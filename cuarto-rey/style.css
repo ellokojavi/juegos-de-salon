@@ -1,0 +1,158 @@
+/* ==========================================================
+   Cuarto Rey — estilos propios del juego
+   ========================================================== */
+
+.screen { display: none; flex-direction: column; flex: 1; }
+.screen.active { display: flex; animation: slideUp 0.3s ease-out both; }
+
+/* ---------- Intro ---------- */
+.intro-hero { text-align: center; padding: 10px 0 8px; }
+.intro-hero .crown { font-size: 4.5rem; display: block; filter: drop-shadow(0 0 20px rgba(255, 210, 63, 0.7)); animation: wiggle 2.4s ease-in-out infinite; }
+.rules-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.rules-list li { display: grid; grid-template-columns: 52px 1fr; gap: 10px; align-items: center; }
+.rules-list .mini-card {
+  width: 44px; height: 58px; border-radius: 7px; background: var(--card); color: var(--card-ink);
+  font-family: var(--font-display); font-size: 1.5rem; display: grid; place-items: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+.rules-list .mini-card.k { background: linear-gradient(180deg, #ffe680, #ffb300); }
+.rules-list b { display: block; }
+.rules-list small { color: var(--muted); }
+details.panel summary { cursor: pointer; font-weight: 900; font-size: 1.05rem; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+details.panel summary::after { content: '▾'; font-size: 1.3rem; transition: transform 0.2s; }
+details.panel[open] summary::after { transform: rotate(180deg); }
+details.panel[open] summary { margin-bottom: 12px; }
+
+/* ---------- Setup jugadores ---------- */
+.players-form { display: grid; gap: 10px; }
+.player-row {
+  display: grid; grid-template-columns: 34px 1fr auto auto; gap: 8px; align-items: center;
+  background: var(--glass); border: 1px solid var(--glass-border); border-radius: 16px; padding: 8px 10px;
+  animation: pop 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.4) both;
+}
+.player-row .num { font-family: var(--font-display); font-size: 1.4rem; color: var(--yellow); text-align: center; }
+.player-row input {
+  width: 100%; min-width: 0; font: 900 1.05rem var(--font-body); color: var(--ink);
+  background: rgba(0, 0, 0, 0.25); border: 2px solid transparent; border-radius: 12px; padding: 12px 12px; outline: none;
+}
+.player-row input:focus { border-color: var(--cyan); }
+.player-row input::placeholder { color: rgba(255, 255, 255, 0.4); font-weight: 700; }
+.gender { display: flex; gap: 4px; background: rgba(0, 0, 0, 0.25); border-radius: 12px; padding: 4px; }
+.gender button {
+  border: 0; background: transparent; color: var(--muted); font-size: 1.15rem; width: 36px; height: 36px; border-radius: 9px; cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+.gender button.on { background: var(--pink); color: #fff; transform: scale(1.05); }
+.gender button[data-g="f"].on { background: var(--purple); }
+.gender button[data-g="x"].on { background: var(--cyan); color: #03302c; }
+.player-row .del { border: 0; background: transparent; color: var(--muted); font-size: 1.3rem; width: 32px; height: 36px; cursor: pointer; }
+.player-row .del:disabled { opacity: 0.2; }
+.setup-hint { font-size: 0.9rem; color: var(--muted); text-align: center; }
+.form-error { color: var(--yellow); font-weight: 800; text-align: center; min-height: 1.4em; }
+
+/* ---------- Mesa de juego ---------- */
+.hud { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; margin-bottom: 10px; }
+.crowns { display: flex; gap: 4px; font-size: 1.6rem; filter: grayscale(1) opacity(0.35); }
+.crowns span { transition: transform 0.3s, filter 0.3s; }
+.crowns span.lit { filter: grayscale(0) opacity(1) drop-shadow(0 0 8px rgba(255, 210, 63, 0.9)); animation: pop 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
+.crowns { filter: none; }
+.crowns span:not(.lit) { filter: grayscale(1) opacity(0.3); }
+.deck-count { font-weight: 900; color: var(--muted); font-size: 0.95rem; text-align: right; }
+.deck-count b { color: var(--ink); font-size: 1.15rem; }
+
+.turn {
+  text-align: center; margin: 4px 0 10px;
+}
+.turn .label { color: var(--muted); font-weight: 800; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.1em; }
+.turn .name { font-family: var(--font-display); font-size: clamp(2rem, 10vw, 3rem); letter-spacing: 0.04em; text-shadow: 0 4px 0 rgba(0,0,0,0.35), 0 0 30px rgba(46, 230, 214, 0.6); }
+
+.seats { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.seat {
+  padding: 5px 11px; border-radius: 999px; font-size: 0.85rem; font-weight: 800;
+  background: rgba(0, 0, 0, 0.25); border: 1px solid transparent; color: var(--muted);
+}
+.seat.current { background: var(--cyan); color: #03302c; border-color: transparent; transform: scale(1.06); }
+.seat .s { opacity: 0.8; font-weight: 700; }
+
+/* La carta */
+.table { display: grid; place-items: center; padding: 8px 0 14px; perspective: 1200px; }
+.card {
+  width: min(56vw, 210px); aspect-ratio: 2.5 / 3.5; position: relative; cursor: pointer;
+  transform-style: preserve-3d; transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1);
+  border-radius: 16px;
+}
+.card.flipped { transform: rotateY(180deg); }
+.card.idle { animation: cardIdle 2.2s ease-in-out infinite; }
+@keyframes cardIdle { 0%, 100% { transform: translateY(0) rotate(-1.5deg); } 50% { transform: translateY(-8px) rotate(1.5deg); } }
+.card .face {
+  position: absolute; inset: 0; border-radius: 16px; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55);
+}
+.card .back {
+  background:
+    repeating-linear-gradient(45deg, rgba(255,255,255,0.08) 0 6px, transparent 6px 12px),
+    linear-gradient(160deg, var(--pink), var(--purple) 60%, var(--bg3));
+  border: 6px solid #fffdf7; display: grid; place-items: center;
+}
+.card .back .logo { font-family: var(--font-display); font-size: 2.6rem; color: #fff; text-shadow: 0 3px 0 rgba(0,0,0,0.35); text-align: center; line-height: 1; }
+.card .back .logo small { display: block; font-size: 1rem; letter-spacing: 0.2em; opacity: 0.9; }
+.card .back .tap { position: absolute; bottom: 12px; left: 0; right: 0; text-align: center; font-weight: 900; font-size: 0.85rem; color: rgba(255,255,255,0.85); animation: bounce 1.2s infinite; }
+.card .front {
+  transform: rotateY(180deg); background: var(--card); color: var(--card-ink);
+  display: grid; grid-template-rows: auto 1fr auto; padding: 10px 12px;
+}
+.card .front.red { color: var(--red); }
+.card .corner { font-family: var(--font-display); font-size: 1.7rem; line-height: 1; display: flex; flex-direction: column; align-items: center; width: 1.6em; }
+.card .corner.br { transform: rotate(180deg); justify-self: end; }
+.card .pip { display: grid; place-items: center; font-size: clamp(3.5rem, 20vw, 5.5rem); line-height: 1; }
+.card .pip .face-emoji { font-size: clamp(3rem, 16vw, 4.5rem); }
+.card.reveal .pip { animation: pop 0.6s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; animation-delay: 0.45s; }
+
+/* Panel de resultado */
+.result { margin-top: 4px; }
+.result .kicker { text-align: center; color: var(--muted); font-weight: 800; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; }
+.result .title { text-align: center; margin: 4px 0 8px; }
+.result .title.gold { color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35), 0 0 30px rgba(255, 210, 63, 0.7); }
+.result .text { text-align: center; font-size: 1.05rem; font-weight: 700; }
+.drinkers { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 10px 0 6px; }
+.drinkers .chip { font-size: 1.05rem; padding: 8px 14px; animation: pop 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
+.result .actions { margin-top: 14px; }
+
+/* Mini-juego */
+.mini-rules { margin: 8px 0 0; padding-left: 0; list-style: none; display: grid; gap: 6px; }
+.mini-rules li { display: grid; grid-template-columns: 26px 1fr; gap: 6px; font-weight: 700; font-size: 0.98rem; line-height: 1.35; }
+.mini-rules li::before { content: '👉'; }
+.helper { margin-top: 12px; background: rgba(0, 0, 0, 0.25); border-radius: 16px; padding: 12px; text-align: center; }
+.helper .big { font-family: var(--font-display); font-size: 1.8rem; letter-spacing: 0.04em; color: var(--yellow); margin: 4px 0; }
+.helper .timer { font-family: var(--font-display); font-size: 3.4rem; line-height: 1; color: var(--cyan); }
+.helper .timer.alarm { color: var(--pink); animation: shake 0.5s; }
+.helper .quote { font-size: 1.15rem; font-weight: 800; font-style: italic; }
+
+/* Selector de jugadores (perdedor / regalo) */
+.picker { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 10px; }
+.picker button {
+  border: 2px solid var(--glass-border); background: var(--glass); color: var(--ink);
+  font: 900 1rem var(--font-body); padding: 12px 8px; border-radius: 14px; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: 2px; transition: transform 0.1s, background 0.15s;
+}
+.picker button:active { transform: scale(0.96); }
+.picker button.on { background: var(--pink); border-color: transparent; }
+.picker button .count { font-family: var(--font-display); font-size: 1.3rem; color: var(--yellow); }
+.picker button:disabled { opacity: 0.4; }
+
+/* Penitencia */
+.penitencia-text { font-size: 1.25rem; font-weight: 800; text-align: center; padding: 14px; background: rgba(0,0,0,0.25); border-radius: 16px; margin: 10px 0; }
+
+/* Cuarto Rey (fin) */
+.finale { text-align: center; padding: 10px 0; }
+.finale .crown-big { font-size: 6rem; display: block; filter: drop-shadow(0 0 30px rgba(255, 210, 63, 0.9)); animation: pop 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.4) both, wiggle 2s ease-in-out 0.8s infinite; }
+.finale .victim { font-family: var(--font-display); font-size: clamp(2.4rem, 12vw, 3.6rem); color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35), 0 0 30px rgba(255, 210, 63, 0.7); margin: 6px 0; }
+.ranking { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 6px; }
+.ranking li { display: grid; grid-template-columns: 36px 1fr auto; gap: 8px; align-items: center; background: rgba(0,0,0,0.25); border-radius: 12px; padding: 8px 12px; font-weight: 800; }
+.ranking li .pos { font-family: var(--font-display); font-size: 1.4rem; color: var(--yellow); }
+.ranking li .sorbos { color: var(--cyan); }
+.ranking li.top { background: linear-gradient(90deg, rgba(255, 210, 63, 0.3), rgba(255, 46, 136, 0.3)); }
+
+/* Modal de confirmación simple */
+.modal { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7); display: grid; place-items: center; padding: 24px; z-index: 40; }
+.modal .panel { width: 100%; max-width: 420px; animation: pop 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }

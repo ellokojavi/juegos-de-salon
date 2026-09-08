@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#150726">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Juegos de Salón 🍻</title>
+  <meta name="description" content="Juegos de salón para el carrete: elige un juego, ingresa a los jugadores y deja que el celular guíe la fiesta.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/base.css">
+  <style>
+    .hero { text-align: center; padding: 28px 0 18px; }
+    .hero .emoji { font-size: 3.2rem; display: block; margin-bottom: 6px; }
+    .hero .sub { color: var(--muted); font-weight: 700; margin-top: 10px; }
+    .games { display: grid; gap: 14px; margin-top: 10px; }
+    .game-card {
+      display: grid; grid-template-columns: 64px 1fr auto; gap: 14px; align-items: center;
+      text-decoration: none; color: var(--ink);
+      background: var(--glass); border: 1px solid var(--glass-border); border-radius: var(--radius);
+      padding: 16px; transition: transform 0.12s, border-color 0.2s;
+      animation: slideUp 0.4s ease-out both;
+    }
+    .game-card:active { transform: scale(0.98); }
+    .game-card .emoji {
+      font-size: 2.6rem; width: 64px; height: 64px; display: grid; place-items: center;
+      background: linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.05));
+      border-radius: 18px;
+    }
+    .game-card h2 { font-family: var(--font-display); font-size: 1.7rem; margin: 0; letter-spacing: 0.04em; text-transform: uppercase; }
+    .game-card .tag { color: var(--muted); font-size: 0.95rem; margin: 2px 0 6px; }
+    .game-card .meta { display: flex; flex-wrap: wrap; gap: 6px; }
+    .game-card .meta span { font-size: 0.78rem; font-weight: 800; padding: 3px 9px; border-radius: 999px; background: rgba(0,0,0,0.25); }
+    .game-card .go { font-family: var(--font-display); font-size: 2rem; color: var(--yellow); }
+    .game-card.soon { opacity: 0.55; pointer-events: none; }
+    .game-card.soon .go { visibility: hidden; }
+    footer { margin-top: auto; padding-top: 28px; text-align: center; color: var(--muted); font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="hero">
+      <span class="emoji bounce">🍻</span>
+      <h1 class="display display--xl rainbow">Juegos de Salón</h1>
+      <p class="sub">Elige un juego, ingresa a los jugadores y deja que el celular guíe el carrete.</p>
+    </header>
+
+    <section class="games" id="games" aria-label="Lista de juegos"></section>
+
+    <footer>
+      <p>Toma con responsabilidad y con agua a mano. Si manejas, no tomas. 🚕</p>
+      <p class="muted">v0.1 · <a href="https://github.com/ellokojavi/juegos-de-salon" style="color:inherit">código en GitHub</a></p>
+    </footer>
+  </main>
+
+  <script type="module">
+    import { GAMES } from './assets/js/games.js';
+    import { sparkles, el } from './assets/js/ui.js';
+    sparkles();
+    const list = document.getElementById('games');
+    GAMES.forEach((g, i) => {
+      const card = el('a', { class: 'game-card' + (g.available ? '' : ' soon'), href: g.path, style: `animation-delay:${i * 80}ms` },
+        el('div', { class: 'emoji' }, g.emoji),
+        el('div', {},
+          el('h2', {}, g.name),
+          el('div', { class: 'tag' }, g.tagline),
+          el('div', { class: 'meta' },
+            g.players && el('span', {}, '👥 ' + g.players),
+            g.duration && el('span', {}, '⏱ ' + g.duration),
+          ),
+        ),
+        el('div', { class: 'go' }, '›'),
+      );
+      list.append(card);
+    });
+  </script>
+</body>
+</html>

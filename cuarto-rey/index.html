@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#150726">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Cuarto Rey 👑 · Juegos de Salón</title>
+  <link rel="manifest" href="../manifest.webmanifest">
+  <link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app" id="app">
+    <div class="topbar">
+      <a class="back" href="../" id="btn-menu">‹ Menú</a>
+      <span class="chip">👑 Cuarto Rey</span>
+    </div>
+
+    <!-- ============ INTRO ============ -->
+    <section class="screen active" id="screen-intro">
+      <div class="intro-hero">
+        <span class="crown">👑</span>
+        <h1 class="display display--xl rainbow">Cuarto Rey</h1>
+        <p class="lead">El clásico de los carretes en casa. Saca una carta, obedece y reza para que no te toque el cuarto rey.</p>
+      </div>
+
+      <div class="stack">
+        <div class="panel">
+          <p class="lead" style="margin-bottom:6px">🍹 Antes de partir</p>
+          <p class="muted">Cada jugador con su vaso a tope de su trago favorito. Una vez que parte el juego, <b>nadie toma</b> si no es por regla. El celular hace de mazo: pásenlo por la mesa hacia la derecha.</p>
+        </div>
+
+        <details class="panel">
+          <summary>🃏 ¿Qué hace cada carta?</summary>
+          <ul class="rules-list" id="rules-list"></ul>
+        </details>
+
+        <div id="resume-slot"></div>
+        <button class="btn btn--yellow" id="btn-go-setup">¡Armar la mesa!</button>
+      </div>
+    </section>
+
+    <!-- ============ SETUP ============ -->
+    <section class="screen" id="screen-setup">
+      <h2 class="display display--lg center">¿Quiénes juegan?</h2>
+      <p class="setup-hint">Anótense en el orden en que están sentados, <b>hacia la derecha</b>. El género sirve para las cartas J y Q.</p>
+      <div class="players-form" id="players-form"></div>
+      <div class="form-error" id="form-error"></div>
+      <div class="stack" style="margin-top:8px">
+        <button class="btn btn--ghost" id="btn-add-player">+ Agregar jugador</button>
+        <button class="btn btn--yellow" id="btn-start">¡A jugar!</button>
+      </div>
+    </section>
+
+    <!-- ============ JUEGO ============ -->
+    <section class="screen" id="screen-play">
+      <div class="hud">
+        <div class="crowns" id="crowns" aria-label="Reyes que han salido">
+          <span>👑</span><span>👑</span><span>👑</span><span>👑</span>
+        </div>
+        <div class="deck-count">Quedan <b id="deck-count">52</b> cartas</div>
+      </div>
+
+      <div class="turn">
+        <div class="label">Le toca a</div>
+        <div class="name" id="turn-name">—</div>
+      </div>
+      <div class="seats" id="seats"></div>
+
+      <div class="table">
+        <div class="card idle" id="card" role="button" aria-label="Sacar carta">
+          <div class="face back">
+            <div class="logo">Cuarto<small>👑 REY 👑</small></div>
+            <div class="tap">Toca para sacar carta</div>
+          </div>
+          <div class="face front" id="card-front"></div>
+        </div>
+      </div>
+
+      <div class="result panel" id="result" hidden></div>
+    </section>
+
+    <!-- ============ FINAL ============ -->
+    <section class="screen" id="screen-end">
+      <div class="finale">
+        <span class="crown-big">👑</span>
+        <div class="display display--md">¡Salió el cuarto rey!</div>
+        <div class="victim" id="end-victim">—</div>
+        <p class="lead">Se toma todo lo que le queda en el vaso. La mesa cuenta: ¡fondo, fondo, fondo!</p>
+      </div>
+      <div class="panel">
+        <p class="lead center" style="margin-bottom:4px">📊 Sorbos de la noche (aprox.)</p>
+        <ol class="ranking" id="ranking"></ol>
+        <p class="muted center" style="margin:10px 0 0;font-size:0.85rem" id="end-stats"></p>
+      </div>
+      <div class="stack" style="margin-top:14px">
+        <button class="btn btn--yellow" id="btn-again">¡Otra ronda!</button>
+        <button class="btn btn--ghost" id="btn-change-players">Cambiar jugadores</button>
+        <a class="btn btn--ghost" href="../">Volver al menú</a>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="game.js"></script>
+</body>
+</html>

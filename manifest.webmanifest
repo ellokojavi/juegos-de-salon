@@ -1,0 +1,11 @@
+{
+  "name": "Juegos de Salón",
+  "short_name": "Juegos",
+  "description": "Juegos de salón para el carrete, guiados desde el celular.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#150726",
+  "theme_color": "#150726",
+  "lang": "es",
+  "icons": [{ "src": "assets/icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}
