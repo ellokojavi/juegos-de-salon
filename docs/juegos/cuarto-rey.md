@@ -1,6 +1,6 @@
 # Especificación: Cuarto Rey 👑
 
-**Ruta:** `/cuarto-rey/` · **Jugadores:** 4 a 6 · **Versión:** 0.1
+**Ruta:** `/cuarto-rey/` · **Jugadores:** 4 a 6 · **Versión:** 0.2 · **Idiomas:** es, en
 
 ## Origen
 Juego de naipes para tomar, popular en Chile. Reglas base según instrucciones entregadas por el cliente (ver abajo). El celular reemplaza al mazo (D-12).
@@ -15,8 +15,9 @@ Intro ──► Setup jugadores ──► Mesa (turnos) ──► Cuarto Rey ─
 
 1. **Intro:** explica la preparación (vaso a tope, nadie toma fuera de regla, pasar el celular hacia la derecha), lista desplegable con la regla de cada carta y, si existe, la opción de continuar una partida guardada.
 2. **Setup:** de 4 a 6 filas con nombre (máx. 14 caracteres) y género (♂ ♀ ⚧). Validaciones: todos con nombre, sin repetidos. Recuerda los últimos jugadores.
-3. **Mesa:** muestra a quién le toca, la fila de asientos, el contador de cartas restantes y 4 coronas que se encienden con cada rey. La carta se saca tocándola (volteo 3D). Debajo aparece el panel con la instrucción y los botones para resolverla.
-4. **Final:** nombre del que sacó el cuarto rey, ranking de sorbos y botones de otra ronda / cambiar jugadores / menú.
+3. **Mesa:** muestra a quién le toca, la fila de asientos, el contador de cartas restantes y 4 coronas que se encienden con cada rey. La carta boca abajo ocupa casi todo el ancho; al tocarla gira en 3D, se encoge y debajo aparece el panel con la instrucción y los botones para resolverla.
+4. **Transición entre turnos:** al resolver la carta, overlay "¡Salud!" con los que toman (avanza solo o al tocar) y luego "Pásale el celular a X" con botón "¡Dame la carta!". Al cerrarse, la carta nueva entra con animación.
+5. **Final:** nombre del que sacó el cuarto rey, ranking de sorbos y botones de otra ronda / cambiar jugadores / menú.
 
 ## Reglas por carta (implementadas)
 
@@ -50,6 +51,9 @@ Intro ──► Setup jugadores ──► Mesa (turnos) ──► Cuarto Rey ─
 ```
 
 `current` guarda la carta en juego y datos elegidos (penitencia, categoría) para que, al retomar, se vea exactamente lo mismo.
+
+## Idiomas
+Todos los textos viven en `rules.js` bajo `LOCALES.es` y `LOCALES.en` (reglas, mensajes de reyes, mini-juegos, 24 penitencias, 35 categorías, 16 ideas de Nunca Nunca y la interfaz). Nombres en inglés: Fourth King, Story Time, Puffer Pig, Categories, Never Have I Ever, Dare.
 
 ## Ideas para versiones futuras
 - Variantes de reglas configurables (sorbos, “seguir hasta agotar el mazo”, usar naipe real).

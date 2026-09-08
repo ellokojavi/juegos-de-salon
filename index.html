@@ -41,34 +41,42 @@
 </head>
 <body>
   <main class="app">
+    <div class="topbar" style="justify-content:flex-end"><div id="lang-slot"></div></div>
     <header class="hero">
       <span class="emoji bounce">🍻</span>
-      <h1 class="display display--xl rainbow">Juegos de Salón</h1>
-      <p class="sub">Elige un juego, ingresa a los jugadores y deja que el celular guíe el carrete.</p>
+      <h1 class="display display--xl rainbow" data-i18n="appTitle">Juegos de Salón</h1>
+      <p class="sub" data-i18n="appSub">Elige un juego, ingresa a los jugadores y deja que el celular guíe el carrete.</p>
     </header>
 
     <section class="games" id="games" aria-label="Lista de juegos"></section>
 
     <footer>
-      <p>Toma con responsabilidad y con agua a mano. Si manejas, no tomas. 🚕</p>
-      <p class="muted">v0.1 · <a href="https://github.com/ellokojavi/juegos-de-salon" style="color:inherit">código en GitHub</a></p>
+      <p data-i18n="footer">Toma con responsabilidad y con agua a mano. Si manejas, no tomas. 🚕</p>
+      <p class="muted">v0.2 · <a href="https://github.com/ellokojavi/juegos-de-salon" style="color:inherit" data-i18n="code">código en GitHub</a></p>
     </footer>
   </main>
 
   <script type="module">
     import { GAMES } from './assets/js/games.js';
     import { sparkles, el } from './assets/js/ui.js';
+    import { getLang, langToggle, applyStatic, pickLang, COMMON } from './assets/js/i18n.js';
     sparkles();
+    const lang = getLang();
+    document.documentElement.lang = lang;
+    const T = COMMON[lang];
+    applyStatic(T);
+    document.title = `${T.appTitle} 🍻`;
+    document.getElementById('lang-slot').append(langToggle());
     const list = document.getElementById('games');
     GAMES.forEach((g, i) => {
       const card = el('a', { class: 'game-card' + (g.available ? '' : ' soon'), href: g.path, style: `animation-delay:${i * 80}ms` },
         el('div', { class: 'emoji' }, g.emoji),
         el('div', {},
-          el('h2', {}, g.name),
-          el('div', { class: 'tag' }, g.tagline),
+          el('h2', {}, pickLang(g.name, lang)),
+          el('div', { class: 'tag' }, pickLang(g.tagline, lang)),
           el('div', { class: 'meta' },
-            g.players && el('span', {}, '👥 ' + g.players),
-            g.duration && el('span', {}, '⏱ ' + g.duration),
+            g.players && el('span', {}, `👥 ${g.players} ${T.players}`),
+            g.duration && el('span', {}, `⏱ ${g.duration} ${T.minutes}`),
           ),
         ),
         el('div', { class: 'go' }, '›'),

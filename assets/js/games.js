@@ -1,28 +1,27 @@
 /**
  * Registro central de juegos.
  * Para agregar un juego nuevo: crear carpeta /<id>/ con su index.html
- * y agregar una entrada aquí. El menú principal se genera desde esta lista.
+ * y agregar una entrada aquí. Los textos van por idioma ({ es, en }).
+ * El menú principal se genera desde esta lista.
  */
 export const GAMES = [
   {
     id: 'cuarto-rey',
-    name: 'Cuarto Rey',
     emoji: '👑',
-    tagline: 'Naipes, sorbos y el temido cuarto rey.',
-    players: '4 a 6 jugadores',
-    duration: '20 a 40 min',
-    needs: 'Solo el celular (el mazo va incluido) y tus tragos',
+    name: { es: 'Cuarto Rey', en: 'Fourth King' },
+    tagline: { es: 'Naipes, sorbos y el temido cuarto rey.', en: 'Cards, sips and the dreaded fourth king.' },
+    players: '4–6',
+    duration: '20–40',
     path: 'cuarto-rey/',
     available: true,
   },
   {
     id: 'proximamente-1',
-    name: 'Próximamente',
     emoji: '🎲',
-    tagline: 'Más juegos en camino para el carrete.',
+    name: { es: 'Próximamente', en: 'Coming soon' },
+    tagline: { es: 'Más juegos en camino para el carrete.', en: 'More games on the way for the party.' },
     players: '',
     duration: '',
-    needs: '',
     path: '#',
     available: false,
   },
