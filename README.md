@@ -8,7 +8,11 @@ App web (mobile-first) con juegos de salón para el carrete. Se abre desde el ce
 
 | Juego | Estado | Jugadores |
 |---|---|---|
-| 👑 [Cuarto Rey](cuarto-rey/) | v0.1 (demo) | 4 a 6 |
+| 👑 [Cuarto Rey / Fourth King](cuarto-rey/) | v0.2 | 4 a 6 |
+
+## Idiomas
+
+Español (por defecto) e inglés. El toggle del menú guarda la elección en el dispositivo y aplica a todos los juegos.
 
 ## Stack
 
@@ -27,7 +31,8 @@ y abrir http://localhost:8080 (los módulos ES necesitan servirse por HTTP, no f
 ```
 index.html              Menú principal (se genera desde assets/js/games.js)
 assets/css/base.css     Estilos y animaciones compartidos (tema fiesta)
-assets/js/games.js      Registro de juegos
+assets/js/games.js      Registro de juegos (textos por idioma)
+assets/js/i18n.js       Idioma (ES/EN): toggle, persistencia y textos comunes
 assets/js/ui.js         Utilidades UI: confeti, vibración, wake lock, helpers DOM
 cuarto-rey/             Juego Cuarto Rey (index.html, game.js, rules.js, style.css)
 docs/                   Requerimientos, decisiones y especificaciones

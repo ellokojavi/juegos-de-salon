@@ -2,17 +2,21 @@
  * Cuarto Rey — lógica del juego.
  * Pantallas: intro → setup → play → end.
  * El estado completo se guarda en localStorage para poder retomar la partida.
+ * Todos los textos salen de LOCALES[lang] (rules.js); el idioma se elige en el menú o en la intro.
  */
 import { $, $$, el, pick, shuffle, vibrate, sparkles, keepAwake, confetti } from '../assets/js/ui.js';
-import {
-  SUITS, RANKS, RANK_NAMES, MIN_PLAYERS, MAX_PLAYERS, SORBOS,
-  CARD_RULES, KING_MESSAGES, MINIGAMES, PENITENCIAS, CATEGORIAS, NUNCA_NUNCA,
-} from './rules.js';
+import { getLang, langToggle, applyStatic } from '../assets/js/i18n.js';
+import { SUITS, RANKS, MIN_PLAYERS, MAX_PLAYERS, SORBOS, CARD_RULES, LOCALES } from './rules.js';
 
 const STORAGE_PLAYERS = 'juegos-de-salon:players';
 const STORAGE_GAME = 'juegos-de-salon:cuarto-rey:game';
 const GENDERS = { m: '♂', f: '♀', x: '⚧' };
-const GENDER_LABEL = { m: 'Hombre', f: 'Mujer', x: 'Otro (toma con J y con Q)' };
+
+const lang = getLang();
+const L = LOCALES[lang];
+const T = L.ui;
+/** Reemplaza {llaves} en un texto: fmt('Hola {name}', { name: 'Javi' }). */
+const fmt = (s, vars = {}) => s.replace(/\{(\w+)\}/g, (_, k) => (vars[k] !== undefined ? vars[k] : `{${k}}`));
 
 let state = null;      // partida en curso
 let draft = [];        // jugadores en edición (pantalla setup)
@@ -52,7 +56,7 @@ function renderRulesList() {
   const list = $('#rules-list');
   list.innerHTML = '';
   for (const rank of RANKS) {
-    const r = CARD_RULES[rank];
+    const r = L.cards[rank];
     list.append(el('li', {},
       el('div', { class: 'mini-card' + (rank === 'K' ? ' k' : '') }, rank),
       el('div', {}, el('b', {}, r.title), el('small', {}, r.text)),
@@ -67,11 +71,11 @@ function renderResumeSlot() {
   if (!saved || saved.finished || !saved.players?.length) return;
   const who = saved.players[saved.turn]?.name || '?';
   slot.append(el('div', { class: 'panel pop' },
-    el('p', { class: 'lead', style: 'margin-bottom:4px' }, '⏯ Hay una partida a medias'),
-    el('p', { class: 'muted' }, `Le tocaba a ${who}. Quedan ${saved.deck.length} cartas y han salido ${saved.kings} reyes.`),
+    el('p', { class: 'lead', style: 'margin-bottom:4px' }, T.resumeTitle),
+    el('p', { class: 'muted' }, fmt(T.resumeText, { name: who, cards: saved.deck.length, kings: saved.kings })),
     el('div', { class: 'btn-row' },
-      el('button', { class: 'btn btn--cyan btn--sm', onClick: () => { state = saved; enterPlay(); } }, 'Continuar'),
-      el('button', { class: 'btn btn--ghost btn--sm', onClick: () => { clearSaved(); renderResumeSlot(); } }, 'Borrar'),
+      el('button', { class: 'btn btn--cyan btn--sm', onClick: () => { state = saved; enterPlay(); } }, T.resume),
+      el('button', { class: 'btn btn--ghost btn--sm', onClick: () => { clearSaved(); renderResumeSlot(); } }, T.delete),
     ),
   ));
 }
@@ -93,30 +97,30 @@ function renderPlayersForm() {
   form.innerHTML = '';
   draft.forEach((p, i) => {
     const input = el('input', {
-      type: 'text', placeholder: `Jugador ${i + 1}`, value: p.name, maxlength: 14, autocomplete: 'off', enterkeyhint: 'next',
+      type: 'text', placeholder: fmt(T.playerPlaceholder, { n: i + 1 }), value: p.name, maxlength: 14, autocomplete: 'off', enterkeyhint: 'next',
       onInput: e => { p.name = e.target.value; },
       onKeydown: e => { if (e.key === 'Enter') { const next = $$('#players-form input')[i + 1]; next ? next.focus() : e.target.blur(); } },
     });
     const gender = el('div', { class: 'gender' },
       ...Object.entries(GENDERS).map(([g, sym]) => el('button', {
-        type: 'button', 'data-g': g, class: p.gender === g ? 'on' : '', title: GENDER_LABEL[g], 'aria-label': GENDER_LABEL[g],
+        type: 'button', 'data-g': g, class: p.gender === g ? 'on' : '', title: T.genders[g], 'aria-label': T.genders[g],
         onClick: e => { p.gender = g; $$('button', e.currentTarget.parentElement).forEach(b => b.classList.toggle('on', b.dataset.g === g)); vibrate(10); },
       }, sym)),
     );
-    const del = el('button', { class: 'del', type: 'button', 'aria-label': 'Quitar jugador', disabled: draft.length <= MIN_PLAYERS,
+    const del = el('button', { class: 'del', type: 'button', 'aria-label': T.removePlayer, disabled: draft.length <= MIN_PLAYERS,
       onClick: () => { draft.splice(i, 1); renderPlayersForm(); } }, '✕');
     form.append(el('div', { class: 'player-row', style: `animation-delay:${i * 40}ms` }, el('div', { class: 'num' }, i + 1), input, gender, del));
   });
   $('#btn-add-player').disabled = draft.length >= MAX_PLAYERS;
-  $('#btn-add-player').textContent = draft.length >= MAX_PLAYERS ? `Máximo ${MAX_PLAYERS} jugadores` : '+ Agregar jugador';
+  $('#btn-add-player').textContent = draft.length >= MAX_PLAYERS ? fmt(T.maxPlayers, { n: MAX_PLAYERS }) : T.addPlayer;
 }
 
 function validateDraft() {
   const players = draft.map(p => ({ name: p.name.trim(), gender: p.gender }));
-  if (players.length < MIN_PLAYERS) return { error: `Se necesitan al menos ${MIN_PLAYERS} jugadores.` };
-  if (players.some(p => !p.name)) return { error: 'Todos los jugadores necesitan un nombre.' };
+  if (players.length < MIN_PLAYERS) return { error: fmt(T.errMin, { n: MIN_PLAYERS }) };
+  if (players.some(p => !p.name)) return { error: T.errNames };
   const lower = players.map(p => p.name.toLowerCase());
-  if (new Set(lower).size !== lower.length) return { error: 'Hay nombres repetidos. Pónganse apodos.' };
+  if (new Set(lower).size !== lower.length) return { error: T.errDup };
   return { players };
 }
 
@@ -171,7 +175,7 @@ function renderTable() {
   const result = $('#result');
   result.hidden = true; result.innerHTML = '';
   if (state.current) {
-    // Partida retomada a mitad de una carta: mostrarla ya volteada.
+    // Partida retomada a mitad de una carta: mostrarla ya volteada y chica.
     renderCardFront(state.current.card);
     card.classList.remove('idle', 'enter'); card.classList.add('flipped', 'small');
     renderResult();
@@ -226,9 +230,9 @@ function applyImmediateRule() {
       state.victim = state.turn;
     }
   } else if (rule.kind === 'penitencia') {
-    state.current.data.penitencia = pick(PENITENCIAS);
+    state.current.data.penitencia = pick(L.penitencias);
   } else if (rule.kind === 'minigame' && rule.game === 'cultura') {
-    state.current.data.category = pick(CATEGORIAS);
+    state.current.data.category = pick(L.categorias);
   }
   state.current.applied = true;
 }
@@ -252,25 +256,25 @@ function resolveTargets(kind) {
 function renderResult() {
   const { card, data } = state.current;
   const rule = CARD_RULES[card.rank];
+  const texts = L.cards[card.rank];
   const box = $('#result');
   box.innerHTML = '';
   box.hidden = false;
   box.classList.remove('slide-up'); void box.offsetWidth; box.classList.add('slide-up');
 
-  const kicker = el('div', { class: 'kicker' }, `${currentPlayer().name} sacó ${RANK_NAMES[card.rank]} de ${SUITS.find(s => s.symbol === card.suit).name}`);
-  box.append(kicker);
+  box.append(el('div', { class: 'kicker' }, fmt(T.drew, { name: currentPlayer().name, rank: L.rankNames[card.rank], suit: L.suitNames[card.suit] })));
 
   switch (rule.kind) {
-    case 'drink': renderDrink(box, rule, data); break;
-    case 'gift': renderGift(box, rule); break;
-    case 'penitencia': renderPenitencia(box, rule, data); break;
+    case 'drink': renderDrink(box, rule, texts, data); break;
+    case 'gift': renderGift(box, texts); break;
+    case 'penitencia': renderPenitencia(box, data); break;
     case 'minigame': renderMinigame(box, rule, data); break;
     case 'king': renderKing(box, data); break;
   }
   box.scrollIntoView({ behavior: 'smooth', block: 'end' });
 }
 
-function nextButton(summary, label = '¡Listo, siguiente!') {
+function nextButton(summary, label = T.next) {
   return el('div', { class: 'actions' }, el('button', { class: 'btn', onClick: () => nextTurn(summary) }, label));
 }
 
@@ -278,67 +282,67 @@ function drinkerChips(indexes) {
   return el('div', { class: 'drinkers' }, ...indexes.map((i, k) => el('span', { class: 'chip chip--hot', style: `animation-delay:${k * 70}ms` }, '🍺 ', state.players[i].name)));
 }
 
-function renderDrink(box, rule, data) {
+function renderDrink(box, rule, texts, data) {
   const targets = data.targets || resolveTargets(rule.targets);
-  const fallback = (rule.targets === 'men' || rule.targets === 'women') && targets.length === 1 && targets[0] === state.turn
-    && !state.players.some(p => p.gender === (rule.targets === 'men' ? 'm' : 'f') || p.gender === 'x');
+  const genderKey = rule.targets === 'men' ? 'm' : rule.targets === 'women' ? 'f' : null;
+  const fallback = genderKey && targets.length === 1 && targets[0] === state.turn
+    && !state.players.some(p => p.gender === genderKey || p.gender === 'x');
   box.append(
-    el('h2', { class: 'display display--md title' }, rule.title),
-    el('p', { class: 'text' }, fallback ? `No hay ${rule.targets === 'men' ? 'hombres' : 'mujeres'} en la mesa… así que tomas tú.` : rule.text),
+    el('h2', { class: 'display display--md title' }, texts.title),
+    el('p', { class: 'text' }, fallback ? (genderKey === 'm' ? T.noMen : T.noWomen) : texts.text),
     drinkerChips(targets),
-    nextButton({ drinkers: targets, title: '¡Salud!' }),
+    nextButton({ drinkers: targets, title: T.hoCheers }),
   );
 }
 
-function renderGift(box, rule) {
+function renderGift(box, texts) {
   const counts = state.players.map(() => 0);
   const total = () => counts.reduce((a, b) => a + b, 0);
-  const status = el('p', { class: 'text' }, `Te quedan ${SORBOS} sorbos por regalar.`);
+  const status = el('p', { class: 'text' }, fmt(T.giftLeft, { n: SORBOS }));
   const done = el('button', { class: 'btn', disabled: true, onClick: () => {
     counts.forEach((c, i) => { state.sorbos[i] += c; });
-    nextTurn({ drinkers: counts.map((c, i) => c ? i : -1).filter(i => i >= 0), title: '¡Regalo!' });
-  } }, '¡Regalados!');
+    nextTurn({ drinkers: counts.map((c, i) => c ? i : -1).filter(i => i >= 0), title: T.hoGift });
+  } }, T.gifted);
   const picker = el('div', { class: 'picker' });
   const buttons = state.players.map((p, i) => {
     const count = el('span', { class: 'count' }, '');
-    const b = el('button', { type: 'button', onClick: () => {
+    return el('button', { type: 'button', onClick: () => {
       if (total() >= SORBOS) { counts[i] = 0; } else { counts[i]++; }
       buttons.forEach((bb, j) => { bb.classList.toggle('on', counts[j] > 0); bb.querySelector('.count').textContent = counts[j] ? '🍺'.repeat(counts[j]) : ''; });
       const left = SORBOS - total();
-      status.textContent = left ? `Te quedan ${left} sorbo${left > 1 ? 's' : ''} por regalar.` : '¡Listo! Confirma abajo.';
+      status.textContent = left === 0 ? T.giftDone : left === 1 ? T.giftLeftOne : fmt(T.giftLeft, { n: left });
       done.disabled = left > 0;
       vibrate(10);
     } }, p.name, count);
-    return b;
   });
   picker.append(...buttons);
   box.append(
-    el('h2', { class: 'display display--md title' }, rule.title),
-    el('p', { class: 'text' }, rule.text),
+    el('h2', { class: 'display display--md title' }, texts.title),
+    el('p', { class: 'text' }, texts.text),
     status, picker,
     el('div', { class: 'actions' }, done),
   );
 }
 
-function renderPenitencia(box, rule, data) {
+function renderPenitencia(box, data) {
   const text = el('div', { class: 'penitencia-text pop' }, data.penitencia);
   box.append(
-    el('h2', { class: 'display display--md title' }, `Penitencia pa' ${currentPlayer().name}`),
+    el('h2', { class: 'display display--md title' }, fmt(T.penitenciaFor, { name: currentPlayer().name })),
     text,
     el('button', { class: 'btn btn--ghost btn--sm', style: 'width:100%', onClick: () => {
-      let p; do { p = pick(PENITENCIAS); } while (p === data.penitencia && PENITENCIAS.length > 1);
+      let p; do { p = pick(L.penitencias); } while (p === data.penitencia && L.penitencias.length > 1);
       data.penitencia = p; save();
       text.textContent = p; text.classList.remove('pop'); void text.offsetWidth; text.classList.add('pop');
-    } }, '🎲 Otra penitencia'),
+    } }, T.otherPenitencia),
     el('div', { class: 'actions stack' },
-      el('button', { class: 'btn btn--cyan', onClick: () => nextTurn({ drinkers: [], title: '¡Cumplida!', emoji: '👏' }) }, '✅ ¡Cumplida!'),
-      el('button', { class: 'btn btn--ghost', onClick: () => { state.sorbos[state.turn] += SORBOS; nextTurn({ drinkers: [state.turn], title: '¡Se arrugó!' }); } }, `😳 Se arrugó: toma ${SORBOS} sorbos`),
+      el('button', { class: 'btn btn--cyan', onClick: () => nextTurn({ drinkers: [], title: T.hoDone, emoji: '👏' }) }, T.done),
+      el('button', { class: 'btn btn--ghost', onClick: () => { state.sorbos[state.turn] += SORBOS; nextTurn({ drinkers: [state.turn], title: T.hoChickened }); } }, fmt(T.chickened, { n: SORBOS })),
     ),
   );
 }
 
 function renderMinigame(box, rule, data) {
-  const mg = MINIGAMES[rule.game];
+  const mg = L.minigames[rule.game];
   box.append(
     el('h2', { class: 'display display--md title' }, `${mg.emoji} ${mg.name}`),
     el('p', { class: 'text' }, mg.intro),
@@ -347,38 +351,36 @@ function renderMinigame(box, rule, data) {
   if (mg.helper === 'timer') box.append(timerHelper());
   if (mg.helper === 'category') box.append(categoryHelper(data));
   if (mg.helper === 'nunca') box.append(nuncaHelper());
-  if (mg.helper === 'none') box.append(el('div', { class: 'helper' }, el('div', { class: 'big' }, '🐷 Cuando quieras…'), el('div', { class: 'muted' }, 'Sigan jugando. Cuando pase, marquen al perdedor aquí o en cualquier momento.')));
+  if (mg.helper === 'none') box.append(el('div', { class: 'helper' }, el('div', { class: 'big' }, T.chanchoBig), el('div', { class: 'muted' }, T.chanchoHint)));
 
-  // Selección de perdedor
   const picker = el('div', { class: 'picker' });
-  const loserBtns = state.players.map((p, i) => el('button', { type: 'button', onClick: () => {
+  picker.append(...state.players.map((p, i) => el('button', { type: 'button', onClick: () => {
     stopTimer();
     state.sorbos[i] += SORBOS;
-    nextTurn({ drinkers: [i], title: '¡Perdió!' });
-  } }, `😵 ${p.name}`));
-  picker.append(...loserBtns);
+    nextTurn({ drinkers: [i], title: T.hoLost });
+  } }, `😵 ${p.name}`)));
   box.append(
     el('div', { class: 'actions' },
-      el('p', { class: 'text', style: 'margin-bottom:4px' }, `¿Quién perdió? Toma ${SORBOS} sorbos.`),
+      el('p', { class: 'text', style: 'margin-bottom:4px' }, fmt(T.whoLost, { n: SORBOS })),
       picker,
-      el('button', { class: 'btn btn--ghost', style: 'margin-top:10px', onClick: () => { stopTimer(); nextTurn({ drinkers: [], title: '¡Sigan!', emoji: '😎' }); } }, 'Nadie perdió / seguir'),
+      el('button', { class: 'btn btn--ghost', style: 'margin-top:10px', onClick: () => { stopTimer(); nextTurn({ drinkers: [], title: T.hoGoOn, emoji: '😎' }); } }, T.nobodyLost),
     ),
   );
 }
 
 function timerHelper(seconds = 5) {
   const display = el('div', { class: 'timer' }, `${seconds}`);
-  const label = el('div', { class: 'muted' }, 'Cuenta de 5 segundos para quien se traba');
+  const label = el('div', { class: 'muted' }, T.timerHint);
   let remaining = seconds;
   const start = el('button', { class: 'btn btn--cyan btn--sm', style: 'margin-top:8px', onClick: () => {
     stopTimer();
     remaining = seconds; display.textContent = remaining; display.classList.remove('alarm');
     timerHandle = setInterval(() => {
       remaining--;
-      display.textContent = remaining > 0 ? remaining : '¡TIEMPO!';
+      display.textContent = remaining > 0 ? remaining : T.timeUp;
       if (remaining <= 0) { stopTimer(); display.classList.add('alarm'); vibrate([80, 60, 80, 60, 200]); }
     }, 1000);
-  } }, '⏱ Iniciar 5 s');
+  } }, T.timerStart);
   return el('div', { class: 'helper' }, display, label, start);
 }
 
@@ -387,27 +389,27 @@ function stopTimer() { if (timerHandle) { clearInterval(timerHandle); timerHandl
 function categoryHelper(data) {
   const cat = el('div', { class: 'big pop' }, data.category);
   return el('div', { class: 'helper' },
-    el('div', { class: 'muted' }, 'Categoría sugerida'),
+    el('div', { class: 'muted' }, T.suggestedCategory),
     cat,
     el('button', { class: 'btn btn--ghost btn--sm', onClick: () => {
-      let c; do { c = pick(CATEGORIAS); } while (c === data.category);
+      let c; do { c = pick(L.categorias); } while (c === data.category);
       data.category = c; save(); cat.textContent = c; cat.classList.remove('pop'); void cat.offsetWidth; cat.classList.add('pop');
-    } }, '🎲 Otra categoría'),
+    } }, T.otherCategory),
   );
 }
 
 function nuncaHelper() {
   const quote = el('div', { class: 'quote', hidden: true });
   const btn = el('button', { class: 'btn btn--ghost btn--sm', onClick: () => {
-    quote.hidden = false; quote.textContent = pick(NUNCA_NUNCA); btn.textContent = '🎲 Otra idea';
+    quote.hidden = false; quote.textContent = pick(L.nuncaNunca); btn.textContent = T.otherIdea;
     quote.classList.remove('pop'); void quote.offsetWidth; quote.classList.add('pop');
-  } }, '💡 ¿Sin ideas?');
-  return el('div', { class: 'helper' }, el('div', { class: 'muted' }, `${currentPlayer().name} parte: “Nunca nunca he…”`), quote, btn);
+  } }, T.noIdeas);
+  return el('div', { class: 'helper' }, el('div', { class: 'muted' }, fmt(T.nuncaStarts, { name: currentPlayer().name })), quote, btn);
 }
 
 function renderKing(box, data) {
   const k = data.kingNumber;
-  const msg = KING_MESSAGES[k - 1];
+  const msg = L.kings[k - 1];
   renderCrowns();
   vibrate(k === 4 ? [100, 50, 100, 50, 300] : [40, 30, 40]);
   if (k === 4) {
@@ -416,14 +418,14 @@ function renderKing(box, data) {
       el('h2', { class: 'display display--lg title gold' }, msg.title),
       el('p', { class: 'text' }, msg.text),
       drinkerChips([state.turn]),
-      el('div', { class: 'actions' }, el('button', { class: 'btn btn--yellow', onClick: () => finishGame(state.turn) }, '🏆 Ver el resultado')),
+      el('div', { class: 'actions' }, el('button', { class: 'btn btn--yellow', onClick: () => finishGame(state.turn) }, T.seeResult)),
     );
   } else {
     box.append(
       el('h2', { class: 'display display--md title gold' }, msg.title),
       el('p', { class: 'text' }, msg.text),
-      el('div', { class: 'chips', style: 'justify-content:center' }, el('span', { class: 'chip chip--gold' }, `👑 ${k} de 4`)),
-      nextButton({ drinkers: [], title: `¡Van ${k} reyes!`, emoji: '👑' }),
+      el('div', { class: 'chips', style: 'justify-content:center' }, el('span', { class: 'chip chip--gold' }, fmt(T.kingsCount, { k }))),
+      nextButton({ drinkers: [], title: fmt(T.hoKings, { k }), emoji: '👑' }),
     );
   }
 }
@@ -434,7 +436,7 @@ function renderKing(box, data) {
  *  2) "Pásale el celular a X" con botón para que el siguiente jugador confirme.
  * El estado avanza de inmediato (por si se cierra el navegador); la mesa se redibuja detrás del overlay.
  */
-function nextTurn(summary = { drinkers: [], title: '¡Listo!' }) {
+function nextTurn(summary = { drinkers: [], title: T.hoReady }) {
   stopTimer();
   state.current = null;
   state.turn = (state.turn + 1) % n();
@@ -443,7 +445,7 @@ function nextTurn(summary = { drinkers: [], title: '¡Listo!' }) {
   showHandoff(summary);
 }
 
-function showHandoff({ drinkers = [], title = '¡Salud!', emoji } = {}) {
+function showHandoff({ drinkers = [], title = T.hoCheers, emoji } = {}) {
   const box = $('#handoff');
   box.hidden = false; box.className = 'handoff'; box.innerHTML = '';
   let timer = null;
@@ -452,15 +454,15 @@ function showHandoff({ drinkers = [], title = '¡Salud!', emoji } = {}) {
     emoji ? el('div', { class: 'cheers' }, el('span', {}, emoji)) : el('div', { class: 'cheers' }, el('span', { class: 'l' }, '🍺'), el('span', { class: 'r' }, '🍺')),
     el('div', { class: 'title gold' }, title),
     drinkers.length ? drinkerChips(drinkers) : null,
-    drinkers.length ? el('div', { class: 'hint' }, `${drinkers.length > 1 ? 'Toman' : 'Toma'} ${SORBOS} sorbos`) : null,
-    el('div', { class: 'hint', style: 'margin-top:10px' }, 'Toca para seguir'),
+    drinkers.length ? el('div', { class: 'hint' }, fmt(drinkers.length > 1 ? T.hoDrinkMany : T.hoDrinkOne, { n: SORBOS })) : null,
+    el('div', { class: 'hint', style: 'margin-top:10px' }, T.hoTap),
   );
 
   const stagePass = el('div', { class: 'stage pop' },
     el('div', { class: 'phone' }, '📱'),
-    el('div', { class: 'hint', style: 'font-size:1.05rem' }, 'Pásale el celular a'),
+    el('div', { class: 'hint', style: 'font-size:1.05rem' }, T.hoPass),
     el('div', { class: 'next-name' }, currentPlayer().name),
-    el('button', { class: 'btn btn--cyan', onClick: e => { e.stopPropagation(); closeHandoff(); } }, '¡Dame la carta!'),
+    el('button', { class: 'btn btn--cyan', onClick: e => { e.stopPropagation(); closeHandoff(); } }, T.hoGiveCard),
   );
 
   const goPass = () => {
@@ -489,7 +491,7 @@ function finishGame(victimIndex) {
   state.finished = true;
   state.current = null;
   save();
-  $('#end-victim').textContent = victimIndex === null ? 'Se acabó el mazo' : state.players[victimIndex].name;
+  $('#end-victim').textContent = victimIndex === null ? T.deckOver : state.players[victimIndex].name;
   const ranking = $('#ranking');
   ranking.innerHTML = '';
   const order = state.players.map((p, i) => ({ ...p, i, sorbos: state.sorbos[i], fondos: state.fondos[i] }))
@@ -498,11 +500,11 @@ function finishGame(victimIndex) {
     ranking.append(el('li', { class: pos === 0 ? 'top' : '' },
       el('span', { class: 'pos' }, ['🥇', '🥈', '🥉'][pos] || `${pos + 1}.`),
       el('span', {}, p.name, p.fondos ? ' 👑' : ''),
-      el('span', { class: 'sorbos' }, `${p.sorbos} sorbos${p.fondos ? ' + fondo' : ''}`),
+      el('span', { class: 'sorbos' }, fmt(T.sips, { n: p.sorbos }) + (p.fondos ? T.plusChug : '')),
     ));
   });
   const mins = Math.max(1, Math.round((Date.now() - state.startedAt) / 60000));
-  $('#end-stats').textContent = `${state.drawn} cartas en ${mins} min. Los sorbos son una estimación: los mini-juegos y penitencias se cuentan cuando marcan al perdedor.`;
+  $('#end-stats').textContent = fmt(T.endStats, { cards: state.drawn, mins });
   showScreen('screen-end');
   confetti({ count: 260, duration: 4000 });
 }
@@ -511,6 +513,10 @@ function finishGame(victimIndex) {
 /* Arranque                                                            */
 /* ------------------------------------------------------------------ */
 function init() {
+  document.documentElement.lang = lang;
+  document.title = T.docTitle;
+  applyStatic(T);
+  $('#lang-slot').append(langToggle());
   sparkles(14);
   renderRulesList();
   renderResumeSlot();

@@ -168,3 +168,16 @@ p { line-height: 1.5; margin: 0 0 12px; }
 
 /* Confeti (canvas) */
 #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; }
+
+/* --- Toggle de idioma --- */
+.lang-toggle {
+  display: inline-flex; gap: 4px; padding: 4px; border-radius: 999px;
+  background: var(--glass); border: 1px solid var(--glass-border);
+}
+.lang-toggle button {
+  border: 0; cursor: pointer; border-radius: 999px; padding: 7px 12px;
+  font: 900 0.9rem var(--font-body); color: var(--muted); background: transparent;
+  transition: background 0.15s, color 0.15s, transform 0.1s;
+}
+.lang-toggle button.on { background: var(--yellow); color: #3a1200; transform: scale(1.04); }
+.lang-toggle button:active { transform: scale(0.96); }
