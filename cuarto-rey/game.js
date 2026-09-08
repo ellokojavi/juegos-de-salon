@@ -173,10 +173,10 @@ function renderTable() {
   if (state.current) {
     // Partida retomada a mitad de una carta: mostrarla ya volteada.
     renderCardFront(state.current.card);
-    card.classList.remove('idle'); card.classList.add('flipped');
+    card.classList.remove('idle', 'enter'); card.classList.add('flipped', 'small');
     renderResult();
   } else {
-    card.classList.remove('flipped', 'reveal'); card.classList.add('idle');
+    card.classList.remove('flipped', 'reveal', 'small'); card.classList.add('idle');
   }
 }
 
@@ -203,9 +203,11 @@ function drawCard() {
   vibrate([20, 40, 30]);
   renderCardFront(card);
   const cardEl = $('#card');
-  cardEl.classList.remove('idle'); cardEl.classList.add('flipped', 'reveal');
+  cardEl.classList.remove('idle', 'enter'); cardEl.classList.add('flipped', 'reveal');
   $('#deck-count').textContent = state.deck.length;
-  setTimeout(renderResult, 650);
+  // Secuencia: volteo (0.75 s) → la carta se encoge (0.5 s) → aparecen las instrucciones.
+  setTimeout(() => cardEl.classList.add('small'), 800);
+  setTimeout(renderResult, 1150);
 }
 
 /** Reglas cuyo efecto es automático (nadie decide nada): se aplican al sacar la carta. */
@@ -268,8 +270,8 @@ function renderResult() {
   box.scrollIntoView({ behavior: 'smooth', block: 'end' });
 }
 
-function nextButton(label = '¡Listo, siguiente!') {
-  return el('div', { class: 'actions' }, el('button', { class: 'btn', onClick: nextTurn }, label));
+function nextButton(summary, label = '¡Listo, siguiente!') {
+  return el('div', { class: 'actions' }, el('button', { class: 'btn', onClick: () => nextTurn(summary) }, label));
 }
 
 function drinkerChips(indexes) {
@@ -284,7 +286,7 @@ function renderDrink(box, rule, data) {
     el('h2', { class: 'display display--md title' }, rule.title),
     el('p', { class: 'text' }, fallback ? `No hay ${rule.targets === 'men' ? 'hombres' : 'mujeres'} en la mesa… así que tomas tú.` : rule.text),
     drinkerChips(targets),
-    nextButton(),
+    nextButton({ drinkers: targets, title: '¡Salud!' }),
   );
 }
 
@@ -294,7 +296,7 @@ function renderGift(box, rule) {
   const status = el('p', { class: 'text' }, `Te quedan ${SORBOS} sorbos por regalar.`);
   const done = el('button', { class: 'btn', disabled: true, onClick: () => {
     counts.forEach((c, i) => { state.sorbos[i] += c; });
-    nextTurn();
+    nextTurn({ drinkers: counts.map((c, i) => c ? i : -1).filter(i => i >= 0), title: '¡Regalo!' });
   } }, '¡Regalados!');
   const picker = el('div', { class: 'picker' });
   const buttons = state.players.map((p, i) => {
@@ -329,8 +331,8 @@ function renderPenitencia(box, rule, data) {
       text.textContent = p; text.classList.remove('pop'); void text.offsetWidth; text.classList.add('pop');
     } }, '🎲 Otra penitencia'),
     el('div', { class: 'actions stack' },
-      el('button', { class: 'btn btn--cyan', onClick: nextTurn }, '✅ ¡Cumplida!'),
-      el('button', { class: 'btn btn--ghost', onClick: () => { state.sorbos[state.turn] += SORBOS; nextTurn(); } }, `😳 Se arrugó: toma ${SORBOS} sorbos`),
+      el('button', { class: 'btn btn--cyan', onClick: () => nextTurn({ drinkers: [], title: '¡Cumplida!', emoji: '👏' }) }, '✅ ¡Cumplida!'),
+      el('button', { class: 'btn btn--ghost', onClick: () => { state.sorbos[state.turn] += SORBOS; nextTurn({ drinkers: [state.turn], title: '¡Se arrugó!' }); } }, `😳 Se arrugó: toma ${SORBOS} sorbos`),
     ),
   );
 }
@@ -352,14 +354,14 @@ function renderMinigame(box, rule, data) {
   const loserBtns = state.players.map((p, i) => el('button', { type: 'button', onClick: () => {
     stopTimer();
     state.sorbos[i] += SORBOS;
-    nextTurn();
+    nextTurn({ drinkers: [i], title: '¡Perdió!' });
   } }, `😵 ${p.name}`));
   picker.append(...loserBtns);
   box.append(
     el('div', { class: 'actions' },
       el('p', { class: 'text', style: 'margin-bottom:4px' }, `¿Quién perdió? Toma ${SORBOS} sorbos.`),
       picker,
-      el('button', { class: 'btn btn--ghost', style: 'margin-top:10px', onClick: () => { stopTimer(); nextTurn(); } }, 'Nadie perdió / seguir'),
+      el('button', { class: 'btn btn--ghost', style: 'margin-top:10px', onClick: () => { stopTimer(); nextTurn({ drinkers: [], title: '¡Sigan!', emoji: '😎' }); } }, 'Nadie perdió / seguir'),
     ),
   );
 }
@@ -421,17 +423,62 @@ function renderKing(box, data) {
       el('h2', { class: 'display display--md title gold' }, msg.title),
       el('p', { class: 'text' }, msg.text),
       el('div', { class: 'chips', style: 'justify-content:center' }, el('span', { class: 'chip chip--gold' }, `👑 ${k} de 4`)),
-      nextButton(),
+      nextButton({ drinkers: [], title: `¡Van ${k} reyes!`, emoji: '👑' }),
     );
   }
 }
 
-function nextTurn() {
+/**
+ * Cierra la carta actual y muestra la transición entre turnos:
+ *  1) "¡Salud!" con quiénes toman (avanza solo o al tocar),
+ *  2) "Pásale el celular a X" con botón para que el siguiente jugador confirme.
+ * El estado avanza de inmediato (por si se cierra el navegador); la mesa se redibuja detrás del overlay.
+ */
+function nextTurn(summary = { drinkers: [], title: '¡Listo!' }) {
   stopTimer();
   state.current = null;
   state.turn = (state.turn + 1) % n();
   save();
   renderTable();
+  showHandoff(summary);
+}
+
+function showHandoff({ drinkers = [], title = '¡Salud!', emoji } = {}) {
+  const box = $('#handoff');
+  box.hidden = false; box.className = 'handoff'; box.innerHTML = '';
+  let timer = null;
+
+  const stageDrink = el('div', { class: 'stage pop' },
+    emoji ? el('div', { class: 'cheers' }, el('span', {}, emoji)) : el('div', { class: 'cheers' }, el('span', { class: 'l' }, '🍺'), el('span', { class: 'r' }, '🍺')),
+    el('div', { class: 'title gold' }, title),
+    drinkers.length ? drinkerChips(drinkers) : null,
+    drinkers.length ? el('div', { class: 'hint' }, `${drinkers.length > 1 ? 'Toman' : 'Toma'} ${SORBOS} sorbos`) : null,
+    el('div', { class: 'hint', style: 'margin-top:10px' }, 'Toca para seguir'),
+  );
+
+  const stagePass = el('div', { class: 'stage pop' },
+    el('div', { class: 'phone' }, '📱'),
+    el('div', { class: 'hint', style: 'font-size:1.05rem' }, 'Pásale el celular a'),
+    el('div', { class: 'next-name' }, currentPlayer().name),
+    el('button', { class: 'btn btn--cyan', onClick: e => { e.stopPropagation(); closeHandoff(); } }, '¡Dame la carta!'),
+  );
+
+  const goPass = () => {
+    if (timer) { clearTimeout(timer); timer = null; }
+    if (box.contains(stagePass)) return;
+    box.innerHTML = ''; box.append(stagePass); vibrate(15);
+  };
+  const closeHandoff = () => {
+    box.classList.add('leaving');
+    const card = $('#card');
+    card.classList.remove('enter'); void card.offsetWidth; card.classList.add('enter');
+    setTimeout(() => { box.hidden = true; box.innerHTML = ''; }, 300);
+  };
+
+  box.append(stageDrink);
+  box.onclick = goPass;
+  vibrate(drinkers.length ? [30, 40, 30] : 20);
+  timer = setTimeout(goPass, drinkers.length ? 2600 : 1800);
 }
 
 /* ------------------------------------------------------------------ */
