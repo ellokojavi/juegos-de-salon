@@ -162,11 +162,12 @@ function gridEl({ small = false, cellClass = () => '', onTap = null, id = null }
 }
 
 /** Clases de una casilla de mi propio tablero: barco + impactos recibidos. */
-function myCellClass(layout, shotsReceived) {
+function myCellClass(layout, shotsReceived, highlightLast = false) {
   const occ = occupancy(layout);
   const hit = {};
   shotsReceived.forEach(s => { hit[s.cell] = s.result; if (s.cells) s.cells.forEach(x => { hit[x] = 'hundido'; }); });
-  return (r, c) => { const n = cellName(r, c); return (occ[n] ? 'ship ' : '') + (hit[n] || ''); };
+  const last = highlightLast && shotsReceived.length ? shotsReceived[shotsReceived.length - 1].cell : null;
+  return (r, c) => { const n = cellName(r, c); return (occ[n] ? 'ship ' : '') + (hit[n] || '') + (n === last ? ' last' : ''); };
 }
 
 /** Clases de una casilla del tablero enemigo: mis disparos. */
@@ -274,7 +275,7 @@ function buildPlacement(role) {
     }
     const actions = $('#place-actions'); actions.innerHTML = '';
     actions.append(
-      el('button', { class: 'btn btn--ghost', onClick: () => { rotateSelected(); } }, T.rotate),
+      el('button', { class: 'btn btn--ghost', onClick: () => { rotateSelected(); } }, fmt(T.rotate, { dir: d.dir === 'h' ? '↔' : '↕' })),
       el('button', { class: 'btn btn--ghost', onClick: () => { d.layout = randomLayout(); d.sel = null; SFX.dice(); paint(); } }, T.random),
       el('button', { class: 'btn btn--ghost', onClick: () => { d.layout = {}; d.sel = FLEET[0].id; SFX.tap(); paint(); } }, T.clear),
     );
@@ -308,7 +309,7 @@ function buildPlacement(role) {
       const p = d.layout[d.sel]; const rotated = { ...p, dir: p.dir === 'h' ? 'v' : 'h' };
       if (isValidPlacement(d.layout, d.sel, rotated)) { d.layout[d.sel] = rotated; d.dir = rotated.dir; paint(); }
       else { const cell = cellAt(p.r, p.c); if (cell) flash(cell); }
-    } else { d.dir = d.dir === 'h' ? 'v' : 'h'; $('#place-hint').textContent = `${T.placeHint} (${d.dir === 'h' ? '↔' : '↕'})`; }
+    } else { d.dir = d.dir === 'h' ? 'v' : 'h'; paint(); }
   }
 
   function cellFromPoint(x, y) {
@@ -408,7 +409,7 @@ function renderPlay(v) {
   const lay = S.layouts[me]?.layout;
   if (lay) {
     const received = M.shots.filter(s => s.from === enemy && s.result !== null);
-    const g = gridEl({ small: true, cellClass: myCellClass(lay, received) });
+    const g = gridEl({ small: true, cellClass: myCellClass(lay, received, true) });
     const wrap = el('div', { class: 'mine-cover' + (S.mode !== 'local' || S.fleetShown ? ' shown' : '') }, g,
       el('div', { class: 'veil', onClick: e => { S.fleetShown = true; e.currentTarget.parentElement.classList.add('shown'); SFX.tap(); } }, `🙈 ${T.showFleet}`));
     mine.append(el('div', { class: 'board-title' }, T.myBoard), wrap);
@@ -448,7 +449,7 @@ function renderResult(v) {
   for (const r of ['A', 'B']) {
     const ver = M.verify[r];
     const received = repliesBy(other(r));
-    fleets.append(el('div', { class: 'f' }, el('small', {}, `${M.names[r]} · ${stats(r)}`), gridEl({ small: true, cellClass: myCellClass(M.reveals[r].layout, received) }), el('small', {}, S.mode === 'online' && ver ? (ver.ok ? T.verified : T.notVerified) : '')));
+    fleets.append(el('div', { class: 'f' }, el('b', {}, M.names[r]), el('small', {}, stats(r)), gridEl({ small: true, cellClass: myCellClass(M.reveals[r].layout, received) }), el('small', {}, S.mode === 'online' && ver ? (ver.ok ? T.verified : T.notVerified) : '')));
   }
   const replay = $('#result-replay'); if (!already) replay.open = false;
   const shotsBox = $('#result-shots'); shotsBox.innerHTML = '';
