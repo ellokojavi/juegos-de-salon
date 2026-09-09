@@ -19,7 +19,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | RP-11 | Instalable como “app” en la pantalla de inicio (manifest PWA básico). | ✅ v0.1 (sin service worker / offline) |
 | RP-12 | Idioma español chileno, informal. | ✅ v0.1 |
 | RP-13 | Funcionar sin conexión (service worker). | ⏳ pendiente |
-| RP-14 | Sonidos / efectos de audio opcionales. | ⏳ pendiente |
+| RP-14 | Sonidos en las acciones clave, con botón para silenciar. | ✅ v0.3 |
 | RP-15 | Jugar en español o inglés, con un toggle al inicio (menú) que aplica a todos los juegos. | ✅ v0.2 |
 
 ## Cuarto Rey (CR)

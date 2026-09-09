@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.0 — 2026-09-08
+- Sonidos sintetizados (Web Audio) en las acciones clave: botones, volteo y descubrimiento de carta, brindis, reyes, temporizador, dados, pase de celular, final y error. Botón 🔊/🔇 en menú y juego.
+- Capturas de pantalla en el README (`docs/screenshots/`).
+
 ## 0.2.0 — 2026-09-08
 - Idioma español / inglés con toggle en el menú y en la intro del juego (se recuerda en el dispositivo).
 - Cuarto Rey traducido completo: reglas, mini-juegos, penitencias, categorías, ideas de Nunca Nunca e interfaz.
