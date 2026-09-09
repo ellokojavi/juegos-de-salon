@@ -99,3 +99,17 @@ export function confetti({ duration = 2500, count = 160 } = {}) {
   }
   requestAnimationFrame(frame);
 }
+
+/**
+ * Comparte un enlace con el diálogo nativo del sistema (celulares) y, si no existe,
+ * lo copia al portapapeles. Devuelve 'shared', 'copied' o 'failed'.
+ */
+export const canShare = () => typeof navigator !== 'undefined' && typeof navigator.share === 'function';
+export async function shareLink({ title, text, url }) {
+  if (canShare()) {
+    try { await navigator.share({ title, text, url }); return 'shared'; }
+    catch (e) { if (e && e.name === 'AbortError') return 'failed'; /* si no se pudo, cae al portapapeles */ }
+  }
+  try { await navigator.clipboard.writeText(url); return 'copied'; }
+  catch (_) { try { prompt('URL', url); } catch (__) { /* nada */ } return 'failed'; }
+}
