@@ -135,6 +135,7 @@ cuarto-rey/                 Juego Cuarto Rey (index.html, game.js, rules.js, sty
 toque-y-fama/               Juego Toque y Fama (engine.js + tests, game.js, rules.js)
 batalla-naval/              Juego Batalla Naval (engine.js + tests, game.js, rules.js)
 assets/js/handoff.js        Transiciones compartidas: pásale el celular, pantalla tapada
+assets/js/session.js        Memoria de partida compartida (retomar en cualquier modo)
 assets/js/transport/        Transportes compartidos: local (mismo celular) y firebase (sala)
 firebase/                   Reglas de seguridad de Realtime Database y notas
 tools/set-version.py        Estampa la versión (import maps + estilos) para evitar caché mezclada
@@ -143,6 +144,7 @@ docs/                       Requerimientos, decisiones, especificaciones y captu
 
 ## Documentación
 
+- [Cánones y estándares de los juegos](docs/CANONES.md)
 - [Requerimientos](docs/REQUERIMIENTOS.md)
 - [Decisiones de diseño y arquitectura](docs/DECISIONES.md)
 - [Cómo agregar un juego nuevo](docs/AGREGAR-JUEGO.md)

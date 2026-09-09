@@ -7,10 +7,11 @@
 import { $, $$, el, pick, shuffle, vibrate, sparkles, keepAwake, confetti } from '../assets/js/ui.js';
 import { getLang, langToggle, applyStatic } from '../assets/js/i18n.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
+import { createSessionStore } from '../assets/js/session.js';
 import { SUITS, RANKS, MIN_PLAYERS, MAX_PLAYERS, SORBOS, CARD_RULES, LOCALES } from './rules.js';
 
 const STORAGE_PLAYERS = 'juegos-de-salon:players';
-const STORAGE_GAME = 'juegos-de-salon:cuarto-rey:game';
+const store = createSessionStore('cuarto-rey', { legacyKeys: ['juegos-de-salon:cuarto-rey:game'] });
 const GENDERS = { m: '♂', f: '♀', x: '⚧' };
 
 const lang = getLang();
@@ -27,13 +28,15 @@ let timerHandle = null;
 /* Persistencia                                                        */
 /* ------------------------------------------------------------------ */
 function save() {
-  try { localStorage.setItem(STORAGE_GAME, JSON.stringify(state)); } catch (_) { /* modo privado */ }
+  store.save({ mode: 'local', state });
 }
 function loadSaved() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_GAME) || 'null'); } catch (_) { return null; }
+  const data = store.load();
+  if (!data) return null;
+  return data.state || (data.players ? data : null); // formato antiguo: el estado iba en la raíz
 }
 function clearSaved() {
-  try { localStorage.removeItem(STORAGE_GAME); } catch (_) { /* nada */ }
+  store.clear();
 }
 function loadPlayers() {
   try { return JSON.parse(localStorage.getItem(STORAGE_PLAYERS) || 'null'); } catch (_) { return null; }
