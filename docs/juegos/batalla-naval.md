@@ -36,7 +36,7 @@ Intro (reglas, modos) → Setup (nombres, tiro extra) → [Lobby: código + QR]
 ### 3.1 Colocar flota (la pantalla clave)
 - Grilla 10×10 grande (casillas de ~32 px) con letras y números.
 - Lista de barcos a la derecha o debajo como fichas: 🚢 5 · 4 · 3 · 3 · 2. Se toca una ficha (queda seleccionada) y luego una casilla de la grilla: el barco se coloca desde esa casilla hacia la derecha (horizontal) o hacia abajo (vertical).
-- Botón **Girar ↻** cambia la orientación del barco seleccionado; tocar un barco ya puesto lo vuelve a seleccionar para moverlo; **arrastrar** también lo mueve (pointer events, mismo enfoque que la pulsación larga del teclado).
+- Tocar un barco ya puesto lo **selecciona** (queda amarillo) y muestra un botón **↻** en su esquina superior derecha para girarlo ahí mismo; con un barco seleccionado, tocar una casilla vacía lo **mueve** y **arrastrarlo** también. Tocarlo de nuevo lo deselecciona; seleccionar otro quita el color y el botón. El botón inferior **Girar ↔/↕** sirve además para elegir la orientación antes de colocar.
 - Casillas inválidas (fuera de borde o superpuestas) se muestran en rojo y no se aceptan.
 - **🎲 Al azar** coloca toda la flota válida en un toque (mismo generador que usa la IA). **Limpiar** vacía el tablero.
 - **¡Zarpar!** se habilita con los 5 barcos puestos. Al confirmar se envía el compromiso `sha256(layout + sal)`.
