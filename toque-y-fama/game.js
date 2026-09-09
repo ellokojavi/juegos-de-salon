@@ -353,7 +353,7 @@ function mySecretChip(role) {
 function statusSub(v) {
   if (v.replicaFor) return fmt(T.replicaNotice, { name: M.names[other(v.replicaFor)], other: M.names[v.replicaFor] });
   if (v.pending) return T.waitingReply;
-  return fmt(T.starts, { name: M.names[v.starter] });
+  return fmt(T.round, { n: Math.floor(M.guesses.length / 2) + 1 });
 }
 
 function renderPlay(v) {

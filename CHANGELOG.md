@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.4.9 — 2026-09-08
+- Toque y Fama: el subtítulo “Parte X” (quién partió) se reemplaza por “Ronda N”; era redundante, sobre todo contra el celular.
+
 ## 0.4.8 — 2026-09-08
 - Toque y Fama: espacio bajo el título “¿Cómo jugamos?” (y el de la sala).
 
