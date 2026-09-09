@@ -1,0 +1,21 @@
+import { launch, sleep } from './cdp.mjs';
+const OUT = process.argv[2];
+const b = await launch({ port: 9461, dir: `${OUT}/p`, out: OUT });
+const tapCell = name => b.evaluate(`(()=>{const r=parseInt('${name}'.slice(1))-1,c='ABCDEFGHIJ'.indexOf('${name}'[0]);const x=document.querySelector('#place-grid .cell[data-r="'+r+'"][data-c="'+c+'"]');if(!x)return 'no';x.click();return 'ok'})()`);
+const state = () => b.evaluate(`(()=>{const d=__bn.session().draft.A;const sel=[...document.querySelectorAll('#place-grid .cell.sel')].map(x=>'ABCDEFGHIJ'[x.dataset.c]+(+x.dataset.r+1));const rot=document.querySelector('#place-grid .rot');const rc=rot?rot.parentElement:null;return JSON.stringify({sel:d.sel,dir:d.dir,layout:d.layout,selCells:sel,rotAt:rc?'ABCDEFGHIJ'[rc.dataset.c]+(+rc.dataset.r+1):null,count:document.getElementById('place-count').textContent})})()`).then(JSON.parse);
+await b.go('http://localhost:8765/batalla-naval/'); await b.evaluate(`localStorage.clear(); 1`); await b.go('http://localhost:8765/batalla-naval/');
+await b.evaluate(`document.querySelectorAll('.mode')[2].click(); 1`); await sleep(300);
+await b.evaluate(`(()=>{document.querySelector('#setup-form input').value='Javi';return 1})()`);
+await b.evaluate(`document.querySelector('#setup-actions .btn').click(); 1`); await sleep(400);
+await tapCell('A1'); await tapCell('A3'); // portaaviones A1-E1 h, acorazado A3-D3 h
+let st = await state(); console.log('tras colocar 2:', JSON.stringify({ count: st.count, sel: st.sel, rotAt: st.rotAt }));
+await tapCell('C1'); st = await state(); console.log('toco el portaaviones →', JSON.stringify({ sel: st.sel, selCells: st.selCells, rotAt: st.rotAt })); await b.shot('sel-ship');
+await b.evaluate(`document.querySelector('#place-grid .rot').click(); 1`); st = await state(); console.log('giro con ↻ →', JSON.stringify({ layout: st.layout.carrier, selCells: st.selCells, rotAt: st.rotAt }));
+await b.shot('rotated');
+await tapCell('F6'); st = await state(); console.log('toco F6 con el barco seleccionado → se mueve:', JSON.stringify({ layout: st.layout.carrier, selCells: st.selCells, rotAt: st.rotAt }));
+await b.evaluate(`document.querySelector('#place-grid .rot').click(); 1`); st = await state(); console.log('giro en F6 (válido) →', JSON.stringify({ layout: st.layout.carrier, selCells: st.selCells, rotAt: st.rotAt })); await b.shot('rotated-valid');
+await tapCell('B3'); st = await state(); console.log('toco el acorazado → cambia la selección:', JSON.stringify({ sel: st.sel, selCells: st.selCells, rotAt: st.rotAt }));
+await tapCell('B3'); st = await state(); console.log('lo toco de nuevo → deselecciona:', JSON.stringify({ sel: st.sel, selCells: st.selCells, rotAt: st.rotAt }));
+await tapCell('J10'); st = await state(); console.log('toco casilla vacía sin selección → coloca el siguiente libre (crucero) si cabe:', st.count);
+console.log('errors:', JSON.stringify(b.errors), JSON.stringify(b.logs));
+b.close();
