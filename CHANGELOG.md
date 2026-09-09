@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.4.4 — 2026-09-08
+- Identidad de la app neutral entre juegos: ícono y título con 🎲 en vez de 🍻, textos “para jugar con amigos” y “guíe la partida” en vez de “carrete”, descripción del repo actualizada.
+
 ## 0.4.3 — 2026-09-08
 - Toque y Fama: desplegable “Ver todos los intentos” en el resultado, colapsado por defecto.
 - Toque y Fama: “Cómo se juega” explica que debes adivinar el número secreto de tu contendor; botón “¡Vamos!” al fijar el número; tarjeta del menú dice “Adivina el número secreto”.
