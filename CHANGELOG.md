@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.4.8 — 2026-09-08
+- Toque y Fama: espacio bajo el título “¿Cómo jugamos?” (y el de la sala).
+
 ## 0.4.7 — 2026-09-08
 - Menú: los mensajes del pie duran 10 segundos (antes 5) y tienen la fuente más grande y más contraste.
 
