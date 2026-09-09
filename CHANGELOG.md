@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.4.7 — 2026-09-08
+- Menú: los mensajes del pie duran 10 segundos (antes 5) y tienen la fuente más grande y más contraste.
+
 ## 0.4.6 — 2026-09-08
 - Fix: el menú podía quedar sin juegos tras una actualización si el navegador mezclaba `index.html` nuevo con `i18n.js` en caché. Ahora la lista de juegos se dibuja antes de cualquier decoración y las decoraciones no pueden romperla.
 - Toque y Fama: pistas abreviadas en los tableros (3F 1T / 3B 1C) para que no se partan de línea.
