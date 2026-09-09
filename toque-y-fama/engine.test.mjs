@@ -1,5 +1,5 @@
 // Ejecutar: node toque-y-fama/engine.test.mjs
-import { score, isValid, randomSecret, allCandidates, Solver, sha256, verifyPlayer, randomRoomCode } from './engine.js';
+import { score, isValid, randomSecret, allCandidates, Solver, sha256, verifyPlayer } from './engine.js';
 import assert from 'node:assert/strict';
 
 assert.deepEqual(score('1356', '1234'), { famas: 1, toques: 1 });
@@ -33,7 +33,6 @@ for (let i = 0; i < 100; i++) {
 console.log(`solver: promedio ${(total / 100).toFixed(2)} intentos, máximo ${max}`);
 assert.ok(max <= 10);
 
-assert.ok(/^[A-Z]{4}$/.test(randomRoomCode()));
 assert.equal((await sha256('abc')), 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad');
 
 const commit = await sha256('1234' + 'n1');

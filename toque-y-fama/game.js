@@ -11,7 +11,7 @@ import { getLang, langToggle, applyStatic } from '../assets/js/i18n.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { score, isValid, randomSecret, Solver, sha256, randomNonce, verifyPlayer } from './engine.js';
 import { GAME_ID, DEFAULT_CONFIG, DIGIT_OPTIONS, LOCALES } from './rules.js';
-import { createLocalTransport } from './transport/local.js';
+import { createLocalTransport } from '../assets/js/transport/local.js';
 
 const lang = getLang();
 const T = LOCALES[lang];
@@ -499,7 +499,7 @@ async function rematch() {
     const o = other(S.role);
     if (typeof M.rematch[o] === 'string') { S.switching = true; return joinOnline(M.rematch[o], M.names[S.role]); }
     // Yo propongo: creo la sala nueva (seré A) y aviso. El rival entra como B.
-    const { createFirebaseTransport } = await import('./transport/firebase.js');
+    const { createFirebaseTransport } = await import('../assets/js/transport/firebase.js');
     const t = createFirebaseTransport({ game: GAME_ID });
     const config = { ...M.config, starter: nextStarterFor(loser => (loser === S.role ? 'A' : 'B')) };
     S.switching = true;
@@ -534,14 +534,14 @@ async function startOnline(transport, code, role, name, config) {
 }
 
 async function createOnline(name, config) {
-  const { createFirebaseTransport } = await import('./transport/firebase.js');
+  const { createFirebaseTransport } = await import('../assets/js/transport/firebase.js');
   const t = createFirebaseTransport({ game: GAME_ID });
   const code = await t.create({ config, name });
   await startOnline(t, code, 'A', name, config);
 }
 
 async function joinOnline(code, name, previousRole = null, savedSecret = null, savedNotes = null) {
-  const { createFirebaseTransport } = await import('./transport/firebase.js');
+  const { createFirebaseTransport } = await import('../assets/js/transport/firebase.js');
   const t = createFirebaseTransport({ game: GAME_ID });
   const { role, config } = await t.join(code, { name, previousRole });
   await startOnline(t, code, role, name, config || DEFAULT_CONFIG);
