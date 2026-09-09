@@ -14,6 +14,7 @@ export function createLocalTransport({ seed = [] } = {}) {
     async create() { return null; },
     async join() { },
     messages,
+    // `at` (marca de tiempo) e `id` los pone el transporte: los juegos no deben usarlos en sus mensajes.
     send(msg) {
       const m = { ...msg, at: Date.now(), id: `m${messages.length}` };
       messages.push(m);

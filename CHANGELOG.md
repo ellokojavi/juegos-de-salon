@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.8.0 — 2026-09-09
+- Cuarto juego: **Línea de Tiempo / Timeline**. Ubica hitos sin fecha en el orden correcto; gana quien se queda sin cartas.
+- Dos temáticas: Historia (98 hitos) y Música (89). Agregar una temática nueva es solo un archivo de datos.
+- Modos: un celular de 2 a 6 jugadores y contra el celular con tres niveles. Varios celulares queda para la fase 2.
+- Mazo determinista por semilla, memoria de partida, motor con tests.
+- Canon C-7: `from`, `at` e `id` son campos reservados del transporte.
+
 ## 0.7.0 — 2026-09-09
 - **Memoria de partida en todos los juegos y modos**: Toque y Fama y Batalla Naval ahora se pueden retomar también en un celular y contra el celular (antes solo en dos celulares). Nuevo módulo compartido `assets/js/session.js`; Cuarto Rey migrado a la misma clave.
 - Batalla Naval: se conserva incluso la flota a medio colocar.

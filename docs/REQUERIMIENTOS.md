@@ -90,3 +90,18 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | BN-08 | Selección + confirmación “¡Fuego!” antes de disparar (con opción de disparo directo). | ✅ v0.6 |
 | BN-09 | Textos en español e inglés (“Battleship”); sonidos de agua, impacto y hundimiento. | ✅ v0.6 |
 | BN-10 | Los transportes `local` y `firebase` se mueven a `assets/js/transport/` para compartirlos entre juegos. | ✅ v0.6 |
+
+## Línea de Tiempo (LT) — ver [docs/juegos/linea-de-tiempo.md](juegos/linea-de-tiempo.md)
+
+| ID | Requerimiento | Estado |
+|---|---|---|
+| LT-01 | Cartas con hitos sin año que se ubican en una línea de tiempo común. | ✅ v0.8 |
+| LT-02 | Temáticas seleccionables; agregar una es solo un archivo de datos. Vienen Historia y Música. | ✅ v0.8 |
+| LT-03 | Acierto: la carta entra en la línea. Error: se descarta y el jugador roba otra. | ✅ v0.8 |
+| LT-04 | Gana quien se queda sin cartas. Mano configurable de 3, 5 o 7. | ✅ v0.8 |
+| LT-05 | Modo un celular de 2 a 6 jugadores, con pase entre turnos. | ✅ v0.8 |
+| LT-06 | Modo contra el celular con tres niveles de dificultad. | ✅ v0.8 |
+| LT-07 | Modo varios celulares (roles A–F). | 📝 fase 2 |
+| LT-08 | Mazo determinista por semilla, para que todos los dispositivos vean el mismo reparto. | ✅ v0.8 |
+| LT-09 | Memoria de partida en todos los modos (canon C-6). | ✅ v0.8 |
+| LT-10 | Textos en español e inglés. | ✅ v0.8 |

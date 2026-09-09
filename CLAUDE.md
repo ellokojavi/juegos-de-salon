@@ -22,6 +22,7 @@ python3 tools/set-version.py X.Y.Z   # obligatorio antes de cada commit publicad
 ```bash
 node toque-y-fama/engine.test.mjs
 node batalla-naval/engine.test.mjs
+node linea-de-tiempo/engine.test.mjs
 python3 -m http.server 8765          # los módulos ES necesitan HTTP, no file://
 ```
 
