@@ -256,6 +256,23 @@ function replyStage(g) {
   );
 }
 
+/** Respuesta al intento y, debajo, el pase del celular al siguiente jugador (una sola pantalla). */
+function replyAndPassStage(g, nextName) {
+  let adv = null;
+  const stage = el('div', { class: 'stage pop' },
+    el('div', { class: 'hint' }, `${M.names[g.from]} · ${T.hoResult}`),
+    el('div', { class: 'reply-big' }, g.value),
+    clueChips(g, true),
+    el('div', { class: 'pass-divider' }),
+    el('div', { class: 'phone', style: 'font-size:3rem' }, '📱'),
+    el('div', { class: 'hint', style: 'font-size:1.05rem' }, T.hoPass),
+    el('div', { class: 'next-name', style: 'font-size:clamp(2.4rem, 12vw, 3.6rem)' }, nextName),
+    el('button', { class: 'btn btn--cyan', onClick: e => { e.stopPropagation(); SFX.pass(); adv && adv(); } }, T.hoReady),
+  );
+  stage.setAdvance = fn => { adv = fn; };
+  return stage;
+}
+
 function showCover(name, onReveal) {
   const c = $('#cover');
   c.hidden = false; c.innerHTML = '';
@@ -365,14 +382,16 @@ function renderPlay(v) {
     const last = M.guesses[M.guesses.length - 1];
     if (last && last.famas !== null && last.round > S.lastShownRound) {
       S.lastShownRound = last.round;
-      const stages = [replyStage(last)];
-      if (v.phase === 'play' && v.expected && v.expected !== S.uiRole) { const ps = passStage(M.names[v.expected]); stages.push(ps); }
-      const adv = showHandoff(stages, () => { S.uiRole = v.expected; renderPlay(view()); });
-      stages[1]?.setAdvance(adv);
+      // Si sigue el juego: respuesta + pase en una sola pantalla. Si terminó: solo la respuesta.
+      const passing = v.phase === 'play' && v.expected && v.expected !== S.uiRole;
+      const stage = passing ? replyAndPassStage(last, M.names[v.expected]) : replyStage(last);
+      const adv = showHandoff([stage], () => { S.uiRole = v.expected; renderPlay(view()); });
+      if (passing) { stage.setAdvance(adv); $('#handoff').onclick = null; } // solo el botón avanza
       SFX.reveal();
       return;
     }
-    if (v.phase === 'play' && v.expected && S.uiRole !== v.expected && !v.pending) {
+    // Si ya hay una transición en pantalla (respuesta → pase), un re-dibujo no debe reemplazarla.
+    if (v.phase === 'play' && v.expected && S.uiRole !== v.expected && !v.pending && $('#handoff').hidden) {
       const ps = passStage(M.names[v.expected]);
       const adv = showHandoff([ps], () => { S.uiRole = v.expected; renderPlay(view()); });
       ps.setAdvance(adv);
