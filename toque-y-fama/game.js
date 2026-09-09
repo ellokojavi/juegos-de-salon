@@ -311,6 +311,19 @@ function renderSecret() {
   if (S.mode === 'local' && S.uiRole !== r) { S.uiRole = r; entry.innerHTML = ''; showCover(name, build); } else build();
 }
 
+/** Recordatorio del número propio. En modo un celular parte oculto (el celular pasa de mano). */
+function mySecretChip(role) {
+  const secret = S.secrets[role].secret;
+  let shown = S.mode !== 'local';
+  const num = el('span', { class: 'num' });
+  const hint = el('span', { class: 'hint' });
+  const refresh = () => { num.textContent = shown ? secret : '•'.repeat(secret.length); hint.textContent = shown ? T.tapToHide : T.tapToShow; chip.classList.toggle('shown', shown); };
+  const chip = el('button', { type: 'button', class: 'my-secret', onClick: () => { shown = !shown; vibrate(8); refresh(); } },
+    el('span', { class: 'label' }, `🔒 ${T.mySecret}`), num, hint);
+  refresh();
+  return chip;
+}
+
 function statusSub(v) {
   if (v.replicaFor) return fmt(T.replicaNotice, { name: M.names[other(v.replicaFor)], other: M.names[v.replicaFor] });
   if (v.pending) return T.waitingReply;
@@ -350,9 +363,11 @@ function renderPlay(v) {
   if (v.phase === 'reveal') { who.textContent = '…'; sub.textContent = T.waitingReply; }
   else if (myTurnRole) { who.textContent = fmt(T.turnYou, { name: M.names[other(myTurnRole)] }); sub.textContent = statusSub(v); }
   else { who.textContent = S.mode === 'cpu' && v.expected === S.bot.role ? T.cpuThinking : fmt(T.turnOther, { name: M.names[v.expected] }); sub.textContent = statusSub(v); }
-  // Entrada
+  // Entrada (con recordatorio del número propio)
   const entry = $('#play-entry');
   entry.innerHTML = '';
+  const reminderRole = S.mode === 'online' ? S.role : S.mode === 'cpu' ? 'A' : myTurnRole;
+  if (reminderRole && S.secrets[reminderRole] && v.phase === 'play') entry.append(mySecretChip(reminderRole));
   if (myTurnRole && !v.pending && v.phase === 'play') {
     entry.append(keypad({ digits: M.config.digits, zeroFirst: M.config.zeroFirst, onSubmit: val => { S.transport.send({ t: 'guess', from: myTurnRole, value: val }); } }));
   }

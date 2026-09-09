@@ -70,3 +70,4 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | TF-09 | Textos en español e inglés (“Bulls and Cows”). | ✅ v0.4 |
 | TF-10 | Revancha en los tres modos; en dos celulares se crea una sala nueva y ambos se mueven solos. | ✅ v0.4 |
 | TF-11 | Indicador de rival desconectado en modo dos celulares. | ✅ v0.4 |
+| TF-12 | Al adivinar, el jugador ve su propio número como recordatorio. En modo un celular parte oculto y se muestra al tocarlo. | ✅ v0.4.1 |
