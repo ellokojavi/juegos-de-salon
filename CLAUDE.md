@@ -26,6 +26,12 @@ node linea-de-tiempo/engine.test.mjs
 python3 -m http.server 8765          # los módulos ES necesitan HTTP, no file://
 ```
 
+## Pruebas de punta a punta
+
+`tools/e2e/` tiene scripts que juegan partidas completas en Chrome headless (ver su README):
+sirven el sitio en el puerto 8765, corren `node tools/e2e/<script>.mjs <carpeta-salida>` y
+revisan las capturas. Antes de repetir uno que falló: `pkill -f remote-debugging-port`.
+
 ## Documentación
 
 `docs/REQUERIMIENTOS.md` · `docs/DECISIONES.md` (ADR) · `docs/AGREGAR-JUEGO.md` ·
