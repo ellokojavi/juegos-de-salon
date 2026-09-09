@@ -71,3 +71,4 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | TF-10 | Revancha en los tres modos; en dos celulares se crea una sala nueva y ambos se mueven solos. | ✅ v0.4 |
 | TF-11 | Indicador de rival desconectado en modo dos celulares. | ✅ v0.4 |
 | TF-12 | Al adivinar, el jugador ve su propio número como recordatorio. En modo un celular parte oculto y se muestra al tocarlo. | ✅ v0.4.1 |
+| TF-13 | Pulsación larga sobre una cifra del teclado la marca como bloqueada (no está en el número del rival). Las marcas son por jugador, se recuerdan durante la partida y se ven tachadas; otra pulsación larga las libera. Instrucción breve en pantalla. | ✅ v0.4.2 |

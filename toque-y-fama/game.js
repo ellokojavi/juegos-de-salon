@@ -93,7 +93,7 @@ function view() {
 /* ------------------------------------------------------------------ */
 function startSession({ mode, transport, roles, config, names, bot = null, code = null, role = null }) {
   if (S?.transport) S.transport.leave();
-  S = { mode, transport, roles, secrets: {}, bot, code, role, repliedRounds: new Set(), lastShownRound: -1, cpuTimer: null, uiRole: null };
+  S = { mode, transport, roles, secrets: {}, notes: {}, bot, code, role, repliedRounds: new Set(), lastShownRound: -1, cpuTimer: null, uiRole: null };
   M = newMatch(config);
   Object.entries(names).forEach(([r, name]) => { if (name) transport.send({ t: 'hello', from: r, name }); });
   transport.onMessage(m => { apply(m); onChange(); });
@@ -153,7 +153,7 @@ async function verifyAll() {
 /* ------------------------------------------------------------------ */
 function saveSession() {
   if (!S || S.mode !== 'online') return;
-  try { localStorage.setItem(SESSION_KEY, JSON.stringify({ code: S.code, role: S.role, name: M.names[S.role], config: M.config, secret: S.secrets[S.role] || null, done: view().phase === 'done' })); } catch (_) { /* nada */ }
+  try { localStorage.setItem(SESSION_KEY, JSON.stringify({ code: S.code, role: S.role, name: M.names[S.role], config: M.config, secret: S.secrets[S.role] || null, notes: [...(S.notes[S.role] || [])], done: view().phase === 'done' })); } catch (_) { /* nada */ }
 }
 function loadSession() { try { return JSON.parse(localStorage.getItem(SESSION_KEY) || 'null'); } catch (_) { return null; } }
 function clearSession() { try { localStorage.removeItem(SESSION_KEY); } catch (_) { /* nada */ } }
@@ -164,8 +164,9 @@ function clearSession() { try { localStorage.removeItem(SESSION_KEY); } catch (_
 function showScreen(id) { $$('.screen').forEach(s => s.classList.toggle('active', s.id === id)); window.scrollTo({ top: 0, behavior: 'instant' }); }
 
 /** Teclado numérico con casillas. onSubmit(value). */
-function keypad({ digits, zeroFirst, onSubmit, hidden = false, submitLabel = T.guess }) {
+function keypad({ digits, zeroFirst, onSubmit, hidden = false, submitLabel = T.guess, notes = null, onNotesChange = null }) {
   let value = '';
+  const LONG_PRESS_MS = 450;
   const boxes = Array.from({ length: digits }, () => el('div', { class: 'box' }));
   const entry = el('div', { class: 'entry' }, ...boxes);
   const keys = [];
@@ -173,10 +174,32 @@ function keypad({ digits, zeroFirst, onSubmit, hidden = false, submitLabel = T.g
   const del = el('button', { class: 'del', onClick: () => { value = value.slice(0, -1); SFX.tap(); refresh(); } }, '⌫');
   const refresh = () => {
     boxes.forEach((b, i) => { b.textContent = value[i] || ''; b.className = 'box' + (value[i] ? ' filled' : '') + (hidden && value[i] ? ' hidden-digit' : '') + (i === value.length ? ' active' : ''); });
-    keys.forEach(k => { const d = k.dataset.d; k.disabled = value.includes(d) || value.length >= digits || (value.length === 0 && d === '0' && !zeroFirst); });
+    keys.forEach(k => { const d = k.dataset.d; const blocked = notes ? notes.has(d) : false; k.classList.toggle('blocked', blocked); k.disabled = !blocked && (value.includes(d) || value.length >= digits || (value.length === 0 && d === '0' && !zeroFirst)); });
     ok.disabled = !isValid(value, digits, { zeroFirst });
   };
-  const key = d => el('button', { 'data-d': d, onClick: () => { if (value.length < digits && !value.includes(d)) { value += d; vibrate(8); SFX.tap(); refresh(); } } }, d);
+  const key = d => {
+    let timer = null, longPressed = false;
+    const b = el('button', { 'data-d': d,
+      onClick: () => {
+        if (longPressed) { longPressed = false; return; }
+        if (notes && notes.has(d)) { b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake'); vibrate([20, 30, 20]); return; }
+        if (value.length < digits && !value.includes(d)) { value += d; vibrate(8); SFX.tap(); refresh(); }
+      },
+      onPointerdown: () => {
+        if (!notes) return;
+        timer = setTimeout(() => {
+          timer = null; longPressed = true;
+          if (notes.has(d)) notes.delete(d); else { notes.add(d); value = value.replace(d, ''); }
+          vibrate([30, 40, 30]); SFX.dice(); refresh(); onNotesChange && onNotesChange();
+        }, LONG_PRESS_MS);
+      },
+      onPointerup: () => { if (timer) { clearTimeout(timer); timer = null; } },
+      onPointerleave: () => { if (timer) { clearTimeout(timer); timer = null; } },
+      onPointercancel: () => { if (timer) { clearTimeout(timer); timer = null; } },
+      onContextmenu: e => { if (notes) e.preventDefault(); },
+    }, d);
+    return b;
+  };
   for (let d = 1; d <= 9; d++) keys.push(key(String(d)));
   keys.push(key('0'));
   const pad = el('div', { class: 'keypad' }, ...keys.slice(0, 9), del, keys[9], ok);
@@ -369,7 +392,11 @@ function renderPlay(v) {
   const reminderRole = S.mode === 'online' ? S.role : S.mode === 'cpu' ? 'A' : myTurnRole;
   if (reminderRole && S.secrets[reminderRole] && v.phase === 'play') entry.append(mySecretChip(reminderRole));
   if (myTurnRole && !v.pending && v.phase === 'play') {
-    entry.append(keypad({ digits: M.config.digits, zeroFirst: M.config.zeroFirst, onSubmit: val => { S.transport.send({ t: 'guess', from: myTurnRole, value: val }); } }));
+    S.notes[myTurnRole] = S.notes[myTurnRole] || new Set();
+    entry.append(
+      keypad({ digits: M.config.digits, zeroFirst: M.config.zeroFirst, notes: S.notes[myTurnRole], onNotesChange: saveSession, onSubmit: val => { S.transport.send({ t: 'guess', from: myTurnRole, value: val }); } }),
+      el('p', { class: 'block-hint' }, T.blockHint),
+    );
   }
   // Tableros
   const boards = $('#boards');
@@ -482,11 +509,12 @@ async function createOnline(name, config) {
   await startOnline(t, code, 'A', name, config);
 }
 
-async function joinOnline(code, name, previousRole = null, savedSecret = null) {
+async function joinOnline(code, name, previousRole = null, savedSecret = null, savedNotes = null) {
   const { createFirebaseTransport } = await import('./transport/firebase.js');
   const t = createFirebaseTransport({ game: GAME_ID });
   const { role, config } = await t.join(code, { name, previousRole });
   await startOnline(t, code, role, name, config || DEFAULT_CONFIG);
+  if (savedNotes) S.notes[role] = new Set(savedNotes);
   if (savedSecret) { S.secrets[role] = savedSecret; onChange(); }
 }
 
@@ -507,7 +535,7 @@ function renderResumeSlot() {
     el('p', { class: 'lead', style: 'margin-bottom:4px' }, T.resumeTitle),
     el('p', { class: 'muted' }, `${T.lobbyCode}: ${saved.code}`),
     el('div', { class: 'btn-row' },
-      el('button', { class: 'btn btn--cyan btn--sm', onClick: async () => { try { await joinOnline(saved.code, saved.name, saved.role, saved.secret); } catch (e) { clearSession(); renderResumeSlot(); } } }, T.resume),
+      el('button', { class: 'btn btn--cyan btn--sm', onClick: async () => { try { await joinOnline(saved.code, saved.name, saved.role, saved.secret, saved.notes); } catch (e) { clearSession(); renderResumeSlot(); } } }, T.resume),
       el('button', { class: 'btn btn--ghost btn--sm', onClick: () => { clearSession(); renderResumeSlot(); } }, T.delete),
     ),
   ));
@@ -567,7 +595,7 @@ function init() {
   const code = new URLSearchParams(location.search).get('sala');
   if (code && /^[A-Z]{4}$/i.test(code)) {
     const saved = loadSession();
-    if (saved && saved.code === code.toUpperCase() && !saved.done) { joinOnline(saved.code, saved.name, saved.role, saved.secret).catch(() => { clearSession(); renderSetup('online', code.toUpperCase()); }); }
+    if (saved && saved.code === code.toUpperCase() && !saved.done) { joinOnline(saved.code, saved.name, saved.role, saved.secret, saved.notes).catch(() => { clearSession(); renderSetup('online', code.toUpperCase()); }); }
     else renderSetup('online', code.toUpperCase());
   }
 }
