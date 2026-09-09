@@ -86,6 +86,14 @@ y abrir http://localhost:8080 (los módulos ES necesitan servirse por HTTP). Tes
 node toque-y-fama/engine.test.mjs
 ```
 
+## Publicar una versión
+
+Antes de hacer commit de una versión nueva, estampa la versión en el sitio (import maps y estilos con `?v=`), así el navegador no mezcla archivos viejos y nuevos:
+
+```bash
+python3 tools/set-version.py 0.4.6
+```
+
 ## Estructura
 
 ```
@@ -99,6 +107,7 @@ assets/js/firebase-config.js Configuración pública de Firebase
 cuarto-rey/                 Juego Cuarto Rey (index.html, game.js, rules.js, style.css)
 toque-y-fama/               Juego Toque y Fama (engine.js + tests, game.js, transport/, rules.js)
 firebase/                   Reglas de seguridad de Realtime Database y notas
+tools/set-version.py        Estampa la versión (import maps + estilos) para evitar caché mezclada
 docs/                       Requerimientos, decisiones, especificaciones y capturas
 ```
 
