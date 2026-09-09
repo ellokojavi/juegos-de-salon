@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.0 — 2026-09-09
+- **Memoria de partida en todos los juegos y modos**: Toque y Fama y Batalla Naval ahora se pueden retomar también en un celular y contra el celular (antes solo en dos celulares). Nuevo módulo compartido `assets/js/session.js`; Cuarto Rey migrado a la misma clave.
+- Batalla Naval: se conserva incluso la flota a medio colocar.
+- Nuevo `docs/CANONES.md` con los estándares de construcción de todos los juegos (C-1 a C-14) y `CLAUDE.md` que lo enlaza. Decisiones D-25 y D-26; requerimientos RP-16 y RP-17.
+
 ## 0.6.4 — 2026-09-09
 - Batalla Naval: tocar fuera de la grilla deselecciona el barco seleccionado.
 

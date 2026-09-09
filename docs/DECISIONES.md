@@ -112,3 +112,13 @@ Registro tipo ADR (Architecture Decision Record). Las decisiones se numeran y no
 ## D-24 · Transportes compartidos entre juegos
 **Decisión:** `local.js` y `firebase.js` pasan de `toque-y-fama/transport/` a `assets/js/transport/`, parametrizados por `game`. Toque y Fama y Batalla Naval los importan desde ahí.
 **Por qué:** Evita duplicar la lógica de salas, presencia y reconexión; cualquier juego futuro con varios celulares la reutiliza (D-18).
+
+## D-25 · Memoria de partida en todos los modos y de todos los juegos
+**Fecha:** 2026-09-09 · **Estado:** vigente
+**Decisión:** Todos los juegos guardan la partida en curso con `assets/js/session.js` (clave `juegos-de-salon:<id>:session`, caducidad 12 h) en **todos** los modos, y ofrecen "Continuar" en la intro. Los juegos con reductor guardan la lista de mensajes y retoman reproduciéndola con `createLocalTransport({ seed })`; los datos privados (número secreto, flota, notas) van aparte en `private`.
+**Por qué:** Había disparidad: Cuarto Rey guardaba siempre, mientras Toque y Fama y Batalla Naval solo guardaban en modo dos celulares, así que salir al menú o recargar perdía la partida en un celular y contra el celular. Es el caso más común en un carrete: alguien toca "Menú" sin querer.
+**Consecuencias:** Queda como canon C-6, obligatorio para los juegos futuros. Cuarto Rey migró a la clave común leyendo la antigua una vez.
+
+## D-26 · Cánones escritos en el repo
+**Decisión:** `docs/CANONES.md` reúne las reglas de construcción de todos los juegos (C-1 a C-14) con una lista de chequeo final, y `CLAUDE.md` en la raíz apunta a él para que se cargue como contexto al abrir el proyecto.
+**Por qué:** Las convenciones estaban repartidas entre decisiones sueltas y el código de cada juego. Un solo archivo evita que cada juego nuevo redescubra o contradiga lo ya acordado.

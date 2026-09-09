@@ -9,6 +9,7 @@ import { getLang, langToggle, applyStatic } from '../assets/js/i18n.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { showHandoff, passBlock, showCover } from '../assets/js/handoff.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
+import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import { N, COLS, FLEET, SHIP_SIZE, cellName, parseCell, isCell, cellsOf, isValidPlacement, isValidLayout, randomLayout, occupancy, layoutKey, shoot, allSunk, Hunter, nextShooter, sha256, randomNonce, verifyPlayer } from './engine.js';
 import { GAME_ID, DEFAULT_CONFIG, LOCALES } from './rules.js';
 
@@ -16,8 +17,8 @@ const lang = getLang();
 const T = LOCALES[lang];
 const fmt = (s, vars = {}) => s.replace(/\{(\w+)\}/g, (_, k) => (vars[k] !== undefined ? vars[k] : `{${k}}`));
 const other = r => (r === 'A' ? 'B' : 'A');
-const NAME_KEY = 'juegos-de-salon:bn:name';
-const SESSION_KEY = 'juegos-de-salon:bn:session';
+const store = createSessionStore(GAME_ID, { legacyKeys: ['juegos-de-salon:bn:session'] });
+const names_ = createNameStore(GAME_ID);
 const SHIP_EMOJI = '🚢';
 
 let S = null;   // sesión
@@ -91,13 +92,33 @@ function startSession({ mode, transport, roles, config, names, bot = null, code 
   transport.onPresence(p => { M.presence = p; renderPresence(); });
 }
 
-/* ---------- Persistencia (solo dos celulares) ---------- */
+/* ---------- Persistencia de la partida (todos los modos, canon C-6) ---------- */
 function saveSession() {
-  if (!S || S.mode !== 'online') return;
-  try { localStorage.setItem(SESSION_KEY, JSON.stringify({ code: S.code, role: S.role, name: M.names[S.role], config: M.config, layout: S.layouts[S.role] || null, done: view().phase === 'done' })); } catch (_) { /* nada */ }
+  if (!S || !M) return;
+  const done = view().phase === 'done';
+  if (S.mode === 'online') {
+    store.save({ mode: 'online', code: S.code, role: S.role, name: M.names[S.role], config: M.config, layout: S.layouts[S.role] || null, done });
+  } else {
+    const layouts = {};
+    for (const r of S.roles) if (S.layouts[r]) layouts[r] = S.layouts[r];
+    store.save({ mode: S.mode, config: M.config, messages: S.transport.messages || [], private: { layouts, draft: S.draft }, done });
+  }
 }
-function loadSession() { try { return JSON.parse(localStorage.getItem(SESSION_KEY) || 'null'); } catch (_) { return null; } }
-function clearSession() { try { localStorage.removeItem(SESSION_KEY); } catch (_) { /* nada */ } }
+function loadSession() { return store.load(); }
+function clearSession() { store.clear(); }
+
+/** Retoma una partida de un celular o contra el celular reproduciendo sus mensajes. */
+function restoreLocal(saved) {
+  const transport = createLocalTransport({ seed: saved.messages || [] });
+  const bot = saved.mode === 'cpu' ? { role: 'B', hunter: new Hunter() } : null;
+  startSession({ mode: saved.mode, transport, roles: ['A', 'B'], config: saved.config, names: {}, bot });
+  for (const [r, lay] of Object.entries(saved.private?.layouts || {})) S.layouts[r] = lay;
+  S.draft = saved.private?.draft || {};
+  M.shots.forEach(x => { if (x.result !== null) { S.repliedShots.add(x.n); S.lastShownShot = Math.max(S.lastShownShot, x.n); } });
+  S.uiRole = null; // fuerza la pantalla de pase / tapada al retomar
+  keepAwake();
+  onChange();
+}
 
 let chain = Promise.resolve();
 function onChange() { chain = chain.then(async () => { await act(); render(); }).catch(e => console.error(e)); }
@@ -289,6 +310,7 @@ function buildPlacement(role) {
     );
     const sail = $('#place-sail'); sail.innerHTML = '';
     sail.append(el('button', { class: 'btn btn--yellow', disabled: !isValidLayout(d.layout), onClick: async () => { if (!isValidLayout(d.layout)) return; SFX.pass(); await setLayout(role, d.layout); } }, T.sail));
+    saveSession(); // conserva el borrador de la flota si el jugador sale a mitad de la colocación
   };
 
   const cellAt = (r, c) => $('#place-grid').querySelector(`.cell[data-r="${r}"][data-c="${c}"]`);
@@ -538,12 +560,18 @@ async function joinOnline(code, name, previousRole = null, savedLayout = null) {
 function renderResumeSlot() {
   const slot = $('#resume-slot'); slot.innerHTML = '';
   const saved = loadSession();
-  if (!saved || saved.done || !saved.code) return;
+  if (!saved || saved.done) return;
+  if (saved.mode === 'online' && !saved.code) return;
+  const label = saved.mode === 'online' ? `${T.lobbyCode}: ${saved.code}` : { local: T.modeLocal, cpu: T.modeCpu }[saved.mode] || '';
+  const resume = async () => {
+    if (saved.mode === 'online') { try { await joinOnline(saved.code, saved.name, saved.role, saved.layout); } catch (e) { clearSession(); renderResumeSlot(); } }
+    else restoreLocal(saved);
+  };
   slot.append(el('div', { class: 'panel pop' },
     el('p', { class: 'lead', style: 'margin-bottom:4px' }, T.resumeTitle),
-    el('p', { class: 'muted' }, `${T.lobbyCode}: ${saved.code}`),
+    el('p', { class: 'muted' }, label),
     el('div', { class: 'btn-row' },
-      el('button', { class: 'btn btn--cyan btn--sm', onClick: async () => { try { await joinOnline(saved.code, saved.name, saved.role, saved.layout); } catch (e) { clearSession(); renderResumeSlot(); } } }, T.resume),
+      el('button', { class: 'btn btn--cyan btn--sm', onClick: resume }, T.resume),
       el('button', { class: 'btn btn--ghost btn--sm', onClick: () => { clearSession(); renderResumeSlot(); } }, T.delete),
     ),
   ));
@@ -553,6 +581,7 @@ function renderResumeSlot() {
 /* Modos y arranque                                                    */
 /* ------------------------------------------------------------------ */
 function startLocalMode(mode, names, config) {
+  clearSession();
   const transport = createLocalTransport();
   const bot = mode === 'cpu' ? { role: 'B', hunter: new Hunter() } : null;
   startSession({ mode, transport, roles: ['A', 'B'], config, names, bot });
@@ -568,7 +597,7 @@ function renderModes() {
 function renderSetup(mode, prefillCode = '') {
   showScreen('screen-setup');
   const config = { ...DEFAULT_CONFIG };
-  const savedName = (() => { try { return localStorage.getItem(NAME_KEY) || ''; } catch (_) { return ''; } })();
+  const savedName = names_.get();
   const form = $('#setup-form'); form.innerHTML = '';
   const err = $('#setup-error'); err.textContent = '';
   const inputs = {};
@@ -579,7 +608,7 @@ function renderSetup(mode, prefillCode = '') {
   const actions = $('#setup-actions'); actions.innerHTML = '';
   const fail = msg => { err.textContent = msg; err.classList.remove('shake'); void err.offsetWidth; err.classList.add('shake'); SFX.error(); vibrate([30, 30, 30]); };
   const getName = k => inputs[k].value.trim();
-  const remember = n => { try { localStorage.setItem(NAME_KEY, n); } catch (_) { /* nada */ } };
+  const remember = n => names_.set(n);
   if (mode === 'local') actions.append(el('button', { class: 'btn btn--yellow', onClick: () => { const a = getName('A'), b = getName('B'); if (!a || !b || a.toLowerCase() === b.toLowerCase()) return fail(T.errNames); SFX.tap(); startLocalMode('local', { A: a, B: b }, config); } }, T.start));
   else if (mode === 'cpu') actions.append(el('button', { class: 'btn btn--yellow', onClick: () => { const a = getName('A'); if (!a) return fail(T.errName); remember(a); SFX.tap(); startLocalMode('cpu', { A: a, B: T.cpuName }, config); } }, T.start));
   else {

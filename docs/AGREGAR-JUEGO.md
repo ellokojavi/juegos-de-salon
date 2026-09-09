@@ -1,5 +1,7 @@
 # Cómo agregar un juego nuevo
 
+> Antes de empezar, leer los [cánones y estándares](CANONES.md): son obligatorios para todos los juegos.
+
 1. **Crear la carpeta** `/<id-del-juego>/` (en minúsculas, con guiones), con:
    - `index.html`: incluye `../assets/css/base.css` y su propio `style.css`. Reutiliza las clases `.app`, `.topbar`, `.panel`, `.btn`, `.display`, etc.
    - `rules.js`: datos del juego (reglas, textos, listas). Sin lógica de UI. Exportar `LOCALES = { es: {...}, en: {...} }` con todos los textos por idioma.

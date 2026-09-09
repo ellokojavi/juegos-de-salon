@@ -21,6 +21,8 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | RP-13 | Funcionar sin conexión (service worker). | ⏳ pendiente |
 | RP-14 | Sonidos en las acciones clave, con botón para silenciar. | ✅ v0.3 |
 | RP-15 | Jugar en español o inglés, con un toggle al inicio (menú) que aplica a todos los juegos. | ✅ v0.2 |
+| RP-16 | Toda partida en curso se puede retomar, en todos los juegos y en todos los modos (canon C-6). | ✅ v0.7 |
+| RP-17 | Cánones de construcción documentados y revisados antes de crear o cambiar un juego. | ✅ v0.7 |
 
 ## Cuarto Rey (CR)
 
