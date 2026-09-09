@@ -1,0 +1,561 @@
+/**
+ * Toque y Fama — lógica de juego.
+ * Un solo reductor de mensajes sirve para los tres modos:
+ *  - local:  ambos jugadores en este celular (transporte en memoria, roles A y B locales)
+ *  - cpu:    A es humano, B es un bot con solver (transporte en memoria)
+ *  - online: este celular tiene un rol; el otro celular el opuesto (transporte Firebase)
+ * Cada dispositivo calcula automáticamente las respuestas para los intentos contra SU secreto.
+ */
+import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../assets/js/ui.js';
+import { getLang, langToggle, applyStatic } from '../assets/js/i18n.js';
+import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
+import { score, isValid, randomSecret, Solver, sha256, randomNonce, verifyPlayer } from './engine.js';
+import { GAME_ID, DEFAULT_CONFIG, DIGIT_OPTIONS, LOCALES } from './rules.js';
+import { createLocalTransport } from './transport/local.js';
+
+const lang = getLang();
+const T = LOCALES[lang];
+const fmt = (s, vars = {}) => s.replace(/\{(\w+)\}/g, (_, k) => (vars[k] !== undefined ? vars[k] : `{${k}}`));
+const other = r => (r === 'A' ? 'B' : 'A');
+const SESSION_KEY = 'juegos-de-salon:tyf:session';
+const NAME_KEY = 'juegos-de-salon:tyf:name';
+
+let S = null;   // sesión: modo, transporte, roles locales, secretos, bot
+let M = null;   // partida: estado reconstruido desde los mensajes
+
+/* ------------------------------------------------------------------ */
+/* Estado de la partida (reductor)                                     */
+/* ------------------------------------------------------------------ */
+/**
+ * Quién parte es determinista (no hay sorteo): en la primera partida parte el invitado (B) y en la
+ * revancha parte quien perdió. Así el estado se reconstruye igual en ambos celulares y nadie puede manipularlo.
+ */
+function newMatch(config) {
+  return { config, names: {}, commits: {}, starter: config.starter === 'A' ? 'A' : 'B', guesses: [], reveals: {}, rematch: {}, presence: {}, verify: {}, seen: new Set() };
+}
+
+function apply(msg) {
+  if (msg.id && M.seen.has(msg.id)) return; if (msg.id) M.seen.add(msg.id);
+  const from = msg.from;
+  switch (msg.t) {
+    case 'hello': M.names[from] = msg.name; break;
+    case 'commit': if (!M.commits[from]) M.commits[from] = { hash: msg.hash }; break;
+    case 'guess': {
+      const v = view();
+      if (v.phase !== 'play' || v.pending || v.expected !== from) return;
+      M.guesses.push({ from, value: msg.value, round: M.guesses.length, famas: null, toques: null });
+      break;
+    }
+    case 'reply': {
+      const g = M.guesses[msg.round];
+      if (!g || g.famas !== null || g.from === from) return;
+      g.famas = msg.famas; g.toques = msg.toques;
+      if (S.bot && g.from === S.bot.role) S.bot.solver.learn(g.value, { famas: g.famas, toques: g.toques });
+      break;
+    }
+    case 'reveal': if (!M.reveals[from]) M.reveals[from] = { secret: msg.secret, salt: msg.salt }; break;
+    case 'rematch': if (!M.rematch[from]) M.rematch[from] = msg.code || true; break;
+  }
+}
+
+/** Vista derivada del estado: fase, turno, resultado. */
+function view() {
+  const d = M.config.digits;
+  const both = M.names.A && M.names.B;
+  const committed = M.commits.A && M.commits.B;
+  const starter = M.starter;
+  const pending = M.guesses.find(g => g.famas === null) || null;
+  const expected = starter ? (M.guesses.length % 2 === 0 ? starter : other(starter)) : null;
+  // Resultado
+  let done = false, winner = null, tie = false, replicaFor = null;
+  for (let i = 0; i < M.guesses.length; i++) {
+    const g = M.guesses[i];
+    if (g.famas !== d) continue;
+    if (g.from === starter && M.config.replica) {
+      const rep = M.guesses[i + 1];
+      if (!rep) { replicaFor = other(starter); break; }
+      if (rep.famas === null) { replicaFor = other(starter); break; }
+      done = true; if (rep.famas === d) tie = true; else winner = starter;
+    } else { done = true; winner = g.from; }
+    break;
+  }
+  let phase;
+  if (!both) phase = 'lobby';
+  else if (!committed) phase = 'secret';
+  else if (!done) phase = 'play';
+  else if (!(M.reveals.A && M.reveals.B)) phase = 'reveal';
+  else phase = 'done';
+  return { phase, pending, expected, done, winner, tie, replicaFor, starter };
+}
+
+/* ------------------------------------------------------------------ */
+/* Sesión y agentes                                                    */
+/* ------------------------------------------------------------------ */
+function startSession({ mode, transport, roles, config, names, bot = null, code = null, role = null }) {
+  if (S?.transport) S.transport.leave();
+  S = { mode, transport, roles, secrets: {}, bot, code, role, repliedRounds: new Set(), lastShownRound: -1, cpuTimer: null, uiRole: null };
+  M = newMatch(config);
+  Object.entries(names).forEach(([r, name]) => { if (name) transport.send({ t: 'hello', from: r, name }); });
+  transport.onMessage(m => { apply(m); onChange(); });
+  transport.onPresence(p => { M.presence = p; renderPresence(); });
+}
+
+// Los cambios se procesan en serie (act() es asíncrono: sorteo y verificación usan SHA-256).
+let chain = Promise.resolve();
+function onChange() {
+  chain = chain.then(async () => { await act(); render(); }).catch(e => console.error(e));
+}
+
+/** Acciones automáticas de los roles locales (responder, revelar, bot). */
+async function act() {
+  const v = view();
+  for (const r of S.roles) {
+    const sec = S.secrets[r];
+    if (!sec) continue;
+    if (v.phase === 'secret' && !M.commits[r]) { S.transport.send({ t: 'commit', from: r, hash: sec.hash }); }
+    if (v.phase === 'play' && v.pending && v.pending.from !== r && !S.repliedRounds.has(v.pending.round)) {
+      S.repliedRounds.add(v.pending.round);
+      const { famas, toques } = score(v.pending.value, sec.secret);
+      S.transport.send({ t: 'reply', from: r, round: v.pending.round, famas, toques });
+    }
+    if (v.phase === 'reveal' && !M.reveals[r]) { S.transport.send({ t: 'reveal', from: r, secret: sec.secret, salt: sec.salt }); }
+  }
+  // Bot
+  if (S.bot) {
+    const b = S.bot.role;
+    if (v.phase === 'secret' && !S.secrets[b]) { await setSecret(b, randomSecret(M.config.digits, M.config)); }
+    if (v.phase === 'play' && v.expected === b && !v.pending && !S.cpuTimer) {
+      S.cpuTimer = setTimeout(() => { S.cpuTimer = null; const g = S.bot.solver.next(); if (g) S.transport.send({ t: 'guess', from: b, value: g }); }, 1400);
+    }
+  }
+  if (v.phase === 'done' && !M.verify.A) { await verifyAll(); }
+  saveSession();
+}
+
+async function setSecret(role, secret) {
+  const salt = randomNonce(16);
+  const hash = await sha256(secret + salt);
+  S.secrets[role] = { secret, salt, hash };
+  saveSession();
+  onChange();
+}
+
+async function verifyAll() {
+  for (const r of ['A', 'B']) {
+    const rv = M.reveals[r];
+    const repliesGiven = M.guesses.filter(g => g.from !== r && g.famas !== null).map(g => ({ value: g.value, famas: g.famas, toques: g.toques }));
+    M.verify[r] = await verifyPlayer({ secret: rv.secret, salt: rv.salt, commit: M.commits[r].hash, repliesGiven });
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Persistencia (solo modo dos celulares)                              */
+/* ------------------------------------------------------------------ */
+function saveSession() {
+  if (!S || S.mode !== 'online') return;
+  try { localStorage.setItem(SESSION_KEY, JSON.stringify({ code: S.code, role: S.role, name: M.names[S.role], config: M.config, secret: S.secrets[S.role] || null, done: view().phase === 'done' })); } catch (_) { /* nada */ }
+}
+function loadSession() { try { return JSON.parse(localStorage.getItem(SESSION_KEY) || 'null'); } catch (_) { return null; } }
+function clearSession() { try { localStorage.removeItem(SESSION_KEY); } catch (_) { /* nada */ } }
+
+/* ------------------------------------------------------------------ */
+/* Navegación y componentes                                            */
+/* ------------------------------------------------------------------ */
+function showScreen(id) { $$('.screen').forEach(s => s.classList.toggle('active', s.id === id)); window.scrollTo({ top: 0, behavior: 'instant' }); }
+
+/** Teclado numérico con casillas. onSubmit(value). */
+function keypad({ digits, zeroFirst, onSubmit, hidden = false, submitLabel = T.guess }) {
+  let value = '';
+  const boxes = Array.from({ length: digits }, () => el('div', { class: 'box' }));
+  const entry = el('div', { class: 'entry' }, ...boxes);
+  const keys = [];
+  const ok = el('button', { class: 'ok', disabled: true, onClick: () => { if (isValid(value, digits, { zeroFirst })) { SFX.tap(); const v = value; value = ''; refresh(); onSubmit(v); } } }, submitLabel);
+  const del = el('button', { class: 'del', onClick: () => { value = value.slice(0, -1); SFX.tap(); refresh(); } }, '⌫');
+  const refresh = () => {
+    boxes.forEach((b, i) => { b.textContent = value[i] || ''; b.className = 'box' + (value[i] ? ' filled' : '') + (hidden && value[i] ? ' hidden-digit' : '') + (i === value.length ? ' active' : ''); });
+    keys.forEach(k => { const d = k.dataset.d; k.disabled = value.includes(d) || value.length >= digits || (value.length === 0 && d === '0' && !zeroFirst); });
+    ok.disabled = !isValid(value, digits, { zeroFirst });
+  };
+  const key = d => el('button', { 'data-d': d, onClick: () => { if (value.length < digits && !value.includes(d)) { value += d; vibrate(8); SFX.tap(); refresh(); } } }, d);
+  for (let d = 1; d <= 9; d++) keys.push(key(String(d)));
+  keys.push(key('0'));
+  const pad = el('div', { class: 'keypad' }, ...keys.slice(0, 9), del, keys[9], ok);
+  refresh();
+  return el('div', {}, entry, pad);
+}
+
+function clueChips(g, big = false) {
+  const d = M.config.digits;
+  const wrap = el('div', { class: big ? 'reply-clue' : 'clue' });
+  if (g.famas === d) wrap.append(el('span', { class: 'f' }, `🎯 ${g.famas} ${T.famas}`));
+  else {
+    if (g.famas) wrap.append(el('span', { class: 'f' }, `${g.famas} ${g.famas === 1 ? T.fama : T.famas}`));
+    if (g.toques) wrap.append(el('span', { class: 't' }, `${g.toques} ${g.toques === 1 ? T.toque : T.toques}`));
+    if (!g.famas && !g.toques) wrap.append(el('span', { class: 'z' }, T.none));
+  }
+  return wrap;
+}
+
+function showHandoff(stages, onDone) {
+  const box = $('#handoff');
+  box.hidden = false; box.className = 'handoff'; box.innerHTML = '';
+  let i = 0;
+  const next = () => {
+    if (i >= stages.length) { box.classList.add('leaving'); setTimeout(() => { box.hidden = true; box.innerHTML = ''; onDone && onDone(); }, 300); return; }
+    box.innerHTML = ''; box.append(stages[i++]); vibrate(15);
+  };
+  box.onclick = e => { if (!e.target.closest('button')) next(); };
+  next();
+  return next;
+}
+
+function passStage(name) {
+  let adv = null;
+  const stage = el('div', { class: 'stage pop' },
+    el('div', { class: 'phone' }, '📱'),
+    el('div', { class: 'hint', style: 'font-size:1.05rem' }, T.hoPass),
+    el('div', { class: 'next-name' }, name),
+    el('button', { class: 'btn btn--cyan', onClick: e => { e.stopPropagation(); SFX.pass(); adv && adv(); } }, T.hoReady),
+  );
+  stage.setAdvance = fn => { adv = fn; };
+  return stage;
+}
+
+function replyStage(g) {
+  return el('div', { class: 'stage pop' },
+    el('div', { class: 'hint' }, `${M.names[g.from]} · ${T.hoResult}`),
+    el('div', { class: 'reply-big' }, g.value),
+    clueChips(g, true),
+    el('div', { class: 'hint', style: 'margin-top:14px' }, T.hoContinue + ' ›'),
+  );
+}
+
+function showCover(name, onReveal) {
+  const c = $('#cover');
+  c.hidden = false; c.innerHTML = '';
+  c.append(el('div', {}, el('div', { class: 'eye' }, '🙈'), el('div', { class: 'hint', style: 'color:var(--muted);font-weight:800' }, T.hoPass), el('div', { class: 'big' }, name), el('button', { class: 'btn btn--cyan', style: 'margin-top:18px', onClick: () => { c.hidden = true; SFX.reveal(); onReveal && onReveal(); } }, T.tapToReveal)));
+}
+
+/* ------------------------------------------------------------------ */
+/* Render principal                                                    */
+/* ------------------------------------------------------------------ */
+function render() {
+  if (!M) return;
+  const v = view();
+  switch (v.phase) {
+    case 'lobby': renderLobby(); break;
+    case 'secret': renderSecret(v); break;
+    case 'play': renderPlay(v); break;
+    case 'reveal': renderPlay(v); break;
+    case 'done': renderResult(v); break;
+  }
+}
+
+function renderPresence() {
+  if (!S || S.mode !== 'online' || !M) return;
+  const v = view();
+  if (v.phase === 'lobby') renderLobby();
+  const o = other(S.role);
+  const p = M.presence[o];
+  if (v.phase === 'play' && p) $('#status-sub').textContent = p.online === false ? T.offline : statusSub(v);
+}
+
+function renderLobby() {
+  showScreen('screen-lobby');
+  const box = $('#lobby-box');
+  box.innerHTML = '';
+  const url = `${location.origin}${location.pathname}?sala=${S.code}`;
+  const joined = M.names.A && M.names.B;
+  box.append(
+    el('div', { class: 'muted', style: 'font-weight:800' }, T.lobbyCode),
+    el('div', { class: 'code-big' }, S.code),
+    el('div', { class: 'qr', id: 'qr' }),
+    el('p', { class: 'muted' }, T.lobbyShare),
+    el('button', { class: 'btn btn--ghost btn--sm', onClick: async e => { try { await navigator.clipboard.writeText(url); e.target.textContent = T.copied; } catch (_) { prompt('URL', url); } } }, T.copyLink),
+    el('p', { class: 'waiting', style: 'margin-top:12px' }, joined ? fmt(T.lobbyJoined, { name: M.names[other(S.role)] }) : el('span', { class: 'dots' }, T.lobbyWaiting)),
+  );
+  renderQr(url);
+}
+
+async function renderQr(url) {
+  try {
+    if (!window.qrcode) await new Promise((res, rej) => { const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js'; s.onload = res; s.onerror = rej; document.head.append(s); });
+    const qr = window.qrcode(0, 'M'); qr.addData(url); qr.make();
+    const box = $('#qr'); if (box) box.innerHTML = qr.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
+  } catch (_) { const box = $('#qr'); if (box) box.remove(); }
+}
+
+/** Fase de secreto: cada rol local sin secreto lo ingresa (en modo un celular, por turnos con pantalla tapada). */
+function renderSecret() {
+  const rolesNeeding = S.roles.filter(r => !S.secrets[r] && !(S.bot && S.bot.role === r));
+  showScreen('screen-secret');
+  const entry = $('#secret-entry');
+  if (!rolesNeeding.length) {
+    const waitingFor = ['A', 'B'].find(r => !M.commits[r]);
+    $('#secret-title').textContent = T.secretSaved;
+    $('#secret-hint').textContent = '';
+    entry.innerHTML = '';
+    $('#secret-status').innerHTML = '';
+    $('#secret-status').append(el('span', { class: 'dots' }, fmt(T.waitingSecret, { name: M.names[waitingFor] || '…' })));
+    return;
+  }
+  const r = rolesNeeding[0];
+  const name = M.names[r];
+  const build = () => {
+    $('#secret-title').textContent = S.mode === 'local' ? fmt(T.secretFor, { name }) : T.secretTitle;
+    $('#secret-hint').textContent = fmt(M.config.zeroFirst ? T.secretHint : T.secretHintNoZero, { n: M.config.digits });
+    $('#secret-status').textContent = '';
+    entry.innerHTML = '';
+    entry.append(keypad({ digits: M.config.digits, zeroFirst: M.config.zeroFirst, hidden: S.mode === 'local', submitLabel: T.confirm, onSubmit: async val => { SFX.reveal(); await setSecret(r, val); } }));
+  };
+  if (S.mode === 'local' && S.uiRole !== r) { S.uiRole = r; entry.innerHTML = ''; showCover(name, build); } else build();
+}
+
+function statusSub(v) {
+  if (v.replicaFor) return fmt(T.replicaNotice, { name: M.names[other(v.replicaFor)], other: M.names[v.replicaFor] });
+  if (v.pending) return T.waitingReply;
+  return fmt(T.starts, { name: M.names[v.starter] });
+}
+
+function renderPlay(v) {
+  showScreen('screen-play');
+  $('#secret-entry').innerHTML = '';
+  const myTurnRole = S.roles.includes(v.expected) && !(S.bot && S.bot.role === v.expected) ? v.expected : null;
+  // Modo un celular: al completarse una respuesta, mostrar el resultado y pasar el celular
+  if (S.mode === 'local') {
+    const last = M.guesses[M.guesses.length - 1];
+    if (last && last.famas !== null && last.round > S.lastShownRound) {
+      S.lastShownRound = last.round;
+      const stages = [replyStage(last)];
+      if (v.phase === 'play' && v.expected && v.expected !== S.uiRole) { const ps = passStage(M.names[v.expected]); stages.push(ps); }
+      const adv = showHandoff(stages, () => { S.uiRole = v.expected; renderPlay(view()); });
+      stages[1]?.setAdvance(adv);
+      SFX.reveal();
+      return;
+    }
+    if (v.phase === 'play' && v.expected && S.uiRole !== v.expected && !v.pending) {
+      const ps = passStage(M.names[v.expected]);
+      const adv = showHandoff([ps], () => { S.uiRole = v.expected; renderPlay(view()); });
+      ps.setAdvance(adv);
+      return;
+    }
+  }
+  // CPU: anunciar el intento del celular
+  if (S.mode === 'cpu') {
+    const last = M.guesses[M.guesses.length - 1];
+    if (last && last.from === S.bot.role && last.famas !== null && last.round > S.lastShownRound) { S.lastShownRound = last.round; SFX.reveal(); }
+  }
+  // Estado
+  const who = $('#status-who'), sub = $('#status-sub');
+  if (v.phase === 'reveal') { who.textContent = '…'; sub.textContent = T.waitingReply; }
+  else if (myTurnRole) { who.textContent = fmt(T.turnYou, { name: M.names[other(myTurnRole)] }); sub.textContent = statusSub(v); }
+  else { who.textContent = S.mode === 'cpu' && v.expected === S.bot.role ? T.cpuThinking : fmt(T.turnOther, { name: M.names[v.expected] }); sub.textContent = statusSub(v); }
+  // Entrada
+  const entry = $('#play-entry');
+  entry.innerHTML = '';
+  if (myTurnRole && !v.pending && v.phase === 'play') {
+    entry.append(keypad({ digits: M.config.digits, zeroFirst: M.config.zeroFirst, onSubmit: val => { S.transport.send({ t: 'guess', from: myTurnRole, value: val }); } }));
+  }
+  // Tableros
+  const boards = $('#boards');
+  boards.innerHTML = '';
+  const order = S.mode === 'online' ? [S.role, other(S.role)] : ['A', 'B'];
+  for (const r of order) {
+    const mine = M.guesses.filter(g => g.from === r);
+    const list = el('ol', {}, ...mine.map(g => el('li', { class: g.famas === M.config.digits ? 'hit' : '' }, el('span', { class: 'val' }, g.value), g.famas === null ? el('span', { class: 'clue' }, el('span', { class: 'z' }, '…')) : clueChips(g))));
+    boards.append(el('div', { class: 'board' + (v.expected === r && v.phase === 'play' ? ' turn' : '') },
+      el('h3', {}, fmt(T.boardOf, { name: M.names[r] })),
+      el('div', { class: 'count' }, mine.length ? fmt(T.tries, { n: mine.length }) : T.noGuesses),
+      mine.length ? list : el('div', { class: 'empty' }, '—'),
+    ));
+  }
+  // Auto-scroll a la última fila
+  const lastLi = boards.querySelector('li:last-child'); if (lastLi && M.guesses.length > 3) lastLi.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+}
+
+function renderResult(v) {
+  const already = $('#screen-result').classList.contains('active');
+  if (!already) showScreen('screen-result');
+  const meRole = S.mode === 'online' ? S.role : (S.mode === 'cpu' ? 'A' : null);
+  const title = $('#result-title'), sub = $('#result-sub'), trophy = $('#result-trophy');
+  if (v.tie) { title.textContent = T.tieTitle; trophy.textContent = '🤝'; sub.textContent = ''; }
+  else {
+    title.textContent = fmt(T.winTitle, { name: M.names[v.winner] });
+    const tries = M.guesses.filter(g => g.from === v.winner).length;
+    sub.textContent = (meRole ? (meRole === v.winner ? T.youWin + ' ' : T.youLose + ' ') : '') + fmt(T.inTries, { n: tries });
+    trophy.textContent = meRole && meRole !== v.winner ? '😵' : '🏆';
+  }
+  const secrets = $('#result-secrets'); secrets.innerHTML = '';
+  for (const r of ['A', 'B']) {
+    const ver = M.verify[r];
+    // La verificación solo tiene sentido cuando el rival está en otro celular
+    const verText = S.mode === 'online' && ver ? (ver.ok ? T.verified : T.notVerified) : '';
+    secrets.append(el('div', { class: 's' }, el('small', {}, M.names[r]), el('div', { class: 'n' }, M.reveals[r].secret), el('small', {}, verText)));
+  }
+  if (!already) { if (!meRole || meRole === v.winner || v.tie) { confetti({ count: 220, duration: 3500 }); SFX.win(); } else SFX.timeUp(); }
+  renderResultActions(v);
+}
+
+function renderResultActions() {
+  const box = $('#result-actions'); box.innerHTML = '';
+  const o = S.mode === 'online' ? other(S.role) : null;
+  const waiting = S.mode === 'online' && M.rematch[S.role] && !M.rematch[o];
+  box.append(
+    waiting ? el('p', { class: 'waiting' }, el('span', { class: 'dots' }, fmt(T.rematchWaiting, { name: M.names[o] }))) : el('button', { class: 'btn btn--yellow', onClick: rematch }, T.rematch),
+    el('button', { class: 'btn btn--ghost', onClick: () => { clearSession(); S.transport.leave(); location.href = location.pathname; } }, T.changeMode),
+    el('a', { class: 'btn btn--ghost', href: '../' }, T.backMenu),
+  );
+  // Revancha propuesta por el rival (online): me uno a su sala nueva
+  if (S.mode === 'online') {
+    const code = M.rematch[o];
+    if (typeof code === 'string' && code !== S.code && !S.switching) { S.switching = true; joinOnline(code, M.names[S.role]).catch(e => { console.error(e); S.switching = false; }); }
+  }
+}
+
+/** En la revancha parte quien perdió (en empate, el que no partió). */
+function nextStarterFor(roleMap) {
+  const v = view();
+  const loser = v.tie ? other(M.starter) : other(v.winner);
+  return roleMap(loser);
+}
+
+async function rematch() {
+  SFX.tap();
+  if (S.mode === 'online') {
+    if (M.rematch[S.role]) return;
+    const o = other(S.role);
+    if (typeof M.rematch[o] === 'string') { S.switching = true; return joinOnline(M.rematch[o], M.names[S.role]); }
+    // Yo propongo: creo la sala nueva (seré A) y aviso. El rival entra como B.
+    const { createFirebaseTransport } = await import('./transport/firebase.js');
+    const t = createFirebaseTransport({ game: GAME_ID });
+    const config = { ...M.config, starter: nextStarterFor(loser => (loser === S.role ? 'A' : 'B')) };
+    S.switching = true;
+    const code = await t.create({ config, name: M.names[S.role] });
+    S.transport.send({ t: 'rematch', from: S.role, code });
+    M.rematch[S.role] = code;
+    renderResultActions(view());
+    setTimeout(() => startOnline(t, code, 'A', M.names[S.role], config), 600);
+  } else {
+    const names = { ...M.names }, mode = S.mode;
+    const config = { ...M.config, starter: nextStarterFor(loser => loser) };
+    startLocalMode(mode, names, config);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Modos                                                               */
+/* ------------------------------------------------------------------ */
+function startLocalMode(mode, names, config) {
+  const transport = createLocalTransport();
+  const bot = mode === 'cpu' ? { role: 'B', solver: new Solver(config.digits, config) } : null;
+  startSession({ mode, transport, roles: ['A', 'B'], config, names, bot });
+  keepAwake();
+}
+
+async function startOnline(transport, code, role, name, config) {
+  startSession({ mode: 'online', transport, roles: [role], config, names: { [role]: name }, code, role });
+  history.replaceState(null, '', `${location.pathname}?sala=${code}`);
+  keepAwake();
+  saveSession();
+  render();
+}
+
+async function createOnline(name, config) {
+  const { createFirebaseTransport } = await import('./transport/firebase.js');
+  const t = createFirebaseTransport({ game: GAME_ID });
+  const code = await t.create({ config, name });
+  await startOnline(t, code, 'A', name, config);
+}
+
+async function joinOnline(code, name, previousRole = null, savedSecret = null) {
+  const { createFirebaseTransport } = await import('./transport/firebase.js');
+  const t = createFirebaseTransport({ game: GAME_ID });
+  const { role, config } = await t.join(code, { name, previousRole });
+  await startOnline(t, code, role, name, config || DEFAULT_CONFIG);
+  if (savedSecret) { S.secrets[role] = savedSecret; onChange(); }
+}
+
+/* ------------------------------------------------------------------ */
+/* Pantallas de inicio                                                 */
+/* ------------------------------------------------------------------ */
+function renderModes() {
+  const box = $('#modes'); box.innerHTML = '';
+  const modes = [['local', T.modeLocal, T.modeLocalHint], ['online', T.modeOnline, T.modeOnlineHint], ['cpu', T.modeCpu, T.modeCpuHint]];
+  for (const [m, label, hint] of modes) box.append(el('button', { class: 'mode', onClick: () => { SFX.tap(); renderSetup(m); } }, el('span', {}, el('b', {}, label), el('small', {}, hint)), el('span', { class: 'go' }, '›')));
+}
+
+function renderResumeSlot() {
+  const slot = $('#resume-slot'); slot.innerHTML = '';
+  const saved = loadSession();
+  if (!saved || saved.done || !saved.code) return;
+  slot.append(el('div', { class: 'panel pop' },
+    el('p', { class: 'lead', style: 'margin-bottom:4px' }, T.resumeTitle),
+    el('p', { class: 'muted' }, `${T.lobbyCode}: ${saved.code}`),
+    el('div', { class: 'btn-row' },
+      el('button', { class: 'btn btn--cyan btn--sm', onClick: async () => { try { await joinOnline(saved.code, saved.name, saved.role, saved.secret); } catch (e) { clearSession(); renderResumeSlot(); } } }, T.resume),
+      el('button', { class: 'btn btn--ghost btn--sm', onClick: () => { clearSession(); renderResumeSlot(); } }, T.delete),
+    ),
+  ));
+}
+
+function renderSetup(mode, prefillCode = '') {
+  showScreen('screen-setup');
+  const config = { ...DEFAULT_CONFIG };
+  const savedName = (() => { try { return localStorage.getItem(NAME_KEY) || ''; } catch (_) { return ''; } })();
+  const form = $('#setup-form'); form.innerHTML = '';
+  const err = $('#setup-error'); err.textContent = '';
+  const inputs = {};
+  const nameField = (key, label, value = '') => { inputs[key] = el('input', { type: 'text', maxlength: 14, placeholder: label, value, autocomplete: 'off' }); return el('div', { class: 'field' }, el('label', {}, label), inputs[key]); };
+  if (mode === 'local') form.append(nameField('A', T.p1), nameField('B', T.p2));
+  else form.append(nameField('A', T.yourName, savedName));
+  // Config (el que se une a una sala usa la config del anfitrión)
+  const seg = el('div', { class: 'seg' }, ...DIGIT_OPTIONS.map(d => el('button', { type: 'button', class: d === config.digits ? 'on' : '', onClick: e => { config.digits = d; $$('button', seg).forEach(b => b.classList.toggle('on', b === e.currentTarget)); SFX.tap(); } }, d)));
+  const sw = (key, label, hint) => { const b = el('button', { type: 'button', class: 'switch' + (config[key] ? ' on' : ''), onClick: () => { config[key] = !config[key]; b.classList.toggle('on', config[key]); SFX.tap(); } }); return el('div', { class: 'toggle-row' }, el('div', {}, el('b', {}, label), hint ? el('small', {}, hint) : null), b); };
+  form.append(el('div', { class: 'field' }, el('label', {}, T.digits), seg), sw('replica', T.replica, T.replicaHint), sw('zeroFirst', T.zeroFirst));
+  const actions = $('#setup-actions'); actions.innerHTML = '';
+  const fail = (msg) => { err.textContent = msg; err.classList.remove('shake'); void err.offsetWidth; err.classList.add('shake'); SFX.error(); vibrate([30, 30, 30]); };
+  const getName = k => inputs[k].value.trim();
+  const remember = n => { try { localStorage.setItem(NAME_KEY, n); } catch (_) { /* nada */ } };
+  if (mode === 'local') {
+    actions.append(el('button', { class: 'btn btn--yellow', onClick: () => { const a = getName('A'), b = getName('B'); if (!a || !b || a.toLowerCase() === b.toLowerCase()) return fail(T.errNames); SFX.tap(); startLocalMode('local', { A: a, B: b }, config); } }, T.start));
+  } else if (mode === 'cpu') {
+    actions.append(el('button', { class: 'btn btn--yellow', onClick: () => { const a = getName('A'); if (!a) return fail(T.errName); remember(a); SFX.tap(); startLocalMode('cpu', { A: a, B: T.cpuName }, config); } }, T.start));
+  } else {
+    const codeInput = el('input', { type: 'text', class: 'code', maxlength: 4, placeholder: T.codePlaceholder, value: prefillCode, autocapitalize: 'characters', autocomplete: 'off' });
+    const busy = (b, on) => { b.disabled = on; };
+    const createBtn = el('button', { class: 'btn btn--yellow', onClick: async () => { const a = getName('A'); if (!a) return fail(T.errName); remember(a); SFX.tap(); busy(createBtn, true); try { await createOnline(a, config); } catch (e) { console.error(e); fail(T.errNet); } busy(createBtn, false); } }, T.create);
+    const joinBtn = el('button', { class: 'btn btn--cyan', onClick: async () => {
+      const a = getName('A'); const code = codeInput.value.trim().toUpperCase();
+      if (!a) return fail(T.errName); if (!/^[A-Z]{4}$/.test(code)) return fail(T.errCode);
+      remember(a); SFX.tap(); busy(joinBtn, true);
+      try { await joinOnline(code, a); } catch (e) { fail({ 'not-found': T.errNotFound, full: T.errFull, expired: T.errExpired, 'other-game': T.errOtherGame }[e.message] || T.errNet); }
+      busy(joinBtn, false);
+    } }, T.join);
+    actions.append(createBtn, el('div', { class: 'or' }, '— o —'), el('div', { class: 'panel' }, el('p', { class: 'lead', style: 'margin-bottom:8px' }, T.joinTitle), el('div', { class: 'field' }, codeInput), joinBtn));
+    if (prefillCode) setTimeout(() => inputs.A.focus(), 100);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Arranque                                                            */
+/* ------------------------------------------------------------------ */
+function init() {
+  document.documentElement.lang = lang;
+  document.title = T.docTitle;
+  applyStatic(T);
+  $('#lang-slot').append(langToggle());
+  $('#sound-slot').append(soundToggle());
+  initSound();
+  sparkles(12);
+  renderModes();
+  renderResumeSlot();
+  const code = new URLSearchParams(location.search).get('sala');
+  if (code && /^[A-Z]{4}$/i.test(code)) {
+    const saved = loadSession();
+    if (saved && saved.code === code.toUpperCase() && !saved.done) { joinOnline(saved.code, saved.name, saved.role, saved.secret).catch(() => { clearSession(); renderSetup('online', code.toUpperCase()); }); }
+    else renderSetup('online', code.toUpperCase());
+  }
+}
+init();
+// Gancho de depuración (solo lectura) para pruebas automatizadas.
+window.__tyf = { view: () => (M ? view() : null), match: () => M, session: () => S };

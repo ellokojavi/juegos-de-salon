@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#150726">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Toque y Fama 🔢 · Juegos de Salón</title>
+  <link rel="manifest" href="../manifest.webmanifest">
+  <link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app" id="app">
+    <div class="topbar">
+      <a class="back" href="../" id="btn-menu" data-i18n="menu">‹ Menú</a>
+      <div class="tools"><span class="chip" data-i18n="gameChip">🔢 Toque y Fama</span><span id="sound-slot"></span></div>
+    </div>
+
+    <!-- INTRO -->
+    <section class="screen active" id="screen-intro">
+      <div class="intro-hero">
+        <span class="icon">🔢</span>
+        <h1 class="display display--xl rainbow" data-i18n="title">Toque y Fama</h1>
+        <p class="lead" data-i18n="lead"></p>
+        <div id="lang-slot" style="margin-top:6px"></div>
+      </div>
+      <div class="stack">
+        <div class="panel">
+          <p class="lead" style="margin-bottom:6px" data-i18n="howTitle"></p>
+          <p class="muted" data-i18n-html="howText"></p>
+          <p class="muted" style="margin:0;font-size:0.9rem" data-i18n="example"></p>
+        </div>
+        <div id="resume-slot"></div>
+        <div class="modes" id="modes"></div>
+      </div>
+    </section>
+
+    <!-- SETUP -->
+    <section class="screen" id="screen-setup">
+      <h2 class="display display--lg center" data-i18n="setupTitle"></h2>
+      <div class="panel" id="setup-form"></div>
+      <div class="form-error" id="setup-error"></div>
+      <div class="stack" id="setup-actions"></div>
+    </section>
+
+    <!-- LOBBY (dos celulares) -->
+    <section class="screen" id="screen-lobby">
+      <h2 class="display display--lg center" data-i18n="lobbyTitle"></h2>
+      <div class="panel center" id="lobby-box"></div>
+    </section>
+
+    <!-- SECRETO -->
+    <section class="screen" id="screen-secret">
+      <h2 class="display display--lg center" id="secret-title"></h2>
+      <p class="center muted" id="secret-hint"></p>
+      <div id="secret-entry"></div>
+      <p class="center muted" id="secret-status"></p>
+    </section>
+
+    <!-- JUEGO -->
+    <section class="screen" id="screen-play">
+      <div class="status"><div class="who" id="status-who"></div><div class="sub" id="status-sub"></div></div>
+      <div id="play-entry"></div>
+      <div class="boards" id="boards"></div>
+    </section>
+
+    <!-- RESULTADO -->
+    <section class="screen" id="screen-result">
+      <div class="result-hero"><span class="trophy" id="result-trophy">🏆</span><h2 class="display display--lg" id="result-title"></h2><p class="lead" id="result-sub"></p></div>
+      <div class="panel"><p class="lead center" style="margin-bottom:4px" data-i18n="secretsWere"></p><div class="secrets" id="result-secrets"></div></div>
+      <div class="stack" style="margin-top:14px" id="result-actions"></div>
+    </section>
+  </main>
+
+  <div class="handoff" id="handoff" hidden></div>
+  <div class="cover" id="cover" hidden></div>
+  <script type="module" src="game.js"></script>
+</body>
+</html>

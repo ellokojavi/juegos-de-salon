@@ -77,8 +77,22 @@ Registro tipo ADR (Architecture Decision Record). Las decisiones se numeran y no
 **Por qué:** Cumple RP-14 sin descargar ni licenciar archivos de audio, mantiene el sitio liviano y sin dependencias (D-01), y evita el problema de iOS con audio no iniciado por gesto del usuario. Si más adelante se quieren sonidos "reales", basta reemplazar la implementación de `SFX` manteniendo la misma interfaz.
 **Consecuencias:** El sonido se apaga con el toggle pero no con el modo silencio del celular en todos los navegadores (iOS Safari sí respeta el switch físico para Web Audio en la mayoría de versiones).
 
-## D-18 · Transporte para juegos con varios celulares (propuesta, pendiente de aprobación)
-**Fecha:** 2026-09-08 · **Estado:** propuesta
-**Decisión propuesta:** Los juegos con dos o más celulares hablan con una interfaz `Transport` (`createRoom`, `joinRoom`, `send`, `onMessage`, `onPresence`, `leave`). La primera implementación remota sería **Firebase Realtime Database** (salas por código de 4 letras, mensajes append-only, expiración a 6 h); se mantiene un transporte `local` para jugar en un solo celular.
+## D-18 · Transporte para juegos con varios celulares
+**Fecha:** 2026-09-08 · **Estado:** vigente (aprobada por el dueño del proyecto)
+**Decisión:** Los juegos con dos o más celulares hablan con una interfaz `Transport` (`createRoom`, `joinRoom`, `send`, `onMessage`, `onPresence`, `leave`). La primera implementación remota sería **Firebase Realtime Database** (salas por código de 4 letras, mensajes append-only, expiración a 6 h); se mantiene un transporte `local` para jugar en un solo celular.
 **Por qué:** Desde GitHub Pages no hay servidor; una base en tiempo real gratuita funciona entre redes distintas (4G y Wi‑Fi), da reconexión y estado persistente sin código propio, y sirve para futuros juegos de 4 a 6 celulares. WebRTC (PeerJS o QR) queda como alternativa sin cuenta, limitada por NAT fuera de la misma Wi‑Fi. Detalle y comparación en [juegos/toque-y-fama-factibilidad.md](juegos/toque-y-fama-factibilidad.md).
-**Consecuencias:** Requiere que el dueño del proyecto cree el proyecto de Firebase y acepte una dependencia externa con claves públicas protegidas por reglas.
+**Consecuencias:** Proyecto de Firebase `juegos-de-salon` creado el 2026-09-08 (plan Spark, sin Analytics ni Gemini). Reglas publicadas y versionadas en `firebase/database.rules.json`; configuración pública en `assets/js/firebase-config.js`. Ver [firebase/README.md](../firebase/README.md).
+
+## D-19 · Quién parte en Toque y Fama: determinista, sin sorteo
+**Fecha:** 2026-09-08 · **Estado:** vigente
+**Decisión:** En la primera partida parte el invitado (rol B); en la revancha parte quien perdió (en empate, quien no partió). No hay sorteo.
+**Por qué:** El sorteo con nonces públicos propuesto en el estudio era manipulable: quien confirma segundo ve el nonce del otro y puede elegir el suyo. Además, un sorteo asíncrono (SHA-256) impedía reconstruir la partida de forma síncrona al reconectar. Con el derecho a réplica activado, la ventaja de partir es mínima, así que una regla fija es justa, simple y reproducible en ambos celulares.
+
+## D-20 · Un solo reductor de mensajes para los tres modos
+**Decisión:** El estado de una partida de Toque y Fama se reconstruye siempre desde una lista de mensajes (`hello`, `commit`, `guess`, `reply`, `reveal`, `rematch`), tanto en un celular (transporte en memoria) como en dos (Firebase). En modo un celular ambos roles son locales; contra el celular, el rol B es un bot con solver por eliminación.
+**Por qué:** Una sola lógica de juego probada en los tres modos; la reconexión es solo “volver a leer los mensajes”; y el mismo esquema sirve para futuros juegos con varios celulares.
+**Consecuencias:** Toda regla de turno vive en `view()` (derivada), nunca en variables sueltas. Los mensajes se procesan en serie para evitar carreras.
+
+## D-21 · Compromiso del secreto con sal privada
+**Decisión:** Al fijar el secreto se publica `sha256(secreto + sal)` con una sal aleatoria privada de 16 bytes; al final se revela secreto y sal, y cada celular verifica el hash y recalcula todas las respuestas del rival.
+**Por qué:** Con solo 5040 secretos posibles, un hash sin sal se rompe por fuerza bruta en milisegundos. La sal privada lo impide y la revelación final permite detectar respuestas falsas.
