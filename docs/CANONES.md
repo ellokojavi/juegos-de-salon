@@ -102,6 +102,13 @@ Un modo que todavía no existe se muestra deshabilitado con "Próximamente", nun
 - Un toque fuera de un elemento seleccionado lo deselecciona.
 - Se muestra en pantalla lo que el jugador necesita recordar (su número secreto, su flota), tapado si el celular pasa de mano.
 
+## C-8b · Errores del jugador
+
+- Un error se muestra con una señal inconfundible (color, sacudida, sonido propio) y se queda en pantalla hasta que el jugador toca; nunca se cierra solo ni lo pisa la jugada de otro.
+- Va acompañado de una explicación corta y concreta de qué estuvo mal, con los datos del juego (por ejemplo, entre qué hitos iba la carta y entre cuáles se puso).
+- Un acierto o la jugada de otro puede cerrarse solo tras un par de segundos; un toque lo cierra antes.
+- El temporizador que cierra un aviso solo puede cerrar ese aviso, no uno más nuevo.
+
 ## C-9 · Transiciones de "pasar el celular"
 
 - En modo un celular, entre turnos siempre hay: **resultado de lo que acaba de pasar** y, debajo, **"Pásale el celular a X"** con un botón. Nunca se salta el resultado.
