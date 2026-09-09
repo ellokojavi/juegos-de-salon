@@ -227,3 +227,12 @@ details.panel summary::-webkit-details-marker { display: none; }
 @keyframes passPhone { 0%, 100% { transform: translateX(-14px) rotate(-8deg); } 50% { transform: translateX(14px) rotate(8deg); } }
 .handoff .next-name { font-family: var(--font-display); font-size: clamp(3rem, 16vw, 4.8rem); color: var(--cyan); letter-spacing: 0.04em; text-shadow: 0 5px 0 rgba(0,0,0,0.4), 0 0 36px rgba(46, 230, 214, 0.7); line-height: 0.95; }
 .handoff .btn { max-width: 420px; }
+
+/* --- Pantalla opaca compartida: "pásale el celular", toca para ver (modo un celular) --- */
+.cover {
+  position: fixed; inset: 0; z-index: 35; display: grid; place-items: center; text-align: center; padding: 24px;
+  background: linear-gradient(160deg, var(--bg1), var(--bg2) 60%, var(--bg3)); animation: fadeIn 0.2s both;
+}
+.cover .big { font-family: var(--font-display); font-size: clamp(2.2rem, 12vw, 3.6rem); color: var(--cyan); letter-spacing: 0.04em; text-shadow: 0 5px 0 rgba(0,0,0,0.4); }
+.cover .eye { font-size: 4rem; animation: bounce 1.6s infinite; }
+

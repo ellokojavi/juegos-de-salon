@@ -1,5 +1,6 @@
 /**
- * Transporte remoto: sala en Firebase Realtime Database.
+ * Transporte remoto compartido por los juegos: sala en Firebase Realtime Database.
+ * Se crea con createFirebaseTransport({ game }) y el campo `game` de la sala separa los juegos.
  * Los mensajes son append-only en rooms/<CODE>/messages; cada cliente reconstruye el estado leyéndolos en orden.
  * Reglas de seguridad: firebase/database.rules.json.
  */
@@ -7,10 +8,17 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.18.0/fireba
 import {
   getDatabase, ref, get, set, update, push, onChildAdded, onValue, onDisconnect, serverTimestamp,
 } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js';
-import { firebaseConfig } from '../../assets/js/firebase-config.js';
-import { randomRoomCode } from '../engine.js';
+import { firebaseConfig } from '../firebase-config.js';
 
 const ROOM_TTL = 6 * 60 * 60 * 1000;
+
+/** Código de sala: 4 letras mayúsculas sin las ambiguas (I, O). */
+export function randomRoomCode() {
+  const letters = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+  const arr = new Uint8Array(4);
+  crypto.getRandomValues(arr);
+  return Array.from(arr).map(b => letters[b % letters.length]).join('');
+}
 let db = null;
 function getDb() {
   if (!db) db = getDatabase(initializeApp(firebaseConfig));

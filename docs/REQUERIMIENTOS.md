@@ -74,17 +74,17 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | TF-13 | Pulsación larga sobre una cifra del teclado la marca como bloqueada (no está en el número del rival). Las marcas son por jugador, se recuerdan durante la partida y se ven tachadas; otra pulsación larga las libera. Instrucción breve en pantalla. | ✅ v0.4.2 |
 | TF-14 | En el resultado, bloque colapsado “Ver todos los intentos” con los tableros de ambos jugadores; colapsado no empuja los botones fuera de la pantalla. | ✅ v0.4.3 |
 
-## Batalla Naval (BN) — diseño aprobado, ver [docs/juegos/batalla-naval.md](juegos/batalla-naval.md)
+## Batalla Naval (BN) — ver [docs/juegos/batalla-naval.md](juegos/batalla-naval.md)
 
 | ID | Requerimiento | Estado |
 |---|---|---|
-| BN-01 | Tablero 10×10 (A–J, 1–10) y flota clásica de 5 barcos (5, 4, 3, 3, 2). | 📝 aprobado |
-| BN-02 | Colocación por toque: seleccionar barco, tocar casilla, girar, arrastrar, “al azar” y “limpiar”; validación de bordes y superposición. Los barcos pueden tocarse. | 📝 aprobado |
-| BN-03 | Turnos con tiro extra al acertar (configurable, activado por defecto). | 📝 aprobado |
-| BN-04 | Respuestas agua / tocado / hundido, con el barco y sus casillas al hundir. Marcador de barcos hundidos. | 📝 aprobado |
-| BN-05 | Tres modos: un celular (flota tapada, pase al fallar), contra el celular (IA con cacería por paridad y persecución) y dos celulares (sala Firebase). | 📝 aprobado |
-| BN-06 | Compromiso de la flota con hash y sal, revelación y verificación al final. | 📝 aprobado |
-| BN-07 | Reconexión, revancha (parte el perdedor), presencia. | 📝 aprobado |
-| BN-08 | Selección + confirmación “¡Fuego!” antes de disparar (con opción de disparo directo). | 📝 aprobado |
-| BN-09 | Textos en español e inglés (“Battleship”); sonidos de agua, impacto y hundimiento. | 📝 aprobado |
-| BN-10 | Los transportes `local` y `firebase` se mueven a `assets/js/transport/` para compartirlos entre juegos. | 📝 aprobado |
+| BN-01 | Tablero 10×10 (A–J, 1–10) y flota clásica de 5 barcos (5, 4, 3, 3, 2). | ✅ v0.6 |
+| BN-02 | Colocación por toque: seleccionar barco, tocar casilla, girar, arrastrar, “al azar” y “limpiar”; validación de bordes y superposición. Los barcos pueden tocarse. | ✅ v0.6 |
+| BN-03 | Turnos con tiro extra al acertar (configurable, activado por defecto). | ✅ v0.6 |
+| BN-04 | Respuestas agua / tocado / hundido, con el barco y sus casillas al hundir. Marcador de barcos hundidos. | ✅ v0.6 |
+| BN-05 | Tres modos: un celular (flota tapada, pase al fallar), contra el celular (IA con cacería por paridad y persecución) y dos celulares (sala Firebase). | ✅ v0.6 |
+| BN-06 | Compromiso de la flota con hash y sal, revelación y verificación al final. | ✅ v0.6 |
+| BN-07 | Reconexión, revancha (parte el perdedor), presencia. | ✅ v0.6 |
+| BN-08 | Selección + confirmación “¡Fuego!” antes de disparar (con opción de disparo directo). | ✅ v0.6 |
+| BN-09 | Textos en español e inglés (“Battleship”); sonidos de agua, impacto y hundimiento. | ✅ v0.6 |
+| BN-10 | Los transportes `local` y `firebase` se mueven a `assets/js/transport/` para compartirlos entre juegos. | ✅ v0.6 |

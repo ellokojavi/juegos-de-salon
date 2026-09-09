@@ -11,8 +11,8 @@ App web (mobile-first) con juegos de salón para jugar con amigos: de naipes, de
 | Juego | Jugadores | Modos | Estado |
 |---|---|---|---|
 | 👑 [Cuarto Rey / Fourth King](#-cuarto-rey) | 4 a 6 | Un celular en la mesa | v0.3 |
-| 🔢 [Toque y Fama / Bulls and Cows](#-toque-y-fama) | 2 | Un celular · Dos celulares · Contra el celular | v0.5 |
-| ⚓ Batalla Naval / Battleship | 2 | Un celular · Dos celulares · Contra el celular | [en diseño](docs/juegos/batalla-naval.md) |
+| 🔢 [Toque y Fama / Bulls and Cows](#-toque-y-fama) | 1 a 2 | Un celular · Dos celulares · Contra el celular | v0.5 |
+| ⚓ [Batalla Naval / Battleship](#-batalla-naval) | 1 a 2 | Un celular · Dos celulares · Contra el celular | v0.6 |
 
 ---
 
@@ -62,6 +62,31 @@ Cada jugador elige un número secreto de cifras distintas y trata de adivinar el
 
 Especificación: [docs/juegos/toque-y-fama.md](docs/juegos/toque-y-fama.md) · Estudio de factibilidad: [docs/juegos/toque-y-fama-factibilidad.md](docs/juegos/toque-y-fama-factibilidad.md)
 
+## ⚓ Batalla Naval
+
+El clásico de hundir la flota. Cada jugador esconde 5 barcos en un tablero de 10×10 y dispara por turnos: agua, tocado o hundido. Si aciertas, sigues disparando. Colocación por toque con girar, arrastrar y "al azar"; el celular responde solo y lleva el marcador.
+
+- **📱 Un celular:** tu flota queda tapada entre turnos; al fallar, el resultado y "Pásale el celular a X" en una sola pantalla.
+- **📡 Dos celulares:** sala con código y QR. Cada celular responde los disparos contra su propia flota; al final ambas flotas se revelan y verifican.
+- **🤖 Contra el celular:** IA con cacería por paridad y persecución al acertar (hunde una flota en unos 50 disparos).
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/batalla-naval/01-intro.png" width="180" alt="Intro"><br><sub>Modos de juego</sub></td>
+    <td align="center"><img src="docs/screenshots/batalla-naval/02-flota.png" width="180" alt="Colocar flota"><br><sub>Colocar la flota</sub></td>
+    <td align="center"><img src="docs/screenshots/batalla-naval/03-batalla.png" width="180" alt="Batalla"><br><sub>Batalla</sub></td>
+    <td align="center"><img src="docs/screenshots/batalla-naval/04-pase.png" width="180" alt="Pase"><br><sub>Resultado y pase</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/batalla-naval/06-sala.png" width="180" alt="Sala"><br><sub>Sala con código y QR</sub></td>
+    <td align="center"><img src="docs/screenshots/batalla-naval/07-dos-celulares.png" width="180" alt="Dos celulares"><br><sub>Partida en dos celulares</sub></td>
+    <td align="center"><img src="docs/screenshots/batalla-naval/05-resultado.png" width="180" alt="Resultado"><br><sub>Resultado con flotas</sub></td>
+    <td></td>
+  </tr>
+</table>
+
+Especificación y diseño: [docs/juegos/batalla-naval.md](docs/juegos/batalla-naval.md)
+
 ---
 
 ## Características comunes
@@ -85,6 +110,7 @@ y abrir http://localhost:8080 (los módulos ES necesitan servirse por HTTP). Tes
 
 ```bash
 node toque-y-fama/engine.test.mjs
+node batalla-naval/engine.test.mjs
 ```
 
 ## Publicar una versión
@@ -106,7 +132,10 @@ assets/js/sound.js          Efectos de sonido sintetizados y botón de silencio
 assets/js/ui.js             Utilidades UI: confeti, vibración, wake lock, helpers DOM
 assets/js/firebase-config.js Configuración pública de Firebase
 cuarto-rey/                 Juego Cuarto Rey (index.html, game.js, rules.js, style.css)
-toque-y-fama/               Juego Toque y Fama (engine.js + tests, game.js, transport/, rules.js)
+toque-y-fama/               Juego Toque y Fama (engine.js + tests, game.js, rules.js)
+batalla-naval/              Juego Batalla Naval (engine.js + tests, game.js, rules.js)
+assets/js/handoff.js        Transiciones compartidas: pásale el celular, pantalla tapada
+assets/js/transport/        Transportes compartidos: local (mismo celular) y firebase (sala)
 firebase/                   Reglas de seguridad de Realtime Database y notas
 tools/set-version.py        Estampa la versión (import maps + estilos) para evitar caché mezclada
 docs/                       Requerimientos, decisiones, especificaciones y capturas
@@ -120,5 +149,5 @@ docs/                       Requerimientos, decisiones, especificaciones y captu
 - [Especificación: Cuarto Rey](docs/juegos/cuarto-rey.md)
 - [Especificación: Toque y Fama](docs/juegos/toque-y-fama.md)
 - [Factibilidad: Toque y Fama con dos celulares](docs/juegos/toque-y-fama-factibilidad.md)
-- [Diseño: Batalla Naval](docs/juegos/batalla-naval.md)
+- [Especificación y diseño: Batalla Naval](docs/juegos/batalla-naval.md)
 - [Changelog](CHANGELOG.md)

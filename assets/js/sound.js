@@ -104,6 +104,18 @@ export const SFX = {
   dice() { [0, 0.06, 0.13].forEach(d => noise({ dur: 0.05, gain: 0.2, from: 1500, to: 1000, q: 2, delay: d })); },
   /** Pasar el celular: whoosh ascendente. */
   pass() { noise({ dur: 0.45, gain: 0.2, from: 200, to: 4000, q: 0.6 }); tone({ freq: 400, to: 900, type: 'sine', dur: 0.4, gain: 0.05 }); },
+  /** Batalla Naval: agua (splash). */
+  splash() { noise({ dur: 0.35, gain: 0.22, from: 900, to: 150, q: 0.7, type: 'lowpass' }); tone({ freq: 220, to: 90, type: 'sine', dur: 0.25, gain: 0.12 }); },
+  /** Batalla Naval: tocado (explosión corta). */
+  hit() { noise({ dur: 0.3, gain: 0.35, from: 3000, to: 300, q: 0.5, type: 'lowpass' }); tone({ freq: 160, to: 50, type: 'square', dur: 0.22, gain: 0.18 }); },
+  /** Batalla Naval: hundido (explosión larga con burbujeo). */
+  sink() {
+    noise({ dur: 0.7, gain: 0.4, from: 2500, to: 120, q: 0.5, type: 'lowpass' });
+    tone({ freq: 140, to: 35, type: 'sawtooth', dur: 0.6, gain: 0.16 });
+    [0.5, 0.65, 0.8, 0.95].forEach((d, i) => tone({ freq: 500 + i * 120, to: 300, type: 'sine', dur: 0.08, gain: 0.06, delay: d }));
+  },
+  /** Batalla Naval: flota perdida (sirena). */
+  siren() { [0, 0.5, 1.0].forEach(d => tone({ freq: 500, to: 800, type: 'triangle', dur: 0.45, gain: 0.1, delay: d })); },
   /** Error de formulario. */
   error() { tone({ freq: 160, to: 120, type: 'sawtooth', dur: 0.25, gain: 0.12 }); },
 };

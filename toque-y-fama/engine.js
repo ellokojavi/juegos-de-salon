@@ -87,14 +87,6 @@ export function randomNonce(bytes = 16) {
   return Array.from(arr).map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
-/** Código de sala: 4 letras mayúsculas sin las ambiguas (I, O). */
-export function randomRoomCode() {
-  const letters = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
-  const arr = new Uint8Array(4);
-  crypto.getRandomValues(arr);
-  return Array.from(arr).map(b => letters[b % letters.length]).join('');
-}
-
 /**
  * Verifica el compromiso y que todas las respuestas dadas por un jugador coincidan con su secreto.
  * El compromiso es sha256(secreto + sal privada). La sal se revela al final; el nonce del sorteo es público

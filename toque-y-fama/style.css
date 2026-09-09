@@ -96,14 +96,6 @@
 .board li.hit { background: linear-gradient(90deg, rgba(255, 210, 63, 0.35), rgba(255, 46, 136, 0.35)); }
 .board .empty { color: var(--muted); font-size: 0.85rem; text-align: center; padding: 10px 0; }
 
-/* Cover (tapar pantalla en modo un celular) */
-.cover {
-  position: fixed; inset: 0; z-index: 35; display: grid; place-items: center; text-align: center; padding: 24px;
-  background: linear-gradient(160deg, var(--bg1), var(--bg2) 60%, var(--bg3)); animation: fadeIn 0.2s both;
-}
-.cover .big { font-family: var(--font-display); font-size: clamp(2.2rem, 12vw, 3.6rem); color: var(--cyan); letter-spacing: 0.04em; text-shadow: 0 5px 0 rgba(0,0,0,0.4); }
-.cover .eye { font-size: 4rem; animation: bounce 1.6s infinite; }
-
 /* Resultado */
 .result-hero { text-align: center; padding: 2px 0 6px; }
 .result-hero .trophy { font-size: 4.2rem; display: block; animation: pop 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }

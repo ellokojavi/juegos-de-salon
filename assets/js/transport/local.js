@@ -1,5 +1,5 @@
 /**
- * Transporte local: ambos jugadores (o un jugador y el bot) en el mismo dispositivo.
+ * Transporte local compartido por los juegos: ambos jugadores (o un jugador y el bot) en el mismo dispositivo.
  * Es un bus de mensajes en memoria con la misma interfaz que el transporte de Firebase.
  */
 export function createLocalTransport() {

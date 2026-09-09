@@ -1,6 +1,6 @@
 # Diseño: Batalla Naval ⚓
 
-**Estado:** diseño aprobado, pendiente de implementación · **Fecha:** 2026-09-08 · **Ruta prevista:** `/batalla-naval/` · **Jugadores:** 2
+**Estado:** implementado (v0.6) · **Fecha:** 2026-09-08 · **Ruta:** `/batalla-naval/` · **Jugadores:** 1 a 2 · **Idiomas:** es, en (“Battleship”)
 
 ## 1. Resumen
 
@@ -107,6 +107,13 @@ batalla-naval/
   transport/ → se reutilizan los de Toque y Fama moviéndolos a assets/js/transport/ (local.js, firebase.js con parámetro game)
 ```
 Mover los transportes a `assets/js/transport/` es la única refactorización previa: Toque y Fama pasa a importarlos de ahí.
+
+## 8b. Estado de la implementación (v0.6)
+- Fase 0: transportes movidos a `assets/js/transport/`; `randomRoomCode` vive en el transporte de Firebase. Nuevo módulo compartido `assets/js/handoff.js` (overlay de pase y pantalla tapada) y estilos `.cover` en `base.css`.
+- Fase 1: motor con tests (`engine.test.mjs`, IA ≈ 50 disparos promedio), colocación por toque/girar/arrastrar/al azar, modo un celular y contra el celular.
+- Fase 2: dos celulares con sala, QR, reconexión (flota guardada en `juegos-de-salon:bn:session`), presencia y revancha (parte el perdedor).
+- Fase 3: sonidos propios (`SFX.splash`, `hit`, `sink`, `siren`), capturas en `docs/screenshots/batalla-naval/`, README.
+- Diferencia con el diseño: la opción “disparo directo con un toque” es el toggle “Confirmar cada disparo” (activado por defecto).
 
 ## 9. Plan y estimación
 
