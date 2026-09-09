@@ -55,16 +55,18 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 - **Privacidad:** no se envía ningún dato a servidores; todo vive en `localStorage` del dispositivo.
 - **Responsabilidad:** el menú incluye un mensaje de consumo responsable.
 
-## Toque y Fama (TF) — propuestos, ver [estudio de factibilidad](juegos/toque-y-fama-factibilidad.md)
+## Toque y Fama (TF) — ver [especificación](juegos/toque-y-fama.md) y [estudio de factibilidad](juegos/toque-y-fama-factibilidad.md)
 
 | ID | Requerimiento | Estado |
 |---|---|---|
-| TF-01 | Dos jugadores; cada uno elige un número secreto de 3, 4 o 5 cifras distintas (4 por defecto). | 📝 propuesto |
-| TF-02 | El celular calcula toques y famas automáticamente; nunca se cuenta a mano. | 📝 propuesto |
-| TF-03 | Modo un celular (pasar y jugar) con pantalla opaca entre turnos. | 📝 propuesto (Fase 1) |
-| TF-04 | Modo contra el celular: adivinar un número al azar, o que el celular adivine el tuyo. | 📝 propuesto (Fase 1) |
-| TF-05 | Modo dos celulares conectados por sala con código de 4 letras y QR. | 📝 propuesto (Fase 2) |
-| TF-06 | El secreto no sale del celular durante la partida; compromiso por hash al inicio y revelación verificada al final. | 📝 propuesto (Fase 2) |
-| TF-07 | Reconexión: si un celular se cierra, retoma la partida desde la sala. | 📝 propuesto (Fase 2) |
-| TF-08 | Derecho a réplica configurable; sorteo verificable de quién parte. | 📝 propuesto |
-| TF-09 | Textos en español e inglés (“Bulls and Cows”). | 📝 propuesto |
+| TF-01 | Dos jugadores; cada uno elige un número secreto de 3, 4 o 5 cifras distintas (4 por defecto). | ✅ v0.4 |
+| TF-02 | El celular calcula toques y famas automáticamente; nunca se cuenta a mano. | ✅ v0.4 |
+| TF-03 | Modo un celular (pasar y jugar) con pantalla opaca entre turnos. | ✅ v0.4 |
+| TF-04 | Modo contra el celular: duelo (tú adivinas el suyo mientras él adivina el tuyo con un solver). | ✅ v0.4 |
+| TF-05 | Modo dos celulares conectados por sala con código de 4 letras y QR (Firebase Realtime Database). | ✅ v0.4 |
+| TF-06 | El secreto no sale del celular durante la partida; compromiso por hash (con sal privada) al inicio y revelación verificada al final. | ✅ v0.4 |
+| TF-07 | Reconexión: si un celular se cierra, retoma la partida desde la sala (secreto guardado en el dispositivo). | ✅ v0.4 |
+| TF-08 | Derecho a réplica configurable. Quién parte es determinista: el invitado en la primera partida, el perdedor en la revancha (ver D-19). | ✅ v0.4 |
+| TF-09 | Textos en español e inglés (“Bulls and Cows”). | ✅ v0.4 |
+| TF-10 | Revancha en los tres modos; en dos celulares se crea una sala nueva y ambos se mueven solos. | ✅ v0.4 |
+| TF-11 | Indicador de rival desconectado en modo dos celulares. | ✅ v0.4 |

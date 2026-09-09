@@ -1,0 +1,36 @@
+{
+  "rules": {
+    "rooms": {
+      "$room": {
+        ".read": "$room.matches(/^[A-Z]{4}$/)",
+        ".write": "$room.matches(/^[A-Z]{4}$/) && data.exists() && !newData.exists() && data.child('createdAt').val() < now - 21600000",
+        ".validate": "newData.hasChildren(['createdAt', 'game'])",
+        "createdAt": {
+          ".write": "$room.matches(/^[A-Z]{4}$/) && !data.exists()",
+          ".validate": "newData.isNumber() && newData.val() <= now + 60000 && newData.val() > now - 60000"
+        },
+        "game": {
+          ".write": "$room.matches(/^[A-Z]{4}$/) && !data.exists()",
+          ".validate": "newData.isString() && newData.val().length < 40"
+        },
+        "config": {
+          ".write": "$room.matches(/^[A-Z]{4}$/) && !data.exists()",
+          ".validate": "newData.hasChildren()"
+        },
+        "players": {
+          "$p": {
+            ".write": "$room.matches(/^[A-Z]{4}$/) && $p.matches(/^[AB]$/) && root.child('rooms/' + $room + '/createdAt').val() > now - 21600000",
+            ".validate": "newData.hasChildren(['name']) && newData.child('name').isString() && newData.child('name').val().length <= 20"
+          }
+        },
+        "messages": {
+          "$id": {
+            ".write": "$room.matches(/^[A-Z]{4}$/) && !data.exists() && root.child('rooms/' + $room + '/createdAt').val() > now - 21600000",
+            ".validate": "newData.hasChildren(['t', 'from', 'at']) && newData.child('t').isString() && newData.child('from').val().matches(/^[AB]$/) && newData.child('at').isNumber() && newData.child('at').val() <= now + 60000"
+          }
+        },
+        "$other": { ".validate": false }
+      }
+    }
+  }
+}
