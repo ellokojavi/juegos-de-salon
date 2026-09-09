@@ -25,7 +25,7 @@ const ES = {
   lobbyTitle: 'Sala creada', lobbyCode: 'Código', lobbyShare: 'Dile el código al rival o que escanee el QR.', lobbyWaiting: 'Esperando al rival…', lobbyJoined: '¡{name} se unió!', copyLink: '📋 Copiar link', copied: '¡Copiado!',
   // secret
   secretTitle: 'Tu número secreto', secretFor: 'Número secreto de {name}', secretHint: '{n} cifras distintas. Que nadie mire.', secretHintNoZero: '{n} cifras distintas, sin cero al inicio. Que nadie mire.',
-  confirm: 'Confirmar', hide: 'Tapar pantalla', tapToReveal: 'Toca para ver', secretSaved: 'Número secreto guardado 🔒',
+  confirm: '¡Vamos!', hide: 'Tapar pantalla', tapToReveal: 'Toca para ver', secretSaved: 'Número secreto guardado 🔒',
   waitingSecret: 'Esperando a que {name} elija su número secreto…', bothReady: '¡Los dos listos!',
   // play
   turnYou: '¡Te toca! Adivina el de {name}', turnOther: 'Le toca a {name}…', waitingReply: 'Esperando la respuesta…', starts: 'Parte {name}',
@@ -62,7 +62,7 @@ const EN = {
   errNotFound: 'That room doesn\'t exist. Check the code.', errFull: 'That room is full.', errExpired: 'That room has expired.', errOtherGame: 'That code belongs to another game.', errNet: 'Could not connect. Is there internet?',
   lobbyTitle: 'Room created', lobbyCode: 'Code', lobbyShare: 'Tell your rival the code or let them scan the QR.', lobbyWaiting: 'Waiting for your rival…', lobbyJoined: '{name} joined!', copyLink: '📋 Copy link', copied: 'Copied!',
   secretTitle: 'Your secret number', secretFor: '{name}\'s secret number', secretHint: '{n} different digits. No peeking.', secretHintNoZero: '{n} different digits, no leading zero. No peeking.',
-  confirm: 'Confirm', hide: 'Hide screen', tapToReveal: 'Tap to reveal', secretSaved: 'Secret number saved 🔒',
+  confirm: 'Let\'s go!', hide: 'Hide screen', tapToReveal: 'Tap to reveal', secretSaved: 'Secret number saved 🔒',
   waitingSecret: 'Waiting for {name} to pick a secret number…', bothReady: 'Both ready!',
   turnYou: 'Your turn! Guess {name}\'s number', turnOther: '{name}\'s turn…', waitingReply: 'Waiting for the reply…', starts: '{name} starts',
   blockHint: '💡 Long-press a digit to block it if you think it isn\'t in your rival\'s number. Long-press again to unblock.',
