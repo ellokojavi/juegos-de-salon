@@ -14,6 +14,8 @@
 
 Publicar: antes de cada commit que se publique, correr `python3 tools/set-version.py X.Y.Z` (nueva versión) para que el navegador no mezcle archivos en caché.
 
+Módulos compartidos: `assets/js/handoff.js` (pásale el celular, pantalla tapada), `assets/js/transport/` (local y Firebase), `assets/js/sound.js`, `assets/js/i18n.js`.
+
 Convenciones:
 - Idioma: leer `getLang()` de `assets/js/i18n.js`, marcar textos fijos del HTML con `data-i18n="clave"` (o `data-i18n-html`) y llamar `applyStatic(LOCALES[lang].ui)` al iniciar. Incluir `langToggle()` en la intro del juego.
 - Textos en español chileno informal, tuteo, sin groserías fuertes.

@@ -11,9 +11,9 @@
 ## Modos
 | Modo | Cómo | Transporte |
 |---|---|---|
-| 📱 Un celular, dos jugadores | Cada uno ingresa su secreto con la pantalla tapada; tras cada intento aparece, en una sola pantalla, la respuesta (toques y famas) y debajo “Pásale el celular a X”. | `transport/local.js` (memoria) |
-| 🤖 Contra el celular | Duelo: el jugador adivina el número del celular mientras el celular (solver por eliminación) adivina el suyo. | `transport/local.js` + bot |
-| 📡 Dos celulares | Sala con código de 4 letras y QR (`?sala=CODE`). Cada celular calcula las respuestas contra su propio secreto. | `transport/firebase.js` (Realtime Database) |
+| 📱 Un celular, dos jugadores | Cada uno ingresa su secreto con la pantalla tapada; tras cada intento aparece, en una sola pantalla, la respuesta (toques y famas) y debajo “Pásale el celular a X”. | `assets/js/transport/local.js` (memoria) |
+| 🤖 Contra el celular | Duelo: el jugador adivina el número del celular mientras el celular (solver por eliminación) adivina el suyo. | `assets/js/transport/local.js` + bot |
+| 📡 Dos celulares | Sala con código de 4 letras y QR (`?sala=CODE`). Cada celular calcula las respuestas contra su propio secreto. | `assets/js/transport/firebase.js` (Realtime Database) |
 
 ## Recordatorio del número propio
 En la pantalla de juego aparece una ficha “🔒 Tu número secreto”. En dos celulares y contra el celular se ve directo; en un celular parte oculta (••••) y se muestra al tocarla, porque el celular pasa de mano.
@@ -59,7 +59,6 @@ toque-y-fama/
   index.html · style.css · rules.js (LOCALES es/en, config por defecto)
   engine.js (score, isValid, randomSecret, Solver, sha256, verifyPlayer) · engine.test.mjs
   game.js (reductor, agentes locales, bot, render)
-  transport/local.js · transport/firebase.js
 firebase/database.rules.json · assets/js/firebase-config.js
 ```
 Tests del motor: `node toque-y-fama/engine.test.mjs`.
