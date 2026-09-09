@@ -11,7 +11,7 @@
 ## Modos
 | Modo | Cómo | Transporte |
 |---|---|---|
-| 📱 Un celular, dos jugadores | Cada uno ingresa su secreto con la pantalla tapada; entre turnos aparece el resultado y “Pásale el celular a X”. | `transport/local.js` (memoria) |
+| 📱 Un celular, dos jugadores | Cada uno ingresa su secreto con la pantalla tapada; tras cada intento aparece, en una sola pantalla, la respuesta (toques y famas) y debajo “Pásale el celular a X”. | `transport/local.js` (memoria) |
 | 🤖 Contra el celular | Duelo: el jugador adivina el número del celular mientras el celular (solver por eliminación) adivina el suyo. | `transport/local.js` + bot |
 | 📡 Dos celulares | Sala con código de 4 letras y QR (`?sala=CODE`). Cada celular calcula las respuestas contra su propio secreto. | `transport/firebase.js` (Realtime Database) |
 
