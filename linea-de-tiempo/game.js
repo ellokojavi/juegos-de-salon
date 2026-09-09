@@ -1,7 +1,7 @@
 /**
  * Línea de Tiempo — lógica de juego.
  * Reductor de mensajes único para todos los modos (canon C-7):
- *  - local: 2 a 6 jugadores en este celular · cpu: el rol B es la IA · online: fase 2
+ *  - local: 2 a 6 jugadores en este celular · solo: un jugador vacía su mano · online: varios celulares
  * El estado se deriva de la semilla del mazo más las jugadas, así que no hacen falta respuestas.
  */
 import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../assets/js/ui.js';
@@ -10,9 +10,9 @@ import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { showHandoff, passBlock } from '../assets/js/handoff.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
-import { buildState, correctSlot, botMove, randomSeed, yearLabel } from './engine.js';
+import { buildState, correctSlot, randomSeed, yearLabel } from './engine.js';
 import { DECKS, getDeck } from './decks/index.js';
-import { GAME_ID, DEFAULT_CONFIG, HAND_SIZES, DIFFICULTIES, MIN_PLAYERS, MAX_PLAYERS, LOCALES } from './rules.js';
+import { GAME_ID, DEFAULT_CONFIG, HAND_SIZES, MIN_PLAYERS, MAX_PLAYERS, LOCALES } from './rules.js';
 
 const lang = getLang();
 const T = LOCALES[lang];
@@ -20,6 +20,12 @@ const fmt = (s, vars = {}) => s.replace(/\{(\w+)\}/g, (_, k) => (vars[k] !== und
 const ROLES = ['A', 'B', 'C', 'D', 'E', 'F'];
 const store = createSessionStore(GAME_ID);
 const nameStore = createNameStore(GAME_ID);
+const RECORD_KEY = `juegos-de-salon:${GAME_ID}:record`;
+/** Récord del solitario por temática y tamaño de mano (menos intentos es mejor). */
+const records = {
+  get(theme, hand) { try { return (JSON.parse(localStorage.getItem(RECORD_KEY) || '{}'))[`${theme}:${hand}`] || null; } catch (_) { return null; } },
+  set(theme, hand, n) { try { const all = JSON.parse(localStorage.getItem(RECORD_KEY) || '{}'); all[`${theme}:${hand}`] = n; localStorage.setItem(RECORD_KEY, JSON.stringify(all)); } catch (_) { /* nada */ } },
+};
 
 let S = null;   // sesión: modo, transporte, roles locales, selección de la interfaz
 let M = null;   // partida: config, nombres y jugadas
@@ -66,9 +72,9 @@ function view() {
 /* ------------------------------------------------------------------ */
 /* Sesión                                                              */
 /* ------------------------------------------------------------------ */
-function startSession({ mode, transport, roles, config, names, bot = null, code = null, role = null }) {
+function startSession({ mode, transport, roles, config, names, code = null, role = null }) {
   if (S?.transport) S.transport.leave();
-  S = { mode, transport, roles, bot, code, role, uiRole: null, selCard: null, selSlot: null, lastShown: -1, cpuTimer: null };
+  S = { mode, transport, roles, code, role, uiRole: null, selCard: null, selSlot: null, lastShown: -1 };
   M = newMatch(config);
   Object.entries(names).forEach(([r, name]) => { if (name) transport.send({ t: 'hello', from: r, name }); });
   transport.onMessage(m => { apply(m); onChange(); });
@@ -78,22 +84,7 @@ function startSession({ mode, transport, roles, config, names, bot = null, code 
 let chain = Promise.resolve();
 function onChange() { chain = chain.then(async () => { await act(); render(); }).catch(e => console.error(e)); }
 
-async function act() {
-  const v = view();
-  if (v.lobby) { saveSession(); return; }
-  if (S.bot && !v.done && v.current === S.bot.role && !S.cpuTimer) {
-    S.cpuTimer = setTimeout(function tick() {
-      // Mientras haya un veredicto en pantalla, el celular espera: no pisa lo que el jugador está leyendo
-      if (!$('#handoff').hidden) { S.cpuTimer = setTimeout(tick, 500); return; }
-      S.cpuTimer = null;
-      const s = view();
-      if (s.done || s.current !== S.bot.role) return;
-      const mv = botMove({ line: s.line, hand: s.hands[S.bot.role], byId: s.byId, difficulty: M.config.difficulty });
-      S.transport.send({ t: 'place', from: S.bot.role, card: mv.card, slot: mv.at });
-    }, 1400);
-  }
-  saveSession();
-}
+async function act() { saveSession(); }
 
 /* ---------- Persistencia (canon C-6) ---------- */
 function saveSession() {
@@ -112,8 +103,7 @@ async function resume(saved) {
 
 function restoreLocal(saved) {
   const transport = createLocalTransport({ seed: saved.messages || [] });
-  const bot = saved.mode === 'cpu' ? { role: 'B' } : null;
-  startSession({ mode: saved.mode, transport, roles: saved.config.players, config: saved.config, names: {}, bot });
+  startSession({ mode: saved.mode, transport, roles: saved.config.players, config: saved.config, names: {} });
   S.lastShown = M.moves.length - 1;
   S.uiRole = null; // fuerza la pantalla de pase al retomar
   keepAwake();
@@ -175,15 +165,15 @@ async function renderQr(url) {
 
 function renderPlay(v) {
   showScreen('screen-play');
-  const isLocalTurn = S.roles.includes(v.current) && !(S.bot && S.bot.role === v.current);
-  // Contra el celular y varios celulares: el veredicto de cada jugada se muestra a todos.
+  const isLocalTurn = S.roles.includes(v.current);
+  // Solitario y varios celulares: el veredicto de cada jugada se muestra a todos.
   // Un acierto (o la jugada de otro) se cierra solo; un error propio se queda hasta que el jugador toque,
   // con fondo rojo y una explicación de dónde iba la carta.
   if (S.mode !== 'local' && v.history.length > S.lastShown + 1) {
     if (S.sticky && !$('#handoff').hidden) return;        // el jugador aún lee su error: lo nuevo espera
     const last = v.history[v.history.length - 1];
     S.lastShown = v.history.length - 1;
-    const mine = S.roles.includes(last.from) && !(S.bot && S.bot.role === last.from);
+    const mine = S.roles.includes(last.from);
     const stage = verdictStage(last, v, null);
     const gen = (S.verdictGen = (S.verdictGen || 0) + 1);
     S.sticky = mine && !last.ok;
@@ -209,16 +199,19 @@ function renderPlay(v) {
   }
 
   // Rol que mira la pantalla
-  const me = S.mode === 'online' ? S.role : (S.mode === 'cpu' ? 'A' : v.current);
-  $('#status-who').textContent = isLocalTurn ? fmt(T.turnYou, { name: M.names[v.current] }) : (S.bot && v.current === S.bot.role ? T.cpuThinking : fmt(T.turnOther, { name: M.names[v.current] }));
+  const me = S.mode === 'online' ? S.role : (S.mode === 'solo' ? 'A' : v.current);
+  const okCount = v.history.filter(h => h.ok).length;
+  $('#status-who').textContent = S.mode === 'solo' ? T.soloTitle : (isLocalTurn ? fmt(T.turnYou, { name: M.names[v.current] }) : fmt(T.turnOther, { name: M.names[v.current] }));
   const offline = S.mode === 'online' ? M.players?.length && ROLES.find(r => M.presence[r]?.online === false && M.names[r]) : null;
-  $('#status-sub').textContent = isLocalTurn ? (S.selCard ? T.pickSlot : T.pickCard)
+  const record = S.mode === 'solo' ? records.get(M.config.theme, M.config.handSize) : null;
+  $('#status-sub').textContent = S.mode === 'solo' ? `${fmt(T.soloStatus, { ok: okCount, n: v.history.length })}${record ? ' · ' + fmt(T.soloRecord, { n: record }) : ''}`
+    : isLocalTurn ? (S.selCard ? T.pickSlot : T.pickCard)
     : offline ? fmt(T.offline, { name: M.names[offline] })
     : (S.mode === 'online' ? fmt(T.waitingTurn, { name: M.names[v.current] }) : '');
 
   // Marcador
   const score = $('#score'); score.innerHTML = '';
-  for (const p of M.players) {
+  if (S.mode !== 'solo') for (const p of M.players) {
     score.append(el('span', { class: 'p' + (p === v.current ? ' turn' : '') }, M.names[p], el('span', { class: 'n' }, v.hands[p].length)));
   }
 
@@ -293,7 +286,7 @@ function whereText([a, b], byId) {
 function verdictStage(last, v, nextName) {
   const c = v.byId[last.card];
   playVerdictSound(last.ok);
-  const mine = S.mode === 'local' || (S.roles.includes(last.from) && !(S.bot && S.bot.role === last.from));
+  const mine = S.mode === 'local' || S.roles.includes(last.from);
   const stage = el('div', { class: 'stage pop' },
     el('div', { class: 'verdict' },
       el('div', { class: 'big ' + (last.ok ? 'ok' : 'no') }, last.ok ? T.correct : T.wrong),
@@ -319,15 +312,26 @@ function renderResult(v) {
   const already = $('#screen-result').classList.contains('active');
   if (!already) showScreen('screen-result');
   const winners = v.winner || [];
-  const meRole = S.mode === 'online' ? S.role : (S.mode === 'cpu' ? 'A' : null);
+  const meRole = S.mode === 'online' ? S.role : null;
   const many = winners.length > 1;
-  $('#result-title').textContent = many ? T.winTitleMany : fmt(T.winTitle, { name: M.names[winners[0]] });
   const okOf = p => v.history.filter(h => h.from === p && h.ok).length;
   const totalOf = p => v.history.filter(h => h.from === p).length;
-  $('#result-sub').textContent = (meRole ? (winners.includes(meRole) ? T.youWin : T.youLose) + ' · ' : '') + fmt(T.stats, { ok: okOf(winners[0]), total: totalOf(winners[0]) });
-  $('#result-trophy').textContent = meRole && !winners.includes(meRole) ? '😵' : (many ? '🤝' : '🏆');
+  if (S.mode === 'solo') {
+    const tries = totalOf('A'), acc = tries ? Math.round(100 * okOf('A') / tries) : 0;
+    const prev = records.get(M.config.theme, M.config.handSize);
+    const isRecord = !prev || tries < prev;
+    if (!already && isRecord) records.set(M.config.theme, M.config.handSize, tries);
+    $('#result-title').textContent = T.soloDone;
+    $('#result-sub').textContent = `${fmt(T.soloResult, { n: tries, acc })} · ${isRecord ? T.newRecord : fmt(T.prevRecord, { n: prev })}`;
+    $('#result-trophy').textContent = isRecord ? '🏆' : '✅';
+  } else {
+    $('#result-title').textContent = many ? T.winTitleMany : fmt(T.winTitle, { name: M.names[winners[0]] });
+    $('#result-sub').textContent = (meRole ? (winners.includes(meRole) ? T.youWin : T.youLose) + ' · ' : '') + fmt(T.stats, { ok: okOf(winners[0]), total: totalOf(winners[0]) });
+    $('#result-trophy').textContent = meRole && !winners.includes(meRole) ? '😵' : (many ? '🤝' : '🏆');
+  }
 
   const rank = $('#result-ranking'); rank.innerHTML = '';
+  $('#result-ranking').parentElement.hidden = S.mode === 'solo';
   const order = M.players.slice().sort((a, b) => v.hands[a].length - v.hands[b].length || okOf(b) - okOf(a));
   order.forEach((p, i) => {
     rank.append(el('li', { class: winners.includes(p) ? 'top' : '' },
@@ -400,14 +404,13 @@ async function joinOnline(code, name, previousRole = null) {
 function startLocalMode(mode, names, config) {
   clearSession();
   const transport = createLocalTransport();
-  const bot = mode === 'cpu' ? { role: 'B' } : null;
-  startSession({ mode, transport, roles: config.players, config, names, bot });
+  startSession({ mode, transport, roles: config.players, config, names });
   keepAwake();
 }
 
 function renderModes() {
   const box = $('#modes'); box.innerHTML = '';
-  const modes = [['local', T.modeLocal, T.modeLocalHint, true], ['online', T.modeOnline, T.modeOnlineHint, true], ['cpu', T.modeCpu, T.modeCpuHint, true]];
+  const modes = [['local', T.modeLocal, T.modeLocalHint, true], ['online', T.modeOnline, T.modeOnlineHint, true], ['solo', T.modeSolo, T.modeSoloHint, true]];
   for (const [m, label, hint, ok] of modes) box.append(el('button', { class: 'mode', disabled: !ok, onClick: () => { SFX.tap(); renderSetup(m); } }, el('span', {}, el('b', {}, label), el('small', {}, hint)), el('span', { class: 'go' }, ok ? '›' : '⏳')));
 }
 
@@ -417,7 +420,7 @@ function renderResumeSlot() {
   if (!saved || saved.done) return;
   if (saved.mode === 'online' && !saved.code) return;
   const deck = getDeck(saved.config?.theme);
-  const label = saved.mode === 'online' ? `${T.lobbyCode}: ${saved.code}` : { local: T.modeLocal, cpu: T.modeCpu }[saved.mode] || '';
+  const label = saved.mode === 'online' ? `${T.lobbyCode}: ${saved.code}` : { local: T.modeLocal, solo: T.modeSolo }[saved.mode] || '';
   slot.append(el('div', { class: 'panel pop' },
     el('p', { class: 'lead', style: 'margin-bottom:4px' }, T.resumeTitle),
     el('p', { class: 'muted' }, `${deck.emoji} ${deck.name[lang]} · ${label}`),
@@ -469,13 +472,6 @@ function renderSetup(mode, prefillCode = '') {
   const seg = el('div', { class: 'seg' }, ...HAND_SIZES.map(n => el('button', { type: 'button', class: n === config.handSize ? 'on' : '', onClick: e => { config.handSize = n; $$('button', seg).forEach(b => b.classList.toggle('on', b === e.currentTarget)); SFX.tap(); } }, `${sizeLabels[n]} · ${n}`)));
   form.append(el('div', { class: 'field' }, el('label', {}, T.handSize), seg));
 
-  // Dificultad (solo contra el celular)
-  if (mode === 'cpu') {
-    const labels = { facil: T.facil, normal: T.normal, dificil: T.dificil };
-    const dseg = el('div', { class: 'seg' }, ...DIFFICULTIES.map(d => el('button', { type: 'button', class: d === config.difficulty ? 'on' : '', onClick: e => { config.difficulty = d; $$('button', dseg).forEach(b => b.classList.toggle('on', b === e.currentTarget)); SFX.tap(); } }, labels[d])));
-    form.append(el('div', { class: 'field' }, el('label', {}, T.difficulty), dseg));
-  }
-
   const fail = msg => { err.textContent = msg; err.classList.remove('shake'); void err.offsetWidth; err.classList.add('shake'); SFX.error(); vibrate([30, 30, 30]); };
   const actions = $('#setup-actions'); actions.innerHTML = '';
   if (mode === 'online') {
@@ -499,12 +495,11 @@ function renderSetup(mode, prefillCode = '') {
   }
   actions.append(el('button', { class: 'btn btn--yellow', onClick: () => {
     const list = draft.map(n => n.trim());
-    if (mode === 'cpu') {
+    if (mode === 'solo') {
       if (!list[0]) return fail(T.errName);
       nameStore.set(list[0]);
-      const players = ['A', 'B'];
       SFX.tap();
-      startLocalMode('cpu', { A: list[0], B: T.cpuName }, { ...config, players, seed: randomSeed() });
+      startLocalMode('solo', { A: list[0] }, { ...config, players: ['A'], seed: randomSeed() });
     } else {
       if (list.some(n => !n) || new Set(list.map(n => n.toLowerCase())).size !== list.length) return fail(T.errNames);
       const players = ROLES.slice(0, list.length);

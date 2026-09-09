@@ -1,6 +1,6 @@
 // Ejecutar: node linea-de-tiempo/engine.test.mjs
 import assert from 'node:assert/strict';
-import { rng, shuffleSeeded, deal, isCorrect, correctSlot, buildState, botMove, yearLabel } from './engine.js';
+import { rng, shuffleSeeded, deal, isCorrect, correctSlot, buildState, yearLabel } from './engine.js';
 import { DECKS, getDeck } from './decks/index.js';
 
 // Mazos bien formados
@@ -84,22 +84,13 @@ assert.ok(st.done, 'la partida termina si todos aciertan');
 assert.deepEqual(st.winner, ['A'], 'gana quien se queda sin cartas primero');
 assert.equal(st.hands.A.length, 0);
 
-// La IA siempre juega una carta de su mano y una ranura válida
-for (const difficulty of ['facil', 'normal', 'dificil']) {
-  let aciertos = 0;
-  const total = 300;
-  for (let i = 0; i < total; i++) {
-    const s = buildState({ cards, seed: 1000 + i, players: ['A', 'B'], handSize: 5 });
-    const mv = botMove({ line: s.line, hand: s.hands.B, byId: s.byId, difficulty });
-    assert.ok(s.hands.B.includes(mv.card), 'la IA juega una carta suya');
-    assert.ok(mv.at >= 0 && mv.at <= s.line.length, 'ranura dentro de rango');
-    if (isCorrect(s.line, mv.card, mv.at, s.byId)) aciertos++;
-  }
-  const pct = aciertos / total;
-  console.log(`IA ${difficulty}: ${(pct * 100).toFixed(0)}% de aciertos`);
-  if (difficulty === 'facil') assert.ok(pct < 0.8, 'la IA fácil debe fallar seguido');
-  if (difficulty === 'dificil') assert.ok(pct > 0.85, 'la IA difícil debe acertar casi siempre');
-}
+// Solitario: un solo jugador vacía su mano
+let solo = buildState({ cards, seed: 11, players: ['A'], handSize: 3 });
+assert.equal(solo.current, 'A');
+let smoves = [];
+for (let i = 0; i < 10 && !solo.done; i++) { const card = solo.hands.A[0]; smoves.push({ from: 'A', card, at: correctSlot(solo.line, card, solo.byId) }); solo = buildState({ cards, seed: 11, players: ['A'], handSize: 3, moves: smoves }); }
+assert.deepEqual(solo.winner, ['A'], 'en solitario se gana al vaciar la mano');
+assert.equal(solo.history.length, 3);
 
 assert.equal(yearLabel(1969), '1969');
 assert.equal(yearLabel(-753), '753 a.C.');
