@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.3 — 2026-09-08
+- Toque y Fama: desplegable “Ver todos los intentos” en el resultado, colapsado por defecto.
+- Toque y Fama: “Cómo se juega” explica que debes adivinar el número secreto de tu contendor; botón “¡Vamos!” al fijar el número; tarjeta del menú dice “Adivina el número secreto”.
+- Estilos de panel desplegable movidos a `base.css`.
+
 ## 0.4.2 — 2026-09-08
 - Toque y Fama: pulsación larga sobre una cifra del teclado para bloquearla como “no está en el número del rival”; marcas por jugador, persistentes en la partida, con instrucción en pantalla.
 

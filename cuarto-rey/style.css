@@ -18,10 +18,6 @@
 .rules-list .mini-card.k { background: linear-gradient(180deg, #ffe680, #ffb300); }
 .rules-list b { display: block; }
 .rules-list small { color: var(--muted); }
-details.panel summary { cursor: pointer; font-weight: 900; font-size: 1.05rem; list-style: none; display: flex; justify-content: space-between; align-items: center; }
-details.panel summary::after { content: '▾'; font-size: 1.3rem; transition: transform 0.2s; }
-details.panel[open] summary::after { transform: rotate(180deg); }
-details.panel[open] summary { margin-bottom: 12px; }
 
 /* ---------- Setup jugadores ---------- */
 .players-form { display: grid; gap: 10px; }

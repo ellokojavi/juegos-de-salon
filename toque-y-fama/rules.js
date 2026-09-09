@@ -10,7 +10,7 @@ const ES = {
   title: 'Toque y Fama',
   lead: 'Cada uno elige un número secreto de cifras distintas. Adivina el del rival antes de que adivine el tuyo.',
   howTitle: '🧠 Cómo se juega',
-  howText: 'Por cada intento recibes pistas: <b>fama</b> es una cifra correcta en su lugar, <b>toque</b> es una cifra correcta en otro lugar. Gana quien llega a todas las famas. El celular cuenta solo, nadie hace trampa.',
+  howText: 'Debes adivinar el número secreto de tu contendor antes de que adivine el tuyo. Por cada intento recibes pistas: <b>fama</b> es una cifra correcta en su lugar, <b>toque</b> es una cifra correcta en otro lugar. Gana quien llega a todas las famas. El celular cuenta solo, nadie hace trampa.',
   example: 'Ejemplo: número secreto 1234, intento 1356 → 1 fama (el 1) y 1 toque (el 3).',
   modeLocal: '📱 Un celular, dos jugadores', modeLocalHint: 'Se pasan el celular. La pantalla se tapa entre turnos.',
   modeOnline: '📡 Dos celulares', modeOnlineHint: 'Sala con código de 4 letras. Cada uno en su celular.',
@@ -40,7 +40,7 @@ const ES = {
   hoPass: 'Pásale el celular a', hoReady: '¡Listo, soy yo!', hoResult: 'Respuesta', hoContinue: 'Seguir',
   // result
   winTitle: '¡Ganó {name}!', tieTitle: '¡Empate!', youWin: '¡Ganaste!', youLose: 'Perdiste… esta vez.',
-  inTries: 'en {n} intentos', secretsWere: 'Los números secretos eran', verified: 'verificado ✅', notVerified: '⚠️ no coincide (¿trampa?)',
+  inTries: 'en {n} intentos', secretsWere: 'Los números secretos eran', replayTitle: '🔎 Ver todos los intentos', verified: 'verificado ✅', notVerified: '⚠️ no coincide (¿trampa?)',
   rematch: '🔁 Revancha', rematchWaiting: 'Esperando a {name} para la revancha…', changeMode: 'Cambiar modo', backMenu: 'Volver al menú',
   resumeTitle: '⏯ Hay una partida a medias', resume: 'Continuar', delete: 'Borrar',
 };
@@ -50,7 +50,7 @@ const EN = {
   title: 'Bulls and Cows',
   lead: 'Each player picks a secret number with no repeated digits. Crack your rival\'s number before they crack yours.',
   howTitle: '🧠 How to play',
-  howText: 'Every guess gets clues: a <b>bull</b> is a right digit in the right spot, a <b>cow</b> is a right digit in the wrong spot. First to score all bulls wins. The phone keeps score, so nobody can cheat.',
+  howText: 'You must guess your opponent\'s secret number before they guess yours. Every guess gets clues: a <b>bull</b> is a right digit in the right spot, a <b>cow</b> is a right digit in the wrong spot. First to score all bulls wins. The phone keeps score, so nobody can cheat.',
   example: 'Example: secret number 1234, guess 1356 → 1 bull (the 1) and 1 cow (the 3).',
   modeLocal: '📱 One phone, two players', modeLocalHint: 'Pass the phone around. The screen hides between turns.',
   modeOnline: '📡 Two phones', modeOnlineHint: 'A room with a 4-letter code. Each player on their own phone.',
@@ -74,7 +74,7 @@ const EN = {
   offline: 'Rival disconnected. Waiting for them to come back…', reconnecting: 'Reconnecting…',
   hoPass: 'Pass the phone to', hoReady: 'Ready, it\'s me!', hoResult: 'Reply', hoContinue: 'Continue',
   winTitle: '{name} wins!', tieTitle: 'It\'s a tie!', youWin: 'You win!', youLose: 'You lose… this time.',
-  inTries: 'in {n} guesses', secretsWere: 'The secret numbers were', verified: 'verified ✅', notVerified: '⚠️ mismatch (cheating?)',
+  inTries: 'in {n} guesses', secretsWere: 'The secret numbers were', replayTitle: '🔎 See all guesses', verified: 'verified ✅', notVerified: '⚠️ mismatch (cheating?)',
   rematch: '🔁 Rematch', rematchWaiting: 'Waiting for {name} for the rematch…', changeMode: 'Change mode', backMenu: 'Back to menu',
   resumeTitle: '⏯ There\'s an unfinished game', resume: 'Continue', delete: 'Delete',
 };
