@@ -26,6 +26,16 @@ export const GAMES = [
     available: true,
   },
   {
+    id: 'linea-de-tiempo',
+    emoji: '⏳',
+    name: { es: 'Línea de Tiempo', en: 'Timeline' },
+    tagline: { es: 'Ubica los hitos en el orden correcto. Historia o música, solo o hasta seis.', en: 'Put the milestones in the right order. History or music, alone or up to six.' },
+    players: '1–6',
+    duration: '10–20',
+    path: 'linea-de-tiempo/',
+    available: true,
+  },
+  {
     id: 'batalla-naval',
     emoji: '⚓',
     name: { es: 'Batalla Naval', en: 'Battleship' },

@@ -12,6 +12,7 @@ App web (mobile-first) con juegos de salón para jugar con amigos: de naipes, de
 |---|---|---|---|
 | 👑 [Cuarto Rey / Fourth King](#-cuarto-rey) | 4 a 6 | Un celular en la mesa | v0.3 |
 | 🔢 [Toque y Fama / Bulls and Cows](#-toque-y-fama) | 1 a 2 | Un celular · Dos celulares · Contra el celular | v0.5 |
+| ⏳ [Línea de Tiempo / Timeline](#-línea-de-tiempo) | 1 a 6 | Un celular · Contra el celular | v0.8 |
 | ⚓ [Batalla Naval / Battleship](#-batalla-naval) | 1 a 2 | Un celular · Dos celulares · Contra el celular | v0.6 |
 
 ---
@@ -87,6 +88,24 @@ El clásico de hundir la flota. Cada jugador esconde 5 barcos en un tablero de 1
 
 Especificación y diseño: [docs/juegos/batalla-naval.md](docs/juegos/batalla-naval.md)
 
+## ⏳ Línea de Tiempo
+
+Recibes hitos sin fecha y los ubicas en el lugar correcto de una línea de tiempo común. Si aciertas, la carta se queda; si fallas, se descarta y robas otra. Gana quien se queda sin cartas. Se elige la temática al empezar: **Historia** con 98 hitos de la humanidad y **Música** con 89, de Beethoven a TikTok. Agregar una temática nueva es solo un archivo de datos.
+
+- **📱 Un celular:** de dos a seis jugadores, pasando el celular por turnos.
+- **🤖 Contra el celular:** tres niveles, de una máquina distraída a una casi infalible.
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/linea-de-tiempo/01-intro.png" width="180" alt="Intro"><br><sub>Modos de juego</sub></td>
+    <td align="center"><img src="docs/screenshots/linea-de-tiempo/02-tematica.png" width="180" alt="Temática"><br><sub>Temática y jugadores</sub></td>
+    <td align="center"><img src="docs/screenshots/linea-de-tiempo/03-juego.png" width="180" alt="Juego"><br><sub>Mano y línea de tiempo</sub></td>
+    <td align="center"><img src="docs/screenshots/linea-de-tiempo/04-veredicto.png" width="180" alt="Veredicto"><br><sub>Veredicto y pase</sub></td>
+  </tr>
+</table>
+
+Especificación y diseño: [docs/juegos/linea-de-tiempo.md](docs/juegos/linea-de-tiempo.md)
+
 ---
 
 ## Características comunes
@@ -111,6 +130,7 @@ y abrir http://localhost:8080 (los módulos ES necesitan servirse por HTTP). Tes
 ```bash
 node toque-y-fama/engine.test.mjs
 node batalla-naval/engine.test.mjs
+node linea-de-tiempo/engine.test.mjs
 ```
 
 ## Publicar una versión
@@ -134,6 +154,7 @@ assets/js/firebase-config.js Configuración pública de Firebase
 cuarto-rey/                 Juego Cuarto Rey (index.html, game.js, rules.js, style.css)
 toque-y-fama/               Juego Toque y Fama (engine.js + tests, game.js, rules.js)
 batalla-naval/              Juego Batalla Naval (engine.js + tests, game.js, rules.js)
+linea-de-tiempo/            Juego Línea de Tiempo (engine.js + tests, game.js, rules.js, decks/)
 assets/js/handoff.js        Transiciones compartidas: pásale el celular, pantalla tapada
 assets/js/session.js        Memoria de partida compartida (retomar en cualquier modo)
 assets/js/transport/        Transportes compartidos: local (mismo celular) y firebase (sala)
@@ -152,4 +173,5 @@ docs/                       Requerimientos, decisiones, especificaciones y captu
 - [Especificación: Toque y Fama](docs/juegos/toque-y-fama.md)
 - [Factibilidad: Toque y Fama con dos celulares](docs/juegos/toque-y-fama-factibilidad.md)
 - [Especificación y diseño: Batalla Naval](docs/juegos/batalla-naval.md)
+- [Especificación y diseño: Línea de Tiempo](docs/juegos/linea-de-tiempo.md)
 - [Changelog](CHANGELOG.md)

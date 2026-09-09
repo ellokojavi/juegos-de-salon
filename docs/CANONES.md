@@ -83,6 +83,7 @@ Un modo que todavía no existe se muestra deshabilitado con "Próximamente", nun
 - Todos los modos usan la misma lógica: cambia el transporte, no el juego.
   `assets/js/transport/local.js` (mismo dispositivo, también para la IA) y `firebase.js` (sala remota).
 - Interfaz del transporte: `create`, `join`, `send`, `onMessage`, `onPresence`, `leave`.
+- **Campos reservados del transporte:** `from`, `at` (marca de tiempo) e `id`. Un juego que necesite enviar una posición o una cantidad usa otro nombre, o el transporte se lo pisará sin avisar.
 - Salas: código de 4 letras mayúsculas sin I ni O, QR con `?sala=CÓDIGO`, campo `game` para separar juegos, caducidad de 6 horas.
 - Se muestra cuando el rival se desconecta y se retoma solo cuando vuelve.
 - La revancha crea una sala nueva y mueve a los dos jugadores; parte quien perdió.

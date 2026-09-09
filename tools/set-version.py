@@ -19,8 +19,10 @@ MODULES = [
     'toque-y-fama/game.js', 'toque-y-fama/rules.js', 'toque-y-fama/engine.js',
     'assets/js/transport/local.js', 'assets/js/transport/firebase.js', 'assets/js/handoff.js', 'assets/js/session.js',
     'batalla-naval/game.js', 'batalla-naval/rules.js', 'batalla-naval/engine.js',
+    'linea-de-tiempo/game.js', 'linea-de-tiempo/rules.js', 'linea-de-tiempo/engine.js',
+    'linea-de-tiempo/decks/index.js', 'linea-de-tiempo/decks/historia.js', 'linea-de-tiempo/decks/musica.js',
 ]
-PAGES = { 'index.html': '', 'cuarto-rey/index.html': '../', 'toque-y-fama/index.html': '../', 'batalla-naval/index.html': '../' }
+PAGES = { 'index.html': '', 'cuarto-rey/index.html': '../', 'toque-y-fama/index.html': '../', 'batalla-naval/index.html': '../', 'linea-de-tiempo/index.html': '../' }
 
 def main(version):
     for page, prefix in PAGES.items():
