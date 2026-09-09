@@ -88,8 +88,8 @@
 .board ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
 .board li { display: grid; grid-template-columns: auto 1fr; gap: 6px; align-items: center; background: rgba(0,0,0,0.25); border-radius: 10px; padding: 5px 8px; animation: slideUp 0.25s ease-out both; }
 .board li .val { font-family: var(--font-display); font-size: 1.15rem; letter-spacing: 0.12em; }
-.board li .clue { display: flex; gap: 3px; flex-wrap: wrap; justify-content: flex-end; }
-.board li .clue span { font-size: 0.72rem; font-weight: 900; padding: 2px 6px; border-radius: 999px; white-space: nowrap; }
+.board li .clue { display: flex; gap: 4px; flex-wrap: nowrap; justify-content: flex-end; }
+.board li .clue span { font-size: 0.8rem; font-weight: 900; padding: 2px 8px; border-radius: 999px; white-space: nowrap; font-family: var(--font-display); letter-spacing: 0.05em; }
 .board li .clue .f { background: var(--yellow); color: #3a1200; }
 .board li .clue .t { background: var(--cyan); color: #03302c; }
 .board li .clue .z { background: rgba(255,255,255,0.15); color: var(--muted); }
