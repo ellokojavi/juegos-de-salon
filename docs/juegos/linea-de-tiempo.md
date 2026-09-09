@@ -69,8 +69,10 @@ falta mensajes de respuesta.
   también hay ranura antes de la primera y después de la última.
 - Arriba, la **carta en juego** grande, con emoji y título, sin año.
 - La carta elegida queda **fija en una barra sobre la línea** mientras se busca la ranura, con la mano atenuada detrás; tocar la barra vuelve a la mano. Se toca una ranura y luego **📍 Colocar aquí** para confirmar (C-8), botón que flota abajo.
-- Al confirmar, la carta se revela con su año y se anima entrando a la línea si acertó, o se cae
-  al descarte si falló, con sonido y vibración distintos.
+- Al confirmar, la carta se revela con su año. Un **acierto** se muestra un par de segundos y se cierra solo.
+  Un **error** tiñe la pantalla de rojo, sacude la carta, suena distinto y explica entre qué hitos iba y entre
+  cuáles se puso; se queda hasta que el jugador toca. Mientras tanto, el celular no juega y las jugadas de
+  otros esperan.
 - La línea larga vive en un contenedor con su propio desplazamiento vertical, y salta sola a la zona
   donde quedó la última carta.
 - Marcador con las cartas que le quedan a cada jugador.

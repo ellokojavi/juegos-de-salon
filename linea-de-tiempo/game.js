@@ -82,7 +82,9 @@ async function act() {
   const v = view();
   if (v.lobby) { saveSession(); return; }
   if (S.bot && !v.done && v.current === S.bot.role && !S.cpuTimer) {
-    S.cpuTimer = setTimeout(() => {
+    S.cpuTimer = setTimeout(function tick() {
+      // Mientras haya un veredicto en pantalla, el celular espera: no pisa lo que el jugador está leyendo
+      if (!$('#handoff').hidden) { S.cpuTimer = setTimeout(tick, 500); return; }
       S.cpuTimer = null;
       const s = view();
       if (s.done || s.current !== S.bot.role) return;
@@ -174,14 +176,20 @@ async function renderQr(url) {
 function renderPlay(v) {
   showScreen('screen-play');
   const isLocalTurn = S.roles.includes(v.current) && !(S.bot && S.bot.role === v.current);
-  // Varios celulares: el veredicto de cada jugada se muestra a todos y se cierra solo
-  if (S.mode === 'online' && v.history.length > S.lastShown + 1) {
+  // Contra el celular y varios celulares: el veredicto de cada jugada se muestra a todos.
+  // Un acierto (o la jugada de otro) se cierra solo; un error propio se queda hasta que el jugador toque,
+  // con fondo rojo y una explicación de dónde iba la carta.
+  if (S.mode !== 'local' && v.history.length > S.lastShown + 1) {
+    if (S.sticky && !$('#handoff').hidden) return;        // el jugador aún lee su error: lo nuevo espera
     const last = v.history[v.history.length - 1];
     S.lastShown = v.history.length - 1;
+    const mine = S.roles.includes(last.from) && !(S.bot && S.bot.role === last.from);
     const stage = verdictStage(last, v, null);
-    let closed = false;
-    const next = showHandoff([stage], () => { closed = true; S.selCard = null; S.selSlot = null; render(); });
-    setTimeout(() => { if (!closed) next(); }, 2600);
+    const gen = (S.verdictGen = (S.verdictGen || 0) + 1);
+    S.sticky = mine && !last.ok;
+    const next = showHandoff([stage], () => { if (S.verdictGen === gen) S.sticky = false; S.selCard = null; S.selSlot = null; render(); });
+    // Solo el temporizador del veredicto vigente puede cerrarlo; un error propio se queda hasta tocar
+    if (!S.sticky) setTimeout(() => { if (S.verdictGen === gen && !$('#handoff').hidden) next(); }, 2400);
     return;
   }
 
@@ -198,11 +206,6 @@ function renderPlay(v) {
     const stage = passBlock({ label: T.hoPass, name: M.names[v.current], button: T.hoReady });
     showHandoff([stage], () => { S.uiRole = v.current; S.selCard = null; S.selSlot = null; render(); }, { tapAdvances: false });
     return;
-  }
-  if (S.mode === 'cpu' && v.history.length > S.lastShown + 1) {
-    const last = v.history[v.history.length - 1];
-    S.lastShown = v.history.length - 1;
-    playVerdictSound(last.ok);
   }
 
   // Rol que mira la pantalla
@@ -276,25 +279,37 @@ function renderPlay(v) {
   const fresh = line.querySelector('.event.fresh'); if (fresh) fresh.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
 }
 
-function playVerdictSound(ok) { if (ok) { SFX.reveal(); vibrate([30, 30]); } else { SFX.error(); vibrate([60, 40, 60]); } }
+function playVerdictSound(ok) { if (ok) { SFX.reveal(); vibrate([30, 30]); } else { SFX.timeUp(); vibrate([120, 60, 120, 60, 200]); } }
 
 /** Pantalla entre turnos: veredicto de la jugada y, si cambia el turno, el pase del celular. */
+/** "entre 1453 · Cae Constantinopla y 1492 · Colón…", o "antes de…" / "después de…" en los bordes. */
+function whereText([a, b], byId) {
+  const lbl = id => `<b>${yearLabel(byId[id].year, lang)}</b> · ${byId[id][lang]}`;
+  if (a && b) return fmt(T.between, { a: lbl(a), b: lbl(b) });
+  if (b) return fmt(T.beforeOf, { b: lbl(b) });
+  return fmt(T.afterOf, { a: lbl(a) });
+}
+
 function verdictStage(last, v, nextName) {
   const c = v.byId[last.card];
   playVerdictSound(last.ok);
+  const mine = S.mode === 'local' || (S.roles.includes(last.from) && !(S.bot && S.bot.role === last.from));
   const stage = el('div', { class: 'stage pop' },
     el('div', { class: 'verdict' },
       el('div', { class: 'big ' + (last.ok ? 'ok' : 'no') }, last.ok ? T.correct : T.wrong),
       el('div', { class: 'card-big' }, el('span', { class: 'em' }, c.emoji), el('span', { class: 't' }, c[lang]), el('span', { class: 'y' }, yearLabel(c.year, lang))),
-      el('div', { class: 'note' }, last.ok ? `${M.names[last.from]} 👏` : T.drewNew),
+      el('div', { class: 'note' }, last.ok ? `${M.names[last.from]} 👏` : `${M.names[last.from]} · ${T.drewNew}`),
+      last.ok ? null : el('div', { class: 'why', html: `${fmt(T.whyWrong, { year: `<b>${yearLabel(c.year, lang)}</b>`, where: whereText(last.correctBetween, v.byId) })}<br>${fmt(T.wherePlaced, { where: whereText(last.placedBetween, v.byId) })}` }),
     ),
   );
+  setTimeout(() => $('#handoff').classList.toggle('bad', !last.ok), 0);
+  void mine;
   if (nextName) {
     stage.append(el('div', { class: 'pass-divider', style: 'width:60%;height:1px;background:var(--glass-border);margin:10px auto 2px' }));
     const pb = passBlock({ label: T.hoPass, name: nextName, button: T.hoReady, small: true });
     stage.append(pb);
     stage.setAdvance = fn => pb.setAdvance(() => { SFX.pass(); fn(); });
-  } else stage.append(el('div', { class: 'hint', style: 'margin-top:14px' }, T.hoContinue + ' ›'));
+  } else stage.append(el('div', { class: 'hint', style: 'margin-top:14px' }, (last.ok ? T.hoContinue : T.tapContinue) + ' ›'));
   return stage;
 }
 

@@ -86,12 +86,16 @@ export function buildState({ cards, seed, players, handSize, moves = [] }) {
     if (idx < 0) continue;                       // no tenía esa carta
     hand.splice(idx, 1);
     const ok = isCorrect(line, mv.card, mv.at, byId);
+    const correctAt = ok ? mv.at : correctSlot(line, mv.card, byId);
+    // Vecinos de la ranura correcta y de la elegida, sobre la línea tal como estaba: sirven para explicar el error
+    const around = at => [line[at - 1] || null, line[at] || null];
+    const entry = { ...mv, ok, correctAt, year: byId[mv.card].year, correctBetween: around(correctAt), placedBetween: around(mv.at) };
     if (ok) {
       line = line.slice(0, mv.at).concat(mv.card, line.slice(mv.at));
     } else if (poolAt < pool.length) {
       hand.push(pool[poolAt++]);                 // falló: descarta y roba
     }
-    history.push({ ...mv, ok, correctAt: ok ? mv.at : correctSlot(line, mv.card, byId), year: byId[mv.card].year });
+    history.push(entry);
     turn = (turn + 1) % players.length;
   }
 
