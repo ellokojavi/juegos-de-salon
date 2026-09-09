@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.8.2 — 2026-09-09
+- Línea de Tiempo: la carta elegida queda fija en una barra sobre la línea mientras se busca dónde ponerla, con la mano atenuada detrás. Tocar la barra vuelve a la mano para cambiar de carta.
+
 ## 0.8.1 — 2026-09-09
 - Línea de Tiempo: el botón “Colocar aquí” ahora flota sobre la línea. Con doce o más hitos quedaba fuera de la pantalla y había que desplazarse para confirmar.
 
