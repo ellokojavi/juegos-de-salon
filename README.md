@@ -31,7 +31,8 @@ App web (mobile-first) con juegos de salón para el carrete. Se abre desde el ce
 
 | Juego | Estado | Jugadores |
 |---|---|---|
-| 👑 [Cuarto Rey / Fourth King](cuarto-rey/) | v0.2 | 4 a 6 |
+| 👑 [Cuarto Rey / Fourth King](cuarto-rey/) | v0.3 | 4 a 6 |
+| 🔢 Toque y Fama / Bulls and Cows | [en estudio](docs/juegos/toque-y-fama-factibilidad.md) | 2 |
 
 ## Sonido
 
@@ -72,4 +73,5 @@ docs/                   Requerimientos, decisiones, especificaciones y capturas
 - [Decisiones de diseño y arquitectura](docs/DECISIONES.md)
 - [Cómo agregar un juego nuevo](docs/AGREGAR-JUEGO.md)
 - [Especificación: Cuarto Rey](docs/juegos/cuarto-rey.md)
+- [Factibilidad: Toque y Fama (dos celulares)](docs/juegos/toque-y-fama-factibilidad.md)
 - [Changelog](CHANGELOG.md)
