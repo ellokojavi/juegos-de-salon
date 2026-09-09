@@ -401,18 +401,22 @@ function renderPlay(v) {
   // Tableros
   const boards = $('#boards');
   boards.innerHTML = '';
-  const order = S.mode === 'online' ? [S.role, other(S.role)] : ['A', 'B'];
-  for (const r of order) {
-    const mine = M.guesses.filter(g => g.from === r);
-    const list = el('ol', {}, ...mine.map(g => el('li', { class: g.famas === M.config.digits ? 'hit' : '' }, el('span', { class: 'val' }, g.value), g.famas === null ? el('span', { class: 'clue' }, el('span', { class: 'z' }, '…')) : clueChips(g))));
-    boards.append(el('div', { class: 'board' + (v.expected === r && v.phase === 'play' ? ' turn' : '') },
-      el('h3', {}, fmt(T.boardOf, { name: M.names[r] })),
-      el('div', { class: 'count' }, mine.length ? fmt(T.tries, { n: mine.length }) : T.noGuesses),
-      mine.length ? list : el('div', { class: 'empty' }, '—'),
-    ));
-  }
+  for (const r of boardOrder()) boards.append(boardEl(r, v.expected === r && v.phase === 'play'));
   // Auto-scroll a la última fila
   const lastLi = boards.querySelector('li:last-child'); if (lastLi && M.guesses.length > 3) lastLi.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+}
+
+function boardOrder() { return S.mode === 'online' ? [S.role, other(S.role)] : ['A', 'B']; }
+
+/** Tablero de intentos de un jugador (se usa en el juego y en el resultado). */
+function boardEl(r, isTurn = false) {
+  const mine = M.guesses.filter(g => g.from === r);
+  const list = el('ol', {}, ...mine.map(g => el('li', { class: g.famas === M.config.digits ? 'hit' : '' }, el('span', { class: 'val' }, g.value), g.famas === null ? el('span', { class: 'clue' }, el('span', { class: 'z' }, '…')) : clueChips(g))));
+  return el('div', { class: 'board' + (isTurn ? ' turn' : '') },
+    el('h3', {}, fmt(T.boardOf, { name: M.names[r] })),
+    el('div', { class: 'count' }, mine.length ? fmt(T.tries, { n: mine.length }) : T.noGuesses),
+    mine.length ? list : el('div', { class: 'empty' }, '—'),
+  );
 }
 
 function renderResult(v) {
@@ -434,6 +438,11 @@ function renderResult(v) {
     const verText = S.mode === 'online' && ver ? (ver.ok ? T.verified : T.notVerified) : '';
     secrets.append(el('div', { class: 's' }, el('small', {}, M.names[r]), el('div', { class: 'n' }, M.reveals[r].secret), el('small', {}, verText)));
   }
+  // Repaso de la partida: colapsado por defecto para que los botones queden a la vista
+  const replay = $('#result-replay');
+  if (!already) replay.open = false;
+  const rb = $('#result-boards'); rb.innerHTML = '';
+  for (const r of boardOrder()) rb.append(boardEl(r));
   if (!already) { if (!meRole || meRole === v.winner || v.tie) { confetti({ count: 220, duration: 3500 }); SFX.win(); } else SFX.timeUp(); }
   renderResultActions(v);
 }

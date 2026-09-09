@@ -44,6 +44,9 @@ El estado (`view()`) se deriva de la lista de mensajes: fase (`lobby`, `secret`,
 ## Cifras bloqueadas (notas del jugador)
 En el teclado de adivinar, una pulsación larga (450 ms) sobre una cifra la marca como bloqueada: se ve tachada con 🚫, se quita de la entrada actual y el toque corto no la ingresa. Otra pulsación larga la libera. Las marcas son por jugador (en un celular cada uno tiene las suyas), duran toda la partida, se guardan con la sesión en modo dos celulares y se limpian en la revancha. Bajo el teclado hay una instrucción de una línea para usuarios nuevos.
 
+## Repaso al final
+Bajo “Los números secretos eran” hay un desplegable “🔎 Ver todos los intentos”, colapsado por defecto (una línea de alto, para que Revancha, Cambiar modo y Volver al menú queden a la vista en un celular de 812 px), con los tableros completos de ambos jugadores.
+
 ## Vocabulario en pantalla
 Siempre se habla de “número secreto” (en inglés, “secret number”), nunca de “secreto” a secas.
 
