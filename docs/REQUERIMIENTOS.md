@@ -100,7 +100,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | LT-03 | Acierto: la carta entra en la línea. Error: se descarta y el jugador roba otra. | ✅ v0.8 |
 | LT-04 | Gana quien se queda sin cartas. Mano configurable de 3, 5 o 7. | ✅ v0.8 |
 | LT-05 | Modo un celular de 2 a 6 jugadores, con pase entre turnos. | ✅ v0.8 |
-| LT-06 | Modo contra el celular con tres niveles de dificultad. | ✅ v0.8 |
+| LT-06 | Modo solitario: vaciar la mano en la menor cantidad de intentos, con récord por temática y mano. | ✅ v0.9.2 |
 | LT-07 | Modo varios celulares de 2 a 6 (roles A–F), con lobby y anfitrión que abre la partida. | ✅ v0.9 |
 | LT-08 | Mazo determinista por semilla, para que todos los dispositivos vean el mismo reparto. | ✅ v0.8 |
 | LT-09 | Memoria de partida en todos los modos (canon C-6). | ✅ v0.8 |

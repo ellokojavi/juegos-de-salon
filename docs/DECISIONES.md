@@ -122,3 +122,9 @@ Registro tipo ADR (Architecture Decision Record). Las decisiones se numeran y no
 ## D-26 · Cánones escritos en el repo
 **Decisión:** `docs/CANONES.md` reúne las reglas de construcción de todos los juegos (C-1 a C-14) con una lista de chequeo final, y `CLAUDE.md` en la raíz apunta a él para que se cargue como contexto al abrir el proyecto.
 **Por qué:** Las convenciones estaban repartidas entre decisiones sueltas y el código de cada juego. Un solo archivo evita que cada juego nuevo redescubra o contradiga lo ya acordado.
+
+## D-27 · Línea de Tiempo: solitario en vez de IA
+**Fecha:** 2026-09-09 · **Estado:** vigente
+**Decisión:** El modo individual de Línea de Tiempo es un solitario con puntaje (vaciar la mano en la menor cantidad de intentos, con récord por temática y tamaño de mano), no una partida contra el celular.
+**Por qué:** Toda la información del juego es pública: la máquina conoce los años, así que solo podía ganar o dejarse ganar a propósito. Eso no es un rival, es un número al azar. Un récord personal sí da motivo para volver a jugar.
+**Consecuencias:** El canon C-5 admite que el tercer modo sea "contra el celular" o "jugar solo", según el juego tenga o no información oculta que le dé sentido a una IA.
