@@ -46,6 +46,24 @@
 .score .p.turn { background: var(--cyan); color: #03302c; }
 .score .p .n { font-family: var(--font-display); font-size: 1rem; }
 
+/* Carta que el jugador lleva en la mano mientras recorre la línea (queda fija arriba) */
+.carry {
+  position: sticky; top: 0; z-index: 6; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 8px;
+  padding: 8px 10px; margin: 2px 0 4px; border-radius: 14px;
+  /* Opaca: la línea pasa por debajo al desplazar y el texto no debe transparentarse */
+  background: linear-gradient(180deg, rgba(74, 45, 14, 0.985), rgba(52, 24, 34, 0.985));
+  border: 2px solid var(--yellow); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  animation: pop 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.4) both;
+}
+.carry .em { font-size: 1.7rem; }
+.carry .txt { display: grid; gap: 1px; min-width: 0; }
+.carry .lbl { font-size: 0.65rem; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; color: var(--yellow); }
+.carry .t { font-size: 0.85rem; font-weight: 800; line-height: 1.2; }
+.carry { cursor: pointer; }
+.carry:active { transform: scale(0.99); }
+.carry .change { font-size: 0.7rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); background: rgba(0,0,0,0.3); padding: 6px 10px; border-radius: 999px; white-space: nowrap; }
+
 /* Mano */
 .hand-title { display: flex; justify-content: space-between; align-items: baseline; margin: 4px 0; }
 .hand-title b { font-family: var(--font-display); font-size: 1.05rem; letter-spacing: 0.05em; }
@@ -60,6 +78,7 @@
 .hand .card .em { font-size: 1.5rem; }
 .hand .card .t { font-size: 0.72rem; font-weight: 800; line-height: 1.25; }
 .hand .card.sel { border-color: var(--yellow); background: linear-gradient(180deg, rgba(255,210,63,0.3), rgba(255,122,26,0.15)); transform: translateY(-3px); }
+.hand.dim .card:not(.sel) { opacity: 0.55; }
 .hand .card:active { transform: scale(0.97); }
 
 /* Línea de tiempo */

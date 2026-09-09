@@ -168,6 +168,21 @@ function renderPlay(v) {
       el('span', { class: 'em' }, c.emoji), el('span', { class: 't' }, c[lang])));
   }
 
+  // Carta que se lleva: queda fija arriba mientras se recorre la línea
+  const carry = $('#carry');
+  if (isLocalTurn && S.selCard) {
+    const c = v.byId[S.selCard];
+    // Tocar la barra devuelve a la mano para cambiar de carta sin buscarla desplazando
+    carry.hidden = false; carry.innerHTML = '';
+    carry.append(
+      el('span', { class: 'em' }, c.emoji),
+      el('span', { class: 'txt' }, el('span', { class: 'lbl' }, T.carrying), el('span', { class: 't' }, c[lang])),
+      el('span', { class: 'change' }, T.changeCard, ' ↑'),
+    );
+    carry.onclick = () => { SFX.tap(); $('#hand').scrollIntoView({ block: 'center', behavior: 'smooth' }); };
+    handBox.classList.add('dim');
+  } else { carry.hidden = true; carry.innerHTML = ''; handBox.classList.remove('dim'); }
+
   // Línea de tiempo con ranuras
   const line = $('#line'); line.innerHTML = '';
   const sel = S.selCard ? v.byId[S.selCard] : null;

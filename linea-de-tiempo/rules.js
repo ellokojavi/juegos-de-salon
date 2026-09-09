@@ -25,7 +25,7 @@ const ES = {
   errName: 'Falta el nombre.', errNames: 'Faltan nombres o están repetidos.',
   // juego
   turnYou: '¡Te toca, {name}!', turnOther: 'Turno de {name}', cpuThinking: 'El celular está pensando…',
-  yourHand: 'Tu mano', handOf: 'Mano de {name}', pickCard: 'Elige una carta', pickSlot: '¿Dónde va?', place: '📍 Colocar aquí',
+  carrying: 'Llevas', changeCard: 'Cambiar', yourHand: 'Tu mano', handOf: 'Mano de {name}', pickCard: 'Elige una carta', pickSlot: '¿Dónde va?', place: '📍 Colocar aquí',
   timeline: 'Línea de tiempo', cardsLeft: '{n}', poolLeft: 'Quedan {n} en el mazo',
   slotFirst: '↑ Antes de todo', slotLast: '↓ Después de todo', slotBetween: 'Aquí',
   correct: '¡Correcto!', wrong: 'Nop…', wasYear: 'Era {year}', goesHere: 'Iba aquí ↓', drewNew: 'Robas una carta nueva',
@@ -52,7 +52,7 @@ const EN = {
   yourName: 'Your name', cpuName: 'Phone', start: 'Let\'s play!',
   errName: 'Name missing.', errNames: 'Names missing or repeated.',
   turnYou: 'Your turn, {name}!', turnOther: '{name}\'s turn', cpuThinking: 'The phone is thinking…',
-  yourHand: 'Your hand', handOf: '{name}\'s hand', pickCard: 'Pick a card', pickSlot: 'Where does it go?', place: '📍 Place it here',
+  carrying: 'Carrying', changeCard: 'Change', yourHand: 'Your hand', handOf: '{name}\'s hand', pickCard: 'Pick a card', pickSlot: 'Where does it go?', place: '📍 Place it here',
   timeline: 'Timeline', cardsLeft: '{n}', poolLeft: '{n} left in the deck',
   slotFirst: '↑ Before everything', slotLast: '↓ After everything', slotBetween: 'Here',
   correct: 'Correct!', wrong: 'Nope…', wasYear: 'It was {year}', goesHere: 'It goes here ↓', drewNew: 'You draw a new card',

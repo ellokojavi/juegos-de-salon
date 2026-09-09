@@ -66,7 +66,7 @@ falta mensajes de respuesta.
   un celular. Cada hito es una fila con año, emoji y título. Entre filas hay **ranuras tocables**;
   también hay ranura antes de la primera y después de la última.
 - Arriba, la **carta en juego** grande, con emoji y título, sin año.
-- Se toca una ranura para elegirla y luego **📍 Colocar aquí** para confirmar (C-8).
+- La carta elegida queda **fija en una barra sobre la línea** mientras se busca la ranura, con la mano atenuada detrás; tocar la barra vuelve a la mano. Se toca una ranura y luego **📍 Colocar aquí** para confirmar (C-8), botón que flota abajo.
 - Al confirmar, la carta se revela con su año y se anima entrando a la línea si acertó, o se cae
   al descarte si falló, con sonido y vibración distintos.
 - La línea larga vive en un contenedor con su propio desplazamiento vertical, y salta sola a la zona
