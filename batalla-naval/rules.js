@@ -18,7 +18,7 @@ const ES = {
   errName: 'Falta el nombre.', errNames: 'Faltan nombres o están repetidos.',
   create: 'Crear sala', joinTitle: 'Unirse a una sala', codePlaceholder: 'CÓDIGO', join: 'Unirse', errCode: 'El código tiene 4 letras.',
   errNotFound: 'No existe esa sala. Revisa el código.', errFull: 'La sala ya está llena.', errExpired: 'Esa sala ya venció.', errOtherGame: 'Ese código es de otro juego.', errNet: 'No se pudo conectar. ¿Hay internet?',
-  lobbyTitle: 'Sala creada', lobbyCode: 'Código', lobbyShare: 'Dile el código al rival o que escanee el QR.', lobbyWaiting: 'Esperando al rival…', lobbyJoined: '¡{name} se unió!', copyLink: '📋 Copiar link', copied: '¡Copiado!',
+  lobbyTitle: 'Sala creada', lobbyCode: 'Código', lobbyShare: 'Dile el código al rival o que escanee el QR.', lobbyWaiting: 'Esperando al rival…', lobbyJoined: '¡{name} se unió!', shareLink: '📤 Compartir link', shareText: 'Únete a mi sala de {game}. Código: {code}', copyLink: '📋 Copiar link', copied: '¡Copiado!',
   offline: 'Rival desconectado. Esperando que vuelva…', rematchWaiting: 'Esperando a {name} para la revancha…',
   resumeTitle: '⏯ Hay una batalla a medias', resume: 'Continuar', delete: 'Borrar',
   // colocación
@@ -52,7 +52,7 @@ const EN = {
   errName: 'Name missing.', errNames: 'Names missing or repeated.',
   create: 'Create room', joinTitle: 'Join a room', codePlaceholder: 'CODE', join: 'Join', errCode: 'The code has 4 letters.',
   errNotFound: 'That room doesn\'t exist. Check the code.', errFull: 'That room is full.', errExpired: 'That room has expired.', errOtherGame: 'That code belongs to another game.', errNet: 'Could not connect. Is there internet?',
-  lobbyTitle: 'Room created', lobbyCode: 'Code', lobbyShare: 'Tell your rival the code or let them scan the QR.', lobbyWaiting: 'Waiting for your rival…', lobbyJoined: '{name} joined!', copyLink: '📋 Copy link', copied: 'Copied!',
+  lobbyTitle: 'Room created', lobbyCode: 'Code', lobbyShare: 'Tell your rival the code or let them scan the QR.', lobbyWaiting: 'Waiting for your rival…', lobbyJoined: '{name} joined!', shareLink: '📤 Share link', shareText: 'Join my {game} room. Code: {code}', copyLink: '📋 Copy link', copied: 'Copied!',
   offline: 'Rival disconnected. Waiting for them to come back…', rematchWaiting: 'Waiting for {name} for the rematch…',
   resumeTitle: '⏯ There\'s an unfinished battle', resume: 'Continue', delete: 'Delete',
   placeTitle: 'Place your fleet', placeFor: '{name}\'s fleet', placeHint: 'Tap a ship, then a cell. Tap a placed ship to select it: rotate it with ↻, move it by tapping another cell, or drag it.',
