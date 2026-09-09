@@ -139,3 +139,6 @@
 .replay .board li { padding: 5px 6px; gap: 4px; }
 .replay .board h3 { font-size: 1rem; }
 #screen-result .stack { margin-top: 12px !important; }
+
+/* Aire bajo los títulos de las pantallas de configuración y sala */
+#screen-setup > h2, #screen-lobby > h2 { margin-bottom: 16px; }
