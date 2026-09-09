@@ -1,7 +1,12 @@
 # Changelog
 
-## Sin publicar
-- Estudio de factibilidad de Toque y Fama con propuesta de mecánica para dos celulares (`docs/juegos/toque-y-fama-factibilidad.md`); requerimientos TF-01..09 y decisión propuesta D-18. Tarjeta “Toque y Fama · próximamente” en el menú.
+## 0.4.0 — 2026-09-08
+- Segundo juego: **Toque y Fama / Bulls and Cows** con tres modos: un celular (pasar y jugar), contra el celular (duelo con solver) y dos celulares (sala con código y QR sobre Firebase Realtime Database).
+- Motor puro con tests (`engine.test.mjs`), reductor de mensajes único para los tres modos, compromiso del secreto con sal privada y verificación al final, reconexión y revancha.
+- Proyecto de Firebase `juegos-de-salon` creado; reglas de seguridad en `firebase/database.rules.json`.
+- Estilos de transición entre turnos movidos a `base.css` para reutilizarlos.
+- README reorganizado por juego, con capturas de ambos.
+- Estudio de factibilidad de Toque y Fama (`docs/juegos/toque-y-fama-factibilidad.md`), decisiones D-18 a D-21.
 
 ## 0.3.0 — 2026-09-08
 - Sonidos sintetizados (Web Audio) en las acciones clave: botones, volteo y descubrimiento de carta, brindis, reyes, temporizador, dados, pase de celular, final y error. Botón 🔊/🔇 en menú y juego.

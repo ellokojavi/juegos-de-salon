@@ -1,6 +1,8 @@
 # Toque y Fama — estudio de factibilidad y propuesta de mecánica
 
-**Estado:** propuesta, pendiente de aprobación · **Fecha:** 2026-09-08 · **Autor:** equipo del proyecto
+**Estado:** aprobado e implementado (v0.4) · **Fecha:** 2026-09-08 · **Autor:** equipo del proyecto
+
+> Nota de implementación: el sorteo verificable de quién parte (§4.2) se reemplazó por una regla determinista (parte el invitado; en la revancha, el perdedor). Ver decisión D-19. El compromiso usa una sal privada además del hash (D-21). La especificación vigente está en [toque-y-fama.md](toque-y-fama.md).
 
 ## 1. Resumen
 
