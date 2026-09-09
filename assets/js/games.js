@@ -25,4 +25,14 @@ export const GAMES = [
     path: 'toque-y-fama/',
     available: true,
   },
+  {
+    id: 'batalla-naval',
+    emoji: '⚓',
+    name: { es: 'Batalla Naval', en: 'Battleship' },
+    tagline: { es: 'Próximamente: hunde la flota del rival antes de que hunda la tuya.', en: 'Coming soon: sink your rival\'s fleet before they sink yours.' },
+    players: '2',
+    duration: '10–20',
+    path: '#',
+    available: false,
+  },
 ];

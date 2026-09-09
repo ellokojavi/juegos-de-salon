@@ -102,3 +102,13 @@ Registro tipo ADR (Architecture Decision Record). Las decisiones se numeran y no
 **Decisión:** Cada página lleva un `<script type="importmap">` que mapea todos los módulos JS del sitio a su ruta con `?v=VERSION`, y las hojas de estilo llevan el mismo sufijo. Se estampa con `python3 tools/set-version.py X.Y.Z` en cada publicación. Además, el menú dibuja la lista de juegos antes de cualquier decoración y las decoraciones van en `try/catch`.
 **Por qué:** GitHub Pages y los navegadores cachean cada archivo por separado (10 minutos en Pages). Tras una publicación, un celular podía recibir el `index.html` nuevo con un `i18n.js` viejo; el código nuevo esperaba datos que el archivo viejo no tenía, fallaba, y el menú quedaba vacío (ocurrió con la v0.4.5). Con el import map, cambiar la versión cambia la URL de todos los módulos, incluidos los importados por otros módulos y los `import()` dinámicos, así que una página nueva siempre trae JS nuevo.
 **Consecuencias:** Hay que correr el script al publicar (queda documentado en el README y en AGREGAR-JUEGO). Los import maps funcionan en Chrome 89+, Safari 16.4+ y Firefox 108+; en navegadores más antiguos los módulos cargan igual, solo sin el sufijo.
+
+## D-23 · Reglas de Batalla Naval v1
+**Fecha:** 2026-09-08 · **Estado:** vigente (aprobada por el dueño del proyecto)
+**Decisión:** Tablero 10×10, flota clásica de 5 barcos, barcos que pueden tocarse (solo no superponerse), tiro extra al acertar (configurable, por defecto sí), parte el invitado y en la revancha el perdedor, sin réplica.
+**Por qué:** Es la versión más conocida, la más rápida de colocar en un celular y la más dinámica de jugar. El tiro extra es la costumbre chilena. La regla de “sin contacto” y la flota de 10 barcos quedan como variantes futuras porque alargan la colocación y la partida.
+**Consecuencias:** Con tiro extra un turno es una secuencia de disparos; el reductor calcula quién dispara a partir del historial completo, no de un contador de turnos. No hay réplica porque el segundo jugador ya tuvo su secuencia completa cuando el primero termina.
+
+## D-24 · Transportes compartidos entre juegos
+**Decisión:** `local.js` y `firebase.js` pasan de `toque-y-fama/transport/` a `assets/js/transport/`, parametrizados por `game`. Toque y Fama y Batalla Naval los importan desde ahí.
+**Por qué:** Evita duplicar la lógica de salas, presencia y reconexión; cualquier juego futuro con varios celulares la reutiliza (D-18).
