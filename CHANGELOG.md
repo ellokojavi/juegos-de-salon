@@ -2,6 +2,7 @@
 
 ## 0.4.1 — 2026-09-08
 - Toque y Fama: recordatorio del número propio al adivinar (oculto con toque para ver en modo un celular).
+- Toque y Fama: en pantalla se habla siempre de “número secreto” en vez de “secreto”.
 
 ## 0.4.0 — 2026-09-08
 - Segundo juego: **Toque y Fama / Bulls and Cows** con tres modos: un celular (pasar y jugar), contra el celular (duelo con solver) y dos celulares (sala con código y QR sobre Firebase Realtime Database).
