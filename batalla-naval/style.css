@@ -48,7 +48,13 @@
 }
 .grid-wrap.small .cell { font-size: 0.55rem; border-radius: 2px; }
 .cell.ship { background: linear-gradient(180deg, #cfd8e3, #8f9fb3); border-color: #e9eef5; }
-.cell.ship.sel { background: linear-gradient(180deg, var(--yellow), var(--orange)); border-color: #fff; }
+.cell.ship.sel { background: linear-gradient(180deg, var(--yellow), var(--orange)); border-color: #fff; overflow: visible; z-index: 2; box-shadow: 0 0 10px rgba(255, 210, 63, 0.7); }
+.cell .rot {
+  position: absolute; top: -9px; right: -9px; width: 26px; height: 26px; border-radius: 50%; border: 2px solid #fff; cursor: pointer;
+  background: var(--pink); color: #fff; font: 900 15px/1 var(--font-body); display: grid; place-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.5); z-index: 3;
+  animation: pop 0.25s cubic-bezier(0.2, 0.9, 0.3, 1.4) both;
+}
+.cell .rot:active { transform: scale(0.9) rotate(90deg); }
 .cell.ghost-ok { background: rgba(157, 255, 58, 0.45); border-color: var(--lime); }
 .cell.ghost-bad { background: rgba(255, 46, 136, 0.55); border-color: var(--pink); }
 .cell.agua { background: rgba(120, 160, 200, 0.28); }

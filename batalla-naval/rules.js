@@ -22,7 +22,7 @@ const ES = {
   offline: 'Rival desconectado. Esperando que vuelva…', rematchWaiting: 'Esperando a {name} para la revancha…',
   resumeTitle: '⏯ Hay una batalla a medias', resume: 'Continuar', delete: 'Borrar',
   // colocación
-  placeTitle: 'Coloca tu flota', placeFor: 'Flota de {name}', placeHint: 'Toca un barco y luego una casilla. Gira con ↻. Que nadie mire.',
+  placeTitle: 'Coloca tu flota', placeFor: 'Flota de {name}', placeHint: 'Toca un barco y luego una casilla. Toca un barco puesto para seleccionarlo: gíralo con ↻, muévelo tocando otra casilla o arrástralo.',
   ships: { carrier: 'Portaaviones', battleship: 'Acorazado', cruiser: 'Crucero', submarine: 'Submarino', destroyer: 'Destructor' },
   rotate: '↻ Girar {dir}', random: '🎲 Al azar', clear: '🧹 Limpiar', sail: '⚓ ¡Zarpar!', placed: '{n} de 5 barcos',
   fleetSaved: 'Flota lista 🔒', waitingFleet: 'Esperando a que {name} coloque su flota…', tapToReveal: 'Toca para ver', hoPass: 'Pásale el celular a', hoReady: '¡Listo, soy yo!',
@@ -55,7 +55,7 @@ const EN = {
   lobbyTitle: 'Room created', lobbyCode: 'Code', lobbyShare: 'Tell your rival the code or let them scan the QR.', lobbyWaiting: 'Waiting for your rival…', lobbyJoined: '{name} joined!', copyLink: '📋 Copy link', copied: 'Copied!',
   offline: 'Rival disconnected. Waiting for them to come back…', rematchWaiting: 'Waiting for {name} for the rematch…',
   resumeTitle: '⏯ There\'s an unfinished battle', resume: 'Continue', delete: 'Delete',
-  placeTitle: 'Place your fleet', placeFor: '{name}\'s fleet', placeHint: 'Tap a ship, then a cell. Rotate with ↻. No peeking.',
+  placeTitle: 'Place your fleet', placeFor: '{name}\'s fleet', placeHint: 'Tap a ship, then a cell. Tap a placed ship to select it: rotate it with ↻, move it by tapping another cell, or drag it.',
   ships: { carrier: 'Carrier', battleship: 'Battleship', cruiser: 'Cruiser', submarine: 'Submarine', destroyer: 'Destroyer' },
   rotate: '↻ Rotate {dir}', random: '🎲 Random', clear: '🧹 Clear', sail: '⚓ Set sail!', placed: '{n} of 5 ships',
   fleetSaved: 'Fleet ready 🔒', waitingFleet: 'Waiting for {name} to place their fleet…', tapToReveal: 'Tap to reveal', hoPass: 'Pass the phone to', hoReady: 'Ready, it\'s me!',
