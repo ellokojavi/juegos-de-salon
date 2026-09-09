@@ -142,3 +142,6 @@
 
 /* Aire bajo los títulos de las pantallas de configuración y sala */
 #screen-setup > h2, #screen-lobby > h2 { margin-bottom: 16px; }
+
+/* Separador entre la respuesta y el pase del celular */
+.pass-divider { width: 60%; height: 1px; background: var(--glass-border); margin: 6px auto 2px; }
