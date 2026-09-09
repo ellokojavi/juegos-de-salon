@@ -14,7 +14,7 @@ import re, sys, json, pathlib
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 MODULES = [
-    'assets/js/ui.js', 'assets/js/i18n.js', 'assets/js/sound.js', 'assets/js/games.js', 'assets/js/firebase-config.js',
+    'assets/js/ui.js', 'assets/js/i18n.js', 'assets/js/sound.js', 'assets/js/games.js', 'assets/js/firebase-config.js', 'assets/js/frases.js',
     'cuarto-rey/game.js', 'cuarto-rey/rules.js',
     'toque-y-fama/game.js', 'toque-y-fama/rules.js', 'toque-y-fama/engine.js',
     'toque-y-fama/transport/local.js', 'toque-y-fama/transport/firebase.js',
