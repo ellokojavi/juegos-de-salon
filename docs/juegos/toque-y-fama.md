@@ -15,6 +15,9 @@
 | 🤖 Contra el celular | Duelo: el jugador adivina el número del celular mientras el celular (solver por eliminación) adivina el suyo. | `transport/local.js` + bot |
 | 📡 Dos celulares | Sala con código de 4 letras y QR (`?sala=CODE`). Cada celular calcula las respuestas contra su propio secreto. | `transport/firebase.js` (Realtime Database) |
 
+## Recordatorio del número propio
+En la pantalla de juego aparece una ficha “🔒 Tu número”. En dos celulares y contra el celular se ve directo; en un celular parte oculta (••••) y se muestra al tocarla, porque el celular pasa de mano.
+
 ## Flujo
 ```
 Intro (elige modo) → Setup (nombres, cifras, réplica, cero) → [Lobby: código + QR] → Secreto → Juego (tableros) → Resultado → Revancha
