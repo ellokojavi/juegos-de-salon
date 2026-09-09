@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.0 — 2026-09-09
+- Línea de Tiempo en **varios celulares**, de dos a seis jugadores: sala con código y QR, lobby con quienes van llegando, el anfitrión abre la partida, cada uno ve su mano y el veredicto de cada jugada se muestra a todos.
+- Reglas de Firebase ampliadas de dos a seis roles (A a F).
+- Transporte: el reparto de roles ahora resuelve la carrera entre dos personas que entran a la vez, escribiendo un identificador de dispositivo y releyendo.
+- Reconexión a mitad de partida y revancha que mueve a todos a la sala nueva.
+
 ## 0.8.2 — 2026-09-09
 - Línea de Tiempo: la carta elegida queda fija en una barra sobre la línea mientras se busca dónde ponerla, con la mano atenuada detrás. Tocar la barra vuelve a la mano para cambiar de carta.
 

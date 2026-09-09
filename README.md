@@ -12,7 +12,7 @@ App web (mobile-first) con juegos de salón para jugar con amigos: de naipes, de
 |---|---|---|---|
 | 👑 [Cuarto Rey / Fourth King](#-cuarto-rey) | 4 a 6 | Un celular en la mesa | v0.3 |
 | 🔢 [Toque y Fama / Bulls and Cows](#-toque-y-fama) | 1 a 2 | Un celular · Dos celulares · Contra el celular | v0.5 |
-| ⏳ [Línea de Tiempo / Timeline](#-línea-de-tiempo) | 1 a 6 | Un celular · Contra el celular | v0.8 |
+| ⏳ [Línea de Tiempo / Timeline](#-línea-de-tiempo) | 1 a 6 | Un celular · Varios celulares · Contra el celular | v0.9 |
 | ⚓ [Batalla Naval / Battleship](#-batalla-naval) | 1 a 2 | Un celular · Dos celulares · Contra el celular | v0.6 |
 
 ---
@@ -93,6 +93,7 @@ Especificación y diseño: [docs/juegos/batalla-naval.md](docs/juegos/batalla-na
 Recibes hitos sin fecha y los ubicas en el lugar correcto de una línea de tiempo común. Si aciertas, la carta se queda; si fallas, se descarta y robas otra. Gana quien se queda sin cartas. Se elige la temática al empezar: **Historia** con 98 hitos de la humanidad y **Música** con 89, de Beethoven a TikTok. Agregar una temática nueva es solo un archivo de datos.
 
 - **📱 Un celular:** de dos a seis jugadores, pasando el celular por turnos.
+- **📡 Varios celulares:** sala con código y QR, hasta seis jugadores. El anfitrión abre la partida cuando están todos, y cada uno ve su propia mano.
 - **🤖 Contra el celular:** tres niveles, de una máquina distraída a una casi infalible.
 
 <table>
@@ -101,6 +102,12 @@ Recibes hitos sin fecha y los ubicas en el lugar correcto de una línea de tiemp
     <td align="center"><img src="docs/screenshots/linea-de-tiempo/02-tematica.png" width="180" alt="Temática"><br><sub>Temática y jugadores</sub></td>
     <td align="center"><img src="docs/screenshots/linea-de-tiempo/03-juego.png" width="180" alt="Juego"><br><sub>Mano y línea de tiempo</sub></td>
     <td align="center"><img src="docs/screenshots/linea-de-tiempo/04-veredicto.png" width="180" alt="Veredicto"><br><sub>Veredicto y pase</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/linea-de-tiempo/06-sala.png" width="180" alt="Sala"><br><sub>Sala con código y QR</sub></td>
+    <td align="center"><img src="docs/screenshots/linea-de-tiempo/07-varios-celulares.png" width="180" alt="Varios celulares"><br><sub>Partida en varios celulares</sub></td>
+    <td align="center"><img src="docs/screenshots/linea-de-tiempo/05-resultado.png" width="180" alt="Resultado"><br><sub>Resultado y ranking</sub></td>
+    <td></td>
   </tr>
 </table>
 

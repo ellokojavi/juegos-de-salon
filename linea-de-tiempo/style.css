@@ -140,3 +140,18 @@
 .replay { margin-top: 10px; padding: 12px 16px; }
 .replay summary { font-size: 1rem; }
 #screen-result .stack { margin-top: 12px !important; }
+
+/* Sala (varios celulares) */
+#screen-lobby > h2 { margin-bottom: 16px; }
+.field input.code { text-transform: uppercase; letter-spacing: 0.4em; text-align: center; font-family: var(--font-display); font-size: 2rem; }
+.or { text-align: center; color: var(--muted); font-weight: 900; margin: 6px 0; }
+.code-big { font-family: var(--font-display); font-size: clamp(3rem, 20vw, 5rem); letter-spacing: 0.25em; text-align: center; color: var(--yellow); text-shadow: 0 5px 0 rgba(0,0,0,0.4), 0 0 30px rgba(255, 210, 63, 0.6); margin: 2px 0; padding-left: 0.25em; }
+.qr { display: grid; place-items: center; margin: 8px auto; background: #fff; border-radius: 16px; padding: 8px; width: fit-content; }
+.qr svg { display: block; width: min(46vw, 190px); height: auto; }
+.lobby-players { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 10px 0; }
+.lobby-players .p { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; background: rgba(0,0,0,0.28); font-weight: 800; font-size: 0.9rem; animation: pop 0.3s cubic-bezier(0.2,0.9,0.3,1.4) both; }
+.lobby-players .p.me { background: var(--cyan); color: #03302c; }
+.lobby-players .p.off { opacity: 0.45; }
+.waiting { text-align: center; color: var(--muted); font-weight: 800; }
+.waiting .dots::after, .dots::after { content: '…'; animation: dots 1.2s steps(4) infinite; }
+@keyframes dots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } }

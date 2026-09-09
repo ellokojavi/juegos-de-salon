@@ -19,14 +19,14 @@
         },
         "players": {
           "$p": {
-            ".write": "$room.matches(/^[A-Z]{4}$/) && $p.matches(/^[AB]$/) && root.child('rooms/' + $room + '/createdAt').val() > now - 21600000",
+            ".write": "$room.matches(/^[A-Z]{4}$/) && $p.matches(/^[A-F]$/) && root.child('rooms/' + $room + '/createdAt').val() > now - 21600000",
             ".validate": "newData.hasChildren(['name']) && newData.child('name').isString() && newData.child('name').val().length <= 20"
           }
         },
         "messages": {
           "$id": {
             ".write": "$room.matches(/^[A-Z]{4}$/) && !data.exists() && root.child('rooms/' + $room + '/createdAt').val() > now - 21600000",
-            ".validate": "newData.hasChildren(['t', 'from', 'at']) && newData.child('t').isString() && newData.child('from').val().matches(/^[AB]$/) && newData.child('at').isNumber() && newData.child('at').val() <= now + 60000"
+            ".validate": "newData.hasChildren(['t', 'from', 'at']) && newData.child('t').isString() && newData.child('from').val().matches(/^[A-F]$/) && newData.child('at').isNumber() && newData.child('at').val() <= now + 60000"
           }
         },
         "$other": { ".validate": false }

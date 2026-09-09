@@ -27,15 +27,24 @@ let M = null;   // partida: config, nombres y jugadas
 /* ------------------------------------------------------------------ */
 /* Estado                                                              */
 /* ------------------------------------------------------------------ */
-function newMatch(config) { return { config, names: {}, moves: [], rematch: {}, seen: new Set() }; }
+function newMatch(config) {
+  // `players` viene en la configuración salvo en varios celulares, donde lo fija el anfitrión con `start`.
+  return { config, players: config.players || null, names: {}, moves: [], rematch: {}, presence: {}, seen: new Set() };
+}
 
 function apply(msg) {
   if (msg.id && M.seen.has(msg.id)) return; if (msg.id) M.seen.add(msg.id);
   switch (msg.t) {
     case 'hello': M.names[msg.from] = msg.name; break;
+    case 'start': {
+      if (M.players || msg.from !== 'A') return;                  // solo el anfitrión y una vez
+      const order = (msg.order || []).filter(r => M.names[r]);
+      if (order.length >= MIN_PLAYERS) M.players = order;
+      break;
+    }
     case 'place': {
       const v = view();
-      if (v.done || v.current !== msg.from) return;              // fuera de turno
+      if (v.lobby || v.done || v.current !== msg.from) return;    // sin empezar o fuera de turno
       if (!v.hands[msg.from]?.includes(msg.card)) return;         // carta que no tiene
       // Ojo: `at` es campo reservado del transporte (marca de tiempo), la ranura viaja como `slot`
       if (!(msg.slot >= 0 && msg.slot <= v.line.length)) return;  // ranura inválida
@@ -46,22 +55,24 @@ function apply(msg) {
   }
 }
 
-/** Vista derivada: manos, línea, turno, ganador. */
+/** Vista derivada: manos, línea, turno, ganador. Sin jugadores fijados, la partida aún no empieza. */
 function view() {
+  if (!M.players) return { lobby: true, done: false };
   const cards = getDeck(M.config.theme).cards;
-  const st = buildState({ cards, seed: M.config.seed, players: M.config.players, handSize: M.config.handSize, moves: M.moves });
+  const st = buildState({ cards, seed: M.config.seed, players: M.players, handSize: M.config.handSize, moves: M.moves });
   return { ...st, cards };
 }
 
 /* ------------------------------------------------------------------ */
 /* Sesión                                                              */
 /* ------------------------------------------------------------------ */
-function startSession({ mode, transport, roles, config, names, bot = null }) {
+function startSession({ mode, transport, roles, config, names, bot = null, code = null, role = null }) {
   if (S?.transport) S.transport.leave();
-  S = { mode, transport, roles, bot, uiRole: null, selCard: null, selSlot: null, lastShown: -1, cpuTimer: null };
+  S = { mode, transport, roles, bot, code, role, uiRole: null, selCard: null, selSlot: null, lastShown: -1, cpuTimer: null };
   M = newMatch(config);
   Object.entries(names).forEach(([r, name]) => { if (name) transport.send({ t: 'hello', from: r, name }); });
   transport.onMessage(m => { apply(m); onChange(); });
+  transport.onPresence(p => { M.presence = p; if (view().lobby) renderLobby(); });
 }
 
 let chain = Promise.resolve();
@@ -69,6 +80,7 @@ function onChange() { chain = chain.then(async () => { await act(); render(); })
 
 async function act() {
   const v = view();
+  if (v.lobby) { saveSession(); return; }
   if (S.bot && !v.done && v.current === S.bot.role && !S.cpuTimer) {
     S.cpuTimer = setTimeout(() => {
       S.cpuTimer = null;
@@ -84,10 +96,17 @@ async function act() {
 /* ---------- Persistencia (canon C-6) ---------- */
 function saveSession() {
   if (!S || !M) return;
-  store.save({ mode: S.mode, config: M.config, messages: S.transport.messages || [], done: view().done });
+  const done = view().done;
+  if (S.mode === 'online') store.save({ mode: 'online', code: S.code, role: S.role, name: M.names[S.role], config: M.config, done });
+  else store.save({ mode: S.mode, config: M.config, messages: S.transport.messages || [], done });
 }
 function loadSession() { return store.load(); }
 function clearSession() { store.clear(); }
+
+async function resume(saved) {
+  if (saved.mode === 'online') return joinOnline(saved.code, saved.name, saved.role);
+  return restoreLocal(saved);
+}
 
 function restoreLocal(saved) {
   const transport = createLocalTransport({ seed: saved.messages || [] });
@@ -116,13 +135,55 @@ function eventRow(cardId, byId, fresh = false) {
 function render() {
   if (!M) return;
   const v = view();
+  if (v.lobby) return renderLobby();
   if (v.done) return renderResult(v);
   renderPlay(v);
+}
+
+/* ---------- Sala (varios celulares) ---------- */
+function renderLobby() {
+  if (S.mode !== 'online' || !M) return;
+  showScreen('screen-lobby');
+  const box = $('#lobby-box'); box.innerHTML = '';
+  const url = `${location.origin}${location.pathname}?sala=${S.code}`;
+  const joined = ROLES.filter(r => M.names[r]);
+  const host = 'A';
+  box.append(
+    el('div', { class: 'muted', style: 'font-weight:800' }, T.lobbyCode),
+    el('div', { class: 'code-big' }, S.code),
+    el('div', { class: 'qr', id: 'qr' }),
+    el('p', { class: 'muted', style: 'font-size:0.9rem' }, T.lobbyShare),
+    el('button', { class: 'btn btn--ghost btn--sm', onClick: async e => { try { await navigator.clipboard.writeText(url); e.target.textContent = T.copied; } catch (_) { prompt('URL', url); } } }, T.copyLink),
+    el('p', { class: 'lead', style: 'margin:12px 0 4px' }, `${T.lobbyPlayers} (${joined.length}/${MAX_PLAYERS})`),
+    el('div', { class: 'lobby-players' }, ...joined.map(r => el('span', { class: 'p' + (r === S.role ? ' me' : '') + (M.presence[r]?.online === false ? ' off' : '') }, M.names[r]))),
+    S.role === host
+      ? el('button', { class: 'btn btn--yellow', disabled: joined.length < MIN_PLAYERS, onClick: () => { SFX.pass(); S.transport.send({ t: 'start', from: 'A', order: joined }); } }, joined.length < MIN_PLAYERS ? T.lobbyNeedMore : T.lobbyStart)
+      : el('p', { class: 'waiting' }, el('span', { class: 'dots' }, fmt(T.lobbyWaitHost, { name: M.names[host] || '…' }))),
+  );
+  renderQr(url);
+}
+
+async function renderQr(url) {
+  try {
+    if (!window.qrcode) await new Promise((res, rej) => { const sc = document.createElement('script'); sc.src = 'https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js'; sc.onload = res; sc.onerror = rej; document.head.append(sc); });
+    const qr = window.qrcode(0, 'M'); qr.addData(url); qr.make();
+    const box = $('#qr'); if (box) box.innerHTML = qr.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
+  } catch (_) { const box = $('#qr'); if (box) box.remove(); }
 }
 
 function renderPlay(v) {
   showScreen('screen-play');
   const isLocalTurn = S.roles.includes(v.current) && !(S.bot && S.bot.role === v.current);
+  // Varios celulares: el veredicto de cada jugada se muestra a todos y se cierra solo
+  if (S.mode === 'online' && v.history.length > S.lastShown + 1) {
+    const last = v.history[v.history.length - 1];
+    S.lastShown = v.history.length - 1;
+    const stage = verdictStage(last, v, null);
+    let closed = false;
+    const next = showHandoff([stage], () => { closed = true; S.selCard = null; S.selSlot = null; render(); });
+    setTimeout(() => { if (!closed) next(); }, 2600);
+    return;
+  }
 
   // Modo un celular: mostrar el resultado de la jugada anterior y pasar el celular
   if (S.mode === 'local' && v.history.length > S.lastShown + 1) {
@@ -145,13 +206,16 @@ function renderPlay(v) {
   }
 
   // Rol que mira la pantalla
-  const me = S.mode === 'cpu' ? 'A' : v.current;
+  const me = S.mode === 'online' ? S.role : (S.mode === 'cpu' ? 'A' : v.current);
   $('#status-who').textContent = isLocalTurn ? fmt(T.turnYou, { name: M.names[v.current] }) : (S.bot && v.current === S.bot.role ? T.cpuThinking : fmt(T.turnOther, { name: M.names[v.current] }));
-  $('#status-sub').textContent = isLocalTurn ? (S.selCard ? T.pickSlot : T.pickCard) : '';
+  const offline = S.mode === 'online' ? M.players?.length && ROLES.find(r => M.presence[r]?.online === false && M.names[r]) : null;
+  $('#status-sub').textContent = isLocalTurn ? (S.selCard ? T.pickSlot : T.pickCard)
+    : offline ? fmt(T.offline, { name: M.names[offline] })
+    : (S.mode === 'online' ? fmt(T.waitingTurn, { name: M.names[v.current] }) : '');
 
   // Marcador
   const score = $('#score'); score.innerHTML = '';
-  for (const p of M.config.players) {
+  for (const p of M.players) {
     score.append(el('span', { class: 'p' + (p === v.current ? ' turn' : '') }, M.names[p], el('span', { class: 'n' }, v.hands[p].length)));
   }
 
@@ -159,7 +223,7 @@ function renderPlay(v) {
   const hand = v.hands[me] || [];
   if (S.selCard && !hand.includes(S.selCard)) S.selCard = null;
   if (!S.selCard && hand.length && isLocalTurn) S.selCard = hand[0];
-  $('#hand-title').textContent = S.mode === 'cpu' ? T.yourHand : fmt(T.handOf, { name: M.names[me] });
+  $('#hand-title').textContent = S.mode === 'local' ? fmt(T.handOf, { name: M.names[me] }) : T.yourHand;
   $('#pool-left').textContent = fmt(T.poolLeft, { n: v.poolLeft });
   const handBox = $('#hand'); handBox.innerHTML = '';
   for (const id of hand) {
@@ -240,7 +304,7 @@ function renderResult(v) {
   const already = $('#screen-result').classList.contains('active');
   if (!already) showScreen('screen-result');
   const winners = v.winner || [];
-  const meRole = S.mode === 'cpu' ? 'A' : null;
+  const meRole = S.mode === 'online' ? S.role : (S.mode === 'cpu' ? 'A' : null);
   const many = winners.length > 1;
   $('#result-title').textContent = many ? T.winTitleMany : fmt(T.winTitle, { name: M.names[winners[0]] });
   const okOf = p => v.history.filter(h => h.from === p && h.ok).length;
@@ -249,7 +313,7 @@ function renderResult(v) {
   $('#result-trophy').textContent = meRole && !winners.includes(meRole) ? '😵' : (many ? '🤝' : '🏆');
 
   const rank = $('#result-ranking'); rank.innerHTML = '';
-  const order = M.config.players.slice().sort((a, b) => v.hands[a].length - v.hands[b].length || okOf(b) - okOf(a));
+  const order = M.players.slice().sort((a, b) => v.hands[a].length - v.hands[b].length || okOf(b) - okOf(a));
   order.forEach((p, i) => {
     rank.append(el('li', { class: winners.includes(p) ? 'top' : '' },
       el('span', { class: 'pos' }, ['🥇', '🥈', '🥉'][i] || `${i + 1}.`),
@@ -262,6 +326,11 @@ function renderResult(v) {
   if (!already) { $('#result-replay').open = false; if (!meRole || winners.includes(meRole)) { confetti({ count: 220, duration: 3500 }); SFX.win(); } else SFX.timeUp(); }
 
   const box = $('#result-actions'); box.innerHTML = '';
+  // Revancha propuesta por otro: me uno a su sala nueva
+  if (S.mode === 'online' && !S.switching) {
+    const proposed = ROLES.filter(r => r !== S.role).map(r => M.rematch[r]).find(c => typeof c === 'string');
+    if (proposed && proposed !== S.code) { S.switching = true; joinOnline(proposed, M.names[S.role]).catch(e => { console.error(e); S.switching = false; }); }
+  }
   box.append(
     el('button', { class: 'btn btn--yellow', onClick: rematch }, T.rematch),
     el('button', { class: 'btn btn--ghost', onClick: () => { clearSession(); S.transport.leave(); location.href = location.pathname; } }, T.changeMode),
@@ -269,7 +338,46 @@ function renderResult(v) {
   );
 }
 
-function rematch() { SFX.tap(); startLocalMode(S.mode, { ...M.names }, { ...M.config, seed: randomSeed() }); }
+async function rematch() {
+  SFX.tap();
+  if (S.mode === 'online') {
+    if (M.rematch[S.role]) return;
+    const others = ROLES.filter(r => M.names[r] && r !== S.role);
+    const proposed = others.map(r => M.rematch[r]).find(c => typeof c === 'string');
+    if (proposed) { S.switching = true; return joinOnline(proposed, M.names[S.role]); }
+    const { createFirebaseTransport } = await import('../assets/js/transport/firebase.js');
+    const t = createFirebaseTransport({ game: GAME_ID, maxPlayers: MAX_PLAYERS });
+    const config = { theme: M.config.theme, handSize: M.config.handSize, seed: randomSeed() };
+    S.switching = true;
+    const code = await t.create({ config, name: M.names[S.role] });
+    S.transport.send({ t: 'rematch', from: S.role, code });
+    M.rematch[S.role] = code;
+    setTimeout(() => startOnline(t, code, 'A', M.names[S.role], config), 600);
+    return;
+  }
+  startLocalMode(S.mode, { ...M.names }, { ...M.config, seed: randomSeed() });
+}
+
+/* ---------- Varios celulares ---------- */
+async function startOnline(transport, code, role, name, config) {
+  startSession({ mode: 'online', transport, roles: [role], config, names: { [role]: name }, code, role });
+  history.replaceState(null, '', `${location.pathname}?sala=${code}`);
+  keepAwake();
+  saveSession();
+  render();
+}
+async function createOnline(name, config) {
+  const { createFirebaseTransport } = await import('../assets/js/transport/firebase.js');
+  const t = createFirebaseTransport({ game: GAME_ID, maxPlayers: MAX_PLAYERS });
+  const code = await t.create({ config, name });
+  await startOnline(t, code, 'A', name, config);
+}
+async function joinOnline(code, name, previousRole = null) {
+  const { createFirebaseTransport } = await import('../assets/js/transport/firebase.js');
+  const t = createFirebaseTransport({ game: GAME_ID, maxPlayers: MAX_PLAYERS });
+  const { role, config } = await t.join(code, { name, previousRole });
+  await startOnline(t, code, role, name, config || DEFAULT_CONFIG);
+}
 
 /* ------------------------------------------------------------------ */
 /* Modos y arranque                                                    */
@@ -284,7 +392,7 @@ function startLocalMode(mode, names, config) {
 
 function renderModes() {
   const box = $('#modes'); box.innerHTML = '';
-  const modes = [['local', T.modeLocal, T.modeLocalHint, true], ['online', T.modeOnline, T.modeOnlineHint, false], ['cpu', T.modeCpu, T.modeCpuHint, true]];
+  const modes = [['local', T.modeLocal, T.modeLocalHint, true], ['online', T.modeOnline, T.modeOnlineHint, true], ['cpu', T.modeCpu, T.modeCpuHint, true]];
   for (const [m, label, hint, ok] of modes) box.append(el('button', { class: 'mode', disabled: !ok, onClick: () => { SFX.tap(); renderSetup(m); } }, el('span', {}, el('b', {}, label), el('small', {}, hint)), el('span', { class: 'go' }, ok ? '›' : '⏳')));
 }
 
@@ -292,23 +400,25 @@ function renderResumeSlot() {
   const slot = $('#resume-slot'); slot.innerHTML = '';
   const saved = loadSession();
   if (!saved || saved.done) return;
+  if (saved.mode === 'online' && !saved.code) return;
   const deck = getDeck(saved.config?.theme);
+  const label = saved.mode === 'online' ? `${T.lobbyCode}: ${saved.code}` : { local: T.modeLocal, cpu: T.modeCpu }[saved.mode] || '';
   slot.append(el('div', { class: 'panel pop' },
     el('p', { class: 'lead', style: 'margin-bottom:4px' }, T.resumeTitle),
-    el('p', { class: 'muted' }, `${deck.emoji} ${deck.name[lang]} · ${{ local: T.modeLocal, cpu: T.modeCpu }[saved.mode] || ''}`),
+    el('p', { class: 'muted' }, `${deck.emoji} ${deck.name[lang]} · ${label}`),
     el('div', { class: 'btn-row' },
-      el('button', { class: 'btn btn--cyan btn--sm', onClick: () => restoreLocal(saved) }, T.resume),
+      el('button', { class: 'btn btn--cyan btn--sm', onClick: async () => { try { await resume(saved); } catch (e) { clearSession(); renderResumeSlot(); } } }, T.resume),
       el('button', { class: 'btn btn--ghost btn--sm', onClick: () => { clearSession(); renderResumeSlot(); } }, T.delete),
     ),
   ));
 }
 
-function renderSetup(mode) {
+function renderSetup(mode, prefillCode = '') {
   showScreen('screen-setup');
   const config = { ...DEFAULT_CONFIG };
   const form = $('#setup-form'); form.innerHTML = '';
   const err = $('#setup-error'); err.textContent = '';
-  let draft = mode === 'cpu' ? [nameStore.get()] : ['', ''];
+  let draft = mode === 'local' ? ['', ''] : [nameStore.get()];
 
   // Temática
   const themes = el('div', { class: 'themes' });
@@ -353,6 +463,25 @@ function renderSetup(mode) {
 
   const fail = msg => { err.textContent = msg; err.classList.remove('shake'); void err.offsetWidth; err.classList.add('shake'); SFX.error(); vibrate([30, 30, 30]); };
   const actions = $('#setup-actions'); actions.innerHTML = '';
+  if (mode === 'online') {
+    const codeInput = el('input', { type: 'text', class: 'code', maxlength: 4, placeholder: T.codePlaceholder, value: prefillCode, autocapitalize: 'characters', autocomplete: 'off' });
+    const createBtn = el('button', { class: 'btn btn--yellow', onClick: async () => {
+      const name = draft[0].trim(); if (!name) return fail(T.errName);
+      nameStore.set(name); SFX.tap(); createBtn.disabled = true;
+      try { await createOnline(name, { ...config, seed: randomSeed() }); } catch (e) { console.error(e); fail(T.errNet); }
+      createBtn.disabled = false;
+    } }, T.create);
+    const joinBtn = el('button', { class: 'btn btn--cyan', onClick: async () => {
+      const name = draft[0].trim(); const code = codeInput.value.trim().toUpperCase();
+      if (!name) return fail(T.errName);
+      if (!/^[A-Z]{4}$/.test(code)) return fail(T.errCode);
+      nameStore.set(name); SFX.tap(); joinBtn.disabled = true;
+      try { await joinOnline(code, name); } catch (e) { fail({ 'not-found': T.errNotFound, full: T.errFull, expired: T.errExpired, 'other-game': T.errOtherGame }[e.message] || T.errNet); }
+      joinBtn.disabled = false;
+    } }, T.join);
+    actions.append(createBtn, el('div', { class: 'or' }, '— o —'), el('div', { class: 'panel' }, el('p', { class: 'lead', style: 'margin-bottom:8px' }, T.joinTitle), el('div', { class: 'field' }, codeInput), joinBtn));
+    return;
+  }
   actions.append(el('button', { class: 'btn btn--yellow', onClick: () => {
     const list = draft.map(n => n.trim());
     if (mode === 'cpu') {
@@ -381,6 +510,12 @@ function init() {
   sparkles(12);
   renderModes();
   renderResumeSlot();
+  const code = new URLSearchParams(location.search).get('sala');
+  if (code && /^[A-Z]{4}$/i.test(code)) {
+    const saved = loadSession();
+    if (saved && saved.mode === 'online' && saved.code === code.toUpperCase() && !saved.done) joinOnline(saved.code, saved.name, saved.role).catch(() => { clearSession(); renderSetup('online', code.toUpperCase()); });
+    else renderSetup('online', code.toUpperCase());
+  }
 }
 init();
 // Gancho de depuración (solo lectura) para pruebas automatizadas (canon C-14).

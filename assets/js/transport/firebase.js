@@ -25,8 +25,14 @@ function getDb() {
   return db;
 }
 
-export function createFirebaseTransport({ game }) {
+const ROLES = ['A', 'B', 'C', 'D', 'E', 'F'];
+
+export function createFirebaseTransport({ game, maxPlayers = 2 }) {
+  // Identificador de este dispositivo: sirve para resolver quién se quedó con un rol
+  // cuando dos personas entran a la sala en el mismo instante.
+  const uid = randomRoomCode() + Date.now().toString(36);
   const t = {
+    uid,
     kind: 'firebase',
     code: null,
     role: null,
@@ -62,20 +68,31 @@ export function createFirebaseTransport({ game }) {
       if (Date.now() - (room.createdAt || 0) > ROOM_TTL) throw new Error('expired');
       const players = room.players || {};
       let role = previousRole;
-      if (!role) {
-        if (!players.A) role = 'A';
-        else if (!players.B) role = 'B';
-        else throw new Error('full');
-      }
+      if (!role) role = await this._claimRole(code, ROLES.slice(0, maxPlayers).filter(r => !players[r]), name);
       await this._enter(code, role, name);
-      return { role, config: room.config };
+      return { role, config: room.config, players };
+    },
+
+    /**
+     * Reclama el primer rol libre. Escribe y vuelve a leer: si otro dispositivo ganó
+     * la carrera, su identificador quedará en el nodo y probamos con el rol siguiente.
+     */
+    async _claimRole(code, candidates, name) {
+      const d = getDb();
+      for (const role of candidates) {
+        const meRef = ref(d, `rooms/${code}/players/${role}`);
+        if ((await get(meRef)).exists()) continue;
+        await set(meRef, { name, online: true, uid });
+        if ((await get(meRef)).val()?.uid === uid) return role;
+      }
+      throw new Error('full');
     },
 
     async _enter(code, role, name) {
       const d = getDb();
       this.code = code; this.role = role; this.roles = [role];
       const meRef = ref(d, `rooms/${code}/players/${role}`);
-      await set(meRef, { name, online: true });
+      await set(meRef, { name, online: true, uid });
       onDisconnect(meRef).update({ online: false });
       // Reconexión: al volver, marcar online de nuevo
       const connRef = ref(d, '.info/connected');

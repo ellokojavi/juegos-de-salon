@@ -12,8 +12,8 @@ Proyecto: `juegos-de-salon` (plan Spark, gratuito). Creado el 2026-09-08 con la 
 - Solo existe el nodo `rooms/<CODIGO>` con código de 4 letras mayúsculas.
 - Cualquiera con el código puede leer la sala.
 - `createdAt`, `game` y `config` se escriben una sola vez (al crear la sala).
-- `players/A` y `players/B` se pueden actualizar mientras la sala tenga menos de 6 horas.
-- `messages/<id>` son de solo agregar (no se editan ni borran) y deben traer `t`, `from` (A o B) y `at`.
+- `players/A` a `players/F` se pueden actualizar mientras la sala tenga menos de 6 horas (hasta seis jugadores).
+- `messages/<id>` son de solo agregar (no se editan ni borran) y deben traer `t`, `from` (de A a F) y `at`.
 - Una sala con más de 6 horas puede ser borrada por cualquiera (limpieza).
 - Cualquier otro campo se rechaza.
 
