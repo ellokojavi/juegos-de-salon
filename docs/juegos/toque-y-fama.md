@@ -16,7 +16,7 @@
 | 📡 Dos celulares | Sala con código de 4 letras y QR (`?sala=CODE`). Cada celular calcula las respuestas contra su propio secreto. | `transport/firebase.js` (Realtime Database) |
 
 ## Recordatorio del número propio
-En la pantalla de juego aparece una ficha “🔒 Tu número”. En dos celulares y contra el celular se ve directo; en un celular parte oculta (••••) y se muestra al tocarla, porque el celular pasa de mano.
+En la pantalla de juego aparece una ficha “🔒 Tu número secreto”. En dos celulares y contra el celular se ve directo; en un celular parte oculta (••••) y se muestra al tocarla, porque el celular pasa de mano.
 
 ## Flujo
 ```
@@ -40,6 +40,9 @@ El estado (`view()`) se deriva de la lista de mensajes: fase (`lobby`, `secret`,
 - Reconexión: el secreto y el rol se guardan en `localStorage` (`juegos-de-salon:tyf:session`); al abrir `?sala=CODE` o “Continuar” se retoma.
 - Revancha: quien la propone crea una sala nueva (queda como A) y avisa con `rematch`; el otro se une como B.
 - Presencia con `onDisconnect`; si el rival se desconecta, se avisa en pantalla.
+
+## Vocabulario en pantalla
+Siempre se habla de “número secreto” (en inglés, “secret number”), nunca de “secreto” a secas.
 
 ## Anti-trampa
 Compromiso `sha256(secreto + sal privada)` al inicio; al final se revelan secreto y sal, se verifica el hash y se recalculan todas las respuestas del rival. Resultado en pantalla: “verificado ✅” o “⚠️ no coincide”.
