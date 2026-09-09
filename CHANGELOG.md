@@ -1,5 +1,8 @@
 # Changelog
 
+## Sin publicar
+- Estudio de factibilidad de Toque y Fama con propuesta de mecánica para dos celulares (`docs/juegos/toque-y-fama-factibilidad.md`); requerimientos TF-01..09 y decisión propuesta D-18. Tarjeta “Toque y Fama · próximamente” en el menú.
+
 ## 0.3.0 — 2026-09-08
 - Sonidos sintetizados (Web Audio) en las acciones clave: botones, volteo y descubrimiento de carta, brindis, reyes, temporizador, dados, pase de celular, final y error. Botón 🔊/🔇 en menú y juego.
 - Capturas de pantalla en el README (`docs/screenshots/`).
