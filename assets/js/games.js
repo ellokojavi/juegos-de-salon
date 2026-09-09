@@ -19,7 +19,7 @@ export const GAMES = [
     id: 'toque-y-fama',
     emoji: '🔢',
     name: { es: 'Toque y Fama', en: 'Bulls and Cows' },
-    tagline: { es: 'Adivina el número secreto del rival. En un celular, en dos, o contra el celular.', en: 'Crack your rival\'s secret number. One phone, two phones, or versus the phone.' },
+    tagline: { es: 'Adivina el número secreto. En un celular, en dos, o contra el celular.', en: 'Crack the secret number. One phone, two phones, or versus the phone.' },
     players: '2',
     duration: '5–12',
     path: 'toque-y-fama/',
