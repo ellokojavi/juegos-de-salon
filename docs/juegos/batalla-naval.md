@@ -93,7 +93,7 @@ Promedio esperado: 45 a 55 disparos para hundir la flota (un humano promedio ron
 ## 7. Interfaz y estilo
 
 - Misma identidad: fondo neón, Bangers en títulos, botones pill, confeti al ganar. Paleta del mar: casillas azul profundo, agua gris-azul, tocado naranjo, hundido rojo con brillo.
-- Grilla táctil: casillas mínimas de 30 px en 375 px de ancho (10 columnas + etiquetas). Sin scroll horizontal.
+- Grilla táctil: casillas mínimas de 30 px en 375 px de ancho. Es una sola grilla CSS de 11×11 donde la primera fila y la primera columna son las etiquetas, así números y letras quedan alineados con las casillas en todos los navegadores (v0.9.4). Sin scroll horizontal.
 - Todo en español e inglés (“Battleship”): agua/miss, tocado/hit, hundido/sunk, ¡Fuego!/Fire!, ¡Zarpar!/Set sail!
 - Accesible con dedo: selección + confirmación antes de disparar; vibración en tocado/hundido.
 

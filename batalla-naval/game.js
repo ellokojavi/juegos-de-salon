@@ -169,17 +169,23 @@ async function verifyAll() {
 /* ------------------------------------------------------------------ */
 function showScreen(id) { $$('.screen').forEach(s => s.classList.toggle('active', s.id === id)); window.scrollTo({ top: 0, behavior: 'instant' }); }
 
-/** Grilla 10×10 con etiquetas. cellClass(r,c) devuelve clases extra; onTap(r,c) opcional. */
+/**
+ * Grilla 10×10 con etiquetas. cellClass(r,c) devuelve clases extra; onTap(r,c) opcional.
+ * Las etiquetas viven DENTRO de la misma grilla (una fila y una columna más), así comparten
+ * las pistas de tamaño con las casillas y quedan alineadas en cualquier navegador.
+ */
 function gridEl({ small = false, cellClass = () => '', onTap = null, id = null }) {
-  const cols = el('div', { class: 'cols' }, ...COLS.split('').map(l => el('div', { class: 'lbl' }, l)));
-  const rows = el('div', { class: 'rows' }, ...Array.from({ length: N }, (_, i) => el('div', { class: 'lbl' }, i + 1)));
   const grid = el('div', { class: 'grid' });
-  for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
-    const cell = el('div', { class: 'cell ' + cellClass(r, c), 'data-r': r, 'data-c': c });
-    if (onTap) cell.addEventListener('click', () => onTap(r, c, cell));
-    grid.append(cell);
+  grid.append(el('div', { class: 'lbl corner' }), ...COLS.split('').map(l => el('div', { class: 'lbl' }, l)));
+  for (let r = 0; r < N; r++) {
+    grid.append(el('div', { class: 'lbl' }, r + 1));
+    for (let c = 0; c < N; c++) {
+      const cell = el('div', { class: 'cell ' + cellClass(r, c), 'data-r': r, 'data-c': c });
+      if (onTap) cell.addEventListener('click', () => onTap(r, c, cell));
+      grid.append(cell);
+    }
   }
-  return el('div', { class: 'grid-wrap' + (small ? ' small' : ''), id }, el('div', { class: 'corner' }), cols, rows, grid);
+  return el('div', { class: 'grid-wrap' + (small ? ' small' : ''), id }, grid);
 }
 
 /** Clases de una casilla de mi propio tablero: barco + impactos recibidos. */
