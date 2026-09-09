@@ -65,6 +65,13 @@
 }
 .keypad button:active { transform: scale(0.94); background: rgba(255,255,255,0.2); }
 .keypad button:disabled { opacity: 0.25; }
+.keypad button { -webkit-touch-callout: none; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+.keypad button.blocked {
+  opacity: 1; color: rgba(255,255,255,0.35); background: rgba(255, 46, 136, 0.12); border-color: rgba(255, 46, 136, 0.5);
+  text-decoration: line-through; text-decoration-color: var(--pink); text-decoration-thickness: 4px; position: relative;
+}
+.keypad button.blocked::after { content: '🚫'; position: absolute; top: 4px; right: 6px; font-size: 0.8rem; }
+.block-hint { margin: 10px auto 0; max-width: 360px; text-align: center; color: var(--muted); font-size: 0.8rem; font-weight: 700; line-height: 1.35; }
 .keypad button.ok { background: linear-gradient(180deg, var(--yellow), var(--orange)); color: #3a1200; border-color: transparent; box-shadow: 0 5px 0 #9a4a00; }
 .keypad button.ok:disabled { opacity: 0.4; box-shadow: none; }
 .keypad button.del { font-family: var(--font-body); font-weight: 900; font-size: 1.3rem; }
