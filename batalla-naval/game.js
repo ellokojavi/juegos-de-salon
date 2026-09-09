@@ -261,6 +261,13 @@ function buildPlacement(role) {
     const gridBox = $('#place-grid'); gridBox.innerHTML = '';
     const g = gridEl({ cellClass: (r, c) => { const id = occ[cellName(r, c)]; return id ? ('ship' + (id === d.sel ? ' sel' : '')) : ''; }, onTap: onCellTap });
     gridBox.append(g);
+    // Barco seleccionado ya colocado: botón ↻ sobre su esquina superior derecha
+    if (d.sel && d.layout[d.sel]) {
+      const p = d.layout[d.sel]; const size = SHIP_SIZE[d.sel];
+      const corner = p.dir === 'h' ? { r: p.r, c: p.c + size - 1 } : { r: p.r, c: p.c };
+      const cell = g.querySelector(`.cell[data-r="${corner.r}"][data-c="${corner.c}"]`);
+      if (cell) cell.append(el('button', { type: 'button', class: 'rot', 'aria-label': T.rotate.replace('{dir}', ''), onClick: e => { e.stopPropagation(); rotateSelected(); }, onPointerdown: e => e.stopPropagation() }, '↻'));
+    }
     // arrastre de barcos ya colocados
     const grid = g.querySelector('.grid');
     grid.addEventListener('pointerdown', onPointerDown);
@@ -289,10 +296,16 @@ function buildPlacement(role) {
   function onCellTap(r, c, cell) {
     if (drag && drag.moved) return; // fue un arrastre
     const here = shipAt(r, c);
-    if (here) { // levantar el barco para moverlo / seleccionarlo
-      d.sel = here; d.dir = d.layout[here].dir; delete d.layout[here]; SFX.tap(); paint(); return;
+    if (here) { // tocar un barco puesto: seleccionarlo (amarillo + botón ↻); tocarlo de nuevo lo deselecciona
+      d.sel = here === d.sel ? null : here; if (d.sel) d.dir = d.layout[here].dir; SFX.tap(); vibrate(8); paint(); return;
     }
-    if (!d.sel || d.layout[d.sel]) { // sin barco seleccionado: elegir el primero libre
+    if (d.sel && d.layout[d.sel]) { // barco puesto seleccionado + casilla vacía: moverlo ahí
+      const target = { r, c, dir: d.layout[d.sel].dir };
+      const without = { ...d.layout }; delete without[d.sel];
+      if (isValidPlacement(without, d.sel, target)) { d.layout[d.sel] = target; SFX.reveal(); vibrate(10); paint(); } else flash(cell);
+      return;
+    }
+    if (!d.sel) { // sin barco seleccionado: elegir el primero libre
       const free = FLEET.find(f => !d.layout[f.id]); if (!free) return; d.sel = free.id;
     }
     const placement = { r, c, dir: d.dir };
