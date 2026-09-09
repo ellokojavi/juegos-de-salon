@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.5.0 — 2026-09-08
+- Menú: base de 100 frases por idioma (`assets/js/frases.js`), casi todas de humor de carrete y unas pocas sobre agua, moderación y manejar sobrio. Se barajan en cada carga y rotan cada 10 s.
+
 ## 0.4.9 — 2026-09-08
 - Toque y Fama: el subtítulo “Parte X” (quién partió) se reemplaza por “Ronda N”; era redundante, sobre todo contra el celular.
 
