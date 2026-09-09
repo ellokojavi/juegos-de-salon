@@ -207,14 +207,17 @@ function keypad({ digits, zeroFirst, onSubmit, hidden = false, submitLabel = T.g
   return el('div', {}, entry, pad);
 }
 
+/** Píldoras de pista. En los tableros van abreviadas (3F 1T) para que quepan en una línea; en la pantalla de respuesta, con palabra completa. */
 function clueChips(g, big = false) {
   const d = M.config.digits;
   const wrap = el('div', { class: big ? 'reply-clue' : 'clue' });
-  if (g.famas === d) wrap.append(el('span', { class: 'f' }, `🎯 ${g.famas} ${T.famas}`));
+  const F = n => big ? `${n} ${n === 1 ? T.fama : T.famas}` : `${n}${T.famaShort}`;
+  const Tq = n => big ? `${n} ${n === 1 ? T.toque : T.toques}` : `${n}${T.toqueShort}`;
+  if (g.famas === d) wrap.append(el('span', { class: 'f' }, `🎯 ${F(g.famas)}`));
   else {
-    if (g.famas) wrap.append(el('span', { class: 'f' }, `${g.famas} ${g.famas === 1 ? T.fama : T.famas}`));
-    if (g.toques) wrap.append(el('span', { class: 't' }, `${g.toques} ${g.toques === 1 ? T.toque : T.toques}`));
-    if (!g.famas && !g.toques) wrap.append(el('span', { class: 'z' }, T.none));
+    if (g.famas) wrap.append(el('span', { class: 'f' }, F(g.famas)));
+    if (g.toques) wrap.append(el('span', { class: 't' }, Tq(g.toques)));
+    if (!g.famas && !g.toques) wrap.append(el('span', { class: 'z' }, big ? T.none : '0'));
   }
   return wrap;
 }

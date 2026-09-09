@@ -48,7 +48,7 @@ En el teclado de adivinar, una pulsación larga (450 ms) sobre una cifra la marc
 Bajo “Los números secretos eran” hay un desplegable “🔎 Ver todos los intentos”, colapsado por defecto (una línea de alto, para que Revancha, Cambiar modo y Volver al menú queden a la vista en un celular de 812 px), con los tableros completos de ambos jugadores.
 
 ## Vocabulario en pantalla
-Siempre se habla de “número secreto” (en inglés, “secret number”), nunca de “secreto” a secas.
+En los tableros las pistas van abreviadas (“3F 1T”, en inglés “3B 1C”) para caber en una línea; en la pantalla grande de respuesta y en las instrucciones se usan las palabras completas. Siempre se habla de “número secreto” (en inglés, “secret number”), nunca de “secreto” a secas.
 
 ## Anti-trampa
 Compromiso `sha256(secreto + sal privada)` al inicio; al final se revelan secreto y sal, se verifica el hash y se recalculan todas las respuestas del rival. Resultado en pantalla: “verificado ✅” o “⚠️ no coincide”.

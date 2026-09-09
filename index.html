@@ -10,7 +10,8 @@
   <meta name="description" content="Juegos de salón para jugar con amigos: elige un juego, ingresa a los jugadores y deja que el celular guíe la partida.">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="assets/css/base.css">
+  <script type="importmap" id="importmap">{"imports": {"./assets/js/ui.js": "./assets/js/ui.js?v=0.4.6", "./assets/js/i18n.js": "./assets/js/i18n.js?v=0.4.6", "./assets/js/sound.js": "./assets/js/sound.js?v=0.4.6", "./assets/js/games.js": "./assets/js/games.js?v=0.4.6", "./assets/js/firebase-config.js": "./assets/js/firebase-config.js?v=0.4.6", "./cuarto-rey/game.js": "./cuarto-rey/game.js?v=0.4.6", "./cuarto-rey/rules.js": "./cuarto-rey/rules.js?v=0.4.6", "./toque-y-fama/game.js": "./toque-y-fama/game.js?v=0.4.6", "./toque-y-fama/rules.js": "./toque-y-fama/rules.js?v=0.4.6", "./toque-y-fama/engine.js": "./toque-y-fama/engine.js?v=0.4.6", "./toque-y-fama/transport/local.js": "./toque-y-fama/transport/local.js?v=0.4.6", "./toque-y-fama/transport/firebase.js": "./toque-y-fama/transport/firebase.js?v=0.4.6"}}</script>
+  <link rel="stylesheet" href="assets/css/base.css?v=0.4.6">
   <style>
     .hero { text-align: center; padding: 28px 0 18px; }
     .hero .emoji { font-size: 3.2rem; display: block; margin-bottom: 6px; }
@@ -56,7 +57,7 @@
 
     <footer>
       <p class="footer-msg" id="footer-msg" aria-live="polite">Toma con responsabilidad y con agua a mano. Si manejas, no tomas. 🚕</p>
-      <p class="muted">v0.4.5 · <a href="https://github.com/ellokojavi/juegos-de-salon" style="color:inherit" data-i18n="code">código en GitHub</a></p>
+      <p class="muted">v0.4.6 · <a href="https://github.com/ellokojavi/juegos-de-salon" style="color:inherit" data-i18n="code">código en GitHub</a></p>
     </footer>
   </main>
 
@@ -75,25 +76,8 @@
     applyStatic(T);
     document.title = `${T.appTitle} 🎲`;
     document.getElementById('lang-slot').append(langToggle());
-    // Emoji del encabezado: el dado se transforma suavemente en otros emojis festivos cada 3 segundos.
-    const heroEmojis = ['🎲', '🍻', '🎯', '🍸', '🎈', '🍣', '🃏', '🎉', '🥳', '🍕', '🎤', '🔢', '🍹', '🕺', '🎊'];
-    const heroEl = document.getElementById('hero-emoji');
-    let heroIdx = 0;
-    setInterval(() => {
-      if (document.hidden) return;
-      heroEl.classList.add('out');
-      setTimeout(() => { heroIdx = (heroIdx + 1) % heroEmojis.length; heroEl.textContent = heroEmojis[heroIdx]; heroEl.classList.remove('out'); }, 350);
-    }, 3000);
-    // Mensajes rotativos del pie: uno al azar al cargar, luego uno nuevo cada 5 segundos con fundido.
-    const msgs = T.footerMessages;
-    const msgEl = document.getElementById('footer-msg');
-    let idx = Math.floor(Math.random() * msgs.length);
-    msgEl.textContent = msgs[idx];
-    setInterval(() => {
-      if (document.hidden) return;
-      msgEl.classList.add('out');
-      setTimeout(() => { idx = (idx + 1) % msgs.length; msgEl.textContent = msgs[idx]; msgEl.classList.remove('out'); }, 450);
-    }, 5000);
+
+    // 1) Lo importante primero: la lista de juegos.
     const list = document.getElementById('games');
     GAMES.forEach((g, i) => {
       const card = el('a', { class: 'game-card' + (g.available ? '' : ' soon'), href: g.path, style: `animation-delay:${i * 80}ms` },
@@ -110,6 +94,29 @@
       );
       list.append(card);
     });
+
+    // 2) Decoraciones: si algo falla aquí, el menú sigue funcionando.
+    try {
+      // Emoji del encabezado: el dado se transforma suavemente en otros emojis festivos cada 3 segundos.
+      const heroEmojis = ['🎲', '🍻', '🎯', '🍸', '🎈', '🍣', '🃏', '🎉', '🥳', '🍕', '🎤', '🔢', '🍹', '🕺', '🎊'];
+      const heroEl = document.getElementById('hero-emoji');
+      let heroIdx = 0;
+      setInterval(() => {
+        if (document.hidden) return;
+        heroEl.classList.add('out');
+        setTimeout(() => { heroIdx = (heroIdx + 1) % heroEmojis.length; heroEl.textContent = heroEmojis[heroIdx]; heroEl.classList.remove('out'); }, 350);
+      }, 3000);
+      // Mensajes rotativos del pie: uno al azar al cargar, luego uno nuevo cada 5 segundos con fundido.
+      const msgs = Array.isArray(T.footerMessages) && T.footerMessages.length ? T.footerMessages : [T.footer];
+      const msgEl = document.getElementById('footer-msg');
+      let idx = Math.floor(Math.random() * msgs.length);
+      msgEl.textContent = msgs[idx];
+      if (msgs.length > 1) setInterval(() => {
+        if (document.hidden) return;
+        msgEl.classList.add('out');
+        setTimeout(() => { idx = (idx + 1) % msgs.length; msgEl.textContent = msgs[idx]; msgEl.classList.remove('out'); }, 450);
+      }, 5000);
+    } catch (e) { console.warn('decoraciones del menú:', e); }
   </script>
 </body>
 </html>
