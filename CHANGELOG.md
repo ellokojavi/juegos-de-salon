@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.6.4 — 2026-09-09
+- Batalla Naval: tocar fuera de la grilla deselecciona el barco seleccionado.
+
 ## 0.6.3 — 2026-09-09
 - Batalla Naval: botón ↻ del barco seleccionado más grande (40 px visibles, 52 px de área táctil) para tocarlo bien en el celular.
 

@@ -247,6 +247,7 @@ function renderPlace() {
 
 function buildPlacement(role) {
   const d = S.draft[role] = S.draft[role] || { layout: {}, sel: FLEET[0].id, dir: 'h' };
+  S.placing = { role, deselect: () => { if (d.sel && d.layout[d.sel]) { d.sel = null; paint(); } } };
   $('#place-title').textContent = S.mode === 'local' ? fmt(T.placeFor, { name: M.names[role] }) : T.placeTitle;
   $('#place-hint').textContent = T.placeHint;
   $('#place-status').textContent = '';
@@ -604,6 +605,14 @@ function init() {
   $('#sound-slot').append(soundToggle());
   initSound();
   sparkles(12);
+  // Tocar fuera de la grilla (y fuera de las fichas y botones) deselecciona el barco seleccionado.
+  $('#screen-place').addEventListener('click', e => {
+    if (!S?.placing || $('#screen-place').classList.contains('active') === false) return;
+    // composedPath conserva los nodos aunque la grilla se haya redibujado durante el mismo toque
+    const inside = e.composedPath().some(n => n.id === 'place-grid' || n.id === 'place-actions' || n.id === 'place-sail' || (n.classList && n.classList.contains('ship-chip')));
+    if (inside) return;
+    S.placing.deselect();
+  });
   renderModes();
   renderResumeSlot();
   const code = new URLSearchParams(location.search).get('sala');
