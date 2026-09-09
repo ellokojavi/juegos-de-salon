@@ -204,7 +204,7 @@ function renderPlay(v) {
   $('#status-who').textContent = S.mode === 'solo' ? T.soloTitle : (isLocalTurn ? fmt(T.turnYou, { name: M.names[v.current] }) : fmt(T.turnOther, { name: M.names[v.current] }));
   const offline = S.mode === 'online' ? M.players?.length && ROLES.find(r => M.presence[r]?.online === false && M.names[r]) : null;
   const record = S.mode === 'solo' ? records.get(M.config.theme, M.config.handSize) : null;
-  $('#status-sub').textContent = S.mode === 'solo' ? `${fmt(T.soloStatus, { ok: okCount, n: v.history.length })}${record ? ' · ' + fmt(T.soloRecord, { n: record }) : ''}`
+  $('#status-sub').textContent = S.mode === 'solo' ? `${fmt(T.soloStatus, { ok: okCount, n: v.history.length, tries: triesWord(v.history.length) })}${record ? ' · ' + fmt(T.soloRecord, { n: record, tries: triesWord(record) }) : ''}`
     : isLocalTurn ? (S.selCard ? T.pickSlot : T.pickCard)
     : offline ? fmt(T.offline, { name: M.names[offline] })
     : (S.mode === 'online' ? fmt(T.waitingTurn, { name: M.names[v.current] }) : '');
@@ -307,6 +307,7 @@ function verdictStage(last, v, nextName) {
 }
 
 const cardsLabel = n => (n === 0 ? T.noCards : n === 1 ? T.cardHeld : fmt(T.cardsHeld, { n }));
+const triesWord = n => (n === 1 ? T.tryOne : T.tryMany);
 
 function renderResult(v) {
   const already = $('#screen-result').classList.contains('active');
@@ -322,7 +323,7 @@ function renderResult(v) {
     const isRecord = !prev || tries < prev;
     if (!already && isRecord) records.set(M.config.theme, M.config.handSize, tries);
     $('#result-title').textContent = T.soloDone;
-    $('#result-sub').textContent = `${fmt(T.soloResult, { n: tries, acc })} · ${isRecord ? T.newRecord : fmt(T.prevRecord, { n: prev })}`;
+    $('#result-sub').textContent = `${fmt(T.soloResult, { n: tries, acc, tries: triesWord(tries) })} · ${isRecord ? T.newRecord : fmt(T.prevRecord, { n: prev, tries: triesWord(prev) })}`;
     $('#result-trophy').textContent = isRecord ? '🏆' : '✅';
   } else {
     $('#result-title').textContent = many ? T.winTitleMany : fmt(T.winTitle, { name: M.names[winners[0]] });

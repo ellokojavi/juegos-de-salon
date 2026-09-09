@@ -12,7 +12,7 @@ App web (mobile-first) con juegos de salón para jugar con amigos: de naipes, de
 |---|---|---|---|
 | 👑 [Cuarto Rey / Fourth King](#-cuarto-rey) | 4 a 6 | Un celular en la mesa | v0.3 |
 | 🔢 [Toque y Fama / Bulls and Cows](#-toque-y-fama) | 1 a 2 | Un celular · Dos celulares · Contra el celular | v0.5 |
-| ⏳ [Línea de Tiempo / Timeline](#-línea-de-tiempo) | 1 a 6 | Un celular · Varios celulares · Contra el celular | v0.9 |
+| ⏳ [Línea de Tiempo / Timeline](#-línea-de-tiempo) | 1 a 6 | Un celular · Varios celulares · Solitario | v0.9 |
 | ⚓ [Batalla Naval / Battleship](#-batalla-naval) | 1 a 2 | Un celular · Dos celulares · Contra el celular | v0.6 |
 
 ---
@@ -94,7 +94,7 @@ Recibes hitos sin fecha y los ubicas en el lugar correcto de una línea de tiemp
 
 - **📱 Un celular:** de dos a seis jugadores, pasando el celular por turnos.
 - **📡 Varios celulares:** sala con código y QR, hasta seis jugadores. El anfitrión abre la partida cuando están todos, y cada uno ve su propia mano.
-- **🤖 Contra el celular:** tres niveles, de una máquina distraída a una casi infalible.
+- **🧍 Jugar solo:** vacía tu mano en la menor cantidad de intentos y supera tu récord por temática.
 
 <table>
   <tr>
