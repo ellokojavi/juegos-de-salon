@@ -11,7 +11,8 @@ App web (mobile-first) con juegos de salón para jugar con amigos: de naipes, de
 | Juego | Jugadores | Modos | Estado |
 |---|---|---|---|
 | 👑 [Cuarto Rey / Fourth King](#-cuarto-rey) | 4 a 6 | Un celular en la mesa | v0.3 |
-| 🔢 [Toque y Fama / Bulls and Cows](#-toque-y-fama) | 2 | Un celular · Dos celulares · Contra el celular | v0.4 |
+| 🔢 [Toque y Fama / Bulls and Cows](#-toque-y-fama) | 2 | Un celular · Dos celulares · Contra el celular | v0.5 |
+| ⚓ Batalla Naval / Battleship | 2 | Un celular · Dos celulares · Contra el celular | [en diseño](docs/juegos/batalla-naval.md) |
 
 ---
 
@@ -119,4 +120,5 @@ docs/                       Requerimientos, decisiones, especificaciones y captu
 - [Especificación: Cuarto Rey](docs/juegos/cuarto-rey.md)
 - [Especificación: Toque y Fama](docs/juegos/toque-y-fama.md)
 - [Factibilidad: Toque y Fama con dos celulares](docs/juegos/toque-y-fama-factibilidad.md)
+- [Diseño: Batalla Naval](docs/juegos/batalla-naval.md)
 - [Changelog](CHANGELOG.md)
