@@ -1,7 +1,7 @@
 {
   "name": "Juegos de Salón",
   "short_name": "Juegos",
-  "description": "Juegos de salón para el carrete, guiados desde el celular.",
+  "description": "Juegos de salón para jugar con amigos, guiados desde el celular.",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#150726",

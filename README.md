@@ -1,6 +1,6 @@
-# 🍻 Juegos de Salón
+# 🎲 Juegos de Salón
 
-App web (mobile-first) con juegos de salón para el carrete. Se abre desde el celular o tablet, se elige un juego en el menú principal, se ingresan los jugadores y el celular guía la partida. En español e inglés.
+App web (mobile-first) con juegos de salón para jugar con amigos: de naipes, de tomar, de deducción. Se abre desde el celular o tablet, se elige un juego en el menú principal, se ingresan los jugadores y el celular guía la partida. En español e inglés.
 
 **Jugar:** https://ellokojavi.github.io/juegos-de-salon/
 

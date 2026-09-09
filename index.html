@@ -6,8 +6,8 @@
   <meta name="theme-color" content="#150726">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>Juegos de Salón 🍻</title>
-  <meta name="description" content="Juegos de salón para el carrete: elige un juego, ingresa a los jugadores y deja que el celular guíe la fiesta.">
+  <title>Juegos de Salón 🎲</title>
+  <meta name="description" content="Juegos de salón para jugar con amigos: elige un juego, ingresa a los jugadores y deja que el celular guíe la partida.">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="assets/css/base.css">
@@ -43,16 +43,16 @@
   <main class="app">
     <div class="topbar" style="justify-content:flex-end"><div class="tools"><div id="lang-slot"></div><span id="sound-slot"></span></div></div>
     <header class="hero">
-      <span class="emoji bounce">🍻</span>
+      <span class="emoji bounce">🎲</span>
       <h1 class="display display--xl rainbow" data-i18n="appTitle">Juegos de Salón</h1>
-      <p class="sub" data-i18n="appSub">Elige un juego, ingresa a los jugadores y deja que el celular guíe el carrete.</p>
+      <p class="sub" data-i18n="appSub">Elige un juego, ingresa a los jugadores y deja que el celular guíe la partida.</p>
     </header>
 
     <section class="games" id="games" aria-label="Lista de juegos"></section>
 
     <footer>
       <p data-i18n="footer">Toma con responsabilidad y con agua a mano. Si manejas, no tomas. 🚕</p>
-      <p class="muted">v0.4.3 · <a href="https://github.com/ellokojavi/juegos-de-salon" style="color:inherit" data-i18n="code">código en GitHub</a></p>
+      <p class="muted">v0.4.4 · <a href="https://github.com/ellokojavi/juegos-de-salon" style="color:inherit" data-i18n="code">código en GitHub</a></p>
     </footer>
   </main>
 
@@ -69,7 +69,7 @@
     document.documentElement.lang = lang;
     const T = COMMON[lang];
     applyStatic(T);
-    document.title = `${T.appTitle} 🍻`;
+    document.title = `${T.appTitle} 🎲`;
     document.getElementById('lang-slot').append(langToggle());
     const list = document.getElementById('games');
     GAMES.forEach((g, i) => {
