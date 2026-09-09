@@ -93,6 +93,7 @@ Un modo que todavía no existe se muestra deshabilitado con "Próximamente", nun
 - Objetivos táctiles de 44 px como mínimo; los controles pequeños llevan área táctil ampliada invisible.
 - Las acciones irreversibles se confirman: seleccionar y luego confirmar (por ejemplo elegir casilla y tocar "¡Fuego!").
 - Nada importante bajo la línea de flotación en un celular de 812 px: los botones de la pantalla final deben verse sin desplazar.
+- Si una lista puede crecer sin límite, el botón de confirmar va flotando (`position: sticky; bottom: 0`) con un degradado detrás, nunca al final del contenido.
 - Los bloques largos (repaso de la partida, reglas) van colapsados por defecto.
 - Sin scroll horizontal. Las grillas y tablas se adaptan al ancho.
 - Se respeta `prefers-reduced-motion`.
