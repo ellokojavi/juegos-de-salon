@@ -4,7 +4,7 @@
  *  - local: 2 a 6 jugadores en este celular · solo: un jugador vacía su mano · online: varios celulares
  * El estado se deriva de la semilla del mazo más las jugadas, así que no hacen falta respuestas.
  */
-import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../assets/js/ui.js';
+import { $, $$, el, vibrate, sparkles, keepAwake, confetti, shareLink, canShare } from '../assets/js/ui.js';
 import { getLang, langToggle, applyStatic } from '../assets/js/i18n.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { showHandoff, passBlock } from '../assets/js/handoff.js';
@@ -145,7 +145,7 @@ function renderLobby() {
     el('div', { class: 'code-big' }, S.code),
     el('div', { class: 'qr', id: 'qr' }),
     el('p', { class: 'muted', style: 'font-size:0.9rem' }, T.lobbyShare),
-    el('button', { class: 'btn btn--ghost btn--sm', onClick: async e => { try { await navigator.clipboard.writeText(url); e.target.textContent = T.copied; } catch (_) { prompt('URL', url); } } }, T.copyLink),
+    shareButton(url),
     el('p', { class: 'lead', style: 'margin:12px 0 4px' }, `${T.lobbyPlayers} (${joined.length}/${MAX_PLAYERS})`),
     el('div', { class: 'lobby-players' }, ...joined.map(r => el('span', { class: 'p' + (r === S.role ? ' me' : '') + (M.presence[r]?.online === false ? ' off' : '') }, M.names[r]))),
     S.role === host
@@ -153,6 +153,17 @@ function renderLobby() {
       : el('p', { class: 'waiting' }, el('span', { class: 'dots' }, fmt(T.lobbyWaitHost, { name: M.names[host] || '…' }))),
   );
   renderQr(url);
+}
+
+/** Botón de compartir: diálogo nativo del sistema si existe; si no, copia el enlace. */
+function shareButton(url) {
+  const btn = el('button', { class: 'btn btn--cyan btn--sm', style: 'width:100%;max-width:320px' }, canShare() ? T.shareLink : T.copyLink);
+  btn.addEventListener('click', async () => {
+    SFX.tap();
+    const r = await shareLink({ title: T.title, text: fmt(T.shareText, { game: T.title, code: S.code }), url });
+    if (r === 'copied') { btn.textContent = T.copied; setTimeout(() => { btn.textContent = canShare() ? T.shareLink : T.copyLink; }, 2000); }
+  });
+  return btn;
 }
 
 async function renderQr(url) {

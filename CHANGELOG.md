@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.9.6 — 2026-09-09
+- Salas de Toque y Fama, Batalla Naval y Línea de Tiempo: botón **Compartir link** que abre el diálogo nativo del celular (WhatsApp, mensajes, copiar…). En navegadores sin ese diálogo sigue copiando al portapapeles.
+- Pruebas de punta a punta dentro del repo (`tools/e2e/`) con guía de uso.
+
 ## 0.9.4 — 2026-09-09
 - Fix Batalla Naval: en Safari de iPhone los números de fila (1 a 10) quedaban desalineados con las casillas y el 10 caía bajo la grilla. Las etiquetas ahora viven dentro de la misma grilla, como una fila y una columna más, así comparten el tamaño de las casillas en cualquier navegador. Verificado con cero píxeles de desfase en tres tamaños de pantalla.
 

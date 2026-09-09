@@ -35,6 +35,7 @@ mkdir -p /tmp/e2e && node tools/e2e/batalla-naval-local.mjs /tmp/e2e
 | `linea-de-tiempo-online.mjs` | Tres celulares contra Firebase real, recarga y revancha |
 | `memoria-de-partida.mjs` | Guardar y retomar en los tres juegos (canon C-6) |
 | `versionado.mjs` | Que todos los módulos carguen con `?v=` del import map |
+| `compartir-sala.mjs` | Botón de compartir: diálogo nativo si existe, copiar si no |
 
 ## Cómo simulan varios celulares
 
