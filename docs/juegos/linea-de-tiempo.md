@@ -1,6 +1,6 @@
 # Diseño: Línea de Tiempo ⏳
 
-**Estado:** implementado (v0.8, fase 1: un celular y contra el celular) · **Fecha:** 2026-09-09 · **Ruta:** `/linea-de-tiempo/` · **Jugadores:** 1 a 6 · **Idiomas:** es, en (“Timeline”)
+**Estado:** implementado (v0.9, los tres modos) · **Fecha:** 2026-09-09 · **Ruta:** `/linea-de-tiempo/` · **Jugadores:** 1 a 6 · **Idiomas:** es, en (“Timeline”)
 
 ## 1. Resumen
 
@@ -38,6 +38,8 @@ naturaleza del juego:
 | 📱 Un celular | 2 a 6 | `local` |
 | 🤖 Contra el celular | 1 humano + 1 IA | `local` + bot |
 | 📡 Varios celulares | 2 a 6 | `firebase` |
+
+En varios celulares, el anfitrión (rol A) crea la sala y abre la partida con el botón **Empezar** cuando hay al menos dos jugadores; el mensaje `start` fija el orden. Cada celular ve solo su mano, y el veredicto de cada jugada se muestra a todos y se cierra solo.
 
 La IA conoce los años (son públicos) y falla a propósito según la dificultad: fácil acierta poco y
 se equivoca por mucho, difícil casi siempre acierta. Se configura al empezar.
@@ -106,8 +108,11 @@ linea-de-tiempo/
 ## 8b. Estado de la implementación (v0.8)
 - Fase 1 lista: mazos de Historia (98 cartas) y Música (89), motor con tests, modo un celular de 2 a 6 jugadores y modo contra el celular con tres niveles.
 - Memoria de partida en ambos modos (canon C-6), incluida la selección de temática.
-- Fase 2 pendiente: varios celulares, que además necesita ampliar los roles de sala de A–B a A–F en las reglas de Firebase.
-- Lección aprendida: `at` es un campo reservado del transporte, así que la ranura viaja como `slot` (ver C-7).
+- Fase 2 lista (v0.9): varios celulares de 2 a 6 con sala, QR, lobby con la lista de quienes van llegando, botón de empezar del anfitrión, reconexión, presencia y revancha que mueve a todos a la sala nueva.
+- Reglas de Firebase ampliadas de A–B a A–F.
+- Lecciones aprendidas:
+  - `at` es un campo reservado del transporte, así que la ranura viaja como `slot` (ver C-7).
+  - Con más de dos jugadores, dos personas pueden reclamar el mismo rol a la vez. El transporte ahora escribe el rol con un identificador de dispositivo y vuelve a leer para confirmar quién ganó la carrera.
 
 ## 9. Variantes futuras
 Más temáticas (cine, deporte, ciencia, Chile), mazo musical con adelantos de audio del catálogo de
