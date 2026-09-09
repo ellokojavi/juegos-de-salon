@@ -24,16 +24,16 @@ const ES = {
   // colocación
   placeTitle: 'Coloca tu flota', placeFor: 'Flota de {name}', placeHint: 'Toca un barco y luego una casilla. Gira con ↻. Que nadie mire.',
   ships: { carrier: 'Portaaviones', battleship: 'Acorazado', cruiser: 'Crucero', submarine: 'Submarino', destroyer: 'Destructor' },
-  rotate: '↻ Girar', random: '🎲 Al azar', clear: '🧹 Limpiar', sail: '⚓ ¡Zarpar!', placed: '{n} de 5 barcos',
+  rotate: '↻ Girar {dir}', random: '🎲 Al azar', clear: '🧹 Limpiar', sail: '⚓ ¡Zarpar!', placed: '{n} de 5 barcos',
   fleetSaved: 'Flota lista 🔒', waitingFleet: 'Esperando a que {name} coloque su flota…', tapToReveal: 'Toca para ver', hoPass: 'Pásale el celular a', hoReady: '¡Listo, soy yo!',
   // batalla
-  turnYou: '¡Te toca! Dispara a {name}', turnOther: '{name} está apuntando…', extraGo: '¡{result}! Sigues disparando', waitingReply: 'Esperando la respuesta…',
+  turnYou: '¡Te toca! Dispara a {name}', turnOther: '{name} está apuntando…', extraGo: '{result} Sigues disparando', waitingReply: 'Esperando la respuesta…',
   fire: '🎯 ¡Fuego!', pickCell: 'Elige una casilla', enemyBoard: 'Flota de {name}', myBoard: 'Mi flota', showFleet: 'toca para ver mi flota', hideFleet: 'toca para ocultar',
   agua: 'Agua', tocado: '¡Tocado!', hundido: '¡Hundido!', sunkShip: 'Hundiste el {ship} de {name}', sunkMine: '¡Te hundieron el {ship}!',
   cpuShot: 'El celular disparó a {cell}: {result}', shotAt: '{name} disparó a {cell}',
   hoResult: 'Resultado', hoContinue: 'Seguir',
   // resultado
-  winTitle: '¡Ganó {name}!', youWin: '¡Ganaste!', youLose: 'Te hundieron… esta vez.', stats: '{shots} disparos · {acc}% de puntería', fleetsWere: 'Las flotas eran',
+  winTitle: '¡Ganó {name}!', youWin: '¡Ganaste!', youLose: 'Te hundieron… esta vez.', stats: '{shots} disparos · {acc}% puntería', fleetsWere: 'Las flotas eran',
   verified: 'verificado ✅', notVerified: '⚠️ no coincide (¿trampa?)', replayTitle: '🔎 Ver todos los disparos', shotsOf: 'Disparos de {name}',
   rematch: '🔁 Revancha', changeMode: 'Cambiar modo', backMenu: 'Volver al menú',
 };
@@ -57,9 +57,9 @@ const EN = {
   resumeTitle: '⏯ There\'s an unfinished battle', resume: 'Continue', delete: 'Delete',
   placeTitle: 'Place your fleet', placeFor: '{name}\'s fleet', placeHint: 'Tap a ship, then a cell. Rotate with ↻. No peeking.',
   ships: { carrier: 'Carrier', battleship: 'Battleship', cruiser: 'Cruiser', submarine: 'Submarine', destroyer: 'Destroyer' },
-  rotate: '↻ Rotate', random: '🎲 Random', clear: '🧹 Clear', sail: '⚓ Set sail!', placed: '{n} of 5 ships',
+  rotate: '↻ Rotate {dir}', random: '🎲 Random', clear: '🧹 Clear', sail: '⚓ Set sail!', placed: '{n} of 5 ships',
   fleetSaved: 'Fleet ready 🔒', waitingFleet: 'Waiting for {name} to place their fleet…', tapToReveal: 'Tap to reveal', hoPass: 'Pass the phone to', hoReady: 'Ready, it\'s me!',
-  turnYou: 'Your turn! Fire at {name}', turnOther: '{name} is aiming…', extraGo: '{result}! Fire again', waitingReply: 'Waiting for the reply…',
+  turnYou: 'Your turn! Fire at {name}', turnOther: '{name} is aiming…', extraGo: '{result} Fire again', waitingReply: 'Waiting for the reply…',
   fire: '🎯 Fire!', pickCell: 'Pick a cell', enemyBoard: '{name}\'s fleet', myBoard: 'My fleet', showFleet: 'tap to show my fleet', hideFleet: 'tap to hide',
   agua: 'Miss', tocado: 'Hit!', hundido: 'Sunk!', sunkShip: 'You sank {name}\'s {ship}', sunkMine: 'They sank your {ship}!',
   cpuShot: 'The phone fired at {cell}: {result}', shotAt: '{name} fired at {cell}',
