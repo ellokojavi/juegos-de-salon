@@ -29,6 +29,7 @@ const ES = {
   waitingSecret: 'Esperando a que {name} elija su número…', bothReady: '¡Los dos listos!',
   // play
   turnYou: '¡Te toca! Adivina el de {name}', turnOther: 'Le toca a {name}…', waitingReply: 'Esperando la respuesta…', starts: 'Parte {name}',
+  mySecret: 'Tu número', tapToShow: 'toca para ver', tapToHide: 'toca para ocultar',
   guess: 'Probar', famas: 'famas', toques: 'toques', fama: 'fama', toque: 'toque', none: 'nada',
   boardOf: 'Intentos de {name}', noGuesses: 'Aún sin intentos', tries: '{n} intentos',
   replicaNotice: '¡{name} acertó! {other} tiene derecho a réplica: un último intento.',
@@ -63,6 +64,7 @@ const EN = {
   confirm: 'Confirm', hide: 'Hide screen', tapToReveal: 'Tap to reveal', secretSaved: 'Secret saved 🔒',
   waitingSecret: 'Waiting for {name} to pick a number…', bothReady: 'Both ready!',
   turnYou: 'Your turn! Guess {name}\'s number', turnOther: '{name}\'s turn…', waitingReply: 'Waiting for the reply…', starts: '{name} starts',
+  mySecret: 'Your number', tapToShow: 'tap to show', tapToHide: 'tap to hide',
   guess: 'Guess', famas: 'bulls', toques: 'cows', fama: 'bull', toque: 'cow', none: 'nothing',
   boardOf: '{name}\'s guesses', noGuesses: 'No guesses yet', tries: '{n} guesses',
   replicaNotice: '{name} got it! {other} has the right of reply: one last guess.',

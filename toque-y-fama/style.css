@@ -111,3 +111,15 @@
 .reply-clue .f { background: var(--yellow); color: #3a1200; }
 .reply-clue .t { background: var(--cyan); color: #03302c; }
 .reply-clue .z { background: rgba(255,255,255,0.15); }
+
+/* Recordatorio del número propio */
+.my-secret {
+  display: flex; align-items: center; justify-content: center; gap: 10px; margin: 0 auto 8px; width: fit-content; max-width: 100%;
+  background: var(--glass); border: 1px solid var(--glass-border); border-radius: 999px; padding: 6px 14px 6px 12px;
+  color: var(--ink); cursor: pointer; font: 800 0.9rem var(--font-body); transition: transform 0.1s;
+}
+.my-secret:active { transform: scale(0.97); }
+.my-secret .label { color: var(--muted); }
+.my-secret .num { font-family: var(--font-display); font-size: 1.35rem; letter-spacing: 0.2em; color: var(--muted); }
+.my-secret.shown .num { color: var(--yellow); text-shadow: 0 0 12px rgba(255, 210, 63, 0.5); }
+.my-secret .hint { color: var(--muted); font-size: 0.72rem; font-weight: 700; }

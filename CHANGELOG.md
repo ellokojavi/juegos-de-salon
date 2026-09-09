@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.4.1 — 2026-09-08
+- Toque y Fama: recordatorio del número propio al adivinar (oculto con toque para ver en modo un celular).
+
 ## 0.4.0 — 2026-09-08
 - Segundo juego: **Toque y Fama / Bulls and Cows** con tres modos: un celular (pasar y jugar), contra el celular (duelo con solver) y dos celulares (sala con código y QR sobre Firebase Realtime Database).
 - Motor puro con tests (`engine.test.mjs`), reductor de mensajes único para los tres modos, compromiso del secreto con sal privada y verificación al final, reconexión y revancha.
