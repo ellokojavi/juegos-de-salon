@@ -6,6 +6,7 @@
  */
 import { $, $$, el, pick, shuffle, vibrate, sparkles, keepAwake, confetti } from '../assets/js/ui.js';
 import { getLang, langToggle, applyStatic } from '../assets/js/i18n.js';
+import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { SUITS, RANKS, MIN_PLAYERS, MAX_PLAYERS, SORBOS, CARD_RULES, LOCALES } from './rules.js';
 
 const STORAGE_PLAYERS = 'juegos-de-salon:players';
@@ -208,6 +209,8 @@ function drawCard() {
   renderCardFront(card);
   const cardEl = $('#card');
   cardEl.classList.remove('idle', 'enter'); cardEl.classList.add('flipped', 'reveal');
+  SFX.flip();
+  setTimeout(SFX.reveal, 700);
   $('#deck-count').textContent = state.deck.length;
   // Secuencia: volteo (0.75 s) → la carta se encoge (0.5 s) → aparecen las instrucciones.
   setTimeout(() => cardEl.classList.add('small'), 800);
@@ -264,6 +267,7 @@ function renderResult() {
 
   box.append(el('div', { class: 'kicker' }, fmt(T.drew, { name: currentPlayer().name, rank: L.rankNames[card.rank], suit: L.suitNames[card.suit] })));
 
+  if (rule.kind === 'drink') SFX.cheers();
   switch (rule.kind) {
     case 'drink': renderDrink(box, rule, texts, data); break;
     case 'gift': renderGift(box, texts); break;
@@ -331,7 +335,7 @@ function renderPenitencia(box, data) {
     text,
     el('button', { class: 'btn btn--ghost btn--sm', style: 'width:100%', onClick: () => {
       let p; do { p = pick(L.penitencias); } while (p === data.penitencia && L.penitencias.length > 1);
-      data.penitencia = p; save();
+      data.penitencia = p; save(); SFX.dice();
       text.textContent = p; text.classList.remove('pop'); void text.offsetWidth; text.classList.add('pop');
     } }, T.otherPenitencia),
     el('div', { class: 'actions stack' },
@@ -378,7 +382,8 @@ function timerHelper(seconds = 5) {
     timerHandle = setInterval(() => {
       remaining--;
       display.textContent = remaining > 0 ? remaining : T.timeUp;
-      if (remaining <= 0) { stopTimer(); display.classList.add('alarm'); vibrate([80, 60, 80, 60, 200]); }
+      if (remaining <= 0) { stopTimer(); display.classList.add('alarm'); vibrate([80, 60, 80, 60, 200]); SFX.timeUp(); }
+      else SFX.tick();
     }, 1000);
   } }, T.timerStart);
   return el('div', { class: 'helper' }, display, label, start);
@@ -393,7 +398,7 @@ function categoryHelper(data) {
     cat,
     el('button', { class: 'btn btn--ghost btn--sm', onClick: () => {
       let c; do { c = pick(L.categorias); } while (c === data.category);
-      data.category = c; save(); cat.textContent = c; cat.classList.remove('pop'); void cat.offsetWidth; cat.classList.add('pop');
+      data.category = c; save(); SFX.dice(); cat.textContent = c; cat.classList.remove('pop'); void cat.offsetWidth; cat.classList.add('pop');
     } }, T.otherCategory),
   );
 }
@@ -401,7 +406,7 @@ function categoryHelper(data) {
 function nuncaHelper() {
   const quote = el('div', { class: 'quote', hidden: true });
   const btn = el('button', { class: 'btn btn--ghost btn--sm', onClick: () => {
-    quote.hidden = false; quote.textContent = pick(L.nuncaNunca); btn.textContent = T.otherIdea;
+    quote.hidden = false; quote.textContent = pick(L.nuncaNunca); btn.textContent = T.otherIdea; SFX.dice();
     quote.classList.remove('pop'); void quote.offsetWidth; quote.classList.add('pop');
   } }, T.noIdeas);
   return el('div', { class: 'helper' }, el('div', { class: 'muted' }, fmt(T.nuncaStarts, { name: currentPlayer().name })), quote, btn);
@@ -413,6 +418,7 @@ function renderKing(box, data) {
   renderCrowns();
   vibrate(k === 4 ? [100, 50, 100, 50, 300] : [40, 30, 40]);
   if (k === 4) {
+    SFX.fourthKing();
     confetti({ count: 220, duration: 3500 });
     box.append(
       el('h2', { class: 'display display--lg title gold' }, msg.title),
@@ -421,6 +427,7 @@ function renderKing(box, data) {
       el('div', { class: 'actions' }, el('button', { class: 'btn btn--yellow', onClick: () => finishGame(state.turn) }, T.seeResult)),
     );
   } else {
+    SFX.king();
     box.append(
       el('h2', { class: 'display display--md title gold' }, msg.title),
       el('p', { class: 'text' }, msg.text),
@@ -468,18 +475,20 @@ function showHandoff({ drinkers = [], title = T.hoCheers, emoji } = {}) {
   const goPass = () => {
     if (timer) { clearTimeout(timer); timer = null; }
     if (box.contains(stagePass)) return;
-    box.innerHTML = ''; box.append(stagePass); vibrate(15);
+    box.innerHTML = ''; box.append(stagePass); vibrate(15); SFX.pass();
   };
   const closeHandoff = () => {
     box.classList.add('leaving');
     const card = $('#card');
     card.classList.remove('enter'); void card.offsetWidth; card.classList.add('enter');
+    SFX.flip();
     setTimeout(() => { box.hidden = true; box.innerHTML = ''; }, 300);
   };
 
   box.append(stageDrink);
   box.onclick = goPass;
   vibrate(drinkers.length ? [30, 40, 30] : 20);
+  if (drinkers.length) SFX.drink();
   timer = setTimeout(goPass, drinkers.length ? 2600 : 1800);
 }
 
@@ -506,6 +515,7 @@ function finishGame(victimIndex) {
   const mins = Math.max(1, Math.round((Date.now() - state.startedAt) / 60000));
   $('#end-stats').textContent = fmt(T.endStats, { cards: state.drawn, mins });
   showScreen('screen-end');
+  SFX.win();
   confetti({ count: 260, duration: 4000 });
 }
 
@@ -517,6 +527,10 @@ function init() {
   document.title = T.docTitle;
   applyStatic(T);
   $('#lang-slot').append(langToggle());
+  $('#sound-slot').append(soundToggle());
+  initSound();
+  // Click suave en todos los botones (excepto la carta, que tiene su propio sonido).
+  document.addEventListener('click', e => { if (e.target.closest('.btn, .picker button, .gender button, .lang-toggle button')) SFX.tap(); });
   sparkles(14);
   renderRulesList();
   renderResumeSlot();
@@ -525,7 +539,7 @@ function init() {
   $('#btn-start').addEventListener('click', () => {
     const { error, players } = validateDraft();
     const err = $('#form-error');
-    if (error) { err.textContent = error; err.classList.remove('shake'); void err.offsetWidth; err.classList.add('shake'); vibrate([30, 30, 30]); return; }
+    if (error) { err.textContent = error; err.classList.remove('shake'); void err.offsetWidth; err.classList.add('shake'); vibrate([30, 30, 30]); SFX.error(); return; }
     err.textContent = '';
     clearSaved();
     startGame(players);

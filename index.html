@@ -41,7 +41,7 @@
 </head>
 <body>
   <main class="app">
-    <div class="topbar" style="justify-content:flex-end"><div id="lang-slot"></div></div>
+    <div class="topbar" style="justify-content:flex-end"><div class="tools"><div id="lang-slot"></div><span id="sound-slot"></span></div></div>
     <header class="hero">
       <span class="emoji bounce">🍻</span>
       <h1 class="display display--xl rainbow" data-i18n="appTitle">Juegos de Salón</h1>
@@ -52,7 +52,7 @@
 
     <footer>
       <p data-i18n="footer">Toma con responsabilidad y con agua a mano. Si manejas, no tomas. 🚕</p>
-      <p class="muted">v0.2 · <a href="https://github.com/ellokojavi/juegos-de-salon" style="color:inherit" data-i18n="code">código en GitHub</a></p>
+      <p class="muted">v0.3 · <a href="https://github.com/ellokojavi/juegos-de-salon" style="color:inherit" data-i18n="code">código en GitHub</a></p>
     </footer>
   </main>
 
@@ -60,7 +60,11 @@
     import { GAMES } from './assets/js/games.js';
     import { sparkles, el } from './assets/js/ui.js';
     import { getLang, langToggle, applyStatic, pickLang, COMMON } from './assets/js/i18n.js';
+    import { SFX, soundToggle, initSound } from './assets/js/sound.js';
     sparkles();
+    initSound();
+    document.getElementById('sound-slot').append(soundToggle());
+    document.addEventListener('click', e => { if (e.target.closest('.game-card, .lang-toggle button')) SFX.tap(); });
     const lang = getLang();
     document.documentElement.lang = lang;
     const T = COMMON[lang];
