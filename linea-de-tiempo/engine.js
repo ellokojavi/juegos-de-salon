@@ -112,24 +112,6 @@ export function buildState({ cards, seed, players, handSize, moves = [] }) {
   return { byId, line, hands, poolLeft, history, current: players[turn], winner, done: !!winner };
 }
 
-/**
- * IA: conoce los años, pero se equivoca según la dificultad.
- *  - facil: acierta poco y se aleja más de la ranura correcta
- *  - normal: acierta la mayoría de las veces
- *  - dificil: casi siempre acierta
- */
-const ACCURACY = { facil: 0.45, normal: 0.75, dificil: 0.95 };
-
-export function botMove({ line, hand, byId, difficulty = 'normal', rand = Math.random }) {
-  const card = hand[Math.floor(rand() * hand.length)];
-  const right = correctSlot(line, card, byId);
-  if (rand() < (ACCURACY[difficulty] ?? ACCURACY.normal)) return { card, at: right };
-  const spread = difficulty === 'facil' ? 3 : 1;
-  const delta = (Math.floor(rand() * spread) + 1) * (rand() < 0.5 ? -1 : 1);
-  const at = Math.max(0, Math.min(line.length, right + delta));
-  return { card, at: at === right ? Math.max(0, Math.min(line.length, right + 1)) : at };
-}
-
 /** Texto del año para mostrar: los negativos son antes de Cristo. */
 export function yearLabel(year, lang = 'es') {
   return year < 0 ? `${Math.abs(year)} ${lang === 'es' ? 'a.C.' : 'BC'}` : String(year);
