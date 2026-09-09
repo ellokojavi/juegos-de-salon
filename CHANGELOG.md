@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.4.2 — 2026-09-08
+- Toque y Fama: pulsación larga sobre una cifra del teclado para bloquearla como “no está en el número del rival”; marcas por jugador, persistentes en la partida, con instrucción en pantalla.
+
 ## 0.4.1 — 2026-09-08
 - Toque y Fama: recordatorio del número propio al adivinar (oculto con toque para ver en modo un celular).
 - Toque y Fama: en pantalla se habla siempre de “número secreto” en vez de “secreto”.

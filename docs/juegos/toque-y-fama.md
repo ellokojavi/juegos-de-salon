@@ -41,6 +41,9 @@ El estado (`view()`) se deriva de la lista de mensajes: fase (`lobby`, `secret`,
 - Revancha: quien la propone crea una sala nueva (queda como A) y avisa con `rematch`; el otro se une como B.
 - Presencia con `onDisconnect`; si el rival se desconecta, se avisa en pantalla.
 
+## Cifras bloqueadas (notas del jugador)
+En el teclado de adivinar, una pulsación larga (450 ms) sobre una cifra la marca como bloqueada: se ve tachada con 🚫, se quita de la entrada actual y el toque corto no la ingresa. Otra pulsación larga la libera. Las marcas son por jugador (en un celular cada uno tiene las suyas), duran toda la partida, se guardan con la sesión en modo dos celulares y se limpian en la revancha. Bajo el teclado hay una instrucción de una línea para usuarios nuevos.
+
 ## Vocabulario en pantalla
 Siempre se habla de “número secreto” (en inglés, “secret number”), nunca de “secreto” a secas.
 

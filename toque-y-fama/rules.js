@@ -29,6 +29,7 @@ const ES = {
   waitingSecret: 'Esperando a que {name} elija su número secreto…', bothReady: '¡Los dos listos!',
   // play
   turnYou: '¡Te toca! Adivina el de {name}', turnOther: 'Le toca a {name}…', waitingReply: 'Esperando la respuesta…', starts: 'Parte {name}',
+  blockHint: '💡 Mantén presionada una cifra para bloquearla si crees que no está en el número del rival. Repite para desbloquear.',
   mySecret: 'Tu número secreto', tapToShow: 'toca para ver', tapToHide: 'toca para ocultar',
   guess: 'Probar', famas: 'famas', toques: 'toques', fama: 'fama', toque: 'toque', none: 'nada',
   boardOf: 'Intentos de {name}', noGuesses: 'Aún sin intentos', tries: '{n} intentos',
@@ -64,6 +65,7 @@ const EN = {
   confirm: 'Confirm', hide: 'Hide screen', tapToReveal: 'Tap to reveal', secretSaved: 'Secret number saved 🔒',
   waitingSecret: 'Waiting for {name} to pick a secret number…', bothReady: 'Both ready!',
   turnYou: 'Your turn! Guess {name}\'s number', turnOther: '{name}\'s turn…', waitingReply: 'Waiting for the reply…', starts: '{name} starts',
+  blockHint: '💡 Long-press a digit to block it if you think it isn\'t in your rival\'s number. Long-press again to unblock.',
   mySecret: 'Your secret number', tapToShow: 'tap to show', tapToHide: 'tap to hide',
   guess: 'Guess', famas: 'bulls', toques: 'cows', fama: 'bull', toque: 'cow', none: 'nothing',
   boardOf: '{name}\'s guesses', noGuesses: 'No guesses yet', tries: '{n} guesses',
