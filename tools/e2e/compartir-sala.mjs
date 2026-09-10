@@ -16,7 +16,9 @@ await b.evaluate(`navigator.share = async d => { window.__shared = d; }; 1`);
 // forzar re-render de la sala (presencia) sin tocar el estado
 await b.evaluate(`window.__ldt.session().transport.onPresence(p => {}); 1`); await sleep(300);
 await b.evaluate(`document.querySelector('#lobby-box .btn--cyan').click(); 1`); await sleep(400);
-console.log('con navigator.share, el botón dice:', await btnText(), '| se compartió:', await b.evaluate(`JSON.stringify(window.__shared)`));
+const compartido = await b.evaluate(`JSON.stringify(window.__shared)`);
+console.log('con navigator.share, el botón dice:', await btnText(), '| se compartió:', compartido);
+console.log('el texto nombra la temática:', /Historia/.test(compartido), '| y el código:', new RegExp(code).test(compartido));
 await b.shot('lobby-share');
 console.log('errors:', JSON.stringify(b.errors), JSON.stringify(b.logs));
 b.close();
