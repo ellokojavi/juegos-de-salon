@@ -11,6 +11,7 @@ import { getLang, langToggle, applyStatic } from '../assets/js/i18n.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { score, isValid, randomSecret, Solver, sha256, randomNonce, verifyPlayer } from './engine.js';
 import { GAME_ID, DEFAULT_CONFIG, DIGIT_OPTIONS, LOCALES } from './rules.js';
+import { createChat } from '../assets/js/chat.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
 
@@ -23,6 +24,7 @@ const store = createSessionStore(GAME_ID, { legacyKeys: ['juegos-de-salon:tyf:se
 const names_ = createNameStore(GAME_ID);
 
 let S = null;   // sesión: modo, transporte, roles locales, secretos, bot
+let chat = null; // chat de sala: solo en dos celulares (canon C-15)
 let M = null;   // partida: estado reconstruido desde los mensajes
 
 /* ------------------------------------------------------------------ */
@@ -57,7 +59,10 @@ function apply(msg) {
     }
     case 'reveal': if (!M.reveals[from]) M.reveals[from] = { secret: msg.secret, salt: msg.salt }; break;
     case 'rematch': if (!M.rematch[from]) M.rematch[from] = msg.code || true; break;
+    // El chat no es parte del estado: se dibuja y se olvida (canon C-15)
+    case 'chat': if (chat) chat.add(msg, { live: !!S?.live }); return 'chat';
   }
+  return null;
 }
 
 /** Vista derivada del estado: fase, turno, resultado. */
@@ -95,10 +100,14 @@ function view() {
 /* ------------------------------------------------------------------ */
 function startSession({ mode, transport, roles, config, names, bot = null, code = null, role = null }) {
   if (S?.transport) S.transport.leave();
-  S = { mode, transport, roles, secrets: {}, notes: {}, bot, code, role, repliedRounds: new Set(), lastShownRound: -1, cpuTimer: null, uiRole: null };
+  S = { mode, transport, roles, secrets: {}, notes: {}, bot, code, role, repliedRounds: new Set(), lastShownRound: -1, cpuTimer: null, uiRole: null, live: false };
   M = newMatch(config);
+  setupChat(mode);
+  // Lo que llega en los primeros instantes es la historia de la sala al entrar: se dibuja sin ruido
+  const sess = S;
+  setTimeout(() => { if (S === sess) S.live = true; }, 1500);
   Object.entries(names).forEach(([r, name]) => { if (name) transport.send({ t: 'hello', from: r, name }); });
-  transport.onMessage(m => { apply(m); onChange(); });
+  transport.onMessage(m => { if (apply(m) === 'chat') return; onChange(); });
   transport.onPresence(p => { M.presence = p; renderPresence(); });
 }
 
@@ -310,6 +319,9 @@ function showCover(name, onReveal) {
 function render() {
   if (!M) return;
   const v = view();
+  // El chat acompaña la sala y la partida; en el resultado se apaga y muere con ella (canon C-15)
+  if (chat) { if (v.phase === 'done') chat.hide(); else chat.show(); }
+  if (chat && v.phase === 'play' && v.expected === S.role && !v.pending) chat.closeIfIdle();
   switch (v.phase) {
     case 'lobby': renderLobby(); break;
     case 'secret': renderSecret(v); break;
@@ -317,6 +329,21 @@ function render() {
     case 'reveal': renderPlay(v); break;
     case 'done': renderResult(v); break;
   }
+}
+
+/** Crea (o bota) el chat de sala. Solo tiene sentido con un jugador por celular. */
+function setupChat(mode) {
+  if (chat) { chat.destroy(); chat = null; }
+  const mount = $('#chat');
+  if (!mount) return;
+  mount.hidden = true;
+  if (mode !== 'online') return;
+  chat = createChat({
+    mount, T,
+    nameOf: r => M.names[r] || '…',
+    isMine: r => r === S.role,
+    onSend: text => S.transport.send({ t: 'chat', from: S.role, text }),
+  });
 }
 
 function renderPresence() {
