@@ -96,6 +96,10 @@ falta mensajes de respuesta.
 - Los mazos se registran en `decks/index.js` con su nombre por idioma y su emoji, que es lo único que
   hay que tocar para agregar una temática nueva.
 
+### Tipografía de los años
+Los años (y las cartas que le quedan a cada jugador) van en Nunito 900 con `tabular-nums`, no en
+Bangers: ahí el 1 y el 7 son casi el mismo trazo y un 1917 se puede leer como 1911 (D-30, canon C-1).
+
 ## 7. Archivos
 
 ```

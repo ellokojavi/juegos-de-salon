@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.10.4 — 2026-09-09
+- Mismo arreglo de las cifras en los otros dos juegos: los **años de Línea de Tiempo** y las **casillas de Batalla Naval** (el aviso de cada disparo y la casilla grande del resultado) dejan Bangers y se leen sin confundir el 1 con el 7 (D-30).
+
 ## 0.10.3 — 2026-09-09
 - Toque y Fama: **el 7 ya no se confunde con el 1**. Las cifras del teclado, las casillas, los intentos, las pistas y los números secretos pasan de Bangers a Nunito 900, que las distingue sin dudar (D-30). Los títulos y el botón de probar siguen igual.
 - Toque y Fama: decía "1 intentos"; ahora dice "1 intento".
