@@ -48,11 +48,11 @@
 .waiting .dots::after { content: '…'; animation: dots 1.2s steps(4) infinite; }
 @keyframes dots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } }
 
-/* Keypad */
+/* Keypad. Las cifras van en Nunito 900, no en Bangers: ahí el 1 y el 7 se confunden (D-30) */
 .entry { display: flex; justify-content: center; gap: 10px; margin: 10px 0 14px; }
 .entry .box {
   width: clamp(48px, 15vw, 64px); aspect-ratio: 3 / 4; border-radius: 14px; background: var(--card); color: var(--card-ink);
-  font-family: var(--font-display); font-size: clamp(2rem, 9vw, 2.8rem); display: grid; place-items: center;
+  font: 900 clamp(1.7rem, 7.6vw, 2.4rem)/1 var(--font-num); font-variant-numeric: tabular-nums; display: grid; place-items: center;
   box-shadow: 0 6px 0 rgba(0,0,0,0.35); transition: transform 0.1s;
 }
 .entry .box.filled { animation: pop 0.25s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
@@ -61,7 +61,7 @@
 .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 340px; margin: 0 auto; }
 .keypad button {
   border: 0; border-radius: 14px; background: var(--glass); border: 1px solid var(--glass-border); color: var(--ink);
-  font-family: var(--font-display); font-size: 1.9rem; padding: 12px 0; min-height: 58px; cursor: pointer; transition: transform 0.08s, background 0.15s;
+  font: 900 1.7rem var(--font-num); font-variant-numeric: tabular-nums; padding: 12px 0; min-height: 58px; cursor: pointer; transition: transform 0.08s, background 0.15s;
 }
 .keypad button:active { transform: scale(0.94); background: rgba(255,255,255,0.2); }
 .keypad button:disabled { opacity: 0.25; }
@@ -72,7 +72,7 @@
 }
 .keypad button.blocked::after { content: '🚫'; position: absolute; top: 4px; right: 6px; font-size: 0.8rem; }
 .block-hint { margin: 10px auto 0; max-width: 360px; text-align: center; color: var(--muted); font-size: 0.8rem; font-weight: 700; line-height: 1.35; }
-.keypad button.ok { background: linear-gradient(180deg, var(--yellow), var(--orange)); color: #3a1200; border-color: transparent; box-shadow: 0 5px 0 #9a4a00; }
+.keypad button.ok { background: linear-gradient(180deg, var(--yellow), var(--orange)); color: #3a1200; border-color: transparent; box-shadow: 0 5px 0 #9a4a00; font-family: var(--font-display); font-size: 1.9rem; }
 .keypad button.ok:disabled { opacity: 0.4; box-shadow: none; }
 .keypad button.del { font-family: var(--font-body); font-weight: 900; font-size: 1.3rem; }
 
@@ -87,9 +87,9 @@
 .board .count { color: var(--muted); font-size: 0.75rem; font-weight: 800; text-align: center; margin-bottom: 6px; }
 .board ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
 .board li { display: grid; grid-template-columns: auto 1fr; gap: 6px; align-items: center; background: rgba(0,0,0,0.25); border-radius: 10px; padding: 5px 8px; animation: slideUp 0.25s ease-out both; }
-.board li .val { font-family: var(--font-display); font-size: 1.15rem; letter-spacing: 0.12em; }
+.board li .val { font: 900 1rem var(--font-num); font-variant-numeric: tabular-nums; letter-spacing: 0.14em; }
 .board li .clue { display: flex; gap: 4px; flex-wrap: nowrap; justify-content: flex-end; }
-.board li .clue span { font-size: 0.8rem; font-weight: 900; padding: 2px 8px; border-radius: 999px; white-space: nowrap; font-family: var(--font-display); letter-spacing: 0.05em; }
+.board li .clue span { font-size: 0.78rem; font-weight: 900; padding: 3px 8px; border-radius: 999px; white-space: nowrap; font-family: var(--font-num); letter-spacing: 0.03em; }
 .board li .clue .f { background: var(--yellow); color: #3a1200; }
 .board li .clue .t { background: var(--cyan); color: #03302c; }
 .board li .clue .z { background: rgba(255,255,255,0.15); color: var(--muted); }
@@ -101,10 +101,10 @@
 .result-hero .trophy { font-size: 4.2rem; display: block; animation: pop 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
 .secrets { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
 .secrets .s { background: rgba(0,0,0,0.25); border-radius: 14px; padding: 10px; text-align: center; }
-.secrets .s .n { font-family: var(--font-display); font-size: 2rem; letter-spacing: 0.15em; color: var(--yellow); }
+.secrets .s .n { font: 900 1.6rem var(--font-num); font-variant-numeric: tabular-nums; letter-spacing: 0.16em; color: var(--yellow); }
 .secrets .s small { display: block; color: var(--muted); font-weight: 800; }
 
-.reply-big { font-family: var(--font-display); font-size: clamp(2.4rem, 12vw, 3.4rem); letter-spacing: 0.15em; color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35); }
+.reply-big { font: 900 clamp(2rem, 10vw, 2.8rem) var(--font-num); font-variant-numeric: tabular-nums; letter-spacing: 0.16em; color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35); }
 .reply-clue { display: flex; gap: 8px; justify-content: center; margin-top: 6px; }
 .reply-clue span { font-weight: 900; font-size: 1.2rem; padding: 8px 14px; border-radius: 999px; }
 .reply-clue .f { background: var(--yellow); color: #3a1200; }
@@ -119,7 +119,7 @@
 }
 .my-secret:active { transform: scale(0.97); }
 .my-secret .label { color: var(--muted); }
-.my-secret .num { font-family: var(--font-display); font-size: 1.35rem; letter-spacing: 0.2em; color: var(--muted); }
+.my-secret .num { font: 900 1.1rem var(--font-num); font-variant-numeric: tabular-nums; letter-spacing: 0.2em; color: var(--muted); }
 .my-secret.shown .num { color: var(--yellow); text-shadow: 0 0 12px rgba(255, 210, 63, 0.5); }
 .my-secret .hint { color: var(--muted); font-size: 0.72rem; font-weight: 700; }
 

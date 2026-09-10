@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.10.3 — 2026-09-09
+- Toque y Fama: **el 7 ya no se confunde con el 1**. Las cifras del teclado, las casillas, los intentos, las pistas y los números secretos pasan de Bangers a Nunito 900, que las distingue sin dudar (D-30). Los títulos y el botón de probar siguen igual.
+- Toque y Fama: decía "1 intentos"; ahora dice "1 intento".
+
 ## 0.10.2 — 2026-09-09
 - La pantalla de quien llega por un enlace de sala se titula **¡Invitado a jugar!** en vez de "¿Cómo jugamos?": no viene a configurar una partida, viene invitado a una que ya existe.
 

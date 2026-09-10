@@ -47,6 +47,13 @@ En el teclado de adivinar, una pulsación larga (450 ms) sobre una cifra la marc
 ## Repaso al final
 Bajo “Los números secretos eran” hay un desplegable “🔎 Ver todos los intentos”, colapsado por defecto (una línea de alto, para que Revancha, Cambiar modo y Volver al menú queden a la vista en un celular de 812 px), con los tableros completos de ambos jugadores.
 
+## Tipografía de las cifras
+
+Todo lo que es número (teclado, casillas de entrada, intentos, pistas, número secreto propio y
+números revelados al final) va en Nunito 900 con `tabular-nums`, no en Bangers: en Bangers el 1 y
+el 7 son casi el mismo trazo y los jugadores se equivocaban al teclear (D-30, canon C-1). Los
+títulos, los nombres y el botón de probar siguen en Bangers.
+
 ## Vocabulario en pantalla
 En los tableros las pistas van abreviadas (“3F 1T”, en inglés “3B 1C”) para caber en una línea; en la pantalla grande de respuesta y en las instrucciones se usan las palabras completas. Siempre se habla de “número secreto” (en inglés, “secret number”), nunca de “secreto” a secas.
 

@@ -33,7 +33,7 @@ const ES = {
   blockHint: '💡 Mantén presionada una cifra para bloquearla si crees que no está en el número del rival. Repite para desbloquear.',
   mySecret: 'Tu número secreto', tapToShow: 'toca para ver', tapToHide: 'toca para ocultar',
   guess: 'Probar', famas: 'famas', toques: 'toques', fama: 'fama', toque: 'toque', none: 'nada', famaShort: 'F', toqueShort: 'T',
-  boardOf: 'Intentos de {name}', noGuesses: 'Aún sin intentos', tries: '{n} intentos',
+  boardOf: 'Intentos de {name}', noGuesses: 'Aún sin intentos', tries: '{n} {word}', tryOne: 'intento', tryMany: 'intentos',
   replicaNotice: '¡{name} acertó! {other} tiene derecho a réplica: un último intento.',
   cpuThinking: 'El celular está pensando…', cpuGuessed: 'El celular probó {value}: {famas} famas, {toques} toques.',
   offline: 'Rival desconectado. Esperando que vuelva…', reconnecting: 'Reconectando…',
@@ -41,7 +41,7 @@ const ES = {
   hoPass: 'Pásale el celular a', hoReady: '¡Listo, soy yo!', hoResult: 'Respuesta', hoContinue: 'Seguir',
   // result
   winTitle: '¡Ganó {name}!', tieTitle: '¡Empate!', youWin: '¡Ganaste!', youLose: 'Perdiste… esta vez.',
-  inTries: 'en {n} intentos', secretsWere: 'Los números secretos eran', replayTitle: '🔎 Ver todos los intentos', verified: 'verificado ✅', notVerified: '⚠️ no coincide (¿trampa?)',
+  inTries: 'en {n} {word}', secretsWere: 'Los números secretos eran', replayTitle: '🔎 Ver todos los intentos', verified: 'verificado ✅', notVerified: '⚠️ no coincide (¿trampa?)',
   rematch: '🔁 Revancha', rematchWaiting: 'Esperando a {name} para la revancha…', changeMode: 'Cambiar modo', backMenu: 'Volver al menú',
   resumeTitle: '⏯ Hay una partida a medias', resume: 'Continuar', delete: 'Borrar',
 };
@@ -70,13 +70,13 @@ const EN = {
   blockHint: '💡 Long-press a digit to block it if you think it isn\'t in your rival\'s number. Long-press again to unblock.',
   mySecret: 'Your secret number', tapToShow: 'tap to show', tapToHide: 'tap to hide',
   guess: 'Guess', famas: 'bulls', toques: 'cows', fama: 'bull', toque: 'cow', none: 'nothing', famaShort: 'B', toqueShort: 'C',
-  boardOf: '{name}\'s guesses', noGuesses: 'No guesses yet', tries: '{n} guesses',
+  boardOf: '{name}\'s guesses', noGuesses: 'No guesses yet', tries: '{n} {word}', tryOne: 'guess', tryMany: 'guesses',
   replicaNotice: '{name} got it! {other} has the right of reply: one last guess.',
   cpuThinking: 'The phone is thinking…', cpuGuessed: 'The phone tried {value}: {famas} bulls, {toques} cows.',
   offline: 'Rival disconnected. Waiting for them to come back…', reconnecting: 'Reconnecting…',
   hoPass: 'Pass the phone to', hoReady: 'Ready, it\'s me!', hoResult: 'Reply', hoContinue: 'Continue',
   winTitle: '{name} wins!', tieTitle: 'It\'s a tie!', youWin: 'You win!', youLose: 'You lose… this time.',
-  inTries: 'in {n} guesses', secretsWere: 'The secret numbers were', replayTitle: '🔎 See all guesses', verified: 'verified ✅', notVerified: '⚠️ mismatch (cheating?)',
+  inTries: 'in {n} {word}', secretsWere: 'The secret numbers were', replayTitle: '🔎 See all guesses', verified: 'verified ✅', notVerified: '⚠️ mismatch (cheating?)',
   rematch: '🔁 Rematch', rematchWaiting: 'Waiting for {name} for the rematch…', changeMode: 'Change mode', backMenu: 'Back to menu',
   resumeTitle: '⏯ There\'s an unfinished game', resume: 'Continue', delete: 'Delete',
 };
