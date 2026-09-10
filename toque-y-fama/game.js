@@ -616,6 +616,8 @@ function renderResumeSlot() {
 
 function renderSetup(mode, prefillCode = '') {
   showScreen('screen-setup');
+  // Quien llega por un enlace no viene a configurar nada: viene invitado
+  $('#screen-setup h2').textContent = prefillCode ? T.invitedTitle : T.setupTitle;
   const config = { ...DEFAULT_CONFIG };
   const savedName = names_.get();
   const form = $('#setup-form'); form.innerHTML = '';
