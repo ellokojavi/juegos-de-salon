@@ -31,6 +31,7 @@ Intro (elige modo) → Setup (nombres, cifras, réplica, cero) → [Lobby: códi
 { "t": "reply",   "from": "B", "round": 0, "famas": 1, "toques": 2 }
 { "t": "reveal",  "from": "A", "secret": "1234", "salt": "…" }
 { "t": "rematch", "from": "B", "code": "KXTR" }      // solo dos celulares
+{ "t": "chat",    "from": "B", "text": "no le achuntas ni una" }   // solo dos celulares; no es estado
 ```
 El estado (`view()`) se deriva de la lista de mensajes: fase (`lobby`, `secret`, `play`, `reveal`, `done`), turno esperado, intento pendiente, resultado y réplica. Mensajes fuera de turno o duplicados se ignoran.
 
@@ -56,6 +57,16 @@ títulos, los nombres y el botón de probar siguen en Bangers.
 
 ## Vocabulario en pantalla
 En los tableros las pistas van abreviadas (“3F 1T”, en inglés “3B 1C”) para caber en una línea; en la pantalla grande de respuesta y en las instrucciones se usan las palabras completas. Siempre se habla de “número secreto” (en inglés, “secret number”), nunca de “secreto” a secas.
+
+## Chat de sala (solo dos celulares)
+
+Burbuja 💬 con globito de no leídos, disponible desde la sala de espera y durante toda la partida
+(también mientras cada uno elige su número secreto, que es puro tiempo muerto). Usa el módulo
+compartido `assets/js/chat.js` montado en `<div id="chat">`, hermano de `#handoff` (canon C-15).
+No aparece en la pantalla de resultado y no se guarda: muere con la partida. Al reconectar, la
+conversación vuelve desde la sala, sin sonido ni globito. Se cierra solo cuando llega tu turno,
+salvo que estés escribiendo. Con el chat en pantalla, la pantalla de juego deja aire abajo para
+que la burbuja no tape el último intento.
 
 ## Anti-trampa
 Compromiso `sha256(secreto + sal privada)` al inicio; al final se revelan secreto y sal, se verifica el hash y se recalculan todas las respuestas del rival. Resultado en pantalla: “verificado ✅” o “⚠️ no coincide”.
