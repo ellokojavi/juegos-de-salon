@@ -165,10 +165,12 @@ export function createChat({ mount, T, nameOf, isMine, onSend }) {
     close: () => toggle(false),
     /** Cierra solo si no hay nada escrito: el juego lo usa cuando llega el turno del jugador. */
     closeIfIdle() { if (open && !input.value.trim()) toggle(false); },
-    show() { mount.hidden = false; onViewport(); },
-    hide() { toggle(false); hidePeek(); mount.hidden = true; },
+    // `chat-on` en el body: cada juego decide si necesita dejar aire bajo la burbuja
+    show() { mount.hidden = false; document.body.classList.add('chat-on'); onViewport(); },
+    hide() { toggle(false); hidePeek(); mount.hidden = true; document.body.classList.remove('chat-on'); },
     destroy() {
       clearTimeout(peekTimer);
+      document.body.classList.remove('chat-on');
       if (vv) { vv.removeEventListener('resize', onViewport); vv.removeEventListener('scroll', onViewport); }
       document.removeEventListener('keydown', onKey);
       mount.innerHTML = ''; mount.hidden = true;

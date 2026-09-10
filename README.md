@@ -45,6 +45,7 @@ Cada jugador elige un número secreto de cifras distintas y trata de adivinar el
 - **📱 Un celular:** se pasan el celular; la pantalla se tapa entre turnos.
 - **📡 Dos celulares:** sala con código de 4 letras y QR. Cada celular guarda su secreto y responde a los intentos del rival. Al final ambos revelan y se verifica todo.
 - **🤖 Contra el celular:** duelo contra un solver que adivina en 5 a 6 intentos.
+- **💬 Chat de la sala:** en dos celulares hay un chat para picarse mientras adivinan. Los mensajes nuevos se asoman al lado de la burbuja. Muere con la partida.
 
 <table>
   <tr>
@@ -58,6 +59,10 @@ Cada jugador elige un número secreto de cifras distintas y trata de adivinar el
     <td align="center"><img src="docs/screenshots/toque-y-fama/07-dos-celulares.png" width="180" alt="Dos celulares"><br><sub>Partida en dos celulares</sub></td>
     <td align="center"><img src="docs/screenshots/toque-y-fama/08-verificado.png" width="180" alt="Verificado"><br><sub>Secretos verificados</sub></td>
     <td align="center"><img src="docs/screenshots/toque-y-fama/05-resultado.png" width="180" alt="Resultado"><br><sub>Contra el celular</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/toque-y-fama/09-chat.png" width="180" alt="Chat de la sala"><br><sub>Chat de la sala</sub></td>
+    <td></td><td></td><td></td>
   </tr>
 </table>
 
