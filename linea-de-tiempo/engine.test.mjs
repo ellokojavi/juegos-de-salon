@@ -1,6 +1,6 @@
 // Ejecutar: node linea-de-tiempo/engine.test.mjs
 import assert from 'node:assert/strict';
-import { rng, shuffleSeeded, deal, isCorrect, correctSlot, buildState, yearLabel, timeLabel, MAX_MOVE_MS } from './engine.js';
+import { rng, shuffleSeeded, deal, dealShared, isCorrect, correctSlot, buildState, yearLabel, timeLabel, MAX_MOVE_MS } from './engine.js';
 import { DECKS, getDeck } from './decks/index.js';
 
 // Mazos bien formados
@@ -138,6 +138,56 @@ assert.equal(timeLabel(600000), '10m 0s');
 assert.equal(timeLabel(59700), '1m 0s', 'redondear no puede dar "60s"');
 assert.equal(timeLabel(2400, { decimals: 1 }), '2.4s');
 assert.equal(timeLabel(72340, { decimals: 1 }), '1m 12.3s');
+assert.equal(timeLabel(1237, { decimals: 2 }), '1.24s');
+
+// --- Pozo común: una sola tira a la vista de todos (D-32) ---
+const pozo = { cards, seed: 21, players: ['A', 'B'], handSize: 2, shared: true, visible: 6 };
+const rep = dealShared(cards, 21, 6);
+assert.equal(rep.table.length, 6);
+assert.equal(rep.pool.length, cards.length - 7);
+assert.equal(new Set([rep.base, ...rep.table]).size, 7, 'no se repite ninguna carta');
+
+const p0 = buildState(pozo);
+assert.equal(p0.shared, true);
+assert.equal(p0.target, 2);
+assert.deepEqual(p0.table, rep.table);
+assert.deepEqual(p0.hands.A, p0.table, 'todos ven la misma tira');
+assert.deepEqual(p0.hands.B, p0.table);
+assert.deepEqual(p0.scores, { A: 0, B: 0 });
+
+const pc = p0.table[0];
+const acierto = { from: 'A', card: pc, at: correctSlot(p0.line, pc, p0.byId), ms: 1000 };
+const p1 = buildState({ ...pozo, moves: [acierto] });
+assert.equal(p1.table.length, 6, 'la tira mantiene su tamaño');
+assert.equal(p1.table.includes(pc), false, 'la carta jugada sale de la tira');
+assert.equal(p1.table[5], rep.pool[0], 'la carta nueva entra por el final');
+assert.equal(p1.scores.A, 1);
+assert.equal(p1.line.length, 2);
+assert.equal(p1.done, false, 'falta que B juegue su turno de la ronda');
+
+const malAt = acierto.at === 0 ? p0.line.length : 0;
+const p1b = buildState({ ...pozo, moves: [{ from: 'A', card: pc, at: malAt, ms: 1000 }] });
+assert.equal(p1b.scores.A, 0, 'fallar no suma');
+assert.equal(p1b.table.length, 6, 'al fallar también entra una carta nueva');
+assert.equal(p1b.table[5], rep.pool[0]);
+assert.equal(p1b.line.length, 1, 'la carta fallada no entra en la línea');
+
+// Meta de 1 carta: los dos llegan en la misma ronda y desempata el tiempo
+const meta1 = { ...pozo, handSize: 1 };
+const m0 = buildState(meta1);
+const cartaA = m0.table[0];
+const jA = { from: 'A', card: cartaA, at: correctSlot(m0.line, cartaA, m0.byId), ms: 4000 };
+const trasA = buildState({ ...meta1, moves: [jA] });
+assert.equal(trasA.scores.A, 1);
+assert.equal(trasA.done, false, 'la ronda se termina igual (D-31)');
+const cartaB = trasA.table[0];
+const jB = { from: 'B', card: cartaB, at: correctSlot(trasA.line, cartaB, trasA.byId), ms: 1500 };
+const finPozo = buildState({ ...meta1, moves: [jA, jB] });
+assert.equal(finPozo.done, true);
+assert.deepEqual(finPozo.winner, ['B'], 'empatados en cartas colocadas, gana el más rápido');
+// Si B falla, gana A aunque haya sido más lento
+const finSolo = buildState({ ...meta1, moves: [jA, { from: 'B', card: cartaB, at: correctSlot(trasA.line, cartaB, trasA.byId) === 0 ? trasA.line.length : 0, ms: 10 }] });
+assert.deepEqual(finSolo.winner, ['A']);
 
 assert.equal(yearLabel(1969), '1969');
 assert.equal(yearLabel(-753), '753 a.C.');
