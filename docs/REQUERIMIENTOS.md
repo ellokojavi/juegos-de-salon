@@ -107,3 +107,4 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | LT-09 | Memoria de partida en todos los modos (canon C-6). | ✅ v0.8 |
 | LT-10 | Textos en español e inglés. | ✅ v0.8 |
 | LT-11 | Chat de sala en varios celulares, en la sala de espera y durante la partida; muere con la partida (canon C-15). | ✅ v0.10 |
+| LT-12 | La ronda se juega completa y, si más de uno queda sin cartas, gana quien respondió en menos tiempo. El tiempo se muestra solo al final. | ✅ v0.12 |

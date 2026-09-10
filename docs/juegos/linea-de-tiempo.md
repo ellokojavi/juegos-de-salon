@@ -31,6 +31,18 @@ naturaleza del juego:
 | Empates de año | Dos hitos del mismo año se aceptan en cualquier orden entre ellos. |
 | Temática | Historia o Música. Se elige al configurar y define el mazo. |
 
+## 2b. Final de la partida y desempate (D-31)
+
+Cuando alguien se queda sin cartas **no** termina la partida: se completa la ronda, de modo que
+todos juegan la misma cantidad de turnos. Terminada la ronda gana quien haya quedado sin cartas y,
+si son varios, **el que acumuló menos tiempo respondiendo**.
+
+Cada dispositivo mide su propio turno desde que el jugador ve el tablero hasta que confirma, y lo
+manda como `ms` en el mensaje `place`; el motor lo suma por jugador. No se muestra durante la
+partida: aparece al final, en el ranking, junto a las cartas y los aciertos, en segundos (con una
+décima si dos jugadores caen en el mismo segundo). Cada jugada tope de 5 minutos, para que una
+interrupción larga no decida el desempate.
+
 ## 3. Modos
 
 | Modo | Jugadores | Transporte |
@@ -56,14 +68,14 @@ falta mensajes de respuesta.
 ```jsonc
 { "t": "hello", "from": "A", "name": "Javi" }
 { "t": "start", "from": "A", "order": ["A","B","C"] }   // solo varios celulares: el anfitrión abre el juego
-{ "t": "place", "from": "B", "card": "luna", "slot": 2 }   // carta y ranura elegida ("at" lo usa el transporte)
+{ "t": "place", "from": "B", "card": "luna", "slot": 2, "ms": 4200 }   // ranura elegida y cuánto tardó ("at" lo usa el transporte)
 { "t": "rematch", "from": "A", "code": "KXTR" }
 { "t": "chat", "from": "C", "text": "esa iba antes de la luna" }   // solo varios celulares; no es estado
 ```
 
 - El mazo se baraja con un generador sembrado (`mulberry32`), así que la semilla basta para que
   todos tengan el mismo mazo y el mismo reparto.
-- `view()` deriva: manos, línea de tiempo, pozo, turno, aciertos y errores, ganador.
+- `view()` deriva: manos, línea de tiempo, pozo, turno, aciertos y errores, tiempo por jugador y ganador.
 - Jugadas fuera de turno, repetidas o con cartas que no están en la mano se descartan en el reductor.
 - `chat` es la excepción: el reductor lo dibuja y lo olvida, y avisa que **no** hay que volver a dibujar la partida. Si el chat se redibujara con el juego, cada mensaje recibido borraría lo que el jugador está escribiendo.
 
