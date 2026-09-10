@@ -25,6 +25,8 @@
   --radius: 22px;
   --font-display: 'Bangers', 'Impact', 'Arial Black', sans-serif;
   --font-body: 'Nunito', system-ui, -apple-system, sans-serif;
+  /* Cifras que el jugador lee o compara: en Bangers el 1 y el 7 son casi el mismo trazo */
+  --font-num: 'Nunito', system-ui, -apple-system, sans-serif;
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
