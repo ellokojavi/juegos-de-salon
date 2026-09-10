@@ -87,6 +87,7 @@ Un modo que todavía no existe se muestra deshabilitado con "Próximamente", nun
 - Salas: código de 4 letras mayúsculas sin I ni O, QR con `?sala=CÓDIGO`, campo `game` para separar juegos, caducidad de 6 horas. Roles de A a F (hasta seis jugadores).
 - Con más de dos jugadores, el reparto de roles es una carrera: se escribe el rol con un identificador de dispositivo y se relee para confirmar quién lo obtuvo. Nunca se asume que el primer rol libre que se leyó sigue libre.
 - Cuando hay más de dos jugadores, uno es anfitrión (rol A) y abre la partida cuando están todos.
+- Quien abre un enlace de sala (`?sala=CÓDIGO`) llega a una pantalla que **solo** deja unirse a esa sala: nada de botón para crear otra, el código va fijo y de solo lectura, y los ajustes de la partida no se muestran porque los fija el anfitrión. Ofrecer las dos cosas confunde a quien fue invitado.
 - El enlace de la sala se comparte con el diálogo nativo del sistema (`navigator.share`, helper `shareLink` en `ui.js`); copiar al portapapeles es solo el respaldo cuando el navegador no tiene ese diálogo. El diálogo del celular ya incluye copiar, así que no se pierde nada.
 - Se muestra cuando el rival se desconecta y se retoma solo cuando vuelve.
 - La revancha crea una sala nueva y mueve a los dos jugadores; parte quien perdió.
@@ -172,6 +173,7 @@ Solo en los modos de **varios celulares**: en un celular la gente está mirando 
 - El chat **muere con la partida**: no se guarda en la memoria de partida (C-6) y se apaga en la pantalla de resultado. Al reconectar se recupera de la sala, sin sonido ni globito de no leídos.
 - No aparece sobre las pantallas de veredicto ni de resultado: el chat va por debajo de `#handoff` y se cierra solo cuando llega el turno del jugador (salvo que esté escribiendo).
 - Burbuja flotante con globito de no leídos; sonido discreto y vibración corta al recibir, sujetos al botón de silencio (C-4).
+- Un mensaje nuevo se asoma unos segundos al lado de la burbuja, con el nombre de quien escribe: el globito dice *cuántos*, la etiqueta dice *qué*. Se puede tocar para abrir el chat y desaparece sola.
 - Límites: 120 caracteres por mensaje, un mensaje cada 1,2 s por celular y los últimos 60 en pantalla. Las reglas de Firebase validan el largo del texto.
 - La sala se lee con solo saber el código: el chat no es privado y no se usa para nada sensible.
 

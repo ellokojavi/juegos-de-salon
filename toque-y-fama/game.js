@@ -627,7 +627,8 @@ function renderSetup(mode, prefillCode = '') {
   // Config (el que se une a una sala usa la config del anfitrión)
   const seg = el('div', { class: 'seg' }, ...DIGIT_OPTIONS.map(d => el('button', { type: 'button', class: d === config.digits ? 'on' : '', onClick: e => { config.digits = d; $$('button', seg).forEach(b => b.classList.toggle('on', b === e.currentTarget)); SFX.tap(); } }, d)));
   const sw = (key, label, hint) => { const b = el('button', { type: 'button', class: 'switch' + (config[key] ? ' on' : ''), onClick: () => { config[key] = !config[key]; b.classList.toggle('on', config[key]); SFX.tap(); } }); return el('div', { class: 'toggle-row' }, el('div', {}, el('b', {}, label), hint ? el('small', {}, hint) : null), b); };
-  form.append(el('div', { class: 'field' }, el('label', {}, T.digits), seg), sw('replica', T.replica, T.replicaHint), sw('zeroFirst', T.zeroFirst));
+  // Quien llega invitado no configura nada: la partida ya viene armada por el anfitrión.
+  if (!prefillCode) form.append(el('div', { class: 'field' }, el('label', {}, T.digits), seg), sw('replica', T.replica, T.replicaHint), sw('zeroFirst', T.zeroFirst));
   const actions = $('#setup-actions'); actions.innerHTML = '';
   const fail = (msg) => { err.textContent = msg; err.classList.remove('shake'); void err.offsetWidth; err.classList.add('shake'); SFX.error(); vibrate([30, 30, 30]); };
   const getName = k => inputs[k].value.trim();
@@ -647,7 +648,17 @@ function renderSetup(mode, prefillCode = '') {
       try { await joinOnline(code, a); } catch (e) { fail({ 'not-found': T.errNotFound, full: T.errFull, expired: T.errExpired, 'other-game': T.errOtherGame }[e.message] || T.errNet); }
       busy(joinBtn, false);
     } }, T.join);
-    actions.append(createBtn, el('div', { class: 'or' }, '— o —'), el('div', { class: 'panel' }, el('p', { class: 'lead', style: 'margin-bottom:8px' }, T.joinTitle), el('div', { class: 'field' }, codeInput), joinBtn));
+    // Con un enlace de sala solo se puede entrar a ESA sala: crear otra desde aquí confunde.
+    const joinPanel = extra => el('div', { class: 'panel' }, extra, el('div', { class: 'field' }, codeInput), joinBtn);
+    if (prefillCode) {
+      codeInput.readOnly = true;
+      actions.append(joinPanel(el('div', {},
+        el('p', { class: 'lead', style: 'margin-bottom:2px' }, fmt(T.invited, { code: prefillCode })),
+        el('p', { class: 'muted', style: 'margin:0 0 8px' }, T.invitedHint),
+      )));
+    } else {
+      actions.append(createBtn, el('div', { class: 'or' }, '— o —'), joinPanel(el('p', { class: 'lead', style: 'margin-bottom:8px' }, T.joinTitle)));
+    }
     if (prefillCode) setTimeout(() => inputs.A.focus(), 100);
   }
 }

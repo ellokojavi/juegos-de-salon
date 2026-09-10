@@ -258,6 +258,24 @@ details.panel summary::-webkit-details-marker { display: none; }
   display: grid; place-items: center; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 
+/* Etiqueta que se asoma al lado de la burbuja con el mensaje recién llegado */
+.chat-peek {
+  position: absolute; right: 74px; bottom: calc(78px + env(safe-area-inset-bottom, 0px));
+  max-width: min(64vw, 260px); min-height: 54px;
+  display: flex; flex-direction: column; justify-content: center; gap: 1px; text-align: left;
+  padding: 8px 12px; border-radius: 16px 16px 4px 16px;
+  background: linear-gradient(180deg, rgba(42, 10, 74, 0.97), rgba(21, 7, 38, 0.97));
+  border: 2px solid var(--glass-border); box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5);
+  color: var(--ink); font-family: var(--font-body); cursor: pointer;
+}
+.chat-peek .who { font-size: 0.66rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.07em; }
+/* Un mensaje largo se corta en dos líneas: la etiqueta es un aviso, no el chat */
+.chat-peek .txt { font-size: 0.85rem; font-weight: 700; line-height: 1.25; overflow: hidden; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.chat-peek.in { animation: peekIn 0.28s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
+.chat-peek.leaving { animation: peekOut 0.28s ease-in both; }
+@keyframes peekIn { from { opacity: 0; transform: translateX(16px) scale(0.92); } to { opacity: 1; transform: none; } }
+@keyframes peekOut { to { opacity: 0; transform: translateX(10px) scale(0.96); } }
+
 .chat-sheet { position: absolute; inset: 0; display: grid; align-items: end; }
 .chat-scrim { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.55); animation: fadeIn 0.2s both; }
 .chat-panel {

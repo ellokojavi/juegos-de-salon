@@ -15,6 +15,7 @@ const chat = d => d.evaluate(`(()=>{const m=document.getElementById('chat');cons
   burbuja: !!document.querySelector('.chat-fab') && !document.querySelector('.chat-fab').hidden,
   abierta: !!document.querySelector('.chat-sheet') && !document.querySelector('.chat-sheet').hidden,
   noLeidos: b && !b.hidden ? b.textContent : '0',
+  etiqueta: (()=>{const p=document.querySelector('.chat-peek');return p && !p.hidden ? p.textContent : null})(),
   mensajes: [...document.querySelectorAll('.chat-msg')].map(x=>x.textContent),
 })})()`).then(JSON.parse);
 const say = async (d, text) => {
@@ -60,8 +61,10 @@ await A.shot('chat-01-lobby');
 console.log('A escribe:', await say(A, 'Ya llegaron todos?'));
 await sleep(2500);
 let cB = await chat(B);
-console.log('B (chat cerrado) → no leídos:', cB.noLeidos, '| mensajes:', JSON.stringify(cB.mensajes));
+console.log('B (chat cerrado) → no leídos:', cB.noLeidos, '| etiqueta asomada:', JSON.stringify(cB.etiqueta), '| mensajes:', JSON.stringify(cB.mensajes));
 await B.shot('chat-02-no-leidos');
+await sleep(2800);
+console.log('B unos segundos después → etiqueta:', JSON.stringify((await chat(B)).etiqueta), '(debe ser null)', '| no leídos:', (await chat(B)).noLeidos, '(sigue en 1)');
 console.log('B responde:', await say(B, 'Estoy lista 💪'));
 await sleep(2500);
 console.log('B tras abrir → no leídos:', (await chat(B)).noLeidos, '(debe ser 0)');
@@ -80,7 +83,9 @@ console.log('empezó la partida → A:', await A.active(), '| chat visible:', (a
 await A.shot('chat-04-partida');
 console.log('A comenta la jugada:', await say(A, 'esa carta es fácil'));
 await sleep(2500);
-console.log('B recibe durante la partida → no leídos:', (await chat(B)).noLeidos);
+const cJuego = await chat(B);
+console.log('B recibe durante la partida → no leídos:', cJuego.noLeidos, '| etiqueta:', JSON.stringify(cJuego.etiqueta));
+await B.shot('chat-04b-etiqueta');
 await B.evaluate(`document.querySelector('.chat-fab')?.click(); 1`); await sleep(300);
 await B.shot('chat-05-en-partida');
 await B.evaluate(`document.querySelector('.chat-x').click(); 1`); await sleep(200);

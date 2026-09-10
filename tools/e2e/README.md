@@ -37,6 +37,7 @@ mkdir -p /tmp/e2e && node tools/e2e/batalla-naval-local.mjs /tmp/e2e
 | `memoria-de-partida.mjs` | Guardar y retomar en los tres juegos (canon C-6) |
 | `versionado.mjs` | Que todos los módulos carguen con `?v=` del import map |
 | `compartir-sala.mjs` | Botón de compartir: diálogo nativo si existe, copiar si no |
+| `enlace-invitacion.mjs` | Quien llega por un enlace solo puede unirse a esa sala, en los tres juegos |
 
 ## Cómo simulan varios celulares
 
