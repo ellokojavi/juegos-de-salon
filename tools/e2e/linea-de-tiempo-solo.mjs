@@ -16,6 +16,7 @@ const start = async () => {
   await b.evaluate(`[...document.querySelectorAll('.mode')].find(m=>/solo/i.test(m.textContent)).click(); 1`); await sleep(300);
   console.log('setup sin nivel del celular:', await b.evaluate(`!/Nivel del celular|Phone level/.test(document.getElementById('setup-form').innerText)`));
   await b.evaluate(`(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}));return 1})()`);
+  await b.evaluate(`(()=>{const x=[...document.querySelectorAll('#setup-form .seg button')].find(e=>/Mano propia|Own hand/.test(e.textContent));if(x)x.click();return 1})()`); await sleep(150);
   await b.evaluate(`[...document.querySelectorAll('#setup-form .seg button')].find(x=>/Corta/.test(x.textContent)).click(); 1`);
   await click('#setup-actions .btn'); await sleep(700);
 };

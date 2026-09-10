@@ -2,7 +2,7 @@
  * Línea de Tiempo — configuración por defecto y textos en español e inglés.
  */
 export const GAME_ID = 'linea-de-tiempo';
-export const DEFAULT_CONFIG = { theme: 'historia', handSize: 5, shared: false };
+export const DEFAULT_CONFIG = { theme: 'historia', handSize: 5, shared: true };
 /** Cartas a la vista en el modo de pozo común (D-32). */
 export const VISIBLE = 6;
 export const HAND_SIZES = [3, 5, 7];
@@ -27,7 +27,7 @@ const ES = {
   players: 'Jugadores', playerPlaceholder: 'Jugador {n}', addPlayer: '+ Agregar jugador', maxPlayers: 'Máximo {n} jugadores', removePlayer: 'Quitar jugador',
   yourName: 'Tu nombre', start: '¡A jugar!',
   errName: 'Falta el nombre.', errNames: 'Faltan nombres o están repetidos.',
-  create: 'Crear sala', joinTitle: 'Unirse a una sala', codePlaceholder: 'CÓDIGO', join: 'Unirse', errCode: 'El código tiene 4 letras.',
+  create: 'Crear sala', joinTitle: '¿Tienes un código? ¡Únete!', codePlaceholder: 'CÓDIGO', join: 'Unirse', errCode: 'El código tiene 4 letras.',
   errNotFound: 'No existe esa sala. Revisa el código.', errFull: 'La sala ya está llena.', errExpired: 'Esa sala ya venció.', errOtherGame: 'Ese código es de otro juego.', errNet: 'No se pudo conectar. ¿Hay internet?',
   invitedTitle: '¡Invitado a jugar!', invited: '📩 Sala {code}', invitedHint: 'Escribe tu nombre y entra. La partida la configura quien te invitó.',
   lobbyTitle: 'Sala creada', lobbyCode: 'Código', lobbyShare: 'Dile el código al resto o que escaneen el QR.', shareLink: '📤 Compartir link', shareText: 'Únete a mi sala de {game} · {theme}. Código: {code}', copyLink: '📋 Copiar link', copied: '¡Copiado!',
@@ -71,7 +71,7 @@ const EN = {
   players: 'Players', playerPlaceholder: 'Player {n}', addPlayer: '+ Add player', maxPlayers: 'Max {n} players', removePlayer: 'Remove player',
   yourName: 'Your name', start: 'Let\'s play!',
   errName: 'Name missing.', errNames: 'Names missing or repeated.',
-  create: 'Create room', joinTitle: 'Join a room', codePlaceholder: 'CODE', join: 'Join', errCode: 'The code has 4 letters.',
+  create: 'Create room', joinTitle: 'Got a code? Jump in!', codePlaceholder: 'CODE', join: 'Join', errCode: 'The code has 4 letters.',
   errNotFound: 'That room doesn\'t exist. Check the code.', errFull: 'That room is full.', errExpired: 'That room has expired.', errOtherGame: 'That code belongs to another game.', errNet: 'Could not connect. Is there internet?',
   invitedTitle: 'Invited to play!', invited: '📩 Room {code}', invitedHint: 'Type your name and jump in. Whoever invited you sets up the game.',
   lobbyTitle: 'Room created', lobbyCode: 'Code', lobbyShare: 'Tell the others the code or let them scan the QR.', shareLink: '📤 Share link', shareText: 'Join my {game} room · {theme}. Code: {code}', copyLink: '📋 Copy link', copied: 'Copied!',

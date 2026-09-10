@@ -19,6 +19,7 @@ await b.go(`${BASE}/linea-de-tiempo/`, 1500); await b.evaluate(`localStorage.cle
 await b.go(`${BASE}/linea-de-tiempo/`, 1500);
 await b.evaluate(`document.querySelectorAll('.mode')[0].click(); 1`); await sleep(400);
 await b.evaluate(`(()=>{const xs=document.querySelectorAll('#setup-form input');xs[0].value='Javi';xs[0].dispatchEvent(new Event('input',{bubbles:true}));xs[1].value='Cata';xs[1].dispatchEvent(new Event('input',{bubbles:true}));return 1})()`);
+await b.evaluate(`(()=>{const x=[...document.querySelectorAll('.seg button')].find(e=>/Mano propia|Own hand/.test(e.textContent));if(x)x.click();return 1})()`); await sleep(150);
 await b.evaluate(`(()=>{const x=[...document.querySelectorAll('.seg button')].find(e=>/3$/.test(e.textContent.trim()));if(x)x.click();return 1})()`);
 await b.evaluate(`[...document.querySelectorAll('#setup-actions .btn')][0].click(); 1`); await sleep(1200);
 await closeOverlay();

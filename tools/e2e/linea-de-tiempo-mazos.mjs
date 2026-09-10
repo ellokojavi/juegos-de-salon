@@ -36,6 +36,7 @@ for (let i = 0; i < VUELTAS; i++) {
   await b.evaluate(`document.querySelectorAll('.mode')[2].click(); 1`); await sleep(300);
   await b.evaluate(`(()=>{const t=[...document.querySelectorAll('.theme-card')].find(c=>/Chile/.test(c.innerText));t.click();return 1})()`); await sleep(150);
   await b.evaluate(`(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}));return 1})()`);
+  await b.evaluate(`(()=>{const x=[...document.querySelectorAll('.seg button')].find(e=>/Mano propia|Own hand/.test(e.textContent));if(x)x.click();return 1})()`); await sleep(150);
   await b.evaluate(`(()=>{const x=[...document.querySelectorAll('.seg button')].find(e=>/7$/.test(e.textContent.trim()));if(x)x.click();return 1})()`);
   await b.evaluate(`[...document.querySelectorAll('#setup-actions .btn')][0].click(); 1`); await sleep(900);
   const cartas = await b.evaluate(`(()=>{const v=window.__ldt.view();return JSON.stringify([...v.line, ...v.hands.A])})()`).then(JSON.parse);

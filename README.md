@@ -100,7 +100,7 @@ Recibes hitos sin fecha y los ubicas en el lugar correcto de una línea de tiemp
 - **📱 Un celular:** de dos a seis jugadores, pasando el celular por turnos.
 - **📡 Varios celulares:** sala con código y QR, hasta seis jugadores. El anfitrión abre la partida cuando están todos, y cada uno ve su propia mano.
 - **🧍 Jugar solo:** vacía tu mano en la menor cantidad de intentos y supera tu récord por temática.
-- **🃏 Pozo común (opcional):** en vez de una mano privada, las mismas 6 cartas a la vista para todos. Gana quien coloque primero las cartas acordadas.
+- **🃏 Pozo común (por defecto):** las mismas 6 cartas a la vista para todos, y gana quien coloque primero las cartas acordadas. También se puede jugar con mano privada.
 - **💬 Chat de la sala:** en varios celulares hay un chat para comentar las jugadas mientras se espera el turno, que sigue vivo en la pantalla final. Los mensajes nuevos se asoman unos segundos al lado de la burbuja.
 
 <table>

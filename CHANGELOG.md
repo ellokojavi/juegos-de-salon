@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.16.0 — 2026-09-10
+- Línea de Tiempo: el **pozo común** pasa a ser la primera opción y viene elegido por defecto. Es el modo que más conversación genera, porque todos miran las mismas cartas.
+- Línea de Tiempo: el campo **Tu nombre** ahora es grande y centrado, que es lo único que el jugador tiene que escribir.
+- Línea de Tiempo: "Unirse a una sala" pasa a decir **"¿Tienes un código? ¡Únete!"**.
+
 ## 0.15.2 — 2026-09-10
 - Mazo chileno: entran **Los Venegas** (1989), **Sucupira** (1996) y **Romané** (2000). Quedó en 127 cartas.
 
