@@ -489,7 +489,9 @@ function renderSetup(mode, prefillCode = '') {
       el('span', { class: 'em' }, d.emoji), el('b', {}, d.name[lang]), el('small', {}, d.hint[lang])));
   };
   paintThemes();
-  form.append(el('div', { class: 'field' }, el('label', {}, T.theme), themes));
+  // Quien llega invitado no configura nada: la partida ya viene armada por el anfitrión.
+  const invitado = !!prefillCode;
+  if (!invitado) form.append(el('div', { class: 'field' }, el('label', {}, T.theme), themes));
 
   // Jugadores
   const playersBox = el('div');
@@ -513,7 +515,7 @@ function renderSetup(mode, prefillCode = '') {
   // Cartas en mano
   const sizeLabels = { 3: T.short, 5: T.normal, 7: T.long };
   const seg = el('div', { class: 'seg' }, ...HAND_SIZES.map(n => el('button', { type: 'button', class: n === config.handSize ? 'on' : '', onClick: e => { config.handSize = n; $$('button', seg).forEach(b => b.classList.toggle('on', b === e.currentTarget)); SFX.tap(); } }, `${sizeLabels[n]} · ${n}`)));
-  form.append(el('div', { class: 'field' }, el('label', {}, T.handSize), seg));
+  if (!invitado) form.append(el('div', { class: 'field' }, el('label', {}, T.handSize), seg));
 
   const fail = msg => { err.textContent = msg; err.classList.remove('shake'); void err.offsetWidth; err.classList.add('shake'); SFX.error(); vibrate([30, 30, 30]); };
   const actions = $('#setup-actions'); actions.innerHTML = '';
@@ -533,7 +535,17 @@ function renderSetup(mode, prefillCode = '') {
       try { await joinOnline(code, name); } catch (e) { fail({ 'not-found': T.errNotFound, full: T.errFull, expired: T.errExpired, 'other-game': T.errOtherGame }[e.message] || T.errNet); }
       joinBtn.disabled = false;
     } }, T.join);
-    actions.append(createBtn, el('div', { class: 'or' }, '— o —'), el('div', { class: 'panel' }, el('p', { class: 'lead', style: 'margin-bottom:8px' }, T.joinTitle), el('div', { class: 'field' }, codeInput), joinBtn));
+    // Con un enlace de sala solo se puede entrar a ESA sala: crear otra desde aquí confunde.
+    const joinPanel = extra => el('div', { class: 'panel' }, extra, el('div', { class: 'field' }, codeInput), joinBtn);
+    if (prefillCode) {
+      codeInput.readOnly = true;
+      actions.append(joinPanel(el('div', {},
+        el('p', { class: 'lead', style: 'margin-bottom:2px' }, fmt(T.invited, { code: prefillCode })),
+        el('p', { class: 'muted', style: 'margin:0 0 8px' }, T.invitedHint),
+      )));
+    } else {
+      actions.append(createBtn, el('div', { class: 'or' }, '— o —'), joinPanel(el('p', { class: 'lead', style: 'margin-bottom:8px' }, T.joinTitle)));
+    }
     return;
   }
   actions.append(el('button', { class: 'btn btn--yellow', onClick: () => {

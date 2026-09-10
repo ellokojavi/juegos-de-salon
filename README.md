@@ -95,7 +95,7 @@ Recibes hitos sin fecha y los ubicas en el lugar correcto de una línea de tiemp
 - **📱 Un celular:** de dos a seis jugadores, pasando el celular por turnos.
 - **📡 Varios celulares:** sala con código y QR, hasta seis jugadores. El anfitrión abre la partida cuando están todos, y cada uno ve su propia mano.
 - **🧍 Jugar solo:** vacía tu mano en la menor cantidad de intentos y supera tu récord por temática.
-- **💬 Chat de la sala:** en varios celulares hay un chat para comentar las jugadas mientras se espera el turno. Muere con la partida.
+- **💬 Chat de la sala:** en varios celulares hay un chat para comentar las jugadas mientras se espera el turno. Los mensajes nuevos se asoman unos segundos al lado de la burbuja. Muere con la partida.
 
 <table>
   <tr>
@@ -109,6 +109,10 @@ Recibes hitos sin fecha y los ubicas en el lugar correcto de una línea de tiemp
     <td align="center"><img src="docs/screenshots/linea-de-tiempo/07-varios-celulares.png" width="180" alt="Varios celulares"><br><sub>Partida en varios celulares</sub></td>
     <td align="center"><img src="docs/screenshots/linea-de-tiempo/05-resultado.png" width="180" alt="Resultado"><br><sub>Resultado y ranking</sub></td>
     <td align="center"><img src="docs/screenshots/linea-de-tiempo/08-chat.png" width="180" alt="Chat de la sala"><br><sub>Chat de la sala</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/linea-de-tiempo/09-chat-aviso.png" width="180" alt="Aviso de mensaje nuevo"><br><sub>Aviso de mensaje nuevo</sub></td>
+    <td></td><td></td><td></td>
   </tr>
 </table>
 

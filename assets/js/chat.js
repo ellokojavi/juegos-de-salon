@@ -17,6 +17,7 @@ import { SFX } from './sound.js';
 export const CHAT_MAX = 120;    // caracteres por mensaje
 const KEEP = 60;                // mensajes que se mantienen en pantalla
 const MIN_GAP = 1200;           // ms mínimos entre dos envíos del mismo celular
+const PEEK_MS = 4200;           // cuánto se asoma la etiqueta con el mensaje nuevo
 const ROLE_COLORS = ['--cyan', '--yellow', '--lime', '--pink', '--orange', '--purple'];
 const ROLES = ['A', 'B', 'C', 'D', 'E', 'F'];
 
@@ -38,6 +39,9 @@ export function createChat({ mount, T, nameOf, isMine, onSend }) {
   let lastFrom = null;          // agrupa mensajes seguidos del mismo jugador
 
   const badge = el('span', { class: 'chat-badge', hidden: true }, '0');
+  // Etiqueta que se asoma al lado de la burbuja con el mensaje recién llegado
+  const peek = el('button', { class: 'chat-peek', type: 'button', hidden: true, onClick: () => toggle(true) });
+  let peekTimer = null;
   const fab = el('button', { class: 'chat-fab', type: 'button', 'aria-label': T.chatOpen, onClick: () => toggle(true) }, '💬', badge);
   const list = el('div', { class: 'chat-list' }, el('p', { class: 'chat-empty' }, T.chatEmpty));
   const input = el('input', {
@@ -60,7 +64,7 @@ export function createChat({ mount, T, nameOf, isMine, onSend }) {
     panel,
   );
   mount.classList.add('chat');
-  mount.append(fab, sheet);
+  mount.append(fab, peek, sheet);
 
   /* ---------- teclado del celular ----------
      El teclado no achica la ventana en iOS: tapa lo que hay abajo. visualViewport
@@ -79,6 +83,26 @@ export function createChat({ mount, T, nameOf, isMine, onSend }) {
 
   function scrollDown() { list.scrollTop = list.scrollHeight; }
 
+  /** Asoma el mensaje nuevo al lado de la burbuja y lo esconde solo. Uno a la vez: el último manda. */
+  function showPeek(role, text) {
+    clearTimeout(peekTimer);
+    peek.innerHTML = '';
+    peek.append(
+      el('span', { class: 'who', style: `color:${chatColor(role)}` }, nameOf(role)),
+      el('span', { class: 'txt' }, text),
+    );
+    peek.hidden = false;
+    peek.classList.remove('leaving'); void peek.offsetWidth; peek.classList.add('in');
+    peekTimer = setTimeout(hidePeek, PEEK_MS);
+  }
+
+  function hidePeek() {
+    clearTimeout(peekTimer);
+    if (peek.hidden) return;
+    peek.classList.remove('in'); peek.classList.add('leaving');
+    peekTimer = setTimeout(() => { peek.hidden = true; peek.classList.remove('leaving'); }, 300);
+  }
+
   function paintBadge() {
     badge.hidden = unread === 0;
     badge.textContent = unread > 9 ? '9+' : String(unread);
@@ -89,6 +113,7 @@ export function createChat({ mount, T, nameOf, isMine, onSend }) {
     open = v;
     sheet.hidden = !v;
     fab.hidden = v;
+    if (v) hidePeek();
     if (v) {
       unread = 0; paintBadge(); scrollDown();
       // El foco automático abre el teclado y tapa media pantalla: mejor que lo pida el jugador.
@@ -129,7 +154,7 @@ export function createChat({ mount, T, nameOf, isMine, onSend }) {
     const atBottom = list.scrollHeight - list.scrollTop - list.clientHeight < 80;
     if (open && (atBottom || mine)) scrollDown();
     if (!live || mine) return;
-    if (!open) { unread++; paintBadge(); }
+    if (!open) { unread++; paintBadge(); showPeek(msg.from, text); }
     SFX.chat(); vibrate(12);
   }
 
@@ -141,8 +166,9 @@ export function createChat({ mount, T, nameOf, isMine, onSend }) {
     /** Cierra solo si no hay nada escrito: el juego lo usa cuando llega el turno del jugador. */
     closeIfIdle() { if (open && !input.value.trim()) toggle(false); },
     show() { mount.hidden = false; onViewport(); },
-    hide() { toggle(false); mount.hidden = true; },
+    hide() { toggle(false); hidePeek(); mount.hidden = true; },
     destroy() {
+      clearTimeout(peekTimer);
       if (vv) { vv.removeEventListener('resize', onViewport); vv.removeEventListener('scroll', onViewport); }
       document.removeEventListener('keydown', onKey);
       mount.innerHTML = ''; mount.hidden = true;
