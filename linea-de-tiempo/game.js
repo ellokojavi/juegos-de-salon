@@ -176,8 +176,9 @@ function eventRow(cardId, byId, fresh = false) {
 function render() {
   if (!M) return;
   const v = view();
-  // El chat acompaña la sala y la partida; en el resultado se apaga y muere con ella.
-  if (chat) { if (v.done) chat.hide(); else chat.show(); }
+  // El chat acompaña la sala, la partida y también el resultado: ahí se celebra y se cierra
+  // la conversación. Muere con la sala, no con la partida (D-35).
+  if (chat) chat.show();
   if (v.lobby) return renderLobby();
   if (v.done) return renderResult(v);
   renderPlay(v);
@@ -364,17 +365,20 @@ function whereText([a, b], byId) {
 function verdictStage(last, v, nextName) {
   const c = v.byId[last.card];
   playVerdictSound(last.ok);
+  // Si jugó otro, el veredicto habla de él: "¡Cata se equivocó!", no "¡Te equivocaste!"
   const mine = S.mode === 'local' || S.roles.includes(last.from);
+  const quien = M.names[last.from];
+  const titulo = mine ? (last.ok ? T.correct : T.wrong) : fmt(last.ok ? T.correctOther : T.wrongOther, { name: quien });
   const stage = el('div', { class: 'stage pop' },
     el('div', { class: 'verdict' },
-      el('div', { class: 'big ' + (last.ok ? 'ok' : 'no') }, last.ok ? T.correct : T.wrong),
+      el('div', { class: 'big ' + (last.ok ? 'ok' : 'no') }, titulo),
       el('div', { class: 'card-big' }, el('span', { class: 'em' }, c.emoji), el('span', { class: 't' }, c[lang]), el('span', { class: 'y' }, yearLabel(c.year, lang))),
-      el('div', { class: 'note' }, last.ok ? `${M.names[last.from]} 👏` : `${M.names[last.from]} · ${T.drewNew}`),
-      last.ok ? null : el('div', { class: 'why', html: `${fmt(T.whyWrong, { year: `<b>${yearLabel(c.year, lang)}</b>`, where: whereText(last.correctBetween, v.byId) })}<br>${fmt(T.wherePlaced, { where: whereText(last.placedBetween, v.byId) })}` }),
+      el('div', { class: 'note' }, last.ok ? `${quien} 👏` : (mine ? `${quien} · ${T.drewNew}` : `${quien} · ${T.drewNewOther}`)),
+      last.ok ? null : el('div', { class: 'why', html: `${fmt(T.whyWrong, { year: `<b>${yearLabel(c.year, lang)}</b>`, where: whereText(last.correctBetween, v.byId) })}<br>${fmt(mine ? T.wherePlaced : T.wherePlacedOther, { where: whereText(last.placedBetween, v.byId) })}` }),
     ),
   );
-  setTimeout(() => $('#handoff').classList.toggle('bad', !last.ok), 0);
-  void mine;
+  // El fondo rojo del error es solo para el que se equivocó: al resto le llega como noticia
+  setTimeout(() => $('#handoff').classList.toggle('bad', !last.ok && mine), 0);
   if (nextName) {
     stage.append(el('div', { class: 'pass-divider', style: 'width:60%;height:1px;background:var(--glass-border);margin:10px auto 2px' }));
     const pb = passBlock({ label: T.hoPass, name: nextName, button: T.hoReady, small: true });

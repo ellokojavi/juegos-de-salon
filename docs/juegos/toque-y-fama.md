@@ -63,7 +63,7 @@ En los tableros las pistas van abreviadas (“3F 1T”, en inglés “3B 1C”) 
 Burbuja 💬 con globito de no leídos, disponible desde la sala de espera y durante toda la partida
 (también mientras cada uno elige su número secreto, que es puro tiempo muerto). Usa el módulo
 compartido `assets/js/chat.js` montado en `<div id="chat">`, hermano de `#handoff` (canon C-15).
-No aparece en la pantalla de resultado y no se guarda: muere con la partida. Al reconectar, la
+Sigue vivo en la pantalla de resultado, para celebrar o pedir revancha (D-35), y no se guarda en ninguna parte: muere con la sala. Al reconectar, la
 conversación vuelve desde la sala, sin sonido ni globito. Se cierra solo cuando llega tu turno,
 salvo que estés escribiendo. Con el chat en pantalla, la pantalla de juego deja aire abajo para
 que la burbuja no tape el último intento.

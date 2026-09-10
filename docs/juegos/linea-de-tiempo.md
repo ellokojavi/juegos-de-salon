@@ -70,7 +70,7 @@ En varios celulares, el anfitrión (rol A) crea la sala y abre la partida con el
 
 El botón de compartir usa el diálogo nativo del celular y el texto que lo acompaña nombra la temática elegida, para que quien recibe el enlace sepa a qué lo invitan.
 
-En varios celulares hay además un **chat de sala** (canon C-15): una burbuja 💬 con globito de no leídos, disponible en la sala de espera y durante la partida. No aparece sobre el veredicto de una jugada ni en la pantalla de resultado, y no se guarda: muere con la partida.
+En varios celulares hay además un **chat de sala** (canon C-15): una burbuja 💬 con globito de no leídos, disponible en la sala de espera y durante la partida. No aparece sobre el veredicto de una jugada, pero **sí sigue vivo en la pantalla final**, para celebrar o pedir revancha (D-35). No se guarda en ninguna parte: muere con la sala.
 
 En solitario no hay rival: el objetivo es vaciar la mano en la menor cantidad de intentos. Se guarda un
 récord personal por temática, tamaño de mano y forma de repartir (el pozo común lleva su propio récord). Se descartó jugar contra una IA porque la máquina conoce
@@ -102,6 +102,7 @@ falta mensajes de respuesta.
   un celular. Cada hito es una fila con año, emoji y título. Entre filas hay **ranuras tocables**;
   también hay ranura antes de la primera y después de la última.
 - Arriba, la **carta en juego** grande, con emoji y título, sin año.
+- El veredicto se dirige a quien jugó: “¡Te equivocaste!” para el que falló y “¡Cata se equivocó!” para el resto, con el fondo rojo solo en la pantalla del que falló (D-36).
 - La carta elegida se marca en la propia mano (borde amarillo, el resto atenuado) y aparece dibujada dentro de la ranura elegida antes de confirmar. Se toca una ranura y luego **📍 Colocar aquí** (C-8), botón que flota abajo. Hubo una barra aparte que repetía la carta elegida sobre la línea; se quitó por redundante (D-33).
 - Al confirmar, la carta se revela con su año. Un **acierto** se muestra un par de segundos y se cierra solo.
   Un **error** tiñe la pantalla de rojo, sacude la carta, suena distinto y explica entre qué hitos iba y entre
@@ -120,7 +121,7 @@ Cuatro temáticas, cada una en su archivo dentro de `decks/`:
 |---|---|---|---|
 | 📜 Historia | `historia.js` | 98 | Hitos de la humanidad |
 | 🎵 Música | `musica.js` | 89 | De Beethoven a TikTok |
-| 🇨🇱 Chile | `chile.js` | 114 | Del terremoto del 60 al estallido |
+| 🇨🇱 Chile | `chile.js` | 122 | Del terremoto del 60 al estallido |
 | 🍿 Cultura pop | `pop.js` | 110 | Cine, memes y videojuegos |
 
 ```js
@@ -128,6 +129,7 @@ Cuatro temáticas, cada una en su archivo dentro de `decks/`:
 ```
 
 - Hitos **reconocibles**, con años indiscutibles: si la fecha se discute, la carta no entra.
+- Y que se puedan **situar**: nada de “un gran incendio” o “manifestaciones” a secas, porque eso pasa cada pocos años. Superlativo, nombre propio o cifra que ancle el año (D-37).
 - Cada mazo trae al menos noventa cartas, bien repartidas en el tiempo.
 - Los mazos se registran en `decks/index.js` con su nombre por idioma y su emoji, que es lo único que
   hay que tocar para agregar una temática nueva.
