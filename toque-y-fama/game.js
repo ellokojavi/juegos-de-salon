@@ -17,6 +17,7 @@ import { createSessionStore, createNameStore } from '../assets/js/session.js';
 const lang = getLang();
 const T = LOCALES[lang];
 const fmt = (s, vars = {}) => s.replace(/\{(\w+)\}/g, (_, k) => (vars[k] !== undefined ? vars[k] : `{${k}}`));
+const triesWord = n => (n === 1 ? T.tryOne : T.tryMany);
 const other = r => (r === 'A' ? 'B' : 'A');
 const store = createSessionStore(GAME_ID, { legacyKeys: ['juegos-de-salon:tyf:session'] });
 const names_ = createNameStore(GAME_ID);
@@ -471,7 +472,7 @@ function boardEl(r, isTurn = false) {
   const list = el('ol', {}, ...mine.map(g => el('li', { class: g.famas === M.config.digits ? 'hit' : '' }, el('span', { class: 'val' }, g.value), g.famas === null ? el('span', { class: 'clue' }, el('span', { class: 'z' }, '…')) : clueChips(g))));
   return el('div', { class: 'board' + (isTurn ? ' turn' : '') },
     el('h3', {}, fmt(T.boardOf, { name: M.names[r] })),
-    el('div', { class: 'count' }, mine.length ? fmt(T.tries, { n: mine.length }) : T.noGuesses),
+    el('div', { class: 'count' }, mine.length ? fmt(T.tries, { n: mine.length, word: triesWord(mine.length) }) : T.noGuesses),
     mine.length ? list : el('div', { class: 'empty' }, '—'),
   );
 }
@@ -485,7 +486,7 @@ function renderResult(v) {
   else {
     title.textContent = fmt(T.winTitle, { name: M.names[v.winner] });
     const tries = M.guesses.filter(g => g.from === v.winner).length;
-    sub.textContent = (meRole ? (meRole === v.winner ? T.youWin + ' ' : T.youLose + ' ') : '') + fmt(T.inTries, { n: tries });
+    sub.textContent = (meRole ? (meRole === v.winner ? T.youWin + ' ' : T.youLose + ' ') : '') + fmt(T.inTries, { n: tries, word: triesWord(tries) });
     trophy.textContent = meRole && meRole !== v.winner ? '😵' : '🏆';
   }
   const secrets = $('#result-secrets'); secrets.innerHTML = '';
