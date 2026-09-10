@@ -105,7 +105,7 @@ console.log('B tras recargar → pantalla:', await B.active(), '| mensajes recup
 await B.shot('chat-06b-reconexion');
 for (const k of ['A', 'B']) await closeVerdict(devs[k]);
 
-// --- hasta el final: el chat muere con la partida ---
+// --- hasta el final: el chat sigue vivo en el resultado ---
 let guard = 0;
 while (guard++ < 30) {
   s = await v(A);
@@ -117,7 +117,12 @@ while (guard++ < 30) {
   for (const k of ['A', 'B']) await closeVerdict(devs[k]);
 }
 console.log('partida terminada:', JSON.stringify(await v(A)));
-for (const k of ['A', 'B']) console.log(`${k} en el resultado → pantalla:`, await devs[k].active(), '| chat visible:', JSON.stringify(await chat(devs[k])).slice(0, 120));
+for (const k of ['A', 'B']) { const c = await chat(devs[k]); console.log(`${k} en el resultado → pantalla:`, await devs[k].active(), '| chat visible:', c.visible, '(debe ser true) | mensajes:', c.mensajes.length); }
+// Se puede seguir hablando después del pitazo final (D-35)
+console.log('A celebra en el resultado:', await say(A, 'te gane por un pelo'));
+await sleep(2500);
+const cFinal = await chat(B);
+console.log('B lo recibe en su pantalla de resultado → no leídos:', cFinal.noLeidos, '| etiqueta:', JSON.stringify(cFinal.etiqueta));
 await A.shot('chat-07-resultado');
 console.log('errors A:', JSON.stringify(A.errors), JSON.stringify(A.logs));
 console.log('errors B:', JSON.stringify(B.errors), JSON.stringify(B.logs));

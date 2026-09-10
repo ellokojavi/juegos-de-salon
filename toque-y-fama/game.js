@@ -319,8 +319,8 @@ function showCover(name, onReveal) {
 function render() {
   if (!M) return;
   const v = view();
-  // El chat acompaña la sala y la partida; en el resultado se apaga y muere con ella (canon C-15)
-  if (chat) { if (v.phase === 'done') chat.hide(); else chat.show(); }
+  // El chat acompaña la sala, la partida y el resultado; muere con la sala (canon C-15, D-35)
+  if (chat) chat.show();
   if (chat && v.phase === 'play' && v.expected === S.role && !v.pending) chat.closeIfIdle();
   switch (v.phase) {
     case 'lobby': renderLobby(); break;

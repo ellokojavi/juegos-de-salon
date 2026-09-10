@@ -45,7 +45,7 @@ Cada jugador elige un número secreto de cifras distintas y trata de adivinar el
 - **📱 Un celular:** se pasan el celular; la pantalla se tapa entre turnos.
 - **📡 Dos celulares:** sala con código de 4 letras y QR. Cada celular guarda su secreto y responde a los intentos del rival. Al final ambos revelan y se verifica todo.
 - **🤖 Contra el celular:** duelo contra un solver que adivina en 5 a 6 intentos.
-- **💬 Chat de la sala:** en dos celulares hay un chat para picarse mientras adivinan. Los mensajes nuevos se asoman al lado de la burbuja. Muere con la partida.
+- **💬 Chat de la sala:** en dos celulares hay un chat para picarse mientras adivinan, que sigue vivo en la pantalla final para celebrar o pedir revancha. Los mensajes nuevos se asoman al lado de la burbuja.
 
 <table>
   <tr>
@@ -95,13 +95,13 @@ Especificación y diseño: [docs/juegos/batalla-naval.md](docs/juegos/batalla-na
 
 ## ⏳ Línea de Tiempo
 
-Recibes hitos sin fecha y los ubicas en el lugar correcto de una línea de tiempo común. Si aciertas, la carta se queda; si fallas, se descarta y robas otra. Gana quien se queda sin cartas: la ronda se juega completa, y si más de uno queda sin cartas gana el que respondió más rápido. Se elige la temática al empezar: **Historia** (98 hitos de la humanidad), **Música** (89, de Beethoven a TikTok), **Chile** (114, del terremoto del 60 al estallido) y **Cultura pop** (110, cine, memes y videojuegos). Las cartas no se repiten entre partidas seguidas: cada celular recuerda las que ya mostró. Agregar una temática nueva es solo un archivo de datos.
+Recibes hitos sin fecha y los ubicas en el lugar correcto de una línea de tiempo común. Si aciertas, la carta se queda; si fallas, se descarta y robas otra. Gana quien se queda sin cartas: la ronda se juega completa, y si más de uno queda sin cartas gana el que respondió más rápido. Se elige la temática al empezar: **Historia** (98 hitos de la humanidad), **Música** (89, de Beethoven a TikTok), **Chile** (122, del terremoto del 60 al estallido, con Viña, la Teletón y las teleseries incluidas) y **Cultura pop** (110, cine, memes y videojuegos). Las cartas no se repiten entre partidas seguidas: cada celular recuerda las que ya mostró. Agregar una temática nueva es solo un archivo de datos.
 
 - **📱 Un celular:** de dos a seis jugadores, pasando el celular por turnos.
 - **📡 Varios celulares:** sala con código y QR, hasta seis jugadores. El anfitrión abre la partida cuando están todos, y cada uno ve su propia mano.
 - **🧍 Jugar solo:** vacía tu mano en la menor cantidad de intentos y supera tu récord por temática.
 - **🃏 Pozo común (opcional):** en vez de una mano privada, las mismas 6 cartas a la vista para todos. Gana quien coloque primero las cartas acordadas.
-- **💬 Chat de la sala:** en varios celulares hay un chat para comentar las jugadas mientras se espera el turno. Los mensajes nuevos se asoman unos segundos al lado de la burbuja. Muere con la partida.
+- **💬 Chat de la sala:** en varios celulares hay un chat para comentar las jugadas mientras se espera el turno, que sigue vivo en la pantalla final. Los mensajes nuevos se asoman unos segundos al lado de la burbuja.
 
 <table>
   <tr>
