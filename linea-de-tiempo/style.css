@@ -136,7 +136,10 @@
 .ranking { list-style: none; padding: 0; margin: 8px 0 0; display: grid; gap: 6px; }
 .ranking li { display: grid; grid-template-columns: 32px 1fr auto; gap: 8px; align-items: center; background: rgba(0,0,0,0.25); border-radius: 12px; padding: 8px 12px; font-weight: 800; }
 .ranking li .pos { font-family: var(--font-display); font-size: 1.3rem; color: var(--yellow); }
-.ranking li .info { color: var(--cyan); font-size: 0.85rem; }
+/* Una línea por jugador: el nombre se recorta antes que la fila se parta en dos */
+.ranking li .name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ranking li .info { color: var(--cyan); font-size: 0.8rem; text-align: right; white-space: nowrap; }
+.ranking li .info .time { color: var(--muted); font: 900 0.78rem var(--font-num); font-variant-numeric: tabular-nums; }
 .ranking li.top { background: linear-gradient(90deg, rgba(255,210,63,0.28), rgba(255,46,136,0.28)); }
 .replay { margin-top: 10px; padding: 12px 16px; }
 .replay summary { font-size: 1rem; }
