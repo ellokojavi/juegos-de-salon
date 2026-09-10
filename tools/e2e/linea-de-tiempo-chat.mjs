@@ -1,7 +1,9 @@
 // Chat de sala en Línea de Tiempo: dos celulares contra Firebase real (canon C-15)
 import { launch, sleep } from './cdp.mjs';
 const OUT = process.argv[2];
-const hosts = ['http://localhost:8765', 'http://127.0.0.1:8765'];
+// Segundo argumento opcional: una base distinta (por ejemplo el sitio publicado), canon C-12.
+const BASE = process.argv[3];
+const hosts = BASE ? [BASE, BASE] : ['http://localhost:8765', 'http://127.0.0.1:8765'];
 const A = await launch({ port: 9462, dir: `${OUT}/cA`, out: OUT, width: 375, height: 812 });
 const B = await launch({ port: 9463, dir: `${OUT}/cB`, out: OUT, width: 375, height: 812 });
 const devs = { A, B };
