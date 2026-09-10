@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.15.2 — 2026-09-10
+- Mazo chileno: entran **Los Venegas** (1989), **Sucupira** (1996) y **Romané** (2000). Quedó en 127 cartas.
+
 ## 0.15.1 — 2026-09-10
 - Mazo chileno: entran **Extra Jóvenes** (1986, con Katherine Salosny) y **Mekano** (1997, con José Miguel Viñuela). Quedó en 124 cartas.
 - Fix de dato: el último Festival de Viña de Antonio Vodanovic fue **2004**, no 2005.

@@ -121,7 +121,7 @@ Cuatro temáticas, cada una en su archivo dentro de `decks/`:
 |---|---|---|---|
 | 📜 Historia | `historia.js` | 98 | Hitos de la humanidad |
 | 🎵 Música | `musica.js` | 89 | De Beethoven a TikTok |
-| 🇨🇱 Chile | `chile.js` | 124 | Del terremoto del 60 al estallido |
+| 🇨🇱 Chile | `chile.js` | 127 | Del terremoto del 60 al estallido |
 | 🍿 Cultura pop | `pop.js` | 110 | Cine, memes y videojuegos |
 
 ```js
