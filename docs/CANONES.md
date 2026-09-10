@@ -109,6 +109,7 @@ Un modo que todavía no existe se muestra deshabilitado con "Próximamente", nun
 ## C-8b · Errores del jugador
 
 - Un error se muestra con una señal inconfundible (color, sacudida, sonido propio) y se queda en pantalla hasta que el jugador toca; nunca se cierra solo ni lo pisa la jugada de otro.
+- Esa señal es **para quien se equivocó**. A los demás el mismo hecho les llega como noticia, en tercera persona y sin el fondo rojo: “¡Cata se equivocó!”, no “¡Te equivocaste!” (D-36).
 - Va acompañado de una explicación corta y concreta de qué estuvo mal, con los datos del juego (por ejemplo, entre qué hitos iba la carta y entre cuáles se puso).
 - Un acierto o la jugada de otro puede cerrarse solo tras un par de segundos; un toque lo cierra antes.
 - El temporizador que cierra un aviso solo puede cerrar ese aviso, no uno más nuevo.
@@ -171,8 +172,9 @@ Solo en los modos de **varios celulares**: en un celular la gente está mirando 
 - Se usa `assets/js/chat.js` (`createChat`), no una implementación propia. Los textos salen de `LOCALES` del juego (C-3).
 - Vive en su propio contenedor (`<div id="chat">`), hermano de `#handoff` y **fuera** de las `.screen`: los re-render de la partida no pueden borrar lo que el jugador está escribiendo.
 - Los mensajes viajan por el mismo transporte que las jugadas (`{ t: 'chat', text }`), pero **no son parte del estado**: el reductor los dibuja y no los guarda. Un mensaje de chat no vuelve a dibujar la partida.
-- El chat **muere con la partida**: no se guarda en la memoria de partida (C-6) y se apaga en la pantalla de resultado. Al reconectar se recupera de la sala, sin sonido ni globito de no leídos.
-- No aparece sobre las pantallas de veredicto ni de resultado: el chat va por debajo de `#handoff` y se cierra solo cuando llega el turno del jugador (salvo que esté escribiendo).
+- El chat **muere con la sala**, no con la partida: sigue vivo en la pantalla de victoria o derrota, que es donde la conversación se cierra sola (D-35). No se guarda en la memoria de partida (C-6), y la revancha crea una sala nueva y por lo tanto un chat en blanco. Al reconectar se recupera de la sala, sin sonido ni globito de no leídos.
+- No aparece sobre las pantallas de veredicto: el chat va por debajo de `#handoff` y se cierra solo cuando llega el turno del jugador (salvo que esté escribiendo).
+- Donde esté la burbuja, la pantalla deja aire abajo para que no tape lo que importa: el último intento del tablero o los botones del final (C-8).
 - Burbuja flotante con globito de no leídos; sonido discreto y vibración corta al recibir, sujetos al botón de silencio (C-4).
 - Un mensaje nuevo se asoma unos segundos al lado de la burbuja, con el nombre de quien escribe: el globito dice *cuántos*, la etiqueta dice *qué*. Se puede tocar para abrir el chat y desaparece sola.
 - Límites: 120 caracteres por mensaje, un mensaje cada 1,2 s por celular y los últimos 60 en pantalla. Las reglas de Firebase validan el largo del texto.

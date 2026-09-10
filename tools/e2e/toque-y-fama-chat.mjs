@@ -62,7 +62,7 @@ await A.evaluate(`document.querySelector('.chat-fab')?.click(); 1`); await sleep
 await A.shot('tyf-chat-03-partida');
 await close(A); await close(B);
 
-// --- hasta el final: el chat muere con la partida ---
+// --- hasta el final: el chat sigue vivo en el resultado ---
 let guard = 0;
 while (guard++ < 14) {
   const vA = await A.view(); if (!vA || vA.phase === 'done') break;
@@ -77,8 +77,13 @@ while (guard++ < 14) {
 await sleep(3000);
 for (const [k, d] of [['A', A], ['B', B]]) {
   const c = await chat(d);
-  console.log(`${k} en el resultado → pantalla:`, await d.active(), '| chat visible:', c.visible, '(debe ser false) | mensajes guardados:', c.mensajes.length);
+  console.log(`${k} en el resultado → pantalla:`, await d.active(), '| chat visible:', c.visible, '(debe ser true) | mensajes:', c.mensajes.length);
 }
+// Se puede seguir hablando después del pitazo final (D-35)
+console.log('B comenta el resultado:', await say(B, 'revancha altiro'));
+await sleep(2500);
+const cFin = await chat(A);
+console.log('A lo recibe en el resultado → no leídos:', cFin.noLeidos, '| etiqueta:', JSON.stringify(cFin.etiqueta));
 await A.shot('tyf-chat-04-resultado');
 console.log('errors A:', JSON.stringify(A.errors), JSON.stringify(A.logs));
 console.log('errors B:', JSON.stringify(B.errors), JSON.stringify(B.logs));

@@ -176,3 +176,21 @@ Registro tipo ADR (Architecture Decision Record). Las decisiones se numeran y no
 **Por qué:** El juego funcionaba igual de bien en Santiago que en Oslo, que es otra manera de decir que no tenía nada propio. El mazo chileno es lo único de la app que hace que alguien diga "esta la sé". Y con noventa cartas y partidas de veinte, jugar tres veces la misma noche empezaba a mostrar las mismas cartas: eso mata la gracia de un juego que se trata de no saber.
 **Cómo:** El filtro se aplica sobre la lista de cartas **antes** de barajar, así que sigue siendo determinista y todos los dispositivos de una sala arman el mismo mazo (canon C-7). Se guarda un máximo de 200 ids por temática y se excluyen solo las últimas, dejando siempre al menos 70 cartas disponibles: con manos de siete y seis jugadores nunca falta mazo. Una partida guardada de antes, sin `skip`, se sigue reproduciendo igual.
 **Consecuencias:** Medido con diez partidas seguidas de la misma temática: **cero cartas repetidas entre una partida y la siguiente**, y 70 hitos distintos en 80 repartidos. La memoria es por celular, no por sala: quien crea la partida es el que aporta su historial, que es lo razonable porque es quien más ha jugado.
+
+## D-35 · El chat sigue vivo en la pantalla final
+**Fecha:** 2026-09-10 · **Estado:** vigente · **Revisa:** D-28
+**Decisión:** El chat de sala ya no se apaga al terminar la partida: sigue disponible en la pantalla de victoria o derrota, en Línea de Tiempo y en Toque y Fama. Muere con la **sala**, no con la partida; la revancha crea una sala nueva y empieza con el chat en blanco.
+**Por qué:** El final es justo cuando la gente tiene algo que decir: el que ganó quiere celebrarlo y el que perdió quiere reclamar o pedir revancha. Apagar el chat ahí cortaba la conversación en su mejor momento, y obligaba a coordinar la revancha fuera de la app. La razón original para apagarlo (que no compitiera con las pantallas de veredicto, D-28) sigue valiendo para el veredicto de cada jugada, que es un aviso corto que se cierra solo; la pantalla final no tiene apuro.
+**Consecuencias:** La pantalla de resultado deja aire abajo (`body.chat-on`) para que la burbuja no tape los botones de revancha, cambiar modo y volver al menú (C-8). El canon C-15 se corrige: el chat muere con la sala.
+
+## D-36 · El veredicto habla de quien jugó
+**Fecha:** 2026-09-10 · **Estado:** vigente
+**Decisión:** En Línea de Tiempo, la pantalla de veredicto se dirige al jugador correcto: si la jugada fue mía dice “¡Te equivocaste!” o “¡Correcto!”; si fue de otro, “¡Cata se equivocó!” o “¡Cata acertó!”. La explicación también cambia de persona (“La puso antes de…”, “roba una nueva”), y el fondo rojo del error queda solo en la pantalla de quien se equivocó.
+**Por qué:** En varios celulares el veredicto se muestra a todos. Decirle “¡Te equivocaste!” a alguien que estaba mirando es confuso y, con el fondo rojo, se siente como un reto inmerecido. Para el que mira es una noticia, no un error.
+**Consecuencias:** El canon C-8b se precisa: la señal fuerte del error es para quien lo cometió. En un celular y en solitario no cambia nada, porque quien mira la pantalla es siempre quien acaba de jugar. Prueba: `tools/e2e/linea-de-tiempo-veredicto.mjs`.
+
+## D-37 · Cartas que se puedan situar en el tiempo
+**Fecha:** 2026-09-10 · **Estado:** vigente
+**Decisión:** Una carta no puede describir un hecho que se repite en la historia sin algo que la ancle a su año. Se sacó “un gran incendio golpea los cerros de Valparaíso” y “el terremoto de marzo sacude la zona central”; “el movimiento estudiantil se toma el año” pasó a nombrar a Camila Vallejo, y el incendio de Valparaíso a decir que fue el mayor de su historia y cuántas casas se llevó.
+**Por qué:** Chile tiene terremotos, incendios y marchas cada pocos años. Si la carta no dice cuál, el jugador no está pensando, está adivinando, y eso rompe el juego para todos.
+**Consecuencias:** Regla para escribir mazos: superlativo, nombre propio o cifra que ancle el año. Si no hay ninguno, la carta no entra. Vale también para los mazos futuros.

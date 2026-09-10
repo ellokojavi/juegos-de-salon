@@ -139,4 +139,4 @@
 .pass-divider { width: 60%; height: 1px; background: var(--glass-border); margin: 6px auto 2px; }
 
 /* Con el chat en pantalla, la burbuja flota abajo a la derecha: que no tape el último intento */
-body.chat-on #screen-play, body.chat-on #screen-lobby { padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)); }
+body.chat-on #screen-play, body.chat-on #screen-lobby, body.chat-on #screen-result { padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)); }
