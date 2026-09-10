@@ -126,6 +126,7 @@ Del lado compartido usa `assets/js/chat.js` (chat de sala) montado en `<div id="
 ### Chat de sala (v0.10)
 - Solo en varios celulares, en la sala de espera y en la partida. Texto, 120 caracteres, un mensaje cada 1,2 s, últimos 60 en pantalla.
 - Se cierra solo cuando llega el turno del jugador, salvo que tenga algo escrito.
+- Con el chat cerrado, cada mensaje nuevo se asoma 4,2 s en una etiqueta al lado de la burbuja (nombre y texto, dos líneas como máximo). Tocarla abre el chat; llega otro y manda el último.
 - Al reconectar se recupera la conversación desde la sala, sin sonido ni globito (los mensajes de los primeros 1,5 s se consideran historia).
 - El teclado del celular no achica la ventana: el panel se levanta con `visualViewport` y el campo usa 16 px para que iOS no haga zoom.
 - Prueba: `node tools/e2e/linea-de-tiempo-chat.mjs <carpeta>`.
