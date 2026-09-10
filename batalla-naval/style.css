@@ -100,6 +100,7 @@
 .score .fleet .sunk { opacity: 0.25; filter: grayscale(1); }
 .board-title { text-align: center; font-family: var(--font-display); font-size: 1.05rem; letter-spacing: 0.05em; margin: 6px 0 4px; color: var(--muted); }
 .fire-row { display: grid; grid-template-columns: 1fr; gap: 8px; margin: 10px auto; max-width: 420px; }
+.toast .coord { font: 900 1.35rem var(--font-num); font-variant-numeric: tabular-nums; letter-spacing: 0.04em; }
 .toast { text-align: center; font-family: var(--font-display); font-size: 1.6rem; letter-spacing: 0.05em; color: var(--yellow); text-shadow: 0 3px 0 rgba(0,0,0,0.35); min-height: 1.4em; animation: pop 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
 .toast.agua { color: var(--cyan); }
 .toast.hundido { color: var(--pink); }
@@ -132,7 +133,8 @@
 #screen-result .stack { margin-top: 12px !important; }
 
 /* Etapa de resultado en el pase (modo un celular) */
-.shot-big { font-family: var(--font-display); font-size: clamp(2.4rem, 12vw, 3.4rem); letter-spacing: 0.1em; color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35); }
+/* La casilla es un dato que se lee y se canta: cifras en Nunito, no en Bangers (D-30) */
+.shot-big { font: 900 clamp(2.1rem, 10.5vw, 3rem) var(--font-num); font-variant-numeric: tabular-nums; letter-spacing: 0.12em; color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35); }
 .shot-result { font-family: var(--font-display); font-size: 1.8rem; letter-spacing: 0.05em; }
 .shot-result.agua { color: var(--cyan); } .shot-result.tocado { color: var(--orange); } .shot-result.hundido { color: var(--pink); }
 .pass-divider { width: 60%; height: 1px; background: var(--glass-border); margin: 6px auto 2px; }

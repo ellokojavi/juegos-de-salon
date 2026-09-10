@@ -14,7 +14,6 @@ Cada canon tiene un ID (C-n) para citarlo en el código, en los commits y en las
 - Español chileno informal por defecto, inglés como segundo idioma. Tuteo, humor liviano, sin groserías fuertes.
 - Paleta y tipografías compartidas desde `assets/css/base.css`: fondo oscuro con degradados, acentos neón (rosado, amarillo, cian, lima), **Bangers** en títulos y **Nunito** en el cuerpo.
 - **Las cifras que el jugador lee o compara** (teclados, intentos, números secretos) van en `var(--font-num)` (Nunito 900) con `tabular-nums`, nunca en Bangers: ahí el 1 y el 7 son casi el mismo trazo y los jugadores se equivocan (D-30). Bangers se queda en títulos, nombres, palabras y códigos de sala (letras, sin I ni O).
-  - Excepción pendiente: los años de Línea de Tiempo y las coordenadas de Batalla Naval siguen en Bangers.
 - Nada de estilos "de marca" propios por juego: un juego puede tener colores temáticos (el mar en Batalla Naval), pero botones, paneles, chips y títulos salen de las clases comunes.
 - Cada juego tiene un emoji propio que lo identifica en el menú, la pestaña y la barra superior.
 - Momentos de cierre con celebración: confeti y sonido al ganar o al terminar una partida.
