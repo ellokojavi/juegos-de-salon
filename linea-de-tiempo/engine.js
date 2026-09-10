@@ -67,9 +67,19 @@ export function correctSlot(line, card, byId) {
   return at;
 }
 
+/** Tope por jugada: una interrupción larga no debe decidir el desempate (ver D-31). */
+export const MAX_MOVE_MS = 5 * 60 * 1000;
+
+/** De los candidatos, los que sumaron menos tiempo respondiendo. */
+function fastest(cands, times) {
+  const min = Math.min(...cands.map(p => times[p] ?? 0));
+  return cands.filter(p => (times[p] ?? 0) === min);
+}
+
 /**
  * Reconstruye la partida a partir de la configuración y las jugadas.
- * moves: [{ from, card, at }] en orden. Las inválidas ya vienen filtradas por el reductor.
+ * moves: [{ from, card, at, ms }] en orden. Las inválidas ya vienen filtradas por el reductor.
+ * `ms` es lo que tardó el jugador en responder ese turno; sirve para desempatar (D-31).
  */
 export function buildState({ cards, seed, players, handSize, moves = [] }) {
   const byId = Object.fromEntries(cards.map(c => [c.id, c]));
@@ -78,6 +88,7 @@ export function buildState({ cards, seed, players, handSize, moves = [] }) {
   let line = [base];
   let poolAt = 0;
   const history = [];
+  const times = Object.fromEntries(players.map(p => [p, 0]));
   let turn = 0;
 
   for (const mv of moves) {
@@ -96,20 +107,38 @@ export function buildState({ cards, seed, players, handSize, moves = [] }) {
       hand.push(pool[poolAt++]);                 // falló: descarta y roba
     }
     history.push(entry);
+    times[mv.from] += Number.isFinite(mv.ms) ? Math.max(0, Math.min(mv.ms, MAX_MOVE_MS)) : 0;
     turn = (turn + 1) % players.length;
   }
 
   const poolLeft = pool.length - poolAt;
   const empty = players.filter(p => hands[p].length === 0);
+  // La ronda se completa antes de terminar: si alguien se queda sin cartas, los que vienen
+  // después en el orden juegan igual su turno y pueden empatarle (D-31).
+  const roundDone = moves.length % players.length === 0;
   let winner = null;
-  if (empty.length) winner = empty;
+  if (empty.length && roundDone) winner = fastest(empty, times);
   else if (poolLeft === 0 && moves.length && players.some(p => hands[p].length > 0)) {
-    // El pozo se agotó: gana quien tenga menos cartas (puede haber empate)
+    // El pozo se agotó: gana quien tenga menos cartas (y entre esos, el más rápido)
     const min = Math.min(...players.map(p => hands[p].length));
     const tooLong = moves.length >= players.length * 30;
-    if (tooLong) winner = players.filter(p => hands[p].length === min);
+    if (tooLong) winner = fastest(players.filter(p => hands[p].length === min), times);
   }
-  return { byId, line, hands, poolLeft, history, current: players[turn], winner, done: !!winner };
+  return { byId, line, hands, poolLeft, history, times, current: players[turn], winner, done: !!winner };
+}
+
+/**
+ * Tiempo para mostrar: "48s" o "1m 12s". Con `decimals: 1` muestra décimas ("2.4s"),
+ * que es lo que se usa cuando dos jugadores caen en el mismo segundo y hay que
+ * mostrar por qué ganó uno (D-31).
+ */
+export function timeLabel(ms, { decimals = 0 } = {}) {
+  const secs = Math.max(0, ms) / 1000;
+  const r = decimals ? Math.round(secs * 10) / 10 : Math.round(secs);
+  const m = Math.floor(r / 60);
+  const s = r - m * 60;
+  const txt = decimals ? s.toFixed(1) : String(s);
+  return m ? `${m}m ${txt}s` : `${txt}s`;
 }
 
 /** Texto del año para mostrar: los negativos son antes de Cristo. */

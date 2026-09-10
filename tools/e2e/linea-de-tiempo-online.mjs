@@ -9,7 +9,7 @@ const devs = { A, B, C };
 const click = (d, sel) => d.evaluate(`(()=>{const x=document.querySelector('${sel}');if(!x)return 'no';x.click();return 'ok'})()`);
 const clickText = (d, sel, re) => d.evaluate(`(()=>{const x=[...document.querySelectorAll('${sel}')].find(e=>new RegExp('${re}','i').test(e.textContent));if(!x)return 'no';x.click();return 'ok'})()`);
 const setName = (d, n) => d.evaluate(`(()=>{const i=document.querySelector('#setup-form input');i.value='${n}';i.dispatchEvent(new Event('input',{bubbles:true}));return 1})()`);
-const v = d => d.evaluate(`(()=>{const s=window.__ldt.view();return JSON.stringify({lobby:!!s.lobby,current:s.current,line:s.line?s.line.length:0,mano:s.hands?Object.fromEntries(Object.entries(s.hands).map(([k,h])=>[k,h.length])):null,done:s.done,winner:s.winner})})()`).then(JSON.parse);
+const v = d => d.evaluate(`(()=>{const s=window.__ldt.view();return JSON.stringify({lobby:!!s.lobby,current:s.current,line:s.line?s.line.length:0,mano:s.hands?Object.fromEntries(Object.entries(s.hands).map(([k,h])=>[k,h.length])):null,done:s.done,winner:s.winner,times:s.times})})()`).then(JSON.parse);
 const closeVerdict = async d => { await d.evaluate(`document.getElementById('handoff').click(); 1`); await sleep(300); };
 const play = async (d, role) => {
   const info = await d.evaluate(`(()=>{const s=window.__ldt.view();const card=s.hands['${role}'][0];let at=0;const y=s.byId[card].year;while(at<s.line.length&&s.byId[s.line[at]].year<y)at++;return JSON.stringify({at})})()`).then(JSON.parse);

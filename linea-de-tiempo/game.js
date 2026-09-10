@@ -11,7 +11,7 @@ import { showHandoff, passBlock } from '../assets/js/handoff.js';
 import { createChat } from '../assets/js/chat.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
-import { buildState, correctSlot, randomSeed, yearLabel } from './engine.js';
+import { buildState, correctSlot, randomSeed, yearLabel, timeLabel } from './engine.js';
 import { DECKS, getDeck } from './decks/index.js';
 import { GAME_ID, DEFAULT_CONFIG, HAND_SIZES, MIN_PLAYERS, MAX_PLAYERS, LOCALES } from './rules.js';
 
@@ -56,7 +56,8 @@ function apply(msg) {
       if (!v.hands[msg.from]?.includes(msg.card)) return;         // carta que no tiene
       // Ojo: `at` es campo reservado del transporte (marca de tiempo), la ranura viaja como `slot`
       if (!(msg.slot >= 0 && msg.slot <= v.line.length)) return;  // ranura inválida
-      M.moves.push({ from: msg.from, card: msg.card, at: msg.slot });
+      // `ms`: lo que tardó el jugador en responder. Sirve para desempatar al final (D-31).
+      M.moves.push({ from: msg.from, card: msg.card, at: msg.slot, ms: Number.isFinite(msg.ms) ? msg.ms : 0 });
       break;
     }
     case 'rematch': if (!M.rematch[msg.from]) M.rematch[msg.from] = msg.code || true; break;
@@ -237,6 +238,11 @@ function renderPlay(v) {
     return;
   }
 
+  // Cronómetro del turno: parte cuando el jugador ya ve el tablero y puede jugar.
+  // No se muestra durante la partida; solo se suma y aparece al final (D-31).
+  const turnKey = `${v.current}:${v.history.length}`;
+  if (isLocalTurn && S.turnKey !== turnKey) { S.turnKey = turnKey; S.turnStart = Date.now(); }
+
   // Rol que mira la pantalla
   const me = S.mode === 'online' ? S.role : (S.mode === 'solo' ? 'A' : v.current);
   // Si el chat quedó abierto y llega mi turno, se cierra para dejar ver el tablero
@@ -307,7 +313,7 @@ function renderPlay(v) {
   if (isLocalTurn) {
     row.append(el('button', { class: 'btn btn--yellow', disabled: S.selSlot === null || !S.selCard, onClick: () => {
       SFX.flip();
-      S.transport.send({ t: 'place', from: v.current, card: S.selCard, slot: S.selSlot });
+      S.transport.send({ t: 'place', from: v.current, card: S.selCard, slot: S.selSlot, ms: S.turnStart ? Date.now() - S.turnStart : 0 });
       S.selCard = null; S.selSlot = null;
     } }, T.place));
   }
@@ -359,13 +365,18 @@ function renderResult(v) {
   const many = winners.length > 1;
   const okOf = p => v.history.filter(h => h.from === p && h.ok).length;
   const totalOf = p => v.history.filter(h => h.from === p).length;
+  // Empate a cartas: ganó quien respondió en menos tiempo (D-31)
+  const sinCartas = M.players.filter(p => v.hands[p].length === 0);
+  const porTiempo = winners.length === 1 && sinCartas.length > 1;
+  $('#result-note').textContent = S.mode === 'solo' ? '' : (porTiempo ? T.wonOnTime : '');
+  $('#result-note').hidden = !porTiempo || S.mode === 'solo';
   if (S.mode === 'solo') {
     const tries = totalOf('A'), acc = tries ? Math.round(100 * okOf('A') / tries) : 0;
     const prev = records.get(M.config.theme, M.config.handSize);
     const isRecord = !prev || tries < prev;
     if (!already && isRecord) records.set(M.config.theme, M.config.handSize, tries);
     $('#result-title').textContent = T.soloDone;
-    $('#result-sub').textContent = `${fmt(T.soloResult, { n: tries, acc, tries: triesWord(tries) })} · ${isRecord ? T.newRecord : fmt(T.prevRecord, { n: prev, tries: triesWord(prev) })}`;
+    $('#result-sub').textContent = `${fmt(T.soloResult, { n: tries, acc, tries: triesWord(tries) })} · ${fmt(T.timeSpent, { t: timeLabel(v.times.A || 0) })} · ${isRecord ? T.newRecord : fmt(T.prevRecord, { n: prev, tries: triesWord(prev) })}`;
     $('#result-trophy').textContent = isRecord ? '🏆' : '✅';
   } else {
     $('#result-title').textContent = many ? T.winTitleMany : fmt(T.winTitle, { name: M.names[winners[0]] });
@@ -374,13 +385,23 @@ function renderResult(v) {
   }
 
   const rank = $('#result-ranking'); rank.innerHTML = '';
+  // Si dos jugadores caen en el mismo segundo, se muestran décimas: si no, el ranking
+  // parecería arbitrario justo cuando el tiempo es lo que decidió la partida (D-31).
+  const enSegundos = M.players.map(p => timeLabel(v.times[p] || 0));
+  const decimals = new Set(enSegundos).size === enSegundos.length ? 0 : 1;
   $('#result-ranking').parentElement.hidden = S.mode === 'solo';
-  const order = M.players.slice().sort((a, b) => v.hands[a].length - v.hands[b].length || okOf(b) - okOf(a));
+  // Menos cartas primero; a igualdad de cartas manda el tiempo (D-31)
+  const order = M.players.slice().sort((a, b) => v.hands[a].length - v.hands[b].length || (v.times[a] || 0) - (v.times[b] || 0) || okOf(b) - okOf(a));
   order.forEach((p, i) => {
+    // "Sin cartas" no se repite: ya se dice arriba y así la fila cabe en una línea
+    const quedan = v.hands[p].length ? `${cardsLabel(v.hands[p].length)} · ` : '';
     rank.append(el('li', { class: winners.includes(p) ? 'top' : '' },
       el('span', { class: 'pos' }, ['🥇', '🥈', '🥉'][i] || `${i + 1}.`),
-      el('span', {}, M.names[p]),
-      el('span', { class: 'info' }, `${cardsLabel(v.hands[p].length)} · ${fmt(T.stats, { ok: okOf(p), total: totalOf(p) })}`),
+      el('span', { class: 'name' }, M.names[p]),
+      el('span', { class: 'info' },
+        `${quedan}${fmt(T.stats, { ok: okOf(p), total: totalOf(p) })} · `,
+        el('span', { class: 'time' }, `⏱ ${timeLabel(v.times[p] || 0, { decimals })}`),
+      ),
     ));
   });
   const rline = $('#result-line'); rline.innerHTML = '';
