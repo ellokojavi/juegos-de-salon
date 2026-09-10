@@ -2,7 +2,9 @@
  * Línea de Tiempo — configuración por defecto y textos en español e inglés.
  */
 export const GAME_ID = 'linea-de-tiempo';
-export const DEFAULT_CONFIG = { theme: 'historia', handSize: 5 };
+export const DEFAULT_CONFIG = { theme: 'historia', handSize: 5, shared: false };
+/** Cartas a la vista en el modo de pozo común (D-32). */
+export const VISIBLE = 6;
 export const HAND_SIZES = [3, 5, 7];
 export const MIN_PLAYERS = 2;
 export const MAX_PLAYERS = 6;
@@ -12,12 +14,15 @@ const ES = {
   title: 'Línea de Tiempo',
   lead: 'Recibes hitos sin fecha. Ubícalos en el lugar correcto de la línea de tiempo y quédate sin cartas antes que nadie.',
   howTitle: '🧭 Cómo se juega',
-  howText: 'Cada uno parte con 5 cartas que muestran un hito, pero <b>no su año</b>. En tu turno eliges una carta y la ranura donde crees que va. Si aciertas, la carta se queda en la línea. Si fallas, se descarta y robas otra. Gana quien se queda sin cartas; la ronda se termina igual, y si más de uno queda sin cartas gana el que respondió más rápido.',
+  howText: 'Cada uno parte con 5 cartas que muestran un hito, pero <b>no su año</b>. En tu turno eliges una carta y la ranura donde crees que va. Si aciertas, la carta se queda en la línea. Si fallas, se descarta y robas otra. Gana quien se queda sin cartas; la ronda se termina igual, y si más de uno queda sin cartas gana el que respondió más rápido. También pueden jugar con <b>pozo común</b>: las mismas 6 cartas a la vista para todos, y gana quien coloque primero las cartas que se acuerden.',
   modeLocal: '📱 Un celular, hasta 6', modeLocalHint: 'Se pasan el celular por turnos.',
   modeOnline: '📡 Varios celulares', modeOnlineHint: 'Sala con código de 4 letras, hasta 6 jugadores.',
   modeSolo: '🧍 Jugar solo', modeSoloHint: 'Vacía tu mano en la menor cantidad de intentos y supera tu récord.',
   // setup
   setupTitle: '¿Cómo jugamos?', theme: 'Temática', handSize: 'Cartas en mano',
+  cardsMode: 'Cartas', modeOwn: '🙋 Mano propia', modeShared: '🃏 Pozo común',
+  ownHint: 'Cada uno juega con su propia mano.', sharedHint: 'Todos eligen de las mismas {n} cartas a la vista.',
+  toWin: 'Cartas para ganar', visibleTitle: 'Cartas a la vista',
   short: 'Corta', normal: 'Normal', long: 'Larga',
   players: 'Jugadores', playerPlaceholder: 'Jugador {n}', addPlayer: '+ Agregar jugador', maxPlayers: 'Máximo {n} jugadores', removePlayer: 'Quitar jugador',
   yourName: 'Tu nombre', start: '¡A jugar!',
@@ -39,7 +44,7 @@ const ES = {
   // resultado
   winTitle: '¡Ganó {name}!', winTitleMany: '¡Empate!', youWin: '¡Ganaste!', youLose: 'Perdiste… esta vez.',
   soloDone: '¡Mano vacía!', soloResult: 'Lo lograste en {n} {tries} · {acc}% de aciertos', newRecord: '🏆 ¡Nuevo récord!', prevRecord: 'Tu récord: {n} {tries}',
-  wonOnTime: '⚡ Empataron sin cartas: ganó quien respondió más rápido', timeSpent: '⏱ {t} respondiendo',
+  wonOnTime: '⚡ Empataron sin cartas: ganó quien respondió más rápido', wonOnTimeShared: '⚡ Empataron: ganó quien respondió más rápido', timeSpent: '⏱ {t} respondiendo',
   stats: '{ok} de {total} aciertos', ranking: 'Cómo terminaron', cardsHeld: '{n} cartas', cardHeld: '1 carta', noCards: 'sin cartas',
   finalLine: 'La línea quedó así', rematch: '🔁 Revancha', changeMode: 'Cambiar modo', backMenu: 'Volver al menú',
   resumeTitle: '⏯ Hay una partida a medias', resume: 'Continuar', delete: 'Borrar',
@@ -53,11 +58,14 @@ const EN = {
   title: 'Timeline',
   lead: 'You get milestones with no date. Put them in the right spot on the timeline and run out of cards before anyone else.',
   howTitle: '🧭 How to play',
-  howText: 'Everyone starts with 5 cards showing a milestone but <b>not its year</b>. On your turn you pick a card and the slot where you think it belongs. Get it right and the card stays on the timeline. Get it wrong and you discard it and draw another. Whoever runs out of cards wins; the round is played out to the end, and if more than one player ends with no cards, the fastest one wins.',
+  howText: 'Everyone starts with 5 cards showing a milestone but <b>not its year</b>. On your turn you pick a card and the slot where you think it belongs. Get it right and the card stays on the timeline. Get it wrong and you discard it and draw another. Whoever runs out of cards wins; the round is played out to the end, and if more than one player ends with no cards, the fastest one wins. You can also play with a <b>shared pool</b>: the same 6 open cards for everyone, and whoever places the agreed number of cards first wins.',
   modeLocal: '📱 One phone, up to 6', modeLocalHint: 'Pass the phone around, turn by turn.',
   modeOnline: '📡 Several phones', modeOnlineHint: 'A room with a 4-letter code, up to 6 players.',
   modeSolo: '🧍 Play alone', modeSoloHint: 'Empty your hand in as few tries as you can and beat your record.',
   setupTitle: 'How do we play?', theme: 'Theme', handSize: 'Cards in hand',
+  cardsMode: 'Cards', modeOwn: '🙋 Own hand', modeShared: '🃏 Shared pool',
+  ownHint: 'Everyone plays their own hand.', sharedHint: 'Everyone picks from the same {n} open cards.',
+  toWin: 'Cards to win', visibleTitle: 'Cards on the table',
   short: 'Short', normal: 'Normal', long: 'Long',
   players: 'Players', playerPlaceholder: 'Player {n}', addPlayer: '+ Add player', maxPlayers: 'Max {n} players', removePlayer: 'Remove player',
   yourName: 'Your name', start: 'Let\'s play!',
@@ -77,7 +85,7 @@ const EN = {
   hoPass: 'Pass the phone to', hoReady: 'Ready, it\'s me!', hoContinue: 'Continue',
   winTitle: '{name} wins!', winTitleMany: 'It\'s a tie!', youWin: 'You win!', youLose: 'You lose… this time.',
   soloDone: 'Hand empty!', soloResult: 'You did it in {n} {tries} · {acc}% correct', newRecord: '🏆 New record!', prevRecord: 'Your record: {n} {tries}',
-  wonOnTime: '⚡ Tied with no cards: the fastest one wins', timeSpent: '⏱ {t} answering',
+  wonOnTime: '⚡ Tied with no cards: the fastest one wins', wonOnTimeShared: '⚡ Tied: the fastest one wins', timeSpent: '⏱ {t} answering',
   stats: '{ok} of {total} correct', ranking: 'How it ended', cardsHeld: '{n} cards', cardHeld: '1 card', noCards: 'no cards',
   finalLine: 'The timeline ended like this', rematch: '🔁 Rematch', changeMode: 'Change mode', backMenu: 'Back to menu',
   resumeTitle: '⏯ There\'s an unfinished game', resume: 'Continue', delete: 'Delete',

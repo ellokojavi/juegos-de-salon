@@ -31,6 +31,21 @@ naturaleza del juego:
 | Empates de año | Dos hitos del mismo año se aceptan en cualquier orden entre ellos. |
 | Temática | Historia o Música. Se elige al configurar y define el mazo. |
 
+## 2a. Mano propia o pozo común (D-32)
+
+En la configuración se elige de dónde salen las cartas:
+
+| | Mano propia | Pozo común |
+|---|---|---|
+| Cartas | Cada jugador tiene la suya, privada | Una tira de **6 a la vista de todos** |
+| Al colocar | La carta sale de tu mano | Sale de la tira y entra otra **por el final** |
+| Al fallar | Descartas y robas una carta nueva | La carta se descarta y entra otra por el final; no vuelve a la tira |
+| Se gana | Quedándote sin cartas | Colocando primero las cartas acordadas ("Cartas para ganar") |
+
+Una carta fallada no vuelve a la tira porque el veredicto acaba de mostrar su año a todos: dejarla
+ahí sería regalarle el punto al siguiente. El marcador muestra `colocadas/meta` en vez de las cartas
+que quedan, y el ajuste viaja en la `config` de la sala.
+
 ## 2b. Final de la partida y desempate (D-31)
 
 Cuando alguien se queda sin cartas **no** termina la partida: se completa la ronda, de modo que
@@ -56,7 +71,7 @@ En varios celulares, el anfitrión (rol A) crea la sala y abre la partida con el
 En varios celulares hay además un **chat de sala** (canon C-15): una burbuja 💬 con globito de no leídos, disponible en la sala de espera y durante la partida. No aparece sobre el veredicto de una jugada ni en la pantalla de resultado, y no se guarda: muere con la partida.
 
 En solitario no hay rival: el objetivo es vaciar la mano en la menor cantidad de intentos. Se guarda un
-récord personal por temática y tamaño de mano. Se descartó jugar contra una IA porque la máquina conoce
+récord personal por temática, tamaño de mano y forma de repartir (el pozo común lleva su propio récord). Se descartó jugar contra una IA porque la máquina conoce
 los años y la partida no tenía sentido (D-27).
 
 ## 4. Estado y protocolo

@@ -13,7 +13,7 @@ import { createLocalTransport } from '../assets/js/transport/local.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import { buildState, correctSlot, randomSeed, yearLabel, timeLabel } from './engine.js';
 import { DECKS, getDeck } from './decks/index.js';
-import { GAME_ID, DEFAULT_CONFIG, HAND_SIZES, MIN_PLAYERS, MAX_PLAYERS, LOCALES } from './rules.js';
+import { GAME_ID, DEFAULT_CONFIG, HAND_SIZES, MIN_PLAYERS, MAX_PLAYERS, VISIBLE, LOCALES } from './rules.js';
 
 const lang = getLang();
 const T = LOCALES[lang];
@@ -24,8 +24,9 @@ const nameStore = createNameStore(GAME_ID);
 const RECORD_KEY = `juegos-de-salon:${GAME_ID}:record`;
 /** Récord del solitario por temática y tamaño de mano (menos intentos es mejor). */
 const records = {
-  get(theme, hand) { try { return (JSON.parse(localStorage.getItem(RECORD_KEY) || '{}'))[`${theme}:${hand}`] || null; } catch (_) { return null; } },
-  set(theme, hand, n) { try { const all = JSON.parse(localStorage.getItem(RECORD_KEY) || '{}'); all[`${theme}:${hand}`] = n; localStorage.setItem(RECORD_KEY, JSON.stringify(all)); } catch (_) { /* nada */ } },
+  key: (theme, hand, shared) => `${theme}:${hand}${shared ? ':pozo' : ''}`,
+  get(theme, hand, shared) { try { return (JSON.parse(localStorage.getItem(RECORD_KEY) || '{}'))[this.key(theme, hand, shared)] || null; } catch (_) { return null; } },
+  set(theme, hand, shared, n) { try { const all = JSON.parse(localStorage.getItem(RECORD_KEY) || '{}'); all[this.key(theme, hand, shared)] = n; localStorage.setItem(RECORD_KEY, JSON.stringify(all)); } catch (_) { /* nada */ } },
 };
 
 let S = null;   // sesión: modo, transporte, roles locales, selección de la interfaz
@@ -71,7 +72,7 @@ function apply(msg) {
 function view() {
   if (!M.players) return { lobby: true, done: false };
   const cards = getDeck(M.config.theme).cards;
-  const st = buildState({ cards, seed: M.config.seed, players: M.players, handSize: M.config.handSize, moves: M.moves });
+  const st = buildState({ cards, seed: M.config.seed, players: M.players, handSize: M.config.handSize, moves: M.moves, shared: !!M.config.shared, visible: VISIBLE });
   return { ...st, cards };
 }
 
@@ -251,7 +252,7 @@ function renderPlay(v) {
   const okCount = v.history.filter(h => h.ok).length;
   $('#status-who').textContent = S.mode === 'solo' ? T.soloTitle : (isLocalTurn ? fmt(T.turnYou, { name: M.names[v.current] }) : fmt(T.turnOther, { name: M.names[v.current] }));
   const offline = S.mode === 'online' ? M.players?.length && ROLES.find(r => M.presence[r]?.online === false && M.names[r]) : null;
-  const record = S.mode === 'solo' ? records.get(M.config.theme, M.config.handSize) : null;
+  const record = S.mode === 'solo' ? records.get(M.config.theme, M.config.handSize, M.config.shared) : null;
   $('#status-sub').textContent = S.mode === 'solo' ? `${fmt(T.soloStatus, { ok: okCount, n: v.history.length, tries: triesWord(v.history.length) })}${record ? ' · ' + fmt(T.soloRecord, { n: record, tries: triesWord(record) }) : ''}`
     : isLocalTurn ? (S.selCard ? T.pickSlot : T.pickCard)
     : offline ? fmt(T.offline, { name: M.names[offline] })
@@ -259,15 +260,17 @@ function renderPlay(v) {
 
   // Marcador
   const score = $('#score'); score.innerHTML = '';
+  // Con pozo común el número es lo colocado sobre la meta; con mano propia, lo que queda por colocar
   if (S.mode !== 'solo') for (const p of M.players) {
-    score.append(el('span', { class: 'p' + (p === v.current ? ' turn' : '') }, M.names[p], el('span', { class: 'n' }, v.hands[p].length)));
+    score.append(el('span', { class: 'p' + (p === v.current ? ' turn' : '') }, M.names[p],
+      el('span', { class: 'n' }, v.shared ? `${v.scores[p]}/${v.target}` : v.hands[p].length)));
   }
 
   // Mano
   const hand = v.hands[me] || [];
   if (S.selCard && !hand.includes(S.selCard)) S.selCard = null;
   if (!S.selCard && hand.length && isLocalTurn) S.selCard = hand[0];
-  $('#hand-title').textContent = S.mode === 'local' ? fmt(T.handOf, { name: M.names[me] }) : T.yourHand;
+  $('#hand-title').textContent = v.shared ? T.visibleTitle : (S.mode === 'local' ? fmt(T.handOf, { name: M.names[me] }) : T.yourHand);
   $('#pool-left').textContent = fmt(T.poolLeft, { n: v.poolLeft });
   const handBox = $('#hand'); handBox.innerHTML = '';
   for (const id of hand) {
@@ -366,15 +369,15 @@ function renderResult(v) {
   const okOf = p => v.history.filter(h => h.from === p && h.ok).length;
   const totalOf = p => v.history.filter(h => h.from === p).length;
   // Empate a cartas: ganó quien respondió en menos tiempo (D-31)
-  const sinCartas = M.players.filter(p => v.hands[p].length === 0);
-  const porTiempo = winners.length === 1 && sinCartas.length > 1;
-  $('#result-note').textContent = S.mode === 'solo' ? '' : (porTiempo ? T.wonOnTime : '');
+  const llegaron = v.shared ? M.players.filter(p => v.scores[p] >= v.target) : M.players.filter(p => v.hands[p].length === 0);
+  const porTiempo = winners.length === 1 && llegaron.length > 1;
+  $('#result-note').textContent = S.mode === 'solo' ? '' : (porTiempo ? (v.shared ? T.wonOnTimeShared : T.wonOnTime) : '');
   $('#result-note').hidden = !porTiempo || S.mode === 'solo';
   if (S.mode === 'solo') {
     const tries = totalOf('A'), acc = tries ? Math.round(100 * okOf('A') / tries) : 0;
-    const prev = records.get(M.config.theme, M.config.handSize);
+    const prev = records.get(M.config.theme, M.config.handSize, M.config.shared);
     const isRecord = !prev || tries < prev;
-    if (!already && isRecord) records.set(M.config.theme, M.config.handSize, tries);
+    if (!already && isRecord) records.set(M.config.theme, M.config.handSize, M.config.shared, tries);
     $('#result-title').textContent = T.soloDone;
     $('#result-sub').textContent = `${fmt(T.soloResult, { n: tries, acc, tries: triesWord(tries) })} · ${fmt(T.timeSpent, { t: timeLabel(v.times.A || 0) })} · ${isRecord ? T.newRecord : fmt(T.prevRecord, { n: prev, tries: triesWord(prev) })}`;
     $('#result-trophy').textContent = isRecord ? '🏆' : '✅';
@@ -387,14 +390,16 @@ function renderResult(v) {
   const rank = $('#result-ranking'); rank.innerHTML = '';
   // Si dos jugadores caen en el mismo segundo, se muestran décimas: si no, el ranking
   // parecería arbitrario justo cuando el tiempo es lo que decidió la partida (D-31).
-  const enSegundos = M.players.map(p => timeLabel(v.times[p] || 0));
-  const decimals = new Set(enSegundos).size === enSegundos.length ? 0 : 1;
+  const distintos = d => new Set(M.players.map(p => timeLabel(v.times[p] || 0, { decimals: d }))).size === M.players.length;
+  let decimals = 0;
+  while (decimals < 2 && !distintos(decimals)) decimals++;
   $('#result-ranking').parentElement.hidden = S.mode === 'solo';
   // Menos cartas primero; a igualdad de cartas manda el tiempo (D-31)
-  const order = M.players.slice().sort((a, b) => v.hands[a].length - v.hands[b].length || (v.times[a] || 0) - (v.times[b] || 0) || okOf(b) - okOf(a));
+  const order = M.players.slice().sort((a, b) =>
+    (v.shared ? v.scores[b] - v.scores[a] : v.hands[a].length - v.hands[b].length) || (v.times[a] || 0) - (v.times[b] || 0) || okOf(b) - okOf(a));
   order.forEach((p, i) => {
     // "Sin cartas" no se repite: ya se dice arriba y así la fila cabe en una línea
-    const quedan = v.hands[p].length ? `${cardsLabel(v.hands[p].length)} · ` : '';
+    const quedan = !v.shared && v.hands[p].length ? `${cardsLabel(v.hands[p].length)} · ` : '';
     rank.append(el('li', { class: winners.includes(p) ? 'top' : '' },
       el('span', { class: 'pos' }, ['🥇', '🥈', '🥉'][i] || `${i + 1}.`),
       el('span', { class: 'name' }, M.names[p]),
@@ -484,7 +489,7 @@ function renderResumeSlot() {
   if (!saved || saved.done) return;
   if (saved.mode === 'online' && !saved.code) return;
   const deck = getDeck(saved.config?.theme);
-  const label = saved.mode === 'online' ? `${T.lobbyCode}: ${saved.code}` : { local: T.modeLocal, solo: T.modeSolo }[saved.mode] || '';
+  const label = (saved.mode === 'online' ? `${T.lobbyCode}: ${saved.code}` : { local: T.modeLocal, solo: T.modeSolo }[saved.mode] || '') + (saved.config?.shared ? ` · ${T.modeShared}` : '');
   slot.append(el('div', { class: 'panel pop' },
     el('p', { class: 'lead', style: 'margin-bottom:4px' }, T.resumeTitle),
     el('p', { class: 'muted' }, `${deck.emoji} ${deck.name[lang]} · ${label}`),
@@ -535,10 +540,22 @@ function renderSetup(mode, prefillCode = '') {
     form.append(el('div', { class: 'field' }, el('label', {}, T.yourName), input));
   }
 
-  // Cartas en mano
+  // De dónde salen las cartas: mano propia de cada uno o una tira común a la vista (D-32)
+  const modeHint = el('p', { class: 'muted', style: 'font-size:0.8rem;margin:2px 0 0' });
+  const sizeLabel = el('label', {});
+  const paintCards = () => {
+    sizeLabel.textContent = config.shared ? T.toWin : T.handSize;
+    modeHint.textContent = config.shared ? fmt(T.sharedHint, { n: VISIBLE }) : T.ownHint;
+  };
+  const modeSeg = el('div', { class: 'seg' }, ...[[false, T.modeOwn], [true, T.modeShared]].map(([val, label]) =>
+    el('button', { type: 'button', class: config.shared === val ? 'on' : '', onClick: e => { config.shared = val; $$('button', modeSeg).forEach(b => b.classList.toggle('on', b === e.currentTarget)); SFX.tap(); paintCards(); } }, label)));
+  if (!invitado) form.append(el('div', { class: 'field' }, el('label', {}, T.cardsMode), modeSeg, modeHint));
+
+  // Cuántas cartas: en mano (mano propia) o para ganar (pozo común)
   const sizeLabels = { 3: T.short, 5: T.normal, 7: T.long };
   const seg = el('div', { class: 'seg' }, ...HAND_SIZES.map(n => el('button', { type: 'button', class: n === config.handSize ? 'on' : '', onClick: e => { config.handSize = n; $$('button', seg).forEach(b => b.classList.toggle('on', b === e.currentTarget)); SFX.tap(); } }, `${sizeLabels[n]} · ${n}`)));
-  if (!invitado) form.append(el('div', { class: 'field' }, el('label', {}, T.handSize), seg));
+  paintCards();
+  if (!invitado) form.append(el('div', { class: 'field' }, sizeLabel, seg));
 
   const fail = msg => { err.textContent = msg; err.classList.remove('shake'); void err.offsetWidth; err.classList.add('shake'); SFX.error(); vibrate([30, 30, 30]); };
   const actions = $('#setup-actions'); actions.innerHTML = '';

@@ -48,6 +48,15 @@ export function deal(cards, seed, players, handSize) {
 }
 
 /**
+ * Reparte para el pozo común: una carta base y `visible` cartas a la vista de todos.
+ * El resto queda en el mazo y va entrando por el final a medida que salen (D-32).
+ */
+export function dealShared(cards, seed, visible) {
+  const order = shuffleSeeded(cards.map(c => c.id), seed);
+  return { base: order[0], table: order.slice(1, 1 + visible), pool: order.slice(1 + visible) };
+}
+
+/**
  * ¿Es correcta la posición `at` para `card` dentro de `line`?
  * `line` son ids ya ordenados por año. `at` va de 0 (antes del primero) a line.length (después del último).
  * Los años iguales se aceptan en cualquier orden entre ellos.
@@ -81,21 +90,28 @@ function fastest(cands, times) {
  * moves: [{ from, card, at, ms }] en orden. Las inválidas ya vienen filtradas por el reductor.
  * `ms` es lo que tardó el jugador en responder ese turno; sirve para desempatar (D-31).
  */
-export function buildState({ cards, seed, players, handSize, moves = [] }) {
+export function buildState({ cards, seed, players, handSize, moves = [], shared = false, visible = 6 }) {
   const byId = Object.fromEntries(cards.map(c => [c.id, c]));
-  const { base, hands: dealt, pool } = deal(cards, seed, players, handSize);
-  const hands = Object.fromEntries(players.map(p => [p, dealt[p].slice()]));
+  // Dos repartos: mano propia por jugador, o una sola tira de cartas a la vista de todos (D-32).
+  let table = null, hands = null, base, pool;
+  if (shared) ({ base, table, pool } = dealShared(cards, seed, visible));
+  else {
+    const d = deal(cards, seed, players, handSize);
+    base = d.base; pool = d.pool;
+    hands = Object.fromEntries(players.map(p => [p, d.hands[p].slice()]));
+  }
   let line = [base];
   let poolAt = 0;
   const history = [];
   const times = Object.fromEntries(players.map(p => [p, 0]));
+  const scores = Object.fromEntries(players.map(p => [p, 0]));
   let turn = 0;
 
   for (const mv of moves) {
-    const hand = hands[mv.from];
-    const idx = hand.indexOf(mv.card);
-    if (idx < 0) continue;                       // no tenía esa carta
-    hand.splice(idx, 1);
+    const from = shared ? table : hands[mv.from];
+    const idx = from.indexOf(mv.card);
+    if (idx < 0) continue;                       // no estaba disponible
+    from.splice(idx, 1);
     const ok = isCorrect(line, mv.card, mv.at, byId);
     const correctAt = ok ? mv.at : correctSlot(line, mv.card, byId);
     // Vecinos de la ranura correcta y de la elegida, sobre la línea tal como estaba: sirven para explicar el error
@@ -103,8 +119,13 @@ export function buildState({ cards, seed, players, handSize, moves = [] }) {
     const entry = { ...mv, ok, correctAt, year: byId[mv.card].year, correctBetween: around(correctAt), placedBetween: around(mv.at) };
     if (ok) {
       line = line.slice(0, mv.at).concat(mv.card, line.slice(mv.at));
-    } else if (poolAt < pool.length) {
-      hand.push(pool[poolAt++]);                 // falló: descarta y roba
+      scores[mv.from]++;
+    }
+    if (shared) {
+      // Salga a la línea o se descarte, la carta deja la tira y entra otra por el final
+      if (poolAt < pool.length) table.push(pool[poolAt++]);
+    } else if (!ok && poolAt < pool.length) {
+      hands[mv.from].push(pool[poolAt++]);       // falló: descarta y roba
     }
     history.push(entry);
     times[mv.from] += Number.isFinite(mv.ms) ? Math.max(0, Math.min(mv.ms, MAX_MOVE_MS)) : 0;
@@ -112,19 +133,30 @@ export function buildState({ cards, seed, players, handSize, moves = [] }) {
   }
 
   const poolLeft = pool.length - poolAt;
-  const empty = players.filter(p => hands[p].length === 0);
-  // La ronda se completa antes de terminar: si alguien se queda sin cartas, los que vienen
+  // La ronda se completa antes de terminar: si alguien llega a la meta, los que vienen
   // después en el orden juegan igual su turno y pueden empatarle (D-31).
   const roundDone = moves.length % players.length === 0;
   let winner = null;
-  if (empty.length && roundDone) winner = fastest(empty, times);
-  else if (poolLeft === 0 && moves.length && players.some(p => hands[p].length > 0)) {
-    // El pozo se agotó: gana quien tenga menos cartas (y entre esos, el más rápido)
-    const min = Math.min(...players.map(p => hands[p].length));
-    const tooLong = moves.length >= players.length * 30;
-    if (tooLong) winner = fastest(players.filter(p => hands[p].length === min), times);
+  if (shared) {
+    const listos = players.filter(p => scores[p] >= handSize);
+    if (listos.length && roundDone) winner = fastest(listos, times);
+    else if (!table.length) {                    // se acabó el mazo: gana quien colocó más
+      const max = Math.max(...players.map(p => scores[p]));
+      winner = fastest(players.filter(p => scores[p] === max), times);
+    }
+    // Todos ven la misma tira; `hands` se mantiene para que la interfaz y el reductor no cambien
+    hands = Object.fromEntries(players.map(p => [p, table]));
+  } else {
+    const empty = players.filter(p => hands[p].length === 0);
+    if (empty.length && roundDone) winner = fastest(empty, times);
+    else if (poolLeft === 0 && moves.length && players.some(p => hands[p].length > 0)) {
+      // El pozo se agotó: gana quien tenga menos cartas (y entre esos, el más rápido)
+      const min = Math.min(...players.map(p => hands[p].length));
+      const tooLong = moves.length >= players.length * 30;
+      if (tooLong) winner = fastest(players.filter(p => hands[p].length === min), times);
+    }
   }
-  return { byId, line, hands, poolLeft, history, times, current: players[turn], winner, done: !!winner };
+  return { byId, line, hands, table, scores, shared, target: handSize, poolLeft, history, times, current: players[turn], winner, done: !!winner };
 }
 
 /**
@@ -134,11 +166,11 @@ export function buildState({ cards, seed, players, handSize, moves = [] }) {
  */
 export function timeLabel(ms, { decimals = 0 } = {}) {
   const secs = Math.max(0, ms) / 1000;
-  const r = decimals ? Math.round(secs * 10) / 10 : Math.round(secs);
+  const f = 10 ** decimals;
+  const r = Math.round(secs * f) / f;
   const m = Math.floor(r / 60);
   const s = r - m * 60;
-  const txt = decimals ? s.toFixed(1) : String(s);
-  return m ? `${m}m ${txt}s` : `${txt}s`;
+  return m ? `${m}m ${s.toFixed(decimals)}s` : `${s.toFixed(decimals)}s`;
 }
 
 /** Texto del año para mostrar: los negativos son antes de Cristo. */
