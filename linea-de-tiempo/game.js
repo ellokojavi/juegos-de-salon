@@ -29,6 +29,33 @@ const records = {
   set(theme, hand, shared, n) { try { const all = JSON.parse(localStorage.getItem(RECORD_KEY) || '{}'); all[this.key(theme, hand, shared)] = n; localStorage.setItem(RECORD_KEY, JSON.stringify(all)); } catch (_) { /* nada */ } },
 };
 
+const SEEN_KEY = `juegos-de-salon:${GAME_ID}:vistas`;
+/** Cartas que quedan disponibles como mínimo al excluir las vistas hace poco. */
+const MIN_DISPONIBLES = 70;
+/**
+ * Cartas vistas hace poco, por temática (D-34). Al armar una partida se excluyen las
+ * más recientes, así jugar diez veces seguidas no repite siempre los mismos hitos.
+ * La lista viaja en la config, de modo que todos los celulares de la sala excluyen lo mismo.
+ */
+const seen = {
+  all() { try { return JSON.parse(localStorage.getItem(SEEN_KEY) || '{}'); } catch (_) { return {}; } },
+  add(theme, ids) {
+    try {
+      const all = this.all();
+      const antes = (all[theme] || []).filter(id => !ids.includes(id));
+      all[theme] = [...antes, ...ids].slice(-200);
+      localStorage.setItem(SEEN_KEY, JSON.stringify(all));
+    } catch (_) { /* sin memoria, se juega igual */ }
+  },
+  recent(theme) {
+    const total = getDeck(theme).cards.length;
+    const max = Math.max(0, total - MIN_DISPONIBLES);
+    return (this.all()[theme] || []).slice(-max);
+  },
+};
+/** Config lista para empezar: semilla nueva y las cartas recién vistas fuera. */
+const freshConfig = config => ({ ...config, seed: randomSeed(), skip: seen.recent(config.theme) });
+
 let S = null;   // sesión: modo, transporte, roles locales, selección de la interfaz
 let M = null;   // partida: config, nombres y jugadas
 let chat = null; // chat de sala: solo en varios celulares (canon C-15)
@@ -71,7 +98,8 @@ function apply(msg) {
 /** Vista derivada: manos, línea, turno, ganador. Sin jugadores fijados, la partida aún no empieza. */
 function view() {
   if (!M.players) return { lobby: true, done: false };
-  const cards = getDeck(M.config.theme).cards;
+  const fuera = M.config.skip && M.config.skip.length ? new Set(M.config.skip) : null;
+  const cards = fuera ? getDeck(M.config.theme).cards.filter(c => !fuera.has(c.id)) : getDeck(M.config.theme).cards;
   const st = buildState({ cards, seed: M.config.seed, players: M.players, handSize: M.config.handSize, moves: M.moves, shared: !!M.config.shared, visible: VISIBLE });
   return { ...st, cards };
 }
@@ -96,7 +124,16 @@ function startSession({ mode, transport, roles, config, names, code = null, role
 let chain = Promise.resolve();
 function onChange() { chain = chain.then(async () => { await act(); render(); }).catch(e => console.error(e)); }
 
-async function act() { saveSession(); }
+async function act() {
+  saveSession();
+  if (!M?.players) return;
+  const v = view();
+  // Se anota lo repartido al empezar, cada cierto rato y al terminar (D-34)
+  if (S.seenAt == null || v.done || v.history.length >= S.seenAt + 6) {
+    S.seenAt = v.history.length;
+    seen.add(M.config.theme, [...new Set([...v.line, ...Object.values(v.hands).flat()])]);
+  }
+}
 
 /* ---------- Persistencia (canon C-6) ---------- */
 function saveSession() {
@@ -423,7 +460,7 @@ async function rematch() {
     if (proposed) { S.switching = true; return joinOnline(proposed, M.names[S.role]); }
     const { createFirebaseTransport } = await import('../assets/js/transport/firebase.js');
     const t = createFirebaseTransport({ game: GAME_ID, maxPlayers: MAX_PLAYERS });
-    const config = { theme: M.config.theme, handSize: M.config.handSize, seed: randomSeed() };
+    const config = freshConfig(M.config);   // mantiene tema, cartas y pozo común
     S.switching = true;
     const code = await t.create({ config, name: M.names[S.role] });
     S.transport.send({ t: 'rematch', from: S.role, code });
@@ -431,7 +468,7 @@ async function rematch() {
     setTimeout(() => startOnline(t, code, 'A', M.names[S.role], config), 600);
     return;
   }
-  startLocalMode(S.mode, { ...M.names }, { ...M.config, seed: randomSeed() });
+  startLocalMode(S.mode, { ...M.names }, freshConfig(M.config));
 }
 
 /* ---------- Varios celulares ---------- */
@@ -552,7 +589,7 @@ function renderSetup(mode, prefillCode = '') {
     const createBtn = el('button', { class: 'btn btn--yellow', onClick: async () => {
       const name = draft[0].trim(); if (!name) return fail(T.errName);
       nameStore.set(name); SFX.tap(); createBtn.disabled = true;
-      try { await createOnline(name, { ...config, seed: randomSeed() }); } catch (e) { console.error(e); fail(T.errNet); }
+      try { await createOnline(name, freshConfig(config)); } catch (e) { console.error(e); fail(T.errNet); }
       createBtn.disabled = false;
     } }, T.create);
     const joinBtn = el('button', { class: 'btn btn--cyan', onClick: async () => {
@@ -582,13 +619,13 @@ function renderSetup(mode, prefillCode = '') {
       if (!list[0]) return fail(T.errName);
       nameStore.set(list[0]);
       SFX.tap();
-      startLocalMode('solo', { A: list[0] }, { ...config, players: ['A'], seed: randomSeed() });
+      startLocalMode('solo', { A: list[0] }, { ...freshConfig(config), players: ['A'] });
     } else {
       if (list.some(n => !n) || new Set(list.map(n => n.toLowerCase())).size !== list.length) return fail(T.errNames);
       const players = ROLES.slice(0, list.length);
       const names = Object.fromEntries(players.map((p, i) => [p, list[i]]));
       SFX.tap();
-      startLocalMode('local', names, { ...config, players, seed: randomSeed() });
+      startLocalMode('local', names, { ...freshConfig(config), players });
     }
   } }, T.start));
 }

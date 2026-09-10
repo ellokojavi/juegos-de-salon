@@ -112,16 +112,29 @@ falta mensajes de respuesta.
 
 ## 6. Contenido
 
-`decks/historia.js` y `decks/musica.js`, con la forma:
+Cuatro temáticas, cada una en su archivo dentro de `decks/`:
+
+| Temática | Archivo | Cartas | De qué va |
+|---|---|---|---|
+| 📜 Historia | `historia.js` | 98 | Hitos de la humanidad |
+| 🎵 Música | `musica.js` | 89 | De Beethoven a TikTok |
+| 🇨🇱 Chile | `chile.js` | 114 | Del terremoto del 60 al estallido |
+| 🍿 Cultura pop | `pop.js` | 110 | Cine, memes y videojuegos |
 
 ```js
 { id: 'luna', year: 1969, emoji: '🚀', es: 'El hombre llega a la Luna', en: 'First Moon landing' }
 ```
 
-- Hitos **universales y reconocibles**, con años indiscutibles.
+- Hitos **reconocibles**, con años indiscutibles: si la fecha se discute, la carta no entra.
 - Cada mazo trae al menos noventa cartas, bien repartidas en el tiempo.
 - Los mazos se registran en `decks/index.js` con su nombre por idioma y su emoji, que es lo único que
   hay que tocar para agregar una temática nueva.
+
+### Que no se repitan las cartas (D-34)
+Cada celular recuerda las cartas que ha visto por temática (`juegos-de-salon:linea-de-tiempo:vistas`).
+Al armar una partida, las más recientes se excluyen del mazo y la lista viaja en `config.skip`, así
+todos los celulares de la sala excluyen exactamente lo mismo y el estado sigue derivándose de la
+config más las jugadas (canon C-7). Siempre quedan al menos 70 cartas disponibles para repartir.
 
 ### Tipografía de los años
 Los años (y las cartas que le quedan a cada jugador) van en Nunito 900 con `tabular-nums`, no en
