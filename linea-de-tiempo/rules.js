@@ -35,7 +35,7 @@ const ES = {
   offline: '{name} se desconectó', waitingTurn: 'Esperando a {name}…', placedBy: '{name} colocó',
   // juego
   turnYou: '¡Te toca, {name}!', turnOther: 'Turno de {name}', soloTitle: 'Vacía tu mano', soloStatus: '{ok} aciertos en {n} {tries}', soloRecord: 'Récord: {n} {tries}', tryOne: 'intento', tryMany: 'intentos',
-  carrying: 'Llevas', changeCard: 'Cambiar', yourHand: 'Tu mano', handOf: 'Mano de {name}', pickCard: 'Elige una carta', pickSlot: '¿Dónde va?', place: '📍 Colocar aquí',
+  yourHand: 'Tu mano', handOf: 'Mano de {name}', pickCard: 'Elige una carta', pickSlot: '¿Dónde va?', place: '📍 Colocar aquí',
   timeline: 'Línea de tiempo', cardsLeft: '{n}', poolLeft: 'Quedan {n} en el mazo',
   slotFirst: '↑ Antes de todo', slotLast: '↓ Después de todo', slotBetween: 'Aquí',
   correct: '¡Correcto!', wrong: '¡Te equivocaste!', wasYear: 'Era {year}', goesHere: 'Iba aquí ↓', drewNew: 'La carta se descarta y robas una nueva.',
@@ -77,7 +77,7 @@ const EN = {
   lobbyPlayers: 'In the room', lobbyWaitHost: 'Waiting for {name} to start…', lobbyStart: '🚀 Start!', lobbyNeedMore: 'Need more players',
   offline: '{name} disconnected', waitingTurn: 'Waiting for {name}…', placedBy: '{name} placed',
   turnYou: 'Your turn, {name}!', turnOther: '{name}\'s turn', soloTitle: 'Empty your hand', soloStatus: '{ok} correct in {n} {tries}', soloRecord: 'Record: {n} {tries}', tryOne: 'try', tryMany: 'tries',
-  carrying: 'Carrying', changeCard: 'Change', yourHand: 'Your hand', handOf: '{name}\'s hand', pickCard: 'Pick a card', pickSlot: 'Where does it go?', place: '📍 Place it here',
+  yourHand: 'Your hand', handOf: '{name}\'s hand', pickCard: 'Pick a card', pickSlot: 'Where does it go?', place: '📍 Place it here',
   timeline: 'Timeline', cardsLeft: '{n}', poolLeft: '{n} left in the deck',
   slotFirst: '↑ Before everything', slotLast: '↓ After everything', slotBetween: 'Here',
   correct: 'Correct!', wrong: 'Wrong!', wasYear: 'It was {year}', goesHere: 'It goes here ↓', drewNew: 'The card is discarded and you draw a new one.',
