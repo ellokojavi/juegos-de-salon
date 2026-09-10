@@ -8,6 +8,7 @@ import { $, $$, el, vibrate, sparkles, keepAwake, confetti, shareLink, canShare 
 import { getLang, langToggle, applyStatic } from '../assets/js/i18n.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { showHandoff, passBlock } from '../assets/js/handoff.js';
+import { createChat } from '../assets/js/chat.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import { buildState, correctSlot, randomSeed, yearLabel } from './engine.js';
@@ -29,6 +30,7 @@ const records = {
 
 let S = null;   // sesión: modo, transporte, roles locales, selección de la interfaz
 let M = null;   // partida: config, nombres y jugadas
+let chat = null; // chat de sala: solo en varios celulares (canon C-15)
 
 /* ------------------------------------------------------------------ */
 /* Estado                                                              */
@@ -58,7 +60,10 @@ function apply(msg) {
       break;
     }
     case 'rematch': if (!M.rematch[msg.from]) M.rematch[msg.from] = msg.code || true; break;
+    // El chat no es parte del estado de la partida: se dibuja y se olvida (canon C-15)
+    case 'chat': if (chat) chat.add(msg, { live: !!S?.live }); return 'chat';
   }
+  return null;
 }
 
 /** Vista derivada: manos, línea, turno, ganador. Sin jugadores fijados, la partida aún no empieza. */
@@ -74,10 +79,15 @@ function view() {
 /* ------------------------------------------------------------------ */
 function startSession({ mode, transport, roles, config, names, code = null, role = null }) {
   if (S?.transport) S.transport.leave();
-  S = { mode, transport, roles, code, role, uiRole: null, selCard: null, selSlot: null, lastShown: -1 };
+  S = { mode, transport, roles, code, role, uiRole: null, selCard: null, selSlot: null, lastShown: -1, live: false };
   M = newMatch(config);
+  setupChat(mode);
+  // Lo que llega en los primeros instantes es la historia de la sala que se relee al entrar:
+  // se dibuja en el chat, pero sin sonido ni globito de no leídos.
+  const sess = S;
+  setTimeout(() => { if (S === sess) S.live = true; }, 1500);
   Object.entries(names).forEach(([r, name]) => { if (name) transport.send({ t: 'hello', from: r, name }); });
-  transport.onMessage(m => { apply(m); onChange(); });
+  transport.onMessage(m => { if (apply(m) === 'chat') return; onChange(); });
   transport.onPresence(p => { M.presence = p; if (view().lobby) renderLobby(); });
 }
 
@@ -127,9 +137,26 @@ function eventRow(cardId, byId, fresh = false) {
 function render() {
   if (!M) return;
   const v = view();
+  // El chat acompaña la sala y la partida; en el resultado se apaga y muere con ella.
+  if (chat) { if (v.done) chat.hide(); else chat.show(); }
   if (v.lobby) return renderLobby();
   if (v.done) return renderResult(v);
   renderPlay(v);
+}
+
+/** Crea (o bota) el chat de sala. Solo tiene sentido con un jugador por celular. */
+function setupChat(mode) {
+  if (chat) { chat.destroy(); chat = null; }
+  const mount = $('#chat');
+  if (!mount) return;
+  mount.hidden = true;
+  if (mode !== 'online') return;
+  chat = createChat({
+    mount, T,
+    nameOf: r => M.names[r] || '…',
+    isMine: r => r === S.role,
+    onSend: text => S.transport.send({ t: 'chat', from: S.role, text }),
+  });
 }
 
 /* ---------- Sala (varios celulares) ---------- */
@@ -184,6 +211,7 @@ function renderPlay(v) {
     if (S.sticky && !$('#handoff').hidden) return;        // el jugador aún lee su error: lo nuevo espera
     const last = v.history[v.history.length - 1];
     S.lastShown = v.history.length - 1;
+    if (chat) chat.close();
     const mine = S.roles.includes(last.from);
     const stage = verdictStage(last, v, null);
     const gen = (S.verdictGen = (S.verdictGen || 0) + 1);
@@ -211,6 +239,9 @@ function renderPlay(v) {
 
   // Rol que mira la pantalla
   const me = S.mode === 'online' ? S.role : (S.mode === 'solo' ? 'A' : v.current);
+  // Si el chat quedó abierto y llega mi turno, se cierra para dejar ver el tablero
+  // (salvo que esté escribiendo algo: eso no se bota).
+  if (chat && isLocalTurn) chat.closeIfIdle();
   const okCount = v.history.filter(h => h.ok).length;
   $('#status-who').textContent = S.mode === 'solo' ? T.soloTitle : (isLocalTurn ? fmt(T.turnYou, { name: M.names[v.current] }) : fmt(T.turnOther, { name: M.names[v.current] }));
   const offline = S.mode === 'online' ? M.players?.length && ROLES.find(r => M.presence[r]?.online === false && M.names[r]) : null;

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.10.0 — 2026-09-09
+- **Chat de sala en Línea de Tiempo** (modo varios celulares): burbuja 💬 con globito de no leídos, disponible mientras esperan en la sala y durante la partida, para comentar las jugadas sin quedarse mirando el turno ajeno.
+- El chat no aparece sobre las pantallas de acierto o error ni en el resultado, y muere con la partida: no se guarda en ninguna parte. Al reconectar se recupera la conversación de la sala, en silencio.
+- Módulo compartido `assets/js/chat.js` listo para los demás juegos con salas, con su canon C-15.
+- Reglas de Firebase: se valida el largo del texto de un mensaje.
+
 ## 0.9.6 — 2026-09-09
 - Salas de Toque y Fama, Batalla Naval y Línea de Tiempo: botón **Compartir link** que abre el diálogo nativo del celular (WhatsApp, mensajes, copiar…). En navegadores sin ese diálogo sigue copiando al portapapeles.
 - Pruebas de punta a punta dentro del repo (`tools/e2e/`) con guía de uso.

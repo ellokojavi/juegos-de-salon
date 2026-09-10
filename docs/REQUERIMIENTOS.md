@@ -105,3 +105,4 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | LT-08 | Mazo determinista por semilla, para que todos los dispositivos vean el mismo reparto. | ✅ v0.8 |
 | LT-09 | Memoria de partida en todos los modos (canon C-6). | ✅ v0.8 |
 | LT-10 | Textos en español e inglés. | ✅ v0.8 |
+| LT-11 | Chat de sala en varios celulares, en la sala de espera y durante la partida; muere con la partida (canon C-15). | ✅ v0.10 |

@@ -162,6 +162,19 @@ Con cada juego o cambio relevante se actualiza:
 - La pantalla no se apaga jugando (`keepAwake()`).
 - Los errores previsibles se muestran al jugador en su idioma, con una salida clara; nunca una pantalla en blanco.
 
+## C-15 · Chat de sala
+
+Solo en los modos de **varios celulares**: en un celular la gente está mirando la misma pantalla y hablando en voz alta, y en solitario no hay con quién.
+
+- Se usa `assets/js/chat.js` (`createChat`), no una implementación propia. Los textos salen de `LOCALES` del juego (C-3).
+- Vive en su propio contenedor (`<div id="chat">`), hermano de `#handoff` y **fuera** de las `.screen`: los re-render de la partida no pueden borrar lo que el jugador está escribiendo.
+- Los mensajes viajan por el mismo transporte que las jugadas (`{ t: 'chat', text }`), pero **no son parte del estado**: el reductor los dibuja y no los guarda. Un mensaje de chat no vuelve a dibujar la partida.
+- El chat **muere con la partida**: no se guarda en la memoria de partida (C-6) y se apaga en la pantalla de resultado. Al reconectar se recupera de la sala, sin sonido ni globito de no leídos.
+- No aparece sobre las pantallas de veredicto ni de resultado: el chat va por debajo de `#handoff` y se cierra solo cuando llega el turno del jugador (salvo que esté escribiendo).
+- Burbuja flotante con globito de no leídos; sonido discreto y vibración corta al recibir, sujetos al botón de silencio (C-4).
+- Límites: 120 caracteres por mensaje, un mensaje cada 1,2 s por celular y los últimos 60 en pantalla. Las reglas de Firebase validan el largo del texto.
+- La sala se lee con solo saber el código: el chat no es privado y no se usa para nada sensible.
+
 ---
 
 ## Lista de chequeo antes de dar por listo un juego
@@ -174,4 +187,5 @@ Con cada juego o cambio relevante se actualiza:
 - [ ] Los secretos se comprometen y verifican (C-10).
 - [ ] Tests del motor en verde y partida completa probada en cada modo, con capturas revisadas (C-12).
 - [ ] Versión estampada, publicada y comprobada en la URL pública (C-11).
+- [ ] Si tiene varios celulares, el chat de sala usa el módulo compartido y muere con la partida (C-15).
 - [ ] Registro en el menú, README, especificación, requerimientos, decisiones y changelog (C-2, C-13).
