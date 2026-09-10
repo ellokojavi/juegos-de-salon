@@ -567,8 +567,8 @@ function renderSetup(mode, prefillCode = '') {
   };
   if (mode === 'local') { paintPlayers(); form.append(el('div', { class: 'field' }, el('label', {}, T.players), playersBox, addBtn)); }
   else {
-    const input = el('input', { type: 'text', maxlength: 14, placeholder: T.yourName, value: draft[0], autocomplete: 'off', onInput: e => { draft[0] = e.target.value; } });
-    form.append(el('div', { class: 'field' }, el('label', {}, T.yourName), input));
+    const input = el('input', { class: 'name', type: 'text', maxlength: 14, placeholder: T.yourName, value: draft[0], autocomplete: 'off', onInput: e => { draft[0] = e.target.value; } });
+    form.append(el('div', { class: 'field field--name' }, el('label', {}, T.yourName), input));
   }
 
   // De dónde salen las cartas: mano propia de cada uno o una tira común a la vista (D-32)
@@ -578,7 +578,7 @@ function renderSetup(mode, prefillCode = '') {
     sizeLabel.textContent = config.shared ? T.toWin : T.handSize;
     modeHint.textContent = config.shared ? fmt(T.sharedHint, { n: VISIBLE }) : T.ownHint;
   };
-  const modeSeg = el('div', { class: 'seg' }, ...[[false, T.modeOwn], [true, T.modeShared]].map(([val, label]) =>
+  const modeSeg = el('div', { class: 'seg' }, ...[[true, T.modeShared], [false, T.modeOwn]].map(([val, label]) =>
     el('button', { type: 'button', class: config.shared === val ? 'on' : '', onClick: e => { config.shared = val; $$('button', modeSeg).forEach(b => b.classList.toggle('on', b === e.currentTarget)); SFX.tap(); paintCards(); } }, label)));
   if (!invitado) form.append(el('div', { class: 'field' }, el('label', {}, T.cardsMode), modeSeg, modeHint));
 
