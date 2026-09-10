@@ -97,6 +97,8 @@ Promedio esperado: 45 a 55 disparos para hundir la flota (un humano promedio ron
 - Todo en español e inglés (“Battleship”): agua/miss, tocado/hit, hundido/sunk, ¡Fuego!/Fire!, ¡Zarpar!/Set sail!
 - Accesible con dedo: selección + confirmación antes de disparar; vibración en tocado/hundido.
 
+- Las casillas que se leen (el aviso de cada disparo y la casilla grande del resultado) van en Nunito 900, no en Bangers: ahí el 1 y el 7 se confunden y se dispara al lugar equivocado (D-30, canon C-1). Los números de fila de la grilla ya estaban en Nunito.
+
 ## 8. Archivos previstos
 
 ```

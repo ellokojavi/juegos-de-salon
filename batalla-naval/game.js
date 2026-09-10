@@ -452,7 +452,12 @@ function renderPlay(v) {
   if (M.config.confirmShot && canShoot) fireRow.append(el('button', { class: 'btn btn--yellow', id: 'fire-btn', disabled: !S.aim, onClick: () => fire(S.aim) }, T.fire));
   // Toast del último resultado (mío o del rival)
   if (v.last && v.last.result) {
-    const t = el('div', { class: 'toast ' + v.last.result }, v.last.from === me ? `${v.last.cell}: ${T[v.last.result]}` : fmt(T.shotAt, { name: M.names[v.last.from], cell: v.last.cell }) + ` · ${T[v.last.result]}`);
+    // La casilla va en su propio span: las cifras no se leen en Bangers (D-30).
+    // `fmt` deja {cell} sin reemplazar, así que sirve de marca para partir el texto.
+    const withCoord = (text, cell) => { const [antes, despues = ''] = text.split('{cell}'); return [antes, el('span', { class: 'coord' }, cell), despues]; };
+    const t = el('div', { class: 'toast ' + v.last.result }, ...(v.last.from === me
+      ? withCoord(`{cell}: ${T[v.last.result]}`, v.last.cell)
+      : [...withCoord(fmt(T.shotAt, { name: M.names[v.last.from] }), v.last.cell), ` · ${T[v.last.result]}`]));
     if (v.last.result === 'hundido') t.append(el('div', { class: 'muted', style: 'font:800 0.85rem var(--font-body)' }, v.last.from === me ? fmt(T.sunkShip, { ship: T.ships[v.last.ship], name: M.names[enemy] }) : fmt(T.sunkMine, { ship: T.ships[v.last.ship] })));
     fireRow.append(t);
     if (v.last.n > S.lastShownShot) { S.lastShownShot = v.last.n; playResultSound(v.last.result); }
