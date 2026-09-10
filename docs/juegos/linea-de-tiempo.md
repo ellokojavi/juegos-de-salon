@@ -68,6 +68,8 @@ interrupción larga no decida el desempate.
 
 En varios celulares, el anfitrión (rol A) crea la sala y abre la partida con el botón **Empezar** cuando hay al menos dos jugadores; el mensaje `start` fija el orden. Cada celular ve solo su mano, y el veredicto de cada jugada se muestra a todos y se cierra solo.
 
+El botón de compartir usa el diálogo nativo del celular y el texto que lo acompaña nombra la temática elegida, para que quien recibe el enlace sepa a qué lo invitan.
+
 En varios celulares hay además un **chat de sala** (canon C-15): una burbuja 💬 con globito de no leídos, disponible en la sala de espera y durante la partida. No aparece sobre el veredicto de una jugada ni en la pantalla de resultado, y no se guarda: muere con la partida.
 
 En solitario no hay rival: el objetivo es vaciar la mano en la menor cantidad de intentos. Se guarda un

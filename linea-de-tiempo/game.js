@@ -226,7 +226,9 @@ function shareButton(url) {
   const btn = el('button', { class: 'btn btn--cyan btn--sm', style: 'width:100%;max-width:320px' }, canShare() ? T.shareLink : T.copyLink);
   btn.addEventListener('click', async () => {
     SFX.tap();
-    const r = await shareLink({ title: T.title, text: fmt(T.shareText, { game: T.title, code: S.code }), url });
+    // El texto que ve quien recibe el enlace lleva la temática que eligió el anfitrión
+    const deck = getDeck(M.config.theme);
+    const r = await shareLink({ title: T.title, text: fmt(T.shareText, { game: T.title, theme: `${deck.emoji} ${deck.name[lang]}`, code: S.code }), url });
     if (r === 'copied') { btn.textContent = T.copied; setTimeout(() => { btn.textContent = canShare() ? T.shareLink : T.copyLink; }, 2000); }
   });
   return btn;
