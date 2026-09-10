@@ -26,7 +26,7 @@
         "messages": {
           "$id": {
             ".write": "$room.matches(/^[A-Z]{4}$/) && !data.exists() && root.child('rooms/' + $room + '/createdAt').val() > now - 21600000",
-            ".validate": "newData.hasChildren(['t', 'from', 'at']) && newData.child('t').isString() && newData.child('from').val().matches(/^[A-F]$/) && newData.child('at').isNumber() && newData.child('at').val() <= now + 60000"
+            ".validate": "newData.hasChildren(['t', 'from', 'at']) && newData.child('t').isString() && newData.child('t').val().length < 20 && newData.child('from').val().matches(/^[A-F]$/) && newData.child('at').isNumber() && newData.child('at').val() <= now + 60000 && (!newData.hasChild('text') || (newData.child('text').isString() && newData.child('text').val().length <= 200))"
           }
         },
         "$other": { ".validate": false }

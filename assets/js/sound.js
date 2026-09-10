@@ -118,6 +118,8 @@ export const SFX = {
   siren() { [0, 0.5, 1.0].forEach(d => tone({ freq: 500, to: 800, type: 'triangle', dur: 0.45, gain: 0.1, delay: d })); },
   /** Error de formulario. */
   error() { tone({ freq: 160, to: 120, type: 'sawtooth', dur: 0.25, gain: 0.12 }); },
+  /** Mensaje de chat: burbuja corta y discreta (suena seguido, no puede molestar). */
+  chat() { tone({ freq: 880, to: 1320, type: 'sine', dur: 0.07, gain: 0.06 }); tone({ freq: 1320, type: 'sine', dur: 0.09, gain: 0.04, delay: 0.06 }); },
 };
 
 /** Botón 🔊/🔇 que alterna el silencio. */
