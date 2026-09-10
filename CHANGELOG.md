@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.15.1 — 2026-09-10
+- Mazo chileno: entran **Extra Jóvenes** (1986, con Katherine Salosny) y **Mekano** (1997, con José Miguel Viñuela). Quedó en 124 cartas.
+- Fix de dato: el último Festival de Viña de Antonio Vodanovic fue **2004**, no 2005.
+
 ## 0.15.0 — 2026-09-10
 - El chat de sala **sigue vivo en la pantalla de victoria o derrota**, en Línea de Tiempo y en Toque y Fama: el final es justo cuando hay algo que decir, sea para celebrar o para pedir la revancha. Ahora muere con la sala, no con la partida (D-35).
 - Línea de Tiempo: cuando se equivoca otro, la pantalla dice **“¡Cata se equivocó!”** en vez de “¡Te equivocaste!”, y el fondo rojo queda solo en el celular del que falló (D-36).
