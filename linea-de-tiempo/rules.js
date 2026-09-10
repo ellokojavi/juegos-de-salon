@@ -41,6 +41,9 @@ const ES = {
   stats: '{ok} de {total} aciertos', ranking: 'Cómo terminaron', cardsHeld: '{n} cartas', cardHeld: '1 carta', noCards: 'sin cartas',
   finalLine: 'La línea quedó así', rematch: '🔁 Revancha', changeMode: 'Cambiar modo', backMenu: 'Volver al menú',
   resumeTitle: '⏯ Hay una partida a medias', resume: 'Continuar', delete: 'Borrar',
+  // chat de sala (solo varios celulares)
+  chatTitle: 'Chat de la sala', chatOpen: 'Abrir el chat', chatClose: 'Cerrar el chat', chatSend: 'Enviar',
+  chatPlaceholder: 'Escribe algo…', chatEmpty: 'Acá pueden comentar la partida. Se borra cuando termina.',
 };
 
 const EN = {
@@ -74,6 +77,9 @@ const EN = {
   stats: '{ok} of {total} correct', ranking: 'How it ended', cardsHeld: '{n} cards', cardHeld: '1 card', noCards: 'no cards',
   finalLine: 'The timeline ended like this', rematch: '🔁 Rematch', changeMode: 'Change mode', backMenu: 'Back to menu',
   resumeTitle: '⏯ There\'s an unfinished game', resume: 'Continue', delete: 'Delete',
+  // room chat (several phones only)
+  chatTitle: 'Room chat', chatOpen: 'Open the chat', chatClose: 'Close the chat', chatSend: 'Send',
+  chatPlaceholder: 'Say something…', chatEmpty: 'Talk trash about the game here. It disappears when the game ends.',
 };
 
 export const LOCALES = { es: ES, en: EN };

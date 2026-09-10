@@ -33,6 +33,7 @@ mkdir -p /tmp/e2e && node tools/e2e/batalla-naval-local.mjs /tmp/e2e
 | `linea-de-tiempo-solo.mjs` | Solitario: récord, plural, retomar |
 | `linea-de-tiempo-error.mjs` | Pantalla de error que se queda hasta tocar; el rival espera |
 | `linea-de-tiempo-online.mjs` | Tres celulares contra Firebase real, recarga y revancha |
+| `linea-de-tiempo-chat.mjs` | Chat de sala: no leídos, freno al spam, veredicto que lo tapa, reconexión y muerte al terminar |
 | `memoria-de-partida.mjs` | Guardar y retomar en los tres juegos (canon C-6) |
 | `versionado.mjs` | Que todos los módulos carguen con `?v=` del import map |
 | `compartir-sala.mjs` | Botón de compartir: diálogo nativo si existe, copiar si no |

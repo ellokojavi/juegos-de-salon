@@ -41,6 +41,8 @@ naturaleza del juego:
 
 En varios celulares, el anfitrión (rol A) crea la sala y abre la partida con el botón **Empezar** cuando hay al menos dos jugadores; el mensaje `start` fija el orden. Cada celular ve solo su mano, y el veredicto de cada jugada se muestra a todos y se cierra solo.
 
+En varios celulares hay además un **chat de sala** (canon C-15): una burbuja 💬 con globito de no leídos, disponible en la sala de espera y durante la partida. No aparece sobre el veredicto de una jugada ni en la pantalla de resultado, y no se guarda: muere con la partida.
+
 En solitario no hay rival: el objetivo es vaciar la mano en la menor cantidad de intentos. Se guarda un
 récord personal por temática y tamaño de mano. Se descartó jugar contra una IA porque la máquina conoce
 los años y la partida no tenía sentido (D-27).
@@ -56,12 +58,14 @@ falta mensajes de respuesta.
 { "t": "start", "from": "A", "order": ["A","B","C"] }   // solo varios celulares: el anfitrión abre el juego
 { "t": "place", "from": "B", "card": "luna", "slot": 2 }   // carta y ranura elegida ("at" lo usa el transporte)
 { "t": "rematch", "from": "A", "code": "KXTR" }
+{ "t": "chat", "from": "C", "text": "esa iba antes de la luna" }   // solo varios celulares; no es estado
 ```
 
 - El mazo se baraja con un generador sembrado (`mulberry32`), así que la semilla basta para que
   todos tengan el mismo mazo y el mismo reparto.
 - `view()` deriva: manos, línea de tiempo, pozo, turno, aciertos y errores, ganador.
 - Jugadas fuera de turno, repetidas o con cartas que no están en la mano se descartan en el reductor.
+- `chat` es la excepción: el reductor lo dibuja y lo olvida, y avisa que **no** hay que volver a dibujar la partida. Si el chat se redibujara con el juego, cada mensaje recibido borraría lo que el jugador está escribiendo.
 
 ## 5. Interfaz
 
@@ -100,6 +104,8 @@ linea-de-tiempo/
   decks/index.js · decks/historia.js · decks/musica.js
 ```
 
+Del lado compartido usa `assets/js/chat.js` (chat de sala) montado en `<div id="chat">`, hermano de `#handoff`.
+
 ## 8. Plan
 
 | Fase | Contenido |
@@ -116,6 +122,13 @@ linea-de-tiempo/
 - Lecciones aprendidas:
   - `at` es un campo reservado del transporte, así que la ranura viaja como `slot` (ver C-7).
   - Con más de dos jugadores, dos personas pueden reclamar el mismo rol a la vez. El transporte ahora escribe el rol con un identificador de dispositivo y vuelve a leer para confirmar quién ganó la carrera.
+
+### Chat de sala (v0.10)
+- Solo en varios celulares, en la sala de espera y en la partida. Texto, 120 caracteres, un mensaje cada 1,2 s, últimos 60 en pantalla.
+- Se cierra solo cuando llega el turno del jugador, salvo que tenga algo escrito.
+- Al reconectar se recupera la conversación desde la sala, sin sonido ni globito (los mensajes de los primeros 1,5 s se consideran historia).
+- El teclado del celular no achica la ventana: el panel se levanta con `visualViewport` y el campo usa 16 px para que iOS no haga zoom.
+- Prueba: `node tools/e2e/linea-de-tiempo-chat.mjs <carpeta>`.
 
 ## 9. Variantes futuras
 Más temáticas (cine, deporte, ciencia, Chile), mazo musical con adelantos de audio del catálogo de
