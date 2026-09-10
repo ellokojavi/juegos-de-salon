@@ -31,6 +31,7 @@ await click('.mode'); await sleep(300);
 await clickText('.theme-card', 'Música'); await sleep(100);
 await clickText('#setup-form .btn', 'Agregar'); await sleep(100);
 await b.evaluate(`(()=>{const n=['Javi','Cata','Nico'];[...document.querySelectorAll('#setup-form .player-row input')].forEach((i,k)=>{i.value=n[k];i.dispatchEvent(new Event('input',{bubbles:true}))});return 1})()`);
+await b.evaluate(`(()=>{const x=[...document.querySelectorAll('#setup-form .seg button')].find(e=>/Mano propia|Own hand/.test(e.textContent));if(x)x.click();return 1})()`); await sleep(150);
 await clickText('#setup-form .seg button', 'Corta'); await sleep(100);
 await b.shot('02-setup');
 await click('#setup-actions .btn'); await sleep(700);
@@ -65,6 +66,7 @@ console.log('resultado:', await b.evaluate(`document.getElementById('result-titl
 await b.go('http://localhost:8765/linea-de-tiempo/', 1200);
 await b.evaluate(`document.querySelectorAll('.mode')[2].click(); 1`); await sleep(300);
 await b.evaluate(`(()=>{document.querySelector('#setup-form input').value='Javi';document.querySelector('#setup-form input').dispatchEvent(new Event('input',{bubbles:true}));return 1})()`);
+await b.evaluate(`(()=>{const x=[...document.querySelectorAll('#setup-form .seg button')].find(e=>/Mano propia|Own hand/.test(e.textContent));if(x)x.click();return 1})()`); await sleep(150);
 await clickText('#setup-form .seg button', 'Difícil'); await sleep(100);
 await click('#setup-actions .btn'); await sleep(900);
 console.log('cpu inicio:', JSON.stringify(await v())); await b.shot('07-cpu');

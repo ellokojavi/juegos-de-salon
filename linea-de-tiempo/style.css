@@ -21,6 +21,11 @@
 .field input { width: 100%; font: 900 1.1rem var(--font-body); color: var(--ink); background: rgba(0,0,0,0.3); border: 2px solid transparent; border-radius: 14px; padding: 12px 14px; outline: none; }
 .field input:focus { border-color: var(--cyan); }
 .field input::placeholder { color: rgba(255,255,255,0.35); }
+/* El nombre es lo único que el jugador escribe: grande y al centro */
+.field--name { margin-bottom: 16px; }
+.field--name label { text-align: center; }
+.field input.name { font: 900 1.5rem var(--font-body); text-align: center; padding: 14px 12px; border-color: var(--glass-border); }
+.field input.name:focus { border-color: var(--cyan); }
 .seg { display: flex; gap: 6px; background: rgba(0,0,0,0.3); border-radius: 14px; padding: 5px; }
 .seg button { flex: 1; border: 0; background: transparent; color: var(--muted); font: 900 0.95rem var(--font-body); padding: 10px 4px; border-radius: 10px; cursor: pointer; }
 .seg button.on { background: var(--yellow); color: #3a1200; }

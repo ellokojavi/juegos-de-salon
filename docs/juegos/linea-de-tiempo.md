@@ -33,7 +33,7 @@ naturaleza del juego:
 
 ## 2a. Mano propia o pozo común (D-32)
 
-En la configuración se elige de dónde salen las cartas:
+En la configuración se elige de dónde salen las cartas. **El pozo común viene elegido por defecto**: es el modo que más conversación genera, porque todos miran las mismas cartas.
 
 | | Mano propia | Pozo común |
 |---|---|---|
