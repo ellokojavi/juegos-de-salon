@@ -11,6 +11,7 @@ const pantalla = () => b.evaluate(`(()=>{
   const code = document.querySelector('#setup-actions input.code');
   return JSON.stringify({
     pantalla: document.querySelector('.screen.active')?.id,
+    titulo: document.querySelector('#screen-setup h2')?.textContent,
     botones: acc,
     crear: acc.some(t=>/crear|create/i.test(t)),
     invitacion: document.querySelector('#setup-actions .lead')?.textContent || '',
