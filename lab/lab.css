@@ -17,9 +17,13 @@
    4. Las rutas de url() se resuelven contra ESTE archivo, no contra el HTML
       que lo carga: 'img/loquesea.png' vale igual para lab/index.html y para
       lab/<juego>/index.html.
-   5. El laboratorio no lleva ?v= (ver README), así que el navegador cachea
-      esta hoja y las imágenes. Al iterar, recargar sin caché o agregar una
-      marca a mano ('img/x.png?2').
+   5. El laboratorio no lleva ?v= de set-version.py, pero GitHub Pages manda
+      cache-control de 10 minutos. Al cambiar esta hoja hay que subirle la
+      marca de revisión en las DOS páginas que la cargan:
+        lab/index.html               <link ... href="lab.css?r=N">
+        lab/<juego>/index.html       <link ... href="../lab.css?r=N">
+      Sin eso, uno mira el celular y ve la versión anterior sin entender por
+      qué. Lo mismo vale para las imágenes del experimento ('img/x.png?2').
    ========================================================== */
 
 /* Aviso de que esto no es el sitio de verdad. Esto sí se queda siempre:
