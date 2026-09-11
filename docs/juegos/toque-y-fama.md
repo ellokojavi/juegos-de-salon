@@ -1,6 +1,6 @@
 # Especificación: Toque y Fama 🔢
 
-**Ruta:** `/toque-y-fama/` · **Jugadores:** 2 · **Versión:** 0.4 · **Idiomas:** es, en (“Bulls and Cows”)
+**Ruta:** `/toque-y-fama/` · **Jugadores:** 2 · **Versión:** 0.4 · **Idiomas:** es, en (“Bulls and Cows”), pt (“Toque e Fama”)
 
 ## Reglas implementadas
 - Cada jugador elige un número secreto de **3, 4 o 5 cifras distintas** (4 por defecto). Cero inicial permitido (configurable).

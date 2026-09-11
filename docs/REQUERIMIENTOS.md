@@ -21,6 +21,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | RP-13 | Funcionar sin conexión (service worker). | ⏳ pendiente |
 | RP-14 | Sonidos en las acciones clave, con botón para silenciar. | ✅ v0.3 |
 | RP-15 | Jugar en español o inglés, con un toggle al inicio (menú) que aplica a todos los juegos. | ✅ v0.2 |
+| RP-25 | Jugar en portugués (de Brasil): toda la experiencia —menú, juegos, salas, chat, errores, cartas— en el idioma elegido, con las mismas claves que español e inglés (D-48). | ✅ v0.22 |
 | RP-16 | Toda partida en curso se puede retomar, en todos los juegos y en todos los modos (canon C-6). | ✅ v0.7 |
 | RP-17 | Cánones de construcción documentados y revisados antes de crear o cambiar un juego. | ✅ v0.7 |
 | RP-18 | Quien entra por un enlace de sala solo puede unirse a esa sala: no se le ofrece crear otra ni configurar la partida. | ✅ v0.10.1 |
@@ -56,6 +57,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | CR-19 | Transición entre turnos: tras resolver la carta, pantalla "¡Salud!" con quiénes toman y luego "Pásale el celular a X" con confirmación del siguiente jugador. | ✅ v0.2 |
 | CR-20 | La carta boca abajo ocupa la mayor parte de la pantalla (fácil de tocar); al descubrirse gira y se encoge para dejar espacio a las instrucciones. | ✅ v0.2 |
 | CR-21 | Todo el contenido del juego (reglas, mini-juegos, penitencias, categorías, ideas de Nunca Nunca) disponible en español e inglés. | ✅ v0.2 |
+| CR-22 | Todo el contenido del juego en portugués (Quarto Rei, Era Uma Vez, Porquinho Bochechudo, Cultura de Boteco, Eu Nunca, prendas y categorías adaptadas). | ✅ v0.22 |
 
 ## Requerimientos no funcionales
 
@@ -77,6 +79,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | TF-07 | Reconexión: si un celular se cierra, retoma la partida desde la sala (secreto guardado en el dispositivo). | ✅ v0.4 |
 | TF-08 | Derecho a réplica configurable. Quién parte es determinista: el invitado en la primera partida, el perdedor en la revancha (ver D-19). | ✅ v0.4 |
 | TF-09 | Textos en español e inglés (“Bulls and Cows”). | ✅ v0.4 |
+| TF-18 | Textos en portugués (“Toque e Fama”). | ✅ v0.22 |
 | TF-10 | Revancha en los tres modos; en dos celulares se crea una sala nueva y ambos se mueven solos. | ✅ v0.4 |
 | TF-11 | Indicador de rival desconectado en modo dos celulares. | ✅ v0.4 |
 | TF-12 | Al adivinar, el jugador ve su propio número como recordatorio. En modo un celular parte oculto y se muestra al tocarlo. | ✅ v0.4.1 |
@@ -96,6 +99,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | BN-07 | Reconexión, revancha (parte el perdedor), presencia. | ✅ v0.6 |
 | BN-08 | Selección + confirmación “¡Fuego!” antes de disparar (con opción de disparo directo). | ✅ v0.6 |
 | BN-09 | Textos en español e inglés (“Battleship”); sonidos de agua, impacto y hundimiento. | ✅ v0.6 |
+| BN-16 | Textos en portugués (“Batalha Naval”: água, acertou, afundou). | ✅ v0.22 |
 | BN-10 | Los transportes `local` y `firebase` se mueven a `assets/js/transport/` para compartirlos entre juegos. | ✅ v0.6 |
 
 ## Línea de Tiempo (LT) — ver [docs/juegos/linea-de-tiempo.md](juegos/linea-de-tiempo.md)
@@ -112,6 +116,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | LT-08 | Mazo determinista por semilla, para que todos los dispositivos vean el mismo reparto. | ✅ v0.8 |
 | LT-09 | Memoria de partida en todos los modos (canon C-6). | ✅ v0.8 |
 | LT-10 | Textos en español e inglés. | ✅ v0.8 |
+| LT-16 | Textos y los cuatro mazos en portugués (“Linha do Tempo”). | ✅ v0.22 |
 | LT-11 | Chat de sala en varios celulares, en la sala de espera y durante la partida; muere con la partida (canon C-15). | ✅ v0.10 |
 | LT-12 | La ronda se juega completa y, si más de uno queda sin cartas, gana quien respondió en menos tiempo. El tiempo se muestra solo al final. | ✅ v0.12 |
 | LT-13 | Opción de pozo común: 6 cartas a la vista para todos, se reponen por el final, y gana quien coloque primero las cartas acordadas. | ✅ v0.13 |

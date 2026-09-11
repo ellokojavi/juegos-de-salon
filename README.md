@@ -1,6 +1,6 @@
 # 🎲 Juegos de Salón
 
-App web (mobile-first) con juegos de salón para jugar con amigos: de naipes, de tomar, de deducción. Se abre desde el celular o tablet, se elige un juego en el menú principal, se ingresan los jugadores y el celular guía la partida. En español e inglés.
+App web (mobile-first) con juegos de salón para jugar con amigos: de naipes, de tomar, de deducción. Se abre desde el celular o tablet, se elige un juego en el menú principal, se ingresan los jugadores y el celular guía la partida. En español, inglés y portugués.
 
 **Jugar:** https://juegosdesalon.cl/
 
@@ -10,10 +10,10 @@ App web (mobile-first) con juegos de salón para jugar con amigos: de naipes, de
 
 | Juego | Jugadores | Modos | Estado |
 |---|---|---|---|
-| 👑 [Cuarto Rey / Fourth King](#-cuarto-rey) | 4 a 6 | Un celular en la mesa | v0.3 |
-| 🔢 [Toque y Fama / Bulls and Cows](#-toque-y-fama) | 1 a 2 | Un celular · Dos celulares · Contra el celular | v0.5 |
-| ⏳ [Línea de Tiempo / Timeline](#-línea-de-tiempo) | 1 a 6 | Un celular · Varios celulares · Solitario | v0.9 |
-| ⚓ [Batalla Naval / Battleship](#-batalla-naval) | 1 a 2 | Un celular · Dos celulares · Contra el celular | v0.6 |
+| 👑 [Cuarto Rey / Fourth King / Quarto Rei](#-cuarto-rey) | 4 a 6 | Un celular en la mesa | v0.3 |
+| 🔢 [Toque y Fama / Bulls and Cows / Toque e Fama](#-toque-y-fama) | 1 a 2 | Un celular · Dos celulares · Contra el celular | v0.5 |
+| ⏳ [Línea de Tiempo / Timeline / Linha do Tempo](#-línea-de-tiempo) | 1 a 6 | Un celular · Varios celulares · Solitario | v0.9 |
+| ⚓ [Batalla Naval / Battleship / Batalha Naval](#-batalla-naval) | 1 a 2 | Un celular · Dos celulares · Contra el celular | v0.6 |
 
 ---
 
@@ -131,10 +131,44 @@ Especificación y diseño: [docs/juegos/linea-de-tiempo.md](docs/juegos/linea-de
 
 ## Características comunes
 
-- **Idiomas:** español (por defecto) e inglés. El toggle del menú guarda la elección en el dispositivo.
+- **Idiomas:** español (por defecto), inglés y portugués de Brasil. El toggle del menú guarda la elección en el dispositivo; nunca se detecta el idioma del navegador (D-47, D-48). Ver [Idiomas](#idiomas).
 - **Sonido:** efectos sintetizados con Web Audio (sin archivos de audio). Botón 🔊/🔇 en cada pantalla.
 - **Partidas guardadas:** cada juego guarda su estado en el dispositivo y ofrece continuar.
 - **Instalable:** manifest PWA para agregar a la pantalla de inicio. La pantalla no se apaga mientras se juega.
+
+### Idiomas
+
+Toda la experiencia va en el idioma elegido: el menú y sus frases del pie, los cuatro juegos
+con todos sus modos, las salas, el chat, los errores de transporte, las pantallas de "pásale
+el celular" y las cartas de los cuatro mazos de Línea de Tiempo. El portugués es el de
+Brasil, informal, y los nombres se traducen igual que en inglés:
+
+| Español | English | Português |
+|---|---|---|
+| Juegos de Salón | Party Games | Jogos de Salão |
+| Cuarto Rey | Fourth King | Quarto Rei |
+| Toque y Fama | Bulls and Cows | Toque e Fama |
+| Batalla Naval | Battleship | Batalha Naval |
+| Línea de Tiempo | Timeline | Linha do Tempo |
+
+Cómo está armado (canon C-3):
+
+- `assets/js/i18n.js` guarda el idioma en `localStorage` (`juegos-de-salon:lang`), dibuja el
+  toggle 🇨🇱 ES · 🇬🇧 EN · 🇧🇷 PT y tiene los textos comunes del menú (`COMMON`).
+- Cada juego tiene sus textos en `LOCALES = { es, en, pt }` de su `rules.js`; `game.js` no
+  tiene ninguna cadena literal. Los textos fijos del HTML llevan `data-i18n`.
+- El registro del menú (`games.js`), las 100 frases del pie (`frases.js`) y cada carta de
+  Línea de Tiempo (`decks/*.js`) llevan los tres idiomas.
+- **Los tres diccionarios tienen exactamente las mismas claves.** Lo verifica
+  `node assets/js/i18n.test.mjs`: claves, largo de las listas, `{llaves}` de las plantillas
+  y que no haya textos vacíos. Un texto que falta se vería como `undefined` en pantalla.
+- Las traducciones se adaptan, no se calcan: en portugués las comunas de Santiago son
+  bairros, la penitencia es una prenda y el "fondo" es "vira, vira, vira".
+- Para agregar un idioma: sumarlo a `LANGS` y al toggle en `i18n.js`, y agregar el
+  diccionario en `COMMON`, `games.js`, `frases.js`, los cuatro `rules.js`, `decks/index.js` y
+  cada carta. El test de paridad dice qué falta.
+- El panel del dueño es solo en español (excepción anotada en `docs/PANEL.md`) y el
+  `manifest.webmanifest` también, porque es uno solo para toda la app.
 
 ## Panel del dueño
 
@@ -154,12 +188,13 @@ HTML, CSS y JavaScript puro (módulos ES), sin build ni dependencias de npm. Se 
 python3 -m http.server 8080
 ```
 
-y abrir http://localhost:8080 (los módulos ES necesitan servirse por HTTP). Tests del motor de Toque y Fama:
+y abrir http://localhost:8080 (los módulos ES necesitan servirse por HTTP). Tests de los motores, de los idiomas y de los módulos compartidos:
 
 ```bash
 node toque-y-fama/engine.test.mjs
 node batalla-naval/engine.test.mjs
 node linea-de-tiempo/engine.test.mjs
+node assets/js/i18n.test.mjs
 node assets/js/transport/stats.test.mjs
 node panel/aggregate.test.mjs
 ```
@@ -204,8 +239,9 @@ python3 tools/set-version.py 0.4.6
 ```
 index.html                  Menú principal (se genera desde assets/js/games.js)
 assets/css/base.css         Estilos y animaciones compartidos (tema fiesta, transición entre turnos)
-assets/js/games.js          Registro de juegos (textos por idioma)
-assets/js/i18n.js           Idioma (ES/EN): toggle, persistencia y textos comunes
+assets/js/games.js          Registro de juegos (textos en es, en y pt)
+assets/js/i18n.js           Idioma (ES/EN/PT): toggle, persistencia y textos comunes; i18n.test.mjs revisa la paridad
+assets/js/frases.js         Frases del pie del menú, 100 por idioma
 assets/js/sound.js          Efectos de sonido sintetizados y botón de silencio
 assets/js/ui.js             Utilidades UI: confeti, vibración, wake lock, helpers DOM
 assets/js/firebase-config.js Configuración pública de Firebase

@@ -1,4 +1,4 @@
-// Sin llegar a Firebase: el jugador tiene que enterarse, en su idioma, y con una salida (C-14, D-40).
+// Sin llegar a Firebase: el jugador tiene que enterarse, en su idioma (los tres), y con una salida (C-14, D-40).
 // Se le corta la red a la base (no al sitio), que es como se ve quedarse sin señal o toparse
 // con el tope de conexiones del plan gratuito.
 import { launch, sleep } from './cdp.mjs';
@@ -45,13 +45,15 @@ async function intento(lang, juego, etiqueta) {
 
 const es = await intento('es', 'toque-y-fama', 'es');
 const en = await intento('en', 'toque-y-fama', 'en');
+const pt = await intento('pt', 'toque-y-fama', 'pt');
 const ldt = await intento('es', 'linea-de-tiempo', 'ldt');
 const bn = await intento('es', 'batalla-naval', 'bn');
 
-const ok = t => t && !/Hay internet|Is there internet/.test(t) && /celular|phone/.test(t);
+const ok = t => t && !/Hay internet|Is there internet|Tem internet/.test(t) && /celular|phone/.test(t);
 console.log('\n--- resumen ---');
 console.log('es: mensaje nuevo, no el genérico →', ok(es));
 console.log('en: traducido, no el genérico   →', ok(en) && /Couldn/.test(en));
+console.log('pt: traducido, no el genérico   →', ok(pt) && /Não foi possível abrir/.test(pt));
 console.log('línea de tiempo                 →', ok(ldt));
 console.log('batalla naval                   →', ok(bn));
 console.log('errors:', JSON.stringify(b.errors));
