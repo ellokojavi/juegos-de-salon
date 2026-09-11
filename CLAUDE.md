@@ -29,6 +29,12 @@ node assets/js/transport/ratelimit.test.mjs
 python3 -m http.server 8765          # los módulos ES necesitan HTTP, no file://
 ```
 
+## Probar un cambio de interfaz
+
+`lab/` es un ambiente de pruebas con URL propia (`/lab/`) que **no toca la app publicada**:
+espeja el menú y los juegos, pero importa los módulos reales. El experimento se escribe
+en `lab/lab.css`, que solo agrega. Ver [lab/README.md](lab/README.md) y D-42.
+
 ## Pruebas de punta a punta
 
 `tools/e2e/` tiene scripts que juegan partidas completas en Chrome headless (ver su README):
