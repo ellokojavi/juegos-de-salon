@@ -16,18 +16,21 @@
     .hero { text-align: center; padding: 14px 0 18px; }
     .hero .sub { color: var(--muted); font-weight: 700; margin-top: 10px; }
     .games { display: grid; gap: 14px; margin-top: 10px; }
+    /* Una ficha de papel impreso: tinta plana y la plancha corrida en una esquina.
+       Al apretar, la tarjeta se mete dentro de su propia sombra. */
     .game-card {
       display: grid; grid-template-columns: 64px 1fr auto; gap: 14px; align-items: center;
       text-decoration: none; color: var(--ink);
-      background: var(--glass); border: 1px solid var(--glass-border); border-radius: var(--radius);
-      padding: 16px; transition: transform 0.12s, border-color 0.2s;
-      animation: slideUp 0.4s ease-out both;
+      background: var(--papel-hondo); border: 3px solid var(--tinta-negra); border-radius: var(--radius);
+      box-shadow: var(--desfase) var(--desfase) 0 rgba(46, 230, 214, 0.4);
+      padding: 16px; transition: transform 0.06s steps(2), box-shadow 0.06s steps(2);
+      animation: slideUp 0.3s steps(4) both;
     }
-    .game-card:active { transform: scale(0.98); }
+    .game-card:active { transform: translate(var(--desfase), var(--desfase)); box-shadow: 0 0 0; }
     .game-card h2 { font-family: var(--font-display); font-size: 1.7rem; margin: 0; letter-spacing: 0.04em; text-transform: uppercase; }
     .game-card .tag { color: var(--muted); font-size: 0.95rem; margin: 2px 0 6px; }
     .game-card .meta { display: flex; flex-wrap: wrap; gap: 6px; }
-    .game-card .meta span { font-size: 0.78rem; font-weight: 800; padding: 3px 9px; border-radius: 999px; background: rgba(0,0,0,0.25); }
+    .game-card .meta span { font-size: 0.78rem; font-weight: 800; padding: 3px 9px; border-radius: 999px; background: var(--papel); border: 1px solid var(--tinta-negra); }
     .game-card .go { font-family: var(--font-display); font-size: 2rem; color: var(--yellow); }
     /* En el laboratorio solo Línea de Tiempo está rehecha: el resto lleva al sitio publicado */
     .game-card .go.out { font-size: 1.3rem; color: var(--muted); font-family: var(--font-body); font-weight: 800; }

@@ -5,8 +5,12 @@
 No es una versión de la app: **ningún archivo de los juegos cambió.** Se publica una
 carpeta nueva, `/lab/`, para probar cambios de interfaz antes de llevarlos a la app.
 
-- Primer experimento: **insignias serigrafiadas**, una ilustración impresa por juego en
-  reemplazo del emoji del sistema, en la tarjeta del menú y en el encabezado de la intro.
+- Primer experimento: **la app impresa en serigrafía**. No son solo iconos nuevos.
+  El fondo pasa a ser papel plano con el grano real recortado del arte; los degradados,
+  el vidrio esmerilado y los resplandores se van; las sombras quedan duras y corridas,
+  como una plancha mal registrada; y el movimiento avanza a saltos en vez de interpolado.
+  Las insignias reemplazan al emoji en la tarjeta del menú y en el encabezado de la intro,
+  pero no en el chip de la barra: a 22 px una insignia impresa es una mancha de color.
   Cubre la vista principal y Línea de Tiempo; los otros tres juegos se muestran con su
   insignia pero el enlace lleva al juego publicado.
 - Las páginas del laboratorio **importan los módulos reales** de cada juego, así que no
