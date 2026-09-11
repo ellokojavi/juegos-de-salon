@@ -115,11 +115,16 @@ Los jugadores no se autentican nunca; activar Google no les cambia nada.
 Si algún día hacen falta dos cuentas, la regla deja de ser una comparación y pasa a ser una
 lista: `auth != null && (auth.uid === 'UNO' || auth.uid === 'OTRO')`, en los dos lugares.
 
-> **El proyecto cuelga de una sola cuenta.** `jbotmacmini@gmail.com` es hoy la única
-> propietaria, y es una cuenta de máquina. Perder su acceso es perder la base de datos de la
-> app publicada. Conviene agregar `jirigoyen@gmail.com` como *Propietario* en
-> [IAM](https://console.cloud.google.com/iam-admin/iam?project=juegos-de-salon), aunque el
-> panel no lo necesite para funcionar.
+> **Dos propietarios, a propósito.** El proyecto lo creó `jbotmacmini@gmail.com`, una cuenta
+> de máquina, y durante un tiempo fue la única propietaria: perder su acceso habría sido
+> perder la base de datos de la app publicada. Desde el 2026-09-11 `jirigoyen@gmail.com`
+> también es *Propietario* en
+> [IAM](https://console.cloud.google.com/iam-admin/iam?project=juegos-de-salon). Si alguna vez
+> queda una sola de nuevo, vale la pena volver a sumar la segunda.
+>
+> Ser propietario en IAM y poder entrar al panel son cosas distintas: el panel compara el UID
+> de Authentication, no el permiso de IAM. Agregar un propietario **no** le da acceso al panel,
+> y quitarlo no se lo saca.
 
 ## Probar las reglas por REST
 
