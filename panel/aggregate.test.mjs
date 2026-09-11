@@ -14,14 +14,26 @@ const rooms = {
 const live = liveRooms(rooms, now);
 assert.deepEqual(live.map(r => r.code), ['ABCD', 'EFGH']);
 assert.equal(live[0].online, 1);
-assert.equal(live[0].messages, 2);
-assert.equal(live[0].lastAt, now - 60 * 1000);
+// El `hello` que manda el transporte al entrar no es una jugada: sin esto, una sala recién
+// creada mostraba un mensaje por jugador antes de que nadie hubiera hecho nada.
+assert.equal(live[0].messages, 1, 'se cuenta la jugada, no el hello');
+assert.equal(live[0].lastAt, now - 60 * 1000, 'la hora sí sale de todos los mensajes');
 assert.equal(live[0].active, true);
 assert.equal(live[1].active, false);          // nadie conectado y sin jugadas hace 3 horas
 assert.equal(live[1].lastAt, live[1].createdAt);
 assert.deepEqual(live[0].players.map(p => p.name), ['Javi', 'Cata']);
 assert.equal(connections(live), 1);
 assert.deepEqual(liveRooms(null, now), []);
+
+// Una sala recién creada, con los saludos de los dos jugadores y nada más: cero mensajes
+const reciennacida = liveRooms({ NUEV: {
+  createdAt: now - 30 * 1000, game: 'batalla-naval',
+  players: { A: { name: 'Ana', online: true }, B: { name: 'Beto', online: true } },
+  messages: { m1: { t: 'hello', at: now - 30 * 1000 }, m2: { t: 'hello', at: now - 20 * 1000 } },
+} }, now);
+assert.equal(reciennacida[0].messages, 0, 'sin jugadas todavía');
+assert.equal(reciennacida[0].lastAt, now - 20 * 1000, 'pero entrar cuenta como actividad');
+assert.equal(reciennacida[0].active, true);
 
 // Resumen de días
 const days = {

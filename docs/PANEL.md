@@ -20,7 +20,8 @@ los datos son las reglas de Firebase, que solo dejan leer al UID del dueño.
 | **Jugadores por partida** | Cuántas partidas de 1, 2, … 6 jugadores. | `n` de los contadores sin red y cantidad de nombres de cada sala |
 | **Por día** | Partidas por día, separando dos celulares del resto. | ídem |
 | **De dónde** | Zona horaria del celular (ciudad y región). Cuenta celulares que empezaron o entraron a una partida, no partidas. | `origin/<zona>` |
-| **Idioma del navegador** | `es-CL`, `pt-BR`, … | `lang/<idioma>` |
+| **Idioma del navegador** | `es-CL`, `pt-BR`, … De dónde es la persona. | `lang/<idioma>` |
+| **Idioma elegido para jugar** | Español o Inglés, el del toggle de la app. En cuál prefiere jugar, que no es lo mismo (D-46). | `applang/<idioma>` |
 | **A qué hora se juega** | Hora local de cada celular, 0 a 23. | `hour/<h>` |
 | **Cuota** | Enlace a la consola de uso de Firebase. Los "celulares conectados" son la mejor aproximación a las conexiones simultáneas del plan gratuito. | — |
 
@@ -46,7 +47,8 @@ Sale del celular, por día y por entorno (`assets/js/transport/stats.js`):
   el rival los vea; acá solo los lee el dueño.
 - **Un celular, contra el celular, solo:** un contador por juego, modo y cantidad de
   jugadores. **Ningún nombre.**
-- **Cualquier modo:** contador de zona horaria, idioma del navegador y hora local.
+- **Cualquier modo:** contador de zona horaria, idioma del navegador, idioma elegido en el
+  juego y hora local.
 
 No sale nunca: dirección IP (no hay servidor que la vea y no se consulta a nadie), los
 secretos de las partidas, el chat, quién ganó, ni el nombre de nadie en los modos sin red.

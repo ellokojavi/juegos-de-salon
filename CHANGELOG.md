@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.21.2 — 2026-09-11
+- **Idioma elegido para jugar** (D-46). Las señales de uso ya guardaban el idioma del
+  navegador, que dice de dónde es la persona. Ahora guardan también el del toggle de la app,
+  que dice en cuál prefiere jugar: son preguntas distintas y con una sola no se distingue
+  "nadie juega en inglés" de "no hay nadie de habla inglesa". El panel los muestra en dos
+  secciones vecinas. **Hay que republicar las reglas de Firebase** para que acepten el
+  contador nuevo.
+- **Una sala recién creada dice "Sin msjs"**, no "2 msj". El transporte manda un `hello` por
+  cada jugador que entra, y el panel los contaba como jugadas: una partida donde nadie había
+  hecho nada aparecía con mensajes. Ahora se cuentan las jugadas y el chat, no los saludos, y
+  el plural va bien ("1 msj", "3 msjs"). La hora de última actividad sí sigue mirando todos
+  los mensajes: que alguien acabe de entrar también es actividad.
+- El aviso de salas de otro entorno explica qué son en vez de describir cómo funciona por
+  dentro: "Hay una sala abierta que no es de Publicado, así que no se cuenta acá: UWRD.
+  Suelen ser partidas de prueba hechas en el computador o en el laboratorio, y se borran
+  solas a las seis horas."
+
 ## 0.21.1 — 2026-09-11
 - **El panel ya no cuenta las partidas de prueba como uso** (D-45). El selector de entorno
   separaba las cifras de los últimos días, pero la sección "Ahora" leía `rooms/` directo, que

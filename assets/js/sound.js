@@ -124,7 +124,7 @@ export const SFX = {
 
 /** Botón 🔊/🔇 que alterna el silencio. */
 export function soundToggle() {
-  const btn = el('button', { type: 'button', class: 'sound-toggle', 'aria-pressed': muted ? 'true' : 'false', title: 'Sonido / Sound' }, muted ? '🔇' : '🔊');
+  const btn = el('button', { type: 'button', class: 'sound-toggle', 'aria-pressed': muted ? 'true' : 'false', title: 'Sonido / Sound / Som' }, muted ? '🔇' : '🔊');
   btn.addEventListener('click', () => {
     setMuted(!muted);
     btn.textContent = muted ? '🔇' : '🔊';

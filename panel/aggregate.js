@@ -4,7 +4,7 @@
  *
  * Entra lo que hay en la base:
  *   - `rooms`: las salas vivas, tal como están en `rooms/` (solo el dueño puede listarlas)
- *   - `days`: `stats/<env>/days`, un objeto por día con rooms/local/origin/lang/hour
+ *   - `days`: `stats/<env>/days`, un objeto por día con rooms/local/origin/lang/applang/hour
  * Sale lo que el panel dibuja: totales, por juego, por modo, por jugadores, por día,
  * origen, idioma y hora.
  */
@@ -53,11 +53,15 @@ export function liveRooms(rooms, now = Date.now()) {
     const players = Object.entries(r.players || {}).sort(([a], [b]) => a.localeCompare(b))
       .map(([role, p]) => ({ role, name: p?.name || '?', online: !!p?.online }));
     const msgs = Object.values(r.messages || {});
+    // `hello` lo manda el transporte solo al entrar cada jugador, así que una sala recién
+    // creada ya trae uno por cabeza. Contarlos hacía que una sala sin jugadas dijera "2 msj".
+    const dichos = msgs.filter(x => x?.t !== 'hello');
+    // La hora sí sale de todos: que alguien acabe de entrar también es actividad.
     const lastAt = msgs.reduce((m, x) => (typeof x?.at === 'number' && x.at > m ? x.at : m), r.createdAt);
     const online = players.filter(p => p.online).length;
     out.push({
       code, game: r.game || '?', createdAt: r.createdAt, players, online,
-      messages: msgs.length, lastAt,
+      messages: dichos.length, lastAt,
       active: online > 0 || lastAt > now - ACTIVE_MS,
     });
   }
@@ -77,7 +81,7 @@ const bump = (obj, key) => { if (!obj[key]) obj[key] = { total: 0, online: 0, lo
  * `days` es el objeto tal como viene de `stats/<env>/days`.
  */
 export function summarize(days, { from, to }) {
-  const byGame = {}, byPlayers = {}, origin = {}, lang = {}, hour = Array(24).fill(0);
+  const byGame = {}, byPlayers = {}, origin = {}, lang = {}, applang = {}, hour = Array(24).fill(0);
   const byDay = [];
   let online = 0, local = 0, devices = 0;
 
@@ -104,6 +108,7 @@ export function summarize(days, { from, to }) {
     }
     for (const [k, v] of Object.entries(bucket.origin || {})) { add(origin, k, Number(v) || 0); devices += Number(v) || 0; }
     for (const [k, v] of Object.entries(bucket.lang || {})) add(lang, k, Number(v) || 0);
+    for (const [k, v] of Object.entries(bucket.applang || {})) add(applang, k, Number(v) || 0);
     for (const [h, v] of Object.entries(bucket.hour || {})) { const i = Number(h); if (i >= 0 && i < 24) hour[i] += Number(v) || 0; }
 
     row.total = row.online + row.local;
@@ -111,7 +116,7 @@ export function summarize(days, { from, to }) {
     byDay.push(row);
   }
 
-  return { partidas: online + local, online, local, devices, byGame, byPlayers, byDay, origin, lang, hour };
+  return { partidas: online + local, online, local, devices, byGame, byPlayers, byDay, origin, lang, applang, hour };
 }
 
 /** Pares [clave, valor] de mayor a menor, con tope. */

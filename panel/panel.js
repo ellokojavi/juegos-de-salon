@@ -110,7 +110,14 @@ function listen() {
 /* ------------------------------------------------------------------ */
 /* Dibujo                                                              */
 /* ------------------------------------------------------------------ */
+/** Los mismos nombres que ofrece el selector de entorno, para no mostrar `prod` en una frase. */
+const ENV_LABEL = { prod: 'Publicado', lab: 'Laboratorio', dev: 'Pruebas locales' };
+/** Los dos idiomas que ofrece la app, más lo que llegue de una versión vieja. */
+const APP_LANG = { es: 'Español', en: 'Inglés', desconocido: 'Sin idioma' };
+
 const n = v => Number(v || 0).toLocaleString('es-CL');
+/** Una sala recién creada no tiene jugadas: decir "0 msj" se lee como un error de la página. */
+const msjs = k => (k === 0 ? 'Sin msjs' : k === 1 ? '1 msj' : `${n(k)} msjs`);
 
 function tile(value, label, hot = false) {
   return el('div', { class: `tile${hot ? ' tile--hot' : ''}` }, el('b', {}, n(value)), el('small', {}, label));
@@ -149,15 +156,19 @@ function renderNow() {
   fill(box, live.map(r => el('div', { class: `room${r.active ? ' active' : ''}` },
     el('div', {}, el('div', { class: 'code' }, r.code), el('div', { class: 'meta', style: 'text-align:left' }, gameLabel(r.game))),
     el('div', { class: 'who' }, r.players.map(p => el('span', {}, el('i', { class: p.online ? 'on' : '' }), p.name))),
-    el('div', { class: 'meta' }, `${n(r.messages)} msj`, el('br'), ago(r.lastAt, now), el('br'), `creada ${ago(r.createdAt, now)}`),
+    el('div', { class: 'meta' }, msjs(r.messages), el('br'), ago(r.lastAt, now), el('br'), `creada ${ago(r.createdAt, now)}`),
   )), 'No hay salas vivas en este momento.');
   // Nunca esconder en silencio: una sala puede quedar fuera por ser de otro entorno, pero
   // también porque su registro de señales falló, que es mejor esfuerzo y falla callado (C-14).
   if (ajenas.length) {
+    const cuales = ajenas.map(r => r.code).join(', ');
+    const una = ajenas.length === 1;
+    const cuantas = una
+      ? 'Hay una sala abierta que no es'
+      : `Hay ${n(ajenas.length)} salas abiertas que no son`;
     box.append(el('p', { class: 'empty', style: 'margin-top:8px' },
-      ajenas.length === 1
-        ? `1 sala viva no quedó registrada en ${S.env} y no se muestra acá: ${ajenas[0].code}.`
-        : `${n(ajenas.length)} salas vivas no quedaron registradas en ${S.env} y no se muestran acá: ${ajenas.map(r => r.code).join(', ')}.`));
+      `${cuantas} de ${ENV_LABEL[S.env] || S.env}, así que no ${una ? 'se cuenta' : 'se cuentan'} acá: ${cuales}. `
+      + 'Suelen ser partidas de prueba hechas en el computador o en el laboratorio, y se borran solas a las seis horas.'));
   }
   $('#updated').textContent = `Actualizado ${new Date(now).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' })}`;
 }
@@ -197,6 +208,11 @@ function renderRange() {
   const lang = top(s.lang, 10);
   const maxL = Math.max(0, ...lang.map(([, v]) => v));
   fill($('#lang'), lang.map(([k, v]) => bar(k === 'desconocido' ? 'Sin idioma' : k, [['solo', v]], maxL)));
+  // El del navegador dice de dónde es la persona; este dice en cuál prefiere jugar (D-46)
+  const app = top(s.applang, 10);
+  const maxA = Math.max(0, ...app.map(([, v]) => v));
+  fill($('#applang'), app.map(([k, v]) => bar(APP_LANG[k] || k, [['solo', v]], maxA)),
+    'Nada todavía: se empieza a contar desde esta versión.');
 
   const hours = $('#hours'); hours.innerHTML = '';
   const maxH = Math.max(1, ...s.hour);

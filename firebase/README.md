@@ -67,7 +67,8 @@ stats/prod/days/20342/
   rooms/ABCD: { game, at, v, players: { A: "Javi", B: "Cata" } }   dos celulares
   local/toque-y-fama/cpu/1: 7          partidas sin red: juego / modo / jugadores → cuántas
   origin/America__Santiago: 12         celulares que empezaron o entraron a una partida
-  lang/es-CL: 12
+  lang/es-CL: 12                      idioma del navegador
+  applang/en: 4                       idioma elegido en el juego (D-46)
   hour/21: 5                           hora local del celular
 ```
 

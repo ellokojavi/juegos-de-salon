@@ -176,7 +176,7 @@ export function timeLabel(ms, { decimals = 0 } = {}) {
   return m ? `${m}m ${s.toFixed(decimals)}s` : `${s.toFixed(decimals)}s`;
 }
 
-/** Texto del año para mostrar: los negativos son antes de Cristo. */
+/** Texto del año para mostrar: los negativos son antes de Cristo ("a.C." en español y en portugués). */
 export function yearLabel(year, lang = 'es') {
-  return year < 0 ? `${Math.abs(year)} ${lang === 'es' ? 'a.C.' : 'BC'}` : String(year);
+  return year < 0 ? `${Math.abs(year)} ${lang === 'en' ? 'BC' : 'a.C.'}` : String(year);
 }
