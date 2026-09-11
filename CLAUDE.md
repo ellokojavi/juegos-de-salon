@@ -24,6 +24,8 @@ node toque-y-fama/engine.test.mjs
 node batalla-naval/engine.test.mjs
 node linea-de-tiempo/engine.test.mjs
 node assets/js/transport/cleanup.test.mjs
+node assets/js/transport/errors.test.mjs
+node assets/js/transport/ratelimit.test.mjs
 python3 -m http.server 8765          # los módulos ES necesitan HTTP, no file://
 ```
 

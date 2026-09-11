@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.19.0 — 2026-09-10
+- **Un celular ya no puede abrir salas sin parar.** Hay un tope por dispositivo (20 por hora, 80 por día) que ataja el caso realista: una pestaña en bucle o un error nuestro creando salas sin freno. El tope está muy por encima del uso legítimo más intenso, porque la revancha abre sala nueva y una tarde de partidas cortas son muchas salas seguidas (D-41).
+- El tope se revisa **antes** de tocar la red, así que avisa al instante y no gasta una conexión para después descartarla.
+- Si `localStorage` no está disponible (modo privado), se deja crear igual: dejar a un jugador legítimo sin jugar es peor que dejar pasar a un abusivo.
+
+## 0.18.0 — 2026-09-10
+- **Cuando no se puede abrir una sala, el juego ya no culpa a la internet del jugador.** Antes cualquier falla al crear sala decía "No se pudo conectar. ¿Hay internet?", incluso si el problema era el tope de conexiones del plan gratuito de Firebase. Ahora el mensaje dice lo que realmente se sabe y ofrece la salida que la app ya tenía: jugar en modo de un solo celular (D-40).
+- Crear o entrar a una sala ahora **espera la conexión** (8 s) y tiene tope (12 s). Sin eso, quedarse sin señal se veía como un botón pegado para siempre.
+- El mapa de errores de sala, que estaba copiado igual en los tres juegos, pasa a `assets/js/transport/errors.js`.
+- La consola ya no registra errores previstos; solo los inesperados, que es lo que hace útil el criterio de "consola limpia" (C-12).
+
 ## 0.17.1 — 2026-09-10
 - Fix del barrido de salas: un código apuntado cuya sala ya no existía dejaba ese día —y todos los siguientes— sin barrer para siempre. Las reglas no dejan borrar lo que no está, y eso se estaba tomando como un fracaso en vez de como trabajo hecho. Aparece seguido: basta que un barrido anterior se corte a medias.
 - Fix del apunte en la papelera: cada jugador que entraba a una sala dejaba un `permission_denied` en la consola, porque intentaba apuntar un código que ya estaba. Ahora el apunte va separado del refresco de la marca, y el que crea la sala la apunta con la hora del servidor, así un celular con el reloj corrido no la deja en el balde equivocado.
