@@ -32,6 +32,10 @@ function fakeDb(now) {
     },
     update(path, changes) {
       for (const [k, v] of Object.entries(changes)) {
+        if (api.strictNotes && k.startsWith('rooms/')) {
+          const [n, key] = walk(`${path}/${k}`);
+          if (n && n[key] !== undefined) throw new Error('permission-denied'); // no se pisa un apunte
+        }
         const [node, key] = walk(`${path}/${k}`, true);
         node[key] = v;
       }
@@ -40,7 +44,8 @@ function fakeDb(now) {
     remove(path) {
       const [node, key] = walk(path);
       const val = node ? node[key] : null;
-      if (path.startsWith('rooms/') && val && val.createdAt > now - ROOM_TTL) throw new Error('permission-denied');
+      // Como las reglas de verdad: solo se puede borrar una sala que existe y ya venció
+      if (path.startsWith('rooms/') && (!val || val.createdAt > now - ROOM_TTL)) throw new Error('permission-denied');
       if (path.startsWith('cleanup/days/') && fresh(val)) throw new Error('permission-denied');
       if (node) delete node[key];
       return Promise.resolve();
@@ -76,6 +81,24 @@ assert.deepEqual(r, { days: 1, rooms: 1 });
 assert.deepEqual(db.data.rooms, {}, 'la sala vencida se borró');
 assert.equal(db.data.cleanup.days[dayOf(t0)], undefined, 'el balde se borró');
 assert.equal(db.data.cleanup.sweptDay, dayOf(t0));
+
+// Apuntar dos veces la misma sala no puede romper el apunte (las reglas rechazan pisar el código)
+const dbDoble = fakeDb(t0);
+await noteRoom(dbDoble, 'ABCD', t0);
+dbDoble.strictNotes = true;                 // como las reglas: el código no se puede pisar
+await noteRoom(dbDoble, 'ABCD', t0, { note: false });
+assert.deepEqual(dbDoble.data.cleanup.days[dayOf(t0)], { lastAt: t0, rooms: { ABCD: true } });
+
+// Un código apuntado cuya sala ya no existe no puede atascar el barrido
+const db2 = fakeDb(t0);
+db2.data.rooms = { ABCD: { createdAt: t0, game: 'toque-y-fama' } };
+await noteRoom(db2, 'ABCD', t0);
+await noteRoom(db2, 'GONE', t0);          // apuntada, pero la sala ya no está
+const res = await sweep(fakeMove(db2, mañana), mañana);
+assert.equal(res.rooms, 1, 'borra la sala que sí estaba');
+assert.equal(res.days, 1, 'y el balde se va igual, con fantasma y todo');
+assert.equal(db2.data.cleanup.days[dayOf(t0)], undefined);
+assert.equal(db2.data.cleanup.sweptDay, dayOf(t0), 'la marca avanza');
 
 // Con la marca puesta, un segundo barrido no vuelve a mirar ese día
 const antes = db.reads;

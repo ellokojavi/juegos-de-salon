@@ -38,8 +38,8 @@ const cleanupApi = d => ({
  * Apunta la sala en la papelera y, si a este celular le toca, barre las salas vencidas
  * (canon C-7). No se espera ni se muestra: si algo falla, la partida sigue igual.
  */
-async function cleanup(d, code, createdAt) {
-  try { await noteRoom(cleanupApi(d), code, createdAt); } catch (_) { /* que la apunte el que entre después */ }
+async function cleanup(d, code, createdAt, { note = true } = {}) {
+  try { await noteRoom(cleanupApi(d), code, createdAt, { note }); } catch (_) { /* mejor esfuerzo */ }
   if (!dueForSweep()) return;
   markSwept();
   setTimeout(() => { sweep(cleanupApi(d)).catch(() => { /* nada */ }); }, 10000); // primero que arranque la partida
@@ -71,7 +71,9 @@ export function createFirebaseTransport({ game, maxPlayers = 2 }) {
         }
         await update(roomRef, { createdAt: serverTimestamp(), game, config });
         await this._enter(code, 'A', name);
-        cleanup(d, code, Date.now()); // en segundo plano: la sala ya está lista
+        // La hora la pone el servidor: si el reloj del celular está corrido, el apunte
+        // igual cae en el balde correcto. En segundo plano, la sala ya está lista.
+        get(ref(d, `rooms/${code}/createdAt`)).then(snap => cleanup(d, code, snap.val() || Date.now()));
         return code;
       }
       throw new Error('no-code');
@@ -89,7 +91,9 @@ export function createFirebaseTransport({ game, maxPlayers = 2 }) {
       let role = previousRole;
       if (!role) role = await this._claimRole(code, ROLES.slice(0, maxPlayers).filter(r => !players[r]), name);
       await this._enter(code, role, name);
-      cleanup(d, code, room.createdAt); // el que entra la vuelve a apuntar, ya con la hora del servidor
+      // El que entra no vuelve a apuntar el código (las reglas no dejan pisar el apunte):
+      // solo refresca la marca del balde y, si le toca, barre.
+      cleanup(d, code, room.createdAt, { note: false });
       return { role, config: room.config, players };
     },
 

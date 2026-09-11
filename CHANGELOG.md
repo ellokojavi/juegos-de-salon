@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.17.1 — 2026-09-10
+- Fix del barrido de salas: un código apuntado cuya sala ya no existía dejaba ese día —y todos los siguientes— sin barrer para siempre. Las reglas no dejan borrar lo que no está, y eso se estaba tomando como un fracaso en vez de como trabajo hecho. Aparece seguido: basta que un barrido anterior se corte a medias.
+- Fix del apunte en la papelera: cada jugador que entraba a una sala dejaba un `permission_denied` en la consola, porque intentaba apuntar un código que ya estaba. Ahora el apunte va separado del refresco de la marca, y el que crea la sala la apunta con la hora del servidor, así un celular con el reloj corrido no la deja en el balde equivocado.
+
 ## 0.17.0 — 2026-09-10
 - **Las salas vencidas ahora se borran solas.** Antes una sala quedaba para siempre en Firebase y solo se limpiaba de casualidad, cuando una sala nueva sacaba su mismo código. Ahora cada celular apunta la sala que crea en una papelera por día y, cada 6 horas como mucho, barre en segundo plano lo que ya venció (D-39). Nada de esto se ve mientras se juega.
 - Las reglas de Firebase suman el nodo `cleanup`: un balde de códigos solo se puede abrir 6 horas después de su último apunte, así que la papelera nunca delata una sala en juego.
