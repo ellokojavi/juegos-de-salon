@@ -33,13 +33,25 @@ const S = { user: null, env: 'prod', range: 7, rooms: {}, days: {}, unsubRooms: 
 /* ------------------------------------------------------------------ */
 function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.toggle('active', s.id === id)); }
 
+/**
+ * Las fallas de la primera vez tienen una causa única y se pueden nombrar; lo demás sale
+ * con su código de Firebase, que es lo que permite diagnosticar lo inesperado (canon C-14).
+ * Son ajustes que se hacen una sola vez y no le cambian nada a quienes juegan.
+ */
+const LOGIN_ERRORES = {
+  'auth/operation-not-allowed': 'Falta habilitar el acceso con Google en la consola de Firebase, en Authentication y luego Método de acceso. Se hace una sola vez.',
+  'auth/unauthorized-domain': 'Este dominio no está en la lista de dominios autorizados del proyecto, en Authentication y luego Configuración. Hay que agregarlo una sola vez.',
+  'auth/network-request-failed': 'No se pudo hablar con Firebase. Puede ser tu internet o que el servicio esté con problemas. Intenta nuevamente en unos minutos.',
+};
+
 async function login() {
   const provider = new GoogleAuthProvider();
   try { await signInWithPopup(auth, provider); }
   catch (e) {
     // En algunos celulares la ventana emergente no abre: se va y se vuelve.
     if (/popup/.test(e?.code || '')) { await signInWithRedirect(auth, provider); return; }
-    $('#login-msg').textContent = `No se pudo entrar (${e?.code || e?.message || 'error'}).`;
+    const code = e?.code || '';
+    $('#login-msg').textContent = LOGIN_ERRORES[code] || `No se pudo entrar (${code || e?.message || 'error'}).`;
   }
 }
 
