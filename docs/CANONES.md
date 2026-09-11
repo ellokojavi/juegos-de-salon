@@ -86,6 +86,7 @@ Un modo que todavía no existe se muestra deshabilitado con "Próximamente", nun
 - Interfaz del transporte: `create`, `join`, `send`, `onMessage`, `onPresence`, `leave`.
 - **Campos reservados del transporte:** `from`, `at` (marca de tiempo) e `id`. Un juego que necesite enviar una posición o una cantidad usa otro nombre, o el transporte se lo pisará sin avisar.
 - Salas: código de 4 letras mayúsculas sin I ni O, QR con `?sala=CÓDIGO`, campo `game` para separar juegos, caducidad de 6 horas. Roles de A a F (hasta seis jugadores).
+- **Las salas vencidas se borran solas.** Al crear o entrar a una sala, el celular la apunta en la papelera (`cleanup/days/<día>`) y de vez en cuando barre los días pendientes borrando lo vencido (`assets/js/transport/cleanup.js`, D-38). Nada de esto se le muestra al jugador ni puede voltear una partida: si falla, barre el celular siguiente.
 - Con más de dos jugadores, el reparto de roles es una carrera: se escribe el rol con un identificador de dispositivo y se relee para confirmar quién lo obtuvo. Nunca se asume que el primer rol libre que se leyó sigue libre.
 - Cuando hay más de dos jugadores, uno es anfitrión (rol A) y abre la partida cuando están todos.
 - Quien abre un enlace de sala (`?sala=CÓDIGO`) llega a una pantalla que **solo** deja unirse a esa sala: título propio de invitación, nada de botón para crear otra, el código va fijo y de solo lectura, y los ajustes de la partida no se muestran porque los fija el anfitrión. Ofrecer las dos cosas confunde a quien fue invitado.
@@ -97,6 +98,8 @@ Un modo que todavía no existe se muestra deshabilitado con "Próximamente", nun
 
 - Objetivos táctiles de 44 px como mínimo; los controles pequeños llevan área táctil ampliada invisible.
 - Las acciones irreversibles se confirman: seleccionar y luego confirmar (por ejemplo elegir casilla y tocar "¡Fuego!").
+- **Nada se preselecciona.** La app no elige por el jugador: sin selección explícita, el botón de confirmar va deshabilitado. En una lista que se desplaza, un toque puede irse en scroll y no llegar nunca; si había algo preseleccionado, el jugador termina confirmando lo que no eligió (D-38).
+- El botón que confirma **dice sobre qué actúa** ("Colocar aquí · 🔍 Se funda Google"), no solo la acción.
 - Nada importante bajo la línea de flotación en un celular de 812 px: los botones de la pantalla final deben verse sin desplazar.
 - Si una lista puede crecer sin límite, el botón de confirmar va flotando (`position: sticky; bottom: 0`) con un degradado detrás, nunca al final del contenido.
 - Los bloques largos (repaso de la partida, reglas) van colapsados por defecto.

@@ -102,6 +102,9 @@
   backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
 }
 .place-row:empty { display: none; }
+/* El botón dice qué carta va a colocar: es lo último que se mira antes de confirmar (D-38) */
+.place-row .btn { flex-direction: column; gap: 2px; padding: 12px 20px; }
+.place-row .btn small { font: 800 0.8rem var(--font-body); text-transform: none; letter-spacing: 0; opacity: 0.9; line-height: 1.2; max-width: 100%; }
 
 /* Overlay de resultado de jugada */
 .verdict { display: grid; gap: 6px; justify-items: center; }
