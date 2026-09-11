@@ -1,3 +1,7 @@
 .DS_Store
 node_modules/
 *.log
+
+# Arte original de las insignias (JPEG de 2048 px, ~15 MB).
+# Se queda en el disco, no en el repo: lo publicado son los WebP de lab/img/.
+arte-original/

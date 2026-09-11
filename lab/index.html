@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#150726">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="robots" content="noindex">
+  <title>Laboratorio · Juegos de Salón 🎲</title>
+  <link rel="icon" href="img/app-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="img/app-180.png">
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="lab.css">
+  <style>
+    .hero { text-align: center; padding: 14px 0 18px; }
+    .hero .sub { color: var(--muted); font-weight: 700; margin-top: 10px; }
+    .games { display: grid; gap: 14px; margin-top: 10px; }
+    .game-card {
+      display: grid; grid-template-columns: 64px 1fr auto; gap: 14px; align-items: center;
+      text-decoration: none; color: var(--ink);
+      background: var(--glass); border: 1px solid var(--glass-border); border-radius: var(--radius);
+      padding: 16px; transition: transform 0.12s, border-color 0.2s;
+      animation: slideUp 0.4s ease-out both;
+    }
+    .game-card:active { transform: scale(0.98); }
+    .game-card h2 { font-family: var(--font-display); font-size: 1.7rem; margin: 0; letter-spacing: 0.04em; text-transform: uppercase; }
+    .game-card .tag { color: var(--muted); font-size: 0.95rem; margin: 2px 0 6px; }
+    .game-card .meta { display: flex; flex-wrap: wrap; gap: 6px; }
+    .game-card .meta span { font-size: 0.78rem; font-weight: 800; padding: 3px 9px; border-radius: 999px; background: rgba(0,0,0,0.25); }
+    .game-card .go { font-family: var(--font-display); font-size: 2rem; color: var(--yellow); }
+    /* En el laboratorio solo Línea de Tiempo está rehecha: el resto lleva al sitio publicado */
+    .game-card .go.out { font-size: 1.3rem; color: var(--muted); font-family: var(--font-body); font-weight: 800; }
+    footer { margin-top: auto; padding-top: 28px; text-align: center; color: var(--muted); font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <div class="lab-bar">
+      <span>🧪 Laboratorio</span>
+      <a href="../">ir al sitio real</a>
+    </div>
+    <div class="topbar" style="justify-content:flex-end"><div class="tools"><div id="lang-slot"></div><span id="sound-slot"></span></div></div>
+    <header class="hero">
+      <img class="tile-app" id="hero-icon" src="img/app.webp" alt="" width="88" height="88">
+      <h1 class="display display--xl rainbow" data-i18n="appTitle">Juegos de Salón</h1>
+      <p class="sub" data-i18n="appSub">Elige un juego, juega solo o con amigos y deja que el celular guíe la partida.</p>
+    </header>
+
+    <section class="games" id="games" aria-label="Lista de juegos"></section>
+
+    <footer>
+      <p class="footer-msg" id="footer-msg" aria-live="polite"></p>
+      <p class="muted">laboratorio · <a href="../" style="color:inherit">volver a la app</a></p>
+    </footer>
+  </main>
+
+  <script type="module">
+    import { GAMES } from '../assets/js/games.js';
+    import { sparkles, el } from '../assets/js/ui.js';
+    import { getLang, langToggle, applyStatic, pickLang, COMMON } from '../assets/js/i18n.js';
+    import { FRASES } from '../assets/js/frases.js';
+    import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
+
+    // Qué juegos ya están rehechos en el laboratorio. El resto se muestra igual,
+    // con su insignia nueva, pero el enlace va al juego publicado.
+    const EN_EL_LAB = { 'linea-de-tiempo': 'linea-de-tiempo/' };
+
+    sparkles();
+    initSound();
+    document.getElementById('sound-slot').append(soundToggle());
+    document.addEventListener('click', e => { if (e.target.closest('.game-card, .lang-toggle button')) SFX.tap(); });
+    const lang = getLang();
+    document.documentElement.lang = lang;
+    const T = COMMON[lang];
+    applyStatic(T);
+    document.getElementById('lang-slot').append(langToggle());
+
+    // Si una insignia no carga, vuelve el emoji: una imagen rota no puede
+    // dejar la tarjeta sin identidad (C-14).
+    function insignia(juego) {
+      const img = el('img', { class: 'tile', src: `img/${juego.id}.webp`, alt: '', width: 64, height: 64 });
+      img.addEventListener('error', () => {
+        img.replaceWith(el('div', { class: 'tile-fallback' }, juego.emoji));
+      }, { once: true });
+      return img;
+    }
+    document.getElementById('hero-icon').addEventListener('error', e => {
+      e.target.replaceWith(el('div', { class: 'tile-fallback', style: 'margin:0 auto 10px' }, '🎲'));
+    }, { once: true });
+
+    // 1) Lo importante primero: la lista de juegos (C-11).
+    const list = document.getElementById('games');
+    GAMES.forEach((g, i) => {
+      const dentro = EN_EL_LAB[g.id];
+      const card = el('a', { class: 'game-card', href: dentro || `../${g.path}`, style: `animation-delay:${i * 80}ms` },
+        insignia(g),
+        el('div', {},
+          el('h2', {}, pickLang(g.name, lang)),
+          el('div', { class: 'tag' }, pickLang(g.tagline, lang)),
+          el('div', { class: 'meta' },
+            g.players && el('span', {}, `👥 ${g.players} ${T.players}`),
+            g.duration && el('span', {}, `⏱ ${g.duration} ${T.minutes}`),
+          ),
+        ),
+        dentro ? el('div', { class: 'go' }, '›') : el('div', { class: 'go out', title: 'este juego todavía no está en el laboratorio' }, '↗'),
+      );
+      list.append(card);
+    });
+
+    // 2) Decoraciones: si algo falla aquí, el menú sigue funcionando.
+    try {
+      const msgs = (FRASES[lang] || [T.footer]).slice().sort(() => Math.random() - 0.5);
+      const msgEl = document.getElementById('footer-msg');
+      msgEl.textContent = msgs[0];
+    } catch (e) { console.warn('decoraciones del menú:', e); }
+  </script>
+</body>
+</html>
