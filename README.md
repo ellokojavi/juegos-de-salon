@@ -152,6 +152,23 @@ node batalla-naval/engine.test.mjs
 node linea-de-tiempo/engine.test.mjs
 ```
 
+## Laboratorio: probar interfaz sin tocar la app
+
+`lab/` es un ambiente de pruebas con **URL propia** que no modifica ningún archivo de la app publicada. Sirve para mirar un cambio de aspecto en un celular de verdad —y pasarle el enlace a alguien— antes de decidir si va.
+
+- Local: http://localhost:8080/lab/
+- Publicado: https://ellokojavi.github.io/juegos-de-salon/lab/
+
+Las páginas del laboratorio **espejan** el menú y los juegos que haga falta, pero importan los módulos reales (`game.js`, `rules.js`, `engine.js`, `assets/js/*`): no hay lógica duplicada y un arreglo en un juego se ve ahí solo. Lo único propio es la presentación.
+
+El experimento se escribe en **`lab/lab.css`**, que se carga *después* de `base.css` y solo agrega. La prueba de que está bien aislado: borrar ese archivo tiene que dejar las páginas funcionando con el aspecto actual de la app. En reposo el archivo está vacío y el laboratorio se ve idéntico al sitio.
+
+Un cambio que solo toca `lab/` **no corre `set-version.py`** ni sube el número de versión: no cambió ningún archivo versionado. A cambio, el navegador cachea `lab.css` y sus imágenes, así que al iterar hay que recargar sin caché.
+
+Ojo: comparte origen con la app, así que comparte `localStorage` (memoria de partida, idioma, nombre) y las salas de Firebase.
+
+Detalle completo —cómo empezar un experimento, cómo espejar otro juego y qué hacer cuando uno se aprueba— en **[lab/README.md](lab/README.md)**, y el porqué en [D-42](docs/DECISIONES.md).
+
 ## Publicar una versión
 
 Antes de hacer commit de una versión nueva, estampa la versión en el sitio (import maps y estilos con `?v=`), así el navegador no mezcla archivos viejos y nuevos:
@@ -178,6 +195,7 @@ assets/js/handoff.js        Transiciones compartidas: pásale el celular, pantal
 assets/js/chat.js           Chat de sala compartido (modos de varios celulares)
 assets/js/session.js        Memoria de partida compartida (retomar en cualquier modo)
 assets/js/transport/        Transportes compartidos: local (mismo celular) y firebase (sala)
+lab/                        Ambiente de pruebas de interfaz, con URL propia (ver lab/README.md)
 firebase/                   Reglas de seguridad de Realtime Database y notas
 tools/set-version.py        Estampa la versión (import maps + estilos) para evitar caché mezclada
 docs/                       Requerimientos, decisiones, especificaciones y capturas
@@ -189,6 +207,7 @@ docs/                       Requerimientos, decisiones, especificaciones y captu
 - [Requerimientos](docs/REQUERIMIENTOS.md)
 - [Decisiones de diseño y arquitectura](docs/DECISIONES.md)
 - [Cómo agregar un juego nuevo](docs/AGREGAR-JUEGO.md)
+- [Laboratorio: probar interfaz sin tocar la app](lab/README.md)
 - [Especificación: Cuarto Rey](docs/juegos/cuarto-rey.md)
 - [Especificación: Toque y Fama](docs/juegos/toque-y-fama.md)
 - [Factibilidad: Toque y Fama con dos celulares](docs/juegos/toque-y-fama-factibilidad.md)

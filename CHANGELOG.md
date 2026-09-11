@@ -3,24 +3,27 @@
 ## Laboratorio — 2026-09-11
 
 No es una versión de la app: **ningún archivo de los juegos cambió.** Se publica una
-carpeta nueva, `/lab/`, para probar cambios de interfaz antes de llevarlos a la app.
+carpeta nueva, `/lab/`, como ambiente de pruebas de interfaz con URL propia (D-42).
 
-- Primer experimento: **la app impresa en serigrafía**. No son solo iconos nuevos.
-  El fondo pasa a ser papel plano con el grano real recortado del arte; los degradados,
-  el vidrio esmerilado y los resplandores se van; las sombras quedan duras y corridas,
-  como una plancha mal registrada; y el movimiento avanza a saltos en vez de interpolado.
-  Las insignias reemplazan al emoji en la tarjeta del menú y en el encabezado de la intro,
-  pero no en el chip de la barra: a 22 px una insignia impresa es una mancha de color.
-  Cubre la vista principal y Línea de Tiempo; los otros tres juegos se muestran con su
-  insignia pero el enlace lleva al juego publicado.
-- Las páginas del laboratorio **importan los módulos reales** de cada juego, así que no
-  hay lógica duplicada y un arreglo en el juego se ve ahí solo.
-- Si una insignia no carga, vuelve el emoji del juego (C-14). Probado forzando la falla.
-- **Excepción a C-11, anotada y no ignorada en silencio:** no se corrió `set-version.py`
-  ni se subió el número de versión. Ese canon existe para que el navegador no mezcle
-  archivos viejos y nuevos, y acá no cambió ningún archivo versionado: estampar `?v=`
-  nuevo obligaría a todos los celulares a rebajar el JS y el CSS completos sin que haya
-  nada nuevo que bajar. El laboratorio, a propósito, se sirve sin `?v=`.
+- Sirve para mirar un cambio de aspecto en un celular de verdad, y pasarle el enlace a
+  alguien, antes de decidir si va. Las páginas del laboratorio **espejan** el menú y los
+  juegos, pero **importan los módulos reales**: no hay lógica duplicada y un arreglo en
+  un juego se ve ahí solo.
+- El experimento se escribe en `lab/lab.css`, que se carga después de `base.css` y solo
+  agrega. Borrar ese archivo tiene que dejar las páginas funcionando con el aspecto
+  actual: esa es la prueba de que el experimento está aislado.
+- Documentado en `lab/README.md`, en el README principal y en `CLAUDE.md`.
+- **Excepción a C-11, anotada y no ignorada en silencio:** un cambio que solo toca
+  `lab/` no corre `set-version.py` ni sube el número de versión. Ese canon existe para
+  que el navegador no mezcle archivos viejos y nuevos, y acá no cambió ningún archivo
+  versionado: estampar `?v=` nuevo obligaría a todos los celulares a rebajar el JS y el
+  CSS completos sin que haya nada nuevo que bajar.
+
+**Primer experimento, descartado: insignias serigrafiadas.** Ilustraciones impresas por
+juego en reemplazo del emoji, y después toda la interfaz llevada al mismo lenguaje: papel
+con grano, tinta plana, sombras duras corridas y movimiento a saltos. No convenció y se
+sacó. Queda en los commits `8efd11c` y `d5071c9` por si alguna vez se quiere rescatar.
+El laboratorio vuelve a verse idéntico a la app, que es su estado correcto en reposo.
 
 ## 0.19.0 — 2026-09-10
 - **Un celular ya no puede abrir salas sin parar.** Hay un tope por dispositivo (20 por hora, 80 por día) que ataja el caso realista: una pestaña en bucle o un error nuestro creando salas sin freno. El tope está muy por encima del uso legítimo más intenso, porque la revancha abre sala nueva y una tarde de partidas cortas son muchas salas seguidas (D-41).
