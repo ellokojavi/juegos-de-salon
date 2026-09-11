@@ -31,6 +31,31 @@
         },
         "$other": { ".validate": false }
       }
+    },
+    "cleanup": {
+      "sweptDay": {
+        ".read": true,
+        ".write": "newData.isNumber() && newData.val() * 86400000 <= now && (!data.exists() || newData.val() > data.val())"
+      },
+      "days": {
+        "$day": {
+          ".read": "!data.exists() || data.child('lastAt').val() < now - 21600000",
+          ".write": "data.exists() && !newData.exists() && data.child('lastAt').val() < now - 21600000",
+          ".validate": "newData.hasChildren(['lastAt'])",
+          "lastAt": {
+            ".write": "newData.exists()",
+            ".validate": "newData.isNumber() && newData.val() <= now + 60000 && newData.val() > now - 60000"
+          },
+          "rooms": {
+            "$code": {
+              ".write": "$code.matches(/^[A-Z]{4}$/) && !data.exists()",
+              ".validate": "newData.isBoolean() && newData.val() == true"
+            }
+          },
+          "$other": { ".validate": false }
+        }
+      },
+      "$other": { ".validate": false }
     }
   }
 }

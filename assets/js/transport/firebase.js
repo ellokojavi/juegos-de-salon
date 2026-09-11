@@ -9,8 +9,7 @@ import {
   getDatabase, ref, get, set, update, push, onChildAdded, onValue, onDisconnect, serverTimestamp,
 } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js';
 import { firebaseConfig } from '../firebase-config.js';
-
-const ROOM_TTL = 6 * 60 * 60 * 1000;
+import { ROOM_TTL, dueForSweep, markSwept, noteRoom, sweep } from './cleanup.js';
 
 /** Código de sala: 4 letras mayúsculas sin las ambiguas (I, O). */
 export function randomRoomCode() {
@@ -26,6 +25,25 @@ function getDb() {
 }
 
 const ROLES = ['A', 'B', 'C', 'D', 'E', 'F'];
+
+/** Acceso a la base que usa la papelera (cleanup.js). */
+const cleanupApi = d => ({
+  read: async path => (await get(ref(d, path))).val(),
+  update: (path, changes) => update(ref(d, path), changes),
+  remove: path => set(ref(d, path), null),
+  stamp: () => serverTimestamp(),
+});
+
+/**
+ * Apunta la sala en la papelera y, si a este celular le toca, barre las salas vencidas
+ * (canon C-7). No se espera ni se muestra: si algo falla, la partida sigue igual.
+ */
+async function cleanup(d, code, createdAt) {
+  try { await noteRoom(cleanupApi(d), code, createdAt); } catch (_) { /* que la apunte el que entre después */ }
+  if (!dueForSweep()) return;
+  markSwept();
+  setTimeout(() => { sweep(cleanupApi(d)).catch(() => { /* nada */ }); }, 10000); // primero que arranque la partida
+}
 
 export function createFirebaseTransport({ game, maxPlayers = 2 }) {
   // Identificador de este dispositivo: sirve para resolver quién se quedó con un rol
@@ -53,6 +71,7 @@ export function createFirebaseTransport({ game, maxPlayers = 2 }) {
         }
         await update(roomRef, { createdAt: serverTimestamp(), game, config });
         await this._enter(code, 'A', name);
+        cleanup(d, code, Date.now()); // en segundo plano: la sala ya está lista
         return code;
       }
       throw new Error('no-code');
@@ -70,6 +89,7 @@ export function createFirebaseTransport({ game, maxPlayers = 2 }) {
       let role = previousRole;
       if (!role) role = await this._claimRole(code, ROLES.slice(0, maxPlayers).filter(r => !players[r]), name);
       await this._enter(code, role, name);
+      cleanup(d, code, room.createdAt); // el que entra la vuelve a apuntar, ya con la hora del servidor
       return { role, config: room.config, players };
     },
 
