@@ -9,6 +9,7 @@
  *                                                             tiene esos nombres, y al panel
  *                                                             solo lo lee el dueño
  *   local/<juego>/<modo>/<n>: cuántas partidas sin red, por modo y jugadores
+ *   applang/<idioma>: en qué idioma se eligió jugar (distinto del idioma del navegador)
  *   origin/<zona horaria>: celulares que empezaron o entraron a una partida
  *   lang/<idioma del navegador>: ídem
  *   hour/<hora local 0–23>: ídem
@@ -24,6 +25,7 @@
  */
 import { firebaseConfig } from '../firebase-config.js';
 import { dayOf } from './cleanup.js';
+import { getLang } from '../i18n.js';
 
 export const ENVS = ['prod', 'lab', 'dev'];
 export const MODES = ['local', 'cpu', 'solo'];
@@ -61,8 +63,14 @@ export function langKey(lang) {
   return k || 'desconocido';
 }
 
-/** Lo que se sabe del celular sin preguntarle nada a nadie. */
-export function fingerprint({ loc = globalThis.location, nav = globalThis.navigator, doc = globalThis.document, now = new Date() } = {}) {
+/**
+ * Lo que se sabe del celular sin preguntarle nada a nadie.
+ *
+ * Van dos idiomas y no son el mismo: `lang` es el del navegador, que dice de dónde es la
+ * persona, y `app` es el que eligió en el juego, que dice en cuál prefiere jugar. Un celular
+ * en `es-CL` jugando en inglés es información que solo se ve teniendo los dos.
+ */
+export function fingerprint({ loc = globalThis.location, nav = globalThis.navigator, doc = globalThis.document, now = new Date(), app = getLang() } = {}) {
   let tz = '';
   try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch (_) { /* nada */ }
   return {
@@ -70,13 +78,14 @@ export function fingerprint({ loc = globalThis.location, nav = globalThis.naviga
     v: versionOf(doc?.getElementById?.('importmap')?.textContent),
     tz: tzKey(tz),
     lang: langKey(nav?.language),
+    app: langKey(app),
     hour: now.getHours(),
   };
 }
 
 /** Cambios de los contadores que suben con cada celular que empieza o entra a una partida. */
 export function startChanges(fp, { game, mode, players } = {}) {
-  const changes = { [`origin/${fp.tz}`]: INC, [`lang/${fp.lang}`]: INC, [`hour/${fp.hour}`]: INC };
+  const changes = { [`origin/${fp.tz}`]: INC, [`lang/${fp.lang}`]: INC, [`applang/${fp.app}`]: INC, [`hour/${fp.hour}`]: INC };
   if (MODES.includes(mode)) {
     const n = Math.min(6, Math.max(1, Number(players) || 1));
     changes[`local/${game}/${mode}/${n}`] = INC;
