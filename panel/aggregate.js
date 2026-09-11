@@ -15,6 +15,36 @@ export const ACTIVE_MS = 10 * 60 * 1000;      // una sala está "en juego" si hu
 export const MODES = ['online', 'local', 'cpu', 'solo'];
 export const dayOf = ts => Math.floor(ts / DAY);
 
+/**
+ * Códigos de sala que el entorno cargado registró hoy y ayer. Una sala vive seis horas como
+ * mucho, así que dos días alcanzan de sobra y evitan que un código reciclado de hace semanas
+ * —son cuatro letras, se repiten— haga pasar por buena una sala que no lo es.
+ */
+export function codesOfDays(days, now = Date.now()) {
+  const hoy = dayOf(now);
+  const set = new Set();
+  for (const d of [hoy, hoy - 1]) {
+    for (const code of Object.keys(days?.[String(d)]?.rooms || {})) set.add(code);
+  }
+  return set;
+}
+
+/**
+ * Parte las salas vivas entre las del entorno mirado y las demás (D-45).
+ * `rooms/` es el nodo real del transporte y no está separado por entorno: una partida de
+ * prueba en localhost es una sala igual de real que la de un jugador. El entorno se sabe por
+ * fuera, en `stats/<env>/days/<día>/rooms/<CÓDIGO>`, así que se cruza por código.
+ *
+ * Sin ese registro cargado todavía no se filtra nada: preferimos mostrar de más un instante
+ * antes que dejar el panel en blanco mientras llega el segundo snapshot.
+ */
+export function splitByEnv(live, codes, { loaded = true } = {}) {
+  if (!loaded) return { propias: live, ajenas: [] };
+  const propias = [], ajenas = [];
+  for (const r of live) (codes.has(r.code) ? propias : ajenas).push(r);
+  return { propias, ajenas };
+}
+
 /** Las salas vivas, ordenadas de la más reciente actividad a la más vieja. */
 export function liveRooms(rooms, now = Date.now()) {
   const out = [];

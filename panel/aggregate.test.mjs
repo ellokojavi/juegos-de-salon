@@ -1,6 +1,6 @@
 // Ejecutar: node panel/aggregate.test.mjs
 import assert from 'node:assert/strict';
-import { DAY, ROOM_TTL, liveRooms, connections, summarize, top, tzLabel, ago, dayLabel } from './aggregate.js';
+import { DAY, ROOM_TTL, liveRooms, connections, summarize, top, tzLabel, ago, dayLabel, codesOfDays, splitByEnv } from './aggregate.js';
 
 const now = 20342 * DAY + 15 * 60 * 60 * 1000; // día 20342, 15:00 UTC
 
@@ -69,5 +69,34 @@ assert.equal(ago(now - 10 * 1000, now), 'recién');
 assert.equal(ago(now - 3 * 60 * 1000, now), 'hace 3 min');
 assert.equal(ago(now - 2 * 60 * 60 * 1000, now), 'hace 2 h');
 assert.ok(/\d/.test(dayLabel(20342)));
+
+// --- Separar las salas del entorno de las de prueba (D-45) ---
+// `rooms/` es uno solo para todos los entornos; el entorno se sabe por los códigos que
+// `stats/<env>` registró. Se miran hoy y ayer, no más: los códigos de 4 letras se reciclan.
+const hoy = 20342;
+const dias = {
+  [hoy]: { rooms: { ABCD: { game: 'toque-y-fama' } } },
+  [hoy - 1]: { rooms: { EFGH: { game: 'linea-de-tiempo' } } },
+  [hoy - 20]: { rooms: { ZZZZ: { game: 'batalla-naval' } } },
+};
+const codigos = codesOfDays(dias, now);
+assert.deepEqual([...codigos].sort(), ['ABCD', 'EFGH'], 'solo hoy y ayer');
+assert.equal(codigos.has('ZZZZ'), false, 'un código de hace 20 días no cuenta aunque se repita');
+assert.deepEqual([...codesOfDays({}, now)], [], 'sin días cargados, ningún código');
+
+const vivas = [{ code: 'ABCD' }, { code: 'EFGH' }, { code: 'TEST' }];
+const { propias, ajenas } = splitByEnv(vivas, codigos);
+assert.deepEqual(propias.map(r => r.code), ['ABCD', 'EFGH']);
+assert.deepEqual(ajenas.map(r => r.code), ['TEST'], 'la que nadie registró en este entorno queda aparte');
+
+// Mientras el snapshot de días no llegue no se filtra: si no, el panel parpadearía vacío
+const sinCargar = splitByEnv(vivas, new Set(), { loaded: false });
+assert.deepEqual(sinCargar.propias.map(r => r.code), ['ABCD', 'EFGH', 'TEST']);
+assert.deepEqual(sinCargar.ajenas, []);
+
+// Ya cargado y sin ningún código, todas quedan aparte: se ocultan, pero se nombran en pantalla
+const ninguna = splitByEnv(vivas, new Set(), { loaded: true });
+assert.deepEqual(ninguna.propias, []);
+assert.equal(ninguna.ajenas.length, 3);
 
 console.log('aggregate.test.mjs: todo en verde');

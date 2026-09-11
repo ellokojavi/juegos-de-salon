@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.21.1 — 2026-09-11
+- **El panel ya no cuenta las partidas de prueba como uso** (D-45). El selector de entorno
+  separaba las cifras de los últimos días, pero la sección "Ahora" leía `rooms/` directo, que
+  es el nodo real del transporte y es uno solo para todos los entornos: al estrenar el panel
+  aparecieron ahí las salas de las pruebas de punta a punta, con sus jugadores de mentira,
+  indistinguibles de gente jugando. Ahora cada sala viva se cruza por código contra lo que
+  `stats/<entorno>` registró, sin pedirle nada más a la base.
+- Las salas que quedan fuera **se nombran debajo de la lista** en vez de desaparecer. El
+  registro de señales es mejor esfuerzo y falla callado: si una sala real no alcanzó a
+  registrarse, filtrar sin avisar la borraría del panel y nadie podría notarlo.
+- El sitio vive en **https://juegosdesalon.cl/**, no en `ellokojavi.github.io`, que redirige
+  con un 301. Todo el repo lo tenía mal, y no era cosmético: el paso de configurar
+  Authentication mandaba a autorizar el dominio equivocado, con lo que el panel habría
+  fallado en producción funcionando perfecto en `localhost`.
+- La pantalla de entrada del panel nombra las fallas de la primera vez —falta habilitar
+  Google, falta el dominio— en vez de mostrar el código crudo de Firebase, y pregunta siempre
+  con qué cuenta se entra: sin eso Google usa la sesión abierta y entrar con la cuenta
+  equivocada no se nota, porque muestra un UID igual de válido.
+
 ## 0.21.0 — 2026-09-11
 - **Línea de Tiempo: todas las cartas a la vista** (D-43, LT-15). La sección "Cartas" de la
   configuración pasa de dos opciones a tres, y la nueva queda marcada por defecto: se
