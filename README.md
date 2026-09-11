@@ -163,6 +163,16 @@ Las páginas del laboratorio **espejan** el menú y los juegos que haga falta, p
 
 El experimento se escribe en **`lab/lab.css`**, que se carga *después* de `base.css` y solo agrega. La prueba de que está bien aislado: borrar ese archivo tiene que dejar las páginas funcionando con el aspecto actual de la app. En reposo el archivo está vacío y el laboratorio se ve idéntico al sitio.
 
+```bash
+python3 tools/lab.py espejar batalla-naval   # sumar un juego al laboratorio
+python3 tools/lab.py revisar                 # ¿los espejos están al día?
+python3 tools/lab.py promover                # llevar el experimento a producción
+```
+
+Cada bloque de `lab.css` declara con `/* @destino <ruta> */` adónde va el día que se apruebe, y `promover` lo mueve solo: los estilos a su archivo, las imágenes a `assets/img/` con la versión en el nombre y las rutas de `url()` reescritas según dónde caiga cada bloque. Lo que es criterio —fundir reglas duplicadas, repasar los cuatro juegos— lo deja anotado en una lista al terminar.
+
+`revisar` ataja lo más peligroso del laboratorio: que el espejo de un juego quede viejo respecto del juego real y uno crea que está probando algo que ya no existe. Conviene correrlo antes de publicar, junto con los tests de motor.
+
 Un cambio que solo toca `lab/` **no corre `set-version.py`** ni sube el número de versión: no cambió ningún archivo versionado. A cambio, GitHub Pages cachea `lab.css` diez minutos, así que al cambiarlo hay que subirle la marca de revisión (`lab.css?r=N`) en las dos páginas que lo cargan.
 
 Ojo: comparte origen con la app, así que comparte `localStorage` (memoria de partida, idioma, nombre) y las salas de Firebase.
@@ -198,6 +208,7 @@ assets/js/transport/        Transportes compartidos: local (mismo celular) y fir
 lab/                        Ambiente de pruebas de interfaz, con URL propia (ver lab/README.md)
 firebase/                   Reglas de seguridad de Realtime Database y notas
 tools/set-version.py        Estampa la versión (import maps + estilos) para evitar caché mezclada
+tools/lab.py                Laboratorio: espejar juegos, revisar que esté sano y promover un experimento
 docs/                       Requerimientos, decisiones, especificaciones y capturas
 ```
 
