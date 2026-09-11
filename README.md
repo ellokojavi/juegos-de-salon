@@ -163,7 +163,7 @@ Las páginas del laboratorio **espejan** el menú y los juegos que haga falta, p
 
 El experimento se escribe en **`lab/lab.css`**, que se carga *después* de `base.css` y solo agrega. La prueba de que está bien aislado: borrar ese archivo tiene que dejar las páginas funcionando con el aspecto actual de la app. En reposo el archivo está vacío y el laboratorio se ve idéntico al sitio.
 
-Un cambio que solo toca `lab/` **no corre `set-version.py`** ni sube el número de versión: no cambió ningún archivo versionado. A cambio, el navegador cachea `lab.css` y sus imágenes, así que al iterar hay que recargar sin caché.
+Un cambio que solo toca `lab/` **no corre `set-version.py`** ni sube el número de versión: no cambió ningún archivo versionado. A cambio, GitHub Pages cachea `lab.css` diez minutos, así que al cambiarlo hay que subirle la marca de revisión (`lab.css?r=N`) en las dos páginas que lo cargan.
 
 Ojo: comparte origen con la app, así que comparte `localStorage` (memoria de partida, idioma, nombre) y las salas de Firebase.
 
