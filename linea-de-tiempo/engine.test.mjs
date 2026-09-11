@@ -189,6 +189,58 @@ assert.deepEqual(finPozo.winner, ['B'], 'empatados en cartas colocadas, gana el 
 const finSolo = buildState({ ...meta1, moves: [jA, { from: 'B', card: cartaB, at: correctSlot(trasA.line, cartaB, trasA.byId) === 0 ? trasA.line.length : 0, ms: 10 }] });
 assert.deepEqual(finSolo.winner, ['A']);
 
+// --- Todas a la vista: la mesa parte completa y solo se achica (D-43) ---
+const META = 3;
+const mesa = { cards, seed: 55, players: ['A', 'B'], handSize: META, shared: true, visible: 2 * META, refill: false };
+const t0 = buildState(mesa);
+assert.equal(t0.table.length, 2 * META, 'se despliega el doble de la meta desde el primer turno');
+assert.equal(t0.target, META);
+assert.deepEqual(t0.hands.A, t0.table, 'todos eligen de la misma mesa');
+
+const primera = t0.table[0];
+const t1 = buildState({ ...mesa, moves: [{ from: 'A', card: primera, at: correctSlot(t0.line, primera, t0.byId), ms: 100 }] });
+assert.equal(t1.table.length, 2 * META - 1, 'acertar achica la mesa: no entra ninguna carta nueva');
+assert.equal(t1.table.includes(primera), false);
+
+const malAt2 = correctSlot(t0.line, primera, t0.byId) === 0 ? t0.line.length : 0;
+const t1b = buildState({ ...mesa, moves: [{ from: 'A', card: primera, at: malAt2, ms: 100 }] });
+assert.equal(t1b.table.length, 2 * META - 1, 'fallar también achica la mesa');
+assert.equal(t1b.scores.A, 0);
+assert.deepEqual(t1b.table, t0.table.slice(1), 'el orden de las que quedan no cambia');
+
+// El mismo reparto con reposición mantiene el tamaño: es la única diferencia entre los dos modos
+const conReposicion = buildState({ ...mesa, refill: true, moves: [{ from: 'A', card: primera, at: correctSlot(t0.line, primera, t0.byId), ms: 100 }] });
+assert.equal(conReposicion.table.length, 2 * META);
+
+// Vaciar la mesa termina la partida aunque nadie haya llegado a la meta: gana quien colocó más
+const fallar = (st, quien) => {
+  const c = st.table[0];
+  const bien = correctSlot(st.line, c, st.byId);
+  return { from: quien, card: c, at: bien === 0 ? st.line.length : 0, ms: 100 };
+};
+const jugadas = [];
+let vaciando = t0;
+while (vaciando.table.length) {
+  jugadas.push(fallar(vaciando, vaciando.current));
+  vaciando = buildState({ ...mesa, moves: jugadas });
+}
+assert.equal(jugadas.length, 2 * META, 'la mesa se agota en tantas jugadas como cartas tenía');
+assert.equal(vaciando.done, true, 'sin cartas en la mesa la partida termina');
+assert.deepEqual(vaciando.scores, { A: 0, B: 0 });
+assert.equal(vaciando.winner.length, 2, 'nadie colocó nada: empatan los dos');
+
+// Partida jugada bien: los dos llegan a la meta con las 2 × META cartas y desempata el tiempo
+const buenas = [];
+let sb = t0;
+for (let i = 0; i < 2 * META; i++) {
+  const c = sb.table[0];
+  buenas.push({ from: sb.current, card: c, at: correctSlot(sb.line, c, sb.byId), ms: sb.current === 'A' ? 900 : 100 });
+  sb = buildState({ ...mesa, moves: buenas });
+}
+assert.deepEqual(sb.scores, { A: META, B: META }, 'con la mesa justa cada uno coloca su meta');
+assert.equal(sb.done, true);
+assert.deepEqual(sb.winner, ['B'], 'empatados en la meta, gana el más rápido (D-31)');
+
 assert.equal(yearLabel(1969), '1969');
 assert.equal(yearLabel(-753), '753 a.C.');
 assert.equal(yearLabel(-753, 'en'), '753 BC');

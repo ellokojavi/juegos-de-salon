@@ -100,7 +100,8 @@ Recibes hitos sin fecha y los ubicas en el lugar correcto de una línea de tiemp
 - **📱 Un celular:** de dos a seis jugadores, pasando el celular por turnos.
 - **📡 Varios celulares:** sala con código y QR, hasta seis jugadores. El anfitrión abre la partida cuando están todos, y cada uno ve su propia mano.
 - **🧍 Jugar solo:** vacía tu mano en la menor cantidad de intentos y supera tu récord por temática.
-- **🃏 Pozo común (por defecto):** las mismas 6 cartas a la vista para todos, y gana quien coloque primero las cartas acordadas. También se puede jugar con mano privada.
+- **🗂 Todas a la vista (por defecto):** se despliega el doble de las cartas que hay que colocar para ganar —6, 10 o 14— desde el primer turno, y no entra ninguna carta nueva en toda la partida. Como la mesa solo se achica, las cartas difíciles de situar van quedando para el final, sobre una línea que para entonces ya está llena: el juego se pone más difícil solo.
+- **🃏 Pozo común:** las mismas 6 cartas a la vista para todos, reponiéndose desde el mazo, y gana quien coloque primero las cartas acordadas. También se puede jugar con **🙋 mano propia**, cada uno con sus cartas y en privado.
 - **💬 Chat de la sala:** en varios celulares hay un chat para comentar las jugadas mientras se espera el turno, que sigue vivo en la pantalla final. Los mensajes nuevos se asoman unos segundos al lado de la burbuja.
 
 <table>
@@ -119,7 +120,8 @@ Recibes hitos sin fecha y los ubicas en el lugar correcto de una línea de tiemp
   <tr>
     <td align="center"><img src="docs/screenshots/linea-de-tiempo/09-chat-aviso.png" width="180" alt="Aviso de mensaje nuevo"><br><sub>Aviso de mensaje nuevo</sub></td>
     <td align="center"><img src="docs/screenshots/linea-de-tiempo/10-pozo-comun.png" width="180" alt="Pozo común"><br><sub>Pozo común</sub></td>
-    <td></td><td></td>
+    <td align="center"><img src="docs/screenshots/linea-de-tiempo/11-todas-a-la-vista.png" width="180" alt="Todas las cartas a la vista"><br><sub>Todas a la vista</sub></td>
+    <td></td>
   </tr>
 </table>
 
@@ -133,6 +135,14 @@ Especificación y diseño: [docs/juegos/linea-de-tiempo.md](docs/juegos/linea-de
 - **Sonido:** efectos sintetizados con Web Audio (sin archivos de audio). Botón 🔊/🔇 en cada pantalla.
 - **Partidas guardadas:** cada juego guarda su estado en el dispositivo y ofrece continuar.
 - **Instalable:** manifest PWA para agregar a la pantalla de inicio. La pantalla no se apaga mientras se juega.
+
+## Panel del dueño
+
+`/panel/` es una página privada que muestra cuánto y desde dónde se juega: salas vivas y
+celulares conectados, partidas por juego y modo, jugadores por partida, zona horaria, idioma
+y hora del día. Entra con Google y solo lee el dueño del proyecto de Firebase. Son señales de
+uso anonimizadas, no personas: de los modos sin red salen solo contadores, y nunca una IP, un
+secreto, el chat ni quién ganó. Ver [docs/PANEL.md](docs/PANEL.md).
 
 ## Stack
 
@@ -150,6 +160,8 @@ y abrir http://localhost:8080 (los módulos ES necesitan servirse por HTTP). Tes
 node toque-y-fama/engine.test.mjs
 node batalla-naval/engine.test.mjs
 node linea-de-tiempo/engine.test.mjs
+node assets/js/transport/stats.test.mjs
+node panel/aggregate.test.mjs
 ```
 
 ## Laboratorio: probar interfaz sin tocar la app
@@ -204,7 +216,8 @@ linea-de-tiempo/            Juego Línea de Tiempo (engine.js + tests, game.js, 
 assets/js/handoff.js        Transiciones compartidas: pásale el celular, pantalla tapada
 assets/js/chat.js           Chat de sala compartido (modos de varios celulares)
 assets/js/session.js        Memoria de partida compartida (retomar en cualquier modo)
-assets/js/transport/        Transportes compartidos: local (mismo celular) y firebase (sala)
+assets/js/transport/        Transportes compartidos: local (mismo celular), firebase (sala) y stats (señales de uso)
+panel/                      Panel privado del dueño (entrada con Google; ver docs/PANEL.md)
 lab/                        Ambiente de pruebas de interfaz, con URL propia (ver lab/README.md)
 firebase/                   Reglas de seguridad de Realtime Database y notas
 tools/set-version.py        Estampa la versión (import maps + estilos) para evitar caché mezclada
@@ -219,6 +232,7 @@ docs/                       Requerimientos, decisiones, especificaciones y captu
 - [Decisiones de diseño y arquitectura](docs/DECISIONES.md)
 - [Cómo agregar un juego nuevo](docs/AGREGAR-JUEGO.md)
 - [Laboratorio: probar interfaz sin tocar la app](lab/README.md)
+- [Panel del dueño](docs/PANEL.md)
 - [Especificación: Cuarto Rey](docs/juegos/cuarto-rey.md)
 - [Especificación: Toque y Fama](docs/juegos/toque-y-fama.md)
 - [Factibilidad: Toque y Fama con dos celulares](docs/juegos/toque-y-fama-factibilidad.md)

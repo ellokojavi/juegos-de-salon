@@ -11,10 +11,11 @@ import { failWith } from '../assets/js/transport/errors.js';
 import { showHandoff, passBlock } from '../assets/js/handoff.js';
 import { createChat } from '../assets/js/chat.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
+import { trackStart } from '../assets/js/transport/stats.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import { buildState, correctSlot, randomSeed, yearLabel, timeLabel } from './engine.js';
 import { DECKS, getDeck } from './decks/index.js';
-import { GAME_ID, DEFAULT_CONFIG, HAND_SIZES, MIN_PLAYERS, MAX_PLAYERS, VISIBLE, LOCALES } from './rules.js';
+import { GAME_ID, DEFAULT_CONFIG, HAND_SIZES, MIN_PLAYERS, MAX_PLAYERS, VISIBLE, SPREAD_FACTOR, LOCALES } from './rules.js';
 
 const lang = getLang();
 const T = LOCALES[lang];
@@ -23,12 +24,27 @@ const ROLES = ['A', 'B', 'C', 'D', 'E', 'F'];
 const store = createSessionStore(GAME_ID);
 const nameStore = createNameStore(GAME_ID);
 const RECORD_KEY = `juegos-de-salon:${GAME_ID}:record`;
-/** Récord del solitario por temática y tamaño de mano (menos intentos es mejor). */
+/**
+ * Récord del solitario por temática, tamaño de mano y forma de repartir: son juegos
+ * distintos y no se comparan (D-32, D-43). Las claves viejas no cambian de nombre.
+ */
 const records = {
-  key: (theme, hand, shared) => `${theme}:${hand}${shared ? ':pozo' : ''}`,
-  get(theme, hand, shared) { try { return (JSON.parse(localStorage.getItem(RECORD_KEY) || '{}'))[this.key(theme, hand, shared)] || null; } catch (_) { return null; } },
-  set(theme, hand, shared, n) { try { const all = JSON.parse(localStorage.getItem(RECORD_KEY) || '{}'); all[this.key(theme, hand, shared)] = n; localStorage.setItem(RECORD_KEY, JSON.stringify(all)); } catch (_) { /* nada */ } },
+  key: (theme, hand, config) => `${theme}:${hand}${config?.shared ? (config.spread ? ':mesa' : ':pozo') : ''}`,
+  get(theme, hand, config) { try { return (JSON.parse(localStorage.getItem(RECORD_KEY) || '{}'))[this.key(theme, hand, config)] || null; } catch (_) { return null; } },
+  set(theme, hand, config, n) { try { const all = JSON.parse(localStorage.getItem(RECORD_KEY) || '{}'); all[this.key(theme, hand, config)] = n; localStorage.setItem(RECORD_KEY, JSON.stringify(all)); } catch (_) { /* nada */ } },
 };
+
+/**
+ * Formas de repartir que ofrece la pantalla de configuración, en el orden en que se muestran.
+ * `spread` despliega el doble de la meta desde el primer turno y no repone nada (D-43).
+ */
+const tableSize = config => (config.spread ? SPREAD_FACTOR * config.handSize : VISIBLE);
+const CARD_MODES = [
+  { id: 'all', shared: true, spread: true, label: () => T.modeAll, hint: c => fmt(T.allHint, { n: tableSize(c) }) },
+  { id: 'pool', shared: true, spread: false, label: () => T.modeShared, hint: () => fmt(T.sharedHint, { n: VISIBLE }) },
+  { id: 'own', shared: false, spread: false, label: () => T.modeOwn, hint: () => T.ownHint },
+];
+const cardModeOf = config => (config?.shared ? (config.spread ? CARD_MODES[0] : CARD_MODES[1]) : CARD_MODES[2]);
 
 const SEEN_KEY = `juegos-de-salon:${GAME_ID}:vistas`;
 /** Cartas que quedan disponibles como mínimo al excluir las vistas hace poco. */
@@ -101,7 +117,7 @@ function view() {
   if (!M.players) return { lobby: true, done: false };
   const fuera = M.config.skip && M.config.skip.length ? new Set(M.config.skip) : null;
   const cards = fuera ? getDeck(M.config.theme).cards.filter(c => !fuera.has(c.id)) : getDeck(M.config.theme).cards;
-  const st = buildState({ cards, seed: M.config.seed, players: M.players, handSize: M.config.handSize, moves: M.moves, shared: !!M.config.shared, visible: VISIBLE });
+  const st = buildState({ cards, seed: M.config.seed, players: M.players, handSize: M.config.handSize, moves: M.moves, shared: !!M.config.shared, visible: tableSize(M.config), refill: !M.config.spread });
   return { ...st, cards };
 }
 
@@ -293,7 +309,7 @@ function renderPlay(v) {
   const okCount = v.history.filter(h => h.ok).length;
   $('#status-who').textContent = S.mode === 'solo' ? T.soloTitle : (isLocalTurn ? fmt(T.turnYou, { name: M.names[v.current] }) : fmt(T.turnOther, { name: M.names[v.current] }));
   const offline = S.mode === 'online' ? M.players?.length && ROLES.find(r => M.presence[r]?.online === false && M.names[r]) : null;
-  const record = S.mode === 'solo' ? records.get(M.config.theme, M.config.handSize, M.config.shared) : null;
+  const record = S.mode === 'solo' ? records.get(M.config.theme, M.config.handSize, M.config) : null;
   $('#status-sub').textContent = S.mode === 'solo' ? `${fmt(T.soloStatus, { ok: okCount, n: v.history.length, tries: triesWord(v.history.length) })}${record ? ' · ' + fmt(T.soloRecord, { n: record, tries: triesWord(record) }) : ''}`
     : isLocalTurn ? (S.selCard ? T.pickSlot : T.pickCard)
     : offline ? fmt(T.offline, { name: M.names[offline] })
@@ -313,7 +329,10 @@ function renderPlay(v) {
   // se va en scroll no puede terminar colocando la primera carta (D-38).
   if (S.selCard && !hand.includes(S.selCard)) S.selCard = null;
   $('#hand-title').textContent = v.shared ? T.visibleTitle : (S.mode === 'local' ? fmt(T.handOf, { name: M.names[me] }) : T.yourHand);
-  $('#pool-left').textContent = fmt(T.poolLeft, { n: v.poolLeft });
+  // Con todas a la vista el mazo de atrás no entra nunca: lo que se acaba es la mesa (D-43)
+  $('#pool-left').textContent = M.config.spread
+    ? (v.table.length === 1 ? T.tableLeftOne : fmt(T.tableLeft, { n: v.table.length }))
+    : fmt(T.poolLeft, { n: v.poolLeft });
   const handBox = $('#hand'); handBox.innerHTML = '';
   for (const id of hand) {
     const c = v.byId[id];
@@ -409,12 +428,16 @@ function renderResult(v) {
   $('#result-note').hidden = !porTiempo || S.mode === 'solo';
   if (S.mode === 'solo') {
     const tries = totalOf('A'), acc = tries ? Math.round(100 * okOf('A') / tries) : 0;
-    const prev = records.get(M.config.theme, M.config.handSize, M.config.shared);
-    const isRecord = !prev || tries < prev;
-    if (!already && isRecord) records.set(M.config.theme, M.config.handSize, M.config.shared, tries);
-    $('#result-title').textContent = T.soloDone;
-    $('#result-sub').textContent = `${fmt(T.soloResult, { n: tries, acc, tries: triesWord(tries) })} · ${fmt(T.timeSpent, { t: timeLabel(v.times.A || 0) })} · ${isRecord ? T.newRecord : fmt(T.prevRecord, { n: prev, tries: triesWord(prev) })}`;
-    $('#result-trophy').textContent = isRecord ? '🏆' : '✅';
+    // Con todas a la vista la mesa se puede vaciar antes de llegar a la meta: eso no es récord (D-43)
+    const logrado = !v.shared || v.scores.A >= v.target;
+    const prev = records.get(M.config.theme, M.config.handSize, M.config);
+    const isRecord = logrado && (!prev || tries < prev);
+    if (!already && isRecord) records.set(M.config.theme, M.config.handSize, M.config, tries);
+    $('#result-title').textContent = logrado ? T.soloDone : T.soloShort;
+    const detalle = logrado ? fmt(T.soloResult, { n: tries, acc, tries: triesWord(tries) }) : fmt(T.soloShortResult, { ok: v.scores.A, n: v.target });
+    const marca = !logrado ? '' : ` · ${isRecord ? T.newRecord : fmt(T.prevRecord, { n: prev, tries: triesWord(prev) })}`;
+    $('#result-sub').textContent = `${detalle} · ${fmt(T.timeSpent, { t: timeLabel(v.times.A || 0) })}${marca}`;
+    $('#result-trophy').textContent = !logrado ? '😵' : (isRecord ? '🏆' : '✅');
   } else {
     $('#result-title').textContent = many ? T.winTitleMany : fmt(T.winTitle, { name: M.names[winners[0]] });
     $('#result-sub').textContent = (meRole ? (winners.includes(meRole) ? T.youWin : T.youLose) + ' · ' : '') + fmt(T.stats, { ok: okOf(winners[0]), total: totalOf(winners[0]) });
@@ -509,6 +532,7 @@ function startLocalMode(mode, names, config) {
   const transport = createLocalTransport();
   startSession({ mode, transport, roles: config.players, config, names });
   keepAwake();
+  trackStart({ game: GAME_ID, mode, players: config.players.length }); // señal de uso para el panel (D-44)
 }
 
 function renderModes() {
@@ -523,7 +547,7 @@ function renderResumeSlot() {
   if (!saved || saved.done) return;
   if (saved.mode === 'online' && !saved.code) return;
   const deck = getDeck(saved.config?.theme);
-  const label = (saved.mode === 'online' ? `${T.lobbyCode}: ${saved.code}` : { local: T.modeLocal, solo: T.modeSolo }[saved.mode] || '') + (saved.config?.shared ? ` · ${T.modeShared}` : '');
+  const label = (saved.mode === 'online' ? `${T.lobbyCode}: ${saved.code}` : { local: T.modeLocal, solo: T.modeSolo }[saved.mode] || '') + ` · ${cardModeOf(saved.config).label()}`;
   slot.append(el('div', { class: 'panel pop' },
     el('p', { class: 'lead', style: 'margin-bottom:4px' }, T.resumeTitle),
     el('p', { class: 'muted' }, `${deck.emoji} ${deck.name[lang]} · ${label}`),
@@ -574,20 +598,25 @@ function renderSetup(mode, prefillCode = '') {
     form.append(el('div', { class: 'field field--name' }, el('label', {}, T.yourName), input));
   }
 
-  // De dónde salen las cartas: mano propia de cada uno o una tira común a la vista (D-32)
+  // De dónde salen las cartas: todas a la vista, pozo común que se repone o mano propia (D-32, D-43)
   const modeHint = el('p', { class: 'muted', style: 'font-size:0.8rem;margin:2px 0 0' });
   const sizeLabel = el('label', {});
   const paintCards = () => {
+    const actual = cardModeOf(config);
     sizeLabel.textContent = config.shared ? T.toWin : T.handSize;
-    modeHint.textContent = config.shared ? fmt(T.sharedHint, { n: VISIBLE }) : T.ownHint;
+    modeHint.textContent = actual.hint(config);
+    $$('button', modeSeg).forEach((b, i) => b.classList.toggle('on', CARD_MODES[i] === actual));
   };
-  const modeSeg = el('div', { class: 'seg' }, ...[[true, T.modeShared], [false, T.modeOwn]].map(([val, label]) =>
-    el('button', { type: 'button', class: config.shared === val ? 'on' : '', onClick: e => { config.shared = val; $$('button', modeSeg).forEach(b => b.classList.toggle('on', b === e.currentTarget)); SFX.tap(); paintCards(); } }, label)));
+  // Tres opciones no caben lado a lado en un celular: van apiladas, con el nombre completo (C-8)
+  const modeSeg = el('div', { class: 'seg seg--stack' }, ...CARD_MODES.map(m =>
+    el('button', { type: 'button', onClick: () => { config.shared = m.shared; config.spread = m.spread; SFX.tap(); paintCards(); } }, m.label())));
   if (!invitado) form.append(el('div', { class: 'field' }, el('label', {}, T.cardsMode), modeSeg, modeHint));
 
-  // Cuántas cartas: en mano (mano propia) o para ganar (pozo común)
+  // Cuántas cartas: en mano (mano propia) o para ganar (pozo común y todas a la vista).
+  // Con todas a la vista este número manda también el tamaño de la mesa, así que el
+  // texto de ayuda se vuelve a escribir con cada cambio.
   const sizeLabels = { 3: T.short, 5: T.normal, 7: T.long };
-  const seg = el('div', { class: 'seg' }, ...HAND_SIZES.map(n => el('button', { type: 'button', class: n === config.handSize ? 'on' : '', onClick: e => { config.handSize = n; $$('button', seg).forEach(b => b.classList.toggle('on', b === e.currentTarget)); SFX.tap(); } }, `${sizeLabels[n]} · ${n}`)));
+  const seg = el('div', { class: 'seg' }, ...HAND_SIZES.map(n => el('button', { type: 'button', class: n === config.handSize ? 'on' : '', onClick: e => { config.handSize = n; $$('button', seg).forEach(b => b.classList.toggle('on', b === e.currentTarget)); SFX.tap(); paintCards(); } }, `${sizeLabels[n]} · ${n}`)));
   paintCards();
   if (!invitado) form.append(el('div', { class: 'field' }, sizeLabel, seg));
 

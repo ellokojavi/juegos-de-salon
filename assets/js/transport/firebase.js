@@ -12,6 +12,7 @@ import { firebaseConfig } from '../firebase-config.js';
 import { ROOM_TTL, dueForSweep, markSwept, noteRoom, sweep } from './cleanup.js';
 import { CONNECT_MS, OP_MS, waitConnected, withTimeout } from './errors.js';
 import { checkQuota, noteCreated } from './ratelimit.js';
+import { stats, noteRoom as recordRoom, notePlayer as recordPlayer, noteStart as recordStart } from './stats.js';
 
 /** Código de sala: 4 letras mayúsculas sin las ambiguas (I, O). */
 export function randomRoomCode() {
@@ -41,6 +42,19 @@ const cleanupApi = d => ({
   remove: path => set(ref(d, path), null),
   stamp: () => serverTimestamp(),
 });
+
+/**
+ * Deja constancia para el panel del dueño (D-44): la sala nueva o el que entró a una ajena,
+ * y los contadores de origen. Mejor esfuerzo y en segundo plano, igual que la papelera.
+ */
+function record(game, code, createdAt, { role, name, created }) {
+  try {
+    const { api, fp } = stats();
+    if (created) recordRoom(api, fp, { code, createdAt, game, role, name });
+    else recordPlayer(api, fp, { code, createdAt, role, name });
+    recordStart(api, fp, { game, mode: 'online', players: 1 });
+  } catch (_) { /* nada */ }
+}
 
 /**
  * Apunta la sala en la papelera y, si a este celular le toca, barre las salas vencidas
@@ -96,7 +110,11 @@ export function createFirebaseTransport({ game, maxPlayers = 2 }) {
         await this._enter(code, 'A', name);
         // La hora la pone el servidor: si el reloj del celular está corrido, el apunte
         // igual cae en el balde correcto. En segundo plano, la sala ya está lista.
-        get(ref(d, `rooms/${code}/createdAt`)).then(snap => cleanup(d, code, snap.val() || Date.now()));
+        get(ref(d, `rooms/${code}/createdAt`)).then(snap => {
+          const createdAt = snap.val() || Date.now();
+          cleanup(d, code, createdAt);
+          record(game, code, createdAt, { role: 'A', name, created: true });
+        });
         return code;
       }
       throw new Error('no-code');
@@ -125,6 +143,8 @@ export function createFirebaseTransport({ game, maxPlayers = 2 }) {
       // El que entra no vuelve a apuntar el código (las reglas no dejan pisar el apunte):
       // solo refresca la marca del balde y, si le toca, barre.
       cleanup(d, code, room.createdAt, { note: false });
+      // Solo cuenta la entrada nueva: retomar la partida no es empezar otra.
+      if (!previousRole) record(game, code, room.createdAt, { role, name, created: false });
       return { role, config: room.config, players };
     },
 

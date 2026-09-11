@@ -38,6 +38,7 @@ mkdir -p /tmp/e2e && node tools/e2e/batalla-naval-local.mjs /tmp/e2e
 | `linea-de-tiempo-veredicto.mjs` | Que el veredicto hable en tercera persona cuando se equivocó otro |
 | `linea-de-tiempo-mazos.mjs` | Las cuatro temáticas y que diez partidas seguidas no repitan cartas |
 | `linea-de-tiempo-pozo.mjs` | Pozo común: tira de 6, reposición por el final, meta y ajuste que viaja en la sala |
+| `linea-de-tiempo-mesa.mjs` | Todas a la vista: mesa del doble de la meta, sin reposición, y solitario que se queda sin cartas |
 | `linea-de-tiempo-empate.mjs` | Que la ronda se termine y que el empate lo gane el más rápido |
 | `linea-de-tiempo-chat.mjs` | Chat de sala: no leídos, freno al spam, veredicto que lo tapa, reconexión y muerte al terminar |
 | `memoria-de-partida.mjs` | Guardar y retomar en los tres juegos (canon C-6) |

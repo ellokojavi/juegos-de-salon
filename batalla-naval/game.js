@@ -10,6 +10,7 @@ import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { failWith } from '../assets/js/transport/errors.js';
 import { showHandoff, passBlock, showCover } from '../assets/js/handoff.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
+import { trackStart } from '../assets/js/transport/stats.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import { N, COLS, FLEET, SHIP_SIZE, cellName, parseCell, isCell, cellsOf, isValidPlacement, isValidLayout, randomLayout, occupancy, layoutKey, shoot, allSunk, Hunter, nextShooter, sha256, randomNonce, verifyPlayer } from './engine.js';
 import { GAME_ID, DEFAULT_CONFIG, LOCALES } from './rules.js';
@@ -609,6 +610,7 @@ function startLocalMode(mode, names, config) {
   const bot = mode === 'cpu' ? { role: 'B', hunter: new Hunter() } : null;
   startSession({ mode, transport, roles: ['A', 'B'], config, names, bot });
   keepAwake();
+  trackStart({ game: GAME_ID, mode, players: mode === 'cpu' ? 1 : 2 }); // señal de uso para el panel (D-44)
 }
 
 function renderModes() {

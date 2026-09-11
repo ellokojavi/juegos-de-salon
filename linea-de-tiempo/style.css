@@ -29,6 +29,9 @@
 .seg { display: flex; gap: 6px; background: rgba(0,0,0,0.3); border-radius: 14px; padding: 5px; }
 .seg button { flex: 1; border: 0; background: transparent; color: var(--muted); font: 900 0.95rem var(--font-body); padding: 10px 4px; border-radius: 10px; cursor: pointer; }
 .seg button.on { background: var(--yellow); color: #3a1200; }
+/* Con tres formas de repartir las opciones van apiladas: lado a lado no cabe el nombre (C-8) */
+.seg--stack { flex-direction: column; }
+.seg--stack button { text-align: left; padding: 12px 12px; min-height: 44px; }
 .themes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .theme-card { display: grid; gap: 2px; justify-items: center; text-align: center; padding: 12px 8px; border-radius: 16px; background: rgba(0,0,0,0.3); border: 2px solid transparent; color: var(--ink); cursor: pointer; font-family: var(--font-body); }
 .theme-card .em { font-size: 1.8rem; }

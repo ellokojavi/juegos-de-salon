@@ -12,7 +12,8 @@
 4. **Documentar**: crear `docs/juegos/<id>.md` con la especificación, agregar requerimientos con prefijo propio en `docs/REQUERIMIENTOS.md` y registrar decisiones nuevas en `docs/DECISIONES.md`.
 5. **Si el juego usa varios celulares**, seguir el patrón de Toque y Fama: estado derivado de una lista de mensajes, interfaz `Transport` (`create`, `join`, `send`, `onMessage`, `onPresence`, `leave`) con implementaciones `local` y `firebase`, y reglas de seguridad en `firebase/database.rules.json` (campo `game` en la sala para separar juegos).
 6. **Registrar sus módulos JS** en la lista `MODULES` de `tools/set-version.py` para que entren en el import map de versiones.
-7. **Probar en el celular** desde la URL publicada y actualizar `CHANGELOG.md`.
+7. **Dejar la señal de uso para el panel** (D-44): al empezar una partida sin red, llamar `trackStart({ game, mode, players })` de `assets/js/transport/stats.js` (no al retomar). Las salas de dos celulares las apunta el transporte solo. Ver `docs/PANEL.md`.
+8. **Probar en el celular** desde la URL publicada y actualizar `CHANGELOG.md`.
 
 Publicar: antes de cada commit que se publique, correr `python3 tools/set-version.py X.Y.Z` (nueva versión) para que el navegador no mezcle archivos en caché.
 

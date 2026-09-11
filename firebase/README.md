@@ -9,7 +9,8 @@ Proyecto: `juegos-de-salon` (plan Spark, gratuito). Creado el 2026-09-08 con la 
 
 ## Qué permiten las reglas
 
-- Existen dos nodos: `rooms/<CODIGO>` (las salas) y `cleanup` (la papelera que las borra).
+- Existen tres nodos: `rooms/<CODIGO>` (las salas), `cleanup` (la papelera que las borra) y
+  `stats` (las señales de uso que lee el panel del dueño, D-44).
 - El código de sala son 4 letras mayúsculas.
 - Cualquiera con el código puede leer la sala.
 - `createdAt`, `game` y `config` se escriben una sola vez (al crear la sala).
@@ -17,6 +18,8 @@ Proyecto: `juegos-de-salon` (plan Spark, gratuito). Creado el 2026-09-08 con la 
 - `messages/<id>` son de solo agregar (no se editan ni borran) y deben traer `t`, `from` (de A a F) y `at`.
 - Una sala con más de 6 horas puede ser borrada por cualquiera (limpieza).
 - Cualquier otro campo se rechaza.
+- **Solo el dueño** (su UID en las reglas) puede listar `rooms/` entero y leer `stats/`.
+  Nadie más: ni con el código de una sala se llega a `stats/`.
 
 ## La papelera (`cleanup`)
 
@@ -48,6 +51,43 @@ Lógica y tests: [`assets/js/transport/cleanup.js`](../assets/js/transport/clean
 > en ningún balde y nadie las va a barrer. Se borran a mano desde *Realtime Database → Datos*,
 > eliminando el nodo `rooms` completo (no hay partidas en curso que valgan más de 6 horas).
 
+## Las señales de uso (`stats`)
+
+Lo que los juegos apuntan para el panel del dueño ([docs/PANEL.md](../docs/PANEL.md)),
+por entorno (`prod`, `lab`, `dev`) y por día:
+
+```
+stats/prod/days/20342/
+  rooms/ABCD: { game, at, v, players: { A: "Javi", B: "Cata" } }   dos celulares
+  local/toque-y-fama/cpu/1: 7          partidas sin red: juego / modo / jugadores → cuántas
+  origin/America__Santiago: 12         celulares que empezaron o entraron a una partida
+  lang/es-CL: 12
+  hour/21: 5                           hora local del celular
+```
+
+- `rooms/<CÓDIGO>` se crea una sola vez; cada `players/<rol>` también. Nada se edita ni se borra.
+- Los contadores solo aceptan **subir exactamente en uno**: los celulares mandan
+  `{".sv": {"increment": 1}}` por REST y las reglas rechazan cualquier otro valor.
+- La zona horaria va con `__` en vez de `/` (`America__Sao_Paulo`), porque la barra no
+  puede ir en una clave y el guion bajo ya lo usan los nombres.
+- `stats/` no entra en la papelera: son unos cientos de bytes por partida.
+
+Módulo y tests: [`assets/js/transport/stats.js`](../assets/js/transport/stats.js) ·
+`node assets/js/transport/stats.test.mjs`.
+
+## El panel: Authentication y el UID del dueño (una sola vez)
+
+1. **Authentication → Método de acceso → Google → Habilitar.**
+2. **Authentication → Configuración → Dominios autorizados:** agregar `ellokojavi.github.io`.
+3. Entrar a `/panel/` con la cuenta dueña del proyecto: como las reglas no la conocen, la
+   página muestra su UID.
+4. Reemplazar `REEMPLAZAR-POR-EL-UID-DEL-DUENO` por ese UID en
+   [database.rules.json](database.rules.json) (dos veces: `rooms` y `stats`) y publicar las
+   reglas en *Realtime Database → Rules*.
+
+Mientras el UID no esté, las reglas fallan cerradas: nadie lee `stats/` ni lista `rooms/`.
+Los jugadores no se autentican nunca; activar Google no les cambia nada.
+
 ## Probar las reglas por REST
 
 ```bash
@@ -59,6 +99,11 @@ curl -X PATCH "$DB/rooms/ABCD.json" -d "{\"createdAt\":$NOW,\"game\":\"toque-y-f
 DAY=$((NOW/86400000))
 curl -X PATCH "$DB/cleanup/days/$DAY.json" -d "{\"lastAt\":$NOW,\"rooms/ABCD\":true}"
 curl "$DB/cleanup/days/$DAY.json"   # -> Permission denied
+
+# señales de uso: subir un contador de a uno (debe pasar), pisarlo con otro valor (debe fallar), leer (debe fallar)
+curl -X PATCH "$DB/stats/dev/days/$DAY.json" -d '{"local/toque-y-fama/cpu/1":{".sv":{"increment":1}},"origin/America__Santiago":{".sv":{"increment":1}}}'
+curl -X PUT "$DB/stats/dev/days/$DAY/local/toque-y-fama/cpu/1.json" -d '50'   # -> Permission denied
+curl "$DB/stats/dev/days/$DAY.json"                                            # -> Permission denied
 ```
 
 ## Cuotas y límites del plan Spark

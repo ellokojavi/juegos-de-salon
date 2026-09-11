@@ -89,8 +89,10 @@ function fastest(cands, times) {
  * Reconstruye la partida a partir de la configuración y las jugadas.
  * moves: [{ from, card, at, ms }] en orden. Las inválidas ya vienen filtradas por el reductor.
  * `ms` es lo que tardó el jugador en responder ese turno; sirve para desempatar (D-31).
+ * En pozo común, `refill` dice si entra una carta nueva por cada una que sale: con `false`
+ * la mesa arranca completa y solo se vacía, que es el modo de todas a la vista (D-43).
  */
-export function buildState({ cards, seed, players, handSize, moves = [], shared = false, visible = 6 }) {
+export function buildState({ cards, seed, players, handSize, moves = [], shared = false, visible = 6, refill = true }) {
   const byId = Object.fromEntries(cards.map(c => [c.id, c]));
   // Dos repartos: mano propia por jugador, o una sola tira de cartas a la vista de todos (D-32).
   let table = null, hands = null, base, pool;
@@ -122,8 +124,9 @@ export function buildState({ cards, seed, players, handSize, moves = [], shared 
       scores[mv.from]++;
     }
     if (shared) {
-      // Salga a la línea o se descarte, la carta deja la tira y entra otra por el final
-      if (poolAt < pool.length) table.push(pool[poolAt++]);
+      // Salga a la línea o se descarte, la carta deja la tira y entra otra por el final.
+      // Sin reposición la mesa solo se achica y las difíciles quedan para el final (D-43).
+      if (refill && poolAt < pool.length) table.push(pool[poolAt++]);
     } else if (!ok && poolAt < pool.length) {
       hands[mv.from].push(pool[poolAt++]);       // falló: descarta y roba
     }

@@ -22,6 +22,8 @@ const play = async () => {
 await b.go(`${BASE}/linea-de-tiempo/`, 1500); await b.evaluate(`localStorage.clear(); 1`);
 await b.go(`${BASE}/linea-de-tiempo/`, 1500);
 await b.evaluate(`document.querySelectorAll('.mode')[0].click(); 1`); await sleep(400);
+// El setup abre en "todas a la vista" (D-43): hay que pedir mano propia a propósito
+await b.evaluate(`(()=>{const x=[...document.querySelectorAll('.seg button')].find(e=>/Mano propia|Own hand/.test(e.textContent));x.click();return 1})()`); await sleep(300);
 console.log('setup con mano propia → etiquetas:', await b.evaluate(`[...document.querySelectorAll('#setup-form label')].map(l=>l.textContent).join(' | ')`));
 await b.shot('pozo-01-setup-mano');
 // Cambiar a pozo común
