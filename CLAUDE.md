@@ -23,6 +23,7 @@ python3 tools/set-version.py X.Y.Z   # obligatorio antes de cada commit publicad
 node toque-y-fama/engine.test.mjs
 node batalla-naval/engine.test.mjs
 node linea-de-tiempo/engine.test.mjs
+node assets/js/i18n.test.mjs             # paridad es/en/pt (C-3)
 node assets/js/transport/cleanup.test.mjs
 node assets/js/transport/errors.test.mjs
 node assets/js/transport/ratelimit.test.mjs

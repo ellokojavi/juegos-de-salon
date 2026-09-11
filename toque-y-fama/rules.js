@@ -1,5 +1,5 @@
 /**
- * Toque y Fama — configuración por defecto y textos en español e inglés.
+ * Toque y Fama — configuración por defecto y textos en español, inglés y portugués.
  */
 export const GAME_ID = 'toque-y-fama';
 export const DEFAULT_CONFIG = { digits: 4, replica: true, zeroFirst: true };
@@ -89,4 +89,50 @@ const EN = {
   resumeTitle: '⏯ There\'s an unfinished game', resume: 'Continue', delete: 'Delete',
 };
 
-export const LOCALES = { es: ES, en: EN };
+
+const PT = {
+  docTitle: 'Toque e Fama 🔢 · Jogos de Salão', gameChip: '🔢 Toque e Fama', menu: '‹ Menu',
+  title: 'Toque e Fama',
+  lead: 'Cada um escolhe um número secreto com algarismos diferentes. Descubra o do rival antes que ele descubra o seu.',
+  howTitle: '🧠 Como se joga',
+  howText: 'Você precisa descobrir o número secreto do adversário antes que ele descubra o seu. A cada tentativa você recebe pistas: <b>fama</b> é um algarismo certo no lugar certo, <b>toque</b> é um algarismo certo em outro lugar. Ganha quem chega a todas as famas. O celular conta sozinho, ninguém rouba.',
+  example: 'Exemplo: número secreto 1234, tentativa 1356 → 1 fama (o 1) e 1 toque (o 3).',
+  modeLocal: '📱 Um celular, dois jogadores', modeLocalHint: 'Vocês passam o celular. A tela fica coberta entre os turnos.',
+  modeOnline: '📡 Dois celulares', modeOnlineHint: 'Sala com código de 4 letras. Cada um no seu celular.',
+  modeCpu: '🤖 Contra o celular', modeCpuHint: 'Duelo: você tenta descobrir o número dele e ele tenta descobrir o seu.',
+  // configuração
+  setupTitle: 'Como vamos jogar?', digits: 'Algarismos', replica: 'Direito de resposta', replicaHint: 'Se quem começa acerta, o outro tem uma última tentativa.',
+  zeroFirst: 'Permitir zero no início', yourName: 'Seu nome', p1: 'Jogador 1', p2: 'Jogador 2', cpuName: 'Celular',
+  start: 'Bora jogar!', create: 'Criar sala', joinTitle: 'Entrar em uma sala', codePlaceholder: 'CÓDIGO', join: 'Entrar',
+  errName: 'Falta o nome.', errNames: 'Faltam nomes ou estão repetidos.', errCode: 'O código tem 4 letras.',
+  errNotFound: 'Essa sala não existe. Confira o código.', errFull: 'A sala já está cheia.', errExpired: 'Essa sala já expirou.', errOtherGame: 'Esse código é de outro jogo.', errNet: 'Não foi possível conectar. Tem internet?',
+  errOffline: 'Não foi possível abrir a sala. Pode ser a sua internet ou muita gente jogando ao mesmo tempo. Tente de novo em alguns minutos ou jogue no modo de um celular só, que não precisa de internet.',
+  errTooMany: 'Você abriu muitas salas seguidas. Espere um pouquinho e tente de novo.',
+  // sala
+  chatTitle: 'Chat da sala', chatOpen: 'Abrir o chat', chatClose: 'Fechar o chat', chatSend: 'Enviar',
+  chatPlaceholder: 'Escreva algo…', chatEmpty: 'Aqui vocês podem se provocar enquanto tentam adivinhar. Some quando a partida termina.',
+  invitedTitle: 'Convidado para jogar!', invited: '📩 Sala {code}', invitedHint: 'Escreva seu nome e entre. Quem te convidou configura a partida.',
+  lobbyTitle: 'Sala criada', lobbyCode: 'Código', lobbyShare: 'Diga o código ao rival ou deixe ele escanear o QR.', lobbyWaiting: 'Esperando o rival…', lobbyJoined: '{name} entrou!', shareLink: '📤 Compartilhar link', shareText: 'Entre na minha sala de {game}. Código: {code}', copyLink: '📋 Copiar link', copied: 'Copiado!',
+  // segredo
+  secretTitle: 'Seu número secreto', secretFor: 'Número secreto de {name}', secretHint: '{n} algarismos diferentes. Ninguém pode olhar.', secretHintNoZero: '{n} algarismos diferentes, sem zero no início. Ninguém pode olhar.',
+  confirm: 'Vamos!', hide: 'Cobrir a tela', tapToReveal: 'Toque para ver', secretSaved: 'Número secreto guardado 🔒',
+  waitingSecret: 'Esperando {name} escolher o número secreto…', bothReady: 'Os dois prontos!',
+  // jogo
+  turnYou: 'Sua vez! Descubra o número de {name}', turnOther: 'Vez de {name}…', waitingReply: 'Esperando a resposta…', round: 'Rodada {n}',
+  blockHint: '💡 Segure um algarismo para bloqueá-lo se você acha que ele não está no número do rival. Repita para desbloquear.',
+  mySecret: 'Seu número secreto', tapToShow: 'toque para ver', tapToHide: 'toque para esconder',
+  guess: 'Tentar', famas: 'famas', toques: 'toques', fama: 'fama', toque: 'toque', none: 'nada', famaShort: 'F', toqueShort: 'T',
+  boardOf: 'Tentativas de {name}', noGuesses: 'Ainda sem tentativas', tries: '{n} {word}', tryOne: 'tentativa', tryMany: 'tentativas',
+  replicaNotice: '{name} acertou! {other} tem direito de resposta: uma última tentativa.',
+  cpuThinking: 'O celular está pensando…', cpuGuessed: 'O celular tentou {value}: {famas} famas, {toques} toques.',
+  offline: 'Rival desconectado. Esperando ele voltar…', reconnecting: 'Reconectando…',
+  // passagem do celular
+  hoPass: 'Passe o celular para', hoReady: 'Pronto, sou eu!', hoResult: 'Resposta', hoContinue: 'Continuar',
+  // resultado
+  winTitle: '{name} ganhou!', tieTitle: 'Empate!', youWin: 'Você ganhou!', youLose: 'Você perdeu… desta vez.',
+  inTries: 'em {n} {word}', secretsWere: 'Os números secretos eram', replayTitle: '🔎 Ver todas as tentativas', verified: 'verificado ✅', notVerified: '⚠️ não confere (roubou?)',
+  rematch: '🔁 Revanche', rematchWaiting: 'Esperando {name} para a revanche…', changeMode: 'Mudar o modo', backMenu: 'Voltar ao menu',
+  resumeTitle: '⏯ Tem uma partida pela metade', resume: 'Continuar', delete: 'Apagar',
+};
+
+export const LOCALES = { es: ES, en: EN, pt: PT };

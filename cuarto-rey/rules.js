@@ -1,5 +1,5 @@
 /**
- * Cuarto Rey — datos del juego en español e inglés: mazo, reglas por carta,
+ * Cuarto Rey — datos del juego en español, inglés y portugués: mazo, reglas por carta,
  * mini-juegos, penitencias, categorías y textos de interfaz.
  * Solo datos, sin lógica. Ver docs/juegos/cuarto-rey.md.
  */
@@ -222,4 +222,96 @@ const EN = {
   },
 };
 
-export const LOCALES = { es: ES, en: EN };
+/* ================================================================== */
+/* PORTUGUÊS                                                           */
+/* ================================================================== */
+const PT = {
+  rankNames: { A: 'Ás', 2: 'Dois', 3: 'Três', 4: 'Quatro', 5: 'Cinco', 6: 'Seis', 7: 'Sete', 8: 'Oito', 9: 'Nove', 10: 'Dez', J: 'Valete', Q: 'Dama', K: 'Rei' },
+  suitNames: { '♠': 'espadas', '♥': 'copas', '♦': 'ouros', '♣': 'paus' },
+  cards: {
+    A:  { title: 'Todo mundo bebe!',       text: 'Todos da mesa tomam dois goles. Saúde!' },
+    2:  { title: 'Pra direita',            text: 'Quem está à sua direita toma dois goles.' },
+    3:  { title: 'Pra esquerda',           text: 'Quem está à sua esquerda toma dois goles.' },
+    4:  { title: 'Era Uma Vez',            text: 'Hora de inventar uma história entre todos.' },
+    5:  { title: 'Prenda',                 text: 'Você tem que pagar uma prenda. A mesa decide se você cumpriu.' },
+    6:  { title: 'Porquinho Bochechudo',   text: 'Encha as bochechas e veja quem te segue.' },
+    7:  { title: 'Cultura de Boteco',      text: 'Uma categoria, uma palavra cada um, sem repetir.' },
+    8:  { title: 'Goles de presente',      text: 'Você tem dois goles para dar a quem quiser (ou os dois para a mesma pessoa).' },
+    9:  { title: 'Eu Nunca',               text: 'Confesse algo que você nunca fez.' },
+    10: { title: 'É a sua vez!',           text: 'Você toma dois goles. Sem reclamar.' },
+    J:  { title: 'Os homens bebem',        text: 'Os homens da mesa tomam dois goles.' },
+    Q:  { title: 'As mulheres bebem',      text: 'As mulheres da mesa tomam dois goles.' },
+    K:  { title: 'Um Rei!',                text: 'Conta-se mais um rei. O quarto vira o copo inteiro.' },
+  },
+  kings: [
+    { title: 'Primeiro Rei!', text: 'Calma, está só começando. Faltam três reis no baralho.' },
+    { title: 'Segundo Rei!',  text: 'Já são dois. A coisa está ficando séria.' },
+    { title: 'Terceiro Rei!', text: 'Só falta um. Quem tirar o próximo… vira o copo INTEIRO.' },
+    { title: 'QUARTO REI!',   text: 'Acabou. Você vira tudo o que sobrou no copo. Vira, vira, vira!' },
+  ],
+  minigames: {
+    cuentacuentos: { name: 'Era Uma Vez', emoji: '📖', intro: 'Vamos inventar uma história entre todos, uma palavra de cada vez.', helper: 'timer',
+      rules: ['Quem tirou a carta começa dizendo a primeira palavra da história.', 'Seguindo para a direita, cada jogador acrescenta UMA palavra.', 'A história tem que fazer sentido (mais ou menos).', 'Quem demorar mais de 5 segundos, repetir ou quebrar a história perde e toma dois goles.'] },
+    chancho: { name: 'Porquinho Bochechudo', emoji: '🐷', intro: 'Quando quiser, encha as bochechas como um porquinho.', helper: 'none',
+      rules: ['Quem tirou a carta pode encher as bochechas a qualquer momento da partida (não precisa ser agora).', 'Assim que alguém perceber, também enche as bochechas e fica em silêncio.', 'O último da mesa a encher as bochechas perde e toma dois goles.', 'Se alguém rir e deixar o ar escapar… também bebe.'] },
+    cultura: { name: 'Cultura de Boteco', emoji: '🧠', intro: 'Escolha uma categoria e todos vão dizendo uma palavra que se encaixe.', helper: 'category',
+      rules: ['Quem tirou a carta escolhe a categoria (ou pede uma ao celular).', 'Seguindo para a direita, cada um diz uma palavra dessa categoria.', 'Não pode repetir nem demorar mais de 5 segundos.', 'Quem repetir, errar ou der branco perde e toma dois goles.'] },
+    nunca: { name: 'Eu Nunca', emoji: '🙊', intro: 'Confesse algo que você NUNCA fez.', helper: 'nunca',
+      rules: ['Quem tirou a carta diz: “Eu nunca…” e completa a frase.', 'Todos os que JÁ fizeram tomam dois goles.', 'Se ninguém fez, quem falou bebe por ser sem graça.', 'Vale perguntar os detalhes depois. Essa é a graça.'] },
+  },
+  penitencias: [
+    'Imite alguém da mesa até adivinharem quem é.', 'Cante o refrão da música que a mesa escolher, com sentimento.', 'Fale com sotaque de novela mexicana até a sua próxima vez.',
+    'Dance 15 segundos sem música. A mesa marca o ritmo com palmas.', 'Conte o seu pior perrengue de festa em 30 segundos.', 'Faça 10 agachamentos gritando o nome do seu ex (ou do seu pet).',
+    'Mostre a última foto da sua galeria e explique.', 'Faça um elogio para a pessoa da sua esquerda com cara séria.', 'Faça uma declaração de amor para o seu copo.',
+    'Conte uma piada. Se ninguém rir, você toma dois goles.', 'Fale na terceira pessoa até a sua próxima vez.', 'Deixe a pessoa da sua direita te dar um apelido pelo resto da noite.',
+    'Imite um animal até alguém adivinhar qual é.', 'Recite o alfabeto de trás pra frente. Se errar, dois goles.', 'Faça uma pose de modelo e segure até tirarem a próxima carta.',
+    'Conte qual foi o seu pior corte de cabelo e por quê.', 'Venda um objeto da mesa como se fosse um anúncio de TV, 20 segundos.', 'Faça um discurso de agradecimento como se tivesse ganhado um prêmio.',
+    'Repita um trava-língua 3 vezes seguidas sem errar.', 'Mande um áudio de 10 segundos cantando para o grupo de amigos.', 'Faça uma previsão de como a noite vai terminar para cada jogador.',
+    'Escolha alguém e faça a pergunta mais constrangedora que conseguir.', 'Fique de pé e anuncie o placar do jogo como um narrador esportivo.', 'Beba um gole com a mão não dominante e sem usar os dentes pra nada.',
+  ],
+  categorias: [
+    'Marcas de cerveja', 'Times de futebol brasileiros', 'Bairros da sua cidade', 'Filmes da Disney', 'Marcas de carro', 'Cantores brasileiros', 'Sabores de sorvete', 'Países da América do Sul',
+    'Super-heróis', 'Verduras e legumes', 'Séries da Netflix', 'Coisas que tem num banheiro', 'Marcas de roupa esportiva', 'Frutas', 'Raças de cachorro', 'Capitais brasileiras', 'Personagens dos Simpsons', 'Drinks',
+    'Instrumentos musicais', 'Videogames', 'Marcas de celular', 'Palavras terminadas em -ção', 'Coisas que se compram na padaria', 'Esportes olímpicos', 'Apps do celular',
+    'Coisas que tem na praia', 'Nomes de presidentes', 'Bandas de rock', 'Tipos de pão', 'Bebidas sem álcool', 'Cores', 'Profissões', 'Animais da floresta', 'Coisas que se dizem numa festa', 'Comidas de boteco',
+  ],
+  nuncaNunca: [
+    'Eu nunca mandei mensagem para a pessoa errada.', 'Eu nunca dormi no ônibus e passei do ponto.', 'Eu nunca cantei karaokê em público.',
+    'Eu nunca stalkeei um ex nas redes sociais.', 'Eu nunca menti para não ir a um evento.', 'Eu nunca chorei com um filme de animação.',
+    'Eu nunca perdi o celular numa festa.', 'Eu nunca saí de um lugar sem pagar.', 'Eu nunca fingi conhecer alguém que me cumprimentou.',
+    'Eu nunca comi algo que caiu no chão.', 'Eu nunca mandei um áudio bêbado.', 'Eu nunca errei o nome de alguém.',
+    'Eu nunca cheguei mais de uma hora atrasado em algo importante.', 'Eu nunca inventei uma desculpa médica.', 'Eu nunca dancei sozinho na frente do espelho.', 'Eu nunca fui a um encontro às cegas.',
+  ],
+  ui: {
+    docTitle: 'Quarto Rei 👑 · Jogos de Salão', gameChip: '👑 Quarto Rei', menu: '‹ Menu',
+    title: 'Quarto Rei', lead: 'O clássico das festas em casa. Tire uma carta, obedeça e reze para não pegar o quarto rei.',
+    beforeTitle: '🍹 Antes de começar',
+    beforeText: 'Cada jogador com o copo cheio da bebida favorita. Depois que o jogo começa, <b>ninguém bebe</b> se não for por regra. O celular faz de baralho: passem ele pela mesa para a direita.',
+    rulesSummary: '🃏 O que faz cada carta?', goSetup: 'Montar a mesa!',
+    whoPlays: 'Quem vai jogar?', setupHint: 'Cadastrem-se na ordem em que estão sentados, <b>para a direita</b>. O gênero serve para as cartas J e Q.',
+    addPlayer: '+ Adicionar jogador', maxPlayers: 'No máximo {n} jogadores', start: 'Bora jogar!',
+    cardsLeft: 'Faltam <b id="deck-count">52</b> cartas', turnLabel: 'É a vez de', cardBack: 'Quarto', cardBackSmall: '👑 REI 👑', tap: 'Toque para tirar uma carta',
+    fourthOut: 'Saiu o quarto rei!', fourthText: 'Vira tudo o que sobrou no copo. A mesa conta: vira, vira, vira!',
+    sipsTitle: '📊 Goles da noite (aprox.)', again: 'Mais uma rodada!', changePlayers: 'Trocar jogadores', backMenu: 'Voltar ao menu',
+    resumeTitle: '⏯ Tem uma partida pela metade', resumeText: 'Era a vez de {name}. Faltam {cards} cartas e já saíram {kings} reis.', resume: 'Continuar', delete: 'Apagar',
+    playerPlaceholder: 'Jogador {n}', removePlayer: 'Remover jogador',
+    genders: { m: 'Homem', f: 'Mulher', x: 'Outro (bebe com J e com Q)' },
+    errMin: 'São necessários pelo menos {n} jogadores.', errNames: 'Todos os jogadores precisam de um nome.', errDup: 'Tem nomes repetidos. Usem apelidos.',
+    drew: '{name} tirou {rank} de {suit}', next: 'Pronto, próximo!',
+    noMen: 'Não tem homens na mesa… então você bebe.', noWomen: 'Não tem mulheres na mesa… então você bebe.',
+    giftLeft: 'Ainda faltam {n} goles para dar.', giftLeftOne: 'Ainda falta 1 gole para dar.', giftDone: 'Pronto! Confirme abaixo.', gifted: 'Presenteados!',
+    penitenciaFor: 'Prenda para {name}', otherPenitencia: '🎲 Outra prenda', done: '✅ Cumprida!', chickened: '😳 Amarelou: toma {n} goles',
+    chanchoBig: '🐷 Quando quiser…', chanchoHint: 'Continuem jogando. Quando acontecer, marquem o perdedor aqui, a qualquer momento.',
+    whoLost: 'Quem perdeu? Toma {n} goles.', nobodyLost: 'Ninguém perdeu / continuar',
+    timerHint: 'Contagem de 5 segundos para quem travar', timerStart: '⏱ Iniciar 5 s', timeUp: 'TEMPO!',
+    suggestedCategory: 'Categoria sugerida', otherCategory: '🎲 Outra categoria',
+    noIdeas: '💡 Sem ideias?', otherIdea: '🎲 Outra ideia', nuncaStarts: '{name} começa: “Eu nunca…”',
+    kingsCount: '👑 {k} de 4', seeResult: '🏆 Ver o resultado',
+    deckOver: 'O baralho acabou', sips: '{n} goles', plusChug: ' + virada',
+    endStats: '{cards} cartas em {mins} min. Os goles são uma estimativa: os mini-jogos e as prendas contam quando marcam o perdedor.',
+    hoCheers: 'Saúde!', hoGift: 'Presente!', hoDone: 'Cumprida!', hoChickened: 'Amarelou!', hoLost: 'Perdeu!', hoGoOn: 'Continuem!', hoKings: 'Já são {k} reis!', hoReady: 'Pronto!',
+    hoDrinkOne: 'Toma {n} goles', hoDrinkMany: 'Tomam {n} goles', hoTap: 'Toque para continuar', hoPass: 'Passe o celular para', hoGiveCard: 'Me dá a carta!',
+  },
+};
+
+export const LOCALES = { es: ES, en: EN, pt: PT };

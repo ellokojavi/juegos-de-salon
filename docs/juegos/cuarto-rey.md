@@ -1,6 +1,6 @@
 # Especificación: Cuarto Rey 👑
 
-**Ruta:** `/cuarto-rey/` · **Jugadores:** 4 a 6 · **Versión:** 0.2 · **Idiomas:** es, en
+**Ruta:** `/cuarto-rey/` · **Jugadores:** 4 a 6 · **Versión:** 0.2 · **Idiomas:** es, en, pt (“Quarto Rei”)
 
 ## Origen
 Juego de naipes para tomar, popular en Chile. Reglas base según instrucciones entregadas por el cliente (ver abajo). El celular reemplaza al mazo (D-12).
@@ -53,7 +53,7 @@ Intro ──► Setup jugadores ──► Mesa (turnos) ──► Cuarto Rey ─
 `current` guarda la carta en juego y datos elegidos (penitencia, categoría) para que, al retomar, se vea exactamente lo mismo.
 
 ## Idiomas
-Todos los textos viven en `rules.js` bajo `LOCALES.es` y `LOCALES.en` (reglas, mensajes de reyes, mini-juegos, 24 penitencias, 35 categorías, 16 ideas de Nunca Nunca y la interfaz). Nombres en inglés: Fourth King, Story Time, Puffer Pig, Categories, Never Have I Ever, Dare.
+Todos los textos viven en `rules.js` bajo `LOCALES.es`, `LOCALES.en` y `LOCALES.pt` (reglas, mensajes de reyes, mini-juegos, 24 penitencias, 35 categorías, 16 ideas de Nunca Nunca y la interfaz), con las mismas claves en los tres. Nombres en inglés: Fourth King, Story Time, Puffer Pig, Categories, Never Have I Ever, Dare. En portugués de Brasil: Quarto Rei, Era Uma Vez, Porquinho Bochechudo, Cultura de Boteco, Eu Nunca, Prenda; los sorbos son "goles" y el fondo es "vira, vira, vira" (D-48).
 
 ## Ideas para versiones futuras
 - Variantes de reglas configurables (sorbos, “seguir hasta agotar el mazo”, usar naipe real).

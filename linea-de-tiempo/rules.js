@@ -1,5 +1,5 @@
 /**
- * Línea de Tiempo — configuración por defecto y textos en español e inglés.
+ * Línea de Tiempo — configuración por defecto y textos en español, inglés y portugués.
  */
 export const GAME_ID = 'linea-de-tiempo';
 export const DEFAULT_CONFIG = { theme: 'historia', handSize: 5, shared: true, spread: true };
@@ -110,4 +110,56 @@ const EN = {
   chatPlaceholder: 'Say something…', chatEmpty: 'Talk trash about the game here. It disappears when the game ends.',
 };
 
-export const LOCALES = { es: ES, en: EN };
+
+const PT = {
+  docTitle: 'Linha do Tempo ⏳ · Jogos de Salão', gameChip: '⏳ Linha do Tempo', menu: '‹ Menu',
+  title: 'Linha do Tempo',
+  lead: 'Você recebe marcos sem data. Coloque cada um no lugar certo da linha do tempo e fique sem cartas antes de todo mundo.',
+  howTitle: '🧭 Como se joga',
+  howText: 'As cartas mostram um marco, mas <b>não o ano</b>. Na sua vez você escolhe uma carta e o espaço onde acha que ela vai. Se acertar, a carta fica na linha. Se errar, ela é descartada e todo mundo vê em que ano foi. Há três jeitos de distribuir. Com <b>todas na mesa</b> aparecem de uma vez o dobro das cartas que é preciso colocar para ganhar e nenhuma outra entra, então as mais difíceis de situar vão ficando para o final e cada turno fica mais complicado que o anterior. Com <b>monte comum</b> sempre há 6 cartas à vista e cada vez que uma sai entra outra do baralho. Com <b>mão própria</b> cada um joga com as suas cartas e ganha quem fica sem nenhuma. A rodada sempre vai até o fim, e se mais de um chega à meta ganha quem respondeu mais rápido.',
+  modeLocal: '📱 Um celular, até 6', modeLocalHint: 'Vocês passam o celular a cada turno.',
+  modeOnline: '📡 Vários celulares', modeOnlineHint: 'Sala com código de 4 letras, até 6 jogadores.',
+  modeSolo: '🧍 Jogar sozinho', modeSoloHint: 'Esvazie sua mão no menor número de tentativas e supere seu recorde.',
+  // configuração
+  setupTitle: 'Como vamos jogar?', theme: 'Tema', handSize: 'Cartas na mão',
+  cardsMode: 'Cartas', modeOwn: '🙋 Mão própria', modeShared: '🃏 Monte comum', modeAll: '🗂 Todas na mesa',
+  ownHint: 'Cada um joga com a própria mão.',
+  sharedHint: 'Todos escolhem entre as mesmas {n} cartas à vista e cada vez que uma sai entra outra do baralho.',
+  allHint: 'Aparecem {n} cartas desde o primeiro turno e nenhuma outra entra, então as mais difíceis de situar vão ficando para o final.',
+  toWin: 'Cartas para ganhar', visibleTitle: 'Cartas à vista',
+  short: 'Curta', normal: 'Normal', long: 'Longa',
+  players: 'Jogadores', playerPlaceholder: 'Jogador {n}', addPlayer: '+ Adicionar jogador', maxPlayers: 'No máximo {n} jogadores', removePlayer: 'Remover jogador',
+  yourName: 'Seu nome', start: 'Bora jogar!',
+  errName: 'Falta o nome.', errNames: 'Faltam nomes ou estão repetidos.',
+  create: 'Criar sala', joinTitle: 'Tem um código? Entre!', codePlaceholder: 'CÓDIGO', join: 'Entrar', errCode: 'O código tem 4 letras.',
+  errNotFound: 'Essa sala não existe. Confira o código.', errFull: 'A sala já está cheia.', errExpired: 'Essa sala já expirou.', errOtherGame: 'Esse código é de outro jogo.', errNet: 'Não foi possível conectar. Tem internet?',
+  errOffline: 'Não foi possível abrir a sala. Pode ser a sua internet ou muita gente jogando ao mesmo tempo. Tente de novo em alguns minutos ou jogue no modo de um celular só, que não precisa de internet.',
+  errTooMany: 'Você abriu muitas salas seguidas. Espere um pouquinho e tente de novo.',
+  invitedTitle: 'Convidado para jogar!', invited: '📩 Sala {code}', invitedHint: 'Escreva seu nome e entre. Quem te convidou configura a partida.',
+  lobbyTitle: 'Sala criada', lobbyCode: 'Código', lobbyShare: 'Diga o código aos outros ou deixe eles escanearem o QR.', shareLink: '📤 Compartilhar link', shareText: 'Entre na minha sala de {game} · {theme}. Código: {code}', copyLink: '📋 Copiar link', copied: 'Copiado!',
+  lobbyPlayers: 'Na sala', lobbyWaitHost: 'Esperando {name} começar…', lobbyStart: '🚀 Começar!', lobbyNeedMore: 'Faltam jogadores',
+  offline: '{name} se desconectou', waitingTurn: 'Esperando {name}…', placedBy: '{name} colocou',
+  // jogo
+  turnYou: 'Sua vez, {name}!', turnOther: 'Vez de {name}', soloTitle: 'Esvazie sua mão', soloStatus: '{ok} acertos em {n} {tries}', soloRecord: 'Recorde: {n} {tries}', tryOne: 'tentativa', tryMany: 'tentativas',
+  yourHand: 'Sua mão', handOf: 'Mão de {name}', pickCard: 'Escolha uma carta', pickSlot: 'Onde ela vai?', place: '📍 Colocar aqui',
+  timeline: 'Linha do tempo', cardsLeft: '{n}', poolLeft: 'Faltam {n} no baralho',
+  tableLeft: 'Faltam {n} cartas na mesa', tableLeftOne: 'Falta 1 carta na mesa',
+  slotFirst: '↑ Antes de tudo', slotLast: '↓ Depois de tudo', slotBetween: 'Aqui',
+  correct: 'Correto!', wrong: 'Você errou!', correctOther: '{name} acertou!', wrongOther: '{name} errou!',
+  wasYear: 'Foi em {year}', goesHere: 'Ia aqui ↓', drewNew: 'A carta é descartada e você compra uma nova.', drewNewOther: 'A carta é descartada e quem jogou compra uma nova.',
+  whyWrong: 'Foi em {year}: ia {where}.', wherePlaced: 'Você colocou {where}.', wherePlacedOther: 'Foi colocada {where}.', between: 'entre {a} e {b}', beforeOf: 'antes de {b}', afterOf: 'depois de {a}', tapContinue: 'Toque para continuar',
+  hoPass: 'Passe o celular para', hoReady: 'Pronto, sou eu!', hoContinue: 'Continuar',
+  // resultado
+  winTitle: '{name} ganhou!', winTitleMany: 'Empate!', youWin: 'Você ganhou!', youLose: 'Você perdeu… desta vez.',
+  soloDone: 'Mão vazia!', soloResult: 'Você conseguiu em {n} {tries} · {acc}% de acertos',
+  soloShort: 'As cartas acabaram', soloShortResult: 'Você conseguiu colocar {ok} das {n} cartas de que precisava', newRecord: '🏆 Novo recorde!', prevRecord: 'Seu recorde: {n} {tries}',
+  wonOnTime: '⚡ Empataram sem cartas: ganhou quem respondeu mais rápido', wonOnTimeShared: '⚡ Empataram: ganhou quem respondeu mais rápido', timeSpent: '⏱ {t} respondendo',
+  stats: '{ok} de {total} acertos', ranking: 'Como terminaram', cardsHeld: '{n} cartas', cardHeld: '1 carta', noCards: 'sem cartas',
+  finalLine: 'A linha ficou assim', rematch: '🔁 Revanche', changeMode: 'Mudar o modo', backMenu: 'Voltar ao menu',
+  resumeTitle: '⏯ Tem uma partida pela metade', resume: 'Continuar', delete: 'Apagar',
+  // chat da sala (só com vários celulares)
+  chatTitle: 'Chat da sala', chatOpen: 'Abrir o chat', chatClose: 'Fechar o chat', chatSend: 'Enviar',
+  chatPlaceholder: 'Escreva algo…', chatEmpty: 'Aqui vocês podem comentar a partida. Some quando ela termina.',
+};
+
+export const LOCALES = { es: ES, en: EN, pt: PT };

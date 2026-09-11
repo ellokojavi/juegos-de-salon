@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.22.0 — 2026-09-11
+- **Portugués** (RP-25, D-48). La app entera se puede jugar en portugués de Brasil: el menú y
+  sus 100 frases del pie, los cuatro juegos con sus tres modos, las salas, el chat, los
+  errores de transporte, las pantallas de pase y las 424 cartas de los cuatro mazos de Línea
+  de Tiempo. Tercer botón en el toggle: 🇧🇷 PT. Los nombres se traducen como ya se hacía en
+  inglés: Quarto Rei, Toque e Fama, Batalha Naval, Linha do Tempo; los mini-juegos de Cuarto
+  Rey son Era Uma Vez, Porquinho Bochechudo, Cultura de Boteco y Eu Nunca.
+- Las traducciones se adaptan, no se calcan (C-3): las comunas de Santiago son bairros, los
+  equipos chilenos son times brasileiros, la penitencia es una prenda y el "fondo" es "vira,
+  vira, vira". Los años antes de Cristo se escriben "a.C." también en portugués.
+- Los tres diccionarios tienen exactamente las mismas claves, listas del mismo largo y las
+  mismas `{llaves}` en las plantillas: lo verifica el test nuevo `assets/js/i18n.test.mjs`,
+  y el test del motor de Línea de Tiempo exige `pt` en cada carta. `sala-error.mjs` prueba el mensaje de sala caída también en portugués.
+- El panel etiqueta `pt` en "Idioma elegido para jugar". El panel mismo sigue en español.
+
 ## 0.21.2 — 2026-09-11
 - **Idioma elegido para jugar** (D-46). Las señales de uso ya guardaban el idioma del
   navegador, que dice de dónde es la persona. Ahora guardan también el del toggle de la app,

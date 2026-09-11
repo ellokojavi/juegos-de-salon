@@ -4,10 +4,10 @@
 
 1. **Crear la carpeta** `/<id-del-juego>/` (en minúsculas, con guiones), con:
    - `index.html`: incluye `../assets/css/base.css` y su propio `style.css`. Reutiliza las clases `.app`, `.topbar`, `.panel`, `.btn`, `.display`, etc.
-   - `rules.js`: datos del juego (reglas, textos, listas). Sin lógica de UI. Exportar `LOCALES = { es: {...}, en: {...} }` con todos los textos por idioma.
+   - `rules.js`: datos del juego (reglas, textos, listas). Sin lógica de UI. Exportar `LOCALES = { es: {...}, en: {...}, pt: {...} }` con todos los textos por idioma, con las mismas claves en los tres.
    - `game.js`: máquina de estados y render. Importa helpers desde `../assets/js/ui.js`.
    - `style.css`: solo lo específico del juego.
-2. **Registrarlo** en `assets/js/games.js` agregando una entrada con `id`, `emoji`, `name` y `tagline` (objetos `{ es, en }`), `players`, `duration`, `path` y `available: true`. El menú se genera solo.
+2. **Registrarlo** en `assets/js/games.js` agregando una entrada con `id`, `emoji`, `name` y `tagline` (objetos `{ es, en, pt }`), `players`, `duration`, `path` y `available: true`. El menú se genera solo.
 3. **Seguir el flujo estándar** de pantallas: `intro` (dinámica y materiales) → `setup` (jugadores) → `play` → `end`. Guardar el estado en `localStorage` con la clave `juegos-de-salon:<id>:game` y reutilizar `juegos-de-salon:players` para los nombres.
 4. **Documentar**: crear `docs/juegos/<id>.md` con la especificación, agregar requerimientos con prefijo propio en `docs/REQUERIMIENTOS.md` y registrar decisiones nuevas en `docs/DECISIONES.md`.
 5. **Si el juego usa varios celulares**, seguir el patrón de Toque y Fama: estado derivado de una lista de mensajes, interfaz `Transport` (`create`, `join`, `send`, `onMessage`, `onPresence`, `leave`) con implementaciones `local` y `firebase`, y reglas de seguridad en `firebase/database.rules.json` (campo `game` en la sala para separar juegos).
@@ -21,6 +21,6 @@ Módulos compartidos: `assets/js/handoff.js` (pásale el celular, pantalla tapad
 
 Convenciones:
 - Idioma: leer `getLang()` de `assets/js/i18n.js`, marcar textos fijos del HTML con `data-i18n="clave"` (o `data-i18n-html`) y llamar `applyStatic(LOCALES[lang].ui)` al iniciar. Incluir `langToggle()` en la intro del juego.
-- Textos en español chileno informal, tuteo, sin groserías fuertes.
+- Textos en español chileno informal, tuteo, sin groserías fuertes. Inglés y portugués de Brasil adaptados, no calcados (C-3, D-48).
 - Botones de acción principal con `.btn` (rosado) o `.btn--yellow`; secundarios con `.btn--ghost`.
 - Usar `vibrate()` en momentos clave y `confetti()` en cierres.

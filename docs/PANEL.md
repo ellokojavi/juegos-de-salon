@@ -103,7 +103,7 @@ assets/js/transport/
 ## Excepciones a los cánones
 
 - **C-3 (idiomas):** el panel es solo en español. No es una pantalla de jugador: lo lee
-  una persona, y mantener dos idiomas ahí es costo sin beneficio.
+  una persona, y mantener tres idiomas ahí es costo sin beneficio.
 - **C-4 (sonido) y C-6 (memoria de partida):** no aplican; no es un juego.
 
 ## Qué queda fuera de esta versión

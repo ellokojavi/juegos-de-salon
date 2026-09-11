@@ -1,6 +1,6 @@
 # Diseño: Batalla Naval ⚓
 
-**Estado:** implementado (v0.6) · **Fecha:** 2026-09-08 · **Ruta:** `/batalla-naval/` · **Jugadores:** 1 a 2 · **Idiomas:** es, en (“Battleship”)
+**Estado:** implementado (v0.6) · **Fecha:** 2026-09-08 · **Ruta:** `/batalla-naval/` · **Jugadores:** 1 a 2 · **Idiomas:** es, en (“Battleship”), pt (“Batalha Naval”)
 
 ## 1. Resumen
 
@@ -94,7 +94,7 @@ Promedio esperado: 45 a 55 disparos para hundir la flota (un humano promedio ron
 
 - Misma identidad: fondo neón, Bangers en títulos, botones pill, confeti al ganar. Paleta del mar: casillas azul profundo, agua gris-azul, tocado naranjo, hundido rojo con brillo.
 - Grilla táctil: casillas mínimas de 30 px en 375 px de ancho. Es una sola grilla CSS de 11×11 donde la primera fila y la primera columna son las etiquetas, así números y letras quedan alineados con las casillas en todos los navegadores (v0.9.4). Sin scroll horizontal.
-- Todo en español e inglés (“Battleship”): agua/miss, tocado/hit, hundido/sunk, ¡Fuego!/Fire!, ¡Zarpar!/Set sail!
+- Todo en español, inglés y portugués (“Battleship”, “Batalha Naval”): agua/miss/água, tocado/hit/acertou, hundido/sunk/afundou, ¡Fuego!/Fire!/Fogo!, ¡Zarpar!/Set sail!/Zarpar!
 - Accesible con dedo: selección + confirmación antes de disparar; vibración en tocado/hundido.
 
 - Las casillas que se leen (el aviso de cada disparo y la casilla grande del resultado) van en Nunito 900, no en Bangers: ahí el 1 y el 7 se confunden y se dispara al lugar equivocado (D-30, canon C-1). Los números de fila de la grilla ya estaban en Nunito.
