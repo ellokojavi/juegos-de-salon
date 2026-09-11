@@ -25,6 +25,9 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | RP-17 | Cánones de construcción documentados y revisados antes de crear o cambiar un juego. | ✅ v0.7 |
 | RP-18 | Quien entra por un enlace de sala solo puede unirse a esa sala: no se le ofrece crear otra ni configurar la partida. | ✅ v0.10.1 |
 | RP-19 | Las salas vencidas se borran solas de Firebase, sin servidor ni tarea manual. | ✅ v0.17 |
+| RP-20 | Cuando no se puede abrir una sala, el jugador ve por qué en su idioma y con una salida, sin que se le culpe a su internet. | ✅ v0.18 |
+| RP-21 | Un celular no puede abrir salas sin parar: hay un tope por dispositivo que protege la cuota del plan gratuito. | ✅ v0.19 |
+| RP-22 | Vigilar el uso de la cuota de Firebase (conexiones simultáneas y descarga mensual) con una alerta antes de llegar al techo. | ⏳ pendiente (consola) |
 
 ## Cuarto Rey (CR)
 

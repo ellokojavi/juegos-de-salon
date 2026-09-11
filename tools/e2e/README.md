@@ -44,6 +44,8 @@ mkdir -p /tmp/e2e && node tools/e2e/batalla-naval-local.mjs /tmp/e2e
 | `versionado.mjs` | Que todos los módulos carguen con `?v=` del import map |
 | `compartir-sala.mjs` | Botón de compartir: diálogo nativo si existe, copiar si no |
 | `enlace-invitacion.mjs` | Quien llega por un enlace solo puede unirse a esa sala, en los tres juegos |
+| `sala-error.mjs` | Sin llegar a Firebase: el mensaje se ve en los tres juegos y en los dos idiomas |
+| `sala-tope.mjs` | Pasado el tope de salas por celular, avisa al instante y sin tocar la red |
 
 ## Cómo simulan varios celulares
 

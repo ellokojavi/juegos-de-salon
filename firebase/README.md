@@ -60,3 +60,36 @@ DAY=$((NOW/86400000))
 curl -X PATCH "$DB/cleanup/days/$DAY.json" -d "{\"lastAt\":$NOW,\"rooms/ABCD\":true}"
 curl "$DB/cleanup/days/$DAY.json"   # -> Permission denied
 ```
+
+## Cuotas y límites del plan Spark
+
+La app es estática: no hay servidor propio, así que lo multijugador entero depende de esta
+base. El techo no viene del diseño estático sino del plan gratuito:
+
+| Recurso | Tope habitual | Qué significa jugando |
+|---|---|---|
+| Conexiones simultáneas | ~100 | ≈50 partidas de dos celulares, ≈16 de seis |
+| Descarga | ~10 GB/mes | |
+| Almacenamiento | 1 GB | Poco relevante desde D-39: la papelera borra lo vencido |
+
+**No hay alerta de facturación que poner: el plan Spark no tiene facturación.** Pasado el
+tope, Firebase rechaza conexiones nuevas y el jugador no puede entrar a la sala; no se
+degrada con elegancia, se cae. Desde v0.18 al menos se le dice al jugador (D-40).
+
+Confirmar los números en la consola antes de fijar umbrales: Google los ha cambiado.
+
+### Vigilarlo (RP-22, pendiente)
+
+1. **Firebase Console → Realtime Database → Uso**: línea base de conexiones, almacenamiento
+   y descarga con el tráfico real.
+2. **Google Cloud Monitoring** (el proyecto Firebase ya es proyecto GCP): política de alerta
+   sobre conexiones activas de RTDB, umbral ~80 de 100, notificando por correo.
+
+### Si el uso crece de verdad
+
+El tope de salas por celular (D-41) ataja el abuso accidental, no al decidido: quien quiera
+abusar le pega a la REST API con `curl`. Lo único que cierra esa puerta es **autenticación
+anónima** (`signInAnonymously`) con reglas que exijan `auth != null`, que además permitiría
+reglas por usuario en vez de "cualquiera con el código". Es otro modelo de seguridad y
+merece su propia decisión; el paso a Blaze resuelve el techo pero abre la puerta a una
+boleta por abuso, así que pide tope de gasto.

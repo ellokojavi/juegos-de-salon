@@ -7,6 +7,7 @@
 import { $, $$, el, vibrate, sparkles, keepAwake, confetti, shareLink, canShare } from '../assets/js/ui.js';
 import { getLang, langToggle, applyStatic } from '../assets/js/i18n.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
+import { failWith } from '../assets/js/transport/errors.js';
 import { showHandoff, passBlock } from '../assets/js/handoff.js';
 import { createChat } from '../assets/js/chat.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
@@ -597,7 +598,7 @@ function renderSetup(mode, prefillCode = '') {
     const createBtn = el('button', { class: 'btn btn--yellow', onClick: async () => {
       const name = draft[0].trim(); if (!name) return fail(T.errName);
       nameStore.set(name); SFX.tap(); createBtn.disabled = true;
-      try { await createOnline(name, freshConfig(config)); } catch (e) { console.error(e); fail(T.errNet); }
+      try { await createOnline(name, freshConfig(config)); } catch (e) { failWith(e, T, fail); }
       createBtn.disabled = false;
     } }, T.create);
     const joinBtn = el('button', { class: 'btn btn--cyan', onClick: async () => {
@@ -605,7 +606,7 @@ function renderSetup(mode, prefillCode = '') {
       if (!name) return fail(T.errName);
       if (!/^[A-Z]{4}$/.test(code)) return fail(T.errCode);
       nameStore.set(name); SFX.tap(); joinBtn.disabled = true;
-      try { await joinOnline(code, name); } catch (e) { fail({ 'not-found': T.errNotFound, full: T.errFull, expired: T.errExpired, 'other-game': T.errOtherGame }[e.message] || T.errNet); }
+      try { await joinOnline(code, name); } catch (e) { failWith(e, T, fail); }
       joinBtn.disabled = false;
     } }, T.join);
     // Con un enlace de sala solo se puede entrar a ESA sala: crear otra desde aquí confunde.
