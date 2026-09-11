@@ -34,6 +34,7 @@ mkdir -p /tmp/e2e && node tools/e2e/batalla-naval-local.mjs /tmp/e2e
 | `linea-de-tiempo-error.mjs` | Pantalla de error que se queda hasta tocar; el rival espera |
 | `linea-de-tiempo-online.mjs` | Tres celulares contra Firebase real, recarga y revancha |
 | `toque-y-fama-chat.mjs` | Chat de sala en Toque y Fama: no leídos, etiqueta, y que muera con la partida |
+| `linea-de-tiempo-eleccion.mjs` | Que se coloque la carta elegida y que sin elegir no se pueda colocar nada |
 | `linea-de-tiempo-veredicto.mjs` | Que el veredicto hable en tercera persona cuando se equivocó otro |
 | `linea-de-tiempo-mazos.mjs` | Las cuatro temáticas y que diez partidas seguidas no repitan cartas |
 | `linea-de-tiempo-pozo.mjs` | Pozo común: tira de 6, reposición por el final, meta y ajuste que viaja en la sala |

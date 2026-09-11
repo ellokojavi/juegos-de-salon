@@ -308,8 +308,9 @@ function renderPlay(v) {
 
   // Mano
   const hand = v.hands[me] || [];
+  // La carta se elige tocándola, nunca sola: en la tira hay que desplazarse y un toque que
+  // se va en scroll no puede terminar colocando la primera carta (D-38).
   if (S.selCard && !hand.includes(S.selCard)) S.selCard = null;
-  if (!S.selCard && hand.length && isLocalTurn) S.selCard = hand[0];
   $('#hand-title').textContent = v.shared ? T.visibleTitle : (S.mode === 'local' ? fmt(T.handOf, { name: M.names[me] }) : T.yourHand);
   $('#pool-left').textContent = fmt(T.poolLeft, { n: v.poolLeft });
   const handBox = $('#hand'); handBox.innerHTML = '';
@@ -342,11 +343,12 @@ function renderPlay(v) {
   // Confirmar
   const row = $('#place-row'); row.innerHTML = '';
   if (isLocalTurn) {
+    const elegida = S.selCard ? v.byId[S.selCard] : null;
     row.append(el('button', { class: 'btn btn--yellow', disabled: S.selSlot === null || !S.selCard, onClick: () => {
       SFX.flip();
       S.transport.send({ t: 'place', from: v.current, card: S.selCard, slot: S.selSlot, ms: S.turnStart ? Date.now() - S.turnStart : 0 });
       S.selCard = null; S.selSlot = null;
-    } }, T.place));
+    } }, T.place, elegida && S.selSlot !== null ? el('small', {}, `${elegida.emoji} ${elegida[lang]}`) : null));
   }
   const fresh = line.querySelector('.event.fresh'); if (fresh) fresh.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
 }
