@@ -11,7 +11,7 @@ Cada canon tiene un ID (C-n) para citarlo en el código, en los commits y en las
 
 ## C-1 · Identidad y tono
 
-- Español chileno informal por defecto, inglés como segundo idioma. Tuteo, humor liviano, sin groserías fuertes.
+- Español chileno informal por defecto; inglés y portugués son opcionales y se eligen a mano (C-3). Tuteo, humor liviano, sin groserías fuertes.
 - Paleta y tipografías compartidas desde `assets/css/base.css`: fondo oscuro con degradados, acentos neón (rosado, amarillo, cian, lima), **Bangers** en títulos y **Nunito** en el cuerpo.
 - **Las cifras que el jugador lee o compara** (teclados, intentos, números secretos) van en `var(--font-num)` (Nunito 900) con `tabular-nums`, nunca en Bangers: ahí el 1 y el 7 son casi el mismo trazo y los jugadores se equivocan (D-30). Bangers se queda en títulos, nombres, palabras y códigos de sala (letras, sin I ni O).
 - Nada de estilos "de marca" propios por juego: un juego puede tener colores temáticos (el mar en Batalla Naval), pero botones, paneles, chips y títulos salen de las clases comunes.
@@ -26,7 +26,7 @@ Una carpeta por juego, con su propia URL (`/<id>/`) y siempre estos archivos:
 <id>/
   index.html      Pantallas como <section class="screen">, barra superior, contenedores #handoff y #cover
   style.css       Solo lo específico del juego
-  rules.js        GAME_ID, DEFAULT_CONFIG y LOCALES = { es, en }. Datos, sin lógica ni DOM
+  rules.js        GAME_ID, DEFAULT_CONFIG y LOCALES = { es, en, pt }. Datos, sin lógica ni DOM
   engine.js       Reglas puras, sin DOM ni estado global. Testeable con node
   engine.test.mjs Tests del motor (node <id>/engine.test.mjs)
   game.js         Máquina de estados y render. Lo único que toca el DOM
@@ -39,10 +39,12 @@ Una carpeta por juego, con su propia URL (`/<id>/`) y siempre estos archivos:
 
 ## C-3 · Idiomas
 
-- Todo texto visible vive en `LOCALES.es` y `LOCALES.en` de `rules.js`. Ninguna cadena literal en `game.js`.
+- **Español es el idioma por defecto.** Quien entra a juegosdesalon.cl sin haber elegido nada ve la app en español, sea cual sea el idioma de su navegador: nunca se detecta con `navigator.language`. Inglés y portugués son opcionales: solo se activan cuando la persona toca el toggle, y la elección queda guardada en el dispositivo (D-47).
+- Todo texto visible vive en `LOCALES.es`, `LOCALES.en` y `LOCALES.pt` de `rules.js`. Ninguna cadena literal en `game.js`.
 - Los textos fijos del HTML se marcan con `data-i18n="clave"` (o `data-i18n-html`) y se aplican con `applyStatic(T)`.
 - El idioma se lee con `getLang()` y el toggle `langToggle()` va en la intro de cada juego.
-- Las traducciones se adaptan, no se calcan: los chistes y las referencias locales se reemplazan por equivalentes.
+- Las traducciones se adaptan, no se calcan: los chistes y las referencias locales se reemplazan por equivalentes. El portugués es el de Brasil, informal ("você", "celular", "rolê"), y los nombres de los juegos se traducen (Quarto Rei, Toque e Fama, Batalha Naval, Linha do Tempo) igual que en inglés (D-48).
+- **Los tres diccionarios tienen exactamente las mismas claves**, las listas el mismo largo y las plantillas las mismas `{llaves}`: un texto que falta en un idioma se ve como `undefined` en pantalla, y `errText` (C-14) busca la misma clave en cualquier idioma. Lo verifica `node assets/js/i18n.test.mjs` (menú, frases, mazos y los cuatro juegos). Los mazos de Línea de Tiempo llevan `es`, `en` y `pt` en cada carta, y el test del motor también lo exige.
 - Las plantillas usan `{llaves}` y una función `fmt()`; nunca se arman frases concatenando palabras sueltas.
 
 ## C-4 · Sonido y vibración
@@ -194,12 +196,12 @@ Solo en los modos de **varios celulares**: en un celular la gente está mirando 
 ## Lista de chequeo antes de dar por listo un juego
 
 - [ ] Los tres modos funcionan y la partida se puede retomar en **todos** (C-5, C-6).
-- [ ] Todo el texto está en español e inglés, sin cadenas sueltas en el código (C-3).
+- [ ] Todo el texto está en español, inglés y portugués, con las mismas claves en los tres, sin cadenas sueltas en el código (C-3).
 - [ ] Hay sonido y vibración en las acciones clave, con botón de silencio (C-4).
 - [ ] Los botones tienen 44 px, los botones finales se ven sin desplazar y no hay scroll horizontal (C-8).
 - [ ] En un celular, el resultado se ve antes del pase, y lo secreto va tapado (C-9).
 - [ ] Los secretos se comprometen y verifican (C-10).
-- [ ] Las fallas de sala se ven en pantalla, en los dos idiomas, y la consola queda limpia (C-14).
+- [ ] Las fallas de sala se ven en pantalla, en los tres idiomas, y la consola queda limpia (C-14).
 - [ ] Tests del motor en verde y partida completa probada en cada modo, con capturas revisadas (C-12).
 - [ ] Versión estampada, publicada y comprobada en la URL pública (C-11).
 - [ ] Si tiene varios celulares, el chat de sala usa el módulo compartido y muere con la partida (C-15).

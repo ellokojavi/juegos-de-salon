@@ -1,5 +1,5 @@
 /**
- * Batalla Naval — configuración por defecto y textos en español e inglés.
+ * Batalla Naval — configuración por defecto y textos en español, inglés y portugués.
  */
 export const GAME_ID = 'batalla-naval';
 export const DEFAULT_CONFIG = { extraShot: true, confirmShot: true };
@@ -75,4 +75,42 @@ const EN = {
   rematch: '🔁 Rematch', changeMode: 'Change mode', backMenu: 'Back to menu',
 };
 
-export const LOCALES = { es: ES, en: EN };
+
+const PT = {
+  docTitle: 'Batalha Naval ⚓ · Jogos de Salão', gameChip: '⚓ Batalha Naval', menu: '‹ Menu',
+  title: 'Batalha Naval',
+  lead: 'Posicione sua frota em segredo e afunde a do rival antes que ele afunde a sua.',
+  howTitle: '🧭 Como se joga',
+  howText: 'Cada um esconde 5 navios no seu tabuleiro de 10×10. Nos turnos você atira em uma casa do rival: <b>água</b> se não tem nada, <b>acertou</b> se atingiu um navio e <b>afundou</b> quando completou todas as casas dele. Se acertar, você continua atirando. Ganha quem afunda os 5 navios.',
+  modeLocal: '📱 Um celular, dois jogadores', modeLocalHint: 'Vocês passam o celular. Sua frota fica coberta entre os turnos.',
+  modeOnline: '📡 Dois celulares', modeOnlineHint: 'Sala com código de 4 letras. Cada um no seu celular.',
+  modeCpu: '🤖 Contra o celular', modeCpuHint: 'A IA posiciona a frota dela e caça a sua sem piedade.',
+  setupTitle: 'Como vamos jogar?', extraShot: 'Tiro extra ao acertar', extraShotHint: 'Se acertar ou afundar, você atira de novo.', confirmShot: 'Confirmar cada tiro', confirmShotHint: 'Você escolhe a casa e depois toca em Fogo!',
+  yourName: 'Seu nome', p1: 'Jogador 1', p2: 'Jogador 2', cpuName: 'Celular', start: 'Bora jogar!',
+  errName: 'Falta o nome.', errNames: 'Faltam nomes ou estão repetidos.',
+  create: 'Criar sala', joinTitle: 'Entrar em uma sala', codePlaceholder: 'CÓDIGO', join: 'Entrar', errCode: 'O código tem 4 letras.',
+  errNotFound: 'Essa sala não existe. Confira o código.', errFull: 'A sala já está cheia.', errExpired: 'Essa sala já expirou.', errOtherGame: 'Esse código é de outro jogo.', errNet: 'Não foi possível conectar. Tem internet?',
+  errOffline: 'Não foi possível abrir a sala. Pode ser a sua internet ou muita gente jogando ao mesmo tempo. Tente de novo em alguns minutos ou jogue no modo de um celular só, que não precisa de internet.',
+  errTooMany: 'Você abriu muitas salas seguidas. Espere um pouquinho e tente de novo.',
+  invitedTitle: 'Convidado para jogar!', invited: '📩 Sala {code}', invitedHint: 'Escreva seu nome e entre. Quem te convidou configura a partida.',
+  lobbyTitle: 'Sala criada', lobbyCode: 'Código', lobbyShare: 'Diga o código ao rival ou deixe ele escanear o QR.', lobbyWaiting: 'Esperando o rival…', lobbyJoined: '{name} entrou!', shareLink: '📤 Compartilhar link', shareText: 'Entre na minha sala de {game}. Código: {code}', copyLink: '📋 Copiar link', copied: 'Copiado!',
+  offline: 'Rival desconectado. Esperando ele voltar…', rematchWaiting: 'Esperando {name} para a revanche…',
+  resumeTitle: '⏯ Tem uma batalha pela metade', resume: 'Continuar', delete: 'Apagar',
+  // posicionamento
+  placeTitle: 'Posicione sua frota', placeFor: 'Frota de {name}', placeHint: 'Toque em um navio e depois em uma casa. Toque em um navio já posicionado para selecioná-lo: gire com ↻, mova tocando em outra casa ou arraste.',
+  ships: { carrier: 'Porta-aviões', battleship: 'Encouraçado', cruiser: 'Cruzador', submarine: 'Submarino', destroyer: 'Destróier' },
+  rotate: '↻ Girar {dir}', random: '🎲 Aleatório', clear: '🧹 Limpar', sail: '⚓ Zarpar!', placed: '{n} de 5 navios',
+  fleetSaved: 'Frota pronta 🔒', waitingFleet: 'Esperando {name} posicionar a frota…', tapToReveal: 'Toque para ver', hoPass: 'Passe o celular para', hoReady: 'Pronto, sou eu!',
+  // batalha
+  turnYou: 'Sua vez! Atire em {name}', turnOther: '{name} está mirando…', extraGo: '{result} Continue atirando', waitingReply: 'Esperando a resposta…',
+  fire: '🎯 Fogo!', pickCell: 'Escolha uma casa', enemyBoard: 'Frota de {name}', myBoard: 'Minha frota', showFleet: 'toque para ver minha frota', hideFleet: 'toque para esconder',
+  agua: 'Água', tocado: 'Acertou!', hundido: 'Afundou!', sunkShip: 'Você afundou o {ship} de {name}', sunkMine: 'Afundaram o seu {ship}!',
+  cpuShot: 'O celular atirou em {cell}: {result}', shotAt: '{name} atirou em {cell}',
+  hoResult: 'Resultado', hoContinue: 'Continuar',
+  // resultado
+  winTitle: '{name} ganhou!', youWin: 'Você ganhou!', youLose: 'Afundaram você… desta vez.', stats: '{shots} tiros · {acc}% de pontaria', fleetsWere: 'As frotas eram',
+  verified: 'verificado ✅', notVerified: '⚠️ não confere (roubou?)', replayTitle: '🔎 Ver todos os tiros', shotsOf: 'Tiros de {name}',
+  rematch: '🔁 Revanche', changeMode: 'Mudar o modo', backMenu: 'Voltar ao menu',
+};
+
+export const LOCALES = { es: ES, en: EN, pt: PT };

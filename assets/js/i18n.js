@@ -1,7 +1,7 @@
 /**
  * Idioma compartido por toda la app.
  * El idioma se elige con un toggle en el menú (y en la intro de cada juego)
- * y se guarda en localStorage. Por defecto: español. Idiomas: es, en, pt (D-46).
+ * y se guarda en localStorage. Por defecto: español. Idiomas: es, en, pt (D-47).
  */
 import { el } from './ui.js';
 
