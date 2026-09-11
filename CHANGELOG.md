@@ -1,5 +1,23 @@
 # Changelog
 
+## Laboratorio — 2026-09-11
+
+No es una versión de la app: **ningún archivo de los juegos cambió.** Se publica una
+carpeta nueva, `/lab/`, para probar cambios de interfaz antes de llevarlos a la app.
+
+- Primer experimento: **insignias serigrafiadas**, una ilustración impresa por juego en
+  reemplazo del emoji del sistema, en la tarjeta del menú y en el encabezado de la intro.
+  Cubre la vista principal y Línea de Tiempo; los otros tres juegos se muestran con su
+  insignia pero el enlace lleva al juego publicado.
+- Las páginas del laboratorio **importan los módulos reales** de cada juego, así que no
+  hay lógica duplicada y un arreglo en el juego se ve ahí solo.
+- Si una insignia no carga, vuelve el emoji del juego (C-14). Probado forzando la falla.
+- **Excepción a C-11, anotada y no ignorada en silencio:** no se corrió `set-version.py`
+  ni se subió el número de versión. Ese canon existe para que el navegador no mezcle
+  archivos viejos y nuevos, y acá no cambió ningún archivo versionado: estampar `?v=`
+  nuevo obligaría a todos los celulares a rebajar el JS y el CSS completos sin que haya
+  nada nuevo que bajar. El laboratorio, a propósito, se sirve sin `?v=`.
+
 ## 0.19.0 — 2026-09-10
 - **Un celular ya no puede abrir salas sin parar.** Hay un tope por dispositivo (20 por hora, 80 por día) que ataja el caso realista: una pestaña en bucle o un error nuestro creando salas sin freno. El tope está muy por encima del uso legítimo más intenso, porque la revancha abre sala nueva y una tarde de partidas cortas son muchas salas seguidas (D-41).
 - El tope se revisa **antes** de tocar la red, así que avisa al instante y no gasta una conexión para después descartarla.
