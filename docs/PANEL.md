@@ -14,7 +14,7 @@ los datos son las reglas de Firebase, que solo dejan leer al UID del dueño.
 
 | Sección | Qué muestra | De dónde sale |
 |---|---|---|
-| **Ahora** | Salas en juego, celulares conectados, salas de las últimas 6 h, juegos en curso. Lista de salas con código, juego, nombres, quién está conectado, mensajes y última jugada. | `rooms/` en vivo (índice por `createdAt`) |
+| **Ahora** | Salas en juego, celulares conectados, salas de las últimas 6 h, juegos en curso. Lista de salas con código, juego, nombres, quién está conectado, mensajes y última jugada. Solo las del entorno elegido (D-45). | `rooms/` en vivo (índice por `createdAt`), cruzado por código con `stats/<env>` |
 | **Últimos 7 / 30 días** | Partidas totales, en dos celulares, sin red, celulares que jugaron, partidas de hoy. | `stats/<env>/days/<día>` |
 | **Partidas por juego** | Barra por juego, partida por modo: 📡 dos celulares, 📱 un celular, 🤖 contra el celular, 🧍 solo. | `rooms` (📡) y `local/<juego>/<modo>/<n>` |
 | **Jugadores por partida** | Cuántas partidas de 1, 2, … 6 jugadores. | `n` de los contadores sin red y cantidad de nombres de cada sala |
@@ -30,6 +30,12 @@ sin red no abren conexión (mandan un solo `fetch`), así que no aparecen ahí n
 **Entorno**: el selector separa lo publicado (`prod`), el laboratorio (`lab`) y las pruebas
 en `localhost` (`dev`). Las pruebas de punta a punta pegan contra Firebase de verdad y caen
 en `dev`, así que no ensucian las cifras reales.
+
+Vale también para la lista de "Ahora", aunque ahí cueste un rodeo: `rooms/` es el nodo real
+del transporte y es uno solo para todos los entornos, así que una partida de prueba abre una
+sala tan real como la de un jugador. El panel cruza cada sala viva por código contra lo que
+`stats/<env>` registró hoy y ayer, y las que quedan fuera las nombra debajo de la lista en vez
+de esconderlas: si una sala real no alcanzó a registrarse, tiene que poder verse (D-45).
 
 ## Qué se registra y qué no
 
