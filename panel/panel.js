@@ -39,8 +39,8 @@ function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.cl
  * Son ajustes que se hacen una sola vez y no le cambian nada a quienes juegan.
  */
 const LOGIN_ERRORES = {
-  'auth/operation-not-allowed': 'Falta habilitar el acceso con Google en la consola de Firebase, en Authentication y luego Método de acceso. Se hace una sola vez.',
-  'auth/unauthorized-domain': 'Este dominio no está en la lista de dominios autorizados del proyecto, en Authentication y luego Configuración. Hay que agregarlo una sola vez.',
+  'auth/operation-not-allowed': 'Falta habilitar el acceso con Google en la consola de Firebase, en Authentication y luego Sign-in method. Se hace una sola vez.',
+  'auth/unauthorized-domain': 'Este dominio no está en la lista de Authorized domains del proyecto, en Authentication y luego Settings. Hay que agregarlo una sola vez.',
   'auth/network-request-failed': 'No se pudo hablar con Firebase. Puede ser tu internet o que el servicio esté con problemas. Intenta nuevamente en unos minutos.',
 };
 
