@@ -7,6 +7,7 @@
 import { $, $$, el, vibrate, sparkles, keepAwake, confetti, shareLink, canShare } from '../assets/js/ui.js';
 import { getLang, langToggle, applyStatic } from '../assets/js/i18n.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
+import { failWith } from '../assets/js/transport/errors.js';
 import { showHandoff, passBlock, showCover } from '../assets/js/handoff.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
@@ -638,12 +639,12 @@ function renderSetup(mode, prefillCode = '') {
   else if (mode === 'cpu') actions.append(el('button', { class: 'btn btn--yellow', onClick: () => { const a = getName('A'); if (!a) return fail(T.errName); remember(a); SFX.tap(); startLocalMode('cpu', { A: a, B: T.cpuName }, config); } }, T.start));
   else {
     const codeInput = el('input', { type: 'text', class: 'code', maxlength: 4, placeholder: T.codePlaceholder, value: prefillCode, autocapitalize: 'characters', autocomplete: 'off' });
-    const createBtn = el('button', { class: 'btn btn--yellow', onClick: async () => { const a = getName('A'); if (!a) return fail(T.errName); remember(a); SFX.tap(); createBtn.disabled = true; try { await createOnline(a, config); } catch (e) { console.error(e); fail(T.errNet); } createBtn.disabled = false; } }, T.create);
+    const createBtn = el('button', { class: 'btn btn--yellow', onClick: async () => { const a = getName('A'); if (!a) return fail(T.errName); remember(a); SFX.tap(); createBtn.disabled = true; try { await createOnline(a, config); } catch (e) { failWith(e, T, fail); } createBtn.disabled = false; } }, T.create);
     const joinBtn = el('button', { class: 'btn btn--cyan', onClick: async () => {
       const a = getName('A'); const code = codeInput.value.trim().toUpperCase();
       if (!a) return fail(T.errName); if (!/^[A-Z]{4}$/.test(code)) return fail(T.errCode);
       remember(a); SFX.tap(); joinBtn.disabled = true;
-      try { await joinOnline(code, a); } catch (e) { fail({ 'not-found': T.errNotFound, full: T.errFull, expired: T.errExpired, 'other-game': T.errOtherGame }[e.message] || T.errNet); }
+      try { await joinOnline(code, a); } catch (e) { failWith(e, T, fail); }
       joinBtn.disabled = false;
     } }, T.join);
     // Con un enlace de sala solo se puede entrar a ESA sala: crear otra desde aquí confunde.

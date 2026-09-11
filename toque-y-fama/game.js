@@ -9,6 +9,7 @@
 import { $, $$, el, vibrate, sparkles, keepAwake, confetti, shareLink, canShare } from '../assets/js/ui.js';
 import { getLang, langToggle, applyStatic } from '../assets/js/i18n.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
+import { failWith } from '../assets/js/transport/errors.js';
 import { score, isValid, randomSecret, Solver, sha256, randomNonce, verifyPlayer } from './engine.js';
 import { GAME_ID, DEFAULT_CONFIG, DIGIT_OPTIONS, LOCALES } from './rules.js';
 import { createChat } from '../assets/js/chat.js';
@@ -670,12 +671,12 @@ function renderSetup(mode, prefillCode = '') {
   } else {
     const codeInput = el('input', { type: 'text', class: 'code', maxlength: 4, placeholder: T.codePlaceholder, value: prefillCode, autocapitalize: 'characters', autocomplete: 'off' });
     const busy = (b, on) => { b.disabled = on; };
-    const createBtn = el('button', { class: 'btn btn--yellow', onClick: async () => { const a = getName('A'); if (!a) return fail(T.errName); remember(a); SFX.tap(); busy(createBtn, true); try { await createOnline(a, config); } catch (e) { console.error(e); fail(T.errNet); } busy(createBtn, false); } }, T.create);
+    const createBtn = el('button', { class: 'btn btn--yellow', onClick: async () => { const a = getName('A'); if (!a) return fail(T.errName); remember(a); SFX.tap(); busy(createBtn, true); try { await createOnline(a, config); } catch (e) { failWith(e, T, fail); } busy(createBtn, false); } }, T.create);
     const joinBtn = el('button', { class: 'btn btn--cyan', onClick: async () => {
       const a = getName('A'); const code = codeInput.value.trim().toUpperCase();
       if (!a) return fail(T.errName); if (!/^[A-Z]{4}$/.test(code)) return fail(T.errCode);
       remember(a); SFX.tap(); busy(joinBtn, true);
-      try { await joinOnline(code, a); } catch (e) { fail({ 'not-found': T.errNotFound, full: T.errFull, expired: T.errExpired, 'other-game': T.errOtherGame }[e.message] || T.errNet); }
+      try { await joinOnline(code, a); } catch (e) { failWith(e, T, fail); }
       busy(joinBtn, false);
     } }, T.join);
     // Con un enlace de sala solo se puede entrar a ESA sala: crear otra desde aquí confunde.

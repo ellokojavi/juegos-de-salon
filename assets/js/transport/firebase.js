@@ -10,6 +10,8 @@ import {
 } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js';
 import { firebaseConfig } from '../firebase-config.js';
 import { ROOM_TTL, dueForSweep, markSwept, noteRoom, sweep } from './cleanup.js';
+import { CONNECT_MS, OP_MS, waitConnected, withTimeout } from './errors.js';
+import { checkQuota, noteCreated } from './ratelimit.js';
 
 /** Código de sala: 4 letras mayúsculas sin las ambiguas (I, O). */
 export function randomRoomCode() {
@@ -25,6 +27,12 @@ function getDb() {
 }
 
 const ROLES = ['A', 'B', 'C', 'D', 'E', 'F'];
+
+/**
+ * Avisa si hay conexión con la base. Lo usa `waitConnected` antes de crear o entrar.
+ * `.info/connected` es local del SDK: no gasta cuota y responde apenas se sabe.
+ */
+const connWatch = d => cb => onValue(ref(d, '.info/connected'), s => cb(!!s.val()));
 
 /** Acceso a la base que usa la papelera (cleanup.js). */
 const cleanupApi = d => ({
@@ -57,9 +65,24 @@ export function createFirebaseTransport({ game, maxPlayers = 2 }) {
     roles: [],
     _unsubs: [],
 
-    /** Crea una sala nueva con un código libre. Devuelve el código. */
-    async create({ config, name }) {
+    /**
+     * Crea una sala nueva con un código libre. Devuelve el código.
+     *
+     * Antes de tocar la base se espera la conexión, y la operación entera lleva tope. Sin
+     * eso, quedarse sin señal —o toparse con el tope de conexiones del plan gratuito— se ve
+     * como una espera eterna con el botón pegado, y el juego terminaba culpando a la
+     * internet del jugador sin saberlo (C-14, D-40).
+     */
+    async create(opts) {
+      checkQuota(); // antes de tocar la red: una sala de más no se pide y después se descarta
       const d = getDb();
+      await waitConnected(connWatch(d), CONNECT_MS);
+      const code = await withTimeout(this._create(d, opts), OP_MS);
+      noteCreated(); // solo cuenta la que quedó creada de verdad
+      return code;
+    },
+
+    async _create(d, { config, name }) {
       for (let i = 0; i < 8; i++) {
         const code = randomRoomCode();
         const roomRef = ref(d, `rooms/${code}`);
@@ -79,9 +102,17 @@ export function createFirebaseTransport({ game, maxPlayers = 2 }) {
       throw new Error('no-code');
     },
 
-    /** Se une a una sala existente. Si este dispositivo ya tenía un rol en la sala, lo retoma. */
-    async join(code, { name, previousRole = null }) {
+    /**
+     * Se une a una sala existente. Si este dispositivo ya tenía un rol en la sala, lo retoma.
+     * Espera conexión y lleva tope, por lo mismo que `create`.
+     */
+    async join(code, opts) {
       const d = getDb();
+      await waitConnected(connWatch(d), CONNECT_MS);
+      return withTimeout(this._join(d, code, opts), OP_MS);
+    },
+
+    async _join(d, code, { name, previousRole = null }) {
       const snap = await get(ref(d, `rooms/${code}`));
       if (!snap.exists()) throw new Error('not-found');
       const room = snap.val();

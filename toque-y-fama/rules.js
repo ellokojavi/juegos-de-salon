@@ -21,6 +21,8 @@ const ES = {
   start: '¡A jugar!', create: 'Crear sala', joinTitle: 'Unirse a una sala', codePlaceholder: 'CÓDIGO', join: 'Unirse',
   errName: 'Falta el nombre.', errNames: 'Faltan nombres o están repetidos.', errCode: 'El código tiene 4 letras.',
   errNotFound: 'No existe esa sala. Revisa el código.', errFull: 'La sala ya está llena.', errExpired: 'Esa sala ya venció.', errOtherGame: 'Ese código es de otro juego.', errNet: 'No se pudo conectar. ¿Hay internet?',
+  errOffline: 'No se pudo abrir la sala. Puede ser tu internet o que haya mucha gente jugando. Intenta nuevamente en unos minutos o jugar en modo de un solo celular sin conexión a internet.',
+  errTooMany: 'Abriste muchas salas seguidas. Espera un ratito y prueba de nuevo.',
   // lobby
   chatTitle: 'Chat de la sala', chatOpen: 'Abrir el chat', chatClose: 'Cerrar el chat', chatSend: 'Enviar',
   chatPlaceholder: 'Escribe algo…', chatEmpty: 'Acá pueden picarse mientras adivinan. Se borra cuando termina la partida.',
@@ -63,6 +65,8 @@ const EN = {
   start: 'Let\'s play!', create: 'Create room', joinTitle: 'Join a room', codePlaceholder: 'CODE', join: 'Join',
   errName: 'Name missing.', errNames: 'Names missing or repeated.', errCode: 'The code has 4 letters.',
   errNotFound: 'That room doesn\'t exist. Check the code.', errFull: 'That room is full.', errExpired: 'That room has expired.', errOtherGame: 'That code belongs to another game.', errNet: 'Could not connect. Is there internet?',
+  errOffline: 'Couldn\'t open the room. It might be your connection or too many people playing. Try again in a few minutes, or play in one-phone mode, which needs no internet.',
+  errTooMany: 'You\'ve opened a lot of rooms in a row. Wait a bit and try again.',
   chatTitle: 'Room chat', chatOpen: 'Open the chat', chatClose: 'Close the chat', chatSend: 'Send',
   chatPlaceholder: 'Say something…', chatEmpty: 'Trash talk while you guess. It disappears when the game ends.',
   invitedTitle: 'Invited to play!', invited: '📩 Room {code}', invitedHint: 'Type your name and jump in. Whoever invited you sets up the game.',

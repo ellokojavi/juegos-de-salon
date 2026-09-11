@@ -24,6 +24,7 @@ export async function launch({ port, dir, out, width = 390, height = 844 }) {
   await send('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: 2, mobile: true });
   const api = {
     errors, logs,
+    send, // CDP crudo, para lo que no tiene helper (por ejemplo cortarle la red a Firebase)
     evaluate: async expr => { const r = await send('Runtime.evaluate', { expression: expr, awaitPromise: true, returnByValue: true }); if (r.result?.exceptionDetails) throw new Error(r.result.exceptionDetails.text + ' ' + (r.result.exceptionDetails.exception?.description || '')); return r.result?.result?.value; },
     go: async (url, wait = 1800) => { await send('Page.navigate', { url }); await sleep(wait); },
     shot: async name => { const r = await send('Page.captureScreenshot', { format: 'png' }); writeFileSync(`${out}/${name}.png`, Buffer.from(r.result.data, 'base64')); },
