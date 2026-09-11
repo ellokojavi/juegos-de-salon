@@ -46,6 +46,10 @@ const LOGIN_ERRORES = {
 
 async function login() {
   const provider = new GoogleAuthProvider();
+  // Siempre preguntar con qué cuenta: sin esto Google usa la sesión que ya esté abierta y
+  // entra sin avisar. Acá importa más que en otras partes, porque el panel es de una cuenta
+  // concreta y entrar con la equivocada no se ve: muestra un UID válido, pero el de otra.
+  provider.setCustomParameters({ prompt: 'select_account' });
   try { await signInWithPopup(auth, provider); }
   catch (e) {
     // En algunos celulares la ventana emergente no abre: se va y se vuelve.
