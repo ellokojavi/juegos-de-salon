@@ -16,7 +16,7 @@ import {
 import { firebaseConfig } from '../assets/js/firebase-config.js';
 import { GAMES } from '../assets/js/games.js';
 import { $, el } from '../assets/js/ui.js';
-import { DAY, ROOM_TTL, liveRooms, connections, summarize, top, tzLabel, ago, dayLabel, dayOf } from './aggregate.js';
+import { DAY, ROOM_TTL, liveRooms, connections, summarize, top, tzLabel, ago, dayLabel, dayOf, codesOfDays, splitByEnv } from './aggregate.js';
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -26,7 +26,7 @@ const GAME_LABEL = Object.fromEntries(GAMES.map(g => [g.id, `${g.emoji} ${g.name
 const gameLabel = id => GAME_LABEL[id] || id;
 const MODE_ICON = { online: '📡', local: '📱', cpu: '🤖', solo: '🧍' };
 
-const S = { user: null, env: 'prod', range: 7, rooms: {}, days: {}, unsubRooms: null, unsubDays: null, denied: false, tick: null };
+const S = { user: null, env: 'prod', range: 7, rooms: {}, days: {}, daysLoaded: false, unsubRooms: null, unsubDays: null, denied: false, tick: null };
 
 /* ------------------------------------------------------------------ */
 /* Entrar                                                              */
@@ -103,7 +103,7 @@ function listen() {
   S.unsubRooms = onValue(query(ref(db, 'rooms'), orderByChild('createdAt'), startAt(since)), snap => { S.rooms = snap.val() || {}; renderNow(); }, denied);
   // Días del rango más largo que se puede pedir (30), así cambiar el rango no vuelve a bajar nada.
   const from = String(dayOf(Date.now()) - 30);
-  S.unsubDays = onValue(query(ref(db, `stats/${S.env}/days`), orderByKey(), startAt(from)), snap => { S.days = snap.val() || {}; renderRange(); }, denied);
+  S.unsubDays = onValue(query(ref(db, `stats/${S.env}/days`), orderByKey(), startAt(from)), snap => { S.days = snap.val() || {}; S.daysLoaded = true; renderRange(); renderNow(); }, denied);
   S.tick = setInterval(renderNow, 30000); // "hace 3 min" se actualiza solo
 }
 
@@ -134,7 +134,9 @@ function fill(box, rows, emptyText = 'Nada todavía.') {
 
 function renderNow() {
   const now = Date.now();
-  const live = liveRooms(S.rooms, now);
+  // `rooms/` no está separado por entorno: se cruza por código con lo que registró
+  // `stats/<env>` para no contar las pruebas como si fueran gente jugando (D-45).
+  const { propias: live, ajenas } = splitByEnv(liveRooms(S.rooms, now), codesOfDays(S.days, now), { loaded: S.daysLoaded });
   const active = live.filter(r => r.active);
   const tiles = $('#tiles-now'); tiles.innerHTML = '';
   tiles.append(
@@ -149,6 +151,14 @@ function renderNow() {
     el('div', { class: 'who' }, r.players.map(p => el('span', {}, el('i', { class: p.online ? 'on' : '' }), p.name))),
     el('div', { class: 'meta' }, `${n(r.messages)} msj`, el('br'), ago(r.lastAt, now), el('br'), `creada ${ago(r.createdAt, now)}`),
   )), 'No hay salas vivas en este momento.');
+  // Nunca esconder en silencio: una sala puede quedar fuera por ser de otro entorno, pero
+  // también porque su registro de señales falló, que es mejor esfuerzo y falla callado (C-14).
+  if (ajenas.length) {
+    box.append(el('p', { class: 'empty', style: 'margin-top:8px' },
+      ajenas.length === 1
+        ? `1 sala viva no quedó registrada en ${S.env} y no se muestra acá: ${ajenas[0].code}.`
+        : `${n(ajenas.length)} salas vivas no quedaron registradas en ${S.env} y no se muestran acá: ${ajenas.map(r => r.code).join(', ')}.`));
+  }
   $('#updated').textContent = `Actualizado ${new Date(now).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' })}`;
 }
 
@@ -197,11 +207,11 @@ function renderRange() {
 /* Controles                                                           */
 /* ------------------------------------------------------------------ */
 $('#btn-login').addEventListener('click', login);
-$('#env').addEventListener('change', e => { S.env = e.target.value; S.days = {}; renderRange(); if (S.user) listen(); });
+$('#env').addEventListener('change', e => { S.env = e.target.value; S.days = {}; S.daysLoaded = false; renderRange(); renderNow(); if (S.user) listen(); });
 $('#range').addEventListener('change', e => { S.range = Number(e.target.value); renderRange(); });
 
 // Gancho de solo lectura para pruebas (C-14): permite dibujar con datos sembrados sin entrar.
 window.__panel = {
   get state() { return S; },
-  seed({ rooms = {}, days = {} }) { stopListening(); S.rooms = rooms; S.days = days; showScreen('screen-panel'); renderNow(); renderRange(); },
+  seed({ rooms = {}, days = {}, daysLoaded = true }) { stopListening(); S.rooms = rooms; S.days = days; S.daysLoaded = daysLoaded; showScreen('screen-panel'); renderNow(); renderRange(); },
 };
