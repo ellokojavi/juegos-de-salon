@@ -1,6 +1,8 @@
 {
   "rules": {
     "rooms": {
+      ".read": "auth != null && auth.uid === 'REEMPLAZAR-POR-EL-UID-DEL-DUENO'",
+      ".indexOn": ["createdAt"],
       "$room": {
         ".read": "$room.matches(/^[A-Z]{4}$/)",
         ".write": "$room.matches(/^[A-Z]{4}$/) && data.exists() && !newData.exists() && data.child('createdAt').val() < now - 21600000",
@@ -56,6 +58,63 @@
         }
       },
       "$other": { ".validate": false }
+    },
+    "stats": {
+      ".read": "auth != null && auth.uid === 'REEMPLAZAR-POR-EL-UID-DEL-DUENO'",
+      "$env": {
+        ".validate": "$env.matches(/^(prod|lab|dev)$/)",
+        "days": {
+          "$day": {
+            ".validate": "$day.matches(/^[0-9]{5}$/)",
+            "rooms": {
+              "$code": {
+                ".write": "$env.matches(/^(prod|lab|dev)$/) && $day.matches(/^[0-9]{5}$/) && $code.matches(/^[A-Z]{4}$/) && !data.exists()",
+                ".validate": "newData.hasChildren(['game', 'at', 'v', 'players'])",
+                "game": { ".validate": "newData.isString() && newData.val().length < 40" },
+                "at": { ".validate": "newData.isNumber() && newData.val() <= now + 60000 && newData.val() > now - 60000" },
+                "v": { ".validate": "newData.isString() && newData.val().length <= 16" },
+                "players": {
+                  "$p": {
+                    ".write": "$env.matches(/^(prod|lab|dev)$/) && $day.matches(/^[0-9]{5}$/) && $code.matches(/^[A-Z]{4}$/) && $p.matches(/^[A-F]$/) && !data.exists()",
+                    ".validate": "newData.isString() && newData.val().length <= 20"
+                  }
+                },
+                "$other": { ".validate": false }
+              }
+            },
+            "local": {
+              "$game": {
+                "$mode": {
+                  "$n": {
+                    ".write": "$env.matches(/^(prod|lab|dev)$/) && $day.matches(/^[0-9]{5}$/) && $game.matches(/^[a-z-]{1,40}$/) && $mode.matches(/^(local|cpu|solo)$/) && $n.matches(/^[1-6]$/)",
+                    ".validate": "newData.isNumber() && ((!data.exists() && newData.val() == 1) || newData.val() == data.val() + 1)"
+                  }
+                }
+              }
+            },
+            "origin": {
+              "$tz": {
+                ".write": "$env.matches(/^(prod|lab|dev)$/) && $day.matches(/^[0-9]{5}$/) && $tz.matches(/^[A-Za-z0-9_+-]{1,40}$/)",
+                ".validate": "newData.isNumber() && ((!data.exists() && newData.val() == 1) || newData.val() == data.val() + 1)"
+              }
+            },
+            "lang": {
+              "$lang": {
+                ".write": "$env.matches(/^(prod|lab|dev)$/) && $day.matches(/^[0-9]{5}$/) && $lang.matches(/^[A-Za-z0-9_-]{1,12}$/)",
+                ".validate": "newData.isNumber() && ((!data.exists() && newData.val() == 1) || newData.val() == data.val() + 1)"
+              }
+            },
+            "hour": {
+              "$h": {
+                ".write": "$env.matches(/^(prod|lab|dev)$/) && $day.matches(/^[0-9]{5}$/) && $h.matches(/^([0-9]|1[0-9]|2[0-3])$/)",
+                ".validate": "newData.isNumber() && ((!data.exists() && newData.val() == 1) || newData.val() == data.val() + 1)"
+              }
+            },
+            "$other": { ".validate": false }
+          }
+        },
+        "$other": { ".validate": false }
+      }
     }
   }
 }

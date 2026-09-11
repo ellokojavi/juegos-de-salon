@@ -26,6 +26,8 @@ node linea-de-tiempo/engine.test.mjs
 node assets/js/transport/cleanup.test.mjs
 node assets/js/transport/errors.test.mjs
 node assets/js/transport/ratelimit.test.mjs
+node assets/js/transport/stats.test.mjs
+node panel/aggregate.test.mjs
 python3 -m http.server 8765          # los módulos ES necesitan HTTP, no file://
 ```
 
@@ -48,7 +50,15 @@ python3 tools/lab.py promover       # llevar el experimento aprobado a producci�
 sirven el sitio en el puerto 8765, corren `node tools/e2e/<script>.mjs <carpeta-salida>` y
 revisan las capturas. Antes de repetir uno que falló: `pkill -f remote-debugging-port`.
 
+## Panel del dueño
+
+`panel/` es una página privada (entrada con Google, lectura solo para el UID del dueño en las
+reglas) que muestra salas vivas, partidas por juego y modo, jugadores, origen e idioma. Las
+señales las mandan los juegos con `trackStart` y el transporte (`assets/js/transport/stats.js`).
+Ver [docs/PANEL.md](docs/PANEL.md) y D-44. `window.__panel.seed({ rooms, days })` lo dibuja con
+datos sembrados sin entrar.
+
 ## Documentación
 
-`docs/REQUERIMIENTOS.md` · `docs/DECISIONES.md` (ADR) · `docs/AGREGAR-JUEGO.md` ·
+`docs/PANEL.md` · `docs/REQUERIMIENTOS.md` · `docs/DECISIONES.md` (ADR) · `docs/AGREGAR-JUEGO.md` ·
 `docs/juegos/<id>.md` · `firebase/README.md` · `CHANGELOG.md`

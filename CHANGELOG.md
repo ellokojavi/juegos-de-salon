@@ -1,5 +1,41 @@
 # Changelog
 
+## 0.21.0 — 2026-09-11
+- **Línea de Tiempo: todas las cartas a la vista** (D-43, LT-15). La sección "Cartas" de la
+  configuración pasa de dos opciones a tres, y la nueva queda marcada por defecto: se
+  despliega **el doble de las cartas que hay que colocar para ganar** —6, 10 o 14 según la
+  meta— desde el primer turno, y no entra ninguna carta nueva en toda la partida. Cada carta
+  que sale, por acierto o por error, achica la mesa.
+- Como la mesa solo se achica, las cartas difíciles de situar van quedando para el final,
+  sobre una línea de tiempo que para entonces ya está llena y deja huecos cada vez más
+  estrechos: la partida se pone más difícil sola, sin ninguna regla extra que explicar. El
+  pozo común de 6 cartas que se reponen sigue disponible, y la mano propia también.
+- El contador de arriba a la derecha deja de decir cuántas cartas quedan en el mazo —que en
+  este modo no entra nunca— y dice cuántas quedan en la mesa. Con tres opciones el selector
+  ya no cabe lado a lado en un celular, así que va apilado y cada una lleva su nombre completo.
+- En solitario la mesa se puede vaciar antes de llegar a la meta: la pantalla final lo dice
+  con sus palabras ("Se acabaron las cartas · Alcanzaste a colocar 1 de las 3 cartas que
+  necesitabas") y no se guarda récord, para que una partida abandonada no quede como la mejor
+  marca. Cada forma de repartir lleva su récord aparte.
+
+## 0.20.0 — 2026-09-11
+- **Panel privado del dueño en `/panel/`** (D-44, RP-23). Entra con Google y muestra, en vivo:
+  salas en juego y celulares conectados (la mejor aproximación a la cuota de conexiones),
+  partidas por juego y por modo en 7 o 30 días, jugadores por partida, de dónde se juega
+  (zona horaria), idioma del navegador y a qué hora se juega. Filtra por entorno para que
+  las pruebas locales y el laboratorio no ensucien las cifras publicadas.
+- **Los juegos dejan señales de uso anonimizadas** (RP-24): las salas quedan registradas
+  con juego, hora, versión y los nombres que ya viajaban a Firebase; los modos sin red
+  mandan un contador por juego, modo y jugadores, sin nombre; todos suman zona horaria,
+  idioma y hora local. Va por REST con un solo `fetch`, sin cargar el SDK ni abrir
+  conexión, y si falla nadie se entera. Nunca sale una IP, un secreto, el chat ni quién ganó.
+- Reglas de Firebase nuevas: `stats/` solo lo lee el dueño y solo acepta subir contadores
+  de a uno; `rooms/` gana un índice por `createdAt` y lectura de lista para el dueño.
+  **Hay que publicarlas en la consola y activar Google en Authentication** (pasos en
+  `firebase/README.md`).
+- La promesa de privacidad de los requerimientos pasa de "no se envía ningún dato" a
+  "no se envía nada que identifique a una persona".
+
 ## Laboratorio — 2026-09-11
 
 No es una versión de la app: **ningún archivo de los juegos cambió.** Se publica una

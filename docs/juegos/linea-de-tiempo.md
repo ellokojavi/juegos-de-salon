@@ -31,20 +31,28 @@ naturaleza del juego:
 | Empates de año | Dos hitos del mismo año se aceptan en cualquier orden entre ellos. |
 | Temática | Historia o Música. Se elige al configurar y define el mazo. |
 
-## 2a. Mano propia o pozo común (D-32)
+## 2a. De dónde salen las cartas (D-32, D-43)
 
-En la configuración se elige de dónde salen las cartas. **El pozo común viene elegido por defecto**: es el modo que más conversación genera, porque todos miran las mismas cartas.
+La sección **Cartas** de la configuración ofrece tres formas de repartir. **Todas a la vista viene
+elegida por defecto**, porque es la que más conversación genera y la única que se va poniendo más
+difícil sola.
 
-| | Mano propia | Pozo común |
-|---|---|---|
-| Cartas | Cada jugador tiene la suya, privada | Una tira de **6 a la vista de todos** |
-| Al colocar | La carta sale de tu mano | Sale de la tira y entra otra **por el final** |
-| Al fallar | Descartas y robas una carta nueva | La carta se descarta y entra otra por el final; no vuelve a la tira |
-| Se gana | Quedándote sin cartas | Colocando primero las cartas acordadas ("Cartas para ganar") |
+| | Todas a la vista | Pozo común | Mano propia |
+|---|---|---|---|
+| Cartas | **El doble de la meta**, a la vista de todos desde el primer turno (6, 10 o 14) | Una tira de **6 a la vista de todos** | Cada jugador tiene la suya, privada |
+| Al colocar | Sale de la mesa y **no entra ninguna nueva** | Sale de la tira y entra otra **por el final** | La carta sale de tu mano |
+| Al fallar | Se descarta y tampoco entra una nueva; no vuelve a la mesa | Se descarta y entra otra por el final; no vuelve a la tira | Descartas y robas una carta nueva |
+| Se gana | Colocando primero las cartas acordadas ("Cartas para ganar") | Colocando primero las cartas acordadas | Quedándote sin cartas |
+| Si se acaban | La mesa se vacía: gana quien colocó más | El mazo se agota: gana quien colocó más | Gana quien tenga menos cartas |
 
-Una carta fallada no vuelve a la tira porque el veredicto acaba de mostrar su año a todos: dejarla
-ahí sería regalarle el punto al siguiente. El marcador muestra `colocadas/meta` en vez de las cartas
-que quedan, y el ajuste viaja en la `config` de la sala.
+Una carta fallada no vuelve a la mesa porque el veredicto acaba de mostrar su año a todos: dejarla
+ahí sería regalarle el punto al siguiente. En los dos modos compartidos el marcador muestra
+`colocadas/meta` en vez de las cartas que quedan, y el ajuste viaja en la `config` de la sala.
+
+Con todas a la vista la mesa solo se achica, así que las cartas difíciles de situar van quedando
+para el final, sobre una línea de tiempo que para entonces está llena y deja huecos cada vez más
+estrechos: la partida se pone más difícil sola, sin ninguna regla extra. El contador de arriba a la
+derecha dice cuántas cartas quedan **en la mesa**, no en el mazo, que en este modo no se usa.
 
 ## 2b. Final de la partida y desempate (D-31)
 
@@ -73,8 +81,10 @@ El botón de compartir usa el diálogo nativo del celular y el texto que lo acom
 En varios celulares hay además un **chat de sala** (canon C-15): una burbuja 💬 con globito de no leídos, disponible en la sala de espera y durante la partida. No aparece sobre el veredicto de una jugada, pero **sí sigue vivo en la pantalla final**, para celebrar o pedir revancha (D-35). No se guarda en ninguna parte: muere con la sala.
 
 En solitario no hay rival: el objetivo es vaciar la mano en la menor cantidad de intentos. Se guarda un
-récord personal por temática, tamaño de mano y forma de repartir (el pozo común lleva su propio récord). Se descartó jugar contra una IA porque la máquina conoce
-los años y la partida no tenía sentido (D-27).
+récord personal por temática, tamaño de mano y forma de repartir: las tres formas llevan su propio
+récord y no se comparan. Con todas a la vista se puede terminar sin lograrlo, si la mesa se vacía
+antes de llegar a la meta; en ese caso la pantalla final lo dice y no se guarda récord. Se descartó
+jugar contra una IA porque la máquina conoce los años y la partida no tenía sentido (D-27).
 
 ## 4. Estado y protocolo
 

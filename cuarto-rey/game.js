@@ -8,6 +8,7 @@ import { $, $$, el, pick, shuffle, vibrate, sparkles, keepAwake, confetti } from
 import { getLang, langToggle, applyStatic } from '../assets/js/i18n.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { createSessionStore } from '../assets/js/session.js';
+import { trackStart } from '../assets/js/transport/stats.js';
 import { SUITS, RANKS, MIN_PLAYERS, MAX_PLAYERS, SORBOS, CARD_RULES, LOCALES } from './rules.js';
 
 const STORAGE_PLAYERS = 'juegos-de-salon:players';
@@ -146,6 +147,7 @@ function startGame(players) {
   };
   save();
   enterPlay();
+  trackStart({ game: 'cuarto-rey', mode: 'local', players: players.length }); // señal de uso para el panel (D-44)
 }
 
 function enterPlay() {
