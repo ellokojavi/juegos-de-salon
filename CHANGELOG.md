@@ -1,11 +1,9 @@
 # Changelog
 
-## 0.16.1 — 2026-09-10
-- **Fix importante** en Línea de Tiempo: se podía colocar una carta que el jugador no eligió. La app dejaba preseleccionada la primera de la mano, así que si el toque se iba en scroll (la mano se desplaza a lo ancho), el jugador confirmaba y aparecía otra carta. Ahora no hay nada preseleccionado y el botón de confirmar **dice qué carta va a colocar** (D-38).
-
 ## 0.17.0 — 2026-09-10
-- **Las salas vencidas ahora se borran solas.** Antes una sala quedaba para siempre en Firebase y solo se limpiaba de casualidad, cuando una sala nueva sacaba su mismo código. Ahora cada celular apunta la sala que crea en una papelera por día y, cada 6 horas como mucho, barre en segundo plano lo que ya venció (D-38). Nada de esto se ve mientras se juega.
+- **Las salas vencidas ahora se borran solas.** Antes una sala quedaba para siempre en Firebase y solo se limpiaba de casualidad, cuando una sala nueva sacaba su mismo código. Ahora cada celular apunta la sala que crea en una papelera por día y, cada 6 horas como mucho, barre en segundo plano lo que ya venció (D-39). Nada de esto se ve mientras se juega.
 - Las reglas de Firebase suman el nodo `cleanup`: un balde de códigos solo se puede abrir 6 horas después de su último apunte, así que la papelera nunca delata una sala en juego.
+- **Fix importante** en Línea de Tiempo: se podía colocar una carta que el jugador no eligió. La app dejaba preseleccionada la primera de la mano, así que si el toque se iba en scroll (la mano se desplaza a lo ancho), el jugador confirmaba y aparecía otra carta. Ahora no hay nada preseleccionado y el botón de confirmar **dice qué carta va a colocar** (D-38).
 
 ## 0.16.0 — 2026-09-10
 - Línea de Tiempo: el **pozo común** pasa a ser la primera opción y viene elegido por defecto. Es el modo que más conversación genera, porque todos miran las mismas cartas.
