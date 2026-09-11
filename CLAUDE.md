@@ -33,7 +33,14 @@ python3 -m http.server 8765          # los módulos ES necesitan HTTP, no file:/
 
 `lab/` es un ambiente de pruebas con URL propia (`/lab/`) que **no toca la app publicada**:
 espeja el menú y los juegos, pero importa los módulos reales. El experimento se escribe
-en `lab/lab.css`, que solo agrega. Ver [lab/README.md](lab/README.md) y D-42.
+en `lab/lab.css`, que solo agrega, y cada bloque declara su `@destino` para poder migrarlo
+después. Ver [lab/README.md](lab/README.md) y D-42.
+
+```bash
+python3 tools/lab.py espejar <id>   # sumar un juego al laboratorio
+python3 tools/lab.py revisar        # ¿los espejos quedaron viejos? correr antes de publicar
+python3 tools/lab.py promover       # llevar el experimento aprobado a producción
+```
 
 ## Pruebas de punta a punta
 
