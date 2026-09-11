@@ -50,14 +50,21 @@ Todo es mejor esfuerzo: si el envío falla, nadie se entera y la partida sigue i
 
 1. **Authentication → Método de acceso → Google → Habilitar.** Es la única forma de
    entrar que acepta el panel. Los jugadores siguen sin autenticarse: no les cambia nada.
-2. **Authentication → Configuración → Dominios autorizados:** agregar `ellokojavi.github.io`
+2. **Authentication → Settings → Authorized domains:** agregar `ellokojavi.github.io`
    (`localhost` ya viene).
-3. Abrir `/panel/`, tocar **Entrar con Google** con la cuenta dueña del proyecto. Como las
-   reglas todavía no la conocen, el panel muestra el **UID** de esa cuenta.
-4. Reemplazar `REEMPLAZAR-POR-EL-UID-DEL-DUENO` por ese UID en
-   [firebase/database.rules.json](../firebase/database.rules.json) (aparece dos veces:
-   `rooms` y `stats`), y publicar las reglas en **Realtime Database → Reglas**.
+3. Abrir `/panel/` y tocar **Entrar con Google** con la cuenta que va a mirar el panel. Como
+   las reglas todavía no la conocen, el panel muestra el **UID** de esa cuenta en vez de
+   dejar pasar. El selector de cuentas sale siempre, a propósito: entrar con la equivocada
+   da un UID igual de válido y el error no se nota hasta después de publicar las reglas.
+4. Poner ese UID en las dos líneas `.read` de
+   [firebase/database.rules.json](../firebase/database.rules.json) (`rooms` y `stats`), y
+   publicar las reglas en **Realtime Database → Rules → Publish**.
 5. Recargar el panel.
+
+> **Ya está hecho.** El UID en las reglas es el de `jirigoyen@gmail.com`. Estos pasos quedan
+> por si alguna vez hay que cambiar de cuenta: son esas dos líneas `.read` y volver a
+> publicar. Para que sirvan dos cuentas a la vez, la comparación pasa a ser una lista:
+> `auth != null && (auth.uid === 'UNO' || auth.uid === 'OTRO')`.
 
 Mientras el UID no esté en las reglas, nadie (ni el dueño) puede leer `stats/` ni listar
 `rooms/`: las reglas fallan cerradas.

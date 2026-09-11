@@ -1,7 +1,7 @@
 {
   "rules": {
     "rooms": {
-      ".read": "auth != null && auth.uid === 'REEMPLAZAR-POR-EL-UID-DEL-DUENO'",
+      ".read": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
       ".indexOn": ["createdAt"],
       "$room": {
         ".read": "$room.matches(/^[A-Z]{4}$/)",
@@ -60,7 +60,7 @@
       "$other": { ".validate": false }
     },
     "stats": {
-      ".read": "auth != null && auth.uid === 'REEMPLAZAR-POR-EL-UID-DEL-DUENO'",
+      ".read": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
       "$env": {
         ".validate": "$env.matches(/^(prod|lab|dev)$/)",
         "days": {

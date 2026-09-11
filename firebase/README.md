@@ -98,9 +98,13 @@ como aparecen en pantalla. Traducirlos al español manda a buscar menús que no 
    domain:** agregar `ellokojavi.github.io`.
 3. Entrar a `/panel/` **con `jirigoyen@gmail.com`**: como las reglas todavía no conocen ese
    UID, la página lo muestra en pantalla en vez de dejar pasar.
-4. Reemplazar `REEMPLAZAR-POR-EL-UID-DEL-DUENO` por ese UID en
-   [database.rules.json](database.rules.json) (dos veces: `rooms` y `stats`) y publicar las
-   reglas con `jbotmacmini@gmail.com` en *Realtime Database → Rules → Publish*.
+4. Poner ese UID en las dos líneas `.read` de [database.rules.json](database.rules.json)
+   (`rooms` y `stats`) y publicar las reglas con `jbotmacmini@gmail.com` en
+   *Realtime Database → Rules → Publish*.
+
+**Los pasos 1 a 4 ya están hechos**, con el UID de `jirigoyen@gmail.com`. Quedan escritos por
+si hay que cambiar de cuenta alguna vez. El UID no es un secreto: no sirve para entrar a
+ninguna parte, solo dice qué usuario ya autenticado puede leer.
 
 Mientras el UID no esté, las reglas fallan cerradas: nadie lee `stats/` ni lista `rooms/`.
 Los jugadores no se autentican nunca; activar Google no les cambia nada.
