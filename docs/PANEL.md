@@ -4,7 +4,7 @@ Página privada en `/panel/` que muestra cuánto y desde dónde se juega. Son **
 uso, no personas**: sirven para ver qué juegos gustan, cuántos jugadores se juntan y a
 qué horas, no para identificar a nadie (D-44).
 
-- Publicado: `https://ellokojavi.github.io/juegos-de-salon/panel/`
+- Publicado: `https://juegosdesalon.cl/panel/`
 - Local: `http://localhost:8765/panel/`
 
 No aparece en el menú ni se indexa. El código es público como todo el repo: lo que protege
@@ -50,8 +50,10 @@ Todo es mejor esfuerzo: si el envío falla, nadie se entera y la partida sigue i
 
 1. **Authentication → Método de acceso → Google → Habilitar.** Es la única forma de
    entrar que acepta el panel. Los jugadores siguen sin autenticarse: no les cambia nada.
-2. **Authentication → Settings → Authorized domains:** agregar `ellokojavi.github.io`
-   (`localhost` ya viene).
+2. **Authentication → Settings → Authorized domains:** agregar `juegosdesalon.cl`, que es
+   el dominio donde vive el sitio (`localhost` ya viene). Ojo: no sirve autorizar
+   `ellokojavi.github.io`, porque redirige con un 301 y el acceso con Google ocurre en el
+   dominio final.
 3. Abrir `/panel/` y tocar **Entrar con Google** con la cuenta que va a mirar el panel. Como
    las reglas todavía no la conocen, el panel muestra el **UID** de esa cuenta en vez de
    dejar pasar. El selector de cuentas sale siempre, a propósito: entrar con la equivocada
