@@ -89,14 +89,18 @@ que se quiere *mirar* el panel (`jirigoyen@gmail.com`). Son distintas a propósi
 compara el UID de Firebase Authentication, no el permiso de Google Cloud, así que para pasar la
 regla no hace falta ser propietario del proyecto.
 
-1. Con `jbotmacmini@gmail.com`: **Authentication → Método de acceso → Google → Habilitar.**
-2. Con `jbotmacmini@gmail.com`: **Authentication → Configuración → Dominios autorizados:**
-   agregar `ellokojavi.github.io`.
+La consola de Firebase de esta cuenta está **en inglés**, así que los nombres de abajo van
+como aparecen en pantalla. Traducirlos al español manda a buscar menús que no existen.
+
+1. Con `jbotmacmini@gmail.com`: **Authentication → Sign-in method → Google → Enable.**
+   Pide un *Support email for project*: sirve la misma cuenta dueña.
+2. Con `jbotmacmini@gmail.com`: **Authentication → Settings → Authorized domains → Add
+   domain:** agregar `ellokojavi.github.io`.
 3. Entrar a `/panel/` **con `jirigoyen@gmail.com`**: como las reglas todavía no conocen ese
    UID, la página lo muestra en pantalla en vez de dejar pasar.
 4. Reemplazar `REEMPLAZAR-POR-EL-UID-DEL-DUENO` por ese UID en
    [database.rules.json](database.rules.json) (dos veces: `rooms` y `stats`) y publicar las
-   reglas con `jbotmacmini@gmail.com` en *Realtime Database → Rules*.
+   reglas con `jbotmacmini@gmail.com` en *Realtime Database → Rules → Publish*.
 
 Mientras el UID no esté, las reglas fallan cerradas: nadie lee `stats/` ni lista `rooms/`.
 Los jugadores no se autentican nunca; activar Google no les cambia nada.
