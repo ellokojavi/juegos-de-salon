@@ -45,9 +45,16 @@ export function daysToSweep(sweptDay, today) {
   return days;
 }
 
-/** Apunta una sala en la papelera, en el balde del día en que se creó. */
-export function noteRoom(api, code, createdAt) {
-  return api.update(`cleanup/days/${dayOf(createdAt)}`, { lastAt: api.stamp(), [`rooms/${code}`]: true });
+/**
+ * Apunta una sala en la papelera, en el balde del día en que se creó.
+ * Las reglas solo dejan escribir un código que no está (`!data.exists()`), así que el apunte
+ * va aparte del `lastAt`: si la sala ya estaba apuntada, el rechazo no arrastra al resto.
+ * `note: false` es para el que entra a una sala ajena: solo refresca la marca del balde.
+ */
+export async function noteRoom(api, code, createdAt, { note = true } = {}) {
+  const day = `cleanup/days/${dayOf(createdAt)}`;
+  await api.update(day, { lastAt: api.stamp() });
+  if (note) await api.update(day, { [`rooms/${code}`]: true });
 }
 
 /**
@@ -68,7 +75,13 @@ export async function sweep(api, now = Date.now()) {
       if (!(bucket.lastAt < now - ROOM_TTL)) break; // aún puede haber una sala viva adentro
       let failed = false;
       for (const code of Object.keys(bucket.rooms || {})) {
-        try { await api.remove(`rooms/${code}`); rooms++; } catch (_) { failed = true; }
+        try { await api.remove(`rooms/${code}`); rooms++; continue; } catch (_) { /* ver si sigue ahí */ }
+        // Las reglas no dejan borrar una sala que no existe, y eso pasa seguido: la reusó
+        // otro código o la borró un barrido anterior que se cortó a medias. Un apunte sin
+        // sala es trabajo hecho, no un fracaso; si se tratara como fracaso, un solo código
+        // fantasma dejaría su balde (y todos los días siguientes) sin barrer para siempre.
+        try { if ((await api.read(`rooms/${code}`)) == null) continue; } catch (__) { /* ni leerla se pudo */ }
+        failed = true;
       }
       if (failed) break;
       await api.remove(`cleanup/days/${day}`);
