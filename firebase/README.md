@@ -1,6 +1,12 @@
 # Firebase
 
-Proyecto: `juegos-de-salon` (plan Spark, gratuito). Creado el 2026-09-08 con la cuenta del dueño del repo.
+Proyecto: `juegos-de-salon` (plan Spark, gratuito). Creado el 2026-09-08.
+
+> **Ojo con la cuenta.** El proyecto está a nombre de **`jbotmacmini@gmail.com`**, la cuenta de
+> la máquina, que **no** es la identidad con la que se commitea (`jirigoyen@gmail.com`, GitHub
+> `ellokojavi`). Entrar a la consola con la cuenta equivocada hace que el proyecto no aparezca
+> en la lista, que es exactamente lo que parece una cuenta sin proyectos. Para cualquier cambio
+> en la consola —reglas, Authentication, borrar datos— hay que entrar con `jbotmacmini@gmail.com`.
 
 - **Realtime Database:** `https://juegos-de-salon-default-rtdb.firebaseio.com` (us-central1).
 - **Reglas de seguridad:** [database.rules.json](database.rules.json). Son la copia de lo publicado en la consola; si se cambian, hay que volver a publicarlas en *Realtime Database → Rules*.
@@ -77,16 +83,32 @@ Módulo y tests: [`assets/js/transport/stats.js`](../assets/js/transport/stats.j
 
 ## El panel: Authentication y el UID del dueño (una sola vez)
 
-1. **Authentication → Método de acceso → Google → Habilitar.**
-2. **Authentication → Configuración → Dominios autorizados:** agregar `ellokojavi.github.io`.
-3. Entrar a `/panel/` con la cuenta dueña del proyecto: como las reglas no la conocen, la
-   página muestra su UID.
+**Acá se cruzan dos cuentas y el orden importa.** El trabajo de consola va con la cuenta dueña
+del proyecto (`jbotmacmini@gmail.com`); el UID que va en las reglas es el de la cuenta con la
+que se quiere *mirar* el panel (`jirigoyen@gmail.com`). Son distintas a propósito: la regla
+compara el UID de Firebase Authentication, no el permiso de Google Cloud, así que para pasar la
+regla no hace falta ser propietario del proyecto.
+
+1. Con `jbotmacmini@gmail.com`: **Authentication → Método de acceso → Google → Habilitar.**
+2. Con `jbotmacmini@gmail.com`: **Authentication → Configuración → Dominios autorizados:**
+   agregar `ellokojavi.github.io`.
+3. Entrar a `/panel/` **con `jirigoyen@gmail.com`**: como las reglas todavía no conocen ese
+   UID, la página lo muestra en pantalla en vez de dejar pasar.
 4. Reemplazar `REEMPLAZAR-POR-EL-UID-DEL-DUENO` por ese UID en
    [database.rules.json](database.rules.json) (dos veces: `rooms` y `stats`) y publicar las
-   reglas en *Realtime Database → Rules*.
+   reglas con `jbotmacmini@gmail.com` en *Realtime Database → Rules*.
 
 Mientras el UID no esté, las reglas fallan cerradas: nadie lee `stats/` ni lista `rooms/`.
 Los jugadores no se autentican nunca; activar Google no les cambia nada.
+
+Si algún día hacen falta dos cuentas, la regla deja de ser una comparación y pasa a ser una
+lista: `auth != null && (auth.uid === 'UNO' || auth.uid === 'OTRO')`, en los dos lugares.
+
+> **El proyecto cuelga de una sola cuenta.** `jbotmacmini@gmail.com` es hoy la única
+> propietaria, y es una cuenta de máquina. Perder su acceso es perder la base de datos de la
+> app publicada. Conviene agregar `jirigoyen@gmail.com` como *Propietario* en
+> [IAM](https://console.cloud.google.com/iam-admin/iam?project=juegos-de-salon), aunque el
+> panel no lo necesite para funcionar.
 
 ## Probar las reglas por REST
 
