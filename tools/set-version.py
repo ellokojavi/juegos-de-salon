@@ -17,7 +17,7 @@ MODULES = [
     'assets/js/ui.js', 'assets/js/i18n.js', 'assets/js/sound.js', 'assets/js/games.js', 'assets/js/firebase-config.js', 'assets/js/frases.js',
     'cuarto-rey/game.js', 'cuarto-rey/rules.js',
     'toque-y-fama/game.js', 'toque-y-fama/rules.js', 'toque-y-fama/engine.js',
-    'assets/js/transport/local.js', 'assets/js/transport/firebase.js', 'assets/js/handoff.js', 'assets/js/session.js', 'assets/js/chat.js',
+    'assets/js/transport/local.js', 'assets/js/transport/firebase.js', 'assets/js/transport/cleanup.js', 'assets/js/handoff.js', 'assets/js/session.js', 'assets/js/chat.js',
     'batalla-naval/game.js', 'batalla-naval/rules.js', 'batalla-naval/engine.js',
     'linea-de-tiempo/game.js', 'linea-de-tiempo/rules.js', 'linea-de-tiempo/engine.js',
     'linea-de-tiempo/decks/index.js', 'linea-de-tiempo/decks/historia.js', 'linea-de-tiempo/decks/musica.js',
