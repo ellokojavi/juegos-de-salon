@@ -1,54 +1,279 @@
 /* ==========================================================
-   Laboratorio — solo lo que cambia respecto de la app publicada.
-   Se carga DESPUÉS de base.css y del style.css del juego, nunca en su lugar.
-   Si este archivo se borra, las páginas del laboratorio siguen funcionando
-   con el aspecto actual de la app.
+   Laboratorio — la app impresa en serigrafía.
+
+   Solo contiene lo que CAMBIA respecto de la app publicada. Se carga DESPUÉS
+   de base.css y del style.css del juego, nunca en su lugar: si este archivo
+   se borra, las páginas vuelven al aspecto actual y siguen funcionando.
+
+   La idea: las páginas están impresas en el mismo papel y con las mismas tres
+   tintas que las insignias. De ahí salen todas las reglas de abajo.
+
+     1. Tinta plana. Ningún degradado, en ninguna parte.
+     2. Nada de vidrio. Ni blur ni backdrop-filter: el papel no es traslúcido.
+     3. Nada de resplandor. Las sombras son duras y desplazadas (0 de difuminado),
+        como una plancha que quedó corrida.
+     4. El movimiento va a saltos (steps), como fotogramas impresos, no interpolado.
    ========================================================== */
 
-/* Aviso de que esto no es el sitio de verdad */
+:root {
+  /* El papel, muestreado del arte original */
+  --papel: #29222e;
+  --papel-hondo: #1d1823;
+  --tinta-negra: #120c16;
+  /* Las tres tintas son las mismas de base.css: --pink, --cyan, --yellow */
+  --radius: 14px;
+  --desfase: 5px;       /* cuánto se corrió la plancha */
+}
+
+/* --- El papel ----------------------------------------------------------
+   Un color plano y el grano real del arte, en mosaico. Sin degradados
+   radiales, que es lo que hacía que el fondo se viera iluminado. */
+body {
+  background: var(--papel);
+  background-image: url('img/papel.webp?2');
+  background-repeat: repeat;
+  background-size: 192px 192px;
+  /* Nada de background-attachment: fixed. Con una textura sale caro y deja
+     franjas sin repintar al desplazar en celular. Además el grano tiene que
+     moverse con el papel: es el mismo pliego, no un fondo detrás. */
+}
+/* Ojo: las rutas de url() se resuelven contra ESTE archivo, no contra el HTML,
+   así que 'img/papel.webp' vale igual para el menú y para la página del juego. */
+
+/* Las motas eran bokeh de neón. Ahora son pelusas cuadradas de papel y suben
+   a saltos, no deslizándose. Ojo: pararles la animación no sirve, porque el
+   desplazamiento inicial vive en el fotograma de floatUp y quedan todas
+   amontonadas arriba. */
+.bg-sparkles span {
+  animation-name: floatUp;
+  animation-timing-function: steps(26);
+  opacity: 0.16; border-radius: 1px;
+}
+
+/* --- Tipografía --------------------------------------------------------
+   El resplandor sale; entra el desfase de plancha: la misma palabra impresa
+   dos veces, corrida, en otra tinta. */
+.display {
+  text-shadow: 3px 3px 0 var(--tinta-negra);
+  letter-spacing: 0.03em;
+}
+.display--xl, .display--lg { text-shadow: 4px 4px 0 var(--tinta-negra); }
+
+/* El título ya no tornasola: una tinta plana y la plancha corrida detrás.
+   Una sola sombra de color, no tres: con tres la palabra se vuelve ilegible. */
+.rainbow {
+  background: none; -webkit-background-clip: initial; background-clip: initial;
+  color: var(--yellow); animation: none; filter: none;
+  text-shadow: 5px 5px 0 var(--pink);
+}
+
+/* --- Botones -----------------------------------------------------------
+   Tinta plana y sombra dura. Al apretar, el botón se mete dentro de su
+   propia sombra: el gesto de un sello. */
+.btn {
+  background: var(--pink); border: 3px solid var(--tinta-negra);
+  border-radius: var(--radius);
+  box-shadow: var(--desfase) var(--desfase) 0 var(--tinta-negra);
+  text-shadow: 2px 2px 0 rgba(18, 12, 22, 0.5);
+  transition: transform 0.06s steps(2), box-shadow 0.06s steps(2), filter 0.2s;
+}
+.btn:active { transform: translate(var(--desfase), var(--desfase)); box-shadow: 0 0 0 var(--tinta-negra); }
+.btn:disabled { filter: none; background: #4a4152; color: rgba(255,255,255,0.55); box-shadow: var(--desfase) var(--desfase) 0 rgba(18,12,22,0.5); transform: none; }
+.btn--yellow { background: var(--yellow); color: var(--tinta-negra); box-shadow: var(--desfase) var(--desfase) 0 var(--tinta-negra); text-shadow: none; }
+.btn--yellow:active { box-shadow: 0 0 0 var(--tinta-negra); }
+.btn--cyan { background: var(--cyan); color: var(--tinta-negra); box-shadow: var(--desfase) var(--desfase) 0 var(--tinta-negra); text-shadow: none; }
+.btn--cyan:active { box-shadow: 0 0 0 var(--tinta-negra); }
+.btn--ghost {
+  background: transparent; border: 3px solid var(--cyan); color: var(--cyan);
+  box-shadow: 3px 3px 0 var(--tinta-negra); text-shadow: none;
+}
+.btn--ghost:active { transform: translate(3px, 3px); box-shadow: 0 0 0 var(--tinta-negra); }
+
+/* --- Paneles y fichas --------------------------------------------------
+   El vidrio esmerilado se va: un bloque de papel más hondo, con el filete
+   de otra tinta corrido en una esquina. */
+.panel {
+  background: var(--papel-hondo);
+  border: 3px solid var(--tinta-negra);
+  border-radius: var(--radius);
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+  box-shadow: var(--desfase) var(--desfase) 0 rgba(46, 230, 214, 0.35);
+}
+.chip {
+  background: var(--papel-hondo); border: 2px solid var(--cyan); color: var(--ink);
+  border-radius: 999px; box-shadow: 2px 2px 0 var(--tinta-negra);
+}
+.chip--hot { background: var(--pink); border-color: var(--tinta-negra); }
+.chip--gold { background: var(--yellow); border-color: var(--tinta-negra); color: var(--tinta-negra); }
+details.panel summary::after { content: '▾'; }
+
+.topbar .back {
+  background: transparent; border: 2px solid var(--yellow); color: var(--yellow);
+  box-shadow: 2px 2px 0 var(--tinta-negra);
+}
+
+/* --- Controles de la barra --------------------------------------------- */
+.lang-toggle { background: var(--papel-hondo); border: 2px solid var(--tinta-negra); box-shadow: 2px 2px 0 rgba(255,46,136,0.5); }
+.lang-toggle button.on { background: var(--yellow); color: var(--tinta-negra); transform: none; }
+.sound-toggle { background: var(--papel-hondo); border: 2px solid var(--cyan); box-shadow: 2px 2px 0 var(--tinta-negra); }
+.sound-toggle:active { transform: translate(2px, 2px); box-shadow: none; }
+
+/* --- Aviso de laboratorio ---------------------------------------------- */
 .lab-bar {
   display: flex; align-items: center; justify-content: space-between; gap: 10px;
   margin: 0 0 10px; padding: 7px 14px; border-radius: 999px;
-  background: rgba(255, 210, 63, 0.14); border: 1px solid rgba(255, 210, 63, 0.45);
+  background: transparent; border: 2px dashed rgba(255, 210, 63, 0.6);
   font-size: 0.78rem; font-weight: 800; color: var(--yellow);
 }
 .lab-bar a { color: var(--muted); text-decoration: underline; white-space: nowrap; }
 
-/* --- La insignia impresa ---
-   El arte llena el cuadrado, así que el tile ya no necesita fondo propio:
+/* --- Las insignias -----------------------------------------------------
+   El arte llena el cuadrado, así que el tile no necesita fondo propio:
    antes el degradado de vidrio estaba ahí para que el emoji no flotara solo. */
 .tile {
-  display: block; width: 64px; height: 64px; border-radius: 16px;
-  object-fit: cover; background: #150726;
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  display: block; width: 64px; height: 64px; border-radius: 10px;
+  object-fit: cover; background: var(--papel-hondo);
+  border: 2px solid var(--tinta-negra);
+  box-shadow: 3px 3px 0 rgba(255, 46, 136, 0.5);
 }
-/* Respaldo cuando la imagen no carga: vuelve el emoji y el fondo de siempre (C-14) */
+/* Respaldo cuando la imagen no carga: vuelve el emoji (C-14) */
 .tile-fallback {
-  width: 64px; height: 64px; border-radius: 16px; font-size: 2.6rem;
+  width: 64px; height: 64px; border-radius: 10px; font-size: 2.6rem;
   display: grid; place-items: center;
-  background: linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.05));
+  background: var(--papel-hondo); border: 2px solid var(--tinta-negra);
+}
+.intro-hero .tile-hero, .hero .tile-app {
+  border-radius: 16px; object-fit: cover; display: block; margin: 0 auto 8px;
+  border: 3px solid var(--tinta-negra);
+  box-shadow: 6px 6px 0 var(--pink);
+  animation: none;
+}
+.intro-hero .tile-hero { width: 96px; height: 96px; }
+.hero .tile-app { width: 88px; height: 88px; }
+
+/* ==========================================================
+   Línea de Tiempo
+   ========================================================== */
+
+/* Modos de la intro: fichas de papel con el filete corrido */
+.mode {
+  background: var(--papel-hondo); border: 3px solid var(--tinta-negra);
+  border-radius: var(--radius); box-shadow: var(--desfase) var(--desfase) 0 rgba(255, 210, 63, 0.4);
+  transition: transform 0.06s steps(2), box-shadow 0.06s steps(2);
+}
+.mode:active { transform: translate(var(--desfase), var(--desfase)); box-shadow: 0 0 0; }
+.mode .go { color: var(--yellow); }
+
+/* Formularios */
+.field input, .field input.name { background: var(--papel); border: 3px solid var(--tinta-negra); border-radius: 10px; }
+.field input:focus, .field input.name:focus { border-color: var(--cyan); }
+.seg { background: var(--papel); border: 3px solid var(--tinta-negra); border-radius: 10px; }
+.seg button { border-radius: 6px; }
+.seg button.on { background: var(--yellow); color: var(--tinta-negra); }
+.theme-card { background: var(--papel); border: 3px solid var(--tinta-negra); border-radius: 10px; }
+.theme-card.on { border-color: var(--yellow); background: rgba(255, 210, 63, 0.18); box-shadow: 3px 3px 0 var(--yellow); }
+.player-row { background: var(--papel); border: 2px solid var(--tinta-negra); border-radius: 10px; }
+
+/* Partida */
+/* Una sola sombra: con el eco cian encima, el nombre del turno se lee turbio */
+.status .who { text-shadow: 3px 3px 0 var(--tinta-negra); }
+.score .p { background: var(--papel-hondo); border: 2px solid var(--tinta-negra); }
+.score .p.turn { background: var(--cyan); color: var(--tinta-negra); }
+
+/* La mano: cada carta es un papel impreso, no un vidrio */
+.hand .card {
+  background: var(--papel-hondo); border: 3px solid var(--tinta-negra); border-radius: 10px;
+  box-shadow: 3px 3px 0 rgba(46, 230, 214, 0.45);
+  transition: transform 0.06s steps(2), box-shadow 0.06s steps(2);
+}
+.hand .card.sel {
+  background: var(--yellow); color: var(--tinta-negra);
+  border-color: var(--tinta-negra); box-shadow: 4px 4px 0 var(--pink);
+  transform: translateY(-3px);
+}
+.hand .card:active { transform: translate(2px, 2px); box-shadow: 0 0 0; }
+
+/* La línea */
+.event {
+  background: var(--papel-hondo); border: 2px solid var(--tinta-negra); border-radius: 8px;
+  box-shadow: 3px 3px 0 rgba(18, 12, 22, 0.6);
+}
+.event.fresh { border-color: var(--lime); box-shadow: 3px 3px 0 var(--lime); }
+.slot { border: 3px dashed rgba(255, 255, 255, 0.3); border-radius: 8px; }
+.slot.on { border-color: var(--yellow); border-style: solid; background: rgba(255, 210, 63, 0.18); box-shadow: 3px 3px 0 var(--yellow); }
+/* El degradado de la barra flotante se cambia por papel opaco y un filete */
+.place-row {
+  background: var(--papel);
+  border-top: 3px solid var(--tinta-negra);
+  backdrop-filter: none; -webkit-backdrop-filter: none;
 }
 
-/* Barra superior del juego: la insignia reemplaza al emoji dentro del chip */
-.chip .tile-chip {
-  width: 22px; height: 22px; border-radius: 6px; object-fit: cover;
-  vertical-align: -5px; margin-right: 2px;
+/* Veredicto de la jugada */
+.verdict .big.ok { color: var(--lime); text-shadow: 4px 4px 0 var(--tinta-negra); }
+.verdict .big.no { color: var(--pink); text-shadow: 4px 4px 0 var(--tinta-negra); }
+.verdict .card-big {
+  background: var(--yellow); color: var(--tinta-negra); border: 3px solid var(--tinta-negra);
+  border-radius: 10px; box-shadow: 7px 7px 0 var(--cyan);
 }
+.verdict .card-big .y { color: var(--pink-deep); }
+.verdict .why { background: var(--papel-hondo); border: 2px solid var(--tinta-negra); border-radius: 8px; }
 
-/* Encabezado de la intro de un juego: la insignia en grande, en vez del emoji */
-.intro-hero .tile-hero {
-  width: 96px; height: 96px; border-radius: 22px; object-fit: cover;
-  display: block; margin: 0 auto 4px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
-  animation: bounce 3.2s ease-in-out infinite;
+/* Resultado */
+.ranking li { background: var(--papel-hondo); border: 2px solid var(--tinta-negra); border-radius: 8px; }
+.ranking li.top { background: var(--yellow); color: var(--tinta-negra); box-shadow: 3px 3px 0 var(--pink); }
+.ranking li.top .pos, .ranking li.top .info { color: var(--tinta-negra); }
+.ranking li.top .info .time { color: rgba(18, 12, 22, 0.7); }
+
+/* Sala */
+.code-big { color: var(--yellow); text-shadow: 5px 5px 0 var(--tinta-negra), 9px 9px 0 var(--pink); }
+.qr { border: 3px solid var(--tinta-negra); border-radius: 8px; box-shadow: 5px 5px 0 var(--cyan); }
+.lobby-players .p { background: var(--papel-hondo); border: 2px solid var(--tinta-negra); }
+.lobby-players .p.me { background: var(--cyan); color: var(--tinta-negra); }
+
+/* --- Pantallas a toda página: pase de celular, tapa y error --------------
+   Eran degradados radiales de neón. Ahora son el mismo papel, con la tinta
+   del momento puesta encima en plano. */
+/* El tinte del momento va en el propio color del papel, no en una capa encima:
+   una capa posicionada se pintaría por sobre el texto del veredicto. */
+.handoff {
+  background: #3a1a33;
+  background-image: url('img/papel.webp?2');
+  background-size: 192px 192px;
 }
+.handoff.bad { background: #3d0f22; background-image: url('img/papel.webp?2'); background-size: 192px 192px; }
+.handoff .title { text-shadow: 4px 4px 0 var(--tinta-negra); }
+.handoff .next-name { color: var(--cyan); text-shadow: 4px 4px 0 var(--tinta-negra), 8px 8px 0 var(--pink); }
+.cover { background: var(--papel); background-image: url('img/papel.webp?2'); background-size: 192px 192px; }
+.cover .big { color: var(--cyan); text-shadow: 4px 4px 0 var(--tinta-negra); }
 
-/* Encabezado del menú */
-.hero .tile-app {
-  width: 88px; height: 88px; border-radius: 22px; object-fit: cover;
-  display: block; margin: 0 auto 10px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
-  animation: bounce 3.2s ease-in-out infinite;
+/* --- Chat --------------------------------------------------------------- */
+.chat-fab { background: var(--pink); border: 3px solid var(--tinta-negra); box-shadow: 4px 4px 0 var(--tinta-negra); }
+.chat-fab.has-unread { border-color: var(--yellow); box-shadow: 4px 4px 0 var(--yellow); }
+.chat-peek, .chat-panel { background: var(--papel-hondo); border: 3px solid var(--tinta-negra); }
+.chat-panel { box-shadow: 0 -6px 0 var(--cyan); }
+.chat-msg { background: var(--papel); border: 2px solid var(--tinta-negra); border-radius: 8px; }
+.chat-msg.mine { background: var(--cyan); color: var(--tinta-negra); border-color: var(--tinta-negra); }
+.chat-form input { background: var(--papel); border: 3px solid var(--tinta-negra); }
+.chat-send { background: var(--cyan); color: var(--tinta-negra); border: 3px solid var(--tinta-negra); box-shadow: 3px 3px 0 var(--tinta-negra); }
+
+/* --- Movimiento --------------------------------------------------------
+   Nada interpolado: todo avanza a saltos, como fotogramas de una impresión.
+   Un cartel no hace easing. */
+.pop       { animation: pop 0.32s steps(4) both; }
+.slide-up  { animation: slideUp 0.24s steps(4) both; }
+.screen.active { animation: slideUp 0.24s steps(4) both; }
+.event     { animation: slideUp 0.24s steps(4) both; }
+.bounce    { animation: bounce 1.2s steps(3) infinite; }
+.wiggle    { animation: wiggle 1s steps(2) infinite; }
+.handoff .stage.pop { animation: pop 0.32s steps(4) both; }
+.handoff .phone { animation: passPhone 1.2s steps(4) infinite; }
+.cover .eye { animation: bounce 1.2s steps(3) infinite; }
+.result-hero .trophy { animation: pop 0.5s steps(5) both; }
+.handoff .cheers .l { animation: clinkL 0.8s steps(3) infinite; }
+.handoff .cheers .r { animation: clinkR 0.8s steps(3) infinite; }
+.lobby-players .p { animation: pop 0.24s steps(3) both; }
+.chat-msg { animation: pop 0.16s steps(2) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .bg-sparkles span { display: none; }
 }
