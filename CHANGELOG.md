@@ -12,6 +12,14 @@ carpeta nueva, `/lab/`, como ambiente de pruebas de interfaz con URL propia (D-4
 - El experimento se escribe en `lab/lab.css`, que se carga después de `base.css` y solo
   agrega. Borrar ese archivo tiene que dejar las páginas funcionando con el aspecto
   actual: esa es la prueba de que el experimento está aislado.
+- **`tools/lab.py`** hace lo mecánico del laboratorio: `espejar` deriva la página de un
+  juego desde su `index.html` real, `revisar` avisa si un espejo quedó viejo —que es el
+  error silencioso del asunto: la página carga igual y uno cree que prueba el juego
+  cuando prueba una copia de hace meses— y `promover` migra un experimento aprobado a
+  producción. Cada bloque de `lab.css` declara con `@destino` adónde va, y al promover
+  las imágenes se mueven a `assets/img/` con la versión en el nombre y las rutas de
+  `url()` se reescriben según dónde caiga el bloque. Lo que es criterio —fundir reglas
+  duplicadas, repasar los cuatro juegos— queda impreso como lista al terminar.
 - Documentado en `lab/README.md`, en el README principal y en `CLAUDE.md`.
 - **Excepción a C-11, anotada y no ignorada en silencio:** un cambio que solo toca
   `lab/` no corre `set-version.py` ni sube el número de versión. Ese canon existe para

@@ -9,11 +9,19 @@
 
    1. Solo va acá lo que CAMBIA. Se carga DESPUÉS de base.css y del style.css
       del juego, nunca en su lugar.
+   1b. Cada bloque declara adónde va el día que se apruebe, con una marca
+      "@destino <ruta>" en su propio comentario, como la de más abajo.
+      Los destinos son rutas del repo: assets/css/base.css para lo compartido,
+      <juego>/style.css para lo de un juego, o la palabra laboratorio para lo
+      que nunca migra.
+      `python3 tools/lab.py revisar` falla si falta la marca, y `promover` la
+      usa para mover el bloque solo. Un estilo sin destino es un estilo que
+      alguien va a tener que adivinar dónde va, meses después.
    2. Borrar este archivo tiene que dejar las páginas del laboratorio
       funcionando y con el aspecto actual de la app. Si algo se rompe al
       borrarlo, es que se puso acá algo que no era un cambio, sino una base.
-   3. Nada de !important. Si hace falta, es señal de que el cambio corresponde
-      a base.css y no a un experimento.
+   3. Nada de reglas forzadas con prioridad. Si hace falta, es señal de que el
+      cambio corresponde a base.css y no a un experimento.
    4. Las rutas de url() se resuelven contra ESTE archivo, no contra el HTML
       que lo carga: 'img/loquesea.png' vale igual para lab/index.html y para
       lab/<juego>/index.html.
@@ -26,8 +34,8 @@
       qué. Lo mismo vale para las imágenes del experimento ('img/x.png?2').
    ========================================================== */
 
-/* Aviso de que esto no es el sitio de verdad. Esto sí se queda siempre:
-   es del laboratorio, no del experimento. */
+/* @destino laboratorio */
+/* Esto no migra nunca: el aviso es del laboratorio, no del experimento. */
 .lab-bar {
   display: flex; align-items: center; justify-content: space-between; gap: 10px;
   margin: 0 0 10px; padding: 7px 14px; border-radius: 999px;
