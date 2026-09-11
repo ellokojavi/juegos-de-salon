@@ -35,7 +35,18 @@ ve acá solo, sin copiar nada. Lo único propio del laboratorio es la presentaci
    sirve igual para `lab/index.html` y para `lab/<juego>/index.html`.
 3. Si hace falta cambiar el HTML (agregar un elemento que no existe), tocar la copia
    del laboratorio, nunca la del juego.
-4. Probar en celular: `python3 -m http.server 8765` y abrir `/lab/`.
+4. **Subir la marca de revisión de `lab.css` en las dos páginas que lo cargan**, cada
+   vez que se cambia la hoja:
+
+   ```
+   lab/index.html           <link rel="stylesheet" href="lab.css?r=2">
+   lab/<juego>/index.html   <link rel="stylesheet" href="../lab.css?r=2">
+   ```
+
+   GitHub Pages manda `cache-control: max-age=600`. Sin subir la marca, uno abre el
+   celular y ve la versión anterior durante diez minutos sin entender por qué.
+
+5. Probar en celular: `python3 -m http.server 8765` y abrir `/lab/`.
 
 **La prueba de que un experimento está bien aislado:** borrar `lab.css` tiene que dejar
 las páginas funcionando y con el aspecto actual de la app. Si algo se rompe, es que se
@@ -71,8 +82,8 @@ contra la ubicación real del módulo, así que no hay que tocar nada más.
 
 - **Sin `?v=`.** `tools/set-version.py` no toca estas páginas: el laboratorio siempre
   carga la última versión de cada módulo. Es lo que uno quiere al probar. La contra es
-  que el navegador **sí cachea `lab.css` y las imágenes**; al iterar hay que recargar
-  sin caché o poner una marca a mano (`img/x.webp?2`).
+  que `lab.css` y las imágenes del experimento **sí quedan cacheadas** diez minutos, y
+  por eso llevan marca de revisión a mano (`lab.css?r=2`, `img/x.webp?2`).
 - **Sin `manifest.webmanifest`.** El laboratorio no se instala como app.
 - **`noindex`.** No queremos que aparezca en buscadores.
 - **Sin versión ni entrada de versión.** Un cambio que solo toca `lab/` no corre
