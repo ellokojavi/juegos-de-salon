@@ -1,7 +1,7 @@
 # Juegos de Salón — contexto para Claude
 
 App web estática (HTML, CSS y JavaScript con módulos ES, sin build ni npm) con juegos de salón,
-publicada en GitHub Pages: https://ellokojavi.github.io/juegos-de-salon/
+publicada en GitHub Pages: https://juegosdesalon.cl/
 
 ## Antes de construir o modificar un juego
 

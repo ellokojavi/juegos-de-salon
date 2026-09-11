@@ -55,7 +55,7 @@ Registro tipo ADR (Architecture Decision Record). Las decisiones se numeran y no
 
 ## D-13 · Publicación en GitHub Pages desde `main`
 **Decisión:** Repo público `ellokojavi/juegos-de-salon`, Pages sirviendo la raíz de `main`, con `.nojekyll`.
-**Por qué:** Cero configuración de CI; cada push publica. URL: https://ellokojavi.github.io/juegos-de-salon/
+**Por qué:** Cero configuración de CI; cada push publica. La URL de GitHub Pages (`ellokojavi.github.io/juegos-de-salon/`) quedó después detrás del dominio propio https://juegosdesalon.cl/, y redirige con un 301.
 
 ## D-14 · Transición entre turnos como overlay de dos etapas
 **Fecha:** 2026-09-08 · **Estado:** vigente

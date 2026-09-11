@@ -5,7 +5,7 @@ ningún archivo de la app publicada**, así que se puede experimentar sin riesgo
 mostrarle el resultado a alguien antes de decidir.
 
 - Local: `http://localhost:8765/lab/`
-- Publicado: `https://ellokojavi.github.io/juegos-de-salon/lab/`
+- Publicado: `https://juegosdesalon.cl/lab/`
 
 Ahora mismo **no hay ningún experimento en curso**: el laboratorio se ve igual que la
 app. Ese es el estado correcto en reposo (ver D-42).

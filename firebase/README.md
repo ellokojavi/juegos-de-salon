@@ -95,7 +95,9 @@ como aparecen en pantalla. Traducirlos al español manda a buscar menús que no 
 1. Con `jbotmacmini@gmail.com`: **Authentication → Sign-in method → Google → Enable.**
    Pide un *Support email for project*: sirve la misma cuenta dueña.
 2. Con `jbotmacmini@gmail.com`: **Authentication → Settings → Authorized domains → Add
-   domain:** agregar `ellokojavi.github.io`.
+   domain:** agregar `juegosdesalon.cl`, que es donde vive el sitio. No sirve autorizar
+   `ellokojavi.github.io`: redirige con un 301 y el acceso con Google ocurre en el
+   dominio final.
 3. Entrar a `/panel/` **con `jirigoyen@gmail.com`**: como las reglas todavía no conocen ese
    UID, la página lo muestra en pantalla en vez de dejar pasar.
 4. Poner ese UID en las dos líneas `.read` de [database.rules.json](database.rules.json)

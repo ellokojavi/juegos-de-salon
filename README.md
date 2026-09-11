@@ -2,7 +2,7 @@
 
 App web (mobile-first) con juegos de salón para jugar con amigos: de naipes, de tomar, de deducción. Se abre desde el celular o tablet, se elige un juego en el menú principal, se ingresan los jugadores y el celular guía la partida. En español e inglés.
 
-**Jugar:** https://ellokojavi.github.io/juegos-de-salon/
+**Jugar:** https://juegosdesalon.cl/
 
 <p align="center"><img src="docs/screenshots/menu.png" width="220" alt="Menú principal"></p>
 
@@ -169,7 +169,7 @@ node panel/aggregate.test.mjs
 `lab/` es un ambiente de pruebas con **URL propia** que no modifica ningún archivo de la app publicada. Sirve para mirar un cambio de aspecto en un celular de verdad —y pasarle el enlace a alguien— antes de decidir si va.
 
 - Local: http://localhost:8080/lab/
-- Publicado: https://ellokojavi.github.io/juegos-de-salon/lab/
+- Publicado: https://juegosdesalon.cl/lab/
 
 Las páginas del laboratorio **espejan** el menú y los juegos que haga falta, pero importan los módulos reales (`game.js`, `rules.js`, `engine.js`, `assets/js/*`): no hay lógica duplicada y un arreglo en un juego se ve ahí solo. Lo único propio es la presentación.
 
