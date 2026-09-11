@@ -8,8 +8,21 @@ Vive en su propia URL y no modifica ningún archivo de los juegos.
 
 ## Qué se está probando ahora
 
-Las **insignias serigrafiadas**: una ilustración impresa por juego, en reemplazo del
-emoji del sistema, en la tarjeta del menú y en el encabezado de la intro.
+**La app impresa en serigrafía.** No son solo iconos nuevos: la página entera se
+mudó a la misma imprenta que las insignias.
+
+- **Papel en vez de degradado.** El fondo es un color plano más el grano real,
+  recortado del arte original (`img/papel.webp`). Se fueron los degradados radiales
+  que hacían ver el fondo iluminado.
+- **Tinta plana.** Ningún degradado en botones, paneles ni fichas.
+- **Nada de vidrio.** Sin `blur` ni `backdrop-filter`: el papel no es traslúcido.
+- **Nada de resplandor.** Las sombras son duras y desplazadas, sin difuminado, como
+  una plancha que quedó corrida. Los títulos se imprimen dos veces, corridos.
+- **El movimiento va a saltos** (`steps`), como fotogramas impresos. Un cartel no
+  hace easing.
+- Las **insignias** reemplazan al emoji en la tarjeta del menú y en el encabezado de
+  la intro. En el chip de la barra se queda el emoji: a 22 px la insignia es una
+  mancha de color.
 
 Cubre la vista principal y **Línea de Tiempo**. Los otros tres juegos aparecen en el
 menú con su insignia nueva, pero el enlace (`↗`) lleva al juego publicado.
@@ -52,8 +65,11 @@ probar desde cero, borrar la partida guardada o usar una ventana privada.
 Lo que hay que llevar a la app de verdad:
 
 1. `lab/img/*` a `assets/img/`, con la versión en el nombre (`<id>.v1.webp`), porque
-   `set-version.py` no estampa imágenes.
-2. Lo de `lab.css` a `assets/css/base.css`.
+   `set-version.py` no estampa imágenes. En el laboratorio el papel va con `?2` a
+   mano, que sirve para probar pero no para publicar.
+2. Lo de `lab.css` a `assets/css/base.css`. Ojo: `lab.css` pisa estilos de los cuatro
+   juegos, así que llevarlo a producción obliga a repasar Cuarto Rey, Toque y Fama y
+   Batalla Naval, no solo Línea de Tiempo (C-12).
 3. Campo `icon` en `assets/js/games.js`, con caída a `emoji` si la imagen falla.
 4. `apple-touch-icon` y los iconos PNG del `manifest.webmanifest`.
 5. Una línea en C-1 y una decisión (D-n) en `docs/DECISIONES.md`.
