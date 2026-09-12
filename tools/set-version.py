@@ -8,9 +8,13 @@ Estampa una versión en el sitio para evitar caché mezclada (HTML nuevo con JS 
 - Agrega ?v=VERSION a las hojas de estilo.
 - Actualiza el número de versión visible en el pie del menú.
 
-Uso:  python3 tools/set-version.py 0.4.6
+- Antes de estampar, revisa que el README no haya quedado viejo (tools/readme.py revisar):
+  la publicación es el único momento por el que pasan todos los cambios, así que es el
+  lugar donde preguntarlo. Con --igual se estampa igual, para una urgencia.
+
+Uso:  python3 tools/set-version.py 0.4.6 [--igual]
 """
-import re, sys, json, pathlib
+import re, sys, json, pathlib, subprocess
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 MODULES = [
@@ -25,6 +29,12 @@ MODULES = [
     'panel/panel.js', 'panel/aggregate.js',
 ]
 PAGES = { 'index.html': '', 'cuarto-rey/index.html': '../', 'toque-y-fama/index.html': '../', 'batalla-naval/index.html': '../', 'linea-de-tiempo/index.html': '../', 'panel/index.html': '../' }
+
+def revisar_readme():
+    """El README, contra el código de hoy. Devuelve True si está al día."""
+    print('README:', flush=True)
+    return subprocess.run([sys.executable, str(ROOT / 'tools/readme.py'), 'revisar']).returncode == 0
+
 
 def main(version):
     for page, prefix in PAGES.items():
@@ -43,6 +53,12 @@ def main(version):
         print(f'{page}: importmap con {len(imports)} módulos, versión {version}')
 
 if __name__ == '__main__':
-    if len(sys.argv) != 2 or not re.fullmatch(r'\d+\.\d+\.\d+', sys.argv[1]):
-        sys.exit('uso: python3 tools/set-version.py X.Y.Z')
-    main(sys.argv[1])
+    args = [a for a in sys.argv[1:] if a != '--igual']
+    if len(args) != 1 or not re.fullmatch(r'\d+\.\d+\.\d+', args[0]):
+        sys.exit('uso: python3 tools/set-version.py X.Y.Z [--igual]')
+    if not revisar_readme() and '--igual' not in sys.argv:
+        sys.exit('\nel README quedó atrás del código. Arriba dice qué le falta.\n'
+                 'Para estampar igual (y arreglarlo después): '
+                 f'python3 tools/set-version.py {args[0]} --igual')
+    print()
+    main(args[0])

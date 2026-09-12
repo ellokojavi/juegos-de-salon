@@ -17,6 +17,26 @@ Al terminar, recorrer la lista de chequeo al final de ese archivo.
 python3 tools/set-version.py X.Y.Z   # obligatorio antes de cada commit publicado (C-11)
 ```
 
+Estampa la versión y, antes, revisa que el README no haya quedado atrás del código:
+si lo quedó, no estampa y dice qué le falta (C-13, D-51).
+
+## Mantener el README al día
+
+El README repite datos que el código ya sabe y muestra capturas que envejecen.
+`tools/readme.py` genera lo derivable, delata lo que cambió y rehace las capturas:
+
+```bash
+python3 tools/readme.py revisar        # ¿quedó algo atrás? (lo corre set-version.py)
+python3 tools/readme.py actualizar     # reescribe los bloques <!-- generado: ... -->
+python3 tools/readme.py capturas <seccion> [--sin-red]   # rehace las capturas con Chrome
+python3 tools/readme.py sellar         # "ya releí el README con estos hechos"
+```
+
+Dentro de las marcas `<!-- generado: ... -->` no se edita a mano. La prosa sí es a mano:
+`revisar` compara los hechos de hoy (`tools/hechos.mjs`, que importa los módulos reales)
+contra el último sello (`docs/hechos.json`) y dice qué sección releer. Cada captura declara
+en [docs/capturas.json](docs/capturas.json) de qué guion de `tools/e2e/` y de qué toma sale.
+
 ## Pruebas
 
 ```bash
