@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.23.1 — 2026-09-11
+- **Frases del pie renovadas** (D-49). Las 100 frases por idioma de `assets/js/frases.js` dejan
+  el humor sobre los juegos de la app y los mensajes de agua/moderación por chistes genéricos
+  de sobremesa: cortas, sobre la vida, para ligar y de WhatsApp. Traducidas y adaptadas (C-3)
+  a inglés y portugués de Brasil, sin calcar los juegos de palabras que solo funcionan en
+  español.
+
 ## 0.23.0 — 2026-09-11
 - **Dos temáticas nuevas en Línea de Tiempo** (LT-17). 🇧🇷 **Brasil** (140 cartas): de Cabral
   y Tiradentes a la COP30, mezclando historia con la tele (Escrava Isaura, Xou da Xuxa, Vale
