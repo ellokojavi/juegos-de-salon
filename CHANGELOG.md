@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.25.2 — 2026-09-12
+- **La intro de Línea de Tiempo va al grano.** El "Cómo se juega" explicaba de corrido las
+  tres maneras de repartir —todas a la vista, pozo común y mano propia— antes de que nadie
+  hubiera elegido ninguna. Esa parte sale: cada manera ya se explica sola en la pantalla de
+  configuración, donde el selector muestra la ayuda de la que está elegida. El panel de la
+  intro baja de doce líneas a cinco y los tres modos se ven sin desplazar. En los tres idiomas.
+
 ## 0.25.1 — 2026-09-11
 - **El README se mantiene solo** (D-51). `tools/readme.py` genera desde el código los datos que
   el README repetía a mano —tabla de juegos, temáticas con su cuenta de cartas, nombres por
