@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.25.1 — 2026-09-11
+- **El README se mantiene solo** (D-51). `tools/readme.py` genera desde el código los datos que
+  el README repetía a mano —tabla de juegos, temáticas con su cuenta de cartas, nombres por
+  idioma, tests e índice de documentos, todo entre marcas `<!-- generado: ... -->`—, avisa qué
+  sección de prosa hay que releer cuando cambian los hechos de la app (`docs/hechos.json`) y
+  rehace las capturas corriendo los guiones de `tools/e2e/` según el catálogo nuevo
+  `docs/capturas.json`. `set-version.py` lo corre antes de estampar, así que un README viejo
+  frena la publicación. De paso quedan corregidos los datos que ya estaban vencidos: los mazos
+  eran cuatro en el texto y seis en el código, y el estado de cada juego ahora sale de su
+  especificación. `tools/e2e/cuarto-rey.mjs` saca ahora las nueve pantallas del juego y las dos
+  en inglés; Cuarto Rey, Línea de Tiempo y el menú quedaron recapturados, al doble de
+  resolución y pesando menos.
+
 ## 0.25.0 — 2026-09-11
 - **Las salas canceladas se cierran en el acto** (RP-27, D-50). Hasta ahora una sala vivía sus
   seis horas pasara lo que pasara: el panel del dueño mostraba como "vivas" las salas que

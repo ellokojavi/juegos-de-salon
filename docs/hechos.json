@@ -1,0 +1,446 @@
+{
+  "version": "0.25.0",
+  "app": {
+    "es": "Juegos de Salón",
+    "en": "Party Games",
+    "pt": "Jogos de Salão"
+  },
+  "idiomas": [
+    "es",
+    "en",
+    "pt"
+  ],
+  "frases": {
+    "es": 100,
+    "en": 100,
+    "pt": 100
+  },
+  "clavesComunes": 8,
+  "juegos": [
+    {
+      "id": "cuarto-rey",
+      "emoji": "👑",
+      "nombre": {
+        "es": "Cuarto Rey",
+        "en": "Fourth King",
+        "pt": "Quarto Rei"
+      },
+      "jugadores": "4 a 6",
+      "duracion": "20–40",
+      "disponible": true,
+      "estado": "v0.2",
+      "modos": [],
+      "variantes": [],
+      "pantallas": [
+        "intro",
+        "setup",
+        "play",
+        "end"
+      ],
+      "chat": false,
+      "archivos": [
+        "cuarto-rey/game.js",
+        "cuarto-rey/index.html",
+        "cuarto-rey/rules.js",
+        "cuarto-rey/style.css"
+      ]
+    },
+    {
+      "id": "toque-y-fama",
+      "emoji": "🔢",
+      "nombre": {
+        "es": "Toque y Fama",
+        "en": "Bulls and Cows",
+        "pt": "Toque e Fama"
+      },
+      "jugadores": "1 a 2",
+      "duracion": "5–12",
+      "disponible": true,
+      "estado": "v0.4",
+      "modos": [
+        {
+          "clave": "modeLocal",
+          "es": "📱 Un celular, dos jugadores"
+        },
+        {
+          "clave": "modeOnline",
+          "es": "📡 Dos celulares"
+        },
+        {
+          "clave": "modeCpu",
+          "es": "🤖 Contra el celular"
+        }
+      ],
+      "variantes": [],
+      "pantallas": [
+        "intro",
+        "setup",
+        "lobby",
+        "secret",
+        "play",
+        "result"
+      ],
+      "chat": true,
+      "archivos": [
+        "toque-y-fama/engine.js",
+        "toque-y-fama/game.js",
+        "toque-y-fama/index.html",
+        "toque-y-fama/rules.js",
+        "toque-y-fama/style.css"
+      ]
+    },
+    {
+      "id": "linea-de-tiempo",
+      "emoji": "⏳",
+      "nombre": {
+        "es": "Línea de Tiempo",
+        "en": "Timeline",
+        "pt": "Linha do Tempo"
+      },
+      "jugadores": "1 a 6",
+      "duracion": "10–20",
+      "disponible": true,
+      "estado": "v0.9",
+      "modos": [
+        {
+          "clave": "modeLocal",
+          "es": "📱 Un celular, hasta 6"
+        },
+        {
+          "clave": "modeOnline",
+          "es": "📡 Varios celulares"
+        },
+        {
+          "clave": "modeSolo",
+          "es": "🧍 Jugar solo"
+        }
+      ],
+      "variantes": [
+        {
+          "clave": "modeOwn",
+          "es": "Mano propia"
+        },
+        {
+          "clave": "modeShared",
+          "es": "Pozo común"
+        },
+        {
+          "clave": "modeAll",
+          "es": "Todas a la vista"
+        }
+      ],
+      "pantallas": [
+        "intro",
+        "setup",
+        "lobby",
+        "play",
+        "result"
+      ],
+      "chat": true,
+      "archivos": [
+        "linea-de-tiempo/decks/brasil.js",
+        "linea-de-tiempo/decks/chile.js",
+        "linea-de-tiempo/decks/futbol.js",
+        "linea-de-tiempo/decks/historia.js",
+        "linea-de-tiempo/decks/index.js",
+        "linea-de-tiempo/decks/musica.js",
+        "linea-de-tiempo/decks/pop.js",
+        "linea-de-tiempo/engine.js",
+        "linea-de-tiempo/game.js",
+        "linea-de-tiempo/index.html",
+        "linea-de-tiempo/rules.js",
+        "linea-de-tiempo/style.css"
+      ]
+    },
+    {
+      "id": "batalla-naval",
+      "emoji": "⚓",
+      "nombre": {
+        "es": "Batalla Naval",
+        "en": "Battleship",
+        "pt": "Batalha Naval"
+      },
+      "jugadores": "1 a 2",
+      "duracion": "10–20",
+      "disponible": true,
+      "estado": "v0.6",
+      "modos": [
+        {
+          "clave": "modeLocal",
+          "es": "📱 Un celular, dos jugadores"
+        },
+        {
+          "clave": "modeOnline",
+          "es": "📡 Dos celulares"
+        },
+        {
+          "clave": "modeCpu",
+          "es": "🤖 Contra el celular"
+        }
+      ],
+      "variantes": [],
+      "pantallas": [
+        "intro",
+        "setup",
+        "lobby",
+        "place",
+        "play",
+        "result"
+      ],
+      "chat": false,
+      "archivos": [
+        "batalla-naval/engine.js",
+        "batalla-naval/game.js",
+        "batalla-naval/index.html",
+        "batalla-naval/rules.js",
+        "batalla-naval/style.css"
+      ]
+    }
+  ],
+  "tematicas": [
+    {
+      "id": "historia",
+      "emoji": "📜",
+      "nombre": {
+        "es": "Historia",
+        "en": "History",
+        "pt": "História"
+      },
+      "pista": {
+        "es": "Hitos de la humanidad",
+        "en": "Milestones of humankind",
+        "pt": "Marcos da humanidade"
+      },
+      "cartas": 98,
+      "desde": -2560,
+      "hasta": 2022
+    },
+    {
+      "id": "musica",
+      "emoji": "🎵",
+      "nombre": {
+        "es": "Música",
+        "en": "Music",
+        "pt": "Música"
+      },
+      "pista": {
+        "es": "De Beethoven a TikTok",
+        "en": "From Beethoven to TikTok",
+        "pt": "De Beethoven ao TikTok"
+      },
+      "cartas": 89,
+      "desde": 1600,
+      "hasta": 2023
+    },
+    {
+      "id": "chile",
+      "emoji": "🇨🇱",
+      "nombre": {
+        "es": "Chile",
+        "en": "Chile",
+        "pt": "Chile"
+      },
+      "pista": {
+        "es": "Del terremoto del 60 al estallido",
+        "en": "From the 1960 quake to the uprising",
+        "pt": "Do terremoto de 1960 aos protestos de 2019"
+      },
+      "cartas": 127,
+      "desde": 1520,
+      "hasta": 2023
+    },
+    {
+      "id": "pop",
+      "emoji": "🍿",
+      "nombre": {
+        "es": "Cultura pop",
+        "en": "Pop culture",
+        "pt": "Cultura pop"
+      },
+      "pista": {
+        "es": "Cine, memes y videojuegos",
+        "en": "Movies, memes and video games",
+        "pt": "Cinema, memes e videogames"
+      },
+      "cartas": 110,
+      "desde": 1928,
+      "hasta": 2023
+    },
+    {
+      "id": "brasil",
+      "emoji": "🇧🇷",
+      "nombre": {
+        "es": "Brasil",
+        "en": "Brazil",
+        "pt": "Brasil"
+      },
+      "pista": {
+        "es": "De Cabral a la COP30, con novelas y carnaval",
+        "en": "From Cabral to COP30, telenovelas and carnival included",
+        "pt": "De Cabral à COP30, com novela e carnaval"
+      },
+      "cartas": 140,
+      "desde": 1500,
+      "hasta": 2025
+    },
+    {
+      "id": "futbol",
+      "emoji": "⚽",
+      "nombre": {
+        "es": "Fútbol",
+        "en": "Soccer",
+        "pt": "Futebol"
+      },
+      "pista": {
+        "es": "Mundiales, clubes, goles y fichajes",
+        "en": "World Cups, clubs, goals and transfers",
+        "pt": "Copas, clubes, gols e contratações"
+      },
+      "cartas": 123,
+      "desde": 1863,
+      "hasta": 2025
+    }
+  ],
+  "modulos": [
+    "assets/js/chat.js",
+    "assets/js/firebase-config.js",
+    "assets/js/frases.js",
+    "assets/js/games.js",
+    "assets/js/handoff.js",
+    "assets/js/i18n.js",
+    "assets/js/session.js",
+    "assets/js/sound.js",
+    "assets/js/transport/cleanup.js",
+    "assets/js/transport/dispose.js",
+    "assets/js/transport/errors.js",
+    "assets/js/transport/firebase.js",
+    "assets/js/transport/local.js",
+    "assets/js/transport/ratelimit.js",
+    "assets/js/transport/stats.js",
+    "assets/js/ui.js",
+    "batalla-naval/engine.js",
+    "batalla-naval/game.js",
+    "batalla-naval/rules.js",
+    "cuarto-rey/game.js",
+    "cuarto-rey/rules.js",
+    "linea-de-tiempo/decks/brasil.js",
+    "linea-de-tiempo/decks/chile.js",
+    "linea-de-tiempo/decks/futbol.js",
+    "linea-de-tiempo/decks/historia.js",
+    "linea-de-tiempo/decks/index.js",
+    "linea-de-tiempo/decks/musica.js",
+    "linea-de-tiempo/decks/pop.js",
+    "linea-de-tiempo/engine.js",
+    "linea-de-tiempo/game.js",
+    "linea-de-tiempo/rules.js",
+    "panel/aggregate.js",
+    "panel/panel.js",
+    "toque-y-fama/engine.js",
+    "toque-y-fama/game.js",
+    "toque-y-fama/rules.js"
+  ],
+  "sinVersionar": [],
+  "tests": [
+    "assets/js/i18n.test.mjs",
+    "assets/js/transport/cleanup.test.mjs",
+    "assets/js/transport/dispose.test.mjs",
+    "assets/js/transport/errors.test.mjs",
+    "assets/js/transport/ratelimit.test.mjs",
+    "assets/js/transport/stats.test.mjs",
+    "batalla-naval/engine.test.mjs",
+    "linea-de-tiempo/engine.test.mjs",
+    "panel/aggregate.test.mjs",
+    "toque-y-fama/engine.test.mjs"
+  ],
+  "e2e": [
+    "batalla-naval-alineacion.mjs",
+    "batalla-naval-colocacion.mjs",
+    "batalla-naval-local.mjs",
+    "batalla-naval-online.mjs",
+    "compartir-sala.mjs",
+    "cuarto-rey.mjs",
+    "enlace-invitacion.mjs",
+    "linea-de-tiempo-chat.mjs",
+    "linea-de-tiempo-eleccion.mjs",
+    "linea-de-tiempo-empate.mjs",
+    "linea-de-tiempo-error.mjs",
+    "linea-de-tiempo-local.mjs",
+    "linea-de-tiempo-mazos.mjs",
+    "linea-de-tiempo-mesa.mjs",
+    "linea-de-tiempo-online.mjs",
+    "linea-de-tiempo-pozo.mjs",
+    "linea-de-tiempo-solo.mjs",
+    "linea-de-tiempo-veredicto.mjs",
+    "memoria-de-partida.mjs",
+    "sala-error.mjs",
+    "sala-tope.mjs",
+    "toque-y-fama-chat.mjs",
+    "toque-y-fama-local.mjs",
+    "toque-y-fama-online.mjs",
+    "versionado.mjs"
+  ],
+  "documentos": [
+    {
+      "ruta": "docs/AGREGAR-JUEGO.md",
+      "titulo": "Cómo agregar un juego nuevo"
+    },
+    {
+      "ruta": "docs/CANONES.md",
+      "titulo": "Cánones y estándares de Juegos de Salón"
+    },
+    {
+      "ruta": "docs/DECISIONES.md",
+      "titulo": "Decisiones de diseño y arquitectura"
+    },
+    {
+      "ruta": "docs/PANEL.md",
+      "titulo": "Panel del dueño"
+    },
+    {
+      "ruta": "docs/REQUERIMIENTOS.md",
+      "titulo": "Requerimientos"
+    },
+    {
+      "ruta": "docs/juegos/batalla-naval.md",
+      "titulo": "Diseño: Batalla Naval"
+    },
+    {
+      "ruta": "docs/juegos/cuarto-rey.md",
+      "titulo": "Especificación: Cuarto Rey"
+    },
+    {
+      "ruta": "docs/juegos/linea-de-tiempo.md",
+      "titulo": "Diseño: Línea de Tiempo"
+    },
+    {
+      "ruta": "docs/juegos/toque-y-fama-factibilidad.md",
+      "titulo": "Toque y Fama — estudio de factibilidad y propuesta de mecánica"
+    },
+    {
+      "ruta": "docs/juegos/toque-y-fama.md",
+      "titulo": "Especificación: Toque y Fama"
+    },
+    {
+      "ruta": "lab/README.md",
+      "titulo": "Laboratorio"
+    },
+    {
+      "ruta": "firebase/README.md",
+      "titulo": "Firebase"
+    },
+    {
+      "ruta": "tools/e2e/README.md",
+      "titulo": "Pruebas de punta a punta (Chrome headless por CDP)"
+    },
+    {
+      "ruta": "CHANGELOG.md",
+      "titulo": "Changelog"
+    }
+  ],
+  "capturas": {
+    "cuarto-rey": 11,
+    "toque-y-fama": 9,
+    "linea-de-tiempo": 11,
+    "batalla-naval": 7
+  }
+}
