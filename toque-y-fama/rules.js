@@ -28,6 +28,7 @@ const ES = {
   chatPlaceholder: 'Escribe algo…', chatEmpty: 'Acá pueden picarse mientras adivinan. Se borra cuando termina la partida.',
   invitedTitle: '¡Invitado a jugar!', invited: '📩 Sala {code}', invitedHint: 'Escribe tu nombre y entra. La partida la configura quien te invitó.',
   lobbyTitle: 'Sala creada', lobbyCode: 'Código', lobbyShare: 'Dile el código al rival o que escanee el QR.', lobbyWaiting: 'Esperando al rival…', lobbyJoined: '¡{name} se unió!', shareLink: '📤 Compartir link', shareText: 'Únete a mi sala de {game}. Código: {code}', copyLink: '📋 Copiar link', copied: '¡Copiado!',
+  lobbyCancel: 'Cancelar la sala', lobbyLeave: 'Salir de la sala',
   // secret
   secretTitle: 'Tu número secreto', secretFor: 'Número secreto de {name}', secretHint: '{n} cifras distintas. Que nadie mire.', secretHintNoZero: '{n} cifras distintas, sin cero al inicio. Que nadie mire.',
   confirm: '¡Vamos!', hide: 'Tapar pantalla', tapToReveal: 'Toca para ver', secretSaved: 'Número secreto guardado 🔒',
@@ -71,6 +72,7 @@ const EN = {
   chatPlaceholder: 'Say something…', chatEmpty: 'Trash talk while you guess. It disappears when the game ends.',
   invitedTitle: 'Invited to play!', invited: '📩 Room {code}', invitedHint: 'Type your name and jump in. Whoever invited you sets up the game.',
   lobbyTitle: 'Room created', lobbyCode: 'Code', lobbyShare: 'Tell your rival the code or let them scan the QR.', lobbyWaiting: 'Waiting for your rival…', lobbyJoined: '{name} joined!', shareLink: '📤 Share link', shareText: 'Join my {game} room. Code: {code}', copyLink: '📋 Copy link', copied: 'Copied!',
+  lobbyCancel: 'Cancel the room', lobbyLeave: 'Leave the room',
   secretTitle: 'Your secret number', secretFor: '{name}\'s secret number', secretHint: '{n} different digits. No peeking.', secretHintNoZero: '{n} different digits, no leading zero. No peeking.',
   confirm: 'Let\'s go!', hide: 'Hide screen', tapToReveal: 'Tap to reveal', secretSaved: 'Secret number saved 🔒',
   waitingSecret: 'Waiting for {name} to pick a secret number…', bothReady: 'Both ready!',
@@ -113,6 +115,7 @@ const PT = {
   chatPlaceholder: 'Escreva algo…', chatEmpty: 'Aqui vocês podem se provocar enquanto tentam adivinhar. Some quando a partida termina.',
   invitedTitle: 'Convidado para jogar!', invited: '📩 Sala {code}', invitedHint: 'Escreva seu nome e entre. Quem te convidou configura a partida.',
   lobbyTitle: 'Sala criada', lobbyCode: 'Código', lobbyShare: 'Diga o código ao rival ou deixe ele escanear o QR.', lobbyWaiting: 'Esperando o rival…', lobbyJoined: '{name} entrou!', shareLink: '📤 Compartilhar link', shareText: 'Entre na minha sala de {game}. Código: {code}', copyLink: '📋 Copiar link', copied: 'Copiado!',
+  lobbyCancel: 'Cancelar a sala', lobbyLeave: 'Sair da sala',
   // segredo
   secretTitle: 'Seu número secreto', secretFor: 'Número secreto de {name}', secretHint: '{n} algarismos diferentes. Ninguém pode olhar.', secretHintNoZero: '{n} algarismos diferentes, sem zero no início. Ninguém pode olhar.',
   confirm: 'Vamos!', hide: 'Cobrir a tela', tapToReveal: 'Toque para ver', secretSaved: 'Número secreto guardado 🔒',
