@@ -22,7 +22,7 @@ const ES = {
   modeSolo: '🧍 Jugar solo', modeSoloHint: 'Vacía tu mano en la menor cantidad de intentos y supera tu récord.',
   // setup
   setupTitle: '¿Cómo jugamos?', theme: 'Temática', handSize: 'Cartas en mano',
-  cardsMode: 'Cartas', modeOwn: '🙋 Mano propia', modeShared: '🃏 Pozo común', modeAll: '🗂 Todas a la vista',
+  cardsMode: 'Cartas', modeOwn: 'Mano propia', modeShared: 'Pozo común', modeAll: 'Todas a la vista',
   ownHint: 'Cada uno juega con su propia mano.',
   sharedHint: 'Todos eligen de las mismas {n} cartas a la vista y cada vez que sale una entra otra del mazo.',
   allHint: 'Se despliegan {n} cartas desde el primer turno y no entra ninguna más, así las más difíciles de situar van quedando para el final.',
@@ -38,6 +38,7 @@ const ES = {
   invitedTitle: '¡Invitado a jugar!', invited: '📩 Sala {code}', invitedHint: 'Escribe tu nombre y entra. La partida la configura quien te invitó.',
   lobbyTitle: 'Sala creada', lobbyCode: 'Código', lobbyShare: 'Dile el código al resto o que escaneen el QR.', shareLink: '📤 Compartir link', shareText: 'Únete a mi sala de {game} · {theme}. Código: {code}', copyLink: '📋 Copiar link', copied: '¡Copiado!',
   lobbyPlayers: 'En la sala', lobbyWaitHost: 'Esperando a que {name} empiece…', lobbyStart: '🚀 ¡Empezar!', lobbyNeedMore: 'Faltan jugadores',
+  lobbyCancel: 'Cancelar la sala', lobbyLeave: 'Salir de la sala',
   offline: '{name} se desconectó', waitingTurn: 'Esperando a {name}…', placedBy: '{name} colocó',
   // juego
   turnYou: '¡Te toca, {name}!', turnOther: 'Turno de {name}', soloTitle: 'Vacía tu mano', soloStatus: '{ok} aciertos en {n} {tries}', soloRecord: 'Récord: {n} {tries}', tryOne: 'intento', tryMany: 'intentos',
@@ -72,7 +73,7 @@ const EN = {
   modeOnline: '📡 Several phones', modeOnlineHint: 'A room with a 4-letter code, up to 6 players.',
   modeSolo: '🧍 Play alone', modeSoloHint: 'Empty your hand in as few tries as you can and beat your record.',
   setupTitle: 'How do we play?', theme: 'Theme', handSize: 'Cards in hand',
-  cardsMode: 'Cards', modeOwn: '🙋 Own hand', modeShared: '🃏 Shared pool', modeAll: '🗂 All on the table',
+  cardsMode: 'Cards', modeOwn: 'Own hand', modeShared: 'Shared pool', modeAll: 'All on the table',
   ownHint: 'Everyone plays their own hand.',
   sharedHint: 'Everyone picks from the same {n} open cards and a new one comes in from the deck each time one leaves.',
   allHint: 'All {n} cards are laid out from the very first turn and no card is ever added, so the hardest ones to place are left for the end.',
@@ -88,6 +89,7 @@ const EN = {
   invitedTitle: 'Invited to play!', invited: '📩 Room {code}', invitedHint: 'Type your name and jump in. Whoever invited you sets up the game.',
   lobbyTitle: 'Room created', lobbyCode: 'Code', lobbyShare: 'Tell the others the code or let them scan the QR.', shareLink: '📤 Share link', shareText: 'Join my {game} room · {theme}. Code: {code}', copyLink: '📋 Copy link', copied: 'Copied!',
   lobbyPlayers: 'In the room', lobbyWaitHost: 'Waiting for {name} to start…', lobbyStart: '🚀 Start!', lobbyNeedMore: 'Need more players',
+  lobbyCancel: 'Cancel the room', lobbyLeave: 'Leave the room',
   offline: '{name} disconnected', waitingTurn: 'Waiting for {name}…', placedBy: '{name} placed',
   turnYou: 'Your turn, {name}!', turnOther: '{name}\'s turn', soloTitle: 'Empty your hand', soloStatus: '{ok} correct in {n} {tries}', soloRecord: 'Record: {n} {tries}', tryOne: 'try', tryMany: 'tries',
   yourHand: 'Your hand', handOf: '{name}\'s hand', pickCard: 'Pick a card', pickSlot: 'Where does it go?', place: '📍 Place it here',
@@ -122,7 +124,7 @@ const PT = {
   modeSolo: '🧍 Jogar sozinho', modeSoloHint: 'Esvazie sua mão no menor número de tentativas e supere seu recorde.',
   // configuração
   setupTitle: 'Como vamos jogar?', theme: 'Tema', handSize: 'Cartas na mão',
-  cardsMode: 'Cartas', modeOwn: '🙋 Mão própria', modeShared: '🃏 Monte comum', modeAll: '🗂 Todas na mesa',
+  cardsMode: 'Cartas', modeOwn: 'Mão própria', modeShared: 'Monte comum', modeAll: 'Todas na mesa',
   ownHint: 'Cada um joga com a própria mão.',
   sharedHint: 'Todos escolhem entre as mesmas {n} cartas à vista e cada vez que uma sai entra outra do baralho.',
   allHint: 'Aparecem {n} cartas desde o primeiro turno e nenhuma outra entra, então as mais difíceis de situar vão ficando para o final.',
@@ -138,6 +140,7 @@ const PT = {
   invitedTitle: 'Convidado para jogar!', invited: '📩 Sala {code}', invitedHint: 'Escreva seu nome e entre. Quem te convidou configura a partida.',
   lobbyTitle: 'Sala criada', lobbyCode: 'Código', lobbyShare: 'Diga o código aos outros ou deixe eles escanearem o QR.', shareLink: '📤 Compartilhar link', shareText: 'Entre na minha sala de {game} · {theme}. Código: {code}', copyLink: '📋 Copiar link', copied: 'Copiado!',
   lobbyPlayers: 'Na sala', lobbyWaitHost: 'Esperando {name} começar…', lobbyStart: '🚀 Começar!', lobbyNeedMore: 'Faltam jogadores',
+  lobbyCancel: 'Cancelar a sala', lobbyLeave: 'Sair da sala',
   offline: '{name} se desconectou', waitingTurn: 'Esperando {name}…', placedBy: '{name} colocou',
   // jogo
   turnYou: 'Sua vez, {name}!', turnOther: 'Vez de {name}', soloTitle: 'Esvazie sua mão', soloStatus: '{ok} acertos em {n} {tries}', soloRecord: 'Recorde: {n} {tries}', tryOne: 'tentativa', tryMany: 'tentativas',

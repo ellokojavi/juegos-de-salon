@@ -25,6 +25,17 @@ assert.deepEqual(live[0].players.map(p => p.name), ['Javi', 'Cata']);
 assert.equal(connections(live), 1);
 assert.deepEqual(liveRooms(null, now), []);
 
+// Una sala cerrada (todos se despidieron) ya no es una sala viva: se borra sola, y si
+// alguna sobrevive al borrado no puede aparecer como si hubiera gente jugando (D-50)
+const cerradas = liveRooms({
+  IDAS: { createdAt: now - 10 * 60 * 1000, game: 'toque-y-fama', players: { A: { name: 'Javi', left: true }, B: { name: 'Cata', left: true } } },
+  MEDI: { createdAt: now - 10 * 60 * 1000, game: 'toque-y-fama', players: { A: { name: 'Javi', left: true }, B: { name: 'Cata', online: false } } },
+  NADI: { createdAt: now - 10 * 60 * 1000, game: 'toque-y-fama', players: { A: { name: 'Javi', online: false }, B: { name: 'Cata', online: false } } },
+}, now);
+assert.deepEqual(cerradas.map(r => r.code), ['MEDI', 'NADI'], 'solo se va la que quedó sin nadie');
+assert.equal(cerradas[0].players[0].left, true, 'quien se despidió se ve despedido');
+assert.equal(cerradas[1].players[0].left, false, 'desconectado no es despedido');
+
 // Una sala recién creada, con los saludos de los dos jugadores y nada más: cero mensajes
 const reciennacida = liveRooms({ NUEV: {
   createdAt: now - 30 * 1000, game: 'batalla-naval',

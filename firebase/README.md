@@ -13,6 +13,17 @@ Proyecto: `juegos-de-salon` (plan Spark, gratuito). Creado el 2026-09-08.
 - **App web:** `juegos-de-salon-web`. Su configuración pública está en `assets/js/firebase-config.js`.
 - Google Analytics y Gemini quedaron desactivados (no se necesitan).
 
+## Publicar las reglas
+
+Las reglas de [`database.rules.json`](database.rules.json) **no se publican solas**: no hay
+deploy que las suba. Se pegan a mano y se toca *Publish*, con la cuenta dueña del proyecto
+(`jbotmacmini@gmail.com`):
+
+<https://console.firebase.google.com/u/0/project/juegos-de-salon/database/juegos-de-salon-default-rtdb/rules>
+
+Mientras un cambio en el archivo no esté publicado, las escrituras nuevas se rechazan y nadie
+se entera: el transporte y las señales de uso son mejor esfuerzo y fallan callados.
+
 ## Qué permiten las reglas
 
 - Existen tres nodos: `rooms/<CODIGO>` (las salas), `cleanup` (la papelera que las borra) y
@@ -21,8 +32,12 @@ Proyecto: `juegos-de-salon` (plan Spark, gratuito). Creado el 2026-09-08.
 - Cualquiera con el código puede leer la sala.
 - `createdAt`, `game` y `config` se escriben una sola vez (al crear la sala).
 - `players/A` a `players/F` se pueden actualizar mientras la sala tenga menos de 6 horas (hasta seis jugadores).
+  Ahí va también `left` (booleano): la despedida de quien se fue a propósito (D-50).
 - `messages/<id>` son de solo agregar (no se editan ni borran) y deben traer `t`, `from` (de A a F) y `at`.
 - Una sala con más de 6 horas puede ser borrada por cualquiera (limpieza).
+- Una sala **viva** solo se puede borrar cuando todos los jugadores que están adentro tienen
+  `left: true`: es la sala cancelada, que se cierra en el acto en vez de esperar seis horas.
+  Una sala sin ningún jugador apuntado no se puede borrar.
 - Cualquier otro campo se rechaza.
 - **Solo el dueño** (su UID en las reglas) puede listar `rooms/` entero y leer `stats/`.
   Nadie más: ni con el código de una sala se llega a `stats/`.
@@ -52,6 +67,21 @@ cleanup/
 
 Lógica y tests: [`assets/js/transport/cleanup.js`](../assets/js/transport/cleanup.js) ·
 `node assets/js/transport/cleanup.test.mjs`.
+
+## La despedida (`left`)
+
+La papelera es la puerta de atrás: recién puede tocar una sala cuando venció. La de adelante
+es la despedida (D-50, canon C-7): quien se va **a propósito** —cancela la sala en el lobby,
+se sale, cambia de modo, se muda a la sala de la revancha— escribe `left: true` en su rol y,
+si al releer no queda nadie sin despedirse, borra la sala en el acto.
+
+- `online: false` no alcanza: eso es quedarse sin señal o cerrar la pestaña, y esa partida se
+  puede retomar mientras la sala viva (C-6). Al reconectar, `left` vuelve a `false`.
+- Son dos escrituras y en ese orden, porque las reglas miran la sala **antes** del borrado.
+- La regla enumera los seis roles: las reglas de Firebase no saben recorrer hijos.
+
+Lógica y tests: [`assets/js/transport/dispose.js`](../assets/js/transport/dispose.js) ·
+`node assets/js/transport/dispose.test.mjs`.
 
 > **Una sola vez, al publicar esto:** las salas creadas antes de la papelera no están apuntadas
 > en ningún balde y nadie las va a barrer. Se borran a mano desde *Realtime Database → Datos*,
@@ -131,12 +161,20 @@ lista: `auth != null && (auth.uid === 'UNO' || auth.uid === 'OTRO')`, en los dos
 ```bash
 DB=https://juegos-de-salon-default-rtdb.firebaseio.com
 NOW=$(($(date +%s)*1000))
-curl -X PATCH "$DB/rooms/ABCD.json" -d "{\"createdAt\":$NOW,\"game\":\"toque-y-fama\",\"config\":{\"digits\":4},\"players/A\":{\"name\":\"Javi\"}}"
+# la sala y el jugador van en dos pasos: las reglas de `players/` miran el `createdAt` que ya
+# está en la base, así que en una sola escritura todavía no existe y se rechaza
+curl -X PATCH "$DB/rooms/ABCD.json" -d "{\"createdAt\":$NOW,\"game\":\"toque-y-fama\",\"config\":{\"digits\":4}}"
+curl -X PUT "$DB/rooms/ABCD/players/A.json" -d '{"name":"Javi","online":true}'
 
 # apuntar la sala en la papelera (debe pasar) y tratar de abrir el balde (debe fallar: recién apuntado)
 DAY=$((NOW/86400000))
 curl -X PATCH "$DB/cleanup/days/$DAY.json" -d "{\"lastAt\":$NOW,\"rooms/ABCD\":true}"
 curl "$DB/cleanup/days/$DAY.json"   # -> Permission denied
+
+# borrar la sala viva sin despedirse (debe fallar), despedirse y volver a borrar (debe pasar)
+curl -X DELETE "$DB/rooms/ABCD.json"                                           # -> Permission denied
+curl -X PATCH "$DB/rooms/ABCD/players/A.json" -d '{"online":false,"left":true}'
+curl -X DELETE "$DB/rooms/ABCD.json"                                           # -> null
 
 # señales de uso: subir un contador de a uno (debe pasar), pisarlo con otro valor (debe fallar), leer (debe fallar)
 curl -X PATCH "$DB/stats/dev/days/$DAY.json" -d '{"local/toque-y-fama/cpu/1":{".sv":{"increment":1}},"origin/America__Santiago":{".sv":{"increment":1}}}'
