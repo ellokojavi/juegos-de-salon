@@ -23,5 +23,7 @@ export function createLocalTransport({ seed = [] } = {}) {
     onMessage(cb) { listeners.push(cb); messages.forEach(m => cb(m)); },
     onPresence() { },
     leave() { listeners.length = 0; },
+    // En un solo celular no hay sala que borrar: irse a propósito es lo mismo que irse.
+    async dispose() { listeners.length = 0; return { left: false, removed: false }; },
   };
 }

@@ -27,6 +27,12 @@
 /** Espera de conexión antes de tocar la sala, y tope para la operación completa. */
 export const CONNECT_MS = 8000;
 export const OP_MS = 12000;
+/**
+ * Tope para irse de una sala (`dispose`). Es mucho más corto que `OP_MS` porque acá no se
+ * está esperando nada: la persona ya tocó "cancelar" y quiere estar en otra pantalla. Si no
+ * alcanza, la sala queda marcada y la barre la papelera; nadie se entera.
+ */
+export const LEAVE_MS = 4000;
 
 const KEYS = {
   'not-found': 'errNotFound',
