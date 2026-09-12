@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.23.2 — 2026-09-11
+- Bajada del título del menú, más corta: "Elige un juego, para pasar el tiempo solo o con
+  amigos." en los tres idiomas.
+
 ## 0.23.1 — 2026-09-11
 - **Frases del pie renovadas** (D-49). Las 100 frases por idioma de `assets/js/frases.js` dejan
   el humor sobre los juegos de la app y los mensajes de agua/moderación por chistes genéricos
