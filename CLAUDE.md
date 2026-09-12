@@ -50,6 +50,7 @@ node assets/js/transport/errors.test.mjs
 node assets/js/transport/ratelimit.test.mjs
 node assets/js/transport/stats.test.mjs
 node panel/aggregate.test.mjs
+python3 tools/readme.test.py       # qué cuenta como cambio para las capturas (D-51)
 python3 -m http.server 8765          # los módulos ES necesitan HTTP, no file://
 ```
 
