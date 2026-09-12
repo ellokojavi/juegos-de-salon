@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.25.3 — 2026-09-12
+- **El aviso de capturas viejas vuelve a querer decir algo** (D-51). Estampar la versión
+  reescribe los seis `index.html` (C-11), y el chequeo del README lo leía como "esta pantalla
+  cambió": después de cada publicación aparecían como viejas las capturas de todos los juegos,
+  incluidos los que nadie había tocado. Ahora `git_fecha` se salta los cambios cuyo único
+  contenido son las marcas de versión —comparando las líneas quitadas contra las puestas con
+  el número borrado, que es lo que distingue un estampado de un módulo nuevo en el import map—
+  y el aviso queda solo para las pantallas que de verdad cambiaron. Lo prueba
+  `python3 tools/readme.test.py`, el primer test de las herramientas.
+
 ## 0.25.2 — 2026-09-12
 - **La intro de Línea de Tiempo va al grano.** El "Cómo se juega" explicaba de corrido las
   tres maneras de repartir —todas a la vista, pozo común y mano propia— antes de que nadie

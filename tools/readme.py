@@ -260,18 +260,63 @@ SECCIONES = {
 }
 
 
+COMMITS_MIRADOS = 40   # tope de commits que se revisan hacia atrás buscando uno de verdad
+
+#: Las marcas que estampa set-version.py: `?v=0.25.2` en el import map y las hojas de
+#: estilo, y `v0.25.2 ·` en el pie del menú.
+ESTAMPA = re.compile(r'\?v=\d+\.\d+\.\d+|v\d+\.\d+\.\d+ ·')
+
+
+def git(*args, rutas=()):
+    """Un comando de git acotado a esos caminos, con la salida como texto."""
+    orden = ['git', *args] + (['--', *rutas] if rutas else [])
+    return subprocess.run(orden, cwd=RAIZ, capture_output=True, text=True).stdout
+
+
+def solo_estampa(diff):
+    """
+    ¿Ese diff no cambia nada más que la versión estampada?
+
+    Se comparan las líneas quitadas contra las puestas con el número de versión borrado: si
+    quedan iguales, lo único que pasó fue una publicación. No basta con "todas las líneas
+    tienen un ?v=", porque el import map es una línea sola y enorme que también cambia
+    cuando se agrega un módulo, y eso sí es un cambio.
+    """
+    mas, menos = [], []
+    for linea in diff.splitlines():
+        if linea.startswith(('+++', '---')):
+            continue
+        if linea.startswith('+'):
+            mas.append(ESTAMPA.sub('V', linea[1:]))
+        elif linea.startswith('-'):
+            menos.append(ESTAMPA.sub('V', linea[1:]))
+    return bool(mas or menos) and sorted(mas) == sorted(menos)
+
+
 def git_fecha(rutas):
-    """Cuándo se tocó por última vez alguno de esos caminos (0 si nunca)."""
+    """
+    Cuándo cambió de verdad por última vez alguno de esos caminos (0 si nunca).
+
+    El estampado de versión no cuenta: `set-version.py` reescribe los seis `index.html` en
+    cada publicación (C-11) y eso no cambia ninguna pantalla. Sin esta salvedad, publicar
+    dejaba "más viejas que el código" a las capturas de todos los juegos, incluidos los que
+    nadie tocó, y el aviso dejaba de querer decir algo (D-51).
+    """
     rutas = [r for r in rutas if (RAIZ / r).exists()]
     if not rutas:
         return 0
-    sucio = subprocess.run(['git', 'status', '--porcelain', '--'] + rutas,
-                           cwd=RAIZ, capture_output=True, text=True).stdout.strip()
-    if sucio:
+    sucio = git('status', '--porcelain', rutas=rutas).strip()
+    # Un archivo nuevo sin commitear es un cambio de verdad; lo modificado se mira igual
+    # que un commit, porque ahí también puede haber solo un estampado a medio publicar.
+    if sucio and (any(l.startswith('??') for l in sucio.splitlines())
+                  or not solo_estampa(git('diff', 'HEAD', '-U0', rutas=rutas))):
         return 10 ** 12  # sin commitear: más nuevo que cualquier commit
-    fecha = subprocess.run(['git', 'log', '-1', '--format=%ct', '--'] + rutas,
-                           cwd=RAIZ, capture_output=True, text=True).stdout.strip()
-    return int(fecha) if fecha else 0
+    for linea in git('log', f'-{COMMITS_MIRADOS}', '--format=%H %ct', rutas=rutas).splitlines():
+        sha, fecha = linea.split()
+        if solo_estampa(git('show', sha, '-U0', '--format=', rutas=rutas)):
+            continue
+        return int(fecha)
+    return 0
 
 
 NUMEROS = {'dos': 2, 'tres': 3, 'cuatro': 4, 'cinco': 5, 'seis': 6, 'siete': 7, 'ocho': 8}
