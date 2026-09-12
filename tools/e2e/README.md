@@ -22,7 +22,7 @@ mkdir -p /tmp/e2e && node tools/e2e/batalla-naval-local.mjs /tmp/e2e
 
 | Script | Qué prueba |
 |---|---|
-| `cuarto-rey.mjs` | Botón de sonido y mazo completo hasta el cuarto rey |
+| `cuarto-rey.mjs` | Botón de sonido, mazo completo hasta el cuarto rey y el menú en inglés |
 | `toque-y-fama-local.mjs` | Un celular y contra el celular, hasta el resultado |
 | `toque-y-fama-online.mjs` | Dos celulares contra Firebase real: unión por URL, recarga a mitad, revancha |
 | `batalla-naval-local.mjs` | Colocación, batalla en un celular y contra el celular |
@@ -36,7 +36,7 @@ mkdir -p /tmp/e2e && node tools/e2e/batalla-naval-local.mjs /tmp/e2e
 | `toque-y-fama-chat.mjs` | Chat de sala en Toque y Fama: no leídos, etiqueta, y que muera con la partida |
 | `linea-de-tiempo-eleccion.mjs` | Que se coloque la carta elegida y que sin elegir no se pueda colocar nada |
 | `linea-de-tiempo-veredicto.mjs` | Que el veredicto hable en tercera persona cuando se equivocó otro |
-| `linea-de-tiempo-mazos.mjs` | Las cuatro temáticas y que diez partidas seguidas no repitan cartas |
+| `linea-de-tiempo-mazos.mjs` | Todas las temáticas y que diez partidas seguidas no repitan cartas |
 | `linea-de-tiempo-pozo.mjs` | Pozo común: tira de 6, reposición por el final, meta y ajuste que viaja en la sala |
 | `linea-de-tiempo-mesa.mjs` | Todas a la vista: mesa del doble de la meta, sin reposición, y solitario que se queda sin cartas |
 | `linea-de-tiempo-empate.mjs` | Que la ronda se termine y que el empate lo gane el más rápido |
@@ -47,6 +47,14 @@ mkdir -p /tmp/e2e && node tools/e2e/batalla-naval-local.mjs /tmp/e2e
 | `enlace-invitacion.mjs` | Quien llega por un enlace solo puede unirse a esa sala, en los tres juegos |
 | `sala-error.mjs` | Sin llegar a Firebase: el mensaje se ve en los tres juegos y en los tres idiomas |
 | `sala-tope.mjs` | Pasado el tope de salas por celular, avisa al instante y sin tocar la red |
+
+## De acá salen las capturas del README
+
+Varias de estas tomas son las imágenes que muestra el README. El catálogo
+[`docs/capturas.json`](../../docs/capturas.json) dice cuál sale de qué guion y con qué
+nombre, y `python3 tools/readme.py capturas <seccion>` corre los guiones que hagan falta y
+copia los PNG a `docs/screenshots/` (ver D-51). Por eso, al renombrar o sacar una toma de
+un guion conviene correr `python3 tools/readme.py revisar`: avisa si dejó una imagen huérfana.
 
 ## Cómo simulan varios celulares
 
