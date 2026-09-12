@@ -33,6 +33,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | RP-24 | Los juegos registran señales de uso anonimizadas: de los modos sin red solo contadores, de las salas lo que ya viaja a Firebase. Nunca IP, secretos, chat ni quién ganó. | ✅ v0.20 |
 | RP-25 | El panel separa por entorno también las salas vivas, que viven en un `rooms/` común a todos: las de otro entorno no se cuentan y se nombran debajo de la lista, para que ninguna desaparezca en silencio (D-45). | ✅ v0.21.1 |
 | RP-26 | Se registra el idioma elegido en el juego, aparte del idioma del navegador: uno dice de dónde es la persona y el otro en cuál prefiere jugar (D-46). | ✅ v0.21.2 |
+| RP-27 | Una sala que se cancela se cierra en el acto: quien se va a propósito se despide, la sala queda sin nadie y se borra sola, y el panel deja de mostrarla viva. Cerrar la pestaña no cancela nada: esa partida se puede retomar (D-50). | ✅ v0.25 |
 
 ## Cuarto Rey (CR)
 

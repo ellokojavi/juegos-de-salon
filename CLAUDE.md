@@ -25,6 +25,7 @@ node batalla-naval/engine.test.mjs
 node linea-de-tiempo/engine.test.mjs
 node assets/js/i18n.test.mjs             # paridad es/en/pt (C-3)
 node assets/js/transport/cleanup.test.mjs
+node assets/js/transport/dispose.test.mjs
 node assets/js/transport/errors.test.mjs
 node assets/js/transport/ratelimit.test.mjs
 node assets/js/transport/stats.test.mjs

@@ -33,9 +33,10 @@ naturaleza del juego:
 
 ## 2a. De dónde salen las cartas (D-32, D-43)
 
-La sección **Cartas** de la configuración ofrece tres formas de repartir. **Todas a la vista viene
-elegida por defecto**, porque es la que más conversación genera y la única que se va poniendo más
-difícil sola.
+La sección **Cartas** de la configuración ofrece tres formas de repartir, en un selector de una
+sola fila con el emoji arriba y el nombre completo debajo (D-52). **Todas a la vista viene elegida
+por defecto**, porque es la que más conversación genera y la única que se va poniendo más difícil
+sola.
 
 | | Todas a la vista | Pozo común | Mano propia |
 |---|---|---|---|
@@ -74,7 +75,7 @@ interrupción larga no decida el desempate.
 | 🧍 Jugar solo | 1 | `local` |
 | 📡 Varios celulares | 2 a 6 | `firebase` |
 
-En varios celulares, el anfitrión (rol A) crea la sala y abre la partida con el botón **Empezar** cuando hay al menos dos jugadores; el mensaje `start` fija el orden. Cada celular ve solo su mano, y el veredicto de cada jugada se muestra a todos y se cierra solo.
+En varios celulares, el anfitrión (rol A) crea la sala y abre la partida con el botón **Empezar** cuando hay al menos dos jugadores; el mensaje `start` fija el orden. En la sala de espera, el anfitrión puede **cancelar la sala** y quien se unió puede **salir de la sala**: quien se va a propósito se despide y la sala se borra si no queda nadie (D-50). Cada celular ve solo su mano, y el veredicto de cada jugada se muestra a todos y se cierra solo.
 
 El botón de compartir usa el diálogo nativo del celular y el texto que lo acompaña nombra la temática elegida, para que quien recibe el enlace sepa a qué lo invitan.
 

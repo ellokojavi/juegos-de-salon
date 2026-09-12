@@ -25,6 +25,12 @@ los datos son las reglas de Firebase, que solo dejan leer al UID del dueño.
 | **A qué hora se juega** | Hora local de cada celular, 0 a 23. | `hour/<h>` |
 | **Cuota** | Enlace a la consola de uso de Firebase. Los "celulares conectados" son la mejor aproximación a las conexiones simultáneas del plan gratuito. | — |
 
+**Salas cerradas**: una sala que sus jugadores cancelaron (todos con `left`, ver D-50) no
+aparece en "Ahora". Se borra sola en el acto, así que casi nunca alcanza a verse; si alguna
+sobrevive al borrado, mostrarla sería decir que hay gente jugando donde ya no hay nadie. Una
+sala donde nadie está conectado **sí** sigue apareciendo, apagada: esa partida se puede
+retomar hasta que la sala venza (C-6).
+
 **Celulares conectados** cuenta los jugadores con `online: true` en salas vivas. Los modos
 sin red no abren conexión (mandan un solo `fetch`), así que no aparecen ahí ni gastan cuota.
 
@@ -68,7 +74,8 @@ Todo es mejor esfuerzo: si el envío falla, nadie se entera y la partida sigue i
    da un UID igual de válido y el error no se nota hasta después de publicar las reglas.
 4. Poner ese UID en las dos líneas `.read` de
    [firebase/database.rules.json](../firebase/database.rules.json) (`rooms` y `stats`), y
-   publicar las reglas en **Realtime Database → Rules → Publish**.
+   publicar las reglas en **Realtime Database → Rules → Publish**
+   ([enlace directo](https://console.firebase.google.com/u/0/project/juegos-de-salon/database/juegos-de-salon-default-rtdb/rules)).
 5. Recargar el panel.
 
 > **Ya está hecho.** El UID en las reglas es el de `jirigoyen@gmail.com`. Estos pasos quedan
@@ -95,6 +102,8 @@ panel/
 assets/js/transport/
   stats.js            Registro desde los juegos y el transporte, por REST
   stats.test.mjs      node assets/js/transport/stats.test.mjs
+  dispose.js          Despedida de una sala: lo que hace que una cancelada no se vea viva
+  dispose.test.mjs    node assets/js/transport/dispose.test.mjs
 ```
 
 `window.__panel.seed({ rooms, days })` dibuja el panel con datos sembrados sin entrar

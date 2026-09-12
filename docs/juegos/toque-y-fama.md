@@ -20,7 +20,7 @@ En la pantalla de juego aparece una ficha “🔒 Tu número secreto”. En dos 
 
 ## Flujo
 ```
-Intro (elige modo) → Setup (nombres, cifras, réplica, cero) → [Lobby: código + QR] → Secreto → Juego (tableros) → Resultado → Revancha
+Intro (elige modo) → Setup (nombres, cifras, réplica, cero) → [Lobby: código + QR + cancelar la sala] → Secreto → Juego (tableros) → Resultado → Revancha
 ```
 
 ## Protocolo de mensajes (todos los modos)
@@ -38,6 +38,7 @@ El estado (`view()`) se deriva de la lista de mensajes: fase (`lobby`, `secret`,
 ## Firebase (modo dos celulares)
 - Sala: `rooms/<CODE>` con `createdAt`, `game`, `config`, `players/{A,B}` (nombre, online) y `messages/<pushId>` (append-only).
 - Creación en dos pasos (sala, luego jugador) por las reglas de seguridad; salas válidas 6 horas.
+- El lobby tiene botón para cancelar la sala: quien se va a propósito se despide y la sala se borra si no queda nadie (D-50).
 - Reconexión: el secreto y el rol se guardan en `localStorage` (`juegos-de-salon:tyf:session`); al abrir `?sala=CODE` o “Continuar” se retoma.
 - Revancha: quien la propone crea una sala nueva (queda como A) y avisa con `rematch`; el otro se une como B.
 - Presencia con `onDisconnect`; si el rival se desconecta, se avisa en pantalla.

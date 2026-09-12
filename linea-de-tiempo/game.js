@@ -40,9 +40,9 @@ const records = {
  */
 const tableSize = config => (config.spread ? SPREAD_FACTOR * config.handSize : VISIBLE);
 const CARD_MODES = [
-  { id: 'all', shared: true, spread: true, label: () => T.modeAll, hint: c => fmt(T.allHint, { n: tableSize(c) }) },
-  { id: 'pool', shared: true, spread: false, label: () => T.modeShared, hint: () => fmt(T.sharedHint, { n: VISIBLE }) },
-  { id: 'own', shared: false, spread: false, label: () => T.modeOwn, hint: () => T.ownHint },
+  { id: 'all', emoji: '🗂', shared: true, spread: true, label: () => T.modeAll, hint: c => fmt(T.allHint, { n: tableSize(c) }) },
+  { id: 'pool', emoji: '🃏', shared: true, spread: false, label: () => T.modeShared, hint: () => fmt(T.sharedHint, { n: VISIBLE }) },
+  { id: 'own', emoji: '🙋', shared: false, spread: false, label: () => T.modeOwn, hint: () => T.ownHint },
 ];
 const cardModeOf = config => (config?.shared ? (config.spread ? CARD_MODES[0] : CARD_MODES[1]) : CARD_MODES[2]);
 
@@ -125,7 +125,9 @@ function view() {
 /* Sesión                                                              */
 /* ------------------------------------------------------------------ */
 function startSession({ mode, transport, roles, config, names, code = null, role = null }) {
-  if (S?.transport) S.transport.leave();
+  // Cambiar de sala (la revancha crea una nueva) es irse de la anterior para siempre: se
+  // despide en vez de solo soltar los oyentes, así no queda una sala muerta viéndose viva.
+  if (S?.transport) S.transport.dispose();
   S = { mode, transport, roles, code, role, uiRole: null, selCard: null, selSlot: null, lastShown: -1, live: false };
   M = newMatch(config);
   setupChat(mode);
@@ -217,6 +219,20 @@ function setupChat(mode) {
 }
 
 /* ---------- Sala (varios celulares) ---------- */
+
+/**
+ * Irse de la sala a propósito: este rol se despide y, si no queda nadie, la sala se borra
+ * en el acto en vez de quedar seis horas pareciendo viva (D-50). Cerrar la pestaña no pasa
+ * por acá: esa partida se puede retomar y la sala tiene que seguir esperando (C-6).
+ */
+async function leaveRoom(btn) {
+  SFX.tap();
+  if (btn) btn.disabled = true;
+  clearSession();
+  await S.transport.dispose();
+  location.href = location.pathname;
+}
+
 function renderLobby() {
   if (S.mode !== 'online' || !M) return;
   showScreen('screen-lobby');
@@ -235,6 +251,7 @@ function renderLobby() {
     S.role === host
       ? el('button', { class: 'btn btn--yellow', disabled: joined.length < MIN_PLAYERS, onClick: () => { SFX.pass(); S.transport.send({ t: 'start', from: 'A', order: joined }); } }, joined.length < MIN_PLAYERS ? T.lobbyNeedMore : T.lobbyStart)
       : el('p', { class: 'waiting' }, el('span', { class: 'dots' }, fmt(T.lobbyWaitHost, { name: M.names[host] || '…' }))),
+    el('button', { class: 'btn btn--ghost btn--sm', style: 'margin-top:10px', onClick: e => leaveRoom(e.currentTarget) }, S.role === 'A' ? T.lobbyCancel : T.lobbyLeave),
   );
   renderQr(url);
 }
@@ -478,7 +495,7 @@ function renderResult(v) {
   }
   box.append(
     el('button', { class: 'btn btn--yellow', onClick: rematch }, T.rematch),
-    el('button', { class: 'btn btn--ghost', onClick: () => { clearSession(); S.transport.leave(); location.href = location.pathname; } }, T.changeMode),
+    el('button', { class: 'btn btn--ghost', onClick: e => leaveRoom(e.currentTarget) }, T.changeMode),
     el('a', { class: 'btn btn--ghost', href: '../' }, T.backMenu),
   );
 }
@@ -547,7 +564,9 @@ function renderResumeSlot() {
   if (!saved || saved.done) return;
   if (saved.mode === 'online' && !saved.code) return;
   const deck = getDeck(saved.config?.theme);
-  const label = (saved.mode === 'online' ? `${T.lobbyCode}: ${saved.code}` : { local: T.modeLocal, solo: T.modeSolo }[saved.mode] || '') + ` · ${cardModeOf(saved.config).label()}`;
+  // El emoji va con el nombre, como la temática: acá no hay pastilla que lo muestre aparte (D-52)
+  const cards = cardModeOf(saved.config);
+  const label = (saved.mode === 'online' ? `${T.lobbyCode}: ${saved.code}` : { local: T.modeLocal, solo: T.modeSolo }[saved.mode] || '') + ` · ${cards.emoji} ${cards.label()}`;
   slot.append(el('div', { class: 'panel pop' },
     el('p', { class: 'lead', style: 'margin-bottom:4px' }, T.resumeTitle),
     el('p', { class: 'muted' }, `${deck.emoji} ${deck.name[lang]} · ${label}`),
@@ -607,9 +626,12 @@ function renderSetup(mode, prefillCode = '') {
     modeHint.textContent = actual.hint(config);
     $$('button', modeSeg).forEach((b, i) => b.classList.toggle('on', CARD_MODES[i] === actual));
   };
-  // Tres opciones no caben lado a lado en un celular: van apiladas, con el nombre completo (C-8)
-  const modeSeg = el('div', { class: 'seg seg--stack' }, ...CARD_MODES.map(m =>
-    el('button', { type: 'button', onClick: () => { config.shared = m.shared; config.spread = m.spread; SFX.tap(); paintCards(); } }, m.label())));
+  // Las tres van lado a lado, como el toggle de idioma: apiladas se comían media pantalla
+  // del celular. El emoji arriba y el nombre completo debajo, que puede ocupar dos líneas
+  // antes que acortarse (C-8, D-52).
+  const modeSeg = el('div', { class: 'seg seg--cards' }, ...CARD_MODES.map(m =>
+    el('button', { type: 'button', onClick: () => { config.shared = m.shared; config.spread = m.spread; SFX.tap(); paintCards(); } },
+      el('span', { class: 'em' }, m.emoji), el('span', { class: 'txt' }, m.label()))));
   if (!invitado) form.append(el('div', { class: 'field' }, el('label', {}, T.cardsMode), modeSeg, modeHint));
 
   // Cuántas cartas: en mano (mano propia) o para ganar (pozo común y todas a la vista).

@@ -10,7 +10,8 @@ import {
 } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js';
 import { firebaseConfig } from '../firebase-config.js';
 import { ROOM_TTL, dueForSweep, markSwept, noteRoom, sweep } from './cleanup.js';
-import { CONNECT_MS, OP_MS, waitConnected, withTimeout } from './errors.js';
+import { disposeRoom } from './dispose.js';
+import { CONNECT_MS, LEAVE_MS, OP_MS, waitConnected, withTimeout } from './errors.js';
 import { checkQuota, noteCreated } from './ratelimit.js';
 import { stats, noteRoom as recordRoom, notePlayer as recordPlayer, noteStart as recordStart } from './stats.js';
 
@@ -35,8 +36,8 @@ const ROLES = ['A', 'B', 'C', 'D', 'E', 'F'];
  */
 const connWatch = d => cb => onValue(ref(d, '.info/connected'), s => cb(!!s.val()));
 
-/** Acceso a la base que usa la papelera (cleanup.js). */
-const cleanupApi = d => ({
+/** Acceso a la base que usan la papelera (cleanup.js) y la despedida (dispose.js). */
+const dbApi = d => ({
   read: async path => (await get(ref(d, path))).val(),
   update: (path, changes) => update(ref(d, path), changes),
   remove: path => set(ref(d, path), null),
@@ -61,10 +62,10 @@ function record(game, code, createdAt, { role, name, created }) {
  * (canon C-7). No se espera ni se muestra: si algo falla, la partida sigue igual.
  */
 async function cleanup(d, code, createdAt, { note = true } = {}) {
-  try { await noteRoom(cleanupApi(d), code, createdAt, { note }); } catch (_) { /* mejor esfuerzo */ }
+  try { await noteRoom(dbApi(d), code, createdAt, { note }); } catch (_) { /* mejor esfuerzo */ }
   if (!dueForSweep()) return;
   markSwept();
-  setTimeout(() => { sweep(cleanupApi(d)).catch(() => { /* nada */ }); }, 10000); // primero que arranque la partida
+  setTimeout(() => { sweep(dbApi(d)).catch(() => { /* nada */ }); }, 10000); // primero que arranque la partida
 }
 
 export function createFirebaseTransport({ game, maxPlayers = 2 }) {
@@ -77,6 +78,7 @@ export function createFirebaseTransport({ game, maxPlayers = 2 }) {
     code: null,
     role: null,
     roles: [],
+    _me: null,
     _unsubs: [],
 
     /**
@@ -167,11 +169,14 @@ export function createFirebaseTransport({ game, maxPlayers = 2 }) {
       const d = getDb();
       this.code = code; this.role = role; this.roles = [role];
       const meRef = ref(d, `rooms/${code}/players/${role}`);
+      this._me = meRef;
+      // `set` y no `update`: entrar borra la despedida de la vez anterior (dispose.js).
       await set(meRef, { name, online: true, uid });
       onDisconnect(meRef).update({ online: false });
-      // Reconexión: al volver, marcar online de nuevo
+      // Reconexión: al volver, marcar online de nuevo. `left: false` porque volver de un
+      // túnel es lo contrario de irse: si quedó una despedida a medias, se deshace acá.
       const connRef = ref(d, '.info/connected');
-      this._unsubs.push(onValue(connRef, s => { if (s.val()) { update(meRef, { online: true }); onDisconnect(meRef).update({ online: false }); } }));
+      this._unsubs.push(onValue(connRef, s => { if (s.val()) { update(meRef, { online: true, left: false }); onDisconnect(meRef).update({ online: false }); } }));
     },
 
     send(msg) {
@@ -189,9 +194,31 @@ export function createFirebaseTransport({ game, maxPlayers = 2 }) {
       this._unsubs.push(onValue(ref(d, `rooms/${this.code}/players`), snap => cb(snap.val() || {})));
     },
 
+    /** Suelta los oyentes de este celular. La sala queda como está, esperando (C-6). */
     leave() {
       this._unsubs.forEach(u => { try { u(); } catch (_) { /* nada */ } });
       this._unsubs = [];
+    },
+
+    /**
+     * Despedida limpia: este rol queda fuera de la sala y, si con eso no queda nadie, la
+     * sala se borra en el acto en vez de esperar seis horas (dispose.js, D-50).
+     *
+     * Es para cuando la persona se va **a propósito**: cancelar la sala, salirse de ella,
+     * cambiar de modo. Cerrar la pestaña o quedarse sin señal no pasa por acá: eso solo
+     * apaga `online`, porque esa partida se puede retomar y la sala tiene que esperarla.
+     *
+     * Lleva tope y nunca lanza: quien ya se está yendo no puede quedarse con el botón
+     * pegado ni ver un error de algo que no le importa (C-14).
+     */
+    async dispose() {
+      const { code, role, _me: me } = this;
+      this.leave();                       // primero soltar los oyentes: al reconectar no debe volver a marcarse online
+      this.code = null; this.role = null; this.roles = []; this._me = null;
+      if (!code || !role) return { left: false, removed: false };
+      try { await withTimeout(onDisconnect(me).cancel(), LEAVE_MS); } catch (_) { /* igual se va */ }
+      try { return await withTimeout(disposeRoom(dbApi(getDb()), code, role), LEAVE_MS); }
+      catch (_) { return { left: false, removed: false }; }
     },
   };
   return t;
