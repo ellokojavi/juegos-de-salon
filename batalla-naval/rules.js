@@ -22,6 +22,7 @@ const ES = {
   errTooMany: 'Abriste muchas salas seguidas. Espera un ratito y prueba de nuevo.',
   invitedTitle: '¡Invitado a jugar!', invited: '📩 Sala {code}', invitedHint: 'Escribe tu nombre y entra. La partida la configura quien te invitó.',
   lobbyTitle: 'Sala creada', lobbyCode: 'Código', lobbyShare: 'Dile el código al rival o que escanee el QR.', lobbyWaiting: 'Esperando al rival…', lobbyJoined: '¡{name} se unió!', shareLink: '📤 Compartir link', shareText: 'Únete a mi sala de {game}. Código: {code}', copyLink: '📋 Copiar link', copied: '¡Copiado!',
+  lobbyCancel: 'Cancelar la sala', lobbyLeave: 'Salir de la sala',
   offline: 'Rival desconectado. Esperando que vuelva…', rematchWaiting: 'Esperando a {name} para la revancha…',
   resumeTitle: '⏯ Hay una batalla a medias', resume: 'Continuar', delete: 'Borrar',
   // colocación
@@ -59,6 +60,7 @@ const EN = {
   errTooMany: 'You\'ve opened a lot of rooms in a row. Wait a bit and try again.',
   invitedTitle: 'Invited to play!', invited: '📩 Room {code}', invitedHint: 'Type your name and jump in. Whoever invited you sets up the game.',
   lobbyTitle: 'Room created', lobbyCode: 'Code', lobbyShare: 'Tell your rival the code or let them scan the QR.', lobbyWaiting: 'Waiting for your rival…', lobbyJoined: '{name} joined!', shareLink: '📤 Share link', shareText: 'Join my {game} room. Code: {code}', copyLink: '📋 Copy link', copied: 'Copied!',
+  lobbyCancel: 'Cancel the room', lobbyLeave: 'Leave the room',
   offline: 'Rival disconnected. Waiting for them to come back…', rematchWaiting: 'Waiting for {name} for the rematch…',
   resumeTitle: '⏯ There\'s an unfinished battle', resume: 'Continue', delete: 'Delete',
   placeTitle: 'Place your fleet', placeFor: '{name}\'s fleet', placeHint: 'Tap a ship, then a cell. Tap a placed ship to select it: rotate it with ↻, move it by tapping another cell, or drag it.',
@@ -94,6 +96,7 @@ const PT = {
   errTooMany: 'Você abriu muitas salas seguidas. Espere um pouquinho e tente de novo.',
   invitedTitle: 'Convidado para jogar!', invited: '📩 Sala {code}', invitedHint: 'Escreva seu nome e entre. Quem te convidou configura a partida.',
   lobbyTitle: 'Sala criada', lobbyCode: 'Código', lobbyShare: 'Diga o código ao rival ou deixe ele escanear o QR.', lobbyWaiting: 'Esperando o rival…', lobbyJoined: '{name} entrou!', shareLink: '📤 Compartilhar link', shareText: 'Entre na minha sala de {game}. Código: {code}', copyLink: '📋 Copiar link', copied: 'Copiado!',
+  lobbyCancel: 'Cancelar a sala', lobbyLeave: 'Sair da sala',
   offline: 'Rival desconectado. Esperando ele voltar…', rematchWaiting: 'Esperando {name} para a revanche…',
   resumeTitle: '⏯ Tem uma batalha pela metade', resume: 'Continuar', delete: 'Apagar',
   // posicionamento

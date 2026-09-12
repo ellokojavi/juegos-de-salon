@@ -101,7 +101,9 @@ function view() {
 /* Sesión y agentes                                                    */
 /* ------------------------------------------------------------------ */
 function startSession({ mode, transport, roles, config, names, bot = null, code = null, role = null }) {
-  if (S?.transport) S.transport.leave();
+  // Cambiar de sala (la revancha crea una nueva) es irse de la anterior para siempre: se
+  // despide en vez de solo soltar los oyentes, así no queda una sala muerta viéndose viva.
+  if (S?.transport) S.transport.dispose();
   S = { mode, transport, roles, secrets: {}, notes: {}, bot, code, role, repliedRounds: new Set(), lastShownRound: -1, cpuTimer: null, uiRole: null, live: false };
   M = newMatch(config);
   setupChat(mode);
@@ -357,6 +359,19 @@ function renderPresence() {
   if (v.phase === 'play' && p) $('#status-sub').textContent = p.online === false ? T.offline : statusSub(v);
 }
 
+/**
+ * Irse de la sala a propósito: este rol se despide y, si no queda nadie, la sala se borra
+ * en el acto en vez de quedar seis horas pareciendo viva (D-50). Cerrar la pestaña no pasa
+ * por acá: esa partida se puede retomar y la sala tiene que seguir esperando (C-6).
+ */
+async function leaveRoom(btn) {
+  SFX.tap();
+  if (btn) btn.disabled = true;
+  clearSession();
+  await S.transport.dispose();
+  location.href = location.pathname;
+}
+
 function renderLobby() {
   showScreen('screen-lobby');
   const box = $('#lobby-box');
@@ -370,6 +385,7 @@ function renderLobby() {
     el('p', { class: 'muted' }, T.lobbyShare),
     shareButton(url),
     el('p', { class: 'waiting', style: 'margin-top:12px' }, joined ? fmt(T.lobbyJoined, { name: M.names[other(S.role)] }) : el('span', { class: 'dots' }, T.lobbyWaiting)),
+    el('button', { class: 'btn btn--ghost btn--sm', style: 'margin-top:10px', onClick: e => leaveRoom(e.currentTarget) }, S.role === 'A' ? T.lobbyCancel : T.lobbyLeave),
   );
   renderQr(url);
 }
@@ -540,7 +556,7 @@ function renderResultActions() {
   const waiting = S.mode === 'online' && M.rematch[S.role] && !M.rematch[o];
   box.append(
     waiting ? el('p', { class: 'waiting' }, el('span', { class: 'dots' }, fmt(T.rematchWaiting, { name: M.names[o] }))) : el('button', { class: 'btn btn--yellow', onClick: rematch }, T.rematch),
-    el('button', { class: 'btn btn--ghost', onClick: () => { clearSession(); S.transport.leave(); location.href = location.pathname; } }, T.changeMode),
+    el('button', { class: 'btn btn--ghost', onClick: e => leaveRoom(e.currentTarget) }, T.changeMode),
     el('a', { class: 'btn btn--ghost', href: '../' }, T.backMenu),
   );
   // Revancha propuesta por el rival (online): me uno a su sala nueva
