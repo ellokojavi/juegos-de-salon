@@ -21,7 +21,7 @@ MODULES = [
     'batalla-naval/game.js', 'batalla-naval/rules.js', 'batalla-naval/engine.js',
     'linea-de-tiempo/game.js', 'linea-de-tiempo/rules.js', 'linea-de-tiempo/engine.js',
     'linea-de-tiempo/decks/index.js', 'linea-de-tiempo/decks/historia.js', 'linea-de-tiempo/decks/musica.js',
-    'linea-de-tiempo/decks/chile.js', 'linea-de-tiempo/decks/pop.js',
+    'linea-de-tiempo/decks/chile.js', 'linea-de-tiempo/decks/pop.js', 'linea-de-tiempo/decks/brasil.js', 'linea-de-tiempo/decks/futbol.js',
     'panel/panel.js', 'panel/aggregate.js',
 ]
 PAGES = { 'index.html': '', 'cuarto-rey/index.html': '../', 'toque-y-fama/index.html': '../', 'batalla-naval/index.html': '../', 'linea-de-tiempo/index.html': '../', 'panel/index.html': '../' }

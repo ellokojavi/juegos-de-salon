@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.23.0 — 2026-09-11
+- **Dos temáticas nuevas en Línea de Tiempo** (LT-17). 🇧🇷 **Brasil** (140 cartas): de Cabral
+  y Tiradentes a la COP30, mezclando historia con la tele (Escrava Isaura, Xou da Xuxa, Vale
+  Tudo, Avenida Brasil, BBB), la música (bossa nova, Tropicália, Mamonas, Anitta), el cine
+  (Cidade de Deus, el Oscar de Ainda Estou Aqui) y la farándula (Gisele en el Maracaná,
+  Madonna y Lady Gaga en Copacabana). ⚽ **Fútbol** (123 cartas): de las reglas de 1863 y el
+  primer Mundial a la Superliga de 48 horas, con fundaciones de clubes, finales, goles
+  famosos, fichajes récord, fútbol femenino y escándalos. Ambos en los tres idiomas.
+- Los dos archivos se suman al import map de `tools/set-version.py`, y la especificación del
+  juego ahora dice explícitamente que ese paso es parte de agregar un mazo.
+
 ## 0.22.0 — 2026-09-11
 - **Portugués** (RP-25, D-48). La app entera se puede jugar en portugués de Brasil: el menú y
   sus 100 frases del pie, los cuatro juegos con sus tres modos, las salas, el chat, los

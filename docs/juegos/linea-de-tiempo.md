@@ -126,7 +126,7 @@ falta mensajes de respuesta.
 
 ## 6. Contenido
 
-Cuatro temáticas, cada una en su archivo dentro de `decks/`:
+Seis temáticas, cada una en su archivo dentro de `decks/`:
 
 | Temática | Archivo | Cartas | De qué va |
 |---|---|---|---|
@@ -134,16 +134,24 @@ Cuatro temáticas, cada una en su archivo dentro de `decks/`:
 | 🎵 Música | `musica.js` | 89 | De Beethoven a TikTok |
 | 🇨🇱 Chile | `chile.js` | 127 | Del terremoto del 60 al estallido |
 | 🍿 Cultura pop | `pop.js` | 110 | Cine, memes y videojuegos |
+| 🇧🇷 Brasil | `brasil.js` | 140 | De Cabral a la COP30, con novelas y carnaval |
+| ⚽ Fútbol | `futbol.js` | 123 | Mundiales, clubes, goles y fichajes |
 
 ```js
-{ id: 'luna', year: 1969, emoji: '🚀', es: 'El hombre llega a la Luna', en: 'First Moon landing' }
+{ id: 'luna', year: 1969, emoji: '🚀', es: 'El hombre llega a la Luna', en: 'First Moon landing', pt: 'O homem chega à Lua' }
 ```
 
 - Hitos **reconocibles**, con años indiscutibles: si la fecha se discute, la carta no entra.
 - Y que se puedan **situar**: nada de “un gran incendio” o “manifestaciones” a secas, porque eso pasa cada pocos años. Superlativo, nombre propio o cifra que ancle el año (D-37).
 - Cada mazo trae al menos noventa cartas, bien repartidas en el tiempo.
-- Los mazos se registran en `decks/index.js` con su nombre por idioma y su emoji, que es lo único que
-  hay que tocar para agregar una temática nueva.
+- Los mazos se registran en `decks/index.js` con su nombre, su pista y su emoji por idioma. Además el
+  archivo nuevo tiene que sumarse a `MODULES` en `tools/set-version.py`, o el import map no lo versiona
+  y el navegador puede mezclar un índice nuevo con un mazo en caché (C-11). Nada más hay que tocar:
+  la grilla de temáticas se dibuja sola a partir del registro.
+- El test del motor exige por carta `id` único, `year` numérico entre -4000 y 2026, `emoji` y los tres
+  idiomas, y rechaza el apóstrofo recto en `pt` (se usa ’).
+- Los mazos temáticos (Brasil, Fútbol) pueden repetir hitos de otros mazos (el Maracanazo, el Mundial
+  del 62): cada mazo se juega solo, así que no hay choque de ids mientras lleven su prefijo (`br-`, `fut-`).
 
 ### Que no se repitan las cartas (D-34)
 Cada celular recuerda las cartas que ha visto por temática (`juegos-de-salon:linea-de-tiempo:vistas`).
