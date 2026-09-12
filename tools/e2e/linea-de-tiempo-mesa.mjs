@@ -24,8 +24,8 @@ const play = async (bien = true) => {
 await b.go(`${BASE}/linea-de-tiempo/`, 1500); await b.evaluate(`localStorage.clear(); 1`);
 await b.go(`${BASE}/linea-de-tiempo/`, 1500);
 await b.evaluate(`document.querySelectorAll('.mode')[0].click(); 1`); await sleep(400);
-console.log('el setup abre en →', await b.evaluate(`document.querySelector('#setup-form .seg--stack button.on')?.textContent`), '(debe ser todas a la vista)');
-console.log('opciones de cartas:', await b.evaluate(`[...document.querySelectorAll('#setup-form .seg--stack button')].map(x=>x.textContent).join(' | ')`));
+console.log('el setup abre en →', await b.evaluate(`document.querySelector('#setup-form .seg--cards button.on')?.textContent`), '(debe ser todas a la vista)');
+console.log('opciones de cartas:', await b.evaluate(`[...document.querySelectorAll('#setup-form .seg--cards button')].map(x=>x.textContent).join(' | ')`));
 console.log('etiqueta del tamaño:', await b.evaluate(`[...document.querySelectorAll('#setup-form label')].map(l=>l.textContent).join(' | ')`));
 const pista = () => b.evaluate(`document.querySelector('#setup-form p.muted')?.textContent`);
 console.log('pista con meta 5:', await pista());

@@ -1,5 +1,33 @@
 # Changelog
 
+## 0.25.0 — 2026-09-11
+- **Las salas canceladas se cierran en el acto** (RP-27, D-50). Hasta ahora una sala vivía sus
+  seis horas pasara lo que pasara: el panel del dueño mostraba como "vivas" las salas que
+  alguien abrió y abandonó, y cada revancha dejaba otra atrás. El transporte suma una
+  despedida (`dispose()`, `assets/js/transport/dispose.js`): quien se va a propósito escribe
+  `left` en su rol y, si con eso no queda nadie adentro, borra la sala. Cerrar la pestaña o
+  quedarse sin señal **no** cancela nada: esa partida se puede retomar (C-6) y la sala sigue
+  esperando.
+- El lobby de los tres juegos con sala gana un botón al final: **Cancelar la sala** para quien
+  la creó y **Salir de la sala** para quien se unió, en los tres idiomas. Antes no había
+  ninguna salida explícita: solo la flecha de volver al menú, que es una navegación y no una
+  intención.
+- Cambiar de modo al terminar y mudarse a la sala de la revancha también se despiden, así que
+  la sala que se deja atrás no queda dando vueltas.
+- El panel deja de contar y de listar las salas cerradas. Las salas sin nadie conectado siguen
+  apareciendo, apagadas: esas se pueden retomar.
+- **Reglas de Firebase republicadas** (`firebase/database.rules.json`): son las que permiten
+  borrar una sala viva cuando todos sus jugadores se despidieron, y las que validan `left`.
+  Se pegan y se publican a mano en
+  [la consola](https://console.firebase.google.com/u/0/project/juegos-de-salon/database/juegos-de-salon-default-rtdb/rules);
+  sin eso, la despedida se escribe igual pero el borrado se rechaza en silencio.
+
+- **El selector de Cartas de Línea de Tiempo va en fila** (D-52). Las tres formas de repartir
+  eran tres botones apilados que se comían 169 px de alto en un celular; ahora son tres
+  pastillas lado a lado, con el mismo aire que el toggle de idioma, con el emoji arriba y el
+  nombre completo debajo. El control baja a 78 px y la pantalla de configuración se acorta
+  casi 100 px. Probado en los tres idiomas y hasta 320 px de ancho.
+
 ## 0.23.2 — 2026-09-11
 - Bajada del título del menú, más corta: "Elige un juego, para pasar el tiempo solo o con
   amigos." en los tres idiomas.

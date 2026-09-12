@@ -3,11 +3,13 @@
  * Firebase, para poder probarlas con node (`node panel/aggregate.test.mjs`).
  *
  * Entra lo que hay en la base:
- *   - `rooms`: las salas vivas, tal como están en `rooms/` (solo el dueño puede listarlas)
+ *   - `rooms`: las salas de `rooms/`, tal como están (solo el dueño puede listarlas)
  *   - `days`: `stats/<env>/days`, un objeto por día con rooms/local/origin/lang/applang/hour
  * Sale lo que el panel dibuja: totales, por juego, por modo, por jugadores, por día,
  * origen, idioma y hora.
  */
+import { deserted } from '../assets/js/transport/dispose.js';
+
 export const DAY = 24 * 60 * 60 * 1000;
 export const ROOM_TTL = 6 * 60 * 60 * 1000;   // igual que en el transporte y las reglas
 export const ACTIVE_MS = 10 * 60 * 1000;      // una sala está "en juego" si hubo jugada hace poco
@@ -45,13 +47,24 @@ export function splitByEnv(live, codes, { loaded = true } = {}) {
   return { propias, ajenas };
 }
 
-/** Las salas vivas, ordenadas de la más reciente actividad a la más vieja. */
+/**
+ * Las salas vivas, ordenadas de la más reciente actividad a la más vieja.
+ *
+ * Quedan fuera las vencidas y las **cerradas**: aquellas donde todos los jugadores se
+ * despidieron (`left`, ver `transport/dispose.js`). Una sala cerrada se borra sola en el
+ * acto; si alguna sobrevive es porque el borrado no alcanzó a salir, y mostrarla sería
+ * decir que hay gente jugando donde ya no hay nadie (D-50).
+ *
+ * Nadie conectado no es lo mismo que cerrada: los dos pueden volver a retomar la partida
+ * hasta que la sala venza (C-6), así que esas siguen apareciendo, apagadas.
+ */
 export function liveRooms(rooms, now = Date.now()) {
   const out = [];
   for (const [code, r] of Object.entries(rooms || {})) {
     if (!r || typeof r.createdAt !== 'number' || r.createdAt < now - ROOM_TTL) continue;
+    if (deserted(r.players)) continue;
     const players = Object.entries(r.players || {}).sort(([a], [b]) => a.localeCompare(b))
-      .map(([role, p]) => ({ role, name: p?.name || '?', online: !!p?.online }));
+      .map(([role, p]) => ({ role, name: p?.name || '?', online: !!p?.online, left: !!p?.left }));
     const msgs = Object.values(r.messages || {});
     // `hello` lo manda el transporte solo al entrar cada jugador, así que una sala recién
     // creada ya trae uno por cabeza. Contarlos hacía que una sala sin jugadas dijera "2 msj".
