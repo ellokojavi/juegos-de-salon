@@ -142,6 +142,7 @@ Cuando cada dispositivo guarda un secreto (un número, una flota):
 ## C-11 · Publicación y versionado
 
 - Antes de cada publicación: `python3 tools/set-version.py X.Y.Z`. Estampa `?v=` en los import maps y las hojas de estilo para que el navegador no mezcle archivos viejos y nuevos.
+- Ese mismo comando revisa antes que el README no haya quedado atrás del código (C-13) y no estampa si lo quedó. Con `--igual` se estampa igual, para una urgencia.
 - Los módulos nuevos se agregan a `MODULES` en ese script, o quedarán sin versionar.
 - El menú dibuja la lista de juegos **antes** que cualquier adorno, y los adornos van en `try/catch`: un adorno roto no puede dejar la app vacía.
 - Cada cambio publicado entra en `CHANGELOG.md` con su versión.
@@ -165,6 +166,21 @@ Con cada juego o cambio relevante se actualiza:
 - `docs/DECISIONES.md`: una decisión numerada (D-n) por cada elección no obvia, con su porqué y sus consecuencias.
 - `README.md`: sección del juego con capturas.
 - `CHANGELOG.md`: qué cambió, en qué versión.
+
+El README no se mantiene a pulso: `python3 tools/readme.py` lo sostiene.
+
+- Lo derivable del código —tabla de juegos, modos, temáticas con su cuenta de cartas, nombres
+  por idioma, tests, índice de documentos y galerías de capturas— vive entre marcas
+  `<!-- generado: ... -->` y lo reescribe `actualizar` desde `tools/hechos.mjs`, que importa
+  los módulos de verdad. Dentro de esas marcas no se edita a mano.
+- La prosa la escribe una persona. `revisar` compara los hechos de hoy contra el último sello
+  (`docs/hechos.json`) y nombra qué cambió y qué sección hay que releer; `sellar` lo anota
+  cuando ya se releyó. Un cambio material que no pasó por ahí no llega a publicarse:
+  `set-version.py` corre `revisar` antes de estampar (C-11).
+- Las capturas salen de los guiones de `tools/e2e/`: `docs/capturas.json` dice de qué guion y
+  de qué toma sale cada imagen, y `capturas <seccion>` las rehace. Una pantalla nueva en el
+  README es una toma nueva en el guion, no un recorte a mano. Se miran antes de publicar
+  (C-12) y se guardan al doble del ancho con que se muestran.
 
 ## C-14 · Robustez
 
@@ -207,3 +223,4 @@ Solo en los modos de **varios celulares**: en un celular la gente está mirando 
 - [ ] Versión estampada, publicada y comprobada en la URL pública (C-11).
 - [ ] Si tiene varios celulares, el chat de sala usa el módulo compartido y muere con la partida (C-15).
 - [ ] Registro en el menú, README, especificación, requerimientos, decisiones y changelog (C-2, C-13).
+- [ ] Capturas del README rehechas y miradas, y `python3 tools/readme.py revisar` en verde (C-13).

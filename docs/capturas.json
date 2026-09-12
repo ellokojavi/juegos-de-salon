@@ -1,0 +1,384 @@
+{
+  "_": [
+    "Catálogo de las capturas del README: qué muestra cada una y de dónde sale.",
+    "Cada entrada dice el guion de tools/e2e/ y el nombre de la toma que ese guion",
+    "saca, así `python3 tools/readme.py capturas` las rehace todas sin que nadie",
+    "tenga que acordarse de la secuencia de toques. El pie es el texto que va",
+    "debajo de la imagen en el README; las galerías se generan desde acá.",
+    "Al agregar una pantalla al README: sumar la toma al guion, la entrada acá,",
+    "correr `capturas` y después `actualizar`."
+  ],
+  "ancho": {
+    "_": "Ancho con que el README muestra cada imagen. El PNG se guarda al doble, para que se vea nítido en pantallas retina sin engordar el repo.",
+    "portada": 220,
+    "galeria": 180
+  },
+  "guiones": {
+    "versionado": {
+      "archivo": "versionado.mjs",
+      "red": false,
+      "que": "menú principal"
+    },
+    "cuarto-rey": {
+      "archivo": "cuarto-rey.mjs",
+      "red": false,
+      "que": "partida completa de Cuarto Rey"
+    },
+    "toque-y-fama-local": {
+      "archivo": "toque-y-fama-local.mjs",
+      "red": false,
+      "que": "un celular y contra el celular"
+    },
+    "toque-y-fama-online": {
+      "archivo": "toque-y-fama-online.mjs",
+      "red": true,
+      "que": "sala de dos celulares"
+    },
+    "toque-y-fama-chat": {
+      "archivo": "toque-y-fama-chat.mjs",
+      "red": true,
+      "que": "chat de la sala"
+    },
+    "batalla-naval-local": {
+      "archivo": "batalla-naval-local.mjs",
+      "red": false,
+      "que": "colocación, batalla y contra el celular"
+    },
+    "batalla-naval-online": {
+      "archivo": "batalla-naval-online.mjs",
+      "red": true,
+      "que": "sala de dos celulares"
+    },
+    "linea-de-tiempo-local": {
+      "archivo": "linea-de-tiempo-local.mjs",
+      "red": false,
+      "que": "un celular y solitario"
+    },
+    "linea-de-tiempo-mesa": {
+      "archivo": "linea-de-tiempo-mesa.mjs",
+      "red": false,
+      "que": "todas las cartas a la vista"
+    },
+    "linea-de-tiempo-pozo": {
+      "archivo": "linea-de-tiempo-pozo.mjs",
+      "red": true,
+      "que": "pozo común"
+    },
+    "linea-de-tiempo-online": {
+      "archivo": "linea-de-tiempo-online.mjs",
+      "red": true,
+      "que": "sala de varios celulares"
+    },
+    "linea-de-tiempo-chat": {
+      "archivo": "linea-de-tiempo-chat.mjs",
+      "red": true,
+      "que": "chat de la sala"
+    }
+  },
+  "capturas": [
+    {
+      "seccion": "portada",
+      "imagen": "docs/screenshots/menu.png",
+      "pie": "Menú principal",
+      "guion": "versionado",
+      "toma": "menu"
+    },
+    {
+      "seccion": "cuarto-rey",
+      "imagen": "docs/screenshots/cuarto-rey/02-intro.png",
+      "pie": "Intro y reglas",
+      "guion": "cuarto-rey",
+      "toma": "02-intro"
+    },
+    {
+      "seccion": "cuarto-rey",
+      "imagen": "docs/screenshots/cuarto-rey/03-jugadores.png",
+      "pie": "Jugadores y género",
+      "guion": "cuarto-rey",
+      "toma": "03-jugadores"
+    },
+    {
+      "seccion": "cuarto-rey",
+      "imagen": "docs/screenshots/cuarto-rey/04-mesa.png",
+      "pie": "Toca para sacar carta",
+      "guion": "cuarto-rey",
+      "toma": "04-mesa"
+    },
+    {
+      "seccion": "cuarto-rey",
+      "imagen": "docs/screenshots/cuarto-rey/05-carta.png",
+      "pie": "Carta e instrucción",
+      "guion": "cuarto-rey",
+      "toma": "05-carta"
+    },
+    {
+      "seccion": "cuarto-rey",
+      "imagen": "docs/screenshots/cuarto-rey/06-minijuego.png",
+      "pie": "Mini-juego con ayudas",
+      "guion": "cuarto-rey",
+      "toma": "06-minijuego"
+    },
+    {
+      "seccion": "cuarto-rey",
+      "imagen": "docs/screenshots/cuarto-rey/07-salud.png",
+      "pie": "¡Salud!",
+      "guion": "cuarto-rey",
+      "toma": "07-salud"
+    },
+    {
+      "seccion": "cuarto-rey",
+      "imagen": "docs/screenshots/cuarto-rey/08-pasale.png",
+      "pie": "Pásale el celular",
+      "guion": "cuarto-rey",
+      "toma": "08-pasale"
+    },
+    {
+      "seccion": "cuarto-rey",
+      "imagen": "docs/screenshots/cuarto-rey/09-cuarto-rey.png",
+      "pie": "¡Cuarto Rey!",
+      "guion": "cuarto-rey",
+      "toma": "09-cuarto-rey"
+    },
+    {
+      "seccion": "cuarto-rey",
+      "imagen": "docs/screenshots/cuarto-rey/10-final.png",
+      "pie": "Ranking de sorbos",
+      "guion": "cuarto-rey",
+      "toma": "10-final"
+    },
+    {
+      "seccion": "toque-y-fama",
+      "imagen": "docs/screenshots/toque-y-fama/01-intro.png",
+      "pie": "Modos de juego",
+      "guion": "toque-y-fama-local",
+      "toma": "01-intro"
+    },
+    {
+      "seccion": "toque-y-fama",
+      "imagen": "docs/screenshots/toque-y-fama/02-secreto.png",
+      "pie": "Número secreto",
+      "guion": "toque-y-fama-local",
+      "toma": "04-secret-A"
+    },
+    {
+      "seccion": "toque-y-fama",
+      "imagen": "docs/screenshots/toque-y-fama/03-tablero.png",
+      "pie": "Tablero y teclado",
+      "guion": "toque-y-fama-local",
+      "toma": "07-play-first"
+    },
+    {
+      "seccion": "toque-y-fama",
+      "imagen": "docs/screenshots/toque-y-fama/04-pasale.png",
+      "pie": "Pásale el celular",
+      "guion": "toque-y-fama-local",
+      "toma": "06-handoff-start"
+    },
+    {
+      "seccion": "toque-y-fama",
+      "imagen": "docs/screenshots/toque-y-fama/06-sala.png",
+      "pie": "Sala con código y QR",
+      "guion": "toque-y-fama-online",
+      "toma": "21-lobby-A"
+    },
+    {
+      "seccion": "toque-y-fama",
+      "imagen": "docs/screenshots/toque-y-fama/07-dos-celulares.png",
+      "pie": "Partida en dos celulares",
+      "guion": "toque-y-fama-online",
+      "toma": "25-play-A"
+    },
+    {
+      "seccion": "toque-y-fama",
+      "imagen": "docs/screenshots/toque-y-fama/08-verificado.png",
+      "pie": "Secretos verificados",
+      "guion": "toque-y-fama-online",
+      "toma": "27-result-A"
+    },
+    {
+      "seccion": "toque-y-fama",
+      "imagen": "docs/screenshots/toque-y-fama/05-resultado.png",
+      "pie": "Contra el celular",
+      "guion": "toque-y-fama-local",
+      "toma": "12-cpu-result"
+    },
+    {
+      "seccion": "toque-y-fama",
+      "imagen": "docs/screenshots/toque-y-fama/09-chat.png",
+      "pie": "Chat de la sala",
+      "guion": "toque-y-fama-chat",
+      "toma": "tyf-chat-03-partida"
+    },
+    {
+      "seccion": "batalla-naval",
+      "imagen": "docs/screenshots/batalla-naval/01-intro.png",
+      "pie": "Modos de juego",
+      "guion": "batalla-naval-local",
+      "toma": "01-intro"
+    },
+    {
+      "seccion": "batalla-naval",
+      "imagen": "docs/screenshots/batalla-naval/02-flota.png",
+      "pie": "Colocar la flota",
+      "guion": "batalla-naval-local",
+      "toma": "06-place-full"
+    },
+    {
+      "seccion": "batalla-naval",
+      "imagen": "docs/screenshots/batalla-naval/03-batalla.png",
+      "pie": "Batalla",
+      "guion": "batalla-naval-local",
+      "toma": "09-play"
+    },
+    {
+      "seccion": "batalla-naval",
+      "imagen": "docs/screenshots/batalla-naval/04-pase.png",
+      "pie": "Resultado y pase",
+      "guion": "batalla-naval-local",
+      "toma": "10-result-pass"
+    },
+    {
+      "seccion": "batalla-naval",
+      "imagen": "docs/screenshots/batalla-naval/06-sala.png",
+      "pie": "Sala con código y QR",
+      "guion": "batalla-naval-online",
+      "toma": "21-lobby"
+    },
+    {
+      "seccion": "batalla-naval",
+      "imagen": "docs/screenshots/batalla-naval/07-dos-celulares.png",
+      "pie": "Partida en dos celulares",
+      "guion": "batalla-naval-online",
+      "toma": "23-play-A"
+    },
+    {
+      "seccion": "batalla-naval",
+      "imagen": "docs/screenshots/batalla-naval/05-resultado.png",
+      "pie": "Resultado con flotas",
+      "guion": "batalla-naval-local",
+      "toma": "14-cpu-result"
+    },
+    {
+      "seccion": "linea-de-tiempo",
+      "imagen": "docs/screenshots/linea-de-tiempo/01-intro.png",
+      "pie": "Modos de juego",
+      "guion": "linea-de-tiempo-local",
+      "toma": "01-intro"
+    },
+    {
+      "seccion": "linea-de-tiempo",
+      "imagen": "docs/screenshots/linea-de-tiempo/02-tematica.png",
+      "pie": "Temática y jugadores",
+      "guion": "linea-de-tiempo-local",
+      "toma": "02-setup"
+    },
+    {
+      "seccion": "linea-de-tiempo",
+      "imagen": "docs/screenshots/linea-de-tiempo/03-juego.png",
+      "pie": "Mano y línea de tiempo",
+      "guion": "linea-de-tiempo-local",
+      "toma": "03-play"
+    },
+    {
+      "seccion": "linea-de-tiempo",
+      "imagen": "docs/screenshots/linea-de-tiempo/04-veredicto.png",
+      "pie": "Veredicto y pase",
+      "guion": "linea-de-tiempo-local",
+      "toma": "04-verdict"
+    },
+    {
+      "seccion": "linea-de-tiempo",
+      "imagen": "docs/screenshots/linea-de-tiempo/06-sala.png",
+      "pie": "Sala con código y QR",
+      "guion": "linea-de-tiempo-online",
+      "toma": "01-lobby-A"
+    },
+    {
+      "seccion": "linea-de-tiempo",
+      "imagen": "docs/screenshots/linea-de-tiempo/07-varios-celulares.png",
+      "pie": "Partida en varios celulares",
+      "guion": "linea-de-tiempo-online",
+      "toma": "03-play-A"
+    },
+    {
+      "seccion": "linea-de-tiempo",
+      "imagen": "docs/screenshots/linea-de-tiempo/05-resultado.png",
+      "pie": "Resultado y ranking",
+      "guion": "linea-de-tiempo-local",
+      "toma": "06-result"
+    },
+    {
+      "seccion": "linea-de-tiempo",
+      "imagen": "docs/screenshots/linea-de-tiempo/08-chat.png",
+      "pie": "Chat de la sala",
+      "guion": "linea-de-tiempo-chat",
+      "toma": "chat-03-abierto"
+    },
+    {
+      "seccion": "linea-de-tiempo",
+      "imagen": "docs/screenshots/linea-de-tiempo/09-chat-aviso.png",
+      "pie": "Aviso de mensaje nuevo",
+      "guion": "linea-de-tiempo-chat",
+      "toma": "chat-04b-etiqueta"
+    },
+    {
+      "seccion": "linea-de-tiempo",
+      "imagen": "docs/screenshots/linea-de-tiempo/10-pozo-comun.png",
+      "pie": "Pozo común",
+      "guion": "linea-de-tiempo-pozo",
+      "toma": "pozo-03-mesa"
+    },
+    {
+      "seccion": "linea-de-tiempo",
+      "imagen": "docs/screenshots/linea-de-tiempo/11-todas-a-la-vista.png",
+      "pie": "Todas a la vista",
+      "guion": "linea-de-tiempo-mesa",
+      "toma": "mesa-02-mesa-completa"
+    },
+    {
+      "seccion": "idiomas",
+      "imagen": "docs/screenshots/cuarto-rey/11-menu-en.png",
+      "pie": "Menú en inglés",
+      "guion": "cuarto-rey",
+      "toma": "11-menu-en"
+    },
+    {
+      "seccion": "idiomas",
+      "imagen": "docs/screenshots/cuarto-rey/12-mesa-en.png",
+      "pie": "Mesa en inglés",
+      "guion": "cuarto-rey",
+      "toma": "12-mesa-en"
+    }
+  ],
+  "fuentes": {
+    "_": "Qué archivos hacen vieja a una captura de cada sección (además de los comunes).",
+    "comunes": [
+      "assets/css/base.css",
+      "assets/js/i18n.js",
+      "assets/js/ui.js",
+      "assets/js/handoff.js",
+      "assets/js/chat.js"
+    ],
+    "portada": [
+      "index.html",
+      "assets/js/games.js",
+      "assets/js/frases.js"
+    ],
+    "cuarto-rey": [
+      "cuarto-rey/"
+    ],
+    "toque-y-fama": [
+      "toque-y-fama/"
+    ],
+    "batalla-naval": [
+      "batalla-naval/"
+    ],
+    "linea-de-tiempo": [
+      "linea-de-tiempo/"
+    ],
+    "idiomas": [
+      "assets/js/i18n.js",
+      "cuarto-rey/"
+    ]
+  }
+}
