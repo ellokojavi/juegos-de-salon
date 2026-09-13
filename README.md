@@ -17,14 +17,14 @@ App web (mobile-first) con juegos de salón para jugar con amigos: de naipes, de
 | 🔢 [Toque y Fama / Bulls and Cows / Toque e Fama](#-toque-y-fama) | 1 a 2 | Un celular · Dos celulares · Contra el celular | v0.4 |
 | 🪢 [El Ahorcado / Hangman / Forca](#-el-ahorcado) | 1 a 6 | Un celular · Varios celulares · Jugar solo | v0.26 |
 | ⚓ [Batalla Naval / Battleship / Batalha Naval](#-batalla-naval) | 1 a 2 | Un celular · Dos celulares · Contra el celular | v0.6 |
-| 👑 [Cuarto Rey / Fourth King / Quarto Rei](#-cuarto-rey) | 4 a 6 | Un celular | v0.2 |
+| 👑 [Cuarto Rey / Fourth King / Quarto Rei](#-cuarto-rey) | 4 a 6 | Un celular | v0.27 |
 <!-- /generado -->
 
 ---
 
 ## 👑 Cuarto Rey
 
-El clásico de naipes para tomar. El celular hace de mazo: cada jugador saca una carta y la app dice qué hacer, nombra a quién le toca tomar, guía los mini-juegos (Cuenta Cuentos, Chancho Inflado, Cultura Chupística, Nunca Nunca), propone penitencias y cuenta los reyes. Con el cuarto rey, fondo y pantalla final.
+El clásico de naipes para tomar. El celular hace de mazo: cada jugador saca una carta y la app dice qué hacer, nombra a quién le toca tomar, guía los mini-juegos (Cuenta Cuentos, Chancho Inflado, Cultura Chupística, Nunca Nunca), propone penitencias y cuenta los reyes. Con el cuarto rey, fondo y pantalla final: quién se lo tomó, el ranking de sorbos y, plegado al pie, el repaso de todas las cartas que salieron, con quién sacó cada una.
 
 <!-- generado: capturas:cuarto-rey · lo reescribe python3 tools/readme.py actualizar -->
 <table>
@@ -42,7 +42,7 @@ El clásico de naipes para tomar. El celular hace de mazo: cada jugador saca una
   </tr>
   <tr>
     <td align="center"><img src="docs/screenshots/cuarto-rey/10-final.png" width="180" alt="Ranking de sorbos"><br><sub>Ranking de sorbos</sub></td>
-    <td></td>
+    <td align="center"><img src="docs/screenshots/cuarto-rey/13-historial.png" width="180" alt="Las cartas que salieron"><br><sub>Las cartas que salieron</sub></td>
     <td></td>
     <td></td>
   </tr>
