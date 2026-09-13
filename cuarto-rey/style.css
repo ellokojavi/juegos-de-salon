@@ -147,12 +147,18 @@
 .penitencia-text { font-size: 1.25rem; font-weight: 800; text-align: center; padding: 14px; background: rgba(0,0,0,0.25); border-radius: 16px; margin: 10px 0; }
 
 /* Cuarto Rey (fin) */
-.finale { text-align: center; padding: 10px 0; }
-.finale .crown-big { font-size: 6rem; display: block; filter: drop-shadow(0 0 30px rgba(255, 210, 63, 0.9)); animation: pop 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.4) both, wiggle 2s ease-in-out 0.8s infinite; }
-.finale .victim { font-family: var(--font-display); font-size: clamp(2.4rem, 12vw, 3.6rem); color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35), 0 0 30px rgba(255, 210, 63, 0.7); margin: 6px 0; }
-.ranking { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 6px; }
-.ranking li { display: grid; grid-template-columns: 36px 1fr auto; gap: 8px; align-items: center; background: rgba(0,0,0,0.25); border-radius: 12px; padding: 8px 12px; font-weight: 800; }
-.ranking li .pos { font-family: var(--font-display); font-size: 1.4rem; color: var(--yellow); }
+/* overflow-x: clip porque la corona se mece (wiggle) y en 320 px se salía medio píxel:
+   lo justo para que apareciera barra horizontal, que C-8 no admite. */
+.finale { text-align: center; padding: 2px 0 4px; overflow-x: clip; }
+/* La pantalla final se compacta para que los tres botones se vean sin desplazar con seis
+   jugadores en un celular de 812 px, en los tres idiomas (C-8). Medido, no supuesto. */
+#screen-end .panel { padding: 12px 14px; }
+#screen-end .stack { gap: 10px; }
+.finale .crown-big { font-size: 3.6rem; line-height: 1.1; display: block; filter: drop-shadow(0 0 30px rgba(255, 210, 63, 0.9)); animation: pop 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.4) both, wiggle 2s ease-in-out 0.8s infinite; }
+.finale .victim { font-family: var(--font-display); font-size: clamp(2.4rem, 12vw, 3.6rem); color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35), 0 0 30px rgba(255, 210, 63, 0.7); margin: 2px 0; }
+.ranking { list-style: none; padding: 0; margin: 10px 0 0; display: grid; gap: 5px; }
+.ranking li { display: grid; grid-template-columns: 30px 1fr auto; gap: 8px; align-items: center; background: rgba(0,0,0,0.25); border-radius: 12px; padding: 5px 12px; font-weight: 800; }
+.ranking li .pos { font-family: var(--font-display); font-size: 1.15rem; color: var(--yellow); }
 .ranking li .sorbos { color: var(--cyan); }
 .ranking li.top { background: linear-gradient(90deg, rgba(255, 210, 63, 0.3), rgba(255, 46, 136, 0.3)); }
 

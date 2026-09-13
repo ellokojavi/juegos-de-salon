@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.27.1 — 2026-09-13
+- **Los botones de la pantalla final de Cuarto Rey se ven sin desplazar** (C-8). Con seis jugadores
+  quedaban fuera: "¡Otra ronda!" cerraba en 902 px y "Volver al menú" en 1026, en una pantalla de
+  812. Venía de antes; apareció al medir dónde poner el historial nuevo. Ahora la corona es más
+  chica, las filas del ranking más compactas y los dos botones secundarios comparten fila: el último
+  cierra en 774 px con seis jugadores, y en los tres idiomas. Medido, no supuesto.
+- **En 320 px ya no aparece barra horizontal en esa pantalla.** La corona se mece y en el punto más
+  ancho del vaivén se salía medio píxel, que basta para que el navegador muestre la barra.
+
 ## 0.27.0 — 2026-09-13
 - **Cuarto Rey guarda las cartas que salieron** (CR-18). Al pie de la pantalla final, plegado, queda
   el repaso de la partida: cada carta con su palo y su color, quién la sacó y qué decía, en el orden
