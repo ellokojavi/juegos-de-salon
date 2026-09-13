@@ -52,7 +52,18 @@ for (let i = 0; i < 60; i++) {
 }
 await sleep(600);
 const final = await ev(`document.querySelector('.screen.active').id`);
-if (final === 'screen-end') await toma('10-final');
+if (final === 'screen-end') {
+  await toma('10-final');
+  // El historial (CR-18) va plegado: se abre para la captura y para contar si anotó todas las cartas.
+  await sleep(4200); // el confeti dura 4 s y taparía la lista entera
+  await ev(`(()=>{const d=document.getElementById('end-history');d.open=true;d.scrollIntoView({block:'start'});return 1})()`); await sleep(400);
+  console.log('historial:',
+    await ev(`document.querySelectorAll('#history-list li').length`), 'de',
+    await ev(`JSON.parse(localStorage.getItem('juegos-de-salon:cuarto-rey:session')).state.drawn`), 'cartas | primera:',
+    await ev(`document.querySelector('#history-list li')?.innerText.replace(/\\n/g, ' · ')`), '| última:',
+    await ev(`[...document.querySelectorAll('#history-list li')].at(-1)?.innerText.replace(/\\n/g, ' · ')`));
+  await toma('13-historial');
+}
 console.log('final screen:', final, '| capturas:', [...sacadas].sort().join(' '));
 
 // ---- inglés: el toggle del menú manda en todas las pantallas (C-3) ----

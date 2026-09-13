@@ -108,6 +108,7 @@ const ES = {
     cardsLeft: 'Quedan <b id="deck-count">52</b> cartas', turnLabel: 'Le toca a', cardBack: 'Cuarto', cardBackSmall: '👑 REY 👑', tap: 'Toca para sacar carta',
     fourthOut: '¡Salió el cuarto rey!', fourthText: 'Se toma todo lo que le queda en el vaso. La mesa cuenta: ¡fondo, fondo, fondo!',
     sipsTitle: '📊 Sorbos de la noche (aprox.)', again: '¡Otra ronda!', changePlayers: 'Cambiar jugadores', backMenu: 'Volver al menú',
+    historyTitle: '🃏 Las cartas que salieron',
     // dinámicos (game.js)
     resumeTitle: '⏯ Hay una partida a medias', resumeText: 'Le tocaba a {name}. Quedan {cards} cartas y han salido {kings} reyes.', resume: 'Continuar', delete: 'Borrar',
     playerPlaceholder: 'Jugador {n}', removePlayer: 'Quitar jugador',
@@ -201,6 +202,7 @@ const EN = {
     cardsLeft: '<b id="deck-count">52</b> cards left', turnLabel: 'It\'s your turn', cardBack: 'Fourth', cardBackSmall: '👑 KING 👑', tap: 'Tap to draw a card',
     fourthOut: 'The fourth king is out!', fourthText: 'They chug everything left in their glass. Everyone counts: chug, chug, chug!',
     sipsTitle: '📊 Sips of the night (approx.)', again: 'Another round!', changePlayers: 'Change players', backMenu: 'Back to menu',
+    historyTitle: '🃏 The cards that came out',
     resumeTitle: '⏯ There\'s an unfinished game', resumeText: 'It was {name}\'s turn. {cards} cards left and {kings} kings drawn.', resume: 'Continue', delete: 'Delete',
     playerPlaceholder: 'Player {n}', removePlayer: 'Remove player',
     genders: { m: 'Guy', f: 'Girl', x: 'Other (drinks on J and Q)' },
@@ -293,6 +295,7 @@ const PT = {
     cardsLeft: 'Faltam <b id="deck-count">52</b> cartas', turnLabel: 'É a vez de', cardBack: 'Quarto', cardBackSmall: '👑 REI 👑', tap: 'Toque para tirar uma carta',
     fourthOut: 'Saiu o quarto rei!', fourthText: 'Vira tudo o que sobrou no copo. A mesa conta: vira, vira, vira!',
     sipsTitle: '📊 Goles da noite (aprox.)', again: 'Mais uma rodada!', changePlayers: 'Trocar jogadores', backMenu: 'Voltar ao menu',
+    historyTitle: '🃏 As cartas que saíram',
     resumeTitle: '⏯ Tem uma partida pela metade', resumeText: 'Era a vez de {name}. Faltam {cards} cartas e já saíram {kings} reis.', resume: 'Continuar', delete: 'Apagar',
     playerPlaceholder: 'Jogador {n}', removePlayer: 'Remover jogador',
     genders: { m: 'Homem', f: 'Mulher', x: 'Outro (bebe com J e com Q)' },

@@ -34,7 +34,9 @@ function save() {
 function loadSaved() {
   const data = store.load();
   if (!data) return null;
-  return data.state || (data.players ? data : null); // formato antiguo: el estado iba en la raíz
+  const saved = data.state || (data.players ? data : null); // formato antiguo: el estado iba en la raíz
+  if (saved && !Array.isArray(saved.history)) saved.history = []; // guardada antes del historial (CR-18)
+  return saved;
 }
 function clearSaved() {
   store.clear();
@@ -143,6 +145,7 @@ function startGame(players) {
   state = {
     players, deck: buildDeck(), turn: 0, kings: 0, drawn: 0,
     sorbos: players.map(() => 0), fondos: players.map(() => 0),
+    history: [],
     current: null, finished: false, victim: null, startedAt: Date.now(),
   };
   save();
@@ -207,6 +210,7 @@ function drawCard() {
   if (!state.deck.length) return finishGame(null);
   const card = state.deck.pop();
   state.drawn++;
+  state.history.push({ ...card, by: state.turn });
   state.current = { card, applied: false, data: {} };
   applyImmediateRule();
   save();
@@ -500,6 +504,26 @@ function showHandoff({ drinkers = [], title = T.hoCheers, emoji } = {}) {
 /* ------------------------------------------------------------------ */
 /* Final                                                               */
 /* ------------------------------------------------------------------ */
+/**
+ * Las cartas que salieron, en el orden en que salieron (CR-18). Plegado, porque es para
+ * el que quiere revisar cómo se dio la noche, no para el que mira quién tomó más.
+ * Una partida guardada antes de esta versión no trae historial: ahí no se muestra nada.
+ */
+function renderHistory() {
+  const box = $('#end-history');
+  const list = $('#history-list');
+  const cards = state.history || [];
+  box.hidden = !cards.length;
+  list.innerHTML = '';
+  cards.forEach(h => {
+    list.append(el('li', {},
+      el('span', { class: 'hist-card ' + h.color + (h.rank === 'K' ? ' k' : '') }, h.rank, el('span', { class: 'suit' }, h.suit)),
+      el('span', { class: 'who' }, state.players[h.by]?.name || '—'),
+      el('span', { class: 'what' }, L.cards[h.rank].title),
+    ));
+  });
+}
+
 function finishGame(victimIndex) {
   stopTimer();
   state.finished = true;
@@ -519,6 +543,7 @@ function finishGame(victimIndex) {
   });
   const mins = Math.max(1, Math.round((Date.now() - state.startedAt) / 60000));
   $('#end-stats').textContent = fmt(T.endStats, { cards: state.drawn, mins });
+  renderHistory();
   showScreen('screen-end');
   SFX.win();
   confetti({ count: 260, duration: 4000 });
