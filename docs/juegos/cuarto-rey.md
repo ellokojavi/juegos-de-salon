@@ -1,6 +1,6 @@
 # Especificación: Cuarto Rey 👑
 
-**Ruta:** `/cuarto-rey/` · **Jugadores:** 4 a 6 · **Versión:** 0.2 · **Idiomas:** es, en, pt (“Quarto Rei”)
+**Ruta:** `/cuarto-rey/` · **Jugadores:** 4 a 6 · **Versión:** 0.27 · **Idiomas:** es, en, pt (“Quarto Rei”)
 
 ## Origen
 Juego de naipes para tomar, popular en Chile. Reglas base según instrucciones entregadas por el cliente (ver abajo). El celular reemplaza al mazo (D-12).
@@ -17,7 +17,10 @@ Intro ──► Setup jugadores ──► Mesa (turnos) ──► Cuarto Rey ─
 2. **Setup:** de 4 a 6 filas con nombre (máx. 14 caracteres) y género (♂ ♀ ⚧). Validaciones: todos con nombre, sin repetidos. Recuerda los últimos jugadores.
 3. **Mesa:** muestra a quién le toca, la fila de asientos, el contador de cartas restantes y 4 coronas que se encienden con cada rey. La carta boca abajo ocupa casi todo el ancho; al tocarla gira en 3D, se encoge y debajo aparece el panel con la instrucción y los botones para resolverla.
 4. **Transición entre turnos:** al resolver la carta, overlay "¡Salud!" con los que toman (avanza solo o al tocar) y luego "Pásale el celular a X" con botón "¡Dame la carta!". Al cerrarse, la carta nueva entra con animación.
-5. **Final:** nombre del que sacó el cuarto rey, ranking de sorbos y botones de otra ronda / cambiar jugadores / menú.
+5. **Final:** nombre del que sacó el cuarto rey, ranking de sorbos, botones de otra ronda / cambiar jugadores / menú
+   y, plegado al pie, el historial de las cartas que salieron (CR-18): cada una con su palo, quién la sacó y qué
+   decía. Va **después** de los botones, al revés que en los otros juegos, porque acá el ranking tiene hasta seis
+   filas y los botones ya quedan justo en la línea de flotación de un celular de 812 px (C-8).
 
 ## Reglas por carta (implementadas)
 
@@ -45,21 +48,24 @@ Intro ──► Setup jugadores ──► Mesa (turnos) ──► Cuarto Rey ─
   "deck": [{ "rank": "K", "suit": "♠", "color": "black" }],
   "turn": 0, "kings": 0, "drawn": 0,
   "sorbos": [0], "fondos": [0],
+  "history": [{ "rank": "K", "suit": "♠", "color": "black", "by": 0 }],
   "current": { "card": {…}, "applied": true, "data": {} },
   "finished": false, "victim": null, "startedAt": 1757000000000
 }
 ```
 
 `current` guarda la carta en juego y datos elegidos (penitencia, categoría) para que, al retomar, se vea exactamente lo mismo.
+`history` son las cartas que ya salieron, en orden, con el índice de quien la sacó; una partida guardada de antes de la
+v0.27 no la trae y se retoma igual, solo que al final no muestra historial.
 
 ## Idiomas
 Todos los textos viven en `rules.js` bajo `LOCALES.es`, `LOCALES.en` y `LOCALES.pt` (reglas, mensajes de reyes, mini-juegos, 24 penitencias, 35 categorías, 16 ideas de Nunca Nunca y la interfaz), con las mismas claves en los tres. Nombres en inglés: Fourth King, Story Time, Puffer Pig, Categories, Never Have I Ever, Dare. En portugués de Brasil: Quarto Rei, Era Uma Vez, Porquinho Bochechudo, Cultura de Boteco, Eu Nunca, Prenda; los sorbos son "goles" y el fondo es "vira, vira, vira" (D-48).
 
 ## Ideas para versiones futuras
-- Variantes de reglas configurables (sorbos, “seguir hasta agotar el mazo”, usar naipe real).
-- Historial de cartas de la partida.
-- Sonidos (tambor al voltear, fanfarria del cuarto rey).
 - Modo “una carta por pantalla” para tablets en el centro de la mesa.
+
+Las variantes de reglas configurables se descartaron en D-68. El historial ya está (CR-18) y los sonidos también
+(`SFX.flip` al voltear, `SFX.fourthKing` al cuarto rey).
 
 ## Reglas originales (texto del cliente)
 - Naipe inglés sin jokers (52 cartas), tragos, mínimo 4 jugadores.
