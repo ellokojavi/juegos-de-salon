@@ -1,5 +1,5 @@
 {
-  "version": "0.26.2",
+  "version": "0.26.3",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -229,7 +229,7 @@
       "jugadores": "4 a 6",
       "duracion": "20–40",
       "disponible": true,
-      "estado": "v0.2",
+      "estado": "v0.27",
       "modos": [],
       "variantes": [],
       "pantallas": [
@@ -505,6 +505,6 @@
     "toque-y-fama": 9,
     "ahorcado": 9,
     "batalla-naval": 7,
-    "cuarto-rey": 11
+    "cuarto-rey": 12
   }
 }

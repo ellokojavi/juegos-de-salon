@@ -55,8 +55,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | CR-14 | Los nombres de los jugadores se recuerdan para la próxima partida. | ✅ |
 | CR-15 | La pantalla no se apaga mientras se juega (Wake Lock, donde el navegador lo permita). | ✅ |
 | CR-16 | Vibración al sacar carta y en momentos clave (donde el dispositivo lo permita). | ✅ |
-| CR-17 | Variantes configurables (p. ej. cantidad de sorbos, reglas alternativas). | ⏳ pendiente |
-| CR-18 | Historial de cartas sacadas en la partida. | ⏳ pendiente |
+| CR-18 | Historial de cartas sacadas en la partida: plegado al pie de la pantalla final, con palo, quién la sacó y qué decía. | ✅ v0.27 |
 | CR-19 | Transición entre turnos: tras resolver la carta, pantalla "¡Salud!" con quiénes toman y luego "Pásale el celular a X" con confirmación del siguiente jugador. | ✅ v0.2 |
 | CR-20 | La carta boca abajo ocupa la mayor parte de la pantalla (fácil de tocar); al descubrirse gira y se encoge para dejar espacio a las instrucciones. | ✅ v0.2 |
 | CR-21 | Todo el contenido del juego (reglas, mini-juegos, penitencias, categorías, ideas de Nunca Nunca) disponible en español e inglés. | ✅ v0.2 |

@@ -55,6 +55,7 @@ console.log('CR guardado:', await key('cuarto-rey'));
 await b.go('http://localhost:8765/cuarto-rey/', 1500);
 console.log('CR tras recargar → continuar:', await resumeVisible());
 await click('#resume-slot .btn'); await sleep(700);
-console.log('CR retomado → pantalla:', await b.active(), '| cartas restantes:', await b.evaluate(`document.getElementById('deck-count').textContent`));
+console.log('CR retomado → pantalla:', await b.active(), '| cartas restantes:', await b.evaluate(`document.getElementById('deck-count').textContent`),
+  '| historial guardado:', await b.evaluate(`JSON.parse(localStorage.getItem('juegos-de-salon:cuarto-rey:session')).state.history.map(h=>h.rank+h.suit).join(' ')`)); // CR-18
 console.log('errors:', JSON.stringify(b.errors), JSON.stringify(b.logs));
 b.close();
