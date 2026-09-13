@@ -1,5 +1,116 @@
 # Changelog
 
+## 0.26.0 — 2026-09-12
+- **Juego nuevo: El Ahorcado 🪢** (1 a 6 jugadores). El ahorcado de toda la vida con el arreglo
+  que le falta desde siempre: nadie se queda mirando. Cada jugador le escribe la palabra al
+  siguiente —el último al primero— y todos adivinan la suya; con dos es un duelo y con seis una
+  carrera (D-53). El puntaje son los errores que te sobraron, así que poner una palabra imposible
+  no suma nada: el que puntúa es el que adivina. La otra forma de repartir es el mazo de la app,
+  con cinco temáticas y una mezcla, y palabra y pista propias en los tres idiomas.
+- **Los turnos se alternan letra a letra** (D-59): pruebas una y le toca al de al lado, en vez de
+  jugar tu palabra entera mientras el resto mira. Todos los tableros avanzan a la vez y la carrera
+  se ve. En un celular, eso significa que el aparato cambia de mano en cada jugada, así que el
+  resultado de la letra y el pase van juntos en una sola pantalla (C-9).
+- **Los tres modos:** un celular de 2 a 6 (pantalla tapada para escribir y pase en cada letra),
+  varios celulares de 2 a 6 con sala, chat y turnos alternados, y jugar solo, donde la app
+  reparte una palabra de la temática y la sacas tú. Con cadena la palabra no viaja: se compromete
+  con hash y se verifica al final (C-10).
+- **Comprar una letra** 💡 revela la que falta más rara y cuesta un error (D-58); la tira de
+  rivales muestra vidas y avance, nunca las letras (D-55); los acentos se pliegan y la Ñ tiene
+  tecla propia solo en español (D-57). Una letra errada no abre un aviso que haya que cerrar:
+  excepción documentada al canon C-8b (D-56).
+- **Ya está en el menú** (AH-15). Entró con dos guiones de punta a punta propios: `ahorcado-local.mjs`
+  juega la cadena de tres en un celular y el duelo contra el celular, y `ahorcado-online.mjs` arma
+  una sala de tres celulares contra Firebase real, con reconexión a mitad y revancha.
+- **Una letra errada dejaba la sala escribiendo sin parar** (D-60). En varios celulares con cadena,
+  quien puso la palabra responde con las posiciones de la letra, y la letra que no está es una lista
+  vacía. Firebase no guarda listas vacías, así que el campo llegaba ausente, la respuesta se
+  descartaba por no ser una lista y el aparato la volvía a mandar en cada vuelta: bucle de escrituras
+  contra la sala y ese celular colgado. Ahora las posiciones viajan como texto —`"1,4"`, o vacío— y
+  una respuesta que el otro lado no aplica se reintenta tres veces y se deja de mandar. Lo encontró
+  el guion de punta a punta, que se quedaba mudo siempre en el mismo lugar.
+- **Colgarse ya no gana** (D-61). El desempate por "menos letras gastadas" está pensado para quien
+  sacó la palabra, pero entre colgados decía lo contrario: gastar menos letras es haber revelado
+  menos. En la primera partida de prueba los tres se colgaron y la pantalla coronó justo al que no
+  había revelado ni una letra. Ahora los colgados van al final del ranking, ordenados por cuánto
+  alcanzaron a revelar, y si no la sacó nadie no hay ganador: dice "No la sacó nadie".
+- **El modo Un celular ya no promete rondas enteras**: su texto decía "las rondas van una después de
+  otra", que dejó de ser cierto con los turnos alternados (D-59). Ahora dice que cada uno prueba una
+  letra y le toca al siguiente, en los tres idiomas.
+- **En varios celulares la pantalla ya no dice "te toca"**: ahí nadie espera a nadie, así que sobre
+  el tablero propio dice "Tu palabra, {nombre}". El "te toca" queda para los modos que sí tienen turno.
+- **El tercer modo es 🧍 Jugar solo, y el celular ya no adivina** (D-65). Que la máquina tratara de
+  sacar *tu* palabra era una simetría forzada: el ahorcado es alguien que pone una palabra y alguien
+  que la saca, y poner al aparato del lado del que adivina no agregaba un rival sino la animación de
+  un rival. Ahora la app reparte una palabra de la temática elegida, con su pista, y la sacas tú. Se
+  fueron con el duelo la IA del motor y los diccionarios de cien mil palabras por idioma que hacían
+  falta para que adivinara de verdad: tres megas menos. De yapa, jugando solo la palabra sale del
+  mazo y no hay secreto que comprometer, así que es el único modo que anda sin https.
+- **En la sala también se juega por turnos** (D-66). Varios celulares estaba pensado simultáneo para
+  que nadie se quedara mirando, pero jugando de a dos —que es como se juega casi siempre— eso se
+  comía justo lo que hace divertido un duelo: no había secuencia que seguir ni contra quién medirse
+  en el momento, eran dos solitarios que al final comparaban puntajes. Ahora va una letra cada uno,
+  en el orden en que entraron, con el teclado bloqueado para quien no tiene el turno y la tira de
+  rivales marcando a quién le toca. Un celular que cierra la pestaña ya no traba la sala: el turno
+  lo saltea y lo vuelve a tomar si regresa.
+- **Una letra confirmada se ve antes de seguir** (D-63). Al confirmar, pasa un cartel de un segundo
+  sobre el dibujo —"¡Va!", "No está" o "Comprada", con la letra— que aparece y se va solo. Va en los
+  dos modos donde la jugada no abre ninguna pantalla: jugando solo y en varios celulares, donde el
+  cartel no interrumpe nada y recupera la señal para quien estaba mirando la tira de rivales en vez
+  del teclado. En un celular no cambia nada, porque ahí cada letra ya termina en la pantalla de
+  veredicto y pase.
+- **La temática ahora sirve también con cadena** (D-62). Antes solo repartía cartas con el mazo, así
+  que en el camino por defecto —cadena— se pedía elegir una temática que no tenía ninguna
+  consecuencia, y el mensaje de compartir la sala la anunciaba igual. Ahora, arriba de los campos y
+  antes de pedirle nada, quien escribe ve seis palabras de esa temática con su emoji: toca una y se
+  llenan la palabra y la pista, y después las puede cambiar o ignorar y poner la suya. Se calculan en ese celular y no viajan, así que la
+  palabra sigue siendo secreta.
+- **Escribir la palabra ya no se traba en silencio sin https** (C-14). Comprometerla con hash usa
+  `crypto.subtle`, que solo existe con https o en localhost; al abrir el juego por la IP de la red
+  —lo que uno hace para probarlo desde un celular— el botón de guardar quedaba deshabilitado para
+  siempre, sin decir nada y con un error en la consola. Ahora lo explica en pantalla, en los tres
+  idiomas, y el botón vuelve a estar usable.
+- Los guiones compartidos de sala —enlace de invitación, falla de red y tope de salas por celular—
+  ahora recorren también El Ahorcado: son cuatro los juegos con sala, no tres.
+- **El test de idiomas ahora ve las claves repetidas** (C-3). Una clave escrita dos veces en el
+  mismo idioma no da error en JavaScript: la segunda pisa a la primera, en silencio. Comparar los
+  tres idiomas no lo detectaba, porque los tres quedaban igual de pisados. Pasó de verdad: el
+  título nuevo de varios celulares salía sin el nombre porque una clave muerta con el mismo nombre
+  lo tapaba. El test lee el archivo llevando la cuenta de las llaves, para mirar solo las claves
+  del propio idioma y no las de los objetos que tenga adentro.
+- **Se va el laboratorio** (D-67). Existía para mirar un cambio de interfaz en un celular sin
+  publicarlo, y eso ahora se hace sirviendo el árbol de trabajo por Tailscale: la app entera, con
+  HTTPS y sin espejos que mantener. Los espejos eran copias del `index.html` de cada juego y
+  envejecían —el mismo día que se sacó, `lab.py revisar` falló por dos `id` nuevos—, y en su vida
+  útil nunca se promovió un experimento. En su lugar queda `tools/e2e/mirar.mjs`, que abre una
+  pantalla suelta y avisa si hay scroll horizontal o botones bajo 44 px, sin jugar la partida entera.
+- **La barra de acciones se ve como una barra** y no como un rectángulo oscuro suelto. El botón de
+  confirmar quedaba 72 px más corto que el de comprar —un hueco reservado para la burbuja del chat—
+  y el fondo flotaba a media altura con el fondo de la página asomando debajo. Ahora los dos botones
+  miden igual y usan todo el ancho, la barra llega de borde a borde y baja al pie cuando sobra
+  pantalla. La que se corre es **la burbuja del chat**, que mientras se juega se va al vacío que deja
+  el dibujo: dejarle su esquina obligaba a acortar los dos botones y a 360 px el texto de comprar
+  quedaba partido en dos renglones.
+- **Aire entre el teclado y los botones de acción**: estaban tan pegados que se tocaba "comprar una
+  letra" queriendo la Z. Y el sobrante de pantalla ya no queda partiendo ese bloque al medio: se va
+  arriba del teclado, así el teclado y sus botones bajan juntos al pie.
+- **Esperando el turno no hay teclado**: una botonera entera apagada ocupaba media pantalla para
+  decir "todavía no". Quedan el dibujo, la pista, la palabra y la tira de rivales, que es lo que
+  hay para mirar mientras le toca a otro.
+- **Jugando solo, un solo aviso al terminar**: salía "¡La sacaste!" en un pop-up y otra vez en la
+  pantalla final. Se va el pop-up —no hay a quién pasarle el celular ni nadie esperando— y en su
+  lugar la letra que cierra la palabra se ve sobre el tablero completo antes de pasar al resultado.
+  Antes esa última jugada quedaba tapada por el aviso apenas aparecía.
+- **El cartel de la letra dura dos segundos** y no uno: con uno la jugada pasaba antes de que el
+  jugador levantara la vista del teclado.
+- Detalles: en el ranking el ⏱ ya no se separa de su valor al partirse la línea.
+- Suman a `assets/js/sound.js` cuatro efectos: la letra acertada sube medio tono sobre la anterior
+  —una racha se escucha como una escala—, la errada es seca, el dibujo completo suena a trampa que
+  se abre y con un solo error de margen entra un latido.
+- `tools/hechos.mjs` ya no se cae cuando un juego todavía no tiene carpeta de capturas: eso es
+  cero capturas, no una falla de la herramienta.
+
+
 ## 0.25.3 — 2026-09-12
 - **El aviso de capturas viejas vuelve a querer decir algo** (D-51). Estampar la versión
   reescribe los seis `index.html` (C-11), y el chequeo del README lo leía como "esta pantalla

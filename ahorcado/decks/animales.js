@@ -1,0 +1,23 @@
+/** Mazo Animales: bichos conocidos, fáciles de dibujar en la cabeza. */
+export const ANIMALES = [
+  { id: 'an-elefante', emoji: '🐘', es: { w: 'elefante', hint: 'Nunca olvida, dicen' }, en: { w: 'elephant', hint: 'Never forgets, they say' }, pt: { w: 'elefante', hint: 'Nunca esquece, dizem' } },
+  { id: 'an-jirafa', emoji: '🦒', es: { w: 'jirafa', hint: 'Come de la copa del árbol' }, en: { w: 'giraffe', hint: 'Eats from the treetop' }, pt: { w: 'girafa', hint: 'Come da copa da árvore' } },
+  { id: 'an-ballena', emoji: '🐋', es: { w: 'ballena', hint: 'La más grande, y canta' }, en: { w: 'whale', hint: 'The biggest one, and it sings' }, pt: { w: 'baleia', hint: 'A maior de todas, e canta' } },
+  { id: 'an-murcielago', emoji: '🦇', es: { w: 'murcielago', hint: 'Duerme de cabeza y ve con el oído' }, en: { w: 'bat', hint: 'Sleeps upside down, sees with sound' }, pt: { w: 'morcego', hint: 'Dorme de cabeça para baixo' } },
+  { id: 'an-pinguino', emoji: '🐧', es: { w: 'pinguino', hint: 'De frac, y no vuela' }, en: { w: 'penguin', hint: 'Wears a tuxedo, cannot fly' }, pt: { w: 'pinguim', hint: 'De fraque, e não voa' } },
+  { id: 'an-cocodrilo', emoji: '🐊', es: { w: 'cocodrilo', hint: 'Llora sin pena' }, en: { w: 'crocodile', hint: 'Cries without feeling sorry' }, pt: { w: 'crocodilo', hint: 'Chora sem sentir pena' } },
+  { id: 'an-mariposa', emoji: '🦋', es: { w: 'mariposa', hint: 'Antes fue gusano' }, en: { w: 'butterfly', hint: 'Used to be a caterpillar' }, pt: { w: 'borboleta', hint: 'Antes era lagarta' } },
+  { id: 'an-erizo', emoji: '🦔', es: { w: 'erizo', hint: 'Se hace bola y pincha' }, en: { w: 'hedgehog', hint: 'Rolls into a prickly ball' }, pt: { w: 'ourico', hint: 'Vira uma bola espinhenta' } },
+  { id: 'an-tortuga', emoji: '🐢', es: { w: 'tortuga', hint: 'Llega tarde pero llega' }, en: { w: 'turtle', hint: 'Late, but it gets there' }, pt: { w: 'tartaruga', hint: 'Chega atrasada, mas chega' } },
+  { id: 'an-zorro', emoji: '🦊', es: { w: 'zorro', hint: 'El astuto de los cuentos' }, en: { w: 'fox', hint: 'The sly one in the tales' }, pt: { w: 'raposa', hint: 'A esperta das histórias' } },
+  { id: 'an-camaleon', emoji: '🦎', es: { w: 'camaleon', hint: 'Cambia de color según la ocasión' }, en: { w: 'chameleon', hint: 'Changes color to fit in' }, pt: { w: 'camaleao', hint: 'Muda de cor conforme a ocasião' } },
+  { id: 'an-abeja', emoji: '🐝', es: { w: 'abeja', hint: 'Trabaja, pica y hace miel' }, en: { w: 'bee', hint: 'Works, stings and makes honey' }, pt: { w: 'abelha', hint: 'Trabalha, ferroa e faz mel' } },
+  { id: 'an-pulpo', emoji: '🐙', es: { w: 'pulpo', hint: 'Ocho brazos y tres corazones' }, en: { w: 'octopus', hint: 'Eight arms, three hearts' }, pt: { w: 'polvo', hint: 'Oito braços e três corações' } },
+  { id: 'an-lobo', emoji: '🐺', es: { w: 'lobo', hint: 'Le aúlla a la luna en manada' }, en: { w: 'wolf', hint: 'Howls at the moon, in a pack' }, pt: { w: 'lobo', hint: 'Uiva para a lua, em bando' } },
+  { id: 'an-caballo', emoji: '🐴', es: { w: 'caballo', hint: 'Galopa y mide la fuerza del motor' }, en: { w: 'horse', hint: 'Gallops, and measures engines' }, pt: { w: 'cavalo', hint: 'Galopa, e mede motores' } },
+  { id: 'an-rana', emoji: '🐸', es: { w: 'rana', hint: 'Salta y croa, era renacuajo' }, en: { w: 'frog', hint: 'Jumps and croaks, was a tadpole' }, pt: { w: 'sapo', hint: 'Pula e coaxa, era girino' } },
+  { id: 'an-aguila', emoji: '🦅', es: { w: 'aguila', hint: 'Ve un ratón desde el cielo' }, en: { w: 'eagle', hint: 'Spots a mouse from the sky' }, pt: { w: 'aguia', hint: 'Vê um rato lá do céu' } },
+  { id: 'an-hormiga', emoji: '🐜', es: { w: 'hormiga', hint: 'Chica, y carga el triple' }, en: { w: 'ant', hint: 'Tiny, and lifts triple its weight' }, pt: { w: 'formiga', hint: 'Pequena, carrega o triplo' } },
+  { id: 'an-delfin', emoji: '🐬', es: { w: 'delfin', hint: 'Salta, chilla y es muy vivo' }, en: { w: 'dolphin', hint: 'Jumps, squeaks, and is clever' }, pt: { w: 'golfinho', hint: 'Pula, apita e é muito esperto' } },
+  { id: 'an-canguro', emoji: '🦘', es: { w: 'canguro', hint: 'Lleva a la cría en el bolsillo' }, en: { w: 'kangaroo', hint: 'Carries the baby in a pocket' }, pt: { w: 'canguru', hint: 'Leva o filhote no bolso' } },
+];

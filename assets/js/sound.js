@@ -118,6 +118,25 @@ export const SFX = {
   siren() { [0, 0.5, 1.0].forEach(d => tone({ freq: 500, to: 800, type: 'triangle', dur: 0.45, gain: 0.1, delay: d })); },
   /** Error de formulario. */
   error() { tone({ freq: 160, to: 120, type: 'sawtooth', dur: 0.25, gain: 0.12 }); },
+  /**
+   * El Ahorcado: letra acertada. Sube medio tono por cada acierto seguido, así una
+   * racha se escucha como una escala y el jugador nota que va bien sin leer nada.
+   */
+  letterHit(step = 0) {
+    const f = 523.25 * Math.pow(2, Math.min(step, 11) / 12);
+    tone({ freq: f, type: 'triangle', dur: 0.13, gain: 0.16 });
+    tone({ freq: f * 2, type: 'sine', dur: 0.16, gain: 0.06, delay: 0.05 });
+  },
+  /** El Ahorcado: letra que no estaba. Seco, y con el golpe del trazo nuevo. */
+  letterMiss() { tone({ freq: 200, to: 110, type: 'square', dur: 0.16, gain: 0.14 }); noise({ dur: 0.2, gain: 0.18, from: 800, to: 120, q: 0.7, type: 'lowpass' }); },
+  /** El Ahorcado: se completó el dibujo. Trampa que se abre y cuerda que queda sonando. */
+  hang() {
+    noise({ dur: 0.5, gain: 0.3, from: 1200, to: 90, q: 0.6, type: 'lowpass' });
+    tone({ freq: 140, to: 45, type: 'sawtooth', dur: 0.7, gain: 0.16 });
+    [523, 466, 415].forEach((f, i) => tone({ freq: f, to: f * 0.94, type: 'triangle', dur: 0.5, gain: 0.06, delay: 0.35 + i * 0.12 }));
+  },
+  /** El Ahorcado: queda un solo error de margen. Latido bajo, corto. */
+  heartbeat() { [0, 0.26].forEach(d => tone({ freq: 95, to: 60, type: 'sine', dur: 0.16, gain: 0.22, delay: d })); },
   /** Mensaje de chat: burbuja corta y discreta (suena seguido, no puede molestar). */
   chat() { tone({ freq: 880, to: 1320, type: 'sine', dur: 0.07, gain: 0.06 }); tone({ freq: 1320, type: 'sine', dur: 0.09, gain: 0.04, delay: 0.06 }); },
 };

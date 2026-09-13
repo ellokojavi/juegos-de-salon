@@ -126,3 +126,26 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | LT-14 | Cuatro temáticas (Historia, Música, Chile, Cultura pop) y cartas que no se repiten entre partidas seguidas. | ✅ v0.14 |
 | LT-17 | Mazos de Brasil (historia, tele, música y farándula, 140 cartas) y de Fútbol mundial (123 cartas), en los tres idiomas. | ✅ v0.23 |
 | LT-15 | Opción de todas las cartas a la vista: se despliega el doble de la meta desde el primer turno, no entra ninguna carta nueva y la mesa solo se achica. Es la opción marcada al abrir la configuración. | ✅ v0.21 |
+
+## El Ahorcado (AH) — ver [docs/juegos/ahorcado.md](juegos/ahorcado.md)
+
+| ID | Requerimiento | Estado |
+|---|---|---|
+| AH-01 | Palabra tapada que se adivina por letras; cada error dibuja un trazo del ahorcado. | ✅ v0.26 |
+| AH-02 | Errores permitidos configurables: 5, 6 u 8, y el último trazo siempre son los ojos en X. | ✅ v0.26 |
+| AH-03 | La palabra sale de una cadena entre jugadores (cada uno para el siguiente, con pista) o del mazo de la app. | ✅ v0.26 |
+| AH-04 | Cinco temáticas y una mezcla, con palabra y pista propias en español, inglés y portugués. Con cadena, la temática sugiere palabras a quien escribe (D-62). | ✅ v0.26 |
+| AH-05 | Puntaje: los errores que le sobraron a quien adivinó; desempata quien gastó menos letras y después menos tiempo. Los colgados van al final, por cuánto revelaron, y si no la sacó nadie no hay ganador (D-61). | ✅ v0.26 |
+| AH-06 | Comprar una letra: revela la que falta más rara y cuesta un error (D-58). | ✅ v0.26 |
+| AH-07 | Modo un celular, de 2 a 6 jugadores, con pantalla tapada para escribir y pase en cada letra (D-59). | ✅ v0.26 |
+| AH-08 | Modo varios celulares, de 2 a 6 (roles A–F), con sala, anfitrión y turnos alternados (D-66). | ✅ v0.26 |
+| AH-09 | Modo jugar solo: la app reparte una palabra de la temática elegida y el jugador la saca. Sin rival y sin secreto que comprometer (D-65). | ✅ v0.26 |
+| AH-10 | Con cadena, la palabra no viaja: se compromete con hash y se verifica al final (canon C-10). | ✅ v0.26 |
+| AH-11 | Memoria de partida en todos los modos, incluida la palabra a medio escribir (canon C-6). | ✅ v0.26 |
+| AH-12 | Teclado de 27 teclas en español y 26 en los otros idiomas; acentos plegados y Ñ aparte (D-57). | ✅ v0.26 |
+| AH-13 | Chat de sala en varios celulares (canon C-15). | ✅ v0.26 |
+| AH-14 | La tira de rivales muestra vidas y avance, nunca las letras (D-55). | ✅ v0.26 |
+| AH-16 | Turnos alternados letra a letra, salteando a quien ya terminó y a quien se fue de la sala (D-59, D-66). | ✅ v0.26 |
+| AH-17 | Al confirmar una letra, un cartel breve dice cómo fue antes de que cambie el turno (D-63). | ✅ v0.26 |
+| AH-15 | Entra al menú publicado cuando esté probado de punta a punta y con capturas en el README. | ✅ v0.26 |
+

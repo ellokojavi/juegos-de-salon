@@ -1,5 +1,5 @@
 {
-  "version": "0.25.0",
+  "version": "0.26.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -153,6 +153,56 @@
       ]
     },
     {
+      "id": "ahorcado",
+      "emoji": "🪢",
+      "nombre": {
+        "es": "El Ahorcado",
+        "en": "Hangman",
+        "pt": "Forca"
+      },
+      "jugadores": "1 a 6",
+      "duracion": "5–12",
+      "disponible": true,
+      "estado": null,
+      "modos": [
+        {
+          "clave": "modeLocal",
+          "es": "📱 Un celular"
+        },
+        {
+          "clave": "modeOnline",
+          "es": "📡 Varios celulares"
+        },
+        {
+          "clave": "modeSolo",
+          "es": "🧍 Jugar solo"
+        }
+      ],
+      "variantes": [],
+      "pantallas": [
+        "intro",
+        "setup",
+        "lobby",
+        "word",
+        "play",
+        "result"
+      ],
+      "chat": true,
+      "archivos": [
+        "ahorcado/decks/animales.js",
+        "ahorcado/decks/chile.js",
+        "ahorcado/decks/cine.js",
+        "ahorcado/decks/comida.js",
+        "ahorcado/decks/deportes.js",
+        "ahorcado/decks/index.js",
+        "ahorcado/engine.js",
+        "ahorcado/game.js",
+        "ahorcado/index.html",
+        "ahorcado/rules.js",
+        "ahorcado/style.css"
+      ]
+    },
+    {
       "id": "batalla-naval",
       "emoji": "⚓",
       "nombre": {
@@ -302,6 +352,15 @@
     }
   ],
   "modulos": [
+    "ahorcado/decks/animales.js",
+    "ahorcado/decks/chile.js",
+    "ahorcado/decks/cine.js",
+    "ahorcado/decks/comida.js",
+    "ahorcado/decks/deportes.js",
+    "ahorcado/decks/index.js",
+    "ahorcado/engine.js",
+    "ahorcado/game.js",
+    "ahorcado/rules.js",
     "assets/js/chat.js",
     "assets/js/firebase-config.js",
     "assets/js/frases.js",
@@ -341,6 +400,7 @@
   ],
   "sinVersionar": [],
   "tests": [
+    "ahorcado/engine.test.mjs",
     "assets/js/i18n.test.mjs",
     "assets/js/transport/cleanup.test.mjs",
     "assets/js/transport/dispose.test.mjs",
@@ -353,6 +413,8 @@
     "toque-y-fama/engine.test.mjs"
   ],
   "e2e": [
+    "ahorcado-local.mjs",
+    "ahorcado-online.mjs",
     "batalla-naval-alineacion.mjs",
     "batalla-naval-colocacion.mjs",
     "batalla-naval-local.mjs",
@@ -372,6 +434,7 @@
     "linea-de-tiempo-solo.mjs",
     "linea-de-tiempo-veredicto.mjs",
     "memoria-de-partida.mjs",
+    "mirar.mjs",
     "sala-error.mjs",
     "sala-tope.mjs",
     "toque-y-fama-chat.mjs",
@@ -401,6 +464,10 @@
       "titulo": "Requerimientos"
     },
     {
+      "ruta": "docs/juegos/ahorcado.md",
+      "titulo": "Diseño: El Ahorcado"
+    },
+    {
       "ruta": "docs/juegos/batalla-naval.md",
       "titulo": "Diseño: Batalla Naval"
     },
@@ -421,10 +488,6 @@
       "titulo": "Especificación: Toque y Fama"
     },
     {
-      "ruta": "lab/README.md",
-      "titulo": "Laboratorio"
-    },
-    {
       "ruta": "firebase/README.md",
       "titulo": "Firebase"
     },
@@ -441,6 +504,7 @@
     "cuarto-rey": 11,
     "toque-y-fama": 9,
     "linea-de-tiempo": 11,
+    "ahorcado": 9,
     "batalla-naval": 7
   }
 }

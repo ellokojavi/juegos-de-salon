@@ -5,7 +5,7 @@
  *
  * No inventa nada ni describe: solo junta los datos que el README cuenta
  * (juegos, modos, temáticas, idiomas, módulos, tests, documentos, capturas)
- * importando los módulos de verdad, igual que el laboratorio (D-42). De acá
+ * importando los módulos de verdad. De acá
  * salen los bloques generados del README y la comparación que hace
  * `tools/readme.py revisar` para avisar que un cambio dejó el texto viejo.
  *
@@ -21,9 +21,12 @@ const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..');
 const leer = r => readFileSync(join(RAIZ, r), 'utf8');
 const hay = r => { try { statSync(join(RAIZ, r)); return true; } catch { return false; } };
 
-const IGNORA = new Set(['.git', '.claude', 'node_modules', 'arte-original', 'lab']);
+const IGNORA = new Set(['.git', '.claude', 'node_modules', 'arte-original']);
 function archivos(dir = '', filtro = () => true) {
   const out = [];
+  // Un juego recién agregado todavía no tiene carpeta de capturas: eso es cero capturas,
+  // no una falla de la herramienta.
+  if (!hay(dir)) return out;
   for (const nombre of readdirSync(join(RAIZ, dir))) {
     if (nombre.startsWith('.') || IGNORA.has(nombre)) continue;
     const rel = dir ? `${dir}/${nombre}` : nombre;
@@ -98,7 +101,7 @@ const titulo = ruta => (leer(ruta).match(/^#\s+(.+)$/m) || [, ruta])[1]
   .replace(/[\p{Extended_Pictographic}\uFE0F\s]+$/u, '').trim();
 const documentos = [
   ...archivos('docs', r => r.endsWith('.md')),
-  'lab/README.md', 'firebase/README.md', 'tools/e2e/README.md', 'CHANGELOG.md',
+  'firebase/README.md', 'tools/e2e/README.md', 'CHANGELOG.md',
 ].filter(hay).map(ruta => ({ ruta, titulo: titulo(ruta) }));
 
 const capturas = Object.fromEntries(GAMES.map(g => [g.id, archivos(`docs/screenshots/${g.id}`, r => r.endsWith('.png')).length]));
@@ -112,7 +115,7 @@ console.log(JSON.stringify({
   juegos,
   tematicas,
   modulos,
-  sinVersionar: modulos.filter(m => !versionados.includes(m) && !m.startsWith('lab/')),
+  sinVersionar: modulos.filter(m => !versionados.includes(m)),
   tests,
   e2e,
   documentos,
