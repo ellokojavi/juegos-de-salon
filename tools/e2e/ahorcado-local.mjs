@@ -176,6 +176,11 @@ await click('#setup-actions .btn'); await sleep(900);
 console.log('empieza derecho a jugar:', await b.active(), '| sin tira de rivales:', await b.evaluate(`document.getElementById('rivals').children.length === 0`));
 console.log('pista del mazo:', await b.evaluate(`document.getElementById('hint').innerText.replace(/\\n/g,' ')`));
 await b.shot('09-solo');
+// La barra de acciones no puede flotar sobre el teclado: pasaba en cuanto la pantalla quedaba
+// corta, y se comía la última fila de teclas (C-8)
+console.log('la barra no tapa el teclado:', await b.evaluate(`(()=>{const t=[...document.querySelectorAll('#keyboard button')].slice(-1)[0];
+  const c=document.querySelector('.confirm');if(!t||!c)return 'sin barra';
+  return t.getBoundingClientRect().bottom <= c.getBoundingClientRect().top})()`));
 {
   // El cartel de la letra también acá, que es el otro modo donde nada abre pantalla (D-63)
   const l = await b.evaluate(`(()=>{const s=window.__ahorcado.view();const w=(s.words.A||'').toUpperCase();
