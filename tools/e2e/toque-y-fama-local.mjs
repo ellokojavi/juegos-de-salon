@@ -10,14 +10,17 @@ await b.evaluate(`document.querySelector('#setup-actions .btn').click(); 1`); aw
 await b.cover(); await b.shot('04-secret-A'); console.log('secret A:', await b.typeNum('1234')); await sleep(500);
 await b.cover(); console.log('secret B:', await b.typeNum('5678')); await sleep(900);
 await b.shot('06-handoff-start'); await b.handoff(); await b.shot('07-play-first');
-let guard = 0;
+let guard = 0, primera = true;
 while ((await b.active()) === 'screen-play' && guard++ < 14) {
   const v = await b.view();
   if (!(await b.hasPad())) { const hh = await b.evaluate(`document.getElementById('handoff').hidden`); if (hh === false) await b.handoff(); else await sleep(300); continue; }
   const mine = await b.evaluate(`__tyf.match().guesses.filter(g=>g.from==='${v.expected}').length`);
   const guess = v.expected === 'A' ? (mine === 0 ? '5687' : '5678') : (mine === 0 ? '1243' : '1234');
   console.log('turn', v.expected, '→', guess, await b.typeNum(guess));
-  await sleep(700); await b.shot(`08-reply-${guard}`); await b.handoff();
+  await sleep(700); await b.shot(`08-reply-${guard}`);
+  // La respuesta y el pase en una sola pantalla (C-9): con nombre fijo, porque es una captura del README.
+  if (primera) { primera = false; await b.shot('08-respuesta-y-pase'); }
+  await b.handoff();
 }
 await sleep(700); await b.shot('09-result-local');
 console.log('local result:', await b.evaluate(`document.getElementById('result-title').textContent + ' | ' + document.getElementById('result-sub').textContent + ' | ' + document.getElementById('result-secrets').innerText.replace(/\\n/g,' ')`));

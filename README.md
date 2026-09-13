@@ -66,7 +66,7 @@ Cada jugador elige un número secreto de cifras distintas y trata de adivinar el
     <td align="center"><img src="docs/screenshots/toque-y-fama/01-intro.png" width="180" alt="Modos de juego"><br><sub>Modos de juego</sub></td>
     <td align="center"><img src="docs/screenshots/toque-y-fama/02-secreto.png" width="180" alt="Número secreto"><br><sub>Número secreto</sub></td>
     <td align="center"><img src="docs/screenshots/toque-y-fama/03-tablero.png" width="180" alt="Tablero y teclado"><br><sub>Tablero y teclado</sub></td>
-    <td align="center"><img src="docs/screenshots/toque-y-fama/04-pasale.png" width="180" alt="Pásale el celular"><br><sub>Pásale el celular</sub></td>
+    <td align="center"><img src="docs/screenshots/toque-y-fama/04-pasale.png" width="180" alt="La respuesta y el pase, en una pantalla"><br><sub>La respuesta y el pase, en una pantalla</sub></td>
   </tr>
   <tr>
     <td align="center"><img src="docs/screenshots/toque-y-fama/06-sala.png" width="180" alt="Sala con código y QR"><br><sub>Sala con código y QR</sub></td>
