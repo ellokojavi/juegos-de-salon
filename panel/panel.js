@@ -111,6 +111,7 @@ function listen() {
 /* Dibujo                                                              */
 /* ------------------------------------------------------------------ */
 /** Los mismos nombres que ofrece el selector de entorno, para no mostrar `prod` en una frase. */
+// 'lab' ya no se emite (D-67), pero se sigue nombrando para lo que quedó guardado de antes
 const ENV_LABEL = { prod: 'Publicado', lab: 'Laboratorio', dev: 'Pruebas locales' };
 /** Los dos idiomas que ofrece la app, más lo que llegue de una versión vieja. */
 const APP_LANG = { es: 'Español', en: 'Inglés', pt: 'Portugués', desconocido: 'Sin idioma' };

@@ -16,8 +16,8 @@ function fakeApi({ fail = false } = {}) {
 
 // Entorno según la URL
 assert.equal(envOf({ hostname: 'localhost', pathname: '/toque-y-fama/' }), 'dev');
-assert.equal(envOf({ hostname: '127.0.0.1', pathname: '/lab/' }), 'dev');
-assert.equal(envOf({ hostname: 'ellokojavi.github.io', pathname: '/juegos-de-salon/lab/linea-de-tiempo/' }), 'lab');
+assert.equal(envOf({ hostname: '127.0.0.1' }), 'dev');
+assert.equal(envOf({ hostname: 'ellokojavi.github.io', pathname: '/juegos-de-salon/linea-de-tiempo/' }), 'prod');
 assert.equal(envOf({ hostname: 'ellokojavi.github.io', pathname: '/juegos-de-salon/toque-y-fama/' }), 'prod');
 assert.equal(envOf({}), 'prod');
 
@@ -73,7 +73,7 @@ assert.equal(roomRecord(fp, { game: 'x', role: 'A', name: 'n'.repeat(30) }).play
 
 // Rutas por día y entorno
 const now = 20342 * DAY + 5 * 60 * 60 * 1000;
-assert.equal(dayPath('lab', 20342), 'stats/lab/days/20342');
+assert.equal(dayPath('prod', 20342), 'stats/prod/days/20342');
 
 // noteStart apunta en el día de hoy del entorno
 {

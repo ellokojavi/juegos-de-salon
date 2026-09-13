@@ -1,0 +1,23 @@
+/** Mazo Deportes: canchas, gestos y objetos que todos reconocen. */
+export const DEPORTES = [
+  { id: 'de-penal', emoji: '⚽', es: { w: 'penal', hint: 'Doce pasos y silencio' }, en: { w: 'penalty', hint: 'Twelve steps and silence' }, pt: { w: 'penalti', hint: 'Doze passos e silêncio' } },
+  { id: 'de-arbitro', emoji: '🟥', es: { w: 'arbitro', hint: 'Siempre se equivoca contra el tuyo' }, en: { w: 'referee', hint: 'Always wrong against your team' }, pt: { w: 'arbitro', hint: 'Sempre erra contra o seu time' } },
+  { id: 'de-maraton', emoji: '🏃', es: { w: 'maraton', hint: 'Cuarenta y dos kilómetros' }, en: { w: 'marathon', hint: 'Forty-two kilometres' }, pt: { w: 'maratona', hint: 'Quarenta e dois quilômetros' } },
+  { id: 'de-raqueta', emoji: '🎾', es: { w: 'raqueta', hint: 'Cuerdas tensas y un grito' }, en: { w: 'racket', hint: 'Tight strings and a grunt' }, pt: { w: 'raquete', hint: 'Cordas tensas e um grito' } },
+  { id: 'de-natacion', emoji: '🏊', es: { w: 'natacion', hint: 'Se gana por centésimas y con gorro' }, en: { w: 'swimming', hint: 'Won by hundredths, wearing a cap' }, pt: { w: 'natacao', hint: 'Ganha-se por centésimos, de touca' } },
+  { id: 'de-canasta', emoji: '🏀', es: { w: 'canasta', hint: 'Tres metros de altura' }, en: { w: 'basket', hint: 'Three metres up' }, pt: { w: 'cesta', hint: 'Três metros de altura' } },
+  { id: 'de-ajedrez', emoji: '♟', es: { w: 'ajedrez', hint: 'Se gana sin moverse de la silla' }, en: { w: 'chess', hint: 'Won without leaving the chair' }, pt: { w: 'xadrez', hint: 'Vence-se sem sair da cadeira' } },
+  { id: 'de-podio', emoji: '🥇', es: { w: 'podio', hint: 'Tres escalones y una foto' }, en: { w: 'podium', hint: 'Three steps and a photo' }, pt: { w: 'podio', hint: 'Três degraus e uma foto' } },
+  { id: 'de-portero', emoji: '🧤', es: { w: 'arquero', hint: 'El único que puede usar las manos' }, en: { w: 'goalkeeper', hint: 'The only one allowed to use hands' }, pt: { w: 'goleiro', hint: 'O único que pode usar as mãos' } },
+  { id: 'de-bicicleta', emoji: '🚴', es: { w: 'bicicleta', hint: 'Dos ruedas, y no se olvida' }, en: { w: 'bicycle', hint: 'Two wheels, never forgotten' }, pt: { w: 'bicicleta', hint: 'Duas rodas, nunca se esquece' } },
+  { id: 'de-surf', emoji: '🏄', es: { w: 'surf', hint: 'Se espera mucho y dura poco' }, en: { w: 'surf', hint: 'Long wait, short ride' }, pt: { w: 'surfe', hint: 'Espera longa, onda curta' } },
+  { id: 'de-boxeo', emoji: '🥊', es: { w: 'boxeo', hint: 'Doce asaltos y una campana' }, en: { w: 'boxing', hint: 'Twelve rounds and a bell' }, pt: { w: 'boxe', hint: 'Doze assaltos e um sino' } },
+  { id: 'de-escalada', emoji: '🧗', es: { w: 'escalada', hint: 'Magnesio en las manos' }, en: { w: 'climbing', hint: 'Chalk on your hands' }, pt: { w: 'escalada', hint: 'Magnésio nas mãos' } },
+  { id: 'de-hincha', emoji: '📣', es: { w: 'hincha', hint: 'Sufre más que el que juega' }, en: { w: 'supporter', hint: 'Suffers more than the players' }, pt: { w: 'torcedor', hint: 'Sofre mais que quem joga' } },
+  { id: 'de-estadio', emoji: '🏟', es: { w: 'estadio', hint: 'Suena distinto cuando está lleno' }, en: { w: 'stadium', hint: 'Sounds different when it is full' }, pt: { w: 'estadio', hint: 'Soa diferente quando está cheio' } },
+  { id: 'de-medalla', emoji: '🎖', es: { w: 'medalla', hint: 'Pesa más de lo que parece' }, en: { w: 'medal', hint: 'Heavier than it looks' }, pt: { w: 'medalha', hint: 'Pesa mais do que parece' } },
+  { id: 'de-empate', emoji: '🤝', es: { w: 'empate', hint: 'Nadie queda contento' }, en: { w: 'draw', hint: 'Nobody leaves happy' }, pt: { w: 'empate', hint: 'Ninguém sai feliz' } },
+  { id: 'de-esqui', emoji: '⛷', es: { w: 'esqui', hint: 'Se baja rápido y se sube lento' }, en: { w: 'skiing', hint: 'Down fast, up slow' }, pt: { w: 'esqui', hint: 'Desce rápido, sobe devagar' } },
+  { id: 'de-rugby', emoji: '🏉', es: { w: 'rugby', hint: 'La pelota no es redonda' }, en: { w: 'rugby', hint: 'The ball is not round' }, pt: { w: 'rugbi', hint: 'A bola não é redonda' } },
+  { id: 'de-entrenador', emoji: '📋', es: { w: 'entrenador', hint: 'El primero que se va cuando pierden' }, en: { w: 'coach', hint: 'First to go when they lose' }, pt: { w: 'tecnico', hint: 'O primeiro a cair quando perdem' } },
+];
