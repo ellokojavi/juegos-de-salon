@@ -170,6 +170,15 @@
    Los 14 de abajo son el aire con los botones de acción: pegados, se tocaba comprar queriendo la Z. */
 .keyboard { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin: auto 0 14px; }
 .keyboard[hidden] { display: none; }
+/* En pantallas cortas el teclado se compacta hasta el mínimo del canon —44 px— para que el
+   tablero entre entero sin desplazar. Por debajo de eso no baja. */
+@media (max-height: 780px) {
+  .keyboard { gap: 4px; margin-bottom: 10px; }
+  .keyboard button { min-height: 44px; font-size: 1.15rem; }
+  .gallows svg { max-height: 110px; }
+  .word .ch { min-height: 40px; font-size: 2.1rem; }
+  .confirm .btn { min-height: 52px; font-size: 1.25rem; }
+}
 .keyboard button {
   min-height: 45px; border-radius: 12px; border: 2px solid var(--glass-border); background: var(--glass);
   color: var(--ink); font: 900 1.15rem var(--font-num); cursor: pointer; transition: transform 0.08s, background 0.15s, border-color 0.15s;
@@ -183,7 +192,10 @@
 
 /* Confirmar: nada se preselecciona y el botón dice sobre qué actúa (C-8, D-38) */
 .confirm {
-  position: sticky; bottom: 0; z-index: 7; display: grid; gap: 6px;
+  /* Nada de sticky: pegada al fondo del viewport flotaba sobre el teclado en cuanto la pantalla
+     quedaba corta —bastaban 16 px de más— y se comía la última fila de teclas. Va en el flujo,
+     al pie, que es donde el margen automático del teclado la deja cuando sobra pantalla. */
+  z-index: 7; display: grid; gap: 6px;
   /* De borde a borde y hasta el fondo: el fondo tiene que leerse como la barra de abajo y no como
      un rectángulo oscuro suelto alrededor de los botones. Los márgenes negativos se comen el
      padding de .app (18 px a los lados, 32 px abajo), que si no dejaba una franja por debajo. */

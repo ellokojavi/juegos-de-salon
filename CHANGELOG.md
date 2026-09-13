@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.26.1 — 2026-09-12
+- **La barra de acciones ya no flota sobre el teclado.** Estaba pegada al fondo de la pantalla, y
+  eso hace que se monte sobre lo que haya debajo en cuanto el tablero no entra: bastaban 16 px de
+  más para que se comiera la última fila de teclas. Ahora va en el flujo, al pie, y en pantallas
+  cortas el teclado se compacta hasta el mínimo del canon —44 px— para que el tablero entre entero
+  sin desplazar. El guion de punta a punta ahora lo comprueba.
+
 ## 0.26.0 — 2026-09-12
 - **Juego nuevo: El Ahorcado 🪢** (1 a 6 jugadores). El ahorcado de toda la vida con el arreglo
   que le falta desde siempre: nadie se queda mirando. Cada jugador le escribe la palabra al
