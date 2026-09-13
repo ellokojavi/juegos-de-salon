@@ -20,6 +20,10 @@ python3 -m http.server 8765
 mkdir -p /tmp/e2e && node tools/e2e/batalla-naval-local.mjs /tmp/e2e
 ```
 
+`mirar.mjs` no es una prueba: abre una pantalla suelta para revisarla de a una, sin jugar la
+partida. `node tools/e2e/mirar.mjs ahorcado juego --ancho 320` saca la captura y avisa si hay
+scroll horizontal o botones bajo 44 px (C-8).
+
 | Script | Qué prueba |
 |---|---|
 | `cuarto-rey.mjs` | Botón de sonido, mazo completo hasta el cuarto rey y el menú en inglés |
@@ -29,6 +33,8 @@ mkdir -p /tmp/e2e && node tools/e2e/batalla-naval-local.mjs /tmp/e2e
 | `batalla-naval-colocacion.mjs` | Seleccionar, girar, mover y deseleccionar barcos en la grilla |
 | `batalla-naval-alineacion.mjs` | Que los números de fila queden alineados con las casillas en tres anchos |
 | `batalla-naval-online.mjs` | Dos celulares contra Firebase real, con recarga y revancha |
+| `ahorcado-local.mjs` | Cadena de tres en un celular, comprar una letra, retomar y el solitario |
+| `ahorcado-online.mjs` | Tres celulares contra Firebase real: cadena, reconexión a mitad y revancha |
 | `linea-de-tiempo-local.mjs` | Un celular con tres jugadores y solitario |
 | `linea-de-tiempo-solo.mjs` | Solitario: récord, plural, retomar |
 | `linea-de-tiempo-error.mjs` | Pantalla de error que se queda hasta tocar; el rival espera |
@@ -44,8 +50,8 @@ mkdir -p /tmp/e2e && node tools/e2e/batalla-naval-local.mjs /tmp/e2e
 | `memoria-de-partida.mjs` | Guardar y retomar en los tres juegos (canon C-6) |
 | `versionado.mjs` | Que todos los módulos carguen con `?v=` del import map |
 | `compartir-sala.mjs` | Botón de compartir: diálogo nativo si existe, copiar si no |
-| `enlace-invitacion.mjs` | Quien llega por un enlace solo puede unirse a esa sala, en los tres juegos |
-| `sala-error.mjs` | Sin llegar a Firebase: el mensaje se ve en los tres juegos y en los tres idiomas |
+| `enlace-invitacion.mjs` | Quien llega por un enlace solo puede unirse a esa sala, en los cuatro juegos con sala |
+| `sala-error.mjs` | Sin llegar a Firebase: el mensaje se ve en los cuatro juegos con sala y en los tres idiomas |
 | `sala-tope.mjs` | Pasado el tope de salas por celular, avisa al instante y sin tocar la red |
 
 ## De acá salen las capturas del README
