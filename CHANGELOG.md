@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.26.2 — 2026-09-13
+- **El menú se reordenó**: Línea de Tiempo, Toque y Fama, El Ahorcado, Batalla Naval y Cuarto Rey.
+  Antes el orden era el de cuándo se fue construyendo cada juego, que no le dice nada a quien llega.
+- **El Ahorcado aparece como v0.26 en la tabla del README** y no con un guión: la cabecera de su
+  especificación no usaba el formato del que `tools/hechos.mjs` saca el estado publicado.
+
 ## 0.26.1 — 2026-09-12
 - **La barra de acciones ya no flota sobre el teclado.** Estaba pegada al fondo de la pantalla, y
   eso hace que se monte sobre lo que haya debajo en cuanto el tablero no entra: bastaban 16 px de

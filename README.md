@@ -13,11 +13,11 @@ App web (mobile-first) con juegos de salón para jugar con amigos: de naipes, de
 <!-- generado: juegos · lo reescribe python3 tools/readme.py actualizar -->
 | Juego | Jugadores | Modos | Estado |
 |---|---|---|---|
-| 👑 [Cuarto Rey / Fourth King / Quarto Rei](#-cuarto-rey) | 4 a 6 | Un celular | v0.2 |
-| 🔢 [Toque y Fama / Bulls and Cows / Toque e Fama](#-toque-y-fama) | 1 a 2 | Un celular · Dos celulares · Contra el celular | v0.4 |
 | ⏳ [Línea de Tiempo / Timeline / Linha do Tempo](#-línea-de-tiempo) | 1 a 6 | Un celular · Varios celulares · Jugar solo | v0.9 |
-| 🪢 [El Ahorcado / Hangman / Forca](#-el-ahorcado) | 1 a 6 | Un celular · Varios celulares · Jugar solo | — |
+| 🔢 [Toque y Fama / Bulls and Cows / Toque e Fama](#-toque-y-fama) | 1 a 2 | Un celular · Dos celulares · Contra el celular | v0.4 |
+| 🪢 [El Ahorcado / Hangman / Forca](#-el-ahorcado) | 1 a 6 | Un celular · Varios celulares · Jugar solo | v0.26 |
 | ⚓ [Batalla Naval / Battleship / Batalha Naval](#-batalla-naval) | 1 a 2 | Un celular · Dos celulares · Contra el celular | v0.6 |
+| 👑 [Cuarto Rey / Fourth King / Quarto Rei](#-cuarto-rey) | 4 a 6 | Un celular | v0.2 |
 <!-- /generado -->
 
 ---
@@ -239,11 +239,11 @@ Brasil, informal, y los nombres se traducen igual que en inglés:
 | Español | English | Português |
 |---|---|---|
 | Juegos de Salón | Party Games | Jogos de Salão |
-| Cuarto Rey | Fourth King | Quarto Rei |
-| Toque y Fama | Bulls and Cows | Toque e Fama |
 | Línea de Tiempo | Timeline | Linha do Tempo |
+| Toque y Fama | Bulls and Cows | Toque e Fama |
 | El Ahorcado | Hangman | Forca |
 | Batalla Naval | Battleship | Batalha Naval |
+| Cuarto Rey | Fourth King | Quarto Rei |
 <!-- /generado -->
 
 Cómo está armado (canon C-3):

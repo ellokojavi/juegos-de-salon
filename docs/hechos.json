@@ -1,5 +1,5 @@
 {
-  "version": "0.26.1",
+  "version": "0.26.2",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -17,78 +17,6 @@
   },
   "clavesComunes": 8,
   "juegos": [
-    {
-      "id": "cuarto-rey",
-      "emoji": "👑",
-      "nombre": {
-        "es": "Cuarto Rey",
-        "en": "Fourth King",
-        "pt": "Quarto Rei"
-      },
-      "jugadores": "4 a 6",
-      "duracion": "20–40",
-      "disponible": true,
-      "estado": "v0.2",
-      "modos": [],
-      "variantes": [],
-      "pantallas": [
-        "intro",
-        "setup",
-        "play",
-        "end"
-      ],
-      "chat": false,
-      "archivos": [
-        "cuarto-rey/game.js",
-        "cuarto-rey/index.html",
-        "cuarto-rey/rules.js",
-        "cuarto-rey/style.css"
-      ]
-    },
-    {
-      "id": "toque-y-fama",
-      "emoji": "🔢",
-      "nombre": {
-        "es": "Toque y Fama",
-        "en": "Bulls and Cows",
-        "pt": "Toque e Fama"
-      },
-      "jugadores": "1 a 2",
-      "duracion": "5–12",
-      "disponible": true,
-      "estado": "v0.4",
-      "modos": [
-        {
-          "clave": "modeLocal",
-          "es": "📱 Un celular, dos jugadores"
-        },
-        {
-          "clave": "modeOnline",
-          "es": "📡 Dos celulares"
-        },
-        {
-          "clave": "modeCpu",
-          "es": "🤖 Contra el celular"
-        }
-      ],
-      "variantes": [],
-      "pantallas": [
-        "intro",
-        "setup",
-        "lobby",
-        "secret",
-        "play",
-        "result"
-      ],
-      "chat": true,
-      "archivos": [
-        "toque-y-fama/engine.js",
-        "toque-y-fama/game.js",
-        "toque-y-fama/index.html",
-        "toque-y-fama/rules.js",
-        "toque-y-fama/style.css"
-      ]
-    },
     {
       "id": "linea-de-tiempo",
       "emoji": "⏳",
@@ -153,6 +81,50 @@
       ]
     },
     {
+      "id": "toque-y-fama",
+      "emoji": "🔢",
+      "nombre": {
+        "es": "Toque y Fama",
+        "en": "Bulls and Cows",
+        "pt": "Toque e Fama"
+      },
+      "jugadores": "1 a 2",
+      "duracion": "5–12",
+      "disponible": true,
+      "estado": "v0.4",
+      "modos": [
+        {
+          "clave": "modeLocal",
+          "es": "📱 Un celular, dos jugadores"
+        },
+        {
+          "clave": "modeOnline",
+          "es": "📡 Dos celulares"
+        },
+        {
+          "clave": "modeCpu",
+          "es": "🤖 Contra el celular"
+        }
+      ],
+      "variantes": [],
+      "pantallas": [
+        "intro",
+        "setup",
+        "lobby",
+        "secret",
+        "play",
+        "result"
+      ],
+      "chat": true,
+      "archivos": [
+        "toque-y-fama/engine.js",
+        "toque-y-fama/game.js",
+        "toque-y-fama/index.html",
+        "toque-y-fama/rules.js",
+        "toque-y-fama/style.css"
+      ]
+    },
+    {
       "id": "ahorcado",
       "emoji": "🪢",
       "nombre": {
@@ -163,7 +135,7 @@
       "jugadores": "1 a 6",
       "duracion": "5–12",
       "disponible": true,
-      "estado": null,
+      "estado": "v0.26",
       "modos": [
         {
           "clave": "modeLocal",
@@ -244,6 +216,34 @@
         "batalla-naval/index.html",
         "batalla-naval/rules.js",
         "batalla-naval/style.css"
+      ]
+    },
+    {
+      "id": "cuarto-rey",
+      "emoji": "👑",
+      "nombre": {
+        "es": "Cuarto Rey",
+        "en": "Fourth King",
+        "pt": "Quarto Rei"
+      },
+      "jugadores": "4 a 6",
+      "duracion": "20–40",
+      "disponible": true,
+      "estado": "v0.2",
+      "modos": [],
+      "variantes": [],
+      "pantallas": [
+        "intro",
+        "setup",
+        "play",
+        "end"
+      ],
+      "chat": false,
+      "archivos": [
+        "cuarto-rey/game.js",
+        "cuarto-rey/index.html",
+        "cuarto-rey/rules.js",
+        "cuarto-rey/style.css"
       ]
     }
   ],
@@ -501,10 +501,10 @@
     }
   ],
   "capturas": {
-    "cuarto-rey": 11,
-    "toque-y-fama": 9,
     "linea-de-tiempo": 11,
+    "toque-y-fama": 9,
     "ahorcado": 9,
-    "batalla-naval": 7
+    "batalla-naval": 7,
+    "cuarto-rey": 11
   }
 }

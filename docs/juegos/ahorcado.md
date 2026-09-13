@@ -1,6 +1,6 @@
 # Diseño: El Ahorcado 🪢
 
-**Estado:** 0.26 · en el menú · **Fecha:** 2026-09-12 · **Ruta:** `/ahorcado/` · **Jugadores:** 1 a 6 · **Idiomas:** es, en (“Hangman”), pt (“Forca”)
+**Estado:** implementado (v0.26, los tres modos) · **Fecha:** 2026-09-12 · **Ruta:** `/ahorcado/` · **Jugadores:** 1 a 6 · **Idiomas:** es, en (“Hangman”), pt (“Forca”)
 
 ## 1. Resumen
 
