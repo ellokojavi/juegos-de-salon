@@ -1,5 +1,35 @@
 # Changelog
 
+## 0.28.0 — 2026-09-13
+- **Juego nuevo: Dudo 🎲** (2 a 6 jugadores). El clásico de los dados que se juega en bares y
+  sobremesas: cada uno tira cinco y mira solo los suyos, se apuesta cuántos hay de una pinta en toda
+  la mesa —"cuatro cincos", con los ases de comodín— y el que sigue sube o dice dudo. Se destapa,
+  se cuenta, y el que se equivocó pierde un dado. Gana el último que le quede alguno (D-69).
+- **Lo que aporta el celular no es reemplazar los dados, es arbitrar.** Reparte, **no deja hacer una
+  apuesta ilegal** —subir es más cantidad o la misma con pinta mayor, y entrar y salir de los ases
+  cuesta la mitad y el doble más uno— y cuenta al instante, que es exactamente lo que se discute a
+  gritos en la mesa de verdad.
+- **Calzar** es decir que la cantidad es exacta: aciertas y recuperas un dado, fallas y pierdes uno.
+  Solo desde que la apuesta llega a la mitad de los dados de la mesa, porque antes es una apuesta
+  gratis. Se puede apagar en la configuración.
+- **Dos modos:** un celular de 2 a 6, con la pantalla de pase entre turnos, y contra el celular. El
+  aparato **solo mira sus propios dados**: decide con la probabilidad de que entre los dados que no
+  ve estén los que faltan, no espiando los tuyos. Salió barato —es una cuenta binomial— justo donde
+  el rival de la máquina del Ahorcado salía carísimo (D-64, D-65).
+- **Los dados no salen de la semilla** (D-70), y es la decisión que define el juego. El código de
+  esta app es público: con una semilla compartida, cualquiera podría calcular los dados del rival
+  desde la consola. Cada celular tira los suyos y publica el hash; al dudar se destapan y se
+  verifica (C-10), igual que la flota de Batalla Naval. Es una excepción anotada a C-7.
+- **Varios celulares queda "Próximamente"**, como manda C-5 para un modo que todavía no existe. El
+  motor ya habla el protocolo de la sala; falta la sala.
+- **La prueba de paridad de idiomas cambió de criterio.** Comprobaba que cada bloque de idioma
+  tuviera más de cinco claves para saber que se había leído bien, y eso dejaba fuera a un juego chico
+  como Dudo, que solo tiene los nombres de las pintas y la interfaz. Ahora compara que los tres
+  idiomas den la misma cantidad de claves, que es lo que de verdad delata una lectura a medias.
+- **`mirar.mjs --idioma` no hacía nada.** Guardaba el idioma con comillas (`JSON.stringify`) y
+  `getLang()` compara contra `['es','en','pt']`, así que siempre caía al español y las capturas de
+  otro idioma salían en español sin avisar.
+
 ## 0.27.1 — 2026-09-13
 - **Los botones de la pantalla final de Cuarto Rey se ven sin desplazar** (C-8). Con seis jugadores
   quedaban fuera: "¡Otra ronda!" cerraba en 902 px y "Volver al menú" en 1026, en una pantalla de
