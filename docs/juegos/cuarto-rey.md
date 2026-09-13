@@ -20,7 +20,10 @@ Intro ──► Setup jugadores ──► Mesa (turnos) ──► Cuarto Rey ─
 5. **Final:** nombre del que sacó el cuarto rey, ranking de sorbos, botones de otra ronda / cambiar jugadores / menú
    y, plegado al pie, el historial de las cartas que salieron (CR-18): cada una con su palo, quién la sacó y qué
    decía. Va **después** de los botones, al revés que en los otros juegos, porque acá el ranking tiene hasta seis
-   filas y los botones ya quedan justo en la línea de flotación de un celular de 812 px (C-8).
+   filas y un bloque encima de los botones los empuja fuera de la pantalla. Toda la pantalla está medida para que
+   con seis jugadores los tres botones se vean sin desplazar en un celular de 812 px, en los tres idiomas (C-8):
+   corona más chica, filas del ranking compactas y los dos botones secundarios compartiendo fila. El último cierra
+   en 774 px.
 
 ## Reglas por carta (implementadas)
 
