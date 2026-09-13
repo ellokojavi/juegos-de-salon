@@ -6,13 +6,13 @@
  */
 export const GAMES = [
   {
-    id: 'cuarto-rey',
-    emoji: '👑',
-    name: { es: 'Cuarto Rey', en: 'Fourth King', pt: 'Quarto Rei' },
-    tagline: { es: 'Naipes, sorbos y el temido cuarto rey.', en: 'Cards, sips and the dreaded fourth king.', pt: 'Cartas, goles e o temido quarto rei.' },
-    players: '4–6',
-    duration: '20–40',
-    path: 'cuarto-rey/',
+    id: 'linea-de-tiempo',
+    emoji: '⏳',
+    name: { es: 'Línea de Tiempo', en: 'Timeline', pt: 'Linha do Tempo' },
+    tagline: { es: 'Ubica los hitos en el orden correcto. Historia o música, solo o hasta seis.', en: 'Put the milestones in the right order. History or music, alone or up to six.', pt: 'Coloque os marcos na ordem certa. História ou música, sozinho ou até seis.' },
+    players: '1–6',
+    duration: '10–20',
+    path: 'linea-de-tiempo/',
     available: true,
   },
   {
@@ -23,16 +23,6 @@ export const GAMES = [
     players: '1–2',
     duration: '5–12',
     path: 'toque-y-fama/',
-    available: true,
-  },
-  {
-    id: 'linea-de-tiempo',
-    emoji: '⏳',
-    name: { es: 'Línea de Tiempo', en: 'Timeline', pt: 'Linha do Tempo' },
-    tagline: { es: 'Ubica los hitos en el orden correcto. Historia o música, solo o hasta seis.', en: 'Put the milestones in the right order. History or music, alone or up to six.', pt: 'Coloque os marcos na ordem certa. História ou música, sozinho ou até seis.' },
-    players: '1–6',
-    duration: '10–20',
-    path: 'linea-de-tiempo/',
     available: true,
   },
   {
@@ -53,6 +43,16 @@ export const GAMES = [
     players: '1–2',
     duration: '10–20',
     path: 'batalla-naval/',
+    available: true,
+  },
+  {
+    id: 'cuarto-rey',
+    emoji: '👑',
+    name: { es: 'Cuarto Rey', en: 'Fourth King', pt: 'Quarto Rei' },
+    tagline: { es: 'Naipes, sorbos y el temido cuarto rey.', en: 'Cards, sips and the dreaded fourth king.', pt: 'Cartas, goles e o temido quarto rei.' },
+    players: '4–6',
+    duration: '20–40',
+    path: 'cuarto-rey/',
     available: true,
   },
 ];
