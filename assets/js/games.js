@@ -36,6 +36,16 @@ export const GAMES = [
     available: true,
   },
   {
+    id: 'ahorcado',
+    emoji: '🪢',
+    name: { es: 'El Ahorcado', en: 'Hangman', pt: 'Forca' },
+    tagline: { es: 'Adivina tu palabra antes de que se acaben los errores. Acá nadie se queda mirando.', en: 'Crack your word before the mistakes run out. Nobody sits this one out.', pt: 'Descubra sua palavra antes que os erros acabem. Aqui ninguém fica só olhando.' },
+    players: '1–6',
+    duration: '5–12',
+    path: 'ahorcado/',
+    available: true,
+  },
+  {
     id: 'batalla-naval',
     emoji: '⚓',
     name: { es: 'Batalla Naval', en: 'Battleship', pt: 'Batalha Naval' },

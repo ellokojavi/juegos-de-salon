@@ -43,6 +43,7 @@ en [docs/capturas.json](docs/capturas.json) de qué guion de `tools/e2e/` y de q
 node toque-y-fama/engine.test.mjs
 node batalla-naval/engine.test.mjs
 node linea-de-tiempo/engine.test.mjs
+node ahorcado/engine.test.mjs
 node assets/js/i18n.test.mjs             # paridad es/en/pt (C-3)
 node assets/js/transport/cleanup.test.mjs
 node assets/js/transport/dispose.test.mjs
@@ -54,17 +55,24 @@ python3 tools/readme.test.py       # qué cuenta como cambio para las capturas (
 python3 -m http.server 8765          # los módulos ES necesitan HTTP, no file://
 ```
 
-## Probar un cambio de interfaz
+## Mirar una pantalla
 
-`lab/` es un ambiente de pruebas con URL propia (`/lab/`) que **no toca la app publicada**:
-espeja el menú y los juegos, pero importa los módulos reales. El experimento se escribe
-en `lab/lab.css`, que solo agrega, y cada bloque declara su `@destino` para poder migrarlo
-después. Ver [lab/README.md](lab/README.md) y D-42.
+Para revisar cómo quedó una pantalla concreta, sin jugar una partida entera:
 
 ```bash
-python3 tools/lab.py espejar <id>   # sumar un juego al laboratorio
-python3 tools/lab.py revisar        # ¿los espejos quedaron viejos? correr antes de publicar
-python3 tools/lab.py promover       # llevar el experimento aprobado a producción
+node tools/e2e/mirar.mjs ahorcado juego --ancho 320
+node tools/e2e/mirar.mjs ahorcado resultado --idioma pt
+```
+
+Saca la captura y avisa si hay scroll horizontal o botones bajo 44 px (C-8). Los caminos a
+cada pantalla están declarados arriba del archivo: agregar uno es sumar una entrada, no
+escribir un guion nuevo.
+
+Para verlo en un celular de verdad, se sirve el árbol de trabajo por Tailscale (D-67):
+
+```bash
+tailscale serve --bg 8765     # queda en https://<equipo>.<tailnet>.ts.net/
+tailscale serve --https=443 off
 ```
 
 ## Pruebas de punta a punta

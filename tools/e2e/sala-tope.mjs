@@ -41,8 +41,10 @@ console.log('sigue en la pantalla de datos   →', await b.active());
 
 const ldt = await intento('linea-de-tiempo', 20, 'ldt');
 const bn = await intento('batalla-naval', 20, 'bn');
+const ah = await intento('ahorcado', 20, 'ah');
 console.log('línea de tiempo →', /muchas salas/.test(ldt.texto));
 console.log('batalla naval   →', /muchas salas/.test(bn.texto));
+console.log('el ahorcado     →', /muchas salas/.test(ah.texto));
 console.log('errors:', JSON.stringify(b.errors));
 console.log('logs:', JSON.stringify(b.logs));
 b.close();

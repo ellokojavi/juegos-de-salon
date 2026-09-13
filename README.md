@@ -16,6 +16,7 @@ App web (mobile-first) con juegos de salón para jugar con amigos: de naipes, de
 | 👑 [Cuarto Rey / Fourth King / Quarto Rei](#-cuarto-rey) | 4 a 6 | Un celular | v0.2 |
 | 🔢 [Toque y Fama / Bulls and Cows / Toque e Fama](#-toque-y-fama) | 1 a 2 | Un celular · Dos celulares · Contra el celular | v0.4 |
 | ⏳ [Línea de Tiempo / Timeline / Linha do Tempo](#-línea-de-tiempo) | 1 a 6 | Un celular · Varios celulares · Jugar solo | v0.9 |
+| 🪢 [El Ahorcado / Hangman / Forca](#-el-ahorcado) | 1 a 6 | Un celular · Varios celulares · Jugar solo | — |
 | ⚓ [Batalla Naval / Battleship / Batalha Naval](#-batalla-naval) | 1 a 2 | Un celular · Dos celulares · Contra el celular | v0.6 |
 <!-- /generado -->
 
@@ -161,6 +162,65 @@ Especificación y diseño: [docs/juegos/linea-de-tiempo.md](docs/juegos/linea-de
 
 ---
 
+## 🪢 El Ahorcado
+
+<!-- generado: capturas:ahorcado · lo reescribe python3 tools/readme.py actualizar -->
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/ahorcado/01-intro.png" width="180" alt="Modos de juego"><br><sub>Modos de juego</sub></td>
+    <td align="center"><img src="docs/screenshots/ahorcado/02-configuracion.png" width="180" alt="La palabra, los errores y quiénes juegan"><br><sub>La palabra, los errores y quiénes juegan</sub></td>
+    <td align="center"><img src="docs/screenshots/ahorcado/03-escribir.png" width="180" alt="Cada uno le escribe al siguiente"><br><sub>Cada uno le escribe al siguiente</sub></td>
+    <td align="center"><img src="docs/screenshots/ahorcado/04-juego.png" width="180" alt="Horca, pista, palabra y teclado"><br><sub>Horca, pista, palabra y teclado</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/ahorcado/05-veredicto.png" width="180" alt="La letra y el pase, juntos"><br><sub>La letra y el pase, juntos</sub></td>
+    <td align="center"><img src="docs/screenshots/ahorcado/06-sala.png" width="180" alt="Sala con código y QR"><br><sub>Sala con código y QR</sub></td>
+    <td align="center"><img src="docs/screenshots/ahorcado/07-varios-celulares.png" width="180" alt="Todos adivinando a la vez"><br><sub>Todos adivinando a la vez</sub></td>
+    <td align="center"><img src="docs/screenshots/ahorcado/08-resultado.png" width="180" alt="Puntaje y palabras verificadas"><br><sub>Puntaje y palabras verificadas</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/ahorcado/09-solitario.png" width="180" alt="Jugar solo: la app reparte la palabra"><br><sub>Jugar solo: la app reparte la palabra</sub></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+</table>
+<!-- /generado -->
+
+El ahorcado de toda la vida, con el arreglo que le falta desde siempre: **nadie se queda mirando**.
+En vez de un verdugo aburrido y un adivinador, cada jugador le escribe la palabra al siguiente —el
+último al primero— y todos adivinan la suya. Con dos es un duelo; con seis, una carrera. El puntaje
+son **los errores que te sobraron**, así que no basta con sacar la palabra: hay que sacarla barata.
+Poner una palabra imposible no da ni un punto, y de todas formas el de al lado te escribe la tuya.
+
+| | 🤝 Cadena | 🎴 Mazo de la app |
+|---|---|---|
+| Quién la pone | Cada jugador, para el siguiente, con una pista obligatoria | La app, de la temática elegida |
+| Para qué sirve la temática | Le sugiere seis palabras a quien escribe, que puede tomarlas, editarlas o ignorarlas | Es de donde sale la palabra |
+| El secreto | No viaja: se compromete con hash y se verifica al final | No hay: sale de la semilla del mazo |
+
+Cinco temáticas y una mezcla (Chile, Animales, Comida, Cine y series, Deportes), con palabra y pista
+propias en cada idioma: no son traducciones, porque una palabra traducida cambia de largo y de
+dificultad. Los errores permitidos se eligen —5, 6 u 8— y el último trazo del dibujo, siempre, son
+los ojos en X. Se puede **comprar una letra** 💡: aparece la que falta más rara y cuesta un error.
+
+Se juega **por turnos alternados**: pruebas una letra y el celular pasa al siguiente. Todos los
+tableros avanzan a la vez, así que ver que al de al lado le queda una vida mientras a ti te quedan
+cuatro llega en el momento en que sirve.
+
+- **📱 Un celular:** de dos a seis, con pantalla tapada para escribir la palabra. Después de cada
+  letra, el resultado y el "pásale el celular a X" en la misma pantalla.
+- **📡 Varios celulares:** sala con código y QR, hasta seis, por turnos alternados: una letra cada
+  uno y se ve la secuencia (D-66). La tira
+  de rivales muestra vidas y avance, nunca las letras.
+- **🧍 Jugar solo:** la app reparte una palabra de la temática elegida, con su pista, y la sacas tú.
+  Sin rival: el celular no adivina. Como la palabra sale del mazo no hay secreto que comprometer,
+  así que es el único modo que anda sin https (D-65).
+
+Especificación y diseño: [docs/juegos/ahorcado.md](docs/juegos/ahorcado.md)
+
+---
+
 ## Características comunes
 
 - **Idiomas:** español (por defecto), inglés y portugués de Brasil. El toggle del menú guarda la elección en el dispositivo; nunca se detecta el idioma del navegador (D-47, D-48). Ver [Idiomas](#idiomas).
@@ -170,7 +230,7 @@ Especificación y diseño: [docs/juegos/linea-de-tiempo.md](docs/juegos/linea-de
 
 ### Idiomas
 
-Toda la experiencia va en el idioma elegido: el menú y sus frases del pie, los cuatro juegos
+Toda la experiencia va en el idioma elegido: el menú y sus frases del pie, los cinco juegos
 con todos sus modos, las salas, el chat, los errores de transporte, las pantallas de "pásale
 el celular" y las cartas de todos los mazos de Línea de Tiempo. El portugués es el de
 Brasil, informal, y los nombres se traducen igual que en inglés:
@@ -182,6 +242,7 @@ Brasil, informal, y los nombres se traducen igual que en inglés:
 | Cuarto Rey | Fourth King | Quarto Rei |
 | Toque y Fama | Bulls and Cows | Toque e Fama |
 | Línea de Tiempo | Timeline | Linha do Tempo |
+| El Ahorcado | Hangman | Forca |
 | Batalla Naval | Battleship | Batalha Naval |
 <!-- /generado -->
 
@@ -237,6 +298,7 @@ y abrir http://localhost:8765 (los módulos ES necesitan servirse por HTTP). Tes
 
 <!-- generado: pruebas · lo reescribe python3 tools/readme.py actualizar -->
 ```bash
+node ahorcado/engine.test.mjs
 node batalla-naval/engine.test.mjs
 node linea-de-tiempo/engine.test.mjs
 node toque-y-fama/engine.test.mjs
@@ -250,32 +312,25 @@ node panel/aggregate.test.mjs
 ```
 <!-- /generado -->
 
-## Laboratorio: probar interfaz sin tocar la app
+## Mirar una pantalla
 
-`lab/` es un ambiente de pruebas con **URL propia** que no modifica ningún archivo de la app publicada. Sirve para mirar un cambio de aspecto en un celular de verdad —y pasarle el enlace a alguien— antes de decidir si va.
-
-- Local: http://localhost:8765/lab/
-- Publicado: https://juegosdesalon.cl/lab/
-
-Las páginas del laboratorio **espejan** el menú y los juegos que haga falta, pero importan los módulos reales (`game.js`, `rules.js`, `engine.js`, `assets/js/*`): no hay lógica duplicada y un arreglo en un juego se ve ahí solo. Lo único propio es la presentación.
-
-El experimento se escribe en **`lab/lab.css`**, que se carga *después* de `base.css` y solo agrega. La prueba de que está bien aislado: borrar ese archivo tiene que dejar las páginas funcionando con el aspecto actual de la app. En reposo el archivo está vacío y el laboratorio se ve idéntico al sitio.
+Para revisar cómo quedó una pantalla concreta, sin jugar una partida entera:
 
 ```bash
-python3 tools/lab.py espejar batalla-naval   # sumar un juego al laboratorio
-python3 tools/lab.py revisar                 # ¿los espejos están al día?
-python3 tools/lab.py promover                # llevar el experimento a producción
+node tools/e2e/mirar.mjs ahorcado juego --ancho 320
+node tools/e2e/mirar.mjs ahorcado resultado --idioma pt
 ```
 
-Cada bloque de `lab.css` declara con `/* @destino <ruta> */` adónde va el día que se apruebe, y `promover` lo mueve solo: los estilos a su archivo, las imágenes a `assets/img/` con la versión en el nombre y las rutas de `url()` reescritas según dónde caiga cada bloque. Lo que es criterio —fundir reglas duplicadas, repasar los cuatro juegos— lo deja anotado en una lista al terminar.
+Saca la captura y avisa si hay scroll horizontal o botones bajo 44 px, que es lo que el canon pide mirar en cada pantalla. Los caminos a cada pantalla están declarados arriba del archivo: agregar uno es sumar una entrada, no escribir un guion nuevo.
 
-`revisar` ataja lo más peligroso del laboratorio: que el espejo de un juego quede viejo respecto del juego real y uno crea que está probando algo que ya no existe. Conviene correrlo antes de publicar, junto con los tests de motor.
+Para verlo en un celular de verdad —y pasarle el enlace a alguien— se sirve el árbol de trabajo por Tailscale, sin publicar nada (D-67):
 
-Un cambio que solo toca `lab/` **no corre `set-version.py`** ni sube el número de versión: no cambió ningún archivo versionado. A cambio, GitHub Pages cachea `lab.css` diez minutos, así que al cambiarlo hay que subirle la marca de revisión (`lab.css?r=N`) en las dos páginas que lo cargan.
+```bash
+tailscale serve --bg 8765          # queda en https://<equipo>.<tailnet>.ts.net/
+tailscale serve --https=443 off    # y se baja así
+```
 
-Ojo: comparte origen con la app, así que comparte `localStorage` (memoria de partida, idioma, nombre) y las salas de Firebase.
-
-Detalle completo —cómo empezar un experimento, cómo espejar otro juego y qué hacer cuando uno se aprueba— en **[lab/README.md](lab/README.md)**, y el porqué en [D-42](docs/DECISIONES.md).
+Es la app completa y con HTTPS, así que sirven también los modos que necesitan contexto seguro. Antes esto lo hacía una carpeta `lab/` con espejos de cada juego; se sacó porque los espejos envejecían y esto cubre lo mismo mejor.
 
 ## Publicar una versión
 
@@ -332,16 +387,15 @@ cuarto-rey/                 Juego Cuarto Rey (index.html, game.js, rules.js, sty
 toque-y-fama/               Juego Toque y Fama (engine.js + tests, game.js, rules.js)
 batalla-naval/              Juego Batalla Naval (engine.js + tests, game.js, rules.js)
 linea-de-tiempo/            Juego Línea de Tiempo (engine.js + tests, game.js, rules.js, decks/)
+ahorcado/                   Juego El Ahorcado (engine.js + tests, game.js, rules.js, decks/)
 assets/js/handoff.js        Transiciones compartidas: pásale el celular, pantalla tapada
 assets/js/chat.js           Chat de sala compartido (modos de varios celulares)
 assets/js/session.js        Memoria de partida compartida (retomar en cualquier modo)
 assets/js/transport/        Transportes compartidos: local (mismo celular), firebase (sala) y stats (señales de uso)
 panel/                      Panel privado del dueño (entrada con Google; ver docs/PANEL.md)
-lab/                        Ambiente de pruebas de interfaz, con URL propia (ver lab/README.md)
 firebase/                   Reglas de seguridad de Realtime Database y notas
 manifest.webmanifest        Manifest PWA (instalable en la pantalla de inicio)
 tools/set-version.py        Estampa la versión (import maps + estilos) para evitar caché mezclada
-tools/lab.py                Laboratorio: espejar juegos, revisar que esté sano y promover un experimento
 tools/readme.py             README al día: bloques generados, capturas rehechas y aviso de lo que cambió
 tools/hechos.mjs            La hoja de hechos de la app (juegos, modos, temáticas, tests) leída del código
 tools/e2e/                  Partidas completas en Chrome headless; de ahí salen las capturas (su README)
@@ -356,10 +410,10 @@ docs/                       Requerimientos, decisiones, especificaciones y captu
 - [Requerimientos](docs/REQUERIMIENTOS.md)
 - [Decisiones de diseño y arquitectura](docs/DECISIONES.md)
 - [Cómo agregar un juego nuevo](docs/AGREGAR-JUEGO.md)
-- [Laboratorio](lab/README.md)
 - [Panel del dueño](docs/PANEL.md)
 - [Pruebas de punta a punta (Chrome headless por CDP)](tools/e2e/README.md)
 - [Firebase](firebase/README.md)
+- [Diseño: El Ahorcado](docs/juegos/ahorcado.md)
 - [Diseño: Batalla Naval](docs/juegos/batalla-naval.md)
 - [Especificación: Cuarto Rey](docs/juegos/cuarto-rey.md)
 - [Diseño: Línea de Tiempo](docs/juegos/linea-de-tiempo.md)

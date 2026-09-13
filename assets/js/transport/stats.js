@@ -27,17 +27,17 @@ import { firebaseConfig } from '../firebase-config.js';
 import { dayOf } from './cleanup.js';
 import { getLang } from '../i18n.js';
 
-export const ENVS = ['prod', 'lab', 'dev'];
+// 'lab' salió con el laboratorio (D-67); queda en el panel para leer lo que quedó guardado
+export const ENVS = ['prod', 'dev'];
 export const MODES = ['local', 'cpu', 'solo'];
 
 /** Valores que resuelve el servidor (REST): hora y suma de a uno. */
 const STAMP = { '.sv': 'timestamp' };
 const INC = { '.sv': { increment: 1 } };
 
-/** Entorno según la URL: pruebas en local, laboratorio o app publicada. */
-export function envOf({ hostname = '', pathname = '' } = {}) {
+/** Entorno según la URL: pruebas en local o app publicada. */
+export function envOf({ hostname = '' } = {}) {
   if (/^(localhost|127\.0\.0\.1|\[::1\]|0\.0\.0\.0)$/.test(hostname)) return 'dev';
-  if (/\/lab\//.test(pathname)) return 'lab';
   return 'prod';
 }
 

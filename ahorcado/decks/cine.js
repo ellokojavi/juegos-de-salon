@@ -1,0 +1,23 @@
+/** Mazo Cine y series: títulos y criaturas que todos ubican. */
+export const CINE = [
+  { id: 'ci-titanic', emoji: '🚢', es: { w: 'titanic', hint: 'Cabía perfectamente en esa puerta' }, en: { w: 'titanic', hint: 'He totally fit on that door' }, pt: { w: 'titanic', hint: 'Cabia direitinho naquela porta' } },
+  { id: 'ci-matrix', emoji: '💊', es: { w: 'matrix', hint: 'Pastilla roja o pastilla azul' }, en: { w: 'matrix', hint: 'Red pill or blue pill' }, pt: { w: 'matrix', hint: 'Pílula vermelha ou azul' } },
+  { id: 'ci-jurasico', emoji: '🦖', es: { w: 'jurasico', hint: 'El parque que salió mal' }, en: { w: 'jurassic', hint: 'The park that went wrong' }, pt: { w: 'jurassico', hint: 'O parque que deu errado' } },
+  { id: 'ci-zombie', emoji: '🧟', es: { w: 'zombie', hint: 'Camina lento y no se rinde' }, en: { w: 'zombie', hint: 'Walks slow, never gives up' }, pt: { w: 'zumbi', hint: 'Anda devagar e não desiste' } },
+  { id: 'ci-vampiro', emoji: '🧛', es: { w: 'vampiro', hint: 'Le teme al ajo y al espejo' }, en: { w: 'vampire', hint: 'Afraid of garlic and mirrors' }, pt: { w: 'vampiro', hint: 'Teme alho e espelho' } },
+  { id: 'ci-oscar', emoji: '🏆', es: { w: 'oscar', hint: 'La estatuilla dorada de marzo' }, en: { w: 'oscar', hint: 'The golden statue in March' }, pt: { w: 'oscar', hint: 'A estatueta dourada de março' } },
+  { id: 'ci-batman', emoji: '🦇', es: { w: 'batman', hint: 'Millonario con problemas de sueño' }, en: { w: 'batman', hint: 'Rich guy with sleep problems' }, pt: { w: 'batman', hint: 'Milionário com insônia' } },
+  { id: 'ci-galaxia', emoji: '🌌', es: { w: 'galaxia', hint: 'Muy muy lejana, hace mucho tiempo' }, en: { w: 'galaxy', hint: 'Far, far away, long ago' }, pt: { w: 'galaxia', hint: 'Muito muito distante' } },
+  { id: 'ci-sirena', emoji: '🧜', es: { w: 'sirena', hint: 'Media mujer, medio pez, canta' }, en: { w: 'mermaid', hint: 'Half fish, and she sings' }, pt: { w: 'sereia', hint: 'Metade peixe, e canta' } },
+  { id: 'ci-pirata', emoji: '🏴', es: { w: 'pirata', hint: 'Parche, loro y tesoro' }, en: { w: 'pirate', hint: 'Eyepatch, parrot and treasure' }, pt: { w: 'pirata', hint: 'Tapa-olho, papagaio e tesouro' } },
+  { id: 'ci-robot', emoji: '🤖', es: { w: 'robot', hint: 'Obedece hasta que deja de hacerlo' }, en: { w: 'robot', hint: 'Obeys until it stops obeying' }, pt: { w: 'robo', hint: 'Obedece até parar de obedecer' } },
+  { id: 'ci-fantasma', emoji: '👻', es: { w: 'fantasma', hint: 'No sabe que ya murió' }, en: { w: 'ghost', hint: 'Does not know it is dead yet' }, pt: { w: 'fantasma', hint: 'Não sabe que já morreu' } },
+  { id: 'ci-hobbit', emoji: '💍', es: { w: 'hobbit', hint: 'Pies peludos y un anillo' }, en: { w: 'hobbit', hint: 'Hairy feet and one ring' }, pt: { w: 'hobbit', hint: 'Pés peludos e um anel' } },
+  { id: 'ci-detective', emoji: '🔍', es: { w: 'detective', hint: 'Siempre sabe quién fue' }, en: { w: 'detective', hint: 'Always knows who did it' }, pt: { w: 'detetive', hint: 'Sempre sabe quem foi' } },
+  { id: 'ci-dragon', emoji: '🐉', es: { w: 'dragon', hint: 'Escupe fuego y cuida oro' }, en: { w: 'dragon', hint: 'Breathes fire, guards gold' }, pt: { w: 'dragao', hint: 'Cospe fogo e guarda ouro' } },
+  { id: 'ci-secuela', emoji: '🎬', es: { w: 'secuela', hint: 'Casi nunca supera a la primera' }, en: { w: 'sequel', hint: 'Rarely better than the first' }, pt: { w: 'sequencia', hint: 'Quase nunca supera a primeira' } },
+  { id: 'ci-palomitas', emoji: '🍿', es: { w: 'cabritas', hint: 'Suenan justo en la escena clave' }, en: { w: 'popcorn', hint: 'Crunches in the key scene' }, pt: { w: 'pipoca', hint: 'Estala bem na cena decisiva' } },
+  { id: 'ci-espia', emoji: '🕵️', es: { w: 'espia', hint: 'Traje, auto y martini' }, en: { w: 'spy', hint: 'Suit, car and a martini' }, pt: { w: 'espiao', hint: 'Terno, carro e martini' } },
+  { id: 'ci-monstruo', emoji: '👹', es: { w: 'monstruo', hint: 'Vive bajo la cama' }, en: { w: 'monster', hint: 'Lives under the bed' }, pt: { w: 'monstro', hint: 'Mora embaixo da cama' } },
+  { id: 'ci-final', emoji: '🎭', es: { w: 'desenlace', hint: 'Lo que nadie quiere que le cuenten' }, en: { w: 'spoiler', hint: 'What nobody wants to be told' }, pt: { w: 'spoiler', hint: 'O que ninguém quer ouvir antes' } },
+];
