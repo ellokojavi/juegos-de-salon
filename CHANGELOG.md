@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.27.0 — 2026-09-13
+- **Cuarto Rey guarda las cartas que salieron** (CR-18). Al pie de la pantalla final, plegado, queda
+  el repaso de la partida: cada carta con su palo y su color, quién la sacó y qué decía, en el orden
+  en que salieron. Los reyes se ven de una, con la carta dorada. Es para el que quiere revisar cómo
+  se dio la noche, no para el que solo mira quién tomó más, así que va cerrado y no estorba.
+- **Va después de los botones, al revés que en Toque y Fama y Línea de Tiempo.** En esos dos el
+  repaso va entre el ranking y los botones, pero acá el ranking tiene hasta seis filas y los botones
+  ya quedan justo en el borde de un celular de 812 px: sumarle un bloque encima los empujaba 64 px
+  más abajo (C-8).
+- **Una partida guardada de antes no trae historial** y se retoma igual; al final no muestra la
+  sección en vez de mostrarla a medias.
+- **Se descartan las variantes configurables de Cuarto Rey** (D-68). CR-17 pedía elegir la cantidad
+  de sorbos, seguir hasta agotar el mazo o usar naipe real. Los sorbos configurables se pagan en
+  textos —"toma dos sorbos" está escrito en las cartas, los overlays y el ranking, en tres idiomas—
+  para cambiar un número en una app donde el vaso lo sirve cada uno; las otras dos revierten D-06 y
+  D-12, que se decidieron con razones que siguen valiendo. Cuarto Rey queda sin pendientes.
+- La especificación del juego decía que los sonidos eran una idea futura desde antes de que
+  existieran: se voltea la carta con `SFX.flip` y el cuarto rey suena con su fanfarria desde la v0.3.
+
 ## 0.26.3 — 2026-09-13
 - **Las capturas del README muestran la app de hoy.** Treinta y ocho imágenes de Cuarto Rey,
   Toque y Fama, Batalla Naval, Línea de Tiempo y el menú en inglés venían de código anterior;

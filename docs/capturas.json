@@ -157,6 +157,13 @@
       "toma": "10-final"
     },
     {
+      "seccion": "cuarto-rey",
+      "imagen": "docs/screenshots/cuarto-rey/13-historial.png",
+      "pie": "Las cartas que salieron",
+      "guion": "cuarto-rey",
+      "toma": "13-historial"
+    },
+    {
       "seccion": "toque-y-fama",
       "imagen": "docs/screenshots/toque-y-fama/01-intro.png",
       "pie": "Modos de juego",
