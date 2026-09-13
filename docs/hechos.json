@@ -1,5 +1,5 @@
 {
-  "version": "0.27.0",
+  "version": "0.27.1",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -172,6 +172,35 @@
         "ahorcado/index.html",
         "ahorcado/rules.js",
         "ahorcado/style.css"
+      ]
+    },
+    {
+      "id": "dudo",
+      "emoji": "🎲",
+      "nombre": {
+        "es": "Dudo",
+        "en": "Liar's Dice",
+        "pt": "Dado Mentiroso"
+      },
+      "jugadores": "1 a 6",
+      "duracion": "10–20",
+      "disponible": true,
+      "estado": "v0.28",
+      "modos": [],
+      "variantes": [],
+      "pantallas": [
+        "intro",
+        "setup",
+        "play",
+        "result"
+      ],
+      "chat": false,
+      "archivos": [
+        "dudo/engine.js",
+        "dudo/game.js",
+        "dudo/index.html",
+        "dudo/rules.js",
+        "dudo/style.css"
       ]
     },
     {
@@ -382,6 +411,9 @@
     "batalla-naval/rules.js",
     "cuarto-rey/game.js",
     "cuarto-rey/rules.js",
+    "dudo/engine.js",
+    "dudo/game.js",
+    "dudo/rules.js",
     "linea-de-tiempo/decks/brasil.js",
     "linea-de-tiempo/decks/chile.js",
     "linea-de-tiempo/decks/futbol.js",
@@ -408,6 +440,7 @@
     "assets/js/transport/ratelimit.test.mjs",
     "assets/js/transport/stats.test.mjs",
     "batalla-naval/engine.test.mjs",
+    "dudo/engine.test.mjs",
     "linea-de-tiempo/engine.test.mjs",
     "panel/aggregate.test.mjs",
     "toque-y-fama/engine.test.mjs"
@@ -421,6 +454,7 @@
     "batalla-naval-online.mjs",
     "compartir-sala.mjs",
     "cuarto-rey.mjs",
+    "dudo-local.mjs",
     "enlace-invitacion.mjs",
     "linea-de-tiempo-chat.mjs",
     "linea-de-tiempo-eleccion.mjs",
@@ -476,6 +510,10 @@
       "titulo": "Especificación: Cuarto Rey"
     },
     {
+      "ruta": "docs/juegos/dudo.md",
+      "titulo": "Diseño: Dudo"
+    },
+    {
       "ruta": "docs/juegos/linea-de-tiempo.md",
       "titulo": "Diseño: Línea de Tiempo"
     },
@@ -504,6 +542,7 @@
     "linea-de-tiempo": 11,
     "toque-y-fama": 9,
     "ahorcado": 9,
+    "dudo": 7,
     "batalla-naval": 7,
     "cuarto-rey": 12
   }
