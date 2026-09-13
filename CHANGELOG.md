@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.26.3 — 2026-09-13
+- **Las capturas del README muestran la app de hoy.** Treinta y ocho imágenes de Cuarto Rey,
+  Toque y Fama, Batalla Naval, Línea de Tiempo y el menú en inglés venían de código anterior;
+  se rehicieron con los guiones de punta a punta.
+- **La captura "Pásale el celular" de Toque y Fama mostraba el tablero, no el pase.** La toma
+  se sacaba justo después de anotar los dos números secretos, y ahí no hay pase que mostrar:
+  quien anotó último es quien juega primero. En el README quedaban dos imágenes iguales, una
+  de ellas con un pie que no correspondía. Ahora sale la pantalla que junta la respuesta al
+  intento y el pase al siguiente jugador (C-9), que además es la que muestra famas y toques.
+  El guion la saca con nombre fijo, porque una toma numerada dentro de un bucle no la puede
+  encontrar `readme.py revisar`.
+
 ## 0.26.2 — 2026-09-13
 - **El menú se reordenó**: Línea de Tiempo, Toque y Fama, El Ahorcado, Batalla Naval y Cuarto Rey.
   Antes el orden era el de cuándo se fue construyendo cada juego, que no le dice nada a quien llega.
