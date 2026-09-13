@@ -180,9 +180,9 @@
     {
       "seccion": "toque-y-fama",
       "imagen": "docs/screenshots/toque-y-fama/04-pasale.png",
-      "pie": "Pásale el celular",
+      "pie": "La respuesta y el pase, en una pantalla",
       "guion": "toque-y-fama-local",
-      "toma": "06-handoff-start"
+      "toma": "08-respuesta-y-pase"
     },
     {
       "seccion": "toque-y-fama",
