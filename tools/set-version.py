@@ -26,9 +26,12 @@ MODULES = [
     'linea-de-tiempo/game.js', 'linea-de-tiempo/rules.js', 'linea-de-tiempo/engine.js',
     'linea-de-tiempo/decks/index.js', 'linea-de-tiempo/decks/historia.js', 'linea-de-tiempo/decks/musica.js',
     'linea-de-tiempo/decks/chile.js', 'linea-de-tiempo/decks/pop.js', 'linea-de-tiempo/decks/brasil.js', 'linea-de-tiempo/decks/futbol.js',
+    'ahorcado/game.js', 'ahorcado/rules.js', 'ahorcado/engine.js',
+    'ahorcado/decks/index.js', 'ahorcado/decks/chile.js', 'ahorcado/decks/animales.js',
+    'ahorcado/decks/comida.js', 'ahorcado/decks/cine.js', 'ahorcado/decks/deportes.js',
     'panel/panel.js', 'panel/aggregate.js',
 ]
-PAGES = { 'index.html': '', 'cuarto-rey/index.html': '../', 'toque-y-fama/index.html': '../', 'batalla-naval/index.html': '../', 'linea-de-tiempo/index.html': '../', 'panel/index.html': '../' }
+PAGES = { 'index.html': '', 'cuarto-rey/index.html': '../', 'toque-y-fama/index.html': '../', 'batalla-naval/index.html': '../', 'linea-de-tiempo/index.html': '../', 'ahorcado/index.html': '../', 'panel/index.html': '../' }
 
 def revisar_readme():
     """El README, contra el código de hoy. Devuelve True si está al día."""
