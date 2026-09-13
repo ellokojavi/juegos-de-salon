@@ -66,9 +66,9 @@ for (const g of GAMES) {
 function clavesDirectas(src, lang) {
   // Cada idioma es una constante suelta (const ES = { … }), no una clave de LOCALES
   const desde = src.search(new RegExp(`^const ${lang.toUpperCase()}\\s*=\\s*\\{`, 'm'));
-  if (desde < 0) return [];
+  if (desde < 0) return null;
   const abre = src.indexOf('{', desde);
-  if (abre < 0) return [];
+  if (abre < 0) return null;
   const claves = [];
   let hondo = 0, i = abre, comilla = null;
   for (; i < src.length; i++) {
@@ -86,13 +86,20 @@ function clavesDirectas(src, lang) {
 
 for (const g of GAMES) {
   const src = await readFile(new URL(`../../${g.path}rules.js`, import.meta.url), 'utf8');
+  const cuantas = {};
   for (const lang of LANGS) {
     const claves = clavesDirectas(src, lang);
-    assert.ok(claves.length > 5, `rules.js de ${g.id}: no se pudieron leer las claves de ${lang}`);
+    assert.ok(claves?.length, `rules.js de ${g.id}: no se encontró el bloque const ${lang.toUpperCase()} = {`);
     const vistas = new Set(), repes = new Set();
     for (const k of claves) { if (vistas.has(k)) repes.add(k); vistas.add(k); }
     assert.deepEqual([...repes], [], `rules.js de ${g.id}, ${lang}: claves repetidas (la segunda pisa a la primera)`);
+    cuantas[lang] = claves.length;
   }
+  // Los tres bloques tienen las mismas claves (eso ya lo comprueba same()), así que si uno se
+  // leyó con otra cantidad es que el recorrido de llaves se perdió justo en ese idioma. Vale
+  // para un juego con mucho contenido y para uno chico, que es lo que no hacía contar claves.
+  assert.equal(new Set(Object.values(cuantas)).size, 1,
+    `rules.js de ${g.id}: los tres idiomas no dieron la misma cantidad de claves (${JSON.stringify(cuantas)})`);
 }
 
-console.log('i18n: los tres idiomas tienen las mismas claves en menú, frases, mazos y los cinco juegos');
+console.log(`i18n: los tres idiomas tienen las mismas claves en menú, frases, mazos y los ${GAMES.length} juegos`);

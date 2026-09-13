@@ -36,6 +36,16 @@ export const GAMES = [
     available: true,
   },
   {
+    id: 'dudo',
+    emoji: '🎲',
+    name: { es: 'Dudo', en: 'Liar\'s Dice', pt: 'Dado Mentiroso' },
+    tagline: { es: 'Apuesta cuántos dados hay en la mesa y aguanta la cara. En un celular o contra el celular.', en: 'Bid how many dice are on the table and keep a straight face. One phone or versus the phone.', pt: 'Aposte quantos dados tem na mesa e segure a cara. Em um celular ou contra o celular.' },
+    players: '1–6',
+    duration: '10–20',
+    path: 'dudo/',
+    available: true,
+  },
+  {
     id: 'batalla-naval',
     emoji: '⚓',
     name: { es: 'Batalla Naval', en: 'Battleship', pt: 'Batalha Naval' },

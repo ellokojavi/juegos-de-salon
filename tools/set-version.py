@@ -29,9 +29,10 @@ MODULES = [
     'ahorcado/game.js', 'ahorcado/rules.js', 'ahorcado/engine.js',
     'ahorcado/decks/index.js', 'ahorcado/decks/chile.js', 'ahorcado/decks/animales.js',
     'ahorcado/decks/comida.js', 'ahorcado/decks/cine.js', 'ahorcado/decks/deportes.js',
+    'dudo/game.js', 'dudo/rules.js', 'dudo/engine.js',
     'panel/panel.js', 'panel/aggregate.js',
 ]
-PAGES = { 'index.html': '', 'cuarto-rey/index.html': '../', 'toque-y-fama/index.html': '../', 'batalla-naval/index.html': '../', 'linea-de-tiempo/index.html': '../', 'ahorcado/index.html': '../', 'panel/index.html': '../' }
+PAGES = { 'index.html': '', 'cuarto-rey/index.html': '../', 'toque-y-fama/index.html': '../', 'batalla-naval/index.html': '../', 'linea-de-tiempo/index.html': '../', 'ahorcado/index.html': '../', 'dudo/index.html': '../', 'panel/index.html': '../' }
 
 def revisar_readme():
     """El README, contra el código de hoy. Devuelve True si está al día."""

@@ -36,6 +36,33 @@ if (!juego) {
  * si un juego necesita otra cosa, se suma acá y no en un guion nuevo.
  */
 const CAMINOS = {
+  dudo: {
+    intro: [],
+    configuracion: [`document.querySelectorAll('.mode')[0].click()`],
+    // Contra el celular se llega a la mesa sin pantalla de pase de por medio
+    juego: [
+      `document.querySelectorAll('.mode')[2].click()`,
+      `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
+      `document.querySelector('#setup-actions .btn--yellow').click()`,
+    ],
+    // Con la pinta elegida aparece el selector de cantidad, que es la parte apretada de la barra
+    apuesta: [
+      `document.querySelectorAll('.mode')[2].click()`,
+      `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
+      `document.querySelector('#setup-actions .btn--yellow').click()`,
+      `document.querySelectorAll('.pinta')[4].click()`,
+    ],
+    // Se destapa la mesa: se apuesta un disparate y se duda de la respuesta del celular
+    destape: [
+      `document.querySelectorAll('.mode')[2].click()`,
+      `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
+      `document.querySelector('#setup-actions .btn--yellow').click()`,
+      `document.querySelectorAll('.pinta')[5].click()`,
+      `document.querySelector('#actions .btn--yellow').click()`,
+      `1`,   // el celular se demora en cantar su apuesta: un paso de espera
+      `[...document.querySelectorAll('#actions .btn')].find(b=>/Dudo|Liar|Duvido/i.test(b.textContent))?.click()`,
+    ],
+  },
   ahorcado: {
     intro: [],
     configuracion: [`document.querySelectorAll('.mode')[0].click()`],
@@ -80,7 +107,9 @@ if (!camino) {
 
 const b = await launch({ port: 9451, dir: `${salida}/perfil`, out: salida, width: ancho, height: alto });
 await b.go(`${base}/${juego}/`, 1500);
-await b.evaluate(`localStorage.clear(); localStorage.setItem('juegos-de-salon:lang', JSON.stringify('${idioma}')); 1`);
+// El idioma se guarda como texto pelado: getLang() compara contra ['es','en','pt'] y un
+// JSON.stringify le dejaba las comillas dentro, así que --idioma no hacía nada.
+await b.evaluate(`localStorage.clear(); localStorage.setItem('juegos-de-salon:lang', '${idioma}'); 1`);
 await b.go(`${base}/${juego}/`, 1500);
 for (const paso of camino) { await b.evaluate(`(()=>{ ${paso} ; return 1})()`); await sleep(700); }
 await sleep(400);

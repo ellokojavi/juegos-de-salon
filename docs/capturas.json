@@ -79,6 +79,11 @@
       "red": false,
       "que": "un celular en cadena y el solitario"
     },
+    "dudo-local": {
+      "archivo": "dudo-local.mjs",
+      "red": false,
+      "que": "duelo contra el celular y tres jugadores en un celular"
+    },
     "ahorcado-online": {
       "archivo": "ahorcado-online.mjs",
       "red": true,
@@ -351,6 +356,55 @@
       "pie": "Todas a la vista",
       "guion": "linea-de-tiempo-mesa",
       "toma": "mesa-02-mesa-completa"
+    },
+    {
+      "seccion": "dudo",
+      "imagen": "docs/screenshots/dudo/01-intro.png",
+      "pie": "Modos de juego",
+      "guion": "dudo-local",
+      "toma": "01-intro"
+    },
+    {
+      "seccion": "dudo",
+      "imagen": "docs/screenshots/dudo/02-configuracion.png",
+      "pie": "Quiénes juegan y si se puede calzar",
+      "guion": "dudo-local",
+      "toma": "02-configuracion"
+    },
+    {
+      "seccion": "dudo",
+      "imagen": "docs/screenshots/dudo/03-mesa.png",
+      "pie": "Tus dados y la mesa",
+      "guion": "dudo-local",
+      "toma": "03-mesa"
+    },
+    {
+      "seccion": "dudo",
+      "imagen": "docs/screenshots/dudo/04-apuesta.png",
+      "pie": "Elegir pinta y cantidad",
+      "guion": "dudo-local",
+      "toma": "04-apuesta"
+    },
+    {
+      "seccion": "dudo",
+      "imagen": "docs/screenshots/dudo/05-destape.png",
+      "pie": "Se destapa la mesa y se cuenta",
+      "guion": "dudo-local",
+      "toma": "05-destape"
+    },
+    {
+      "seccion": "dudo",
+      "imagen": "docs/screenshots/dudo/07-pase.png",
+      "pie": "Pásale el celular",
+      "guion": "dudo-local",
+      "toma": "07-pase"
+    },
+    {
+      "seccion": "dudo",
+      "imagen": "docs/screenshots/dudo/06-resultado.png",
+      "pie": "Quién ganó y cómo se fue dando",
+      "guion": "dudo-local",
+      "toma": "06-resultado"
     },
     {
       "seccion": "idiomas",

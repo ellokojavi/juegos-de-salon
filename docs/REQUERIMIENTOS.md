@@ -61,6 +61,25 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | CR-21 | Todo el contenido del juego (reglas, mini-juegos, penitencias, categorías, ideas de Nunca Nunca) disponible en español e inglés. | ✅ v0.2 |
 | CR-22 | Todo el contenido del juego en portugués (Quarto Rei, Era Uma Vez, Porquinho Bochechudo, Cultura de Boteco, Eu Nunca, prendas y categorías adaptadas). | ✅ v0.22 |
 
+## Dudo (DU) — ver [especificación](juegos/dudo.md)
+
+| ID | Requerimiento | Estado |
+|---|---|---|
+| DU-01 | De 2 a 6 jugadores, cinco dados cada uno; cada jugador ve solo los suyos. | ✅ v0.28 |
+| DU-02 | Apuesta de cantidad + pinta sobre el total de la mesa, con los ases de comodín. | ✅ v0.28 |
+| DU-03 | La app no deja hacer una apuesta ilegal: subir es más cantidad o la misma con pinta mayor, y entrar y salir de los ases cuesta la mitad y el doble más uno. | ✅ v0.28 |
+| DU-04 | Dudar destapa la mesa, cuenta la pinta más los ases y quita un dado a quien se equivocó. | ✅ v0.28 |
+| DU-05 | Calzar: acertar la cantidad exacta devuelve un dado (tope cinco) y fallar quita uno; solo desde la mitad de los dados de la mesa. Es configurable. | ✅ v0.28 |
+| DU-06 | Quien pierde el dado abre la ronda siguiente; quien se queda sin dados sale y gana el último con dados. | ✅ v0.28 |
+| DU-07 | Modo un celular, de 2 a 6, con pantalla de pase entre turnos (C-9). | ✅ v0.28 |
+| DU-08 | Modo contra el celular: el aparato apuesta por probabilidad y **solo** con sus propios dados. | ✅ v0.28 |
+| DU-09 | Modo varios celulares con sala, chat y turnos. Los dados no viajan: se comprometen con hash y se destapan al dudar (C-10). | ⏳ pendiente (el motor ya habla el protocolo) |
+| DU-10 | Memoria de partida en todos los modos (C-6). | ✅ v0.28 |
+| DU-11 | Textos e interfaz en español, inglés y portugués, con el plural de cada pinta (C-3). | ✅ v0.28 |
+| DU-12 | El destape muestra los dados de todos con los que cuentan marcados, el total y quién pierde el dado. | ✅ v0.28 |
+| DU-13 | Repaso de la partida al final: qué se apostó, cuánto había y quién perdió el dado en cada ronda. | ✅ v0.28 |
+| DU-14 | Ronda obligada: con un jugador en un dado, esa ronda se juega sin comodín y sin cambiar de pinta. | ⏳ pendiente |
+
 ## Requerimientos no funcionales
 
 - **Accesible al tacto:** botones de al menos 44 px de alto, texto grande, alto contraste sobre fondo oscuro.
