@@ -16,6 +16,7 @@ App web (mobile-first) con juegos de salón para jugar con amigos: de naipes, de
 | ⏳ [Línea de Tiempo / Timeline / Linha do Tempo](#-línea-de-tiempo) | 1 a 6 | Un celular · Varios celulares · Jugar solo | v0.9 |
 | 🔢 [Toque y Fama / Bulls and Cows / Toque e Fama](#-toque-y-fama) | 1 a 2 | Un celular · Dos celulares · Contra el celular | v0.4 |
 | 🪢 [El Ahorcado / Hangman / Forca](#-el-ahorcado) | 1 a 6 | Un celular · Varios celulares · Jugar solo | v0.26 |
+| 🎲 [Dudo / Liar's Dice / Dado Mentiroso](#-dudo) | 1 a 6 | Un celular | v0.28 |
 | ⚓ [Batalla Naval / Battleship / Batalha Naval](#-batalla-naval) | 1 a 2 | Un celular · Dos celulares · Contra el celular | v0.6 |
 | 👑 [Cuarto Rey / Fourth King / Quarto Rei](#-cuarto-rey) | 4 a 6 | Un celular | v0.27 |
 <!-- /generado -->
@@ -221,6 +222,49 @@ Especificación y diseño: [docs/juegos/ahorcado.md](docs/juegos/ahorcado.md)
 
 ---
 
+## 🎲 Dudo
+
+<!-- generado: capturas:dudo · lo reescribe python3 tools/readme.py actualizar -->
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/dudo/01-intro.png" width="180" alt="Modos de juego"><br><sub>Modos de juego</sub></td>
+    <td align="center"><img src="docs/screenshots/dudo/02-configuracion.png" width="180" alt="Quiénes juegan y si se puede calzar"><br><sub>Quiénes juegan y si se puede calzar</sub></td>
+    <td align="center"><img src="docs/screenshots/dudo/03-mesa.png" width="180" alt="Tus dados y la mesa"><br><sub>Tus dados y la mesa</sub></td>
+    <td align="center"><img src="docs/screenshots/dudo/04-apuesta.png" width="180" alt="Elegir pinta y cantidad"><br><sub>Elegir pinta y cantidad</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/dudo/05-destape.png" width="180" alt="Se destapa la mesa y se cuenta"><br><sub>Se destapa la mesa y se cuenta</sub></td>
+    <td align="center"><img src="docs/screenshots/dudo/07-pase.png" width="180" alt="Pásale el celular"><br><sub>Pásale el celular</sub></td>
+    <td align="center"><img src="docs/screenshots/dudo/06-resultado.png" width="180" alt="Quién ganó y cómo se fue dando"><br><sub>Quién ganó y cómo se fue dando</sub></td>
+    <td></td>
+  </tr>
+</table>
+<!-- /generado -->
+
+El clásico de los dados, el que se juega en bares y sobremesas. Cada uno tira cinco dados y **mira
+solo los suyos**; se apuesta cuántos hay de una pinta **en toda la mesa** —"cuatro cincos"— y el que
+sigue sube la apuesta o dice **dudo**. Al dudar se destapa todo y se cuenta: si había tantos como se
+dijo o más, pierde un dado quien dudó; si había menos, quien apostó. Los **ases son comodín**. Quien
+se queda sin dados sale, y gana el último que le quede alguno.
+
+Acá el celular hace lo que en la mesa se hace mal: reparte los dados, **no deja hacer una apuesta
+ilegal** —subir es más cantidad, o la misma cantidad con pinta mayor, y los ases valen doble en las
+dos direcciones— y cuenta al instante, que es justo lo que se discute a gritos. **Calzar** es decir
+que la cantidad es exacta: si aciertas recuperas un dado, si fallas pierdes uno, y solo se puede
+desde la mitad de los dados de la mesa.
+
+- **📱 Un celular:** de dos a seis. Se pasa el celular y cada uno ve sus dados con la pantalla del
+  pase de por medio (C-9).
+- **🤖 Contra el celular:** duelo. El aparato apuesta con probabilidad y **solo mira sus propios
+  dados**: la decisión sale de cuántos dados desconocidos quedan y qué chance tienen de tapar la
+  apuesta, no de espiar los tuyos.
+- **📶 Varios celulares:** todavía no. El motor ya habla el protocolo de la sala —los dados se
+  comprometen con hash y se destapan al dudar (C-10)—, falta la sala.
+
+Especificación y diseño: [docs/juegos/dudo.md](docs/juegos/dudo.md)
+
+---
+
 ## Características comunes
 
 - **Idiomas:** español (por defecto), inglés y portugués de Brasil. El toggle del menú guarda la elección en el dispositivo; nunca se detecta el idioma del navegador (D-47, D-48). Ver [Idiomas](#idiomas).
@@ -230,7 +274,7 @@ Especificación y diseño: [docs/juegos/ahorcado.md](docs/juegos/ahorcado.md)
 
 ### Idiomas
 
-Toda la experiencia va en el idioma elegido: el menú y sus frases del pie, los cinco juegos
+Toda la experiencia va en el idioma elegido: el menú y sus frases del pie, los seis juegos
 con todos sus modos, las salas, el chat, los errores de transporte, las pantallas de "pásale
 el celular" y las cartas de todos los mazos de Línea de Tiempo. El portugués es el de
 Brasil, informal, y los nombres se traducen igual que en inglés:
@@ -242,6 +286,7 @@ Brasil, informal, y los nombres se traducen igual que en inglés:
 | Línea de Tiempo | Timeline | Linha do Tempo |
 | Toque y Fama | Bulls and Cows | Toque e Fama |
 | El Ahorcado | Hangman | Forca |
+| Dudo | Liar's Dice | Dado Mentiroso |
 | Batalla Naval | Battleship | Batalha Naval |
 | Cuarto Rey | Fourth King | Quarto Rei |
 <!-- /generado -->
@@ -300,6 +345,7 @@ y abrir http://localhost:8765 (los módulos ES necesitan servirse por HTTP). Tes
 ```bash
 node ahorcado/engine.test.mjs
 node batalla-naval/engine.test.mjs
+node dudo/engine.test.mjs
 node linea-de-tiempo/engine.test.mjs
 node toque-y-fama/engine.test.mjs
 node assets/js/i18n.test.mjs
@@ -388,6 +434,7 @@ toque-y-fama/               Juego Toque y Fama (engine.js + tests, game.js, rule
 batalla-naval/              Juego Batalla Naval (engine.js + tests, game.js, rules.js)
 linea-de-tiempo/            Juego Línea de Tiempo (engine.js + tests, game.js, rules.js, decks/)
 ahorcado/                   Juego El Ahorcado (engine.js + tests, game.js, rules.js, decks/)
+dudo/                       Juego Dudo (engine.js + tests, game.js, rules.js)
 assets/js/handoff.js        Transiciones compartidas: pásale el celular, pantalla tapada
 assets/js/chat.js           Chat de sala compartido (modos de varios celulares)
 assets/js/session.js        Memoria de partida compartida (retomar en cualquier modo)
@@ -416,6 +463,7 @@ docs/                       Requerimientos, decisiones, especificaciones y captu
 - [Diseño: El Ahorcado](docs/juegos/ahorcado.md)
 - [Diseño: Batalla Naval](docs/juegos/batalla-naval.md)
 - [Especificación: Cuarto Rey](docs/juegos/cuarto-rey.md)
+- [Diseño: Dudo](docs/juegos/dudo.md)
 - [Diseño: Línea de Tiempo](docs/juegos/linea-de-tiempo.md)
 - [Toque y Fama — estudio de factibilidad y propuesta de mecánica](docs/juegos/toque-y-fama-factibilidad.md)
 - [Especificación: Toque y Fama](docs/juegos/toque-y-fama.md)
