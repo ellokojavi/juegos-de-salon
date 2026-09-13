@@ -114,7 +114,7 @@ def orden_tests(tests):
 
 # De lo general a lo particular: los documentos nuevos caen al final, donde se ven.
 ORDEN_DOCS = ['docs/CANONES.md', 'docs/REQUERIMIENTOS.md', 'docs/DECISIONES.md',
-              'docs/AGREGAR-JUEGO.md', 'lab/README.md', 'docs/PANEL.md',
+              'docs/AGREGAR-JUEGO.md', 'docs/PANEL.md',
               'tools/e2e/README.md', 'firebase/README.md']
 
 

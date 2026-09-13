@@ -73,6 +73,16 @@
       "archivo": "linea-de-tiempo-chat.mjs",
       "red": true,
       "que": "chat de la sala"
+    },
+    "ahorcado-local": {
+      "archivo": "ahorcado-local.mjs",
+      "red": false,
+      "que": "un celular en cadena y el solitario"
+    },
+    "ahorcado-online": {
+      "archivo": "ahorcado-online.mjs",
+      "red": true,
+      "que": "sala de tres celulares en cadena"
     }
   },
   "capturas": [
@@ -348,6 +358,69 @@
       "pie": "Mesa en inglés",
       "guion": "cuarto-rey",
       "toma": "12-mesa-en"
+    },
+    {
+      "seccion": "ahorcado",
+      "imagen": "docs/screenshots/ahorcado/01-intro.png",
+      "pie": "Modos de juego",
+      "guion": "ahorcado-local",
+      "toma": "01-intro"
+    },
+    {
+      "seccion": "ahorcado",
+      "imagen": "docs/screenshots/ahorcado/02-configuracion.png",
+      "pie": "La palabra, los errores y quiénes juegan",
+      "guion": "ahorcado-local",
+      "toma": "02-setup"
+    },
+    {
+      "seccion": "ahorcado",
+      "imagen": "docs/screenshots/ahorcado/03-escribir.png",
+      "pie": "Cada uno le escribe al siguiente",
+      "guion": "ahorcado-local",
+      "toma": "04-word"
+    },
+    {
+      "seccion": "ahorcado",
+      "imagen": "docs/screenshots/ahorcado/04-juego.png",
+      "pie": "Horca, pista, palabra y teclado",
+      "guion": "ahorcado-local",
+      "toma": "07-play-medio"
+    },
+    {
+      "seccion": "ahorcado",
+      "imagen": "docs/screenshots/ahorcado/05-veredicto.png",
+      "pie": "La letra y el pase, juntos",
+      "guion": "ahorcado-local",
+      "toma": "06-letter-verdict"
+    },
+    {
+      "seccion": "ahorcado",
+      "imagen": "docs/screenshots/ahorcado/06-sala.png",
+      "pie": "Sala con código y QR",
+      "guion": "ahorcado-online",
+      "toma": "02-lobby"
+    },
+    {
+      "seccion": "ahorcado",
+      "imagen": "docs/screenshots/ahorcado/07-varios-celulares.png",
+      "pie": "Todos adivinando a la vez",
+      "guion": "ahorcado-online",
+      "toma": "04-play"
+    },
+    {
+      "seccion": "ahorcado",
+      "imagen": "docs/screenshots/ahorcado/08-resultado.png",
+      "pie": "Puntaje y palabras verificadas",
+      "guion": "ahorcado-local",
+      "toma": "08-result"
+    },
+    {
+      "seccion": "ahorcado",
+      "imagen": "docs/screenshots/ahorcado/09-solitario.png",
+      "pie": "Jugar solo: la app reparte la palabra",
+      "guion": "ahorcado-local",
+      "toma": "09-solo"
     }
   ],
   "fuentes": {
@@ -379,6 +452,9 @@
     "idiomas": [
       "assets/js/i18n.js",
       "cuarto-rey/"
+    ],
+    "ahorcado": [
+      "ahorcado/"
     ]
   }
 }

@@ -1,0 +1,23 @@
+/** Mazo Comida: lo que se pide, se cocina o se pelea en la mesa. */
+export const COMIDA = [
+  { id: 'co-chocolate', emoji: '🍫', es: { w: 'chocolate', hint: 'Se derrite en la mano' }, en: { w: 'chocolate', hint: 'Melts in your hand' }, pt: { w: 'chocolate', hint: 'Derrete na mão' } },
+  { id: 'co-sandia', emoji: '🍉', es: { w: 'sandia', hint: 'Verde afuera, roja adentro' }, en: { w: 'watermelon', hint: 'Green outside, red inside' }, pt: { w: 'melancia', hint: 'Verde por fora, vermelha por dentro' } },
+  { id: 'co-pizza', emoji: '🍕', es: { w: 'pizza', hint: 'Discusión eterna: ¿con piña?' }, en: { w: 'pizza', hint: 'Eternal fight: pineapple or not' }, pt: { w: 'pizza', hint: 'Briga eterna: com abacaxi?' } },
+  { id: 'co-palta', emoji: '🥑', es: { w: 'palta', hint: 'Se pasa de madura en un día' }, en: { w: 'avocado', hint: 'Goes bad in a single day' }, pt: { w: 'abacate', hint: 'Passa do ponto em um dia' } },
+  { id: 'co-queso', emoji: '🧀', es: { w: 'queso', hint: 'Mientras más viejo, mejor' }, en: { w: 'cheese', hint: 'The older, the better' }, pt: { w: 'queijo', hint: 'Quanto mais velho, melhor' } },
+  { id: 'co-cebolla', emoji: '🧅', es: { w: 'cebolla', hint: 'Hace llorar sin ser triste' }, en: { w: 'onion', hint: 'Makes you cry for no reason' }, pt: { w: 'cebola', hint: 'Faz chorar sem tristeza' } },
+  { id: 'co-helado', emoji: '🍦', es: { w: 'helado', hint: 'Corre contra el reloj en verano' }, en: { w: 'icecream', hint: 'Races the clock in summer' }, pt: { w: 'sorvete', hint: 'Corre contra o relógio no verão' } },
+  { id: 'co-pan', emoji: '🥖', es: { w: 'marraqueta', hint: 'Crujiente, y viene en pareja' }, en: { w: 'baguette', hint: 'Crusty, and very long' }, pt: { w: 'baguete', hint: 'Crocante e comprida' } },
+  { id: 'co-sushi', emoji: '🍣', es: { w: 'sushi', hint: 'Arroz, alga y palitos' }, en: { w: 'sushi', hint: 'Rice, seaweed and chopsticks' }, pt: { w: 'sushi', hint: 'Arroz, alga e hashi' } },
+  { id: 'co-cafe', emoji: '☕', es: { w: 'cafe', hint: 'Sin esto no arranca el día' }, en: { w: 'coffee', hint: 'The day does not start without it' }, pt: { w: 'cafe', hint: 'Sem isso o dia não começa' } },
+  { id: 'co-lentejas', emoji: '🥘', es: { w: 'lentejas', hint: 'Guiso de invierno, con chorizo' }, en: { w: 'lentils', hint: 'Winter stew, with sausage' }, pt: { w: 'lentilha', hint: 'Ensopado de inverno, com linguiça' } },
+  { id: 'co-mayonesa', emoji: '🥄', es: { w: 'mayonesa', hint: 'Se corta si la apuras' }, en: { w: 'mayonnaise', hint: 'It splits if you rush it' }, pt: { w: 'maionese', hint: 'Talha se você tiver pressa' } },
+  { id: 'co-canela', emoji: '🌿', es: { w: 'canela', hint: 'Corteza que perfuma el postre' }, en: { w: 'cinnamon', hint: 'Bark that perfumes dessert' }, pt: { w: 'canela', hint: 'Casca que perfuma a sobremesa' } },
+  { id: 'co-chorizo', emoji: '🌭', es: { w: 'chorizo', hint: 'Va al asado antes que la carne' }, en: { w: 'sausage', hint: 'Hits the grill before the steak' }, pt: { w: 'linguica', hint: 'Vai à brasa antes da carne' } },
+  { id: 'co-frutilla', emoji: '🍓', es: { w: 'frutilla', hint: 'Roja, con pepitas por fuera' }, en: { w: 'strawberry', hint: 'Red, with seeds on the outside' }, pt: { w: 'morango', hint: 'Vermelho, com sementes por fora' } },
+  { id: 'co-galleta', emoji: '🍪', es: { w: 'galleta', hint: 'Se moja en la leche' }, en: { w: 'cookie', hint: 'Gets dunked in the milk' }, pt: { w: 'biscoito', hint: 'Molhado no leite' } },
+  { id: 'co-pimienta', emoji: '🧂', es: { w: 'pimienta', hint: 'Va junto a la sal y hace estornudar' }, en: { w: 'pepper', hint: 'Sits next to the salt' }, pt: { w: 'pimenta', hint: 'Fica ao lado do sal' } },
+  { id: 'co-tallarines', emoji: '🍝', es: { w: 'tallarines', hint: 'Con salsa, y se enrollan' }, en: { w: 'noodles', hint: 'You twirl them with sauce' }, pt: { w: 'macarrao', hint: 'Com molho, e se enrola' } },
+  { id: 'co-huevo', emoji: '🥚', es: { w: 'huevo', hint: 'Frito, duro o revuelto' }, en: { w: 'egg', hint: 'Fried, boiled or scrambled' }, pt: { w: 'ovo', hint: 'Frito, cozido ou mexido' } },
+  { id: 'co-manjar', emoji: '🍮', es: { w: 'manjar', hint: 'Leche y azúcar, horas al fuego' }, en: { w: 'caramel', hint: 'Milk and sugar, hours on the stove' }, pt: { w: 'doce', hint: 'Leite e açúcar, horas no fogo' } },
+];
