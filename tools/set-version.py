@@ -30,9 +30,10 @@ MODULES = [
     'ahorcado/decks/index.js', 'ahorcado/decks/chile.js', 'ahorcado/decks/animales.js',
     'ahorcado/decks/comida.js', 'ahorcado/decks/cine.js', 'ahorcado/decks/deportes.js',
     'dudo/game.js', 'dudo/rules.js', 'dudo/engine.js',
+    'julepe/game.js', 'julepe/rules.js', 'julepe/engine.js', 'assets/js/sobre.js',
     'panel/panel.js', 'panel/aggregate.js',
 ]
-PAGES = { 'index.html': '', 'cuarto-rey/index.html': '../', 'toque-y-fama/index.html': '../', 'batalla-naval/index.html': '../', 'linea-de-tiempo/index.html': '../', 'ahorcado/index.html': '../', 'dudo/index.html': '../', 'panel/index.html': '../' }
+PAGES = { 'index.html': '', 'cuarto-rey/index.html': '../', 'toque-y-fama/index.html': '../', 'batalla-naval/index.html': '../', 'linea-de-tiempo/index.html': '../', 'ahorcado/index.html': '../', 'dudo/index.html': '../', 'julepe/index.html': '../', 'panel/index.html': '../' }
 
 def tarjetas_sociales():
     """Las etiquetas de Open Graph salen de games.js: se rehacen antes de estampar (D-72)."""

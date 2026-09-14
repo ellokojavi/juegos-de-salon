@@ -20,6 +20,7 @@ Mobile-first web app with party games to play with friends: card games, drinking
 | 🪢 [Hangman / El Ahorcado / Forca](#-hangman-el-ahorcado) | 1 to 6 | One phone · Several phones · Play alone | v0.26 |
 | 🎲 [Liar's Dice / Dudo / Dado Mentiroso](#-liars-dice-dudo) | 1 to 6 | One phone · Several phones · Versus the phone | v0.32 |
 | ⚓ [Battleship / Batalla Naval / Batalha Naval](#-battleship-batalla-naval) | 1 to 2 | One phone · Two phones · Versus the phone | v0.6 |
+| 🍹 [Julep / Julepe / Paga o Bolo](#-julep-julepe) | 1 to 6 | One phone · Several phones · Versus the phone | v0.34 |
 | 👑 [Fourth King / Cuarto Rey / Quarto Rei](#-fourth-king-cuarto-rey) | 4 to 6 | One phone | v0.27 |
 <!-- /generado -->
 
@@ -249,6 +250,47 @@ Spec and design: [docs/juegos/dudo.md](docs/juegos/dudo.md)
 
 ---
 
+## 🍹 Julep (Julepe)
+
+<!-- generado: capturas:julepe · written by python3 tools/readme.py actualizar -->
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/julepe/01-intro.png" width="180" alt="Game modes"><br><sub>Game modes</sub></td>
+    <td align="center"><img src="docs/screenshots/julepe/02-configuracion.png" width="180" alt="How many rivals and how many hands"><br><sub>How many rivals and how many hands</sub></td>
+    <td align="center"><img src="docs/screenshots/julepe/03-declaracion.png" width="180" alt="In or out, in secret"><br><sub>In or out, in secret</sub></td>
+    <td align="center"><img src="docs/screenshots/julepe/04-cambio.png" width="180" alt="Swap up to three cards"><br><sub>Swap up to three cards</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/julepe/05-baza.png" width="180" alt="Illegal cards are dimmed"><br><sub>Illegal cards are dimmed</sub></td>
+    <td align="center"><img src="docs/screenshots/julepe/06-julepe.png" width="180" alt="A julep: drink the whole pot"><br><sub>A julep: drink the whole pot</sub></td>
+    <td align="center"><img src="docs/screenshots/julepe/07-reparto.png" width="180" alt="Handing out the sips you won"><br><sub>Handing out the sips you won</sub></td>
+    <td align="center"><img src="docs/screenshots/julepe/09-pase.png" width="180" alt="Pass the phone"><br><sub>Pass the phone</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/julepe/online-01-sala.png" width="180" alt="Room with code and QR"><br><sub>Room with code and QR</sub></td>
+    <td align="center"><img src="docs/screenshots/julepe/08-resultado.png" width="180" alt="Who drank the least"><br><sub>Who drank the least</sub></td>
+    <td></td>
+    <td></td>
+  </tr>
+</table>
+<!-- /generado -->
+
+A trick-taking game from the Tute family, played for drinks. There is a **pot** of sips on the table. You look at your five cards and say, in secret, whether you are **in** or **out**. Going in means committing to win **two of the five tricks**: make it and you are safe, and you get to hand out two sips per trick to anyone you like; fall short and you **drink the whole pot**. That is a **julep**. Everything drunk goes straight back into the pot, so two juleps in a row leave twenty sips sitting there before anyone notices.
+
+The phone does what a real table does badly. It deals, it keeps the pot, it remembers who owes whom, and above all it **refuses illegal cards**: you must follow the suit led, you must play higher if you can win the trick, and you must trump when you are out of the suit. Those three rules are what people argue about all night; here the cards that cannot be played are simply dimmed, with a line saying which rule is doing it. Nobody has to learn a rule by breaking it.
+
+If only one player goes in, the hand would be no hand at all, so **the dealer is dragged in** and has to play it (D-83). Dealing is a risk too, which is exactly the story the table tells afterwards.
+
+- **📱 One phone:** two to six players. The phone goes around the table for every declaration, every swap and every card, with the result of what just happened shown before each handoff (C-9).
+- **📡 Several phones:** a room with a 4-letter code, a QR and chat, two to six players. The deal travels **sealed for each player**: every phone publishes a public key when it joins, and the dealer seals each hand with the key of the person it belongs to (D-81). Nobody else can open it, not even reading the room from the console. When the hand ends everyone reveals what they were dealt and the app checks that no one played a card they did not have: "Cards verified ✅" (C-10). It is also what the table wants to see anyway — what the player who got juleped was holding.
+- **🤖 Versus the phone:** one to five phone rivals, however many you want at the table. They weigh their hand the way you would (how many trumps, how high, how many aces and kings), and they get more careful as the pot grows: risking twenty sips for the right to hand out four is not the same bet as risking six.
+
+The name changes in each language, because a name only works if it is recognised (D-84): the English cousin of this game is *Loo*, which today reads as the toilet, so in English it is **Julep** — a real word, a drink, and one letter from the original. In Portuguese there is no relative to borrow from, but *o bolo* is what the pot is called in Brazil, so it is **Paga o Bolo**.
+
+Spec and design: [docs/juegos/julepe.md](docs/juegos/julepe.md)
+
+---
+
 ## What every game shares
 
 - **Languages:** Spanish (default), English and Brazilian Portuguese. The menu toggle saves the choice on the device, and the browser language is never used to guess (D-47, D-48). See [Languages](#languages).
@@ -269,6 +311,7 @@ The whole experience is translated: the menu and its footer lines, the six games
 | El Ahorcado | Hangman | Forca |
 | Dudo | Liar's Dice | Dado Mentiroso |
 | Batalla Naval | Battleship | Batalha Naval |
+| Julepe | Julep | Paga o Bolo |
 | Cuarto Rey | Fourth King | Quarto Rei |
 <!-- /generado -->
 
@@ -343,6 +386,7 @@ Then open http://localhost:8765 (ES modules have to be served over HTTP). Tests 
 node ahorcado/engine.test.mjs
 node batalla-naval/engine.test.mjs
 node dudo/engine.test.mjs
+node julepe/engine.test.mjs
 node linea-de-tiempo/engine.test.mjs
 node toque-y-fama/engine.test.mjs
 node assets/js/i18n.test.mjs
@@ -474,6 +518,7 @@ These documents are in Spanish, like the rest of the project.
 - [Diseño: Batalla Naval](docs/juegos/batalla-naval.md)
 - [Especificación: Cuarto Rey](docs/juegos/cuarto-rey.md)
 - [Diseño: Dudo](docs/juegos/dudo.md)
+- [Diseño: Julepe](docs/juegos/julepe.md)
 - [Diseño: Línea de Tiempo](docs/juegos/linea-de-tiempo.md)
 - [Toque y Fama: estudio de factibilidad y propuesta de mecánica](docs/juegos/toque-y-fama-factibilidad.md)
 - [Especificación: Toque y Fama](docs/juegos/toque-y-fama.md)
