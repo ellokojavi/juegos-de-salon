@@ -5,9 +5,11 @@
  * ninguna IP, ningún secreto ni el chat, y de los modos sin red no sale ni un nombre. Lo que
  * se apunta, por día y por entorno, en `stats/<env>/days/<día>`:
  *
- *   rooms/<CÓDIGO>: { game, at, v, players: { A: 'Javi' } }   solo dos celulares: la sala ya
- *                                                             tiene esos nombres, y al panel
- *                                                             solo lo lee el dueño
+ *   rooms/<CÓDIGO>: { game, at, v, players: { A: 'Javi' },     solo dos celulares: la sala ya
+ *                     co: { A: 'CL' }, end: { winner, name, at } }  tiene esos nombres, y al
+ *                                                             panel solo lo lee el dueño.
+ *                                                             `co` es el país del celular y
+ *                                                             `end` quién ganó (D-79).
  *   local/<juego>/<modo>/<n>: cuántas partidas sin red, por modo y jugadores
  *   applang/<idioma>: en qué idioma se eligió jugar (distinto del idioma del navegador)
  *   origin/<zona horaria>: celulares que empezaron o entraron a una partida
@@ -58,6 +60,60 @@ export function tzKey(tz) {
   return k || 'desconocida';
 }
 
+/**
+ * Países que se saben reconocer por el huso horario. No es una tabla de husos: es la lista de
+ * a qué países preguntarle cuáles son los suyos. Están los de la audiencia real de la app y
+ * los grandes; un país fuera de la lista cae en el país del idioma del navegador, y si el
+ * idioma tampoco lo dice, la sala queda sin bandera. Es una señal, no un padrón (D-79).
+ */
+export const PAISES = [
+  'CL', 'AR', 'BR', 'PE', 'BO', 'PY', 'UY', 'CO', 'EC', 'VE', 'MX', 'CR', 'PA', 'GT', 'HN',
+  'SV', 'NI', 'CU', 'DO', 'PR', 'US', 'CA', 'ES', 'PT', 'GB', 'IE', 'FR', 'DE', 'IT', 'NL',
+  'BE', 'CH', 'AT', 'SE', 'NO', 'DK', 'FI', 'PL', 'CZ', 'GR', 'RO', 'RU', 'TR', 'IL', 'AE',
+  'IN', 'CN', 'JP', 'KR', 'ID', 'PH', 'TH', 'VN', 'AU', 'NZ', 'ZA', 'NG', 'KE', 'EG', 'MA',
+];
+
+/** Los husos de un país, según el navegador. Si no sabe responder, ninguno. */
+const husosDe = region => { try { return new Intl.Locale('und-' + region).getTimeZones?.() || []; } catch (_) { return []; } };
+
+/**
+ * `America/Santiago` → `CL`, armando el mapa una sola vez y solo si hace falta.
+ * El caché va por función y no en una variable suelta: si no, la primera llamada real deja
+ * el mapa puesto y una prueba que pasa husos de mentira nunca los vería (la prueba pasaba
+ * sola o fallaba según el orden, que es la peor clase de prueba).
+ */
+const mapas = new Map();
+function paisDelHuso(tz, zonesOf) {
+  if (!tz) return '';
+  let mapa = mapas.get(zonesOf);
+  if (!mapa) {
+    mapa = new Map();
+    for (const cc of PAISES) for (const z of zonesOf(cc)) mapa.set(z, cc);
+    mapas.set(zonesOf, mapa);
+  }
+  return mapa.get(tz) || '';
+}
+
+/** `es-CL` → `CL`. Solo sirve cuando el idioma trae país, que no siempre lo trae. */
+export function regionOfLang(lang) {
+  const m = /^[A-Za-z]{2,3}[-_]([A-Za-z]{2})(?:[-_]|$)/.exec(String(lang || ''));
+  return m ? m[1].toUpperCase() : '';
+}
+
+/**
+ * País del celular en dos letras, para la lista de salas del panel (D-79).
+ *
+ * Sale del **huso horario** y no del idioma: un celular chileno puesto en inglés dice `en-US`
+ * y lo daría por estadounidense. El idioma queda de respaldo, para los países que no están en
+ * `PAISES` o para un navegador que no sepa decir qué husos tiene cada país. Si ninguno de los
+ * dos lo dice, se devuelve vacío y la sala se muestra sin bandera: preferimos un hueco a
+ * inventar un país.
+ */
+export function countryOf({ tz, lang } = {}, zonesOf = husosDe) {
+  const cc = paisDelHuso(tz, zonesOf) || regionOfLang(lang);
+  return /^[A-Z]{2}$/.test(cc) ? cc : '';
+}
+
 /** Idioma del navegador como clave, acotado. */
 export function langKey(lang) {
   const k = String(lang || '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 12);
@@ -78,6 +134,7 @@ export function fingerprint({ loc = globalThis.location, nav = globalThis.naviga
     env: envOf(loc || {}),
     v: versionOf(doc?.getElementById?.('importmap')?.textContent),
     tz: tzKey(tz),
+    co: countryOf({ tz, lang: nav?.language }),
     lang: langKey(nav?.language),
     app: langKey(app),
     hour: now.getHours(),
@@ -101,9 +158,23 @@ export function startChanges(fp, { game, mode, players } = {}) {
   return changes;
 }
 
-/** Registro de una sala nueva (dos celulares), con el nombre de quien la creó. */
+/** Registro de una sala nueva (dos celulares), con el nombre y el país de quien la creó. */
 export function roomRecord(fp, { game, role, name }) {
-  return { game, at: STAMP, v: fp.v, players: { [role]: String(name || '').slice(0, 20) } };
+  const r = { game, at: STAMP, v: fp.v, players: { [role]: String(name || '').slice(0, 20) } };
+  if (fp.co) r.co = { [role]: fp.co };
+  return r;
+}
+
+/**
+ * Quién ganó la sala (D-79). Va el rol y el nombre: el rol para cruzarlo con los jugadores
+ * del registro, el nombre para que la lista se lea aunque ese jugador nunca haya alcanzado a
+ * quedar apuntado. Un empate se apunta como `tie` y sin nombre.
+ */
+export function endRecord({ role, name }) {
+  const winner = /^[A-F]$/.test(String(role || '')) ? String(role) : 'tie';
+  const end = { winner, at: STAMP };
+  if (winner !== 'tie' && name) end.name = String(name).slice(0, 20);
+  return end;
 }
 
 export const dayPath = (env, day) => `stats/${env}/days/${day}`;
@@ -137,9 +208,20 @@ export function noteRoom(api, fp, { code, createdAt, game, role, name }) {
   return quiet(() => api.patch(dayPath(fp.env, dayOf(createdAt)), { [`rooms/${code}`]: roomRecord(fp, { game, role, name }) }));
 }
 
-/** Alguien entró a una sala ajena con un rol nuevo: se suma su nombre al registro. */
+/** Alguien entró a una sala ajena con un rol nuevo: se suman su nombre y su país. */
 export function notePlayer(api, fp, { code, createdAt, role, name }) {
-  return quiet(() => api.patch(dayPath(fp.env, dayOf(createdAt)), { [`rooms/${code}/players/${role}`]: String(name || '').slice(0, 20) }));
+  const cambios = { [`rooms/${code}/players/${role}`]: String(name || '').slice(0, 20) };
+  if (fp.co) cambios[`rooms/${code}/co/${role}`] = fp.co;
+  return quiet(() => api.patch(dayPath(fp.env, dayOf(createdAt)), cambios));
+}
+
+/**
+ * Se terminó la partida de una sala: queda quién ganó (D-79). Lo manda cada celular que llega
+ * a la pantalla final, y las reglas solo dejan escribirlo una vez: el primero que llegue lo
+ * deja puesto y los demás rebotan sin que nadie se entere, que es como se manda todo acá.
+ */
+export function noteEnd(api, fp, { code, createdAt, role, name }) {
+  return quiet(() => api.patch(dayPath(fp.env, dayOf(createdAt)), { [`rooms/${code}/end`]: endRecord({ role, name }) }));
 }
 
 /** Lo que usan los juegos y el transporte: la API real y la huella del navegador, de una. */
@@ -147,6 +229,11 @@ let shared = null;
 export function stats() {
   if (!shared) shared = { api: restApi(), fp: fingerprint() };
   return shared;
+}
+
+/** Atajo para el transporte: apunta al ganador de una sala. Nunca lanza ni se espera. */
+export function trackEnd(info) {
+  try { const s = stats(); return noteEnd(s.api, s.fp, info); } catch (_) { return Promise.resolve(); }
 }
 
 /** Atajo para los juegos: `trackStart({ game, mode, players })`. Nunca lanza ni se espera. */

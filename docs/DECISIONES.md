@@ -626,3 +626,36 @@ apuntando a distinto lado.
 **Consecuencias:** `tools/hechos.mjs` guarda los modos en los dos idiomas, no solo en español, y
 `jugadores` viaja como "1 to 6". Al agregar un juego hay un paso más explícito en
 `docs/AGREGAR-JUEGO.md`: la sección del README y el `pie` de las capturas van en inglés.
+
+---
+
+## D-79 · El panel anota quién ganó y de qué país se jugó
+**Fecha:** 2026-09-14 · **Estado:** vigente · **Cambia D-44**
+**Decisión:** El registro de una sala (`stats/<env>/days/<día>/rooms/<CÓDIGO>`) suma dos cosas:
+`co/<rol>`, el país del celular de cada jugador en dos letras, y `end: { winner, name, at }`, quién
+ganó esa partida. Con eso el panel muestra una **bitácora de salas jugadas**: cuándo, quiénes (con
+la bandera al lado del nombre), qué juego y quién ganó, filtrada por el rango de 7 o 30 días que ya
+tenía y paginada de a 20.
+**Qué cambia de D-44:** esa decisión decía que del panel "nunca sale quién ganó". Ahora sí, porque
+el dueño quiere leer las partidas como partidas y no solo como contadores. Lo demás de D-44 sigue
+igual: sin IP, sin secretos, sin chat, y de los modos sin red no sale ni un nombre. La sala ya
+guardaba los nombres, así que lo nuevo de verdad es el país y el resultado.
+**Por qué el país sale del huso horario y no del idioma:** un celular chileno puesto en inglés dice
+`en-US` y lo daría por estadounidense. Al navegador se le pregunta qué husos tiene cada país
+(`Intl.Locale.getTimeZones`), así que no hay tabla de husos que mantener; el idioma queda de
+respaldo y, si ninguno de los dos lo dice, la sala se muestra sin bandera. Preferimos un hueco a un
+país inventado.
+**Por qué se guarda el país y no el huso:** el huso es más fino que lo que se muestra y dice a qué
+ciudad pertenece el celular. En el registro por día ya está el contador de husos, que es agregado y
+no dice de quién es cada uno; acá, pegado a un nombre, se guarda solo lo que la lista enseña.
+**Por qué lo manda cada celular al llegar al final:** el ganador lo sabe el juego, no el transporte.
+Cada celular que llega a la pantalla final lo apunta y las reglas solo dejan escribirlo una vez: el
+primero lo deja puesto y los demás rebotan, sin reintentos ni coordinación. Si no sale, no sale: es
+mejor esfuerzo, como todo lo que va al panel.
+**Por defecto no se ven las pruebas ni las salas vacías:** las partidas de prueba corren en el
+entorno `dev` y el panel abre en `prod`, así que quedan fuera solas (D-45); y una sala donde nunca
+entró un segundo jugador no es una partida, así que se muestra solo si se pide con la casilla.
+**Consecuencias:** hay que **publicar las reglas** en la consola de Firebase; hasta entonces el país
+y el ganador se rechazan en silencio y la lista los muestra en guion. Nada de esto es retroactivo:
+las salas jugadas antes de esta versión salen sin bandera y sin ganador, y se muestran igual, porque
+una sala de la que se sabe menos es una sala que igual pasó.

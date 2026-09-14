@@ -18,13 +18,17 @@ import { gameLabel, MODES, MODE_IDS, ROOM_MODE, modeIcon } from '../assets/js/ga
 import { LANGS } from '../assets/js/i18n.js';
 import { ENVS } from '../assets/js/transport/stats.js';
 import { $, el } from '../assets/js/ui.js';
-import { DAY, ROOM_TTL, liveRooms, connections, summarize, top, tzLabel, ago, dayLabel, dayOf, codesOfDays, splitByEnv } from './aggregate.js';
+import { DAY, ROOM_TTL, liveRooms, connections, summarize, top, tzLabel, ago, dayLabel, dayOf, codesOfDays, splitByEnv, roomLog, paginate, flagOf, whenLabel } from './aggregate.js';
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
 
-const S = { user: null, env: 'prod', range: 7, rooms: {}, days: {}, daysLoaded: false, unsubRooms: null, unsubDays: null, denied: false, tick: null };
+const S = { user: null, env: 'prod', range: 7, rooms: {}, days: {}, daysLoaded: false, unsubRooms: null, unsubDays: null, denied: false, tick: null,
+  // Bitácora de salas (D-79): en qué página va y si se muestran las salas donde no entró nadie
+  logPage: 1, logSolas: false };
+
+const POR_PAGINA = 20;
 
 /* ------------------------------------------------------------------ */
 /* Entrar                                                              */
@@ -266,6 +270,47 @@ function renderRange() {
   const hours = $('#hours'); hours.innerHTML = '';
   const maxH = Math.max(1, ...s.hour);
   s.hour.forEach((v, h) => hours.append(el('div', { class: 'h', style: `height:${Math.max(2, (v / maxH) * 100)}%`, title: `${h}:00 · ${n(v)}`, 'data-h': h % 6 === 0 ? h : null })));
+
+  renderLog();
+}
+
+/**
+ * La lista de salas jugadas (D-79): cuándo, quiénes con su bandera, qué juego y quién ganó.
+ *
+ * El país y el ganador se empezaron a anotar con esta versión, así que las salas de antes los
+ * muestran en guion. No se esconden ni se completan a ojo: una sala vieja es una sala de la
+ * que se sabe menos, no una sala que no pasó.
+ */
+function renderLog() {
+  const today = dayOf(Date.now());
+  const filas = roomLog(S.days, { from: today - S.range + 1, to: today, soloJugadas: !S.logSolas });
+  const { rows, page, pages, total, desde } = paginate(filas, { page: S.logPage, perPage: POR_PAGINA });
+  S.logPage = page;
+
+  const quien = p => el('span', { class: 'q' }, p.co ? el('i', { class: 'flag', title: p.co }, flagOf(p.co)) : null, p.name);
+  const ganador = f => {
+    if (f.winner) return el('span', { class: 'won' }, '🏆 ', f.winnerName);
+    if (f.empate) return el('span', { class: 'tie' }, '🤝 Empate');
+    return el('span', { class: 'none', title: 'Esta sala terminó sin que quedara registro de quién ganó' }, '—');
+  };
+
+  fill($('#room-log'), rows.map(f => el('div', { class: 'log-row' },
+    el('div', { class: 'when' }, whenLabel(f.at), el('br'), el('span', { class: 'code' }, f.code)),
+    el('div', { class: 'game' }, gameLabel(f.game)),
+    el('div', { class: 'who' }, ...f.players.map(quien)),
+    el('div', { class: 'win' }, ganador(f)),
+  )), S.logSolas ? 'Ninguna sala en este rango.' : 'Ninguna sala jugada en este rango.');
+
+  const pager = $('#room-pager');
+  pager.innerHTML = '';
+  if (!total) return;
+  const hasta = Math.min(desde + rows.length, total);
+  const ir = d => () => { S.logPage = page + d; renderLog(); };
+  pager.append(
+    el('button', { class: 'btn btn--ghost btn--sm', disabled: page <= 1, onClick: ir(-1) }, '‹ Anterior'),
+    el('span', { class: 'muted small' }, `${desde + 1}–${hasta} de ${n(total)} ${total === 1 ? 'sala' : 'salas'}`),
+    el('button', { class: 'btn btn--ghost btn--sm', disabled: page >= pages, onClick: ir(1) }, 'Siguiente ›'),
+  );
 }
 
 /* ------------------------------------------------------------------ */
@@ -285,8 +330,10 @@ function renderControls() {
 renderControls();
 
 $('#btn-login').addEventListener('click', login);
-$('#env').addEventListener('change', e => { S.env = e.target.value; S.days = {}; S.daysLoaded = false; renderRange(); renderNow(); if (S.user) listen(); });
-$('#range').addEventListener('change', e => { S.range = Number(e.target.value); renderRange(); });
+$('#env').addEventListener('change', e => { S.env = e.target.value; S.days = {}; S.daysLoaded = false; S.logPage = 1; renderRange(); renderNow(); if (S.user) listen(); });
+// Cambiar el rango o el entorno empieza la lista de nuevo: la página 3 de otra cosa no existe
+$('#range').addEventListener('change', e => { S.range = Number(e.target.value); S.logPage = 1; renderRange(); });
+$('#log-solas').addEventListener('change', e => { S.logSolas = e.target.checked; S.logPage = 1; renderLog(); });
 
 // Gancho de solo lectura para pruebas (C-14): permite dibujar con datos sembrados sin entrar.
 window.__panel = {

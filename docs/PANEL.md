@@ -48,17 +48,35 @@ de esconderlas: si una sala real no alcanzó a registrarse, tiene que poder vers
 
 Sale del celular, por día y por entorno (`assets/js/transport/stats.js`):
 
-- **Dos celulares:** `rooms/<CÓDIGO>` con juego, hora del servidor, versión de la app y los
-  nombres de quienes entraron (`players/A..F`). Esos nombres ya viajan a la sala para que
-  el rival los vea; acá solo los lee el dueño.
+- **Dos celulares:** `rooms/<CÓDIGO>` con juego, hora del servidor, versión de la app, los
+  nombres de quienes entraron (`players/A..F`), el país de cada celular (`co/A..F`, dos
+  letras) y quién ganó (`end`). Esos nombres ya viajan a la sala para que el rival los vea;
+  acá solo los lee el dueño. El país y el ganador se anotan desde la versión 0.33.6 (D-79).
 - **Un celular, contra el celular, solo:** un contador por juego, modo y cantidad de
   jugadores. **Ningún nombre.**
 - **Cualquier modo:** contador de zona horaria, idioma del navegador, idioma elegido en el
   juego y hora local.
 
 No sale nunca: dirección IP (no hay servidor que la vea y no se consulta a nadie), los
-secretos de las partidas, el chat, quién ganó, ni el nombre de nadie en los modos sin red.
+secretos de las partidas, el chat, ni el nombre de nadie en los modos sin red. Quién ganó sí
+sale, pero solo de las salas: de una partida en un celular no se sabe ni quién jugó (D-79).
 Todo es mejor esfuerzo: si el envío falla, nadie se entera y la partida sigue igual.
+
+## La bitácora de salas (D-79)
+
+Al final del panel hay una lista de las **salas jugadas** en el rango elegido arriba (7 o 30
+días), de la más nueva a la más vieja y paginada de a 20:
+
+| Cuándo | Juego | Jugadores | Ganador |
+|---|---|---|---|
+| Día y hora de la sala, y su código | Nombre del juego | Cada nombre con la bandera de su país | 🏆 el que ganó, 🤝 si fue empate |
+
+- **Las pruebas no salen.** Corren en el entorno `dev` y el panel abre en `prod`; para verlas
+  se cambia el entorno arriba (D-45).
+- **Las salas donde nunca entró nadie más tampoco**, porque no son una partida. Hay una
+  casilla para incluirlas.
+- **Guion en el ganador** quiere decir que no quedó registro: una sala de antes de que esto
+  existiera, o un final que no alcanzó a enviarse. No es lo mismo que un empate.
 
 ## Cómo entrar (una sola vez, en la consola de Firebase)
 
@@ -141,7 +159,8 @@ panel, y porque lo de un juego que ya se fue del menú queda guardado igual.
 
 ## Qué queda fuera de esta versión
 
-- Resultado y duración de la partida (quién ganó, cuántos intentos): no interesa por ahora.
+- Duración de la partida y cuántos intentos tomó: no interesa por ahora. Quién ganó sí se
+  anota, desde la 0.33.6 (D-79).
 - Uso real de la cuota de Firebase (conexiones, descarga): no se lee desde el navegador.
   Sigue pendiente RP-22 con Cloud Monitoring.
 - Geolocalización por IP: descartada a propósito; la zona horaria alcanza.

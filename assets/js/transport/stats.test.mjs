@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import {
   envOf, versionOf, tzKey, langKey, fingerprint, startChanges, roomRecord, dayPath,
-  noteStart, noteRoom, notePlayer, restApi,
+  noteStart, noteRoom, notePlayer, noteEnd, endRecord, countryOf, regionOfLang, restApi,
 } from './stats.js';
 
 const INC = { '.sv': { increment: 1 } };
@@ -114,6 +114,59 @@ assert.equal(dayPath('prod', 20342), 'stats/prod/days/20342');
   assert.equal(sent[0].opts.method, 'PATCH');
   assert.equal(sent[0].opts.keepalive, true);
   assert.deepEqual(JSON.parse(sent[0].opts.body), { 'hour/3': INC });
+}
+
+// ---------------------------------------------------------------- país (D-79)
+{
+  // Los husos los responde el navegador; acá se le pasa uno de mentira para no depender del ICU
+  const husos = cc => ({ CL: ['America/Santiago', 'Pacific/Easter'], BR: ['America/Sao_Paulo'] })[cc] || [];
+  assert.equal(countryOf({ tz: 'America/Santiago', lang: 'en-US' }, husos), 'CL',
+    'manda el huso: un celular chileno puesto en inglés no es de Estados Unidos');
+  assert.equal(countryOf({ tz: 'Pacific/Easter', lang: '' }, husos), 'CL');
+  assert.equal(countryOf({ tz: 'America/Sao_Paulo', lang: 'pt-BR' }, husos), 'BR');
+  // Huso que el navegador no sabe de quién es: queda el país del idioma
+  assert.equal(countryOf({ tz: 'Europe/Madrid', lang: 'es-ES' }, husos), 'ES');
+  // Ni huso conocido ni idioma con país: mejor sin bandera que con una inventada
+  assert.equal(countryOf({ tz: 'Europe/Madrid', lang: 'es' }, husos), '');
+  assert.equal(countryOf({}, husos), '');
+  assert.equal(regionOfLang('pt-BR'), 'BR');
+  assert.equal(regionOfLang('es-419'), '', 'una región que no es un país no es un país');
+  assert.equal(regionOfLang('es'), '');
+}
+
+// El país viaja pegado a la sala: en el registro nuevo y al entrar alguien más
+{
+  const fp = { env: 'prod', v: '1.0.0', co: 'CL' };
+  const r = roomRecord(fp, { game: 'dudo', role: 'A', name: 'Javi' });
+  assert.deepEqual(r.co, { A: 'CL' });
+  assert.deepEqual(roomRecord({ ...fp, co: '' }, { game: 'dudo', role: 'A', name: 'Javi' }).co, undefined,
+    'sin país no se manda la llave: la regla exige dos letras');
+
+  const api = fakeApi();
+  const now = 20342 * DAY;
+  await notePlayer(api, { ...fp, co: 'BR' }, { code: 'ABCD', createdAt: now, role: 'B', name: 'Ana' });
+  assert.deepEqual(api.calls[0].changes, { 'rooms/ABCD/players/B': 'Ana', 'rooms/ABCD/co/B': 'BR' });
+}
+
+// ---------------------------------------------------------------- ganador (D-79)
+{
+  const e = endRecord({ role: 'B', name: 'Cata' });
+  assert.equal(e.winner, 'B');
+  assert.equal(e.name, 'Cata');
+  assert.deepEqual(e.at, { '.sv': 'timestamp' }, 'la hora la pone el servidor, no el celular');
+  assert.equal(endRecord({ role: 'Z', name: 'x' }).winner, 'tie', 'un rol que no existe no es un ganador');
+  assert.equal(endRecord({}).winner, 'tie');
+  assert.equal(endRecord({}).name, undefined, 'un empate no tiene nombre que anotar');
+  assert.equal(endRecord({ role: 'A', name: 'x'.repeat(40) }).name.length, 20, 'el nombre va acotado, como en la sala');
+
+  const api = fakeApi();
+  const createdAt = 20342 * DAY + 3600000;
+  await noteEnd(api, { env: 'prod', v: '1' }, { code: 'ABCD', createdAt, role: 'A', name: 'Javi' });
+  assert.equal(api.calls[0].path, dayPath('prod', 20342), 'se anota en el día en que nació la sala, no en el de hoy');
+  assert.equal(api.calls[0].changes['rooms/ABCD/end'].winner, 'A');
+
+  // Mejor esfuerzo: si la regla dice que no (ya estaba escrito), nadie se entera
+  await noteEnd(fakeApi({ fail: true }), { env: 'prod', v: '1' }, { code: 'ABCD', createdAt, role: 'A', name: 'Javi' });
 }
 
 console.log('stats.test.mjs: todo en verde');
