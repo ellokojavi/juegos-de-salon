@@ -67,6 +67,7 @@ console.log('contra el celular →', await pantalla(), '·', await ev(`document.
   '·', await ev(`document.getElementById('result-sub').textContent`), '· destapes:', destapes);
 console.log('calzar ofrecido en el duelo:', calzoOfrecido === 0 ? 'nunca (bien)' : `⚠️ ${calzoOfrecido} veces`);
 await ev(`document.getElementById('result-history').open = true; 1`); await sleep(300);
+await sleep(4200); // el confeti dura 4 s y taparía el título y el historial de la captura (D-76)
 await toma('06-resultado');
 console.log('historial:', await ev(`document.querySelectorAll('#history-list li').length`), 'rondas anotadas');
 

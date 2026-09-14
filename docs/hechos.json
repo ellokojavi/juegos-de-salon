@@ -1,5 +1,5 @@
 {
-  "version": "0.32.1",
+  "version": "0.33.1",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -468,6 +468,7 @@
     "batalla-naval-local.mjs",
     "batalla-naval-online.mjs",
     "compartir-sala.mjs",
+    "contacto.mjs",
     "cuarto-rey.mjs",
     "dudo-local.mjs",
     "dudo-online.mjs",

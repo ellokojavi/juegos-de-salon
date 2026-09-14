@@ -396,6 +396,14 @@ node tools/e2e/mirar.mjs panel datos --ancho 900
 
 Saca la captura y avisa si hay scroll horizontal o botones bajo 44 px, que es lo que el canon pide mirar en cada pantalla. Los caminos a cada pantalla están declarados arriba del archivo: agregar uno es sumar una entrada, no escribir un guion nuevo.
 
+Y para mirar de una vez **todas** las capturas que muestra este README —antes de publicarlas—, la hoja de contacto las pone juntas, al tamaño en que se van a ver:
+
+```bash
+node tools/e2e/contacto.mjs cuarto-rey --salida /tmp/contacto
+```
+
+Rehacerlas no es revisarlas: juntas se ve lo que una imagen sola no delata. Así apareció que la lista de jugadores de Cuarto Rey estaba fotografiada a mitad de su animación de entrada, con las filas a distintos anchos, como si la grilla estuviera mal armada (D-76).
+
 Para verlo en un celular de verdad —y pasarle el enlace a alguien— se sirve el árbol de trabajo por Tailscale, sin publicar nada (D-67):
 
 ```bash

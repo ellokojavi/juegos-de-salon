@@ -29,9 +29,10 @@ export async function launch({ port, dir, out, width = 390, height = 844 }) {
     go: async (url, wait = 1800) => { await send('Page.navigate', { url }); await sleep(wait); },
     // Antes de disparar, esperar a que las animaciones de entrada se queden quietas: una
     // captura sacada a mitad de un `pop` congela las filas a distintas escalas y en el README
-    // se ven desalineadas, como si el CSS estuviera malo (D-73). Las animaciones infinitas
-    // (burbujas, wiggle, shimmer) no se esperan nunca: no terminan.
-    quieto: async (tope = 1500) => api.evaluate(`(async()=>{
+    // se ven desalineadas, como si el CSS estuviera malo (D-76). Las animaciones infinitas
+    // (burbujas, wiggle, shimmer) no se esperan nunca: no terminan. El tope es corto a propósito:
+    // varias pantallas se pasan solas a los 1,8 s, y una espera larga cambiaría la toma.
+    quieto: async (tope = 900) => api.evaluate(`(async()=>{
       const finitas = () => document.getAnimations().filter(a => {
         const t = a.effect && a.effect.getComputedTiming();
         return a.playState === 'running' && t && t.iterations !== Infinity;
