@@ -1,5 +1,5 @@
 {
-  "version": "0.28.0",
+  "version": "0.30.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -442,6 +442,7 @@
     "batalla-naval/engine.test.mjs",
     "dudo/engine.test.mjs",
     "linea-de-tiempo/engine.test.mjs",
+    "panel/adapta.test.mjs",
     "panel/aggregate.test.mjs",
     "toque-y-fama/engine.test.mjs"
   ],

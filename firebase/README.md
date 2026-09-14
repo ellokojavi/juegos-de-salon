@@ -108,9 +108,18 @@ stats/prod/days/20342/
 - La zona horaria va con `__` en vez de `/` (`America__Sao_Paulo`), porque la barra no
   puede ir en una clave y el guion bajo ya lo usan los nombres.
 - `stats/` no entra en la papelera: son unos cientos de bytes por partida.
+- **Las claves se validan por forma, no por lista** (canon C-16, D-73): el juego
+  (`^[a-z-]{1,40}$`), el modo (`^[a-z][a-z-]{0,15}$`, la misma forma que `MODE_KEY` en
+  `assets/js/games.js`), la cantidad de jugadores (`^[1-9][0-9]?$`) y el entorno
+  (`^[a-z]{2,10}$`). Así un juego o un modo nuevo empieza a contarse el día que sale
+  publicado, sin tener que acordarse de venir a republicar las reglas. Una lista acá rechaza
+  la señal en el servidor, la partida ni se entera y el dato no existe nunca más.
+- Lo que **sí** obliga a tocar las reglas: una categoría de señal nueva (cualquier cosa que no
+  sea `rooms`, `local`, `origin`, `lang`, `applang` o `hour`), porque `$other` las rechaza.
 
 Módulo y tests: [`assets/js/transport/stats.js`](../assets/js/transport/stats.js) ·
-`node assets/js/transport/stats.test.mjs`.
+`node assets/js/transport/stats.test.mjs` · `node panel/adapta.test.mjs` (compara la forma de
+las reglas con la del código).
 
 ## El panel: Authentication y el UID del dueño (una sola vez)
 

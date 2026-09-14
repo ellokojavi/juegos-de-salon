@@ -16,12 +16,12 @@ los datos son las reglas de Firebase, que solo dejan leer al UID del dueño.
 |---|---|---|
 | **Ahora** | Salas en juego, celulares conectados, salas de las últimas 6 h, juegos en curso. Lista de salas con código, juego, nombres, quién está conectado, mensajes y última jugada. Solo las del entorno elegido (D-45). | `rooms/` en vivo (índice por `createdAt`), cruzado por código con `stats/<env>` |
 | **Últimos 7 / 30 días** | Partidas totales, en dos celulares, sin red, celulares que jugaron, partidas de hoy. | `stats/<env>/days/<día>` |
-| **Partidas por juego** | Barra por juego, partida por modo: 📡 dos celulares, 📱 un celular, 🤖 contra el celular, 🧍 solo. | `rooms` (📡) y `local/<juego>/<modo>/<n>` |
-| **Jugadores por partida** | Cuántas partidas de 1, 2, … 6 jugadores. | `n` de los contadores sin red y cantidad de nombres de cada sala |
+| **Partidas por juego** | Barra por juego, partida por modo: 📡 dos celulares, 📱 un celular, 🤖 contra el celular, 🧍 solo. Los modos salen del registro, y uno nuevo entra solo (C-16). | `rooms` (📡) y `local/<juego>/<modo>/<n>` |
+| **Jugadores por partida** | Cuántas partidas de 1, 2, … hasta el juego más numeroso del menú (hoy 6, `MAX_PLAYERS`). | `n` de los contadores sin red y cantidad de nombres de cada sala |
 | **Por día** | Partidas por día, separando dos celulares del resto. | ídem |
 | **De dónde** | Zona horaria del celular (ciudad y región). Cuenta celulares que empezaron o entraron a una partida, no partidas. | `origin/<zona>` |
 | **Idioma del navegador** | `es-CL`, `pt-BR`, … De dónde es la persona. | `lang/<idioma>` |
-| **Idioma elegido para jugar** | Español o Inglés, el del toggle de la app. En cuál prefiere jugar, que no es lo mismo (D-46). | `applang/<idioma>` |
+| **Idioma elegido para jugar** | El del toggle de la app, con su nombre en español. En cuál prefiere jugar, que no es lo mismo que de dónde es (D-46). | `applang/<idioma>` |
 | **A qué hora se juega** | Hora local de cada celular, 0 a 23. | `hour/<h>` |
 | **Cuota** | Enlace a la consola de uso de Firebase. Los "celulares conectados" son la mejor aproximación a las conexiones simultáneas del plan gratuito. | — |
 
@@ -99,6 +99,7 @@ panel/
   panel.js            Entrada con Google, lecturas en vivo y dibujo
   aggregate.js        Agregación pura (sin DOM ni Firebase)
   aggregate.test.mjs  node panel/aggregate.test.mjs
+  adapta.test.mjs     node panel/adapta.test.mjs — que el panel se entere solo (C-16)
 assets/js/transport/
   stats.js            Registro desde los juegos y el transporte, por REST
   stats.test.mjs      node assets/js/transport/stats.test.mjs
@@ -108,6 +109,29 @@ assets/js/transport/
 
 `window.__panel.seed({ rooms, days })` dibuja el panel con datos sembrados sin entrar
 (gancho de solo lectura, C-14): sirve para probar la página sin cuenta ni base.
+
+## Cuando entra un juego, un modo o un idioma nuevo
+
+**No hay que tocar el panel** (canon C-16, D-73). Esta página no tiene listas propias: los
+juegos y los modos los lee de `assets/js/games.js`, los entornos de `transport/stats.js` y los
+idiomas de `i18n.js`. Un juego nuevo aparece con su emoji y su nombre apenas manda su primera
+señal; un modo nuevo es una línea en `MODES` de `games.js` y entra con su ícono, su color y su
+lugar en la leyenda.
+
+Lo que llega y el panel **no** conoce tampoco se pierde: se dibuja con su clave cruda por
+nombre —`juego-nuevo`, un modo con `·` por ícono, un idioma que el navegador sabe nombrar—.
+Pasa siempre, porque la app publicada empieza a mandar lo nuevo antes de que nadie mire el
+panel, y porque lo de un juego que ya se fue del menú queda guardado igual.
+
+- Para verlo: `node tools/e2e/mirar.mjs panel datos`, que siembra el panel con un juego, un
+  modo y un idioma que no existen en el registro.
+- Para que no se rompa: `node panel/adapta.test.mjs`, que falla si vuelve a aparecer una lista
+  copiada en el panel o una enumeración en las reglas de la base.
+- El tope de jugadores por partida sale de `MAX_PLAYERS`, derivado del juego más numeroso. Los
+  roles de sala (`A`–`F`) siguen topando en seis: un juego de más de seis en dos celulares
+  necesita además crecer el transporte y el patrón `$p` de las reglas.
+- Lo único que obliga a tocar las reglas de Firebase y publicarlas a mano es una **categoría**
+  de señal nueva (algo que no sea juego, modo, jugadores, zona horaria, idioma ni hora).
 
 ## Excepciones a los cánones
 

@@ -9,12 +9,12 @@
  * origen, idioma y hora.
  */
 import { deserted } from '../assets/js/transport/dispose.js';
+import { MODE_IDS, isLocalMode, MAX_PLAYERS } from '../assets/js/games.js';
 
 export const DAY = 24 * 60 * 60 * 1000;
 export const ROOM_TTL = 6 * 60 * 60 * 1000;   // igual que en el transporte y las reglas
 export const ACTIVE_MS = 10 * 60 * 1000;      // una sala está "en juego" si hubo jugada hace poco
 
-export const MODES = ['online', 'local', 'cpu', 'solo'];
 export const dayOf = ts => Math.floor(ts / DAY);
 
 /**
@@ -87,7 +87,26 @@ export function connections(live) {
 }
 
 const add = (obj, key, n = 1) => { obj[key] = (obj[key] || 0) + n; };
-const bump = (obj, key) => { if (!obj[key]) obj[key] = { total: 0, online: 0, local: 0, cpu: 0, solo: 0 }; return obj[key]; };
+/** La fila de un juego: un casillero por modo conocido, y los que aparezcan se suman solos. */
+const bump = (obj, key) => {
+  if (!obj[key]) obj[key] = { total: 0, ...Object.fromEntries(MODE_IDS.map(m => [m, 0])) };
+  return obj[key];
+};
+
+/**
+ * Los modos que hay que dibujar: los conocidos en su orden (C-5) y detrás los que llegaron
+ * de la base sin estar en el registro, en orden alfabético. Así una versión nueva de la app
+ * que empezó a mandar un modo que el panel no conoce se ve igual, con su clave por nombre,
+ * en vez de desaparecer de las barras (C-16).
+ */
+export function modesOf(byGame) {
+  const vistos = new Set();
+  for (const fila of Object.values(byGame || {})) {
+    for (const [modo, v] of Object.entries(fila)) if (modo !== 'total' && v > 0) vistos.add(modo);
+  }
+  const nuevos = [...vistos].filter(m => !MODE_IDS.includes(m)).sort();
+  return [...MODE_IDS, ...nuevos];
+}
 
 /**
  * Resume los días entre `from` y `to` (inclusive, números de día).
@@ -106,16 +125,18 @@ export function summarize(days, { from, to }) {
       if (!r) continue;
       const g = bump(byGame, r.game || '?');
       g.total++; g.online++; row.online++;
-      add(byPlayers, Math.min(6, Math.max(1, Object.keys(r.players || {}).length)));
+      add(byPlayers, Math.min(MAX_PLAYERS, Math.max(1, Object.keys(r.players || {}).length)));
     }
     for (const [game, modes] of Object.entries(bucket.local || {})) {
       for (const [mode, ns] of Object.entries(modes || {})) {
-        if (!['local', 'cpu', 'solo'].includes(mode)) continue;
+        // Se acepta por forma, no por lista: un modo que el código empezó a mandar ayer
+        // cuenta hoy, sin tocar el panel (C-16). Lo que no tiene forma de modo es basura.
+        if (!isLocalMode(mode)) continue;
         for (const [n, count] of Object.entries(ns || {})) {
           const c = Number(count) || 0;
           const g = bump(byGame, game);
-          g.total += c; g[mode] += c; row.local += c;
-          add(byPlayers, Math.min(6, Math.max(1, Number(n) || 1)), c);
+          g.total += c; g[mode] = (g[mode] || 0) + c; row.local += c;
+          add(byPlayers, Math.min(MAX_PLAYERS, Math.max(1, Number(n) || 1)), c);
         }
       }
     }
@@ -129,7 +150,7 @@ export function summarize(days, { from, to }) {
     byDay.push(row);
   }
 
-  return { partidas: online + local, online, local, devices, byGame, byPlayers, byDay, origin, lang, applang, hour };
+  return { partidas: online + local, online, local, devices, byGame, byPlayers, byDay, origin, lang, applang, hour, modes: modesOf(byGame) };
 }
 
 /** Pares [clave, valor] de mayor a menor, con tope. */
