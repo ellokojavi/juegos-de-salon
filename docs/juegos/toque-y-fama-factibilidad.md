@@ -1,4 +1,4 @@
-# Toque y Fama — estudio de factibilidad y propuesta de mecánica
+# Toque y Fama: estudio de factibilidad y propuesta de mecánica
 
 **Estado:** aprobado e implementado (v0.4) · **Fecha:** 2026-09-08 · **Autor:** equipo del proyecto
 
