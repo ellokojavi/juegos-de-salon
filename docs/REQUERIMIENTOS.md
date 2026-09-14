@@ -73,7 +73,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | DU-06 | Quien pierde el dado abre la ronda siguiente; quien se queda sin dados sale y gana el último con dados. | ✅ v0.28 |
 | DU-07 | Modo un celular, de 2 a 6, con pantalla de pase entre turnos (C-9). | ✅ v0.28 |
 | DU-08 | Modo contra el celular: el aparato apuesta por probabilidad y **solo** con sus propios dados. | ✅ v0.28 |
-| DU-09 | Modo varios celulares con sala, chat y turnos. Los dados no viajan: se comprometen con hash y se destapan al dudar (C-10). | ⏳ pendiente (el motor ya habla el protocolo) |
+| DU-09 | Modo varios celulares con sala, chat y turnos. Los dados no viajan: se comprometen con hash y se destapan al dudar (C-10). | ✅ v0.32 |
 | DU-10 | Memoria de partida en todos los modos (C-6). | ✅ v0.28 |
 | DU-11 | Textos e interfaz en español, inglés y portugués, con el plural de cada pinta (C-3). | ✅ v0.28 |
 | DU-12 | El destape muestra los dados de todos con los que cuentan marcados, el total y quién pierde el dado. | ✅ v0.28 |
