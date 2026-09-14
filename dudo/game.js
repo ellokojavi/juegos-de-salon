@@ -636,9 +636,9 @@ function interruptor(encendido, label, hint, onChange) {
 }
 
 const MODES = [
-  { id: 'local', title: () => T.m1, sub: () => T.m1sub },
-  { id: 'online', title: () => T.m2, sub: () => T.m2sub },
-  { id: 'cpu', title: () => T.m3, sub: () => T.m3sub },
+  { id: 'local', title: () => T.modeLocal, sub: () => T.modeLocalHint },
+  { id: 'online', title: () => T.modeOnline, sub: () => T.modeOnlineHint },
+  { id: 'cpu', title: () => T.modeCpu, sub: () => T.modeCpuHint },
 ];
 
 function renderModes() {
