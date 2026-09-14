@@ -1,5 +1,36 @@
 # Changelog
 
+## 0.30.1 — 2026-09-13
+- **La bajada de la portada ya no cuenta los juegos.** Decía cuántos había, y ese número cambia
+  cada vez que entra uno nuevo: una frase que envejece sola es peor que una que no cuenta nada.
+  Ahora dice qué es la app: *"Juegos tradicionales llevados a tu celular para pasar el tiempo solo o
+  con amigos"*. Va en los dos lugares donde se lee lo mismo —debajo del título en el menú y en la
+  tarjeta que se ve al compartir el link— y está en los tres idiomas.
+- La lista de juegos de la descripción sí se sigue armando de `games.js`: nombra cuáles hay sin
+  decir cuántos son, así que no envejece.
+
+## 0.31.0 — 2026-09-13
+- **El panel se entera solo de los juegos nuevos.** Tenía cuatro listas copiadas —los juegos, los
+  modos con su ícono, los idiomas con su nombre y los entornos del `<select>`—, una regla de CSS por
+  modo y una enumeración de modos en las reglas de Firebase. Ahora no tiene ninguna: los juegos y los
+  modos los lee del registro de `assets/js/games.js`, los entornos de `transport/stats.js` y los
+  idiomas de `i18n.js` (canon C-16, D-73).
+- **Un modo nuevo era el caso que fallaba feo.** El contador ni salía del celular, porque el registro
+  de señales filtraba contra su propia lista, y si salía, las reglas lo rechazaban con un 401 que no
+  mira nadie. El dato no se veía mal: no existía. Ahora el modo se acepta por su forma, en el código
+  y en las reglas, y agregar uno es una línea en `MODES`.
+- **Lo que el panel no conoce se muestra igual**, con su clave por nombre: un juego recién publicado,
+  uno que ya se fue del menú, un modo sin emoji propio (entra con su color y un `·`) o un idioma que
+  el navegador sabe nombrar —`fr` se lee "Francés"—. Descartarlo en silencio era mentir en el total.
+- **Se acabaron los topes escritos a mano:** cuántos jugadores caben sale del juego más numeroso del
+  menú. Si algún día entra uno de ocho, el panel y los contadores lo siguen sin que nadie se acuerde.
+- **Lo vigila un test, no la memoria:** `node panel/adapta.test.mjs` inventa un juego y un modo y
+  exige verlos en la barra, y falla si vuelve a aparecer una lista copiada en el panel o una
+  enumeración en las reglas. Para mirarlo, `node tools/e2e/mirar.mjs panel datos` siembra el panel
+  con datos que incluyen un juego, un modo y un idioma que no existen.
+- **Hay que publicar las reglas** de `firebase/database.rules.json` en la consola para que la
+  validación por forma tenga efecto.
+
 ## 0.30.0 — 2026-09-13
 - **Un link de la app pegado en un chat ahora se ve como algo.** No había ninguna etiqueta de Open
   Graph: WhatsApp, Slack o X mostraban el título pelado y ninguna imagen. Ahora cada página —el menú

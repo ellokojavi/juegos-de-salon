@@ -208,6 +208,41 @@ Solo en los modos de **varios celulares**: en un celular la gente está mirando 
 - Límites: 120 caracteres por mensaje, un mensaje cada 1,2 s por celular y los últimos 60 en pantalla. Las reglas de Firebase validan el largo del texto.
 - La sala se lee con solo saber el código: el chat no es privado y no se usa para nada sensible.
 
+## C-16 · El panel se entera solo
+
+El panel del dueño (`/panel/`) no lleva su propia lista de juegos, ni de modos, ni de idiomas:
+lee las mismas listas que usa la app y dibuja las señales que le llegan. **Un juego, un modo,
+un idioma o un entorno nuevo tiene que aparecer ahí sin que nadie se acuerde de ir a editarlo**,
+porque el día que se agrega un juego nadie se acuerda del panel, y una cifra que falta no se ve
+como un error: se lee como que nadie jugó.
+
+- **Una lista por eje, y una sola.** Los juegos y los modos viven en `assets/js/games.js`
+  (`GAMES`, `MODES`, y de ahí salen `gameLabel`, `modeIcon`, `ROOM_MODE`, `LOCAL_MODES` y
+  `MAX_PLAYERS`); los entornos, en `assets/js/transport/stats.js` (`ENVS`); los idiomas, en
+  `assets/js/i18n.js` (`LANGS`). El panel las importa. No las copia **en ninguna parte**: ni en
+  el JavaScript, ni en las opciones del HTML, ni en una regla de CSS por modo.
+- **Lo desconocido se muestra, no se descarta.** Una señal de un juego, un modo o un idioma que
+  el panel no conoce se dibuja igual, con su clave cruda por nombre. Pasa siempre: la app
+  publicada empieza a mandar lo nuevo antes de que nadie mire el panel, y lo de un juego que ya
+  se fue del menú queda guardado. Descartarlo en silencio es mentir en la cifra total.
+- **Se valida la forma, no la lista.** Las reglas de `firebase/database.rules.json` aceptan un
+  modo por su forma (`^[a-z][a-z-]{0,15}$`, la misma de `MODE_KEY`) y no por enumeración, igual
+  que ya hacían con el id del juego. Una lista en las reglas es peor que una lista en el código:
+  rechaza la señal en el servidor, la partida ni se entera y el dato no existe nunca más.
+- **Ningún tope escrito a mano.** Cuántos jugadores caben sale de `MAX_PLAYERS`, derivado del
+  juego más numeroso del registro. Un juego de ocho sube el tope solo (y obliga a crecer los
+  roles de sala `A`–`F` y el patrón de `$p` en las reglas, que es un cambio aparte).
+- **El color y el ícono se reparten, no se asignan uno por uno.** Los colores de las barras se
+  toman por orden de la paleta y el ícono sale del registro: un modo nuevo entra con su color y
+  con `·` mientras nadie le elija emoji, nunca gris ni invisible.
+- **Lo vigila un test, no la memoria:** `node panel/adapta.test.mjs` inventa un juego, un modo y
+  una partida más numerosa, y exige que lleguen hasta la barra; además falla si el panel o las
+  reglas vuelven a nombrar un juego o un modo. Para mirarlo: `node tools/e2e/mirar.mjs panel datos`,
+  que siembra el panel con un juego y un modo que no existen.
+- **Lo que sí hay que tocar a mano:** una **categoría** de señal nueva (algo que no sea juego,
+  modo, jugadores, zona horaria, idioma ni hora) necesita su línea en las reglas, su sección en
+  el panel y publicar las reglas en la consola (ver [PANEL.md](PANEL.md)).
+
 ---
 
 ## Lista de chequeo antes de dar por listo un juego
@@ -223,4 +258,5 @@ Solo en los modos de **varios celulares**: en un celular la gente está mirando 
 - [ ] Versión estampada, publicada y comprobada en la URL pública (C-11).
 - [ ] Si tiene varios celulares, el chat de sala usa el módulo compartido y muere con la partida (C-15).
 - [ ] Registro en el menú, README, especificación, requerimientos, decisiones y changelog (C-2, C-13).
+- [ ] El panel lo muestra sin haberlo tocado: `node panel/adapta.test.mjs` en verde y una mirada a `node tools/e2e/mirar.mjs panel datos` (C-16).
 - [ ] Capturas del README rehechas y miradas, y `python3 tools/readme.py revisar` en verde (C-13).

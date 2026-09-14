@@ -23,21 +23,21 @@ export function setLang(lang) {
 export const COMMON = {
   es: {
     appTitle: 'Juegos de Salón',
-    appSub: 'Elige un juego, para pasar el tiempo solo o con amigos.',
+    appSub: 'Juegos tradicionales llevados a tu celular para pasar el tiempo solo o con amigos.',
     players: 'jugadores', minutes: 'min',
     footer: 'Toma con responsabilidad y con agua a mano. Si manejas, no tomas. 🚕',
     code: 'código en GitHub', menu: 'Menú', soon: 'Próximamente',
   },
   en: {
     appTitle: 'Party Games',
-    appSub: 'Pick a game, to pass the time alone or with friends.',
+    appSub: 'Traditional games brought to your phone, to pass the time alone or with friends.',
     players: 'players', minutes: 'min',
     footer: 'Drink responsibly and keep water nearby. If you drive, you don\'t drink. 🚕',
     code: 'code on GitHub', menu: 'Menu', soon: 'Coming soon',
   },
   pt: {
     appTitle: 'Jogos de Salão',
-    appSub: 'Escolha um jogo, pra passar o tempo sozinho ou com amigos.',
+    appSub: 'Jogos tradicionais trazidos pro seu celular, pra passar o tempo sozinho ou com amigos.',
     players: 'jogadores', minutes: 'min',
     footer: 'Beba com responsabilidade e com água por perto. Se for dirigir, não beba. 🚕',
     code: 'código no GitHub', menu: 'Menu', soon: 'Em breve',

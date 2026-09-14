@@ -26,10 +26,11 @@
 import { firebaseConfig } from '../firebase-config.js';
 import { dayOf } from './cleanup.js';
 import { getLang } from '../i18n.js';
+import { isLocalMode, MAX_PLAYERS } from '../games.js';
 
 // 'lab' salió con el laboratorio (D-67); queda en el panel para leer lo que quedó guardado
 export const ENVS = ['prod', 'dev'];
-export const MODES = ['local', 'cpu', 'solo'];
+// Los modos viven en `games.js` (C-16): acá solo se pregunta si el que llegó sube contador.
 
 /** Valores que resuelve el servidor (REST): hora y suma de a uno. */
 const STAMP = { '.sv': 'timestamp' };
@@ -83,11 +84,18 @@ export function fingerprint({ loc = globalThis.location, nav = globalThis.naviga
   };
 }
 
-/** Cambios de los contadores que suben con cada celular que empieza o entra a una partida. */
+/**
+ * Cambios de los contadores que suben con cada celular que empieza o entra a una partida.
+ *
+ * El modo se acepta por forma y no por lista (C-16): un modo nuevo empieza a contarse el día
+ * en que un juego lo manda, sin tocar esto, sin tocar las reglas de la base y sin tocar el
+ * panel. El único que no sube contador es el de la sala, que se cuenta por sala.
+ * El tope de jugadores sale del juego más numeroso del registro, no de un 6 escrito acá.
+ */
 export function startChanges(fp, { game, mode, players } = {}) {
   const changes = { [`origin/${fp.tz}`]: INC, [`lang/${fp.lang}`]: INC, [`applang/${fp.app}`]: INC, [`hour/${fp.hour}`]: INC };
-  if (MODES.includes(mode)) {
-    const n = Math.min(6, Math.max(1, Number(players) || 1));
+  if (isLocalMode(mode)) {
+    const n = Math.min(MAX_PLAYERS, Math.max(1, Number(players) || 1));
     changes[`local/${game}/${mode}/${n}`] = INC;
   }
   return changes;
