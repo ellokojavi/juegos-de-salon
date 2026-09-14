@@ -683,3 +683,65 @@ horas al año; la incoherencia duraría todas.
 "cargando…": un año a medio bajar se ve igual que un año sin partidas, y son cosas distintas (C-14).
 Los datos solo llegan hasta donde llegue el registro: el panel existe desde la v0.20, y del país y
 el ganador solo hay desde la v0.33.6 (D-79).
+
+## D-81 · Las cartas de la sala viajan en sobres cerrados
+**Fecha:** 2026-09-14 · **Estado:** vigente · **Amplía D-70**
+**Decisión:** En la sala de Julepe el reparto no viaja en claro ni sale de una semilla compartida:
+cada celular genera un par de llaves al entrar (RSA-OAEP del propio navegador, `assets/js/sobre.js`)
+y publica la pública junto con su nombre; quien reparte cierra la mano de cada jugador con la llave
+de esa persona. El mensaje `reparte` lleva un sobre por rol y nadie más lo puede abrir.
+**Por qué no la semilla:** es lo mismo que ya pasaba con los dados (D-70), pero peor. Un hash sirve
+para *comprometer* un secreto que después se destapa entero; acá hay que **entregarle** cinco cartas
+a alguien y que nadie más las vea mientras se juega, y para eso no hay hash que valga.
+**Lo que no evita:** quien reparte arma las manos, así que pasan por su celular en claro. Es el
+trato de la mesa real —el que baraja podría marcar las cartas— y por eso el reparto rota en cada
+mano. Lo que sí queda probado al cerrar la mano es que nadie **jugó** una carta que no le tocó:
+cada uno destapa sus ocho cartas y todos verifican contra lo que tiraron (C-10).
+**Consecuencias:** hace falta contexto seguro (https o localhost). Sin `crypto.subtle` no se puede
+cerrar nada, así que el reparto va en claro y el cierre de la mano lo dice con todas sus letras en
+vez de fingir un secreto que no existe (C-14). La llave privada se guarda con la partida
+(`private`, C-6): sin ella, un celular que recarga no podría volver a abrir su propia mano.
+
+## D-82 · La reserva: tres cartas tapadas en vez de un mazo común
+**Fecha:** 2026-09-14 · **Estado:** vigente
+**Decisión:** En Julepe a cada jugador le tocan **ocho** cartas: las cinco de la mano y tres tapadas
+de reserva. Cambiar saca de la reserva propia y no del resto del mazo. Además el cambio viaja por
+**puestos** (`i: '0,3'`) y no por nombres de carta.
+**Por qué:** si el resto del mazo fuera público —que es lo que haría falta para repartir el cambio
+desde la mesa—, los tres naipes que pide el rival se sabrían de antemano, que es peor que verle la
+mano. Y si el mensaje dijera "cambio el 10♠ y la J♠", le estaría contando a toda la sala dos cartas
+que tenía. El puesto no dice nada y alcanza para rehacer la jugada al retomar (C-6) y para
+verificarla al destapar (C-10).
+**Por qué alcanza:** seis jugadores por ocho cartas más la que marca el triunfo son 49 de 52. El
+mazo nunca se queda corto, así que no hay que barajar los descartes a mitad de mano.
+**Consecuencias:** las probabilidades cambian un pelo respecto de la mesa real (las cartas de la
+reserva no pueden estar en otra mano), y a cambio el cambio es tan secreto como el reparto.
+
+## D-83 · Si va uno solo, el dador se queda obligado
+**Fecha:** 2026-09-14 · **Estado:** vigente
+**Decisión:** En Julepe, si de la declaración sale **un solo** jugador dispuesto a ir, el dador
+entra a la fuerza y juega esa mano quiera o no, con las cartas que se repartió. Si el solitario es
+el propio dador, se queda obligado el de su derecha. Si se pasan **todos**, la mano se anula: el
+plato queda acumulado y reparte el siguiente.
+**Por qué:** una mano de a uno no es una mano —el solitario ganaría las cinco bazas sin jugarlas—
+y anularla cada vez que alguien tiene mano buena y el resto se arruga deja el juego dando vueltas
+sin que pase nada. La regla es de la mesa de toda la vida y le pone filo al reparto: repartir
+también arriesga.
+**Consecuencias:** el obligado puede caer en julepe sin haber querido entrar, que es justamente la
+historia que la mesa cuenta después. La pantalla se lo dice con esas palabras ("¡Te quedaste
+obligado!") y el asiento lo marca distinto, para que nadie crea que apretó el botón equivocado.
+
+## D-84 · El nombre del séptimo juego cambia en cada idioma
+**Fecha:** 2026-09-14 · **Estado:** vigente · **Amplía D-48**
+**Decisión:** El juego se llama **Julepe** en español, **Julep** en inglés y **Paga o Bolo** en
+portugués de Brasil.
+**Por qué:** el criterio de esta app es que el nombre se reconozca en el idioma en que se juega
+(Bulls and Cows, Liar's Dice, Forca). El Julepe es de la familia del Rams: su primo inglés se llama
+**Loo** y el de Luisiana, **Bourré**; ninguno de los dos sirve de nombre en una app —"loo" hoy se
+lee como el baño, y "bourré" lo conoce quien juega cartas en Nueva Orleans—. **Julep** sí: es
+palabra inglesa corriente, es un trago, suena igual que el original y deja la frase "you got
+juleped" a mano. En portugués no hay miembro de la familia: lo que sí se reconoce es **o bolo**, que
+es como se llama allá el pozo que se junta, y "paga o bolo" cuenta el juego entero en tres palabras.
+**Consecuencias:** las tarjetas sociales, el README y el menú muestran tres nombres distintos para
+el mismo `id` (`julepe`), que es lo que ya hacen los otros seis. El castigo se sigue llamando
+julepe dentro del juego en español y en inglés; en portugués es "pagar o bolo".
