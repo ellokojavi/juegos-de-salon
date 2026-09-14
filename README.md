@@ -320,6 +320,11 @@ Cómo está armado (canon C-3):
   y que no haya textos vacíos. Un texto que falta se vería como `undefined` en pantalla.
 - Las traducciones se adaptan, no se calcan: en portugués las comunas de Santiago son
   bairros, la penitencia es una prenda y el "fondo" es "vira, vira, vira".
+- **El idioma también puede venir en el link** (D-74): `juegosdesalon.cl/?lang=pt` en cualquier
+  página, o las puertas `juegosdesalon.cl/pt/` y `/en/`, que dejan el idioma elegido y mandan a la
+  portada. Se aplica, se guarda y el parámetro se saca de la barra de direcciones. **La invitación
+  a una sala lo lleva pegado**, así que quien la recibe abre la app en el idioma en que se la
+  mandaron. No es detección: alguien eligió, para sí mismo o para el que recibe el link.
 - Para agregar un idioma: sumarlo a `LANGS` y al toggle en `i18n.js`, y agregar el
   diccionario en `COMMON`, `games.js`, `frases.js`, los cuatro `rules.js`, `decks/index.js` y
   cada carta. El test de paridad dice qué falta.
@@ -469,6 +474,7 @@ tools/readme.py             README al día: bloques generados, capturas rehechas
 tools/og.mjs                Tarjetas sociales: las etiquetas Open Graph de cada página y sus imágenes
 tools/hechos.mjs            La hoja de hechos de la app (juegos, modos, temáticas, tests) leída del código
 tools/e2e/                  Partidas completas en Chrome headless; de ahí salen las capturas (su README)
+pt/ · en/                   Puertas de entrada por idioma: dejan el idioma y mandan a la portada
 assets/og/                  Las imágenes de 1200×630 que se ven al compartir un link
 docs/capturas.json          Catálogo de las capturas: pie de foto y de qué guion sale cada una
 docs/                       Requerimientos, decisiones, especificaciones y capturas
