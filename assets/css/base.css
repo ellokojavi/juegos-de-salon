@@ -70,7 +70,12 @@ body {
 .app {
   position: relative; z-index: 1;
   max-width: 560px; margin: 0 auto; padding: 16px 18px 32px;
-  min-height: 100dvh; display: flex; flex-direction: column;
+  /* Descontando las muescas: el `body` ya las reserva con su padding, así que pedir 100dvh acá
+     dejaba la página más alta que la pantalla justo por ese alto (81 px en un iPhone con muesca).
+     No se notaba salvo donde algo se apoya en el borde de abajo: en Dudo la barra de apostar se
+     iba fuera de la pantalla con medio celular vacío más arriba (D-75). */
+  min-height: calc(100dvh - var(--safe-top) - var(--safe-bottom));
+  display: flex; flex-direction: column;
 }
 
 /* --- Tipografía --- */

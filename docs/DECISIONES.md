@@ -527,3 +527,42 @@ retoma con los nombres encendidos, que es el valor por defecto.
 **Por qué se saca el parámetro de la URL:** lo que circula tiene que ser la dirección de siempre —la que está en las tarjetas sociales, la que indexa el buscador, la que la gente copia—. El idioma ya quedó guardado, así que el parámetro no tiene nada más que hacer ahí; y donde sí hace falta que viaje, que es la invitación, lo pone el juego a propósito con `withLang()`.
 **Las puertas también se comparten:** `/pt/` y `/en/` llevan sus propias etiquetas Open Graph y su propia imagen de 1200×630 en su idioma (D-72), y las tres se anuncian entre sí con `hreflang`. Pegar `juegosdesalon.cl/pt/` en un grupo de Brasil muestra la tarjeta en portugués.
 **Consecuencias:** las páginas de los juegos no tienen una URL por idioma: adentro el idioma se elige y se guarda, así que no hay tres direcciones que ofrecerle al buscador. El panel es español solo y el parámetro no le hace nada. Prueba de punta a punta en `tools/e2e/idioma-por-url.mjs`.
+
+## D-75 · La app mide lo que se ve, no lo que la pantalla dice que mide
+**Fecha:** 2026-09-13 · **Estado:** vigente
+**Decisión:** `.app` pide `calc(100dvh - var(--safe-top) - var(--safe-bottom))` y no `100dvh`. El `body` ya reserva las muescas con su `padding`, así que pedir la pantalla entera adentro de una caja que ya se achicó dejaba la página **más alta que el celular por exactamente el alto de las muescas**: 81 px en un iPhone con muesca (47 arriba, 34 abajo).
+**Cómo se vio:** en Dudo, la barra de apostar se apoya en el borde de abajo (`margin-top: auto`), así que se iba fuera de la pantalla con medio celular vacío más arriba. En los otros juegos el contenido baja desde arriba y esos 81 px de más solo se notaban como un scroll de la nada. Es un error del armazón compartido, no de Dudo: se arregla una vez en `base.css` y vale para los seis juegos, el menú y el panel.
+**Por qué ninguna prueba lo vio:** en Chrome headless `env(safe-area-inset-*)` vale 0, así que la página medía exactamente lo que tenía que medir y todo pasaba. El error solo existe en un celular con muesca, que es justo donde se juega.
+**Lo que queda para que no vuelva:** `node tools/e2e/mirar.mjs <juego> <pantalla> --muescas` simula 47 y 34, y el informe ahora dice dos cosas más: cuánto se pasa la página del alto del celular y qué botones caen por debajo del borde. Con el error puesto de vuelta, avisa "⚠️ 81 px" y nombra el botón de apostar.
+
+---
+
+## D-75 · Las capturas se sacan con la pantalla quieta
+**Fecha:** 2026-09-13 · **Estado:** vigente
+**Decisión:** Antes de disparar, `b.shot()` (`tools/e2e/cdp.mjs`) espera a que terminen las
+animaciones finitas que estén corriendo, con un tope de 900 ms; las infinitas —las burbujas del
+fondo, el `wiggle`, el `shimmer`— no se esperan nunca porque no terminan. Además, la lista de
+jugadores de Cuarto Rey dejó de animarse entera: entra animada **solo la fila recién agregada**, y
+entra desplazándose, no escalándose.
+**Por qué:** en el README, la pantalla "¿Quiénes juegan?" mostraba las cuatro filas con anchos
+distintos, como si la grilla estuviera mal armada. No lo estaba: cada fila entraba con un `pop`
+—`scale(0.6) → 1.08 → 1`— escalonado de a 40 ms, y la captura se sacaba a los 300 ms, con las dos
+primeras filas ya asentadas y las dos últimas todavía creciendo. Una animación de escala sobre una
+fila de ancho completo **cambia su ancho mientras dura**, así que congelarla a la mitad es
+fotografiar cuatro anchos distintos. El bug no estaba en el CSS de la fila: estaba en el instante
+en que se apretaba el obturador, y el mismo instante afectaba a las fichas de "¡Salud!" y a
+cualquier pantalla con entradas escalonadas.
+**Por qué el tope es corto:** varias pantallas se pasan solas —el pase del celular a los 1,8 s, el
+"¡Salud!" a los 2,6 s—. Una espera larga no sacaría una foto más quieta: sacaría otra pantalla.
+**Por qué además se cambió la animación y no solo la espera:** la lista se redibuja entera cada vez
+que alguien agrega o borra un jugador, así que las cuatro filas saltaban de nuevo por una fila
+nueva. Eso se veía en el celular, no solo en la captura, y ninguna espera lo arregla.
+**Y de paso, la fila angosta:** el selector de género le comía el ancho al nombre —en un celular de
+320 px el campo quedaba en dos letras—. Bajo 400 px la fila se aprieta (número, separaciones y
+botones) y bajo 340 px el selector se baja entero a una segunda línea, a lo ancho. Los botones de
+género y la ✕ miden 44 px de alto, con área táctil ampliada la ✕ (C-8).
+**Consecuencias:** hay una hoja de contacto, `node tools/e2e/contacto.mjs [seccion]`, que arma un
+PNG con todas las capturas de una sección al tamaño en que el README las muestra. Mirarla es parte
+de publicar: las capturas se rehacen solas, pero nadie las revisaba de a una. Mirándola se
+encontraron dos más —el ranking final y el "¡Cuarto Rey!" tapados por el confeti, y un "¡Salud!"
+que en realidad decía "¡Cumplida!"—, que se arreglaron en el guion, no en el juego.

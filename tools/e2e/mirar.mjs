@@ -5,6 +5,7 @@
  *
  * Ejemplos:
  *   node tools/e2e/mirar.mjs ahorcado juego --ancho 320
+ *   node tools/e2e/mirar.mjs dudo apuesta --muescas      (celular con muesca: 47 arriba, 34 abajo)
  *   node tools/e2e/mirar.mjs ahorcado resultado
  *   node tools/e2e/mirar.mjs linea-de-tiempo intro --idioma pt
  *
@@ -24,6 +25,12 @@ const ancho = Number(flag('ancho', 390));
 const alto = Number(flag('alto', 844));
 const idioma = flag('idioma', 'es');
 const salida = flag('salida', '/tmp/mirar');
+/**
+ * `--muescas` simula un celular con muesca (47 px arriba, 34 abajo). Importa porque en Chrome
+ * headless esos márgenes valen 0, así que un error de alto que solo aparece con muescas pasa
+ * por delante de todas las pruebas sin que nadie lo vea (D-75).
+ */
+const muescas = args.includes('--muescas');
 const base = flag('base', 'http://localhost:8765');
 
 if (!juego) {
@@ -135,6 +142,7 @@ await b.go(`${base}/${juego}/`, 1500);
 // JSON.stringify le dejaba las comillas dentro, así que --idioma no hacía nada.
 await b.evaluate(`localStorage.clear(); localStorage.setItem('juegos-de-salon:lang', '${idioma}'); 1`);
 await b.go(`${base}/${juego}/`, 1500);
+if (muescas) await b.evaluate(`(()=>{const s=document.createElement('style');s.textContent=':root{--safe-top:47px;--safe-bottom:34px}';document.head.append(s);return 1})()`);
 for (const paso of camino) { await b.evaluate(`(()=>{ ${paso} ; return 1})()`); await sleep(700); }
 await sleep(400);
 
@@ -147,6 +155,12 @@ const revision = await b.evaluate(`(()=>{
     scrollHorizontal: document.documentElement.scrollWidth > innerWidth,
     botonesChicos: [...new Set(chicos)],
     alto: document.documentElement.scrollHeight,
+    // Lo que queda fuera de la pantalla sin que nada lo anuncie: la página más alta que el
+    // celular, y los botones que caen por debajo del borde de abajo (D-75)
+    sobra: document.documentElement.scrollHeight - innerHeight,
+    fueraAbajo: [...new Set([...document.querySelectorAll('.screen.active .btn, .confirm .btn')]
+      .filter(x => x.offsetParent !== null && x.getBoundingClientRect().bottom > innerHeight)
+      .map(x => (x.textContent || x.className).trim().slice(0, 18)))],
   });
 })()`).then(JSON.parse);
 
@@ -156,5 +170,7 @@ console.log(`${salida}/${nombre}.png · ${ancho}×${alto} · ${idioma}`);
 console.log(`  pantalla: ${revision.pantalla}`);
 console.log(`  scroll horizontal (C-8): ${revision.scrollHorizontal ? '⚠️  SÍ' : 'no'}`);
 console.log(`  botones bajo 44 px (C-8): ${revision.botonesChicos.length ? '⚠️  ' + revision.botonesChicos.join(', ') : 'ninguno'}`);
+console.log(`  la página se pasa del alto: ${revision.sobra > 0 ? `⚠️  ${revision.sobra} px` : 'no'}${muescas ? ' (con muescas)' : ''}`);
+console.log(`  botones fuera de pantalla: ${revision.fueraAbajo.length ? '⚠️  ' + revision.fueraAbajo.join(', ') : 'ninguno'}`);
 if (b.errors.length) console.log('  errores de consola:', JSON.stringify(b.errors.slice(0, 2)));
 b.close();
