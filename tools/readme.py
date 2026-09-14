@@ -57,10 +57,18 @@ def catalogo():
 
 
 def ancla(nombre):
-    """El ancla que GitHub le pone al encabezado '## 👑 Cuarto Rey': el emoji se va
-    pero su espacio queda, y por eso el guion del principio."""
+    """El ancla que GitHub le pone al encabezado '## 👑 Fourth King (Cuarto Rey)': el emoji se va
+    pero su espacio queda (por eso el guion del principio) y los paréntesis desaparecen."""
     limpio = ''.join(c for c in nombre.lower() if c.isalnum() or c in ' -_')
     return '#-' + re.sub(r'\s+', '-', limpio.strip())
+
+
+def titulo_juego(j):
+    """Como se titula la sección del juego en el README: el nombre en inglés y, entre
+    paréntesis, el de verdad. De acá sale también el ancla, así que si cambia el título
+    cambia el enlace de la tabla y nunca quedan apuntando a distinto lado (D-78)."""
+    en, es = j['nombre']['en'], j['nombre']['es']
+    return f'{en} ({es})' if en != es else es
 
 
 def sin_emoji(texto):
@@ -80,9 +88,9 @@ def anio(n):
 def bloque_juegos(H, C):
     filas = ['| Game | Players | Modes | Status |', '|---|---|---|---|']
     for j in H['juegos']:
-        nombres = ' / '.join(dict.fromkeys([j['nombre']['es'], j['nombre']['en'], j['nombre']['pt']]))
+        nombres = ' / '.join(dict.fromkeys([j['nombre']['en'], j['nombre']['es'], j['nombre']['pt']]))
         modos = ' · '.join(sin_emoji(m['en']) for m in j['modos']) or 'One phone'
-        filas.append(f"| {j['emoji']} [{nombres}]({ancla(j['nombre']['es'])}) | {j['jugadores']} "
+        filas.append(f"| {j['emoji']} [{nombres}]({ancla(titulo_juego(j))}) | {j['jugadores']} "
                      f"| {modos} | {j['estado'] or '-'} |")
     return '\n'.join(filas) + '\n'
 
