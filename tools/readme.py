@@ -70,26 +70,28 @@ def sin_emoji(texto):
 
 
 def anio(n):
-    return f'{abs(n)} a. C.' if n < 0 else str(n)
+    return f'{abs(n)} BC' if n < 0 else str(n)
 
 
 # ------------------------------------------------------------- bloques generados
 
+# El README es la cara pública del proyecto y va en inglés; el resto de la documentación, en
+# español (D-78). Por eso los bloques generados salen del `en` de los módulos, no del `es`.
 def bloque_juegos(H, C):
-    filas = ['| Juego | Jugadores | Modos | Estado |', '|---|---|---|---|']
+    filas = ['| Game | Players | Modes | Status |', '|---|---|---|---|']
     for j in H['juegos']:
         nombres = ' / '.join(dict.fromkeys([j['nombre']['es'], j['nombre']['en'], j['nombre']['pt']]))
-        modos = ' · '.join(sin_emoji(m['es']) for m in j['modos']) or 'Un celular'
+        modos = ' · '.join(sin_emoji(m['en']) for m in j['modos']) or 'One phone'
         filas.append(f"| {j['emoji']} [{nombres}]({ancla(j['nombre']['es'])}) | {j['jugadores']} "
-                     f"| {modos} | {j['estado'] or '—'} |")
+                     f"| {modos} | {j['estado'] or '-'} |")
     return '\n'.join(filas) + '\n'
 
 
 def bloque_tematicas(H, C):
-    filas = ['| Temática | Cartas | Años | De qué va |', '|---|---|---|---|']
+    filas = ['| Theme | Cards | Years | What it covers |', '|---|---|---|---|']
     for t in H['tematicas']:
-        filas.append(f"| {t['emoji']} {t['nombre']['es']} | {t['cartas']} | "
-                     f"{anio(t['desde'])} a {anio(t['hasta'])} | {t['pista']['es']} |")
+        filas.append(f"| {t['emoji']} {t['nombre']['en']} | {t['cartas']} | "
+                     f"{anio(t['desde'])} to {anio(t['hasta'])} | {t['pista']['en']} |")
     filas.append(f"| **Total** | **{sum(t['cartas'] for t in H['tematicas'])}** | | |")
     return '\n'.join(filas) + '\n'
 

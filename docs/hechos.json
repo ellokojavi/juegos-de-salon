@@ -1,5 +1,5 @@
 {
-  "version": "0.33.1",
+  "version": "0.33.3",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -25,36 +25,42 @@
         "en": "Timeline",
         "pt": "Linha do Tempo"
       },
-      "jugadores": "1 a 6",
+      "jugadores": "1 to 6",
       "duracion": "10–20",
       "disponible": true,
       "estado": "v0.9",
       "modos": [
         {
           "clave": "modeLocal",
-          "es": "📱 Un celular, hasta 6"
+          "es": "📱 Un celular, hasta 6",
+          "en": "📱 One phone, up to 6"
         },
         {
           "clave": "modeOnline",
-          "es": "📡 Varios celulares"
+          "es": "📡 Varios celulares",
+          "en": "📡 Several phones"
         },
         {
           "clave": "modeSolo",
-          "es": "🧍 Jugar solo"
+          "es": "🧍 Jugar solo",
+          "en": "🧍 Play alone"
         }
       ],
       "variantes": [
         {
           "clave": "modeOwn",
-          "es": "Mano propia"
+          "es": "Mano propia",
+          "en": "Own hand"
         },
         {
           "clave": "modeShared",
-          "es": "Pozo común"
+          "es": "Pozo común",
+          "en": "Shared pool"
         },
         {
           "clave": "modeAll",
-          "es": "Todas a la vista"
+          "es": "Todas a la vista",
+          "en": "All on the table"
         }
       ],
       "pantallas": [
@@ -88,22 +94,25 @@
         "en": "Bulls and Cows",
         "pt": "Toque e Fama"
       },
-      "jugadores": "1 a 2",
+      "jugadores": "1 to 2",
       "duracion": "5–12",
       "disponible": true,
       "estado": "v0.4",
       "modos": [
         {
           "clave": "modeLocal",
-          "es": "📱 Un celular, dos jugadores"
+          "es": "📱 Un celular, dos jugadores",
+          "en": "📱 One phone, two players"
         },
         {
           "clave": "modeOnline",
-          "es": "📡 Dos celulares"
+          "es": "📡 Dos celulares",
+          "en": "📡 Two phones"
         },
         {
           "clave": "modeCpu",
-          "es": "🤖 Contra el celular"
+          "es": "🤖 Contra el celular",
+          "en": "🤖 Versus the phone"
         }
       ],
       "variantes": [],
@@ -132,22 +141,25 @@
         "en": "Hangman",
         "pt": "Forca"
       },
-      "jugadores": "1 a 6",
+      "jugadores": "1 to 6",
       "duracion": "5–12",
       "disponible": true,
       "estado": "v0.26",
       "modos": [
         {
           "clave": "modeLocal",
-          "es": "📱 Un celular"
+          "es": "📱 Un celular",
+          "en": "📱 One phone"
         },
         {
           "clave": "modeOnline",
-          "es": "📡 Varios celulares"
+          "es": "📡 Varios celulares",
+          "en": "📡 Several phones"
         },
         {
           "clave": "modeSolo",
-          "es": "🧍 Jugar solo"
+          "es": "🧍 Jugar solo",
+          "en": "🧍 Play alone"
         }
       ],
       "variantes": [],
@@ -182,22 +194,25 @@
         "en": "Liar's Dice",
         "pt": "Dado Mentiroso"
       },
-      "jugadores": "1 a 6",
+      "jugadores": "1 to 6",
       "duracion": "10–20",
       "disponible": true,
       "estado": "v0.32",
       "modos": [
         {
           "clave": "modeLocal",
-          "es": "📱 Un celular"
+          "es": "📱 Un celular",
+          "en": "📱 One phone"
         },
         {
           "clave": "modeOnline",
-          "es": "📡 Varios celulares"
+          "es": "📡 Varios celulares",
+          "en": "📡 Several phones"
         },
         {
           "clave": "modeCpu",
-          "es": "🤖 Contra el celular"
+          "es": "🤖 Contra el celular",
+          "en": "🤖 Versus the phone"
         }
       ],
       "variantes": [],
@@ -225,22 +240,25 @@
         "en": "Battleship",
         "pt": "Batalha Naval"
       },
-      "jugadores": "1 a 2",
+      "jugadores": "1 to 2",
       "duracion": "10–20",
       "disponible": true,
       "estado": "v0.6",
       "modos": [
         {
           "clave": "modeLocal",
-          "es": "📱 Un celular, dos jugadores"
+          "es": "📱 Un celular, dos jugadores",
+          "en": "📱 One phone, two players"
         },
         {
           "clave": "modeOnline",
-          "es": "📡 Dos celulares"
+          "es": "📡 Dos celulares",
+          "en": "📡 Two phones"
         },
         {
           "clave": "modeCpu",
-          "es": "🤖 Contra el celular"
+          "es": "🤖 Contra el celular",
+          "en": "🤖 Versus the phone"
         }
       ],
       "variantes": [],
@@ -269,7 +287,7 @@
         "en": "Fourth King",
         "pt": "Quarto Rei"
       },
-      "jugadores": "4 a 6",
+      "jugadores": "4 to 6",
       "duracion": "20–40",
       "disponible": true,
       "estado": "v0.27",
@@ -537,7 +555,7 @@
     },
     {
       "ruta": "docs/juegos/toque-y-fama-factibilidad.md",
-      "titulo": "Toque y Fama — estudio de factibilidad y propuesta de mecánica"
+      "titulo": "Toque y Fama: estudio de factibilidad y propuesta de mecánica"
     },
     {
       "ruta": "docs/juegos/toque-y-fama.md",

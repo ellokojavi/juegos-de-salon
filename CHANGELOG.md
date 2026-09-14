@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.33.4 — 2026-09-13
+- **El README pasó a inglés** (D-78). Es la puerta del repositorio y por ahí entra gente de
+  cualquier parte. La app sigue siendo chilena y todo lo demás sigue en español: los cánones, las
+  decisiones, las especificaciones, los comentarios y los mensajes de las herramientas.
+- **Los bloques generados también.** La tabla de juegos toma los modos del `en` de cada `rules.js`,
+  las temáticas salen del `en` de los mazos y los pies de foto de `docs/capturas.json` se
+  reescribieron en inglés. Si no, `readme.py actualizar` devolvía media página al español en la
+  primera publicación.
+- Los títulos de las secciones siguen en español, porque así se llaman los juegos y porque los
+  enlaces internos del índice salen de ahí. La tabla de arriba muestra los tres nombres.
+
+---
+
 ## 0.33.3 — 2026-09-13
 - **La barra de apostar de Dudo ya no se va fuera de la pantalla** (D-77). La app se arma con el
   **alto chico** de la pantalla (`svh`) y no con el del instante (`dvh`). En un Android con la app

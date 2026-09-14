@@ -13,7 +13,11 @@
 5. **Si el juego usa varios celulares**, seguir el patrón de Toque y Fama: estado derivado de una lista de mensajes, interfaz `Transport` (`create`, `join`, `send`, `onMessage`, `onPresence`, `leave`) con implementaciones `local` y `firebase`, y reglas de seguridad en `firebase/database.rules.json` (campo `game` en la sala para separar juegos).
 6. **Registrar sus módulos JS** en la lista `MODULES` de `tools/set-version.py` para que entren en el import map de versiones.
 7. **Dejar la señal de uso para el panel** (D-44): al empezar una partida sin red, llamar `trackStart({ game, mode, players })` de `assets/js/transport/stats.js` (no al retomar). Las salas de dos celulares las apunta el transporte solo. El panel no hay que tocarlo: el juego nuevo aparece ahí con su emoji y su nombre en cuanto manda la primera señal (C-16). Si el juego estrena un **modo** que no está en `MODES` de `assets/js/games.js`, se agrega esa línea y basta. Ver `docs/PANEL.md`.
-8. **Probar en el celular** desde la URL publicada y actualizar `CHANGELOG.md`.
+8. **Sumarlo al README**, que es la única parte del proyecto que va en inglés (C-13, D-78): la
+   sección del juego con su prosa, las tomas nuevas en el guion de `tools/e2e/` y sus entradas en
+   `docs/capturas.json`, con el `pie` en inglés. Después, `python3 tools/readme.py capturas <seccion>`
+   y `actualizar`. La tabla de juegos y los modos se generan solos desde el `en` de `rules.js`.
+9. **Probar en el celular** desde la URL publicada y actualizar `CHANGELOG.md`.
 
 Publicar: antes de cada commit que se publique, correr `python3 tools/set-version.py X.Y.Z` (nueva versión) para que el navegador no mezcle archivos en caché.
 

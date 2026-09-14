@@ -166,8 +166,16 @@ Con cada juego o cambio relevante se actualiza:
 - `docs/juegos/<id>.md`: reglas, modos, flujo, protocolo de mensajes, archivos.
 - `docs/REQUERIMIENTOS.md`: requerimientos con prefijo propio y estado.
 - `docs/DECISIONES.md`: una decisión numerada (D-n) por cada elección no obvia, con su porqué y sus consecuencias.
-- `README.md`: sección del juego con capturas.
+- `README.md`: sección del juego con capturas, **en inglés** (ver abajo).
 - `CHANGELOG.md`: qué cambió, en qué versión.
+
+**El README va en inglés; el resto de la documentación, en español** (D-78). Es la única página
+del proyecto que lee gente de cualquier parte: la app es chilena y se construye en español, pero
+quien llega al repositorio desde afuera llega ahí. Eso alcanza también a lo que el README muestra
+generado: los modos salen del `en` de cada `rules.js`, las temáticas del `en` de los mazos y los
+pies de foto de `docs/capturas.json` se escriben en inglés. Los cánones, las decisiones, las
+especificaciones y los mensajes de las herramientas siguen en español, que es el idioma en que se
+piensa este proyecto.
 
 El README no se mantiene a pulso: `python3 tools/readme.py` lo sostiene.
 
