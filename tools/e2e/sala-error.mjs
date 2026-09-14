@@ -49,6 +49,7 @@ const pt = await intento('pt', 'toque-y-fama', 'pt');
 const ldt = await intento('es', 'linea-de-tiempo', 'ldt');
 const bn = await intento('es', 'batalla-naval', 'bn');
 const ah = await intento('es', 'ahorcado', 'ah');
+const du = await intento('es', 'dudo', 'du');
 
 const ok = t => t && !/Hay internet|Is there internet|Tem internet/.test(t) && /celular|phone/.test(t);
 console.log('\n--- resumen ---');
@@ -58,6 +59,7 @@ console.log('pt: traducido, no el genérico   →', ok(pt) && /Não foi possíve
 console.log('línea de tiempo                 →', ok(ldt));
 console.log('batalla naval                   →', ok(bn));
 console.log('el ahorcado                     →', ok(ah));
+console.log('dudo                            →', ok(du));
 console.log('errors:', JSON.stringify(b.errors));
 console.log('logs:', JSON.stringify(b.logs.filter(l => !/firebaseio|net::ERR_BLOCKED/.test(l))));
 b.close();

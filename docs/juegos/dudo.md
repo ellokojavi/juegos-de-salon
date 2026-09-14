@@ -63,7 +63,7 @@ instalado, así que ahí las pintas van por su número y el interruptor ni se of
 | Modo | Jugadores | Cómo |
 |---|---|---|
 | 📱 Un celular | 2 a 6 | Se pasa el celular. Cada uno mira sus dados con la pantalla tapada y apuesta; al terminar el turno, pase al siguiente (C-9). |
-| 📶 Varios celulares | 2 a 6 | **Todavía no** (DU-09): en la intro va deshabilitado con "Próximamente", como manda C-5. El motor ya habla el protocolo —hash al abrir la ronda, destape al dudar (C-10)—; falta la sala. |
+| 📶 Varios celulares | 2 a 6 | Sala con código de 4 letras, QR y chat. Cada celular tira **sus** dados y publica el hash; al dudar los destapa y todos verifican (C-10). El turno gira igual que en la mesa y la pantalla dice de quién se esperan los dados. |
 | 🤖 Contra el celular | 1 | Duelo contra el aparato, que juega con probabilidad y **solo con sus propios dados**. |
 
 ## 4. De dónde salen los dados, y por qué no de la semilla
@@ -133,13 +133,21 @@ destape: revelarlos antes sería revelar la mano.
 
 ## 7. Memoria de partida (C-6)
 
-Se guarda en todos los modos con `createSessionStore('dudo')`: la configuración, los nombres y la
-lista de mensajes. Retomar es volver a reproducirla. En un celular se vuelve a la pantalla de pase,
-porque al retomar nadie sabe quién tenía el aparato en la mano.
+Se guarda en todos los modos con `createSessionStore('dudo')`. En un celular y contra el celular se
+guardan la configuración, los nombres y la lista de mensajes: retomar es volver a reproducirla, y se
+vuelve a la pantalla de pase porque nadie sabe quién tenía el aparato en la mano.
+
+En la sala se guarda cómo volver a entrar —código, rol y nombre— y, en `private`, **los dados
+propios de la ronda con su sal**. Sin eso, un celular que recarga a mitad de ronda no podría
+destapar y la mesa se quedaría esperándolo para siempre. Al volver, quien recarga entra directo a su
+sala sin presentarse de nuevo, y **no** se le muestra el destape de las rondas que se jugaron antes
+de que llegara.
 
 ## 8. Archivos
 
 ```
 dudo/index.html · dudo/style.css · dudo/rules.js · dudo/game.js
 dudo/engine.js · dudo/engine.test.mjs
+tools/e2e/dudo-local.mjs   un celular y contra el celular
+tools/e2e/dudo-online.mjs  tres celulares contra Firebase real
 ```

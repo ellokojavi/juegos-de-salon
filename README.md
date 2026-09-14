@@ -235,7 +235,13 @@ Especificación y diseño: [docs/juegos/ahorcado.md](docs/juegos/ahorcado.md)
   <tr>
     <td align="center"><img src="docs/screenshots/dudo/05-destape.png" width="180" alt="Se destapa la mesa y se cuenta"><br><sub>Se destapa la mesa y se cuenta</sub></td>
     <td align="center"><img src="docs/screenshots/dudo/07-pase.png" width="180" alt="Pásale el celular"><br><sub>Pásale el celular</sub></td>
+    <td align="center"><img src="docs/screenshots/dudo/08-sala.png" width="180" alt="Sala con código y QR"><br><sub>Sala con código y QR</sub></td>
+    <td align="center"><img src="docs/screenshots/dudo/09-destape-verificado.png" width="180" alt="Se destapa la mesa y se verifica"><br><sub>Se destapa la mesa y se verifica</sub></td>
+  </tr>
+  <tr>
     <td align="center"><img src="docs/screenshots/dudo/06-resultado.png" width="180" alt="Quién ganó y cómo se fue dando"><br><sub>Quién ganó y cómo se fue dando</sub></td>
+    <td></td>
+    <td></td>
     <td></td>
   </tr>
 </table>
@@ -264,8 +270,11 @@ van por su número y el interruptor ni se ofrece.
 - **🤖 Contra el celular:** duelo. El aparato apuesta con probabilidad y **solo mira sus propios
   dados**: la decisión sale de cuántos dados desconocidos quedan y qué chance tienen de tapar la
   apuesta, no de espiar los tuyos.
-- **📶 Varios celulares:** todavía no. El motor ya habla el protocolo de la sala —los dados se
-  comprometen con hash y se destapan al dudar (C-10)—, falta la sala.
+- **📶 Varios celulares:** sala con código de 4 letras, QR y chat, de dos a seis. Cada celular tira
+  **sus** dados y publica solo el hash; al dudar los destapa y todos verifican que nadie los haya
+  cambiado (C-10). Es la razón por la que los dados no salen de la semilla como el resto de lo que
+  esta app reparte: el código es público, y con una semilla compartida cualquiera podría calcular
+  los del rival desde la consola (D-70).
 
 Especificación y diseño: [docs/juegos/dudo.md](docs/juegos/dudo.md)
 
@@ -301,7 +310,7 @@ Cómo está armado (canon C-3):
 
 - `assets/js/i18n.js` guarda el idioma en `localStorage` (`juegos-de-salon:lang`), dibuja el
   toggle 🇨🇱 ES · 🇬🇧 EN · 🇧🇷 PT y tiene los textos comunes (`COMMON`): los del menú y el de la
-  invitación a una sala, que es el mismo para los cuatro juegos que tienen sala (D-73).
+  invitación a una sala, que es el mismo para todos los juegos que tienen sala (D-73).
 - Cada juego tiene sus textos en `LOCALES = { es, en, pt }` de su `rules.js`; `game.js` no
   tiene ninguna cadena literal. Los textos fijos del HTML llevan `data-i18n`.
 - El registro del menú (`games.js`), las 100 frases del pie (`frases.js`) y cada carta de
