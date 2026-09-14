@@ -6,7 +6,7 @@
  * celular de quien la escribió, que responde letra por letra y la revela al final (C-10).
  */
 import { $, $$, el, vibrate, sparkles, keepAwake, confetti, shareLink, canShare } from '../assets/js/ui.js';
-import { getLang, langToggle, applyStatic, COMMON } from '../assets/js/i18n.js';
+import { getLang, langToggle, applyStatic, COMMON, withLang } from '../assets/js/i18n.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { failWith } from '../assets/js/transport/errors.js';
 import { showHandoff, passBlock, showCover } from '../assets/js/handoff.js';
@@ -338,7 +338,8 @@ function renderLobby() {
   if (S.mode !== 'online' || !M) return;
   showScreen('screen-lobby');
   const box = $('#lobby-box'); box.innerHTML = '';
-  const url = `${location.origin}${location.pathname}?sala=${S.code}`;
+  // Con el idioma pegado: quien reciba la invitación abre la app como quien la mandó (D-74)
+  const url = withLang(`${location.origin}${location.pathname}?sala=${S.code}`);
   const joined = ROLES.filter(r => M.names[r]);
   box.append(
     el('div', { class: 'muted', style: 'font-weight:800' }, T.lobbyCode),
