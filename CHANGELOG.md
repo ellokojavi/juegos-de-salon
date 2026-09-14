@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.33.5 — 2026-09-14
+- **Los títulos del README llevan los dos nombres**: `👑 Fourth King (Cuarto Rey)`. Primero el
+  inglés, que es por lo que alguien de afuera busca el juego; entre paréntesis, el nombre de verdad,
+  que es el que va a ver en la pantalla de la app.
+- El ancla de cada sección se genera del título completo (`#-fourth-king-cuarto-rey`) con la misma
+  función que arma el título, así que el enlace de la tabla y el título no pueden quedar apuntando a
+  distinto lado.
+- La tabla de juegos ahora nombra primero el inglés: `Fourth King / Cuarto Rey / Quarto Rei`.
+
+---
+
 ## 0.33.4 — 2026-09-13
 - **El README pasó a inglés** (D-78). Es la puerta del repositorio y por ahí entra gente de
   cualquier parte. La app sigue siendo chilena y todo lo demás sigue en español: los cánones, las
@@ -8,8 +19,8 @@
   las temáticas salen del `en` de los mazos y los pies de foto de `docs/capturas.json` se
   reescribieron en inglés. Si no, `readme.py actualizar` devolvía media página al español en la
   primera publicación.
-- Los títulos de las secciones siguen en español, porque así se llaman los juegos y porque los
-  enlaces internos del índice salen de ahí. La tabla de arriba muestra los tres nombres.
+- Los títulos de las secciones quedaron en español en esta versión. En la 0.33.5 pasaron a llevar
+  los dos nombres.
 
 ---
 
