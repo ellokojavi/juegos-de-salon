@@ -13,7 +13,7 @@ import { ROOM_TTL, dueForSweep, markSwept, noteRoom, sweep } from './cleanup.js'
 import { disposeRoom } from './dispose.js';
 import { CONNECT_MS, LEAVE_MS, OP_MS, waitConnected, withTimeout } from './errors.js';
 import { checkQuota, noteCreated } from './ratelimit.js';
-import { stats, noteRoom as recordRoom, notePlayer as recordPlayer, noteStart as recordStart } from './stats.js';
+import { stats, noteRoom as recordRoom, notePlayer as recordPlayer, noteStart as recordStart, noteEnd as recordEnd } from './stats.js';
 
 /** Código de sala: 4 letras mayúsculas sin las ambiguas (I, O). */
 export function randomRoomCode() {
@@ -76,6 +76,7 @@ export function createFirebaseTransport({ game, maxPlayers = 2 }) {
     uid,
     kind: 'firebase',
     code: null,
+    createdAt: 0,   // cuándo nació la sala: el registro del panel vive en el día de esa fecha
     role: null,
     roles: [],
     _me: null,
@@ -114,6 +115,7 @@ export function createFirebaseTransport({ game, maxPlayers = 2 }) {
         // igual cae en el balde correcto. En segundo plano, la sala ya está lista.
         get(ref(d, `rooms/${code}/createdAt`)).then(snap => {
           const createdAt = snap.val() || Date.now();
+          this.createdAt = createdAt;
           cleanup(d, code, createdAt);
           record(game, code, createdAt, { role: 'A', name, created: true });
         });
@@ -144,6 +146,7 @@ export function createFirebaseTransport({ game, maxPlayers = 2 }) {
       await this._enter(code, role, name);
       // El que entra no vuelve a apuntar el código (las reglas no dejan pisar el apunte):
       // solo refresca la marca del balde y, si le toca, barre.
+      this.createdAt = room.createdAt || 0;
       cleanup(d, code, room.createdAt, { note: false });
       // Solo cuenta la entrada nueva: retomar la partida no es empezar otra.
       if (!previousRole) record(game, code, room.createdAt, { role, name, created: false });
@@ -177,6 +180,19 @@ export function createFirebaseTransport({ game, maxPlayers = 2 }) {
       // túnel es lo contrario de irse: si quedó una despedida a medias, se deshace acá.
       const connRef = ref(d, '.info/connected');
       this._unsubs.push(onValue(connRef, s => { if (s.val()) { update(meRef, { online: true, left: false }); onDisconnect(meRef).update({ online: false }); } }));
+    },
+
+    /**
+     * Apunta quién ganó esta sala para el panel del dueño (D-79). Lo llama el juego cuando
+     * llega a su pantalla final; en los transportes sin sala no existe, así que el juego lo
+     * llama con `?.` y en un celular no pasa nada. Mejor esfuerzo, como todo lo del panel.
+     */
+    noteWinner({ role, name } = {}) {
+      try {
+        if (!this.code || !this.createdAt) return;
+        const { api, fp } = stats();
+        recordEnd(api, fp, { code: this.code, createdAt: this.createdAt, role, name });
+      } catch (_) { /* nada */ }
     },
 
     send(msg) {

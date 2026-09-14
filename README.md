@@ -313,8 +313,13 @@ How it is put together (canon C-3):
 `/panel/` is a private page that shows how much the app is played and from where: live rooms and
 connected phones, games by title and mode, players per game, time zone, language and time of day.
 You sign in with Google, and only the owner of the Firebase project can read it. These are
-anonymized usage signals, not people: offline modes send counters only, never an IP, a secret, the
-chat or who won.
+anonymized usage signals, not people: offline modes send counters only, and an IP, a secret or the
+chat never leave the phone. A room also records the country of each phone and who won, which is
+what the room log at the bottom of the dashboard shows.
+
+At the bottom there is a **log of the rooms that were played** in the selected range (7 or 30
+days), newest first and paged: day and time, the players with the flag of their country, the game
+and who won. Test rooms run in the development environment, so they are out by default.
 
 It keeps no lists of its own. Games and modes are read from the registry in `assets/js/games.js`,
 so a new game shows up there by itself, and anything it does not recognize yet is drawn anyway,

@@ -96,6 +96,28 @@
                     ".validate": "newData.isString() && newData.val().length <= 20"
                   }
                 },
+                "co": {
+                  "$p": {
+                    ".write": "$env.matches(/^[a-z]{2,10}$/) && $day.matches(/^[0-9]{5}$/) && $code.matches(/^[A-Z]{4}$/) && $p.matches(/^[A-F]$/) && !data.exists()",
+                    ".validate": "newData.isString() && newData.val().matches(/^[A-Z]{2}$/)"
+                  }
+                },
+                "end": {
+                  ".write": "$env.matches(/^[a-z]{2,10}$/) && $day.matches(/^[0-9]{5}$/) && $code.matches(/^[A-Z]{4}$/) && !data.exists()",
+                  ".validate": "newData.hasChildren(['winner', 'at'])",
+                  "winner": {
+                    ".validate": "newData.isString() && newData.val().matches(/^([A-F]|tie)$/)"
+                  },
+                  "name": {
+                    ".validate": "newData.isString() && newData.val().length <= 20"
+                  },
+                  "at": {
+                    ".validate": "newData.isNumber() && newData.val() <= now + 60000 && newData.val() > now - 60000"
+                  },
+                  "$other": {
+                    ".validate": false
+                  }
+                },
                 "$other": {
                   ".validate": false
                 }

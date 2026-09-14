@@ -765,6 +765,12 @@ function renderResult(v) {
   const already = $('#screen-result').classList.contains('active');
   if (!already) showScreen('screen-result');
   const winners = v.winner || [];
+  // Quién ganó, para la lista de salas del panel del dueño (D-79). Solo en sala, y una sola
+  // vez: al volver a dibujar la misma pantalla no se repite. Mejor esfuerzo, como todo lo
+  // que va al panel: si no sale, la partida no se entera.
+  if (!already && S.mode === 'online') {
+    S.transport?.noteWinner?.(winners.length === 1 ? { role: winners[0], name: M.names[winners[0]] } : {});
+  }
   const meRole = S.mode === 'online' ? S.role : null;
   const many = winners.length > 1;
   // Se colgaron todos: no hay a quién coronar, y el trofeo sobra (D-61)

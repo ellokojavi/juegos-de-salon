@@ -125,7 +125,28 @@ const CAMINOS = {
    * en el registro: así se ve de una que el panel los muestra igual (C-16).
    */
   panel: {
-    datos: [`(()=>{const DIA=86400000,ahora=Date.now(),hoy=Math.floor(ahora/DIA);const rooms={ABCD:{createdAt:ahora-4*60000,game:'dudo',players:{A:{name:'Javi',online:true},B:{name:'Cata',online:true}},messages:{m1:{t:'hello',at:ahora-4*60000},m2:{t:'bid',at:ahora-60000}}},EFGH:{createdAt:ahora-2*3600000,game:'juego-nuevo',players:{A:{name:'Fausto',online:false}}}};const days={[hoy]:{rooms:{ABCD:{game:'dudo',players:{A:'Javi',B:'Cata'}},EFGH:{game:'juego-nuevo',players:{A:'Fausto'}}},local:{dudo:{local:{4:6},cpu:{1:3}},'juego-nuevo':{equipos:{6:5}},ahorcado:{local:{3:4}}},origin:{America__Santiago:12,Europe__Madrid:2},lang:{'es-CL':12,'pt-BR':2},applang:{es:11,pt:2,fr:1},hour:{14:4,21:9}},[hoy-1]:{local:{'linea-de-tiempo':{solo:{1:7}}},origin:{America__Santiago:5},lang:{'es-CL':5},applang:{es:5},hour:{20:5}}};window.__panel.seed({rooms,days});})();1`],
+    datos: [`(()=>{const DIA=86400000,ahora=Date.now(),hoy=Math.floor(ahora/DIA);
+      const rooms={ABCD:{createdAt:ahora-4*60000,game:'dudo',players:{A:{name:'Javi',online:true},B:{name:'Cata',online:true}},messages:{m1:{t:'hello',at:ahora-4*60000},m2:{t:'bid',at:ahora-60000}}},EFGH:{createdAt:ahora-2*3600000,game:'juego-nuevo',players:{A:{name:'Fausto',online:false}}}};
+      // Salas jugadas de varios días, con país y ganador, para ver la bitácora y su paginado (D-79).
+      // Van a propósito: un empate, una sala sin registro de ganador (de antes de que se anotara),
+      // una donde nunca entró nadie más y nombres de varios países.
+      const gente=[['Javi','CL'],['Cata','CL'],['Pancho','CL'],['Fran','AR'],['Ana','BR'],['Leo','ES'],['Nico','MX'],['Sofi','PE']];
+      const juegos=['dudo','ahorcado','linea-de-tiempo','toque-y-fama','batalla-naval'];
+      const dias={};
+      for(let k=0;k<26;k++){
+        const d=hoy-(k%7), code=String.fromCharCode(65+k%26)+'BCD'.slice(0,3);
+        const a=gente[k%gente.length], b=gente[(k+3)%gente.length];
+        const r={game:juegos[k%juegos.length],at:(d*DIA)+((10+k%12)*3600000),v:'0.33.6',players:{A:a[0],B:b[0]},co:{A:a[1],B:b[1]}};
+        if(k%7===3) r.end={winner:'tie',at:r.at};
+        else if(k%5!==1) r.end={winner:k%2?'A':'B',name:k%2?a[0]:b[0],at:r.at};
+        if(k%9===4){ delete r.players.B; delete r.co.B; delete r.end; }
+        (dias[d]=dias[d]||{rooms:{}}).rooms[code]=r;
+      }
+      const days={...dias};
+      days[hoy]={...(days[hoy]||{}),rooms:{...((days[hoy]||{}).rooms||{}),ABCD:{game:'dudo',at:ahora-4*60000,players:{A:'Javi',B:'Cata'},co:{A:'CL',B:'CL'},end:{winner:'A',name:'Javi',at:ahora}},EFGH:{game:'juego-nuevo',at:ahora-2*3600000,players:{A:'Fausto'},co:{A:'UY'}}},local:{dudo:{local:{4:6},cpu:{1:3}},'juego-nuevo':{equipos:{6:5}},ahorcado:{local:{3:4}}},origin:{America__Santiago:12,Europe__Madrid:2},lang:{'es-CL':12,'pt-BR':2},applang:{es:11,pt:2,fr:1},hour:{14:4,21:9}};
+      days[hoy-1]={...(days[hoy-1]||{}),local:{'linea-de-tiempo':{solo:{1:7}}},origin:{America__Santiago:5},lang:{'es-CL':5},applang:{es:5},hour:{20:5}};
+      window.__panel.seed({rooms,days});})();1`],
+
   },
 };
 

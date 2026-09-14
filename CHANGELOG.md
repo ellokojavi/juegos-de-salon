@@ -1,9 +1,22 @@
 # Changelog
 
-## Sin publicar
-
-> Commiteado pero **sin estampar**: hay otra sesión trabajando en el repo, así que el número de
-> versión lo pone `python3 tools/set-version.py X.Y.Z` al publicar (C-11).
+## 0.33.6 — 2026-09-14
+- **El panel muestra las salas jugadas** (D-79, RP-29). Al final de `/panel/` hay una lista del rango
+  elegido arriba (7 o 30 días), de la más nueva a la más vieja y paginada de a 20: día y hora,
+  jugadores con la bandera de su país, juego y quién ganó.
+- **Se empieza a anotar quién ganó** en las salas de dos celulares. Cambia D-44, que decía que eso no
+  se guardaba: lo manda cada celular al llegar a la pantalla final y las reglas solo lo dejan
+  escribir una vez. De los modos sin red sigue sin salir ni un nombre.
+- **Y el país del celular**, en dos letras, pegado al jugador de esa sala. Sale del huso horario y no
+  del idioma: un celular chileno puesto en inglés diría `en-US`. Si no se puede saber, la lista
+  muestra el nombre sin bandera; no se inventa un país.
+- **Las pruebas no aparecen**: corren en el entorno de desarrollo y el panel abre en producción. Las
+  salas donde nunca entró un segundo jugador tampoco, porque no son una partida, y hay una casilla
+  para incluirlas.
+- Nada de esto es retroactivo: las salas de antes salen sin bandera y con un guion en el ganador, que
+  no es lo mismo que un empate.
+- **Hay que publicar las reglas de la base** en la consola de Firebase para que los dos campos nuevos
+  se acepten; hasta entonces se rechazan en silencio.
 
 - **El celular de Dudo ahora farolea, y se le nota menos la mano.** Antes cantaba casi siempre la
   pinta de la que más tenía: lo que apostaba delataba su mano un 46% por encima del azar, así que
@@ -19,6 +32,15 @@
   partidas— el farol vale +4,4 puntos; contra quien solo calcula cuesta 3,6. Quedó en 0,7 y no en 1
   porque con la perilla al tope **nunca** cantaría su pinta más fuerte, que es un patrón tan legible
   como cantarla siempre. Todo anotado en [docs/juegos/dudo.md](docs/juegos/dudo.md).
+- **Los títulos del README llevan los dos nombres**: `👑 Fourth King (Cuarto Rey)`. Primero el
+  inglés, que es por lo que alguien de afuera busca el juego; entre paréntesis, el nombre de verdad,
+  que es el que va a ver en la pantalla de la app.
+- El ancla de cada sección se genera del título completo (`#-fourth-king-cuarto-rey`) con la misma
+  función que arma el título, así que el enlace de la tabla y el título no pueden quedar apuntando a
+  distinto lado.
+- La tabla de juegos ahora nombra primero el inglés: `Fourth King / Cuarto Rey / Quarto Rei`.
+
+---
 
 ## 0.33.5 — 2026-09-14
 - **Los títulos del README llevan los dos nombres**: `👑 Fourth King (Cuarto Rey)`. Primero el
