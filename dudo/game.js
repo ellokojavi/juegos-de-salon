@@ -13,10 +13,10 @@ import { createLocalTransport } from '../assets/js/transport/local.js';
 import { trackStart } from '../assets/js/transport/stats.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import {
-  PINTAS, MIN_PLAYERS, MAX_PLAYERS, buildState, botMove, minBid, bidOk,
+  PINTAS, MIN_PLAYERS, MAX_PLAYERS, MIN_CALZAR, buildState, botMove, minBid, bidOk,
   readDice, rollDice, writeDice, countPinta,
 } from './engine.js';
-import { GAME_ID, DEFAULT_CONFIG, LOCALES } from './rules.js';
+import { GAME_ID, DEFAULT_CONFIG, CHILENO, LOCALES } from './rules.js';
 
 const lang = getLang();
 const L = LOCALES[lang];
@@ -34,7 +34,15 @@ let M = null;   // partida: config, nombres y la lista de jugadas
 /* ------------------------------------------------------------------ */
 /* Nombres de las apuestas                                             */
 /* ------------------------------------------------------------------ */
-const pintaName = (n, p) => (n === 1 ? L.pintaOne[p] : L.pintaMany[p]);
+/**
+ * Cómo se dice la pinta. En español la mesa las llama por su nombre —tontos, trenes, cuadras,
+ * quintas y sextas— y eso viene encendido; apagado, y en los otros dos idiomas, van por número.
+ */
+const nombresChilenos = () => lang === 'es' && M?.config?.chileno !== false;
+const pintaName = (n, p) => {
+  if (nombresChilenos()) return n === 1 ? CHILENO.one[p] : CHILENO.many[p];
+  return n === 1 ? L.pintaOne[p] : L.pintaMany[p];
+};
 const nameOf = r => M.names[r] || r;
 
 /* ------------------------------------------------------------------ */
@@ -427,6 +435,20 @@ function renderSetup(mode) {
     ? [recordado || '']
     : [recordado || '', ''];
   let calzar = DEFAULT_CONFIG.calzar;
+  let chileno = DEFAULT_CONFIG.chileno;
+
+  /** Un interruptor con su explicación, como el del resto de la app. */
+  const interruptor = (encendido, label, hint, onChange) => {
+    const sw = el('button', {
+      type: 'button', class: 'switch' + (encendido ? ' on' : ''), 'aria-label': label, 'aria-pressed': String(encendido),
+      onClick: () => {
+        const v = !sw.classList.contains('on');
+        sw.classList.toggle('on', v); sw.setAttribute('aria-pressed', String(v));
+        SFX.tap(); onChange(v);
+      },
+    });
+    return el('div', { class: 'toggle-row' }, el('div', { class: 'txt' }, el('b', {}, label), el('small', {}, hint)), sw);
+  };
 
   const dibujar = () => {
     form.innerHTML = '';
@@ -447,12 +469,15 @@ function renderSetup(mode) {
       form.append(el('div', { class: 'player-row cpu' },
         el('div', { class: 'num' }, '🤖'), el('span', { class: 'cpu-name' }, T.cpuName)));
     }
-    const sw = el('button', {
-      type: 'button', class: 'switch' + (calzar ? ' on' : ''), 'aria-label': T.calzarLabel, 'aria-pressed': String(calzar),
-      onClick: () => { calzar = !calzar; sw.classList.toggle('on', calzar); sw.setAttribute('aria-pressed', String(calzar)); SFX.tap(); },
-    });
-    form.append(el('div', { class: 'toggle-row' },
-      el('div', { class: 'txt' }, el('b', {}, T.calzarLabel), el('small', {}, T.calzarHint)), sw));
+    // Calzar solo existe de tres para arriba (D-71), así que el interruptor aparece cuando la
+    // mesa da para eso. Contra el celular son dos y no se ofrece nunca.
+    if (draft.length >= MIN_CALZAR && mode !== 'cpu') {
+      form.append(interruptor(calzar, T.calzarLabel, T.calzarHint, v => { calzar = v; }));
+    }
+    // Los nombres de la mesa chilena son de un solo idioma: en inglés y portugués no hay qué elegir
+    if (lang === 'es') {
+      form.append(interruptor(chileno, CHILENO.label, CHILENO.hint, v => { chileno = v; }));
+    }
   };
   dibujar();
 
@@ -490,7 +515,7 @@ function renderSetup(mode) {
       const names = mode === 'cpu'
         ? { A: nombres[0], B: T.cpuName }
         : Object.fromEntries(players.map((r, i) => [r, nombres[i]]));
-      startMatch(mode, names, { ...DEFAULT_CONFIG, calzar, players });
+      startMatch(mode, names, { ...DEFAULT_CONFIG, calzar, chileno, players });
     },
   }, T.start));
   acciones.append(el('button', { class: 'btn btn--ghost btn--sm', onClick: () => showScreen('screen-intro') }, T.menu));

@@ -68,13 +68,20 @@ export function bidOk(prev, next, totalDice = Infinity) {
   return next.n >= minBid(prev, next.p);
 }
 
+/** Con dos jugadores no se puede calzar: hace falta una mesa de tres para arriba (D-71). */
+export const MIN_CALZAR = 3;
+
 /**
- * Calzar solo se puede cuando la apuesta ya llegó a la mitad de los dados de la mesa.
- * Antes es una apuesta gratis: con muchos dados sin destapar, acertar la cantidad exacta
- * es casi imposible, pero fallar no cuesta lo mismo que arriesgarse a dudar.
+ * Calzar pide dos cosas: que queden al menos tres jugadores y que la apuesta ya haya llegado
+ * a la mitad de los dados de la mesa.
+ *
+ * Lo de la mitad es porque antes es una apuesta gratis: con muchos dados tapados, acertar la
+ * cantidad exacta es casi imposible, pero fallar cuesta lo mismo que dudar mal.
+ * Lo de los tres jugadores es porque en un duelo solo hay una mano tapada, así que la cuenta
+ * exacta deja de ser un riesgo y pasa a ser aritmética: el que calza ya sabe casi todo.
  */
-export function calzarOk(bid, totalDice) {
-  return !!bid && bid.n * 2 >= totalDice;
+export function calzarOk(bid, totalDice, jugadores = MIN_CALZAR) {
+  return !!bid && jugadores >= MIN_CALZAR && bid.n * 2 >= totalDice;
 }
 
 /* ------------------------------------------------------------------ */
@@ -259,7 +266,7 @@ export function buildState({ players = [], config = {}, plays = [] } = {}) {
         round.current = nextIn(vivos, play.from);
       } else if (play.t === 'dudo' && round.bid) {
         cerrar(round, { type: 'dudo', by: play.from });
-      } else if (play.t === 'calza' && config.calzar !== false && calzarOk(round.bid, totalNow())) {
+      } else if (play.t === 'calza' && config.calzar !== false && calzarOk(round.bid, totalNow(), vivos.length)) {
         cerrar(round, { type: 'calza', by: play.from });
       }
       continue;
@@ -288,7 +295,7 @@ export function buildState({ players = [], config = {}, plays = [] } = {}) {
     players, st, alive: vivos, totalDice,
     round: round.n, opener, current, waiting,
     rolls: round.rolls, bid: round.bid, bids: round.bids, end: round.end,
-    canCalzar: config.calzar !== false && calzarOk(round.bid, totalDice),
+    canCalzar: config.calzar !== false && calzarOk(round.bid, totalDice, vivos.length),
     last, history, done,
     winner: done ? (vivos[0] || null) : null,
   };

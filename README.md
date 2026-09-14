@@ -250,8 +250,14 @@ se queda sin dados sale, y gana el último que le quede alguno.
 Acá el celular hace lo que en la mesa se hace mal: reparte los dados, **no deja hacer una apuesta
 ilegal** —subir es más cantidad, o la misma cantidad con pinta mayor, y los ases valen doble en las
 dos direcciones— y cuenta al instante, que es justo lo que se discute a gritos. **Calzar** es decir
-que la cantidad es exacta: si aciertas recuperas un dado, si fallas pierdes uno, y solo se puede
-desde la mitad de los dados de la mesa.
+que la cantidad es exacta: si aciertas recuperas un dado, si fallas pierdes uno. Se puede desde la
+mitad de los dados de la mesa y **con tres jugadores o más**: en un duelo solo hay una mano tapada,
+así que la cuenta exacta es aritmética y no riesgo (D-71).
+
+En español las pintas se dicen como en la mesa chilena —**ases, tontos, trenes, cuadras, quintas y
+sextas**—, que es la forma en que el juego se juega acá: "cuatro quintas", no "cuatro cincos". Viene
+encendido y se apaga en la configuración para volver a los números. En inglés y portugués las pintas
+van por su número y el interruptor ni se ofrece.
 
 - **📱 Un celular:** de dos a seis. Se pasa el celular y cada uno ve sus dados con la pantalla del
   pase de por medio (C-9).

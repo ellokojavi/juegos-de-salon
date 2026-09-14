@@ -4,7 +4,19 @@
  */
 
 export const GAME_ID = 'dudo';
-export const DEFAULT_CONFIG = { dice: 5, calzar: true };
+export const DEFAULT_CONFIG = { dice: 5, calzar: true, chileno: true };
+
+/**
+ * Como se nombran las pintas en una mesa chilena. Van aparte de LOCALES porque son de un solo
+ * idioma: en inglés y en portugués no hay un juego de nombres equivalente instalado, así que ahí
+ * las pintas se dicen por su número y el interruptor ni se ofrece (D-71).
+ */
+export const CHILENO = {
+  one: { 1: 'as', 2: 'tonto', 3: 'tren', 4: 'cuadra', 5: 'quinta', 6: 'sexta' },
+  many: { 1: 'ases', 2: 'tontos', 3: 'trenes', 4: 'cuadras', 5: 'quintas', 6: 'sextas' },
+  label: 'Nombres chilenos',
+  hint: 'Ases, tontos, trenes, cuadras, quintas y sextas, como se dice en la mesa. Apagado, se dicen por su número.',
+};
 
 /* ================================================================== */
 /* ESPAÑOL                                                             */
@@ -26,7 +38,7 @@ const ES = {
     whoPlays: '¿Quiénes juegan?',
     setupHint: 'Anótense en el orden en que están sentados. Cada uno parte con cinco dados.',
     addPlayer: '+ Agregar jugador', start: '¡A jugar!',
-    calzarLabel: 'Se puede calzar', calzarHint: 'Acertar la cantidad exacta recupera un dado. Solo desde la mitad de la mesa.',
+    calzarLabel: 'Se puede calzar', calzarHint: 'Acertar la cantidad exacta recupera un dado. Desde la mitad de la mesa y con tres jugadores o más.',
     endAgain: '¡Otra partida!', changePlayers: 'Cambiar jugadores', backMenu: 'Volver al menú',
     historyTitle: '🎲 Cómo se fue dando',
     // dinámicos (game.js)
@@ -36,11 +48,11 @@ const ES = {
     yourName: 'Tu nombre', cpuName: 'Celular',
     rules: [
       'Cada uno tira cinco dados y mira solo los suyos.',
-      'Se apuesta cuántos dados de una pinta hay <b>en toda la mesa</b>: "cuatro cincos".',
+      'Se apuesta cuántos dados de una pinta hay <b>en toda la mesa</b>: "cuatro quintas" son cuatro dados con un 5.',
       'Los <b>ases son comodín</b>: cuentan como la pinta que se haya apostado.',
       'El que sigue sube la apuesta —más cantidad, o la misma cantidad con pinta mayor— o dice <b>dudo</b>.',
       'Al dudar se destapa todo y se cuenta. Si había tantos o más, pierde un dado quien dudó; si había menos, quien apostó.',
-      '<b>Calzar</b> es decir que la cantidad es exacta: si aciertas recuperas un dado, si fallas pierdes uno.',
+      '<b>Calzar</b> es decir que la cantidad es exacta: si aciertas recuperas un dado, si fallas pierdes uno. Hace falta una mesa de tres.',
       'Quien se queda sin dados sale. Gana el último con dados.',
     ],
     diceLeft: '{n} dados', diceLeftOne: '1 dado',
@@ -89,7 +101,7 @@ const EN = {
     whoPlays: 'Who\'s playing?',
     setupHint: 'Sign up in the order you\'re sitting. Everyone starts with five dice.',
     addPlayer: '+ Add player', start: 'Play!',
-    calzarLabel: 'Spot on allowed', calzarHint: 'Calling the exact count wins a die back. Only once the bid reaches half the table.',
+    calzarLabel: 'Spot on allowed', calzarHint: 'Calling the exact count wins a die back. From half the table on, and only with three players or more.',
     endAgain: 'Another game!', changePlayers: 'Change players', backMenu: 'Back to menu',
     historyTitle: '🎲 How it went',
     resumeTitle: '⏯ There\'s a game in progress', resumeText: 'Round {round}. It was {name}\'s turn.', resume: 'Continue', delete: 'Delete',
@@ -102,7 +114,7 @@ const EN = {
       '<b>Aces are wild</b>: they count as whatever face was bid.',
       'The next player raises —more dice, or the same count on a higher face— or calls <b>liar</b>.',
       'On a call everything is opened and counted. If there were that many or more, the caller loses a die; if fewer, the bidder does.',
-      '<b>Spot on</b> means the count is exact: get it right and you win a die back, get it wrong and you lose one.',
+      '<b>Spot on</b> means the count is exact: get it right and you win a die back, get it wrong and you lose one. Needs three players.',
       'Run out of dice and you\'re out. Last player with dice wins.',
     ],
     diceLeft: '{n} dice', diceLeftOne: '1 die',
@@ -148,7 +160,7 @@ const PT = {
     whoPlays: 'Quem vai jogar?',
     setupHint: 'Cadastrem-se na ordem em que estão sentados. Cada um começa com cinco dados.',
     addPlayer: '+ Adicionar jogador', start: 'Bora jogar!',
-    calzarLabel: 'Pode cravar', calzarHint: 'Acertar a quantidade exata devolve um dado. Só a partir da metade da mesa.',
+    calzarLabel: 'Pode cravar', calzarHint: 'Acertar a quantidade exata devolve um dado. Da metade da mesa em diante, e só com três jogadores ou mais.',
     endAgain: 'Mais uma partida!', changePlayers: 'Trocar jogadores', backMenu: 'Voltar ao menu',
     historyTitle: '🎲 Como foi',
     resumeTitle: '⏯ Tem uma partida pela metade', resumeText: 'Rodada {round}. Era a vez de {name}.', resume: 'Continuar', delete: 'Apagar',
@@ -161,7 +173,7 @@ const PT = {
       'Os <b>ases são curinga</b>: contam como a face que foi apostada.',
       'O próximo aumenta a aposta —mais quantidade, ou a mesma com face maior— ou fala <b>duvido</b>.',
       'Na dúvida abre tudo e conta. Se tinha aquilo ou mais, perde um dado quem duvidou; se tinha menos, quem apostou.',
-      '<b>Cravar</b> é dizer que a quantidade é exata: acertou, ganha um dado de volta; errou, perde um.',
+      '<b>Cravar</b> é dizer que a quantidade é exata: acertou, ganha um dado de volta; errou, perde um. Precisa de três na mesa.',
       'Quem fica sem dados sai. Ganha o último com dados.',
     ],
     diceLeft: '{n} dados', diceLeftOne: '1 dado',
