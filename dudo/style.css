@@ -83,9 +83,20 @@
 .actions-bar { margin-top: auto; padding-top: 10px; display: grid; gap: 8px; }
 .pick-label { text-align: center; color: var(--muted); font-weight: 800; font-size: 0.85rem; margin: 0; }
 .pintas { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
-.pinta { display: grid; place-items: center; min-height: 46px; padding: 6px 0; border-radius: 12px; border: 2px solid transparent; background: rgba(0,0,0,0.25); cursor: pointer; }
+.pinta { display: grid; place-items: center; min-height: 48px; padding: 7px 0; border-radius: 12px; border: 2px solid transparent; background: rgba(0,0,0,0.25); cursor: pointer; }
 .pinta.on { border-color: var(--cyan); background: rgba(46,230,214,0.18); }
 .pinta:disabled { opacity: 0.3; cursor: not-allowed; }
+/* Los de la botonera no son dados, son botones que nombran una pinta. Van dibujados en hueco
+   —sin cara, con el contorno y los puntos en línea— para que los dados de verdad, los de la
+   mano del jugador, sean lo único que se lea como un objeto sobre la mesa. */
+.pinta .die { background: none; box-shadow: none; border: 2px solid rgba(255, 255, 255, 0.3); }
+.pinta .die i { background: rgba(255, 255, 255, 0.62); }
+.pinta .die.ace { background: none; border-color: rgba(255, 210, 63, 0.6); }
+.pinta .die.ace i { background: var(--yellow); }
+.pinta.on .die { border-color: var(--cyan); }
+.pinta.on .die i { background: var(--cyan); }
+/* Salvo el elegido, que se rellena: es la pinta sobre la que se está apostando */
+.pinta.on .die { background: rgba(46, 230, 214, 0.12); }
 .amount { display: flex; align-items: center; justify-content: center; gap: 16px; }
 .amount-n { font: 900 2.6rem var(--font-num); font-variant-numeric: tabular-nums; min-width: 2ch; text-align: center; color: var(--yellow); }
 .step { width: 52px; height: 52px; border-radius: 50%; border: 2px solid var(--glass-border); background: rgba(0,0,0,0.3); color: var(--ink); font: 900 1.8rem var(--font-body); cursor: pointer; }
