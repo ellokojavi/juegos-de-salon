@@ -32,6 +32,13 @@ python3 tools/readme.py capturas <seccion> [--sin-red]   # rehace las capturas c
 python3 tools/readme.py sellar         # "ya releí el README con estos hechos"
 ```
 
+Rehacerlas no es revisarlas. Antes de publicar, la hoja de contacto pone todas las capturas de
+una sección juntas, al tamaño en que el README las muestra (D-76):
+
+```bash
+node tools/e2e/contacto.mjs cuarto-rey --salida /tmp/contacto
+```
+
 Dentro de las marcas `<!-- generado: ... -->` no se edita a mano. La prosa sí es a mano:
 `revisar` compara los hechos de hoy (`tools/hechos.mjs`, que importa los módulos reales)
 contra el último sello (`docs/hechos.json`) y dice qué sección releer. Cada captura declara

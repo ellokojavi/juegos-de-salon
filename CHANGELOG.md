@@ -1,11 +1,30 @@
 # Changelog
 
+## 0.33.2 — 2026-09-13
+- **Las capturas se sacan con la pantalla quieta** (D-76). En el README, la pantalla "¿Quiénes
+  juegan?" de Cuarto Rey mostraba las cuatro filas con anchos distintos. La grilla estaba bien: cada
+  fila entraba con una animación de escala escalonada y la foto se sacaba a mitad de camino, con dos
+  filas asentadas y dos todavía creciendo. Ahora el capturador espera a que las animaciones finitas
+  terminen antes de disparar.
+- **La lista de jugadores de Cuarto Rey dejó de saltar entera.** Entra animada solo la fila recién
+  agregada, y entra desplazándose en vez de escalándose: agregar un jugador ya no vuelve a animar a
+  los que estaban.
+- **La fila angosta le dejó de comer el ancho al nombre.** En un celular de 320 px el campo quedaba
+  en dos letras: bajo 400 px la fila se aprieta y bajo 340 px el selector de género se baja entero a
+  una segunda línea. Los botones de género y la ✕ miden 44 px de alto (C-8).
+- **Hoja de contacto para mirar las capturas juntas**: `node tools/e2e/contacto.mjs <seccion>` arma
+  un PNG con todas las imágenes de una sección al tamaño en que el README las muestra. Mirándola
+  aparecieron tres tomas más para arreglar: el ranking final y el "¡Cuarto Rey!" tapados por el
+  confeti, y un "¡Salud!" que en realidad mostraba "¡Cumplida!".
+
+---
+
 ## 0.33.1 — 2026-09-13
 - **El botón de apostar de Dudo se iba fuera de la pantalla** en un celular con muesca, con medio
   celular vacío más arriba. No era de Dudo: `.app` pedía `100dvh` adentro de un `body` que ya había
   reservado las muescas con su padding, así que **la página quedaba 81 px más alta que el celular**
   (47 arriba, 34 abajo). En los otros juegos eso se notaba solo como un scroll de la nada; en Dudo,
-  donde la barra de apostar se apoya en el borde de abajo, se llevaba el botón fuera (D-75).
+  donde la barra de apostar se apoya en el borde de abajo, se llevaba el botón fuera (D-76).
 - **Ninguna prueba lo veía** porque en Chrome headless las muescas valen 0. Ahora
   `mirar.mjs --muescas` las simula, y el informe dice cuánto se pasa la página del alto del celular
   y qué botones caen por debajo del borde. Con el error de vuelta, avisa: "⚠️ 81 px · Apuesto 1 quinta".
