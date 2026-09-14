@@ -36,6 +36,7 @@ scroll horizontal o botones bajo 44 px (C-8).
 | `ahorcado-local.mjs` | Cadena de tres en un celular, comprar una letra, retomar y el solitario |
 | `ahorcado-online.mjs` | Tres celulares contra Firebase real: cadena, reconexión a mitad y revancha |
 | `dudo-local.mjs` | Duelo contra el celular y partida de tres en un celular, con retomar a mitad |
+| `dudo-online.mjs` | Tres celulares contra Firebase real: sala, destape verificado, recarga a mitad y revancha |
 | `linea-de-tiempo-local.mjs` | Un celular con tres jugadores y solitario |
 | `linea-de-tiempo-solo.mjs` | Solitario: récord, plural, retomar |
 | `linea-de-tiempo-error.mjs` | Pantalla de error que se queda hasta tocar; el rival espera |
