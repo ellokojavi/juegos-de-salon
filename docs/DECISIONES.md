@@ -566,3 +566,34 @@ PNG con todas las capturas de una sección al tamaño en que el README las muest
 de publicar: las capturas se rehacen solas, pero nadie las revisaba de a una. Mirándola se
 encontraron dos más —el ranking final y el "¡Cuarto Rey!" tapados por el confeti, y un "¡Salud!"
 que en realidad decía "¡Cumplida!"—, que se arreglaron en el guion, no en el juego.
+
+---
+
+## D-77 · La app se arma con el alto chico de la pantalla
+**Fecha:** 2026-09-13 · **Estado:** vigente · **Corrige D-75 (el alto), ajusta D-76**
+**Decisión:** `.app` mide `calc(100svh - muescas)`, no `100dvh`. `svh` es el **alto chico**: el que
+queda cuando el navegador muestra toda su interfaz. El `body` sigue pintando `100dvh` para que el
+fondo llegue al borde. Y `mirar.mjs --muescas` dejó de simular las muescas con variables CSS: ahora
+se las pide a Chrome (`Emulation.setSafeAreaInsetsOverride`), que es lo que la página lee con
+`env(safe-area-inset-*)`.
+**Por qué:** la barra de apostar de Dudo seguía saliéndose de la pantalla en un Android con la app
+instalada, después de que D-75 diera el asunto por cerrado. La página del diagnóstico
+(`tools/diag/`, abierta en ese mismo celular) mostró por qué: **`dvh` daba 1016 px y `svh` 960**. La
+app se armaba con el valor de `dvh`, 56 px más larga que lo que se alcanza a ver, así que lo que se
+apoya abajo —la barra de apostar— quedaba justo afuera: alcanzable deslizando, pero afuera. Las
+muescas no tenían nada que ver: en ese aparato `env(safe-area-inset-*)` vale 0 y la ventana ya
+excluye las barras del sistema.
+**Por qué `svh` y no seguir con `dvh`:** `dvh` es el alto **de este instante**, y el instante puede
+ser el bueno. Vale para animar, no para decidir dónde termina una pantalla: la app se arma una vez
+y la barra tiene que estar adentro también cuando el navegador muestra su interfaz. Con `svh` lo
+que puede sobrar es un poco de fondo abajo —invisible, porque el `body` pinta `100dvh`—; lo que
+nunca pasa es que falte.
+**Por qué el diagnóstico y no otro arreglo a ojo:** D-75 se validó con un sustituto —`--muescas`
+sobreescribía `--safe-top` y `--safe-bottom`—, y un sustituto no mueve el viewport ni el `dvh`: por
+eso daba verde con el error puesto. Con muescas de verdad la página mide exactamente el alto de la
+pantalla, o sea que el error nunca estuvo ahí. Los números que lo decidieron no los tenía ninguna
+prueba: los tenía el celular, y hubo que ir a buscarlos.
+**Consecuencias:** `mirar.mjs` agrega una línea al informe —"se arma con el alto chico (svh)"— que
+revisa la **regla**, no la medida, porque en Chrome headless `dvh` y `svh` valen lo mismo y una
+medida nunca vería la diferencia. `tools/diag/` se publica mientras se diagnostica y se borra
+después; es la única página del sitio que no es la app.

@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.33.3 — 2026-09-13
+- **La barra de apostar de Dudo ya no se va fuera de la pantalla** (D-77). La app se arma con el
+  **alto chico** de la pantalla (`svh`) y no con el del instante (`dvh`). En un Android con la app
+  instalada los dos valores se separan —medimos `dvh` 1016 px y `svh` 960—, así que la pantalla se
+  armaba 56 px más larga que lo que se alcanza a ver y lo que se apoya abajo quedaba afuera:
+  alcanzable deslizando, pero afuera.
+- **Las muescas ahora se prueban de verdad.** `mirar.mjs --muescas` se las pide a Chrome en vez de
+  sobreescribir las variables CSS: un sustituto pinta los márgenes pero no mueve el viewport, y por
+  eso el arreglo anterior daba verde con el error puesto. El informe además avisa si una pantalla se
+  arma con `dvh` en vez de `svh`.
+- El diagnóstico salió de una página que mide el alto en el celular de verdad (`tools/diag/`), que se
+  publicó a propósito para poder abrirla de un toque y se saca en cuanto deje de hacer falta.
+
+---
+
 ## 0.33.2 — 2026-09-13
 - **Las capturas se sacan con la pantalla quieta** (D-76). En el README, la pantalla "¿Quiénes
   juegan?" de Cuarto Rey mostraba las cuatro filas con anchos distintos. La grilla estaba bien: cada
