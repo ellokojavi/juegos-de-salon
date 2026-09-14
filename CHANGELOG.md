@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.32.0 — 2026-09-13
+- **Dudo se juega en varios celulares** (DU-09). Sala con código de cuatro letras, QR, chat y
+  turnos, de dos a seis. Era el modo que quedó en "Próximamente" cuando entró el juego: el motor ya
+  hablaba el protocolo, faltaba la sala.
+- **Los dados no viajan hasta que alguien duda.** Cada celular tira los suyos, publica el hash y los
+  guarda; al dudar los destapa y todos verifican que sean los que había comprometido. El destape lo
+  dice en pantalla: **"Dados verificados ✅"**, o el nombre de quien no calza (C-10, D-70).
+- **Recargar a mitad de partida devuelve a la misma sala**, sin volver a presentarse, y con los
+  dados de la ronda intactos: van guardados en el celular con su sal, porque sin ellos nadie podría
+  destapar y la mesa se quedaría esperando para siempre (C-6).
+- **Quien entra a una sala empezada no ve el destape de las rondas que se jugaron antes de llegar.**
+- La revancha abre una sala nueva y arrastra a los demás, como en el resto de los juegos (C-7).
+
 ## 0.31.0 — 2026-09-13
 - **La invitación a una sala dice quién invita**: *"Javi te invita a jugar Línea de Tiempo en
   juegosdesalon.cl - Sala: WFBN"* (D-73). Antes decía "Únete a mi sala de Línea de Tiempo. Código:
