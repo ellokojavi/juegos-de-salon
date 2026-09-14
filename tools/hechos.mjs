@@ -52,16 +52,17 @@ function estado(id) {
   return m ? `v${m[1]}` : null;
 }
 
-/** Los modos de juego: las claves modeX que tienen su modeXHint al lado. */
-function modos(L) {
+/** Los modos de juego: las claves modeX que tienen su modeXHint al lado.
+    Van en los dos idiomas porque el README es en inglés y la tabla de juegos sale de acá (D-78). */
+function modos(L, EN) {
   return Object.keys(L).filter(k => /^mode[A-Z]/.test(k) && L[k + 'Hint'] !== undefined)
-    .map(k => ({ clave: k, es: L[k] }));
+    .map(k => ({ clave: k, es: L[k], en: EN[k] || L[k] }));
 }
 
 /** Las variantes de un juego: claves modeX sin ayuda propia (el reparto de Línea de Tiempo). */
-function variantes(L) {
+function variantes(L, EN) {
   return Object.keys(L).filter(k => /^mode[A-Z]/.test(k) && !k.endsWith('Hint') && L[k + 'Hint'] === undefined)
-    .map(k => ({ clave: k, es: L[k] }));
+    .map(k => ({ clave: k, es: L[k], en: EN[k] || L[k] }));
 }
 
 const juegos = [];
@@ -70,17 +71,18 @@ for (const g of GAMES) {
   // Hay dos formas de escribir un rules.js: los textos sueltos (El Ahorcado) o dentro de `ui`
   // (Cuarto Rey, Dudo). Se miran las dos, o los modos de esos juegos no se ven desde acá.
   const es = { ...LOCALES.es, ...(LOCALES.es.ui || {}) };
+  const en = { ...LOCALES.en, ...(LOCALES.en.ui || {}) };
   const html = leer(`${g.id}/index.html`);
   juegos.push({
     id: g.id,
     emoji: g.emoji,
     nombre: g.name,
-    jugadores: g.players.replace('–', ' a '),
+    jugadores: g.players.replace('–', ' to '),   // "1 to 6": lo lee la tabla del README, que es en inglés
     duracion: g.duration,
     disponible: g.available,
     estado: estado(g.id),
-    modos: modos(es),
-    variantes: variantes(es),
+    modos: modos(es, en),
+    variantes: variantes(es, en),
     pantallas: [...html.matchAll(/id="screen-([a-z-]+)"/g)].map(m => m[1]),
     chat: /id="chat"/.test(html),
     archivos: archivos(g.id, r => !r.endsWith('.test.mjs')),

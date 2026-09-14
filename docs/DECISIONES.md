@@ -600,3 +600,26 @@ apenas el celular confirmó el arreglo: era la única página del sitio que no e
 hacer falta, está en la historia (`git show effd591:tools/diag/index.html`), y lo que mide —dvh,
 svh, lvh, la ventana, las muescas y cuánto se pasa la página— es la lista de lo que hay que ir a
 buscar al aparato cuando una pantalla se corta y en el escritorio se ve bien.
+
+---
+
+## D-78 · El README en inglés, el resto en español
+**Fecha:** 2026-09-13 · **Estado:** vigente
+**Decisión:** `README.md` se escribe en inglés. Todo lo demás sigue en español: los cánones, las
+decisiones, las especificaciones de cada juego, los comentarios del código y los mensajes de las
+herramientas. Lo que el README muestra generado también sale en inglés: los modos se leen del `en`
+de cada `rules.js`, las temáticas del `en` de los mazos y el `pie` de `docs/capturas.json` se
+escribe en inglés. Queda como canon en C-13.
+**Por qué:** la app es chilena, se juega en chileno y se piensa en español, y eso no cambia. Pero el
+README no es parte de la app: es la puerta del repositorio, y por ahí entra gente de cualquier
+parte que no lee español. Todo lo demás lo lee quien trabaja en el proyecto.
+**Por qué también los bloques generados:** si la prosa quedaba en inglés y las tablas en español,
+`python3 tools/readme.py actualizar` devolvía la mitad del archivo al español en la primera
+publicación. Un README bilingüe por accidente es peor que uno en cualquiera de los dos idiomas.
+**Por qué los nombres de los juegos no se traducen en los títulos:** las secciones siguen diciendo
+"Cuarto Rey" y "Línea de Tiempo" porque así se llaman, y la tabla de arriba muestra los tres
+nombres (`Cuarto Rey / Fourth King / Quarto Rei`). Además los anclas del índice salen del nombre en
+español: traducir los títulos habría roto todos los enlaces internos.
+**Consecuencias:** `tools/hechos.mjs` guarda los modos en los dos idiomas, no solo en español, y
+`jugadores` viaja como "1 to 6". Al agregar un juego hay un paso más explícito en
+`docs/AGREGAR-JUEGO.md`: la sección del README y el `pie` de las capturas van en inglés.
