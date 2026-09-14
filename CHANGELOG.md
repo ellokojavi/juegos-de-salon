@@ -8,8 +8,6 @@
   tarjeta que se ve al compartir el link— y está en los tres idiomas.
 - La lista de juegos de la descripción sí se sigue armando de `games.js`: nombra cuáles hay sin
   decir cuántos son, así que no envejece.
-
-## 0.31.0 — 2026-09-13
 - **El panel se entera solo de los juegos nuevos.** Tenía cuatro listas copiadas —los juegos, los
   modos con su ícono, los idiomas con su nombre y los entornos del `<select>`—, una regla de CSS por
   modo y una enumeración de modos en las reglas de Firebase. Ahora no tiene ninguna: los juegos y los
