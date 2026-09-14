@@ -95,6 +95,16 @@
       "archivo": "ahorcado-online.mjs",
       "red": true,
       "que": "sala de tres celulares en cadena"
+    },
+    "julepe-local": {
+      "archivo": "julepe-local.mjs",
+      "red": false,
+      "que": "mesa de tres contra el celular y partida en un celular"
+    },
+    "julepe-online": {
+      "archivo": "julepe-online.mjs",
+      "red": true,
+      "que": "sala de tres celulares con reparto cerrado"
     }
   },
   "capturas": [
@@ -503,6 +513,76 @@
       "pie": "Play alone: the app deals the word",
       "guion": "ahorcado-local",
       "toma": "09-solo"
+    },
+    {
+      "seccion": "julepe",
+      "imagen": "docs/screenshots/julepe/01-intro.png",
+      "pie": "Game modes",
+      "guion": "julepe-local",
+      "toma": "01-intro"
+    },
+    {
+      "seccion": "julepe",
+      "imagen": "docs/screenshots/julepe/02-configuracion.png",
+      "pie": "How many rivals and how many hands",
+      "guion": "julepe-local",
+      "toma": "02-configuracion"
+    },
+    {
+      "seccion": "julepe",
+      "imagen": "docs/screenshots/julepe/03-declaracion.png",
+      "pie": "In or out, in secret",
+      "guion": "julepe-local",
+      "toma": "03-declaracion"
+    },
+    {
+      "seccion": "julepe",
+      "imagen": "docs/screenshots/julepe/04-cambio.png",
+      "pie": "Swap up to three cards",
+      "guion": "julepe-local",
+      "toma": "04-cambio"
+    },
+    {
+      "seccion": "julepe",
+      "imagen": "docs/screenshots/julepe/05-baza.png",
+      "pie": "Illegal cards are dimmed",
+      "guion": "julepe-local",
+      "toma": "05-baza"
+    },
+    {
+      "seccion": "julepe",
+      "imagen": "docs/screenshots/julepe/06-julepe.png",
+      "pie": "A julep: drink the whole pot",
+      "guion": "julepe-local",
+      "toma": "06-julepe"
+    },
+    {
+      "seccion": "julepe",
+      "imagen": "docs/screenshots/julepe/07-reparto.png",
+      "pie": "Handing out the sips you won",
+      "guion": "julepe-local",
+      "toma": "07-reparto"
+    },
+    {
+      "seccion": "julepe",
+      "imagen": "docs/screenshots/julepe/09-pase.png",
+      "pie": "Pass the phone",
+      "guion": "julepe-local",
+      "toma": "09-pase"
+    },
+    {
+      "seccion": "julepe",
+      "imagen": "docs/screenshots/julepe/online-01-sala.png",
+      "pie": "Room with code and QR",
+      "guion": "julepe-online",
+      "toma": "online-01-sala"
+    },
+    {
+      "seccion": "julepe",
+      "imagen": "docs/screenshots/julepe/08-resultado.png",
+      "pie": "Who drank the least",
+      "guion": "julepe-local",
+      "toma": "08-resultado"
     }
   ],
   "fuentes": {
@@ -537,6 +617,10 @@
     ],
     "ahorcado": [
       "ahorcado/"
+    ],
+    "julepe": [
+      "julepe/",
+      "assets/js/sobre.js"
     ]
   }
 }

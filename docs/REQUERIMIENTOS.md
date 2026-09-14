@@ -171,3 +171,22 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | AH-17 | Al confirmar una letra, un cartel breve dice cómo fue antes de que cambie el turno (D-63). | ✅ v0.26 |
 | AH-15 | Entra al menú publicado cuando esté probado de punta a punta y con capturas en el README. | ✅ v0.26 |
 
+## Julepe (JU) — ver [docs/juegos/julepe.md](juegos/julepe.md)
+
+| ID | Requerimiento | Estado |
+|---|---|---|
+| JU-01 | Juego de bazas con baraja inglesa de 52 cartas, cinco por jugador y una vuelta que marca el triunfo. De 2 a 6 jugadores. | ✅ v0.34 |
+| JU-02 | El plato: cada jugador pone 2 tragos cuando queda vacío, y solo entonces. | ✅ v0.34 |
+| JU-03 | Declaración en secreto: ir (comprometerse a dos bazas) o pasarse (no juega, no bebe). | ✅ v0.34 |
+| JU-04 | Si se pasan todos, la mano se anula con el plato acumulado; si va uno solo, el dador se queda obligado (D-83). | ✅ v0.34 |
+| JU-05 | Cambio de hasta tres cartas desde la reserva propia, por puestos y no por nombre de carta (D-82). | ✅ v0.34 |
+| JU-06 | Las cinco bazas con las tres obligaciones —asistir, montar y fallar—: la app apaga las cartas que no se pueden tirar y dice por qué (C-8b). | ✅ v0.34 |
+| JU-07 | Julepe: quien fue y no hizo dos bazas se toma el plato entero, y lo bebido vuelve al plato (se dobla con dos julepes). | ✅ v0.34 |
+| JU-08 | Quien se salva reparte dos tragos por baza a quien quiera de la mesa. | ✅ v0.34 |
+| JU-09 | Partida de 5, 8 o 12 manos; gana quien terminó más seco, con tabla de tragos y julepes. | ✅ v0.34 |
+| JU-10 | Modo un celular, de 2 a 6, con pase y resultado antes de cada pase (C-9). | ✅ v0.34 |
+| JU-11 | Modo varios celulares, de 2 a 6, con sala, QR y chat, y reparto cerrado por jugador (D-81). | ✅ v0.34 |
+| JU-12 | Modo contra el celular: mesa de tres contra dos rivales que solo miran sus propias cartas. | ✅ v0.34 |
+| JU-13 | Al cerrar la mano cada celular destapa sus cartas y todos verifican que nadie jugó una que no tenía (C-10). | ✅ v0.34 |
+| JU-14 | Memoria de partida en los tres modos, incluida la llave privada de la sala (C-6). | ✅ v0.34 |
+| JU-15 | Los tres idiomas, con nombre propio en cada uno: Julepe, Julep y Paga o Bolo (D-84). | ✅ v0.34 |
