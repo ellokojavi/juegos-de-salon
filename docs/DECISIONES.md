@@ -537,7 +537,7 @@ retoma con los nombres encendidos, que es el valor por defecto.
 
 ---
 
-## D-75 · Las capturas se sacan con la pantalla quieta
+## D-76 · Las capturas se sacan con la pantalla quieta
 **Fecha:** 2026-09-13 · **Estado:** vigente
 **Decisión:** Antes de disparar, `b.shot()` (`tools/e2e/cdp.mjs`) espera a que terminen las
 animaciones finitas que estén corriendo, con un tope de 900 ms; las infinitas —las burbujas del
