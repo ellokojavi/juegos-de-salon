@@ -142,7 +142,10 @@ await b.go(`${base}/${juego}/`, 1500);
 // JSON.stringify le dejaba las comillas dentro, así que --idioma no hacía nada.
 await b.evaluate(`localStorage.clear(); localStorage.setItem('juegos-de-salon:lang', '${idioma}'); 1`);
 await b.go(`${base}/${juego}/`, 1500);
-if (muescas) await b.evaluate(`(()=>{const s=document.createElement('style');s.textContent=':root{--safe-top:47px;--safe-bottom:34px}';document.head.append(s);return 1})()`);
+// Muescas de verdad: Chrome fija los insets del sistema y la página los lee con
+// env(safe-area-inset-*), igual que en un celular. Sobreescribir las variables CSS —como se
+// hacía antes— no es lo mismo: pinta los márgenes pero no cambia el viewport (D-77).
+if (muescas) await b.send('Emulation.setSafeAreaInsetsOverride', { insets: { top: 47, bottom: 34, left: 0, right: 0 } });
 for (const paso of camino) { await b.evaluate(`(()=>{ ${paso} ; return 1})()`); await sleep(700); }
 await sleep(400);
 
@@ -158,6 +161,14 @@ const revision = await b.evaluate(`(()=>{
     // Lo que queda fuera de la pantalla sin que nada lo anuncie: la página más alta que el
     // celular, y los botones que caen por debajo del borde de abajo (D-75)
     sobra: document.documentElement.scrollHeight - innerHeight,
+    // El alto con el que la app se arma no puede ser el del instante (dvh): tiene que ser el
+    // chico (svh), el que queda con toda la interfaz del navegador a la vista. En un celular
+    // los dos valores se separan —dvh 1016, svh 960— y lo que se apoya abajo cae fuera (D-77).
+    // En Chrome headless valen lo mismo, así que acá se revisa la regla, no la medida.
+    midePorElAltoChico: [...document.styleSheets].some(hoja => {
+      try { return [...hoja.cssRules].some(r => (r.selectorText || '').includes('.app') && (r.style?.minHeight || '').includes('svh')); }
+      catch { return false; }
+    }),
     fueraAbajo: [...new Set([...document.querySelectorAll('.screen.active .btn, .confirm .btn')]
       .filter(x => x.offsetParent !== null && x.getBoundingClientRect().bottom > innerHeight)
       .map(x => (x.textContent || x.className).trim().slice(0, 18)))],
@@ -172,5 +183,6 @@ console.log(`  scroll horizontal (C-8): ${revision.scrollHorizontal ? '⚠️  S
 console.log(`  botones bajo 44 px (C-8): ${revision.botonesChicos.length ? '⚠️  ' + revision.botonesChicos.join(', ') : 'ninguno'}`);
 console.log(`  la página se pasa del alto: ${revision.sobra > 0 ? `⚠️  ${revision.sobra} px` : 'no'}${muescas ? ' (con muescas)' : ''}`);
 console.log(`  botones fuera de pantalla: ${revision.fueraAbajo.length ? '⚠️  ' + revision.fueraAbajo.join(', ') : 'ninguno'}`);
+console.log(`  se arma con el alto chico (svh): ${revision.midePorElAltoChico ? 'sí' : '⚠️  NO (usa dvh: lo que se apoya abajo se va fuera en un celular)'}`);
 if (b.errors.length) console.log('  errores de consola:', JSON.stringify(b.errors.slice(0, 2)));
 b.close();

@@ -70,11 +70,15 @@ body {
 .app {
   position: relative; z-index: 1;
   max-width: 560px; margin: 0 auto; padding: 16px 18px 32px;
-  /* Descontando las muescas: el `body` ya las reserva con su padding, así que pedir 100dvh acá
-     dejaba la página más alta que la pantalla justo por ese alto (81 px en un iPhone con muesca).
-     No se notaba salvo donde algo se apoya en el borde de abajo: en Dudo la barra de apostar se
-     iba fuera de la pantalla con medio celular vacío más arriba (D-75). */
-  min-height: calc(100dvh - var(--safe-top) - var(--safe-bottom));
+  /* `svh` y no `dvh`: el alto chico, el que queda cuando el navegador muestra toda su interfaz.
+     `dvh` es el de este instante y puede ser el grande —en un Android con la app instalada
+     medimos dvh 1016 y svh 960—, así que al dimensionar con él la pantalla se arma 56 px más
+     larga que lo que se ve y lo que se apoya abajo, la barra de apostar de Dudo, queda fuera:
+     alcanzable deslizando, pero fuera (D-77). Con `svh` puede sobrar un poco de fondo abajo,
+     que no se ve porque el `body` sigue pintando `100dvh`; lo que nunca pasa es que falte.
+     Las muescas se descuentan porque el `body` ya las reservó con su padding (D-75). */
+  min-height: 100vh;   /* respaldo: un navegador que no entienda `svh` se queda con el alto de siempre */
+  min-height: calc(100svh - var(--safe-top) - var(--safe-bottom));
   display: flex; flex-direction: column;
 }
 
