@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.32.1 — 2026-09-13
+- **La bajada de Dudo en el menú**: *"Apuesta cuántos dados hay en la mesa sin poner caras
+  sospechosas"*. Y de paso decía en qué se juega como si la sala no existiera —"en un celular o
+  contra el celular"—: ahora nombra los tres modos, en los tres idiomas.
+- **La tabla del README mostraba Dudo con un solo modo y en v0.28.** No era la tabla: Dudo llamaba
+  a sus modos `m1`, `m2` y `m3`, y la hoja de hechos busca `modeLocal`, `modeOnline` y `modeCpu`,
+  que es como se llaman en los otros cinco juegos. Renombrados. Además `tools/hechos.mjs` solo
+  miraba los textos sueltos de `rules.js` y no los que viven dentro de `ui`, que es como los
+  escriben Cuarto Rey y Dudo: ahora mira las dos formas.
+- El icono de "varios celulares" en Dudo era 📶 y en el resto de la app es 📡.
+
 ## 0.32.0 — 2026-09-13
 - **Dudo se juega en varios celulares** (DU-09). Sala con código de cuatro letras, QR, chat y
   turnos, de dos a seis. Era el modo que quedó en "Próximamente" cuando entró el juego: el motor ya
