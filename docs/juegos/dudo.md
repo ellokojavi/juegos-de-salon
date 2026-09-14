@@ -26,8 +26,10 @@ ilegal**, cuenta al instante —que es justo lo que se discute a gritos— y lle
 - **Dudo** lo dice el que tiene el turno, sobre la apuesta que acaba de escuchar. Se destapa todo y
   se cuenta la pinta apostada más los ases.
 - **Calzar** es decir que la cantidad apostada es **exacta**. Si acierta, recupera un dado (nunca
-  más de cinco); si falla, pierde uno. Solo se puede calzar cuando la apuesta ya llegó a la mitad de
-  los dados que quedan en la mesa: antes es una apuesta gratis.
+  más de cinco); si falla, pierde uno. Pide dos cosas: que la apuesta haya llegado a la mitad de los
+  dados que quedan en la mesa —antes es una apuesta gratis— y que queden **tres jugadores o más**.
+  En un duelo no existe: con una sola mano tapada, la cuenta exacta es aritmética y no riesgo
+  (D-71). Cuando una mesa de seis se queda en dos, calzar se apaga solo.
 - **Quien pierde un dado abre la ronda siguiente**; quien calza bien, también.
 - Sin dados, fuera de la partida. Gana el último con dados.
 
@@ -38,6 +40,23 @@ cambiar de pinta) es clásica en Chile y no está en esta versión. Es una regla
 la partida y hay que explicarla en tres idiomas justo cuando el juego ya se entendió; entra después,
 cuando la mesa pida el juego largo. El motor la tiene prevista: la resolución recibe `acesWild` y la
 apuesta legal recibe `obligada`, así que sumarla no es rehacer nada.
+
+### Cómo se nombran las pintas
+
+En español la mesa chilena no dice "doses" ni "treses": dice **ases, tontos, trenes, cuadras,
+quintas y sextas**. Esos son los nombres que usa el juego por defecto —en la apuesta, en el
+destape y en el repaso— y se pueden apagar en la configuración para volver a los números. Es una
+opción de un solo idioma: en inglés y en portugués no hay un juego de nombres equivalente
+instalado, así que ahí las pintas van por su número y el interruptor ni se ofrece (D-71).
+
+| Pinta | Chile | es (apagado) | en | pt |
+|---|---|---|---|---|
+| ⚀ | ases | ases | aces | ases |
+| ⚁ | tontos | doses | twos | dois |
+| ⚂ | trenes | treses | threes | três |
+| ⚃ | cuadras | cuatros | fours | quatros |
+| ⚄ | quintas | cincos | fives | cincos |
+| ⚅ | sextas | seises | sixes | seis |
 
 ## 3. Modos
 
@@ -84,7 +103,7 @@ es `open` y la pantalla dice a quién se espera.
 ```json
 {
   "mode": "local",
-  "config": { "dice": 5, "calzar": true, "players": ["A", "B"] },
+  "config": { "dice": 5, "calzar": true, "chileno": true, "players": ["A", "B"] },
   "names": { "A": "Javi", "B": "Cata" },
   "messages": [{ "t": "roll", "from": "A", "d": "3,3,5,1,6" }, { "t": "bid", "from": "A", "n": 4, "p": 5 }],
   "done": false
@@ -99,12 +118,15 @@ destape: revelarlos antes sería revelar la mano.
 ## 6. Interfaz
 
 1. **Intro:** de qué se trata, los tres modos y, si hay partida a medias, continuar.
-2. **Setup:** nombres (2 a 6) y el ajuste de calzar.
+2. **Setup:** nombres (2 a 6) y los ajustes: calzar —solo aparece de tres jugadores para arriba,
+   porque de dos no existe— y los nombres chilenos de las pintas, solo en español.
 3. **Mesa:** arriba la tira de rivales con cuántos dados le quedan a cada uno (nunca cuáles);
    al centro, tus dados; abajo, la apuesta que está en pie y la botonera.
-4. **Apostar:** se elige la pinta (seis botones grandes con la cara del dado) y después la cantidad,
-   que arranca en la mínima legal. Nada viene preseleccionado y el botón dice qué va a hacer:
-   **"Apuesto 4 cincos"** (C-8).
+4. **Apostar:** se elige la pinta y después la cantidad, que arranca en la mínima legal. Nada viene
+   preseleccionado y el botón dice qué va a hacer: **"Apuesto 4 quintas"** (C-8). Los dados de esa
+   botonera van **dibujados en hueco**, con el contorno y los puntos en línea: son botones que
+   nombran una pinta, no dados. Los de verdad —los de la mano— son los únicos con cara sólida, y
+   así la mesa se lee de un vistazo (D-71).
 5. **Al dudar:** se destapan todos los dados en una sola pantalla, con los que cuentan marcados y el
    total grande, y dice quién perdió el dado. De ahí se pasa a la ronda siguiente.
 6. **Final:** quién ganó, cuántas rondas duró y, plegado, el repaso de las rondas.
