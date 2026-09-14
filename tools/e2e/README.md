@@ -24,6 +24,13 @@ mkdir -p /tmp/e2e && node tools/e2e/batalla-naval-local.mjs /tmp/e2e
 partida. `node tools/e2e/mirar.mjs ahorcado juego --ancho 320` saca la captura y avisa si hay
 scroll horizontal o botones bajo 44 px (C-8).
 
+`contacto.mjs` tampoco: arma una hoja con **todas** las capturas del README de una sección,
+al tamaño en que el README las muestra, para mirarlas juntas antes de publicar (D-76).
+
+```bash
+node tools/e2e/contacto.mjs cuarto-rey --salida /tmp/contacto
+```
+
 | Script | Qué prueba |
 |---|---|
 | `cuarto-rey.mjs` | Botón de sonido, mazo completo hasta el cuarto rey y el menú en inglés |
@@ -64,6 +71,10 @@ Varias de estas tomas son las imágenes que muestra el README. El catálogo
 nombre, y `python3 tools/readme.py capturas <seccion>` corre los guiones que hagan falta y
 copia los PNG a `docs/screenshots/` (ver D-51). Por eso, al renombrar o sacar una toma de
 un guion conviene correr `python3 tools/readme.py revisar`: avisa si dejó una imagen huérfana.
+
+Rehacerlas no es revisarlas: después de `capturas`, la hoja de contacto (`contacto.mjs`) las
+pone juntas y ahí se ve lo que una imagen sola no delata —una fila más ancha que la de arriba,
+una pantalla que no corresponde al pie, algo tapado por el confeti— (D-76).
 
 ## Cómo simulan varios celulares
 

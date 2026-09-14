@@ -34,7 +34,9 @@ for (let i = 0; i < 60; i++) {
   await ev(`document.getElementById('card').click(); 1`); await sleep(1300);
   const kind = await ev(`JSON.parse(localStorage.getItem('juegos-de-salon:cuarto-rey:session')).state.current?.card?.rank`);
   // El cuarto rey es el único que se anuncia en grande, con confeti y sin botón de "siguiente"
-  if (await ev(`!!document.querySelector('#result .display--lg')`)) await toma('09-cuarto-rey');
+  // El confeti recién lanzado tapa la carta y los nombres: se le da un respiro para que baje.
+  // La pantalla espera al toque del jugador, así que no se pasa sola.
+  if (await ev(`!!document.querySelector('#result .display--lg')`)) { await sleep(1400); await toma('09-cuarto-rey'); }
   else if (await ev(`!!document.querySelector('#result .helper')`)) await toma('06-minijuego');
   else if (['A', '2', '3', '10', 'J', 'Q'].includes(kind)) await toma('05-carta');
   if (kind === '4') { await ev(`[...document.querySelectorAll('#result .helper button')][0].click(); 1`); await sleep(1500); }
@@ -44,7 +46,9 @@ for (let i = 0; i < 60; i++) {
   await sleep(200);
   if ((await ev(`document.getElementById('handoff').hidden`)) === false) {
     // El pase tiene dos tiempos: primero "¡Salud!" con quiénes toman, después "pásale el celular a X"
-    if (await ev(`!!document.querySelector('#handoff .cheers')`)) await toma('07-salud');
+    // Solo sirve el "¡Salud!" con gente tomando: el mismo bloque .cheers también dice
+    // "¡Cumplida!" sin fichas, y esa toma no ilustra el pie de la captura ("¡Salud!").
+    if (await ev(`document.querySelectorAll('#handoff .drinkers .chip').length > 1`)) await toma('07-salud');
     await ev(`document.getElementById('handoff').click(); 1`); await sleep(150);
     await toma('08-pasale');
     await ev(`document.querySelector('#handoff .btn')?.click(); 1`); await sleep(350);
@@ -53,9 +57,9 @@ for (let i = 0; i < 60; i++) {
 await sleep(600);
 const final = await ev(`document.querySelector('.screen.active').id`);
 if (final === 'screen-end') {
+  await sleep(4200); // el confeti dura 4 s y taparía el ranking y la lista entera
   await toma('10-final');
   // El historial (CR-18) va plegado: se abre para la captura y para contar si anotó todas las cartas.
-  await sleep(4200); // el confeti dura 4 s y taparía la lista entera
   await ev(`(()=>{const d=document.getElementById('end-history');d.open=true;d.scrollIntoView({block:'start'});return 1})()`); await sleep(400);
   console.log('historial:',
     await ev(`document.querySelectorAll('#history-list li').length`), 'de',
