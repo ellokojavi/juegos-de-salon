@@ -19,28 +19,42 @@ import { fileURLToPath } from 'node:url';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { GAMES } from '../assets/js/games.js';
+import { COMMON } from '../assets/js/i18n.js';
 
 const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..');
 const SITIO = 'https://juegosdesalon.cl';
 const PUERTO = 8791;
 const ANCHO = 1200, ALTO = 630;
 
-/** El sitio en una frase, para la portada. */
 const disponibles = GAMES.filter(g => g.available);
-const PORTADA = {
-  archivo: 'index.html',
-  ruta: '/',
-  imagen: 'menu',
-  titulo: 'Juegos de Salón 🎲',
+
+/**
+ * Las tres puertas de entrada: la portada en español y las dos que dejan elegido el idioma
+ * (/pt/ y /en/). Cada una se comparte en su idioma, así que su tarjeta también (D-74).
+ */
+const PUERTAS = [
+  { lang: 'es', archivo: 'index.html', ruta: '/', imagen: 'menu' },
+  { lang: 'pt', archivo: 'pt/index.html', ruta: '/pt/', imagen: 'menu-pt' },
+  { lang: 'en', archivo: 'en/index.html', ruta: '/en/', imagen: 'menu-en' },
+];
+/** El cierre de la bajada. Es la única frase que no sale de la app: se dice a los robots. */
+const GRATIS = { es: 'Gratis, sin instalar y sin cuenta.', en: 'Free, no install, no account.', pt: 'De graça, sem instalar e sem conta.' };
+/** "A, B y C" en cada idioma. */
+const lista = lang => disponibles.map(g => g.name[lang]).join(', ')
+  .replace(/, ([^,]*)$/, ` ${{ es: 'y', en: 'and', pt: 'e' }[lang]} $1`);
+
+const portada = p => ({
+  ...p,
   // Sin decir cuántos son: el número cambia cada vez que entra un juego, y una frase que
   // envejece sola es peor que una que no cuenta nada. La lista sí se arma de games.js.
-  descripcion: 'Juegos tradicionales llevados a tu celular para pasar el tiempo solo o con amigos: '
-    + disponibles.map(g => g.name.es).join(', ').replace(/, ([^,]*)$/, ' y $1')
-    + '. Gratis, sin instalar y sin cuenta.',
-  alt: 'Juegos de Salón: ' + disponibles.map(g => g.emoji).join(' '),
-};
+  titulo: `${COMMON[p.lang].appTitle} 🎲`,
+  descripcion: `${COMMON[p.lang].appSub.replace(/\.$/, '')}: ${lista(p.lang)}. ${GRATIS[p.lang]}`,
+  alt: `${COMMON[p.lang].appTitle}: ` + disponibles.map(g => g.emoji).join(' '),
+  puerta: true,
+});
 
-const paginas = () => [PORTADA, ...disponibles.map(g => ({
+const paginas = () => [...PUERTAS.map(portada), ...disponibles.map(g => ({
+  lang: 'es',
   archivo: `${g.id}/index.html`,
   ruta: `/${g.id}/`,
   imagen: g.id,
@@ -67,9 +81,12 @@ function version() {
   return m ? m[1] : '0';
 }
 
+const LOCALE = { es: 'es_CL', en: 'en_US', pt: 'pt_BR' };
+
 function bloque(p) {
   const img = `${SITIO}/assets/og/${p.imagen}.jpg?v=${version()}`;
   const url = SITIO + p.ruta;
+  const otros = Object.keys(LOCALE).filter(l => l !== p.lang);
   const meta = [
     ['name', 'description', p.descripcion],
     ['canonical', null, url],
@@ -83,19 +100,23 @@ function bloque(p) {
     ['property', 'og:image:width', String(ANCHO)],
     ['property', 'og:image:height', String(ALTO)],
     ['property', 'og:image:alt', p.alt],
-    // El sitio es en español y ofrece inglés y portugués con el mismo link (D-47)
-    ['property', 'og:locale', 'es_CL'],
-    ['property', 'og:locale:alternate', 'en_US'],
-    ['property', 'og:locale:alternate', 'pt_BR'],
+    ['property', 'og:locale', LOCALE[p.lang]],
+    ...otros.map(l => ['property', 'og:locale:alternate', LOCALE[l]]),
+    // Solo las puertas de entrada tienen una URL por idioma; adentro el idioma se elige y se
+    // guarda, así que no hay tres direcciones que ofrecerle al buscador (D-74).
+    ...(p.puerta ? PUERTAS.map(q => ['alternate', q.lang, SITIO + q.ruta]) : []),
+    ...(p.puerta ? [['alternate', 'x-default', SITIO + '/']] : []),
     ['name', 'twitter:card', 'summary_large_image'],
     ['name', 'twitter:title', p.titulo],
     ['name', 'twitter:description', p.descripcion],
     ['name', 'twitter:image', img],
     ['name', 'twitter:image:alt', p.alt],
   ];
-  const lineas = meta.map(([tipo, clave, valor]) => (tipo === 'canonical'
-    ? `  <link rel="canonical" href="${escapa(valor)}">`
-    : `  <meta ${tipo}="${clave}" content="${escapa(valor)}">`));
+  const lineas = meta.map(([tipo, clave, valor]) => {
+    if (tipo === 'canonical') return `  <link rel="canonical" href="${escapa(valor)}">`;
+    if (tipo === 'alternate') return `  <link rel="alternate" hreflang="${clave}" href="${escapa(valor)}">`;
+    return `  <meta ${tipo}="${clave}" content="${escapa(valor)}">`;
+  });
   return [ABRE, ...lineas, CIERRA].join('\n');
 }
 
@@ -109,10 +130,15 @@ function cmdTarjetas() {
       const re = new RegExp(`${ABRE.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}[\\s\\S]*?${CIERRA.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`);
       html = html.replace(re, nuevo);
     } else {
-      // Va después del <title> y antes del manifest: primero quién es la página, después cómo se instala
+      // Va después del <title> y antes del manifest: primero quién es la página, después cómo se
+      // instala. Las puertas de entrada no tienen manifest —no son la app, solo mandan a ella—,
+      // así que ahí el bloque va antes de la primera hoja de estilos.
       const desc = html.match(/^ {2}<meta name="description".*\n/m);
       if (desc) html = html.replace(desc[0], '');
-      html = html.replace(/^( *<link rel="manifest".*\n)/m, `${nuevo}\n$1`);
+      const ancla = /^( *<link rel="manifest".*\n)/m.test(html)
+        ? /^( *<link rel="manifest".*\n)/m
+        : /^( *<link rel="stylesheet".*\n)/m;
+      html = html.replace(ancla, `${nuevo}\n$1`);
     }
     const antes = readFileSync(ruta, 'utf8');
     if (antes !== html) { writeFileSync(ruta, html); tocadas++; }
@@ -168,7 +194,7 @@ async function cmdImagenes() {
     for (const p of paginas()) {
       // El `t` es para que Chrome no reuse la tarjeta de la vuelta pasada: sin eso, un cambio
       // en el dibujo o en base.css se fotografía viejo y no hay forma de darse cuenta.
-      const q = `?t=${Date.now()}${p.juego ? `&juego=${p.juego}` : ''}`;
+      const q = `?t=${Date.now()}${p.juego ? `&juego=${p.juego}` : ''}&lang=${p.lang}`;
       await b.go(`http://localhost:${PUERTO}/tools/og/tarjeta.html${q}`, 1200);
       // Sin esperar a las fuentes, el título sale en la tipografía de reemplazo
       for (let i = 0; i < 20 && !(await b.evaluate(`document.body.dataset.listo === '1'`)); i++) await sleep(200);
