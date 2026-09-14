@@ -124,6 +124,27 @@ function cmdTarjetas() {
 /* ------------------------------------------------------------------ */
 /* Las imágenes                                                        */
 /* ------------------------------------------------------------------ */
+/**
+ * Cada chat recorta la imagen al alto de su propia ventanita y lo que se come son los lados:
+ * de 1,91:1 a 1,5:1 se van 127 px por lado. Todo lo que se lea tiene que quedar dentro del 88%
+ * central. Esto mide la tinta de verdad (los rangos del texto), no la caja de los bloques.
+ */
+const SEGURO = 10;  // % de cada lado que puede desaparecer
+const MARGEN = `(()=>{
+  let min = 1e9, max = -1e9, quien = '';
+  const anda = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  for (let n = anda.nextNode(); n; n = anda.nextNode()) {
+    if (!n.textContent.trim()) continue;
+    const r = document.createRange(); r.selectNodeContents(n);
+    const c = r.getBoundingClientRect();
+    if (!c.width) continue;
+    if (c.left < min) { min = c.left; quien = n.textContent.trim().slice(0, 20); }
+    if (c.right > max) { max = c.right; if (innerWidth - c.right < min) quien = n.textContent.trim().slice(0, 20); }
+  }
+  const izq = min / innerWidth * 100, der = (innerWidth - max) / innerWidth * 100;
+  return Math.min(izq, der) < ${SEGURO} ? \`"\${quien}" (a \${Math.min(izq, der).toFixed(1)}% del borde)\` : '';
+})()`;
+
 /** PNG → JPEG con la herramienta que trae macOS, la misma que usa readme.py para las capturas. */
 const jpeg = (origen, destino) => new Promise((ok, falla) => {
   const s = spawn('sips', ['-s', 'format', 'jpeg', '-s', 'formatOptions', '82', origen, '--out', destino], { stdio: 'ignore' });
@@ -145,11 +166,15 @@ async function cmdImagenes() {
     // El lienzo es de 600×315 y cdp fotografía al doble: 1200×630 exactos
     const b = await launch({ port: 9490, dir: `${tmp}/perfil`, out: tmp, width: ANCHO / 2, height: ALTO / 2 });
     for (const p of paginas()) {
-      const q = p.juego ? `?juego=${p.juego}` : '';
+      // El `t` es para que Chrome no reuse la tarjeta de la vuelta pasada: sin eso, un cambio
+      // en el dibujo o en base.css se fotografía viejo y no hay forma de darse cuenta.
+      const q = `?t=${Date.now()}${p.juego ? `&juego=${p.juego}` : ''}`;
       await b.go(`http://localhost:${PUERTO}/tools/og/tarjeta.html${q}`, 1200);
       // Sin esperar a las fuentes, el título sale en la tipografía de reemplazo
       for (let i = 0; i < 20 && !(await b.evaluate(`document.body.dataset.listo === '1'`)); i++) await sleep(200);
       await sleep(300);
+      const fuera = await b.evaluate(MARGEN);
+      if (fuera) console.log(`  ⚠️  ${p.imagen}: ${fuera} se sale de la franja segura y el chat lo puede recortar`);
       await b.shot(p.imagen);
       // En JPEG pesan cuatro veces menos y a este tamaño no se nota: son letras grandes sobre
       // un degradado. 3 MB de PNG en el repo por siete imágenes que solo miran los robots.
