@@ -18,7 +18,12 @@ await b.evaluate(`window.__ldt.session().transport.onPresence(p => {}); 1`); awa
 await b.evaluate(`document.querySelector('#lobby-box .btn--cyan').click(); 1`); await sleep(400);
 const compartido = await b.evaluate(`JSON.stringify(window.__shared)`);
 console.log('con navigator.share, el botón dice:', await btnText(), '| se compartió:', compartido);
-console.log('el texto nombra la temática:', /Historia/.test(compartido), '| y el código:', new RegExp(code).test(compartido));
+// La invitación dice quién invita, a qué juego y con qué código (D-73)
+console.log('el texto nombra a quien invita:', /Javi/.test(compartido),
+  '| el juego:', /Línea de Tiempo/.test(compartido),
+  '| el dominio:', /juegosdesalon\.cl/.test(compartido),
+  '| y el código:', new RegExp(code).test(compartido));
+console.log('mensaje:', JSON.parse(compartido).text);
 await b.shot('lobby-share');
 console.log('errors:', JSON.stringify(b.errors), JSON.stringify(b.logs));
 b.close();

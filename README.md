@@ -300,7 +300,8 @@ Brasil, informal, y los nombres se traducen igual que en inglés:
 Cómo está armado (canon C-3):
 
 - `assets/js/i18n.js` guarda el idioma en `localStorage` (`juegos-de-salon:lang`), dibuja el
-  toggle 🇨🇱 ES · 🇬🇧 EN · 🇧🇷 PT y tiene los textos comunes del menú (`COMMON`).
+  toggle 🇨🇱 ES · 🇬🇧 EN · 🇧🇷 PT y tiene los textos comunes (`COMMON`): los del menú y el de la
+  invitación a una sala, que es el mismo para los cuatro juegos que tienen sala (D-73).
 - Cada juego tiene sus textos en `LOCALES = { es, en, pt }` de su `rules.js`; `game.js` no
   tiene ninguna cadena literal. Los textos fijos del HTML llevan `data-i18n`.
 - El registro del menú (`games.js`), las 100 frases del pie (`frases.js`) y cada carta de

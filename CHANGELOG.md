@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.31.0 — 2026-09-13
+- **La invitación a una sala dice quién invita**: *"Javi te invita a jugar Línea de Tiempo en
+  juegosdesalon.cl - Sala: WFBN"* (D-73). Antes decía "Únete a mi sala de Línea de Tiempo. Código:
+  WFBN", sin nombre: el mensaje llega por WhatsApp a gente que muchas veces no conoce la app, y lo
+  primero que hace falta saber es de parte de quién viene. Nombra a quien toca compartir, que es
+  quien está invitando.
+- **Al copiar el link también viaja el mensaje.** Sin diálogo nativo —en un computador— el
+  portapapeles se llevaba solo la URL y el texto se perdía; quien invitaba tenía que escribir a mano
+  de qué se trataba.
+- **La N de "SALÓN" ya no sale cortada en WhatsApp.** La imagen estaba entera, pero cada chat la
+  recorta al alto de su propia ventanita y lo que se come son los lados: de 1200×630 a 1,5:1 se van
+  127 px por lado, justo donde terminaba el título. Ahora todo lo que se lee vive dentro del 88%
+  central y el generador avisa si algo se acerca al borde.
+- El texto de la invitación es **uno solo para los cuatro juegos con sala**, en `COMMON`: eran doce
+  frases (cuatro juegos por tres idiomas) que decían lo mismo de doce formas.
+
 ## 0.30.1 — 2026-09-13
 - **La bajada de la portada ya no cuenta los juegos.** Decía cuántos había, y ese número cambia
   cada vez que entra uno nuevo: una frase que envejece sola es peor que una que no cuenta nada.
