@@ -34,6 +34,13 @@ MODULES = [
 ]
 PAGES = { 'index.html': '', 'cuarto-rey/index.html': '../', 'toque-y-fama/index.html': '../', 'batalla-naval/index.html': '../', 'linea-de-tiempo/index.html': '../', 'ahorcado/index.html': '../', 'dudo/index.html': '../', 'panel/index.html': '../' }
 
+def tarjetas_sociales():
+    """Las etiquetas de Open Graph salen de games.js: se rehacen antes de estampar (D-72)."""
+    r = subprocess.run(['node', str(ROOT / 'tools/og.mjs'), 'tarjetas'], capture_output=True, text=True)
+    ultima = [l for l in r.stdout.splitlines() if l and not l.startswith('  ')]
+    print('Tarjetas sociales:', ultima[-1] if ultima else r.stderr.strip())
+
+
 def revisar_readme():
     """El README, contra el código de hoy. Devuelve True si está al día."""
     print('README:', flush=True)
@@ -66,3 +73,6 @@ if __name__ == '__main__':
                  f'python3 tools/set-version.py {args[0]} --igual')
     print()
     main(args[0])
+    # Después de estampar: las tarjetas llevan la versión en la URL de la imagen, para que un
+    # cambio de dibujo no se quede pegado en la caché de WhatsApp (D-72).
+    tarjetas_sociales()

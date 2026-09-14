@@ -37,6 +37,22 @@ Dentro de las marcas `<!-- generado: ... -->` no se edita a mano. La prosa sí e
 contra el último sello (`docs/hechos.json`) y dice qué sección releer. Cada captura declara
 en [docs/capturas.json](docs/capturas.json) de qué guion de `tools/e2e/` y de qué toma sale.
 
+## Tarjetas sociales (Open Graph)
+
+Lo que se ve cuando alguien pega un link de la app en WhatsApp o en un chat. Importa más que en
+otras apps: los links de sala se comparten por ahí, así que la invitación a jugar **es** una de
+estas tarjetas.
+
+```bash
+node tools/og.mjs tarjetas    # reescribe el bloque <!-- generado: og --> (lo corre set-version.py)
+node tools/og.mjs imagenes    # rehace los 1200×630 con Chrome (necesita internet: Google Fonts)
+node tools/og.mjs revisar     # ¿falta una tarjeta o una imagen?
+```
+
+Los textos salen de `assets/js/games.js` y el dibujo de [tools/og/tarjeta.html](tools/og/tarjeta.html),
+que importa los módulos reales. Las imágenes se rehacen a mano: solo cambian si cambia un nombre,
+un emoji o el diseño (D-72).
+
 ## Pruebas
 
 ```bash

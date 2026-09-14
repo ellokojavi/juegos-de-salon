@@ -450,8 +450,10 @@ firebase/                   Reglas de seguridad de Realtime Database y notas
 manifest.webmanifest        Manifest PWA (instalable en la pantalla de inicio)
 tools/set-version.py        Estampa la versión (import maps + estilos) para evitar caché mezclada
 tools/readme.py             README al día: bloques generados, capturas rehechas y aviso de lo que cambió
+tools/og.mjs                Tarjetas sociales: las etiquetas Open Graph de cada página y sus imágenes
 tools/hechos.mjs            La hoja de hechos de la app (juegos, modos, temáticas, tests) leída del código
 tools/e2e/                  Partidas completas en Chrome headless; de ahí salen las capturas (su README)
+assets/og/                  Las imágenes de 1200×630 que se ven al compartir un link
 docs/capturas.json          Catálogo de las capturas: pie de foto y de qué guion sale cada una
 docs/                       Requerimientos, decisiones, especificaciones y capturas
 ```
