@@ -616,10 +616,13 @@ parte que no lee español. Todo lo demás lo lee quien trabaja en el proyecto.
 **Por qué también los bloques generados:** si la prosa quedaba en inglés y las tablas en español,
 `python3 tools/readme.py actualizar` devolvía la mitad del archivo al español en la primera
 publicación. Un README bilingüe por accidente es peor que uno en cualquiera de los dos idiomas.
-**Por qué los nombres de los juegos no se traducen en los títulos:** las secciones siguen diciendo
-"Cuarto Rey" y "Línea de Tiempo" porque así se llaman, y la tabla de arriba muestra los tres
-nombres (`Cuarto Rey / Fourth King / Quarto Rei`). Además los anclas del índice salen del nombre en
-español: traducir los títulos habría roto todos los enlaces internos.
+**Los títulos llevan los dos nombres:** `## 👑 Fourth King (Cuarto Rey)`. Primero el inglés, que es
+por lo que alguien de afuera busca el juego, y entre paréntesis el nombre de verdad, que es como se
+llama en la app y lo que va a ver en pantalla. La tabla de arriba muestra los tres
+(`Fourth King / Cuarto Rey / Quarto Rei`). El ancla del índice sale del título completo
+(`#-fourth-king-cuarto-rey`) y la arma `titulo_juego()` en `tools/readme.py`, la misma función que
+dicta cómo se titula la sección: si cambia el título cambia el enlace, y no hay forma de que queden
+apuntando a distinto lado.
 **Consecuencias:** `tools/hechos.mjs` guarda los modos en los dos idiomas, no solo en español, y
 `jugadores` viaja como "1 to 6". Al agregar un juego hay un paso más explícito en
 `docs/AGREGAR-JUEGO.md`: la sección del README y el `pie` de las capturas van en inglés.
