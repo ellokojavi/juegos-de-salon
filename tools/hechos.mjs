@@ -67,6 +67,9 @@ function variantes(L) {
 const juegos = [];
 for (const g of GAMES) {
   const { LOCALES } = await import(join(RAIZ, g.id, 'rules.js'));
+  // Hay dos formas de escribir un rules.js: los textos sueltos (El Ahorcado) o dentro de `ui`
+  // (Cuarto Rey, Dudo). Se miran las dos, o los modos de esos juegos no se ven desde acá.
+  const es = { ...LOCALES.es, ...(LOCALES.es.ui || {}) };
   const html = leer(`${g.id}/index.html`);
   juegos.push({
     id: g.id,
@@ -76,8 +79,8 @@ for (const g of GAMES) {
     duracion: g.duration,
     disponible: g.available,
     estado: estado(g.id),
-    modos: modos(LOCALES.es),
-    variantes: variantes(LOCALES.es),
+    modos: modos(es),
+    variantes: variantes(es),
     pantallas: [...html.matchAll(/id="screen-([a-z-]+)"/g)].map(m => m[1]),
     chat: /id="chat"/.test(html),
     archivos: archivos(g.id, r => !r.endsWith('.test.mjs')),

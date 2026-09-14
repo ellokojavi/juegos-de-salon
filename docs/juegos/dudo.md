@@ -1,6 +1,6 @@
 # Diseño: Dudo 🎲
 
-**Ruta:** `/dudo/` · **Jugadores:** 2 a 6 · **Versión:** 0.28 · **Idiomas:** es, en, pt (“Dado Mentiroso”)
+**Ruta:** `/dudo/` · **Jugadores:** 2 a 6 · **Versión:** 0.32 · **Idiomas:** es, en, pt (“Dado Mentiroso”)
 
 ## 1. Resumen
 

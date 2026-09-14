@@ -1,5 +1,5 @@
 {
-  "version": "0.31.0",
+  "version": "0.32.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -185,8 +185,21 @@
       "jugadores": "1 a 6",
       "duracion": "10–20",
       "disponible": true,
-      "estado": "v0.28",
-      "modos": [],
+      "estado": "v0.32",
+      "modos": [
+        {
+          "clave": "modeLocal",
+          "es": "📱 Un celular"
+        },
+        {
+          "clave": "modeOnline",
+          "es": "📡 Varios celulares"
+        },
+        {
+          "clave": "modeCpu",
+          "es": "🤖 Contra el celular"
+        }
+      ],
       "variantes": [],
       "pantallas": [
         "intro",
