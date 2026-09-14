@@ -124,39 +124,106 @@ export function credibility({ myDice, bid, totalDice }) {
 }
 
 /**
+ * Cuánto se arriesga el celular a mentir. El número salió de un torneo contra tres rivales de
+ * prueba —uno que solo calcula, uno que supone que tienes lo que cantas y uno que supone lo
+ * contrario— y no de la intuición (ver docs/juegos/dudo.md).
+ *
+ * No es 1 a propósito: con la perilla al tope **nunca** cantaría su pinta más fuerte, que es
+ * un patrón tan legible como cantarla siempre. En 0,7 miente dos de cada tres veces que puede,
+ * así que ninguna de las dos lecturas le sirve a nadie.
+ */
+export const AGRESIVIDAD = 0.7;
+
+/**
+ * Lo mínimo creíble que puede ser un farol. Mentir no es apostar lo improbable: si la apuesta
+ * disfrazada ya es más falsa que cierta, no es un farol, es regalar un dado. Con el umbral en
+ * 0,45 el celular perdía veinte puntos contra un rival que solo calcula; subirlo deja el
+ * disfraz —cantar una pinta que no tiene— sin pagar por él (ver docs/juegos/dudo.md).
+ */
+const UMBRAL_FAROL = 0.62;
+
+/**
+ * Cada forma de mentir tiene su propio peso, porque no cuestan lo mismo. Abrir la ronda con una
+ * pinta que no se tiene es casi gratis —con la mesa entera sin destapar, "un seis" es cierto
+ * igual— y ya rompe la lectura. Disfrazar a mitad de ronda es caro: sube la escalera en una
+ * pinta donde el celular está flaco y después le toca a él vivir con esa apuesta. Se miden por
+ * separado y se pesan por separado (ver docs/juegos/dudo.md).
+ */
+export const MEZCLA = { abrir: 1, disfraz: 1, apriete: 1 };
+
+/** Uno al azar de la lista, sin salirse aunque `rand()` devuelva 1. */
+const unoDe = (lista, rand) => lista[Math.min(lista.length - 1, Math.floor(rand() * lista.length))];
+
+/**
  * La jugada del celular. Recibe **solo sus propios dados** y lo que está a la vista: no
  * mira los del rival aunque el aparato los tenga a mano en el modo de un celular.
+ *
+ * Miente de tres formas, y las tres tienen su motivo (ver docs/juegos/dudo.md):
+ *  - **disfraza la mano**: canta una pinta que no es la más fuerte que tiene, mientras la
+ *    apuesta siga siendo creíble. Sin esto el celular es un libro abierto: siempre nombraba la
+ *    pinta de la que más tenía, así que dos de cada tres apuestas delataban su mano.
+ *  - **aprieta al que va perdiendo**: con uno o dos dados, cada ronda le puede costar la
+ *    partida, y una apuesta alta lo obliga a decidir viendo menos mesa que nadie.
+ *
+ * Lo que **no** hace es exagerar la cantidad por encima de la mínima legal. Era la única mentira
+ * que tenía antes, y medida sola gana el 21% de las partidas contra el 46% del celular honesto:
+ * subir de más le regala al rival un piso más alto sin comprarle nada a cambio (ver docs/juegos/dudo.md).
+ *
+ * `rivales` son los dados que le quedan a cada uno de los otros; sin eso no puede saber a
+ * quién apretar.
  */
-export function botMove({ myDice, bid, totalDice, canCalzar = false, rand = Math.random }) {
+export function botMove({
+  myDice, bid, totalDice, canCalzar = false, rivales = [],
+  agresividad = AGRESIVIDAD, mezcla = MEZCLA, rand = Math.random,
+}) {
+  const miente = que => rand() < agresividad * mezcla[que];
   const unknown = Math.max(0, totalDice - myDice.length);
   const mine = pinta => countPinta(myDice, pinta);
+  const creer = (n, p) => binomAtLeast(n - mine(p), unknown, chanceOf(p));
 
   // Calzar: solo cuando la cantidad exacta es de verdad probable
   if (bid && canCalzar && binomExact(bid.n - mine(bid.p), unknown, chanceOf(bid.p)) > 0.32) {
     return { t: 'calza' };
   }
 
-  // La mejor subida posible: la pinta que deje la apuesta más creíble
-  let best = null;
-  for (const p of PINTAS) {
-    const n = minBid(bid, p);
-    if (n > totalDice) continue;
-    const chance = binomAtLeast(n - mine(p), unknown, chanceOf(p));
-    if (!best || chance > best.chance) best = { t: 'bid', n, p, chance };
+  // Todas las subidas legales, con lo creíble que sería cada una y cuántos tiene en la mano
+  const subidas = PINTAS
+    .map(p => ({ p, n: minBid(bid, p) }))
+    .filter(s => s.n <= totalDice)
+    .map(s => ({ ...s, chance: creer(s.n, s.p), tengo: mine(s.p) }));
+  const mejor = subidas.reduce((a, b) => (!a || b.chance > a.chance ? b : a), null);
+  const apuesta = s => ({ t: 'bid', n: s.n, p: s.p });
+
+  if (!bid) {
+    // Abrir con una pinta que no tiene es el farol más barato: nadie puede dudarle todavía,
+    // y deja al de al lado midiendo una mano que no existe.
+    const disfraz = subidas.filter(s => s.p !== mejor?.p && s.chance > UMBRAL_FAROL);
+    if (disfraz.length && miente('abrir')) return apuesta(unoDe(disfraz, rand));
+    return mejor ? apuesta(mejor) : { t: 'bid', n: 1, p: 6 };
   }
 
-  if (bid) {
-    const creo = credibility({ myDice, bid, totalDice });
-    // Dudar cuando la apuesta que hay es poco creíble y no hay subida cómoda
-    if (creo < 0.30 && (!best || best.chance < 0.55)) return { t: 'dudo' };
-    if (!best) return { t: 'dudo' };
-    // Un farol de vez en cuando: subir una más de la mínima cuando alcanza para creérselo
-    if (best.chance > 0.75 && best.n + 1 <= totalDice && rand() < 0.35) best = { ...best, n: best.n + 1 };
-    return { t: 'bid', n: best.n, p: best.p };
+  const creo = credibility({ myDice, bid, totalDice });
+  const rivalMin = rivales.length ? Math.min(...rivales) : myDice.length;
+  // Contra la pared se duda antes: con uno o dos dados propios se ve menos mesa, la cuenta de
+  // uno vale menos y seguir subiendo es apostar a ciegas.
+  const umbral = 0.30 + (myDice.length <= 2 ? 0.15 : 0) - agresividad * 0.05;
+  if (creo < umbral && (!mejor || mejor.chance < 0.55)) return { t: 'dudo' };
+  if (!mejor) return { t: 'dudo' };
+
+  // Apretar al que va perdiendo
+  if (rivalMin <= 2 && miente('apriete')) {
+    // La más alta que siga siendo creíble, no la más alta a secas: apretar no es regalar el dado
+    const apriete = subidas.filter(s => s.chance > UMBRAL_FAROL).sort((a, b) => b.n - a.n)[0];
+    if (apriete) return apuesta(apriete);
   }
-  // Abre la ronda: sin apuesta que dudar, la apuesta más creíble que tenga
-  const abre = best || { t: 'bid', n: 1, p: 6 };
-  return { t: 'bid', n: abre.n, p: abre.p };
+
+  // Disfrazar la mano
+  // Cualquier pinta creíble que **no** sea la suya más fuerte: lo que lo delataba no era tener
+  // o no tener, era cantar siempre la mejor que tenía.
+  const disfraz = subidas.filter(s => s.p !== mejor.p && s.chance > UMBRAL_FAROL);
+  if (disfraz.length && miente('disfraz')) return apuesta(unoDe(disfraz, rand));
+
+  return apuesta(mejor);
 }
 
 /* ------------------------------------------------------------------ */

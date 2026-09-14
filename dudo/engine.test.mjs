@@ -84,6 +84,50 @@ assert.ok(credibility({ myDice: [2, 2, 2], bid: { n: 9, p: 5 }, totalDice: 10 })
   });
   assert.equal(calza.t, 'calza', 'con la cantidad exacta en la mano, calzar es lo obvio');
 
+  /* ---- las tres formas de mentir (ver docs/juegos/dudo.md) ---- */
+  const siempre = () => 0;      // rand() = 0: miente siempre que pueda
+  const nunca = () => 0.999;    // rand() casi 1: no miente nunca
+
+  // Disfrazar: con la mano cargada de seises, honesto canta seises; mintiendo canta otra cosa.
+  // La mesa es de veinte dados porque con diez ninguna otra pinta llega a ser creíble, y
+  // entonces no miente: eso es lo que hace el umbral.
+  const mano = [6, 6, 6, 6, 2];
+  const honesto = botMove({ myDice: mano, bid: { n: 2, p: 3 }, totalDice: 20, rand: nunca });
+  assert.equal(honesto.p, 6, 'sin mentir canta la pinta de la que más tiene');
+  const disfrazado = botMove({ myDice: mano, bid: { n: 2, p: 3 }, totalDice: 20, rand: siempre });
+  assert.notEqual(disfrazado.p, 6, 'mintiendo canta otra, para que no se le lea la mano');
+  assert.ok(bidOk({ n: 2, p: 3 }, disfrazado, 20), 'y la mentira sigue siendo una apuesta legal');
+
+  // Con una mesa chica no hay mentira creíble, así que dice la verdad aunque le toque mentir
+  const sinDonde = botMove({ myDice: mano, bid: { n: 2, p: 3 }, totalDice: 10, rand: siempre });
+  assert.equal(sinDonde.p, 6, 'sin una mentira creíble a mano, no inventa: regalar un dado no es farolear');
+
+  // El disfraz nunca es una apuesta improbable: mentir no es regalar un dado
+  for (let i = 0; i < 200; i++) {
+    const mios = rollDice(5);
+    const m = botMove({ myDice: mios, bid: { n: 2, p: 4 }, totalDice: 15, rand: siempre });
+    if (m.t !== 'bid') continue;
+    assert.ok(credibility({ myDice: mios, bid: m, totalDice: 15 }) > 0.6,
+      `farol poco creíble: ${JSON.stringify(m)} con ${mios}`);
+  }
+
+  // Apretar: con el rival en un dado sube más que contra un rival entero
+  {
+    const mios = [5, 5, 5, 1, 1];
+    const suave = botMove({ myDice: mios, bid: { n: 3, p: 5 }, totalDice: 10, rivales: [5], rand: nunca });
+    const apriete = botMove({ myDice: mios, bid: { n: 3, p: 5 }, totalDice: 6, rivales: [1], rand: siempre });
+    assert.ok(apriete.n >= suave.n, 'al que va perdiendo se le aprieta, no se le da un respiro');
+  }
+
+  // Contra la pared duda antes: la misma apuesta dudosa, con un dado propio o con cinco
+  {
+    const dudosa = { n: 8, p: 5 };
+    const conCinco = botMove({ myDice: [2, 3, 4, 6, 6], bid: dudosa, totalDice: 12, rand: nunca });
+    const conUno = botMove({ myDice: [2], bid: dudosa, totalDice: 8, rand: nunca });
+    assert.equal(conUno.t, 'dudo', 'con un dado propio se ve menos mesa: se duda');
+    assert.ok(['dudo', 'bid'].includes(conCinco.t));
+  }
+
   // Nunca propone algo que el motor vaya a descartar
   for (let i = 0; i < 200; i++) {
     const mine = rollDice(5);
