@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.30.0 — 2026-09-13
+- **Un link de la app pegado en un chat ahora se ve como algo.** No había ninguna etiqueta de Open
+  Graph: WhatsApp, Slack o X mostraban el título pelado y ninguna imagen. Ahora cada página —el menú
+  y los seis juegos— lleva su título, su bajada y **su propia imagen de 1200×630** (D-72).
+- **Cada juego tiene la suya, y esa es la parte que importa.** El link que más se comparte en esta
+  app no es la portada: es la invitación a una sala, `juegosdesalon.cl/toque-y-fama/?sala=WDDT`
+  pegada en un WhatsApp. Antes llegaba sin decir a qué te estaban invitando; ahora muestra el juego,
+  para cuántos y cuánto dura.
+- **Las etiquetas se generan** desde `assets/js/games.js` con `node tools/og.mjs tarjetas`, que
+  corre solo en cada publicación: son siete páginas por veinte etiquetas, y copiar a mano el nombre
+  y la bajada de cada juego a un segundo lugar es crear algo que envejece. Las imágenes las dibuja
+  `tools/og/tarjeta.html` con los estilos y los datos reales, y `node tools/og.mjs imagenes` las
+  fotografía con Chrome.
+- **La versión va en la URL de la imagen.** Las redes cachean estas tarjetas por semanas; sin eso,
+  un dibujo nuevo no se vería hasta que a ellas se les ocurriera volver a mirar.
+- De paso, cada página gana su `<link rel="canonical">` y una descripción propia: los juegos no
+  tenían ninguna.
+
 ## 0.29.1 — 2026-09-13
 - **El "¿Cómo se juega?" de Dudo se lee mejor.** Los siete pasos van en frases derechas, sin guiones
   largos partiendo las frases al medio: "El que sigue sube la apuesta: más cantidad, o la misma
