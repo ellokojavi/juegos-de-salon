@@ -317,9 +317,10 @@ anonymized usage signals, not people: offline modes send counters only, and an I
 chat never leave the phone. A room also records the country of each phone and who won, which is
 what the room log at the bottom of the dashboard shows.
 
-At the bottom there is a **log of the rooms that were played** in the selected range (7 or 30
-days), newest first and paged: day and time, the players with the flag of their country, the game
-and who won. Test rooms run in the development environment, so they are out by default.
+One range selector drives the whole page: 7, 30, 60 or 90 days, one year, or the year so far. At
+the bottom there is a **log of the rooms that were played** in that range, newest first and paged:
+day and time, the players with the flag of their country, the game and who won. Test rooms run in
+the development environment, so they are out by default.
 
 It keeps no lists of its own. Games and modes are read from the registry in `assets/js/games.js`,
 so a new game shows up there by itself, and anything it does not recognize yet is drawn anyway,

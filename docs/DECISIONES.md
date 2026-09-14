@@ -659,3 +659,27 @@ entró un segundo jugador no es una partida, así que se muestra solo si se pide
 y el ganador se rechazan en silencio y la lista los muestra en guion. Nada de esto es retroactivo:
 las salas jugadas antes de esta versión salen sin bandera y sin ganador, y se muestran igual, porque
 una sala de la que se sabe menos es una sala que igual pasó.
+
+---
+
+## D-80 · Seis rangos en el panel, y lo que se baja crece con ellos
+**Fecha:** 2026-09-14 · **Estado:** vigente · **Amplía D-79**
+**Decisión:** El panel ofrece seis rangos —7, 30, 60 y 90 días, 1 año y lo que va del año—, y con
+ellos se filtran **todas** las cifras de la página, incluida la bitácora de salas. La lista de
+rangos vive en `panel/aggregate.js` (`RANGOS`): de ahí salen el selector, el título, la ventana que
+se le pide a la base y el grano de la barra "cuándo se juega".
+**Lo que se baja crece con el rango, y nunca al revés:** la suscripción arranca en el día más
+antiguo que pida el rango elegido y solo se vuelve a pedir si alguien elige uno más largo. Mirar la
+semana no descarga un año, y volver de un año a la semana no descarga nada. Antes se bajaban
+siempre 30 días fijos.
+**Por qué la barra cambia de grano:** un año en barras diarias son 365 barras de un píxel. Hasta 30
+días va por día, hasta 90 por semana (rotulada con su lunes) y de ahí en adelante por mes. Agrupar
+no puede perder ni inventar partidas, y eso lo vigila `panel/aggregate.test.mjs`.
+**Por qué "este año" se cuenta en UTC:** los días se numeran en UTC y el panel rotula todas sus
+fechas en UTC. Tomar el año del reloj local mientras los días son UTC hace que en las primeras horas
+del 1 de enero el rango empiece en enero del año pasado y termine mañana. La diferencia dura unas
+horas al año; la incoherencia duraría todas.
+**Consecuencias:** un rango largo tarda en llegar, así que mientras no esté el título dice
+"cargando…": un año a medio bajar se ve igual que un año sin partidas, y son cosas distintas (C-14).
+Los datos solo llegan hasta donde llegue el registro: el panel existe desde la v0.20, y del país y
+el ganador solo hay desde la v0.33.6 (D-79).

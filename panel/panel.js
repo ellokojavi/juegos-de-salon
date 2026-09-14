@@ -18,13 +18,15 @@ import { gameLabel, MODES, MODE_IDS, ROOM_MODE, modeIcon } from '../assets/js/ga
 import { LANGS } from '../assets/js/i18n.js';
 import { ENVS } from '../assets/js/transport/stats.js';
 import { $, el } from '../assets/js/ui.js';
-import { DAY, ROOM_TTL, liveRooms, connections, summarize, top, tzLabel, ago, dayLabel, dayOf, codesOfDays, splitByEnv, roomLog, paginate, flagOf, whenLabel } from './aggregate.js';
+import { DAY, ROOM_TTL, liveRooms, connections, summarize, top, tzLabel, ago, dayLabel, dayOf, codesOfDays, splitByEnv, roomLog, paginate, flagOf, whenLabel, RANGOS, RANGO_POR_DEFECTO, rangeOf, groupDays } from './aggregate.js';
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
 
-const S = { user: null, env: 'prod', range: 7, rooms: {}, days: {}, daysLoaded: false, unsubRooms: null, unsubDays: null, denied: false, tick: null,
+const S = { user: null, env: 'prod', range: RANGO_POR_DEFECTO, rooms: {}, days: {}, daysLoaded: false, unsubRooms: null, unsubDays: null, denied: false, tick: null,
+  // Desde qué día está bajado `days`: un rango más largo obliga a pedir de nuevo, uno más corto no
+  desdeDia: null,
   // Bitácora de salas (D-79): en qué página va y si se muestran las salas donde no entró nadie
   logPage: 1, logSolas: false };
 
@@ -103,9 +105,12 @@ function listen() {
   // Salas de las últimas 6 horas (índice por createdAt en las reglas). Cada jugada llega como delta.
   const since = Date.now() - ROOM_TTL;
   S.unsubRooms = onValue(query(ref(db, 'rooms'), orderByChild('createdAt'), startAt(since)), snap => { S.rooms = snap.val() || {}; renderNow(); }, denied);
-  // Días del rango más largo que se puede pedir (30), así cambiar el rango no vuelve a bajar nada.
-  const from = String(dayOf(Date.now()) - 30);
-  S.unsubDays = onValue(query(ref(db, `stats/${S.env}/days`), orderByKey(), startAt(from)), snap => { S.days = snap.val() || {}; S.daysLoaded = true; renderRange(); renderNow(); }, denied);
+  // Se baja solo hasta donde llega el rango elegido y nunca menos de lo que ya estaba bajado
+  // (D-80): mirar un año son 365 días de registros, y no hay por qué pagarlos mientras se
+  // mira la semana. Cambiar a un rango más corto no vuelve a pedir nada.
+  const desde = Math.min(rangeOf(S.range).from, S.desdeDia ?? Infinity);
+  S.desdeDia = desde;
+  S.unsubDays = onValue(query(ref(db, `stats/${S.env}/days`), orderByKey(), startAt(String(desde))), snap => { S.days = snap.val() || {}; S.daysLoaded = true; renderRange(); renderNow(); }, denied);
   S.tick = setInterval(renderNow, 30000); // "hace 3 min" se actualiza solo
 }
 
@@ -226,8 +231,12 @@ function renderNow() {
 
 function renderRange() {
   const today = dayOf(Date.now());
-  const s = summarize(S.days, { from: today - S.range + 1, to: today });
-  $('#range-title').textContent = `Últimos ${S.range} días`;
+  const rango = rangeOf(S.range);
+  const s = summarize(S.days, { from: rango.from, to: rango.to });
+  // Mientras no llegue el snapshot del rango recién pedido, el título lo dice: un año a medio
+  // bajar se ve igual que un año sin partidas, y son cosas muy distintas (C-14).
+  const falta = S.daysLoaded && S.desdeDia !== null && rango.from < S.desdeDia;
+  $('#range-title').textContent = rango.titulo + (S.daysLoaded && !falta ? '' : ' · cargando…');
 
   const tiles = $('#tiles-range'); tiles.innerHTML = '';
   const hoy = summarize(S.days, { from: today, to: today });
@@ -251,8 +260,13 @@ function renderRange() {
   const maxP = Math.max(0, ...players.map(([, v]) => v));
   fill($('#by-players'), players.map(([k, v]) => bar(k === '1' ? '1 jugador' : `${k} jugadores`, [seg(C_SIN_RED, v)], maxP)));
 
-  const maxDay = Math.max(0, ...s.byDay.map(d => d.total));
-  fill($('#by-day'), s.byDay.map(d => bar(dayLabel(d.day), [segModo(ROOM_MODE, d.online), seg(C_SIN_RED, d.local)], maxDay)));
+  // Por día en los rangos cortos, por semana o por mes en los largos: 365 barras no se leen
+  const periodos = groupDays(s.byDay, rango.grano);
+  const maxDay = Math.max(0, ...periodos.map(d => d.total));
+  fill($('#by-day'), periodos.map(d => bar(d.label, [segModo(ROOM_MODE, d.online), seg(C_SIN_RED, d.local)], maxDay)));
+  $('#by-day-title').textContent = { dia: 'Por día', semana: 'Por semana', mes: 'Por mes' }[rango.grano];
+  // La semana necesita una aclaración; el día y el mes se explican solos
+  $('#by-day-note').textContent = rango.grano === 'semana' ? 'La fecha es el lunes de cada semana.' : '';
 
   const origin = top(s.origin, 15);
   const maxO = Math.max(0, ...origin.map(([, v]) => v));
@@ -283,7 +297,8 @@ function renderRange() {
  */
 function renderLog() {
   const today = dayOf(Date.now());
-  const filas = roomLog(S.days, { from: today - S.range + 1, to: today, soloJugadas: !S.logSolas });
+  const rango = rangeOf(S.range);
+  const filas = roomLog(S.days, { from: rango.from, to: rango.to, soloJugadas: !S.logSolas });
   const { rows, page, pages, total, desde } = paginate(filas, { page: S.logPage, perPage: POR_PAGINA });
   S.logPage = page;
 
@@ -325,14 +340,24 @@ function renderControls() {
   const env = $('#env');
   env.innerHTML = '';
   ENV_OPCIONES.forEach(e => env.append(el('option', { value: e, selected: e === S.env ? '' : null }, envLabel(e))));
+  const rango = $('#range');
+  rango.innerHTML = '';
+  RANGOS.forEach(r => rango.append(el('option', { value: r.id, selected: r.id === S.range ? '' : null }, r.etiqueta)));
   $('#modes-legend').textContent = `Por modo: ${MODE_IDS.map(m => `${modeIcon(m)} ${MODES[m].label}`).join(' · ')}`;
 }
 renderControls();
 
 $('#btn-login').addEventListener('click', login);
-$('#env').addEventListener('change', e => { S.env = e.target.value; S.days = {}; S.daysLoaded = false; S.logPage = 1; renderRange(); renderNow(); if (S.user) listen(); });
-// Cambiar el rango o el entorno empieza la lista de nuevo: la página 3 de otra cosa no existe
-$('#range').addEventListener('change', e => { S.range = Number(e.target.value); S.logPage = 1; renderRange(); });
+$('#env').addEventListener('change', e => { S.env = e.target.value; S.days = {}; S.daysLoaded = false; S.logPage = 1; S.desdeDia = null; renderRange(); renderNow(); if (S.user) listen(); });
+// Cambiar el rango o el entorno empieza la lista de nuevo: la página 3 de otra cosa no existe.
+// Y si el rango nuevo llega más atrás de lo que está bajado, se pide de nuevo desde ahí (D-80).
+$('#range').addEventListener('change', e => {
+  S.range = e.target.value;
+  S.logPage = 1;
+  const necesita = rangeOf(S.range).from;
+  if (S.user && S.desdeDia !== null && necesita < S.desdeDia) { S.daysLoaded = false; listen(); }
+  renderRange();
+});
 $('#log-solas').addEventListener('change', e => { S.logSolas = e.target.checked; S.logPage = 1; renderLog(); });
 
 // Gancho de solo lectura para pruebas (C-14): permite dibujar con datos sembrados sin entrar.
