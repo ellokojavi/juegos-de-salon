@@ -16,7 +16,7 @@ App web (mobile-first) con juegos de salón para jugar con amigos: de naipes, de
 | ⏳ [Línea de Tiempo / Timeline / Linha do Tempo](#-línea-de-tiempo) | 1 a 6 | Un celular · Varios celulares · Jugar solo | v0.9 |
 | 🔢 [Toque y Fama / Bulls and Cows / Toque e Fama](#-toque-y-fama) | 1 a 2 | Un celular · Dos celulares · Contra el celular | v0.4 |
 | 🪢 [El Ahorcado / Hangman / Forca](#-el-ahorcado) | 1 a 6 | Un celular · Varios celulares · Jugar solo | v0.26 |
-| 🎲 [Dudo / Liar's Dice / Dado Mentiroso](#-dudo) | 1 a 6 | Un celular | v0.28 |
+| 🎲 [Dudo / Liar's Dice / Dado Mentiroso](#-dudo) | 1 a 6 | Un celular · Varios celulares · Contra el celular | v0.32 |
 | ⚓ [Batalla Naval / Battleship / Batalha Naval](#-batalla-naval) | 1 a 2 | Un celular · Dos celulares · Contra el celular | v0.6 |
 | 👑 [Cuarto Rey / Fourth King / Quarto Rei](#-cuarto-rey) | 4 a 6 | Un celular | v0.27 |
 <!-- /generado -->
