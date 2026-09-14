@@ -1,5 +1,25 @@
 # Changelog
 
+## Sin publicar
+
+> Commiteado pero **sin estampar**: hay otra sesión trabajando en el repo, así que el número de
+> versión lo pone `python3 tools/set-version.py X.Y.Z` al publicar (C-11).
+
+- **El celular de Dudo ahora farolea, y se le nota menos la mano.** Antes cantaba casi siempre la
+  pinta de la que más tenía: lo que apostaba delataba su mano un 46% por encima del azar, así que
+  bastaba con jugar dos partidas para leerlo. Ahora **disfraza**: canta una pinta creíble que no es
+  su más fuerte, abre rondas con una pinta que no tiene, y **aprieta** al rival que queda con uno o
+  dos dados, que es cuando decidir le cuesta más. Delata un 38%.
+- **Y dejó de exagerar la cantidad**, que era la única mentira que tenía. Medida sola gana el 21%
+  de las partidas contra el 46% del celular honesto: subir por encima de la mínima legal le regala
+  al rival un piso más alto sin comprarle nada. Era la peor jugada de su repertorio.
+- **La agresividad se eligió con un torneo**, no a ojo: tres rivales de prueba —uno que solo
+  calcula, uno que supone que tienes lo que cantas, uno que supone lo contrario— y 2.500 partidas
+  por celda. Contra quien lee patrones —que es lo que hace una persona después de un par de
+  partidas— el farol vale +4,4 puntos; contra quien solo calcula cuesta 3,6. Quedó en 0,7 y no en 1
+  porque con la perilla al tope **nunca** cantaría su pinta más fuerte, que es un patrón tan legible
+  como cantarla siempre. Todo anotado en [docs/juegos/dudo.md](docs/juegos/dudo.md).
+
 ## 0.33.5 — 2026-09-14
 - **Los títulos del README llevan los dos nombres**: `👑 Fourth King (Cuarto Rey)`. Primero el
   inglés, que es por lo que alguien de afuera busca el juego; entre paréntesis, el nombre de verdad,

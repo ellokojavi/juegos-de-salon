@@ -80,6 +80,45 @@ empezar la ronda. Si uno no calza, la pantalla lo dice: **"⚠️ no coincide"**
 el celular no hay a quién esconderle nada: los dados van en claro en la lista de mensajes, tapados
 por la pantalla del pase.
 
+## 4b. Cómo juega el celular
+
+El celular decide con **sus propios dados y nada más**: cuántos dados desconocidos quedan y qué
+probabilidad tienen de tapar la apuesta (una cuenta binomial). Nunca mira la mano del rival, aunque
+en un celular el aparato la tenga a mano.
+
+**Miente de tres formas, y ninguna es apostar lo improbable.** Un farol tiene que seguir siendo
+creíble —el umbral está en 0,62—: si la apuesta disfrazada ya es más falsa que cierta, no es un
+farol, es regalar un dado.
+
+| | Qué hace | Para qué |
+|---|---|---|
+| **Abrir disfrazado** | Abre la ronda con una pinta que no es su más fuerte | Es el farol más barato: con la mesa entera sin destapar, casi cualquier apuesta baja es cierta, y ya planta una pista falsa |
+| **Disfrazar la mano** | En su turno canta una pinta creíble que no es su más fuerte | Sin esto es un libro abierto: lo que canta delata su mano un 46% por encima del azar |
+| **Apretar** | Con el rival en uno o dos dados, sube lo más alto que siga siendo creíble | Cada ronda le puede costar la partida, y decidir con menos mesa a la vista es su peor momento |
+
+**Lo que no hace es exagerar la cantidad** por encima de la mínima legal. Era la única mentira que
+tenía antes de medirlo, y sola gana el **21%** de las partidas contra el 46% del celular honesto:
+subir de más le regala al rival un piso más alto sin comprarle nada.
+
+### De dónde salió el número de la agresividad
+
+`AGRESIVIDAD = 0.7` no es una corazonada: salió de un torneo contra tres rivales de prueba —uno que
+solo calcula, uno que supone que tienes lo que cantas, y uno que supone lo contrario— con 2.500
+partidas por celda:
+
+| | honesto | con farol (0,7) |
+|---|---|---|
+| contra el que solo calcula | 51,0% | 47,4% |
+| **contra el que lee patrones** | 52,4% | **56,8%** |
+| contra el desconfiado | 65,8% | 61,8% |
+| **cuánto delata lo que canta** | **46%** | **38%** |
+
+Mentirle a una máquina que solo calcula cuesta unos puntos; contra alguien que **lee**, que es lo
+que hace una persona después de un par de partidas, los recupera con creces. Con la perilla en 1
+gana todavía más contra el lector (+16 puntos), pero ahí **nunca** canta su pinta más fuerte, que es
+un patrón tan legible como cantarla siempre: en 0,7 dice la verdad una de cada tres veces que podría
+mentir, y ninguna de las dos lecturas le sirve a nadie.
+
 ## 5. Estado y protocolo
 
 La partida se deriva de la lista de mensajes (C-7). Cada ronda es una secuencia:
