@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.29.0 — 2026-09-13
+- **En español, Dudo se dice en chileno**: ases, tontos, trenes, cuadras, quintas y sextas (D-71).
+  Es como se juega acá —"cuatro quintas", no "cuatro cincos"— y viene encendido. Los nombres salen
+  en la apuesta, en el destape y en el repaso de la partida. Hay un interruptor en la configuración
+  para volver a los números, porque quien no los conoce necesita una salida y porque en español
+  también se juega fuera de Chile. **Es una opción de un solo idioma:** en inglés y en portugués no
+  hay un juego de nombres equivalente, así que las pintas van por su número y el interruptor ni se
+  ofrece.
+- **En un duelo no se puede calzar.** Con dos jugadores hay una sola mano tapada, así que acertar la
+  cantidad exacta deja de ser un riesgo y pasa a ser una cuenta. Ahora calzar pide **tres jugadores
+  o más**, y se apaga solo cuando una mesa de seis se queda en dos: la regla vive en el motor, no en
+  la pantalla. El interruptor de calzar aparece recién cuando hay tres nombres anotados.
+- **Los dados de la botonera ya no se confunden con los tuyos.** Eran el mismo dado sólido, más
+  chico, y dos cosas con la misma forma se leen como cosas del mismo tipo. La botonera pasa a ir
+  **dibujada en hueco** —contorno y puntos en línea— y la cara sólida queda solo para los dados de
+  la mano; el elegido se rellena apenas, en cian.
+
 ## 0.28.0 — 2026-09-13
 - **Juego nuevo: Dudo 🎲** (2 a 6 jugadores). El clásico de los dados que se juega en bares y
   sobremesas: cada uno tira cinco y mira solo los suyos, se apuesta cuántos hay de una pinta en toda

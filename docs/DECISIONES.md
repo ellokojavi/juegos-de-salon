@@ -460,3 +460,35 @@ haría falta saber si algún día vuelve a hacer falta un diccionario grande.
 **Por qué:** C-7 dice que todo lo repartible sale de la semilla, y para las cartas de Línea de Tiempo o la palabra del mazo del Ahorcado está bien: son públicas apenas se juegan. Los dados no. **El código de esta app es público**: si los dados salieran de una semilla que todos los celulares conocen, cualquiera podría abrir la consola y calcular los del rival, que es el juego entero. Es el mismo problema que ya tenía la flota de Batalla Naval, y se resuelve igual: el secreto vive en el celular de su dueño.
 **Cómo queda C-7 igual:** el estado se sigue derivando de la lista de mensajes. Lo que cambia es que el mensaje que abre la ronda lleva un hash en vez de los dados, y que la ronda no se puede contar hasta que estén todos los `open`. En un celular y contra el celular los dados van en claro en el mismo mensaje —no hay a quién escondérselos— y por eso el destape es instantáneo: un solo camino en el motor para los tres modos.
 **Consecuencias:** una sala no puede resolver una ronda si alguien se va sin destapar. A diferencia del Ahorcado (D-66), acá **no se saltea el turno de quien se fue**: en el Ahorcado cada uno tiene su tablero y saltarlo solo cambia el orden, pero en Dudo los dados del ausente son parte de la cuenta y descartarlos cambiaría el resultado, además de depender de la presencia, que cada celular ve distinto. Una sala trabada se cancela (D-50). Queda anotado para cuando se construya DU-09.
+
+## D-71 · Dudo se dice en chileno, y en un duelo no se calza
+**Fecha:** 2026-09-13 · **Estado:** vigente · **Ajusta D-69**
+**Decisión:** Tres cambios en Dudo, los tres sobre cómo se juega y cómo se lee la mesa.
+
+**1. Calzar necesita tres jugadores.** Con dos, calzar deja de ser una apuesta: el que calza ve su
+propia mano y solo hay **una** mano tapada, así que la cantidad exacta se calcula en vez de
+arriesgarse. Se apaga solo cuando una mesa de seis se queda en dos, no solo al configurar la
+partida, y por eso vive en el motor (`calzarOk` recibe cuántos siguen vivos) y no en la pantalla.
+En la configuración, el interruptor de calzar aparece recién cuando hay tres nombres anotados:
+ofrecer un ajuste que no va a poder usarse es peor que no ofrecerlo.
+
+**2. En español, las pintas se llaman como en la mesa: ases, tontos, trenes, cuadras, quintas y
+sextas.** Es la forma en que se juega Dudo en Chile —el juego se dice "cuatro quintas", no "cuatro
+cincos"— y el canon manda español chileno informal (C-3, RP-12). Viene **encendido por defecto** y
+se puede apagar para volver a los números, porque quien no conoce los nombres necesita una salida y
+porque el juego también se juega fuera de Chile en español.
+**Es una opción de un solo idioma.** En inglés y en portugués no hay un juego de nombres equivalente
+instalado, así que las pintas van por su número y el interruptor no se ofrece. Por eso los nombres
+viven en un `export const CHILENO` de `rules.js` y no dentro de `LOCALES`: no son una traducción que
+falte en dos idiomas, son contenido de uno solo, y meterlos en `LOCALES` habría obligado a inventar
+un equivalente en inglés y portugués solo para que cuadrara la prueba de paridad.
+
+**3. Los dados de la botonera se dibujan en hueco.** Antes la botonera de pintas usaba el mismo dado
+sólido que la mano del jugador, más chico. Dos cosas con la misma forma y el mismo peso visual son
+dos cosas del mismo tipo, y no lo son: una es lo que te tocó y la otra es un botón para nombrar una
+pinta. Ahora la botonera va con el contorno y los puntos en línea, y la cara sólida queda solo para
+los dados de verdad. El elegido se rellena apenas, en cian, que es el color con que la app marca la
+selección en todos los juegos.
+**Consecuencias:** `MIN_CALZAR` queda en el motor y la prueba lo cubre con una mesa que empieza en
+tres y termina en dos. Una partida guardada de antes no trae `chileno` en su configuración y se
+retoma con los nombres encendidos, que es el valor por defecto.
