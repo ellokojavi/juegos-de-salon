@@ -64,8 +64,8 @@ Todo es mejor esfuerzo: si el envío falla, nadie se entera y la partida sigue i
 
 ## La bitácora de salas (D-79)
 
-Al final del panel hay una lista de las **salas jugadas** en el rango elegido arriba (7 o 30
-días), de la más nueva a la más vieja y paginada de a 20:
+Al final del panel hay una lista de las **salas jugadas** en el rango elegido arriba, de la
+más nueva a la más vieja y paginada de a 20:
 
 | Cuándo | Juego | Jugadores | Ganador |
 |---|---|---|---|
@@ -77,6 +77,20 @@ días), de la más nueva a la más vieja y paginada de a 20:
   casilla para incluirlas.
 - **Guion en el ganador** quiere decir que no quedó registro: una sala de antes de que esto
   existiera, o un final que no alcanzó a enviarse. No es lo mismo que un empate.
+
+## Los rangos (D-80)
+
+El selector de arriba manda en toda la página, incluida la bitácora: **7, 30, 60 y 90 días, 1
+año y lo que va del año** (desde el 1 de enero). La lista vive en `panel/aggregate.js`, así que
+agregar un rango es sumar una línea.
+
+- **Se baja lo que el rango pide, y nunca menos de lo ya bajado.** Mirar la semana no descarga
+  un año; volver de un año a la semana no descarga nada. Mientras llega, el título dice
+  "cargando…".
+- **La barra "cuándo se juega" cambia de grano:** por día hasta 30, por semana hasta 90 (con la
+  fecha del lunes) y por mes de ahí en adelante.
+- Hacia atrás solo hay lo que se haya registrado: el panel existe desde la v0.20, y el país y el
+  ganador desde la v0.33.6 (D-79).
 
 ## Cómo entrar (una sola vez, en la consola de Firebase)
 

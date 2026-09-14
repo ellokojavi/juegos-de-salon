@@ -1,6 +1,6 @@
 // Ejecutar: node panel/aggregate.test.mjs
 import assert from 'node:assert/strict';
-import { DAY, roomLog, paginate, flagOf, whenLabel, ROOM_TTL, liveRooms, connections, summarize, top, tzLabel, ago, dayLabel, codesOfDays, splitByEnv } from './aggregate.js';
+import { DAY, roomLog, paginate, flagOf, whenLabel, RANGOS, rangeOf, groupDays, periodLabel, ROOM_TTL, liveRooms, connections, summarize, top, tzLabel, ago, dayLabel, codesOfDays, splitByEnv } from './aggregate.js';
 
 const now = 20342 * DAY + 15 * 60 * 60 * 1000; // día 20342, 15:00 UTC
 
@@ -181,6 +181,63 @@ assert.equal(ninguna.ajenas.length, 3);
   assert.equal(flagOf(''), '', 'sin país no va bandera: no se inventa una');
   assert.equal(flagOf('XYZ'), '');
   assert.match(whenLabel(Date.UTC(2026, 8, 14, 15, 30)), /\d{1,2}:\d{2}$/, 'termina en hora de 24');
+}
+
+// ---------------------------------------------------------------- rangos (D-80)
+{
+  // 14 de septiembre de 2026, mediodía UTC
+  const ahora = Date.UTC(2026, 8, 14, 12);
+  const hoy = Math.floor(ahora / DAY);
+  const largo = id => { const r = rangeOf(id, ahora); return r.to - r.from + 1; };
+
+  assert.deepEqual(RANGOS.map(r => r.id), ['7d', '30d', '60d', '90d', '1y', 'ytd'], 'los seis rangos, en orden');
+  assert.equal(largo('7d'), 7);
+  assert.equal(largo('30d'), 30);
+  assert.equal(largo('60d'), 60);
+  assert.equal(largo('90d'), 90);
+  assert.equal(largo('1y'), 365);
+  assert.equal(rangeOf('7d', ahora).to, hoy, 'todos terminan hoy');
+
+  // "Este año" empieza el 1 de enero del año del calendario, no hace 365 días
+  const ytd = rangeOf('ytd', ahora);
+  assert.equal(ytd.from, Math.floor(Date.UTC(2026, 0, 1) / DAY));
+  assert.equal(ytd.to - ytd.from + 1, 257);
+  // El 1 de enero, "este año" es un solo día y nunca una ventana al revés
+  const enero = Date.UTC(2026, 0, 1, 3);
+  assert.equal(rangeOf('ytd', enero).from, rangeOf('ytd', enero).to, 'el 1 de enero, este año es hoy');
+
+  assert.equal(rangeOf('no-existe', ahora).id, '7d', 'un rango desconocido cae en el de siempre');
+
+  // El grano crece con el rango: un año en barras diarias no se lee
+  assert.equal(rangeOf('30d', ahora).grano, 'dia');
+  assert.equal(rangeOf('90d', ahora).grano, 'semana');
+  assert.equal(rangeOf('ytd', ahora).grano, 'mes');
+}
+
+// Agrupar por semana y por mes conserva los totales
+{
+  const hoy = Math.floor(Date.UTC(2026, 8, 14, 12) / DAY);
+  const byDay = Array.from({ length: 70 }, (_, i) => ({ day: hoy - 69 + i, total: 2, online: 1, local: 1 }));
+  const suma = filas => filas.reduce((n, f) => n + f.total, 0);
+
+  const dias = groupDays(byDay, 'dia');
+  assert.equal(dias.length, 70, 'agrupar por día es no agrupar');
+  assert.equal(typeof dias[0].label, 'string');
+
+  const semanas = groupDays(byDay, 'semana');
+  assert.ok(semanas.length >= 10 && semanas.length <= 11, `70 días son 10 u 11 semanas, no ${semanas.length}`);
+  assert.equal(suma(semanas), suma(byDay), 'agrupar no puede perder ni inventar partidas');
+  assert.deepEqual(semanas.map(s => s.day), [...semanas.map(s => s.day)].sort((a, b) => a - b), 'de la más vieja a la más nueva');
+  // Cada cajón empieza un lunes: el día 0 fue jueves, así que se revisa con una fecha real
+  assert.equal(new Date(semanas[1].day * DAY).getUTCDay(), 1, 'la semana empieza el lunes');
+
+  const meses = groupDays(byDay, 'mes');
+  assert.ok(meses.length === 3, `70 días tocan tres meses, no ${meses.length}`);
+  assert.equal(suma(meses), suma(byDay));
+  assert.equal(new Date(meses[0].day * DAY).getUTCDate(), 1, 'el cajón del mes empieza el día 1');
+
+  assert.deepEqual(groupDays([], 'mes'), []);
+  assert.match(periodLabel(hoy, 'mes'), /2026/);
 }
 
 console.log('aggregate.test.mjs: todo en verde');

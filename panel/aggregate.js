@@ -18,6 +18,71 @@ export const ACTIVE_MS = 10 * 60 * 1000;      // una sala está "en juego" si hu
 export const dayOf = ts => Math.floor(ts / DAY);
 
 /**
+ * Los rangos que el panel ofrece (D-80). Viven acá y no en el HTML: el selector, el título, la
+ * ventana que se baja de la base y el grano de la barra por día salen todos de esta lista, así
+ * que agregar un rango es sumar una línea.
+ *
+ * `grano` es cada cuánto se agrupa la barra "cuándo se juega": un año en barras diarias son 365
+ * barras de un píxel, que no se leen. Por día hasta 30, por semana hasta 90, por mes de ahí en
+ * adelante.
+ */
+export const RANGOS = [
+  { id: '7d', etiqueta: '7 días', titulo: 'Últimos 7 días', dias: 7, grano: 'dia' },
+  { id: '30d', etiqueta: '30 días', titulo: 'Últimos 30 días', dias: 30, grano: 'dia' },
+  { id: '60d', etiqueta: '60 días', titulo: 'Últimos 60 días', dias: 60, grano: 'semana' },
+  { id: '90d', etiqueta: '90 días', titulo: 'Últimos 90 días', dias: 90, grano: 'semana' },
+  { id: '1y', etiqueta: '1 año', titulo: 'Último año', dias: 365, grano: 'mes' },
+  { id: 'ytd', etiqueta: 'Este año', titulo: 'Lo que va del año', dias: null, grano: 'mes' },
+];
+
+export const RANGO_POR_DEFECTO = '7d';
+
+/**
+ * De qué día a qué día va un rango, en números de día.
+ *
+ * "Este año" no es una cantidad de días: empieza el 1 de enero. El año se toma en UTC, igual que
+ * los números de día y que todas las fechas que el panel rotula: mezclar el año local con días
+ * numerados en UTC hace que en las primeras horas del 1 de enero el rango arranque en enero del
+ * año pasado y termine mañana. La diferencia dura unas horas al año; la incoherencia, todas.
+ */
+export function rangeOf(id, now = Date.now()) {
+  const r = RANGOS.find(x => x.id === id) || RANGOS.find(x => x.id === RANGO_POR_DEFECTO);
+  const hoy = dayOf(now);
+  const desde = r.dias === null
+    ? dayOf(Date.UTC(new Date(now).getUTCFullYear(), 0, 1))
+    : hoy - r.dias + 1;
+  return { ...r, from: Math.min(desde, hoy), to: hoy };
+}
+
+/** Lunes de la semana de ese día, en número de día: el día 0 fue jueves. */
+const lunesDe = d => d - ((d + 3) % 7);
+
+/**
+ * Agrupa las filas por día en semanas o meses, para que la barra se pueda leer en un rango
+ * largo. Con grano 'dia' devuelve lo mismo que entró: agrupar por uno es no agrupar.
+ */
+export function groupDays(byDay, grano = 'dia') {
+  if (grano === 'dia') return byDay.map(d => ({ ...d, label: dayLabel(d.day) }));
+  const cajones = new Map();
+  for (const fila of byDay) {
+    const f = new Date(fila.day * DAY);
+    const clave = grano === 'mes' ? dayOf(Date.UTC(f.getUTCFullYear(), f.getUTCMonth(), 1)) : lunesDe(fila.day);
+    const caja = cajones.get(clave) || { day: clave, total: 0, online: 0, local: 0 };
+    caja.total += fila.total; caja.online += fila.online; caja.local += fila.local;
+    cajones.set(clave, caja);
+  }
+  return [...cajones.values()].sort((a, b) => a.day - b.day).map(c => ({ ...c, label: periodLabel(c.day, grano) }));
+}
+
+/** Cómo se llama un cajón: "8 sep" la semana, "sep 2026" el mes. */
+export function periodLabel(day, grano) {
+  const d = new Date(day * DAY);
+  if (grano === 'mes') return d.toLocaleDateString('es-CL', { month: 'short', year: 'numeric', timeZone: 'UTC' });
+  if (grano === 'semana') return d.toLocaleDateString('es-CL', { day: 'numeric', month: 'short', timeZone: 'UTC' });
+  return dayLabel(day);
+}
+
+/**
  * Códigos de sala que el entorno cargado registró hoy y ayer. Una sala vive seis horas como
  * mucho, así que dos días alcanzan de sobra y evitan que un código reciclado de hace semanas
  * —son cuatro letras, se repiten— haga pasar por buena una sala que no lo es.
