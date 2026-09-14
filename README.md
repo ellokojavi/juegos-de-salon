@@ -1,82 +1,84 @@
 # 🎲 Juegos de Salón
 
-App web (mobile-first) con juegos de salón para jugar con amigos: de naipes, de tomar, de deducción. Se abre desde el celular o tablet, se elige un juego en el menú principal, se ingresan los jugadores y el celular guía la partida. En español, inglés y portugués.
+Mobile-first web app with party games to play with friends: card games, drinking games, guessing games. Open it on a phone or tablet, pick a game from the menu, type in the players, and the phone runs the game. In Spanish, English and Portuguese.
 
-**Jugar:** https://juegosdesalon.cl/
+**Play:** https://juegosdesalon.cl/
 
-<!-- generado: capturas:portada · lo reescribe python3 tools/readme.py actualizar -->
-<p align="center"><img src="docs/screenshots/menu.png" width="220" alt="Menú principal"></p>
+<!-- generado: capturas:portada · written by python3 tools/readme.py actualizar -->
+<p align="center"><img src="docs/screenshots/menu.png" width="220" alt="Main menu"></p>
 <!-- /generado -->
 
-## Juegos
+> The app is Chilean and it is built in Spanish. This README is in English so anyone can read it. The rest of the documentation, linked at the end, is in Spanish, and the screenshots show the app in Spanish, which is its default language.
 
-<!-- generado: juegos · lo reescribe python3 tools/readme.py actualizar -->
-| Juego | Jugadores | Modos | Estado |
+## Games
+
+<!-- generado: juegos · written by python3 tools/readme.py actualizar -->
+| Game | Players | Modes | Status |
 |---|---|---|---|
-| ⏳ [Línea de Tiempo / Timeline / Linha do Tempo](#-línea-de-tiempo) | 1 a 6 | Un celular · Varios celulares · Jugar solo | v0.9 |
-| 🔢 [Toque y Fama / Bulls and Cows / Toque e Fama](#-toque-y-fama) | 1 a 2 | Un celular · Dos celulares · Contra el celular | v0.4 |
-| 🪢 [El Ahorcado / Hangman / Forca](#-el-ahorcado) | 1 a 6 | Un celular · Varios celulares · Jugar solo | v0.26 |
-| 🎲 [Dudo / Liar's Dice / Dado Mentiroso](#-dudo) | 1 a 6 | Un celular · Varios celulares · Contra el celular | v0.32 |
-| ⚓ [Batalla Naval / Battleship / Batalha Naval](#-batalla-naval) | 1 a 2 | Un celular · Dos celulares · Contra el celular | v0.6 |
-| 👑 [Cuarto Rey / Fourth King / Quarto Rei](#-cuarto-rey) | 4 a 6 | Un celular | v0.27 |
+| ⏳ [Línea de Tiempo / Timeline / Linha do Tempo](#-línea-de-tiempo) | 1 to 6 | One phone · Several phones · Play alone | v0.9 |
+| 🔢 [Toque y Fama / Bulls and Cows / Toque e Fama](#-toque-y-fama) | 1 to 2 | One phone · Two phones · Versus the phone | v0.4 |
+| 🪢 [El Ahorcado / Hangman / Forca](#-el-ahorcado) | 1 to 6 | One phone · Several phones · Play alone | v0.26 |
+| 🎲 [Dudo / Liar's Dice / Dado Mentiroso](#-dudo) | 1 to 6 | One phone · Several phones · Versus the phone | v0.32 |
+| ⚓ [Batalla Naval / Battleship / Batalha Naval](#-batalla-naval) | 1 to 2 | One phone · Two phones · Versus the phone | v0.6 |
+| 👑 [Cuarto Rey / Fourth King / Quarto Rei](#-cuarto-rey) | 4 to 6 | One phone | v0.27 |
 <!-- /generado -->
 
 ---
 
 ## 👑 Cuarto Rey
 
-El clásico de naipes para tomar. El celular hace de mazo: cada jugador saca una carta y la app dice qué hacer, nombra a quién le toca tomar, guía los mini-juegos (Cuenta Cuentos, Chancho Inflado, Cultura Chupística, Nunca Nunca), propone penitencias y cuenta los reyes. Con el cuarto rey, fondo y pantalla final: quién se lo tomó, el ranking de sorbos y, plegado al pie, el repaso de todas las cartas que salieron, con quién sacó cada una.
+*Fourth King.* The classic drinking card game. The phone is the deck: each player draws a card and the app says what to do. It names who drinks, runs the mini-games (Cuenta Cuentos, Chancho Inflado, Cultura Chupística, Nunca Nunca), suggests dares and counts the kings. The fourth king ends the game: whoever draws it finishes their glass, and the last screen shows who it was, the sip ranking and, folded at the bottom, every card that came up and who drew it.
 
-<!-- generado: capturas:cuarto-rey · lo reescribe python3 tools/readme.py actualizar -->
+<!-- generado: capturas:cuarto-rey · written by python3 tools/readme.py actualizar -->
 <table>
   <tr>
-    <td align="center"><img src="docs/screenshots/cuarto-rey/02-intro.png" width="180" alt="Intro y reglas"><br><sub>Intro y reglas</sub></td>
-    <td align="center"><img src="docs/screenshots/cuarto-rey/03-jugadores.png" width="180" alt="Jugadores y género"><br><sub>Jugadores y género</sub></td>
-    <td align="center"><img src="docs/screenshots/cuarto-rey/04-mesa.png" width="180" alt="Toca para sacar carta"><br><sub>Toca para sacar carta</sub></td>
-    <td align="center"><img src="docs/screenshots/cuarto-rey/05-carta.png" width="180" alt="Carta e instrucción"><br><sub>Carta e instrucción</sub></td>
+    <td align="center"><img src="docs/screenshots/cuarto-rey/02-intro.png" width="180" alt="Intro and rules"><br><sub>Intro and rules</sub></td>
+    <td align="center"><img src="docs/screenshots/cuarto-rey/03-jugadores.png" width="180" alt="Players and gender"><br><sub>Players and gender</sub></td>
+    <td align="center"><img src="docs/screenshots/cuarto-rey/04-mesa.png" width="180" alt="Tap to draw a card"><br><sub>Tap to draw a card</sub></td>
+    <td align="center"><img src="docs/screenshots/cuarto-rey/05-carta.png" width="180" alt="Card and instruction"><br><sub>Card and instruction</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/cuarto-rey/06-minijuego.png" width="180" alt="Mini-juego con ayudas"><br><sub>Mini-juego con ayudas</sub></td>
-    <td align="center"><img src="docs/screenshots/cuarto-rey/07-salud.png" width="180" alt="¡Salud!"><br><sub>¡Salud!</sub></td>
-    <td align="center"><img src="docs/screenshots/cuarto-rey/08-pasale.png" width="180" alt="Pásale el celular"><br><sub>Pásale el celular</sub></td>
-    <td align="center"><img src="docs/screenshots/cuarto-rey/09-cuarto-rey.png" width="180" alt="¡Cuarto Rey!"><br><sub>¡Cuarto Rey!</sub></td>
+    <td align="center"><img src="docs/screenshots/cuarto-rey/06-minijuego.png" width="180" alt="Mini-game with prompts"><br><sub>Mini-game with prompts</sub></td>
+    <td align="center"><img src="docs/screenshots/cuarto-rey/07-salud.png" width="180" alt="Cheers!"><br><sub>Cheers!</sub></td>
+    <td align="center"><img src="docs/screenshots/cuarto-rey/08-pasale.png" width="180" alt="Pass the phone"><br><sub>Pass the phone</sub></td>
+    <td align="center"><img src="docs/screenshots/cuarto-rey/09-cuarto-rey.png" width="180" alt="Fourth King!"><br><sub>Fourth King!</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/cuarto-rey/10-final.png" width="180" alt="Ranking de sorbos"><br><sub>Ranking de sorbos</sub></td>
-    <td align="center"><img src="docs/screenshots/cuarto-rey/13-historial.png" width="180" alt="Las cartas que salieron"><br><sub>Las cartas que salieron</sub></td>
+    <td align="center"><img src="docs/screenshots/cuarto-rey/10-final.png" width="180" alt="Sip ranking"><br><sub>Sip ranking</sub></td>
+    <td align="center"><img src="docs/screenshots/cuarto-rey/13-historial.png" width="180" alt="Every card that came up"><br><sub>Every card that came up</sub></td>
     <td></td>
     <td></td>
   </tr>
 </table>
 <!-- /generado -->
 
-Especificación: [docs/juegos/cuarto-rey.md](docs/juegos/cuarto-rey.md)
+Spec: [docs/juegos/cuarto-rey.md](docs/juegos/cuarto-rey.md)
 
 ## 🔢 Toque y Fama
 
-Cada jugador elige un número secreto de cifras distintas y trata de adivinar el del rival. Por cada intento, el celular responde solo: **fama** es cifra correcta en su lugar, **toque** es cifra correcta en otro lugar. Nadie cuenta a mano, nadie hace trampa.
+*Bulls and Cows.* Each player picks a secret number with no repeated digits and tries to crack the other one. For every guess the phone answers on its own: **fama** is a right digit in the right place, **toque** is a right digit somewhere else. Nobody counts by hand, nobody cheats.
 
-- **📱 Un celular:** se pasan el celular; la pantalla se tapa entre turnos.
-- **📡 Dos celulares:** sala con código de 4 letras y QR. Cada celular guarda su secreto y responde a los intentos del rival. Al final ambos revelan y se verifica todo.
-- **🤖 Contra el celular:** duelo contra un solver que adivina en 5 a 6 intentos.
-- **💬 Chat de la sala:** en dos celulares hay un chat para picarse mientras adivinan, que sigue vivo en la pantalla final para celebrar o pedir revancha. Los mensajes nuevos se asoman al lado de la burbuja.
+- **📱 One phone:** players pass the phone around, and the screen is covered between turns.
+- **📡 Two phones:** a room with a 4-letter code and a QR. Each phone keeps its own secret and answers the rival's guesses. At the end both reveal and everything is verified.
+- **🤖 Versus the phone:** a duel against a solver that cracks the number in 5 or 6 guesses.
+- **💬 Room chat:** on two phones there is a chat to trash-talk while guessing, and it stays alive on the final screen to celebrate or ask for a rematch. New messages peek out next to the bubble.
 
-<!-- generado: capturas:toque-y-fama · lo reescribe python3 tools/readme.py actualizar -->
+<!-- generado: capturas:toque-y-fama · written by python3 tools/readme.py actualizar -->
 <table>
   <tr>
-    <td align="center"><img src="docs/screenshots/toque-y-fama/01-intro.png" width="180" alt="Modos de juego"><br><sub>Modos de juego</sub></td>
-    <td align="center"><img src="docs/screenshots/toque-y-fama/02-secreto.png" width="180" alt="Número secreto"><br><sub>Número secreto</sub></td>
-    <td align="center"><img src="docs/screenshots/toque-y-fama/03-tablero.png" width="180" alt="Tablero y teclado"><br><sub>Tablero y teclado</sub></td>
-    <td align="center"><img src="docs/screenshots/toque-y-fama/04-pasale.png" width="180" alt="La respuesta y el pase, en una pantalla"><br><sub>La respuesta y el pase, en una pantalla</sub></td>
+    <td align="center"><img src="docs/screenshots/toque-y-fama/01-intro.png" width="180" alt="Game modes"><br><sub>Game modes</sub></td>
+    <td align="center"><img src="docs/screenshots/toque-y-fama/02-secreto.png" width="180" alt="Secret number"><br><sub>Secret number</sub></td>
+    <td align="center"><img src="docs/screenshots/toque-y-fama/03-tablero.png" width="180" alt="Board and keypad"><br><sub>Board and keypad</sub></td>
+    <td align="center"><img src="docs/screenshots/toque-y-fama/04-pasale.png" width="180" alt="Answer and handoff on one screen"><br><sub>Answer and handoff on one screen</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/toque-y-fama/06-sala.png" width="180" alt="Sala con código y QR"><br><sub>Sala con código y QR</sub></td>
-    <td align="center"><img src="docs/screenshots/toque-y-fama/07-dos-celulares.png" width="180" alt="Partida en dos celulares"><br><sub>Partida en dos celulares</sub></td>
-    <td align="center"><img src="docs/screenshots/toque-y-fama/08-verificado.png" width="180" alt="Secretos verificados"><br><sub>Secretos verificados</sub></td>
-    <td align="center"><img src="docs/screenshots/toque-y-fama/05-resultado.png" width="180" alt="Contra el celular"><br><sub>Contra el celular</sub></td>
+    <td align="center"><img src="docs/screenshots/toque-y-fama/06-sala.png" width="180" alt="Room with code and QR"><br><sub>Room with code and QR</sub></td>
+    <td align="center"><img src="docs/screenshots/toque-y-fama/07-dos-celulares.png" width="180" alt="Game on two phones"><br><sub>Game on two phones</sub></td>
+    <td align="center"><img src="docs/screenshots/toque-y-fama/08-verificado.png" width="180" alt="Verified secrets"><br><sub>Verified secrets</sub></td>
+    <td align="center"><img src="docs/screenshots/toque-y-fama/05-resultado.png" width="180" alt="Versus the phone"><br><sub>Versus the phone</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/toque-y-fama/09-chat.png" width="180" alt="Chat de la sala"><br><sub>Chat de la sala</sub></td>
+    <td align="center"><img src="docs/screenshots/toque-y-fama/09-chat.png" width="180" alt="Room chat"><br><sub>Room chat</sub></td>
     <td></td>
     <td></td>
     <td></td>
@@ -84,103 +86,103 @@ Cada jugador elige un número secreto de cifras distintas y trata de adivinar el
 </table>
 <!-- /generado -->
 
-Especificación: [docs/juegos/toque-y-fama.md](docs/juegos/toque-y-fama.md) · Estudio de factibilidad: [docs/juegos/toque-y-fama-factibilidad.md](docs/juegos/toque-y-fama-factibilidad.md)
+Spec: [docs/juegos/toque-y-fama.md](docs/juegos/toque-y-fama.md) · Feasibility study: [docs/juegos/toque-y-fama-factibilidad.md](docs/juegos/toque-y-fama-factibilidad.md)
 
 ## ⚓ Batalla Naval
 
-El clásico de hundir la flota. Cada jugador esconde 5 barcos en un tablero de 10×10 y dispara por turnos: agua, tocado o hundido. Si aciertas, sigues disparando. Colocación por toque con girar, arrastrar y "al azar"; el celular responde solo y lleva el marcador.
+*Battleship.* Sink the fleet. Each player hides 5 ships on a 10×10 board and fires in turns: miss, hit or sunk. A hit lets you fire again. Ships are placed by tapping, with rotate, drag and "random". The phone answers on its own and keeps score.
 
-- **📱 Un celular:** tu flota queda tapada entre turnos; al fallar, el resultado y "Pásale el celular a X" en una sola pantalla.
-- **📡 Dos celulares:** sala con código y QR. Cada celular responde los disparos contra su propia flota; al final ambas flotas se revelan y verifican.
-- **🤖 Contra el celular:** IA con cacería por paridad y persecución al acertar (hunde una flota en unos 50 disparos).
+- **📱 One phone:** your fleet is covered between turns. On a miss, the result and "pass the phone to X" share one screen.
+- **📡 Two phones:** a room with a code and a QR. Each phone answers the shots against its own fleet, and at the end both fleets are revealed and verified.
+- **🤖 Versus the phone:** an AI that hunts by parity and chases after a hit. It sinks a fleet in about 50 shots.
 
-<!-- generado: capturas:batalla-naval · lo reescribe python3 tools/readme.py actualizar -->
+<!-- generado: capturas:batalla-naval · written by python3 tools/readme.py actualizar -->
 <table>
   <tr>
-    <td align="center"><img src="docs/screenshots/batalla-naval/01-intro.png" width="180" alt="Modos de juego"><br><sub>Modos de juego</sub></td>
-    <td align="center"><img src="docs/screenshots/batalla-naval/02-flota.png" width="180" alt="Colocar la flota"><br><sub>Colocar la flota</sub></td>
-    <td align="center"><img src="docs/screenshots/batalla-naval/03-batalla.png" width="180" alt="Batalla"><br><sub>Batalla</sub></td>
-    <td align="center"><img src="docs/screenshots/batalla-naval/04-pase.png" width="180" alt="Resultado y pase"><br><sub>Resultado y pase</sub></td>
+    <td align="center"><img src="docs/screenshots/batalla-naval/01-intro.png" width="180" alt="Game modes"><br><sub>Game modes</sub></td>
+    <td align="center"><img src="docs/screenshots/batalla-naval/02-flota.png" width="180" alt="Placing the fleet"><br><sub>Placing the fleet</sub></td>
+    <td align="center"><img src="docs/screenshots/batalla-naval/03-batalla.png" width="180" alt="Battle"><br><sub>Battle</sub></td>
+    <td align="center"><img src="docs/screenshots/batalla-naval/04-pase.png" width="180" alt="Result and handoff"><br><sub>Result and handoff</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/batalla-naval/06-sala.png" width="180" alt="Sala con código y QR"><br><sub>Sala con código y QR</sub></td>
-    <td align="center"><img src="docs/screenshots/batalla-naval/07-dos-celulares.png" width="180" alt="Partida en dos celulares"><br><sub>Partida en dos celulares</sub></td>
-    <td align="center"><img src="docs/screenshots/batalla-naval/05-resultado.png" width="180" alt="Resultado con flotas"><br><sub>Resultado con flotas</sub></td>
+    <td align="center"><img src="docs/screenshots/batalla-naval/06-sala.png" width="180" alt="Room with code and QR"><br><sub>Room with code and QR</sub></td>
+    <td align="center"><img src="docs/screenshots/batalla-naval/07-dos-celulares.png" width="180" alt="Game on two phones"><br><sub>Game on two phones</sub></td>
+    <td align="center"><img src="docs/screenshots/batalla-naval/05-resultado.png" width="180" alt="Result with both fleets"><br><sub>Result with both fleets</sub></td>
     <td></td>
   </tr>
 </table>
 <!-- /generado -->
 
-Especificación y diseño: [docs/juegos/batalla-naval.md](docs/juegos/batalla-naval.md)
+Spec and design: [docs/juegos/batalla-naval.md](docs/juegos/batalla-naval.md)
 
 ## ⏳ Línea de Tiempo
 
-Recibes hitos sin fecha y los ubicas en el lugar correcto de una línea de tiempo común. Si aciertas, la carta se queda; si fallas, se descarta y robas otra. Gana quien se queda sin cartas: la ronda se juega completa, y si más de uno queda sin cartas gana el que respondió más rápido. Se elige la temática al empezar y agregar una nueva es solo un archivo de datos. Las cartas no se repiten entre partidas seguidas: cada celular recuerda las que ya mostró.
+*Timeline.* You get events with no date on them and place them in the right spot on a shared timeline. Get it right and the card stays. Get it wrong and it is discarded, and you draw another one. The first player to run out of cards wins. The round is always played to the end, and if more than one player runs out, the fastest answer wins. The theme is picked at the start, and adding a new one is just a data file. Cards do not repeat across back-to-back games: each phone remembers the ones it has already shown.
 
-<!-- generado: tematicas · lo reescribe python3 tools/readme.py actualizar -->
-| Temática | Cartas | Años | De qué va |
+<!-- generado: tematicas · written by python3 tools/readme.py actualizar -->
+| Theme | Cards | Years | What it covers |
 |---|---|---|---|
-| 📜 Historia | 98 | 2560 a. C. a 2022 | Hitos de la humanidad |
-| 🎵 Música | 89 | 1600 a 2023 | De Beethoven a TikTok |
-| 🇨🇱 Chile | 127 | 1520 a 2023 | Del terremoto del 60 al estallido |
-| 🍿 Cultura pop | 110 | 1928 a 2023 | Cine, memes y videojuegos |
-| 🇧🇷 Brasil | 140 | 1500 a 2025 | De Cabral a la COP30, con novelas y carnaval |
-| ⚽ Fútbol | 123 | 1863 a 2025 | Mundiales, clubes, goles y fichajes |
+| 📜 History | 98 | 2560 BC to 2022 | Milestones of humankind |
+| 🎵 Music | 89 | 1600 to 2023 | From Beethoven to TikTok |
+| 🇨🇱 Chile | 127 | 1520 to 2023 | From the 1960 quake to the uprising |
+| 🍿 Pop culture | 110 | 1928 to 2023 | Movies, memes and video games |
+| 🇧🇷 Brazil | 140 | 1500 to 2025 | From Cabral to COP30, telenovelas and carnival included |
+| ⚽ Soccer | 123 | 1863 to 2025 | World Cups, clubs, goals and transfers |
 | **Total** | **687** | | |
 <!-- /generado -->
 
-- **📱 Un celular:** de dos a seis jugadores, pasando el celular por turnos.
-- **📡 Varios celulares:** sala con código y QR, hasta seis jugadores. El anfitrión abre la partida cuando están todos, y cada uno ve su propia mano.
-- **🧍 Jugar solo:** vacía tu mano en la menor cantidad de intentos y supera tu récord por temática.
-- **🗂 Todas a la vista (por defecto):** se despliega el doble de las cartas que hay que colocar para ganar —6, 10 o 14— desde el primer turno, y no entra ninguna carta nueva en toda la partida. Como la mesa solo se achica, las cartas difíciles de situar van quedando para el final, sobre una línea que para entonces ya está llena: el juego se pone más difícil solo.
-- **🃏 Pozo común:** las mismas 6 cartas a la vista para todos, reponiéndose desde el mazo, y gana quien coloque primero las cartas acordadas. También se puede jugar con **🙋 mano propia**, cada uno con sus cartas y en privado.
-- **💬 Chat de la sala:** en varios celulares hay un chat para comentar las jugadas mientras se espera el turno, que sigue vivo en la pantalla final. Los mensajes nuevos se asoman unos segundos al lado de la burbuja.
+- **📱 One phone:** two to six players, passing the phone around.
+- **📡 Several phones:** a room with a code and a QR, up to six players. The host starts the game once everyone is in, and each player sees their own hand.
+- **🧍 Play alone:** empty your hand in as few tries as you can and beat your record for that theme.
+- **🗂 All cards on the table (default):** twice the cards you need to win are dealt face up from the first turn (6, 10 or 14), and no new card enters for the rest of the game. Since the table only shrinks, the cards that are hard to place pile up for the end, on a timeline that by then is already crowded. The game gets harder on its own.
+- **🃏 Shared pool:** the same 6 cards face up for everyone, refilled from the deck, and whoever places the agreed number of cards first wins. It can also be played with **🙋 your own hand**, each player with private cards.
+- **💬 Room chat:** on several phones there is a chat to comment on the plays while waiting for your turn, and it stays alive on the final screen. New messages peek out for a few seconds next to the bubble.
 
-<!-- generado: capturas:linea-de-tiempo · lo reescribe python3 tools/readme.py actualizar -->
+<!-- generado: capturas:linea-de-tiempo · written by python3 tools/readme.py actualizar -->
 <table>
   <tr>
-    <td align="center"><img src="docs/screenshots/linea-de-tiempo/01-intro.png" width="180" alt="Modos de juego"><br><sub>Modos de juego</sub></td>
-    <td align="center"><img src="docs/screenshots/linea-de-tiempo/02-tematica.png" width="180" alt="Temática y jugadores"><br><sub>Temática y jugadores</sub></td>
-    <td align="center"><img src="docs/screenshots/linea-de-tiempo/03-juego.png" width="180" alt="Mano y línea de tiempo"><br><sub>Mano y línea de tiempo</sub></td>
-    <td align="center"><img src="docs/screenshots/linea-de-tiempo/04-veredicto.png" width="180" alt="Veredicto y pase"><br><sub>Veredicto y pase</sub></td>
+    <td align="center"><img src="docs/screenshots/linea-de-tiempo/01-intro.png" width="180" alt="Game modes"><br><sub>Game modes</sub></td>
+    <td align="center"><img src="docs/screenshots/linea-de-tiempo/02-tematica.png" width="180" alt="Theme and players"><br><sub>Theme and players</sub></td>
+    <td align="center"><img src="docs/screenshots/linea-de-tiempo/03-juego.png" width="180" alt="Hand and timeline"><br><sub>Hand and timeline</sub></td>
+    <td align="center"><img src="docs/screenshots/linea-de-tiempo/04-veredicto.png" width="180" alt="Verdict and handoff"><br><sub>Verdict and handoff</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/linea-de-tiempo/06-sala.png" width="180" alt="Sala con código y QR"><br><sub>Sala con código y QR</sub></td>
-    <td align="center"><img src="docs/screenshots/linea-de-tiempo/07-varios-celulares.png" width="180" alt="Partida en varios celulares"><br><sub>Partida en varios celulares</sub></td>
-    <td align="center"><img src="docs/screenshots/linea-de-tiempo/05-resultado.png" width="180" alt="Resultado y ranking"><br><sub>Resultado y ranking</sub></td>
-    <td align="center"><img src="docs/screenshots/linea-de-tiempo/08-chat.png" width="180" alt="Chat de la sala"><br><sub>Chat de la sala</sub></td>
+    <td align="center"><img src="docs/screenshots/linea-de-tiempo/06-sala.png" width="180" alt="Room with code and QR"><br><sub>Room with code and QR</sub></td>
+    <td align="center"><img src="docs/screenshots/linea-de-tiempo/07-varios-celulares.png" width="180" alt="Game on several phones"><br><sub>Game on several phones</sub></td>
+    <td align="center"><img src="docs/screenshots/linea-de-tiempo/05-resultado.png" width="180" alt="Result and ranking"><br><sub>Result and ranking</sub></td>
+    <td align="center"><img src="docs/screenshots/linea-de-tiempo/08-chat.png" width="180" alt="Room chat"><br><sub>Room chat</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/linea-de-tiempo/09-chat-aviso.png" width="180" alt="Aviso de mensaje nuevo"><br><sub>Aviso de mensaje nuevo</sub></td>
-    <td align="center"><img src="docs/screenshots/linea-de-tiempo/10-pozo-comun.png" width="180" alt="Pozo común"><br><sub>Pozo común</sub></td>
-    <td align="center"><img src="docs/screenshots/linea-de-tiempo/11-todas-a-la-vista.png" width="180" alt="Todas a la vista"><br><sub>Todas a la vista</sub></td>
+    <td align="center"><img src="docs/screenshots/linea-de-tiempo/09-chat-aviso.png" width="180" alt="New message label"><br><sub>New message label</sub></td>
+    <td align="center"><img src="docs/screenshots/linea-de-tiempo/10-pozo-comun.png" width="180" alt="Shared pool"><br><sub>Shared pool</sub></td>
+    <td align="center"><img src="docs/screenshots/linea-de-tiempo/11-todas-a-la-vista.png" width="180" alt="All cards on the table"><br><sub>All cards on the table</sub></td>
     <td></td>
   </tr>
 </table>
 <!-- /generado -->
 
-Especificación y diseño: [docs/juegos/linea-de-tiempo.md](docs/juegos/linea-de-tiempo.md)
+Spec and design: [docs/juegos/linea-de-tiempo.md](docs/juegos/linea-de-tiempo.md)
 
 ---
 
 ## 🪢 El Ahorcado
 
-<!-- generado: capturas:ahorcado · lo reescribe python3 tools/readme.py actualizar -->
+<!-- generado: capturas:ahorcado · written by python3 tools/readme.py actualizar -->
 <table>
   <tr>
-    <td align="center"><img src="docs/screenshots/ahorcado/01-intro.png" width="180" alt="Modos de juego"><br><sub>Modos de juego</sub></td>
-    <td align="center"><img src="docs/screenshots/ahorcado/02-configuracion.png" width="180" alt="La palabra, los errores y quiénes juegan"><br><sub>La palabra, los errores y quiénes juegan</sub></td>
-    <td align="center"><img src="docs/screenshots/ahorcado/03-escribir.png" width="180" alt="Cada uno le escribe al siguiente"><br><sub>Cada uno le escribe al siguiente</sub></td>
-    <td align="center"><img src="docs/screenshots/ahorcado/04-juego.png" width="180" alt="Horca, pista, palabra y teclado"><br><sub>Horca, pista, palabra y teclado</sub></td>
+    <td align="center"><img src="docs/screenshots/ahorcado/01-intro.png" width="180" alt="Game modes"><br><sub>Game modes</sub></td>
+    <td align="center"><img src="docs/screenshots/ahorcado/02-configuracion.png" width="180" alt="Word, misses allowed and who plays"><br><sub>Word, misses allowed and who plays</sub></td>
+    <td align="center"><img src="docs/screenshots/ahorcado/03-escribir.png" width="180" alt="Each player writes for the next"><br><sub>Each player writes for the next</sub></td>
+    <td align="center"><img src="docs/screenshots/ahorcado/04-juego.png" width="180" alt="Gallows, clue, word and keyboard"><br><sub>Gallows, clue, word and keyboard</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/ahorcado/05-veredicto.png" width="180" alt="La letra y el pase, juntos"><br><sub>La letra y el pase, juntos</sub></td>
-    <td align="center"><img src="docs/screenshots/ahorcado/06-sala.png" width="180" alt="Sala con código y QR"><br><sub>Sala con código y QR</sub></td>
-    <td align="center"><img src="docs/screenshots/ahorcado/07-varios-celulares.png" width="180" alt="Todos adivinando a la vez"><br><sub>Todos adivinando a la vez</sub></td>
-    <td align="center"><img src="docs/screenshots/ahorcado/08-resultado.png" width="180" alt="Puntaje y palabras verificadas"><br><sub>Puntaje y palabras verificadas</sub></td>
+    <td align="center"><img src="docs/screenshots/ahorcado/05-veredicto.png" width="180" alt="The letter and the handoff together"><br><sub>The letter and the handoff together</sub></td>
+    <td align="center"><img src="docs/screenshots/ahorcado/06-sala.png" width="180" alt="Room with code and QR"><br><sub>Room with code and QR</sub></td>
+    <td align="center"><img src="docs/screenshots/ahorcado/07-varios-celulares.png" width="180" alt="Everyone guessing at once"><br><sub>Everyone guessing at once</sub></td>
+    <td align="center"><img src="docs/screenshots/ahorcado/08-resultado.png" width="180" alt="Score and verified words"><br><sub>Score and verified words</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/ahorcado/09-solitario.png" width="180" alt="Jugar solo: la app reparte la palabra"><br><sub>Jugar solo: la app reparte la palabra</sub></td>
+    <td align="center"><img src="docs/screenshots/ahorcado/09-solitario.png" width="180" alt="Play alone: the app deals the word"><br><sub>Play alone: the app deals the word</sub></td>
     <td></td>
     <td></td>
     <td></td>
@@ -188,58 +190,44 @@ Especificación y diseño: [docs/juegos/linea-de-tiempo.md](docs/juegos/linea-de
 </table>
 <!-- /generado -->
 
-El ahorcado de toda la vida, con el arreglo que le falta desde siempre: **nadie se queda mirando**.
-En vez de un verdugo aburrido y un adivinador, cada jugador le escribe la palabra al siguiente —el
-último al primero— y todos adivinan la suya. Con dos es un duelo; con seis, una carrera. El puntaje
-son **los errores que te sobraron**, así que no basta con sacar la palabra: hay que sacarla barata.
-Poner una palabra imposible no da ni un punto, y de todas formas el de al lado te escribe la tuya.
+*Hangman*, with the fix it has always needed: **nobody sits and watches**. Instead of one bored executioner and one guesser, every player writes the word for the next one, the last one writes for the first, and everyone guesses their own. Two players make a duel, six make a race. Your score is **the misses you had left over**, so cracking the word is not enough: you have to crack it cheap. Setting an impossible word earns nothing, and the player next to you writes yours anyway.
 
-| | 🤝 Cadena | 🎴 Mazo de la app |
+| | 🤝 Chain | 🎴 App deck |
 |---|---|---|
-| Quién la pone | Cada jugador, para el siguiente, con una pista obligatoria | La app, de la temática elegida |
-| Para qué sirve la temática | Le sugiere seis palabras a quien escribe, que puede tomarlas, editarlas o ignorarlas | Es de donde sale la palabra |
-| El secreto | No viaja: se compromete con hash y se verifica al final | No hay: sale de la semilla del mazo |
+| Who sets the word | Each player, for the next one, with a mandatory clue | The app, from the chosen theme |
+| What the theme is for | It suggests six words to whoever writes, who can take them, edit them or ignore them | It is where the word comes from |
+| The secret | It never travels: it is committed with a hash and verified at the end | There is none: it comes from the deck seed |
 
-Cinco temáticas y una mezcla (Chile, Animales, Comida, Cine y series, Deportes), con palabra y pista
-propias en cada idioma: no son traducciones, porque una palabra traducida cambia de largo y de
-dificultad. Los errores permitidos se eligen —5, 6 u 8— y el último trazo del dibujo, siempre, son
-los ojos en X. Se puede **comprar una letra** 💡: aparece la que falta más rara y cuesta un error.
+Five themes and a mix (Chile, Animals, Food, Film and TV, Sports), each with its own words and clues per language. They are not translations, because a translated word changes length and difficulty. Misses allowed are configurable (5, 6 or 8), and the last stroke of the drawing is always the X eyes. You can **buy a letter** 💡: the rarest missing one shows up and it costs you a miss.
 
-Se juega **por turnos alternados**: pruebas una letra y el celular pasa al siguiente. Todos los
-tableros avanzan a la vez, así que ver que al de al lado le queda una vida mientras a ti te quedan
-cuatro llega en el momento en que sirve.
+Turns alternate: you try a letter and the phone moves to the next player. All boards advance at the same time, so seeing that your neighbour has one life left while you still have four lands exactly when it matters.
 
-- **📱 Un celular:** de dos a seis, con pantalla tapada para escribir la palabra. Después de cada
-  letra, el resultado y el "pásale el celular a X" en la misma pantalla.
-- **📡 Varios celulares:** sala con código y QR, hasta seis, por turnos alternados: una letra cada
-  uno y se ve la secuencia (D-66). La tira
-  de rivales muestra vidas y avance, nunca las letras.
-- **🧍 Jugar solo:** la app reparte una palabra de la temática elegida, con su pista, y la sacas tú.
-  Sin rival: el celular no adivina. Como la palabra sale del mazo no hay secreto que comprometer,
-  así que es el único modo que anda sin https (D-65).
+- **📱 One phone:** two to six players, with a covered screen for writing the word. After each letter, the result and "pass the phone to X" share one screen.
+- **📡 Several phones:** a room with a code and a QR, up to six, taking turns one letter at a time so the sequence is visible (D-66). The rival strip shows lives and progress, never letters.
+- **🧍 Play alone:** the app deals a word from the chosen theme with its clue, and you crack it. There is no rival: the phone does not guess. Since the word comes from the deck there is no secret to commit, so this is the only mode that works without https (D-65).
 
-Especificación y diseño: [docs/juegos/ahorcado.md](docs/juegos/ahorcado.md)
+Spec and design: [docs/juegos/ahorcado.md](docs/juegos/ahorcado.md)
 
 ---
 
 ## 🎲 Dudo
 
-<!-- generado: capturas:dudo · lo reescribe python3 tools/readme.py actualizar -->
+<!-- generado: capturas:dudo · written by python3 tools/readme.py actualizar -->
 <table>
   <tr>
-    <td align="center"><img src="docs/screenshots/dudo/01-intro.png" width="180" alt="Modos de juego"><br><sub>Modos de juego</sub></td>
-    <td align="center"><img src="docs/screenshots/dudo/02-configuracion.png" width="180" alt="Quiénes juegan y si se puede calzar"><br><sub>Quiénes juegan y si se puede calzar</sub></td>
-    <td align="center"><img src="docs/screenshots/dudo/03-mesa.png" width="180" alt="Tus dados y la mesa"><br><sub>Tus dados y la mesa</sub></td>
-    <td align="center"><img src="docs/screenshots/dudo/04-apuesta.png" width="180" alt="Elegir pinta y cantidad"><br><sub>Elegir pinta y cantidad</sub></td>
+    <td align="center"><img src="docs/screenshots/dudo/01-intro.png" width="180" alt="Game modes"><br><sub>Game modes</sub></td>
+    <td align="center"><img src="docs/screenshots/dudo/02-configuracion.png" width="180" alt="Who plays and whether calzar is on"><br><sub>Who plays and whether calzar is on</sub></td>
+    <td align="center"><img src="docs/screenshots/dudo/03-mesa.png" width="180" alt="Your dice and the table"><br><sub>Your dice and the table</sub></td>
+    <td align="center"><img src="docs/screenshots/dudo/04-apuesta.png" width="180" alt="Pick face and count"><br><sub>Pick face and count</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/dudo/05-destape.png" width="180" alt="Se destapa la mesa y se cuenta"><br><sub>Se destapa la mesa y se cuenta</sub></td>
-    <td align="center"><img src="docs/screenshots/dudo/07-pase.png" width="180" alt="Pásale el celular"><br><sub>Pásale el celular</sub></td>
-    <td align="center"><img src="docs/screenshots/dudo/08-sala.png" width="180" alt="Sala con código y QR"><br><sub>Sala con código y QR</sub></td>
-    <td align="center"><img src="docs/screenshots/dudo/09-destape-verificado.png" width="180" alt="Se destapa la mesa y se verifica"><br><sub>Se destapa la mesa y se verifica</sub></td>
+    <td align="center"><img src="docs/screenshots/dudo/05-destape.png" width="180" alt="The table opens up and counts"><br><sub>The table opens up and counts</sub></td>
+    <td align="center"><img src="docs/screenshots/dudo/07-pase.png" width="180" alt="Pass the phone"><br><sub>Pass the phone</sub></td>
+    <td align="center"><img src="docs/screenshots/dudo/08-sala.png" width="180" alt="Room with code and QR"><br><sub>Room with code and QR</sub></td>
+    <td align="center"><img src="docs/screenshots/dudo/09-destape-verificado.png" width="180" alt="The table opens up and verifies"><br><sub>The table opens up and verifies</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/dudo/06-resultado.png" width="180" alt="Quién ganó y cómo se fue dando"><br><sub>Quién ganó y cómo se fue dando</sub></td>
+    <td align="center"><img src="docs/screenshots/dudo/06-resultado.png" width="180" alt="Who won and how it went"><br><sub>Who won and how it went</sub></td>
     <td></td>
     <td></td>
     <td></td>
@@ -247,54 +235,32 @@ Especificación y diseño: [docs/juegos/ahorcado.md](docs/juegos/ahorcado.md)
 </table>
 <!-- /generado -->
 
-El clásico de los dados, el que se juega en bares y sobremesas. Cada uno tira cinco dados y **mira
-solo los suyos**; se apuesta cuántos hay de una pinta **en toda la mesa** —"cuatro cincos"— y el que
-sigue sube la apuesta o dice **dudo**. Al dudar se destapa todo y se cuenta: si había tantos como se
-dijo o más, pierde un dado quien dudó; si había menos, quien apostó. Los **ases son comodín**. Quien
-se queda sin dados sale, y gana el último que le quede alguno.
+*Liar's Dice.* The classic dice game from bars and long dinners. Everyone rolls five dice and **only looks at their own**. You bet how many dice of one face are on **the whole table** ("four fives"), and the next player either raises or calls **dudo**. On a call everything is revealed and counted: if there were as many as claimed or more, the caller loses a die; if there were fewer, the bidder does. **Aces are wild**. A player with no dice left is out, and the last one with dice wins.
 
-Acá el celular hace lo que en la mesa se hace mal: reparte los dados, **no deja hacer una apuesta
-ilegal** —subir es más cantidad, o la misma cantidad con pinta mayor, y los ases valen doble en las
-dos direcciones— y cuenta al instante, que es justo lo que se discute a gritos. **Calzar** es decir
-que la cantidad es exacta: si aciertas recuperas un dado, si fallas pierdes uno. Se puede desde la
-mitad de los dados de la mesa y **con tres jugadores o más**: en un duelo solo hay una mano tapada,
-así que la cuenta exacta es aritmética y no riesgo (D-71).
+Here the phone does what a real table does badly: it rolls the dice, it **refuses illegal bids** (a raise is more dice, or the same number with a higher face, and aces count double in both directions), and it counts instantly, which is exactly what people argue about. **Calzar** means claiming the count is exact: get it right and you win a die back, get it wrong and you lose one. It is available from half the dice on the table and **only with three players or more**. In a duel there is a single hidden hand, so the exact count is arithmetic, not a risk (D-71).
 
-En español las pintas se dicen como en la mesa chilena —**ases, tontos, trenes, cuadras, quintas y
-sextas**—, que es la forma en que el juego se juega acá: "cuatro quintas", no "cuatro cincos". Viene
-encendido y se apaga en la configuración para volver a los números. En inglés y portugués las pintas
-van por su número y el interruptor ni se ofrece.
+In Spanish the faces are called the way they are called at a Chilean table (**ases, tontos, trenes, cuadras, quintas, sextas**), which is how the game is actually played here: "cuatro quintas", not "cuatro cincos". It ships on, and it can be turned off in settings to go back to numbers. In English and Portuguese the faces go by their number and the switch is not offered.
 
-- **📱 Un celular:** de dos a seis. Se pasa el celular y cada uno ve sus dados con la pantalla del
-  pase de por medio (C-9).
-- **🤖 Contra el celular:** duelo. El aparato apuesta con probabilidad y **solo mira sus propios
-  dados**: la decisión sale de cuántos dados desconocidos quedan y qué chance tienen de tapar la
-  apuesta, no de espiar los tuyos.
-- **📶 Varios celulares:** sala con código de 4 letras, QR y chat, de dos a seis. Cada celular tira
-  **sus** dados y publica solo el hash; al dudar los destapa y todos verifican que nadie los haya
-  cambiado (C-10). Es la razón por la que los dados no salen de la semilla como el resto de lo que
-  esta app reparte: el código es público, y con una semilla compartida cualquiera podría calcular
-  los del rival desde la consola (D-70).
+- **📱 One phone:** two to six players. The phone is passed around and each player sees their dice behind a handoff screen (C-9).
+- **🤖 Versus the phone:** a duel. The app bets on probability and **only looks at its own dice**: the decision comes from how many unknown dice are left and how likely they are to cover the bid, not from peeking at yours.
+- **📶 Several phones:** a room with a 4-letter code, a QR and chat, two to six players. Each phone rolls **its own** dice and publishes only the hash. On a call it reveals them and everyone verifies that nobody swapped them (C-10). This is why the dice are not derived from the shared seed like everything else this app deals: the code is public, and with a shared seed anyone could compute the rival's dice from the console (D-70).
 
-Especificación y diseño: [docs/juegos/dudo.md](docs/juegos/dudo.md)
+Spec and design: [docs/juegos/dudo.md](docs/juegos/dudo.md)
 
 ---
 
-## Características comunes
+## What every game shares
 
-- **Idiomas:** español (por defecto), inglés y portugués de Brasil. El toggle del menú guarda la elección en el dispositivo; nunca se detecta el idioma del navegador (D-47, D-48). Ver [Idiomas](#idiomas).
-- **Sonido:** efectos sintetizados con Web Audio (sin archivos de audio). Botón 🔊/🔇 en cada pantalla.
-- **Partidas guardadas:** cada juego guarda su estado en el dispositivo y ofrece continuar.
-- **Instalable:** manifest PWA para agregar a la pantalla de inicio. La pantalla no se apaga mientras se juega.
+- **Languages:** Spanish (default), English and Brazilian Portuguese. The menu toggle saves the choice on the device, and the browser language is never used to guess (D-47, D-48). See [Languages](#languages).
+- **Sound:** effects synthesized with Web Audio, no audio files. A 🔊/🔇 button on every screen.
+- **Saved games:** every game stores its state on the device and offers to continue.
+- **Installable:** a PWA manifest to add it to the home screen. The screen stays awake while playing.
 
-### Idiomas
+### Languages
 
-Toda la experiencia va en el idioma elegido: el menú y sus frases del pie, los seis juegos
-con todos sus modos, las salas, el chat, los errores de transporte, las pantallas de "pásale
-el celular" y las cartas de todos los mazos de Línea de Tiempo. El portugués es el de
-Brasil, informal, y los nombres se traducen igual que en inglés:
+The whole experience is translated: the menu and its footer lines, the six games with all their modes, the rooms, the chat, the transport errors, the "pass the phone" screens and the cards of every Timeline theme. Portuguese is the Brazilian one, informal, and the names are translated the same way as in English:
 
-<!-- generado: idiomas · lo reescribe python3 tools/readme.py actualizar -->
+<!-- generado: idiomas · written by python3 tools/readme.py actualizar -->
 | Español | English | Português |
 |---|---|---|
 | Juegos de Salón | Party Games | Jogos de Salão |
@@ -306,67 +272,67 @@ Brasil, informal, y los nombres se traducen igual que en inglés:
 | Cuarto Rey | Fourth King | Quarto Rei |
 <!-- /generado -->
 
-Cómo está armado (canon C-3):
+How it is put together (canon C-3):
 
-- `assets/js/i18n.js` guarda el idioma en `localStorage` (`juegos-de-salon:lang`), dibuja el
-  toggle 🇨🇱 ES · 🇬🇧 EN · 🇧🇷 PT y tiene los textos comunes (`COMMON`): los del menú y el de la
-  invitación a una sala, que es el mismo para todos los juegos que tienen sala (D-73).
-- Cada juego tiene sus textos en `LOCALES = { es, en, pt }` de su `rules.js`; `game.js` no
-  tiene ninguna cadena literal. Los textos fijos del HTML llevan `data-i18n`.
-- El registro del menú (`games.js`), las 100 frases del pie (`frases.js`) y cada carta de
-  Línea de Tiempo (`decks/*.js`) llevan los tres idiomas.
-- **Los tres diccionarios tienen exactamente las mismas claves.** Lo verifica
-  `node assets/js/i18n.test.mjs`: claves, largo de las listas, `{llaves}` de las plantillas
-  y que no haya textos vacíos. Un texto que falta se vería como `undefined` en pantalla.
-- Las traducciones se adaptan, no se calcan: en portugués las comunas de Santiago son
-  bairros, la penitencia es una prenda y el "fondo" es "vira, vira, vira".
-- **El idioma también puede venir en el link** (D-74): `juegosdesalon.cl/?lang=pt` en cualquier
-  página, o las puertas `juegosdesalon.cl/pt/` y `/en/`, que dejan el idioma elegido y mandan a la
-  portada. Se aplica, se guarda y el parámetro se saca de la barra de direcciones. **La invitación
-  a una sala lo lleva pegado**, así que quien la recibe abre la app en el idioma en que se la
-  mandaron. No es detección: alguien eligió, para sí mismo o para el que recibe el link.
-- Para agregar un idioma: sumarlo a `LANGS` y al toggle en `i18n.js`, y agregar el
-  diccionario en `COMMON`, `games.js`, `frases.js`, los cuatro `rules.js`, `decks/index.js` y
-  cada carta. El test de paridad dice qué falta.
-- El panel del dueño es solo en español (excepción anotada en `docs/PANEL.md`) y el
-  `manifest.webmanifest` también, porque es uno solo para toda la app.
+- `assets/js/i18n.js` keeps the language in `localStorage` (`juegos-de-salon:lang`), draws the
+  🇨🇱 ES · 🇬🇧 EN · 🇧🇷 PT toggle and holds the shared text (`COMMON`): the menu, plus the room
+  invitation, which is the same for every game that has rooms (D-73).
+- Each game keeps its text in `LOCALES = { es, en, pt }` inside its `rules.js`. There is not a
+  single literal string in `game.js`. Fixed HTML text is marked with `data-i18n`.
+- The menu registry (`games.js`), the 100 footer lines (`frases.js`) and every Timeline card
+  (`decks/*.js`) carry all three languages.
+- **The three dictionaries have exactly the same keys.** `node assets/js/i18n.test.mjs` checks
+  keys, list lengths, the `{braces}` in templates and that no text is empty. A missing string
+  would show up as `undefined` on screen.
+- Translations are adapted, not copied: in Portuguese the Santiago districts become bairros, the
+  dare becomes a prenda and "fondo" becomes "vira, vira, vira".
+- **The language can travel in the link** (D-74): `juegosdesalon.cl/?lang=pt` on any page, or the
+  `juegosdesalon.cl/pt/` and `/en/` doors, which set the language and send you to the menu. It is
+  applied, it is saved, and the parameter is removed from the address bar. **A room invitation
+  carries it**, so whoever gets the link opens the app in the language it was sent in. This is not
+  detection: somebody chose, for themselves or for the person getting the link.
+- To add a language: add it to `LANGS` and to the toggle in `i18n.js`, then add the dictionary in
+  `COMMON`, `games.js`, `frases.js`, the six `rules.js`, `decks/index.js` and every card. The
+  parity test says what is missing.
+- The owner dashboard is Spanish only (an exception recorded in `docs/PANEL.md`), and so is
+  `manifest.webmanifest`, because there is one manifest for the whole app.
 
-<!-- generado: capturas:idiomas · lo reescribe python3 tools/readme.py actualizar -->
+<!-- generado: capturas:idiomas · written by python3 tools/readme.py actualizar -->
 <table>
   <tr>
-    <td align="center"><img src="docs/screenshots/cuarto-rey/11-menu-en.png" width="180" alt="Menú en inglés"><br><sub>Menú en inglés</sub></td>
-    <td align="center"><img src="docs/screenshots/cuarto-rey/12-mesa-en.png" width="180" alt="Mesa en inglés"><br><sub>Mesa en inglés</sub></td>
+    <td align="center"><img src="docs/screenshots/cuarto-rey/11-menu-en.png" width="180" alt="Menu in English"><br><sub>Menu in English</sub></td>
+    <td align="center"><img src="docs/screenshots/cuarto-rey/12-mesa-en.png" width="180" alt="Table in English"><br><sub>Table in English</sub></td>
     <td></td>
     <td></td>
   </tr>
 </table>
 <!-- /generado -->
 
-## Panel del dueño
+## Owner dashboard
 
-`/panel/` es una página privada que muestra cuánto y desde dónde se juega: salas vivas y
-celulares conectados, partidas por juego y modo, jugadores por partida, zona horaria, idioma
-y hora del día. Entra con Google y solo lee el dueño del proyecto de Firebase. Son señales de
-uso anonimizadas, no personas: de los modos sin red salen solo contadores, y nunca una IP, un
-secreto, el chat ni quién ganó.
+`/panel/` is a private page that shows how much the app is played and from where: live rooms and
+connected phones, games by title and mode, players per game, time zone, language and time of day.
+You sign in with Google, and only the owner of the Firebase project can read it. These are
+anonymized usage signals, not people: offline modes send counters only, never an IP, a secret, the
+chat or who won.
 
-No tiene listas propias: los juegos y los modos los lee del registro de `assets/js/games.js`,
-así que un juego nuevo aparece ahí solo, y lo que todavía no conoce lo dibuja igual con su
-clave por nombre en vez de descartarlo. Ver [docs/PANEL.md](docs/PANEL.md).
+It keeps no lists of its own. Games and modes are read from the registry in `assets/js/games.js`,
+so a new game shows up there by itself, and anything it does not recognize yet is drawn anyway,
+keyed by name instead of thrown away. See [docs/PANEL.md](docs/PANEL.md).
 
 ## Stack
 
-HTML, CSS y JavaScript puro (módulos ES), sin build ni dependencias de npm. Se publica como sitio estático en GitHub Pages desde la rama `main`. El modo de dos celulares usa **Firebase Realtime Database** (plan gratuito) como sala en tiempo real; ver [firebase/README.md](firebase/README.md).
+Plain HTML, CSS and JavaScript (ES modules). No build step, no npm dependencies. It is published as a static site on GitHub Pages from the `main` branch. The two-phone mode uses **Firebase Realtime Database** (free plan) as a live room. See [firebase/README.md](firebase/README.md).
 
-## Correr en local
+## Running it locally
 
 ```bash
 python3 -m http.server 8765
 ```
 
-y abrir http://localhost:8765 (los módulos ES necesitan servirse por HTTP). Tests de los motores, de los idiomas y de los módulos compartidos:
+Then open http://localhost:8765 (ES modules have to be served over HTTP). Tests for the engines, the languages and the shared modules:
 
-<!-- generado: pruebas · lo reescribe python3 tools/readme.py actualizar -->
+<!-- generado: pruebas · written by python3 tools/readme.py actualizar -->
 ```bash
 node ahorcado/engine.test.mjs
 node batalla-naval/engine.test.mjs
@@ -384,9 +350,9 @@ node panel/aggregate.test.mjs
 ```
 <!-- /generado -->
 
-## Mirar una pantalla
+## Looking at one screen
 
-Para revisar cómo quedó una pantalla concreta, sin jugar una partida entera:
+To check how a single screen turned out, without playing a whole game:
 
 ```bash
 node tools/e2e/mirar.mjs ahorcado juego --ancho 320
@@ -394,103 +360,103 @@ node tools/e2e/mirar.mjs ahorcado resultado --idioma pt
 node tools/e2e/mirar.mjs panel datos --ancho 900
 ```
 
-Saca la captura y avisa si hay scroll horizontal o botones bajo 44 px, que es lo que el canon pide mirar en cada pantalla. Los caminos a cada pantalla están declarados arriba del archivo: agregar uno es sumar una entrada, no escribir un guion nuevo.
+It takes the screenshot and reports horizontal scroll, buttons under 44 px and anything that falls below the bottom edge, which is what the canon asks you to look at on every screen. The path to each screen is declared at the top of the file: adding one is adding an entry, not writing a new script.
 
-Y para mirar de una vez **todas** las capturas que muestra este README —antes de publicarlas—, la hoja de contacto las pone juntas, al tamaño en que se van a ver:
+To look at **all** the screenshots in this README at once, before publishing them, the contact sheet puts them side by side at the size they will be seen:
 
 ```bash
 node tools/e2e/contacto.mjs cuarto-rey --salida /tmp/contacto
 ```
 
-Rehacerlas no es revisarlas: juntas se ve lo que una imagen sola no delata. Así apareció que la lista de jugadores de Cuarto Rey estaba fotografiada a mitad de su animación de entrada, con las filas a distintos anchos, como si la grilla estuviera mal armada (D-76).
+Retaking them is not reviewing them. Together they show what a single image hides. That is how we found the Cuarto Rey player list photographed halfway through its entrance animation, with rows at different widths, as if the grid were broken (D-76).
 
-Para verlo en un celular de verdad —y pasarle el enlace a alguien— se sirve el árbol de trabajo por Tailscale, sin publicar nada (D-67):
+To try it on a real phone, and to hand the link to someone else, serve the working tree over Tailscale without publishing anything (D-67):
 
 ```bash
-tailscale serve --bg 8765          # queda en https://<equipo>.<tailnet>.ts.net/
-tailscale serve --https=443 off    # y se baja así
+tailscale serve --bg 8765          # served at https://<machine>.<tailnet>.ts.net/
+tailscale serve --https=443 off    # and this takes it down
 ```
 
-Es la app completa y con HTTPS, así que sirven también los modos que necesitan contexto seguro. Antes esto lo hacía una carpeta `lab/` con espejos de cada juego; se sacó porque los espejos envejecían y esto cubre lo mismo mejor.
+It is the whole app over HTTPS, so the modes that need a secure context work too. This used to be a `lab/` folder with a mirror of each game. The mirrors went stale, and this covers the same ground better.
 
-## Publicar una versión
+## Publishing a version
 
-Antes de hacer commit de una versión nueva, estampa la versión en el sitio (import maps y estilos con `?v=`), así el navegador no mezcla archivos viejos y nuevos:
+Before committing a new version, stamp it into the site (import maps and stylesheets carry `?v=`), so the browser never mixes old and new files:
 
 ```bash
 python3 tools/set-version.py 0.4.6
 ```
 
-## Mantener este README al día
+## Keeping this README current
 
-Este archivo cuenta cosas que el código ya sabe —cuántos juegos hay, qué modos tiene cada
-uno, cuántas cartas trae cada temática, qué tests corren— y muestra capturas de pantallas
-que cambian. Nada de eso avisa cuando queda viejo, así que hay una herramienta:
+This file states things the code already knows (how many games there are, what modes each one has, how many cards each theme carries, which tests run) and shows screenshots of screens that change. None of that announces when it goes stale, so there is a tool:
 
 ```bash
-python3 tools/readme.py revisar          # ¿quedó algo atrás del código?
-python3 tools/readme.py actualizar       # reescribe los bloques generados
-python3 tools/readme.py capturas <seccion> [--sin-red]   # rehace las capturas
-python3 tools/readme.py sellar           # "ya lo releí con estos hechos"
+python3 tools/readme.py revisar          # did anything fall behind the code?
+python3 tools/readme.py actualizar       # rewrites the generated blocks
+python3 tools/readme.py capturas <section> [--sin-red]   # retakes the screenshots
+python3 tools/readme.py sellar           # "I have read it again against these facts"
 ```
 
-- **Lo derivable se genera.** Todo lo que está entre `<!-- generado: ... -->` y
-  `<!-- /generado -->` lo escribe `actualizar` desde [`tools/hechos.mjs`](tools/hechos.mjs),
-  que importa los módulos de verdad (`games.js`, los `rules.js`, `decks/index.js`). Ahí
-  adentro no se edita a mano: la tabla de juegos, las temáticas, los nombres por idioma, los
-  tests, el índice de documentos y las galerías de capturas.
-- **Lo que es prosa la escribe una persona**, y la herramienta no la toca: la delata.
-  `revisar` compara los hechos de hoy contra los del último sello (`docs/hechos.json`) y
-  nombra qué cambió y qué sección hay que releer. Cuando ya se releyó, `sellar` lo anota.
-- **Las capturas se rehacen solas.** [`docs/capturas.json`](docs/capturas.json) dice de qué
-  guion de [`tools/e2e/`](tools/e2e/README.md) y de qué toma sale cada imagen; `capturas`
-  corre los guiones en Chrome headless, copia los PNG y los deja al doble del ancho con que
-  se muestran. Las que necesitan una sala de Firebase van marcadas y se saltan con
-  `--sin-red`. Hay que mirarlas antes de publicar: los problemas de diseño se ven (C-12).
-- **El gancho para que pase siempre** es `set-version.py`, obligatorio antes de publicar
-  (C-11): corre `revisar` y se planta si el README quedó atrás. Para una urgencia, `--igual`.
+- **Anything derivable is generated.** Everything between `<!-- generado: ... -->` and
+  `<!-- /generado -->` is written by `actualizar` from [`tools/hechos.mjs`](tools/hechos.mjs),
+  which imports the real modules (`games.js`, the `rules.js` files, `decks/index.js`). Nothing in
+  there is edited by hand: the games table, the themes, the names per language, the tests, the
+  document index and the screenshot galleries.
+- **Prose is written by a person**, and the tool does not touch it. It reports on it instead.
+  `revisar` compares today's facts against the last seal (`docs/hechos.json`) and names what
+  changed and which section to read again. Once it has been read, `sellar` records that.
+- **Screenshots are retaken automatically.** [`docs/capturas.json`](docs/capturas.json) says which
+  script in [`tools/e2e/`](tools/e2e/README.md) each image comes from and which shot it is.
+  `capturas` runs the scripts in headless Chrome, copies the PNGs and saves them at twice the width
+  they are shown at. The ones that need a Firebase room are marked and skipped with `--sin-red`.
+  Look at them before publishing: design problems are seen, not asserted (C-12).
+- **The hook that makes it happen** is `set-version.py`, required before publishing (C-11). It runs
+  `revisar` and refuses to stamp if the README fell behind. For an emergency, `--igual`.
 
-Agregar una pantalla al README: sacar la toma en el guion de e2e, sumar la entrada a
-`docs/capturas.json`, y correr `capturas` y `actualizar`.
+To add a screen to this README: take the shot in the e2e script, add the entry to
+`docs/capturas.json`, then run `capturas` and `actualizar`.
 
-## Estructura
+## Layout
 
 ```
-index.html                  Menú principal (se genera desde assets/js/games.js)
-assets/css/base.css         Estilos y animaciones compartidos (tema fiesta, transición entre turnos)
-assets/js/games.js          Registro de juegos (textos en es, en y pt)
-assets/js/i18n.js           Idioma (ES/EN/PT): toggle, persistencia y textos comunes; i18n.test.mjs revisa la paridad
-assets/js/frases.js         Frases del pie del menú, 100 por idioma
-assets/js/sound.js          Efectos de sonido sintetizados y botón de silencio
-assets/js/ui.js             Utilidades UI: confeti, vibración, wake lock, helpers DOM
-assets/js/firebase-config.js Configuración pública de Firebase
-cuarto-rey/                 Juego Cuarto Rey (index.html, game.js, rules.js, style.css)
-toque-y-fama/               Juego Toque y Fama (engine.js + tests, game.js, rules.js)
-batalla-naval/              Juego Batalla Naval (engine.js + tests, game.js, rules.js)
-linea-de-tiempo/            Juego Línea de Tiempo (engine.js + tests, game.js, rules.js, decks/)
-ahorcado/                   Juego El Ahorcado (engine.js + tests, game.js, rules.js, decks/)
-dudo/                       Juego Dudo (engine.js + tests, game.js, rules.js)
-assets/js/handoff.js        Transiciones compartidas: pásale el celular, pantalla tapada
-assets/js/chat.js           Chat de sala compartido (modos de varios celulares)
-assets/js/session.js        Memoria de partida compartida (retomar en cualquier modo)
-assets/js/transport/        Transportes compartidos: local (mismo celular), firebase (sala) y stats (señales de uso)
-panel/                      Panel privado del dueño (entrada con Google; ver docs/PANEL.md)
-firebase/                   Reglas de seguridad de Realtime Database y notas
-manifest.webmanifest        Manifest PWA (instalable en la pantalla de inicio)
-tools/set-version.py        Estampa la versión (import maps + estilos) para evitar caché mezclada
-tools/readme.py             README al día: bloques generados, capturas rehechas y aviso de lo que cambió
-tools/og.mjs                Tarjetas sociales: las etiquetas Open Graph de cada página y sus imágenes
-tools/hechos.mjs            La hoja de hechos de la app (juegos, modos, temáticas, tests) leída del código
-tools/e2e/                  Partidas completas en Chrome headless; de ahí salen las capturas (su README)
-pt/ · en/                   Puertas de entrada por idioma: dejan el idioma y mandan a la portada
-assets/og/                  Las imágenes de 1200×630 que se ven al compartir un link
-docs/capturas.json          Catálogo de las capturas: pie de foto y de qué guion sale cada una
-docs/                       Requerimientos, decisiones, especificaciones y capturas
+index.html                  Main menu (generated from assets/js/games.js)
+assets/css/base.css         Shared styles and animations (party theme, turn transitions)
+assets/js/games.js          Game registry (text in es, en and pt)
+assets/js/i18n.js           Language (ES/EN/PT): toggle, persistence and shared text; i18n.test.mjs checks parity
+assets/js/frases.js         Footer lines for the menu, 100 per language
+assets/js/sound.js          Synthesized sound effects and the mute button
+assets/js/ui.js             UI helpers: confetti, vibration, wake lock, DOM helpers
+assets/js/firebase-config.js Public Firebase configuration
+cuarto-rey/                 Cuarto Rey (index.html, game.js, rules.js, style.css)
+toque-y-fama/               Toque y Fama (engine.js + tests, game.js, rules.js)
+batalla-naval/              Batalla Naval (engine.js + tests, game.js, rules.js)
+linea-de-tiempo/            Línea de Tiempo (engine.js + tests, game.js, rules.js, decks/)
+ahorcado/                   El Ahorcado (engine.js + tests, game.js, rules.js, decks/)
+dudo/                       Dudo (engine.js + tests, game.js, rules.js)
+assets/js/handoff.js        Shared transitions: pass the phone, covered screen
+assets/js/chat.js           Shared room chat (multi-phone modes)
+assets/js/session.js        Shared saved games (resume in any mode)
+assets/js/transport/        Shared transports: local (same phone), firebase (room) and stats (usage signals)
+panel/                      Private owner dashboard (Google sign-in; see docs/PANEL.md)
+firebase/                   Realtime Database security rules and notes
+manifest.webmanifest        PWA manifest (installable on the home screen)
+tools/set-version.py        Stamps the version (import maps + stylesheets) to avoid a mixed cache
+tools/readme.py             Keeps this README current: generated blocks, retaken screenshots, staleness report
+tools/og.mjs                Social cards: the Open Graph tags of each page and their images
+tools/hechos.mjs            The app's fact sheet (games, modes, themes, tests) read from the code
+tools/e2e/                  Full games in headless Chrome; the screenshots come from here (see its README)
+pt/ · en/                   Language doors: they set the language and send you to the menu
+assets/og/                  The 1200×630 images shown when a link is shared
+docs/capturas.json          Screenshot catalog: the caption and the script each one comes from
+docs/                       Requirements, decisions, specs and screenshots
 ```
 
-## Documentación
+## Documentation
 
-<!-- generado: documentacion · lo reescribe python3 tools/readme.py actualizar -->
+These documents are in Spanish, like the rest of the project.
+
+<!-- generado: documentacion · written by python3 tools/readme.py actualizar -->
 - [Cánones y estándares de Juegos de Salón](docs/CANONES.md)
 - [Requerimientos](docs/REQUERIMIENTOS.md)
 - [Decisiones de diseño y arquitectura](docs/DECISIONES.md)
@@ -503,7 +469,7 @@ docs/                       Requerimientos, decisiones, especificaciones y captu
 - [Especificación: Cuarto Rey](docs/juegos/cuarto-rey.md)
 - [Diseño: Dudo](docs/juegos/dudo.md)
 - [Diseño: Línea de Tiempo](docs/juegos/linea-de-tiempo.md)
-- [Toque y Fama — estudio de factibilidad y propuesta de mecánica](docs/juegos/toque-y-fama-factibilidad.md)
+- [Toque y Fama: estudio de factibilidad y propuesta de mecánica](docs/juegos/toque-y-fama-factibilidad.md)
 - [Especificación: Toque y Fama](docs/juegos/toque-y-fama.md)
 - [Changelog](CHANGELOG.md)
 <!-- /generado -->

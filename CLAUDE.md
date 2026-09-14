@@ -22,6 +22,9 @@ si lo quedó, no estampa y dice qué le falta (C-13, D-51).
 
 ## Mantener el README al día
 
+**El README va en inglés** (C-13, D-78): es la cara pública del proyecto. Todo el resto de la
+documentación, y los mensajes de las herramientas, siguen en español.
+
 El README repite datos que el código ya sabe y muestra capturas que envejecen.
 `tools/readme.py` genera lo derivable, delata lo que cambió y rehace las capturas:
 
