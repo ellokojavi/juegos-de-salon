@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <!-- Sin esto, Chrome en modo móvil asume una ventana de 980 px y encoge la tarjeta -->
+  <meta name="viewport" content="width=600, initial-scale=1">
+  <title>Tarjeta social</title>
+  <!--
+    La imagen que se ve cuando alguien pega un link de la app en WhatsApp o en un chat.
+    Se dibuja acá con los estilos y los datos reales (assets/js/games.js), y `node tools/og.mjs
+    imagenes` la fotografía a 1200×630. No se abre a mano: se mira con la captura.
+      /tools/og/tarjeta.html?juego=dudo   una tarjeta por juego
+      /tools/og/tarjeta.html              la del menú
+  -->
+  <link rel="stylesheet" href="/assets/css/base.css">
+  <style>
+    /* El lienzo es de 600×315 y se fotografía al doble: 1200×630, la medida que piden las redes */
+    html, body { margin: 0; padding: 0; width: 600px; height: 315px; overflow: hidden; }
+    body { display: grid; place-items: center; }
+    .tarjeta { width: 600px; height: 315px; padding: 34px 40px; box-sizing: border-box; display: grid; align-content: center; gap: 10px; position: relative; }
+
+    /* ---- Tarjeta de un juego: el emoji manda y al lado va de qué se trata ---- */
+    .juego { grid-template-columns: 150px 1fr; align-items: center; gap: 26px; align-content: center; }
+    .juego .emoji { font-size: 118px; line-height: 1; text-align: center; filter: drop-shadow(0 0 26px rgba(255, 210, 63, 0.55)); }
+    .juego .nombre { font-family: var(--font-display); font-size: 62px; line-height: 0.92; letter-spacing: 0.03em; margin: 0 0 8px; }
+    .juego .bajada { color: var(--ink); font-weight: 800; font-size: 19px; line-height: 1.3; margin: 0 0 14px; }
+    .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .chip2 { font-weight: 900; font-size: 15px; padding: 6px 14px; border-radius: 999px; background: var(--glass); border: 1px solid var(--glass-border); }
+
+    /* ---- Tarjeta del menú: el nombre de la app y los juegos que hay ---- */
+    .menu { justify-items: center; text-align: center; gap: 14px; }
+    .menu .titulo { font-family: var(--font-display); font-size: 74px; line-height: 0.9; letter-spacing: 0.02em; margin: 0; }
+    .menu .bajada { color: var(--ink); font-weight: 800; font-size: 21px; margin: 0; text-wrap: balance; }
+    .menu .fila { display: flex; gap: 16px; font-size: 46px; line-height: 1; }
+    .menu .fila span { filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.45)); }
+
+    .pie { position: absolute; left: 40px; right: 40px; bottom: 20px; display: flex; justify-content: space-between; align-items: center; font-weight: 900; font-size: 15px; color: var(--muted); }
+    .pie .dominio { color: var(--yellow); letter-spacing: 0.04em; }
+    /* La animación del degradado deja el título de un color distinto en cada foto */
+    .rainbow { animation: none; }
+  </style>
+</head>
+<body>
+  <div class="tarjeta" id="tarjeta"></div>
+  <script type="module">
+    import { GAMES } from '/assets/js/games.js';
+
+    const id = new URLSearchParams(location.search).get('juego');
+    const caja = document.getElementById('tarjeta');
+    const el = (tag, clase, ...hijos) => {
+      const n = document.createElement(tag);
+      if (clase) n.className = clase;
+      hijos.forEach(h => n.append(h));
+      return n;
+    };
+    const pie = (izq) => {
+      const p = el('div', 'pie');
+      p.append(el('span', null, izq), el('span', 'dominio', 'juegosdesalon.cl'));
+      return p;
+    };
+
+    if (id) {
+      const g = GAMES.find(x => x.id === id);
+      if (!g) throw new Error(`No existe el juego "${id}"`);
+      caja.classList.add('juego');
+      const texto = el('div');
+      texto.append(
+        el('h1', 'nombre rainbow', g.name.es),
+        el('p', 'bajada', g.tagline.es),
+      );
+      const chips = el('div', 'chips');
+      chips.append(
+        el('span', 'chip2', `👥 ${g.players} jugadores`),
+        el('span', 'chip2', `⏱ ${g.duration} min`),
+      );
+      texto.append(chips);
+      caja.append(el('div', 'emoji', g.emoji), texto, pie('Gratis y sin instalar'));
+    } else {
+      caja.classList.add('menu');
+      const fila = el('div', 'fila');
+      GAMES.filter(g => g.available).forEach(g => fila.append(el('span', null, g.emoji)));
+      caja.append(
+        fila,
+        el('h1', 'titulo rainbow', 'Juegos de Salón'),
+        el('p', 'bajada', `${GAMES.filter(g => g.available).length} juegos para pasar el tiempo con amigos`),
+        pie('Gratis y sin instalar'),
+      );
+    }
+    document.fonts.ready.then(() => { document.body.dataset.listo = '1'; });
+  </script>
+</body>
+</html>
