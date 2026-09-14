@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.33.1 — 2026-09-13
+- **El botón de apostar de Dudo se iba fuera de la pantalla** en un celular con muesca, con medio
+  celular vacío más arriba. No era de Dudo: `.app` pedía `100dvh` adentro de un `body` que ya había
+  reservado las muescas con su padding, así que **la página quedaba 81 px más alta que el celular**
+  (47 arriba, 34 abajo). En los otros juegos eso se notaba solo como un scroll de la nada; en Dudo,
+  donde la barra de apostar se apoya en el borde de abajo, se llevaba el botón fuera (D-75).
+- **Ninguna prueba lo veía** porque en Chrome headless las muescas valen 0. Ahora
+  `mirar.mjs --muescas` las simula, y el informe dice cuánto se pasa la página del alto del celular
+  y qué botones caen por debajo del borde. Con el error de vuelta, avisa: "⚠️ 81 px · Apuesto 1 quinta".
+
 ## 0.33.0 — 2026-09-13
 - **El idioma puede venir en el link** (D-74). `juegosdesalon.cl/?lang=pt` abre la app en
   portugués, y hay dos puertas de entrada para compartir sin parámetros a la vista:
