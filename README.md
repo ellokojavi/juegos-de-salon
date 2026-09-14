@@ -15,19 +15,19 @@ Mobile-first web app with party games to play with friends: card games, drinking
 <!-- generado: juegos · written by python3 tools/readme.py actualizar -->
 | Game | Players | Modes | Status |
 |---|---|---|---|
-| ⏳ [Línea de Tiempo / Timeline / Linha do Tempo](#-línea-de-tiempo) | 1 to 6 | One phone · Several phones · Play alone | v0.9 |
-| 🔢 [Toque y Fama / Bulls and Cows / Toque e Fama](#-toque-y-fama) | 1 to 2 | One phone · Two phones · Versus the phone | v0.4 |
-| 🪢 [El Ahorcado / Hangman / Forca](#-el-ahorcado) | 1 to 6 | One phone · Several phones · Play alone | v0.26 |
-| 🎲 [Dudo / Liar's Dice / Dado Mentiroso](#-dudo) | 1 to 6 | One phone · Several phones · Versus the phone | v0.32 |
-| ⚓ [Batalla Naval / Battleship / Batalha Naval](#-batalla-naval) | 1 to 2 | One phone · Two phones · Versus the phone | v0.6 |
-| 👑 [Cuarto Rey / Fourth King / Quarto Rei](#-cuarto-rey) | 4 to 6 | One phone | v0.27 |
+| ⏳ [Timeline / Línea de Tiempo / Linha do Tempo](#-timeline-línea-de-tiempo) | 1 to 6 | One phone · Several phones · Play alone | v0.9 |
+| 🔢 [Bulls and Cows / Toque y Fama / Toque e Fama](#-bulls-and-cows-toque-y-fama) | 1 to 2 | One phone · Two phones · Versus the phone | v0.4 |
+| 🪢 [Hangman / El Ahorcado / Forca](#-hangman-el-ahorcado) | 1 to 6 | One phone · Several phones · Play alone | v0.26 |
+| 🎲 [Liar's Dice / Dudo / Dado Mentiroso](#-liars-dice-dudo) | 1 to 6 | One phone · Several phones · Versus the phone | v0.32 |
+| ⚓ [Battleship / Batalla Naval / Batalha Naval](#-battleship-batalla-naval) | 1 to 2 | One phone · Two phones · Versus the phone | v0.6 |
+| 👑 [Fourth King / Cuarto Rey / Quarto Rei](#-fourth-king-cuarto-rey) | 4 to 6 | One phone | v0.27 |
 <!-- /generado -->
 
 ---
 
-## 👑 Cuarto Rey
+## 👑 Fourth King (Cuarto Rey)
 
-*Fourth King.* The classic drinking card game. The phone is the deck: each player draws a card and the app says what to do. It names who drinks, runs the mini-games (Cuenta Cuentos, Chancho Inflado, Cultura Chupística, Nunca Nunca), suggests dares and counts the kings. The fourth king ends the game: whoever draws it finishes their glass, and the last screen shows who it was, the sip ranking and, folded at the bottom, every card that came up and who drew it.
+The classic drinking card game. The phone is the deck: each player draws a card and the app says what to do. It names who drinks, runs the mini-games (Cuenta Cuentos, Chancho Inflado, Cultura Chupística, Nunca Nunca), suggests dares and counts the kings. The fourth king ends the game: whoever draws it finishes their glass, and the last screen shows who it was, the sip ranking and, folded at the bottom, every card that came up and who drew it.
 
 <!-- generado: capturas:cuarto-rey · written by python3 tools/readme.py actualizar -->
 <table>
@@ -54,9 +54,9 @@ Mobile-first web app with party games to play with friends: card games, drinking
 
 Spec: [docs/juegos/cuarto-rey.md](docs/juegos/cuarto-rey.md)
 
-## 🔢 Toque y Fama
+## 🔢 Bulls and Cows (Toque y Fama)
 
-*Bulls and Cows.* Each player picks a secret number with no repeated digits and tries to crack the other one. For every guess the phone answers on its own: **fama** is a right digit in the right place, **toque** is a right digit somewhere else. Nobody counts by hand, nobody cheats.
+Each player picks a secret number with no repeated digits and tries to crack the other one. For every guess the phone answers on its own: **fama** is a right digit in the right place, **toque** is a right digit somewhere else. Nobody counts by hand, nobody cheats.
 
 - **📱 One phone:** players pass the phone around, and the screen is covered between turns.
 - **📡 Two phones:** a room with a 4-letter code and a QR. Each phone keeps its own secret and answers the rival's guesses. At the end both reveal and everything is verified.
@@ -88,9 +88,9 @@ Spec: [docs/juegos/cuarto-rey.md](docs/juegos/cuarto-rey.md)
 
 Spec: [docs/juegos/toque-y-fama.md](docs/juegos/toque-y-fama.md) · Feasibility study: [docs/juegos/toque-y-fama-factibilidad.md](docs/juegos/toque-y-fama-factibilidad.md)
 
-## ⚓ Batalla Naval
+## ⚓ Battleship (Batalla Naval)
 
-*Battleship.* Sink the fleet. Each player hides 5 ships on a 10×10 board and fires in turns: miss, hit or sunk. A hit lets you fire again. Ships are placed by tapping, with rotate, drag and "random". The phone answers on its own and keeps score.
+Sink the fleet. Each player hides 5 ships on a 10×10 board and fires in turns: miss, hit or sunk. A hit lets you fire again. Ships are placed by tapping, with rotate, drag and "random". The phone answers on its own and keeps score.
 
 - **📱 One phone:** your fleet is covered between turns. On a miss, the result and "pass the phone to X" share one screen.
 - **📡 Two phones:** a room with a code and a QR. Each phone answers the shots against its own fleet, and at the end both fleets are revealed and verified.
@@ -115,9 +115,9 @@ Spec: [docs/juegos/toque-y-fama.md](docs/juegos/toque-y-fama.md) · Feasibility 
 
 Spec and design: [docs/juegos/batalla-naval.md](docs/juegos/batalla-naval.md)
 
-## ⏳ Línea de Tiempo
+## ⏳ Timeline (Línea de Tiempo)
 
-*Timeline.* You get events with no date on them and place them in the right spot on a shared timeline. Get it right and the card stays. Get it wrong and it is discarded, and you draw another one. The first player to run out of cards wins. The round is always played to the end, and if more than one player runs out, the fastest answer wins. The theme is picked at the start, and adding a new one is just a data file. Cards do not repeat across back-to-back games: each phone remembers the ones it has already shown.
+You get events with no date on them and place them in the right spot on a shared timeline. Get it right and the card stays. Get it wrong and it is discarded, and you draw another one. The first player to run out of cards wins. The round is always played to the end, and if more than one player runs out, the fastest answer wins. The theme is picked at the start, and adding a new one is just a data file. Cards do not repeat across back-to-back games: each phone remembers the ones it has already shown.
 
 <!-- generado: tematicas · written by python3 tools/readme.py actualizar -->
 | Theme | Cards | Years | What it covers |
@@ -165,7 +165,7 @@ Spec and design: [docs/juegos/linea-de-tiempo.md](docs/juegos/linea-de-tiempo.md
 
 ---
 
-## 🪢 El Ahorcado
+## 🪢 Hangman (El Ahorcado)
 
 <!-- generado: capturas:ahorcado · written by python3 tools/readme.py actualizar -->
 <table>
@@ -190,7 +190,7 @@ Spec and design: [docs/juegos/linea-de-tiempo.md](docs/juegos/linea-de-tiempo.md
 </table>
 <!-- /generado -->
 
-*Hangman*, with the fix it has always needed: **nobody sits and watches**. Instead of one bored executioner and one guesser, every player writes the word for the next one, the last one writes for the first, and everyone guesses their own. Two players make a duel, six make a race. Your score is **the misses you had left over**, so cracking the word is not enough: you have to crack it cheap. Setting an impossible word earns nothing, and the player next to you writes yours anyway.
+The classic word game, with the fix it has always needed: **nobody sits and watches**. Instead of one bored executioner and one guesser, every player writes the word for the next one, the last one writes for the first, and everyone guesses their own. Two players make a duel, six make a race. Your score is **the misses you had left over**, so cracking the word is not enough: you have to crack it cheap. Setting an impossible word earns nothing, and the player next to you writes yours anyway.
 
 | | 🤝 Chain | 🎴 App deck |
 |---|---|---|
@@ -210,7 +210,7 @@ Spec and design: [docs/juegos/ahorcado.md](docs/juegos/ahorcado.md)
 
 ---
 
-## 🎲 Dudo
+## 🎲 Liar's Dice (Dudo)
 
 <!-- generado: capturas:dudo · written by python3 tools/readme.py actualizar -->
 <table>
@@ -235,7 +235,7 @@ Spec and design: [docs/juegos/ahorcado.md](docs/juegos/ahorcado.md)
 </table>
 <!-- /generado -->
 
-*Liar's Dice.* The classic dice game from bars and long dinners. Everyone rolls five dice and **only looks at their own**. You bet how many dice of one face are on **the whole table** ("four fives"), and the next player either raises or calls **dudo**. On a call everything is revealed and counted: if there were as many as claimed or more, the caller loses a die; if there were fewer, the bidder does. **Aces are wild**. A player with no dice left is out, and the last one with dice wins.
+The classic dice game from bars and long dinners. Everyone rolls five dice and **only looks at their own**. You bet how many dice of one face are on **the whole table** ("four fives"), and the next player either raises or calls **dudo**. On a call everything is revealed and counted: if there were as many as claimed or more, the caller loses a die; if there were fewer, the bidder does. **Aces are wild**. A player with no dice left is out, and the last one with dice wins.
 
 Here the phone does what a real table does badly: it rolls the dice, it **refuses illegal bids** (a raise is more dice, or the same number with a higher face, and aces count double in both directions), and it counts instantly, which is exactly what people argue about. **Calzar** means claiming the count is exact: get it right and you win a die back, get it wrong and you lose one. It is available from half the dice on the table and **only with three players or more**. In a duel there is a single hidden hand, so the exact count is arithmetic, not a risk (D-71).
 
