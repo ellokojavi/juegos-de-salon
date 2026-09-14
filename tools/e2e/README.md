@@ -44,6 +44,8 @@ node tools/e2e/contacto.mjs cuarto-rey --salida /tmp/contacto
 | `ahorcado-online.mjs` | Tres celulares contra Firebase real: cadena, reconexión a mitad y revancha |
 | `dudo-local.mjs` | Duelo contra el celular y partida de tres en un celular, con retomar a mitad |
 | `dudo-online.mjs` | Tres celulares contra Firebase real: sala, destape verificado, recarga a mitad y revancha |
+| `julepe-local.mjs` | Mesa de tres contra el celular y partida en un celular, con retomar a mitad |
+| `julepe-online.mjs` | Tres celulares contra Firebase real: reparto cerrado, sello de cartas verificadas, recarga a mitad y chat |
 | `linea-de-tiempo-local.mjs` | Un celular con tres jugadores y solitario |
 | `linea-de-tiempo-solo.mjs` | Solitario: récord, plural, retomar |
 | `linea-de-tiempo-error.mjs` | Pantalla de error que se queda hasta tocar; el rival espera |
