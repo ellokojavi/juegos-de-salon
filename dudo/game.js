@@ -1,20 +1,23 @@
 /**
  * Dudo — lógica de juego.
  * Reductor de mensajes único para todos los modos (canon C-7): cambia el transporte, no el juego.
- *  - local: de 2 a 6 jugadores en este celular, pasándoselo · cpu: duelo contra el aparato.
- * Los dados de cada ronda viajan como mensaje `roll`; en la sala irán comprometidos con hash y se
- * destapan al dudar (C-10), que es el mismo camino que ya recorre el motor.
+ *  - local: de 2 a 6 en este celular, pasándoselo · cpu: duelo contra el aparato
+ *  - online: sala de 2 a 6 celulares
+ * Los dados de cada ronda viajan como mensaje `roll`. En un celular van en claro —no hay a quién
+ * escondérselos—; en la sala va el hash y se destapan al dudar, y ahí se verifican (C-10, D-70).
  */
-import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../assets/js/ui.js';
-import { getLang, langToggle, applyStatic } from '../assets/js/i18n.js';
+import { $, $$, el, vibrate, sparkles, keepAwake, confetti, shareLink, canShare } from '../assets/js/ui.js';
+import { getLang, langToggle, applyStatic, COMMON } from '../assets/js/i18n.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { showHandoff, passBlock } from '../assets/js/handoff.js';
+import { failWith } from '../assets/js/transport/errors.js';
+import { createChat } from '../assets/js/chat.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
 import { trackStart } from '../assets/js/transport/stats.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import {
   PINTAS, MIN_PLAYERS, MAX_PLAYERS, MIN_CALZAR, buildState, botMove, minBid, bidOk,
-  readDice, rollDice, writeDice, countPinta,
+  readDice, rollDice, writeDice, countPinta, sha256, randomSalt, verifyOpen,
 } from './engine.js';
 import { GAME_ID, DEFAULT_CONFIG, CHILENO, LOCALES } from './rules.js';
 
@@ -30,6 +33,7 @@ const nameStore = createNameStore(GAME_ID);
 
 let S = null;   // sesión: modo, transporte, roles de este celular, quién tiene el aparato
 let M = null;   // partida: config, nombres y la lista de jugadas
+let chat = null; // chat de sala: solo en varios celulares (canon C-15)
 
 /* ------------------------------------------------------------------ */
 /* Nombres de las apuestas                                             */
@@ -66,29 +70,61 @@ const bidEl = (n, p) => el('span', { class: 'bid-chip' }, el('b', {}, n), dieEl(
 /* Estado                                                              */
 /* ------------------------------------------------------------------ */
 function newMatch(config) {
-  return { config, players: config.players, names: {}, plays: [], seen: new Set() };
+  // En la sala los jugadores no se saben hasta que el anfitrión parte: llegan de a uno
+  return { config, players: config.players || null, names: {}, plays: [], seen: new Set(), presence: {}, rematch: {}, verify: null };
 }
+
+const JUGADAS = ['roll', 'bid', 'dudo', 'calza', 'open'];
 
 function apply(msg) {
   if (msg.id && M.seen.has(msg.id)) return;
   if (msg.id) M.seen.add(msg.id);
-  if (msg.t === 'hello') { M.names[msg.from] = msg.name; return; }
-  if (['roll', 'bid', 'dudo', 'calza', 'open'].includes(msg.t)) M.plays.push(msg);
+  switch (msg.t) {
+    case 'hello': M.names[msg.from] = msg.name; return;
+    case 'start':
+      // Solo el anfitrión, y una sola vez: el orden de la mesa es el de llegada a la sala
+      if (M.players || msg.from !== 'A') return;
+      if ((msg.order || []).filter(r => M.names[r]).length >= MIN_PLAYERS) M.players = msg.order.filter(r => M.names[r]);
+      return;
+    case 'rematch': M.rematch[msg.from] = msg.code; return;
+    // El chat no es parte del estado de la partida: se dibuja y se olvida (canon C-15)
+    case 'chat': if (chat) chat.add(msg, { live: !!S?.live }); return 'chat';
+    default: if (JUGADAS.includes(msg.t)) M.plays.push(msg);
+  }
 }
 
-const view = () => buildState({ players: M.players, config: M.config, plays: M.plays });
-/** Los dados que este aparato puede mostrar de un rol: los suyos, o todos al destapar. */
-const diceOf = (v, role) => readDice(v.rolls[role]?.d) || null;
+const view = () => (M.players
+  ? { ...buildState({ players: M.players, config: M.config, plays: M.plays }), lobby: false }
+  : { lobby: true, phase: 'lobby', done: false, players: [], st: {}, alive: [], waiting: [], rolls: {}, history: [], last: null });
+
+/**
+ * Los dados que este aparato puede mostrar de un rol. En la sala los propios no salen del
+ * mensaje —ahí viaja el hash— sino de lo que este celular guardó al tirarlos.
+ */
+const diceOf = (v, role) => {
+  if (S.mode === 'online' && role === S.role) return S.secrets[v.round]?.dice || null;
+  return readDice(v.rolls[role]?.d) || null;
+};
 
 /* ------------------------------------------------------------------ */
 /* Sesión                                                              */
 /* ------------------------------------------------------------------ */
-function startSession({ mode, transport, roles, config, names }) {
+function startSession({ mode, transport, roles, config, names, code = null, role = null, secrets = {} }) {
+  // Cambiar de sala (la revancha abre una nueva) es irse de la anterior para siempre
   if (S?.transport) S.transport.dispose();
-  S = { mode, transport, roles, uiRole: null, sel: null, shownRound: 0, botAt: -1, rolled: new Set() };
+  S = {
+    mode, transport, roles, code, role, secrets,
+    // `Infinity` hasta saber por dónde va la partida: quien entra a una sala a mitad de camino
+    // no tiene por qué ver el destape de una ronda que se jugó antes de que llegara.
+    uiRole: null, sel: null, shownRound: Infinity, botAt: -1, rolled: new Set(), abriendo: new Set(),
+  };
   M = newMatch(config);
+  setupChat(mode);
+  const sesion = S;
+  setTimeout(() => { if (S === sesion) S.live = true; }, 1500);
   Object.entries(names).forEach(([r, name]) => { if (name) transport.send({ t: 'hello', from: r, name }); });
-  transport.onMessage(m => { apply(m); onChange(); });
+  transport.onMessage(m => { if (apply(m) === 'chat') return; onChange(); });
+  transport.onPresence(p => { M.presence = p; if (view().lobby) renderLobby(); });
 }
 
 let chain = Promise.resolve();
@@ -99,17 +135,43 @@ async function act() {
   saveSession();
   if (!M?.players) return;
   const v = view();
+  if (S.shownRound === Infinity) S.shownRound = (v.last?.n ?? -1) + 1;   // lo de antes ya pasó
   if (v.done) return;
 
-  // 1. Los dados de la ronda. Cada rol de este celular tira los suyos.
+  // 1. Lo primero, la ronda que acaba de resolverse: que nadie haya cambiado sus dados (C-10).
+  // Va antes de tirar los de la ronda siguiente, porque el destape se dibuja apenas se cuenta y
+  // el sello tiene que estar listo para esa misma pantalla.
+  if (S.mode === 'online' && v.last && M.verify?.n !== v.last.n) await verificarRonda(v.last);
+
+  // 2. Los dados de la ronda. Cada rol de este celular tira los suyos.
   if (v.phase === 'roll') {
     // Cada `send` avisa por microtarea y vuelve a entrar acá antes de que se aplique el resto,
     // así que sin la marca el mismo rol tiraba sus dados varias veces (el motor los descarta,
     // pero quedaban mensajes de más en la partida guardada).
-    v.waiting.filter(r => S.roles.includes(r) && !S.rolled.has(`${v.round}:${r}`)).forEach(r => {
+    const mios = v.waiting.filter(r => S.roles.includes(r) && !S.rolled.has(`${v.round}:${r}`));
+    for (const r of mios) {
       S.rolled.add(`${v.round}:${r}`);
-      S.transport.send({ t: 'roll', from: r, d: writeDice(rollDice(v.st[r].dice)) });
-    });
+      const dados = rollDice(v.st[r].dice);
+      if (S.mode === 'online') {
+        // Los dados no viajan: se compromete el hash y se guardan acá hasta el destape (C-10)
+        const salt = randomSalt();
+        S.secrets[v.round] = { dice: dados, salt };
+        saveSession();
+        S.transport.send({ t: 'roll', from: r, h: await sha256(writeDice(dados) + salt) });
+      } else {
+        S.transport.send({ t: 'roll', from: r, d: writeDice(dados) });
+      }
+    }
+    if (mios.length) return;
+  }
+
+  // 3. Al dudar, cada celular destapa los suyos. Es lo único que hace viajar los dados.
+  if (v.phase === 'open' && S.mode === 'online' && v.waiting.includes(S.role) && !S.abriendo.has(v.round)) {
+    const mio = S.secrets[v.round];
+    if (mio) {
+      S.abriendo.add(v.round);
+      S.transport.send({ t: 'open', from: S.role, d: writeDice(mio.dice), salt: mio.salt });
+    }
     return;
   }
 
@@ -128,22 +190,48 @@ async function act() {
   }
 }
 
-/* ---------- Persistencia (canon C-6) ---------- */
-function saveSession() {
-  if (!S || !M?.players) return;
-  store.save({ mode: S.mode, config: M.config, names: M.names, messages: S.transport.messages || [], done: view().done });
+/**
+ * Los dados que destapó cada uno, ¿son los que había comprometido al abrir la ronda? Se guarda
+ * el resultado de la última ronda y la pantalla lo dice: "verificados ✅" o el nombre del que
+ * no calza (C-10).
+ */
+async function verificarRonda(last) {
+  const rolls = M.plays.filter(p => p.t === 'roll');
+  const opens = M.plays.filter(p => p.t === 'open');
+  const fallan = [];
+  for (const role of Object.keys(last.dice)) {
+    // El hash y el destape de esta ronda: se cuentan por ronda, en orden
+    const h = rolls.filter(p => p.from === role)[last.n]?.h;
+    const abrió = opens.filter(p => p.from === role)[last.n];
+    if (!h || !abrió) continue;
+    const { ok } = await verifyOpen({ dice: readDice(abrió.d) || [], salt: abrió.salt, commit: h });
+    if (!ok) fallan.push(role);
+  }
+  M.verify = { n: last.n, fallan };
 }
 
-function resume(saved) {
+/* ---------- Persistencia (canon C-6) ---------- */
+function saveSession() {
+  if (!S || !M) return;
+  const done = M.players ? view().done : false;
+  if (S.mode === 'online') {
+    // De la sala se guarda cómo volver a entrar y los dados propios: sin ellos, un celular que
+    // recarga a mitad de ronda no podría destapar y la mesa se quedaría esperándolo.
+    store.save({ mode: 'online', code: S.code, role: S.role, name: M.names[S.role], config: M.config, private: S.secrets, done });
+  } else {
+    store.save({ mode: S.mode, config: M.config, names: M.names, messages: S.transport.messages || [], done });
+  }
+}
+
+async function resume(saved) {
+  if (saved.mode === 'online') return joinOnline(saved.code, saved.name, saved.role, saved.private || {});
   const transport = createLocalTransport({ seed: saved.messages || [] });
   startSession({ mode: saved.mode, transport, roles: saved.mode === 'cpu' ? ['A', 'B'] : saved.config.players, config: saved.config, names: {} });
   M.names = saved.names || {};
   // Al retomar en un celular nadie sabe quién lo tenía: se vuelve a la pantalla de pase (C-6)
   S.uiRole = saved.mode === 'cpu' ? 'A' : null;
-  S.shownRound = Infinity;      // lo que ya pasó no se vuelve a destapar
   keepAwake();
   onChange();
-  setTimeout(() => { if (S) { S.shownRound = (view().last?.n ?? -1) + 1; } }, 0);
 }
 
 /* ------------------------------------------------------------------ */
@@ -153,8 +241,9 @@ function showScreen(id) { $$('.screen').forEach(s => s.classList.toggle('active'
 function closeOverlay() { const b = $('#handoff'); b.hidden = true; b.innerHTML = ''; b.className = 'handoff'; }
 
 function render() {
-  if (!M?.players) return;
+  if (!M) return;
   const v = view();
+  if (v.lobby) return renderLobby();
   // Si hay una transición en pantalla, manda ella. Se pregunta por el overlay y no por una
   // marca aparte: la marca se quedaba en true si el destape y el pase se pisaban, y ahí la
   // partida se veía congelada con el turno de otro y sin botones.
@@ -169,6 +258,7 @@ function render() {
 
   // 2. En un celular, el que tiene que jugar todavía no tiene el aparato en la mano
   if (S.mode === 'local' && v.phase === 'bid' && v.current && S.uiRole !== v.current) return showPass(v.current);
+  if (chat) chat.show();
 
   renderPlay(v);
 }
@@ -187,11 +277,15 @@ function renderRivals(v) {
 }
 
 function renderPlay(v) {
-  const yo = S.mode === 'cpu' ? 'A' : S.uiRole;
+  const yo = S.mode === 'online' ? S.role : S.mode === 'cpu' ? 'A' : S.uiRole;
   renderRivals(v);
   const miTurno = v.current === yo;
   $('#status-who').textContent = miTurno ? T.yourTurn : `${T.turnOf} ${nameOf(v.current)}`;
-  $('#status-sub').textContent = `${fmt(T.round, { n: v.round + 1 })} · ${fmt(T.tableDice, { n: v.totalDice })}`;
+  const esperando = v.waiting.filter(r => r !== yo);
+  $('#status-sub').textContent = v.phase === 'open' && esperando.length
+    ? fmt(T.waitDice, { name: esperando.map(nameOf).join(', ') })
+    : v.phase === 'roll' ? T.waitRoll
+    : `${fmt(T.round, { n: v.round + 1 })} · ${fmt(T.tableDice, { n: v.totalDice })}`;
 
   // Mis dados
   const mine = $('#mine');
@@ -280,6 +374,21 @@ function renderActions(v, yo, miTurno) {
   box.append(acciones);
 }
 
+/* ---------- Chat de la sala (C-15) ---------- */
+function setupChat(mode) {
+  if (chat) { chat.destroy(); chat = null; }
+  const mount = $('#chat');
+  if (!mount) return;
+  mount.hidden = true;
+  if (mode !== 'online') return;
+  chat = createChat({
+    mount, T,
+    nameOf: r => M.names[r] || '…',
+    isMine: r => r === S.role,
+    onSend: text => S.transport.send({ t: 'chat', from: S.role, text }),
+  });
+}
+
 /* ---------- Pase del celular (C-9) ---------- */
 function showPass(role) {
   showHandoff([passBlock({ label: T.hoPass, name: nameOf(role), button: T.hoReady })],
@@ -320,6 +429,7 @@ function showReveal(v) {
       { n: last.count, pinta: pintaName(last.count, last.bid.p) })),
     last.type === 'calza' ? el('div', { class: 'exact ' + (last.exact ? 'yes' : 'no') }, last.exact ? T.exactYes : T.exactNo) : null,
     el('div', { class: 'outcome' }, desenlace),
+    selloVerificado(last),
     el('div', { class: 'hint', style: 'margin-top:10px' }, T.goOn),
   );
 
@@ -330,6 +440,17 @@ function showReveal(v) {
     if (S.mode === 'local') S.uiRole = null;
     onChange();
   });
+}
+
+/**
+ * En la sala, después de contar se dice si los dados que se destaparon son los que cada uno
+ * había comprometido (C-10). En un celular no hay nada que verificar y no se muestra.
+ */
+function selloVerificado(last) {
+  if (S.mode !== 'online' || M.verify?.n !== last.n) return null;
+  const fallan = M.verify.fallan;
+  return el('div', { class: 'sello' + (fallan.length ? ' mal' : '') },
+    fallan.length ? fmt(T.notVerified, { name: fallan.map(nameOf).join(', ') }) : T.verified);
 }
 
 /* ---------- Final ---------- */
@@ -359,13 +480,127 @@ function renderResult(v) {
   const acciones = $('#result-actions');
   acciones.innerHTML = '';
   acciones.append(
-    el('button', { class: 'btn btn--yellow', onClick: () => startMatch(S.mode, M.names, M.config) }, T.endAgain),
+    el('button', {
+      class: 'btn btn--yellow',
+      onClick: e => {
+        if (S.mode !== 'online') return startMatch(S.mode, M.names, M.config);
+        // La revancha abre una sala nueva: mientras se arma, el botón queda esperando
+        e.currentTarget.disabled = true;
+        rematchOnline().catch(err => { console.error(err); e.currentTarget.disabled = false; });
+      },
+    }, S.mode === 'online' ? T.rematch : T.endAgain),
     el('div', { class: 'btn-row' },
-      el('button', { class: 'btn btn--ghost btn--sm', onClick: () => { store.clear(); renderModes(); showScreen('screen-intro'); } }, T.changePlayers),
+      S.mode === 'online'
+        ? el('button', { class: 'btn btn--ghost btn--sm', onClick: e => leaveRoom(e.currentTarget) }, T.changeMode)
+        : el('button', { class: 'btn btn--ghost btn--sm', onClick: () => { store.clear(); renderModes(); showScreen('screen-intro'); } }, T.changePlayers),
       el('a', { class: 'btn btn--ghost btn--sm', href: '../' }, T.backMenu),
     ),
   );
   if (!S.shownWin) { S.shownWin = true; SFX.win(); confetti({ count: 220, duration: 3500 }); }
+}
+
+/* ------------------------------------------------------------------ */
+/* Sala (varios celulares)                                             */
+/* ------------------------------------------------------------------ */
+function renderLobby() {
+  if (S.mode !== 'online' || !M) return;
+  showScreen('screen-lobby');
+  if (chat) chat.show();
+  const box = $('#lobby-box'); box.innerHTML = '';
+  const url = `${location.origin}${location.pathname}?sala=${S.code}`;
+  const entraron = ROLES.filter(r => M.names[r]);
+  box.append(
+    el('div', { class: 'muted', style: 'font-weight:800' }, T.lobbyCode),
+    el('div', { class: 'code-big' }, S.code),
+    el('div', { class: 'qr', id: 'qr' }),
+    el('p', { class: 'muted', style: 'font-size:0.9rem' }, T.lobbyShare),
+    shareButton(url),
+    el('p', { class: 'lead', style: 'margin:12px 0 4px' }, `${T.lobbyPlayers} (${entraron.length}/${MAX_PLAYERS})`),
+    el('div', { class: 'lobby-players' }, ...entraron.map(r => el('span', {
+      class: 'p' + (r === S.role ? ' me' : '') + (M.presence[r]?.online === false ? ' off' : ''),
+    }, M.names[r]))),
+    S.role === 'A'
+      ? el('button', {
+        class: 'btn btn--yellow', disabled: entraron.length < MIN_PLAYERS,
+        onClick: () => { SFX.pass(); S.transport.send({ t: 'start', from: 'A', order: entraron }); },
+      }, entraron.length < MIN_PLAYERS ? T.lobbyNeedMore : T.lobbyStart)
+      : el('p', { class: 'waiting' }, fmt(T.lobbyWaitHost, { name: M.names.A || '…' })),
+    el('button', { class: 'btn btn--ghost btn--sm', style: 'margin-top:10px', onClick: e => leaveRoom(e.currentTarget) },
+      S.role === 'A' ? T.lobbyCancel : T.lobbyLeave),
+  );
+  renderQr(url);
+}
+
+/**
+ * "Javi te invita a jugar Dudo en juegosdesalon.cl - Sala: WFBN". Nombra a quien toca compartir,
+ * que es quien invita; de qué se trata el juego lo cuenta la tarjeta que el chat arma con el
+ * link (D-72, D-73).
+ */
+function textoInvitacion() {
+  return fmt(COMMON[lang].invite, { name: M.names[S.role] || '', game: T.title, code: S.code });
+}
+
+function shareButton(url) {
+  const btn = el('button', { class: 'btn btn--cyan btn--sm', style: 'width:100%;max-width:320px' }, canShare() ? T.shareLink : T.copyLink);
+  btn.addEventListener('click', async () => {
+    SFX.tap();
+    const r = await shareLink({ title: T.title, text: textoInvitacion(), url });
+    if (r === 'copied') { btn.textContent = T.copied; setTimeout(() => { btn.textContent = canShare() ? T.shareLink : T.copyLink; }, 2000); }
+  });
+  return btn;
+}
+
+async function renderQr(url) {
+  try {
+    if (!window.qrcode) await new Promise((res, rej) => { const sc = document.createElement('script'); sc.src = 'https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js'; sc.onload = res; sc.onerror = rej; document.head.append(sc); });
+    const qr = window.qrcode(0, 'M'); qr.addData(url); qr.make();
+    const box = $('#qr'); if (box) box.innerHTML = qr.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
+  } catch (_) { const box = $('#qr'); if (box) box.remove(); }
+}
+
+async function leaveRoom(btn) {
+  SFX.tap();
+  if (btn) btn.disabled = true;
+  store.clear();
+  await S.transport.dispose();
+  location.href = location.pathname;
+}
+
+async function startOnline(transport, code, role, name, config, secrets = {}) {
+  startSession({ mode: 'online', transport, roles: [role], config, names: { [role]: name }, code, role, secrets });
+  history.replaceState(null, '', `${location.pathname}?sala=${code}`);
+  keepAwake();
+  saveSession();
+  render();
+}
+
+async function createOnline(name, config) {
+  const { createFirebaseTransport } = await import('../assets/js/transport/firebase.js');
+  const t = createFirebaseTransport({ game: GAME_ID, maxPlayers: MAX_PLAYERS });
+  const code = await t.create({ config, name });
+  await startOnline(t, code, 'A', name, config);
+}
+
+async function joinOnline(code, name, previousRole = null, secrets = {}) {
+  const { createFirebaseTransport } = await import('../assets/js/transport/firebase.js');
+  const t = createFirebaseTransport({ game: GAME_ID, maxPlayers: MAX_PLAYERS });
+  const { role, config } = await t.join(code, { name, previousRole });
+  await startOnline(t, code, role, name, config || DEFAULT_CONFIG, secrets);
+}
+
+/** La revancha abre una sala nueva (C-7). El primero que la propone manda; el resto lo sigue. */
+async function rematchOnline() {
+  if (M.rematch[S.role]) return;
+  const propuesta = ROLES.filter(r => M.names[r] && r !== S.role).map(r => M.rematch[r]).find(c => typeof c === 'string');
+  const nombre = M.names[S.role];
+  if (propuesta) return joinOnline(propuesta, nombre);
+  const { createFirebaseTransport } = await import('../assets/js/transport/firebase.js');
+  const t = createFirebaseTransport({ game: GAME_ID, maxPlayers: MAX_PLAYERS });
+  const config = { ...M.config, players: null };
+  const code = await t.create({ config, name: nombre });
+  S.transport.send({ t: 'rematch', from: S.role, code });
+  M.rematch[S.role] = code;
+  setTimeout(() => startOnline(t, code, 'A', nombre, config), 600);
 }
 
 /* ------------------------------------------------------------------ */
@@ -377,6 +612,7 @@ function startMatch(mode, names, config) {
   const transport = createLocalTransport();
   startSession({ mode, transport, roles: players.slice(), config, names });
   S.uiRole = mode === 'cpu' ? 'A' : null;
+  S.shownRound = 0;
   S.shownWin = false;
   keepAwake();
   trackStart({ game: GAME_ID, mode, players: mode === 'cpu' ? 1 : players.length }); // señal de uso (D-44)
@@ -386,22 +622,32 @@ function startMatch(mode, names, config) {
 /* ------------------------------------------------------------------ */
 /* Intro y configuración                                               */
 /* ------------------------------------------------------------------ */
+/** Un interruptor con su explicación, como el del resto de la app. */
+function interruptor(encendido, label, hint, onChange) {
+  const sw = el('button', {
+    type: 'button', class: 'switch' + (encendido ? ' on' : ''), 'aria-label': label, 'aria-pressed': String(encendido),
+    onClick: () => {
+      const v = !sw.classList.contains('on');
+      sw.classList.toggle('on', v); sw.setAttribute('aria-pressed', String(v));
+      SFX.tap(); onChange(v);
+    },
+  });
+  return el('div', { class: 'toggle-row' }, el('div', { class: 'txt' }, el('b', {}, label), el('small', {}, hint)), sw);
+}
+
 const MODES = [
-  { id: 'local', title: () => T.m1, sub: () => T.m1sub, ready: true },
-  { id: 'online', title: () => T.m2, sub: () => T.m2sub, ready: false },
-  { id: 'cpu', title: () => T.m3, sub: () => T.m3sub, ready: true },
+  { id: 'local', title: () => T.m1, sub: () => T.m1sub },
+  { id: 'online', title: () => T.m2, sub: () => T.m2sub },
+  { id: 'cpu', title: () => T.m3, sub: () => T.m3sub },
 ];
 
 function renderModes() {
   const box = $('#modes');
   box.innerHTML = '';
   MODES.forEach(m => {
-    box.append(el('button', {
-      class: 'mode' + (m.ready ? '' : ' mode--soon'), disabled: !m.ready,
-      onClick: () => m.ready && renderSetup(m.id),
-    },
-    el('div', { class: 'mode-main' }, el('b', {}, m.title()), el('small', {}, m.sub())),
-    m.ready ? el('span', { class: 'go' }, '›') : el('span', { class: 'soon' }, T.soon)));
+    box.append(el('button', { class: 'mode', onClick: () => { SFX.tap(); renderSetup(m.id); } },
+      el('div', { class: 'mode-main' }, el('b', {}, m.title()), el('small', {}, m.sub())),
+      el('span', { class: 'go' }, '›')));
   });
 }
 
@@ -415,20 +661,28 @@ function renderResumeSlot() {
   const slot = $('#resume-slot');
   slot.innerHTML = '';
   const saved = store.load();
-  if (!saved || saved.done || !saved.config?.players) return;
-  const previa = buildState({ players: saved.config.players, config: saved.config, plays: (saved.messages || []).filter(m => ['roll', 'bid', 'dudo', 'calza', 'open'].includes(m.t)) });
-  const quien = saved.names?.[previa.current || previa.opener] || '';
+  if (!saved || saved.done) return;
+  // De la sala solo se guarda el código: el estado vive en Firebase y se lee al volver a entrar
+  const enSala = saved.mode === 'online' && saved.code;
+  if (!enSala && !saved.config?.players) return;
+  let detalle = '';
+  if (enSala) detalle = fmt(T.invited, { code: saved.code });
+  else {
+    const previa = buildState({ players: saved.config.players, config: saved.config, plays: (saved.messages || []).filter(m => JUGADAS.includes(m.t)) });
+    detalle = fmt(T.resumeText, { round: previa.round + 1, name: saved.names?.[previa.current || previa.opener] || '' });
+  }
   slot.append(el('div', { class: 'panel pop' },
     el('p', { class: 'lead', style: 'margin-bottom:4px' }, T.resumeTitle),
-    el('p', { class: 'muted' }, fmt(T.resumeText, { round: previa.round + 1, name: quien })),
+    el('p', { class: 'muted' }, detalle),
     el('div', { class: 'btn-row' },
-      el('button', { class: 'btn btn--cyan btn--sm', onClick: () => resume(saved) }, T.resume),
+      el('button', { class: 'btn btn--cyan btn--sm', onClick: async () => { try { await resume(saved); } catch (_) { store.clear(); renderResumeSlot(); } } }, T.resume),
       el('button', { class: 'btn btn--ghost btn--sm', onClick: () => { store.clear(); renderResumeSlot(); } }, T.delete),
     ),
   ));
 }
 
-function renderSetup(mode) {
+function renderSetup(mode, codigoInvitado = '') {
+  if (mode === 'online') return renderSetupOnline(codigoInvitado);
   const form = $('#setup-form');
   const recordado = nameStore.get();
   let draft = mode === 'cpu'
@@ -436,19 +690,6 @@ function renderSetup(mode) {
     : [recordado || '', ''];
   let calzar = DEFAULT_CONFIG.calzar;
   let chileno = DEFAULT_CONFIG.chileno;
-
-  /** Un interruptor con su explicación, como el del resto de la app. */
-  const interruptor = (encendido, label, hint, onChange) => {
-    const sw = el('button', {
-      type: 'button', class: 'switch' + (encendido ? ' on' : ''), 'aria-label': label, 'aria-pressed': String(encendido),
-      onClick: () => {
-        const v = !sw.classList.contains('on');
-        sw.classList.toggle('on', v); sw.setAttribute('aria-pressed', String(v));
-        SFX.tap(); onChange(v);
-      },
-    });
-    return el('div', { class: 'toggle-row' }, el('div', { class: 'txt' }, el('b', {}, label), el('small', {}, hint)), sw);
-  };
 
   const dibujar = () => {
     form.innerHTML = '';
@@ -523,6 +764,72 @@ function renderSetup(mode) {
   showScreen('screen-setup');
 }
 
+/**
+ * Crear una sala o entrar con un código. Quien llega por un enlace no ve "crear": solo puede
+ * entrar a esa sala (RP-18), así que el código llega escrito y no se toca.
+ */
+function renderSetupOnline(codigoInvitado = '') {
+  showScreen('screen-setup');
+  const invitado = !!codigoInvitado;
+  $('#screen-setup h2').textContent = invitado ? T.invitedTitle : T.setupOnline;
+  $('.setup-hint').textContent = invitado ? T.invitedHint : T.setupHint;
+  const form = $('#setup-form'); form.innerHTML = '';
+  const err = $('#setup-error'); err.textContent = '';
+  let nombre = nameStore.get() || '';
+  let calzar = DEFAULT_CONFIG.calzar, chileno = DEFAULT_CONFIG.chileno;
+
+  form.append(el('div', { class: 'player-row' },
+    el('div', { class: 'num' }, '👤'),
+    el('input', {
+      type: 'text', value: nombre, maxlength: 14, placeholder: T.yourNameLabel, autocomplete: 'off',
+      onInput: e => { nombre = e.target.value; },
+    }),
+  ));
+  // Los ajustes los pone quien crea la sala: al que entra le llegan con la partida
+  if (!invitado) {
+    form.append(interruptor(calzar, T.calzarLabel, T.calzarHint, v => { calzar = v; }));
+    if (lang === 'es') form.append(interruptor(chileno, CHILENO.label, CHILENO.hint, v => { chileno = v; }));
+  }
+
+  const fallar = msg => {
+    err.textContent = msg; err.classList.remove('shake'); void err.offsetWidth; err.classList.add('shake');
+    SFX.error(); vibrate([30, 30, 30]);
+  };
+  const acciones = $('#setup-actions'); acciones.innerHTML = '';
+  const codigo = el('input', {
+    type: 'text', class: 'code', maxlength: 4, placeholder: T.codePlaceholder, value: codigoInvitado,
+    autocapitalize: 'characters', autocomplete: 'off', readOnly: invitado,
+  });
+  const entrar = el('button', { class: 'btn btn--cyan', onClick: async () => {
+    const n = nombre.trim(), c = codigo.value.trim().toUpperCase();
+    if (!n) return fallar(T.errName);
+    if (!/^[A-Z]{4}$/.test(c)) return fallar(T.errCode);
+    nameStore.set(n); SFX.tap(); entrar.disabled = true;
+    try { await joinOnline(c, n); } catch (e) { failWith(e, T, fallar); }
+    entrar.disabled = false;
+  } }, T.join);
+
+  if (invitado) {
+    acciones.append(el('div', { class: 'panel' },
+      el('p', { class: 'lead', style: 'margin-bottom:8px' }, fmt(T.invited, { code: codigoInvitado })),
+      el('div', { class: 'field' }, codigo), entrar));
+  } else {
+    const crear = el('button', { class: 'btn btn--yellow', onClick: async () => {
+      const n = nombre.trim();
+      if (!n) return fallar(T.errName);
+      nameStore.set(n); SFX.tap(); crear.disabled = true;
+      try { await createOnline(n, { ...DEFAULT_CONFIG, calzar, chileno, players: null }); }
+      catch (e) { failWith(e, T, fallar); }
+      crear.disabled = false;
+    } }, T.create);
+    acciones.append(crear, el('div', { class: 'or' }, '— o —'),
+      el('div', { class: 'panel' },
+        el('p', { class: 'lead', style: 'margin-bottom:8px' }, T.joinTitle),
+        el('div', { class: 'field' }, codigo), entrar));
+  }
+  acciones.append(el('button', { class: 'btn btn--ghost btn--sm', onClick: () => { showScreen('screen-intro'); } }, T.menu));
+}
+
 /* ------------------------------------------------------------------ */
 /* Arranque                                                            */
 /* ------------------------------------------------------------------ */
@@ -538,6 +845,19 @@ function init() {
   renderRules();
   renderModes();
   renderResumeSlot();
+  const sala = new URLSearchParams(location.search).get('sala');
+  if (!sala || !/^[A-Z]{4}$/i.test(sala)) return;
+  const code = sala.toUpperCase();
+  const guardada = store.load();
+  // Recargar a mitad de partida vuelve a la misma sala sin volver a presentarse; llegar por un
+  // enlace ajeno es otra cosa: ahí se pide el nombre y no se ofrece crear otra sala (RP-18, C-6).
+  if (guardada && guardada.mode === 'online' && guardada.code === code && !guardada.done) {
+    joinOnline(code, guardada.name, guardada.role, guardada.private || {})
+      .catch(() => { store.clear(); renderSetupOnline(code); });
+  } else renderSetupOnline(code);
 }
 
 init();
+
+// Ventana al estado para las pruebas de punta a punta (tools/e2e/)
+window.__dudo = { view: () => (M ? view() : null), match: () => M, session: () => S };
