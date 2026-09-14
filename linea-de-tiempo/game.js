@@ -5,7 +5,7 @@
  * El estado se deriva de la semilla del mazo más las jugadas, así que no hacen falta respuestas.
  */
 import { $, $$, el, vibrate, sparkles, keepAwake, confetti, shareLink, canShare } from '../assets/js/ui.js';
-import { getLang, langToggle, applyStatic, COMMON } from '../assets/js/i18n.js';
+import { getLang, langToggle, applyStatic, COMMON, withLang } from '../assets/js/i18n.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { failWith } from '../assets/js/transport/errors.js';
 import { showHandoff, passBlock } from '../assets/js/handoff.js';
@@ -237,7 +237,8 @@ function renderLobby() {
   if (S.mode !== 'online' || !M) return;
   showScreen('screen-lobby');
   const box = $('#lobby-box'); box.innerHTML = '';
-  const url = `${location.origin}${location.pathname}?sala=${S.code}`;
+  // Con el idioma pegado: quien reciba la invitación abre la app como quien la mandó (D-74)
+  const url = withLang(`${location.origin}${location.pathname}?sala=${S.code}`);
   const joined = ROLES.filter(r => M.names[r]);
   const host = 'A';
   box.append(

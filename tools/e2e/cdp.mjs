@@ -27,7 +27,23 @@ export async function launch({ port, dir, out, width = 390, height = 844 }) {
     send, // CDP crudo, para lo que no tiene helper (por ejemplo cortarle la red a Firebase)
     evaluate: async expr => { const r = await send('Runtime.evaluate', { expression: expr, awaitPromise: true, returnByValue: true }); if (r.result?.exceptionDetails) throw new Error(r.result.exceptionDetails.text + ' ' + (r.result.exceptionDetails.exception?.description || '')); return r.result?.result?.value; },
     go: async (url, wait = 1800) => { await send('Page.navigate', { url }); await sleep(wait); },
-    shot: async name => { const r = await send('Page.captureScreenshot', { format: 'png' }); writeFileSync(`${out}/${name}.png`, Buffer.from(r.result.data, 'base64')); },
+    // Antes de disparar, esperar a que las animaciones de entrada se queden quietas: una
+    // captura sacada a mitad de un `pop` congela las filas a distintas escalas y en el README
+    // se ven desalineadas, como si el CSS estuviera malo (D-73). Las animaciones infinitas
+    // (burbujas, wiggle, shimmer) no se esperan nunca: no terminan.
+    quieto: async (tope = 1500) => api.evaluate(`(async()=>{
+      const finitas = () => document.getAnimations().filter(a => {
+        const t = a.effect && a.effect.getComputedTiming();
+        return a.playState === 'running' && t && t.iterations !== Infinity;
+      });
+      await Promise.race([
+        Promise.all(finitas().map(a => a.finished.catch(() => {}))),
+        new Promise(r => setTimeout(r, ${tope})),
+      ]);
+      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+      return 1;
+    })()`),
+    shot: async name => { await api.quieto(); const r = await send('Page.captureScreenshot', { format: 'png' }); writeFileSync(`${out}/${name}.png`, Buffer.from(r.result.data, 'base64')); },
     close: () => { ws.close(); chrome.kill(); },
   };
   // helpers del juego Toque y Fama

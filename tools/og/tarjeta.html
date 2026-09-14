@@ -51,8 +51,12 @@
   <div class="tarjeta" id="tarjeta"></div>
   <script type="module">
     import { GAMES } from '/assets/js/games.js';
+    import { COMMON, getLang } from '/assets/js/i18n.js';
 
     const id = new URLSearchParams(location.search).get('juego');
+    // El idioma se pide con ?lang= en la URL, pero se lee con getLang(): i18n.js lo aplica al
+    // cargar y saca el parámetro de la barra, así que para cuando corre esto ya no está (D-74).
+    const lang = getLang();
     const caja = document.getElementById('tarjeta');
     const el = (tag, clase, ...hijos) => {
       const n = document.createElement(tag);
@@ -60,6 +64,8 @@
       hijos.forEach(h => n.append(h));
       return n;
     };
+    // La misma frase que el pie de la tarjeta de cada juego, en los tres idiomas
+    const GRATIS = { es: 'Gratis y sin instalar', en: 'Free, no install', pt: 'De graça, sem instalar' };
     const pie = (izq) => {
       const p = el('div', 'pie');
       p.append(el('span', null, izq), el('span', 'dominio', 'juegosdesalon.cl'));
@@ -72,25 +78,25 @@
       caja.classList.add('juego');
       const texto = el('div');
       texto.append(
-        el('h1', 'nombre rainbow', g.name.es),
-        el('p', 'bajada', g.tagline.es),
+        el('h1', 'nombre rainbow', g.name[lang]),
+        el('p', 'bajada', g.tagline[lang]),
       );
       const chips = el('div', 'chips');
       chips.append(
-        el('span', 'chip2', `👥 ${g.players} jugadores`),
-        el('span', 'chip2', `⏱ ${g.duration} min`),
+        el('span', 'chip2', `👥 ${g.players} ${COMMON[lang].players}`),
+        el('span', 'chip2', `⏱ ${g.duration} ${COMMON[lang].minutes}`),
       );
       texto.append(chips);
-      caja.append(el('div', 'emoji', g.emoji), texto, pie('Gratis y sin instalar'));
+      caja.append(el('div', 'emoji', g.emoji), texto, pie(GRATIS[lang]));
     } else {
       caja.classList.add('menu');
       const fila = el('div', 'fila');
       GAMES.filter(g => g.available).forEach(g => fila.append(el('span', null, g.emoji)));
       caja.append(
         fila,
-        el('h1', 'titulo rainbow', 'Juegos de Salón'),
-        el('p', 'bajada', 'Juegos tradicionales llevados a tu celular para pasar el tiempo solo o con amigos'),
-        pie('Gratis y sin instalar'),
+        el('h1', 'titulo rainbow', COMMON[lang].appTitle),
+        el('p', 'bajada', COMMON[lang].appSub.replace(/\.$/, '')),
+        pie(GRATIS[lang]),
       );
     }
     document.fonts.ready.then(() => { document.body.dataset.listo = '1'; });

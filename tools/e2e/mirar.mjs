@@ -63,6 +63,21 @@ const CAMINOS = {
       `[...document.querySelectorAll('#actions .btn')].find(b=>/Dudo|Liar|Duvido/i.test(b.textContent))?.click()`,
     ],
   },
+  'cuarto-rey': {
+    intro: [],
+    jugadores: [`document.getElementById('btn-go-setup').click()`],
+    // Con seis filas se ve si la lista crece pareja y si la barra de abajo sigue alcanzando
+    'jugadores-6': [
+      `document.getElementById('btn-go-setup').click()`,
+      `document.getElementById('btn-add-player').click()`,
+      `document.getElementById('btn-add-player').click()`,
+    ],
+    mesa: [
+      `document.getElementById('btn-go-setup').click()`,
+      `[...document.querySelectorAll('#players-form input')].forEach((i,k)=>{i.value=['Javi','Cata','Pancho','Fran'][k];i.dispatchEvent(new Event('input',{bubbles:true}))})`,
+      `document.getElementById('btn-start').click()`,
+    ],
+  },
   ahorcado: {
     intro: [],
     configuracion: [`document.querySelectorAll('.mode')[0].click()`],
