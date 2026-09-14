@@ -32,7 +32,9 @@ const PORTADA = {
   ruta: '/',
   imagen: 'menu',
   titulo: 'Juegos de Salón 🎲',
-  descripcion: `${disponibles.length} juegos de salón para jugar con amigos en el celular: `
+  // Sin decir cuántos son: el número cambia cada vez que entra un juego, y una frase que
+  // envejece sola es peor que una que no cuenta nada. La lista sí se arma de games.js.
+  descripcion: 'Juegos tradicionales llevados a tu celular para pasar el tiempo solo o con amigos: '
     + disponibles.map(g => g.name.es).join(', ').replace(/, ([^,]*)$/, ' y $1')
     + '. Gratis, sin instalar y sin cuenta.',
   alt: 'Juegos de Salón: ' + disponibles.map(g => g.emoji).join(' '),

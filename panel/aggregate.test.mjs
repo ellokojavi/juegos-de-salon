@@ -77,8 +77,9 @@ assert.equal(vacio.partidas, 0);
 assert.deepEqual(vacio.byDay, [{ day: 20350, total: 0, online: 0, local: 0 }, { day: 20351, total: 0, online: 0, local: 0 }]);
 assert.equal(summarize(null, { from: 1, to: 1 }).partidas, 0);
 
-// Basura en la base no cuenta ni revienta
-const sucio = summarize({ 20341: { local: { x: { raro: { 1: 5 }, cpu: { 9: 'dos' } } }, rooms: { ZZZZ: null } } }, { from: 20341, to: 20341 });
+// Basura en la base no cuenta ni revienta. Basura es lo que no tiene forma de modo ni de
+// cuenta; un modo desconocido no es basura, es un modo que el panel todavía no conoce (C-16).
+const sucio = summarize({ 20341: { local: { x: { 'NO ES UN MODO': { 1: 5 }, cpu: { 9: 'dos' } } }, rooms: { ZZZZ: null } } }, { from: 20341, to: 20341 });
 assert.equal(sucio.partidas, 0);
 
 // Utilidades
