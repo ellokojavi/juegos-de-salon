@@ -84,6 +84,11 @@
       "red": false,
       "que": "duelo contra el celular y tres jugadores en un celular"
     },
+    "dudo-online": {
+      "archivo": "dudo-online.mjs",
+      "red": true,
+      "que": "sala de tres celulares"
+    },
     "ahorcado-online": {
       "archivo": "ahorcado-online.mjs",
       "red": true,
@@ -398,6 +403,20 @@
       "pie": "Pásale el celular",
       "guion": "dudo-local",
       "toma": "07-pase"
+    },
+    {
+      "seccion": "dudo",
+      "imagen": "docs/screenshots/dudo/08-sala.png",
+      "pie": "Sala con código y QR",
+      "guion": "dudo-online",
+      "toma": "online-01-sala"
+    },
+    {
+      "seccion": "dudo",
+      "imagen": "docs/screenshots/dudo/09-destape-verificado.png",
+      "pie": "Se destapa la mesa y se verifica",
+      "guion": "dudo-online",
+      "toma": "online-02-destape"
     },
     {
       "seccion": "dudo",

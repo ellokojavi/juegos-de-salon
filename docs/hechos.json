@@ -1,5 +1,5 @@
 {
-  "version": "0.30.1",
+  "version": "0.31.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -191,10 +191,11 @@
       "pantallas": [
         "intro",
         "setup",
+        "lobby",
         "play",
         "result"
       ],
-      "chat": false,
+      "chat": true,
       "archivos": [
         "dudo/engine.js",
         "dudo/game.js",
@@ -456,6 +457,7 @@
     "compartir-sala.mjs",
     "cuarto-rey.mjs",
     "dudo-local.mjs",
+    "dudo-online.mjs",
     "enlace-invitacion.mjs",
     "linea-de-tiempo-chat.mjs",
     "linea-de-tiempo-eleccion.mjs",
@@ -543,7 +545,7 @@
     "linea-de-tiempo": 11,
     "toque-y-fama": 9,
     "ahorcado": 9,
-    "dudo": 7,
+    "dudo": 9,
     "batalla-naval": 7,
     "cuarto-rey": 12
   }
