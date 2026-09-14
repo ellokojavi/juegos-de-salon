@@ -180,7 +180,11 @@ async function act() {
     S.botAt = M.plays.length;
     const mine = diceOf(v, 'B');
     if (!mine) return;
-    const jugada = botMove({ myDice: mine, bid: v.bid, totalDice: v.totalDice, canCalzar: v.canCalzar });
+    // Los dados que le quedan al rival: sin eso no sabe a quién apretar (ver docs/juegos/dudo.md)
+    const jugada = botMove({
+      myDice: mine, bid: v.bid, totalDice: v.totalDice, canCalzar: v.canCalzar,
+      rivales: v.alive.filter(r => r !== 'B').map(r => v.st[r].dice),
+    });
     setTimeout(() => {
       if (!S || S.mode !== 'cpu') return;
       const ahora = view();
@@ -455,7 +459,14 @@ function selloVerificado(last) {
 
 /* ---------- Final ---------- */
 function renderResult(v) {
+  const already = $('#screen-result').classList.contains('active');
   showScreen('screen-result');
+  // Quién ganó, para la lista de salas del panel del dueño (D-79). Solo en sala, y una sola
+  // vez: al volver a dibujar la misma pantalla no se repite. Mejor esfuerzo, como todo lo
+  // que va al panel: si no sale, la partida no se entera.
+  if (!already && S.mode === 'online') {
+    S.transport?.noteWinner?.({ role: v.winner, name: nameOf(v.winner) });
+  }
   const gane = S.mode === 'cpu' && v.winner === 'A';
   $('#result-trophy').textContent = S.mode === 'cpu' && !gane ? '🎲' : '🏆';
   $('#result-title').textContent = S.mode === 'cpu'
