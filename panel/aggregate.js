@@ -153,6 +153,69 @@ export function summarize(days, { from, to }) {
   return { partidas: online + local, online, local, devices, byGame, byPlayers, byDay, origin, lang, applang, hour, modes: modesOf(byGame) };
 }
 
+/**
+ * La bitácora de salas: una fila por sala registrada en el rango, de la más nueva a la más
+ * vieja (D-79). Sale de `stats/<env>/days/<día>/rooms`, así que ya viene separada por entorno:
+ * mirando producción no aparece ninguna sala de prueba, que corren todas en local (D-45).
+ *
+ * `soloJugadas` deja fuera las salas donde nunca entró un segundo jugador: alguien abrió una
+ * sala y no llegó nadie, y eso no es una partida. Es lo que se muestra por defecto.
+ *
+ * Lo que no se sabe se deja vacío y la lista muestra un guion: las salas jugadas antes de que
+ * esto existiera no tienen país ni ganador, y no hay de dónde sacarlos.
+ */
+export function roomLog(days, { from, to, soloJugadas = true } = {}) {
+  const filas = [];
+  for (let d = from; d <= to; d++) {
+    const bucket = (days || {})[String(d)] || {};
+    for (const [code, r] of Object.entries(bucket.rooms || {})) {
+      if (!r) continue;
+      const players = Object.entries(r.players || {})
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([role, name]) => ({ role, name: String(name || '?'), co: r.co?.[role] || '' }));
+      if (soloJugadas && players.length < 2) continue;
+      const fin = r.end || null;
+      const rol = fin && /^[A-F]$/.test(fin.winner || '') ? fin.winner : '';
+      filas.push({
+        code, day: d, at: Number(r.at) || d * DAY, game: r.game || '?', v: r.v || '',
+        players,
+        // Empate es un resultado, no un dato que falte: se distingue de la sala sin registro.
+        empate: !!fin && fin.winner === 'tie',
+        winner: rol,
+        winnerName: rol ? (fin.name || players.find(p => p.role === rol)?.name || rol) : '',
+      });
+    }
+  }
+  return filas.sort((a, b) => b.at - a.at || a.code.localeCompare(b.code));
+}
+
+/** Una página de la bitácora, y cuántas hay. `page` empieza en 1 y se acota a lo que existe. */
+export function paginate(filas, { page = 1, perPage = 20 } = {}) {
+  const total = filas.length;
+  const pages = Math.max(1, Math.ceil(total / perPage));
+  const actual = Math.min(Math.max(1, Math.round(page) || 1), pages);
+  const desde = (actual - 1) * perPage;
+  return { rows: filas.slice(desde, desde + perPage), page: actual, pages, total, desde };
+}
+
+/**
+ * La bandera de un país en dos letras: `CL` → 🇨🇱. Son los dos caracteres de indicador
+ * regional, que el sistema dibuja como bandera; si el país no se sabe, no va nada.
+ */
+export function flagOf(co) {
+  if (!/^[A-Za-z]{2}$/.test(co || '')) return '';
+  return String.fromCodePoint(...[...co.toUpperCase()].map(c => 0x1f1e6 + c.charCodeAt(0) - 65));
+}
+
+/** Día y hora de una sala, en la zona horaria de quien mira el panel. */
+export function whenLabel(ts) {
+  const d = new Date(ts);
+  const dia = d.toLocaleDateString('es-CL', { day: 'numeric', month: 'short' });
+  // 24 horas: "02:00 p. m." ocupa el doble y en una lista de veinte filas se lee peor
+  const hora = d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit', hour12: false });
+  return `${dia}, ${hora}`;
+}
+
 /** Pares [clave, valor] de mayor a menor, con tope. */
 export function top(obj, limit = 12) {
   return Object.entries(obj || {}).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).slice(0, limit);
