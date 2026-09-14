@@ -155,7 +155,8 @@ Cuando cada dispositivo guarda un secreto (un número, una flota):
 - Antes de publicar se prueba el juego de punta a punta en Chrome headless: partida completa en cada modo, con recarga a mitad de partida y revancha.
 - El modo de dos celulares se prueba con dos instancias del navegador, y al menos una vez contra la URL publicada.
 - Un cambio en un módulo compartido obliga a repetir la regresión de **todos** los juegos.
-- Se revisan capturas reales de cada pantalla, no solo el resultado de los asertos: los problemas de diseño se ven, no se afirman.
+- Se revisan capturas reales de cada pantalla, no solo el resultado de los asertos: los problemas de diseño se ven, no se afirman. Rehacerlas no es revisarlas: antes de publicar se mira la hoja de contacto (`node tools/e2e/contacto.mjs <seccion>`), que las pone juntas al tamaño del README (D-76).
+- Una captura se saca con la pantalla quieta. Congelada a media animación, una lista con entradas escalonadas se fotografía con las filas a distintos anchos y parece un error de CSS que no existe (D-76).
 - Consola sin errores es parte del criterio de aceptación.
 
 ## C-13 · Documentación
