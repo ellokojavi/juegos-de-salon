@@ -595,5 +595,8 @@ pantalla, o sea que el error nunca estuvo ahí. Los números que lo decidieron n
 prueba: los tenía el celular, y hubo que ir a buscarlos.
 **Consecuencias:** `mirar.mjs` agrega una línea al informe —"se arma con el alto chico (svh)"— que
 revisa la **regla**, no la medida, porque en Chrome headless `dvh` y `svh` valen lo mismo y una
-medida nunca vería la diferencia. `tools/diag/` se publica mientras se diagnostica y se borra
-después; es la única página del sitio que no es la app.
+medida nunca vería la diferencia. `tools/diag/` se publicó mientras duró el diagnóstico y se borró
+apenas el celular confirmó el arreglo: era la única página del sitio que no es la app. Si vuelve a
+hacer falta, está en la historia (`git show effd591:tools/diag/index.html`), y lo que mide —dvh,
+svh, lvh, la ventana, las muescas y cuánto se pasa la página— es la lista de lo que hay que ir a
+buscar al aparato cuando una pantalla se corta y en el escritorio se ve bien.
