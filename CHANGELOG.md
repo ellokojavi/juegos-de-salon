@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.33.7 — 2026-09-14
+- **Seis rangos en el panel** (D-80, RP-30): 7, 30, 60 y 90 días, **1 año** y **lo que va del año**.
+  El selector manda en toda la página, incluida la bitácora de salas.
+- **Se baja de la base solo lo que el rango pide**, y nunca menos de lo que ya estaba bajado: mirar
+  la semana no descarga un año, y volver de un año a la semana no descarga nada. Mientras llega, el
+  título dice "cargando…", porque un año a medio bajar se ve igual que un año sin partidas.
+- **La barra de "cuándo se juega" cambia de grano** según el rango: por día hasta 30, por semana
+  hasta 90 (con la fecha del lunes) y por mes de ahí en adelante. Un año en barras diarias son 365
+  barras de un píxel.
+- Hacia atrás hay lo que esté registrado: las salas viejas traen fecha, juego y jugadores desde la
+  v0.20; el país y el ganador, solo desde la 0.33.6.
+
+---
+
 ## 0.33.6 — 2026-09-14
 - **El panel muestra las salas jugadas** (D-79, RP-29). Al final de `/panel/` hay una lista del rango
   elegido arriba (7 o 30 días), de la más nueva a la más vieja y paginada de a 20: día y hora,
