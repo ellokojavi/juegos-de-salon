@@ -21,27 +21,35 @@
 
 /* ---------- Setup jugadores ---------- */
 .players-form { display: grid; gap: 10px; }
+/* Flex con `wrap` en vez de grilla fija: en un celular angosto (320 px) el nombre quedaba
+   reducido a dos letras para dejarle sitio al selector de género. Ahora, cuando no alcanza,
+   el selector se baja solo a una segunda línea y el nombre se queda con el ancho entero (C-8). */
 .player-row {
-  display: grid; grid-template-columns: 34px 1fr auto auto; gap: 8px; align-items: center;
+  display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
   background: var(--glass); border: 1px solid var(--glass-border); border-radius: 16px; padding: 8px 10px;
-  animation: pop 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.4) both;
 }
-.player-row .num { font-family: var(--font-display); font-size: 1.4rem; color: var(--yellow); text-align: center; }
+/* Entra sólo la fila recién agregada, y entra sin escalarse: un `pop` sobre una fila
+   de ancho completo la deja más ancha a media animación, y la lista se ve chueca. */
+.player-row.nueva { animation: rowIn 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
+@keyframes rowIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: none; } }
+.player-row .num { flex: none; width: 26px; font-family: var(--font-display); font-size: 1.4rem; color: var(--yellow); text-align: center; }
 .player-row input {
-  width: 100%; min-width: 0; font: 900 1.05rem var(--font-body); color: var(--ink);
+  flex: 1 1 150px; min-width: 0; font: 900 1.05rem var(--font-body); color: var(--ink);
   background: rgba(0, 0, 0, 0.25); border: 2px solid transparent; border-radius: 12px; padding: 12px 12px; outline: none;
 }
 .player-row input:focus { border-color: var(--cyan); }
 .player-row input::placeholder { color: rgba(255, 255, 255, 0.4); font-weight: 700; }
-.gender { display: flex; gap: 4px; background: rgba(0, 0, 0, 0.25); border-radius: 12px; padding: 4px; }
+.gender { flex: none; display: flex; gap: 4px; background: rgba(0, 0, 0, 0.25); border-radius: 12px; padding: 4px; }
 .gender button {
-  border: 0; background: transparent; color: var(--muted); font-size: 1.15rem; width: 36px; height: 36px; border-radius: 9px; cursor: pointer;
+  border: 0; background: transparent; color: var(--muted); font-size: 1.15rem; width: 40px; height: 44px; border-radius: 9px; cursor: pointer;
   transition: background 0.15s, transform 0.1s;
 }
 .gender button.on { background: var(--pink); color: #fff; transform: scale(1.05); }
 .gender button[data-g="f"].on { background: var(--purple); }
 .gender button[data-g="x"].on { background: var(--cyan); color: #03302c; }
-.player-row .del { border: 0; background: transparent; color: var(--muted); font-size: 1.3rem; width: 32px; height: 36px; cursor: pointer; }
+/* La ✕ es angosta para que le quede ancho al nombre; el área que se toca es de 44 px (C-8). */
+.player-row .del { flex: none; margin-left: auto; border: 0; background: transparent; color: var(--muted); font-size: 1.3rem; width: 32px; height: 44px; cursor: pointer; position: relative; }
+.player-row .del::after { content: ''; position: absolute; inset: 0 -6px; }
 .player-row .del:disabled { opacity: 0.2; }
 .setup-hint { font-size: 0.9rem; color: var(--muted); text-align: center; }
 .form-error { color: var(--yellow); font-weight: 800; text-align: center; min-height: 1.4em; }

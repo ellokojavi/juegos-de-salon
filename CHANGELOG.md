@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.33.0 — 2026-09-13
+- **El idioma puede venir en el link** (D-74). `juegosdesalon.cl/?lang=pt` abre la app en
+  portugués, y hay dos puertas de entrada para compartir sin parámetros a la vista:
+  **`juegosdesalon.cl/pt/`** y **`/en/`**. El idioma se aplica, se guarda como cualquier elección y
+  el parámetro se saca de la barra de direcciones: lo que circula sigue siendo la dirección de
+  siempre.
+- **La invitación a una sala lleva el idioma pegado.** Quien la recibe abre la app en el mismo
+  idioma en que se la mandaron —`/dudo/?sala=WFBN&lang=pt`—, sin tocar el toggle y sin que la sala
+  cambie en nada. Vale para los cinco juegos con sala, y también para el QR.
+- **Las dos puertas se comparten en su idioma**: `/pt/` y `/en/` llevan sus propias etiquetas Open
+  Graph y su propia imagen de 1200×630, así que pegar el link en un grupo de Brasil muestra la
+  tarjeta en portugués. Las tres portadas se anuncian entre sí con `hreflang`.
+- **Sigue sin detectarse nada del navegador** (D-47): entrar a juegosdesalon.cl sin haber elegido
+  nada es ver la app en español. Un `?lang=` que no sea es, en o pt se ignora en silencio.
+- Se eligieron rutas y no subdominios: `pt.juegosdesalon.cl` necesitaría otro destino de publicación
+  —GitHub Pages sirve un dominio por repositorio— o un proxy delante. Las carpetas cuestan dos
+  archivos y no tocan la infraestructura.
+
 ## 0.32.1 — 2026-09-13
 - **La bajada de Dudo en el menú**: *"Apuesta cuántos dados hay en la mesa sin poner caras
   sospechosas"*. Y de paso decía en qué se juega como si la sala no existiera —"en un celular o

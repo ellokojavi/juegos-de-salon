@@ -99,7 +99,10 @@ function enterSetup() {
   showScreen('screen-setup');
 }
 
-function renderPlayersForm() {
+// `recienAgregada` es el índice de la fila que acaba de sumar el jugador: la única que entra
+// animada. Redibujar la lista entera con todas animándose hacía saltar las cuatro filas cada
+// vez que se agregaba una.
+function renderPlayersForm(recienAgregada = -1) {
   const form = $('#players-form');
   form.innerHTML = '';
   draft.forEach((p, i) => {
@@ -116,7 +119,7 @@ function renderPlayersForm() {
     );
     const del = el('button', { class: 'del', type: 'button', 'aria-label': T.removePlayer, disabled: draft.length <= MIN_PLAYERS,
       onClick: () => { draft.splice(i, 1); renderPlayersForm(); } }, '✕');
-    form.append(el('div', { class: 'player-row', style: `animation-delay:${i * 40}ms` }, el('div', { class: 'num' }, i + 1), input, gender, del));
+    form.append(el('div', { class: i === recienAgregada ? 'player-row nueva' : 'player-row' }, el('div', { class: 'num' }, i + 1), input, gender, del));
   });
   $('#btn-add-player').disabled = draft.length >= MAX_PLAYERS;
   $('#btn-add-player').textContent = draft.length >= MAX_PLAYERS ? fmt(T.maxPlayers, { n: MAX_PLAYERS }) : T.addPlayer;
@@ -565,7 +568,7 @@ function init() {
   renderRulesList();
   renderResumeSlot();
   $('#btn-go-setup').addEventListener('click', enterSetup);
-  $('#btn-add-player').addEventListener('click', () => { if (draft.length < MAX_PLAYERS) { draft.push({ name: '', gender: 'm' }); renderPlayersForm(); setTimeout(() => $$('#players-form input').at(-1)?.focus(), 50); } });
+  $('#btn-add-player').addEventListener('click', () => { if (draft.length < MAX_PLAYERS) { draft.push({ name: '', gender: 'm' }); renderPlayersForm(draft.length - 1); setTimeout(() => $$('#players-form input').at(-1)?.focus(), 50); } });
   $('#btn-start').addEventListener('click', () => {
     const { error, players } = validateDraft();
     const err = $('#form-error');

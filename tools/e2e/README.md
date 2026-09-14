@@ -54,6 +54,7 @@ scroll horizontal o botones bajo 44 px (C-8).
 | `compartir-sala.mjs` | Botón de compartir: diálogo nativo si existe, copiar si no |
 | `enlace-invitacion.mjs` | Quien llega por un enlace solo puede unirse a esa sala, en los cuatro juegos con sala |
 | `sala-error.mjs` | Sin llegar a Firebase: el mensaje se ve en los cuatro juegos con sala y en los tres idiomas |
+| `idioma-por-url.mjs` | El idioma que viene en el link: `?lang=`, las puertas `/pt/` y `/en/`, y la invitación |
 | `sala-tope.mjs` | Pasado el tope de salas por celular, avisa al instante y sin tocar la red |
 
 ## De acá salen las capturas del README
