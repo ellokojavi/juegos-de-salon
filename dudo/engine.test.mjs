@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import {
   PINTAS, DICE_PER_PLAYER, rollDice, readDice, writeDice, countPinta,
-  minBid, bidOk, calzarOk, binomExact, binomAtLeast, credibility, botMove,
+  minBid, bidOk, calzarOk, MIN_CALZAR, binomExact, binomAtLeast, credibility, botMove,
   buildState, sha256, randomSalt, verifyOpen,
 } from './engine.js';
 
@@ -46,10 +46,12 @@ assert.ok(!bidOk(null, { n: 21, p: 5 }, 20), 'no se puede apostar más dados de 
 assert.ok(!bidOk(null, { n: 2, p: 7 }, 20), 'no existe la pinta 7');
 assert.ok(!bidOk(null, { n: 0, p: 5 }, 20), 'cero dados no es una apuesta');
 
-/* ---------- calzar solo desde la mitad de la mesa ---------- */
-assert.ok(!calzarOk({ n: 4, p: 5 }, 20), 'con 20 dados en la mesa, cuatro es muy poco');
-assert.ok(calzarOk({ n: 10, p: 5 }, 20), 'la mitad justa ya deja calzar');
-assert.ok(!calzarOk(null, 10), 'sin apuesta no hay nada que calzar');
+/* ---------- calzar: desde la mitad de la mesa y con tres jugadores (D-71) ---------- */
+assert.ok(!calzarOk({ n: 4, p: 5 }, 20, 4), 'con 20 dados en la mesa, cuatro es muy poco');
+assert.ok(calzarOk({ n: 10, p: 5 }, 20, 4), 'la mitad justa ya deja calzar');
+assert.ok(!calzarOk(null, 10, 4), 'sin apuesta no hay nada que calzar');
+assert.ok(!calzarOk({ n: 6, p: 5 }, 10, 2), 'en un duelo no se calza: solo hay una mano tapada');
+assert.ok(calzarOk({ n: 6, p: 5 }, 10, MIN_CALZAR), 'con tres ya se puede');
 
 /* ---------- probabilidad ---------- */
 assert.ok(Math.abs(binomExact(0, 5, 1 / 3) - Math.pow(2 / 3, 5)) < 1e-12);
@@ -135,19 +137,24 @@ const abrir = (a, b) => [{ t: 'open', from: 'A', d: a }, { t: 'open', from: 'B',
   assert.equal(s.last.loser, 'A', 'apostó más de los que había');
   assert.equal(s.st.A.dice, 4);
 }
+/* ---------- calzar, con la mesa de tres que la regla pide ---------- */
+const P3 = ['A', 'B', 'C'];
+const ronda3 = (a, b, c) => [
+  { t: 'roll', from: 'A', d: a }, { t: 'roll', from: 'B', d: b }, { t: 'roll', from: 'C', d: c },
+];
 {
-  // Calzar justo: A recupera… pero ya tiene cinco, así que el tope lo deja igual
+  // Diez cincos en la mesa (cinco de A, tres de B y sus dos ases). B calza justo y recupera…
+  // pero ya tiene cinco dados, así que el tope lo deja igual.
   const s = buildState({
-    players: P,
+    players: P3,
     plays: [
-      ...ronda('5,5,5,2,2', '5,5,3,3,3'),
-      { t: 'bid', from: 'A', n: 5, p: 5 },
+      ...ronda3('5,5,5,5,5', '5,5,5,1,1', '2,2,2,2,2'),
+      { t: 'bid', from: 'A', n: 10, p: 5 },
       { t: 'calza', from: 'B' },
-      ...abrir('5,5,5,2,2', '5,5,3,3,3'),
     ],
   });
-  assert.equal(s.last.count, 5);
-  assert.ok(s.last.exact, 'cinco cincos eran exactamente cinco');
+  assert.equal(s.last.count, 10);
+  assert.ok(s.last.exact, 'diez cincos eran exactamente diez');
   assert.equal(s.last.gainer, 'B');
   assert.equal(s.st.B.dice, 5, 'nadie pasa de cinco dados');
   assert.equal(s.opener, 'B', 'quien calza bien abre la ronda siguiente');
@@ -155,17 +162,40 @@ const abrir = (a, b) => [{ t: 'open', from: 'A', d: a }, { t: 'open', from: 'B',
 {
   // Calzar de más: se pierde el dado
   const s = buildState({
-    players: P,
+    players: P3,
     plays: [
-      ...ronda('5,5,5,2,2', '5,5,3,3,3'),
-      { t: 'bid', from: 'A', n: 6, p: 5 },
+      ...ronda3('5,5,5,5,5', '5,5,5,1,1', '2,2,2,2,2'),
+      { t: 'bid', from: 'A', n: 11, p: 5 },
       { t: 'calza', from: 'B' },
-      ...abrir('5,5,5,2,2', '5,5,3,3,3'),
     ],
   });
   assert.equal(s.last.gainer, null);
   assert.equal(s.last.loser, 'B');
   assert.equal(s.st.B.dice, 4);
+}
+{
+  // Empezar con tres y quedar en dos apaga el calzar (D-71). C duda cinco veces de una
+  // apuesta cierta —A y B tienen diez ases, que valen como cualquier pinta— y se queda sin dados.
+  const plays = [];
+  for (let i = 5; i >= 1; i--) {
+    const dadosC = '2,2,2,2,2'.split(',').slice(0, i).join(',');
+    plays.push({ t: 'roll', from: 'A', d: '1,1,1,1,1' }, { t: 'roll', from: 'B', d: '1,1,1,1,1' }, { t: 'roll', from: 'C', d: dadosC });
+    if (i < 5) plays.push({ t: 'bid', from: 'C', n: 1, p: 5 });
+    plays.push({ t: 'bid', from: 'A', n: 10, p: 5 }, { t: 'bid', from: 'B', n: 10, p: 6 }, { t: 'dudo', from: 'C' });
+  }
+  const fuera = buildState({ players: P3, plays });
+  assert.ok(fuera.st.C.out, 'C se quedó sin dados');
+  assert.deepEqual(fuera.alive, ['A', 'B']);
+  assert.equal(fuera.done, false, 'quedan dos: la partida sigue');
+
+  const duelo = buildState({
+    players: P3,
+    plays: [...plays,
+      { t: 'roll', from: 'A', d: '1,1,1,1,1' }, { t: 'roll', from: 'B', d: '1,1,1,1,1' },
+      { t: 'bid', from: 'A', n: 10, p: 5 }],
+  });
+  assert.equal(duelo.bid.n, 10, 'la apuesta pasa la mitad de la mesa');
+  assert.equal(duelo.canCalzar, false, 'pero ya son dos, así que no se puede calzar');
 }
 
 /* ---------- lo que se descarta (C-7) ---------- */
@@ -190,6 +220,13 @@ const abrir = (a, b) => [{ t: 'open', from: 'A', d: a }, { t: 'open', from: 'B',
     plays: [...base, { t: 'bid', from: 'A', n: 2, p: 5 }, { t: 'calza', from: 'B' }],
   });
   assert.equal(calzaTemprano.phase, 'bid', 'calzar antes de la mitad de la mesa no cuenta');
+
+  const duelo = buildState({
+    players: P,
+    plays: [...base, { t: 'bid', from: 'A', n: 6, p: 5 }, { t: 'calza', from: 'B' }],
+  });
+  assert.equal(duelo.canCalzar, false, 'en un duelo no se ofrece calzar');
+  assert.equal(duelo.phase, 'bid', 'y el mensaje se descarta aunque la apuesta pase la mitad');
 
   const dadosDeMas = buildState({ players: P, plays: [{ t: 'roll', from: 'A', d: '1,1,1,1,1,1' }] });
   assert.deepEqual(dadosDeMas.waiting, ['A', 'B'], 'seis dados cuando tocan cinco no es una tirada');
