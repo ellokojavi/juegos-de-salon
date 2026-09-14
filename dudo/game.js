@@ -7,7 +7,7 @@
  * escondérselos—; en la sala va el hash y se destapan al dudar, y ahí se verifican (C-10, D-70).
  */
 import { $, $$, el, vibrate, sparkles, keepAwake, confetti, shareLink, canShare } from '../assets/js/ui.js';
-import { getLang, langToggle, applyStatic, COMMON } from '../assets/js/i18n.js';
+import { getLang, langToggle, applyStatic, COMMON, withLang } from '../assets/js/i18n.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { showHandoff, passBlock } from '../assets/js/handoff.js';
 import { failWith } from '../assets/js/transport/errors.js';
@@ -507,7 +507,8 @@ function renderLobby() {
   showScreen('screen-lobby');
   if (chat) chat.show();
   const box = $('#lobby-box'); box.innerHTML = '';
-  const url = `${location.origin}${location.pathname}?sala=${S.code}`;
+  // Con el idioma pegado: quien reciba la invitación abre la app como quien la mandó (D-74)
+  const url = withLang(`${location.origin}${location.pathname}?sala=${S.code}`);
   const entraron = ROLES.filter(r => M.names[r]);
   box.append(
     el('div', { class: 'muted', style: 'font-weight:800' }, T.lobbyCode),

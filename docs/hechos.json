@@ -1,5 +1,5 @@
 {
-  "version": "0.32.0",
+  "version": "0.32.1",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -472,6 +472,7 @@
     "dudo-local.mjs",
     "dudo-online.mjs",
     "enlace-invitacion.mjs",
+    "idioma-por-url.mjs",
     "linea-de-tiempo-chat.mjs",
     "linea-de-tiempo-eleccion.mjs",
     "linea-de-tiempo-empate.mjs",
