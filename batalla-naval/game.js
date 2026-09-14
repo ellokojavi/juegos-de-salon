@@ -525,6 +525,12 @@ function shotResultStage(shot, nextName) {
 function renderResult(v) {
   const already = $('#screen-result').classList.contains('active');
   if (!already) showScreen('screen-result');
+  // Quién ganó, para la lista de salas del panel del dueño (D-79). Solo en sala, y una sola
+  // vez: al volver a dibujar la misma pantalla no se repite. Mejor esfuerzo, como todo lo
+  // que va al panel: si no sale, la partida no se entera.
+  if (!already && S.mode === 'online') {
+    S.transport?.noteWinner?.({ role: v.winner, name: M.names[v.winner] });
+  }
   const meRole = S.mode === 'cpu' ? 'A' : (S.mode === 'online' ? S.role : null);
   const title = $('#result-title'), sub = $('#result-sub'), trophy = $('#result-trophy');
   title.textContent = fmt(T.winTitle, { name: M.names[v.winner] });

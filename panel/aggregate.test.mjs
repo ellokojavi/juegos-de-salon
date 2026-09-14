@@ -1,6 +1,6 @@
 // Ejecutar: node panel/aggregate.test.mjs
 import assert from 'node:assert/strict';
-import { DAY, ROOM_TTL, liveRooms, connections, summarize, top, tzLabel, ago, dayLabel, codesOfDays, splitByEnv } from './aggregate.js';
+import { DAY, roomLog, paginate, flagOf, whenLabel, ROOM_TTL, liveRooms, connections, summarize, top, tzLabel, ago, dayLabel, codesOfDays, splitByEnv } from './aggregate.js';
 
 const now = 20342 * DAY + 15 * 60 * 60 * 1000; // día 20342, 15:00 UTC
 
@@ -122,5 +122,65 @@ assert.deepEqual(sinCargar.ajenas, []);
 const ninguna = splitByEnv(vivas, new Set(), { loaded: true });
 assert.deepEqual(ninguna.propias, []);
 assert.equal(ninguna.ajenas.length, 3);
+
+// ---------------------------------------------------------------- bitácora de salas (D-79)
+{
+  const d = 20342;
+  const dias = {
+    [d]: { rooms: {
+      ABCD: { game: 'dudo', at: d * DAY + 3 * 3600000, players: { A: 'Javi', B: 'Cata' }, co: { A: 'CL', B: 'BR' }, end: { winner: 'B', name: 'Cata', at: 1 } },
+      EFGH: { game: 'ahorcado', at: d * DAY + 5 * 3600000, players: { A: 'Solo' } },
+      IJKL: { game: 'toque-y-fama', at: d * DAY + 1 * 3600000, players: { A: 'Ana', B: 'Leo' }, end: { winner: 'tie', at: 1 } },
+      MNOP: { game: 'linea-de-tiempo', at: d * DAY + 2 * 3600000, players: { A: 'Vieja', B: 'Sala' } },
+    } },
+    [d - 1]: { rooms: { QRST: { game: 'dudo', at: (d - 1) * DAY, players: { A: 'Ayer', B: 'Otro' }, end: { winner: 'A', at: 1 } } } },
+  };
+
+  const filas = roomLog(dias, { from: d - 1, to: d });
+  assert.deepEqual(filas.map(f => f.code), ['ABCD', 'MNOP', 'IJKL', 'QRST'], 'de la más nueva a la más vieja');
+  assert.equal(filas.find(f => f.code === 'EFGH'), undefined, 'una sala donde no entró nadie más no es una partida');
+  assert.deepEqual(roomLog(dias, { from: d, to: d, soloJugadas: false }).map(f => f.code).sort(),
+    ['ABCD', 'EFGH', 'IJKL', 'MNOP'], 'pidiéndolas, esas salas sí salen');
+
+  const ganada = filas.find(f => f.code === 'ABCD');
+  assert.deepEqual(ganada.players, [{ role: 'A', name: 'Javi', co: 'CL' }, { role: 'B', name: 'Cata', co: 'BR' }]);
+  assert.equal(ganada.winnerName, 'Cata');
+  assert.equal(ganada.empate, false);
+
+  const empate = filas.find(f => f.code === 'IJKL');
+  assert.equal(empate.empate, true);
+  assert.equal(empate.winner, '', 'un empate no tiene ganador, y eso no es lo mismo que no saberlo');
+
+  const vieja = filas.find(f => f.code === 'MNOP');
+  assert.equal(vieja.empate, false);
+  assert.equal(vieja.winner, '', 'una sala de antes de que esto existiera queda sin ganador');
+  assert.deepEqual(vieja.players.map(p => p.co), ['', ''], 'y sin país');
+
+  // El nombre del ganador se resuelve del registro si no vino escrito
+  assert.equal(filas.find(f => f.code === 'QRST').winnerName, 'Ayer');
+
+  assert.deepEqual(roomLog({}, { from: d, to: d }), []);
+}
+
+// Paginado: se acota a lo que existe y nunca deja la lista en blanco
+{
+  const filas = Array.from({ length: 23 }, (_, i) => ({ code: String(i) }));
+  const p1 = paginate(filas, { page: 1, perPage: 20 });
+  assert.equal(p1.rows.length, 20); assert.equal(p1.pages, 2); assert.equal(p1.total, 23); assert.equal(p1.desde, 0);
+  const p2 = paginate(filas, { page: 2, perPage: 20 });
+  assert.equal(p2.rows.length, 3); assert.equal(p2.desde, 20);
+  assert.equal(paginate(filas, { page: 99, perPage: 20 }).page, 2, 'una página que no existe cae en la última');
+  assert.equal(paginate(filas, { page: 0, perPage: 20 }).page, 1);
+  assert.equal(paginate([], {}).pages, 1, 'sin filas sigue habiendo una página, vacía');
+}
+
+// Banderas y fecha
+{
+  assert.equal(flagOf('CL'), '🇨🇱');
+  assert.equal(flagOf('br'), '🇧🇷');
+  assert.equal(flagOf(''), '', 'sin país no va bandera: no se inventa una');
+  assert.equal(flagOf('XYZ'), '');
+  assert.match(whenLabel(Date.UTC(2026, 8, 14, 15, 30)), /\d{1,2}:\d{2}$/, 'termina en hora de 24');
+}
 
 console.log('aggregate.test.mjs: todo en verde');
