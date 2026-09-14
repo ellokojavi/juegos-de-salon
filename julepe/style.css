@@ -1,0 +1,207 @@
+/* Julepe — estilos propios. Lo compartido vive en assets/css/base.css. */
+
+.screen { display: none; flex-direction: column; flex: 1; }
+.screen.active { display: flex; animation: slideUp 0.3s ease-out both; }
+
+/* ---------- Intro ---------- */
+.intro-hero { text-align: center; padding: 6px 0 8px; }
+.intro-hero .icon { font-size: 4.2rem; display: block; animation: bounce 2.4s ease-in-out infinite; filter: drop-shadow(0 0 18px rgba(255, 210, 63, 0.6)); }
+.rules-list { margin: 10px 0 0; padding-left: 20px; display: grid; gap: 7px; }
+.rules-list li { color: var(--muted); font-weight: 700; line-height: 1.35; }
+.rules-list li b { color: var(--ink); }
+
+.modes { display: grid; gap: 10px; }
+.mode { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px; text-align: left; background: var(--glass); border: 2px solid var(--glass-border); border-radius: var(--radius); padding: 14px 16px; color: var(--ink); cursor: pointer; font-family: var(--font-body); transition: transform 0.1s; }
+.mode:active { transform: scale(0.98); }
+.mode:disabled { opacity: 0.55; cursor: not-allowed; }
+.mode b { font-family: var(--font-display); font-size: 1.4rem; letter-spacing: 0.04em; text-transform: uppercase; display: block; }
+.mode small { color: var(--muted); font-weight: 700; }
+.mode .go { font-family: var(--font-display); font-size: 2rem; color: var(--yellow); }
+.mode .soon { font-weight: 900; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); border: 1px solid var(--glass-border); border-radius: 999px; padding: 4px 8px; white-space: nowrap; }
+
+/* ---------- Configuración ---------- */
+#screen-setup > h2 { margin-bottom: 6px; }
+.setup-hint { color: var(--muted); font-weight: 700; text-align: center; margin: 0 0 12px; font-size: 0.9rem; }
+.player-row { display: grid; grid-template-columns: 28px 1fr auto; gap: 8px; align-items: center; background: rgba(0,0,0,0.25); border-radius: 14px; padding: 6px 10px; margin-bottom: 6px; }
+.player-row .num { font-family: var(--font-display); font-size: 1.2rem; color: var(--yellow); text-align: center; }
+.player-row input { background: transparent; border: 0; padding: 10px 0; color: var(--ink); font: 800 1rem var(--font-body); width: 100%; }
+.player-row .del { border: 0; background: transparent; color: var(--muted); font-size: 1.2rem; width: 32px; height: 36px; cursor: pointer; }
+.player-row.cpu .cpu-name { font-weight: 900; color: var(--cyan); padding: 10px 0; }
+.form-error { color: var(--yellow); font-weight: 800; text-align: center; min-height: 1.4em; margin: 6px 0; }
+.toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; background: rgba(0,0,0,0.25); border-radius: 14px; padding: 10px 14px; margin-top: 8px; }
+.toggle-row .txt b { display: block; font-size: 0.95rem; }
+.toggle-row .txt small { color: var(--muted); font-weight: 700; font-size: 0.76rem; line-height: 1.25; display: block; }
+.switch { flex: 0 0 auto; width: 58px; height: 34px; border-radius: 999px; border: 2px solid var(--glass-border); background: rgba(0,0,0,0.4); position: relative; cursor: pointer; padding: 0; }
+.switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: var(--muted); transition: transform 0.15s, background 0.15s; }
+.switch.on { background: rgba(255, 210, 63, 0.3); border-color: var(--yellow); }
+.switch.on::after { transform: translateX(24px); background: var(--yellow); }
+
+/* ---------- Sala (varios celulares) ---------- */
+#screen-lobby > h2 { margin-bottom: 12px; }
+.field { display: grid; gap: 6px; margin-bottom: 12px; }
+.field input { width: 100%; font: 900 1.1rem var(--font-body); color: var(--ink); background: rgba(0,0,0,0.3); border: 2px solid transparent; border-radius: 14px; padding: 12px 14px; outline: none; }
+.field input:focus { border-color: var(--cyan); }
+.field input::placeholder { color: rgba(255,255,255,0.35); }
+.field input.code { text-transform: uppercase; letter-spacing: 0.4em; text-align: center; font-family: var(--font-display); font-size: 2rem; }
+.or { text-align: center; color: var(--muted); font-weight: 900; margin: 6px 0; }
+.code-big { font-family: var(--font-display); font-size: clamp(3rem, 20vw, 5rem); letter-spacing: 0.25em; text-align: center; color: var(--yellow); text-shadow: 0 5px 0 rgba(0,0,0,0.4), 0 0 30px rgba(255, 210, 63, 0.6); margin: 2px 0; padding-left: 0.25em; }
+.qr { display: grid; place-items: center; margin: 8px auto; background: #fff; border-radius: 16px; padding: 8px; width: fit-content; }
+.qr svg { display: block; width: min(46vw, 190px); height: auto; }
+.lobby-players { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 10px 0; }
+.lobby-players .p { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; background: rgba(0,0,0,0.28); font-weight: 800; font-size: 0.9rem; animation: pop 0.3s cubic-bezier(0.2,0.9,0.3,1.4) both; }
+.lobby-players .p.me { background: var(--cyan); color: #03302c; }
+.lobby-players .p.off { opacity: 0.45; }
+.waiting { text-align: center; color: var(--muted); font-weight: 800; }
+.waiting::after { content: '…'; animation: dots 1.2s steps(4) infinite; }
+@keyframes dots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } }
+/* El sello de que nadie cambió sus dados al destaparlos (C-10) */
+.handoff .sello { font-weight: 900; font-size: 0.85rem; color: var(--lime); }
+.handoff .sello.mal { color: var(--pink); }
+
+/* ---------- La carta ---------- */
+/* Naipe claro sobre mesa oscura, como en la mesa de verdad. El número va en var(--font-num):
+   es una cifra que el jugador compara (C-1). */
+.pcard {
+  position: relative; flex: 0 0 auto;
+  /* Cinco naipes tienen que caber en una sola fila hasta en 320 px de ancho: en dos filas la
+     mano deja de leerse como una mano. Descontando lo que se llevan .app y .mine, en 320 px
+     quedan 272 para las cinco: 15vw con 4 px de hueco son 256 (C-8). */
+  width: clamp(38px, 15vw, 58px); aspect-ratio: 5 / 7;
+  border-radius: 9px; border: 0; padding: 4px 0;
+  background: var(--card); color: var(--card-ink);
+  display: grid; align-content: center; justify-items: center; gap: 0;
+  box-shadow: 0 3px 0 rgba(0,0,0,0.35), 0 4px 10px rgba(0,0,0,0.35);
+  font-family: var(--font-body); cursor: default; transition: transform 0.12s, box-shadow 0.12s, opacity 0.12s;
+}
+.pcard .r { font: 900 1.35rem var(--font-num); font-variant-numeric: tabular-nums; line-height: 1; }
+.pcard .s { font-size: 1.15rem; line-height: 1.1; }
+.pcard.red { color: var(--red); }
+.pcard--sm { width: clamp(34px, 13vw, 44px); }
+.pcard--sm .r { font-size: 1rem; }
+.pcard--sm .s { font-size: 0.85rem; }
+.pcard--xs { width: 28px; }
+.pcard--xs .r { font-size: 0.8rem; }
+.pcard--xs .s { font-size: 0.7rem; }
+/* Apagada: no se puede tirar (asistir, montar o fallar). Se ve, pero no se toca. */
+.pcard.off { opacity: 0.34; filter: grayscale(0.6); }
+.pcard.pick { cursor: pointer; }
+.pcard.pick:active { transform: translateY(2px); }
+.pcard.sel { transform: translateY(-12px); box-shadow: 0 0 0 3px var(--cyan), 0 8px 0 rgba(0,0,0,0.35), 0 10px 18px rgba(0,0,0,0.4); }
+/* La que se cambia se marca con una cruz, no solo con el borde: en una mesa con seis cartas
+   iguales el borde solo no dice qué va a pasar con ella. */
+.pcard.drop { transform: translateY(6px) rotate(-4deg); opacity: 0.75; box-shadow: 0 0 0 3px var(--pink), 0 4px 10px rgba(0,0,0,0.4); }
+.pcard.drop::after { content: '✕'; position: absolute; inset: 0; display: grid; place-items: center; font: 900 1.6rem var(--font-body); color: var(--pink); }
+.pcard.win { box-shadow: 0 0 0 3px var(--lime), 0 3px 0 rgba(0,0,0,0.35), 0 0 18px rgba(157,255,58,0.5); }
+.pcard.back { background: linear-gradient(135deg, var(--purple), var(--pink-deep)); color: rgba(255,255,255,0.85); }
+.pcard.back .s { font-size: 1.4rem; }
+.cards-row { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; }
+
+/* ---------- La mesa ---------- */
+.table-top { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 8px; margin-bottom: 8px; }
+.pot { display: grid; justify-items: center; gap: 0; background: rgba(0,0,0,0.3); border: 2px solid rgba(255,210,63,0.35); border-radius: 16px; padding: 6px 12px; }
+.pot .n { font: 900 1.9rem var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); line-height: 1; }
+.pot .l { font-size: 0.64rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+.pot.grande { animation: potPulse 1.8s ease-in-out infinite; }
+@keyframes potPulse { 0%, 100% { box-shadow: 0 0 0 rgba(255,210,63,0); } 50% { box-shadow: 0 0 22px rgba(255,210,63,0.55); } }
+.table-mid { text-align: center; }
+.table-mid .hand-n { font-weight: 900; font-size: 0.8rem; color: var(--muted); }
+.table-mid .dealer { font-size: 0.72rem; color: var(--muted); font-weight: 700; }
+.trump { display: grid; justify-items: center; gap: 2px; }
+.trump .l { font-size: 0.64rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+
+/* Los asientos: quién va, quién se pasó y cuántas bazas lleva cada uno */
+.seats { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; align-items: stretch; margin-bottom: 4px; }
+.seat { display: grid; gap: 1px; justify-items: center; min-width: 68px; padding: 5px 8px; border-radius: 12px; background: rgba(0,0,0,0.25); }
+.seat .n { font-weight: 900; font-size: 0.76rem; max-width: 12ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.seat .d { font-size: 0.64rem; font-weight: 800; color: var(--muted); }
+.seat .b { font: 900 0.72rem var(--font-num); color: var(--lime); letter-spacing: 0.08em; }
+.seat.turn { box-shadow: 0 0 0 2px var(--yellow), 0 0 14px rgba(255,210,63,0.45); }
+.seat.turn .n { color: var(--yellow); }
+.seat.fuera { opacity: 0.45; }
+.seat.va .d { color: var(--cyan); }
+.seat.obligado .d { color: var(--pink); }
+.seat .tragos { font-size: 0.62rem; font-weight: 800; color: var(--muted); }
+
+.status { text-align: center; margin: 4px 0 6px; }
+.status .who { font-family: var(--font-display); font-size: clamp(1.4rem, 6.5vw, 2rem); letter-spacing: 0.04em; text-shadow: 0 4px 0 rgba(0,0,0,0.35), 0 0 24px rgba(46, 230, 214, 0.5); }
+.status .sub { color: var(--muted); font-weight: 800; font-size: 0.85rem; min-height: 1.2em; }
+
+/* La baza en juego: las cartas que ya están sobre la mesa */
+.trick { margin: 8px 0 auto; display: grid; gap: 6px; justify-items: center; }
+.trick-cards { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.trick-one { display: grid; justify-items: center; gap: 3px; animation: pop 0.35s cubic-bezier(0.2,0.9,0.3,1.4) both; }
+.trick-one .who { font-size: 0.68rem; font-weight: 900; color: var(--muted); max-width: 9ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.trick-empty { color: var(--muted); font-weight: 700; font-size: 0.85rem; text-align: center; }
+
+.mine { margin-top: auto; background: rgba(0,0,0,0.25); border-radius: 18px; padding: 10px 6px; display: grid; gap: 8px; justify-items: center; }
+.mine-label { font-weight: 900; font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+.why { color: var(--muted); font-weight: 700; font-size: 0.74rem; text-align: center; line-height: 1.3; }
+
+/* La botonera va pegada abajo: la mano puede crecer y los botones no pueden quedar bajo el pliegue (C-8) */
+.actions-bar { position: sticky; bottom: 0; margin-top: 10px; padding: 10px 0 calc(6px + var(--safe-bottom)); display: grid; gap: 8px; background: linear-gradient(180deg, transparent, var(--bg1) 45%); }
+.pick-label { text-align: center; color: var(--muted); font-weight: 800; font-size: 0.85rem; margin: 0; }
+
+/* ---------- Repartir los tragos ---------- */
+.give-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: rgba(0,0,0,0.28); border-radius: 14px; padding: 8px 12px; }
+.give-row .n { font-weight: 900; font-size: 0.95rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.give-row .c { font: 900 1.2rem var(--font-num); color: var(--yellow); min-width: 2ch; text-align: center; }
+.give-pm { display: flex; gap: 8px; align-items: center; }
+.give-pm button { width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--glass-border); background: rgba(0,0,0,0.3); color: var(--ink); font: 900 1.4rem var(--font-body); cursor: pointer; }
+.give-pm button:disabled { opacity: 0.3; }
+
+/* ---------- Cierre de la mano ---------- */
+.handoff .julepe { font-family: var(--font-display); font-size: clamp(2.4rem, 13vw, 3.8rem); color: var(--pink); letter-spacing: 0.04em; text-shadow: 0 4px 0 rgba(0,0,0,0.4), 0 0 30px rgba(255,46,136,0.6); line-height: 1; }
+.handoff .safe { font-family: var(--font-display); font-size: clamp(1.8rem, 9vw, 2.6rem); color: var(--lime); letter-spacing: 0.04em; }
+.handoff .sips { font: 900 clamp(2rem, 11vw, 3rem) var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); line-height: 1; }
+.handoff .who-line { font-weight: 800; line-height: 1.35; }
+.hand-table { display: grid; gap: 5px; width: 100%; }
+.hand-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; background: rgba(0,0,0,0.3); border-radius: 12px; padding: 6px 10px; }
+.hand-row .n { font-weight: 900; font-size: 0.82rem; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hand-row .v { font-weight: 800; font-size: 0.78rem; color: var(--muted); white-space: nowrap; }
+.hand-row.perdio { box-shadow: inset 0 0 0 2px rgba(255,46,136,0.5); }
+.hand-row.perdio .v { color: var(--pink); }
+.hand-row.salvado .v { color: var(--lime); }
+.handoff .sello { font-weight: 900; font-size: 0.85rem; color: var(--lime); }
+.handoff .sello.mal { color: var(--pink); }
+.handoff .cards-row { gap: 4px; }
+.destape { display: grid; gap: 6px; width: 100%; }
+.destape .fila { display: grid; gap: 3px; justify-items: start; }
+.destape .fila .n { font-weight: 900; font-size: 0.74rem; color: var(--muted); }
+
+/* ---------- Final ---------- */
+.result-hero { text-align: center; padding: 2px 0 6px; }
+.result-hero .trophy { font-size: 4.2rem; display: block; animation: pop 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
+.board { display: grid; gap: 6px; }
+.board-row { display: grid; grid-template-columns: 24px 1fr auto; gap: 8px; align-items: center; background: rgba(0,0,0,0.25); border-radius: 12px; padding: 8px 10px; }
+.board-row .p { font: 900 0.9rem var(--font-num); color: var(--muted); text-align: center; }
+.board-row .n { font-weight: 900; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.board-row .s { font: 900 1.1rem var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); }
+.board-row .j { font-size: 0.72rem; font-weight: 800; color: var(--pink); white-space: nowrap; }
+.board-row.top { box-shadow: inset 0 0 0 2px rgba(157,255,58,0.6); }
+.board-row.top .s { color: var(--lime); }
+.replay { margin-top: 10px; padding: 12px 16px; }
+.replay summary { font-size: 1rem; }
+.hist { list-style: none; padding: 0; margin: 0; display: grid; gap: 5px; }
+.hist li { display: grid; grid-template-columns: 24px 1fr auto; gap: 8px; align-items: baseline; background: rgba(0,0,0,0.25); border-radius: 10px; padding: 6px 10px; font-size: 0.82rem; font-weight: 700; }
+.hist .r { font: 900 0.82rem var(--font-num); color: var(--muted); }
+.hist .q { color: var(--muted); }
+.hist .down { color: var(--pink); font-weight: 900; white-space: nowrap; }
+.hist .up { color: var(--lime); font-weight: 900; white-space: nowrap; }
+
+@media (prefers-reduced-motion: reduce) {
+  .pot.grande { animation: none; }
+  .trick-one { animation: none; }
+}
+
+/* Cuántas manos dura la partida */
+/* Columnas que se achican solas: con cinco opciones y "rivales" adentro, un grid de columnas
+   iguales se pasaba del ancho de la pantalla (C-8). */
+.largos { display: grid; grid-template-columns: repeat(auto-fit, minmax(44px, 1fr)); gap: 6px; margin-top: 8px; }
+.largos button { min-height: 48px; padding: 6px 4px; border-radius: 12px; border: 2px solid transparent; background: rgba(0,0,0,0.25); color: var(--ink); font: 900 1.15rem var(--font-num); font-variant-numeric: tabular-nums; cursor: pointer; }
+.largos button.on { border-color: var(--cyan); background: rgba(46,230,214,0.18); color: var(--cyan); }
+
+/* Con el chat en pantalla, la burbuja flota abajo a la derecha, justo encima del botón que
+   confirma la jugada. Se le deja aire a la botonera y se sube la burbuja mientras haya
+   cartas que tirar, que es cuando esa esquina es del juego (C-15, C-8). */
+body.chat-on #screen-play, body.chat-on #screen-lobby, body.chat-on #screen-result { padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)); }
+body:has(#screen-play.active) .chat-fab { bottom: calc(112px + env(safe-area-inset-bottom, 0px)); }

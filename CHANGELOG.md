@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.34.0 — 2026-09-14
+- **Séptimo juego: Julepe** 🍹 (JU-01 a JU-15). Juego de bazas de la familia del Tute, adaptado a
+  tragos: dices si vas o te pasas, y si vas y no haces dos bazas de las cinco te tomas el plato
+  entero. Lo que se bebió vuelve al plato, así que dos julepes seguidos lo dejan en veinte.
+  En inglés se llama **Julep** y en portugués **Paga o Bolo** (D-84).
+- **Los tres modos**: un celular de 2 a 6 pasándoselo, sala de varios celulares con código y QR, y
+  mesa de tres contra dos rivales del aparato.
+- **En la sala, el reparto viaja cerrado** (D-81): cada celular publica una llave pública al entrar
+  y quien reparte le cierra la mano a cada uno. Nadie más la puede abrir, ni mirando la sala desde
+  la consola. Al terminar la mano todos destapan y se verifica que nadie jugó una carta que no
+  tenía: "Cartas verificadas ✅" (C-10).
+- **La reserva** (D-82): a cada jugador le tocan tres cartas tapadas para el cambio, así que las
+  cartas nuevas también son secretas, y el cambio viaja por puestos y no por nombre de carta.
+- **Si va uno solo, el dador se queda obligado** (D-83): repartir también arriesga.
+- La app apaga las cartas que no se pueden tirar y dice por qué: asistir, montar o fallar. Nadie
+  descubre una regla equivocándose.
+- Módulo nuevo `assets/js/sobre.js`, compartido: sobres cerrados para cualquier juego con cartas.
+
+---
+
 ## 0.33.7 — 2026-09-14
 - **Seis rangos en el panel** (D-80, RP-30): 7, 30, 60 y 90 días, **1 año** y **lo que va del año**.
   El selector manda en toda la página, incluida la bitácora de salas.
