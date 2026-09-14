@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.29.1 — 2026-09-13
+- **El "¿Cómo se juega?" de Dudo se lee mejor.** Los siete pasos van en frases derechas, sin guiones
+  largos partiendo las frases al medio: "El que sigue sube la apuesta: más cantidad, o la misma
+  cantidad con pinta mayor, o bien dice «dudo»". Cada jugador **recibe** los dados en vez de tirarlos
+  —que es lo que hace la app—, calzar dice cuántos jugadores hacen falta en vez de mandar a contar
+  la mesa, y el final nombra lo que hay que mirar: gana el último jugador con dados **en su mano**.
+  Mismos cambios en inglés y portugués.
+
 ## 0.29.0 — 2026-09-13
 - **En español, Dudo se dice en chileno**: ases, tontos, trenes, cuadras, quintas y sextas (D-71).
   Es como se juega acá —"cuatro quintas", no "cuatro cincos"— y viene encendido. Los nombres salen
