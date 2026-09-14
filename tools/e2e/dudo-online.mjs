@@ -92,6 +92,15 @@ while (vueltas++ < 80) {
 const fin = await estado(A);
 console.log('partida →', JSON.stringify({ done: fin.done, winner: fin.winner, rondas: fin.round, destapes, verificados }));
 
+/* ---------------- El aviso del ganador al panel (D-79) ---------------- */
+// Se espía el transporte, que es hasta donde llega el juego: que la base acepte el campo
+// depende de las reglas, que se publican a mano en la consola. Lo que esta prueba cuida es
+// que el juego avise, que avise una sola vez y que nombre al que ganó.
+for (const dev of Object.values(devs)) {
+  await dev.evaluate(`(()=>{const t=window.__dudo.session().transport;window.__ganador=[];
+    const orig=t.noteWinner.bind(t);t.noteWinner=x=>{window.__ganador.push(x||{});return orig(x)};return 1})()`);
+}
+
 /* ---------------- Hasta el final ---------------- */
 let g2 = 0;
 while (g2++ < 160) {
@@ -105,6 +114,12 @@ while (g2++ < 160) {
 }
 const s3 = await estado(A);
 console.log('final →', JSON.stringify({ done: s3.done, winner: s3.winner, pantalla: await pantalla(A) }));
+{
+  const avisos = JSON.parse(await A.evaluate(`JSON.stringify(window.__ganador || [])`));
+  const bien = avisos.length === 1 && avisos[0]?.role === s3.winner;
+  console.log('aviso del ganador al panel (D-79) →', JSON.stringify(avisos),
+    bien ? '· una sola vez y es el que ganó' : '⚠️  no calza con el ganador');
+}
 if (s3.done) await A.shot('online-03-resultado');
 
 /* ---------------- Revancha: sala nueva y todos adentro ---------------- */
