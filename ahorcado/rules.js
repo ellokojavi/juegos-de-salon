@@ -55,7 +55,7 @@ const ES = {
   // sala
   lobbyTitle: 'Sala creada', lobbyCode: 'Código', lobbyShare: 'Dile el código al resto o que escaneen el QR.',
   lobbyPlayers: 'En la sala', lobbyStart: '¡Empezar!', lobbyNeedMore: 'Faltan jugadores…', lobbyWaitHost: 'Esperando a que {name} empiece…',
-  shareLink: '📤 Compartir link', shareText: 'Únete a mi sala de {game}. Temática: {theme}. Código: {code}', copyLink: '📋 Copiar link', copied: '¡Copiado!',
+  shareLink: '📤 Compartir link', copyLink: '📋 Copiar link', copied: '¡Copiado!',
   lobbyCancel: 'Cancelar la sala', lobbyLeave: 'Salir de la sala',
   invitedTitle: '¡Invitado a jugar!', invited: '📩 Sala {code}', invitedHint: 'Escribe tu nombre y entra. La partida la configura quien te invitó.',
   // escribir la palabra
@@ -120,7 +120,7 @@ const EN = {
   errTooMany: 'You opened a lot of rooms in a row. Wait a bit and try again.',
   lobbyTitle: 'Room created', lobbyCode: 'Code', lobbyShare: 'Tell the others the code or let them scan the QR.',
   lobbyPlayers: 'In the room', lobbyStart: 'Start!', lobbyNeedMore: 'Waiting for players…', lobbyWaitHost: 'Waiting for {name} to start…',
-  shareLink: '📤 Share link', shareText: 'Join my {game} room. Theme: {theme}. Code: {code}', copyLink: '📋 Copy link', copied: 'Copied!',
+  shareLink: '📤 Share link', copyLink: '📋 Copy link', copied: 'Copied!',
   lobbyCancel: 'Cancel the room', lobbyLeave: 'Leave the room',
   invitedTitle: 'You are invited!', invited: '📩 Room {code}', invitedHint: 'Type your name and come in. Whoever invited you sets the game up.',
   wordTitle: 'A word for {name}', wordHint: '3 to 14 letters. A short phrase works too: spaces come free.',
@@ -179,7 +179,7 @@ const PT = {
   errTooMany: 'Você abriu muitas salas seguidas. Espera um pouquinho e tenta de novo.',
   lobbyTitle: 'Sala criada', lobbyCode: 'Código', lobbyShare: 'Passe o código para o resto ou deixe escanear o QR.',
   lobbyPlayers: 'Na sala', lobbyStart: 'Começar!', lobbyNeedMore: 'Faltam jogadores…', lobbyWaitHost: 'Esperando {name} começar…',
-  shareLink: '📤 Compartilhar link', shareText: 'Entra na minha sala de {game}. Tema: {theme}. Código: {code}', copyLink: '📋 Copiar link', copied: 'Copiado!',
+  shareLink: '📤 Compartilhar link', copyLink: '📋 Copiar link', copied: 'Copiado!',
   lobbyCancel: 'Cancelar a sala', lobbyLeave: 'Sair da sala',
   invitedTitle: 'Você foi convidado!', invited: '📩 Sala {code}', invitedHint: 'Escreve seu nome e entra. Quem te convidou é que configura a partida.',
   wordTitle: 'Uma palavra para {name}', wordHint: 'De 3 a 14 letras. Uma frase curta também vale: os espaços são de graça.',

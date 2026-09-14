@@ -5,7 +5,7 @@
  * Cada dispositivo responde los disparos contra SU flota.
  */
 import { $, $$, el, vibrate, sparkles, keepAwake, confetti, shareLink, canShare } from '../assets/js/ui.js';
-import { getLang, langToggle, applyStatic } from '../assets/js/i18n.js';
+import { getLang, langToggle, applyStatic, COMMON } from '../assets/js/i18n.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { failWith } from '../assets/js/transport/errors.js';
 import { showHandoff, passBlock, showCover } from '../assets/js/handoff.js';
@@ -266,11 +266,20 @@ function renderLobby() {
 }
 
 /** Botón de compartir: diálogo nativo del sistema si existe; si no, copia el enlace. */
+/**
+ * "Javi te invita a jugar X en juegosdesalon.cl - Sala: WFBN". Nombra a quien toca compartir,
+ * que es quien está invitando; el resto —de qué se trata el juego, para cuántos, cuánto dura—
+ * lo pone la tarjeta que el chat arma sola con el link (D-72).
+ */
+function textoInvitacion() {
+  return fmt(COMMON[lang].invite, { name: M.names[S.role] || '', game: T.title, code: S.code });
+}
+
 function shareButton(url) {
   const btn = el('button', { class: 'btn btn--cyan btn--sm', style: 'width:100%;max-width:320px' }, canShare() ? T.shareLink : T.copyLink);
   btn.addEventListener('click', async () => {
     SFX.tap();
-    const r = await shareLink({ title: T.title, text: fmt(T.shareText, { game: T.title, code: S.code }), url });
+    const r = await shareLink({ title: T.title, text: textoInvitacion(), url });
     if (r === 'copied') { btn.textContent = T.copied; setTimeout(() => { btn.textContent = canShare() ? T.shareLink : T.copyLink; }, 2000); }
   });
   return btn;
