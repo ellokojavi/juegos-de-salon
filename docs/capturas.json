@@ -5,6 +5,8 @@
     "saca, así `python3 tools/readme.py capturas` las rehace todas sin que nadie",
     "tenga que acordarse de la secuencia de toques. El pie es el texto que va",
     "debajo de la imagen en el README; las galerías se generan desde acá.",
+    "El pie va en inglés, porque el README es en inglés (D-78); el resto de este",
+    "catálogo, como el resto de la documentación, va en español.",
     "Al agregar una pantalla al README: sumar la toma al guion, la entrada acá,",
     "correr `capturas` y después `actualizar`."
   ],
@@ -99,406 +101,406 @@
     {
       "seccion": "portada",
       "imagen": "docs/screenshots/menu.png",
-      "pie": "Menú principal",
+      "pie": "Main menu",
       "guion": "versionado",
       "toma": "menu"
     },
     {
       "seccion": "cuarto-rey",
       "imagen": "docs/screenshots/cuarto-rey/02-intro.png",
-      "pie": "Intro y reglas",
+      "pie": "Intro and rules",
       "guion": "cuarto-rey",
       "toma": "02-intro"
     },
     {
       "seccion": "cuarto-rey",
       "imagen": "docs/screenshots/cuarto-rey/03-jugadores.png",
-      "pie": "Jugadores y género",
+      "pie": "Players and gender",
       "guion": "cuarto-rey",
       "toma": "03-jugadores"
     },
     {
       "seccion": "cuarto-rey",
       "imagen": "docs/screenshots/cuarto-rey/04-mesa.png",
-      "pie": "Toca para sacar carta",
+      "pie": "Tap to draw a card",
       "guion": "cuarto-rey",
       "toma": "04-mesa"
     },
     {
       "seccion": "cuarto-rey",
       "imagen": "docs/screenshots/cuarto-rey/05-carta.png",
-      "pie": "Carta e instrucción",
+      "pie": "Card and instruction",
       "guion": "cuarto-rey",
       "toma": "05-carta"
     },
     {
       "seccion": "cuarto-rey",
       "imagen": "docs/screenshots/cuarto-rey/06-minijuego.png",
-      "pie": "Mini-juego con ayudas",
+      "pie": "Mini-game with prompts",
       "guion": "cuarto-rey",
       "toma": "06-minijuego"
     },
     {
       "seccion": "cuarto-rey",
       "imagen": "docs/screenshots/cuarto-rey/07-salud.png",
-      "pie": "¡Salud!",
+      "pie": "Cheers!",
       "guion": "cuarto-rey",
       "toma": "07-salud"
     },
     {
       "seccion": "cuarto-rey",
       "imagen": "docs/screenshots/cuarto-rey/08-pasale.png",
-      "pie": "Pásale el celular",
+      "pie": "Pass the phone",
       "guion": "cuarto-rey",
       "toma": "08-pasale"
     },
     {
       "seccion": "cuarto-rey",
       "imagen": "docs/screenshots/cuarto-rey/09-cuarto-rey.png",
-      "pie": "¡Cuarto Rey!",
+      "pie": "Fourth King!",
       "guion": "cuarto-rey",
       "toma": "09-cuarto-rey"
     },
     {
       "seccion": "cuarto-rey",
       "imagen": "docs/screenshots/cuarto-rey/10-final.png",
-      "pie": "Ranking de sorbos",
+      "pie": "Sip ranking",
       "guion": "cuarto-rey",
       "toma": "10-final"
     },
     {
       "seccion": "cuarto-rey",
       "imagen": "docs/screenshots/cuarto-rey/13-historial.png",
-      "pie": "Las cartas que salieron",
+      "pie": "Every card that came up",
       "guion": "cuarto-rey",
       "toma": "13-historial"
     },
     {
       "seccion": "toque-y-fama",
       "imagen": "docs/screenshots/toque-y-fama/01-intro.png",
-      "pie": "Modos de juego",
+      "pie": "Game modes",
       "guion": "toque-y-fama-local",
       "toma": "01-intro"
     },
     {
       "seccion": "toque-y-fama",
       "imagen": "docs/screenshots/toque-y-fama/02-secreto.png",
-      "pie": "Número secreto",
+      "pie": "Secret number",
       "guion": "toque-y-fama-local",
       "toma": "04-secret-A"
     },
     {
       "seccion": "toque-y-fama",
       "imagen": "docs/screenshots/toque-y-fama/03-tablero.png",
-      "pie": "Tablero y teclado",
+      "pie": "Board and keypad",
       "guion": "toque-y-fama-local",
       "toma": "07-play-first"
     },
     {
       "seccion": "toque-y-fama",
       "imagen": "docs/screenshots/toque-y-fama/04-pasale.png",
-      "pie": "La respuesta y el pase, en una pantalla",
+      "pie": "Answer and handoff on one screen",
       "guion": "toque-y-fama-local",
       "toma": "08-respuesta-y-pase"
     },
     {
       "seccion": "toque-y-fama",
       "imagen": "docs/screenshots/toque-y-fama/06-sala.png",
-      "pie": "Sala con código y QR",
+      "pie": "Room with code and QR",
       "guion": "toque-y-fama-online",
       "toma": "21-lobby-A"
     },
     {
       "seccion": "toque-y-fama",
       "imagen": "docs/screenshots/toque-y-fama/07-dos-celulares.png",
-      "pie": "Partida en dos celulares",
+      "pie": "Game on two phones",
       "guion": "toque-y-fama-online",
       "toma": "25-play-A"
     },
     {
       "seccion": "toque-y-fama",
       "imagen": "docs/screenshots/toque-y-fama/08-verificado.png",
-      "pie": "Secretos verificados",
+      "pie": "Verified secrets",
       "guion": "toque-y-fama-online",
       "toma": "27-result-A"
     },
     {
       "seccion": "toque-y-fama",
       "imagen": "docs/screenshots/toque-y-fama/05-resultado.png",
-      "pie": "Contra el celular",
+      "pie": "Versus the phone",
       "guion": "toque-y-fama-local",
       "toma": "12-cpu-result"
     },
     {
       "seccion": "toque-y-fama",
       "imagen": "docs/screenshots/toque-y-fama/09-chat.png",
-      "pie": "Chat de la sala",
+      "pie": "Room chat",
       "guion": "toque-y-fama-chat",
       "toma": "tyf-chat-03-partida"
     },
     {
       "seccion": "batalla-naval",
       "imagen": "docs/screenshots/batalla-naval/01-intro.png",
-      "pie": "Modos de juego",
+      "pie": "Game modes",
       "guion": "batalla-naval-local",
       "toma": "01-intro"
     },
     {
       "seccion": "batalla-naval",
       "imagen": "docs/screenshots/batalla-naval/02-flota.png",
-      "pie": "Colocar la flota",
+      "pie": "Placing the fleet",
       "guion": "batalla-naval-local",
       "toma": "06-place-full"
     },
     {
       "seccion": "batalla-naval",
       "imagen": "docs/screenshots/batalla-naval/03-batalla.png",
-      "pie": "Batalla",
+      "pie": "Battle",
       "guion": "batalla-naval-local",
       "toma": "09-play"
     },
     {
       "seccion": "batalla-naval",
       "imagen": "docs/screenshots/batalla-naval/04-pase.png",
-      "pie": "Resultado y pase",
+      "pie": "Result and handoff",
       "guion": "batalla-naval-local",
       "toma": "10-result-pass"
     },
     {
       "seccion": "batalla-naval",
       "imagen": "docs/screenshots/batalla-naval/06-sala.png",
-      "pie": "Sala con código y QR",
+      "pie": "Room with code and QR",
       "guion": "batalla-naval-online",
       "toma": "21-lobby"
     },
     {
       "seccion": "batalla-naval",
       "imagen": "docs/screenshots/batalla-naval/07-dos-celulares.png",
-      "pie": "Partida en dos celulares",
+      "pie": "Game on two phones",
       "guion": "batalla-naval-online",
       "toma": "23-play-A"
     },
     {
       "seccion": "batalla-naval",
       "imagen": "docs/screenshots/batalla-naval/05-resultado.png",
-      "pie": "Resultado con flotas",
+      "pie": "Result with both fleets",
       "guion": "batalla-naval-local",
       "toma": "14-cpu-result"
     },
     {
       "seccion": "linea-de-tiempo",
       "imagen": "docs/screenshots/linea-de-tiempo/01-intro.png",
-      "pie": "Modos de juego",
+      "pie": "Game modes",
       "guion": "linea-de-tiempo-local",
       "toma": "01-intro"
     },
     {
       "seccion": "linea-de-tiempo",
       "imagen": "docs/screenshots/linea-de-tiempo/02-tematica.png",
-      "pie": "Temática y jugadores",
+      "pie": "Theme and players",
       "guion": "linea-de-tiempo-local",
       "toma": "02-setup"
     },
     {
       "seccion": "linea-de-tiempo",
       "imagen": "docs/screenshots/linea-de-tiempo/03-juego.png",
-      "pie": "Mano y línea de tiempo",
+      "pie": "Hand and timeline",
       "guion": "linea-de-tiempo-local",
       "toma": "03-play"
     },
     {
       "seccion": "linea-de-tiempo",
       "imagen": "docs/screenshots/linea-de-tiempo/04-veredicto.png",
-      "pie": "Veredicto y pase",
+      "pie": "Verdict and handoff",
       "guion": "linea-de-tiempo-local",
       "toma": "04-verdict"
     },
     {
       "seccion": "linea-de-tiempo",
       "imagen": "docs/screenshots/linea-de-tiempo/06-sala.png",
-      "pie": "Sala con código y QR",
+      "pie": "Room with code and QR",
       "guion": "linea-de-tiempo-online",
       "toma": "01-lobby-A"
     },
     {
       "seccion": "linea-de-tiempo",
       "imagen": "docs/screenshots/linea-de-tiempo/07-varios-celulares.png",
-      "pie": "Partida en varios celulares",
+      "pie": "Game on several phones",
       "guion": "linea-de-tiempo-online",
       "toma": "03-play-A"
     },
     {
       "seccion": "linea-de-tiempo",
       "imagen": "docs/screenshots/linea-de-tiempo/05-resultado.png",
-      "pie": "Resultado y ranking",
+      "pie": "Result and ranking",
       "guion": "linea-de-tiempo-local",
       "toma": "06-result"
     },
     {
       "seccion": "linea-de-tiempo",
       "imagen": "docs/screenshots/linea-de-tiempo/08-chat.png",
-      "pie": "Chat de la sala",
+      "pie": "Room chat",
       "guion": "linea-de-tiempo-chat",
       "toma": "chat-03-abierto"
     },
     {
       "seccion": "linea-de-tiempo",
       "imagen": "docs/screenshots/linea-de-tiempo/09-chat-aviso.png",
-      "pie": "Aviso de mensaje nuevo",
+      "pie": "New message label",
       "guion": "linea-de-tiempo-chat",
       "toma": "chat-04b-etiqueta"
     },
     {
       "seccion": "linea-de-tiempo",
       "imagen": "docs/screenshots/linea-de-tiempo/10-pozo-comun.png",
-      "pie": "Pozo común",
+      "pie": "Shared pool",
       "guion": "linea-de-tiempo-pozo",
       "toma": "pozo-03-mesa"
     },
     {
       "seccion": "linea-de-tiempo",
       "imagen": "docs/screenshots/linea-de-tiempo/11-todas-a-la-vista.png",
-      "pie": "Todas a la vista",
+      "pie": "All cards on the table",
       "guion": "linea-de-tiempo-mesa",
       "toma": "mesa-02-mesa-completa"
     },
     {
       "seccion": "dudo",
       "imagen": "docs/screenshots/dudo/01-intro.png",
-      "pie": "Modos de juego",
+      "pie": "Game modes",
       "guion": "dudo-local",
       "toma": "01-intro"
     },
     {
       "seccion": "dudo",
       "imagen": "docs/screenshots/dudo/02-configuracion.png",
-      "pie": "Quiénes juegan y si se puede calzar",
+      "pie": "Who plays and whether calzar is on",
       "guion": "dudo-local",
       "toma": "02-configuracion"
     },
     {
       "seccion": "dudo",
       "imagen": "docs/screenshots/dudo/03-mesa.png",
-      "pie": "Tus dados y la mesa",
+      "pie": "Your dice and the table",
       "guion": "dudo-local",
       "toma": "03-mesa"
     },
     {
       "seccion": "dudo",
       "imagen": "docs/screenshots/dudo/04-apuesta.png",
-      "pie": "Elegir pinta y cantidad",
+      "pie": "Pick face and count",
       "guion": "dudo-local",
       "toma": "04-apuesta"
     },
     {
       "seccion": "dudo",
       "imagen": "docs/screenshots/dudo/05-destape.png",
-      "pie": "Se destapa la mesa y se cuenta",
+      "pie": "The table opens up and counts",
       "guion": "dudo-local",
       "toma": "05-destape"
     },
     {
       "seccion": "dudo",
       "imagen": "docs/screenshots/dudo/07-pase.png",
-      "pie": "Pásale el celular",
+      "pie": "Pass the phone",
       "guion": "dudo-local",
       "toma": "07-pase"
     },
     {
       "seccion": "dudo",
       "imagen": "docs/screenshots/dudo/08-sala.png",
-      "pie": "Sala con código y QR",
+      "pie": "Room with code and QR",
       "guion": "dudo-online",
       "toma": "online-01-sala"
     },
     {
       "seccion": "dudo",
       "imagen": "docs/screenshots/dudo/09-destape-verificado.png",
-      "pie": "Se destapa la mesa y se verifica",
+      "pie": "The table opens up and verifies",
       "guion": "dudo-online",
       "toma": "online-02-destape"
     },
     {
       "seccion": "dudo",
       "imagen": "docs/screenshots/dudo/06-resultado.png",
-      "pie": "Quién ganó y cómo se fue dando",
+      "pie": "Who won and how it went",
       "guion": "dudo-local",
       "toma": "06-resultado"
     },
     {
       "seccion": "idiomas",
       "imagen": "docs/screenshots/cuarto-rey/11-menu-en.png",
-      "pie": "Menú en inglés",
+      "pie": "Menu in English",
       "guion": "cuarto-rey",
       "toma": "11-menu-en"
     },
     {
       "seccion": "idiomas",
       "imagen": "docs/screenshots/cuarto-rey/12-mesa-en.png",
-      "pie": "Mesa en inglés",
+      "pie": "Table in English",
       "guion": "cuarto-rey",
       "toma": "12-mesa-en"
     },
     {
       "seccion": "ahorcado",
       "imagen": "docs/screenshots/ahorcado/01-intro.png",
-      "pie": "Modos de juego",
+      "pie": "Game modes",
       "guion": "ahorcado-local",
       "toma": "01-intro"
     },
     {
       "seccion": "ahorcado",
       "imagen": "docs/screenshots/ahorcado/02-configuracion.png",
-      "pie": "La palabra, los errores y quiénes juegan",
+      "pie": "Word, misses allowed and who plays",
       "guion": "ahorcado-local",
       "toma": "02-setup"
     },
     {
       "seccion": "ahorcado",
       "imagen": "docs/screenshots/ahorcado/03-escribir.png",
-      "pie": "Cada uno le escribe al siguiente",
+      "pie": "Each player writes for the next",
       "guion": "ahorcado-local",
       "toma": "04-word"
     },
     {
       "seccion": "ahorcado",
       "imagen": "docs/screenshots/ahorcado/04-juego.png",
-      "pie": "Horca, pista, palabra y teclado",
+      "pie": "Gallows, clue, word and keyboard",
       "guion": "ahorcado-local",
       "toma": "07-play-medio"
     },
     {
       "seccion": "ahorcado",
       "imagen": "docs/screenshots/ahorcado/05-veredicto.png",
-      "pie": "La letra y el pase, juntos",
+      "pie": "The letter and the handoff together",
       "guion": "ahorcado-local",
       "toma": "06-letter-verdict"
     },
     {
       "seccion": "ahorcado",
       "imagen": "docs/screenshots/ahorcado/06-sala.png",
-      "pie": "Sala con código y QR",
+      "pie": "Room with code and QR",
       "guion": "ahorcado-online",
       "toma": "02-lobby"
     },
     {
       "seccion": "ahorcado",
       "imagen": "docs/screenshots/ahorcado/07-varios-celulares.png",
-      "pie": "Todos adivinando a la vez",
+      "pie": "Everyone guessing at once",
       "guion": "ahorcado-online",
       "toma": "04-play"
     },
     {
       "seccion": "ahorcado",
       "imagen": "docs/screenshots/ahorcado/08-resultado.png",
-      "pie": "Puntaje y palabras verificadas",
+      "pie": "Score and verified words",
       "guion": "ahorcado-local",
       "toma": "08-result"
     },
     {
       "seccion": "ahorcado",
       "imagen": "docs/screenshots/ahorcado/09-solitario.png",
-      "pie": "Jugar solo: la app reparte la palabra",
+      "pie": "Play alone: the app deals the word",
       "guion": "ahorcado-local",
       "toma": "09-solo"
     }
