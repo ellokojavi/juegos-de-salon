@@ -39,7 +39,7 @@ export const GAMES = [
     id: 'dudo',
     emoji: '🎲',
     name: { es: 'Dudo', en: 'Liar\'s Dice', pt: 'Dado Mentiroso' },
-    tagline: { es: 'Apuesta cuántos dados hay en la mesa y aguanta la cara. En un celular o contra el celular.', en: 'Bid how many dice are on the table and keep a straight face. One phone or versus the phone.', pt: 'Aposte quantos dados tem na mesa e segure a cara. Em um celular ou contra o celular.' },
+    tagline: { es: 'Apuesta cuántos dados hay en la mesa sin poner caras sospechosas. En un celular, en varios o contra el celular.', en: 'Bid how many dice are on the table and keep a straight face. One phone, several, or versus the phone.', pt: 'Aposte quantos dados tem na mesa e segure a cara. Em um celular, em vários ou contra o celular.' },
     players: '1–6',
     duration: '10–20',
     path: 'dudo/',
