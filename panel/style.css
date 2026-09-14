@@ -35,11 +35,9 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0
 .bar .label { font-weight: 800; overflow: hidden; overflow-wrap: anywhere; display: flex; flex-direction: column; line-height: 1.15; }
 .bar .label small { color: var(--muted); font-size: 0.72rem; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .bar .track { height: 18px; border-radius: 999px; background: rgba(255, 255, 255, 0.08); overflow: hidden; display: flex; }
+/* El color de cada segmento lo pone panel.js, repartido por el orden de los modos (C-16):
+   una regla por modo acá dejaría gris a cualquier modo nuevo. */
 .bar .fill { height: 100%; background: var(--cyan); }
-.bar .fill--online { background: var(--cyan); }
-.bar .fill--local { background: var(--yellow); }
-.bar .fill--cpu { background: var(--pink); }
-.bar .fill--solo { background: var(--lime); }
 .bar .n { font-family: var(--font-num); font-variant-numeric: tabular-nums; font-weight: 900; min-width: 2ch; text-align: right; }
 .bar .modes { color: var(--muted); font-size: 0.8rem; font-weight: 800; white-space: nowrap; }
 .empty { color: var(--muted); font-weight: 800; }

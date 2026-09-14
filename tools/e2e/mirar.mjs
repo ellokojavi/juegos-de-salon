@@ -96,6 +96,15 @@ const CAMINOS = {
       `(()=>{for(let i=0;i<4;i++){const h=document.getElementById('handoff');if(h.hidden)break;const b=h.querySelector('button');b?b.click():h.click()}})()`,
     ],
   },
+  /**
+   * El panel del dueño no es un juego, pero se mira igual: `window.__panel.seed` lo dibuja
+   * con datos sembrados, sin entrar con Google ni tocar la base (C-14). Los datos traen a
+   * propósito un juego (`juego-nuevo`), un modo (`equipos`) y un idioma (`fr`) que no están
+   * en el registro: así se ve de una que el panel los muestra igual (C-16).
+   */
+  panel: {
+    datos: [`(()=>{const DIA=86400000,ahora=Date.now(),hoy=Math.floor(ahora/DIA);const rooms={ABCD:{createdAt:ahora-4*60000,game:'dudo',players:{A:{name:'Javi',online:true},B:{name:'Cata',online:true}},messages:{m1:{t:'hello',at:ahora-4*60000},m2:{t:'bid',at:ahora-60000}}},EFGH:{createdAt:ahora-2*3600000,game:'juego-nuevo',players:{A:{name:'Fausto',online:false}}}};const days={[hoy]:{rooms:{ABCD:{game:'dudo',players:{A:'Javi',B:'Cata'}},EFGH:{game:'juego-nuevo',players:{A:'Fausto'}}},local:{dudo:{local:{4:6},cpu:{1:3}},'juego-nuevo':{equipos:{6:5}},ahorcado:{local:{3:4}}},origin:{America__Santiago:12,Europe__Madrid:2},lang:{'es-CL':12,'pt-BR':2},applang:{es:11,pt:2,fr:1},hour:{14:4,21:9}},[hoy-1]:{local:{'linea-de-tiempo':{solo:{1:7}}},origin:{America__Santiago:5},lang:{'es-CL':5},applang:{es:5},hour:{20:5}}};window.__panel.seed({rooms,days});})();1`],
+  },
 };
 
 const camino = CAMINOS[juego]?.[pantalla];

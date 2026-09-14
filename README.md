@@ -333,7 +333,11 @@ Cómo está armado (canon C-3):
 celulares conectados, partidas por juego y modo, jugadores por partida, zona horaria, idioma
 y hora del día. Entra con Google y solo lee el dueño del proyecto de Firebase. Son señales de
 uso anonimizadas, no personas: de los modos sin red salen solo contadores, y nunca una IP, un
-secreto, el chat ni quién ganó. Ver [docs/PANEL.md](docs/PANEL.md).
+secreto, el chat ni quién ganó.
+
+No tiene listas propias: los juegos y los modos los lee del registro de `assets/js/games.js`,
+así que un juego nuevo aparece ahí solo, y lo que todavía no conoce lo dibuja igual con su
+clave por nombre en vez de descartarlo. Ver [docs/PANEL.md](docs/PANEL.md).
 
 ## Stack
 
@@ -360,6 +364,7 @@ node assets/js/transport/dispose.test.mjs
 node assets/js/transport/errors.test.mjs
 node assets/js/transport/ratelimit.test.mjs
 node assets/js/transport/stats.test.mjs
+node panel/adapta.test.mjs
 node panel/aggregate.test.mjs
 ```
 <!-- /generado -->
@@ -371,6 +376,7 @@ Para revisar cómo quedó una pantalla concreta, sin jugar una partida entera:
 ```bash
 node tools/e2e/mirar.mjs ahorcado juego --ancho 320
 node tools/e2e/mirar.mjs ahorcado resultado --idioma pt
+node tools/e2e/mirar.mjs panel datos --ancho 900
 ```
 
 Saca la captura y avisa si hay scroll horizontal o botones bajo 44 px, que es lo que el canon pide mirar en cada pantalla. Los caminos a cada pantalla están declarados arriba del archivo: agregar uno es sumar una entrada, no escribir un guion nuevo.
