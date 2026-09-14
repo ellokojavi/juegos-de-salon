@@ -56,6 +56,16 @@ export const GAMES = [
     available: true,
   },
   {
+    id: 'julepe',
+    emoji: '🍹',
+    name: { es: 'Julepe', en: 'Julep', pt: 'Paga o Bolo' },
+    tagline: { es: 'Dices si vas o te pasas. Si vas y no haces dos bazas, te tomas todo el plato. En un celular, en varios o contra el celular.', en: 'Say if you are in or out. Go in, miss two tricks, and you drink the whole pot. One phone, several, or versus the phone.', pt: 'Você diz se entra ou passa. Se entrar e não fizer duas vazas, bebe o bolo inteiro. Em um celular, em vários ou contra o celular.' },
+    players: '1–6',
+    duration: '15–30',
+    path: 'julepe/',
+    available: true,
+  },
+  {
     id: 'cuarto-rey',
     emoji: '👑',
     name: { es: 'Cuarto Rey', en: 'Fourth King', pt: 'Quarto Rei' },

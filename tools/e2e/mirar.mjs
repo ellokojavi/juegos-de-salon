@@ -85,6 +85,37 @@ const CAMINOS = {
       `document.getElementById('btn-start').click()`,
     ],
   },
+  julepe: {
+    intro: [],
+    configuracion: [`document.querySelectorAll('.mode')[0].click()`],
+    // Contra el celular se llega a la mesa sin pantalla de pase de por medio
+    declaracion: [
+      `document.querySelectorAll('.mode')[2].click()`,
+      `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
+      `document.querySelector('#setup-actions .btn--yellow').click()`,
+    ],
+    // El cambio: con una carta marcada, que es cuando la mano se ve más cargada. Los pasos `1`
+    // son esperas: los rivales del aparato declaran y cambian antes, y se demoran a propósito.
+    cambio: [
+      `document.querySelectorAll('.mode')[2].click()`,
+      `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
+      `document.querySelector('#setup-actions .btn--yellow').click()`,
+      `document.querySelector('#actions .btn--yellow')?.click()`,
+      `1`, `1`, `1`,
+      `document.querySelectorAll('#mine .pcard')[0]?.click()`,
+    ],
+    // La baza: hasta la primera carta, donde aparecen las apagadas y el porqué de abajo
+    baza: [
+      `document.querySelectorAll('.mode')[2].click()`,
+      `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
+      `document.querySelector('#setup-actions .btn--yellow').click()`,
+      `document.querySelector('#actions .btn--yellow')?.click()`,
+      `1`, `1`, `1`,
+      `document.querySelector('#actions .btn--yellow')?.click()`,
+      `1`, `1`, `1`,
+      `document.querySelector('#mine .pcard:not(.off)')?.click()`,
+    ],
+  },
   ahorcado: {
     intro: [],
     configuracion: [`document.querySelectorAll('.mode')[0].click()`],

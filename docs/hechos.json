@@ -1,5 +1,5 @@
 {
-  "version": "0.33.3",
+  "version": "0.33.7",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -280,6 +280,52 @@
       ]
     },
     {
+      "id": "julepe",
+      "emoji": "🍹",
+      "nombre": {
+        "es": "Julepe",
+        "en": "Julep",
+        "pt": "Paga o Bolo"
+      },
+      "jugadores": "1 to 6",
+      "duracion": "15–30",
+      "disponible": true,
+      "estado": "v0.34",
+      "modos": [
+        {
+          "clave": "modeLocal",
+          "es": "📱 Un celular",
+          "en": "📱 One phone"
+        },
+        {
+          "clave": "modeOnline",
+          "es": "📡 Varios celulares",
+          "en": "📡 Several phones"
+        },
+        {
+          "clave": "modeCpu",
+          "es": "🤖 Contra el celular",
+          "en": "🤖 Versus the phone"
+        }
+      ],
+      "variantes": [],
+      "pantallas": [
+        "intro",
+        "setup",
+        "lobby",
+        "play",
+        "result"
+      ],
+      "chat": true,
+      "archivos": [
+        "julepe/engine.js",
+        "julepe/game.js",
+        "julepe/index.html",
+        "julepe/rules.js",
+        "julepe/style.css"
+      ]
+    },
+    {
       "id": "cuarto-rey",
       "emoji": "👑",
       "nombre": {
@@ -429,6 +475,7 @@
     "assets/js/handoff.js",
     "assets/js/i18n.js",
     "assets/js/session.js",
+    "assets/js/sobre.js",
     "assets/js/sound.js",
     "assets/js/transport/cleanup.js",
     "assets/js/transport/dispose.js",
@@ -446,6 +493,9 @@
     "dudo/engine.js",
     "dudo/game.js",
     "dudo/rules.js",
+    "julepe/engine.js",
+    "julepe/game.js",
+    "julepe/rules.js",
     "linea-de-tiempo/decks/brasil.js",
     "linea-de-tiempo/decks/chile.js",
     "linea-de-tiempo/decks/futbol.js",
@@ -473,6 +523,7 @@
     "assets/js/transport/stats.test.mjs",
     "batalla-naval/engine.test.mjs",
     "dudo/engine.test.mjs",
+    "julepe/engine.test.mjs",
     "linea-de-tiempo/engine.test.mjs",
     "panel/adapta.test.mjs",
     "panel/aggregate.test.mjs",
@@ -492,6 +543,8 @@
     "dudo-online.mjs",
     "enlace-invitacion.mjs",
     "idioma-por-url.mjs",
+    "julepe-local.mjs",
+    "julepe-online.mjs",
     "linea-de-tiempo-chat.mjs",
     "linea-de-tiempo-eleccion.mjs",
     "linea-de-tiempo-empate.mjs",
@@ -550,6 +603,10 @@
       "titulo": "Diseño: Dudo"
     },
     {
+      "ruta": "docs/juegos/julepe.md",
+      "titulo": "Diseño: Julepe"
+    },
+    {
       "ruta": "docs/juegos/linea-de-tiempo.md",
       "titulo": "Diseño: Línea de Tiempo"
     },
@@ -580,6 +637,7 @@
     "ahorcado": 9,
     "dudo": 9,
     "batalla-naval": 7,
+    "julepe": 10,
     "cuarto-rey": 12
   }
 }
