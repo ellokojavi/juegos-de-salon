@@ -14,17 +14,15 @@ import {
   getDatabase, ref, onValue, query, orderByChild, orderByKey, startAt,
 } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js';
 import { firebaseConfig } from '../assets/js/firebase-config.js';
-import { GAMES } from '../assets/js/games.js';
+import { gameLabel, MODES, MODE_IDS, ROOM_MODE, modeIcon } from '../assets/js/games.js';
+import { LANGS } from '../assets/js/i18n.js';
+import { ENVS } from '../assets/js/transport/stats.js';
 import { $, el } from '../assets/js/ui.js';
 import { DAY, ROOM_TTL, liveRooms, connections, summarize, top, tzLabel, ago, dayLabel, dayOf, codesOfDays, splitByEnv } from './aggregate.js';
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
-
-const GAME_LABEL = Object.fromEntries(GAMES.map(g => [g.id, `${g.emoji} ${g.name.es}`]));
-const gameLabel = id => GAME_LABEL[id] || id;
-const MODE_ICON = { online: '📡', local: '📱', cpu: '🤖', solo: '🧍' };
 
 const S = { user: null, env: 'prod', range: 7, rooms: {}, days: {}, daysLoaded: false, unsubRooms: null, unsubDays: null, denied: false, tick: null };
 
@@ -110,11 +108,51 @@ function listen() {
 /* ------------------------------------------------------------------ */
 /* Dibujo                                                              */
 /* ------------------------------------------------------------------ */
-/** Los mismos nombres que ofrece el selector de entorno, para no mostrar `prod` en una frase. */
-// 'lab' ya no se emite (D-67), pero se sigue nombrando para lo que quedó guardado de antes
-const ENV_LABEL = { prod: 'Publicado', lab: 'Laboratorio', dev: 'Pruebas locales' };
-/** Los dos idiomas que ofrece la app, más lo que llegue de una versión vieja. */
-const APP_LANG = { es: 'Español', en: 'Inglés', pt: 'Portugués', desconocido: 'Sin idioma' };
+/**
+ * Nada de listas copiadas acá (C-16). Los juegos, los modos y su ícono salen de `games.js`;
+ * los entornos, de `transport/stats.js`; los idiomas, de `i18n.js`. Lo que no está en ninguna
+ * de esas listas igual se dibuja, con su clave cruda por nombre: puede ser un juego, un modo
+ * o un idioma que el código ya manda y esta página todavía no conoce.
+ */
+
+/** Los entornos que el selector ofrece: los que la app emite hoy, más los que quedaron guardados. */
+const ENV_VIEJOS = { lab: 'Laboratorio' };            // salió con el laboratorio (D-67)
+const ENV_NOMBRE = { prod: 'Publicado', dev: 'Pruebas locales', ...ENV_VIEJOS };
+const envLabel = env => ENV_NOMBRE[env] || env;
+const ENV_OPCIONES = [...ENVS, ...Object.keys(ENV_VIEJOS).filter(e => !ENVS.includes(e))];
+
+/**
+ * El idioma elegido para jugar, con nombre en español. Se lo pregunta al navegador en vez de
+ * mantener una tabla: un idioma nuevo en `i18n.js` aparece nombrado sin tocar el panel.
+ */
+const nombreDeIdioma = (() => {
+  let dn = null;
+  try { dn = new Intl.DisplayNames(['es'], { type: 'language' }); } catch (_) { /* nada */ }
+  return code => {
+    if (code === 'desconocido') return 'Sin idioma';
+    let nombre = '';
+    try { nombre = dn?.of(code) || ''; } catch (_) { /* clave rara: se muestra tal cual */ }
+    if (!nombre || nombre === code) return code;
+    return nombre.charAt(0).toUpperCase() + nombre.slice(1);
+  };
+})();
+
+/**
+ * Colores de las barras, en el orden de los modos. Se reparten por posición y no por nombre:
+ * un modo nuevo toma el siguiente color en vez de quedar sin uno (C-16).
+ */
+const PALETA = ['var(--cyan)', 'var(--yellow)', 'var(--pink)', 'var(--lime)', 'var(--purple)'];
+let MODOS = [...MODE_IDS];   // los conocidos, más los que traiga la base (lo pone renderRange)
+const modeColor = mode => PALETA[Math.max(0, MODOS.indexOf(mode)) % PALETA.length];
+
+/** Colores de las barras que no son de modo: el total, lo que se juega sin red y los idiomas. */
+const C_TOTAL = 'var(--cyan)', C_SIN_RED = 'var(--yellow)', C_IDIOMA = 'var(--lime)';
+
+/** Idiomas conocidos primero, en el orden de la app; detrás, lo que haya llegado. */
+const ordenIdiomas = pares => [
+  ...LANGS.map(l => pares.find(([k]) => k === l)).filter(Boolean),
+  ...pares.filter(([k]) => !LANGS.includes(k)),
+];
 
 const n = v => Number(v || 0).toLocaleString('es-CL');
 /** Una sala recién creada no tiene jugadas: decir "0 msj" se lee como un error de la página. */
@@ -124,15 +162,23 @@ function tile(value, label, hot = false) {
   return el('div', { class: `tile${hot ? ' tile--hot' : ''}` }, el('b', {}, n(value)), el('small', {}, label));
 }
 
-/** Una barra con segmentos por modo (o uno solo) y su total. */
+/**
+ * Una barra con sus segmentos y el total. Cada segmento trae su color ya resuelto: los de
+ * modo salen de `segModo`, que lo saca del registro, y los demás de un color fijo. Así
+ * ningún nombre de modo queda escrito acá (C-16).
+ */
 function bar(label, segments, max, { note = '', sub = '' } = {}) {
-  const total = segments.reduce((s, [, v]) => s + v, 0);
+  const total = segments.reduce((s, x) => s + x.value, 0);
   const track = el('div', { class: 'track' });
-  for (const [mode, v] of segments) if (v > 0) track.append(el('div', { class: `fill fill--${mode}`, style: `width:${max ? (v / max) * 100 : 0}%`, title: `${MODE_ICON[mode] || ''} ${n(v)}` }));
+  for (const x of segments) if (x.value > 0) track.append(el('div', { class: 'fill', style: `width:${max ? (x.value / max) * 100 : 0}%;background:${x.color}`, title: `${x.title || ''} ${n(x.value)}`.trim() }));
   return el('div', { class: 'bar' },
     el('span', { class: 'label', title: sub ? `${label} · ${sub}` : label }, label, sub ? el('small', {}, sub) : null),
     track, el('span', { class: 'n' }, n(total), note ? el('span', { class: 'modes' }, ` ${note}`) : null));
 }
+
+/** Un segmento de un modo (color e ícono del registro) y uno de color fijo. */
+const segModo = (mode, value) => ({ color: modeColor(mode), value, title: modeIcon(mode) });
+const seg = (color, value) => ({ color, value });
 
 function fill(box, rows, emptyText = 'Nada todavía.') {
   box.innerHTML = '';
@@ -168,7 +214,7 @@ function renderNow() {
       ? 'Hay una sala abierta que no es'
       : `Hay ${n(ajenas.length)} salas abiertas que no son`;
     box.append(el('p', { class: 'empty', style: 'margin-top:8px' },
-      `${cuantas} de ${ENV_LABEL[S.env] || S.env}, así que no ${una ? 'se cuenta' : 'se cuentan'} acá: ${cuales}. `
+      `${cuantas} de ${envLabel(S.env)}, así que no ${una ? 'se cuenta' : 'se cuentan'} acá: ${cuales}. `
       + 'Suelen ser partidas de prueba hechas en el computador o en el laboratorio, y se borran solas a las seis horas.'));
   }
   $('#updated').textContent = `Actualizado ${new Date(now).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' })}`;
@@ -189,30 +235,32 @@ function renderRange() {
     tile(hoy.partidas, 'partidas hoy'),
   );
 
-  // Por juego, en el orden del menú, con los que no están en el registro al final
+  // Por juego y por modo, con lo que haya: un juego o un modo que esta página no conoce se
+  // dibuja igual, con su clave por nombre (C-16).
+  MODOS = s.modes;
   const games = Object.entries(s.byGame).sort((a, b) => b[1].total - a[1].total);
   const maxGame = Math.max(0, ...games.map(([, g]) => g.total));
-  fill($('#by-game'), games.map(([id, g]) => bar(gameLabel(id), ['online', 'local', 'cpu', 'solo'].map(m => [m, g[m]]), maxGame,
-    { note: ['online', 'local', 'cpu', 'solo'].filter(m => g[m]).map(m => `${MODE_ICON[m]}${n(g[m])}`).join(' ') })));
+  fill($('#by-game'), games.map(([id, g]) => bar(gameLabel(id), MODOS.map(m => segModo(m, g[m] || 0)), maxGame,
+    { note: MODOS.filter(m => g[m]).map(m => `${modeIcon(m)}${n(g[m])}`).join(' ') })));
 
   const players = Object.entries(s.byPlayers).sort((a, b) => Number(a[0]) - Number(b[0]));
   const maxP = Math.max(0, ...players.map(([, v]) => v));
-  fill($('#by-players'), players.map(([k, v]) => bar(k === '1' ? '1 jugador' : `${k} jugadores`, [['local', v]], maxP)));
+  fill($('#by-players'), players.map(([k, v]) => bar(k === '1' ? '1 jugador' : `${k} jugadores`, [seg(C_SIN_RED, v)], maxP)));
 
   const maxDay = Math.max(0, ...s.byDay.map(d => d.total));
-  fill($('#by-day'), s.byDay.map(d => bar(dayLabel(d.day), [['online', d.online], ['local', d.local]], maxDay)));
+  fill($('#by-day'), s.byDay.map(d => bar(dayLabel(d.day), [segModo(ROOM_MODE, d.online), seg(C_SIN_RED, d.local)], maxDay)));
 
   const origin = top(s.origin, 15);
   const maxO = Math.max(0, ...origin.map(([, v]) => v));
-  fill($('#origin'), origin.map(([k, v]) => { const { city, region } = tzLabel(k); return bar(city, [['online', v]], maxO, { sub: region }); }));
+  fill($('#origin'), origin.map(([k, v]) => { const { city, region } = tzLabel(k); return bar(city, [seg(C_TOTAL, v)], maxO, { sub: region }); }));
 
   const lang = top(s.lang, 10);
   const maxL = Math.max(0, ...lang.map(([, v]) => v));
-  fill($('#lang'), lang.map(([k, v]) => bar(k === 'desconocido' ? 'Sin idioma' : k, [['solo', v]], maxL)));
+  fill($('#lang'), lang.map(([k, v]) => bar(k === 'desconocido' ? 'Sin idioma' : k, [seg(C_IDIOMA, v)], maxL)));
   // El del navegador dice de dónde es la persona; este dice en cuál prefiere jugar (D-46)
-  const app = top(s.applang, 10);
+  const app = ordenIdiomas(top(s.applang, 10));
   const maxA = Math.max(0, ...app.map(([, v]) => v));
-  fill($('#applang'), app.map(([k, v]) => bar(APP_LANG[k] || k, [['solo', v]], maxA)),
+  fill($('#applang'), app.map(([k, v]) => bar(nombreDeIdioma(k), [seg(C_IDIOMA, v)], maxA)),
     'Nada todavía: se empieza a contar desde esta versión.');
 
   const hours = $('#hours'); hours.innerHTML = '';
@@ -223,6 +271,19 @@ function renderRange() {
 /* ------------------------------------------------------------------ */
 /* Controles                                                           */
 /* ------------------------------------------------------------------ */
+/**
+ * El selector de entornos y la leyenda de modos se arman con lo que dice el código, no con
+ * lo que alguien escribió en el HTML: un entorno o un modo nuevo aparece en el panel el
+ * mismo día que empieza a mandar señales (C-16).
+ */
+function renderControls() {
+  const env = $('#env');
+  env.innerHTML = '';
+  ENV_OPCIONES.forEach(e => env.append(el('option', { value: e, selected: e === S.env ? '' : null }, envLabel(e))));
+  $('#modes-legend').textContent = `Por modo: ${MODE_IDS.map(m => `${modeIcon(m)} ${MODES[m].label}`).join(' · ')}`;
+}
+renderControls();
+
 $('#btn-login').addEventListener('click', login);
 $('#env').addEventListener('change', e => { S.env = e.target.value; S.days = {}; S.daysLoaded = false; renderRange(); renderNow(); if (S.user) listen(); });
 $('#range').addEventListener('change', e => { S.range = Number(e.target.value); renderRange(); });
