@@ -34,9 +34,9 @@ const ES = {
     beforeText: 'Cada uno con su vaso servido. El juego reparte sorbos: si te toca tomarte 20, son 20 sorbos, no un vaso. Los puedes tomar durante el juego y no necesariamente en un turno.',
 
     // modos (C-5)
-    modeLocal: '📱 Un celular', modeLocalHint: 'De 2 a 6 en la mesa. Se pasan el celular y cada uno mira sus cartas con la pantalla tapada.',
-    modeOnline: '📡 Varios celulares', modeOnlineHint: 'Sala con código de 4 letras. Las cartas llegan cerradas: solo tu celular puede abrir tu mano.',
-    modeCpu: '🤖 Contra el celular', modeCpuHint: 'De uno a cinco rivales del aparato, que declaran, cambian y juegan mirando solo sus propias cartas.',
+    modeLocal: '📱 Un celular', modeLocalHint: 'Juegan entre 2 y 6 personas. Se pasan el celular y cada uno mira sus cartas sin mostrarlas al resto.',
+    modeOnline: '📡 Varios celulares', modeOnlineHint: 'Si entras a la sala con tu celular mediante código, las cartas llegan solo a tu celular.',
+    modeCpu: '🤖 Contra el celular', modeCpuHint: 'Elige entre 1 y 5 rivales virtuales (creados por el celular). Todos juegan sin saber las cartas del otro.',
 
     // configuración
     playerPlaceholder: 'Jugador {n}', removePlayer: 'Quitar jugador', addPlayer: '+ Agregar jugador',
@@ -173,9 +173,9 @@ const EN = {
     beforeTitle: '🍹 Before you start',
     beforeText: 'Everyone with a full glass. The game hands out sips: if you get twenty, that is twenty sips, not a full glass. You can take them during the hand, not necessarily in one turn.',
 
-    modeLocal: '📱 One phone', modeLocalHint: '2 to 6 around the table. You pass the phone and each player checks their cards with the screen covered.',
-    modeOnline: '📡 Several phones', modeOnlineHint: 'Room with a 4-letter code. Cards arrive sealed: only your phone can open your hand.',
-    modeCpu: '🤖 Versus the phone', modeCpuHint: 'One to five phone rivals, who bid, swap and play seeing only their own cards.',
+    modeLocal: '📱 One phone', modeLocalHint: '2 to 6 people play. You pass the phone and each player sees their cards without showing them to the rest.',
+    modeOnline: '📡 Several phones', modeOnlineHint: 'Join the room with your phone using a code. Cards arrive only on your phone.',
+    modeCpu: '🤖 Versus the phone', modeCpuHint: 'Choose 1 to 5 virtual rivals (created by the phone). Everyone plays without knowing each other\'s cards.',
 
     playerPlaceholder: 'Player {n}', removePlayer: 'Remove player', addPlayer: '+ Add player',
     start: 'Deal me in!', yourName: 'Your name', cpuName: 'Phone', cpuNameN: 'Phone {n}',
@@ -299,9 +299,9 @@ const PT = {
     beforeTitle: '🍹 Antes de começar',
     beforeText: 'Cada um com seu copo servido. O jogo distribui goles: se você receber vinte, são vinte goles, não um copo. Você toma durante o jogo, não necessariamente em um turno.',
 
-    modeLocal: '📱 Um celular', modeLocalHint: 'De 2 a 6 na mesa. Vocês passam o celular e cada um olha suas cartas com a tela tampada.',
-    modeOnline: '📡 Vários celulares', modeOnlineHint: 'Sala com código de 4 letras. As cartas chegam lacradas: só o seu celular abre a sua mão.',
-    modeCpu: '🤖 Contra o celular', modeCpuHint: 'De um a cinco rivais do aparelho, que entram, trocam e jogam vendo só as próprias cartas.',
+    modeLocal: '📱 Um celular', modeLocalHint: 'Jogam entre 2 e 6 pessoas. Vocês passam o celular e cada um olha suas cartas sem mostrar pro resto.',
+    modeOnline: '📡 Vários celulares', modeOnlineHint: 'Entra na sala com seu celular usando código. As cartas chegam só no seu celular.',
+    modeCpu: '🤖 Contra o celular', modeCpuHint: 'Escolha entre 1 e 5 rivais virtuais (criados pelo celular). Todos jogam sem saber as cartas do outro.',
 
     playerPlaceholder: 'Jogador {n}', removePlayer: 'Tirar jogador', addPlayer: '+ Adicionar jogador',
     start: 'Bora jogar!', yourName: 'Seu nome', cpuName: 'Celular', cpuNameN: 'Celular {n}',
