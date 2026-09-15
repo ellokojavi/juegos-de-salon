@@ -31,7 +31,7 @@ const ES = {
     setupHint: 'Anótense en el orden en que están sentados. El reparto va rotando hacia la derecha.',
     lobbyTitle: 'Sala creada', historyTitle: '🍹 Mano por mano',
     beforeTitle: '🍹 Antes de partir',
-    beforeText: 'Cada uno con su vaso servido. El juego reparte sorbos: si te toca tomarte 20, son 20 sorbos, no un vaso. Los puedes tomar durante el juego y no necesariamente en un turno.',
+    beforeText: 'Cada uno empieza con su vaso servido. El juego reparte sorbos: si te toca tomarte 20, son 20 sorbos, no un vaso. Los puedes tomar durante el juego y no necesariamente en un turno.',
 
     // modos (C-5)
     modeLocal: '📱 Un celular', modeLocalHint: 'Juegan entre 2 y 6 personas. Se pasan el celular y cada uno mira sus cartas sin mostrarlas al resto.',
@@ -171,7 +171,7 @@ const EN = {
     setupHint: 'Sign up in the order you are sitting. The deal moves on after every hand.',
     lobbyTitle: 'Room created', historyTitle: '🍹 Hand by hand',
     beforeTitle: '🍹 Before you start',
-    beforeText: 'Everyone with a full glass. The game hands out sips: if you get twenty, that is twenty sips, not a full glass. You can take them during the hand, not necessarily in one turn.',
+    beforeText: 'Everyone starts with a full glass. The game hands out sips: if you get twenty, that is twenty sips, not a full glass. You can take them during the hand, not necessarily in one turn.',
 
     modeLocal: '📱 One phone', modeLocalHint: '2 to 6 people play. You pass the phone and each player sees their cards without showing them to the rest.',
     modeOnline: '📡 Several phones', modeOnlineHint: 'Join the room with your phone using a code. Cards arrive only on your phone.',
@@ -297,7 +297,7 @@ const PT = {
     setupHint: 'Se anotem na ordem em que estão sentados. Quem dá as cartas muda a cada mão.',
     lobbyTitle: 'Sala criada', historyTitle: '🍹 Mão por mão',
     beforeTitle: '🍹 Antes de começar',
-    beforeText: 'Cada um com seu copo servido. O jogo distribui goles: se você receber vinte, são vinte goles, não um copo. Você toma durante o jogo, não necessariamente em um turno.',
+    beforeText: 'Cada um começa com seu copo servido. O jogo distribui goles: se você receber vinte, são vinte goles, não um copo. Você toma durante o jogo, não necessariamente em um turno.',
 
     modeLocal: '📱 Um celular', modeLocalHint: 'Jogam entre 2 e 6 pessoas. Vocês passam o celular e cada um olha suas cartas sem mostrar pro resto.',
     modeOnline: '📡 Vários celulares', modeOnlineHint: 'Entra na sala com seu celular usando código. As cartas chegam só no seu celular.',
