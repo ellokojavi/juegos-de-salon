@@ -24,13 +24,14 @@ const ES = {
   ui: {
     // estáticos (index.html)
     docTitle: 'Julepe 🍹 · Juegos de Salón', gameChip: '🍹 Julepe', menu: '‹ Menú',
-    title: 'Julepe', lead: 'Dices si vas o te pasas. Si vas y no ganas dos bazas, te tomas todo el plato.',
+    title: 'Julepe', lead: 'Ves tus cartas y decides en secreto si vas o pasas. Si vas y no ganas dos de las cinco tiradas, te tomas todos los tragos.',
+    leadExplain: 'Una partida tiene varios juegos. Cada juego tiene 5 tiradas: en cada tirada todos juegan una carta. Un turno es cuando te toca a ti jugar.',
     rulesSummary: '🍹 ¿Cómo se juega?',
     whoPlays: '¿Quiénes juegan?',
     setupHint: 'Anótense en el orden en que están sentados. El reparto va rotando hacia la derecha.',
     lobbyTitle: 'Sala creada', historyTitle: '🍹 Mano por mano',
     beforeTitle: '🍹 Antes de partir',
-    beforeText: 'Cada uno con su vaso servido y agua a mano. Los tragos que reparte el juego son <b>sorbos</b>: un julepe de veinte no es un vaso de veinte, son veinte sorbos, y se pueden repartir en el rato que dure la mano.',
+    beforeText: 'Cada uno con su vaso servido. El juego reparte sorbos: si te toca tomarte 20, son 20 sorbos, no un vaso. Los puedes tomar durante el juego y no necesariamente en un turno.',
 
     // modos (C-5)
     modeLocal: '📱 Un celular', modeLocalHint: 'De 2 a 6 en la mesa. Se pasan el celular y cada uno mira sus cartas con la pantalla tapada.',
@@ -40,7 +41,7 @@ const ES = {
     // configuración
     playerPlaceholder: 'Jugador {n}', removePlayer: 'Quitar jugador', addPlayer: '+ Agregar jugador',
     start: '¡A jugar!', yourName: 'Tu nombre', cpuName: 'Celular', cpuNameN: 'Celular {n}',
-    handsLabel: '¿Cuántas manos?', handsHint: 'La partida termina después de esas manos y gana quien haya tomado menos.',
+    handsLabel: '¿Cuántos juegos?', handsHint: 'La partida termina después de esos juegos y gana quien haya tomado menos.',
     handsOption: '{n} manos',
     rivalsLabel: '¿Cuántos rivales?', rivalsHint: 'Cuantos más haya en la mesa, más difícil es hacer dos bazas y más grande se pone el plato.',
     rivalsOption: '{n} rivales', rivalsOne: '1 rival',
@@ -163,13 +164,14 @@ const EN = {
   rankNames: { A: 'ace', K: 'king', Q: 'queen', J: 'jack' },
   ui: {
     docTitle: 'Julep 🍹 · Party Games', gameChip: '🍹 Julep', menu: '‹ Menu',
-    title: 'Julep', lead: 'Say whether you are in or out. If you are in and miss two tricks, you drink the whole pot.',
+    title: 'Julep', lead: 'You see your cards and secretly decide whether you are in or out. If you are in and don\'t win two of the five plays, you drink all the sips.',
+    leadExplain: 'A game has several hands. Each hand has 5 plays: in each play everyone plays a card. A turn is when it\'s your time to play.',
     rulesSummary: '🍹 How do you play?',
     whoPlays: 'Who is playing?',
     setupHint: 'Sign up in the order you are sitting. The deal moves on after every hand.',
     lobbyTitle: 'Room created', historyTitle: '🍹 Hand by hand',
     beforeTitle: '🍹 Before you start',
-    beforeText: 'Everyone with a full glass and water nearby. What the game hands out are <b>sips</b>: a twenty-sip pot is not twenty glasses, it is twenty sips, and you can spread them over the hand.',
+    beforeText: 'Everyone with a full glass. The game hands out sips: if you get twenty, that is twenty sips, not a full glass. You can take them during the hand, not necessarily in one turn.',
 
     modeLocal: '📱 One phone', modeLocalHint: '2 to 6 around the table. You pass the phone and each player checks their cards with the screen covered.',
     modeOnline: '📡 Several phones', modeOnlineHint: 'Room with a 4-letter code. Cards arrive sealed: only your phone can open your hand.',
@@ -177,7 +179,7 @@ const EN = {
 
     playerPlaceholder: 'Player {n}', removePlayer: 'Remove player', addPlayer: '+ Add player',
     start: 'Deal me in!', yourName: 'Your name', cpuName: 'Phone', cpuNameN: 'Phone {n}',
-    handsLabel: 'How many hands?', handsHint: 'The game ends after that many hands, and whoever drank the least wins.',
+    handsLabel: 'How many hands?', handsHint: 'The game ends after those hands and whoever drank the least wins.',
     handsOption: '{n} hands',
     rivalsLabel: 'How many rivals?', rivalsHint: 'The more players at the table, the harder two tricks are and the bigger the pot gets.',
     rivalsOption: '{n} rivals', rivalsOne: '1 rival',
@@ -288,13 +290,14 @@ const PT = {
   rankNames: { A: 'ás', K: 'rei', Q: 'dama', J: 'valete' },
   ui: {
     docTitle: 'Paga o Bolo 🍹 · Jogos de Salão', gameChip: '🍹 Paga o Bolo', menu: '‹ Menu',
-    title: 'Paga o Bolo', lead: 'Você diz se entra ou passa. Se entrar e não fizer duas vazas, bebe o bolo inteiro.',
+    title: 'Paga o Bolo', lead: 'Você vê suas cartas e decide em segredo se entra ou passa. Se entrar e não ganhar duas das cinco jogadas, bebe todos os goles.',
+    leadExplain: 'Uma partida tem vários jogos. Cada jogo tem 5 jogadas: em cada jogada todos jogam uma carta. Um turno é quando te toca jogar.',
     rulesSummary: '🍹 Como se joga?',
     whoPlays: 'Quem vai jogar?',
     setupHint: 'Se anotem na ordem em que estão sentados. Quem dá as cartas muda a cada mão.',
     lobbyTitle: 'Sala criada', historyTitle: '🍹 Mão por mão',
     beforeTitle: '🍹 Antes de começar',
-    beforeText: 'Cada um com seu copo servido e água por perto. O que o jogo distribui são <b>goles</b>: um bolo de vinte não é vinte copos, são vinte goles, e dá pra espalhar ao longo da mão.',
+    beforeText: 'Cada um com seu copo servido. O jogo distribui goles: se você receber vinte, são vinte goles, não um copo. Você toma durante o jogo, não necessariamente em um turno.',
 
     modeLocal: '📱 Um celular', modeLocalHint: 'De 2 a 6 na mesa. Vocês passam o celular e cada um olha suas cartas com a tela tampada.',
     modeOnline: '📡 Vários celulares', modeOnlineHint: 'Sala com código de 4 letras. As cartas chegam lacradas: só o seu celular abre a sua mão.',
@@ -302,7 +305,7 @@ const PT = {
 
     playerPlaceholder: 'Jogador {n}', removePlayer: 'Tirar jogador', addPlayer: '+ Adicionar jogador',
     start: 'Bora jogar!', yourName: 'Seu nome', cpuName: 'Celular', cpuNameN: 'Celular {n}',
-    handsLabel: 'Quantas mãos?', handsHint: 'A partida acaba depois dessas mãos e ganha quem bebeu menos.',
+    handsLabel: 'Quantos jogos?', handsHint: 'A partida acaba depois desses jogos e ganha quem bebeu menos.',
     handsOption: '{n} mãos',
     rivalsLabel: 'Quantos rivais?', rivalsHint: 'Quanto mais gente na mesa, mais difícil fazer duas vazas e maior fica o bolo.',
     rivalsOption: '{n} rivais', rivalsOne: '1 rival',
