@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.35.0 — 2026-09-18
+- **Arrastrar la carta a la línea**, en Línea de Tiempo (LT-16, D-85). Se saca la carta de la mano
+  hacia abajo y se suelta en su lugar. Mientras viaja se dibuja en grande y por sobre el dedo: en la
+  mano el título queda en 11 px y en un celular angosto no se alcanza a leer justo cuando hay que
+  decidir. La carta ya puesta se puede retomar y llevar a otra ranura, o soltar fuera de la línea
+  para devolverla a la mano.
+- **Soltar elige, no coloca.** El botón amarillo sigue siendo el único que confirma (C-8), así que
+  el motor, el transporte y el reductor no cambian y quien prefiera tocar sigue tocando igual.
+- **La carta se enciende al apretar**, no al soltar el dedo. Si el gesto resulta ser desliz lateral
+  de la mano, que es scroll, se devuelve la selección anterior (D-38).
+- Mientras se arrastra, los dos hitos entre los que caería la carta encienden su año.
+- **Módulo compartido** `assets/js/arrastre.js` para los juegos que lo necesiten, con sus pruebas
+  (`node assets/js/arrastre.test.mjs`) y un guion de punta a punta que ejercita el gesto de verdad
+  (`tools/e2e/linea-de-tiempo-arrastre.mjs`).
+
 ## 0.34.0 — 2026-09-14
 - **Séptimo juego: Julepe** 🍹 (JU-01 a JU-15). Juego de bazas de la familia del Tute, adaptado a
   tragos: dices si vas o te pasas, y si vas y no haces dos bazas de las cinco te tomas el plato
