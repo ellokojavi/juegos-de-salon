@@ -14,7 +14,7 @@ export const CHILE = [
   { id: 'cl-valparaiso', emoji: '⛴', es: { w: 'valparaiso', hint: 'Cerros, ascensores y puerto' }, en: { w: 'seaport', hint: 'Hills, funiculars and cargo ships' }, pt: { w: 'valparaiso', hint: 'Morros, funiculares e porto' } },
   { id: 'cl-asado', emoji: '🔥', es: { w: 'asado', hint: 'El plan de todos los domingos' }, en: { w: 'barbecue', hint: 'The Sunday plan, with smoke' }, pt: { w: 'churrasco', hint: 'O plano de todo domingo' } },
   { id: 'cl-micro', emoji: '🚌', es: { w: 'micro', hint: 'Se toma parado y va llena' }, en: { w: 'bus', hint: 'Crowded, and never on time' }, pt: { w: 'onibus', hint: 'Lotado e sempre atrasado' } },
-  { id: 'cl-cueca', emoji: '💃', es: { w: 'cueca', hint: 'Pañuelo en la mano, en septiembre' }, en: { w: 'cueca', hint: 'The handkerchief dance of September' }, pt: { w: 'cueca', hint: 'A dança do lenço, em setembro' } },
+  { id: 'cl-cueca', emoji: '💃', es: { w: 'cueca', hint: 'Pañuelo en la mano, en septiembre' }, en: { w: 'cueca', hint: 'The handkerchief dance of September' }, pt: { w: 'musica', hint: 'Toca em setembro, com lenço na mão' } },
   { id: 'cl-chiloe', emoji: '🏝', es: { w: 'chiloe', hint: 'Isla de palafitos, mitos y curanto' }, en: { w: 'island', hint: 'Stilt houses, myths and rain' }, pt: { w: 'ilha', hint: 'Palafitas, mitos e muita chuva' } },
   { id: 'cl-condor', emoji: '🦅', es: { w: 'condor', hint: 'Mira todo desde muy arriba' }, en: { w: 'condor', hint: 'Watches everything from very high' }, pt: { w: 'condor', hint: 'Observa tudo lá de cima' } },
   { id: 'cl-patagonia', emoji: '🐧', es: { w: 'patagonia', hint: 'Viento, glaciares y pingüinos' }, en: { w: 'patagonia', hint: 'Wind, glaciers and penguins' }, pt: { w: 'patagonia', hint: 'Vento, geleiras e pinguins' } },

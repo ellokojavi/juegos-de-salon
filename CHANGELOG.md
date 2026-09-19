@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.35.6 — 2026-09-19
+- **En portugués, "cueca" es ropa interior.** La carta chilena del baile se jugaba en Brasil con
+  esa palabra tapada y la pista "a dança do lenço": el chiste se armaba solo. La carta sigue
+  siendo la misma (💃, `cl-cueca`, cueca en español y en inglés), pero en portugués la palabra
+  pasa a ser *musica* y la pista a *Toca em setembro, com lenço na mão*, que deja la imagen sin
+  nombrar lo que no corresponde. Va sin tilde, como el resto del mazo en portugués
+  (*onibus*, *pessego*, *violao*).
+
 ## 0.35.5 — 2026-09-19
 - **Arreglo: entre "crear sala" y "unirse" decía "— o —" en los tres idiomas.** El separador
   estaba escrito a mano en el JS de los seis juegos con sala, sin pasar por `LOCALES`, así que en
