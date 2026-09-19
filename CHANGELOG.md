@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.37.0 — 2026-09-19
+- **Compartir la app desde la portada.** Al lado del idioma y del sonido hay un botón 📤 que abre
+  el diálogo de compartir del celular; donde no existe, copia el texto y el link y lo avisa
+  cambiando el ícono por un ✅ dos segundos, que no necesita traducción ni mueve nada de lugar.
+- **Se comparte la puerta del idioma en que se está mirando** (D-74): `juegosdesalon.cl`,
+  `/pt/` o `/en/`. Cada puerta tiene su propia tarjeta social en ese idioma, así que el link
+  llega como corresponde a quien lo recibe. El texto que lo acompaña sale de `COMMON`
+  (`shareText`) y dice lo mismo que la tarjeta: juegos tradicionales para jugar con amigos desde
+  el celular, gratis, sin instalar y sin cuenta.
+- El botón redondo de la barra deja de ser solo el del sonido: `.icon-btn` comparte las mismas
+  medidas (44 px, C-8) y `shareButton` vive en `assets/js/ui.js`, al lado de `shareLink`, listo
+  para cuando lo quiera también el encabezado de cada juego.
+
 ## 0.36.0 — 2026-09-19
 - **Una sala se cae a la media hora de quedar quieta** (D-89). Antes vivía seis horas pasara lo que
   pasara: la que alguien abría a las ocho y quedaba vacía seguía ocupando su código —y apareciendo

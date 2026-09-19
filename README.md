@@ -301,6 +301,10 @@ Spec and design: [docs/juegos/julepe.md](docs/juegos/julepe.md)
 
 - **Languages:** Spanish (default), English and Brazilian Portuguese. The menu toggle saves the choice on the device, and the browser language is never used to guess (D-47, D-48). See [Languages](#languages).
 - **Sound:** effects synthesized with Web Audio, no audio files. A 🔊/🔇 button on every screen.
+- **Sharing the app:** a 📤 button next to the language and sound ones on the menu. It opens the
+  phone's own share sheet — and where there is none, copies the text and the link — with the front
+  door of the language you are reading in: `/`, `/pt/` or `/en/`, each with its own social card
+  (D-74).
 - **Saved games:** every game stores its state on the device and offers to continue.
 - **Installable:** a PWA manifest to add it to the home screen. The screen stays awake while playing.
 
@@ -324,9 +328,9 @@ The whole experience is translated: the menu and its footer lines, the six games
 How it is put together (canon C-3):
 
 - `assets/js/i18n.js` keeps the language in `localStorage` (`juegos-de-salon:lang`), draws the
-  🇨🇱 ES · 🇬🇧 EN · 🇧🇷 PT toggle and holds the shared text (`COMMON`): the menu, plus the two
-  strings every game with rooms repeats word for word — the room invitation (D-73) and the "or"
-  between creating a room and joining one.
+  🇨🇱 ES · 🇬🇧 EN · 🇧🇷 PT toggle and holds the shared text (`COMMON`): the menu and what goes out
+  when somebody shares the app, plus the two strings every game with rooms repeats word for word —
+  the room invitation (D-73) and the "or" between creating a room and joining one.
 - Each game keeps its text in `LOCALES = { es, en, pt }` inside its `rules.js`. There is not a
   single literal string in `game.js`. Fixed HTML text is marked with `data-i18n`.
 - The menu registry (`games.js`), the 100 footer lines (`frases.js`) and every Timeline card
