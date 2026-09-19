@@ -1000,7 +1000,7 @@ function renderSetup(mode, prefillCode = '') {
         el('p', { class: 'muted', style: 'margin:0 0 8px' }, T.invitedHint),
       )));
     } else {
-      actions.append(createBtn, el('div', { class: 'or' }, '— o —'), joinPanel(el('p', { class: 'lead', style: 'margin-bottom:8px' }, T.joinTitle)));
+      actions.append(createBtn, el('div', { class: 'or' }, `— ${COMMON[lang].or} —`), joinPanel(el('p', { class: 'lead', style: 'margin-bottom:8px' }, T.joinTitle)));
     }
     return;
   }
