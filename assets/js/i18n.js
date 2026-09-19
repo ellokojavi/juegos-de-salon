@@ -41,6 +41,16 @@ function idiomaDeLaUrl() {
 }
 idiomaDeLaUrl();
 
+/** La app en la web. Las puertas por idioma son /pt/ y /en/ (D-74). */
+export const SITIO = 'https://juegosdesalon.cl/';
+
+/**
+ * La portada para compartir, en el idioma de quien comparte: la de siempre, `/pt/` o `/en/`.
+ * Es la misma idea que `withLang` —quien manda el link elige con qué idioma llega— pero con
+ * las puertas, que son las que traen su propia tarjeta social en ese idioma (D-74).
+ */
+export const homeUrl = (lang = getLang()) => SITIO + (lang === 'es' ? '' : `${lang}/`);
+
 /**
  * Un link para compartir, con el idioma pegado si no es el de siempre. Así el que recibe la
  * invitación abre la app en el mismo idioma en que se la mandaron, sin tocar el toggle.
@@ -58,6 +68,8 @@ export const COMMON = {
     players: 'jugadores', minutes: 'min',
     footer: 'Toma con responsabilidad y con agua a mano. Si manejas, no tomas. 🚕',
     code: 'código en GitHub', menu: 'Menú', soon: 'Próximamente', or: 'o',
+    share: 'Compartir Juegos de Salón',
+    shareText: 'Juegos tradicionales para jugar con amigos desde el celular. Gratis, sin instalar y sin cuenta.',
     // La invitación a una sala: quién invita, a qué y adónde. Es el texto que más se lee de
     // toda la app, porque llega por WhatsApp a gente que todavía no la conoce.
     invite: '{name} te invita a jugar {game} en juegosdesalon.cl - Sala: {code}',
@@ -68,6 +80,8 @@ export const COMMON = {
     players: 'players', minutes: 'min',
     footer: 'Drink responsibly and keep water nearby. If you drive, you don\'t drink. 🚕',
     code: 'code on GitHub', menu: 'Menu', soon: 'Coming soon', or: 'or',
+    share: 'Share Party Games',
+    shareText: 'Traditional games to play with friends from your phone. Free, no install, no account.',
     invite: '{name} invites you to play {game} at juegosdesalon.cl - Room: {code}',
   },
   pt: {
@@ -76,6 +90,8 @@ export const COMMON = {
     players: 'jogadores', minutes: 'min',
     footer: 'Beba com responsabilidade e com água por perto. Se for dirigir, não beba. 🚕',
     code: 'código no GitHub', menu: 'Menu', soon: 'Em breve', or: 'ou',
+    share: 'Compartilhar Jogos de Salão',
+    shareText: 'Jogos tradicionais para jogar com amigos pelo celular. De graça, sem instalar e sem conta.',
     invite: '{name} te convida pra jogar {game} em juegosdesalon.cl - Sala: {code}',
   },
 };

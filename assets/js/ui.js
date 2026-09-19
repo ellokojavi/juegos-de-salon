@@ -105,6 +105,23 @@ export function confetti({ duration = 2500, count = 160 } = {}) {
  * lo copia al portapapeles. Devuelve 'shared', 'copied' o 'failed'.
  */
 export const canShare = () => typeof navigator !== 'undefined' && typeof navigator.share === 'function';
+
+/**
+ * Botón redondo de la barra de arriba para compartir un link (📤). Donde hay diálogo nativo
+ * abre el del sistema; donde no, copia y lo avisa cambiando el ícono por un ✅ dos segundos,
+ * que se entiende sin traducir y no mueve nada de lugar en la barra.
+ */
+export function shareButton({ title, text, url, label }) {
+  const btn = el('button', { type: 'button', class: 'icon-btn', title: label, 'aria-label': label }, '📤');
+  btn.addEventListener('click', async () => {
+    if (btn.textContent === '✅') return;
+    const r = await shareLink({ title, text, url });
+    if (r !== 'copied') return;
+    btn.textContent = '✅';
+    setTimeout(() => { btn.textContent = '📤'; }, 2000);
+  });
+  return btn;
+}
 export async function shareLink({ title, text, url }) {
   if (canShare()) {
     try { await navigator.share({ title, text, url }); return 'shared'; }
