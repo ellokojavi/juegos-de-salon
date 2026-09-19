@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.35.4 — 2026-09-19
+- **Portugués de Forca: la portada, releída** (C-3). "Antes que os erros acabem" sonaba a que los
+  errores se terminan solos; ahora dice "antes de gastar todos os erros permitidos", que es como se
+  llama el ajuste en la pantalla de configuración. En el cómo se juega, "a letra que está" quedaba
+  sin complemento ("estiver na palavra"), "quando o desenho termina, você foi enforcado" mezclaba
+  tiempos, y "erros de sobra" era calco del español: el resto del juego cuenta la ventaja con
+  *margem* y *sobrar*. El ejemplo nombra la acción real de la cadena ("escrever uma palavra
+  impossível para o próximo") y la bajada de un celular dice a quién se le pasa la vez.
+- La bajada del menú en portugués repite la primera frase, así que cambió con ella.
+
 ## 0.35.3 — 2026-09-18
 - **Julepe sale del menú por ahora** (D-88). Varias vueltas seguidas de reglas no terminaron de
   aclarar el juego, ni para quien las estaba escribiendo — con más pasos encadenados que cualquier
