@@ -1,5 +1,5 @@
 {
-  "version": "0.33.7",
+  "version": "0.34.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -468,6 +468,7 @@
     "ahorcado/engine.js",
     "ahorcado/game.js",
     "ahorcado/rules.js",
+    "assets/js/arrastre.js",
     "assets/js/chat.js",
     "assets/js/firebase-config.js",
     "assets/js/frases.js",
@@ -515,6 +516,7 @@
   "sinVersionar": [],
   "tests": [
     "ahorcado/engine.test.mjs",
+    "assets/js/arrastre.test.mjs",
     "assets/js/i18n.test.mjs",
     "assets/js/transport/cleanup.test.mjs",
     "assets/js/transport/dispose.test.mjs",
@@ -545,6 +547,7 @@
     "idioma-por-url.mjs",
     "julepe-local.mjs",
     "julepe-online.mjs",
+    "linea-de-tiempo-arrastre.mjs",
     "linea-de-tiempo-chat.mjs",
     "linea-de-tiempo-eleccion.mjs",
     "linea-de-tiempo-empate.mjs",

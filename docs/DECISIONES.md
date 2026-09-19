@@ -745,3 +745,51 @@ es como se llama allá el pozo que se junta, y "paga o bolo" cuenta el juego ent
 **Consecuencias:** las tarjetas sociales, el README y el menú muestran tres nombres distintos para
 el mismo `id` (`julepe`), que es lo que ya hacen los otros seis. El castigo se sigue llamando
 julepe dentro del juego en español y en inglés; en portugués es "pagar o bolo".
+
+## D-85 · Arrastrar la carta a la línea es elegir, nunca colocar
+**Fecha:** 2026-09-18 · **Estado:** vigente · **Amplía C-8 y D-38**
+**Decisión:** En Línea de Tiempo la carta se puede **arrastrar** desde la mano hasta su lugar en la
+línea, y la carta ya puesta se puede **retomar** y llevar a otra ranura, o soltar fuera de la línea
+para devolverla a la mano. Soltar **elige**: deja la carta y el lugar marcados, exactamente como si
+se hubieran tocado. Quien coloca sigue siendo el botón amarillo, que nombra la carta. El gesto vive
+en un módulo compartido, `assets/js/arrastre.js`, que no sabe nada de las reglas de ningún juego.
+
+**Por qué:** el problema concreto es el texto. En la mano, una carta mide 130 px y su título queda en
+11 px; en un celular angosto —un Pixel normal, 393 px— eso no se alcanza a leer justo en el momento
+en que hay que decidir dónde va. Al arrastrar, la carta sale de la tira y se dibuja en un clon de
+268 px con el texto en 15 px, que es media pantalla de ancho y se lee de una. El arrastre no se
+agregó por moderno: se agregó porque es la única postura en que la carta puede ser grande.
+
+Que soltar no coloque no es timidez. Colocar es irreversible y se paga con la carta, así que el
+canon pide elegir y después confirmar (C-8). Y como soltar deja el mismo estado que tocar, el
+arrastre es un atajo hacia el camino de siempre: el motor, el transporte y el reductor no se
+enteran, y quien prefiera tocar sigue tocando.
+
+**Consecuencias:**
+- **La carta en vilo va 60 px sobre el dedo.** Bajo el dedo, el pulgar tapa justo el texto que se
+  agrandó: el remedio y la enfermedad en el mismo lugar.
+- **Se elige al apretar, no al soltar.** La carta se enciende bajo el dedo. Si el gesto resulta ser
+  desliz lateral —la mano es una tira que se desplaza— se devuelve la selección anterior, que es la
+  protección de D-38 intacta. El eje lo reparte el navegador con `touch-action: pan-x`: se queda con
+  el movimiento horizontal, que es scroll, y nos entrega el vertical. No hace falta toque largo.
+- **`pointerdown` no cubre el teclado.** `Enter` sobre un botón llega como `click`, igual que el
+  `el.click()` de los guiones de punta a punta. Los dos traen `detail === 0`; un toque de verdad trae
+  1 o más y ya lo atendió `pointerdown`. Con eso, el mismo control sirve para las dos formas.
+- **Los destinos se miden en coordenadas de documento**, no de pantalla, y se vuelven a medir cada
+  vez que cambia el destino. Hacía falta: el destino se marca **abriendo la ranura** con la carta
+  dentro, que es el mismo hueco que deja el camino de toques, y abrirlo corre la línea bajo el dedo.
+  La alternativa —una barra que no mueve nada— se probó y se descartó: ver la carta en su lugar
+  mientras se decide vale más que ahorrarse la medición.
+- **Los dos hitos vecinos encienden su año**, en lima y sin tocar su borde. Dicen entre qué años cae
+  la carta, que es la decisión que se está tomando y el mismo dato con que después se explica el
+  error (C-8b). El borde encendido queda reservado al destino: con tres bordes del mismo color,
+  ninguno dice "es aquí".
+- **El puntero lo toma el contenedor, no la carta.** La carta arrastrada se destruye en el primer
+  redibujo; `#hand` y `#line` sobreviven, y con ellos la captura y los oyentes.
+- **Con una carta en el aire, la pantalla no se redibuja.** Lo que llegue mientras tanto se pinta al
+  soltar. Sin eso, un mensaje de la sala se lleva el elemento que el dedo tiene tomado.
+- El botón de confirmar se desvanece con opacidad mientras dura el gesto: estorba donde va el pulgar,
+  y esconderlo con `display` movería la caja y echaría a perder lo medido.
+- Batalla Naval mueve barcos con un arrastre propio, anterior a este módulo. No se migró en esta
+  pasada; cuando se migre gana el clon en vilo y la vibración, y el módulo gana su primer destino
+  de dos dimensiones, que es para lo que la clave del destino es cualquier cosa y no un índice.
