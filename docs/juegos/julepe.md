@@ -2,6 +2,8 @@
 
 **Ruta:** `/julepe/` · **Jugadores:** 2 a 6 · **Versión:** 0.34 · **Idiomas:** es, en (“Julep”), pt (“Paga o Bolo”)
 
+**Estado:** fuera del menú por ahora, mientras se reescriben las reglas (D-88). El juego sigue entero acá.
+
 ## 1. Resumen
 
 Juego de bazas de la familia del Tute, adaptado a tragos. En cada mano hay un **plato** de tragos
