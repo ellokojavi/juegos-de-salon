@@ -115,13 +115,20 @@ falta mensajes de respuesta.
 - Arriba, la **carta en juego** grande, con emoji y título, sin año.
 - El veredicto se dirige a quien jugó: “¡Te equivocaste!” para el que falló y “¡Cata se equivocó!” para el resto, con el fondo rojo solo en la pantalla del que falló (D-36).
 - Nada viene preseleccionado: hasta que el jugador toca una carta, las ranuras no reaccionan y el botón de confirmar está deshabilitado (D-38). El botón nombra la carta que va a colocar.
-- La carta elegida se marca en la propia mano (borde amarillo, el resto atenuado) y aparece dibujada dentro de la ranura elegida antes de confirmar. Se toca una ranura y luego **📍 Colocar aquí** (C-8), botón que flota abajo. Hubo una barra aparte que repetía la carta elegida sobre la línea; se quitó por redundante (D-33).
+- La carta se enciende **al apretar**, no al soltar el dedo. La carta elegida se marca en la propia mano (borde amarillo, el resto atenuado) y aparece dibujada dentro de la ranura elegida antes de confirmar. Se toca una ranura y luego **📍 Colocar aquí** (C-8), botón que flota abajo. Hubo una barra aparte que repetía la carta elegida sobre la línea; se quitó por redundante (D-33).
 - Al confirmar, la carta se revela con su año. Un **acierto** se muestra un par de segundos y se cierra solo.
   Un **error** tiñe la pantalla de rojo, sacude la carta, suena distinto y explica entre qué hitos iba y entre
   cuáles se puso; se queda hasta que el jugador toca. Mientras tanto, el celular no juega y las jugadas de
   otros esperan.
+- **Arrastrar** (D-85, `assets/js/arrastre.js`). La carta se puede sacar de la mano hacia abajo y
+  soltarla sobre una ranura; mientras viaja se dibuja en grande —268 px, texto de 15 px— y 60 px por
+  sobre el dedo, que si no la tapa. El destino se marca abriendo la ranura con la carta dentro, y los
+  dos hitos entre los que caería encienden su año. **Soltar elige, no coloca**: el botón amarillo
+  sigue siendo el que confirma. La carta ya puesta se retoma arrastrando su fila —la del año en “?”—
+  y se lleva a otra ranura, o se suelta fuera de la línea para devolverla a la mano. La mano se
+  desplaza a lo ancho como siempre: ese gesto es scroll y no elige nada (D-38).
 - La línea larga vive en un contenedor con su propio desplazamiento vertical, y salta sola a la zona
-  donde quedó la última carta.
+  donde quedó la última carta. Arrastrando cerca de un borde, la página se corre sola.
 - Marcador con las cartas que le quedan a cada jugador.
 - En modo un celular, entre turnos aparece el resultado y **“Pásale el celular a X”** (C-9).
 

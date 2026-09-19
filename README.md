@@ -138,6 +138,7 @@ You get events with no date on them and place them in the right spot on a shared
 - **🗂 All cards on the table (default):** twice the cards you need to win are dealt face up from the first turn (6, 10 or 14), and no new card enters for the rest of the game. Since the table only shrinks, the cards that are hard to place pile up for the end, on a timeline that by then is already crowded. The game gets harder on its own.
 - **🃏 Shared pool:** the same 6 cards face up for everyone, refilled from the deck, and whoever places the agreed number of cards first wins. It can also be played with **🙋 your own hand**, each player with private cards.
 - **💬 Room chat:** on several phones there is a chat to comment on the plays while waiting for your turn, and it stays alive on the final screen. New messages peek out for a few seconds next to the bubble.
+- **Drag a card into place.** Pull a card down out of your hand and drop it where you think it goes. While it travels it is drawn large and above your finger: in the hand a card is 130px wide and its title sits at 11px, which is unreadable on a narrow phone exactly when you have to decide. A card you already placed can be picked up again and moved, or dropped outside the timeline to send it back to your hand. Dropping only **chooses** — the yellow button is still the one that places it, so nothing irreversible happens by accident, and tapping works exactly as before.
 
 <!-- generado: capturas:linea-de-tiempo · written by python3 tools/readme.py actualizar -->
 <table>
@@ -389,6 +390,7 @@ node dudo/engine.test.mjs
 node julepe/engine.test.mjs
 node linea-de-tiempo/engine.test.mjs
 node toque-y-fama/engine.test.mjs
+node assets/js/arrastre.test.mjs
 node assets/js/i18n.test.mjs
 node assets/js/transport/cleanup.test.mjs
 node assets/js/transport/dispose.test.mjs
@@ -484,6 +486,7 @@ batalla-naval/              Batalla Naval (engine.js + tests, game.js, rules.js)
 linea-de-tiempo/            Línea de Tiempo (engine.js + tests, game.js, rules.js, decks/)
 ahorcado/                   El Ahorcado (engine.js + tests, game.js, rules.js, decks/)
 dudo/                       Dudo (engine.js + tests, game.js, rules.js)
+assets/js/arrastre.js       Shared drag and drop: dropping chooses, a button confirms
 assets/js/handoff.js        Shared transitions: pass the phone, covered screen
 assets/js/chat.js           Shared room chat (multi-phone modes)
 assets/js/session.js        Shared saved games (resume in any mode)

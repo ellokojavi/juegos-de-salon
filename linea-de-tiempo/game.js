@@ -13,6 +13,7 @@ import { createChat } from '../assets/js/chat.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
 import { trackStart } from '../assets/js/transport/stats.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
+import { crearArrastre } from '../assets/js/arrastre.js';
 import { buildState, correctSlot, randomSeed, yearLabel, timeLabel } from './engine.js';
 import { DECKS, getDeck } from './decks/index.js';
 import { GAME_ID, DEFAULT_CONFIG, HAND_SIZES, MIN_PLAYERS, MAX_PLAYERS, VISIBLE, SPREAD_FACTOR, LOCALES } from './rules.js';
@@ -288,6 +289,9 @@ async function renderQr(url) {
 }
 
 function renderPlay(v) {
+  // Con una carta en el aire no se redibuja: se iría el elemento que el dedo tiene tomado.
+  // Lo que llegue mientras tanto se pinta al soltar, que siempre termina en renderPlay.
+  if (arrastre && arrastre.activa()) return;
   showScreen('screen-play');
   const isLocalTurn = S.roles.includes(v.current);
   // Solitario y varios celulares: el veredicto de cada jugada se muestra a todos.
@@ -360,44 +364,157 @@ function renderPlay(v) {
   $('#pool-left').textContent = M.config.spread
     ? (v.table.length === 1 ? T.tableLeftOne : fmt(T.tableLeft, { n: v.table.length }))
     : fmt(T.poolLeft, { n: v.poolLeft });
+  pintarMano(v, hand, isLocalTurn);
+  pintarLinea(v, isLocalTurn);
+  pintarConfirmar(v, isLocalTurn);
+  const fresh = $('#line').querySelector('.event.fresh'); if (fresh) fresh.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+}
+
+/**
+ * La mano se reconstruye entera sólo fuera de un gesto: en medio de uno, el botón que el
+ * dedo tiene tomado no se puede reemplazar sin llevarse la captura del puntero (D-85).
+ * Para encender la carta bajo el dedo está `marcarMano`, que sólo toca clases.
+ */
+function pintarMano(v, hand, isLocalTurn) {
   const handBox = $('#hand'); handBox.innerHTML = '';
   for (const id of hand) {
     const c = v.byId[id];
-    handBox.append(el('button', { class: 'card' + (S.selCard === id ? ' sel' : ''), disabled: !isLocalTurn, onClick: () => { S.selCard = id; S.selSlot = null; SFX.tap(); vibrate(8); renderPlay(view()); } },
+    handBox.append(el('button', { class: 'card' + (S.selCard === id ? ' sel' : ''), disabled: !isLocalTurn, 'data-card': id, onClick: elegirConTeclado(() => { S.selCard = id; S.selSlot = null; }) },
       el('span', { class: 'em' }, c.emoji), el('span', { class: 't' }, c[lang])));
   }
+  marcarMano(isLocalTurn);
+}
 
-  // La carta elegida se marca en la propia mano; no hay barra aparte (D-33)
-  handBox.classList.toggle('dim', !!(isLocalTurn && S.selCard));
+/** La carta elegida se marca en la propia mano; no hay barra aparte (D-33) */
+function marcarMano(isLocalTurn) {
+  $$('#hand .card').forEach(b => b.classList.toggle('sel', b.dataset.card === S.selCard));
+  $('#hand').classList.toggle('dim', !!(isLocalTurn && S.selCard));
+}
 
-  // Línea de tiempo con ranuras
+/** Línea de tiempo con ranuras. La ranura elegida se abre y muestra la carta en su lugar. */
+function pintarLinea(v, isLocalTurn) {
   const line = $('#line'); line.innerHTML = '';
   const sel = S.selCard ? v.byId[S.selCard] : null;
-  const slot = i => el('div', { class: 'slot' + (S.selSlot === i ? ' on' : ''), onClick: () => {
+  const elegirRanura = i => { S.selSlot = S.selSlot === i ? null : i; SFX.tap(); vibrate(8); pintarLinea(v, isLocalTurn); pintarConfirmar(v, isLocalTurn); };
+  const slot = i => el('div', { class: 'slot' + (S.selSlot === i ? ' on' : ''), 'data-slot': i, onPointerdown: e => {
     if (!isLocalTurn || !S.selCard) return;
-    S.selSlot = S.selSlot === i ? null : i; SFX.tap(); vibrate(8); renderPlay(view());
-  } },
+    if (e.target.closest('.ghost')) return;   // esa la lleva el arrastre de la carta ya puesta
+    elegirRanura(i);
+  }, onClick: elegirConTeclado(() => { if (isLocalTurn && S.selCard) elegirRanura(i); }) },
     S.selSlot === i && sel
-      ? el('span', { class: 'ghost' }, el('span', { class: 'y' }, '?'), el('span', { class: 'em' }, sel.emoji), el('span', { class: 't' }, sel[lang]))
+      ? el('span', { class: 'ghost', 'data-card': S.selCard }, el('span', { class: 'y' }, '?'), el('span', { class: 'em' }, sel.emoji), el('span', { class: 't' }, sel[lang]))
       : el('span', {}, i === 0 ? T.slotFirst : i === v.line.length ? T.slotLast : T.slotBetween));
   if (isLocalTurn) line.append(slot(0));
   v.line.forEach((id, i) => {
     const fresh = v.history.length && v.history[v.history.length - 1].ok && v.history[v.history.length - 1].card === id;
-    line.append(eventRow(id, v.byId, fresh));
+    const row = eventRow(id, v.byId, fresh); row.dataset.ev = i;   // para encender los vecinos al arrastrar
+    line.append(row);
     if (isLocalTurn) line.append(slot(i + 1));
   });
+}
 
-  // Confirmar
+/**
+ * La selección se hace al apretar, para que la carta se encienda bajo el dedo y no al
+ * soltarlo. Pero `pointerdown` no cubre dos casos que sí llegan como `click`: el teclado
+ * (Enter sobre un botón) y los guiones de punta a punta, que llaman a `el.click()`. Los dos
+ * llegan con `detail === 0`; un toque o un clic de verdad llega con 1 o más, y ese ya lo
+ * atendió `pointerdown`. Así el mismo control sirve para las dos formas sin elegir dos veces.
+ */
+const elegirConTeclado = accion => e => {
+  if (e.detail !== 0) return;
+  accion();
+  SFX.tap();
+  renderPlay(view());
+};
+
+/* ------------------------------------------------------------------ */
+/* Arrastrar la carta a la línea (D-85)                                 */
+/* ------------------------------------------------------------------ */
+/**
+ * Arrastrar es elegir, nunca colocar: soltar sobre una ranura deja la carta y el lugar
+ * elegidos, y el botón amarillo sigue siendo el único que confirma (C-8). Se arrastra desde
+ * la mano y también desde la carta ya puesta —la del año en "?"—, que se puede llevar a otra
+ * ranura o soltar fuera de la línea para devolverla a la mano.
+ */
+let arrastre = null;
+/** Selección de antes de apretar, para devolverla si el gesto resulta ser scroll de la mano */
+let selPrevia = null;
+
+const enTurno = () => !!(M && S && S.transport && !view().done && S.roles.includes(view().current));
+const repintar = () => { const v = view(); marcarMano(true); pintarLinea(v, true); pintarConfirmar(v, true); };
+
+function montarArrastre() {
+  arrastre = crearArrastre({
+    fuentes: [
+      // La mano se desplaza a lo ancho: el navegador se queda con el gesto lateral y nos
+      // deja el vertical (`touch-action: pan-x` en el CSS), sin necesidad de toque largo.
+      { contenedor: $('#hand'), item: '.card', eje: 'vertical', nombre: 'mano' },
+      { contenedor: $('#line'), item: '.ghost', eje: 'libre', nombre: 'linea' },
+    ],
+    activo: () => enTurno() && $('#handoff').hidden && $('#cover').hidden,
+    vibrar: vibrate,
+    avatar: item => {
+      const c = view().byId[item.dataset.card];
+      return el('div', { class: 'vilo-carta' },
+        el('span', { class: 'em' }, c.emoji), el('span', { class: 't' }, c[lang]), el('span', { class: 'y' }, '?'));
+    },
+    // En coordenadas de documento: así la página se puede correr sola sin invalidar lo medido
+    medir: () => $$('#line .slot').map(s => {
+      const r = s.getBoundingClientRect();
+      return { clave: +s.dataset.slot, y: r.top + r.height / 2 + window.scrollY };
+    }),
+    // El destino se marca abriendo la ranura con la carta dentro: es el mismo hueco que deja
+    // el camino de toques, así que soltar no cambia de estado, solo lo deja quieto.
+    sobre: clave => {
+      if (S.selSlot === clave) return;
+      S.selSlot = clave; repintar();
+      if (clave === null) return;
+      // Los dos hitos entre los que cae encienden su año. Van muy por debajo de la ranura:
+      // el destino es uno solo, y dos bordes del mismo color no se distinguen entre sí.
+      for (const i of [clave - 1, clave]) $(`#line .event[data-ev="${i}"]`)?.classList.add('vecino');
+    },
+    // Se enciende al apretar, no al soltar: el jugador ve elegida la carta que tiene bajo el dedo
+    apretar: (item, nombre) => {
+      if (nombre !== 'mano') return;
+      selPrevia = { card: S.selCard, slot: S.selSlot };
+      S.selCard = item.dataset.card; S.selSlot = null;
+      SFX.tap(); vibrate(8); repintar();
+    },
+    // Retomar la carta puesta cierra su ranura antes de medir: lo medido vale todo el arrastre
+    alAlzar: (item, nombre) => {
+      if (nombre === 'linea') { selPrevia = { card: S.selCard, slot: S.selSlot }; S.selSlot = null; repintar(); }
+      // El lugar que dejó la carta queda marcado en la mano, venga el gesto de donde venga
+      const enMano = $(`#hand .card[data-card="${item.dataset.card}"]`);
+      if (enMano) enMano.classList.add('hueco');
+    },
+    // El gesto era scroll de la mano, no arrastre: se devuelve lo que había (D-38)
+    abandonar: () => { if (selPrevia) { S.selCard = selPrevia.card; S.selSlot = selPrevia.slot; repintar(); } },
+    // Un toque sobre la carta puesta la saca de la línea; sobre la mano ya eligió `apretar`
+    toque: (item, nombre) => { if (nombre === 'linea') { S.selSlot = null; SFX.tap(); vibrate(8); repintar(); } },
+    soltar: (clave, { nombre, cancelado }) => {
+      if (cancelado) { if (selPrevia) { S.selCard = selPrevia.card; S.selSlot = selPrevia.slot; } }
+      else if (clave === null) {
+        // Fuera de la línea: desde la mano queda elegida sin lugar; retomada desde la línea,
+        // se descarta y la carta vuelve a la mano sin elegir.
+        S.selSlot = null;
+        if (nombre === 'linea') S.selCard = null;
+      } else { S.selSlot = clave; SFX.tap(); vibrate(12); }
+      selPrevia = null;
+      renderPlay(view());
+    },
+  });
+}
+
+/** El botón que confirma: dice sobre qué carta actúa, nunca sólo la acción (C-8, D-38). */
+function pintarConfirmar(v, isLocalTurn) {
   const row = $('#place-row'); row.innerHTML = '';
-  if (isLocalTurn) {
-    const elegida = S.selCard ? v.byId[S.selCard] : null;
-    row.append(el('button', { class: 'btn btn--yellow', disabled: S.selSlot === null || !S.selCard, onClick: () => {
-      SFX.flip();
-      S.transport.send({ t: 'place', from: v.current, card: S.selCard, slot: S.selSlot, ms: S.turnStart ? Date.now() - S.turnStart : 0 });
-      S.selCard = null; S.selSlot = null;
-    } }, T.place, elegida && S.selSlot !== null ? el('small', {}, `${elegida.emoji} ${elegida[lang]}`) : null));
-  }
-  const fresh = line.querySelector('.event.fresh'); if (fresh) fresh.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  if (!isLocalTurn) return;
+  const elegida = S.selCard ? v.byId[S.selCard] : null;
+  row.append(el('button', { class: 'btn btn--yellow', disabled: S.selSlot === null || !S.selCard, onClick: () => {
+    SFX.flip();
+    S.transport.send({ t: 'place', from: v.current, card: S.selCard, slot: S.selSlot, ms: S.turnStart ? Date.now() - S.turnStart : 0 });
+    S.selCard = null; S.selSlot = null;
+  } }, T.place, elegida && S.selSlot !== null ? el('small', {}, `${elegida.emoji} ${elegida[lang]}`) : null));
 }
 
 function playVerdictSound(ok) { if (ok) { SFX.reveal(); vibrate([30, 30]); } else { SFX.timeUp(); vibrate([120, 60, 120, 60, 200]); } }
@@ -716,6 +833,7 @@ function init() {
   sparkles(12);
   renderModes();
   renderResumeSlot();
+  montarArrastre();
   const code = new URLSearchParams(location.search).get('sala');
   if (code && /^[A-Z]{4}$/i.test(code)) {
     const saved = loadSession();
