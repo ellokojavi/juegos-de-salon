@@ -324,8 +324,9 @@ The whole experience is translated: the menu and its footer lines, the six games
 How it is put together (canon C-3):
 
 - `assets/js/i18n.js` keeps the language in `localStorage` (`juegos-de-salon:lang`), draws the
-  🇨🇱 ES · 🇬🇧 EN · 🇧🇷 PT toggle and holds the shared text (`COMMON`): the menu, plus the room
-  invitation, which is the same for every game that has rooms (D-73).
+  🇨🇱 ES · 🇬🇧 EN · 🇧🇷 PT toggle and holds the shared text (`COMMON`): the menu, plus the two
+  strings every game with rooms repeats word for word — the room invitation (D-73) and the "or"
+  between creating a room and joining one.
 - Each game keeps its text in `LOCALES = { es, en, pt }` inside its `rules.js`. There is not a
   single literal string in `game.js`. Fixed HTML text is marked with `data-i18n`.
 - The menu registry (`games.js`), the 100 footer lines (`frases.js`) and every Timeline card

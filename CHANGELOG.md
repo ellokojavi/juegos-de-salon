@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.35.5 — 2026-09-19
+- **Arreglo: entre "crear sala" y "unirse" decía "— o —" en los tres idiomas.** El separador
+  estaba escrito a mano en el JS de los seis juegos con sala, sin pasar por `LOCALES`, así que en
+  portugués y en inglés asomaba una palabra en español. Ahora es una clave de `COMMON` (`or`) y
+  dice *o*, *or* u *ou* según el idioma.
+- **Portugués de Forca: la pantalla de configuración** (C-3). Tres calcos del español se van:
+  "Deixar comprar letras" → *Permitir comprar letras*, "a letra que falta mais rara" → *a letra
+  mais rara que ainda falta*, y "a palavra do seguinte" → *a palavra do próximo jogador*. El
+  mazo decía qué hace sin decir con qué ("O app distribui do tema escolhido" → *sorteia uma
+  palavra*), y la ✕ de cada jugador, que es lo que lee un lector de pantalla, pasa de "Tirar
+  jogador" a *Remover jogador*.
+- **El portugués tenía dos imperativos mezclados** y esta pantalla usaba el de *tu*, que en Brasil
+  suena regional: "Confere o código" → *Confira*, "Espera um pouquinho e tenta de novo" →
+  *Espere … tente*. El resto de la app ya hablaba de *você*.
+- La temática de deportes decía "Quadras, medalhas e árbitros": *quadra* es cancha techada y deja
+  el fútbol afuera, que es lo primero que se le ocurre a un brasileño. Ahora dice *Campos*.
+
 ## 0.35.4 — 2026-09-19
 - **Portugués de Forca: la portada, releída** (C-3). "Antes que os erros acabem" sonaba a que los
   errores se terminan solos; ahora dice "antes de gastar todos os erros permitidos", que es como se
