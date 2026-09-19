@@ -9,7 +9,7 @@ import {
   getDatabase, ref, get, set, update, push, onChildAdded, onValue, onDisconnect, serverTimestamp,
 } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js';
 import { firebaseConfig } from '../firebase-config.js';
-import { ROOM_TTL, dueForSweep, markSwept, noteRoom, sweep } from './cleanup.js';
+import { IDLE_TTL, ROOM_TTL, dueForSweep, markSwept, noteRoom, sweep } from './cleanup.js';
 import { disposeRoom } from './dispose.js';
 import { CONNECT_MS, LEAVE_MS, OP_MS, waitConnected, withTimeout } from './errors.js';
 import { checkQuota, noteCreated } from './ratelimit.js';
@@ -29,6 +29,17 @@ function getDb() {
 }
 
 const ROLES = ['A', 'B', 'C', 'D', 'E', 'F'];
+
+/** Cada cuánto, como mucho, este celular refresca el latido de su sala. */
+const TOUCH_EVERY = 60 * 1000;
+
+/**
+ * ¿Esta sala ya venció? Media hora sin jugadas o seis horas desde que nació (D-89).
+ * Una sala sin `lastAt` es de antes de que existiera el latido: vale el tope de seis horas.
+ */
+export const roomExpired = (room, now = Date.now()) => !room
+  || now - (room.createdAt || 0) > ROOM_TTL
+  || (typeof room.lastAt === 'number' && now - room.lastAt > IDLE_TTL);
 
 /**
  * Avisa si hay conexión con la base. Lo usa `waitConnected` antes de crear o entrar.
@@ -80,6 +91,7 @@ export function createFirebaseTransport({ game, maxPlayers = 2 }) {
     role: null,
     roles: [],
     _me: null,
+    _touchedAt: 0,
     _unsubs: [],
 
     /**
@@ -99,14 +111,28 @@ export function createFirebaseTransport({ game, maxPlayers = 2 }) {
       return code;
     },
 
+    /**
+     * El latido de la sala: `lastAt` con la hora del servidor, que es la que miran las reglas.
+     *
+     * Va aparte de la jugada y sin esperarlo a propósito. Si las reglas publicadas todavía no
+     * conocen `lastAt` el escrito se rechaza, y entonces la sala se comporta como siempre
+     * (vence a las seis horas): una partida en curso no se cae porque falte publicar reglas.
+     */
+    _touch(d) {
+      const now = Date.now();
+      if (!this.code || now - this._touchedAt < TOUCH_EVERY) return;
+      this._touchedAt = now;
+      try { set(ref(d, `rooms/${this.code}/lastAt`), serverTimestamp()).catch(() => { /* mejor esfuerzo */ }); }
+      catch (_) { /* nada */ }
+    },
+
     async _create(d, { config, name }) {
       for (let i = 0; i < 8; i++) {
         const code = randomRoomCode();
         const roomRef = ref(d, `rooms/${code}`);
         const snap = await get(roomRef);
         if (snap.exists()) {
-          const createdAt = snap.val().createdAt || 0;
-          if (Date.now() - createdAt > ROOM_TTL) { try { await set(roomRef, null); } catch (_) { continue; } }
+          if (roomExpired(snap.val())) { try { await set(roomRef, null); } catch (_) { continue; } }
           else continue;
         }
         await update(roomRef, { createdAt: serverTimestamp(), game, config });
@@ -139,7 +165,7 @@ export function createFirebaseTransport({ game, maxPlayers = 2 }) {
       if (!snap.exists()) throw new Error('not-found');
       const room = snap.val();
       if (room.game !== game) throw new Error('other-game');
-      if (Date.now() - (room.createdAt || 0) > ROOM_TTL) throw new Error('expired');
+      if (roomExpired(room)) throw new Error('expired');
       const players = room.players || {};
       let role = previousRole;
       if (!role) role = await this._claimRole(code, ROLES.slice(0, maxPlayers).filter(r => !players[r]), name);
@@ -175,6 +201,7 @@ export function createFirebaseTransport({ game, maxPlayers = 2 }) {
       this._me = meRef;
       // `set` y no `update`: entrar borra la despedida de la vez anterior (dispose.js).
       await set(meRef, { name, online: true, uid });
+      this._touch(d);   // entrar es actividad: la sala empieza (o sigue) viva
       onDisconnect(meRef).update({ online: false });
       // Reconexión: al volver, marcar online de nuevo. `left: false` porque volver de un
       // túnel es lo contrario de irse: si quedó una despedida a medias, se deshace acá.
@@ -197,6 +224,7 @@ export function createFirebaseTransport({ game, maxPlayers = 2 }) {
 
     send(msg) {
       const d = getDb();
+      this._touch(d);
       return push(ref(d, `rooms/${this.code}/messages`), { ...msg, from: this.role, at: serverTimestamp() });
     },
 
@@ -218,7 +246,7 @@ export function createFirebaseTransport({ game, maxPlayers = 2 }) {
 
     /**
      * Despedida limpia: este rol queda fuera de la sala y, si con eso no queda nadie, la
-     * sala se borra en el acto en vez de esperar seis horas (dispose.js, D-50).
+     * sala se borra en el acto en vez de esperar a que venza (dispose.js, D-50).
      *
      * Es para cuando la persona se va **a propósito**: cancelar la sala, salirse de ella,
      * cambiar de modo. Cerrar la pestaña o quedarse sin señal no pasa por acá: eso solo
