@@ -65,7 +65,12 @@
   flex: 0 0 auto; width: 130px; min-height: 84px; border-radius: 14px; padding: 8px; cursor: pointer;
   background: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.06)); border: 2px solid var(--glass-border);
   display: grid; gap: 2px; align-content: start; text-align: center; color: var(--ink); font-family: var(--font-body); transition: transform 0.1s, border-color 0.15s;
+  /* El eje del gesto se reparte solo: el navegador se queda con el desplazamiento lateral de
+     la tira y nos entrega el vertical, que es sacar la carta hacia la línea (D-85). */
+  touch-action: pan-x; user-select: none; -webkit-user-select: none;
 }
+/* El lugar que deja la carta que anda por el aire */
+.hand .card.hueco { opacity: 0.25; border-style: dashed; }
 .hand .card .em { font-size: 1.5rem; }
 .hand .card .t { font-size: 0.72rem; font-weight: 800; line-height: 1.25; }
 .hand .card.sel { border-color: var(--yellow); background: linear-gradient(180deg, rgba(255,210,63,0.3), rgba(255,122,26,0.15)); transform: translateY(-3px); }
@@ -88,6 +93,11 @@
 .event .em { font-size: 1.2rem; text-align: center; }
 .event .t { font-size: 0.82rem; font-weight: 700; line-height: 1.25; }
 .event.fresh { border-color: var(--lime); box-shadow: 0 0 12px rgba(157, 255, 58, 0.4); }
+/* Mientras se arrastra, los dos hitos entre los que caería la carta encienden su año: es
+   el dato que se está decidiendo, y el mismo que después explica el error (C-8b). No tocan
+   su borde a propósito: el borde encendido tiene que significar una sola cosa, el destino. */
+.event.vecino { background: rgba(157, 255, 58, 0.05); }
+.event.vecino .y { color: var(--lime); text-shadow: 0 0 10px rgba(157, 255, 58, 0.5); }
 .slot {
   display: grid; place-items: center; min-height: 30px; margin: 3px 0; border-radius: 10px; cursor: pointer;
   border: 2px dashed rgba(255,255,255,0.22); color: var(--muted); font-weight: 800; font-size: 0.75rem;
@@ -95,7 +105,9 @@
 }
 .slot:active { transform: scale(0.99); }
 .slot.on { border-color: var(--yellow); border-style: solid; background: rgba(255, 210, 63, 0.16); color: var(--ink); min-height: 56px; }
-.slot.on .ghost { display: grid; grid-template-columns: 62px 28px 1fr; align-items: center; gap: 8px; width: 100%; padding: 0 10px; }
+.slot.on .ghost { display: grid; grid-template-columns: 62px 28px 1fr; align-items: center; gap: 8px; width: 100%; padding: 0 10px;
+  /* La carta puesta se retoma arrastrándola a otra ranura, o se suelta fuera para devolverla */
+  cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; }
 .slot .ghost { display: none; }
 .slot .ghost .y { font: 900 0.98rem var(--font-num); color: var(--yellow); }
 .slot .ghost .em { font-size: 1.2rem; text-align: center; }
@@ -106,6 +118,10 @@
   backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
 }
 .place-row:empty { display: none; }
+/* Con la carta en el aire el botón está de más y ocupa justo donde va el pulgar. Se
+   desvanece con opacidad, no con display: mover la caja invalidaría lo ya medido. */
+body.arrastrando .place-row { opacity: 0; pointer-events: none; }
+.place-row { transition: opacity 0.15s; }
 /* El botón dice qué carta va a colocar: es lo último que se mira antes de confirmar (D-38) */
 .place-row .btn { flex-direction: column; gap: 2px; padding: 12px 20px; }
 .place-row .btn small { font: 800 0.8rem var(--font-body); text-transform: none; letter-spacing: 0; opacity: 0.9; line-height: 1.2; max-width: 100%; }
@@ -162,3 +178,23 @@
 
 /* Con el chat en pantalla, la burbuja flota abajo a la derecha: que no tape los botones del final */
 body.chat-on #screen-result { padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)); }
+
+/* ---------- La carta en vilo (D-85) ----------
+   Se ve como la carta elegida en la mano —mismo degradado, mismo borde amarillo— pero en
+   grande: en un celular apretado el texto de la mano queda en 11 px y no se alcanza a leer
+   justo cuando hay que decidir dónde va. Sube 60 px sobre el dedo, que si no la tapa. */
+.vilo { position: fixed; left: 0; top: 0; z-index: 60; pointer-events: none; display: none; will-change: transform; filter: drop-shadow(0 16px 28px rgba(0,0,0,0.55)); }
+.vilo.on { display: block; }
+.vilo-carta {
+  display: grid; gap: 4px; justify-items: center; color: var(--ink);
+  background: linear-gradient(180deg, rgba(255,210,63,0.34), rgba(255,122,26,0.18)), linear-gradient(180deg, #2f0d52, #1b0733);
+  border: 2px solid var(--yellow); box-shadow: 0 0 26px rgba(255,210,63,0.35);
+  border-radius: 16px; padding: 11px 14px; width: min(70vw, 268px);
+  transform: translate(-50%, -100%); transform-origin: 50% 100%;
+  animation: alzar 0.16s cubic-bezier(0.2, 0.9, 0.3, 1.4) both;
+}
+.vilo-carta .em { font-size: 2rem; line-height: 1; }
+.vilo-carta .t { font-weight: 900; font-size: 0.95rem; text-align: center; line-height: 1.3; text-wrap: balance; }
+.vilo-carta .y { font: 900 1.35rem var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); }
+@keyframes alzar { from { transform: translate(-50%, -100%) scale(0.55); } to { transform: translate(-50%, -100%) scale(1); } }
+@media (prefers-reduced-motion: reduce) { .vilo-carta { animation: none; } }
