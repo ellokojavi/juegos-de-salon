@@ -337,14 +337,8 @@ function renderPlay(v) {
   // Si el chat quedó abierto y llega mi turno, se cierra para dejar ver el tablero
   // (salvo que esté escribiendo algo: eso no se bota).
   if (chat && isLocalTurn) chat.closeIfIdle();
-  const okCount = v.history.filter(h => h.ok).length;
   $('#status-who').textContent = S.mode === 'solo' ? T.soloTitle : (isLocalTurn ? fmt(T.turnYou, { name: M.names[v.current] }) : fmt(T.turnOther, { name: M.names[v.current] }));
-  const offline = S.mode === 'online' ? M.players?.length && ROLES.find(r => M.presence[r]?.online === false && M.names[r]) : null;
-  const record = S.mode === 'solo' ? records.get(M.config.theme, M.config.handSize, M.config) : null;
-  $('#status-sub').textContent = S.mode === 'solo' ? `${fmt(T.soloStatus, { ok: okCount, n: v.history.length, tries: triesWord(v.history.length) })}${record ? ' · ' + fmt(T.soloRecord, { n: record, tries: triesWord(record) }) : ''}`
-    : isLocalTurn ? (S.selCard ? T.pickSlot : T.pickCard)
-    : offline ? fmt(T.offline, { name: M.names[offline] })
-    : (S.mode === 'online' ? fmt(T.waitingTurn, { name: M.names[v.current] }) : '');
+  marcarEstado(v, isLocalTurn);
 
   // Marcador
   const score = $('#score'); score.innerHTML = '';
@@ -391,19 +385,50 @@ function marcarMano(isLocalTurn) {
   $('#hand').classList.toggle('dim', !!(isLocalTurn && S.selCard));
 }
 
+/** La línea de estado, que cambia con la selección: "elige una carta" → "elige el lugar". */
+function marcarEstado(v, isLocalTurn) {
+  const okCount = v.history.filter(h => h.ok).length;
+  const offline = S.mode === 'online' ? M.players?.length && ROLES.find(r => M.presence[r]?.online === false && M.names[r]) : null;
+  const record = S.mode === 'solo' ? records.get(M.config.theme, M.config.handSize, M.config) : null;
+  $('#status-sub').textContent = S.mode === 'solo' ? `${fmt(T.soloStatus, { ok: okCount, n: v.history.length, tries: triesWord(v.history.length) })}${record ? ' · ' + fmt(T.soloRecord, { n: record, tries: triesWord(record) }) : ''}`
+    : isLocalTurn ? (S.selCard ? T.pickSlot : T.pickCard)
+    : offline ? fmt(T.offline, { name: M.names[offline] })
+    : (S.mode === 'online' ? fmt(T.waitingTurn, { name: M.names[v.current] }) : '');
+}
+
+/** Lo que muestra una ranura: la carta elegida dentro, o el cartel de dónde va. */
+function contenidoRanura(i, v) {
+  const sel = S.selCard ? v.byId[S.selCard] : null;
+  return (S.selSlot === i && sel)
+    ? el('span', { class: 'ghost', 'data-card': S.selCard }, el('span', { class: 'y' }, '?'), el('span', { class: 'em' }, sel.emoji), el('span', { class: 't' }, sel[lang]))
+    : el('span', {}, i === 0 ? T.slotFirst : i === v.line.length ? T.slotLast : T.slotBetween);
+}
+
+/**
+ * Elegir una carta o un lugar **no cambia la línea**: cambian las ranuras y nada más. Esto
+ * repinta solo esas, sin tocar las filas de hitos. Reconstruir la línea entera las hacía
+ * reproducir de nuevo su animación de entrada, y el tablero daba un salto en cada toque y en
+ * cada cambio de destino mientras se arrastra (D-87).
+ */
+function marcarRanuras(v) {
+  for (const d of $$('#line .slot')) {
+    const i = +d.dataset.slot;
+    d.classList.toggle('on', S.selSlot === i);
+    d.replaceChildren(contenidoRanura(i, v));
+  }
+  $$('#line .event.vecino').forEach(e => e.classList.remove('vecino'));
+}
+
 /** Línea de tiempo con ranuras. La ranura elegida se abre y muestra la carta en su lugar. */
 function pintarLinea(v, isLocalTurn) {
   const line = $('#line'); line.innerHTML = '';
-  const sel = S.selCard ? v.byId[S.selCard] : null;
-  const elegirRanura = i => { S.selSlot = S.selSlot === i ? null : i; SFX.tap(); vibrate(8); pintarLinea(v, isLocalTurn); pintarConfirmar(v, isLocalTurn); };
+  const elegirRanura = i => { S.selSlot = S.selSlot === i ? null : i; SFX.tap(); vibrate(8); marcarRanuras(v); pintarConfirmar(v, isLocalTurn); marcarEstado(v, isLocalTurn); };
   const slot = i => el('div', { class: 'slot' + (S.selSlot === i ? ' on' : ''), 'data-slot': i, onPointerdown: e => {
     if (!isLocalTurn || !S.selCard) return;
     if (e.target.closest('.ghost')) return;   // esa la lleva el arrastre de la carta ya puesta
     elegirRanura(i);
   }, onClick: elegirConTeclado(() => { if (isLocalTurn && S.selCard) elegirRanura(i); }) },
-    S.selSlot === i && sel
-      ? el('span', { class: 'ghost', 'data-card': S.selCard }, el('span', { class: 'y' }, '?'), el('span', { class: 'em' }, sel.emoji), el('span', { class: 't' }, sel[lang]))
-      : el('span', {}, i === 0 ? T.slotFirst : i === v.line.length ? T.slotLast : T.slotBetween));
+    contenidoRanura(i, v));
   if (isLocalTurn) line.append(slot(0));
   v.line.forEach((id, i) => {
     const fresh = v.history.length && v.history[v.history.length - 1].ok && v.history[v.history.length - 1].card === id;
@@ -424,7 +449,7 @@ const elegirConTeclado = accion => e => {
   if (e.detail !== 0) return;
   accion();
   SFX.tap();
-  renderPlay(view());
+  repintar();
 };
 
 /* ------------------------------------------------------------------ */
@@ -441,7 +466,8 @@ let arrastre = null;
 let selPrevia = null;
 
 const enTurno = () => !!(M && S && S.transport && !view().done && S.roles.includes(view().current));
-const repintar = () => { const v = view(); marcarMano(true); pintarLinea(v, true); pintarConfirmar(v, true); };
+/** Repintado liviano: ranuras, mano y botón. Las filas de hitos no se tocan (D-87). */
+const repintar = () => { const v = view(); marcarMano(true); marcarRanuras(v); pintarConfirmar(v, true); marcarEstado(v, true); };
 
 function montarArrastre() {
   arrastre = crearArrastre({
@@ -500,7 +526,8 @@ function montarArrastre() {
         if (nombre === 'linea') S.selCard = null;
       } else { S.selSlot = clave; SFX.tap(); vibrate(12); }
       selPrevia = null;
-      renderPlay(view());
+      $$('#hand .card.hueco').forEach(b => b.classList.remove('hueco'));
+      repintar();
     },
   });
 }

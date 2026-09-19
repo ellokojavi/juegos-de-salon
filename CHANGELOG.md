@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.35.2 — 2026-09-18
+- **Arreglo: el tablero pegaba un salto al apretar una carta** y otro cada vez que cambiaba el
+  destino mientras se arrastraba (D-87). Elegir reconstruía la línea entera y las filas volvían a
+  reproducir su animación de entrada. Ahora elegir repinta solo las ranuras: los hitos se quedan
+  donde están, que es lo que hacen de verdad.
+
 ## 0.35.1 — 2026-09-18
 - **Arreglo: arrastrar una carta hacia abajo disparaba el "deslizar para actualizar" de Chrome** en
   Android y recargaba la partida (D-86). `overscroll-behavior: none` pasa a estar también en `<html>`,

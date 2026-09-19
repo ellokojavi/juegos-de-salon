@@ -823,3 +823,26 @@ página y se va en desplazamiento vertical.
   GitHub Pages los sirve con `max-age=600`. El menú puede mostrar la versión nueva mientras el juego
   todavía corre la vieja desde la caché del celular, hasta diez minutos. Al verificar una publicación
   (C-11) hay que pedir **la página del juego**, no solo la portada.
+
+## D-87 · Elegir no reconstruye la línea
+**Fecha:** 2026-09-18 · **Estado:** vigente · **Corrige D-85**
+**Decisión:** Elegir una carta o un lugar repinta **solo las ranuras**, la mano y el botón. Las filas
+de hitos no se tocan. La línea se reconstruye entera únicamente cuando cambia de verdad: cuando se
+coloca una carta.
+
+**Por qué:** cada toque reconstruía `#line` completo, y como `.event` lleva `animation: slideUp`, las
+filas volvían a reproducir su animación de entrada: el tablero pegaba un salto al apretar una carta,
+y otro cada vez que el destino cambiaba mientras se arrastraba. Arrastrando es peor que tocando,
+porque ahí el salto se repite varias veces por segundo mientras el jugador mira la línea para decidir.
+
+El error de fondo era tratar "cambió la selección" como "cambió la pantalla". No cambió: elegir una
+carta no mueve ningún hito. Lo único que cambia es qué ranura está abierta y qué muestra adentro.
+
+**Consecuencias:**
+- `pintarLinea` (reconstruye) y `marcarRanuras` (repinta ranuras) quedan separadas, y con ellas
+  `marcarEstado`, porque la línea de estado sí cambia con la selección ("elige una carta" →
+  "elige el lugar") y antes venía de arrastre con el redibujo entero.
+- Soltar tampoco reconstruye: soltar elige, y elegir no cambia la línea (D-85).
+- La prueba es de identidad, no de aspecto: se marcan los nodos de las filas antes de apretar y se
+  comprueba que sean los mismos después. Una captura no habría delatado nada, porque el estado final
+  es idéntico: lo que molestaba era el camino, no el destino.
