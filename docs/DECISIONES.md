@@ -846,3 +846,31 @@ carta no mueve ningún hito. Lo único que cambia es qué ranura está abierta y
 - La prueba es de identidad, no de aspecto: se marcan los nodos de las filas antes de apretar y se
   comprueba que sean los mismos después. Una captura no habría delatado nada, porque el estado final
   es idéntico: lo que molestaba era el camino, no el destino.
+
+## D-88 · Julepe se retira del menú hasta que sus reglas se entiendan
+**Fecha:** 2026-09-18 · **Estado:** vigente
+**Decisión:** `julepe` pasa a `available: false` en `assets/js/games.js`. La tarjeta sigue en el
+menú, apagada y sin click (el mismo trato que tuvieron Batalla Naval y Toque y Fama mientras se
+construían), pero el juego entero sigue andando en `/julepe/`: quien tenga el link puede seguir
+jugando, y nada de lo construido —motor, sala, cartas selladas, verificación— se toca.
+
+**Por qué:** varias vueltas seguidas revisando el texto de reglas (qué es un palo, una baza, el
+plato, "repartir en lo que dure la mano") no terminaron de aclarar el juego ni para quien lo estaba
+explicando. Julepe es el juego con más reglas encadenadas de toda la app —declarar, cambiar cartas,
+asistir, montar, fallar, el plato que se dobla solo— y ese peso todavía no está bien resuelto en
+palabras simples. Publicarlo así es peor que no publicarlo: un juego que nadie entiende no se juega,
+y las capturas y el README ya lo muestran como si estuviera listo.
+
+**Lo que no cambia:** los quince requerimientos (JU-01 a JU-15) siguen marcados como cumplidos en
+`docs/REQUERIMIENTOS.md` — el juego está construido y funciona, lo que falta es que se explique
+bien. `docs/juegos/julepe.md` y la sección del README quedan, con una nota de que está pausado.
+
+**Consecuencias:**
+- La tabla de juegos del README (`tools/readme.py`, `bloque_juegos`) muestra "⏸ paused" en vez de
+  la versión cuando `disponible` es falso, en lugar de mentir con un número de versión que sugiere
+  que está en línea.
+- La portada y sus tarjetas sociales (`tools/og.mjs`) dejan de nombrar a Julepe en la lista de
+  juegos y en el emoji de la cabecera: se arman filtrando por `available`, así que no hubo que
+  tocarlas.
+- Reactivarlo es cambiar un booleano de vuelta a `true` una vez que las reglas se reescriban y se
+  prueben con alguien que no las conozca de antes.

@@ -20,7 +20,7 @@ Mobile-first web app with party games to play with friends: card games, drinking
 | 🪢 [Hangman / El Ahorcado / Forca](#-hangman-el-ahorcado) | 1 to 6 | One phone · Several phones · Play alone | v0.26 |
 | 🎲 [Liar's Dice / Dudo / Dado Mentiroso](#-liars-dice-dudo) | 1 to 6 | One phone · Several phones · Versus the phone | v0.32 |
 | ⚓ [Battleship / Batalla Naval / Batalha Naval](#-battleship-batalla-naval) | 1 to 2 | One phone · Two phones · Versus the phone | v0.6 |
-| 🍹 [Julep / Julepe / Paga o Bolo](#-julep-julepe) | 1 to 6 | One phone · Several phones · Versus the phone | v0.34 |
+| 🍹 [Julep / Julepe / Paga o Bolo](#-julep-julepe) | 1 to 6 | One phone · Several phones · Versus the phone | ⏸ paused |
 | 👑 [Fourth King / Cuarto Rey / Quarto Rei](#-fourth-king-cuarto-rey) | 4 to 6 | One phone | v0.27 |
 <!-- /generado -->
 
@@ -275,6 +275,11 @@ Spec and design: [docs/juegos/dudo.md](docs/juegos/dudo.md)
   </tr>
 </table>
 <!-- /generado -->
+
+> **Paused for now.** Several rounds of rewriting the rules text still did not make the game land
+> — not even for the person writing them. It is off the main menu while the rules get reworked
+> into something a new player can actually follow (D-88). The game itself is untouched and still
+> works at [`/julepe/`](https://juegosdesalon.cl/julepe/).
 
 A trick-taking game from the Tute family, played for drinks. There is a **pot** of sips on the table. You look at your five cards and say, in secret, whether you are **in** or **out**. Going in means committing to win **two of the five tricks**: make it and you are safe, and you get to hand out two sips per trick to anyone you like; fall short and you **drink the whole pot**. That is a **julep**. Everything drunk goes straight back into the pot, so two juleps in a row leave twenty sips sitting there before anyone notices.
 
