@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.35.7 — 2026-09-19
+- **Las bajadas del menú, al día.** Línea de Tiempo decía "Historia o música" cuando ya son seis
+  mazos (ahora: "Seis temáticas, de la historia al fútbol") y repetía los jugadores que la pastilla
+  👥 ya muestra. Batalla Naval ofrecía "un celular o contra el celular" y se dejaba afuera la sala
+  de dos, que tiene desde que hay salas. Dudo era la bajada más larga del menú y en español decía
+  otra cosa que en inglés y portugués: ahora las tres hablan de aguantar la cara, y en portugués
+  con un giro que se usa en Brasil ("sem entregar o jogo", no "segure a cara"). En Toque y Fama se
+  va la coma antes del "o", y la bajada del ahorcado en portugués vuelve al largo de las otras.
+- Ninguna de estas se había roto: envejecieron solas, y ningún test las compara contra el código.
+
 ## 0.35.6 — 2026-09-19
 - **En portugués, "cueca" es ropa interior.** La carta chilena del baile se jugaba en Brasil con
   esa palabra tapada y la pista "a dança do lenço": el chiste se armaba solo. La carta sigue
