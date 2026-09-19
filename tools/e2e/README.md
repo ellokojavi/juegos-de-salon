@@ -84,7 +84,7 @@ una pantalla que no corresponde al pie, algo tapado por el confeti— (D-76).
 Cada "celular" es una instancia de Chrome con su propio perfil (`dir`) y su propio puerto de
 depuración. Para que no compartan `localStorage`, cada una usa un origen distinto del mismo
 servidor: `localhost`, `127.0.0.1` y `[::1]`. Los scripts "online" hablan con el proyecto de
-Firebase real, así que necesitan internet y dejan salas de prueba que caducan a las 6 horas.
+Firebase real, así que necesitan internet y dejan salas de prueba que caducan a la media hora de quedar quietas (D-89).
 
 ## Cuidados
 

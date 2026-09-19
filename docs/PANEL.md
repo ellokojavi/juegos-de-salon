@@ -14,7 +14,7 @@ los datos son las reglas de Firebase, que solo dejan leer al UID del dueño.
 
 | Sección | Qué muestra | De dónde sale |
 |---|---|---|
-| **Ahora** | Salas en juego, celulares conectados, salas de las últimas 6 h, juegos en curso. Lista de salas con código, juego, nombres, quién está conectado, mensajes y última jugada. Solo las del entorno elegido (D-45). | `rooms/` en vivo (índice por `createdAt`), cruzado por código con `stats/<env>` |
+| **Ahora** | Salas en juego, celulares conectados, salas vivas (las que latieron hace menos de media hora, D-89), juegos en curso. Lista de salas con código, juego, nombres, quién está conectado, mensajes y última jugada. Solo las del entorno elegido (D-45). | `rooms/` en vivo (índice por `createdAt`), cruzado por código con `stats/<env>` |
 | **Últimos 7 / 30 días** | Partidas totales, en dos celulares, sin red, celulares que jugaron, partidas de hoy. | `stats/<env>/days/<día>` |
 | **Partidas por juego** | Barra por juego, partida por modo: 📡 dos celulares, 📱 un celular, 🤖 contra el celular, 🧍 solo. Los modos salen del registro, y uno nuevo entra solo (C-16). | `rooms` (📡) y `local/<juego>/<modo>/<n>` |
 | **Jugadores por partida** | Cuántas partidas de 1, 2, … hasta el juego más numeroso del menú (hoy 6, `MAX_PLAYERS`). | `n` de los contadores sin red y cantidad de nombres de cada sala |

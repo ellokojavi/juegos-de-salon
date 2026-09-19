@@ -31,12 +31,16 @@ se entera: el transporte y las señales de uso son mejor esfuerzo y fallan calla
 - El código de sala son 4 letras mayúsculas.
 - Cualquiera con el código puede leer la sala.
 - `createdAt`, `game` y `config` se escriben una sola vez (al crear la sala).
-- `players/A` a `players/F` se pueden actualizar mientras la sala tenga menos de 6 horas (hasta seis jugadores).
+- **Una sala está viva mientras late** (D-89): `lastAt` es la hora del servidor de la última
+  jugada, la refresca cualquiera que esté adentro y vale media hora. Pasada esa media hora —o las
+  seis horas desde `createdAt`, que son el tope duro— la sala no acepta nada más. Una sala sin
+  `lastAt` es de antes del latido: vale el tope de seis horas.
+- `players/A` a `players/F` se pueden actualizar mientras la sala esté viva (hasta seis jugadores).
   Ahí va también `left` (booleano): la despedida de quien se fue a propósito (D-50).
 - `messages/<id>` son de solo agregar (no se editan ni borran) y deben traer `t`, `from` (de A a F) y `at`.
-- Una sala con más de 6 horas puede ser borrada por cualquiera (limpieza).
+- Una sala vencida (media hora sin latido, o más de 6 horas) puede ser borrada por cualquiera (limpieza).
 - Una sala **viva** solo se puede borrar cuando todos los jugadores que están adentro tienen
-  `left: true`: es la sala cancelada, que se cierra en el acto en vez de esperar seis horas.
+  `left: true`: es la sala cancelada, que se cierra en el acto en vez de esperar a que venza.
   Una sala sin ningún jugador apuntado no se puede borrar.
 - Cualquier otro campo se rechaza.
 - **Solo el dueño** (su UID en las reglas) puede listar `rooms/` entero y leer `stats/`.
@@ -59,7 +63,7 @@ cleanup/
   la hora del servidor). Los códigos solo se agregan: no se pisan ni se editan.
 - **Un balde solo se puede leer y borrar 6 horas después de su último apunte.** Esa es la
   condición que hace que la papelera nunca delate una sala viva: cuando se abre, todas las
-  salas que nombra ya vencieron. Por eso `rooms/` sigue sin poder listarse.
+  salas que nombra ya vencieron, porque ninguna pasa de seis horas (D-89). Por eso `rooms/` sigue sin poder listarse.
 - Barrer es leer los baldes de los días anteriores a hoy, borrar esas salas y borrar el balde.
   Lo hace un celular cada vez que crea o entra a una sala, como mucho una vez cada 6 horas.
 - `sweptDay` evita repetir trabajo, pero cualquiera puede adelantarla (solo hacia adelante y

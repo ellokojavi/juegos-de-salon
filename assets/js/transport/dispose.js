@@ -1,7 +1,7 @@
 /**
  * Despedida limpia de una sala (canon C-7, D-50).
  *
- * Una sala vive seis horas y nadie la borra antes: la papelera (`cleanup.js`) recién puede
+ * Una sala vive hasta media hora quieta (seis como tope) y nadie la borra antes: la papelera (`cleanup.js`) recién puede
  * tocarla cuando venció. Eso está bien para las salas que se terminaron solas, pero deja
  * vivas —y en el panel del dueño, como si alguien estuviera jugando— las que la persona
  * canceló a propósito: creó la sala, nadie llegó, y se fue.

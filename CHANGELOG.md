@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.36.0 — 2026-09-19
+- **Una sala se cae a la media hora de quedar quieta** (D-89). Antes vivía seis horas pasara lo que
+  pasara: la que alguien abría a las ocho y quedaba vacía seguía ocupando su código —y apareciendo
+  en el panel como si ahí hubiera gente— hasta las dos de la mañana. Ahora la sala late: cada
+  jugada refresca `rooms/<CÓDIGO>/lastAt` con la hora del servidor, como mucho una vez por minuto,
+  y sin latido fresco las reglas no aceptan ni un jugador ni un mensaje más.
+- **Las seis horas siguen, como tope duro.** No son la vida normal de una sala: son lo que le
+  permite a la papelera (D-39) prometer que un balde que se puede abrir no nombra ninguna sala
+  viva. Sin tope, una partida larga podría sobrevivir a su propio balde y el índice delataría un
+  código en juego.
+- El despliegue no tiene ventana rota: el latido se escribe aparte y con el error tragado, así que
+  un cliente nuevo con las reglas viejas sigue jugando con las seis horas de siempre, y una sala
+  sin `lastAt` —creada por una pestaña vieja— también. **Las reglas se publican a mano**, y hasta
+  que se publiquen no cambia nada.
+- El panel descarta las salas sin latido fresco con la misma cuenta que las reglas, y su tarjeta
+  dice "salas vivas" en vez de "salas de las últimas 6 h", que ya no era lo mismo.
+- Lo que se pierde: una partida abandonada más de media hora ya no se puede retomar. Quien vuelve
+  ve "esa sala ya venció" y arma otra.
+
 ## 0.35.7 — 2026-09-19
 - **Las bajadas del menú, al día.** Línea de Tiempo decía "Historia o música" cuando ya son seis
   mazos (ahora: "Seis temáticas, de la historia al fútbol") y repetía los jugadores que la pastilla

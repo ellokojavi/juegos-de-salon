@@ -8,7 +8,7 @@
  * Códigos y de dónde salen:
  *   not-found   el código de sala no existe                     join
  *   other-game  ese código es de otro juego                     join
- *   expired     la sala pasó sus 6 horas                        join
+ *   expired     la sala venció: media hora quieta o seis desde que nació                        join
  *   full        ya están todos los roles tomados                join
  *   offline     no se pudo llegar a Firebase                    create, join
  *   busy        se llegó, pero la operación se colgó            create, join

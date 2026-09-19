@@ -7,10 +7,14 @@
       ],
       "$room": {
         ".read": "$room.matches(/^[A-Z]{4}$/)",
-        ".write": "$room.matches(/^[A-Z]{4}$/) && data.exists() && !newData.exists() && (data.child('createdAt').val() < now - 21600000 || (data.child('players').hasChildren() && (!data.child('players/A').exists() || data.child('players/A/left').val() == true) && (!data.child('players/B').exists() || data.child('players/B/left').val() == true) && (!data.child('players/C').exists() || data.child('players/C/left').val() == true) && (!data.child('players/D').exists() || data.child('players/D/left').val() == true) && (!data.child('players/E').exists() || data.child('players/E/left').val() == true) && (!data.child('players/F').exists() || data.child('players/F/left').val() == true)))",
+        ".write": "$room.matches(/^[A-Z]{4}$/) && data.exists() && !newData.exists() && (data.child('createdAt').val() < now - 21600000 || (data.child('lastAt').exists() && data.child('lastAt').val() < now - 1800000) || (data.child('players').hasChildren() && (!data.child('players/A').exists() || data.child('players/A/left').val() == true) && (!data.child('players/B').exists() || data.child('players/B/left').val() == true) && (!data.child('players/C').exists() || data.child('players/C/left').val() == true) && (!data.child('players/D').exists() || data.child('players/D/left').val() == true) && (!data.child('players/E').exists() || data.child('players/E/left').val() == true) && (!data.child('players/F').exists() || data.child('players/F/left').val() == true)))",
         ".validate": "newData.hasChildren(['createdAt', 'game'])",
         "createdAt": {
           ".write": "$room.matches(/^[A-Z]{4}$/) && !data.exists()",
+          ".validate": "newData.isNumber() && newData.val() <= now + 60000 && newData.val() > now - 60000"
+        },
+        "lastAt": {
+          ".write": "$room.matches(/^[A-Z]{4}$/) && root.child('rooms/' + $room + '/createdAt').val() > now - 21600000 && (!root.child('rooms/' + $room + '/lastAt').exists() || root.child('rooms/' + $room + '/lastAt').val() > now - 1800000)",
           ".validate": "newData.isNumber() && newData.val() <= now + 60000 && newData.val() > now - 60000"
         },
         "game": {
@@ -23,7 +27,7 @@
         },
         "players": {
           "$p": {
-            ".write": "$room.matches(/^[A-Z]{4}$/) && $p.matches(/^[A-F]$/) && root.child('rooms/' + $room + '/createdAt').val() > now - 21600000",
+            ".write": "$room.matches(/^[A-Z]{4}$/) && $p.matches(/^[A-F]$/) && root.child('rooms/' + $room + '/createdAt').val() > now - 21600000 && (!root.child('rooms/' + $room + '/lastAt').exists() || root.child('rooms/' + $room + '/lastAt').val() > now - 1800000)",
             ".validate": "newData.hasChildren(['name']) && newData.child('name').isString() && newData.child('name').val().length <= 20",
             "left": {
               ".validate": "newData.isBoolean()"
@@ -32,7 +36,7 @@
         },
         "messages": {
           "$id": {
-            ".write": "$room.matches(/^[A-Z]{4}$/) && !data.exists() && root.child('rooms/' + $room + '/createdAt').val() > now - 21600000",
+            ".write": "$room.matches(/^[A-Z]{4}$/) && !data.exists() && root.child('rooms/' + $room + '/createdAt').val() > now - 21600000 && (!root.child('rooms/' + $room + '/lastAt').exists() || root.child('rooms/' + $room + '/lastAt').val() > now - 1800000)",
             ".validate": "newData.hasChildren(['t', 'from', 'at']) && newData.child('t').isString() && newData.child('t').val().length < 20 && newData.child('from').val().matches(/^[A-F]$/) && newData.child('at').isNumber() && newData.child('at').val() <= now + 60000 && (!newData.hasChild('text') || (newData.child('text').isString() && newData.child('text').val().length <= 200))"
           }
         },

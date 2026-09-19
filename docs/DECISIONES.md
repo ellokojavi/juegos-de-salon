@@ -874,3 +874,39 @@ bien. `docs/juegos/julepe.md` y la sección del README quedan, con una nota de q
   tocarlas.
 - Reactivarlo es cambiar un booleano de vuelta a `true` una vez que las reglas se reescriban y se
   prueben con alguien que no las conozca de antes.
+
+## D-89 · Una sala se cae a la media hora de quedar quieta
+**Fecha:** 2026-09-19 · **Estado:** vigente
+**Decisión:** Una sala vence **media hora después de la última jugada**, y sigue existiendo el tope
+duro de seis horas desde que nació (D-15). Las dos cuentas las hacen las reglas de seguridad: la
+sala gana un campo `lastAt` —el latido, con la hora del servidor— que el transporte refresca al
+entrar y al jugar, como mucho una vez por minuto (`_touch` en `assets/js/transport/firebase.js`).
+Sin latido fresco, las reglas dejan de aceptar jugadores y mensajes, y cualquiera puede borrar la
+sala.
+
+**Por qué:** seis horas era la vida de cualquier sala, jugara alguien o no. Una sala que se abrió a
+las ocho y quedó vacía seguía ocupando su código de cuatro letras hasta las dos de la mañana, y
+aparecía en el panel del dueño como si ahí hubiera gente. Las partidas duran entre cinco y cuarenta
+minutos (`duration` en `games.js`): media hora quieta no es una pausa, es una sala abandonada.
+
+**Por qué se queda el tope de seis horas:** la papelera (D-39) promete que un balde del índice solo
+se puede leer cuando todas sus salas ya vencieron, y así el índice nunca delata el código de una
+sala en juego (C-15). Esa promesa necesita que exista un plazo máximo: con vencimiento solo por
+inactividad, una sala con gente jugando podría sobrevivir a su propio balde. Los seis horas dejan de
+ser la vida normal de una sala y pasan a ser el tope que sostiene a la papelera.
+
+**Compatible en los dos sentidos, porque las reglas se publican a mano:**
+- Reglas nuevas con un cliente viejo en caché: esa sala nunca escribe `lastAt`, y las reglas tratan
+  la ausencia del campo como "vale el tope de seis horas". La partida sigue como antes.
+- Cliente nuevo con reglas viejas: el latido es un escrito aparte, en segundo plano y con el error
+  tragado. Se rechaza, nadie lo nota y la sala vence a las seis horas.
+Así ninguna de las dos mitades del despliegue tiene que esperar a la otra.
+
+**Consecuencias:**
+- Las reglas se **publican a mano** en la consola ([Realtime Database → Rules](https://console.firebase.google.com/u/0/project/juegos-de-salon/database/juegos-de-salon-default-rtdb/rules)).
+  Hasta que se publiquen, todo sigue funcionando con las seis horas de siempre.
+- Una partida que se deja a medias más de media hora ya no se puede retomar (C-6 vale hasta que la
+  sala venza). Quien vuelve ve "esa sala ya venció" y arma una nueva.
+- El panel descarta las salas sin latido fresco, con la misma cuenta que las reglas, así que deja de
+  mostrar como vivas las salas que nadie puede usar.
+- Un escrito más por sala cada minuto de juego, solo mientras se juega.

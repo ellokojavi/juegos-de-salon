@@ -1,7 +1,8 @@
 /**
  * Limpieza de salas viejas en Firebase (canon C-7).
  *
- * Una sala vence a las 6 horas, pero nadie la borra: el creador ya cerró el navegador.
+ * Una sala vence sola —media hora quieta, o seis horas en total— pero nadie la borra: el
+ * creador ya cerró el navegador.
  * La papelera es el índice que permite encontrarlas sin poder listar `rooms/`:
  *
  *   cleanup/
@@ -11,8 +12,9 @@
  *       rooms/<CÓDIGO>: true
  *
  * Al crear (y al entrar a) una sala se apunta su código en el balde de su día. Las reglas
- * solo dejan leer un balde cuando pasaron 6 horas desde su último apunte: cuando se puede
- * leer, todas sus salas están vencidas, así que el índice nunca revela una sala viva.
+ * solo dejan leer un balde cuando pasaron 6 horas desde su último apunte: como ninguna sala
+ * pasa de seis horas (ROOM_TTL, el tope duro), cuando el balde se puede leer todas sus salas
+ * están vencidas y el índice nunca revela una sala viva.
  *
  * Barrer es entonces: leer los baldes de los días que faltan, borrar esas salas y borrar
  * el balde. Lo hace cualquier celular que cree o entre a una sala, en segundo plano y como
@@ -21,7 +23,17 @@
  * Todo el acceso a la base entra por `api` para poder probar esto con node sin Firebase:
  *   { read(ruta), update(ruta, cambios), remove(ruta), stamp() }
  */
-export const ROOM_TTL = 6 * 60 * 60 * 1000;   // vida de una sala (igual que en las reglas)
+
+/**
+ * Una sala tiene dos relojes, y el primero que llegue la mata (D-89):
+ *   - IDLE_TTL: media hora sin que nadie juegue. Cada jugada refresca `rooms/<CÓDIGO>/lastAt`.
+ *   - ROOM_TTL: seis horas desde que nació, juegue quien juegue. Es el tope duro, y es lo que
+ *     le permite a la papelera prometer que un balde que se puede leer no tiene salas vivas:
+ *     sin tope, una sala con gente jugando podría sobrevivir a su propio balde.
+ * Los dos números están también en las reglas (`firebase/database.rules.json`).
+ */
+export const ROOM_TTL = 6 * 60 * 60 * 1000;   // tope duro desde que se creó
+export const IDLE_TTL = 30 * 60 * 1000;       // media hora sin jugadas
 const DAY = 24 * 60 * 60 * 1000;
 const RESCUE_DAYS = 8;                        // días que se revisan siempre, ignorando la marca
 const MAX_DAYS = 30;                          // tope de baldes por barrido
