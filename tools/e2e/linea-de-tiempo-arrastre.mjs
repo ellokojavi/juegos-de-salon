@@ -49,6 +49,20 @@ await clickText('#setup-form .seg button', 'Corta'); await sleep(100);
 await click('#setup-actions .btn'); await sleep(900);
 console.log('pantalla:', await b.evaluate(`document.querySelector('.screen.active').id`));
 
+/* 0 · Elegir no puede reconstruir la línea: las filas se quedan donde están ----- */
+// Se marcan las filas de hitos; si alguna se reemplaza, el marcador se pierde y además la
+// fila reproduce de nuevo su animación de entrada, que es el salto que se veía (D-87).
+await b.evaluate(`document.querySelectorAll('#line .event').forEach((e,i)=>e.__marca=i); 1`);
+const marcadas = await b.evaluate(`document.querySelectorAll('#line .event').length`);
+await b.evaluate(`document.querySelector('#hand .card').dispatchEvent(new PointerEvent('pointerdown',{bubbles:true})); 1`); await sleep(120);
+const sobreviven = await b.evaluate(`[...document.querySelectorAll('#line .event')].filter(e=>e.__marca!==undefined).length`);
+console.log('filas de la línea:', marcadas, '· siguen siendo las mismas tras apretar una carta:', sobreviven);
+console.log('  ' + (sobreviven === marcadas && marcadas > 0 ? '✅' : '❌') + ' elegir no reconstruye la línea (D-87)');
+// Con `animation-fill-mode: both` la animación terminada sigue adjunta, así que no sirve
+// contarlas: lo que delata el redibujo es que alguna vuelva a estar corriendo.
+const corriendo = await b.evaluate(`[...document.querySelectorAll('#line .event')].filter(e=>e.getAnimations().some(a=>a.playState==='running')).length`);
+console.log('  ' + (corriendo === 0 ? '✅' : '❌') + ` y ninguna fila volvió a reproducir su animación de entrada (${corriendo} corriendo)`);
+
 /* 1 · De la mano a una ranura: elige, no coloca -------------------------------- */
 const carta = await centro('#hand .card');
 const ranura = await centro('#line .slot');
