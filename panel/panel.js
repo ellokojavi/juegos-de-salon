@@ -102,7 +102,9 @@ function stopListening() {
 
 function listen() {
   stopListening();
-  // Salas de las últimas 6 horas (índice por createdAt en las reglas). Cada jugada llega como delta.
+  // Se bajan las salas de las últimas 6 horas —el tope duro, que es lo que el índice por
+  // createdAt sabe filtrar— y `liveRooms` descarta después las que llevan media hora sin latir
+  // (D-89). Cada jugada llega como delta.
   const since = Date.now() - ROOM_TTL;
   S.unsubRooms = onValue(query(ref(db, 'rooms'), orderByChild('createdAt'), startAt(since)), snap => { S.rooms = snap.val() || {}; renderNow(); }, denied);
   // Se baja solo hasta donde llega el rango elegido y nunca menos de lo que ya estaba bajado
@@ -205,7 +207,7 @@ function renderNow() {
   tiles.append(
     tile(active.length, 'salas en juego', active.length > 0),
     tile(connections(live), 'celulares conectados'),
-    tile(live.length, 'salas de las últimas 6 h'),
+    tile(live.length, 'salas vivas'),
     tile(new Set(active.map(r => r.game)).size, 'juegos en curso'),
   );
   const box = $('#rooms');
@@ -224,7 +226,7 @@ function renderNow() {
       : `Hay ${n(ajenas.length)} salas abiertas que no son`;
     box.append(el('p', { class: 'empty', style: 'margin-top:8px' },
       `${cuantas} de ${envLabel(S.env)}, así que no ${una ? 'se cuenta' : 'se cuentan'} acá: ${cuales}. `
-      + 'Suelen ser partidas de prueba hechas en el computador o en el laboratorio, y se borran solas a las seis horas.'));
+      + 'Suelen ser partidas de prueba hechas en el computador o en el laboratorio, y se borran solas a la media hora de quedar quietas.'));
   }
   $('#updated').textContent = `Actualizado ${new Date(now).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' })}`;
 }

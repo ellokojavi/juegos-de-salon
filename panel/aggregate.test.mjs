@@ -25,6 +25,17 @@ assert.deepEqual(live[0].players.map(p => p.name), ['Javi', 'Cata']);
 assert.equal(connections(live), 1);
 assert.deepEqual(liveRooms(null, now), []);
 
+// Media hora sin latido y la sala está vencida (D-89). El latido es lo que miran las reglas,
+// así que manda sobre los mensajes: con latido fresco la sala vive aunque la última jugada
+// sea vieja, y sin latido vale el tope de seis horas (salas de antes del latido).
+const latidos = liveRooms({
+  VIVA: { createdAt: now - 2 * 60 * 60 * 1000, lastAt: now - 60 * 1000, game: 'dudo', players: { A: { name: 'Javi', online: true } }, messages: { m1: { t: 'bid', at: now - 40 * 60 * 1000 } } },
+  QUIE: { createdAt: now - 2 * 60 * 60 * 1000, lastAt: now - 31 * 60 * 1000, game: 'dudo', players: { A: { name: 'Cata', online: true } } },
+  ANTI: { createdAt: now - 2 * 60 * 60 * 1000, game: 'dudo', players: { A: { name: 'Fausto', online: false } } },
+}, now);
+assert.deepEqual(latidos.map(r => r.code), ['VIVA', 'ANTI'], 'se va la que lleva media hora quieta');
+assert.equal(latidos[0].lastAt, now - 60 * 1000, 'el latido cuenta como última señal de vida');
+
 // Una sala cerrada (todos se despidieron) ya no es una sala viva: se borra sola, y si
 // alguna sobrevive al borrado no puede aparecer como si hubiera gente jugando (D-50)
 const cerradas = liveRooms({

@@ -12,7 +12,8 @@ import { deserted } from '../assets/js/transport/dispose.js';
 import { MODE_IDS, isLocalMode, MAX_PLAYERS } from '../assets/js/games.js';
 
 export const DAY = 24 * 60 * 60 * 1000;
-export const ROOM_TTL = 6 * 60 * 60 * 1000;   // igual que en el transporte y las reglas
+export const ROOM_TTL = 6 * 60 * 60 * 1000;   // tope duro de una sala (transporte y reglas)
+export const IDLE_TTL = 30 * 60 * 1000;       // media hora sin jugadas y la sala vence (D-89)
 export const ACTIVE_MS = 10 * 60 * 1000;      // una sala está "en juego" si hubo jugada hace poco
 
 export const dayOf = ts => Math.floor(ts / DAY);
@@ -113,9 +114,25 @@ export function splitByEnv(live, codes, { loaded = true } = {}) {
 }
 
 /**
+ * Última señal de vida de una sala: el latido que escribe el transporte (`lastAt`), la última
+ * jugada que llegó, o su nacimiento. Se miran los tres porque no siempre están los tres: una
+ * sala de antes del latido no tiene `lastAt`, y una recién creada no tiene mensajes.
+ */
+export function actividad(r) {
+  const msgs = Object.values(r?.messages || {});
+  const ultima = msgs.reduce((m, x) => (typeof x?.at === 'number' && x.at > m ? x.at : m), 0);
+  return Math.max(r?.createdAt || 0, typeof r?.lastAt === 'number' ? r.lastAt : 0, ultima);
+}
+
+/**
  * Las salas vivas, ordenadas de la más reciente actividad a la más vieja.
  *
- * Quedan fuera las vencidas y las **cerradas**: aquellas donde todos los jugadores se
+ * Vencida es la que lleva media hora sin latido o seis horas desde que nació (D-89). Se
+ * miran las mismas dos cuentas que hacen las reglas —y el latido igual que ellas, solo si
+ * está— para que el panel no muestre viva una sala donde ya nadie puede escribir, ni muerta
+ * una de las de antes del latido, que todavía aceptan jugadas hasta las seis horas.
+ *
+ * Quedan fuera también las **cerradas**: aquellas donde todos los jugadores se
  * despidieron (`left`, ver `transport/dispose.js`). Una sala cerrada se borra sola en el
  * acto; si alguna sobrevive es porque el borrado no alcanzó a salir, y mostrarla sería
  * decir que hay gente jugando donde ya no hay nadie (D-50).
@@ -127,6 +144,7 @@ export function liveRooms(rooms, now = Date.now()) {
   const out = [];
   for (const [code, r] of Object.entries(rooms || {})) {
     if (!r || typeof r.createdAt !== 'number' || r.createdAt < now - ROOM_TTL) continue;
+    if (typeof r.lastAt === 'number' && r.lastAt < now - IDLE_TTL) continue;
     if (deserted(r.players)) continue;
     const players = Object.entries(r.players || {}).sort(([a], [b]) => a.localeCompare(b))
       .map(([role, p]) => ({ role, name: p?.name || '?', online: !!p?.online, left: !!p?.left }));
@@ -135,7 +153,7 @@ export function liveRooms(rooms, now = Date.now()) {
     // creada ya trae uno por cabeza. Contarlos hacía que una sala sin jugadas dijera "2 msj".
     const dichos = msgs.filter(x => x?.t !== 'hello');
     // La hora sí sale de todos: que alguien acabe de entrar también es actividad.
-    const lastAt = msgs.reduce((m, x) => (typeof x?.at === 'number' && x.at > m ? x.at : m), r.createdAt);
+    const lastAt = actividad(r);
     const online = players.filter(p => p.online).length;
     out.push({
       code, game: r.game || '?', createdAt: r.createdAt, players, online,

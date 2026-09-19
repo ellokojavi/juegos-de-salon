@@ -157,7 +157,7 @@ const CAMINOS = {
    */
   panel: {
     datos: [`(()=>{const DIA=86400000,ahora=Date.now(),hoy=Math.floor(ahora/DIA);
-      const rooms={ABCD:{createdAt:ahora-4*60000,game:'dudo',players:{A:{name:'Javi',online:true},B:{name:'Cata',online:true}},messages:{m1:{t:'hello',at:ahora-4*60000},m2:{t:'bid',at:ahora-60000}}},EFGH:{createdAt:ahora-2*3600000,game:'juego-nuevo',players:{A:{name:'Fausto',online:false}}}};
+      const rooms={ABCD:{createdAt:ahora-4*60000,lastAt:ahora-60000,game:'dudo',players:{A:{name:'Javi',online:true},B:{name:'Cata',online:true}},messages:{m1:{t:'hello',at:ahora-4*60000},m2:{t:'bid',at:ahora-60000}}},EFGH:{createdAt:ahora-2*3600000,lastAt:ahora-12*60000,game:'juego-nuevo',players:{A:{name:'Fausto',online:false}}}};
       // Salas jugadas de varios días, con país y ganador, para ver la bitácora y su paginado (D-79).
       // Van a propósito: un empate, una sala sin registro de ganador (de antes de que se anotara),
       // una donde nunca entró nadie más y nombres de varios países.
