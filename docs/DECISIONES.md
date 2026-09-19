@@ -793,3 +793,33 @@ enteran, y quien prefiera tocar sigue tocando.
 - Batalla Naval mueve barcos con un arrastre propio, anterior a este módulo. No se migró en esta
   pasada; cuando se migre gana el clon en vilo y la vibración, y el módulo gana su primer destino
   de dos dimensiones, que es para lo que la clave del destino es cualquier cosa y no un índice.
+
+## D-86 · El gesto de arrastrar no se lo puede llevar el navegador
+**Fecha:** 2026-09-18 · **Estado:** vigente · **Corrige D-85**
+**Decisión:** `overscroll-behavior: none` va en `<html>` **y** en `<body>`, y `touch-action: pan-x`
+va en toda la tira de la mano, no solo en las cartas.
+
+**Por qué:** publicado el arrastre, en un celular de verdad tirar la carta hacia abajo disparaba el
+**deslizar para actualizar** de Chrome. Es el peor final posible para este gesto: no es que no
+funcione, es que recarga la página y se lleva la partida por delante.
+
+Dos causas, sumadas. La primera: el `overscroll-behavior` del viewport se toma de `<html>`, y desde
+`<body>` solo se propaga si `<html>` vale `auto`. Esa propagación estaba escrita en la hoja desde el
+principio y nadie la había puesto a prueba, porque hasta ahora ningún gesto de la app tiraba hacia
+abajo desde el borde superior. La segunda: `touch-action: pan-x` estaba solo en `.card`, y entre dos
+cartas hay 6 px de hueco; el dedo mide bastante más, así que un toque que cae en el hueco lo toma la
+página y se va en desplazamiento vertical.
+
+**Consecuencias:**
+- La regla vale para toda la app, no solo para Línea de Tiempo: cualquier juego que arrastre hereda
+  el viewport ya protegido.
+- **Ninguna prueba automatizada podía atrapar esto.** `Input.dispatchTouchEvent` de CDP inyecta el
+  toque directamente en el renderizador, saltándose `touch-action` y el sobre-desplazamiento;
+  `Input.synthesizeScrollGesture` sí pasa por el canal de gestos, pero Chrome headless no implementa
+  el deslizar para actualizar, que es una función del navegador de Android. El gesto que fallaba no
+  existe en ningún Chrome que se pueda automatizar desde aquí. Lo que sí queda: **un gesto nuevo se
+  prueba en un celular de verdad antes de publicarlo** (D-67), y eso no lo reemplaza ningún guion.
+- Al revisar esto apareció otra trampa: `/linea-de-tiempo/` es un documento distinto del menú, y
+  GitHub Pages los sirve con `max-age=600`. El menú puede mostrar la versión nueva mientras el juego
+  todavía corre la vieja desde la caché del celular, hasta diez minutos. Al verificar una publicación
+  (C-11) hay que pedir **la página del juego**, no solo la portada.
