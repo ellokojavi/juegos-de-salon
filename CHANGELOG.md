@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.35.1 — 2026-09-18
+- **Arreglo: arrastrar una carta hacia abajo disparaba el "deslizar para actualizar" de Chrome** en
+  Android y recargaba la partida (D-86). `overscroll-behavior: none` pasa a estar también en `<html>`,
+  que es de donde el viewport lo toma de verdad, y `touch-action: pan-x` cubre ahora toda la tira de
+  la mano y no solo las cartas: entre dos cartas hay 6 px de hueco y el dedo mide más que eso.
+
 ## 0.35.0 — 2026-09-18
 - **Arrastrar la carta a la línea**, en Línea de Tiempo (LT-16, D-85). Se saca la carta de la mano
   hacia abajo y se suelta en su lugar. Mientras viaja se dibuja en grande y por sobre el dedo: en la

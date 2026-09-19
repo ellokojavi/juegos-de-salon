@@ -59,7 +59,10 @@
 .hand-title { display: flex; justify-content: space-between; align-items: baseline; margin: 4px 0; }
 .hand-title b { font-family: var(--font-display); font-size: 1.05rem; letter-spacing: 0.05em; }
 .hand-title small { color: var(--muted); font-weight: 800; font-size: 0.75rem; }
-.hand { display: flex; gap: 6px; overflow-x: auto; padding: 2px 2px 8px; scrollbar-width: none; }
+.hand { display: flex; gap: 6px; overflow-x: auto; padding: 2px 2px 8px; scrollbar-width: none;
+  /* En toda la tira, no solo sobre las cartas: entre dos cartas hay 6 px de hueco y el dedo mide
+     bastante más que eso. Un toque que cae ahí no puede desplazar la página a lo alto (D-86). */
+  touch-action: pan-x; }
 .hand::-webkit-scrollbar { display: none; }
 .hand .card {
   flex: 0 0 auto; width: 130px; min-height: 84px; border-radius: 14px; padding: 8px; cursor: pointer;

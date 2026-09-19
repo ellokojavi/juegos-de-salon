@@ -33,7 +33,11 @@
 
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
-html, body { margin: 0; min-height: 100%; }
+/* El `overscroll-behavior` del viewport se toma de <html>; desde <body> solo se propaga si
+   <html> vale `auto`, y de esa propagación no conviene depender: donde no ocurre, tirar hacia
+   abajo desde arriba dispara el "deslizar para actualizar" de Chrome y se lleva el gesto
+   puesto —y con él la partida, porque recarga la página (D-86)—. Va en los dos. */
+html, body { margin: 0; min-height: 100%; overscroll-behavior: none; }
 
 body {
   font-family: var(--font-body);
