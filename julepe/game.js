@@ -1006,7 +1006,7 @@ function renderSetupOnline(codigoInvitado = '') {
       catch (e) { failWith(e, T, fallar); }
       crear.disabled = false;
     } }, T.create);
-    acciones.append(crear, el('div', { class: 'or' }, '— o —'),
+    acciones.append(crear, el('div', { class: 'or' }, `— ${COMMON[lang].or} —`),
       el('div', { class: 'panel' },
         el('p', { class: 'lead', style: 'margin-bottom:8px' }, T.joinTitle),
         el('div', { class: 'field' }, codigo), entrar));
