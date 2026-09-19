@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.35.3 — 2026-09-18
+- **Julepe sale del menú por ahora** (D-88). Varias vueltas seguidas de reglas no terminaron de
+  aclarar el juego, ni para quien las estaba escribiendo — con más pasos encadenados que cualquier
+  otro juego de la app, todavía no está bien resuelto en palabras simples. Queda apagado en el menú
+  y sin click, igual que Batalla Naval y Toque y Fama mientras se construían; el juego sigue entero
+  en `/julepe/` y nada de lo construido se pierde.
+- **Arreglo: una tarjeta apagada del menú no se veía apagada.** `.game-card` anima su entrada con
+  `opacity` hasta 1 y la deja puesta (`animation ... both`), así que el `opacity: 0.55` de
+  `.soon` quedaba tapado: el juego no se podía tocar, pero se veía idéntico a uno jugable. Nadie lo
+  había notado porque los tres usos anteriores de `available: false` fueron juegos que todavía no
+  existían, no uno que se apagó después de publicado.
+- La tabla de juegos del README dice **"⏸ paused"** en vez de una versión cuando el juego no está
+  disponible, para no sugerir que se puede jugar desde la portada.
+
 ## 0.35.2 — 2026-09-18
 - **Arreglo: el tablero pegaba un salto al apretar una carta** y otro cada vez que cambiaba el
   destino mientras se arrastraba (D-87). Elegir reconstruía la línea entera y las filas volvían a

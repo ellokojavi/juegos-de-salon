@@ -63,7 +63,9 @@ export const GAMES = [
     players: '1–6',
     duration: '15–30',
     path: 'julepe/',
-    available: true,
+    // Fuera del menú por ahora: las reglas no quedaron claras y se están reescribiendo (D-88).
+    // El juego sigue entero en /julepe/, solo no se ofrece desde acá.
+    available: false,
   },
   {
     id: 'cuarto-rey',
