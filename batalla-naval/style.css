@@ -79,12 +79,16 @@
 .place-top .count { color: var(--muted); font-weight: 900; }
 .ships { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 12px 0 10px; }
 .ship-chip {
-  display: flex; align-items: center; gap: 6px; padding: 8px 10px; border-radius: 12px; cursor: pointer;
+  display: flex; align-items: center; gap: 6px; padding: 8px 10px; border-radius: 12px; cursor: grab;
+  /* La ficha se arrastra al tablero: el navegador no puede llevarse el gesto para desplazar la
+     página (D-86), y arrastrar un botón no debe seleccionar su texto. */
+  touch-action: none; user-select: none; -webkit-user-select: none;
   background: var(--glass); border: 2px solid var(--glass-border); color: var(--ink); font: 800 0.85rem var(--font-body); transition: transform 0.1s, border-color 0.15s;
 }
 .ship-chip .segs { display: flex; gap: 2px; }
 .ship-chip .segs i { width: 12px; height: 12px; border-radius: 3px; background: linear-gradient(180deg, #cfd8e3, #8f9fb3); display: block; }
 .ship-chip.sel { border-color: var(--yellow); background: rgba(255, 210, 63, 0.18); }
+.ship-chip:active { cursor: grabbing; }
 .ship-chip.done { opacity: 0.45; }
 .ship-chip.done .segs i { background: var(--lime); }
 .place-actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 10px; }

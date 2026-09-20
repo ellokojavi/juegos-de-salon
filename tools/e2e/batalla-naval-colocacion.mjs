@@ -17,5 +17,24 @@ await b.evaluate(`document.querySelector('#place-grid .rot').click(); 1`); st = 
 await tapCell('B3'); st = await state(); console.log('toco el acorazado → cambia la selección:', JSON.stringify({ sel: st.sel, selCells: st.selCells, rotAt: st.rotAt }));
 await tapCell('B3'); st = await state(); console.log('lo toco de nuevo → deselecciona:', JSON.stringify({ sel: st.sel, selCells: st.selCells, rotAt: st.rotAt }));
 await tapCell('J10'); st = await state(); console.log('toco casilla vacía sin selección → coloca el siguiente libre (crucero) si cabe:', st.count);
+// Arrastrar (D-90): desde la ficha al tablero, y desde el tablero con OTRO barco seleccionado.
+// El gesto va por eventos de puntero, que es como llega de un dedo o de un mouse de verdad.
+await b.evaluate(`window.__arrastra = async (desde, hasta) => {
+  const ev = (t, el, x, y) => el.dispatchEvent(new PointerEvent(t, { bubbles: true, cancelable: true, clientX: x, clientY: y, pointerId: 1, pointerType: 'touch', isPrimary: true, button: 0 }));
+  const a = desde.getBoundingClientRect(), z = hasta.getBoundingClientRect();
+  const x0 = a.left + a.width / 2, y0 = a.top + a.height / 2, x1 = z.left + z.width / 2, y1 = z.top + z.height / 2;
+  ev('pointerdown', desde, x0, y0);
+  for (let i = 1; i <= 6; i++) { const x = x0 + (x1 - x0) * i / 6, y = y0 + (y1 - y0) * i / 6; ev('pointermove', document.elementFromPoint(x, y) || desde, x, y); await new Promise(r => setTimeout(r, 20)); }
+  ev('pointerup', document.elementFromPoint(x1, y1) || hasta, x1, y1);
+  await new Promise(r => setTimeout(r, 150));
+};
+window.__celda = (r, c) => document.querySelector('#place-grid .cell[data-r="' + r + '"][data-c="' + c + '"]');
+window.__ficha = id => document.querySelector('.ship-chip[data-ship="' + id + '"]'); 1`);
+await b.evaluate(`__arrastra(__ficha('destroyer'), __celda(7, 1))`); await sleep(400);
+st = await state(); console.log('arrastro la ficha del destructor al tablero →', JSON.stringify({ sel: st.sel, layout: st.layout.destroyer, rotAt: st.rotAt }));
+await tapCell('A3'); st = await state(); console.log('selecciono el acorazado →', JSON.stringify({ sel: st.sel }));
+await b.evaluate(`__arrastra(__celda(7, 1), __celda(0, 7))`); await sleep(400);
+st = await state(); console.log('arrastro el destructor con el acorazado elegido → se mueve Y queda elegido:', JSON.stringify({ sel: st.sel, layout: st.layout.destroyer, rotAt: st.rotAt }));
+await b.shot('arrastre-elige');
 console.log('errors:', JSON.stringify(b.errors), JSON.stringify(b.logs));
 b.close();

@@ -91,7 +91,7 @@ Spec: [docs/juegos/toque-y-fama.md](docs/juegos/toque-y-fama.md) · Feasibility 
 
 ## ⚓ Battleship (Batalla Naval)
 
-Sink the fleet. Each player hides 5 ships on a 10×10 board and fires in turns: miss, hit or sunk. A hit lets you fire again. Ships are placed by tapping, with rotate, drag and "random". The phone answers on its own and keeps score.
+Sink the fleet. Each player hides 5 ships on a 10×10 board and fires in turns: miss, hit or sunk. A hit lets you fire again. Ships are placed by tapping or by dragging them from the list onto the board, with rotate and "random". The phone answers on its own and keeps score.
 
 - **📱 One phone:** your fleet is covered between turns. On a miss, the result and "pass the phone to X" share one screen.
 - **📡 Two phones:** a room with a code and a QR. Each phone answers the shots against its own fleet, and at the end both fleets are revealed and verified.
