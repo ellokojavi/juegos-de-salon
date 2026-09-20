@@ -347,7 +347,7 @@ function buildPlacement(role) {
     }
     const actions = $('#place-actions'); actions.innerHTML = '';
     actions.append(
-      el('button', { class: 'btn btn--ghost', onClick: () => { rotateSelected(); } }, fmt(T.rotate, { dir: d.dir === 'h' ? '↔' : '↕' })),
+      el('button', { class: 'btn btn--ghost rotar', onClick: () => { rotateSelected(); } }, fmt(T.rotate, { dir: d.dir === 'h' ? '↔' : '↕' })),
       el('button', { class: 'btn btn--ghost', onClick: () => { d.layout = randomLayout(); d.sel = null; SFX.dice(); paint(); } }, T.random),
       el('button', { class: 'btn btn--ghost', onClick: () => { d.layout = {}; d.sel = FLEET[0].id; SFX.tap(); paint(); } }, T.clear),
     );
@@ -742,13 +742,16 @@ function init() {
   for (const [evento, paso] of [['pointerdown', 'down'], ['pointermove', 'move'], ['pointerup', 'up'], ['pointercancel', 'up']]) {
     $('#screen-place').addEventListener(evento, e => { S?.placing?.drag?.[paso](e); });
   }
-  // Tocar fuera de la grilla (y fuera de las fichas y botones) deselecciona el barco seleccionado.
+  // Tocar en cualquier parte fuera de la grilla deselecciona el barco elegido. Solo se salvan
+  // las dos cosas que trabajan con la selección: la ficha de un barco (tocarla es elegirlo) y el
+  // botón de girar (gira el que está elegido). Al azar y Limpiar rehacen la selección por su
+  // cuenta, y Zarpar se lleva la pantalla entera.
   $('#screen-place').addEventListener('click', e => {
     if (!S?.placing || $('#screen-place').classList.contains('active') === false) return;
     if (S.placing.drag?.dragging()) return; // soltar un barco no es tocar afuera
     // composedPath conserva los nodos aunque la grilla se haya redibujado durante el mismo toque
-    const inside = e.composedPath().some(n => n.id === 'place-grid' || n.id === 'place-actions' || n.id === 'place-sail' || (n.classList && n.classList.contains('ship-chip')));
-    if (inside) return;
+    const trabaja = e.composedPath().some(n => n.id === 'place-grid' || (n.classList && (n.classList.contains('ship-chip') || n.classList.contains('rotar'))));
+    if (trabaja) return;
     S.placing.deselect();
   });
   renderModes();
