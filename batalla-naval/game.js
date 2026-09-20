@@ -330,8 +330,10 @@ function buildPlacement(role) {
     const gridBox = $('#place-grid'); gridBox.innerHTML = '';
     const g = gridEl({ cellClass: (r, c) => { const id = occ[cellName(r, c)]; return id ? ('ship' + (id === d.sel ? ' sel' : '')) : ''; }, onTap: onCellTap });
     gridBox.append(g);
-    // Barco seleccionado ya colocado: botón ↻ sobre su esquina superior derecha
-    if (d.sel && d.layout[d.sel]) {
+    // Barco seleccionado ya colocado: botón ↻ sobre su esquina superior derecha.
+    // Mientras se arrastra no se dibuja: girar no es algo que se pueda hacer con el barco en el
+    // aire, y el botón quedaba flotando sobre la casilla de donde salió.
+    if (d.sel && d.layout[d.sel] && !(drag && drag.moved)) {
       const p = d.layout[d.sel]; const size = SHIP_SIZE[d.sel];
       const corner = p.dir === 'h' ? { r: p.r, c: p.c + size - 1 } : { r: p.r, c: p.c };
       const cell = g.querySelector(`.cell[data-r="${corner.r}"][data-c="${corner.c}"]`);
@@ -424,7 +426,8 @@ function buildPlacement(role) {
       if (!drag.moved) {
         if (Math.hypot(e.clientX - drag.x, e.clientY - drag.y) < UMBRAL) return;
         drag.moved = true;
-        if (d.sel !== drag.ship) { d.sel = drag.ship; d.dir = drag.dir; paint(); }
+        d.sel = drag.ship; d.dir = drag.dir;
+        paint();   // el barco arrastrado queda elegido, y el ↻ se va mientras dure el gesto
       }
       $$('#place-grid .cell').forEach(x => x.classList.remove('ghost-ok', 'ghost-bad'));
       drag.target = null;

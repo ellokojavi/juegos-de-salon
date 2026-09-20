@@ -936,3 +936,6 @@ Línea de Tiempo: el puntero lo toma el contenedor, no lo que se arrastra.
   la página en Android en vez de mover el barco.
 - Soltar afuera del tablero, o sobre un lugar donde el barco no cabe, no coloca nada y suena el
   error —pero el barco arrastrado igual queda elegido, que es lo que el gesto pedía.
+- **Mientras dura el arrastre no se dibuja el ↻.** Girar no es algo que se pueda hacer con el barco
+  en el aire, y el botón se quedaba flotando sobre la casilla de donde salió, ofreciendo una acción
+  que en ese momento no existe. Vuelve al soltar.
