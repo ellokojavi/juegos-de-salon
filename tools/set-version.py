@@ -22,7 +22,7 @@ MODULES = [
     'cuarto-rey/game.js', 'cuarto-rey/rules.js',
     'toque-y-fama/game.js', 'toque-y-fama/rules.js', 'toque-y-fama/engine.js',
     'assets/js/transport/local.js', 'assets/js/transport/firebase.js', 'assets/js/transport/cleanup.js', 'assets/js/transport/dispose.js', 'assets/js/transport/errors.js', 'assets/js/transport/ratelimit.js', 'assets/js/transport/stats.js', 'assets/js/handoff.js', 'assets/js/session.js', 'assets/js/chat.js', 'assets/js/arrastre.js',
-    'batalla-naval/game.js', 'batalla-naval/rules.js', 'batalla-naval/engine.js',
+    'batalla-naval/game.js', 'batalla-naval/rules.js', 'batalla-naval/engine.js', 'batalla-naval/flota.js',
     'linea-de-tiempo/game.js', 'linea-de-tiempo/rules.js', 'linea-de-tiempo/engine.js',
     'linea-de-tiempo/decks/index.js', 'linea-de-tiempo/decks/historia.js', 'linea-de-tiempo/decks/musica.js',
     'linea-de-tiempo/decks/chile.js', 'linea-de-tiempo/decks/pop.js', 'linea-de-tiempo/decks/brasil.js', 'linea-de-tiempo/decks/futbol.js',
