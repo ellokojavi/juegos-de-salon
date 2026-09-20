@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.39.1 — 2026-09-20
+- **Arreglo: la grilla chica de "Mi flota" se veía rectangular** aunque sus casillas fueran
+  cuadradas. El número de la fila era más alto que la casilla y era él el que mandaba el alto de
+  la fila: quedaba aire entre filas y ninguno entre columnas. Las etiquetas pasan a tener
+  `line-height: 1` y el alto vuelve a decidirlo la casilla.
+- **Un disparo al agua ya no tapa el agua**: la casilla conserva el mismo patrón de mar con un halo
+  oscuro por dentro —el hoyo que deja la bomba— y el punto encima. Tocado y hundido también dejan
+  ver el mar alrededor, con un resplandor naranja o rojo en vez de un cuadrado de color.
+- **El barco hundido se le muestra al rival, ardiendo.** La respuesta de un hundimiento ya traía el
+  barco y sus casillas en orden, así que de ahí sale qué trozo va en cada una: el casco aparece con
+  la paleta quemada (negro, óxido y brasas) y el 🔥 encima. Antes el rival solo veía cinco cuadrados
+  rojos y nunca sabía qué le había hundido.
+- De paso: el 💥 y el 🔥 se dibujan por encima del barco. El dibujo va posicionado y les estaba
+  pasando por arriba.
+
 ## 0.39.0 — 2026-09-20
 - **La flota de Batalla Naval, en pixel art** (D-91). Los barcos dejan de ser bloques grises
   idénticos: cada casilla pinta un trozo de 16×16 píxeles visto desde arriba, y los trozos calzan
