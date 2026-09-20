@@ -90,7 +90,8 @@ function startSession({ mode, transport, roles, config, names, bot = null, code 
   // Cambiar de sala (la revancha crea una nueva) es irse de la anterior para siempre: se
   // despide en vez de solo soltar los oyentes, así no queda una sala muerta viéndose viva.
   if (S?.transport) S.transport.dispose();
-  S = { mode, transport, roles, layouts: {}, draft: {}, bot, code, role, repliedShots: new Set(), lastShownShot: -1, cpuTimer: null, uiRole: null, aim: null, fleetShown: false };
+  if (S?.turnTimer) clearTimeout(S.turnTimer);
+  S = { mode, transport, roles, layouts: {}, draft: {}, bot, code, role, repliedShots: new Set(), lastShownShot: -1, cpuTimer: null, turnTimer: null, lastTurnMine: null, uiRole: null, aim: null, fleetShown: false };
   M = newMatch(config);
   M.presence = {};
   Object.entries(names).forEach(([r, name]) => { if (name) transport.send({ t: 'hello', from: r, name }); });
@@ -240,9 +241,16 @@ function fleetScore(sunkIds) {
 /* ------------------------------------------------------------------ */
 /* Render principal                                                    */
 /* ------------------------------------------------------------------ */
+/**
+ * El turno, en el título de la pestaña. En dos celulares el aparato puede estar en el bolsillo
+ * o la app de fondo cuando te toca: el título es lo único que se ve sin abrir nada.
+ */
+function tabTurn(on) { document.title = on ? `🎯 ${T.turnYou} · ${T.docTitle}` : T.docTitle; }
+
 function render() {
   if (!M) return;
   const v = view();
+  if (v.phase !== 'play') tabTurn(false);
   switch (v.phase) {
     case 'lobby': renderLobby(); break;
     case 'placing': renderPlace(); break;
@@ -509,12 +517,34 @@ function renderPlay(v) {
   // Rol que "mira" la pantalla
   const me = S.mode === 'local' ? v.shooter : (S.mode === 'online' ? S.role : 'A');
   const enemy = other(me);
-  // Estado
-  const who = $('#status-who'), sub = $('#status-sub');
+  const canShoot = shooterLocal && v.shooter === me && !v.pending && v.phase === 'play';
+  const myTurn = v.phase === 'play' && shooterLocal && v.shooter === me;
+  /**
+   * Estado. Dos frases distintas del mismo tamaño y del mismo color se leen igual de lejos,
+   * así que la barra cambia de color y de forma según de quién sea el turno (D-92). El ícono
+   * va en su propio elemento: es una señal, no una palabra de la frase.
+   */
+  const bar = $('#screen-play .status'), who = $('#status-who'), sub = $('#status-sub');
   const lastMine = v.last && v.last.from === me && v.last.result ? v.last : null;
-  if (v.phase !== 'play') { who.textContent = '…'; sub.textContent = T.waitingReply; }
-  else if (shooterLocal && v.shooter === me) { who.textContent = fmt(T.turnYou, { name: M.names[enemy] }); sub.textContent = lastMine && lastMine.result !== 'agua' && M.config.extraShot ? fmt(T.extraGo, { result: T[lastMine.result] }) : (v.pending ? T.waitingReply : T.pickCell); }
-  else { who.textContent = fmt(T.turnOther, { name: M.names[v.shooter] }); sub.textContent = v.last && v.last.from !== me && v.last.result ? fmt(T.cpuShot, { cell: v.last.cell, result: T[v.last.result] }) : ''; }
+  const setStatus = (kind, ico, titulo, bajada) => {
+    bar.className = 'status ' + kind;
+    who.replaceChildren(el('span', { class: 'ico' }, ico), titulo);
+    sub.textContent = bajada;
+  };
+  if (v.phase !== 'play') setStatus('theirs', '⏳', '…', T.waitingReply);
+  else if (myTurn) setStatus('mine', '🎯', T.turnYou, lastMine && lastMine.result !== 'agua' && M.config.extraShot
+    ? fmt(T.extraGo, { result: T[lastMine.result] })
+    : (v.pending ? T.waitingReply : fmt(T.turnYouSub, { name: M.names[enemy] })));
+  else setStatus('theirs', '⏳', fmt(T.turnOther, { name: M.names[v.shooter] }), T.turnOtherSub);
+  tabTurn(S.mode === 'online' && myTurn);
+  // Te llegó el turno: además de verse, se oye y se siente. Si el disparo del rival acaba de
+  // sonar, el aviso lo espera: dos sonidos encima se escuchan como uno solo y mal.
+  if (myTurn && S.lastTurnMine !== myTurn) {
+    const tras = v.last && v.last.result && v.last.n > S.lastShownShot ? 650 : 0;
+    clearTimeout(S.turnTimer);
+    S.turnTimer = setTimeout(() => { SFX.turn(); vibrate([40, 60, 40]); bar.classList.remove('pop'); void bar.offsetWidth; bar.classList.add('pop'); }, tras);
+  }
+  S.lastTurnMine = myTurn;
   // Marcador
   const score = $('#score'); score.innerHTML = '';
   const sunkOf = target => repliesBy(other(target)).filter(s => s.result === 'hundido').map(s => s.ship);
@@ -525,11 +555,26 @@ function renderPlay(v) {
   // Tablero enemigo
   $('#enemy-title').textContent = fmt(T.enemyBoard, { name: M.names[enemy] });
   const myShots = M.shots.filter(s => s.from === me);
-  const canShoot = shooterLocal && v.shooter === me && !v.pending && v.phase === 'play';
   const fire = cell => { if (!canShoot) return; S.aim = null; S.transport.send({ t: 'shot', from: me, cell }); SFX.flip(); };
   const enemyBox = $('#enemy-grid'); enemyBox.innerHTML = '';
+  // El tablero ocupa media pantalla: es el cartel más grande que hay para decir si puedes
+  // disparar o no. Vivo cuando te toca, apagado cuando no.
+  enemyBox.classList.toggle('live', canShoot);
+  enemyBox.classList.toggle('locked', !canShoot);
+  /**
+   * Tocarlo fuera de turno no puede ser un silencio: el canon pide una señal inconfundible y
+   * una explicación de qué pasó (C-8b), y es además como se aprende la regla —tocando—.
+   * El aviso no se cierra solo: lo reemplaza la jugada del rival cuando llegue.
+   */
+  const denegar = () => {
+    const tablero = enemyBox.querySelector('.grid-wrap');
+    if (tablero) { tablero.classList.remove('shake'); void tablero.offsetWidth; tablero.classList.add('shake'); }
+    bar.classList.remove('flash'); void bar.offsetWidth; bar.classList.add('flash');
+    if (v.phase === 'play' && !v.pending && v.shooter !== me) sub.textContent = fmt(T.notYourTurn, { name: M.names[v.shooter] });
+    SFX.error(); vibrate([20, 30, 20]);
+  };
   enemyBox.append(gridEl({ cellClass: enemyCellClass(myShots, S.aim), cellArt: enemyCellArt(myShots), onTap: (r, c, cellEl) => {
-    if (!canShoot) return;
+    if (!canShoot) return denegar();
     const n = cellName(r, c);
     if (myShots.some(s => s.cell === n)) { cellEl.classList.remove('shake'); void cellEl.offsetWidth; cellEl.classList.add('shake'); return; }
     if (!M.config.confirmShot) return fire(n);
