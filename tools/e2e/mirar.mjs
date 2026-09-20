@@ -38,6 +38,22 @@ if (!juego) {
   process.exit(1);
 }
 
+/* --- Trozos de camino de Batalla Naval (ver el comentario de su entrada) --- */
+const BN_CPU = [
+  `document.querySelectorAll('.mode')[2].click()`,
+  `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
+  `document.querySelector('#setup-actions .btn--yellow').click()`,
+];
+const BN_ZARPA = [
+  `[...document.querySelectorAll('#place-actions .btn')].find(b=>/azar/.test(b.textContent)).click()`,
+  `document.querySelector('#place-sail .btn').click()`,
+];
+const BN_FRENA = `(()=>{const S=window.__bn.session();clearTimeout(S.cpuTimer);S.cpuTimer='frenado';})()`;
+const BN_FALLA = rol => `(()=>{const S=window.__bn.session(),L=S.layouts['${rol === 'A' ? 'B' : 'A'}'].layout,
+  T={carrier:5,battleship:4,cruiser:3,submarine:3,destroyer:2},o=new Set();
+  for(const [id,p] of Object.entries(L)) for(let i=0;i<T[id];i++) o.add((p.dir==='h'?p.r:p.r+i)+','+(p.dir==='h'?p.c+i:p.c));
+  for(let r=0;r<10;r++) for(let c=0;c<10;c++) if(!o.has(r+','+c)) return S.transport.send({t:'shot',from:'${rol}',cell:'ABCDEFGHIJ'[c]+(r+1)});})()`;
+
 /**
  * Cómo llegar a cada pantalla. Cada paso es un trocito de JS que se corre en la página;
  * si un juego necesita otra cosa, se suma acá y no en un guion nuevo.
@@ -148,6 +164,22 @@ const CAMINOS = {
           window.__ahorcado.session().transport.send({t:'guess',from:'A',letter:l,n:n++,ms:100});})()`,
       `(()=>{for(let i=0;i<4;i++){const h=document.getElementById('handoff');if(h.hidden)break;const b=h.querySelector('button');b?b.click():h.click()}})()`,
     ],
+  },
+  /**
+   * Batalla Naval contra el celular: el celular es siempre quien abre (`starter` es B), así que
+   * para mirar una pantalla concreta hay que mover el turno a mano. `BN_FRENA` le corta el reloj
+   * del disparo y se lo deja tomado, para que no se vuelva a armar; `BN_FALLA(rol)` dispara al
+   * agua del otro, que se sabe dónde está porque las dos flotas viven en la sesión. Así las dos
+   * pantallas de turno salen siempre iguales en vez de depender de dónde apuntó el bot.
+   */
+  'batalla-naval': {
+    intro: [],
+    // Contra el celular se llega al tablero sin pantalla de pase de por medio
+    colocacion: [...BN_CPU],
+    // Mi turno: la barra en lima y el tablero del rival encendido (D-92)
+    juego: [...BN_CPU, ...BN_ZARPA, BN_FRENA, BN_FALLA('B')],
+    // El turno del rival: la barra apagada y el tablero también (D-92)
+    espera: [...BN_CPU, ...BN_ZARPA, BN_FRENA, BN_FALLA('B'), BN_FALLA('A')],
   },
   /**
    * El panel del dueño no es un juego, pero se mira igual: `window.__panel.seed` lo dibuja
