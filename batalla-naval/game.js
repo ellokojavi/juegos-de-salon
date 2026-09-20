@@ -15,7 +15,7 @@ import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import { UMBRAL } from '../assets/js/arrastre.js';
 import { N, COLS, FLEET, SHIP_SIZE, cellName, parseCell, isCell, cellsOf, isValidPlacement, isValidLayout, randomLayout, occupancy, layoutKey, shoot, allSunk, Hunter, nextShooter, sha256, randomNonce, verifyPlayer } from './engine.js';
 import { GAME_ID, DEFAULT_CONFIG, LOCALES } from './rules.js';
-import { FONDO_AGUA, barcoEn, barcoEntero } from './flota.js';
+import { FONDO_AGUA, barcoEn, barcoEntero, trozoDe } from './flota.js';
 
 const lang = getLang();
 const T = LOCALES[lang];
@@ -202,6 +202,28 @@ function myCellClass(layout, shotsReceived, highlightLast = false) {
   shotsReceived.forEach(s => { hit[s.cell] = s.result; if (s.cells) s.cells.forEach(x => { hit[x] = 'hundido'; }); });
   const last = highlightLast && shotsReceived.length ? shotsReceived[shotsReceived.length - 1].cell : null;
   return (r, c) => { const n = cellName(r, c); return (occ[n] ? 'ship ' : '') + (hit[n] || '') + (n === last ? ' last' : ''); };
+}
+
+/**
+ * El dibujo del tablero enemigo: solo los barcos **hundidos**, que son los únicos que el rival
+ * ya mostró. La respuesta de un hundimiento trae el barco y sus casillas en orden desde la popa
+ * (`cellsOf`), así que de ahí sale qué trozo va en cada una y si el barco está de pie o acostado.
+ */
+function enemyCellArt(myShots) {
+  const arte = {};
+  for (const s of myShots) {
+    if (s.result !== 'hundido' || !s.ship || !s.cells) continue;
+    const pos = s.cells.map(parseCell);
+    const dir = pos.length > 1 && pos[0].r === pos[1].r ? 'h' : 'v';
+    pos.forEach((p, i) => { arte[cellName(p.r, p.c)] = { id: s.ship, i, dir }; });
+  }
+  return (r, c) => {
+    const t = arte[cellName(r, c)];
+    if (!t) return null;
+    const svg = trozoDe(t.id, t.i);
+    if (svg && t.dir === 'v') svg.classList.add('v');
+    return svg;
+  };
 }
 
 /** Clases de una casilla del tablero enemigo: mis disparos. */
@@ -506,7 +528,7 @@ function renderPlay(v) {
   const canShoot = shooterLocal && v.shooter === me && !v.pending && v.phase === 'play';
   const fire = cell => { if (!canShoot) return; S.aim = null; S.transport.send({ t: 'shot', from: me, cell }); SFX.flip(); };
   const enemyBox = $('#enemy-grid'); enemyBox.innerHTML = '';
-  enemyBox.append(gridEl({ cellClass: enemyCellClass(myShots, S.aim), onTap: (r, c, cellEl) => {
+  enemyBox.append(gridEl({ cellClass: enemyCellClass(myShots, S.aim), cellArt: enemyCellArt(myShots), onTap: (r, c, cellEl) => {
     if (!canShoot) return;
     const n = cellName(r, c);
     if (myShots.some(s => s.cell === n)) { cellEl.classList.remove('shake'); void cellEl.offsetWidth; cellEl.classList.add('shake'); return; }
@@ -773,4 +795,4 @@ function init() {
 init();
 // Gancho de depuración (solo lectura) para pruebas automatizadas.
 window.__bn = { view: () => (M ? view() : null), match: () => M, session: () => S };
-void GAME_ID; void parseCell;
+void GAME_ID;

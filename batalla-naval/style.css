@@ -40,8 +40,11 @@
 .grid-wrap { margin: 0 auto; width: 100%; max-width: 420px; user-select: none; -webkit-user-select: none; touch-action: none; }
 .grid-wrap.small { max-width: 220px; }
 .grid { display: grid; grid-template-columns: 18px repeat(10, minmax(0, 1fr)); grid-auto-rows: auto; gap: 2px; min-width: 0; }
-.grid .lbl { color: var(--muted); font-weight: 900; font-size: 0.7rem; text-align: center; display: grid; place-items: center; min-width: 0; }
-.grid .lbl.corner { min-height: 14px; }
+/* `line-height: 1` no es cosmético: sin eso, el número de la fila es más alto que la casilla
+   cuando la grilla es chica, y es ÉL el que manda el alto de la fila. La grilla quedaba con
+   aire entre filas y ninguna entre columnas, o sea rectangular teniendo casillas cuadradas. */
+.grid .lbl { color: var(--muted); font-weight: 900; font-size: 0.7rem; line-height: 1; text-align: center; display: grid; place-items: center; min-width: 0; min-height: 0; }
+.grid .lbl.corner { min-height: 10px; }
 :root {
   /* La flota, en pixel art (D-91). El barco elegido es el mismo dibujo con esta paleta
      cambiada, así que acá se decide de qué color es toda la flota. */
@@ -75,15 +78,29 @@
 .cell .rot:active { transform: scale(0.9) rotate(90deg); }
 .cell.ghost-ok { background: rgba(157, 255, 58, 0.45); border-color: var(--lime); }
 .cell.ghost-bad { background: rgba(255, 46, 136, 0.55); border-color: var(--pink); }
-.cell.agua { background: rgba(120, 160, 200, 0.28); }
-.cell.agua::after { content: '•'; color: rgba(255,255,255,0.55); font-size: 1.2em; }
-.cell.tocado { background: linear-gradient(180deg, #ff9a3c, #ff5a1f); border-color: #ffd0a0; }
+/* Un disparo al agua no cambia el mar: le queda el mismo patrón con un halo oscuro,
+   como el hoyo que deja la bomba, y el punto encima. */
+.cell.agua { box-shadow: inset 0 0 7px 3px rgba(0, 0, 0, 0.55); border-color: rgba(46, 230, 214, 0.08); }
+.cell.agua::after { content: '•'; color: rgba(255,255,255,0.6); font-size: 1.2em; }
+/* Tocado y hundido tampoco borran el mar: le ponen un resplandor por dentro. Así el agua
+   sigue siendo agua alrededor del barco, que es lo que se está quemando. */
+.cell.tocado { box-shadow: inset 0 0 8px 4px rgba(255, 122, 26, 0.75); border-color: #ffd0a0; }
 .cell.tocado::after { content: '💥'; }
-.cell.hundido { background: linear-gradient(180deg, #ff2e88, #b3103f); border-color: #ffb3d1; box-shadow: 0 0 10px rgba(255, 46, 136, 0.6); }
-.cell.tocado .barco { filter: saturate(0.5) brightness(0.85); }
-.cell.hundido .barco { filter: saturate(0.25) brightness(0.55); }
+/* Hundido: el casco cambia de paleta y queda quemado —negro, brasas, óxido— debajo del 🔥.
+   Por eso el fondo rojo se ve solo alrededor del barco: el agua ardiendo, no un cuadrado. */
+.cell.hundido {
+  --casco-borde: #240a0a; --casco-luz: #ffb07a; --casco: #8c4133;
+  --casco-sombra: #57231c; --casco-medio: #6f3226; --cubierta: #431c17;
+  --marca: var(--orange); --antena: var(--orange); --espuma: rgba(255, 180, 120, 0.5);
+  border-color: #ffb3d1;
+  box-shadow: inset 0 0 9px 4px rgba(224, 36, 60, 0.8), 0 0 10px rgba(255, 46, 136, 0.55);
+}
+.cell.tocado .barco { filter: saturate(0.55) brightness(0.9); }
 .cell.hundido::after { content: '🔥'; }
 .cell.ship.tocado::after, .cell.ship.hundido::after { content: '💥'; }
+/* El dibujo del barco va posicionado, así que pinta por encima de lo que no lo está: sin esto
+   el 💥 y el 🔥 quedaban debajo del casco y no se veían. */
+.cell::after { position: relative; z-index: 2; }
 .cell.last { outline: 2px solid var(--yellow); outline-offset: -1px; animation: lastPulse 1.2s ease-in-out infinite; }
 @keyframes lastPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(255, 210, 63, 0.6); } 50% { box-shadow: 0 0 8px 3px rgba(255, 210, 63, 0.35); } }
 .cell.aim { outline: 3px solid var(--yellow); outline-offset: -1px; transform: scale(1.12); z-index: 1; background: rgba(255, 210, 63, 0.35); }
