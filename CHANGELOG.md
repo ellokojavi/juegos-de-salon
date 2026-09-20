@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.38.1 — 2026-09-20
+- La bajada de la colocación de Batalla Naval cuenta el gesto nuevo: "o arrastra la ficha hasta el
+  tablero" (D-90), en los tres idiomas. El resto de la frase queda igual.
+
 ## 0.38.0 — 2026-09-20
 - **Arrastrar un barco es elegirlo, y las fichas también se arrastran** (D-90, Batalla Naval).
   Antes se podía tener el portaaviones en amarillo, con su ↻ encima, y arrastrar el destructor: el
