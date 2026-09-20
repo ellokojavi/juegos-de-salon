@@ -95,6 +95,11 @@ Sink the fleet. Each player hides 5 ships on a 10×10 board and fires in turns: 
 
 The fleet is drawn in **pixel art, seen from above** (D-91): every square paints one 16×16 piece — stern, middle sections, bow — and together they make the ship, so a carrier is a flight deck with a jet parked on it and a submarine is a thin hull with its periscope up. Every ship begins and ends in a point, and turning one is the same drawing rotated 90°. The sea is a single tile repeated in every square. The art lives in `batalla-naval/flota.js`, **generated** by `python3 tools/flota.py`: to change a ship you edit the script and run it again.
 
+Whose turn it is is said **four times over, and never only in words** (D-92): the status bar fills
+lime with a 🎯 when it is yours and stays grey with an ⏳ when it is not, the rival's board glows
+while you can fire and dims when you cannot, tapping it out of turn shakes it and tells you why, and
+a chime, a buzz and the tab title announce your turn when the phone is face down.
+
 - **📱 One phone:** your fleet is covered between turns. On a miss, the result and "pass the phone to X" share one screen.
 - **📡 Two phones:** a room with a code and a QR. Each phone answers the shots against its own fleet, and at the end both fleets are revealed and verified.
 - **🤖 Versus the phone:** an AI that hunts by parity and chases after a hit. It sinks a fleet in about 50 shots.

@@ -105,8 +105,24 @@
 @keyframes lastPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(255, 210, 63, 0.6); } 50% { box-shadow: 0 0 8px 3px rgba(255, 210, 63, 0.35); } }
 .cell.aim { outline: 3px solid var(--yellow); outline-offset: -1px; transform: scale(1.12); z-index: 1; background: rgba(255, 210, 63, 0.35); }
 .cell.aim::after { content: '🎯'; }
-.enemy .cell:not(.agua):not(.tocado):not(.hundido) { cursor: pointer; }
-.enemy .cell:not(.agua):not(.tocado):not(.hundido):active { transform: scale(0.9); }
+/* El tablero enemigo ocupa media pantalla: es el cartel más grande que hay para decir de quién
+   es el turno. Vivo cuando puedes disparar, apagado cuando no. Apagado no es tapado: los
+   impactos se siguen leyendo, que para eso se mira el tablero mientras esperas. */
+.enemy .grid-wrap { border-radius: 10px; padding: 3px; transition: box-shadow 0.25s, background 0.25s; }
+/* El aro va también fuera de la animación: con `prefers-reduced-motion` el latido se corta y,
+   si el aro viviera solo en los fotogramas, el tablero se quedaría sin la señal que importa. */
+.enemy.live .grid-wrap {
+  background: rgba(46, 230, 214, 0.07); box-shadow: 0 0 0 2px rgba(46, 230, 214, 0.65), 0 0 18px rgba(46, 230, 214, 0.28);
+  animation: turnoVivo 2.2s ease-in-out infinite;
+}
+@keyframes turnoVivo {
+  0%, 100% { box-shadow: 0 0 0 2px rgba(46, 230, 214, 0.45), 0 0 14px rgba(46, 230, 214, 0.18); }
+  50% { box-shadow: 0 0 0 2px rgba(46, 230, 214, 0.85), 0 0 24px rgba(46, 230, 214, 0.45); }
+}
+.enemy.locked { opacity: 0.45; filter: saturate(0.5); transition: opacity 0.25s, filter 0.25s; }
+.enemy.live .cell:not(.agua):not(.tocado):not(.hundido) { cursor: pointer; }
+.enemy.live .cell:not(.agua):not(.tocado):not(.hundido):active { transform: scale(0.9); }
+.enemy.locked .cell:not(.agua):not(.tocado):not(.hundido) { cursor: not-allowed; }
 
 /* ---------- Colocación ---------- */
 .place-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }
@@ -129,9 +145,29 @@
 .place-actions .btn { font-size: 1.05rem; min-height: 46px; padding: 8px 6px; }
 
 /* ---------- Batalla ---------- */
-.status { text-align: center; margin: 4px 0 8px; }
-.status .who { font-family: var(--font-display); font-size: clamp(1.5rem, 7vw, 2.2rem); letter-spacing: 0.04em; text-shadow: 0 4px 0 rgba(0,0,0,0.35), 0 0 24px rgba(46, 230, 214, 0.5); }
+/* De quién es el turno no puede vivir solo en las palabras del titular: dos frases distintas
+   del mismo tamaño y del mismo color se leen igual de lejos, y los jugadores no sabían cuándo
+   les tocaba (D-92). La barra cambia de forma y de color, y el tablero del rival se apaga
+   cuando no se puede disparar: dos señales redundantes, ninguna que haya que leer. */
+.status {
+  text-align: center; margin: 3px 0 6px; border-radius: 14px; padding: 4px 12px 5px;
+  border: 2px solid transparent; transition: background 0.25s, border-color 0.25s;
+}
+.status .who { font-family: var(--font-display); font-size: clamp(1.5rem, 7vw, 2.2rem); line-height: 1.12; letter-spacing: 0.04em; text-shadow: 0 4px 0 rgba(0,0,0,0.35), 0 0 24px rgba(46, 230, 214, 0.5); }
 .status .sub { color: var(--muted); font-weight: 800; font-size: 0.9rem; min-height: 1.3em; }
+/* El ícono va aparte del texto: es una señal, no una palabra de la frase. Va algo más chico
+   que el titular porque un emoji ocupa más alto que las mayúsculas de Bangers y, si no, es él
+   el que manda el alto de la barra. */
+.status .ico { font-family: var(--font-body); font-size: 0.82em; margin-right: 6px; }
+.status.mine { background: rgba(157, 255, 58, 0.14); border-color: var(--lime); }
+.status.mine .who { color: var(--lime); text-shadow: 0 4px 0 rgba(0,0,0,0.4), 0 0 24px rgba(157, 255, 58, 0.55); }
+/* Apagada a propósito: sin borde vivo, sin brillo y con el titular en gris. */
+.status.theirs { background: rgba(0, 0, 0, 0.28); border-color: var(--glass-border); }
+.status.theirs .who { color: var(--muted); text-shadow: none; }
+.status.theirs .ico { opacity: 0.8; }
+/* Tocaste el tablero fuera de turno: la barra se sacude y te dice por qué (C-8b). */
+.status.flash { animation: shake 0.6s both; }
+.status.flash .sub { color: var(--yellow); }
 .score { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin: 4px 0 8px; font-weight: 900; font-size: 0.85rem; }
 .score .side { display: flex; flex-direction: column; align-items: center; gap: 2px; }
 .score .fleet { letter-spacing: 0.05em; font-size: 1rem; }

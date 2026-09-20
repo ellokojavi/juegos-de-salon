@@ -980,3 +980,38 @@ se edite a mano en `flota.js` se pierde en la próxima pasada, y eso está dicho
 **Consecuencias:** `batalla-naval/flota.js` entra a la lista de módulos versionados de
 `set-version.py` (C-11). Las fichas de la lista de barcos muestran el barco en chico en vez de tres
 cuadraditos. Las capturas del README de este juego cambian y hay que rehacerlas.
+
+## D-92 · De quién es el turno se ve sin leer
+**Fecha:** 2026-09-20 · **Estado:** vigente
+**Decisión:** En Batalla Naval el turno deja de vivir solo en el titular. Se dice con **cuatro
+señales redundantes**, ninguna de las cuales hay que leer:
+1. **La barra de estado cambia de color y de forma.** Rellena en lima con 🎯 cuando te toca
+   (`.status.mine`), apagada en gris con ⏳ cuando no (`.status.theirs`).
+2. **El tablero del rival se apaga cuando no puedes disparar** (`.enemy.locked`) y late con un
+   halo cian cuando sí (`.enemy.live`). Apagado no es tapado: los impactos se siguen leyendo,
+   porque el tablero se mira igual mientras se espera.
+3. **Tocarlo fuera de turno responde**: el tablero se sacude, suena el error y la bajada explica
+   qué pasó ("Espera tu turno: ahora dispara Cata"), como pide C-8b.
+4. **Cuando llega tu turno, el celular avisa**: `SFX.turn()` y vibración; en sala, además, el
+   título de la pestaña pasa a "🎯 ¡Te toca!" mientras la app está de fondo.
+
+**Por qué:** los jugadores decían no entender cuándo les tocaba. La única diferencia entre las dos
+pantallas era una frase en Bangers blanca del mismo tamaño en los dos estados —"¡Te toca! Dispara a
+Javi" contra "Cata está apuntando…"—; a la distancia a la que se mira un celular sobre la mesa, las
+dos se leen igual. Todo lo demás —el tablero, el marcador, los títulos— era idéntico, y el tablero
+enemigo parecía tocable en los dos casos porque se veía igual de vivo. Dudo y Julepe ya resolvían
+esto encendiendo el asiento de quien juega (`.seat.turn`); acá no había equivalente.
+
+**Por qué redundantes:** el celular puede estar en silencio, boca abajo, o con
+`prefers-reduced-motion`. Cada señal cubre el hueco de otra, y la más barata —el color— es la que
+funciona de reojo.
+
+**Por qué el aviso sonoro espera:** el turno suele llegar justo detrás del resultado del disparo del
+rival. Los dos sonidos juntos se escuchan como uno solo y feo, así que `SFX.turn()` sale 650 ms
+después cuando acaba de sonar un resultado.
+
+**Consecuencias:** `turnYou` y `turnOther` pasan a ser titulares cortos y la instrucción baja a
+`turnYouSub`/`turnOtherSub`; entra `notYourTurn`. Se van `pickCell` y `cpuShot`: la bajada del turno
+ajeno ya no repite el disparo (lo canta el toast) y con eso se cae de paso un error viejo —en sala
+con otra persona decía "El celular disparó a I7"—. `SFX.turn()` es nuevo en `assets/js/sound.js` y
+queda disponible para los demás juegos, que también tienen que anunciar el cambio de turno (C-4).
