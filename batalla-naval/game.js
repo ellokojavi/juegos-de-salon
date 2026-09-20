@@ -15,6 +15,7 @@ import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import { UMBRAL } from '../assets/js/arrastre.js';
 import { N, COLS, FLEET, SHIP_SIZE, cellName, parseCell, isCell, cellsOf, isValidPlacement, isValidLayout, randomLayout, occupancy, layoutKey, shoot, allSunk, Hunter, nextShooter, sha256, randomNonce, verifyPlayer } from './engine.js';
 import { GAME_ID, DEFAULT_CONFIG, LOCALES } from './rules.js';
+import { FONDO_AGUA, barcoEn, barcoEntero } from './flota.js';
 
 const lang = getLang();
 const T = LOCALES[lang];
@@ -179,13 +180,14 @@ function showScreen(id) { $$('.screen').forEach(s => s.classList.toggle('active'
  * Las etiquetas viven DENTRO de la misma grilla (una fila y una columna más), así comparten
  * las pistas de tamaño con las casillas y quedan alineadas en cualquier navegador.
  */
-function gridEl({ small = false, cellClass = () => '', onTap = null, id = null }) {
+function gridEl({ small = false, cellClass = () => '', cellArt = null, onTap = null, id = null }) {
   const grid = el('div', { class: 'grid' });
   grid.append(el('div', { class: 'lbl corner' }), ...COLS.split('').map(l => el('div', { class: 'lbl' }, l)));
   for (let r = 0; r < N; r++) {
     grid.append(el('div', { class: 'lbl' }, r + 1));
     for (let c = 0; c < N; c++) {
       const cell = el('div', { class: 'cell ' + cellClass(r, c), 'data-r': r, 'data-c': c });
+      if (cellArt) { const arte = cellArt(r, c); if (arte) cell.append(arte); }
       if (onTap) cell.addEventListener('click', () => onTap(r, c, cell));
       grid.append(cell);
     }
@@ -328,7 +330,11 @@ function buildPlacement(role) {
     $('#place-count').textContent = fmt(T.placed, { n: placedCount() });
     const occ = occupancy(d.layout);
     const gridBox = $('#place-grid'); gridBox.innerHTML = '';
-    const g = gridEl({ cellClass: (r, c) => { const id = occ[cellName(r, c)]; return id ? ('ship' + (id === d.sel ? ' sel' : '')) : ''; }, onTap: onCellTap });
+    const g = gridEl({
+      cellClass: (r, c) => { const id = occ[cellName(r, c)]; return id ? ('ship' + (id === d.sel ? ' sel' : '')) : ''; },
+      cellArt: (r, c) => barcoEn(d.layout, r, c),
+      onTap: onCellTap,
+    });
     gridBox.append(g);
     // Barco seleccionado ya colocado: botón ↻ sobre su esquina superior derecha.
     // Mientras se arrastra no se dibuja: girar no es algo que se pueda hacer con el barco en el
@@ -343,7 +349,7 @@ function buildPlacement(role) {
     const ships = $('#place-ships'); ships.innerHTML = '';
     for (const f of FLEET) {
       ships.append(el('button', { type: 'button', 'data-ship': f.id, class: 'ship-chip' + (d.sel === f.id ? ' sel' : '') + (d.layout[f.id] ? ' done' : ''), onClick: () => { d.sel = f.id; SFX.tap(); paint(); } },
-        el('span', { class: 'segs' }, ...Array.from({ length: f.size }, () => el('i'))), T.ships[f.id]));
+        barcoEntero(f.id), T.ships[f.id]));
     }
     const actions = $('#place-actions'); actions.innerHTML = '';
     actions.append(
@@ -528,7 +534,7 @@ function renderPlay(v) {
   const lay = S.layouts[me]?.layout;
   if (lay) {
     const received = M.shots.filter(s => s.from === enemy && s.result !== null);
-    const g = gridEl({ small: true, cellClass: myCellClass(lay, received, true) });
+    const g = gridEl({ small: true, cellClass: myCellClass(lay, received, true), cellArt: (r, c) => barcoEn(lay, r, c) });
     const wrap = el('div', { class: 'mine-cover' + (S.mode !== 'local' || S.fleetShown ? ' shown' : '') }, g,
       el('div', { class: 'veil', onClick: e => { S.fleetShown = true; e.currentTarget.parentElement.classList.add('shown'); SFX.tap(); } }, `🙈 ${T.showFleet}`));
     mine.append(el('div', { class: 'board-title' }, T.myBoard), wrap);
@@ -574,7 +580,7 @@ function renderResult(v) {
   for (const r of ['A', 'B']) {
     const ver = M.verify[r];
     const received = repliesBy(other(r));
-    fleets.append(el('div', { class: 'f' }, el('b', {}, M.names[r]), el('small', {}, stats(r)), gridEl({ small: true, cellClass: myCellClass(M.reveals[r].layout, received) }), el('small', {}, S.mode === 'online' && ver ? (ver.ok ? T.verified : T.notVerified) : '')));
+    fleets.append(el('div', { class: 'f' }, el('b', {}, M.names[r]), el('small', {}, stats(r)), gridEl({ small: true, cellClass: myCellClass(M.reveals[r].layout, received), cellArt: (rr, cc) => barcoEn(M.reveals[r].layout, rr, cc) }), el('small', {}, S.mode === 'online' && ver ? (ver.ok ? T.verified : T.notVerified) : '')));
   }
   const replay = $('#result-replay'); if (!already) replay.open = false;
   const shotsBox = $('#result-shots'); shotsBox.innerHTML = '';
@@ -737,6 +743,7 @@ function init() {
   $('#sound-slot').append(soundToggle());
   initSound();
   sparkles(12);
+  document.documentElement.style.setProperty('--agua', FONDO_AGUA);   // el mar de todas las casillas
   // El arrastre de barcos: los oyentes van en la pantalla, que sobrevive a los repintados de la
   // grilla, y le pasan el gesto a la colocación que esté viva (buildPlacement).
   for (const [evento, paso] of [['pointerdown', 'down'], ['pointermove', 'move'], ['pointerup', 'up'], ['pointercancel', 'up']]) {

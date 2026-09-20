@@ -93,6 +93,8 @@ Spec: [docs/juegos/toque-y-fama.md](docs/juegos/toque-y-fama.md) · Feasibility 
 
 Sink the fleet. Each player hides 5 ships on a 10×10 board and fires in turns: miss, hit or sunk. A hit lets you fire again. Ships are placed by tapping or by dragging them from the list onto the board, with rotate and "random". The phone answers on its own and keeps score.
 
+The fleet is drawn in **pixel art, seen from above** (D-91): every square paints one 16×16 piece — stern, middle sections, bow — and together they make the ship, so a carrier is a flight deck with a jet parked on it and a submarine is a thin hull with its periscope up. Every ship begins and ends in a point, and turning one is the same drawing rotated 90°. The sea is a single tile repeated in every square. The art lives in `batalla-naval/flota.js`, **generated** by `python3 tools/flota.py`: to change a ship you edit the script and run it again.
+
 - **📱 One phone:** your fleet is covered between turns. On a miss, the result and "pass the phone to X" share one screen.
 - **📡 Two phones:** a room with a code and a QR. Each phone answers the shots against its own fleet, and at the end both fleets are revealed and verified.
 - **🤖 Versus the phone:** an AI that hunts by parity and chases after a hit. It sinks a fleet in about 50 shots.
@@ -492,7 +494,7 @@ assets/js/ui.js             UI helpers: confetti, vibration, wake lock, DOM help
 assets/js/firebase-config.js Public Firebase configuration
 cuarto-rey/                 Cuarto Rey (index.html, game.js, rules.js, style.css)
 toque-y-fama/               Toque y Fama (engine.js + tests, game.js, rules.js)
-batalla-naval/              Batalla Naval (engine.js + tests, game.js, rules.js)
+batalla-naval/              Batalla Naval (engine.js + tests, game.js, rules.js, flota.js: el pixel art)
 linea-de-tiempo/            Línea de Tiempo (engine.js + tests, game.js, rules.js, decks/)
 ahorcado/                   El Ahorcado (engine.js + tests, game.js, rules.js, decks/)
 dudo/                       Dudo (engine.js + tests, game.js, rules.js)

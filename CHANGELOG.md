@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.39.0 — 2026-09-20
+- **La flota de Batalla Naval, en pixel art** (D-91). Los barcos dejan de ser bloques grises
+  idénticos: cada casilla pinta un trozo de 16×16 píxeles visto desde arriba, y los trozos calzan
+  entre sí para armar el barco. Todos **empiezan y terminan en punta**, y cada clase tiene lo suyo:
+  el portaaviones lleva pista con marcas, un caza y la isla con radar; el acorazado, torretas con
+  los cañones de boca amarilla, puente y chimenea; el crucero, helipuerto y tubos; el destructor,
+  chimenea y radar; el submarino es un casco cilíndrico y delgado con el periscopio asomado. Girar
+  un barco es el mismo dibujo rotado 90°.
+- **El mar dejó de ser un color plano**: una sola baldosa de rayas horizontales, repetida en todas
+  las casillas como en un tileset. Va de fondo, no de contenido: cien casillas con su propio SVG
+  serían miles de nodos para pintar agua quieta.
+- El barco elegido es **el mismo trazado con otra paleta** (las tres decenas de píxeles no se
+  dibujan dos veces: los colores son variables CSS). Tocado y hundido siguen encima, y el barco se
+  apaga debajo en vez de taparse: se ve el trozo ardiendo.
+- Las fichas de la lista muestran el barco en chico, no tres cuadraditos.
+- El dibujo lo **genera** `python3 tools/flota.py` y queda en `batalla-naval/flota.js`: 17 trozos de
+  256 píxeles escritos a mano salen cada uno con distinta luz; con funciones (casco, torreta,
+  puente, remaches) todos tienen la misma mano. Lo que se edite a mano en el módulo se pierde en la
+  próxima pasada, y el archivo lo dice en la primera línea.
+
 ## 0.38.4 — 2026-09-20
 - **Tocar en cualquier parte fuera de la grilla deselecciona el barco.** Antes los botones de abajo
   (Al azar, Limpiar, Zarpar) eran una excepción y la selección quedaba puesta sin que nada la

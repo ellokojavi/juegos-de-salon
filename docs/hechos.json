@@ -1,5 +1,5 @@
 {
-  "version": "0.36.0",
+  "version": "0.38.4",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -273,6 +273,7 @@
       "chat": false,
       "archivos": [
         "batalla-naval/engine.js",
+        "batalla-naval/flota.js",
         "batalla-naval/game.js",
         "batalla-naval/index.html",
         "batalla-naval/rules.js",
@@ -487,6 +488,7 @@
     "assets/js/transport/stats.js",
     "assets/js/ui.js",
     "batalla-naval/engine.js",
+    "batalla-naval/flota.js",
     "batalla-naval/game.js",
     "batalla-naval/rules.js",
     "cuarto-rey/game.js",

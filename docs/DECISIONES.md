@@ -948,3 +948,35 @@ Línea de Tiempo: el puntero lo toma el contenedor, no lo que se arrastra.
   `elemento.click()`, que se salta la cocina de eventos del navegador entera y pasaba en verde.
   `tools/e2e/cdp.mjs` gana `toque(x, y)` y `arrastre(x0, y0, x1, y1)`, que mandan el gesto por
   `Input.dispatchMouseEvent`; con la versión rota, el guion de colocación imprime `sel: null`.
+
+## D-91 · La flota se dibuja en pixel art, vista desde arriba
+**Fecha:** 2026-09-20 · **Estado:** vigente
+**Decisión:** Los barcos de Batalla Naval dejan de ser bloques grises lisos. Cada casilla pinta un
+**trozo de 16×16 píxeles** y los trozos calzan entre sí para armar el barco: popa, tramos del medio
+y proa. Todos **empiezan y terminan en punta**, cada clase tiene su silueta y sus detalles
+(portaaviones con pista y aviones, acorazado con torretas de cañones amarillos, submarino cilíndrico
+con el periscopio arriba), y el agua es **una sola baldosa repetida** en todas las casillas, como un
+tileset. Vive en `batalla-naval/flota.js`, que **genera** `python3 tools/flota.py`.
+
+**Por qué:** el tablero era un damero de rectángulos idénticos; la flota no se leía como flota y las
+cinco clases de barco solo se distinguían por el largo. Con la silueta, el jugador ve de un vistazo
+cuál es cuál —que es justo lo que hay que decidir mientras se coloca— y la pantalla deja de parecer
+una hoja de cálculo.
+
+**Por qué generado y no dibujado a mano:** son 17 trozos de 256 píxeles. Escritos a mano, cada barco
+sale con distinto grosor de línea y distinta luz; con funciones (`casco`, `torreta`, `puente`,
+`remaches`) todos tienen la misma mano y cambiar un detalle es cambiar una línea del script. Lo que
+se edite a mano en `flota.js` se pierde en la próxima pasada, y eso está dicho arriba del archivo.
+
+**Cómo se pinta:**
+- **Los barcos van en el DOM**, un `<svg>` por casilla ocupada (17 dibujos en el peor caso), con los
+  colores en variables CSS. Por eso el barco elegido es el **mismo trazado con otra paleta**
+  (`.cell.sel`) y no hay que dibujarlo dos veces; girarlo es `transform: rotate(90deg)`.
+- **El agua va de fondo** (`--agua`, una imagen `data:` armada una sola vez), no de contenido: cien
+  casillas con su SVG serían miles de nodos para pintar mar quieto.
+- Tocado y hundido siguen encima, y el barco se apaga debajo con un filtro en vez de taparse: se ve
+  el trozo ardiendo, que es más claro que un cuadrado de color.
+
+**Consecuencias:** `batalla-naval/flota.js` entra a la lista de módulos versionados de
+`set-version.py` (C-11). Las fichas de la lista de barcos muestran el barco en chico en vez de tres
+cuadraditos. Las capturas del README de este juego cambian y hay que rehacerlas.
