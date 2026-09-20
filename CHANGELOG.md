@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.38.0 — 2026-09-20
+- **Arrastrar un barco es elegirlo, y las fichas también se arrastran** (D-90, Batalla Naval).
+  Antes se podía tener el portaaviones en amarillo, con su ↻ encima, y arrastrar el destructor: el
+  que se movía no era el que la pantalla decía que estaba elegido. Ahora, apenas el dedo pasa el
+  umbral de arrastre, el barco que se arrastra pasa a ser el seleccionado — la misma regla que
+  Línea de Tiempo (D-85).
+- **Un barco sin colocar se puede llevar desde su ficha hasta el tablero** y soltarlo ahí, que es
+  lo primero que uno intenta al ver una ficha y una grilla. Antes había que tocar la ficha y
+  después la casilla; eso sigue funcionando igual.
+- Los oyentes del arrastre pasan de la grilla a la pantalla: la grilla se rehace entera cada vez
+  que algo se pinta, y con ella se perdía la captura del puntero a mitad del gesto. Es la misma
+  lección que dejó el arrastre de Línea de Tiempo.
+- Las fichas llevan `touch-action: none` (D-86): sin eso, arrastrar una hacia el tablero desplazaba
+  la página en Android en vez de mover el barco.
+- El guion de punta a punta de la colocación arrastra de verdad (eventos de puntero) y deja una
+  captura del barco arrastrado, elegido y con su ↻.
+
 ## 0.37.0 — 2026-09-19
 - **Compartir la app desde la portada.** Al lado del idioma y del sonido hay un botón 📤 que abre
   el diálogo de compartir del celular; donde no existe, copia el texto y el link y lo avisa

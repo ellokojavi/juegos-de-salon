@@ -910,3 +910,29 @@ Así ninguna de las dos mitades del despliegue tiene que esperar a la otra.
 - El panel descarta las salas sin latido fresco, con la misma cuenta que las reglas, así que deja de
   mostrar como vivas las salas que nadie puede usar.
 - Un escrito más por sala cada minuto de juego, solo mientras se juega.
+
+## D-90 · Arrastrar un barco es elegirlo
+**Fecha:** 2026-09-20 · **Estado:** vigente
+**Decisión:** En la colocación de la flota de Batalla Naval, un barco se puede arrastrar **desde su
+ficha** (todavía fuera del tablero) y **desde el tablero**, y apenas el dedo pasa el umbral de
+arrastre el barco arrastrado pasa a ser el **seleccionado**. Es la misma regla que Línea de Tiempo
+(D-85): arrastrar elige, y lo irreversible sigue colgando de su botón —acá, zarpar—.
+
+**Por qué:** la selección y el arrastre eran dos cosas distintas. Se podía tener el portaaviones en
+amarillo, con su botón ↻ encima, y arrastrar el destructor: el que se movía no era el que la pantalla
+decía que estaba elegido, y el ↻ seguía girando al otro. Y las fichas de los barcos sin colocar no se
+podían arrastrar: había que tocar la ficha y después la casilla, un gesto que nadie intenta primero
+cuando ve una ficha y un tablero.
+
+**Cómo:** los oyentes de puntero pasan de la grilla a `#screen-place`. La grilla se rehace entera en
+cada repintado —y se rehace, porque elegir pinta— así que colgados de ella se perdía la captura a
+mitad del gesto; la pantalla sobrevive. Es la misma lección que dejó `assets/js/arrastre.js` en
+Línea de Tiempo: el puntero lo toma el contenedor, no lo que se arrastra.
+
+**Consecuencias:**
+- Mientras no se pasa el umbral (`UMBRAL`, 8 px, el de la casa) no hay arrastre, así que el toque de
+  siempre queda intacto: tocar un barco lo selecciona, tocarlo de nuevo lo deselecciona.
+- Las fichas llevan `touch-action: none` (D-86): sin eso, arrastrar una hacia el tablero desplazaba
+  la página en Android en vez de mover el barco.
+- Soltar afuera del tablero, o sobre un lugar donde el barco no cabe, no coloca nada y suena el
+  error —pero el barco arrastrado igual queda elegido, que es lo que el gesto pedía.
