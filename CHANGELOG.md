@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.38.4 — 2026-09-20
+- **Tocar en cualquier parte fuera de la grilla deselecciona el barco.** Antes los botones de abajo
+  (Al azar, Limpiar, Zarpar) eran una excepción y la selección quedaba puesta sin que nada la
+  hubiera pedido. Siguen salvándose solo las dos cosas que trabajan con la selección: la ficha de
+  un barco, que es cómo se elige, y el botón de girar, que gira al elegido.
+
 ## 0.38.3 — 2026-09-20
 - **Arreglo: tocar un barco no lo seleccionaba** (ni lo pintaba de amarillo, ni le aparecía el ↻).
   Lo rompió el arrastre nuevo de 0.38.0: tomaba el puntero al apoyar el dedo, y entonces el `click`
