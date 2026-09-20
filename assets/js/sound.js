@@ -102,6 +102,11 @@ export const SFX = {
   timeUp() { [0, 0.22, 0.44].forEach(d => tone({ freq: 220, to: 200, type: 'sawtooth', dur: 0.18, gain: 0.12, delay: d })); },
   /** Dado / otra opción. */
   dice() { [0, 0.06, 0.13].forEach(d => noise({ dur: 0.05, gain: 0.2, from: 1500, to: 1000, q: 2, delay: d })); },
+  /**
+   * Te llegó el turno (C-4). Campanita corta que sube: no se parece a ningún resultado de la
+   * jugada del rival, porque la noticia es otra —ahora juegas tú— y llega justo detrás de ellos.
+   */
+  turn() { tone({ freq: 784, type: 'triangle', dur: 0.12, gain: 0.14 }); tone({ freq: 1175, type: 'triangle', dur: 0.2, gain: 0.1, delay: 0.1 }); tone({ freq: 1568, type: 'sine', dur: 0.26, gain: 0.05, delay: 0.19 }); },
   /** Pasar el celular: whoosh ascendente. */
   pass() { noise({ dur: 0.45, gain: 0.2, from: 200, to: 4000, q: 0.6 }); tone({ freq: 400, to: 900, type: 'sine', dur: 0.4, gain: 0.05 }); },
   /** Batalla Naval: agua (splash). */

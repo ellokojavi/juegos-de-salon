@@ -46,8 +46,14 @@ Intro (reglas, modos) → Setup (nombres, tiro extra) → [Lobby: código + QR +
 - Arriba, **grilla de disparos** al rival (grande, es donde se toca): agua 🌊 en gris, tocado 💥 en naranjo, hundido 🔥 en rojo con el contorno del barco. Tocar una casilla la selecciona; **🎯 ¡Fuego!** confirma (evita disparos por error). Opción “disparo directo con un toque” en configuración.
 - Abajo, **mi flota** en una grilla chica (mitad de tamaño) con los impactos recibidos. En modo un celular esta grilla va tapada con “toca para ver”.
 - Marcador: barcos hundidos de cada lado como iconos tachados (🚢🚢🚢🚢🚢).
-- Turno: “¡Te toca! Dispara a Cata” / “Cata está apuntando…”. Con tiro extra: “¡Tocado! Sigues disparando”.
-- Sonidos: splash al agua, explosión al tocar, explosión larga + vibración al hundir, sirena al perder la flota.
+- **Turno: cuatro señales, ninguna de leer** (D-92). La barra de estado se rellena en lima con 🎯
+  cuando te toca (“¡Te toca!” / “Dispara a la flota de Cata”) y queda apagada en gris con ⏳ cuando
+  no (“Turno de Cata” / “Te está apuntando…”); el tablero del rival late con un halo cian mientras
+  puedes disparar y se apaga cuando no; tocarlo fuera de turno lo sacude y explica por qué (“Espera
+  tu turno: ahora dispara Cata”); y cuando el turno llega suena, vibra y —en sala— el título de la
+  pestaña pasa a “🎯 ¡Te toca!”. Con tiro extra, la bajada dice “¡Tocado! Sigues disparando”.
+- Sonidos: splash al agua, explosión al tocar, explosión larga + vibración al hundir, sirena al
+  perder la flota, campanita al llegar el turno (espera 650 ms si acaba de sonar un resultado).
 
 ### 3.3 Resultado
 Ganador, disparos totales y precisión de cada uno, ambas flotas reveladas (con los disparos encima), verificación ✅ del compromiso, desplegable con la secuencia de disparos, Revancha / Cambiar modo / Menú.
@@ -97,6 +103,7 @@ Promedio esperado: 45 a 55 disparos para hundir la flota (un humano promedio ron
 - Grilla táctil: casillas mínimas de 30 px en 375 px de ancho. Es una sola grilla CSS de 11×11 donde la primera fila y la primera columna son las etiquetas, así números y letras quedan alineados con las casillas en todos los navegadores (v0.9.4). Sin scroll horizontal.
 - Todo en español, inglés y portugués (“Battleship”, “Batalha Naval”): agua/miss/água, tocado/hit/acertou, hundido/sunk/afundou, ¡Fuego!/Fire!/Fogo!, ¡Zarpar!/Set sail!/Zarpar!
 - Accesible con dedo: selección + confirmación antes de disparar; vibración en tocado/hundido.
+- Las dos pantallas de turno se miran sin jugar una partida: `node tools/e2e/mirar.mjs batalla-naval juego` y `… espera`.
 
 - Las casillas que se leen (el aviso de cada disparo y la casilla grande del resultado) van en Nunito 900, no en Bangers: ahí el 1 y el 7 se confunden y se dispara al lugar equivocado (D-30, canon C-1). Los números de fila de la grilla ya estaban en Nunito.
 

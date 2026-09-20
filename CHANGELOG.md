@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.40.0 — 2026-09-20
+- **En Batalla Naval se ve de quién es el turno sin leer nada** (D-92). Los jugadores decían no
+  entenderlo, y con razón: la única diferencia entre las dos pantallas era una frase blanca del
+  mismo tamaño arriba —"¡Te toca! Dispara a Javi" contra "Cata está apuntando…"—, y todo lo demás,
+  tablero incluido, se veía igual. Ahora hay cuatro señales:
+  - **La barra de estado cambia de color y de forma**: rellena en lima con 🎯 cuando te toca,
+    apagada en gris con ⏳ cuando no. El titular se acorta ("¡Te toca!" / "Turno de Cata") y la
+    instrucción baja a la bajada ("Dispara a la flota de Javi" / "Te está apuntando…").
+  - **El tablero del rival se apaga cuando no puedes disparar** y late con un halo cian cuando sí.
+    Apagado no es tapado: los impactos se siguen leyendo, que para eso se mira mientras se espera.
+  - **Tocarlo fuera de turno responde**: el tablero se sacude, suena el error y la bajada explica
+    qué pasó ("Espera tu turno: ahora dispara Cata"). Antes no pasaba absolutamente nada.
+  - **Cuando llega tu turno, el celular avisa**: campanita nueva (`SFX.turn`) y vibración. En sala,
+    además, el título de la pestaña pasa a "🎯 ¡Te toca!" mientras la app está de fondo. El aviso
+    espera 650 ms si acaba de sonar el disparo del rival: dos sonidos encima se escuchan mal.
+- **Arreglo: en sala con otra persona, la bajada decía "El celular disparó a I7"** aunque el rival
+  fuera humano y el titular dijera su nombre. Esa línea ya no repite el disparo —lo canta el aviso
+  grande de abajo— y con eso se cae el error.
+- `tools/e2e/mirar.mjs` aprende Batalla Naval: `intro`, `colocacion`, `juego` (mi turno) y `espera`
+  (el turno del rival), sin jugar una partida entera.
+
 ## 0.39.1 — 2026-09-20
 - **Arreglo: la grilla chica de "Mi flota" se veía rectangular** aunque sus casillas fueran
   cuadradas. El número de la fila era más alto que la casilla y era él el que mandaba el alto de
