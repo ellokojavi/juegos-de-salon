@@ -12,6 +12,7 @@ import { showHandoff, passBlock, showCover } from '../assets/js/handoff.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
 import { trackStart } from '../assets/js/transport/stats.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
+import { UMBRAL } from '../assets/js/arrastre.js';
 import { N, COLS, FLEET, SHIP_SIZE, cellName, parseCell, isCell, cellsOf, isValidPlacement, isValidLayout, randomLayout, occupancy, layoutKey, shoot, allSunk, Hunter, nextShooter, sha256, randomNonce, verifyPlayer } from './engine.js';
 import { GAME_ID, DEFAULT_CONFIG, LOCALES } from './rules.js';
 
@@ -318,7 +319,8 @@ function buildPlacement(role) {
   $('#place-hint').textContent = T.placeHint;
   $('#place-status').textContent = '';
   const placedCount = () => FLEET.filter(f => d.layout[f.id]).length;
-  let drag = null; // { ship, offset, dir }
+  let drag = null;          // { ship, dir, offset, moved, x, y, target }
+  let justDragged = false;  // el click que viene después de soltar no es un toque
 
   const flash = cell => { cell.classList.remove('shake'); void cell.offsetWidth; cell.classList.add('shake'); vibrate([20, 30, 20]); SFX.error(); };
 
@@ -335,16 +337,10 @@ function buildPlacement(role) {
       const cell = g.querySelector(`.cell[data-r="${corner.r}"][data-c="${corner.c}"]`);
       if (cell) cell.append(el('button', { type: 'button', class: 'rot', 'aria-label': T.rotate.replace('{dir}', ''), onClick: e => { e.stopPropagation(); rotateSelected(); }, onPointerdown: e => e.stopPropagation() }, '↻'));
     }
-    // arrastre de barcos ya colocados
-    const grid = g.querySelector('.grid');
-    grid.addEventListener('pointerdown', onPointerDown);
-    grid.addEventListener('pointermove', onPointerMove);
-    grid.addEventListener('pointerup', onPointerUp);
-    grid.addEventListener('pointercancel', onPointerUp);
     // fichas de barcos
     const ships = $('#place-ships'); ships.innerHTML = '';
     for (const f of FLEET) {
-      ships.append(el('button', { type: 'button', class: 'ship-chip' + (d.sel === f.id ? ' sel' : '') + (d.layout[f.id] ? ' done' : ''), onClick: () => { d.sel = f.id; SFX.tap(); paint(); } },
+      ships.append(el('button', { type: 'button', 'data-ship': f.id, class: 'ship-chip' + (d.sel === f.id ? ' sel' : '') + (d.layout[f.id] ? ' done' : ''), onClick: () => { d.sel = f.id; SFX.tap(); paint(); } },
         el('span', { class: 'segs' }, ...Array.from({ length: f.size }, () => el('i'))), T.ships[f.id]));
     }
     const actions = $('#place-actions'); actions.innerHTML = '';
@@ -362,7 +358,7 @@ function buildPlacement(role) {
   const shipAt = (r, c) => occupancy(d.layout)[cellName(r, c)] || null;
 
   function onCellTap(r, c, cell) {
-    if (drag && drag.moved) return; // fue un arrastre
+    if (justDragged) return; // fue un arrastre, no un toque
     const here = shipAt(r, c);
     if (here) { // tocar un barco puesto: seleccionarlo (amarillo + botón ↻); tocarlo de nuevo lo deselecciona
       d.sel = here === d.sel ? null : here; if (d.sel) d.dir = d.layout[here].dir; SFX.tap(); vibrate(8); paint(); return;
@@ -397,31 +393,61 @@ function buildPlacement(role) {
     const t = document.elementFromPoint(x, y); const cell = t && t.closest('.cell');
     return cell && cell.closest('#place-grid') ? { r: +cell.dataset.r, c: +cell.dataset.c } : null;
   }
-  function onPointerDown(e) {
-    const cell = e.target.closest('.cell'); if (!cell) return;
-    const r = +cell.dataset.r, c = +cell.dataset.c; const ship = shipAt(r, c); if (!ship) return;
-    const p = d.layout[ship];
-    drag = { ship, dir: p.dir, offset: p.dir === 'h' ? c - p.c : r - p.r, orig: p, moved: false };
-    try { e.currentTarget.setPointerCapture(e.pointerId); } catch (_) { /* nada */ }
-  }
-  function onPointerMove(e) {
-    if (!drag) return;
-    const at = cellFromPoint(e.clientX, e.clientY); if (!at) return;
-    const target = drag.dir === 'h' ? { r: at.r, c: at.c - drag.offset, dir: 'h' } : { r: at.r - drag.offset, c: at.c, dir: 'v' };
-    if (target.r === drag.orig.r && target.c === drag.orig.c && !drag.moved) return;
-    drag.moved = true;
-    const without = { ...d.layout }; delete without[drag.ship];
-    const ok = isValidPlacement(without, drag.ship, target);
-    // previsualización
-    $$('#place-grid .cell').forEach(x => x.classList.remove('ghost-ok', 'ghost-bad'));
-    cellsOf(SHIP_SIZE[drag.ship], target).forEach(x => { const cell = cellAt(x.r, x.c); if (cell) cell.classList.add(ok ? 'ghost-ok' : 'ghost-bad'); });
-    drag.target = ok ? target : null;
-  }
-  function onPointerUp() {
-    if (!drag) return;
-    const dr = drag; drag = null;
-    if (dr.moved) { if (dr.target) { d.layout[dr.ship] = dr.target; SFX.reveal(); vibrate(10); } else SFX.error(); paint(); setTimeout(() => { drag = null; }, 0); }
-  }
+
+  /**
+   * Arrastrar un barco, tanto desde su ficha (todavía fuera del tablero) como desde el tablero.
+   *
+   * Dos cosas que aprendimos en Línea de Tiempo y valen igual acá (D-85, D-86):
+   *  - **El puntero lo toma la pantalla, no la grilla.** La grilla se rehace entera en cada
+   *    repintado, y con ella se iría la captura a mitad del gesto.
+   *  - **Arrastrar es elegir.** Apenas el dedo se mueve de verdad (UMBRAL), el barco arrastrado
+   *    pasa a ser el seleccionado: antes se podía tener uno en amarillo y mover otro.
+   * Mientras no se pase del umbral no hay arrastre, así que el toque de siempre sigue intacto.
+   */
+  const dragApi = {
+    down(e) {
+      if (e.button > 0) return;
+      const chip = e.target.closest && e.target.closest('.ship-chip');
+      const cell = e.target.closest && e.target.closest('#place-grid .cell');
+      let ship = null, dir = d.dir, offset = 0;
+      if (chip) { ship = chip.dataset.ship; dir = d.layout[ship] ? d.layout[ship].dir : d.dir; }
+      else if (cell) {
+        const r = +cell.dataset.r, c = +cell.dataset.c; ship = shipAt(r, c);
+        if (ship) { const p = d.layout[ship]; dir = p.dir; offset = p.dir === 'h' ? c - p.c : r - p.r; }
+      }
+      if (!ship) return;
+      drag = { ship, dir, offset, moved: false, x: e.clientX, y: e.clientY, target: null };
+      try { $('#screen-place').setPointerCapture(e.pointerId); } catch (_) { /* nada */ }
+    },
+    move(e) {
+      if (!drag) return;
+      if (!drag.moved) {
+        if (Math.hypot(e.clientX - drag.x, e.clientY - drag.y) < UMBRAL) return;
+        drag.moved = true;
+        if (d.sel !== drag.ship) { d.sel = drag.ship; d.dir = drag.dir; paint(); }
+      }
+      $$('#place-grid .cell').forEach(x => x.classList.remove('ghost-ok', 'ghost-bad'));
+      drag.target = null;
+      const at = cellFromPoint(e.clientX, e.clientY); if (!at) return;   // afuera del tablero: sin destino
+      const target = drag.dir === 'h' ? { r: at.r, c: at.c - drag.offset, dir: 'h' } : { r: at.r - drag.offset, c: at.c, dir: 'v' };
+      const without = { ...d.layout }; delete without[drag.ship];
+      const ok = isValidPlacement(without, drag.ship, target);
+      cellsOf(SHIP_SIZE[drag.ship], target).forEach(x => { const cell = cellAt(x.r, x.c); if (cell) cell.classList.add(ok ? 'ghost-ok' : 'ghost-bad'); });
+      if (ok) drag.target = target;
+    },
+    up(e) {
+      if (!drag) return;
+      const dr = drag; drag = null;
+      try { $('#screen-place').releasePointerCapture(e.pointerId); } catch (_) { /* nada */ }
+      if (!dr.moved) return;   // fue un toque: lo resuelve onCellTap o la ficha
+      justDragged = true; setTimeout(() => { justDragged = false; }, 0);
+      if (dr.target) { d.layout[dr.ship] = dr.target; d.sel = dr.ship; SFX.reveal(); vibrate(10); }
+      else SFX.error();
+      paint();
+    },
+    dragging: () => !!(drag && drag.moved) || justDragged,
+  };
+  S.placing.drag = dragApi;
   paint();
 }
 
@@ -704,9 +730,15 @@ function init() {
   $('#sound-slot').append(soundToggle());
   initSound();
   sparkles(12);
+  // El arrastre de barcos: los oyentes van en la pantalla, que sobrevive a los repintados de la
+  // grilla, y le pasan el gesto a la colocación que esté viva (buildPlacement).
+  for (const [evento, paso] of [['pointerdown', 'down'], ['pointermove', 'move'], ['pointerup', 'up'], ['pointercancel', 'up']]) {
+    $('#screen-place').addEventListener(evento, e => { S?.placing?.drag?.[paso](e); });
+  }
   // Tocar fuera de la grilla (y fuera de las fichas y botones) deselecciona el barco seleccionado.
   $('#screen-place').addEventListener('click', e => {
     if (!S?.placing || $('#screen-place').classList.contains('active') === false) return;
+    if (S.placing.drag?.dragging()) return; // soltar un barco no es tocar afuera
     // composedPath conserva los nodos aunque la grilla se haya redibujado durante el mismo toque
     const inside = e.composedPath().some(n => n.id === 'place-grid' || n.id === 'place-actions' || n.id === 'place-sail' || (n.classList && n.classList.contains('ship-chip')));
     if (inside) return;
