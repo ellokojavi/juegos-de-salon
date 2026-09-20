@@ -939,3 +939,12 @@ Línea de Tiempo: el puntero lo toma el contenedor, no lo que se arrastra.
 - **Mientras dura el arrastre no se dibuja el ↻.** Girar no es algo que se pueda hacer con el barco
   en el aire, y el botón se quedaba flotando sobre la casilla de donde salió, ofreciendo una acción
   que en ese momento no existe. Vuelve al soltar.
+- **El puntero se toma cuando el gesto ya es un arrastre, no al apoyar el dedo.** La primera versión
+  capturaba en `pointerdown`, y con eso el `click` que el navegador fabrica después se lo lleva el
+  elemento que capturó: tocar un barco dejó de seleccionarlo y tocar una ficha dejó de elegirla.
+  `assets/js/arrastre.js` ya lo hacía bien —captura dentro de `onMove`, pasado el umbral— y no se
+  había mirado al escribir esto.
+- **Ninguna prueba lo vio, y por eso ahora hay entrada de verdad.** Los guiones tocaban con
+  `elemento.click()`, que se salta la cocina de eventos del navegador entera y pasaba en verde.
+  `tools/e2e/cdp.mjs` gana `toque(x, y)` y `arrastre(x0, y0, x1, y1)`, que mandan el gesto por
+  `Input.dispatchMouseEvent`; con la versión rota, el guion de colocación imprime `sel: null`.
