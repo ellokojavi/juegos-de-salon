@@ -52,5 +52,16 @@ await b.evaluate(`window.__mitad = async () => {
 }; 1`);
 const rot = await b.evaluate('__mitad()');
 console.log('el ↻ mientras se arrastra y después de soltar →', rot);
+// Entrada de verdad (D-90): el mismo toque, pero fabricado por Chrome y no por `.click()`.
+// Esto es lo que se le escapó a la prueba cuando el puntero se tomaba al apoyar el dedo.
+const centro = sel => b.evaluate(`(()=>{const e=document.querySelector('${sel}');if(!e)return null;const r=e.getBoundingClientRect();return JSON.stringify({x:Math.round(r.left+r.width/2),y:Math.round(r.top+r.height/2)})})()`).then(v => (v ? JSON.parse(v) : null));
+await b.evaluate(`(()=>{const d=__bn.session().draft.A; d.sel=null; document.querySelector('#place-actions .btn').click(); return 1})()`); await sleep(300);
+const pBarco = await centro('#place-grid .cell.ship');
+await b.toque(pBarco.x, pBarco.y);
+st = await state(); console.log('toque de verdad sobre un barco →', JSON.stringify({ sel: st.sel, selCells: st.selCells.length, rotAt: st.rotAt }));
+const pFicha = await centro('.ship-chip:not(.done)');
+const pVacia = await centro('#place-grid .cell[data-r="0"][data-c="0"]');
+await b.arrastre(pFicha.x, pFicha.y, pVacia.x, pVacia.y);
+st = await state(); console.log('arrastre de verdad de una ficha al tablero →', JSON.stringify({ sel: st.sel, layout: st.layout[st.sel], rotAt: st.rotAt }));
 console.log('errors:', JSON.stringify(b.errors), JSON.stringify(b.logs));
 b.close();

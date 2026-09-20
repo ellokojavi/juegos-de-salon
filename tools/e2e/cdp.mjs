@@ -46,6 +46,31 @@ export async function launch({ port, dir, out, width = 390, height = 844 }) {
     })()`),
     shot: async name => { await api.quieto(); const r = await send('Page.captureScreenshot', { format: 'png' }); writeFileSync(`${out}/${name}.png`, Buffer.from(r.result.data, 'base64')); },
     close: () => { ws.close(); chrome.kill(); },
+    /**
+     * Entrada de verdad, por el navegador y no por `.click()`.
+     *
+     * Existe por un error que ningún `.click()` podía ver (D-90): tomar el puntero al apoyar
+     * el dedo le cambia el destino al `click` que Chrome fabrica después, y tocar un barco
+     * dejó de seleccionarlo. Un `elemento.click()` se salta esa cocina entera y pasaba en verde.
+     *
+     * `toque(x, y)` y `arrastre(x0, y0, x1, y1)` van en píxeles de la página (los de
+     * `getBoundingClientRect`), que es como los mide el guion.
+     */
+    toque: async (x, y) => {
+      const p = { x, y, button: 'left', clickCount: 1, buttons: 1, pointerType: 'mouse' };
+      await send('Input.dispatchMouseEvent', { type: 'mousePressed', ...p });
+      await send('Input.dispatchMouseEvent', { type: 'mouseReleased', ...p, buttons: 0 });
+      await sleep(120);
+    },
+    arrastre: async (x0, y0, x1, y1, pasos = 6) => {
+      await send('Input.dispatchMouseEvent', { type: 'mousePressed', x: x0, y: y0, button: 'left', clickCount: 1, buttons: 1 });
+      for (let i = 1; i <= pasos; i++) {
+        await send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: Math.round(x0 + (x1 - x0) * i / pasos), y: Math.round(y0 + (y1 - y0) * i / pasos), button: 'left', buttons: 1 });
+        await sleep(25);
+      }
+      await send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: x1, y: y1, button: 'left', clickCount: 1, buttons: 0 });
+      await sleep(180);
+    },
   };
   // helpers del juego Toque y Fama
   api.press = d => api.evaluate(`(()=>{const b=[...document.querySelectorAll('.screen.active .keypad button')].find(x=>x.textContent==='${d}');if(!b||b.disabled)return 'no';b.click();return 'ok'})()`);

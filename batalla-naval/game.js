@@ -419,13 +419,17 @@ function buildPlacement(role) {
       }
       if (!ship) return;
       drag = { ship, dir, offset, moved: false, x: e.clientX, y: e.clientY, target: null };
-      try { $('#screen-place').setPointerCapture(e.pointerId); } catch (_) { /* nada */ }
     },
     move(e) {
       if (!drag) return;
       if (!drag.moved) {
         if (Math.hypot(e.clientX - drag.x, e.clientY - drag.y) < UMBRAL) return;
         drag.moved = true;
+        // El puntero se toma recién acá, cuando el gesto ya es un arrastre. Tomarlo al apoyar
+        // el dedo le cambia el destino al `click` que viene después —se lo lleva el elemento
+        // que capturó— y entonces tocar un barco no lo seleccionaba: el toque moría en la
+        // pantalla sin llegar nunca a la casilla.
+        try { $('#screen-place').setPointerCapture(e.pointerId); } catch (_) { /* nada */ }
         d.sel = drag.ship; d.dir = drag.dir;
         paint();   // el barco arrastrado queda elegido, y el ↻ se va mientras dure el gesto
       }

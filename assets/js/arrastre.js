@@ -12,8 +12,11 @@
  *    puede correr sola mientras se arrastra sin que lo medido deje de valer.
  * 2. **Se vuelve a medir cada vez que cambia el destino**, porque pintarlo puede mover la
  *    página bajo el dedo (en Línea de Tiempo el hueco abre la línea, D-85).
- * 3. **El puntero lo toma el contenedor, no el elemento arrastrado.** El elemento se destruye
- *    en el primer redibujo; el contenedor sobrevive, y con él la captura y los oyentes.
+ * 3. **El puntero lo toma el contenedor, no el elemento arrastrado, y recién cuando el gesto ya
+ *    es un arrastre.** El elemento se destruye en el primer redibujo; el contenedor sobrevive, y
+ *    con él la captura y los oyentes. Y tomarlo al apoyar el dedo le cambia el destino al `click`
+ *    que el navegador fabrica después: el toque muere en el contenedor y nunca llega a lo que se
+ *    tocó (D-90, donde esto rompió la selección de barcos en Batalla Naval).
  *
  * El eje de la fuente evita el gesto ambiguo sin pedir un toque largo: en una tira que se
  * desplaza a lo ancho (`eje: 'vertical'` + `touch-action: pan-x` en el CSS), el navegador se

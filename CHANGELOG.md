@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.38.3 — 2026-09-20
+- **Arreglo: tocar un barco no lo seleccionaba** (ni lo pintaba de amarillo, ni le aparecía el ↻).
+  Lo rompió el arrastre nuevo de 0.38.0: tomaba el puntero al apoyar el dedo, y entonces el `click`
+  que el navegador fabrica después se lo lleva el elemento que capturó — el toque moría en la
+  pantalla sin llegar nunca a la casilla ni a la ficha. Ahora el puntero se toma recién cuando el
+  gesto pasa el umbral y ya es un arrastre, que es como lo hace el módulo compartido de Línea de
+  Tiempo desde el principio.
+- **Los guiones de punta a punta tocan de verdad.** `tools/e2e/cdp.mjs` gana `toque` y `arrastre`,
+  que mandan el gesto por el navegador (`Input.dispatchMouseEvent`) en vez de llamar a
+  `elemento.click()`, que se salta esa cocina entera y por eso el error pasó en verde. Con la
+  versión rota puesta a propósito, el guion de colocación imprime `sel: null`.
+
 ## 0.38.2 — 2026-09-20
 - **Mientras se arrastra un barco, el ↻ desaparece** (D-90). Girar no se puede con el barco en el
   aire, y el botón se quedaba flotando sobre la casilla de la que había salido, ofreciendo algo que
