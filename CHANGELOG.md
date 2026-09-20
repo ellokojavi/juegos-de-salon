@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.38.2 — 2026-09-20
+- **Mientras se arrastra un barco, el ↻ desaparece** (D-90). Girar no se puede con el barco en el
+  aire, y el botón se quedaba flotando sobre la casilla de la que había salido, ofreciendo algo que
+  en ese momento no existe. Vuelve apenas se suelta.
+
 ## 0.38.1 — 2026-09-20
 - La bajada de la colocación de Batalla Naval cuenta el gesto nuevo: "o arrastra la ficha hasta el
   tablero" (D-90), en los tres idiomas. El resto de la frase queda igual.

@@ -36,5 +36,21 @@ await tapCell('A3'); st = await state(); console.log('selecciono el acorazado �
 await b.evaluate(`__arrastra(__celda(7, 1), __celda(0, 7))`); await sleep(400);
 st = await state(); console.log('arrastro el destructor con el acorazado elegido → se mueve Y queda elegido:', JSON.stringify({ sel: st.sel, layout: st.layout.destroyer, rotAt: st.rotAt }));
 await b.shot('arrastre-elige');
+// Durante el arrastre no hay ↻: girar no se puede con el barco en el aire.
+await b.evaluate(`window.__mitad = async () => {
+  const ev = (t, el, x, y) => el.dispatchEvent(new PointerEvent(t, { bubbles: true, cancelable: true, clientX: x, clientY: y, pointerId: 1, pointerType: 'touch', isPrimary: true, button: 0 }));
+  const desde = __celda(0, 7), hasta = __celda(4, 7);
+  const a = desde.getBoundingClientRect(), z = hasta.getBoundingClientRect();
+  const x0 = a.left + a.width / 2, y0 = a.top + a.height / 2, x1 = z.left + z.width / 2, y1 = z.top + z.height / 2;
+  ev('pointerdown', desde, x0, y0);
+  ev('pointermove', document.elementFromPoint(x1, y1) || hasta, x1, y1);
+  await new Promise(r => setTimeout(r, 60));
+  const durante = !!document.querySelector('#place-grid .rot');
+  ev('pointerup', document.elementFromPoint(x1, y1) || hasta, x1, y1);
+  await new Promise(r => setTimeout(r, 150));
+  return JSON.stringify({ durante, despues: !!document.querySelector('#place-grid .rot') });
+}; 1`);
+const rot = await b.evaluate('__mitad()');
+console.log('el ↻ mientras se arrastra y después de soltar →', rot);
 console.log('errors:', JSON.stringify(b.errors), JSON.stringify(b.logs));
 b.close();
