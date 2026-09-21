@@ -58,9 +58,11 @@
   border: 1px solid rgba(46, 230, 214, 0.14);
   display: grid; place-items: center; font-size: clamp(0.7rem, 3.2vw, 1.05rem); line-height: 1; position: relative; transition: background 0.15s, transform 0.1s;
 }
-/* El trozo de barco que le toca a esta casilla. Vertical = el mismo dibujo girado. */
-.cell .barco { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-.cell .barco.v { transform: rotate(90deg); }
+/* El trozo de barco que le toca a esta casilla. Vertical = el mismo dibujo girado. El giro vive
+   en una variable y no escrito en el `transform`, para que el hundimiento pueda componer sobre
+   él sin borrarlo ni tener que escribir dos animaciones, una por orientación (D-93). */
+.cell .barco { position: absolute; inset: 0; width: 100%; height: 100%; display: block; --giro: 0deg; transform: rotate(var(--giro)); }
+.cell .barco.v { --giro: 90deg; }
 .grid-wrap.small .cell { font-size: 0.55rem; border-radius: 2px; }
 .grid-wrap.small .grid { grid-template-columns: 14px repeat(10, minmax(0, 1fr)); }
 .cell.ship.sel {
@@ -97,6 +99,81 @@
 }
 .cell.tocado .barco { filter: saturate(0.55) brightness(0.9); }
 .cell.hundido::after { content: '🔥'; }
+
+/* ---------- El hundimiento, mientras pasa (D-93) ----------
+   Hundir es el único momento en que la grilla regala casillas que nadie disparó: le pegaste a
+   una y aparecen las otras cuatro. Antes esa revelación ocurría en un repintado. Ahora el fuego
+   corre por el casco casilla por casilla —ahí se lee el largo y el sentido del barco— y recién
+   cuando la cascada termina el casco entero se va bajo el agua.
+   `--t` es el lugar de esta casilla en la cascada; `--tFin`, cuándo termina. Los pone game.js,
+   y pueden venir en negativo: así un repintado a mitad de camino retoma la animación donde iba
+   en vez de reiniciarla. */
+.cell.hundiendo { overflow: visible; z-index: 3; animation: aguaArde 900ms ease-out forwards var(--t, 0ms); }
+.cell.hundiendo::after { animation: brasa 900ms ease-out forwards var(--t, 0ms); }
+/* El fuego va escalonado; el casco, no: un barco no se hunde de a pedazos. Por eso el casco
+   arranca en `--tFin`, igual para todos los trozos, y baja derecho. Escorarlo pediría girar
+   cada trozo sobre el centro del barco y no sobre el suyo, y el trozo vertical ya gira 90°:
+   hacerlo sobre un punto lejano lo lanza una casilla entera. Bajar derecho ya se lee. */
+.cell.hundiendo .barco { animation: seVa 620ms ease-in forwards var(--tFin, 0ms); }
+
+/**
+ * El ANTES de cada casilla. La casilla ya lleva `hundido` desde el primer repintado —casco
+ * quemado, borde rosado y 🔥 son su estado normal—, así que sin esto el barco entero aparece
+ * ardiendo en el fotograma cero y la cascada no muestra nada: cinco cuadrados con fuego.
+ *
+ * Esto vivía en los fotogramas, hasta mirarlo de cerca: Chrome no anima variables CSS sin
+ * registrar ni `content`, así que los ignoraba en silencio. Ahora la clase la saca game.js con
+ * un temporizador por casilla, y las animaciones van en `forwards` para no pisarla antes de
+ * tiempo. El borde importa tanto como el resto: es lo que más se ve de lejos.
+ */
+.cell.hundiendo.aun-vivo {
+  --casco-borde: #1d2740; --casco-luz: #eef3fa; --casco: #a9b7c9;
+  --casco-sombra: #73839a; --casco-medio: #8795ab; --cubierta: #5d6c85;
+  --marca: var(--yellow); --antena: var(--cyan); --espuma: rgba(255, 255, 255, 0.45);
+  border-color: #ffd0a0; box-shadow: inset 0 0 8px 4px rgba(255, 122, 26, 0.75);
+}
+.cell.hundiendo.aun-vivo::after { content: '💥'; }
+
+@keyframes aguaArde {
+  0%   { box-shadow: inset 0 0 6px 2px rgba(255, 122, 26, 0.5); }
+  6%   { box-shadow: inset 0 0 16px 9px rgba(255, 246, 220, 0.95); }
+  22%  { box-shadow: inset 0 0 12px 6px rgba(255, 140, 40, 0.85); }
+  100% { box-shadow: inset 0 0 9px 4px rgba(224, 36, 60, 0.8), 0 0 10px rgba(255, 46, 136, 0.55); }
+}
+@keyframes brasa { 0% { transform: scale(1); } 7% { transform: scale(1.6); } 30% { transform: scale(1); } }
+/* El casco se va bajo el agua y vuelve a asomar hecho pecio, en su sitio: no desaparece, porque
+   el barco hundido se le queda mostrando al rival, quemado y ardiendo (D-91). Por eso el último
+   fotograma es exactamente el estado de reposo —sin desplazar, sin apagar—: la animación lleva
+   hasta donde ya estaba y no deja nada colgando cuando termina. */
+@keyframes seVa {
+  0%   { transform: translateY(0) scale(1) rotate(var(--giro)); opacity: 1; filter: none; }
+  16%  { transform: translateY(-7%) scale(1.04) rotate(var(--giro)); opacity: 1; filter: none; }
+  58%  { transform: translateY(17%) scale(0.87) rotate(var(--giro)); opacity: 0.45; filter: brightness(0.55); }
+  100% { transform: translateY(0) scale(1) rotate(var(--giro)); opacity: 1; filter: none; }
+}
+
+/* El fogonazo de la casilla que se disparó: la onda sale de ahí y no del barco entero. */
+.cell.impacto::before {
+  content: ''; position: absolute; inset: 0; border-radius: 4px; z-index: 4;
+  animation: onda 620ms cubic-bezier(0.1, 0.7, 0.3, 1) both;
+}
+@keyframes onda {
+  0%   { box-shadow: 0 0 0 0 rgba(255,255,255,0.95), inset 0 0 12px 6px rgba(255,255,255,0.9); }
+  100% { box-shadow: 0 0 0 16px rgba(255,255,255,0), inset 0 0 12px 6px rgba(255,255,255,0); }
+}
+
+/* La espuma sube del medio del casco cuando el sonido va en las burbujas: `SFX.sink` las toca
+   entre los 0,5 y los 0,95 s, así que la imagen y el ruido cuentan lo mismo al mismo tiempo. */
+.burbuja {
+  position: absolute; left: 50%; bottom: 6%; width: 34%; height: 34%; border-radius: 50%;
+  background: radial-gradient(circle at 34% 30%, #fff, rgba(255,255,255,0.35) 62%, rgba(255,255,255,0) 72%);
+  pointer-events: none; z-index: 6; animation: sube 780ms ease-out both;
+}
+@keyframes sube {
+  0%   { transform: translate(-50%, 20%) scale(0.25); opacity: 0; }
+  20%  { opacity: 1; }
+  100% { transform: translate(calc(-50% + var(--dx, 0px)), -150%) scale(1.15); opacity: 0; }
+}
 .cell.ship.tocado::after, .cell.ship.hundido::after { content: '💥'; }
 /* El dibujo del barco va posicionado, así que pinta por encima de lo que no lo está: sin esto
    el 💥 y el 🔥 quedaban debajo del casco y no se veían. */
