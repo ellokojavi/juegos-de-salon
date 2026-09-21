@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.41.0 — 2026-09-20
+- **Los barcos se hunden, ya no se apagan** (D-93). Hundir uno pasa de un cambio de clase a durar
+  1,4 s: fogonazo en la casilla que disparaste, el fuego corriendo por el casco 90 ms por casilla
+  hacia los dos lados, el casco entero yéndose bajo el agua cuando la cascada termina, y cuatro
+  burbujas subiendo a los ~630 ms. Pasa en los dos tableros: en el del rival cuando hundes tú, en
+  el propio cuando te hunden.
+- **El motivo no es adornar.** Hundir es el único momento en que el tablero del rival dibuja el
+  casco: las casillas ya se conocían —para hundir hay que haberlas tocado todas—, pero el barco
+  no, y recién ahí aparece el portaaviones con su pista o el submarino con el periscopio (D-91).
+  Antes eso ocurría en un repintado y el barco que acababas de matar nunca se veía como barco.
+- **La espuma va donde van las burbujas del sonido.** `SFX.sink()` ya duraba casi un segundo
+  mientras la imagen tardaba cero: ahora las dos cuentan lo mismo al mismo tiempo.
+- **El tiro que gana la partida por fin se ve.** La pantalla de resultado espera a que el barco
+  termine de hundirse. En un celular no espera: ahí manda la pantalla de pase (C-9).
+
 ## 0.40.0 — 2026-09-20
 - **En Batalla Naval se ve de quién es el turno sin leer nada** (D-92). Los jugadores decían no
   entenderlo, y con razón: la única diferencia entre las dos pantallas era una frase blanca del
