@@ -1015,3 +1015,51 @@ después cuando acaba de sonar un resultado.
 ajeno ya no repite el disparo (lo canta el toast) y con eso se cae de paso un error viejo —en sala
 con otra persona decía "El celular disparó a I7"—. `SFX.turn()` es nuevo en `assets/js/sound.js` y
 queda disponible para los demás juegos, que también tienen que anunciar el cambio de turno (C-4).
+
+## D-93 · Un barco se hunde en un segundo, no en un repintado
+**Fecha:** 2026-09-20 · **Estado:** vigente
+**Decisión:** Hundir un barco deja de ser un cambio de clase y pasa a durar **1,4 s en pantalla**:
+1. **Fogonazo** en la casilla que se disparó: una onda blanca que se expande (620 ms).
+2. **El fuego corre por el casco**, 90 ms por casilla, **hacia los dos lados desde el impacto**.
+   Cada casilla se sigue viendo como estaba hasta que le llega su turno.
+3. **El casco se va entero** —todos los trozos a la vez, cuando la cascada terminó— y vuelve a
+   asomar hecho pecio, en su sitio.
+4. **Espuma**: cuatro burbujas suben del medio del casco a los ~630 ms.
+
+Pasa en los dos tableros: en el del rival cuando hundes tú, en el propio cuando te hunden.
+Y **el resultado espera** a que el barco termine de irse, salvo en un celular, donde manda la
+pantalla de pase (C-9).
+
+**Por qué:** el hundimiento es el único momento en que el tablero del rival **dibuja el casco**.
+Las casillas ya se conocían —para hundir hay que haberlas tocado todas—, pero el barco no: hasta
+ese disparo eran cinco cuadrados naranjos, y recién al hundirse aparece el portaaviones con su
+pista, o el submarino con el periscopio (D-91). Eso ocurría en un repintado: cinco cuadrados rojos
+con fuego, de golpe, y el barco que acababas de matar no se veía nunca como barco. La cascada le
+da tiempo al dibujo de leerse, y de paso canta el largo y el sentido.
+
+Y había una asimetría que lo delataba: **`SFX.sink()` ya dura casi un segundo** —explosión, sierra
+que cae y cuatro burbujas entre los 0,5 y los 0,95 s—. El sonido contaba un hundimiento entero
+mientras la imagen tardaba 0 ms. La espuma va donde van las burbujas del sonido.
+
+**Lo que costó, que no se ve en el resultado:**
+- **El casco no se escora.** Con escora, cada trozo giraba sobre *su* centro y el acorazado se
+  partía en cuatro baldosas con huecos. El arreglo obvio —girar todos sobre el centro del barco—
+  es peor: el trozo vertical ya gira 90°, así que hacerlo sobre un punto lejano lo lanza una
+  casilla entera. Hacerlo bien pide envolver cada dibujo en otro elemento; no vale ese precio.
+- **El `translateY` va antes del giro**, o el barco vertical se hunde de costado: en su marco
+  rotado, "abajo" apunta a un lado. Por eso `--giro` es una variable y no está escrito en el
+  `transform`: la animación compone sobre él sin borrarlo ni duplicarse por orientación.
+- **Los retardos se calculan contra el reloj y salen negativos.** `renderPlay` rehace la grilla
+  entera en cada mensaje; un `animation-delay` negativo arranca la animación ya empezada, así que
+  el repintado **retoma** el hundimiento donde iba en vez de reiniciarlo.
+- **El "antes" de cada casilla es una clase, no un fotograma.** Chrome no anima variables CSS sin
+  registrar ni `content`: los ignoraba en silencio y el barco aparecía ardiendo entero en el
+  fotograma cero. Ahora `.aun-vivo` lo sostiene y la saca un temporizador por casilla. Las
+  animaciones van en `forwards` —no en `both`— para que el relleno no la pise antes de tiempo.
+- **El último fotograma es el estado de reposo.** Si la animación terminara con el casco hundido,
+  el `forwards` lo dejaría colgado y el siguiente disparo lo devolvería de un salto a la vista.
+  Además, así `prefers-reduced-motion` degrada solo: sin animación queda exactamente lo de hoy.
+
+**Consecuencias:** `.cell .barco` gana la variable `--giro`. Entran las clases `hundiendo`,
+`aun-vivo`, `impacto` y `burbuja`, y `HUNDIR_MS` en `game.js`. La pantalla de resultado de sala y
+de contra el celular tarda 1,4 s más cuando la partida termina con un hundimiento, que es siempre.

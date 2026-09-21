@@ -91,7 +91,8 @@ function startSession({ mode, transport, roles, config, names, bot = null, code 
   // despide en vez de solo soltar los oyentes, así no queda una sala muerta viéndose viva.
   if (S?.transport) S.transport.dispose();
   if (S?.turnTimer) clearTimeout(S.turnTimer);
-  S = { mode, transport, roles, layouts: {}, draft: {}, bot, code, role, repliedShots: new Set(), lastShownShot: -1, cpuTimer: null, turnTimer: null, lastTurnMine: null, uiRole: null, aim: null, fleetShown: false };
+  if (S?.finTimer) clearTimeout(S.finTimer);
+  S = { mode, transport, roles, layouts: {}, draft: {}, bot, code, role, repliedShots: new Set(), lastShownShot: -1, cpuTimer: null, turnTimer: null, finTimer: null, lastTurnMine: null, hundimiento: null, uiRole: null, aim: null, fleetShown: false };
   M = newMatch(config);
   M.presence = {};
   Object.entries(names).forEach(([r, name]) => { if (name) transport.send({ t: 'hello', from: r, name }); });
@@ -227,6 +228,61 @@ function enemyCellArt(myShots) {
   };
 }
 
+/** Cuánto dura el hundimiento en pantalla, de punta a punta. */
+const HUNDIR_MS = 1400;
+
+/**
+ * Decora una grilla ya dibujada con el hundimiento en curso (D-93): el fuego corre por el casco
+ * desde la casilla que se disparó y después el casco entero se va bajo el agua.
+ *
+ * Los retardos se calculan **contra el reloj**, no desde cero, así que salen negativos si la
+ * grilla se vuelve a dibujar a mitad de camino. Un `animation-delay` negativo arranca la
+ * animación ya empezada: el repintado retoma el hundimiento donde iba en vez de reiniciarlo,
+ * que es lo que pasaba antes porque `renderPlay` rehace la grilla entera en cada mensaje.
+ */
+function pintaHundimiento(wrap, h) {
+  const celdas = h.shot.cells;
+  if (!celdas || !celdas.length) return;
+  const PASO = 90;
+  const impacto = Math.max(0, celdas.indexOf(h.shot.cell));
+  const tFin = PASO * Math.max(impacto, celdas.length - 1 - impacto) + 90;
+  const corrido = Date.now() - h.inicio;
+  celdas.forEach((nombre, i) => {
+    const { r, c } = parseCell(nombre);
+    const cell = wrap.querySelector(`.cell[data-r="${r}"][data-c="${c}"]`);
+    if (!cell) return;
+    const mio = Math.abs(i - impacto) * PASO;
+    cell.style.setProperty('--t', mio - corrido + 'ms');
+    cell.style.setProperty('--tFin', tFin - corrido + 'ms');
+    cell.classList.add('hundiendo');
+    if (nombre === h.shot.cell) cell.classList.add('impacto');
+    // Hasta que a esta casilla le llegue el fuego se sigue viendo como estaba (ver `aun-vivo`
+    // en style.css). Lo hace un temporizador y no un fotograma porque Chrome no anima ni las
+    // variables de la paleta ni el `content` del emoji.
+    if (mio > corrido) { cell.classList.add('aun-vivo'); setTimeout(() => cell.classList.remove('aun-vivo'), mio - corrido); }
+    // Y al terminar, la casilla vuelve a ser una casilla hundida y nada más: si las clases se
+    // quedaran puestas, el `forwards` del último fotograma seguiría mandando y el siguiente
+    // repintado —el próximo disparo— las sacaría de golpe, a la vista.
+    setTimeout(() => cell.classList.remove('hundiendo', 'impacto', 'aun-vivo'), Math.max(0, HUNDIR_MS - corrido));
+    // La espuma se programa una sola vez por hundimiento, no en cada repintado.
+    if (i === Math.floor(celdas.length / 2) && !h.espuma) {
+      h.espuma = true;
+      setTimeout(() => espuma(wrap, r, c), Math.max(0, tFin + 270 - corrido));
+    }
+  });
+}
+
+/** Cuatro burbujas subiendo de una casilla, si la grilla que las pidió sigue en pantalla. */
+function espuma(wrap, r, c) {
+  const cell = wrap.querySelector(`.cell[data-r="${r}"][data-c="${c}"]`);
+  if (!cell || !cell.isConnected) return;
+  for (let k = 0; k < 4; k++) {
+    const b = el('i', { class: 'burbuja', style: `--dx:${((k - 1.5) * 8).toFixed(0)}px;animation-delay:${k * 150}ms` });
+    cell.append(b);
+    setTimeout(() => b.remove(), 1400);
+  }
+}
+
 /** Clases de una casilla del tablero enemigo: mis disparos. */
 function enemyCellClass(myShots, aim) {
   const mark = {};
@@ -255,7 +311,16 @@ function render() {
     case 'lobby': renderLobby(); break;
     case 'placing': renderPlace(); break;
     case 'play': case 'reveal': renderPlay(v); break;
-    case 'done': renderResult(v); break;
+    case 'done': {
+      // El hundimiento que gana la partida es el que más merece verse, y era el único que no se
+      // veía: la pantalla saltaba al resultado en el mismo repintado. Ahora el resultado espera
+      // a que el barco termine de irse (D-93). En un celular no espera: ahí manda la pantalla
+      // de pase, que ya canta el resultado del disparo antes que nada (C-9).
+      const resta = S.mode !== 'local' && S.hundimiento ? HUNDIR_MS - (Date.now() - S.hundimiento.inicio) : 0;
+      if (resta > 0) { clearTimeout(S.finTimer); S.finTimer = setTimeout(render, resta + 40); renderPlay(v); break; }
+      renderResult(v);
+      break;
+    }
   }
 }
 
@@ -519,6 +584,10 @@ function renderPlay(v) {
   const enemy = other(me);
   const canShoot = shooterLocal && v.shooter === me && !v.pending && v.phase === 'play';
   const myTurn = v.phase === 'play' && shooterLocal && v.shooter === me;
+  // El hundimiento en curso: el más nuevo de la partida, mientras siga durando en pantalla.
+  const ultimoHundido = [...M.shots].reverse().find(x => x.result === 'hundido' && x.cells);
+  if (ultimoHundido && S.hundimiento?.n !== ultimoHundido.n) S.hundimiento = { n: ultimoHundido.n, shot: ultimoHundido, inicio: Date.now(), espuma: false };
+  const hundiendo = S.hundimiento && Date.now() - S.hundimiento.inicio < HUNDIR_MS ? S.hundimiento : null;
   /**
    * Estado. Dos frases distintas del mismo tamaño y del mismo color se leen igual de lejos,
    * así que la barra cambia de color y de forma según de quién sea el turno (D-92). El ícono
@@ -531,7 +600,12 @@ function renderPlay(v) {
     who.replaceChildren(el('span', { class: 'ico' }, ico), titulo);
     sub.textContent = bajada;
   };
-  if (v.phase !== 'play') setStatus('theirs', '⏳', '…', T.waitingReply);
+  // Con la partida terminada la barra no puede quedarse en "…" durante todo el hundimiento:
+  // mientras el barco se va, dice cuál fue.
+  if (v.phase !== 'play' && hundiendo) setStatus('theirs', '💥', T.hundido, hundiendo.shot.from === me
+    ? fmt(T.sunkShip, { ship: T.ships[hundiendo.shot.ship], name: M.names[enemy] })
+    : fmt(T.sunkMine, { ship: T.ships[hundiendo.shot.ship] }));
+  else if (v.phase !== 'play') setStatus('theirs', '⏳', '…', T.waitingReply);
   else if (myTurn) setStatus('mine', '🎯', T.turnYou, lastMine && lastMine.result !== 'agua' && M.config.extraShot
     ? fmt(T.extraGo, { result: T[lastMine.result] })
     : (v.pending ? T.waitingReply : fmt(T.turnYouSub, { name: M.names[enemy] })));
@@ -582,6 +656,7 @@ function renderPlay(v) {
     $$('#enemy-grid .cell').forEach(x => x.classList.toggle('aim', S.aim === cellName(+x.dataset.r, +x.dataset.c)));
     $('#fire-btn').disabled = !S.aim;
   } }));
+  if (hundiendo && hundiendo.shot.from === me) pintaHundimiento(enemyBox, hundiendo);
   const fireRow = $('#fire-row'); fireRow.innerHTML = '';
   if (M.config.confirmShot && canShoot) fireRow.append(el('button', { class: 'btn btn--yellow', id: 'fire-btn', disabled: !S.aim, onClick: () => fire(S.aim) }, T.fire));
   // Toast del último resultado (mío o del rival)
@@ -605,6 +680,7 @@ function renderPlay(v) {
     const wrap = el('div', { class: 'mine-cover' + (S.mode !== 'local' || S.fleetShown ? ' shown' : '') }, g,
       el('div', { class: 'veil', onClick: e => { S.fleetShown = true; e.currentTarget.parentElement.classList.add('shown'); SFX.tap(); } }, `🙈 ${T.showFleet}`));
     mine.append(el('div', { class: 'board-title' }, T.myBoard), wrap);
+    if (hundiendo && hundiendo.shot.from === enemy) pintaHundimiento(mine, hundiendo);
     if (S.mode === 'local') mine.append(el('button', { class: 'btn btn--ghost btn--sm', onClick: () => { S.fleetShown = !S.fleetShown; wrap.classList.toggle('shown', S.fleetShown); } }, S.fleetShown ? T.hideFleet : T.showFleet));
   }
 }

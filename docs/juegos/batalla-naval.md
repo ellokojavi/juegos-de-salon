@@ -52,6 +52,11 @@ Intro (reglas, modos) → Setup (nombres, tiro extra) → [Lobby: código + QR +
   puedes disparar y se apaga cuando no; tocarlo fuera de turno lo sacude y explica por qué (“Espera
   tu turno: ahora dispara Cata”); y cuando el turno llega suena, vibra y —en sala— el título de la
   pestaña pasa a “🎯 ¡Te toca!”. Con tiro extra, la bajada dice “¡Tocado! Sigues disparando”.
+- **Hundir dura 1,4 s** (D-93): fogonazo en la casilla disparada, el fuego corriendo por el casco
+  90 ms por casilla hacia los dos lados desde el impacto, el casco entero yéndose bajo el agua
+  cuando la cascada termina, y cuatro burbujas a los ~630 ms, justo donde el sonido toca las
+  suyas. Es el único momento en que el tablero del rival dibuja el casco, y antes pasaba en un
+  repintado. La pantalla de resultado espera a que termine, salvo en un celular (ahí manda C-9).
 - Sonidos: splash al agua, explosión al tocar, explosión larga + vibración al hundir, sirena al
   perder la flota, campanita al llegar el turno (espera 650 ms si acaba de sonar un resultado).
 
@@ -104,6 +109,7 @@ Promedio esperado: 45 a 55 disparos para hundir la flota (un humano promedio ron
 - Todo en español, inglés y portugués (“Battleship”, “Batalha Naval”): agua/miss/água, tocado/hit/acertou, hundido/sunk/afundou, ¡Fuego!/Fire!/Fogo!, ¡Zarpar!/Set sail!/Zarpar!
 - Accesible con dedo: selección + confirmación antes de disparar; vibración en tocado/hundido.
 - Las dos pantallas de turno se miran sin jugar una partida: `node tools/e2e/mirar.mjs batalla-naval juego` y `… espera`.
+- El hundimiento no se mira con una captura sino con varias seguidas: el guion que las saca vive en la historia de D-93.
 
 - Las casillas que se leen (el aviso de cada disparo y la casilla grande del resultado) van en Nunito 900, no en Bangers: ahí el 1 y el 7 se confunden y se dispara al lugar equivocado (D-30, canon C-1). Los números de fila de la grilla ya estaban en Nunito.
 
