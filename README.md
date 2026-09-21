@@ -95,6 +95,12 @@ Sink the fleet. Each player hides 5 ships on a 10×10 board and fires in turns: 
 
 The fleet is drawn in **pixel art, seen from above** (D-91): every square paints one 16×16 piece — stern, middle sections, bow — and together they make the ship, so a carrier is a flight deck with a jet parked on it and a submarine is a thin hull with its periscope up. Every ship begins and ends in a point, and turning one is the same drawing rotated 90°. The sea is a single tile repeated in every square. The art lives in `batalla-naval/flota.js`, **generated** by `python3 tools/flota.py`: to change a ship you edit the script and run it again.
 
+Sinking a ship **takes a second and a half** (D-93): a flash on the cell you fired at, fire running
+along the hull one square at a time out from the hit, the whole hull slipping under once the fire
+has run, and four bubbles rising just as the sound plays its own. It is the one moment the rival's
+board draws the hull — you already knew the squares, since sinking means hitting all of them, but
+not the ship — and it used to happen in a single repaint.
+
 Whose turn it is is said **four times over, and never only in words** (D-92): the status bar fills
 lime with a 🎯 when it is yours and stays grey with an ⏳ when it is not, the rival's board glows
 while you can fire and dims when you cannot, tapping it out of turn shakes it and tells you why, and
