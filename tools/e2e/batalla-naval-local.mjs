@@ -62,7 +62,10 @@ while (guard++ < 400) {
   else { do { cell = 'ABCDEFGHIJ'[missR % 10] + (Math.floor(missR / 10) + 1); missR++; } while (botCells.includes(cell) || (await b.evaluate(`__bn.match().shots.some(s=>s.from==='A'&&s.cell==='${cell}')`))); }
   await fireAt(cell); await sleep(300);
 }
-await sleep(1500); await b.shot('14-cpu-result');
+// La espera es larga a propósito: el último barco tarda 1,4 s en hundirse antes de que aparezca
+// el resultado (D-93), y encima caen 3,5 s de confeti. El confeti se pinta en un canvas, así que
+// `quieto()` no lo ve y la toma salía con la pantalla tapada de papelitos (D-76).
+await sleep(6000); await b.shot('14-cpu-result');
 console.log('cpu resultado:', await b.evaluate(`document.getElementById('result-title').textContent + ' | ' + document.getElementById('result-sub').textContent`), '| disparos totales:', await b.evaluate(`__bn.match().shots.length`));
 console.log('errors:', JSON.stringify(b.errors), JSON.stringify(b.logs));
 b.close();
