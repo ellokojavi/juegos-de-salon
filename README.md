@@ -323,7 +323,7 @@ Spec and design: [docs/juegos/julepe.md](docs/juegos/julepe.md)
   </tr>
   <tr>
     <td align="center"><img src="docs/screenshots/copa/04-reinas.png" width="180" alt="Day 4: Queens"><br><sub>Day 4: Queens</sub></td>
-    <td align="center"><img src="docs/screenshots/copa/05-letras.png" width="180" alt="Day 5: Bulls and Cows with letters"><br><sub>Day 5: Bulls and Cows with letters</sub></td>
+    <td align="center"><img src="docs/screenshots/copa/05-letras.png" width="180" alt="Day 5: Bulls and Cows: Word"><br><sub>Day 5: Bulls and Cows: Word</sub></td>
     <td align="center"><img src="docs/screenshots/copa/06-anio.png" width="180" alt="Day 6: What year was it?"><br><sub>Day 6: What year was it?</sub></td>
     <td align="center"><img src="docs/screenshots/copa/07-grafico.png" width="180" alt="Your place, day by day"><br><sub>Your place, day by day</sub></td>
   </tr>
@@ -348,7 +348,7 @@ It borrows what makes daily puzzles work (Wordle, Connections): same challenge f
 | 2 | 🔢 Bulls and Cows: guess the number, with the Bulls and Cows keypad and notes | deduction |
 | 3 | 🔗 Connections: 16 words, 4 groups, with red herrings | association |
 | 4 | 👑 Queens: one per row, column and color region, never touching; scored by solve time, mistakes are free | logic |
-| 5 | 🔤 Bulls and Cows with letters: a 5-letter word, each letter colored by its clue | deduction |
+| 5 | 🔤 Bulls and Cows: Word: a 5-letter word, each letter colored by its clue; every letter you pin down scores, so getting close counts | deduction |
 | 6 | 📅 What year was it?: closer is better, older gets more slack | estimation |
 | 7 | 🏁 The Grand Final: five short rounds, one of each, worth double | everything |
 
@@ -480,6 +480,7 @@ node assets/js/transport/errors.test.mjs
 node assets/js/transport/ratelimit.test.mjs
 node assets/js/transport/stats.test.mjs
 node copa/juegos/juegos.test.mjs
+node copa/reportes.test.mjs
 node copa/store.test.mjs
 node panel/adapta.test.mjs
 node panel/aggregate.test.mjs

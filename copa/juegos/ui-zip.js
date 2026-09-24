@@ -66,12 +66,21 @@ export function montar(raiz, ctx) {
 
   const terminar = () => {
     clearInterval(reloj);
+    // Si el tiempo se acabó con un nivel a medias, se muestra cómo se resolvía (D-109). Si justo
+    // se había resuelto (la grilla ya está en verde), no hay nada que mostrar.
+    const aMedias = !grilla.classList.contains('fin') && p?.sol;
     J.usado = Math.min(tiempo, usado()); desde = null;
     guardar();
     aviso.innerHTML = '';
+    if (aMedias) {
+      celdas.forEach(c => { c.classList.add('on'); c.classList.remove('cabeza'); });
+      linea.setAttribute('points', p.sol.map(i => `${(i % p.n) + 0.5},${Math.floor(i / p.n) + 0.5}`).join(' '));
+      grilla.classList.add('solucion');
+    }
     grilla.classList.add('fin');
     SFX.timeUp();
     aviso.append(el('div', { class: 'aviso bien' }, J.hechos === 1 ? T.zipTimeOne : fmt(T.zipTime, { n: J.hechos })),
+      aMedias ? el('p', { class: 'muted center', id: 'zip-solucion', style: 'margin:0' }, fmt(T.zipSolution, { k: J.hechos + 1 })) : null,
       el('button', { class: 'btn btn--yellow', id: 'btn-fin', onClick: () => { SFX.tap(); ctx.terminar({ ...J }); } }, ctx.textoFin || T.seeResults));
     pintarCabeza();
   };
