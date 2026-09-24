@@ -15,6 +15,7 @@ Mobile-first web app with party games to play with friends: card games, drinking
 <!-- generado: juegos · written by python3 tools/readme.py actualizar -->
 | Game | Players | Modes | Status |
 |---|---|---|---|
+| 🏆 [The Cup / La Copa / A Copa](#-the-cup-la-copa) | 3 to 10 | Each on their own phone | - |
 | ⏳ [Timeline / Línea de Tiempo / Linha do Tempo](#-timeline-línea-de-tiempo) | 1 to 6 | One phone · Several phones · Play alone | v0.9 |
 | 🔢 [Bulls and Cows / Toque y Fama / Toque e Fama](#-bulls-and-cows-toque-y-fama) | 1 to 2 | One phone · Two phones · Versus the phone | v0.4 |
 | 🪢 [Hangman / El Ahorcado / Forca](#-hangman-el-ahorcado) | 1 to 6 | One phone · Several phones · Play alone | v0.26 |
@@ -310,6 +311,56 @@ Spec and design: [docs/juegos/julepe.md](docs/juegos/julepe.md)
 
 ---
 
+## 🏆 The Cup (La Copa)
+
+<!-- generado: capturas:copa · written by python3 tools/readme.py actualizar -->
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/copa/00-invitacion.png" width="180" alt="The invite: your name and a 4-digit PIN"><br><sub>The invite: your name and a 4-digit PIN</sub></td>
+    <td align="center"><img src="docs/screenshots/copa/01-tablero.png" width="180" alt="Your days: past ones done, today open"><br><sub>Your days: past ones done, today open</sub></td>
+    <td align="center"><img src="docs/screenshots/copa/02-numero.png" width="180" alt="Day 2: the Number of the Day"><br><sub>Day 2: the Number of the Day</sub></td>
+    <td align="center"><img src="docs/screenshots/copa/03-conexiones.png" width="180" alt="Day 3: Connections, Chilean edition"><br><sub>Day 3: Connections, Chilean edition</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/copa/04-solitario.png" width="180" alt="Day 4: Battleship Solitaire"><br><sub>Day 4: Battleship Solitaire</sub></td>
+    <td align="center"><img src="docs/screenshots/copa/05-dudo.png" width="180" alt="Day 5: Doubt it or buy it?"><br><sub>Day 5: Doubt it or buy it?</sub></td>
+    <td align="center"><img src="docs/screenshots/copa/06-anio.png" width="180" alt="Day 6: What year was it?"><br><sub>Day 6: What year was it?</sub></td>
+    <td align="center"><img src="docs/screenshots/copa/07-grafico.png" width="180" alt="Your place, day by day"><br><sub>Your place, day by day</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/copa/08-podio.png" width="180" alt="Podium and medals"><br><sub>Podium and medals</sub></td>
+    <td align="center"><img src="docs/screenshots/copa/09-admin.png" width="180" alt="The admin shares messages with the group"><br><sub>The admin shares messages with the group</sub></td>
+    <td></td>
+    <td></td>
+  </tr>
+</table>
+<!-- /generado -->
+
+Not a game but a **tournament that lasts a week**. Someone creates a cup and shares the link with the group; everyone joins with their name and a 4-digit PIN, from any phone or computer. Every day a different minigame opens, **the same one for everybody**, and it can be played **once**. Your score only matters against the others: the day hands out points by position (10, 8, 6, 5, 4, 3, 2, 1), so seven games with seven different scales weigh the same and one crushing day does not decide the cup (D-94). The final day is worth double, everyone gets one ×2 wildcard, and whoever has the most points on day 7 lifts the cup.
+
+It borrows what makes daily puzzles work (Wordle, Connections): same challenge for everyone, once a day, comparable scores, little luck, and a **share card** that shows how you did without giving the answer away. Five of the seven minigames are built on engines and decks this app already had:
+
+| Day | Minigame | Skill |
+|---|---|---|
+| 1 | ⏳ Timeline Flash: place 7 milestones | knowledge |
+| 2 | 🔢 Number of the Day: Bulls and Cows, 10 tries | deduction |
+| 3 | 🔗 Connections: 16 Chilean words, 4 groups | association |
+| 4 | ⚓ Battleship Solitaire: the Bimaru logic puzzle, with a guaranteed unique solution | logic |
+| 5 | 🎲 Doubt it or buy it?: frozen Liar's Dice hands, scored by the **quality of the decision**, not by how the dice fell (D-97) | probability |
+| 6 | 📅 What year was it?: closer is better, older gets more slack | estimation |
+| 7 | 🏁 The Grand Final: five short rounds, one of each, worth double | everything |
+
+- **Everything comes from a seed** (`code:day`), so everyone plays exactly the same content with no server (D-97).
+- **A day stays open until the next midnight** (a grace day), except the final. Time only breaks ties, and it is *active* time: it pauses while the screen is hidden (D-95).
+- **Results stay hidden until you play**: the table and the progress chart only add up the days you can already see, so they cannot spoil today.
+- **Accounts are a name and a PIN inside one cup**, backed by Firebase anonymous auth. The PIN hash lives where nobody can read it, and the rules only let a device write for a player if it sends the same hash (D-96).
+- **The admin plays too**, and can rename, remove or re-PIN players and share ready-made messages with the group: the invite, **today's reminder** (with who is still missing), the partial table and the final summary (D-99).
+- **Spanish only for now** (D-98): the content is Chilean and does not translate. A 3-day cup exists for testing with `?tres` (D-100), and `?prueba` plays a whole cup with no Firebase and a clock you can fast-forward.
+
+Spec and design: [docs/juegos/copa.md](docs/juegos/copa.md)
+
+---
+
 ## What every game shares
 
 - **Languages:** Spanish (default), English and Brazilian Portuguese. The menu toggle saves the choice on the device, and the browser language is never used to guess (D-47, D-48). See [Languages](#languages).
@@ -329,6 +380,7 @@ The whole experience is translated: the menu and its footer lines, the six games
 | Español | English | Português |
 |---|---|---|
 | Juegos de Salón | Party Games | Jogos de Salão |
+| La Copa | The Cup | A Copa |
 | Línea de Tiempo | Timeline | Linha do Tempo |
 | Toque y Fama | Bulls and Cows | Toque e Fama |
 | El Ahorcado | Hangman | Forca |
@@ -409,6 +461,7 @@ Then open http://localhost:8765 (ES modules have to be served over HTTP). Tests 
 ```bash
 node ahorcado/engine.test.mjs
 node batalla-naval/engine.test.mjs
+node copa/engine.test.mjs
 node dudo/engine.test.mjs
 node julepe/engine.test.mjs
 node linea-de-tiempo/engine.test.mjs
@@ -420,6 +473,8 @@ node assets/js/transport/dispose.test.mjs
 node assets/js/transport/errors.test.mjs
 node assets/js/transport/ratelimit.test.mjs
 node assets/js/transport/stats.test.mjs
+node copa/juegos/juegos.test.mjs
+node copa/store.test.mjs
 node panel/adapta.test.mjs
 node panel/aggregate.test.mjs
 ```
@@ -509,6 +564,7 @@ batalla-naval/              Batalla Naval (engine.js + tests, game.js, rules.js,
 linea-de-tiempo/            Línea de Tiempo (engine.js + tests, game.js, rules.js, decks/)
 ahorcado/                   El Ahorcado (engine.js + tests, game.js, rules.js, decks/)
 dudo/                       Dudo (engine.js + tests, game.js, rules.js)
+copa/                       La Copa: tournament engine, stores (Firebase and local test), juegos/ with the seven minigames
 assets/js/arrastre.js       Shared drag and drop: dropping chooses, a button confirms
 assets/js/handoff.js        Shared transitions: pass the phone, covered screen
 assets/js/chat.js           Shared room chat (multi-phone modes)
@@ -542,6 +598,7 @@ These documents are in Spanish, like the rest of the project.
 - [Firebase](firebase/README.md)
 - [Diseño: El Ahorcado](docs/juegos/ahorcado.md)
 - [Diseño: Batalla Naval](docs/juegos/batalla-naval.md)
+- [La Copa](docs/juegos/copa.md)
 - [Especificación: Cuarto Rey](docs/juegos/cuarto-rey.md)
 - [Diseño: Dudo](docs/juegos/dudo.md)
 - [Diseño: Julepe](docs/juegos/julepe.md)

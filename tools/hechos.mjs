@@ -71,7 +71,8 @@ for (const g of GAMES) {
   // Hay dos formas de escribir un rules.js: los textos sueltos (El Ahorcado) o dentro de `ui`
   // (Cuarto Rey, Dudo). Se miran las dos, o los modos de esos juegos no se ven desde acá.
   const es = { ...LOCALES.es, ...(LOCALES.es.ui || {}) };
-  const en = { ...LOCALES.en, ...(LOCALES.en.ui || {}) };
+  const EN = LOCALES.en || LOCALES.es; // La Copa va solo en español por ahora (D-98)
+  const en = { ...EN, ...(EN.ui || {}) };
   const html = leer(`${g.id}/index.html`);
   juegos.push({
     id: g.id,
@@ -81,7 +82,7 @@ for (const g of GAMES) {
     duracion: g.duration,
     disponible: g.available,
     estado: estado(g.id),
-    modos: modos(es, en),
+    modos: g.formato ? [{ clave: 'formato', es: g.formato.es, en: g.formato.en }] : modos(es, en),
     variantes: variantes(es, en),
     pantallas: [...html.matchAll(/id="screen-([a-z-]+)"/g)].map(m => m[1]),
     chat: /id="chat"/.test(html),
