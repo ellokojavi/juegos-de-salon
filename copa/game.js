@@ -20,6 +20,7 @@ import {
 import { GAME_ID, LOCALES, MINIJUEGOS } from './rules.js';
 import { createCuenta } from './cuenta.js';
 import { JUEGOS } from './juegos/index.js';
+import { desglose } from './desglose.js';
 
 /** `append` que descarta los hijos nulos, como `el()` (sin esto, un null se escribe como texto). */
 const poner = (nodo, ...hijos) => nodo.append(...hijos.flat().filter(x => x !== null && x !== undefined && x !== false));
@@ -70,6 +71,7 @@ function errorDe(e) {
     pin: 'errPinWrong', 'nombre-repetido': 'errRepetido', llena: 'errLlena', 'no-existe': 'errNoExiste',
     ventana: 'errVentana', 'ya-jugado': 'errYaJugado', comodin: 'errComodin', permiso: 'errPermiso',
     config: 'errConfig', offline: 'errOffline', busy: 'errOffline', cerrada: 'errCerrada',
+    reporte: 'errReport',
   };
   if (!mapa[code]) console.error(e);
   return T[mapa[code] || 'errNet'];
@@ -762,6 +764,7 @@ function antesDeJugar(d) {
     el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.howToPlay), el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
       el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, J.puntaje)),
     el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.wildTitle), comodin),
+    JUEGOS[id].ensayo ? el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-ensayo', onClick: () => { SFX.tap(); ensayo(d); } }, `🧪 ${T.tryFirst}`) : null,
     el('p', { class: 'muted center' }, T.startWarn), err, empezar,
     el('button', { class: 'btn btn--ghost btn--sm', onClick: () => { SFX.tap(); tablero(); } }, T.toBoard)));
 }
@@ -770,7 +773,35 @@ function antesDeJugar(d) {
 /* Jugar                                                               */
 /* ------------------------------------------------------------------ */
 
-function jugar(d) {
+/**
+ * Cuenta de 5 a 1 y "¡A jugar!" antes de un juego con reloj (D-105): todos los de La Copa lo
+ * tienen, porque el tiempo desempata. El reloj parte cuando aparece "¡A jugar!", y ese cartel se
+ * desvanece solo sobre el tablero. Resuelve la promesa en ese momento.
+ */
+function cuentaRegresiva(J) {
+  $('#jugar-head').replaceChildren(el('span', { class: 'jugar-titulo' }, `${J.emoji} ${J.nombre}`));
+  $('#jugar-body').innerHTML = '';
+  return new Promise(listo => {
+    const num = el('span', { class: 'cuenta-num' });
+    const capa = el('div', { class: 'cuenta', id: 'cuenta', role: 'status', 'aria-live': 'assertive' },
+      el('p', { class: 'cuenta-juego' }, `${J.emoji} ${J.nombre}`), num);
+    document.body.append(capa);
+    let n = 5;
+    const paso = () => {
+      if (!capa.isConnected) return;
+      num.classList.remove('late'); void num.offsetWidth; num.classList.add('late');
+      if (n > 0) { num.textContent = String(n); SFX.tick(); vibrate(10); n--; setTimeout(paso, 1000); return; }
+      num.textContent = T.letsPlay;
+      capa.classList.add('ya');
+      SFX.turn(); vibrate([20, 40, 20]);
+      listo();
+      setTimeout(() => capa.remove(), 900);
+    };
+    paso();
+  });
+}
+
+async function jugar(d) {
   const Lc = L(), { meta } = Lc;
   const id = juegoDelDia(meta, d), J = MINIJUEGOS[id], mod = JUEGOS[id];
   const guardado = cuenta.intento.leer(S.code, d, S.yo) || {};
@@ -778,6 +809,8 @@ function jugar(d) {
   if (guardado.fin) { enviar(d, guardado.fin); return; }
   mostrar('jugar');
   keepAwake();
+  // La cuenta va solo al empezar: si se retoma una partida, el tablero vuelve de una
+  if (!guardado.reloj) await cuentaRegresiva(J);
   const p = mod.generar(S.code, d);
   const now = ahora();
   let rel = guardado.reloj ? reloj.seguir(guardado.reloj, now) : reloj.nuevo(now);
@@ -809,7 +842,7 @@ function jugar(d) {
       clearInterval(S.reloj);
       document.removeEventListener('visibilitychange', S.visibilidad);
       const r = mod.resultado(estado);
-      const fin = { s: r.s, ms, t: r.t, resumen: r.resumen };
+      const fin = { s: r.s, ms: r.ms ?? ms, t: r.t, resumen: r.resumen, det: desglose(id, estado, { T, fmt, mmss }) };
       cuenta.intento.guardar(S.code, d, S.yo, { jugadas, reloj: reloj.pausar(rel, ahora()), fin });
       enviar(d, fin);
     },
@@ -842,14 +875,14 @@ async function enviar(d, fin) {
     Lc.results ||= {}; Lc.results[d] ||= {};
     Lc.results[d][S.yo] = { s: fin.s, ms: fin.ms, t: fin.t, r: fin.resumen };
   }
-  resultado(d, { recien: true });
+  resultado(d, { recien: true, det: fin.det });
 }
 
 /* ------------------------------------------------------------------ */
 /* Resultado del día                                                   */
 /* ------------------------------------------------------------------ */
 
-function resultado(d, { recien = false } = {}) {
+function resultado(d, { recien = false, det = null } = {}) {
   const Lc = L(), { meta } = Lc;
   const mio = Lc.results?.[d]?.[S.yo];
   if (!mio) { tablero(); return; }
@@ -876,6 +909,7 @@ function resultado(d, { recien = false } = {}) {
     el('p', { class: 'lead center' }, cerrado(meta, d, now) || terminada(meta, now)
       ? fmt(T.finalPos, { pos: `${yo.pos}º`, n, pts: yo.pts * x })
       : fmt(T.provisional, { pos: `${yo.pos}º`, n })),
+    explicacion(J, { s: mio.s, ms: mio.ms, det, x, final: esFinal(meta, d) }),
     el('pre', { class: 'tarjeta' }, mio.t || ''),
     el('button', { class: 'btn btn--cyan', id: 'btn-tarjeta', onClick: () => { SFX.tap(); compartir(tarjeta); } }, T.shareCard),
     el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.dayTable),
@@ -887,6 +921,22 @@ function resultado(d, { recien = false } = {}) {
     el('button', { class: 'btn btn--yellow', id: 'btn-volver', onClick: () => { SFX.tap(); S.verDia = null; tablero(); } }, T.toBoard),
     botonReporte({ juego: id, dia: d }),
   );
+}
+
+/**
+ * Cómo se calculó el puntaje (D-106). Recién terminado trae el desglose línea por línea; si se
+ * mira después (el desglose no se guarda en la copa), la regla del juego. En la copa suma cómo el
+ * lugar del día se vuelve puntos, y si ese día valía el doble.
+ */
+function explicacion(J, { s, ms, det, x = 1, final = false, copa = true }) {
+  const lineas = det?.length ? det : [J.puntaje];
+  return el('details', { class: 'panel explicacion', id: 'explicacion', open: true },
+    el('summary', { class: 'lead' }, `🧮 ${T.bdTitle}`),
+    el('ul', {}, lineas.map(t => el('li', {}, t))),
+    det?.length ? el('p', { class: 'explicacion-total' }, fmt(s === 1 ? T.bdTotalOne : T.bdTotal, { s })) : null,
+    J === MINIJUEGOS.zip ? null : el('p', { class: 'muted' }, fmt(T.bdTime, { t: mmss(ms) })),
+    copa ? el('p', { class: 'muted' }, T.bdPlaces) : null,
+    copa && x > 1 ? el('p', { class: 'ok' }, final ? T.bdFinal : T.bdWild) : null);
 }
 
 /* ------------------------------------------------------------------ */
@@ -902,7 +952,8 @@ function practica(id) {
   const J = MINIJUEGOS[id], mod = JUEGOS[id];
   if (!J || !mod) { portada(); return; }
   const semilla = esCodigo(SEMILLA) ? SEMILLA : codigoAlAzar();
-  history.replaceState(null, '', `${location.pathname}?practica=${id}&semilla=${semilla}${PRUEBA ? '&prueba' : ''}`);
+  const zipSeg = new URLSearchParams(location.search).get('zipSeg');
+  history.replaceState(null, '', `${location.pathname}?practica=${id}&semilla=${semilla}${PRUEBA ? '&prueba' : ''}${zipSeg ? `&zipSeg=${zipSeg}` : ''}`);
   S.juego = { d: 1, id, practica: true, semilla };
   mostrar('jugar');
   $('#jugar-head').innerHTML = '';
@@ -920,13 +971,25 @@ function practica(id) {
 }
 
 function jugarPractica(id, semilla) {
+  const p = JUEGOS[id].generar(semilla, 1);
+  // Solo en el modo de prueba: `&zipSeg=8` acorta el reloj de Zip para los guiones de punta a punta
+  const seg = Number(new URLSearchParams(location.search).get('zipSeg'));
+  if (PRUEBA && id === 'zip' && seg > 0) p.tiempo = seg * 1000;
+  jugarSinPuntaje(id, p, r => resultadoPractica(id, semilla, r));
+}
+
+/**
+ * Juega un minijuego sin que cuente: la práctica del laboratorio y la sesión de prueba antes de
+ * un día de la copa (D-103). Nada se guarda ni se envía; el reloj corre igual, para que se vea.
+ */
+async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false } = {}) {
   const J = MINIJUEGOS[id], mod = JUEGOS[id];
-  const p = mod.generar(semilla, 1);
+  await cuentaRegresiva(J);
   let rel = reloj.nuevo(Date.now());
   const head = $('#jugar-head');
   head.innerHTML = '';
   const cron = el('span', { class: 'cron' }, fmt(T.timer, { t: '0:00' }));
-  poner(head, el('span', { class: 'jugar-titulo' }, `${J.emoji} ${J.nombre}`), cron);
+  poner(head, el('span', { class: 'jugar-titulo' }, `${J.emoji} ${J.nombre}`), ensayo ? el('span', { class: 'chip chip--gold' }, T.trialChip) : null, cron);
   clearInterval(S.reloj);
   S.reloj = setInterval(() => { if (S.pantalla === 'jugar') cron.textContent = fmt(T.timer, { t: mmss(reloj.leer(rel, Date.now())) }); }, 1000);
   S.visibilidad && document.removeEventListener('visibilitychange', S.visibilidad);
@@ -936,14 +999,34 @@ function jugarPractica(id, semilla) {
   body.innerHTML = '';
   mod.montar(body, {
     p, jugadas: undefined, T, fmt, el, SFX, vibrate,
-    guardar() { /* la práctica no se guarda */ },
+    textoFin: ensayo ? T.trialEnd : undefined,
+    guardar() { /* no se guarda: no cuenta */ },
     terminar(estado) {
       clearInterval(S.reloj);
       document.removeEventListener('visibilitychange', S.visibilidad);
       const r = mod.resultado(estado);
-      resultadoPractica(id, semilla, { ...r, ms: Math.round(reloj.leer(rel, Date.now())) });
+      alTerminar({ ...r, ms: r.ms ?? Math.round(reloj.leer(rel, Date.now())), det: desglose(id, estado, { T, fmt, mmss }) });
     },
   });
+}
+
+/** La sesión de prueba de un día: otro contenido, la misma mecánica, y de vuelta a Empezar. */
+function ensayo(d) {
+  const id = juegoDelDia(L().meta, d);
+  mostrar('jugar');
+  S.juego = { d, id, ensayo: true };
+  jugarSinPuntaje(id, JUEGOS[id].ensayo(S.code, d), r => {
+    mostrar('resultado');
+    SFX.reveal();
+    const body = $('#resultado-body');
+    body.innerHTML = '';
+    poner(body,
+      el('div', { class: 'result-hero' }, el('span', { class: 'trophy pop' }, '🧪'),
+        el('h2', { class: 'display display--md' }, T.trialDoneTitle)),
+      el('div', { class: 'aviso' }, fmt(T.trialDone, { resumen: r.resumen || r.s })),
+      explicacion(MINIJUEGOS[id], { s: r.s, ms: r.ms, det: r.det, copa: false }),
+      el('button', { class: 'btn btn--yellow', id: 'btn-volver-ensayo', onClick: () => { SFX.tap(); antesDeJugar(d); } }, T.trialBack));
+  }, { ensayo: true });
 }
 
 function resultadoPractica(id, semilla, r) {
@@ -960,6 +1043,7 @@ function resultadoPractica(id, semilla, r) {
       el('p', { class: 'muted', style: 'margin:0' }, T.yourScore),
       el('div', { class: 'score-big' }, r.resumen || String(r.s)),
       el('p', { class: 'muted' }, `⏱ ${mmss(r.ms)}`)),
+    explicacion(J, { s: r.s, ms: r.ms, det: r.det, copa: false }),
     el('pre', { class: 'tarjeta' }, r.t || ''),
     el('p', { class: 'muted center' }, fmt(T.practiceSeed, { semilla })),
     el('a', { class: 'btn btn--yellow', id: 'btn-otra', href: otra }, T.practiceAgain),
@@ -971,6 +1055,16 @@ function resultadoPractica(id, semilla, r) {
 /* ------------------------------------------------------------------ */
 /* Reportar un problema o dejar un comentario (LIG-42)                 */
 /* ------------------------------------------------------------------ */
+
+/**
+ * El nombre de quien reporta queda en este dispositivo (no en la cuenta: en el laboratorio no la
+ * hay), para no escribirlo en cada reporte. Si el almacenamiento está bloqueado, no pasa nada.
+ */
+const NOMBRE_REPORTE = 'juegos-de-salon:copa:reporte-nombre';
+const nombreReporte = {
+  leer() { try { return localStorage.getItem(NOMBRE_REPORTE) || ''; } catch (_) { return ''; } },
+  guardar(n) { try { if (n) localStorage.setItem(NOMBRE_REPORTE, n); else localStorage.removeItem(NOMBRE_REPORTE); } catch (_) { /* nada */ } },
+};
 
 /** El botón que lleva al formulario, con lo que se sabe de dónde se apretó. */
 function botonReporte(extra = {}) {
@@ -999,15 +1093,17 @@ function reportar(extra = {}) {
   body.innerHTML = '';
   const err = el('div', { class: 'form-error', role: 'alert' });
   const texto = el('textarea', { class: 'reporte-texto', maxlength: '1000', rows: '6', placeholder: T.reportPlaceholder, 'aria-label': T.reportTitle });
-  const nombre = el('input', { class: 'mini', maxlength: '40', placeholder: T.reportNamePh, value: contexto.jugador || cuenta.nombre.get() || '', 'aria-label': T.reportNamePh });
+  const nombre = el('input', { class: 'mini', id: 'reporte-nombre', maxlength: '40', autocomplete: 'name', placeholder: T.reportNamePh, value: nombreReporte.leer() || contexto.jugador || cuenta.nombre.get() || '', 'aria-label': T.reportNamePh });
   const enviarBtn = el('button', { class: 'btn btn--yellow', id: 'btn-enviar-reporte' }, T.reportSend);
   enviarBtn.addEventListener('click', async () => {
     const t = texto.value.trim();
     if (!t) { avisoError(err, T.reportEmpty); return; }
+    nombreReporte.guardar(nombre.value.trim().slice(0, 40));
     enviarBtn.disabled = true; enviarBtn.textContent = T.sending2;
     try {
-      const st = await abrirStore();
-      await st.reportar({
+      // Sin cuenta (D-104): en la práctica no se abre el almacén ni su sesión anónima
+      const reportar = PRUEBA ? (await abrirStore()).reportar : (await import('./reportes.js')).enviarReporte;
+      await reportar({
         texto: t.slice(0, 1000), nombre: nombre.value.trim().slice(0, 40),
         contexto: JSON.stringify(contexto).slice(0, 500),
         v: versionOf(document.getElementById('importmap')?.textContent || '') || 'dev',
@@ -1024,7 +1120,9 @@ function reportar(extra = {}) {
   poner(body,
     el('h2', { class: 'display display--md center' }, T.reportTitle),
     el('p', { class: 'muted' }, T.reportLead),
-    el('div', { class: 'panel stack' }, texto, nombre,
+    el('div', { class: 'panel stack' }, texto,
+      el('label', { class: 'lead', for: 'reporte-nombre', style: 'margin:0' }, T.reportNameLabel), nombre,
+      el('p', { class: 'muted', style: 'margin:0' }, T.reportNameKeep),
       el('details', {}, el('summary', { class: 'muted' }, T.reportContext), el('pre', { class: 'reporte-contexto' }, JSON.stringify(contexto, null, 1)))),
     err, enviarBtn,
     el('button', { class: 'btn btn--ghost btn--sm', onClick: () => { SFX.tap(); volver(); } }, T.reportCancel));
