@@ -7,7 +7,7 @@
  * `?prueba` en la URL. Imita las reglas del servidor que importan para jugar: escribir una
  * sola vez, la ventana de cada día, el PIN y el comodín antes de empezar.
  */
-import { MAX_JUGADORES, claveNombre, esCodigo, abierto, puedeComodin, inscripcionAbierta, sinEmpezar } from './engine.js';
+import { MAX_JUGADORES, faltaGente, claveNombre, esCodigo, abierto, puedeComodin, inscripcionAbierta, sinEmpezar } from './engine.js';
 
 const KEY = 'juegos-de-salon:copa:prueba';
 const RELOJ = 'juegos-de-salon:copa:prueba:reloj';
@@ -119,6 +119,7 @@ export function createLocalStore({ uid = null } = {}) {
       return cambiar(db => {
         const L = copa(db, code);
         if (!sentado(L, pid)) throw falla('permiso');
+        if (faltaGente(L)) throw falla('faltan');
         if (!abierto(L.meta, dia, now())) throw falla('ventana');
         L.started[dia] ||= {};
         if (!L.started[dia][pid]) L.started[dia][pid] = now();
@@ -180,6 +181,8 @@ export function createLocalStore({ uid = null } = {}) {
         if (!esAdmin(L)) throw falla('permiso');
         // Una copa del laboratorio se puede correr siempre (pasar al día siguiente, D-115)
         if (!L.meta.lab && !sinEmpezar(L)) throw falla('empezada');
+        // Pasar de día (lab) necesita con quién jugar; mover el inicio de una copa sin empezar, no
+        if (L.meta.lab && !sinEmpezar(L) && faltaGente(L)) throw falla('faltan');
         if (!L.meta.lab && meta.win[1].b <= now()) throw falla('ventana');
         L.meta = { ...meta, createdAt: L.meta.createdAt };
       });
