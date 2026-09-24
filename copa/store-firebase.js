@@ -114,8 +114,19 @@ export function createFirebaseStore() {
       await escribir({ [`torneoSeats/${code}/${pid}/${uid}`]: pinHash }, 'pin');
     },
 
+    /**
+     * Con mala conexión la escritura puede llegar aunque el celular se canse de esperar, y el
+     * reintento choca con "ya existe" (D-123). Si falla, se mira si quedó hecho: entonces no falló.
+     */
+    async yaEsta(ruta) {
+      try { return (await withTimeout(get(ref(db, ruta)), OP_MS)).exists(); } catch (_) { return false; }
+    },
+
     async empezar(code, dia, pid) {
-      await escribir({ [`torneos/${code}/started/${dia}/${pid}`]: serverTimestamp() }, 'ventana');
+      try { await escribir({ [`torneos/${code}/started/${dia}/${pid}`]: serverTimestamp() }, 'ventana'); } catch (e) {
+        if (await this.yaEsta(`torneos/${code}/started/${dia}/${pid}`)) return;
+        throw e;
+      }
     },
 
     async comodin(code, dia, pid) {
@@ -123,7 +134,11 @@ export function createFirebaseStore() {
     },
 
     async resultado(code, dia, pid, r) {
-      await escribir({ [`torneos/${code}/results/${dia}/${pid}`]: { ...r, at: serverTimestamp() } }, 'ventana');
+      try { await escribir({ [`torneos/${code}/results/${dia}/${pid}`]: { ...r, at: serverTimestamp() } }, 'ventana'); } catch (e) {
+        // Si el resultado ya quedó guardado (llegó aunque el celular no se enteró), cuenta como enviado
+        if (await this.yaEsta(`torneos/${code}/results/${dia}/${pid}`)) throw Object.assign(new Error('ya-jugado'), { code: 'ya-jugado' });
+        throw e;
+      }
     },
 
     async sacar(code, pid, out) {
