@@ -14,7 +14,7 @@ import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { trackStart, versionOf } from '../assets/js/transport/stats.js';
 import {
   CALENDARIOS, MAX_JUGADORES, CODIGO, esCodigo, codigoAlAzar, pidAlAzar, limpiarNombre, claveNombre, esPin, hashPin,
-  fechaEn, sumarDias, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta, estadoDia, comodinDe, moverInicio, sinEmpezar,
+  fechaEn, sumarDias, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta, estadoDia, comodinDe, moverInicio, sinEmpezar, pasarDia, MAX_DIAS_INICIO,
   medianoche, puedeComodin, multiplicador, posicionesDelDia, tabla, faltan, medallas, evolucion, visibleDia, reloj, mmss, juegoDelDia, esFinal, activos, ZONA,
 } from './engine.js';
 import { GAME_ID, LOCALES, MINIJUEGOS } from './rules.js';
@@ -157,6 +157,14 @@ function opciones(items, onChange) {
   return { nodo: el('div', { class: 'opciones' }, botones), get valor() { return valor; } };
 }
 
+/** Un selector de fecha, de hoy a 30 días más (D-115). Parte oculto. */
+function campoFecha(hoy) {
+  const max = sumarDias(hoy, MAX_DIAS_INICIO);
+  const input = el('input', { type: 'date', class: 'fecha', min: hoy, max, value: sumarDias(hoy, 2), 'aria-label': T.startOther });
+  const nodo = el('div', { class: 'field fecha-campo', hidden: true }, input);
+  return { nodo, input, valida: () => /^\d{4}-\d{2}-\d{2}$/.test(input.value) && input.value >= hoy && input.value <= max };
+}
+
 function crearCopa() {
   mostrar('crear');
   const body = $('#crear-body');
@@ -169,8 +177,12 @@ function crearCopa() {
     TRES ? { valor: 3, titulo: T.mode3, sub: `${T.mode3Sub} ${CALENDARIOS[3].map(j => MINIJUEGOS[j].emoji).join(' ')}` } : null,
     { valor: 7, titulo: T.mode7, sub: `${T.mode7Sub} ${CALENDARIOS[7].map(j => MINIJUEGOS[j].emoji).join(' ')}` },
   ].filter(Boolean));
-  const inicio = opciones([{ valor: 0, titulo: T.startToday }, { valor: 1, titulo: T.startTomorrow }]);
-  inicio.nodo.classList.add('dos');
+  // Hoy, mañana u otra fecha de un calendario, hasta 30 días desde hoy (D-115)
+  const hoyCrear = fechaEn(Date.now(), ZONA);
+  const otraFecha = campoFecha(hoyCrear);
+  const inicio = opciones([{ valor: 0, titulo: T.startToday }, { valor: 1, titulo: T.startTomorrow }, { valor: 'otra', titulo: T.startOther }],
+    v => { otraFecha.nodo.hidden = v !== 'otra'; if (v === 'otra') otraFecha.input.focus(); });
+  inicio.nodo.classList.add('tres');
   const yo = campo(T.fYou, { placeholder: T.fYouPh, maxlength: '20', value: cuenta.nombre.get() });
   const pin1 = campoPin(T.fPin), pin2 = campoPin(T.fPin2);
   const boton = el('button', { class: 'btn btn--yellow', id: 'btn-crear-go' }, T.createGo);
@@ -181,6 +193,7 @@ function crearCopa() {
     if (!n) return avisoError(err, T.errCopa);
     if (!modo.valor) return avisoError(err, TRES ? T.errMode : T.errMode7);
     if (inicio.valor === null) return avisoError(err, T.errStart);
+    if (inicio.valor === 'otra' && !otraFecha.valida()) return avisoError(err, fmt(T.errStartDate, { n: MAX_DIAS_INICIO }));
     if (!quien) return avisoError(err, T.errNombre);
     if (!esPin(pin1.input.value)) return avisoError(err, T.errPin);
     if (pin1.input.value !== pin2.input.value) return avisoError(err, T.errPin2);
@@ -193,7 +206,9 @@ function crearCopa() {
       if (!code) throw Object.assign(new Error('busy'), { code: 'busy' });
       const pid = pidAlAzar();
       const now = st.now();
-      const meta = nuevaMeta({ nombre: n, dias: modo.valor, inicio: sumarDias(fechaEn(now, ZONA), inicio.valor), tz: ZONA, admin: pid, creada: now });
+      const fechaInicio = inicio.valor === 'otra' ? otraFecha.input.value : sumarDias(fechaEn(now, ZONA), inicio.valor);
+      // Las copas del laboratorio (y las de prueba) llevan la marca que deja pasar de día (D-115)
+      const meta = nuevaMeta({ nombre: n, dias: modo.valor, inicio: fechaInicio, tz: ZONA, admin: pid, creada: now, lab: LABS || PRUEBA });
       await st.crear(code, meta, { pid, name: quien, at: now, pinHash: await hashPin(code, pid, pin1.input.value) });
       cuenta.nombre.set(quien);
       cuenta.recordar(code, pid, { nombre: quien, copa: n, fin: meta.end });
@@ -208,7 +223,7 @@ function crearCopa() {
   poner(body, 
     el('div', { class: 'panel' }, nombre.nodo,
       el('div', { class: 'field' }, el('label', {}, T.fMode), modo.nodo),
-      el('div', { class: 'field' }, el('label', {}, T.fStart), inicio.nodo, el('small', { class: 'muted' }, fmt(T.startHint, { zona: zonaTexto(ZONA) })))),
+      el('div', { class: 'field' }, el('label', {}, T.fStart), inicio.nodo, otraFecha.nodo, el('small', { class: 'muted' }, fmt(T.startHint, { zona: zonaTexto(ZONA) })))),
     el('div', { class: 'panel' }, yo.nodo, pin1.nodo, pin2.nodo, el('small', { class: 'muted' }, T.pinHint)),
     err, boton,
     el('button', { class: 'btn btn--ghost btn--sm', onClick: () => portada() }, '‹ ' + T.menu.replace('‹ ', '')),
@@ -670,11 +685,12 @@ function mensajeFinal() {
 /* Admin                                                               */
 /* ------------------------------------------------------------------ */
 
-function admin() {
+function admin({ forzar = false } = {}) {
   if (!esAdmin()) { tablero(); return; }
   const Lc = L(), { meta } = Lc;
   const body = $('#admin-body');
-  if (S.pantalla === 'admin' && body.contains(document.activeElement) && document.activeElement.tagName === 'INPUT') return;
+  // Si alguien escribe (un nombre, un PIN) no se le borra el campo por una actualización; el calendario no cuenta
+  if (!forzar && S.pantalla === 'admin' && body.contains(document.activeElement) && document.activeElement.tagName === 'INPUT' && document.activeElement.type !== 'date') return;
   mostrar('admin');
   body.innerHTML = '';
   const now = ahora();
@@ -710,19 +726,49 @@ function admin() {
     let alerta = null;
     if (d >= 1) alerta = T.startPassed;
     else if (meta.start === hoy && quedanHoy < 6 * 3600000) alerta = T.startLate;
+    const moverA = async fecha => {
+      if (!confirm(fmt(T.startMoveConfirm, { fecha: fechaLarga(medianoche(fecha, meta.tz), meta.tz) }))) throw { code: 'cancelado' };
+      await store.reprogramar(S.code, moverInicio(meta, fecha));
+      // El calendario tiene el foco (y en Chrome no lo suelta con blur), y con un campo enfocado
+      // Administrar no se redibuja: aquí se fuerza
+      admin({ forzar: true });
+      SFX.reveal(); toast(fmt(T.startMoved, { fecha: fechaLarga(medianoche(fecha, meta.tz), meta.tz) }));
+    };
     const mover = (fecha, rotulo, id) => meta.start === fecha
       ? el('button', { class: 'btn btn--yellow btn--sm', id, disabled: true }, `✓ ${rotulo}`)
-      : accion(rotulo, id, async () => {
-        if (!confirm(fmt(T.startMoveConfirm, { fecha: fechaLarga(medianoche(fecha, meta.tz), meta.tz) }))) throw { code: 'cancelado' };
-        await store.reprogramar(S.code, moverInicio(meta, fecha));
-        SFX.reveal(); toast(fmt(T.startMoved, { fecha: fechaLarga(medianoche(fecha, meta.tz), meta.tz) }));
-      });
+      : accion(rotulo, id, () => moverA(fecha));
+    // Otra fecha: un calendario de hoy a 30 días más (D-115)
+    const otra = campoFecha(hoy);
+    const esOtra = meta.start !== hoy && meta.start !== manana;
+    if (esOtra && meta.start > hoy) otra.input.value = meta.start;
+    const otraErr = el('div', { class: 'form-error', role: 'alert' });
+    otra.nodo.append(accion(T.startOtherGo, 'btn-inicio-otra-ok', async () => {
+      if (!otra.valida()) { avisoError(otraErr, fmt(T.errStartDate, { n: MAX_DIAS_INICIO })); throw { code: 'cancelado' }; }
+      await moverA(otra.input.value);
+    }, 'btn btn--yellow btn--sm'), otraErr);
+    const botonOtra = el('button', { class: 'btn btn--ghost btn--sm' + (esOtra ? ' on' : ''), id: 'btn-inicio-otra', onClick: () => {
+      SFX.tap(); otra.nodo.hidden = !otra.nodo.hidden; if (!otra.nodo.hidden) otra.input.focus();
+    } }, `📅 ${T.startOther}`);
     poner(body, el('div', { class: 'panel stack', id: 'admin-inicio' },
       el('p', { class: 'lead', style: 'margin:0' }, T.startTitle),
       el('p', { class: 'muted', style: 'margin:0' }, fmt(d >= 1 ? T.startWas : T.startIs, { fecha: fechaLarga(meta.win[1].a, meta.tz) })),
       el('p', { class: 'muted', id: 'admin-zona', style: 'margin:0' }, fmt(T.startZone, { zona: zonaTexto(meta.tz) })),
       alerta ? el('div', { class: 'aviso' }, alerta) : null,
-      el('div', { class: 'btn-row' }, mover(hoy, T.startTodayBtn, 'btn-inicio-hoy'), mover(manana, T.startTomorrowBtn, 'btn-inicio-manana'))));
+      el('div', { class: 'btn-row tres' }, mover(hoy, T.startTodayBtn, 'btn-inicio-hoy'), mover(manana, T.startTomorrowBtn, 'btn-inicio-manana'), botonOtra),
+      otra.nodo));
+  }
+
+  // Solo en las copas del laboratorio: pasar al día siguiente para probar sin esperar (D-115)
+  if (meta.lab && !terminada(meta, now)) {
+    const siguiente = Math.min(d + 1, meta.days + 1);
+    poner(body, el('div', { class: 'panel stack lab-panel', id: 'admin-lab' },
+      el('p', { class: 'lead', style: 'margin:0' }, `🧪 ${T.labTitle}`),
+      el('p', { class: 'muted', style: 'margin:0' }, T.labLead),
+      accion(`⏭️ ${siguiente > meta.days ? T.labEnd : fmt(T.labNext, { d: siguiente })}`, 'btn-pasar-dia', async () => {
+        if (!confirm(siguiente > meta.days ? T.labEndConfirm : fmt(T.labNextConfirm, { d: siguiente, hoy: Math.max(d, 1) }))) throw { code: 'cancelado' };
+        await store.reprogramar(S.code, pasarDia(meta));
+        SFX.reveal(); toast(siguiente > meta.days ? T.labEndDone : fmt(T.labNextDone, { d: siguiente }));
+      }, 'btn btn--ghost')));
   }
 
   // Cerrar o reabrir la inscripción, mientras todavía se pueda entrar (hasta la final)

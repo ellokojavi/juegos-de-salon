@@ -176,7 +176,7 @@
       "$code": {
         ".read": "$code.matches(/^[A-HJ-NP-Z]{5}$/)",
         "meta": {
-          ".write": "auth != null && $code.matches(/^[A-HJ-NP-Z]{5}$/) && (!data.exists() || (root.child('torneoSeats/' + $code + '/' + data.child('admin').val() + '/' + auth.uid).exists() && !root.child('torneos/' + $code + '/started').exists() && newData.child('admin').val() == data.child('admin').val() && newData.child('name').val() == data.child('name').val() && newData.child('days').val() == data.child('days').val() && newData.child('cal').val() == data.child('cal').val() && newData.child('createdAt').val() == data.child('createdAt').val() && newData.child('win/1/b').val() > now && newData.child('win/1/a').val() < now + 172800000))",
+          ".write": "auth != null && $code.matches(/^[A-HJ-NP-Z]{5}$/) && (!data.exists() || (root.child('torneoSeats/' + $code + '/' + data.child('admin').val() + '/' + auth.uid).exists() && newData.child('admin').val() == data.child('admin').val() && newData.child('name').val() == data.child('name').val() && newData.child('days').val() == data.child('days').val() && newData.child('cal').val() == data.child('cal').val() && newData.child('createdAt').val() == data.child('createdAt').val() && newData.child('lab').val() == data.child('lab').val() && (data.child('lab').val() == true || (!root.child('torneos/' + $code + '/started').exists() && newData.child('win/1/b').val() > now && newData.child('win/1/a').val() < now + 2764800000))))",
           ".validate": "newData.hasChildren(['v', 'name', 'days', 'start', 'tz', 'admin', 'cal', 'win', 'end', 'joinUntil', 'final', 'createdAt']) && newData.parent().child('players/' + newData.child('admin').val()).exists()",
           "v": {
             ".validate": "newData.isNumber()"
@@ -218,6 +218,9 @@
           },
           "createdAt": {
             ".validate": "newData.isNumber() && ((data.exists() && newData.val() == data.val()) || (newData.val() <= now + 60000 && newData.val() > now - 60000))"
+          },
+          "lab": {
+            ".validate": "newData.isBoolean() && newData.val() == true"
           },
           "$other": {
             ".validate": false

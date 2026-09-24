@@ -169,8 +169,9 @@ export function createLocalStore({ uid = null } = {}) {
       return cambiar(db => {
         const L = copa(db, code);
         if (!esAdmin(L)) throw falla('permiso');
-        if (!sinEmpezar(L)) throw falla('empezada');
-        if (meta.win[1].b <= now()) throw falla('ventana');
+        // Una copa del laboratorio se puede correr siempre (pasar al día siguiente, D-115)
+        if (!L.meta.lab && !sinEmpezar(L)) throw falla('empezada');
+        if (!L.meta.lab && meta.win[1].b <= now()) throw falla('ventana');
         L.meta = { ...meta, createdAt: L.meta.createdAt };
       });
     },

@@ -255,7 +255,7 @@ await b.go(`${BASE}?prueba`, 1200);
 await preparar();
 await revisarPantalla('portada');
 await click('#btn-crear'); await sleep(300);
-await ev(`(()=>{const i=[...document.querySelectorAll('#crear-body input')];i[0].value='Copa de la oficina';i[1].value='Cata';i[2].value='1111';i[3].value='1111';return 1})()`);
+await ev(`(()=>{const i=[...document.querySelectorAll('#crear-body input:not(.fecha)')];i[0].value='Copa de la oficina';i[1].value='Cata';i[2].value='1111';i[3].value='1111';return 1})()`);
 await ev(`(()=>{const o=[...document.querySelectorAll('#crear-body .opcion')];o[${SIETE ? 1 : 0}].click();o[3].click();return 1})()`); // parte mañana
 await revisarPantalla('crear');
 await click('#btn-crear-go'); await sleep(900);
@@ -285,6 +285,13 @@ const inicio1 = await ev('__copa.estado.copa.meta.start');
 ok(inicio1 !== inicio0, `el admin mueve el inicio a hoy (${inicio0} → ${inicio1})`);
 await click('#btn-inicio-manana'); await sleep(300);
 ok(await ev('__copa.estado.copa.meta.start') === inicio0, 'y lo devuelve a mañana');
+// Otra fecha, con el calendario (D-115)
+await click('#btn-inicio-otra'); await sleep(200);
+const otraFecha = await ev(`(()=>{const i=document.querySelector('#admin-inicio input.fecha');const d=new Date(i.min+'T12:00:00');d.setDate(d.getDate()+10);i.value=d.toISOString().slice(0,10);return i.value})()`);
+await click('#btn-inicio-otra-ok'); await sleep(300);
+ok(await ev('__copa.estado.copa.meta.start') === otraFecha, `el admin elige otra fecha en el calendario (${otraFecha})`);
+await click('#btn-inicio-manana'); await sleep(300);
+ok(await ev('__copa.estado.copa.meta.start') === inicio0, 'y la devuelve a mañana');
 await ev(`window.__compartido=[]; 1`);
 
 await inscribir(CODE, 'Javi', '2222');
@@ -465,6 +472,13 @@ await b.go(`${BASE}?prueba&demo=sin-jugar`, 1500); await preparar();
 ok(/nadie ha jugado/.test(await ev(`document.getElementById('admin-inicio')?.innerText || ''`)), 'demo sin-jugar: el admin ve que partió sin nadie y puede moverla');
 await b.go(`${BASE}?prueba&demo=jugador`, 1500); await preparar();
 ok(!!await ev(`document.querySelector('[data-dia="4"]')`), 'demo jugador: el día 4 se puede jugar');
+// Copa de prueba: el admin la pasa al día siguiente (D-115)
+await b.go(`${BASE}?prueba&demo=admin`, 1500); await preparar();
+const inicioLab = await ev('__copa.estado.copa.meta.start');
+await click('#btn-pasar-dia'); await sleep(400);
+ok(await ev('__copa.estado.copa.meta.start') !== inicioLab && /día 6/i.test(await ev(`document.getElementById('btn-pasar-dia')?.textContent || ''`)), 'copa de prueba: el admin la pasa al día 5 y el botón ofrece el 6');
+await revisarPantalla('admin-lab');
+await b.shot('admin-lab');
 
 console.log('errores:', JSON.stringify(b.errors), JSON.stringify(b.logs));
 ok(!b.errors.length && !b.logs.length, 'consola sin errores');
