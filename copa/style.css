@@ -212,12 +212,21 @@ button.md-fila { cursor: pointer; }
 .grafico { width: 100%; height: auto; display: block; overflow: visible; }
 .grafico .g-grid { stroke: rgba(255,255,255,0.08); stroke-width: 1; }
 .grafico .g-eje { fill: var(--muted); font: 800 10px var(--font-num); }
-.grafico .g-linea { fill: none; stroke: rgba(255,255,255,0.28); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
-.grafico .g-linea.mia { stroke: var(--cyan); stroke-width: 3; }
-.grafico .g-punto { fill: rgba(255,255,255,0.45); stroke: var(--bg1); stroke-width: 2; }
-.grafico .g-punto.mia { fill: var(--cyan); }
+.grafico .g-linea { fill: none; stroke: var(--c); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; opacity: 0.85; }
+.grafico .g-jugador.mia .g-linea { stroke-width: 3.5; opacity: 1; }
+.grafico .g-punto { fill: var(--c); stroke: var(--bg1); stroke-width: 2; }
+.grafico .g-rotulo { fill: var(--c); }
+/* Con un jugador destacado, el resto se apaga (D-125) */
+.grafico.con-destacado .g-jugador { opacity: 0.18; }
+.grafico.con-destacado .g-jugador.destacado { opacity: 1; }
+.grafico .g-jugador { transition: opacity 0.2s; }
+.grafico-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.g-chip { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: var(--ink); font: 800 0.85rem var(--font-body); cursor: pointer; }
+.g-chip.on { border-color: var(--c); box-shadow: 0 0 0 1px var(--c) inset; }
+.g-chip.mia { font-weight: 900; }
+.g-color { width: 12px; height: 12px; border-radius: 50%; background: var(--c); flex: none; }
 .grafico .g-toque { fill: transparent; cursor: pointer; }
-.grafico .g-rotulo { fill: var(--ink); font: 900 11px var(--font-body); }
+.grafico .g-rotulo { font: 900 10px var(--font-body); }
 .grafico-nota { font-size: 0.85rem; margin: 6px 0 0; min-height: 1.3em; }
 
 /* Reportes (LIG-42) */
