@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.57.3 — 2026-09-24
+- **Tu resultado para compartir** dice la copa, el día, el nombre del juego y quién lo jugó (D-124).
+
 ## 0.57.2 — 2026-09-24
 - **Mensajes para compartir** (D-124): la tabla se titula "📊 La Copa: … · Tabla de posiciones
   (día N)" y cierra con "⏳ ¡Día N en curso! Falta que jueguen: …"; el link va en su propia línea.
