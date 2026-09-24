@@ -53,13 +53,25 @@ export function montar(raiz, ctx) {
     }
     const reinas = e.marcas.filter(v => v === motor.REINA).length;
     caja.append(el('p', { class: 'muted center', style: 'margin:0' }, fmt(T.queensLeft, { m: reinas, n })));
-    if (e.fin) {
-      caja.append(el('div', { class: 'aviso bien' }, `🎉 ${T.queensOk}`),
+    const cierre = e.fin ? [el('div', { class: 'aviso ' + (e.rendido ? 'mal' : 'bien') }, e.rendido ? T.queensGaveUp : `🎉 ${T.queensOk}`),
         // El puntaje es el tiempo (D-107): la pantalla lo lee del reloj de la partida al terminar
-        el('button', { class: 'btn btn--yellow', id: 'btn-fin', onClick: () => { SFX.tap(); ctx.terminar({ ...e, ms: ctx.tiempo?.() }); } }, ctx.textoFin || T.seeResults));
-    }
+        el('button', { class: 'btn btn--yellow', id: 'btn-fin', onClick: () => { SFX.tap(); ctx.terminar({ ...e, ms: ctx.tiempo?.() }); } }, ctx.textoFin || T.seeResults)] : [];
+    // El cierre va arriba de la grilla; en la final (ctx.cierreAbajo), debajo
+    if (!ctx.cierreAbajo) caja.append(...cierre);
     caja.append(grilla, el('p', { class: 'block-hint' }, T.queensHint));
+    if (ctx.cierreAbajo) caja.append(...cierre);
     if (e.conflictos.size && !e.fin) caja.append(el('div', { class: 'aviso mal' }, T.queensClash));
+    if (!e.fin) {
+      // Rendirse es definitivo: pide confirmar, como el comodín (D-110)
+      caja.append(el('button', {
+        type: 'button', class: 'btn btn--ghost btn--sm', id: 'btn-rendirse',
+        onClick: () => {
+          SFX.tap();
+          if (!confirm(T.giveUpConfirm)) return;
+          jugadas.push(motor.RENDIRSE); ctx.guardar(jugadas); SFX.error(); vibrate([40, 40, 40]); dibujar();
+        },
+      }, `🏳️ ${T.giveUp}`));
+    }
     raiz.append(caja);
   };
   dibujar();

@@ -1306,3 +1306,35 @@ acertado ninguna.
   dispositivo y se reenvían solos al abrir La Copa (`reenviarPendientes`, hasta 20).
 **Por qué:** el laboratorio sirve para decidir si un juego entra; si su UX difiere de la de la copa,
 lo que se decide no es lo que se publica. Y un reporte escrito es caro de conseguir: no se pierde.
+
+## D-110 · El admin de una copa nueva, la inscripción, el inicio movible y las demos del laboratorio
+**Fecha:** 2026-09-23 · **Estado:** vigente
+**Decisión:**
+- **Recién creada, la copa abre en Administrar**, con una guía de la primera vez (se ve mientras
+  el admin siga solo y la copa no haya partido): compartir la invitación, esperar a que se
+  inscriban (se puede desde ya, antes del inicio) y, si quiere, cerrar la inscripción. "Mensajes
+  para el grupo" pasa a **"Mensajes para los competidores"**; Renombrar va a la derecha del nombre.
+- **Cerrar y reabrir la inscripción**: `torneos/<code>/closed`, que solo escribe el admin; las
+  reglas no dejan inscribirse a nadie nuevo con la copa cerrada. Los inscritos siguen entrando.
+- **Mover el inicio a hoy o a mañana mientras nadie haya empezado un día**: `moverInicio`
+  recalcula las ventanas. Las reglas dejan reescribir `meta` solo al admin, sin `started`, con el
+  mismo nombre, días, calendario, admin y `createdAt`, y con el día 1 todavía abierto. La vista
+  avisa si la copa ya partió sin que nadie jugara, o si parte hoy y quedan pocas horas.
+- **Rendirse en Reinas** (el día y la ronda de la final): dos toques, la solución a la vista y 0
+  puntos.
+- **La Gran Final**: sin cuenta regresiva (cada ronda ya tiene su presentación), y el botón para
+  seguir va debajo del tablero en las cinco rondas.
+- **Demos del laboratorio** (`?prueba&demo=<escena>`, `copa/demo.js`): ocho escenas sembradas en el
+  almacén local —copa recién creada, invitación, antes de partir, partió sin que nadie jugara,
+  día 4 como jugador y como admin, el día de la final y el podio— para probar cada vista como
+  en producción, sin Firebase ni esperar días.
+**Por qué:** lo que el admin necesita saber justo después de crear la copa es qué hacer ahora; y
+una copa creada con días de anticipación se desfasa si los amigos tardan en inscribirse.
+
+## D-111 · La copa no usa la temática de Brasil
+**Fecha:** 2026-09-23 · **Estado:** vigente
+**Decisión:** Línea Relámpago, ¿En qué año? y la final eligen sus temáticas entre las de Línea
+de Tiempo **menos Brasil** (`copa/juegos/mazos.js`). Las copas de prueba en curso pueden cambiar
+de temática con esto (el sorteo es sobre una lista más corta).
+**Por qué:** la copa se juega entre chilenos y la historia de Brasil no la resuelve casi nadie
+que no sea brasileño.

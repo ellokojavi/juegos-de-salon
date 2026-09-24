@@ -125,6 +125,13 @@ pre.tarjeta { font: 1.2rem/1.35 var(--font-body); text-align: center; white-spac
 /* Admin */
 .admin-jugadores { display: grid; gap: 8px; }
 .admin-fila { display: grid; gap: 6px; background: rgba(0,0,0,0.22); border-radius: 12px; padding: 10px 12px; }
+/* El nombre y Renombrar en la misma línea (D-110): el botón a la derecha, sin gastar alto */
+.admin-nombre { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.admin-nombre b { min-width: 0; overflow-wrap: anywhere; }
+.admin-nombre .mini-btn { flex: none; }
+.acciones:empty { display: none; }
+#screen-admin > h2 { margin-bottom: 14px; }
+.bienvenida { border-color: var(--yellow); }
 .admin-fila.fuera { opacity: 0.6; }
 .acciones { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 .acciones input.mini { flex: 1 1 8em; min-width: 0; }
@@ -146,13 +153,23 @@ pre.tarjeta { font: 1.2rem/1.35 var(--font-body); text-align: center; white-spac
 
 /* Conexiones */
 .grupos { display: grid; gap: 6px; }
-.grupo { border-radius: 12px; padding: 8px 10px; text-align: center; color: #1a1a1a; display: grid; gap: 2px; }
-.grupo b { font-weight: 900; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.04em; }
-.grupo span { font-weight: 700; font-size: 0.85rem; }
-.grupo.nivel0 { background: #f9df6d; }
-.grupo.nivel1 { background: #a0c35a; }
-.grupo.nivel2 { background: #b0c4ef; }
-.grupo.nivel3 { background: #ba81c5; }
+.grupo {
+  --c: var(--yellow);
+  position: relative; border-radius: 14px; padding: 10px 12px 10px 16px; text-align: center; display: grid; gap: 3px;
+  color: var(--ink); overflow: hidden;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--c) 26%, transparent), color-mix(in srgb, var(--c) 14%, transparent)), rgba(0,0,0,0.22);
+  border: 1px solid color-mix(in srgb, var(--c) 55%, transparent);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--c) 22%, transparent), inset 0 1px 0 rgba(255,255,255,0.08);
+}
+/* El color del grupo como un filo a la izquierda, además del tinte: se distingue sin depender solo del color */
+.grupo::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: var(--c); }
+.grupo b { font-family: var(--font-display); font-weight: 400; font-size: 1.05rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--c); text-shadow: 0 1px 0 rgba(0,0,0,0.35); }
+.grupo span { font-weight: 800; font-size: 0.85rem; color: var(--ink); opacity: 0.92; }
+/* Los colores de la app, en el orden de las tarjetas para compartir (🟨 🟩 🟦 🟪) */
+.grupo.nivel0 { --c: var(--yellow); }
+.grupo.nivel1 { --c: var(--lime); }
+.grupo.nivel2 { --c: var(--cyan); }
+.grupo.nivel3 { --c: #c792ff; }
 .palabras { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
 .palabra {
   min-height: 60px; min-width: 0; border: 0; border-radius: 10px; background: var(--card); color: var(--card-ink);

@@ -44,6 +44,11 @@ sin que nada viaje por la red.
 | 6 | 📅 ¿En qué año?: 6 hitos | 100 por hito, baja con la distancia | mazos de Línea de Tiempo y teclado de Toque y Fama |
 | 7 | 🏁 La Gran Final: 5 rondas cortas | 0 a 100 por ronda, 0 a 500 | los cinco motores |
 
+Recién creada, la copa abre en **Administrar** con una guía para invitar (D-110). Ahí el admin
+comparte los mensajes, **cierra o reabre la inscripción** y **mueve el inicio a hoy o mañana**
+mientras nadie haya jugado. En el laboratorio, `?prueba&demo=<escena>` abre una copa de ejemplo
+en cualquier punto (`copa/demo.js`).
+
 Al tocar Empezar, una **cuenta de 3 a 1** y "¡A jugar!" (D-105): recién ahí aparece el tablero y
 parte el reloj. Al terminar, el resultado explica **cómo se calculó el puntaje** línea por línea
 (`copa/desglose.js`, D-106).

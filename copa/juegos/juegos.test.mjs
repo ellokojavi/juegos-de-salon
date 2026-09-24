@@ -163,6 +163,12 @@ test('reinas: solución única, reglas y puntaje', () => {
   assert.equal(reinas.puntaje({ fin: true, errores: 0, ms: 900000 }), 10);
   assert.equal(reinas.puntaje({ fin: false, errores: 0, ms: 1000 }), 0);
   assert.equal(reinas.tarjeta({ fin: true, ms: 83000 }), '👑 ⏱ 1:23 ✅');
+  // Rendirse termina con la solución a la vista y 0 puntos, también en la final (D-110)
+  const r = reinas.estado(p, [0, reinas.RENDIRSE]);
+  assert.ok(r.fin && r.rendido); assert.equal(r.marcas.filter(v => v === reinas.REINA).length, p.n);
+  assert.equal(reinas.puntaje({ ...r, ms: 1000 }), 0);
+  assert.equal(final.puntosRonda.reinas(r), 0);
+  assert.equal(reinas.tarjeta(r), '👑 🏳️');
   // El toque largo pone y saca la X, y no cuenta como error ni como reina
   e = reinas.estado(p, [reinas.toqueLargo(5), reinas.toqueLargo(6), reinas.toqueLargo(6)]);
   assert.equal(e.marcas[5], reinas.MARCA); assert.equal(e.marcas[6], reinas.VACIO); assert.equal(e.errores, 0);
@@ -313,5 +319,10 @@ test('final: cinco rondas, de 0 a 500', () => {
   assert.deepEqual(desglose('reinas', { fin: false, errores: 0 }, { T, fmt, mmss }), [T.bdNotSolved]);
   n++;
 }
+
+test('la copa no usa la temática de Brasil (D-111)', () => {
+  const codigos = [...CODIGOS, ...Array.from({ length: 200 }, (_, i) => 'ABCDEFGHJKLMNPQRSTUVWXYZ'.slice(i % 19, i % 19 + 5))];
+  for (const c of codigos) assert.ok(!Object.values(temasDeLaCopa(c)).includes('brasil'), c);
+});
 
 console.log(`copa/juegos: ${n} tests OK`);

@@ -9,7 +9,7 @@ export const GAMES = [
     id: 'copa',
     emoji: '🏆',
     name: { es: 'La Copa', en: 'The Cup', pt: 'A Copa' },
-    tagline: { es: 'Un torneo de una semana entre amigos: un minijuego distinto cada día, una tabla y un campeón.', en: 'A week-long tournament among friends: a different minigame every day, a leaderboard and a champion. In Spanish for now.', pt: 'Um torneio de uma semana entre amigos: um minijogo diferente por dia, uma tabela e um campeão. Por enquanto só em espanhol.' },
+    tagline: { es: 'Un torneo de una semana entre amigos: un minijuego distinto cada día y una tabla. Quien acumula más puntos se lleva la gloria.', en: 'A week-long tournament among friends: a different minigame every day and a leaderboard. Whoever piles up the most points takes the glory. In Spanish for now.', pt: 'Um torneio de uma semana entre amigos: um minijogo diferente por dia e uma tabela. Quem somar mais pontos fica com a glória. Por enquanto só em espanhol.' },
     players: '3–10',
     duration: '7',
     // No dura minutos sino días, y por ahora solo existe en español (D-98): el contenido de los

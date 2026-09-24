@@ -72,6 +72,7 @@ export function montar(raiz, ctx) {
       jugadas: J.sub[r],
       max: r === 'numero' ? final.NUMERO_INTENTOS : undefined,
       textoFin: ultima ? T.seeResults : T.roundNext,
+      cierreAbajo: true, // en la final, el botón para seguir va debajo del tablero, en todas las rondas
       guardar(x) { J.sub[r] = x; guardar(); },
       terminar() {
         J.hechas[r] = true;

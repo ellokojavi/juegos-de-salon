@@ -29,7 +29,8 @@ export function desglose(id, e, { T, fmt, mmss }) {
       fmt(T.bdGroups, { n: e.resueltos.length, pts: 25 * e.resueltos.length }),
       resta('bdMistakes', e.errores, { pts: 5 * e.errores, c: 5 }),
     ].filter(Boolean);
-    case 'reinas': return e.fin ? [fmt(T.bdQueensTime, { t: mmss(e.ms || 0) }), T.bdQueensScale] : [T.bdNotSolved];
+    case 'reinas': if (e.rendido) return [T.bdGaveUp];
+      return e.fin ? [fmt(T.bdQueensTime, { t: mmss(e.ms || 0) }), T.bdQueensScale] : [T.bdNotSolved];
     case 'tango': return e.fin ? [
       T.bdStart100,
       resta('bdRuleBreaks', e.errores, { pts: 10 * e.errores }) || T.bdNoRuleBreaks,
