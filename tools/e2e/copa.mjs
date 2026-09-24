@@ -263,6 +263,35 @@ await click('#btn-admin'); await sleep(300);
 await click('#msg-final'); await sleep(100);
 console.log('  resumen final:', JSON.stringify(await ev('window.__compartido.at(-1)?.text')));
 
+
+/* ---------- El laboratorio (D-101): la página, la práctica de cada minijuego y los reportes ---------- */
+
+await b.go('http://localhost:8765/', 1500);
+const tarjeta = await ev(`(()=>{const c=[...document.querySelectorAll('.game-card')].find(x=>x.textContent.includes('La Copa'));return JSON.stringify({soon:c.classList.contains('soon'),href:c.getAttribute('href'),rotulo:c.querySelector('.proximamente')?.textContent})})()`).then(JSON.parse);
+ok(tarjeta.soon && !tarjeta.href && tarjeta.rotulo === 'Próximamente', 'en el menú La Copa se ve con Próximamente y no se abre');
+await b.go('http://localhost:8765/labs/', 1500);
+ok(await ev(`document.querySelectorAll('.mini-juego').length`) === 7, 'el laboratorio ofrece los siete minijuegos');
+await b.shot('10-labs');
+for (const id of ['linea', 'numero', 'conexiones', 'solitario', 'dudo', 'anio', 'final']) {
+  await b.go(`${BASE}?practica=${id}&prueba`, 1200); await preparar();
+  await click('#btn-empezar'); await sleep(300);
+  await ev(`(async()=>{const {JUEGOS}=await import('/copa/juegos/index.js');window.__jugando={p:JUEGOS['${id}'].generar(__copa.estado.juego.semilla, 1)};return 1})()`);
+  await JUGAR[id](2);
+  await click('#btn-fin'); await sleep(500);
+  const r = await ev(`JSON.stringify({p:__copa.estado.pantalla, s:document.querySelector('.score-big')?.textContent})`).then(JSON.parse);
+  ok(r.p === 'resultado', `práctica de ${id}: se juega completa (${r.s})`);
+  if (id === 'solitario') { await revisarPantalla('practica-resultado'); await b.shot('11-practica'); }
+}
+// Un reporte desde la práctica
+await click('#btn-reporte'); await sleep(300);
+await ev(`document.querySelector('.reporte-texto').value='El barco no se veía bien'; 1`);
+await revisarPantalla('reporte');
+await b.shot('12-reporte');
+await click('#btn-enviar-reporte'); await sleep(400);
+const reportes = await ev(`JSON.parse(localStorage.getItem('juegos-de-salon:copa:prueba:reportes')||'[]')`);
+ok(reportes.length === 1 && reportes[0].texto === 'El barco no se veía bien' && /"juego":"final"/.test(reportes[0].contexto), 'el reporte se guarda con su contexto');
+ok(await ev(`!!document.getElementById('btn-reporte-volver')`), 'después de enviar se agradece y se puede volver');
+
 console.log('errores:', JSON.stringify(b.errors), JSON.stringify(b.logs));
 ok(!b.errors.length && !b.logs.length, 'consola sin errores');
 b.close();

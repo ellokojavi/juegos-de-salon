@@ -64,6 +64,12 @@ propio árbol porque duran una semana y las salas mueren a la media hora (D-89).
   el mismo hash. El admin puede cambiar el hash y borrar los asientos (PIN nuevo).
 - Las copas no se borran todavía (LIG-31).
 
+## Reportes (`feedback`)
+
+El botón 🐞 de La Copa (D-101) escribe en `feedback/<id>` con acceso anónimo: `texto` (hasta 1000
+caracteres), `nombre` opcional, `contexto` (JSON, hasta 500), `v` y `at` del servidor. Se escribe
+una sola vez y **solo el dueño lo lee**: en la consola, *Realtime Database → Data → feedback*.
+
 ## La papelera (`cleanup`)
 
 Nadie borra su sala al terminar de jugar, así que los mismos celulares que juegan hacen el aseo

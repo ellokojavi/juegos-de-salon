@@ -128,6 +128,10 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | LIG-38 | Tablero con tus días: los pasados con su resultado y deshabilitados, hoy habilitado, los que vienen deshabilitados. | ✅ v0.42 |
 | LIG-39 | Gráfico de tu posición día a día. | ✅ v0.42 |
 | LIG-40 | El panel del dueño muestra las copas creadas y su progreso. | ⏳ pendiente |
+| LIG-41 | Práctica de cada minijuego suelto, con semilla repetible, desde el laboratorio (D-101). | ✅ v0.43 |
+| LIG-42 | Reportar un problema o dejar un comentario con su contexto, desde la práctica, el tablero y el resultado. | ✅ v0.43 (se leen en la consola de Firebase) |
+| LIG-43 | Laboratorio `/labs/`: La Copa sale del menú (Próximamente) y se prueba ahí, con la Copa de 3 días. | ✅ v0.43 |
+| LIG-44 | El panel del dueño muestra los reportes. | ⏳ pendiente |
 
 ## Requerimientos no funcionales
 

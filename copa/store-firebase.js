@@ -10,7 +10,7 @@
  */
 import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js';
 import {
-  getDatabase, ref, get, update, onValue, serverTimestamp,
+  getDatabase, ref, get, update, onValue, serverTimestamp, push,
 } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js';
 import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js';
 import { firebaseConfig } from '../assets/js/firebase-config.js';
@@ -121,6 +121,12 @@ export function createFirebaseStore() {
 
     async renombrar(code, pid, name) {
       await escribir({ [`torneos/${code}/players/${pid}/name`]: name });
+    },
+
+    /** Un reporte o comentario (LIG-42). Solo el dueño lo puede leer: `feedback/` en la consola. */
+    async reportar(r) {
+      const id = push(ref(db, 'feedback')).key;
+      await escribir({ [`feedback/${id}`]: { ...r, at: serverTimestamp() } });
     },
 
     async cambiarPin(code, pid, pinHash) {

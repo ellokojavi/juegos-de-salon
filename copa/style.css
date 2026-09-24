@@ -271,3 +271,10 @@ button.md-fila { cursor: pointer; }
 .grafico .g-toque { fill: transparent; cursor: pointer; }
 .grafico .g-rotulo { fill: var(--ink); font: 900 11px var(--font-body); }
 .grafico-nota { font-size: 0.85rem; margin: 6px 0 0; min-height: 1.3em; }
+
+/* Reportes (LIG-42) */
+.reporte-btn { margin-top: 14px; }
+.reporte-texto { width: 100%; font: 700 1rem/1.4 var(--font-body); color: var(--ink); background: rgba(0,0,0,0.3); border: 2px solid transparent; border-radius: 14px; padding: 12px 14px; outline: none; resize: vertical; }
+.reporte-texto:focus { border-color: var(--cyan); }
+.reporte-contexto { font-size: 0.72rem; white-space: pre-wrap; overflow-wrap: anywhere; color: var(--muted); margin: 6px 0 0; }
+#reporte-body details summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; }
