@@ -144,6 +144,12 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | LIG-55 | La práctica del laboratorio ofrece la sesión de prueba, como un día de la copa (D-109). | ✅ v0.47 |
 | LIG-56 | Zip muestra la solución del nivel a medias al acabarse el tiempo (D-109). | ✅ v0.47 |
 | LIG-57 | Los reportes que no se pueden enviar se guardan y se reenvían (D-109). | ✅ v0.47 |
+| LIG-58 | Recién creada, la copa abre en Administrar con una guía para invitar (D-110). | ✅ v0.48 |
+| LIG-59 | El admin cierra y reabre la inscripción (D-110). | ✅ v0.48 |
+| LIG-60 | El admin mueve el inicio a hoy o mañana mientras nadie haya jugado (D-110). | ✅ v0.48 |
+| LIG-61 | Demos de cada vista de la copa en el laboratorio (D-110). | ✅ v0.48 |
+| LIG-62 | Rendirse en Reinas (D-110). | ✅ v0.48 |
+| LIG-63 | La copa no usa la temática de Brasil (D-111). | ✅ v0.48 |
 | LIG-46 | El teclado, el tablero y la línea se comparten con Toque y Fama y Línea de Tiempo (`assets/js/teclado.js`, `assets/css/teclado.css`, `assets/css/linea.css`). | ✅ v0.44 |
 
 ## Requerimientos no funcionales

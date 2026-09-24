@@ -1,5 +1,5 @@
 {
-  "version": "0.46.0",
+  "version": "0.48.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -52,6 +52,7 @@
       "chat": false,
       "archivos": [
         "copa/cuenta.js",
+        "copa/demo.js",
         "copa/desglose.js",
         "copa/engine.js",
         "copa/game.js",
@@ -569,6 +570,7 @@
     "batalla-naval/game.js",
     "batalla-naval/rules.js",
     "copa/cuenta.js",
+    "copa/demo.js",
     "copa/desglose.js",
     "copa/engine.js",
     "copa/game.js",

@@ -14,8 +14,8 @@ import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { trackStart, versionOf } from '../assets/js/transport/stats.js';
 import {
   CALENDARIOS, MAX_JUGADORES, CODIGO, esCodigo, codigoAlAzar, pidAlAzar, limpiarNombre, claveNombre, esPin, hashPin,
-  fechaEn, sumarDias, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta, estadoDia, comodinDe,
-  puedeComodin, multiplicador, posicionesDelDia, tabla, faltan, medallas, evolucion, visibleDia, reloj, mmss, juegoDelDia, esFinal, activos, ZONA,
+  fechaEn, sumarDias, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta, estadoDia, comodinDe, moverInicio, sinEmpezar,
+  medianoche, puedeComodin, multiplicador, posicionesDelDia, tabla, faltan, medallas, evolucion, visibleDia, reloj, mmss, juegoDelDia, esFinal, activos, ZONA,
 } from './engine.js';
 import { GAME_ID, LOCALES, MINIJUEGOS } from './rules.js';
 import { createCuenta } from './cuenta.js';
@@ -40,6 +40,8 @@ const LABS = busqueda.includes('labs');
 const TRES = PRUEBA || LABS || busqueda.includes('tres');
 const PRACTICA = new URLSearchParams(location.search).get('practica');
 const SEMILLA = (new URLSearchParams(location.search).get('semilla') || '').toUpperCase();
+// Las demos del laboratorio (D-110): solo en el modo de prueba, con el almacén local
+const DEMO = PRUEBA ? new URLSearchParams(location.search).get('demo') : null;
 const codigoUrl = (busqueda.find(x => CODIGO.test(x.toUpperCase()) && x.length === 5) || new URLSearchParams(location.search).get('c') || '').toUpperCase();
 
 const cuenta = createCuenta({ prueba: PRUEBA });
@@ -71,7 +73,7 @@ function errorDe(e) {
     pin: 'errPinWrong', 'nombre-repetido': 'errRepetido', llena: 'errLlena', 'no-existe': 'errNoExiste',
     ventana: 'errVentana', 'ya-jugado': 'errYaJugado', comodin: 'errComodin', permiso: 'errPermiso',
     config: 'errConfig', offline: 'errOffline', busy: 'errOffline', cerrada: 'errCerrada',
-    reporte: 'errReport',
+    reporte: 'errReport', empezada: 'errEmpezada',
   };
   if (!mapa[code]) console.error(e);
   return T[mapa[code] || 'errNet'];
@@ -224,7 +226,7 @@ function espera(texto, { error = false, reintentar = null } = {}) {
   if (error) poner(body, el('a', { class: 'btn btn--ghost btn--sm', href: location.pathname + (PRUEBA ? '?prueba' : '') }, T.menu));
 }
 
-async function abrirCopa(code, { recienCreada = false } = {}) {
+async function abrirCopa(code, { recienCreada = false, pantalla = null } = {}) {
   S.code = code;
   espera('…');
   let st;
@@ -240,8 +242,8 @@ async function abrirCopa(code, { recienCreada = false } = {}) {
       if (pid && L.players?.[pid]) {
         S.yo = pid;
         cuenta.recordar(code, pid, { nombre: L.players[pid].name, copa: L.meta.name, fin: L.meta.end });
-        tablero();
-        if (recienCreada) setTimeout(() => invitar(), 300);
+        // Recién creada, el admin parte en Administrar, con la guía de la primera vez (D-110)
+        if (recienCreada) { S.bienvenida = true; admin(); } else if (pantalla === 'admin') admin(); else tablero();
       } else entrar();
       return;
     }
@@ -278,7 +280,7 @@ function entrar({ mantener = false } = {}) {
     ? fmt(T.inviteInfo, { modo: modoTexto(meta), fecha: fechaLarga(meta.win[1].a, meta.tz), n: jug.length, max: MAX_JUGADORES })
     : fmt(T.inviteStarted, { modo: modoTexto(meta), d: Math.min(d, meta.days), n: meta.days, k: jug.length, max: MAX_JUGADORES });
   const err = el('div', { class: 'form-error', role: 'alert' });
-  const puedeEntrar = inscripcionAbierta(meta, now) && jug.length < MAX_JUGADORES;
+  const puedeEntrar = inscripcionAbierta(meta, now, L().closed) && jug.length < MAX_JUGADORES;
 
   const caja = el('div', { class: 'stack' });
   const nuevo = () => {
@@ -355,7 +357,7 @@ function entrar({ mantener = false } = {}) {
       el('h1', { class: 'display display--lg rainbow' }, meta.name),
       el('p', { class: 'lead' }, info)),
     el('div', { class: 'cal-mini' }, CALENDARIOS[meta.days].map(j => el('span', { title: MINIJUEGOS[j].nombre }, MINIJUEGOS[j].emoji))),
-    puedeEntrar ? null : el('p', { class: 'muted center' }, T.closedJoin),
+    puedeEntrar ? null : el('p', { class: 'muted center' }, L().closed && inscripcionAbierta(meta, now) ? T.closedByAdmin : T.closedJoin),
     tabs, caja,
   );
   if (!puedeEntrar || entrarModo === 'inscrito') $('#tab-inscrito').click();
@@ -631,7 +633,7 @@ function mensajeHoy() {
   }
   const falta = faltan(Lc, hoy, now);
   if (falta.length && falta.length < activos(Lc).length) partes.push(fmt(T.shareTodayMissing, { names: falta.map(j => j.name).join(', ') }));
-  return partes.join(' ');
+  return partes.join('\n');
 }
 
 function mensajeTabla() {
@@ -640,10 +642,10 @@ function mensajeTabla() {
   const d = Math.min(diaActual(meta, now), meta.days);
   // La tabla que se comparte es la que ve el admin: no delata días que él no ha jugado
   const filas = tabla(Lc, S.yo, now);
-  const lista = filas.map(f => `${f.lugar}. ${f.name} ${f.total}`).join(' · ');
+  const lista = filas.map(f => `${['🥇', '🥈', '🥉'][f.lugar - 1] || `${f.lugar}.`} ${f.name} · ${f.total} pts`).join('\n');
   const falta = faltan(Lc, d, now);
   let txt = fmt(T.shareTableText, { copa: meta.name, d, tabla: lista });
-  if (falta.length) txt += `\n${fmt(T.shareTableMissing, { d, names: falta.map(j => j.name).join(', ') })}`;
+  if (falta.length) txt += `\n\n${fmt(T.shareTableMissing, { d, names: falta.map(j => j.name).join(', ') })}`;
   return txt;
 }
 
@@ -652,13 +654,13 @@ function mensajeFinal() {
   const m = medallas(Lc);
   const filas = tabla(Lc, S.yo, Lc.meta.end);
   const campeon = m.campeon?.length === 1 ? fmt(T.shareFinalChamp, { name: m.campeon[0].name, pts: m.campeon[0].total }) : T.podiumTie;
-  const podioTxt = filas.slice(0, 3).map((f, i) => `${['🥇', '🥈', '🥉'][i]} ${f.name} ${f.total}`).join(' · ');
+  const podioTxt = filas.slice(0, 3).map((f, i) => `${['🥇', '🥈', '🥉'][i]} ${f.name} · ${f.total} pts`).join('\n');
   const extras = [
     m.ganador && `${T.medalWins}: ${m.ganador.filas.map(f => f.name).join(', ')} (${m.ganador.n})`,
     m.remontada && `${T.medalComeback}: ${m.remontada.filas.map(f => f.name).join(', ')}`,
     m.farolito && `${T.medalLast}: ${m.farolito.map(f => f.name).join(', ')}`,
   ].filter(Boolean).join('\n');
-  return fmt(T.shareFinalText, { copa: Lc.meta.name, campeon, podio: podioTxt }) + (extras ? `\n${extras}` : '');
+  return fmt(T.shareFinalText, { copa: Lc.meta.name, campeon, podio: podioTxt }) + (extras ? `\n\n${extras}` : '');
 }
 
 /* ------------------------------------------------------------------ */
@@ -675,6 +677,22 @@ function admin() {
   const now = ahora();
   const d = diaActual(meta, now);
   const msg = (rotulo, fn, id) => el('button', { class: 'btn btn--cyan btn--sm', id, onClick: () => { SFX.tap(); compartir(fn()); } }, `📤 ${rotulo}`);
+  const jug = activos(Lc);
+  const err = el('div', { class: 'form-error', role: 'alert' });
+  // La primera vez (recién creada, o mientras el admin siga solo): qué hacer ahora (D-110)
+  if ((S.bienvenida || jug.length <= 1) && d === 0) {
+    poner(body, el('div', { class: 'panel stack bienvenida', id: 'admin-bienvenida' },
+      el('p', { class: 'lead', style: 'margin:0' }, `🎉 ${T.adminWelcomeTitle}`),
+      el('ol', { class: 'como' },
+        el('li', {}, T.adminWelcome1),
+        el('li', {}, fmt(T.adminWelcome2, { fecha: fechaLarga(meta.win[1].a, meta.tz) })),
+        el('li', {}, T.adminWelcome3))));
+  }
+  const accion = (rotulo, id, fn, clase = 'btn btn--ghost btn--sm') => el('button', { class: clase, id, onClick: async ev => {
+    SFX.tap(); ev.currentTarget.disabled = true;
+    const b = ev.currentTarget;
+    try { await fn(); err.textContent = ''; } catch (e) { if (e?.code !== 'cancelado') avisoError(err, errorDe(e)); b.disabled = false; }
+  } }, rotulo);
   poner(body, el('div', { class: 'panel stack' },
     el('p', { class: 'lead', style: 'margin:0' }, T.adminMsgs),
     msg(T.msgInvite, () => fmt(T.shareInviteText, { copa: meta.name, dias: meta.days, fecha: fechaLarga(meta.win[1].a, meta.tz) }), 'msg-invitar'),
@@ -682,7 +700,40 @@ function admin() {
     d >= 1 ? msg(T.msgTable, mensajeTabla, 'msg-tabla') : null,
     terminada(meta, now) ? msg(T.msgFinal, mensajeFinal, 'msg-final') : null));
 
-  const err = el('div', { class: 'form-error', role: 'alert' });
+  // El inicio se puede mover a hoy o mañana mientras nadie haya jugado (D-110)
+  if (sinEmpezar(Lc) && !terminada(meta, now)) {
+    const hoy = fechaEn(now, meta.tz), manana = sumarDias(hoy, 1);
+    const quedanHoy = medianoche(manana, meta.tz) - now;
+    let alerta = null;
+    if (d >= 1) alerta = T.startPassed;
+    else if (meta.start === hoy && quedanHoy < 6 * 3600000) alerta = T.startLate;
+    const mover = (fecha, rotulo, id) => meta.start === fecha
+      ? el('button', { class: 'btn btn--yellow btn--sm', id, disabled: true }, `✓ ${rotulo}`)
+      : accion(rotulo, id, async () => {
+        if (!confirm(fmt(T.startMoveConfirm, { fecha: fechaLarga(medianoche(fecha, meta.tz), meta.tz) }))) throw { code: 'cancelado' };
+        await store.reprogramar(S.code, moverInicio(meta, fecha));
+        SFX.reveal(); toast(fmt(T.startMoved, { fecha: fechaLarga(medianoche(fecha, meta.tz), meta.tz) }));
+      });
+    poner(body, el('div', { class: 'panel stack', id: 'admin-inicio' },
+      el('p', { class: 'lead', style: 'margin:0' }, T.startTitle),
+      el('p', { class: 'muted', style: 'margin:0' }, fmt(d >= 1 ? T.startWas : T.startIs, { fecha: fechaLarga(meta.win[1].a, meta.tz) })),
+      alerta ? el('div', { class: 'aviso' }, alerta) : null,
+      el('div', { class: 'btn-row' }, mover(hoy, T.startTodayBtn, 'btn-inicio-hoy'), mover(manana, T.startTomorrowBtn, 'btn-inicio-manana'))));
+  }
+
+  // Cerrar o reabrir la inscripción, mientras todavía se pueda entrar (hasta la final)
+  if (inscripcionAbierta(meta, now)) {
+    poner(body, el('div', { class: 'panel stack', id: 'admin-inscripcion' },
+      el('p', { class: 'lead', style: 'margin:0' }, T.joinTitle),
+      el('p', { class: 'muted', style: 'margin:0' }, Lc.closed ? T.joinIsClosed : fmt(T.joinIsOpen, { n: jug.length, max: MAX_JUGADORES })),
+      Lc.closed
+        ? accion(`🔓 ${T.joinReopen}`, 'btn-reabrir', () => store.cerrarInscripcion(S.code, false))
+        : accion(`🔒 ${T.joinClose}`, 'btn-cerrar-inscripcion', async () => {
+          if (!confirm(T.joinCloseConfirm)) throw { code: 'cancelado' };
+          await store.cerrarInscripcion(S.code, true);
+        })));
+  }
+
   const lista = el('div', { class: 'admin-jugadores' });
   const fila = (pid, p) => {
     const acciones = el('div', { class: 'acciones' });
@@ -697,13 +748,14 @@ function admin() {
       input.focus();
     };
     const esElAdmin = pid === meta.admin;
-    poner(acciones, 
-      el('button', { class: 'mini-btn', onClick: () => editar(T.rename, { value: p.name, maxlength: '20', 'aria-label': fmt(T.renamePrompt, { name: p.name }) }, async v => {
+    // Renombrar va a la derecha del nombre, en la misma línea (no gasta alto); el resto, debajo
+    const renombrar = el('button', { class: 'mini-btn', onClick: () => editar(T.rename, { value: p.name, maxlength: '20', 'aria-label': fmt(T.renamePrompt, { name: p.name }) }, async v => {
         const n = limpiarNombre(v);
         if (!n) throw T.errNombre;
         if (Object.entries(Lc.players).some(([q, x]) => q !== pid && claveNombre(x.name) === claveNombre(n))) throw T.errRepetido;
         await store.renombrar(S.code, pid, n);
-      }) }, T.rename),
+      }) }, T.rename);
+    poner(acciones,
       esElAdmin ? null : el('button', { class: 'mini-btn', onClick: () => editar(T.newPin, { inputmode: 'numeric', maxlength: '4', 'aria-label': fmt(T.pinPrompt, { name: p.name }) }, async v => {
         if (!esPin(v)) throw T.errPin;
         await store.cambiarPin(S.code, pid, await hashPin(S.code, pid, v));
@@ -713,11 +765,13 @@ function admin() {
         if (!p.out && !confirm(fmt(T.kickConfirm, { name: p.name }))) return;
         try { await store.sacar(S.code, pid, !p.out); } catch (e) { avisoError(err, errorDe(e)); }
       } }, p.out ? T.unkick : T.kick));
-    return el('div', { class: 'admin-fila' + (p.out ? ' fuera' : '') }, el('b', {}, p.name, p.out ? el('small', { class: 'muted' }, ` (${T.kicked})`) : null), acciones);
+    const nombre = el('div', { class: 'admin-nombre' },
+      el('b', {}, p.name, esElAdmin ? el('small', { class: 'muted' }, ` (${T.youAdmin})`) : null, p.out ? el('small', { class: 'muted' }, ` (${T.kicked})`) : null), renombrar);
+    return el('div', { class: 'admin-fila' + (p.out ? ' fuera' : '') }, nombre, acciones);
   };
   Object.entries(Lc.players || {}).sort((a, b) => (a[1].at || 0) - (b[1].at || 0)).forEach(([pid, p]) => poner(lista, fila(pid, p)));
   poner(body, el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.adminPlayers), lista, err),
-    el('button', { class: 'btn btn--ghost', onClick: () => { SFX.tap(); tablero(); } }, T.toBoard));
+    el('button', { class: 'btn btn--ghost', onClick: () => { SFX.tap(); S.bienvenida = false; tablero(); } }, T.toBoard));
 }
 
 /* ------------------------------------------------------------------ */
@@ -779,6 +833,8 @@ function antesDeJugar(d) {
  * desvanece solo sobre el tablero. Resuelve la promesa en ese momento.
  */
 function cuentaRegresiva(J) {
+  // La Gran Final no la lleva: cada ronda ya parte con su propia presentación
+  if (J === MINIJUEGOS.final) return Promise.resolve();
   $('#jugar-head').replaceChildren(el('span', { class: 'jugar-titulo' }, `${J.emoji} ${J.nombre}`));
   $('#jugar-body').innerHTML = '';
   return new Promise(listo => {
@@ -1187,6 +1243,20 @@ window.__copa = {
   prueba: PRUEBA,
 };
 
+/** Una demo del laboratorio: siembra la escena, deja la sesión de quien mira y la abre. */
+async function demo(nombre) {
+  const st = await abrirStore();
+  await st.listo();
+  st.reiniciarReloj();
+  const { sembrar } = await import('./demo.js');
+  const e = sembrar(nombre, { now: st.now(), uid: st.uid });
+  if (!e) { portada(); return; }
+  if (e.pid) cuenta.recordar(e.code, e.pid, { nombre: e.nombre, copa: e.meta.name, fin: e.meta.end });
+  history.replaceState(null, '', `${location.pathname}?prueba&${e.code}`);
+  await abrirCopa(e.code, { recienCreada: e.recien, pantalla: e.pantalla });
+}
+
 if (PRACTICA) practica(PRACTICA);
+else if (DEMO) demo(DEMO);
 else if (codigoUrl && esCodigo(codigoUrl)) abrirCopa(codigoUrl);
 else portada();

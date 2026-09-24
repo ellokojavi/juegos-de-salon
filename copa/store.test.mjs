@@ -10,7 +10,7 @@ globalThis.sessionStorage = memoria();
 globalThis.addEventListener ||= () => {};
 
 const { createLocalStore } = await import('./store-local.js');
-const { nuevaMeta, hashPin, DIA_MS, fechaEn } = await import('./engine.js');
+const { nuevaMeta, hashPin, DIA_MS, fechaEn, moverInicio, sumarDias, inscripcionAbierta } = await import('./engine.js');
 const { createCuenta } = await import('./cuenta.js');
 
 let n = 0;
@@ -31,6 +31,31 @@ await test('crear y leer', async () => {
   assert.equal(L.players.aaaaaa.name, 'Cata');
   assert.equal(L._keys, undefined); // el hash no se lee
   await rechaza(admin.crear(CODE, meta, { pid: 'x', name: 'x', at: 1, pinHash: 'x' }), 'ocupado');
+});
+
+await test('cerrar la inscripción y mover el inicio: solo el admin, y solo sin empezar (D-110)', async () => {
+  const C2 = 'MNPQR';
+  const m2 = nuevaMeta({ nombre: 'Copa dos', dias: 3, inicio: hoy, admin: 'aaaaaa', creada: admin.now() });
+  await admin.crear(C2, m2, { pid: 'aaaaaa', name: 'Cata', at: 1, pinHash: 'h' });
+  await rechaza(otro.cerrarInscripcion(C2, true), 'permiso');
+  await admin.cerrarInscripcion(C2, true);
+  assert.equal((await admin.leer(C2)).closed, true);
+  await rechaza(otro.inscribir(C2, { pid: 'bbbbbb', name: 'Javi', at: 2, pinHash: 'h' }), 'cerrada');
+  await admin.cerrarInscripcion(C2, false);
+  await otro.inscribir(C2, { pid: 'bbbbbb', name: 'Javi', at: 2, pinHash: 'h' });
+  // Mover el inicio a mañana: las ventanas se corren un día
+  const manana = moverInicio(m2, sumarDias(hoy, 1));
+  await rechaza(otro.reprogramar(C2, manana), 'permiso');
+  await admin.reprogramar(C2, manana);
+  const L2 = await admin.leer(C2);
+  assert.equal(L2.meta.start, sumarDias(hoy, 1));
+  assert.ok(Math.abs(L2.meta.win[1].a - m2.win[1].a - DIA_MS) <= 3600000); // un día (± el cambio de hora)
+  assert.equal(L2.meta.createdAt, m2.createdAt);
+  // Con alguien que ya empezó, no se mueve
+  await admin.reprogramar(C2, moverInicio(m2, hoy));
+  await admin.empezar(C2, 1, 'aaaaaa');
+  await rechaza(admin.reprogramar(C2, moverInicio(m2, sumarDias(hoy, 1))), 'empezada');
+  assert.equal(inscripcionAbierta(m2, admin.now(), true), false);
 });
 
 await test('inscribirse: nombre repetido y cupo', async () => {
