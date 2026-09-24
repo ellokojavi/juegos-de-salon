@@ -36,22 +36,33 @@ sin que nada viaje por la red.
 
 | Día | Minijuego | Puntaje | Reusa |
 |---|---|---|---|
-| 1 | ⏳ Línea Relámpago: 8 hitos, 7 por colocar | aciertos, 0 a 7 | mazos de Línea de Tiempo |
-| 2 | 🔢 El Número del Día: 4 cifras, 10 intentos | 11 − intentos, 0 si no | motor de Toque y Fama |
-| 3 | 🔗 Conexiones: 16 palabras, 4 grupos, 4 errores | 25 × grupo − 5 × error | 12 grillas chilenas (`juegos/grillas.js`) |
-| 4 | ⚓ Batalla Naval: Solitario (Bimaru) 8×8 | 100 − 15 × revisión fallida, piso 10 | pixel art de la flota |
-| 5 | 🎲 ¿Dudo o le creo?: 8 manos | probabilidad de acertar × 100 por mano | probabilidades de Dudo |
-| 6 | 📅 ¿En qué año?: 6 hitos | 100 por hito, baja con la distancia | mazos de Línea de Tiempo |
+| 1 | ⏳ Línea Relámpago: 10 hitos, 9 en la mano en cualquier orden | aciertos, 0 a 9 | la mano, las ranuras, el arrastre y el veredicto de Línea de Tiempo |
+| 2 | 🔢 Toque y Fama: adivina el número. 4 cifras, 10 intentos | 11 − intentos, 0 si no | el teclado con notas, el tablero y las pistas de Toque y Fama |
+| 3 | 🔗 Conexiones: 16 palabras, 4 grupos, 4 errores | 25 × grupo − 5 × error | 12 grillas difíciles (`juegos/grillas.js`) |
+| 4 | 👑 Reinas: una por fila, columna y zona, sin tocarse | 100 − 10 × reina en conflicto, piso 10 | nuevo (Queens de LinkedIn) |
+| 5 | 🔤 Toque y Fama con letras: 5 letras, 8 intentos | 9 − intentos, 0 si no | lo mismo que el día 2, con letras |
+| 6 | 📅 ¿En qué año?: 6 hitos | 100 por hito, baja con la distancia | mazos de Línea de Tiempo y teclado de Toque y Fama |
 | 7 | 🏁 La Gran Final: 5 rondas cortas | 0 a 100 por ronda, 0 a 500 | los cinco motores |
 
-La Copa de 3 días juega Línea, Conexiones y la final.
+La Copa de 3 días juega Línea, Conexiones y la final. En el laboratorio se pueden practicar además
+**〰️ Zip** (un solo trazo por todas las casillas, pasando por los números en orden) y **☀️ Tango**
+(soles y lunas, mitad y mitad por línea, nunca tres seguidos, con marcas = y ×), candidatos a
+entrar al calendario.
 
 - **Línea y Año** usan temáticas distintas dentro de la misma copa (`temasDeLaCopa`), para que no
   sean dos días de lo mismo.
-- **El solitario** tiene solución única garantizada: el generador agrega pistas —casillas
-  destapadas— hasta que el resolvedor encuentra una sola solución (`resolver` cuenta hasta 2).
-- **¿Dudo o le creo?** puntúa la calidad de la decisión y no el resultado (D-97).
+- **Reinas, Zip y Tango** tienen solución única garantizada. Reinas ajusta las zonas de a una
+  casilla hasta que el resolvedor encuentra una sola solución; Tango suma pistas hasta que es única
+  y después saca las que sobran; Zip suma números sobre un camino al azar y después saca los que
+  sobran (quedan 7 a 12 en 6 × 6).
+- **Tango** no cuenta como error pasar por el sol para llegar a la luna: solo dejar la casilla
+  rompiendo una regla (D-102).
+- **Toque y Fama con letras** acepta cualquier combinación de 5 letras distintas como intento, sin
+  diccionario, igual que Toque y Fama acepta cualquier número de cifras distintas. La palabra
+  secreta sale de una lista de 120 palabras comunes (`juegos/palabras.js`).
 - **¿En qué año?** tiene un margen que crece con la antigüedad: `max(8, (2026 − año) / 4)` años.
+- Las copas creadas antes de D-102 con el Solitario o Dudo en el calendario juegan Reinas y Toque y
+  Fama con letras en esos días.
 
 ## Flujo y pantallas
 

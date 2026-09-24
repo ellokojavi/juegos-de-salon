@@ -13,6 +13,7 @@ import { failWith } from '../assets/js/transport/errors.js';
 import { score, isValid, randomSecret, Solver, sha256, randomNonce, verifyPlayer } from './engine.js';
 import { GAME_ID, DEFAULT_CONFIG, DIGIT_OPTIONS, LOCALES } from './rules.js';
 import { createChat } from '../assets/js/chat.js';
+import { teclado, CIFRAS } from '../assets/js/teclado.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
 import { trackStart } from '../assets/js/transport/stats.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
@@ -202,47 +203,13 @@ function restoreLocal(saved) {
 function showScreen(id) { $$('.screen').forEach(s => s.classList.toggle('active', s.id === id)); window.scrollTo({ top: 0, behavior: 'instant' }); }
 
 /** Teclado numérico con casillas. onSubmit(value). */
+/** El teclado, con notas (toque largo para tachar), sale de assets/js/teclado.js (D-102). */
 function keypad({ digits, zeroFirst, onSubmit, hidden = false, submitLabel = T.guess, notes = null, onNotesChange = null }) {
-  let value = '';
-  const LONG_PRESS_MS = 450;
-  const boxes = Array.from({ length: digits }, () => el('div', { class: 'box' }));
-  const entry = el('div', { class: 'entry' }, ...boxes);
-  const keys = [];
-  const ok = el('button', { class: 'ok', disabled: true, onClick: () => { if (isValid(value, digits, { zeroFirst })) { SFX.tap(); const v = value; value = ''; refresh(); onSubmit(v); } } }, submitLabel);
-  const del = el('button', { class: 'del', onClick: () => { value = value.slice(0, -1); SFX.tap(); refresh(); } }, '⌫');
-  const refresh = () => {
-    boxes.forEach((b, i) => { b.textContent = value[i] || ''; b.className = 'box' + (value[i] ? ' filled' : '') + (hidden && value[i] ? ' hidden-digit' : '') + (i === value.length ? ' active' : ''); });
-    keys.forEach(k => { const d = k.dataset.d; const blocked = notes ? notes.has(d) : false; k.classList.toggle('blocked', blocked); k.disabled = !blocked && (value.includes(d) || value.length >= digits || (value.length === 0 && d === '0' && !zeroFirst)); });
-    ok.disabled = !isValid(value, digits, { zeroFirst });
-  };
-  const key = d => {
-    let timer = null, longPressed = false;
-    const b = el('button', { 'data-d': d,
-      onClick: () => {
-        if (longPressed) { longPressed = false; return; }
-        if (notes && notes.has(d)) { b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake'); vibrate([20, 30, 20]); return; }
-        if (value.length < digits && !value.includes(d)) { value += d; vibrate(8); SFX.tap(); refresh(); }
-      },
-      onPointerdown: () => {
-        if (!notes) return;
-        timer = setTimeout(() => {
-          timer = null; longPressed = true;
-          if (notes.has(d)) notes.delete(d); else { notes.add(d); value = value.replace(d, ''); }
-          vibrate([30, 40, 30]); SFX.dice(); refresh(); onNotesChange && onNotesChange();
-        }, LONG_PRESS_MS);
-      },
-      onPointerup: () => { if (timer) { clearTimeout(timer); timer = null; } },
-      onPointerleave: () => { if (timer) { clearTimeout(timer); timer = null; } },
-      onPointercancel: () => { if (timer) { clearTimeout(timer); timer = null; } },
-      onContextmenu: e => { if (notes) e.preventDefault(); },
-    }, d);
-    return b;
-  };
-  for (let d = 1; d <= 9; d++) keys.push(key(String(d)));
-  keys.push(key('0'));
-  const pad = el('div', { class: 'keypad' }, ...keys.slice(0, 9), del, keys[9], ok);
-  refresh();
-  return el('div', {}, entry, pad);
+  return teclado({
+    largo: digits, teclas: CIFRAS, submitLabel, hidden, notes, onNotesChange, onSubmit,
+    valido: v => isValid(v, digits, { zeroFirst }),
+    puede: (v, d) => !v.includes(d) && v.length < digits && !(v.length === 0 && d === '0' && !zeroFirst),
+  });
 }
 
 /** Píldoras de pista. En los tableros van abreviadas (3F 1T) para que quepan en una línea; en la pantalla de respuesta, con palabra completa. */

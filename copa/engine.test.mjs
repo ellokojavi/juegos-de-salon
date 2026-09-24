@@ -12,6 +12,7 @@ const H = 60 * 60 * 1000;
 
 test('calendarios: la final siempre al final', () => {
   assert.deepEqual(CALENDARIOS[3], ['linea', 'conexiones', 'final']);
+  assert.deepEqual(CALENDARIOS[7], ['linea', 'numero', 'conexiones', 'reinas', 'letras', 'anio', 'final']);
   assert.equal(CALENDARIOS[7].length, 7);
   assert.equal(CALENDARIOS[7][6], 'final');
   assert.equal(new Set(CALENDARIOS[7]).size, 7);
@@ -87,7 +88,9 @@ test('meta y día actual', () => {
   assert.equal(meta7.name, 'Copa de la oficina');
   assert.equal(meta7.joinUntil, meta7.win[7].a);
   assert.equal(meta7.final, '7');
-  assert.equal(juegoDelDia(meta7, 4), 'solitario');
+  assert.equal(juegoDelDia(meta7, 4), 'reinas');
+  // Una copa vieja con el Solitario en el calendario lo juega como Reinas (D-102)
+  assert.equal(juegoDelDia({ ...meta7, cal: 'linea,numero,conexiones,solitario,dudo,anio,final' }, 5), 'letras');
   assert.equal(diaActual(meta7, meta7.win[1].a - 1), 0);
   assert.equal(diaActual(meta7, dia(0)), 1);
   assert.equal(diaActual(meta7, dia(6)), 7);
