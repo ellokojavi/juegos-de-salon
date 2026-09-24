@@ -136,14 +136,13 @@ const tocarCasilla = sel => i => click(`${sel}[data-i="${i}"]`);
 const jugarReinas = async nivel => {
   const p = await ev('JSON.stringify(window.__jugando.p)').then(JSON.parse);
   const t = tocarCasilla('.rej');
-  // Cada error: la reina de la fila 0 bien puesta y una pegada en diagonal en la fila 1; después se sacan
+  // Cada error: la reina de la fila 0 y una pegada en diagonal en la fila 1 (un toque pone, otro saca: D-103)
   const pegada = 1 * p.n + (p.sol[0] === 0 ? 1 : p.sol[0] - 1);
   for (let e = 0; e < (nivel === 2 ? 0 : nivel === 1 ? 1 : 2); e++) {
-    await t(p.sol[0]); await t(p.sol[0]);   // marca → reina
-    await t(pegada); await t(pegada);       // marca → reina que choca
-    await t(pegada); await t(p.sol[0]);     // reina → vacío, las dos
+    await t(p.sol[0]); await t(pegada);   // choque
+    await t(pegada); await t(p.sol[0]);   // se sacan las dos
   }
-  for (let r = 0; r < p.n; r++) { const i = r * p.n + p.sol[r]; await t(i); await t(i); }
+  for (let r = 0; r < p.n; r++) await t(r * p.n + p.sol[r]);
   await sleep(150);
 };
 
@@ -152,16 +151,28 @@ const jugarTango = async nivel => {
   const t = tocarCasilla('.tan');
   const valor = i => ev(`Number(document.querySelector('.tan[data-i="${i}"]').dataset.v)`);
   const libres = p.sol.map((v, i) => i).filter(i => p.dadas[i] === undefined);
-  // Un error: el valor contrario dejado un momento en una casilla, que después se corrige
-  if (nivel < 2) { const i = libres[0]; await t(i); if (p.sol[i] === 1) await t(i); await click('.tan-grid'); }
-  for (const i of libres) for (let k = 0; k < 3 && await valor(i) !== p.sol[i]; k++) await t(i);
+  if (nivel < 2) {
+    // Borrar todo (dos toques) y una pista (dos toques), las ayudas de D-103
+    await t(libres[0]);
+    await click('#btn-borrar'); await sleep(60); await click('#btn-borrar'); await sleep(100);
+    await click('#btn-pista'); await sleep(60); await click('#btn-pista'); await sleep(100);
+  }
+  for (const i of libres) {
+    if (await ev(`document.querySelector('.tan[data-i="${i}"]').disabled`)) continue;
+    for (let k = 0; k < 3 && await valor(i) !== p.sol[i]; k++) await t(i);
+  }
   await sleep(150);
 };
 
+/** Zip por niveles: resuelve los dos primeros y espera a que se acabe el reloj (acortado con &zipSeg). */
 const jugarZip = async () => {
-  const sol = await ev('JSON.stringify(window.__jugando.p.sol)').then(JSON.parse);
-  for (const i of sol) await click(`.zc[data-i="${i}"]`);
-  await sleep(150);
+  const { codigo, dia } = await ev('JSON.stringify(window.__jugando.p)').then(JSON.parse);
+  for (let k = 0; k < 2; k++) {
+    const sol = await ev(`(async()=>{const m=await import('/copa/juegos/zip.js');return JSON.stringify(m.nivel('${codigo}', ${dia}, ${k}).sol)})()`).then(JSON.parse);
+    for (const i of sol) await click(`.zc[data-i="${i}"]`);
+    await sleep(700);
+  }
+  for (let w = 0; w < 40 && !await ev(`!!document.getElementById('btn-fin')`); w++) await sleep(500);
 };
 
 const jugarConexiones = async nivel => {
@@ -189,11 +200,40 @@ const jugarFinal = async nivel => {
 
 const JUGAR = { linea: jugarLinea, numero: jugarNumero, anio: jugarAnio, reinas: jugarReinas, letras: jugarLetras, zip: jugarZip, tango: jugarTango, conexiones: jugarConexiones, final: jugarFinal };
 
+/** La cuenta de 5 a 1 antes de cada juego (D-105): espera a que aparezca "¡A jugar!". */
+async function esperarCuenta({ revisar = false } = {}) {
+  if (revisar) {
+    await sleep(150);
+    ok(await ev(`document.querySelector('#cuenta .cuenta-num')?.textContent`) === '5' && await ev(`document.querySelector('#jugar-body').children.length`) === 0,
+      'al empezar aparece la cuenta desde 5, con el tablero todavía oculto');
+    await b.shot('cuenta');
+  }
+  for (let i = 0; i < 80 && !(await ev(`!document.getElementById('cuenta') || document.getElementById('cuenta').classList.contains('ya')`)); i++) await sleep(100);
+  if (revisar) {
+    ok(await ev(`document.getElementById('cuenta')?.textContent.includes('¡A jugar!') && !!document.querySelector('#jugar-body').children.length`), 'después de la cuenta dice ¡A jugar! y aparece el tablero');
+    ok(/0:0[01]/.test(await ev(`document.querySelector('#jugar-head .cron')?.textContent || ''`)), 'el reloj parte en cero después de la cuenta');
+  }
+  await sleep(950);
+}
+
 async function jugarDia(d, nivel, { capturar = false, comodin = false } = {}) {
   await click(`[data-dia="${d}"]`); await sleep(300);
   if (comodin) { await click('#btn-comodin'); await sleep(300); }
   if (capturar) await revisarPantalla(`antes-${d}`);
-  await click('#btn-empezar'); await sleep(400);
+  if (capturar && d === 1) {
+    // La sesión de prueba (D-103): otro contenido, no cuenta, y vuelve a Empezar
+    await click('#btn-ensayo'); await esperarCuenta({ revisar: true });
+    await ev(`(async()=>{const {JUEGOS}=await import('/copa/juegos/index.js');window.__jugando={p:JUEGOS.linea.ensayo(__copa.estado.code, 1)};return 1})()`);
+    const real = await ev(`(async()=>{const {JUEGOS}=await import('/copa/juegos/index.js');return JUEGOS.linea.generar(__copa.estado.code, 1).tema})()`);
+    ok(await ev('window.__jugando.p.tema') !== real && await ev(`document.querySelectorAll('.hand .card').length`) === 4, 'la sesión de prueba trae otro contenido y es más corta');
+    await revisarPantalla('ensayo');
+    await jugarLinea(2);
+    await click('#btn-fin'); await sleep(300);
+    ok(await pantalla() === 'resultado' && !(await ev('__copa.estado.copa.started?.[1]?.[__copa.estado.yo]')), 'la prueba termina sin empezar el día ni guardar nada');
+    await b.shot('ensayo-fin');
+    await click('#btn-volver-ensayo'); await sleep(300);
+  }
+  await click('#btn-empezar'); await sleep(400); await esperarCuenta();
   if (!await ev('!!__copa.estado.juego')) {
     console.log('  diagnóstico día', d, await ev(`JSON.stringify({p:__copa.estado.pantalla, err:document.querySelector('.screen.active .form-error')?.textContent, btn:!!document.getElementById('btn-empezar'), texto:document.querySelector('.screen.active').innerText.slice(0,300)})`));
     await b.shot(`fallo-dia${d}`);
@@ -203,6 +243,7 @@ async function jugarDia(d, nivel, { capturar = false, comodin = false } = {}) {
   await JUGAR[id](nivel, { arrastrar: capturar && id === 'linea' });
   if (capturar) { await revisarPantalla(`juego-${id}`); if (TOMAS[id]) await b.shot(TOMAS[id]); }
   await click('#btn-fin'); await sleep(700);
+  if (capturar) ok(await ev(`(document.querySelector('#explicacion')?.innerText || '').includes('Total:')`), `resultado del día ${d}: explica cómo se calculó el puntaje`);
   return id;
 }
 
@@ -308,24 +349,43 @@ await b.go('http://localhost:8765/labs/', 1500);
 ok(await ev(`document.querySelectorAll('.mini-juego').length`) === 9, 'el laboratorio ofrece los nueve minijuegos (con Zip y Tango)');
 await b.shot('10-labs');
 for (const id of ['linea', 'numero', 'conexiones', 'reinas', 'letras', 'zip', 'tango', 'anio', 'final']) {
-  await b.go(`${BASE}?practica=${id}&prueba`, 1200); await preparar();
-  await click('#btn-empezar'); await sleep(300);
+  await b.go(`${BASE}?practica=${id}&prueba${id === 'zip' ? '&zipSeg=12' : ''}`, 1200); await preparar();
+  await click('#btn-empezar'); await sleep(300); await esperarCuenta();
   await ev(`(async()=>{const {JUEGOS}=await import('/copa/juegos/index.js');window.__jugando={p:JUEGOS['${id}'].generar(__copa.estado.juego.semilla, 1)};return 1})()`);
-  await JUGAR[id](2);
+  if (id === 'reinas') {
+    // El toque largo pone una X, con el puntero de verdad (D-103)
+    const [x, y] = await ev(`(()=>{const r=document.querySelector('.rej[data-i="0"]').getBoundingClientRect();return [r.x+r.width/2,r.y+r.height/2]})()`);
+    await b.send('Input.dispatchMouseEvent', { type: 'mousePressed', x, y, button: 'left', clickCount: 1, buttons: 1 });
+    await sleep(650);
+    await b.send('Input.dispatchMouseEvent', { type: 'mouseReleased', x, y, button: 'left', clickCount: 1, buttons: 0 });
+    await sleep(300);
+    ok(await ev(`document.querySelector('.rej[data-i="0"]').classList.contains('marca')`), 'Reinas: el toque largo marca la X y no pone reina');
+    await b.toque(x, y); await b.toque(x, y);   // un toque rápido de verdad pone la reina y otro la saca: queda vacía
+    ok(await ev(`!document.querySelector('.rej[data-i="0"]').classList.contains('reina')`), 'Reinas: después del toque largo, los toques rápidos no se pierden');
+  }
+  if (id === 'tango') await b.shot('tango-tablero');
+  await JUGAR[id](id === 'tango' ? 1 : 2);
   await click('#btn-fin'); await sleep(500);
   const r = await ev(`JSON.stringify({p:__copa.estado.pantalla, s:document.querySelector('.score-big')?.textContent})`).then(JSON.parse);
   ok(r.p === 'resultado', `práctica de ${id}: se juega completa (${r.s})`);
+  ok((await ev(`document.querySelector('#explicacion')?.innerText || ''`)).length > 40, `práctica de ${id}: explica cómo se calculó el puntaje`);
   if (['reinas', 'zip', 'tango', 'letras'].includes(id)) await b.shot(`practica-${id}`);
   if (id === 'reinas') { await revisarPantalla('practica-resultado'); await b.shot('11-practica'); }
 }
 // Un reporte desde la práctica
 await click('#btn-reporte'); await sleep(300);
-await ev(`document.querySelector('.reporte-texto').value='El barco no se veía bien'; 1`);
+await ev(`document.querySelector('.reporte-texto').value='El barco no se veía bien'; document.querySelector('#reporte-nombre').value='Tester'; 1`);
 await revisarPantalla('reporte');
 await b.shot('12-reporte');
 await click('#btn-enviar-reporte'); await sleep(400);
 const reportes = await ev(`JSON.parse(localStorage.getItem('juegos-de-salon:copa:prueba:reportes')||'[]')`);
 ok(reportes.length === 1 && reportes[0].texto === 'El barco no se veía bien' && /"juego":"final"/.test(reportes[0].contexto), 'el reporte se guarda con su contexto');
+ok(reportes[0].nombre === 'Tester', 'el reporte lleva el nombre escrito');
+await click('#btn-reporte-volver'); await sleep(300);
+await click('#btn-reporte'); await sleep(300);
+ok(await ev(`document.querySelector('#reporte-nombre').value`) === 'Tester', 'el nombre queda guardado en el dispositivo para el próximo reporte');
+await ev(`document.querySelector('.reporte-texto').value='Segundo comentario'; 1`);
+await click('#btn-enviar-reporte'); await sleep(400);
 ok(await ev(`!!document.getElementById('btn-reporte-volver')`), 'después de enviar se agradece y se puede volver');
 
 console.log('errores:', JSON.stringify(b.errors), JSON.stringify(b.logs));

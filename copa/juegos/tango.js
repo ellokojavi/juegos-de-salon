@@ -119,31 +119,59 @@ export function inicial(p) {
   return g;
 }
 
-/** Vacío → sol → luna → vacío. Las dadas no se tocan. */
-export function tocar(p, g, i) {
-  if (esDada(p, i)) return g;
+/** Vacío → sol → luna → vacío. Las dadas y las reveladas por una pista no se tocan. */
+export function tocar(p, g, i, fijas = new Set()) {
+  if (esDada(p, i) || fijas.has(i)) return g;
   const h = g.slice();
   h[i] = h[i] === VACIO ? SOL : h[i] === SOL ? LUNA : VACIO;
   return h;
 }
 
+export const BORRAR = 'C';
+export const COSTO_PISTA = 15;
+
 /**
- * El estado a partir de las jugadas (los índices tocados). Para poner una luna hay que pasar
- * por el sol, así que un toque que rompe una regla solo cuenta como error si el jugador **deja**
- * la casilla así: si el toque siguiente es sobre la misma casilla, era un paso de camino.
+ * La casilla que revela una pista: primero una que esté mal puesta; si no hay, la vacía que
+ * tiene más vecinas llenas en su fila y su columna, que es la que más ayuda a seguir deduciendo.
+ */
+export function pista(p, g, fijas = new Set()) {
+  const { n, sol } = p;
+  const libre = i => !esDada(p, i) && !fijas.has(i);
+  const mal = g.findIndex((v, i) => libre(i) && v && v !== sol[i]);
+  if (mal >= 0) return mal;
+  let mejor = -1, max = -1;
+  g.forEach((v, i) => {
+    if (v || !libre(i)) return;
+    const r = Math.floor(i / n), c = i % n;
+    let llenas = 0;
+    for (let k = 0; k < n; k++) { if (g[r * n + k]) llenas++; if (g[k * n + c]) llenas++; }
+    if (llenas > max) { max = llenas; mejor = i; }
+  });
+  return mejor;
+}
+
+/**
+ * El estado a partir de las jugadas: el índice tocado, `'C'` para borrar todo o `{ h: índice }`
+ * para una pista. Para poner una luna hay que pasar por el sol, así que un toque que rompe una
+ * regla solo cuenta como error si el jugador **deja** la casilla así: si el toque siguiente es
+ * sobre la misma casilla, era un paso de camino. Borrar todo no devuelve los errores ni las
+ * pistas, pero sí deja puestas las casillas reveladas.
  */
 export function estado(p, jugadas) {
   let g = inicial(p);
-  let errores = 0;
-  jugadas.forEach((i, k) => {
+  let errores = 0, pistas = 0;
+  const fijas = new Set();
+  jugadas.forEach((j, k) => {
+    if (j === BORRAR) { const h = inicial(p); fijas.forEach(i => { h[i] = p.sol[i]; }); g = h; return; }
+    if (j && typeof j === 'object') { g = g.slice(); g[j.h] = p.sol[j.h]; fijas.add(j.h); pistas++; return; }
     const antes = violaciones(p, g).size;
-    g = tocar(p, g, i);
-    if (g[i] && violaciones(p, g).size > antes && jugadas[k + 1] !== i) errores++;
+    g = tocar(p, g, j, fijas);
+    if (g[j] && violaciones(p, g).size > antes && jugadas[k + 1] !== j) errores++;
   });
   const mal = violaciones(p, g);
-  return { g, errores, mal, fin: g.every(Boolean) && mal.size === 0 };
+  return { g, errores, pistas, fijas, mal, fin: g.every(Boolean) && mal.size === 0 };
 }
 
-/** 100 menos 10 por jugada que rompe una regla, con piso de 10. */
-export const puntaje = e => (e.fin ? Math.max(10, 100 - 10 * e.errores) : 0);
-export const tarjeta = e => `☀️🌙${'❌'.repeat(e.errores)}✅`;
+/** 100 menos 10 por jugada que rompe una regla y 15 por pista, con piso de 10. */
+export const puntaje = e => (e.fin ? Math.max(10, 100 - 10 * e.errores - COSTO_PISTA * (e.pistas || 0)) : 0);
+export const tarjeta = e => `☀️🌙${'❌'.repeat(e.errores)}${'💡'.repeat(e.pistas || 0)}✅`;

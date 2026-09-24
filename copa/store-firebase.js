@@ -15,6 +15,7 @@ import {
 import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js';
 import { firebaseConfig } from '../assets/js/firebase-config.js';
 import { OP_MS, waitConnected, withTimeout } from '../assets/js/transport/errors.js';
+import { enviarReporte } from './reportes.js';
 
 const falla = code => Object.assign(new Error(code), { code });
 
@@ -123,11 +124,8 @@ export function createFirebaseStore() {
       await escribir({ [`torneos/${code}/players/${pid}/name`]: name });
     },
 
-    /** Un reporte o comentario (LIG-42). Solo el dueño lo puede leer: `feedback/` en la consola. */
-    async reportar(r) {
-      const id = push(ref(db, 'feedback')).key;
-      await escribir({ [`feedback/${id}`]: { ...r, at: serverTimestamp() } });
-    },
+    /** Un reporte o comentario (LIG-42). Va por REST, sin cuenta: ver `enviarReporte`. */
+    reportar: r => enviarReporte(r),
 
     async cambiarPin(code, pid, pinHash) {
       // El PIN nuevo invalida los celulares que ya estaban sentados como ese jugador.
@@ -135,3 +133,4 @@ export function createFirebaseStore() {
     },
   };
 }
+

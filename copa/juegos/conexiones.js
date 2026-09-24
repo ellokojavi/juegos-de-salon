@@ -3,7 +3,7 @@
  * Se eligen cuatro y se confirma; hay cuatro errores permitidos. Si quedó a una de un grupo,
  * se avisa "a una".
  */
-import { GRILLAS } from './grillas.js';
+import { GRILLAS, GRILLA_ENSAYO } from './grillas.js';
 import { azar, hash32 } from './semilla.js';
 
 export const ERRORES = 4;
@@ -13,8 +13,8 @@ export const EMOJIS = ['🟨', '🟩', '🟦', '🟪'];
 /** La grilla de la copa: una por copa (la semilla del código, no la del día). */
 export const grillaDe = codigo => GRILLAS[hash32(`${codigo}:grilla`) % GRILLAS.length];
 
-export function generar(codigo, dia, { sal = 'conexiones' } = {}) {
-  const g = grillaDe(codigo);
+export function generar(codigo, dia, { sal = 'conexiones', grilla } = {}) {
+  const g = grilla || grillaDe(codigo);
   const a = azar(codigo, dia, sal);
   return {
     id: g.id,
@@ -71,3 +71,6 @@ export const puntaje = e => Math.max(0, 25 * e.resueltos.length - 5 * e.errores)
 
 /** Una fila de colores por intento, como Connections. */
 export const tarjeta = e => e.filas.map(f => f.map(n => EMOJIS[n]).join('')).join('\n');
+
+/** La sesión de prueba juega su propia grilla, fuera del sorteo (D-103). */
+export const ensayo = (codigo, dia) => generar(codigo, dia, { sal: 'ensayo', grilla: GRILLA_ENSAYO });

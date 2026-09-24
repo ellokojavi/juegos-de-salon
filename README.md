@@ -336,7 +336,7 @@ Spec and design: [docs/juegos/julepe.md](docs/juegos/julepe.md)
 </table>
 <!-- /generado -->
 
-**In the lab for now** (D-101): the menu shows it as *coming soon*, and it is tested at [`/labs/`](https://juegosdesalon.cl/labs/), where you can practice each minigame on its own, simulate a whole cup on one computer, or run a real 3-day cup with close friends. A 🐞 button sends bug reports and comments with their context.
+**In the lab for now** (D-101): the menu shows it as *coming soon*, and it is tested at [`/labs/`](https://juegosdesalon.cl/labs/), where you can practice each minigame on its own, simulate a whole cup on one computer, or run a real 3-day cup with close friends. A 🐞 button sends bug reports and comments with their context, no login needed.
 
 Not a game but a **tournament that lasts a week**. Someone creates a cup and shares the link with the group; everyone joins with their name and a 4-digit PIN, from any phone or computer. Every day a different minigame opens, **the same one for everybody**, and it can be played **once**. Your score only matters against the others: the day hands out points by position (10, 8, 6, 5, 4, 3, 2, 1), so seven games with seven different scales weigh the same and one crushing day does not decide the cup (D-94). The final day is worth double, everyone gets one ×2 wildcard, and whoever has the most points on day 7 lifts the cup.
 
@@ -359,6 +359,8 @@ The lab also has **〰️ Zip** and **☀️ Tango** to try out. The cup does no
 - **Results stay hidden until you play**: the table and the progress chart only add up the days you can already see, so they cannot spoil today.
 - **Accounts are a name and a PIN inside one cup**, backed by Firebase anonymous auth. The PIN hash lives where nobody can read it, and the rules only let a device write for a player if it sends the same hash (D-96).
 - **The admin plays too**, and can rename, remove or re-PIN players and share ready-made messages with the group: the invite, **today's reminder** (with who is still missing), the partial table and the final summary (D-99).
+- **Every day has a practice round first** (D-103): same mechanics, different content, and it does not count. Starting the real one shows a **5-to-1 countdown** and the board and clock appear only on "¡A jugar!" (D-105). When you finish, the result **explains how the score was calculated**, line by line (D-106).
+- **Bug reports need no account** (D-104): the 🐞 form posts straight to `feedback/` and remembers your name on that device; `node tools/reportes.mjs` reads them back.
 - **Spanish only for now** (D-98): the content is Chilean and does not translate. A 3-day cup exists for testing with `?tres` (D-100), and `?prueba` plays a whole cup with no Firebase and a clock you can fast-forward.
 
 Spec and design: [docs/juegos/copa.md](docs/juegos/copa.md)
@@ -568,7 +570,7 @@ batalla-naval/              Batalla Naval (engine.js + tests, game.js, rules.js,
 linea-de-tiempo/            Línea de Tiempo (engine.js + tests, game.js, rules.js, decks/)
 ahorcado/                   El Ahorcado (engine.js + tests, game.js, rules.js, decks/)
 dudo/                       Dudo (engine.js + tests, game.js, rules.js)
-copa/                       La Copa: tournament engine, stores (Firebase and local test), juegos/ with the seven minigames
+copa/                       La Copa: tournament engine, stores (Firebase and local test), juegos/ with the minigames, desglose.js (score breakdown), reportes.js (auth-free bug reports)
 labs/                       The lab: games being tested before they reach the menu (not linked, not indexed)
 assets/js/arrastre.js       Shared drag and drop: dropping chooses, a button confirms
 assets/js/teclado.js        Shared Bulls and Cows keypad, with notes (long press to strike out a key)
@@ -585,6 +587,7 @@ tools/set-version.py        Stamps the version (import maps + stylesheets) to av
 tools/readme.py             Keeps this README current: generated blocks, retaken screenshots, staleness report
 tools/og.mjs                Social cards: the Open Graph tags of each page and their images
 tools/hechos.mjs            The app's fact sheet (games, modes, themes, tests) read from the code
+tools/reportes.mjs          Reads the La Copa bug reports from Firebase (`--dias N`, `--json`)
 tools/e2e/                  Full games in headless Chrome; the screenshots come from here (see its README)
 pt/ · en/                   Language doors: they set the language and send you to the menu
 assets/og/                  The 1200×630 images shown when a link is shared

@@ -129,10 +129,16 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | LIG-39 | Gráfico de tu posición día a día. | ✅ v0.42 |
 | LIG-40 | El panel del dueño muestra las copas creadas y su progreso. | ⏳ pendiente |
 | LIG-41 | Práctica de cada minijuego suelto, con semilla repetible, desde el laboratorio (D-101). | ✅ v0.43 |
-| LIG-42 | Reportar un problema o dejar un comentario con su contexto, desde la práctica, el tablero y el resultado. | ✅ v0.43 (se leen en la consola de Firebase) |
+| LIG-42 | Reportar un problema o dejar un comentario con su contexto, desde la práctica, el tablero y el resultado, sin cuenta (D-104). | ✅ v0.45 (se leen con `node tools/reportes.mjs`) |
 | LIG-43 | Laboratorio `/labs/`: La Copa sale del menú (Próximamente) y se prueba ahí, con la Copa de 3 días. | ✅ v0.43 |
 | LIG-44 | El panel del dueño muestra los reportes. | ⏳ pendiente |
 | LIG-45 | 〰️ Zip y ☀️ Tango en el laboratorio, con solución única, para decidir si entran al calendario. | ✅ v0.44 |
+| LIG-47 | Sesión de prueba antes de cada día: la misma mecánica con otro contenido, que no cuenta (D-103). | ✅ v0.45 |
+| LIG-48 | Zip por niveles contra el reloj (3 minutos) y aviso cuando el trazo llega al final sin pasar por todas. | ✅ v0.45 |
+| LIG-49 | Reinas: toque para la reina, toque largo para la X. Tango: ≠, borrar todo, pista (−15) y consejos. | ✅ v0.45 |
+| LIG-50 | Cuenta regresiva de 5 a 1 y "¡A jugar!" antes de cada juego; el reloj parte ahí (D-105). | ✅ v0.45 |
+| LIG-51 | Al terminar, cómo se calculó el puntaje, línea por línea (D-106). | ✅ v0.45 |
+| LIG-52 | El nombre del reporte queda guardado en el dispositivo (D-104). | ✅ v0.45 |
 | LIG-46 | El teclado, el tablero y la línea se comparten con Toque y Fama y Línea de Tiempo (`assets/js/teclado.js`, `assets/css/teclado.css`, `assets/css/linea.css`). | ✅ v0.44 |
 
 ## Requerimientos no funcionales

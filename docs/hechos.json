@@ -1,5 +1,5 @@
 {
-  "version": "0.43.0",
+  "version": "0.44.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -52,6 +52,7 @@
       "chat": false,
       "archivos": [
         "copa/cuenta.js",
+        "copa/desglose.js",
         "copa/engine.js",
         "copa/game.js",
         "copa/index.html",
@@ -78,6 +79,7 @@
         "copa/juegos/ui-tango.js",
         "copa/juegos/ui-zip.js",
         "copa/juegos/zip.js",
+        "copa/reportes.js",
         "copa/rules.js",
         "copa/store-firebase.js",
         "copa/store-local.js",
@@ -567,6 +569,7 @@
     "batalla-naval/game.js",
     "batalla-naval/rules.js",
     "copa/cuenta.js",
+    "copa/desglose.js",
     "copa/engine.js",
     "copa/game.js",
     "copa/juegos/anio.js",
@@ -592,6 +595,7 @@
     "copa/juegos/ui-tango.js",
     "copa/juegos/ui-zip.js",
     "copa/juegos/zip.js",
+    "copa/reportes.js",
     "copa/rules.js",
     "copa/store-firebase.js",
     "copa/store-local.js",

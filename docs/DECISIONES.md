@@ -1207,3 +1207,61 @@ Solitario o Dudo en el calendario juegan Reinas y Toque y Fama con letras en eso
 Tango restan 10 puntos por jugada que rompe una regla, pero en Tango pasar por el sol para llegar
 a la luna no cuenta como error: solo cuenta dejar la casilla rompiendo una regla. Zip no tiene
 errores: todos los que terminan sacan 100 y el tiempo ordena el día.
+
+## D-103 · Zip por niveles contra el reloj, sesión de prueba en cada juego, y ajustes a Reinas y Tango
+**Fecha:** 2026-09-23 · **Estado:** vigente
+**Decisión:** Lo que salió de probar la v0.44 en el laboratorio:
+- **Zip** pasa a jugarse **por niveles contra el reloj**: tres minutos de tiempo activo para
+  resolver la mayor cantidad de tableros, cada uno igual o más grande que el anterior (4 × 4 → 7 ×
+  7). El puntaje son los niveles resueltos y el desempate, cuándo se resolvió el último. Además,
+  llegar al último número sin pasar por todas las casillas **avisa cuántas faltan** y ya no deja
+  seguir: el dueño "terminaba" en el último número y el juego no decía nada.
+- **Sesión de prueba antes de cada día** ("🧪 Probar primero, no cuenta"): la misma mecánica con
+  otro contenido —otra temática para Línea y ¿En qué año?, una grilla de práctica fuera del sorteo
+  para Conexiones, tableros más chicos, un minuto de Zip— que no se guarda ni cuenta. Se arma con
+  un código derivado del de la copa (`codigoEnsayo`), así que es la misma para todos.
+- **Reinas:** un toque pone o saca la reina; el **toque largo** pone o saca la X, que solo sirve
+  para descartar casillas (como las notas de Toque y Fama). El click que cierra el toque largo se
+  traga, y solo ese: un toque rápido después no se pierde.
+- **Tango:** la marca de distintas pasa de × a **≠**; hay **borrar todo** y **pista**, los dos con
+  un segundo toque para confirmar, y **consejos** para cuando uno se atasca. La pista revela una
+  casilla (primero una mal puesta; si no hay, la vacía con más vecinas llenas) y **cuesta 15
+  puntos**, más que un error (10), porque entrega una casilla segura.
+**Por qué:** un juego diario tiene que entenderse antes de jugarlo de verdad, porque el intento
+es uno solo. Y un tablero que no dice por qué no terminó parece roto.
+
+## D-104 · Los reportes se mandan sin cuenta y se leen sin cuenta
+**Fecha:** 2026-09-23 · **Estado:** vigente
+**Decisión:** El botón 🐞 de La Copa manda el reporte por REST a `feedback/`, sin sesión anónima ni
+PIN (`copa/reportes.js`). Las reglas dejan escribir a cualquiera (una sola vez por reporte, con el
+largo validado) y **leer a cualquiera**, para que `node tools/reportes.mjs` los traiga sin la
+cuenta del dueño y se puedan revisar en la conversación.
+**Por qué:** el reporte fallaba con "Vuelve a entrar con tu nombre y tu PIN" (las reglas del nodo
+no estaban publicadas, y además el envío dependía del acceso anónimo). El dueño pidió que fuera
+libre y que Claude lo leyera cuando se le pida. Los reportes son comentarios de prueba: no llevan
+PIN ni datos de la cuenta, solo el texto, un nombre opcional y el contexto (copa, día, pantalla,
+juego, semilla, versión y navegador). El nombre, con una etiqueta a la vista, queda guardado en
+el dispositivo (`localStorage`, no en la cuenta: en el laboratorio no la hay) para el próximo
+reporte. Que se puedan leer públicamente es el precio de no tener
+servidor; si eso cambia, se cierra la lectura al UID del dueño y se leen desde el panel.
+
+## D-105 · Cuenta regresiva antes de cada juego con reloj
+**Fecha:** 2026-09-23 · **Estado:** vigente
+**Decisión:** Al tocar Empezar (el día, la sesión de prueba o la práctica) aparece una capa con
+el nombre del juego y una cuenta de 5 a 1, un número por segundo, con un tic y una vibración
+corta. Después dice **¡A jugar!** y se desvanece sola sobre el tablero. El tablero no se dibuja
+y el reloj no corre hasta ese momento. Todos los minijuegos de La Copa la llevan, porque en
+todos el tiempo desempata. Si se retoma una partida empezada, el tablero vuelve de una.
+**Por qué:** el reloj partía con el toque, mientras la persona todavía acomodaba el teléfono. La
+cuenta da el mismo punto de partida a todos.
+
+## D-106 · Al terminar, cómo se calculó el puntaje
+**Fecha:** 2026-09-23 · **Estado:** vigente
+**Decisión:** El resultado del día, el de la práctica y el de la sesión de prueba traen un
+recuadro **Cómo se calculó tu puntaje**, con la cuenta línea por línea y en frases completas
+(`copa/desglose.js`, con las mismas funciones del motor): los grupos y los errores, las reinas en
+conflicto, las pistas, los intentos, cada hito del año o cada ronda de la final. Los descuentos
+en cero no se nombran. Cierra con el total y el desempate. En la copa suma cómo el lugar del día
+se vuelve puntos (10-8-6-5-4-3-2-1) y si ese día valía el doble. El desglose no se sube a la
+copa: si el resultado se mira otro día, el recuadro muestra la regla del juego.
+**Por qué:** un puntaje suelto ("85/100") no dice qué hacer distinto mañana.

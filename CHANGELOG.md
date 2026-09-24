@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.45.0 — 2026-09-23
+- **Cuenta regresiva** (D-105): al tocar Empezar, una cuenta de 5 a 1 y "¡A jugar!". El tablero y
+  el reloj aparecen recién ahí.
+- **Cómo se calculó tu puntaje** (D-106): al terminar cada juego, la cuenta línea por línea, el
+  desempate y, en la copa, cuántos puntos da el lugar del día.
+- **Sesión de prueba en cada juego** (D-103): antes de Empezar un día aparece **🧪 Probar primero
+  (no cuenta)**. Es la misma mecánica con otro contenido y no se guarda ni suma.
+- **Zip por niveles contra el reloj**: tres minutos para resolver la mayor cantidad de tableros,
+  de 4 × 4 a 7 × 7. Si el trazo llega al último número sin pasar por todas las casillas, ahora
+  avisa cuántas faltan (antes no pasaba nada y parecía que el juego no terminaba).
+- **Reinas**: un toque pone o saca la reina; el toque largo marca la X para descartar.
+- **Tango**: la marca de distintas es ≠; se puede **borrar todo** y pedir una **pista** (cuesta 15
+  puntos), los dos con un segundo toque para confirmar, y hay **consejos** para cuando te atascas.
+- **Los reportes 🐞 ya no piden nada** (D-104): se mandan sin cuenta, el nombre queda guardado
+  en el dispositivo y se leen con
+  `node tools/reportes.mjs`. **Paso manual:** volver a publicar `firebase/database.rules.json`
+  (<https://console.firebase.google.com/u/0/project/juegos-de-salon/database/juegos-de-salon-default-rtdb/rules>).
+
 ## 0.44.0 — 2026-09-23
 - **La Copa reusa la UX de los juegos que ya existen** (D-102), a pedido del dueño después de
   probarla en el laboratorio:

@@ -123,3 +123,17 @@ export const GRILLAS = [
     ],
   },
 ];
+
+/**
+ * La grilla de la sesión de prueba (D-103): más fácil y fuera del sorteo, para que probar
+ * Conexiones nunca adelante la grilla de verdad de una copa.
+ */
+export const GRILLA_ENSAYO = {
+  id: 'ensayo',
+  grupos: [
+    { nombre: 'Colores', palabras: ['ROJO', 'AZUL', 'VERDE', 'AMARILLO'] },
+    { nombre: 'Frutas', palabras: ['MANZANA', 'PERA', 'UVA', 'PLÁTANO'] },
+    { nombre: 'Animales de la granja', palabras: ['VACA', 'GALLINA', 'CERDO', 'OVEJA'] },
+    { nombre: 'Tienen teclas', palabras: ['PIANO', 'TECLADO', 'CALCULADORA', 'CONTROL'] },
+  ],
+};
