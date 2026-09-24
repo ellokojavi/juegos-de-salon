@@ -147,7 +147,7 @@ test('reinas: solución única, reglas y puntaje', () => {
     assert.ok(reinas.resuelto(p, marcas));
   }
   const p = reinas.generar('KQRST', 4);
-  const toques = i => [i, i]; // vacío → marca → reina
+  const toques = i => [i]; // un toque pone la reina (D-103)
   const bien = p.sol.flatMap((col, r) => toques(r * p.n + col));
   let e = reinas.estado(p, bien);
   assert.ok(e.fin); assert.equal(e.errores, 0); assert.equal(reinas.puntaje(e), 100);
@@ -157,6 +157,13 @@ test('reinas: solución única, reglas y puntaje', () => {
   assert.equal(e.errores, 1);
   assert.ok(e.conflictos.has(vecina));
   assert.equal(reinas.puntaje({ fin: true, errores: 12 }), 10);
+  // El toque largo pone y saca la X, y no cuenta como error ni como reina
+  e = reinas.estado(p, [reinas.toqueLargo(5), reinas.toqueLargo(6), reinas.toqueLargo(6)]);
+  assert.equal(e.marcas[5], reinas.MARCA); assert.equal(e.marcas[6], reinas.VACIO); assert.equal(e.errores, 0);
+  // Un toque sobre una X pone la reina; otro la saca
+  e = reinas.estado(p, [reinas.toqueLargo(5), 5]);
+  assert.equal(e.marcas[5], reinas.REINA);
+  assert.equal(reinas.estado(p, [5, 5]).marcas[5], reinas.VACIO);
 });
 
 test('tango: solución única, reglas y puntaje', () => {
@@ -171,12 +178,24 @@ test('tango: solución única, reglas y puntaje', () => {
   p.sol.forEach((v, i) => { if (!tango.esDada(p, i)) { jugadas.push(i); if (v === tango.LUNA) jugadas.push(i); } });
   const e = tango.estado(p, jugadas);
   assert.ok(e.fin); assert.equal(tango.puntaje(e), 100);
+  // Borrar todo deja solo las dadas; una pista revela una casilla correcta, fija, y cuesta 15
+  const conPista = tango.estado(p, [jugadas[0], tango.BORRAR, { h: tango.pista(p, tango.inicial(p)) }]);
+  assert.equal(conPista.pistas, 1);
+  assert.equal(conPista.g.filter(Boolean).length, Object.keys(p.dadas).length + 1);
+  const fija = [...conPista.fijas][0];
+  assert.equal(conPista.g[fija], p.sol[fija]);
+  assert.equal(tango.estado(p, [{ h: fija }, fija]).g[fija], p.sol[fija]);   // la revelada no se toca
+  assert.equal(tango.puntaje({ fin: true, errores: 1, pistas: 2 }), 60);
+  // La pista arregla primero una casilla mal puesta
+  const mal = tango.inicial(p); const libre = p.sol.findIndex((v, i) => p.dadas[i] === undefined);
+  mal[libre] = p.sol[libre] === tango.SOL ? tango.LUNA : tango.SOL;
+  assert.equal(tango.pista(p, mal), libre);
   // tres soles seguidos rompen la regla
   const g = new Array(36).fill(tango.VACIO); g[0] = g[1] = g[2] = tango.SOL;
   assert.ok(tango.violaciones({ n: 6, marcas: [] }, g).has(0));
 });
 
-test('zip: solución única y trazo', () => {
+test('zip: solución única, trazo y niveles', () => {
   for (const c of CODIGOS) {
     const p = zip.generar(c, 4);
     assert.equal(zip.resolver(p, 3), 1, c);
@@ -185,9 +204,35 @@ test('zip: solución única y trazo', () => {
   }
   const p = zip.generar('KQRST', 4);
   assert.ok(zip.estado(p, p.sol).fin);
-  assert.equal(zip.puntaje(zip.estado(p, p.sol)), 100);
   assert.ok(!zip.valido(p, p.sol.slice(1)));          // no parte en el 1
   assert.ok(!zip.puedeIr(p, p.sol.slice(0, 3), p.sol[0])); // no se vuelve a pisar
+  // Llegar al último número sin pasar por todas: se avisa cuántas faltan y no se sigue
+  const q = { n: 3, numeros: { 0: 1, 2: 2 } };        // 1 arriba a la izquierda, 2 arriba a la derecha
+  const corto = [0, 1, 2];
+  assert.equal(zip.estado(q, corto).faltan, 6);
+  assert.ok(!zip.puedeIr(q, corto, 5));
+  // Los niveles: los mismos para todos, del más chico al más grande
+  assert.deepEqual(zip.nivel('KQRST', 1, 0), zip.nivel('KQRST', 1, 0));
+  assert.equal(zip.nivel('KQRST', 1, 0).n, 4);
+  assert.equal(zip.nivel('KQRST', 1, 20).n, 7);
+  for (let k = 1; k < zip.TAMANOS.length; k++) assert.ok(zip.TAMANOS[k] >= zip.TAMANOS[k - 1]);
+  assert.equal(zip.puntaje({ hechos: 4 }), 4);
+  assert.equal(zip.TIEMPO_MS, 180000);
+});
+
+test('sesión de prueba: otro contenido que el del día (D-103)', async () => {
+  const { JUEGOS, codigoEnsayo } = await import('./index.js');
+  for (const c of CODIGOS) {
+    assert.notEqual(codigoEnsayo(c), c);
+    assert.match(codigoEnsayo(c), /^[A-HJ-NP-Z]{5}$/);
+    const real = JUEGOS.linea.generar(c, 1), prueba = JUEGOS.linea.ensayo(c, 1);
+    assert.notEqual(prueba.tema, real.tema);
+    assert.notEqual(JUEGOS.anio.ensayo(c, 6).tema, JUEGOS.anio.generar(c, 6).tema);
+    assert.equal(JUEGOS.conexiones.ensayo(c, 3).id, 'ensayo');
+    assert.notEqual(JUEGOS.letras.ensayo(c, 5).secreto, JUEGOS.letras.generar(c, 5).secreto);
+    assert.equal(JUEGOS.zip.ensayo(c, 1).tiempo, 60000);
+    for (const id of Object.keys(JUEGOS)) assert.ok(JUEGOS[id].ensayo, `${id} sin sesión de prueba`);
+  }
 });
 
 test('letras: palabras válidas, pistas por letra y puntaje', () => {
@@ -226,5 +271,32 @@ test('final: cinco rondas, de 0 a 500', () => {
   assert.equal(final.puntaje({}), 0);
   assert.equal(final.tarjeta(perfecto), '⏳100 🔢100 👑100 🔤100 📅100');
 });
+
+// El desglose del puntaje explica la cuenta con frases completas (D-106)
+{
+  const { desglose } = await import('../desglose.js');
+  const { LOCALES } = await import('../rules.js');
+  const T = LOCALES.es;
+  const fmt = (t, v) => t.replace(/\{(\w+)\}/g, (_, k) => v[k]);
+  const mmss = ms => `${Math.floor(ms / 60000)}:${String(Math.floor(ms / 1000) % 60).padStart(2, '0')}`;
+  const pa = anio.generar('KQRST', 3);
+  const casos = {
+    numero: numero.estado(numero.generar('KQRST', 2), ['1234', numero.generar('KQRST', 2).secreto]),
+    conexiones: { resueltos: [0, 1, 2], errores: 2 },
+    reinas: { fin: true, errores: 1 },
+    tango: { fin: true, errores: 2, pistas: 1 },
+    zip: { hechos: 3, ultimo: 125000 },
+    anio: anio.estado(pa, pa.hitos.map(h => h.year + 3)),
+    final: { reinas: { fin: true, errores: 0 } },
+  };
+  for (const [id, e] of Object.entries(casos)) {
+    const l = desglose(id, e, { T, fmt, mmss });
+    assert.ok(l.length && l.every(x => typeof x === 'string' && x.length > 10 && !x.includes('{') && !x.includes('undefined')), id);
+  }
+  assert.match(desglose('tango', casos.tango, { T, fmt, mmss }).join(' '), /se restan 20 .*1 pista, que resta 15/);
+  assert.match(desglose('zip', casos.zip, { T, fmt, mmss }).join(' '), /3 niveles.*2:05/);
+  assert.deepEqual(desglose('reinas', { fin: false, errores: 0 }, { T, fmt, mmss }), [T.bdNotSolved]);
+  n++;
+}
 
 console.log(`copa/juegos: ${n} tests OK`);
