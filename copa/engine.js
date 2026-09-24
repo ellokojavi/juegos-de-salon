@@ -342,6 +342,16 @@ export function evolucion(L, yo, now) {
   return { dias, filas: activos(L).map(j => ({ pid: j.pid, name: j.name, lugares: lugares[j.pid] || [] })) };
 }
 
+/**
+ * Cuántos juegos menos que el que más jugó tiene cada fila de la tabla (D-126), contando solo
+ * los días que se ven: para marcar "(-1J)" en la tabla parcial que se comparte.
+ */
+export function menosJuegos(filas) {
+  const jugados = f => Object.values(f.dias || {}).filter(x => !x.oculto && x.jugo).length;
+  const max = Math.max(0, ...filas.map(jugados));
+  return Object.fromEntries(filas.map(f => [f.pid, max - jugados(f)]));
+}
+
 /** Quiénes no han jugado un día que sigue abierto (para el mensaje del admin y el tablero). */
 export function faltan(L, d, now) {
   if (!abierto(L.meta, d, now)) return [];
