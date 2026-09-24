@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.59.1 — 2026-09-24
+- "Compartir como imagen" queda centrado y separado de la nota del gráfico.
+
 ## 0.59.0 — 2026-09-24
 - **Compartir la tabla como imagen** (D-126): bajo el gráfico, una imagen con el gráfico de
   colores, la tabla y el link, lista para WhatsApp.

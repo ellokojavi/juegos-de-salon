@@ -348,3 +348,6 @@ input.fecha { width: 100%; min-height: 48px; border-radius: 12px; border: 1px so
 .link-estado { display: block; margin-top: 6px; font-size: 0.85rem; overflow-wrap: anywhere; }
 .link-estado.ok { color: var(--lime); }
 .link-estado.mal { color: var(--yellow); }
+
+/* Compartir como imagen: separado de la nota y centrado en la caja del gráfico (D-126) */
+#btn-imagen { display: flex; margin: 16px auto 4px; }
