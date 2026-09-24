@@ -14,7 +14,7 @@ import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { trackStart, versionOf } from '../assets/js/transport/stats.js';
 import {
   CALENDARIOS, MAX_JUGADORES, CODIGO, esCodigo, codigoAlAzar, pidAlAzar, limpiarNombre, claveNombre, esPin, hashPin,
-  fechaEn, sumarDias, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta, estadoDia, comodinDe, moverInicio, sinEmpezar, pasarDia, MAX_DIAS_INICIO,
+  fechaEn, sumarDias, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta, estadoDia, comodinDe, moverInicio, sinEmpezar, pasarDia, MAX_DIAS_INICIO, faltaGente,
   medianoche, puedeComodin, multiplicador, posicionesDelDia, tabla, faltan, medallas, evolucion, visibleDia, reloj, mmss, juegoDelDia, esFinal, activos, ZONA,
 } from './engine.js';
 import { GAME_ID, LOCALES, MINIJUEGOS } from './rules.js';
@@ -73,7 +73,7 @@ function errorDe(e) {
     pin: 'errPinWrong', 'nombre-repetido': 'errRepetido', llena: 'errLlena', 'no-existe': 'errNoExiste',
     ventana: 'errVentana', 'ya-jugado': 'errYaJugado', comodin: 'errComodin', permiso: 'errPermiso',
     config: 'errConfig', offline: 'errOffline', busy: 'errOffline', cerrada: 'errCerrada',
-    reporte: 'errReport', empezada: 'errEmpezada',
+    reporte: 'errReport', empezada: 'errEmpezada', faltan: 'errFaltan',
   };
   if (!mapa[code]) console.error(e);
   return T[mapa[code] || 'errNet'];
@@ -413,6 +413,8 @@ function tarjetaDia(d, rotulo) {
   const falta = faltan(Lc, d, now);
   let accion;
   if (est === 'jugado') accion = el('button', { class: 'btn btn--cyan btn--sm', onClick: () => { SFX.tap(); resultado(d); } }, T.seeResult);
+  // Con el admin solo no se juega (D-118): falta con quién competir
+  else if ((est === 'hoy' || est === 'gracia') && faltaGente(Lc)) accion = el('div', { class: 'aviso', id: 'falta-gente' }, T.needSecond);
   else if (est === 'hoy' || est === 'gracia') accion = el('button', { class: 'btn btn--yellow', 'data-dia': d, onClick: () => { SFX.tap(); antesDeJugar(d); } }, `${J.emoji} ${T.play}`);
   else if (est === 'en-curso') accion = el('button', { class: 'btn btn--yellow', 'data-dia': d, onClick: () => { SFX.tap(); jugar(d); } }, `${J.emoji} ${T.resume}`);
   return el('div', { class: `panel dia-card ${est}` },
@@ -465,7 +467,7 @@ function misDias(d, now) {
       detalle = visibleDia(Lc, k, S.yo, now) && pos ? `${r.r || r.s} · ${pos.pos}º · +${pos.pts * multiplicador(Lc, k, S.yo)} ${T.pts}` : `${r.r || r.s}`;
     } else if (est === 'gracia') {
       detalle = T.lastDay;
-      accion = el('button', { class: 'btn btn--yellow btn--sm', 'data-dia': k, onClick: () => { SFX.tap(); antesDeJugar(k); } }, `${J.emoji} ${T.play}`);
+      accion = faltaGente(Lc) ? null : el('button', { class: 'btn btn--yellow btn--sm', 'data-dia': k, onClick: () => { SFX.tap(); antesDeJugar(k); } }, `${J.emoji} ${T.play}`);
     } else if (est === 'en-curso') {
       detalle = T.lastDay;
       accion = el('button', { class: 'btn btn--yellow btn--sm', 'data-dia': k, onClick: () => { SFX.tap(); jugar(k); } }, `${J.emoji} ${T.resume}`);
@@ -559,7 +561,7 @@ function tablero() {
       esAdmin() ? el('button', { class: 'btn btn--ghost btn--sm', id: 'btn-admin', onClick: () => { SFX.tap(); admin(); } }, T.adminTab) : null)));
 
   if (terminada(meta, now)) poner(body, podio());
-  if (d === 0) poner(body, el('div', { class: 'panel center' }, el('p', { class: 'lead' }, T.beforeSub)));
+  if (d === 0) poner(body, el('div', { class: 'panel center' }, el('p', { class: 'lead' }, faltaGente(L()) ? T.needSecondBefore : T.beforeSub)));
 
   // Tus días: el historial, el de hoy habilitado y los que vienen deshabilitados
   poner(body, misDias(d, now));
@@ -773,7 +775,8 @@ function admin({ forzar = false } = {}) {
     poner(body, el('div', { class: 'panel stack lab-panel', id: 'admin-lab' },
       el('p', { class: 'lead', style: 'margin:0' }, `🧪 ${T.labTitle}`),
       el('p', { class: 'muted', style: 'margin:0' }, T.labLead),
-      accion(`⏭️ ${siguiente > meta.days ? T.labEnd : fmt(T.labNext, { d: siguiente })}`, 'btn-pasar-dia', async () => {
+      faltaGente(Lc) ? el('div', { class: 'aviso', id: 'lab-falta-gente' }, T.labNeedSecond) : null,
+      faltaGente(Lc) ? null : accion(`⏭️ ${siguiente > meta.days ? T.labEnd : fmt(T.labNext, { d: siguiente })}`, 'btn-pasar-dia', async () => {
         if (!confirm(siguiente > meta.days ? T.labEndConfirm : fmt(T.labNextConfirm, { d: siguiente, hoy: Math.max(d, 1) }))) throw { code: 'cancelado' };
         await store.reprogramar(S.code, pasarDia(meta));
         SFX.reveal(); toast(siguiente > meta.days ? T.labEndDone : fmt(T.labNextDone, { d: siguiente }));
@@ -899,7 +902,9 @@ function antesDeJugar(d) {
         try { await store.comodin(S.code, d, S.yo); SFX.king(); antesDeJugar(d); } catch (e) { avisoError(err, errorDe(e)); ev.currentTarget.disabled = false; }
       } }, `🃏 ${T.wildUse}`));
   }
-  const empezar = el('button', { class: 'btn btn--yellow', id: 'btn-empezar' }, `${J.emoji} ${T.start}`);
+  const sinGente = faltaGente(Lc);
+  const empezar = el('button', { class: 'btn btn--yellow', id: 'btn-empezar', disabled: sinGente }, `${J.emoji} ${T.start}`);
+  if (sinGente) avisoError(err, T.needSecond);
   empezar.addEventListener('click', async () => {
     SFX.tap();
     empezar.disabled = true;
