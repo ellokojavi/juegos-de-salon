@@ -1470,3 +1470,16 @@ su código al azar, y `torneoAlias/<alias>` = `{ code, hasta }` apunta a ella.
   pruebe `?pirata` la ve y, si la inscripción está abierta, se puede inscribir). La guía del admin
   le recuerda cerrar la inscripción cuando estén todos.
 **Por qué:** el link es la invitación; tiene que poder decirse en voz alta.
+
+## D-122 · Las reglas de Firebase se publican con un script
+**Fecha:** 2026-09-24 · **Estado:** vigente
+**Decisión:** `node tools/reglas.mjs publicar` sube `firebase/database.rules.json` y la vuelve a
+leer para verificar que quedó; `revisar` dice si lo publicado es lo del repo. Usa una **llave de
+cuenta de servicio** que el dueño genera una vez en la consola y guarda fuera del repo
+(`~/.config/juegos-de-salon/firebase-admin.json`, carpeta 700, archivo 600; `.gitignore` la
+excluye por si acaso). Con ella firma un JWT, pide un token a Google y escribe
+`.settings/rules.json`, lo mismo que el botón Publicar. No entra a la consola ni usa contraseñas.
+**Por qué:** el paso manual de copiar y pegar las reglas se repetía en casi cada versión, y
+mientras no se hacía, lo nuevo fallaba en producción sin que nadie se enterara.
+**Cuidado:** esa llave da acceso de administrador a todo el proyecto. Si se filtra, se revoca en
+la misma pantalla de la consola donde se creó.
