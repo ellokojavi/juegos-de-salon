@@ -336,7 +336,7 @@ export function faltan(L, d, now) {
 
 /**
  * Las medallas del cierre: campeón, más días ganados, la mejor remontada (más puestos subidos
- * desde la mitad de la copa) y el farolito rojo. Con menos de tres jugadores no hay
+ * desde la mitad de la copa) y "a la liga de descenso" (el último). Con menos de tres jugadores no hay
  * remontada ni farolito: con dos, el último es simplemente el segundo.
  */
 export function medallas(L) {

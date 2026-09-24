@@ -27,7 +27,7 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
 | Resultados ocultos | Los puntajes de un día se ven después de jugarlo o cuando cierra. La tabla y el gráfico tampoco lo delatan: suman solo los días que ya puedes ver. |
 | Inscripción | Abierta hasta que empieza la final. Los días que ya cerraron quedan con 0. |
 | Tabla | Suma de puntos. Desempata quien ganó más días y después quien quedó mejor en la final. |
-| Medallas | Campeón, más días ganados, la remontada (más puestos subidos desde la mitad) y el farolito rojo. |
+| Medallas | Campeón, más días ganados, la remontada (más puestos subidos desde la mitad) y "a la liga de descenso" (el último). |
 
 ## Los minijuegos
 

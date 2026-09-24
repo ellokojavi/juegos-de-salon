@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.55.1 — 2026-09-24
+- **La Copa:** la medalla del último ya no es "🏮 Farolito rojo" sino "📉 A la liga de descenso",
+  en la pantalla final y en el resumen que se comparte.
+
 ## 0.55.0 — 2026-09-24
 - **El nombre de la copa llega a 40 caracteres** (se recortaba a 20) y el campo muestra cuántos
   van; los nombres de jugador también tienen contador (D-119).
