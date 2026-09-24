@@ -35,7 +35,7 @@ export const GRILLAS = [
   {
     id: 'notas',
     grupos: [
-      { nombre: 'Piezas de ajedrez', palabras: ['ALFIL', 'CABALLO', 'PEÓN', 'DAMA'] },
+      { nombre: 'Piezas de ajedrez', palabras: ['ALFIL', 'CABALLO', 'PEÓN', 'TORRE'] },
       { nombre: 'Unidades de peso', palabras: ['ONZA', 'GRAMO', 'QUINTAL', 'TONELADA'] },
       { nombre: 'Monedas', palabras: ['LIBRA', 'EURO', 'YEN', 'RUPIA'] },
       { nombre: 'Empiezan con una nota musical', palabras: ['DOMINGO', 'SOLAPA', 'MIRADA', 'FAROL'] },
