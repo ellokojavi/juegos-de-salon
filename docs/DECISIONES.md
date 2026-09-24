@@ -1513,3 +1513,17 @@ la propia va más gruesa y encima. Debajo, un botón por jugador con su color: t
 punto) destaca su línea y apaga las demás; tocarlo otra vez, vuelven todas. Sigue mostrando solo
 los días que el jugador ya puede ver (no delata lo de hoy).
 **Por qué:** con el resto en gris no se podía seguir la carrera de nadie más que la propia.
+
+## D-126 · La tabla parcial como imagen, y "(-1J)" para quien lleva menos juegos
+**Fecha:** 2026-09-24 · **Estado:** vigente
+**Decisión:**
+- Bajo el gráfico de posiciones, **"📤 Compartir como imagen"** dibuja en el celular (canvas, con
+  las fuentes de la app) una imagen de 1080 px de ancho: el nombre de la copa, "Tabla de
+  posiciones · día N de 7", el gráfico con el color de cada jugador, la tabla y el link. Se
+  comparte como archivo con el menú del sistema (WhatsApp, etc.); donde no se puede compartir
+  archivos (computador), se descarga.
+- Es la **tabla parcial tal como la ve quien comparte**. Para que no engañe, quien lleva menos
+  juegos que el que más jugó va marcado junto a su nombre: **"Tomario (-1J)"** (`menosJuegos`).
+  La misma marca va en el mensaje de texto "Tabla parcial" del admin.
+**Por qué:** una imagen se lee de un vistazo en el grupo; y en una tabla a mitad de día, el que
+va último puede ser solo el que todavía no juega.

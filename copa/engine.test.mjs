@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {
   CALENDARIOS, PUNTOS, esCodigo, codigoAlAzar, pidAlAzar, PID, limpiarNombre, claveNombre, esPin, hashPin,
   fechaEn, sumarDias, medianoche, ventanas, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta,
-  aliasLimpio, esAlias, aliasHasta, ALIAS_LIBRE_MS,
+  aliasLimpio, esAlias, menosJuegos, aliasHasta, ALIAS_LIBRE_MS,
   estadoDia, puedeComodin, multiplicador, posicionesDelDia, tabla, faltan, medallas, reloj, mmss, juegoDelDia, evolucion,
 } from './engine.js';
 
@@ -234,6 +234,15 @@ test('reloj activo', () => {
   assert.equal(reloj.leer(r, 12000), 5000);
   assert.equal(mmss(65000), '1:05');
   assert.equal(mmss(3725000), '1:02:05');
+});
+
+test('juegos de menos en la tabla parcial (D-126)', () => {
+  const filas = [
+    { pid: 'a', dias: { 1: { jugo: true }, 2: { jugo: true } } },
+    { pid: 'b', dias: { 1: { jugo: true }, 2: { jugo: false } } },
+    { pid: 'c', dias: { 1: { jugo: false }, 2: { oculto: true, jugo: true } } },
+  ];
+  assert.deepEqual(menosJuegos(filas), { a: 0, b: 1, c: 2 });
 });
 
 test('el link propio: se normaliza y no se confunde con un código (D-121)', () => {

@@ -15,7 +15,7 @@ import { trackStart, versionOf } from '../assets/js/transport/stats.js';
 import {
   CALENDARIOS, MAX_JUGADORES, COPA_MAX, aliasLimpio, esAlias, CODIGO, esCodigo, codigoAlAzar, pidAlAzar, limpiarNombre, claveNombre, esPin, hashPin,
   fechaEn, sumarDias, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta, estadoDia, comodinDe, moverInicio, sinEmpezar, pasarDia, MAX_DIAS_INICIO, faltaGente,
-  medianoche, puedeComodin, multiplicador, posicionesDelDia, tabla, faltan, medallas, evolucion, visibleDia, reloj, mmss, juegoDelDia, esFinal, activos, ZONA,
+  medianoche, menosJuegos, puedeComodin, multiplicador, posicionesDelDia, tabla, faltan, medallas, evolucion, visibleDia, reloj, mmss, juegoDelDia, esFinal, activos, ZONA,
 } from './engine.js';
 import { GAME_ID, LOCALES, MINIJUEGOS } from './rules.js';
 import { createCuenta } from './cuenta.js';
@@ -555,6 +555,10 @@ function misDias(d, now) {
 /** Un color por jugador en el gráfico (D-125): los de la app, bien distintos entre sí. */
 const COLORES_GRAFICO = ['#2ee6d6', '#ffd23f', '#ff2e88', '#9dff3a', '#ff7a1a', '#a78bff', '#5ab0ff', '#ff9ecb', '#e8e8e8', '#c7a36b'];
 
+/** Los jugadores por orden de inscripción, y el color fijo de cada uno (D-125). */
+const llegada = Lc => Object.entries(Lc.players || {}).sort((a, b) => (a[1].at || 0) - (b[1].at || 0)).map(([pid]) => pid);
+const colorDe = (Lc, pid) => COLORES_GRAFICO[Math.max(0, llegada(Lc).indexOf(pid)) % COLORES_GRAFICO.length];
+
 function grafico(now) {
   const Lc = L(), { meta } = Lc;
   const ev = evolucion(Lc, S.yo, now);
@@ -579,8 +583,8 @@ function grafico(now) {
   }
   for (let k = 1; k <= meta.days; k++) svg.append(svgEl('text', { x: x(k), y: H - 6, class: 'g-eje', 'text-anchor': 'middle' }, fmt(T.dayShort, { d: k })));
   // Cada jugador con su color (D-125), fijo por orden de inscripción; tu línea, más gruesa y encima
-  const porLlegada = Object.entries(Lc.players || {}).sort((a, b) => (a[1].at || 0) - (b[1].at || 0)).map(([pid]) => pid);
-  const color = pid => COLORES_GRAFICO[Math.max(0, porLlegada.indexOf(pid)) % COLORES_GRAFICO.length];
+  const porLlegada = llegada(Lc);
+  const color = pid => colorDe(Lc, pid);
   const orden = [...ev.filas.filter(f => f.pid !== S.yo), ...ev.filas.filter(f => f.pid === S.yo)];
   const grupos = {};
   for (const f of orden) {
@@ -614,7 +618,11 @@ function grafico(now) {
   const chips = el('div', { class: 'grafico-chips' }, ev.filas.slice().sort((a, b) => porLlegada.indexOf(a.pid) - porLlegada.indexOf(b.pid)).map(f =>
     el('button', { type: 'button', class: 'g-chip' + (f.pid === S.yo ? ' mia' : ''), 'data-pid': f.pid, style: `--c:${color(f.pid)}`, onClick: () => { SFX.tap(); destacar(f.pid); } },
       el('span', { class: 'g-color', 'aria-hidden': 'true' }), f.pid === S.yo ? fmt(T.progressYou, { name: f.name }) : f.name)));
-  return el('div', { class: 'panel' }, el('p', { class: 'lead', style: 'margin-bottom:8px' }, T.progressTitle), svg, chips, leyenda);
+  return el('div', { class: 'panel' }, el('p', { class: 'lead', style: 'margin-bottom:8px' }, T.progressTitle), svg, chips, leyenda,
+    el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-imagen', onClick: async ev2 => {
+      SFX.tap(); const b = ev2.currentTarget; b.disabled = true;
+      try { await compartirImagen(); } finally { b.disabled = false; }
+    } }, `📤 ${T.shareImage}`));
 }
 
 function tablero() {
@@ -754,11 +762,103 @@ function mensajeTabla() {
   const d = Math.min(diaActual(meta, now), meta.days);
   // La tabla que se comparte es la que ve el admin: no delata días que él no ha jugado
   const filas = tabla(Lc, S.yo, now);
-  const lista = filas.map(f => `${['🥇', '🥈', '🥉'][f.lugar - 1] || `${f.lugar}.`} ${f.name} · ${f.total} pts`).join('\n');
+  // Quien lleva menos juegos va marcado "(-1J)": la tabla parcial no lo castiga, lo explica (D-126)
+  const menos = menosJuegos(filas);
+  const lista = filas.map(f => `${['🥇', '🥈', '🥉'][f.lugar - 1] || `${f.lugar}.`} ${nombreConJuegos(f.name, menos[f.pid])} · ${f.total} pts`).join('\n');
   const falta = faltan(Lc, d, now);
   let txt = fmt(T.shareTableText, { copa: meta.name, d, tabla: lista });
   if (falta.length) txt += `\n\n${fmt(T.shareTableMissing, { d, names: falta.map(j => j.name).join(', ') })}`;
   return txt;
+}
+
+/** "Tomario (-1J)": el nombre con cuántos juegos menos lleva (D-126). */
+const nombreConJuegos = (name, n) => (n > 0 ? fmt(T.fewerGames, { name, n }) : name);
+
+/**
+ * La tabla parcial como imagen para compartir (D-126): el gráfico de posiciones con los colores
+ * de cada jugador, la tabla con las marcas de juegos de menos y el link. Se dibuja en un canvas
+ * con las fuentes de la app y se comparte como archivo; si el celular no puede, se descarga.
+ */
+async function compartirImagen() {
+  const Lc = L(), { meta } = Lc;
+  const now = ahora();
+  const filas = tabla(Lc, S.yo, now);
+  const menos = menosJuegos(filas);
+  const ev = evolucion(Lc, S.yo, now);
+  const d = Math.min(Math.max(diaActual(meta, now), 1), meta.days);
+  const W = 1080, n = filas.length;
+  const altoGraf = 90 + Math.max(1, n - 1) * 70 + 70, altoTabla = n * 78;
+  const H = Math.max(1080, 250 + altoGraf + 60 + altoTabla + 150);
+  const cv = document.createElement('canvas');
+  cv.width = W; cv.height = H;
+  const c = cv.getContext('2d');
+  try { await document.fonts?.ready; } catch (_) { /* nada */ }
+  const fuente = (peso, px, familia = 'Nunito, system-ui, sans-serif') => `${peso} ${px}px ${familia}`;
+  // Fondo como el de la app
+  const fondo = c.createLinearGradient(0, 0, W, H);
+  fondo.addColorStop(0, '#3a0d5c'); fondo.addColorStop(1, '#120a2e');
+  c.fillStyle = fondo; c.fillRect(0, 0, W, H);
+  // Títulos
+  c.textAlign = 'center';
+  c.fillStyle = '#ffd23f';
+  // El nombre de la copa, achicando la letra hasta que quepa (llega a 40 caracteres)
+  let tam = 76;
+  do { c.font = fuente(400, tam, 'Bangers, Impact, sans-serif'); tam -= 4; } while (c.measureText(`🏆 ${meta.name}`).width > W - 100 && tam > 30);
+  c.fillText(`🏆 ${meta.name}`, W / 2, 120);
+  c.fillStyle = '#ffffff'; c.font = fuente(800, 40);
+  c.fillText(fmt(T.imageSubtitle, { d, n: meta.days }), W / 2, 185);
+  // El gráfico
+  const g0 = 250, izq = 110, der = 250, fila = 70;
+  const color = pid => colorDe(Lc, pid);
+  const x = k => izq + (meta.days === 1 ? 0 : ((k - 1) * (W - izq - der)) / (meta.days - 1));
+  const y = l => g0 + 40 + (l - 1) * fila;
+  c.lineWidth = 2; c.strokeStyle = 'rgba(255,255,255,0.10)'; c.fillStyle = 'rgba(255,255,255,0.7)'; c.font = fuente(800, 28);
+  const nf = Math.max(1, ev.filas.length);
+  for (let l = 1; l <= nf; l++) { c.beginPath(); c.moveTo(izq, y(l)); c.lineTo(W - der, y(l)); c.stroke(); c.textAlign = 'right'; c.fillText(`${l}º`, izq - 22, y(l) + 10); }
+  c.textAlign = 'center';
+  for (let k = 1; k <= meta.days; k++) c.fillText(fmt(T.dayShort, { d: k }), x(k), y(nf) + 60);
+  const orden = [...ev.filas.filter(f => f.pid !== S.yo), ...ev.filas.filter(f => f.pid === S.yo)];
+  for (const f of orden) {
+    if (!f.lugares.length) continue;
+    const pts = f.lugares.map((l, i) => [x(ev.dias[i]), y(l)]);
+    c.strokeStyle = color(f.pid); c.fillStyle = color(f.pid); c.lineWidth = f.pid === S.yo ? 9 : 6; c.lineJoin = 'round';
+    c.beginPath(); pts.forEach(([px, py], i) => (i ? c.lineTo(px, py) : c.moveTo(px, py))); c.stroke();
+    pts.forEach(([px, py]) => { c.beginPath(); c.arc(px, py, f.pid === S.yo ? 13 : 10, 0, Math.PI * 2); c.fill(); });
+    const [lx, ly] = pts[pts.length - 1];
+    c.textAlign = 'left'; c.font = fuente(900, 28);
+    const corto = f.name.length > 10 ? `${f.name.slice(0, 9)}…` : f.name;
+    c.fillText(`${corto} ${f.lugares[f.lugares.length - 1]}º`, lx + 24, ly + 10);
+  }
+  // La tabla
+  let ty = g0 + altoGraf + 60;
+  for (const f of filas) {
+    c.fillStyle = f.pid === S.yo ? 'rgba(46,230,214,0.16)' : 'rgba(0,0,0,0.25)';
+    c.beginPath(); c.roundRect?.(90, ty - 52, W - 180, 66, 18); if (!c.roundRect) c.rect(90, ty - 52, W - 180, 66); c.fill();
+    c.textAlign = 'left'; c.font = fuente(900, 36); c.fillStyle = '#ffffff';
+    c.fillText(['🥇', '🥈', '🥉'][f.lugar - 1] || `${f.lugar}.`, 115, ty);
+    c.fillStyle = color(f.pid); c.beginPath(); c.arc(205, ty - 12, 11, 0, Math.PI * 2); c.fill();
+    c.fillStyle = '#ffffff'; c.font = fuente(800, 36);
+    c.fillText(nombreConJuegos(f.name, menos[f.pid]), 232, ty);
+    c.textAlign = 'right'; c.font = fuente(900, 38); c.fillStyle = '#ffd23f';
+    c.fillText(`${f.total} pts`, W - 115, ty);
+    ty += 78;
+  }
+  if (Object.values(menos).some(x => x > 0)) { c.textAlign = 'center'; c.font = fuente(700, 28); c.fillStyle = 'rgba(255,255,255,0.7)'; c.fillText(T.fewerGamesNote, W / 2, ty + 10); }
+  // El link
+  c.textAlign = 'center'; c.font = fuente(800, 34); c.fillStyle = '#2ee6d6';
+  c.fillText(urlPublica(S.code).replace(/^https?:\/\//, ''), W / 2, H - 60);
+  const blob = await new Promise(r => cv.toBlob(r, 'image/png'));
+  const archivo = new File([blob], `copa-${meta.alias || S.code.toLowerCase()}-dia-${d}.png`, { type: 'image/png' });
+  try {
+    if (navigator.canShare?.({ files: [archivo] })) {
+      await navigator.share({ files: [archivo], title: meta.name, text: `${fmt(T.shareTableText, { copa: meta.name, d, tabla: '' }).trim()}\n\n🔗 ${urlPublica(S.code)}` });
+      return;
+    }
+  } catch (e) { if (e?.name === 'AbortError') return; }
+  // Sin compartir archivos (computador): se descarga
+  const a = el('a', { href: URL.createObjectURL(blob), download: archivo.name });
+  document.body.append(a); a.click(); a.remove();
+  toast(T.imageDownloaded);
 }
 
 function mensajeFinal() {
