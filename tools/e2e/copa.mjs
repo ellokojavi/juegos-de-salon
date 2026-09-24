@@ -422,6 +422,9 @@ for (const id of ['linea', 'numero', 'conexiones', 'reinas', 'letras', 'zip', 't
   await JUGAR[id](id === 'tango' ? 1 : 2);
   if (id === 'zip') {
     ok(await ev(`document.querySelector('.zip-grid').classList.contains('solucion') && !!document.getElementById('zip-solucion')`), 'Zip: al acabarse el tiempo se ve la solución del nivel que quedó a medias');
+    const cron0 = await ev(`document.querySelector('#jugar-head .cron').textContent`);
+    await sleep(2200);
+    ok(await ev(`document.querySelector('#jugar-head .cron').textContent`) === cron0 && !await ev(`document.querySelector('.zip-reloj')`), `Zip: al acabarse el tiempo el reloj queda quieto en ${cron0} y la cuenta regresiva desaparece`);
     await b.shot('zip-solucion');
   }
   if (id === 'conexiones') ok(await ev(`document.querySelectorAll('.grupo').length === 4 && !document.querySelector('.grupo').classList.contains('pop')`), 'Conexiones: los grupos ya resueltos no se vuelven a animar');
