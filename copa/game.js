@@ -552,6 +552,9 @@ function misDias(d, now) {
  * 1º arriba. Solo los días que ya puedes ver (los que jugaste o los cerrados), así el gráfico
  * tampoco delata el día de hoy. Tocar un punto muestra quién era y en qué lugar iba.
  */
+/** Un color por jugador en el gráfico (D-125): los de la app, bien distintos entre sí. */
+const COLORES_GRAFICO = ['#2ee6d6', '#ffd23f', '#ff2e88', '#9dff3a', '#ff7a1a', '#a78bff', '#5ab0ff', '#ff9ecb', '#e8e8e8', '#c7a36b'];
+
 function grafico(now) {
   const Lc = L(), { meta } = Lc;
   const ev = evolucion(Lc, S.yo, now);
@@ -575,25 +578,43 @@ function grafico(now) {
     svg.append(svgEl('text', { x: izq - 8, y: y(l) + 4, class: 'g-eje', 'text-anchor': 'end' }, `${l}º`));
   }
   for (let k = 1; k <= meta.days; k++) svg.append(svgEl('text', { x: x(k), y: H - 6, class: 'g-eje', 'text-anchor': 'middle' }, fmt(T.dayShort, { d: k })));
-  // El resto primero, para que tu línea quede encima
+  // Cada jugador con su color (D-125), fijo por orden de inscripción; tu línea, más gruesa y encima
+  const porLlegada = Object.entries(Lc.players || {}).sort((a, b) => (a[1].at || 0) - (b[1].at || 0)).map(([pid]) => pid);
+  const color = pid => COLORES_GRAFICO[Math.max(0, porLlegada.indexOf(pid)) % COLORES_GRAFICO.length];
   const orden = [...ev.filas.filter(f => f.pid !== S.yo), ...ev.filas.filter(f => f.pid === S.yo)];
+  const grupos = {};
   for (const f of orden) {
     const mia = f.pid === S.yo;
+    const g = svgEl('g', { class: 'g-jugador' + (mia ? ' mia' : ''), 'data-pid': f.pid, style: `--c:${color(f.pid)}` });
+    grupos[f.pid] = g;
     const pts = f.lugares.map((l, i) => [x(ev.dias[i]), y(l)]);
-    if (pts.length > 1) svg.append(svgEl('polyline', { points: pts.map(p => p.join(',')).join(' '), class: mia ? 'g-linea mia' : 'g-linea' }));
+    if (pts.length > 1) g.append(svgEl('polyline', { points: pts.map(p => p.join(',')).join(' '), class: 'g-linea' }));
     pts.forEach(([px, py], i) => {
       const texto = fmt(T.progressPoint, { d: ev.dias[i], name: f.name, pos: f.lugares[i] });
-      svg.append(svgEl('circle', { cx: px, cy: py, r: mia ? 5 : 3, class: mia ? 'g-punto mia' : 'g-punto' }));
+      g.append(svgEl('circle', { cx: px, cy: py, r: mia ? 5 : 4, class: 'g-punto' }));
       const blanco = svgEl('circle', { cx: px, cy: py, r: 11, class: 'g-toque' }, svgEl('title', {}, texto));
-      blanco.addEventListener('click', () => { leyenda.textContent = texto; });
-      svg.append(blanco);
+      blanco.addEventListener('click', () => { leyenda.textContent = texto; destacar(f.pid); });
+      g.append(blanco);
     });
-    if (mia && pts.length) {
+    if (pts.length) {
       const [px, py] = pts[pts.length - 1];
-      svg.append(svgEl('text', { x: px + 10, y: py + 4, class: 'g-rotulo' }, `${f.name} · ${f.lugares[f.lugares.length - 1]}º`));
+      const corto = f.name.length > 10 ? `${f.name.slice(0, 9)}…` : f.name;
+      g.append(svgEl('text', { x: px + 9, y: py + 4, class: 'g-rotulo' }, `${corto} ${f.lugares[f.lugares.length - 1]}º`));
     }
+    svg.append(g);
   }
-  return el('div', { class: 'panel' }, el('p', { class: 'lead', style: 'margin-bottom:8px' }, T.progressTitle), svg, leyenda);
+  // Tocar un nombre (o un punto) destaca su línea y apaga las demás; tocarlo otra vez, todas
+  let destacado = null;
+  const destacar = pid => {
+    destacado = destacado === pid ? null : pid;
+    svg.classList.toggle('con-destacado', !!destacado);
+    Object.entries(grupos).forEach(([p, g]) => g.classList.toggle('destacado', p === destacado));
+    chips.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.pid === destacado));
+  };
+  const chips = el('div', { class: 'grafico-chips' }, ev.filas.slice().sort((a, b) => porLlegada.indexOf(a.pid) - porLlegada.indexOf(b.pid)).map(f =>
+    el('button', { type: 'button', class: 'g-chip' + (f.pid === S.yo ? ' mia' : ''), 'data-pid': f.pid, style: `--c:${color(f.pid)}`, onClick: () => { SFX.tap(); destacar(f.pid); } },
+      el('span', { class: 'g-color', 'aria-hidden': 'true' }), f.pid === S.yo ? fmt(T.progressYou, { name: f.name }) : f.name)));
+  return el('div', { class: 'panel' }, el('p', { class: 'lead', style: 'margin-bottom:8px' }, T.progressTitle), svg, chips, leyenda);
 }
 
 function tablero() {
