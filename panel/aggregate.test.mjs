@@ -1,5 +1,6 @@
 // Ejecutar: node panel/aggregate.test.mjs
 import assert from 'node:assert/strict';
+import { MODE_IDS } from '../assets/js/games.js';
 import { DAY, roomLog, paginate, flagOf, whenLabel, RANGOS, rangeOf, groupDays, periodLabel, ROOM_TTL, liveRooms, connections, summarize, top, tzLabel, ago, dayLabel, codesOfDays, splitByEnv } from './aggregate.js';
 
 const now = 20342 * DAY + 15 * 60 * 60 * 1000; // día 20342, 15:00 UTC
@@ -72,9 +73,11 @@ assert.equal(s.online, 2);
 assert.equal(s.local, 9);
 assert.equal(s.partidas, 11);
 assert.equal(s.devices, 8);
-assert.deepEqual(s.byGame['toque-y-fama'], { total: 5, online: 1, local: 1, cpu: 3, solo: 0 });
-assert.deepEqual(s.byGame['linea-de-tiempo'], { total: 5, online: 1, local: 0, cpu: 0, solo: 4 });
-assert.deepEqual(s.byGame['batalla-naval'], { total: 1, online: 0, local: 0, cpu: 1, solo: 0 });
+// Un modo que el juego no usó aparece en 0: la lista de modos sale de games.js (C-16)
+const ceros = Object.fromEntries(MODE_IDS.map(m => [m, 0]));
+assert.deepEqual(s.byGame['toque-y-fama'], { total: 5, ...ceros, online: 1, local: 1, cpu: 3 });
+assert.deepEqual(s.byGame['linea-de-tiempo'], { total: 5, ...ceros, online: 1, solo: 4 });
+assert.deepEqual(s.byGame['batalla-naval'], { total: 1, ...ceros, cpu: 1 });
 assert.equal(s.byGame['cuarto-rey'], undefined);   // fuera del rango
 assert.deepEqual(s.byPlayers, { 1: 8, 2: 2, 3: 1 });
 assert.deepEqual(s.byDay, [{ day: 20341, total: 10, online: 2, local: 8 }, { day: 20342, total: 1, online: 0, local: 1 }]);

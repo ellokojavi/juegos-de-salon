@@ -33,7 +33,7 @@ assert.ok(ROOM_MODE && MODES[ROOM_MODE].room, 'tiene que haber un modo de sala')
 assert.deepEqual(LOCAL_MODES, MODE_IDS.filter(m => m !== ROOM_MODE));
 assert.equal(isLocalMode(ROOM_MODE), false, 'el de la sala se cuenta por sala, no por contador');
 // El tope de jugadores sale de los juegos registrados, no de un número escrito a mano
-assert.equal(MAX_PLAYERS, Math.max(...GAMES.map(g => Number(g.players.split(/[^\d]+/).pop()))));
+assert.equal(MAX_PLAYERS, Math.max(...GAMES.filter(g => !g.torneo).map(g => Number(g.players.split(/[^\d]+/).pop()))));
 
 // --- Un juego que el panel no conoce ------------------------------------
 // Pasa de verdad: la app publicada empieza a mandar señales de un juego nuevo antes de que
