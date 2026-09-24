@@ -1501,4 +1501,6 @@ y cierra con **"⏳ ¡Día 2 en curso! Falta que jueguen: …"**; el resumen fin
 Terminó". Ya no se escribe "la {copa}", que con nombres propios quedaba "la Valdenenas". El link va
 **dentro del texto, en su propia línea al final** ("🔗 https://…"): pasado aparte, Android lo
 pegaba a la última frase.
+El resultado individual queda completo: "🏆 La Copa: … · Día 1", "⏳ Línea Relámpago" y
+"👤 Javier · 78/100", y debajo la tarjeta de colores.
 **Por qué:** propuesta del dueño a partir del mensaje real de una copa.
