@@ -251,8 +251,14 @@ async function abrirCopa(code, { recienCreada = false, pantalla = null } = {}) {
   if (S.off) S.off();
   let primera = true;
   S.off = st.escuchar(code, L => {
+    const habia = !!S.L?.meta;
     S.L = L;
-    if (!L || !L.meta) { espera(T.errNoExiste, { error: true }); return; }
+    if (!L || !L.meta) {
+      // La borró su admin (D-117): quien la tenía abierta se entera, y este celular la olvida
+      if (S.eliminando) return;
+      if (habia) { cuenta.olvidar(code); espera(T.copaDeleted, { error: true }); return; }
+      espera(T.errNoExiste, { error: true }); return;
+    }
     if (primera) {
       primera = false;
       const pid = cuenta.quien(code);
@@ -826,6 +832,44 @@ function admin({ forzar = false } = {}) {
   Object.entries(Lc.players || {}).sort((a, b) => (a[1].at || 0) - (b[1].at || 0)).forEach(([pid, p]) => poner(lista, fila(pid, p)));
   poner(body, el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.adminPlayers), lista, err),
     el('button', { class: 'btn btn--ghost', onClick: () => { SFX.tap(); S.bienvenida = false; tablero(); } }, T.toBoard));
+
+  // Eliminar la copa (D-117): al final, en rojo, con dos confirmaciones (la segunda, escribir el nombre)
+  const errBorrar = el('div', { class: 'form-error', role: 'alert' });
+  poner(body, el('div', { class: 'panel stack peligro', id: 'admin-eliminar' },
+    el('p', { class: 'lead', style: 'margin:0' }, T.deleteTitle),
+    el('p', { class: 'muted', style: 'margin:0' }, T.deleteLead),
+    errBorrar,
+    el('button', { class: 'btn btn--red', id: 'btn-eliminar', onClick: async ev => {
+      SFX.tap();
+      if (!confirm(fmt(T.deleteConfirm1, { copa: meta.name }))) return;
+      const escrito = prompt(fmt(T.deleteConfirm2, { copa: meta.name }));
+      if (escrito === null) return;
+      if (claveNombre(escrito) !== claveNombre(meta.name)) { avisoError(errBorrar, T.deleteMismatch); return; }
+      const b = ev.currentTarget; b.disabled = true;
+      S.eliminando = true;
+      try {
+        await store.eliminar(S.code);
+        const nombre = meta.name;
+        cuenta.olvidar(S.code);
+        if (S.off) { S.off(); S.off = null; }
+        S.code = null; S.yo = null; S.L = null;
+        history.replaceState(null, '', `${location.pathname}${PRUEBA ? '?prueba' : LABS ? '?labs' : ''}`);
+        SFX.splash();
+        eliminada(nombre);
+      } catch (e) { S.eliminando = false; b.disabled = false; avisoError(errBorrar, errorDe(e)); }
+    } }, `🗑️ ${T.deleteGo}`)));
+}
+
+/** La confirmación al admin de que su copa se borró (D-117). */
+function eliminada(nombre) {
+  mostrar('espera');
+  const body = $('#espera-body');
+  body.innerHTML = '';
+  poner(body, el('div', { class: 'stack center', id: 'copa-eliminada' },
+    el('div', { class: 'result-hero' }, el('span', { class: 'trophy pop' }, '🗑️'),
+      el('h2', { class: 'display display--md' }, T.deletedTitle)),
+    el('div', { class: 'aviso bien' }, fmt(T.deletedDone, { copa: nombre })),
+    el('button', { class: 'btn btn--yellow', onClick: () => { SFX.tap(); S.eliminando = false; portada(); } }, T.deletedBack)));
 }
 
 /* ------------------------------------------------------------------ */

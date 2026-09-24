@@ -120,6 +120,11 @@ export function createFirebaseStore() {
       await escribir({ [`torneos/${code}/players/${pid}/out`]: out ? true : null });
     },
 
+    /** Eliminar la copa entera (D-117): la copa, los hashes de los PIN y los asientos, de una vez. */
+    async eliminar(code) {
+      await escribir({ [`torneos/${code}`]: null, [`torneoKeys/${code}`]: null, [`torneoSeats/${code}`]: null }, 'permiso');
+    },
+
     /** Cerrar o reabrir la inscripción (D-110). */
     async cerrarInscripcion(code, cerrada) {
       await escribir({ [`torneos/${code}/closed`]: cerrada ? true : null });
