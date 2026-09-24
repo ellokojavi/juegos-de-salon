@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.53.1 — 2026-09-24
+- **Laboratorio:** al final se ve la versión activa.
+
 ## 0.53.0 — 2026-09-24
 - **Eliminar la copa** (D-117): al final de Administrar, en rojo, con dos confirmaciones (la
   segunda, escribir el nombre de la copa). El admin ve que se eliminó y los demás, que ya no existe.
