@@ -74,6 +74,9 @@ propio árbol porque duran una semana y las salas mueren a la media hora (D-89).
 - Una copa del laboratorio (`meta/lab = true`, D-115) se puede reescribir aunque ya se haya
   jugado: así su admin la pasa al día siguiente. La marca `lab` no se puede quitar ni poner después.
 
+- **Eliminar la copa** (D-117): el celular sentado como admin puede borrar de una vez
+  `torneos/<code>`, `torneoKeys/<code>` y `torneoSeats/<code>` (solo el nodo entero, nunca a medias).
+
 ## Reportes (`feedback`)
 
 El botón 🐞 de La Copa (D-101, D-104) escribe en `feedback/<id>` **por REST y sin cuenta**:
