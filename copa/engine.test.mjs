@@ -235,5 +235,12 @@ test('reloj activo', () => {
   assert.equal(mmss(3725000), '1:02:05');
 });
 
+test('el nombre de la copa llega a 40 caracteres; el de un jugador, a 20 (D-119)', () => {
+  const m = nuevaMeta({ nombre: 'Copa Pirata (1ra prueba)', dias: 7, inicio: '2026-10-01', admin: 'aaaaaa', creada: 1 });
+  assert.equal(m.name, 'Copa Pirata (1ra prueba)');
+  assert.equal(nuevaMeta({ nombre: 'x'.repeat(60), dias: 7, inicio: '2026-10-01', admin: 'a', creada: 1 }).name.length, 40);
+  assert.equal(limpiarNombre('y'.repeat(30)).length, 20);
+});
+
 await new Promise(r => setTimeout(r, 50));
 console.log(`copa/engine: ${n} tests OK`);

@@ -1427,3 +1427,12 @@ mueve a hoy, mañana u otra fecha (D-110, D-115), porque nadie ha jugado. Se con
 en el almacén de prueba; las reglas de Firebase no saben contar jugadores, así que no lo impiden
 (solo el propio admin podría saltárselo, jugando contra nadie).
 **Por qué:** un duelo entre dos también es una copa; un torneo de uno, no.
+
+## D-119 · El nombre de la copa, hasta 40 caracteres y con contador
+**Fecha:** 2026-09-24 · **Estado:** vigente
+**Decisión:** El nombre de una copa se recortaba a 20 caracteres (el largo de un nombre de
+jugador) aunque el campo dejaba escribir 30: "Copa Pirata (1ra prueba)" quedaba en "Copa Pirata (1ra
+pru". Ahora llega a **40** (`COPA_MAX`, y las reglas aceptan hasta 40). Los campos de nombre
+muestran un **contador** ("24 / 40", en amarillo al llegar al tope) y no dejan escribir más. Los
+títulos largos parten línea en vez de salirse de la pantalla.
+**Por qué:** un límite que no se ve se descubre cuando ya cortó el texto.

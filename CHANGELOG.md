@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.55.0 — 2026-09-24
+- **El nombre de la copa llega a 40 caracteres** (se recortaba a 20) y el campo muestra cuántos
+  van; los nombres de jugador también tienen contador (D-119).
+- **Paso manual:** volver a publicar `firebase/database.rules.json`.
+
 ## 0.54.0 — 2026-09-24
 - **La Copa se juega entre 2 y 10** (D-118). Con el admin solo no se puede jugar ni pasar de día:
   la app pide que se inscriba al menos un competidor más.
