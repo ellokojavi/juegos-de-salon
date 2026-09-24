@@ -1504,3 +1504,12 @@ pegaba a la última frase.
 El resultado individual queda completo: "🏆 La Copa: … · Día 1", "⏳ Línea Relámpago" y
 "👤 Javier · 78/100", y debajo la tarjeta de colores.
 **Por qué:** propuesta del dueño a partir del mensaje real de una copa.
+
+## D-125 · El gráfico de posiciones muestra a todos, cada uno con su color
+**Fecha:** 2026-09-24 · **Estado:** vigente
+**Decisión:** En "Tu posición día a día" cada jugador tiene su línea de color (fijo por orden de
+inscripción, de una paleta de 10 bien distintos), con su nombre y su lugar al final de la línea;
+la propia va más gruesa y encima. Debajo, un botón por jugador con su color: tocarlo (o tocar un
+punto) destaca su línea y apaga las demás; tocarlo otra vez, vuelven todas. Sigue mostrando solo
+los días que el jugador ya puede ver (no delata lo de hoy).
+**Por qué:** con el resto en gris no se podía seguir la carrera de nadie más que la propia.
