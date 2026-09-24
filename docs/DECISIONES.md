@@ -1276,3 +1276,33 @@ final, resolverlas vale 100: ahí el tiempo de toda la final ya desempata. La ta
 tiempo (`👑 ⏱ 1:23 ✅`). La pantalla le pasa el tiempo al motor con `ctx.tiempo()` al terminar.
 **Por qué:** castigar el ensayo y error en un juego de deducción premia la cautela, no la
 habilidad; y el tiempo ya era el desempate, así que la escala solo lo vuelve visible.
+
+## D-108 · Toque y Fama: Palabra, con puntos por letra encontrada
+**Fecha:** 2026-09-23 · **Estado:** vigente
+**Decisión:** 🔤 Toque y Fama con letras pasa a llamarse **Toque y Fama: Palabra**, en la línea
+de "Toque y Fama: adivina el número". El puntaje, de 0 a 100, deja de ser solo por intentos:
+- **10 puntos por cada letra encontrada en su lugar** (fama), contando el lugar y no el intento:
+  un lugar que ya dio fama no vuelve a sumar aunque se repita en otros intentos. Hasta 50.
+- **Si saca la palabra, 50 más, menos 5 por cada intento después del primero** (50 al primero,
+  15 al octavo).
+Quien se acercó (por ejemplo 4 letras en su lugar, 40 puntos) gana más que quien no, y quien la
+sacó (65 como mínimo) siempre gana más que quien no la sacó (50 como máximo). Mientras juega, la
+pantalla dice cuántas letras lleva en su lugar y cuánto suman. La ronda de la final usa la misma
+cuenta (con 6 intentos, de 75 a 100 si la saca).
+**Por qué:** con "9 menos los intentos, 0 si no", quedar a una letra valía lo mismo que no haber
+acertado ninguna.
+
+## D-109 · El laboratorio con la UX de producción, la solución de Zip y los reportes que no se pierden
+**Fecha:** 2026-09-23 · **Estado:** vigente
+**Decisión:**
+- **La práctica del laboratorio tiene la misma antesala que un día de la copa**: cómo se juega,
+  el puntaje, **🧪 Probar primero (no cuenta)** con el contenido de prueba, y Empezar, con la cuenta
+  regresiva y el resultado con su desglose. Lo que se prueba en el laboratorio es lo que se juega.
+- **Zip:** si el tiempo se acaba con un nivel a medias, antes de ir al resultado se dibuja la
+  solución de ese nivel (en celeste punteado, distinto del verde de un nivel resuelto).
+- **Conexiones:** solo el grupo recién resuelto se anima; antes todos parpadeaban con cada toque
+  porque la pantalla se redibuja entera (primer reporte del laboratorio).
+- **Reportes:** si no se pueden enviar (sin red, o las reglas lo rechazan), quedan guardados en el
+  dispositivo y se reenvían solos al abrir La Copa (`reenviarPendientes`, hasta 20).
+**Por qué:** el laboratorio sirve para decidir si un juego entra; si su UX difiere de la de la copa,
+lo que se decide no es lo que se publica. Y un reporte escrito es caro de conseguir: no se pierde.

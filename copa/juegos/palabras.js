@@ -1,5 +1,5 @@
 /**
- * Las palabras secretas de 🔤 Toque y Fama con letras. Cinco letras distintas, sin tilde (la Ñ
+ * Las palabras secretas de 🔤 Toque y Fama: Palabra. Cinco letras distintas, sin tilde (la Ñ
  * vale), comunes en Chile. Las reglas del test (copa/juegos/juegos.test.mjs): cinco letras,
  * todas distintas, solo A–Z y Ñ, y sin repetir palabras en la lista.
  *

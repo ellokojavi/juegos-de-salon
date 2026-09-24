@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.47.0 — 2026-09-23
+- **🔤 Toque y Fama: Palabra** (antes "con letras", D-108): cada letra que encuentras en su lugar
+  suma 10 puntos, una sola vez por lugar; sacar la palabra suma 50 más, menos 5 por cada intento
+  después del primero. Quien se acercó gana más que quien no. La pantalla muestra lo que llevas.
+- **El laboratorio juega como la copa** (D-109): la práctica ofrece la sesión de prueba antes de
+  Empezar, igual que un día.
+- **Zip:** si se acaba el tiempo con un nivel a medias, muestra cómo se resolvía.
+- **Conexiones:** los grupos ya resueltos no parpadean al tocar palabras.
+- **Reportes:** si no se pueden enviar, quedan guardados en el dispositivo y se reenvían solos.
+
 ## 0.46.0 — 2026-09-23
 - **La cuenta regresiva ahora es de 3 a 1** (D-105).
 - **Reinas puntúa el tiempo, no los errores** (D-107): hasta 30 segundos vale 100 y baja parejo

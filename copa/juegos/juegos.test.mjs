@@ -254,7 +254,16 @@ test('letras: palabras válidas, pistas por letra y puntaje', () => {
   assert.ok(!letras.valido('CASAS'));
   const e = letras.estado({ ...p, secreto: 'MANGO' }, ['CAMPO', 'MANGO']);
   assert.ok(e.resuelto && e.fin);
-  assert.equal(letras.puntaje(e), 7);
+  // CAMPO encuentra A y O en su lugar; MANGO la saca en 2: 5 letras × 10 + 50 − 5 = 95 (D-108)
+  assert.equal(e.encontradas, 5);
+  assert.equal(letras.puntaje(e), 95);
+  // Quien se acercó gana más que quien no, y una fama repetida no suma de nuevo
+  const cerca = letras.estado({ ...p, secreto: 'MANGO' }, ['CAMPO', 'CAMPO', 'TANGO']);
+  assert.equal(cerca.encontradas, 4); assert.equal(letras.puntaje(cerca), 40);
+  const lejos = letras.estado({ ...p, secreto: 'MANGO' }, ['CAMPO']);
+  assert.equal(letras.puntaje(lejos), 20);
+  assert.equal(letras.puntaje(letras.estado({ ...p, secreto: 'MANGO' }, ['MANGO'])), 100);
+  assert.ok(letras.puntaje({ encontradas: 5, resuelto: true, usados: 8 }) > letras.puntaje({ encontradas: 5, resuelto: false, usados: 8 }));
   assert.equal(letras.tarjeta(e).split('\n')[1], '🟨🟨🟨🟨🟨');
 });
 
