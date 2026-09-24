@@ -58,4 +58,4 @@ export function montar(raiz, ctx) {
   dibujar();
 }
 
-export const resultado = e => ({ s: motor.puntaje(e), t: motor.tarjeta(e), resumen: `${motor.puntaje(e)}/${e.filas.length * 100}` });
+export const resultado = e => ({ s: motor.puntaje(e), t: motor.tarjeta(e), resumen: `${motor.puntaje(e)}/100` });

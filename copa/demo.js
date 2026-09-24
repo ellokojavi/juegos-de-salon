@@ -18,15 +18,15 @@ const JUGADORES = [
 
 /** Puntajes creíbles por minijuego: `k` de 0 a 1 dice qué tan bien le fue. */
 const PUNTAJE = {
-  linea: k => ({ s: Math.round(9 * k), r: `${Math.round(9 * k)}/9` }),
-  numero: k => { const u = 1 + Math.round(9 * (1 - k)); return { s: 11 - u, r: `${u}/10` }; },
+  linea: k => { const s = Math.round((100 * Math.round(9 * k)) / 9); return { s, r: `${s}/100` }; },
+  numero: k => { const s = 100 - 10 * Math.round(9 * (1 - k)); return { s, r: `${s}/100` }; },
   conexiones: k => { const s = Math.max(0, Math.round(20 * k) * 5); return { s, r: `${s}/100` }; },
   reinas: k => { const s = Math.max(10, Math.round(100 * k)); return { s, r: `${s}/100` }; },
   letras: k => { const s = Math.round(100 * k); return { s, r: `${s}/100` }; },
-  zip: k => { const s = Math.round(8 * k); return { s, r: `${s} ✅` }; },
+  zip: k => { const s = 10 * Math.round(8 * k); return { s, r: `${s}/100` }; },
   tango: k => { const s = Math.max(10, Math.round(100 * k)); return { s, r: `${s}/100` }; },
-  anio: k => { const s = Math.round(600 * k); return { s, r: `${s}/600` }; },
-  final: k => { const s = Math.round(500 * k); return { s, r: `${s}/500` }; },
+  anio: k => { const s = Math.round(100 * k); return { s, r: `${s}/100` }; },
+  final: k => { const s = Math.round(100 * k); return { s, r: `${s}/100` }; },
 };
 
 /** Un azar fijo por jugador y día, para que la demo se vea igual cada vez. */
