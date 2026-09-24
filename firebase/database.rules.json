@@ -183,7 +183,7 @@
             ".validate": "newData.isNumber()"
           },
           "name": {
-            ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 30"
+            ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 40"
           },
           "days": {
             ".validate": "newData.isNumber() && (newData.val() == 3 || newData.val() == 7)"

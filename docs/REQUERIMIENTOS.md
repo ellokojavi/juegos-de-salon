@@ -156,6 +156,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | LIG-67 | Copas del laboratorio: el admin pasa al día siguiente (D-115). | ✅ v0.51 |
 | LIG-68 | El admin elimina la copa, con dos confirmaciones (D-117). | ✅ v0.53 |
 | LIG-69 | La copa se juega entre 2 y 10; con el admin solo no parte ni avanza de día (D-118). | ✅ v0.54 |
+| LIG-70 | El nombre de la copa llega a 40 caracteres, con contador (D-119). | ✅ v0.55 |
 | LIG-46 | El teclado, el tablero y la línea se comparten con Toque y Fama y Línea de Tiempo (`assets/js/teclado.js`, `assets/css/teclado.css`, `assets/css/linea.css`). | ✅ v0.44 |
 
 ## Requerimientos no funcionales
