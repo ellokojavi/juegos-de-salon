@@ -58,7 +58,7 @@ export function montar(raiz, ctx) {
       for (const m of p.marcas) {
         if (m.a !== i) continue;
         // Igual (=) o distinto (≠), sobre el borde que comparten las dos casillas
-        celda.append(el('span', { class: 'tan-marca ' + (m.b === i + 1 ? 'der' : 'abajo'), 'aria-hidden': 'true' }, m.t === '=' ? '=' : '≠'));
+        celda.append(el('span', { class: `tan-marca ${m.b === i + 1 ? 'der' : 'abajo'} ${m.t === '=' ? 'igual' : 'distinto'}`, 'aria-hidden': 'true' }, m.t === '=' ? '=' : '≠'));
       }
       grilla.append(celda);
     }
