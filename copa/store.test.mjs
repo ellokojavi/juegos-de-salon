@@ -10,7 +10,7 @@ globalThis.sessionStorage = memoria();
 globalThis.addEventListener ||= () => {};
 
 const { createLocalStore } = await import('./store-local.js');
-const { nuevaMeta, hashPin, DIA_MS, fechaEn, moverInicio, sumarDias, inscripcionAbierta } = await import('./engine.js');
+const { nuevaMeta, hashPin, DIA_MS, fechaEn, moverInicio, sumarDias, inscripcionAbierta, pasarDia, diaActual } = await import('./engine.js');
 const { createCuenta } = await import('./cuenta.js');
 
 let n = 0;
@@ -56,6 +56,24 @@ await test('cerrar la inscripción y mover el inicio: solo el admin, y solo sin 
   await admin.empezar(C2, 1, 'aaaaaa');
   await rechaza(admin.reprogramar(C2, moverInicio(m2, sumarDias(hoy, 1))), 'empezada');
   assert.equal(inscripcionAbierta(m2, admin.now(), true), false);
+});
+
+await test('copa del laboratorio: el admin la pasa al día siguiente aunque ya se juegue (D-115)', async () => {
+  const C3 = 'HJKLM';
+  const m3 = nuevaMeta({ nombre: 'Copa lab', dias: 3, inicio: hoy, admin: 'aaaaaa', creada: admin.now(), lab: true });
+  assert.equal(m3.lab, true);
+  assert.equal(nuevaMeta({ nombre: 'x', dias: 3, inicio: hoy, admin: 'a', creada: 1 }).lab, undefined);
+  await admin.crear(C3, m3, { pid: 'aaaaaa', name: 'Cata', at: 1, pinHash: 'h' });
+  await admin.empezar(C3, 1, 'aaaaaa');
+  assert.equal(diaActual(m3, admin.now()), 1);
+  await rechaza(otro.reprogramar(C3, pasarDia(m3)), 'permiso');
+  await admin.reprogramar(C3, pasarDia(m3));
+  const L3 = await admin.leer(C3);
+  assert.equal(diaActual(L3.meta, admin.now()), 2);
+  assert.equal(L3.meta.lab, true);
+  // Lo jugado sigue ahí, y el día 1 sigue abierto en su día de gracia
+  assert.ok(L3.started[1].aaaaaa);
+  await admin.resultado(C3, 1, 'aaaaaa', { s: 50, ms: 1000, t: '', r: '50/100' });
 });
 
 await test('inscribirse: nombre repetido y cupo', async () => {

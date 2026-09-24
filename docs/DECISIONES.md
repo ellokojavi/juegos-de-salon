@@ -1377,3 +1377,18 @@ la primera hace que el tablero parezca imposible.
 - Conexiones: el grupo *Piezas de ajedrez* cambia **DAMA** por **TORRE**. "Dama" es el nombre del
   reglamento, pero en Chile se dice "reina", y un grupo que no se reconoce parece un error. REINA no
   se usa para no cruzarse con el minijuego Reinas.
+
+## D-115 · Otra fecha de inicio, y pasar de día en las copas del laboratorio
+**Fecha:** 2026-09-24 · **Estado:** vigente
+**Decisión:**
+- **El inicio puede ser hoy, mañana u otra fecha**, elegida en un calendario de hoy a 30 días
+  más, al crear la copa y en Administrar (mientras nadie haya jugado). Las reglas aceptan un
+  día 1 que empiece hasta 32 días después de ahora.
+- **Copas de prueba:** las copas creadas desde el laboratorio llevan `meta.lab = true`. Su admin
+  tiene en Administrar **"Pasar al día N"** (con confirmación): corre el inicio un día hacia atrás
+  (`pasarDia`), así que lo de hoy queda como ayer, en su día de gracia, y se abre el día que sigue
+  para todos. En el último día el botón es **"Terminar la copa"**. Lo jugado no se toca. Las
+  reglas dejan reescribir `meta` de una copa `lab` aunque ya se haya jugado, siempre que no
+  cambien nombre, días, calendario, admin, `createdAt` ni la marca `lab`. Las copas creadas antes
+  de esta versión no la tienen.
+**Por qué:** probar una copa de 7 días con amigos no puede tomar 7 días.
