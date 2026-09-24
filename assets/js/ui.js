@@ -124,12 +124,12 @@ export function shareButton({ title, text, url, label }) {
 }
 export async function shareLink({ title, text, url }) {
   if (canShare()) {
-    try { await navigator.share({ title, text, url }); return 'shared'; }
+    try { await navigator.share(url ? { title, text, url } : { title, text }); return 'shared'; }
     catch (e) { if (e && e.name === 'AbortError') return 'failed'; /* si no se pudo, cae al portapapeles */ }
   }
   // Sin diálogo nativo se copia el mensaje entero y no solo la URL: pegar en un chat "un link
   // pelado" obliga a quien invita a escribir de qué se trata, que es justo lo que dice el texto.
-  const pegar = text ? `${text}\n${url}` : url;
+  const pegar = text ? (url ? `${text}\n${url}` : text) : url;
   try { await navigator.clipboard.writeText(pegar); return 'copied'; }
   catch (_) { try { prompt('URL', pegar); } catch (__) { /* nada */ } return 'failed'; }
 }

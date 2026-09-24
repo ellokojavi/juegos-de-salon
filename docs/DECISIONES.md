@@ -1483,3 +1483,22 @@ excluye por si acaso). Con ella firma un JWT, pide un token a Google y escribe
 mientras no se hacía, lo nuevo fallaba en producción sin que nadie se enterara.
 **Cuidado:** esa llave da acceso de administrador a todo el proyecto. Si se filtra, se revoca en
 la misma pantalla de la consola donde se creó.
+
+## D-123 · Empezar y enviar el resultado aguantan un reintento
+**Fecha:** 2026-09-24 · **Estado:** vigente
+**Decisión:** Con mala conexión, la escritura de "empecé" o del resultado puede llegar a Firebase
+aunque el celular se canse de esperar y muestre "No pudimos conectarnos". Las reglas escriben
+una sola vez, así que el reintento chocaba y el jugador quedaba trabado. Ahora, si la escritura
+falla, el almacén mira si quedó hecha: si "empecé" ya está, se sigue jugando; si el resultado ya
+está, cuenta como enviado.
+**Por qué:** una jugadora de la copa Valdenenas vio ese error al tocar Empezar (se le resolvió al
+reintentar), y revisando el caso apareció este riesgo.
+
+## D-124 · Los mensajes para compartir: título con "La Copa:" y el link en su línea
+**Fecha:** 2026-09-24 · **Estado:** vigente
+**Decisión:** La tabla parcial se titula **"📊 La Copa: Valdenenas · Tabla de posiciones (día 2)"**
+y cierra con **"⏳ ¡Día 2 en curso! Falta que jueguen: …"**; el resumen final, "🏁 La Copa: … ·
+Terminó". Ya no se escribe "la {copa}", que con nombres propios quedaba "la Valdenenas". El link va
+**dentro del texto, en su propia línea al final** ("🔗 https://…"): pasado aparte, Android lo
+pegaba a la última frase.
+**Por qué:** propuesta del dueño a partir del mensaje real de una copa.

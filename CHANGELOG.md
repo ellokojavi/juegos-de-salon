@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.57.2 — 2026-09-24
+- **Mensajes para compartir** (D-124): la tabla se titula "📊 La Copa: … · Tabla de posiciones
+  (día N)" y cierra con "⏳ ¡Día N en curso! Falta que jueguen: …"; el link va en su propia línea.
+- **Con mala conexión**, tocar Empezar o enviar el resultado otra vez ya no se traba si la primera
+  vez sí había llegado (D-123). El aviso de conexión dice que lo hecho no se pierde.
+
 ## 0.57.1 — 2026-09-24
 - **Herramienta:** `node tools/reglas.mjs publicar` publica las reglas de Firebase sin pasar por la
   consola, con una llave de cuenta de servicio guardada fuera del repo (D-122).
