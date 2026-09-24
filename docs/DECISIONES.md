@@ -1406,3 +1406,13 @@ terminada) y de si la inscripción está cerrada:
 Sigue abierta, a propósito, la inscripción tardía hasta la final (D-99): el admin la ve en
 Administrar y la puede cerrar.
 **Por qué:** un botón que no sirve en ese momento parece un error.
+
+## D-117 · El admin puede eliminar la copa
+**Fecha:** 2026-09-24 · **Estado:** vigente
+**Decisión:** Al final de Administrar hay un recuadro rojo **Eliminar la copa**. Pide dos
+confirmaciones: un "¿seguro?" y después **escribir el nombre de la copa** (se compara sin
+mayúsculas ni tildes). Borra de una vez `torneos/<code>`, `torneoKeys/<code>` y
+`torneoSeats/<code>`; las reglas lo dejan solo al celular sentado como admin y solo para borrar
+la copa entera. El admin ve "Copa eliminada"; quien la tenga abierta ve "Esta copa ya no existe:
+su admin la eliminó", y su celular la olvida.
+**Por qué:** las copas de prueba se acumulan, y una copa creada con un error no tenía salida.

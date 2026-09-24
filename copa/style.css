@@ -325,3 +325,7 @@ input.fecha { width: 100%; min-height: 48px; border-radius: 12px; border: 1px so
 .btn-row.tres { flex-wrap: wrap; }
 #btn-inicio-otra.on { border-color: var(--yellow); color: var(--yellow); }
 .lab-panel { border: 1px dashed var(--cyan); }
+
+/* Eliminar la copa (D-117) */
+.peligro { border: 1px solid rgba(224, 36, 60, 0.55); }
+.btn--red { background: var(--red); color: #fff; box-shadow: 0 4px 0 #8a1024; }

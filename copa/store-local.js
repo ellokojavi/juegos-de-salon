@@ -155,6 +155,15 @@ export function createLocalStore({ uid = null } = {}) {
       });
     },
 
+    /** Eliminar la copa entera (D-117): solo su admin. */
+    async eliminar(code) {
+      return cambiar(db => {
+        const L = copa(db, code);
+        if (!esAdmin(L)) throw falla('permiso');
+        delete db[code];
+      });
+    },
+
     /** Cerrar o reabrir la inscripción (D-110). */
     async cerrarInscripcion(code, cerrada) {
       return cambiar(db => {

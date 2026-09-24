@@ -154,6 +154,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | LIG-65 | Las copas nuevas usan la hora del Pacífico y Administrar muestra la zona (D-113). | ✅ v0.49 |
 | LIG-66 | Inicio de la copa: hoy, mañana u otra fecha (hasta 30 días) con calendario (D-115). | ✅ v0.51 |
 | LIG-67 | Copas del laboratorio: el admin pasa al día siguiente (D-115). | ✅ v0.51 |
+| LIG-68 | El admin elimina la copa, con dos confirmaciones (D-117). | ✅ v0.53 |
 | LIG-46 | El teclado, el tablero y la línea se comparten con Toque y Fama y Línea de Tiempo (`assets/js/teclado.js`, `assets/css/teclado.css`, `assets/css/linea.css`). | ✅ v0.44 |
 
 ## Requerimientos no funcionales
