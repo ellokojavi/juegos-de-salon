@@ -383,6 +383,12 @@ ok(await ev(`new Set([...document.querySelectorAll('svg.grafico .g-jugador')].ma
 await ev(`document.querySelectorAll('.g-chip')[1].click(); 1`); await sleep(200);
 ok(await ev(`document.querySelector('svg.grafico').classList.contains('con-destacado') && document.querySelectorAll('svg.grafico .g-jugador.destacado').length === 1`), 'tocar un nombre destaca su línea');
 await b.shot('grafico-colores');
+// La tabla parcial como imagen (D-126): se comparte como archivo PNG
+await ev(`navigator.canShare = () => true; 1`);
+await click('#btn-imagen'); await sleep(1500);
+const img = await ev(`(async()=>{const d=window.__compartido.at(-1);const f=d?.files?.[0];if(!f)return null;const r=new FileReader();const u=await new Promise(ok=>{r.onload=()=>ok(r.result);r.readAsDataURL(f)});return {name:f.name,type:f.type,size:f.size,u}})()`);
+ok(img && img.type === 'image/png' && img.size > 20000 && /^copa-oficina-dia-\d\.png$/.test(img.name), `la tabla parcial se comparte como imagen (${img?.name})`);
+if (img) (await import('node:fs')).writeFileSync(`${OUT}/tabla-imagen.png`, Buffer.from(img.u.split(',')[1], 'base64'));
 await ev(`document.querySelectorAll('.g-chip')[1].click(); 1`);
 await ev(`document.querySelector('svg.grafico').scrollIntoView(); 1`);
 await b.shot('07-grafico');

@@ -158,6 +158,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | LIG-69 | La copa se juega entre 2 y 10; con el admin solo no parte ni avanza de día (D-118). | ✅ v0.54 |
 | LIG-70 | El nombre de la copa llega a 40 caracteres, con contador (D-119). | ✅ v0.55 |
 | LIG-71 | Link propio de la copa (?pirata), único mientras dure y reusable 7 días después de terminar (D-121). | ✅ v0.57 |
+| LIG-72 | Compartir la tabla parcial como imagen, con "(-1J)" para quien lleva menos juegos (D-126). | ✅ v0.59 |
 | LIG-46 | El teclado, el tablero y la línea se comparten con Toque y Fama y Línea de Tiempo (`assets/js/teclado.js`, `assets/css/teclado.css`, `assets/css/linea.css`). | ✅ v0.44 |
 
 ## Requerimientos no funcionales
