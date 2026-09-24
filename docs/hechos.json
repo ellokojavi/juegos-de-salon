@@ -1,5 +1,5 @@
 {
-  "version": "0.41.0",
+  "version": "0.42.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -27,7 +27,8 @@
       },
       "jugadores": "3 to 10",
       "duracion": "7",
-      "disponible": true,
+      "disponible": false,
+      "labs": true,
       "estado": null,
       "modos": [
         {
@@ -45,6 +46,7 @@
         "jugar",
         "resultado",
         "admin",
+        "reporte",
         "espera"
       ],
       "chat": false,
@@ -88,6 +90,7 @@
       "jugadores": "1 to 6",
       "duracion": "10–20",
       "disponible": true,
+      "labs": false,
       "estado": "v0.9",
       "modos": [
         {
@@ -157,6 +160,7 @@
       "jugadores": "1 to 2",
       "duracion": "5–12",
       "disponible": true,
+      "labs": false,
       "estado": "v0.4",
       "modos": [
         {
@@ -204,6 +208,7 @@
       "jugadores": "1 to 6",
       "duracion": "5–12",
       "disponible": true,
+      "labs": false,
       "estado": "v0.26",
       "modos": [
         {
@@ -257,6 +262,7 @@
       "jugadores": "1 to 6",
       "duracion": "10–20",
       "disponible": true,
+      "labs": false,
       "estado": "v0.32",
       "modos": [
         {
@@ -303,6 +309,7 @@
       "jugadores": "1 to 2",
       "duracion": "10–20",
       "disponible": true,
+      "labs": false,
       "estado": "v0.6",
       "modos": [
         {
@@ -351,6 +358,7 @@
       "jugadores": "1 to 6",
       "duracion": "15–30",
       "disponible": false,
+      "labs": false,
       "estado": "v0.34",
       "modos": [
         {
@@ -397,6 +405,7 @@
       "jugadores": "4 to 6",
       "duracion": "20–40",
       "disponible": true,
+      "labs": false,
       "estado": "v0.27",
       "modos": [],
       "variantes": [],
