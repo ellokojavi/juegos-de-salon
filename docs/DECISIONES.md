@@ -1392,3 +1392,17 @@ la primera hace que el tablero parezca imposible.
   cambien nombre, días, calendario, admin, `createdAt` ni la marca `lab`. Las copas creadas antes
   de esta versión no la tienen.
 **Por qué:** probar una copa de 7 días con amigos no puede tomar 7 días.
+
+## D-116 · Cada cosa en su momento de la copa
+**Fecha:** 2026-09-24 · **Estado:** vigente
+**Decisión:** Una revisión de lo que depende de la etapa de la copa (antes de partir, en juego,
+terminada) y de si la inscripción está cerrada:
+- **Invitación** (en Administrar y en el tablero): solo antes de partir y con la inscripción abierta.
+- **Recordatorio antes de partir**: si la inscripción está cerrada, no invita a inscribirse.
+- **Tabla parcial**: solo mientras se juega; al terminar queda el resumen final.
+- **Sacar a un jugador**: no se ofrece con la copa terminada (cambiaría el podio).
+- **Quien abre el link de una copa terminada** ve "terminó" (no "va en el día 7 de 7") y que
+  entre para ver el podio (no "ya está en la final").
+Sigue abierta, a propósito, la inscripción tardía hasta la final (D-99): el admin la ve en
+Administrar y la puede cerrar.
+**Por qué:** un botón que no sirve en ese momento parece un error.
