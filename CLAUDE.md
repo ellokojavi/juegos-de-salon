@@ -121,6 +121,14 @@ señales las mandan los juegos con `trackStart` y el transporte (`assets/js/tran
 Ver [docs/PANEL.md](docs/PANEL.md) y D-44. `window.__panel.seed({ rooms, days })` lo dibuja con
 datos sembrados sin entrar.
 
+## Reportes de La Copa
+
+El botón 🐞 de La Copa escribe en `feedback/` sin cuenta (D-104). Para leerlos y conversarlos:
+
+```bash
+node tools/reportes.mjs            # todos; --dias 3 para los recientes, --json para el crudo
+```
+
 ## Documentación
 
 `docs/PANEL.md` · `docs/REQUERIMIENTOS.md` · `docs/DECISIONES.md` (ADR) · `docs/AGREGAR-JUEGO.md` ·

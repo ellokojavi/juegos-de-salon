@@ -128,24 +128,30 @@ export function conflictos(p, marcas) {
 
 export const resuelto = (p, marcas) => marcas.filter(v => v === REINA).length === p.n && conflictos(p, marcas).size === 0;
 
-/** Vacío → marca → reina → vacío, como en el original. */
-export function tocar(marcas, i) {
+/**
+ * Un toque pone o saca la reina; un toque largo pone o saca la X, que es solo una ayuda para
+ * descartar casillas (D-103). Las jugadas guardan el toque como el índice y el toque largo como
+ * `-(índice + 1)`.
+ */
+export const toqueLargo = i => -(i + 1);
+export function tocar(marcas, j) {
   const m = marcas.slice();
-  m[i] = m[i] === VACIO ? MARCA : m[i] === MARCA ? REINA : VACIO;
+  if (j >= 0) m[j] = m[j] === REINA ? VACIO : REINA;
+  else { const i = -j - 1; m[i] = m[i] === MARCA ? VACIO : MARCA; }
   return m;
 }
 
 /**
- * El estado a partir de las jugadas (los índices tocados, en orden). Un error es poner una
- * reina que choca con otra: el tablero lo muestra en el acto, y cuesta puntos.
+ * El estado a partir de las jugadas, en orden. Un error es poner una reina que choca con otra:
+ * el tablero lo muestra en el acto, y cuesta puntos.
  */
 export function estado(p, jugadas) {
   let marcas = new Array(p.n * p.n).fill(VACIO);
   let errores = 0;
-  for (const i of jugadas) {
+  for (const j of jugadas) {
     const antes = conflictos(p, marcas).size;
-    marcas = tocar(marcas, i);
-    if (marcas[i] === REINA && conflictos(p, marcas).size > antes) errores++;
+    marcas = tocar(marcas, j);
+    if (j >= 0 && marcas[j] === REINA && conflictos(p, marcas).size > antes) errores++;
   }
   return { marcas, errores, fin: resuelto(p, marcas), conflictos: conflictos(p, marcas) };
 }
