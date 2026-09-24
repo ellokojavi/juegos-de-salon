@@ -4,10 +4,15 @@
  * Cada copa elige de entrada dos temáticas distintas: una para la línea y otra para los años,
  * así un día de historia no se repite con el otro (ver la revisión en docs/juegos/copa.md).
  */
-import { DECKS } from '../../linea-de-tiempo/decks/index.js';
+import { DECKS as TODOS } from '../../linea-de-tiempo/decks/index.js';
 import { azar } from './semilla.js';
 
-export { DECKS };
+/**
+ * Las temáticas que entran a la copa. Brasil queda fuera (D-111): la copa es de un grupo chileno
+ * y ordenar hitos de la historia de Brasil no lo resuelve casi nadie que no sea brasileño.
+ */
+const FUERA = ['brasil'];
+export const DECKS = TODOS.filter(d => !FUERA.includes(d.id));
 
 export function temasDeLaCopa(codigo) {
   const a = azar(codigo, 0, 'temas');

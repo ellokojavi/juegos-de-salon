@@ -261,9 +261,31 @@ await revisarPantalla('crear');
 await click('#btn-crear-go'); await sleep(900);
 const CODE = await ev('__copa.estado.code');
 ok(/^[A-HJ-NP-Z]{5}$/.test(CODE), `copa creada con código ${CODE}`);
-ok((await ev('window.__compartido.length')) === 1, 'al crearla se ofrece compartir la invitación');
+// Recién creada, el admin parte en Administrar, con la guía de la primera vez (D-110)
+ok(await pantalla() === 'admin' && !!await ev(`document.getElementById('admin-bienvenida')`), 'al crearla, el admin ve Administrar con la guía para invitar');
+ok(/Mensajes para los competidores/.test(await ev(`document.getElementById('admin-body').innerText`)), 'los mensajes son para los competidores');
+await revisarPantalla('admin-nueva');
+await b.shot('admin-nueva');
+await click('#msg-invitar'); await sleep(300);
+ok((await ev('window.__compartido.length')) === 1, 'desde ahí se comparte la invitación');
 console.log('  invitación:', await ev('window.__compartido[0]?.text'));
-await revisarPantalla('espera');
+// Cerrar la inscripción deja fuera a los nuevos; reabrirla, no
+await click('#btn-cerrar-inscripcion'); await sleep(300);
+ok(!!await ev(`document.getElementById('btn-reabrir')`), 'el admin cierra la inscripción');
+await comoJugador(CODE);
+ok(!await ev(`document.getElementById('tab-nuevo')`) && /cerró la inscripción/.test(await ev(`document.getElementById('entrar-body').innerText`)), 'con la inscripción cerrada, un nuevo no puede entrar y se le dice por qué');
+await sentarse(CODE, 'Cata', '1111');
+await click('#btn-admin'); await sleep(300);
+await click('#btn-reabrir'); await sleep(300);
+ok(!!await ev(`document.getElementById('btn-cerrar-inscripcion')`), 'el admin reabre la inscripción');
+// Mover el inicio: parte mañana; se mueve a hoy y de vuelta a mañana
+const inicio0 = await ev('__copa.estado.copa.meta.start');
+await click('#btn-inicio-hoy'); await sleep(300);
+const inicio1 = await ev('__copa.estado.copa.meta.start');
+ok(inicio1 !== inicio0, `el admin mueve el inicio a hoy (${inicio0} → ${inicio1})`);
+await click('#btn-inicio-manana'); await sleep(300);
+ok(await ev('__copa.estado.copa.meta.start') === inicio0, 'y lo devuelve a mañana');
+await ev(`window.__compartido=[]; 1`);
 
 await inscribir(CODE, 'Javi', '2222');
 await inscribir(CODE, 'Pancho', '3333');
@@ -346,8 +368,20 @@ await b.go('http://localhost:8765/', 1500);
 const tarjeta = await ev(`(()=>{const c=[...document.querySelectorAll('.game-card')].find(x=>x.textContent.includes('La Copa'));return JSON.stringify({soon:c.classList.contains('soon'),href:c.getAttribute('href'),rotulo:c.querySelector('.proximamente')?.textContent})})()`).then(JSON.parse);
 ok(tarjeta.soon && !tarjeta.href && tarjeta.rotulo === 'Próximamente', 'en el menú La Copa se ve con Próximamente y no se abre');
 await b.go('http://localhost:8765/labs/', 1500);
-ok(await ev(`document.querySelectorAll('.mini-juego').length`) === 9, 'el laboratorio ofrece los nueve minijuegos (con Zip y Tango)');
+ok(await ev(`document.querySelectorAll('#minis .mini-juego').length`) === 9, 'el laboratorio ofrece los nueve minijuegos (con Zip y Tango)');
 await b.shot('10-labs');
+// Rendirse en Reinas: dos toques, la solución a la vista y 0 puntos (D-110)
+await b.go(`${BASE}?practica=reinas&prueba`, 1200); await preparar();
+await click('#btn-empezar'); await sleep(300); await esperarCuenta();
+// Con la confirmación negada no pasa nada; aceptada, se rinde
+await ev('window.confirm = () => false; 1');
+await click('#btn-rendirse'); await sleep(150);
+ok(!await ev(`document.getElementById('btn-fin')`), 'Reinas: rendirse pide confirmación y, si no se confirma, se sigue jugando');
+await ev('window.confirm = () => true; 1');
+await click('#btn-rendirse'); await sleep(300);
+ok(await ev(`document.querySelectorAll('.rej.reina').length`) > 0 && !!await ev(`document.getElementById('btn-fin')`), 'Reinas: al rendirse se ve la solución');
+await click('#btn-fin'); await sleep(500);
+ok(/^0/.test(await ev(`document.querySelector('.score-big')?.textContent || ''`)), 'Reinas: rendirse vale 0 puntos');
 for (const id of ['linea', 'numero', 'conexiones', 'reinas', 'letras', 'zip', 'tango', 'anio', 'final']) {
   await b.go(`${BASE}?practica=${id}&prueba${id === 'zip' ? '&zipSeg=12' : ''}`, 1200); await preparar();
   ok(await ev(`!!document.getElementById('btn-ensayo')`) , `práctica de ${id}: la antesala ofrece la prueba como en la copa`);
@@ -413,6 +447,21 @@ ok(await ev(`document.querySelector('#reporte-nombre').value`) === 'Tester', 'el
 await ev(`document.querySelector('.reporte-texto').value='Segundo comentario'; 1`);
 await click('#btn-enviar-reporte'); await sleep(400);
 ok(await ev(`!!document.getElementById('btn-reporte-volver')`), 'después de enviar se agradece y se puede volver');
+
+/* ---------- Las demos del laboratorio (D-110) ---------- */
+await b.go('http://localhost:8765/labs/', 1200);
+ok(await ev(`document.querySelectorAll('[data-demo]').length`) === 8, 'el laboratorio ofrece las ocho demos de la copa');
+const DEMOS = { nueva: 'admin', invitado: 'entrar', espera: 'tablero', 'sin-jugar': 'admin', jugador: 'tablero', admin: 'admin', final: 'tablero', podio: 'tablero' };
+for (const [demo, pant] of Object.entries(DEMOS)) {
+  await b.go(`${BASE}?prueba&demo=${demo}`, 1500); await preparar();
+  ok(await pantalla() === pant, `demo ${demo}: abre en ${pant}`);
+  await revisarPantalla(`demo-${demo}`);
+  await b.shot(`demo-${demo}`);
+}
+await b.go(`${BASE}?prueba&demo=sin-jugar`, 1500); await preparar();
+ok(/nadie ha jugado/.test(await ev(`document.getElementById('admin-inicio')?.innerText || ''`)), 'demo sin-jugar: el admin ve que partió sin nadie y puede moverla');
+await b.go(`${BASE}?prueba&demo=jugador`, 1500); await preparar();
+ok(!!await ev(`document.querySelector('[data-dia="4"]')`), 'demo jugador: el día 4 se puede jugar');
 
 console.log('errores:', JSON.stringify(b.errors), JSON.stringify(b.logs));
 ok(!b.errors.length && !b.logs.length, 'consola sin errores');

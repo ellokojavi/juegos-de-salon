@@ -7,7 +7,7 @@
  * `?prueba` en la URL. Imita las reglas del servidor que importan para jugar: escribir una
  * sola vez, la ventana de cada día, el PIN y el comodín antes de empezar.
  */
-import { MAX_JUGADORES, claveNombre, esCodigo, abierto, puedeComodin, inscripcionAbierta } from './engine.js';
+import { MAX_JUGADORES, claveNombre, esCodigo, abierto, puedeComodin, inscripcionAbierta, sinEmpezar } from './engine.js';
 
 const KEY = 'juegos-de-salon:copa:prueba';
 const RELOJ = 'juegos-de-salon:copa:prueba:reloj';
@@ -96,7 +96,7 @@ export function createLocalStore({ uid = null } = {}) {
     async inscribir(code, { pid, name, at, pinHash }) {
       return cambiar(db => {
         const L = copa(db, code);
-        if (!inscripcionAbierta(L.meta, now())) throw falla('cerrada');
+        if (!inscripcionAbierta(L.meta, now(), L.closed)) throw falla('cerrada');
         const activos = Object.values(L.players).filter(p => !p.out);
         if (activos.length >= MAX_JUGADORES) throw falla('llena');
         if (Object.values(L.players).some(p => claveNombre(p.name) === claveNombre(name))) throw falla('nombre-repetido');
@@ -152,6 +152,26 @@ export function createLocalStore({ uid = null } = {}) {
         if (pid === L.meta.admin) throw falla('permiso');
         if (!L.players[pid]) throw falla('no-existe');
         if (out) L.players[pid].out = true; else delete L.players[pid].out;
+      });
+    },
+
+    /** Cerrar o reabrir la inscripción (D-110). */
+    async cerrarInscripcion(code, cerrada) {
+      return cambiar(db => {
+        const L = copa(db, code);
+        if (!esAdmin(L)) throw falla('permiso');
+        if (cerrada) L.closed = true; else delete L.closed;
+      });
+    },
+
+    /** Mover el inicio mientras nadie haya jugado (D-110): `meta` viene de `moverInicio`. */
+    async reprogramar(code, meta) {
+      return cambiar(db => {
+        const L = copa(db, code);
+        if (!esAdmin(L)) throw falla('permiso');
+        if (!sinEmpezar(L)) throw falla('empezada');
+        if (meta.win[1].b <= now()) throw falla('ventana');
+        L.meta = { ...meta, createdAt: L.meta.createdAt };
       });
     },
 
