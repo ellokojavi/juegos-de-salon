@@ -273,7 +273,7 @@ await b.shot('admin-nueva');
 await click('#msg-invitar'); await sleep(300);
 ok((await ev('window.__compartido.length')) === 1, 'desde ahí se comparte la invitación');
 console.log('  invitación:', await ev('window.__compartido[0]?.text'));
-ok(/\?oficina/.test(await ev('window.__compartido[0]?.url || ""')), 'la invitación comparte el link ?oficina');
+ok(/\n\n🔗 https?:\/\/\S+\?oficina/.test(await ev('window.__compartido[0]?.text || ""')), 'la invitación termina con el link ?oficina en su propia línea');
 // Cerrar la inscripción deja fuera a los nuevos; reabrirla, no
 await click('#btn-cerrar-inscripcion'); await sleep(300);
 ok(!!await ev(`document.getElementById('btn-reabrir')`), 'el admin cierra la inscripción');
