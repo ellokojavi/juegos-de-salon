@@ -81,6 +81,7 @@ for (const g of GAMES) {
     jugadores: g.players.replace('–', ' to '),   // "1 to 6": lo lee la tabla del README, que es en inglés
     duracion: g.duration,
     disponible: g.available,
+    labs: !!g.labs,
     estado: estado(g.id),
     modos: g.formato ? [{ clave: 'formato', es: g.formato.es, en: g.formato.en }] : modos(es, en),
     variantes: variantes(es, en),

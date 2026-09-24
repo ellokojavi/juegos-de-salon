@@ -320,6 +320,35 @@ const ES = {
   bc: 'a. C.',
   yearWas: 'Fue en {v}. Ganaste {pts} puntos.',
   roundOf: 'Ronda {i} de 5',
+
+  // Laboratorio y práctica (D-101)
+  backToLabs: '🧪 Volver al laboratorio',
+  backToLabsShort: '‹ Laboratorio',
+  practiceTitle: 'Práctica en el laboratorio',
+  practiceHint: 'Es una práctica: no cuenta para ninguna copa y puedes jugarla las veces que quieras.',
+  practiceSeed: 'Esta partida es la semilla {semilla}. Si vas a reportar un problema, con ella se repite la misma partida.',
+  practiceAgain: 'Jugar otra vez con otro contenido',
+  practiceSame: 'Repetir exactamente esta partida',
+
+  // Reportes (LIG-42)
+  reportButton: '🐞 Reportar un problema o dejar un comentario',
+  reportTitle: 'Cuéntanos qué pasó',
+  reportLead: 'Describe el problema o el comentario con tus palabras: qué hiciste, qué esperabas y qué pasó. Lo lee quien mantiene juegosdesalon.cl.',
+  reportPlaceholder: 'Por ejemplo: toqué Confirmar en Conexiones y no pasó nada.',
+  reportNamePh: 'Tu nombre (opcional)',
+  reportContext: 'Lo que se envía además de tu texto',
+  reportSend: 'Enviar',
+  reportEmpty: 'Escribe qué pasó antes de enviar.',
+  reportThanks: '¡Gracias! Tu mensaje llegó y lo vamos a revisar.',
+  reportBack: 'Volver',
+  reportCancel: 'Cancelar',
+  sending2: 'Enviando…',
+
+  // Barra del modo de prueba
+  testBar: 'Modo de prueba',
+  testHour: '+1 h',
+  testDay: '+1 día',
+  testNow: 'Hoy',
   roundStart: 'Empezar la ronda',
   roundNext: 'Siguiente ronda',
   roundDone: 'Ronda terminada: {pts} puntos.',

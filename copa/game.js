@@ -11,7 +11,7 @@
 import { $, $$, el, vibrate, sparkles, keepAwake, confetti, shareLink, canShare } from '../assets/js/ui.js';
 import { applyStatic } from '../assets/js/i18n.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
-import { trackStart } from '../assets/js/transport/stats.js';
+import { trackStart, versionOf } from '../assets/js/transport/stats.js';
 import {
   CALENDARIOS, MAX_JUGADORES, CODIGO, esCodigo, codigoAlAzar, pidAlAzar, limpiarNombre, claveNombre, esPin, hashPin,
   fechaEn, sumarDias, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta, estadoDia, comodinDe,
@@ -33,7 +33,12 @@ const fmt = (s, vars = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (vars[k]
 
 const busqueda = location.search.slice(1).split('&').filter(Boolean);
 const PRUEBA = busqueda.includes('prueba');
-const TRES = PRUEBA || busqueda.includes('tres');
+// La Copa vive en el laboratorio (D-101): desde /labs/ se llega con ?labs, que ofrece también
+// la Copa de 3 días (D-100). ?tres se mantiene por los links que ya circulan.
+const LABS = busqueda.includes('labs');
+const TRES = PRUEBA || LABS || busqueda.includes('tres');
+const PRACTICA = new URLSearchParams(location.search).get('practica');
+const SEMILLA = (new URLSearchParams(location.search).get('semilla') || '').toUpperCase();
 const codigoUrl = (busqueda.find(x => CODIGO.test(x.toUpperCase()) && x.length === 5) || new URLSearchParams(location.search).get('c') || '').toUpperCase();
 
 const cuenta = createCuenta({ prueba: PRUEBA });
@@ -50,7 +55,7 @@ async function abrirStore() {
 /** Estado de la pantalla: la copa abierta, quién soy en ella y qué se está mirando. */
 const S = { code: null, L: null, yo: null, pantalla: null, off: null, juego: null, reloj: null, tic: null };
 
-const urlCopa = code => `${location.origin}${location.pathname}?${code}${PRUEBA ? '&prueba' : ''}`;
+const urlCopa = code => `${location.origin}${location.pathname}?${code}${PRUEBA ? '&prueba' : ''}${LABS ? '&labs' : ''}`;
 const urlPublica = code => (PRUEBA ? urlCopa(code) : `https://juegosdesalon.cl/copa/?${code}`);
 
 function mostrar(id) {
@@ -100,7 +105,7 @@ function portada() {
   const ir = () => {
     const c = input.value.trim().toUpperCase();
     if (!esCodigo(c)) { avisoError(err, T.errCodigo); return; }
-    location.search = `?${c}${PRUEBA ? '&prueba' : ''}`;
+    location.search = `?${c}${PRUEBA ? '&prueba' : ''}${LABS ? '&labs' : ''}`;
   };
   input.addEventListener('keydown', e => { if (e.key === 'Enter') ir(); });
 
@@ -545,7 +550,7 @@ function tablero() {
       el('div', { class: 'nombres' }, jug.map(j => el('span', { class: 'chip' + (j.pid === S.yo ? ' chip--hot' : '') }, j.name)))));
   }
 
-  poner(body, el('button', {
+  poner(body, botonReporte(), el('button', {
     class: 'link-btn', onClick: () => {
       if (!confirm(T.leaveConfirm)) return;
       cuenta.olvidar(S.code); S.yo = null; entrar();
@@ -880,7 +885,150 @@ function resultado(d, { recien = false } = {}) {
         el('div', { class: 'quien' }, el('b', {}, j.name), el('small', { class: 'muted' }, `${Lc.results[d][j.pid].r || Lc.results[d][j.pid].s} · ⏱ ${mmss(Lc.results[d][j.pid].ms)}`)),
         el('span', { class: 'total' }, `+${pos[j.pid].pts * multiplicador(Lc, d, j.pid)}`))))),
     el('button', { class: 'btn btn--yellow', id: 'btn-volver', onClick: () => { SFX.tap(); S.verDia = null; tablero(); } }, T.toBoard),
+    botonReporte({ juego: id, dia: d }),
   );
+}
+
+/* ------------------------------------------------------------------ */
+/* Práctica: un minijuego suelto, sin copa ni Firebase (LIG-41)        */
+/* ------------------------------------------------------------------ */
+
+/**
+ * `/copa/?practica=<id>` juega un minijuego suelto con contenido al azar, para probar su
+ * mecánica antes de armar una copa. La semilla se muestra al final y va en la URL
+ * (`&semilla=K7Q2X`): con ella se repite exactamente la misma partida para reportar un error.
+ */
+function practica(id) {
+  const J = MINIJUEGOS[id], mod = JUEGOS[id];
+  if (!J || !mod) { portada(); return; }
+  const semilla = esCodigo(SEMILLA) ? SEMILLA : codigoAlAzar();
+  history.replaceState(null, '', `${location.pathname}?practica=${id}&semilla=${semilla}${PRUEBA ? '&prueba' : ''}`);
+  S.juego = { d: 1, id, practica: true, semilla };
+  mostrar('jugar');
+  $('#jugar-head').innerHTML = '';
+  const body = $('#jugar-body');
+  body.innerHTML = '';
+  poner(body, el('div', { class: 'stack' },
+    el('div', { class: 'intro-hero' }, el('span', { class: 'icon' }, J.emoji),
+      el('p', { class: 'muted', style: 'margin:0' }, T.practiceTitle),
+      el('h2', { class: 'display display--lg' }, J.nombre)),
+    el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.howToPlay), el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
+      el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, J.puntaje)),
+    el('p', { class: 'muted center' }, T.practiceHint),
+    el('button', { class: 'btn btn--yellow', id: 'btn-empezar', onClick: () => { SFX.tap(); jugarPractica(id, semilla); } }, `${J.emoji} ${T.start}`),
+    el('a', { class: 'btn btn--ghost btn--sm', href: '../labs/' }, T.backToLabs)));
+}
+
+function jugarPractica(id, semilla) {
+  const J = MINIJUEGOS[id], mod = JUEGOS[id];
+  const p = mod.generar(semilla, 1);
+  let rel = reloj.nuevo(Date.now());
+  const head = $('#jugar-head');
+  head.innerHTML = '';
+  const cron = el('span', { class: 'cron' }, fmt(T.timer, { t: '0:00' }));
+  poner(head, el('span', { class: 'jugar-titulo' }, `${J.emoji} ${J.nombre}`), cron);
+  clearInterval(S.reloj);
+  S.reloj = setInterval(() => { if (S.pantalla === 'jugar') cron.textContent = fmt(T.timer, { t: mmss(reloj.leer(rel, Date.now())) }); }, 1000);
+  S.visibilidad && document.removeEventListener('visibilitychange', S.visibilidad);
+  S.visibilidad = () => { rel = document.hidden ? reloj.pausar(rel, Date.now()) : reloj.seguir(rel, Date.now()); };
+  document.addEventListener('visibilitychange', S.visibilidad);
+  const body = $('#jugar-body');
+  body.innerHTML = '';
+  mod.montar(body, {
+    p, jugadas: undefined, T, fmt, el, SFX, vibrate,
+    guardar() { /* la práctica no se guarda */ },
+    terminar(estado) {
+      clearInterval(S.reloj);
+      document.removeEventListener('visibilitychange', S.visibilidad);
+      const r = mod.resultado(estado);
+      resultadoPractica(id, semilla, { ...r, ms: Math.round(reloj.leer(rel, Date.now())) });
+    },
+  });
+}
+
+function resultadoPractica(id, semilla, r) {
+  const J = MINIJUEGOS[id];
+  mostrar('resultado');
+  SFX.win();
+  const otra = `${location.pathname}?practica=${id}${PRUEBA ? '&prueba' : ''}`;
+  const body = $('#resultado-body');
+  body.innerHTML = '';
+  poner(body,
+    el('div', { class: 'result-hero' },
+      el('span', { class: 'trophy pop' }, J.emoji),
+      el('h2', { class: 'display display--md' }, J.nombre),
+      el('p', { class: 'muted', style: 'margin:0' }, T.yourScore),
+      el('div', { class: 'score-big' }, r.resumen || String(r.s)),
+      el('p', { class: 'muted' }, `⏱ ${mmss(r.ms)}`)),
+    el('pre', { class: 'tarjeta' }, r.t || ''),
+    el('p', { class: 'muted center' }, fmt(T.practiceSeed, { semilla })),
+    el('a', { class: 'btn btn--yellow', id: 'btn-otra', href: otra }, T.practiceAgain),
+    el('a', { class: 'btn btn--cyan btn--sm', id: 'btn-repetir', href: `${otra}&semilla=${semilla}` }, T.practiceSame),
+    botonReporte({ juego: id, semilla, puntaje: r.s, resumen: r.resumen }),
+    el('a', { class: 'btn btn--ghost btn--sm', href: '../labs/' }, T.backToLabs));
+}
+
+/* ------------------------------------------------------------------ */
+/* Reportar un problema o dejar un comentario (LIG-42)                 */
+/* ------------------------------------------------------------------ */
+
+/** El botón que lleva al formulario, con lo que se sabe de dónde se apretó. */
+function botonReporte(extra = {}) {
+  return el('button', { class: 'link-btn reporte-btn', id: 'btn-reporte', onClick: () => { SFX.tap(); reportar(extra); } }, T.reportButton);
+}
+
+/**
+ * El formulario va en su propia pantalla y vuelve a la que se estaba mirando. Además del
+ * texto se manda el contexto, a la vista de quien reporta: copa, día, pantalla, versión y
+ * navegador. Nunca el PIN ni lo que se está jugando.
+ */
+function reportar(extra = {}) {
+  const volverA = S.pantalla;
+  const contexto = {
+    copa: S.code || null, jugador: S.yo ? nombreDe(S.yo) : null, pantalla: volverA,
+    dia: S.verDia || S.juego?.d || null, ...extra,
+    url: location.pathname + location.search, navegador: navigator.userAgent.slice(0, 160),
+  };
+  const volver = () => {
+    if (volverA === 'tablero') tablero();
+    else if (volverA === 'resultado' && S.verDia) resultado(S.verDia);
+    else mostrar(volverA || 'intro');
+  };
+  mostrar('reporte');
+  const body = $('#reporte-body');
+  body.innerHTML = '';
+  const err = el('div', { class: 'form-error', role: 'alert' });
+  const texto = el('textarea', { class: 'reporte-texto', maxlength: '1000', rows: '6', placeholder: T.reportPlaceholder, 'aria-label': T.reportTitle });
+  const nombre = el('input', { class: 'mini', maxlength: '40', placeholder: T.reportNamePh, value: contexto.jugador || cuenta.nombre.get() || '', 'aria-label': T.reportNamePh });
+  const enviarBtn = el('button', { class: 'btn btn--yellow', id: 'btn-enviar-reporte' }, T.reportSend);
+  enviarBtn.addEventListener('click', async () => {
+    const t = texto.value.trim();
+    if (!t) { avisoError(err, T.reportEmpty); return; }
+    enviarBtn.disabled = true; enviarBtn.textContent = T.sending2;
+    try {
+      const st = await abrirStore();
+      await st.reportar({
+        texto: t.slice(0, 1000), nombre: nombre.value.trim().slice(0, 40),
+        contexto: JSON.stringify(contexto).slice(0, 500),
+        v: versionOf(document.getElementById('importmap')?.textContent || '') || 'dev',
+      });
+      body.innerHTML = '';
+      SFX.reveal();
+      poner(body, el('div', { class: 'aviso bien' }, T.reportThanks),
+        el('button', { class: 'btn btn--yellow', id: 'btn-reporte-volver', onClick: () => { SFX.tap(); volver(); } }, T.reportBack));
+    } catch (e) {
+      avisoError(err, errorDe(e));
+      enviarBtn.disabled = false; enviarBtn.textContent = T.reportSend;
+    }
+  });
+  poner(body,
+    el('h2', { class: 'display display--md center' }, T.reportTitle),
+    el('p', { class: 'muted' }, T.reportLead),
+    el('div', { class: 'panel stack' }, texto, nombre,
+      el('details', {}, el('summary', { class: 'muted' }, T.reportContext), el('pre', { class: 'reporte-contexto' }, JSON.stringify(contexto, null, 1)))),
+    err, enviarBtn,
+    el('button', { class: 'btn btn--ghost btn--sm', onClick: () => { SFX.tap(); volver(); } }, T.reportCancel));
+  texto.focus();
 }
 
 /* ------------------------------------------------------------------ */
@@ -889,10 +1037,10 @@ function resultado(d, { recien = false } = {}) {
 
 function barraDePrueba() {
   const barra = el('div', { class: 'prueba-barra' },
-    el('span', {}, 'Modo de prueba'),
-    el('button', { onClick: () => store?.adelantar(60 * 60 * 1000) }, '+1 h'),
-    el('button', { onClick: () => store?.adelantar(24 * 60 * 60 * 1000) }, '+1 día'),
-    el('button', { onClick: () => store?.reiniciarReloj() }, 'Hoy'));
+    el('span', {}, T.testBar),
+    el('button', { onClick: () => store?.adelantar(60 * 60 * 1000) }, T.testHour),
+    el('button', { onClick: () => store?.adelantar(24 * 60 * 60 * 1000) }, T.testDay),
+    el('button', { onClick: () => store?.reiniciarReloj() }, T.testNow));
   document.body.append(barra);
 }
 
@@ -906,6 +1054,9 @@ applyStatic(T);
 document.documentElement.lang = 'es';
 document.title = `${T.title} 🏆 · Juegos de Salón`;
 $('#sound-slot').append(soundToggle());
+// Mientras La Copa esté en el laboratorio, "volver" es volver ahí y no al menú (D-101)
+$('#btn-menu').setAttribute('href', '../labs/');
+$('#btn-menu').textContent = T.backToLabsShort;
 if (PRUEBA) barraDePrueba();
 
 // Gancho de solo lectura para las pruebas (C-14)
@@ -915,5 +1066,6 @@ window.__copa = {
   prueba: PRUEBA,
 };
 
-if (codigoUrl && esCodigo(codigoUrl)) abrirCopa(codigoUrl);
+if (PRACTICA) practica(PRACTICA);
+else if (codigoUrl && esCodigo(codigoUrl)) abrirCopa(codigoUrl);
 else portada();

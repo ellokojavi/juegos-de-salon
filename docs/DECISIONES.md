@@ -1149,3 +1149,30 @@ compartir ya llega a WhatsApp y el grupo es donde se juega la pica. La tarjeta e
 Conexiones y la final) aparece con `?tres` en la URL o en el modo de prueba.
 **Por qué:** el dueño la quiere para probar con amigos, no como producto. Promocionarla en la
 portada la haría la opción por defecto de quien quiere algo corto.
+
+## D-101 · La Copa se prueba en un laboratorio antes de llegar al menú
+**Fecha:** 2026-09-23 · **Estado:** vigente
+**Decisión:** La Copa sale del menú como juego jugable: su tarjeta se sigue viendo, apagada y con
+"Próximamente" (`available: false`, `labs: true` en `games.js`), y se juega desde **`/labs/`**,
+una página que no está enlazada desde el menú ni se indexa. El laboratorio ofrece tres pasos:
+1. **Cada minijuego por separado** (`/copa/?practica=<id>`): contenido al azar, sin copa ni
+   Firebase. Al final muestra la semilla y la deja en la URL (`&semilla=K7Q2X`), para repetir
+   exactamente la misma partida.
+2. **Una copa entera en un computador** (`/copa/?prueba`): el almacén local y el reloj adelantable.
+3. **Una copa de verdad con amigos cercanos** (`/copa/?labs`): Firebase real, con la Copa de 3
+   días disponible (D-100).
+
+En la práctica, en el tablero y en el resultado del día hay un botón **🐞 Reportar un problema o
+dejar un comentario** que guarda el texto, un nombre opcional y el contexto (copa, día, pantalla,
+juego, semilla, versión y navegador) en `feedback/` de Firebase, que solo el dueño puede leer.
+**Por qué:** el dueño quiere probar la mecánica de cada juego y después una copa real con amigos
+cercanos, recibir comentarios y reportes, y recién entonces abrirla a todos. Una copa necesita
+días reales para probarse, así que tiene que estar publicada; el laboratorio la publica sin
+ofrecerla. Los reportes llevan el contexto porque "no me funcionó" sin copa, día ni semilla no se
+puede reproducir.
+**Consecuencias:** mientras esté en el laboratorio, el enlace de arriba de La Copa vuelve a
+`/labs/` y no al menú. Las copas creadas desde el laboratorio son copas normales y sus links
+traen la tarjeta social de siempre (`og.mjs` genera tarjeta para los juegos con `labs`). La
+portada del README la marca `🧪 lab`. Los reportes se leen por ahora en la consola de Firebase
+(*Realtime Database → Data → feedback*); que el panel los muestre queda pendiente. Hay que
+publicar las reglas de nuevo por el nodo `feedback`.
