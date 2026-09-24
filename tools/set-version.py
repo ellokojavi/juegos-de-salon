@@ -32,7 +32,7 @@ MODULES = [
     'dudo/game.js', 'dudo/rules.js', 'dudo/engine.js',
     'julepe/game.js', 'julepe/rules.js', 'julepe/engine.js', 'assets/js/sobre.js',
     'panel/panel.js', 'panel/aggregate.js',
-    'copa/game.js', 'copa/rules.js', 'copa/engine.js', 'copa/cuenta.js', 'copa/store-local.js', 'copa/store-firebase.js', 'copa/reportes.js', 'copa/desglose.js',
+    'copa/game.js', 'copa/rules.js', 'copa/engine.js', 'copa/cuenta.js', 'copa/store-local.js', 'copa/store-firebase.js', 'copa/reportes.js', 'copa/desglose.js', 'copa/demo.js',
     'copa/juegos/index.js', 'copa/juegos/semilla.js', 'copa/juegos/mazos.js', 'copa/juegos/grillas.js',
     'copa/juegos/linea.js', 'copa/juegos/numero.js', 'copa/juegos/conexiones.js', 'copa/juegos/reinas.js',
     'copa/juegos/letras.js', 'copa/juegos/palabras.js', 'copa/juegos/zip.js', 'copa/juegos/tango.js', 'copa/juegos/anio.js', 'copa/juegos/final.js',

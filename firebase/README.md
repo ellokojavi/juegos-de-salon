@@ -64,6 +64,14 @@ propio árbol porque duran una semana y las salas mueren a la media hora (D-89).
   el mismo hash. El admin puede cambiar el hash y borrar los asientos (PIN nuevo).
 - Las copas no se borran todavía (LIG-31).
 
+## La Copa: inscripción cerrada e inicio movible (D-110)
+
+- `torneos/<code>/closed` (`true` o nada): solo lo escribe el celular sentado como admin. Con la
+  copa cerrada, las reglas no dejan crear jugadores nuevos.
+- `torneos/<code>/meta` se escribe al crear y, después, **solo el admin puede reescribirlo** para
+  mover el inicio: sin ningún `started`, con el mismo nombre, días, calendario, admin y
+  `createdAt`, y con la ventana del día 1 todavía abierta y empezando antes de dos días.
+
 ## Reportes (`feedback`)
 
 El botón 🐞 de La Copa (D-101, D-104) escribe en `feedback/<id>` **por REST y sin cuenta**:

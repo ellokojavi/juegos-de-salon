@@ -120,6 +120,16 @@ export function createFirebaseStore() {
       await escribir({ [`torneos/${code}/players/${pid}/out`]: out ? true : null });
     },
 
+    /** Cerrar o reabrir la inscripción (D-110). */
+    async cerrarInscripcion(code, cerrada) {
+      await escribir({ [`torneos/${code}/closed`]: cerrada ? true : null });
+    },
+
+    /** Mover el inicio mientras nadie haya jugado (D-110). Las reglas lo niegan si alguien empezó. */
+    async reprogramar(code, meta) {
+      await escribir({ [`torneos/${code}/meta`]: meta }, 'empezada');
+    },
+
     async renombrar(code, pid, name) {
       await escribir({ [`torneos/${code}/players/${pid}/name`]: name });
     },

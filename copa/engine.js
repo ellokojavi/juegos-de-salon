@@ -162,7 +162,23 @@ export const cerrado = (meta, d, now) => !!meta.win[d] && now >= meta.win[d].b;
 export const terminada = (meta, now) => now >= meta.end;
 
 /** ¿Todavía se puede entrar? Hasta que empieza la final (D-94). */
-export const inscripcionAbierta = (meta, now) => now < (meta.joinUntil ?? meta.win[meta.days].a);
+/** Se puede inscribir alguien nuevo: antes de la final y si el admin no cerró la inscripción (D-110). */
+export const inscripcionAbierta = (meta, now, cerrada = false) => !cerrada && now < (meta.joinUntil ?? meta.win[meta.days].a);
+
+/**
+ * Mover el inicio de una copa que nadie ha empezado a jugar (D-110): la misma copa, con las
+ * fechas recalculadas desde `inicio` ("AAAA-MM-DD"). Nombre, días, calendario y admin no cambian.
+ */
+export function moverInicio(meta, inicio) {
+  const tz = meta.tz || ZONA;
+  return {
+    ...meta, start: inicio, win: ventanas(inicio, meta.days, tz),
+    end: medianoche(sumarDias(inicio, meta.days), tz), joinUntil: medianoche(sumarDias(inicio, meta.days - 1), tz),
+  };
+}
+
+/** Nadie ha empezado ningún día: el inicio todavía se puede mover. */
+export const sinEmpezar = L => !Object.values(L?.started || {}).some(d => d && Object.keys(d).length);
 
 /* ------------------------------------------------------------------ */
 /* Estado de cada día para un jugador                                  */
