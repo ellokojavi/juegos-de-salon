@@ -70,7 +70,9 @@ propio árbol porque duran una semana y las salas mueren a la media hora (D-89).
   copa cerrada, las reglas no dejan crear jugadores nuevos.
 - `torneos/<code>/meta` se escribe al crear y, después, **solo el admin puede reescribirlo** para
   mover el inicio: sin ningún `started`, con el mismo nombre, días, calendario, admin y
-  `createdAt`, y con la ventana del día 1 todavía abierta y empezando antes de dos días.
+  `createdAt`, y con la ventana del día 1 todavía abierta y empezando antes de 32 días.
+- Una copa del laboratorio (`meta/lab = true`, D-115) se puede reescribir aunque ya se haya
+  jugado: así su admin la pasa al día siguiente. La marca `lab` no se puede quitar ni poner después.
 
 ## Reportes (`feedback`)
 
