@@ -12,13 +12,20 @@ export function montar(raiz, ctx) {
   let orden = p.orden.slice();
   let sel = [];
   let aviso = null;
+  // Los grupos ya mostrados no se vuelven a animar: la pantalla se redibuja en cada toque y la
+  // animación de entrada los hacía parpadear (reporte del laboratorio). Solo el recién resuelto la lleva.
+  const mostrados = new Set();
 
   const barajar = () => {
     for (let i = orden.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [orden[i], orden[j]] = [orden[j], orden[i]]; }
   };
 
-  const grupo = g => el('div', { class: `grupo nivel${g.nivel} pop` },
-    el('b', {}, g.nombre), el('span', {}, g.palabras.join(' · ')));
+  const grupo = g => {
+    const nuevo = !mostrados.has(g.nivel);
+    mostrados.add(g.nivel);
+    return el('div', { class: `grupo nivel${g.nivel}` + (nuevo ? ' pop' : ''), 'data-nivel': g.nivel },
+      el('b', {}, g.nombre), el('span', {}, g.palabras.join(' · ')));
+  };
 
   const dibujar = () => {
     const e = motor.estado(p, jugadas);

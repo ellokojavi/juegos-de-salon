@@ -350,6 +350,15 @@ ok(await ev(`document.querySelectorAll('.mini-juego').length`) === 9, 'el labora
 await b.shot('10-labs');
 for (const id of ['linea', 'numero', 'conexiones', 'reinas', 'letras', 'zip', 'tango', 'anio', 'final']) {
   await b.go(`${BASE}?practica=${id}&prueba${id === 'zip' ? '&zipSeg=12' : ''}`, 1200); await preparar();
+  ok(await ev(`!!document.getElementById('btn-ensayo')`) , `práctica de ${id}: la antesala ofrece la prueba como en la copa`);
+  if (id === 'linea') {
+    // La prueba desde el laboratorio: la misma que antes de un día (D-109), y vuelve a la antesala
+    await click('#btn-ensayo'); await esperarCuenta();
+    await ev(`(async()=>{const {JUEGOS}=await import('/copa/juegos/index.js');window.__jugando={p:JUEGOS.linea.ensayo(__copa.estado.juego.semilla, 1)};return 1})()`);
+    await jugarLinea(2); await click('#btn-fin'); await sleep(300);
+    ok(!!await ev(`document.getElementById('btn-volver-ensayo')`), 'la prueba del laboratorio termina con la vuelta a la antesala');
+    await click('#btn-volver-ensayo'); await sleep(300);
+  }
   await click('#btn-empezar'); await sleep(300); await esperarCuenta();
   await ev(`(async()=>{const {JUEGOS}=await import('/copa/juegos/index.js');window.__jugando={p:JUEGOS['${id}'].generar(__copa.estado.juego.semilla, 1)};return 1})()`);
   if (id === 'zip') {
@@ -377,6 +386,11 @@ for (const id of ['linea', 'numero', 'conexiones', 'reinas', 'letras', 'zip', 't
   }
   if (id === 'tango') await b.shot('tango-tablero');
   await JUGAR[id](id === 'tango' ? 1 : 2);
+  if (id === 'zip') {
+    ok(await ev(`document.querySelector('.zip-grid').classList.contains('solucion') && !!document.getElementById('zip-solucion')`), 'Zip: al acabarse el tiempo se ve la solución del nivel que quedó a medias');
+    await b.shot('zip-solucion');
+  }
+  if (id === 'conexiones') ok(await ev(`document.querySelectorAll('.grupo').length === 4 && !document.querySelector('.grupo').classList.contains('pop')`), 'Conexiones: los grupos ya resueltos no se vuelven a animar');
   await click('#btn-fin'); await sleep(500);
   const r = await ev(`JSON.stringify({p:__copa.estado.pantalla, s:document.querySelector('.score-big')?.textContent})`).then(JSON.parse);
   ok(r.p === 'resultado', `práctica de ${id}: se juega completa (${r.s})`);

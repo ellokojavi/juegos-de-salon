@@ -140,6 +140,10 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | LIG-51 | Al terminar, cómo se calculó el puntaje, línea por línea (D-106). | ✅ v0.45 |
 | LIG-52 | El nombre del reporte queda guardado en el dispositivo (D-104). | ✅ v0.45 |
 | LIG-53 | Reinas puntúa el tiempo en resolverlo (100 hasta 30 s, 10 a los 5 min), sin castigo por error (D-107). | ✅ v0.46 |
+| LIG-54 | 🔤 pasa a llamarse Toque y Fama: Palabra y suma puntos por cada letra encontrada en su lugar, una vez por lugar (D-108). | ✅ v0.47 |
+| LIG-55 | La práctica del laboratorio ofrece la sesión de prueba, como un día de la copa (D-109). | ✅ v0.47 |
+| LIG-56 | Zip muestra la solución del nivel a medias al acabarse el tiempo (D-109). | ✅ v0.47 |
+| LIG-57 | Los reportes que no se pueden enviar se guardan y se reenvían (D-109). | ✅ v0.47 |
 | LIG-46 | El teclado, el tablero y la línea se comparten con Toque y Fama y Línea de Tiempo (`assets/js/teclado.js`, `assets/css/teclado.css`, `assets/css/linea.css`). | ✅ v0.44 |
 
 ## Requerimientos no funcionales
