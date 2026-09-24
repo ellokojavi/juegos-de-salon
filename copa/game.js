@@ -684,7 +684,9 @@ function podio() {
 /* ------------------------------------------------------------------ */
 
 async function compartir(texto, url = urlPublica(S.code)) {
-  const r = await shareLink({ title: L().meta.name, text: texto, url });
+  // El link va dentro del texto, en su propia línea al final (D-124): si va aparte, Android lo
+  // pega pegado a la última frase ("…Mica. https://…")
+  const r = await shareLink({ title: L().meta.name, text: `${texto}\n\n🔗 ${url}` });
   if (r === 'copied') toast(T.copied);
 }
 
