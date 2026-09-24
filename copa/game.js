@@ -13,7 +13,7 @@ import { applyStatic } from '../assets/js/i18n.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { trackStart, versionOf } from '../assets/js/transport/stats.js';
 import {
-  CALENDARIOS, MAX_JUGADORES, CODIGO, esCodigo, codigoAlAzar, pidAlAzar, limpiarNombre, claveNombre, esPin, hashPin,
+  CALENDARIOS, MAX_JUGADORES, COPA_MAX, CODIGO, esCodigo, codigoAlAzar, pidAlAzar, limpiarNombre, claveNombre, esPin, hashPin,
   fechaEn, sumarDias, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta, estadoDia, comodinDe, moverInicio, sinEmpezar, pasarDia, MAX_DIAS_INICIO, faltaGente,
   medianoche, puedeComodin, multiplicador, posicionesDelDia, tabla, faltan, medallas, evolucion, visibleDia, reloj, mmss, juegoDelDia, esFinal, activos, ZONA,
 } from './engine.js';
@@ -136,9 +136,18 @@ function portada() {
 /* Formularios de cuenta                                               */
 /* ------------------------------------------------------------------ */
 
-function campo(label, attrs = {}) {
+/**
+ * Un campo con su etiqueta. Si tiene largo máximo y `contador`, muestra cuántos caracteres van
+ * ("24 / 40") para que el límite se vea antes de chocar con él (D-119).
+ */
+function campo(label, attrs = {}, { contador = false } = {}) {
   const input = el('input', { autocomplete: 'off', ...attrs });
-  return { input, nodo: el('div', { class: 'field' }, el('label', {}, label), input) };
+  const max = Number(attrs.maxlength) || 0;
+  const cuenta = contador && max ? el('small', { class: 'contador muted', 'aria-live': 'polite' }) : null;
+  const pintar = () => { if (!cuenta) return; const n = input.value.length; cuenta.textContent = `${n} / ${max}`; cuenta.classList.toggle('lleno', n >= max); };
+  input.addEventListener('input', pintar);
+  pintar();
+  return { input, nodo: el('div', { class: 'field' }, el('label', {}, label), input, cuenta) };
 }
 const campoPin = label => campo(label, { inputmode: 'numeric', pattern: '[0-9]*', maxlength: '4', type: 'password', class: 'pin' });
 
@@ -170,7 +179,7 @@ function crearCopa() {
   const body = $('#crear-body');
   body.innerHTML = '';
   const err = el('div', { class: 'form-error', role: 'alert' });
-  const nombre = campo(T.fCopa, { placeholder: T.fCopaPh, maxlength: '30' });
+  const nombre = campo(T.fCopa, { placeholder: T.fCopaPh, maxlength: String(COPA_MAX) }, { contador: true });
   // La Copa de 3 días es solo para probar con amigos (D-100): se ofrece con ?tres en la URL
   // o en el modo de prueba, nunca en la portada.
   const modo = opciones([
@@ -183,13 +192,13 @@ function crearCopa() {
   const inicio = opciones([{ valor: 0, titulo: T.startToday }, { valor: 1, titulo: T.startTomorrow }, { valor: 'otra', titulo: T.startOther }],
     v => { otraFecha.nodo.hidden = v !== 'otra'; if (v === 'otra') otraFecha.input.focus(); });
   inicio.nodo.classList.add('tres');
-  const yo = campo(T.fYou, { placeholder: T.fYouPh, maxlength: '20', value: cuenta.nombre.get() });
+  const yo = campo(T.fYou, { placeholder: T.fYouPh, maxlength: '20', value: cuenta.nombre.get() }, { contador: true });
   const pin1 = campoPin(T.fPin), pin2 = campoPin(T.fPin2);
   const boton = el('button', { class: 'btn btn--yellow', id: 'btn-crear-go' }, T.createGo);
 
   boton.addEventListener('click', async () => {
     SFX.tap();
-    const n = limpiarNombre(nombre.input.value), quien = limpiarNombre(yo.input.value);
+    const n = limpiarNombre(nombre.input.value, COPA_MAX), quien = limpiarNombre(yo.input.value);
     if (!n) return avisoError(err, T.errCopa);
     if (!modo.valor) return avisoError(err, TRES ? T.errMode : T.errMode7);
     if (inicio.valor === null) return avisoError(err, T.errStart);
@@ -310,7 +319,7 @@ function entrar({ mantener = false } = {}) {
   const nuevo = () => {
     entrarModo = 'nuevo';
     caja.innerHTML = '';
-    const yo = campo(T.fYou, { placeholder: T.fYouPh, maxlength: '20', value: cuenta.nombre.get() });
+    const yo = campo(T.fYou, { placeholder: T.fYouPh, maxlength: '20', value: cuenta.nombre.get() }, { contador: true });
     const p1 = campoPin(T.fPin), p2 = campoPin(T.fPin2);
     const b = el('button', { class: 'btn btn--yellow', id: 'btn-inscribir' }, T.joinGo);
     b.addEventListener('click', async () => {
@@ -847,7 +856,7 @@ function admin({ forzar = false } = {}) {
       if (!confirm(fmt(T.deleteConfirm1, { copa: meta.name }))) return;
       const escrito = prompt(fmt(T.deleteConfirm2, { copa: meta.name }));
       if (escrito === null) return;
-      if (claveNombre(escrito) !== claveNombre(meta.name)) { avisoError(errBorrar, T.deleteMismatch); return; }
+      if (claveNombre(escrito, COPA_MAX) !== claveNombre(meta.name, COPA_MAX)) { avisoError(errBorrar, T.deleteMismatch); return; }
       const b = ev.currentTarget; b.disabled = true;
       S.eliminando = true;
       try {
