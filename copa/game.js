@@ -290,7 +290,6 @@ async function abrirCopa(code, { recienCreada = false, pantalla = null } = {}) {
 const L = () => S.L;
 const ahora = () => store.now();
 const nombreDe = pid => L().players?.[pid]?.name || '?';
-const modoTexto = meta => (meta.days === 3 ? T.mode3 : T.mode7);
 
 /* ------------------------------------------------------------------ */
 /* Entrar: inscribirse o sentarse                                      */
@@ -308,10 +307,12 @@ function entrar({ mantener = false } = {}) {
   const now = ahora();
   const d = diaActual(meta, now);
   const jug = activos(L());
+  // "7 días · Parte el viernes 25 de septiembre · 3 jugadores inscritos" (D-120)
+  const inscritos = fmt(jug.length === 1 ? T.signedUpOne : T.signedUp, { n: jug.length });
   const info = d === 0
-    ? fmt(T.inviteInfo, { modo: modoTexto(meta), fecha: fechaLarga(meta.win[1].a, meta.tz), n: jug.length, max: MAX_JUGADORES })
-    : terminada(meta, now) ? fmt(T.inviteEnded, { modo: modoTexto(meta), k: jug.length })
-    : fmt(T.inviteStarted, { modo: modoTexto(meta), d: Math.min(d, meta.days), n: meta.days, k: jug.length, max: MAX_JUGADORES });
+    ? fmt(T.inviteInfo, { dias: meta.days, fecha: fechaLarga(meta.win[1].a, meta.tz), inscritos })
+    : terminada(meta, now) ? fmt(T.inviteEnded, { dias: meta.days, inscritos })
+    : fmt(T.inviteStarted, { dias: meta.days, d: Math.min(d, meta.days), n: meta.days, inscritos });
   const err = el('div', { class: 'form-error', role: 'alert' });
   const puedeEntrar = inscripcionAbierta(meta, now, L().closed) && jug.length < MAX_JUGADORES;
 
@@ -328,6 +329,23 @@ function entrar({ mantener = false } = {}) {
       if (!n) return avisoError(err, T.errNombre);
       if (!esPin(p1.input.value)) return avisoError(err, T.errPin);
       if (p1.input.value !== p2.input.value) return avisoError(err, T.errPin2);
+      // Un nombre que ya está: si el PIN es el suyo, cuenta como entrar, sin volver a escribirlo (D-120)
+      const existente = Object.entries(L().players || {}).find(([, x]) => !x.out && claveNombre(x.name) === claveNombre(n));
+      if (existente) {
+        const [pid, x] = existente;
+        b.disabled = true; b.textContent = T.joining;
+        try {
+          await store.sentarse(S.code, pid, await hashPin(S.code, pid, p1.input.value));
+          cuenta.recordar(S.code, pid, { nombre: x.name, copa: meta.name, fin: meta.end });
+          S.yo = pid;
+          SFX.reveal(); toast(fmt(T.welcomeBack, { name: x.name }));
+          tablero();
+        } catch (e) {
+          avisoError(err, e?.code === 'pin' ? fmt(T.errRepetidoPin, { name: x.name }) : errorDe(e));
+          b.disabled = false; b.textContent = T.joinGo;
+        }
+        return;
+      }
       if (Object.values(L().players || {}).some(p => claveNombre(p.name) === claveNombre(n))) return avisoError(err, T.errRepetido);
       b.disabled = true; b.textContent = T.joining;
       try {
@@ -429,7 +447,7 @@ function tarjetaDia(d, rotulo) {
   return el('div', { class: `panel dia-card ${est}` },
     el('div', { class: 'dia-top' },
       el('span', { class: 'chip' + (rotulo === T.today ? ' chip--hot' : '') }, rotulo),
-      el('span', { class: 'muted' }, fmt(T.dayOf, { d, n: meta.days })),
+      el('span', { class: 'muted' }, `${fmt(T.dayOf, { d, n: meta.days })} · ${fechaCorta(meta.win[d].a, meta.tz)}`),
       x2 ? el('span', { class: 'chip chip--gold' }, esFinal(meta, d) ? T.x2 : `${T.x2} ${T.wildUsed}`) : null),
     el('div', { class: 'dia-juego' }, el('span', { class: 'dia-emoji' }, J.emoji), el('div', {}, el('b', {}, J.nombre), el('small', { class: 'muted' }, hastaCuando(d, est, now)))),
     est === 'jugado' ? el('p', { class: 'ok' }, `✅ ${T.played}`) : null,
@@ -559,7 +577,8 @@ function tablero() {
   let estadoTxt;
   if (d === 0) estadoTxt = fmt(T.before, { fecha: fechaLarga(meta.win[1].a, meta.tz) });
   else if (d > meta.days) estadoTxt = T.over;
-  else estadoTxt = fmt(T.dayOf, { d, n: meta.days });
+  // El día de la copa y la fecha, para que se lea igual que el calendario (D-120)
+  else estadoTxt = `${fmt(T.dayOf, { d, n: meta.days })} · ${fechaLarga(meta.win[d].a, meta.tz)}`;
 
   poner(body, el('div', { class: 'copa-head' },
     el('h1', { class: 'display display--md rainbow' }, `🏆 ${meta.name}`),

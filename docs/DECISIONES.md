@@ -1436,3 +1436,17 @@ pru". Ahora llega a **40** (`COPA_MAX`, y las reglas aceptan hasta 40). Los camp
 muestran un **contador** ("24 / 40", en amarillo al llegar al tope) y no dejan escribir más. Los
 títulos largos parten línea en vez de salirse de la pantalla.
 **Por qué:** un límite que no se ve se descubre cuando ya cortó el texto.
+
+## D-120 · El calendario con fechas, el día de gracia explícito, y la invitación más simple
+**Fecha:** 2026-09-24 · **Estado:** vigente
+**Decisión:**
+- **El tablero dice el día de la copa y su fecha** ("Día 2 de 7 · jueves 24 de septiembre"), y la
+  tarjeta de hoy también ("Día 2 de 7 · jue 24"), como las tarjetas chicas del calendario.
+- **El día de gracia se nombra**: el día de ayer que todavía se puede jugar dice "Día de gracia:
+  puedes jugarlo hasta hoy a las 23:59" (antes, "Último día para jugarlo", que no explicaba por
+  qué un día de ayer seguía abierto).
+- **La invitación**: "7 días · Parte el viernes 25 de septiembre · 3 jugadores inscritos".
+- **Inscribirse con un nombre que ya existe y su PIN correcto cuenta como entrar**, sin pasar por
+  "Ya estoy inscrito". Con otro PIN, avisa que el nombre está tomado y que revise su PIN.
+**Por qué:** del laboratorio: un día de ayer abierto sin explicación parece un error, y quien
+vuelve a inscribirse casi siempre es alguien que ya estaba y cambió de teléfono.

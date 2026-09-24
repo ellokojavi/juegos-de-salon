@@ -308,6 +308,13 @@ await click('#tab-inscrito'); await sleep(100);
 await ev(`[...document.querySelectorAll('.chip-btn')].find(x=>x.textContent==='Javi').click(); document.querySelector('#entrar-body input.pin').value='9999'; 1`);
 await click('#btn-sentarse'); await sleep(300);
 ok(/no es el de Javi/.test(await ev(`document.querySelector('#entrar-body .form-error').textContent`)), 'un PIN equivocado se rechaza');
+// Inscribirse con un nombre y PIN que ya existen cuenta como entrar (D-120)
+await comoJugador(CODE);
+ok(/7 días · Parte el .* · 3 jugadores inscritos/.test(await ev(`document.querySelector('#entrar-body .lead').textContent`)) || /3 días · Parte el .* · 3 jugadores inscritos/.test(await ev(`document.querySelector('#entrar-body .lead').textContent`)), 'la invitación dice días, cuándo parte y cuántos se inscribieron');
+await click('#tab-nuevo'); await sleep(100);
+await ev(`(()=>{const i=[...document.querySelectorAll('#entrar-body input')];i[0].value='javi';i[1].value='2222';i[2].value='2222';return 1})()`);
+await click('#btn-inscribir'); await sleep(500);
+ok(await pantalla() === 'tablero' && await ev('__copa.estado.copa.players[__copa.estado.yo].name') === 'Javi', 'inscribirse con el nombre y el PIN de alguien ya inscrito lo hace entrar');
 
 const JUGADORES = [['Cata', '1111'], ['Javi', '2222'], ['Pancho', '3333']];
 const dias = SIETE ? 7 : 3;
