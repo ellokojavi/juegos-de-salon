@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.50.0 — 2026-09-24
+- **Resultado:** la tarjeta para compartir va justo bajo el puntaje, sin repetir el tiempo si ya
+  lo trae (D-114). Primer arreglo que sale de un reporte 🐞.
+- **Conexiones:** en *Piezas de ajedrez*, TORRE en vez de DAMA.
+
 ## 0.49.0 — 2026-09-23
 - **Zip:** cuando se acaba el tiempo, el reloj de arriba se detiene en el tiempo final (seguía
   contando segundos) y la cuenta regresiva desaparece. Queda a la vista cuántos niveles resolviste.
