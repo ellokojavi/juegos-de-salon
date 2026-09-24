@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.53.0 — 2026-09-24
+- **Eliminar la copa** (D-117): al final de Administrar, en rojo, con dos confirmaciones (la
+  segunda, escribir el nombre de la copa). El admin ve que se eliminó y los demás, que ya no existe.
+- **Paso manual:** volver a publicar `firebase/database.rules.json`.
+
 ## 0.52.0 — 2026-09-24
 - **Cada cosa en su momento** (D-116): la invitación solo antes de partir y con la inscripción
   abierta; la tabla parcial solo mientras se juega; sin "Sacar" con la copa terminada; el

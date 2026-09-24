@@ -76,6 +76,14 @@ await test('copa del laboratorio: el admin la pasa al día siguiente aunque ya s
   await admin.resultado(C3, 1, 'aaaaaa', { s: 50, ms: 1000, t: '', r: '50/100' });
 });
 
+await test('eliminar la copa: solo el admin (D-117)', async () => {
+  const C4 = 'PQRST';
+  await admin.crear(C4, nuevaMeta({ nombre: 'Copa a borrar', dias: 3, inicio: hoy, admin: 'aaaaaa', creada: admin.now() }), { pid: 'aaaaaa', name: 'Cata', at: 1, pinHash: 'h' });
+  await rechaza(otro.eliminar(C4), 'permiso');
+  await admin.eliminar(C4);
+  assert.equal(await admin.leer(C4), null);
+});
+
 await test('inscribirse: nombre repetido y cupo', async () => {
   await otro.inscribir(CODE, { pid: 'bbbbbb', name: 'Javi', at: 2, pinHash: await hashPin(CODE, 'bbbbbb', '2222') });
   await rechaza(intruso.inscribir(CODE, { pid: 'cccccc', name: ' javi ', at: 3, pinHash: 'h' }), 'nombre-repetido');

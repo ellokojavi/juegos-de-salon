@@ -390,7 +390,8 @@ ok(await ev(`document.querySelectorAll('.rej.reina').length`) > 0 && !!await ev(
 await click('#btn-fin'); await sleep(500);
 ok(/^0/.test(await ev(`document.querySelector('.score-big')?.textContent || ''`)), 'Reinas: rendirse vale 0 puntos');
 for (const id of ['linea', 'numero', 'conexiones', 'reinas', 'letras', 'zip', 'tango', 'anio', 'final']) {
-  await b.go(`${BASE}?practica=${id}&prueba${id === 'zip' ? '&zipSeg=12' : ''}`, 1200); await preparar();
+  // Zip con semilla fija: el chequeo del aviso busca un trazo que llegue al final sin cubrir todo
+await b.go(`${BASE}?practica=${id}&prueba${id === 'zip' ? '&zipSeg=12&semilla=KQRST' : ''}`, 1200); await preparar();
   ok(await ev(`!!document.getElementById('btn-ensayo')`) , `práctica de ${id}: la antesala ofrece la prueba como en la copa`);
   if (id === 'linea') {
     // La prueba desde el laboratorio: la misma que antes de un día (D-109), y vuelve a la antesala
@@ -472,6 +473,18 @@ await b.go(`${BASE}?prueba&demo=sin-jugar`, 1500); await preparar();
 ok(/nadie ha jugado/.test(await ev(`document.getElementById('admin-inicio')?.innerText || ''`)), 'demo sin-jugar: el admin ve que partió sin nadie y puede moverla');
 await b.go(`${BASE}?prueba&demo=jugador`, 1500); await preparar();
 ok(!!await ev(`document.querySelector('[data-dia="4"]')`), 'demo jugador: el día 4 se puede jugar');
+// Eliminar la copa (D-117): dos confirmaciones, la segunda escribiendo el nombre
+await b.go(`${BASE}?prueba&demo=admin`, 1500); await preparar();
+const codeBorrar = await ev('__copa.estado.code');
+await revisarPantalla('admin-eliminar');
+await ev(`window.prompt = () => 'otro nombre'; 1`);
+await click('#btn-eliminar'); await sleep(300);
+ok(/no coincide/.test(await ev(`document.querySelector('#admin-eliminar .form-error').textContent`)) && !!await ev(`JSON.parse(localStorage.getItem('juegos-de-salon:copa:prueba'))['${codeBorrar}']`), 'eliminar: con otro nombre no se borra nada');
+await ev(`window.prompt = () => 'copa de la oficina'; 1`);
+await click('#btn-eliminar'); await sleep(500);
+ok(!!await ev(`document.getElementById('copa-eliminada')`) && !await ev(`JSON.parse(localStorage.getItem('juegos-de-salon:copa:prueba'))['${codeBorrar}']`), 'eliminar: escribiendo el nombre se borra y el admin ve que se eliminó');
+await b.shot('copa-eliminada');
+
 // Cada mensaje solo cuando tiene sentido (D-116)
 await b.go(`${BASE}?prueba&demo=admin`, 1500); await preparar();
 ok(!await ev(`document.getElementById('msg-invitar')`) && !!await ev(`document.getElementById('msg-tabla')`) && !await ev(`document.getElementById('msg-final')`), 'día 4: sin invitación ni resumen final, con la tabla parcial');
