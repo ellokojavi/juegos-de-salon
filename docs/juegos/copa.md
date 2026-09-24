@@ -44,8 +44,16 @@ sin que nada viaje por la red.
 | 6 | 📅 ¿En qué año?: 6 hitos | 100 por hito, baja con la distancia | mazos de Línea de Tiempo y teclado de Toque y Fama |
 | 7 | 🏁 La Gran Final: 5 rondas cortas | 0 a 100 por ronda, 0 a 500 | los cinco motores |
 
+Al tocar Empezar, una **cuenta de 5 a 1** y "¡A jugar!" (D-105): recién ahí aparece el tablero y
+parte el reloj. Al terminar, el resultado explica **cómo se calculó el puntaje** línea por línea
+(`copa/desglose.js`, D-106).
+
+Antes de Empezar cada día se puede jugar una **sesión de prueba** (D-103): la misma mecánica con
+otro contenido (código derivado con `codigoEnsayo`, otra temática, una grilla fuera del sorteo,
+tableros más chicos), que no se guarda ni cuenta.
+
 La Copa de 3 días juega Línea, Conexiones y la final. En el laboratorio se pueden practicar además
-**〰️ Zip** (un solo trazo por todas las casillas, pasando por los números en orden) y **☀️ Tango**
+**〰️ Zip** (un solo trazo por todas las casillas, pasando por los números en orden; por niveles, tres minutos para resolver la mayor cantidad) y **☀️ Tango**
 (soles y lunas, mitad y mitad por línea, nunca tres seguidos, con marcas = y ×), candidatos a
 entrar al calendario.
 
@@ -102,9 +110,9 @@ juegos (C-16, `panel/adapta.test.mjs`).
 `/labs/` (D-101) ofrece la práctica de cada minijuego, la copa simulada y la copa real. La práctica
 arma el contenido con una semilla al azar como si fuera el día 1 de una copa con ese código, y la
 muestra al final. El botón **🐞 Reportar un problema o dejar un comentario** (práctica, tablero y
-resultado) guarda en `feedback/<id>` el texto, un nombre opcional, la versión y un contexto en
-JSON: copa, jugador, pantalla, día, juego, semilla, URL y navegador. Solo el dueño lo lee, por ahora
-en la consola de Firebase; en `?prueba` queda en `localStorage` (`juegos-de-salon:copa:prueba:reportes`).
+resultado) guarda en `feedback/<id>`, por REST y sin cuenta (D-104), el texto, un nombre opcional, la versión
+y un contexto en JSON: copa, jugador, pantalla, día, juego, semilla, URL y navegador. Se leen con
+`node tools/reportes.mjs`; en `?prueba` queda en `localStorage` (`juegos-de-salon:copa:prueba:reportes`).
 
 ## Admin
 

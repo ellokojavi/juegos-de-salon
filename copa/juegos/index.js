@@ -25,16 +25,35 @@ import * as uiTango from './ui-tango.js';
 import * as uiAnio from './ui-anio.js';
 import * as uiFinal from './ui-final.js';
 
-const juego = (motor, ui) => ({ generar: motor.generar, montar: ui.montar, resultado: ui.resultado });
+import { temasDeLaCopa, DECKS } from './mazos.js';
+import { LETRAS } from '../engine.js';
+
+/**
+ * El código con que se arma la sesión de prueba (D-103): otro, derivado del de la copa, para que
+ * el contenido sea distinto del de verdad pero igual para todos los que prueban.
+ */
+export const codigoEnsayo = codigo => [...codigo].map(l => LETRAS[(LETRAS.indexOf(l) + 7) % LETRAS.length]).join('');
+
+/** Una temática que la copa no usa: probar Línea o ¿En qué año? no puede adelantar cartas. */
+const temaLibre = codigo => {
+  const usados = Object.values(temasDeLaCopa(codigo));
+  return DECKS.map(d => d.id).find(id => !usados.includes(id));
+};
+
+const juego = (motor, ui, ensayo) => ({ generar: motor.generar, montar: ui.montar, resultado: ui.resultado, ensayo });
 
 export const JUEGOS = {
-  linea: juego(linea, uiLinea),
-  numero: juego(numero, uiNumero),
-  conexiones: juego(conexiones, uiConexiones),
-  reinas: juego(reinas, uiReinas),
-  letras: juego(letras, uiLetras),
-  zip: juego(zip, uiZip),
-  tango: juego(tango, uiTango),
-  anio: juego(anio, uiAnio),
-  final: juego(final, uiFinal),
+  linea: juego(linea, uiLinea, (c, d) => linea.generar(codigoEnsayo(c), d, { n: 5, tema: temaLibre(c), sal: 'ensayo' })),
+  numero: juego(numero, uiNumero, (c, d) => numero.generar(codigoEnsayo(c), d, { cifras: 3, sal: 'ensayo' })),
+  conexiones: juego(conexiones, uiConexiones, (c, d) => conexiones.ensayo(c, d)),
+  reinas: juego(reinas, uiReinas, (c, d) => reinas.generar(codigoEnsayo(c), d, { n: 5, sal: 'ensayo' })),
+  letras: juego(letras, uiLetras, (c, d) => {
+    const real = letras.generar(c, d).secreto;
+    for (let k = 0; ; k++) { const p = letras.generar(codigoEnsayo(c), d, { sal: `ensayo-${k}` }); if (p.secreto !== real) return p; }
+  }),
+  // Zip se arma nivel por nivel dentro de la pantalla: lo generado es solo la semilla del día (D-103)
+  zip: { generar: (codigo, dia) => ({ codigo, dia }), montar: uiZip.montar, resultado: uiZip.resultado, ensayo: (c, d) => ({ codigo: codigoEnsayo(c), dia: d, tiempo: 60 * 1000 }) },
+  tango: juego(tango, uiTango, (c, d) => tango.generar(codigoEnsayo(c), d, { sal: 'ensayo' })),
+  anio: juego(anio, uiAnio, (c, d) => anio.generar(codigoEnsayo(c), d, { n: 2, tema: temaLibre(c), sal: 'ensayo' })),
+  final: juego(final, uiFinal, (c, d) => final.generar(codigoEnsayo(c), d)),
 };

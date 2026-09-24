@@ -306,9 +306,9 @@
       }
     },
     "feedback": {
-      ".read": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
+      ".read": true,
       "$id": {
-        ".write": "auth != null && !data.exists()",
+        ".write": "!data.exists()",
         ".validate": "newData.hasChildren(['texto', 'at'])",
         "texto": {
           ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 1000"

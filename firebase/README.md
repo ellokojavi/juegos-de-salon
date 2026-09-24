@@ -66,9 +66,10 @@ propio árbol porque duran una semana y las salas mueren a la media hora (D-89).
 
 ## Reportes (`feedback`)
 
-El botón 🐞 de La Copa (D-101) escribe en `feedback/<id>` con acceso anónimo: `texto` (hasta 1000
-caracteres), `nombre` opcional, `contexto` (JSON, hasta 500), `v` y `at` del servidor. Se escribe
-una sola vez y **solo el dueño lo lee**: en la consola, *Realtime Database → Data → feedback*.
+El botón 🐞 de La Copa (D-101, D-104) escribe en `feedback/<id>` **por REST y sin cuenta**:
+`texto` (hasta 1000 caracteres), `nombre` opcional, `contexto` (JSON, hasta 500), `v` y `at` del
+servidor. Se escribe una sola vez y **se lee sin cuenta**: `node tools/reportes.mjs` los muestra
+(`--dias 3` para los recientes). No llevan PIN ni datos de la cuenta.
 
 ## La papelera (`cleanup`)
 
