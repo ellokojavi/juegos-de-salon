@@ -64,6 +64,19 @@ propio árbol porque duran una semana y las salas mueren a la media hora (D-89).
   el mismo hash. El admin puede cambiar el hash y borrar los asientos (PIN nuevo).
 - Las copas no se borran todavía (LIG-31).
 
+## Publicar las reglas (D-122)
+
+```bash
+node tools/reglas.mjs publicar    # sube database.rules.json y verifica que quedó
+node tools/reglas.mjs revisar     # ¿lo publicado es lo del repo?
+```
+
+Usa la llave de una cuenta de servicio guardada fuera del repo en
+`~/.config/juegos-de-salon/firebase-admin.json` (o `FIREBASE_LLAVE=/ruta`). Se crea una vez en
+[Cuentas de servicio](https://console.firebase.google.com/u/0/project/juegos-de-salon/settings/serviceaccounts/adminsdk)
+→ Generar nueva clave privada. Da acceso de administrador a todo el proyecto: no se comparte, y si
+se filtra se revoca ahí mismo. Sin la llave, se sigue pudiendo pegar a mano en la consola.
+
 ## La Copa: inscripción cerrada e inicio movible (D-110)
 
 - `torneos/<code>/closed` (`true` o nada): solo lo escribe el celular sentado como admin. Con la

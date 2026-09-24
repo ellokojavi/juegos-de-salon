@@ -122,6 +122,18 @@ señales las mandan los juegos con `trackStart` y el transporte (`assets/js/tran
 Ver [docs/PANEL.md](docs/PANEL.md) y D-44. `window.__panel.seed({ rooms, days })` lo dibuja con
 datos sembrados sin entrar.
 
+## Reglas de Firebase
+
+Cuando un cambio toca `firebase/database.rules.json`, después de fusionar se publican así (D-122):
+
+```bash
+node tools/reglas.mjs publicar     # sube las reglas y verifica que quedaron
+node tools/reglas.mjs revisar      # ¿lo publicado es lo del repo?
+```
+
+Necesita la llave de la cuenta de servicio en `~/.config/juegos-de-salon/firebase-admin.json`
+(fuera del repo). Si no está, el script dice cómo crearla.
+
 ## Reportes de La Copa
 
 El botón 🐞 de La Copa escribe en `feedback/` sin cuenta (D-104). Para leerlos y conversarlos:
