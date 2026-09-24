@@ -43,7 +43,7 @@ export const MINIJUEGOS = {
       'Dos reinas nunca se pueden tocar, ni siquiera en diagonal.',
       'Toca una casilla para poner o sacar una reina. Mantenla apretada para marcarla con una X y descartarla. Hay una sola solución y se llega deduciendo, sin adivinar.',
     ],
-    puntaje: 'Parte en 100 puntos y cada reina que pones en conflicto con otra resta 10, con un mínimo de 10. Si empatas, gana quien tardó menos.',
+    puntaje: 'Puntúa el tiempo que tardas en resolverlo: hasta 30 segundos vale 100 puntos, y después baja parejo hasta 10 puntos a los 5 minutos. Equivocarse no resta: las reinas que chocan se ven en rojo y las corriges.',
   },
   letras: {
     emoji: '🔤', nombre: 'Toque y Fama con letras', habilidad: 'deducir',
@@ -96,7 +96,7 @@ export const MINIJUEGOS = {
 export const RONDAS_FINAL = {
   linea: 'Cuatro hitos: el primero ya está puesto y colocas los otros tres. Vale 33 puntos por carta bien puesta.',
   numero: 'Un número de 3 cifras distintas en 7 intentos. Si lo sacas al primero son 100 puntos, y cada intento extra resta 15.',
-  reinas: 'Unas reinas de 6 × 6: una por fila, por columna y por zona, sin tocarse. Son 100 puntos y cada reina en conflicto resta 20.',
+  reinas: 'Unas reinas de 6 × 6: una por fila, por columna y por zona, sin tocarse. Resolverlas vale 100 puntos, y equivocarse no resta.',
   letras: 'Una palabra de 5 letras distintas en 6 intentos. Si la sacas al primero son 100 puntos, y cada intento extra resta 15.',
   anio: 'Dos hitos para decir el año. Ganas el promedio de los puntos de los dos.',
 }
@@ -249,9 +249,8 @@ const ES = {
   bdMistakes: 'Tuviste {n} errores, a {c} puntos cada uno: se restan {pts} puntos.',
   bdMistakesOne: 'Tuviste 1 error, que resta {c} puntos.',
   bdStart100: 'Partes con 100 puntos.',
-  bdClashes: 'Pusiste {n} reinas en conflicto con otra, a 10 puntos cada una: se restan {pts} puntos.',
-  bdClashesOne: 'Pusiste 1 reina en conflicto con otra, que resta 10 puntos.',
-  bdNoClashes: 'No pusiste ninguna reina en conflicto, así que no se resta nada.',
+  bdQueensTime: 'Resolviste el tablero en {t}.',
+  bdQueensScale: 'Hasta 30 segundos vale 100 puntos y después baja parejo hasta 10 puntos a los 5 minutos. Equivocarse no resta.',
   bdRuleBreaks: 'Hiciste {n} jugadas que rompían una regla, a 10 puntos cada una: se restan {pts} puntos.',
   bdRuleBreaksOne: 'Hiciste 1 jugada que rompía una regla, que resta 10 puntos.',
   bdNoRuleBreaks: 'No hiciste ninguna jugada que rompiera una regla, así que no se resta nada por eso.',
@@ -337,7 +336,6 @@ const ES = {
   queensLeft: 'Reinas puestas: {m} de {n}',
   queensOk: '¡Resolviste las reinas!',
   queensClash: 'Hay reinas que chocan: comparten fila, columna o zona, o se tocan.',
-  clashCount: 'Jugadas en conflicto: {n}',
   tangoOk: '¡Resolviste el tango!',
   tangoClash: 'Algo no calza: tres iguales seguidos, más de tres de uno en una línea, o una marca = o × que no se cumple.',
   // Sesión de prueba (D-103)
