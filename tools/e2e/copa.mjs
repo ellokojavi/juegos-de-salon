@@ -350,6 +350,7 @@ for (let d = 1; d <= dias; d++) {
     ok(await pantalla() === 'resultado', `${nombre} terminó el día ${d} (${id})`);
     await click('#btn-tarjeta'); await sleep(100);
     if (d === 1 && j === 0) console.log('  tarjeta:', JSON.stringify(await ev('window.__compartido.at(-1)?.text')));
+    if (d === 1 && j === 0) ok(/Línea Relámpago\n👤 Cata · \d+\/100/.test(await ev('window.__compartido.at(-1)?.text')), 'el resultado para compartir dice el juego y quién lo jugó');
     await click('#btn-volver'); await sleep(300);
     // Resultados ocultos: quien jugó primero no ve cuánto sacaron los que todavía no juegan (LIG-13)
   }
