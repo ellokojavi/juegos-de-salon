@@ -84,7 +84,7 @@
       const chips = el('div', 'chips');
       chips.append(
         el('span', 'chip2', `👥 ${g.players} ${COMMON[lang].players}`),
-        el('span', 'chip2', `⏱ ${g.duration} ${COMMON[lang].minutes}`),
+        el('span', 'chip2', `⏱ ${g.duration} ${g.durationUnit ? g.durationUnit[lang] : COMMON[lang].minutes}`),
       );
       texto.append(chips);
       caja.append(el('div', 'emoji', g.emoji), texto, pie(GRATIS[lang]));
