@@ -18,7 +18,8 @@ export const MODALIDADES = Object.keys(CALENDARIOS).map(Number);
 
 /** Puntos del día según la posición. Del décimo para abajo, uno por haber jugado. */
 export const PUNTOS = [10, 8, 6, 5, 4, 3, 2, 1, 1, 1];
-export const MIN_JUGADORES = 1;
+/** Una copa se juega entre 2 y 10 (D-118): con el admin solo, no parte ni avanza de día. */
+export const MIN_JUGADORES = 2;
 export const MAX_JUGADORES = 10;
 export const NOMBRE_MAX = 20;
 export const DIA_MS = 24 * 60 * 60 * 1000;
@@ -228,6 +229,9 @@ export const multiplicador = (L, d, pid) => (esFinal(L.meta, d) || comodinDe(L, 
 /* ------------------------------------------------------------------ */
 
 /** Jugadores que cuentan: los inscritos que el admin no sacó. */
+/** Todavía no hay con quién competir: falta al menos un jugador más. */
+export const faltaGente = L => activos(L).length < MIN_JUGADORES;
+
 export function activos(L) {
   return Object.entries(L.players || {})
     .filter(([, p]) => p && !p.out)

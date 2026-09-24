@@ -15,7 +15,7 @@ Mobile-first web app with party games to play with friends: card games, drinking
 <!-- generado: juegos · written by python3 tools/readme.py actualizar -->
 | Game | Players | Modes | Status |
 |---|---|---|---|
-| 🏆 [The Cup / La Copa / A Copa](#-the-cup-la-copa) | 3 to 10 | Each on their own phone | 🧪 lab |
+| 🏆 [The Cup / La Copa / A Copa](#-the-cup-la-copa) | 2 to 10 | Each on their own phone | 🧪 lab |
 | ⏳ [Timeline / Línea de Tiempo / Linha do Tempo](#-timeline-línea-de-tiempo) | 1 to 6 | One phone · Several phones · Play alone | v0.9 |
 | 🔢 [Bulls and Cows / Toque y Fama / Toque e Fama](#-bulls-and-cows-toque-y-fama) | 1 to 2 | One phone · Two phones · Versus the phone | v0.4 |
 | 🪢 [Hangman / El Ahorcado / Forca](#-hangman-el-ahorcado) | 1 to 6 | One phone · Several phones · Play alone | v0.26 |

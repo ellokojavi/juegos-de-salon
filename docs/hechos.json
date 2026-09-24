@@ -1,5 +1,5 @@
 {
-  "version": "0.53.0",
+  "version": "0.54.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -25,7 +25,7 @@
         "en": "The Cup",
         "pt": "A Copa"
       },
-      "jugadores": "3 to 10",
+      "jugadores": "2 to 10",
       "duracion": "7",
       "disponible": false,
       "labs": true,

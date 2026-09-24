@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.54.0 — 2026-09-24
+- **La Copa se juega entre 2 y 10** (D-118). Con el admin solo no se puede jugar ni pasar de día:
+  la app pide que se inscriba al menos un competidor más.
+
 ## 0.53.1 — 2026-09-24
 - **Laboratorio:** al final se ve la versión activa.
 
