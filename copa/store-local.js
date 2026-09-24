@@ -164,6 +164,16 @@ export function createLocalStore({ uid = null } = {}) {
       });
     },
 
+    /** Los reportes de prueba quedan en este navegador (`juegos-de-salon:copa:prueba:reportes`). */
+    async reportar(r) {
+      try {
+        const k = `${KEY}:reportes`;
+        const lista = JSON.parse(localStorage.getItem(k) || '[]');
+        lista.push({ ...r, at: now() });
+        localStorage.setItem(k, JSON.stringify(lista));
+      } catch (_) { /* nada */ }
+    },
+
     async cambiarPin(code, pid, pinHash) {
       return cambiar(db => {
         const L = copa(db, code);
