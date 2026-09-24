@@ -1450,3 +1450,23 @@ títulos largos parten línea en vez de salirse de la pantalla.
   "Ya estoy inscrito". Con otro PIN, avisa que el nombre está tomado y que revise su PIN.
 **Por qué:** del laboratorio: un día de ayer abierto sin explicación parece un error, y quien
 vuelve a inscribirse casi siempre es alguien que ya estaba y cambió de teléfono.
+
+## D-121 · El link propio de una copa (?pirata)
+**Fecha:** 2026-09-24 · **Estado:** vigente
+**Decisión:** Al crear la copa, el admin puede darle un **link propio**:
+`juegosdesalon.cl/copa/?pirata` en vez de `?KQRST`. Es un **alias**: la copa sigue guardada con
+su código al azar, y `torneoAlias/<alias>` = `{ code, hasta }` apunta a ella.
+- **Formato:** minúsculas, números y guiones, de 3 a 20; "Pirata" y " PIRATA " son el mismo, y
+  tildes y ñ se simplifican. No puede tener la forma de un código (5 letras solas) ni ser una
+  palabra de la URL (`prueba`, `labs`, …). El campo muestra en vivo cómo queda y si está libre.
+- **Único mientras dure:** queda tomado hasta 7 días después de que la copa termina (`hasta`); se
+  libera de inmediato si el admin la elimina, y se corre si mueve el inicio. Vencido, otra copa lo
+  puede tomar: "pirata" de 2026 y "pirata" de 2027 son copas distintas con el mismo link.
+- **Reglas:** el alias se escribe en la misma operación que crea la copa, así que si dos lo piden
+  a la vez solo uno lo consigue; solo lo escribe el admin de la copa a la que apunta.
+- **Links limpios:** los links que se comparten ya no llevan `&labs`: la copa sabe por dentro si es
+  del laboratorio (D-115).
+- **Lo que se acepta a cambio:** un link fácil hace la copa fácil de encontrar (cualquiera que
+  pruebe `?pirata` la ve y, si la inscripción está abierta, se puede inscribir). La guía del admin
+  le recuerda cerrar la inscripción cuando estén todos.
+**Por qué:** el link es la invitación; tiene que poder decirse en voz alta.

@@ -255,10 +255,14 @@ await b.go(`${BASE}?prueba`, 1200);
 await preparar();
 await revisarPantalla('portada');
 await click('#btn-crear'); await sleep(300);
-await ev(`(()=>{const i=[...document.querySelectorAll('#crear-body input:not(.fecha)')];i[0].value='Copa de la oficina';i[1].value='Cata';i[2].value='1111';i[3].value='1111';return 1})()`);
+await ev(`(()=>{const i=[...document.querySelectorAll('#crear-body input:not(.fecha):not(#crear-link)')];i[0].value='Copa de la oficina';i[1].value='Cata';i[2].value='1111';i[3].value='1111';return 1})()`);
 await ev(`(()=>{const o=[...document.querySelectorAll('#crear-body .opcion')];o[${SIETE ? 1 : 0}].click();o[3].click();return 1})()`); // parte mañana
+// El link propio (D-121): se ve cómo queda y si está libre
+await ev(`(()=>{const i=document.getElementById('crear-link');i.value='Oficina';i.dispatchEvent(new Event('input'));return 1})()`); await sleep(700);
+ok(/juegosdesalon\.cl\/copa\/\?oficina está libre/.test(await ev(`document.getElementById('link-estado').textContent`)), 'el link propio muestra cómo queda y que está libre');
 await revisarPantalla('crear');
 await click('#btn-crear-go'); await sleep(900);
+ok(/\?oficina&prueba$/.test(await ev('location.search')), 'la copa creada queda en ?oficina');
 const CODE = await ev('__copa.estado.code');
 ok(/^[A-HJ-NP-Z]{5}$/.test(CODE), `copa creada con código ${CODE}`);
 // Recién creada, el admin parte en Administrar, con la guía de la primera vez (D-110)
@@ -269,6 +273,7 @@ await b.shot('admin-nueva');
 await click('#msg-invitar'); await sleep(300);
 ok((await ev('window.__compartido.length')) === 1, 'desde ahí se comparte la invitación');
 console.log('  invitación:', await ev('window.__compartido[0]?.text'));
+ok(/\?oficina/.test(await ev('window.__compartido[0]?.url || ""')), 'la invitación comparte el link ?oficina');
 // Cerrar la inscripción deja fuera a los nuevos; reabrirla, no
 await click('#btn-cerrar-inscripcion'); await sleep(300);
 ok(!!await ev(`document.getElementById('btn-reabrir')`), 'el admin cierra la inscripción');
@@ -308,6 +313,10 @@ await click('#tab-inscrito'); await sleep(100);
 await ev(`[...document.querySelectorAll('.chip-btn')].find(x=>x.textContent==='Javi').click(); document.querySelector('#entrar-body input.pin').value='9999'; 1`);
 await click('#btn-sentarse'); await sleep(300);
 ok(/no es el de Javi/.test(await ev(`document.querySelector('#entrar-body .form-error').textContent`)), 'un PIN equivocado se rechaza');
+// Abrir por el link propio lleva a la misma copa
+await ev('sessionStorage.clear(); 1');
+await b.go(`${BASE}?oficina&prueba`, 1200); await preparar();
+ok(await ev('__copa.estado.code') === CODE, 'el link ?oficina abre la copa');
 // Inscribirse con un nombre y PIN que ya existen cuenta como entrar (D-120)
 await comoJugador(CODE);
 ok(/7 días · Parte el .* · 3 jugadores inscritos/.test(await ev(`document.querySelector('#entrar-body .lead').textContent`)) || /3 días · Parte el .* · 3 jugadores inscritos/.test(await ev(`document.querySelector('#entrar-body .lead').textContent`)), 'la invitación dice días, cuándo parte y cuántos se inscribieron');

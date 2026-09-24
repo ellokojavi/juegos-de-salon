@@ -334,3 +334,8 @@ input.fecha { width: 100%; min-height: 48px; border-radius: 12px; border: 1px so
 .field .contador { display: block; text-align: right; margin-top: 4px; font-size: 0.8rem; }
 .field .contador.lleno { color: var(--yellow); }
 .copa-head h1, .intro-hero h1, .intro-hero h2 { overflow-wrap: anywhere; }
+
+/* El link propio (D-121) */
+.link-estado { display: block; margin-top: 6px; font-size: 0.85rem; overflow-wrap: anywhere; }
+.link-estado.ok { color: var(--lime); }
+.link-estado.mal { color: var(--yellow); }
