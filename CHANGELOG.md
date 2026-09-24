@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.56.0 — 2026-09-24
+- **Calendario más claro** (D-120): el tablero y la tarjeta de hoy dicen la fecha, y el día de
+  ayer que sigue abierto dice que es su **día de gracia** y hasta cuándo.
+- **Invitación:** "7 días · Parte el viernes 25 de septiembre · 3 jugadores inscritos".
+- **Inscribirse con un nombre y PIN que ya existen cuenta como entrar.**
+
 ## 0.55.0 — 2026-09-24
 - **El nombre de la copa llega a 40 caracteres** (se recortaba a 20) y el campo muestra cuántos
   van; los nombres de jugador también tienen contador (D-119).
