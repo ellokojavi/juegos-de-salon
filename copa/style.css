@@ -255,3 +255,37 @@ button.md-fila { cursor: pointer; }
 .zip-trazo { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
 .zip-trazo polyline { fill: none; stroke: var(--orange); stroke-width: 0.34; stroke-linecap: round; stroke-linejoin: round; }
 .zip-grid.fin .zip-trazo polyline { stroke: var(--lime); }
+
+/* v0.45 (D-103): Zip por niveles, acciones de Tango y la sesión de prueba */
+.zip-cabeza { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-weight: 900; }
+.zip-nivel { color: var(--yellow); }
+.zip-hechos { color: var(--muted); font-size: 0.9rem; }
+.zip-reloj { font: 900 1.15rem var(--font-num); font-variant-numeric: tabular-nums; }
+.zip-reloj.poco { color: var(--pink); animation: pulse 1s ease-in-out infinite; }
+.zip-grid.fin .zc.on { background: rgba(157, 255, 58, 0.25); }
+.tan.revelada { background: rgba(46, 230, 214, 0.22); cursor: default; }
+.tango-acciones .btn { white-space: normal; line-height: 1.15; }
+.tango-acciones .btn.armado { border-color: var(--yellow); color: var(--yellow); background: rgba(255, 210, 63, 0.12); }
+.tips ul { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
+.tips summary { min-height: 44px; }
+.jugar-head .chip { margin-left: auto; margin-right: 8px; }
+@keyframes pulse { 50% { opacity: 0.55; } }
+
+/* Cuenta regresiva antes de jugar (D-105) */
+.cuenta {
+  position: fixed; inset: 0; z-index: 50; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+  background: rgba(20, 8, 40, 0.88); backdrop-filter: blur(4px); color: var(--ink);
+}
+.cuenta-juego { margin: 0; font-size: 1.2rem; opacity: .8; }
+.cuenta-num { font-family: var(--font-display, inherit); font-size: clamp(5rem, 30vw, 9rem); font-weight: 800; line-height: 1; color: var(--yellow, #ffd23f); text-align: center; }
+.cuenta-num.late { animation: cuenta-late .9s ease-out both; }
+.cuenta.ya .cuenta-num { font-size: clamp(3rem, 16vw, 5.5rem); }
+.cuenta.ya { animation: cuenta-fuera .9s ease-in forwards; pointer-events: none; }
+@keyframes cuenta-late { 0% { transform: scale(1.6); opacity: 0; } 25% { transform: scale(1); opacity: 1; } 100% { transform: scale(.85); opacity: .9; } }
+@keyframes cuenta-fuera { 0%, 45% { opacity: 1; } 100% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .cuenta-num.late { animation: none; } }
+
+/* Cómo se calculó el puntaje (D-106) */
+.explicacion ul { margin: 6px 0; padding-left: 20px; display: grid; gap: 4px; }
+.explicacion p { margin: 6px 0 0; }
+.explicacion-total { font-weight: 800; }
