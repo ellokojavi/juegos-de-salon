@@ -139,6 +139,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | LIG-50 | Cuenta regresiva de 5 a 1 y "¡A jugar!" antes de cada juego; el reloj parte ahí (D-105). | ✅ v0.45 |
 | LIG-51 | Al terminar, cómo se calculó el puntaje, línea por línea (D-106). | ✅ v0.45 |
 | LIG-52 | El nombre del reporte queda guardado en el dispositivo (D-104). | ✅ v0.45 |
+| LIG-53 | Reinas puntúa el tiempo en resolverlo (100 hasta 30 s, 10 a los 5 min), sin castigo por error (D-107). | ✅ v0.46 |
 | LIG-46 | El teclado, el tablero y la línea se comparten con Toque y Fama y Línea de Tiempo (`assets/js/teclado.js`, `assets/css/teclado.css`, `assets/css/linea.css`). | ✅ v0.44 |
 
 ## Requerimientos no funcionales

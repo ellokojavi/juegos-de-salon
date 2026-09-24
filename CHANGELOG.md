@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.46.0 — 2026-09-23
+- **La cuenta regresiva ahora es de 3 a 1** (D-105).
+- **Reinas puntúa el tiempo, no los errores** (D-107): hasta 30 segundos vale 100 y baja parejo
+  hasta 10 a los 5 minutos. Una reina que choca se ve en rojo y se corrige sin costo. En la final,
+  la ronda de Reinas vale 100 al resolverla.
+- **Zip:** la cabeza del trazo tapaba el número de su casilla (parecía que faltaba uno); ahora es
+  un anillo amarillo alrededor del número. El aviso de casillas faltantes va bajo la grilla, en un
+  espacio reservado: arriba la movía al aparecer y el trazo saltaba bajo el dedo.
+
 ## 0.45.0 — 2026-09-23
 - **Cuenta regresiva** (D-105): al tocar Empezar, una cuenta de 5 a 1 y "¡A jugar!". El tablero y
   el reloj aparecen recién ahí.

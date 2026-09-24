@@ -1246,9 +1246,9 @@ reporte. Que se puedan leer públicamente es el precio de no tener
 servidor; si eso cambia, se cierra la lectura al UID del dueño y se leen desde el panel.
 
 ## D-105 · Cuenta regresiva antes de cada juego con reloj
-**Fecha:** 2026-09-23 · **Estado:** vigente
+**Fecha:** 2026-09-23 · **Estado:** vigente (desde la 0.46, de 3 a 1: con 5 se hacía larga)
 **Decisión:** Al tocar Empezar (el día, la sesión de prueba o la práctica) aparece una capa con
-el nombre del juego y una cuenta de 5 a 1, un número por segundo, con un tic y una vibración
+el nombre del juego y una cuenta de 3 a 1, un número por segundo, con un tic y una vibración
 corta. Después dice **¡A jugar!** y se desvanece sola sobre el tablero. El tablero no se dibuja
 y el reloj no corre hasta ese momento. Todos los minijuegos de La Copa la llevan, porque en
 todos el tiempo desempata. Si se retoma una partida empezada, el tablero vuelve de una.
@@ -1265,3 +1265,14 @@ en cero no se nombran. Cierra con el total y el desempate. En la copa suma cómo
 se vuelve puntos (10-8-6-5-4-3-2-1) y si ese día valía el doble. El desglose no se sube a la
 copa: si el resultado se mira otro día, el recuadro muestra la regla del juego.
 **Por qué:** un puntaje suelto ("85/100") no dice qué hacer distinto mañana.
+
+## D-107 · Reinas puntúa el tiempo, no los errores
+**Fecha:** 2026-09-23 · **Estado:** vigente
+**Decisión:** Poner una reina que choca con otra ya no resta: el tablero la marca en rojo y se
+corrige. Lo que da puntos es el **tiempo activo en resolverlo**: hasta 30 segundos vale 100, y
+después baja parejo hasta 10 a los 5 minutos (un 8 × 8 de LinkedIn se resuelve en uno o dos
+minutos, que quedan entre 85 y 50). Más lento, 10; sin resolver, 0. En la ronda de Reinas de la
+final, resolverlas vale 100: ahí el tiempo de toda la final ya desempata. La tarjeta muestra el
+tiempo (`👑 ⏱ 1:23 ✅`). La pantalla le pasa el tiempo al motor con `ctx.tiempo()` al terminar.
+**Por qué:** castigar el ensayo y error en un juego de deducción premia la cautela, no la
+habilidad; y el tiempo ya era el desempate, así que la escala solo lo vuelve visible.

@@ -252,6 +252,11 @@ button.md-fila { cursor: pointer; }
 .zc.on { background: rgba(255, 122, 26, 0.28); }
 .zc.num span { display: grid; place-items: center; width: 62%; aspect-ratio: 1; border-radius: 50%; background: #1a1a1a; color: #fff; font: 900 clamp(0.8rem, 4vw, 1.1rem)/1 var(--font-num); box-shadow: 0 0 0 2px #fff; }
 .zc.cabeza::after { content: ''; position: absolute; inset: 30%; border-radius: 50%; background: var(--yellow); box-shadow: 0 0 12px var(--yellow); }
+/* Sobre un número, la cabeza es un anillo amarillo: el punto tapaba el número */
+.zc.num.cabeza::after { content: none; }
+.zc.num.cabeza span { box-shadow: 0 0 0 3px var(--yellow), 0 0 14px var(--yellow); }
+/* El aviso va bajo la grilla, en un espacio reservado: arriba la movía al aparecer y el trazo saltaba */
+.zip-aviso { min-height: 56px; }
 .zip-trazo { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
 .zip-trazo polyline { fill: none; stroke: var(--orange); stroke-width: 0.34; stroke-linecap: round; stroke-linejoin: round; }
 .zip-grid.fin .zip-trazo polyline { stroke: var(--lime); }
