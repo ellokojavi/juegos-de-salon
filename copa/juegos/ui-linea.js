@@ -29,9 +29,12 @@ export function montar(raiz, ctx) {
   const linea = el('div', { class: 'line' });
   const fila = el('div', { class: 'place-row' });
   const cierre = el('div', { class: 'stack' });
+  // En la final (cuatro cartas, la línea es corta) el cierre va debajo de la línea, después de
+  // verla entera; en el día, arriba, para que se vea sin desplazar (C-8)
+  const abajo = !!ctx.cierreAbajo;
   raiz.append(el('div', { class: 'lt-juego' },
     el('div', { class: 'status' }, el('div', { class: 'sub' }, `${p.temaEmoji} ${p.temaNombre}`), estadoTxt),
-    cierre, tituloMano, mano, el('div', { class: 'line-wrap' }, linea), fila));
+    abajo ? null : cierre, tituloMano, mano, el('div', { class: 'line-wrap' }, linea), fila, abajo ? cierre : null));
 
   const e = () => motor.estado(p, jugadas);
   const porId = id => p.mano.find(c => c.id === id) || (p.base.id === id ? p.base : null);
@@ -101,7 +104,7 @@ export function montar(raiz, ctx) {
         el('span', { class: 'y' }, anioLabel(c.year)), el('span', { class: 'em' }, c.emoji), el('span', { class: 't' }, c.texto)));
       if (!x.fin) linea.append(ranura(i + 1));
     });
-    // El cierre va arriba de la línea: tiene que verse sin desplazar (C-8)
+    // El cierre: el veredicto y el botón para seguir
     cierre.innerHTML = '';
     if (x.fin) {
       cierre.append(el('div', { class: 'aviso bien' }, fmt(T.lineaFin, { ok: x.aciertos, n: x.marcas.length })),

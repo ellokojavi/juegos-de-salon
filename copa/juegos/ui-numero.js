@@ -49,9 +49,11 @@ export function montar(raiz, ctx) {
     const e = motor.estado(p, J.i, max);
     raiz.innerHTML = '';
     const caja = el('div', { class: 'stack numero-juego' });
+    // El cierre va arriba; en la final (ctx.cierreAbajo), debajo del tablero
+    const cierre = e.fin ? [el('div', { class: 'aviso ' + (e.resuelto ? 'bien' : 'mal') }, e.resuelto ? `🎉 ${T.solved}` : fmt(T.notSolved, { v: p.secreto })),
+      el('button', { class: 'btn btn--yellow', id: 'btn-fin', onClick: () => { SFX.tap(); ctx.terminar(e); } }, ctx.textoFin || T.seeResults)] : [];
     if (e.fin) {
-      caja.append(el('div', { class: 'aviso ' + (e.resuelto ? 'bien' : 'mal') }, e.resuelto ? `🎉 ${T.solved}` : fmt(T.notSolved, { v: p.secreto })),
-        el('button', { class: 'btn btn--yellow', id: 'btn-fin', onClick: () => { SFX.tap(); ctx.terminar(e); } }, ctx.textoFin || T.seeResults));
+      if (!ctx.cierreAbajo) caja.append(...cierre);
     } else {
       const quedan = max - e.usados;
       caja.append(el('p', { class: 'muted center', style: 'margin:0' }, quedan === 1 ? T.tryLeft1 : fmt(T.triesLeft, { n: quedan })),
@@ -69,6 +71,7 @@ export function montar(raiz, ctx) {
         el('p', { class: 'block-hint' }, TYF.blockHint));
     }
     caja.append(tablero(el, { filas: e.filas, largo: p.cifras, titulo: T.yourGuesses, valor: f => el('span', { class: 'val' }, f.v) }));
+    if (ctx.cierreAbajo) caja.append(...cierre);
     raiz.append(caja);
   };
   dibujar();
