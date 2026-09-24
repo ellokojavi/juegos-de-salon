@@ -64,6 +64,9 @@ await test('copa del laboratorio: el admin la pasa al día siguiente aunque ya s
   assert.equal(m3.lab, true);
   assert.equal(nuevaMeta({ nombre: 'x', dias: 3, inicio: hoy, admin: 'a', creada: 1 }).lab, undefined);
   await admin.crear(C3, m3, { pid: 'aaaaaa', name: 'Cata', at: 1, pinHash: 'h' });
+  // Con el admin solo no se juega (D-118)
+  await rechaza(admin.empezar(C3, 1, 'aaaaaa'), 'faltan');
+  await otro.inscribir(C3, { pid: 'bbbbbb', name: 'Javi', at: 2, pinHash: 'h' });
   await admin.empezar(C3, 1, 'aaaaaa');
   assert.equal(diaActual(m3, admin.now()), 1);
   await rechaza(otro.reprogramar(C3, pasarDia(m3)), 'permiso');

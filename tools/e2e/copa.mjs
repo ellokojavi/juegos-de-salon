@@ -489,6 +489,7 @@ await b.shot('copa-eliminada');
 await b.go(`${BASE}?prueba&demo=admin`, 1500); await preparar();
 ok(!await ev(`document.getElementById('msg-invitar')`) && !!await ev(`document.getElementById('msg-tabla')`) && !await ev(`document.getElementById('msg-final')`), 'día 4: sin invitación ni resumen final, con la tabla parcial');
 await b.go(`${BASE}?prueba&demo=nueva`, 1500); await preparar();
+ok(!!await ev(`document.getElementById('lab-falta-gente')`) && !await ev(`document.getElementById('btn-pasar-dia')`), 'con el admin solo no se puede pasar de día (D-118)');
 ok(!!await ev(`document.getElementById('msg-invitar')`) && !await ev(`document.getElementById('msg-tabla')`), 'antes de partir: con invitación y sin tabla');
 // Copa de prueba: el admin la pasa al día siguiente (D-115)
 await b.go(`${BASE}?prueba&demo=admin`, 1500); await preparar();

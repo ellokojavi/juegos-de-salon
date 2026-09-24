@@ -1416,3 +1416,14 @@ mayúsculas ni tildes). Borra de una vez `torneos/<code>`, `torneoKeys/<code>` y
 la copa entera. El admin ve "Copa eliminada"; quien la tenga abierta ve "Esta copa ya no existe:
 su admin la eliminó", y su celular la olvida.
 **Por qué:** las copas de prueba se acumulan, y una copa creada con un error no tenía salida.
+
+## D-118 · Una copa se juega entre 2 y 10
+**Fecha:** 2026-09-24 · **Estado:** vigente
+**Decisión:** El mínimo pasa de 3 a **2 jugadores** (el máximo sigue en 10). Con el admin solo,
+la copa **no parte ni avanza de día**: el día de hoy muestra "hace falta al menos un competidor
+más" en vez de Jugar, Empezar queda deshabilitado, y en una copa del laboratorio "Pasar al día"
+no aparece. El reloj de la copa sigue corriendo; si el inicio pasa sin nadie más, el admin lo
+mueve a hoy, mañana u otra fecha (D-110, D-115), porque nadie ha jugado. Se controla en la app y
+en el almacén de prueba; las reglas de Firebase no saben contar jugadores, así que no lo impiden
+(solo el propio admin podría saltárselo, jugando contra nadie).
+**Por qué:** un duelo entre dos también es una copa; un torneo de uno, no.
