@@ -46,6 +46,24 @@ se entera: el transporte y las señales de uso son mejor esfuerzo y fallan calla
 - **Solo el dueño** (su UID en las reglas) puede listar `rooms/` entero y leer `stats/`.
   Nadie más: ni con el código de una sala se llega a `stats/`.
 
+## La Copa (`torneos`, `torneoKeys`, `torneoSeats`)
+
+Los torneos de varios días (D-94, [docs/juegos/copa.md](../docs/juegos/copa.md)) viven en su
+propio árbol porque duran una semana y las salas mueren a la media hora (D-89).
+
+- **Necesitan el acceso anónimo de Firebase Auth** (D-96): *Authentication → Sign-in method →
+  Anonymous → Enable*. Cada navegador entra anónimo, y las reglas usan su `auth.uid`.
+- `torneos/<código>` (5 letras sin I ni O) lo lee quien tenga el código; `torneos/` entero, solo el dueño.
+- `meta` se escribe una vez y trae las ventanas de cada día ya calculadas (`win/<d>/{a,b,h}`),
+  `joinUntil` y `final`: las reglas comparan `now` contra números, no saben de zonas horarias.
+- `players/<pid>` lo crea el propio jugador antes de la final; después solo lo cambia el admin.
+- `started`, `results` y `wild` se escriben una sola vez, por el jugador sentado y dentro de la
+  ventana de su día. El comodín, además, solo antes de `started` y nunca el día de la final.
+- `torneoKeys/<código>/<pid>` guarda el hash del PIN y `torneoSeats/<código>/<pid>/<uid>` los
+  celulares sentados como ese jugador. **Ninguna de las dos se puede leer**: sentarse exige mandar
+  el mismo hash. El admin puede cambiar el hash y borrar los asientos (PIN nuevo).
+- Las copas no se borran todavía (LIG-31).
+
 ## La papelera (`cleanup`)
 
 Nadie borra su sala al terminar de jugar, así que los mismos celulares que juegan hacen el aseo
