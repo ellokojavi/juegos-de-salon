@@ -591,6 +591,7 @@ tools/readme.py             Keeps this README current: generated blocks, retaken
 tools/og.mjs                Social cards: the Open Graph tags of each page and their images
 tools/hechos.mjs            The app's fact sheet (games, modes, themes, tests) read from the code
 tools/reportes.mjs          Reads the La Copa bug reports from Firebase (`--dias N`, `--json`)
+tools/reglas.mjs            Publishes the Firebase rules with a service-account key kept outside the repo
 tools/e2e/                  Full games in headless Chrome; the screenshots come from here (see its README)
 pt/ · en/                   Language doors: they set the language and send you to the menu
 assets/og/                  The 1200×630 images shown when a link is shared

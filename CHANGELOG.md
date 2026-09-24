@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.57.1 — 2026-09-24
+- **Herramienta:** `node tools/reglas.mjs publicar` publica las reglas de Firebase sin pasar por la
+  consola, con una llave de cuenta de servicio guardada fuera del repo (D-122).
+
 ## 0.57.0 — 2026-09-24
 - **Link propio para la copa** (D-121): al crearla, `juegosdesalon.cl/copa/?pirata` en vez de un
   código. Se ve en vivo si está libre; queda tomado hasta 7 días después de terminar la copa.

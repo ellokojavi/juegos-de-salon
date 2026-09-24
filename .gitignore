@@ -5,3 +5,7 @@ node_modules/
 # Arte original de las insignias (JPEG de 2048 px, ~15 MB).
 # Se queda en el disco, no en el repo: lo publicado son los WebP de lab/img/.
 arte-original/
+
+# Llaves de cuentas de servicio de Firebase: nunca en el repo (D-122)
+*firebase-admin*.json
+*-firebase-adminsdk-*.json
