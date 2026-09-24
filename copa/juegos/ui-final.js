@@ -8,27 +8,28 @@
 import * as final from './final.js';
 import * as linea from './linea.js';
 import * as numero from './numero.js';
-import * as solitario from './solitario.js';
-import * as dudo from './dudo.js';
+import * as reinas from './reinas.js';
+import * as letras from './letras.js';
 import * as anio from './anio.js';
 import * as uiLinea from './ui-linea.js';
 import * as uiNumero from './ui-numero.js';
-import * as uiSolitario from './ui-solitario.js';
-import * as uiDudo from './ui-dudo.js';
+import * as uiReinas from './ui-reinas.js';
+import * as uiLetras from './ui-letras.js';
+import { leerJugadas } from './ui-numero.js';
 import * as uiAnio from './ui-anio.js';
 import { MINIJUEGOS, RONDAS_FINAL } from '../rules.js';
 
 /** `append` que descarta los hijos nulos, como `el()` (sin esto, un null se escribe como texto). */
 const poner = (nodo, ...hijos) => nodo.append(...hijos.flat().filter(x => x !== null && x !== undefined && x !== false));
 
-const UI = { linea: uiLinea, numero: uiNumero, solitario: uiSolitario, dudo: uiDudo, anio: uiAnio };
+const UI = { linea: uiLinea, numero: uiNumero, reinas: uiReinas, letras: uiLetras, anio: uiAnio };
 
 /** El estado de una ronda a partir de sus jugadas (lo que cada pantalla le pasa a `terminar`). */
 const ESTADO = {
-  linea: (p, j) => linea.estado(p, j || []),
-  numero: (p, j) => numero.estado(p, j || [], final.NUMERO_INTENTOS),
-  solitario: (p, j) => ({ resuelto: !!j?.resuelto, fallidas: j?.fallidas || 0 }),
-  dudo: (p, j) => dudo.estado(p, j || []),
+  linea: (p, j) => linea.estado(p, Array.isArray(j) ? j : []),
+  numero: (p, j) => numero.estado(p, leerJugadas(j).i, final.NUMERO_INTENTOS),
+  reinas: (p, j) => reinas.estado(p, j || []),
+  letras: (p, j) => letras.estado(p, leerJugadas(j).i),
   anio: (p, j) => anio.estado(p, j || []),
 };
 
