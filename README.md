@@ -325,7 +325,7 @@ Spec and design: [docs/juegos/julepe.md](docs/juegos/julepe.md)
     <td align="center"><img src="docs/screenshots/copa/04-reinas.png" width="180" alt="Day 4: Queens"><br><sub>Day 4: Queens</sub></td>
     <td align="center"><img src="docs/screenshots/copa/05-letras.png" width="180" alt="Day 5: Bulls and Cows: Word"><br><sub>Day 5: Bulls and Cows: Word</sub></td>
     <td align="center"><img src="docs/screenshots/copa/06-anio.png" width="180" alt="Day 6: What year was it?"><br><sub>Day 6: What year was it?</sub></td>
-    <td align="center"><img src="docs/screenshots/copa/07-grafico.png" width="180" alt="Your place, day by day"><br><sub>Your place, day by day</sub></td>
+    <td align="center"><img src="docs/screenshots/copa/07-grafico.png" width="180" alt="Everyone's place, day by day"><br><sub>Everyone's place, day by day</sub></td>
   </tr>
   <tr>
     <td align="center"><img src="docs/screenshots/copa/08-podio.png" width="180" alt="Podium and medals"><br><sub>Podium and medals</sub></td>

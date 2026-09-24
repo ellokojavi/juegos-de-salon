@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.58.0 — 2026-09-24
+- **El gráfico de posiciones muestra a todos** (D-125): cada jugador con su color y su nombre al
+  final de la línea; tocar un nombre destaca su línea.
+
 ## 0.57.3 — 2026-09-24
 - **Tu resultado para compartir** dice la copa, el día, el nombre del juego y quién lo jugó (D-124).
 
