@@ -25,9 +25,10 @@ export function montar(raiz, ctx) {
   raiz.innerHTML = '';
   const caja = el('div', { class: 'stack zip-juego' });
   const cabeza = el('div', { class: 'zip-cabeza' });
-  const aviso = el('div', { class: 'stack' });
+  const aviso = el('div', { class: 'stack zip-aviso' });
   const grilla = el('div', { class: 'zip-grid' });
-  caja.append(cabeza, el('p', { class: 'muted center', style: 'margin:0' }, T.zipHint), aviso, grilla);
+  // El aviso va debajo de la grilla: si fuera arriba, al aparecer la correría bajo el dedo
+  caja.append(cabeza, el('p', { class: 'muted center', style: 'margin:0' }, T.zipHint), grilla, aviso);
   raiz.append(caja);
 
   const NS = 'http://www.w3.org/2000/svg';

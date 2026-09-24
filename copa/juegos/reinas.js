@@ -142,8 +142,8 @@ export function tocar(marcas, j) {
 }
 
 /**
- * El estado a partir de las jugadas, en orden. Un error es poner una reina que choca con otra:
- * el tablero lo muestra en el acto, y cuesta puntos.
+ * El estado a partir de las jugadas, en orden. Poner una reina que choca con otra se cuenta (el
+ * tablero lo muestra en rojo en el acto), pero ya no cuesta puntos: puntúa el tiempo (D-107).
  */
 export function estado(p, jugadas) {
   let marcas = new Array(p.n * p.n).fill(VACIO);
@@ -156,6 +156,17 @@ export function estado(p, jugadas) {
   return { marcas, errores, fin: resuelto(p, marcas), conflictos: conflictos(p, marcas) };
 }
 
-/** 100 menos 10 por reina puesta en conflicto, con piso de 10. */
-export const puntaje = e => (e.fin ? Math.max(10, 100 - 10 * e.errores) : 0);
-export const tarjeta = e => `👑${'❌'.repeat(e.errores)}✅`;
+/**
+ * Puntúa el tiempo activo en resolverlo (D-107), no los errores: hasta `RAPIDO_MS` vale 100 y
+ * después baja parejo hasta 10 a los `LENTO_MS`; más lento, 10. Sin resolver, 0. El estado trae
+ * `ms`, que pone la pantalla al terminar.
+ */
+export const RAPIDO_MS = 30000;
+export const LENTO_MS = 300000;
+export function puntosPorTiempo(ms) {
+  const t = Math.min(Math.max(ms || 0, RAPIDO_MS), LENTO_MS);
+  return Math.round(100 - (90 * (t - RAPIDO_MS)) / (LENTO_MS - RAPIDO_MS));
+}
+export const puntaje = e => (e.fin ? puntosPorTiempo(e.ms) : 0);
+const reloj = ms => { const s = Math.round((ms || 0) / 1000); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
+export const tarjeta = e => (e.fin ? `👑 ⏱ ${reloj(e.ms)} ✅` : '👑 ❌');

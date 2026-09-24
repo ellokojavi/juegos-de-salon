@@ -347,7 +347,7 @@ It borrows what makes daily puzzles work (Wordle, Connections): same challenge f
 | 1 | ⏳ Timeline Flash: 10 milestones, played from a hand with the Timeline drag and drop | knowledge |
 | 2 | 🔢 Bulls and Cows: guess the number, with the Bulls and Cows keypad and notes | deduction |
 | 3 | 🔗 Connections: 16 words, 4 groups, with red herrings | association |
-| 4 | 👑 Queens: one per row, column and color region, never touching | logic |
+| 4 | 👑 Queens: one per row, column and color region, never touching; scored by solve time, mistakes are free | logic |
 | 5 | 🔤 Bulls and Cows with letters: a 5-letter word, each letter colored by its clue | deduction |
 | 6 | 📅 What year was it?: closer is better, older gets more slack | estimation |
 | 7 | 🏁 The Grand Final: five short rounds, one of each, worth double | everything |
@@ -359,7 +359,7 @@ The lab also has **〰️ Zip** and **☀️ Tango** to try out. The cup does no
 - **Results stay hidden until you play**: the table and the progress chart only add up the days you can already see, so they cannot spoil today.
 - **Accounts are a name and a PIN inside one cup**, backed by Firebase anonymous auth. The PIN hash lives where nobody can read it, and the rules only let a device write for a player if it sends the same hash (D-96).
 - **The admin plays too**, and can rename, remove or re-PIN players and share ready-made messages with the group: the invite, **today's reminder** (with who is still missing), the partial table and the final summary (D-99).
-- **Every day has a practice round first** (D-103): same mechanics, different content, and it does not count. Starting the real one shows a **5-to-1 countdown** and the board and clock appear only on "¡A jugar!" (D-105). When you finish, the result **explains how the score was calculated**, line by line (D-106).
+- **Every day has a practice round first** (D-103): same mechanics, different content, and it does not count. Starting the real one shows a **3-to-1 countdown** and the board and clock appear only on "¡A jugar!" (D-105). When you finish, the result **explains how the score was calculated**, line by line (D-106).
 - **Bug reports need no account** (D-104): the 🐞 form posts straight to `feedback/` and remembers your name on that device; `node tools/reportes.mjs` reads them back.
 - **Spanish only for now** (D-98): the content is Chilean and does not translate. A 3-day cup exists for testing with `?tres` (D-100), and `?prueba` plays a whole cup with no Firebase and a clock you can fast-forward.
 
