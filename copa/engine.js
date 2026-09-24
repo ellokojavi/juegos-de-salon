@@ -63,6 +63,19 @@ function cryptoRand() {
 /** El nombre tal como se guarda: sin espacios de más y con tope de largo. */
 export const limpiarNombre = (s, max = NOMBRE_MAX) => String(s || '').replace(/\s+/g, ' ').trim().slice(0, max);
 
+/**
+ * El link propio de una copa (D-121): `juegosdesalon.cl/copa/?pirata`. Minúsculas, números y
+ * guiones, de 3 a 20; "Pirata", " pirata " y "PIRATA" son el mismo. No puede tener la forma de
+ * un código (5 letras sin I ni O), para que un link nunca se confunda con otro.
+ */
+export const ALIAS = /^[a-z0-9](?:[a-z0-9-]{1,18})[a-z0-9]$/;
+export const aliasLimpio = s => String(s || '').toLocaleLowerCase('es').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+  .replace(/ñ/g, 'n').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 20).replace(/-+$/, '');
+export const esAlias = a => typeof a === 'string' && ALIAS.test(a) && !/^[a-hj-np-z]{5}$/.test(a);
+/** El alias queda tomado hasta 7 días después de que la copa termina; después se puede reusar. */
+export const ALIAS_LIBRE_MS = 7 * 24 * 60 * 60 * 1000;
+export const aliasHasta = meta => meta.end + ALIAS_LIBRE_MS;
+
 /** Para comparar nombres: "Cata", "cata " y "CATA" son el mismo jugador. */
 export const claveNombre = (s, max = NOMBRE_MAX) => limpiarNombre(s, max).toLocaleLowerCase('es').normalize('NFD').replace(/[̀-ͯ]/g, '');
 
@@ -136,7 +149,7 @@ export function ventanas(inicio, dias, tz = ZONA) {
  * Lo que se guarda al crear una copa. `win` lleva las ventanas ya calculadas porque las
  * reglas de la base no saben de zonas horarias: comparan `now` contra estos números.
  */
-export function nuevaMeta({ nombre, dias, inicio, tz = ZONA, admin, creada, lab = false }) {
+export function nuevaMeta({ nombre, dias, inicio, tz = ZONA, admin, creada, lab = false, alias = null }) {
   if (!CALENDARIOS[dias]) throw new Error('modalidad');
   return {
     v: 1, name: limpiarNombre(nombre, COPA_MAX), days: dias, start: inicio, tz, admin,
@@ -147,6 +160,7 @@ export function nuevaMeta({ nombre, dias, inicio, tz = ZONA, admin, creada, lab 
     joinUntil: medianoche(sumarDias(inicio, dias - 1), tz), final: String(dias),
     // Una copa del laboratorio (D-115): su admin puede pasarla al día siguiente para probar
     ...(lab ? { lab: true } : {}),
+    ...(alias ? { alias } : {}),
   };
 }
 
