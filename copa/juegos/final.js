@@ -37,6 +37,7 @@ export const puntosRonda = {
 };
 
 /** `rondas` = { linea: estado, numero: estado, ... } de las rondas terminadas. */
-export const puntaje = rondas => RONDAS.reduce((s, r) => s + (rondas[r] ? puntosRonda[r](rondas[r]) : 0), 0);
+/** De 0 a 100 (D-113): el promedio de las cinco rondas, que valen de 0 a 100 cada una. */
+export const puntaje = rondas => Math.round(RONDAS.reduce((s, r) => s + (rondas[r] ? puntosRonda[r](rondas[r]) : 0), 0) / RONDAS.length);
 
 export const tarjeta = rondas => RONDAS.map(r => `${EMOJI[r]}${rondas[r] ? puntosRonda[r](rondas[r]) : 0}`).join(' ');

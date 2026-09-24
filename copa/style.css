@@ -108,8 +108,6 @@ ol.como li { line-height: 1.45; }
 .aviso.bien { background: rgba(157, 255, 58, 0.14); color: var(--lime); }
 .aviso.mal { background: rgba(224, 36, 60, 0.22); color: #ffd0d6; }
 
-.prueba-barra { position: fixed; left: 8px; bottom: calc(8px + var(--safe-bottom)); z-index: 40; display: flex; gap: 6px; align-items: center; background: rgba(0,0,0,0.75); border: 1px dashed var(--orange); border-radius: 12px; padding: 6px 8px; font: 800 0.75rem var(--font-body); color: var(--orange); }
-.prueba-barra button { background: var(--orange); color: #2a1000; border: 0; border-radius: 8px; font: 900 0.8rem var(--font-body); padding: 6px 8px; min-height: 32px; cursor: pointer; }
 
 /* Jugar */
 .jugar-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 8px; min-height: 1.5em; }
@@ -261,9 +259,12 @@ button.md-fila { cursor: pointer; }
 .tan { position: relative; aspect-ratio: 1; min-width: 0; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.1); font-size: clamp(1.2rem, 7vw, 2rem); cursor: pointer; padding: 0; display: grid; place-items: center; }
 .tan.dada { background: rgba(255,255,255,0.28); cursor: default; }
 .tan.choque { box-shadow: inset 0 0 0 3px var(--red); background: rgba(224, 36, 60, 0.25); }
-.tan-marca { position: absolute; z-index: 2; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--yellow); color: #3a1200; font: 900 1.05rem/1 var(--font-num); box-shadow: 0 0 0 2px var(--bg1); pointer-events: none; }
-.tan-marca.der { right: -14px; top: 50%; transform: translateY(-50%); }
-.tan-marca.abajo { bottom: -14px; left: 50%; transform: translateX(-50%); }
+.tan-marca { position: absolute; z-index: 2; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; font: 900 1.35rem/1 system-ui, -apple-system, 'Segoe UI', sans-serif; box-shadow: 0 0 0 2px var(--bg1), 0 2px 6px rgba(0,0,0,0.4); pointer-events: none; }
+/* Igual y distinto con colores propios, además del signo (D-112): el ≠ casi no se distinguía del = */
+.tan-marca.igual { background: var(--cyan); color: #00312d; }
+.tan-marca.distinto { background: var(--pink); color: #fff; }
+.tan-marca.der { right: -16px; top: 50%; transform: translateY(-50%); }
+.tan-marca.abajo { bottom: -16px; left: 50%; transform: translateX(-50%); }
 .zip-grid { position: relative; gap: 0; border: 2px solid var(--glass-border); border-radius: 10px; overflow: hidden; touch-action: none; }
 .zc { aspect-ratio: 1; min-width: 0; border: 1px solid rgba(255,255,255,0.08); display: grid; place-items: center; position: relative; z-index: 2; }
 .zc.on { background: rgba(255, 122, 26, 0.28); }

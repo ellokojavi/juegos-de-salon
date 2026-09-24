@@ -47,6 +47,7 @@ export function estado(p, jugadas) {
   return { linea, mano, marcas, historia, fin: mano.length === 0, aciertos: marcas.filter(Boolean).length };
 }
 
-export const puntaje = e => e.aciertos;
+/** De 0 a 100, como todos los minijuegos (D-113): la parte de las cartas bien puestas. */
+export const puntaje = e => (e.marcas.length ? Math.round((100 * e.aciertos) / e.marcas.length) : 0);
 
 export const tarjeta = e => e.marcas.map(ok => (ok ? '🟩' : '🟥')).join('');

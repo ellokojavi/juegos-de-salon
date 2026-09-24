@@ -14,12 +14,12 @@ import { MINIJUEGOS } from './rules.js';
 export function desglose(id, e, { T, fmt, mmss }) {
   if (!e) return null;
   const intentos = (x, max) => (x.resuelto
-    ? [fmt(T.bdTries, { u: x.usados, max }), fmt(T.bdTriesPts, { max, u: x.usados, s: max + 1 - x.usados })]
+    ? [fmt(T.bdTries, { u: x.usados, max }), fmt(T.bdTriesPts, { menos: 10 * (x.usados - 1), s: numero.puntaje(x, max) })]
     : [T.bdNotSolved]);
   // Un descuento en cero no se nombra; uno solo va en singular (las claves terminadas en One)
   const resta = (clave, n, v) => (n ? fmt(n === 1 ? T[`${clave}One`] : T[clave], { n, ...v }) : null);
   switch (id) {
-    case 'linea': return [fmt(T.bdLinea, { n: e.aciertos, total: e.marcas.length })];
+    case 'linea': return [fmt(T.bdLinea, { n: e.aciertos, total: e.marcas.length, s: Math.round((100 * e.aciertos) / (e.marcas.length || 1)) })];
     case 'numero': return intentos(e, numero.MAX_INTENTOS);
     case 'letras': return [
       e.encontradas ? fmt(e.encontradas === 1 ? T.bdFamasOne : T.bdFamas, { n: e.encontradas, pts: letras.PUNTOS_FAMA * e.encontradas }) : T.bdNoFamas,
@@ -38,13 +38,13 @@ export function desglose(id, e, { T, fmt, mmss }) {
       T.bdFloor10,
     ].filter(Boolean) : [T.bdNotSolved];
     case 'zip': return [
-      fmt(e.hechos === 1 ? T.bdLevelsOne : T.bdLevels, { n: e.hechos || 0 }),
+      fmt(e.hechos === 1 ? T.bdLevelsOne : T.bdLevels, { n: e.hechos || 0, pts: Math.min(100, 10 * (e.hechos || 0)) }),
       e.hechos ? fmt(T.bdLastLevel, { t: mmss(e.ultimo || 0) }) : null,
     ].filter(Boolean);
-    case 'anio': return e.filas.map(f => fmt(T.bdYear, { hito: f.hito.texto, r: anio.anioLabel(f.r), y: anio.anioLabel(f.hito.year), pts: f.pts }));
-    case 'final': return final.RONDAS.map(r => fmt(T.bdRound, {
+    case 'anio': return [...e.filas.map(f => fmt(T.bdYear, { hito: f.hito.texto, r: anio.anioLabel(f.r), y: anio.anioLabel(f.hito.year), pts: f.pts })), T.bdAverage];
+    case 'final': return [...final.RONDAS.map(r => fmt(T.bdRound, {
       emoji: final.EMOJI[r], juego: MINIJUEGOS[r].nombre, pts: e[r] ? final.puntosRonda[r](e[r]) : 0,
-    }));
+    })), T.bdAverage];
     default: return null;
   }
 }

@@ -19,6 +19,7 @@ export function montar(raiz, ctx) {
   let p = null;
   let dibujando = false;
   let reloj = null;
+  let terminado = false;
   const guardar = () => ctx.guardar({ ...J, trazo: J.trazo.slice() });
   const usado = () => J.usado + (desde === null ? 0 : Date.now() - desde);
 
@@ -58,10 +59,11 @@ export function montar(raiz, ctx) {
 
   const pintarCabeza = () => {
     const quedan = Math.max(0, tiempo - usado());
-    cabeza.replaceChildren(
-      el('span', { class: 'zip-nivel' }, fmt(T.zipLevel, { k: J.hechos + 1, n: p ? p.n : '' })),
+    cabeza.replaceChildren(...[
+      terminado ? null : el('span', { class: 'zip-nivel' }, fmt(T.zipLevel, { k: J.hechos + 1, n: p ? p.n : '' })),
       el('span', { class: 'zip-hechos' }, fmt(T.zipDone, { n: J.hechos })),
-      el('span', { class: 'zip-reloj' + (quedan < 30000 ? ' poco' : '') }, `⏳ ${Math.floor(quedan / 60000)}:${String(Math.floor((quedan % 60000) / 1000)).padStart(2, '0')}`));
+      terminado ? null : el('span', { class: 'zip-reloj' + (quedan < 30000 ? ' poco' : '') }, `⏳ ${Math.floor(quedan / 60000)}:${String(Math.floor((quedan % 60000) / 1000)).padStart(2, '0')}`),
+    ].filter(Boolean));
   };
 
   const terminar = () => {
@@ -78,6 +80,10 @@ export function montar(raiz, ctx) {
       grilla.classList.add('solucion');
     }
     grilla.classList.add('fin');
+    // Se acabó: los relojes dejan de correr. El de arriba queda en el tiempo final y la cuenta
+    // regresiva, que ya no dice nada, desaparece
+    ctx.pararReloj?.();
+    terminado = true;
     SFX.timeUp();
     aviso.append(el('div', { class: 'aviso bien' }, J.hechos === 1 ? T.zipTimeOne : fmt(T.zipTime, { n: J.hechos })),
       aMedias ? el('p', { class: 'muted center', id: 'zip-solucion', style: 'margin:0' }, fmt(T.zipSolution, { k: J.hechos + 1 })) : null,
@@ -166,4 +172,4 @@ export function montar(raiz, ctx) {
  * El puntaje son los niveles resueltos; el desempate, el tiempo en que se resolvió el último
  * (no los tres minutos, que todos gastan).
  */
-export const resultado = j => ({ s: motor.puntaje(j), t: motor.tarjeta(j), resumen: `${j.hechos || 0} ✅`, ms: Math.round(j.ultimo || motor.TIEMPO_MS) });
+export const resultado = j => ({ s: motor.puntaje(j), t: motor.tarjeta(j), resumen: `${motor.puntaje(j)}/100`, ms: Math.round(j.ultimo || motor.TIEMPO_MS) });

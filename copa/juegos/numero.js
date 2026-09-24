@@ -27,7 +27,8 @@ export function estado(p, intentos, max = MAX_INTENTOS) {
 }
 
 /** Puntaje del día: 11 menos los intentos si lo sacó; 0 si no (de 1 a 10 intentos → 10 a 1). */
-export const puntaje = (e, max = MAX_INTENTOS) => (e.resuelto ? max + 1 - e.usados : 0);
+/** De 0 a 100 (D-113): 100 al primer intento y 10 menos por cada uno más (con 10 intentos, 10 al último). */
+export const puntaje = (e, max = MAX_INTENTOS) => (e.resuelto ? Math.round((100 * (max + 1 - e.usados)) / max) : 0);
 
 /** Cada intento es una fila: 🟢 por fama, 🟡 por toque y ⚪ por el resto. Nunca las cifras. */
 export function tarjeta(e) {
