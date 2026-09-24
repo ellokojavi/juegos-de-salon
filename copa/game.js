@@ -13,7 +13,7 @@ import { applyStatic } from '../assets/js/i18n.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { trackStart, versionOf } from '../assets/js/transport/stats.js';
 import {
-  CALENDARIOS, MAX_JUGADORES, COPA_MAX, CODIGO, esCodigo, codigoAlAzar, pidAlAzar, limpiarNombre, claveNombre, esPin, hashPin,
+  CALENDARIOS, MAX_JUGADORES, COPA_MAX, aliasLimpio, esAlias, CODIGO, esCodigo, codigoAlAzar, pidAlAzar, limpiarNombre, claveNombre, esPin, hashPin,
   fechaEn, sumarDias, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta, estadoDia, comodinDe, moverInicio, sinEmpezar, pasarDia, MAX_DIAS_INICIO, faltaGente,
   medianoche, puedeComodin, multiplicador, posicionesDelDia, tabla, faltan, medallas, evolucion, visibleDia, reloj, mmss, juegoDelDia, esFinal, activos, ZONA,
 } from './engine.js';
@@ -43,6 +43,11 @@ const SEMILLA = (new URLSearchParams(location.search).get('semilla') || '').toUp
 // Las demos del laboratorio (D-110): solo en el modo de prueba, con el almacén local
 const DEMO = PRUEBA ? new URLSearchParams(location.search).get('demo') : null;
 const codigoUrl = (busqueda.find(x => CODIGO.test(x.toUpperCase()) && x.length === 5) || new URLSearchParams(location.search).get('c') || '').toUpperCase();
+/** Palabras de la URL que no pueden ser el link de una copa. */
+const RESERVADAS = ['prueba', 'labs', 'tres', 'practica', 'demo', 'semilla', 'copa'];
+// Un link propio: la palabra de la URL que no es un código ni un parámetro (D-121)
+const aliasUrl = busqueda.filter(y => !y.includes('=') && !(CODIGO.test(y.toUpperCase()) && y.length === 5))
+  .map(y => aliasLimpio(decodeURIComponent(y))).find(a => esAlias(a) && !RESERVADAS.includes(a)) || '';
 
 const cuenta = createCuenta({ prueba: PRUEBA });
 let store = null;
@@ -58,8 +63,11 @@ async function abrirStore() {
 /** Estado de la pantalla: la copa abierta, quién soy en ella y qué se está mirando. */
 const S = { code: null, L: null, yo: null, pantalla: null, off: null, juego: null, reloj: null, tic: null };
 
-const urlCopa = code => `${location.origin}${location.pathname}?${code}${PRUEBA ? '&prueba' : ''}${LABS ? '&labs' : ''}`;
-const urlPublica = code => (PRUEBA ? urlCopa(code) : `https://juegosdesalon.cl/copa/?${code}`);
+// El link de una copa: su nombre propio si lo tiene (?pirata), si no su código. Sin &labs: la
+// copa ya sabe por dentro si es del laboratorio (D-121)
+const enlace = code => (S.code === code && S.L?.meta?.alias) || code;
+const urlCopa = code => `${location.origin}${location.pathname}?${enlace(code)}${PRUEBA ? '&prueba' : ''}`;
+const urlPublica = code => (PRUEBA ? urlCopa(code) : `https://juegosdesalon.cl/copa/?${enlace(code)}`);
 
 function mostrar(id) {
   S.pantalla = id;
@@ -73,7 +81,7 @@ function errorDe(e) {
     pin: 'errPinWrong', 'nombre-repetido': 'errRepetido', llena: 'errLlena', 'no-existe': 'errNoExiste',
     ventana: 'errVentana', 'ya-jugado': 'errYaJugado', comodin: 'errComodin', permiso: 'errPermiso',
     config: 'errConfig', offline: 'errOffline', busy: 'errOffline', cerrada: 'errCerrada',
-    reporte: 'errReport', empezada: 'errEmpezada', faltan: 'errFaltan',
+    reporte: 'errReport', empezada: 'errEmpezada', faltan: 'errFaltan', alias: 'errAlias',
   };
   if (!mapa[code]) console.error(e);
   return T[mapa[code] || 'errNet'];
@@ -195,6 +203,28 @@ function crearCopa() {
   const yo = campo(T.fYou, { placeholder: T.fYouPh, maxlength: '20', value: cuenta.nombre.get() }, { contador: true });
   const pin1 = campoPin(T.fPin), pin2 = campoPin(T.fPin2);
   const boton = el('button', { class: 'btn btn--yellow', id: 'btn-crear-go' }, T.createGo);
+  // El link propio, opcional (D-121): se ve cómo queda y si está libre mientras se escribe
+  const link = campo(T.fLink, { placeholder: T.fLinkPh, maxlength: '20', id: 'crear-link', autocapitalize: 'none', spellcheck: 'false' });
+  const linkEstado = el('small', { class: 'muted link-estado', id: 'link-estado', 'aria-live': 'polite' }, T.fLinkHint);
+  link.nodo.append(linkEstado);
+  let linkTimer = null, linkLibre = null;
+  const revisarLink = async () => {
+    const a = aliasLimpio(link.input.value);
+    linkLibre = null;
+    if (!link.input.value.trim()) { linkEstado.textContent = T.fLinkHint; linkEstado.className = 'muted link-estado'; return; }
+    const url = `juegosdesalon.cl/copa/?${a}`;
+    if (!esAlias(a) || RESERVADAS.includes(a)) { linkEstado.textContent = fmt(T.fLinkBad, { url }); linkEstado.className = 'link-estado mal'; return; }
+    linkEstado.textContent = fmt(T.fLinkChecking, { url }); linkEstado.className = 'muted link-estado';
+    try {
+      const st = await abrirStore(); await st.listo();
+      const x = await st.alias(a);
+      if (aliasLimpio(link.input.value) !== a) return;
+      linkLibre = !(x && x.hasta > st.now());
+      linkEstado.textContent = fmt(linkLibre ? T.fLinkFree : T.fLinkTaken, { url });
+      linkEstado.className = 'link-estado ' + (linkLibre ? 'ok' : 'mal');
+    } catch (_) { linkEstado.textContent = fmt(T.fLinkChecking, { url }); }
+  };
+  link.input.addEventListener('input', () => { clearTimeout(linkTimer); linkTimer = setTimeout(revisarLink, 350); });
 
   boton.addEventListener('click', async () => {
     SFX.tap();
@@ -206,6 +236,8 @@ function crearCopa() {
     if (!quien) return avisoError(err, T.errNombre);
     if (!esPin(pin1.input.value)) return avisoError(err, T.errPin);
     if (pin1.input.value !== pin2.input.value) return avisoError(err, T.errPin2);
+    const alias = link.input.value.trim() ? aliasLimpio(link.input.value) : null;
+    if (alias && (!esAlias(alias) || RESERVADAS.includes(alias))) return avisoError(err, fmt(T.fLinkBad, { url: `juegosdesalon.cl/copa/?${alias}` }));
     boton.disabled = true; boton.textContent = T.creating; err.textContent = '';
     try {
       const st = await abrirStore();
@@ -215,13 +247,14 @@ function crearCopa() {
       if (!code) throw Object.assign(new Error('busy'), { code: 'busy' });
       const pid = pidAlAzar();
       const now = st.now();
+      if (alias) { const x = await st.alias(alias); if (x && x.hasta > now) throw Object.assign(new Error('alias'), { code: 'alias' }); }
       const fechaInicio = inicio.valor === 'otra' ? otraFecha.input.value : sumarDias(fechaEn(now, ZONA), inicio.valor);
       // Las copas del laboratorio (y las de prueba) llevan la marca que deja pasar de día (D-115)
-      const meta = nuevaMeta({ nombre: n, dias: modo.valor, inicio: fechaInicio, tz: ZONA, admin: pid, creada: now, lab: LABS || PRUEBA });
+      const meta = nuevaMeta({ nombre: n, dias: modo.valor, inicio: fechaInicio, tz: ZONA, admin: pid, creada: now, lab: LABS || PRUEBA, alias });
       await st.crear(code, meta, { pid, name: quien, at: now, pinHash: await hashPin(code, pid, pin1.input.value) });
       cuenta.nombre.set(quien);
       cuenta.recordar(code, pid, { nombre: quien, copa: n, fin: meta.end });
-      history.replaceState(null, '', urlCopa(code));
+      history.replaceState(null, '', `${location.pathname}?${alias || code}${PRUEBA ? '&prueba' : ''}`);
       await abrirCopa(code, { recienCreada: true });
     } catch (e) {
       avisoError(err, errorDe(e));
@@ -233,6 +266,7 @@ function crearCopa() {
     el('div', { class: 'panel' }, nombre.nodo,
       el('div', { class: 'field' }, el('label', {}, T.fMode), modo.nodo),
       el('div', { class: 'field' }, el('label', {}, T.fStart), inicio.nodo, otraFecha.nodo, el('small', { class: 'muted' }, fmt(T.startHint, { zona: zonaTexto(ZONA) })))),
+    el('div', { class: 'panel' }, link.nodo),
     el('div', { class: 'panel' }, yo.nodo, pin1.nodo, pin2.nodo, el('small', { class: 'muted' }, T.pinHint)),
     err, boton,
     el('button', { class: 'btn btn--ghost btn--sm', onClick: () => portada() }, '‹ ' + T.menu.replace('‹ ', '')),
@@ -742,7 +776,8 @@ function admin({ forzar = false } = {}) {
       el('ol', { class: 'como' },
         el('li', {}, T.adminWelcome1),
         el('li', {}, fmt(T.adminWelcome2, { fecha: fechaLarga(meta.win[1].a, meta.tz) })),
-        el('li', {}, T.adminWelcome3))));
+        el('li', {}, T.adminWelcome3),
+        meta.alias ? el('li', {}, T.adminWelcomeAlias) : null)));
   }
   const accion = (rotulo, id, fn, clase = 'btn btn--ghost btn--sm') => el('button', { class: clase, id, onClick: async ev => {
     SFX.tap(); ev.currentTarget.disabled = true;
@@ -1373,6 +1408,17 @@ window.__copa = {
   prueba: PRUEBA,
 };
 
+/** Abrir una copa por su link propio (?pirata, D-121). La URL se queda como está. */
+async function abrirPorAlias(a) {
+  espera('…');
+  try {
+    const st = await abrirStore(); await st.listo();
+    const x = await st.alias(a);
+    if (!x?.code) { espera(fmt(T.errNoAlias, { a }), { error: true }); return; }
+    await abrirCopa(x.code);
+  } catch (e) { espera(errorDe(e), { error: true, reintentar: () => location.reload() }); }
+}
+
 /** Una demo del laboratorio: siembra la escena, deja la sesión de quien mira y la abre. */
 async function demo(nombre) {
   const st = await abrirStore();
@@ -1389,4 +1435,5 @@ async function demo(nombre) {
 if (PRACTICA) practica(PRACTICA);
 else if (DEMO) demo(DEMO);
 else if (codigoUrl && esCodigo(codigoUrl)) abrirCopa(codigoUrl);
+else if (aliasUrl) abrirPorAlias(aliasUrl);
 else portada();

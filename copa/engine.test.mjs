@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {
   CALENDARIOS, PUNTOS, esCodigo, codigoAlAzar, pidAlAzar, PID, limpiarNombre, claveNombre, esPin, hashPin,
   fechaEn, sumarDias, medianoche, ventanas, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta,
+  aliasLimpio, esAlias, aliasHasta, ALIAS_LIBRE_MS,
   estadoDia, puedeComodin, multiplicador, posicionesDelDia, tabla, faltan, medallas, reloj, mmss, juegoDelDia, evolucion,
 } from './engine.js';
 
@@ -233,6 +234,14 @@ test('reloj activo', () => {
   assert.equal(reloj.leer(r, 12000), 5000);
   assert.equal(mmss(65000), '1:05');
   assert.equal(mmss(3725000), '1:02:05');
+});
+
+test('el link propio: se normaliza y no se confunde con un código (D-121)', () => {
+  assert.equal(aliasLimpio('  Copa Pirata (1ra) '), 'copa-pirata-1ra');
+  assert.equal(aliasLimpio('Ñandú'), 'nandu');
+  assert.ok(esAlias('pirata') && esAlias('la-copa-2026'));
+  assert.ok(!esAlias('kqrst') && !esAlias('pi') && !esAlias('-pirata') && !esAlias('x'.repeat(21)));
+  assert.equal(aliasHasta({ end: 1000 }), 1000 + ALIAS_LIBRE_MS);
 });
 
 test('el nombre de la copa llega a 40 caracteres; el de un jugador, a 20 (D-119)', () => {
