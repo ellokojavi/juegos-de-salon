@@ -46,13 +46,13 @@ export const MINIJUEGOS = {
     puntaje: 'Puntúa el tiempo que tardas en resolverlo: hasta 30 segundos vale 100 puntos, y después baja parejo hasta 10 puntos a los 5 minutos. Equivocarse no resta: las reinas que chocan se ven en rojo y las corriges.',
   },
   letras: {
-    emoji: '🔤', nombre: 'Toque y Fama con letras', habilidad: 'deducir',
+    emoji: '🔤', nombre: 'Toque y Fama: Palabra', habilidad: 'deducir',
     como: [
       'Hay una palabra secreta de 5 letras distintas, la misma para todos.',
       'Cada intento son 5 letras distintas, aunque no formen una palabra. Te dice cuántas famas (letra correcta en su lugar) y cuántos toques (letra correcta en otro lugar) tiene, y cada letra se pinta: amarilla si es fama y celeste si es toque.',
       'Mantén apretada una letra para tacharla cuando sepas que no está. Tienes 8 intentos.',
     ],
-    puntaje: 'Mientras menos intentos uses, más puntos: 8 si la sacas al primero y 1 si la sacas al octavo. Si empatas, gana quien tardó menos.',
+    puntaje: 'Cada letra que encuentras en su lugar suma 10 puntos, una sola vez aunque la repitas en otros intentos. Si sacas la palabra, sumas 50 más, menos 5 por cada intento después del primero. Va de 0 a 100 y, si empatas, gana quien tardó menos.',
   },
   anio: {
     emoji: '📅', nombre: '¿En qué año?', habilidad: 'estimar',
@@ -97,7 +97,7 @@ export const RONDAS_FINAL = {
   linea: 'Cuatro hitos: el primero ya está puesto y colocas los otros tres. Vale 33 puntos por carta bien puesta.',
   numero: 'Un número de 3 cifras distintas en 7 intentos. Si lo sacas al primero son 100 puntos, y cada intento extra resta 15.',
   reinas: 'Unas reinas de 6 × 6: una por fila, por columna y por zona, sin tocarse. Resolverlas vale 100 puntos, y equivocarse no resta.',
-  letras: 'Una palabra de 5 letras distintas en 6 intentos. Si la sacas al primero son 100 puntos, y cada intento extra resta 15.',
+  letras: 'Una palabra de 5 letras distintas en 6 intentos. Cada letra que encuentras en su lugar suma 10 puntos, y sacarla suma 50 más, menos 5 por cada intento después del primero.',
   anio: 'Dos hitos para decir el año. Ganas el promedio de los puntos de los dos.',
 }
 
@@ -249,6 +249,12 @@ const ES = {
   bdMistakes: 'Tuviste {n} errores, a {c} puntos cada uno: se restan {pts} puntos.',
   bdMistakesOne: 'Tuviste 1 error, que resta {c} puntos.',
   bdStart100: 'Partes con 100 puntos.',
+  bdFamas: 'Encontraste {n} letras en su lugar, a 10 puntos cada una: {pts} puntos. Una letra que ya habías encontrado no vuelve a sumar.',
+  bdFamasOne: 'Encontraste 1 letra en su lugar, que suma 10 puntos. Una letra que ya habías encontrado no vuelve a sumar.',
+  bdNoFamas: 'No encontraste ninguna letra en su lugar, así que por eso no sumas puntos.',
+  bdWordBonus: 'Sacaste la palabra en {u} intentos: suma 50 menos 5 por cada intento después del primero, o sea {b} puntos.',
+  bdWordBonusFirst: 'Sacaste la palabra al primer intento: suma 50 puntos más.',
+  bdWordNoBonus: 'No sacaste la palabra, así que no sumas los puntos de resolverla.',
   bdQueensTime: 'Resolviste el tablero en {t}.',
   bdQueensScale: 'Hasta 30 segundos vale 100 puntos y después baja parejo hasta 10 puntos a los 5 minutos. Equivocarse no resta.',
   bdRuleBreaks: 'Hiciste {n} jugadas que rompían una regla, a 10 puntos cada una: se restan {pts} puntos.',
@@ -330,6 +336,8 @@ const ES = {
   // Toque y Fama (el resto de sus textos son los de Toque y Fama)
   yourGuesses: 'Tus intentos',
   solvedWord: '¡La sacaste!',
+  famasFound: 'Llevas {n} de {largo} letras en su lugar: {pts} puntos.',
+  famasFoundOne: 'Llevas 1 de {largo} letras en su lugar: {pts} puntos.',
   notSolvedWord: 'Se acabaron los intentos. La palabra era {v}.',
   blockHintLetters: '💡 Mantén presionada una letra para tacharla si crees que no está en la palabra. Repite para destacharla.',
   // Reinas, Tango y Zip
@@ -350,6 +358,7 @@ const ES = {
   zipDone: 'Resueltos: {n}',
   zipTime: 'Se acabó el tiempo. Resolviste {n} niveles.',
   zipTimeOne: 'Se acabó el tiempo. Resolviste 1 nivel.',
+  zipSolution: 'Así se resolvía el nivel {k}, el que te quedó a medias.',
   zipMissing: 'Llegaste al último número, pero te faltan {n} casillas: el trazo tiene que pasar por todas. Vuelve atrás y busca otro camino.',
   zipMissingOne: 'Llegaste al último número, pero te falta 1 casilla: el trazo tiene que pasar por todas. Vuelve atrás y busca otro camino.',
   queensHint: '💡 Toca una casilla para poner o sacar una reina. Mantenla apretada para marcarla con una X y descartarla.',
@@ -407,6 +416,7 @@ const ES = {
   reportEmpty: 'Escribe qué pasó antes de enviar.',
   errReport: 'No pudimos enviar tu mensaje. Revisa tu internet e intenta nuevamente en unos minutos.',
   reportThanks: '¡Gracias! Tu mensaje llegó y lo vamos a revisar.',
+  reportQueued: 'No pudimos enviar tu mensaje ahora, pero quedó guardado en este dispositivo y se enviará solo la próxima vez que abras La Copa. ¡Gracias!',
   reportBack: 'Volver',
   reportCancel: 'Cancelar',
   sending2: 'Enviando…',

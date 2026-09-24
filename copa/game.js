@@ -966,6 +966,8 @@ function practica(id) {
       el('h2', { class: 'display display--lg' }, J.nombre)),
     el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.howToPlay), el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
       el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, J.puntaje)),
+    // La misma antesala que un día de la copa (D-109): la sesión de prueba se elige antes de jugar
+    mod.ensayo ? el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-ensayo', onClick: () => { SFX.tap(); ensayoPractica(id, semilla); } }, `🧪 ${T.tryFirst}`) : null,
     el('p', { class: 'muted center' }, T.practiceHint),
     el('button', { class: 'btn btn--yellow', id: 'btn-empezar', onClick: () => { SFX.tap(); jugarPractica(id, semilla); } }, `${J.emoji} ${T.start}`),
     el('a', { class: 'btn btn--ghost btn--sm', href: '../labs/' }, T.backToLabs)));
@@ -1017,18 +1019,28 @@ function ensayo(d) {
   const id = juegoDelDia(L().meta, d);
   mostrar('jugar');
   S.juego = { d, id, ensayo: true };
-  jugarSinPuntaje(id, JUEGOS[id].ensayo(S.code, d), r => {
-    mostrar('resultado');
-    SFX.reveal();
-    const body = $('#resultado-body');
-    body.innerHTML = '';
-    poner(body,
-      el('div', { class: 'result-hero' }, el('span', { class: 'trophy pop' }, '🧪'),
-        el('h2', { class: 'display display--md' }, T.trialDoneTitle)),
-      el('div', { class: 'aviso' }, fmt(T.trialDone, { resumen: r.resumen || r.s })),
-      explicacion(MINIJUEGOS[id], { s: r.s, ms: r.ms, det: r.det, copa: false }),
-      el('button', { class: 'btn btn--yellow', id: 'btn-volver-ensayo', onClick: () => { SFX.tap(); antesDeJugar(d); } }, T.trialBack));
-  }, { ensayo: true });
+  jugarSinPuntaje(id, JUEGOS[id].ensayo(S.code, d), r => resultadoEnsayo(id, r, () => antesDeJugar(d)), { ensayo: true });
+}
+
+/** La sesión de prueba desde la práctica del laboratorio: la misma que antes de un día (D-109). */
+function ensayoPractica(id, semilla) {
+  mostrar('jugar');
+  S.juego = { d: 1, id, practica: true, ensayo: true, semilla };
+  jugarSinPuntaje(id, JUEGOS[id].ensayo(semilla, 1), r => resultadoEnsayo(id, r, () => practica(id)), { ensayo: true });
+}
+
+/** Fin de la sesión de prueba: cómo le fue, cómo se calcula, y de vuelta a la antesala. */
+function resultadoEnsayo(id, r, volver) {
+  mostrar('resultado');
+  SFX.reveal();
+  const body = $('#resultado-body');
+  body.innerHTML = '';
+  poner(body,
+    el('div', { class: 'result-hero' }, el('span', { class: 'trophy pop' }, '🧪'),
+      el('h2', { class: 'display display--md' }, T.trialDoneTitle)),
+    el('div', { class: 'aviso' }, fmt(T.trialDone, { resumen: r.resumen || r.s })),
+    explicacion(MINIJUEGOS[id], { s: r.s, ms: r.ms, det: r.det, copa: false }),
+    el('button', { class: 'btn btn--yellow', id: 'btn-volver-ensayo', onClick: () => { SFX.tap(); volver(); } }, T.trialBack));
 }
 
 function resultadoPractica(id, semilla, r) {
@@ -1115,6 +1127,13 @@ function reportar(extra = {}) {
       poner(body, el('div', { class: 'aviso bien' }, T.reportThanks),
         el('button', { class: 'btn btn--yellow', id: 'btn-reporte-volver', onClick: () => { SFX.tap(); volver(); } }, T.reportBack));
     } catch (e) {
+      // No se pudo enviar, pero quedó en el dispositivo y se reenvía solo (D-109)
+      if (e?.guardado) {
+        body.innerHTML = '';
+        poner(body, el('div', { class: 'aviso' }, T.reportQueued),
+          el('button', { class: 'btn btn--yellow', id: 'btn-reporte-volver', onClick: () => { SFX.tap(); volver(); } }, T.reportBack));
+        return;
+      }
       avisoError(err, errorDe(e));
       enviarBtn.disabled = false; enviarBtn.textContent = T.reportSend;
     }
@@ -1158,6 +1177,8 @@ $('#sound-slot').append(soundToggle());
 $('#btn-menu').setAttribute('href', '../labs/');
 $('#btn-menu').textContent = T.backToLabsShort;
 if (PRUEBA) barraDePrueba();
+// Los reportes que no alcanzaron a enviarse se reintentan al abrir (D-109)
+else import('./reportes.js').then(m => m.reenviarPendientes()).catch(() => { /* la próxima vez */ });
 
 // Gancho de solo lectura para las pruebas (C-14)
 window.__copa = {
