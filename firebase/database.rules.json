@@ -304,6 +304,31 @@
           }
         }
       }
+    },
+    "feedback": {
+      ".read": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
+      "$id": {
+        ".write": "auth != null && !data.exists()",
+        ".validate": "newData.hasChildren(['texto', 'at'])",
+        "texto": {
+          ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 1000"
+        },
+        "nombre": {
+          ".validate": "newData.isString() && newData.val().length <= 40"
+        },
+        "contexto": {
+          ".validate": "newData.isString() && newData.val().length <= 500"
+        },
+        "v": {
+          ".validate": "newData.isString() && newData.val().length <= 16"
+        },
+        "at": {
+          ".validate": "newData.isNumber() && newData.val() <= now + 60000 && newData.val() > now - 60000"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
     }
   }
 }

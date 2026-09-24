@@ -15,7 +15,7 @@ Mobile-first web app with party games to play with friends: card games, drinking
 <!-- generado: juegos · written by python3 tools/readme.py actualizar -->
 | Game | Players | Modes | Status |
 |---|---|---|---|
-| 🏆 [The Cup / La Copa / A Copa](#-the-cup-la-copa) | 3 to 10 | Each on their own phone | - |
+| 🏆 [The Cup / La Copa / A Copa](#-the-cup-la-copa) | 3 to 10 | Each on their own phone | 🧪 lab |
 | ⏳ [Timeline / Línea de Tiempo / Linha do Tempo](#-timeline-línea-de-tiempo) | 1 to 6 | One phone · Several phones · Play alone | v0.9 |
 | 🔢 [Bulls and Cows / Toque y Fama / Toque e Fama](#-bulls-and-cows-toque-y-fama) | 1 to 2 | One phone · Two phones · Versus the phone | v0.4 |
 | 🪢 [Hangman / El Ahorcado / Forca](#-hangman-el-ahorcado) | 1 to 6 | One phone · Several phones · Play alone | v0.26 |
@@ -336,6 +336,8 @@ Spec and design: [docs/juegos/julepe.md](docs/juegos/julepe.md)
 </table>
 <!-- /generado -->
 
+**In the lab for now** (D-101): the menu shows it as *coming soon*, and it is tested at [`/labs/`](https://juegosdesalon.cl/labs/), where you can practice each minigame on its own, simulate a whole cup on one computer, or run a real 3-day cup with close friends. A 🐞 button sends bug reports and comments with their context.
+
 Not a game but a **tournament that lasts a week**. Someone creates a cup and shares the link with the group; everyone joins with their name and a 4-digit PIN, from any phone or computer. Every day a different minigame opens, **the same one for everybody**, and it can be played **once**. Your score only matters against the others: the day hands out points by position (10, 8, 6, 5, 4, 3, 2, 1), so seven games with seven different scales weigh the same and one crushing day does not decide the cup (D-94). The final day is worth double, everyone gets one ×2 wildcard, and whoever has the most points on day 7 lifts the cup.
 
 It borrows what makes daily puzzles work (Wordle, Connections): same challenge for everyone, once a day, comparable scores, little luck, and a **share card** that shows how you did without giving the answer away. Five of the seven minigames are built on engines and decks this app already had:
@@ -565,6 +567,7 @@ linea-de-tiempo/            Línea de Tiempo (engine.js + tests, game.js, rules.
 ahorcado/                   El Ahorcado (engine.js + tests, game.js, rules.js, decks/)
 dudo/                       Dudo (engine.js + tests, game.js, rules.js)
 copa/                       La Copa: tournament engine, stores (Firebase and local test), juegos/ with the seven minigames
+labs/                       The lab: games being tested before they reach the menu (not linked, not indexed)
 assets/js/arrastre.js       Shared drag and drop: dropping chooses, a button confirms
 assets/js/handoff.js        Shared transitions: pass the phone, covered screen
 assets/js/chat.js           Shared room chat (multi-phone modes)

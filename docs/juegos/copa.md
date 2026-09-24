@@ -6,8 +6,11 @@ quien suma más al cierre. Es la primera modalidad de la app que no es una parti
 serie de partidas en el tiempo (un macro-juego). El diseño completo, con la revisión y el plan
 de construcción, se discutió en el documento *La Copa — requisitos del torneo de varios días*.
 
-- **URL:** `/copa/` (portada) · `/copa/?K7Q2X` (una copa) · `/copa/?tres` (ofrece la Copa de 3
-  días, solo para probar, D-100) · `?prueba` (almacén local y reloj adelantable, sin Firebase).
+- **Estado:** en el laboratorio (D-101). En el menú aparece como "Próximamente"; se prueba desde
+  **`/labs/`**.
+- **URL:** `/copa/` (portada) · `/copa/?K7Q2X` (una copa) · `/copa/?labs` (copa real con la Copa
+  de 3 días, D-100; `?tres` sigue funcionando) · `?prueba` (almacén local y reloj adelantable, sin
+  Firebase) · `/copa/?practica=<id>&semilla=K7Q2X` (un minijuego suelto, repetible).
 - **Jugadores:** de 1 a 10 por copa. **Idioma:** solo español (D-98).
 - **Modalidades:** Copa de 7 días (la que se ofrece) y Copa de 3 días (solo pruebas).
 
@@ -82,6 +85,15 @@ Las reglas imponen: escribir una sola vez, las ventanas de cada día con la hora
 comodín antes de Empezar y fuera de la final, la inscripción antes de la final y que solo el admin
 renombre, saque o cambie PINes. El árbol no se llama `copas` porque las reglas no pueden nombrar
 juegos (C-16, `panel/adapta.test.mjs`).
+
+## Laboratorio, práctica y reportes
+
+`/labs/` (D-101) ofrece la práctica de cada minijuego, la copa simulada y la copa real. La práctica
+arma el contenido con una semilla al azar como si fuera el día 1 de una copa con ese código, y la
+muestra al final. El botón **🐞 Reportar un problema o dejar un comentario** (práctica, tablero y
+resultado) guarda en `feedback/<id>` el texto, un nombre opcional, la versión y un contexto en
+JSON: copa, jugador, pantalla, día, juego, semilla, URL y navegador. Solo el dueño lo lee, por ahora
+en la consola de Firebase; en `?prueba` queda en `localStorage` (`juegos-de-salon:copa:prueba:reportes`).
 
 ## Admin
 

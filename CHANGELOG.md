@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.43.0 — 2026-09-23
+- **La Copa pasa al laboratorio** (D-101). En el menú su tarjeta sigue a la vista, apagada y con
+  "Próximamente". Se prueba en **`/labs/`**, una página fuera del menú con tres pasos: cada
+  minijuego por separado, una copa entera simulada en un computador y una copa de verdad con
+  amigos cercanos, donde también se ofrece la **Copa de 3 días**.
+- **Práctica de cada minijuego** (`/copa/?practica=<id>`): contenido al azar, sin copa y sin que
+  cuente. Al final dice la semilla de la partida; con ella se repite la misma para reportar un error.
+- **🐞 Reportar un problema o dejar un comentario**, en la práctica, el tablero y el resultado del
+  día. Manda el texto y el contexto (copa, día, pantalla, juego, semilla, versión y navegador) a
+  `feedback/`, que solo lee el dueño.
+- En el menú, cualquier juego que no está disponible dice "Próximamente" y ya no se puede abrir,
+  ni con el teclado (C-5).
+- **Paso manual:** volver a publicar `firebase/database.rules.json` por el nodo nuevo `feedback`
+  (<https://console.firebase.google.com/u/0/project/juegos-de-salon/database/juegos-de-salon-default-rtdb/rules>).
+
 ## 0.42.0 — 2026-09-23
 - **Llega La Copa** 🏆 (D-94): un torneo entre amigos que dura una semana. Una persona la crea y
   comparte el link; cada uno entra con su nombre y un PIN de 4 números, desde el celular o el

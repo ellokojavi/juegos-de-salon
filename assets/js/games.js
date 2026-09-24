@@ -21,7 +21,10 @@ export const GAMES = [
     // Un torneo no es una partida: cada día manda su señal con `players: 1` y no pesa en MAX_PLAYERS.
     torneo: true,
     path: 'copa/',
-    available: true,
+    // En el laboratorio (D-101): la tarjeta se ve en el menú, apagada y con "Próximamente", y se
+    // juega desde /labs/ y desde los links de cada copa, que siguen trayendo su tarjeta social.
+    available: false,
+    labs: true,
   },
   {
     id: 'linea-de-tiempo',
