@@ -1,11 +1,12 @@
 /**
- * ⏳ Línea Relámpago — motor puro. Ocho hitos de una temática: el primero queda puesto y los
- * otros siete se colocan de a uno. Un error deja la carta en su lugar, marcada, y se sigue.
+ * ⏳ Línea Relámpago — motor puro. Diez hitos de una temática: el primero queda puesto y los
+ * otros nueve se juegan desde la mano, en el orden que el jugador quiera, igual que en el modo
+ * solo de Línea de Tiempo. Un error deja la carta en su lugar, marcada, y se sigue.
  */
 import { azar } from './semilla.js';
 import { cartas, temasDeLaCopa, mazo } from './mazos.js';
 
-export const CARTAS = 8;
+export const CARTAS = 10;
 
 export function generar(codigo, dia, { n = CARTAS, tema, sal = 'linea' } = {}) {
   const deck = tema || temasDeLaCopa(codigo).linea;
@@ -24,22 +25,26 @@ export function correcto(linea, carta, at) {
 export const huecoCorrecto = (linea, carta) => linea.filter(c => c.year < carta.year).length;
 
 /**
- * El estado a partir de los huecos elegidos, en orden: la línea como quedó, cuál va ahora
- * y si cada jugada acertó. Una carta mal puesta queda donde corresponde.
+ * El estado a partir de las jugadas: `{ c: id de la carta, at: hueco elegido }`, en orden.
+ * Devuelve la línea como quedó, la mano que falta, cada veredicto y dónde iba cada error.
  */
 export function estado(p, jugadas) {
   let linea = [{ ...p.base, ok: null }];
   const marcas = [];
-  jugadas.forEach((at, i) => {
-    const carta = p.mano[i];
-    if (!carta) return;
-    const ok = correcto(linea, carta, at);
-    const pos = ok ? at : huecoCorrecto(linea, carta);
+  const historia = [];
+  const puestas = new Set();
+  for (const j of jugadas) {
+    const carta = p.mano.find(c => c.id === j.c);
+    if (!carta || puestas.has(carta.id)) continue;
+    const ok = correcto(linea, carta, j.at);
+    const pos = ok ? j.at : huecoCorrecto(linea, carta);
     linea = [...linea.slice(0, pos), { ...carta, ok }, ...linea.slice(pos)];
+    puestas.add(carta.id);
     marcas.push(ok);
-  });
-  const fin = marcas.length >= p.mano.length;
-  return { linea, marcas, fin, actual: fin ? null : p.mano[marcas.length], aciertos: marcas.filter(Boolean).length };
+    historia.push({ carta, ok, entre: [linea[pos - 1] || null, linea[pos + 1] || null] });
+  }
+  const mano = p.mano.filter(c => !puestas.has(c.id));
+  return { linea, mano, marcas, historia, fin: mano.length === 0, aciertos: marcas.filter(Boolean).length };
 }
 
 export const puntaje = e => e.aciertos;

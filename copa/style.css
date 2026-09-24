@@ -142,34 +142,7 @@ pre.tarjeta { font: 1.2rem/1.35 var(--font-body); text-align: center; white-spac
 .carta.actual { grid-template-columns: auto 1fr; font-size: 1.1rem; background: linear-gradient(180deg, #fff7d6, #ffe38a); }
 .carta.actual small { grid-column: 1 / 3; }
 .carta.actual b { font-weight: 900; }
-.linea { display: grid; gap: 6px; }
-.hueco { border: 2px dashed rgba(255,255,255,0.3); background: transparent; color: var(--muted); border-radius: 12px; min-height: 44px; font: 900 1rem var(--font-body); cursor: pointer; }
-.hueco.on { border-style: solid; border-color: var(--yellow); background: rgba(255, 210, 63, 0.18); color: var(--yellow); }
-.hueco:disabled { display: none; }
-.flota-btn { position: sticky; bottom: 0; padding: 12px 0 calc(8px + var(--safe-bottom)); background: linear-gradient(transparent, var(--bg1) 35%); }
 
-/* Número y año: el teclado. Cifras en Nunito 900, no en Bangers (D-30) */
-.entry { display: flex; justify-content: center; gap: 10px; margin: 4px 0; }
-.entry .box {
-  width: clamp(48px, 15vw, 64px); aspect-ratio: 3 / 4; border-radius: 14px; background: var(--card); color: var(--card-ink);
-  font: 900 clamp(1.7rem, 7.6vw, 2.4rem)/1 var(--font-num); font-variant-numeric: tabular-nums; display: grid; place-items: center; box-shadow: 0 6px 0 rgba(0,0,0,0.35);
-}
-.entry .box.active { outline: 3px solid var(--cyan); }
-.teclado { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.tecla { min-height: 52px; border: 0; border-radius: 14px; background: rgba(255,255,255,0.12); color: var(--ink); font: 900 1.5rem var(--font-num); cursor: pointer; }
-.tecla:disabled { opacity: 0.3; cursor: default; }
-.tecla.borrar, .tecla.ac { font-size: 1.1rem; }
-.tecla.ac.on { background: var(--yellow); color: #3a1200; }
-.tecla:active:not(:disabled) { transform: scale(0.96); }
-.historial { display: grid; gap: 6px; }
-.intento { display: grid; grid-template-columns: 1.8em auto 1fr; grid-template-rows: auto auto; column-gap: 10px; align-items: center; background: rgba(0,0,0,0.22); border-radius: 12px; padding: 6px 10px; }
-.intento .n { color: var(--muted); font: 800 0.85rem var(--font-num); grid-row: 1 / 3; }
-.intento .v { font: 900 1.4rem var(--font-num); letter-spacing: 0.18em; font-variant-numeric: tabular-nums; grid-row: 1 / 3; }
-.intento .r { font-weight: 800; font-size: 0.9rem; }
-.intento .bolitas { font-size: 0.8rem; min-height: 1em; }
-.intento.ok { box-shadow: 0 0 0 2px var(--lime) inset; }
-.anio-entry { text-align: center; font: 900 2.6rem var(--font-num); font-variant-numeric: tabular-nums; min-height: 1.3em; }
-.anio-entry small { font-size: 1.2rem; color: var(--yellow); }
 
 /* Conexiones */
 .grupos { display: grid; gap: 6px; }
@@ -189,49 +162,6 @@ pre.tarjeta { font: 1.2rem/1.35 var(--font-body); text-align: center; white-spac
 .palabra.on { background: #5a594e; color: #fff; }
 .vidas { letter-spacing: 0.1em; }
 
-/* Solitario: los números van dentro de la misma grilla (C-8) */
-:root {
-  --casco-borde: #1d2740; --casco-luz: #eef3fa; --casco: #a9b7c9;
-  --casco-sombra: #73839a; --casco-medio: #8795ab; --cubierta: #5d6c85;
-  --marca: var(--yellow); --antena: var(--cyan); --espuma: rgba(255, 255, 255, 0.45);
-}
-.sol-grid { display: grid; gap: 3px; width: 100%; max-width: 440px; margin: 0 auto; }
-.sc {
-  aspect-ratio: 1; min-width: 0; border-radius: 5px; border: 1px solid rgba(46, 230, 214, 0.2); background: #132a45;
-  position: relative; overflow: hidden; cursor: pointer; padding: 0; display: grid; place-items: center;
-}
-.sc::before { content: ''; position: absolute; inset: -6px; }
-.sc.agua { background: #0e2036; }
-.sc.agua::after { content: '•'; color: rgba(255,255,255,0.55); font-size: 1.1rem; }
-.sc.barco::after { content: ''; position: absolute; inset: 18%; border-radius: 30%; background: var(--casco); box-shadow: inset 0 -3px 0 var(--casco-sombra), 0 0 0 2px var(--casco-borde); }
-.sc.fija { border-color: var(--yellow); cursor: default; }
-.sc.fija.barco::after { background: var(--yellow); box-shadow: inset 0 -3px 0 var(--orange), 0 0 0 2px #6d3400; }
-.sc:disabled { cursor: default; }
-.sol-grid.fin .sc { background: #132a45 var(--agua) center / 100% 100%; image-rendering: pixelated; }
-.sol-grid.fin .sc.real::after, .sol-grid.fin .sc.agua::after { display: none; }
-.sol-grid.fin .sc.barco:not(.real)::after { background: var(--red); }
-.sc .barco { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-.sc .barco.v { transform: rotate(90deg); }
-.sol-grid .lbl { display: grid; place-items: center; font: 900 0.9rem var(--font-num); font-variant-numeric: tabular-nums; color: var(--muted); min-width: 1.4em; }
-.sol-grid .lbl.completo { color: var(--lime); }
-.sol-grid .lbl.pasado { color: var(--pink); }
-
-/* Dudo */
-.die {
-  display: grid; grid-template: repeat(3, 1fr) / repeat(3, 1fr); gap: 1px;
-  width: 44px; height: 44px; padding: 6px; border-radius: 11px;
-  background: var(--card); box-shadow: 0 3px 0 rgba(0,0,0,0.35);
-}
-.die i { display: block; align-self: center; justify-self: center; width: 7px; height: 7px; border-radius: 50%; background: var(--card-ink); }
-.die.ace { background: linear-gradient(180deg, #ffe680, #ffb300); }
-.die--sm { width: 28px; height: 28px; padding: 4px; border-radius: 7px; }
-.die--sm i { width: 4px; height: 4px; }
-.die.off { opacity: 0.35; }
-.die.on { box-shadow: 0 0 0 3px var(--lime), 0 3px 0 rgba(0,0,0,0.35); }
-.dice-row { display: flex; flex-wrap: wrap; gap: 7px; justify-content: center; }
-.apuesta { display: flex; align-items: center; justify-content: center; gap: 10px; font: 900 2.2rem var(--font-num); }
-.otros { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
-.otros .dice-row { gap: 3px; padding: 5px; border-radius: 10px; background: rgba(0,0,0,0.25); }
 
 @media (prefers-reduced-motion: reduce) {
   .intro-hero .icon { animation: none; }
@@ -278,3 +208,50 @@ button.md-fila { cursor: pointer; }
 .reporte-texto:focus { border-color: var(--cyan); }
 .reporte-contexto { font-size: 0.72rem; white-space: pre-wrap; overflow-wrap: anywhere; color: var(--muted); margin: 6px 0 0; }
 #reporte-body details summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; }
+
+/* ---------- Minijuegos de la v2 (D-102) ---------- */
+
+/* Línea Relámpago: todo lo demás viene de assets/css/linea.css */
+.lt-juego .status { text-align: center; margin: 0 0 8px; }
+.lt-juego .status .sub { color: var(--muted); font-weight: 800; font-size: 0.9rem; }
+.lt-juego .line-wrap { padding: 2px; margin-top: 2px; }
+.event.fallo { border-color: rgba(255, 46, 136, 0.7); box-shadow: 0 0 10px rgba(255, 46, 136, 0.25); }
+
+/* Toque y Fama: el teclado y el tablero vienen de assets/css/teclado.css */
+.board--solo { min-height: 0; }
+.board--solo li { grid-template-columns: auto 1fr; }
+.keypad--letras { max-width: 460px; gap: 4px; }
+.keypad--letras button { font: 900 1.05rem var(--font-body); min-height: 48px; padding: 0; }
+.keypad--letras button.del, .keypad--letras button.ok { grid-column: span 2; }
+.keypad--letras button.ok { font-size: 1.3rem; grid-column: span 3; }
+.letras-juego .entry .box { width: clamp(44px, 14vw, 58px); font-family: var(--font-body); }
+.board li .val.letras { display: flex; gap: 3px; letter-spacing: 0; }
+.letra { display: inline-grid; place-items: center; width: 1.6em; height: 1.6em; border-radius: 6px; font: 900 0.95rem var(--font-body); background: rgba(255,255,255,0.1); }
+.letra.f { background: var(--yellow); color: #3a1200; }
+.letra.t { background: var(--cyan); color: #03302c; }
+.anio-era { max-width: 260px; width: 100%; margin: 0 auto; }
+.anio-era button { white-space: nowrap; }
+
+/* Reinas, Tango y Zip: grillas cuadradas que se tocan (C-8: 44 px en 320 de ancho con 7 u 8
+   casillas no caben; el área de toque es la casilla entera y la grilla usa todo el ancho) */
+.rej-grid, .tan-grid, .zip-grid { display: grid; width: 100%; max-width: 440px; margin: 0 auto; user-select: none; -webkit-user-select: none; }
+.rej-grid { gap: 0; border: 3px solid #1a1a1a; border-radius: 8px; overflow: hidden; }
+.rej { aspect-ratio: 1; min-width: 0; border: 1px solid #1a1a1a; padding: 0; font: 900 clamp(1rem, 5.5vw, 1.6rem)/1 var(--font-body); color: #1a1a1a; cursor: pointer; display: grid; place-items: center; }
+.rej.marca { color: rgba(0,0,0,0.45); font-size: clamp(0.8rem, 3.8vw, 1.1rem); }
+.rej.choque { box-shadow: inset 0 0 0 3px var(--red); background-image: repeating-linear-gradient(45deg, rgba(224,36,60,0.35) 0 4px, transparent 4px 8px) !important; }
+.rej:disabled { cursor: default; }
+.tan-grid { gap: 4px; }
+.tan { position: relative; aspect-ratio: 1; min-width: 0; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.1); font-size: clamp(1.2rem, 7vw, 2rem); cursor: pointer; padding: 0; display: grid; place-items: center; }
+.tan.dada { background: rgba(255,255,255,0.28); cursor: default; }
+.tan.choque { box-shadow: inset 0 0 0 3px var(--red); background: rgba(224, 36, 60, 0.25); }
+.tan-marca { position: absolute; z-index: 2; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--yellow); color: #3a1200; font: 900 1.05rem/1 var(--font-num); box-shadow: 0 0 0 2px var(--bg1); pointer-events: none; }
+.tan-marca.der { right: -14px; top: 50%; transform: translateY(-50%); }
+.tan-marca.abajo { bottom: -14px; left: 50%; transform: translateX(-50%); }
+.zip-grid { position: relative; gap: 0; border: 2px solid var(--glass-border); border-radius: 10px; overflow: hidden; touch-action: none; }
+.zc { aspect-ratio: 1; min-width: 0; border: 1px solid rgba(255,255,255,0.08); display: grid; place-items: center; position: relative; z-index: 2; }
+.zc.on { background: rgba(255, 122, 26, 0.28); }
+.zc.num span { display: grid; place-items: center; width: 62%; aspect-ratio: 1; border-radius: 50%; background: #1a1a1a; color: #fff; font: 900 clamp(0.8rem, 4vw, 1.1rem)/1 var(--font-num); box-shadow: 0 0 0 2px #fff; }
+.zc.cabeza::after { content: ''; position: absolute; inset: 30%; border-radius: 50%; background: var(--yellow); box-shadow: 0 0 12px var(--yellow); }
+.zip-trazo { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+.zip-trazo polyline { fill: none; stroke: var(--orange); stroke-width: 0.34; stroke-linecap: round; stroke-linejoin: round; }
+.zip-grid.fin .zip-trazo polyline { stroke: var(--lime); }

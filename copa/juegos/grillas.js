@@ -1,121 +1,125 @@
 /**
- * Las grillas de 🔗 Conexiones. Se escriben a mano, en chileno, y cada copa usa una.
+ * Las grillas de 🔗 Conexiones. Se escriben a mano y cada copa usa una.
  *
  * Cada grilla: cuatro grupos de cuatro palabras, del más fácil (nivel 0, amarillo) al más
- * difícil (nivel 3, morado). Las reglas del test (copa/juegos/juegos.test.mjs):
- * - 16 palabras distintas por grilla, en mayúsculas y de 14 caracteres como mucho (caben en
- *   una casilla de un celular de 320 px).
- * - Un distractor es bienvenido (una palabra que parece de otro grupo), pero cada palabra
- *   tiene que ser del suyo sin discusión cuando se mira la grilla entera.
+ * difícil (nivel 3, morado). Tienen que costar (D-102): cada grilla trae **distractores**,
+ * palabras que parecen de otro grupo (LUZ va en "verde" aunque también haya luz roja), y el
+ * grupo morado suele ser un juego de palabras (esconden un animal, empiezan con una nota).
+ * Temas generales, no solo chilenos: una grilla de comunas de Santiago se resolvía de memoria.
+ *
+ * Las reglas del test (copa/juegos/juegos.test.mjs):
+ * - 16 palabras distintas por grilla, en mayúsculas y de 14 caracteres como mucho.
+ * - Cada palabra es del suyo sin discusión cuando se mira la grilla entera: el distractor
+ *   calza en otro grupo, pero ese grupo ya tiene sus cuatro sin él.
  * - Nada de groserías fuertes (C-1).
  */
 export const GRILLAS = [
   {
-    id: 'fiestas',
+    id: 'zapato',
     grupos: [
-      { nombre: 'Fiestas Patrias', palabras: ['FONDA', 'RAMADA', 'CUECA', 'VOLANTÍN'] },
-      { nombre: 'En la mesa de la once', palabras: ['MARRAQUETA', 'HALLULLA', 'PALTA', 'TÉ'] },
-      { nombre: 'Pastelería de barrio', palabras: ['CHILENITO', 'BERLÍN', 'CALZONES ROTOS', 'KUCHEN'] },
-      { nombre: 'Tragos con nombre raro', palabras: ['TERREMOTO', 'COLA DE MONO', 'JOTE', 'PISCOLA'] },
+      { nombre: 'Partes de un zapato', palabras: ['SUELA', 'PLANTILLA', 'CORDÓN', 'LENGÜETA'] },
+      { nombre: 'Cosas del billar', palabras: ['TACO', 'TIZA', 'BANDA', 'TRONERA'] },
+      { nombre: '___ de mesa', palabras: ['TENIS', 'VINO', 'JUEGO', 'SAL'] },
+      { nombre: 'Esconden un animal', palabras: ['ZAPATO', 'HERMOSO', 'PIRATA', 'MONOPOLIO'] },
     ],
   },
   {
-    id: 'geografia',
+    id: 'cielo',
     grupos: [
-      { nombre: 'Ciudades del norte', palabras: ['ARICA', 'IQUIQUE', 'ANTOFAGASTA', 'CALAMA'] },
-      { nombre: 'Islas', palabras: ['CHILOÉ', 'RAPA NUI', 'NAVARINO', 'MOCHA'] },
-      { nombre: 'Ríos', palabras: ['BIOBÍO', 'MAIPO', 'MAULE', 'LOA'] },
-      { nombre: 'Volcanes', palabras: ['VILLARRICA', 'OSORNO', 'CALBUCO', 'LLAIMA'] },
+      { nombre: 'Signos del zodíaco', palabras: ['ARIES', 'TAURO', 'LEO', 'PISCIS'] },
+      { nombre: 'Planetas', palabras: ['SATURNO', 'URANO', 'TIERRA', 'MERCURIO'] },
+      { nombre: 'Dioses griegos', palabras: ['ZEUS', 'HERA', 'APOLO', 'HERMES'] },
+      { nombre: 'Misiones espaciales', palabras: ['GÉMINIS', 'SOYUZ', 'VOSTOK', 'ARTEMISA'] },
     ],
   },
   {
-    id: 'chilenismos',
+    id: 'notas',
     grupos: [
-      { nombre: 'Formas de decir plata', palabras: ['LUCAS', 'CHAUCHAS', 'BILLETE', 'MONEDAS'] },
-      { nombre: 'Formas de decir amigo', palabras: ['COMPADRE', 'CUMPA', 'SOCIO', 'YUNTA'] },
-      { nombre: 'Formas de decir fiesta', palabras: ['CARRETE', 'MALÓN', 'TOCATA', 'JUERGA'] },
-      { nombre: 'Formas de decir tonto', palabras: ['GIL', 'LESO', 'PAVO', 'TARADO'] },
+      { nombre: 'Piezas de ajedrez', palabras: ['ALFIL', 'CABALLO', 'PEÓN', 'DAMA'] },
+      { nombre: 'Unidades de peso', palabras: ['ONZA', 'GRAMO', 'QUINTAL', 'TONELADA'] },
+      { nombre: 'Monedas', palabras: ['LIBRA', 'EURO', 'YEN', 'RUPIA'] },
+      { nombre: 'Empiezan con una nota musical', palabras: ['DOMINGO', 'SOLAPA', 'MIRADA', 'FAROL'] },
     ],
   },
   {
-    id: 'futbol',
+    id: 'adivinanzas',
     grupos: [
-      { nombre: 'Jugadores de la Generación Dorada', palabras: ['VIDAL', 'SÁNCHEZ', 'MEDEL', 'ARÁNGUIZ'] },
-      { nombre: 'Estadios', palabras: ['MONUMENTAL', 'NACIONAL', 'SAN CARLOS', 'SAUSALITO'] },
-      { nombre: 'Puestos en la cancha', palabras: ['ARQUERO', 'VOLANTE', 'LATERAL', 'PUNTERO'] },
-      { nombre: 'Apodos de clubes', palabras: ['CACIQUE', 'CHUNCHO', 'CRUZADOS', 'PIRATAS'] },
+      { nombre: 'Estar en las ___ (o en la ___)', palabras: ['NUBES', 'LUNA', 'BABIA', 'OTRA'] },
+      { nombre: 'Tienen dientes', palabras: ['PEINE', 'SIERRA', 'AJO', 'ENGRANAJE'] },
+      { nombre: 'Tienen cuello', palabras: ['BOTELLA', 'CAMISA', 'JIRAFA', 'PIE'] },
+      { nombre: 'Tienen ojos pero no ven', palabras: ['AGUJA', 'PAPA', 'HURACÁN', 'PUENTE'] },
     ],
   },
   {
-    id: 'musica',
+    id: 'colores',
     grupos: [
-      { nombre: 'Instrumentos andinos', palabras: ['CHARANGO', 'QUENA', 'ZAMPOÑA', 'BOMBO'] },
-      { nombre: 'Bandas chilenas', palabras: ['LOS JAIVAS', 'LA LEY', 'LOS BUNKERS', 'LOS TRES'] },
-      { nombre: 'Cosas del Festival de Viña', palabras: ['GAVIOTA', 'MONSTRUO', 'ANTORCHA', 'QUINTA VERGARA'] },
-      { nombre: 'Tienen apellido Parra', palabras: ['VIOLETA', 'NICANOR', 'ÁNGEL', 'ISABEL'] },
+      { nombre: 'Frutas que son colores', palabras: ['NARANJA', 'LIMA', 'CEREZA', 'DURAZNO'] },
+      { nombre: '___ negra', palabras: ['CAJA', 'OVEJA', 'VIUDA', 'LISTA'] },
+      { nombre: '___ roja', palabras: ['ALFOMBRA', 'TARJETA', 'CRUZ', 'CAPERUCITA'] },
+      { nombre: '___ verde', palabras: ['LUZ', 'TÉ', 'VIEJO', 'CHISTE'] },
     ],
   },
   {
-    id: 'tele',
+    id: 'numeros',
     grupos: [
-      { nombre: 'Personajes de 31 Minutos', palabras: ['TULIO', 'BODOQUE', 'JUANÍN', 'POLICARPO'] },
-      { nombre: 'Personajes de Condorito', palabras: ['YAYITA', 'DON CHUMA', 'COMEGATO', 'PEPE CORTISONA'] },
-      { nombre: 'Canales de televisión', palabras: ['TVN', 'MEGA', 'CHV', 'CANAL 13'] },
-      { nombre: 'Juegos de patio', palabras: ['RAYUELA', 'EMBOQUE', 'TROMPO', 'LUCHE'] },
+      { nombre: 'Asignaturas del colegio', palabras: ['QUÍMICA', 'FÍSICA', 'HISTORIA', 'MÚSICA'] },
+      { nombre: 'Bodas de ___', palabras: ['ORO', 'PLATA', 'PAPEL', 'DIAMANTE'] },
+      { nombre: 'Grupos de personas', palabras: ['TRIBU', 'CLAN', 'BANDA', 'PANDILLA'] },
+      { nombre: 'Esconden un número', palabras: ['BRONCE', 'FAMILIA', 'CIENCIA', 'AYUNO'] },
     ],
   },
   {
-    id: 'comida',
+    id: 'fiesta',
     grupos: [
-      { nombre: 'Platos típicos', palabras: ['CAZUELA', 'CHARQUICÁN', 'POROTOS', 'CURANTO'] },
-      { nombre: 'Mariscos', palabras: ['LOCO', 'PIURE', 'CHORITO', 'MACHA'] },
-      { nombre: 'Le ponen al completo italiano', palabras: ['PALTA', 'TOMATE', 'MAYO', 'VIENESA'] },
-      { nombre: 'Frutos del sur', palabras: ['MAQUI', 'MURTA', 'CALAFATE', 'AVELLANA'] },
+      { nombre: 'Frutas tropicales', palabras: ['PIÑA', 'MANGO', 'PAPAYA', 'MARACUYÁ'] },
+      { nombre: 'Películas de Pixar', palabras: ['COCO', 'CARS', 'SOUL', 'BRAVE'] },
+      { nombre: 'Bailes', palabras: ['SALSA', 'MERENGUE', 'TANGO', 'SAMBA'] },
+      { nombre: 'Salsas', palabras: ['PESTO', 'ALIOLI', 'CHIMICHURRI', 'BECHAMEL'] },
     ],
   },
   {
-    id: 'micro',
+    id: 'avion',
     grupos: [
-      { nombre: 'Tipos de pan', palabras: ['AMASADO', 'COLIZA', 'DOBLADITA', 'MARRAQUETA'] },
-      { nombre: 'Se ven en la micro', palabras: ['TIMBRE', 'PASILLO', 'CHOFER', 'PASAMANOS'] },
-      { nombre: 'Tiendas chilenas', palabras: ['FALABELLA', 'RIPLEY', 'PARIS', 'HITES'] },
-      { nombre: 'Se "toman" en Chile', palabras: ['MICRO', 'ONCE', 'PELO', 'SOL'] },
+      { nombre: 'Signos de puntuación', palabras: ['COMA', 'PUNTO', 'GUION', 'PARÉNTESIS'] },
+      { nombre: 'Tipos de letra', palabras: ['ARIAL', 'TIMES', 'CALIBRI', 'VERDANA'] },
+      { nombre: 'Cortes de carne', palabras: ['LOMO', 'POSTA', 'PLATEADA', 'ASIENTO'] },
+      { nombre: 'Partes de un avión', palabras: ['ALA', 'CABINA', 'TREN', 'COLA'] },
     ],
   },
   {
-    id: 'sudamerica',
+    id: 'mundo',
     grupos: [
-      { nombre: 'Capitales', palabras: ['LIMA', 'QUITO', 'CARACAS', 'ASUNCIÓN'] },
-      { nombre: 'Monedas', palabras: ['SOL', 'PESO', 'REAL', 'GUARANÍ'] },
-      { nombre: 'Próceres', palabras: ["O'HIGGINS", 'SAN MARTÍN', 'BOLÍVAR', 'SUCRE'] },
-      { nombre: 'Ríos', palabras: ['AMAZONAS', 'ORINOCO', 'PARANÁ', 'MAGDALENA'] },
+      { nombre: 'Ríos de Europa', palabras: ['DANUBIO', 'SENA', 'TÁMESIS', 'RIN'] },
+      { nombre: 'Islas', palabras: ['CUBA', 'MALTA', 'CHIPRE', 'CRETA'] },
+      { nombre: 'Tragos', palabras: ['MOJITO', 'DAIQUIRI', 'MARGARITA', 'CAIPIRIÑA'] },
+      { nombre: 'Ciudades con nombre de mujer', palabras: ['FLORENCIA', 'VICTORIA', 'LOURDES', 'ADELAIDA'] },
     ],
   },
   {
-    id: 'raqueta',
+    id: 'cocina',
     grupos: [
-      { nombre: 'Se juegan con raqueta', palabras: ['TENIS', 'PÁDEL', 'SQUASH', 'BÁDMINTON'] },
-      { nombre: 'Tenistas chilenos', palabras: ['RÍOS', 'MASSÚ', 'GONZÁLEZ', 'JARRY'] },
-      { nombre: 'Palabras del tenis', palabras: ['SET', 'QUIEBRE', 'VOLEA', 'SAQUE'] },
-      { nombre: 'Apellidos que son colores', palabras: ['ROJAS', 'BLANCO', 'MORENO', 'PARDO'] },
+      { nombre: 'Utensilios de cocina', palabras: ['BATIDOR', 'COLADOR', 'RALLADOR', 'CUCHARÓN'] },
+      { nombre: 'Hierbas', palabras: ['ALBAHACA', 'ORÉGANO', 'ROMERO', 'LAUREL'] },
+      { nombre: 'Pintores españoles', palabras: ['VELÁZQUEZ', 'DALÍ', 'MIRÓ', 'PICASSO'] },
+      { nombre: 'Premios', palabras: ['NOBEL', 'OSCAR', 'GRAMMY', 'GOYA'] },
     ],
   },
   {
-    id: 'naturaleza',
+    id: 'mitos',
     grupos: [
-      { nombre: 'Árboles nativos', palabras: ['ARAUCARIA', 'ALERCE', 'QUILLAY', 'PEUMO'] },
-      { nombre: 'Pájaros', palabras: ['CHINCOL', 'LOICA', 'TIUQUE', 'QUELTEHUE'] },
-      { nombre: 'Mamíferos', palabras: ['PUDÚ', 'GUANACO', 'CHINGUE', 'DEGÚ'] },
-      { nombre: 'Están en el escudo', palabras: ['CÓNDOR', 'HUEMUL', 'ESTRELLA', 'PLUMAS'] },
+      { nombre: 'Crías de animales', palabras: ['TERNERO', 'CORDERO', 'CACHORRO', 'LECHÓN'] },
+      { nombre: 'Aparatos de gimnasia', palabras: ['POTRO', 'BARRA', 'ANILLAS', 'VIGA'] },
+      { nombre: 'Constelaciones', palabras: ['ORIÓN', 'CASIOPEA', 'PEGASO', 'ANDRÓMEDA'] },
+      { nombre: 'Criaturas míticas', palabras: ['UNICORNIO', 'GRIFO', 'FÉNIX', 'SIRENA'] },
     ],
   },
   {
-    id: 'santiago',
+    id: 'pantalla',
     grupos: [
-      { nombre: 'Comunas', palabras: ['PROVIDENCIA', 'MAIPÚ', 'ÑUÑOA', 'RENCA'] },
-      { nombre: 'Estaciones de metro', palabras: ['BAQUEDANO', 'TOBALABA', 'PAJARITOS', 'LOS DOMINICOS'] },
-      { nombre: 'Avenidas', palabras: ['ALAMEDA', 'IRARRÁZAVAL', 'GRECIA', 'MATTA'] },
-      { nombre: 'Cerros', palabras: ['SAN CRISTÓBAL', 'SANTA LUCÍA', 'MANQUEHUE', 'CALÁN'] },
+      { nombre: 'Redes sociales', palabras: ['TIKTOK', 'INSTAGRAM', 'FACEBOOK', 'LINKEDIN'] },
+      { nombre: 'Se hacen en el computador', palabras: ['COPIAR', 'PEGAR', 'GUARDAR', 'IMPRIMIR'] },
+      { nombre: 'Se hacen en la peluquería', palabras: ['CORTAR', 'TEÑIR', 'PEINAR', 'ALISAR'] },
+      { nombre: 'Golpes, en chileno', palabras: ['COMBO', 'CHARCHAZO', 'PATADA', 'CABEZAZO'] },
     ],
   },
 ];

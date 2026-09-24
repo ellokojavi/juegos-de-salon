@@ -1176,3 +1176,34 @@ traen la tarjeta social de siempre (`og.mjs` genera tarjeta para los juegos con 
 portada del README la marca `🧪 lab`. Los reportes se leen por ahora en la consola de Firebase
 (*Realtime Database → Data → feedback*); que el panel los muestre queda pendiente. Hay que
 publicar las reglas de nuevo por el nodo `feedback`.
+
+## D-102 · La Copa no inventa UX: reusa la de los juegos que ya existen
+**Fecha:** 2026-09-23 · **Estado:** vigente
+**Decisión:** Después de probarla en el laboratorio, el dueño pidió no reinventar interfaz: lo
+que ya existe en otro juego está probado. Por eso:
+- **⏳ Línea Relámpago** es el modo solo de Línea de Tiempo: una mano de 9 cartas que se juegan
+  en cualquier orden (10 hitos en total), las ranuras de la línea, el **arrastre compartido**
+  (`assets/js/arrastre.js`, D-85), el botón que dice qué carta coloca y el veredicto con el error
+  que se queda hasta tocarlo y dice dónde iba. Los estilos salieron de `linea-de-tiempo/style.css`
+  a **`assets/css/linea.css`**, sin cambios, y los textos son los de Línea de Tiempo.
+- **🔢 Toque y Fama: adivina el número** (antes "El Número del Día") y **🔤 Toque y Fama con
+  letras** usan el teclado de Toque y Fama, que salió a **`assets/js/teclado.js`** con sus
+  **notas** (toque largo para tachar), el tablero de intentos y las pistas de famas y toques. Sus
+  estilos pasaron a **`assets/css/teclado.css`**. ¿En qué año? usa el mismo teclado.
+- **Batalla Naval: Solitario** sale: con pocas pistas obligaba a adivinar. Lo reemplaza **👑
+  Reinas** (el Queens de LinkedIn) el día 4, y **〰️ Zip** y **☀️ Tango** quedan en el laboratorio
+  para probarlos. Los tres se generan con solución única.
+- **¿Dudo o le creo?** sale: aburría. Lo reemplaza **🔤 Toque y Fama con letras** el día 5: una
+  palabra de 5 letras distintas con famas y toques, y cada letra pintada con el color de su pista,
+  como Wordle.
+- **Conexiones** se rehace más difícil: temas generales, un distractor por grilla y juegos de
+  palabras en el grupo morado.
+**Por qué:** una interfaz nueva hay que probarla desde cero; una que ya se juega en la app trae
+sus arreglos (D-85, D-86, D-87, D-38) y se aprende una sola vez. Para los juegos nuevos (Reinas,
+Zip, Tango) la referencia es LinkedIn, que los juegan millones cada día.
+**Consecuencias:** Línea de Tiempo y Toque y Fama cargan las hojas compartidas y Toque y Fama usa
+el teclado compartido: un cambio ahí cambia los dos juegos. Las copas creadas antes con el
+Solitario o Dudo en el calendario juegan Reinas y Toque y Fama con letras en esos días. Reinas y
+Tango restan 10 puntos por jugada que rompe una regla, pero en Tango pasar por el sol para llegar
+a la luna no cuenta como error: solo cuenta dejar la casilla rompiendo una regla. Zip no tiene
+errores: todos los que terminan sacan 100 y el tiempo ordena el día.

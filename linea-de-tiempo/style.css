@@ -56,92 +56,13 @@
 .score .p .n { font: 900 0.9rem var(--font-num); font-variant-numeric: tabular-nums; }
 
 /* Mano */
-.hand-title { display: flex; justify-content: space-between; align-items: baseline; margin: 4px 0; }
-.hand-title b { font-family: var(--font-display); font-size: 1.05rem; letter-spacing: 0.05em; }
-.hand-title small { color: var(--muted); font-weight: 800; font-size: 0.75rem; }
-.hand { display: flex; gap: 6px; overflow-x: auto; padding: 2px 2px 8px; scrollbar-width: none;
-  /* En toda la tira, no solo sobre las cartas: entre dos cartas hay 6 px de hueco y el dedo mide
-     bastante más que eso. Un toque que cae ahí no puede desplazar la página a lo alto (D-86). */
-  touch-action: pan-x; }
-.hand::-webkit-scrollbar { display: none; }
-.hand .card {
-  flex: 0 0 auto; width: 130px; min-height: 84px; border-radius: 14px; padding: 8px; cursor: pointer;
-  background: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.06)); border: 2px solid var(--glass-border);
-  display: grid; gap: 2px; align-content: start; text-align: center; color: var(--ink); font-family: var(--font-body); transition: transform 0.1s, border-color 0.15s;
-  /* El eje del gesto se reparte solo: el navegador se queda con el desplazamiento lateral de
-     la tira y nos entrega el vertical, que es sacar la carta hacia la línea (D-85). */
-  touch-action: pan-x; user-select: none; -webkit-user-select: none;
-}
-/* El lugar que deja la carta que anda por el aire */
-.hand .card.hueco { opacity: 0.25; border-style: dashed; }
-.hand .card .em { font-size: 1.5rem; }
-.hand .card .t { font-size: 0.72rem; font-weight: 800; line-height: 1.25; }
-.hand .card.sel { border-color: var(--yellow); background: linear-gradient(180deg, rgba(255,210,63,0.3), rgba(255,122,26,0.15)); transform: translateY(-3px); }
-.hand.dim .card:not(.sel) { opacity: 0.55; }
-.hand .card:active { transform: scale(0.97); }
 
 /* Línea de tiempo */
 /* La página se desplaza con normalidad y el botón de confirmar queda flotando abajo,
    así la línea puede crecer sin que se pierda el control (ver docs, canon C-8). */
 .line-wrap { padding: 2px; margin-top: 2px; padding-bottom: 4px; }
 #screen-play { padding-bottom: 4px; }
-.line { display: grid; gap: 0; position: relative; }
-.event {
-  display: grid; grid-template-columns: 62px 28px 1fr; align-items: center; gap: 8px;
-  background: var(--glass); border: 1px solid var(--glass-border); border-radius: 12px; padding: 7px 10px;
-  animation: slideUp 0.3s ease-out both;
-}
-/* El año es el dato del juego: cifras en Nunito, no en Bangers (D-30) */
-.event .y { font: 900 0.98rem var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); letter-spacing: 0.01em; }
-.event .em { font-size: 1.2rem; text-align: center; }
-.event .t { font-size: 0.82rem; font-weight: 700; line-height: 1.25; }
-.event.fresh { border-color: var(--lime); box-shadow: 0 0 12px rgba(157, 255, 58, 0.4); }
-/* Mientras se arrastra, los dos hitos entre los que caería la carta encienden su año: es
-   el dato que se está decidiendo, y el mismo que después explica el error (C-8b). No tocan
-   su borde a propósito: el borde encendido tiene que significar una sola cosa, el destino. */
-.event.vecino { background: rgba(157, 255, 58, 0.05); }
-.event.vecino .y { color: var(--lime); text-shadow: 0 0 10px rgba(157, 255, 58, 0.5); }
-.slot {
-  display: grid; place-items: center; min-height: 30px; margin: 3px 0; border-radius: 10px; cursor: pointer;
-  border: 2px dashed rgba(255,255,255,0.22); color: var(--muted); font-weight: 800; font-size: 0.75rem;
-  transition: background 0.15s, border-color 0.15s, min-height 0.2s;
-}
-.slot:active { transform: scale(0.99); }
-.slot.on { border-color: var(--yellow); border-style: solid; background: rgba(255, 210, 63, 0.16); color: var(--ink); min-height: 56px; }
-.slot.on .ghost { display: grid; grid-template-columns: 62px 28px 1fr; align-items: center; gap: 8px; width: 100%; padding: 0 10px;
-  /* La carta puesta se retoma arrastrándola a otra ranura, o se suelta fuera para devolverla */
-  cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; }
-.slot .ghost { display: none; }
-.slot .ghost .y { font: 900 0.98rem var(--font-num); color: var(--yellow); }
-.slot .ghost .em { font-size: 1.2rem; text-align: center; }
-.slot .ghost .t { font-size: 0.8rem; font-weight: 800; line-height: 1.2; text-align: left; }
-.place-row {
-  position: sticky; bottom: 0; z-index: 5; padding: 10px 0 calc(8px + env(safe-area-inset-bottom, 0px));
-  background: linear-gradient(to top, rgba(21, 7, 38, 0.92) 40%, rgba(21, 7, 38, 0.7) 72%, rgba(21, 7, 38, 0));
-  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
-}
-.place-row:empty { display: none; }
-/* Con la carta en el aire el botón está de más y ocupa justo donde va el pulgar. Se
-   desvanece con opacidad, no con display: mover la caja invalidaría lo ya medido. */
-body.arrastrando .place-row { opacity: 0; pointer-events: none; }
-.place-row { transition: opacity 0.15s; }
-/* El botón dice qué carta va a colocar: es lo último que se mira antes de confirmar (D-38) */
-.place-row .btn { flex-direction: column; gap: 2px; padding: 12px 20px; }
-.place-row .btn small { font: 800 0.8rem var(--font-body); text-transform: none; letter-spacing: 0; opacity: 0.9; line-height: 1.2; max-width: 100%; }
 
-/* Overlay de resultado de jugada */
-.verdict { display: grid; gap: 6px; justify-items: center; }
-.verdict .big { font-family: var(--font-display); font-size: clamp(2.4rem, 13vw, 3.4rem); letter-spacing: 0.04em; }
-.verdict .big.ok { color: var(--lime); text-shadow: 0 4px 0 rgba(0,0,0,0.35), 0 0 30px rgba(157,255,58,0.5); }
-.verdict .big.no { color: var(--pink); text-shadow: 0 4px 0 rgba(0,0,0,0.35), 0 0 30px rgba(255,46,136,0.5); }
-.verdict .card-big {
-  display: grid; gap: 4px; justify-items: center; background: var(--card); color: var(--card-ink);
-  border-radius: 16px; padding: 14px 18px; min-width: 200px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-}
-.verdict .card-big .em { font-size: 2.4rem; }
-.verdict .card-big .t { font-weight: 900; font-size: 0.95rem; text-align: center; line-height: 1.3; }
-.verdict .card-big .y { font: 900 1.8rem var(--font-num); font-variant-numeric: tabular-nums; color: var(--pink-deep); }
-.verdict .note { color: var(--muted); font-weight: 800; font-size: 0.9rem; }
 
 /* Resultado */
 .result-hero { text-align: center; padding: 2px 0 6px; }
@@ -173,31 +94,7 @@ body.arrastrando .place-row { opacity: 0; pointer-events: none; }
 .waiting .dots::after, .dots::after { content: '…'; animation: dots 1.2s steps(4) infinite; }
 @keyframes dots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } }
 
-/* Error: la pantalla se tiñe de rojo y la carta se sacude; se queda hasta que el jugador toque */
-.handoff.bad { background: radial-gradient(700px 500px at 50% 25%, rgba(255, 46, 136, 0.55), transparent 65%), radial-gradient(600px 500px at 50% 110%, rgba(255, 46, 136, 0.25), transparent 60%), linear-gradient(160deg, #2a0a1e, #3a0d2a 60%, #1a0b3f); }
-.handoff.bad .card-big { animation: shake 0.6s both; }
-.verdict .why { max-width: 340px; text-align: center; color: var(--ink); font-weight: 700; font-size: 0.95rem; line-height: 1.45; background: rgba(0, 0, 0, 0.3); border-radius: 14px; padding: 10px 14px; margin-top: 4px; }
-.verdict .why b { color: var(--yellow); }
 
 /* Con el chat en pantalla, la burbuja flota abajo a la derecha: que no tape los botones del final */
 body.chat-on #screen-result { padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)); }
 
-/* ---------- La carta en vilo (D-85) ----------
-   Se ve como la carta elegida en la mano —mismo degradado, mismo borde amarillo— pero en
-   grande: en un celular apretado el texto de la mano queda en 11 px y no se alcanza a leer
-   justo cuando hay que decidir dónde va. Sube 60 px sobre el dedo, que si no la tapa. */
-.vilo { position: fixed; left: 0; top: 0; z-index: 60; pointer-events: none; display: none; will-change: transform; filter: drop-shadow(0 16px 28px rgba(0,0,0,0.55)); }
-.vilo.on { display: block; }
-.vilo-carta {
-  display: grid; gap: 4px; justify-items: center; color: var(--ink);
-  background: linear-gradient(180deg, rgba(255,210,63,0.34), rgba(255,122,26,0.18)), linear-gradient(180deg, #2f0d52, #1b0733);
-  border: 2px solid var(--yellow); box-shadow: 0 0 26px rgba(255,210,63,0.35);
-  border-radius: 16px; padding: 11px 14px; width: min(70vw, 268px);
-  transform: translate(-50%, -100%); transform-origin: 50% 100%;
-  animation: alzar 0.16s cubic-bezier(0.2, 0.9, 0.3, 1.4) both;
-}
-.vilo-carta .em { font-size: 2rem; line-height: 1; }
-.vilo-carta .t { font-weight: 900; font-size: 0.95rem; text-align: center; line-height: 1.3; text-wrap: balance; }
-.vilo-carta .y { font: 900 1.35rem var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); }
-@keyframes alzar { from { transform: translate(-50%, -100%) scale(0.55); } to { transform: translate(-50%, -100%) scale(1); } }
-@media (prefers-reduced-motion: reduce) { .vilo-carta { animation: none; } }

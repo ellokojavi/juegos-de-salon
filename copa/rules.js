@@ -12,47 +12,47 @@ export const MINIJUEGOS = {
   linea: {
     emoji: '⏳', nombre: 'Línea Relámpago', habilidad: 'saber',
     como: [
-      'Hay 8 hitos de una misma temática. El primero ya está puesto en la línea.',
-      'Los otros 7 salen de a uno: toca el hueco donde crees que va y confirma.',
-      'Si te equivocas, la carta queda en su lugar marcada en rojo y sigues con la siguiente.',
+      'Hay 10 hitos de una misma temática. El primero ya está puesto en la línea y los otros 9 están en tu mano.',
+      'Elige una carta de la mano y el lugar de la línea donde va, tocando o arrastrando la carta, y confirma. Puedes jugarlas en el orden que quieras.',
+      'Si te equivocas, la carta queda en su lugar marcada en rojo y sigues con las demás.',
     ],
-    puntaje: 'Ganas un punto por cada carta bien puesta, de 0 a 7. Si empatas, gana quien tardó menos.',
+    puntaje: 'Ganas un punto por cada carta bien puesta, de 0 a 9. Si empatas, gana quien tardó menos.',
   },
   numero: {
-    emoji: '🔢', nombre: 'El Número del Día', habilidad: 'deducir',
+    emoji: '🔢', nombre: 'Toque y Fama: adivina el número', habilidad: 'deducir',
     como: [
       'Hay un número secreto de 4 cifras distintas, el mismo para todos. Puede empezar con cero.',
       'Cada intento te dice cuántas famas tiene (cifra correcta en su lugar) y cuántos toques (cifra correcta en otro lugar).',
-      'Tienes 10 intentos para descubrirlo.',
+      'Mantén apretada una cifra para tacharla cuando sepas que no está. Tienes 10 intentos.',
     ],
     puntaje: 'Mientras menos intentos uses, más puntos: 10 si lo sacas al primero y 1 si lo sacas al décimo. Si empatas, gana quien tardó menos.',
   },
   conexiones: {
     emoji: '🔗', nombre: 'Conexiones', habilidad: 'asociar',
     como: [
-      'Hay 16 palabras que forman 4 grupos de 4, de más fácil a más difícil.',
+      'Hay 16 palabras que forman 4 grupos de 4, de más fácil a más difícil. Ojo: algunas palabras parecen de dos grupos.',
       'Elige 4 palabras que creas que van juntas y confirma.',
       'Puedes equivocarte 3 veces: al cuarto error se termina. Si te faltó una sola palabra para un grupo, te avisamos.',
     ],
     puntaje: 'Cada grupo vale 25 puntos y cada error resta 5, de 0 a 100. Si empatas, gana quien tardó menos.',
   },
-  solitario: {
-    emoji: '⚓', nombre: 'Batalla Naval: Solitario', habilidad: 'lógica',
+  reinas: {
+    emoji: '👑', nombre: 'Reinas', habilidad: 'lógica',
     como: [
-      'Hay una flota escondida: los mismos cinco barcos de Batalla Naval, de 5, 4, 3, 3 y 2 casillas.',
-      'Los números de cada fila y columna dicen cuántas casillas de barco tienen. Los barcos no se tocan, ni siquiera en diagonal.',
-      'Toca una casilla una vez para marcar agua, otra vez para marcar barco y una tercera para limpiarla. Cuando creas que está, toca Revisar.',
+      'Pon una reina en cada fila, en cada columna y en cada zona de color.',
+      'Dos reinas nunca se pueden tocar, ni siquiera en diagonal.',
+      'Toca una casilla una vez para marcarla con una X, otra vez para poner una reina y una tercera para limpiarla. Hay una sola solución y se llega deduciendo, sin adivinar.',
     ],
-    puntaje: 'Parte en 100 puntos y cada revisión fallida resta 15, con un mínimo de 10 si la resuelves. Si empatas, gana quien tardó menos.',
+    puntaje: 'Parte en 100 puntos y cada reina que pones en conflicto con otra resta 10, con un mínimo de 10. Si empatas, gana quien tardó menos.',
   },
-  dudo: {
-    emoji: '🎲', nombre: '¿Dudo o le creo?', habilidad: 'probabilidad',
+  letras: {
+    emoji: '🔤', nombre: 'Toque y Fama con letras', habilidad: 'deducir',
     como: [
-      'Son 8 manos de Dudo. En cada una ves tus 5 dados, cuántos dados hay en la mesa y lo que apostó el rival.',
-      'Los ases son comodín, salvo que la apuesta sea de ases.',
-      'Elige si dudas o le crees, y se destapa la mesa.',
+      'Hay una palabra secreta de 5 letras distintas, la misma para todos.',
+      'Cada intento son 5 letras distintas, aunque no formen una palabra. Te dice cuántas famas (letra correcta en su lugar) y cuántos toques (letra correcta en otro lugar) tiene, y cada letra se pinta: amarilla si es fama y celeste si es toque.',
+      'Mantén apretada una letra para tacharla cuando sepas que no está. Tienes 8 intentos.',
     ],
-    puntaje: 'No importa lo que salió sino qué tan buena era tu decisión: ganas la probabilidad de que tu elección fuera cierta, de 0 a 100 por mano. Si empatas, gana quien tardó menos.',
+    puntaje: 'Mientras menos intentos uses, más puntos: 8 si la sacas al primero y 1 si la sacas al octavo. Si empatas, gana quien tardó menos.',
   },
   anio: {
     emoji: '📅', nombre: '¿En qué año?', habilidad: 'estimar',
@@ -62,10 +62,27 @@ export const MINIJUEGOS = {
     ],
     puntaje: 'Cada hito da 100 puntos si aciertas el año exacto y menos mientras más te alejas. En los hitos antiguos el margen es más amplio. Si empatas, gana quien tardó menos.',
   },
+  zip: {
+    emoji: '〰️', nombre: 'Zip', habilidad: 'lógica', labs: true,
+    como: [
+      'Dibuja un solo trazo que parta en el 1, pase por todas las casillas una sola vez y toque los números en orden.',
+      'Arrastra el dedo desde el 1. Para corregir, vuelve con el dedo por el mismo camino o toca una casilla del trazo para cortarlo ahí.',
+    ],
+    puntaje: 'Todos los que lo terminan sacan 100 puntos: gana quien tardó menos.',
+  },
+  tango: {
+    emoji: '☀️', nombre: 'Tango', habilidad: 'lógica', labs: true,
+    como: [
+      'Llena la grilla con soles y lunas: cada fila y cada columna lleva tres de cada uno.',
+      'Nunca puede haber tres iguales seguidos. Un = entre dos casillas dice que son iguales y una × que son distintas.',
+      'Toca una casilla para poner un sol, otra vez para una luna y una tercera para limpiarla. Hay una sola solución.',
+    ],
+    puntaje: 'Parte en 100 puntos y cada jugada que rompe una regla resta 10, con un mínimo de 10. Si empatas, gana quien tardó menos.',
+  },
   final: {
     emoji: '🏁', nombre: 'La Gran Final', habilidad: 'todo',
     como: [
-      'Son cinco rondas cortas seguidas, una de cada minijuego de la copa: 4 hitos, un número de 3 cifras, un solitario chico, 3 manos de Dudo y 2 años.',
+      'Son cinco rondas cortas seguidas, una de cada minijuego de la copa: 4 hitos, un número de 3 cifras, unas reinas chicas, una palabra en 6 intentos y 2 años.',
       'Antes de cada ronda verás cómo se juega.',
       'La final vale el doble de puntos en la tabla.',
     ],
@@ -77,10 +94,10 @@ export const MINIJUEGOS = {
 export const RONDAS_FINAL = {
   linea: 'Cuatro hitos: el primero ya está puesto y colocas los otros tres. Vale 33 puntos por carta bien puesta.',
   numero: 'Un número de 3 cifras distintas en 7 intentos. Si lo sacas al primero son 100 puntos, y cada intento extra resta 15.',
-  solitario: 'Un solitario de 6 × 6 con tres barcos, de 3, 3 y 2 casillas. Son 100 puntos y cada revisión fallida resta 25.',
-  dudo: 'Tres manos de ¿Dudo o le creo? Ganas el promedio de la probabilidad de acertar de tus decisiones.',
+  reinas: 'Unas reinas de 6 × 6: una por fila, por columna y por zona, sin tocarse. Son 100 puntos y cada reina en conflicto resta 20.',
+  letras: 'Una palabra de 5 letras distintas en 6 intentos. Si la sacas al primero son 100 puntos, y cada intento extra resta 15.',
   anio: 'Dos hitos para decir el año. Ganas el promedio de los puntos de los dos.',
-};
+}
 
 /** Los textos. Un solo idioma por ahora (D-98): la forma `const ES` es la de todos los juegos. */
 const ES = {
@@ -272,18 +289,26 @@ const ES = {
 
   // Pantalla de minijuego
   confirm: 'Confirmar',
-  placeHere: 'Colocar aquí',
-  pickSlot: 'Toca un hueco de la línea',
-  cardOf: 'Carta {i} de {n}',
-  wentWrong: 'No era ahí. {c} fue en {y}.',
-  wentAfter: 'Va después de {c} ({y})',
-  wentBefore: 'antes de {c} ({y})',
-  wentBeforeSolo: 'Va antes de {c} ({y})',
-  wentJoin: ' y ',
-  guess: 'Probar {v}',
-  typeDigits: 'Escribe {n} cifras distintas',
-  famas: '{n} famas', fama1: '1 fama',
-  toques: '{n} toques', toque1: '1 toque',
+  confirmShort: 'OK',
+  dc: 'd. C.',
+  // Línea Relámpago (el resto de sus textos son los de Línea de Tiempo)
+  lineaLleva: 'vas {ok} de {n}',
+  lineaQuedan: 'Quedan {n}',
+  lineaFin: 'Pusiste bien {ok} de {n} cartas.',
+  // Toque y Fama (el resto de sus textos son los de Toque y Fama)
+  yourGuesses: 'Tus intentos',
+  solvedWord: '¡La sacaste!',
+  notSolvedWord: 'Se acabaron los intentos. La palabra era {v}.',
+  blockHintLetters: '💡 Mantén presionada una letra para tacharla si crees que no está en la palabra. Repite para destacharla.',
+  // Reinas, Tango y Zip
+  queensLeft: 'Reinas puestas: {m} de {n}',
+  queensOk: '¡Resolviste las reinas!',
+  queensClash: 'Hay reinas que chocan: comparten fila, columna o zona, o se tocan.',
+  clashCount: 'Jugadas en conflicto: {n}',
+  tangoOk: '¡Resolviste el tango!',
+  tangoClash: 'Algo no calza: tres iguales seguidos, más de tres de uno en una línea, o una marca = o × que no se cumple.',
+  zipHint: 'Arrastra el dedo desde el 1 por todas las casillas, pasando por los números en orden.',
+  zipOk: '¡Completaste el trazo!',
   triesLeft: 'Te quedan {n} intentos.',
   tryLeft1: 'Te queda 1 intento.',
   solved: '¡Lo sacaste!',
@@ -297,23 +322,6 @@ const ES = {
   deselect: 'Limpiar',
   groupsOk: '¡Encontraste los 4 grupos!',
   groupsFail: 'Se acabaron los errores. Estos eran los grupos.',
-  check: 'Revisar',
-  giveUp: 'Rendirse',
-  giveUpConfirm: '¿Rendirte? Este día quedaría con 0 puntos.',
-  checkBad: 'Todavía hay casillas que no calzan. Cada revisión fallida resta 15 puntos.',
-  checkOk: '¡Encontraste la flota!',
-  gaveUp: 'Te rendiste. Esta era la flota.',
-  shipsLeft: 'Casillas de barco: {m} de {t}',
-  tableDice: '{n} dados en la mesa',
-  yourDice: 'Tus dados',
-  bid: 'El rival apuesta',
-  bidText: '{n} × {cara}',
-  doubt: 'Dudo',
-  believe: 'Le creo',
-  handOf: 'Mano {i} de {n}',
-  thereWere: 'Había {n}. La apuesta era {v}.',
-  trueWord: 'cierta', falseWord: 'falsa',
-  chanceWas: 'La probabilidad de que fuera cierta era {p} %. Ganaste {pts} puntos.',
   next: 'Siguiente',
   yearOf: 'Hito {i} de {n}',
   yearPh: 'Año',
