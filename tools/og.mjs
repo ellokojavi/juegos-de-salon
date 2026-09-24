@@ -60,7 +60,7 @@ const paginas = () => [...PUERTAS.map(portada), ...disponibles.map(g => ({
   imagen: g.id,
   juego: g.id,
   titulo: `${g.name.es} ${g.emoji} · Juegos de Salón`,
-  descripcion: `${g.tagline.es} ${g.players} jugadores, ${g.duration} min. Gratis, sin instalar y sin cuenta.`,
+  descripcion: `${g.tagline.es} ${g.players} jugadores, ${g.duration} ${g.durationUnit?.es || 'min'}. Gratis, sin instalar y sin cuenta.`,
   alt: `${g.name.es}: ${g.tagline.es}`,
 }))];
 

@@ -84,6 +84,51 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | DU-14 | Ronda obligada: con un jugador en un dado, esa ronda se juega sin comodín y sin cambiar de pinta. | ⏳ pendiente |
 | DU-15 | En español, las pintas se nombran como en la mesa chilena (ases, tontos, trenes, cuadras, quintas y sextas), con un interruptor para volver a los números. Encendido por defecto; inglés y portugués van por número (D-71). | ✅ v0.29 |
 
+## La Copa (LIG) — ver [docs/juegos/copa.md](juegos/copa.md)
+
+| ID | Requerimiento | Estado |
+|---|---|---|
+| LIG-1 | Tarjeta "La Copa" en el menú principal que lleva a `/copa/`. | ✅ v0.42 |
+| LIG-2 | Crear una copa: nombre, duración, inicio hoy o mañana, nombre y PIN del admin. | ✅ v0.42 |
+| LIG-3 | Código de 5 letras sin I ni O y link `/copa/?CÓDIGO`. | ✅ v0.42 |
+| LIG-4 | Inscribirse con nombre (hasta 20 caracteres, no repetido) y PIN de 4 dígitos escrito dos veces. | ✅ v0.42 |
+| LIG-5 | Entrar como jugador ya inscrito tocando el nombre y escribiendo el PIN; el celular recuerda la sesión. | ✅ v0.42 |
+| LIG-6 | Máximo 10 jugadores por copa (lo cuida el celular; las reglas no cuentan hijos). | ✅ v0.42 |
+| LIG-7 | Calendario fijo por modalidad, visible desde el primer día. | ✅ v0.42 |
+| LIG-8 | Ventana de cada día: ese día más uno de gracia, impuesta por el servidor; la final sin gracia. | ✅ v0.42 |
+| LIG-9 | Un solo intento por día; recargar retoma el intento (C-6). | ✅ v0.42 |
+| LIG-10 | Puntos del día por posición (10-8-6-5-4-3-2-1-1-1), desempate por tiempo activo. | ✅ v0.42 |
+| LIG-11 | Comodín ×2, uno por jugador, activado antes de Empezar, no en la final. | ✅ v0.42 |
+| LIG-12 | La Gran Final ×2 el último día. | ✅ v0.42 |
+| LIG-13 | Resultados del día ocultos hasta jugarlo o hasta que cierre, también en la tabla y el gráfico. | ✅ v0.42 |
+| LIG-14 | Tabla general con flechas contra el día anterior y quién falta por jugar hoy. | ✅ v0.42 |
+| LIG-15 | Resultado del día con puntaje, posición provisoria y tarjeta para compartir. | ✅ v0.42 |
+| LIG-16 | Podio final con confeti y medallas. | ✅ v0.42 |
+| LIG-17 | ⏳ Línea Relámpago. | ✅ v0.42 |
+| LIG-18 | 🔢 El Número del Día. | ✅ v0.42 |
+| LIG-19 | 🔗 Conexiones con 12 grillas chilenas. | ✅ v0.42 |
+| LIG-20 | ⚓ Batalla Naval: Solitario con solución única garantizada. | ✅ v0.42 |
+| LIG-21 | 🎲 ¿Dudo o le creo? puntuado por probabilidad. | ✅ v0.42 |
+| LIG-22 | 📅 ¿En qué año?. | ✅ v0.42 |
+| LIG-23 | 🏁 La Gran Final. | ✅ v0.42 |
+| LIG-24 | Admin: renombrar, sacar y cambiar PIN de jugadores. | ✅ v0.42 |
+| LIG-25 | Admin: invitación, recordatorio del día (cualquier día), tabla parcial y resumen final por el diálogo de compartir. | ✅ v0.42 |
+| LIG-26 | Cuenta segura: hash del PIN ilegible y escritura autorizada por reglas (D-96). | ✅ v0.42 (falta publicar reglas y habilitar el acceso anónimo) |
+| LIG-27 | Modo de prueba local con reloj adelantable y gancho `window.__copa` (C-14). | ✅ v0.42 |
+| LIG-28 | Señal al panel por día jugado (C-16) y documentación (C-13). | ✅ v0.42 |
+| LIG-29 | Recordatorios `.ics` para el calendario del celular. | ⏳ pendiente |
+| LIG-30 | Verificación cruzada: cada celular recalcula los puntajes ajenos desde las jugadas. | ⏳ pendiente |
+| LIG-31 | Papelera: borrar copas una semana después de terminadas. | ⏳ pendiente |
+| LIG-32 | Inglés y portugués, con contenido propio por idioma (D-98). | ⏳ pendiente |
+| LIG-33 | Avisos automáticos por WhatsApp, correo o push (D-99). | ⏳ pendiente |
+| LIG-34 | Calendario elegido por el admin y minijuegos de reserva (La Palabra, Ahorcado Contrarreloj). | ⏳ pendiente |
+| LIG-35 | Pantalla de espera antes del día 1: cuándo parte, calendario e inscritos. | ✅ v0.42 |
+| LIG-36 | "Cómo se juega" antes de cada minijuego y de cada ronda de la final; el intento empieza en Empezar. | ✅ v0.42 |
+| LIG-37 | Tiempo activo: el cronómetro se pausa con la pantalla oculta (D-95). | ✅ v0.42 |
+| LIG-38 | Tablero con tus días: los pasados con su resultado y deshabilitados, hoy habilitado, los que vienen deshabilitados. | ✅ v0.42 |
+| LIG-39 | Gráfico de tu posición día a día. | ✅ v0.42 |
+| LIG-40 | El panel del dueño muestra las copas creadas y su progreso. | ⏳ pendiente |
+
 ## Requerimientos no funcionales
 
 - **Accesible al tacto:** botones de al menos 44 px de alto, texto grande, alto contraste sobre fondo oscuro.

@@ -18,6 +18,66 @@
   "clavesComunes": 12,
   "juegos": [
     {
+      "id": "copa",
+      "emoji": "🏆",
+      "nombre": {
+        "es": "La Copa",
+        "en": "The Cup",
+        "pt": "A Copa"
+      },
+      "jugadores": "3 to 10",
+      "duracion": "7",
+      "disponible": true,
+      "estado": null,
+      "modos": [
+        {
+          "clave": "formato",
+          "es": "Cada uno en su celular, un juego por día",
+          "en": "Each on their own phone, one game a day"
+        }
+      ],
+      "variantes": [],
+      "pantallas": [
+        "intro",
+        "crear",
+        "entrar",
+        "tablero",
+        "jugar",
+        "resultado",
+        "admin",
+        "espera"
+      ],
+      "chat": false,
+      "archivos": [
+        "copa/cuenta.js",
+        "copa/engine.js",
+        "copa/game.js",
+        "copa/index.html",
+        "copa/juegos/anio.js",
+        "copa/juegos/conexiones.js",
+        "copa/juegos/dudo.js",
+        "copa/juegos/final.js",
+        "copa/juegos/grillas.js",
+        "copa/juegos/index.js",
+        "copa/juegos/linea.js",
+        "copa/juegos/mazos.js",
+        "copa/juegos/numero.js",
+        "copa/juegos/semilla.js",
+        "copa/juegos/solitario.js",
+        "copa/juegos/ui-anio.js",
+        "copa/juegos/ui-conexiones.js",
+        "copa/juegos/ui-dudo.js",
+        "copa/juegos/ui-final.js",
+        "copa/juegos/ui-linea.js",
+        "copa/juegos/ui-numero.js",
+        "copa/juegos/ui-solitario.js",
+        "copa/rules.js",
+        "copa/store-firebase.js",
+        "copa/store-local.js",
+        "copa/style.css"
+      ]
+    },
+    {
       "id": "linea-de-tiempo",
       "emoji": "⏳",
       "nombre": {
@@ -491,6 +551,30 @@
     "batalla-naval/flota.js",
     "batalla-naval/game.js",
     "batalla-naval/rules.js",
+    "copa/cuenta.js",
+    "copa/engine.js",
+    "copa/game.js",
+    "copa/juegos/anio.js",
+    "copa/juegos/conexiones.js",
+    "copa/juegos/dudo.js",
+    "copa/juegos/final.js",
+    "copa/juegos/grillas.js",
+    "copa/juegos/index.js",
+    "copa/juegos/linea.js",
+    "copa/juegos/mazos.js",
+    "copa/juegos/numero.js",
+    "copa/juegos/semilla.js",
+    "copa/juegos/solitario.js",
+    "copa/juegos/ui-anio.js",
+    "copa/juegos/ui-conexiones.js",
+    "copa/juegos/ui-dudo.js",
+    "copa/juegos/ui-final.js",
+    "copa/juegos/ui-linea.js",
+    "copa/juegos/ui-numero.js",
+    "copa/juegos/ui-solitario.js",
+    "copa/rules.js",
+    "copa/store-firebase.js",
+    "copa/store-local.js",
     "cuarto-rey/game.js",
     "cuarto-rey/rules.js",
     "dudo/engine.js",
@@ -526,6 +610,9 @@
     "assets/js/transport/ratelimit.test.mjs",
     "assets/js/transport/stats.test.mjs",
     "batalla-naval/engine.test.mjs",
+    "copa/engine.test.mjs",
+    "copa/juegos/juegos.test.mjs",
+    "copa/store.test.mjs",
     "dudo/engine.test.mjs",
     "julepe/engine.test.mjs",
     "linea-de-tiempo/engine.test.mjs",
@@ -542,6 +629,7 @@
     "batalla-naval-online.mjs",
     "compartir-sala.mjs",
     "contacto.mjs",
+    "copa.mjs",
     "cuarto-rey.mjs",
     "dudo-local.mjs",
     "dudo-online.mjs",
@@ -600,6 +688,10 @@
       "titulo": "Diseño: Batalla Naval"
     },
     {
+      "ruta": "docs/juegos/copa.md",
+      "titulo": "La Copa"
+    },
+    {
       "ruta": "docs/juegos/cuarto-rey.md",
       "titulo": "Especificación: Cuarto Rey"
     },
@@ -637,6 +729,7 @@
     }
   ],
   "capturas": {
+    "copa": 10,
     "linea-de-tiempo": 11,
     "toque-y-fama": 9,
     "ahorcado": 9,
