@@ -177,7 +177,7 @@
         ".read": "$code.matches(/^[A-HJ-NP-Z]{5}$/)",
         ".write": "auth != null && $code.matches(/^[A-HJ-NP-Z]{5}$/) && !newData.exists() && root.child('torneoSeats/' + $code + '/' + root.child('torneos/' + $code + '/meta/admin').val() + '/' + auth.uid).exists()",
         "meta": {
-          ".write": "auth != null && $code.matches(/^[A-HJ-NP-Z]{5}$/) && (!data.exists() || (root.child('torneoSeats/' + $code + '/' + data.child('admin').val() + '/' + auth.uid).exists() && newData.child('admin').val() == data.child('admin').val() && newData.child('name').val() == data.child('name').val() && newData.child('days').val() == data.child('days').val() && newData.child('cal').val() == data.child('cal').val() && newData.child('createdAt').val() == data.child('createdAt').val() && newData.child('lab').val() == data.child('lab').val() && (data.child('lab').val() == true || (!root.child('torneos/' + $code + '/started').exists() && newData.child('win/1/b').val() > now && newData.child('win/1/a').val() < now + 2764800000))))",
+          ".write": "auth != null && $code.matches(/^[A-HJ-NP-Z]{5}$/) && (!data.exists() || (root.child('torneoSeats/' + $code + '/' + data.child('admin').val() + '/' + auth.uid).exists() && newData.child('admin').val() == data.child('admin').val() && newData.child('name').val() == data.child('name').val() && newData.child('days').val() == data.child('days').val() && newData.child('cal').val() == data.child('cal').val() && newData.child('createdAt').val() == data.child('createdAt').val() && newData.child('lab').val() == data.child('lab').val() && newData.child('alias').val() == data.child('alias').val() && (data.child('lab').val() == true || (!root.child('torneos/' + $code + '/started').exists() && newData.child('win/1/b').val() > now && newData.child('win/1/a').val() < now + 2764800000))))",
           ".validate": "newData.hasChildren(['v', 'name', 'days', 'start', 'tz', 'admin', 'cal', 'win', 'end', 'joinUntil', 'final', 'createdAt']) && newData.parent().child('players/' + newData.child('admin').val()).exists()",
           "v": {
             ".validate": "newData.isNumber()"
@@ -222,6 +222,9 @@
           },
           "lab": {
             ".validate": "newData.isBoolean() && newData.val() == true"
+          },
+          "alias": {
+            ".validate": "newData.isString() && newData.val().matches(/^[a-z0-9][a-z0-9-]{1,18}[a-z0-9]$/)"
           },
           "$other": {
             ".validate": false
@@ -312,6 +315,22 @@
             ".write": "auth != null && $code.matches(/^[A-HJ-NP-Z]{5}$/) && $pid.matches(/^[a-z0-9]{6}$/) && $uid === auth.uid && newData.exists()",
             ".validate": "newData.isString() && newData.val() === newData.parent().parent().parent().parent().child('torneoKeys/' + $code + '/' + $pid).val()"
           }
+        }
+      }
+    },
+    "torneoAlias": {
+      "$alias": {
+        ".read": "$alias.matches(/^[a-z0-9][a-z0-9-]{1,18}[a-z0-9]$/)",
+        ".write": "auth != null && $alias.matches(/^[a-z0-9][a-z0-9-]{1,18}[a-z0-9]$/) && ((newData.exists() && (!data.exists() || data.child('hasta').val() < now || data.child('code').val() == newData.child('code').val()) && newData.parent().parent().child('torneos/' + newData.child('code').val() + '/meta/alias').val() == $alias && newData.parent().parent().child('torneoSeats/' + newData.child('code').val() + '/' + newData.parent().parent().child('torneos/' + newData.child('code').val() + '/meta/admin').val() + '/' + auth.uid).exists()) || (!newData.exists() && root.child('torneoSeats/' + data.child('code').val() + '/' + root.child('torneos/' + data.child('code').val() + '/meta/admin').val() + '/' + auth.uid).exists()))",
+        ".validate": "newData.hasChildren(['code', 'hasta'])",
+        "code": {
+          ".validate": "newData.isString() && newData.val().matches(/^[A-HJ-NP-Z]{5}$/)"
+        },
+        "hasta": {
+          ".validate": "newData.isNumber() && newData.val() > now && newData.val() < now + 5184000000"
+        },
+        "$other": {
+          ".validate": false
         }
       }
     },
