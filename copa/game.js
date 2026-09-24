@@ -1125,7 +1125,8 @@ function resultado(d, { recien = false, det = null } = {}) {
   const body = $('#resultado-body');
   body.innerHTML = '';
   const ranking = jug.filter(j => pos[j.pid]).sort((a, b) => pos[a.pid].pos - pos[b.pid].pos);
-  const tarjeta = `${fmt(T.shareCardText, { copa: meta.name, d, emoji: J.emoji, resumen: mio.r || '' })}\n${mio.t || ''}`;
+  // Completa (D-124): la copa, el día, el juego, quién lo jugó y cómo le fue
+  const tarjeta = `${fmt(T.shareCardText, { copa: meta.name, d, emoji: J.emoji, juego: J.nombre, name: nombreDe(S.yo), resumen: mio.r || '' })}\n${mio.t || ''}`;
   poner(body, 
     el('div', { class: 'result-hero' },
       el('span', { class: 'trophy' + (recien ? ' pop' : '') }, J.emoji),
