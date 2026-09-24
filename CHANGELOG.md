@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.51.0 — 2026-09-24
+- **Inicio de la copa:** hoy, mañana u **otra fecha** con un calendario (hasta 30 días), al crearla
+  y en Administrar (D-115).
+- **Copas de prueba del laboratorio:** el admin puede **pasar al día siguiente** (con
+  confirmación) para probar sin esperar; en el último día, terminar la copa.
+- El aviso flotante ("Listo: …") queda centrado; la animación lo corría a la derecha.
+- **Paso manual:** volver a publicar `firebase/database.rules.json`.
+
 ## 0.50.0 — 2026-09-24
 - **Resultado:** la tarjeta para compartir va justo bajo el puntaje, sin repetir el tiempo si ya
   lo trae (D-114). Primer arreglo que sale de un reporte 🐞.
