@@ -12,7 +12,7 @@
 /** Los minijuegos de cada modalidad, en orden. El último siempre es la final, que vale doble. */
 export const CALENDARIOS = {
   3: ['linea', 'conexiones', 'final'],
-  7: ['linea', 'numero', 'conexiones', 'solitario', 'dudo', 'anio', 'final'],
+  7: ['linea', 'numero', 'conexiones', 'reinas', 'letras', 'anio', 'final'],
 };
 export const MODALIDADES = Object.keys(CALENDARIOS).map(Number);
 
@@ -143,7 +143,9 @@ export function nuevaMeta({ nombre, dias, inicio, tz = ZONA, admin, creada }) {
   };
 }
 
-export const calendario = meta => String(meta.cal || '').split(',');
+/** Los minijuegos que salieron (D-102) se juegan como sus reemplazos, para no romper copas viejas. */
+const REEMPLAZOS = { solitario: 'reinas', dudo: 'letras' };
+export const calendario = meta => String(meta.cal || '').split(',').map(id => REEMPLAZOS[id] || id);
 export const juegoDelDia = (meta, d) => calendario(meta)[d - 1] || null;
 export const esFinal = (meta, d) => d === meta.days;
 

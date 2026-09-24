@@ -318,12 +318,12 @@ Spec and design: [docs/juegos/julepe.md](docs/juegos/julepe.md)
   <tr>
     <td align="center"><img src="docs/screenshots/copa/00-invitacion.png" width="180" alt="The invite: your name and a 4-digit PIN"><br><sub>The invite: your name and a 4-digit PIN</sub></td>
     <td align="center"><img src="docs/screenshots/copa/01-tablero.png" width="180" alt="Your days: past ones done, today open"><br><sub>Your days: past ones done, today open</sub></td>
-    <td align="center"><img src="docs/screenshots/copa/02-numero.png" width="180" alt="Day 2: the Number of the Day"><br><sub>Day 2: the Number of the Day</sub></td>
-    <td align="center"><img src="docs/screenshots/copa/03-conexiones.png" width="180" alt="Day 3: Connections, Chilean edition"><br><sub>Day 3: Connections, Chilean edition</sub></td>
+    <td align="center"><img src="docs/screenshots/copa/02-numero.png" width="180" alt="Day 2: Bulls and Cows, guess the number"><br><sub>Day 2: Bulls and Cows, guess the number</sub></td>
+    <td align="center"><img src="docs/screenshots/copa/03-conexiones.png" width="180" alt="Day 3: Connections, with red herrings"><br><sub>Day 3: Connections, with red herrings</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/copa/04-solitario.png" width="180" alt="Day 4: Battleship Solitaire"><br><sub>Day 4: Battleship Solitaire</sub></td>
-    <td align="center"><img src="docs/screenshots/copa/05-dudo.png" width="180" alt="Day 5: Doubt it or buy it?"><br><sub>Day 5: Doubt it or buy it?</sub></td>
+    <td align="center"><img src="docs/screenshots/copa/04-reinas.png" width="180" alt="Day 4: Queens"><br><sub>Day 4: Queens</sub></td>
+    <td align="center"><img src="docs/screenshots/copa/05-letras.png" width="180" alt="Day 5: Bulls and Cows with letters"><br><sub>Day 5: Bulls and Cows with letters</sub></td>
     <td align="center"><img src="docs/screenshots/copa/06-anio.png" width="180" alt="Day 6: What year was it?"><br><sub>Day 6: What year was it?</sub></td>
     <td align="center"><img src="docs/screenshots/copa/07-grafico.png" width="180" alt="Your place, day by day"><br><sub>Your place, day by day</sub></td>
   </tr>
@@ -340,17 +340,19 @@ Spec and design: [docs/juegos/julepe.md](docs/juegos/julepe.md)
 
 Not a game but a **tournament that lasts a week**. Someone creates a cup and shares the link with the group; everyone joins with their name and a 4-digit PIN, from any phone or computer. Every day a different minigame opens, **the same one for everybody**, and it can be played **once**. Your score only matters against the others: the day hands out points by position (10, 8, 6, 5, 4, 3, 2, 1), so seven games with seven different scales weigh the same and one crushing day does not decide the cup (D-94). The final day is worth double, everyone gets one ×2 wildcard, and whoever has the most points on day 7 lifts the cup.
 
-It borrows what makes daily puzzles work (Wordle, Connections): same challenge for everyone, once a day, comparable scores, little luck, and a **share card** that shows how you did without giving the answer away. Five of the seven minigames are built on engines and decks this app already had:
+It borrows what makes daily puzzles work (Wordle, Connections): same challenge for everyone, once a day, comparable scores, little luck, and a **share card** that shows how you did without giving the answer away. The minigames reuse the engines, decks and screens this app already had where it can:
 
 | Day | Minigame | Skill |
 |---|---|---|
-| 1 | ⏳ Timeline Flash: place 7 milestones | knowledge |
-| 2 | 🔢 Number of the Day: Bulls and Cows, 10 tries | deduction |
-| 3 | 🔗 Connections: 16 Chilean words, 4 groups | association |
-| 4 | ⚓ Battleship Solitaire: the Bimaru logic puzzle, with a guaranteed unique solution | logic |
-| 5 | 🎲 Doubt it or buy it?: frozen Liar's Dice hands, scored by the **quality of the decision**, not by how the dice fell (D-97) | probability |
+| 1 | ⏳ Timeline Flash: 10 milestones, played from a hand with the Timeline drag and drop | knowledge |
+| 2 | 🔢 Bulls and Cows: guess the number, with the Bulls and Cows keypad and notes | deduction |
+| 3 | 🔗 Connections: 16 words, 4 groups, with red herrings | association |
+| 4 | 👑 Queens: one per row, column and color region, never touching | logic |
+| 5 | 🔤 Bulls and Cows with letters: a 5-letter word, each letter colored by its clue | deduction |
 | 6 | 📅 What year was it?: closer is better, older gets more slack | estimation |
 | 7 | 🏁 The Grand Final: five short rounds, one of each, worth double | everything |
+
+The lab also has **〰️ Zip** and **☀️ Tango** to try out. The cup does not invent its own UX (D-102): the timeline, the drag and drop and the keypad are the ones Timeline and Bulls and Cows already use, shared from `assets/`.
 
 - **Everything comes from a seed** (`code:day`), so everyone plays exactly the same content with no server (D-97).
 - **A day stays open until the next midnight** (a grace day), except the final. Time only breaks ties, and it is *active* time: it pauses while the screen is hidden (D-95).
@@ -569,6 +571,9 @@ dudo/                       Dudo (engine.js + tests, game.js, rules.js)
 copa/                       La Copa: tournament engine, stores (Firebase and local test), juegos/ with the seven minigames
 labs/                       The lab: games being tested before they reach the menu (not linked, not indexed)
 assets/js/arrastre.js       Shared drag and drop: dropping chooses, a button confirms
+assets/js/teclado.js        Shared Bulls and Cows keypad, with notes (long press to strike out a key)
+assets/css/linea.css        Shared timeline, hand, slots and verdict (Timeline and the cup)
+assets/css/teclado.css      Shared keypad, guess boards and clues (Bulls and Cows and the cup)
 assets/js/handoff.js        Shared transitions: pass the phone, covered screen
 assets/js/chat.js           Shared room chat (multi-phone modes)
 assets/js/session.js        Shared saved games (resume in any mode)

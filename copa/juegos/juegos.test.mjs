@@ -4,8 +4,11 @@ import { hash32, azar } from './semilla.js';
 import * as numero from './numero.js';
 import * as linea from './linea.js';
 import * as anio from './anio.js';
-import * as dudo from './dudo.js';
-import * as solitario from './solitario.js';
+import * as reinas from './reinas.js';
+import * as tango from './tango.js';
+import * as zip from './zip.js';
+import * as letras from './letras.js';
+import { PALABRAS } from './palabras.js';
 import * as conexiones from './conexiones.js';
 import * as final from './final.js';
 import { GRILLAS } from './grillas.js';
@@ -51,22 +54,26 @@ test('temas: línea, años y final distintos', () => {
   }
 });
 
-test('línea: 8 cartas de años separados, puntaje y estado', () => {
+test('línea: 10 cartas de años separados, jugadas en cualquier orden', () => {
   for (const c of CODIGOS) {
     const p = linea.generar(c, 1);
     const todas = [p.base, ...p.mano];
-    assert.equal(todas.length, 8);
+    assert.equal(todas.length, 10);
     const ys = todas.map(x => x.year).sort((a, b) => a - b);
     for (let i = 1; i < ys.length; i++) assert.ok(ys[i] - ys[i - 1] >= 2, `${c} ${ys}`);
     assert.ok(todas.every(x => x.texto && x.emoji));
   }
   const p = { base: { id: 'b', year: 1950 }, mano: [{ id: 'x', year: 1900 }, { id: 'y', year: 2000 }, { id: 'z', year: 1960 }] };
-  const e = linea.estado(p, [0, 0, 2]); // 1900 bien; 2000 mal (va al final); 1960 bien entre 1950 y 2000
+  // Primero la de 2000 (bien, al final), después 1960 mal puesta al principio, después 1900 bien
+  const e = linea.estado(p, [{ c: 'y', at: 1 }, { c: 'z', at: 0 }, { c: 'x', at: 0 }]);
   assert.deepEqual(e.marcas, [true, false, true]);
   assert.deepEqual(e.linea.map(x => x.year), [1900, 1950, 1960, 2000]);
-  assert.ok(e.fin);
+  assert.ok(e.fin && !e.mano.length);
   assert.equal(linea.puntaje(e), 2);
   assert.equal(linea.tarjeta(e), '🟩🟥🟩');
+  assert.equal(e.historia[1].entre[0].year, 1950); // la 1960 iba después de 1950
+  // Una carta repetida o que no está en la mano no cuenta
+  assert.equal(linea.estado(p, [{ c: 'y', at: 1 }, { c: 'y', at: 0 }, { c: 'nada', at: 0 }]).marcas.length, 1);
 });
 
 test('año: margen según antigüedad y puntos', () => {
@@ -86,83 +93,6 @@ test('año: margen según antigüedad y puntos', () => {
   assert.ok(e.fin);
   assert.equal(anio.puntaje(e), 600);
   assert.equal(anio.anioLabel(-44), '44 a. C.');
-});
-
-test('dudo: manos creíbles pero no regaladas, puntos por probabilidad', () => {
-  for (const c of CODIGOS) {
-    const p = dudo.generar(c, 5);
-    assert.equal(p.manos.length, 8);
-    for (const m of p.manos) {
-      assert.equal(m.mios.length, 5);
-      assert.equal(m.total, 5 + m.otros.flat().length);
-      const cr = dudo.creible(m);
-      assert.ok(cr >= 0.03 && cr <= 0.97, cr);
-      const a = dudo.puntos(m, 'creo'), b = dudo.puntos(m, 'dudo');
-      assert.ok(Math.abs(a + b - 100) <= 1);
-    }
-    assert.deepEqual(dudo.generar(c, 5), p);
-  }
-  const p = dudo.generar('KQRST', 5);
-  const mejores = p.manos.map(m => (dudo.creible(m) >= 0.5 ? 'creo' : 'dudo'));
-  const e = dudo.estado(p, mejores);
-  assert.ok(e.fin);
-  assert.ok(e.filas.every(f => f.mejor));
-  assert.ok(!dudo.tarjeta(e).includes('😬'));
-  const peores = mejores.map(x => (x === 'creo' ? 'dudo' : 'creo'));
-  assert.ok(dudo.puntaje(dudo.estado(p, peores)) < dudo.puntaje(e));
-});
-
-test('solitario: solución única, reglas del Bimaru y rápido', () => {
-  const t0 = Date.now();
-  let peor = 0;
-  for (const c of CODIGOS) {
-    for (const [nn, flota] of [[8, solitario.FLOTA], [6, solitario.FLOTA_CHICA]]) {
-      const t = Date.now();
-      const p = solitario.generar(c, 4, { n: nn, flota });
-      peor = Math.max(peor, Date.now() - t);
-      const sol = solitario.solucion(p);
-      const cells = flota.reduce((s, f) => s + f.size, 0);
-      assert.equal(sol.reduce((s, v) => s + v, 0), cells);
-      assert.equal(p.filas.reduce((s, v) => s + v, 0), cells);
-      // única
-      assert.equal(solitario.resolver(p, { tope: 2 }).cuantas, 1, `${c} ${nn}`);
-      // no se tocan ni en diagonal: cada casilla de barco solo tiene vecinas de su propio barco
-      for (const f of flota) {
-        const pos = p.layout[f.id];
-        const mias = new Set(Array.from({ length: f.size }, (_, i) => (pos.dir === 'h' ? pos.r * nn + pos.c + i : (pos.r + i) * nn + pos.c)));
-        for (const i of mias) {
-          const r = Math.floor(i / nn), cc = i % nn;
-          for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) {
-            const rr = r + dr, c2 = cc + dc;
-            if (rr < 0 || c2 < 0 || rr >= nn || c2 >= nn) continue;
-            const j = rr * nn + c2;
-            assert.ok(!sol[j] || mias.has(j), `${c} se tocan`);
-          }
-        }
-      }
-      assert.ok(p.pistas.length >= 1 && p.pistas.length < nn * nn / 2, `${p.pistas.length} pistas`);
-    }
-  }
-  assert.ok(peor < 1500, `generar tardó ${peor} ms`);
-  console.log(`  solitario: el más lento tardó ${peor} ms (total ${Date.now() - t0} ms)`);
-});
-
-test('solitario: marcas, errores y puntaje', () => {
-  const p = solitario.generar('KQRST', 4);
-  let m = solitario.marcasIniciales(p);
-  const sol = solitario.solucion(p);
-  assert.ok(solitario.errores(p, m) > 0);
-  const q = p.pistas[0];
-  assert.deepEqual(solitario.tocar(p, m, q.r * p.n + q.c), m); // las pistas no se tocan
-  sol.forEach((v, i) => { if (v && m[i] !== solitario.BARCO) m = solitario.tocar(p, solitario.tocar(p, m, i), i); });
-  assert.equal(solitario.errores(p, m), 0);
-  const { fil } = solitario.cuentas(p, m);
-  assert.deepEqual(fil, p.filas);
-  assert.equal(solitario.puntaje({ resuelto: true, fallidas: 0 }), 100);
-  assert.equal(solitario.puntaje({ resuelto: true, fallidas: 2 }), 70);
-  assert.equal(solitario.puntaje({ resuelto: true, fallidas: 9 }), 10);
-  assert.equal(solitario.puntaje({ resuelto: false, fallidas: 1 }), 0);
-  assert.equal(solitario.tarjeta({ resuelto: true, fallidas: 1 }), '⚓❌✅');
 });
 
 test('grillas: 12, bien formadas', () => {
@@ -206,24 +136,95 @@ test('conexiones: aciertos, errores, a una y puntaje', () => {
   assert.ok(conexiones.repetido([mal], mal.slice().reverse()));
 });
 
+test('reinas: solución única, reglas y puntaje', () => {
+  for (const c of CODIGOS) for (const n of [8, 6]) {
+    const p = reinas.generar(c, 4, { n });
+    assert.equal(reinas.resolver(p, 3), 1, `${c} ${n}`);
+    assert.equal(new Set(p.zonas).size, n);
+    // la solución cumple: una por fila, columna y zona, sin tocarse
+    const marcas = new Array(n * n).fill(reinas.VACIO);
+    p.sol.forEach((col, r) => { marcas[r * n + col] = reinas.REINA; });
+    assert.ok(reinas.resuelto(p, marcas));
+  }
+  const p = reinas.generar('KQRST', 4);
+  const toques = i => [i, i]; // vacío → marca → reina
+  const bien = p.sol.flatMap((col, r) => toques(r * p.n + col));
+  let e = reinas.estado(p, bien);
+  assert.ok(e.fin); assert.equal(e.errores, 0); assert.equal(reinas.puntaje(e), 100);
+  // una reina al lado de otra es un error
+  const c0 = p.sol[0], vecina = 1 * p.n + (c0 === 0 ? 1 : c0 - 1);
+  e = reinas.estado(p, [...toques(c0), ...toques(vecina)]);
+  assert.equal(e.errores, 1);
+  assert.ok(e.conflictos.has(vecina));
+  assert.equal(reinas.puntaje({ fin: true, errores: 12 }), 10);
+});
+
+test('tango: solución única, reglas y puntaje', () => {
+  for (const c of CODIGOS) {
+    const p = tango.generar(c, 4);
+    assert.equal(tango.resolver(p, 3), 1, c);
+    assert.equal(tango.violaciones(p, p.sol).size, 0);
+    for (const [i, v] of Object.entries(p.dadas)) assert.equal(p.sol[i], v);
+  }
+  const p = tango.generar('KQRST', 4);
+  const jugadas = [];
+  p.sol.forEach((v, i) => { if (!tango.esDada(p, i)) { jugadas.push(i); if (v === tango.LUNA) jugadas.push(i); } });
+  const e = tango.estado(p, jugadas);
+  assert.ok(e.fin); assert.equal(tango.puntaje(e), 100);
+  // tres soles seguidos rompen la regla
+  const g = new Array(36).fill(tango.VACIO); g[0] = g[1] = g[2] = tango.SOL;
+  assert.ok(tango.violaciones({ n: 6, marcas: [] }, g).has(0));
+});
+
+test('zip: solución única y trazo', () => {
+  for (const c of CODIGOS) {
+    const p = zip.generar(c, 4);
+    assert.equal(zip.resolver(p, 3), 1, c);
+    assert.ok(zip.valido(p, p.sol));
+    assert.ok(Object.keys(p.numeros).length <= 16, `${c}: demasiados números`);
+  }
+  const p = zip.generar('KQRST', 4);
+  assert.ok(zip.estado(p, p.sol).fin);
+  assert.equal(zip.puntaje(zip.estado(p, p.sol)), 100);
+  assert.ok(!zip.valido(p, p.sol.slice(1)));          // no parte en el 1
+  assert.ok(!zip.puedeIr(p, p.sol.slice(0, 3), p.sol[0])); // no se vuelve a pisar
+});
+
+test('letras: palabras válidas, pistas por letra y puntaje', () => {
+  assert.ok(PALABRAS.length >= 100);
+  assert.equal(new Set(PALABRAS).size, PALABRAS.length);
+  for (const w of PALABRAS) assert.ok(letras.valido(w), w);
+  const p = letras.generar('KQRST', 5);
+  assert.ok(PALABRAS.includes(p.secreto));
+  assert.deepEqual(letras.generar('KQRST', 5), p);
+  const r = letras.responder('CAMPO', 'MANGO');
+  assert.deepEqual(r.marcas, ['-', 'f', 't', '-', 'f']); // la A y la O en su lugar, la M en otro
+  assert.equal(r.famas, 2); assert.equal(r.toques, 1);
+  assert.ok(!letras.valido('CASAS'));
+  const e = letras.estado({ ...p, secreto: 'MANGO' }, ['CAMPO', 'MANGO']);
+  assert.ok(e.resuelto && e.fin);
+  assert.equal(letras.puntaje(e), 7);
+  assert.equal(letras.tarjeta(e).split('\n')[1], '🟨🟨🟨🟨🟨');
+});
+
 test('final: cinco rondas, de 0 a 500', () => {
   const p = final.generar('KQRST', 7);
   assert.equal(p.linea.mano.length, 3);
   assert.equal(p.numero.secreto.length, 3);
-  assert.equal(p.solitario.n, 6);
-  assert.equal(p.dudo.manos.length, 3);
+  assert.equal(p.reinas.n, 6);
+  assert.equal(p.letras.max, 6);
   assert.equal(p.anio.hitos.length, 2);
+  const lineaPerfecta = (() => { let j = []; for (const c of p.linea.mano) { const l = linea.estado(p.linea, j).linea; j = [...j, { c: c.id, at: linea.huecoCorrecto(l, c) }]; } return linea.estado(p.linea, j); })();
   const perfecto = {
-    linea: linea.estado(p.linea, p.linea.mano.map((c, i, arr) => linea.huecoCorrecto(linea.estado(p.linea, arr.slice(0, i).map((cc, j) => linea.huecoCorrecto(linea.estado(p.linea, []).linea, cc))).linea, c))),
+    linea: lineaPerfecta,
     numero: numero.estado(p.numero, [p.numero.secreto], final.NUMERO_INTENTOS),
-    solitario: { resuelto: true, fallidas: 0 },
-    dudo: dudo.estado(p.dudo, p.dudo.manos.map(m => (dudo.creible(m) >= 0.5 ? 'creo' : 'dudo'))),
+    reinas: { fin: true, errores: 0 },
+    letras: letras.estado(p.letras, [p.letras.secreto]),
     anio: anio.estado(p.anio, p.anio.hitos.map(h => h.year)),
   };
-  const s = final.puntaje(perfecto);
-  assert.ok(s > 400 && s <= 500, s);
+  assert.equal(final.puntaje(perfecto), 500);
   assert.equal(final.puntaje({}), 0);
-  assert.match(final.tarjeta(perfecto), /^⏳\d+ 🔢100 ⚓100 🎲\d+ 📅100$/);
+  assert.equal(final.tarjeta(perfecto), '⏳100 🔢100 👑100 🔤100 📅100');
 });
 
 console.log(`copa/juegos: ${n} tests OK`);
