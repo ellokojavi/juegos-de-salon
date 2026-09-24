@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.59.0 — 2026-09-24
+- **Compartir la tabla como imagen** (D-126): bajo el gráfico, una imagen con el gráfico de
+  colores, la tabla y el link, lista para WhatsApp.
+- **"(-1J)"** junto al nombre de quien lleva menos juegos, en la imagen y en el mensaje de la tabla.
+
 ## 0.58.0 — 2026-09-24
 - **El gráfico de posiciones muestra a todos** (D-125): cada jugador con su color y su nombre al
   final de la línea; tocar un nombre destaca su línea.
