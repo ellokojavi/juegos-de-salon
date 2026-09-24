@@ -21,7 +21,10 @@ export function desglose(id, e, { T, fmt, mmss }) {
   switch (id) {
     case 'linea': return [fmt(T.bdLinea, { n: e.aciertos, total: e.marcas.length })];
     case 'numero': return intentos(e, numero.MAX_INTENTOS);
-    case 'letras': return intentos(e, letras.MAX_INTENTOS);
+    case 'letras': return [
+      e.encontradas ? fmt(e.encontradas === 1 ? T.bdFamasOne : T.bdFamas, { n: e.encontradas, pts: letras.PUNTOS_FAMA * e.encontradas }) : T.bdNoFamas,
+      e.resuelto ? fmt(e.usados === 1 ? T.bdWordBonusFirst : T.bdWordBonus, { u: e.usados, b: letras.bono(e.usados) }) : T.bdWordNoBonus,
+    ];
     case 'conexiones': return [
       fmt(T.bdGroups, { n: e.resueltos.length, pts: 25 * e.resueltos.length }),
       resta('bdMistakes', e.errores, { pts: 5 * e.errores, c: 5 }),

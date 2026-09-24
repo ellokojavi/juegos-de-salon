@@ -1,5 +1,5 @@
 {
-  "version": "0.45.0",
+  "version": "0.46.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -636,6 +636,7 @@
     "batalla-naval/engine.test.mjs",
     "copa/engine.test.mjs",
     "copa/juegos/juegos.test.mjs",
+    "copa/reportes.test.mjs",
     "copa/store.test.mjs",
     "dudo/engine.test.mjs",
     "julepe/engine.test.mjs",

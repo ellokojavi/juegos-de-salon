@@ -74,6 +74,7 @@ node dudo/engine.test.mjs
 node copa/engine.test.mjs               # La Copa: torneo, minijuegos y almacén de prueba
 node copa/juegos/juegos.test.mjs
 node copa/store.test.mjs
+node copa/reportes.test.mjs             # un reporte que no sale queda guardado y se reenvía
 node assets/js/i18n.test.mjs             # paridad es/en/pt (C-3)
 node assets/js/transport/cleanup.test.mjs
 node assets/js/transport/dispose.test.mjs
