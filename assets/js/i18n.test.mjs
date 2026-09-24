@@ -52,7 +52,10 @@ for (const d of AHORCADO) {
     assert.ok(c[lang]?.hint?.trim(), `ahorcado/${d.id}/${c.id}: falta la pista en ${lang}`);
   }
 }
-for (const g of GAMES) {
+// Un juego que por ahora existe en un solo idioma lo declara en `idiomas` (La Copa, D-98): su
+// tarjeta del menú sí va en los tres, pero sus textos no se comparan.
+const TRADUCIDOS = GAMES.filter(g => !g.idiomas || LANGS.every(l => g.idiomas.includes(l)));
+for (const g of TRADUCIDOS) {
   const { LOCALES } = await import(`../../${g.path}rules.js`);
   same(`LOCALES de ${g.id}`, LOCALES);
 }
@@ -84,7 +87,7 @@ function clavesDirectas(src, lang) {
   return claves;
 }
 
-for (const g of GAMES) {
+for (const g of TRADUCIDOS) {
   const src = await readFile(new URL(`../../${g.path}rules.js`, import.meta.url), 'utf8');
   const cuantas = {};
   for (const lang of LANGS) {

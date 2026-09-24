@@ -1063,3 +1063,89 @@ mientras la imagen tardaba 0 ms. La espuma va donde van las burbujas del sonido.
 **Consecuencias:** `.cell .barco` gana la variable `--giro`. Entran las clases `hundiendo`,
 `aun-vivo`, `impacto` y `burbuja`, y `HUNDIR_MS` en `game.js`. La pantalla de resultado de sala y
 de contra el celular tarda 1,4 s más cuando la partida termina con un hundimiento, que es siempre.
+
+## D-94 · La Copa: un torneo de varios días en vez de una sala más
+**Fecha:** 2026-09-23 · **Estado:** vigente
+**Decisión:** La primera modalidad que no es una partida: una **copa** de 7 días (y una de 3 para
+probar, D-100) donde cada día se abre un minijuego igual para todos, que se juega una vez y da
+puntos **por posición** (10-8-6-5-4-3-2-1-1-1), no por puntaje bruto. Cada día se puede jugar ese
+día o el siguiente (día de gracia); la final vale doble y no tiene gracia; hay un comodín ×2 por
+jugador; la inscripción sigue abierta hasta que empieza la final; los resultados de un día se ven
+recién después de jugarlo o cuando cierra.
+**Por qué:** lo que hace funcionar a los juegos diarios (Wordle, Connections) es el mismo desafío
+para todos, una vez al día, con un puntaje comparable y una tarjeta que se comparte sin revelar la
+respuesta. Los puntos por posición hacen que siete minijuegos con escalas distintas pesen lo mismo
+y que un día aplastante no defina la copa. La gracia existe porque un grupo de amigos no juega
+todos a la misma hora; la final sin gracia existe porque, si no, el campeón se sabría un día tarde.
+**Consecuencias:** carpeta `copa/`, entrada `copa` en `games.js` con `torneo: true` (no cuenta en
+`MAX_PLAYERS`: cada día manda su señal con un jugador) y el modo `copa` en `MODES` para el panel.
+Los minijuegos elegidos, y por qué Conexiones y el Bimaru reemplazaron al Ahorcado y a una flota
+escondida con suerte, están en `docs/juegos/copa.md`.
+
+## D-95 · El tiempo desempata, y es tiempo activo
+**Fecha:** 2026-09-23 · **Estado:** vigente
+**Decisión:** El tiempo nunca es el puntaje principal de un minijuego: solo desempata. Y se mide
+como **tiempo activo** (`reloj` en `copa/engine.js`): se pausa cuando la pantalla no está visible.
+**Por qué:** en un celular te interrumpen. Castigar una llamada en medio del Número del Día no mide
+nada. Pausar con la pantalla oculta deja una trampa posible (esconder la pestaña para pensar sin
+ver), pero sin ver el tablero no se piensa mucho.
+**Consecuencias:** el intento guarda `{ ms, desde }` y lo retoma igual después de recargar.
+
+## D-96 · Una cuenta es nombre y PIN dentro de una copa, con acceso anónimo de Firebase
+**Fecha:** 2026-09-23 · **Estado:** vigente
+**Decisión:** No hay cuentas de la app. Dentro de cada copa, una persona es un `pid` con nombre y
+PIN de 4 dígitos, y entra desde cualquier celular o computador con el link. Cada navegador inicia
+sesión **anónima** en Firebase Auth; para escribir por un jugador, su `uid` tiene que estar sentado
+en `torneoSeats/<código>/<pid>/<uid>`, y las reglas aceptan el asiento solo si trae el mismo hash
+que `torneoKeys/<código>/<pid>`. Ninguna de las dos ramas se puede leer.
+**Por qué:** el dueño pidió poder jugar un día en el celular y otro en el computador sin crear
+cuentas. Las reglas de Realtime Database no calculan hashes, pero sí comparan textos: el hash viaja
+en la escritura y se compara contra uno que nadie puede leer. Un PIN de 4 dígitos se puede adivinar
+probando 10.000 veces en línea: separa cuentas entre amigos, no protege contra un atacante, y eso
+es lo que se busca.
+**Consecuencias:** **hay que habilitar el acceso anónimo** en la consola (Authentication → Sign-in
+method → Anonymous), además de publicar las reglas. Si falta, crear o entrar a una copa falla con
+un mensaje que lo dice (`errConfig`). El árbol se llama `torneos/` y no `copas/`: las reglas no
+pueden nombrar juegos (C-16) y `panel/adapta.test.mjs` lo revisa.
+
+## D-97 · El contenido del día sale de una semilla pública, y ¿Dudo o le creo? puntúa decisiones
+**Fecha:** 2026-09-23 · **Estado:** vigente
+**Decisión:** Todo lo de un día (el número, las cartas, la flota, los dados, el orden de las
+palabras) sale de `hash32("código:día:sal")` con el generador de Línea de Tiempo. En ¿Dudo o le
+creo?, cada mano da `100 × P(la elección era cierta)`, calculada con lo que el jugador veía, sin
+importar lo que salió al destapar.
+**Por qué:** una semilla pública es la única forma de que todos jueguen lo mismo sin servidor. El
+precio es que quien lea el código puede calcular la respuesta; entre amigos no vale la pena un
+servidor para impedirlo. En Dudo (D-70) los dados no salían de la semilla porque había un rival que
+podía calcularlos; acá todos ven la misma mesa. Y puntuar el resultado de la mesa sería premiar la
+suerte: una buena decisión puede perder al destapar.
+**Consecuencias:** el mismo código da la misma copa en cualquier navegador; las pruebas lo comparan.
+
+## D-98 · La Copa va solo en español por ahora
+**Fecha:** 2026-09-23 · **Estado:** vigente
+**Decisión:** La interfaz y el contenido de La Copa son solo en español, sin selector de idioma. Es
+una excepción a C-3: la entrada de `games.js` declara `idiomas: ['es']`, su tarjeta del menú sí va
+en los tres idiomas (y en inglés y portugués dice que por ahora es en español), y
+`assets/js/i18n.test.mjs` no compara sus `LOCALES`.
+**Por qué:** el contenido es chileno (grillas de Conexiones, chilenismos) y no se traduce: una copa
+mixta español/portugués no sería pareja. Traducir la interfaz sin traducir el contenido dejaría una
+copa a medias.
+**Consecuencias:** LIG-32 queda pendiente: cada idioma necesita su propio contenido.
+
+## D-99 · Los avisos del grupo los manda el admin, con mensajes armados
+**Fecha:** 2026-09-23 · **Estado:** vigente
+**Decisión:** La app no manda WhatsApp ni correos. El admin tiene cuatro mensajes armados que salen
+por el diálogo de compartir del celular: invitación, **recordatorio del día**, tabla parcial y
+resumen final. El recordatorio sirve cualquier día: antes de empezar dice cuándo parte y el primer
+juego; durante la copa dice qué toca, hasta cuándo, si queda el de ayer en su gracia y quién falta.
+Cada jugador comparte además su tarjeta del día, que nunca revela la respuesta.
+**Por qué:** mandar avisos automáticos necesita un servidor y un proveedor pago; el diálogo de
+compartir ya llega a WhatsApp y el grupo es donde se juega la pica. La tarjeta es la notificación.
+**Consecuencias:** LIG-33 (avisos automáticos) queda para después.
+
+## D-100 · La Copa de 3 días es solo para probar
+**Fecha:** 2026-09-23 · **Estado:** vigente
+**Decisión:** La portada y el formulario ofrecen solo la Copa de 7 días. La de 3 días (Línea,
+Conexiones y la final) aparece con `?tres` en la URL o en el modo de prueba.
+**Por qué:** el dueño la quiere para probar con amigos, no como producto. Promocionarla en la
+portada la haría la opción por defecto de quien quiere algo corto.

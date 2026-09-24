@@ -96,3 +96,11 @@ Firebase real, así que necesitan internet y dejan salas de prueba que caducan a
   vez deben usar puertos distintos.
 - En una pestaña oculta el navegador acelera los temporizadores de forma distinta; las esperas
   (`sleep`) están calibradas para headless.
+
+## La Copa
+
+`node tools/e2e/copa.mjs <salida> [--siete]` juega una Copa de 3 días (o la de 7 con `--siete`) con
+tres jugadores en un solo Chrome, con el almacén de prueba y el reloj adelantado día por día. Cada
+jugador es la misma pestaña con el `sessionStorage` limpio. Revisa en cada pantalla que no haya
+scroll horizontal ni botones bajo 44 px (C-8), y captura el recordatorio, la tabla parcial y el
+resumen que compartiría la admin.

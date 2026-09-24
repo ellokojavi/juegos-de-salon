@@ -32,8 +32,14 @@ MODULES = [
     'dudo/game.js', 'dudo/rules.js', 'dudo/engine.js',
     'julepe/game.js', 'julepe/rules.js', 'julepe/engine.js', 'assets/js/sobre.js',
     'panel/panel.js', 'panel/aggregate.js',
+    'copa/game.js', 'copa/rules.js', 'copa/engine.js', 'copa/cuenta.js', 'copa/store-local.js', 'copa/store-firebase.js',
+    'copa/juegos/index.js', 'copa/juegos/semilla.js', 'copa/juegos/mazos.js', 'copa/juegos/grillas.js',
+    'copa/juegos/linea.js', 'copa/juegos/numero.js', 'copa/juegos/conexiones.js', 'copa/juegos/solitario.js',
+    'copa/juegos/dudo.js', 'copa/juegos/anio.js', 'copa/juegos/final.js',
+    'copa/juegos/ui-linea.js', 'copa/juegos/ui-numero.js', 'copa/juegos/ui-conexiones.js', 'copa/juegos/ui-solitario.js',
+    'copa/juegos/ui-dudo.js', 'copa/juegos/ui-anio.js', 'copa/juegos/ui-final.js',
 ]
-PAGES = { 'index.html': '', 'cuarto-rey/index.html': '../', 'toque-y-fama/index.html': '../', 'batalla-naval/index.html': '../', 'linea-de-tiempo/index.html': '../', 'ahorcado/index.html': '../', 'dudo/index.html': '../', 'julepe/index.html': '../', 'panel/index.html': '../' }
+PAGES = { 'index.html': '', 'cuarto-rey/index.html': '../', 'toque-y-fama/index.html': '../', 'batalla-naval/index.html': '../', 'linea-de-tiempo/index.html': '../', 'ahorcado/index.html': '../', 'dudo/index.html': '../', 'julepe/index.html': '../', 'panel/index.html': '../', 'copa/index.html': '../' }
 
 def tarjetas_sociales():
     """Las etiquetas de Open Graph salen de games.js: se rehacen antes de estampar (D-72)."""

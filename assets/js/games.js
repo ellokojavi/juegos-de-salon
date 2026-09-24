@@ -6,6 +6,24 @@
  */
 export const GAMES = [
   {
+    id: 'copa',
+    emoji: '🏆',
+    name: { es: 'La Copa', en: 'The Cup', pt: 'A Copa' },
+    tagline: { es: 'Un torneo de una semana entre amigos: un minijuego distinto cada día, una tabla y un campeón.', en: 'A week-long tournament among friends: a different minigame every day, a leaderboard and a champion. In Spanish for now.', pt: 'Um torneio de uma semana entre amigos: um minijogo diferente por dia, uma tabela e um campeão. Por enquanto só em espanhol.' },
+    players: '3–10',
+    duration: '7',
+    // No dura minutos sino días, y por ahora solo existe en español (D-98): el contenido de los
+    // minijuegos es chileno y no se traduce. Las pruebas de idiomas lo saben por `idiomas`.
+    durationUnit: { es: 'días', en: 'days', pt: 'dias' },
+    idiomas: ['es'],
+    // Cómo se juega, para la tabla del README: una copa no tiene modos de un celular o de sala.
+    formato: { es: 'Cada uno en su celular, un juego por día', en: 'Each on their own phone, one game a day', pt: 'Cada um no seu celular, um jogo por dia' },
+    // Un torneo no es una partida: cada día manda su señal con `players: 1` y no pesa en MAX_PLAYERS.
+    torneo: true,
+    path: 'copa/',
+    available: true,
+  },
+  {
     id: 'linea-de-tiempo',
     emoji: '⏳',
     name: { es: 'Línea de Tiempo', en: 'Timeline', pt: 'Linha do Tempo' },
@@ -117,6 +135,7 @@ export const MODES = {
   local: { icon: '📱', label: 'un celular' },
   cpu: { icon: '🤖', label: 'contra el celular' },
   solo: { icon: '🧍', label: 'solo' },
+  copa: { icon: '🏆', label: 'día de La Copa' },
 };
 
 /** Todos los modos conocidos, en orden. */
@@ -146,4 +165,4 @@ export const modeIcon = mode => MODES[mode]?.icon || '·';
  * el tope sube solo. Ojo: los roles de sala (`A`–`F`) y las reglas de la base también tienen
  * que crecer para que un juego así funcione en dos celulares.
  */
-export const MAX_PLAYERS = Math.max(...GAMES.map(g => Number(String(g.players).split(/[^\d]+/).filter(Boolean).pop()) || 1));
+export const MAX_PLAYERS = Math.max(...GAMES.filter(g => !g.torneo).map(g => Number(String(g.players).split(/[^\d]+/).filter(Boolean).pop()) || 1));

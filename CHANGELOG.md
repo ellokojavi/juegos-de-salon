@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.42.0 — 2026-09-23
+- **Llega La Copa** 🏆 (D-94): un torneo entre amigos que dura una semana. Una persona la crea y
+  comparte el link; cada uno entra con su nombre y un PIN de 4 números, desde el celular o el
+  computador. Cada día se abre un minijuego distinto, el mismo para todos, que se juega una sola
+  vez y reparte puntos por posición. Tiene comodín ×2, una Gran Final que vale doble, tabla con
+  flechas, un gráfico de la posición día a día, podio y medallas.
+- **Siete minijuegos**, cinco sobre motores y mazos que ya existían: ⏳ Línea Relámpago, 🔢 El
+  Número del Día, 🔗 Conexiones (12 grillas chilenas escritas a mano), ⚓ Batalla Naval: Solitario
+  (el Bimaru, con solución única), 🎲 ¿Dudo o le creo? (puntúa la calidad de la decisión, D-97),
+  📅 ¿En qué año? y 🏁 La Gran Final.
+- **El admin avisa al grupo** con mensajes armados (D-99): invitación, recordatorio del día, tabla
+  parcial y resumen final. Cada jugador comparte su tarjeta, que nunca revela la respuesta.
+- **Solo en español por ahora** (D-98). La Copa de 3 días existe solo para probar, con `?tres`
+  en la URL (D-100). `?prueba` juega una copa entera sin Firebase y con el reloj adelantable.
+- **Pasos manuales para que funcione en juegosdesalon.cl**: publicar las reglas nuevas de
+  `firebase/database.rules.json`
+  (<https://console.firebase.google.com/u/0/project/juegos-de-salon/database/juegos-de-salon-default-rtdb/rules>)
+  y habilitar el acceso anónimo en Authentication → Sign-in method → Anonymous (D-96). Mientras
+  falten, crear una copa falla con un mensaje que lo dice.
+
 ## 0.41.0 — 2026-09-20
 - **Los barcos se hunden, ya no se apagan** (D-93). Hundir uno pasa de un cambio de clase a durar
   1,4 s: fogonazo en la casilla que disparaste, el fuego corriendo por el casco 90 ms por casilla
