@@ -774,7 +774,7 @@ function antesDeJugar(d) {
 /* ------------------------------------------------------------------ */
 
 /**
- * Cuenta de 5 a 1 y "¡A jugar!" antes de un juego con reloj (D-105): todos los de La Copa lo
+ * Cuenta de 3 a 1 y "¡A jugar!" antes de un juego con reloj (D-105): todos los de La Copa lo
  * tienen, porque el tiempo desempata. El reloj parte cuando aparece "¡A jugar!", y ese cartel se
  * desvanece solo sobre el tablero. Resuelve la promesa en ese momento.
  */
@@ -786,7 +786,7 @@ function cuentaRegresiva(J) {
     const capa = el('div', { class: 'cuenta', id: 'cuenta', role: 'status', 'aria-live': 'assertive' },
       el('p', { class: 'cuenta-juego' }, `${J.emoji} ${J.nombre}`), num);
     document.body.append(capa);
-    let n = 5;
+    let n = 3;
     const paso = () => {
       if (!capa.isConnected) return;
       num.classList.remove('late'); void num.offsetWidth; num.classList.add('late');
@@ -837,6 +837,7 @@ async function jugar(d) {
   mod.montar(body, {
     p, jugadas, T, fmt, el, SFX, vibrate,
     guardar(j) { jugadas = j; persistir(); },
+    tiempo: () => Math.round(reloj.leer(rel, ahora())),
     terminar(estado) {
       const ms = Math.round(reloj.leer(rel, ahora()));
       clearInterval(S.reloj);
@@ -1001,6 +1002,7 @@ async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false } = {}) {
     p, jugadas: undefined, T, fmt, el, SFX, vibrate,
     textoFin: ensayo ? T.trialEnd : undefined,
     guardar() { /* no se guarda: no cuenta */ },
+    tiempo: () => Math.round(reloj.leer(rel, Date.now())),
     terminar(estado) {
       clearInterval(S.reloj);
       document.removeEventListener('visibilitychange', S.visibilidad);

@@ -150,13 +150,19 @@ test('reinas: solución única, reglas y puntaje', () => {
   const toques = i => [i]; // un toque pone la reina (D-103)
   const bien = p.sol.flatMap((col, r) => toques(r * p.n + col));
   let e = reinas.estado(p, bien);
-  assert.ok(e.fin); assert.equal(e.errores, 0); assert.equal(reinas.puntaje(e), 100);
+  assert.ok(e.fin); assert.equal(e.errores, 0); assert.equal(reinas.puntaje({ ...e, ms: 20000 }), 100);
   // una reina al lado de otra es un error
   const c0 = p.sol[0], vecina = 1 * p.n + (c0 === 0 ? 1 : c0 - 1);
   e = reinas.estado(p, [...toques(c0), ...toques(vecina)]);
   assert.equal(e.errores, 1);
   assert.ok(e.conflictos.has(vecina));
-  assert.equal(reinas.puntaje({ fin: true, errores: 12 }), 10);
+  // Puntúa el tiempo, no los errores (D-107): 100 hasta 30 s, parejo hasta 10 a los 5 min
+  assert.equal(reinas.puntaje({ fin: true, errores: 12, ms: 25000 }), 100);
+  assert.equal(reinas.puntaje({ fin: true, errores: 0, ms: 165000 }), 55);
+  assert.equal(reinas.puntaje({ fin: true, errores: 0, ms: 300000 }), 10);
+  assert.equal(reinas.puntaje({ fin: true, errores: 0, ms: 900000 }), 10);
+  assert.equal(reinas.puntaje({ fin: false, errores: 0, ms: 1000 }), 0);
+  assert.equal(reinas.tarjeta({ fin: true, ms: 83000 }), '👑 ⏱ 1:23 ✅');
   // El toque largo pone y saca la X, y no cuenta como error ni como reina
   e = reinas.estado(p, [reinas.toqueLargo(5), reinas.toqueLargo(6), reinas.toqueLargo(6)]);
   assert.equal(e.marcas[5], reinas.MARCA); assert.equal(e.marcas[6], reinas.VACIO); assert.equal(e.errores, 0);
@@ -283,7 +289,7 @@ test('final: cinco rondas, de 0 a 500', () => {
   const casos = {
     numero: numero.estado(numero.generar('KQRST', 2), ['1234', numero.generar('KQRST', 2).secreto]),
     conexiones: { resueltos: [0, 1, 2], errores: 2 },
-    reinas: { fin: true, errores: 1 },
+    reinas: { fin: true, errores: 1, ms: 83000 },
     tango: { fin: true, errores: 2, pistas: 1 },
     zip: { hechos: 3, ultimo: 125000 },
     anio: anio.estado(pa, pa.hitos.map(h => h.year + 3)),
