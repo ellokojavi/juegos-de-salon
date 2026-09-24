@@ -329,3 +329,8 @@ input.fecha { width: 100%; min-height: 48px; border-radius: 12px; border: 1px so
 /* Eliminar la copa (D-117) */
 .peligro { border: 1px solid rgba(224, 36, 60, 0.55); }
 .btn--red { background: var(--red); color: #fff; box-shadow: 0 4px 0 #8a1024; }
+
+/* El largo del nombre a la vista (D-119), y los nombres largos que parten línea en vez de salirse */
+.field .contador { display: block; text-align: right; margin-top: 4px; font-size: 0.8rem; }
+.field .contador.lleno { color: var(--yellow); }
+.copa-head h1, .intro-hero h1, .intro-hero h2 { overflow-wrap: anywhere; }

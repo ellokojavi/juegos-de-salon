@@ -22,6 +22,8 @@ export const PUNTOS = [10, 8, 6, 5, 4, 3, 2, 1, 1, 1];
 export const MIN_JUGADORES = 2;
 export const MAX_JUGADORES = 10;
 export const NOMBRE_MAX = 20;
+/** El nombre de una copa (D-119): antes se recortaba al largo de un nombre de jugador (20). */
+export const COPA_MAX = 40;
 export const DIA_MS = 24 * 60 * 60 * 1000;
 // La hora de las copas nuevas (D-113): la del Pacífico, donde está el dueño. Cada copa guarda la
 // suya en `meta.tz`, así que las ya creadas siguen con la hora de Chile.
@@ -59,10 +61,10 @@ function cryptoRand() {
 /* ------------------------------------------------------------------ */
 
 /** El nombre tal como se guarda: sin espacios de más y con tope de largo. */
-export const limpiarNombre = s => String(s || '').replace(/\s+/g, ' ').trim().slice(0, NOMBRE_MAX);
+export const limpiarNombre = (s, max = NOMBRE_MAX) => String(s || '').replace(/\s+/g, ' ').trim().slice(0, max);
 
 /** Para comparar nombres: "Cata", "cata " y "CATA" son el mismo jugador. */
-export const claveNombre = s => limpiarNombre(s).toLocaleLowerCase('es').normalize('NFD').replace(/[̀-ͯ]/g, '');
+export const claveNombre = (s, max = NOMBRE_MAX) => limpiarNombre(s, max).toLocaleLowerCase('es').normalize('NFD').replace(/[̀-ͯ]/g, '');
 
 export const esPin = p => typeof p === 'string' && /^\d{4}$/.test(p);
 
@@ -137,7 +139,7 @@ export function ventanas(inicio, dias, tz = ZONA) {
 export function nuevaMeta({ nombre, dias, inicio, tz = ZONA, admin, creada, lab = false }) {
   if (!CALENDARIOS[dias]) throw new Error('modalidad');
   return {
-    v: 1, name: limpiarNombre(nombre), days: dias, start: inicio, tz, admin,
+    v: 1, name: limpiarNombre(nombre, COPA_MAX), days: dias, start: inicio, tz, admin,
     cal: CALENDARIOS[dias].join(','), win: ventanas(inicio, dias, tz), createdAt: creada,
     end: medianoche(sumarDias(inicio, dias), tz),
     // Las reglas de la base no suman ni convierten números a texto: lo que necesitan comparar
