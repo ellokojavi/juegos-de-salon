@@ -25,7 +25,7 @@ const preparar = () => ev(`(()=>{window.confirm=()=>true;window.__compartido=[];
   const st=document.createElement('style');st.textContent='.prueba-barra{display:none!important}';document.head.append(st);return 1})()`);
 
 /** Las tomas del README, con nombre fijo para que docs/capturas.json las encuentre. */
-const TOMAS = { numero: '02-numero', conexiones: '03-conexiones', solitario: '04-solitario', dudo: '05-dudo', anio: '06-anio' };
+const TOMAS = { numero: '02-numero', conexiones: '03-conexiones', reinas: '04-reinas', letras: '05-letras', anio: '06-anio' };
 
 /** C-8: sin scroll horizontal y sin botones bajo 44 px en la pantalla activa. */
 async function revisarPantalla(nombre) {
@@ -70,29 +70,54 @@ async function sentarse(code, nombre, pin) {
 
 /* ---------- Cómo juega cada uno cada minijuego. `nivel` de 0 (mal) a 2 (perfecto). ---------- */
 
-const jugarLinea = async nivel => {
-  for (let i = 0; i < 7 && await ev(`!!document.getElementById('btn-colocar')`); i++) {
-    await ev(`(()=>{
-      const actual = window.__jugando.p.mano[${i}];
-      const anios = [...document.querySelectorAll('.linea .carta')].map(c => Number(c.dataset.year));
-      let at = anios.filter(y => y < actual.year).length;
-      if (${nivel} === 0 || (${nivel} === 1 && ${i} % 3 === 2)) at = (at + 1) % (anios.length + 1);
-      document.querySelector('.hueco[data-at="' + at + '"]').click();
-      return 1;
-    })()`);
-    await sleep(60); await click('#btn-colocar'); await sleep(120);
+/** Cierra el veredicto de Línea (el acierto se cierra solo; el error espera un toque). */
+const cerrarVeredicto = async () => { await sleep(150); await ev(`(()=>{const h=document.getElementById('handoff');if(!h.hidden)h.click();return 1})()`); await sleep(380); };
+
+const jugarLinea = async (nivel, { arrastrar = false } = {}) => {
+  for (let k = 0; k < 12 && await ev(`!!document.querySelector('.hand .card')`); k++) {
+    // Elige la primera carta de la mano y calcula su ranura correcta con los años de la línea
+    const plan = await ev(`(()=>{
+      const b = document.querySelector('.hand .card');
+      const c = window.__jugando.p.mano.find(x => x.id === b.dataset.card);
+      const anios = [...document.querySelectorAll('.line .event')].map(e => Number(e.dataset.year));
+      let at = anios.filter(y => y < c.year).length;
+      if (${nivel} === 0 || (${nivel} === 1 && ${k} % 3 === 2)) at = (at + 1) % (anios.length + 1);
+      return JSON.stringify({ id: c.id, at });
+    })()`).then(JSON.parse);
+    if (arrastrar && k === 0) {
+      // El arrastre de verdad, con eventos de puntero (D-85): de la mano a la ranura
+      const [x0, y0, x1, y1] = await ev(`(()=>{const c=document.querySelector('.hand .card[data-card="${plan.id}"]').getBoundingClientRect();const s=document.querySelector('.line .slot[data-slot="${plan.at}"]').getBoundingClientRect();return [c.x+c.width/2,c.y+c.height/2,s.x+s.width/2,s.y+s.height/2]})()`);
+      // Hacia abajo, como un dedo: un desliz más lateral que vertical es scroll de la mano (D-38)
+      await b.arrastre(x0, y0, x0, y1 + 6);
+      if (!await ev(`!!document.querySelector('.line .slot.on .ghost')`)) console.log('  diagnóstico arrastre', JSON.stringify([x0, y0, x1, y1]), await ev(`JSON.stringify({h: innerHeight, sy: scrollY, handoff: document.getElementById('handoff').hidden, sel: document.querySelector('.hand .card.sel')?.dataset.card})`));
+      ok(await ev(`!!document.querySelector('.line .slot.on .ghost') && !document.getElementById('btn-colocar').disabled`), 'Línea Relámpago: arrastrar la carta a la línea la deja elegida, sin colocarla');
+    } else {
+      await ev(`document.querySelector('.hand .card[data-card="${plan.id}"]').click(); 1`); await sleep(40);
+      await ev(`document.querySelector('.line .slot[data-slot="${plan.at}"]').click(); 1`); await sleep(40);
+    }
+    await click('#btn-colocar'); await cerrarVeredicto();
   }
 };
 
-const teclear = async texto => { for (const k of texto) { await ev(`(()=>{const t=[...document.querySelectorAll('.tecla')].find(x=>x.dataset.k===${JSON.stringify(k)});t&&t.click();return 1})()`); await sleep(30); } };
+const teclaTyF = async texto => { for (const k of texto) { await ev(`(()=>{const t=[...document.querySelectorAll('.keypad button[data-d]')].find(x=>x.dataset.d===${JSON.stringify(k)});t&&t.click();return 1})()`); await sleep(25); } await click('.keypad .ok'); await sleep(120); };
 
 const jugarNumero = async nivel => {
   const secreto = await ev('window.__jugando.p.secreto');
   const cifras = secreto.length;
   const malos = ['0123456789'.split('').filter(d => !secreto.includes(d)).slice(0, cifras).join(''), secreto.split('').reverse().join('')];
   for (const intento of [...malos.slice(0, nivel === 2 ? 0 : nivel === 1 ? 1 : 2), secreto]) {
-    if (!await ev(`!!document.getElementById('btn-probar')`)) break;
-    await teclear(intento); await click('#btn-probar'); await sleep(120);
+    if (!await ev(`!!document.querySelector('.keypad .ok')`)) break;
+    await teclaTyF(intento);
+  }
+};
+
+const jugarLetras = async nivel => {
+  const secreto = await ev('window.__jugando.p.secreto');
+  const otras = 'QWERTYUIOPASDFGHJKLÑZXCVBNM'.split('').filter(l => !secreto.includes(l));
+  const malos = [otras.slice(0, 5).join(''), secreto.slice(1) + secreto[0]];
+  for (const intento of [...malos.slice(0, nivel === 2 ? 0 : nivel === 1 ? 1 : 2), secreto]) {
+    if (!await ev(`!!document.querySelector('.keypad .ok')`)) break;
+    await teclaTyF(intento);
   }
 };
 
@@ -100,35 +125,43 @@ const jugarAnio = async nivel => {
   const hitos = await ev('JSON.stringify(window.__jugando.p.hitos)').then(JSON.parse);
   for (const h of hitos) {
     const y = h.year + (nivel === 2 ? 0 : nivel === 1 ? 3 : 25);
-    if (y < 0) await ev(`document.querySelector('.tecla.ac').click(); 1`);
-    await teclear(String(Math.abs(y)));
-    await click('#btn-anio'); await sleep(80);
+    if (y < 0) await click('#btn-ac');
+    await teclaTyF(String(Math.abs(y)));
     if (await ev(`!!document.getElementById('btn-siguiente')`)) { await click('#btn-siguiente'); await sleep(80); }
   }
 };
 
-const jugarDudo = async nivel => {
-  const n = await ev('window.__jugando.p.manos.length');
-  for (let i = 0; i < n; i++) {
-    const mejor = await ev(`(async()=>{const m=await import('/copa/juegos/dudo.js');return m.creible(window.__jugando.p.manos[${i}])>=0.5?'creo':'dudo'})()`);
-    const e = nivel === 2 || (nivel === 1 && i % 2) ? mejor : (mejor === 'creo' ? 'dudo' : 'creo');
-    await click(`.opcion[data-e="${e}"]`); await sleep(40); await click('#btn-decidir'); await sleep(80);
-    if (await ev(`!!document.getElementById('btn-siguiente')`)) { await click('#btn-siguiente'); await sleep(60); }
+const tocarCasilla = sel => i => click(`${sel}[data-i="${i}"]`);
+
+const jugarReinas = async nivel => {
+  const p = await ev('JSON.stringify(window.__jugando.p)').then(JSON.parse);
+  const t = tocarCasilla('.rej');
+  // Cada error: la reina de la fila 0 bien puesta y una pegada en diagonal en la fila 1; después se sacan
+  const pegada = 1 * p.n + (p.sol[0] === 0 ? 1 : p.sol[0] - 1);
+  for (let e = 0; e < (nivel === 2 ? 0 : nivel === 1 ? 1 : 2); e++) {
+    await t(p.sol[0]); await t(p.sol[0]);   // marca → reina
+    await t(pegada); await t(pegada);       // marca → reina que choca
+    await t(pegada); await t(p.sol[0]);     // reina → vacío, las dos
   }
+  for (let r = 0; r < p.n; r++) { const i = r * p.n + p.sol[r]; await t(i); await t(i); }
+  await sleep(150);
 };
 
-const jugarSolitario = async nivel => {
-  if (nivel === 0) { await click('#btn-rendirse'); await sleep(150); return; }
-  const barcos = await ev(`(async()=>{const m=await import('/copa/juegos/solitario.js');const p=window.__jugando.p;const sol=m.solucion(p);return JSON.stringify([...sol.keys()].filter(i=>sol[i]&&!p.pistas.some(q=>q.r*p.n+q.c===i)))})()`).then(JSON.parse);
-  // nivel 1: primero se equivoca una vez (una casilla corrida), después lo arregla
-  if (nivel === 1) {
-    const vacia = await ev(`(()=>{const x=[...document.querySelectorAll('.sc')].find(c=>!c.disabled&&!${JSON.stringify(barcos)}.includes(Number(c.dataset.i)));return x?Number(x.dataset.i):-1})()`);
-    for (const i of [...barcos.slice(1), vacia]) { await click(`.sc[data-i="${i}"]`); await click(`.sc[data-i="${i}"]`); }
-    await click('#btn-revisar'); await sleep(100);
-    await click(`.sc[data-i="${vacia}"]`); // barco → vacío
-    await click(`.sc[data-i="${barcos[0]}"]`); await click(`.sc[data-i="${barcos[0]}"]`);
-  } else for (const i of barcos) { await click(`.sc[data-i="${i}"]`); await click(`.sc[data-i="${i}"]`); }
-  await click('#btn-revisar'); await sleep(150);
+const jugarTango = async nivel => {
+  const p = await ev('JSON.stringify(window.__jugando.p)').then(JSON.parse);
+  const t = tocarCasilla('.tan');
+  const valor = i => ev(`Number(document.querySelector('.tan[data-i="${i}"]').dataset.v)`);
+  const libres = p.sol.map((v, i) => i).filter(i => p.dadas[i] === undefined);
+  // Un error: el valor contrario dejado un momento en una casilla, que después se corrige
+  if (nivel < 2) { const i = libres[0]; await t(i); if (p.sol[i] === 1) await t(i); await click('.tan-grid'); }
+  for (const i of libres) for (let k = 0; k < 3 && await valor(i) !== p.sol[i]; k++) await t(i);
+  await sleep(150);
+};
+
+const jugarZip = async () => {
+  const sol = await ev('JSON.stringify(window.__jugando.p.sol)').then(JSON.parse);
+  for (const i of sol) await click(`.zc[data-i="${i}"]`);
+  await sleep(150);
 };
 
 const jugarConexiones = async nivel => {
@@ -144,28 +177,30 @@ const jugarConexiones = async nivel => {
 };
 
 const jugarFinal = async nivel => {
-  const rondas = { linea: jugarLinea, numero: jugarNumero, solitario: jugarSolitario, dudo: jugarDudo, anio: jugarAnio };
-  for (const r of ['linea', 'numero', 'solitario', 'dudo', 'anio']) {
+  const rondas = { linea: jugarLinea, numero: jugarNumero, reinas: jugarReinas, letras: jugarLetras, anio: jugarAnio };
+  for (const r of ['linea', 'numero', 'reinas', 'letras', 'anio']) {
     await click('#btn-ronda'); await sleep(200);
-    const p = await ev(`JSON.stringify(window.__jugando.p)`).then(JSON.parse);
     await ev(`window.__jugandoFinal = window.__jugando; window.__jugando = { p: window.__jugandoFinal.p.${r} }; 1`);
     await rondas[r](nivel);
     await ev('window.__jugando = window.__jugandoFinal; 1');
-    await click('#btn-fin'); await sleep(200);
-    void p;
+    await click('#btn-fin'); await sleep(250);
   }
 };
 
-const JUGAR = { linea: jugarLinea, numero: jugarNumero, anio: jugarAnio, dudo: jugarDudo, solitario: jugarSolitario, conexiones: jugarConexiones, final: jugarFinal };
+const JUGAR = { linea: jugarLinea, numero: jugarNumero, anio: jugarAnio, reinas: jugarReinas, letras: jugarLetras, zip: jugarZip, tango: jugarTango, conexiones: jugarConexiones, final: jugarFinal };
 
 async function jugarDia(d, nivel, { capturar = false, comodin = false } = {}) {
   await click(`[data-dia="${d}"]`); await sleep(300);
   if (comodin) { await click('#btn-comodin'); await sleep(300); }
   if (capturar) await revisarPantalla(`antes-${d}`);
   await click('#btn-empezar'); await sleep(400);
+  if (!await ev('!!__copa.estado.juego')) {
+    console.log('  diagnóstico día', d, await ev(`JSON.stringify({p:__copa.estado.pantalla, err:document.querySelector('.screen.active .form-error')?.textContent, btn:!!document.getElementById('btn-empezar'), texto:document.querySelector('.screen.active').innerText.slice(0,300)})`));
+    await b.shot(`fallo-dia${d}`);
+  }
   const id = await ev('__copa.estado.juego.id');
   await ev(`(async()=>{const {JUEGOS}=await import('/copa/juegos/index.js');window.__jugando={p:JUEGOS[${JSON.stringify(id)}].generar(__copa.estado.code, ${d})};return 1})()`);
-  await JUGAR[id](nivel);
+  await JUGAR[id](nivel, { arrastrar: capturar && id === 'linea' });
   if (capturar) { await revisarPantalla(`juego-${id}`); if (TOMAS[id]) await b.shot(TOMAS[id]); }
   await click('#btn-fin'); await sleep(700);
   return id;
@@ -270,9 +305,9 @@ await b.go('http://localhost:8765/', 1500);
 const tarjeta = await ev(`(()=>{const c=[...document.querySelectorAll('.game-card')].find(x=>x.textContent.includes('La Copa'));return JSON.stringify({soon:c.classList.contains('soon'),href:c.getAttribute('href'),rotulo:c.querySelector('.proximamente')?.textContent})})()`).then(JSON.parse);
 ok(tarjeta.soon && !tarjeta.href && tarjeta.rotulo === 'Próximamente', 'en el menú La Copa se ve con Próximamente y no se abre');
 await b.go('http://localhost:8765/labs/', 1500);
-ok(await ev(`document.querySelectorAll('.mini-juego').length`) === 7, 'el laboratorio ofrece los siete minijuegos');
+ok(await ev(`document.querySelectorAll('.mini-juego').length`) === 9, 'el laboratorio ofrece los nueve minijuegos (con Zip y Tango)');
 await b.shot('10-labs');
-for (const id of ['linea', 'numero', 'conexiones', 'solitario', 'dudo', 'anio', 'final']) {
+for (const id of ['linea', 'numero', 'conexiones', 'reinas', 'letras', 'zip', 'tango', 'anio', 'final']) {
   await b.go(`${BASE}?practica=${id}&prueba`, 1200); await preparar();
   await click('#btn-empezar'); await sleep(300);
   await ev(`(async()=>{const {JUEGOS}=await import('/copa/juegos/index.js');window.__jugando={p:JUEGOS['${id}'].generar(__copa.estado.juego.semilla, 1)};return 1})()`);
@@ -280,7 +315,8 @@ for (const id of ['linea', 'numero', 'conexiones', 'solitario', 'dudo', 'anio', 
   await click('#btn-fin'); await sleep(500);
   const r = await ev(`JSON.stringify({p:__copa.estado.pantalla, s:document.querySelector('.score-big')?.textContent})`).then(JSON.parse);
   ok(r.p === 'resultado', `práctica de ${id}: se juega completa (${r.s})`);
-  if (id === 'solitario') { await revisarPantalla('practica-resultado'); await b.shot('11-practica'); }
+  if (['reinas', 'zip', 'tango', 'letras'].includes(id)) await b.shot(`practica-${id}`);
+  if (id === 'reinas') { await revisarPantalla('practica-resultado'); await b.shot('11-practica'); }
 }
 // Un reporte desde la práctica
 await click('#btn-reporte'); await sleep(300);

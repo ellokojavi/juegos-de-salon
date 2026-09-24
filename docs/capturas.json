@@ -109,7 +109,7 @@
     "copa": {
       "archivo": "copa.mjs",
       "red": false,
-      "que": "una Copa de 7 días con tres jugadores y el reloj adelantado"
+      "que": "una Copa de 7 días con tres jugadores, el laboratorio y la práctica de cada minijuego"
     }
   },
   "capturas": [
@@ -606,30 +606,30 @@
     {
       "seccion": "copa",
       "imagen": "docs/screenshots/copa/02-numero.png",
-      "pie": "Day 2: the Number of the Day",
+      "pie": "Day 2: Bulls and Cows, guess the number",
       "guion": "copa",
       "toma": "02-numero"
     },
     {
       "seccion": "copa",
       "imagen": "docs/screenshots/copa/03-conexiones.png",
-      "pie": "Day 3: Connections, Chilean edition",
+      "pie": "Day 3: Connections, with red herrings",
       "guion": "copa",
       "toma": "03-conexiones"
     },
     {
       "seccion": "copa",
-      "imagen": "docs/screenshots/copa/04-solitario.png",
-      "pie": "Day 4: Battleship Solitaire",
+      "imagen": "docs/screenshots/copa/04-reinas.png",
+      "pie": "Day 4: Queens",
       "guion": "copa",
-      "toma": "04-solitario"
+      "toma": "04-reinas"
     },
     {
       "seccion": "copa",
-      "imagen": "docs/screenshots/copa/05-dudo.png",
-      "pie": "Day 5: Doubt it or buy it?",
+      "imagen": "docs/screenshots/copa/05-letras.png",
+      "pie": "Day 5: Bulls and Cows with letters",
       "guion": "copa",
-      "toma": "05-dudo"
+      "toma": "05-letras"
     },
     {
       "seccion": "copa",
