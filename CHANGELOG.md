@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.49.0 — 2026-09-23
+- **Zip:** cuando se acaba el tiempo, el reloj de arriba se detiene en el tiempo final (seguía
+  contando segundos) y la cuenta regresiva desaparece. Queda a la vista cuántos niveles resolviste.
+- **Tango:** los signos = y ≠ son más grandes y tienen colores distintos (celeste y rosado) (D-112).
+- **Fuera la barra "Modo de prueba"** de todas las pantallas, y el paso "Simular una copa" del
+  laboratorio: las demos cubren lo mismo (D-112).
+- **Todos los minijuegos puntúan de 0 a 100** (D-113), para que se lean parejos.
+- **Las copas nuevas van en hora del Pacífico** (Los Ángeles), y Administrar dice la zona.
+- "Invitar al grupo" solo antes de que parta la copa; "Tus días" pasa a **Calendario**.
+
 ## 0.48.0 — 2026-09-23
 - **El admin de una copa nueva** (D-110): al crearla abre Administrar con una guía para invitar y
   esperar a los competidores. Se puede **cerrar y reabrir la inscripción** y **mover el inicio a

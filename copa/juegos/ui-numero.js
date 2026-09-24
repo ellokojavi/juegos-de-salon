@@ -77,4 +77,4 @@ export function montar(raiz, ctx) {
   dibujar();
 }
 
-export const resultado = (e, max = motor.MAX_INTENTOS) => ({ s: motor.puntaje(e, max), t: motor.tarjeta(e), resumen: `${e.resuelto ? e.usados : 'X'}/${max}` });
+export const resultado = (e, max = motor.MAX_INTENTOS) => ({ s: motor.puntaje(e, max), t: motor.tarjeta(e), resumen: `${motor.puntaje(e, max)}/100` });

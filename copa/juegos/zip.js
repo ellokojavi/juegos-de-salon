@@ -168,5 +168,7 @@ export const finPartida = j => j.usado >= TIEMPO_MS;
 /**
  * El puntaje de Zip son los niveles resueltos en los tres minutos.
  */
-export const puntaje = j => j.hechos || 0;
+/** De 0 a 100 (D-113): 10 por nivel resuelto, hasta 100. */
+export const PUNTOS_NIVEL = 10;
+export const puntaje = j => Math.min(100, PUNTOS_NIVEL * (j.hechos || 0));
 export const tarjeta = j => `〰️ ${'🟩'.repeat(j.hechos || 0)}${j.hechos ? '' : '⬛'}`;

@@ -37,14 +37,14 @@ test('número: cifras distintas, mismo para todos, puntaje de 10 a 0', () => {
   const p = { cifras: 4, secreto: '1234' };
   const e1 = numero.estado(p, ['1234']);
   assert.ok(e1.resuelto && e1.fin);
-  assert.equal(numero.puntaje(e1), 10);
+  assert.equal(numero.puntaje(e1), 100);
   const e2 = numero.estado(p, ['5678', '1243']);
   assert.equal(e2.fin, false);
   assert.equal(numero.tarjeta(e2), '⚪⚪⚪⚪\n🟢🟢🟡🟡');
   const e3 = numero.estado(p, Array(10).fill('5678'));
   assert.ok(e3.fin && !e3.resuelto);
   assert.equal(numero.puntaje(e3), 0);
-  assert.equal(numero.puntaje(numero.estado(p, [...Array(9).fill('5678'), '1234'])), 1);
+  assert.equal(numero.puntaje(numero.estado(p, [...Array(9).fill('5678'), '1234'])), 10);
 });
 
 test('temas: línea, años y final distintos', () => {
@@ -69,7 +69,7 @@ test('línea: 10 cartas de años separados, jugadas en cualquier orden', () => {
   assert.deepEqual(e.marcas, [true, false, true]);
   assert.deepEqual(e.linea.map(x => x.year), [1900, 1950, 1960, 2000]);
   assert.ok(e.fin && !e.mano.length);
-  assert.equal(linea.puntaje(e), 2);
+  assert.equal(linea.puntaje(e), 67); // 2 de 3, de 0 a 100 (D-113)
   assert.equal(linea.tarjeta(e), '🟩🟥🟩');
   assert.equal(e.historia[1].entre[0].year, 1950); // la 1960 iba después de 1950
   // Una carta repetida o que no está en la mano no cuenta
@@ -91,7 +91,7 @@ test('año: margen según antigüedad y puntos', () => {
   assert.notEqual(p.tema, linea.generar('KQRST', 1).tema);
   const e = anio.estado(p, p.hitos.map(h => h.year));
   assert.ok(e.fin);
-  assert.equal(anio.puntaje(e), 600);
+  assert.equal(anio.puntaje(e), 100); // el promedio de los seis, de 0 a 100 (D-113)
   assert.equal(anio.anioLabel(-44), '44 a. C.');
 });
 
@@ -228,7 +228,8 @@ test('zip: solución única, trazo y niveles', () => {
   assert.equal(zip.nivel('KQRST', 1, 0).n, 4);
   assert.equal(zip.nivel('KQRST', 1, 20).n, 7);
   for (let k = 1; k < zip.TAMANOS.length; k++) assert.ok(zip.TAMANOS[k] >= zip.TAMANOS[k - 1]);
-  assert.equal(zip.puntaje({ hechos: 4 }), 4);
+  assert.equal(zip.puntaje({ hechos: 4 }), 40);
+  assert.equal(zip.puntaje({ hechos: 14 }), 100);
   assert.equal(zip.TIEMPO_MS, 180000);
 });
 
@@ -273,7 +274,7 @@ test('letras: palabras válidas, pistas por letra y puntaje', () => {
   assert.equal(letras.tarjeta(e).split('\n')[1], '🟨🟨🟨🟨🟨');
 });
 
-test('final: cinco rondas, de 0 a 500', () => {
+test('final: cinco rondas, promedio de 0 a 100', () => {
   const p = final.generar('KQRST', 7);
   assert.equal(p.linea.mano.length, 3);
   assert.equal(p.numero.secreto.length, 3);
@@ -288,7 +289,7 @@ test('final: cinco rondas, de 0 a 500', () => {
     letras: letras.estado(p.letras, [p.letras.secreto]),
     anio: anio.estado(p.anio, p.anio.hitos.map(h => h.year)),
   };
-  assert.equal(final.puntaje(perfecto), 500);
+  assert.equal(final.puntaje(perfecto), 100);
   assert.equal(final.puntaje({}), 0);
   assert.equal(final.tarjeta(perfecto), '⏳100 🔢100 👑100 🔤100 📅100');
 });
@@ -315,7 +316,7 @@ test('final: cinco rondas, de 0 a 500', () => {
     assert.ok(l.length && l.every(x => typeof x === 'string' && x.length > 10 && !x.includes('{') && !x.includes('undefined')), id);
   }
   assert.match(desglose('tango', casos.tango, { T, fmt, mmss }).join(' '), /se restan 20 .*1 pista, que resta 15/);
-  assert.match(desglose('zip', casos.zip, { T, fmt, mmss }).join(' '), /3 niveles.*2:05/);
+  assert.match(desglose('zip', casos.zip, { T, fmt, mmss }).join(' '), /3 niveles.*30 puntos.*2:05/);
   assert.deepEqual(desglose('reinas', { fin: false, errores: 0 }, { T, fmt, mmss }), [T.bdNotSolved]);
   n++;
 }
@@ -323,6 +324,14 @@ test('final: cinco rondas, de 0 a 500', () => {
 test('la copa no usa la temática de Brasil (D-111)', () => {
   const codigos = [...CODIGOS, ...Array.from({ length: 200 }, (_, i) => 'ABCDEFGHJKLMNPQRSTUVWXYZ'.slice(i % 19, i % 19 + 5))];
   for (const c of codigos) assert.ok(!Object.values(temasDeLaCopa(c)).includes('brasil'), c);
+});
+
+test('todos los minijuegos puntúan de 0 a 100 (D-113)', () => {
+  const tope = { linea: linea.puntaje({ aciertos: 9, marcas: Array(9).fill(true) }), numero: numero.puntaje({ resuelto: true, usados: 1 }),
+    conexiones: conexiones.puntaje({ resueltos: [0, 1, 2, 3], errores: 0 }), reinas: reinas.puntaje({ fin: true, ms: 1000 }),
+    letras: letras.puntaje({ encontradas: 5, resuelto: true, usados: 1 }), zip: zip.puntaje({ hechos: 99 }),
+    tango: tango.puntaje({ fin: true, errores: 0, pistas: 0 }), anio: anio.puntaje({ filas: [{}, {}], total: 200 }) };
+  for (const [id, s] of Object.entries(tope)) assert.equal(s, 100, id);
 });
 
 console.log(`copa/juegos: ${n} tests OK`);

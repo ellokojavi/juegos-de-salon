@@ -338,7 +338,7 @@ Spec and design: [docs/juegos/julepe.md](docs/juegos/julepe.md)
 
 **In the lab for now** (D-101): the menu shows it as *coming soon*, and it is tested at [`/labs/`](https://juegosdesalon.cl/labs/), where you can practice each minigame on its own, simulate a whole cup on one computer, or run a real 3-day cup with close friends. A 🐞 button sends bug reports and comments with their context, no login needed.
 
-Not a game but a **tournament that lasts a week**. Someone creates a cup and shares the link with the group; everyone joins with their name and a 4-digit PIN, from any phone or computer. Every day a different minigame opens, **the same one for everybody**, and it can be played **once**. Your score only matters against the others: the day hands out points by position (10, 8, 6, 5, 4, 3, 2, 1), so seven games with seven different scales weigh the same and one crushing day does not decide the cup (D-94). The final day is worth double, everyone gets one ×2 wildcard, and whoever has the most points on day 7 lifts the cup.
+Not a game but a **tournament that lasts a week**. Someone creates a cup and shares the link with the group; everyone joins with their name and a 4-digit PIN, from any phone or computer. Every day a different minigame opens, **the same one for everybody**, and it can be played **once**. Your score only matters against the others: the day hands out points by position (10, 8, 6, 5, 4, 3, 2, 1), so every day weighs the same (and every minigame scores 0 to 100 anyway, D-113) and one crushing day does not decide the cup (D-94). The final day is worth double, everyone gets one ×2 wildcard, and whoever has the most points on day 7 lifts the cup.
 
 It borrows what makes daily puzzles work (Wordle, Connections): same challenge for everyone, once a day, comparable scores, little luck, and a **share card** that shows how you did without giving the answer away. The minigames reuse the engines, decks and screens this app already had where it can:
 
@@ -362,7 +362,7 @@ The lab also has **〰️ Zip** and **☀️ Tango** to try out. The cup does no
 - **Every day has a practice round first** (D-103): same mechanics, different content, and it does not count. Starting the real one shows a **3-to-1 countdown** and the board and clock appear only on "¡A jugar!" (D-105). When you finish, the result **explains how the score was calculated**, line by line (D-106).
 - **A new cup opens on the admin screen** with a short guide: share the invite, wait for people to join (they can before it starts), close sign-ups if you like, and move the start to today or tomorrow while nobody has played yet (D-110). The lab has **eight live demos** of the cup, as a player and as the admin.
 - **Bug reports need no account** (D-104): the 🐞 form posts straight to `feedback/` and remembers your name on that device; `node tools/reportes.mjs` reads them back.
-- **Spanish only for now** (D-98): the content is Chilean and does not translate. A 3-day cup exists for testing with `?tres` (D-100), and `?prueba` plays a whole cup with no Firebase and a clock you can fast-forward.
+- **Spanish only for now** (D-98): the content is Chilean and does not translate. A 3-day cup exists for testing with `?tres` (D-100), and `?prueba` plays a cup with no Firebase, which is what the lab demos and the end-to-end scripts use.
 
 Spec and design: [docs/juegos/copa.md](docs/juegos/copa.md)
 
