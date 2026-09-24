@@ -388,7 +388,7 @@ const ES = {
   shareTableMissing: '⏳ ¡Día {d} en curso! Falta que jueguen: {names}.',
   shareFinalText: '🏁 *La Copa: {copa}* · Terminó\n\n🏆 {campeon}\n\n{podio}',
   shareFinalChamp: 'Ganó {name} con {pts} puntos.',
-  shareCardText: '🏆 *{copa}* · Día {d}\n{emoji} {resumen}',
+  shareCardText: '🏆 *La Copa: {copa}* · Día {d}\n{emoji} {juego}\n👤 {name} · {resumen}',
   untilTomorrow: 'mañana a medianoche',
   untilToday: 'hoy a medianoche',
 
