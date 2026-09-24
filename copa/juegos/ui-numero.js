@@ -1,60 +1,75 @@
 /**
- * 🔢 El Número del Día — pantalla. Las jugadas son los intentos, como texto.
+ * 🔢 Toque y Fama: adivina el número — pantalla. Es la de Toque y Fama (D-102): el teclado
+ * compartido con notas (toque largo para tachar una cifra), el tablero de intentos y las
+ * pistas de famas y toques, con sus textos. Los estilos son los de assets/css/teclado.css.
+ *
+ * Las jugadas son `{ i: intentos, n: cifras tachadas }`. Una lista suelta (copas guardadas
+ * antes de las notas) se lee como los intentos.
  */
 import * as motor from './numero.js';
+import { teclado, CIFRAS } from '../../assets/js/teclado.js';
+import { LOCALES as TYF_LOCALES } from '../../toque-y-fama/rules.js';
 
-/** `append` que descarta los hijos nulos, como `el()` (sin esto, un null se escribe como texto). */
-const poner = (nodo, ...hijos) => nodo.append(...hijos.flat().filter(x => x !== null && x !== undefined && x !== false));
+export const TYF = TYF_LOCALES.es;
+
+export const leerJugadas = j => (Array.isArray(j) ? { i: j.slice(), n: [] } : { i: (j?.i || []).slice(), n: (j?.n || []).slice() });
+
+/** Las pistas como en el tablero de Toque y Fama: "2F 1T", "🎯 4F" o "0". */
+export function pistas(el, g, largo, grande = false) {
+  const wrap = el('div', { class: grande ? 'reply-clue' : 'clue' });
+  const F = n => (grande ? `${n} ${n === 1 ? TYF.fama : TYF.famas}` : `${n}${TYF.famaShort}`);
+  const Tq = n => (grande ? `${n} ${n === 1 ? TYF.toque : TYF.toques}` : `${n}${TYF.toqueShort}`);
+  if (g.famas === largo) wrap.append(el('span', { class: 'f' }, `🎯 ${F(g.famas)}`));
+  else {
+    if (g.famas) wrap.append(el('span', { class: 'f' }, F(g.famas)));
+    if (g.toques) wrap.append(el('span', { class: 't' }, Tq(g.toques)));
+    if (!g.famas && !g.toques) wrap.append(el('span', { class: 'z' }, grande ? TYF.none : '0'));
+  }
+  return wrap;
+}
+
+/** El tablero de intentos de Toque y Fama, de un solo jugador. `valor` dibuja el intento. */
+export function tablero(el, { filas, largo, titulo, valor = f => f.v }) {
+  const tries = n => (n === 1 ? TYF.tryOne : TYF.tryMany);
+  const lista = el('ol', {}, ...filas.map(f => el('li', { class: f.famas === largo ? 'hit' : '' }, valor(f), pistas(el, f, largo))));
+  return el('div', { class: 'board turn board--solo' },
+    el('h3', {}, titulo),
+    el('div', { class: 'count' }, filas.length ? `${filas.length} ${tries(filas.length)}` : TYF.noGuesses),
+    filas.length ? lista : el('div', { class: 'empty' }, '—'));
+}
 
 export function montar(raiz, ctx) {
   const { p, T, fmt, el, SFX, vibrate } = ctx;
   const max = ctx.max || motor.MAX_INTENTOS;
-  let jugadas = Array.isArray(ctx.jugadas) ? ctx.jugadas.slice() : [];
-  let escrito = '';
+  const J = leerJugadas(ctx.jugadas);
+  const notas = new Set(J.n);
+  const guardar = () => ctx.guardar({ i: J.i, n: [...notas] });
 
   const dibujar = () => {
-    const e = motor.estado(p, jugadas, max);
+    const e = motor.estado(p, J.i, max);
     raiz.innerHTML = '';
     const caja = el('div', { class: 'stack numero-juego' });
-    const historial = el('div', { class: 'historial' }, e.filas.map((f, i) => el('div', { class: 'intento' + (f.famas === p.cifras ? ' ok' : '') },
-      el('span', { class: 'n' }, `${i + 1}.`),
-      el('span', { class: 'v' }, f.v),
-      el('span', { class: 'r' }, `${f.famas === 1 ? T.fama1 : fmt(T.famas, { n: f.famas })} · ${f.toques === 1 ? T.toque1 : fmt(T.toques, { n: f.toques })}`),
-      el('span', { class: 'bolitas' }, '🟢'.repeat(f.famas) + '🟡'.repeat(f.toques)))));
-    poner(caja, historial);
     if (e.fin) {
-      poner(caja, el('div', { class: 'aviso ' + (e.resuelto ? 'bien' : 'mal') }, e.resuelto ? `🎉 ${T.solved}` : fmt(T.notSolved, { v: p.secreto })),
+      caja.append(el('div', { class: 'aviso ' + (e.resuelto ? 'bien' : 'mal') }, e.resuelto ? `🎉 ${T.solved}` : fmt(T.notSolved, { v: p.secreto })),
         el('button', { class: 'btn btn--yellow', id: 'btn-fin', onClick: () => { SFX.tap(); ctx.terminar(e); } }, ctx.textoFin || T.seeResults));
-      poner(raiz, caja);
-      return;
+    } else {
+      const quedan = max - e.usados;
+      caja.append(el('p', { class: 'muted center', style: 'margin:0' }, quedan === 1 ? T.tryLeft1 : fmt(T.triesLeft, { n: quedan })),
+        teclado({
+          largo: p.cifras, teclas: CIFRAS, submitLabel: TYF.guess, notes: notas, onNotesChange: guardar,
+          valido: v => motor.valido(v, p.cifras),
+          puede: (v, d) => !v.includes(d) && v.length < p.cifras,
+          onSubmit: v => {
+            J.i.push(v); guardar();
+            const u = motor.estado(p, J.i, max).filas.at(-1);
+            if (u.famas === p.cifras) { SFX.win(); vibrate([30, 50, 30]); } else SFX.reveal();
+            dibujar();
+          },
+        }),
+        el('p', { class: 'block-hint' }, TYF.blockHint));
     }
-    const quedan = max - e.usados;
-    poner(caja, el('p', { class: 'muted center', style: 'margin:0' }, quedan === 1 ? T.tryLeft1 : fmt(T.triesLeft, { n: quedan })));
-    poner(caja, el('div', { class: 'entry' }, Array.from({ length: p.cifras }, (_, i) => el('div', { class: 'box' + (escrito[i] ? ' filled' : '') + (i === escrito.length ? ' active' : '') }, escrito[i] || ''))));
-    const teclado = el('div', { class: 'teclado' });
-    for (const d of ['1', '2', '3', '4', '5', '6', '7', '8', '9', '⌫', '0', '']) {
-      if (!d) { teclado.append(el('span')); continue; }
-      teclado.append(el('button', {
-        type: 'button', class: 'tecla' + (d === '⌫' ? ' borrar' : ''), 'data-k': d,
-        disabled: d === '⌫' ? !escrito.length : escrito.includes(d) || escrito.length >= p.cifras,
-        onClick: () => { SFX.tap(); escrito = d === '⌫' ? escrito.slice(0, -1) : escrito + d; dibujar(); },
-      }, d));
-    }
-    poner(caja, teclado);
-    const listo = motor.valido(escrito, p.cifras);
-    poner(caja, el('button', {
-      class: 'btn btn--yellow', id: 'btn-probar', disabled: !listo,
-      onClick: () => {
-        jugadas.push(escrito);
-        escrito = '';
-        ctx.guardar(jugadas);
-        const e2 = motor.estado(p, jugadas, max);
-        const u = e2.filas[e2.filas.length - 1];
-        if (u.famas === p.cifras) { SFX.win(); vibrate([30, 50, 30]); } else if (u.famas || u.toques) SFX.reveal(); else SFX.splash();
-        dibujar();
-      },
-    }, listo ? fmt(T.guess, { v: escrito }) : fmt(T.typeDigits, { n: p.cifras })));
-    poner(raiz, caja);
+    caja.append(tablero(el, { filas: e.filas, largo: p.cifras, titulo: T.yourGuesses, valor: f => el('span', { class: 'val' }, f.v) }));
+    raiz.append(caja);
   };
   dibujar();
 }

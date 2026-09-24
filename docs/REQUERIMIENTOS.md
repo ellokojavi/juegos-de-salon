@@ -104,11 +104,11 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | LIG-14 | Tabla general con flechas contra el día anterior y quién falta por jugar hoy. | ✅ v0.42 |
 | LIG-15 | Resultado del día con puntaje, posición provisoria y tarjeta para compartir. | ✅ v0.42 |
 | LIG-16 | Podio final con confeti y medallas. | ✅ v0.42 |
-| LIG-17 | ⏳ Línea Relámpago. | ✅ v0.42 |
-| LIG-18 | 🔢 El Número del Día. | ✅ v0.42 |
-| LIG-19 | 🔗 Conexiones con 12 grillas chilenas. | ✅ v0.42 |
-| LIG-20 | ⚓ Batalla Naval: Solitario con solución única garantizada. | ✅ v0.42 |
-| LIG-21 | 🎲 ¿Dudo o le creo? puntuado por probabilidad. | ✅ v0.42 |
+| LIG-17 | ⏳ Línea Relámpago, con 10 hitos y la mano, las ranuras y el arrastre de Línea de Tiempo (D-102). | ✅ v0.44 |
+| LIG-18 | 🔢 Toque y Fama: adivina el número, con el teclado, las notas y el tablero de Toque y Fama. | ✅ v0.44 |
+| LIG-19 | 🔗 Conexiones con 12 grillas difíciles, de temas generales y con distractores. | ✅ v0.44 |
+| LIG-20 | ~~⚓ Batalla Naval: Solitario~~ reemplazado por 👑 Reinas, con solución única (D-102). | ✅ v0.44 |
+| LIG-21 | ~~🎲 ¿Dudo o le creo?~~ reemplazado por 🔤 Toque y Fama con letras (D-102). | ✅ v0.44 |
 | LIG-22 | 📅 ¿En qué año?. | ✅ v0.42 |
 | LIG-23 | 🏁 La Gran Final. | ✅ v0.42 |
 | LIG-24 | Admin: renombrar, sacar y cambiar PIN de jugadores. | ✅ v0.42 |
@@ -132,6 +132,8 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | LIG-42 | Reportar un problema o dejar un comentario con su contexto, desde la práctica, el tablero y el resultado. | ✅ v0.43 (se leen en la consola de Firebase) |
 | LIG-43 | Laboratorio `/labs/`: La Copa sale del menú (Próximamente) y se prueba ahí, con la Copa de 3 días. | ✅ v0.43 |
 | LIG-44 | El panel del dueño muestra los reportes. | ⏳ pendiente |
+| LIG-45 | 〰️ Zip y ☀️ Tango en el laboratorio, con solución única, para decidir si entran al calendario. | ✅ v0.44 |
+| LIG-46 | El teclado, el tablero y la línea se comparten con Toque y Fama y Línea de Tiempo (`assets/js/teclado.js`, `assets/css/teclado.css`, `assets/css/linea.css`). | ✅ v0.44 |
 
 ## Requerimientos no funcionales
 

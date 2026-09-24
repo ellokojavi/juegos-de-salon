@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.44.0 — 2026-09-23
+- **La Copa reusa la UX de los juegos que ya existen** (D-102), a pedido del dueño después de
+  probarla en el laboratorio:
+  - **⏳ Línea Relámpago** se juega como el modo solo de Línea de Tiempo: una mano de 9 cartas en
+    el orden que quieras (10 hitos en total), las ranuras, **el arrastre** de la carta a la línea,
+    el botón que dice qué coloca y el veredicto que explica dónde iba.
+  - **🔢 Toque y Fama: adivina el número** (antes "El Número del Día") usa el teclado, las
+    **notas** (toque largo para tachar una cifra) y el tablero de Toque y Fama. ¿En qué año? usa el
+    mismo teclado.
+- **Nuevos minijuegos:** **👑 Reinas** (el Queens de LinkedIn) reemplaza a Batalla Naval:
+  Solitario el día 4, y **🔤 Toque y Fama con letras** (una palabra de 5 letras con famas, toques y
+  cada letra pintada, como Wordle) reemplaza a ¿Dudo o le creo? el día 5. **〰️ Zip** y **☀️ Tango**
+  quedan en el laboratorio para probarlos. Los tres juegos de lógica tienen solución única.
+- **Conexiones, más difícil:** 12 grillas nuevas de temas generales, con distractores y juegos de
+  palabras (esconden un animal, empiezan con una nota musical, tienen ojos pero no ven).
+- **Compartido:** el teclado de Toque y Fama pasó a `assets/js/teclado.js`, y los estilos de la
+  línea y del teclado a `assets/css/linea.css` y `assets/css/teclado.css`. Línea de Tiempo y Toque
+  y Fama se ven y funcionan igual que antes.
+
 ## 0.43.0 — 2026-09-23
 - **La Copa pasa al laboratorio** (D-101). En el menú su tarjeta sigue a la vista, apagada y con
   "Próximamente". Se prueba en **`/labs/`**, una página fuera del menú con tres pasos: cada

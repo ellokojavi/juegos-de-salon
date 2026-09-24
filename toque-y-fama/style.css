@@ -48,53 +48,11 @@
 .waiting .dots::after { content: '…'; animation: dots 1.2s steps(4) infinite; }
 @keyframes dots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } }
 
-/* Keypad. Las cifras van en Nunito 900, no en Bangers: ahí el 1 y el 7 se confunden (D-30) */
-.entry { display: flex; justify-content: center; gap: 10px; margin: 10px 0 14px; }
-.entry .box {
-  width: clamp(48px, 15vw, 64px); aspect-ratio: 3 / 4; border-radius: 14px; background: var(--card); color: var(--card-ink);
-  font: 900 clamp(1.7rem, 7.6vw, 2.4rem)/1 var(--font-num); font-variant-numeric: tabular-nums; display: grid; place-items: center;
-  box-shadow: 0 6px 0 rgba(0,0,0,0.35); transition: transform 0.1s;
-}
-.entry .box.filled { animation: pop 0.25s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
-.entry .box.hidden-digit { background: linear-gradient(160deg, var(--pink), var(--purple)); color: transparent; }
-.entry .box.active { outline: 3px solid var(--cyan); }
-.keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 340px; margin: 0 auto; }
-.keypad button {
-  border: 0; border-radius: 14px; background: var(--glass); border: 1px solid var(--glass-border); color: var(--ink);
-  font: 900 1.7rem var(--font-num); font-variant-numeric: tabular-nums; padding: 12px 0; min-height: 58px; cursor: pointer; transition: transform 0.08s, background 0.15s;
-}
-.keypad button:active { transform: scale(0.94); background: rgba(255,255,255,0.2); }
-.keypad button:disabled { opacity: 0.25; }
-.keypad button { -webkit-touch-callout: none; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
-.keypad button.blocked {
-  opacity: 1; color: rgba(255,255,255,0.35); background: rgba(255, 46, 136, 0.12); border-color: rgba(255, 46, 136, 0.5);
-  text-decoration: line-through; text-decoration-color: var(--pink); text-decoration-thickness: 4px; position: relative;
-}
-.keypad button.blocked::after { content: '🚫'; position: absolute; top: 4px; right: 6px; font-size: 0.8rem; }
-.block-hint { margin: 10px auto 0; max-width: 360px; text-align: center; color: var(--muted); font-size: 0.8rem; font-weight: 700; line-height: 1.35; }
-.keypad button.ok { background: linear-gradient(180deg, var(--yellow), var(--orange)); color: #3a1200; border-color: transparent; box-shadow: 0 5px 0 #9a4a00; font-family: var(--font-display); font-size: 1.9rem; }
-.keypad button.ok:disabled { opacity: 0.4; box-shadow: none; }
-.keypad button.del { font-family: var(--font-body); font-weight: 900; font-size: 1.3rem; }
 
 /* Tablero */
 .status { text-align: center; margin: 6px 0 10px; }
 .status .who { font-family: var(--font-display); font-size: clamp(1.6rem, 7.5vw, 2.3rem); letter-spacing: 0.04em; text-shadow: 0 4px 0 rgba(0,0,0,0.35), 0 0 24px rgba(46, 230, 214, 0.5); }
 .status .sub { color: var(--muted); font-weight: 800; font-size: 0.9rem; }
-.boards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
-.board { background: var(--glass); border: 1px solid var(--glass-border); border-radius: 16px; padding: 10px; min-height: 120px; }
-.board.turn { border-color: var(--cyan); box-shadow: 0 0 0 2px rgba(46, 230, 214, 0.35); }
-.board h3 { margin: 0 0 6px; font-family: var(--font-display); font-size: 1.1rem; letter-spacing: 0.04em; text-transform: uppercase; text-align: center; }
-.board .count { color: var(--muted); font-size: 0.75rem; font-weight: 800; text-align: center; margin-bottom: 6px; }
-.board ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
-.board li { display: grid; grid-template-columns: auto 1fr; gap: 6px; align-items: center; background: rgba(0,0,0,0.25); border-radius: 10px; padding: 5px 8px; animation: slideUp 0.25s ease-out both; }
-.board li .val { font: 900 1rem var(--font-num); font-variant-numeric: tabular-nums; letter-spacing: 0.14em; }
-.board li .clue { display: flex; gap: 4px; flex-wrap: nowrap; justify-content: flex-end; }
-.board li .clue span { font-size: 0.78rem; font-weight: 900; padding: 3px 8px; border-radius: 999px; white-space: nowrap; font-family: var(--font-num); letter-spacing: 0.03em; }
-.board li .clue .f { background: var(--yellow); color: #3a1200; }
-.board li .clue .t { background: var(--cyan); color: #03302c; }
-.board li .clue .z { background: rgba(255,255,255,0.15); color: var(--muted); }
-.board li.hit { background: linear-gradient(90deg, rgba(255, 210, 63, 0.35), rgba(255, 46, 136, 0.35)); }
-.board .empty { color: var(--muted); font-size: 0.85rem; text-align: center; padding: 10px 0; }
 
 /* Resultado */
 .result-hero { text-align: center; padding: 2px 0 6px; }
@@ -104,12 +62,6 @@
 .secrets .s .n { font: 900 1.6rem var(--font-num); font-variant-numeric: tabular-nums; letter-spacing: 0.16em; color: var(--yellow); }
 .secrets .s small { display: block; color: var(--muted); font-weight: 800; }
 
-.reply-big { font: 900 clamp(2rem, 10vw, 2.8rem) var(--font-num); font-variant-numeric: tabular-nums; letter-spacing: 0.16em; color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35); }
-.reply-clue { display: flex; gap: 8px; justify-content: center; margin-top: 6px; }
-.reply-clue span { font-weight: 900; font-size: 1.2rem; padding: 8px 14px; border-radius: 999px; }
-.reply-clue .f { background: var(--yellow); color: #3a1200; }
-.reply-clue .t { background: var(--cyan); color: #03302c; }
-.reply-clue .z { background: rgba(255,255,255,0.15); }
 
 /* Recordatorio del número propio */
 .my-secret {
