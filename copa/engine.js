@@ -133,7 +133,7 @@ export function ventanas(inicio, dias, tz = ZONA) {
  * Lo que se guarda al crear una copa. `win` lleva las ventanas ya calculadas porque las
  * reglas de la base no saben de zonas horarias: comparan `now` contra estos números.
  */
-export function nuevaMeta({ nombre, dias, inicio, tz = ZONA, admin, creada }) {
+export function nuevaMeta({ nombre, dias, inicio, tz = ZONA, admin, creada, lab = false }) {
   if (!CALENDARIOS[dias]) throw new Error('modalidad');
   return {
     v: 1, name: limpiarNombre(nombre), days: dias, start: inicio, tz, admin,
@@ -142,6 +142,8 @@ export function nuevaMeta({ nombre, dias, inicio, tz = ZONA, admin, creada }) {
     // Las reglas de la base no suman ni convierten números a texto: lo que necesitan comparar
     // va ya calculado. `joinUntil` = cuándo empieza la final; `final` = el día de la final, como texto.
     joinUntil: medianoche(sumarDias(inicio, dias - 1), tz), final: String(dias),
+    // Una copa del laboratorio (D-115): su admin puede pasarla al día siguiente para probar
+    ...(lab ? { lab: true } : {}),
   };
 }
 
@@ -178,6 +180,15 @@ export function moverInicio(meta, inicio) {
     end: medianoche(sumarDias(inicio, meta.days), tz), joinUntil: medianoche(sumarDias(inicio, meta.days - 1), tz),
   };
 }
+
+/** Hasta cuántos días desde hoy se puede fijar el inicio de una copa (D-115). */
+export const MAX_DIAS_INICIO = 30;
+
+/**
+ * Solo en las copas del laboratorio (D-115): pasar al día siguiente es correr el inicio un día
+ * hacia atrás. Lo de hoy queda como ayer, en su día de gracia, y se abre el día siguiente.
+ */
+export const pasarDia = meta => moverInicio(meta, sumarDias(meta.start, -1));
 
 /** Nadie ha empezado ningún día: el inicio todavía se puede mover. */
 export const sinEmpezar = L => !Object.values(L?.started || {}).some(d => d && Object.keys(d).length);

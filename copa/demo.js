@@ -56,7 +56,7 @@ export function sembrar(nombre, { now, uid }) {
   if (!e) return null;
   const hoy = fechaEn(now, ZONA);
   const inicio = sumarDias(hoy, -e.inicio);
-  const meta = nuevaMeta({ nombre: 'Copa de la oficina', dias: 7, inicio, tz: ZONA, admin: 'cata01', creada: now - (e.inicio + 1) * 86400000 });
+  const meta = nuevaMeta({ nombre: 'Copa de la oficina', dias: 7, inicio, tz: ZONA, admin: 'cata01', creada: now - (e.inicio + 1) * 86400000, lab: true });
   const cal = CALENDARIOS[7];
   const jug = JUGADORES.slice(0, e.jugadores);
   const L = { meta, players: {}, started: {}, results: {}, wild: {}, _keys: {}, _seats: {} };
