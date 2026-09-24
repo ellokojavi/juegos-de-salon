@@ -27,6 +27,8 @@ const PUERTO = 8791;
 const ANCHO = 1200, ALTO = 630;
 
 const disponibles = GAMES.filter(g => g.available);
+// Un juego del laboratorio no va en la portada, pero sus links sí se comparten: lleva su tarjeta (D-101).
+const conTarjeta = GAMES.filter(g => g.available || g.labs);
 
 /**
  * Las tres puertas de entrada: la portada en español y las dos que dejan elegido el idioma
@@ -53,7 +55,7 @@ const portada = p => ({
   puerta: true,
 });
 
-const paginas = () => [...PUERTAS.map(portada), ...disponibles.map(g => ({
+const paginas = () => [...PUERTAS.map(portada), ...conTarjeta.map(g => ({
   lang: 'es',
   archivo: `${g.id}/index.html`,
   ruta: `/${g.id}/`,
