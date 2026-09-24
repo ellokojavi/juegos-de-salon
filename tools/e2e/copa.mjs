@@ -200,12 +200,12 @@ const jugarFinal = async nivel => {
 
 const JUGAR = { linea: jugarLinea, numero: jugarNumero, anio: jugarAnio, reinas: jugarReinas, letras: jugarLetras, zip: jugarZip, tango: jugarTango, conexiones: jugarConexiones, final: jugarFinal };
 
-/** La cuenta de 5 a 1 antes de cada juego (D-105): espera a que aparezca "¡A jugar!". */
+/** La cuenta de 3 a 1 antes de cada juego (D-105): espera a que aparezca "¡A jugar!". */
 async function esperarCuenta({ revisar = false } = {}) {
   if (revisar) {
     await sleep(150);
-    ok(await ev(`document.querySelector('#cuenta .cuenta-num')?.textContent`) === '5' && await ev(`document.querySelector('#jugar-body').children.length`) === 0,
-      'al empezar aparece la cuenta desde 5, con el tablero todavía oculto');
+    ok(await ev(`document.querySelector('#cuenta .cuenta-num')?.textContent`) === '3' && await ev(`document.querySelector('#jugar-body').children.length`) === 0,
+      'al empezar aparece la cuenta desde 3, con el tablero todavía oculto');
     await b.shot('cuenta');
   }
   for (let i = 0; i < 80 && !(await ev(`!document.getElementById('cuenta') || document.getElementById('cuenta').classList.contains('ya')`)); i++) await sleep(100);
@@ -352,6 +352,18 @@ for (const id of ['linea', 'numero', 'conexiones', 'reinas', 'letras', 'zip', 't
   await b.go(`${BASE}?practica=${id}&prueba${id === 'zip' ? '&zipSeg=12' : ''}`, 1200); await preparar();
   await click('#btn-empezar'); await sleep(300); await esperarCuenta();
   await ev(`(async()=>{const {JUEGOS}=await import('/copa/juegos/index.js');window.__jugando={p:JUEGOS['${id}'].generar(__copa.estado.juego.semilla, 1)};return 1})()`);
+  if (id === 'zip') {
+    // Llegar al último número sin cubrir todo: el aviso va bajo la grilla y no la mueve, y la cabeza no tapa el número
+    const z = await ev(`(async()=>{const z=await import('/copa/juegos/zip.js');const p=z.nivel(__copa.estado.juego.semilla,1,0);const N=p.n*p.n;
+      const ini=+Object.keys(p.numeros).find(k=>p.numeros[k]===1);let f=null,k=0;
+      const dfs=t=>{if(f||k++>200000)return;if(z.estado(p,t).faltan){f=t.slice();return}for(let i=0;i<N;i++)if(z.puedeIr(p,t,i)){t.push(i);dfs(t);t.pop()}};dfs([ini]);
+      const g=document.querySelector('.zip-grid');const top0=g.getBoundingClientRect().top;
+      for(const i of f)g.querySelector('.zc[data-i="'+i+'"]').dispatchEvent(new MouseEvent('click',{bubbles:true,detail:0}));
+      const h=g.querySelector('.zc.cabeza');const r={quieta:g.getBoundingClientRect().top===top0,aviso:!!document.querySelector('.zip-aviso .aviso.mal'),num:h.innerText.trim()!=='',tapa:getComputedStyle(h,'::after').content!=='none'};
+      g.querySelector('.zc[data-i="'+ini+'"]').dispatchEvent(new MouseEvent('click',{bubbles:true,detail:0}));return JSON.stringify(r)})()`).then(JSON.parse);
+    ok(z.aviso && z.quieta, 'Zip: el aviso de casillas faltantes aparece bajo la grilla sin moverla');
+    ok(z.num && !z.tapa, 'Zip: la cabeza del trazo sobre un número deja ver el número');
+  }
   if (id === 'reinas') {
     // El toque largo pone una X, con el puntero de verdad (D-103)
     const [x, y] = await ev(`(()=>{const r=document.querySelector('.rej[data-i="0"]').getBoundingClientRect();return [r.x+r.width/2,r.y+r.height/2]})()`);

@@ -55,11 +55,11 @@ export function montar(raiz, ctx) {
     caja.append(el('p', { class: 'muted center', style: 'margin:0' }, fmt(T.queensLeft, { m: reinas, n })));
     if (e.fin) {
       caja.append(el('div', { class: 'aviso bien' }, `🎉 ${T.queensOk}`),
-        el('button', { class: 'btn btn--yellow', id: 'btn-fin', onClick: () => { SFX.tap(); ctx.terminar(e); } }, ctx.textoFin || T.seeResults));
+        // El puntaje es el tiempo (D-107): la pantalla lo lee del reloj de la partida al terminar
+        el('button', { class: 'btn btn--yellow', id: 'btn-fin', onClick: () => { SFX.tap(); ctx.terminar({ ...e, ms: ctx.tiempo?.() }); } }, ctx.textoFin || T.seeResults));
     }
     caja.append(grilla, el('p', { class: 'block-hint' }, T.queensHint));
     if (e.conflictos.size && !e.fin) caja.append(el('div', { class: 'aviso mal' }, T.queensClash));
-    if (e.errores) caja.append(el('p', { class: 'muted center', style: 'margin:0' }, fmt(T.clashCount, { n: e.errores })));
     raiz.append(caja);
   };
   dibujar();
