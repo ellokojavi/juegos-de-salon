@@ -1338,3 +1338,32 @@ de Tiempo **menos Brasil** (`copa/juegos/mazos.js`). Las copas de prueba en curs
 de temática con esto (el sorteo es sobre una lista más corta).
 **Por qué:** la copa se juega entre chilenos y la historia de Brasil no la resuelve casi nadie
 que no sea brasileño.
+
+## D-112 · Sin la barra del modo de prueba, y signos de Tango que se distinguen
+**Fecha:** 2026-09-23 · **Estado:** vigente
+**Decisión:**
+- **Fuera la barra "Modo de prueba"** (+1 h, +1 día, Hoy) que aparecía abajo en `?prueba`. Servía
+  para simular una copa entera adelantando el reloj; las demos del laboratorio (D-110) muestran
+  cada punto de la copa sin eso, y el paso "Simular una copa" sale del laboratorio. El almacén de
+  prueba sigue teniendo `adelantar()` para los guiones de punta a punta.
+- **Tango:** las marcas entre casillas son más grandes y cada una tiene su color: **=** en celeste y
+  **≠** en rosado. Antes eran iguales salvo por la raya y casi no se distinguían.
+- **Zip:** al acabarse el tiempo, el reloj de arriba se congela en el tiempo final
+  (`ctx.pararReloj()`) y la cuenta regresiva del nivel desaparece.
+**Por qué:** la barra confundía al probar (nadie sabía para qué era), y un signo que no se lee a
+la primera hace que el tablero parezca imposible.
+
+## D-113 · Todos los minijuegos de 0 a 100, la hora del Pacífico, y "Invitar" solo antes de partir
+**Fecha:** 2026-09-23 · **Estado:** vigente
+**Decisión:**
+- **Todos los minijuegos puntúan de 0 a 100**: Línea (la parte de cartas bien puestas), el número
+  (100 menos 10 por intento extra), ¿En qué año? y la final (el promedio de sus hitos o rondas) y
+  Zip (10 por nivel, hasta 100) se suman a los que ya iban de 0 a 100. Lo que decide la copa sigue
+  siendo el lugar de cada día (D-94), así que ningún día pesaba más que otro; pero "2/10" al lado
+  de "90/100" se leía como una ventaja, y ahora todos se leen igual.
+- **Las copas nuevas usan la hora del Pacífico** (`America/Los_Angeles`), donde vive el dueño. La
+  zona va en `meta.tz`, así que las copas ya creadas siguen con la de Chile. Administrar dice en
+  qué zona van los días ("hora del Pacífico (Los Ángeles, California)").
+- **"Invitar al grupo" sale del tablero cuando la copa ya partió**: el admin lo sigue teniendo en
+  Administrar (todavía se puede entrar hasta la final). "Tus días" pasa a llamarse **Calendario**.
+**Por qué:** lo que se ve tiene que contar la misma historia que las reglas.

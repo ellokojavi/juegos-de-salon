@@ -22,7 +22,9 @@ export const MIN_JUGADORES = 1;
 export const MAX_JUGADORES = 10;
 export const NOMBRE_MAX = 20;
 export const DIA_MS = 24 * 60 * 60 * 1000;
-export const ZONA = 'America/Santiago';
+// La hora de las copas nuevas (D-113): la del Pacífico, donde está el dueño. Cada copa guarda la
+// suya en `meta.tz`, así que las ya creadas siguen con la hora de Chile.
+export const ZONA = 'America/Los_Angeles';
 
 /** Código de copa: 5 letras sin las ambiguas (I, O). 24⁵ ≈ 7,9 millones. */
 export const LETRAS = 'ABCDEFGHJKLMNPQRSTUVWXYZ';

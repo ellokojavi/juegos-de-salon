@@ -18,7 +18,7 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
 
 | Regla | Detalle |
 |---|---|
-| Días | El día 1 parte a las 00:00 del día de inicio, hora de Chile. Cada día termina a las 23:59. |
+| Días | El día 1 parte a las 00:00 del día de inicio, en la zona de la copa (`meta.tz`: hora del Pacífico en las nuevas, D-113; hora de Chile en las anteriores). Cada día termina a las 23:59. |
 | Día de gracia | Un día se puede jugar ese día o el siguiente, con puntaje completo. La final no tiene gracia: la copa cierra a las 23:59 del último día, y ahí vence también la gracia del penúltimo. |
 | Un intento | "Cómo se juega" no cuenta. El intento empieza al tocar **Empezar**; recargar retoma el mismo intento (C-6). |
 | Puntos del día | Por posición entre quienes jugaron: 10-8-6-5-4-3-2-1-1-1. Manda el puntaje del minijuego; a igual puntaje, el menor **tiempo activo** (D-95). Empate total: comparten la mejor posición. |
@@ -34,15 +34,17 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
 Todo el contenido de un día sale de una semilla `código:día:sal` (D-97): es idéntico para todos
 sin que nada viaje por la red.
 
-| Día | Minijuego | Puntaje | Reusa |
+Todos los minijuegos puntúan **de 0 a 100** (D-113). Igual lo que decide la copa es el lugar de cada día.
+
+| Día | Minijuego | Puntaje (0 a 100) | Reusa |
 |---|---|---|---|
-| 1 | ⏳ Línea Relámpago: 10 hitos, 9 en la mano en cualquier orden | aciertos, 0 a 9 | la mano, las ranuras, el arrastre y el veredicto de Línea de Tiempo |
-| 2 | 🔢 Toque y Fama: adivina el número. 4 cifras, 10 intentos | 11 − intentos, 0 si no | el teclado con notas, el tablero y las pistas de Toque y Fama |
+| 1 | ⏳ Línea Relámpago: 10 hitos, 9 en la mano en cualquier orden | 100 × aciertos / 9 | la mano, las ranuras, el arrastre y el veredicto de Línea de Tiempo |
+| 2 | 🔢 Toque y Fama: adivina el número. 4 cifras, 10 intentos | 100 − 10 × (intentos − 1), 0 si no | el teclado con notas, el tablero y las pistas de Toque y Fama |
 | 3 | 🔗 Conexiones: 16 palabras, 4 grupos, 4 errores | 25 × grupo − 5 × error | 12 grillas difíciles (`juegos/grillas.js`) |
 | 4 | 👑 Reinas: una por fila, columna y zona, sin tocarse | por tiempo: 100 hasta 30 s, 10 a los 5 min (D-107) | nuevo (Queens de LinkedIn) |
 | 5 | 🔤 Toque y Fama: Palabra. 5 letras, 8 intentos | 10 × letra encontrada en su lugar (una vez por lugar) + si la saca 50 − 5 × (intentos − 1) (D-108) | lo mismo que el día 2, con letras |
-| 6 | 📅 ¿En qué año?: 6 hitos | 100 por hito, baja con la distancia | mazos de Línea de Tiempo y teclado de Toque y Fama |
-| 7 | 🏁 La Gran Final: 5 rondas cortas | 0 a 100 por ronda, 0 a 500 | los cinco motores |
+| 6 | 📅 ¿En qué año?: 6 hitos | promedio de los hitos (100 cada uno, baja con la distancia) | mazos de Línea de Tiempo y teclado de Toque y Fama |
+| 7 | 🏁 La Gran Final: 5 rondas cortas | promedio de las rondas (0 a 100 cada una) | los cinco motores |
 
 Recién creada, la copa abre en **Administrar** con una guía para invitar (D-110). Ahí el admin
 comparte los mensajes, **cierra o reabre la inscripción** y **mueve el inicio a hoy o mañana**

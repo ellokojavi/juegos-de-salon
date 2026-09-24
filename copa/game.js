@@ -87,6 +87,8 @@ function avisoError(caja, texto) {
 }
 
 const fechaLarga = (ms, tz = ZONA) => new Intl.DateTimeFormat('es-CL', { timeZone: tz, weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(ms)).replace(',', '');
+/** El nombre de la zona horaria de una copa, para decirlo en palabras (D-113). */
+const zonaTexto = tz => T.zones[tz] || fmt(T.zoneOther, { tz });
 const fechaCorta = (ms, tz = ZONA) => new Intl.DateTimeFormat('es-CL', { timeZone: tz, weekday: 'short', day: 'numeric' }).format(new Date(ms));
 
 function faltaPara(ms) {
@@ -206,7 +208,7 @@ function crearCopa() {
   poner(body, 
     el('div', { class: 'panel' }, nombre.nodo,
       el('div', { class: 'field' }, el('label', {}, T.fMode), modo.nodo),
-      el('div', { class: 'field' }, el('label', {}, T.fStart), inicio.nodo, el('small', { class: 'muted' }, T.startHint))),
+      el('div', { class: 'field' }, el('label', {}, T.fStart), inicio.nodo, el('small', { class: 'muted' }, fmt(T.startHint, { zona: zonaTexto(ZONA) })))),
     el('div', { class: 'panel' }, yo.nodo, pin1.nodo, pin2.nodo, el('small', { class: 'muted' }, T.pinHint)),
     err, boton,
     el('button', { class: 'btn btn--ghost btn--sm', onClick: () => portada() }, '‹ ' + T.menu.replace('‹ ', '')),
@@ -530,7 +532,8 @@ function tablero() {
     el('h1', { class: 'display display--md rainbow' }, `🏆 ${meta.name}`),
     el('p', { class: 'lead', style: 'margin:0' }, estadoTxt),
     el('div', { class: 'btn-row' },
-      el('button', { class: 'btn btn--ghost btn--sm', id: 'btn-invitar', onClick: () => { SFX.tap(); invitar(); } }, T.shareInvite),
+      // Invitar tiene sentido antes de que parta; después, el admin lo tiene en Administrar
+      d === 0 ? el('button', { class: 'btn btn--ghost btn--sm', id: 'btn-invitar', onClick: () => { SFX.tap(); invitar(); } }, T.shareInvite) : null,
       esAdmin() ? el('button', { class: 'btn btn--ghost btn--sm', id: 'btn-admin', onClick: () => { SFX.tap(); admin(); } }, T.adminTab) : null)));
 
   if (terminada(meta, now)) poner(body, podio());
@@ -717,6 +720,7 @@ function admin() {
     poner(body, el('div', { class: 'panel stack', id: 'admin-inicio' },
       el('p', { class: 'lead', style: 'margin:0' }, T.startTitle),
       el('p', { class: 'muted', style: 'margin:0' }, fmt(d >= 1 ? T.startWas : T.startIs, { fecha: fechaLarga(meta.win[1].a, meta.tz) })),
+      el('p', { class: 'muted', id: 'admin-zona', style: 'margin:0' }, fmt(T.startZone, { zona: zonaTexto(meta.tz) })),
       alerta ? el('div', { class: 'aviso' }, alerta) : null,
       el('div', { class: 'btn-row' }, mover(hoy, T.startTodayBtn, 'btn-inicio-hoy'), mover(manana, T.startTomorrowBtn, 'btn-inicio-manana'))));
   }
@@ -894,6 +898,8 @@ async function jugar(d) {
     p, jugadas, T, fmt, el, SFX, vibrate,
     guardar(j) { jugadas = j; persistir(); },
     tiempo: () => Math.round(reloj.leer(rel, ahora())),
+    // Un juego que termina solo (Zip, al acabarse el tiempo) congela el reloj de arriba en su tiempo final
+    pararReloj() { clearInterval(S.reloj); cron.textContent = fmt(T.timer, { t: mmss(reloj.leer(rel, ahora())) }); },
     terminar(estado) {
       const ms = Math.round(reloj.leer(rel, ahora()));
       clearInterval(S.reloj);
@@ -1061,6 +1067,7 @@ async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false } = {}) {
     textoFin: ensayo ? T.trialEnd : undefined,
     guardar() { /* no se guarda: no cuenta */ },
     tiempo: () => Math.round(reloj.leer(rel, Date.now())),
+    pararReloj() { clearInterval(S.reloj); cron.textContent = fmt(T.timer, { t: mmss(reloj.leer(rel, Date.now())) }); },
     terminar(estado) {
       clearInterval(S.reloj);
       document.removeEventListener('visibilitychange', S.visibilidad);
@@ -1207,19 +1214,6 @@ function reportar(extra = {}) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Modo de prueba: el reloj                                            */
-/* ------------------------------------------------------------------ */
-
-function barraDePrueba() {
-  const barra = el('div', { class: 'prueba-barra' },
-    el('span', {}, T.testBar),
-    el('button', { onClick: () => store?.adelantar(60 * 60 * 1000) }, T.testHour),
-    el('button', { onClick: () => store?.adelantar(24 * 60 * 60 * 1000) }, T.testDay),
-    el('button', { onClick: () => store?.reiniciarReloj() }, T.testNow));
-  document.body.append(barra);
-}
-
-/* ------------------------------------------------------------------ */
 /* Inicio                                                              */
 /* ------------------------------------------------------------------ */
 
@@ -1232,9 +1226,9 @@ $('#sound-slot').append(soundToggle());
 // Mientras La Copa esté en el laboratorio, "volver" es volver ahí y no al menú (D-101)
 $('#btn-menu').setAttribute('href', '../labs/');
 $('#btn-menu').textContent = T.backToLabsShort;
-if (PRUEBA) barraDePrueba();
-// Los reportes que no alcanzaron a enviarse se reintentan al abrir (D-109)
-else import('./reportes.js').then(m => m.reenviarPendientes()).catch(() => { /* la próxima vez */ });
+// Los reportes que no alcanzaron a enviarse se reintentan al abrir (D-109). En el modo de prueba
+// no hay barra para adelantar el reloj (D-112): las demos y los guiones lo hacen por su cuenta.
+if (!PRUEBA) import('./reportes.js').then(m => m.reenviarPendientes()).catch(() => { /* la próxima vez */ });
 
 // Gancho de solo lectura para las pruebas (C-14)
 window.__copa = {

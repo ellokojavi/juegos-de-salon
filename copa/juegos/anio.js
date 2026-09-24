@@ -39,7 +39,8 @@ export function estado(p, respuestas) {
   return { filas, fin: filas.length >= p.hitos.length, actual: p.hitos[filas.length] || null, total: filas.reduce((s, f) => s + f.pts, 0) };
 }
 
-export const puntaje = e => e.total;
+/** De 0 a 100 (D-113): el promedio de los hitos, que valen hasta 100 cada uno. */
+export const puntaje = e => (e.filas.length ? Math.round(e.total / e.filas.length) : 0);
 
 export const tarjeta = e => e.filas.map(f => marca(f.hito.year, f.r)).join('');
 

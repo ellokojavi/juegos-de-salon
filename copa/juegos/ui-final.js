@@ -90,5 +90,5 @@ export function montar(raiz, ctx) {
 
 export const resultado = rondas => {
   const s = final.puntaje(rondas);
-  return { s, t: final.tarjeta(rondas), resumen: `${s}/500` };
+  return { s, t: final.tarjeta(rondas), resumen: `${s}/100` };
 };
