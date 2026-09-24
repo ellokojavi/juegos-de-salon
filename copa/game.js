@@ -295,6 +295,7 @@ function entrar({ mantener = false } = {}) {
   const jug = activos(L());
   const info = d === 0
     ? fmt(T.inviteInfo, { modo: modoTexto(meta), fecha: fechaLarga(meta.win[1].a, meta.tz), n: jug.length, max: MAX_JUGADORES })
+    : terminada(meta, now) ? fmt(T.inviteEnded, { modo: modoTexto(meta), k: jug.length })
     : fmt(T.inviteStarted, { modo: modoTexto(meta), d: Math.min(d, meta.days), n: meta.days, k: jug.length, max: MAX_JUGADORES });
   const err = el('div', { class: 'form-error', role: 'alert' });
   const puedeEntrar = inscripcionAbierta(meta, now, L().closed) && jug.length < MAX_JUGADORES;
@@ -374,7 +375,7 @@ function entrar({ mantener = false } = {}) {
       el('h1', { class: 'display display--lg rainbow' }, meta.name),
       el('p', { class: 'lead' }, info)),
     el('div', { class: 'cal-mini' }, CALENDARIOS[meta.days].map(j => el('span', { title: MINIJUEGOS[j].nombre }, MINIJUEGOS[j].emoji))),
-    puedeEntrar ? null : el('p', { class: 'muted center' }, L().closed && inscripcionAbierta(meta, now) ? T.closedByAdmin : T.closedJoin),
+    puedeEntrar ? null : el('p', { class: 'muted center' }, terminada(meta, now) ? T.closedEnded : L().closed && inscripcionAbierta(meta, now) ? T.closedByAdmin : T.closedJoin),
     tabs, caja,
   );
   if (!puedeEntrar || entrarModo === 'inscrito') $('#tab-inscrito').click();
@@ -548,7 +549,7 @@ function tablero() {
     el('p', { class: 'lead', style: 'margin:0' }, estadoTxt),
     el('div', { class: 'btn-row' },
       // Invitar tiene sentido antes de que parta; después, el admin lo tiene en Administrar
-      d === 0 ? el('button', { class: 'btn btn--ghost btn--sm', id: 'btn-invitar', onClick: () => { SFX.tap(); invitar(); } }, T.shareInvite) : null,
+      d === 0 && !L().closed ? el('button', { class: 'btn btn--ghost btn--sm', id: 'btn-invitar', onClick: () => { SFX.tap(); invitar(); } }, T.shareInvite) : null,
       esAdmin() ? el('button', { class: 'btn btn--ghost btn--sm', id: 'btn-admin', onClick: () => { SFX.tap(); admin(); } }, T.adminTab) : null)));
 
   if (terminada(meta, now)) poner(body, podio());
@@ -639,7 +640,7 @@ function mensajeHoy() {
   const d = diaActual(meta, now);
   if (d === 0) {
     const J1 = MINIJUEGOS[juegoDelDia(meta, 1)];
-    return fmt(T.shareBeforeText, { copa: meta.name, fecha: fechaLarga(meta.win[1].a, meta.tz), juego: `${J1.emoji} ${J1.nombre}` });
+    return fmt(Lc.closed ? T.shareBeforeClosed : T.shareBeforeText, { copa: meta.name, fecha: fechaLarga(meta.win[1].a, meta.tz), juego: `${J1.emoji} ${J1.nombre}` });
   }
   const hoy = Math.min(d, meta.days);
   const J = MINIJUEGOS[juegoDelDia(meta, hoy)];
@@ -714,9 +715,11 @@ function admin({ forzar = false } = {}) {
   } }, rotulo);
   poner(body, el('div', { class: 'panel stack' },
     el('p', { class: 'lead', style: 'margin:0' }, T.adminMsgs),
-    msg(T.msgInvite, () => fmt(T.shareInviteText, { copa: meta.name, dias: meta.days, fecha: fechaLarga(meta.win[1].a, meta.tz) }), 'msg-invitar'),
+    // Cada mensaje, solo cuando tiene sentido (D-116): la invitación antes de partir y con la
+    // inscripción abierta; la tabla parcial mientras se juega; el resumen, al terminar
+    d === 0 && !Lc.closed ? msg(T.msgInvite, () => fmt(T.shareInviteText, { copa: meta.name, dias: meta.days, fecha: fechaLarga(meta.win[1].a, meta.tz) }), 'msg-invitar') : null,
     !terminada(meta, now) ? msg(T.msgToday, mensajeHoy, 'msg-hoy') : null,
-    d >= 1 ? msg(T.msgTable, mensajeTabla, 'msg-tabla') : null,
+    d >= 1 && !terminada(meta, now) ? msg(T.msgTable, mensajeTabla, 'msg-tabla') : null,
     terminada(meta, now) ? msg(T.msgFinal, mensajeFinal, 'msg-final') : null));
 
   // El inicio se puede mover a hoy o mañana mientras nadie haya jugado (D-110)
@@ -811,7 +814,8 @@ function admin({ forzar = false } = {}) {
         await store.cambiarPin(S.code, pid, await hashPin(S.code, pid, v));
         toast(fmt(T.pinDone, { name: p.name, pin: v }));
       }) }, T.newPin),
-      esElAdmin ? null : el('button', { class: 'mini-btn', onClick: async () => {
+      // Terminada la copa, sacar a alguien cambiaría el podio: ya no se ofrece
+      esElAdmin || terminada(meta, now) ? null : el('button', { class: 'mini-btn', onClick: async () => {
         if (!p.out && !confirm(fmt(T.kickConfirm, { name: p.name }))) return;
         try { await store.sacar(S.code, pid, !p.out); } catch (e) { avisoError(err, errorDe(e)); }
       } }, p.out ? T.unkick : T.kick));

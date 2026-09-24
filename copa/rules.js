@@ -153,6 +153,7 @@ const ES = {
   inviteTitle: 'Te invitaron a una copa',
   inviteInfo: '{modo} · parte el {fecha} · {n} de {max} jugadores',
   inviteStarted: '{modo} · va en el día {d} de {n} · {k} de {max} jugadores',
+  inviteEnded: '{modo} · terminó · {k} jugadores',
   imNew: 'Soy nuevo',
   imIn: 'Ya estoy inscrito',
   pickName: 'Toca tu nombre',
@@ -161,6 +162,7 @@ const ES = {
   joining: 'Entrando…',
   lateJoin: 'Los días que ya cerraron quedan con 0 puntos, pero todavía puedes pelear la copa.',
   closedByAdmin: 'El admin cerró la inscripción de esta copa. Si ya estás inscrito, entra con tu nombre y tu PIN.',
+  closedEnded: 'Esta copa ya terminó. Si participaste, entra con tu nombre y tu PIN para ver el podio y la tabla final.',
   closedJoin: 'Esta copa ya está en la final y no recibe más jugadores. Si ya estás inscrito, entra con tu nombre y tu PIN.',
 
   // Errores
@@ -352,6 +354,7 @@ const ES = {
   shareTodayText: '🏆 *{copa}* · Día {d} de {n}\n\n🎮 Hoy toca {juego}.\n⏰ Tienes hasta {hasta} para jugarlo.',
   shareTodayGrace: '🕐 Si te falta el de ayer ({juego}), todavía lo puedes jugar hasta hoy a medianoche.',
   shareTodayMissing: '👀 Faltan por jugar hoy: {names}.',
+  shareBeforeClosed: '🏆 *{copa}*\n\n📅 Parte el {fecha}.\n🎮 El primer juego es {juego}.\n🔑 Entra con tu nombre y tu PIN en este link:',
   shareBeforeText: '🏆 *{copa}*\n\n📅 Parte el {fecha}.\n🎮 El primer juego es {juego}.\n✍️ Si todavía no te inscribes, entra con tu nombre y un PIN de 4 números en este link:',
   shareTableText: '📊 *Tabla de la {copa}* después del día {d}\n\n{tabla}',
   shareTableMissing: '⏳ Todavía no juegan el día {d}: {names}.',

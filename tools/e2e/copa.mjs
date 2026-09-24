@@ -472,6 +472,11 @@ await b.go(`${BASE}?prueba&demo=sin-jugar`, 1500); await preparar();
 ok(/nadie ha jugado/.test(await ev(`document.getElementById('admin-inicio')?.innerText || ''`)), 'demo sin-jugar: el admin ve que partió sin nadie y puede moverla');
 await b.go(`${BASE}?prueba&demo=jugador`, 1500); await preparar();
 ok(!!await ev(`document.querySelector('[data-dia="4"]')`), 'demo jugador: el día 4 se puede jugar');
+// Cada mensaje solo cuando tiene sentido (D-116)
+await b.go(`${BASE}?prueba&demo=admin`, 1500); await preparar();
+ok(!await ev(`document.getElementById('msg-invitar')`) && !!await ev(`document.getElementById('msg-tabla')`) && !await ev(`document.getElementById('msg-final')`), 'día 4: sin invitación ni resumen final, con la tabla parcial');
+await b.go(`${BASE}?prueba&demo=nueva`, 1500); await preparar();
+ok(!!await ev(`document.getElementById('msg-invitar')`) && !await ev(`document.getElementById('msg-tabla')`), 'antes de partir: con invitación y sin tabla');
 // Copa de prueba: el admin la pasa al día siguiente (D-115)
 await b.go(`${BASE}?prueba&demo=admin`, 1500); await preparar();
 const inicioLab = await ev('__copa.estado.copa.meta.start');

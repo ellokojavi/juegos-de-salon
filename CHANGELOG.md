@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.52.0 — 2026-09-24
+- **Cada cosa en su momento** (D-116): la invitación solo antes de partir y con la inscripción
+  abierta; la tabla parcial solo mientras se juega; sin "Sacar" con la copa terminada; el
+  recordatorio no invita a inscribirse si está cerrada; el link de una copa terminada dice que
+  terminó.
+
 ## 0.51.0 — 2026-09-24
 - **Inicio de la copa:** hoy, mañana u **otra fecha** con un calendario (hasta 30 días), al crearla
   y en Administrar (D-115).
