@@ -968,12 +968,11 @@ function resultado(d, { recien = false, det = null } = {}) {
       el('h2', { class: 'display display--md' }, fmt(T.resultTitle, { d, juego: J.nombre })),
       el('p', { class: 'muted', style: 'margin:0' }, T.yourScore),
       el('div', { class: 'score-big' }, mio.r || String(mio.s)),
-      el('p', { class: 'muted' }, `⏱ ${mmss(mio.ms)}`)),
+      ...bajoElPuntaje(mio.t, mio.ms)),
     el('p', { class: 'lead center' }, cerrado(meta, d, now) || terminada(meta, now)
       ? fmt(T.finalPos, { pos: `${yo.pos}º`, n, pts: yo.pts * x })
       : fmt(T.provisional, { pos: `${yo.pos}º`, n })),
     explicacion(J, { s: mio.s, ms: mio.ms, det, x, final: esFinal(meta, d) }),
-    el('pre', { class: 'tarjeta' }, mio.t || ''),
     el('button', { class: 'btn btn--cyan', id: 'btn-tarjeta', onClick: () => { SFX.tap(); compartir(tarjeta); } }, T.shareCard),
     el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.dayTable),
       el('div', { class: 'tabla' }, ranking.map(j => el('div', { class: 'fila' + (j.pid === S.yo ? ' yo' : '') },
@@ -984,6 +983,17 @@ function resultado(d, { recien = false, det = null } = {}) {
     el('button', { class: 'btn btn--yellow', id: 'btn-volver', onClick: () => { SFX.tap(); S.verDia = null; tablero(); } }, T.toBoard),
     botonReporte({ juego: id, dia: d }),
   );
+}
+
+/**
+ * Lo que va bajo el puntaje (D-114): la tarjeta para compartir y el tiempo, pero el tiempo solo
+ * si la tarjeta no lo trae ya (la de Reinas es "👑 ⏱ 1:23 ✅"): se veía dos veces.
+ */
+function bajoElPuntaje(t, ms) {
+  return [
+    t ? el('pre', { class: 'tarjeta' }, t) : null,
+    String(t || '').includes('⏱') ? null : el('p', { class: 'muted' }, `⏱ ${mmss(ms)}`),
+  ];
 }
 
 /**
@@ -1119,9 +1129,8 @@ function resultadoPractica(id, semilla, r) {
       el('h2', { class: 'display display--md' }, J.nombre),
       el('p', { class: 'muted', style: 'margin:0' }, T.yourScore),
       el('div', { class: 'score-big' }, r.resumen || String(r.s)),
-      el('p', { class: 'muted' }, `⏱ ${mmss(r.ms)}`)),
+      ...bajoElPuntaje(r.t, r.ms)),
     explicacion(J, { s: r.s, ms: r.ms, det: r.det, copa: false }),
-    el('pre', { class: 'tarjeta' }, r.t || ''),
     el('p', { class: 'muted center' }, fmt(T.practiceSeed, { semilla })),
     el('a', { class: 'btn btn--yellow', id: 'btn-otra', href: otra }, T.practiceAgain),
     el('a', { class: 'btn btn--cyan btn--sm', id: 'btn-repetir', href: `${otra}&semilla=${semilla}` }, T.practiceSame),

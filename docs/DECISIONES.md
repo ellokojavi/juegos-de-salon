@@ -1367,3 +1367,13 @@ la primera hace que el tablero parezca imposible.
 - **"Invitar al grupo" sale del tablero cuando la copa ya partió**: el admin lo sigue teniendo en
   Administrar (todavía se puede entrar hasta la final). "Tus días" pasa a llamarse **Calendario**.
 **Por qué:** lo que se ve tiene que contar la misma historia que las reglas.
+
+## D-114 · La tarjeta bajo el puntaje, y TORRE en vez de DAMA
+**Fecha:** 2026-09-24 · **Estado:** vigente
+**Decisión:** De los primeros reportes del laboratorio (`node tools/reportes.mjs`):
+- En el resultado del día y de la práctica, **la tarjeta para compartir va justo bajo el
+  puntaje**, y la línea del tiempo (⏱) se muestra solo si la tarjeta no lo trae: en Reinas
+  (`👑 ⏱ 1:23 ✅`) el tiempo aparecía dos veces.
+- Conexiones: el grupo *Piezas de ajedrez* cambia **DAMA** por **TORRE**. "Dama" es el nombre del
+  reglamento, pero en Chile se dice "reina", y un grupo que no se reconoce parece un error. REINA no
+  se usa para no cruzarse con el minijuego Reinas.
