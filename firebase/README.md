@@ -77,6 +77,13 @@ propio árbol porque duran una semana y las salas mueren a la media hora (D-89).
 - **Eliminar la copa** (D-117): el celular sentado como admin puede borrar de una vez
   `torneos/<code>`, `torneoKeys/<code>` y `torneoSeats/<code>` (solo el nodo entero, nunca a medias).
 
+## La Copa: el link propio (`torneoAlias`, D-121)
+
+`torneoAlias/<alias>` = `{ code, hasta }`. Se lee sin cuenta (solo dice a qué código apunta). Se
+escribe si no existe, si venció (`hasta < now`) o si apunta a la misma copa, y siempre por el
+admin de esa copa y con `meta/alias` igual al alias; se borra solo por ese admin. `hasta` es el fin
+de la copa más 7 días.
+
 ## Reportes (`feedback`)
 
 El botón 🐞 de La Copa (D-101, D-104) escribe en `feedback/<id>` **por REST y sin cuenta**:

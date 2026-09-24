@@ -7,10 +7,13 @@
  * `?prueba` en la URL. Imita las reglas del servidor que importan para jugar: escribir una
  * sola vez, la ventana de cada día, el PIN y el comodín antes de empezar.
  */
-import { MAX_JUGADORES, faltaGente, claveNombre, esCodigo, abierto, puedeComodin, inscripcionAbierta, sinEmpezar } from './engine.js';
+import { aliasHasta, MAX_JUGADORES, faltaGente, claveNombre, esCodigo, abierto, puedeComodin, inscripcionAbierta, sinEmpezar } from './engine.js';
 
 const KEY = 'juegos-de-salon:copa:prueba';
 const RELOJ = 'juegos-de-salon:copa:prueba:reloj';
+const ALIASES = 'juegos-de-salon:copa:prueba:alias';
+const leerAlias = () => { try { return JSON.parse(localStorage.getItem(ALIASES) || '{}'); } catch (_) { return {}; } };
+const guardarAlias = a => { try { localStorage.setItem(ALIASES, JSON.stringify(a)); } catch (_) { /* nada */ } };
 
 const falla = code => Object.assign(new Error(code), { code });
 
@@ -77,12 +80,22 @@ export function createLocalStore({ uid = null } = {}) {
       return cambiar(db => {
         if (!esCodigo(code)) throw falla('codigo');
         if (db[code]) throw falla('ocupado');
+        // El link propio: tomado si apunta a otra copa y no venció (D-121)
+        if (meta.alias) {
+          const al = leerAlias();
+          const x = al[meta.alias];
+          if (x && x.hasta > now() && x.code !== code) throw falla('alias');
+          al[meta.alias] = { code, hasta: aliasHasta(meta) };
+          guardarAlias(al);
+        }
         db[code] = {
           meta, players: { [pid]: { name, at } }, started: {}, results: {}, wild: {},
           _keys: { [pid]: pinHash }, _seats: { [pid]: { [yo]: true } },
         };
       });
     },
+
+    async alias(a) { return leerAlias()[a] || null; },
 
     escuchar(code, cb) {
       const f = () => cb(publica(leerTodo()[code]));
@@ -161,6 +174,7 @@ export function createLocalStore({ uid = null } = {}) {
       return cambiar(db => {
         const L = copa(db, code);
         if (!esAdmin(L)) throw falla('permiso');
+        if (L.meta.alias) { const al = leerAlias(); delete al[L.meta.alias]; guardarAlias(al); }
         delete db[code];
       });
     },
@@ -185,6 +199,7 @@ export function createLocalStore({ uid = null } = {}) {
         if (L.meta.lab && !sinEmpezar(L) && faltaGente(L)) throw falla('faltan');
         if (!L.meta.lab && meta.win[1].b <= now()) throw falla('ventana');
         L.meta = { ...meta, createdAt: L.meta.createdAt };
+        if (meta.alias) { const al = leerAlias(); al[meta.alias] = { code, hasta: aliasHasta(meta) }; guardarAlias(al); }
       });
     },
 
