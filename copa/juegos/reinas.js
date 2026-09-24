@@ -145,9 +145,18 @@ export function tocar(marcas, j) {
  * El estado a partir de las jugadas, en orden. Poner una reina que choca con otra se cuenta (el
  * tablero lo muestra en rojo en el acto), pero ya no cuesta puntos: puntúa el tiempo (D-107).
  */
+/** Rendirse (D-110): una jugada más, que termina el tablero sin resolverlo y muestra la solución. */
+export const RENDIRSE = 'R';
+
 export function estado(p, jugadas) {
   let marcas = new Array(p.n * p.n).fill(VACIO);
   let errores = 0;
+  if (jugadas.includes(RENDIRSE)) {
+    // La solución a la vista: una reina por fila, en la columna de la solución
+    const sol = new Array(p.n * p.n).fill(VACIO);
+    p.sol.forEach((col, r) => { sol[r * p.n + col] = REINA; });
+    return { marcas: sol, errores, fin: true, rendido: true, conflictos: new Set() };
+  }
   for (const j of jugadas) {
     const antes = conflictos(p, marcas).size;
     marcas = tocar(marcas, j);
@@ -167,6 +176,6 @@ export function puntosPorTiempo(ms) {
   const t = Math.min(Math.max(ms || 0, RAPIDO_MS), LENTO_MS);
   return Math.round(100 - (90 * (t - RAPIDO_MS)) / (LENTO_MS - RAPIDO_MS));
 }
-export const puntaje = e => (e.fin ? puntosPorTiempo(e.ms) : 0);
+export const puntaje = e => (e.fin && !e.rendido ? puntosPorTiempo(e.ms) : 0);
 const reloj = ms => { const s = Math.round((ms || 0) / 1000); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
-export const tarjeta = e => (e.fin ? `👑 ⏱ ${reloj(e.ms)} ✅` : '👑 ❌');
+export const tarjeta = e => (e.rendido ? '👑 🏳️' : e.fin ? `👑 ⏱ ${reloj(e.ms)} ✅` : '👑 ❌');

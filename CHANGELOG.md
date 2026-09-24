@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.48.0 — 2026-09-23
+- **El admin de una copa nueva** (D-110): al crearla abre Administrar con una guía para invitar y
+  esperar a los competidores. Se puede **cerrar y reabrir la inscripción** y **mover el inicio a
+  hoy o a mañana** mientras nadie haya jugado. "Mensajes para los competidores" y Renombrar al lado
+  del nombre.
+- **Demos en el laboratorio**: ocho vistas de la copa ya en marcha, de jugador y de admin.
+- **Reinas**: se puede rendir (dos toques; muestra la solución y vale 0).
+- **La Gran Final**: sin cuenta regresiva, y "Siguiente ronda" debajo del tablero en todas las rondas.
+- **Conexiones**: los grupos resueltos con los colores y el vidrio de la app.
+- **Sin la temática de Brasil** en la copa (D-111).
+- **Paso manual:** volver a publicar `firebase/database.rules.json` (inscripción cerrada y mover el inicio).
+
 ## 0.47.0 — 2026-09-23
 - **🔤 Toque y Fama: Palabra** (antes "con letras", D-108): cada letra que encuentras en su lugar
   suma 10 puntos, una sola vez por lugar; sacar la palabra suma 50 más, menos 5 por cada intento
