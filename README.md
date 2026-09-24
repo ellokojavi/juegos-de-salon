@@ -361,6 +361,7 @@ The lab also has **〰️ Zip** and **☀️ Tango** to try out. The cup does no
 - **The admin plays too**, and can rename, remove or re-PIN players and share ready-made messages with the group: the invite, **today's reminder** (with who is still missing), the partial table and the final summary (D-99).
 - **Every day has a practice round first** (D-103): same mechanics, different content, and it does not count. Starting the real one shows a **3-to-1 countdown** and the board and clock appear only on "¡A jugar!" (D-105). When you finish, the result **explains how the score was calculated**, line by line (D-106).
 - **A new cup opens on the admin screen** with a short guide: share the invite, wait for people to join (they can before it starts), close sign-ups if you like, and move the start to today or tomorrow while nobody has played yet (D-110). The lab has **eight live demos** of the cup, as a player and as the admin.
+- **A cup can have its own link** (D-121): `juegosdesalon.cl/copa/?pirata` instead of a 5-letter code. It is an alias, unique while the cup lasts and free again a week after it ends.
 - **Bug reports need no account** (D-104): the 🐞 form posts straight to `feedback/` and remembers your name on that device; `node tools/reportes.mjs` reads them back.
 - **Spanish only for now** (D-98): the content is Chilean and does not translate. A 3-day cup exists for testing with `?tres` (D-100), and `?prueba` plays a cup with no Firebase, which is what the lab demos and the end-to-end scripts use.
 

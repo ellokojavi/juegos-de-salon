@@ -16,6 +16,7 @@ import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gsta
 import { firebaseConfig } from '../assets/js/firebase-config.js';
 import { OP_MS, waitConnected, withTimeout } from '../assets/js/transport/errors.js';
 import { enviarReporte } from './reportes.js';
+import { aliasHasta } from './engine.js';
 
 const falla = code => Object.assign(new Error(code), { code });
 
@@ -73,7 +74,16 @@ export function createFirebaseStore() {
         [`torneos/${code}/players/${pid}`]: { name, at: serverTimestamp() },
         [`torneoKeys/${code}/${pid}`]: pinHash,
         [`torneoSeats/${code}/${pid}/${uid}`]: pinHash,
-      }, 'ocupado');
+        // El link propio, en la misma escritura: si otro lo tomó justo antes, no se crea nada (D-121)
+        ...(meta.alias ? { [`torneoAlias/${meta.alias}`]: { code, hasta: aliasHasta(meta) } } : {}),
+      }, meta.alias ? 'alias' : 'ocupado');
+    },
+
+    /** A qué copa apunta un link propio: `{ code, hasta }` o null (D-121). */
+    async alias(a) {
+      await listo();
+      await waitConnected(conectado);
+      return (await withTimeout(get(ref(db, `torneoAlias/${a}`)), OP_MS)).val();
     },
 
     escuchar(code, cb, onError = () => {}) {
@@ -122,7 +132,12 @@ export function createFirebaseStore() {
 
     /** Eliminar la copa entera (D-117): la copa, los hashes de los PIN y los asientos, de una vez. */
     async eliminar(code) {
-      await escribir({ [`torneos/${code}`]: null, [`torneoKeys/${code}`]: null, [`torneoSeats/${code}`]: null }, 'permiso');
+      const alias = (await withTimeout(get(ref(db, `torneos/${code}/meta/alias`)), OP_MS)).val();
+      await escribir({
+        [`torneos/${code}`]: null, [`torneoKeys/${code}`]: null, [`torneoSeats/${code}`]: null,
+        // El link propio queda libre de inmediato (D-121)
+        ...(alias ? { [`torneoAlias/${alias}`]: null } : {}),
+      }, 'permiso');
     },
 
     /** Cerrar o reabrir la inscripción (D-110). */
@@ -132,7 +147,8 @@ export function createFirebaseStore() {
 
     /** Mover el inicio mientras nadie haya jugado (D-110). Las reglas lo niegan si alguien empezó. */
     async reprogramar(code, meta) {
-      await escribir({ [`torneos/${code}/meta`]: meta }, 'empezada');
+      // Si la copa tiene link propio, se mueve con ella hasta cuándo queda tomado (D-121)
+      await escribir({ [`torneos/${code}/meta`]: meta, ...(meta.alias ? { [`torneoAlias/${meta.alias}`]: { code, hasta: aliasHasta(meta) } } : {}) }, 'empezada');
     },
 
     async renombrar(code, pid, name) {

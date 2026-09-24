@@ -87,6 +87,24 @@ await test('eliminar la copa: solo el admin (D-117)', async () => {
   assert.equal(await admin.leer(C4), null);
 });
 
+await test('link propio: único mientras dure, libre al eliminar o al vencer (D-121)', async () => {
+  const mA = nuevaMeta({ nombre: 'Pirata', dias: 3, inicio: hoy, admin: 'aaaaaa', creada: admin.now(), alias: 'pirata' });
+  await admin.crear('BCDFG', mA, { pid: 'aaaaaa', name: 'Cata', at: 1, pinHash: 'h' });
+  assert.equal((await admin.alias('pirata')).code, 'BCDFG');
+  const mB = nuevaMeta({ nombre: 'Otra', dias: 3, inicio: hoy, admin: 'bbbbbb', creada: admin.now(), alias: 'pirata' });
+  await rechaza(otro.crear('CDFGH', mB, { pid: 'bbbbbb', name: 'Javi', at: 1, pinHash: 'h' }), 'alias');
+  await admin.eliminar('BCDFG');
+  assert.equal(await admin.alias('pirata'), null);
+  await otro.crear('CDFGH', mB, { pid: 'bbbbbb', name: 'Javi', at: 1, pinHash: 'h' });
+  assert.equal((await otro.alias('pirata')).code, 'CDFGH');
+  // Vencido (7 días después de terminar), otra copa lo puede tomar
+  admin.adelantar(20 * DIA_MS);
+  const mC = nuevaMeta({ nombre: 'Tercera', dias: 3, inicio: fechaEn(admin.now()), admin: 'aaaaaa', creada: admin.now(), alias: 'pirata' });
+  await admin.crear('DFGHJ', mC, { pid: 'aaaaaa', name: 'Cata', at: 1, pinHash: 'h' });
+  assert.equal((await admin.alias('pirata')).code, 'DFGHJ');
+  admin.reiniciarReloj();
+});
+
 await test('inscribirse: nombre repetido y cupo', async () => {
   await otro.inscribir(CODE, { pid: 'bbbbbb', name: 'Javi', at: 2, pinHash: await hashPin(CODE, 'bbbbbb', '2222') });
   await rechaza(intruso.inscribir(CODE, { pid: 'cccccc', name: ' javi ', at: 3, pinHash: 'h' }), 'nombre-repetido');

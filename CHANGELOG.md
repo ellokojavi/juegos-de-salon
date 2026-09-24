@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.57.0 — 2026-09-24
+- **Link propio para la copa** (D-121): al crearla, `juegosdesalon.cl/copa/?pirata` en vez de un
+  código. Se ve en vivo si está libre; queda tomado hasta 7 días después de terminar la copa.
+- Los links ya no llevan `&labs`.
+- **Paso manual:** volver a publicar `firebase/database.rules.json`.
+
 ## 0.56.0 — 2026-09-24
 - **Calendario más claro** (D-120): el tablero y la tarjeta de hoy dicen la fecha, y el día de
   ayer que sigue abierto dice que es su **día de gracia** y hasta cuándo.
