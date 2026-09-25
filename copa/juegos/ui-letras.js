@@ -44,7 +44,7 @@ export function montar(raiz, ctx) {
         }),
         el('p', { class: 'block-hint' }, T.blockHintLetters));
     }
-    caja.append(tablero(el, { filas: e.filas, largo: p.largo, titulo: T.yourGuesses, valor: letrasPintadas }));
+    caja.append(tablero(el, { filas: e.filas, largo: p.largo, titulo: T.yourGuesses, valor: letrasPintadas, completa: false }));
     if (ctx.cierreAbajo) caja.append(...cierre);
     raiz.append(caja);
   };

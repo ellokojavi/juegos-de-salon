@@ -1560,3 +1560,21 @@ la grilla de antes (`GRILLAS_ANTES_D128`, intacta); las demás reciben la nueva.
 que quedar después del momento en que se publica.
 **Por qué:** feedback de jugadores: "tarjeta" y "caperucita" unidas por "roja" era demasiado
 rebuscado; un grupo tiene que poder adivinarse pensando en las cosas, no en las palabras.
+
+## D-129 · Toque y Fama: jugar solo en vez de contra el celular
+**Fecha:** 2026-09-25 · **Estado:** vigente
+**Decisión:** El tercer modo de Toque y Fama deja de ser "🤖 Contra el celular" (un duelo contra un
+solver que adivinaba tu número) y pasa a ser **"🧍 Jugar solo"**: el celular elige un número
+secreto y tú lo adivinas en la menor cantidad de intentos, con récord por cantidad de cifras y
+cero al inicio, como Línea de Tiempo (D-27). No hay número propio, ni réplica, ni pantalla de
+secreto. El solver sale del motor. En el tablero único de jugar solo, y en el de Toque y Fama de La
+Copa, las pistas van con palabra completa ("2 famas", "1 toque", "nada"); en los dos tableros lado
+a lado del duelo y en Letras (cinco letras de colores) siguen abreviadas ("2F 1T") porque a 320 px
+no caben. La pista del teclado dice "número secreto"
+en vez de "número del rival", que en La Copa no existe.
+**Por qué:** lo pidió el dueño. Adivinar un número es entretenido por sí solo; el duelo contra una
+máquina que siempre lo resuelve en 5 o 6 intentos no agregaba nada. Y La Copa, que reusa los
+textos de Toque y Fama, hablaba de un rival que no hay.
+**Consecuencias:** C-5 ya no pone a Toque y Fama como ejemplo de "contra el celular". Una partida
+guardada del modo anterior no se ofrece para retomar. El panel verá el modo `solo` en vez de `cpu`
+desde esta versión.
