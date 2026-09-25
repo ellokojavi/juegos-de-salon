@@ -39,7 +39,9 @@ motor de la copa, `copa/engine.js`; el panel no las repite.
 - **Minijuego sin terminar:** tocó Empezar y no dejó resultado, y ya no lo está jugando (pasó
   media hora o el día cerró). Se dibuja en gris detrás de las jugadas de su minijuego.
 - **Participación:** minijuegos jugados de los que se podían jugar, en los días ya cerrados: uno
-  por jugador inscrito por día. Una copa sin días cerrados muestra "sin días cerrados", no 0 %.
+  por jugador inscrito por día. Quien se inscribió después de que un día cerró no debía ese día.
+  Una copa sin días cerrados muestra "sin días cerrados", no 0 %.
+- **Inscripción abierta:** según las fechas y según el admin: si la cerró (`closed`), no se dice abierta.
 - **Tiempo típico:** la mediana, no el promedio: una persona que dejó el celular media hora
   encendido no mueve la cifra.
 - **Va primero:** el dueño ve la tabla completa, incluidos los días que los jugadores todavía no

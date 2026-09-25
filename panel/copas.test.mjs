@@ -132,4 +132,13 @@ assert.match(inicioLabel('2026-09-24'), /24/);
 assert.equal(inicioLabel(''), '?');
 assert.ok(JUGANDO_MS > 0 && JUGANDO_MS < DIA_MS);
 
+// --- Inscripción cerrada por el admin y quien llegó tarde ---------------
+const cerrada = estadoCopa(copaDe('OFICI', { ...torneos.OFICI, closed: true }), now);
+assert.equal(c.inscripcion, true, 'sin cerrar, la inscripción sigue abierta');
+assert.equal(cerrada.inscripcion, false, 'el admin la cerró: no se puede decir abierta');
+// Leo entra el día 3: el día 1 ya había cerrado, así que no le faltó ese minijuego
+const tarde = { ...torneos.OFICI, players: { ...players, gggggg: { name: 'Leo', at: meta.win[1].b + 1000 } } };
+assert.deepEqual(estadoCopa(copaDe('OFICI', tarde), now).participacion, { jugado: 2, esperado: 3 }, 'el día 1 no se le cobra a quien llegó después');
+assert.deepEqual(resumenCopas({ OFICI: tarde }, semana, now).participacion, { jugado: 2, esperado: 3 });
+
 console.log('copas.test.mjs: todo en verde');
