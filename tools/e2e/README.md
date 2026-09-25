@@ -34,7 +34,7 @@ node tools/e2e/contacto.mjs cuarto-rey --salida /tmp/contacto
 | Script | Qué prueba |
 |---|---|
 | `cuarto-rey.mjs` | Botón de sonido, mazo completo hasta el cuarto rey y el menú en inglés |
-| `toque-y-fama-local.mjs` | Un celular y contra el celular, hasta el resultado |
+| `toque-y-fama-local.mjs` | Un celular y jugar solo (dos veces, para ver el récord), hasta el resultado |
 | `toque-y-fama-online.mjs` | Dos celulares contra Firebase real: unión por URL, recarga a mitad, revancha |
 | `batalla-naval-local.mjs` | Colocación, batalla en un celular y contra el celular |
 | `batalla-naval-colocacion.mjs` | Seleccionar, girar, mover y deseleccionar barcos en la grilla |

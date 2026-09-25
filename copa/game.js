@@ -1182,7 +1182,8 @@ async function jugar(d) {
   keepAwake();
   // La cuenta va solo al empezar: si se retoma una partida, el tablero vuelve de una
   if (!guardado.reloj) await cuentaRegresiva(J);
-  const p = mod.generar(S.code, d);
+  // Conexiones necesita saber cuándo empezó su día, para no cambiar de grilla a mitad (D-128)
+  const p = mod.generar(S.code, d, id === 'conexiones' ? { desde: meta.win[d].a } : undefined);
   const now = ahora();
   let rel = guardado.reloj ? reloj.seguir(guardado.reloj, now) : reloj.nuevo(now);
   let jugadas = guardado.jugadas;
