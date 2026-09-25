@@ -134,6 +134,21 @@ node tools/reglas.mjs revisar      # ¿lo publicado es lo del repo?
 Necesita la llave de la cuenta de servicio en `~/.config/juegos-de-salon/firebase-admin.json`
 (fuera del repo). Si no está, el script dice cómo crearla.
 
+## Usabilidad (D-132)
+
+El agente `usabilidad` (`.claude/agents/usabilidad.md`) revisa cada PR antes de mostrárselo al
+dueño y hace una ronda diaria a las 5:00 hora del Pacífico. Su guía es
+[docs/USABILIDAD.md](docs/USABILIDAD.md). Los dilemas son issues de GitHub y se manejan desde aquí:
+
+```bash
+node tools/dilemas.mjs listar [--todos]
+node tools/dilemas.mjs ver <n>
+node tools/dilemas.mjs crear <archivo.md>
+node tools/dilemas.mjs resolver <n> "decisión"   # y anotarla en docs/USABILIDAD.md
+node tools/dilemas.mjs archivar <n> "motivo"
+node tools/dilemas.mjs reabrir <n>
+```
+
 ## Reportes de La Copa
 
 El botón 🐞 de La Copa escribe en `feedback/` sin cuenta (D-104). Para leerlos y conversarlos:

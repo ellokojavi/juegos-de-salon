@@ -1597,3 +1597,22 @@ si jugó pero todavía no puedes ver sus puntos, **• por jugar** (borde amaril
 abierto y no lo ha jugado, **– no jugó** (rojizo) si cerró sin jugarlo, y **vacío** si todavía
 no abre. Una leyenda debajo explica los estados.
 **Por qué:** pedido del dueño: que cada uno vea su grilla completa y qué le queda.
+
+## D-132 · Un agente de usabilidad con ronda diaria y dilemas como issues
+**Fecha:** 2026-09-25 · **Estado:** vigente
+**Decisión:** Un subagente (`.claude/agents/usabilidad.md`) revisa solo usabilidad: textos,
+botones, interacciones, navegación y mensajes para compartir, con la guía `docs/USABILIDAD.md`
+(reglas U-n, que crecen con cada decisión del dueño).
+- **Cuándo:** cada PR que abre Claude pasa por él antes de mostrárselo al dueño, y hay una **ronda
+  diaria a las 5:00 hora del Pacífico** (tarea programada en el Mac del dueño, que tiene la llave
+  de Firebase y el servidor local).
+- **Qué hace solo:** lo obvio (algo que no cumple lo ya decidido, ortografía, textos cortados o
+  encimados, botones chicos o sin aire), en un PR que **no fusiona**.
+- **Qué pregunta:** textos nuevos, puntajes, reglas, funciones, rediseños y todo lo discutible,
+  como **issues de GitHub** con la etiqueta `usabilidad` (estados `pendiente` → `resuelto` o
+  `archivado`). Se crean, resuelven, archivan y reabren desde la conversación con
+  `node tools/dilemas.mjs`; la decisión se anota en la guía.
+- Los guiones `copa.mjs` y `mirar.mjs` aceptan `SITIO=http://localhost:<puerto>` para probar una
+  copia aparte del repo sin chocar con la que está sirviendo el puerto 8765.
+**Por qué:** pedido del dueño: bugs como el reloj de Conexiones o los textos rebuscados se
+tienen que encontrar solos, y las dudas llegarle ordenadas.

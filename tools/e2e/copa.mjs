@@ -12,7 +12,9 @@ const OUT = process.argv[2] || '/tmp/copa';
 const SIETE = !process.argv.includes('--tres');
 mkdirSync(OUT, { recursive: true });
 const b = await launch({ port: 9377, dir: `${OUT}/perfil`, out: OUT });
-const BASE = 'http://localhost:8765/copa/';
+// SITIO permite probar otra copia del repo servida en otro puerto (la ronda de usabilidad, D-132)
+const SITIO = process.env.SITIO || 'http://localhost:8765';
+const BASE = `${SITIO}/copa/`;
 const ok = (cond, msg) => { console.log(`${cond ? '✓' : '✗'} ${msg}`); if (!cond) process.exitCode = 1; };
 const ev = expr => b.evaluate(expr);
 const click = sel => ev(`(()=>{const x=document.querySelector(${JSON.stringify(sel)});if(!x)return 'no';if(x.disabled)return 'disabled';x.click();return 'ok'})()`);
@@ -409,10 +411,10 @@ console.log('  resumen final:', JSON.stringify(await ev('window.__compartido.at(
 
 /* ---------- El laboratorio (D-101): la página, la práctica de cada minijuego y los reportes ---------- */
 
-await b.go('http://localhost:8765/', 1500);
+await b.go(`${SITIO}/`, 1500);
 const tarjeta = await ev(`(()=>{const c=[...document.querySelectorAll('.game-card')].find(x=>x.textContent.includes('La Copa'));return JSON.stringify({soon:c.classList.contains('soon'),href:c.getAttribute('href'),rotulo:c.querySelector('.proximamente')?.textContent})})()`).then(JSON.parse);
 ok(tarjeta.soon && !tarjeta.href && tarjeta.rotulo === 'Próximamente', 'en el menú La Copa se ve con Próximamente y no se abre');
-await b.go('http://localhost:8765/labs/', 1500);
+await b.go(`${SITIO}/labs/`, 1500);
 ok(await ev(`document.querySelectorAll('#minis .mini-juego').length`) === 9, 'el laboratorio ofrece los nueve minijuegos (con Zip y Tango)');
 await b.shot('10-labs');
 // Rendirse en Reinas: dos toques, la solución a la vista y 0 puntos (D-110)
@@ -504,7 +506,7 @@ await click('#btn-enviar-reporte'); await sleep(400);
 ok(await ev(`!!document.getElementById('btn-reporte-volver')`), 'después de enviar se agradece y se puede volver');
 
 /* ---------- Las demos del laboratorio (D-110) ---------- */
-await b.go('http://localhost:8765/labs/', 1200);
+await b.go(`${SITIO}/labs/`, 1200);
 ok(await ev(`document.querySelectorAll('[data-demo]').length`) === 8, 'el laboratorio ofrece las ocho demos de la copa');
 const DEMOS = { nueva: 'admin', invitado: 'entrar', espera: 'tablero', 'sin-jugar': 'admin', jugador: 'tablero', admin: 'admin', final: 'tablero', podio: 'tablero' };
 for (const [demo, pant] of Object.entries(DEMOS)) {
