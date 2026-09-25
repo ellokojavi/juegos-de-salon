@@ -563,8 +563,10 @@ function grafico(now) {
   const Lc = L(), { meta } = Lc;
   const ev = evolucion(Lc, S.yo, now);
   if (!ev.dias.length) return null;
+  // "(-1J)" junto a quien lleva menos juegos, como en la imagen que se comparte (D-126)
+  const menos = menosJuegos(tabla(Lc, S.yo, now));
   const n = ev.filas.length;
-  const W = 320, fila = 24, arriba = 14, abajo = 26, izq = 26, der = 70;
+  const W = 320, fila = 24, arriba = 14, abajo = 26, izq = 26, der = 92; // espacio a la derecha para "Nombre 3º (-1J)"
   const H = arriba + (n - 1) * fila + abajo;
   const x = k => izq + (meta.days === 1 ? 0 : ((k - 1) * (W - izq - der)) / (meta.days - 1));
   const y = lugar => arriba + (lugar - 1) * fila;
@@ -587,6 +589,9 @@ function grafico(now) {
   const color = pid => colorDe(Lc, pid);
   const orden = [...ev.filas.filter(f => f.pid !== S.yo), ...ev.filas.filter(f => f.pid === S.yo)];
   const grupos = {};
+  // Empatados en el mismo lugar: sus nombres se apilan en vez de encimarse (el lugar siguiente
+  // queda vacío en un empate, así que hay espacio)
+  const enLugar = {};
   for (const f of orden) {
     const mia = f.pid === S.yo;
     const g = svgEl('g', { class: 'g-jugador' + (mia ? ' mia' : ''), 'data-pid': f.pid, style: `--c:${color(f.pid)}` });
@@ -603,7 +608,10 @@ function grafico(now) {
     if (pts.length) {
       const [px, py] = pts[pts.length - 1];
       const corto = f.name.length > 10 ? `${f.name.slice(0, 9)}…` : f.name;
-      g.append(svgEl('text', { x: px + 9, y: py + 4, class: 'g-rotulo' }, `${corto} ${f.lugares[f.lugares.length - 1]}º`));
+      const marca = menos[f.pid] > 0 ? ` (-${menos[f.pid]}J)` : '';
+      const ultimo = f.lugares[f.lugares.length - 1];
+      const k = (enLugar[ultimo] = (enLugar[ultimo] ?? -1) + 1);
+      g.append(svgEl('text', { x: px + 9, y: py + 4 + k * 11, class: 'g-rotulo' }, `${corto} ${ultimo}º${marca}`));
     }
     svg.append(g);
   }
@@ -617,8 +625,9 @@ function grafico(now) {
   };
   const chips = el('div', { class: 'grafico-chips' }, ev.filas.slice().sort((a, b) => porLlegada.indexOf(a.pid) - porLlegada.indexOf(b.pid)).map(f =>
     el('button', { type: 'button', class: 'g-chip' + (f.pid === S.yo ? ' mia' : ''), 'data-pid': f.pid, style: `--c:${color(f.pid)}`, onClick: () => { SFX.tap(); destacar(f.pid); } },
-      el('span', { class: 'g-color', 'aria-hidden': 'true' }), f.pid === S.yo ? fmt(T.progressYou, { name: f.name }) : f.name)));
-  return el('div', { class: 'panel' }, el('p', { class: 'lead', style: 'margin-bottom:8px' }, T.progressTitle), svg, chips, leyenda,
+      el('span', { class: 'g-color', 'aria-hidden': 'true' }), nombreConJuegos(f.pid === S.yo ? fmt(T.progressYou, { name: f.name }) : f.name, menos[f.pid]))));
+  const notaJuegos = Object.values(menos).some(x => x > 0) ? el('p', { class: 'muted grafico-nota', id: 'nota-juegos' }, T.fewerGamesNote) : null;
+  return el('div', { class: 'panel' }, el('p', { class: 'lead', style: 'margin-bottom:8px' }, T.progressTitle), svg, chips, notaJuegos, leyenda,
     el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-imagen', onClick: async ev2 => {
       SFX.tap(); const b = ev2.currentTarget; b.disabled = true;
       try { await compartirImagen(); } finally { b.disabled = false; }
@@ -818,6 +827,7 @@ async function compartirImagen() {
   c.textAlign = 'center';
   for (let k = 1; k <= meta.days; k++) c.fillText(fmt(T.dayShort, { d: k }), x(k), y(nf) + 60);
   const orden = [...ev.filas.filter(f => f.pid !== S.yo), ...ev.filas.filter(f => f.pid === S.yo)];
+  const enLugar = {};
   for (const f of orden) {
     if (!f.lugares.length) continue;
     const pts = f.lugares.map((l, i) => [x(ev.dias[i]), y(l)]);
@@ -827,7 +837,9 @@ async function compartirImagen() {
     const [lx, ly] = pts[pts.length - 1];
     c.textAlign = 'left'; c.font = fuente(900, 28);
     const corto = f.name.length > 10 ? `${f.name.slice(0, 9)}…` : f.name;
-    c.fillText(`${corto} ${f.lugares[f.lugares.length - 1]}º`, lx + 24, ly + 10);
+    const ultimo = f.lugares[f.lugares.length - 1];
+    const k = (enLugar[ultimo] = (enLugar[ultimo] ?? -1) + 1); // empatados: apilados, no encimados
+    c.fillText(`${corto} ${ultimo}º${menos[f.pid] > 0 ? ` (-${menos[f.pid]}J)` : ''}`, lx + 24, ly + 10 + k * 32);
   }
   // La tabla
   let ty = g0 + altoGraf + 60;
