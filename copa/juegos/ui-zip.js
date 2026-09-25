@@ -10,6 +10,39 @@
  */
 import * as motor from './zip.js';
 
+const NS = 'http://www.w3.org/2000/svg';
+
+/**
+ * El dibujo de las reglas, como el de Reinas (D-134): el mismo 4 × 4 dos veces. En el primero el
+ * trazo pasa por todas las casillas; en el segundo toca los números en orden pero deja cuatro
+ * casillas sin pintar, que es el error más fácil de cometer. Se entiende mirando antes de leer.
+ */
+const EJ_NUMEROS = { 0: 1, 13: 2, 3: 3, 11: 4 };
+const EJ_BIEN = [0, 4, 8, 12, 13, 9, 5, 1, 2, 3, 7, 6, 10, 14, 15, 11];
+const EJ_MAL = [0, 4, 8, 12, 13, 9, 5, 1, 2, 3, 7, 11];
+
+function tableroEjemplo(el, n, trazo, bien) {
+  const g = el('div', { class: 'zip-ej' + (bien ? ' fin' : ''), 'aria-hidden': 'true', style: `grid-template-columns: repeat(${n}, 1fr)` });
+  for (let i = 0; i < n * n; i++) {
+    const num = EJ_NUMEROS[i];
+    g.append(el('span', { class: (trazo.includes(i) ? 'on' : 'falta') + (num ? ' num' : '') }, num ? el('b', {}, String(num)) : null));
+  }
+  const svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('viewBox', `0 0 ${n} ${n}`);
+  svg.setAttribute('class', 'zip-trazo');
+  const linea = document.createElementNS(NS, 'polyline');
+  linea.setAttribute('points', trazo.map(i => `${(i % n) + 0.5},${Math.floor(i / n) + 0.5}`).join(' '));
+  svg.append(linea);
+  g.append(svg);
+  return g;
+}
+
+export function ejemplo({ el, T }) {
+  return el('div', { class: 'rej-ejemplo' },
+    el('figure', {}, tableroEjemplo(el, 4, EJ_BIEN, true), el('figcaption', {}, `✅ ${T.zipExOk}`)),
+    el('figure', {}, tableroEjemplo(el, 4, EJ_MAL, false), el('figcaption', {}, `❌ ${T.zipExBad}`)));
+}
+
 export function montar(raiz, ctx) {
   const { T, fmt, el, SFX, vibrate } = ctx;
   const { codigo, dia } = ctx.p;
@@ -32,7 +65,6 @@ export function montar(raiz, ctx) {
   caja.append(cabeza, el('p', { class: 'muted center', style: 'margin:0' }, T.zipHint), grilla, aviso);
   raiz.append(caja);
 
-  const NS = 'http://www.w3.org/2000/svg';
   let celdas = [], linea = null;
 
   const armar = () => {
