@@ -58,4 +58,7 @@ Cada regla tiene un ID (U-n) para citarla en los PR y en los issues.
 
 Las respuestas a dilemas (issues con la etiqueta `usabilidad`) se anotan aquí:
 
-- *(todavía ninguno)*
+- **Reinas sin bordes gruesos entre zonas** (D-134): decisión del dueño, sabiendo lo de C-8. No
+  marcarlo.
+- **Textos del dibujo de Reinas:** "Así: una reina por fila, por columna y por color." y "Así no:
+  se tocan." (aprobados por el dueño).
