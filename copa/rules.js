@@ -246,7 +246,7 @@ const ES = {
   progressTitle: 'Posiciones día a día',
   progressHint: 'Cada jugador tiene su color y la tuya es la línea más gruesa. Toca un nombre o un punto para destacar su línea.',
   progressYou: '{name} (tú)',
-  shareImage: 'Compartir como imagen',
+  shareImage: 'Compartir',
   imageSubtitle: 'Tabla de posiciones · día {d} de {n}',
   imageDownloaded: 'Listo: la imagen se descargó.',
   fewerGames: '{name} (-{n}J)',
