@@ -174,6 +174,15 @@ El botón 🐞 de La Copa escribe en `feedback/` sin cuenta (D-104). Para leerlo
 node tools/reportes.mjs            # todos; --dias 3 para los recientes, --json para el crudo
 ```
 
+## ¿Hay alguien jugando?
+
+Antes de proponer una fusión a main: salas en vivo y copas en curso, leídas como administrador
+(misma llave que las reglas; solo lectura).
+
+```bash
+node tools/en-curso.mjs            # sale con 3 si hay algo en juego; --todo, --json
+```
+
 ## Documentación
 
 `docs/PANEL.md` · `docs/REQUERIMIENTOS.md` · `docs/DECISIONES.md` (ADR) · `docs/AGREGAR-JUEGO.md` ·
