@@ -517,6 +517,7 @@ await b.go(`${BASE}?prueba&demo=sin-jugar`, 1500); await preparar();
 ok(/nadie ha jugado/.test(await ev(`document.getElementById('admin-inicio')?.innerText || ''`)), 'demo sin-jugar: el admin ve que partió sin nadie y puede moverla');
 await b.go(`${BASE}?prueba&demo=jugador`, 1500); await preparar();
 ok(!!await ev(`document.querySelector('[data-dia="4"]')`), 'demo jugador: el día 4 se puede jugar');
+ok(await ev(`[...document.querySelectorAll('.tabla .fila')].every(f=>f.querySelectorAll('.pd').length===7) && !!document.querySelector('.tabla .pd.pendiente') && !!document.querySelector('.tabla .pd.abierto') && !!document.querySelector('.tabla-leyenda')`), 'la tabla muestra los 7 días de cada jugador, con estados y leyenda (D-131)');
 // Eliminar la copa (D-117): dos confirmaciones, la segunda escribiendo el nombre
 await b.go(`${BASE}?prueba&demo=admin`, 1500); await preparar();
 const codeBorrar = await ev('__copa.estado.code');
