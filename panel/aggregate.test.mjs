@@ -1,7 +1,7 @@
 // Ejecutar: node panel/aggregate.test.mjs
 import assert from 'node:assert/strict';
 import { MODE_IDS } from '../assets/js/games.js';
-import { DAY, roomLog, paginate, flagOf, whenLabel, RANGOS, rangeOf, groupDays, periodLabel, ROOM_TTL, liveRooms, esJugada, connections, summarize, top, tzLabel, ago, dayLabel, codesOfDays, splitByEnv } from './aggregate.js';
+import { DAY, roomLog, paginate, flagOf, whenLabel, RANGOS, rangeOf, groupDays, periodLabel, ROOM_TTL, liveRooms, esJugada, connections, summarize, top, tzLabel, ago, dayLabel, codesOfDays, splitByEnv, liveLocal, VIVA_SIN_RED_MS } from './aggregate.js';
 
 const now = 20342 * DAY + 15 * 60 * 60 * 1000; // día 20342, 15:00 UTC
 
@@ -279,6 +279,25 @@ assert.equal(ninguna.ajenas.length, 3);
 
   assert.deepEqual(groupDays([], 'mes'), []);
   assert.match(periodLabel(hoy, 'mes'), /2026/);
+}
+
+// Partidas sin red en vivo (D-140): las que latieron hace poco, de hoy y de ayer
+{
+  const now = 20342 * DAY + 60000;   // un minuto después de la medianoche UTC
+  const days = {
+    20342: { live: {
+      mica000001: { game: 'batalla-naval', mode: 'cpu', n: 1, co: 'CL', at: now - 50000, beat: now - 20000 },
+      vieja00001: { game: 'dudo', mode: 'cpu', n: 1, at: now - 3600000, beat: now - VIVA_SIN_RED_MS - 1 },
+    } },
+    20341: { live: { anoche0001: { game: 'ahorcado', mode: 'local', n: 3, at: now - 900000, beat: now - 30000 } } },
+    20300: { live: { antigua001: { game: 'dudo', mode: 'cpu', n: 1, at: now - 5000, beat: now - 5000 } } },
+  };
+  const l = liveLocal(days, now);
+  assert.deepEqual(l.map(x => x.id), ['mica000001', 'anoche0001'], 'la que dejó de latir no está, y la que cruzó la medianoche sí');
+  assert.equal(l[0].co, 'CL');
+  assert.equal(l[1].n, 3);
+  assert.deepEqual(liveLocal({}, now), []);
+  assert.deepEqual(liveLocal({ 20342: { live: { x: { game: 'dudo', at: now } } } }, now).length, 1, 'recién empezada, antes del primer latido');
 }
 
 console.log('aggregate.test.mjs: todo en verde');
