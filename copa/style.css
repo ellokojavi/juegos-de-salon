@@ -86,6 +86,12 @@ ol.como li { line-height: 1.45; }
 .pd.oro { background: rgba(255, 210, 63, 0.25); color: var(--yellow); }
 .pd.doble { box-shadow: 0 0 0 1px var(--orange) inset; }
 .pd.oculto { color: var(--cyan); }
+/* Los siete días como bloques (D-131): por jugar, no jugó y todavía no abre */
+.pd.abierto { color: var(--yellow); background: transparent; box-shadow: 0 0 0 1.5px rgba(255, 210, 63, 0.7) inset; }
+.pd.perdido { color: rgba(255, 120, 140, 0.9); background: rgba(224, 36, 60, 0.12); }
+.pd.pendiente { background: transparent; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14) inset; min-height: 1.45em; }
+.tabla-leyenda { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 10px 2px 4px; font-size: 0.8rem; color: var(--muted); }
+.tabla-leyenda > span { display: inline-flex; align-items: center; gap: 5px; }
 
 .calendario { display: grid; gap: 6px; }
 .cal-fila { display: grid; grid-template-columns: 4.2em 1fr auto 1.6em; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 10px; background: rgba(0,0,0,0.18); font-weight: 700; }
