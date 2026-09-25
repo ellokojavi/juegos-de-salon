@@ -1649,3 +1649,20 @@ Quedó en CLAUDE.md.
 terminar de otra, una rama se reescribió con el trabajo de otra sesión, y dos decisiones
 distintas quedaron con el número D-129. Se reordenó la cadena de PRs y se renumeró. Además, el
 `pkill -f remote-debugging-port` de una sesión mataba las pruebas de las demás.
+
+## D-137 · El panel separa La Copa de los demás juegos, y mide sus minijuegos
+**Fecha:** 2026-09-25 · **Estado:** vigente
+**Decisión:** El panel del dueño tiene tres vistas: Resumen, La Copa y Juegos (`/panel/#torneo`).
+La Copa se mide con sus propios datos de `torneos/` y no con la señal de uso que manda cada día
+jugado: el calendario de cada copa dice qué minijuego fue, y cada resultado trae puntaje, tiempo
+y hora. De ahí salen las copas en curso con quién está jugando ahora, y por minijuego las jugadas,
+los que quedaron sin terminar, el puntaje promedio y el tiempo típico. Los juegos de una partida
+se cuentan sin La Copa. Qué es torneo lo dice el registro (`torneo: true` en `games.js`).
+**Por qué:** el dueño quiere ver en cualquier momento si hay copas o minijuegos en juego, y
+comparar La Copa, el juego central, con los demás. La señal de uso solo decía "un día de La
+Copa", sin minijuego, y sumaba esos días como si fueran partidas de un juego más.
+**Alternativas descartadas:** mandar una señal nueva por minijuego (obligaba a tocar las reglas
+de la base y solo servía desde hoy; `torneos/` ya tiene todo, también hacia atrás). Separar
+las copas por entorno: `torneos/` no lo está y no hay de dónde sacarlo; las del laboratorio
+llevan su etiqueta.
+
