@@ -1,5 +1,38 @@
 # Changelog
 
+## 0.64.4 — 2026-09-25
+- **Batalla Naval: las dos fichas de abajo quedan centradas** al colocar la flota, en vez de
+  pegadas a la izquierda con un hueco a la derecha (U-11).
+
+## 0.64.3 — 2026-09-25
+- **Batalla Naval: los cinco barcos se ven sin desplazar** al colocar la flota. Las fichas van en
+  tres columnas (dibujo arriba, nombre abajo) y la instrucción pasa de cuatro líneas a tres. En un
+  celular con la barra del navegador abajo, el quinto barco quedaba fuera de la pantalla.
+
+## 0.64.2 — 2026-09-25
+- **Batalla Naval: girar un barco casi siempre gira** (D-136). Si sobre su proa no cabe, gira
+  igual y se acomoda en el lugar libre más cercano, sin irse lejos.
+
+## 0.64.1 — 2026-09-25
+- **Panel del dueño: La Copa aparte** (D-137). Tres vistas: Resumen, La Copa y Juegos. Se ve en
+  todo momento qué copas están en curso, qué minijuego toca hoy en cada una, quién ya lo jugó y
+  quién lo está jugando. Por minijuego: jugadas, sin terminar, puntaje promedio y tiempo típico.
+  Los juegos de una partida se cuentan sin los días de La Copa. Sin cambios para los jugadores.
+- **Chat de sala en Batalla Naval** (C-15, D-138): en la sala, esperando la flota del rival, en la
+  batalla y en el resultado. Mientras uno coloca su propia flota se guarda.
+- **Panel:** las salas vivas separan jugadas de mensajes de chat; "176 msjs" en una Batalla Naval
+  eran disparos y sus respuestas automáticas, no conversación (D-138). Las salas sin rival ya no
+  cuentan como partidas, los rótulos dicen qué se cuenta (partidas empezadas, entradas de un
+  celular, día UTC) y la red de la casa y Tailscale cuentan como pruebas.
+
+## 0.64.0 — 2026-09-25
+- **Reglas plegadas en cada minijuego** (D-133): "📖 Reglas de …" debajo del tablero, cerrado por
+  defecto, con las mismas palabras de los botones de cada pantalla.
+- Las copas de `?prueba` (de mentira, en el navegador) ya no suman en las estadísticas del panel.
+- **Reinas:** un dibujo explica las reglas antes del texto, y el tablero ya no tiene bordes
+  gruesos entre zonas (D-134).
+- Textos que ahora calzan con su pantalla: "apretada", ≠ en Tango, "tocar OK", Consejos y Pista.
+
 ## 0.63.1 — 2026-09-25
 - **Herramientas:** agente de usabilidad con ronda diaria, guía `docs/USABILIDAD.md` y
   `node tools/dilemas.mjs` para manejar sus preguntas como issues de GitHub (D-132). Sin cambios

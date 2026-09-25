@@ -108,7 +108,7 @@ while you can fire and dims when you cannot, tapping it out of turn shakes it an
 a chime, a buzz and the tab title announce your turn when the phone is face down.
 
 - **📱 One phone:** your fleet is covered between turns. On a miss, the result and "pass the phone to X" share one screen.
-- **📡 Two phones:** a room with a code and a QR. Each phone answers the shots against its own fleet, and at the end both fleets are revealed and verified.
+- **📡 Two phones:** a room with a code, a QR and chat. Each phone answers the shots against its own fleet, and at the end both fleets are revealed and verified. The chat steps aside while you place your own fleet, which fills the whole screen, and comes back with its unread badge once you are waiting for the rival (D-138).
 - **🤖 Versus the phone:** an AI that hunts by parity and chases after a hit. It sinks a fleet in about 50 shots.
 
 <!-- generado: capturas:batalla-naval · written by python3 tools/readme.py actualizar -->
@@ -440,9 +440,17 @@ How it is put together (canon C-3):
 `/panel/` is a private page that shows how much the app is played and from where: live rooms and
 connected phones, games by title and mode, players per game, time zone, language and time of day.
 You sign in with Google, and only the owner of the Firebase project can read it. These are
-anonymized usage signals, not people: offline modes send counters only, and an IP, a secret or the
-chat never leave the phone. A room also records the country of each phone and who won, which is
-what the room log at the bottom of the dashboard shows.
+anonymized usage signals, not people: offline modes send counters only, and an IP or a secret never
+leave the phone. A room also records the country of each phone and who won, which is what the room
+log at the bottom of the dashboard shows. Live rooms show **plays and chat messages separately**:
+only what a person did counts as a play (a shot, a guess, a bid), never the automatic answers, and
+of the chat only the number of messages is shown, never what they say (D-138).
+
+It has three views: a summary, **La Copa** and the other **games**. La Copa is measured from its
+own tournament data, so the dashboard shows at any moment which cups are running, today's
+minigame in each one, who already played it and who is playing it right now; and, per minigame,
+how many were finished or left unfinished, the average score and the typical time. The games view
+counts one-sitting games without La Copa's days.
 
 One range selector drives the whole page: 7, 30, 60 or 90 days, one year, or the year so far. At
 the bottom there is a **log of the rooms that were played** in that range, newest first and paged:
@@ -486,6 +494,7 @@ node copa/reportes.test.mjs
 node copa/store.test.mjs
 node panel/adapta.test.mjs
 node panel/aggregate.test.mjs
+node panel/copas.test.mjs
 ```
 <!-- /generado -->
 
@@ -583,7 +592,7 @@ assets/js/handoff.js        Shared transitions: pass the phone, covered screen
 assets/js/chat.js           Shared room chat (multi-phone modes)
 assets/js/session.js        Shared saved games (resume in any mode)
 assets/js/transport/        Shared transports: local (same phone), firebase (room) and stats (usage signals)
-panel/                      Private owner dashboard (Google sign-in; see docs/PANEL.md)
+panel/                      Private owner dashboard: summary, La Copa and games views (Google sign-in; see docs/PANEL.md)
 firebase/                   Realtime Database security rules and notes
 manifest.webmanifest        PWA manifest (installable on the home screen)
 tools/set-version.py        Stamps the version (import maps + stylesheets) to avoid a mixed cache

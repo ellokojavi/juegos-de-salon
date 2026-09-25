@@ -9,7 +9,7 @@
  * origen, idioma y hora.
  */
 import { deserted } from '../assets/js/transport/dispose.js';
-import { MODE_IDS, isLocalMode, MAX_PLAYERS } from '../assets/js/games.js';
+import { MODE_IDS, isLocalMode, MAX_PLAYERS, gameById } from '../assets/js/games.js';
 
 export const DAY = 24 * 60 * 60 * 1000;
 export const ROOM_TTL = 6 * 60 * 60 * 1000;   // tope duro de una sala (transporte y reglas)
@@ -68,8 +68,10 @@ export function groupDays(byDay, grano = 'dia') {
   for (const fila of byDay) {
     const f = new Date(fila.day * DAY);
     const clave = grano === 'mes' ? dayOf(Date.UTC(f.getUTCFullYear(), f.getUTCMonth(), 1)) : lunesDe(fila.day);
-    const caja = cajones.get(clave) || { day: clave, total: 0, online: 0, local: 0 };
-    caja.total += fila.total; caja.online += fila.online; caja.local += fila.local;
+    // Se suma cada cifra de la fila, sea cual sea: el panel junta así las partidas de los juegos
+    // con los minijuegos de un torneo sin que esto tenga que saber de ninguno de los dos.
+    const caja = cajones.get(clave) || { day: clave };
+    for (const [k, v] of Object.entries(fila)) if (k !== 'day' && typeof v === 'number') caja[k] = (caja[k] || 0) + v;
     cajones.set(clave, caja);
   }
   return [...cajones.values()].sort((a, b) => a.day - b.day).map(c => ({ ...c, label: periodLabel(c.day, grano) }));
@@ -114,6 +116,19 @@ export function splitByEnv(live, codes, { loaded = true } = {}) {
 }
 
 /**
+ * ¿Este mensaje de sala es una jugada de una persona? (D-138)
+ *
+ * Cada juego declara en `games.js` cuáles de sus mensajes lo son (`jugadas`). De uno que no
+ * declara nada —recién publicado, o que ya no está en el registro— se cuenta todo lo que no
+ * sea una entrada ni el chat: puede quedar inflado, pero no en cero (C-16).
+ */
+export function esJugada(game, t) {
+  const lista = gameById(game)?.jugadas;
+  if (Array.isArray(lista)) return lista.includes(t);
+  return !!t && t !== 'hello' && t !== 'chat';
+}
+
+/**
  * Última señal de vida de una sala: el latido que escribe el transporte (`lastAt`), la última
  * jugada que llegó, o su nacimiento. Se miran los tres porque no siempre están los tres: una
  * sala de antes del latido no tiene `lastAt`, y una recién creada no tiene mensajes.
@@ -148,17 +163,24 @@ export function liveRooms(rooms, now = Date.now()) {
     if (deserted(r.players)) continue;
     const players = Object.entries(r.players || {}).sort(([a], [b]) => a.localeCompare(b))
       .map(([role, p]) => ({ role, name: p?.name || '?', online: !!p?.online, left: !!p?.left }));
-    const msgs = Object.values(r.messages || {});
-    // `hello` lo manda el transporte solo al entrar cada jugador, así que una sala recién
-    // creada ya trae uno por cabeza. Contarlos hacía que una sala sin jugadas dijera "2 msj".
-    const dichos = msgs.filter(x => x?.t !== 'hello');
-    // La hora sí sale de todos: que alguien acabe de entrar también es actividad.
+    const msgs = Object.values(r.messages || {}).filter(Boolean);
+    const game = r.game || '?';
+    // Se separan las jugadas de la charla (D-138). Una sala trae además mensajes que nadie
+    // escribió: un `hello` por cabeza al entrar y, según el juego, la respuesta automática a
+    // cada disparo o intento y los compromisos del anti-trampa. Contar todo junto hacía decir
+    // "176 msjs" a una Batalla Naval donde nadie escribió nada: eran 86 disparos y sus respuestas.
+    const jugadas = msgs.filter(x => esJugada(game, x.t));
+    const chat = msgs.filter(x => x.t === 'chat').length;
+    const lastPlayAt = jugadas.reduce((m, x) => (typeof x.at === 'number' && x.at > m ? x.at : m), 0) || null;
+    // La hora de vida sí sale de todo: que alguien acabe de entrar también es actividad.
     const lastAt = actividad(r);
     const online = players.filter(p => p.online).length;
+    // "En juego" pide rival: una sala con uno solo esperando en el lobby no es una partida.
+    const rival = players.filter(p => !p.left).length >= 2;
     out.push({
-      code, game: r.game || '?', createdAt: r.createdAt, players, online,
-      messages: dichos.length, lastAt,
-      active: online > 0 || lastAt > now - ACTIVE_MS,
+      code, game, createdAt: r.createdAt, players, online,
+      jugadas: jugadas.length, chat, lastPlayAt, lastAt,
+      active: rival && (online > 0 || lastAt > now - ACTIVE_MS),
     });
   }
   return out.sort((a, b) => b.lastAt - a.lastAt);
@@ -194,23 +216,32 @@ export function modesOf(byGame) {
 /**
  * Resume los días entre `from` y `to` (inclusive, números de día).
  * `days` es el objeto tal como viene de `stats/<env>/days`.
+ *
+ * `incluye(juego)` deja fuera las partidas de los juegos que no pasan: el panel separa así los
+ * torneos del resto. Zona horaria, idiomas y hora no son de un juego sino del celular, y se
+ * cuentan siempre enteros.
  */
-export function summarize(days, { from, to }) {
+export function summarize(days, { from, to, incluye = () => true }) {
   const byGame = {}, byPlayers = {}, origin = {}, lang = {}, applang = {}, hour = Array(24).fill(0);
   const byDay = [];
-  let online = 0, local = 0, devices = 0;
+  let online = 0, local = 0, devices = 0, sinRival = 0;
 
   for (let d = from; d <= to; d++) {
     const bucket = (days || {})[String(d)] || {};
     const row = { day: d, total: 0, online: 0, local: 0 };
 
     for (const r of Object.values(bucket.rooms || {})) {
-      if (!r) continue;
+      if (!r || !incluye(r.game || '?')) continue;
+      // Una sala donde nunca entró un segundo jugador no es una partida (D-138): alguien la abrió
+      // y no llegó nadie, o la revancha que el otro no aceptó. Se cuenta aparte, igual que la
+      // bitácora las deja fuera por defecto; si no, "en dos celulares" y la bitácora no cuadran.
+      if (Object.keys(r.players || {}).length < 2) { sinRival++; continue; }
       const g = bump(byGame, r.game || '?');
       g.total++; g.online++; row.online++;
       add(byPlayers, Math.min(MAX_PLAYERS, Math.max(1, Object.keys(r.players || {}).length)));
     }
     for (const [game, modes] of Object.entries(bucket.local || {})) {
+      if (!incluye(game)) continue;
       for (const [mode, ns] of Object.entries(modes || {})) {
         // Se acepta por forma, no por lista: un modo que el código empezó a mandar ayer
         // cuenta hoy, sin tocar el panel (C-16). Lo que no tiene forma de modo es basura.
@@ -233,7 +264,7 @@ export function summarize(days, { from, to }) {
     byDay.push(row);
   }
 
-  return { partidas: online + local, online, local, devices, byGame, byPlayers, byDay, origin, lang, applang, hour, modes: modesOf(byGame) };
+  return { partidas: online + local, online, local, devices, sinRival, byGame, byPlayers, byDay, origin, lang, applang, hour, modes: modesOf(byGame) };
 }
 
 /**

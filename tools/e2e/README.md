@@ -40,6 +40,7 @@ node tools/e2e/contacto.mjs cuarto-rey --salida /tmp/contacto
 | `batalla-naval-colocacion.mjs` | Seleccionar, girar, mover y deseleccionar barcos en la grilla |
 | `batalla-naval-alineacion.mjs` | Que los números de fila queden alineados con las casillas en tres anchos |
 | `batalla-naval-online.mjs` | Dos celulares contra Firebase real, con recarga y revancha |
+| `batalla-naval-chat.mjs` | Chat de sala: se guarda al colocar la flota propia, globito y etiqueta, no mueve la partida, vuelve al recargar y sigue en el resultado. |
 | `ahorcado-local.mjs` | Cadena de tres en un celular, comprar una letra, retomar y el solitario |
 | `ahorcado-online.mjs` | Tres celulares contra Firebase real: cadena, reconexión a mitad y revancha |
 | `dudo-local.mjs` | Duelo contra el celular y partida de tres en un celular, con retomar a mitad |

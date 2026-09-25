@@ -20,6 +20,14 @@ assert.equal(envOf({ hostname: '127.0.0.1' }), 'dev');
 assert.equal(envOf({ hostname: 'ellokojavi.github.io', pathname: '/juegos-de-salon/linea-de-tiempo/' }), 'prod');
 assert.equal(envOf({ hostname: 'ellokojavi.github.io', pathname: '/juegos-de-salon/toque-y-fama/' }), 'prod');
 assert.equal(envOf({}), 'prod');
+// Tailscale y la red de la casa también son pruebas (D-138)
+assert.equal(envOf({ hostname: 'mac-mini.tail1234.ts.net' }), 'dev');
+assert.equal(envOf({ hostname: '192.168.1.40' }), 'dev');
+assert.equal(envOf({ hostname: '10.0.0.7' }), 'dev');
+assert.equal(envOf({ hostname: '172.20.3.4' }), 'dev');
+assert.equal(envOf({ hostname: 'mac-mini.local' }), 'dev');
+assert.equal(envOf({ hostname: 'juegosdesalon.cl' }), 'prod');
+assert.equal(envOf({ hostname: '172.40.3.4' }), 'prod');
 
 // Versión desde el import map
 assert.equal(versionOf('{"imports": {"../assets/js/ui.js": "../assets/js/ui.js?v=0.19.0"}}'), '0.19.0');
@@ -82,6 +90,15 @@ assert.equal(dayPath('prod', 20342), 'stats/prod/days/20342');
   assert.equal(api.calls.length, 1);
   assert.equal(api.calls[0].path, 'stats/prod/days/20342');
   assert.deepEqual(api.calls[0].changes['local/toque-y-fama/local/2'], INC);
+}
+
+// La hora se toma al empezar, no la que quedó en la huella al abrir la página (D-138)
+{
+  const api = fakeApi();
+  const tarde = new Date(2026, 8, 25, 23, 10).getTime();
+  await noteStart(api, { ...fp, hour: 8 }, { game: 'copa', mode: 'copa', players: 1, now: tarde });
+  assert.deepEqual(api.calls[0].changes['hour/23'], INC);
+  assert.equal(api.calls[0].changes['hour/8'], undefined);
 }
 
 // noteRoom usa el día en que el servidor creó la sala, no el de hoy

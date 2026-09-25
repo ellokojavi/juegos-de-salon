@@ -204,13 +204,18 @@
 /* ---------- Colocación ---------- */
 .place-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }
 .place-top .count { color: var(--muted); font-weight: 900; }
-.ships { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 12px 0 10px; }
+/* Tres columnas con el dibujo arriba del nombre: las cinco fichas caben en dos filas. En una
+   fila que se envuelve sola quedaban en tres y la última no se veía sin desplazar en un
+   celular con la barra del navegador abajo. Van en una fila que se envuelve, con el ancho de una
+   columna, para que las dos de abajo queden centradas y no pegadas a la izquierda (U-11). */
+.ships { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 8px 0 10px; }
 .ship-chip {
-  display: flex; align-items: center; gap: 6px; padding: 8px 10px; border-radius: 12px; cursor: grab;
+  flex: 0 0 calc((100% - 12px) / 3);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-width: 0; min-height: 44px; padding: 6px 4px; border-radius: 12px; cursor: grab;
   /* La ficha se arrastra al tablero: el navegador no puede llevarse el gesto para desplazar la
      página (D-86), y arrastrar un botón no debe seleccionar su texto. */
   touch-action: none; user-select: none; -webkit-user-select: none;
-  background: var(--glass); border: 2px solid var(--glass-border); color: var(--ink); font: 800 0.85rem var(--font-body); transition: transform 0.1s, border-color 0.15s;
+  background: var(--glass); border: 2px solid var(--glass-border); color: var(--ink); font: 800 0.8rem/1.1 var(--font-body); transition: transform 0.1s, border-color 0.15s;
 }
 .ship-chip .barco-tira { display: flex; gap: 1px; }
 .ship-chip .barco-tira .barco { width: 12px; height: 12px; display: block; background: #132a45; border-radius: 2px; }
@@ -300,3 +305,8 @@
 .waiting { text-align: center; color: var(--muted); font-weight: 800; }
 .waiting .dots::after, .dots::after { content: '…'; animation: dots 1.2s steps(4) infinite; }
 @keyframes dots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } }
+
+/* Con el chat en pantalla, la burbuja flota abajo a la derecha (78 px del borde, 54 de alto):
+   al fondo de la página tiene que quedar aire para que no tape mi flota ni los botones del final
+   (C-15, C-8). En la colocación no hace falta: ahí el chat se guarda. */
+body.chat-on #screen-lobby, body.chat-on #screen-play, body.chat-on #screen-result { padding-bottom: calc(140px + env(safe-area-inset-bottom, 0px)); }
