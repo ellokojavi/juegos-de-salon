@@ -12,7 +12,9 @@ const OUT = process.argv[2] || '/tmp/copa';
 const SIETE = !process.argv.includes('--tres');
 mkdirSync(OUT, { recursive: true });
 const b = await launch({ port: 9377, dir: `${OUT}/perfil`, out: OUT });
-const BASE = 'http://localhost:8765/copa/';
+// SITIO permite probar otra copia del repo servida en otro puerto (la ronda de usabilidad, D-132)
+const SITIO = process.env.SITIO || 'http://localhost:8765';
+const BASE = `${SITIO}/copa/`;
 const ok = (cond, msg) => { console.log(`${cond ? '✓' : '✗'} ${msg}`); if (!cond) process.exitCode = 1; };
 const ev = expr => b.evaluate(expr);
 const click = sel => ev(`(()=>{const x=document.querySelector(${JSON.stringify(sel)});if(!x)return 'no';if(x.disabled)return 'disabled';x.click();return 'ok'})()`);
@@ -273,6 +275,10 @@ await b.shot('admin-nueva');
 await click('#msg-invitar'); await sleep(300);
 ok((await ev('window.__compartido.length')) === 1, 'desde ahí se comparte la invitación');
 console.log('  invitación:', await ev('window.__compartido[0]?.text'));
+{
+  const inv = await ev('window.__compartido[0]?.text || ""');
+  ok(/¡Estás invitado!/.test(inv) && /👥 Ya se inscribió Cata\./.test(inv) && !/Línea Relámpago|Conexiones|Reinas/.test(inv), 'la invitación es promocional, dice quién ya está y no revela los juegos (D-127)');
+}
 ok(/\n\n🔗 https?:\/\/\S+\?oficina/.test(await ev('window.__compartido[0]?.text || ""')), 'la invitación termina con el link ?oficina en su propia línea');
 // Cerrar la inscripción deja fuera a los nuevos; reabrirla, no
 await click('#btn-cerrar-inscripcion'); await sleep(300);
@@ -317,6 +323,9 @@ ok(/no es el de Javi/.test(await ev(`document.querySelector('#entrar-body .form-
 await ev('sessionStorage.clear(); 1');
 await b.go(`${BASE}?oficina&prueba`, 1200); await preparar();
 ok(await ev('__copa.estado.code') === CODE, 'el link ?oficina abre la copa');
+await ev('sessionStorage.clear(); 1');
+await b.go(`${BASE}?${CODE}&prueba`, 1200); await preparar();
+ok(/\?oficina&prueba$/.test(await ev('location.search')), 'entrando por el código, la barra muestra el link propio');
 // Inscribirse con un nombre y PIN que ya existen cuenta como entrar (D-120)
 await comoJugador(CODE);
 ok(/7 días · Parte el .* · 3 jugadores inscritos/.test(await ev(`document.querySelector('#entrar-body .lead').textContent`)) || /3 días · Parte el .* · 3 jugadores inscritos/.test(await ev(`document.querySelector('#entrar-body .lead').textContent`)), 'la invitación dice días, cuándo parte y cuántos se inscribieron');
@@ -402,10 +411,10 @@ console.log('  resumen final:', JSON.stringify(await ev('window.__compartido.at(
 
 /* ---------- El laboratorio (D-101): la página, la práctica de cada minijuego y los reportes ---------- */
 
-await b.go('http://localhost:8765/', 1500);
+await b.go(`${SITIO}/`, 1500);
 const tarjeta = await ev(`(()=>{const c=[...document.querySelectorAll('.game-card')].find(x=>x.textContent.includes('La Copa'));return JSON.stringify({soon:c.classList.contains('soon'),href:c.getAttribute('href'),rotulo:c.querySelector('.proximamente')?.textContent})})()`).then(JSON.parse);
 ok(tarjeta.soon && !tarjeta.href && tarjeta.rotulo === 'Próximamente', 'en el menú La Copa se ve con Próximamente y no se abre');
-await b.go('http://localhost:8765/labs/', 1500);
+await b.go(`${SITIO}/labs/`, 1500);
 ok(await ev(`document.querySelectorAll('#minis .mini-juego').length`) === 9, 'el laboratorio ofrece los nueve minijuegos (con Zip y Tango)');
 await b.shot('10-labs');
 // Rendirse en Reinas: dos toques, la solución a la vista y 0 puntos (D-110)
@@ -467,6 +476,12 @@ await b.go(`${BASE}?practica=${id}&prueba${id === 'zip' ? '&zipSeg=12&semilla=KQ
     await b.shot('zip-solucion');
   }
   if (id === 'conexiones') ok(await ev(`document.querySelectorAll('.grupo').length === 4 && !document.querySelector('.grupo').classList.contains('pop')`), 'Conexiones: los grupos ya resueltos no se vuelven a animar');
+  if (['conexiones', 'reinas', 'linea', 'letras'].includes(id)) {
+    // El reloj se detiene al terminar el tablero, no al tocar "Ver resultado" (D-130)
+    const t0 = await ev(`document.querySelector('#jugar-head .cron').textContent`);
+    await sleep(2300);
+    ok(await ev(`document.querySelector('#jugar-head .cron').textContent`) === t0, `${id}: al terminar el tablero el reloj queda quieto en ${t0}`);
+  }
   await click('#btn-fin'); await sleep(500);
   const r = await ev(`JSON.stringify({p:__copa.estado.pantalla, s:document.querySelector('.score-big')?.textContent})`).then(JSON.parse);
   ok(r.p === 'resultado', `práctica de ${id}: se juega completa (${r.s})`);
@@ -491,7 +506,7 @@ await click('#btn-enviar-reporte'); await sleep(400);
 ok(await ev(`!!document.getElementById('btn-reporte-volver')`), 'después de enviar se agradece y se puede volver');
 
 /* ---------- Las demos del laboratorio (D-110) ---------- */
-await b.go('http://localhost:8765/labs/', 1200);
+await b.go(`${SITIO}/labs/`, 1200);
 ok(await ev(`document.querySelectorAll('[data-demo]').length`) === 8, 'el laboratorio ofrece las ocho demos de la copa');
 const DEMOS = { nueva: 'admin', invitado: 'entrar', espera: 'tablero', 'sin-jugar': 'admin', jugador: 'tablero', admin: 'admin', final: 'tablero', podio: 'tablero' };
 for (const [demo, pant] of Object.entries(DEMOS)) {
@@ -504,6 +519,7 @@ await b.go(`${BASE}?prueba&demo=sin-jugar`, 1500); await preparar();
 ok(/nadie ha jugado/.test(await ev(`document.getElementById('admin-inicio')?.innerText || ''`)), 'demo sin-jugar: el admin ve que partió sin nadie y puede moverla');
 await b.go(`${BASE}?prueba&demo=jugador`, 1500); await preparar();
 ok(!!await ev(`document.querySelector('[data-dia="4"]')`), 'demo jugador: el día 4 se puede jugar');
+ok(await ev(`[...document.querySelectorAll('.tabla .fila')].every(f=>f.querySelectorAll('.pd').length===7) && !!document.querySelector('.tabla .pd.pendiente') && !!document.querySelector('.tabla .pd.abierto') && !!document.querySelector('.tabla-leyenda')`), 'la tabla muestra los 7 días de cada jugador, con estados y leyenda (D-131)');
 // Eliminar la copa (D-117): dos confirmaciones, la segunda escribiendo el nombre
 await b.go(`${BASE}?prueba&demo=admin`, 1500); await preparar();
 const codeBorrar = await ev('__copa.estado.code');

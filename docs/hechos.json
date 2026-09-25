@@ -1,5 +1,5 @@
 {
-  "version": "0.59.0",
+  "version": "0.63.1",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -182,9 +182,9 @@
           "en": "📡 Two phones"
         },
         {
-          "clave": "modeCpu",
-          "es": "🤖 Contra el celular",
-          "en": "🤖 Versus the phone"
+          "clave": "modeSolo",
+          "es": "🧍 Jugar solo",
+          "en": "🧍 Play alone"
         }
       ],
       "variantes": [],
@@ -705,6 +705,10 @@
     {
       "ruta": "docs/REQUERIMIENTOS.md",
       "titulo": "Requerimientos"
+    },
+    {
+      "ruta": "docs/USABILIDAD.md",
+      "titulo": "Guía de usabilidad"
     },
     {
       "ruta": "docs/juegos/ahorcado.md",

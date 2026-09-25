@@ -31,7 +31,7 @@ const salida = flag('salida', '/tmp/mirar');
  * por delante de todas las pruebas sin que nadie lo vea (D-75).
  */
 const muescas = args.includes('--muescas');
-const base = flag('base', 'http://localhost:8765');
+const base = flag('base', process.env.SITIO || 'http://localhost:8765');
 
 if (!juego) {
   console.error('Falta el juego. Ej: node tools/e2e/mirar.mjs ahorcado juego --ancho 320');

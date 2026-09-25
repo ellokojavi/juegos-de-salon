@@ -1,6 +1,6 @@
 # Especificación: Toque y Fama 🔢
 
-**Ruta:** `/toque-y-fama/` · **Jugadores:** 2 · **Versión:** 0.4 · **Idiomas:** es, en (“Bulls and Cows”), pt (“Toque e Fama”)
+**Ruta:** `/toque-y-fama/` · **Jugadores:** 1–2 · **Versión:** 0.4 · **Idiomas:** es, en (“Bulls and Cows”), pt (“Toque e Fama”)
 
 ## Reglas implementadas
 - Cada jugador elige un número secreto de **3, 4 o 5 cifras distintas** (4 por defecto). Cero inicial permitido (configurable).
@@ -12,11 +12,11 @@
 | Modo | Cómo | Transporte |
 |---|---|---|
 | 📱 Un celular, dos jugadores | Cada uno ingresa su secreto con la pantalla tapada; tras cada intento aparece, en una sola pantalla, la respuesta (toques y famas) y debajo “Pásale el celular a X”. | `assets/js/transport/local.js` (memoria) |
-| 🤖 Contra el celular | Duelo: el jugador adivina el número del celular mientras el celular (solver por eliminación) adivina el suyo. | `assets/js/transport/local.js` + bot |
+| 🧍 Jugar solo | El celular elige un número secreto y el jugador lo adivina en la menor cantidad de intentos. Un solo tablero, con las pistas escritas completas ("2 famas", "1 toque"), y récord por cifras y cero al inicio en `localStorage` (D-129). Sin réplica ni número propio. | `assets/js/transport/local.js` + bot que solo responde |
 | 📡 Dos celulares | Sala con código de 4 letras y QR (`?sala=CODE`). Cada celular calcula las respuestas contra su propio secreto. | `assets/js/transport/firebase.js` (Realtime Database) |
 
 ## Recordatorio del número propio
-En la pantalla de juego aparece una ficha “🔒 Tu número secreto”. En dos celulares y contra el celular se ve directo; en un celular parte oculta (••••) y se muestra al tocarla, porque el celular pasa de mano.
+En la pantalla de juego aparece una ficha “🔒 Tu número secreto”. En dos celulares se ve directo; en un celular parte oculta (••••) y se muestra al tocarla, porque el celular pasa de mano.
 
 ## Flujo
 ```
@@ -76,7 +76,7 @@ Compromiso `sha256(secreto + sal privada)` al inicio; al final se revelan secret
 ```
 toque-y-fama/
   index.html · style.css · rules.js (LOCALES es/en, config por defecto)
-  engine.js (score, isValid, randomSecret, Solver, sha256, verifyPlayer) · engine.test.mjs
+  engine.js (score, isValid, randomSecret, sha256, verifyPlayer) · engine.test.mjs
   game.js (reductor, agentes locales, bot, render)
 firebase/database.rules.json · assets/js/firebase-config.js
 ```
