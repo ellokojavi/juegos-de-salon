@@ -58,6 +58,57 @@ const BN_FALLA = rol => `(()=>{const S=window.__bn.session(),L=S.layouts['${rol 
  * Cómo llegar a cada pantalla. Cada paso es un trocito de JS que se corre en la página;
  * si un juego necesita otra cosa, se suma acá y no en un guion nuevo.
  */
+/** Siembra el panel con salas, señales y copas, y abre la vista pedida (ver `panel` abajo). */
+const SEMBRAR_PANEL = vista => `(async()=>{const DIA=86400000,ahora=Date.now(),hoy=Math.floor(ahora/DIA);
+      const rooms={ABCD:{createdAt:ahora-4*60000,lastAt:ahora-60000,game:'dudo',players:{A:{name:'Javi',online:true},B:{name:'Cata',online:true}},messages:{m1:{t:'hello',at:ahora-4*60000},m2:{t:'bid',at:ahora-60000}}},EFGH:{createdAt:ahora-2*3600000,lastAt:ahora-12*60000,game:'juego-nuevo',players:{A:{name:'Fausto',online:false}}}};
+      // Salas jugadas de varios días, con país y ganador, para ver la bitácora y su paginado (D-79).
+      // Van a propósito: un empate, una sala sin registro de ganador (de antes de que se anotara),
+      // una donde nunca entró nadie más y nombres de varios países.
+      const gente=[['Javi','CL'],['Cata','CL'],['Pancho','CL'],['Fran','AR'],['Ana','BR'],['Leo','ES'],['Nico','MX'],['Sofi','PE']];
+      const juegos=['dudo','ahorcado','linea-de-tiempo','toque-y-fama','batalla-naval'];
+      const dias={};
+      for(let k=0;k<26;k++){
+        const d=hoy-(k%7), code=String.fromCharCode(65+k%26)+'BCD'.slice(0,3);
+        const a=gente[k%gente.length], b=gente[(k+3)%gente.length];
+        const r={game:juegos[k%juegos.length],at:(d*DIA)+((10+k%12)*3600000),v:'0.33.6',players:{A:a[0],B:b[0]},co:{A:a[1],B:b[1]}};
+        if(k%7===3) r.end={winner:'tie',at:r.at};
+        else if(k%5!==1) r.end={winner:k%2?'A':'B',name:k%2?a[0]:b[0],at:r.at};
+        if(k%9===4){ delete r.players.B; delete r.co.B; delete r.end; }
+        (dias[d]=dias[d]||{rooms:{}}).rooms[code]=r;
+      }
+      const days={...dias};
+      days[hoy]={...(days[hoy]||{}),rooms:{...((days[hoy]||{}).rooms||{}),ABCD:{game:'dudo',at:ahora-4*60000,players:{A:'Javi',B:'Cata'},co:{A:'CL',B:'CL'},end:{winner:'A',name:'Javi',at:ahora}},EFGH:{game:'juego-nuevo',at:ahora-2*3600000,players:{A:'Fausto'},co:{A:'UY'}}},local:{dudo:{local:{4:6},cpu:{1:3}},'juego-nuevo':{equipos:{6:5}},ahorcado:{local:{3:4}}},origin:{America__Santiago:12,Europe__Madrid:2},lang:{'es-CL':12,'pt-BR':2},applang:{es:11,pt:2,fr:1},hour:{14:4,21:9}};
+      days[hoy-1]={...(days[hoy-1]||{}),local:{'linea-de-tiempo':{solo:{1:7}}},origin:{America__Santiago:5},lang:{'es-CL':5},applang:{es:5},hour:{20:5}};
+      
+      const {nuevaMeta}=await import('/copa/engine.js');
+      const Z='America/Santiago', fecha=k=>new Date(ahora-k*DIA).toLocaleDateString('en-CA',{timeZone:Z});
+      const nombres=['Javi','Cata','Pancho','Fran','Sofi','Nico','Leo'];
+      const copa=(nombre,dias,hace,n,{lab=false,alias=null}={})=>{
+        const pids=nombres.slice(0,n).map((g,i)=>'p'+String(i).padStart(5,'0'));
+        const meta=nuevaMeta({nombre,dias,inicio:fecha(hace),tz:Z,admin:pids[0],creada:ahora-(Math.max(hace,0)+1)*DIA,lab,alias});
+        const players=Object.fromEntries(pids.map((p,i)=>[p,{name:nombres[i],at:i+1}]));
+        const started=[null],results=[null];
+        for(let d=1;d<=dias;d++){
+          started[d]={};results[d]={};
+          if(ahora<meta.win[d].a)continue;
+          pids.forEach((p,i)=>{
+            const k=(d*7+i*3)%10, hoyDia=ahora<meta.win[d].h;
+            if(hoyDia&&i>=n-2&&k%3===0)return;                         // todavía no lo juega
+            const t0=Math.min(ahora-60000,meta.win[d].a+(2+i+d)*3600000);
+            started[d][p]=t0;
+            if(hoyDia&&i===n-1){started[d][p]=ahora-4*60000;return;}  // lo está jugando ahora
+            if(k===7)return;                                           // lo dejó sin terminar
+            const s=[100,89,78,67,56,44,30,20,11,0][k];
+            results[d][p]={s,ms:40000+k*23000+i*7000,at:t0+60000+k*20000,r:s+'/100',t:''};
+          });
+        }
+        return {meta,players,started,results};
+      };
+      const torneos={OFICI:copa('Copa de la oficina',7,2,5,{alias:'oficina'}),PRIMO:copa('Los primos',3,0,3),LABOR:copa('Prueba del laboratorio',3,1,2,{lab:true}),AGOST:copa('Copa de agosto',7,20,6,{alias:'agosto'}),FINDE:copa('Copa del finde',3,-2,2)};
+      // Los días de copa también mandan su señal: el panel no los cuenta entre las partidas de los juegos
+      days[hoy].local.copa={copa:{1:9}};
+      window.__panel.seed({rooms,days,torneos,vista:'${vista}'});})()`;
+
 const CAMINOS = {
   dudo: {
     intro: [],
@@ -186,31 +237,12 @@ const CAMINOS = {
    * con datos sembrados, sin entrar con Google ni tocar la base (C-14). Los datos traen a
    * propósito un juego (`juego-nuevo`), un modo (`equipos`) y un idioma (`fr`) que no están
    * en el registro: así se ve de una que el panel los muestra igual (C-16).
+   *
+   * Las copas se arman con el motor de verdad (`nuevaMeta`): una a media semana con alguien
+   * jugando ahora, una que empieza hoy, una de laboratorio, una terminada y una por empezar.
+   * Cada toma abre una de las tres vistas (D-136); `datos` es la del resumen.
    */
-  panel: {
-    datos: [`(()=>{const DIA=86400000,ahora=Date.now(),hoy=Math.floor(ahora/DIA);
-      const rooms={ABCD:{createdAt:ahora-4*60000,lastAt:ahora-60000,game:'dudo',players:{A:{name:'Javi',online:true},B:{name:'Cata',online:true}},messages:{m1:{t:'hello',at:ahora-4*60000},m2:{t:'bid',at:ahora-60000}}},EFGH:{createdAt:ahora-2*3600000,lastAt:ahora-12*60000,game:'juego-nuevo',players:{A:{name:'Fausto',online:false}}}};
-      // Salas jugadas de varios días, con país y ganador, para ver la bitácora y su paginado (D-79).
-      // Van a propósito: un empate, una sala sin registro de ganador (de antes de que se anotara),
-      // una donde nunca entró nadie más y nombres de varios países.
-      const gente=[['Javi','CL'],['Cata','CL'],['Pancho','CL'],['Fran','AR'],['Ana','BR'],['Leo','ES'],['Nico','MX'],['Sofi','PE']];
-      const juegos=['dudo','ahorcado','linea-de-tiempo','toque-y-fama','batalla-naval'];
-      const dias={};
-      for(let k=0;k<26;k++){
-        const d=hoy-(k%7), code=String.fromCharCode(65+k%26)+'BCD'.slice(0,3);
-        const a=gente[k%gente.length], b=gente[(k+3)%gente.length];
-        const r={game:juegos[k%juegos.length],at:(d*DIA)+((10+k%12)*3600000),v:'0.33.6',players:{A:a[0],B:b[0]},co:{A:a[1],B:b[1]}};
-        if(k%7===3) r.end={winner:'tie',at:r.at};
-        else if(k%5!==1) r.end={winner:k%2?'A':'B',name:k%2?a[0]:b[0],at:r.at};
-        if(k%9===4){ delete r.players.B; delete r.co.B; delete r.end; }
-        (dias[d]=dias[d]||{rooms:{}}).rooms[code]=r;
-      }
-      const days={...dias};
-      days[hoy]={...(days[hoy]||{}),rooms:{...((days[hoy]||{}).rooms||{}),ABCD:{game:'dudo',at:ahora-4*60000,players:{A:'Javi',B:'Cata'},co:{A:'CL',B:'CL'},end:{winner:'A',name:'Javi',at:ahora}},EFGH:{game:'juego-nuevo',at:ahora-2*3600000,players:{A:'Fausto'},co:{A:'UY'}}},local:{dudo:{local:{4:6},cpu:{1:3}},'juego-nuevo':{equipos:{6:5}},ahorcado:{local:{3:4}}},origin:{America__Santiago:12,Europe__Madrid:2},lang:{'es-CL':12,'pt-BR':2},applang:{es:11,pt:2,fr:1},hour:{14:4,21:9}};
-      days[hoy-1]={...(days[hoy-1]||{}),local:{'linea-de-tiempo':{solo:{1:7}}},origin:{America__Santiago:5},lang:{'es-CL':5},applang:{es:5},hour:{20:5}};
-      window.__panel.seed({rooms,days});})();1`],
-
-  },
+  panel: Object.fromEntries([['datos', 'resumen'], ['resumen', 'resumen'], ['torneo', 'torneo'], ['juegos', 'juegos']].map(([toma, vista]) => [toma, [SEMBRAR_PANEL(vista)]])),
 };
 
 const camino = CAMINOS[juego]?.[pantalla];
@@ -220,7 +252,7 @@ if (!camino) {
   process.exit(1);
 }
 
-const b = await launch({ port: 9451, dir: `${salida}/perfil`, out: salida, width: ancho, height: alto });
+const b = await launch({ port: Number(process.env.PUERTO_CDP) || 9451, dir: `${salida}/perfil`, out: salida, width: ancho, height: alto });
 await b.go(`${base}/${juego}/`, 1500);
 // El idioma se guarda como texto pelado: getLang() compara contra ['es','en','pt'] y un
 // JSON.stringify le dejaba las comillas dentro, así que --idioma no hacía nada.

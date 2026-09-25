@@ -1,5 +1,11 @@
 # Changelog
 
+## Por asignar (la versión se pone al fusionar, D-135) — 2026-09-25
+- **Panel del dueño: La Copa aparte** (D-137). Tres vistas: Resumen, La Copa y Juegos. Se ve en
+  todo momento qué copas están en curso, qué minijuego toca hoy en cada una, quién ya lo jugó y
+  quién lo está jugando. Por minijuego: jugadas, sin terminar, puntaje promedio y tiempo típico.
+  Los juegos de una partida se cuentan sin los días de La Copa. Sin cambios para los jugadores.
+
 ## 0.64.0 — 2026-09-25
 - **Reglas plegadas en cada minijuego** (D-133): "📖 Reglas de …" debajo del tablero, cerrado por
   defecto, con las mismas palabras de los botones de cada pantalla.

@@ -86,3 +86,31 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0
   .log-row .who { grid-column: 3; }
   .log-row .win { grid-column: 4; }
 }
+
+/* ---------- Vistas: resumen, torneo y juegos ---------- */
+.tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 4px; }
+.tabs button {
+  appearance: none; border: 1px solid var(--glass-border); background: var(--glass); color: var(--ink);
+  border-radius: 999px; padding: 10px 16px; min-height: 44px; font: inherit; font-weight: 900; cursor: pointer;
+}
+.tabs button[aria-selected="true"] { background: var(--ink); color: var(--bg1); border-color: var(--ink); }
+[data-en][hidden] { display: none !important; }
+
+/* Leyenda con muestras de color */
+.legend .sw { display: inline-block; width: 10px; height: 10px; border-radius: 3px; vertical-align: middle; margin-right: 2px; }
+/* Detalle bajo una barra: ocupa todo el ancho, para no apretar los números en un celular (C-8) */
+.bar .detail { grid-column: 1 / -1; color: var(--muted); font-size: 0.78rem; font-weight: 800; margin-top: -4px; }
+
+/* Copas en curso: la fila de sala, con nombre, día y gente */
+.room.copa { align-items: start; }
+.room .cuerpo { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.room .cname { font-weight: 900; }
+.room .sub { color: var(--muted); font-size: 0.85rem; font-weight: 800; }
+.room .who span.ok { color: var(--lime); }
+.tag { display: inline-block; margin-left: 6px; padding: 1px 8px; border-radius: 999px; font-size: 0.7rem; font-weight: 900; vertical-align: middle; background: rgba(255, 255, 255, 0.1); color: var(--muted); }
+.log-row .win .va { color: var(--ink); }
+@media (max-width: 520px) {
+  /* En un celular, los datos de la copa pasan debajo: tres columnas dejan el nombre en una línea por palabra */
+  .room.copa { grid-template-columns: auto 1fr; }
+  .room.copa .meta { grid-column: 1 / -1; text-align: left; white-space: normal; }
+}

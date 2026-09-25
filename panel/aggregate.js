@@ -68,8 +68,10 @@ export function groupDays(byDay, grano = 'dia') {
   for (const fila of byDay) {
     const f = new Date(fila.day * DAY);
     const clave = grano === 'mes' ? dayOf(Date.UTC(f.getUTCFullYear(), f.getUTCMonth(), 1)) : lunesDe(fila.day);
-    const caja = cajones.get(clave) || { day: clave, total: 0, online: 0, local: 0 };
-    caja.total += fila.total; caja.online += fila.online; caja.local += fila.local;
+    // Se suma cada cifra de la fila, sea cual sea: el panel junta así las partidas de los juegos
+    // con los minijuegos de un torneo sin que esto tenga que saber de ninguno de los dos.
+    const caja = cajones.get(clave) || { day: clave };
+    for (const [k, v] of Object.entries(fila)) if (k !== 'day' && typeof v === 'number') caja[k] = (caja[k] || 0) + v;
     cajones.set(clave, caja);
   }
   return [...cajones.values()].sort((a, b) => a.day - b.day).map(c => ({ ...c, label: periodLabel(c.day, grano) }));
@@ -194,8 +196,12 @@ export function modesOf(byGame) {
 /**
  * Resume los días entre `from` y `to` (inclusive, números de día).
  * `days` es el objeto tal como viene de `stats/<env>/days`.
+ *
+ * `incluye(juego)` deja fuera las partidas de los juegos que no pasan: el panel separa así los
+ * torneos del resto. Zona horaria, idiomas y hora no son de un juego sino del celular, y se
+ * cuentan siempre enteros.
  */
-export function summarize(days, { from, to }) {
+export function summarize(days, { from, to, incluye = () => true }) {
   const byGame = {}, byPlayers = {}, origin = {}, lang = {}, applang = {}, hour = Array(24).fill(0);
   const byDay = [];
   let online = 0, local = 0, devices = 0;
@@ -205,12 +211,13 @@ export function summarize(days, { from, to }) {
     const row = { day: d, total: 0, online: 0, local: 0 };
 
     for (const r of Object.values(bucket.rooms || {})) {
-      if (!r) continue;
+      if (!r || !incluye(r.game || '?')) continue;
       const g = bump(byGame, r.game || '?');
       g.total++; g.online++; row.online++;
       add(byPlayers, Math.min(MAX_PLAYERS, Math.max(1, Object.keys(r.players || {}).length)));
     }
     for (const [game, modes] of Object.entries(bucket.local || {})) {
+      if (!incluye(game)) continue;
       for (const [mode, ns] of Object.entries(modes || {})) {
         // Se acepta por forma, no por lista: un modo que el código empezó a mandar ayer
         // cuenta hoy, sin tocar el panel (C-16). Lo que no tiene forma de modo es basura.
