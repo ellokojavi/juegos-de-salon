@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.59.2 — 2026-09-24
+- El botón del gráfico dice simplemente "📤 Compartir".
+
 ## 0.59.1 — 2026-09-24
 - "Compartir como imagen" queda centrado y separado de la nota del gráfico.
 
