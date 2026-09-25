@@ -20,6 +20,8 @@ export function montar(raiz, ctx) {
 
   const dibujar = () => {
     const e = motor.estado(p, J.i);
+    // Terminado el tablero, el tiempo se detiene aquí y no al tocar el botón (D-130)
+    if (e.fin) ctx.pararReloj?.();
     raiz.innerHTML = '';
     const caja = el('div', { class: 'stack numero-juego letras-juego' });
     // El cierre va arriba; en la final (ctx.cierreAbajo), debajo del tablero
