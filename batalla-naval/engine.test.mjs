@@ -1,6 +1,6 @@
 // Ejecutar: node batalla-naval/engine.test.mjs
 import assert from 'node:assert/strict';
-import { N, FLEET, cellName, parseCell, isCell, cellsOf, isValidPlacement, isValidLayout, randomLayout, occupancy, layoutKey, shoot, sunkShips, allSunk, Hunter, nextShooter, sha256, verifyPlayer } from './engine.js';
+import { N, FLEET, cellName, parseCell, isCell, cellsOf, isValidPlacement, isValidLayout, randomLayout, rotateNear, occupancy, layoutKey, shoot, sunkShips, allSunk, Hunter, nextShooter, sha256, verifyPlayer } from './engine.js';
 
 assert.equal(cellName(0, 0), 'A1'); assert.equal(cellName(9, 9), 'J10'); assert.deepEqual(parseCell('B4'), { r: 3, c: 1 }); assert.deepEqual(parseCell('J10'), { r: 9, c: 9 });
 assert.ok(isCell('A1') && isCell('J10')); assert.ok(!isCell('K1') && !isCell('A11') && !isCell('A0'));
@@ -16,6 +16,24 @@ assert.ok(!isValidLayout({ ...L, destroyer: null }));
 for (let i = 0; i < 200; i++) assert.ok(isValidLayout(randomLayout()), 'randomLayout válido');
 assert.equal(Object.keys(occupancy(L)).length, 17);
 assert.equal(layoutKey(L), 'carrier:0,0,h|battleship:1,0,h|cruiser:2,0,h|submarine:3,0,h|destroyer:4,0,h');
+
+// Girar (D-136): sobre la proa si cabe; si no, lo más cerca posible; nunca lejos.
+assert.deepEqual(rotateNear({ destroyer: { r: 5, c: 5, dir: 'h' } }, 'destroyer'), { r: 5, c: 5, dir: 'v' }, 'sobre la proa si cabe');
+{ // la captura del reporte: acorazado vertical en H6–H9, al girar sobre H6 se sale por la derecha
+  const lay = { battleship: { r: 5, c: 7, dir: 'v' }, cruiser: { r: 1, c: 6, dir: 'v' }, carrier: { r: 5, c: 0, dir: 'h' }, submarine: { r: 1, c: 1, dir: 'h' } };
+  const q = rotateNear(lay, 'battleship');
+  assert.ok(q && q.dir === 'h' && isValidPlacement(lay, 'battleship', q), 'gira aunque no quepa sobre la proa');
+  assert.ok(q.r >= 5 && q.r <= 8 && q.c >= 5, 'se queda donde estaba');
+}
+assert.deepEqual(rotateNear({ carrier: { r: 9, c: 0, dir: 'h' } }, 'carrier'), { r: 5, c: 2, dir: 'v' }, 'en el borde de abajo sube lo justo');
+{ // encajonado: sin espacio cerca, no gira (no lo manda al otro lado del tablero)
+  const lay = { destroyer: { r: 0, c: 0, dir: 'h' }, carrier: { r: 1, c: 0, dir: 'h' }, battleship: { r: 0, c: 2, dir: 'v' } };
+  assert.equal(rotateNear(lay, 'destroyer'), null);
+}
+for (let i = 0; i < 200; i++) { // siempre válido y cerca
+  const lay = randomLayout(); const f = FLEET[i % FLEET.length]; const q = rotateNear(lay, f.id);
+  if (q) { assert.ok(isValidPlacement(lay, f.id, q) && q.dir !== lay[f.id].dir); assert.ok(Math.abs(q.r - lay[f.id].r) <= f.size && Math.abs(q.c - lay[f.id].c) <= f.size); }
+}
 
 assert.deepEqual(shoot(L, [], 'J10'), { result: 'agua' });
 assert.deepEqual(shoot(L, [], 'A5'), { result: 'tocado', ship: 'destroyer' });

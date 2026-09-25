@@ -1,7 +1,7 @@
 // Ejecutar: node panel/aggregate.test.mjs
 import assert from 'node:assert/strict';
 import { MODE_IDS } from '../assets/js/games.js';
-import { DAY, roomLog, paginate, flagOf, whenLabel, RANGOS, rangeOf, groupDays, periodLabel, ROOM_TTL, liveRooms, connections, summarize, top, tzLabel, ago, dayLabel, codesOfDays, splitByEnv } from './aggregate.js';
+import { DAY, roomLog, paginate, flagOf, whenLabel, RANGOS, rangeOf, groupDays, periodLabel, ROOM_TTL, liveRooms, esJugada, connections, summarize, top, tzLabel, ago, dayLabel, codesOfDays, splitByEnv } from './aggregate.js';
 
 const now = 20342 * DAY + 15 * 60 * 60 * 1000; // día 20342, 15:00 UTC
 
@@ -17,7 +17,7 @@ assert.deepEqual(live.map(r => r.code), ['ABCD', 'EFGH']);
 assert.equal(live[0].online, 1);
 // El `hello` que manda el transporte al entrar no es una jugada: sin esto, una sala recién
 // creada mostraba un mensaje por jugador antes de que nadie hubiera hecho nada.
-assert.equal(live[0].messages, 1, 'se cuenta la jugada, no el hello');
+assert.equal(live[0].jugadas, 1, 'se cuenta la jugada, no el hello');
 assert.equal(live[0].lastAt, now - 60 * 1000, 'la hora sí sale de todos los mensajes');
 assert.equal(live[0].active, true);
 assert.equal(live[1].active, false);          // nadie conectado y sin jugadas hace 3 horas
@@ -25,6 +25,31 @@ assert.equal(live[1].lastAt, live[1].createdAt);
 assert.deepEqual(live[0].players.map(p => p.name), ['Javi', 'Cata']);
 assert.equal(connections(live), 1);
 assert.deepEqual(liveRooms(null, now), []);
+
+// Jugadas y chat por separado (D-138). Una Batalla Naval trae por cada disparo su respuesta
+// automática, y además los compromisos del anti-trampa: nada de eso lo hizo una persona.
+{
+  const m = {};
+  const add = (t, dt, extra = {}) => { m['m' + Object.keys(m).length] = { t, at: now - dt, from: 'A', ...extra }; };
+  add('hello', 600000); add('hello', 590000); add('commit', 500000); add('commit', 490000);
+  for (let i = 0; i < 5; i++) { add('shot', 400000 - i * 1000); add('reply', 399000 - i * 1000); }
+  add('chat', 60000, { text: 'te hundo' }); add('chat', 30000, { text: 'ni cerca' });
+  const [r] = liveRooms({ NAVE: { createdAt: now - 700000, game: 'batalla-naval', players: { A: { name: 'Tomi', online: true }, B: { name: 'SVS', online: true } }, messages: m } }, now);
+  assert.equal(r.jugadas, 5, 'cinco disparos, no sus respuestas ni los compromisos');
+  assert.equal(r.chat, 2);
+  assert.equal(r.lastPlayAt, now - 396000, 'la última jugada es el último disparo, no el chat');
+  assert.equal(r.lastAt, now - 30000, 'la vida de la sala sí incluye la charla');
+}
+// Un juego que no declara sus jugadas cuenta todo menos entradas y chat: inflado, nunca en cero
+assert.equal(esJugada('juego-nuevo', 'mueve'), true);
+assert.equal(esJugada('juego-nuevo', 'hello'), false);
+assert.equal(esJugada('juego-nuevo', 'chat'), false);
+assert.equal(esJugada('batalla-naval', 'reply'), false);
+// Uno solo esperando en el lobby, conectado: la sala está viva pero no "en juego"
+{
+  const [r] = liveRooms({ LOBY: { createdAt: now - 60000, game: 'dudo', players: { A: { name: 'Javi', online: true } }, messages: { m1: { t: 'hello', at: now - 60000 } } } }, now);
+  assert.equal(r.active, false, 'sin rival no hay partida en juego');
+}
 
 // Media hora sin latido y la sala está vencida (D-89). El latido es lo que miran las reglas,
 // así que manda sobre los mensajes: con latido fresco la sala vive aunque la última jugada
@@ -54,7 +79,7 @@ const reciennacida = liveRooms({ NUEV: {
   players: { A: { name: 'Ana', online: true }, B: { name: 'Beto', online: true } },
   messages: { m1: { t: 'hello', at: now - 30 * 1000 }, m2: { t: 'hello', at: now - 20 * 1000 } },
 } }, now);
-assert.equal(reciennacida[0].messages, 0, 'sin jugadas todavía');
+assert.equal(reciennacida[0].jugadas, 0, 'sin jugadas todavía');
 assert.equal(reciennacida[0].lastAt, now - 20 * 1000, 'pero entrar cuenta como actividad');
 assert.equal(reciennacida[0].active, true);
 
@@ -62,7 +87,7 @@ assert.equal(reciennacida[0].active, true);
 const days = {
   20340: { local: { 'cuarto-rey': { local: { 5: 2 } } }, origin: { America__Santiago: 2 }, lang: { 'es-CL': 2 }, hour: { 22: 2 } },
   20341: {
-    rooms: { ABCD: { game: 'toque-y-fama', at: 1, v: '0.20.0', players: { A: 'Javi', B: 'Cata' } }, EFGH: { game: 'linea-de-tiempo', at: 1, v: '0.20.0', players: { A: 'a', B: 'b', C: 'c' } } },
+    rooms: { SOLA: { game: 'batalla-naval', at: 1, v: '0.20.0', players: { A: 'Nadie llegó' } }, ABCD: { game: 'toque-y-fama', at: 1, v: '0.20.0', players: { A: 'Javi', B: 'Cata' } }, EFGH: { game: 'linea-de-tiempo', at: 1, v: '0.20.0', players: { A: 'a', B: 'b', C: 'c' } } },
     local: { 'toque-y-fama': { cpu: { 1: 3 }, local: { 2: 1 } }, 'linea-de-tiempo': { solo: { 1: 4 } } },
     origin: { America__Santiago: 5, America__Sao_Paulo: 2 }, lang: { 'es-CL': 5, 'pt-BR': 2 }, hour: { 21: 4, 22: 3 },
   },
@@ -70,6 +95,8 @@ const days = {
 };
 const s = summarize(days, { from: 20341, to: 20342 });
 assert.equal(s.online, 2);
+assert.equal(s.sinRival, 1, 'la sala donde no entró nadie más no es una partida: se cuenta aparte (D-138)');
+assert.equal(s.byGame['batalla-naval'].online, 0);
 assert.equal(s.local, 9);
 assert.equal(s.partidas, 11);
 assert.equal(s.devices, 8);

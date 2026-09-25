@@ -10,12 +10,53 @@ qué horas, no para identificar a nadie (D-44).
 No aparece en el menú ni se indexa. El código es público como todo el repo: lo que protege
 los datos son las reglas de Firebase, que solo dejan leer al UID del dueño.
 
+## Las tres vistas (D-137)
+
+Arriba, debajo del entorno y el rango, tres botones separan lo que se mira. La vista queda en la
+URL (`/panel/#torneo`), así que un enlace o una recarga vuelven a la misma.
+
+| Vista | Ahora | En el rango |
+|---|---|---|
+| **📊 Resumen** | Salas en juego, copas en curso, gente jugando un minijuego, celulares conectados. Las dos listas: copas en curso y salas vivas. | Partidas de juegos contra minijuegos de La Copa, en total y por día. Copas activas, celulares que jugaron. De dónde, idiomas, hora y cuota. |
+| **🏆 La Copa** | Copas en curso con el minijuego de hoy, quién ya lo jugó (✓), quién lo está jugando (punto verde), quién va primero y el último resultado. | Copas activas y nuevas, inscritos, minijuegos jugados y sin terminar, participación. Por minijuego: jugadas, puntaje promedio, tiempo típico y en cuántas copas. Minijuegos por día. La lista de copas con su ganador o quién va primero. |
+| **🎲 Juegos** | Salas vivas, como siempre. | Los juegos de una partida, sin La Copa: por juego y modo, jugadores por partida, por día y la bitácora de salas. |
+
+**Qué es torneo y qué es juego** lo dice el registro (`torneo: true` en `games.js`), no el panel:
+un segundo torneo entraría solo a su vista (C-16). El nombre de la pestaña también sale de ahí.
+
+**De dónde, idiomas y hora** van solo en el resumen y enteros: los manda el celular al empezar
+cualquier cosa, sea una partida o un minijuego, y no se pueden partir por juego.
+
+## La Copa en el panel (D-137)
+
+No usa señales aparte: lee `torneos/` tal como lo guarda la copa (el dueño ya podía leerlo en las
+reglas). El calendario de cada copa dice qué minijuego tocó cada día, y cada resultado trae su
+puntaje (0 a 100), su tiempo y su hora. Las cuentas de la copa (qué día va, la tabla) salen del
+motor de la copa, `copa/engine.js`; el panel no las repite.
+
+- **Jugando ahora:** tocó Empezar hace menos de media hora y todavía no hay resultado. Mira todos
+  los días abiertos, porque el de ayer se puede jugar hasta el fin de hoy.
+- **Minijuego sin terminar:** tocó Empezar y no dejó resultado, y ya no lo está jugando (pasó
+  media hora o el día cerró). Se dibuja en gris detrás de las jugadas de su minijuego.
+- **Participación:** minijuegos jugados de los que se podían jugar, en los días ya cerrados: uno
+  por jugador inscrito por día. Quien se inscribió después de que un día cerró no debía ese día.
+  Una copa sin días cerrados muestra "sin días cerrados", no 0 %.
+- **Inscripción abierta:** según las fechas y según el admin: si la cerró (`closed`), no se dice abierta.
+- **Tiempo típico:** la mediana, no el promedio: una persona que dejó el celular media hora
+  encendido no mueve la cifra.
+- **Va primero:** el dueño ve la tabla completa, incluidos los días que los jugadores todavía no
+  pueden ver (cada uno ve un día recién cuando lo jugó o cuando cerró).
+- **Sin entorno:** `torneos/` no está separado como `stats/<env>`, así que las copas de prueba
+  salen junto a las reales. Las del laboratorio llevan la etiqueta "laboratorio".
+- **Se baja entero:** las copas son pocas y chicas. Si algún día pesan, el paso siguiente es un
+  índice por `meta/createdAt` en las reglas y pedir solo las del rango.
+
 ## Qué se ve
 
 | Sección | Qué muestra | De dónde sale |
 |---|---|---|
-| **Ahora** | Salas en juego, celulares conectados, salas vivas (las que latieron hace menos de media hora, D-89), juegos en curso. Lista de salas con código, juego, nombres, quién está conectado, mensajes y última jugada. Solo las del entorno elegido (D-45). | `rooms/` en vivo (índice por `createdAt`), cruzado por código con `stats/<env>` |
-| **Últimos 7 / 30 días** | Partidas totales, en dos celulares, sin red, celulares que jugaron, partidas de hoy. | `stats/<env>/days/<día>` |
+| **Ahora** | Salas en juego, celulares conectados, salas vivas (las que latieron hace menos de media hora, D-89), juegos en curso. Lista de salas con código, juego, nombres, quién está conectado, **jugadas**, **mensajes de chat** y última jugada (D-138). Una sala cuenta como *en juego* solo si entró un rival. Solo las del entorno elegido (D-45). | `rooms/` en vivo (índice por `createdAt`), cruzado por código con `stats/<env>` |
+| **Últimos 7 / 30 días** | Partidas empezadas, en dos celulares (solo las que tuvieron rival), sin red, entradas de un celular a una partida, partidas de hoy (día UTC) y salas donde nunca entró nadie más (D-138). | `stats/<env>/days/<día>` |
 | **Partidas por juego** | Barra por juego, partida por modo: 📡 dos celulares, 📱 un celular, 🤖 contra el celular, 🧍 solo. Los modos salen del registro, y uno nuevo entra solo (C-16). | `rooms` (📡) y `local/<juego>/<modo>/<n>` |
 | **Jugadores por partida** | Cuántas partidas de 1, 2, … hasta el juego más numeroso del menú (hoy 6, `MAX_PLAYERS`). | `n` de los contadores sin red y cantidad de nombres de cada sala |
 | **Por día** | Partidas por día, separando dos celulares del resto. | ídem |
@@ -34,9 +75,25 @@ retomar hasta que la sala venza (C-6).
 **Celulares conectados** cuenta los jugadores con `online: true` en salas vivas. Los modos
 sin red no abren conexión (mandan un solo `fetch`), así que no aparecen ahí ni gastan cuota.
 
-**Entorno**: el selector separa lo publicado (`prod`), el laboratorio (`lab`) y las pruebas
-en `localhost` (`dev`). Las pruebas de punta a punta pegan contra Firebase de verdad y caen
-en `dev`, así que no ensucian las cifras reales.
+**Entorno**: el selector separa lo publicado (`prod`) de las pruebas (`dev`): el computador, la
+red de la casa (10/8, 172.16/12, 192.168/16, `.local`) y Tailscale (`*.ts.net`, D-67, D-138).
+Las pruebas de punta a punta pegan contra Firebase de verdad y caen en `dev`, así que no ensucian
+las cifras reales. `lab` quedó solo para leer lo que se guardó mientras existió el laboratorio.
+
+**Qué cuenta cada cifra** (D-138):
+
+- **Jugadas** son los mensajes de sala que hizo una persona: un disparo, un intento, una apuesta.
+  Cada juego los declara en `jugadas` de `assets/js/games.js`. No cuentan las respuestas
+  automáticas (`reply`), el anti-trampa (`commit`, `reveal`), las entradas (`hello`), la revancha
+  ni el chat. Un juego que no declara `jugadas` cuenta todo menos entradas y chat.
+- **Mensajes de chat**: solo cuántos. El panel nunca muestra qué dicen.
+- **Partidas** se anotan al empezar, no al terminar: sin red, al elegir el modo; en sala, al
+  crearla. Una sala donde nunca entró un segundo jugador no es una partida y se cuenta aparte.
+- **Entradas de un celular a una partida**, y también *De dónde*, los idiomas y la hora, suben
+  una vez cada vez que un celular empieza o entra a una partida: el mismo celular que juega cinco
+  revanchas suma cinco. No son personas.
+- **Los días son días UTC**: en Chile el día del panel cambia a las 21:00 (verano) o 20:00
+  (invierno). La hora de *A qué hora se juega* sí es la local del celular, tomada al empezar.
 
 Vale también para la lista de "Ahora", aunque ahí cueste un rodeo: `rooms/` es el nodo real
 del transporte y es uno solo para todos los entornos, así que una partida de prueba abre una
@@ -131,6 +188,8 @@ panel/
   panel.js            Entrada con Google, lecturas en vivo y dibujo
   aggregate.js        Agregación pura (sin DOM ni Firebase)
   aggregate.test.mjs  node panel/aggregate.test.mjs
+  copas.js            La Copa: copas en curso, cifras del rango y bitácora (puro, sobre el motor de la copa)
+  copas.test.mjs      node panel/copas.test.mjs
   adapta.test.mjs     node panel/adapta.test.mjs — que el panel se entere solo (C-16)
 assets/js/transport/
   stats.js            Registro desde los juegos y el transporte, por REST
@@ -139,8 +198,10 @@ assets/js/transport/
   dispose.test.mjs    node assets/js/transport/dispose.test.mjs
 ```
 
-`window.__panel.seed({ rooms, days })` dibuja el panel con datos sembrados sin entrar
-(gancho de solo lectura, C-14): sirve para probar la página sin cuenta ni base.
+`window.__panel.seed({ rooms, days, torneos, vista })` dibuja el panel con datos sembrados sin
+entrar (gancho de solo lectura, C-14): sirve para probar la página sin cuenta ni base.
+`node tools/e2e/mirar.mjs panel torneo` (o `resumen`, `juegos`) lo siembra con copas armadas
+con el motor de verdad y abre esa vista.
 
 ## Cuando entra un juego, un modo o un idioma nuevo
 

@@ -38,9 +38,19 @@ export const ENVS = ['prod', 'dev'];
 const STAMP = { '.sv': 'timestamp' };
 const INC = { '.sv': { increment: 1 } };
 
-/** Entorno según la URL: pruebas en local o app publicada. */
+/**
+ * Entorno según la URL: pruebas o app publicada.
+ *
+ * Pruebas es todo lo que no se sirve desde internet: el computador, la red de la casa
+ * (10/8, 172.16/12, 192.168/16, `.local`) y Tailscale (`*.ts.net`, que es como se prueba en un
+ * celular de verdad, D-67). Antes solo el computador contaba como prueba, y las partidas hechas
+ * por Tailscale llegaban al panel como gente jugando (D-138).
+ */
 export function envOf({ hostname = '' } = {}) {
-  if (/^(localhost|127\.0\.0\.1|\[::1\]|0\.0\.0\.0)$/.test(hostname)) return 'dev';
+  const h = String(hostname).toLowerCase();
+  if (/^(localhost|127\.\d+\.\d+\.\d+|\[::1\]|0\.0\.0\.0)$/.test(h)) return 'dev';
+  if (/^(10\.\d+|192\.168|172\.(1[6-9]|2\d|3[01]))\.\d+\.\d+$/.test(h)) return 'dev';
+  if (/(^|\.)(ts\.net|local)$/.test(h)) return 'dev';
   return 'prod';
 }
 
@@ -200,7 +210,10 @@ const quiet = send => { try { return Promise.resolve(send()).catch(() => { /* me
  * creó o entró a una sala. `players` es cuántas personas juegan en este celular.
  */
 export function noteStart(api, fp, { game, mode, players, now = Date.now() }) {
-  return quiet(() => api.patch(dayPath(fp.env, dayOf(now)), startChanges(fp, { game, mode, players })));
+  // La hora es la de ahora, no la que quedó en la huella al abrir la página: una pestaña que
+  // pasa la noche abierta (la Copa, "Otra vez" en Cuarto Rey) anotaba todo a la hora de entrar.
+  const ahora = { ...fp, hour: new Date(now).getHours() };
+  return quiet(() => api.patch(dayPath(fp.env, dayOf(now)), startChanges(ahora, { game, mode, players })));
 }
 
 /** Se creó una sala: queda su registro en el día en que el servidor la creó. */
