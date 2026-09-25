@@ -304,6 +304,11 @@ async function abrirCopa(code, { recienCreada = false, pantalla = null } = {}) {
     }
     if (primera) {
       primera = false;
+      // Si la copa tiene link propio, la dirección lo muestra aunque se haya entrado por el código
+      // (la lista de tus copas, un link viejo): así lo que se copie de la barra es el link bonito (D-121)
+      if (L.meta.alias && !new URLSearchParams(location.search).has('demo')) {
+        history.replaceState(null, '', `${location.pathname}?${L.meta.alias}${PRUEBA ? '&prueba' : ''}`);
+      }
       const pid = cuenta.quien(code);
       if (pid && L.players?.[pid]) {
         S.yo = pid;
@@ -1185,9 +1190,12 @@ async function jugar(d) {
   // Conexiones necesita saber cuándo empezó su día, para no cambiar de grilla a mitad (D-128)
   const p = mod.generar(S.code, d, id === 'conexiones' ? { desde: meta.win[d].a } : undefined);
   const now = ahora();
-  let rel = guardado.reloj ? reloj.seguir(guardado.reloj, now) : reloj.nuevo(now);
+  // El reloj se detiene cuando el tablero termina, no cuando se toca "Ver resultado" (D-130).
+  // Detenido, queda así aunque se recargue la página.
+  let detenido = !!guardado.detenido;
+  let rel = guardado.reloj ? (detenido ? guardado.reloj : reloj.seguir(guardado.reloj, now)) : reloj.nuevo(now);
   let jugadas = guardado.jugadas;
-  const persistir = () => cuenta.intento.guardar(S.code, d, S.yo, { jugadas, reloj: reloj.pausar(rel, ahora()) });
+  const persistir = () => cuenta.intento.guardar(S.code, d, S.yo, { jugadas, reloj: reloj.pausar(rel, ahora()), detenido });
   persistir();
 
   const head = $('#jugar-head');
@@ -1198,6 +1206,7 @@ async function jugar(d) {
   S.reloj = setInterval(() => { if (S.pantalla === 'jugar') cron.textContent = fmt(T.timer, { t: mmss(reloj.leer(rel, ahora())) }); }, 1000);
   S.visibilidad && document.removeEventListener('visibilitychange', S.visibilidad);
   S.visibilidad = () => {
+    if (detenido) return;
     rel = document.hidden ? reloj.pausar(rel, ahora()) : reloj.seguir(rel, ahora());
     persistir();
   };
@@ -1210,8 +1219,12 @@ async function jugar(d) {
     p, jugadas, T, fmt, el, SFX, vibrate,
     guardar(j) { jugadas = j; persistir(); },
     tiempo: () => Math.round(reloj.leer(rel, ahora())),
-    // Un juego que termina solo (Zip, al acabarse el tiempo) congela el reloj de arriba en su tiempo final
-    pararReloj() { clearInterval(S.reloj); cron.textContent = fmt(T.timer, { t: mmss(reloj.leer(rel, ahora())) }); },
+    // Cada juego lo llama cuando su tablero termina (resuelto, perdido o sin tiempo): el tiempo
+    // queda ahí, y lo que se tarde en tocar "Ver resultado" no cuenta (D-130)
+    pararReloj() {
+      if (!detenido) { rel = reloj.pausar(rel, ahora()); detenido = true; persistir(); }
+      clearInterval(S.reloj); cron.textContent = fmt(T.timer, { t: mmss(reloj.leer(rel, ahora())) });
+    },
     terminar(estado) {
       const ms = Math.round(reloj.leer(rel, ahora()));
       clearInterval(S.reloj);
@@ -1381,7 +1394,8 @@ async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false } = {}) {
   clearInterval(S.reloj);
   S.reloj = setInterval(() => { if (S.pantalla === 'jugar') cron.textContent = fmt(T.timer, { t: mmss(reloj.leer(rel, Date.now())) }); }, 1000);
   S.visibilidad && document.removeEventListener('visibilitychange', S.visibilidad);
-  S.visibilidad = () => { rel = document.hidden ? reloj.pausar(rel, Date.now()) : reloj.seguir(rel, Date.now()); };
+  let detenido = false;
+  S.visibilidad = () => { if (!detenido) rel = document.hidden ? reloj.pausar(rel, Date.now()) : reloj.seguir(rel, Date.now()); };
   document.addEventListener('visibilitychange', S.visibilidad);
   const body = $('#jugar-body');
   body.innerHTML = '';
@@ -1390,7 +1404,10 @@ async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false } = {}) {
     textoFin: ensayo ? T.trialEnd : undefined,
     guardar() { /* no se guarda: no cuenta */ },
     tiempo: () => Math.round(reloj.leer(rel, Date.now())),
-    pararReloj() { clearInterval(S.reloj); cron.textContent = fmt(T.timer, { t: mmss(reloj.leer(rel, Date.now())) }); },
+    pararReloj() {
+      if (!detenido) { rel = reloj.pausar(rel, Date.now()); detenido = true; }
+      clearInterval(S.reloj); cron.textContent = fmt(T.timer, { t: mmss(reloj.leer(rel, Date.now())) });
+    },
     terminar(estado) {
       clearInterval(S.reloj);
       document.removeEventListener('visibilitychange', S.visibilidad);

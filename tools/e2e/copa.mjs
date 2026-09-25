@@ -321,6 +321,9 @@ ok(/no es el de Javi/.test(await ev(`document.querySelector('#entrar-body .form-
 await ev('sessionStorage.clear(); 1');
 await b.go(`${BASE}?oficina&prueba`, 1200); await preparar();
 ok(await ev('__copa.estado.code') === CODE, 'el link ?oficina abre la copa');
+await ev('sessionStorage.clear(); 1');
+await b.go(`${BASE}?${CODE}&prueba`, 1200); await preparar();
+ok(/\?oficina&prueba$/.test(await ev('location.search')), 'entrando por el código, la barra muestra el link propio');
 // Inscribirse con un nombre y PIN que ya existen cuenta como entrar (D-120)
 await comoJugador(CODE);
 ok(/7 días · Parte el .* · 3 jugadores inscritos/.test(await ev(`document.querySelector('#entrar-body .lead').textContent`)) || /3 días · Parte el .* · 3 jugadores inscritos/.test(await ev(`document.querySelector('#entrar-body .lead').textContent`)), 'la invitación dice días, cuándo parte y cuántos se inscribieron');
@@ -471,6 +474,12 @@ await b.go(`${BASE}?practica=${id}&prueba${id === 'zip' ? '&zipSeg=12&semilla=KQ
     await b.shot('zip-solucion');
   }
   if (id === 'conexiones') ok(await ev(`document.querySelectorAll('.grupo').length === 4 && !document.querySelector('.grupo').classList.contains('pop')`), 'Conexiones: los grupos ya resueltos no se vuelven a animar');
+  if (['conexiones', 'reinas', 'linea', 'letras'].includes(id)) {
+    // El reloj se detiene al terminar el tablero, no al tocar "Ver resultado" (D-130)
+    const t0 = await ev(`document.querySelector('#jugar-head .cron').textContent`);
+    await sleep(2300);
+    ok(await ev(`document.querySelector('#jugar-head .cron').textContent`) === t0, `${id}: al terminar el tablero el reloj queda quieto en ${t0}`);
+  }
   await click('#btn-fin'); await sleep(500);
   const r = await ev(`JSON.stringify({p:__copa.estado.pantalla, s:document.querySelector('.score-big')?.textContent})`).then(JSON.parse);
   ok(r.p === 'resultado', `práctica de ${id}: se juega completa (${r.s})`);

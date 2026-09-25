@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.62.0 — 2026-09-25
+- **El tiempo se corta al terminar el tablero** (D-130), en todos los minijuegos: lo que se tarda
+  en tocar "Ver resultado" ya no cuenta para el desempate.
+- Una copa con link propio muestra `?pirata` en la barra de direcciones aunque se haya entrado
+  por su código.
+
 ## 0.61.0 — 2026-09-25
 - **Conexiones por significado** (D-128): fuera los grupos de juegos de palabras ("___ roja",
   "esconden un animal"…); los grupos son lo que las cosas son (combustibles, metales, muebles…).
