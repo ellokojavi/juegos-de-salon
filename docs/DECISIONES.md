@@ -1524,6 +1524,7 @@ los días que el jugador ya puede ver (no delata lo de hoy).
   archivos (computador), se descarga.
 - Es la **tabla parcial tal como la ve quien comparte**. Para que no engañe, quien lleva menos
   juegos que el que más jugó va marcado junto a su nombre: **"Tomario (-1J)"** (`menosJuegos`).
-  La misma marca va en el mensaje de texto "Tabla parcial" del admin.
+  La misma marca va en el mensaje de texto "Tabla parcial" del admin y en el recuadro "Posiciones
+  día a día" (al final de cada línea y en los botones de jugador), con la misma leyenda.
 **Por qué:** una imagen se lee de un vistazo en el grupo; y en una tabla a mitad de día, el que
 va último puede ser solo el que todavía no juega.
