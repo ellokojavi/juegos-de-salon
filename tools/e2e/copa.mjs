@@ -257,7 +257,7 @@ await ev('localStorage.clear(); sessionStorage.clear(); 1');
 await b.go(`${BASE}?prueba`, 1200);
 await preparar();
 await revisarPantalla('portada');
-await click('#btn-crear'); await sleep(300);
+await click('#btn-crear'); await sleep(900); // con varias sesiones probando a la vez, la máquina anda lenta
 await ev(`(()=>{const i=[...document.querySelectorAll('#crear-body input:not(.fecha):not(#crear-link)')];i[0].value='Copa de la oficina';i[1].value='Cata';i[2].value='1111';i[3].value='1111';return 1})()`);
 await ev(`(()=>{const o=[...document.querySelectorAll('#crear-body .opcion')];o[${SIETE ? 1 : 0}].click();o[3].click();return 1})()`); // parte mañana
 // El link propio (D-121): se ve cómo queda y si está libre
