@@ -734,9 +734,23 @@ function toast(texto) {
   setTimeout(() => t.remove(), 2600);
 }
 
+/**
+ * La invitación promocional (D-127): el reto, cuándo parte, cuánto toma y quiénes ya están.
+ * Los minijuegos no se nombran: son sorpresa.
+ */
+function mensajeInvitacion() {
+  const Lc = L(), { meta } = Lc;
+  const nombres = activos(Lc).map(j => j.name);
+  const lista = nombres.length > 1 ? `${nombres.slice(0, -1).join(', ')} y ${nombres.at(-1)}` : nombres[0] || '';
+  return fmt(T.shareInviteText, {
+    copa: meta.name, dias: meta.days, fecha: fechaLarga(meta.win[1].a, meta.tz),
+    inscritos: nombres.length ? fmt(nombres.length === 1 ? T.shareInviteJoinedOne : T.shareInviteJoined, { names: lista }) : '',
+  }).replace(/\n{3,}/g, '\n\n');
+}
+
 function invitar() {
   const { meta } = L();
-  return compartir(fmt(T.shareInviteText, { copa: meta.name, dias: meta.days, fecha: fechaLarga(meta.win[1].a, meta.tz) }));
+  return compartir(mensajeInvitacion());
 }
 
 /**
@@ -923,7 +937,7 @@ function admin({ forzar = false } = {}) {
     el('p', { class: 'lead', style: 'margin:0' }, T.adminMsgs),
     // Cada mensaje, solo cuando tiene sentido (D-116): la invitación antes de partir y con la
     // inscripción abierta; la tabla parcial mientras se juega; el resumen, al terminar
-    d === 0 && !Lc.closed ? msg(T.msgInvite, () => fmt(T.shareInviteText, { copa: meta.name, dias: meta.days, fecha: fechaLarga(meta.win[1].a, meta.tz) }), 'msg-invitar') : null,
+    d === 0 && !Lc.closed ? msg(T.msgInvite, mensajeInvitacion, 'msg-invitar') : null,
     !terminada(meta, now) ? msg(T.msgToday, mensajeHoy, 'msg-hoy') : null,
     d >= 1 && !terminada(meta, now) ? msg(T.msgTable, mensajeTabla, 'msg-tabla') : null,
     terminada(meta, now) ? msg(T.msgFinal, mensajeFinal, 'msg-final') : null));
