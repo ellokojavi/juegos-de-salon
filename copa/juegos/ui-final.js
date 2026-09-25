@@ -72,7 +72,9 @@ export function montar(raiz, ctx) {
       jugadas: J.sub[r],
       max: r === 'numero' ? final.NUMERO_INTENTOS : undefined,
       textoFin: ultima ? T.seeResults : T.roundNext,
-      cierreAbajo: true, // en la final, el botón para seguir va debajo del tablero, en todas las rondas
+      cierreAbajo: true,
+      // Solo la última ronda detiene el reloj de la final (D-130)
+      pararReloj: ultima ? ctx.pararReloj : undefined, // en la final, el botón para seguir va debajo del tablero, en todas las rondas
       guardar(x) { J.sub[r] = x; guardar(); },
       terminar() {
         J.hechas[r] = true;

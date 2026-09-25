@@ -72,6 +72,8 @@ export function montar(raiz, ctx) {
 
   const marcarEstado = () => {
     const x = e();
+    // Terminado el tablero, el tiempo se detiene aquí y no al tocar el botón (D-130)
+    if (x.fin) ctx.pararReloj?.();
     estadoTxt.textContent = x.fin ? '' : `${sel.carta ? LT.pickSlot : LT.pickCard} · ${fmt(T.lineaLleva, { ok: x.aciertos, n: x.marcas.length })}`;
   };
 
