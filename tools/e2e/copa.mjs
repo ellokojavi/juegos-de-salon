@@ -273,6 +273,10 @@ await b.shot('admin-nueva');
 await click('#msg-invitar'); await sleep(300);
 ok((await ev('window.__compartido.length')) === 1, 'desde ahí se comparte la invitación');
 console.log('  invitación:', await ev('window.__compartido[0]?.text'));
+{
+  const inv = await ev('window.__compartido[0]?.text || ""');
+  ok(/¡Estás invitado!/.test(inv) && /👥 Ya se inscribió Cata\./.test(inv) && !/Línea Relámpago|Conexiones|Reinas/.test(inv), 'la invitación es promocional, dice quién ya está y no revela los juegos (D-127)');
+}
 ok(/\n\n🔗 https?:\/\/\S+\?oficina/.test(await ev('window.__compartido[0]?.text || ""')), 'la invitación termina con el link ?oficina en su propia línea');
 // Cerrar la inscripción deja fuera a los nuevos; reabrirla, no
 await click('#btn-cerrar-inscripcion'); await sleep(300);
