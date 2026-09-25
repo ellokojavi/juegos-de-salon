@@ -300,3 +300,8 @@
 .waiting { text-align: center; color: var(--muted); font-weight: 800; }
 .waiting .dots::after, .dots::after { content: '…'; animation: dots 1.2s steps(4) infinite; }
 @keyframes dots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } }
+
+/* Con el chat en pantalla, la burbuja flota abajo a la derecha (78 px del borde, 54 de alto):
+   al fondo de la página tiene que quedar aire para que no tape mi flota ni los botones del final
+   (C-15, C-8). En la colocación no hace falta: ahí el chat se guarda. */
+body.chat-on #screen-lobby, body.chat-on #screen-play, body.chat-on #screen-result { padding-bottom: calc(140px + env(safe-area-inset-bottom, 0px)); }

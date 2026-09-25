@@ -66,11 +66,12 @@
 
       <div class="panel" data-en="resumen juegos">
         <p class="lead" style="margin:0 0 8px">Salas vivas</p>
-        <p class="muted" style="margin:0 0 10px;font-size:0.9rem">Salas que jugaron hace menos de media hora. Con punto verde, alguien conectado ahora.</p>
+        <p class="muted" style="margin:0 0 10px;font-size:0.9rem">Salas con movimiento hace menos de media hora. Con punto verde, alguien conectado ahora. Las jugadas son lo que hizo una persona (un disparo, un intento, una apuesta); las respuestas automáticas del juego, las entradas y el chat no cuentan como jugadas. Del chat solo se cuenta cuántos mensajes hubo.</p>
         <div class="rooms" id="rooms"></div>
       </div>
 
       <h2 class="display display--md" id="range-title">Últimos 7 días</h2>
+      <p class="muted small">Una partida se cuenta cuando empieza, aunque no se termine. Las de dos celulares cuentan solo si entró un rival. Los días van de medianoche a medianoche UTC, que en Chile es a las 21:00 en verano y a las 20:00 en invierno.</p>
       <div class="tiles" id="tiles-range"></div>
 
       <!-- RESUMEN: el torneo contra los otros juegos -->
@@ -136,7 +137,7 @@
       <div class="grid2" data-en="resumen">
         <div class="panel">
           <p class="lead">De dónde</p>
-          <p class="muted small">Zona horaria del celular. Cuenta celulares que empezaron o entraron a una partida o a un minijuego.</p>
+          <p class="muted small">Zona horaria del celular. Cuenta cada vez que un celular empezó o entró a una partida o a un minijuego: el mismo celular suma una vez por partida, así que no son personas distintas.</p>
           <div class="bars" id="origin"></div>
         </div>
         <div class="panel">
@@ -161,7 +162,7 @@
         <a class="btn btn--ghost btn--sm" href="https://console.firebase.google.com/project/juegos-de-salon/database/juegos-de-salon-default-rtdb/usage" target="_blank" rel="noopener">Uso en Firebase ↗</a>
       </div>
 
-      <p class="muted center small" style="margin-top:20px">Señales de uso, no personas: sin IP, sin secretos, sin chat. De una sala quedan el juego, los nombres que se pusieron, el país del celular y quién ganó (D-44, D-79). Los modos sin red mandan solo contadores. De una copa, lo que ya guarda para su tabla: nombres, puntajes y tiempos.</p>
+      <p class="muted center small" style="margin-top:20px">Señales de uso, no personas: sin IP, sin secretos, y del chat solo cuántos mensajes hubo, nunca qué dicen. De una sala quedan el juego, los nombres que se pusieron, el país del celular y quién ganó (D-44, D-79). Los modos sin red mandan solo contadores. De una copa, lo que ya guarda para su tabla: nombres, puntajes y tiempos.</p>
     </section>
   </main>
 

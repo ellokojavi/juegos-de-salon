@@ -23,6 +23,8 @@ const ES = {
   invitedTitle: '¡Invitado a jugar!', invited: '📩 Sala {code}', invitedHint: 'Escribe tu nombre y entra. La partida la configura quien te invitó.',
   lobbyTitle: 'Sala creada', lobbyCode: 'Código', lobbyShare: 'Dile el código al rival o que escanee el QR.', lobbyWaiting: 'Esperando al rival…', lobbyJoined: '¡{name} se unió!', shareLink: '📤 Compartir link', copyLink: '📋 Copiar link', copied: '¡Copiado!',
   lobbyCancel: 'Cancelar la sala', lobbyLeave: 'Salir de la sala',
+  chatTitle: 'Chat de la sala', chatOpen: 'Abrir el chat', chatClose: 'Cerrar el chat', chatSend: 'Enviar',
+  chatPlaceholder: 'Escribe algo…', chatEmpty: 'Acá pueden picarse entre disparo y disparo. Se borra cuando termina la sala.',
   offline: 'Rival desconectado. Esperando que vuelva…', rematchWaiting: 'Esperando a {name} para la revancha…',
   resumeTitle: '⏯ Hay una batalla a medias', resume: 'Continuar', delete: 'Borrar',
   // colocación
@@ -62,6 +64,8 @@ const EN = {
   invitedTitle: 'Invited to play!', invited: '📩 Room {code}', invitedHint: 'Type your name and jump in. Whoever invited you sets up the game.',
   lobbyTitle: 'Room created', lobbyCode: 'Code', lobbyShare: 'Tell your rival the code or let them scan the QR.', lobbyWaiting: 'Waiting for your rival…', lobbyJoined: '{name} joined!', shareLink: '📤 Share link', copyLink: '📋 Copy link', copied: 'Copied!',
   lobbyCancel: 'Cancel the room', lobbyLeave: 'Leave the room',
+  chatTitle: 'Room chat', chatOpen: 'Open the chat', chatClose: 'Close the chat', chatSend: 'Send',
+  chatPlaceholder: 'Say something…', chatEmpty: 'Trash talk between shots. It disappears when the room closes.',
   offline: 'Rival disconnected. Waiting for them to come back…', rematchWaiting: 'Waiting for {name} for the rematch…',
   resumeTitle: '⏯ There\'s an unfinished battle', resume: 'Continue', delete: 'Delete',
   placeTitle: 'Place your fleet', placeFor: '{name}\'s fleet', placeHint: 'Tap a ship, then a cell, or drag the ship onto the board. Tap a placed ship to select it: rotate it with ↻, move it by tapping another cell, or drag it.',
@@ -99,6 +103,8 @@ const PT = {
   invitedTitle: 'Convidado para jogar!', invited: '📩 Sala {code}', invitedHint: 'Escreva seu nome e entre. Quem te convidou configura a partida.',
   lobbyTitle: 'Sala criada', lobbyCode: 'Código', lobbyShare: 'Diga o código ao rival ou deixe ele escanear o QR.', lobbyWaiting: 'Esperando o rival…', lobbyJoined: '{name} entrou!', shareLink: '📤 Compartilhar link', copyLink: '📋 Copiar link', copied: 'Copiado!',
   lobbyCancel: 'Cancelar a sala', lobbyLeave: 'Sair da sala',
+  chatTitle: 'Chat da sala', chatOpen: 'Abrir o chat', chatClose: 'Fechar o chat', chatSend: 'Enviar',
+  chatPlaceholder: 'Escreva algo…', chatEmpty: 'Aqui dá para provocar entre um tiro e outro. Some quando a sala fecha.',
   offline: 'Rival desconectado. Esperando ele voltar…', rematchWaiting: 'Esperando {name} para a revanche…',
   resumeTitle: '⏯ Tem uma batalha pela metade', resume: 'Continuar', delete: 'Apagar',
   // posicionamento
