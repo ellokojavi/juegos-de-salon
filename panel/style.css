@@ -58,6 +58,12 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0
 .room .who i { width: 8px; height: 8px; border-radius: 50%; background: rgba(255, 255, 255, 0.3); display: inline-block; }
 .room .who i.on { background: var(--lime); box-shadow: 0 0 6px var(--lime); }
 .room .meta { color: var(--muted); font-size: 0.8rem; font-weight: 800; text-align: right; white-space: nowrap; }
+/* Angosto, lo que pasó en la sala baja a su propia fila: "2 mensajes de chat" y "última jugada
+   hace 21 min" no caben al lado de los nombres y se salían de la tarjeta (C-8, U-12). */
+@media (max-width: 519px) {
+  .room { grid-template-columns: auto 1fr; }
+  .room > .meta { grid-column: 1 / -1; text-align: left; }
+}
 
 /* ---------- Bitácora de salas (D-79) ---------- */
 .check { display: inline-flex; align-items: center; gap: 8px; margin: 2px 0 10px; color: var(--muted); font-size: 0.85rem; font-weight: 800; cursor: pointer; }
