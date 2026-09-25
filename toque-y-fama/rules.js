@@ -27,12 +27,12 @@ const ES = {
   chatTitle: 'Chat de la sala', chatOpen: 'Abrir el chat', chatClose: 'Cerrar el chat', chatSend: 'Enviar',
   chatPlaceholder: 'Escribe algo…', chatEmpty: 'Acá pueden picarse mientras adivinan. Se borra cuando termina la partida.',
   invitedTitle: '¡Invitado a jugar!', invited: '📩 Sala {code}', invitedHint: 'Escribe tu nombre y entra. La partida la configura quien te invitó.',
-  lobbyTitle: 'Sala creada', lobbyCode: 'Código', lobbyShare: 'Dile el código al rival o que escanee el QR.', lobbyWaiting: 'Esperando al rival…', lobbyJoined: '¡{name} se unió!', shareLink: '📤 Compartir link', copyLink: '📋 Copiar link', copied: '¡Copiado!',
+  lobbyTitle: 'Sala creada', lobbyCode: 'Código', lobbyShare: 'Dile el código al rival o que escanee el QR.', lobbyWaiting: 'Esperando al rival', lobbyJoined: '¡{name} se unió!', shareLink: '📤 Compartir link', copyLink: '📋 Copiar link', copied: '¡Copiado!',
   lobbyCancel: 'Cancelar la sala', lobbyLeave: 'Salir de la sala',
   // secret
   secretTitle: 'Tu número secreto', secretFor: 'Número secreto de {name}', secretHint: '{n} cifras distintas. Que nadie mire.', secretHintNoZero: '{n} cifras distintas, sin cero al inicio. Que nadie mire.',
   confirm: '¡Vamos!', hide: 'Tapar pantalla', tapToReveal: 'Toca para ver', secretSaved: 'Número secreto guardado 🔒',
-  waitingSecret: 'Esperando a que {name} elija su número secreto…', bothReady: '¡Los dos listos!',
+  waitingSecret: 'Esperando a que {name} elija su número secreto', bothReady: '¡Los dos listos!',
   // play
   turnYou: '¡Te toca! Adivina el de {name}', turnOther: 'Le toca a {name}…', waitingReply: 'Esperando la respuesta…', round: 'Ronda {n}',
   blockHint: '💡 Mantén presionada una cifra para bloquearla si crees que no está en el número del rival. Repite para desbloquear.',
@@ -47,7 +47,7 @@ const ES = {
   // result
   winTitle: '¡Ganó {name}!', tieTitle: '¡Empate!', youWin: '¡Ganaste!', youLose: 'Perdiste… esta vez.',
   inTries: 'en {n} {word}', secretsWere: 'Los números secretos eran', replayTitle: '🔎 Ver todos los intentos', verified: 'verificado ✅', notVerified: '⚠️ no coincide (¿trampa?)',
-  rematch: '🔁 Revancha', rematchWaiting: 'Esperando a {name} para la revancha…', changeMode: 'Cambiar modo', backMenu: 'Volver al menú',
+  rematch: '🔁 Revancha', rematchWaiting: 'Esperando a {name} para la revancha', changeMode: 'Cambiar modo', backMenu: 'Volver al menú',
   resumeTitle: '⏯ Hay una partida a medias', resume: 'Continuar', delete: 'Borrar',
 };
 
@@ -71,11 +71,11 @@ const EN = {
   chatTitle: 'Room chat', chatOpen: 'Open the chat', chatClose: 'Close the chat', chatSend: 'Send',
   chatPlaceholder: 'Say something…', chatEmpty: 'Trash talk while you guess. It disappears when the game ends.',
   invitedTitle: 'Invited to play!', invited: '📩 Room {code}', invitedHint: 'Type your name and jump in. Whoever invited you sets up the game.',
-  lobbyTitle: 'Room created', lobbyCode: 'Code', lobbyShare: 'Tell your rival the code or let them scan the QR.', lobbyWaiting: 'Waiting for your rival…', lobbyJoined: '{name} joined!', shareLink: '📤 Share link', copyLink: '📋 Copy link', copied: 'Copied!',
+  lobbyTitle: 'Room created', lobbyCode: 'Code', lobbyShare: 'Tell your rival the code or let them scan the QR.', lobbyWaiting: 'Waiting for your rival', lobbyJoined: '{name} joined!', shareLink: '📤 Share link', copyLink: '📋 Copy link', copied: 'Copied!',
   lobbyCancel: 'Cancel the room', lobbyLeave: 'Leave the room',
   secretTitle: 'Your secret number', secretFor: '{name}\'s secret number', secretHint: '{n} different digits. No peeking.', secretHintNoZero: '{n} different digits, no leading zero. No peeking.',
   confirm: 'Let\'s go!', hide: 'Hide screen', tapToReveal: 'Tap to reveal', secretSaved: 'Secret number saved 🔒',
-  waitingSecret: 'Waiting for {name} to pick a secret number…', bothReady: 'Both ready!',
+  waitingSecret: 'Waiting for {name} to pick a secret number', bothReady: 'Both ready!',
   turnYou: 'Your turn! Guess {name}\'s number', turnOther: '{name}\'s turn…', waitingReply: 'Waiting for the reply…', round: 'Round {n}',
   blockHint: '💡 Long-press a digit to block it if you think it isn\'t in your rival\'s number. Long-press again to unblock.',
   mySecret: 'Your secret number', tapToShow: 'tap to show', tapToHide: 'tap to hide',
@@ -87,7 +87,7 @@ const EN = {
   hoPass: 'Pass the phone to', hoReady: 'Ready, it\'s me!', hoResult: 'Reply', hoContinue: 'Continue',
   winTitle: '{name} wins!', tieTitle: 'It\'s a tie!', youWin: 'You win!', youLose: 'You lose… this time.',
   inTries: 'in {n} {word}', secretsWere: 'The secret numbers were', replayTitle: '🔎 See all guesses', verified: 'verified ✅', notVerified: '⚠️ mismatch (cheating?)',
-  rematch: '🔁 Rematch', rematchWaiting: 'Waiting for {name} for the rematch…', changeMode: 'Change mode', backMenu: 'Back to menu',
+  rematch: '🔁 Rematch', rematchWaiting: 'Waiting for {name} for the rematch', changeMode: 'Change mode', backMenu: 'Back to menu',
   resumeTitle: '⏯ There\'s an unfinished game', resume: 'Continue', delete: 'Delete',
 };
 
@@ -114,12 +114,12 @@ const PT = {
   chatTitle: 'Chat da sala', chatOpen: 'Abrir o chat', chatClose: 'Fechar o chat', chatSend: 'Enviar',
   chatPlaceholder: 'Escreva algo…', chatEmpty: 'Aqui vocês podem se provocar enquanto tentam adivinhar. Some quando a partida termina.',
   invitedTitle: 'Convidado para jogar!', invited: '📩 Sala {code}', invitedHint: 'Escreva seu nome e entre. Quem te convidou configura a partida.',
-  lobbyTitle: 'Sala criada', lobbyCode: 'Código', lobbyShare: 'Diga o código ao rival ou deixe ele escanear o QR.', lobbyWaiting: 'Esperando o rival…', lobbyJoined: '{name} entrou!', shareLink: '📤 Compartilhar link', copyLink: '📋 Copiar link', copied: 'Copiado!',
+  lobbyTitle: 'Sala criada', lobbyCode: 'Código', lobbyShare: 'Diga o código ao rival ou deixe ele escanear o QR.', lobbyWaiting: 'Esperando o rival', lobbyJoined: '{name} entrou!', shareLink: '📤 Compartilhar link', copyLink: '📋 Copiar link', copied: 'Copiado!',
   lobbyCancel: 'Cancelar a sala', lobbyLeave: 'Sair da sala',
   // segredo
   secretTitle: 'Seu número secreto', secretFor: 'Número secreto de {name}', secretHint: '{n} algarismos diferentes. Ninguém pode olhar.', secretHintNoZero: '{n} algarismos diferentes, sem zero no início. Ninguém pode olhar.',
   confirm: 'Vamos!', hide: 'Cobrir a tela', tapToReveal: 'Toque para ver', secretSaved: 'Número secreto guardado 🔒',
-  waitingSecret: 'Esperando {name} escolher o número secreto…', bothReady: 'Os dois prontos!',
+  waitingSecret: 'Esperando {name} escolher o número secreto', bothReady: 'Os dois prontos!',
   // jogo
   turnYou: 'Sua vez! Descubra o número de {name}', turnOther: 'Vez de {name}…', waitingReply: 'Esperando a resposta…', round: 'Rodada {n}',
   blockHint: '💡 Segure um algarismo para bloqueá-lo se você acha que ele não está no número do rival. Repita para desbloquear.',
@@ -134,7 +134,7 @@ const PT = {
   // resultado
   winTitle: '{name} ganhou!', tieTitle: 'Empate!', youWin: 'Você ganhou!', youLose: 'Você perdeu… desta vez.',
   inTries: 'em {n} {word}', secretsWere: 'Os números secretos eram', replayTitle: '🔎 Ver todas as tentativas', verified: 'verificado ✅', notVerified: '⚠️ não confere (roubou?)',
-  rematch: '🔁 Revanche', rematchWaiting: 'Esperando {name} para a revanche…', changeMode: 'Mudar o modo', backMenu: 'Voltar ao menu',
+  rematch: '🔁 Revanche', rematchWaiting: 'Esperando {name} para a revanche', changeMode: 'Mudar o modo', backMenu: 'Voltar ao menu',
   resumeTitle: '⏯ Tem uma partida pela metade', resume: 'Continuar', delete: 'Apagar',
 };
 
