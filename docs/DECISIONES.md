@@ -1666,3 +1666,39 @@ de la base y solo servía desde hoy; `torneos/` ya tiene todo, también hacia at
 las copas por entorno: `torneos/` no lo está y no hay de dónde sacarlo; las del laboratorio
 llevan su etiqueta.
 
+## D-138 · Chat en Batalla Naval y un panel que cuenta lo que dice
+**Fecha:** 2026-09-25 · **Estado:** vigente
+**Decisión:** Batalla Naval, el único juego con sala que no tenía chat, lo estrena con el módulo
+compartido (C-15). Y el panel deja de mezclar cosas distintas bajo una misma cifra:
+- Las salas vivas muestran **jugadas** y **mensajes de chat** por separado, más la hora de la
+  última jugada. Qué es una jugada lo declara cada juego en `jugadas` de `games.js`.
+- "En juego" pide un rival; las salas donde nunca entró un segundo jugador no cuentan como
+  partida en ninguna cifra (ya no contaban en la bitácora) y se muestran aparte.
+- Los rótulos dicen lo que se cuenta: partidas *empezadas*, *entradas de un celular a una
+  partida* (no celulares distintos), *día UTC*.
+- La red de la casa y Tailscale caen en el entorno de pruebas, no en producción.
+- La hora de una partida se toma al empezarla, no al abrir la página.
+**Por qué:** una sala de Batalla Naval decía "176 msjs" y los jugadores no habían escrito nada. No
+había chat: eran 86 disparos, sus 86 respuestas automáticas y los compromisos del anti-trampa. Al
+revisar el resto del panel aparecieron otras cifras que se leían como algo que no eran: salas
+abiertas sin nadie más contadas como partidas de dos celulares (y la bitácora, que sí las sacaba,
+no cuadraba con el total), "celulares que jugaron" que sumaba una vez por cada revancha, días que
+en Chile cambian a las 21:00, y las pruebas en un celular de verdad por Tailscale (D-67) contadas
+como gente jugando.
+**Por qué la lista en `games.js`:** es el registro que el panel ya lee (C-16). Qué mensaje es de una
+persona y cuál lo manda el juego solo es algo que solo sabe cada juego: una regla genérica
+("todo menos `hello`") es justo la que contaba respuestas como jugadas. Un juego que no declara
+nada se cuenta con esa regla genérica: inflado, pero nunca en cero.
+**Por qué el chat se guarda al colocar la flota:** la pantalla de colocación llena un celular de
+812 px exacto; la burbuja tapaba Limpiar y la etiqueta del mensaje nuevo tapaba Al azar. Mientras
+uno arma su flota no está conversando; apenas la deja lista y espera al rival, que es el rato
+muerto, el chat vuelve con su globito de no leídos.
+**Consecuencias:** un juego nuevo con sala declara sus `jugadas` al registrarse
+(docs/AGREGAR-JUEGO.md). Quedan anotados sin arreglar, por ser de otra capa: `online` puede
+quedar pegado si la despedida no sale a tiempo (el `onDisconnect` se cancela antes), un jugador
+que vuelve desde otro navegador toma un rol nuevo y aparece dos veces en juegos de 3 a 6, y dos
+salas con el mismo código el mismo día comparten registro. Que La Copa contara sus días como
+partidas sin red lo resolvió el Portal de La Copa (D-137). Las copas de laboratorio suman en
+producción a propósito, porque hoy todas las copas reales se crean desde `/labs/`; se revisa
+cuando La Copa salga del laboratorio.
+

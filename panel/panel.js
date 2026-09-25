@@ -191,8 +191,12 @@ const ordenIdiomas = pares => [
 ];
 
 const n = v => Number(v || 0).toLocaleString('es-CL');
-/** Una sala recién creada no tiene jugadas: decir "0 msj" se lee como un error de la página. */
-const msjs = k => (k === 0 ? 'Sin msjs' : k === 1 ? '1 msj' : `${n(k)} msjs`);
+/**
+ * Lo que pasó en una sala, con nombre completo (D-138): las jugadas de las personas por un lado
+ * y el chat por otro. "176 msjs" se leía como conversación y eran disparos.
+ */
+const jugadasDe = k => (k === 0 ? 'Sin jugadas todavía' : k === 1 ? '1 jugada' : `${n(k)} jugadas`);
+const chatDe = k => (k === 0 ? 'Sin chat' : k === 1 ? '1 mensaje de chat' : `${n(k)} mensajes de chat`);
 
 function tile(value, label, hot = false) {
   return el('div', { class: `tile${hot ? ' tile--hot' : ''}` }, el('b', {}, typeof value === 'string' ? value : n(value)), el('small', {}, label));
@@ -239,7 +243,8 @@ function filaSala(r, now) {
   return el('div', { class: `room${r.active ? ' active' : ''}` },
     el('div', {}, el('div', { class: 'code' }, r.code), el('div', { class: 'meta', style: 'text-align:left' }, gameLabel(r.game))),
     el('div', { class: 'who' }, r.players.map(p => el('span', {}, el('i', { class: p.online ? 'on' : '' }), p.name))),
-    el('div', { class: 'meta' }, msjs(r.messages), el('br'), ago(r.lastAt, now), el('br'), `creada ${ago(r.createdAt, now)}`),
+    el('div', { class: 'meta' }, jugadasDe(r.jugadas), el('br'), chatDe(r.chat), el('br'),
+      r.lastPlayAt ? `última jugada ${ago(r.lastPlayAt, now)}` : `actividad ${ago(r.lastAt, now)}`, el('br'), `creada ${ago(r.createdAt, now)}`),
   );
 }
 
@@ -319,7 +324,7 @@ function renderNow() {
       : `Hay ${n(ajenas.length)} salas abiertas que no son`;
     box.append(el('p', { class: 'empty', style: 'margin-top:8px' },
       `${cuantas} de ${envLabel(S.env)}, así que no ${una ? 'se cuenta' : 'se cuentan'} acá: ${cuales}. `
-      + 'Suelen ser partidas de prueba hechas en el computador o en el laboratorio, y se borran solas a la media hora de quedar quietas.'));
+      + 'Suelen ser partidas de prueba hechas en el computador, en la red de la casa o por Tailscale, y se borran solas a la media hora de quedar quietas.'));
   }
   $('#updated').textContent = `Actualizado ${new Date(now).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' })}`;
 }
@@ -342,11 +347,13 @@ function renderRange() {
 
   const tiles = $('#tiles-range'); tiles.innerHTML = '';
   const part = pct(rc.participacion);
+  // Los rótulos dicen exactamente qué se cuenta (D-138): una partida se anota al empezar y no al
+  // terminar, un mismo celular suma una vez por cada partida, y el día es el de UTC.
   if (S.vista === 'resumen') tiles.append(
-    tile(s.partidas, 'partidas de juegos'),
+    tile(s.partidas, 'partidas de juegos empezadas'),
     tile(rc.jugadas, `minijuegos de ${torneoNombre}`),
     tile(rc.copas, 'copas activas'),
-    tile(todo.devices, 'celulares que jugaron'),
+    tile(todo.devices, 'entradas de un celular a una partida'),
     tile(hoy.partidas + miniHoy, 'partidas y minijuegos hoy'),
   );
   if (S.vista === 'torneo') tiles.append(
@@ -358,10 +365,12 @@ function renderRange() {
     tile(rc.abandonos, 'minijuegos sin terminar'),
   );
   if (S.vista === 'juegos') tiles.append(
-    tile(s.partidas, 'partidas'),
+    tile(s.partidas, 'partidas empezadas'),
     tile(s.online, 'en dos celulares'),
     tile(s.local, 'sin red'),
-    tile(hoy.partidas, 'partidas hoy'),
+    tile(s.devices, 'entradas de un celular a una partida'),
+    tile(hoy.partidas, 'partidas hoy (día UTC)'),
+    tile(s.sinRival, 'salas donde nunca entró nadie más'),
   );
 
   // --- Resumen: el torneo contra los demás juegos -------------------------
