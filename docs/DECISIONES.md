@@ -1528,3 +1528,19 @@ los días que el jugador ya puede ver (no delata lo de hoy).
   día a día" (al final de cada línea y en los botones de jugador), con la misma leyenda.
 **Por qué:** una imagen se lee de un vistazo en el grupo; y en una tabla a mitad de día, el que
 va último puede ser solo el que todavía no juega.
+
+## D-127 · La invitación promocional
+**Fecha:** 2026-09-25 · **Estado:** vigente
+**Decisión:** La invitación que comparte el admin (y "Invitar al grupo" del tablero) es un
+mensaje para animar a participar:
+
+> 🏆 *La Copa: Valdenenas* · ¡Estás invitado!
+> ¿Te la puedes? Son 7 días y 7 minijuegos, con una sola oportunidad al día. Todos juegan lo
+> mismo y la tabla dice quién manda. Quien acumula más puntos se lleva la gloria. 🥇
+> 📅 Parte el viernes 25 de septiembre. · ⏱️ Unos pocos minutos al día, desde tu celular.
+> 👥 Ya se inscribieron: Javier, Mica y Tomarcos. · 🔑 Entra con tu nombre y un PIN de 4 números:
+> 🔗 link
+
+**Los minijuegos no se nombran: son sorpresa.** No lleva mensaje personal del admin. Sigue
+ofreciéndose solo antes de que parta la copa y con la inscripción abierta (D-116).
+**Por qué:** pedido del dueño; la invitación es lo primero que ve quien todavía no se decide.
