@@ -61,6 +61,12 @@ const BN_FALLA = rol => `(()=>{const S=window.__bn.session(),L=S.layouts['${rol 
 /** Siembra el panel con salas, señales y copas, y abre la vista pedida (ver `panel` abajo). */
 const SEMBRAR_PANEL = vista => `(async()=>{const DIA=86400000,ahora=Date.now(),hoy=Math.floor(ahora/DIA);
       const rooms={ABCD:{createdAt:ahora-4*60000,lastAt:ahora-60000,game:'dudo',players:{A:{name:'Javi',online:true},B:{name:'Cata',online:true}},messages:{m1:{t:'hello',at:ahora-4*60000},m2:{t:'bid',at:ahora-60000}}},EFGH:{createdAt:ahora-2*3600000,lastAt:ahora-12*60000,game:'juego-nuevo',players:{A:{name:'Fausto',online:false}}}};
+      // Una Batalla Naval como la que confundió al panel (D-138): cada disparo trae su respuesta
+      // automática, y hay dos mensajes de chat. Debe decir 40 jugadas y 2 mensajes de chat.
+      const nave={createdAt:ahora-24*60000,lastAt:ahora-16*60000,game:'batalla-naval',players:{A:{name:'Tomiguel',online:false},B:{name:'SVS',online:false}},messages:{}};
+      for(let i=0;i<40;i++){nave.messages['s'+i]={t:'shot',at:ahora-40*60000+i*30000};nave.messages['r'+i]={t:'reply',at:ahora-40*60000+i*30000+500};}
+      nave.messages.c1={t:'chat',at:ahora-17*60000,text:'x'};nave.messages.c2={t:'chat',at:ahora-16*60000,text:'y'};
+      rooms.CPSV=nave;
       // Salas jugadas de varios días, con país y ganador, para ver la bitácora y su paginado (D-79).
       // Van a propósito: un empate, una sala sin registro de ganador (de antes de que se anotara),
       // una donde nunca entró nadie más y nombres de varios países.
@@ -77,7 +83,7 @@ const SEMBRAR_PANEL = vista => `(async()=>{const DIA=86400000,ahora=Date.now(),h
         (dias[d]=dias[d]||{rooms:{}}).rooms[code]=r;
       }
       const days={...dias};
-      days[hoy]={...(days[hoy]||{}),rooms:{...((days[hoy]||{}).rooms||{}),ABCD:{game:'dudo',at:ahora-4*60000,players:{A:'Javi',B:'Cata'},co:{A:'CL',B:'CL'},end:{winner:'A',name:'Javi',at:ahora}},EFGH:{game:'juego-nuevo',at:ahora-2*3600000,players:{A:'Fausto'},co:{A:'UY'}}},local:{dudo:{local:{4:6},cpu:{1:3}},'juego-nuevo':{equipos:{6:5}},ahorcado:{local:{3:4}}},origin:{America__Santiago:12,Europe__Madrid:2},lang:{'es-CL':12,'pt-BR':2},applang:{es:11,pt:2,fr:1},hour:{14:4,21:9}};
+      days[hoy]={...(days[hoy]||{}),rooms:{...((days[hoy]||{}).rooms||{}),ABCD:{game:'dudo',at:ahora-4*60000,players:{A:'Javi',B:'Cata'},co:{A:'CL',B:'CL'},end:{winner:'A',name:'Javi',at:ahora}},EFGH:{game:'juego-nuevo',at:ahora-2*3600000,players:{A:'Fausto'},co:{A:'UY'}},CPSV:{game:'batalla-naval',at:ahora-24*60000,players:{A:'Tomiguel',B:'SVS'},co:{A:'CL',B:'CL'}}},local:{dudo:{local:{4:6},cpu:{1:3}},'juego-nuevo':{equipos:{6:5}},ahorcado:{local:{3:4}}},origin:{America__Santiago:12,Europe__Madrid:2},lang:{'es-CL':12,'pt-BR':2},applang:{es:11,pt:2,fr:1},hour:{14:4,21:9}};
       days[hoy-1]={...(days[hoy-1]||{}),local:{'linea-de-tiempo':{solo:{1:7}}},origin:{America__Santiago:5},lang:{'es-CL':5},applang:{es:5},hour:{20:5}};
       
       const {nuevaMeta}=await import('/copa/engine.js');
@@ -252,7 +258,8 @@ if (!camino) {
   process.exit(1);
 }
 
-const b = await launch({ port: Number(process.env.PUERTO_CDP) || 9451, dir: `${salida}/perfil`, out: salida, width: ancho, height: alto });
+// `--cdp` o PUERTO_CDP cambian el puerto de Chrome: dos sesiones mirando a la vez no se pisan (D-135)
+const b = await launch({ port: Number(flag('cdp', process.env.PUERTO_CDP || '9451')), dir: `${salida}/perfil`, out: salida, width: ancho, height: alto });
 await b.go(`${base}/${juego}/`, 1500);
 // El idioma se guarda como texto pelado: getLang() compara contra ['es','en','pt'] y un
 // JSON.stringify le dejaba las comillas dentro, así que --idioma no hacía nada.
