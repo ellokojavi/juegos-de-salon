@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.61.0 — 2026-09-25
+- **Conexiones por significado** (D-128): fuera los grupos de juegos de palabras ("___ roja",
+  "esconden un animal"…); los grupos son lo que las cosas son (combustibles, metales, muebles…).
+  Las copas que ya estaban jugando Conexiones terminan su día con la grilla de antes.
+
 ## 0.60.0 — 2026-09-25
 - **Invitación promocional** (D-127): "¡Estás invitado!", el reto, cuándo parte, cuánto toma y quiénes
   ya se inscribieron. Los minijuegos no se nombran: son sorpresa.
