@@ -592,6 +592,7 @@ tools/og.mjs                Social cards: the Open Graph tags of each page and t
 tools/hechos.mjs            The app's fact sheet (games, modes, themes, tests) read from the code
 tools/reportes.mjs          Reads the La Copa bug reports from Firebase (`--dias N`, `--json`)
 tools/reglas.mjs            Publishes the Firebase rules with a service-account key kept outside the repo
+tools/dilemas.mjs           Usability dilemmas as GitHub issues: list, create, resolve, archive (D-132)
 tools/e2e/                  Full games in headless Chrome; the screenshots come from here (see its README)
 pt/ · en/                   Language doors: they set the language and send you to the menu
 assets/og/                  The 1200×630 images shown when a link is shared
@@ -621,4 +622,5 @@ These documents are in Spanish, like the rest of the project.
 - [Toque y Fama: estudio de factibilidad y propuesta de mecánica](docs/juegos/toque-y-fama-factibilidad.md)
 - [Especificación: Toque y Fama](docs/juegos/toque-y-fama.md)
 - [Changelog](CHANGELOG.md)
+- [Guía de usabilidad](docs/USABILIDAD.md)
 <!-- /generado -->
