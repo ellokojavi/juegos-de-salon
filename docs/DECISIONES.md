@@ -1616,3 +1616,13 @@ botones, interacciones, navegación y mensajes para compartir, con la guía `doc
   copia aparte del repo sin chocar con la que está sirviendo el puerto 8765.
 **Por qué:** pedido del dueño: bugs como el reloj de Conexiones o los textos rebuscados se
 tienen que encontrar solos, y las dudas llegarle ordenadas.
+
+## D-133 · Las reglas de cada minijuego, plegadas debajo del tablero
+**Fecha:** 2026-09-25 · **Estado:** vigente
+**Decisión:** En la pantalla de juego de cada minijuego (el día, la sesión de prueba y la práctica)
+hay un panel **"📖 Reglas de {juego}"** plegado por defecto, **debajo del tablero y de sus
+botones**: no se ve mientras se juega salvo que se baje, y está a un toque ante la duda. Trae
+"Cómo se juega", el puntaje y, en la Gran Final, las cinco rondas. Las reglas se reescribieron con
+**las mismas palabras de los botones** de cada pantalla (Probar, Colocar aquí, Confirmar, Barajar,
+Limpiar, OK; "Errores disponibles") (U-5).
+**Por qué:** pedido del dueño: ayudar ante la duda sin distraer.
