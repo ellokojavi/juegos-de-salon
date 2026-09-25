@@ -31,13 +31,19 @@ function porDia(nodo) {
 export function copaDe(code, x) {
   const m = x?.meta;
   if (!m?.days || !m.win?.[1] || typeof m.end !== 'number') return null;
-  return { code, meta: m, players: x.players || {}, started: porDia(x.started), results: porDia(x.results), wild: x.wild || {} };
+  return { code, meta: m, players: x.players || {}, started: porDia(x.started), results: porDia(x.results), wild: x.wild || {}, closed: x.closed === true };
 }
 
 /** Todas las copas de `torneos/`, las rotas fuera. */
 export function copasDe(torneos) {
   return Object.entries(torneos || {}).map(([code, x]) => copaDe(code, x)).filter(Boolean);
 }
+
+/**
+ * ¿Le tocaba jugar el día `d` a este jugador? Quien se inscribió después de que ese día cerró
+ * no pudo jugarlo: no cuenta como minijuego que faltó.
+ */
+const debia = (m, d, j) => !(typeof j.at === 'number' && j.at >= m.win[d].b);
 
 /** La hora del último resultado de la copa, o 0 si nadie ha jugado. */
 export function ultimoResultado(L) {
@@ -87,8 +93,9 @@ export function estadoCopa(L, now = Date.now()) {
   let esperado = 0, jugado = 0;
   for (let d = 1; d <= m.days; d++) {
     if (!cerrado(m, d, now)) continue;
-    esperado += jug.length;
-    jugado += jug.filter(j => L.results[d]?.[j.pid]).length;
+    const tocaba = jug.filter(j => debia(m, d, j));
+    esperado += tocaba.length;
+    jugado += tocaba.filter(j => L.results[d]?.[j.pid]).length;
   }
 
   const filas = jug.length ? tabla(L, null, Math.max(now, m.end)) : [];
@@ -97,7 +104,7 @@ export function estadoCopa(L, now = Date.now()) {
   return {
     code: L.code, name: m.name, alias: m.alias || null, lab: !!m.lab, days: m.days, start: m.start, tz: m.tz,
     createdAt: m.createdAt || 0, end: m.end, estado, dia, hoy, jugando,
-    jugadores: jug.length, inscripcion: estado !== 'terminada' && inscripcionAbierta(m, now),
+    jugadores: jug.length, inscripcion: estado !== 'terminada' && inscripcionAbierta(m, now, L.closed),
     participacion: { jugado, esperado }, primero, ultimo: ultimoResultado(L),
     calendario: calendario(m),
   };
@@ -130,7 +137,7 @@ const mediana = xs => {
  * - Un **abandono** es un minijuego empezado que no terminó: tocó Empezar y no dejó resultado,
  *   y ya no lo está jugando (el día cerró o pasó media hora).
  * - La **participación** es cuántos minijuegos se jugaron de los que se podían jugar: en cada
- *   día cerrado de cada copa, uno por jugador inscrito.
+ *   día cerrado de cada copa, uno por jugador inscrito antes de que ese día cerrara.
  *
  * Por minijuego salen jugadas, abandonos, puntaje promedio (0 a 100) y tiempo mediano: el
  * promedio del tiempo lo arrastra una sola persona que dejó el celular media hora encendido.
@@ -171,8 +178,9 @@ export function resumenCopas(torneos, { from, to }, now = Date.now()) {
     inscripciones += jug.length;
     for (let d = 1; d <= m.days; d++) {
       if (!cerrado(m, d, now) || !enElRango(m.win[d].a)) continue;
-      esperado += jug.length;
-      jugado += jug.filter(j => L.results[d]?.[j.pid]).length;
+      const tocaba = jug.filter(j => debia(m, d, j));
+      esperado += tocaba.length;
+      jugado += tocaba.filter(j => L.results[d]?.[j.pid]).length;
     }
   }
 
