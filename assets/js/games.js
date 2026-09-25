@@ -138,7 +138,8 @@ export const MODES = {
   local: { icon: '📱', label: 'un celular' },
   cpu: { icon: '🤖', label: 'contra el celular' },
   solo: { icon: '🧍', label: 'solo' },
-  copa: { icon: '🏆', label: 'día de La Copa' },
+  // El día jugado de un torneo: el panel lo mide en su propia vista, con los datos del torneo
+  copa: { icon: '🏆', label: 'día de La Copa', torneo: true },
 };
 
 /** Todos los modos conocidos, en orden. */
@@ -158,6 +159,12 @@ export const MODE_KEY = /^[a-z][a-z-]{0,15}$/;
 
 /** ¿Esta clave es un modo sin red, que sube contador? Vale para uno que todavía no existe. */
 export const isLocalMode = mode => MODE_KEY.test(String(mode || '')) && !MODES[mode]?.room;
+
+/**
+ * ¿Es un torneo (un juego que dura días y se juega en minijuegos) o un juego de una partida?
+ * El panel separa por esto y no por nombre, así que un segundo torneo entraría solo (C-16).
+ */
+export const isTorneo = id => !!BY_ID[id]?.torneo;
 
 /** El ícono del modo; uno desconocido se muestra con su clave, que es mejor que nada. */
 export const modeIcon = mode => MODES[mode]?.icon || '·';

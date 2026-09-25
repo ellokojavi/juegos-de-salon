@@ -620,6 +620,7 @@
     "linea-de-tiempo/game.js",
     "linea-de-tiempo/rules.js",
     "panel/aggregate.js",
+    "panel/copas.js",
     "panel/panel.js",
     "toque-y-fama/engine.js",
     "toque-y-fama/game.js",
@@ -645,6 +646,7 @@
     "linea-de-tiempo/engine.test.mjs",
     "panel/adapta.test.mjs",
     "panel/aggregate.test.mjs",
+    "panel/copas.test.mjs",
     "toque-y-fama/engine.test.mjs"
   ],
   "e2e": [
