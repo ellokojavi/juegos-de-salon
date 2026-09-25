@@ -37,7 +37,7 @@ const ES = {
   errTooMany: 'Abriste muchas salas seguidas. Espera un ratito y prueba de nuevo.',
   invitedTitle: '¡Invitado a jugar!', invited: '📩 Sala {code}', invitedHint: 'Escribe tu nombre y entra. La partida la configura quien te invitó.',
   lobbyTitle: 'Sala creada', lobbyCode: 'Código', lobbyShare: 'Dile el código al resto o que escaneen el QR.', shareLink: '📤 Compartir link', copyLink: '📋 Copiar link', copied: '¡Copiado!',
-  lobbyPlayers: 'En la sala', lobbyWaitHost: 'Esperando a que {name} empiece…', lobbyStart: '🚀 ¡Empezar!', lobbyNeedMore: 'Faltan jugadores',
+  lobbyPlayers: 'En la sala', lobbyWaitHost: 'Esperando a que {name} empiece', lobbyStart: '🚀 ¡Empezar!', lobbyNeedMore: 'Faltan jugadores',
   lobbyCancel: 'Cancelar la sala', lobbyLeave: 'Salir de la sala',
   offline: '{name} se desconectó', waitingTurn: 'Esperando a {name}…', placedBy: '{name} colocó',
   // juego
@@ -88,7 +88,7 @@ const EN = {
   errTooMany: 'You\'ve opened a lot of rooms in a row. Wait a bit and try again.',
   invitedTitle: 'Invited to play!', invited: '📩 Room {code}', invitedHint: 'Type your name and jump in. Whoever invited you sets up the game.',
   lobbyTitle: 'Room created', lobbyCode: 'Code', lobbyShare: 'Tell the others the code or let them scan the QR.', shareLink: '📤 Share link', copyLink: '📋 Copy link', copied: 'Copied!',
-  lobbyPlayers: 'In the room', lobbyWaitHost: 'Waiting for {name} to start…', lobbyStart: '🚀 Start!', lobbyNeedMore: 'Need more players',
+  lobbyPlayers: 'In the room', lobbyWaitHost: 'Waiting for {name} to start', lobbyStart: '🚀 Start!', lobbyNeedMore: 'Need more players',
   lobbyCancel: 'Cancel the room', lobbyLeave: 'Leave the room',
   offline: '{name} disconnected', waitingTurn: 'Waiting for {name}…', placedBy: '{name} placed',
   turnYou: 'Your turn, {name}!', turnOther: '{name}\'s turn', soloTitle: 'Empty your hand', soloStatus: '{ok} correct in {n} {tries}', soloRecord: 'Record: {n} {tries}', tryOne: 'try', tryMany: 'tries',
@@ -139,7 +139,7 @@ const PT = {
   errTooMany: 'Você abriu muitas salas seguidas. Espere um pouquinho e tente de novo.',
   invitedTitle: 'Convidado para jogar!', invited: '📩 Sala {code}', invitedHint: 'Escreva seu nome e entre. Quem te convidou configura a partida.',
   lobbyTitle: 'Sala criada', lobbyCode: 'Código', lobbyShare: 'Diga o código aos outros ou deixe eles escanearem o QR.', shareLink: '📤 Compartilhar link', copyLink: '📋 Copiar link', copied: 'Copiado!',
-  lobbyPlayers: 'Na sala', lobbyWaitHost: 'Esperando {name} começar…', lobbyStart: '🚀 Começar!', lobbyNeedMore: 'Faltam jogadores',
+  lobbyPlayers: 'Na sala', lobbyWaitHost: 'Esperando {name} começar', lobbyStart: '🚀 Começar!', lobbyNeedMore: 'Faltam jogadores',
   lobbyCancel: 'Cancelar a sala', lobbyLeave: 'Sair da sala',
   offline: '{name} se desconectou', waitingTurn: 'Esperando {name}…', placedBy: '{name} colocou',
   // jogo
