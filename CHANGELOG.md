@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.60.0 — 2026-09-25
+- **Invitación promocional** (D-127): "¡Estás invitado!", el reto, cuándo parte, cuánto toma y quiénes
+  ya se inscribieron. Los minijuegos no se nombran: son sorpresa.
+
 ## 0.59.3 — 2026-09-24
 - **Posiciones día a día** también marca "(-1J)" a quien lleva menos juegos, con su leyenda (D-126).
 - En el gráfico, los nombres de dos empatados en el mismo lugar ya no se enciman.

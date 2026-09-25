@@ -384,7 +384,9 @@ const ES = {
   copied: 'Copiado. Pégalo en el chat del grupo.',
 
   // Mensajes para compartir (van por WhatsApp)
-  shareInviteText: '🏆 *{copa}*\n\nTe invito a competir: son {dias} días, con un minijuego distinto cada día y una tabla para ver quién manda. Quien acumula más puntos se lleva la gloria.\n\n📅 Parte el {fecha}.\n🔑 Entra con tu nombre y un PIN de 4 números en este link:',
+  shareInviteText: '🏆 *La Copa: {copa}* · ¡Estás invitado!\n\n¿Te la puedes? Son {dias} días y {dias} minijuegos, con una sola oportunidad al día. Todos juegan lo mismo y la tabla dice quién manda. Quien acumula más puntos se lleva la gloria. 🥇\n\n📅 Parte el {fecha}.\n⏱️ Unos pocos minutos al día, desde tu celular.\n{inscritos}\n\n🔑 Entra con tu nombre y un PIN de 4 números:',
+  shareInviteJoined: '👥 Ya se inscribieron: {names}.',
+  shareInviteJoinedOne: '👥 Ya se inscribió {names}.',
   shareTodayText: '🏆 *{copa}* · Día {d} de {n}\n\n🎮 Hoy toca {juego}.\n⏰ Tienes hasta {hasta} para jugarlo.',
   shareTodayGrace: '🕐 Si te falta el de ayer ({juego}), todavía lo puedes jugar hasta hoy a medianoche.',
   shareTodayMissing: '👀 Faltan por jugar hoy: {names}.',
