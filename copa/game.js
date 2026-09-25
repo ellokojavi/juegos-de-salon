@@ -1142,7 +1142,9 @@ function antesDeJugar(d) {
     empezar.disabled = true;
     try {
       await store.empezar(S.code, d, S.yo);
-      trackStart({ game: GAME_ID, mode: GAME_ID, players: 1 });
+      // Una copa de ?prueba es de mentira (vive en este navegador): no suma en las estadísticas.
+      // Las del laboratorio sí: hoy son las copas reales con amigos (D-101).
+      if (!PRUEBA) trackStart({ game: GAME_ID, mode: GAME_ID, players: 1 });
       jugar(d);
     } catch (e) { avisoError(err, errorDe(e)); empezar.disabled = false; }
   });
