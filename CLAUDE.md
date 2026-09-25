@@ -11,6 +11,22 @@ anti-trampa, versionado, pruebas y documentación). Cada regla tiene un ID (C-n)
 
 Al terminar, recorrer la lista de chequeo al final de ese archivo.
 
+## Varias sesiones a la vez
+
+Puede haber varias sesiones de Claude trabajando en este repo al mismo tiempo (D-135):
+
+- **Cada sesión trabaja en su propia copia** (`git worktree add ../juegos-de-salon-<tema> -b <rama>`),
+  nunca en la carpeta principal: ahí los archivos sin commitear de una se cuelan en el commit de otra.
+- **Ramas con nombre de tema** (`copa-reglas-plegadas`, `tyf-jugar-solo`), no de versión.
+- **La versión se asigna al fusionar**, en el orden que decida el dueño: mientras los PR esperan,
+  numerarlos antes produce choques (dos "0.61"). Las decisiones (D-n) también: se toma el número
+  siguiente al más alto en `main` **y en los PR abiertos** (`gh pr list`).
+- Antes de tocar la rama de otro PR, preguntarle a esa sesión (ListAgents / SendMessage).
+- **Pruebas en paralelo:** servir la copia propia en un puerto propio (`python3 -m http.server 87xx`),
+  correr los guiones con `SITIO=http://localhost:87xx PUERTO_CDP=94xx` y **matar solo el Chrome
+  propio** (`pkill -f "remote-debugging-port=94xx"`). Nunca `pkill -f remote-debugging-port` a secas:
+  mata las pruebas de todas las sesiones.
+
 ## Publicar
 
 ```bash
@@ -112,7 +128,8 @@ tailscale serve --https=443 off
 
 `tools/e2e/` tiene scripts que juegan partidas completas en Chrome headless (ver su README):
 sirven el sitio en el puerto 8765, corren `node tools/e2e/<script>.mjs <carpeta-salida>` y
-revisan las capturas. Antes de repetir uno que falló: `pkill -f remote-debugging-port`.
+revisan las capturas. Antes de repetir uno que falló, matar solo el Chrome propio:
+`pkill -f "remote-debugging-port=<puerto>"` (ver "Varias sesiones a la vez").
 
 ## Panel del dueño
 
