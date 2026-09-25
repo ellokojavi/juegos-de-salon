@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.64.0 — 2026-09-25
+- **Reglas plegadas en cada minijuego** (D-133): "📖 Reglas de …" debajo del tablero, cerrado por
+  defecto, con las mismas palabras de los botones de cada pantalla.
+- Las copas de `?prueba` (de mentira, en el navegador) ya no suman en las estadísticas del panel.
+- **Reinas:** un dibujo explica las reglas antes del texto, y el tablero ya no tiene bordes
+  gruesos entre zonas (D-134).
+- Textos que ahora calzan con su pantalla: "apretada", ≠ en Tango, "tocar OK", Consejos y Pista.
+
 ## 0.63.1 — 2026-09-25
 - **Herramientas:** agente de usabilidad con ronda diaria, guía `docs/USABILIDAD.md` y
   `node tools/dilemas.mjs` para manejar sus preguntas como issues de GitHub (D-132). Sin cambios

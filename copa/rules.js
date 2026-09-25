@@ -13,7 +13,7 @@ export const MINIJUEGOS = {
     emoji: '⏳', nombre: 'Línea Relámpago', habilidad: 'saber',
     como: [
       'Hay 10 hitos de una misma temática. El primero ya está puesto en la línea y los otros 9 están en tu mano.',
-      'Elige una carta de la mano y el lugar de la línea donde va, tocando o arrastrando la carta, y confirma. Puedes jugarlas en el orden que quieras.',
+      'Toca una carta de tu mano y después el lugar de la línea donde va (o arrástrala hasta ahí), y toca Colocar aquí. Puedes jugarlas en el orden que quieras.',
       'Si te equivocas, la carta queda en su lugar marcada en rojo y sigues con las demás.',
     ],
     puntaje: 'Va de 0 a 100 según la parte de las cartas que pongas bien: las 9 bien son 100 puntos. Si empatas, gana quien tardó menos.',
@@ -22,7 +22,7 @@ export const MINIJUEGOS = {
     emoji: '🔢', nombre: 'Toque y Fama: adivina el número', habilidad: 'deducir',
     como: [
       'Hay un número secreto de 4 cifras distintas, el mismo para todos. Puede empezar con cero.',
-      'Cada intento te dice cuántas famas tiene (cifra correcta en su lugar) y cuántos toques (cifra correcta en otro lugar).',
+      'Escribe un número de 4 cifras distintas y toca Probar. Cada intento te dice cuántas famas tiene (cifra correcta en su lugar) y cuántos toques (cifra correcta en otro lugar).',
       'Mantén apretada una cifra para tacharla cuando sepas que no está. Tienes 10 intentos.',
     ],
     puntaje: 'Mientras menos intentos uses, más puntos: 100 si lo sacas al primero y 10 menos por cada intento más, hasta 10 si lo sacas al décimo. Si empatas, gana quien tardó menos.',
@@ -31,8 +31,8 @@ export const MINIJUEGOS = {
     emoji: '🔗', nombre: 'Conexiones', habilidad: 'asociar',
     como: [
       'Hay 16 palabras que forman 4 grupos de 4, de más fácil a más difícil. Ojo: algunas palabras parecen de dos grupos.',
-      'Elige 4 palabras que creas que van juntas y confirma.',
-      'Puedes equivocarte 3 veces: al cuarto error se termina. Si te faltó una sola palabra para un grupo, te avisamos.',
+      'Toca 4 palabras que creas que van juntas y toca Confirmar. Barajar cambia el orden de las palabras y Limpiar suelta las que elegiste.',
+      'Tienes 4 errores disponibles: al cuarto se termina. Si te faltó una sola palabra para un grupo, te avisamos.',
     ],
     puntaje: 'Cada grupo vale 25 puntos y cada error resta 5, de 0 a 100. Si empatas, gana quien tardó menos.',
   },
@@ -49,7 +49,7 @@ export const MINIJUEGOS = {
     emoji: '🔤', nombre: 'Toque y Fama: Palabra', habilidad: 'deducir',
     como: [
       'Hay una palabra secreta de 5 letras distintas, la misma para todos.',
-      'Cada intento son 5 letras distintas, aunque no formen una palabra. Te dice cuántas famas (letra correcta en su lugar) y cuántos toques (letra correcta en otro lugar) tiene, y cada letra se pinta: amarilla si es fama y celeste si es toque.',
+      'Escribe 5 letras distintas, aunque no formen una palabra, y toca Probar. Cada intento te dice cuántas famas (letra correcta en su lugar) y cuántos toques (letra correcta en otro lugar) tiene, y cada letra se pinta: amarilla si es fama y celeste si es toque.',
       'Mantén apretada una letra para tacharla cuando sepas que no está. Tienes 8 intentos.',
     ],
     puntaje: 'Cada letra que encuentras en su lugar suma 10 puntos, una sola vez aunque la repitas en otros intentos. Si sacas la palabra, sumas 50 más, menos 5 por cada intento después del primero. Va de 0 a 100 y, si empatas, gana quien tardó menos.',
@@ -57,8 +57,8 @@ export const MINIJUEGOS = {
   anio: {
     emoji: '📅', nombre: '¿En qué año?', habilidad: 'estimar',
     como: [
-      'Hay 6 hitos. Escribe en qué año crees que pasó cada uno.',
-      'Si fue antes de Cristo, toca el botón a. C. antes de confirmar.',
+      'Hay 6 hitos. Escribe en qué año crees que pasó cada uno y toca OK.',
+      'Si fue antes de Cristo, toca el botón a. C. antes de tocar OK.',
     ],
     puntaje: 'Cada hito da 100 puntos si aciertas el año exacto y menos mientras más te alejas, y tu puntaje es el promedio de los seis, de 0 a 100. En los hitos antiguos el margen es más amplio. Si empatas, gana quien tardó menos.',
   },
@@ -77,7 +77,7 @@ export const MINIJUEGOS = {
       'Llena la grilla con soles y lunas: cada fila y cada columna lleva tres de cada uno.',
       'Nunca puede haber tres iguales seguidos. Un = entre dos casillas dice que son iguales y un ≠ que son distintas.',
       'Toca una casilla para poner un sol, otra vez para una luna y una tercera para limpiarla. Hay una sola solución.',
-      'Si te atascas, abre los consejos o pide una pista: revela una casilla, pero cuesta puntos.',
+      'Si te atascas, abre la sección Consejos o toca Pista: revela una casilla y resta 15 puntos.',
     ],
     puntaje: 'Parte en 100 puntos: cada jugada que rompe una regla resta 10 y cada pista resta 15, con un mínimo de 10. Si empatas, gana quien tardó menos.',
   },
@@ -273,6 +273,8 @@ const ES = {
 
   // Antes de jugar
   howToPlay: 'Cómo se juega',
+  rulesOf: 'Reglas de {juego}',
+  finalRounds: 'Las cinco rondas',
   scoring: 'Puntaje',
   wildTitle: 'Comodín ×2',
   wildOff: 'Tienes un comodín por copa: duplica los puntos de un día. Se activa antes de empezar y no vale en la final.',
@@ -423,13 +425,14 @@ const ES = {
   famasFound: 'Llevas {n} de {largo} letras en su lugar: {pts} puntos.',
   famasFoundOne: 'Llevas 1 de {largo} letras en su lugar: {pts} puntos.',
   notSolvedWord: 'Se acabaron los intentos. La palabra era {v}.',
-  blockHintLetters: '💡 Mantén presionada una letra para tacharla si crees que no está en la palabra. Repite para destacharla.',
+  blockHintDigits: '💡 Mantén apretada una cifra para tacharla si crees que no está en el número secreto. Repite para destacharla.',
+  blockHintLetters: '💡 Mantén apretada una letra para tacharla si crees que no está en la palabra. Repite para destacharla.',
   // Reinas, Tango y Zip
   queensLeft: 'Reinas puestas: {m} de {n}',
   queensOk: '¡Resolviste las reinas!',
   queensClash: 'Hay reinas que chocan: comparten fila, columna o zona, o se tocan.',
   tangoOk: '¡Resolviste el tango!',
-  tangoClash: 'Algo no calza: tres iguales seguidos, más de tres de uno en una línea, o una marca = o × que no se cumple.',
+  tangoClash: 'Algo no calza: tres iguales seguidos, más de tres de uno en una línea, o una marca = o ≠ que no se cumple.',
   // Sesión de prueba (D-103)
   tryFirst: 'Probar primero (no cuenta)',
   trialChip: '🧪 Prueba',
@@ -449,6 +452,8 @@ const ES = {
   giveUpConfirm: '¿Seguro que te rindes? Vas a ver la solución y este juego te va a dar 0 puntos. No se puede deshacer.',
   queensGaveUp: 'Te rendiste. Esta es la solución: una reina por fila, columna y zona, sin tocarse.',
   bdGaveUp: 'Te rendiste, así que este juego da 0 puntos.',
+  queensExOk: 'Así: una reina por fila, por columna y por color.',
+  queensExBad: 'Así no: se tocan.',
   queensHint: '💡 Toca una casilla para poner o sacar una reina. Mantenla apretada para marcarla con una X y descartarla.',
   tangoCount: 'Errores: {e} · Pistas: {p}',
   clearAll: 'Borrar todo',
