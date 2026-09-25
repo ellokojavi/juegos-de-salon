@@ -33,6 +33,7 @@ export const GAMES = [
     tagline: { es: 'Ubica los hitos en el orden correcto. Seis temáticas, de la historia al fútbol.', en: 'Put the milestones in the right order. Six themes, from history to soccer.', pt: 'Coloque os marcos na ordem certa. Seis temas, da história ao futebol.' },
     players: '1–6',
     duration: '10–20',
+    jugadas: ['place'],
     path: 'linea-de-tiempo/',
     available: true,
   },
@@ -43,6 +44,7 @@ export const GAMES = [
     tagline: { es: 'Adivina el número secreto. En un celular, en dos o jugando solo.', en: 'Crack the secret number. One phone, two phones or on your own.', pt: 'Descubra o número secreto. Em um celular, em dois ou sozinho.' },
     players: '1–2',
     duration: '5–12',
+    jugadas: ['guess'],
     path: 'toque-y-fama/',
     available: true,
   },
@@ -53,6 +55,7 @@ export const GAMES = [
     tagline: { es: 'Adivina tu palabra antes de que se acaben los errores. Acá nadie se queda mirando.', en: 'Crack your word before the mistakes run out. Nobody sits this one out.', pt: 'Descubra sua palavra antes de gastar todos os erros. Aqui ninguém fica só olhando.' },
     players: '1–6',
     duration: '5–12',
+    jugadas: ['word', 'guess', 'buy'],
     path: 'ahorcado/',
     available: true,
   },
@@ -63,6 +66,7 @@ export const GAMES = [
     tagline: { es: 'Apuesta cuántos dados hay en la mesa y aguanta la cara. En un celular, en varios o contra el celular.', en: 'Bid how many dice are on the table and keep a straight face. One phone, several or versus the phone.', pt: 'Aposte quantos dados tem na mesa sem entregar o jogo. Em um celular, em vários ou contra o celular.' },
     players: '1–6',
     duration: '10–20',
+    jugadas: ['bid', 'dudo', 'calza'],
     path: 'dudo/',
     available: true,
   },
@@ -73,6 +77,7 @@ export const GAMES = [
     tagline: { es: 'Hunde la flota del rival antes de que hunda la tuya. En un celular, en dos o contra el celular.', en: 'Sink your rival\'s fleet before they sink yours. One phone, two phones or versus the phone.', pt: 'Afunde a frota do rival antes que ele afunde a sua. Em um celular, em dois ou contra o celular.' },
     players: '1–2',
     duration: '10–20',
+    jugadas: ['shot'],
     path: 'batalla-naval/',
     available: true,
   },
@@ -83,6 +88,7 @@ export const GAMES = [
     tagline: { es: 'Dices si vas o te pasas. Si vas y no haces dos bazas, te tomas todo el plato. En un celular, en varios o contra el celular.', en: 'Say if you are in or out. Go in, miss two tricks, and you drink the whole pot. One phone, several, or versus the phone.', pt: 'Você diz se entra ou passa. Se entrar e não fizer duas vazas, bebe o bolo inteiro. Em um celular, em vários ou contra o celular.' },
     players: '1–6',
     duration: '15–30',
+    jugadas: ['va', 'paso', 'cambia', 'juega', 'regala'],
     path: 'julepe/',
     // Fuera del menú por ahora: las reglas no quedaron claras y se están reescribiendo (D-88).
     // El juego sigue entero en /julepe/, solo no se ofrece desde acá.
@@ -104,6 +110,14 @@ export const GAMES = [
 /* Lo derivado: de acá lo lee cualquiera que necesite hablar de juegos  */
 /* o de modos sin copiarse la lista (canon C-16).                      */
 /* ------------------------------------------------------------------ */
+
+/*
+ * `jugadas`: los tipos de mensaje de sala que son una jugada de una persona (un disparo, un
+ * intento, una apuesta). El panel cuenta solo esos (D-138): una sala también se llena de
+ * mensajes que manda el juego solo —la respuesta a cada disparo, los compromisos y las
+ * revelaciones del anti-trampa—, de las entradas y de la charla, y contarlos todos juntos
+ * hacía decir "176 msjs" a una partida donde nadie escribió una palabra.
+ */
 
 /** Los ids, en el orden del menú. */
 export const GAME_IDS = GAMES.map(g => g.id);

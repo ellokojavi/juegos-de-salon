@@ -55,8 +55,8 @@ motor de la copa, `copa/engine.js`; el panel no las repite.
 
 | Sección | Qué muestra | De dónde sale |
 |---|---|---|
-| **Ahora** | Salas en juego, celulares conectados, salas vivas (las que latieron hace menos de media hora, D-89), juegos en curso. Lista de salas con código, juego, nombres, quién está conectado, mensajes y última jugada. Solo las del entorno elegido (D-45). | `rooms/` en vivo (índice por `createdAt`), cruzado por código con `stats/<env>` |
-| **Últimos 7 / 30 días** | Partidas totales, en dos celulares, sin red, celulares que jugaron, partidas de hoy. | `stats/<env>/days/<día>` |
+| **Ahora** | Salas en juego, celulares conectados, salas vivas (las que latieron hace menos de media hora, D-89), juegos en curso. Lista de salas con código, juego, nombres, quién está conectado, **jugadas**, **mensajes de chat** y última jugada (D-138). Una sala cuenta como *en juego* solo si entró un rival. Solo las del entorno elegido (D-45). | `rooms/` en vivo (índice por `createdAt`), cruzado por código con `stats/<env>` |
+| **Últimos 7 / 30 días** | Partidas empezadas, en dos celulares (solo las que tuvieron rival), sin red, entradas de un celular a una partida, partidas de hoy (día UTC) y salas donde nunca entró un rival (D-138). | `stats/<env>/days/<día>` |
 | **Partidas por juego** | Barra por juego, partida por modo: 📡 dos celulares, 📱 un celular, 🤖 contra el celular, 🧍 solo. Los modos salen del registro, y uno nuevo entra solo (C-16). | `rooms` (📡) y `local/<juego>/<modo>/<n>` |
 | **Jugadores por partida** | Cuántas partidas de 1, 2, … hasta el juego más numeroso del menú (hoy 6, `MAX_PLAYERS`). | `n` de los contadores sin red y cantidad de nombres de cada sala |
 | **Por día** | Partidas por día, separando dos celulares del resto. | ídem |
@@ -75,9 +75,25 @@ retomar hasta que la sala venza (C-6).
 **Celulares conectados** cuenta los jugadores con `online: true` en salas vivas. Los modos
 sin red no abren conexión (mandan un solo `fetch`), así que no aparecen ahí ni gastan cuota.
 
-**Entorno**: el selector separa lo publicado (`prod`), el laboratorio (`lab`) y las pruebas
-en `localhost` (`dev`). Las pruebas de punta a punta pegan contra Firebase de verdad y caen
-en `dev`, así que no ensucian las cifras reales.
+**Entorno**: el selector separa lo publicado (`prod`) de las pruebas (`dev`): el computador, la
+red de la casa (10/8, 172.16/12, 192.168/16, `.local`) y Tailscale (`*.ts.net`, D-67, D-138).
+Las pruebas de punta a punta pegan contra Firebase de verdad y caen en `dev`, así que no ensucian
+las cifras reales. `lab` quedó solo para leer lo que se guardó mientras existió el laboratorio.
+
+**Qué cuenta cada cifra** (D-138):
+
+- **Jugadas** son los mensajes de sala que hizo una persona: un disparo, un intento, una apuesta.
+  Cada juego los declara en `jugadas` de `assets/js/games.js`. No cuentan las respuestas
+  automáticas (`reply`), el anti-trampa (`commit`, `reveal`), las entradas (`hello`), la revancha
+  ni el chat. Un juego que no declara `jugadas` cuenta todo menos entradas y chat.
+- **Mensajes de chat**: solo cuántos. El panel nunca muestra qué dicen.
+- **Partidas** se anotan al empezar, no al terminar: sin red, al elegir el modo; en sala, al
+  crearla. Una sala donde nunca entró un segundo jugador no es una partida y se cuenta aparte.
+- **Entradas de un celular a una partida**, y también *De dónde*, los idiomas y la hora, suben
+  una vez cada vez que un celular empieza o entra a una partida: el mismo celular que juega cinco
+  revanchas suma cinco. No son personas.
+- **Los días son días UTC**: en Chile el día del panel cambia a las 21:00 (verano) o 20:00
+  (invierno). La hora de *A qué hora se juega* sí es la local del celular, tomada al empezar.
 
 Vale también para la lista de "Ahora", aunque ahí cueste un rodeo: `rooms/` es el nodo real
 del transporte y es uno solo para todos los entornos, así que una partida de prueba abre una

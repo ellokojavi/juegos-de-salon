@@ -32,7 +32,7 @@ Una carpeta por juego, con su propia URL (`/<id>/`) y siempre estos archivos:
   game.js         Máquina de estados y render. Lo único que toca el DOM
 ```
 
-- El juego se registra en `assets/js/games.js` con `id`, `emoji`, `name` y `tagline` por idioma, `players`, `duration`, `path` y `available`.
+- El juego se registra en `assets/js/games.js` con `id`, `emoji`, `name` y `tagline` por idioma, `players`, `duration`, `path` y `available`. Con sala, también `jugadas`: los tipos de mensaje que hace una persona, que es lo que el panel cuenta como jugadas (D-138).
 - Sus módulos se agregan a `MODULES` en `tools/set-version.py` (C-11).
 - Reutilizar siempre los módulos compartidos antes de escribir uno nuevo:
   `assets/js/ui.js` (DOM, confeti, vibración, wake lock), `i18n.js`, `sound.js`, `session.js`, `handoff.js`, `transport/`.

@@ -89,7 +89,10 @@ export async function sha256, randomNonce, verifyPlayer({ layout, salt, commit, 
 { "t": "reply",   "from": "B", "n": 0, "result": "hundido", "ship": "destroyer", "cells": ["B4","B5"] }
 { "t": "reveal",  "from": "A", "layout": { … }, "salt": "…" }
 { "t": "rematch", "from": "B", "code": "KXTR" }
+{ "t": "chat",    "from": "A", "text": "te voy a hundir el portaaviones" }
 ```
+
+`chat` solo existe en dos celulares y no es parte del estado: el reductor lo dibuja con `assets/js/chat.js` y lo olvida (C-15). El chat se ve en la sala de espera, mientras se espera la flota del rival, en la batalla y en el resultado; **mientras uno coloca su propia flota se guarda**, porque esa pantalla llena el celular justo y la burbuja tapaba los botones de abajo (lo que llega en ese rato espera en el globito, D-138). Para el panel, la única jugada es `shot` (D-138).
 
 Estado derivado (`view()`): fase (`lobby`, `placing`, `play`, `reveal`, `done`), quién dispara (a partir del historial y la regla de tiro extra), disparo pendiente, barcos hundidos por lado, ganador. Disparos repetidos a la misma casilla se rechazan en el reductor. Mensajes en serie, como en D-20.
 
