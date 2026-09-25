@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.64.6 — 2026-09-25
+- **La Copa: Tango y Zip se explican con un dibujo** antes de las reglas, como Reinas (D-139).
+  Tango muestra un tablero resuelto con sus marcas = y ≠ y, al lado, tres soles seguidos que no
+  valen. Zip muestra un trazo que cubre toda la grilla y otro que llega al último número dejando
+  casillas sin pintar.
+
 ## 0.64.5 — 2026-09-25
 - **Textos de espera sin «……»**: "Esperando al rival", "Esperando a {name} para la revancha" y
   los demás ya no terminan en "…"; los puntos los pone solo la animación, que antes se sumaba

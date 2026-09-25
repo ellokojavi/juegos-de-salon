@@ -1169,7 +1169,7 @@ function antesDeJugar(d) {
  * tienen, porque el tiempo desempata. El reloj parte cuando aparece "¡A jugar!", y ese cartel se
  * desvanece solo sobre el tablero. Resuelve la promesa en ese momento.
  */
-/** El dibujo que explica el minijuego antes del texto, si lo tiene (hoy, Reinas). */
+/** El dibujo que explica el minijuego antes del texto, si lo tiene (Reinas, Tango y Zip). */
 const dibujo = id => JUEGOS[id]?.ejemplo?.({ el, T }) ?? null;
 
 /**

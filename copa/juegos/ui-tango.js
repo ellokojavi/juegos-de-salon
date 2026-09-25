@@ -12,6 +12,34 @@ import * as motor from './tango.js';
 const ICONO = { [motor.SOL]: '☀️', [motor.LUNA]: '🌙' };
 const CONFIRMAR_MS = 3000;
 
+/**
+ * El dibujo de las reglas, como el de Reinas (D-134): un tablero de 6 × 6 resuelto, con una
+ * marca = y una ≠ que se cumplen, y al lado tres soles seguidos, que no valen. Se entiende
+ * mirando antes de leer. Mismas casillas y marcas que el tablero de verdad, en chico.
+ */
+const EJ_FILAS = ['SSLSLL', 'SLSLSL', 'LSLSLS', 'LLSLSS', 'SLLSSL', 'LSSLLS'];
+const EJ_MARCAS = [{ a: 0, b: 1, t: '=' }, { a: 14, b: 20, t: 'x' }];
+
+function tableroEjemplo(el, n, valores, marcas = [], choque = false) {
+  const g = el('div', { class: 'tan-ej', 'aria-hidden': 'true', style: `grid-template-columns: repeat(${n}, 1fr)` });
+  valores.forEach((v, i) => {
+    const celda = el('span', { class: choque ? 'choque' : '' }, ICONO[v]);
+    for (const m of marcas) {
+      if (m.a !== i) continue;
+      celda.append(el('i', { class: `${m.b === i + 1 ? 'der' : 'abajo'} ${m.t === '=' ? 'igual' : 'distinto'}` }, m.t === '=' ? '=' : '≠'));
+    }
+    g.append(celda);
+  });
+  return g;
+}
+
+export function ejemplo({ el, T }) {
+  const bien = EJ_FILAS.join('').split('').map(c => (c === 'S' ? motor.SOL : motor.LUNA));
+  return el('div', { class: 'rej-ejemplo' },
+    el('figure', {}, tableroEjemplo(el, 6, bien, EJ_MARCAS), el('figcaption', {}, `✅ ${T.tangoExOk}`)),
+    el('figure', {}, tableroEjemplo(el, 3, [motor.SOL, motor.SOL, motor.SOL], [], true), el('figcaption', {}, `❌ ${T.tangoExBad}`)));
+}
+
 export function montar(raiz, ctx) {
   const { p, T, fmt, el, SFX, vibrate } = ctx;
   let jugadas = Array.isArray(ctx.jugadas) ? ctx.jugadas.slice() : [];

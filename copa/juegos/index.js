@@ -52,7 +52,7 @@ export const JUEGOS = {
     for (let k = 0; ; k++) { const p = letras.generar(codigoEnsayo(c), d, { sal: `ensayo-${k}` }); if (p.secreto !== real) return p; }
   }),
   // Zip se arma nivel por nivel dentro de la pantalla: lo generado es solo la semilla del día (D-103)
-  zip: { generar: (codigo, dia) => ({ codigo, dia }), montar: uiZip.montar, resultado: uiZip.resultado, ensayo: (c, d) => ({ codigo: codigoEnsayo(c), dia: d, tiempo: 60 * 1000 }) },
+  zip: { generar: (codigo, dia) => ({ codigo, dia }), montar: uiZip.montar, resultado: uiZip.resultado, ejemplo: uiZip.ejemplo, ensayo: (c, d) => ({ codigo: codigoEnsayo(c), dia: d, tiempo: 60 * 1000 }) },
   tango: juego(tango, uiTango, (c, d) => tango.generar(codigoEnsayo(c), d, { sal: 'ensayo' })),
   anio: juego(anio, uiAnio, (c, d) => anio.generar(codigoEnsayo(c), d, { n: 2, tema: temaLibre(c), sal: 'ensayo' })),
   final: juego(final, uiFinal, (c, d) => final.generar(codigoEnsayo(c), d)),
