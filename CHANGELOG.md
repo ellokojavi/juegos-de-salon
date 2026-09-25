@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.64.3 — 2026-09-25
+- **Batalla Naval: los cinco barcos se ven sin desplazar** al colocar la flota. Las fichas van en
+  tres columnas (dibujo arriba, nombre abajo) y la instrucción pasa de cuatro líneas a tres. En un
+  celular con la barra del navegador abajo, el quinto barco quedaba fuera de la pantalla.
+
 ## 0.64.2 — 2026-09-25
 - **Batalla Naval: girar un barco casi siempre gira** (D-136). Si sobre su proa no cabe, gira
   igual y se acomoda en el lugar libre más cercano, sin irse lejos.
