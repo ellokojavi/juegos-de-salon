@@ -182,9 +182,9 @@
           "en": "📡 Two phones"
         },
         {
-          "clave": "modeCpu",
-          "es": "🤖 Contra el celular",
-          "en": "🤖 Versus the phone"
+          "clave": "modeSolo",
+          "es": "🧍 Jugar solo",
+          "en": "🧍 Play alone"
         }
       ],
       "variantes": [],

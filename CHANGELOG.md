@@ -4,6 +4,10 @@
 - **Conexiones por significado** (D-128): fuera los grupos de juegos de palabras ("___ roja",
   "esconden un animal"…); los grupos son lo que las cosas son (combustibles, metales, muebles…).
   Las copas que ya estaban jugando Conexiones terminan su día con la grilla de antes.
+- **Toque y Fama: jugar solo** (D-129): el modo contra el celular pasa a ser "🧍 Jugar solo": el
+  celular elige un número y tú lo adivinas en la menor cantidad de intentos, con récord.
+- En el tablero de Toque y Fama de La Copa y en el de jugar solo, las pistas van completas: "2 famas", "1 toque".
+- La pista del teclado dice "número secreto" en vez de "número del rival", que en La Copa no existe.
 
 ## 0.60.0 — 2026-09-25
 - **Invitación promocional** (D-127): "¡Estás invitado!", el reto, cuándo parte, cuánto toma y quiénes

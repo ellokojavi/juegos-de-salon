@@ -62,7 +62,7 @@ Un juego para dos personas ofrece los tres modos, en este orden en la intro:
 
 1. **📱 Un celular** (pasar y jugar). Es el modo base y el respaldo cuando la red falla.
 2. **📡 Dos celulares** (sala con código de 4 letras y QR).
-3. **Un jugador**: **🤖 Contra el celular** cuando el juego tiene información oculta que le da sentido a una IA (Toque y Fama, Batalla Naval), o **🧍 Jugar solo** con puntaje y récord cuando toda la información es pública (Línea de Tiempo, ver D-27). La tarjeta del menú dice "1–N jugadores".
+3. **Un jugador**: **🤖 Contra el celular** cuando el juego tiene información oculta que le da sentido a una IA (Batalla Naval, Dudo), o **🧍 Jugar solo** con puntaje y récord cuando un rival de máquina no agrega nada (Línea de Tiempo, ver D-27; Toque y Fama, ver D-129). La tarjeta del menú dice "1–N jugadores".
 
 Un modo que todavía no existe se muestra deshabilitado con "Próximamente", nunca se oculta.
 
