@@ -27,18 +27,20 @@ console.log('local result:', await b.evaluate(`document.getElementById('result-t
 // Revancha local
 await b.evaluate(`document.querySelector('#result-actions .btn').click(); 1`); await sleep(600);
 console.log('rematch → screen:', await b.active(), 'phase:', (await b.view()).phase);
-// ---- MODO CPU ----
-await b.go('http://localhost:8765/toque-y-fama/'); await b.evaluate(`document.querySelectorAll('.mode')[2].click(); 1`); await sleep(300); await b.shot('10-setup-cpu');
-await b.evaluate(`(()=>{document.querySelector('#setup-form input').value='Javi';return 1})()`);
-await b.evaluate(`document.querySelector('#setup-actions .btn').click(); 1`); await sleep(500);
-console.log('cpu secret:', await b.typeNum('0192')); await sleep(3000); await b.shot('11-cpu-play');
-guard = 0;
-const cands = ['3456', '7890', '1357', '2468', '9876', '0123', '4567', '5678', '6789', '1029', '3847', '5612', '9034', '7821'];
-while ((await b.active()) === 'screen-play' && guard++ < 30) {
-  if (!(await b.hasPad())) { await sleep(700); continue; }
-  await b.typeNum(cands[guard % cands.length]); await sleep(2400);
-}
-await sleep(800); await b.shot('12-cpu-result');
-console.log('cpu result:', await b.evaluate(`document.getElementById('result-title').textContent + ' | ' + document.getElementById('result-sub').textContent`), '|', await b.evaluate(`[...document.querySelectorAll('.board .count')].map(x=>x.textContent).join(' / ')`));
+// ---- JUGAR SOLO (D-129): el celular elige el número; dos intentos fallidos y el bueno ----
+const solo = async (tag) => {
+  await b.go('http://localhost:8765/toque-y-fama/'); await b.evaluate(`document.querySelectorAll('.mode')[2].click(); 1`); await sleep(300); await b.shot(`10-setup-solo${tag}`);
+  await b.evaluate(`document.querySelector('#setup-actions .btn').click(); 1`); await sleep(900);
+  const secreto = await b.evaluate(`__tyf.session().secrets.B.secret`);
+  const otro = [...'0123456789'].filter(d => !secreto.includes(d)).join('');
+  const fallidos = [secreto.slice(2) + secreto.slice(0, 2), otro.slice(0, 4)];
+  for (const g of fallidos) { await b.typeNum(g); await sleep(700); }
+  await b.shot(`11-solo-play${tag}`);
+  console.log('solo tablero:', await b.evaluate(`[...document.querySelectorAll('#boards .clue')].map(x=>x.innerText.replace(/\\n/g,' ')).join(' | ')`), '| estado:', await b.evaluate(`document.getElementById('status-sub').textContent`));
+  await b.typeNum(secreto); await sleep(4200); await b.shot(tag ? '12-solo-result-2' : '12-solo-result'); // después del confeti, que tapa el récord
+  console.log('solo result:', await b.evaluate(`document.getElementById('result-title').textContent + ' | ' + document.getElementById('result-sub').innerText.replace(/\\n/g,' / ') + ' | ' + document.getElementById('result-secrets-title').textContent + ' ' + document.getElementById('result-secrets').innerText`));
+};
+await solo('');
+await solo('-2');
 console.log('errors:', JSON.stringify(b.errors), 'console errors:', JSON.stringify(b.logs));
 b.close();
