@@ -365,6 +365,9 @@ for (let d = 1; d <= dias; d++) {
     console.log('  tabla parcial:', JSON.stringify(await ev('window.__compartido.at(-1)?.text')));
     await revisarPantalla('admin');
     await b.shot('09-admin');
+    // En el tablero, el gráfico también marca a Pancho con "(-1J)" y lo explica (D-126)
+    await sentarse(CODE, 'Cata', '1111');
+    ok(/Pancho \(-1J\)/.test(await ev(`document.querySelector('.grafico-chips')?.textContent || ''`)) && !!await ev(`document.getElementById('nota-juegos')`), 'el gráfico marca (-1J) a quien lleva menos juegos, con su leyenda');
   }
   await ev(`__copa.store.adelantar(${DIA}); 1`);
 }
