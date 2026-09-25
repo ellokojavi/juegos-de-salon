@@ -17,7 +17,7 @@ Mobile-first web app with party games to play with friends: card games, drinking
 |---|---|---|---|
 | 🏆 [The Cup / La Copa / A Copa](#-the-cup-la-copa) | 2 to 10 | Each on their own phone | 🧪 lab |
 | ⏳ [Timeline / Línea de Tiempo / Linha do Tempo](#-timeline-línea-de-tiempo) | 1 to 6 | One phone · Several phones · Play alone | v0.9 |
-| 🔢 [Bulls and Cows / Toque y Fama / Toque e Fama](#-bulls-and-cows-toque-y-fama) | 1 to 2 | One phone · Two phones · Versus the phone | v0.4 |
+| 🔢 [Bulls and Cows / Toque y Fama / Toque e Fama](#-bulls-and-cows-toque-y-fama) | 1 to 2 | One phone · Two phones · Play alone | v0.4 |
 | 🪢 [Hangman / El Ahorcado / Forca](#-hangman-el-ahorcado) | 1 to 6 | One phone · Several phones · Play alone | v0.26 |
 | 🎲 [Liar's Dice / Dudo / Dado Mentiroso](#-liars-dice-dudo) | 1 to 6 | One phone · Several phones · Versus the phone | v0.32 |
 | ⚓ [Battleship / Batalla Naval / Batalha Naval](#-battleship-batalla-naval) | 1 to 2 | One phone · Two phones · Versus the phone | v0.6 |
@@ -58,11 +58,11 @@ Spec: [docs/juegos/cuarto-rey.md](docs/juegos/cuarto-rey.md)
 
 ## 🔢 Bulls and Cows (Toque y Fama)
 
-Each player picks a secret number with no repeated digits and tries to crack the other one. For every guess the phone answers on its own: **fama** is a right digit in the right place, **toque** is a right digit somewhere else. Nobody counts by hand, nobody cheats.
+Each player picks a secret number with no repeated digits and tries to crack the other one, or you play alone against a number the phone picks. For every guess the phone answers on its own: **fama** is a right digit in the right place, **toque** is a right digit somewhere else. Nobody counts by hand, nobody cheats.
 
 - **📱 One phone:** players pass the phone around, and the screen is covered between turns.
 - **📡 Two phones:** a room with a 4-letter code and a QR. Each phone keeps its own secret and answers the rival's guesses. At the end both reveal and everything is verified.
-- **🤖 Versus the phone:** a duel against a solver that cracks the number in 5 or 6 guesses.
+- **🧍 Play alone:** the phone picks the number and you crack it in as few guesses as you can, chasing your record. Clues are spelled out in full ("2 famas, 1 toque").
 - **💬 Room chat:** on two phones there is a chat to trash-talk while guessing, and it stays alive on the final screen to celebrate or ask for a rematch. New messages peek out next to the bubble.
 
 <!-- generado: capturas:toque-y-fama · written by python3 tools/readme.py actualizar -->
@@ -77,7 +77,7 @@ Each player picks a secret number with no repeated digits and tries to crack the
     <td align="center"><img src="docs/screenshots/toque-y-fama/06-sala.png" width="180" alt="Room with code and QR"><br><sub>Room with code and QR</sub></td>
     <td align="center"><img src="docs/screenshots/toque-y-fama/07-dos-celulares.png" width="180" alt="Game on two phones"><br><sub>Game on two phones</sub></td>
     <td align="center"><img src="docs/screenshots/toque-y-fama/08-verificado.png" width="180" alt="Verified secrets"><br><sub>Verified secrets</sub></td>
-    <td align="center"><img src="docs/screenshots/toque-y-fama/05-resultado.png" width="180" alt="Versus the phone"><br><sub>Versus the phone</sub></td>
+    <td align="center"><img src="docs/screenshots/toque-y-fama/05-resultado.png" width="180" alt="Playing alone: a new record"><br><sub>Playing alone: a new record</sub></td>
   </tr>
   <tr>
     <td align="center"><img src="docs/screenshots/toque-y-fama/09-chat.png" width="180" alt="Room chat"><br><sub>Room chat</sub></td>
@@ -592,6 +592,7 @@ tools/og.mjs                Social cards: the Open Graph tags of each page and t
 tools/hechos.mjs            The app's fact sheet (games, modes, themes, tests) read from the code
 tools/reportes.mjs          Reads the La Copa bug reports from Firebase (`--dias N`, `--json`)
 tools/reglas.mjs            Publishes the Firebase rules with a service-account key kept outside the repo
+tools/dilemas.mjs           Usability dilemmas as GitHub issues: list, create, resolve, archive (D-132)
 tools/e2e/                  Full games in headless Chrome; the screenshots come from here (see its README)
 pt/ · en/                   Language doors: they set the language and send you to the menu
 assets/og/                  The 1200×630 images shown when a link is shared
@@ -621,4 +622,5 @@ These documents are in Spanish, like the rest of the project.
 - [Toque y Fama: estudio de factibilidad y propuesta de mecánica](docs/juegos/toque-y-fama-factibilidad.md)
 - [Especificación: Toque y Fama](docs/juegos/toque-y-fama.md)
 - [Changelog](CHANGELOG.md)
+- [Guía de usabilidad](docs/USABILIDAD.md)
 <!-- /generado -->

@@ -14,24 +14,30 @@ export const TYF = TYF_LOCALES.es;
 
 export const leerJugadas = j => (Array.isArray(j) ? { i: j.slice(), n: [] } : { i: (j?.i || []).slice(), n: (j?.n || []).slice() });
 
-/** Las pistas como en el tablero de Toque y Fama: "2F 1T", "🎯 4F" o "0". */
-export function pistas(el, g, largo, grande = false) {
+/**
+ * Las pistas como en el tablero de Toque y Fama. El tablero de la copa ocupa todo el ancho y
+ * suele escribirlas completas ("2 famas", "1 toque", "nada"); abreviadas son "2F 1T" o "0".
+ */
+export function pistas(el, g, largo, grande = false, completa = grande) {
   const wrap = el('div', { class: grande ? 'reply-clue' : 'clue' });
-  const F = n => (grande ? `${n} ${n === 1 ? TYF.fama : TYF.famas}` : `${n}${TYF.famaShort}`);
-  const Tq = n => (grande ? `${n} ${n === 1 ? TYF.toque : TYF.toques}` : `${n}${TYF.toqueShort}`);
+  const F = n => (completa ? `${n} ${n === 1 ? TYF.fama : TYF.famas}` : `${n}${TYF.famaShort}`);
+  const Tq = n => (completa ? `${n} ${n === 1 ? TYF.toque : TYF.toques}` : `${n}${TYF.toqueShort}`);
   if (g.famas === largo) wrap.append(el('span', { class: 'f' }, `🎯 ${F(g.famas)}`));
   else {
     if (g.famas) wrap.append(el('span', { class: 'f' }, F(g.famas)));
     if (g.toques) wrap.append(el('span', { class: 't' }, Tq(g.toques)));
-    if (!g.famas && !g.toques) wrap.append(el('span', { class: 'z' }, grande ? TYF.none : '0'));
+    if (!g.famas && !g.toques) wrap.append(el('span', { class: 'z' }, completa ? TYF.none : '0'));
   }
   return wrap;
 }
 
-/** El tablero de intentos de Toque y Fama, de un solo jugador. `valor` dibuja el intento. */
-export function tablero(el, { filas, largo, titulo, valor = f => f.v }) {
+/**
+ * El tablero de intentos de Toque y Fama, de un solo jugador. `valor` dibuja el intento.
+ * Las pistas van completas; Letras las abrevia porque sus letras de colores no dejan espacio.
+ */
+export function tablero(el, { filas, largo, titulo, valor = f => f.v, completa = true }) {
   const tries = n => (n === 1 ? TYF.tryOne : TYF.tryMany);
-  const lista = el('ol', {}, ...filas.map(f => el('li', { class: f.famas === largo ? 'hit' : '' }, valor(f), pistas(el, f, largo))));
+  const lista = el('ol', {}, ...filas.map(f => el('li', { class: f.famas === largo ? 'hit' : '' }, valor(f), pistas(el, f, largo, false, completa))));
   return el('div', { class: 'board turn board--solo' },
     el('h3', {}, titulo),
     el('div', { class: 'count' }, filas.length ? `${filas.length} ${tries(filas.length)}` : TYF.noGuesses),
@@ -47,6 +53,8 @@ export function montar(raiz, ctx) {
 
   const dibujar = () => {
     const e = motor.estado(p, J.i, max);
+    // Terminado el tablero, el tiempo se detiene aquí y no al tocar el botón (D-130)
+    if (e.fin) ctx.pararReloj?.();
     raiz.innerHTML = '';
     const caja = el('div', { class: 'stack numero-juego' });
     // El cierre va arriba; en la final (ctx.cierreAbajo), debajo del tablero
