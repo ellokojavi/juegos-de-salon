@@ -11,7 +11,8 @@ import { mkdirSync } from 'node:fs';
 const OUT = process.argv[2] || '/tmp/copa';
 const SIETE = !process.argv.includes('--tres');
 mkdirSync(OUT, { recursive: true });
-const b = await launch({ port: 9377, dir: `${OUT}/perfil`, out: OUT });
+// PUERTO_CDP: otro puerto de control para no chocar con el Chrome de otra sesión que prueba en paralelo (D-135)
+const b = await launch({ port: Number(process.env.PUERTO_CDP) || 9377, dir: `${OUT}/perfil`, out: OUT });
 // SITIO permite probar otra copia del repo servida en otro puerto (la ronda de usabilidad, D-132)
 const SITIO = process.env.SITIO || 'http://localhost:8765';
 const BASE = `${SITIO}/copa/`;
