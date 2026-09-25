@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.64.4 — 2026-09-25
+- **Batalla Naval: las dos fichas de abajo quedan centradas** al colocar la flota, en vez de
+  pegadas a la izquierda con un hueco a la derecha (U-11).
+
 ## 0.64.3 — 2026-09-25
 - **Batalla Naval: los cinco barcos se ven sin desplazar** al colocar la flota. Las fichas van en
   tres columnas (dibujo arriba, nombre abajo) y la instrucción pasa de cuatro líneas a tres. En un
