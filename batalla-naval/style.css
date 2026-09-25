@@ -206,9 +206,11 @@
 .place-top .count { color: var(--muted); font-weight: 900; }
 /* Tres columnas con el dibujo arriba del nombre: las cinco fichas caben en dos filas. En una
    fila que se envuelve sola quedaban en tres y la última no se veía sin desplazar en un
-   celular con la barra del navegador abajo. */
-.ships { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 8px 0 10px; }
+   celular con la barra del navegador abajo. Van en una fila que se envuelve, con el ancho de una
+   columna, para que las dos de abajo queden centradas y no pegadas a la izquierda (U-11). */
+.ships { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 8px 0 10px; }
 .ship-chip {
+  flex: 0 0 calc((100% - 12px) / 3);
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-width: 0; min-height: 44px; padding: 6px 4px; border-radius: 12px; cursor: grab;
   /* La ficha se arrastra al tablero: el navegador no puede llevarse el gesto para desplazar la
      página (D-86), y arrastrar un botón no debe seleccionar su texto. */
