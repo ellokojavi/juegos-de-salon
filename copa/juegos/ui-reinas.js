@@ -1,8 +1,8 @@
 /**
  * 👑 Reinas — pantalla. Un toque pone o saca la reina; un toque largo pone o saca una X para
- * descartar la casilla (D-103), como las notas de Toque y Fama. Las zonas se distinguen por color
- * y además por un borde grueso, para no depender solo del color (C-8). Las reinas que chocan se
- * ven en rojo en el acto. Las jugadas son los toques, en orden (el largo, en negativo).
+ * descartar la casilla (D-103), como las notas de Toque y Fama. Las zonas se distinguen solo por
+ * el color, con la misma línea fina entre todas las casillas, como en el juego original. Las
+ * reinas que chocan se ven en rojo en el acto. Las jugadas son los toques, en orden (el largo, en negativo).
  */
 import * as motor from './reinas.js';
 
@@ -10,6 +10,37 @@ import * as motor from './reinas.js';
 export const ZONAS = ['#f4b183', '#a9d18e', '#9dc3e6', '#ffd966', '#c9a0dc', '#f8cbad', '#b4dfe0', '#e6e6e6', '#d5e8a4', '#f2a7c3'];
 
 const LARGO_MS = 450;
+
+/**
+ * El dibujo de las reglas: un tablero de 5 × 5 resuelto y, al lado, dos reinas que se tocan en
+ * diagonal. Se entiende mirando antes de leer. Mismos colores que el tablero de verdad.
+ */
+const EJ_ZONAS = [
+  0, 0, 1, 1, 1,
+  0, 0, 1, 1, 2,
+  3, 0, 0, 2, 2,
+  3, 3, 4, 4, 2,
+  3, 4, 4, 4, 2,
+];
+const EJ_REINAS = [1, 8, 10, 17, 24];
+
+function tableroEjemplo(el, n, zonas, reinas, choque = false) {
+  const g = el('div', { class: 'rej-ej', 'aria-hidden': 'true', style: `grid-template-columns: repeat(${n}, 1fr)` });
+  zonas.forEach((z, i) => {
+    const reina = reinas.includes(i);
+    g.append(el('span', {
+      class: reina && choque ? 'choque' : '',
+      style: `background:${ZONAS[z % ZONAS.length]}`,
+    }, reina ? '👑' : ''));
+  });
+  return g;
+}
+
+export function ejemplo({ el, T }) {
+  return el('div', { class: 'rej-ejemplo' },
+    el('figure', {}, tableroEjemplo(el, 5, EJ_ZONAS, EJ_REINAS), el('figcaption', {}, `✅ ${T.queensExOk}`)),
+    el('figure', {}, tableroEjemplo(el, 2, [0, 0, 1, 1], [0, 3], true), el('figcaption', {}, `❌ ${T.queensExBad}`)));
+}
 
 export function montar(raiz, ctx) {
   const { p, T, fmt, el, SFX, vibrate } = ctx;
@@ -28,7 +59,6 @@ export function montar(raiz, ctx) {
     const grilla = el('div', { class: 'rej-grid' + (e.fin ? ' fin' : ''), style: `grid-template-columns: repeat(${n}, 1fr)` });
     for (let i = 0; i < n * n; i++) {
       const r = Math.floor(i / n), c = i % n, z = zonas[i];
-      const borde = (rr, cc) => (rr < 0 || cc < 0 || rr >= n || cc >= n || zonas[rr * n + cc] !== z ? '3px' : '1px');
       const v = e.marcas[i];
       let timer = null;
       const jugar = j => {
@@ -43,7 +73,7 @@ export function montar(raiz, ctx) {
       grilla.append(el('button', {
         type: 'button', class: 'rej' + (v === motor.REINA ? ' reina' : v === motor.MARCA ? ' marca' : '') + (e.conflictos.has(i) ? ' choque' : ''),
         'data-i': i, disabled: e.fin, 'aria-label': `${r + 1}-${c + 1}`,
-        style: `background:${ZONAS[z % ZONAS.length]};border-width:${borde(r - 1, c)} ${borde(r, c + 1)} ${borde(r + 1, c)} ${borde(r, c - 1)}`,
+        style: `background:${ZONAS[z % ZONAS.length]}`,
         // El toque largo marca la X; el toque normal, la reina (como las notas del teclado de Toque y Fama)
         onPointerdown: () => { tragar = false; timer = setTimeout(() => { timer = null; tragar = true; jugar(motor.toqueLargo(i)); }, LARGO_MS); },
         onPointerup: () => { if (timer) { clearTimeout(timer); timer = null; } },

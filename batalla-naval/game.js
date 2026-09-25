@@ -1,7 +1,7 @@
 /**
  * Batalla Naval — lógica de juego.
  * Misma arquitectura que Toque y Fama (D-20): un reductor de mensajes para todos los modos.
- *  - local: ambos jugadores en este celular · cpu: B es un bot (Hunter) · online: fase 2 (pendiente)
+ *  - local: ambos jugadores en este celular · cpu: B es un bot (Hunter) · online: sala con chat (C-15)
  * Cada dispositivo responde los disparos contra SU flota.
  */
 import { $, $$, el, vibrate, sparkles, keepAwake, confetti, shareLink, canShare } from '../assets/js/ui.js';
@@ -13,7 +13,8 @@ import { createLocalTransport } from '../assets/js/transport/local.js';
 import { trackStart } from '../assets/js/transport/stats.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import { UMBRAL } from '../assets/js/arrastre.js';
-import { N, COLS, FLEET, SHIP_SIZE, cellName, parseCell, isCell, cellsOf, isValidPlacement, isValidLayout, randomLayout, occupancy, layoutKey, shoot, allSunk, Hunter, nextShooter, sha256, randomNonce, verifyPlayer } from './engine.js';
+import { createChat } from '../assets/js/chat.js';
+import { N, COLS, FLEET, SHIP_SIZE, cellName, parseCell, isCell, cellsOf, isValidPlacement, isValidLayout, randomLayout, rotateNear, occupancy, layoutKey, shoot, allSunk, Hunter, nextShooter, sha256, randomNonce, verifyPlayer } from './engine.js';
 import { GAME_ID, DEFAULT_CONFIG, LOCALES } from './rules.js';
 import { FONDO_AGUA, barcoEn, barcoEntero, trozoDe } from './flota.js';
 
@@ -27,6 +28,7 @@ const SHIP_EMOJI = '🚢';
 
 let S = null;   // sesión
 let M = null;   // partida
+let chat = null; // chat de sala: solo en dos celulares (canon C-15)
 
 /* ------------------------------------------------------------------ */
 /* Estado de la partida                                                */
@@ -57,6 +59,8 @@ function apply(msg) {
     }
     case 'reveal': if (!M.reveals[from]) M.reveals[from] = { layout: msg.layout, salt: msg.salt }; break;
     case 'rematch': if (!M.rematch[from]) M.rematch[from] = msg.code || true; break;
+    // El chat no es parte del estado: se dibuja y se olvida (canon C-15)
+    case 'chat': if (chat) chat.add(msg, { live: !!S?.live }); return 'chat';
   }
 }
 
@@ -92,11 +96,15 @@ function startSession({ mode, transport, roles, config, names, bot = null, code 
   if (S?.transport) S.transport.dispose();
   if (S?.turnTimer) clearTimeout(S.turnTimer);
   if (S?.finTimer) clearTimeout(S.finTimer);
-  S = { mode, transport, roles, layouts: {}, draft: {}, bot, code, role, repliedShots: new Set(), lastShownShot: -1, cpuTimer: null, turnTimer: null, finTimer: null, lastTurnMine: null, hundimiento: null, uiRole: null, aim: null, fleetShown: false };
+  S = { mode, transport, roles, layouts: {}, draft: {}, bot, code, role, repliedShots: new Set(), lastShownShot: -1, cpuTimer: null, turnTimer: null, finTimer: null, lastTurnMine: null, hundimiento: null, uiRole: null, aim: null, fleetShown: false, live: false };
   M = newMatch(config);
   M.presence = {};
+  setupChat(mode);
+  // Lo que llega en los primeros instantes es la historia de la sala al entrar: se dibuja sin ruido
+  const sess = S;
+  setTimeout(() => { if (S === sess) S.live = true; }, 1500);
   Object.entries(names).forEach(([r, name]) => { if (name) transport.send({ t: 'hello', from: r, name }); });
-  transport.onMessage(m => { apply(m); onChange(); });
+  transport.onMessage(m => { if (apply(m) === 'chat') return; onChange(); });
   transport.onPresence(p => { M.presence = p; renderPresence(); });
 }
 
@@ -307,6 +315,12 @@ function render() {
   if (!M) return;
   const v = view();
   if (v.phase !== 'play') tabTurn(false);
+  // El chat acompaña la sala, la espera de la flota rival, la batalla y el resultado; muere con
+  // la sala (C-15, D-35). Mientras uno coloca su propia flota se guarda: la pantalla llena el
+  // celular justo, la burbuja tapaba los botones de abajo y ahí nadie está conversando. Lo que
+  // llega en ese rato espera en el globito.
+  if (chat) (v.phase === 'placing' && !S.layouts[S.role] ? chat.hide() : chat.show());
+  if (chat && v.phase === 'play' && v.shooter === S.role && !v.pending) chat.closeIfIdle();
   switch (v.phase) {
     case 'lobby': renderLobby(); break;
     case 'placing': renderPlace(); break;
@@ -322,6 +336,21 @@ function render() {
       break;
     }
   }
+}
+
+/** Crea (o bota) el chat de sala. Solo tiene sentido con un jugador por celular. */
+function setupChat(mode) {
+  if (chat) { chat.destroy(); chat = null; }
+  const mount = $('#chat');
+  if (!mount) return;
+  mount.hidden = true;
+  if (mode !== 'online') return;
+  chat = createChat({
+    mount, T,
+    nameOf: r => M.names[r] || '…',
+    isMine: r => r === S.role,
+    onSend: text => S.transport.send({ t: 'chat', from: S.role, text }),
+  });
 }
 
 /* ---------- Lobby (dos celulares) ---------- */
@@ -486,8 +515,8 @@ function buildPlacement(role) {
   function rotateSelected() {
     SFX.tap();
     if (d.sel && d.layout[d.sel]) {
-      const p = d.layout[d.sel]; const rotated = { ...p, dir: p.dir === 'h' ? 'v' : 'h' };
-      if (isValidPlacement(d.layout, d.sel, rotated)) { d.layout[d.sel] = rotated; d.dir = rotated.dir; paint(); }
+      const p = d.layout[d.sel]; const rotated = rotateNear(d.layout, d.sel); // si no cabe sobre la proa, lo más cerca (D-136)
+      if (rotated) { d.layout[d.sel] = rotated; d.dir = rotated.dir; paint(); }
       else { const cell = cellAt(p.r, p.c); if (cell) flash(cell); }
     } else { d.dir = d.dir === 'h' ? 'v' : 'h'; paint(); }
   }

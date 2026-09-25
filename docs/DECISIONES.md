@@ -1616,3 +1616,99 @@ botones, interacciones, navegación y mensajes para compartir, con la guía `doc
   copia aparte del repo sin chocar con la que está sirviendo el puerto 8765.
 **Por qué:** pedido del dueño: bugs como el reloj de Conexiones o los textos rebuscados se
 tienen que encontrar solos, y las dudas llegarle ordenadas.
+
+## D-133 · Las reglas de cada minijuego, plegadas debajo del tablero
+**Fecha:** 2026-09-25 · **Estado:** vigente
+**Decisión:** En la pantalla de juego de cada minijuego (el día, la sesión de prueba y la práctica)
+hay un panel **"📖 Reglas de {juego}"** plegado por defecto, **debajo del tablero y de sus
+botones**: no se ve mientras se juega salvo que se baje, y está a un toque ante la duda. Trae
+"Cómo se juega", el puntaje y, en la Gran Final, las cinco rondas. Las reglas se reescribieron con
+**las mismas palabras de los botones** de cada pantalla (Probar, Colocar aquí, Confirmar, Barajar,
+Limpiar, OK; "Errores disponibles") (U-5).
+**Por qué:** pedido del dueño: ayudar ante la duda sin distraer.
+
+## D-134 · Reinas: el dibujo de las reglas y sin bordes gruesos entre zonas
+**Fecha:** 2026-09-25 · **Estado:** vigente
+**Decisión:** Las reglas de Reinas traen un dibujo antes del texto: un tablero de 5 × 5 resuelto
+("Así: una reina por fila, por columna y por color.") y dos reinas que se tocan en diagonal ("Así
+no: se tocan."), con los colores del tablero de verdad. Y **el tablero pierde los bordes gruesos
+entre zonas**: todas las casillas llevan la misma línea fina y las zonas se distinguen solo por el
+color, como en el juego original. **Lo decidió el dueño sabiendo que los bordes estaban por
+accesibilidad** (C-8, no depender solo del color); el revisor de usabilidad no lo vuelve a marcar.
+Riesgo conocido: dos pares de colores se parecen (naranja #f4b183 con durazno #f8cbad, celeste
+#9dc3e6 con turquesa #b4dfe0); si molesta, se ajusta la paleta `ZONAS` de ui-reinas.js.
+**Por qué:** pedido del dueño (trabajado en otra sesión y publicado junto con D-133).
+
+## D-135 · Varias sesiones de Claude a la vez: cada una en su copia del repo
+**Fecha:** 2026-09-25 · **Estado:** vigente
+**Decisión:** Cada sesión trabaja en su propio `git worktree`, con ramas de nombre de tema; la
+versión se asigna al fusionar y los números D-n miran también los PR abiertos. Las pruebas usan
+un puerto propio para el sitio y para Chrome (`SITIO`, `PUERTO_CDP`) y matan solo su Chrome.
+Quedó en CLAUDE.md.
+**Por qué:** tres sesiones compartían la carpeta principal: un commit arrastró trabajo sin
+terminar de otra, una rama se reescribió con el trabajo de otra sesión, y dos decisiones
+distintas quedaron con el número D-129. Se reordenó la cadena de PRs y se renumeró. Además, el
+`pkill -f remote-debugging-port` de una sesión mataba las pruebas de las demás.
+
+## D-136 · Batalla Naval: girar un barco casi siempre gira
+**Fecha:** 2026-09-25 · **Estado:** vigente
+**Decisión:** El botón ↻ de un barco puesto primero lo gira sobre su proa, como antes. Si ahí no
+cabe (se sale del tablero o choca con otro), **gira igual** y se acomoda en el lugar válido más
+cercano, medido desde el centro del barco, sin alejarse más de una casilla de lo que cubría
+(`rotateNear` en `engine.js`). Solo si cerca no hay espacio no gira y parpadea, como antes.
+**Por qué:** pedido del dueño con una captura: un acorazado vertical en H6–H9 no giraba porque
+sobre H6 se salía por la derecha. Para el jugador importa que el barco gire cerca de donde está,
+no que gire exactamente sobre la proa. Llevarlo lejos no tendría sentido.
+
+## D-137 · El panel separa La Copa de los demás juegos, y mide sus minijuegos
+**Fecha:** 2026-09-25 · **Estado:** vigente
+**Decisión:** El panel del dueño tiene tres vistas: Resumen, La Copa y Juegos (`/panel/#torneo`).
+La Copa se mide con sus propios datos de `torneos/` y no con la señal de uso que manda cada día
+jugado: el calendario de cada copa dice qué minijuego fue, y cada resultado trae puntaje, tiempo
+y hora. De ahí salen las copas en curso con quién está jugando ahora, y por minijuego las jugadas,
+los que quedaron sin terminar, el puntaje promedio y el tiempo típico. Los juegos de una partida
+se cuentan sin La Copa. Qué es torneo lo dice el registro (`torneo: true` en `games.js`).
+**Por qué:** el dueño quiere ver en cualquier momento si hay copas o minijuegos en juego, y
+comparar La Copa, el juego central, con los demás. La señal de uso solo decía "un día de La
+Copa", sin minijuego, y sumaba esos días como si fueran partidas de un juego más.
+**Alternativas descartadas:** mandar una señal nueva por minijuego (obligaba a tocar las reglas
+de la base y solo servía desde hoy; `torneos/` ya tiene todo, también hacia atrás). Separar
+las copas por entorno: `torneos/` no lo está y no hay de dónde sacarlo; las del laboratorio
+llevan su etiqueta.
+
+## D-138 · Chat en Batalla Naval y un panel que cuenta lo que dice
+**Fecha:** 2026-09-25 · **Estado:** vigente
+**Decisión:** Batalla Naval, el único juego con sala que no tenía chat, lo estrena con el módulo
+compartido (C-15). Y el panel deja de mezclar cosas distintas bajo una misma cifra:
+- Las salas vivas muestran **jugadas** y **mensajes de chat** por separado, más la hora de la
+  última jugada. Qué es una jugada lo declara cada juego en `jugadas` de `games.js`.
+- "En juego" pide un rival; las salas donde nunca entró un segundo jugador no cuentan como
+  partida en ninguna cifra (ya no contaban en la bitácora) y se muestran aparte.
+- Los rótulos dicen lo que se cuenta: partidas *empezadas*, *entradas de un celular a una
+  partida* (no celulares distintos), *día UTC*.
+- La red de la casa y Tailscale caen en el entorno de pruebas, no en producción.
+- La hora de una partida se toma al empezarla, no al abrir la página.
+**Por qué:** una sala de Batalla Naval decía "176 msjs" y los jugadores no habían escrito nada. No
+había chat: eran 86 disparos, sus 86 respuestas automáticas y los compromisos del anti-trampa. Al
+revisar el resto del panel aparecieron otras cifras que se leían como algo que no eran: salas
+abiertas sin nadie más contadas como partidas de dos celulares (y la bitácora, que sí las sacaba,
+no cuadraba con el total), "celulares que jugaron" que sumaba una vez por cada revancha, días que
+en Chile cambian a las 21:00, y las pruebas en un celular de verdad por Tailscale (D-67) contadas
+como gente jugando.
+**Por qué la lista en `games.js`:** es el registro que el panel ya lee (C-16). Qué mensaje es de una
+persona y cuál lo manda el juego solo es algo que solo sabe cada juego: una regla genérica
+("todo menos `hello`") es justo la que contaba respuestas como jugadas. Un juego que no declara
+nada se cuenta con esa regla genérica: inflado, pero nunca en cero.
+**Por qué el chat se guarda al colocar la flota:** la pantalla de colocación llena un celular de
+812 px exacto; la burbuja tapaba Limpiar y la etiqueta del mensaje nuevo tapaba Al azar. Mientras
+uno arma su flota no está conversando; apenas la deja lista y espera al rival, que es el rato
+muerto, el chat vuelve con su globito de no leídos.
+**Consecuencias:** un juego nuevo con sala declara sus `jugadas` al registrarse
+(docs/AGREGAR-JUEGO.md). Quedan anotados sin arreglar, por ser de otra capa: `online` puede
+quedar pegado si la despedida no sale a tiempo (el `onDisconnect` se cancela antes), un jugador
+que vuelve desde otro navegador toma un rol nuevo y aparece dos veces en juegos de 3 a 6, y dos
+salas con el mismo código el mismo día comparten registro. Que La Copa contara sus días como
+partidas sin red lo resolvió el Portal de La Copa (D-137). Las copas de laboratorio suman en
+producción a propósito, porque hoy todas las copas reales se crean desde `/labs/`; se revisa
+cuando La Copa salga del laboratorio.
+

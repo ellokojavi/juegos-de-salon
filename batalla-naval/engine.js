@@ -39,6 +39,32 @@ export function isValidPlacement(layout, shipId, placement, n = N) {
   return cells.every(x => !occupied.has(`${x.r},${x.c}`));
 }
 
+/**
+ * Girar un barco ya puesto (D-136). Primero sobre su proa, como siempre; si ahí no cabe, gira
+ * igual y se acomoda en el lugar válido más cercano a donde estaba (por el centro del barco),
+ * sin alejarse más de una casilla de lo que cubría antes. Devuelve la nueva colocación, o null
+ * si cerca no hay espacio.
+ */
+export function rotateNear(layout, shipId, n = N) {
+  const p = layout[shipId]; if (!p) return null;
+  const size = SHIP_SIZE[shipId]; const dir = p.dir === 'h' ? 'v' : 'h';
+  const pivot = { r: p.r, c: p.c, dir };
+  if (isValidPlacement(layout, shipId, pivot, n)) return pivot;
+  const half = (size - 1) / 2;
+  const center = q => q.dir === 'h' ? { r: q.r, c: q.c + half } : { r: q.r + half, c: q.c };
+  const o = center(p); const reach = half + 1;
+  let best = null, bestD = Infinity;
+  for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) {
+    const q = { r, c, dir }; const k = center(q);
+    const dr = Math.abs(k.r - o.r), dc = Math.abs(k.c - o.c);
+    if (dr > reach || dc > reach || !isValidPlacement(layout, shipId, q, n)) continue;
+    // desempate: lo más cerca de la proa de antes, para que girar sea predecible
+    const d = dr * dr + dc * dc + ((r - p.r) ** 2 + (c - p.c) ** 2) / 1000;
+    if (d < bestD) { best = q; bestD = d; }
+  }
+  return best;
+}
+
 /** Flota completa y válida. */
 export function isValidLayout(layout, n = N) {
   if (!layout) return false;

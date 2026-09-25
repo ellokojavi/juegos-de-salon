@@ -7,7 +7,7 @@
    - `rules.js`: datos del juego (reglas, textos, listas). Sin lógica de UI. Exportar `LOCALES = { es: {...}, en: {...}, pt: {...} }` con todos los textos por idioma, con las mismas claves en los tres.
    - `game.js`: máquina de estados y render. Importa helpers desde `../assets/js/ui.js`.
    - `style.css`: solo lo específico del juego.
-2. **Registrarlo** en `assets/js/games.js` agregando una entrada con `id`, `emoji`, `name` y `tagline` (objetos `{ es, en, pt }`), `players`, `duration`, `path` y `available: true`. El menú se genera solo.
+2. **Registrarlo** en `assets/js/games.js` agregando una entrada con `id`, `emoji`, `name` y `tagline` (objetos `{ es, en, pt }`), `players`, `duration`, `path` y `available: true`. Si tiene modo de dos celulares, también `jugadas`: los tipos de mensaje que son una jugada de una persona (un disparo, un intento), para que el panel no cuente como jugadas las respuestas automáticas ni el chat (D-138). El menú se genera solo.
 3. **Seguir el flujo estándar** de pantallas: `intro` (dinámica y materiales) → `setup` (jugadores) → `play` → `end`. Guardar el estado en `localStorage` con la clave `juegos-de-salon:<id>:game` y reutilizar `juegos-de-salon:players` para los nombres.
 4. **Documentar**: crear `docs/juegos/<id>.md` con la especificación, agregar requerimientos con prefijo propio en `docs/REQUERIMIENTOS.md` y registrar decisiones nuevas en `docs/DECISIONES.md`.
 5. **Si el juego usa varios celulares**, seguir el patrón de Toque y Fama: estado derivado de una lista de mensajes, interfaz `Transport` (`create`, `join`, `send`, `onMessage`, `onPresence`, `leave`) con implementaciones `local` y `firebase`, y reglas de seguridad en `firebase/database.rules.json` (campo `game` en la sala para separar juegos).
