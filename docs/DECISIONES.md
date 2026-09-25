@@ -1712,3 +1712,16 @@ partidas sin red lo resolvió el Portal de La Copa (D-137). Las copas de laborat
 producción a propósito, porque hoy todas las copas reales se crean desde `/labs/`; se revisa
 cuando La Copa salga del laboratorio.
 
+
+## D-139 · Tango y Zip: un dibujo en las reglas, como Reinas
+**Fecha:** 2026-09-25 · **Estado:** vigente
+**Decisión:** Las reglas de Tango y de Zip traen un dibujo antes del texto, igual que Reinas
+(D-134), en la pantalla de antes de jugar y en el panel plegado de reglas (D-133). **Tango:** un
+tablero de 6 × 6 resuelto con una marca = y una ≠ que se cumplen ("Así: tres soles y tres lunas
+en cada fila y en cada columna, y las marcas = y ≠ se cumplen.") y tres soles seguidos en rojo
+("Así no: tres iguales seguidos."). **Zip:** el mismo 4 × 4 dos veces: un trazo que pasa por todas
+las casillas ("Así: un solo trazo que pasa por todas las casillas y toca los números en orden.") y
+uno que toca 1 → 4 en orden pero deja cuatro casillas sin pintar, marcadas en rojo ("Así no: llegó
+al 4, pero quedaron casillas sin pintar."). El error de Zip se eligió porque es el que más se
+comete: llegar al último número creyendo que basta.
+**Por qué:** pedido del dueño; en Zip, que se vea que hay que cubrir toda la grilla.
