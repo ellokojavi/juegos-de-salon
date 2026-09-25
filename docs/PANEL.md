@@ -56,7 +56,7 @@ motor de la copa, `copa/engine.js`; el panel no las repite.
 | Sección | Qué muestra | De dónde sale |
 |---|---|---|
 | **Ahora** | Salas en juego, celulares conectados, salas vivas (las que latieron hace menos de media hora, D-89), juegos en curso. Lista de salas con código, juego, nombres, quién está conectado, **jugadas**, **mensajes de chat** y última jugada (D-138). Una sala cuenta como *en juego* solo si entró un rival. Solo las del entorno elegido (D-45). | `rooms/` en vivo (índice por `createdAt`), cruzado por código con `stats/<env>` |
-| **Últimos 7 / 30 días** | Partidas empezadas, en dos celulares (solo las que tuvieron rival), sin red, entradas de un celular a una partida, partidas de hoy (día UTC) y salas donde nunca entró un rival (D-138). | `stats/<env>/days/<día>` |
+| **Últimos 7 / 30 días** | Partidas empezadas, en dos celulares (solo las que tuvieron rival), sin red, entradas de un celular a una partida, partidas de hoy (día UTC) y salas donde nunca entró nadie más (D-138). | `stats/<env>/days/<día>` |
 | **Partidas por juego** | Barra por juego, partida por modo: 📡 dos celulares, 📱 un celular, 🤖 contra el celular, 🧍 solo. Los modos salen del registro, y uno nuevo entra solo (C-16). | `rooms` (📡) y `local/<juego>/<modo>/<n>` |
 | **Jugadores por partida** | Cuántas partidas de 1, 2, … hasta el juego más numeroso del menú (hoy 6, `MAX_PLAYERS`). | `n` de los contadores sin red y cantidad de nombres de cada sala |
 | **Por día** | Partidas por día, separando dos celulares del resto. | ídem |

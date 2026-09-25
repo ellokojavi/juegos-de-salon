@@ -370,7 +370,7 @@ function renderRange() {
     tile(s.local, 'sin red'),
     tile(s.devices, 'entradas de un celular a una partida'),
     tile(hoy.partidas, 'partidas hoy (día UTC)'),
-    tile(s.sinRival, 'salas donde nunca entró un rival'),
+    tile(s.sinRival, 'salas donde nunca entró nadie más'),
   );
 
   // --- Resumen: el torneo contra los demás juegos -------------------------
