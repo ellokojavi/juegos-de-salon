@@ -31,7 +31,7 @@ MODULES = [
     'ahorcado/decks/comida.js', 'ahorcado/decks/cine.js', 'ahorcado/decks/deportes.js',
     'dudo/game.js', 'dudo/rules.js', 'dudo/engine.js',
     'julepe/game.js', 'julepe/rules.js', 'julepe/engine.js', 'assets/js/sobre.js',
-    'panel/panel.js', 'panel/aggregate.js',
+    'panel/panel.js', 'panel/aggregate.js', 'panel/copas.js',
     'copa/game.js', 'copa/rules.js', 'copa/engine.js', 'copa/cuenta.js', 'copa/store-local.js', 'copa/store-firebase.js', 'copa/reportes.js', 'copa/desglose.js', 'copa/demo.js',
     'copa/juegos/index.js', 'copa/juegos/semilla.js', 'copa/juegos/mazos.js', 'copa/juegos/grillas.js',
     'copa/juegos/linea.js', 'copa/juegos/numero.js', 'copa/juegos/conexiones.js', 'copa/juegos/reinas.js',
