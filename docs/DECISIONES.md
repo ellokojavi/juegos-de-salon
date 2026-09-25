@@ -1578,3 +1578,13 @@ textos de Toque y Fama, hablaba de un rival que no hay.
 **Consecuencias:** C-5 ya no pone a Toque y Fama como ejemplo de "contra el celular". Una partida
 guardada del modo anterior no se ofrece para retomar. El panel verá el modo `solo` en vez de `cpu`
 desde esta versión.
+
+## D-130 · El tiempo se corta al terminar el tablero
+**Fecha:** 2026-09-25 · **Estado:** vigente
+**Decisión:** En todos los minijuegos el reloj se detiene cuando el tablero termina (resuelto,
+perdido, rendido o sin tiempo), no cuando se toca "Ver resultado": cada pantalla llama
+`ctx.pararReloj()` al ver su estado final. Lo que se tarda en tocar el botón ya no cuenta para el
+desempate. El reloj detenido se guarda con la partida, así que recargar la página no lo reanuda.
+En la Gran Final solo lo detiene la última ronda.
+**Por qué:** feedback del laboratorio: en Conexiones el tiempo seguía corriendo con el tablero
+ya resuelto, mientras se miraban los grupos.
