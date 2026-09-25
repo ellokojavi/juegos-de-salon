@@ -14,7 +14,7 @@ import { trackStart } from '../assets/js/transport/stats.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import { UMBRAL } from '../assets/js/arrastre.js';
 import { createChat } from '../assets/js/chat.js';
-import { N, COLS, FLEET, SHIP_SIZE, cellName, parseCell, isCell, cellsOf, isValidPlacement, isValidLayout, randomLayout, occupancy, layoutKey, shoot, allSunk, Hunter, nextShooter, sha256, randomNonce, verifyPlayer } from './engine.js';
+import { N, COLS, FLEET, SHIP_SIZE, cellName, parseCell, isCell, cellsOf, isValidPlacement, isValidLayout, randomLayout, rotateNear, occupancy, layoutKey, shoot, allSunk, Hunter, nextShooter, sha256, randomNonce, verifyPlayer } from './engine.js';
 import { GAME_ID, DEFAULT_CONFIG, LOCALES } from './rules.js';
 import { FONDO_AGUA, barcoEn, barcoEntero, trozoDe } from './flota.js';
 
@@ -515,8 +515,8 @@ function buildPlacement(role) {
   function rotateSelected() {
     SFX.tap();
     if (d.sel && d.layout[d.sel]) {
-      const p = d.layout[d.sel]; const rotated = { ...p, dir: p.dir === 'h' ? 'v' : 'h' };
-      if (isValidPlacement(d.layout, d.sel, rotated)) { d.layout[d.sel] = rotated; d.dir = rotated.dir; paint(); }
+      const p = d.layout[d.sel]; const rotated = rotateNear(d.layout, d.sel); // si no cabe sobre la proa, lo más cerca (D-136)
+      if (rotated) { d.layout[d.sel] = rotated; d.dir = rotated.dir; paint(); }
       else { const cell = cellAt(p.r, p.c); if (cell) flash(cell); }
     } else { d.dir = d.dir === 'h' ? 'v' : 'h'; paint(); }
   }

@@ -1650,6 +1650,16 @@ terminar de otra, una rama se reescribió con el trabajo de otra sesión, y dos 
 distintas quedaron con el número D-129. Se reordenó la cadena de PRs y se renumeró. Además, el
 `pkill -f remote-debugging-port` de una sesión mataba las pruebas de las demás.
 
+## D-136 · Batalla Naval: girar un barco casi siempre gira
+**Fecha:** 2026-09-25 · **Estado:** vigente
+**Decisión:** El botón ↻ de un barco puesto primero lo gira sobre su proa, como antes. Si ahí no
+cabe (se sale del tablero o choca con otro), **gira igual** y se acomoda en el lugar válido más
+cercano, medido desde el centro del barco, sin alejarse más de una casilla de lo que cubría
+(`rotateNear` en `engine.js`). Solo si cerca no hay espacio no gira y parpadea, como antes.
+**Por qué:** pedido del dueño con una captura: un acorazado vertical en H6–H9 no giraba porque
+sobre H6 se salía por la derecha. Para el jugador importa que el barco gire cerca de donde está,
+no que gire exactamente sobre la proa. Llevarlo lejos no tendría sentido.
+
 ## D-137 · El panel separa La Copa de los demás juegos, y mide sus minijuegos
 **Fecha:** 2026-09-25 · **Estado:** vigente
 **Decisión:** El panel del dueño tiene tres vistas: Resumen, La Copa y Juegos (`/panel/#torneo`).
