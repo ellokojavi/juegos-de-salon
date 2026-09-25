@@ -72,7 +72,7 @@ const lleno = summarize({
 assert.equal(lleno.byPlayers[MAX_PLAYERS], 2, 'la partida más numerosa que existe no se recorta');
 
 // --- El panel no copia listas -------------------------------------------
-const fuentes = ['panel/panel.js', 'panel/aggregate.js'].map(r => [r, leer(r)]);
+const fuentes = ['panel/panel.js', 'panel/aggregate.js', 'panel/copas.js'].map(r => [r, leer(r)]);
 for (const [ruta, src] of fuentes) {
   for (const id of GAME_IDS) assert.ok(!src.includes(`'${id}'`), `${ruta} nombra el juego ${id}: los juegos salen de games.js (C-16)`);
   for (const m of MODE_IDS) assert.ok(!src.includes(`'${m}'`), `${ruta} nombra el modo ${m}: los modos salen de games.js (C-16)`);

@@ -99,6 +99,7 @@ node assets/js/transport/ratelimit.test.mjs
 node assets/js/transport/stats.test.mjs
 node panel/aggregate.test.mjs
 node panel/adapta.test.mjs               # el panel se entera solo de lo nuevo (C-16)
+node panel/copas.test.mjs                # La Copa en el panel: en curso, minijuegos, participación
 python3 tools/readme.test.py       # qué cuenta como cambio para las capturas (D-51)
 python3 -m http.server 8765          # los módulos ES necesitan HTTP, no file://
 ```
@@ -111,6 +112,7 @@ Para revisar cómo quedó una pantalla concreta, sin jugar una partida entera:
 node tools/e2e/mirar.mjs ahorcado juego --ancho 320
 node tools/e2e/mirar.mjs ahorcado resultado --idioma pt
 node tools/e2e/mirar.mjs panel datos --ancho 900   # el panel, con datos sembrados
+node tools/e2e/mirar.mjs panel torneo     # la vista de La Copa (también resumen, juegos)
 ```
 
 Saca la captura y avisa si hay scroll horizontal o botones bajo 44 px (C-8). Los caminos a
@@ -136,8 +138,8 @@ revisan las capturas. Antes de repetir uno que falló, matar solo el Chrome prop
 `panel/` es una página privada (entrada con Google, lectura solo para el UID del dueño en las
 reglas) que muestra salas vivas, partidas por juego y modo, jugadores, origen e idioma. Las
 señales las mandan los juegos con `trackStart` y el transporte (`assets/js/transport/stats.js`).
-Ver [docs/PANEL.md](docs/PANEL.md) y D-44. `window.__panel.seed({ rooms, days })` lo dibuja con
-datos sembrados sin entrar.
+Ver [docs/PANEL.md](docs/PANEL.md) y D-44. `window.__panel.seed({ rooms, days, torneos, vista })` lo dibuja con
+datos sembrados sin entrar. Tres vistas: Resumen, La Copa y Juegos (D-137).
 
 ## Reglas de Firebase
 

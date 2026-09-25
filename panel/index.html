@@ -52,9 +52,19 @@
         <span class="muted" id="updated"></span>
       </div>
 
+      <!-- Las vistas las pone panel.js: el nombre del torneo sale del registro de juegos (C-16) -->
+      <nav class="tabs" id="tabs" role="tablist" aria-label="Vista"></nav>
+
       <h2 class="display display--md">Ahora</h2>
       <div class="tiles" id="tiles-now"></div>
-      <div class="panel">
+
+      <div class="panel" data-en="resumen torneo">
+        <p class="lead" style="margin:0 0 8px">Copas en curso</p>
+        <p class="muted small">El minijuego que toca hoy en cada copa. Con ✓, quien ya lo jugó; con punto verde, quien lo está jugando ahora (tocó Empezar hace menos de media hora y no ha terminado). Las copas no se separan por entorno: las de prueba salen acá también.</p>
+        <div class="rooms" id="copas-vivas"></div>
+      </div>
+
+      <div class="panel" data-en="resumen juegos">
         <p class="lead" style="margin:0 0 8px">Salas vivas</p>
         <p class="muted" style="margin:0 0 10px;font-size:0.9rem">Salas que jugaron hace menos de media hora. Con punto verde, alguien conectado ahora.</p>
         <div class="rooms" id="rooms"></div>
@@ -63,14 +73,45 @@
       <h2 class="display display--md" id="range-title">Últimos 7 días</h2>
       <div class="tiles" id="tiles-range"></div>
 
-      <div class="panel">
+      <!-- RESUMEN: el torneo contra los otros juegos -->
+      <div class="grid2" data-en="resumen">
+        <div class="panel">
+          <p class="lead">Torneo y otros juegos</p>
+          <p class="muted small">Un minijuego del torneo es la partida de un jugador en un día de su copa.</p>
+          <div class="bars" id="by-kind"></div>
+        </div>
+        <div class="panel">
+          <p class="lead" id="by-day-kind-title">Por día</p>
+          <p class="muted small legend" id="kind-legend"></p>
+          <div class="bars" id="by-day-kind"></div>
+        </div>
+      </div>
+
+      <!-- EL TORNEO: minijuegos y copas -->
+      <div class="panel" data-en="torneo">
+        <p class="lead">Por minijuego</p>
+        <p class="muted small">Minijuegos terminados en el rango y, en gris, los que alguien empezó y dejó sin terminar. El tiempo típico es la mediana: no lo mueve quien dejó el celular media hora encendido.</p>
+        <div class="bars" id="by-mini"></div>
+      </div>
+      <div class="panel" data-en="torneo">
+        <p class="lead" id="mini-by-day-title">Minijuegos por día</p>
+        <div class="bars" id="mini-by-day"></div>
+      </div>
+      <div class="panel" data-en="torneo">
+        <p class="lead">Copas</p>
+        <p class="muted small">Las que estuvieron abiertas en el rango, de la más nueva a la más vieja. La participación cuenta los minijuegos jugados de los que se podían jugar, en los días que ya cerraron.</p>
+        <div class="log" id="copa-log"></div>
+      </div>
+
+      <!-- LOS JUEGOS DE UNA PARTIDA -->
+      <div class="panel" data-en="juegos">
         <p class="lead">Partidas por juego</p>
         <!-- La leyenda la escribe panel.js con los modos del registro (C-16) -->
         <p class="muted small" id="modes-legend"></p>
         <div class="bars" id="by-game"></div>
       </div>
 
-      <div class="grid2">
+      <div class="grid2" data-en="juegos">
         <div class="panel">
           <p class="lead">Jugadores por partida</p>
           <div class="bars" id="by-players"></div>
@@ -83,10 +124,19 @@
         </div>
       </div>
 
-      <div class="grid2">
+      <div class="panel" data-en="juegos">
+        <p class="lead">Salas jugadas</p>
+        <p class="muted small">Las del rango elegido arriba, de la más nueva a la más vieja. Las partidas de prueba corren en el entorno de desarrollo, así que acá no salen: para verlas, cambia el entorno arriba.</p>
+        <label class="check"><input type="checkbox" id="log-solas"> Incluir salas donde nunca entró nadie más</label>
+        <div class="log" id="room-log"></div>
+        <div class="pager" id="room-pager"></div>
+      </div>
+
+      <!-- QUIÉNES: son del celular, no de un juego, así que van enteros en el resumen -->
+      <div class="grid2" data-en="resumen">
         <div class="panel">
           <p class="lead">De dónde</p>
-          <p class="muted small">Zona horaria del celular. Cuenta celulares que empezaron o entraron a una partida.</p>
+          <p class="muted small">Zona horaria del celular. Cuenta celulares que empezaron o entraron a una partida o a un minijuego.</p>
           <div class="bars" id="origin"></div>
         </div>
         <div class="panel">
@@ -99,27 +149,19 @@
         </div>
       </div>
 
-      <div class="panel">
+      <div class="panel" data-en="resumen">
         <p class="lead">A qué hora se juega</p>
         <p class="muted small">Hora local de cada celular.</p>
         <div class="hours" id="hours"></div>
       </div>
 
-      <div class="panel">
-        <p class="lead">Salas jugadas</p>
-        <p class="muted small">Las del rango elegido arriba, de la más nueva a la más vieja. Las partidas de prueba corren en el entorno de desarrollo, así que acá no salen: para verlas, cambia el entorno arriba.</p>
-        <label class="check"><input type="checkbox" id="log-solas"> Incluir salas donde nunca entró nadie más</label>
-        <div class="log" id="room-log"></div>
-        <div class="pager" id="room-pager"></div>
-      </div>
-
-      <div class="panel">
+      <div class="panel" data-en="resumen">
         <p class="lead">Cuota del plan gratuito</p>
         <p class="muted small">Desde el navegador no se lee el uso de Firebase. Los conectados de arriba son la mejor aproximación a las conexiones simultáneas (tope ~100). El detalle está en la consola:</p>
         <a class="btn btn--ghost btn--sm" href="https://console.firebase.google.com/project/juegos-de-salon/database/juegos-de-salon-default-rtdb/usage" target="_blank" rel="noopener">Uso en Firebase ↗</a>
       </div>
 
-      <p class="muted center small" style="margin-top:20px">Señales de uso, no personas: sin IP, sin secretos, sin chat. De una sala quedan el juego, los nombres que se pusieron, el país del celular y quién ganó (D-44, D-79). Los modos sin red mandan solo contadores.</p>
+      <p class="muted center small" style="margin-top:20px">Señales de uso, no personas: sin IP, sin secretos, sin chat. De una sala quedan el juego, los nombres que se pusieron, el país del celular y quién ganó (D-44, D-79). Los modos sin red mandan solo contadores. De una copa, lo que ya guarda para su tabla: nombres, puntajes y tiempos.</p>
     </section>
   </main>
 
