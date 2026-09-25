@@ -56,6 +56,7 @@ motor de la copa, `copa/engine.js`; el panel no las repite.
 | Sección | Qué muestra | De dónde sale |
 |---|---|---|
 | **Ahora** | Salas en juego, celulares conectados, salas vivas (las que latieron hace menos de media hora, D-89), juegos en curso. Lista de salas con código, juego, nombres, quién está conectado, **jugadas**, **mensajes de chat** y última jugada (D-138). Una sala cuenta como *en juego* solo si entró un rival. Solo las del entorno elegido (D-45). | `rooms/` en vivo (índice por `createdAt`), cruzado por código con `stats/<env>` |
+| **Partidas sin red** | Las partidas contra el celular, en un celular o solitarias que se están jugando ahora (D-140): juego, modo, cuántos juegan, país, cuándo empezó y la última señal. Sale de la lista a los tres minutos sin señal. También suben al cuadro *partidas sin red ahora* y a *juegos en curso*. | `stats/<env>/days/<día>/live/<id>` (hoy y ayer) |
 | **Últimos 7 / 30 días** | Partidas empezadas, en dos celulares (solo las que tuvieron rival), sin red, entradas de un celular a una partida, partidas de hoy (día UTC) y salas donde nunca entró nadie más (D-138). | `stats/<env>/days/<día>` |
 | **Partidas por juego** | Barra por juego, partida por modo: 📡 dos celulares, 📱 un celular, 🤖 contra el celular, 🧍 solo. Los modos salen del registro, y uno nuevo entra solo (C-16). | `rooms` (📡) y `local/<juego>/<modo>/<n>` |
 | **Jugadores por partida** | Cuántas partidas de 1, 2, … hasta el juego más numeroso del menú (hoy 6, `MAX_PLAYERS`). | `n` de los contadores sin red y cantidad de nombres de cada sala |
@@ -73,7 +74,14 @@ sala donde nadie está conectado **sí** sigue apareciendo, apagada: esa partida
 retomar hasta que la sala venza (C-6).
 
 **Celulares conectados** cuenta los jugadores con `online: true` en salas vivas. Los modos
-sin red no abren conexión (mandan un solo `fetch`), así que no aparecen ahí ni gastan cuota.
+sin red no abren conexión (mandan `fetch` sueltos), así que no aparecen ahí ni gastan cuota.
+
+**Partidas sin red en vivo** (D-140): al empezar una partida sin red, el celular deja un
+registro en `live/<id>` (un id al azar de diez letras y números) y le sube `beat` una vez por
+minuto mientras la pantalla está a la vista y alguien la tocó hace menos de cinco minutos. El
+panel la muestra mientras `beat` tenga menos de tres minutos. Una partida retomada después de
+recargar la página no vuelve a aparecer: `trackStart` se llama al empezar, no al retomar. Los
+días de La Copa no se muestran acá: quién está jugando un minijuego ya se ve en *Copas en curso*.
 
 **Entorno**: el selector separa lo publicado (`prod`) de las pruebas (`dev`): el computador, la
 red de la casa (10/8, 172.16/12, 192.168/16, `.local`) y Tailscale (`*.ts.net`, D-67, D-138).
@@ -110,7 +118,8 @@ Sale del celular, por día y por entorno (`assets/js/transport/stats.js`):
   letras) y quién ganó (`end`). Esos nombres ya viajan a la sala para que el rival los vea;
   acá solo los lee el dueño. El país y el ganador se anotan desde la versión 0.33.6 (D-79).
 - **Un celular, contra el celular, solo:** un contador por juego, modo y cantidad de
-  jugadores. **Ningún nombre.**
+  jugadores, y mientras se juega un registro en vivo con juego, modo, cantidad de jugadores,
+  país del celular y la hora de la última señal (D-140). **Ningún nombre.**
 - **Cualquier modo:** contador de zona horaria, idioma del navegador, idioma elegido en el
   juego y hora local.
 
