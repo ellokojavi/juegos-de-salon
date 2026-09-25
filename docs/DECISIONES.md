@@ -1698,5 +1698,7 @@ muerto, el chat vuelve con su globito de no leídos.
 quedar pegado si la despedida no sale a tiempo (el `onDisconnect` se cancela antes), un jugador
 que vuelve desde otro navegador toma un rol nuevo y aparece dos veces en juegos de 3 a 6, y dos
 salas con el mismo código el mismo día comparten registro. La Copa todavía cuenta sus días como
-partidas sin red y las copas de laboratorio suman en producción: eso va con el Portal de La Copa.
+partidas sin red: eso va con el Portal de La Copa (#44). Las copas de laboratorio suman en
+producción a propósito, porque hoy todas las copas reales se crean desde `/labs/`; se revisa
+cuando La Copa salga del laboratorio.
 
