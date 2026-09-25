@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.63.0 — 2026-09-25
+- **La tabla muestra los 7 días de cada jugador** (D-131): puntos, jugado, por jugar, no jugó y
+  todavía no abre, con colores y una leyenda.
+
 ## 0.62.0 — 2026-09-25
 - **El tiempo se corta al terminar el tablero** (D-130), en todos los minijuegos: lo que se tarda
   en tocar "Ver resultado" ya no cuenta para el desempate.
