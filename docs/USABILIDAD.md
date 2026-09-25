@@ -32,6 +32,9 @@ Cada regla tiene un ID (U-n) para citarla en los PR y en los issues.
 - **U-15 · Las acciones que no se deshacen piden confirmación** (rendirse, eliminar la copa,
   cerrar la inscripción, mover el inicio). Eliminar pide escribir el nombre.
 
+- **U-16 · Las reglas están a mano sin estorbar:** plegadas debajo del tablero en cada minijuego
+  (D-133), con las mismas palabras de los botones.
+
 ## Interacciones
 
 - **U-20 · El reloj corre solo mientras se juega:** parte con la cuenta regresiva, se pausa con la

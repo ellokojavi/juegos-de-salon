@@ -40,7 +40,7 @@ const temaLibre = codigo => {
   return DECKS.map(d => d.id).find(id => !usados.includes(id));
 };
 
-const juego = (motor, ui, ensayo) => ({ generar: motor.generar, montar: ui.montar, resultado: ui.resultado, ensayo });
+const juego = (motor, ui, ensayo) => ({ generar: motor.generar, montar: ui.montar, resultado: ui.resultado, ejemplo: ui.ejemplo, ensayo });
 
 export const JUEGOS = {
   linea: juego(linea, uiLinea, (c, d) => linea.generar(codigoEnsayo(c), d, { n: 5, tema: temaLibre(c), sal: 'ensayo' })),

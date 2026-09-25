@@ -442,6 +442,16 @@ await b.go(`${BASE}?practica=${id}&prueba${id === 'zip' ? '&zipSeg=12&semilla=KQ
     await click('#btn-volver-ensayo'); await sleep(300);
   }
   await click('#btn-empezar'); await sleep(300); await esperarCuenta();
+  // Las reglas plegadas debajo del tablero (D-133)
+  {
+    const r = await ev(`(()=>{const d=document.getElementById('reglas');if(!d)return null;const b=document.getElementById('jugar-body').getBoundingClientRect();return JSON.stringify({abierto:d.open,debajo:d.getBoundingClientRect().top>=b.bottom-1,titulo:d.querySelector('summary').textContent})})()`).then(x => x && JSON.parse(x));
+    ok(r && !r.abierto && r.debajo && r.titulo.includes(await ev(`__copa.estado.juego ? document.querySelector('.jugar-titulo')?.textContent.split(' ').slice(1).join(' ') : ''`)), `${id}: las reglas están plegadas debajo del tablero (${r?.titulo})`);
+    if (id === 'conexiones') {
+      await ev(`document.querySelector('#reglas summary').click(); document.getElementById('reglas').scrollIntoView(); 1`); await sleep(300);
+      await b.shot('reglas-abiertas');
+      await ev(`document.querySelector('#reglas summary').click(); window.scrollTo(0,0); 1`);
+    }
+  }
   await ev(`(async()=>{const {JUEGOS}=await import('/copa/juegos/index.js');window.__jugando={p:JUEGOS['${id}'].generar(__copa.estado.juego.semilla, 1)};return 1})()`);
   if (id === 'zip') {
     // Llegar al último número sin cubrir todo: el aviso va bajo la grilla y no la mueve, y la cabeza no tapa el número

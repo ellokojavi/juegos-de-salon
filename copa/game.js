@@ -17,7 +17,7 @@ import {
   fechaEn, sumarDias, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta, estadoDia, comodinDe, moverInicio, sinEmpezar, pasarDia, MAX_DIAS_INICIO, faltaGente,
   medianoche, menosJuegos, puedeComodin, multiplicador, posicionesDelDia, tabla, faltan, medallas, evolucion, visibleDia, reloj, mmss, juegoDelDia, esFinal, activos, ZONA,
 } from './engine.js';
-import { GAME_ID, LOCALES, MINIJUEGOS } from './rules.js';
+import { GAME_ID, LOCALES, MINIJUEGOS, RONDAS_FINAL } from './rules.js';
 import { createCuenta } from './cuenta.js';
 import { JUEGOS } from './juegos/index.js';
 import { desglose } from './desglose.js';
@@ -1150,7 +1150,7 @@ function antesDeJugar(d) {
     el('div', { class: 'intro-hero' }, el('span', { class: 'icon' }, J.emoji),
       el('p', { class: 'muted', style: 'margin:0' }, fmt(T.dayOf, { d, n: meta.days })),
       el('h2', { class: 'display display--lg' }, J.nombre)),
-    el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.howToPlay), el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
+    el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.howToPlay), dibujo(id), el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
       el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, J.puntaje)),
     el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.wildTitle), comodin),
     JUEGOS[id].ensayo ? el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-ensayo', onClick: () => { SFX.tap(); ensayo(d); } }, `🧪 ${T.tryFirst}`) : null,
@@ -1167,6 +1167,29 @@ function antesDeJugar(d) {
  * tienen, porque el tiempo desempata. El reloj parte cuando aparece "¡A jugar!", y ese cartel se
  * desvanece solo sobre el tablero. Resuelve la promesa en ese momento.
  */
+/** El dibujo que explica el minijuego antes del texto, si lo tiene (hoy, Reinas). */
+const dibujo = id => JUEGOS[id]?.ejemplo?.({ el, T }) ?? null;
+
+/**
+ * Las reglas del minijuego, plegadas debajo del tablero (D-133): no molestan mientras se juega y
+ * están a mano ante la duda. Son las mismas de la pantalla de antes de jugar, con las palabras
+ * de los botones que se ven al jugar. En la final, además, las cinco rondas.
+ */
+function panelReglas(id) {
+  const J = MINIJUEGOS[id];
+  const caja = $('#jugar-reglas');
+  caja.innerHTML = '';
+  if (!J) return;
+  poner(caja, el('details', { class: 'panel reglas', id: 'reglas' },
+    el('summary', {}, `📖 ${fmt(T.rulesOf, { juego: J.nombre })}`),
+    dibujo(id),
+    el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
+    id === 'final' ? [el('p', { class: 'lead' }, T.finalRounds),
+      el('ul', { class: 'como' }, Object.entries(RONDAS_FINAL).map(([r, x]) => el('li', {}, `${MINIJUEGOS[r].emoji} ${MINIJUEGOS[r].nombre}: ${x}`)))] : null,
+    el('p', { class: 'lead' }, T.scoring),
+    el('p', { class: 'muted' }, J.puntaje)));
+}
+
 function cuentaRegresiva(J) {
   // La Gran Final no la lleva: cada ronda ya parte con su propia presentación
   if (J === MINIJUEGOS.final) return Promise.resolve();
@@ -1229,6 +1252,7 @@ async function jugar(d) {
 
   const body = $('#jugar-body');
   body.innerHTML = '';
+  panelReglas(id);
   S.juego = { d, id };
   mod.montar(body, {
     p, jugadas, T, fmt, el, SFX, vibrate,
@@ -1371,13 +1395,14 @@ function practica(id) {
   S.juego = { d: 1, id, practica: true, semilla };
   mostrar('jugar');
   $('#jugar-head').innerHTML = '';
+  $('#jugar-reglas').innerHTML = ''; // en la antesala las reglas ya están a la vista
   const body = $('#jugar-body');
   body.innerHTML = '';
   poner(body, el('div', { class: 'stack' },
     el('div', { class: 'intro-hero' }, el('span', { class: 'icon' }, J.emoji),
       el('p', { class: 'muted', style: 'margin:0' }, T.practiceTitle),
       el('h2', { class: 'display display--lg' }, J.nombre)),
-    el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.howToPlay), el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
+    el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.howToPlay), dibujo(id), el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
       el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, J.puntaje)),
     // La misma antesala que un día de la copa (D-109): la sesión de prueba se elige antes de jugar
     mod.ensayo ? el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-ensayo', onClick: () => { SFX.tap(); ensayoPractica(id, semilla); } }, `🧪 ${T.tryFirst}`) : null,
@@ -1414,6 +1439,7 @@ async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false } = {}) {
   document.addEventListener('visibilitychange', S.visibilidad);
   const body = $('#jugar-body');
   body.innerHTML = '';
+  panelReglas(id);
   mod.montar(body, {
     p, jugadas: undefined, T, fmt, el, SFX, vibrate,
     textoFin: ensayo ? T.trialEnd : undefined,
