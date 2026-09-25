@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.59.3 — 2026-09-24
+- **Posiciones día a día** también marca "(-1J)" a quien lleva menos juegos, con su leyenda (D-126).
+- En el gráfico, los nombres de dos empatados en el mismo lugar ya no se enciman.
+
 ## 0.59.2 — 2026-09-24
 - El botón del gráfico dice simplemente "📤 Compartir".
 
