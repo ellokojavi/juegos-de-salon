@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.64.5 — 2026-09-25
+- **Textos de espera sin «……»**: "Esperando al rival", "Esperando a {name} para la revancha" y
+  los demás ya no terminan en "…"; los puntos los pone solo la animación, que antes se sumaba
+  encima (Ahorcado, Batalla Naval, Dudo, Julepe, Línea de Tiempo y Toque y Fama).
+
 ## 0.64.4 — 2026-09-25
 - **Batalla Naval: las dos fichas de abajo quedan centradas** al colocar la flota, en vez de
   pegadas a la izquierda con un hueco a la derecha (U-11).

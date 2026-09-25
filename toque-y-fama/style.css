@@ -45,7 +45,7 @@
 .qr { display: grid; place-items: center; margin: 8px auto; background: #fff; border-radius: 16px; padding: 8px; width: fit-content; }
 .qr svg { display: block; width: min(52vw, 220px); height: auto; }
 .waiting { text-align: center; color: var(--muted); font-weight: 800; }
-.waiting .dots::after { content: '…'; animation: dots 1.2s steps(4) infinite; }
+.waiting .dots::after, .dots::after { content: '…'; animation: dots 1.2s steps(4) infinite; }
 @keyframes dots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } }
 
 
