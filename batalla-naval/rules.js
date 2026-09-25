@@ -28,7 +28,7 @@ const ES = {
   offline: 'Rival desconectado. Esperando que vuelva…', rematchWaiting: 'Esperando a {name} para la revancha…',
   resumeTitle: '⏯ Hay una batalla a medias', resume: 'Continuar', delete: 'Borrar',
   // colocación
-  placeTitle: 'Coloca tu flota', placeFor: 'Flota de {name}', placeHint: 'Toca un barco y luego una casilla, o arrastra la ficha hasta el tablero. Toca un barco puesto para seleccionarlo: gíralo con ↻, muévelo tocando otra casilla o arrástralo.',
+  placeTitle: 'Coloca tu flota', placeFor: 'Flota de {name}', placeHint: 'Toca un barco y luego una casilla, o arrástralo al tablero. Tócalo otra vez para girarlo con ↻ o moverlo.',
   ships: { carrier: 'Portaaviones', battleship: 'Acorazado', cruiser: 'Crucero', submarine: 'Submarino', destroyer: 'Destructor' },
   rotate: '↻ Girar {dir}', random: '🎲 Al azar', clear: '🧹 Limpiar', sail: '⚓ ¡Zarpar!', placed: '{n} de 5 barcos',
   fleetSaved: 'Flota lista 🔒', waitingFleet: 'Esperando a que {name} coloque su flota…', tapToReveal: 'Toca para ver', hoPass: 'Pásale el celular a', hoReady: '¡Listo, soy yo!',
@@ -68,7 +68,7 @@ const EN = {
   chatPlaceholder: 'Say something…', chatEmpty: 'Trash talk between shots. It disappears when the room closes.',
   offline: 'Rival disconnected. Waiting for them to come back…', rematchWaiting: 'Waiting for {name} for the rematch…',
   resumeTitle: '⏯ There\'s an unfinished battle', resume: 'Continue', delete: 'Delete',
-  placeTitle: 'Place your fleet', placeFor: '{name}\'s fleet', placeHint: 'Tap a ship, then a cell, or drag the ship onto the board. Tap a placed ship to select it: rotate it with ↻, move it by tapping another cell, or drag it.',
+  placeTitle: 'Place your fleet', placeFor: '{name}\'s fleet', placeHint: 'Tap a ship, then a cell, or drag it onto the board. Tap it again to rotate it with ↻ or move it.',
   ships: { carrier: 'Carrier', battleship: 'Battleship', cruiser: 'Cruiser', submarine: 'Submarine', destroyer: 'Destroyer' },
   rotate: '↻ Rotate {dir}', random: '🎲 Random', clear: '🧹 Clear', sail: '⚓ Set sail!', placed: '{n} of 5 ships',
   fleetSaved: 'Fleet ready 🔒', waitingFleet: 'Waiting for {name} to place their fleet…', tapToReveal: 'Tap to reveal', hoPass: 'Pass the phone to', hoReady: 'Ready, it\'s me!',
@@ -108,7 +108,7 @@ const PT = {
   offline: 'Rival desconectado. Esperando ele voltar…', rematchWaiting: 'Esperando {name} para a revanche…',
   resumeTitle: '⏯ Tem uma batalha pela metade', resume: 'Continuar', delete: 'Apagar',
   // posicionamento
-  placeTitle: 'Posicione sua frota', placeFor: 'Frota de {name}', placeHint: 'Toque em um navio e depois em uma casa, ou arraste a ficha até o tabuleiro. Toque em um navio já posicionado para selecioná-lo: gire com ↻, mova tocando em outra casa ou arraste.',
+  placeTitle: 'Posicione sua frota', placeFor: 'Frota de {name}', placeHint: 'Toque em um navio e depois em uma casa, ou arraste-o até o tabuleiro. Toque nele de novo para girá-lo com ↻ ou movê-lo.',
   ships: { carrier: 'Porta-aviões', battleship: 'Encouraçado', cruiser: 'Cruzador', submarine: 'Submarino', destroyer: 'Destróier' },
   rotate: '↻ Girar {dir}', random: '🎲 Aleatório', clear: '🧹 Limpar', sail: '⚓ Zarpar!', placed: '{n} de 5 navios',
   fleetSaved: 'Frota pronta 🔒', waitingFleet: 'Esperando {name} posicionar a frota…', tapToReveal: 'Toque para ver', hoPass: 'Passe o celular para', hoReady: 'Pronto, sou eu!',
