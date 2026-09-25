@@ -159,6 +159,11 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | LIG-70 | El nombre de la copa llega a 40 caracteres, con contador (D-119). | ✅ v0.55 |
 | LIG-71 | Link propio de la copa (?pirata), único mientras dure y reusable 7 días después de terminar (D-121). | ✅ v0.57 |
 | LIG-72 | Compartir la tabla parcial como imagen, con "(-1J)" para quien lleva menos juegos (D-126). | ✅ v0.59 |
+| LIG-73 | Invitación promocional, sin revelar los minijuegos (D-127). | ✅ v0.60 |
+| LIG-74 | Conexiones agrupa por significado, sin juegos de palabras (D-128). | ✅ v0.61 |
+| LIG-75 | El tiempo se corta al terminar el tablero, no al tocar "Ver resultado" (D-130). | ✅ v0.62 |
+| LIG-75 | El tiempo se corta al terminar el tablero, no al tocar "Ver resultado" (D-130). | ✅ v0.62 |
+| LIG-76 | La tabla muestra los 7 días de cada jugador con su estado y una leyenda (D-131). | ✅ v0.63 |
 | LIG-46 | El teclado, el tablero y la línea se comparten con Toque y Fama y Línea de Tiempo (`assets/js/teclado.js`, `assets/css/teclado.css`, `assets/css/linea.css`). | ✅ v0.44 |
 
 ## Requerimientos no funcionales
@@ -175,17 +180,18 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | TF-01 | Dos jugadores; cada uno elige un número secreto de 3, 4 o 5 cifras distintas (4 por defecto). | ✅ v0.4 |
 | TF-02 | El celular calcula toques y famas automáticamente; nunca se cuenta a mano. | ✅ v0.4 |
 | TF-03 | Modo un celular (pasar y jugar) con pantalla opaca entre turnos. | ✅ v0.4 |
-| TF-04 | Modo contra el celular: duelo (tú adivinas el suyo mientras él adivina el tuyo con un solver). | ✅ v0.4 |
+| TF-04 | ~~Modo contra el celular: duelo contra un solver.~~ Reemplazado por jugar solo (TF-19, D-129). | ✅ v0.4 |
 | TF-05 | Modo dos celulares conectados por sala con código de 4 letras y QR (Firebase Realtime Database). | ✅ v0.4 |
 | TF-06 | El secreto no sale del celular durante la partida; compromiso por hash (con sal privada) al inicio y revelación verificada al final. | ✅ v0.4 |
 | TF-07 | Reconexión: si un celular se cierra, retoma la partida desde la sala (secreto guardado en el dispositivo). | ✅ v0.4 |
 | TF-08 | Derecho a réplica configurable. Quién parte es determinista: el invitado en la primera partida, el perdedor en la revancha (ver D-19). | ✅ v0.4 |
 | TF-09 | Textos en español e inglés (“Bulls and Cows”). | ✅ v0.4 |
 | TF-18 | Textos en portugués (“Toque e Fama”). | ✅ v0.22 |
+| TF-19 | Jugar solo: el celular elige el número y el jugador lo adivina en la menor cantidad de intentos, con récord por cifras y cero al inicio; pistas con palabra completa en su tablero (D-129). | ✅ v0.61 |
 | TF-10 | Revancha en los tres modos; en dos celulares se crea una sala nueva y ambos se mueven solos. | ✅ v0.4 |
 | TF-11 | Indicador de rival desconectado en modo dos celulares. | ✅ v0.4 |
 | TF-12 | Al adivinar, el jugador ve su propio número como recordatorio. En modo un celular parte oculto y se muestra al tocarlo. | ✅ v0.4.1 |
-| TF-13 | Pulsación larga sobre una cifra del teclado la marca como bloqueada (no está en el número del rival). Las marcas son por jugador, se recuerdan durante la partida y se ven tachadas; otra pulsación larga las libera. Instrucción breve en pantalla. | ✅ v0.4.2 |
+| TF-13 | Pulsación larga sobre una cifra del teclado la marca como bloqueada (no está en el número secreto). Las marcas son por jugador, se recuerdan durante la partida y se ven tachadas; otra pulsación larga las libera. Instrucción breve en pantalla. | ✅ v0.4.2 |
 | TF-14 | En el resultado, bloque colapsado “Ver todos los intentos” con los tableros de ambos jugadores; colapsado no empuja los botones fuera de la pantalla. | ✅ v0.4.3 |
 
 ## Batalla Naval (BN) — ver [docs/juegos/batalla-naval.md](juegos/batalla-naval.md)

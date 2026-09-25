@@ -12,6 +12,7 @@ import { PALABRAS } from './palabras.js';
 import * as conexiones from './conexiones.js';
 import * as final from './final.js';
 import { GRILLAS } from './grillas.js';
+import * as GRILLAS_MOD from './grillas.js';
 import { temasDeLaCopa } from './mazos.js';
 
 let n = 0;
@@ -332,6 +333,23 @@ test('todos los minijuegos puntúan de 0 a 100 (D-113)', () => {
     letras: letras.puntaje({ encontradas: 5, resuelto: true, usados: 1 }), zip: zip.puntaje({ hechos: 99 }),
     tango: tango.puntaje({ fin: true, errores: 0, pistas: 0 }), anio: anio.puntaje({ filas: [{}, {}], total: 200 }) };
   for (const [id, s] of Object.entries(tope)) assert.equal(s, 100, id);
+});
+
+test('Conexiones agrupa por significado, no por juegos de palabras (D-128)', () => {
+  for (const g of GRILLAS) for (const x of g.grupos) {
+    assert.ok(!/___|escond|empiezan|terminan|riman|tienen (dientes|cuello|ojos)/i.test(x.nombre), `${g.id}: "${x.nombre}" parece un juego de palabras`);
+  }
+});
+
+test('una copa ya en su día de Conexiones conserva la grilla de antes (D-128)', () => {
+  const { GRILLAS_ANTES_D128, CAMBIO_D128 } = GRILLAS_MOD;
+  assert.equal(GRILLAS_ANTES_D128.length, GRILLAS.length);
+  for (const c of CODIGOS) {
+    const i = GRILLAS.indexOf(conexiones.grillaDe(c));
+    assert.equal(conexiones.grillaDe(c, { desde: CAMBIO_D128 - 1 }), GRILLAS_ANTES_D128[i]);
+    assert.equal(conexiones.grillaDe(c, { desde: CAMBIO_D128 }), GRILLAS[i]);
+    assert.equal(conexiones.generar(c, 3, { desde: CAMBIO_D128 - 1 }).id, GRILLAS_ANTES_D128[i].id);
+  }
 });
 
 console.log(`copa/juegos: ${n} tests OK`);

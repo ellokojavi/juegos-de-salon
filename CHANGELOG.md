@@ -1,5 +1,33 @@
 # Changelog
 
+## 0.63.1 — 2026-09-25
+- **Herramientas:** agente de usabilidad con ronda diaria, guía `docs/USABILIDAD.md` y
+  `node tools/dilemas.mjs` para manejar sus preguntas como issues de GitHub (D-132). Sin cambios
+  para los jugadores.
+
+## 0.63.0 — 2026-09-25
+- **La tabla muestra los 7 días de cada jugador** (D-131): puntos, jugado, por jugar, no jugó y
+  todavía no abre, con colores y una leyenda.
+
+## 0.62.0 — 2026-09-25
+- **El tiempo se corta al terminar el tablero** (D-130), en todos los minijuegos: lo que se tarda
+  en tocar "Ver resultado" ya no cuenta para el desempate.
+- Una copa con link propio muestra `?pirata` en la barra de direcciones aunque se haya entrado
+  por su código.
+
+## 0.61.0 — 2026-09-25
+- **Conexiones por significado** (D-128): fuera los grupos de juegos de palabras ("___ roja",
+  "esconden un animal"…); los grupos son lo que las cosas son (combustibles, metales, muebles…).
+  Las copas que ya estaban jugando Conexiones terminan su día con la grilla de antes.
+- **Toque y Fama: jugar solo** (D-129): el modo contra el celular pasa a ser "🧍 Jugar solo": el
+  celular elige un número y tú lo adivinas en la menor cantidad de intentos, con récord.
+- En el tablero de Toque y Fama de La Copa y en el de jugar solo, las pistas van completas: "2 famas", "1 toque".
+- La pista del teclado dice "número secreto" en vez de "número del rival", que en La Copa no existe.
+
+## 0.60.0 — 2026-09-25
+- **Invitación promocional** (D-127): "¡Estás invitado!", el reto, cuándo parte, cuánto toma y quiénes
+  ya se inscribieron. Los minijuegos no se nombran: son sorpresa.
+
 ## 0.59.3 — 2026-09-24
 - **Posiciones día a día** también marca "(-1J)" a quien lleva menos juegos, con su leyenda (D-126).
 - En el gráfico, los nombres de dos empatados en el mismo lugar ya no se enciman.

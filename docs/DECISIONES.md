@@ -1528,3 +1528,91 @@ los días que el jugador ya puede ver (no delata lo de hoy).
   día a día" (al final de cada línea y en los botones de jugador), con la misma leyenda.
 **Por qué:** una imagen se lee de un vistazo en el grupo; y en una tabla a mitad de día, el que
 va último puede ser solo el que todavía no juega.
+
+## D-127 · La invitación promocional
+**Fecha:** 2026-09-25 · **Estado:** vigente
+**Decisión:** La invitación que comparte el admin (y "Invitar al grupo" del tablero) es un
+mensaje para animar a participar:
+
+> 🏆 *La Copa: Valdenenas* · ¡Estás invitado!
+> ¿Te la puedes? Son 7 días y 7 minijuegos, con una sola oportunidad al día. Todos juegan lo
+> mismo y la tabla dice quién manda. Quien acumula más puntos se lleva la gloria. 🥇
+> 📅 Parte el viernes 25 de septiembre. · ⏱️ Unos pocos minutos al día, desde tu celular.
+> 👥 Ya se inscribieron: Javier, Mica y Tomarcos. · 🔑 Entra con tu nombre y un PIN de 4 números:
+> 🔗 link
+
+**Los minijuegos no se nombran: son sorpresa.** No lleva mensaje personal del admin. Sigue
+ofreciéndose solo antes de que parta la copa y con la inscripción abierta (D-116).
+**Por qué:** pedido del dueño; la invitación es lo primero que ve quien todavía no se decide.
+## D-128 · Conexiones agrupa por significado, no por juegos de palabras
+**Fecha:** 2026-09-25 · **Estado:** vigente
+**Decisión:** Los grupos de Conexiones son lo que las cuatro cosas **son o tienen en común**
+(MADERA, PÓLVORA, PETRÓLEO y CARBÓN son combustibles). Salen los diez grupos de juegos de
+palabras: "___ roja/negra/verde", "___ de mesa", "Bodas de ___", "Estar en las ___", "esconden un
+animal/número", "empiezan con una nota musical" y "tienen dientes/cuello/ojos". Entran:
+combustibles, herramientas, instrumentos de viento, muebles, electrodomésticos, partes de una
+casa, herramientas de jardín, frutas, colores, piedras preciosas, árboles, metales y útiles
+escolares. La dificultad queda en los **distractores** (LIBRA: moneda o peso; NARANJA: fruta o
+color; TURQUESA: color o piedra). Un test impide volver a meter grupos de juegos de palabras.
+**Sin cambiar a mitad del día:** la grilla de cada copa se elige por su código. Las copas cuyo día
+de Conexiones empezó antes del corte (`CAMBIO_D128`, 26-09-2026 00:00 hora del Pacífico) siguen con
+la grilla de antes (`GRILLAS_ANTES_D128`, intacta); las demás reciben la nueva. El corte tiene
+que quedar después del momento en que se publica.
+**Por qué:** feedback de jugadores: "tarjeta" y "caperucita" unidas por "roja" era demasiado
+rebuscado; un grupo tiene que poder adivinarse pensando en las cosas, no en las palabras.
+
+## D-129 · Toque y Fama: jugar solo en vez de contra el celular
+**Fecha:** 2026-09-25 · **Estado:** vigente
+**Decisión:** El tercer modo de Toque y Fama deja de ser "🤖 Contra el celular" (un duelo contra un
+solver que adivinaba tu número) y pasa a ser **"🧍 Jugar solo"**: el celular elige un número
+secreto y tú lo adivinas en la menor cantidad de intentos, con récord por cantidad de cifras y
+cero al inicio, como Línea de Tiempo (D-27). No hay número propio, ni réplica, ni pantalla de
+secreto. El solver sale del motor. En el tablero único de jugar solo, y en el de Toque y Fama de La
+Copa, las pistas van con palabra completa ("2 famas", "1 toque", "nada"); en los dos tableros lado
+a lado del duelo y en Letras (cinco letras de colores) siguen abreviadas ("2F 1T") porque a 320 px
+no caben. La pista del teclado dice "número secreto"
+en vez de "número del rival", que en La Copa no existe.
+**Por qué:** lo pidió el dueño. Adivinar un número es entretenido por sí solo; el duelo contra una
+máquina que siempre lo resuelve en 5 o 6 intentos no agregaba nada. Y La Copa, que reusa los
+textos de Toque y Fama, hablaba de un rival que no hay.
+**Consecuencias:** C-5 ya no pone a Toque y Fama como ejemplo de "contra el celular". Una partida
+guardada del modo anterior no se ofrece para retomar. El panel verá el modo `solo` en vez de `cpu`
+desde esta versión.
+
+## D-130 · El tiempo se corta al terminar el tablero
+**Fecha:** 2026-09-25 · **Estado:** vigente
+**Decisión:** En todos los minijuegos el reloj se detiene cuando el tablero termina (resuelto,
+perdido, rendido o sin tiempo), no cuando se toca "Ver resultado": cada pantalla llama
+`ctx.pararReloj()` al ver su estado final. Lo que se tarda en tocar el botón ya no cuenta para el
+desempate. El reloj detenido se guarda con la partida, así que recargar la página no lo reanuda.
+En la Gran Final solo lo detiene la última ronda.
+**Por qué:** feedback del laboratorio: en Conexiones el tiempo seguía corriendo con el tablero
+ya resuelto, mientras se miraban los grupos.
+
+## D-131 · La tabla muestra los siete días de cada jugador
+**Fecha:** 2026-09-25 · **Estado:** vigente
+**Decisión:** Cada fila de la tabla tiene un bloque por cada día de la copa, también los que no
+abren: con los **puntos** si ya se ven (dorado si ganó el día, borde naranja si valía doble), **✓**
+si jugó pero todavía no puedes ver sus puntos, **• por jugar** (borde amarillo) si el día está
+abierto y no lo ha jugado, **– no jugó** (rojizo) si cerró sin jugarlo, y **vacío** si todavía
+no abre. Una leyenda debajo explica los estados.
+**Por qué:** pedido del dueño: que cada uno vea su grilla completa y qué le queda.
+
+## D-132 · Un agente de usabilidad con ronda diaria y dilemas como issues
+**Fecha:** 2026-09-25 · **Estado:** vigente
+**Decisión:** Un subagente (`.claude/agents/usabilidad.md`) revisa solo usabilidad: textos,
+botones, interacciones, navegación y mensajes para compartir, con la guía `docs/USABILIDAD.md`
+(reglas U-n, que crecen con cada decisión del dueño).
+- **Cuándo:** cada PR que abre Claude pasa por él antes de mostrárselo al dueño, y hay una **ronda
+  diaria a las 5:00 hora del Pacífico** (tarea programada en el Mac del dueño, que tiene la llave
+  de Firebase y el servidor local).
+- **Qué hace solo:** lo obvio (algo que no cumple lo ya decidido, ortografía, textos cortados o
+  encimados, botones chicos o sin aire), en un PR que **no fusiona**.
+- **Qué pregunta:** textos nuevos, puntajes, reglas, funciones, rediseños y todo lo discutible,
+  como **issues de GitHub** con la etiqueta `usabilidad` (estados `pendiente` → `resuelto` o
+  `archivado`). Se crean, resuelven, archivan y reabren desde la conversación con
+  `node tools/dilemas.mjs`; la decisión se anota en la guía.
+- Los guiones `copa.mjs` y `mirar.mjs` aceptan `SITIO=http://localhost:<puerto>` para probar una
+  copia aparte del repo sin chocar con la que está sirviendo el puerto 8765.
+**Por qué:** pedido del dueño: bugs como el reloj de Conexiones o los textos rebuscados se
+tienen que encontrar solos, y las dudas llegarle ordenadas.

@@ -43,6 +43,8 @@ export function montar(raiz, ctx) {
 
   const dibujar = () => {
     const e = motor.estado(p, jugadas);
+    // Terminado el tablero, el tiempo se detiene aquí y no al tocar el botón (D-130)
+    if (e.fin) ctx.pararReloj?.();
     raiz.innerHTML = '';
     const caja = el('div', { class: 'stack tango-juego' });
     const grilla = el('div', { class: 'tan-grid' + (e.fin ? ' fin' : ''), style: `grid-template-columns: repeat(${n}, 1fr)` });

@@ -29,7 +29,7 @@
     "toque-y-fama-local": {
       "archivo": "toque-y-fama-local.mjs",
       "red": false,
-      "que": "un celular y contra el celular"
+      "que": "un celular y jugar solo"
     },
     "toque-y-fama-online": {
       "archivo": "toque-y-fama-online.mjs",
@@ -242,9 +242,9 @@
     {
       "seccion": "toque-y-fama",
       "imagen": "docs/screenshots/toque-y-fama/05-resultado.png",
-      "pie": "Versus the phone",
+      "pie": "Playing alone: a new record",
       "guion": "toque-y-fama-local",
-      "toma": "12-cpu-result"
+      "toma": "12-solo-result"
     },
     {
       "seccion": "toque-y-fama",

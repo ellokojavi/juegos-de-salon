@@ -304,6 +304,11 @@ async function abrirCopa(code, { recienCreada = false, pantalla = null } = {}) {
     }
     if (primera) {
       primera = false;
+      // Si la copa tiene link propio, la dirección lo muestra aunque se haya entrado por el código
+      // (la lista de tus copas, un link viejo): así lo que se copie de la barra es el link bonito (D-121)
+      if (L.meta.alias && !new URLSearchParams(location.search).has('demo')) {
+        history.replaceState(null, '', `${location.pathname}?${L.meta.alias}${PRUEBA ? '&prueba' : ''}`);
+      }
       const pid = cuenta.quien(code);
       if (pid && L.players?.[pid]) {
         S.yo = pid;
@@ -491,18 +496,25 @@ function tarjetaDia(d, rotulo) {
   );
 }
 
-function vistaTabla(filas, { dias }) {
+/**
+ * La tabla con un bloque por día de la copa, los siete (D-131): con puntos si ya se ven, ✓ si
+ * jugó pero todavía no los puedes ver, "por jugar" si el día está abierto y no ha jugado, "–" si
+ * se cerró sin jugarlo, y vacío si el día todavía no abre.
+ */
+function vistaTabla(filas, { dias, meta, now }) {
+  const bloque = (f, d) => {
+    const x = f.dias[d];
+    if (!x) return el('span', { class: 'pd pendiente', title: T.blockPending }, '');
+    if (x.oculto) return x.jugo ? el('span', { class: 'pd oculto', title: T.blockHidden }, '✓') : el('span', { class: 'pd abierto', title: T.blockOpen }, '•');
+    if (!x.jugo) return abierto(meta, d, now) ? el('span', { class: 'pd abierto', title: T.blockOpen }, '•') : el('span', { class: 'pd perdido', title: T.blockMissed }, '–');
+    return el('span', { class: 'pd' + (x.x === 2 ? ' doble' : '') + (x.pos === 1 ? ' oro' : '') }, String(x.pts));
+  };
   return el('div', { class: 'tabla' }, filas.map(f => el('div', { class: 'fila' + (f.pid === S.yo ? ' yo' : '') },
     el('span', { class: 'lugar' }, String(f.lugar)),
     el('span', { class: 'flecha ' + (f.flecha > 0 ? 'sube' : f.flecha < 0 ? 'baja' : '') }, f.flecha > 0 ? '▲' : f.flecha < 0 ? '▼' : ''),
     el('div', { class: 'quien' },
       el('b', {}, f.name, f.pid === S.yo ? el('small', { class: 'muted' }, ` (${T.you})`) : null),
-      el('div', { class: 'puntitos' }, dias.map(d => {
-        const x = f.dias[d];
-        if (!x) return el('span', { class: 'pd futuro' }, '·');
-        if (x.oculto) return el('span', { class: 'pd oculto', title: x.jugo ? '✓' : '' }, x.jugo ? '✓' : '·');
-        return el('span', { class: 'pd' + (x.x === 2 ? ' doble' : '') + (x.pos === 1 ? ' oro' : '') }, x.jugo ? String(x.pts) : '–');
-      }))),
+      el('div', { class: 'puntitos' }, dias.map(d => bloque(f, d)))),
     el('span', { class: 'total' }, String(f.total), el('small', {}, ` ${T.pts}`)))));
 }
 
@@ -669,9 +681,17 @@ function tablero() {
   if (d >= 1) {
     const filas = tabla(Lc, S.yo, now);
     const hayOcultos = filas.some(f => Object.values(f.dias).some(x => x.oculto));
+    // La leyenda de los bloques (D-131)
+    const leyenda = el('div', { class: 'tabla-leyenda' },
+      el('span', {}, el('span', { class: 'pd oro' }, '10'), T.legendPoints),
+      hayOcultos ? el('span', {}, el('span', { class: 'pd oculto' }, '✓'), T.legendHidden) : null,
+      el('span', {}, el('span', { class: 'pd abierto' }, '•'), T.legendOpen),
+      el('span', {}, el('span', { class: 'pd perdido' }, '–'), T.legendMissed),
+      el('span', {}, el('span', { class: 'pd pendiente' }, ''), T.legendPending));
     poner(body, el('div', { class: 'panel' },
       el('p', { class: 'lead', style: 'margin-bottom:8px' }, T.tableTitle),
-      vistaTabla(filas, { dias: dias.filter(x => x <= Math.min(d, meta.days)) }),
+      vistaTabla(filas, { dias, meta, now }),
+      leyenda,
       hayOcultos ? el('small', { class: 'muted' }, T.tableHidden) : null));
     poner(body, grafico(now));
   } else {
@@ -734,9 +754,23 @@ function toast(texto) {
   setTimeout(() => t.remove(), 2600);
 }
 
+/**
+ * La invitación promocional (D-127): el reto, cuándo parte, cuánto toma y quiénes ya están.
+ * Los minijuegos no se nombran: son sorpresa.
+ */
+function mensajeInvitacion() {
+  const Lc = L(), { meta } = Lc;
+  const nombres = activos(Lc).map(j => j.name);
+  const lista = nombres.length > 1 ? `${nombres.slice(0, -1).join(', ')} y ${nombres.at(-1)}` : nombres[0] || '';
+  return fmt(T.shareInviteText, {
+    copa: meta.name, dias: meta.days, fecha: fechaLarga(meta.win[1].a, meta.tz),
+    inscritos: nombres.length ? fmt(nombres.length === 1 ? T.shareInviteJoinedOne : T.shareInviteJoined, { names: lista }) : '',
+  }).replace(/\n{3,}/g, '\n\n');
+}
+
 function invitar() {
   const { meta } = L();
-  return compartir(fmt(T.shareInviteText, { copa: meta.name, dias: meta.days, fecha: fechaLarga(meta.win[1].a, meta.tz) }));
+  return compartir(mensajeInvitacion());
 }
 
 /**
@@ -923,7 +957,7 @@ function admin({ forzar = false } = {}) {
     el('p', { class: 'lead', style: 'margin:0' }, T.adminMsgs),
     // Cada mensaje, solo cuando tiene sentido (D-116): la invitación antes de partir y con la
     // inscripción abierta; la tabla parcial mientras se juega; el resumen, al terminar
-    d === 0 && !Lc.closed ? msg(T.msgInvite, () => fmt(T.shareInviteText, { copa: meta.name, dias: meta.days, fecha: fechaLarga(meta.win[1].a, meta.tz) }), 'msg-invitar') : null,
+    d === 0 && !Lc.closed ? msg(T.msgInvite, mensajeInvitacion, 'msg-invitar') : null,
     !terminada(meta, now) ? msg(T.msgToday, mensajeHoy, 'msg-hoy') : null,
     d >= 1 && !terminada(meta, now) ? msg(T.msgTable, mensajeTabla, 'msg-tabla') : null,
     terminada(meta, now) ? msg(T.msgFinal, mensajeFinal, 'msg-final') : null));
@@ -1168,11 +1202,15 @@ async function jugar(d) {
   keepAwake();
   // La cuenta va solo al empezar: si se retoma una partida, el tablero vuelve de una
   if (!guardado.reloj) await cuentaRegresiva(J);
-  const p = mod.generar(S.code, d);
+  // Conexiones necesita saber cuándo empezó su día, para no cambiar de grilla a mitad (D-128)
+  const p = mod.generar(S.code, d, id === 'conexiones' ? { desde: meta.win[d].a } : undefined);
   const now = ahora();
-  let rel = guardado.reloj ? reloj.seguir(guardado.reloj, now) : reloj.nuevo(now);
+  // El reloj se detiene cuando el tablero termina, no cuando se toca "Ver resultado" (D-130).
+  // Detenido, queda así aunque se recargue la página.
+  let detenido = !!guardado.detenido;
+  let rel = guardado.reloj ? (detenido ? guardado.reloj : reloj.seguir(guardado.reloj, now)) : reloj.nuevo(now);
   let jugadas = guardado.jugadas;
-  const persistir = () => cuenta.intento.guardar(S.code, d, S.yo, { jugadas, reloj: reloj.pausar(rel, ahora()) });
+  const persistir = () => cuenta.intento.guardar(S.code, d, S.yo, { jugadas, reloj: reloj.pausar(rel, ahora()), detenido });
   persistir();
 
   const head = $('#jugar-head');
@@ -1183,6 +1221,7 @@ async function jugar(d) {
   S.reloj = setInterval(() => { if (S.pantalla === 'jugar') cron.textContent = fmt(T.timer, { t: mmss(reloj.leer(rel, ahora())) }); }, 1000);
   S.visibilidad && document.removeEventListener('visibilitychange', S.visibilidad);
   S.visibilidad = () => {
+    if (detenido) return;
     rel = document.hidden ? reloj.pausar(rel, ahora()) : reloj.seguir(rel, ahora());
     persistir();
   };
@@ -1195,8 +1234,12 @@ async function jugar(d) {
     p, jugadas, T, fmt, el, SFX, vibrate,
     guardar(j) { jugadas = j; persistir(); },
     tiempo: () => Math.round(reloj.leer(rel, ahora())),
-    // Un juego que termina solo (Zip, al acabarse el tiempo) congela el reloj de arriba en su tiempo final
-    pararReloj() { clearInterval(S.reloj); cron.textContent = fmt(T.timer, { t: mmss(reloj.leer(rel, ahora())) }); },
+    // Cada juego lo llama cuando su tablero termina (resuelto, perdido o sin tiempo): el tiempo
+    // queda ahí, y lo que se tarde en tocar "Ver resultado" no cuenta (D-130)
+    pararReloj() {
+      if (!detenido) { rel = reloj.pausar(rel, ahora()); detenido = true; persistir(); }
+      clearInterval(S.reloj); cron.textContent = fmt(T.timer, { t: mmss(reloj.leer(rel, ahora())) });
+    },
     terminar(estado) {
       const ms = Math.round(reloj.leer(rel, ahora()));
       clearInterval(S.reloj);
@@ -1366,7 +1409,8 @@ async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false } = {}) {
   clearInterval(S.reloj);
   S.reloj = setInterval(() => { if (S.pantalla === 'jugar') cron.textContent = fmt(T.timer, { t: mmss(reloj.leer(rel, Date.now())) }); }, 1000);
   S.visibilidad && document.removeEventListener('visibilitychange', S.visibilidad);
-  S.visibilidad = () => { rel = document.hidden ? reloj.pausar(rel, Date.now()) : reloj.seguir(rel, Date.now()); };
+  let detenido = false;
+  S.visibilidad = () => { if (!detenido) rel = document.hidden ? reloj.pausar(rel, Date.now()) : reloj.seguir(rel, Date.now()); };
   document.addEventListener('visibilitychange', S.visibilidad);
   const body = $('#jugar-body');
   body.innerHTML = '';
@@ -1375,7 +1419,10 @@ async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false } = {}) {
     textoFin: ensayo ? T.trialEnd : undefined,
     guardar() { /* no se guarda: no cuenta */ },
     tiempo: () => Math.round(reloj.leer(rel, Date.now())),
-    pararReloj() { clearInterval(S.reloj); cron.textContent = fmt(T.timer, { t: mmss(reloj.leer(rel, Date.now())) }); },
+    pararReloj() {
+      if (!detenido) { rel = reloj.pausar(rel, Date.now()); detenido = true; }
+      clearInterval(S.reloj); cron.textContent = fmt(T.timer, { t: mmss(reloj.leer(rel, Date.now())) });
+    },
     terminar(estado) {
       clearInterval(S.reloj);
       document.removeEventListener('visibilitychange', S.visibilidad);

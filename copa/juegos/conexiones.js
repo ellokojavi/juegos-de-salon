@@ -3,7 +3,7 @@
  * Se eligen cuatro y se confirma; hay cuatro errores permitidos. Si quedó a una de un grupo,
  * se avisa "a una".
  */
-import { GRILLAS, GRILLA_ENSAYO } from './grillas.js';
+import { GRILLAS, GRILLA_ENSAYO, GRILLAS_ANTES_D128, CAMBIO_D128 } from './grillas.js';
 import { azar, hash32 } from './semilla.js';
 
 export const ERRORES = 4;
@@ -11,10 +11,18 @@ export const COLORES = ['amarillo', 'verde', 'azul', 'morado'];
 export const EMOJIS = ['🟨', '🟩', '🟦', '🟪'];
 
 /** La grilla de la copa: una por copa (la semilla del código, no la del día). */
-export const grillaDe = codigo => GRILLAS[hash32(`${codigo}:grilla`) % GRILLAS.length];
+/**
+ * La grilla de una copa: la misma posición de la lista para siempre. `desde` es cuándo empieza
+ * el día de Conexiones de esa copa: si empezó antes del cambio a grupos por significado (D-128),
+ * se sigue con la grilla de antes, para no cambiarla a mitad del día.
+ */
+export const grillaDe = (codigo, { desde = null } = {}) => {
+  const lista = desde !== null && desde < CAMBIO_D128 ? GRILLAS_ANTES_D128 : GRILLAS;
+  return lista[hash32(`${codigo}:grilla`) % lista.length];
+};
 
-export function generar(codigo, dia, { sal = 'conexiones', grilla } = {}) {
-  const g = grilla || grillaDe(codigo);
+export function generar(codigo, dia, { sal = 'conexiones', grilla, desde = null } = {}) {
+  const g = grilla || grillaDe(codigo, { desde });
   const a = azar(codigo, dia, sal);
   return {
     id: g.id,

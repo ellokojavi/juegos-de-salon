@@ -92,3 +92,6 @@
 
 /* Con el chat en pantalla, la burbuja flota abajo a la derecha: que no tape el último intento */
 body.chat-on #screen-play, body.chat-on #screen-lobby, body.chat-on #screen-result { padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)); }
+/* Jugando solo hay un tablero y ocupa todo el ancho: las pistas van con palabra completa (D-129) */
+.boards--solo { grid-template-columns: 1fr; }
+.secrets--solo { grid-template-columns: minmax(0, 200px); justify-content: center; }

@@ -16,6 +16,8 @@ export function montar(raiz, ctx) {
 
   const dibujar = () => {
     const e = motor.estado(p, jugadas);
+    // Terminado el tablero, el tiempo se detiene aquí y no al tocar el botón (D-130)
+    if (e.fin) ctx.pararReloj?.();
     raiz.innerHTML = '';
     const caja = el('div', { class: 'stack anio-juego' });
     poner(caja, el('p', { class: 'muted center', style: 'margin:0' }, `${p.temaEmoji} ${p.temaNombre}`));
