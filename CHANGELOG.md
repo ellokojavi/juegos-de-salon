@@ -1,12 +1,10 @@
 # Changelog
 
-## Por asignar (la versión se pone al fusionar, D-135) — 2026-09-25
+## 0.64.1 — 2026-09-25
 - **Panel del dueño: La Copa aparte** (D-137). Tres vistas: Resumen, La Copa y Juegos. Se ve en
   todo momento qué copas están en curso, qué minijuego toca hoy en cada una, quién ya lo jugó y
   quién lo está jugando. Por minijuego: jugadas, sin terminar, puntaje promedio y tiempo típico.
   Los juegos de una partida se cuentan sin los días de La Copa. Sin cambios para los jugadores.
-
-## Sin publicar — chat en Batalla Naval y panel fidedigno
 - **Chat de sala en Batalla Naval** (C-15, D-138): en la sala, esperando la flota del rival, en la
   batalla y en el resultado. Mientras uno coloca su propia flota se guarda.
 - **Panel:** las salas vivas separan jugadas de mensajes de chat; "176 msjs" en una Batalla Naval
