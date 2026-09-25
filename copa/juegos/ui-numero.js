@@ -76,7 +76,7 @@ export function montar(raiz, ctx) {
             dibujar();
           },
         }),
-        el('p', { class: 'block-hint' }, TYF.blockHint));
+        el('p', { class: 'block-hint' }, T.blockHintDigits)); // "tachar", como en Palabra y en las reglas (U-5)
     }
     caja.append(tablero(el, { filas: e.filas, largo: p.cifras, titulo: T.yourGuesses, valor: f => el('span', { class: 'val' }, f.v) }));
     if (ctx.cierreAbajo) caja.append(...cierre);

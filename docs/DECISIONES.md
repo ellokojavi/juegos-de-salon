@@ -1616,3 +1616,36 @@ botones, interacciones, navegación y mensajes para compartir, con la guía `doc
   copia aparte del repo sin chocar con la que está sirviendo el puerto 8765.
 **Por qué:** pedido del dueño: bugs como el reloj de Conexiones o los textos rebuscados se
 tienen que encontrar solos, y las dudas llegarle ordenadas.
+
+## D-133 · Las reglas de cada minijuego, plegadas debajo del tablero
+**Fecha:** 2026-09-25 · **Estado:** vigente
+**Decisión:** En la pantalla de juego de cada minijuego (el día, la sesión de prueba y la práctica)
+hay un panel **"📖 Reglas de {juego}"** plegado por defecto, **debajo del tablero y de sus
+botones**: no se ve mientras se juega salvo que se baje, y está a un toque ante la duda. Trae
+"Cómo se juega", el puntaje y, en la Gran Final, las cinco rondas. Las reglas se reescribieron con
+**las mismas palabras de los botones** de cada pantalla (Probar, Colocar aquí, Confirmar, Barajar,
+Limpiar, OK; "Errores disponibles") (U-5).
+**Por qué:** pedido del dueño: ayudar ante la duda sin distraer.
+
+## D-134 · Reinas: el dibujo de las reglas y sin bordes gruesos entre zonas
+**Fecha:** 2026-09-25 · **Estado:** vigente
+**Decisión:** Las reglas de Reinas traen un dibujo antes del texto: un tablero de 5 × 5 resuelto
+("Así: una reina por fila, por columna y por color.") y dos reinas que se tocan en diagonal ("Así
+no: se tocan."), con los colores del tablero de verdad. Y **el tablero pierde los bordes gruesos
+entre zonas**: todas las casillas llevan la misma línea fina y las zonas se distinguen solo por el
+color, como en el juego original. **Lo decidió el dueño sabiendo que los bordes estaban por
+accesibilidad** (C-8, no depender solo del color); el revisor de usabilidad no lo vuelve a marcar.
+Riesgo conocido: dos pares de colores se parecen (naranja #f4b183 con durazno #f8cbad, celeste
+#9dc3e6 con turquesa #b4dfe0); si molesta, se ajusta la paleta `ZONAS` de ui-reinas.js.
+**Por qué:** pedido del dueño (trabajado en otra sesión y publicado junto con D-133).
+
+## D-135 · Varias sesiones de Claude a la vez: cada una en su copia del repo
+**Fecha:** 2026-09-25 · **Estado:** vigente
+**Decisión:** Cada sesión trabaja en su propio `git worktree`, con ramas de nombre de tema; la
+versión se asigna al fusionar y los números D-n miran también los PR abiertos. Las pruebas usan
+un puerto propio para el sitio y para Chrome (`SITIO`, `PUERTO_CDP`) y matan solo su Chrome.
+Quedó en CLAUDE.md.
+**Por qué:** tres sesiones compartían la carpeta principal: un commit arrastró trabajo sin
+terminar de otra, una rama se reescribió con el trabajo de otra sesión, y dos decisiones
+distintas quedaron con el número D-129. Se reordenó la cadena de PRs y se renumeró. Además, el
+`pkill -f remote-debugging-port` de una sesión mataba las pruebas de las demás.
