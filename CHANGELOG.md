@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.64.2 — 2026-09-25
+- **Batalla Naval: girar un barco casi siempre gira** (D-136). Si sobre su proa no cabe, gira
+  igual y se acomoda en el lugar libre más cercano, sin irse lejos.
+
 ## 0.64.1 — 2026-09-25
 - **Panel del dueño: La Copa aparte** (D-137). Tres vistas: Resumen, La Copa y Juegos. Se ve en
   todo momento qué copas están en curso, qué minijuego toca hoy en cada una, quién ya lo jugó y
