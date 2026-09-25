@@ -1544,3 +1544,19 @@ mensaje para animar a participar:
 **Los minijuegos no se nombran: son sorpresa.** No lleva mensaje personal del admin. Sigue
 ofreciéndose solo antes de que parta la copa y con la inscripción abierta (D-116).
 **Por qué:** pedido del dueño; la invitación es lo primero que ve quien todavía no se decide.
+## D-128 · Conexiones agrupa por significado, no por juegos de palabras
+**Fecha:** 2026-09-25 · **Estado:** vigente
+**Decisión:** Los grupos de Conexiones son lo que las cuatro cosas **son o tienen en común**
+(MADERA, PÓLVORA, PETRÓLEO y CARBÓN son combustibles). Salen los diez grupos de juegos de
+palabras: "___ roja/negra/verde", "___ de mesa", "Bodas de ___", "Estar en las ___", "esconden un
+animal/número", "empiezan con una nota musical" y "tienen dientes/cuello/ojos". Entran:
+combustibles, herramientas, instrumentos de viento, muebles, electrodomésticos, partes de una
+casa, herramientas de jardín, frutas, colores, piedras preciosas, árboles, metales y útiles
+escolares. La dificultad queda en los **distractores** (LIBRA: moneda o peso; NARANJA: fruta o
+color; TURQUESA: color o piedra). Un test impide volver a meter grupos de juegos de palabras.
+**Sin cambiar a mitad del día:** la grilla de cada copa se elige por su código. Las copas cuyo día
+de Conexiones empezó antes del corte (`CAMBIO_D128`, 26-09-2026 00:00 hora del Pacífico) siguen con
+la grilla de antes (`GRILLAS_ANTES_D128`, intacta); las demás reciben la nueva. El corte tiene
+que quedar después del momento en que se publica.
+**Por qué:** feedback de jugadores: "tarjeta" y "caperucita" unidas por "roja" era demasiado
+rebuscado; un grupo tiene que poder adivinarse pensando en las cosas, no en las palabras.
