@@ -496,18 +496,25 @@ function tarjetaDia(d, rotulo) {
   );
 }
 
-function vistaTabla(filas, { dias }) {
+/**
+ * La tabla con un bloque por día de la copa, los siete (D-131): con puntos si ya se ven, ✓ si
+ * jugó pero todavía no los puedes ver, "por jugar" si el día está abierto y no ha jugado, "–" si
+ * se cerró sin jugarlo, y vacío si el día todavía no abre.
+ */
+function vistaTabla(filas, { dias, meta, now }) {
+  const bloque = (f, d) => {
+    const x = f.dias[d];
+    if (!x) return el('span', { class: 'pd pendiente', title: T.blockPending }, '');
+    if (x.oculto) return x.jugo ? el('span', { class: 'pd oculto', title: T.blockHidden }, '✓') : el('span', { class: 'pd abierto', title: T.blockOpen }, '•');
+    if (!x.jugo) return abierto(meta, d, now) ? el('span', { class: 'pd abierto', title: T.blockOpen }, '•') : el('span', { class: 'pd perdido', title: T.blockMissed }, '–');
+    return el('span', { class: 'pd' + (x.x === 2 ? ' doble' : '') + (x.pos === 1 ? ' oro' : '') }, String(x.pts));
+  };
   return el('div', { class: 'tabla' }, filas.map(f => el('div', { class: 'fila' + (f.pid === S.yo ? ' yo' : '') },
     el('span', { class: 'lugar' }, String(f.lugar)),
     el('span', { class: 'flecha ' + (f.flecha > 0 ? 'sube' : f.flecha < 0 ? 'baja' : '') }, f.flecha > 0 ? '▲' : f.flecha < 0 ? '▼' : ''),
     el('div', { class: 'quien' },
       el('b', {}, f.name, f.pid === S.yo ? el('small', { class: 'muted' }, ` (${T.you})`) : null),
-      el('div', { class: 'puntitos' }, dias.map(d => {
-        const x = f.dias[d];
-        if (!x) return el('span', { class: 'pd futuro' }, '·');
-        if (x.oculto) return el('span', { class: 'pd oculto', title: x.jugo ? '✓' : '' }, x.jugo ? '✓' : '·');
-        return el('span', { class: 'pd' + (x.x === 2 ? ' doble' : '') + (x.pos === 1 ? ' oro' : '') }, x.jugo ? String(x.pts) : '–');
-      }))),
+      el('div', { class: 'puntitos' }, dias.map(d => bloque(f, d)))),
     el('span', { class: 'total' }, String(f.total), el('small', {}, ` ${T.pts}`)))));
 }
 
@@ -674,9 +681,17 @@ function tablero() {
   if (d >= 1) {
     const filas = tabla(Lc, S.yo, now);
     const hayOcultos = filas.some(f => Object.values(f.dias).some(x => x.oculto));
+    // La leyenda de los bloques (D-131)
+    const leyenda = el('div', { class: 'tabla-leyenda' },
+      el('span', {}, el('span', { class: 'pd oro' }, '10'), T.legendPoints),
+      hayOcultos ? el('span', {}, el('span', { class: 'pd oculto' }, '✓'), T.legendHidden) : null,
+      el('span', {}, el('span', { class: 'pd abierto' }, '•'), T.legendOpen),
+      el('span', {}, el('span', { class: 'pd perdido' }, '–'), T.legendMissed),
+      el('span', {}, el('span', { class: 'pd pendiente' }, ''), T.legendPending));
     poner(body, el('div', { class: 'panel' },
       el('p', { class: 'lead', style: 'margin-bottom:8px' }, T.tableTitle),
-      vistaTabla(filas, { dias: dias.filter(x => x <= Math.min(d, meta.days)) }),
+      vistaTabla(filas, { dias, meta, now }),
+      leyenda,
       hayOcultos ? el('small', { class: 'muted' }, T.tableHidden) : null));
     poner(body, grafico(now));
   } else {

@@ -1588,3 +1588,12 @@ desempate. El reloj detenido se guarda con la partida, así que recargar la pág
 En la Gran Final solo lo detiene la última ronda.
 **Por qué:** feedback del laboratorio: en Conexiones el tiempo seguía corriendo con el tablero
 ya resuelto, mientras se miraban los grupos.
+
+## D-131 · La tabla muestra los siete días de cada jugador
+**Fecha:** 2026-09-25 · **Estado:** vigente
+**Decisión:** Cada fila de la tabla tiene un bloque por cada día de la copa, también los que no
+abren: con los **puntos** si ya se ven (dorado si ganó el día, borde naranja si valía doble), **✓**
+si jugó pero todavía no puedes ver sus puntos, **• por jugar** (borde amarillo) si el día está
+abierto y no lo ha jugado, **– no jugó** (rojizo) si cerró sin jugarlo, y **vacío** si todavía
+no abre. Una leyenda debajo explica los estados.
+**Por qué:** pedido del dueño: que cada uno vea su grilla completa y qué le queda.
