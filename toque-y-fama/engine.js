@@ -34,45 +34,6 @@ export function randomSecret(digits, { zeroFirst = true } = {}) {
   return out;
 }
 
-/** Todas las combinaciones válidas (5040 con 4 cifras, 30240 con 5). */
-export function allCandidates(digits, { zeroFirst = true } = {}) {
-  const out = [];
-  const rec = (prefix, used) => {
-    if (prefix.length === digits) { out.push(prefix); return; }
-    for (let d = 0; d <= 9; d++) {
-      if (used & (1 << d)) continue;
-      if (prefix.length === 0 && d === 0 && !zeroFirst) continue;
-      rec(prefix + d, used | (1 << d));
-    }
-  };
-  rec('', 0);
-  return out;
-}
-
-/**
- * Solver por eliminación: mantiene los candidatos consistentes con las respuestas recibidas.
- * Con 4 cifras adivina en 5 a 7 intentos, como un buen jugador humano.
- */
-export class Solver {
-  constructor(digits, opts = {}) {
-    this.digits = digits;
-    this.candidates = allCandidates(digits, opts);
-  }
-  /** Próximo intento: un candidato al azar entre los consistentes. */
-  next() {
-    if (!this.candidates.length) return null;
-    return this.candidates[Math.floor(Math.random() * this.candidates.length)];
-  }
-  /** Registra la respuesta a un intento y filtra candidatos. */
-  learn(guess, { famas, toques }) {
-    this.candidates = this.candidates.filter(c => {
-      const s = score(guess, c);
-      return s.famas === famas && s.toques === toques;
-    });
-    return this.candidates.length;
-  }
-}
-
 /** SHA-256 en hexadecimal (requiere contexto seguro: https o localhost). */
 export async function sha256(text) {
   const data = new TextEncoder().encode(text);
