@@ -67,6 +67,8 @@ export function montar(raiz, ctx) {
   // Borrar todo, igual que en Tango: el primer toque lo arma y el segundo borra
   let armado = false, armadoTimer = null;
   const desarmar = () => { armado = false; clearTimeout(armadoTimer); };
+  // Como en Tango, tocar la grilla deja Borrar todo sin armar: el segundo toque tiene que ser seguido
+  const soltarBorrar = () => { if (armado) { desarmar(); pintarBorrar(); } };
   const borrar = el('button', {
     type: 'button', class: 'btn btn--ghost btn--sm', id: 'btn-borrar',
     onClick: () => {
@@ -195,6 +197,7 @@ export function montar(raiz, ctx) {
   grilla.addEventListener('pointerdown', ev => {
     const i = celdaEn(ev.clientX, ev.clientY);
     if (i === null || usado() >= tiempo || grilla.classList.contains('fin')) return;
+    soltarBorrar();
     empezarEn(i);
     dibujando = true;
     try { grilla.setPointerCapture(ev.pointerId); } catch (_) { /* nada */ }
@@ -208,7 +211,7 @@ export function montar(raiz, ctx) {
   grilla.addEventListener('click', ev => {
     if (ev.detail !== 0) return;
     const d = ev.target.closest('.zc');
-    if (d) { empezarEn(+d.dataset.i); guardar(); }
+    if (d) { soltarBorrar(); empezarEn(+d.dataset.i); guardar(); }
   });
 
   // El reloj corre solo con la pantalla a la vista (D-95)
