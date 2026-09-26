@@ -98,7 +98,7 @@ export function montar(raiz, ctx) {
     const mal = espera ? new Set([...e.mal].filter(i => espera.mal.has(i))) : e.mal;
     const errores = espera ? espera.errores : e.errores;
     // Terminado el tablero, el tiempo se detiene aquí y no al tocar el botón (D-130)
-    if (e.fin) ctx.pararReloj?.();
+    if (e.fin) ctx.pararReloj?.(e);
     raiz.innerHTML = '';
     const caja = el('div', { class: 'stack tango-juego' });
     const grilla = el('div', { class: 'tan-grid' + (e.fin ? ' fin' : ''), style: `grid-template-columns: repeat(${n}, 1fr)` });

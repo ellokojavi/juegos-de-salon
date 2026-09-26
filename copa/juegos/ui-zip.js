@@ -141,7 +141,7 @@ export function montar(raiz, ctx) {
     desarmar(); acciones.remove();
     // Se acabó: los relojes dejan de correr. El de arriba queda en el tiempo final y la cuenta
     // regresiva, que ya no dice nada, desaparece
-    ctx.pararReloj?.();
+    ctx.pararReloj?.({ ...J });
     terminado = true;
     SFX.timeUp();
     aviso.append(el('div', { class: 'aviso bien' }, J.hechos === 1 ? T.zipTimeOne : fmt(T.zipTime, { n: J.hechos })),

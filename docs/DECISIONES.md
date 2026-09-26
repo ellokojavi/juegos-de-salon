@@ -1932,3 +1932,20 @@ import map, para un link apenas más corto. Copiar las pantallas de La Copa a la
 **Consecuencias:** la bajada de la antesala sigue diciendo "Minijuego de La Copa": dice de dónde
 viene, no dónde se está. Las señales del panel no cambian (`game: <id>, mode: 'solo'`).
 `set-version.py` estampa también `minijuegos/index.html`.
+
+## D-150 · El resultado se envía apenas termina el tablero
+**Fecha:** 2026-09-26 · **Estado:** vigente
+**Decisión:** En un día de La Copa el resultado se escribe en la copa en el momento en que el
+tablero termina (resuelto, perdido, rendido o sin tiempo), sin esperar a que se toque "Ver
+resultado". Cada minijuego ya llamaba a `ctx.pararReloj()` en ese momento (D-130); ahora le pasa
+el mismo estado final que después le pasa a `ctx.terminar()`, y `jugar()` calcula el resultado,
+lo guarda en el dispositivo y lo envía por detrás, sin cambiar de pantalla. "Ver resultado" solo
+muestra la pantalla de resultado: espera ese envío y, si falló, lo reintenta con el aviso y el
+botón "Reintentar" de siempre. En la Gran Final lo manda la última ronda, con las cinco.
+**Por qué:** lo pidió el dueño. Antes, quien terminaba el tablero y cerraba la pestaña sin tocar
+el botón no tenía resultado en la copa, y si no volvía antes de que cerrara el día, lo perdía
+(la escritura tardía la rechaza la ventana del día).
+**Consecuencias:** al volver a abrir un día ya terminado se va directo a la pantalla de
+resultado, no al tablero con el botón. Una partida que quedó terminada con la versión anterior
+se envía sola al abrirla, porque el tablero vuelve a avisar que terminó. La práctica y la sesión
+de prueba no cambian: su `pararReloj` ignora el estado.
