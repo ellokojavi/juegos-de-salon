@@ -66,7 +66,7 @@ export const MINIJUEGOS = {
     emoji: '〰️', nombre: 'Zip', habilidad: 'lógica', labs: true,
     como: [
       'Dibuja un solo trazo que parta en el 1, pase por todas las casillas una sola vez y toque los números en orden. Termina en el último número, con todas las casillas pintadas.',
-      'Arrastra el dedo desde el 1. Para corregir, vuelve con el dedo por el mismo camino o toca una casilla del trazo para cortarlo ahí.',
+      'Arrastra el dedo desde el 1. Para corregir, vuelve con el dedo por el mismo camino o toca una casilla del trazo para cortarlo ahí. Con Borrar todo empiezas de nuevo desde el 1.',
       'Tienes 3 minutos para resolver todos los niveles que puedas. Cada nivel es igual o más grande que el anterior.',
     ],
     puntaje: 'Cada nivel resuelto vale 10 puntos, hasta 100. Si empatas, gana quien resolvió su último nivel antes.',
