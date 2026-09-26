@@ -1823,6 +1823,36 @@ quedaría atrás igual que la de CLAUDE.md).
 necesite red o llaves no puede correr ahí: tiene que funcionar sin ellas o quedar fuera del
 patrón. Los avisos de capturas viejas de `readme.py revisar` no hacen fallar el workflow.
 
+## D-144 · Los filtros de la portada caben en dos filas
+**Fecha:** 2026-09-25 · **Estado:** vigente
+**Decisión:** los filtros de la portada son siempre dos filas: cuántos juegan arriba y los tipos
+abajo, los cuatro en una sola fila. Para que quepan, dos tipos se acortan ("Cultura general" →
+"Cultura", "Cartas y dados" → "Cartas/Dados"; en inglés "Cards/Dice", en portugués "Cultura" y
+"Cartas/Dados") y, cuando el ancho no alcanza con el emoji al lado (bajo 520 px, o sea en
+cualquier celular), el emoji sube arriba del nombre, como en una barra de pestañas. Debajo de
+los filtros (y del "Se ven n de m", si está) va una línea tenue que se apaga en las puntas:
+ahí terminan los filtros y empiezan los juegos.
+**Por qué:** lo propuso el dueño. En un celular de 375 px los tipos se partían en dos filas, y en
+portugués o a 320 px los filtros ocupaban cuatro: empujaban los juegos fuera de la primera
+pantalla. Sin separación, la última ficha y la primera tarjeta se leían como un solo bloque.
+**Alternativas descartadas:** una fila de tipos con scroll horizontal (C-8 lo prohíbe y esconde
+opciones); achicar la letra hasta que quepan con el emoji al lado (a 320 px quedaba ilegible).
+
+## D-145 · Con el filtro "Solo", el juego abre directo en su modo solo
+**Fecha:** 2026-09-25 · **Estado:** vigente
+**Decisión:** si la portada está filtrada en "Solo", las tarjetas de los juegos que tienen más de
+un modo llevan `?modo=solo`, y el juego se salta la pantalla de modos: Toque y Fama y Línea de
+Tiempo abren su minijuego solo, El Ahorcado su configuración de solo, y Dudo y Batalla Naval la
+de contra el celular. Lo hace `llegaSolo(entrar)` de `ui.js`, que cada juego llama al arrancar con
+su propia entrada. No salta si se llega a una sala (`?sala=`) ni si hay una partida para
+retomar: esa oferta vive en la pantalla de modos (C-6). El parámetro se borra de la URL al
+llegar, así recargar deja en la portada del juego.
+**Por qué:** lo pidió el dueño. Quien filtró por "Solo" ya contestó la pregunta; hacérsela de
+nuevo en cada juego es un paso de más y hace dudar de si el filtro sirvió.
+**Consecuencias:** un juego nuevo con modo solo tiene que llamar a `llegaSolo` en su `init`, o
+el filtro lo abrirá en la pantalla de modos. "Con amigos" no salta nada: ahí quedan dos modos
+(un celular o en sala) y la elección es real.
+
 ## D-146 · Tango: casillas de día y de noche, y la luna plateada
 **Fecha:** 2026-09-25 · **Estado:** vigente
 **Decisión:** en la grilla de Tango y en el dibujo de las reglas, la casilla con sol lleva fondo
@@ -1838,4 +1868,3 @@ lee. Con dos señales, el fondo y el ícono, se separan aunque uno no distinga b
 **Alternativas descartadas:** 🌑 (cada teléfono la dibuja distinto, y en algunos es una bola
 negra que se pierde sobre el morado); solo el filtro o solo el fondo (una sola señal); dibujar
 el sol y la luna sin emoji, como LinkedIn (más nítido, pero rompe con el resto de La Copa).
-
