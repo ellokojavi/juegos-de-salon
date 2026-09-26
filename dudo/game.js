@@ -6,7 +6,7 @@
  * Los dados de cada ronda viajan como mensaje `roll`. En un celular van en claro —no hay a quién
  * escondérselos—; en la sala va el hash y se destapan al dudar, y ahí se verifican (C-10, D-70).
  */
-import { $, $$, el, vibrate, sparkles, keepAwake, confetti, shareLink, canShare, llegaSolo } from '../assets/js/ui.js';
+import { $, $$, el, vibrate, sparkles, keepAwake, confetti, shareLink, canShare } from '../assets/js/ui.js';
 import { getLang, langToggle, applyStatic, COMMON, withLang } from '../assets/js/i18n.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { showHandoff, passBlock } from '../assets/js/handoff.js';
@@ -857,7 +857,6 @@ function init() {
   renderRules();
   renderModes();
   renderResumeSlot();
-  llegaSolo(() => renderSetup('cpu')); // desde la portada filtrada en Solo (D-145)
   const sala = new URLSearchParams(location.search).get('sala');
   if (!sala || !/^[A-Z]{4}$/i.test(sala)) return;
   const code = sala.toUpperCase();

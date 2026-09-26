@@ -4,7 +4,7 @@
  *  - local: ambos jugadores en este celular · cpu: B es un bot (Hunter) · online: sala con chat (C-15)
  * Cada dispositivo responde los disparos contra SU flota.
  */
-import { $, $$, el, vibrate, sparkles, keepAwake, confetti, shareLink, canShare, llegaSolo } from '../assets/js/ui.js';
+import { $, $$, el, vibrate, sparkles, keepAwake, confetti, shareLink, canShare } from '../assets/js/ui.js';
 import { getLang, langToggle, applyStatic, COMMON, withLang } from '../assets/js/i18n.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { failWith } from '../assets/js/transport/errors.js';
@@ -935,7 +935,6 @@ function init() {
   });
   renderModes();
   renderResumeSlot();
-  llegaSolo(() => renderSetup('cpu')); // desde la portada filtrada en Solo (D-145)
   const code = new URLSearchParams(location.search).get('sala');
   if (code && /^[A-Z]{4}$/i.test(code)) {
     const saved = loadSession();

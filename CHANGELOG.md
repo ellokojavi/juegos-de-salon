@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.66.0 — 2026-09-26
+- **Portada: se filtra solo por tipo de juego** (D-149). Se va el filtro Todos · Solo · Con
+  amigos: cada juego pregunta adentro cómo se juega. Con él se va el salto directo al modo solo
+  de D-145.
+- **Los minijuegos sueltos se abren en `/minijuegos/?reinas`**, y ya no en `/copa/?practica=…`:
+  fuera de una copa, el link, el título de la pestaña y la ficha de arriba no dicen "copa". Los
+  links viejos llevan a la dirección nueva; dentro de una copa y en el laboratorio nada cambia.
+
 ## 0.65.9 — 2026-09-26
 - **La Copa: en los resultados del día, quien usó el comodín lleva "×2" junto a su nombre**
   (en la final, todos). Así se entiende por qué sus puntos no calzan con su lugar: 3º con +12.

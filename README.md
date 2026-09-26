@@ -2,7 +2,7 @@
 
 Mobile-first web app with party games to play with friends: card games, drinking games, guessing games. Open it on a phone or tablet, pick a game from the menu, type in the players, and the phone runs the game. In Spanish, English and Portuguese.
 
-The menu can be filtered by how many are playing (all, solo, with friends) and by kind of game (words, logic, trivia, cards and dice). The filter lives in the link, so going back from a game keeps it and a filtered menu can be shared. Besides the games below, the menu offers The Cup's minigames on their own, for one player: Connections, Bulls and Cows: Word, What Year?, Queens, Tango and Zip. They play in Spanish only for now, and the card says so in English and Portuguese.
+The menu can be filtered by kind of game (words, logic, trivia, cards and dice); how many are playing is chosen inside each game. The filter lives in the link, so going back from a game keeps it and a filtered menu can be shared. Besides the games below, the menu offers The Cup's minigames on their own, for one player: Connections, Bulls and Cows: Word, What Year?, Queens, Tango and Zip. They play in Spanish only for now, and the card says so in English and Portuguese.
 
 **Play:** https://juegosdesalon.cl/
 
@@ -354,7 +354,7 @@ It borrows what makes daily puzzles work (Wordle, Connections): same challenge f
 | 6 | 📅 What year was it?: closer is better, older gets more slack | estimation |
 | 7 | 🏁 The Grand Final: five short rounds, one of each, worth double | everything |
 
-The lab also has **〰️ Zip** and **☀️ Tango** to try out. **The minigames also play on their own from the main menu** (D-142), one player and no cup: Timeline Flash and the number game are the *play alone* modes of Timeline and Bulls and Cows, in all three languages, and the other six (all but the final) have their own card and open in Spanish. The cup does not invent its own UX (D-102): the timeline, the drag and drop and the keypad are the ones Timeline and Bulls and Cows already use, shared from `assets/`.
+The lab also has **〰️ Zip** and **☀️ Tango** to try out. **The minigames also play on their own from the main menu** (D-142), one player and no cup: Timeline Flash and the number game are the *play alone* modes of Timeline and Bulls and Cows, in all three languages, and the other six (all but the final) have their own card, open at `/minijuegos/?<id>` (no "cup" in a link that has nothing to do with one, D-149) and play in Spanish. The cup does not invent its own UX (D-102): the timeline, the drag and drop and the keypad are the ones Timeline and Bulls and Cows already use, shared from `assets/`.
 
 - **Everything comes from a seed** (`code:day`), so everyone plays exactly the same content with no server (D-97).
 - **A day stays open until the next midnight** (a grace day), except the final. Time only breaks ties, and it is *active* time: it pauses while the screen is hidden (D-95).

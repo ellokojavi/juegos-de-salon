@@ -117,9 +117,9 @@ export const GAMES = [
 
 /**
  * Los minijuegos de La Copa que se juegan sueltos desde la portada (D-142), de a uno y sin copa:
- * abren la práctica de La Copa (`copa/?practica=<id>`), que no guarda nada y no cuenta para
- * ninguna copa. Van aparte de GAMES porque no son una carpeta con su `rules.js` y su tarjeta
- * social: el README, las tarjetas y las pruebas de idioma de los juegos no los recorren.
+ * abren `minijuegos/?<id>` (D-149), la pantalla de práctica de La Copa con un link que no dice
+ * "copa": no guarda nada y no cuenta para ninguna copa. Van aparte de GAMES porque no son una
+ * carpeta con su `rules.js` y su tarjeta social: el README, las tarjetas y las pruebas de idioma de los juegos no los recorren.
  *
  * Línea Relámpago y Toque y Fama: adivina el número no están: son el modo solo de Línea de Tiempo
  * y de Toque y Fama. La Gran Final tampoco: repite los otros y es el cierre de la copa.
@@ -175,7 +175,7 @@ export const SUELTOS = [
     tipos: ['logica'],
     duration: '3',
   },
-].map(m => ({ ...m, players: '1', path: `copa/?practica=${m.id}`, idiomas: ['es'], available: true, suelto: true }));
+].map(m => ({ ...m, players: '1', path: `minijuegos/?${m.id}`, idiomas: ['es'], available: true, suelto: true }));
 
 /**
  * Los tipos de juego con que se filtra la portada (D-142), en el orden en que se ofrecen.

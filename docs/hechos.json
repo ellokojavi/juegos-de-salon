@@ -1,5 +1,5 @@
 {
-  "version": "0.64.9",
+  "version": "0.65.9",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -15,7 +15,7 @@
     "en": 100,
     "pt": 100
   },
-  "clavesComunes": 21,
+  "clavesComunes": 18,
   "juegos": [
     {
       "id": "copa",
