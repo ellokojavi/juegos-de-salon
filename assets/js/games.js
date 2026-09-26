@@ -184,8 +184,8 @@ export const SUELTOS = [
 export const TIPOS = {
   palabras: { emoji: '🔤', name: { es: 'Palabras', en: 'Words', pt: 'Palavras' } },
   logica: { emoji: '🧩', name: { es: 'Lógica', en: 'Logic', pt: 'Lógica' } },
-  cultura: { emoji: '🧠', name: { es: 'Cultura general', en: 'Trivia', pt: 'Conhecimentos gerais' } },
-  mesa: { emoji: '🎲', name: { es: 'Cartas y dados', en: 'Cards and dice', pt: 'Cartas e dados' } },
+  cultura: { emoji: '🧠', name: { es: 'Cultura', en: 'Trivia', pt: 'Cultura' } },
+  mesa: { emoji: '🎲', name: { es: 'Cartas/Dados', en: 'Cards/Dice', pt: 'Cartas/Dados' } },
 };
 
 /** Todo lo que ofrece la portada: los juegos y, después, los minijuegos sueltos. */

@@ -1804,3 +1804,18 @@ memoria de partida). La Gran Final suelta: repite los otros y es el cierre de la
 la portada: hay que sumarlo a `SUELTOS` con su tipo, y `i18n.test.mjs` exige que exista en La
 Copa y que su nombre en español sea el mismo. El récord viejo de esos dos solitarios queda sin
 uso, y una partida guardada del solitario viejo no se ofrece para retomar.
+
+## D-144 · Los filtros de la portada caben en dos filas
+**Fecha:** 2026-09-25 · **Estado:** vigente
+**Decisión:** los filtros de la portada son siempre dos filas: cuántos juegan arriba y los tipos
+abajo, los cuatro en una sola fila. Para que quepan, dos tipos se acortan ("Cultura general" →
+"Cultura", "Cartas y dados" → "Cartas/Dados"; en inglés "Cards/Dice", en portugués "Cultura" y
+"Cartas/Dados") y, cuando el ancho no alcanza con el emoji al lado (bajo 520 px, o sea en
+cualquier celular), el emoji sube arriba del nombre, como en una barra de pestañas. Debajo de
+los filtros (y del "Se ven n de m", si está) va una línea tenue que se apaga en las puntas:
+ahí terminan los filtros y empiezan los juegos.
+**Por qué:** lo propuso el dueño. En un celular de 375 px los tipos se partían en dos filas, y en
+portugués o a 320 px los filtros ocupaban cuatro: empujaban los juegos fuera de la primera
+pantalla. Sin separación, la última ficha y la primera tarjeta se leían como un solo bloque.
+**Alternativas descartadas:** una fila de tipos con scroll horizontal (C-8 lo prohíbe y esconde
+opciones); achicar la letra hasta que quepan con el emoji al lado (a 320 px quedaba ilegible).
