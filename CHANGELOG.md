@@ -1,6 +1,6 @@
 # Changelog
 
-## Sin número todavía (se numera al fusionar) — 2026-09-25
+## 0.65.0 — 2026-09-25
 - **Los minijuegos de La Copa se juegan sueltos desde la portada** (D-142): Conexiones, Toque y
   Fama: Palabra, ¿En qué año?, Reinas, Tango y Zip, de un jugador y sin copa. Por ahora en
   español; en inglés y portugués la tarjeta lo avisa.
@@ -10,6 +10,12 @@
 - **La portada se filtra** por cuántos juegan (todos, solo, con amigos) y por tipo (palabras,
   lógica, cultura general, cartas y dados). El filtro queda en el link.
 - **"Próximamente" va al lado del nombre** del juego, y no apagado abajo a la derecha.
+
+## 0.64.10 — 2026-09-25
+- **La Copa: Zip tiene Borrar todo**, el mismo botón de Tango. Va debajo de la grilla y deja
+  solo el 1 pintado para empezar el trazo de nuevo, sin tocar el nivel ni el reloj. El primer
+  toque pide confirmación y el segundo borra, para no perder un tablero grande sin querer. Las
+  reglas lo cuentan.
 
 ## 0.64.9 — 2026-09-25
 - **La Copa: la imagen de la tabla es más compacta** (D-141). El gráfico de posiciones y la tabla

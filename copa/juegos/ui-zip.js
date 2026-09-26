@@ -2,7 +2,8 @@
  * 〰️ Zip — pantalla. Como el Zip de LinkedIn: se arrastra el dedo desde el 1 y el trazo va
  * pasando de casilla en casilla. Volver por el mismo camino lo deshace y tocar una casilla del
  * trazo lo corta ahí. El gesto toma el puntero en la grilla, igual que el arrastre compartido
- * (D-85): la grilla sobrevive a los redibujos, las casillas no.
+ * (D-85): la grilla sobrevive a los redibujos, las casillas no. **Borrar todo** deja solo el 1,
+ * con el mismo segundo toque de confirmación que en Tango.
  *
  * Por niveles contra el reloj (D-103): tres minutos de tiempo activo (se pausa con la pantalla
  * oculta) para resolver la mayor cantidad de tableros. Las jugadas son la partida entera:
@@ -11,6 +12,8 @@
 import * as motor from './zip.js';
 
 const NS = 'http://www.w3.org/2000/svg';
+/** Cuánto espera Borrar todo el segundo toque, como en Tango. */
+const CONFIRMAR_MS = 3000;
 
 /**
  * El dibujo de las reglas, como el de Reinas (D-134): el mismo 4 × 4 dos veces. En el primero el
@@ -61,8 +64,31 @@ export function montar(raiz, ctx) {
   const cabeza = el('div', { class: 'zip-cabeza' });
   const aviso = el('div', { class: 'stack zip-aviso' });
   const grilla = el('div', { class: 'zip-grid' });
-  // El aviso va debajo de la grilla: si fuera arriba, al aparecer la correría bajo el dedo
-  caja.append(cabeza, el('p', { class: 'muted center', style: 'margin:0' }, T.zipHint), grilla, aviso);
+  // Borrar todo, igual que en Tango: el primer toque lo arma y el segundo borra
+  let armado = false, armadoTimer = null;
+  const desarmar = () => { armado = false; clearTimeout(armadoTimer); };
+  // Como en Tango, tocar la grilla deja Borrar todo sin armar: el segundo toque tiene que ser seguido
+  const soltarBorrar = () => { if (armado) { desarmar(); pintarBorrar(); } };
+  const borrar = el('button', {
+    type: 'button', class: 'btn btn--ghost btn--sm', id: 'btn-borrar',
+    onClick: () => {
+      if (grilla.classList.contains('fin')) return;
+      if (armado) { desarmar(); J.trazo = J.trazo.slice(0, 1); SFX.splash(); pintar(); guardar(); return; }
+      armado = true; SFX.tap(); vibrate(15);
+      clearTimeout(armadoTimer);
+      armadoTimer = setTimeout(() => { armado = false; if (raiz.isConnected) pintarBorrar(); }, CONFIRMAR_MS);
+      pintarBorrar();
+    },
+  });
+  const acciones = el('div', { class: 'btn-row zip-acciones' }, borrar);
+  const pintarBorrar = () => {
+    borrar.disabled = J.trazo.length < 2;
+    if (borrar.disabled) desarmar();
+    borrar.classList.toggle('armado', armado);
+    borrar.textContent = armado ? T.clearAllSure : `🧹 ${T.clearAll}`;
+  };
+  // El aviso va debajo de la grilla y del botón: si fuera arriba, al aparecer los correría bajo el dedo
+  caja.append(cabeza, el('p', { class: 'muted center', style: 'margin:0' }, T.zipHint), grilla, acciones, aviso);
   raiz.append(caja);
 
   let celdas = [], linea = null;
@@ -112,6 +138,7 @@ export function montar(raiz, ctx) {
       grilla.classList.add('solucion');
     }
     grilla.classList.add('fin');
+    desarmar(); acciones.remove();
     // Se acabó: los relojes dejan de correr. El de arriba queda en el tiempo final y la cuenta
     // regresiva, que ya no dice nada, desaparece
     ctx.pararReloj?.();
@@ -128,6 +155,7 @@ export function montar(raiz, ctx) {
     const en = new Set(J.trazo);
     celdas.forEach((c, i) => { c.classList.toggle('on', en.has(i)); c.classList.toggle('cabeza', J.trazo[J.trazo.length - 1] === i); });
     linea.setAttribute('points', J.trazo.map(i => `${(i % p.n) + 0.5},${Math.floor(i / p.n) + 0.5}`).join(' '));
+    pintarBorrar();
     aviso.innerHTML = '';
     if (e.faltan) aviso.append(el('div', { class: 'aviso mal' }, e.faltan === 1 ? T.zipMissingOne : fmt(T.zipMissing, { n: e.faltan })));
     return e;
@@ -169,6 +197,7 @@ export function montar(raiz, ctx) {
   grilla.addEventListener('pointerdown', ev => {
     const i = celdaEn(ev.clientX, ev.clientY);
     if (i === null || usado() >= tiempo || grilla.classList.contains('fin')) return;
+    soltarBorrar();
     empezarEn(i);
     dibujando = true;
     try { grilla.setPointerCapture(ev.pointerId); } catch (_) { /* nada */ }
@@ -182,7 +211,7 @@ export function montar(raiz, ctx) {
   grilla.addEventListener('click', ev => {
     if (ev.detail !== 0) return;
     const d = ev.target.closest('.zc');
-    if (d) { empezarEn(+d.dataset.i); guardar(); }
+    if (d) { soltarBorrar(); empezarEn(+d.dataset.i); guardar(); }
   });
 
   // El reloj corre solo con la pantalla a la vista (D-95)
