@@ -1885,4 +1885,7 @@ nombre del mensaje que se manda en cualquier momento de la copa.
 Calcular si los que faltan pueden de verdad cambiar un lugar: con los puntos por posición, quien
 juega mueve también los puntos de los demás, y la regla simple se entiende sin explicarla.
 **Consecuencias:** un jugador que se saltó un día que ya cerró sigue con su "(-1J)", pero no vuelve
-provisoria la tabla: sus puntos de ese día ya no cambian.
+provisoria la tabla: sus puntos de ese día ya no cambian. El número de día del título (imagen y
+mensaje) pasa a ser el último día que muestra la tabla (`ultimoDiaVisto`), no el de hoy (dilema
+#67, decisión del dueño): la marca y el número hablan del mismo día. La línea "⏳ ¡Día N en
+curso!" del mensaje sigue diciendo el día que corre.

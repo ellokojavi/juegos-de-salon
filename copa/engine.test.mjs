@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {
   CALENDARIOS, PUNTOS, esCodigo, codigoAlAzar, pidAlAzar, PID, limpiarNombre, claveNombre, esPin, hashPin,
   fechaEn, sumarDias, medianoche, ventanas, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta,
-  aliasLimpio, esAlias, menosJuegos, provisoria, aliasHasta, ALIAS_LIBRE_MS,
+  aliasLimpio, esAlias, menosJuegos, provisoria, ultimoDiaVisto, aliasHasta, ALIAS_LIBRE_MS,
   estadoDia, puedeComodin, multiplicador, posicionesDelDia, tabla, faltan, medallas, reloj, mmss, juegoDelDia, evolucion,
 } from './engine.js';
 
@@ -217,6 +217,10 @@ test('provisoria: la tabla puede cambiar mientras alguien no juega el último d�
   assert.equal(prov('cccccc', dia(0)), false); // quien no jugó no ve el día: la tabla no muestra nada
   const todos = { meta: meta7, players, results: { 1: { ...r1, cccccc: { s: 3, ms: 1 }, dddddd: { s: 1, ms: 1 } } } };
   assert.equal(prov('aaaaaa', dia(0), todos), false); // ya jugaron todos
+  // El número del título: el último día que se ve (#67)
+  assert.equal(ultimoDiaVisto(tabla(L, 'aaaaaa', dia(0))), 1);
+  assert.equal(ultimoDiaVisto(tabla(L, 'aaaaaa', dia(1))), 1); // el día 2 no lo ha jugado: su tabla llega al 1
+  assert.equal(ultimoDiaVisto(tabla(L, 'cccccc', dia(0))), 0);
 });
 
 test('medallas', () => {

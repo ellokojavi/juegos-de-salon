@@ -15,7 +15,7 @@ import { trackStart, versionOf } from '../assets/js/transport/stats.js';
 import {
   CALENDARIOS, MAX_JUGADORES, COPA_MAX, aliasLimpio, esAlias, CODIGO, esCodigo, codigoAlAzar, pidAlAzar, limpiarNombre, claveNombre, esPin, hashPin,
   fechaEn, sumarDias, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta, estadoDia, comodinDe, moverInicio, sinEmpezar, pasarDia, MAX_DIAS_INICIO, faltaGente,
-  medianoche, menosJuegos, provisoria, puedeComodin, multiplicador, posicionesDelDia, tabla, faltan, medallas, evolucion, visibleDia, reloj, mmss, juegoDelDia, esFinal, activos, ZONA,
+  medianoche, menosJuegos, provisoria, ultimoDiaVisto, puedeComodin, multiplicador, posicionesDelDia, tabla, faltan, medallas, evolucion, visibleDia, reloj, mmss, juegoDelDia, esFinal, activos, ZONA,
 } from './engine.js';
 import { GAME_ID, LOCALES, MINIJUEGOS, RONDAS_FINAL } from './rules.js';
 import { createCuenta } from './cuenta.js';
@@ -809,7 +809,8 @@ function mensajeTabla() {
   const menos = menosJuegos(filas);
   const lista = filas.map(f => `${['🥇', '🥈', '🥉'][f.lugar - 1] || `${f.lugar}.`} ${nombreConJuegos(f.name, menos[f.pid])} · ${f.total} pts`).join('\n');
   const falta = faltan(Lc, d, now);
-  let txt = fmt(provisoria(Lc, filas, now) ? T.shareTableTextProvisional : T.shareTableText, { copa: meta.name, d, tabla: lista });
+  // El título lleva el último día que muestra la tabla; el aviso de abajo, el día que corre (#67)
+  let txt = fmt(provisoria(Lc, filas, now) ? T.shareTableTextProvisional : T.shareTableText, { copa: meta.name, d: ultimoDiaVisto(filas) || d, tabla: lista });
   if (falta.length) txt += `\n\n${fmt(T.shareTableMissing, { d, names: falta.map(j => j.name).join(', ') })}`;
   return txt;
 }
@@ -830,7 +831,8 @@ async function compartirImagen() {
   const filas = tabla(Lc, S.yo, now);
   const menos = menosJuegos(filas);
   const ev = evolucion(Lc, S.yo, now);
-  const d = Math.min(Math.max(diaActual(meta, now), 1), meta.days);
+  // El último día que muestra la tabla, no el de hoy si quien comparte todavía no lo juega (#67)
+  const d = ultimoDiaVisto(filas) || Math.min(Math.max(diaActual(meta, now), 1), meta.days);
   const n = filas.length;
   const W = 1080;
   const pie = Object.values(menos).some(x => x > 0) ? 170 : 130;

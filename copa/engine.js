@@ -364,10 +364,18 @@ export function faltan(L, d, now) {
  * cerró no la vuelve provisoria aunque alguien no lo haya jugado (se queda con su "(-1J)").
  */
 export function provisoria(L, filas, now) {
-  const vistos = new Set();
-  for (const f of filas) for (const [d, x] of Object.entries(f.dias || {})) if (!x.oculto) vistos.add(Number(d));
-  if (!vistos.size) return false;
-  return faltan(L, Math.max(...vistos), now).length > 0;
+  const u = ultimoDiaVisto(filas);
+  return u > 0 && faltan(L, u, now).length > 0;
+}
+
+/**
+ * El último día que muestra la tabla (0 si ninguno): el número de su título (dilema #67). Quien
+ * todavía no juega hoy ve la tabla hasta ayer, y el título lo dice.
+ */
+export function ultimoDiaVisto(filas) {
+  let u = 0;
+  for (const f of filas) for (const [d, x] of Object.entries(f.dias || {})) if (!x.oculto) u = Math.max(u, Number(d));
+  return u;
 }
 
 /**

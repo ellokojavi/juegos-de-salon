@@ -70,3 +70,5 @@ Las respuestas a dilemas (issues con la etiqueta `usabilidad`) se anotan aquí:
   se tocan." (aprobados por el dueño).
 - **Leyenda de "(-1J)"** (#54, D-141): "(-1J), (-2J)… = uno, dos o más juegos por jugar", en la
   imagen de la tabla y en el tablero (aprobada por el dueño).
+- **El número de día del título de la tabla** (#67, D-147): es el último día que la tabla muestra,
+  no el de hoy. Quien todavía no juega hoy comparte "· día 4" con "⏳ ¡Día 5 en curso!" debajo.
