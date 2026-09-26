@@ -8,11 +8,11 @@ import { cartas, temasDeLaCopa, mazo } from './mazos.js';
 
 export const CARTAS = 10;
 
-export function generar(codigo, dia, { n = CARTAS, tema, sal = 'linea' } = {}) {
+export function generar(codigo, dia, { n = CARTAS, tema, sal = 'linea', lang = 'es' } = {}) {
   const deck = tema || temasDeLaCopa(codigo).linea;
   const a = azar(codigo, dia, sal);
-  const cs = cartas(a, deck, n, { separacion: 2 });
-  return { tema: deck, temaNombre: mazo(deck).name.es, temaEmoji: mazo(deck).emoji, base: cs[0], mano: cs.slice(1) };
+  const cs = cartas(a, deck, n, { separacion: 2, lang });
+  return { tema: deck, temaNombre: mazo(deck).name[lang] || mazo(deck).name.es, temaEmoji: mazo(deck).emoji, base: cs[0], mano: cs.slice(1) };
 }
 
 /** ¿El hueco `at` (0 = antes de la primera) es el correcto para `carta` en `linea`? */
