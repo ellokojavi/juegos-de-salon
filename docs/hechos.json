@@ -1,5 +1,5 @@
 {
-  "version": "0.64.0",
+  "version": "0.64.9",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -15,7 +15,7 @@
     "en": 100,
     "pt": 100
   },
-  "clavesComunes": 12,
+  "clavesComunes": 21,
   "juegos": [
     {
       "id": "copa",
@@ -69,6 +69,7 @@
         "copa/juegos/palabras.js",
         "copa/juegos/reinas.js",
         "copa/juegos/semilla.js",
+        "copa/juegos/solo.js",
         "copa/juegos/tango.js",
         "copa/juegos/ui-anio.js",
         "copa/juegos/ui-conexiones.js",
@@ -139,6 +140,8 @@
         "setup",
         "lobby",
         "play",
+        "solo",
+        "solo-result",
         "result"
       ],
       "chat": true,
@@ -194,7 +197,10 @@
         "lobby",
         "secret",
         "play",
-        "result"
+        "result",
+        "solo-intro",
+        "solo",
+        "solo-result"
       ],
       "chat": true,
       "archivos": [
@@ -586,6 +592,7 @@
     "copa/juegos/palabras.js",
     "copa/juegos/reinas.js",
     "copa/juegos/semilla.js",
+    "copa/juegos/solo.js",
     "copa/juegos/tango.js",
     "copa/juegos/ui-anio.js",
     "copa/juegos/ui-conexiones.js",
