@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.65.6 — 2026-09-26
+- **La Copa: el día de gracia se lee entero.** En el calendario, la fila del día de ayer que
+  todavía se puede jugar ponía el botón al lado del nombre: el nombre se cortaba ("Línea Rel…")
+  y el aviso quedaba en una columna angosta. Ahora el botón va en su propia línea, abajo (U-11, U-12).
+- **La Copa: el recordatorio dice "La Copa: {nombre}" en el título**, como el resto de los
+  mensajes para compartir (U-30).
+
 ## 0.65.5 — 2026-09-25
 - **Tango: el choque espera medio segundo**, y no 0,7 segundos. Alcanza para tocar dos veces y
   poner una luna, y cuando el sol queda mal puesto se nota antes.
