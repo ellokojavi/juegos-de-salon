@@ -1,8 +1,8 @@
 // Temáticas de Línea de Tiempo: que se elijan fácil y que no se repitan las cartas (D-34)
 import { launch, sleep } from './cdp.mjs';
 const OUT = process.argv[2];
-const BASE = process.argv[3] || 'http://localhost:8765';
-const b = await launch({ port: 9498, dir: `${OUT}/p`, out: OUT, width: 375, height: 812 });
+const BASE = process.argv[3] || process.env.SITIO || 'http://localhost:8765';
+const b = await launch({ port: Number(process.env.PUERTO_CDP) || 9498, dir: `${OUT}/p`, out: OUT, width: 375, height: 812 });
 
 await b.go(`${BASE}/linea-de-tiempo/`, 1500); await b.evaluate(`localStorage.clear(); 1`);
 await b.go(`${BASE}/linea-de-tiempo/`, 1500);
@@ -33,14 +33,12 @@ const VUELTAS = 10;
 const juegos = [];
 for (let i = 0; i < VUELTAS; i++) {
   await b.go(`${BASE}/linea-de-tiempo/`, 1200);
+  // Jugar solo (la ⏳ Línea Relámpago, D-142): diez hitos por partida
   await b.evaluate(`document.querySelectorAll('.mode')[2].click(); 1`); await sleep(300);
   await b.evaluate(`(()=>{const t=[...document.querySelectorAll('.theme-card')].find(c=>/Chile/.test(c.innerText));t.click();return 1})()`); await sleep(150);
-  await b.evaluate(`(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}));return 1})()`);
-  await b.evaluate(`(()=>{const x=[...document.querySelectorAll('.seg button')].find(e=>/Mano propia|Own hand/.test(e.textContent));if(x)x.click();return 1})()`); await sleep(150);
-  await b.evaluate(`(()=>{const x=[...document.querySelectorAll('.seg button')].find(e=>/7$/.test(e.textContent.trim()));if(x)x.click();return 1})()`);
-  await b.evaluate(`[...document.querySelectorAll('#setup-actions .btn')][0].click(); 1`); await sleep(900);
-  const cartas = await b.evaluate(`(()=>{const v=window.__ldt.view();return JSON.stringify([...v.line, ...v.hands.A])})()`).then(JSON.parse);
-  const excluidas = await b.evaluate(`(window.__ldt.match().config.skip || []).length`);
+  await b.evaluate(`document.getElementById('btn-solo-empezar').click(); 1`); await sleep(900);
+  const cartas = await b.evaluate(`(async()=>{const L=await import('${BASE}/copa/juegos/linea.js');const s=window.__ldt.solo();const p=L.generar(s.codigo,1,{tema:s.tema,excluir:s.skip});return JSON.stringify([p.base.id,...p.mano.map(c=>c.id)])})()`).then(JSON.parse);
+  const excluidas = await b.evaluate(`window.__ldt.solo().skip.length`);
   juegos.push({ cartas, excluidas });
 }
 const repetidasConLaAnterior = juegos.slice(1).map((g, i) => g.cartas.filter(c => juegos[i].cartas.includes(c)).length);

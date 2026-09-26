@@ -1,8 +1,11 @@
 /**
  * Línea de Tiempo — lógica de juego.
- * Reductor de mensajes único para todos los modos (canon C-7):
- *  - local: 2 a 6 jugadores en este celular · solo: un jugador vacía su mano · online: varios celulares
+ * Reductor de mensajes único para los modos con varios jugadores (canon C-7):
+ *  - local: 2 a 6 jugadores en este celular · online: varios celulares
  * El estado se deriva de la semilla del mazo más las jugadas, así que no hacen falta respuestas.
+ *
+ * Jugar solo es la ⏳ Línea Relámpago de La Copa (D-142): no pasa por el reductor, la monta
+ * copa/juegos/solo.js con la pantalla de copa/juegos/ui-linea.js. Ver la sección "Jugar solo".
  */
 import { $, $$, el, vibrate, sparkles, keepAwake, confetti, shareLink, canShare } from '../assets/js/ui.js';
 import { getLang, langToggle, applyStatic, COMMON, withLang } from '../assets/js/i18n.js';
@@ -15,6 +18,10 @@ import { trackStart } from '../assets/js/transport/stats.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import { crearArrastre } from '../assets/js/arrastre.js';
 import { buildState, correctSlot, randomSeed, yearLabel, timeLabel } from './engine.js';
+import { generar as generarLinea, CARTAS as CARTAS_SOLO } from '../copa/juegos/linea.js';
+import * as uiLinea from '../copa/juegos/ui-linea.js';
+import { jugarSolo, crearRecord, mmss } from '../copa/juegos/solo.js';
+import { codigoAlAzar } from '../copa/engine.js';
 import { DECKS, getDeck } from './decks/index.js';
 import { GAME_ID, DEFAULT_CONFIG, HAND_SIZES, MIN_PLAYERS, MAX_PLAYERS, VISIBLE, SPREAD_FACTOR, LOCALES } from './rules.js';
 
@@ -24,16 +31,11 @@ const fmt = (s, vars = {}) => s.replace(/\{(\w+)\}/g, (_, k) => (vars[k] !== und
 const ROLES = ['A', 'B', 'C', 'D', 'E', 'F'];
 const store = createSessionStore(GAME_ID);
 const nameStore = createNameStore(GAME_ID);
-const RECORD_KEY = `juegos-de-salon:${GAME_ID}:record`;
 /**
- * Récord del solitario por temática, tamaño de mano y forma de repartir: son juegos
- * distintos y no se comparan (D-32, D-43). Las claves viejas no cambian de nombre.
+ * Récord de jugar solo, por temática: el mejor puntaje y, a igualdad, el menor tiempo (D-142).
+ * Clave propia: el récord del solitario viejo (por intentos, `…:record`) no se compara con este.
  */
-const records = {
-  key: (theme, hand, config) => `${theme}:${hand}${config?.shared ? (config.spread ? ':mesa' : ':pozo') : ''}`,
-  get(theme, hand, config) { try { return (JSON.parse(localStorage.getItem(RECORD_KEY) || '{}'))[this.key(theme, hand, config)] || null; } catch (_) { return null; } },
-  set(theme, hand, config, n) { try { const all = JSON.parse(localStorage.getItem(RECORD_KEY) || '{}'); all[this.key(theme, hand, config)] = n; localStorage.setItem(RECORD_KEY, JSON.stringify(all)); } catch (_) { /* nada */ } },
-};
+const recordSolo = crearRecord(`juegos-de-salon:${GAME_ID}:record-relampago`);
 
 /**
  * Formas de repartir que ofrece la pantalla de configuración, en el orden en que se muestran.
@@ -166,6 +168,11 @@ function loadSession() { return store.load(); }
 function clearSession() { store.clear(); }
 
 async function resume(saved) {
+  if (saved.mode === 'solo') {
+    // Solo lo propio de la partida: `at` lo pone el almacén en cada escritura (C-6)
+    const { codigo, tema, skip = [], jugadas, ms = 0 } = saved;
+    return montarSolo({ mode: 'solo', codigo, tema, skip, jugadas, ms, done: false });
+  }
   if (saved.mode === 'online') return joinOnline(saved.code, saved.name, saved.role);
   return restoreLocal(saved);
 }
@@ -294,10 +301,10 @@ function renderPlay(v) {
   if (arrastre && arrastre.activa()) return;
   showScreen('screen-play');
   const isLocalTurn = S.roles.includes(v.current);
-  // Solitario y varios celulares: el veredicto de cada jugada se muestra a todos.
+  // Varios celulares: el veredicto de cada jugada se muestra a todos.
   // Un acierto (o la jugada de otro) se cierra solo; un error propio se queda hasta que el jugador toque,
   // con fondo rojo y una explicación de dónde iba la carta.
-  if (S.mode !== 'local' && v.history.length > S.lastShown + 1) {
+  if (S.mode === 'online' && v.history.length > S.lastShown + 1) {
     if (S.sticky && !$('#handoff').hidden) return;        // el jugador aún lee su error: lo nuevo espera
     const last = v.history[v.history.length - 1];
     S.lastShown = v.history.length - 1;
@@ -333,17 +340,17 @@ function renderPlay(v) {
   if (isLocalTurn && S.turnKey !== turnKey) { S.turnKey = turnKey; S.turnStart = Date.now(); }
 
   // Rol que mira la pantalla
-  const me = S.mode === 'online' ? S.role : (S.mode === 'solo' ? 'A' : v.current);
+  const me = S.mode === 'online' ? S.role : v.current;
   // Si el chat quedó abierto y llega mi turno, se cierra para dejar ver el tablero
   // (salvo que esté escribiendo algo: eso no se bota).
   if (chat && isLocalTurn) chat.closeIfIdle();
-  $('#status-who').textContent = S.mode === 'solo' ? T.soloTitle : (isLocalTurn ? fmt(T.turnYou, { name: M.names[v.current] }) : fmt(T.turnOther, { name: M.names[v.current] }));
+  $('#status-who').textContent = isLocalTurn ? fmt(T.turnYou, { name: M.names[v.current] }) : fmt(T.turnOther, { name: M.names[v.current] });
   marcarEstado(v, isLocalTurn);
 
   // Marcador
   const score = $('#score'); score.innerHTML = '';
   // Con pozo común el número es lo colocado sobre la meta; con mano propia, lo que queda por colocar
-  if (S.mode !== 'solo') for (const p of M.players) {
+  for (const p of M.players) {
     score.append(el('span', { class: 'p' + (p === v.current ? ' turn' : '') }, M.names[p],
       el('span', { class: 'n' }, v.shared ? `${v.scores[p]}/${v.target}` : v.hands[p].length)));
   }
@@ -387,11 +394,8 @@ function marcarMano(isLocalTurn) {
 
 /** La línea de estado, que cambia con la selección: "elige una carta" → "elige el lugar". */
 function marcarEstado(v, isLocalTurn) {
-  const okCount = v.history.filter(h => h.ok).length;
   const offline = S.mode === 'online' ? M.players?.length && ROLES.find(r => M.presence[r]?.online === false && M.names[r]) : null;
-  const record = S.mode === 'solo' ? records.get(M.config.theme, M.config.handSize, M.config) : null;
-  $('#status-sub').textContent = S.mode === 'solo' ? `${fmt(T.soloStatus, { ok: okCount, n: v.history.length, tries: triesWord(v.history.length) })}${record ? ' · ' + fmt(T.soloRecord, { n: record, tries: triesWord(record) }) : ''}`
-    : isLocalTurn ? (S.selCard ? T.pickSlot : T.pickCard)
+  $('#status-sub').textContent = isLocalTurn ? (S.selCard ? T.pickSlot : T.pickCard)
     : offline ? fmt(T.offline, { name: M.names[offline] })
     : (S.mode === 'online' ? fmt(T.waitingTurn, { name: M.names[v.current] }) : '');
 }
@@ -582,7 +586,6 @@ function verdictStage(last, v, nextName) {
 }
 
 const cardsLabel = n => (n === 0 ? T.noCards : n === 1 ? T.cardHeld : fmt(T.cardsHeld, { n }));
-const triesWord = n => (n === 1 ? T.tryOne : T.tryMany);
 
 function renderResult(v) {
   const already = $('#screen-result').classList.contains('active');
@@ -601,25 +604,11 @@ function renderResult(v) {
   // Empate a cartas: ganó quien respondió en menos tiempo (D-31)
   const llegaron = v.shared ? M.players.filter(p => v.scores[p] >= v.target) : M.players.filter(p => v.hands[p].length === 0);
   const porTiempo = winners.length === 1 && llegaron.length > 1;
-  $('#result-note').textContent = S.mode === 'solo' ? '' : (porTiempo ? (v.shared ? T.wonOnTimeShared : T.wonOnTime) : '');
-  $('#result-note').hidden = !porTiempo || S.mode === 'solo';
-  if (S.mode === 'solo') {
-    const tries = totalOf('A'), acc = tries ? Math.round(100 * okOf('A') / tries) : 0;
-    // Con todas a la vista la mesa se puede vaciar antes de llegar a la meta: eso no es récord (D-43)
-    const logrado = !v.shared || v.scores.A >= v.target;
-    const prev = records.get(M.config.theme, M.config.handSize, M.config);
-    const isRecord = logrado && (!prev || tries < prev);
-    if (!already && isRecord) records.set(M.config.theme, M.config.handSize, M.config, tries);
-    $('#result-title').textContent = logrado ? T.soloDone : T.soloShort;
-    const detalle = logrado ? fmt(T.soloResult, { n: tries, acc, tries: triesWord(tries) }) : fmt(T.soloShortResult, { ok: v.scores.A, n: v.target });
-    const marca = !logrado ? '' : ` · ${isRecord ? T.newRecord : fmt(T.prevRecord, { n: prev, tries: triesWord(prev) })}`;
-    $('#result-sub').textContent = `${detalle} · ${fmt(T.timeSpent, { t: timeLabel(v.times.A || 0) })}${marca}`;
-    $('#result-trophy').textContent = !logrado ? '😵' : (isRecord ? '🏆' : '✅');
-  } else {
-    $('#result-title').textContent = many ? T.winTitleMany : fmt(T.winTitle, { name: M.names[winners[0]] });
-    $('#result-sub').textContent = (meRole ? (winners.includes(meRole) ? T.youWin : T.youLose) + ' · ' : '') + fmt(T.stats, { ok: okOf(winners[0]), total: totalOf(winners[0]) });
-    $('#result-trophy').textContent = meRole && !winners.includes(meRole) ? '😵' : (many ? '🤝' : '🏆');
-  }
+  $('#result-note').textContent = porTiempo ? (v.shared ? T.wonOnTimeShared : T.wonOnTime) : '';
+  $('#result-note').hidden = !porTiempo;
+  $('#result-title').textContent = many ? T.winTitleMany : fmt(T.winTitle, { name: M.names[winners[0]] });
+  $('#result-sub').textContent = (meRole ? (winners.includes(meRole) ? T.youWin : T.youLose) + ' · ' : '') + fmt(T.stats, { ok: okOf(winners[0]), total: totalOf(winners[0]) });
+  $('#result-trophy').textContent = meRole && !winners.includes(meRole) ? '😵' : (many ? '🤝' : '🏆');
 
   const rank = $('#result-ranking'); rank.innerHTML = '';
   // Si dos jugadores caen en el mismo segundo, se muestran décimas: si no, el ranking
@@ -627,7 +616,6 @@ function renderResult(v) {
   const distintos = d => new Set(M.players.map(p => timeLabel(v.times[p] || 0, { decimals: d }))).size === M.players.length;
   let decimals = 0;
   while (decimals < 2 && !distintos(decimals)) decimals++;
-  $('#result-ranking').parentElement.hidden = S.mode === 'solo';
   // Menos cartas primero; a igualdad de cartas manda el tiempo (D-31)
   const order = M.players.slice().sort((a, b) =>
     (v.shared ? v.scores[b] - v.scores[a] : v.hands[a].length - v.hands[b].length) || (v.times[a] || 0) - (v.times[b] || 0) || okOf(b) - okOf(a));
@@ -715,7 +703,7 @@ function startLocalMode(mode, names, config) {
 function renderModes() {
   const box = $('#modes'); box.innerHTML = '';
   const modes = [['local', T.modeLocal, T.modeLocalHint, true], ['online', T.modeOnline, T.modeOnlineHint, true], ['solo', T.modeSolo, T.modeSoloHint, true]];
-  for (const [m, label, hint, ok] of modes) box.append(el('button', { class: 'mode', disabled: !ok, onClick: () => { SFX.tap(); renderSetup(m); } }, el('span', {}, el('b', {}, label), el('small', {}, hint)), el('span', { class: 'go' }, ok ? '›' : '⏳')));
+  for (const [m, label, hint, ok] of modes) box.append(el('button', { class: 'mode', disabled: !ok, onClick: () => { SFX.tap(); if (m === 'solo') renderSoloSetup(); else renderSetup(m); } }, el('span', {}, el('b', {}, label), el('small', {}, hint)), el('span', { class: 'go' }, ok ? '›' : '⏳')));
 }
 
 function renderResumeSlot() {
@@ -723,10 +711,16 @@ function renderResumeSlot() {
   const saved = loadSession();
   if (!saved || saved.done) return;
   if (saved.mode === 'online' && !saved.code) return;
-  const deck = getDeck(saved.config?.theme);
+  // Una partida del solitario viejo (con `messages`, D-27) ya no se puede jugar: se olvida (D-142)
+  if (saved.mode === 'solo' && !esPartidaSolo(saved)) { clearSession(); return; }
+  const deck = getDeck(saved.mode === 'solo' ? saved.tema : saved.config?.theme);
   // El emoji va con el nombre, como la temática: acá no hay pastilla que lo muestre aparte (D-52)
-  const cards = cardModeOf(saved.config);
-  const label = (saved.mode === 'online' ? `${T.lobbyCode}: ${saved.code}` : { local: T.modeLocal, solo: T.modeSolo }[saved.mode] || '') + ` · ${cards.emoji} ${cards.label()}`;
+  let label;
+  if (saved.mode === 'solo') label = T.modeSolo;
+  else {
+    const cards = cardModeOf(saved.config);
+    label = (saved.mode === 'online' ? `${T.lobbyCode}: ${saved.code}` : T.modeLocal) + ` · ${cards.emoji} ${cards.label()}`;
+  }
   slot.append(el('div', { class: 'panel pop' },
     el('p', { class: 'lead', style: 'margin-bottom:4px' }, T.resumeTitle),
     el('p', { class: 'muted' }, `${deck.emoji} ${deck.name[lang]} · ${label}`),
@@ -747,13 +741,7 @@ function renderSetup(mode, prefillCode = '') {
   let draft = mode === 'local' ? ['', ''] : [nameStore.get()];
 
   // Temática
-  const themes = el('div', { class: 'themes' });
-  const paintThemes = () => {
-    themes.innerHTML = '';
-    for (const d of DECKS) themes.append(el('button', { type: 'button', class: 'theme-card' + (config.theme === d.id ? ' on' : ''), onClick: () => { config.theme = d.id; SFX.tap(); paintThemes(); } },
-      el('span', { class: 'em' }, d.emoji), el('b', {}, d.name[lang]), el('small', {}, d.hint[lang])));
-  };
-  paintThemes();
+  const themes = selectorDeTematica(config);
   // Quien llega invitado no configura nada: la partida ya viene armada por el anfitrión.
   const invitado = !!prefillCode;
   if (!invitado) form.append(el('div', { class: 'field' }, el('label', {}, T.theme), themes));
@@ -835,19 +823,121 @@ function renderSetup(mode, prefillCode = '') {
   }
   actions.append(el('button', { class: 'btn btn--yellow', onClick: () => {
     const list = draft.map(n => n.trim());
-    if (mode === 'solo') {
-      if (!list[0]) return fail(T.errName);
-      nameStore.set(list[0]);
-      SFX.tap();
-      startLocalMode('solo', { A: list[0] }, { ...freshConfig(config), players: ['A'] });
-    } else {
-      if (list.some(n => !n) || new Set(list.map(n => n.toLowerCase())).size !== list.length) return fail(T.errNames);
-      const players = ROLES.slice(0, list.length);
-      const names = Object.fromEntries(players.map((p, i) => [p, list[i]]));
-      SFX.tap();
-      startLocalMode('local', names, { ...freshConfig(config), players });
-    }
+    if (list.some(n => !n) || new Set(list.map(n => n.toLowerCase())).size !== list.length) return fail(T.errNames);
+    const players = ROLES.slice(0, list.length);
+    const names = Object.fromEntries(players.map((p, i) => [p, list[i]]));
+    SFX.tap();
+    startLocalMode('local', names, { ...freshConfig(config), players });
   } }, T.start));
+}
+
+/** Las temáticas en tarjetas de a dos; la elegida queda en `config.theme`. */
+function selectorDeTematica(config) {
+  const themes = el('div', { class: 'themes' });
+  const paintThemes = () => {
+    themes.innerHTML = '';
+    for (const d of DECKS) themes.append(el('button', { type: 'button', class: 'theme-card' + (config.theme === d.id ? ' on' : ''), 'data-tema': d.id, onClick: () => { config.theme = d.id; SFX.tap(); paintThemes(); } },
+      el('span', { class: 'em' }, d.emoji), el('b', {}, d.name[lang]), el('small', {}, d.hint[lang])));
+  };
+  paintThemes();
+  return themes;
+}
+
+/* ------------------------------------------------------------------ */
+/* Jugar solo: la ⏳ Línea Relámpago de La Copa (D-142)                 */
+/* ------------------------------------------------------------------ */
+/**
+ * Diez hitos de la temática elegida: el primero ya puesto y nueve en la mano, en el orden que
+ * se quiera; un error deja la carta en su lugar, en rojo, y se sigue. Puntaje de 0 a 100 y
+ * reloj de tiempo activo, como en la copa. La partida entera sale de `codigo` (la semilla de
+ * copa/juegos/linea.js) más las jugadas, así que la memoria de partida (C-6) guarda solo eso:
+ * `{ mode: 'solo', codigo, tema, skip, jugadas, ms, done }`. `skip` son las cartas vistas hace
+ * poco que se dejaron fuera (D-34): sin ellas, la misma semilla repartiría otras cartas.
+ */
+let soltarSolo = null;
+
+/** ¿Es una partida del solo de ahora? Las del solitario viejo traían `messages` y `config`. */
+const esPartidaSolo = x => !!(x && x.mode === 'solo' && typeof x.codigo === 'string' && x.tema && Array.isArray(x.jugadas));
+
+function renderSoloSetup() {
+  showScreen('screen-setup');
+  $('#screen-setup h2').textContent = T.setupTitle;
+  const config = { theme: DEFAULT_CONFIG.theme };
+  const form = $('#setup-form'); form.innerHTML = '';
+  $('#setup-error').textContent = '';
+  form.append(
+    el('div', { class: 'field' }, el('label', {}, T.theme), selectorDeTematica(config)),
+    // Las reglas van plegadas (C-8), salvo para quien todavía no termina ninguna partida sola:
+    // así la primera vez se leen, y después el botón de empezar queda a la vista.
+    el('details', { class: 'solo-como', open: !DECKS.some(d => recordSolo.get(d.id)) },
+      el('summary', {}, T.howTitle),
+      el('ol', {}, ...T.soloHow.map(t => el('li', {}, t))),
+      el('p', { class: 'lead' }, T.soloScoreTitle),
+      el('p', { class: 'muted' }, T.soloScore)),
+  );
+  const actions = $('#setup-actions'); actions.innerHTML = '';
+  actions.append(el('button', { class: 'btn btn--yellow', id: 'btn-solo-empezar', onClick: () => { SFX.tap(); empezarSolo(config.theme); } }, T.start));
+}
+
+/** Una partida nueva: semilla al azar, fuera las cartas vistas hace poco (D-34). */
+function empezarSolo(tema) {
+  const codigo = codigoAlAzar();
+  let skip = seen.recent(tema);
+  // Si al dejar fuera las vistas no alcanzan diez hitos con años separados, se reparte sin excluir
+  if (generarLinea(codigo, 1, { tema, lang, excluir: skip }).mano.length < CARTAS_SOLO - 1) skip = [];
+  const p = generarLinea(codigo, 1, { tema, lang, excluir: skip });
+  seen.add(tema, [p.base.id, ...p.mano.map(c => c.id)]);
+  const partida = { mode: 'solo', codigo, tema, skip, jugadas: [], ms: 0, done: false };
+  store.save(partida);   // empezar una partida nueva borra la guardada (C-6)
+  trackStart({ game: GAME_ID, mode: 'solo', players: 1 }); // señal de uso para el panel (D-44)
+  montarSolo(partida);
+}
+
+/** Monta la pantalla de juego; sirve para empezar y para retomar (con lo guardado). */
+function montarSolo(partida) {
+  soltarSolo?.();
+  const p = generarLinea(partida.codigo, 1, { tema: partida.tema, lang, excluir: partida.skip });
+  showScreen('screen-solo');
+  keepAwake();
+  soltarSolo = jugarSolo($('#solo-juego'), {
+    mod: uiLinea, p, lang, T, fmt, el, SFX, vibrate,
+    jugadas: partida.jugadas, ms: partida.ms || 0,
+    guardar: ({ jugadas, ms }) => { partida.jugadas = jugadas; partida.ms = ms; store.save(partida); },
+    alTerminar: r => terminarSolo(partida, p, r),
+    cron: t => { $('#solo-cron').textContent = t; },
+  });
+}
+
+function terminarSolo(partida, p, { s, t, ms, estado }) {
+  soltarSolo = null;
+  partida.ms = ms; partida.done = true;
+  store.save(partida);   // terminada: ya no se ofrece retomarla (C-6)
+  const deck = getDeck(partida.tema);
+  const { nuevo, antes } = recordSolo.anotar(partida.tema, { s, ms });
+  // Un cero no se celebra como récord aunque sea la primera partida de la temática
+  const celebrar = nuevo && s > 0;
+  showScreen('screen-solo-result');
+  $('#sr-trophy').textContent = s === 100 ? '🏆' : celebrar ? '🏅' : s >= 50 ? '✅' : '😵';
+  $('#sr-title').textContent = s === 100 ? T.soloPerfect : T.soloDone;
+  $('#sr-puntos').textContent = s;
+  $('#sr-sub').textContent = fmt(T.soloResult, { ok: estado.aciertos, n: estado.marcas.length, t: mmss(ms) });
+  $('#sr-record').textContent = celebrar ? T.newRecord : antes ? fmt(T.prevRecord, { tema: deck.name[lang], s: antes.s, t: mmss(antes.ms) }) : '';
+  $('#sr-record').hidden = !$('#sr-record').textContent;
+  $('#sr-tarjeta').textContent = t;
+  // La línea como quedó, con los errores en rojo; plegada, para que los botones se vean (C-8)
+  const linea = $('#sr-line'); linea.innerHTML = '';
+  for (const c of estado.linea) {
+    linea.append(el('div', { class: 'event' + (c.ok === false ? ' fallo' : '') },
+      el('span', { class: 'y' }, yearLabel(c.year, lang)), el('span', { class: 'em' }, c.emoji), el('span', { class: 't' }, c.texto)));
+  }
+  $('#sr-replay').open = false;
+  if (s >= 50 || celebrar) { confetti({ count: s === 100 || celebrar ? 220 : 120, duration: 3000 }); SFX.win(); } else SFX.timeUp();
+  const box = $('#sr-actions'); box.innerHTML = '';
+  box.append(
+    el('button', { class: 'btn btn--yellow', id: 'btn-solo-otra', onClick: () => { SFX.tap(); empezarSolo(partida.tema); } }, T.playAgain),
+    el('button', { class: 'btn btn--ghost', onClick: () => { SFX.tap(); clearSession(); renderResumeSlot(); showScreen('screen-intro'); } }, T.changeMode),
+    el('a', { class: 'btn btn--ghost', href: '../' }, T.backMenu),
+  );
 }
 
 function init() {
@@ -870,5 +960,5 @@ function init() {
 }
 init();
 // Gancho de depuración (solo lectura) para pruebas automatizadas (canon C-14).
-window.__ldt = { view: () => (M ? view() : null), match: () => M, session: () => S };
+window.__ldt = { view: () => (M ? view() : null), match: () => M, session: () => S, solo: () => { const x = loadSession(); return esPartidaSolo(x) ? x : null; } };
 void correctSlot;

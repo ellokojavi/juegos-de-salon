@@ -62,24 +62,6 @@ const fin = await v();
 console.log('fin local:', JSON.stringify(fin), '| pantalla:', await b.active());
 await sleep(800); await b.shot('06-result');
 console.log('resultado:', await b.evaluate(`document.getElementById('result-title').textContent+' | '+document.getElementById('result-sub').textContent+' | '+document.getElementById('result-ranking').innerText.replace(/\\n/g,' · ')`));
-// ---------- CONTRA EL CELULAR ----------
-await b.go('http://localhost:8765/linea-de-tiempo/', 1200);
-await b.evaluate(`document.querySelectorAll('.mode')[2].click(); 1`); await sleep(300);
-await b.evaluate(`(()=>{document.querySelector('#setup-form input').value='Javi';document.querySelector('#setup-form input').dispatchEvent(new Event('input',{bubbles:true}));return 1})()`);
-await b.evaluate(`(()=>{const x=[...document.querySelectorAll('#setup-form .seg button')].find(e=>/Mano propia|Own hand/.test(e.textContent));if(x)x.click();return 1})()`); await sleep(150);
-await clickText('#setup-form .seg button', 'Difícil'); await sleep(100);
-await click('#setup-actions .btn'); await sleep(900);
-console.log('cpu inicio:', JSON.stringify(await v())); await b.shot('07-cpu');
-guard = 0;
-while (guard++ < 80) {
-  const s = await v(); if (s.done) break;
-  if (s.current === 'B') { await sleep(900); continue; }
-  const r = await playTurn(true);
-  if (r !== 'ok') { console.log('corte cpu:', r, JSON.stringify(s)); break; }
-  await sleep(400);
-}
-console.log('fin cpu:', JSON.stringify(await v()), '| pantalla:', await b.active());
-await sleep(700); await b.shot('08-cpu-result');
-console.log('resultado cpu:', await b.evaluate(`document.getElementById('result-title').textContent+' | '+document.getElementById('result-sub').textContent`));
+// Jugar solo tiene su propio guion (linea-de-tiempo-solo.mjs): es la ⏳ Línea Relámpago (D-142)
 console.log('errors:', JSON.stringify(b.errors), JSON.stringify(b.logs));
 b.close();

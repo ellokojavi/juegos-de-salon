@@ -27,9 +27,12 @@ export const mazo = id => TODOS.find(d => d.id === id) || DECKS[0];
  * `n` cartas de la temática, con años distintos entre sí y, si se pide, separadas por al
  * menos `separacion` años para que ordenar no dependa de adivinar el mismo año.
  */
-export function cartas(a, deckId, n, { separacion = 0, lang = 'es' } = {}) {
+export function cartas(a, deckId, n, { separacion = 0, lang = 'es', excluir = null } = {}) {
   const out = [];
-  for (const c of a.barajar(mazo(deckId).cards)) {
+  // `excluir`: ids vistos hace poco en el modo solo de Línea de Tiempo (D-34, D-142). La copa no lo usa.
+  const fuera = excluir && excluir.length ? new Set(excluir) : null;
+  const todas = fuera ? mazo(deckId).cards.filter(c => !fuera.has(c.id)) : mazo(deckId).cards;
+  for (const c of a.barajar(todas)) {
     if (out.some(o => Math.abs(o.year - c.year) <= separacion - 1 || o.year === c.year)) continue;
     out.push({ id: c.id, year: c.year, emoji: c.emoji, texto: c[lang] || c.es });
     if (out.length === n) break;

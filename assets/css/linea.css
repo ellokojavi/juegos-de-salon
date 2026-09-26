@@ -107,3 +107,10 @@ body.arrastrando .place-row { opacity: 0; pointer-events: none; }
 .vilo-carta .y { font: 900 1.35rem var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); }
 @keyframes alzar { from { transform: translate(-50%, -100%) scale(0.55); } to { transform: translate(-50%, -100%) scale(1); } }
 @media (prefers-reduced-motion: reduce) { .vilo-carta { animation: none; } }
+/* ---------- ⏳ Línea Relámpago (copa/juegos/ui-linea.js) ----------
+   La juegan La Copa y el modo solo de Línea de Tiempo (D-142): la carta mal puesta queda en
+   su lugar, marcada en rojo. */
+.lt-juego .status { text-align: center; margin: 0 0 8px; }
+.lt-juego .status .sub { color: var(--muted); font-weight: 800; font-size: 0.9rem; }
+.lt-juego .line-wrap { padding: 2px; margin-top: 2px; }
+.event.fallo { border-color: rgba(255, 46, 136, 0.7); box-shadow: 0 0 10px rgba(255, 46, 136, 0.25); }
