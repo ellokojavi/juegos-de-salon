@@ -81,7 +81,7 @@ function errorDe(e) {
     pin: 'errPinWrong', 'nombre-repetido': 'errRepetido', llena: 'errLlena', 'no-existe': 'errNoExiste',
     ventana: 'errVentana', 'ya-jugado': 'errYaJugado', comodin: 'errComodin', permiso: 'errPermiso',
     config: 'errConfig', offline: 'errOffline', busy: 'errOffline', cerrada: 'errCerrada',
-    reporte: 'errReport', empezada: 'errEmpezada', faltan: 'errFaltan', alias: 'errAlias',
+    reporte: 'errReport', empezada: 'errEmpezada', terminada: 'errTerminada', faltan: 'errFaltan', alias: 'errAlias',
   };
   if (!mapa[code]) console.error(e);
   return T[mapa[code] || 'errNet'];
@@ -990,6 +990,32 @@ function admin({ forzar = false } = {}) {
     !terminada(meta, now) ? msg(T.msgToday, mensajeHoy, 'msg-hoy') : null,
     d >= 1 && !terminada(meta, now) ? msg(T.msgTable, mensajeTabla, 'msg-tabla') : null,
     terminada(meta, now) ? msg(T.msgFinal, mensajeFinal, 'msg-final') : null));
+
+  // El nombre de la copa se puede cambiar mientras no termine (D-148); el link sigue igual
+  if (!terminada(meta, now)) {
+    // Sin etiqueta a la vista: el título del panel ya lo dice
+    const nombre = campo('', { value: meta.name, maxlength: String(COPA_MAX), 'aria-label': T.fCopa }, { contador: true });
+    nombre.nodo.querySelector('label').remove();
+    const nombreErr = el('div', { class: 'form-error', role: 'alert' });
+    nombre.nodo.hidden = true;
+    const cambiar = el('button', { class: 'btn btn--ghost btn--sm', id: 'btn-nombre', onClick: () => {
+      SFX.tap(); nombre.nodo.hidden = false; cambiar.hidden = true; nombre.input.focus(); nombre.input.select();
+    } }, `✏️ ${T.nameEdit}`);
+    nombre.nodo.append(el('div', { class: 'btn-row' },
+      accion(T.nameSave, 'btn-nombre-ok', async () => {
+        const n = limpiarNombre(nombre.input.value, COPA_MAX);
+        if (!n) { avisoError(nombreErr, T.errCopa); throw { code: 'cancelado' }; }
+        if (n !== meta.name) await store.renombrarCopa(S.code, n);
+        admin({ forzar: true });
+        if (n !== meta.name) { SFX.reveal(); toast(fmt(T.nameDone, { copa: n })); }
+      }, 'btn btn--yellow btn--sm'),
+      el('button', { class: 'btn btn--ghost btn--sm', id: 'btn-nombre-no', onClick: () => { SFX.tap(); admin({ forzar: true }); } }, T.nameCancel)),
+      nombreErr);
+    poner(body, el('div', { class: 'panel stack', id: 'admin-nombre' },
+      el('p', { class: 'lead', style: 'margin:0' }, T.fCopa),
+      el('p', { class: 'muted', style: 'margin:0' }, fmt(T.nameIs, { copa: meta.name })),
+      cambiar, nombre.nodo));
+  }
 
   // El inicio se puede mover a hoy o mañana mientras nadie haya jugado (D-110)
   if (sinEmpezar(Lc) && !terminada(meta, now)) {

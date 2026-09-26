@@ -166,6 +166,11 @@ export function createFirebaseStore() {
       await escribir({ [`torneos/${code}/meta`]: meta, ...(meta.alias ? { [`torneoAlias/${meta.alias}`]: { code, hasta: aliasHasta(meta) } } : {}) }, 'empezada');
     },
 
+    /** Cambiar el nombre de la copa (D-148): solo su admin y mientras no termine. */
+    async renombrarCopa(code, name) {
+      await escribir({ [`torneos/${code}/meta/name`]: name }, 'terminada');
+    },
+
     async renombrar(code, pid, name) {
       await escribir({ [`torneos/${code}/players/${pid}/name`]: name });
     },

@@ -1889,3 +1889,19 @@ provisoria la tabla: sus puntos de ese día ya no cambian. El número de día de
 mensaje) pasa a ser el último día que muestra la tabla (`ultimoDiaVisto`), no el de hoy (dilema
 #67, decisión del dueño): la marca y el número hablan del mismo día. La línea "⏳ ¡Día N en
 curso!" del mensaje sigue diciendo el día que corre.
+
+## D-148 · El admin puede cambiar el nombre de la copa
+**Fecha:** 2026-09-26 · **Estado:** vigente
+**Decisión:** En Administrar, un panel "Nombre de la copa" muestra cómo se llama y ofrece
+"✏️ Cambiar nombre": el mismo campo de 1 a 40 caracteres con contador de cuando se crea (D-119),
+con Guardar y Cancelar. Se puede mientras la copa no termine. Las reglas de Firebase suman un
+`.write` propio en `meta/name` para el admin, con `now < meta/end`; la regla de `meta` entero sigue
+exigiendo el mismo nombre, así mover el inicio no lo cambia de paso.
+**Por qué:** lo pidió el dueño. El link no depende del nombre (código o alias, D-121), así que
+cambiarlo no rompe nada de lo que ya se compartió.
+**Alternativas descartadas:** permitirlo también con la copa terminada: el resumen final ya se
+compartió con ese nombre y el podio quedaría con otro.
+**Consecuencias:** los mensajes que ya se mandaron por WhatsApp siguen con el nombre viejo. La
+confirmación para eliminar la copa pide escribir el nombre de ese momento. Hay que publicar las
+reglas (`node tools/reglas.mjs publicar`) para que el botón funcione en las copas de verdad; en las
+de prueba (almacén local) funciona sin eso.
