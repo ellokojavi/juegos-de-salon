@@ -283,7 +283,7 @@ button.md-fila { cursor: pointer; }
 /* Los dibujos de las reglas de Tango y Zip, del mismo tamaño que el de Reinas */
 .tan-ej { display: grid; gap: 6px; }
 .tan-ej span { position: relative; width: 28px; height: 28px; border-radius: 5px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.1); display: grid; place-items: center; font-size: 14px; line-height: 1; }
-.tan-ej span.choque { box-shadow: inset 0 0 0 2px var(--red); background: rgba(224, 36, 60, 0.25); }
+.tan-ej span.choque, .tan-ej span.choque.sol { box-shadow: inset 0 0 0 2px var(--red); background: rgba(224, 36, 60, 0.25); }
 .tan-ej i { position: absolute; z-index: 2; display: grid; place-items: center; width: 14px; height: 14px; border-radius: 50%; font: 900 0.7rem/1 system-ui, -apple-system, 'Segoe UI', sans-serif; font-style: normal; box-shadow: 0 0 0 1px var(--bg1); }
 .tan-ej i.igual { background: var(--cyan); color: #00312d; }
 .tan-ej i.distinto { background: var(--pink); color: #fff; }
@@ -299,9 +299,15 @@ button.md-fila { cursor: pointer; }
 .zip-ej .zip-trazo { z-index: 1; }
 .zip-ej.fin .zip-trazo polyline { stroke: var(--lime); }
 .tan-grid { gap: 4px; }
-.tan { position: relative; aspect-ratio: 1; min-width: 0; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.1); font-size: clamp(1.2rem, 7vw, 2rem); cursor: pointer; padding: 0; display: grid; place-items: center; }
+.tan { position: relative; aspect-ratio: 1; color: inherit; min-width: 0; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.1); font-size: clamp(1.2rem, 7vw, 2rem); cursor: pointer; padding: 0; display: grid; place-items: center; }
 .tan.dada { background: rgba(255,255,255,0.28); cursor: default; }
-.tan.choque { box-shadow: inset 0 0 0 3px var(--red); background: rgba(224, 36, 60, 0.25); }
+/* Día y noche (D-144): el sol y la luna son emojis amarillos; el fondo y la luna plateada los separan */
+.tan[data-v="1"], .tan-ej span.sol { background: rgba(255, 190, 60, 0.22); border-color: rgba(255, 190, 60, 0.5); }
+.tan[data-v="2"], .tan-ej span.luna { background: rgba(14, 20, 72, 0.88); border-color: rgba(130, 160, 255, 0.45); }
+.tan.dada[data-v="1"] { background: rgba(255, 190, 60, 0.45); }
+.tan.dada[data-v="2"] { background: rgba(38, 54, 150, 0.95); }
+.tan-ico.luna { filter: grayscale(1) brightness(1.5); }
+.tan.choque, .tan.choque[data-v] { box-shadow: inset 0 0 0 3px var(--red); background: rgba(224, 36, 60, 0.25); }
 .tan-marca { position: absolute; z-index: 2; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; font: 900 1.35rem/1 system-ui, -apple-system, 'Segoe UI', sans-serif; box-shadow: 0 0 0 2px var(--bg1), 0 2px 6px rgba(0,0,0,0.4); pointer-events: none; }
 /* Igual y distinto con colores propios, además del signo (D-112): el ≠ casi no se distinguía del = */
 .tan-marca.igual { background: var(--cyan); color: #00312d; }
@@ -332,7 +338,7 @@ button.md-fila { cursor: pointer; }
 .zip-reloj { font: 900 1.15rem var(--font-num); font-variant-numeric: tabular-nums; }
 .zip-reloj.poco { color: var(--pink); animation: pulse 1s ease-in-out infinite; }
 .zip-grid.fin .zc.on { background: rgba(157, 255, 58, 0.25); }
-.tan.revelada { background: rgba(46, 230, 214, 0.22); cursor: default; }
+.tan.revelada { box-shadow: inset 0 0 0 3px var(--cyan); cursor: default; }
 .tango-acciones .btn, .zip-acciones .btn { white-space: normal; line-height: 1.15; }
 .tango-acciones .btn.armado, .zip-acciones .btn.armado { border-color: var(--yellow); color: var(--yellow); background: rgba(255, 210, 63, 0.12); }
 .tips ul { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
