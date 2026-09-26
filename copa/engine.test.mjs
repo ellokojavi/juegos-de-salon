@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {
   CALENDARIOS, PUNTOS, esCodigo, codigoAlAzar, pidAlAzar, PID, limpiarNombre, claveNombre, esPin, hashPin,
   fechaEn, sumarDias, medianoche, ventanas, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta,
-  aliasLimpio, esAlias, menosJuegos, aliasHasta, ALIAS_LIBRE_MS,
+  aliasLimpio, esAlias, menosJuegos, provisoria, ultimoDiaVisto, aliasHasta, ALIAS_LIBRE_MS,
   estadoDia, puedeComodin, multiplicador, posicionesDelDia, tabla, faltan, medallas, reloj, mmss, juegoDelDia, evolucion,
 } from './engine.js';
 
@@ -205,6 +205,22 @@ test('faltan: quién no jugó un día abierto', () => {
   const L = { meta: meta7, players, results: { 1: { aaaaaa: { s: 1, ms: 1 } } } };
   assert.deepEqual(faltan(L, 1, dia(0)).map(j => j.name), ['Javi', 'Pancho', 'Tomás']);
   assert.deepEqual(faltan(L, 1, dia(2)), []);
+});
+
+test('provisoria: la tabla puede cambiar mientras alguien no juega el último día que se ve', () => {
+  const r1 = { aaaaaa: { s: 9, ms: 1 }, bbbbbb: { s: 5, ms: 1 } };
+  const L = { meta: meta7, players, results: { 1: r1 } };
+  const prov = (yo, now, Lx = L) => provisoria(Lx, tabla(Lx, yo, now), now);
+  assert.equal(prov('aaaaaa', dia(0)), true);  // faltan dos en el día 1, que sigue abierto
+  assert.equal(prov('aaaaaa', dia(1)), true);  // día de gracia: todavía pueden jugarlo
+  assert.equal(prov('aaaaaa', dia(2)), false); // el día 1 cerró: los que faltaron quedan con (-1J)
+  assert.equal(prov('cccccc', dia(0)), false); // quien no jugó no ve el día: la tabla no muestra nada
+  const todos = { meta: meta7, players, results: { 1: { ...r1, cccccc: { s: 3, ms: 1 }, dddddd: { s: 1, ms: 1 } } } };
+  assert.equal(prov('aaaaaa', dia(0), todos), false); // ya jugaron todos
+  // El número del título: el último día que se ve (#67)
+  assert.equal(ultimoDiaVisto(tabla(L, 'aaaaaa', dia(0))), 1);
+  assert.equal(ultimoDiaVisto(tabla(L, 'aaaaaa', dia(1))), 1); // el día 2 no lo ha jugado: su tabla llega al 1
+  assert.equal(ultimoDiaVisto(tabla(L, 'cccccc', dia(0))), 0);
 });
 
 test('medallas', () => {
