@@ -466,9 +466,19 @@ await b.go(`${BASE}?practica=${id}&prueba&labs${id === 'zip' ? '&zipSeg=12&semil
       const g=document.querySelector('.zip-grid');const top0=g.getBoundingClientRect().top;
       for(const i of f)g.querySelector('.zc[data-i="'+i+'"]').dispatchEvent(new MouseEvent('click',{bubbles:true,detail:0}));
       const h=g.querySelector('.zc.cabeza');const r={quieta:g.getBoundingClientRect().top===top0,aviso:!!document.querySelector('.zip-aviso .aviso.mal'),num:h.innerText.trim()!=='',tapa:getComputedStyle(h,'::after').content!=='none'};
-      g.querySelector('.zc[data-i="'+ini+'"]').dispatchEvent(new MouseEvent('click',{bubbles:true,detail:0}));return JSON.stringify(r)})()`).then(JSON.parse);
+      return JSON.stringify(r)})()`).then(JSON.parse);
     ok(z.aviso && z.quieta, 'Zip: el aviso de casillas faltantes aparece bajo la grilla sin moverla');
     ok(z.num && !z.tapa, 'Zip: la cabeza del trazo sobre un número deja ver el número');
+    // Borrar todo, como en Tango: el primer toque pide confirmación y el segundo deja solo el 1
+    const bz = await ev(`(async()=>{const g=document.querySelector('.zip-grid'),b=document.getElementById('btn-borrar'),w=ms=>new Promise(r=>setTimeout(r,ms));
+      const antes=g.querySelectorAll('.zc.on').length;b.click();await w(50);
+      const cab=g.querySelector('.zc.cabeza');cab.dispatchEvent(new MouseEvent('click',{bubbles:true,detail:0}));await w(50);const suelta=!b.classList.contains('armado');
+      b.click();await w(50);const armado=b.classList.contains('armado')&&g.querySelectorAll('.zc.on').length===antes;
+      b.click();await w(50);const on=[...g.querySelectorAll('.zc.on')];
+      return JSON.stringify({antes,suelta,armado,quedan:on.length,uno:on[0]?.innerText.trim(),apagado:b.disabled})})()`).then(JSON.parse);
+    ok(bz.antes > 1 && bz.armado, 'Zip: el primer toque de Borrar todo pide confirmación y no borra');
+    ok(bz.suelta, 'Zip: tocar la grilla con Borrar todo armado lo desarma, como en Tango');
+    ok(bz.quedan === 1 && bz.uno === '1' && bz.apagado, 'Zip: el segundo toque deja solo el 1 y el botón se apaga');
   }
   if (id === 'reinas') {
     // El toque largo pone una X, con el puntero de verdad (D-103)
