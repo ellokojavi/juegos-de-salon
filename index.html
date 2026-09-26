@@ -76,9 +76,36 @@
     /* `animation: slideUp` anima opacity hasta 1 y con `both` lo deja puesto: sin apagar la
        animación, el opacity: 0.55 de acá quedaba tapado y la tarjeta se veía intacta aunque no
        se pudiera tocar (D-88). */
-    .game-card.soon { opacity: 0.55; pointer-events: none; animation: none; }
+    .game-card.soon { pointer-events: none; animation: none; }
+    /* Se apaga todo menos "Próximamente", que es lo que explica por qué no se abre */
+    .game-card.soon .emoji, .game-card.soon .tag, .game-card.soon .meta, .game-card.soon h2 > span:first-child { opacity: 0.55; }
     .game-card.soon .go { visibility: hidden; }
-    .game-card .meta span.proximamente { background: var(--yellow); color: #3a1200; }
+    .game-card h2 { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 10px; }
+    .game-card h2 .proximamente {
+      font: 900 0.78rem var(--font-body); letter-spacing: 0; text-transform: none; white-space: nowrap;
+      padding: 3px 9px; border-radius: 999px; background: var(--yellow); color: #3a1200;
+    }
+    /* Filtros (D-141): cuántos juegan, en un control de tres, y el tipo, en fichas que se
+       prenden y se apagan. Todo en fila que se envuelve: nada de scroll horizontal (C-8). */
+    .filtros { display: grid; gap: 10px; margin-top: 4px; }
+    .filtros .grupo { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 4px; border-radius: 999px; background: var(--glass); border: 1px solid var(--glass-border); }
+    .filtros .grupo button, .filtros .tipos button {
+      min-height: 44px; border: 0; cursor: pointer; font: 900 0.9rem var(--font-body); color: var(--muted);
+      background: transparent; border-radius: 999px; padding: 6px 10px; transition: background 0.15s, color 0.15s, transform 0.1s;
+    }
+    .filtros .grupo button { padding: 6px 4px; white-space: nowrap; }
+    .filtros .grupo button.on { background: var(--yellow); color: #3a1200; }
+    .filtros .tipos { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+    .filtros .tipos button { background: var(--glass); border: 1px solid var(--glass-border); color: var(--ink); padding: 6px 14px; }
+    .filtros .tipos button.on { background: var(--cyan); border-color: transparent; color: #03302c; }
+    .filtros button:active { transform: scale(0.96); }
+    .filtros-cuenta { display: flex; flex-wrap: wrap; gap: 4px 10px; justify-content: center; align-items: center; color: var(--muted); font-weight: 700; font-size: 0.9rem; margin: 0; min-height: 44px; }
+    .filtros-cuenta[hidden] { display: none; }
+    .link-btn { background: none; border: 0; color: var(--yellow); font: 900 0.9rem var(--font-body); text-decoration: underline; cursor: pointer; min-height: 44px; padding: 0 6px; }
+    .sin-juegos { text-align: center; }
+    .sin-juegos p { margin: 0 0 10px; }
+    .game-card[hidden] { display: none; }
+    .game-card .meta span.idioma { background: rgba(46, 230, 214, 0.18); }
     footer { margin-top: auto; padding-top: 28px; text-align: center; color: var(--muted); font-size: 0.85rem; }
     .footer-msg { min-height: 3.2em; font-size: 1rem; line-height: 1.5; color: var(--ink); opacity: 0.9; transition: opacity 0.5s ease, transform 0.5s ease; font-weight: 700; }
     .footer-msg.out { opacity: 0; transform: translateY(6px); }
@@ -93,6 +120,8 @@
       <p class="sub" data-i18n="appSub">Juegos tradicionales llevados a tu celular para pasar el tiempo solo o con amigos.</p>
     </header>
 
+    <section class="filtros" id="filtros"></section>
+    <p class="filtros-cuenta" id="filtros-cuenta" aria-live="polite" hidden></p>
     <section class="games" id="games" aria-label="Lista de juegos"></section>
 
     <footer>
@@ -102,7 +131,7 @@
   </main>
 
   <script type="module">
-    import { GAMES } from './assets/js/games.js';
+    import { PORTADA, TIPOS, rangoJugadores } from './assets/js/games.js';
     import { sparkles, el, shareButton } from './assets/js/ui.js';
     import { getLang, langToggle, applyStatic, pickLang, COMMON, homeUrl } from './assets/js/i18n.js';
     import { FRASES } from './assets/js/frases.js';
@@ -110,7 +139,7 @@
     sparkles();
     initSound();
     document.getElementById('sound-slot').append(soundToggle());
-    document.addEventListener('click', e => { if (e.target.closest('.game-card, .lang-toggle button')) SFX.tap(); });
+    document.addEventListener('click', e => { if (e.target.closest('.game-card, .lang-toggle button, .filtros button, .link-btn')) SFX.tap(); });
     const lang = getLang();
     document.documentElement.lang = lang;
     const T = COMMON[lang];
@@ -122,25 +151,88 @@
       title: T.appTitle, text: T.shareText, url: homeUrl(lang), label: T.share,
     }));
 
-    // 1) Lo importante primero: la lista de juegos.
+    // 1) Lo importante primero: la lista de juegos, con los minijuegos sueltos al final (D-141).
     const list = document.getElementById('games');
-    GAMES.forEach((g, i) => {
+    const tarjetas = PORTADA.map((g, i) => {
+      const [min, max] = rangoJugadores(g.players);
       // Un juego que no está disponible se ve, pero no se abre: sin href, ni con el teclado (C-5)
-      const card = el('a', { class: 'game-card' + (g.available ? '' : ' soon'), href: g.available ? g.path : null, 'aria-disabled': g.available ? null : 'true', style: `animation-delay:${i * 80}ms` },
+      const card = el('a', { class: 'game-card' + (g.available ? '' : ' soon'), href: g.available ? g.path : null, 'aria-disabled': g.available ? null : 'true', 'data-id': g.id, style: `animation-delay:${i * 60}ms` },
         el('div', { class: 'emoji' }, g.emoji),
         el('div', { class: 'texto' },
-          el('h2', {}, pickLang(g.name, lang)),
+          // "Próximamente" va pegado al nombre: abajo, entre las píldoras, no se veía
+          el('h2', {}, el('span', {}, pickLang(g.name, lang)), !g.available && el('span', { class: 'proximamente' }, T.soon)),
           el('div', { class: 'tag' }, pickLang(g.tagline, lang)),
         ),
         el('div', { class: 'meta' },
-          g.players && el('span', {}, `👥 ${g.players} ${T.players}`),
+          g.players && el('span', {}, `👥 ${g.players} ${max === 1 ? T.player : T.players}`),
           g.duration && el('span', {}, `⏱ ${g.duration} ${g.durationUnit ? pickLang(g.durationUnit, lang) : T.minutes}`),
-          !g.available && el('span', { class: 'proximamente' }, T.soon),
+          // Lo que por ahora se juega solo en español lo dice antes de abrirlo (D-98)
+          g.available && g.idiomas && !g.idiomas.includes(lang) && el('span', { class: 'idioma' }, `🇪🇸 ${T.onlySpanish}`),
         ),
         el('div', { class: 'go' }, '›'),
       );
       list.append(card);
+      return { g, card, min, max };
     });
+
+    // Filtros (D-141): la lista ya es larga. Van en la URL (?jugadores=solo&tipo=logica), así
+    // volver desde un juego los deja como estaban y un link filtrado se puede compartir.
+    try {
+      const JUGADORES = { todos: T.filterAll, solo: `🧍 ${T.filterSolo}`, amigos: `👥 ${T.filterGroup}` };
+      const q = new URLSearchParams(location.search);
+      const filtro = { jugadores: JUGADORES[q.get('jugadores')] ? q.get('jugadores') : 'todos', tipo: TIPOS[q.get('tipo')] ? q.get('tipo') : null };
+      const caben = ({ g, min, max }) =>
+        (filtro.jugadores === 'todos' || (filtro.jugadores === 'solo' ? min === 1 : max >= 2)) &&
+        (!filtro.tipo || (g.tipos || []).includes(filtro.tipo));
+      const caja = document.getElementById('filtros');
+      caja.setAttribute('aria-label', T.filters);
+      const grupo = el('div', { class: 'grupo', role: 'group', 'aria-label': T.filters });
+      const tipos = el('div', { class: 'tipos', role: 'group', 'aria-label': T.filters });
+      const cuenta = document.getElementById('filtros-cuenta');
+      const vacio = el('div', { class: 'panel sin-juegos', hidden: true },
+        el('p', {}, T.noMatch),
+        el('button', { class: 'btn btn--ghost btn--sm', onClick: () => limpiar() }, T.clearFilters));
+      list.after(vacio);
+      const botones = [];
+      for (const [id, texto] of Object.entries(JUGADORES)) {
+        const b = el('button', { type: 'button', 'data-jugadores': id, onClick: () => { filtro.jugadores = id; aplicar(); } }, texto);
+        grupo.append(b); botones.push(b);
+      }
+      // Solo los tipos que tiene algún juego que se puede abrir: una ficha que deja la lista vacía no sirve
+      for (const [id, t] of Object.entries(TIPOS)) {
+        if (!PORTADA.some(g => g.available && (g.tipos || []).includes(id))) continue;
+        const b = el('button', { type: 'button', 'data-tipo': id, onClick: () => { filtro.tipo = filtro.tipo === id ? null : id; aplicar(); } }, `${t.emoji} ${pickLang(t.name, lang)}`);
+        tipos.append(b); botones.push(b);
+      }
+      caja.append(grupo, tipos);
+      const limpiar = () => { filtro.jugadores = 'todos'; filtro.tipo = null; aplicar(); };
+      const aplicar = (primera = false) => {
+        for (const b of botones) {
+          const on = b.dataset.jugadores ? b.dataset.jugadores === filtro.jugadores : b.dataset.tipo === filtro.tipo;
+          b.classList.toggle('on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false');
+        }
+        let n = 0;
+        for (const t of tarjetas) {
+          const ve = caben(t);
+          // Las que vuelven a aparecer entran escalonadas desde arriba, no con el retraso de su lugar original
+          if (!primera && ve && t.card.hidden) t.card.style.animationDelay = `${n * 40}ms`;
+          t.card.hidden = !ve;
+          if (ve) n++;
+        }
+        const filtrado = filtro.jugadores !== 'todos' || !!filtro.tipo;
+        cuenta.hidden = !filtrado || n === 0;
+        cuenta.replaceChildren(el('span', {}, T.shown.replace('{n}', n).replace('{total}', tarjetas.length)),
+          el('button', { class: 'link-btn', type: 'button', onClick: limpiar }, T.clearFilters));
+        vacio.hidden = n > 0;
+        const url = new URL(location.href);
+        url.searchParams.delete('jugadores'); url.searchParams.delete('tipo');
+        if (filtro.jugadores !== 'todos') url.searchParams.set('jugadores', filtro.jugadores);
+        if (filtro.tipo) url.searchParams.set('tipo', filtro.tipo);
+        history.replaceState(history.state, '', url.pathname + url.search + url.hash);
+      };
+      aplicar(true);
+      window.__portada = { get filtro() { return { ...filtro }; }, get visibles() { return tarjetas.filter(t => !t.card.hidden).map(t => t.g.id); } };
+    } catch (e) { console.warn('filtros del menú:', e); }
 
     // 2) Decoraciones: si algo falla aquí, el menú sigue funcionando.
     try {
