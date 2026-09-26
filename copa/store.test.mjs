@@ -10,7 +10,7 @@ globalThis.sessionStorage = memoria();
 globalThis.addEventListener ||= () => {};
 
 const { createLocalStore } = await import('./store-local.js');
-const { nuevaMeta, hashPin, DIA_MS, fechaEn, moverInicio, sumarDias, inscripcionAbierta, pasarDia, diaActual } = await import('./engine.js');
+const { nuevaMeta, hashPin, DIA_MS, fechaEn, moverInicio, sumarDias, inscripcionAbierta, pasarDia, diaActual, terminada } = await import('./engine.js');
 const { createCuenta } = await import('./cuenta.js');
 
 let n = 0;
@@ -77,6 +77,10 @@ await test('copa del laboratorio: el admin la pasa al día siguiente aunque ya s
   // Lo jugado sigue ahí, y el día 1 sigue abierto en su día de gracia
   assert.ok(L3.started[1].aaaaaa);
   await admin.resultado(C3, 1, 'aaaaaa', { s: 50, ms: 1000, t: '', r: '50/100' });
+  // Terminada, su nombre ya no cambia (D-148)
+  let m = L3.meta;
+  while (!terminada(m, admin.now())) { m = pasarDia(m); await admin.reprogramar(C3, m); }
+  await rechaza(admin.renombrarCopa(C3, 'Otro nombre'), 'terminada');
 });
 
 await test('eliminar la copa: solo el admin (D-117)', async () => {
@@ -151,6 +155,12 @@ await test('admin: sacar, renombrar y cambiar PIN; nadie más', async () => {
   await admin.cambiarPin(CODE, 'bbbbbb', await hashPin(CODE, 'bbbbbb', '9999'));
   await rechaza(otro.comodin(CODE, 2, 'bbbbbb'), 'permiso'); // su asiento se cayó
   await otro.sentarse(CODE, 'bbbbbb', await hashPin(CODE, 'bbbbbb', '9999'));
+});
+
+await test('renombrar la copa: solo su admin y mientras no termine', async () => {
+  await rechaza(otro.renombrarCopa(CODE, 'Otra copa'), 'permiso');
+  await admin.renombrarCopa(CODE, 'La copa nueva');
+  assert.equal((await admin.leer(CODE)).meta.name, 'La copa nueva');
 });
 
 await test('escuchar avisa los cambios', async () => {

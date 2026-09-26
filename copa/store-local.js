@@ -7,7 +7,7 @@
  * `?prueba` en la URL. Imita las reglas del servidor que importan para jugar: escribir una
  * sola vez, la ventana de cada día, el PIN y el comodín antes de empezar.
  */
-import { aliasHasta, MAX_JUGADORES, faltaGente, claveNombre, esCodigo, abierto, puedeComodin, inscripcionAbierta, sinEmpezar } from './engine.js';
+import { aliasHasta, MAX_JUGADORES, faltaGente, claveNombre, esCodigo, abierto, puedeComodin, inscripcionAbierta, sinEmpezar, terminada } from './engine.js';
 
 const KEY = 'juegos-de-salon:copa:prueba';
 const RELOJ = 'juegos-de-salon:copa:prueba:reloj';
@@ -200,6 +200,16 @@ export function createLocalStore({ uid = null } = {}) {
         if (!L.meta.lab && meta.win[1].b <= now()) throw falla('ventana');
         L.meta = { ...meta, createdAt: L.meta.createdAt };
         if (meta.alias) { const al = leerAlias(); al[meta.alias] = { code, hasta: aliasHasta(meta) }; guardarAlias(al); }
+      });
+    },
+
+    /** Cambiar el nombre de la copa (D-148): solo su admin y mientras no termine. */
+    async renombrarCopa(code, name) {
+      return cambiar(db => {
+        const L = copa(db, code);
+        if (!esAdmin(L)) throw falla('permiso');
+        if (terminada(L.meta, now())) throw falla('terminada');
+        L.meta.name = name;
       });
     },
 
