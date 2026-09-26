@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.65.2 — 2026-09-25
+- **Portada: los filtros en dos filas y una línea antes de los juegos** (D-144). A 320 px los
+  filtros ya no se salen de la columna.
+- **Con el filtro «Solo», el juego abre directo en su modo solo** (D-145).
+
 ## 0.65.1 — 2026-09-25
 - **Tango: el sol y la luna ya no se confunden** (D-146). La casilla con sol es ámbar, la casilla
   con luna es azul noche y la luna se ve plateada, en el tablero y en el dibujo de las reglas.
