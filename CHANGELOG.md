@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.65.7 — 2026-09-26
+- **La Copa: la tabla dice "(provisoria)" mientras puede cambiar.** Si el último día que muestra
+  sigue abierto y alguien todavía no lo juega, el título es "Tabla de posiciones (provisoria) ·
+  día 3 de 7" en la imagen que se comparte, "Tabla (provisoria)" en el tablero, y también en el
+  mensaje de WhatsApp. Cuando juegan todos o el día cierra, vuelve a decir solo "Tabla de
+  posiciones".
+
 ## 0.65.6 — 2026-09-26
 - **La Copa: el día de gracia se lee entero.** En el calendario, la fila del día de ayer que
   todavía se puede jugar ponía el botón al lado del nombre: el nombre se cortaba ("Línea Rel…")

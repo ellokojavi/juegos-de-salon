@@ -28,7 +28,7 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
 | Final ×2 | El último día vale doble para todos. |
 | Resultados ocultos | Los puntajes de un día se ven después de jugarlo o cuando cierra. La tabla y el gráfico tampoco lo delatan: suman solo los días que ya puedes ver. |
 | Inscripción | Abierta hasta que empieza la final. Los días que ya cerraron quedan con 0. |
-| Tabla | Suma de puntos. Desempata quien ganó más días y después quien quedó mejor en la final. |
+| Tabla | Suma de puntos. Desempata quien ganó más días y después quien quedó mejor en la final. Es **provisoria** mientras el último día que muestra sigue abierto y alguien no lo ha jugado (D-147). |
 | Medallas | Campeón, más días ganados, la remontada (más puestos subidos desde la mitad) y el farolito rojo. |
 
 ## Los minijuegos
