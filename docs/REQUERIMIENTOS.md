@@ -39,7 +39,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | RP-27 | Una sala que se cancela se cierra en el acto: quien se va a propósito se despide, la sala queda sin nadie y se borra sola, y el panel deja de mostrarla viva. Cerrar la pestaña no cancela nada: esa partida se puede retomar (D-50). | ✅ v0.25 |
 | RP-31 | El panel muestra en vivo las partidas sin red que se están jugando (contra el celular, un celular, solo), con juego, modo, cuántos juegan y país, sin nombres (D-140). | ✅ v0.64.7 |
 | RP-32 | La portada ofrece los minijuegos de La Copa sueltos, de un jugador y sin copa: Conexiones, Toque y Fama: Palabra, ¿En qué año?, Reinas, Tango y Zip. En inglés y portugués la tarjeta avisa que se juegan en español (D-142). | ✅ v0.65 |
-| RP-33 | La portada se filtra por cuántos juegan (todos, solo, con amigos) y por tipo de juego; el filtro queda en la URL, dice cuántos juegos se ven y se quita con un toque (D-142). | ✅ v0.65 |
+| RP-33 | La portada se filtra por tipo de juego; el filtro queda en la URL, dice cuántos juegos se ven y se quita con un toque (D-142, D-149). | ✅ v0.65 |
 
 ## Cuarto Rey (CR)
 

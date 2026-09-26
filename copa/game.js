@@ -7,6 +7,7 @@
  * módulo de juegos/ui-*.js.
  *
  * URL: /copa/ (portada) · /copa/?K7Q2X (una copa) · /copa/?K7Q2X&prueba (sin Firebase).
+ * La misma pantalla sirve los minijuegos sueltos de la portada en /minijuegos/?reinas (D-149).
  */
 import { $, $$, el, vibrate, sparkles, keepAwake, confetti, shareLink, canShare } from '../assets/js/ui.js';
 import { applyStatic } from '../assets/js/i18n.js';
@@ -38,7 +39,14 @@ const PRUEBA = busqueda.includes('prueba');
 // la Copa de 3 días (D-100). ?tres se mantiene por los links que ya circulan.
 const LABS = busqueda.includes('labs');
 const TRES = PRUEBA || LABS || busqueda.includes('tres');
-const PRACTICA = new URLSearchParams(location.search).get('practica');
+// Los minijuegos sueltos de la portada viven en /minijuegos/?<id> (D-149): la misma pantalla,
+// pero fuera de una copa el link no dice "copa". /copa/?practica=<id> queda para el laboratorio.
+const SUELTO = document.body.hasAttribute('data-suelto');
+const PRACTICA = SUELTO
+  ? busqueda.find(x => !x.includes('=') && x !== 'prueba') || ''
+  : new URLSearchParams(location.search).get('practica');
+// Un link viejo a un minijuego suelto (/copa/?practica=reinas, sin &labs) se va a su lugar nuevo
+if (!SUELTO && PRACTICA && !LABS) location.replace(`../minijuegos/?${PRACTICA}${PRUEBA ? '&prueba' : ''}`);
 const SEMILLA = (new URLSearchParams(location.search).get('semilla') || '').toUpperCase();
 // Las demos del laboratorio (D-110): solo en el modo de prueba, con el almacén local
 const DEMO = PRUEBA ? new URLSearchParams(location.search).get('demo') : null;
@@ -1458,11 +1466,13 @@ const volverDePractica = () => (LABS
 
 function practica(id) {
   const J = MINIJUEGOS[id], mod = JUEGOS[id];
-  if (!J || !mod) { portada(); return; }
+  if (!J || !mod) { if (SUELTO) location.replace('../'); else portada(); return; }
   if (!LABS) document.title = `${J.nombre} ${J.emoji} · Juegos de Salón`;
+  if (SUELTO) $('#chip-juego').textContent = `${J.emoji} ${J.nombre}`;
   const semilla = esCodigo(SEMILLA) ? SEMILLA : codigoAlAzar();
   const zipSeg = new URLSearchParams(location.search).get('zipSeg');
-  history.replaceState(null, '', `${location.pathname}?practica=${id}&semilla=${semilla}${PRUEBA ? '&prueba' : ''}${LABS ? '&labs' : ''}${zipSeg ? `&zipSeg=${zipSeg}` : ''}`);
+  // Suelto, la semilla no va a la vista (D-142): el link queda en /minijuegos/?reinas
+  if (!SUELTO) history.replaceState(null, '', `${location.pathname}?practica=${id}&semilla=${semilla}${PRUEBA ? '&prueba' : ''}${LABS ? '&labs' : ''}${zipSeg ? `&zipSeg=${zipSeg}` : ''}`);
   S.juego = { d: 1, id, practica: true, semilla };
   mostrar('jugar');
   $('#jugar-head').innerHTML = '';
@@ -1564,7 +1574,7 @@ function resultadoPractica(id, semilla, r) {
   const J = MINIJUEGOS[id];
   mostrar('resultado');
   SFX.win();
-  const otra = `${location.pathname}?practica=${id}${PRUEBA ? '&prueba' : ''}${LABS ? '&labs' : ''}`;
+  const otra = SUELTO ? `${location.pathname}?${id}${PRUEBA ? '&prueba' : ''}` : `${location.pathname}?practica=${id}${PRUEBA ? '&prueba' : ''}${LABS ? '&labs' : ''}`;
   const body = $('#resultado-body');
   body.innerHTML = '';
   poner(body,
@@ -1677,8 +1687,8 @@ document.documentElement.lang = 'es';
 document.title = `${T.title} 🏆 · Juegos de Salón`;
 $('#sound-slot').append(soundToggle());
 // Mientras La Copa esté en el laboratorio, "volver" es volver ahí y no al menú (D-101)
-// Salvo el minijuego suelto que se abrió desde la portada (D-142), que vuelve a ella.
-if (LABS || !PRACTICA) {
+// Salvo el minijuego suelto de la portada (D-142, D-149), que vuelve a ella.
+if (!SUELTO) {
   $('#btn-menu').setAttribute('href', '../labs/');
   $('#btn-menu').textContent = T.backToLabsShort;
 }
@@ -1717,7 +1727,8 @@ async function demo(nombre) {
   await abrirCopa(e.code, { recienCreada: e.recien, pantalla: e.pantalla });
 }
 
-if (PRACTICA) practica(PRACTICA);
+if (SUELTO) practica(PRACTICA);
+else if (PRACTICA) { if (LABS) practica(PRACTICA); }
 else if (DEMO) demo(DEMO);
 else if (codigoUrl && esCodigo(codigoUrl)) abrirCopa(codigoUrl);
 else if (aliasUrl) abrirPorAlias(aliasUrl);
