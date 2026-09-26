@@ -39,7 +39,7 @@ MODULES = [
     'copa/juegos/ui-linea.js', 'copa/juegos/ui-numero.js', 'copa/juegos/ui-conexiones.js', 'copa/juegos/ui-reinas.js',
     'copa/juegos/ui-letras.js', 'copa/juegos/ui-zip.js', 'copa/juegos/ui-tango.js', 'copa/juegos/ui-anio.js', 'copa/juegos/ui-final.js', 'copa/juegos/solo.js',
 ]
-PAGES = { 'index.html': '', 'cuarto-rey/index.html': '../', 'toque-y-fama/index.html': '../', 'batalla-naval/index.html': '../', 'linea-de-tiempo/index.html': '../', 'ahorcado/index.html': '../', 'dudo/index.html': '../', 'julepe/index.html': '../', 'panel/index.html': '../', 'copa/index.html': '../', 'labs/index.html': '../' }
+PAGES = { 'index.html': '', 'cuarto-rey/index.html': '../', 'toque-y-fama/index.html': '../', 'batalla-naval/index.html': '../', 'linea-de-tiempo/index.html': '../', 'ahorcado/index.html': '../', 'dudo/index.html': '../', 'julepe/index.html': '../', 'panel/index.html': '../', 'copa/index.html': '../', 'minijuegos/index.html': '../', 'labs/index.html': '../' }
 
 def tarjetas_sociales():
     """Las etiquetas de Open Graph salen de games.js: se rehacen antes de estampar (D-72)."""

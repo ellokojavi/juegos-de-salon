@@ -7,7 +7,7 @@
  * Jugar solo es la ⏳ Línea Relámpago de La Copa (D-142): no pasa por el reductor, la monta
  * copa/juegos/solo.js con la pantalla de copa/juegos/ui-linea.js. Ver la sección "Jugar solo".
  */
-import { $, $$, el, vibrate, sparkles, keepAwake, confetti, shareLink, canShare, llegaSolo } from '../assets/js/ui.js';
+import { $, $$, el, vibrate, sparkles, keepAwake, confetti, shareLink, canShare } from '../assets/js/ui.js';
 import { getLang, langToggle, applyStatic, COMMON, withLang } from '../assets/js/i18n.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { failWith } from '../assets/js/transport/errors.js';
@@ -950,7 +950,6 @@ function init() {
   sparkles(12);
   renderModes();
   renderResumeSlot();
-  llegaSolo(() => renderSoloSetup()); // desde la portada filtrada en Solo (D-145)
   montarArrastre();
   const code = new URLSearchParams(location.search).get('sala');
   if (code && /^[A-Z]{4}$/i.test(code)) {
