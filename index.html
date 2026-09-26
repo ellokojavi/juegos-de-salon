@@ -88,6 +88,8 @@
     /* Filtros (D-142): cuántos juegan, en un control de tres, y el tipo, en fichas que se
        prenden y se apagan. Todo en fila que se envuelve: nada de scroll horizontal (C-8). */
     .filtros { display: grid; gap: 10px; margin-top: 4px; }
+    /* Sin esto, el control de tres se estira a su ancho mínimo y se pasa de la columna (U-11) */
+    .filtros > * { min-width: 0; }
     .filtros .grupo { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 4px; border-radius: 999px; background: var(--glass); border: 1px solid var(--glass-border); }
     .filtros .grupo button, .filtros .tipos button {
       min-height: 44px; border: 0; cursor: pointer; font: 900 0.9rem var(--font-body); color: var(--muted);
@@ -107,6 +109,12 @@
       .filtros .tipos { gap: 6px; }
       .filtros .tipos button { flex: 1 1 auto; flex-direction: column; gap: 0; padding: 6px 6px; border-radius: 18px; font-size: 0.8rem; line-height: 1.15; }
       .filtros .tipos button .ficha-emoji { font-size: 1.15rem; }
+    }
+    /* A 320 px (284 de caja) las cuatro fichas pedían 299: se salían por la derecha y quedaban
+       pegadas al borde, sin el margen de la izquierda (U-11). Menos aire adentro, y cabe. */
+    @container (max-width: 300px) {
+      .filtros .tipos { gap: 4px; }
+      .filtros .tipos button { padding: 6px 3px; }
     }
     .filtros .tipos button.on { background: var(--cyan); border-color: transparent; color: #03302c; }
     .filtros button:active { transform: scale(0.96); }
