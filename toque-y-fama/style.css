@@ -92,6 +92,23 @@
 
 /* Con el chat en pantalla, la burbuja flota abajo a la derecha: que no tape el último intento */
 body.chat-on #screen-play, body.chat-on #screen-lobby, body.chat-on #screen-result { padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)); }
-/* Jugando solo hay un tablero y ocupa todo el ancho: las pistas van con palabra completa (D-129) */
-.boards--solo { grid-template-columns: 1fr; }
-.secrets--solo { grid-template-columns: minmax(0, 200px); justify-content: center; }
+/* Jugar solo: el minijuego de La Copa (D-142). El tablero (.board--solo) ocupa todo el ancho */
+.como { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; color: var(--muted); font-weight: 700; }
+.solo-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 8px; min-height: 1.5em; }
+.solo-titulo { font-weight: 900; }
+.cron { font: 900 1rem var(--font-num); font-variant-numeric: tabular-nums; color: var(--muted); }
+.aviso { text-align: center; font-weight: 800; padding: 10px 12px; border-radius: 14px; background: rgba(255,255,255,0.08); }
+.aviso.bien { background: rgba(157, 255, 58, 0.14); color: var(--lime); }
+.aviso.mal { background: rgba(224, 36, 60, 0.22); color: #ffd0d6; }
+#screen-solo-result .result-hero .trophy { font-size: 3.2rem; }
+#screen-solo-result .result-hero h2 { margin: 0; }
+#screen-solo-result .result-hero p { margin: 2px 0; }
+.score-big { font: 900 clamp(2.4rem, 12vw, 3.2rem)/1.1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35); }
+/* El número secreto y la tarjeta lado a lado; las filas de la tarjeta se reparten en columnas para no gastar alto (C-8) */
+.solo-fin { display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: center; }
+.solo-fin .n { font: 900 1.6rem var(--font-num); font-variant-numeric: tabular-nums; letter-spacing: 0.16em; color: var(--yellow); text-align: center; }
+.solo-fin small { display: block; color: var(--muted); font-weight: 800; text-align: center; }
+.tarjeta { text-align: center; font-size: 0.95rem; line-height: 1.35; background: rgba(0,0,0,0.25); border-radius: 14px; padding: 8px; }
+.tarjeta span { display: block; white-space: nowrap; }
+/* Con más de 5 intentos, en dos columnas que se leen de arriba abajo */
+.tarjeta--2 { columns: 2; column-gap: 8px; font-size: 0.85rem; }
