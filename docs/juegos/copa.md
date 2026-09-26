@@ -10,7 +10,9 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
   **`/labs/`**.
 - **URL:** `/copa/` (portada) · `/copa/?K7Q2X` (una copa) · `/copa/?labs` (copa real con la Copa
   de 3 días, D-100; `?tres` sigue funcionando) · `?prueba` (almacén local y reloj adelantable, sin
-  Firebase) · `/copa/?practica=<id>&semilla=K7Q2X` (un minijuego suelto, repetible).
+  Firebase) · `/copa/?practica=<id>&semilla=K7Q2X` (un minijuego suelto, repetible). Desde la portada se
+  abre sin `&labs` y es el minijuego suelto para cualquiera: vuelve al menú, sin sesión de prueba
+  ni semilla a la vista, y con su señal de uso; desde el laboratorio, con `&labs` (D-142).
 - **Jugadores:** de 1 a 10 por copa. **Idioma:** solo español (D-98).
 - **Modalidades:** Copa de 7 días (la que se ofrece) y Copa de 3 días (solo pruebas).
 
