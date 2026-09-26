@@ -14,7 +14,16 @@ const JUGADORES = [
   { pid: 'panc03', name: 'Pancho' },
   { pid: 'vale04', name: 'Vale' },
   { pid: 'nico05', name: 'Nico' },
+  // Los de la escena llena (10 jugadores): uno con nombre largo, para ver que cabe
+  { pid: 'sofi06', name: 'Sofi' },
+  { pid: 'maxi07', name: 'Maximiliano' },
+  { pid: 'tere08', name: 'Tere' },
+  { pid: 'rodr09', name: 'Rodrigo' },
+  { pid: 'isid10', name: 'Isidora' },
 ];
+
+/** Días que alguien no jugó, para que la escena llena muestre "(-1J)" (D-126). */
+const FALTAS = { tere08: [4], isid10: [2, 5] };
 
 /** Puntajes creíbles por minijuego: `k` de 0 a 1 dice qué tan bien le fue. */
 const PUNTAJE = {
@@ -45,6 +54,8 @@ export const ESCENAS = {
   admin: { inicio: 3, jugadores: 5, jugaron: 3, yo: 'cata01', pantalla: 'admin' },
   final: { inicio: 6, jugadores: 5, jugaron: 6, yo: 'javi02', pantalla: 'tablero' },
   podio: { inicio: 7, jugadores: 5, jugaron: 7, yo: 'javi02', pantalla: 'tablero' },
+  // La máxima densidad del gráfico y de la imagen que se comparte (D-141): 7 días, 10 jugadores
+  llena: { inicio: 7, jugadores: 10, jugaron: 7, yo: 'javi02', pantalla: 'tablero', faltas: true },
 };
 
 /**
@@ -70,6 +81,7 @@ export function sembrar(nombre, { now, uid }) {
     for (const j of jug) {
       const hoyEsEste = d === e.jugaron + 1;
       if (hoyEsEste && (j.pid === e.yo || azar(j.pid, d) < 0.5)) continue;
+      if (e.faltas && FALTAS[j.pid]?.includes(d)) continue;
       const k = 0.35 + 0.6 * azar(j.pid, d);
       const r = PUNTAJE[cal[d - 1]](k);
       const at = Math.min(now - 3600000, meta.win[d].a + 3600000 * (8 + 10 * azar(j.pid, -d)));

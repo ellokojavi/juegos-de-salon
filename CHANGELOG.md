@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.64.8 — 2026-09-25
+- **La Copa: la imagen de la tabla es más compacta** (D-141). El gráfico de posiciones y la tabla
+  van lado a lado y la línea de cada jugador termina en su fila: cada nombre aparece una vez, con
+  todos los días jugados y cada cambio de lugar. Los empatados van lado a lado en vez de taparse.
+  El laboratorio suma una demo con 10 jugadores y 7 días.
+
 ## 0.64.6 — 2026-09-25
 - **La Copa: Tango y Zip se explican con un dibujo** antes de las reglas, como Reinas (D-139).
   Tango muestra un tablero resuelto con sus marcas = y ≠ y, al lado, tres soles seguidos que no

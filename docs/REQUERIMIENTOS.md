@@ -167,6 +167,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | LIG-75 | El tiempo se corta al terminar el tablero, no al tocar "Ver resultado" (D-130). | ✅ v0.62 |
 | LIG-76 | La tabla muestra los 7 días de cada jugador con su estado y una leyenda (D-131). | ✅ v0.63 |
 | LIG-77 | Reglas plegadas debajo del tablero en cada minijuego, con las palabras de sus botones (D-133). | ✅ v0.64 |
+| LIG-78 | La imagen de la tabla pone gráfico y tabla en el mismo eje, con todos los días y los empates a la vista (D-141). | ✅ v0.64.8 |
 | LIG-46 | El teclado, el tablero y la línea se comparten con Toque y Fama y Línea de Tiempo (`assets/js/teclado.js`, `assets/css/teclado.css`, `assets/css/linea.css`). | ✅ v0.44 |
 
 ## Requerimientos no funcionales
