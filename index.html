@@ -85,7 +85,7 @@
       font: 900 0.78rem var(--font-body); letter-spacing: 0; text-transform: none; white-space: nowrap;
       padding: 3px 9px; border-radius: 999px; background: var(--yellow); color: #3a1200;
     }
-    /* Filtros (D-141): cuántos juegan, en un control de tres, y el tipo, en fichas que se
+    /* Filtros (D-142): cuántos juegan, en un control de tres, y el tipo, en fichas que se
        prenden y se apagan. Todo en fila que se envuelve: nada de scroll horizontal (C-8). */
     .filtros { display: grid; gap: 10px; margin-top: 4px; }
     .filtros .grupo { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 4px; border-radius: 999px; background: var(--glass); border: 1px solid var(--glass-border); }
@@ -151,7 +151,7 @@
       title: T.appTitle, text: T.shareText, url: homeUrl(lang), label: T.share,
     }));
 
-    // 1) Lo importante primero: la lista de juegos, con los minijuegos sueltos al final (D-141).
+    // 1) Lo importante primero: la lista de juegos, con los minijuegos sueltos al final (D-142).
     const list = document.getElementById('games');
     const tarjetas = PORTADA.map((g, i) => {
       const [min, max] = rangoJugadores(g.players);
@@ -175,7 +175,7 @@
       return { g, card, min, max };
     });
 
-    // Filtros (D-141): la lista ya es larga. Van en la URL (?jugadores=solo&tipo=logica), así
+    // Filtros (D-142): la lista ya es larga. Van en la URL (?jugadores=solo&tipo=logica), así
     // volver desde un juego los deja como estaban y un link filtrado se puede compartir.
     try {
       const JUGADORES = { todos: T.filterAll, solo: `🧍 ${T.filterSolo}`, amigos: `👥 ${T.filterGroup}` };

@@ -42,7 +42,7 @@ same('FRASES', FRASES);
 for (const lang of LANGS) assert.equal(FRASES[lang].length, 100, `FRASES.${lang}: deben ser 100 frases`);
 for (const lang of LANGS) assert.equal(new Set(FRASES[lang]).size, 100, `FRASES.${lang}: hay frases repetidas`);
 for (const g of GAMES) { leaf(`GAMES.${g.id}.name`, g.name); leaf(`GAMES.${g.id}.tagline`, g.tagline); }
-// Los minijuegos sueltos de la portada (D-141): su tarjeta va en los tres idiomas y cada uno
+// Los minijuegos sueltos de la portada (D-142): su tarjeta va en los tres idiomas y cada uno
 // tiene que existir en La Copa, o la tarjeta abriría una práctica que no hay.
 for (const g of SUELTOS) {
   leaf(`SUELTOS.${g.id}.name`, g.name); leaf(`SUELTOS.${g.id}.tagline`, g.tagline);

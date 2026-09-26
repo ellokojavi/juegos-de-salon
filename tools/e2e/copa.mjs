@@ -430,7 +430,7 @@ await click('#btn-rendirse'); await sleep(300);
 ok(await ev(`document.querySelectorAll('.rej.reina').length`) > 0 && !!await ev(`document.getElementById('btn-fin')`), 'Reinas: al rendirse se ve la solución');
 await click('#btn-fin'); await sleep(500);
 ok(/^0/.test(await ev(`document.querySelector('.score-big')?.textContent || ''`)), 'Reinas: rendirse vale 0 puntos');
-// Desde la portada (D-141) la práctica es el minijuego suelto: sin prueba ni semilla, y vuelve al menú
+// Desde la portada (D-142) la práctica es el minijuego suelto: sin prueba ni semilla, y vuelve al menú
 await b.go(`${BASE}?practica=conexiones&prueba`, 1200); await preparar();
 ok(!await ev(`document.getElementById('btn-ensayo')`) && await ev(`document.getElementById('btn-menu').getAttribute('href')`) === '../'
   && await ev(`[...document.querySelectorAll('#jugar-body a')].some(a => a.getAttribute('href') === '../')`), 'minijuego suelto: sin prueba y de vuelta al menú');
