@@ -1,7 +1,10 @@
 /**
  * ☀️ Tango — pantalla. Como el Tango de LinkedIn: un toque pone un sol, otro una luna, otro
  * limpia. Las casillas dadas no se tocan. Las marcas = y ≠ van sobre el borde entre dos
- * casillas. Lo que rompe una regla se ve en rojo en el acto.
+ * casillas. Lo que rompe una regla se ve en rojo, pero no en el acto: para poner una luna hay
+ * que pasar por el sol, y ese sol de paso no debe acusar nada. El choque espera ESPERA_CHOQUE_MS;
+ * si en ese lapso se vuelve a tocar la misma casilla, no aparece. Es lo mismo que ya hace el
+ * puntaje (motor.estado): el sol de paso no cuenta como error.
  *
  * Además (D-103): **borrar todo**, que pide un segundo toque para confirmar; una **pista** que
  * revela una casilla y cuesta 15 puntos, también con segundo toque; y **consejos** para cuando
@@ -14,6 +17,7 @@ const CLASE = { [motor.SOL]: 'sol', [motor.LUNA]: 'luna' };
 /** Los dos emojis son amarillos: la casilla de noche y la luna plateada los separan (D-146). */
 const icono = (el, v) => el('span', { class: `tan-ico ${CLASE[v]}` }, ICONO[v]);
 const CONFIRMAR_MS = 3000;
+const ESPERA_CHOQUE_MS = 700;
 
 /**
  * El dibujo de las reglas, como el de Reinas (D-134): un tablero de 6 × 6 resuelto, con una
@@ -48,15 +52,32 @@ export function montar(raiz, ctx) {
   let jugadas = Array.isArray(ctx.jugadas) ? ctx.jugadas.slice() : [];
   let armado = null;          // qué acción espera su segundo toque: 'borrar' | 'pista'
   let armadoTimer = null;
+  // El choque recién hecho, mientras espera: se sigue viendo lo de antes del toque
+  let espera = null;          // { i, mal, errores }: la casilla y lo de antes del toque, o null
+  let esperaTimer = null;
   const { n } = p;
+
+  const avisar = () => { SFX.error(); vibrate([40, 40, 40]); };
 
   const jugar = j => {
     const antes = motor.estado(p, jugadas);
     jugadas.push(j); ctx.guardar(jugadas);
     const x = motor.estado(p, jugadas);
-    if (x.errores > antes.errores) { SFX.error(); vibrate([40, 40, 40]); }
-    else if (x.fin) { SFX.win(); vibrate([30, 50, 30]); }
-    else SFX.tap();
+    // Se fue a otra casilla antes de que el choque se viera: el aviso va ahora
+    const dejado = espera && espera.i !== j;
+    clearTimeout(esperaTimer); espera = null;
+    if (dejado) avisar();
+    if (x.errores > antes.errores) {
+      // El motor ya lo cuenta, y lo perdona si el toque siguiente es en la misma casilla
+      if (!dejado) SFX.tap();
+      espera = { i: j, mal: antes.mal, errores: antes.errores };
+      esperaTimer = setTimeout(() => {
+        espera = null;
+        if (!raiz.isConnected) return;
+        avisar(); dibujar();
+      }, ESPERA_CHOQUE_MS);
+    } else if (x.fin) { SFX.win(); vibrate([30, 50, 30]); }
+    else if (!dejado) SFX.tap();
     dibujar();
   };
 
@@ -74,6 +95,8 @@ export function montar(raiz, ctx) {
 
   const dibujar = () => {
     const e = motor.estado(p, jugadas);
+    const mal = espera ? new Set([...e.mal].filter(i => espera.mal.has(i))) : e.mal;
+    const errores = espera ? espera.errores : e.errores;
     // Terminado el tablero, el tiempo se detiene aquí y no al tocar el botón (D-130)
     if (e.fin) ctx.pararReloj?.();
     raiz.innerHTML = '';
@@ -83,7 +106,7 @@ export function montar(raiz, ctx) {
       const v = e.g[i];
       const dada = motor.esDada(p, i), revelada = e.fijas.has(i);
       const celda = el('button', {
-        type: 'button', class: 'tan' + (dada ? ' dada' : '') + (revelada ? ' revelada' : '') + (e.mal.has(i) ? ' choque' : ''),
+        type: 'button', class: 'tan' + (dada ? ' dada' : '') + (revelada ? ' revelada' : '') + (mal.has(i) ? ' choque' : ''),
         'data-i': i, 'data-v': v, disabled: dada || revelada || e.fin,
         'aria-label': `${Math.floor(i / n) + 1}-${(i % n) + 1}`,
         onClick: () => { armado = null; jugar(i); },
@@ -100,8 +123,8 @@ export function montar(raiz, ctx) {
         el('button', { class: 'btn btn--yellow', id: 'btn-fin', onClick: () => { SFX.tap(); ctx.terminar(e); } }, ctx.textoFin || T.seeResults));
     }
     caja.append(grilla);
-    if (e.mal.size && !e.fin) caja.append(el('div', { class: 'aviso mal' }, T.tangoClash));
-    if (e.errores || e.pistas) caja.append(el('p', { class: 'muted center', style: 'margin:0' }, fmt(T.tangoCount, { e: e.errores, p: e.pistas })));
+    if (mal.size && !e.fin) caja.append(el('div', { class: 'aviso mal' }, T.tangoClash));
+    if (errores || e.pistas) caja.append(el('p', { class: 'muted center', style: 'margin:0' }, fmt(T.tangoCount, { e: errores, p: e.pistas })));
     if (!e.fin) {
       caja.append(el('div', { class: 'btn-row tango-acciones' },
         conConfirmacion('borrar', `🧹 ${T.clearAll}`, T.clearAllSure, () => { SFX.splash(); jugar(motor.BORRAR); }, { id: 'btn-borrar' }),
