@@ -1413,12 +1413,22 @@ function explicacion(J, { s, ms, det, x = 1, final = false, copa = true }) {
  * mecánica antes de armar una copa. La semilla se muestra al final y va en la URL
  * (`&semilla=K7Q2X`): con ella se repite exactamente la misma partida para reportar un error.
  */
+/**
+ * Desde la portada (D-141) la práctica es el minijuego suelto: vuelve al menú, no ofrece la sesión
+ * de prueba (jugar otra vez ya es probar) ni muestra la semilla, y manda su señal de uso. Desde el
+ * laboratorio llega con `&labs` y queda como estaba.
+ */
+const volverDePractica = () => (LABS
+  ? el('a', { class: 'btn btn--ghost btn--sm', href: '../labs/' }, T.backToLabs)
+  : el('a', { class: 'btn btn--ghost btn--sm', href: '../' }, T.backToMenu));
+
 function practica(id) {
   const J = MINIJUEGOS[id], mod = JUEGOS[id];
   if (!J || !mod) { portada(); return; }
+  if (!LABS) document.title = `${J.nombre} ${J.emoji} · Juegos de Salón`;
   const semilla = esCodigo(SEMILLA) ? SEMILLA : codigoAlAzar();
   const zipSeg = new URLSearchParams(location.search).get('zipSeg');
-  history.replaceState(null, '', `${location.pathname}?practica=${id}&semilla=${semilla}${PRUEBA ? '&prueba' : ''}${zipSeg ? `&zipSeg=${zipSeg}` : ''}`);
+  history.replaceState(null, '', `${location.pathname}?practica=${id}&semilla=${semilla}${PRUEBA ? '&prueba' : ''}${LABS ? '&labs' : ''}${zipSeg ? `&zipSeg=${zipSeg}` : ''}`);
   S.juego = { d: 1, id, practica: true, semilla };
   mostrar('jugar');
   $('#jugar-head').innerHTML = '';
@@ -1427,15 +1437,15 @@ function practica(id) {
   body.innerHTML = '';
   poner(body, el('div', { class: 'stack' },
     el('div', { class: 'intro-hero' }, el('span', { class: 'icon' }, J.emoji),
-      el('p', { class: 'muted', style: 'margin:0' }, T.practiceTitle),
+      el('p', { class: 'muted', style: 'margin:0' }, LABS ? T.practiceTitle : T.looseTitle),
       el('h2', { class: 'display display--lg' }, J.nombre)),
     el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.howToPlay), dibujo(id), el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
       el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, J.puntaje)),
     // La misma antesala que un día de la copa (D-109): la sesión de prueba se elige antes de jugar
-    mod.ensayo ? el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-ensayo', onClick: () => { SFX.tap(); ensayoPractica(id, semilla); } }, `🧪 ${T.tryFirst}`) : null,
-    el('p', { class: 'muted center' }, T.practiceHint),
+    mod.ensayo && LABS ? el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-ensayo', onClick: () => { SFX.tap(); ensayoPractica(id, semilla); } }, `🧪 ${T.tryFirst}`) : null,
+    el('p', { class: 'muted center' }, LABS ? T.practiceHint : T.looseHint),
     el('button', { class: 'btn btn--yellow', id: 'btn-empezar', onClick: () => { SFX.tap(); jugarPractica(id, semilla); } }, `${J.emoji} ${T.start}`),
-    el('a', { class: 'btn btn--ghost btn--sm', href: '../labs/' }, T.backToLabs)));
+    volverDePractica()));
 }
 
 function jugarPractica(id, semilla) {
@@ -1443,6 +1453,8 @@ function jugarPractica(id, semilla) {
   // Solo en el modo de prueba: `&zipSeg=8` acorta el reloj de Zip para los guiones de punta a punta
   const seg = Number(new URLSearchParams(location.search).get('zipSeg'));
   if (PRUEBA && id === 'zip' && seg > 0) p.tiempo = seg * 1000;
+  // Señal de uso para el panel (D-44): el suelto se cuenta como su propio juego; el laboratorio no
+  if (!LABS && !PRUEBA) trackStart({ game: id, mode: 'solo', players: 1 });
   jugarSinPuntaje(id, p, r => resultadoPractica(id, semilla, r));
 }
 
@@ -1518,7 +1530,7 @@ function resultadoPractica(id, semilla, r) {
   const J = MINIJUEGOS[id];
   mostrar('resultado');
   SFX.win();
-  const otra = `${location.pathname}?practica=${id}${PRUEBA ? '&prueba' : ''}`;
+  const otra = `${location.pathname}?practica=${id}${PRUEBA ? '&prueba' : ''}${LABS ? '&labs' : ''}`;
   const body = $('#resultado-body');
   body.innerHTML = '';
   poner(body,
@@ -1529,11 +1541,11 @@ function resultadoPractica(id, semilla, r) {
       el('div', { class: 'score-big' }, r.resumen || String(r.s)),
       ...bajoElPuntaje(r.t, r.ms)),
     explicacion(J, { s: r.s, ms: r.ms, det: r.det, copa: false }),
-    el('p', { class: 'muted center' }, fmt(T.practiceSeed, { semilla })),
+    LABS ? el('p', { class: 'muted center' }, fmt(T.practiceSeed, { semilla })) : null,
     el('a', { class: 'btn btn--yellow', id: 'btn-otra', href: otra }, T.practiceAgain),
-    el('a', { class: 'btn btn--cyan btn--sm', id: 'btn-repetir', href: `${otra}&semilla=${semilla}` }, T.practiceSame),
+    LABS ? el('a', { class: 'btn btn--cyan btn--sm', id: 'btn-repetir', href: `${otra}&semilla=${semilla}` }, T.practiceSame) : null,
     botonReporte({ juego: id, semilla, puntaje: r.s, resumen: r.resumen }),
-    el('a', { class: 'btn btn--ghost btn--sm', href: '../labs/' }, T.backToLabs));
+    volverDePractica());
 }
 
 /* ------------------------------------------------------------------ */
@@ -1631,8 +1643,11 @@ document.documentElement.lang = 'es';
 document.title = `${T.title} 🏆 · Juegos de Salón`;
 $('#sound-slot').append(soundToggle());
 // Mientras La Copa esté en el laboratorio, "volver" es volver ahí y no al menú (D-101)
-$('#btn-menu').setAttribute('href', '../labs/');
-$('#btn-menu').textContent = T.backToLabsShort;
+// Salvo el minijuego suelto que se abrió desde la portada (D-141), que vuelve a ella.
+if (LABS || !PRACTICA) {
+  $('#btn-menu').setAttribute('href', '../labs/');
+  $('#btn-menu').textContent = T.backToLabsShort;
+}
 // Los reportes que no alcanzaron a enviarse se reintentan al abrir (D-109). En el modo de prueba
 // no hay barra para adelantar el reloj (D-112): las demos y los guiones lo hacen por su cuenta.
 if (!PRUEBA) import('./reportes.js').then(m => m.reenviarPendientes()).catch(() => { /* la próxima vez */ });

@@ -20,6 +20,8 @@ export const GAMES = [
     formato: { es: 'Cada uno en su celular, un juego por día', en: 'Each on their own phone, one game a day', pt: 'Cada um no seu celular, um jogo por dia' },
     // Un torneo no es una partida: cada día manda su señal con `players: 1` y no pesa en MAX_PLAYERS.
     torneo: true,
+    // Tiene de todo: aparece con cualquier tipo que se elija en los filtros de la portada
+    tipos: ['palabras', 'logica', 'cultura'],
     path: 'copa/',
     // En el laboratorio (D-101): la tarjeta se ve en el menú, apagada y con "Próximamente", y se
     // juega desde /labs/ y desde los links de cada copa, que siguen trayendo su tarjeta social.
@@ -28,6 +30,7 @@ export const GAMES = [
   },
   {
     id: 'linea-de-tiempo',
+    tipos: ['cultura'],
     emoji: '⏳',
     name: { es: 'Línea de Tiempo', en: 'Timeline', pt: 'Linha do Tempo' },
     tagline: { es: 'Ubica los hitos en el orden correcto. Seis temáticas, de la historia al fútbol.', en: 'Put the milestones in the right order. Six themes, from history to soccer.', pt: 'Coloque os marcos na ordem certa. Seis temas, da história ao futebol.' },
@@ -39,6 +42,7 @@ export const GAMES = [
   },
   {
     id: 'toque-y-fama',
+    tipos: ['logica'],
     emoji: '🔢',
     name: { es: 'Toque y Fama', en: 'Bulls and Cows', pt: 'Toque e Fama' },
     tagline: { es: 'Adivina el número secreto. En un celular, en dos o jugando solo.', en: 'Crack the secret number. One phone, two phones or on your own.', pt: 'Descubra o número secreto. Em um celular, em dois ou sozinho.' },
@@ -50,6 +54,7 @@ export const GAMES = [
   },
   {
     id: 'ahorcado',
+    tipos: ['palabras'],
     emoji: '🪢',
     name: { es: 'El Ahorcado', en: 'Hangman', pt: 'Forca' },
     tagline: { es: 'Adivina tu palabra antes de que se acaben los errores. Acá nadie se queda mirando.', en: 'Crack your word before the mistakes run out. Nobody sits this one out.', pt: 'Descubra sua palavra antes de gastar todos os erros. Aqui ninguém fica só olhando.' },
@@ -61,6 +66,7 @@ export const GAMES = [
   },
   {
     id: 'dudo',
+    tipos: ['mesa'],
     emoji: '🎲',
     name: { es: 'Dudo', en: 'Liar\'s Dice', pt: 'Dado Mentiroso' },
     tagline: { es: 'Apuesta cuántos dados hay en la mesa y aguanta la cara. En un celular, en varios o contra el celular.', en: 'Bid how many dice are on the table and keep a straight face. One phone, several or versus the phone.', pt: 'Aposte quantos dados tem na mesa sem entregar o jogo. Em um celular, em vários ou contra o celular.' },
@@ -72,6 +78,7 @@ export const GAMES = [
   },
   {
     id: 'batalla-naval',
+    tipos: ['logica'],
     emoji: '⚓',
     name: { es: 'Batalla Naval', en: 'Battleship', pt: 'Batalha Naval' },
     tagline: { es: 'Hunde la flota del rival antes de que hunda la tuya. En un celular, en dos o contra el celular.', en: 'Sink your rival\'s fleet before they sink yours. One phone, two phones or versus the phone.', pt: 'Afunde a frota do rival antes que ele afunde a sua. Em um celular, em dois ou contra o celular.' },
@@ -83,6 +90,7 @@ export const GAMES = [
   },
   {
     id: 'julepe',
+    tipos: ['mesa'],
     emoji: '🍹',
     name: { es: 'Julepe', en: 'Julep', pt: 'Paga o Bolo' },
     tagline: { es: 'Dices si vas o te pasas. Si vas y no haces dos bazas, te tomas todo el plato. En un celular, en varios o contra el celular.', en: 'Say if you are in or out. Go in, miss two tricks, and you drink the whole pot. One phone, several, or versus the phone.', pt: 'Você diz se entra ou passa. Se entrar e não fizer duas vazas, bebe o bolo inteiro. Em um celular, em vários ou contra o celular.' },
@@ -96,6 +104,7 @@ export const GAMES = [
   },
   {
     id: 'cuarto-rey',
+    tipos: ['mesa'],
     emoji: '👑',
     name: { es: 'Cuarto Rey', en: 'Fourth King', pt: 'Quarto Rei' },
     tagline: { es: 'Naipes, sorbos y el temido cuarto rey.', en: 'Cards, sips and the dreaded fourth king.', pt: 'Cartas, goles e o temido quarto rei.' },
@@ -105,6 +114,88 @@ export const GAMES = [
     available: true,
   },
 ];
+
+/**
+ * Los minijuegos de La Copa que se juegan sueltos desde la portada (D-141), de a uno y sin copa:
+ * abren la práctica de La Copa (`copa/?practica=<id>`), que no guarda nada y no cuenta para
+ * ninguna copa. Van aparte de GAMES porque no son una carpeta con su `rules.js` y su tarjeta
+ * social: el README, las tarjetas y las pruebas de idioma de los juegos no los recorren.
+ *
+ * Línea Relámpago y Toque y Fama: adivina el número no están: son el modo solo de Línea de Tiempo
+ * y de Toque y Fama. La Gran Final tampoco: repite los otros y es el cierre de la copa.
+ *
+ * El contenido es chileno y la pantalla va en español (D-98): la tarjeta se traduce, el juego no.
+ */
+export const SUELTOS = [
+  {
+    id: 'conexiones',
+    emoji: '🔗',
+    name: { es: 'Conexiones', en: 'Connections', pt: 'Conexões' },
+    tagline: { es: 'Arma cuatro grupos de cuatro palabras que tienen algo en común. Ojo, que algunas parecen de dos grupos.', en: 'Sort sixteen words into four groups of four that share something. Careful: some seem to fit in two groups.', pt: 'Monte quatro grupos de quatro palavras que têm algo em comum. Cuidado: algumas parecem ser de dois grupos.' },
+    tipos: ['palabras', 'cultura'],
+    duration: '3–8',
+  },
+  {
+    id: 'letras',
+    emoji: '🔤',
+    name: { es: 'Toque y Fama: Palabra', en: 'Bulls and Cows: Word', pt: 'Toque e Fama: Palavra' },
+    tagline: { es: 'Adivina la palabra secreta de cinco letras con famas y toques. Tienes ocho intentos.', en: 'Crack the five-letter secret word with bulls and cows. You get eight tries.', pt: 'Descubra a palavra secreta de cinco letras com toques e famas. Você tem oito tentativas.' },
+    tipos: ['palabras', 'logica'],
+    duration: '3–8',
+  },
+  {
+    id: 'anio',
+    emoji: '📅',
+    name: { es: '¿En qué año?', en: 'What Year?', pt: 'Em que ano?' },
+    tagline: { es: 'Escribe en qué año pasó cada uno de seis hitos. Mientras más cerca le achuntes, más puntos.', en: 'Write down the year each of six milestones happened. The closer you get, the more points.', pt: 'Escreva em que ano aconteceu cada um de seis marcos. Quanto mais perto, mais pontos.' },
+    tipos: ['cultura'],
+    duration: '2–5',
+  },
+  {
+    id: 'reinas',
+    emoji: '👑',
+    name: { es: 'Reinas', en: 'Queens', pt: 'Rainhas' },
+    tagline: { es: 'Pon una reina en cada fila, en cada columna y en cada zona de color, sin que se toquen. Hay una sola solución.', en: 'Place one queen in every row, column and color zone without any of them touching. There is only one solution.', pt: 'Coloque uma rainha em cada linha, em cada coluna e em cada zona de cor, sem que elas se toquem. Só existe uma solução.' },
+    tipos: ['logica'],
+    duration: '2–5',
+  },
+  {
+    id: 'tango',
+    emoji: '☀️',
+    name: { es: 'Tango', en: 'Tango', pt: 'Tango' },
+    tagline: { es: 'Llena la grilla con soles y lunas sin poner tres iguales seguidos. Cada fila y cada columna lleva tres de cada uno.', en: 'Fill the grid with suns and moons without ever putting three in a row. Every row and column holds three of each.', pt: 'Preencha a grade com sóis e luas sem colocar três iguais seguidos. Cada linha e cada coluna leva três de cada.' },
+    tipos: ['logica'],
+    duration: '3–8',
+  },
+  {
+    id: 'zip',
+    emoji: '〰️',
+    name: { es: 'Zip', en: 'Zip', pt: 'Zip' },
+    tagline: { es: 'Une los números en orden con un solo trazo que pase por todas las casillas. Tienes tres minutos para resolver todos los niveles que puedas.', en: 'Connect the numbers in order with a single line that fills every square. You have three minutes to clear as many levels as you can.', pt: 'Ligue os números em ordem com um só traço que passe por todas as casas. Você tem três minutos para resolver quantos níveis conseguir.' },
+    tipos: ['logica'],
+    duration: '3',
+  },
+].map(m => ({ ...m, players: '1', path: `copa/?practica=${m.id}`, idiomas: ['es'], available: true, suelto: true }));
+
+/**
+ * Los tipos de juego con que se filtra la portada (D-141), en el orden en que se ofrecen.
+ * Cada juego dice los suyos en `tipos`; uno sin tipos solo se ve sin filtro de tipo.
+ */
+export const TIPOS = {
+  palabras: { emoji: '🔤', name: { es: 'Palabras', en: 'Words', pt: 'Palavras' } },
+  logica: { emoji: '🧩', name: { es: 'Lógica', en: 'Logic', pt: 'Lógica' } },
+  cultura: { emoji: '🧠', name: { es: 'Cultura general', en: 'Trivia', pt: 'Conhecimentos gerais' } },
+  mesa: { emoji: '🎲', name: { es: 'Cartas y dados', en: 'Cards and dice', pt: 'Cartas e dados' } },
+};
+
+/** Todo lo que ofrece la portada: los juegos y, después, los minijuegos sueltos. */
+export const PORTADA = [...GAMES, ...SUELTOS];
+
+/** Cuántos juegan como mínimo y como máximo ("1–6" → [1, 6]; "1" → [1, 1]). */
+export function rangoJugadores(players) {
+  const n = String(players || '').split(/[^\d]+/).filter(Boolean).map(Number);
+  return n.length ? [Math.min(...n), Math.max(...n)] : [1, 1];
+}
 
 /* ------------------------------------------------------------------ */
 /* Lo derivado: de acá lo lee cualquiera que necesite hablar de juegos  */
@@ -122,7 +213,8 @@ export const GAMES = [
 /** Los ids, en el orden del menú. */
 export const GAME_IDS = GAMES.map(g => g.id);
 
-const BY_ID = Object.fromEntries(GAMES.map(g => [g.id, g]));
+// Con los sueltos: el panel también los nombra cuando mandan su señal de uso (C-16)
+const BY_ID = Object.fromEntries([...GAMES, ...SUELTOS].map(g => [g.id, g]));
 
 /** El juego con ese id, o `null` si no está registrado. */
 export const gameById = id => BY_ID[id] || null;
