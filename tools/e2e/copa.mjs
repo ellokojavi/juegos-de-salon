@@ -215,6 +215,10 @@ const jugarFinal = async nivel => {
     await ev(`window.__jugandoFinal = window.__jugando; window.__jugando = { p: window.__jugandoFinal.p.${r} }; 1`);
     await rondas[r](nivel);
     await ev('window.__jugando = window.__jugandoFinal; 1');
+    if (r === 'anio' && await ev('!!__copa.estado.copa && !__copa.estado.juego?.practica')) {
+      await sleep(300);
+      ok(await ev(`(()=>{const d=__copa.estado.juego.d, x=__copa.estado.copa.results?.[d]?.[__copa.estado.yo];return !!x && __copa.estado.pantalla === 'jugar'})()`), 'la final: al terminar la última ronda el resultado ya está en la copa (D-150)');
+    }
     await click('#btn-fin'); await sleep(250);
   }
 };
@@ -263,6 +267,11 @@ async function jugarDia(d, nivel, { capturar = false, comodin = false } = {}) {
   await ev(`(async()=>{const {JUEGOS}=await import('/copa/juegos/index.js');window.__jugando={p:JUEGOS[${JSON.stringify(id)}].generar(__copa.estado.code, ${d})};return 1})()`);
   await JUGAR[id](nivel, { arrastrar: capturar && id === 'linea' });
   if (capturar) { await revisarPantalla(`juego-${id}`); if (TOMAS[id]) await b.shot(TOMAS[id]); }
+  // El resultado sale apenas termina el tablero, antes de tocar "Ver resultado" (D-150)
+  if (id !== 'final') {
+    await sleep(300);
+    ok(await ev(`!!__copa.estado.copa.results?.[${d}]?.[__copa.estado.yo] && __copa.estado.pantalla === 'jugar'`), `día ${d} (${id}): el resultado queda en la copa antes de tocar "Ver resultado"`);
+  }
   await click('#btn-fin'); await sleep(700);
   if (capturar) ok(await ev(`(document.querySelector('#explicacion')?.innerText || '').includes('Total:')`), `resultado del día ${d}: explica cómo se calculó el puntaje`);
   return id;
