@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {
   envOf, versionOf, tzKey, langKey, fingerprint, startChanges, roomRecord, dayPath,
   noteStart, noteRoom, notePlayer, noteEnd, endRecord, countryOf, regionOfLang, restApi,
+  liveId, liveRecord, startLive, esEnVivo, LATIDO_MS, QUIETO_MS,
 } from './stats.js';
 
 const INC = { '.sv': { increment: 1 } };
@@ -184,6 +185,53 @@ assert.equal(dayPath('prod', 20342), 'stats/prod/days/20342');
 
   // Mejor esfuerzo: si la regla dice que no (ya estaba escrito), nadie se entera
   await noteEnd(fakeApi({ fail: true }), { env: 'prod', v: '1' }, { code: 'ABCD', createdAt, role: 'A', name: 'Javi' });
+}
+
+// ---------------------------------------------------------------- partidas sin red en vivo (D-140)
+{
+  assert.match(liveId(), /^[a-z0-9]{10}$/, 'la forma que exige la regla');
+  assert.equal(esEnVivo('cpu'), true);
+  assert.equal(esEnVivo('local'), true);
+  assert.equal(esEnVivo('online'), false, 'las salas ya se ven por rooms/');
+  assert.equal(esEnVivo('copa'), false, 'La Copa se ve por torneos/');
+
+  const r = liveRecord({ v: '0.65.0', co: 'CL' }, { game: 'batalla-naval', mode: 'cpu', players: 1 });
+  assert.deepEqual(r, { game: 'batalla-naval', mode: 'cpu', n: 1, at: { '.sv': 'timestamp' }, beat: { '.sv': 'timestamp' }, v: '0.65.0', co: 'CL' });
+  assert.equal('co' in liveRecord({ v: '1' }, { game: 'x', mode: 'cpu' }), false, 'sin país no se manda la llave');
+  assert.equal(JSON.stringify(r).includes('name'), false, 'de un modo sin red no sale ningún nombre');
+
+  // Un reloj, un documento y un temporizador de mentira
+  let t = 20342 * DAY + 5000;
+  const oyentes = {};
+  const doc = { visibilityState: 'visible', addEventListener: (k, f) => { oyentes[k] = f; }, removeEventListener: k => { delete oyentes[k]; } };
+  let tic = null, parado = false;
+  const api = fakeApi();
+  const parar = startLive(api, { env: 'prod', v: '1' }, { game: 'batalla-naval', mode: 'cpu', players: 1 },
+    { id: 'abcdefghij', now: () => t, doc, every: f => { tic = f; return 1; }, stopEvery: () => { parado = true; } });
+  assert.equal(api.calls[0].path, dayPath('prod', 20342));
+  assert.equal(api.calls[0].changes['live/abcdefghij'].game, 'batalla-naval', 'al empezar queda el registro');
+
+  t += LATIDO_MS; tic();
+  assert.deepEqual(api.calls[1], { path: dayPath('prod', 20342), changes: { 'live/abcdefghij/beat': { '.sv': 'timestamp' } } }, 'late cada minuto');
+
+  doc.visibilityState = 'hidden'; t += LATIDO_MS; tic();
+  assert.equal(api.calls.length, 2, 'con la pantalla escondida no late');
+  doc.visibilityState = 'visible';
+
+  t += QUIETO_MS; tic();
+  assert.equal(api.calls.length, 2, 'si nadie tocó la pantalla en cinco minutos, no late');
+  oyentes.pointerdown(); tic();
+  assert.equal(api.calls.length, 3, 'un toque lo despierta');
+
+  t += DAY; oyentes.keydown(); tic();
+  assert.equal(api.calls[3].path, dayPath('prod', 20342), 'late en el día en que empezó, aunque pase la medianoche');
+
+  parar();
+  assert.equal(parado, true);
+  assert.equal(oyentes.pointerdown, undefined, 'al parar suelta los oyentes');
+
+  // Mejor esfuerzo: si la base dice que no, nadie se entera
+  startLive(fakeApi({ fail: true }), { env: 'prod', v: '1' }, { game: 'x', mode: 'cpu' }, { now: () => t, doc: null, every: () => 0, stopEvery: () => {} })();
 }
 
 console.log('stats.test.mjs: todo en verde');

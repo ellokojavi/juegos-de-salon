@@ -10,6 +10,7 @@
  */
 import { deserted } from '../assets/js/transport/dispose.js';
 import { MODE_IDS, isLocalMode, MAX_PLAYERS, gameById } from '../assets/js/games.js';
+import { LATIDO_MS } from '../assets/js/transport/stats.js';
 
 export const DAY = 24 * 60 * 60 * 1000;
 export const ROOM_TTL = 6 * 60 * 60 * 1000;   // tope duro de una sala (transporte y reglas)
@@ -97,6 +98,30 @@ export function codesOfDays(days, now = Date.now()) {
     for (const code of Object.keys(days?.[String(d)]?.rooms || {})) set.add(code);
   }
   return set;
+}
+
+/**
+ * Una partida sin red está en juego si latió hace menos de tres latidos (D-140): uno que se
+ * pierde por la red no la apaga, y a los tres minutos de soltar el celular desaparece.
+ */
+export const VIVA_SIN_RED_MS = 3 * LATIDO_MS;
+
+/**
+ * Las partidas sin red que se están jugando ahora, de la más reciente a la más vieja. Se miran
+ * hoy y ayer: una partida late en el día en que empezó, aunque cruce la medianoche UTC. Vienen
+ * de `stats/<env>`, así que ya están separadas por entorno.
+ */
+export function liveLocal(days, now = Date.now()) {
+  const hoy = dayOf(now);
+  const out = [];
+  for (const d of [hoy, hoy - 1]) {
+    for (const [id, r] of Object.entries(days?.[String(d)]?.live || {})) {
+      const beat = Math.max(Number(r?.beat) || 0, Number(r?.at) || 0);
+      if (!r?.game || now - beat > VIVA_SIN_RED_MS) continue;
+      out.push({ id, game: r.game, mode: r.mode, n: Number(r.n) || 1, co: r.co || '', at: Number(r.at) || beat, beat });
+    }
+  }
+  return out.sort((a, b) => b.beat - a.beat);
 }
 
 /**

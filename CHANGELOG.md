@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.64.7 — 2026-09-25
+- **Panel del dueño: las partidas sin red se ven en vivo** (D-140). En "Ahora" hay una lista
+  nueva, *Partidas sin red*, con las partidas contra el celular, en un celular o solitarias que
+  se están jugando: juego, modo, cuántos juegan, país y última señal. Cada celular manda una
+  señal por minuto mientras alguien toca la pantalla. Antes solo se veían las salas de dos
+  celulares.
+
 ## 0.64.6 — 2026-09-25
 - **La Copa: Tango y Zip se explican con un dibujo** antes de las reglas, como Reinas (D-139).
   Tango muestra un tablero resuelto con sus marcas = y ≠ y, al lado, tres soles seguidos que no
