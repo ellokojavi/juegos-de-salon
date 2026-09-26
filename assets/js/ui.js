@@ -107,6 +107,22 @@ export function confetti({ duration = 2500, count = 160 } = {}) {
 export const canShare = () => typeof navigator !== 'undefined' && typeof navigator.share === 'function';
 
 /**
+ * La portada filtrada en "Solo" abre los juegos con `?modo=solo` (D-145): quien ya dijo que
+ * juega solo no tiene por qué volver a elegir el modo. `entrar` lleva a la pantalla de jugar
+ * solo de cada juego. No salta si llega a una sala ni si hay una partida para retomar: esa
+ * oferta está en la pantalla de modos y no se puede perder (C-6). El parámetro se borra de la
+ * URL, así recargar deja en la portada del juego y no vuelve a saltar.
+ */
+export function llegaSolo(entrar) {
+  const q = new URLSearchParams(location.search);
+  if (q.get('modo') !== 'solo') return;
+  q.delete('modo');
+  history.replaceState(history.state, '', location.pathname + (q.size ? `?${q}` : '') + location.hash);
+  if (q.has('sala') || $('#resume-slot')?.children.length) return;
+  entrar();
+}
+
+/**
  * Botón redondo de la barra de arriba para compartir un link (📤). Donde hay diálogo nativo
  * abre el del sistema; donde no, copia y lo avisa cambiando el ícono por un ✅ dos segundos,
  * que se entiende sin traducir y no mueve nada de lugar en la barra.
