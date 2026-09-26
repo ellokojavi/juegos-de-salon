@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.65.3 — 2026-09-25
+- **Tango: el sol de paso a la luna ya no marca error.** Para poner una luna hay que pasar por
+  el sol, y si ese sol rompía una regla la pantalla se ponía en rojo por un instante. Ahora el
+  choque espera 0,7 segundos: si en ese lapso vuelves a tocar la casilla, no aparece nada. Si
+  dejas el sol, aparecen juntos el rojo, el aviso, el contador y el sonido.
+
 ## 0.65.2 — 2026-09-25
 - **Portada: los filtros en dos filas y una línea antes de los juegos** (D-144). A 320 px los
   filtros ya no se salen de la columna.
