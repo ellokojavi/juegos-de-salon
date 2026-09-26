@@ -1,5 +1,11 @@
 # Changelog
 
+## Sin publicar
+- **Botones más cortos y centrados** (U-17). Al terminar un minijuego suelto, "Jugar otra vez
+  con otro contenido" pasa a "Jugar de nuevo", y "Repetir exactamente esta partida" a "Repetir
+  esta partida". Si el texto de un botón parte línea, las dos líneas van centradas en toda la
+  app, y ya no a la izquierda.
+
 ## 0.65.0 — 2026-09-25
 - **Los minijuegos de La Copa se juegan sueltos desde la portada** (D-142): Conexiones, Toque y
   Fama: Palabra, ¿En qué año?, Reinas, Tango y Zip, de un jugador y sin copa. Por ahora en
