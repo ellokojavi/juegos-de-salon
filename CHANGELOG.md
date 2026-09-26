@@ -4,7 +4,8 @@
 - **La Copa: la imagen de la tabla es más compacta** (D-141). El gráfico de posiciones y la tabla
   van lado a lado y la línea de cada jugador termina en su fila: cada nombre aparece una vez, con
   todos los días jugados y cada cambio de lugar. Los empatados van lado a lado en vez de taparse.
-  El laboratorio suma una demo con 10 jugadores y 7 días.
+  La leyenda dice "(-1J), (-2J)… = uno, dos o más juegos por jugar". El laboratorio suma una
+  demo con 10 jugadores y 7 días.
 
 ## 0.64.6 — 2026-09-25
 - **La Copa: Tango y Zip se explican con un dibujo** antes de las reglas, como Reinas (D-139).

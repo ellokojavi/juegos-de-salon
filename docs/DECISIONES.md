@@ -1736,7 +1736,9 @@ fila, así cada nombre aparece una sola vez. Queda cuadrada (1080 × 1080) hasta
 más, las filas se achican y la imagen se alarga. Los **empatados** en un día comparten lugar:
 sus líneas van lado a lado, separadas unos píxeles como en un plano de metro, para que ninguna
 tape a otra y se vea que iban juntos. Un nombre que no cabe achica la letra y, si aún no cabe,
-se corta con "…". El laboratorio suma la demo **llena** (10 jugadores, 7 días, dos con juegos de
+se corta con "…". La leyenda de "(-1J)" (en la imagen y en el tablero) pasa a decir
+**"(-1J), (-2J)… = uno, dos o más juegos por jugar"**: explica también "(-2J)", y "por jugar"
+no le suena a reproche a quien todavía puede jugar el día de hoy (dilema #54). El laboratorio suma la demo **llena** (10 jugadores, 7 días, dos con juegos de
 menos) para mirar la máxima densidad.
 **Por qué:** pedido del dueño: una imagen más compacta que retrate la tabla y cómo llegó a ella.
 Se eligió entre tres propuestas (línea que llega a la fila, tabla con el camino de cada uno,
