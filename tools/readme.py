@@ -33,13 +33,14 @@ El gancho para que esto pase siempre y no cuando alguien se acuerde: `set-versio
 —obligatorio antes de cada publicación (C-11)— corre `revisar` y se planta si el
 README quedó atrás.
 """
-import json, re, shutil, socket, subprocess, sys, tempfile, time, pathlib
+import json, os, re, shutil, socket, subprocess, sys, tempfile, time, pathlib
 
 RAIZ = pathlib.Path(__file__).resolve().parent.parent
 README = RAIZ / 'README.md'
 CATALOGO = RAIZ / 'docs/capturas.json'
 SELLO = RAIZ / 'docs/hechos.json'
-PUERTO = 8765
+# Con otra sesión sirviendo el 8765, cada una usa su puerto: PUERTO_SITIO=8770 (D-135)
+PUERTO = int(os.environ.get('PUERTO_SITIO', 8765))
 MARCA = re.compile(r'(<!-- generado: ([\w:-]+)[^>]*-->\n)(.*?)(<!-- /generado -->)', re.S)
 
 
@@ -486,7 +487,8 @@ def cmd_capturas(seccion=None, sin_red=False):
             guion = C['guiones'][g]
             print(f"\n▶ {guion['archivo']}  ({guion['que']}{', necesita internet' if guion['red'] else ''})")
             with tempfile.TemporaryDirectory() as tmp:
-                r = subprocess.run(['node', f"tools/e2e/{guion['archivo']}", tmp], cwd=RAIZ)
+                r = subprocess.run(['node', f"tools/e2e/{guion['archivo']}", tmp], cwd=RAIZ,
+                                   env={**os.environ, 'SITIO': os.environ.get('SITIO', f'http://localhost:{PUERTO}')})
                 if r.returncode:
                     fallaron.append(guion['archivo'])
                     print(f"  falló. Si quedó un Chrome vivo: pkill -f remote-debugging-port")
