@@ -10,6 +10,7 @@ Cada regla tiene un ID (U-n) para citarla en los PR y en los issues.
 
 - **U-1 · Frases completas y explícitas.** Sin comas que fragmentan ni abreviaciones de la jerga de
   la app. Los modos y pantallas se nombran completos. Más largo pero inequívoco vale más que breve.
+  En los botones no: ver U-17.
 - **U-2 · Emojis al inicio de línea o en botones y títulos**, no en medio de una frase.
 - **U-3 · Los textos nuevos se acuerdan con el dueño** antes de publicarse. Corregir ortografía,
   gramática o concordancia no es un texto nuevo.
@@ -34,6 +35,11 @@ Cada regla tiene un ID (U-n) para citarla en los PR y en los issues.
 
 - **U-16 · Las reglas están a mano sin estorbar:** plegadas debajo del tablero en cada minijuego
   (D-133), con las mismas palabras de los botones.
+- **U-17 · El botón dice la acción, nada más:** verbo y objeto, en una sola línea a 320 px (unos
+  18 caracteres). Lo que haya que explicar va en el texto de arriba. Si dos botones se parecen,
+  se distinguen en la palabra principal y no con una cola ("Jugar de nuevo" / "Repetir esta
+  partida", no "Jugar otra vez con otro contenido"). Lo secundario o técnico va en botón chico.
+  Si un botón igual parte línea, el texto va centrado.
 
 ## Interacciones
 
