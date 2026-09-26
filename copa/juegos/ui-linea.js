@@ -8,15 +8,17 @@
  * Las jugadas son `{ c: id de la carta, at: ranura }`, en orden.
  */
 import * as motor from './linea.js';
-import { anioLabel } from './anio.js';
+import { anioLabel as anioDeLaCopa } from './anio.js';
+import { yearLabel } from '../../linea-de-tiempo/engine.js';
 import { crearArrastre } from '../../assets/js/arrastre.js';
 import { showHandoff } from '../../assets/js/handoff.js';
 import { LOCALES as LT_LOCALES } from '../../linea-de-tiempo/rules.js';
 
-const LT = LT_LOCALES.es;
-
 export function montar(raiz, ctx) {
   const { p, T, fmt, el, SFX, vibrate } = ctx;
+  // La copa va en español; el modo solo de Línea de Tiempo, en el idioma de quien juega
+  const LT = LT_LOCALES[ctx.lang] || LT_LOCALES.es;
+  const anioLabel = y => (ctx.lang && ctx.lang !== 'es' ? yearLabel(y, ctx.lang) : anioDeLaCopa(y));
   let jugadas = Array.isArray(ctx.jugadas) ? ctx.jugadas.filter(j => j && typeof j === 'object') : [];
   const sel = { carta: null, ranura: null };
   let arrastre = null;
