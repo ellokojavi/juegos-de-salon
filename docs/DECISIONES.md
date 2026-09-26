@@ -1868,3 +1868,24 @@ lee. Con dos señales, el fondo y el ícono, se separan aunque uno no distinga b
 **Alternativas descartadas:** 🌑 (cada teléfono la dibuja distinto, y en algunos es una bola
 negra que se pierde sobre el morado); solo el filtro o solo el fondo (una sola señal); dibujar
 el sol y la luna sin emoji, como LinkedIn (más nítido, pero rompe con el resto de La Copa).
+
+## D-147 · La tabla dice "(provisoria)" mientras alguien puede cambiarla
+**Fecha:** 2026-09-26 · **Estado:** vigente
+**Decisión:** El título de la tabla lleva "(provisoria)" cuando el último día que muestra sigue
+abierto (incluido su día de gracia) y al menos un jugador no lo ha jugado: "Tabla de posiciones
+(provisoria) · día 3 de 7" en la imagen que se comparte (D-141), "Tabla (provisoria)" en el
+tablero y "Tabla de posiciones (provisoria) · día 3" en el mensaje. Lo decide `provisoria()` en
+`copa/engine.js`, con la tabla tal como la ve quien mira: si no ha jugado el día de hoy, su tabla
+llega hasta ayer, y esa solo es provisoria si ayer sigue en su día de gracia con alguien sin jugar.
+**Por qué:** lo pidió el dueño, a partir de una imagen de la Copa Pirata con dos jugadores terceros
+y uno de ellos con "(-1J)": la tabla parecía definitiva y no lo era. "Provisoria" y no "parcial":
+la app ya dice "la posición es provisoria hasta que el día cierre" (U-1), y "Tabla parcial" es el
+nombre del mensaje que se manda en cualquier momento de la copa.
+**Alternativas descartadas:** una línea aparte que diga cuántos faltan (el dueño prefirió el título).
+Calcular si los que faltan pueden de verdad cambiar un lugar: con los puntos por posición, quien
+juega mueve también los puntos de los demás, y la regla simple se entiende sin explicarla.
+**Consecuencias:** un jugador que se saltó un día que ya cerró sigue con su "(-1J)", pero no vuelve
+provisoria la tabla: sus puntos de ese día ya no cambian. El número de día del título (imagen y
+mensaje) pasa a ser el último día que muestra la tabla (`ultimoDiaVisto`), no el de hoy (dilema
+#67, decisión del dueño): la marca y el número hablan del mismo día. La línea "⏳ ¡Día N en
+curso!" del mensaje sigue diciendo el día que corre.
