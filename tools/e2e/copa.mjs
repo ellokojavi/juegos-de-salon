@@ -455,6 +455,14 @@ ok(await ev(`location.pathname + location.search`) === '/minijuegos/?conexiones&
 ok(!await ev(`document.getElementById('btn-ensayo')`) && await ev(`document.getElementById('btn-menu').getAttribute('href')`) === '../'
   && await ev(`[...document.querySelectorAll('#jugar-body a')].some(a => a.getAttribute('href') === '../')`), 'minijuego suelto: sin prueba y de vuelta al menú');
 ok(!/copa/i.test(await ev(`location.href + ' ' + document.title`)), 'minijuego suelto: ni el link ni el título dicen copa');
+// El 🐞 del resultado abre el formulario y vuelve al resultado (la página suelta necesita su pantalla)
+await b.go(`${SITIO}/minijuegos/?reinas&prueba`, 1500); await preparar();
+await click('#btn-empezar'); await sleep(300); await esperarCuenta();
+await click('#btn-rendirse'); await sleep(300); await click('#btn-fin'); await sleep(800);
+await click('#btn-reporte'); await sleep(300);
+ok(await ev(`document.querySelector('.screen.active')?.id`) === 'screen-reporte' && !!await ev(`document.getElementById('btn-enviar-reporte')`), 'minijuego suelto: el 🐞 del resultado abre el formulario');
+await ev(`[...document.querySelectorAll('#reporte-body .btn--ghost')].at(-1).click()`); await sleep(300);
+ok(await ev(`document.querySelector('.screen.active')?.id`) === 'screen-resultado', 'minijuego suelto: cancelar el reporte vuelve al resultado');
 for (const id of ['linea', 'numero', 'conexiones', 'reinas', 'letras', 'zip', 'tango', 'anio', 'final']) {
   // Zip con semilla fija: el chequeo del aviso busca un trazo que llegue al final sin cubrir todo
 await b.go(`${BASE}?practica=${id}&prueba&labs${id === 'zip' ? '&zipSeg=12&semilla=KQRST' : ''}`, 1200); await preparar();
