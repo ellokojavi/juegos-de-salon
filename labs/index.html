@@ -115,7 +115,7 @@
     // Los minijuegos salen del registro de La Copa: uno nuevo aparece solo (C-16)
     const minis = document.getElementById('minis');
     for (const [id, J] of Object.entries(MINIJUEGOS)) {
-      minis.append(el('a', { class: 'mini-juego', href: `../copa/?practica=${id}`, 'data-id': id },
+      minis.append(el('a', { class: 'mini-juego', href: `../copa/?practica=${id}&labs`, 'data-id': id },
         el('span', {}, J.emoji), el('span', {}, J.nombre, el('small', {}, J.habilidad))));
     }
   </script>
