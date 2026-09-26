@@ -405,7 +405,7 @@ const ES = {
   shareTodayMissing: '👀 Faltan por jugar hoy: {names}.',
   shareBeforeClosed: '🏆 *La Copa: {copa}*\n\n📅 Parte el {fecha}.\n🎮 El primer juego es {juego}.\n🔑 Entra con tu nombre y tu PIN en este link:',
   shareBeforeText: '🏆 *La Copa: {copa}*\n\n📅 Parte el {fecha}.\n🎮 El primer juego es {juego}.\n✍️ Si todavía no te inscribes, entra con tu nombre y un PIN de 4 números en este link:',
-  shareTableText: '📊 *La Copa: {copa}* · Tabla de posiciones (día {d})\n\n{tabla}',
+  shareTableText: '📊 *La Copa: {copa}* · Tabla de posiciones · día {d}\n\n{tabla}',
   shareTableTextProvisional: '📊 *La Copa: {copa}* · Tabla de posiciones (provisoria) · día {d}\n\n{tabla}',
   shareTableMissing: '⏳ ¡Día {d} en curso! Falta que jueguen: {names}.',
   shareFinalText: '🏁 *La Copa: {copa}* · Terminó\n\n🏆 {campeon}\n\n{podio}',
