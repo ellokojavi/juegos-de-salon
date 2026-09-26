@@ -1,5 +1,5 @@
 /**
- * El modo solo de un juego con su minijuego de La Copa (D-141). Toque y Fama juega 🔢 Adivina el
+ * El modo solo de un juego con su minijuego de La Copa (D-142). Toque y Fama juega 🔢 Adivina el
  * número y Línea de Tiempo juega ⏳ Línea Relámpago: la misma pantalla, las mismas reglas y el
  * mismo puntaje de 0 a 100 que en la copa, pero en el idioma de quien juega y dentro del juego,
  * con su memoria de partida (C-6).
