@@ -1400,7 +1400,11 @@ function resultado(d, { recien = false, det = null } = {}) {
       el('div', { class: 'tabla' }, ranking.map(j => el('div', { class: 'fila' + (j.pid === S.yo ? ' yo' : '') },
         el('span', { class: 'lugar' }, `${pos[j.pid].pos}`),
         el('span', { class: 'flecha' }),
-        el('div', { class: 'quien' }, el('b', {}, j.name), el('small', { class: 'muted' }, `${Lc.results[d][j.pid].r || Lc.results[d][j.pid].s} · ⏱ ${mmss(Lc.results[d][j.pid].ms)}`)),
+        // Quien usó el comodín (o todos, en la final) lleva "×2" junto al nombre: explica por qué
+        // sus puntos no calzan con su lugar
+        el('div', { class: 'quien' }, multiplicador(Lc, d, j.pid) === 2
+          ? el('div', { class: 'con-x2' }, el('b', {}, j.name), el('span', { class: 'chip chip--gold md-x2' }, T.x2))
+          : el('b', {}, j.name), el('small', { class: 'muted' }, `${Lc.results[d][j.pid].r || Lc.results[d][j.pid].s} · ⏱ ${mmss(Lc.results[d][j.pid].ms)}`)),
         el('span', { class: 'total' }, `+${pos[j.pid].pts * multiplicador(Lc, d, j.pid)}`))))),
     el('button', { class: 'btn btn--yellow', id: 'btn-volver', onClick: () => { SFX.tap(); S.verDia = null; tablero(); } }, T.toBoard),
     botonReporte({ juego: id, dia: d }),
