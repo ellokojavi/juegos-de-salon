@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.65.9 — 2026-09-26
+- **La Copa: en los resultados del día, quien usó el comodín lleva "×2" junto a su nombre**
+  (en la final, todos). Así se entiende por qué sus puntos no calzan con su lugar: 3º con +12.
+
 ## 0.65.8 — 2026-09-26
 - **La Copa: el admin puede cambiar el nombre de la copa** mientras no termine. En Administrar,
   el panel "Nombre de la copa" dice cómo se llama y tiene "✏️ Cambiar nombre", con el mismo
