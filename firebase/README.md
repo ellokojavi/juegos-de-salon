@@ -86,6 +86,8 @@ se filtra se revoca ahí mismo. Sin la llave, se sigue pudiendo pegar a mano en 
   `createdAt`, y con la ventana del día 1 todavía abierta y empezando antes de 32 días.
 - Una copa del laboratorio (`meta/lab = true`, D-115) se puede reescribir aunque ya se haya
   jugado: así su admin la pasa al día siguiente. La marca `lab` no se puede quitar ni poner después.
+- `torneos/<code>/meta/name` lo puede cambiar solo el admin, en cualquier momento antes de que la
+  copa termine (`now < meta/end`), con el mismo largo de 1 a 40 (D-148).
 
 - **Eliminar la copa** (D-117): el celular sentado como admin puede borrar de una vez
   `torneos/<code>`, `torneoKeys/<code>` y `torneoSeats/<code>` (solo el nodo entero, nunca a medias).
