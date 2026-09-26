@@ -17,7 +17,7 @@ const CLASE = { [motor.SOL]: 'sol', [motor.LUNA]: 'luna' };
 /** Los dos emojis son amarillos: la casilla de noche y la luna plateada los separan (D-146). */
 const icono = (el, v) => el('span', { class: `tan-ico ${CLASE[v]}` }, ICONO[v]);
 const CONFIRMAR_MS = 3000;
-const ESPERA_CHOQUE_MS = 700;
+const ESPERA_CHOQUE_MS = 500;
 
 /**
  * El dibujo de las reglas, como el de Reinas (D-134): un tablero de 6 × 6 resuelto, con una
