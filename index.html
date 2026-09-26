@@ -95,12 +95,25 @@
     }
     .filtros .grupo button { padding: 6px 4px; white-space: nowrap; }
     .filtros .grupo button.on { background: var(--yellow); color: #3a1200; }
-    .filtros .tipos { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
-    .filtros .tipos button { background: var(--glass); border: 1px solid var(--glass-border); color: var(--ink); padding: 6px 14px; }
+    /* Los tipos van siempre en una fila (D-144): si no caben con el emoji al lado, el emoji sube
+       arriba del nombre, como una barra de pestañas. Nunca una tercera fila de filtros. */
+    .filtros { container-type: inline-size; }
+    .filtros .tipos { display: flex; gap: 8px; justify-content: center; }
+    .filtros .tipos button {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap;
+      background: var(--glass); border: 1px solid var(--glass-border); color: var(--ink); padding: 6px 14px;
+    }
+    @container (max-width: 520px) {
+      .filtros .tipos { gap: 6px; }
+      .filtros .tipos button { flex: 1 1 auto; flex-direction: column; gap: 0; padding: 6px 6px; border-radius: 18px; font-size: 0.8rem; line-height: 1.15; }
+      .filtros .tipos button .ficha-emoji { font-size: 1.15rem; }
+    }
     .filtros .tipos button.on { background: var(--cyan); border-color: transparent; color: #03302c; }
     .filtros button:active { transform: scale(0.96); }
     .filtros-cuenta { display: flex; flex-wrap: wrap; gap: 4px 10px; justify-content: center; align-items: center; color: var(--muted); font-weight: 700; font-size: 0.9rem; margin: 0; min-height: 44px; }
     .filtros-cuenta[hidden] { display: none; }
+    /* Una línea que se apaga en las puntas: acá terminan los filtros y empiezan los juegos */
+    .filtros-fin { border: 0; height: 1px; margin: 12px 6% 4px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.28), transparent); }
     .link-btn { background: none; border: 0; color: var(--yellow); font: 900 0.9rem var(--font-body); text-decoration: underline; cursor: pointer; min-height: 44px; padding: 0 6px; }
     .sin-juegos { text-align: center; }
     .sin-juegos p { margin: 0 0 10px; }
@@ -122,6 +135,7 @@
 
     <section class="filtros" id="filtros"></section>
     <p class="filtros-cuenta" id="filtros-cuenta" aria-live="polite" hidden></p>
+    <hr class="filtros-fin" aria-hidden="true">
     <section class="games" id="games" aria-label="Lista de juegos"></section>
 
     <footer>
@@ -201,7 +215,7 @@
       // Solo los tipos que tiene algún juego que se puede abrir: una ficha que deja la lista vacía no sirve
       for (const [id, t] of Object.entries(TIPOS)) {
         if (!PORTADA.some(g => g.available && (g.tipos || []).includes(id))) continue;
-        const b = el('button', { type: 'button', 'data-tipo': id, onClick: () => { filtro.tipo = filtro.tipo === id ? null : id; aplicar(); } }, `${t.emoji} ${pickLang(t.name, lang)}`);
+        const b = el('button', { type: 'button', 'data-tipo': id, onClick: () => { filtro.tipo = filtro.tipo === id ? null : id; aplicar(); } }, el('span', { class: 'ficha-emoji', 'aria-hidden': 'true' }, t.emoji), el('span', {}, pickLang(t.name, lang)));
         tipos.append(b); botones.push(b);
       }
       caja.append(grupo, tipos);
