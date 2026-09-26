@@ -1805,6 +1805,24 @@ la portada: hay que sumarlo a `SUELTOS` con su tipo, y `i18n.test.mjs` exige que
 Copa y que su nombre en español sea el mismo. El récord viejo de esos dos solitarios queda sin
 uso, y una partida guardada del solitario viejo no se ofrece para retomar.
 
+## D-143 · Las pruebas sin navegador corren solas en GitHub
+**Fecha:** 2026-09-25 · **Estado:** vigente
+**Decisión:** `.github/workflows/pruebas.yml` corre en cada PR y en cada fusión a main:
+todos los `*.test.mjs` y `*.test.py` del repo (los busca con `git ls-files`, sin lista),
+`tools/readme.py revisar` y `tools/og.mjs revisar`. El PR muestra ✅ o ❌ antes de fusionar.
+Las pruebas de punta a punta (`tools/e2e/`), las capturas y la revisión de usabilidad siguen a
+mano.
+**Por qué:** desde D-135 varias sesiones trabajan en paralelo y fusionan seguido. Cada una corre
+los tests en su rama, pero nadie los corría sobre main después de juntar dos ramas. Además la
+lista de CLAUDE.md se había quedado atrás: `arrastre.test.mjs` y `julepe/engine.test.mjs` no
+estaban, así que no los corría nadie. Sin npm ni build, todo tarda unos segundos.
+**Alternativas descartadas:** correr también `tools/e2e/` (necesita Chrome y un servidor, tarda
+minutos y sus capturas igual hay que mirarlas). Una lista fija de tests en el workflow (se
+quedaría atrás igual que la de CLAUDE.md).
+**Consecuencias:** un test nuevo entra solo al llamarse `*.test.mjs` o `*.test.py`. Un test que
+necesite red o llaves no puede correr ahí: tiene que funcionar sin ellas o quedar fuera del
+patrón. Los avisos de capturas viejas de `readme.py revisar` no hacen fallar el workflow.
+
 ## D-144 · Los filtros de la portada caben en dos filas
 **Fecha:** 2026-09-25 · **Estado:** vigente
 **Decisión:** los filtros de la portada son siempre dos filas: cuántos juegan arriba y los tipos
@@ -1834,3 +1852,19 @@ nuevo en cada juego es un paso de más y hace dudar de si el filtro sirvió.
 **Consecuencias:** un juego nuevo con modo solo tiene que llamar a `llegaSolo` en su `init`, o
 el filtro lo abrirá en la pantalla de modos. "Con amigos" no salta nada: ahí quedan dos modos
 (un celular o en sala) y la elección es real.
+
+## D-146 · Tango: casillas de día y de noche, y la luna plateada
+**Fecha:** 2026-09-25 · **Estado:** vigente
+**Decisión:** en la grilla de Tango y en el dibujo de las reglas, la casilla con sol lleva fondo
+ámbar y la casilla con luna fondo azul noche. La luna se pinta plateada con un filtro CSS
+(`grayscale(1) brightness(1.5)`) sobre el mismo emoji 🌙. Las casillas dadas llevan el mismo
+color, más intenso; la casilla revelada por una pista se marca con un anillo cian, y no con el
+fondo cian de antes, para no tapar el día y la noche. Un choque sigue ganándole a todo: fondo y
+borde rojos. Además, las casillas deshabilitadas (dadas, reveladas, tablero terminado) ya no
+heredan el color gris al 30% que Chrome da a los botones deshabilitados, que apagaba el emoji
+justo en las dadas.
+**Por qué:** lo pidió el dueño: ☀️ y 🌙 son los dos amarillos y, de un vistazo, el tablero no se
+lee. Con dos señales, el fondo y el ícono, se separan aunque uno no distinga bien los colores.
+**Alternativas descartadas:** 🌑 (cada teléfono la dibuja distinto, y en algunos es una bola
+negra que se pierde sobre el morado); solo el filtro o solo el fondo (una sola señal); dibujar
+el sol y la luna sin emoji, como LinkedIn (más nítido, pero rompe con el resto de La Copa).
