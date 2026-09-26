@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.65.5 — 2026-09-25
+- **Tango: el choque espera medio segundo**, y no 0,7 segundos. Alcanza para tocar dos veces y
+  poner una luna, y cuando el sol queda mal puesto se nota antes.
+
 ## 0.65.4 — 2026-09-25
 - **Tango: el sol de paso a la luna ya no marca error.** Para poner una luna hay que pasar por
   el sol, y si ese sol rompía una regla la pantalla se ponía en rojo por un instante. Ahora el
