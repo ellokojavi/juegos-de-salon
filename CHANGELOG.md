@@ -5,7 +5,8 @@
   sigue abierto y alguien todavía no lo juega, el título es "Tabla de posiciones (provisoria) ·
   día 3 de 7" en la imagen que se comparte, "Tabla (provisoria)" en el tablero, y también en el
   mensaje de WhatsApp. Cuando juegan todos o el día cierra, vuelve a decir solo "Tabla de
-  posiciones".
+  posiciones". El mensaje sin marca pasa de "Tabla de posiciones (día 3)" a "Tabla de
+  posiciones · día 3", la misma forma que la imagen y que el mensaje provisorio (U-5).
 
 ## 0.65.6 — 2026-09-26
 - **La Copa: el día de gracia se lee entero.** En el calendario, la fila del día de ayer que
