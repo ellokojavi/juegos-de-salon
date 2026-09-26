@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.65.1 — 2026-09-25
+- **Tango: el sol y la luna ya no se confunden** (D-146). La casilla con sol es ámbar, la casilla
+  con luna es azul noche y la luna se ve plateada, en el tablero y en el dibujo de las reglas.
+  Las casillas dadas ya no se ven apagadas, y la que revela una pista lleva un borde cian.
+
 ## 0.65.0 — 2026-09-25
 - **Los minijuegos de La Copa se juegan sueltos desde la portada** (D-142): Conexiones, Toque y
   Fama: Palabra, ¿En qué año?, Reinas, Tango y Zip, de un jugador y sin copa. Por ahora en
