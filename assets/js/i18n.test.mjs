@@ -5,7 +5,8 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { LANGS, COMMON } from './i18n.js';
-import { GAMES } from './games.js';
+import { GAMES, SUELTOS, TIPOS } from './games.js';
+import { MINIJUEGOS } from '../../copa/rules.js';
 import { FRASES } from './frases.js';
 import { DECKS } from '../../linea-de-tiempo/decks/index.js';
 import { DECKS as AHORCADO } from '../../ahorcado/decks/index.js';
@@ -41,6 +42,15 @@ same('FRASES', FRASES);
 for (const lang of LANGS) assert.equal(FRASES[lang].length, 100, `FRASES.${lang}: deben ser 100 frases`);
 for (const lang of LANGS) assert.equal(new Set(FRASES[lang]).size, 100, `FRASES.${lang}: hay frases repetidas`);
 for (const g of GAMES) { leaf(`GAMES.${g.id}.name`, g.name); leaf(`GAMES.${g.id}.tagline`, g.tagline); }
+// Los minijuegos sueltos de la portada (D-142): su tarjeta va en los tres idiomas y cada uno
+// tiene que existir en La Copa, o la tarjeta abriría una práctica que no hay.
+for (const g of SUELTOS) {
+  leaf(`SUELTOS.${g.id}.name`, g.name); leaf(`SUELTOS.${g.id}.tagline`, g.tagline);
+  assert.ok(MINIJUEGOS[g.id], `SUELTOS.${g.id}: no es un minijuego de La Copa`);
+  assert.equal(g.name.es, MINIJUEGOS[g.id].nombre, `SUELTOS.${g.id}: el nombre en español no es el de La Copa`);
+}
+for (const [id, t] of Object.entries(TIPOS)) leaf(`TIPOS.${id}.name`, t.name);
+for (const g of [...GAMES, ...SUELTOS]) for (const t of g.tipos || []) assert.ok(TIPOS[t], `${g.id}: el tipo ${t} no está en TIPOS`);
 for (const d of DECKS) {
   leaf(`DECKS.${d.id}.name`, d.name); leaf(`DECKS.${d.id}.hint`, d.hint);
   for (const c of d.cards) for (const lang of LANGS) assert.ok(c[lang] && c[lang].trim(), `${d.id}/${c.id}: falta ${lang}`);

@@ -11,6 +11,8 @@ import { teclado, CIFRAS } from '../../assets/js/teclado.js';
 import { LOCALES as TYF_LOCALES } from '../../toque-y-fama/rules.js';
 
 export const TYF = TYF_LOCALES.es;
+/** Los textos de Toque y Fama en el idioma de quien juega: la copa va en español, pero el modo solo de Toque y Fama no. */
+const tyf = lang => TYF_LOCALES[lang] || TYF;
 
 export const leerJugadas = j => (Array.isArray(j) ? { i: j.slice(), n: [] } : { i: (j?.i || []).slice(), n: (j?.n || []).slice() });
 
@@ -18,7 +20,7 @@ export const leerJugadas = j => (Array.isArray(j) ? { i: j.slice(), n: [] } : { 
  * Las pistas como en el tablero de Toque y Fama. El tablero de la copa ocupa todo el ancho y
  * suele escribirlas completas ("2 famas", "1 toque", "nada"); abreviadas son "2F 1T" o "0".
  */
-export function pistas(el, g, largo, grande = false, completa = grande) {
+export function pistas(el, g, largo, grande = false, completa = grande, TYF = tyf()) {
   const wrap = el('div', { class: grande ? 'reply-clue' : 'clue' });
   const F = n => (completa ? `${n} ${n === 1 ? TYF.fama : TYF.famas}` : `${n}${TYF.famaShort}`);
   const Tq = n => (completa ? `${n} ${n === 1 ? TYF.toque : TYF.toques}` : `${n}${TYF.toqueShort}`);
@@ -35,9 +37,10 @@ export function pistas(el, g, largo, grande = false, completa = grande) {
  * El tablero de intentos de Toque y Fama, de un solo jugador. `valor` dibuja el intento.
  * Las pistas van completas; Letras las abrevia porque sus letras de colores no dejan espacio.
  */
-export function tablero(el, { filas, largo, titulo, valor = f => f.v, completa = true }) {
+export function tablero(el, { filas, largo, titulo, valor = f => f.v, completa = true, lang }) {
+  const TYF = tyf(lang);
   const tries = n => (n === 1 ? TYF.tryOne : TYF.tryMany);
-  const lista = el('ol', {}, ...filas.map(f => el('li', { class: f.famas === largo ? 'hit' : '' }, valor(f), pistas(el, f, largo, false, completa))));
+  const lista = el('ol', {}, ...filas.map(f => el('li', { class: f.famas === largo ? 'hit' : '' }, valor(f), pistas(el, f, largo, false, completa, TYF))));
   return el('div', { class: 'board turn board--solo' },
     el('h3', {}, titulo),
     el('div', { class: 'count' }, filas.length ? `${filas.length} ${tries(filas.length)}` : TYF.noGuesses),
@@ -45,7 +48,8 @@ export function tablero(el, { filas, largo, titulo, valor = f => f.v, completa =
 }
 
 export function montar(raiz, ctx) {
-  const { p, T, fmt, el, SFX, vibrate } = ctx;
+  const { p, T, fmt, el, SFX, vibrate, lang } = ctx;
+  const TYF = tyf(lang);
   const max = ctx.max || motor.MAX_INTENTOS;
   const J = leerJugadas(ctx.jugadas);
   const notas = new Set(J.n);
@@ -78,7 +82,7 @@ export function montar(raiz, ctx) {
         }),
         el('p', { class: 'block-hint' }, T.blockHintDigits)); // "tachar", como en Palabra y en las reglas (U-5)
     }
-    caja.append(tablero(el, { filas: e.filas, largo: p.cifras, titulo: T.yourGuesses, valor: f => el('span', { class: 'val' }, f.v) }));
+    caja.append(tablero(el, { filas: e.filas, largo: p.cifras, titulo: T.yourGuesses, lang, valor: f => el('span', { class: 'val' }, f.v) }));
     if (ctx.cierreAbajo) caja.append(...cierre);
     raiz.append(caja);
   };

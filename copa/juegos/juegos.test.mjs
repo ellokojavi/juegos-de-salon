@@ -64,6 +64,15 @@ test('línea: 10 cartas de años separados, jugadas en cualquier orden', () => {
     for (let i = 1; i < ys.length; i++) assert.ok(ys[i] - ys[i - 1] >= 2, `${c} ${ys}`);
     assert.ok(todas.every(x => x.texto && x.emoji));
   }
+  // El modo solo de Línea de Tiempo deja fuera las cartas vistas hace poco (D-34, D-142);
+  // sin `excluir`, la copa reparte exactamente lo mismo que antes
+  const br = linea.generar('KQRST', 1, { tema: 'brasil', lang: 'pt' });
+  assert.equal(br.tema, 'brasil');
+  assert.deepEqual(linea.generar('KQRST', 1, { tema: 'brasil', lang: 'pt', excluir: [] }), br);
+  const ids = [br.base, ...br.mano].map(x => x.id);
+  const otra = linea.generar('KQRST', 1, { tema: 'brasil', excluir: ids });
+  assert.equal(otra.mano.length, 9);
+  assert.ok([otra.base, ...otra.mano].every(x => !ids.includes(x.id)));
   const p = { base: { id: 'b', year: 1950 }, mano: [{ id: 'x', year: 1900 }, { id: 'y', year: 2000 }, { id: 'z', year: 1960 }] };
   // Primero la de 2000 (bien, al final), después 1960 mal puesta al principio, después 1900 bien
   const e = linea.estado(p, [{ c: 'y', at: 1 }, { c: 'z', at: 0 }, { c: 'x', at: 0 }]);

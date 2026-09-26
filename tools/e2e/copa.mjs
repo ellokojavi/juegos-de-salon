@@ -419,7 +419,7 @@ await b.go(`${SITIO}/labs/`, 1500);
 ok(await ev(`document.querySelectorAll('#minis .mini-juego').length`) === 9, 'el laboratorio ofrece los nueve minijuegos (con Zip y Tango)');
 await b.shot('10-labs');
 // Rendirse en Reinas: dos toques, la solución a la vista y 0 puntos (D-110)
-await b.go(`${BASE}?practica=reinas&prueba`, 1200); await preparar();
+await b.go(`${BASE}?practica=reinas&prueba&labs`, 1200); await preparar();
 await click('#btn-empezar'); await sleep(300); await esperarCuenta();
 // Con la confirmación negada no pasa nada; aceptada, se rinde
 await ev('window.confirm = () => false; 1');
@@ -430,9 +430,13 @@ await click('#btn-rendirse'); await sleep(300);
 ok(await ev(`document.querySelectorAll('.rej.reina').length`) > 0 && !!await ev(`document.getElementById('btn-fin')`), 'Reinas: al rendirse se ve la solución');
 await click('#btn-fin'); await sleep(500);
 ok(/^0/.test(await ev(`document.querySelector('.score-big')?.textContent || ''`)), 'Reinas: rendirse vale 0 puntos');
+// Desde la portada (D-142) la práctica es el minijuego suelto: sin prueba ni semilla, y vuelve al menú
+await b.go(`${BASE}?practica=conexiones&prueba`, 1200); await preparar();
+ok(!await ev(`document.getElementById('btn-ensayo')`) && await ev(`document.getElementById('btn-menu').getAttribute('href')`) === '../'
+  && await ev(`[...document.querySelectorAll('#jugar-body a')].some(a => a.getAttribute('href') === '../')`), 'minijuego suelto: sin prueba y de vuelta al menú');
 for (const id of ['linea', 'numero', 'conexiones', 'reinas', 'letras', 'zip', 'tango', 'anio', 'final']) {
   // Zip con semilla fija: el chequeo del aviso busca un trazo que llegue al final sin cubrir todo
-await b.go(`${BASE}?practica=${id}&prueba${id === 'zip' ? '&zipSeg=12&semilla=KQRST' : ''}`, 1200); await preparar();
+await b.go(`${BASE}?practica=${id}&prueba&labs${id === 'zip' ? '&zipSeg=12&semilla=KQRST' : ''}`, 1200); await preparar();
   ok(await ev(`!!document.getElementById('btn-ensayo')`) , `práctica de ${id}: la antesala ofrece la prueba como en la copa`);
   if (id === 'linea') {
     // La prueba desde el laboratorio: la misma que antes de un día (D-109), y vuelve a la antesala

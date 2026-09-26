@@ -239,6 +239,45 @@ const CAMINOS = {
     espera: [...BN_CPU, ...BN_ZARPA, BN_FRENA, BN_FALLA('B'), BN_FALLA('A')],
   },
   /**
+   * Toque y Fama jugando solo: el minijuego 🔢 de La Copa (D-142). Para el resultado se juega
+   * sola: un intento errado y el bueno, que sale del código guardado con el mismo motor.
+   */
+  'toque-y-fama': {
+    intro: [],
+    solo: [`document.querySelectorAll('.mode')[2].click()`],
+    'solo-juego': [`document.querySelectorAll('.mode')[2].click()`, `document.getElementById('btn-solo-empezar').click()`],
+    'solo-resultado': [
+      `document.querySelectorAll('.mode')[2].click()`,
+      `document.getElementById('btn-solo-empezar').click()`,
+      `(async()=>{const m=await import('../copa/juegos/numero.js');const s=m.generar(__tyf.guardada().codigo,1).secreto;
+        const probar=n=>{for(const d of n)[...document.querySelectorAll('.screen.active .keypad button')].find(x=>x.textContent===d).click();document.querySelector('.screen.active .keypad .ok').click()};
+        probar(s==='0123'?'4567':'0123');probar(s);})()`,
+      `document.getElementById('btn-fin').click()`,
+      `1`, `1`, `1`, `1`,   // que pase el confeti
+    ],
+  },
+  /**
+   * Línea de Tiempo jugando solo: la ⏳ Línea Relámpago de La Copa (D-142). Para el resultado
+   * se juega entera, la primera carta mal y el resto bien, con el mismo motor que la reparte.
+   */
+  'linea-de-tiempo': {
+    intro: [],
+    solo: [`[...document.querySelectorAll('.mode')].find(m=>/solo|alone|sozinho/i.test(m.textContent)).click()`],
+    'solo-juego': [`[...document.querySelectorAll('.mode')].find(m=>/solo|alone|sozinho/i.test(m.textContent)).click()`, `document.getElementById('btn-solo-empezar').click()`],
+    'solo-resultado': [
+      `[...document.querySelectorAll('.mode')].find(m=>/solo|alone|sozinho/i.test(m.textContent)).click()`,
+      `document.getElementById('btn-solo-empezar').click()`,
+      `(async()=>{const L=await import('../copa/juegos/linea.js');const s=__ldt.solo();const p=L.generar(s.codigo,1,{tema:s.tema,excluir:s.skip});
+        let j=[];for(const c of p.mano){const l=L.estado(p,j).linea;const bien=L.huecoCorrecto(l,c);j=[...j,{c:c.id,at:j.length?bien:(bien?0:l.length)}];}
+        const esperar=async f=>{for(let i=0;i<40&&!f();i++)await new Promise(r=>setTimeout(r,50));return f();};
+        for(const x of j){(await esperar(()=>document.getElementById('handoff').hidden&&document.querySelector('#solo-juego .hand .card[data-card="'+x.c+'"]'))).click();
+          document.querySelector('#solo-juego .line .slot[data-slot="'+x.at+'"]').click();document.getElementById('btn-colocar').click();document.getElementById('handoff').click();}})()`,
+      `1`, `1`, `1`, `1`,   // las nueve jugadas siguen solas mientras tanto
+      `document.getElementById('btn-fin').click()`,
+      `1`, `1`, `1`, `1`,   // que pase el confeti
+    ],
+  },
+  /**
    * El panel del dueño no es un juego, pero se mira igual: `window.__panel.seed` lo dibuja
    * con datos sembrados, sin entrar con Google ni tocar la base (C-14). Los datos traen a
    * propósito un juego (`juego-nuevo`), un modo (`equipos`) y un idioma (`fr`) que no están

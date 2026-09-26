@@ -72,7 +72,7 @@ interrupción larga no decida el desempate.
 | Modo | Jugadores | Transporte |
 |---|---|---|
 | 📱 Un celular | 2 a 6 | `local` |
-| 🧍 Jugar solo | 1 | `local` |
+| 🧍 Jugar solo (⏳ Línea Relámpago) | 1 | sin transporte (D-142) |
 | 📡 Varios celulares | 2 a 6 | `firebase` |
 
 En varios celulares, el anfitrión (rol A) crea la sala y abre la partida con el botón **Empezar** cuando hay al menos dos jugadores; el mensaje `start` fija el orden. En la sala de espera, el anfitrión puede **cancelar la sala** y quien se unió puede **salir de la sala**: quien se va a propósito se despide y la sala se borra si no queda nadie (D-50). Cada celular ve solo su mano, y el veredicto de cada jugada se muestra a todos y se cierra solo.
@@ -81,11 +81,39 @@ El botón de compartir usa el diálogo nativo del celular y el texto que lo acom
 
 En varios celulares hay además un **chat de sala** (canon C-15): una burbuja 💬 con globito de no leídos, disponible en la sala de espera y durante la partida. No aparece sobre el veredicto de una jugada, pero **sí sigue vivo en la pantalla final**, para celebrar o pedir revancha (D-35). No se guarda en ninguna parte: muere con la sala.
 
-En solitario no hay rival: el objetivo es vaciar la mano en la menor cantidad de intentos. Se guarda un
-récord personal por temática, tamaño de mano y forma de repartir: las tres formas llevan su propio
-récord y no se comparan. Con todas a la vista se puede terminar sin lograrlo, si la mesa se vacía
-antes de llegar a la meta; en ese caso la pantalla final lo dice y no se guarda récord. Se descartó
-jugar contra una IA porque la máquina conoce los años y la partida no tenía sentido (D-27).
+### Jugar solo: la ⏳ Línea Relámpago de La Copa (D-142)
+
+Jugar solo es el minijuego ⏳ Línea Relámpago de La Copa, con las mismas reglas, la misma pantalla y
+el mismo puntaje, pero en el idioma de quien juega y con las seis temáticas (Brasil incluida, que en
+la copa queda fuera por D-111). Antes era un solitario que vaciaba la mano en la menor cantidad de
+intentos, con nombre, forma de repartir y tamaño de mano (D-27, D-32, D-43); eso se fue.
+
+- **Configuración:** solo la temática. Debajo, cómo se juega y cómo se calcula el puntaje, plegado
+  una vez que el jugador ya terminó alguna partida sola (así el botón de empezar queda a la vista).
+- **Partida:** 10 hitos de la temática, el primero ya puesto en la línea y 9 en la mano. Se juegan
+  en cualquier orden, con toques o arrastrando (D-85), y el botón **Colocar aquí** confirma. Un
+  error deja la carta en su lugar correcto marcada en rojo, con el veredicto que se queda hasta
+  tocarlo (C-8b), y se sigue. Arriba va el reloj de tiempo activo: solo corre con la pantalla a la
+  vista (D-95) y se detiene al poner la última carta (D-130).
+- **Puntaje:** de 0 a 100, la parte de las 9 cartas bien puestas (8 de 9 son 89).
+- **Resultado:** el puntaje, los aciertos y el tiempo, la tarjeta de 🟩🟥, el récord de la
+  temática (“¡Nuevo récord!” o el anterior) y la línea como quedó, plegada. Botones: Jugar otra
+  vez (misma temática), Cambiar modo y Volver al menú, a la vista sin desplazar en 812 px (C-8).
+- **Récord:** uno por temática, en `juegos-de-salon:linea-de-tiempo:record-relampago`: más puntos y,
+  a igual puntaje, menos tiempo (`crearRecord` de `copa/juegos/solo.js`). El récord del solitario
+  viejo (`…:record`, por intentos) no se compara y queda sin uso.
+- **Semilla:** un código de 5 letras al azar (`codigoAlAzar` de `copa/engine.js`) y
+  `generar(codigo, 1, { tema, lang, excluir })` de `copa/juegos/linea.js`. `excluir` deja fuera las
+  cartas vistas hace poco (D-34); si con eso no alcanzan diez hitos de años separados, se reparte
+  sin excluir.
+- **Memoria de partida (C-6):** `{ mode: 'solo', codigo, tema, skip, jugadas, ms, done }` en el
+  almacén de siempre; al retomar se vuelve a montar la pantalla con las mismas jugadas y el reloj
+  donde iba. Una partida guardada del solitario viejo (con `messages`) no se ofrece: se borra.
+- **Panel:** `trackStart({ game, mode: 'solo', players: 1 })` al empezar, no al retomar (D-44).
+- No pasa por el reductor de mensajes: lo monta `jugarSolo` de `copa/juegos/solo.js` con la pantalla
+  de `copa/juegos/ui-linea.js`, que es la misma de La Copa.
+
+Se descartó jugar contra una IA porque la máquina conoce los años y la partida no tenía sentido (D-27).
 
 ## 4. Estado y protocolo
 
@@ -166,6 +194,8 @@ Cada celular recuerda las cartas que ha visto por temática (`juegos-de-salon:li
 Al armar una partida, las más recientes se excluyen del mazo y la lista viaja en `config.skip`, así
 todos los celulares de la sala excluyen exactamente lo mismo y el estado sigue derivándose de la
 config más las jugadas (canon C-7). Siempre quedan al menos 70 cartas disponibles para repartir.
+Jugar solo usa la misma lista: las excluidas se guardan en `skip` junto a la partida, porque sin
+ellas la misma semilla repartiría otras cartas al retomar (D-142).
 
 ### Tipografía de los años
 Los años (y las cartas que le quedan a cada jugador) van en Nunito 900 con `tabular-nums`, no en
@@ -175,11 +205,14 @@ Bangers: ahí el 1 y el 7 son casi el mismo trazo y un 1917 se puede leer como 1
 
 ```
 linea-de-tiempo/
-  index.html · style.css · rules.js (LOCALES es/en, config) · engine.js + engine.test.mjs · game.js
-  decks/index.js · decks/historia.js · decks/musica.js
+  index.html · style.css · rules.js (LOCALES es/en/pt, config) · engine.js + engine.test.mjs · game.js
+  decks/index.js · decks/<temática>.js
 ```
 
-Del lado compartido usa `assets/js/chat.js` (chat de sala) montado en `<div id="chat">`, hermano de `#handoff`.
+Del lado compartido usa `assets/js/chat.js` (chat de sala) montado en `<div id="chat">`, hermano de `#handoff`,
+y `assets/css/linea.css` (la mano, la línea y el veredicto). Jugar solo usa además `copa/juegos/linea.js`
+(motor), `copa/juegos/ui-linea.js` (pantalla), `copa/juegos/solo.js` (reloj, guardado y récord) y
+`codigoAlAzar` de `copa/engine.js` (D-142).
 
 ## 8. Plan
 
