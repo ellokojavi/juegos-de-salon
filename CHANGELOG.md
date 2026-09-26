@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.64.8 — 2026-09-25
+- **Portada: jugadores y duración en una sola línea** en celulares angostos. En una tarjeta de
+  380 px o menos (un celular de 360 px, o uno más ancho con la letra agrandada) las píldoras
+  bajan a su propia fila, de borde a borde, en vez de partirse al lado del emoji.
+
 ## 0.64.7 — 2026-09-25
 - **Panel del dueño: las partidas sin red se ven en vivo** (D-140). En "Ahora" hay una lista
   nueva, *Partidas sin red*, con las partidas contra el celular, en un celular o solitarias que
