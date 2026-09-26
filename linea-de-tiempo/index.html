@@ -81,6 +81,25 @@
       <div class="place-row" id="place-row"></div>
     </section>
 
+    <!-- Jugar solo: la ⏳ Línea Relámpago de La Copa, montada por copa/juegos/solo.js (D-142) -->
+    <section class="screen" id="screen-solo">
+      <div class="solo-top"><b data-i18n="soloTitle"></b><span class="cron" id="solo-cron">0:00</span></div>
+      <div id="solo-juego"></div>
+    </section>
+
+    <section class="screen" id="screen-solo-result">
+      <div class="result-hero">
+        <span class="trophy" id="sr-trophy">🏆</span>
+        <h2 class="display display--lg" id="sr-title"></h2>
+        <div class="puntos"><b id="sr-puntos"></b><small>/100</small></div>
+        <p class="lead" id="sr-sub"></p>
+        <p class="muted" id="sr-record"></p>
+        <div class="tarjeta" id="sr-tarjeta"></div>
+      </div>
+      <details class="panel replay" id="sr-replay"><summary data-i18n="finalLine"></summary><div class="line" id="sr-line"></div></details>
+      <div class="stack" id="sr-actions"></div>
+    </section>
+
     <section class="screen" id="screen-result">
       <div class="result-hero"><span class="trophy" id="result-trophy">🏆</span><h2 class="display display--lg" id="result-title"></h2><p class="lead" id="result-sub"></p><p class="muted" id="result-note" hidden></p></div>
       <div class="panel"><p class="lead center" style="margin-bottom:4px" data-i18n="ranking"></p><ol class="ranking" id="result-ranking"></ol></div>

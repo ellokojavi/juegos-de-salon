@@ -47,8 +47,8 @@ node tools/e2e/contacto.mjs cuarto-rey --salida /tmp/contacto
 | `dudo-online.mjs` | Tres celulares contra Firebase real: sala, destape verificado, recarga a mitad y revancha |
 | `julepe-local.mjs` | Mesa de tres contra el celular y partida en un celular, con retomar a mitad |
 | `julepe-online.mjs` | Tres celulares contra Firebase real: reparto cerrado, sello de cartas verificadas, recarga a mitad y chat |
-| `linea-de-tiempo-local.mjs` | Un celular con tres jugadores y solitario |
-| `linea-de-tiempo-solo.mjs` | Solitario: récord, plural, retomar |
+| `linea-de-tiempo-local.mjs` | Un celular con tres jugadores, con retomar a mitad |
+| `linea-de-tiempo-solo.mjs` | Jugar solo (⏳ Línea Relámpago): solo la temática, error en rojo, retomar, puntaje, récord por temática, cartas sin repetir, en/pt |
 | `linea-de-tiempo-error.mjs` | Pantalla de error que se queda hasta tocar; el rival espera |
 | `linea-de-tiempo-online.mjs` | Tres celulares contra Firebase real, recarga y revancha |
 | `toque-y-fama-chat.mjs` | Chat de sala en Toque y Fama: no leídos, etiqueta, y que muera con la partida |
@@ -56,7 +56,7 @@ node tools/e2e/contacto.mjs cuarto-rey --salida /tmp/contacto
 | `linea-de-tiempo-veredicto.mjs` | Que el veredicto hable en tercera persona cuando se equivocó otro |
 | `linea-de-tiempo-mazos.mjs` | Todas las temáticas y que diez partidas seguidas no repitan cartas |
 | `linea-de-tiempo-pozo.mjs` | Pozo común: tira de 6, reposición por el final, meta y ajuste que viaja en la sala |
-| `linea-de-tiempo-mesa.mjs` | Todas a la vista: mesa del doble de la meta, sin reposición, y solitario que se queda sin cartas |
+| `linea-de-tiempo-mesa.mjs` | Todas a la vista: mesa del doble de la meta y sin reposición |
 | `linea-de-tiempo-arrastre.mjs` | El gesto de arrastrar con eventos táctiles: elegir sin colocar, retomar, soltar fuera y desliz lateral |
 | `linea-de-tiempo-empate.mjs` | Que la ronda se termine y que el empate lo gane el más rápido |
 | `linea-de-tiempo-chat.mjs` | Chat de sala: no leídos, freno al spam, veredicto que lo tapa, reconexión y muerte al terminar |

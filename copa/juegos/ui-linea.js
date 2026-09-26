@@ -76,7 +76,8 @@ export function montar(raiz, ctx) {
     const x = e();
     // Terminado el tablero, el tiempo se detiene aquí y no al tocar el botón (D-130)
     if (x.fin) ctx.pararReloj?.();
-    estadoTxt.textContent = x.fin ? '' : `${sel.carta ? LT.pickSlot : LT.pickCard} · ${fmt(T.lineaLleva, { ok: x.aciertos, n: x.marcas.length })}`;
+    // Antes de la primera jugada no hay cuenta que dar: "vas 0 de 0" no dice nada
+    estadoTxt.textContent = x.fin ? '' : (sel.carta ? LT.pickSlot : LT.pickCard) + (x.marcas.length ? ` · ${fmt(T.lineaLleva, { ok: x.aciertos, n: x.marcas.length })}` : '');
   };
 
   const repintar = () => { marcarMano(); marcarRanuras(); pintarConfirmar(); marcarEstado(); };
@@ -146,7 +147,8 @@ export function montar(raiz, ctx) {
     const siguiente = showHandoff([stage], () => dibujar());
     // El error se queda hasta tocarlo; el acierto se cierra solo (C-8b)
     setTimeout(() => document.getElementById('handoff').classList.toggle('bad', !ult.ok), 0);
-    if (ult.ok) setTimeout(() => { if (!document.getElementById('handoff').hidden) siguiente(); }, 1400);
+    // Solo cierra su propio aviso: si ya hay otro (un error jugando rápido), se queda (C-8b)
+    if (ult.ok) setTimeout(() => { if (stage.isConnected && !document.getElementById('handoff').hidden) siguiente(); }, 1400);
   }
 
   /* ---------- Arrastrar (D-85) ---------- */

@@ -8,10 +8,10 @@ import { cartas, temasDeLaCopa, mazo } from './mazos.js';
 
 export const CARTAS = 10;
 
-export function generar(codigo, dia, { n = CARTAS, tema, sal = 'linea', lang = 'es' } = {}) {
+export function generar(codigo, dia, { n = CARTAS, tema, sal = 'linea', lang = 'es', excluir = null } = {}) {
   const deck = tema || temasDeLaCopa(codigo).linea;
   const a = azar(codigo, dia, sal);
-  const cs = cartas(a, deck, n, { separacion: 2, lang });
+  const cs = cartas(a, deck, n, { separacion: 2, lang, excluir });
   return { tema: deck, temaNombre: mazo(deck).name[lang] || mazo(deck).name.es, temaEmoji: mazo(deck).emoji, base: cs[0], mano: cs.slice(1) };
 }
 
