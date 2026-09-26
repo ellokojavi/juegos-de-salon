@@ -1298,7 +1298,18 @@ async function jugar(d) {
   let detenido = !!guardado.detenido;
   let rel = guardado.reloj ? (detenido ? guardado.reloj : reloj.seguir(guardado.reloj, now)) : reloj.nuevo(now);
   let jugadas = guardado.jugadas;
-  const persistir = () => cuenta.intento.guardar(S.code, d, S.yo, { jugadas, reloj: reloj.pausar(rel, ahora()), detenido });
+  // El resultado se envía apenas termina el tablero, no al tocar "Ver resultado" (D-150): si el
+  // jugador cierra sin tocarlo y el día cierra, igual cuenta
+  let fin = null, envio = null;
+  const persistir = () => cuenta.intento.guardar(S.code, d, S.yo, { jugadas, reloj: reloj.pausar(rel, ahora()), detenido, ...(fin ? { fin } : {}) });
+  const cerrar = estado => {
+    const r = mod.resultado(estado);
+    fin = { s: r.s, ms: r.ms ?? Math.round(reloj.leer(rel, ahora())), t: r.t, resumen: r.resumen, det: desglose(id, estado, { T, fmt, mmss }) };
+    persistir();
+    envio = mandar(d, fin);
+    // Si falla, "Ver resultado" lo reintenta y lo dice en pantalla; aquí no hay nada que mostrar
+    envio.catch(() => {});
+  };
   persistir();
 
   const head = $('#jugar-head');
@@ -1324,40 +1335,47 @@ async function jugar(d) {
     guardar(j) { jugadas = j; persistir(); },
     tiempo: () => Math.round(reloj.leer(rel, ahora())),
     // Cada juego lo llama cuando su tablero termina (resuelto, perdido o sin tiempo): el tiempo
-    // queda ahí, y lo que se tarde en tocar "Ver resultado" no cuenta (D-130)
-    pararReloj() {
+    // queda ahí, y lo que se tarde en tocar "Ver resultado" no cuenta (D-130). Con el estado
+    // final, además, el resultado sale en ese momento (D-150)
+    pararReloj(estado) {
       if (!detenido) { rel = reloj.pausar(rel, ahora()); detenido = true; persistir(); }
       clearInterval(S.reloj); cron.textContent = fmt(T.timer, { t: mmss(reloj.leer(rel, ahora())) });
+      if (estado && !fin) cerrar(estado);
     },
     terminar(estado) {
-      const ms = Math.round(reloj.leer(rel, ahora()));
       clearInterval(S.reloj);
       document.removeEventListener('visibilitychange', S.visibilidad);
-      const r = mod.resultado(estado);
-      const fin = { s: r.s, ms: r.ms ?? ms, t: r.t, resumen: r.resumen, det: desglose(id, estado, { T, fmt, mmss }) };
-      cuenta.intento.guardar(S.code, d, S.yo, { jugadas, reloj: reloj.pausar(rel, ahora()), fin });
-      enviar(d, fin);
+      if (!fin) cerrar(estado);
+      enviar(d, fin, envio);
     },
   });
 }
 
-async function enviar(d, fin) {
+/** Escribe el resultado en la copa. Que ya estuviera guardado cuenta como enviado. */
+async function mandar(d, fin) {
+  const t = String(fin.t || '').slice(0, 300);
+  try {
+    await store.resultado(S.code, d, S.yo, { s: fin.s, ms: fin.ms, t, r: String(fin.resumen || '').slice(0, 30) });
+  } catch (e) {
+    if (e?.code !== 'ya-jugado') throw e;
+  }
+}
+
+/** La pantalla de resultado: espera el envío (el que ya salió al terminar el tablero, o uno nuevo). */
+async function enviar(d, fin, envio = null) {
   mostrar('resultado');
   const body = $('#resultado-body');
   body.innerHTML = '';
   poner(body, el('div', { class: 'waiting center' }, T.sending));
   try {
-    const t = String(fin.t || '').slice(0, 300);
-    await store.resultado(S.code, d, S.yo, { s: fin.s, ms: fin.ms, t, r: String(fin.resumen || '').slice(0, 30) });
+    await (envio || mandar(d, fin));
   } catch (e) {
-    if (e?.code !== 'ya-jugado') {
-      body.innerHTML = '';
-      const err = el('div', { class: 'form-error', role: 'alert' });
-      poner(body, err, el('button', { class: 'btn btn--yellow', onClick: () => enviar(d, fin) }, T.retry),
-        el('button', { class: 'btn btn--ghost btn--sm', onClick: () => tablero() }, T.toBoard));
-      avisoError(err, e?.code === 'ventana' ? T.errVentana : `${errorDe(e)} ${T.sendFail}`);
-      return;
-    }
+    body.innerHTML = '';
+    const err = el('div', { class: 'form-error', role: 'alert' });
+    poner(body, err, el('button', { class: 'btn btn--yellow', onClick: () => enviar(d, fin) }, T.retry),
+      el('button', { class: 'btn btn--ghost btn--sm', onClick: () => tablero() }, T.toBoard));
+    avisoError(err, e?.code === 'ventana' ? T.errVentana : `${errorDe(e)} ${T.sendFail}`);
+    return;
   }
   cuenta.intento.borrar(S.code, d, S.yo);
   SFX.win(); vibrate([30, 50, 30]);
