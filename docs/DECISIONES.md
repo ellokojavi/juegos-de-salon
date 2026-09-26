@@ -1822,3 +1822,20 @@ quedaría atrás igual que la de CLAUDE.md).
 **Consecuencias:** un test nuevo entra solo al llamarse `*.test.mjs` o `*.test.py`. Un test que
 necesite red o llaves no puede correr ahí: tiene que funcionar sin ellas o quedar fuera del
 patrón. Los avisos de capturas viejas de `readme.py revisar` no hacen fallar el workflow.
+
+## D-146 · Tango: casillas de día y de noche, y la luna plateada
+**Fecha:** 2026-09-25 · **Estado:** vigente
+**Decisión:** en la grilla de Tango y en el dibujo de las reglas, la casilla con sol lleva fondo
+ámbar y la casilla con luna fondo azul noche. La luna se pinta plateada con un filtro CSS
+(`grayscale(1) brightness(1.5)`) sobre el mismo emoji 🌙. Las casillas dadas llevan el mismo
+color, más intenso; la casilla revelada por una pista se marca con un anillo cian, y no con el
+fondo cian de antes, para no tapar el día y la noche. Un choque sigue ganándole a todo: fondo y
+borde rojos. Además, las casillas deshabilitadas (dadas, reveladas, tablero terminado) ya no
+heredan el color gris al 30% que Chrome da a los botones deshabilitados, que apagaba el emoji
+justo en las dadas.
+**Por qué:** lo pidió el dueño: ☀️ y 🌙 son los dos amarillos y, de un vistazo, el tablero no se
+lee. Con dos señales, el fondo y el ícono, se separan aunque uno no distinga bien los colores.
+**Alternativas descartadas:** 🌑 (cada teléfono la dibuja distinto, y en algunos es una bola
+negra que se pierde sobre el morado); solo el filtro o solo el fondo (una sola señal); dibujar
+el sol y la luna sin emoji, como LinkedIn (más nítido, pero rompe con el resto de La Copa).
+
