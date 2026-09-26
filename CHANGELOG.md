@@ -1,10 +1,15 @@
 # Changelog
 
-## Sin publicar
+## 0.65.3 — 2026-09-25
 - **Botones más cortos y centrados** (U-17). Al terminar un minijuego suelto, "Jugar otra vez
   con otro contenido" pasa a "Jugar de nuevo", y "Repetir exactamente esta partida" a "Repetir
   esta partida". Si el texto de un botón parte línea, las dos líneas van centradas en toda la
   app, y ya no a la izquierda.
+
+## 0.65.2 — 2026-09-25
+- **Portada: los filtros en dos filas y una línea antes de los juegos** (D-144). A 320 px los
+  filtros ya no se salen de la columna.
+- **Con el filtro «Solo», el juego abre directo en su modo solo** (D-145).
 
 ## 0.65.1 — 2026-09-25
 - **Tango: el sol y la luna ya no se confunden** (D-146). La casilla con sol es ámbar, la casilla
