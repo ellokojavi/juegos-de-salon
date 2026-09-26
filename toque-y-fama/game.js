@@ -1,22 +1,28 @@
 /**
  * Toque y Fama — lógica de juego.
- * Un solo reductor de mensajes sirve para los tres modos:
+ * Un solo reductor de mensajes sirve para los dos modos de dos jugadores:
  *  - local:  ambos jugadores en este celular (transporte en memoria, roles A y B locales)
- *  - solo:   A adivina el número que eligió el celular (B), que solo responde (transporte en memoria, D-129)
  *  - online: este celular tiene un rol; el otro celular el opuesto (transporte Firebase)
  * Cada dispositivo calcula automáticamente las respuestas para los intentos contra SU secreto.
+ *
+ * Jugar solo no pasa por el reductor: es el minijuego 🔢 de La Copa (D-142), con sus 10 intentos,
+ * su puntaje de 0 a 100 y su reloj (copa/juegos/ui-numero.js montado con copa/juegos/solo.js).
  */
 import { $, $$, el, vibrate, sparkles, keepAwake, confetti, shareLink, canShare } from '../assets/js/ui.js';
 import { getLang, langToggle, applyStatic, COMMON, withLang } from '../assets/js/i18n.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { failWith } from '../assets/js/transport/errors.js';
-import { score, isValid, randomSecret, sha256, randomNonce, verifyPlayer } from './engine.js';
+import { score, isValid, sha256, randomNonce, verifyPlayer } from './engine.js';
 import { GAME_ID, DEFAULT_CONFIG, DIGIT_OPTIONS, LOCALES } from './rules.js';
 import { createChat } from '../assets/js/chat.js';
 import { teclado, CIFRAS } from '../assets/js/teclado.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
 import { trackStart } from '../assets/js/transport/stats.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
+import { codigoAlAzar } from '../copa/engine.js';
+import * as numero from '../copa/juegos/numero.js';
+import * as uiNumero from '../copa/juegos/ui-numero.js';
+import { jugarSolo, crearRecord, mmss } from '../copa/juegos/solo.js';
 
 const lang = getLang();
 const T = LOCALES[lang];
@@ -25,15 +31,10 @@ const triesWord = n => (n === 1 ? T.tryOne : T.tryMany);
 const other = r => (r === 'A' ? 'B' : 'A');
 const store = createSessionStore(GAME_ID, { legacyKeys: ['juegos-de-salon:tyf:session'] });
 const names_ = createNameStore(GAME_ID);
-const RECORD_KEY = `juegos-de-salon:${GAME_ID}:record`;
-/** Récord de jugar solo (menos intentos) por cifras y cero al inicio: son juegos distintos. */
-const records = {
-  key: c => `${c.digits}${c.zeroFirst ? '' : '-sin0'}`,
-  get(c) { try { return (JSON.parse(localStorage.getItem(RECORD_KEY) || '{}'))[this.key(c)] || null; } catch (_) { return null; } },
-  set(c, n) { try { const all = JSON.parse(localStorage.getItem(RECORD_KEY) || '{}'); all[this.key(c)] = n; localStorage.setItem(RECORD_KEY, JSON.stringify(all)); } catch (_) { /* nada */ } },
-};
+/** Récord de jugar solo: el mejor `{ s, ms }` (D-142). Clave nueva: el del solo viejo contaba intentos. */
+const record = crearRecord(`juegos-de-salon:${GAME_ID}:record-solo`);
 
-let S = null;   // sesión: modo, transporte, roles locales, secretos, bot
+let S = null;   // sesión: modo, transporte, roles locales, secretos
 let chat = null; // chat de sala: solo en dos celulares (canon C-15)
 let M = null;   // partida: estado reconstruido desde los mensajes
 
@@ -74,24 +75,20 @@ function apply(msg) {
   return null;
 }
 
-/**
- * Vista derivada del estado: fase, turno, resultado. Jugando solo (`config.solo`) el único
- * número secreto es el del celular (B) y siempre adivina A.
- */
+/** Vista derivada del estado: fase, turno, resultado. */
 function view() {
   const d = M.config.digits;
-  const solo = !!M.config.solo;
   const both = M.names.A && M.names.B;
-  const committed = solo ? M.commits.B : M.commits.A && M.commits.B;
-  const starter = solo ? 'A' : M.starter;
+  const committed = M.commits.A && M.commits.B;
+  const starter = M.starter;
   const pending = M.guesses.find(g => g.famas === null) || null;
-  const expected = solo ? 'A' : starter ? (M.guesses.length % 2 === 0 ? starter : other(starter)) : null;
+  const expected = starter ? (M.guesses.length % 2 === 0 ? starter : other(starter)) : null;
   // Resultado
   let done = false, winner = null, tie = false, replicaFor = null;
   for (let i = 0; i < M.guesses.length; i++) {
     const g = M.guesses[i];
     if (g.famas !== d) continue;
-    if (g.from === starter && M.config.replica && !solo) {
+    if (g.from === starter && M.config.replica) {
       const rep = M.guesses[i + 1];
       if (!rep) { replicaFor = other(starter); break; }
       if (rep.famas === null) { replicaFor = other(starter); break; }
@@ -103,7 +100,7 @@ function view() {
   if (!both) phase = 'lobby';
   else if (!committed) phase = 'secret';
   else if (!done) phase = 'play';
-  else if (!(solo ? M.reveals.B : M.reveals.A && M.reveals.B)) phase = 'reveal';
+  else if (!(M.reveals.A && M.reveals.B)) phase = 'reveal';
   else phase = 'done';
   return { phase, pending, expected, done, winner, tie, replicaFor, starter };
 }
@@ -111,11 +108,11 @@ function view() {
 /* ------------------------------------------------------------------ */
 /* Sesión y agentes                                                    */
 /* ------------------------------------------------------------------ */
-function startSession({ mode, transport, roles, config, names, bot = null, code = null, role = null }) {
+function startSession({ mode, transport, roles, config, names, code = null, role = null }) {
   // Cambiar de sala (la revancha crea una nueva) es irse de la anterior para siempre: se
   // despide en vez de solo soltar los oyentes, así no queda una sala muerta viéndose viva.
   if (S?.transport) S.transport.dispose();
-  S = { mode, transport, roles, secrets: {}, notes: {}, bot, code, role, repliedRounds: new Set(), lastShownRound: -1, uiRole: null, live: false };
+  S = { mode, transport, roles, secrets: {}, notes: {}, code, role, repliedRounds: new Set(), lastShownRound: -1, uiRole: null, live: false };
   M = newMatch(config);
   setupChat(mode);
   // Lo que llega en los primeros instantes es la historia de la sala al entrar: se dibuja sin ruido
@@ -132,7 +129,7 @@ function onChange() {
   chain = chain.then(async () => { await act(); render(); }).catch(e => console.error(e));
 }
 
-/** Acciones automáticas de los roles locales (responder, revelar, bot). */
+/** Acciones automáticas de los roles locales (comprometer, responder, revelar). */
 async function act() {
   const v = view();
   for (const r of S.roles) {
@@ -146,13 +143,7 @@ async function act() {
     }
     if (v.phase === 'reveal' && !M.reveals[r]) { S.transport.send({ t: 'reveal', from: r, secret: sec.secret, salt: sec.salt }); }
   }
-  // Jugando solo, el celular elige su número; responder y revelar lo hace el bucle de arriba
-  if (S.bot) {
-    const b = S.bot.role;
-    if (v.phase === 'secret' && !S.secrets[b]) { await setSecret(b, randomSecret(M.config.digits, M.config)); }
-  }
-  // Verificar solo tiene sentido con dos números secretos
-  if (v.phase === 'done' && !M.config.solo && !M.verify.A) { await verifyAll(); }
+  if (v.phase === 'done' && !M.verify.A) { await verifyAll(); }
   saveSession();
 }
 
@@ -191,11 +182,10 @@ function saveSession() {
 function loadSession() { return store.load(); }
 function clearSession() { store.clear(); }
 
-/** Retoma una partida de un celular o de jugar solo reproduciendo sus mensajes. */
+/** Retoma una partida de un celular reproduciendo sus mensajes. */
 function restoreLocal(saved) {
   const transport = createLocalTransport({ seed: saved.messages || [] });
-  const bot = saved.mode === 'solo' ? { role: 'B' } : null;
-  startSession({ mode: saved.mode, transport, roles: ['A', 'B'], config: saved.config, names: {}, bot });
+  startSession({ mode: saved.mode, transport, roles: ['A', 'B'], config: saved.config, names: {} });
   for (const [r, sec] of Object.entries(saved.private?.secrets || {})) S.secrets[r] = sec;
   for (const [r, list] of Object.entries(saved.private?.notes || {})) S.notes[r] = new Set(list);
   // No repetir las transiciones ya vistas ni volver a responder intentos ya respondidos
@@ -222,7 +212,7 @@ function keypad({ digits, zeroFirst, onSubmit, hidden = false, submitLabel = T.g
 
 /**
  * Píldoras de pista. En los dos tableros lado a lado van abreviadas (3F 1T) para que quepan en
- * una línea; en la pantalla de respuesta y en el tablero único de jugar solo, con palabra completa.
+ * una línea; en la pantalla de respuesta, con palabra completa.
  */
 function clueChips(g, big = false, long = big) {
   const d = M.config.digits;
@@ -306,7 +296,7 @@ function render() {
   if (chat && v.phase === 'play' && v.expected === S.role && !v.pending) chat.closeIfIdle();
   switch (v.phase) {
     case 'lobby': renderLobby(); break;
-    case 'secret': if (S.mode !== 'solo') renderSecret(v); break; // solo: el celular elige en un instante
+    case 'secret': renderSecret(v); break;
     case 'play': renderPlay(v); break;
     case 'reveal': renderPlay(v); break;
     case 'done': renderResult(v); break;
@@ -399,7 +389,7 @@ async function renderQr(url) {
 
 /** Fase de secreto: cada rol local sin secreto lo ingresa (en modo un celular, por turnos con pantalla tapada). */
 function renderSecret() {
-  const rolesNeeding = S.roles.filter(r => !S.secrets[r] && !(S.bot && S.bot.role === r));
+  const rolesNeeding = S.roles.filter(r => !S.secrets[r]);
   showScreen('screen-secret');
   const entry = $('#secret-entry');
   if (!rolesNeeding.length) {
@@ -445,7 +435,7 @@ function statusSub(v) {
 function renderPlay(v) {
   showScreen('screen-play');
   $('#secret-entry').innerHTML = '';
-  const myTurnRole = S.roles.includes(v.expected) && !(S.bot && S.bot.role === v.expected) ? v.expected : null;
+  const myTurnRole = S.roles.includes(v.expected) ? v.expected : null;
   // Modo un celular: al completarse una respuesta, mostrar el resultado y pasar el celular
   if (S.mode === 'local') {
     const last = M.guesses[M.guesses.length - 1];
@@ -467,25 +457,15 @@ function renderPlay(v) {
       return;
     }
   }
-  // Solo: sonar la respuesta a cada intento
-  if (S.mode === 'solo') {
-    const last = M.guesses[M.guesses.length - 1];
-    if (last && last.famas !== null && last.round > S.lastShownRound) { S.lastShownRound = last.round; SFX.reveal(); }
-  }
   // Estado
   const who = $('#status-who'), sub = $('#status-sub');
   if (v.phase === 'reveal') { who.textContent = '…'; sub.textContent = T.waitingReply; }
-  else if (S.mode === 'solo') {
-    const record = records.get(M.config);
-    who.textContent = T.soloTurn;
-    sub.textContent = fmt(T.soloStatus, { n: M.guesses.length + 1 }) + (record ? ' · ' + fmt(T.soloRecord, { n: record, word: triesWord(record) }) : '');
-  }
   else if (myTurnRole) { who.textContent = fmt(T.turnYou, { name: M.names[other(myTurnRole)] }); sub.textContent = statusSub(v); }
   else { who.textContent = fmt(T.turnOther, { name: M.names[v.expected] }); sub.textContent = statusSub(v); }
-  // Entrada (con recordatorio del número propio; jugando solo no hay número propio)
+  // Entrada (con recordatorio del número propio)
   const entry = $('#play-entry');
   entry.innerHTML = '';
-  const reminderRole = S.mode === 'online' ? S.role : S.mode === 'solo' ? null : myTurnRole;
+  const reminderRole = S.mode === 'online' ? S.role : myTurnRole;
   if (reminderRole && S.secrets[reminderRole] && v.phase === 'play') entry.append(mySecretChip(reminderRole));
   if (myTurnRole && !v.pending && v.phase === 'play') {
     S.notes[myTurnRole] = S.notes[myTurnRole] || new Set();
@@ -497,21 +477,19 @@ function renderPlay(v) {
   // Tableros
   const boards = $('#boards');
   boards.innerHTML = '';
-  boards.classList.toggle('boards--solo', S.mode === 'solo');
   for (const r of boardOrder()) boards.append(boardEl(r, v.expected === r && v.phase === 'play'));
   // Auto-scroll a la última fila
   const lastLi = boards.querySelector('li:last-child'); if (lastLi && M.guesses.length > 3) lastLi.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
 }
 
-function boardOrder() { return S.mode === 'online' ? [S.role, other(S.role)] : S.mode === 'solo' ? ['A'] : ['A', 'B']; }
+function boardOrder() { return S.mode === 'online' ? [S.role, other(S.role)] : ['A', 'B']; }
 
-/** Tablero de intentos de un jugador (se usa en el juego y en el resultado). Solo, ocupa todo el ancho. */
+/** Tablero de intentos de un jugador (se usa en el juego y en el resultado). */
 function boardEl(r, isTurn = false) {
-  const solo = S.mode === 'solo';
   const mine = M.guesses.filter(g => g.from === r);
-  const list = el('ol', {}, ...mine.map(g => el('li', { class: g.famas === M.config.digits ? 'hit' : '' }, el('span', { class: 'val' }, g.value), g.famas === null ? el('span', { class: 'clue' }, el('span', { class: 'z' }, '…')) : clueChips(g, false, solo))));
-  return el('div', { class: 'board' + (isTurn ? ' turn' : '') + (solo ? ' board--solo' : '') },
-    el('h3', {}, solo ? T.soloBoard : fmt(T.boardOf, { name: M.names[r] })),
+  const list = el('ol', {}, ...mine.map(g => el('li', { class: g.famas === M.config.digits ? 'hit' : '' }, el('span', { class: 'val' }, g.value), g.famas === null ? el('span', { class: 'clue' }, el('span', { class: 'z' }, '…')) : clueChips(g, false))));
+  return el('div', { class: 'board' + (isTurn ? ' turn' : '') },
+    el('h3', {}, fmt(T.boardOf, { name: M.names[r] })),
     el('div', { class: 'count' }, mine.length ? fmt(T.tries, { n: mine.length, word: triesWord(mine.length) }) : T.noGuesses),
     mine.length ? list : el('div', { class: 'empty' }, '—'),
   );
@@ -528,23 +506,7 @@ function renderResult(v) {
   }
   const meRole = S.mode === 'online' ? S.role : null;
   const title = $('#result-title'), sub = $('#result-sub'), trophy = $('#result-trophy');
-  const secretsTitle = $('#result-secrets-title');
-  secretsTitle.textContent = S.mode === 'solo' ? T.soloSecretWas : T.secretsWere;
-  if (S.mode === 'solo') {
-    // Jugando solo no se gana ni se pierde: se adivina, y el puntaje son los intentos
-    // Se decide una vez por partida: la pantalla se vuelve a dibujar y para entonces el récord ya es este
-    const tries = M.guesses.length;
-    if (!S.soloRecord) {
-      const prev = records.get(M.config);
-      const nuevo = !prev || tries < prev;
-      if (nuevo) records.set(M.config, tries);
-      S.soloRecord = { nuevo, best: nuevo ? tries : prev };
-    }
-    const { nuevo, best } = S.soloRecord;
-    title.textContent = T.soloWin; trophy.textContent = '🏆';
-    sub.innerHTML = '';
-    sub.append(fmt(T.inTries, { n: tries, word: triesWord(tries) }), el('br'), nuevo ? T.newRecord : fmt(T.prevRecord, { n: best, word: triesWord(best) }));
-  } else if (v.tie) { title.textContent = T.tieTitle; trophy.textContent = '🤝'; sub.textContent = ''; }
+  if (v.tie) { title.textContent = T.tieTitle; trophy.textContent = '🤝'; sub.textContent = ''; }
   else {
     title.textContent = fmt(T.winTitle, { name: M.names[v.winner] });
     const tries = M.guesses.filter(g => g.from === v.winner).length;
@@ -552,9 +514,7 @@ function renderResult(v) {
     trophy.textContent = meRole && meRole !== v.winner ? '😵' : '🏆';
   }
   const secrets = $('#result-secrets'); secrets.innerHTML = '';
-  secrets.classList.toggle('secrets--solo', S.mode === 'solo');
-  if (S.mode === 'solo') secrets.append(el('div', { class: 's' }, el('div', { class: 'n' }, M.reveals.B.secret)));
-  else for (const r of ['A', 'B']) {
+  for (const r of ['A', 'B']) {
     const ver = M.verify[r];
     // La verificación solo tiene sentido cuando el rival está en otro celular
     const verText = S.mode === 'online' && ver ? (ver.ok ? T.verified : T.notVerified) : '';
@@ -564,7 +524,6 @@ function renderResult(v) {
   const replay = $('#result-replay');
   if (!already) replay.open = false;
   const rb = $('#result-boards'); rb.innerHTML = '';
-  rb.classList.toggle('boards--solo', S.mode === 'solo');
   for (const r of boardOrder()) rb.append(boardEl(r));
   if (!already) { if (!meRole || meRole === v.winner || v.tie) { confetti({ count: 220, duration: 3500 }); SFX.win(); } else SFX.timeUp(); }
   renderResultActions(v);
@@ -622,10 +581,9 @@ async function rematch() {
 function startLocalMode(mode, names, config) {
   clearSession();
   const transport = createLocalTransport();
-  const bot = mode === 'solo' ? { role: 'B' } : null;
-  startSession({ mode, transport, roles: ['A', 'B'], config: mode === 'solo' ? { ...config, solo: true } : config, names, bot });
+  startSession({ mode, transport, roles: ['A', 'B'], config, names });
   keepAwake();
-  trackStart({ game: GAME_ID, mode, players: mode === 'solo' ? 1 : 2 }); // señal de uso para el panel (D-44)
+  trackStart({ game: GAME_ID, mode, players: 2 }); // señal de uso para el panel (D-44)
 }
 
 async function startOnline(transport, code, role, name, config) {
@@ -653,12 +611,97 @@ async function joinOnline(code, name, previousRole = null, savedSecret = null, s
 }
 
 /* ------------------------------------------------------------------ */
+/* Jugar solo: el minijuego 🔢 de La Copa (D-142)                      */
+/* ------------------------------------------------------------------ */
+/**
+ * Las mismas reglas, el mismo puntaje y la misma pantalla que en la copa: 4 cifras distintas
+ * (puede empezar con cero), 10 intentos, de 0 a 100 puntos y reloj de tiempo activo. El número
+ * sale de un código de 5 letras al azar, así la partida guardada es solo `{ codigo, jugadas, ms }`.
+ */
+let soltarSolo = null;
+/** ui-numero usa las claves de la copa; la ayuda del teclado es la del juego (bloquear, no tachar). */
+const TN = { ...T, blockHintDigits: T.blockHint };
+const recordTexto = r => fmt(T.prevRecord, { s: r.s, t: mmss(r.ms) });
+
+function soloIntro() {
+  showScreen('screen-solo-intro');
+  const box = $('#solo-intro'); box.innerHTML = '';
+  const antes = record.get();
+  box.append(
+    el('h2', { class: 'display display--lg center', style: 'margin:4px 0 0' }, T.modeSolo),
+    el('div', { class: 'panel' },
+      el('p', { class: 'lead', style: 'margin-bottom:6px' }, T.howTitle),
+      el('ol', { class: 'como' }, ...T.soloHow.map(x => el('li', {}, x))),
+      el('p', { class: 'lead', style: 'margin:12px 0 4px' }, T.scoringTitle),
+      el('p', { class: 'muted', style: 'margin:0' }, T.soloScoring),
+      antes ? el('p', { class: 'muted', style: 'margin:8px 0 0;font-weight:900' }, recordTexto(antes)) : null),
+    el('button', { class: 'btn btn--yellow', id: 'btn-solo-empezar', onClick: () => { SFX.tap(); soloNueva(); } }, T.soloStart),
+  );
+}
+
+/** Partida nueva: borra la guardada y avisa al panel (al retomar no, C-7). */
+function soloNueva() {
+  clearSession();
+  const partida = { mode: 'solo', codigo: codigoAlAzar(), jugadas: null, ms: 0, done: false };
+  store.save(partida);
+  trackStart({ game: GAME_ID, mode: 'solo', players: 1 }); // señal de uso para el panel (D-44)
+  soloJugar(partida);
+}
+
+/** Monta el minijuego con lo guardado (o de cero) y guarda cada jugada (C-6). */
+function soloJugar(partida) {
+  const { codigo } = partida;
+  soltarSolo?.();
+  showScreen('screen-solo');
+  keepAwake();
+  const p = numero.generar(codigo, 1);
+  const cron = $('#solo-cron');
+  soltarSolo = jugarSolo($('#solo-body'), {
+    mod: uiNumero, p, lang, T: TN, fmt, el, SFX, vibrate,
+    jugadas: partida.jugadas ?? undefined, ms: partida.ms || 0,
+    guardar: ({ jugadas, ms }) => store.save({ mode: 'solo', codigo, jugadas, ms, done: false }),
+    cron: t => { cron.textContent = fmt(T.soloTimer, { t }); },
+    alTerminar: r => { soltarSolo = null; soloFin(codigo, p, r); },
+  });
+}
+
+function soloFin(codigo, p, { s, t, ms, estado }) {
+  store.save({ mode: 'solo', codigo, jugadas: { i: estado.filas.map(f => f.v), n: [] }, ms, done: true });
+  // El récord solo se anota con puntos: un 0 no es un récord que valga la pena celebrar
+  const antes = record.get();
+  const { nuevo } = s > 0 ? record.anotar('', { s, ms }) : { nuevo: false };
+  showScreen('screen-solo-result');
+  const box = $('#solo-result'); box.innerHTML = '';
+  const n = estado.usados;
+  box.append(
+    el('div', { class: 'result-hero' },
+      el('span', { class: 'trophy' }, estado.resuelto ? '🏆' : '😵'),
+      el('h2', { class: 'display display--lg' }, estado.resuelto ? T.soloWin : T.soloLose),
+      el('p', { class: 'muted' }, T.yourScore),
+      el('div', { class: 'score-big', id: 'solo-puntaje' }, `${s}/100`),
+      el('p', { class: 'muted' }, fmt(T.soloSummary, { n, word: triesWord(n), t: mmss(ms) })),
+      nuevo ? el('p', { class: 'lead', style: 'margin:4px 0 0' }, T.newRecord) : antes ? el('p', { class: 'muted', style: 'font-weight:900' }, recordTexto(antes)) : null),
+    el('div', { class: 'panel solo-fin' },
+      el('div', {}, el('small', {}, T.soloSecretWas), el('div', { class: 'n' }, p.secreto)),
+      el('div', { class: 'tarjeta' + (n > 5 ? ' tarjeta--2' : ''), 'aria-hidden': 'true' }, ...t.split('\n').map(fila => el('span', {}, fila)))),
+    // El repaso va colapsado para que los botones queden a la vista (C-8)
+    el('details', { class: 'panel replay' }, el('summary', {}, T.replayTitle),
+      uiNumero.tablero(el, { filas: estado.filas, largo: p.cifras, titulo: T.yourGuesses, lang, valor: f => el('span', { class: 'val' }, f.v) })),
+    el('div', { class: 'stack', id: 'solo-actions' },
+      el('button', { class: 'btn btn--yellow', onClick: () => { SFX.tap(); soloNueva(); } }, T.playAgain),
+      el('button', { class: 'btn btn--ghost', onClick: () => { SFX.tap(); clearSession(); location.href = location.pathname; } }, T.changeMode),
+      el('a', { class: 'btn btn--ghost', href: '../' }, T.backMenu)),
+  );
+  if (estado.resuelto) { confetti({ count: 220, duration: 3500 }); SFX.win(); vibrate([30, 50, 30]); } else { SFX.timeUp(); vibrate(60); }
+}
+
+/* ------------------------------------------------------------------ */
 /* Pantallas de inicio                                                 */
 /* ------------------------------------------------------------------ */
 function renderModes() {
   const box = $('#modes'); box.innerHTML = '';
   const modes = [['local', T.modeLocal, T.modeLocalHint], ['online', T.modeOnline, T.modeOnlineHint], ['solo', T.modeSolo, T.modeSoloHint]];
-  for (const [m, label, hint] of modes) box.append(el('button', { class: 'mode', onClick: () => { SFX.tap(); renderSetup(m); } }, el('span', {}, el('b', {}, label), el('small', {}, hint)), el('span', { class: 'go' }, '›')));
+  for (const [m, label, hint] of modes) box.append(el('button', { class: 'mode', onClick: () => { SFX.tap(); if (m === 'solo') soloIntro(); else renderSetup(m); } }, el('span', {}, el('b', {}, label), el('small', {}, hint)), el('span', { class: 'go' }, '›')));
 }
 
 function renderResumeSlot() {
@@ -666,11 +709,14 @@ function renderResumeSlot() {
   const saved = loadSession();
   if (!saved || saved.done) return;
   if (saved.mode === 'online' && !saved.code) return;
-  // Las partidas del antiguo modo contra el celular (D-129) no se pueden retomar como solo
+  // Las partidas del antiguo modo contra el celular (D-129) no se pueden retomar como solo, ni las
+  // del solo con bot (D-142): esas guardaban mensajes y no el código del minijuego
   if (!['online', 'local', 'solo'].includes(saved.mode)) return;
+  if (saved.mode === 'solo' && typeof saved.codigo !== 'string') return;
   const label = saved.mode === 'online' ? `${T.lobbyCode}: ${saved.code}` : { local: T.modeLocal, solo: T.modeSolo }[saved.mode];
   const resume = async () => {
     if (saved.mode === 'online') { try { await joinOnline(saved.code, saved.name, saved.role, saved.secret, saved.notes); } catch (e) { clearSession(); renderResumeSlot(); } }
+    else if (saved.mode === 'solo') { SFX.tap(); soloJugar(saved); }
     else restoreLocal(saved);
   };
   slot.append(el('div', { class: 'panel pop' },
@@ -694,22 +740,18 @@ function renderSetup(mode, prefillCode = '') {
   const inputs = {};
   const nameField = (key, label, value = '') => { inputs[key] = el('input', { type: 'text', maxlength: 14, placeholder: label, value, autocomplete: 'off' }); return el('div', { class: 'field' }, el('label', {}, label), inputs[key]); };
   if (mode === 'local') form.append(nameField('A', T.p1), nameField('B', T.p2));
-  else if (mode !== 'solo') form.append(nameField('A', T.yourName, savedName));
+  else form.append(nameField('A', T.yourName, savedName));
   // Config (el que se une a una sala usa la config del anfitrión)
   const seg = el('div', { class: 'seg' }, ...DIGIT_OPTIONS.map(d => el('button', { type: 'button', class: d === config.digits ? 'on' : '', onClick: e => { config.digits = d; $$('button', seg).forEach(b => b.classList.toggle('on', b === e.currentTarget)); SFX.tap(); } }, d)));
   const sw = (key, label, hint) => { const b = el('button', { type: 'button', class: 'switch' + (config[key] ? ' on' : ''), onClick: () => { config[key] = !config[key]; b.classList.toggle('on', config[key]); SFX.tap(); } }); return el('div', { class: 'toggle-row' }, el('div', {}, el('b', {}, label), hint ? el('small', {}, hint) : null), b); };
   // Quien llega invitado no configura nada: la partida ya viene armada por el anfitrión.
-  // Jugando solo no hay réplica: nadie más adivina.
-  if (!prefillCode) form.append(el('div', { class: 'field' }, el('label', {}, T.digits), seg), ...(mode === 'solo' ? [] : [sw('replica', T.replica, T.replicaHint)]), sw('zeroFirst', T.zeroFirst));
+  if (!prefillCode) form.append(el('div', { class: 'field' }, el('label', {}, T.digits), seg), sw('replica', T.replica, T.replicaHint), sw('zeroFirst', T.zeroFirst));
   const actions = $('#setup-actions'); actions.innerHTML = '';
   const fail = (msg) => { err.textContent = msg; err.classList.remove('shake'); void err.offsetWidth; err.classList.add('shake'); SFX.error(); vibrate([30, 30, 30]); };
   const getName = k => inputs[k].value.trim();
   const remember = n => names_.set(n);
   if (mode === 'local') {
     actions.append(el('button', { class: 'btn btn--yellow', onClick: () => { const a = getName('A'), b = getName('B'); if (!a || !b || a.toLowerCase() === b.toLowerCase()) return fail(T.errNames); SFX.tap(); startLocalMode('local', { A: a, B: b }, config); } }, T.start));
-  } else if (mode === 'solo') {
-    // Los nombres no se ven jugando solo, pero el reductor los necesita para salir de la sala
-    actions.append(el('button', { class: 'btn btn--yellow', onClick: () => { SFX.tap(); startLocalMode('solo', { A: 'A', B: 'B' }, config); } }, T.start));
   } else {
     const codeInput = el('input', { type: 'text', class: 'code', maxlength: 4, placeholder: T.codePlaceholder, value: prefillCode, autocapitalize: 'characters', autocomplete: 'off' });
     const busy = (b, on) => { b.disabled = on; };
@@ -758,4 +800,4 @@ function init() {
 }
 init();
 // Gancho de depuración (solo lectura) para pruebas automatizadas.
-window.__tyf = { view: () => (M ? view() : null), match: () => M, session: () => S };
+window.__tyf = { view: () => (M ? view() : null), match: () => M, session: () => S, guardada: () => store.load() };
