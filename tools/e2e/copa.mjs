@@ -448,10 +448,13 @@ await click('#btn-rendirse'); await sleep(300);
 ok(await ev(`document.querySelectorAll('.rej.reina').length`) > 0 && !!await ev(`document.getElementById('btn-fin')`), 'Reinas: al rendirse se ve la solución');
 await click('#btn-fin'); await sleep(500);
 ok(/^0/.test(await ev(`document.querySelector('.score-big')?.textContent || ''`)), 'Reinas: rendirse vale 0 puntos');
-// Desde la portada (D-142) la práctica es el minijuego suelto: sin prueba ni semilla, y vuelve al menú
-await b.go(`${BASE}?practica=conexiones&prueba`, 1200); await preparar();
+// Desde la portada (D-142) la práctica es el minijuego suelto: sin prueba ni semilla, y vuelve al menú.
+// Vive en /minijuegos/ (D-149): un link viejo a /copa/?practica= sin &labs se va para allá.
+await b.go(`${BASE}?practica=conexiones&prueba`, 1500); await preparar();
+ok(await ev(`location.pathname + location.search`) === '/minijuegos/?conexiones&prueba', 'minijuego suelto: el link viejo de la copa lleva a /minijuegos/');
 ok(!await ev(`document.getElementById('btn-ensayo')`) && await ev(`document.getElementById('btn-menu').getAttribute('href')`) === '../'
   && await ev(`[...document.querySelectorAll('#jugar-body a')].some(a => a.getAttribute('href') === '../')`), 'minijuego suelto: sin prueba y de vuelta al menú');
+ok(!/copa/i.test(await ev(`location.href + ' ' + document.title`)), 'minijuego suelto: ni el link ni el título dicen copa');
 for (const id of ['linea', 'numero', 'conexiones', 'reinas', 'letras', 'zip', 'tango', 'anio', 'final']) {
   // Zip con semilla fija: el chequeo del aviso busca un trazo que llegue al final sin cubrir todo
 await b.go(`${BASE}?practica=${id}&prueba&labs${id === 'zip' ? '&zipSeg=12&semilla=KQRST' : ''}`, 1200); await preparar();
