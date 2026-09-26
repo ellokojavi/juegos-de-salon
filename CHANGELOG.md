@@ -1,5 +1,11 @@
 # Changelog
 
+## Sin publicar
+- **La Copa: el admin puede cambiar el nombre de la copa** mientras no termine. En Administrar,
+  el panel "Nombre de la copa" dice cómo se llama y tiene "✏️ Cambiar nombre", con el mismo
+  campo y contador de cuando se crea. El link no cambia, y todos ven el nombre nuevo al momento.
+  Necesita publicar las reglas de Firebase.
+
 ## 0.65.6 — 2026-09-26
 - **La Copa: el día de gracia se lee entero.** En el calendario, la fila del día de ayer que
   todavía se puede jugar ponía el botón al lado del nombre: el nombre se cortaba ("Línea Rel…")

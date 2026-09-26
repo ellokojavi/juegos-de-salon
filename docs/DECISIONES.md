@@ -1868,3 +1868,19 @@ lee. Con dos señales, el fondo y el ícono, se separan aunque uno no distinga b
 **Alternativas descartadas:** 🌑 (cada teléfono la dibuja distinto, y en algunos es una bola
 negra que se pierde sobre el morado); solo el filtro o solo el fondo (una sola señal); dibujar
 el sol y la luna sin emoji, como LinkedIn (más nítido, pero rompe con el resto de La Copa).
+
+## D-148 · El admin puede cambiar el nombre de la copa
+**Fecha:** 2026-09-26 · **Estado:** vigente
+**Decisión:** En Administrar, un panel "Nombre de la copa" muestra cómo se llama y ofrece
+"✏️ Cambiar nombre": el mismo campo de 1 a 40 caracteres con contador de cuando se crea (D-119),
+con Guardar y Cancelar. Se puede mientras la copa no termine. Las reglas de Firebase suman un
+`.write` propio en `meta/name` para el admin, con `now < meta/end`; la regla de `meta` entero sigue
+exigiendo el mismo nombre, así mover el inicio no lo cambia de paso.
+**Por qué:** lo pidió el dueño. El link no depende del nombre (código o alias, D-121), así que
+cambiarlo no rompe nada de lo que ya se compartió.
+**Alternativas descartadas:** permitirlo también con la copa terminada: el resumen final ya se
+compartió con ese nombre y el podio quedaría con otro.
+**Consecuencias:** los mensajes que ya se mandaron por WhatsApp siguen con el nombre viejo. La
+confirmación para eliminar la copa pide escribir el nombre de ese momento. Hay que publicar las
+reglas (`node tools/reglas.mjs publicar`) para que el botón funcione en las copas de verdad; en las
+de prueba (almacén local) funciona sin eso.
