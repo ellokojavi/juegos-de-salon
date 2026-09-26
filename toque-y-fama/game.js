@@ -8,7 +8,7 @@
  * Jugar solo no pasa por el reductor: es el minijuego 🔢 de La Copa (D-142), con sus 10 intentos,
  * su puntaje de 0 a 100 y su reloj (copa/juegos/ui-numero.js montado con copa/juegos/solo.js).
  */
-import { $, $$, el, vibrate, sparkles, keepAwake, confetti, shareLink, canShare, llegaSolo } from '../assets/js/ui.js';
+import { $, $$, el, vibrate, sparkles, keepAwake, confetti, shareLink, canShare } from '../assets/js/ui.js';
 import { getLang, langToggle, applyStatic, COMMON, withLang } from '../assets/js/i18n.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { failWith } from '../assets/js/transport/errors.js';
@@ -791,7 +791,6 @@ function init() {
   sparkles(12);
   renderModes();
   renderResumeSlot();
-  llegaSolo(() => soloIntro()); // desde la portada filtrada en Solo (D-145)
   const code = new URLSearchParams(location.search).get('sala');
   if (code && /^[A-Z]{4}$/i.test(code)) {
     const saved = loadSession();

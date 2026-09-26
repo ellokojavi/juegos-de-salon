@@ -1767,7 +1767,7 @@ podio con gráfico); con esta ningún cambio de lugar queda fuera, y el dueño p
 todos.
 
 ## D-142 · Los minijuegos de La Copa se juegan sueltos, y la portada se filtra
-**Fecha:** 2026-09-25 · **Estado:** vigente
+**Fecha:** 2026-09-25 · **Estado:** vigente; D-149 quita el filtro de cuántos juegan y saca los sueltos de `/copa/`
 **Decisión:** Tres cambios que van juntos:
 1. **La portada ofrece los minijuegos de La Copa sueltos**, de un jugador: Conexiones, Toque y
    Fama: Palabra, ¿En qué año?, Reinas, Tango y Zip. Viven en `SUELTOS` de `assets/js/games.js`
@@ -1824,7 +1824,7 @@ necesite red o llaves no puede correr ahí: tiene que funcionar sin ellas o qued
 patrón. Los avisos de capturas viejas de `readme.py revisar` no hacen fallar el workflow.
 
 ## D-144 · Los filtros de la portada caben en dos filas
-**Fecha:** 2026-09-25 · **Estado:** vigente
+**Fecha:** 2026-09-25 · **Estado:** vigente; desde D-149 queda solo la fila de tipos
 **Decisión:** los filtros de la portada son siempre dos filas: cuántos juegan arriba y los tipos
 abajo, los cuatro en una sola fila. Para que quepan, dos tipos se acortan ("Cultura general" →
 "Cultura", "Cartas y dados" → "Cartas/Dados"; en inglés "Cards/Dice", en portugués "Cultura" y
@@ -1839,7 +1839,7 @@ pantalla. Sin separación, la última ficha y la primera tarjeta se leían como 
 opciones); achicar la letra hasta que quepan con el emoji al lado (a 320 px quedaba ilegible).
 
 ## D-145 · Con el filtro "Solo", el juego abre directo en su modo solo
-**Fecha:** 2026-09-25 · **Estado:** vigente
+**Fecha:** 2026-09-25 · **Estado:** reemplazada por D-149 (ya no hay filtro de cuántos juegan)
 **Decisión:** si la portada está filtrada en "Solo", las tarjetas de los juegos que tienen más de
 un modo llevan `?modo=solo`, y el juego se salta la pantalla de modos: Toque y Fama y Línea de
 Tiempo abren su minijuego solo, El Ahorcado su configuración de solo, y Dudo y Batalla Naval la
@@ -1905,3 +1905,30 @@ compartió con ese nombre y el podio quedaría con otro.
 confirmación para eliminar la copa pide escribir el nombre de ese momento. Hay que publicar las
 reglas (`node tools/reglas.mjs publicar`) para que el botón funcione en las copas de verdad; en las
 de prueba (almacén local) funciona sin eso.
+
+## D-149 · La portada se filtra solo por tipo, y los minijuegos sueltos salen de /copa/
+**Fecha:** 2026-09-26 · **Estado:** vigente
+**Decisión:** Dos cambios:
+1. **Se va el filtro de cuántos juegan** (Todos · Solo · Con amigos, D-142). La portada se filtra
+   solo por tipo (Palabras, Lógica, Cultura, Cartas/Dados), igual que antes: se prende y se
+   apaga con un toque y va en la URL (`?tipo=logica`). Con él se va D-145: ninguna tarjeta lleva
+   `?modo=solo` y `llegaSolo` de `ui.js` desaparece; cada juego pregunta su modo adentro, en su
+   pantalla de modos. Un link viejo con `?jugadores=` abre la portada sin ese filtro y lo borra
+   de la URL.
+2. **Los minijuegos sueltos se abren en `/minijuegos/?<id>`** (`/minijuegos/?reinas`), y no en
+   `/copa/?practica=<id>`. Es una página propia, con solo las pantallas de jugar y del
+   resultado, que carga el mismo `copa/game.js` (lo reconoce por `<body data-suelto>`). El título
+   de la pestaña y la ficha de arriba dicen el minijuego (`👑 Reinas`), no "La Copa", y la
+   semilla no va en la URL. Dentro de una copa nada cambia, y la práctica del laboratorio sigue
+   en `/copa/?practica=<id>&labs`. Un link viejo a `/copa/?practica=<id>` sin `&labs` se va a
+   `/minijuegos/?<id>`.
+**Por qué:** lo pidió el dueño. Con "Solo" la pregunta de cuántos juegan se contestaba dos veces
+de maneras que no siempre calzaban (un juego de 1 a 6 aparecía en las dos), y el tipo es lo que
+de verdad ayuda a elegir. Un minijuego jugado desde el menú no es parte de ninguna copa: un link
+que dice "copa" confunde a quien lo recibe.
+**Alternativas descartadas:** una carpeta por minijuego (`/reinas/`): seis páginas iguales con su
+import map, para un link apenas más corto. Copiar las pantallas de La Copa a la página nueva
+(dos versiones del mismo minijuego que se separarían).
+**Consecuencias:** la bajada de la antesala sigue diciendo "Minijuego de La Copa": dice de dónde
+viene, no dónde se está. Las señales del panel no cambian (`game: <id>, mode: 'solo'`).
+`set-version.py` estampa también `minijuegos/index.html`.
