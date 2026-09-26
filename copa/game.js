@@ -833,8 +833,9 @@ async function compartirImagen() {
   const d = Math.min(Math.max(diaActual(meta, now), 1), meta.days);
   const n = filas.length;
   const W = 1080;
-  const fila = Math.max(64, Math.min(104, 690 / Math.max(1, n))); // filas más bajas si son muchos
   const pie = Object.values(menos).some(x => x > 0) ? 170 : 130;
+  // Filas más bajas si son muchos: hasta 10 jugadores cabe en 1080 × 1080; con más, se alarga
+  const fila = Math.max(60, Math.min(104, (1080 - 240 - 60 - pie) / Math.max(1, n)));
   const H = Math.max(1080, 240 + n * fila + 60 + pie);
   const g0 = 240 + (H - (240 + n * fila + 60 + pie)) / 2; // con pocos jugadores, centrado
   const cv = document.createElement('canvas');
