@@ -204,6 +204,9 @@ button.md-fila { cursor: pointer; }
 .md-fila[aria-disabled="true"] { opacity: 0.5; }
 .md-fila.perdido { opacity: 0.45; }
 .md-fila.gracia, .md-fila.en-curso { box-shadow: 0 0 0 2px var(--orange) inset; }
+/* Con botón (U-11, U-12): el botón baja a su propia línea, así el nombre y el aviso usan todo el ancho */
+.md-fila.gracia:has(> .btn), .md-fila.en-curso:has(> .btn) { grid-template-columns: 3.2em 2em 1fr; }
+.md-fila > .btn { grid-column: 1 / -1; margin-top: 4px; }
 .md-dia { display: grid; line-height: 1.1; }
 .md-dia b { font: 900 0.95rem var(--font-num); }
 .md-dia small { color: var(--muted); font-size: 0.7rem; text-transform: capitalize; }
