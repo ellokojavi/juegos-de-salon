@@ -75,7 +75,7 @@ export function montar(raiz, ctx) {
   const marcarEstado = () => {
     const x = e();
     // Terminado el tablero, el tiempo se detiene aquí y no al tocar el botón (D-130)
-    if (x.fin) ctx.pararReloj?.();
+    if (x.fin) ctx.pararReloj?.(x);
     // Antes de la primera jugada no hay cuenta que dar: "vas 0 de 0" no dice nada
     estadoTxt.textContent = x.fin ? '' : (sel.carta ? LT.pickSlot : LT.pickCard) + (x.marcas.length ? ` · ${fmt(T.lineaLleva, { ok: x.aciertos, n: x.marcas.length })}` : '');
   };

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.66.1 — 2026-09-26
+- **La Copa: el resultado del día se envía apenas termina el tablero** (D-150), no al tocar
+  "Ver resultado". Si el jugador cierra la pestaña sin tocarlo, igual cuenta, aunque el día
+  cierre antes de que vuelva. El botón ahora solo muestra la pantalla de resultado.
+
 ## 0.66.0 — 2026-09-26
 - **Portada: se filtra solo por tipo de juego** (D-149). Se va el filtro Todos · Solo · Con
   amigos: cada juego pregunta adentro cómo se juega. Con él se va el salto directo al modo solo
