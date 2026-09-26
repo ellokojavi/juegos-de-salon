@@ -818,9 +818,11 @@ function mensajeTabla() {
 const nombreConJuegos = (name, n) => (n > 0 ? fmt(T.fewerGames, { name, n }) : name);
 
 /**
- * La tabla parcial como imagen para compartir (D-126): el gráfico de posiciones con los colores
- * de cada jugador, la tabla con las marcas de juegos de menos y el link. Se dibuja en un canvas
- * con las fuentes de la app y se comparte como archivo; si el celular no puede, se descarga.
+ * La tabla parcial como imagen para compartir (D-126, D-141): a la izquierda, el gráfico de
+ * posiciones con una columna por cada día que ya se ve (todos, sin saltarse ninguno); a la
+ * derecha, la tabla. Gráfico y tabla comparten el eje: la línea de cada jugador termina en su
+ * fila, así cada nombre aparece una sola vez. Se dibuja en un canvas con las fuentes de la app
+ * y se comparte como archivo; si el celular no puede, se descarga.
  */
 async function compartirImagen() {
   const Lc = L(), { meta } = Lc;
@@ -829,14 +831,19 @@ async function compartirImagen() {
   const menos = menosJuegos(filas);
   const ev = evolucion(Lc, S.yo, now);
   const d = Math.min(Math.max(diaActual(meta, now), 1), meta.days);
-  const W = 1080, n = filas.length;
-  const altoGraf = 90 + Math.max(1, n - 1) * 70 + 70, altoTabla = n * 78;
-  const H = Math.max(1080, 250 + altoGraf + 60 + altoTabla + 150);
+  const n = filas.length;
+  const W = 1080;
+  const pie = Object.values(menos).some(x => x > 0) ? 170 : 130;
+  // Filas más bajas si son muchos: hasta 10 jugadores cabe en 1080 × 1080; con más, se alarga
+  const fila = Math.max(60, Math.min(104, (1080 - 240 - 60 - pie) / Math.max(1, n)));
+  const H = Math.max(1080, 240 + n * fila + 60 + pie);
+  const g0 = 240 + (H - (240 + n * fila + 60 + pie)) / 2; // con pocos jugadores, centrado
   const cv = document.createElement('canvas');
   cv.width = W; cv.height = H;
   const c = cv.getContext('2d');
   try { await document.fonts?.ready; } catch (_) { /* nada */ }
   const fuente = (peso, px, familia = 'Nunito, system-ui, sans-serif') => `${peso} ${px}px ${familia}`;
+  const caja = (x0, y0, w, h, r) => { c.beginPath(); if (c.roundRect) c.roundRect(x0, y0, w, h, r); else c.rect(x0, y0, w, h); };
   // Fondo como el de la app
   const fondo = c.createLinearGradient(0, 0, W, H);
   fondo.addColorStop(0, '#3a0d5c'); fondo.addColorStop(1, '#120a2e');
@@ -847,52 +854,70 @@ async function compartirImagen() {
   // El nombre de la copa, achicando la letra hasta que quepa (llega a 40 caracteres)
   let tam = 76;
   do { c.font = fuente(400, tam, 'Bangers, Impact, sans-serif'); tam -= 4; } while (c.measureText(`🏆 ${meta.name}`).width > W - 100 && tam > 30);
-  c.fillText(`🏆 ${meta.name}`, W / 2, 120);
+  c.fillText(`🏆 ${meta.name}`, W / 2, 115);
   c.fillStyle = '#ffffff'; c.font = fuente(800, 40);
-  c.fillText(fmt(T.imageSubtitle, { d, n: meta.days }), W / 2, 185);
-  // El gráfico
-  const g0 = 250, izq = 110, der = 250, fila = 70;
+  c.fillText(fmt(T.imageSubtitle, { d, n: meta.days }), W / 2, 180);
+  // El eje que comparten: el centro de la fila i (0 = arriba) es también la altura del lugar i+1
+  const yFila = i => g0 + (i + 0.5) * fila;
   const color = pid => colorDe(Lc, pid);
-  const x = k => izq + (meta.days === 1 ? 0 : ((k - 1) * (W - izq - der)) / (meta.days - 1));
-  const y = l => g0 + 40 + (l - 1) * fila;
-  c.lineWidth = 2; c.strokeStyle = 'rgba(255,255,255,0.10)'; c.fillStyle = 'rgba(255,255,255,0.7)'; c.font = fuente(800, 28);
-  const nf = Math.max(1, ev.filas.length);
-  for (let l = 1; l <= nf; l++) { c.beginPath(); c.moveTo(izq, y(l)); c.lineTo(W - der, y(l)); c.stroke(); c.textAlign = 'right'; c.fillText(`${l}º`, izq - 22, y(l) + 10); }
-  c.textAlign = 'center';
-  for (let k = 1; k <= meta.days; k++) c.fillText(fmt(T.dayShort, { d: k }), x(k), y(nf) + 60);
+  const izq = 70, tabla0 = 470, derTabla = W - 40; // el gráfico va de izq a tabla0 - 30
+  const m = ev.dias.length;
+  const x = i => (m <= 1 ? izq : izq + (i * (tabla0 - 40 - izq)) / (m - 1));
+  // Una guía por fila y el rótulo de cada día que se ve
+  c.lineWidth = 2; c.strokeStyle = 'rgba(255,255,255,0.10)';
+  for (let i = 0; i < n; i++) { c.beginPath(); c.moveTo(izq, yFila(i)); c.lineTo(tabla0, yFila(i)); c.stroke(); }
+  c.fillStyle = 'rgba(255,255,255,0.7)'; c.font = fuente(800, m > 10 ? 22 : 28); c.textAlign = 'center';
+  ev.dias.forEach((dia, i) => c.fillText(fmt(T.dayShort, { d: dia }), x(i), g0 + n * fila + 44));
+  // Las filas de la tabla, detrás de las líneas que llegan a ellas
+  const filaDe = Object.fromEntries(filas.map((f, i) => [f.pid, i]));
+  filas.forEach((f, i) => {
+    const y0 = yFila(i) - fila / 2 + 6, h = fila - 12;
+    c.fillStyle = f.pid === S.yo ? 'rgba(46,230,214,0.18)' : 'rgba(0,0,0,0.28)';
+    caja(tabla0, y0, derTabla - tabla0, h, 18); c.fill();
+    if (f.pid === S.yo) { c.lineWidth = 4; c.strokeStyle = '#2ee6d6'; c.stroke(); }
+  });
+  // Las líneas: una columna por día visto; el último punto cae en la fila del jugador y de ahí
+  // sigue derecho hasta ella. La tuya, más gruesa y encima.
+  // Los empatados comparten lugar: sus líneas van lado a lado, como las de un plano de metro,
+  // en el orden de la tabla de hoy, para que ninguna tape a otra (y se vea que iban empatados)
+  const junto = ev.dias.map((_, i) => {
+    const grupos = {};
+    ev.filas.filter(f => f.lugares[i]).sort((a, b) => (filaDe[a.pid] ?? n) - (filaDe[b.pid] ?? n))
+      .forEach(f => (grupos[f.lugares[i]] ||= []).push(f.pid));
+    const r = {};
+    for (const g of Object.values(grupos)) g.forEach((pid, k) => { r[pid] = (k - (g.length - 1) / 2) * Math.min(12, fila / (g.length + 1)); });
+    return r;
+  });
   const orden = [...ev.filas.filter(f => f.pid !== S.yo), ...ev.filas.filter(f => f.pid === S.yo)];
-  const enLugar = {};
   for (const f of orden) {
-    if (!f.lugares.length) continue;
-    const pts = f.lugares.map((l, i) => [x(ev.dias[i]), y(l)]);
-    c.strokeStyle = color(f.pid); c.fillStyle = color(f.pid); c.lineWidth = f.pid === S.yo ? 9 : 6; c.lineJoin = 'round';
-    c.beginPath(); pts.forEach(([px, py], i) => (i ? c.lineTo(px, py) : c.moveTo(px, py))); c.stroke();
-    pts.forEach(([px, py]) => { c.beginPath(); c.arc(px, py, f.pid === S.yo ? 13 : 10, 0, Math.PI * 2); c.fill(); });
-    const [lx, ly] = pts[pts.length - 1];
-    c.textAlign = 'left'; c.font = fuente(900, 28);
-    const corto = f.name.length > 10 ? `${f.name.slice(0, 9)}…` : f.name;
-    const ultimo = f.lugares[f.lugares.length - 1];
-    const k = (enLugar[ultimo] = (enLugar[ultimo] ?? -1) + 1); // empatados: apilados, no encimados
-    c.fillText(`${corto} ${ultimo}º${menos[f.pid] > 0 ? ` (-${menos[f.pid]}J)` : ''}`, lx + 24, ly + 10 + k * 32);
+    if (!f.lugares.length || filaDe[f.pid] === undefined) continue;
+    const pts = f.lugares.map((l, i) => [x(i), (i === m - 1 ? yFila(filaDe[f.pid]) : yFila(l - 1) + junto[i][f.pid])]);
+    const mia = f.pid === S.yo;
+    c.strokeStyle = color(f.pid); c.fillStyle = color(f.pid); c.lineWidth = mia ? 10 : 6; c.lineJoin = 'round'; c.lineCap = 'round';
+    c.beginPath(); pts.forEach(([px, py], i) => (i ? c.lineTo(px, py) : c.moveTo(px, py))); c.lineTo(tabla0 + 6, pts[pts.length - 1][1]); c.stroke();
+    pts.forEach(([px, py]) => { c.beginPath(); c.arc(px, py, mia ? 13 : 10, 0, Math.PI * 2); c.fill(); });
   }
-  // La tabla
-  let ty = g0 + altoGraf + 60;
-  for (const f of filas) {
-    c.fillStyle = f.pid === S.yo ? 'rgba(46,230,214,0.16)' : 'rgba(0,0,0,0.25)';
-    c.beginPath(); c.roundRect?.(90, ty - 52, W - 180, 66, 18); if (!c.roundRect) c.rect(90, ty - 52, W - 180, 66); c.fill();
-    c.textAlign = 'left'; c.font = fuente(900, 36); c.fillStyle = '#ffffff';
-    c.fillText(['🥇', '🥈', '🥉'][f.lugar - 1] || `${f.lugar}.`, 115, ty);
-    c.fillStyle = color(f.pid); c.beginPath(); c.arc(205, ty - 12, 11, 0, Math.PI * 2); c.fill();
-    c.fillStyle = '#ffffff'; c.font = fuente(800, 36);
-    c.fillText(nombreConJuegos(f.name, menos[f.pid]), 232, ty);
-    c.textAlign = 'right'; c.font = fuente(900, 38); c.fillStyle = '#ffd23f';
-    c.fillText(`${f.total} pts`, W - 115, ty);
-    ty += 78;
-  }
-  if (Object.values(menos).some(x => x > 0)) { c.textAlign = 'center'; c.font = fuente(700, 28); c.fillStyle = 'rgba(255,255,255,0.7)'; c.fillText(T.fewerGamesNote, W / 2, ty + 10); }
+  // El texto de cada fila: lugar, flecha, nombre (con "(-1J)") y puntos
+  const tamFila = Math.round(Math.min(38, fila * 0.42));
+  filas.forEach((f, i) => {
+    const y = yFila(i) + tamFila * 0.36;
+    c.textAlign = 'center'; c.font = fuente(900, tamFila); c.fillStyle = '#ffd23f';
+    c.fillText(String(f.lugar), tabla0 + 42, y);
+    if (f.flecha) { c.font = fuente(900, tamFila * 0.6); c.fillStyle = f.flecha > 0 ? '#9dff3a' : '#ff2e88'; c.fillText(f.flecha > 0 ? '▲' : '▼', tabla0 + 82, y - 2); }
+    c.textAlign = 'right'; c.font = fuente(900, tamFila); c.fillStyle = '#ffd23f';
+    const puntos = `${f.total} ${T.pts}`;
+    c.fillText(puntos, derTabla - 22, y);
+    const libre = derTabla - 22 - c.measureText(puntos).width - 20 - (tabla0 + 104);
+    c.textAlign = 'left'; c.fillStyle = '#ffffff';
+    let nombre = nombreConJuegos(f.name, menos[f.pid]), t = tamFila;
+    do { c.font = fuente(800, t); t -= 2; } while (c.measureText(nombre).width > libre && t > 20);
+    while (c.measureText(nombre).width > libre && f.name.length > 1) { f = { ...f, name: f.name.slice(0, -1) }; nombre = nombreConJuegos(`${f.name}…`, menos[f.pid]); }
+    c.fillText(nombre, tabla0 + 104, y);
+  });
+  if (pie > 130) { c.textAlign = 'center'; c.font = fuente(700, 28); c.fillStyle = 'rgba(255,255,255,0.7)'; c.fillText(T.fewerGamesNote, W / 2, H - 120); }
   // El link
   c.textAlign = 'center'; c.font = fuente(800, 34); c.fillStyle = '#2ee6d6';
-  c.fillText(urlPublica(S.code).replace(/^https?:\/\//, ''), W / 2, H - 60);
+  c.fillText(urlPublica(S.code).replace(/^https?:\/\//, ''), W / 2, H - 55);
   const blob = await new Promise(r => cv.toBlob(r, 'image/png'));
   const archivo = new File([blob], `copa-${meta.alias || S.code.toLowerCase()}-dia-${d}.png`, { type: 'image/png' });
   try {
