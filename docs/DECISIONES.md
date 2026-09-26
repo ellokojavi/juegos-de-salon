@@ -1765,3 +1765,42 @@ menos) para mirar la máxima densidad.
 Se eligió entre tres propuestas (línea que llega a la fila, tabla con el camino de cada uno,
 podio con gráfico); con esta ningún cambio de lugar queda fuera, y el dueño pidió que se vieran
 todos.
+
+## D-142 · Los minijuegos de La Copa se juegan sueltos, y la portada se filtra
+**Fecha:** 2026-09-25 · **Estado:** vigente
+**Decisión:** Tres cambios que van juntos:
+1. **La portada ofrece los minijuegos de La Copa sueltos**, de un jugador: Conexiones, Toque y
+   Fama: Palabra, ¿En qué año?, Reinas, Tango y Zip. Viven en `SUELTOS` de `assets/js/games.js`
+   (nombre y bajada en los tres idiomas) y abren la práctica de La Copa (`copa/?practica=<id>`).
+   Abierta desde la portada, la práctica es el minijuego suelto: vuelve al menú, no ofrece la
+   sesión de prueba ni muestra la semilla, y manda `trackStart({ game: <id>, mode: 'solo' })`.
+   Desde el laboratorio llega con `&labs` y queda como estaba. La pantalla sigue en español
+   (D-98): en inglés y portugués la tarjeta lo dice con una píldora "🇪🇸 In Spanish".
+2. **El modo solo de Toque y Fama y de Línea de Tiempo pasa a ser su minijuego de La Copa**
+   (🔢 adivina el número y ⏳ Línea Relámpago): mismas reglas y puntaje de 0 a 100, reloj de
+   tiempo activo y récord por mejor puntaje (a igualdad, menor tiempo). Se montan las mismas
+   pantallas de La Copa (`ui-numero.js`, `ui-linea.js`), que ahora aceptan `ctx.lang`, con lo
+   común en `copa/juegos/solo.js`. Esos dos sí van en los tres idiomas y tienen memoria de
+   partida (C-6). Reemplaza el solitario de D-27/D-129 en esos dos juegos.
+3. **La portada se filtra** por cuántos juegan (Todos · Solo · Con amigos) y por tipo (Palabras,
+   Lógica, Cultura general, Cartas y dados; `TIPOS` y `tipos` en `games.js`). El tipo se prende
+   y se apaga con un toque; sin tipo se ven todos. El filtro va en la URL
+   (`?jugadores=solo&tipo=logica`), así volver desde un juego lo deja igual y un link filtrado se
+   puede compartir. Con filtro se dice cuántos se ven y hay "Quitar filtros"; si no queda ninguno,
+   se dice y se ofrece lo mismo. "Próximamente" pasa al lado del nombre del juego y no se apaga
+   con el resto de la tarjeta: abajo a la derecha no se veía.
+
+**Por qué:** lo pidió el dueño. Los minijuegos ya estaban probados en el laboratorio y en copas
+de verdad, y sueltos son un motivo más para entrar. En Toque y Fama y Línea de Tiempo el
+minijuego es mejor solitario que el que había (un reloj, un tope de intentos y un puntaje que se
+compara) y así hay una sola versión de cada uno. Con catorce tarjetas la lista ya no se recorre
+de un vistazo.
+**Alternativas descartadas:** meter los sueltos en `GAMES` (el README, las tarjetas sociales y
+las pruebas de idioma suponen una carpeta por juego con su `rules.js`). Mandar el modo solo de
+Toque y Fama y Línea de Tiempo a la práctica de La Copa (perdían el inglés, el portugués y la
+memoria de partida). La Gran Final suelta: repite los otros y es el cierre de la copa.
+**Consecuencias:** El panel ve cada suelto como un juego con modo `solo`, y lo nombra porque
+`gameLabel` también busca en `SUELTOS` (C-16). Un minijuego nuevo de La Copa no aparece solo en
+la portada: hay que sumarlo a `SUELTOS` con su tipo, y `i18n.test.mjs` exige que exista en La
+Copa y que su nombre en español sea el mismo. El récord viejo de esos dos solitarios queda sin
+uso, y una partida guardada del solitario viejo no se ofrece para retomar.

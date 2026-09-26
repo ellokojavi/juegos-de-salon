@@ -3,7 +3,7 @@
 **Ruta:** `/toque-y-fama/` · **Jugadores:** 1–2 · **Versión:** 0.4 · **Idiomas:** es, en (“Bulls and Cows”), pt (“Toque e Fama”)
 
 ## Reglas implementadas
-- Cada jugador elige un número secreto de **3, 4 o 5 cifras distintas** (4 por defecto). Cero inicial permitido (configurable).
+- Cada jugador elige un número secreto de **3, 4 o 5 cifras distintas** (4 por defecto). Cero inicial permitido (configurable). Jugando solo no se configura nada (D-142).
 - Por turnos, cada uno intenta adivinar el del rival. El celular responde solo: **fama** = cifra correcta en su posición, **toque** = cifra correcta en otra posición.
 - Gana quien llega a todas las famas. Con **derecho a réplica** (por defecto), si acierta quien partió, el otro tiene un último intento; si también acierta, empate.
 - **Quién parte:** el invitado (B) en la primera partida; en la revancha, el perdedor (D-19).
@@ -12,7 +12,7 @@
 | Modo | Cómo | Transporte |
 |---|---|---|
 | 📱 Un celular, dos jugadores | Cada uno ingresa su secreto con la pantalla tapada; tras cada intento aparece, en una sola pantalla, la respuesta (toques y famas) y debajo “Pásale el celular a X”. | `assets/js/transport/local.js` (memoria) |
-| 🧍 Jugar solo | El celular elige un número secreto y el jugador lo adivina en la menor cantidad de intentos. Un solo tablero, con las pistas escritas completas ("2 famas", "1 toque"), y récord por cifras y cero al inicio en `localStorage` (D-129). Sin réplica ni número propio. | `assets/js/transport/local.js` + bot que solo responde |
+| 🧍 Jugar solo | Es el minijuego 🔢 “Toque y Fama: adivina el número” de La Copa (D-142): 4 cifras distintas (puede empezar con cero), 10 intentos y puntaje de 0 a 100 con reloj de tiempo activo. Sin configuración. Ver “Jugar solo” más abajo. | Sin transporte: `copa/juegos/ui-numero.js` montado con `copa/juegos/solo.js` |
 | 📡 Dos celulares | Sala con código de 4 letras y QR (`?sala=CODE`). Cada celular calcula las respuestas contra su propio secreto. | `assets/js/transport/firebase.js` (Realtime Database) |
 
 ## Recordatorio del número propio
@@ -21,7 +21,36 @@ En la pantalla de juego aparece una ficha “🔒 Tu número secreto”. En dos 
 ## Flujo
 ```
 Intro (elige modo) → Setup (nombres, cifras, réplica, cero) → [Lobby: código + QR + cancelar la sala] → Secreto → Juego (tableros) → Resultado → Revancha
+Jugar solo: Intro → Cómo se juega y puntaje → Juego (teclado, tablero y reloj) → Ver resultado → Resultado → Jugar otra vez
 ```
+
+## Jugar solo (D-142)
+Hasta D-142 el modo solo pasaba por el reductor con un bot B que elegía el número, con cifras y cero
+configurables, intentos ilimitados y récord por menos intentos (D-129). Ahora es exactamente el
+minijuego 🔢 de La Copa, con sus reglas, su pantalla y su puntaje, pero en el idioma de quien juega:
+
+- **Reglas:** 4 cifras distintas, puede empezar con cero, 10 intentos. Puntaje de 0 a 100: 100 al
+  primer intento y 10 menos por cada uno más; 0 si no lo saca (`copa/juegos/numero.js`).
+- **Número:** sale de un código de 5 letras al azar (`codigoAlAzar` de `copa/engine.js`) con
+  `numero.generar(codigo, 1)`. No hay secreto que guardar ni que verificar.
+- **Pantallas:** una previa con “Cómo se juega” (3 puntos), cómo se calcula el puntaje, el récord y
+  Empezar; la del juego (`#screen-solo`) con el título y el reloj arriba y `ui-numero` montado por
+  `jugarSolo` (el reloj solo corre con la pantalla visible, D-95, y se detiene al terminar el
+  tablero); y el resultado propio: puntaje X/100, intentos y tiempo, récord, número secreto, la
+  tarjeta de emojis (🟢 fama, 🟡 toque, ⚪ nada; con más de 5 intentos va en dos columnas para que
+  los botones se vean sin desplazar en 812 px), el repaso colapsado y Jugar otra vez, Cambiar modo
+  y Volver al menú. Confeti y sonido de victoria si lo saca; sonido de tiempo si no.
+- **Textos:** los de `LOCALES` del juego. `ui-numero` lee `solved`, `notSolved`, `triesLeft`,
+  `tryLeft1`, `seeResults` y `yourGuesses`; la ayuda del teclado es la del juego (`blockHint`, que
+  dice bloquear) pasada como `blockHintDigits`.
+- **Memoria (C-6):** `{ mode: 'solo', codigo, jugadas: { i, n }, ms, done }` en el mismo
+  `createSessionStore`, al empezar, tras cada intento o nota y al ocultar la pantalla. Al retomar se
+  vuelve a montar con las jugadas y el tiempo. Una partida guardada del solo viejo (con `messages`
+  y sin `codigo`) no se ofrece.
+- **Récord:** el mejor `{ s, ms }` en `juegos-de-salon:toque-y-fama:record-solo` (`crearRecord`):
+  más puntos y, a igualdad, menos tiempo. Un 0 no se anota. La clave vieja (`…:record`, por
+  intentos) queda sin uso.
+- **Panel:** `trackStart({ game, mode: 'solo', players: 1 })` al empezar, no al retomar.
 
 ## Protocolo de mensajes (todos los modos)
 ```jsonc
@@ -77,7 +106,7 @@ Compromiso `sha256(secreto + sal privada)` al inicio; al final se revelan secret
 toque-y-fama/
   index.html · style.css · rules.js (LOCALES es/en, config por defecto)
   engine.js (score, isValid, randomSecret, sha256, verifyPlayer) · engine.test.mjs
-  game.js (reductor, agentes locales, bot, render)
+  game.js (reductor, agentes locales, render; jugar solo con copa/juegos/ui-numero.js y solo.js)
 firebase/database.rules.json · assets/js/firebase-config.js
 ```
 Tests del motor: `node toque-y-fama/engine.test.mjs`.

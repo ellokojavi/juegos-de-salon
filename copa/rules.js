@@ -496,6 +496,10 @@ const ES = {
   backToLabs: '🧪 Volver al laboratorio',
   backToLabsShort: '‹ Laboratorio',
   practiceTitle: 'Práctica en el laboratorio',
+  // El minijuego suelto, abierto desde la portada (D-142)
+  looseTitle: 'Minijuego de La Copa',
+  looseHint: 'Acá lo juegas suelto: no cuenta para ninguna copa y puedes jugarlo las veces que quieras.',
+  backToMenu: 'Volver al menú',
   practiceHint: 'Es una práctica: no cuenta para ninguna copa y puedes jugarla las veces que quieras.',
   practiceSeed: 'Esta partida es la semilla {semilla}. Si vas a reportar un problema, con ella se repite la misma partida.',
   practiceAgain: 'Jugar otra vez con otro contenido',

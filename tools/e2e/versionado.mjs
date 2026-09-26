@@ -1,13 +1,14 @@
 import { launch, sleep } from './cdp.mjs';
+const SITIO = process.env.SITIO || 'http://localhost:8765';
 const OUT = process.argv[2];
-const b = await launch({ port: 9354, dir: `${OUT}/p`, out: OUT });
+const b = await launch({ port: Number(process.env.PUERTO_CDP) || 9354, dir: `${OUT}/p`, out: OUT });
 const urls = async () => b.evaluate(`performance.getEntriesByType('resource').map(r=>r.name.replace(location.origin,'')).filter(u=>/\\.(js|css)/.test(u))`);
-await b.go('http://localhost:8765/'); await b.evaluate(`localStorage.clear(); 1`); await b.go('http://localhost:8765/');
+await b.go(`${SITIO}/`); await b.evaluate(`localStorage.clear(); 1`); await b.go(`${SITIO}/`);
 console.log('menú → tarjetas:', await b.evaluate(`document.querySelectorAll('.game-card').length`), '| recursos:', JSON.stringify(await urls()));
 await b.shot('menu');
-await b.go('http://localhost:8765/cuarto-rey/');
+await b.go(`${SITIO}/cuarto-rey/`);
 console.log('cuarto-rey → reglas listadas:', await b.evaluate(`document.querySelectorAll('#rules-list li').length`), '| recursos:', JSON.stringify(await urls()));
-await b.go('http://localhost:8765/toque-y-fama/');
+await b.go(`${SITIO}/toque-y-fama/`);
 console.log('toque-y-fama → modos:', await b.evaluate(`document.querySelectorAll('.mode').length`), '| recursos:', JSON.stringify(await urls()));
 // modo online carga firebase.js por import() dinámico: debe salir versionado
 await b.evaluate(`document.querySelectorAll('.mode')[1].click(); 1`); await sleep(300);

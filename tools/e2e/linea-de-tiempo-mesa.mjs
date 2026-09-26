@@ -72,25 +72,7 @@ console.log('pantalla:', await b.active());
 console.log('ranking:', await b.evaluate(`[...document.querySelectorAll('#result-ranking li')].map(li=>li.innerText.replace(/\\n/g,' · ')).join(' | ')`));
 await b.shot('mesa-04-resultado');
 
-// --- Solitario: vaciar la mesa sin llegar a la meta no es récord ---
-await b.go(`${BASE}/linea-de-tiempo/`, 1500); await b.evaluate(`localStorage.clear(); 1`);
-await b.go(`${BASE}/linea-de-tiempo/`, 1500);
-await b.evaluate(`document.querySelectorAll('.mode')[2].click(); 1`); await sleep(400);
-await b.evaluate(`(()=>{const i=document.querySelector('#setup-form .name');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}));return 1})()`);
-await b.evaluate(`(()=>{const x=[...document.querySelectorAll('#setup-form .seg button')].find(e=>/3$/.test(e.textContent.trim()));x.click();return 1})()`); await sleep(150);
-await b.evaluate(`[...document.querySelectorAll('#setup-actions .btn')][0].click(); 1`); await sleep(1200);
-await closeOverlay();
-guard = 0;
-while (guard++ < 12) {
-  s = await v();
-  if (s.done) break;
-  if (!(await b.evaluate(`!!document.querySelector('#place-row .btn')`))) { await closeOverlay(); continue; }
-  await play(false);
-}
-console.log('solitario fallando todo → título:', await b.evaluate(`document.getElementById('result-title')?.textContent`));
-console.log('  resumen:', await b.evaluate(`document.getElementById('result-sub')?.textContent`));
-console.log('  trofeo:', await b.evaluate(`document.getElementById('result-trophy')?.textContent`), '(no debe ser 🏆)');
-console.log('  récords guardados:', await b.evaluate(`localStorage.getItem('juegos-de-salon:linea-de-tiempo:record')`), '(debe ser null)');
-await b.shot('mesa-05-solitario-sin-cartas');
+// El solitario de todas a la vista se fue: jugar solo es ahora la ⏳ Línea Relámpago (D-142),
+// que tiene su propio guion (linea-de-tiempo-solo.mjs).
 console.log('errors:', JSON.stringify(b.errors), JSON.stringify(b.logs));
 b.close();
