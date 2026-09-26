@@ -1,11 +1,23 @@
 # Changelog
 
-## 0.64.8 — 2026-09-25
+## 0.64.9 — 2026-09-25
 - **La Copa: la imagen de la tabla es más compacta** (D-141). El gráfico de posiciones y la tabla
   van lado a lado y la línea de cada jugador termina en su fila: cada nombre aparece una vez, con
   todos los días jugados y cada cambio de lugar. Los empatados van lado a lado en vez de taparse.
   La leyenda dice "(-1J), (-2J)… = uno, dos o más juegos por jugar". El laboratorio suma una
   demo con 10 jugadores y 7 días.
+
+## 0.64.8 — 2026-09-25
+- **Portada: jugadores y duración en una sola línea** en celulares angostos. En una tarjeta de
+  380 px o menos (un celular de 360 px, o uno más ancho con la letra agrandada) las píldoras
+  bajan a su propia fila, de borde a borde, en vez de partirse al lado del emoji.
+
+## 0.64.7 — 2026-09-25
+- **Panel del dueño: las partidas sin red se ven en vivo** (D-140). En "Ahora" hay una lista
+  nueva, *Partidas sin red*, con las partidas contra el celular, en un celular o solitarias que
+  se están jugando: juego, modo, cuántos juegan, país y última señal. Cada celular manda una
+  señal por minuto mientras alguien toca la pantalla. Antes solo se veían las salas de dos
+  celulares.
 
 ## 0.64.6 — 2026-09-25
 - **La Copa: Tango y Zip se explican con un dibujo** antes de las reglas, como Reinas (D-139).

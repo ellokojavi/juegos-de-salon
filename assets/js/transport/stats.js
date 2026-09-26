@@ -15,6 +15,9 @@
  *   origin/<zona horaria>: celulares que empezaron o entraron a una partida
  *   lang/<idioma del navegador>: ídem
  *   hour/<hora local 0–23>: ídem
+ *   live/<id>: { game, mode, n, at, beat, v, co }   una partida sin red que se está jugando:
+ *                                                   `beat` sube cada minuto mientras alguien
+ *                                                   toca la pantalla (D-140)
  *
  * Va por la REST API con un `fetch` y `keepalive`: los modos sin red no cargan el SDK de
  * Firebase ni abren una conexión persistente, así que no pesan en la carga ni gastan la
@@ -28,7 +31,7 @@
 import { firebaseConfig } from '../firebase-config.js';
 import { dayOf } from './cleanup.js';
 import { getLang } from '../i18n.js';
-import { isLocalMode, MAX_PLAYERS } from '../games.js';
+import { isLocalMode, MAX_PLAYERS, MODES } from '../games.js';
 
 // 'lab' salió con el laboratorio (D-67); queda en el panel para leer lo que quedó guardado
 export const ENVS = ['prod', 'dev'];
@@ -237,6 +240,63 @@ export function noteEnd(api, fp, { code, createdAt, role, name }) {
   return quiet(() => api.patch(dayPath(fp.env, dayOf(createdAt)), { [`rooms/${code}/end`]: endRecord({ role, name }) }));
 }
 
+/**
+ * Partidas sin red en vivo (D-140). Una sala se ve viva porque existe en `rooms/`; una partida
+ * contra el celular o en un solo celular no deja nada en la base mientras se juega, así que el
+ * panel no sabía que alguien estaba jugando. Ahora cada una deja un registro al empezar y le
+ * manda un latido cada `LATIDO_MS` mientras la pantalla está a la vista y alguien la tocó hace
+ * menos de `QUIETO_MS`. El celular olvidado en la pantalla final deja de latir solo.
+ *
+ * Los días de La Copa no: el panel ya sabe quién está jugando un minijuego por `torneos/`.
+ */
+export const LATIDO_MS = 60 * 1000;
+export const QUIETO_MS = 5 * 60 * 1000;
+
+/** Identificador de una partida en vivo: diez letras y números al azar, sin nada del jugador. */
+export function liveId(rand = Math.random) {
+  const abc = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  let id = '';
+  for (let i = 0; i < 10; i++) id += abc[Math.floor(rand() * abc.length)];
+  return id;
+}
+
+/** ¿Este modo se muestra en vivo? Los sin red, menos el día jugado de un torneo. */
+export const esEnVivo = mode => isLocalMode(mode) && !MODES[mode]?.torneo;
+
+/** Registro de una partida sin red que empieza: juego, modo, cuántos juegan y el país, sin nombres. */
+export function liveRecord(fp, { game, mode, players }) {
+  const n = Math.min(MAX_PLAYERS, Math.max(1, Number(players) || 1));
+  const r = { game, mode, n, at: STAMP, beat: STAMP, v: fp.v };
+  if (fp.co) r.co = fp.co;
+  return r;
+}
+
+/**
+ * Arranca el latido de una partida sin red y devuelve con qué pararlo. Todo lo de afuera
+ * (reloj, documento, temporizador) entra por parámetro para probarlo con node.
+ */
+export function startLive(api, fp, { game, mode, players }, {
+  id = liveId(), now = Date.now, doc = globalThis.document,
+  every = (f, ms) => setInterval(f, ms), stopEvery = clearInterval,
+} = {}) {
+  const path = dayPath(fp.env, dayOf(now()));
+  quiet(() => api.patch(path, { [`live/${id}`]: liveRecord(fp, { game, mode, players }) }));
+  let tocado = now();
+  const toque = () => { tocado = now(); };
+  const opts = { capture: true, passive: true };
+  doc?.addEventListener?.('pointerdown', toque, opts);
+  doc?.addEventListener?.('keydown', toque, opts);
+  const timer = every(() => {
+    if (doc?.visibilityState === 'hidden' || now() - tocado > QUIETO_MS) return;
+    quiet(() => api.patch(path, { [`live/${id}/beat`]: STAMP }));
+  }, LATIDO_MS);
+  return () => {
+    stopEvery(timer);
+    doc?.removeEventListener?.('pointerdown', toque, opts);
+    doc?.removeEventListener?.('keydown', toque, opts);
+  };
+}
+
 /** Lo que usan los juegos y el transporte: la API real y la huella del navegador, de una. */
 let shared = null;
 export function stats() {
@@ -249,7 +309,17 @@ export function trackEnd(info) {
   try { const s = stats(); return noteEnd(s.api, s.fp, info); } catch (_) { return Promise.resolve(); }
 }
 
-/** Atajo para los juegos: `trackStart({ game, mode, players })`. Nunca lanza ni se espera. */
+/**
+ * Atajo para los juegos: `trackStart({ game, mode, players })`. Nunca lanza ni se espera.
+ * En un modo sin red arranca además el latido en vivo; una partida nueva ("Otra vez") para
+ * el de la anterior, así el mismo celular nunca se ve jugando dos a la vez.
+ */
+let pararVivo = null;
 export function trackStart(info) {
-  try { const s = stats(); return noteStart(s.api, s.fp, info); } catch (_) { return Promise.resolve(); }
+  try {
+    const s = stats();
+    if (pararVivo) { pararVivo(); pararVivo = null; }
+    if (esEnVivo(info?.mode)) pararVivo = startLive(s.api, s.fp, info);
+    return noteStart(s.api, s.fp, info);
+  } catch (_) { return Promise.resolve(); }
 }
