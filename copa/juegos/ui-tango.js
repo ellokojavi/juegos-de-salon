@@ -13,6 +13,9 @@
 import * as motor from './tango.js';
 
 const ICONO = { [motor.SOL]: '☀️', [motor.LUNA]: '🌙' };
+const CLASE = { [motor.SOL]: 'sol', [motor.LUNA]: 'luna' };
+/** Los dos emojis son amarillos: la casilla de noche y la luna plateada los separan (D-146). */
+const icono = (el, v) => el('span', { class: `tan-ico ${CLASE[v]}` }, ICONO[v]);
 const CONFIRMAR_MS = 3000;
 const ESPERA_CHOQUE_MS = 700;
 
@@ -27,7 +30,7 @@ const EJ_MARCAS = [{ a: 0, b: 1, t: '=' }, { a: 14, b: 20, t: 'x' }];
 function tableroEjemplo(el, n, valores, marcas = [], choque = false) {
   const g = el('div', { class: 'tan-ej', 'aria-hidden': 'true', style: `grid-template-columns: repeat(${n}, 1fr)` });
   valores.forEach((v, i) => {
-    const celda = el('span', { class: choque ? 'choque' : '' }, ICONO[v]);
+    const celda = el('span', { class: `${CLASE[v]}${choque ? ' choque' : ''}` }, icono(el, v));
     for (const m of marcas) {
       if (m.a !== i) continue;
       celda.append(el('i', { class: `${m.b === i + 1 ? 'der' : 'abajo'} ${m.t === '=' ? 'igual' : 'distinto'}` }, m.t === '=' ? '=' : '≠'));
@@ -107,7 +110,7 @@ export function montar(raiz, ctx) {
         'data-i': i, 'data-v': v, disabled: dada || revelada || e.fin,
         'aria-label': `${Math.floor(i / n) + 1}-${(i % n) + 1}`,
         onClick: () => { armado = null; jugar(i); },
-      }, v ? ICONO[v] : '');
+      }, v ? icono(el, v) : '');
       for (const m of p.marcas) {
         if (m.a !== i) continue;
         // Igual (=) o distinto (≠), sobre el borde que comparten las dos casillas
