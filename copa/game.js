@@ -15,7 +15,7 @@ import { trackStart, versionOf } from '../assets/js/transport/stats.js';
 import {
   CALENDARIOS, MAX_JUGADORES, COPA_MAX, aliasLimpio, esAlias, CODIGO, esCodigo, codigoAlAzar, pidAlAzar, limpiarNombre, claveNombre, esPin, hashPin,
   fechaEn, sumarDias, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta, estadoDia, comodinDe, moverInicio, sinEmpezar, pasarDia, MAX_DIAS_INICIO, faltaGente,
-  medianoche, menosJuegos, puedeComodin, multiplicador, posicionesDelDia, tabla, faltan, medallas, evolucion, visibleDia, reloj, mmss, juegoDelDia, esFinal, activos, ZONA,
+  medianoche, menosJuegos, provisoria, ultimoDiaVisto, puedeComodin, multiplicador, posicionesDelDia, tabla, faltan, medallas, evolucion, visibleDia, reloj, mmss, juegoDelDia, esFinal, activos, ZONA,
 } from './engine.js';
 import { GAME_ID, LOCALES, MINIJUEGOS, RONDAS_FINAL } from './rules.js';
 import { createCuenta } from './cuenta.js';
@@ -689,7 +689,7 @@ function tablero() {
       el('span', {}, el('span', { class: 'pd perdido' }, '–'), T.legendMissed),
       el('span', {}, el('span', { class: 'pd pendiente' }, ''), T.legendPending));
     poner(body, el('div', { class: 'panel' },
-      el('p', { class: 'lead', style: 'margin-bottom:8px' }, T.tableTitle),
+      el('p', { class: 'lead', style: 'margin-bottom:8px' }, provisoria(Lc, filas, now) ? T.tableTitleProvisional : T.tableTitle),
       vistaTabla(filas, { dias, meta, now }),
       leyenda,
       hayOcultos ? el('small', { class: 'muted' }, T.tableHidden) : null));
@@ -809,7 +809,8 @@ function mensajeTabla() {
   const menos = menosJuegos(filas);
   const lista = filas.map(f => `${['🥇', '🥈', '🥉'][f.lugar - 1] || `${f.lugar}.`} ${nombreConJuegos(f.name, menos[f.pid])} · ${f.total} pts`).join('\n');
   const falta = faltan(Lc, d, now);
-  let txt = fmt(T.shareTableText, { copa: meta.name, d, tabla: lista });
+  // El título lleva el último día que muestra la tabla; el aviso de abajo, el día que corre (#67)
+  let txt = fmt(provisoria(Lc, filas, now) ? T.shareTableTextProvisional : T.shareTableText, { copa: meta.name, d: ultimoDiaVisto(filas) || d, tabla: lista });
   if (falta.length) txt += `\n\n${fmt(T.shareTableMissing, { d, names: falta.map(j => j.name).join(', ') })}`;
   return txt;
 }
@@ -830,7 +831,8 @@ async function compartirImagen() {
   const filas = tabla(Lc, S.yo, now);
   const menos = menosJuegos(filas);
   const ev = evolucion(Lc, S.yo, now);
-  const d = Math.min(Math.max(diaActual(meta, now), 1), meta.days);
+  // El último día que muestra la tabla, no el de hoy si quien comparte todavía no lo juega (#67)
+  const d = ultimoDiaVisto(filas) || Math.min(Math.max(diaActual(meta, now), 1), meta.days);
   const n = filas.length;
   const W = 1080;
   const pie = Object.values(menos).some(x => x > 0) ? 170 : 130;
@@ -856,7 +858,9 @@ async function compartirImagen() {
   do { c.font = fuente(400, tam, 'Bangers, Impact, sans-serif'); tam -= 4; } while (c.measureText(`🏆 ${meta.name}`).width > W - 100 && tam > 30);
   c.fillText(`🏆 ${meta.name}`, W / 2, 115);
   c.fillStyle = '#ffffff'; c.font = fuente(800, 40);
-  c.fillText(fmt(T.imageSubtitle, { d, n: meta.days }), W / 2, 180);
+  // Si alguien todavía puede jugar el último día que se ve, la tabla lo dice
+  const prov = provisoria(Lc, filas, now);
+  c.fillText(fmt(prov ? T.imageSubtitleProvisional : T.imageSubtitle, { d, n: meta.days }), W / 2, 180);
   // El eje que comparten: el centro de la fila i (0 = arriba) es también la altura del lugar i+1
   const yFila = i => g0 + (i + 0.5) * fila;
   const color = pid => colorDe(Lc, pid);
@@ -922,7 +926,7 @@ async function compartirImagen() {
   const archivo = new File([blob], `copa-${meta.alias || S.code.toLowerCase()}-dia-${d}.png`, { type: 'image/png' });
   try {
     if (navigator.canShare?.({ files: [archivo] })) {
-      await navigator.share({ files: [archivo], title: meta.name, text: `${fmt(T.shareTableText, { copa: meta.name, d, tabla: '' }).trim()}\n\n🔗 ${urlPublica(S.code)}` });
+      await navigator.share({ files: [archivo], title: meta.name, text: `${fmt(prov ? T.shareTableTextProvisional : T.shareTableText, { copa: meta.name, d, tabla: '' }).trim()}\n\n🔗 ${urlPublica(S.code)}` });
       return;
     }
   } catch (e) { if (e?.name === 'AbortError') return; }
