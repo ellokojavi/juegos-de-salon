@@ -502,8 +502,8 @@ const ES = {
   backToMenu: 'Volver al menú',
   practiceHint: 'Es una práctica: no cuenta para ninguna copa y puedes jugarla las veces que quieras.',
   practiceSeed: 'Esta partida es la semilla {semilla}. Si vas a reportar un problema, con ella se repite la misma partida.',
-  practiceAgain: 'Jugar otra vez con otro contenido',
-  practiceSame: 'Repetir exactamente esta partida',
+  practiceAgain: 'Jugar de nuevo',
+  practiceSame: 'Repetir esta partida',
 
   // Reportes (LIG-42)
   reportButton: '🐞 Reportar un problema o dejar un comentario',
