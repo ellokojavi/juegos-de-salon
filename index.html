@@ -239,6 +239,9 @@
           // Las que vuelven a aparecer entran escalonadas desde arriba, no con el retraso de su lugar original
           if (!primera && ve && t.card.hidden) t.card.style.animationDelay = `${n * 40}ms`;
           t.card.hidden = !ve;
+          // Con "Solo" puesto, el juego abre directo en su modo solo (D-145). Los que son solo de
+          // uno (los minijuegos sueltos) no tienen modos que saltarse.
+          if (t.g.available && t.max > 1) t.card.setAttribute('href', filtro.jugadores === 'solo' && t.min === 1 ? `${t.g.path}?modo=solo` : t.g.path);
           if (ve) n++;
         }
         const filtrado = filtro.jugadores !== 'todos' || !!filtro.tipo;
