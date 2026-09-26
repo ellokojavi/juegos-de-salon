@@ -518,8 +518,8 @@ ok(await ev(`!!document.getElementById('btn-reporte-volver')`), 'después de env
 
 /* ---------- Las demos del laboratorio (D-110) ---------- */
 await b.go(`${SITIO}/labs/`, 1200);
-ok(await ev(`document.querySelectorAll('[data-demo]').length`) === 8, 'el laboratorio ofrece las ocho demos de la copa');
-const DEMOS = { nueva: 'admin', invitado: 'entrar', espera: 'tablero', 'sin-jugar': 'admin', jugador: 'tablero', admin: 'admin', final: 'tablero', podio: 'tablero' };
+ok(await ev(`document.querySelectorAll('[data-demo]').length`) === 9, 'el laboratorio ofrece las nueve demos de la copa');
+const DEMOS = { nueva: 'admin', invitado: 'entrar', espera: 'tablero', 'sin-jugar': 'admin', jugador: 'tablero', admin: 'admin', final: 'tablero', podio: 'tablero', llena: 'tablero' };
 for (const [demo, pant] of Object.entries(DEMOS)) {
   await b.go(`${BASE}?prueba&demo=${demo}`, 1500); await preparar();
   ok(await pantalla() === pant, `demo ${demo}: abre en ${pant}`);

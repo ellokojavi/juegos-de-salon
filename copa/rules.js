@@ -259,7 +259,7 @@ const ES = {
   imageSubtitle: 'Tabla de posiciones · día {d} de {n}',
   imageDownloaded: 'Listo: la imagen se descargó.',
   fewerGames: '{name} (-{n}J)',
-  fewerGamesNote: '(-1J) = lleva un juego menos que los demás',
+  fewerGamesNote: '(-1J), (-2J)… = uno, dos o más juegos por jugar',
   progressPoint: 'Día {d}: {name} iba {pos}º',
   calToday: 'hoy',
   x2: '×2',

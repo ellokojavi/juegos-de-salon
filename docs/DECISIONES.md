@@ -1746,3 +1746,22 @@ conexiones simultáneas y carga el SDK en modos que no lo cargan, D-41); mandar 
 modos sin red no sale ninguno, C-7).
 **Límite conocido:** una partida retomada después de recargar no vuelve a aparecer, porque los
 juegos llaman `trackStart` al empezar y no al retomar.
+
+## D-141 · La imagen de la tabla: gráfico y tabla en el mismo eje
+**Fecha:** 2026-09-25 · **Estado:** vigente
+**Decisión:** La imagen que sale de "📤 Compartir" (D-126) deja de apilar el gráfico sobre la
+tabla. Ahora van **lado a lado y comparten el eje**: a la izquierda, una columna por cada día que
+ya se ve, sin saltarse ninguno (del D1 al último, hasta los 7 de la copa); a la derecha, la tabla
+con lugar, flecha, nombre ("(-1J)" incluido) y puntos. La línea de cada jugador termina en su
+fila, así cada nombre aparece una sola vez. Queda cuadrada (1080 × 1080) hasta 10 jugadores; con
+más, las filas se achican y la imagen se alarga. Los **empatados** en un día comparten lugar:
+sus líneas van lado a lado, separadas unos píxeles como en un plano de metro, para que ninguna
+tape a otra y se vea que iban juntos. Un nombre que no cabe achica la letra y, si aún no cabe,
+se corta con "…". La leyenda de "(-1J)" (en la imagen y en el tablero) pasa a decir
+**"(-1J), (-2J)… = uno, dos o más juegos por jugar"**: explica también "(-2J)", y "por jugar"
+no le suena a reproche a quien todavía puede jugar el día de hoy (dilema #54). El laboratorio suma la demo **llena** (10 jugadores, 7 días, dos con juegos de
+menos) para mirar la máxima densidad.
+**Por qué:** pedido del dueño: una imagen más compacta que retrate la tabla y cómo llegó a ella.
+Se eligió entre tres propuestas (línea que llega a la fila, tabla con el camino de cada uno,
+podio con gráfico); con esta ningún cambio de lugar queda fuera, y el dueño pidió que se vieran
+todos.
