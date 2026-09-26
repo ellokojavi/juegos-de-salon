@@ -359,6 +359,26 @@ export function faltan(L, d, now) {
 }
 
 /**
+ * ¿La tabla todavía puede cambiar? Sí mientras el último día que muestra sigue abierto y alguien
+ * no lo ha jugado: sus puntos de ese día, y los lugares de los demás, aún no están. Un día que ya
+ * cerró no la vuelve provisoria aunque alguien no lo haya jugado (se queda con su "(-1J)").
+ */
+export function provisoria(L, filas, now) {
+  const u = ultimoDiaVisto(filas);
+  return u > 0 && faltan(L, u, now).length > 0;
+}
+
+/**
+ * El último día que muestra la tabla (0 si ninguno): el número de su título (dilema #67). Quien
+ * todavía no juega hoy ve la tabla hasta ayer, y el título lo dice.
+ */
+export function ultimoDiaVisto(filas) {
+  let u = 0;
+  for (const f of filas) for (const [d, x] of Object.entries(f.dias || {})) if (!x.oculto) u = Math.max(u, Number(d));
+  return u;
+}
+
+/**
  * Las medallas del cierre: campeón, más días ganados, la mejor remontada (más puestos subidos
  * desde la mitad de la copa) y el farolito rojo. Con menos de tres jugadores no hay
  * remontada ni farolito: con dos, el último es simplemente el segundo.
