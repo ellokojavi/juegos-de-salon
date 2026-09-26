@@ -15,13 +15,13 @@ import {
   getDatabase, ref, onValue, query, orderByChild, orderByKey, startAt,
 } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js';
 import { firebaseConfig } from '../assets/js/firebase-config.js';
-import { GAMES, gameLabel, isTorneo, MODES, MODE_IDS, ROOM_MODE, modeIcon } from '../assets/js/games.js';
+import { GAMES, gameById, gameLabel, isTorneo, MODES, MODE_IDS, ROOM_MODE, modeIcon } from '../assets/js/games.js';
 import { MINIJUEGOS } from '../copa/rules.js';
 import { LANGS } from '../assets/js/i18n.js';
 import { ENVS } from '../assets/js/transport/stats.js';
 import { $, el } from '../assets/js/ui.js';
 import { copasEnCurso, resumenCopas, bitacoraCopas, pct, duracion, inicioLabel } from './copas.js';
-import { DAY, ROOM_TTL, liveRooms, connections, summarize, top, tzLabel, ago, dayLabel, dayOf, codesOfDays, splitByEnv, roomLog, paginate, flagOf, whenLabel, RANGOS, RANGO_POR_DEFECTO, rangeOf, groupDays } from './aggregate.js';
+import { DAY, ROOM_TTL, liveRooms, connections, summarize, top, tzLabel, ago, dayLabel, dayOf, codesOfDays, splitByEnv, liveLocal, roomLog, paginate, flagOf, whenLabel, RANGOS, RANGO_POR_DEFECTO, rangeOf, groupDays } from './aggregate.js';
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -249,6 +249,22 @@ function filaSala(r, now) {
 }
 
 /**
+ * Una partida sin red que se está jugando (D-140): el juego, el modo con su nombre completo,
+ * cuántos juegan en ese celular y de qué país es. Sin nombres: de estos modos no sale ninguno.
+ */
+function filaSinRed(p, now) {
+  const modo = MODES[p.mode] ? `${modeIcon(p.mode)} ${MODES[p.mode].label}` : p.mode;
+  const quien = [p.n === 1 ? '1 jugador' : `${n(p.n)} jugadores`, flagOf(p.co)].filter(Boolean).join(' ');
+  return el('div', { class: 'room active' },
+    el('div', { class: 'code' }, gameById(p.game)?.emoji || '🎲'),
+    el('div', { class: 'cuerpo' },
+      el('div', { class: 'who' }, el('span', {}, el('i', { class: 'on' }), gameById(p.game)?.name?.es || p.game)),
+      el('div', { class: 'sub' }, `${modo} · ${quien}`)),
+    el('div', { class: 'meta' }, `empezó ${ago(p.at, now)}`, el('br'), `última señal ${ago(p.beat, now)}`),
+  );
+}
+
+/**
  * Una copa en curso: en qué día va, qué minijuego toca, quién ya lo jugó (✓) y quién lo está
  * jugando en este momento (punto verde). El de ayer se puede jugar hasta el fin de hoy, así que
  * alguien puede estar jugando un día que no es el último: eso va en su propia línea.
@@ -284,6 +300,7 @@ function renderNow() {
   // `stats/<env>` para no contar las pruebas como si fueran gente jugando (D-45).
   const { propias: live, ajenas } = splitByEnv(liveRooms(S.rooms, now), codesOfDays(S.days, now), { loaded: S.daysLoaded });
   const active = live.filter(r => r.active);
+  const sinRed = liveLocal(S.days, now);
   const copas = copasEnCurso(S.torneos, now);
   const enCurso = copas.filter(c => c.estado === 'en-curso');
   const jugandoMini = copas.reduce((k, c) => k + c.jugando.length, 0);
@@ -293,6 +310,7 @@ function renderNow() {
   const tiles = $('#tiles-now'); tiles.innerHTML = '';
   if (S.vista === 'resumen') tiles.append(
     tile(active.length, 'salas en juego', active.length > 0),
+    tile(sinRed.length, 'partidas sin red ahora', sinRed.length > 0),
     tile(enCurso.length, 'copas en curso', enCurso.length > 0),
     tile(jugandoMini, 'jugando un minijuego ahora', jugandoMini > 0),
     tile(connections(live), 'celulares conectados'),
@@ -305,12 +323,15 @@ function renderNow() {
   );
   if (S.vista === 'juegos') tiles.append(
     tile(active.length, 'salas en juego', active.length > 0),
+    tile(sinRed.length, 'partidas sin red ahora', sinRed.length > 0),
     tile(connections(live), 'celulares conectados'),
     tile(live.length, 'salas vivas'),
-    tile(new Set(active.map(r => r.game)).size, 'juegos en curso'),
+    tile(new Set([...active, ...sinRed].map(r => r.game)).size, 'juegos en curso'),
   );
 
   fill($('#copas-vivas'), copas.map(c => filaCopa(c, now)), S.torneosLoaded ? 'No hay copas en curso.' : 'Cargando las copas…');
+
+  fill($('#sin-red'), sinRed.map(p => filaSinRed(p, now)), S.daysLoaded ? 'Nadie está jugando sin red en este momento.' : 'Cargando…');
 
   const box = $('#rooms');
   fill(box, live.map(r => filaSala(r, now)), 'No hay salas vivas en este momento.');

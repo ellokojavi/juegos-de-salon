@@ -127,6 +127,37 @@
                 }
               }
             },
+            "live": {
+              "$id": {
+                ".write": "$env.matches(/^[a-z]{2,10}$/) && $day.matches(/^[0-9]{5}$/) && $id.matches(/^[a-z0-9]{10}$/) && !data.exists()",
+                ".validate": "newData.hasChildren(['game', 'mode', 'n', 'at', 'beat', 'v'])",
+                "game": {
+                  ".validate": "newData.isString() && newData.val().matches(/^[a-z-]{1,40}$/)"
+                },
+                "mode": {
+                  ".validate": "newData.isString() && newData.val().matches(/^[a-z][a-z-]{0,15}$/)"
+                },
+                "n": {
+                  ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 99"
+                },
+                "at": {
+                  ".validate": "newData.isNumber() && newData.val() <= now + 60000 && newData.val() > now - 60000"
+                },
+                "beat": {
+                  ".write": "$env.matches(/^[a-z]{2,10}$/) && $day.matches(/^[0-9]{5}$/) && $id.matches(/^[a-z0-9]{10}$/) && data.parent().child('at').exists()",
+                  ".validate": "newData.isNumber() && newData.val() <= now + 60000 && newData.val() > now - 60000"
+                },
+                "v": {
+                  ".validate": "newData.isString() && newData.val().length <= 16"
+                },
+                "co": {
+                  ".validate": "newData.isString() && newData.val().matches(/^[A-Z]{2}$/)"
+                },
+                "$other": {
+                  ".validate": false
+                }
+              }
+            },
             "local": {
               "$game": {
                 "$mode": {
