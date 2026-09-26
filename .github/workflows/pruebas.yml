@@ -1,0 +1,50 @@
+# Las pruebas sin navegador, en cada PR y en cada fusión a main (D-143).
+# Las de punta a punta (tools/e2e/) y las capturas siguen a mano: necesitan Chrome y ojos.
+
+name: Pruebas
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  pruebas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Todos los *.test.mjs del repo, sin lista que mantener: uno nuevo entra solo.
+      - name: Tests de node
+        run: |
+          fallas=0
+          for f in $(git ls-files '*.test.mjs'); do
+            echo "::group::$f"
+            if node "$f"; then echo "ok"; else echo "::error file=$f::falló $f"; fallas=1; fi
+            echo "::endgroup::"
+          done
+          exit $fallas
+
+      - name: Tests de python
+        run: |
+          fallas=0
+          for f in $(git ls-files '*.test.py'); do
+            python3 "$f" || { echo "::error file=$f::falló $f"; fallas=1; }
+          done
+          exit $fallas
+
+      # Lo mismo que revisa set-version.py antes de estampar (C-11, C-13).
+      - name: README al día
+        run: python3 tools/readme.py revisar
+
+      - name: Tarjetas sociales al día
+        run: node tools/og.mjs revisar
