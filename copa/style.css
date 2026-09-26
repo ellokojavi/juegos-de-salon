@@ -79,6 +79,10 @@ ol.como li { line-height: 1.45; }
 .fila .quien { min-width: 0; }
 .fila .quien b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .fila .quien small { display: block; }
+/* El nombre se corta con "…" antes que la píldora ×2 */
+.fila .quien .con-x2 { display: flex; align-items: center; min-width: 0; }
+.fila .quien .con-x2 b { min-width: 0; }
+.fila .quien .con-x2 .md-x2 { flex: none; }
 .fila .total { font: 900 1.2rem var(--font-num); font-variant-numeric: tabular-nums; text-align: right; }
 .fila .total small { font-size: 0.7rem; color: var(--muted); }
 .puntitos { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 3px; }
