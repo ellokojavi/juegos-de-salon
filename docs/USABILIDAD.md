@@ -62,3 +62,5 @@ Las respuestas a dilemas (issues con la etiqueta `usabilidad`) se anotan aquí:
   marcarlo.
 - **Textos del dibujo de Reinas:** "Así: una reina por fila, por columna y por color." y "Así no:
   se tocan." (aprobados por el dueño).
+- **Leyenda de "(-1J)"** (#54, D-141): "(-1J), (-2J)… = uno, dos o más juegos por jugar", en la
+  imagen de la tabla y en el tablero (aprobada por el dueño).
