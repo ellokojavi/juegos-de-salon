@@ -2,6 +2,8 @@
 
 Mobile-first web app with party games to play with friends: card games, drinking games, guessing games. Open it on a phone or tablet, pick a game from the menu, type in the players, and the phone runs the game. In Spanish, English and Portuguese.
 
+The menu can be filtered by how many are playing (all, solo, with friends) and by kind of game (words, logic, trivia, cards and dice). The filter lives in the link, so going back from a game keeps it and a filtered menu can be shared. Besides the games below, the menu offers The Cup's minigames on their own, for one player: Connections, Bulls and Cows: Word, What Year?, Queens, Tango and Zip. They play in Spanish only for now, and the card says so in English and Portuguese.
+
 **Play:** https://juegosdesalon.cl/
 
 <!-- generado: capturas:portada · written by python3 tools/readme.py actualizar -->
@@ -62,7 +64,7 @@ Each player picks a secret number with no repeated digits and tries to crack the
 
 - **📱 One phone:** players pass the phone around, and the screen is covered between turns.
 - **📡 Two phones:** a room with a 4-letter code and a QR. Each phone keeps its own secret and answers the rival's guesses. At the end both reveal and everything is verified.
-- **🧍 Play alone:** the phone picks the number and you crack it in as few guesses as you can, chasing your record. Clues are spelled out in full ("2 famas, 1 toque").
+- **🧍 Play alone:** The Cup's number minigame. The phone picks a 4-digit number and you get 10 guesses: 100 points on the first one and 10 less for each extra guess, with a clock and a record for your best score. Clues are spelled out in full ("2 famas, 1 toque").
 - **💬 Room chat:** on two phones there is a chat to trash-talk while guessing, and it stays alive on the final screen to celebrate or ask for a rematch. New messages peek out next to the bubble.
 
 <!-- generado: capturas:toque-y-fama · written by python3 tools/readme.py actualizar -->
@@ -148,7 +150,7 @@ You get events with no date on them and place them in the right spot on a shared
 
 - **📱 One phone:** two to six players, passing the phone around.
 - **📡 Several phones:** a room with a code and a QR, up to six players. The host starts the game once everyone is in, and each player sees their own hand.
-- **🧍 Play alone:** empty your hand in as few tries as you can and beat your record for that theme.
+- **🧍 Play alone:** The Cup's Timeline Flash. Pick a theme and get ten events: the first one is already on the timeline and you place the other nine in any order. A wrong card lands in its right spot marked in red, and you keep going. You score 0 to 100 for the share you got right, with a clock and a record for your best score in each theme.
 - **🗂 All cards on the table (default):** twice the cards you need to win are dealt face up from the first turn (6, 10 or 14), and no new card enters for the rest of the game. Since the table only shrinks, the cards that are hard to place pile up for the end, on a timeline that by then is already crowded. The game gets harder on its own.
 - **🃏 Shared pool:** the same 6 cards face up for everyone, refilled from the deck, and whoever places the agreed number of cards first wins. It can also be played with **🙋 your own hand**, each player with private cards.
 - **💬 Room chat:** on several phones there is a chat to comment on the plays while waiting for your turn, and it stays alive on the final screen. New messages peek out for a few seconds next to the bubble.
@@ -352,7 +354,7 @@ It borrows what makes daily puzzles work (Wordle, Connections): same challenge f
 | 6 | 📅 What year was it?: closer is better, older gets more slack | estimation |
 | 7 | 🏁 The Grand Final: five short rounds, one of each, worth double | everything |
 
-The lab also has **〰️ Zip** and **☀️ Tango** to try out. The cup does not invent its own UX (D-102): the timeline, the drag and drop and the keypad are the ones Timeline and Bulls and Cows already use, shared from `assets/`.
+The lab also has **〰️ Zip** and **☀️ Tango** to try out. **The minigames also play on their own from the main menu** (D-142), one player and no cup: Timeline Flash and the number game are the *play alone* modes of Timeline and Bulls and Cows, in all three languages, and the other six (all but the final) have their own card and open in Spanish. The cup does not invent its own UX (D-102): the timeline, the drag and drop and the keypad are the ones Timeline and Bulls and Cows already use, shared from `assets/`.
 
 - **Everything comes from a seed** (`code:day`), so everyone plays exactly the same content with no server (D-97).
 - **A day stays open until the next midnight** (a grace day), except the final. Time only breaks ties, and it is *active* time: it pauses while the screen is hidden (D-95).
@@ -582,7 +584,7 @@ batalla-naval/              Batalla Naval (engine.js + tests, game.js, rules.js,
 linea-de-tiempo/            Línea de Tiempo (engine.js + tests, game.js, rules.js, decks/)
 ahorcado/                   El Ahorcado (engine.js + tests, game.js, rules.js, decks/)
 dudo/                       Dudo (engine.js + tests, game.js, rules.js)
-copa/                       La Copa: tournament engine, stores (Firebase and local test), juegos/ with the minigames, desglose.js (score breakdown), reportes.js (auth-free bug reports), demo.js (lab demos)
+copa/                       La Copa: tournament engine, stores (Firebase and local test), juegos/ with the minigames (solo.js mounts one as the play-alone mode of another game), desglose.js (score breakdown), reportes.js (auth-free bug reports), demo.js (lab demos)
 labs/                       The lab: games being tested before they reach the menu (not linked, not indexed)
 assets/js/arrastre.js       Shared drag and drop: dropping chooses, a button confirms
 assets/js/teclado.js        Shared Bulls and Cows keypad, with notes (long press to strike out a key)
