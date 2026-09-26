@@ -116,7 +116,7 @@ export const GAMES = [
 ];
 
 /**
- * Los minijuegos de La Copa que se juegan sueltos desde la portada (D-141), de a uno y sin copa:
+ * Los minijuegos de La Copa que se juegan sueltos desde la portada (D-142), de a uno y sin copa:
  * abren la práctica de La Copa (`copa/?practica=<id>`), que no guarda nada y no cuenta para
  * ninguna copa. Van aparte de GAMES porque no son una carpeta con su `rules.js` y su tarjeta
  * social: el README, las tarjetas y las pruebas de idioma de los juegos no los recorren.
@@ -178,7 +178,7 @@ export const SUELTOS = [
 ].map(m => ({ ...m, players: '1', path: `copa/?practica=${m.id}`, idiomas: ['es'], available: true, suelto: true }));
 
 /**
- * Los tipos de juego con que se filtra la portada (D-141), en el orden en que se ofrecen.
+ * Los tipos de juego con que se filtra la portada (D-142), en el orden en que se ofrecen.
  * Cada juego dice los suyos en `tipos`; uno sin tipos solo se ve sin filtro de tipo.
  */
 export const TIPOS = {

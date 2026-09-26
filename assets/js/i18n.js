@@ -68,7 +68,7 @@ export const COMMON = {
     players: 'jugadores', minutes: 'min',
     footer: 'Toma con responsabilidad y con agua a mano. Si manejas, no tomas. 🚕',
     player: 'jugador',
-    // Los filtros de la portada (D-141)
+    // Los filtros de la portada (D-142)
     filters: 'Filtrar juegos', filterAll: 'Todos', filterSolo: 'Solo', filterGroup: 'Con amigos',
     shown: 'Se ven {n} de {total} juegos.', clearFilters: 'Quitar filtros',
     noMatch: 'No hay juegos con esos filtros. Prueba quitando alguno.',

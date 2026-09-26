@@ -818,7 +818,7 @@ function mensajeTabla() {
 const nombreConJuegos = (name, n) => (n > 0 ? fmt(T.fewerGames, { name, n }) : name);
 
 /**
- * La tabla parcial como imagen para compartir (D-126, D-141): a la izquierda, el gráfico de
+ * La tabla parcial como imagen para compartir (D-126, D-142): a la izquierda, el gráfico de
  * posiciones con una columna por cada día que ya se ve (todos, sin saltarse ninguno); a la
  * derecha, la tabla. Gráfico y tabla comparten el eje: la línea de cada jugador termina en su
  * fila, así cada nombre aparece una sola vez. Se dibuja en un canvas con las fuentes de la app
@@ -1414,7 +1414,7 @@ function explicacion(J, { s, ms, det, x = 1, final = false, copa = true }) {
  * (`&semilla=K7Q2X`): con ella se repite exactamente la misma partida para reportar un error.
  */
 /**
- * Desde la portada (D-141) la práctica es el minijuego suelto: vuelve al menú, no ofrece la sesión
+ * Desde la portada (D-142) la práctica es el minijuego suelto: vuelve al menú, no ofrece la sesión
  * de prueba (jugar otra vez ya es probar) ni muestra la semilla, y manda su señal de uso. Desde el
  * laboratorio llega con `&labs` y queda como estaba.
  */
@@ -1643,7 +1643,7 @@ document.documentElement.lang = 'es';
 document.title = `${T.title} 🏆 · Juegos de Salón`;
 $('#sound-slot').append(soundToggle());
 // Mientras La Copa esté en el laboratorio, "volver" es volver ahí y no al menú (D-101)
-// Salvo el minijuego suelto que se abrió desde la portada (D-141), que vuelve a ella.
+// Salvo el minijuego suelto que se abrió desde la portada (D-142), que vuelve a ella.
 if (LABS || !PRACTICA) {
   $('#btn-menu').setAttribute('href', '../labs/');
   $('#btn-menu').textContent = T.backToLabsShort;
