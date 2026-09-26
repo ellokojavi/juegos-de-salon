@@ -155,6 +155,18 @@ const jugarTango = async nivel => {
   const valor = i => ev(`Number(document.querySelector('.tan[data-i="${i}"]').dataset.v)`);
   const libres = p.sol.map((v, i) => i).filter(i => p.dadas[i] === undefined);
   if (nivel < 2) {
+    // El sol de paso a la luna no acusa nada: el choque espera 0,7 s (y si se deja, aparece)
+    const paso = await ev(`(async()=>{const m=await import('/copa/juegos/tango.js');const p=window.__jugando.p;
+      return [${libres}].find(i => p.sol[i] === m.LUNA && m.estado(p, [i]).mal.size) ?? -1})()`);
+    if (paso >= 0) {
+      const choques = () => ev(`document.querySelectorAll('.tan.choque').length`);
+      await t(paso);
+      ok(await choques() === 0, 'Tango: el sol que choca no se marca en el acto');
+      await t(paso); await sleep(900);
+      ok(await valor(paso) === p.sol[paso] && await choques() === 0, 'Tango: sol y luna seguidos no dejan choque ni aviso');
+      await t(paso); await t(paso); await sleep(900);
+      ok(await choques() > 0, 'Tango: el sol que se deja se marca a los 0,7 s');
+    }
     // Borrar todo (dos toques) y una pista (dos toques), las ayudas de D-103
     await t(libres[0]);
     await click('#btn-borrar'); await sleep(60); await click('#btn-borrar'); await sleep(100);
