@@ -1805,7 +1805,7 @@ la portada: hay que sumarlo a `SUELTOS` con su tipo, y `i18n.test.mjs` exige que
 Copa y que su nombre en español sea el mismo. El récord viejo de esos dos solitarios queda sin
 uso, y una partida guardada del solitario viejo no se ofrece para retomar.
 
-## D-144 · Tango: casillas de día y de noche, y la luna plateada
+## D-146 · Tango: casillas de día y de noche, y la luna plateada
 **Fecha:** 2026-09-25 · **Estado:** vigente
 **Decisión:** en la grilla de Tango y en el dibujo de las reglas, la casilla con sol lleva fondo
 ámbar y la casilla con luna fondo azul noche. La luna se pinta plateada con un filtro CSS
