@@ -1726,6 +1726,27 @@ al 4, pero quedaron casillas sin pintar."). El error de Zip se eligió porque es
 comete: llegar al último número creyendo que basta.
 **Por qué:** pedido del dueño; en Zip, que se vea que hay que cubrir toda la grilla.
 
+## D-140 · Las partidas sin red se ven en vivo en el panel
+**Fecha:** 2026-09-25 · **Estado:** vigente
+**Decisión:** Al empezar una partida sin red (un celular, contra el celular, solo), `trackStart`
+deja un registro en `stats/<env>/days/<día>/live/<id>` con juego, modo, cantidad de jugadores,
+versión y país del celular, y le sube `beat` cada minuto mientras la pantalla está a la vista y
+alguien la tocó hace menos de cinco minutos. "Otra vez" para el latido de la partida anterior.
+El panel muestra en "Ahora" las que latieron hace menos de tres minutos (lista *Partidas sin
+red* y cuadro *partidas sin red ahora*, en Resumen y en Juegos). Los días de La Copa quedan
+fuera: ya se ven en *Copas en curso*. El registro va en el balde del día en que empezó, que el
+panel ya baja, así que no hay lectura nueva. Las reglas solo dejan crear el registro una vez y
+subir `beat` con la hora del servidor.
+**Por qué:** el dueño miraba el panel mientras Mica jugaba Batalla Naval contra el celular y el
+panel mostraba cero: "Ahora" solo veía salas, y una partida sin red no dejaba nada en la base
+mientras se jugaba. Sin red es la mayoría de las partidas (100 de 121 en la semana).
+**Alternativas descartadas:** latir sin mirar si alguien toca la pantalla (un celular olvidado
+en la pantalla final se vería jugando horas); abrir una conexión de Firebase (gasta cuota de
+conexiones simultáneas y carga el SDK en modos que no lo cargan, D-41); mandar nombres (de los
+modos sin red no sale ninguno, C-7).
+**Límite conocido:** una partida retomada después de recargar no vuelve a aparecer, porque los
+juegos llaman `trackStart` al empezar y no al retomar.
+
 ## D-141 · La imagen de la tabla: gráfico y tabla en el mismo eje
 **Fecha:** 2026-09-25 · **Estado:** vigente
 **Decisión:** La imagen que sale de "📤 Compartir" (D-126) deja de apilar el gráfico sobre la
