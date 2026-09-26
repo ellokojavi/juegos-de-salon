@@ -8,15 +8,17 @@
  * Las jugadas son `{ c: id de la carta, at: ranura }`, en orden.
  */
 import * as motor from './linea.js';
-import { anioLabel } from './anio.js';
+import { anioLabel as anioDeLaCopa } from './anio.js';
+import { yearLabel } from '../../linea-de-tiempo/engine.js';
 import { crearArrastre } from '../../assets/js/arrastre.js';
 import { showHandoff } from '../../assets/js/handoff.js';
 import { LOCALES as LT_LOCALES } from '../../linea-de-tiempo/rules.js';
 
-const LT = LT_LOCALES.es;
-
 export function montar(raiz, ctx) {
   const { p, T, fmt, el, SFX, vibrate } = ctx;
+  // La copa va en español; el modo solo de Línea de Tiempo, en el idioma de quien juega
+  const LT = LT_LOCALES[ctx.lang] || LT_LOCALES.es;
+  const anioLabel = y => (ctx.lang && ctx.lang !== 'es' ? yearLabel(y, ctx.lang) : anioDeLaCopa(y));
   let jugadas = Array.isArray(ctx.jugadas) ? ctx.jugadas.filter(j => j && typeof j === 'object') : [];
   const sel = { carta: null, ranura: null };
   let arrastre = null;
@@ -74,7 +76,8 @@ export function montar(raiz, ctx) {
     const x = e();
     // Terminado el tablero, el tiempo se detiene aquí y no al tocar el botón (D-130)
     if (x.fin) ctx.pararReloj?.();
-    estadoTxt.textContent = x.fin ? '' : `${sel.carta ? LT.pickSlot : LT.pickCard} · ${fmt(T.lineaLleva, { ok: x.aciertos, n: x.marcas.length })}`;
+    // Antes de la primera jugada no hay cuenta que dar: "vas 0 de 0" no dice nada
+    estadoTxt.textContent = x.fin ? '' : (sel.carta ? LT.pickSlot : LT.pickCard) + (x.marcas.length ? ` · ${fmt(T.lineaLleva, { ok: x.aciertos, n: x.marcas.length })}` : '');
   };
 
   const repintar = () => { marcarMano(); marcarRanuras(); pintarConfirmar(); marcarEstado(); };
@@ -144,7 +147,8 @@ export function montar(raiz, ctx) {
     const siguiente = showHandoff([stage], () => dibujar());
     // El error se queda hasta tocarlo; el acierto se cierra solo (C-8b)
     setTimeout(() => document.getElementById('handoff').classList.toggle('bad', !ult.ok), 0);
-    if (ult.ok) setTimeout(() => { if (!document.getElementById('handoff').hidden) siguiente(); }, 1400);
+    // Solo cierra su propio aviso: si ya hay otro (un error jugando rápido), se queda (C-8b)
+    if (ult.ok) setTimeout(() => { if (stage.isConnected && !document.getElementById('handoff').hidden) siguiente(); }, 1400);
   }
 
   /* ---------- Arrastrar (D-85) ---------- */
