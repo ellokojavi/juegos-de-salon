@@ -156,7 +156,7 @@ Cuando cada dispositivo guarda un secreto (un número, una flota):
 
 ## C-12 · Pruebas
 
-- El motor de cada juego tiene tests que corren con node, sin navegador.
+- El motor de cada juego tiene tests que corren con node, sin navegador. GitHub los corre todos en cada PR y en cada fusión a main (D-143): un PR con ❌ no se fusiona.
 - Antes de publicar se prueba el juego de punta a punta en Chrome headless: partida completa en cada modo, con recarga a mitad de partida y revancha.
 - El modo de dos celulares se prueba con dos instancias del navegador, y al menos una vez contra la URL publicada.
 - Un cambio en un módulo compartido obliga a repetir la regresión de **todos** los juegos.

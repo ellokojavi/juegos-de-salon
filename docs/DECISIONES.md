@@ -1804,3 +1804,21 @@ memoria de partida). La Gran Final suelta: repite los otros y es el cierre de la
 la portada: hay que sumarlo a `SUELTOS` con su tipo, y `i18n.test.mjs` exige que exista en La
 Copa y que su nombre en español sea el mismo. El récord viejo de esos dos solitarios queda sin
 uso, y una partida guardada del solitario viejo no se ofrece para retomar.
+
+## D-143 · Las pruebas sin navegador corren solas en GitHub
+**Fecha:** 2026-09-25 · **Estado:** vigente
+**Decisión:** `.github/workflows/pruebas.yml` corre en cada PR y en cada fusión a main:
+todos los `*.test.mjs` y `*.test.py` del repo (los busca con `git ls-files`, sin lista),
+`tools/readme.py revisar` y `tools/og.mjs revisar`. El PR muestra ✅ o ❌ antes de fusionar.
+Las pruebas de punta a punta (`tools/e2e/`), las capturas y la revisión de usabilidad siguen a
+mano.
+**Por qué:** desde D-135 varias sesiones trabajan en paralelo y fusionan seguido. Cada una corre
+los tests en su rama, pero nadie los corría sobre main después de juntar dos ramas. Además la
+lista de CLAUDE.md se había quedado atrás: `arrastre.test.mjs` y `julepe/engine.test.mjs` no
+estaban, así que no los corría nadie. Sin npm ni build, todo tarda unos segundos.
+**Alternativas descartadas:** correr también `tools/e2e/` (necesita Chrome y un servidor, tarda
+minutos y sus capturas igual hay que mirarlas). Una lista fija de tests en el workflow (se
+quedaría atrás igual que la de CLAUDE.md).
+**Consecuencias:** un test nuevo entra solo al llamarse `*.test.mjs` o `*.test.py`. Un test que
+necesite red o llaves no puede correr ahí: tiene que funcionar sin ellas o quedar fuera del
+patrón. Los avisos de capturas viejas de `readme.py revisar` no hacen fallar el workflow.

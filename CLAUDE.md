@@ -81,16 +81,23 @@ un emoji o el diseño (D-72).
 
 ## Pruebas
 
+GitHub corre todas las de abajo (menos el servidor) en cada PR y en cada fusión a main
+(`.github/workflows/pruebas.yml`, D-143): el PR muestra ✅ o ❌. Encuentra solo cualquier
+`*.test.mjs` o `*.test.py`, así que un test nuevo no se agrega al workflow. Igual se corren
+aquí antes de abrir el PR; las de punta a punta siguen a mano.
+
 ```bash
 node toque-y-fama/engine.test.mjs
 node batalla-naval/engine.test.mjs
 node linea-de-tiempo/engine.test.mjs
 node ahorcado/engine.test.mjs
 node dudo/engine.test.mjs
+node julepe/engine.test.mjs
 node copa/engine.test.mjs               # La Copa: torneo, minijuegos y almacén de prueba
 node copa/juegos/juegos.test.mjs
 node copa/store.test.mjs
 node copa/reportes.test.mjs             # un reporte que no sale queda guardado y se reenvía
+node assets/js/arrastre.test.mjs
 node assets/js/i18n.test.mjs             # paridad es/en/pt (C-3)
 node assets/js/transport/cleanup.test.mjs
 node assets/js/transport/dispose.test.mjs
