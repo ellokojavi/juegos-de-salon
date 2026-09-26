@@ -1,5 +1,16 @@
 # Changelog
 
+## Sin número todavía (se numera al fusionar) — 2026-09-25
+- **Los minijuegos de La Copa se juegan sueltos desde la portada** (D-142): Conexiones, Toque y
+  Fama: Palabra, ¿En qué año?, Reinas, Tango y Zip, de un jugador y sin copa. Por ahora en
+  español; en inglés y portugués la tarjeta lo avisa.
+- **Jugar solo en Toque y Fama y en Línea de Tiempo es su minijuego de La Copa**: adivinar un
+  número de 4 cifras en 10 intentos, y Línea Relámpago (10 hitos, el primero ya puesto). Puntaje
+  de 0 a 100, reloj y récord por mejor puntaje, en los tres idiomas y con partida que se retoma.
+- **La portada se filtra** por cuántos juegan (todos, solo, con amigos) y por tipo (palabras,
+  lógica, cultura general, cartas y dados). El filtro queda en el link.
+- **"Próximamente" va al lado del nombre** del juego, y no apagado abajo a la derecha.
+
 ## 0.64.9 — 2026-09-25
 - **La Copa: la imagen de la tabla es más compacta** (D-141). El gráfico de posiciones y la tabla
   van lado a lado y la línea de cada jugador termina en su fila: cada nombre aparece una vez, con
