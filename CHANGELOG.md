@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.64.10 — 2026-09-25
+- **La Copa: Zip tiene Borrar todo**, el mismo botón de Tango. Va debajo de la grilla y deja
+  solo el 1 pintado para empezar el trazo de nuevo, sin tocar el nivel ni el reloj. El primer
+  toque pide confirmación y el segundo borra, para no perder un tablero grande sin querer. Las
+  reglas lo cuentan.
+
 ## 0.64.9 — 2026-09-25
 - **La Copa: la imagen de la tabla es más compacta** (D-141). El gráfico de posiciones y la tabla
   van lado a lado y la línea de cada jugador termina en su fila: cada nombre aparece una vez, con
