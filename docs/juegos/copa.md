@@ -27,6 +27,7 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
 | Comodín ×2 | Uno por jugador y copa. Se activa antes de Empezar (el servidor lo rechaza después). No vale en la final. |
 | Final ×2 | El último día vale doble para todos. |
 | Resultados ocultos | Los puntajes de un día se ven después de jugarlo o cuando cierra. La tabla y el gráfico tampoco lo delatan: suman solo los días que ya puedes ver. |
+| Nombre | El admin lo puede cambiar hasta que la copa termina; el link sigue igual (D-148). |
 | Inscripción | Abierta hasta que empieza la final. Los días que ya cerraron quedan con 0. |
 | Tabla | Suma de puntos. Desempata quien ganó más días y después quien quedó mejor en la final. |
 | Medallas | Campeón, más días ganados, la remontada (más puestos subidos desde la mitad) y el farolito rojo. |

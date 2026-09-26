@@ -214,6 +214,7 @@
             ".validate": "newData.isNumber()"
           },
           "name": {
+            ".write": "auth != null && $code.matches(/^[A-HJ-NP-Z]{5}$/) && data.exists() && now < data.parent().child('end').val() && root.child('torneoSeats/' + $code + '/' + data.parent().child('admin').val() + '/' + auth.uid).exists()",
             ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 40"
           },
           "days": {
