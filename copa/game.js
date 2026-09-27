@@ -1216,7 +1216,7 @@ function antesDeJugar(d) {
       el('p', { class: 'muted', style: 'margin:0' }, fmt(T.dayOf, { d, n: meta.days })),
       el('h2', { class: 'display display--lg' }, J.nombre)),
     el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.howToPlay), dibujo(id), el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
-      el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, J.puntaje)),
+      el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, puntajeTexto(J))),
     el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.wildTitle), comodin),
     JUEGOS[id].ensayo ? el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-ensayo', onClick: () => { SFX.tap(); ensayo(d); } }, `🧪 ${T.tryFirst}`) : null,
     el('p', { class: 'muted center' }, T.startWarn), err, empezar,
@@ -1240,7 +1240,10 @@ const dibujo = id => JUEGOS[id]?.ejemplo?.({ el, T }) ?? null;
  * están a mano ante la duda. Son las mismas de la pantalla de antes de jugar, con las palabras
  * de los botones que se ven al jugar. En la final, además, las cinco rondas.
  */
-function panelReglas(id) {
+/** Cómo se puntúa; el desempate solo dentro de una copa, donde hay con quién empatar (dilema #72). */
+const puntajeTexto = (J, copa = true) => (copa && J.desempate ? `${J.puntaje} ${J.desempate}` : J.puntaje);
+
+function panelReglas(id, { copa = true } = {}) {
   const J = MINIJUEGOS[id];
   const caja = $('#jugar-reglas');
   caja.innerHTML = '';
@@ -1252,7 +1255,7 @@ function panelReglas(id) {
     id === 'final' ? [el('p', { class: 'lead' }, T.finalRounds),
       el('ul', { class: 'como' }, Object.entries(RONDAS_FINAL).map(([r, x]) => el('li', {}, `${MINIJUEGOS[r].emoji} ${MINIJUEGOS[r].nombre}: ${x}`)))] : null,
     el('p', { class: 'lead' }, T.scoring),
-    el('p', { class: 'muted' }, J.puntaje)));
+    el('p', { class: 'muted' }, puntajeTexto(J, copa))));
 }
 
 function cuentaRegresiva(J) {
@@ -1454,12 +1457,12 @@ function bajoElPuntaje(t, ms) {
  * lugar del día se vuelve puntos, y si ese día valía el doble.
  */
 function explicacion(J, { s, ms, det, x = 1, final = false, copa = true }) {
-  const lineas = det?.length ? det : [J.puntaje];
+  const lineas = det?.length ? det : [puntajeTexto(J, copa)];
   return el('details', { class: 'panel explicacion', id: 'explicacion', open: true },
     el('summary', { class: 'lead' }, `🧮 ${T.bdTitle}`),
     el('ul', {}, lineas.map(t => el('li', {}, t))),
     det?.length ? el('p', { class: 'explicacion-total' }, fmt(s === 1 ? T.bdTotalOne : T.bdTotal, { s })) : null,
-    J === MINIJUEGOS.zip ? null : el('p', { class: 'muted' }, fmt(T.bdTime, { t: mmss(ms) })),
+    J === MINIJUEGOS.zip ? null : el('p', { class: 'muted' }, fmt(copa ? T.bdTime : T.bdTimeSolo, { t: mmss(ms) })),
     copa ? el('p', { class: 'muted' }, T.bdPlaces) : null,
     copa && x > 1 ? el('p', { class: 'ok' }, final ? T.bdFinal : T.bdWild) : null);
 }
@@ -1502,7 +1505,7 @@ function practica(id) {
       el('p', { class: 'muted', style: 'margin:0' }, LABS ? T.practiceTitle : T.looseTitle),
       el('h2', { class: 'display display--lg' }, J.nombre)),
     el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.howToPlay), dibujo(id), el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
-      el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, J.puntaje)),
+      el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, puntajeTexto(J, false))),
     // La misma antesala que un día de la copa (D-109): la sesión de prueba se elige antes de jugar
     mod.ensayo && LABS ? el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-ensayo', onClick: () => { SFX.tap(); ensayoPractica(id, semilla); } }, `🧪 ${T.tryFirst}`) : null,
     el('p', { class: 'muted center' }, LABS ? T.practiceHint : T.looseHint),
@@ -1540,7 +1543,7 @@ async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false } = {}) {
   document.addEventListener('visibilitychange', S.visibilidad);
   const body = $('#jugar-body');
   body.innerHTML = '';
-  panelReglas(id);
+  panelReglas(id, { copa: false });
   mod.montar(body, {
     p, jugadas: undefined, T, fmt, el, SFX, vibrate,
     textoFin: ensayo ? T.trialEnd : undefined,
@@ -1554,7 +1557,7 @@ async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false } = {}) {
       clearInterval(S.reloj);
       document.removeEventListener('visibilitychange', S.visibilidad);
       const r = mod.resultado(estado);
-      alTerminar({ ...r, ms: r.ms ?? Math.round(reloj.leer(rel, Date.now())), det: desglose(id, estado, { T, fmt, mmss }) });
+      alTerminar({ ...r, ms: r.ms ?? Math.round(reloj.leer(rel, Date.now())), det: desglose(id, estado, { T, fmt, mmss, copa: false }) });
     },
   });
 }
