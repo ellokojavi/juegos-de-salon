@@ -31,7 +31,7 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
 | Nombre | El admin lo puede cambiar hasta que la copa termina; el link sigue igual (D-148). |
 | Inscripción | Abierta hasta que empieza la final. Los días que ya cerraron quedan con 0. |
 | Tabla | Suma de puntos. Desempata quien ganó más días y después quien quedó mejor en la final. Es **provisoria** mientras el último día que muestra sigue abierto y alguien no lo ha jugado (D-147). |
-| Medallas | Campeón, más días ganados, la remontada (más puestos subidos desde la mitad) y el farolito rojo. |
+| Medallas | Campeón, más días ganados, la remontada (más puestos subidos desde la mitad) y "al descenso" (el último). |
 
 ## Los minijuegos
 
