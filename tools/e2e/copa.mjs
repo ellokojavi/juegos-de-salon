@@ -464,6 +464,7 @@ ok(await ev(`location.pathname + location.search`) === '/minijuegos/?conexiones&
 ok(!await ev(`document.getElementById('btn-ensayo')`) && await ev(`document.getElementById('btn-menu').getAttribute('href')`) === '../'
   && await ev(`[...document.querySelectorAll('#jugar-body a')].some(a => a.getAttribute('href') === '../')`), 'minijuego suelto: sin prueba y de vuelta al menú');
 ok(!/copa/i.test(await ev(`location.href + ' ' + document.title`)), 'minijuego suelto: ni el link ni el título dicen copa');
+ok(!await ev(`document.body.innerText.includes('empatas')`), 'minijuego suelto: no habla de empates, no hay con quién (dilema #72)');
 // El 🐞 del resultado abre el formulario y vuelve al resultado (la página suelta necesita su pantalla)
 await b.go(`${SITIO}/minijuegos/?reinas&prueba`, 1500); await preparar();
 await click('#btn-empezar'); await sleep(300); await esperarCuenta();
