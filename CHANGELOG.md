@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.66.4 — 2026-09-26
+- **La Copa: el ×2 de la final vuelve a los resultados, en cian** (D-151). El dorado queda para
+  el comodín, así el doble de la final (para todos) no se confunde con el de un comodín. Lo
+  mismo en la tarjeta del día y en el calendario.
+
 ## 0.66.3 — 2026-09-26
 - **La Copa: en los resultados de la final nadie lleva "×2".** La final vale doble para todos, así
   que la píldora en cada fila no distinguía a nadie. En los otros días sigue marcando a quien usó
