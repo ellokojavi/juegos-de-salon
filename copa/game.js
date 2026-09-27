@@ -477,6 +477,12 @@ function hastaCuando(d, est, now) {
   return T.untilTomorrowNight;
 }
 
+/**
+ * La píldora ×2: dorada para el comodín, cian para la final, que vale doble para todos. Así no se
+ * confunden: un ×2 de la final no es un comodín, y los dos nunca se suman (D-151).
+ */
+const claseX2 = final => `chip ${final ? 'chip--final' : 'chip--gold'}`;
+
 function tarjetaDia(d, rotulo) {
   const Lc = L(), { meta } = Lc;
   const id = juegoDelDia(meta, d), J = MINIJUEGOS[id];
@@ -495,7 +501,7 @@ function tarjetaDia(d, rotulo) {
     el('div', { class: 'dia-top' },
       el('span', { class: 'chip' + (rotulo === T.today ? ' chip--hot' : '') }, rotulo),
       el('span', { class: 'muted' }, `${fmt(T.dayOf, { d, n: meta.days })} · ${fechaCorta(meta.win[d].a, meta.tz)}`),
-      x2 ? el('span', { class: 'chip chip--gold' }, esFinal(meta, d) ? T.x2 : `${T.x2} ${T.wildUsed}`) : null),
+      x2 ? el('span', { class: claseX2(esFinal(meta, d)) }, esFinal(meta, d) ? T.x2 : `${T.x2} ${T.wildUsed}`) : null),
     el('div', { class: 'dia-juego' }, el('span', { class: 'dia-emoji' }, J.emoji), el('div', {}, el('b', {}, J.nombre), el('small', { class: 'muted' }, hastaCuando(d, est, now)))),
     est === 'jugado' ? el('p', { class: 'ok' }, `✅ ${T.played}`) : null,
     accion,
@@ -557,7 +563,7 @@ function misDias(d, now) {
     const contenido = [
       el('span', { class: 'md-dia' }, el('b', {}, fmt(T.dayShort, { d: k })), el('small', {}, fechaCorta(meta.win[k].a, meta.tz))),
       el('span', { class: 'md-emoji' }, J.emoji),
-      el('span', { class: 'md-info' }, el('b', {}, J.nombre, x2 ? el('span', { class: 'chip chip--gold md-x2' }, T.x2) : null), el('small', {}, detalle)),
+      el('span', { class: 'md-info' }, el('b', {}, J.nombre, x2 ? el('span', { class: `${claseX2(esFinal(meta, k))} md-x2` }, T.x2) : null), el('small', {}, detalle)),
       est === 'jugado' ? el('span', { class: 'md-go' }, '›') : accion,
     ];
     filas.push(est === 'jugado'
@@ -1429,10 +1435,10 @@ function resultado(d, { recien = false, det = null } = {}) {
       el('div', { class: 'tabla' }, ranking.map(j => el('div', { class: 'fila' + (j.pid === S.yo ? ' yo' : '') },
         el('span', { class: 'lugar' }, `${pos[j.pid].pos}`),
         el('span', { class: 'flecha' }),
-        // Quien usó el comodín lleva "×2" junto al nombre: explica por qué sus puntos no calzan con
-        // su lugar. En la final no: vale doble para todos y la píldora en cada fila no distingue a nadie
-        el('div', { class: 'quien' }, !esFinal(meta, d) && multiplicador(Lc, d, j.pid) === 2
-          ? el('div', { class: 'con-x2' }, el('b', {}, j.name), el('span', { class: 'chip chip--gold md-x2' }, T.x2))
+        // Quien usó el comodín (o todos, en la final) lleva "×2" junto al nombre: explica por qué
+        // sus puntos no calzan con su lugar. El de la final va en otro color (D-151)
+        el('div', { class: 'quien' }, multiplicador(Lc, d, j.pid) === 2
+          ? el('div', { class: 'con-x2' }, el('b', {}, j.name), el('span', { class: `${claseX2(esFinal(meta, d))} md-x2` }, T.x2))
           : el('b', {}, j.name), el('small', { class: 'muted' }, `${Lc.results[d][j.pid].r || Lc.results[d][j.pid].s} · ⏱ ${mmss(Lc.results[d][j.pid].ms)}`)),
         el('span', { class: 'total' }, `+${pos[j.pid].pts * multiplicador(Lc, d, j.pid)}`))))),
     el('button', { class: 'btn btn--yellow', id: 'btn-volver', onClick: () => { SFX.tap(); S.verDia = null; tablero(); } }, T.toBoard),
