@@ -10,8 +10,11 @@ import * as anio from './juegos/anio.js';
 import * as final from './juegos/final.js';
 import { MINIJUEGOS } from './rules.js';
 
-/** Las líneas del desglose; la última es el total. `null` si el juego no lo tiene. */
-export function desglose(id, e, { T, fmt, mmss }) {
+/**
+ * Las líneas del desglose; la última es el total. `null` si el juego no lo tiene. Con `copa: false`
+ * (la práctica, el suelto, la sesión de prueba) no se habla de empates: no hay con quién (dilema #72).
+ */
+export function desglose(id, e, { T, fmt, mmss, copa = true }) {
   if (!e) return null;
   const intentos = (x, max) => (x.resuelto
     ? [fmt(T.bdTries, { u: x.usados, max }), fmt(T.bdTriesPts, { menos: 10 * (x.usados - 1), s: numero.puntaje(x, max) })]
@@ -39,7 +42,7 @@ export function desglose(id, e, { T, fmt, mmss }) {
     ].filter(Boolean) : [T.bdNotSolved];
     case 'zip': return [
       fmt(e.hechos === 1 ? T.bdLevelsOne : T.bdLevels, { n: e.hechos || 0, pts: Math.min(100, 10 * (e.hechos || 0)) }),
-      e.hechos ? fmt(T.bdLastLevel, { t: mmss(e.ultimo || 0) }) : null,
+      e.hechos ? fmt(copa ? T.bdLastLevel : T.bdLastLevelSolo, { t: mmss(e.ultimo || 0) }) : null,
     ].filter(Boolean);
     case 'anio': return [...e.filas.map(f => fmt(T.bdYear, { hito: f.hito.texto, r: anio.anioLabel(f.r), y: anio.anioLabel(f.hito.year), pts: f.pts })), T.bdAverage];
     case 'final': return [...final.RONDAS.map(r => fmt(T.bdRound, {
