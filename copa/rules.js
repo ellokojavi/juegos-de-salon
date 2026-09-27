@@ -356,7 +356,7 @@ const ES = {
   medalChamp: '🏆 Campeón',
   medalWins: '🥇 Más días ganados',
   medalComeback: '🚀 La remontada',
-  medalLast: '🏮 Farolito rojo',
+  medalLast: '📉 Al descenso',
   shareSummary: '📤 Compartir el resumen',
 
   // Admin
