@@ -249,6 +249,8 @@ const ES = {
   blockOpen: 'Abierto: todavía no lo juega',
   blockMissed: 'No lo jugó y ya cerró',
   legendPoints: 'puntos',
+  legendWon: 'ganó el día',
+  legendDouble: 'vale doble',
   legendHidden: 'jugado',
   legendOpen: 'por jugar',
   legendMissed: 'no jugó',
