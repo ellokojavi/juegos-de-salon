@@ -1949,3 +1949,16 @@ el botón no tenía resultado en la copa, y si no volvía antes de que cerrara e
 resultado, no al tablero con el botón. Una partida que quedó terminada con la versión anterior
 se envía sola al abrirla, porque el tablero vuelve a avisar que terminó. La práctica y la sesión
 de prueba no cambian: su `pararReloj` ignora el estado.
+
+## D-151 · El ×2 de la final va en cian; el del comodín, en dorado
+**Fecha:** 2026-09-26 · **Estado:** vigente
+**Decisión:** la píldora "×2" tiene dos colores: dorada cuando es el comodín de un jugador y cian
+(`chip--final` en `copa/style.css`) cuando es la final, que vale doble para todos. Vale en la
+tarjeta del día, en el calendario y en los resultados del día, donde en la final todos llevan la
+píldora cian junto al nombre. El texto sigue siendo "×2".
+**Por qué:** lo pidió el dueño. Tiene que quedar claro que la final vale doble, pero con el mismo
+dorado parecía que todos habían usado el comodín ese día, y se podía pensar que un comodín en la
+final daba ×4. No puede: el comodín no se usa en la final (motor, pantalla y reglas de Firebase) y
+`multiplicador` nunca pasa de 2.
+**Alternativas descartadas:** sacar la píldora de los resultados de la final (0.66.3): dejaba de
+decir que ese día vale doble.
