@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.66.6 — 2026-09-27
+- **La Copa:** la medalla del último ya no es "🏮 Farolito rojo" sino "📉 Al descenso", en la
+  pantalla final y en el resumen que se comparte.
+
 ## 0.66.5 — 2026-09-26
 - **La Copa: la leyenda de la tabla explica los colores.** "puntos" ahora tiene bloque gris,
   "ganó el día" el dorado, y "vale doble" el borde naranjo (comodín, o la final para todos).
