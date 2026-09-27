@@ -16,7 +16,8 @@ export const MINIJUEGOS = {
       'Toca una carta de tu mano y después el lugar de la línea donde va (o arrástrala hasta ahí), y toca Colocar aquí. Puedes jugarlas en el orden que quieras.',
       'Si te equivocas, la carta queda en su lugar marcada en rojo y sigues con las demás.',
     ],
-    puntaje: 'Va de 0 a 100 según la parte de las cartas que pongas bien: las 9 bien son 100 puntos. Si empatas, gana quien tardó menos.',
+    puntaje: 'Va de 0 a 100 según la parte de las cartas que pongas bien: las 9 bien son 100 puntos.',
+    desempate: 'Si empatas, gana quien tardó menos.',
   },
   numero: {
     emoji: '🔢', nombre: 'Toque y Fama: adivina el número', habilidad: 'deducir',
@@ -25,7 +26,8 @@ export const MINIJUEGOS = {
       'Escribe un número de 4 cifras distintas y toca Probar. Cada intento te dice cuántas famas tiene (cifra correcta en su lugar) y cuántos toques (cifra correcta en otro lugar).',
       'Mantén apretada una cifra para tacharla cuando sepas que no está. Tienes 10 intentos.',
     ],
-    puntaje: 'Mientras menos intentos uses, más puntos: 100 si lo sacas al primero y 10 menos por cada intento más, hasta 10 si lo sacas al décimo. Si empatas, gana quien tardó menos.',
+    puntaje: 'Mientras menos intentos uses, más puntos: 100 si lo sacas al primero y 10 menos por cada intento más, hasta 10 si lo sacas al décimo.',
+    desempate: 'Si empatas, gana quien tardó menos.',
   },
   conexiones: {
     emoji: '🔗', nombre: 'Conexiones', habilidad: 'asociar',
@@ -34,7 +36,8 @@ export const MINIJUEGOS = {
       'Toca 4 palabras que creas que van juntas y toca Confirmar. Barajar cambia el orden de las palabras y Limpiar suelta las que elegiste.',
       'Tienes 4 errores disponibles: al cuarto se termina. Si te faltó una sola palabra para un grupo, te avisamos.',
     ],
-    puntaje: 'Cada grupo vale 25 puntos y cada error resta 5, de 0 a 100. Si empatas, gana quien tardó menos.',
+    puntaje: 'Cada grupo vale 25 puntos y cada error resta 5, de 0 a 100.',
+    desempate: 'Si empatas, gana quien tardó menos.',
   },
   reinas: {
     emoji: '👑', nombre: 'Reinas', habilidad: 'lógica',
@@ -52,7 +55,8 @@ export const MINIJUEGOS = {
       'Escribe 5 letras distintas, aunque no formen una palabra, y toca Probar. Cada intento te dice cuántas famas (letra correcta en su lugar) y cuántos toques (letra correcta en otro lugar) tiene, y cada letra se pinta: amarilla si es fama y celeste si es toque.',
       'Mantén apretada una letra para tacharla cuando sepas que no está. Tienes 8 intentos.',
     ],
-    puntaje: 'Cada letra que encuentras en su lugar suma 10 puntos, una sola vez aunque la repitas en otros intentos. Si sacas la palabra, sumas 50 más, menos 5 por cada intento después del primero. Va de 0 a 100 y, si empatas, gana quien tardó menos.',
+    puntaje: 'Cada letra que encuentras en su lugar suma 10 puntos, una sola vez aunque la repitas en otros intentos. Si sacas la palabra, sumas 50 más, menos 5 por cada intento después del primero. Va de 0 a 100.',
+    desempate: 'Si empatas, gana quien tardó menos.',
   },
   anio: {
     emoji: '📅', nombre: '¿En qué año?', habilidad: 'estimar',
@@ -60,7 +64,8 @@ export const MINIJUEGOS = {
       'Hay 6 hitos. Escribe en qué año crees que pasó cada uno y toca OK.',
       'Si fue antes de Cristo, toca el botón a. C. antes de tocar OK.',
     ],
-    puntaje: 'Cada hito da 100 puntos si aciertas el año exacto y menos mientras más te alejas, y tu puntaje es el promedio de los seis, de 0 a 100. En los hitos antiguos el margen es más amplio. Si empatas, gana quien tardó menos.',
+    puntaje: 'Cada hito da 100 puntos si aciertas el año exacto y menos mientras más te alejas, y tu puntaje es el promedio de los seis, de 0 a 100. En los hitos antiguos el margen es más amplio.',
+    desempate: 'Si empatas, gana quien tardó menos.',
   },
   zip: {
     emoji: '〰️', nombre: 'Zip', habilidad: 'lógica', labs: true,
@@ -69,7 +74,8 @@ export const MINIJUEGOS = {
       'Arrastra el dedo desde el 1. Para corregir, vuelve con el dedo por el mismo camino o toca una casilla del trazo para cortarlo ahí. Con Borrar todo empiezas de nuevo desde el 1.',
       'Tienes 3 minutos para resolver todos los niveles que puedas. Cada nivel es igual o más grande que el anterior.',
     ],
-    puntaje: 'Cada nivel resuelto vale 10 puntos, hasta 100. Si empatas, gana quien resolvió su último nivel antes.',
+    puntaje: 'Cada nivel resuelto vale 10 puntos, hasta 100.',
+    desempate: 'Si empatas, gana quien resolvió su último nivel antes.',
   },
   tango: {
     emoji: '☀️', nombre: 'Tango', habilidad: 'lógica', labs: true,
@@ -79,7 +85,8 @@ export const MINIJUEGOS = {
       'Toca una casilla para poner un sol, otra vez para una luna y una tercera para limpiarla. Hay una sola solución.',
       'Si te atascas, abre la sección Consejos o toca Pista: revela una casilla y resta 15 puntos.',
     ],
-    puntaje: 'Parte en 100 puntos: cada jugada que rompe una regla resta 10 y cada pista resta 15, con un mínimo de 10. Si empatas, gana quien tardó menos.',
+    puntaje: 'Parte en 100 puntos: cada jugada que rompe una regla resta 10 y cada pista resta 15, con un mínimo de 10.',
+    desempate: 'Si empatas, gana quien tardó menos.',
   },
   final: {
     emoji: '🏁', nombre: 'La Gran Final', habilidad: 'todo',
@@ -88,7 +95,8 @@ export const MINIJUEGOS = {
       'Antes de cada ronda verás cómo se juega.',
       'La final vale el doble de puntos en la tabla.',
     ],
-    puntaje: 'Cada ronda vale de 0 a 100 y tu puntaje es el promedio de las cinco, de 0 a 100. Si empatas, gana quien tardó menos.',
+    puntaje: 'Cada ronda vale de 0 a 100 y tu puntaje es el promedio de las cinco, de 0 a 100.',
+    desempate: 'Si empatas, gana quien tardó menos.',
   },
 };
 
@@ -291,6 +299,8 @@ const ES = {
   bdTotal: 'Total: {s} puntos.',
   bdTotalOne: 'Total: 1 punto.',
   bdTime: 'Tu tiempo fue {t}. Si empatas en puntos con alguien, gana quien tardó menos.',
+  // Fuera de una copa no hay con quién empatar (dilema #72)
+  bdTimeSolo: 'Tu tiempo fue {t}.',
   bdPlaces: 'En la copa, tu lugar del día se convierte en puntos: el 1º gana 10, el 2º 8, el 3º 6, el 4º 5, el 5º 4, el 6º 3, el 7º 2 y del 8º en adelante 1.',
   bdWild: 'Usaste el comodín este día, así que tus puntos de la copa valen el doble.',
   bdFinal: 'Es la gran final, así que los puntos de la copa de este día valen el doble para todos.',
@@ -319,6 +329,7 @@ const ES = {
   bdLevels: 'Resolviste {n} niveles en los tres minutos, a 10 puntos cada uno: {pts} puntos.',
   bdLevelsOne: 'Resolviste 1 nivel en los tres minutos, que vale 10 puntos.',
   bdLastLevel: 'Resolviste tu último nivel a los {t}. Si empatas en niveles, gana quien lo resolvió antes.',
+  bdLastLevelSolo: 'Resolviste tu último nivel a los {t}.',
   bdYear: '{hito}: dijiste {r} y era {y}, así que ganaste {pts} de 100 puntos.',
   bdRound: '{emoji} {juego}: {pts} de 100 puntos.',
   bdAverage: 'Tu puntaje es el promedio, de 0 a 100.',
