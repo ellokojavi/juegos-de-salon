@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.66.3 — 2026-09-26
+- **La Copa: en los resultados de la final nadie lleva "×2".** La final vale doble para todos, así
+  que la píldora en cada fila no distinguía a nadie. En los otros días sigue marcando a quien usó
+  el comodín.
+
 ## 0.66.2 — 2026-09-26
 - **Portada: "Ver todos"** en vez de "Quitar filtros", ahora que se filtra por un solo tipo (#71).
 - **Minijuegos fuera de una copa: sin frases de empate.** Suelto, en la práctica o en la sesión de
