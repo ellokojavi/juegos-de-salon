@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.66.5 — 2026-09-26
+- **La Copa: la leyenda de la tabla explica los colores.** "puntos" ahora tiene bloque gris,
+  "ganó el día" el dorado, y "vale doble" el borde naranjo (comodín, o la final para todos).
+  Los dos nuevos aparecen cuando hay alguno en la tabla (D-152).
+
 ## 0.66.4 — 2026-09-26
 - **La Copa: el ×2 de la final vuelve a los resultados, en cian** (D-151). El dorado queda para
   el comodín, así el doble de la final (para todos) no se confunde con el de un comodín. Lo

@@ -1962,3 +1962,16 @@ final daba ×4. No puede: el comodín no se usa en la final (motor, pantalla y r
 `multiplicador` nunca pasa de 2.
 **Alternativas descartadas:** sacar la píldora de los resultados de la final (0.66.3): dejaba de
 decir que ese día vale doble.
+
+## D-152 · La leyenda de la tabla explica el dorado y el borde naranjo
+**Fecha:** 2026-09-26 · **Estado:** vigente
+**Decisión:** La leyenda de los bloques (D-131) separa "puntos" (bloque gris) de "ganó el día"
+(bloque dorado) y suma "vale doble" (borde naranjo: el comodín, o la final para todos). Los dos
+nuevos aparecen solo cuando ya hay alguno en la tabla, igual que "jugado".
+**Por qué:** lo pidió el dueño: el borde naranjo no se explicaba en ninguna parte, y la muestra de
+"puntos" era dorada, así que tampoco se entendía que el dorado es el 1º del día.
+**Alternativas descartadas:** mostrar "vale doble" desde el primer día, para que se sepa que
+existe: alarga la leyenda con algo que todavía no aparece; el comodín ya se explica en las reglas
+y en su propio panel.
+**Consecuencias:** la final nunca vale ×4: el comodín no se puede usar ese día (`puedeComodin`) y
+`multiplicador` elige entre ×2 y ×1, no multiplica.
