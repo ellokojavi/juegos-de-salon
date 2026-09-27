@@ -72,3 +72,9 @@ Las respuestas a dilemas (issues con la etiqueta `usabilidad`) se anotan aquí:
   imagen de la tabla y en el tablero (aprobada por el dueño).
 - **El número de día del título de la tabla** (#67, D-147): es el último día que la tabla muestra,
   no el de hoy. Quien todavía no juega hoy comparte "· día 4" con "⏳ ¡Día 5 en curso!" debajo.
+- **"Ver todos" en la portada** (#71, D-149): con un solo filtro posible, el enlace bajo las fichas
+  dice "Ver todos" (EN "Show all", PT "Ver todos") y no "Quitar filtros". El aviso de lista vacía
+  se borró: solo se ofrecen tipos con algún juego.
+- **Sin empates fuera de una copa** (#72): en el minijuego suelto, la práctica y la sesión de
+  prueba, el puntaje no dice "Si empatas…" y el resultado dice solo "Tu tiempo fue 0:42.". El
+  desempate vive aparte (`desempate` en `MINIJUEGOS`) y solo se suma dentro de una copa.
