@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.66.2 — 2026-09-26
+- **Portada: "Ver todos"** en vez de "Quitar filtros", ahora que se filtra por un solo tipo (#71).
+- **Minijuegos fuera de una copa: sin frases de empate.** Suelto, en la práctica o en la sesión de
+  prueba no hay con quién empatar: el puntaje ya no dice "Si empatas, gana quien tardó menos" y
+  el resultado dice solo "Tu tiempo fue 0:42." (#72). Dentro de la copa todo sigue igual.
+
 ## 0.66.1 — 2026-09-26
 - **La Copa: el resultado del día se envía apenas termina el tablero** (D-150), no al tocar
   "Ver resultado". Si el jugador cierra la pestaña sin tocarlo, igual cuenta, aunque el día
