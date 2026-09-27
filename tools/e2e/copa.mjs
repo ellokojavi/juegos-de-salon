@@ -273,7 +273,7 @@ async function jugarDia(d, nivel, { capturar = false, comodin = false } = {}) {
     ok(await ev(`!!__copa.estado.copa.results?.[${d}]?.[__copa.estado.yo] && __copa.estado.pantalla === 'jugar'`), `día ${d} (${id}): el resultado queda en la copa antes de tocar "Ver resultado"`);
   }
   await click('#btn-fin'); await sleep(700);
-  if (id === 'final') ok(!await ev(`document.querySelector('#resultado-body .con-x2')`), 'la final: en los resultados nadie lleva ×2, vale doble para todos');
+  if (id === 'final') ok(await ev(`(()=>{const x=[...document.querySelectorAll('#resultado-body .md-x2')];return x.length>0 && x.every(c=>c.classList.contains('chip--final') && !c.classList.contains('chip--gold'))})()`), 'la final: en los resultados todos llevan el ×2 de la final, en cian y no en el dorado del comodín (D-151)');
   if (capturar) ok(await ev(`(document.querySelector('#explicacion')?.innerText || '').includes('Total:')`), `resultado del día ${d}: explica cómo se calculó el puntaje`);
   return id;
 }
