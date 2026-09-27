@@ -694,10 +694,15 @@ function tablero() {
 
   if (d >= 1) {
     const filas = tabla(Lc, S.yo, now);
-    const hayOcultos = filas.some(f => Object.values(f.dias).some(x => x.oculto));
-    // La leyenda de los bloques (D-131)
+    const bloques = filas.flatMap(f => Object.values(f.dias));
+    const hayOcultos = bloques.some(x => x.oculto);
+    const hayOro = bloques.some(x => x.jugo && !x.oculto && x.pos === 1);
+    const hayDoble = bloques.some(x => x.jugo && !x.oculto && x.x === 2);
+    // La leyenda de los bloques (D-131): oro y doble solo si ya hay alguno en la tabla (D-152)
     const leyenda = el('div', { class: 'tabla-leyenda' },
-      el('span', {}, el('span', { class: 'pd oro' }, '10'), T.legendPoints),
+      el('span', {}, el('span', { class: 'pd' }, '6'), T.legendPoints),
+      hayOro ? el('span', {}, el('span', { class: 'pd oro' }, '10'), T.legendWon) : null,
+      hayDoble ? el('span', {}, el('span', { class: 'pd doble' }, '12'), T.legendDouble) : null,
       hayOcultos ? el('span', {}, el('span', { class: 'pd oculto' }, '✓'), T.legendHidden) : null,
       el('span', {}, el('span', { class: 'pd abierto' }, '•'), T.legendOpen),
       el('span', {}, el('span', { class: 'pd perdido' }, '–'), T.legendMissed),
