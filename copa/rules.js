@@ -88,6 +88,15 @@ export const MINIJUEGOS = {
     puntaje: 'Parte en 100 puntos: cada jugada que rompe una regla resta 10 y cada pista resta 15, con un mínimo de 10.',
     desempate: 'Si empatas, gana quien tardó menos.',
   },
+  donde: {
+    emoji: '📍', nombre: '¿Dónde queda?', habilidad: 'ubicar', labs: true,
+    como: [
+      'Te damos 5 ciudades, una por una. Toca el mapa donde crees que queda cada una y toca Confirmar.',
+      'Arrastra el mapa para moverte. Para acercarlo, pellízcalo o tócalo dos veces. Si te arrepientes, toca en otro lugar y el alfiler se mueve.',
+    ],
+    puntaje: 'Cada ciudad vale hasta 100 puntos y pierdes 4 por cada 100 km de error. Tu puntaje es el promedio de las 5.',
+    desempate: 'Si empatas, gana quien tardó menos.',
+  },
   final: {
     emoji: '🏁', nombre: 'La Gran Final', habilidad: 'todo',
     como: [
@@ -341,6 +350,7 @@ const ES = {
   bdLastLevelSolo: 'Resolviste tu último nivel a los {t}.',
   bdYear: '{hito}: dijiste {r} y era {y}, así que ganaste {pts} de 100 puntos.',
   bdRound: '{emoji} {juego}: {pts} de 100 puntos.',
+  bdCity: '{c}: quedaste a {km}, así que ganaste {pts} de 100 puntos.',
   bdAverage: 'Tu puntaje es el promedio, de 0 a 100.',
   reportNameKeep: 'Tu nombre queda guardado en este dispositivo para el próximo reporte.',
   startWarn: 'Tienes un solo intento. Si cierras la página, al volver sigues donde quedaste.',
@@ -515,6 +525,11 @@ const ES = {
   groupsFail: 'Se acabaron los errores. Estos eran los grupos.',
   next: 'Siguiente',
   yearOf: 'Hito {i} de {n}',
+  cityOf: 'Ciudad {i} de {n}',
+  pinWas: 'Quedaste a {km}. Ganaste {pts} puntos.',
+  mapLabel: 'Mapa del mundo sin nombres',
+  zoomIn: 'Acercar el mapa',
+  zoomOut: 'Alejar el mapa',
   yearPh: 'Año',
   bc: 'a. C.',
   yearWas: 'Fue en {v}. Ganaste {pts} puntos.',

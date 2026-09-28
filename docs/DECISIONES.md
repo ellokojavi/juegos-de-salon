@@ -2015,3 +2015,34 @@ en 4:5 y las filas topadas en 104 px, sobraban unos 100 px bajo el subtítulo y 
 los días y la leyenda.
 **Alternativas descartadas:** subir solo el tope de las filas (con 3 jugadores quedaban gigantes);
 dejar el 4:5 fijo y centrar el bloque (el aire se movía, no se iba).
+
+## D-155 · ¿Dónde queda?: un minijuego de mapa, primero en el laboratorio
+**Fecha:** 2026-09-28 · **Estado:** vigente
+**Decisión:** Un minijuego nuevo de La Copa, **📍 ¿Dónde queda?**: cinco ciudades, una por una,
+con su país ("Valparaíso, Chile"), y se toca un mapa del mundo donde se cree que queda cada una.
+Cada ciudad vale hasta 100 puntos y se pierden 4 por cada 100 km de error (a 2.500 km, 0); el
+puntaje es el promedio de las cinco (D-113). La tarjeta usa las marcas de ¿En qué año?: 🎯 a
+25 km o menos, 🟩 hasta 500, 🟨 hasta 1.250, 🟧 hasta 2.000 y ⬛ más lejos.
+- **Las ciudades:** la capital de cada uno de los 193 países de la ONU y de sus dos observadores
+  (el Vaticano y Palestina), más ciudades famosas (306 en total). Cada partida saca dos fáciles,
+  dos medianas y una difícil, en ese orden y de países distintos. Capitales que eligió el dueño: La
+  Paz (Bolivia) y Ámsterdam (Países Bajos); en el resto, la sede del gobierno (Jerusalén para
+  Israel, Ramala para Palestina, Sri Jayawardenepura Kotte para Sri Lanka).
+- **El mapa es propio y sin nombres** (`copa/juegos/mapa.js`, 90 KB): Natural Earth 1:50m, de
+  dominio público, en proyección de Miller, generado por `node tools/mapa.mjs generar`. `revisar`
+  comprueba que cada ciudad cae dentro de su país. Tuvalu no trae bordes en esa escala y va como
+  un rombo en su capital.
+- **Gestos:** arrastrar corre el mapa, pellizcar o tocar dos veces lo acerca (también la rueda y
+  los botones + y −), y un toque pone el alfiler; tocar en otro lugar lo mueve. Confirmar es el
+  botón (C-8).
+- **Solo en el laboratorio** (`labs: true`, sin calendario ni tarjeta en la portada): se juega en
+  `/copa/?practica=donde&labs`. Pasa a una copa sumándolo a `CALENDARIOS` (engine.js).
+**Por qué:** lo pidió el dueño, a la manera de los juegos en que se pone un alfiler en el mapa.
+Un mapa de internet trae escritos los nombres de las ciudades, así que se dibuja uno propio. Con
+el país a la vista, una capital desconocida sigue siendo jugable y el juego pasa a ser de
+precisión. Sin los niveles, casi todas las partidas serían de capitales como Funafuti.
+**Alternativas descartadas:** arrastrar el alfiler (arrastrar ya corre el mapa, y D-85 reserva el
+arrastre para `arrastre.js`); un mapa de teselas (necesita red y trae nombres); sumar Kosovo y
+Taiwán (el dueño prefirió la lista de la ONU con sus observadores).
+**Consecuencias:** un minijuego más en el paso 1 del laboratorio. El mapa se rehace a mano; solo
+cambia si cambian los bordes o la proyección.
