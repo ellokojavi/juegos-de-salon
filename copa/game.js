@@ -866,12 +866,16 @@ async function compartirImagen() {
   // El último día que muestra la tabla, no el de hoy si quien comparte todavía no lo juega (#67)
   const d = ultimoDiaVisto(filas) || Math.min(Math.max(diaActual(meta, now), 1), meta.days);
   const n = filas.length;
-  const W = 1080, ALTO = 1350; // 4:5: se ve entera en WhatsApp y en el feed de Instagram
-  const pie = conPills ? 210 : 170;
-  // Filas más bajas si son muchos: hasta 10 jugadores cabe en 1080 × 1350; con más, se alarga
-  const fila = Math.max(60, Math.min(104, (ALTO - 240 - 60 - pie) / Math.max(1, n)));
-  const H = Math.max(ALTO, 240 + n * fila + 60 + pie);
-  const g0 = 240 + (H - (240 + n * fila + 60 + pie)) / 2; // con pocos jugadores, centrado
+  const W = 1080, ALTO = 1350; // hasta 4:5: se ve entera en WhatsApp y en el feed de Instagram
+  // De arriba abajo (D-154): títulos, filas, rótulos de los días, leyenda y link. Las filas
+  // crecen hasta llenar el 4:5, con tope para que pocos jugadores no queden gigantes; entonces la
+  // imagen se acorta a lo que necesita, sin bajar de cuadrada. Lo que aún sobra se reparte
+  // arriba y abajo del bloque, así nada queda pegado ni suelto
+  const ARRIBA = 225, EJE = 60, HUECO = 40, LEYENDA = conPills ? 96 : 40, ABAJO = 115;
+  const resto = EJE + HUECO + LEYENDA;
+  const fila = Math.max(60, Math.min(128, (ALTO - ARRIBA - ABAJO - resto) / Math.max(1, n)));
+  const H = Math.max(W, ARRIBA + n * fila + resto + ABAJO);
+  const g0 = ARRIBA + (H - ARRIBA - ABAJO - (n * fila + resto)) / 2;
   const cv = document.createElement('canvas');
   cv.width = W; cv.height = H;
   const c = cv.getContext('2d');
@@ -898,11 +902,11 @@ async function compartirImagen() {
   // El eje que comparten: el centro de la fila i (0 = arriba) es también la altura del lugar i+1
   const yFila = i => g0 + (i + 0.5) * fila;
   const color = pid => colorDe(Lc, pid);
-  const izq = 70, tabla0 = 550, derTabla = W - 40; // el gráfico va de izq a tabla0 - 40
+  const izq = 70, tabla0 = 530, derTabla = W - 40; // el gráfico va de izq a tabla0 - 40
   const m = ev.dias.length;
   const x = i => (m <= 1 ? izq : izq + (i * (tabla0 - 40 - izq)) / (m - 1));
   // El radio de los puntos: que quepa un número de dos cifras y no choquen con el vecino
-  const R = Math.max(10, Math.min(19, m <= 1 ? 19 : (tabla0 - 40 - izq) / (m - 1) / 2 - 7, fila * 0.24));
+  const R = Math.max(10, Math.min(22, m <= 1 ? 22 : (tabla0 - 40 - izq) / (m - 1) / 2 - 7, fila * 0.2));
   // Una guía por fila y el rótulo de cada día que se ve; la final dice "Final ×2" y sigue hacia la tabla
   c.lineWidth = 2; c.strokeStyle = 'rgba(255,255,255,0.10)';
   for (let i = 0; i < n; i++) { c.beginPath(); c.moveTo(izq, yFila(i)); c.lineTo(tabla0, yFila(i)); c.stroke(); }
@@ -916,7 +920,7 @@ async function compartirImagen() {
   const filaDe = Object.fromEntries(filas.map((f, i) => [f.pid, i]));
   const metal = f => (fin ? METALES[f.lugar] : null);
   filas.forEach((f, i) => {
-    const y0 = yFila(i) - fila / 2 + 6, h = fila - 12, w = derTabla - tabla0, mia = f.pid === S.yo, mt = metal(f);
+    const y0 = yFila(i) - fila * 0.43, h = fila * 0.86, w = derTabla - tabla0, mia = f.pid === S.yo, mt = metal(f);
     if (mt) {
       const brillo = c.createLinearGradient(0, y0, 0, y0 + h);
       brillo.addColorStop(0, mt.luz); brillo.addColorStop(0.45, mt.medio); brillo.addColorStop(1, mt.sombra);
@@ -1013,7 +1017,9 @@ async function compartirImagen() {
   };
   const anchoPill = (k, px) => { c.font = fuente(900, px); return c.measureText(fmt(T.fewerGamesPill, { n: k })).width + px * 1.1; };
   // El texto de cada fila: lugar, flecha, nombre (con su pill o la copa del campeón) y puntos
-  const tamFila = Math.round(Math.min(38, fila * 0.42));
+  const tamFila = Math.round(Math.min(42, fila * 0.4));
+  // Lugar, flecha y nombre se corren con la letra
+  const xLugar = tabla0 + tamFila * 1.1, xFlecha = tabla0 + tamFila * 2.15, xNombre = tabla0 + tamFila * 2.75;
   filas.forEach((f, i) => {
     const y = yFila(i) + tamFila * 0.36, mt = metal(f);
     // En el galvano, letra grabada: tinta oscura con un reflejo claro abajo
@@ -1022,8 +1028,8 @@ async function compartirImagen() {
       c.fillText(t, px, y);
     };
     c.textAlign = 'center'; c.font = fuente(900, tamFila);
-    escribir(String(f.lugar), tabla0 + 42, '#ffd23f');
-    if (f.flecha) { c.font = fuente(900, tamFila * 0.6); c.fillStyle = f.flecha > 0 ? '#9dff3a' : '#ff2e88'; c.fillText(f.flecha > 0 ? '▲' : '▼', tabla0 + 82, y - 2); }
+    escribir(String(f.lugar), xLugar, '#ffd23f');
+    if (f.flecha) { c.font = fuente(900, tamFila * 0.6); c.fillStyle = f.flecha > 0 ? '#9dff3a' : '#ff2e88'; c.fillText(f.flecha > 0 ? '▲' : '▼', xFlecha, y - 2); }
     c.textAlign = 'right'; c.font = fuente(900, tamFila);
     const total = `${f.total} ${T.pts}`;
     escribir(total, derTabla - 22, '#ffd23f');
@@ -1031,15 +1037,15 @@ async function compartirImagen() {
     // para que todo quepa antes de los puntos y, si aún no cabe, se corta con "…"
     const copa = fin && f.lugar === 1, k = menos[f.pid] || 0;
     const extra = t => (copa ? 14 + t * 1.15 : k ? 16 + anchoPill(k, Math.round(t * 0.62)) : 0);
-    const libre = derTabla - 22 - c.measureText(total).width - 20 - (tabla0 + 104);
+    const libre = derTabla - 22 - c.measureText(total).width - 20 - xNombre;
     const peso = mt ? 900 : 800;
     let nombre = f.name, t = tamFila;
     const ancho = () => { c.font = fuente(peso, t); return c.measureText(nombre).width + extra(t); };
     while (ancho() > libre && t > 20) t -= 2;
     while (ancho() > libre && nombre.length > 1) nombre = `${nombre.replace(/…$/, '').slice(0, -1)}…`;
     c.font = fuente(peso, t); c.textAlign = 'left';
-    escribir(nombre, tabla0 + 104, '#ffffff');
-    const tras = tabla0 + 104 + c.measureText(nombre).width + 14;
+    escribir(nombre, xNombre, '#ffffff');
+    const tras = xNombre + c.measureText(nombre).width + 14;
     if (copa) { c.font = fuente(900, t); c.fillText('🏆', tras, y); }
     if (k) pill(tras + 2, yFila(i), k, Math.round(t * 0.62));
   });
@@ -1049,7 +1055,8 @@ async function compartirImagen() {
     ['pts', { tipo: 'pts', pts: 12 }, T.imageLegendPts], ['comodin', { tipo: 'comodin', pts: 10 }, T.imageLegendWild],
     ['no', { tipo: 'no' }, T.imageLegendMissed], ['falta', { tipo: 'falta' }, T.imageLegendPending],
   ].filter(([tipo]) => hay.has(tipo));
-  const ly = conPills ? H - 150 : H - 125, rl = 17;
+  // La leyenda va justo bajo los rótulos de los días, no pegada al link
+  const ly = g0 + n * fila + EJE + HUECO + 17, rl = 17;
   c.font = fuente(800, 26);
   const anchos = items.map(([, , txt]) => rl * 2 + 12 + c.measureText(txt).width);
   let lx = (W - anchos.reduce((a, b) => a + b, 0) - 36 * Math.max(0, items.length - 1)) / 2;
@@ -1062,13 +1069,13 @@ async function compartirImagen() {
   if (conPills) {
     c.font = fuente(700, 26);
     const wp = anchoPill(1, 22), wn = c.measureText(T.imagePillNote).width, x0 = (W - wp - 14 - wn) / 2;
-    pill(x0, H - 109, 1, 22);
+    pill(x0, ly + 50, 1, 22);
     c.font = fuente(700, 26); c.fillStyle = 'rgba(255,255,255,0.6)'; c.textAlign = 'left';
-    c.fillText(T.imagePillNote, x0 + wp + 14, H - 100);
+    c.fillText(T.imagePillNote, x0 + wp + 14, ly + 59);
   }
   // El link
   c.textAlign = 'center'; c.font = fuente(800, 34); c.fillStyle = '#2ee6d6';
-  c.fillText(urlPublica(S.code).replace(/^https?:\/\//, ''), W / 2, H - 45);
+  c.fillText(urlPublica(S.code).replace(/^https?:\/\//, ''), W / 2, H - 55);
   const blob = await new Promise(r => cv.toBlob(r, 'image/png'));
   const archivo = new File([blob], `copa-${meta.alias || S.code.toLowerCase()}-dia-${d}.png`, { type: 'image/png' });
   try {
