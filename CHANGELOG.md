@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.67.1 — 2026-09-28
+- **La Copa: la imagen de la tabla ya no queda con aire de sobra.** La leyenda va justo bajo los
+  días, las filas y la letra crecen para llenar la imagen, y con pocos jugadores la imagen se
+  acorta, sin bajar de cuadrada (D-154).
+
 ## 0.67.0 — 2026-09-28
 - **La Copa: la imagen de la tabla cuenta cada día.** Cada punto del gráfico lleva los puntos que
   sacó ese jugador ese día; dorado si usó el comodín, "–" si no jugó y "?" si todavía puede
