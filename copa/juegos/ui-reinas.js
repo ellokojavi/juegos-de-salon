@@ -6,8 +6,13 @@
  */
 import * as motor from './reinas.js';
 
-/** Colores de zona: claros, para que la reina negra y la X se lean encima. */
-export const ZONAS = ['#f4b183', '#a9d18e', '#9dc3e6', '#ffd966', '#c9a0dc', '#f8cbad', '#b4dfe0', '#e6e6e6', '#d5e8a4', '#f2a7c3'];
+/**
+ * Colores de zona: claros, para que la reina negra y la X se lean encima (contraste ≥ 9:1), y
+ * lejos entre sí, porque las zonas se distinguen solo por el color (D-134). Entre los ocho primeros
+ * (el tablero más grande es de 8 × 8) ningún par queda a menos de 17 de ΔE2000. Sin rojos: el
+ * rojo es el de las reinas que chocan.
+ */
+export const ZONAS = ['#f6a96b', '#9ed48a', '#80aef5', '#ffe169', '#c9a2ec', '#ffa3c4', '#6fd3c8', '#e4e4e4', '#c9b48f', '#d7ef6e'];
 
 const LARGO_MS = 450;
 
