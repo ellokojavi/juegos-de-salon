@@ -1635,8 +1635,10 @@ no: se tocan."), con los colores del tablero de verdad. Y **el tablero pierde lo
 entre zonas**: todas las casillas llevan la misma línea fina y las zonas se distinguen solo por el
 color, como en el juego original. **Lo decidió el dueño sabiendo que los bordes estaban por
 accesibilidad** (C-8, no depender solo del color); el revisor de usabilidad no lo vuelve a marcar.
-Riesgo conocido: dos pares de colores se parecen (naranja #f4b183 con durazno #f8cbad, celeste
-#9dc3e6 con turquesa #b4dfe0); si molesta, se ajusta la paleta `ZONAS` de ui-reinas.js.
+Riesgo conocido: dos pares de colores se parecían (naranja #f4b183 con durazno #f8cbad, celeste
+#9dc3e6 con turquesa #b4dfe0). **Actualización 2026-09-28:** molestó y se rehízo la paleta `ZONAS`
+de ui-reinas.js: entre los ocho colores que usa un tablero de 8 × 8, el par más parecido quedó
+a 17 de ΔE2000 (antes, 7,8), sin rojos que se confundan con el choque.
 **Por qué:** pedido del dueño (trabajado en otra sesión y publicado junto con D-133).
 
 ## D-135 · Varias sesiones de Claude a la vez: cada una en su copia del repo
