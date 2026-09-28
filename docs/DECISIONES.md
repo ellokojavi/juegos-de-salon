@@ -2000,3 +2000,18 @@ los pidió él, sobre la maqueta.
 pocos jugadores; el dueño prefirió dejar ese aire por ahora.
 **Consecuencias:** en los empates de tres o más, los puntos del grupo se achican (hasta 9 px de
 radio) para ir juntos sin taparse. El tablero de la app no cambia: sus chips siguen con "(-1J)".
+
+## D-154 · La imagen de la tabla mide lo que necesita, entre cuadrada y 4:5
+**Fecha:** 2026-09-28 · **Estado:** vigente
+**Decisión:** La imagen de "📤 Compartir" (D-153) deja de medir siempre 1080 × 1350. Se arma de
+arriba abajo: títulos, filas, rótulos de los días, leyenda (justo debajo) y link. Las filas crecen
+hasta llenar el 4:5, con tope de 128 px; con ese tope, la imagen se acorta a lo que necesita, sin
+bajar de cuadrada (1080 × 1080). Con más de 10 jugadores sigue alargándose. Lo que todavía sobra
+se reparte arriba y abajo del bloque. Los puntos del gráfico (hasta 22 px de radio), la letra de
+la tabla (hasta 42 px) y la separación entre lugar, flecha y nombre crecen con la fila, y la tabla
+parte en x = 530 para que quepa el nombre con su pill.
+**Por qué:** el dueño vio la Copa Pirata (6 jugadores) y el espaciado quedó raro: con el alto fijo
+en 4:5 y las filas topadas en 104 px, sobraban unos 100 px bajo el subtítulo y otros tantos entre
+los días y la leyenda.
+**Alternativas descartadas:** subir solo el tope de las filas (con 3 jugadores quedaban gigantes);
+dejar el 4:5 fijo y centrar el bloque (el aire se movía, no se iba).
