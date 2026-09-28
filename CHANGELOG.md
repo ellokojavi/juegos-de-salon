@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.66.8 — 2026-09-28
+- **Reinas: las zonas ya no se confunden entre sí.** Naranja y durazno, celeste y turquesa, y los
+  dos verdes casi no se distinguían; la paleta nueva los separa bien, sin rojos que se confundan
+  con las reinas que chocan (D-134).
+
 ## 0.66.7 — 2026-09-28
 - **La Copa: en el calendario, el nombre largo del minijuego parte línea** en vez de cortarse con
   "…" (U-12). A 390 px se leía "Toque y Fama: adivina el nú…", y a 320 px también se cortaban
