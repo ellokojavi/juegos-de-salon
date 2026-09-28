@@ -11,6 +11,9 @@ import * as letras from './letras.js';
 import { PALABRAS } from './palabras.js';
 import * as conexiones from './conexiones.js';
 import * as final from './final.js';
+import * as donde from './donde.js';
+import { CIUDADES } from './ciudades.js';
+import { MAPA } from './mapa.js';
 import { GRILLAS } from './grillas.js';
 import * as GRILLAS_MOD from './grillas.js';
 import { temasDeLaCopa } from './mazos.js';
@@ -103,6 +106,84 @@ test('año: margen según antigüedad y puntos', () => {
   assert.ok(e.fin);
   assert.equal(anio.puntaje(e), 100); // el promedio de los seis, de 0 a 100 (D-113)
   assert.equal(anio.anioLabel(-44), '44 a. C.');
+});
+
+test('dónde queda: distancia, puntos y marcas', () => {
+  // Santiago–Buenos Aires son unos 1.140 km
+  const km = donde.distancia([-33.45, -70.67], [-34.60, -58.38]);
+  assert.ok(km > 1100 && km < 1180, String(km));
+  assert.equal(donde.distancia([10, 20], [10, 20]), 0);
+  // Por el lado corto: de un lado al otro de la línea de cambio de fecha hay poco
+  assert.ok(donde.distancia([-18, 179.5], [-18, -179.5]) < 120);
+  assert.equal(donde.puntos(0), 100);
+  assert.equal(donde.puntos(500), 80);   // 4 puntos por cada 100 km
+  assert.equal(donde.puntos(2500), 0);
+  assert.equal(donde.puntos(9000), 0);
+  assert.equal(donde.puntos(NaN), 0);
+  assert.equal(donde.marca(20), '🎯');
+  assert.equal(donde.marca(400), '🟩');
+  assert.equal(donde.marca(1000), '🟨');
+  assert.equal(donde.marca(1900), '🟧');
+  assert.equal(donde.marca(3000), '⬛');
+  assert.equal(donde.km(1250), '1.250 km');
+  assert.equal(donde.nombre({ ciudad: 'Valparaíso', pais: 'Chile' }), 'Valparaíso, Chile');
+  assert.equal(donde.nombre({ ciudad: 'Singapur', pais: 'Singapur' }), 'Singapur');
+});
+
+test('dónde queda: la proyección va y vuelve', () => {
+  for (const [lat, lon] of [[-33.45, -70.67], [64.15, -21.94], [-54.8, -68.3], [1.29, 103.85], [0, 0], [-41.29, 174.78]]) {
+    const [x, y] = donde.proyectar(lat, lon);
+    assert.ok(x >= 0 && x <= MAPA.ancho && y >= 0 && y <= MAPA.alto, `${lat},${lon} fuera del mapa`);
+    const [la, lo] = donde.desproyectar(x, y);
+    assert.ok(Math.abs(la - lat) < 1e-9 && Math.abs(lo - lon) < 1e-9, `${lat},${lon} → ${la},${lo}`);
+  }
+  assert.equal(MAPA.ancho, donde.ANCHO);
+  assert.equal(MAPA.alto, donde.ALTO);
+});
+
+test('dónde queda: todos los países del mundo, sin repetir ni equivocar', () => {
+  const capitales = CIUDADES.filter(c => c.capital);
+  // Los 193 de la ONU y sus dos observadores (el Vaticano y Palestina)
+  assert.equal(capitales.length, 195);
+  assert.equal(new Set(capitales.map(c => c.pais)).size, 195);
+  assert.equal(new Set(capitales.map(c => c.iso)).size, 195);
+  assert.equal(new Set(CIUDADES.map(c => `${c.ciudad}|${c.pais}`)).size, CIUDADES.length, 'ciudad repetida');
+  // Las que decidió el dueño
+  assert.equal(capitales.find(c => c.pais === 'Bolivia').ciudad, 'La Paz');
+  assert.equal(capitales.find(c => c.pais === 'Países Bajos').ciudad, 'Ámsterdam');
+  for (const c of CIUDADES) {
+    assert.ok([1, 2, 3].includes(c.nivel), c.ciudad);
+    assert.ok(c.lat > donde.SUR && c.lat < donde.NORTE && c.lon >= -180 && c.lon <= 180, c.ciudad);
+    assert.match(c.iso, /^\d{3}$/, c.ciudad);
+    assert.ok(!/'/.test(c.ciudad + c.pais) || /'s$/.test(c.ciudad), `${c.ciudad}: apóstrofo recto`);
+  }
+  // Cada país tiene una sola capital y cada ciudad de un país con capital usa el mismo nombre de país
+  const paises = new Set(capitales.map(c => c.pais));
+  for (const c of CIUDADES) assert.ok(paises.has(c.pais), `${c.ciudad}: país "${c.pais}" sin capital`);
+  for (const n of [1, 2, 3]) assert.ok(CIUDADES.filter(c => c.nivel === n).length >= 40, `pocas de nivel ${n}`);
+});
+
+test('dónde queda: cinco ciudades, de la fácil a la difícil, de países distintos', () => {
+  for (const c of CODIGOS) for (let d = 1; d <= 7; d++) {
+    const p = donde.generar(c, d);
+    assert.deepEqual(p, donde.generar(c, d));
+    assert.equal(p.ciudades.length, donde.CIUDADES_POR_JUEGO);
+    assert.deepEqual(p.ciudades.map(x => x.nivel), donde.NIVELES);
+    assert.equal(new Set(p.ciudades.map(x => x.pais)).size, 5);
+  }
+  assert.notDeepEqual(donde.generar('KQRST', 1), donde.generar('KQRST', 2));
+  const p = donde.generar('KQRST', 3);
+  // Acertar todas es 100; una jugada guardada vale lo mismo al recargar
+  const e = donde.estado(p, p.ciudades.map(c => donde.jugada(c.lat, c.lon)));
+  assert.ok(e.fin);
+  assert.equal(donde.puntaje(e), 100);
+  assert.equal(donde.tarjeta(e), '🎯🎯🎯🎯🎯');
+  const lejos = donde.estado(p, p.ciudades.map(c => [-c.lat, c.lon > 0 ? c.lon - 180 : c.lon + 180]));
+  assert.equal(donde.puntaje(lejos), 0);
+  const medio = donde.estado(p, [[p.ciudades[0].lat, p.ciudades[0].lon]]);
+  assert.ok(!medio.fin);
+  assert.equal(medio.actual, p.ciudades[1]);
+  assert.equal(donde.puntaje(medio), 100);
 });
 
 test('grillas: 12, bien formadas', () => {
@@ -254,6 +335,8 @@ test('sesión de prueba: otro contenido que el del día (D-103)', async () => {
     assert.equal(JUEGOS.conexiones.ensayo(c, 3).id, 'ensayo');
     assert.notEqual(JUEGOS.letras.ensayo(c, 5).secreto, JUEGOS.letras.generar(c, 5).secreto);
     assert.equal(JUEGOS.zip.ensayo(c, 1).tiempo, 60000);
+    const dia = JUEGOS.donde.generar(c, 1).ciudades.map(x => x.ciudad);
+    assert.ok(JUEGOS.donde.ensayo(c, 1).ciudades.every(x => !dia.includes(x.ciudad)));
     for (const id of Object.keys(JUEGOS)) assert.ok(JUEGOS[id].ensayo, `${id} sin sesión de prueba`);
   }
 });
@@ -340,7 +423,8 @@ test('todos los minijuegos puntúan de 0 a 100 (D-113)', () => {
   const tope = { linea: linea.puntaje({ aciertos: 9, marcas: Array(9).fill(true) }), numero: numero.puntaje({ resuelto: true, usados: 1 }),
     conexiones: conexiones.puntaje({ resueltos: [0, 1, 2, 3], errores: 0 }), reinas: reinas.puntaje({ fin: true, ms: 1000 }),
     letras: letras.puntaje({ encontradas: 5, resuelto: true, usados: 1 }), zip: zip.puntaje({ hechos: 99 }),
-    tango: tango.puntaje({ fin: true, errores: 0, pistas: 0 }), anio: anio.puntaje({ filas: [{}, {}], total: 200 }) };
+    tango: tango.puntaje({ fin: true, errores: 0, pistas: 0 }), anio: anio.puntaje({ filas: [{}, {}], total: 200 }),
+    donde: donde.puntaje({ filas: [{}, {}, {}, {}, {}], total: 500 }) };
   for (const [id, s] of Object.entries(tope)) assert.equal(s, 100, id);
 });
 

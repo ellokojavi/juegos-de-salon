@@ -134,6 +134,26 @@ const jugarAnio = async nivel => {
   }
 };
 
+/** El punto de la pantalla donde queda un lugar del mapa de ¿Dónde queda?, con el zoom de ese momento. */
+const puntoDelMapa = (lat, lon) => ev(`(async()=>{const m=await import('/copa/juegos/donde.js');const [x,y]=m.proyectar(${lat},${lon});
+  const svg=document.querySelector('.mapa-svg'),r=svg.getBoundingClientRect(),[vx,vy,vw,vh]=svg.getAttribute('viewBox').split(' ').map(Number);
+  return JSON.stringify([r.left+(x-vx)/vw*r.width, r.top+(y-vy)/vh*r.height])})()`).then(JSON.parse);
+
+const jugarDonde = async nivel => {
+  const ciudades = await ev('JSON.stringify(window.__jugando.p.ciudades)').then(JSON.parse);
+  for (const c of ciudades) {
+    // nivel 2: justo en la ciudad; 1: unos 3° al lado; 0: al otro lado del mundo
+    const lat = nivel === 2 ? c.lat : nivel === 1 ? c.lat + 3 : -c.lat;
+    const lon = nivel === 0 ? (c.lon > 0 ? c.lon - 170 : c.lon + 170) : c.lon;
+    // Con el mapa entero a la vista, para que la ciudad no quede fuera de la caja
+    for (let k = 0; k < 5; k++) await click('#btn-alejar');
+    await b.toque(...await puntoDelMapa(lat, lon));
+    await sleep(450); // más que un doble toque: el siguiente toque no acerca
+    await click('#btn-confirmar'); await sleep(150);
+    if (await ev(`!!document.getElementById('btn-siguiente')`)) { await click('#btn-siguiente'); await sleep(120); }
+  }
+};
+
 const tocarCasilla = sel => i => click(`${sel}[data-i="${i}"]`);
 
 const jugarReinas = async nivel => {
@@ -223,7 +243,7 @@ const jugarFinal = async nivel => {
   }
 };
 
-const JUGAR = { linea: jugarLinea, numero: jugarNumero, anio: jugarAnio, reinas: jugarReinas, letras: jugarLetras, zip: jugarZip, tango: jugarTango, conexiones: jugarConexiones, final: jugarFinal };
+const JUGAR = { donde: jugarDonde, linea: jugarLinea, numero: jugarNumero, anio: jugarAnio, reinas: jugarReinas, letras: jugarLetras, zip: jugarZip, tango: jugarTango, conexiones: jugarConexiones, final: jugarFinal };
 
 /** La cuenta de 3 a 1 antes de cada juego (D-105): espera a que aparezca "¡A jugar!". */
 async function esperarCuenta({ revisar = false } = {}) {
@@ -444,7 +464,7 @@ await b.go(`${SITIO}/`, 1500);
 const tarjeta = await ev(`(()=>{const c=[...document.querySelectorAll('.game-card')].find(x=>x.textContent.includes('La Copa'));return JSON.stringify({soon:c.classList.contains('soon'),href:c.getAttribute('href'),rotulo:c.querySelector('.proximamente')?.textContent})})()`).then(JSON.parse);
 ok(tarjeta.soon && !tarjeta.href && tarjeta.rotulo === 'Próximamente', 'en el menú La Copa se ve con Próximamente y no se abre');
 await b.go(`${SITIO}/labs/`, 1500);
-ok(await ev(`document.querySelectorAll('#minis .mini-juego').length`) === 9, 'el laboratorio ofrece los nueve minijuegos (con Zip y Tango)');
+ok(await ev(`document.querySelectorAll('#minis .mini-juego').length`) === 10 && await ev(`!!document.querySelector('#minis [data-id="donde"]')`), 'el laboratorio ofrece los diez minijuegos (con Zip, Tango y ¿Dónde queda?)');
 await b.shot('10-labs');
 // Rendirse en Reinas: dos toques, la solución a la vista y 0 puntos (D-110)
 await b.go(`${BASE}?practica=reinas&prueba&labs`, 1200); await preparar();
@@ -474,7 +494,7 @@ await click('#btn-reporte'); await sleep(300);
 ok(await ev(`document.querySelector('.screen.active')?.id`) === 'screen-reporte' && !!await ev(`document.getElementById('btn-enviar-reporte')`), 'minijuego suelto: el 🐞 del resultado abre el formulario');
 await ev(`[...document.querySelectorAll('#reporte-body .btn--ghost')].at(-1).click()`); await sleep(300);
 ok(await ev(`document.querySelector('.screen.active')?.id`) === 'screen-resultado', 'minijuego suelto: cancelar el reporte vuelve al resultado');
-for (const id of ['linea', 'numero', 'conexiones', 'reinas', 'letras', 'zip', 'tango', 'anio', 'final']) {
+for (const id of ['linea', 'numero', 'conexiones', 'reinas', 'letras', 'zip', 'tango', 'anio', 'donde', 'final']) {
   // Zip con semilla fija: el chequeo del aviso busca un trazo que llegue al final sin cubrir todo
 await b.go(`${BASE}?practica=${id}&prueba&labs${id === 'zip' ? '&zipSeg=12&semilla=KQRST' : ''}`, 1200); await preparar();
   ok(await ev(`!!document.getElementById('btn-ensayo')`) , `práctica de ${id}: la antesala ofrece la prueba como en la copa`);
@@ -532,6 +552,23 @@ await b.go(`${BASE}?practica=${id}&prueba&labs${id === 'zip' ? '&zipSeg=12&semil
     ok(await ev(`!document.querySelector('.rej[data-i="0"]').classList.contains('reina')`), 'Reinas: después del toque largo, los toques rápidos no se pierden');
   }
   if (id === 'tango') await b.shot('tango-tablero');
+  if (id === 'donde') {
+    // Arrastrar corre el mapa sin poner el alfiler; el doble toque lo pone y acerca al doble
+    const vb = () => ev(`document.querySelector('.mapa-svg').getAttribute('viewBox')`).then(v => v.split(' ').map(Number));
+    const [x0, y0] = await puntoDelMapa(0, 20);
+    const antes = await vb();
+    ok(await ev(`document.getElementById('btn-confirmar').disabled`), '¿Dónde queda?: sin alfiler, Confirmar está apagado (C-8)');
+    await b.toque(x0, y0); await sleep(60); await b.toque(x0, y0); await sleep(300);
+    const acercado = await vb();
+    ok(Math.abs(acercado[2] - antes[2] / 2) < 1 && await ev(`!!document.querySelector('.mapa-alfiler') && !document.getElementById('btn-confirmar').disabled`), `¿Dónde queda?: el doble toque pone el alfiler y acerca al doble (${antes[2]} → ${acercado[2]})`);
+    await b.send('Input.dispatchMouseEvent', { type: 'mousePressed', x: x0, y: y0, button: 'left', clickCount: 1, buttons: 1 });
+    for (let i = 1; i <= 6; i++) await b.send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: x0 + 12 * i, y: y0, button: 'left', buttons: 1 });
+    await b.send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: x0 + 72, y: y0, button: 'left', clickCount: 1, buttons: 0 });
+    await sleep(200);
+    const corrido = await vb();
+    ok(corrido[0] < acercado[0] && await ev(`document.querySelectorAll('.mapa-alfiler').length`) === 1, '¿Dónde queda?: arrastrar corre el mapa y no mueve el alfiler');
+    await b.shot('donde-mapa');
+  }
   await JUGAR[id](id === 'tango' ? 1 : 2);
   if (id === 'zip') {
     ok(await ev(`document.querySelector('.zip-grid').classList.contains('solucion') && !!document.getElementById('zip-solucion')`), 'Zip: al acabarse el tiempo se ve la solución del nivel que quedó a medias');
@@ -551,7 +588,8 @@ await b.go(`${BASE}?practica=${id}&prueba&labs${id === 'zip' ? '&zipSeg=12&semil
   const r = await ev(`JSON.stringify({p:__copa.estado.pantalla, s:document.querySelector('.score-big')?.textContent})`).then(JSON.parse);
   ok(r.p === 'resultado', `práctica de ${id}: se juega completa (${r.s})`);
   ok((await ev(`document.querySelector('#explicacion')?.innerText || ''`)).length > 40, `práctica de ${id}: explica cómo se calculó el puntaje`);
-  if (['reinas', 'zip', 'tango', 'letras'].includes(id)) await b.shot(`practica-${id}`);
+  if (id === 'donde') ok(r.s === '100/100', `¿Dónde queda?: el alfiler justo en cada ciudad son 100 puntos (${r.s})`);
+  if (['reinas', 'zip', 'tango', 'letras', 'donde'].includes(id)) await b.shot(`practica-${id}`);
   if (id === 'reinas') { await revisarPantalla('practica-resultado'); await b.shot('11-practica'); }
 }
 // Un reporte desde la práctica

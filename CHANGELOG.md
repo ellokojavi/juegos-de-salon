@@ -1,5 +1,12 @@
 # Changelog
 
+## Próxima — 2026-09-28
+- **La Copa: 📍 ¿Dónde queda?, un minijuego nuevo en el laboratorio.** Cinco ciudades con su país
+  y un mapa del mundo sin nombres: se pone un alfiler donde se cree que queda cada una. Cada ciudad
+  vale hasta 100 puntos y se pierden 4 por cada 100 km. Salen de las capitales de los 195 países
+  (la ONU y sus dos observadores) y de ciudades famosas. El mapa se arrastra y se acerca con dos
+  dedos o con doble toque (D-155).
+
 ## 0.67.1 — 2026-09-28
 - **La Copa: la imagen de la tabla ya no queda con aire de sobra.** La leyenda va justo bajo los
   días, las filas y la letra crecen para llenar la imagen, y con pocos jugadores la imagen se
