@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.66.7 — 2026-09-28
+- **La Copa: en el calendario, el nombre largo del minijuego parte línea** en vez de cortarse con
+  "…" (U-12). A 390 px se leía "Toque y Fama: adivina el nú…", y a 320 px también se cortaban
+  "Toque y Fama: Palabra" y el ×2 de La Gran Final.
+
 ## 0.66.6 — 2026-09-27
 - **La Copa:** la medalla del último ya no es "🏮 Farolito rojo" sino "📉 Al descenso", en la
   pantalla final y en el resumen que se comparte.
