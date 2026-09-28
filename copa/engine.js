@@ -379,6 +379,18 @@ export function ultimoDiaVisto(filas) {
 }
 
 /**
+ * Qué pasó con una fila de la tabla en el día `d`, para la imagen que se comparte (D-153):
+ * 'pts' (jugó), 'comodin' (jugó con el comodín), 'no' (el día cerró sin que jugara) o 'falta'
+ * (el día sigue abierto y no lo ha jugado). `pts` ya viene multiplicado; `final` marca la final.
+ */
+export function marcaDelDia(L, fila, d, now) {
+  const x = fila.dias?.[d];
+  const final = esFinal(L.meta, d);
+  if (x?.jugo) return { tipo: comodinDe(L, fila.pid) === d ? 'comodin' : 'pts', pts: x.pts, final };
+  return { tipo: abierto(L.meta, d, now) ? 'falta' : 'no', pts: 0, final };
+}
+
+/**
  * Las medallas del cierre: campeón, más días ganados, la mejor remontada (más puestos subidos
  * desde la mitad de la copa) y "al descenso" (el último). Con menos de tres jugadores no hay
  * remontada ni farolito: con dos, el último es simplemente el segundo.

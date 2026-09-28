@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.67.0 — 2026-09-28
+- **La Copa: la imagen de la tabla cuenta cada día.** Cada punto del gráfico lleva los puntos que
+  sacó ese jugador ese día; dorado si usó el comodín, "–" si no jugó y "?" si todavía puede
+  jugarlo. La final dice "Final ×2", y una leyenda explica solo lo que aparece. "(-1J)" pasa a ser
+  una pill. Con la copa terminada, el campeón lleva 🏆 y el podio va en galvanos de oro, plata y
+  bronce. La imagen ahora es 4:5 (1080 × 1350) (D-153).
+
 ## 0.66.8 — 2026-09-28
 - **Reinas: las zonas ya no se confunden entre sí.** Naranja y durazno, celeste y turquesa, y los
   dos verdes casi no se distinguían; la paleta nueva los separa bien, sin rojos que se confundan

@@ -1977,3 +1977,26 @@ existe: alarga la leyenda con algo que todavía no aparece; el comodín ya se ex
 y en su propio panel.
 **Consecuencias:** la final nunca vale ×4: el comodín no se puede usar ese día (`puedeComodin`) y
 `multiplicador` elige entre ×2 y ×1, no multiplica.
+
+## D-153 · La imagen de la tabla dice qué pasó cada día, y el podio va en galvanos
+**Fecha:** 2026-09-28 · **Estado:** vigente
+**Decisión:** En la imagen que sale de "📤 Compartir" (D-141), cada punto del gráfico dice qué
+pasó ese día, además del lugar: un círculo lleno con **los puntos del día** (ya multiplicados);
+con **anillo dorado y píldora "×2"** si usó el comodín; con anillo cian en la final, cuya columna
+dice **"Final ×2"**; un círculo chico y hueco con **"–"** si **no jugó** un día que ya cerró, y
+uno punteado con **"?"** si **falta jugar** (el día sigue abierto), con el tramo de línea que
+llega a él también punteado. `marcaDelDia` (motor) decide cuál. Una **leyenda** dibuja los mismos
+puntos, solo los que aparecen en el gráfico. "(-1J)" deja de ser texto pegado al nombre: es una
+**pill** con borde punteado, como el punto "?", y su nota dice "juegos que le faltan por jugar".
+Con la copa **terminada**: el campeón lleva 🏆 junto al nombre, el podio va en **galvanos** de oro,
+plata y bronce (degradado, filete y remaches, con la letra grabada) y no hay pills, porque ya
+nadie puede jugar. La imagen pasa a **1080 × 1350 (4:5)**; con más de 10 jugadores se alarga. La
+tabla se angosta (empieza en x = 550) para darle más ancho al gráfico, y el nombre achica la letra
+para que quepan él, su pill o la copa, y los puntos.
+**Por qué:** pedido del dueño: en la misma imagen se tenía que ver, día por día, los puntos, el
+comodín, quién no sumó por no jugar y quién todavía puede jugar. Las pills y los galvanos también
+los pidió él, sobre la maqueta.
+**Alternativas descartadas:** subir el tope del alto de las filas para llenar la imagen 4:5 con
+pocos jugadores; el dueño prefirió dejar ese aire por ahora.
+**Consecuencias:** en los empates de tres o más, los puntos del grupo se achican (hasta 9 px de
+radio) para ir juntos sin taparse. El tablero de la app no cambia: sus chips siguen con "(-1J)".

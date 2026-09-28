@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {
   CALENDARIOS, PUNTOS, esCodigo, codigoAlAzar, pidAlAzar, PID, limpiarNombre, claveNombre, esPin, hashPin,
   fechaEn, sumarDias, medianoche, ventanas, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta,
-  aliasLimpio, esAlias, menosJuegos, provisoria, ultimoDiaVisto, aliasHasta, ALIAS_LIBRE_MS,
+  aliasLimpio, esAlias, menosJuegos, provisoria, ultimoDiaVisto, marcaDelDia, aliasHasta, ALIAS_LIBRE_MS,
   estadoDia, puedeComodin, multiplicador, posicionesDelDia, tabla, faltan, medallas, reloj, mmss, juegoDelDia, evolucion,
 } from './engine.js';
 
@@ -259,6 +259,19 @@ test('juegos de menos en la tabla parcial (D-126)', () => {
     { pid: 'c', dias: { 1: { jugo: false }, 2: { oculto: true, jugo: true } } },
   ];
   assert.deepEqual(menosJuegos(filas), { a: 0, b: 1, c: 2 });
+});
+
+test('la marca de cada día en la imagen: puntos, comodín, no jugó o falta jugar (D-153)', () => {
+  const L = {
+    meta: meta7, players, wild: { bbbbbb: 1 },
+    results: { 1: { aaaaaa: { s: 9, ms: 1 }, bbbbbb: { s: 5, ms: 1 } }, 7: { aaaaaa: { s: 9, ms: 1 } } },
+  };
+  const marca = (pid, d, now) => marcaDelDia(L, tabla(L, pid, now).find(f => f.pid === pid), d, now);
+  assert.deepEqual(marca('aaaaaa', 1, dia(0)), { tipo: 'pts', pts: 10, final: false });
+  assert.deepEqual(marca('bbbbbb', 1, dia(0)), { tipo: 'comodin', pts: 16, final: false }); // 8 × 2
+  assert.equal(marca('cccccc', 1, dia(1)).tipo, 'falta'); // día de gracia: todavía puede
+  assert.equal(marca('cccccc', 1, dia(2)).tipo, 'no');    // el día cerró
+  assert.deepEqual(marca('aaaaaa', 7, dia(6)), { tipo: 'pts', pts: 20, final: true }); // la final vale doble
 });
 
 test('el link propio: se normaliza y no se confunde con un código (D-121)', () => {
