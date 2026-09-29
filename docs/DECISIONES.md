@@ -2111,3 +2111,25 @@ globo que gira, salvo que se vieran con perspectiva. Se dejan, con perspectiva: 
 ciudad está pintado sobre la esfera, así que se achata en la dirección del radio tanto como el
 coseno del ángulo con que se mira; el alfiler se achica (hasta un 35 %) y se desvanece al irse por
 detrás. En el juego las marcas siguen planas: ahí se miran de frente y tienen que leerse.
+
+## D-159 · El admin elige los juegos de la copa y su orden
+**Fecha:** 2026-09-29 · **Estado:** vigente
+**Decisión:** Al crear una copa, después de elegir la duración aparece **¿Qué se juega cada día?**:
+un día por fila con su juego, la final fija al último y, debajo, los juegos que **quedan fuera**.
+Se cambia tocando un juego y después otro: dos días se cambian de lugar, y un día con uno de los
+de fuera se reemplazan. El pozo son los nueve minijuegos (`POZO`): los seis del calendario de
+siempre más Zip, Tango y ¿Dónde queda?. La copa de 7 días lleva seis de los nueve y la de 3, dos.
+La lista parte con **una propuesta al azar** que evita dos días seguidos de la misma habilidad
+(las dos de Toque y Fama, o Reinas, Zip y Tango), y 🎲 propone otra. La final no cambia: sus cinco
+rondas son las de siempre, aunque la copa no tenga alguno de esos juegos.
+**Por qué:** lo pidió el dueño, para que cada grupo arme la semana a su gusto; la propuesta al azar
+es para quien no quiere pensarlo, que así crea la copa sin un paso más. Con los seis de siempre en
+siete días no había nada que elegir, solo el orden: por eso entran Zip, Tango y ¿Dónde queda?,
+que ya estaban listos para la copa. El toque-y-toque es el de Línea de Tiempo (D-102): elegir y
+después el destino.
+**Consecuencias:** es una excepción a "nada se preselecciona" (C-8, D-38), pedida por el dueño:
+la propuesta viene armada, pero nada se confirma sin tocar **Crear la copa**, y cambiarla no
+cuesta nada. El calendario ya se guardaba en `meta.cal` y todas las pantallas lo leen de ahí
+(la invitación lo leía de `CALENDARIOS` y se corrigió), así que las copas ya creadas no cambian y
+las reglas de Firebase tampoco (aceptan cualquier texto de hasta 100 caracteres). La regla de la
+final dejó de decir "una de cada minijuego de la copa". `CALENDARIOS` queda para las demos.

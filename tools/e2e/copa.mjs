@@ -308,7 +308,49 @@ await preparar();
 await revisarPantalla('portada');
 await click('#btn-crear'); await sleep(900); // con varias sesiones probando a la vez, la máquina anda lenta
 await ev(`(()=>{const i=[...document.querySelectorAll('#crear-body input:not(.fecha):not(#crear-link)')];i[0].value='Copa de la oficina';i[1].value='Cata';i[2].value='1111';i[3].value='1111';return 1})()`);
+ok(await ev(`document.getElementById('crear-juegos').hidden`), 'los juegos se eligen después de la duración: antes no se ven');
 await ev(`(()=>{const o=[...document.querySelectorAll('#crear-body .opcion')];o[${SIETE ? 1 : 0}].click();o[3].click();return 1})()`); // parte mañana
+// Elegir los juegos (D-159): una propuesta al azar, que se cambia tocando un juego y después otro
+{
+  const n = SIETE ? 7 : 3;
+  const cal = () => ev(`[...document.querySelectorAll('#cal-elegir button.elegir-dia')].map(b=>b.dataset.juego)`);
+  const fuera = () => ev(`[...document.querySelectorAll('#cal-fuera button')].map(b=>b.dataset.juego)`);
+  const tocarDia = i => ev(`(document.querySelectorAll('#cal-elegir button.elegir-dia')[${i}].click(), 1)`);
+  const tocarFuera = id => ev(`(document.querySelector('#cal-fuera [data-juego="${id}"]').click(), 1)`);
+  // Lleva la lista al calendario `meta` tocando: cambia dos días de lugar o trae uno de fuera
+  const armar = async (meta, revisar) => {
+    for (let i = 0; i < meta.length; i++) {
+      const ahora = await cal();
+      if (ahora[i] === meta[i]) continue;
+      const j = ahora.indexOf(meta[i]);
+      await tocarDia(i);
+      if (j >= 0) await tocarDia(j); else await tocarFuera(meta[i]);
+      const despues = await cal();
+      if (revisar) ok(despues[i] === meta[i] && (j < 0 ? (await fuera()).includes(ahora[i]) : despues[j] === ahora[i]),
+        j >= 0 ? `dos días se cambian de lugar (${ahora[i]} ↔ ${meta[i]})` : `un día se reemplaza por uno de los que quedan fuera (${ahora[i]} → ${meta[i]})`);
+    }
+  };
+  const propuesta = await cal();
+  ok(!await ev(`document.getElementById('crear-juegos').hidden`) && propuesta.length === n - 1 && new Set(propuesta).size === n - 1
+    && /La Gran Final/.test(await ev(`document.querySelector('#cal-elegir .elegir-dia.fija').textContent`)), `al elegir la duración aparece una propuesta al azar de ${n - 1} juegos, con la final al último (${propuesta.join(', ')})`);
+  ok((await fuera()).length === 9 - (n - 1), 'los que no entraron quedan fuera, a mano para cambiarlos');
+  await tocarDia(0);
+  ok(await ev(`document.querySelectorAll('#cal-elegir .elegir-dia.on').length`) === 1, 'tocar un día lo deja elegido');
+  await ev(`(document.querySelector('#crear-body .panel').click(), 1)`);
+  ok(await ev(`document.querySelectorAll('#cal-elegir .elegir-dia.on').length`) === 0 && JSON.stringify(await cal()) === JSON.stringify(propuesta), 'un toque fuera de la lista lo suelta sin cambiar nada (C-8)');
+  await ev(`(document.getElementById('crear-juegos').scrollIntoView(), 1)`);
+  await b.shot('crear-juegos');
+  // Se arma el calendario de siempre, así el resto del guion sabe qué toca cada día. Primero uno
+  // al revés, para pasar seguro por los dos tipos de cambio
+  const meta = SIETE ? ['linea', 'numero', 'conexiones', 'reinas', 'letras', 'anio'] : ['linea', 'conexiones'];
+  await armar(SIETE ? ['zip', 'anio', 'letras', 'reinas', 'conexiones', 'numero'] : ['tango', 'conexiones'], true);
+  await armar(meta, true);
+  await click('#btn-azar'); await sleep(100);
+  const otra = await cal();
+  ok(otra.length === n - 1 && new Set(otra).size === n - 1, `🎲 propone otro orden (${otra.join(', ')})`);
+  await armar(meta, false);
+  ok(JSON.stringify(await cal()) === JSON.stringify(meta), `el calendario queda como se armó (${meta.join(', ')})`);
+}
 // El link propio (D-121): se ve cómo queda y si está libre
 await ev(`(()=>{const i=document.getElementById('crear-link');i.value='Oficina';i.dispatchEvent(new Event('input'));return 1})()`); await sleep(700);
 ok(/juegosdesalon\.cl\/copa\/\?oficina está libre/.test(await ev(`document.getElementById('link-estado').textContent`)), 'el link propio muestra cómo queda y que está libre');
@@ -317,6 +359,7 @@ await click('#btn-crear-go'); await sleep(900);
 ok(/\?oficina&prueba$/.test(await ev('location.search')), 'la copa creada queda en ?oficina');
 const CODE = await ev('__copa.estado.code');
 ok(/^[A-HJ-NP-Z]{5}$/.test(CODE), `copa creada con código ${CODE}`);
+ok(await ev('__copa.estado.copa.meta.cal') === (SIETE ? 'linea,numero,conexiones,reinas,letras,anio,final' : 'linea,conexiones,final'), 'la copa guarda los juegos en el orden elegido');
 // Recién creada, el admin parte en Administrar, con la guía de la primera vez (D-110)
 ok(await pantalla() === 'admin' && !!await ev(`document.getElementById('admin-bienvenida')`), 'al crearla, el admin ve Administrar con la guía para invitar');
 ok(/Mensajes para los competidores/.test(await ev(`document.getElementById('admin-body').innerText`)), 'los mensajes son para los competidores');

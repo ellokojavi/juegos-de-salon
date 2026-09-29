@@ -124,7 +124,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | LIG-31 | Papelera: borrar copas una semana después de terminadas. | ⏳ pendiente |
 | LIG-32 | Inglés y portugués, con contenido propio por idioma (D-98). | ⏳ pendiente |
 | LIG-33 | Avisos automáticos por WhatsApp, correo o push (D-99). | ⏳ pendiente |
-| LIG-34 | Calendario elegido por el admin y minijuegos de reserva (La Palabra, Ahorcado Contrarreloj). | ⏳ pendiente |
+| LIG-34 | Calendario elegido por el admin al crear la copa: qué juegos y en qué orden, a partir de una propuesta al azar; la final no cambia (D-159). | ✅ (versión al fusionar) |
 | LIG-35 | Pantalla de espera antes del día 1: cuándo parte, calendario e inscritos. | ✅ v0.42 |
 | LIG-36 | "Cómo se juega" antes de cada minijuego y de cada ronda de la final; el intento empieza en Empezar. | ✅ v0.42 |
 | LIG-37 | Tiempo activo: el cronómetro se pausa con la pantalla oculta (D-95). | ✅ v0.42 |
@@ -174,6 +174,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | LIG-79 | El resultado del día se envía apenas termina el tablero, no al tocar "Ver resultado" (D-150). | ✅ v0.66.1 |
 | LIG-80 | La imagen de la tabla muestra los puntos de cada día, el comodín, quién no jugó y quién todavía puede, con leyenda; "(-1J)" en pill y el podio final en galvanos; 4:5 (D-153). | ✅ v0.67.0 |
 | LIG-81 | La imagen de la tabla mide lo que necesita, entre 1080 × 1080 y 1080 × 1350, sin aire de sobra (D-154). | ✅ v0.67.1 |
+| LIG-82 | Minijuegos de reserva (La Palabra, Ahorcado Contrarreloj), separados de LIG-34. | ⏳ pendiente |
 | LIG-46 | El teclado, el tablero y la línea se comparten con Toque y Fama y Línea de Tiempo (`assets/js/teclado.js`, `assets/css/teclado.css`, `assets/css/linea.css`). | ✅ v0.44 |
 
 ## Requerimientos no funcionales
