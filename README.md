@@ -344,7 +344,7 @@ Not a game but a **tournament that lasts a week**. Someone creates a cup and sha
 
 It borrows what makes daily puzzles work (Wordle, Connections): same challenge for everyone, once a day, comparable scores, little luck, and a **share card** that shows how you did without giving the answer away. The minigames reuse the engines, decks and screens this app already had where it can.
 
-**The admin picks the week** (D-159): when creating the cup, which minigames go in and in what order, starting from a random proposal (no two days of the same skill in a row) for anyone who would rather not think about it. It is Timeline's hand and line: drag a day to another spot in the week, or drag a game from the hand onto the day it replaces. There are nine to choose from: the six below plus Zip, Tango and Where is it?. The Grand Final always closes the cup and does not change. Without a choice, this is the classic week:
+**The admin picks the week** (D-161): when creating the cup, which minigames go in and in what order, starting from a random proposal (no two days of the same skill in a row) for anyone who would rather not think about it. It is Timeline's hand and line: drag a day to another spot in the week, or drag a game from the hand onto the day it replaces. There are nine to choose from: the six below plus Zip, Tango and Where is it?. The Grand Final always closes the cup and does not change. Without a choice, this is the classic week:
 
 | Day | Minigame | Skill |
 |---|---|---|
@@ -356,7 +356,7 @@ It borrows what makes daily puzzles work (Wordle, Connections): same challenge f
 | 6 | 📅 What year was it?: closer is better, older gets more slack | estimation |
 | 7 | 🏁 The Grand Final: five short rounds, one of each, worth double | everything |
 
-The other three are **〰️ Zip**, **☀️ Tango** and **📍 Where is it?**. Where is it? gives you five cities, each with its country, and you drop a pin on a globe with no names on it, which spins endlessly as you drag it: every city is worth up to 100 points, minus 4 per 100 km off. The cities are the capitals of every UN country and its two observers, plus famous and second-tier ones (529 in all), and the map is drawn from Natural Earth by `tools/mapa.mjs` (D-155). **The minigames also play on their own from the main menu** (D-142), one player and no cup: Timeline Flash and the number game are the *play alone* modes of Timeline and Bulls and Cows, in all three languages, and the other six (all but the final) have their own card, open at `/minijuegos/?<id>` (no "cup" in a link that has nothing to do with one, D-149) and play in Spanish. The cup does not invent its own UX (D-102): the timeline, the drag and drop and the keypad are the ones Timeline and Bulls and Cows already use, shared from `assets/`.
+The other three are **〰️ Zip**, **☀️ Tango** and **📍 Where is it?**. Where is it? gives you five cities, each with its country, and you drop a pin on a satellite-image globe with no names on it (NASA's Blue Marble, so deserts, jungles and ice look like themselves), which spins endlessly as you drag it: every city is worth up to 100 points, minus 4 per 100 km off. The cities are the capitals of every UN country and its two observers, plus famous and second-tier ones (529 in all), and the borders used to check them come from Natural Earth via `tools/mapa.mjs` (D-155, D-159). **The minigames also play on their own from the main menu** (D-142), one player and no cup: Timeline Flash and the number game are the *play alone* modes of Timeline and Bulls and Cows, in all three languages, and the other six (all but the final) have their own card, open at `/minijuegos/?<id>` (no "cup" in a link that has nothing to do with one, D-149) and play in Spanish. The cup does not invent its own UX (D-102): the timeline, the drag and drop and the keypad are the ones Timeline and Bulls and Cows already use, shared from `assets/`.
 
 - **Everything comes from a seed** (`code:day`), so everyone plays exactly the same content with no server (D-97).
 - **A day stays open until the next midnight** (a grace day), except the final. Time only breaks ties, and it is *active* time: it pauses while the screen is hidden (D-95).
@@ -602,7 +602,7 @@ manifest.webmanifest        PWA manifest (installable on the home screen)
 tools/set-version.py        Stamps the version (import maps + stylesheets) to avoid a mixed cache
 tools/readme.py             Keeps this README current: generated blocks, retaken screenshots, staleness report
 tools/og.mjs                Social cards: the Open Graph tags of each page and their images
-tools/mapa.mjs              The world map of Where is it? (Natural Earth, no names, drawn as a globe) and a check that every city falls in its country
+tools/mapa.mjs              The world of Where is it?: Natural Earth borders (a check that every city falls in its country) and the NASA satellite images of the globe
 tools/hechos.mjs            The app's fact sheet (games, modes, themes, tests) read from the code
 tools/reportes.mjs          Reads the La Copa bug reports from Firebase (`--dias N`, `--json`)
 tools/reglas.mjs            Publishes the Firebase rules with a service-account key kept outside the repo
