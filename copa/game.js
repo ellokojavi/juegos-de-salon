@@ -217,7 +217,8 @@ function elegirJuegos() {
   // página se moviera al elegir, el día de destino se correría bajo el dedo que arrastra. Los tres
   // textos van apilados en la misma celda y solo se ve uno: el alto es el del más largo a cualquier
   // ancho (a 320 px uno ocupa tres líneas y los otros dos, una o dos)
-  const AYUDAS = { nada: T.gamesPick, dia: T.gamesPickedDay, fuera: T.gamesPickedOut };
+  // Tocando se dice "toca"; con el juego en el aire, "suéltalo"
+  const AYUDAS = { nada: T.gamesPick, dia: T.gamesPickedDay, fuera: T.gamesPickedOut, 'arr-dia': T.gamesDragDay, 'arr-fuera': T.gamesDragOut };
   const estado = el('p', { class: 'cal-estado', 'aria-live': 'polite' },
     Object.entries(AYUDAS).map(([k, txt]) => el('span', { 'data-ayuda': k }, txt)));
   const mano = el('div', { class: 'hand', id: 'cal-fuera' });
@@ -277,7 +278,7 @@ function elegirJuegos() {
     linea.append(el('div', { class: 'event fija' }, el('span', { class: 'y' }, fmt(T.gamesDay, { d: cal.length })),
       el('span', { class: 'em' }, MINIJUEGOS.final.emoji), nombreJ('final', T.gamesFinal)));
     marcar();
-    const ayuda = sel?.zona || 'nada';
+    const ayuda = !sel ? 'nada' : arrastrando ? `arr-${sel.zona}` : sel.zona;
     estado.querySelectorAll('[data-ayuda]').forEach(x => x.classList.toggle('oculta', x.dataset.ayuda !== ayuda));
   }
   const sortear = n => { cal = calendarioAlAzar(n, { familia }); sel = null; pintar(); };
