@@ -11,7 +11,7 @@
 
 /**
  * El calendario de siempre de cada modalidad. El último siempre es la final, que vale doble.
- * Desde D-159 el admin arma el suyo al crear la copa (ver POZO); este queda para las demos.
+ * Desde D-161 el admin arma el suyo al crear la copa (ver POZO); este queda para las demos.
  */
 export const CALENDARIOS = {
   3: ['linea', 'conexiones', 'final'],
@@ -19,7 +19,7 @@ export const CALENDARIOS = {
 };
 export const MODALIDADES = Object.keys(CALENDARIOS).map(Number);
 
-/** Los minijuegos que el admin puede poner en los días antes de la final (D-159). */
+/** Los minijuegos que el admin puede poner en los días antes de la final (D-161). */
 export const POZO = ['linea', 'numero', 'conexiones', 'reinas', 'letras', 'anio', 'zip', 'tango', 'donde'];
 
 /** ¿Es un calendario que se puede jugar? Juegos del pozo sin repetir, y la final al último. */
@@ -30,7 +30,7 @@ export function calendarioValido(cal, dias) {
 }
 
 /**
- * Una propuesta al azar para quien no quiere pensarlo (D-159): juegos distintos del pozo y la
+ * Una propuesta al azar para quien no quiere pensarlo (D-161): juegos distintos del pozo y la
  * final. Si se le pasa `familia` (la habilidad de cada juego), evita dos días seguidos de la
  * misma, para que la semana no sea tres de lógica al hilo.
  */

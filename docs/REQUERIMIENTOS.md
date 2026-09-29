@@ -124,7 +124,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | LIG-31 | Papelera: borrar copas una semana después de terminadas. | ⏳ pendiente |
 | LIG-32 | Inglés y portugués, con contenido propio por idioma (D-98). | ⏳ pendiente |
 | LIG-33 | Avisos automáticos por WhatsApp, correo o push (D-99). | ⏳ pendiente |
-| LIG-34 | Calendario elegido por el admin al crear la copa: qué juegos y en qué orden, a partir de una propuesta al azar; la final no cambia (D-159). | ✅ (versión al fusionar) |
+| LIG-34 | Calendario elegido por el admin al crear la copa: qué juegos y en qué orden, a partir de una propuesta al azar; la final no cambia (D-161). | ✅ v0.73.0 |
 | LIG-35 | Pantalla de espera antes del día 1: cuándo parte, calendario e inscritos. | ✅ v0.42 |
 | LIG-36 | "Cómo se juega" antes de cada minijuego y de cada ronda de la final; el intento empieza en Empezar. | ✅ v0.42 |
 | LIG-37 | Tiempo activo: el cronómetro se pausa con la pantalla oculta (D-95). | ✅ v0.42 |

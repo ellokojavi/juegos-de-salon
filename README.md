@@ -332,7 +332,7 @@ Spec and design: [docs/juegos/julepe.md](docs/juegos/julepe.md)
   <tr>
     <td align="center"><img src="docs/screenshots/copa/08-podio.png" width="180" alt="Podium and medals"><br><sub>Podium and medals</sub></td>
     <td align="center"><img src="docs/screenshots/copa/09-admin.png" width="180" alt="The admin shares messages with the group"><br><sub>The admin shares messages with the group</sub></td>
-    <td></td>
+    <td align="center"><img src="docs/screenshots/copa/10-semana.png" width="180" alt="Creating a cup: drag the games into the week"><br><sub>Creating a cup: drag the games into the week</sub></td>
     <td></td>
   </tr>
 </table>
