@@ -9,7 +9,7 @@
     La imagen que se ve cuando alguien pega un link de la app en WhatsApp o en un chat.
     Se dibuja acá con los estilos y los datos reales (assets/js/games.js), y `node tools/og.mjs
     imagenes` la fotografía a 1200×630. No se abre a mano: se mira con la captura.
-      /tools/og/tarjeta.html?juego=dudo   una tarjeta por juego
+      /tools/og/tarjeta.html?juego=dudo   una tarjeta por juego (o por minijuego suelto: ?juego=reinas)
       /tools/og/tarjeta.html              la del menú
   -->
   <link rel="stylesheet" href="/assets/css/base.css">
@@ -50,7 +50,7 @@
 <body>
   <div class="tarjeta" id="tarjeta"></div>
   <script type="module">
-    import { GAMES } from '/assets/js/games.js';
+    import { GAMES, SUELTOS } from '/assets/js/games.js';
     import { COMMON, getLang } from '/assets/js/i18n.js';
 
     const id = new URLSearchParams(location.search).get('juego');
@@ -73,7 +73,7 @@
     };
 
     if (id) {
-      const g = GAMES.find(x => x.id === id);
+      const g = [...GAMES, ...SUELTOS].find(x => x.id === id);
       if (!g) throw new Error(`No existe el juego "${id}"`);
       caja.classList.add('juego');
       const texto = el('div');
@@ -83,7 +83,7 @@
       );
       const chips = el('div', 'chips');
       chips.append(
-        el('span', 'chip2', `👥 ${g.players} ${COMMON[lang].players}`),
+        el('span', 'chip2', `👥 ${g.players} ${g.players === '1' ? COMMON[lang].player : COMMON[lang].players}`),
         el('span', 'chip2', `⏱ ${g.duration} ${g.durationUnit ? g.durationUnit[lang] : COMMON[lang].minutes}`),
       );
       texto.append(chips);

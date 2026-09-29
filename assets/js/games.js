@@ -117,9 +117,13 @@ export const GAMES = [
 
 /**
  * Los minijuegos de La Copa que se juegan sueltos desde la portada (D-142), de a uno y sin copa:
- * abren `minijuegos/?<id>` (D-149), la pantalla de práctica de La Copa con un link que no dice
- * "copa": no guarda nada y no cuenta para ninguna copa. Van aparte de GAMES porque no son una
- * carpeta con su `rules.js` y su tarjeta social: el README, las tarjetas y las pruebas de idioma de los juegos no los recorren.
+ * abren `minijuegos/<id>/` (D-149, D-161), la pantalla de práctica de La Copa con un link que no
+ * dice "copa": no guarda nada y no cuenta para ninguna copa. Van aparte de GAMES porque no son una
+ * carpeta con su `rules.js`: el README y las pruebas de idioma de los juegos no los recorren. Su
+ * página y su tarjeta social las genera `node tools/og.mjs tarjetas` a partir de minijuegos/index.html.
+ *
+ * Uno con `labs: true` todavía no va en la portada, pero su link ya se comparte: tiene página y
+ * tarjeta igual (como La Copa, D-101).
  *
  * Línea Relámpago y Toque y Fama: adivina el número no están: son el modo solo de Línea de Tiempo
  * y de Toque y Fama. La Gran Final tampoco: repite los otros y es el cierre de la copa.
@@ -175,7 +179,16 @@ export const SUELTOS = [
     tipos: ['logica'],
     duration: '3',
   },
-].map(m => ({ ...m, players: '1', path: `minijuegos/?${m.id}`, idiomas: ['es'], available: true, suelto: true }));
+  {
+    id: 'donde',
+    emoji: '📍',
+    name: { es: '¿Dónde queda?', en: 'Where Is It?', pt: 'Onde fica?' },
+    tagline: { es: 'Te damos cinco ciudades y tú las ubicas en el globo. Mientras más cerca pongas el alfiler, más puntos.', en: 'We name five cities and you find them on the globe. The closer your pin, the more points.', pt: 'Damos cinco cidades e você as encontra no globo. Quanto mais perto o alfinete, mais pontos.' },
+    tipos: ['cultura'],
+    duration: '2–5',
+    labs: true,
+  },
+].map(m => ({ ...m, players: '1', path: `minijuegos/${m.id}/`, idiomas: ['es'], available: !m.labs, suelto: true }));
 
 /**
  * Los tipos de juego con que se filtra la portada (D-142), en el orden en que se ofrecen.
@@ -189,7 +202,7 @@ export const TIPOS = {
 };
 
 /** Todo lo que ofrece la portada: los juegos y, después, los minijuegos sueltos. */
-export const PORTADA = [...GAMES, ...SUELTOS];
+export const PORTADA = [...GAMES, ...SUELTOS.filter(m => !m.labs)];
 
 /** Cuántos juegan como mínimo y como máximo ("1–6" → [1, 6]; "1" → [1, 1]). */
 export function rangoJugadores(players) {
