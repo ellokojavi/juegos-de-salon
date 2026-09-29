@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.69.0 — 2026-09-28
+- **¿Dónde queda?: un globo en vez del mapa plano.** Se gira arrastrando, sin fin, y se acerca
+  pellizcando o con doble toque. La respuesta une el alfiler y la ciudad con el arco más corto
+  sobre el globo. La portada del minijuego es el globo girando solo, como el afiche (D-156).
+
 ## 0.68.0 — 2026-09-28
 - **La Copa: 📍 ¿Dónde queda?, un minijuego nuevo en el laboratorio.** Cinco ciudades con su país
   y un mapa del mundo sin nombres: se pone un alfiler donde se cree que queda cada una. Cada ciudad
