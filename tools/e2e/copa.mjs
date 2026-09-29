@@ -557,6 +557,9 @@ await b.go(`${BASE}?practica=${id}&prueba&labs${id === 'zip' ? '&zipSeg=12&semil
     const vb = () => ev(`document.querySelector('.mapa-svg').getAttribute('viewBox')`).then(v => v.split(' ').map(Number));
     const [x0, y0] = await puntoDelMapa(0, 20);
     const antes = await vb();
+    // Parte acercado hasta llenar el alto de la caja, sin franjas de mar vacío (dilema #85)
+    const altoMapa = await ev(`import('/copa/juegos/mapa.js').then(m => m.MAPA.alto)`);
+    ok(antes[3] <= altoMapa + 1 && antes[1] >= -1, `¿Dónde queda?: el mapa parte llenando el alto de la caja (${Math.round(antes[3])} de ${altoMapa})`);
     ok(await ev(`document.getElementById('btn-confirmar').disabled`), '¿Dónde queda?: sin alfiler, Confirmar está apagado (C-8)');
     await b.toque(x0, y0); await sleep(60); await b.toque(x0, y0); await sleep(300);
     const acercado = await vb();
