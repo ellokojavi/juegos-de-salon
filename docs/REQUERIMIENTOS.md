@@ -174,6 +174,8 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | LIG-79 | El resultado del día se envía apenas termina el tablero, no al tocar "Ver resultado" (D-150). | ✅ v0.66.1 |
 | LIG-80 | La imagen de la tabla muestra los puntos de cada día, el comodín, quién no jugó y quién todavía puede, con leyenda; "(-1J)" en pill y el podio final en galvanos; 4:5 (D-153). | ✅ v0.67.0 |
 | LIG-81 | La imagen de la tabla mide lo que necesita, entre 1080 × 1080 y 1080 × 1350, sin aire de sobra (D-154). | ✅ v0.67.1 |
+| LIG-82 | El admin termina la copa antes (por ejemplo, si el último no va a jugar la final); los días sin abrir quedan anulados (D-161). | ✅ v0.73.0 |
+| LIG-83 | Terminada la copa, el admin exporta la tabla final: la imagen y una planilla CSV con la tabla, los lugares día a día y el detalle (D-161). | ✅ v0.73.0 |
 | LIG-46 | El teclado, el tablero y la línea se comparten con Toque y Fama y Línea de Tiempo (`assets/js/teclado.js`, `assets/css/teclado.css`, `assets/css/linea.css`). | ✅ v0.44 |
 
 ## Requerimientos no funcionales

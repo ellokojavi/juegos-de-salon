@@ -2157,6 +2157,32 @@ celulares).
 una ciudad baja entre 1 y 9. Sin mipmap en las teselas (solo se usan acercando, y así no hay
 costura en la línea de cambio de fecha). Las rehace `node tools/mapa.mjs satelite`.
 
+## D-161 · El admin puede terminar la copa antes, y la tabla final se exporta
+**Fecha:** 2026-09-29 · **Estado:** vigente
+**Decisión:** En Administrar, desde que la copa parte hasta que termina, el panel **Terminar la
+copa antes** cierra la copa en ese momento. Se guarda solo la hora del servidor en
+`torneos/<código>/fin`, una vez y sin vuelta atrás; la copa que se ve sale de ahí
+(`conCierre`/`cerrarEn` en `engine.js`): termina en `fin`, las ventanas abiertas se cortan en `fin` y
+los días que todavía no se habían abierto quedan **anulados** (no van en la tabla, en el gráfico ni
+en la planilla, y no suman para nadie). El panel nombra a quienes todavía no juegan el día de hoy o
+el de gracia, y avisa si quedan días sin jugar. Terminada la copa —sola o por el admin— Administrar
+ofrece **Tabla final**: la imagen que ya se compartía (D-153, con el podio en galvanos) y una
+**planilla CSV** (`copa/planilla.js`) con la tabla final, el lugar de cada uno después de cada día y
+el detalle de cada día (resultado, puntaje, tiempo, posición, puntos y si valía doble).
+**Por qué:** el dueño lo pidió para el caso del colista que no va a jugar el último día: sin esto,
+todos esperan hasta las 23:59 para ver un podio que ya está decidido. Guardar la hora del cierre en
+vez de reescribir `meta` deja las reglas simples (una línea más en `started`, `results`, `wild`,
+la inscripción y el nombre) y deja a la vista que la copa se cerró antes y cuándo.
+**Alternativas descartadas:** reescribir `meta.end` y las ventanas (las reglas de `meta` solo dejan
+moverla sin empezar, y abrirlas para esto abre también mover fechas a media copa); dejar que
+terminarla antes vuelva a abrirse (el podio ya se compartió); una planilla por hoja en .xlsx
+(necesita una biblioteca; el CSV abre igual en Excel y en Google Sheets).
+**Consecuencias:** cambio de reglas: publicar con `node tools/reglas.mjs publicar`. Si la final no
+alcanzó a abrirse, nadie tiene días ×2 salvo el comodín. Quien está jugando cuando el admin la
+termina ve "El tiempo para jugar este día ya se terminó" al enviar. El CSV va separado por punto y
+coma y con BOM, para que Excel en español lo abra en columnas y con acentos. Nueva demo del
+laboratorio: `final-admin`.
+
 ## D-162 · Cada minijuego suelto tiene su página y su tarjeta social
 **Fecha:** 2026-09-29 · **Estado:** vigente; cambia la alternativa que D-149 había descartado
 **Decisión:** Los minijuegos sueltos se abren en `/minijuegos/<id>/` (`/minijuegos/reinas/`), una
