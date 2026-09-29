@@ -1,5 +1,5 @@
 {
-  "version": "0.68.0",
+  "version": "0.73.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -780,7 +780,7 @@
     }
   ],
   "capturas": {
-    "copa": 10,
+    "copa": 11,
     "linea-de-tiempo": 11,
     "toque-y-fama": 9,
     "ahorcado": 9,

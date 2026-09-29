@@ -61,7 +61,7 @@ ol.como li { line-height: 1.45; }
 .chip-btn.on { border-color: var(--cyan); background: rgba(46, 230, 214, 0.18); }
 .cal-mini { display: flex; justify-content: center; gap: 8px; font-size: 1.6rem; margin-bottom: 4px; }
 
-/* Elegir los juegos al crear la copa (D-159): la mano y la línea de Línea de Tiempo (linea.css) */
+/* Elegir los juegos al crear la copa (D-161): la mano y la línea de Línea de Tiempo (linea.css) */
 .cal-estado { margin: 0 0 6px; min-height: 2.7em; color: var(--yellow); font-weight: 800; font-size: 0.9rem; line-height: 1.35; }
 #crear-juegos .hand .card { width: 112px; min-height: 76px; }
 #crear-juegos .hand .card.hueco, .cal-linea .event.hueco { opacity: 0.3; border-style: dashed; }
