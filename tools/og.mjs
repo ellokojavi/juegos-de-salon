@@ -3,7 +3,8 @@
  * WhatsApp, en un chat o en una red. Importa a esta app más que a otras: los links de sala se
  * comparten por WhatsApp, así que la invitación a jugar **es** una tarjeta de estas.
  *
- *   node tools/og.mjs tarjetas   reescribe el bloque <!-- generado: og --> de cada página
+ *   node tools/og.mjs tarjetas   reescribe el bloque <!-- generado: og --> de cada página, y
+ *                                genera la página de cada minijuego suelto (minijuegos/<id>/)
  *   node tools/og.mjs imagenes   rehace las imágenes de 1200×630 con Chrome (necesita internet:
  *                                las fuentes vienen de Google Fonts)
  *   node tools/og.mjs revisar    ¿quedó alguna página sin bloque, o alguna imagen sin hacer?
@@ -18,12 +19,14 @@ import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
-import { GAMES } from '../assets/js/games.js';
+import { GAMES, SUELTOS } from '../assets/js/games.js';
 import { COMMON } from '../assets/js/i18n.js';
 
 const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..');
 const SITIO = 'https://juegosdesalon.cl';
-const PUERTO = 8791;
+// Con varias sesiones a la vez, cada una los suyos (D-135): PUERTO=87xx PUERTO_CDP=94xx
+const PUERTO = Number(process.env.PUERTO) || 8791;
+const PUERTO_CDP = Number(process.env.PUERTO_CDP) || 9490;
 const ANCHO = 1200, ALTO = 630;
 
 const disponibles = GAMES.filter(g => g.available);
@@ -64,7 +67,40 @@ const paginas = () => [...PUERTAS.map(portada), ...conTarjeta.map(g => ({
   titulo: `${g.name.es} ${g.emoji} · Juegos de Salón`,
   descripcion: `${g.tagline.es} ${g.players} jugadores, ${g.duration} ${g.durationUnit?.es || 'min'}. Gratis, sin instalar y sin cuenta.`,
   alt: `${g.name.es}: ${g.tagline.es}`,
+})), ...SUELTOS.map(m => ({
+  lang: 'es',
+  archivo: `minijuegos/${m.id}/index.html`,
+  ruta: `/minijuegos/${m.id}/`,
+  imagen: m.id,
+  juego: m.id,
+  suelto: true,
+  titulo: `${m.name.es} ${m.emoji} · Juegos de Salón`,
+  descripcion: `${m.tagline.es} Un jugador, ${m.duration} min. Gratis, sin instalar y sin cuenta.`,
+  alt: `${m.name.es}: ${m.tagline.es}`,
 }))];
+
+/* ------------------------------------------------------------------ */
+/* La página de cada minijuego suelto                                  */
+/* ------------------------------------------------------------------ */
+/**
+ * Un robot de WhatsApp no corre JavaScript: lee las etiquetas del HTML tal como llega. Con una
+ * sola página para todos (/minijuegos/?reinas) cada link traía la misma tarjeta, así que cada
+ * minijuego tiene la suya (D-162). Es una copia de minijuegos/index.html un nivel más abajo, con
+ * su título, su tarjeta y `data-suelto="<id>"`: se rehace, no se edita. Como set-version.py corre
+ * esto después de estampar, la copia sale con el import map de la versión nueva.
+ */
+const AVISO_COPIA = () => `  <!-- Generada por node tools/og.mjs tarjetas a partir de minijuegos/index.html: no se edita a mano (D-162). -->`;
+function paginaSuelta(p, bloqueOg) {
+  let html = readFileSync(join(RAIZ, 'minijuegos/index.html'), 'utf8');
+  // Sus etiquetas genéricas y el comentario que explica la página de todos
+  html = html.replace(/^ {2}<!-- Los minijuegos de La Copa[\s\S]*?-->\n/m, '');
+  html = html.replace(/^ {2}<meta (name="description"|property="og:[^"]*"|name="twitter:[^"]*").*\n/gm, '');
+  // Un nivel más abajo: las rutas relativas (href, src, el import map y el import) suben uno más
+  html = html.replace(/(["'])\.\.\//g, '$1../../');
+  html = html.replace(/<title>.*<\/title>/, `<title>${escapa(p.titulo)}</title>\n${AVISO_COPIA()}`);
+  html = html.replace('<body data-suelto>', `<body data-suelto="${p.juego}">`);
+  return html.replace(/^( *<link rel="manifest".*\n)/m, `${bloqueOg}\n$1`);
+}
 
 /* ------------------------------------------------------------------ */
 /* Las etiquetas                                                       */
@@ -126,8 +162,16 @@ function cmdTarjetas() {
   let tocadas = 0;
   for (const p of paginas()) {
     const ruta = join(RAIZ, p.archivo);
-    let html = readFileSync(ruta, 'utf8');
     const nuevo = bloque(p);
+    if (p.suelto) {
+      const antes = existsSync(ruta) ? readFileSync(ruta, 'utf8') : '';
+      const html = paginaSuelta(p, nuevo);
+      mkdirSync(dirname(ruta), { recursive: true });
+      if (antes !== html) { writeFileSync(ruta, html); tocadas++; }
+      console.log(`  ${p.archivo}${antes !== html ? '  ↻' : '  ='}`);
+      continue;
+    }
+    let html = readFileSync(ruta, 'utf8');
     if (html.includes(ABRE)) {
       const re = new RegExp(`${ABRE.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}[\\s\\S]*?${CIERRA.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`);
       html = html.replace(re, nuevo);
@@ -190,9 +234,11 @@ async function cmdImagenes() {
 
   const servidor = spawn('python3', ['-m', 'http.server', String(PUERTO)], { cwd: RAIZ, stdio: 'ignore' });
   await sleep(800);
+  // Si el puerto ya lo tenía otro, python se fue y las fotos saldrían de la copia de otra sesión
+  if (servidor.exitCode !== null) throw new Error(`el puerto ${PUERTO} está ocupado: PUERTO=87xx node tools/og.mjs imagenes`);
   try {
     // El lienzo es de 600×315 y cdp fotografía al doble: 1200×630 exactos
-    const b = await launch({ port: 9490, dir: `${tmp}/perfil`, out: tmp, width: ANCHO / 2, height: ALTO / 2 });
+    const b = await launch({ port: PUERTO_CDP, dir: `${tmp}/perfil`, out: tmp, width: ANCHO / 2, height: ALTO / 2 });
     for (const p of paginas()) {
       // El `t` es para que Chrome no reuse la tarjeta de la vuelta pasada: sin eso, un cambio
       // en el dibujo o en base.css se fotografía viejo y no hay forma de darse cuenta.
@@ -227,7 +273,15 @@ async function cmdImagenes() {
 function cmdRevisar() {
   const problemas = [];
   for (const p of paginas()) {
-    const html = readFileSync(join(RAIZ, p.archivo), 'utf8');
+    const ruta = join(RAIZ, p.archivo);
+    if (p.suelto) {
+      if (!existsSync(ruta) || readFileSync(ruta, 'utf8') !== paginaSuelta(p, bloque(p))) {
+        problemas.push(`${p.archivo} quedó atrás de minijuegos/index.html o de games.js  →  node tools/og.mjs tarjetas`);
+      }
+      if (!existsSync(join(RAIZ, `assets/og/${p.imagen}.jpg`))) problemas.push(`falta assets/og/${p.imagen}.jpg  →  node tools/og.mjs imagenes`);
+      continue;
+    }
+    const html = readFileSync(ruta, 'utf8');
     if (!html.includes(ABRE)) problemas.push(`${p.archivo} no tiene tarjeta social  →  node tools/og.mjs tarjetas`);
     else if (html.split(ABRE)[1].split(CIERRA)[0] !== bloque(p).split(ABRE)[1].split(CIERRA)[0]) {
       problemas.push(`${p.archivo} quedó atrás de games.js  →  node tools/og.mjs tarjetas`);
