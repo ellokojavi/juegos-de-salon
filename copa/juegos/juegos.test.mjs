@@ -130,15 +130,22 @@ test('dónde queda: distancia, puntos y marcas', () => {
   assert.equal(donde.nombre({ ciudad: 'Singapur', pais: 'Singapur' }), 'Singapur');
 });
 
-test('dónde queda: la proyección va y vuelve', () => {
-  for (const [lat, lon] of [[-33.45, -70.67], [64.15, -21.94], [-54.8, -68.3], [1.29, 103.85], [0, 0], [-41.29, 174.78]]) {
-    const [x, y] = donde.proyectar(lat, lon);
-    assert.ok(x >= 0 && x <= MAPA.ancho && y >= 0 && y <= MAPA.alto, `${lat},${lon} fuera del mapa`);
-    const [la, lo] = donde.desproyectar(x, y);
-    assert.ok(Math.abs(la - lat) < 1e-9 && Math.abs(lo - lon) < 1e-9, `${lat},${lon} → ${la},${lo}`);
+test('dónde queda: el globo va y vuelve', () => {
+  const centros = [[10, -40], [-33, -70], [60, 100], [0, 180], [-80, 20]];
+  for (const c of centros) for (const [lat, lon] of [[-33.45, -70.67], [64.15, -21.94], [1.29, 103.85], [0, 0], [-41.29, 174.78], [-18.14, 178.44]]) {
+    const [x, y, prof] = donde.ver(donde.vector(lat, lon), c);
+    if (prof <= 0) continue;
+    const [la, lo] = donde.tocado(x, y, c);
+    assert.ok(Math.abs(la - lat) < 1e-9 && Math.abs(((lo - lon + 540) % 360) - 180) < 1e-9, `${lat},${lon} desde ${c} → ${la},${lo}`);
   }
-  assert.equal(MAPA.ancho, donde.ANCHO);
-  assert.equal(MAPA.alto, donde.ALTO);
+  // El centro de la vista se ve en el medio, de frente; lo de las antípodas no se ve
+  assert.deepEqual(donde.ver(donde.vector(-33, -70), [-33, -70]).map(n => Math.round(n * 1e9) / 1e9), [0, 0, 1]);
+  assert.ok(donde.ver(donde.vector(33, 110), [-33, -70])[2] < 0);
+  assert.equal(donde.tocado(0.8, 0.8, [0, 0]), null);
+  // El punto medio queda a la misma distancia de los dos
+  const m = donde.medio([-33.45, -70.67], [52.37, 4.9]);
+  assert.ok(Math.abs(donde.distancia(m, [-33.45, -70.67]) - donde.distancia(m, [52.37, 4.9])) < 1);
+  assert.match(MAPA.d, /^M-?\d+ -?\d+l/);
 });
 
 test('dónde queda: todos los países del mundo, sin repetir ni equivocar', () => {
@@ -153,7 +160,7 @@ test('dónde queda: todos los países del mundo, sin repetir ni equivocar', () =
   assert.equal(capitales.find(c => c.pais === 'Países Bajos').ciudad, 'Ámsterdam');
   for (const c of CIUDADES) {
     assert.ok([1, 2, 3].includes(c.nivel), c.ciudad);
-    assert.ok(c.lat > donde.SUR && c.lat < donde.NORTE && c.lon >= -180 && c.lon <= 180, c.ciudad);
+    assert.ok(c.lat > -90 && c.lat < 90 && c.lon >= -180 && c.lon <= 180, c.ciudad);
     assert.match(c.iso, /^\d{3}$/, c.ciudad);
     assert.ok(!/'/.test(c.ciudad + c.pais) || /'s$/.test(c.ciudad), `${c.ciudad}: apóstrofo recto`);
   }
@@ -161,6 +168,43 @@ test('dónde queda: todos los países del mundo, sin repetir ni equivocar', () =
   const paises = new Set(capitales.map(c => c.pais));
   for (const c of CIUDADES) assert.ok(paises.has(c.pais), `${c.ciudad}: país "${c.pais}" sin capital`);
   for (const n of [1, 2, 3]) assert.ok(CIUDADES.filter(c => c.nivel === n).length >= 40, `pocas de nivel ${n}`);
+});
+
+test('dónde queda: cada ciudad cae sobre tierra dibujada en el mapa', () => {
+  // Lo que se dibuja, no los bordes originales: una simplificación mal hecha borró Nueva Zelanda y Japón
+  const anillos = MAPA.d.split('z').filter(Boolean).map(p => {
+    const n = p.match(/-?\d+/g).map(Number);
+    let x = n[0], y = n[1];
+    const r = [[x, y]];
+    for (let k = 2; k < n.length; k += 2) { x += n[k]; y += n[k + 1]; r.push([x, y]); }
+    return r;
+  });
+  const dentro = ([px, py], r) => {
+    let si = false;
+    for (let i = 0, j = r.length - 1; i < r.length; j = i++) {
+      const [xi, yi] = r[i], [xj, yj] = r[j];
+      if ((yi > py) !== (yj > py) && px < ((xj - xi) * (py - yi)) / (yj - yi) + xi) si = !si;
+    }
+    return si;
+  };
+  const aLaCosta = ([px, py], r) => {
+    let min = Infinity;
+    for (let i = 0, j = r.length - 1; i < r.length; j = i++) {
+      const [ax, ay] = r[j], [bx, by] = r[i], dx = bx - ax, dy = by - ay, L = dx * dx + dy * dy;
+      const t = L ? Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / L)) : 0;
+      min = Math.min(min, Math.hypot(px - ax - t * dx, py - ay - t * dy));
+    }
+    return min;
+  };
+  const lejos = [];
+  for (const c of CIUDADES) {
+    const ps = [0, 3600, -3600].map(k => [c.lon * donde.UNIDADES_POR_GRADO + k, c.lat * donde.UNIDADES_POR_GRADO]);
+    if (anillos.some(r => ps.some(p => dentro(p, r)))) continue;
+    // Una ciudad en la costa puede quedar un poco al agua por la simplificación: hasta 0,2° (unos 20 km)
+    const d = Math.min(...anillos.map(r => aLaCosta(ps[0], r))) / donde.UNIDADES_POR_GRADO;
+    if (d > 0.2) lejos.push(`${c.ciudad} (${d.toFixed(2)}°)`);
+  }
+  assert.deepEqual(lejos, [], `ciudades en el agua: ${lejos.join(', ')}`);
 });
 
 test('dónde queda: cinco ciudades, de la fácil a la difícil, de países distintos', () => {

@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.70.2 — 2026-09-29
+- **¿Dónde queda?: la primera ciudad avisa que el globo se gira.** "↔ Arrastra para girar" arriba
+  del globo, hasta el primer arrastre (#88).
+- **¿Dónde queda?: el doble toque solo acerca.** Ya no pone ni mueve el alfiler; un toque solo
+  lo pone, un instante después.
+
+## 0.70.1 — 2026-09-28
+- **¿Dónde queda?: vuelven las islas que faltaban en el globo.** Nueva Zelanda, Japón, Cuba,
+  Jamaica, Filipinas, Java, Madagascar, Rapa Nui y otras 280 islas habían quedado como un punto:
+  al simplificar el mapa, una isla dibujada en un solo trazo cerrado se borraba entera. Una prueba
+  nueva revisa que cada una de las 529 ciudades caiga sobre tierra dibujada.
+
+## 0.70.0 — 2026-09-28
+- **¿Dónde queda?: 223 ciudades más, de segunda línea.** Porto Alegre, Salta, Copiapó, Castro,
+  Bilbao, Chengdú, Luxor, Queenstown… Las medianas y las difíciles ya no son casi siempre
+  capitales: ahora hay que ubicar ciudades que uno sabe más o menos dónde quedan (D-157).
+
+## 0.69.0 — 2026-09-28
+- **¿Dónde queda?: un globo en vez del mapa plano.** Se gira arrastrando, sin fin, y se acerca
+  pellizcando o con doble toque. La respuesta une el alfiler y la ciudad con el arco más corto
+  sobre el globo. La portada del minijuego es el globo girando solo, como el afiche (D-156).
+
 ## 0.68.0 — 2026-09-28
 - **La Copa: 📍 ¿Dónde queda?, un minijuego nuevo en el laboratorio.** Cinco ciudades con su país
   y un mapa del mundo sin nombres: se pone un alfiler donde se cree que queda cada una. Cada ciudad

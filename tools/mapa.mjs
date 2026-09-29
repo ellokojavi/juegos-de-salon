@@ -6,21 +6,20 @@
  *   node tools/mapa.mjs revisar    # ¿cada ciudad cae dentro de su país? ¿falta algún país?
  *
  * Los bordes son los de Natural Earth 1:50m (dominio público), en el TopoJSON de `world-atlas`,
- * bajados de jsDelivr. El mapa sale sin nombres, en la proyección de Miller del motor
- * (`copa/juegos/donde.js`), simplificado y con coordenadas enteras: una sola ruta SVG.
+ * bajados de jsDelivr. El mapa sale sin nombres, simplificado y en décimas de grado enteras
+ * (x = longitud, y = latitud), con la forma de una ruta SVG: el globo (`copa/juegos/globo.js`)
+ * lo pasa a la esfera y lo gira.
  * Se rehace a mano; solo cambia si cambian los bordes o la proyección.
  */
 import { writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { proyectar, ANCHO, ALTO, SUR, distancia } from '../copa/juegos/donde.js';
+import { UNIDADES_POR_GRADO as U, distancia } from '../copa/juegos/donde.js';
 import { CIUDADES } from '../copa/juegos/ciudades.js';
 
 const RAIZ = fileURLToPath(new URL('..', import.meta.url));
 const FUENTE = 'https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-50m.json';
 const SALIDA = `${RAIZ}copa/juegos/mapa.js`;
-/** Antártica no se dibuja: el mapa llega a 57° S. */
-const FUERA = new Set(['010']);
-/** Tolerancia de la simplificación y área mínima de una isla, en unidades del dibujo (0,1°). */
+/** Tolerancia de la simplificación y área mínima de una isla, en décimas de grado. */
 const TOLERANCIA = 0.6;
 const AREA_MIN = 3;
 
@@ -92,10 +91,12 @@ function simplificar(pts, tol) {
   while (pila.length) {
     const [a, b] = pila.pop();
     const [ax, ay] = pts[a], [bx, by] = pts[b];
-    const dx = bx - ax, dy = by - ay, L = Math.hypot(dx, dy) || 1;
+    const dx = bx - ax, dy = by - ay, L = Math.hypot(dx, dy);
     let max = -1, k = -1;
     for (let i = a + 1; i < b; i++) {
-      const d = Math.abs((pts[i][0] - ax) * dy - (pts[i][1] - ay) * dx) / L;
+      // Un arco cerrado (una isla entera) empieza y termina en el mismo punto: ahí no hay recta
+      // contra la cual medir, y medir contra una de largo cero borraba la isla (Nueva Zelanda, Japón)
+      const d = L ? Math.abs((pts[i][0] - ax) * dy - (pts[i][1] - ay) * dx) / L : Math.hypot(pts[i][0] - ax, pts[i][1] - ay);
       if (d > max) { max = d; k = i; }
     }
     if (max > tol) { keep[k] = 1; pila.push([a, k], [k, b]); }
@@ -107,29 +108,25 @@ const area = pts => Math.abs(pts.reduce((s, [x, y], i) => { const [x2, y2] = pts
 
 async function generar() {
   const topo = await bajar();
-  // Se simplifica cada arco una sola vez: así un borde compartido queda igual para los dos países
-  const A = arcos(topo).map(a => simplificar(sinSaltos(a).map(([lon, lat]) => proyectar(Math.max(lat, SUR - 1), lon)), TOLERANCIA));
+  // Se simplifica cada arco una sola vez: así un borde compartido queda igual para los dos países.
+  // Sin saltos en la línea de cambio de fecha (Rusia, Fiyi): en la esfera 181° es −179°
+  const A = arcos(topo).map(a => simplificar(sinSaltos(a).map(([lon, lat]) => [lon * U, lat * U]), TOLERANCIA));
   let d = '', puntos = 0, anillos = 0;
+  const conCiudad = r => {
+    const xs = r.map(q => q[0]), ys = r.map(q => q[1]), m = 0.3 * U;
+    return CIUDADES.some(c => c.lon * U > Math.min(...xs) - m && c.lon * U < Math.max(...xs) + m && c.lat * U > Math.min(...ys) - m && c.lat * U < Math.max(...ys) + m);
+  };
+  const rombo = (x, y) => { d += `M${x} ${y + 1}l1-1-1-1-1 1z`; anillos++; puntos += 4; };
   for (const p of paises(topo)) {
-    if (FUERA.has(p.id)) continue;
-    // Lo que cruza la línea de cambio de fecha se dibuja dos veces, una a cada lado del mapa
-    const todos = p.poligonos.flat().map(ix => anillo(ix, A, ANCHO).map(([x, y]) => [Math.round(x), Math.round(y)]))
-      .flatMap(r => {
-        const xs = r.map(q => q[0]);
-        return Math.min(...xs) < 0 ? [r, r.map(([x, y]) => [x + ANCHO, y])]
-          : Math.max(...xs) > ANCHO ? [r, r.map(([x, y]) => [x - ANCHO, y])] : [r];
-      });
+    const todos = p.poligonos.flat().map(ix => anillo(ix, A, 360 * U).map(([x, y]) => [Math.round(x), Math.round(y)]));
     const mayor = Math.max(...todos.map(area));
     for (const r of todos) {
       // Las islas mínimas se van, salvo que sean lo más grande que tiene el país (Nauru, Tuvalu)
-      if (area(r) < AREA_MIN && area(r) < mayor) continue;
+      // o que haya una ciudad del juego en ellas (Hanga Roa en Rapa Nui, Tarawa en Kiribati)
+      if (area(r) < AREA_MIN && area(r) < mayor && !conCiudad(r)) continue;
       const pts = r.filter((q, i) => i === 0 || q[0] !== r[i - 1][0] || q[1] !== r[i - 1][1]);
-      if (pts.length < 3) {
-        // Un país que cabe en una unidad: un rombo chico, para que se vea que ahí hay algo
-        const [x, y] = pts[0];
-        d += `M${x} ${y - 1}l1 1-1 1-1-1z`; anillos++; puntos += 4;
-        continue;
-      }
+      // Un país que cabe en una décima de grado: un rombo chico, para que se vea que ahí hay algo
+      if (pts.length < 3) { rombo(...pts[0]); continue; }
       d += `M${pts[0][0]} ${pts[0][1]}`;
       for (let i = 1; i < pts.length; i++) d += `l${pts[i][0] - pts[i - 1][0]} ${pts[i][1] - pts[i - 1][1]}`.replace(/ -/g, '-');
       d += 'z';
@@ -138,15 +135,12 @@ async function generar() {
   }
   // Los países que Natural Earth 1:50m no trae (Tuvalu): un rombo chico en su capital
   const ids = new Set(paises(topo).map(p => p.id));
-  for (const c of CIUDADES.filter(c => c.capital && !ids.has(c.iso))) {
-    const [x, y] = proyectar(c.lat, c.lon).map(Math.round);
-    d += `M${x} ${y - 1}l1 1-1 1-1-1z`; anillos++; puntos += 4;
-  }
+  for (const c of CIUDADES.filter(c => c.capital && !ids.has(c.iso))) rombo(Math.round(c.lon * U), Math.round(c.lat * U));
   const js = `/**
- * El mapa de ¿Dónde queda?: los países sin nombres, en la proyección de Miller del motor.
+ * El mapa de ¿Dónde queda?: los países sin nombres, en décimas de grado (x = longitud, y = latitud).
  * Generado por \`node tools/mapa.mjs generar\` desde Natural Earth 1:50m (dominio público). No se edita a mano.
  */
-export const MAPA = { ancho: ${ANCHO}, alto: ${ALTO}, d: '${d}' };
+export const MAPA = { d: '${d}' };
 `;
   writeFileSync(SALIDA, js);
   console.log(`copa/juegos/mapa.js: ${anillos} anillos, ${puntos} puntos, ${(js.length / 1024).toFixed(0)} KB`);

@@ -66,13 +66,15 @@ tableros más chicos), que no se guarda ni cuenta.
 La Copa de 3 días juega Línea, Conexiones y la final. En el laboratorio se pueden practicar además
 **〰️ Zip** (un solo trazo por todas las casillas, pasando por los números en orden; por niveles, tres minutos para resolver la mayor cantidad) y **☀️ Tango**
 (soles y lunas, mitad y mitad por línea, nunca tres seguidos, con marcas = y ×), y **📍 ¿Dónde
-queda?** (cinco ciudades con su país, un alfiler en un mapa del mundo sin nombres; 100 puntos por
-ciudad menos 4 cada 100 km, D-155), candidatos a entrar al calendario.
+queda?** (cinco ciudades con su país, un alfiler en un globo sin nombres que se gira sin fin; 100
+puntos por ciudad menos 4 cada 100 km, D-155, D-156), candidatos a entrar al calendario.
 
-- **¿Dónde queda?** saca sus ciudades de `ciudades.js` (las 195 capitales y ciudades famosas, con
-  nivel y código ISO) y su mapa de `mapa.js`, que genera `node tools/mapa.mjs generar`; `revisar`
-  comprueba que cada ciudad cae dentro de su país. La proyección (Miller) y su inversa están en el
-  motor, `donde.js`; la distancia se mide sobre la esfera.
+- **¿Dónde queda?** saca sus ciudades de `ciudades.js` (las 195 capitales, ciudades famosas y de
+  segunda línea, 529 en total, con nivel y código ISO; D-157) y su mapa de `mapa.js`, que genera `node tools/mapa.mjs generar`; `revisar`
+  comprueba que cada ciudad cae dentro de su país. La vista del globo (ortográfica) y su inversa
+  están en el motor, `donde.js`; `globo.js` lo dibuja en un canvas, recortando cada país en el
+  borde, y la distancia se mide sobre la esfera. La antesala muestra el globo girando solo
+  (`portada()` de `ui-donde.js`).
 
 - **Línea y Año** usan temáticas distintas dentro de la misma copa (`temasDeLaCopa`), para que no
   sean dos días de lo mismo.
