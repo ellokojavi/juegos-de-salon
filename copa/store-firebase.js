@@ -3,7 +3,7 @@
  * (D-96). Misma interfaz que store-local.js.
  *
  * Rutas (reglas en firebase/database.rules.json):
- *   torneos/<código>/meta · players/<pid> · started/<día>/<pid> · results/<día>/<pid> · wild/<pid>
+ *   torneos/<código>/meta · players/<pid> · started/<día>/<pid> · results/<día>/<pid> · wild/<pid> · fin
  *   torneoKeys/<código>/<pid>          sha256 del PIN. Nadie lo puede leer.
  *   torneoSeats/<código>/<pid>/<uid>   el celular `uid` puede escribir por `pid`. Las reglas
  *                                    aceptan el asiento solo si trae el mismo hash que torneoKeys.
@@ -164,6 +164,15 @@ export function createFirebaseStore() {
     async reprogramar(code, meta) {
       // Si la copa tiene link propio, se mueve con ella hasta cuándo queda tomado (D-121)
       await escribir({ [`torneos/${code}/meta`]: meta, ...(meta.alias ? { [`torneoAlias/${meta.alias}`]: { code, hasta: aliasHasta(meta) } } : {}) }, 'empezada');
+    },
+
+    /**
+     * Terminar la copa antes de tiempo (D-161): la hora del servidor en `fin`. Las reglas la
+     * aceptan una sola vez, del admin, con la copa ya partida y sin terminar; desde ahí nadie
+     * puede empezar, jugar ni usar el comodín.
+     */
+    async terminarCopa(code) {
+      await escribir({ [`torneos/${code}/fin`]: serverTimestamp() }, 'fin');
     },
 
     /** Cambiar el nombre de la copa (D-148): solo su admin y mientras no termine. */
