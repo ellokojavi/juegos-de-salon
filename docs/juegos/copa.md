@@ -154,6 +154,11 @@ un jugador, y compartir cuatro mensajes armados con el diálogo del celular (D-9
 **recordatorio del día** (sirve cualquier día: antes de empezar, con el día de gracia y con quién
 falta), tabla parcial y resumen final.
 
+La invitación va con su **tarjeta** (D-164): la misma de la vista previa del link, pero con el
+nombre de la copa en el título ("La Copa: Piratotes 1983"), cuántos días dura y cuándo parte. Se
+dibuja en el celular y se comparte como imagen junto al texto; si el celular no comparte archivos,
+va solo el texto.
+
 **Terminar la copa antes** (D-161): desde que parte, el admin puede cerrarla en ese momento, por
 ejemplo si el último no va a jugar la final. Antes de confirmar ve quiénes todavía no juegan el día
 de hoy (y el de gracia) y si quedan días que no se van a jugar. No se puede deshacer.
