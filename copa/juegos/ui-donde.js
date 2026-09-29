@@ -1,8 +1,8 @@
 /**
  * 📍 ¿Dónde queda? — pantalla. Un globo sin nombres (`globo.js`) que se gira sin fin
- * arrastrando y se acerca pellizcando, con doble toque (o con la rueda y los botones + y −). Tocar
- * pone el alfiler; tocar otra vez lo mueve: el alfiler no se arrastra, porque arrastrar ya gira
- * el globo. Confirmar es el botón (C-8). Las jugadas son `[lat, lon]` de cada alfiler confirmado.
+ * arrastrando y se acerca pellizcando, con doble toque (o con la rueda y los botones + y −). Un
+ * toque pone el alfiler; tocar otra vez lo mueve; el doble toque solo acerca. El alfiler no se
+ * arrastra, porque arrastrar ya gira el globo. Confirmar es el botón (C-8). Las jugadas son `[lat, lon]` de cada alfiler confirmado.
  *
  * La portada del minijuego (`portada`) es el mismo globo, chico y girando solo.
  */
@@ -108,16 +108,17 @@ function crearGlobo({ T, alTocar, alGirar }) {
     dedos.delete(e.pointerId);
     previa = dedos.size >= 2 ? pinza() : null;
     if (!unico || e.type !== 'pointerup') return;
-    // El primer toque ya puso el alfiler ahí mismo; el segundo solo acerca, en torno al dedo
+    // Un toque espera un momento antes de poner el alfiler: si llega un segundo toque, era un
+    // doble toque, que solo acerca en torno al dedo y no pone ni mueve el alfiler
     const t = e.timeStamp;
     if (ultimo && t - ultimo.t < DOBLE_MS && Math.hypot(e.clientX - ultimo.x, e.clientY - ultimo.y) < DOBLE_PX) {
+      clearTimeout(ultimo.espera);
       ultimo = null;
       zoom(2, e.clientX, e.clientY);
       return;
     }
-    ultimo = { t, x: e.clientX, y: e.clientY };
     const g = bajo(e.clientX, e.clientY);
-    if (g) alTocar(g);
+    ultimo = { t, x: e.clientX, y: e.clientY, espera: g ? setTimeout(() => { ultimo = null; alTocar(g); }, DOBLE_MS) : null };
   };
   canvas.addEventListener('pointerup', soltar);
   canvas.addEventListener('pointercancel', soltar);
