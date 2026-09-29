@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.72.1 — 2026-09-29
+- **La Copa: la práctica del laboratorio ya no dice "Práctica en el laboratorio"** sobre el nombre
+  del minijuego.
+
 ## 0.72.0 — 2026-09-29
 - **¿Dónde queda?: el globo se ve nítido al acercarse.** Acercado, se bajan solo los pedazos de la
   imagen satelital que se ven, con más de 5 veces la resolución de antes (D-160).
