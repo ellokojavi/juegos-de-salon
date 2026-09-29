@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.70.4 — 2026-09-29
+- **¿Dónde queda?: el globo va sin fronteras.** La tierra es un solo verde; hay que saber dónde
+  queda cada país (D-158).
+
 ## 0.70.3 — 2026-09-29
 - **¿En qué año?: "Ganaste 1 punto." en singular** cuando un hito da un solo punto (U-6).
 
