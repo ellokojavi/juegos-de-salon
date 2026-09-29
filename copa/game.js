@@ -922,8 +922,119 @@ function mensajeInvitacion() {
 }
 
 function invitar() {
+  return compartirInvitacion();
+}
+
+/**
+ * La invitación va con su tarjeta: la misma de la vista previa del link (assets/og/copa.jpg), pero
+ * con el nombre de la copa en el título ("La Copa: Piratotes 1983"). La vista previa no puede
+ * llevarlo (el sitio es estático y la imagen es una sola para todas las copas), así que se dibuja
+ * aquí y se comparte como archivo con el texto. Si el celular no comparte archivos, va solo el texto.
+ */
+async function compartirInvitacion() {
+  const texto = mensajeInvitacion();
+  try {
+    const archivo = await tarjetaInvitacion();
+    if (archivo && navigator.canShare?.({ files: [archivo] })) {
+      await navigator.share({ files: [archivo], title: L().meta.name, text: `${texto}\n\n🔗 ${urlPublica(S.code)}` });
+      return;
+    }
+  } catch (e) { if (e?.name === 'AbortError') return; }
+  return compartir(texto);
+}
+
+/** La tarjeta de la invitación, 1200 × 630 como la de Open Graph (tools/og/tarjeta.html), en PNG. */
+async function tarjetaInvitacion() {
   const { meta } = L();
-  return compartir(mensajeInvitacion());
+  const W = 1200, H = 630;
+  const cv = document.createElement('canvas');
+  cv.width = W; cv.height = H;
+  const c = cv.getContext('2d');
+  try { await Promise.all([document.fonts?.load('400 100px Bangers'), document.fonts?.load('800 34px Nunito'), document.fonts?.load('900 28px Nunito')]); } catch (_) { /* nada */ }
+  const fuente = (peso, px, familia = 'Nunito, system-ui, sans-serif') => `${peso} ${px}px ${familia}`;
+  const DISPLAY = 'Bangers, Impact, sans-serif';
+  // El fondo de la app (base.css): el degradado y sus tres manchas de color
+  const fondo = c.createLinearGradient(0, 0, W * 0.55, H * 1.5);
+  fondo.addColorStop(0, '#150726'); fondo.addColorStop(0.55, '#2a0a4a'); fondo.addColorStop(1, '#0b1e3f');
+  c.fillStyle = fondo; c.fillRect(0, 0, W, H);
+  const mancha = (x, y, r, color) => {
+    const g = c.createRadialGradient(x, y, 0, x, y, r);
+    g.addColorStop(0, color); g.addColorStop(1, 'rgba(0,0,0,0)');
+    c.fillStyle = g; c.fillRect(0, 0, W, H);
+  };
+  mancha(W * 0.1, -H * 0.1, 900, 'rgba(255, 46, 136, 0.35)');
+  mancha(W * 1.1, H * 0.1, 700, 'rgba(46, 230, 214, 0.22)');
+  mancha(W * 0.5, H * 1.2, 700, 'rgba(138, 77, 255, 0.35)');
+  // Los márgenes de la tarjeta social: los chats recortan los lados, y lo que se lee vive adentro
+  const izq = 144, der = W - 144, tx = izq + 200 + 40, ancho = der - tx;
+  // El trofeo, con su brillo dorado
+  c.save();
+  c.textAlign = 'center'; c.textBaseline = 'middle'; c.font = fuente(400, 176, 'system-ui, sans-serif');
+  c.shadowColor = 'rgba(255, 210, 63, 0.55)'; c.shadowBlur = 52;
+  c.fillText('🏆', izq + 100, H / 2 - 20);
+  c.restore();
+  // El título: "La Copa: <nombre>", en una línea grande o, si no cabe, en dos o tres más chicas
+  const titulo = fmt(T.inviteCardTitle, { copa: meta.name });
+  const envolver = (txt, font, max) => {
+    c.font = font;
+    const out = [];
+    let actual = '';
+    txt.split(' ').forEach(p => {
+      const prueba = actual ? `${actual} ${p}` : p;
+      if (c.measureText(prueba).width > max && actual) { out.push(actual); actual = p; } else actual = prueba;
+    });
+    if (actual) out.push(actual);
+    return out;
+  };
+  const cabe = (ls, px) => { c.font = fuente(400, px, DISPLAY); return ls.every(l => c.measureText(l).width <= ancho); };
+  let px = 104, lineas;
+  for (; px >= 36; px -= 4) {
+    lineas = envolver(titulo, fuente(400, px, DISPLAY), ancho);
+    // En dos líneas, el corte va después de "La Copa:" y el nombre queda entero abajo
+    const [antes, ...resto] = titulo.split(': ');
+    if (lineas.length > 1 && resto.length && cabe([`${antes}:`, resto.join(': ')], px)) lineas = [`${antes}:`, resto.join(': ')];
+    const tope = px >= 72 ? 1 : px >= 52 ? 2 : 3;
+    if (lineas.length <= tope && cabe(lineas, px)) break;
+  }
+  // Una palabra larguísima: se achica hasta que quepa
+  if (px < 36) { lineas = envolver(titulo, fuente(400, 36, DISPLAY), ancho).slice(0, 3); c.font = fuente(400, 36, DISPLAY); px = Math.floor(36 * Math.min(1, ancho / Math.max(...lineas.map(l => c.measureText(l).width)))); }
+  c.font = fuente(400, px, DISPLAY);
+  const alto = px * 0.92;
+  // Qué va debajo: la bajada y los chips
+  const renglones = envolver(T.inviteCardSub, fuente(800, 30), ancho);
+  const chips = [fmt(T.inviteCardDays, { dias: meta.days }), fmt(T.inviteCardStart, { fecha: new Intl.DateTimeFormat('es-CL', { timeZone: meta.tz, day: 'numeric', month: 'long' }).format(new Date(meta.win[1].a)) })];
+  const total = lineas.length * alto + 16 + renglones.length * 40 + 24 + 60;
+  let y = (H - 40) / 2 - total / 2;
+  c.textAlign = 'left'; c.textBaseline = 'alphabetic';
+  lineas.forEach(l => {
+    y += alto;
+    c.font = fuente(400, px, DISPLAY);
+    const w = c.measureText(l).width;
+    const arco = c.createLinearGradient(tx, 0, tx + Math.max(w, 1), 0);
+    arco.addColorStop(0, '#ffd23f'); arco.addColorStop(1, '#ff2e88');
+    c.fillStyle = 'rgba(0, 0, 0, 0.35)'; c.fillText(l, tx, y + 8);
+    c.fillStyle = arco; c.fillText(l, tx, y);
+  });
+  y += 16;
+  c.fillStyle = '#ffffff'; c.font = fuente(800, 30);
+  renglones.forEach(r => { y += 40; c.fillText(r, tx, y - 8); });
+  y += 24;
+  let cx = tx;
+  c.font = fuente(900, 26);
+  chips.forEach(txt => {
+    const w = c.measureText(txt).width + 44;
+    c.beginPath(); if (c.roundRect) c.roundRect(cx, y, w, 60, 30); else c.rect(cx, y, w, 60);
+    c.fillStyle = 'rgba(255, 255, 255, 0.08)'; c.fill();
+    c.lineWidth = 2; c.strokeStyle = 'rgba(255, 255, 255, 0.16)'; c.stroke();
+    c.fillStyle = '#ffffff'; c.fillText(txt, cx + 22, y + 39);
+    cx += w + 16;
+  });
+  // El pie, como en la tarjeta social
+  c.font = fuente(900, 30);
+  c.fillStyle = 'rgba(255, 255, 255, 0.72)'; c.textAlign = 'left'; c.fillText(T.inviteCardFree, izq, H - 46);
+  c.fillStyle = '#ffd23f'; c.textAlign = 'right'; c.fillText('juegosdesalon.cl', der, H - 46);
+  const blob = await new Promise(r => cv.toBlob(r, 'image/png'));
+  return blob && new File([blob], `copa-${meta.alias || S.code.toLowerCase()}-invitacion.png`, { type: 'image/png' });
 }
 
 /**
@@ -1262,7 +1373,7 @@ function admin({ forzar = false } = {}) {
   body.innerHTML = '';
   const now = ahora();
   const d = diaActual(meta, now);
-  const msg = (rotulo, fn, id) => el('button', { class: 'btn btn--cyan btn--sm', id, onClick: () => { SFX.tap(); compartir(fn()); } }, `📤 ${rotulo}`);
+  const msg = (rotulo, fn, id) => el('button', { class: 'btn btn--cyan btn--sm', id, onClick: () => { SFX.tap(); fn === mensajeInvitacion ? compartirInvitacion() : compartir(fn()); } }, `📤 ${rotulo}`);
   const jug = activos(Lc);
   const err = el('div', { class: 'form-error', role: 'alert' });
   // La primera vez (recién creada, o mientras el admin siga solo): qué hacer ahora (D-110)

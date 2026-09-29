@@ -2233,3 +2233,20 @@ dice "Suéltalo…" y no "Toca…" (pedido del dueño), en la misma celda de alt
 (la invitación lo leía de `CALENDARIOS` y se corrigió), así que las copas ya creadas no cambian y
 las reglas de Firebase tampoco (aceptan cualquier texto de hasta 100 caracteres). La regla de la
 final dejó de decir "una de cada minijuego de la copa". `CALENDARIOS` queda para las demos.
+
+## D-164 · La invitación de la copa lleva una tarjeta con su nombre
+**Fecha:** 2026-09-29 · **Estado:** vigente
+**Decisión:** El botón de la invitación (el de la pantalla de la copa y el de Administrar) dibuja
+en un canvas de 1200 × 630 la misma tarjeta de `assets/og/copa.jpg`, pero con el título **"La Copa:
+<nombre>"**, y la comparte como archivo junto al texto de siempre (con el link al final). El título
+va en una línea grande si cabe; si no, corta después de "La Copa:" y achica la letra hasta tres
+líneas, para los nombres de 40 caracteres. Los chips dicen cuántos días dura y cuándo parte. Si el
+celular no comparte archivos (un computador), la invitación sale como antes: solo el texto.
+**Por qué:** lo pidió el dueño: la tarjeta que se ve en el chat decía solo "La Copa", y quien la
+recibe no sabe de qué grupo es. La vista previa del link no puede decirlo: el sitio es estático
+(GitHub Pages) y `og:image` es una sola imagen para todas las copas, así que la tarjeta con el
+nombre la arma el celular del admin, como la imagen de la tabla (D-126).
+**Consecuencias:** en WhatsApp la invitación llega como imagen con el texto de pie, y el link del
+texto ya no despliega su propia vista previa (la tarjeta la reemplaza). La tarjeta social de
+`tools/og/tarjeta.html` sigue igual para el link pelado.
+

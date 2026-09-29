@@ -427,6 +427,12 @@ const ES = {
   adminTitle: 'Administrar la copa',
   adminMsgs: 'Mensajes para los competidores',
   msgInvite: 'Invitación',
+  // La tarjeta que acompaña la invitación (como assets/og/copa.jpg, con el nombre de la copa)
+  inviteCardTitle: 'La Copa: {copa}',
+  inviteCardSub: 'Un torneo de una semana entre amigos: un minijuego distinto cada día, una tabla y un campeón.',
+  inviteCardDays: '⏱ {dias} días',
+  inviteCardStart: '📅 Parte el {fecha}',
+  inviteCardFree: 'Gratis y sin instalar',
   msgToday: 'Recordatorio del día',
   msgTable: 'Tabla parcial',
   msgFinal: 'Resumen final',
