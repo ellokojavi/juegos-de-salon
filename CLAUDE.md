@@ -96,6 +96,7 @@ node julepe/engine.test.mjs
 node copa/engine.test.mjs               # La Copa: torneo, minijuegos y almacén de prueba
 node copa/juegos/juegos.test.mjs
 node copa/store.test.mjs
+node copa/planilla.test.mjs            # la tabla final como CSV (D-161)
 node copa/reportes.test.mjs             # un reporte que no sale queda guardado y se reenvía
 node assets/js/arrastre.test.mjs
 node assets/js/i18n.test.mjs             # paridad es/en/pt (C-3)
