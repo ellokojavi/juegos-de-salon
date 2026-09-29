@@ -682,7 +682,7 @@ await b.shot('admin-lab');
 // Terminar la copa antes (D-161): el día de la final, con gente sin jugar; después, exportar
 await b.go(`${BASE}?prueba&demo=final-admin`, 1500); await preparar();
 const avisoFin = await ev(`document.getElementById('admin-terminar')?.innerText || ''`);
-ok(/Todavía no juegan el día 7: .*Cata/.test(avisoFin) && !/no se van a jugar/.test(avisoFin), 'terminar antes: el admin ve quién no ha jugado la final');
+ok(/Falta que jueguen el día 7: .*Cata/.test(avisoFin) && !/no se juegan/.test(avisoFin), 'terminar antes: el admin ve quién no ha jugado la final');
 ok(!await ev(`document.getElementById('admin-exportar')`), 'mientras se juega no hay exportar');
 await revisarPantalla('admin-terminar');
 await ev(`document.getElementById('admin-terminar').scrollIntoView(); 1`);
@@ -698,13 +698,13 @@ await click('#btn-exportar-planilla'); await sleep(300);
 const csv = await ev(`window.__descargas[0]?.text()`);
 const bom = await ev(`window.__descargas[0]?.arrayBuffer().then(x => [...new Uint8Array(x).slice(0, 3)].join(','))`);
 ok(bom === '239,187,191', 'exportar: la planilla lleva BOM, para que Excel lea los acentos');
-ok(/^🏆 Copa de la oficina\r\nEl admin la terminó antes/.test(csv || '') && /Tabla final/.test(csv) && /Lugar después de cada día/.test(csv) && /Día 7 · La Gran Final/.test(csv), 'exportar: la planilla trae la tabla final, los lugares día a día y la final');
+ok(/^🏆 Copa de la oficina\r\nEl admin la terminó antes/.test(csv || '') && /Tabla final/.test(csv) && /Posiciones día a día/.test(csv) && /Día 7 · La Gran Final/.test(csv), 'exportar: la planilla trae la tabla final, los lugares día a día y la final');
 await revisarPantalla('admin-exportar');
 await b.shot('admin-exportar');
 await click('#btn-exportar-imagen'); await sleep(1500);
 ok((await ev(`window.__compartido.length`)) + (await ev(`window.__descargas.length`)) >= 2, 'exportar: la imagen de la tabla final se comparte o se descarga');
 await ev(`[...document.querySelectorAll('#admin-body > button')].find(x => /Volver a la copa/.test(x.textContent))?.click(); 1`); await sleep(400);
-ok(await pantalla() === 'tablero' && !!await ev(`document.querySelector('.podio')`) && /terminó antes/.test(await ev(`document.querySelector('.copa-head').innerText`)), 'terminar antes: el tablero muestra el podio y que el admin la cerró');
+ok(await pantalla() === 'tablero' && !!await ev(`document.querySelector('.podio')`) && /terminó la copa antes/.test(await ev(`document.querySelector('.copa-head').innerText`)), 'terminar antes: el tablero muestra el podio y que el admin la cerró');
 await b.shot('tablero-terminada-antes');
 
 console.log('errores:', JSON.stringify(b.errors), JSON.stringify(b.logs));
