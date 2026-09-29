@@ -9,12 +9,40 @@
  * sabe de reglas; la pantalla no sabe sumar.
  */
 
-/** Los minijuegos de cada modalidad, en orden. El último siempre es la final, que vale doble. */
+/**
+ * El calendario de siempre de cada modalidad. El último siempre es la final, que vale doble.
+ * Desde D-159 el admin arma el suyo al crear la copa (ver POZO); este queda para las demos.
+ */
 export const CALENDARIOS = {
   3: ['linea', 'conexiones', 'final'],
   7: ['linea', 'numero', 'conexiones', 'reinas', 'letras', 'anio', 'final'],
 };
 export const MODALIDADES = Object.keys(CALENDARIOS).map(Number);
+
+/** Los minijuegos que el admin puede poner en los días antes de la final (D-159). */
+export const POZO = ['linea', 'numero', 'conexiones', 'reinas', 'letras', 'anio', 'zip', 'tango', 'donde'];
+
+/** ¿Es un calendario que se puede jugar? Juegos del pozo sin repetir, y la final al último. */
+export function calendarioValido(cal, dias) {
+  if (!Array.isArray(cal) || cal.length !== dias || cal[dias - 1] !== 'final') return false;
+  const dia = cal.slice(0, -1);
+  return dia.every(id => POZO.includes(id)) && new Set(dia).size === dia.length;
+}
+
+/**
+ * Una propuesta al azar para quien no quiere pensarlo (D-159): juegos distintos del pozo y la
+ * final. Si se le pasa `familia` (la habilidad de cada juego), evita dos días seguidos de la
+ * misma, para que la semana no sea tres de lógica al hilo.
+ */
+export function calendarioAlAzar(dias, { rand = cryptoRand, familia = null } = {}) {
+  const barajar = xs => { const a = [...xs]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  let cal = null;
+  for (let k = 0; k < 50; k++) {
+    cal = barajar(POZO).slice(0, dias - 1);
+    if (!familia || cal.every((id, i) => i === 0 || familia(id) !== familia(cal[i - 1]))) break;
+  }
+  return [...cal, 'final'];
+}
 
 /** Puntos del día según la posición. Del décimo para abajo, uno por haber jugado. */
 export const PUNTOS = [10, 8, 6, 5, 4, 3, 2, 1, 1, 1];
@@ -149,11 +177,12 @@ export function ventanas(inicio, dias, tz = ZONA) {
  * Lo que se guarda al crear una copa. `win` lleva las ventanas ya calculadas porque las
  * reglas de la base no saben de zonas horarias: comparan `now` contra estos números.
  */
-export function nuevaMeta({ nombre, dias, inicio, tz = ZONA, admin, creada, lab = false, alias = null }) {
+export function nuevaMeta({ nombre, dias, inicio, tz = ZONA, admin, creada, lab = false, alias = null, cal = null }) {
   if (!CALENDARIOS[dias]) throw new Error('modalidad');
+  if (cal && !calendarioValido(cal, dias)) throw new Error('calendario');
   return {
     v: 1, name: limpiarNombre(nombre, COPA_MAX), days: dias, start: inicio, tz, admin,
-    cal: CALENDARIOS[dias].join(','), win: ventanas(inicio, dias, tz), createdAt: creada,
+    cal: (cal || CALENDARIOS[dias]).join(','), win: ventanas(inicio, dias, tz), createdAt: creada,
     end: medianoche(sumarDias(inicio, dias), tz),
     // Las reglas de la base no suman ni convierten números a texto: lo que necesitan comparar
     // va ya calculado. `joinUntil` = cuándo empieza la final; `final` = el día de la final, como texto.

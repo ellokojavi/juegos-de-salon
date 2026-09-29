@@ -14,7 +14,7 @@ import { applyStatic } from '../assets/js/i18n.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { trackStart, versionOf } from '../assets/js/transport/stats.js';
 import {
-  CALENDARIOS, MAX_JUGADORES, COPA_MAX, aliasLimpio, esAlias, CODIGO, esCodigo, codigoAlAzar, pidAlAzar, limpiarNombre, claveNombre, esPin, hashPin,
+  POZO, calendarioAlAzar, calendario, MAX_JUGADORES, COPA_MAX, aliasLimpio, esAlias, CODIGO, esCodigo, codigoAlAzar, pidAlAzar, limpiarNombre, claveNombre, esPin, hashPin,
   fechaEn, sumarDias, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta, estadoDia, comodinDe, moverInicio, sinEmpezar, pasarDia, MAX_DIAS_INICIO, faltaGente,
   medianoche, menosJuegos, provisoria, ultimoDiaVisto, marcaDelDia, puedeComodin, multiplicador, posicionesDelDia, tabla, faltan, medallas, evolucion, visibleDia, reloj, mmss, juegoDelDia, esFinal, activos, ZONA,
 } from './engine.js';
@@ -190,6 +190,60 @@ function campoFecha(hoy) {
   return { nodo, input, valida: () => /^\d{4}-\d{2}-\d{2}$/.test(input.value) && input.value >= hoy && input.value <= max };
 }
 
+/**
+ * Los juegos de la copa y su orden (D-159). Parte con una propuesta al azar para quien no quiere
+ * pensarlo; se cambia tocando un juego y después otro: dos días se cambian de lugar, y un día con
+ * uno de los que quedan fuera se reemplazan. La final no se toca: siempre el último día.
+ */
+function elegirJuegos() {
+  let cal = [], sel = null;
+  const familia = id => MINIJUEGOS[id].habilidad;
+  const lista = el('ol', { class: 'cal-elegir', id: 'cal-elegir' });
+  const fuera = el('div', { class: 'cal-fuera', id: 'cal-fuera' });
+  const ayuda = el('small', { class: 'muted', 'aria-live': 'polite' });
+  const fueraDe = () => POZO.filter(id => !cal.includes(id));
+
+  const tocar = (zona, i) => {
+    SFX.tap();
+    if (!sel || (sel.zona === 'fuera' && zona === 'fuera')) sel = { zona, i };
+    else if (sel.zona === zona && sel.i === i) sel = null;
+    else {
+      const a = sel.zona === 'dia' ? sel : { zona, i }, b = sel.zona === 'dia' ? { zona, i } : sel;
+      if (b.zona === 'dia') [cal[a.i], cal[b.i]] = [cal[b.i], cal[a.i]];
+      else cal[a.i] = fueraDe()[b.i];
+      sel = null;
+    }
+    pintar();
+  };
+  const juego = (id, sub = MINIJUEGOS[id].habilidad) => [el('span', { class: 'cal-emoji' }, MINIJUEGOS[id].emoji),
+    el('span', { class: 'cal-nombre' }, MINIJUEGOS[id].nombre, el('small', {}, sub))];
+  const elegido = (zona, i) => sel?.zona === zona && sel.i === i;
+
+  function pintar() {
+    lista.innerHTML = ''; fuera.innerHTML = '';
+    poner(lista, cal.slice(0, -1).map((id, i) => el('li', {}, el('button', {
+      type: 'button', class: `elegir-dia${elegido('dia', i) ? ' on' : ''}`, 'data-juego': id,
+      'aria-pressed': String(elegido('dia', i)), onClick: () => tocar('dia', i),
+    }, el('b', { class: 'cal-num' }, fmt(T.gamesDay, { d: i + 1 })), ...juego(id)))),
+    el('li', {}, el('div', { class: 'elegir-dia fija' }, el('b', { class: 'cal-num' }, fmt(T.gamesDay, { d: cal.length })), ...juego('final', T.gamesFinal))));
+    poner(fuera, fueraDe().map((id, i) => el('button', {
+      type: 'button', class: `chip-btn${elegido('fuera', i) ? ' on' : ''}`, 'data-juego': id,
+      'aria-pressed': String(elegido('fuera', i)), onClick: () => tocar('fuera', i),
+    }, `${MINIJUEGOS[id].emoji} ${MINIJUEGOS[id].nombre}`)));
+    ayuda.textContent = !sel ? T.gamesHint : sel.zona === 'dia' ? T.gamesPickedDay : T.gamesPickedOut;
+  }
+  const sortear = dias => { cal = calendarioAlAzar(dias, { familia }); sel = null; pintar(); };
+
+  const nodo = el('div', { class: 'panel', id: 'crear-juegos', hidden: true },
+    el('div', { class: 'field' }, el('label', {}, T.fGames), ayuda, lista),
+    el('div', { class: 'field' }, el('label', {}, T.gamesOut), fuera),
+    el('button', { type: 'button', class: 'btn btn--ghost btn--sm', id: 'btn-azar', onClick: () => { SFX.tap(); sortear(cal.length); } }, T.gamesShuffle));
+  // Un toque fuera de la lista suelta lo elegido (C-8). Con la ruta del evento, no con
+  // `contains`: el botón tocado ya se redibujó y quedó fuera del árbol.
+  document.addEventListener('click', ev => { if (sel && nodo.isConnected && !ev.composedPath().includes(nodo)) { sel = null; pintar(); } });
+  return { nodo, sortear, get cal() { return [...cal]; } };
+}
+
 function crearCopa() {
   mostrar('crear');
   const body = $('#crear-body');
@@ -198,10 +252,11 @@ function crearCopa() {
   const nombre = campo(T.fCopa, { placeholder: T.fCopaPh, maxlength: String(COPA_MAX) }, { contador: true });
   // La Copa de 3 días es solo para probar con amigos (D-100): se ofrece con ?tres en la URL
   // o en el modo de prueba, nunca en la portada.
+  const juegos = elegirJuegos();
   const modo = opciones([
-    TRES ? { valor: 3, titulo: T.mode3, sub: `${T.mode3Sub} ${CALENDARIOS[3].map(j => MINIJUEGOS[j].emoji).join(' ')}` } : null,
-    { valor: 7, titulo: T.mode7, sub: `${T.mode7Sub} ${CALENDARIOS[7].map(j => MINIJUEGOS[j].emoji).join(' ')}` },
-  ].filter(Boolean));
+    TRES ? { valor: 3, titulo: T.mode3, sub: T.mode3Sub } : null,
+    { valor: 7, titulo: T.mode7, sub: T.mode7Sub },
+  ].filter(Boolean), dias => { juegos.nodo.hidden = false; juegos.sortear(dias); });
   // Hoy, mañana u otra fecha de un calendario, hasta 30 días desde hoy (D-115)
   const hoyCrear = fechaEn(Date.now(), ZONA);
   const otraFecha = campoFecha(hoyCrear);
@@ -258,7 +313,7 @@ function crearCopa() {
       if (alias) { const x = await st.alias(alias); if (x && x.hasta > now) throw Object.assign(new Error('alias'), { code: 'alias' }); }
       const fechaInicio = inicio.valor === 'otra' ? otraFecha.input.value : sumarDias(fechaEn(now, ZONA), inicio.valor);
       // Las copas del laboratorio (y las de prueba) llevan la marca que deja pasar de día (D-115)
-      const meta = nuevaMeta({ nombre: n, dias: modo.valor, inicio: fechaInicio, tz: ZONA, admin: pid, creada: now, lab: LABS || PRUEBA, alias });
+      const meta = nuevaMeta({ nombre: n, dias: modo.valor, inicio: fechaInicio, tz: ZONA, admin: pid, creada: now, lab: LABS || PRUEBA, alias, cal: juegos.cal });
       await st.crear(code, meta, { pid, name: quien, at: now, pinHash: await hashPin(code, pid, pin1.input.value) });
       cuenta.nombre.set(quien);
       cuenta.recordar(code, pid, { nombre: quien, copa: n, fin: meta.end });
@@ -274,6 +329,7 @@ function crearCopa() {
     el('div', { class: 'panel' }, nombre.nodo,
       el('div', { class: 'field' }, el('label', {}, T.fMode), modo.nodo),
       el('div', { class: 'field' }, el('label', {}, T.fStart), inicio.nodo, otraFecha.nodo, el('small', { class: 'muted' }, fmt(T.startHint, { zona: zonaTexto(ZONA) })))),
+    juegos.nodo,
     el('div', { class: 'panel' }, link.nodo),
     el('div', { class: 'panel' }, yo.nodo, pin1.nodo, pin2.nodo, el('small', { class: 'muted' }, T.pinHint)),
     err, boton,
@@ -454,7 +510,7 @@ function entrar({ mantener = false } = {}) {
       el('p', { class: 'muted', style: 'margin:0' }, T.inviteTitle),
       el('h1', { class: 'display display--lg rainbow' }, meta.name),
       el('p', { class: 'lead' }, info)),
-    el('div', { class: 'cal-mini' }, CALENDARIOS[meta.days].map(j => el('span', { title: MINIJUEGOS[j].nombre }, MINIJUEGOS[j].emoji))),
+    el('div', { class: 'cal-mini' }, calendario(meta).map(j => el('span', { title: MINIJUEGOS[j].nombre }, MINIJUEGOS[j].emoji))),
     puedeEntrar ? null : el('p', { class: 'muted center' }, terminada(meta, now) ? T.closedEnded : L().closed && inscripcionAbierta(meta, now) ? T.closedByAdmin : T.closedJoin),
     tabs, caja,
   );
