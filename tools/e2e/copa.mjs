@@ -501,7 +501,7 @@ await b.go(`${BASE}?practica=${id}&prueba&labs${id === 'zip' ? '&zipSeg=12&semil
   ok(await ev(`!!document.getElementById('btn-ensayo')`) , `práctica de ${id}: la antesala ofrece la prueba como en la copa`);
   if (id === 'donde') {
     // La portada es el globo girando solo (y los demás minijuegos siguen con su emoji)
-    const cuadro = () => ev(`document.querySelector('.intro-hero .globo-portada')?.toDataURL().length + ':' + document.querySelector('.intro-hero .globo-portada')?.toDataURL().slice(-200)`);
+    const cuadro = () => ev(`document.querySelector('.intro-hero .globo-portada canvas:last-child')?.toDataURL().length + ':' + document.querySelector('.intro-hero .globo-portada canvas:last-child')?.toDataURL().slice(-200)`);
     const c1 = await cuadro(); await sleep(700); const c2 = await cuadro();
     ok(!c1.startsWith('undefined') && c1 !== c2, '¿Dónde queda?: la portada es un globo que gira');
     await b.shot('donde-portada');
