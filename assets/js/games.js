@@ -117,7 +117,7 @@ export const GAMES = [
 
 /**
  * Los minijuegos de La Copa que se juegan sueltos desde la portada (D-142), de a uno y sin copa:
- * abren `minijuegos/<id>/` (D-149, D-161), la pantalla de práctica de La Copa con un link que no
+ * abren `minijuegos/<id>/` (D-149, D-162), la pantalla de práctica de La Copa con un link que no
  * dice "copa": no guarda nada y no cuenta para ninguna copa. Van aparte de GAMES porque no son una
  * carpeta con su `rules.js`: el README y las pruebas de idioma de los juegos no los recorren. Su
  * página y su tarjeta social las genera `node tools/og.mjs tarjetas` a partir de minijuegos/index.html.
