@@ -2106,3 +2106,8 @@ calcar un contorno y pasa a depender de saber dónde queda el país: más incert
 de D-157.
 **Consecuencias:** los países chicos sin costa (Luxemburgo, Andorra, Eswatini) ya no se distinguen
 de sus vecinos.
+**Además, la portada gira con perspectiva:** el dueño pidió sacar el alfiler y la estrella del
+globo que gira, salvo que se vieran con perspectiva. Se dejan, con perspectiva: el aro de la
+ciudad está pintado sobre la esfera, así que se achata en la dirección del radio tanto como el
+coseno del ángulo con que se mira; el alfiler se achica (hasta un 35 %) y se desvanece al irse por
+detrás. En el juego las marcas siguen planas: ahí se miran de frente y tienen que leerse.
