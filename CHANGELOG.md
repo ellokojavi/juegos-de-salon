@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.71.0 — 2026-09-29
+- **¿Dónde queda?: el globo es una imagen satelital.** La Tierra vista desde el satélite (Blue
+  Marble de la NASA): los desiertos, las selvas, las montañas y el hielo se ven como son. También
+  en la portada. El zoom llega hasta 16 veces (D-159).
+
 ## 0.70.4 — 2026-09-29
 - **¿Dónde queda?: el globo va sin fronteras.** La tierra es un solo verde; hay que saber dónde
   queda cada país (D-158).

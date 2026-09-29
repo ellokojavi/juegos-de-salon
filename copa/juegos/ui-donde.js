@@ -16,10 +16,13 @@ const poner = (nodo, ...hijos) => nodo.append(...hijos.flat().filter(x => x !== 
 /** Dos toques más juntos que esto, en tiempo y en distancia, son un doble toque: acercan. */
 const DOBLE_MS = 320;
 const DOBLE_PX = 30;
-/** Cuánto se puede acercar, en veces el globo entero: en un celular, cerca de 1 km por píxel. */
-const ZOOM_MAX = 40;
+/**
+ * Cuánto se puede acercar, en veces el globo entero: en un celular, unos 2 km por píxel. Más allá
+ * la imagen satelital (4096 px de ancho, D-159) ya no tiene detalle que mostrar.
+ */
+const ZOOM_MAX = 16;
 /** Al mostrar la respuesta, se acerca a lo más esto: dos puntos muy juntos no llenan la pantalla. */
-const ZOOM_RESPUESTA = 16;
+const ZOOM_RESPUESTA = 12;
 /** Hacia dónde mira el globo al empezar cada ciudad: el Atlántico, con América, Europa y África. */
 const CENTRO_INICIAL = [10, -40];
 /** El globo va esto más abajo en su caja: el alfiler clavado en el borde de arriba muestra la cabeza (30 px). */
@@ -37,9 +40,14 @@ function crearGlobo({ T, alTocar, alGirar }) {
   canvas.className = 'mapa-globo';
   canvas.setAttribute('role', 'img');
   canvas.setAttribute('aria-label', T.mapLabel);
+  // Debajo, la imagen satelital (D-159); encima, en `canvas`, las marcas y los toques
+  const fondo = document.createElement('canvas');
+  fondo.className = 'mapa-satelite';
+  fondo.setAttribute('aria-hidden', 'true');
   const v = { centro: CENTRO_INICIAL.slice(), z: 1 };
   const marcas = {};
   let w = 0, h = 0, pedido = false;
+  const sat = globo.satelite(fondo, () => redibujar());
 
   const radioBase = () => Math.max(40, Math.min(w / 2, h / 2 - AIRE) - 10);
   const V = () => globo.vista({ centro: v.centro, r: radioBase() * v.z, cx: w / 2, cy: h / 2 + AIRE });
@@ -47,7 +55,10 @@ function crearGlobo({ T, alTocar, alGirar }) {
     pedido = false;
     if (!canvas.isConnected) return;
     [w, h] = globo.ajustar(canvas);
-    if (w && h) globo.dibujar(canvas.getContext('2d'), w, h, V(), { marcas });
+    if (!w || !h) return;
+    const vista = V();
+    sat?.dibujar(vista, w, h);
+    globo.dibujar(canvas.getContext('2d'), w, h, vista, { marcas, satelital: !!sat?.lista() });
   };
   const redibujar = () => { if (!pedido) { pedido = true; requestAnimationFrame(pintar); } };
 
@@ -137,6 +148,7 @@ function crearGlobo({ T, alTocar, alGirar }) {
   };
   return {
     canvas,
+    fondo,
     zoom: f => { const r = canvas.getBoundingClientRect(); zoom(f, r.left + r.width / 2, r.top + r.height / 2); },
     alfiler(q) { marcas.alfiler = q; canvas.dataset.alfiler = q ? '1' : ''; redibujar(); },
     /** La respuesta: el alfiler, la ciudad y el arco entre los dos, con los dos a la vista. */
@@ -157,9 +169,13 @@ function crearGlobo({ T, alTocar, alGirar }) {
  * como el afiche de "Próximamente". Con movimiento reducido (C-8) queda quieto.
  */
 export function portada() {
-  const canvas = document.createElement('canvas');
-  canvas.className = 'globo-portada';
-  canvas.setAttribute('aria-hidden', 'true');
+  const caja = document.createElement('div');
+  caja.className = 'globo-portada';
+  caja.setAttribute('aria-hidden', 'true');
+  const fondo = document.createElement('canvas'), canvas = document.createElement('canvas');
+  caja.append(fondo, canvas);
+  // Quieta (movimiento reducido) se dibuja una sola vez: se redibuja cuando llega la imagen
+  const sat = globo.satelite(fondo, () => { if (quieto) requestAnimationFrame(cuadro); });
   const marcas = { alfiler: [-12, -50], ciudad: [-33.05, -71.62], linea: true };
   const quieto = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
   const t0 = performance.now();
@@ -172,13 +188,15 @@ export function portada() {
       const [w, h] = globo.ajustar(canvas);
       if (w) {
         const lon = quieto ? -60 : -60 + ((ahora - t0) / 1000) * 8;
-        globo.dibujar(canvas.getContext('2d'), w, h, globo.vista({ centro: [-12, envolver(lon)], r: Math.min(w, h) / 2 - 8, cx: w / 2, cy: h / 2 }), { marcas, liviano: true, escala: 0.7, perspectiva: true });
+        const vista = globo.vista({ centro: [-12, envolver(lon)], r: Math.min(w, h) / 2 - 8, cx: w / 2, cy: h / 2 });
+        sat?.dibujar(vista, w, h);
+        globo.dibujar(canvas.getContext('2d'), w, h, vista, { marcas, liviano: true, escala: 0.7, perspectiva: true, satelital: !!sat?.lista() });
       }
     }
     if (!quieto) requestAnimationFrame(cuadro);
   };
   requestAnimationFrame(cuadro);
-  return canvas;
+  return caja;
 }
 
 export function montar(raiz, ctx) {
@@ -188,7 +206,7 @@ export function montar(raiz, ctx) {
   // La pista de que el globo se gira (#88): solo en la primera ciudad, hasta el primer arrastre
   let girado = jugadas.length > 0;
 
-  const caja = (mapa, pista = null) => el('div', { class: 'mapa-caja' }, mapa.canvas, pista,
+  const caja = (mapa, pista = null) => el('div', { class: 'mapa-caja' }, mapa.fondo, mapa.canvas, pista,
     el('div', { class: 'mapa-zoom' },
       el('button', { type: 'button', class: 'btn btn--ghost', id: 'btn-acercar', 'aria-label': T.zoomIn, onClick: () => mapa.zoom(2) }, '+'),
       el('button', { type: 'button', class: 'btn btn--ghost', id: 'btn-alejar', 'aria-label': T.zoomOut, onClick: () => mapa.zoom(0.5) }, '−')));
