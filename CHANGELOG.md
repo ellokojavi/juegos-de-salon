@@ -1,7 +1,7 @@
 # Changelog
 
 ## 0.73.0 — 2026-09-29
-- **La Copa: el admin elige los juegos y su orden al crearla** (D-161). Después de la duración
+- **La Copa: el admin elige los juegos y su orden al crearla** (D-163). Después de la duración
   aparece "¿Qué se juega cada día?" con la mano y la línea de Línea de Tiempo: un día se arrastra
   a otro lugar de la semana y un juego de los que quedan fuera, hasta el día que reemplaza (o
   tocando: el juego y después dónde va). Parte con una propuesta al azar, sin dos días seguidos

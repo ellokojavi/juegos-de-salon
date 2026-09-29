@@ -192,7 +192,7 @@ function campoFecha(hoy) {
 }
 
 /**
- * Los juegos de la copa y su orden (D-161), con la mano y la línea de Línea de Tiempo (D-102):
+ * Los juegos de la copa y su orden (D-163), con la mano y la línea de Línea de Tiempo (D-102):
  * arriba los que quedan fuera, abajo la semana. Un día se arrastra a otro lugar de la semana, y un
  * juego de fuera se arrastra hasta el día que reemplaza; tocando se llega a lo mismo (el juego y
  * después dónde va). Parte con una propuesta al azar, para quien no quiere pensarlo. La final no
