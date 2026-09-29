@@ -527,6 +527,7 @@ const ES = {
   yearOf: 'Hito {i} de {n}',
   cityOf: 'Ciudad {i} de {n}',
   pinWas: 'Quedaste a {km}. Ganaste {pts} puntos.',
+  pinWasOne: 'Quedaste a {km}. Ganaste 1 punto.',
   mapLabel: 'Mapa del mundo sin nombres',
   zoomIn: 'Acercar el mapa',
   zoomOut: 'Alejar el mapa',
