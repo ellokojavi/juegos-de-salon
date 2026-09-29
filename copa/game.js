@@ -17,11 +17,13 @@ import {
   CALENDARIOS, MAX_JUGADORES, COPA_MAX, aliasLimpio, esAlias, CODIGO, esCodigo, codigoAlAzar, pidAlAzar, limpiarNombre, claveNombre, esPin, hashPin,
   fechaEn, sumarDias, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta, estadoDia, comodinDe, moverInicio, sinEmpezar, pasarDia, MAX_DIAS_INICIO, faltaGente,
   medianoche, menosJuegos, provisoria, ultimoDiaVisto, marcaDelDia, puedeComodin, multiplicador, posicionesDelDia, tabla, faltan, medallas, evolucion, visibleDia, reloj, mmss, juegoDelDia, esFinal, activos, ZONA,
+  conCierre, cerradaAntes, anulado, puedeCerrar,
 } from './engine.js';
 import { GAME_ID, LOCALES, MINIJUEGOS, RONDAS_FINAL } from './rules.js';
 import { createCuenta } from './cuenta.js';
 import { JUEGOS } from './juegos/index.js';
 import { desglose } from './desglose.js';
+import { planilla } from './planilla.js';
 
 /** `append` que descarta los hijos nulos, como `el()` (sin esto, un null se escribe como texto). */
 const poner = (nodo, ...hijos) => nodo.append(...hijos.flat().filter(x => x !== null && x !== undefined && x !== false));
@@ -89,7 +91,7 @@ function errorDe(e) {
     pin: 'errPinWrong', 'nombre-repetido': 'errRepetido', llena: 'errLlena', 'no-existe': 'errNoExiste',
     ventana: 'errVentana', 'ya-jugado': 'errYaJugado', comodin: 'errComodin', permiso: 'errPermiso',
     config: 'errConfig', offline: 'errOffline', busy: 'errOffline', cerrada: 'errCerrada',
-    reporte: 'errReport', empezada: 'errEmpezada', terminada: 'errTerminada', faltan: 'errFaltan', alias: 'errAlias',
+    reporte: 'errReport', empezada: 'errEmpezada', terminada: 'errTerminada', faltan: 'errFaltan', alias: 'errAlias', fin: 'errFin',
   };
   if (!mapa[code]) console.error(e);
   return T[mapa[code] || 'errNet'];
@@ -303,6 +305,8 @@ async function abrirCopa(code, { recienCreada = false, pantalla = null } = {}) {
   let primera = true;
   S.off = st.escuchar(code, L => {
     const habia = !!S.L?.meta;
+    // Si el admin la terminó antes (D-161), la copa se ve cerrada desde esa hora
+    L = conCierre(L);
     S.L = L;
     if (!L || !L.meta) {
       // La borró su admin (D-117): quien la tenía abierta se entera, y este celular la olvida
@@ -559,6 +563,7 @@ function misDias(d, now) {
       detalle = T.lastDay;
       accion = el('button', { class: 'btn btn--yellow btn--sm', 'data-dia': k, onClick: () => { SFX.tap(); jugar(k); } }, `${J.emoji} ${T.resume}`);
     } else if (est === 'perdido') detalle = T.notPlayed;
+    else if (est === 'anulado') detalle = T.dayCancelled;
     else detalle = fmt(T.opensOn, { fecha: fechaCorta(meta.win[k].a, meta.tz) });
     const contenido = [
       el('span', { class: 'md-dia' }, el('b', {}, fmt(T.dayShort, { d: k })), el('small', {}, fechaCorta(meta.win[k].a, meta.tz))),
@@ -670,11 +675,12 @@ function tablero() {
   const d = diaActual(meta, now);
   const body = $('#tablero-body');
   body.innerHTML = '';
-  const dias = Array.from({ length: meta.days }, (_, i) => i + 1);
+  // Los días que no alcanzaron a abrirse porque el admin terminó la copa antes no van en la tabla
+  const dias = Array.from({ length: meta.days }, (_, i) => i + 1).filter(k => !anulado(meta, k));
 
   let estadoTxt;
   if (d === 0) estadoTxt = fmt(T.before, { fecha: fechaLarga(meta.win[1].a, meta.tz) });
-  else if (d > meta.days) estadoTxt = T.over;
+  else if (d > meta.days) estadoTxt = cerradaAntes(meta) ? fmt(T.overEarly, { fecha: fechaLarga(meta.end, meta.tz) }) : T.over;
   // El día de la copa y la fecha, para que se lea igual que el calendario (D-120)
   else estadoTxt = `${fmt(T.dayOf, { d, n: meta.days })} · ${fechaLarga(meta.win[d].a, meta.tz)}`;
 
@@ -1090,6 +1096,16 @@ async function compartirImagen() {
   toast(T.imageDownloaded);
 }
 
+/** La tabla final como planilla CSV (D-161): se descarga, para abrirla en Excel o en Google Sheets. */
+function descargarPlanilla() {
+  const Lc = L(), { meta } = Lc;
+  const csv = planilla(Lc, { T, juegos: MINIJUEGOS, fmt, fecha: ms => fechaLarga(ms, meta.tz) });
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const a = el('a', { href: URL.createObjectURL(blob), download: `copa-${meta.alias || S.code.toLowerCase()}-tabla-final.csv` });
+  document.body.append(a); a.click(); a.remove();
+  toast(T.exportDone);
+}
+
 function mensajeFinal() {
   const Lc = L();
   const m = medallas(Lc);
@@ -1131,10 +1147,12 @@ function admin({ forzar = false } = {}) {
         el('li', {}, T.adminWelcome3),
         meta.alias ? el('li', {}, T.adminWelcomeAlias) : null)));
   }
-  const accion = (rotulo, id, fn, clase = 'btn btn--ghost btn--sm') => el('button', { class: clase, id, onClick: async ev => {
+  const accion = (rotulo, id, fn, clase = 'btn btn--ghost btn--sm', caja = err) => el('button', { class: clase, id, onClick: async ev => {
     SFX.tap(); ev.currentTarget.disabled = true;
     const b = ev.currentTarget;
-    try { await fn(); err.textContent = ''; } catch (e) { if (e?.code !== 'cancelado') avisoError(err, errorDe(e)); b.disabled = false; }
+    try { await fn(); caja.textContent = ''; } catch (e) { if (e?.code !== 'cancelado') avisoError(caja, errorDe(e)); }
+    // Lo que cambia la copa redibuja Administrar; exportar no, y el botón tiene que seguir sirviendo
+    b.disabled = false;
   } }, rotulo);
   poner(body, el('div', { class: 'panel stack' },
     el('p', { class: 'lead', style: 'margin:0' }, T.adminMsgs),
@@ -1144,6 +1162,18 @@ function admin({ forzar = false } = {}) {
     !terminada(meta, now) ? msg(T.msgToday, mensajeHoy, 'msg-hoy') : null,
     d >= 1 && !terminada(meta, now) ? msg(T.msgTable, mensajeTabla, 'msg-tabla') : null,
     terminada(meta, now) ? msg(T.msgFinal, mensajeFinal, 'msg-final') : null));
+
+  // Terminada (sola o por el admin), la tabla final se exporta: imagen y planilla (D-161)
+  if (terminada(meta, now)) {
+    const errExportar = el('div', { class: 'form-error', role: 'alert' });
+    poner(body, el('div', { class: 'panel stack', id: 'admin-exportar' },
+      el('p', { class: 'lead', style: 'margin:0' }, T.exportTitle),
+      el('p', { class: 'muted', style: 'margin:0' }, T.exportLead),
+      errExportar,
+      accion(`📤 ${T.exportImage}`, 'btn-exportar-imagen', () => compartirImagen(), 'btn btn--cyan btn--sm', errExportar),
+      accion(`⬇️ ${T.exportSheet}`, 'btn-exportar-planilla', async () => { descargarPlanilla(); }, 'btn btn--cyan btn--sm', errExportar)));
+  }
+
 
   // El nombre de la copa se puede cambiar mientras no termine (D-148); el link sigue igual
   if (!terminada(meta, now)) {
@@ -1235,6 +1265,25 @@ function admin({ forzar = false } = {}) {
           if (!confirm(T.joinCloseConfirm)) throw { code: 'cancelado' };
           await store.cerrarInscripcion(S.code, true);
         })));
+  }
+
+  // Terminar la copa antes (D-161): por ejemplo, si el último no va a jugar la final
+  if (puedeCerrar(meta, now)) {
+    const hoy = Math.min(d, meta.days);
+    const quienes = [hoy - 1, hoy].filter(k => k >= 1).map(k => ({ k, falta: faltan(Lc, k, now) })).filter(x => x.falta.length);
+    const quedan = hoy < meta.days;
+    const errTerminar = el('div', { class: 'form-error', role: 'alert' });
+    poner(body, el('div', { class: 'panel stack', id: 'admin-terminar' },
+      el('p', { class: 'lead', style: 'margin:0' }, T.endTitle),
+      el('p', { class: 'muted', style: 'margin:0' }, T.endLead),
+      quienes.map(x => el('div', { class: 'aviso' }, fmt(T.endMissing, { d: x.k, names: x.falta.map(j => j.name).join(', ') }))),
+      quedan ? el('p', { class: 'muted', style: 'margin:0' }, T.endCancelled) : null,
+      errTerminar,
+      accion(`🏁 ${T.endGo}`, 'btn-terminar', async () => {
+        if (!confirm(fmt(T.endConfirm, { copa: meta.name }))) throw { code: 'cancelado' };
+        await store.terminarCopa(S.code);
+        SFX.reveal(); toast(T.endDone);
+      }, 'btn btn--ghost', errTerminar)));
   }
 
   const lista = el('div', { class: 'admin-jugadores' });
