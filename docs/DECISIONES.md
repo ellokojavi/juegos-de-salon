@@ -2139,3 +2139,20 @@ satélite); la imagen de diciembre de la NASA (medio hemisferio norte bajo la ni
 (6 MB, mucho para un celular).
 **Consecuencias:** la primera vez se bajan unos 2 MB más; el navegador los guarda. En la portada
 el globo que gira también es satelital.
+
+## D-160 · El globo satelital se ve nítido al acercarse: teselas
+**Fecha:** 2026-09-29 · **Estado:** vigente
+**Decisión:** Además de la imagen entera de 4096 px (D-159), la de la NASA de 21600 × 10800 se
+corta en **128 teselas** de 1350 px (16 columnas por 8 filas, 22,5° por lado) en
+`assets/img/tierra-2004-09/`. Cuando el globo se acerca más de lo que da la imagen entera, se bajan
+y se pintan encima solo las teselas que se ven; zoom afuera queda la imagen entera. El globo
+guarda en la tarjeta de video hasta 36 teselas y suelta las que llevan más rato sin verse.
+**Por qué:** el dueño vio la imagen estirada al acercar: con 4096 px para toda la Tierra, a 16
+veces cada píxel de la imagen ocupa varios de la pantalla. Las teselas dan la resolución completa
+de la fuente (más de 5 veces más nítida) sin bajarla entera.
+**Alternativas descartadas:** una imagen de 8192 px (6 MB, sigue siendo la mitad de nítida y la
+bajaría todo el mundo); la imagen completa como una sola textura (no cabe en la memoria de muchos
+celulares).
+**Consecuencias:** el repo suma 30 MB de teselas, unos 235 KB cada una; un jugador que acerca en
+una ciudad baja entre 1 y 9. Sin mipmap en las teselas (solo se usan acercando, y así no hay
+costura en la línea de cambio de fecha). Las rehace `node tools/mapa.mjs satelite`.

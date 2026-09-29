@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.72.0 — 2026-09-29
+- **¿Dónde queda?: el globo se ve nítido al acercarse.** Acercado, se bajan solo los pedazos de la
+  imagen satelital que se ven, con más de 5 veces la resolución de antes (D-160).
+
 ## 0.71.0 — 2026-09-29
 - **¿Dónde queda?: el globo es una imagen satelital.** La Tierra vista desde el satélite (Blue
   Marble de la NASA): los desiertos, las selvas, las montañas y el hielo se ven como son. También
