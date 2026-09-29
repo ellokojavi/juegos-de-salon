@@ -2111,3 +2111,31 @@ globo que gira, salvo que se vieran con perspectiva. Se dejan, con perspectiva: 
 ciudad está pintado sobre la esfera, así que se achata en la dirección del radio tanto como el
 coseno del ángulo con que se mira; el alfiler se achica (hasta un 35 %) y se desvanece al irse por
 detrás. En el juego las marcas siguen planas: ahí se miran de frente y tienen que leerse.
+
+## D-159 · El globo de ¿Dónde queda? es una imagen satelital
+**Fecha:** 2026-09-29 · **Estado:** vigente
+**Decisión:** El globo muestra la Tierra vista desde el satélite: **Blue Marble Next Generation**
+de la NASA (dominio público), la de septiembre de 2004, con relieve y fondo marino. Se eligió
+septiembre porque es el mes con menos nieve en los dos hemisferios: el Sahara, Arabia, el Atacama
+y el interior de Australia se ven como desiertos, el Amazonas y el Congo como selva, Groenlandia y
+la Antártica como hielo. Sin nombres ni fronteras (D-158).
+- **Cómo se dibuja:** con WebGL, en un canvas debajo del de las marcas: cada píxel del disco se
+  invierte a latitud y longitud y se lee de la imagen (`satelite()` en `globo.js`). Encima siguen
+  la sombra del borde, el brillo, la retícula (más tenue) y las marcas.
+- **Dos imágenes** en `assets/img/`: una de 2048 px de ancho (0,5 MB) que llega rápido y otra de
+  4096 px (1,6 MB) que la reemplaza al bajar, si el celular la acepta. El nombre lleva el mes de
+  la imagen, porque `set-version.py` no estampa imágenes. Las rehace
+  `node tools/mapa.mjs satelite` (necesita internet y `sips`, de macOS).
+- **Sin WebGL, o mientras no llega ninguna imagen,** el globo se dibuja como antes, con el mapa
+  vectorial verde. El mapa vectorial (`mapa.js`) queda también para las pruebas: cada ciudad cae
+  en su país y sobre tierra.
+- **El zoom máximo baja de 40 a 16 veces** (unos 2 km por píxel en un celular): más allá la
+  imagen de 4096 px ya no tiene detalle. Sigue sobrando precisión para el puntaje (un punto cada
+  25 km). La respuesta acerca hasta 12 veces.
+**Por qué:** lo pidió el dueño: un mapa físico, con color de las zonas y volumen, para reconocer
+por ejemplo los desiertos, y con imagen satelital y no dibujada.
+**Alternativas descartadas:** los mapas físicos dibujados de Natural Earth (el dueño pidió
+satélite); la imagen de diciembre de la NASA (medio hemisferio norte bajo la nieve); una de 8192 px
+(6 MB, mucho para un celular).
+**Consecuencias:** la primera vez se bajan unos 2 MB más; el navegador los guarda. En la portada
+el globo que gira también es satelital.
