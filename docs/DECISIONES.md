@@ -2157,7 +2157,7 @@ celulares).
 una ciudad baja entre 1 y 9. Sin mipmap en las teselas (solo se usan acercando, y así no hay
 costura en la línea de cambio de fecha). Las rehace `node tools/mapa.mjs satelite`.
 
-## D-161 · Cada minijuego suelto tiene su página y su tarjeta social
+## D-162 · Cada minijuego suelto tiene su página y su tarjeta social
 **Fecha:** 2026-09-29 · **Estado:** vigente; cambia la alternativa que D-149 había descartado
 **Decisión:** Los minijuegos sueltos se abren en `/minijuegos/<id>/` (`/minijuegos/reinas/`), una
 página por minijuego con su propia tarjeta social (título, bajada e imagen de 1200×630 en

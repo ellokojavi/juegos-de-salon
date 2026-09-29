@@ -85,11 +85,11 @@ const paginas = () => [...PUERTAS.map(portada), ...conTarjeta.map(g => ({
 /**
  * Un robot de WhatsApp no corre JavaScript: lee las etiquetas del HTML tal como llega. Con una
  * sola página para todos (/minijuegos/?reinas) cada link traía la misma tarjeta, así que cada
- * minijuego tiene la suya (D-161). Es una copia de minijuegos/index.html un nivel más abajo, con
+ * minijuego tiene la suya (D-162). Es una copia de minijuegos/index.html un nivel más abajo, con
  * su título, su tarjeta y `data-suelto="<id>"`: se rehace, no se edita. Como set-version.py corre
  * esto después de estampar, la copia sale con el import map de la versión nueva.
  */
-const AVISO_COPIA = () => `  <!-- Generada por node tools/og.mjs tarjetas a partir de minijuegos/index.html: no se edita a mano (D-161). -->`;
+const AVISO_COPIA = () => `  <!-- Generada por node tools/og.mjs tarjetas a partir de minijuegos/index.html: no se edita a mano (D-162). -->`;
 function paginaSuelta(p, bloqueOg) {
   let html = readFileSync(join(RAIZ, 'minijuegos/index.html'), 'utf8');
   // Sus etiquetas genéricas y el comentario que explica la página de todos

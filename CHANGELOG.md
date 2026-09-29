@@ -4,7 +4,7 @@
 - **Cada minijuego tiene su propia tarjeta al compartirlo.** Un link a Reinas, Conexiones, Zip o
   cualquier minijuego pegado en WhatsApp muestra ese minijuego, con su nombre, de qué se trata y su
   imagen, y no la tarjeta de La Copa o del menú. Viven en `/minijuegos/reinas/` y así; los links de
-  antes siguen funcionando (D-161).
+  antes siguen funcionando (D-162).
 
 ## 0.72.1 — 2026-09-29
 - **La Copa: la práctica del laboratorio ya no dice "Práctica en el laboratorio"** sobre el nombre
