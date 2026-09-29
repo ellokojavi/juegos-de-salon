@@ -589,6 +589,14 @@ await b.go(`${BASE}?practica=${id}&prueba&labs${id === 'zip' ? '&zipSeg=12&semil
     await sleep(200);
     const lon = (await vista()).centro[1];
     ok(lon < -170, `¿Dónde queda?: pasados los 180° el globo sigue girando (${lon.toFixed(1)}°)`);
+    // Acercado, se bajan las teselas nítidas de lo que se ve, y solo esas (D-160)
+    if (await ev(`!!document.createElement('canvas').getContext('webgl')`)) {
+      await ev(`document.querySelector('.mapa-globo').globo.girarA(-33, -70); for (let i = 0; i < 4; i++) document.getElementById('btn-acercar').click(); 1`);
+      await sleep(1500);
+      const teselas = await ev(`JSON.stringify(performance.getEntriesByType('resource').filter(e => e.name.includes('tierra-2004-09/')).map(e => e.name.split('/').pop()))`).then(JSON.parse);
+      ok(teselas.includes('5-4.jpg') && teselas.length <= 9, `¿Dónde queda?: acercado sobre Chile se bajan sus teselas (${teselas.join(', ')})`);
+      for (let i = 0; i < 4; i++) await click('#btn-alejar');
+    }
     await b.shot('donde-mapa');
   }
   await JUGAR[id](id === 'tango' ? 1 : 2);
