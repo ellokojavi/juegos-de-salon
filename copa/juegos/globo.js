@@ -175,25 +175,32 @@ function blanco(ctx, x, y, k = 1) {
  * Dibuja el globo. `vistaDe` sale de `vista()`; `marcas` puede traer `alfiler: [lat, lon]`,
  * `ciudad: [lat, lon]` y `linea: true` (el arco entre los dos); `liviano` usa menos puntos.
  */
-export function dibujar(ctx, w, h, V, { marcas = {}, liviano = false, escala = 1, perspectiva = false } = {}) {
+export function dibujar(ctx, w, h, V, { marcas = {}, liviano = false, escala = 1, perspectiva = false, satelital = false } = {}) {
   ctx.clearRect(0, 0, w, h);
   const { cx, cy, r } = V;
   // Halo, como en el afiche
   const halo = ctx.createRadialGradient(cx, cy, r * 0.9, cx, cy, r * 1.12);
   halo.addColorStop(0, 'rgba(90, 200, 255, 0.45)'); halo.addColorStop(1, 'rgba(90, 200, 255, 0)');
-  ctx.fillStyle = halo; ctx.beginPath(); ctx.arc(cx, cy, r * 1.12, 0, 2 * Math.PI); ctx.fill();
+  // Solo por fuera del disco: por dentro teñiría la imagen satelital, que va debajo
+  ctx.fillStyle = halo; ctx.beginPath(); ctx.arc(cx, cy, r * 1.12, 0, 2 * Math.PI); ctx.arc(cx, cy, r, 0, 2 * Math.PI, true); ctx.fill();
+  // Con la imagen satelital debajo (otro canvas), aquí va solo lo de encima: la retícula, la
+  // sombra, el brillo y las marcas
+  if (!satelital) {
   // El mar, más claro arriba a la izquierda
   const mar = ctx.createRadialGradient(cx - r * 0.35, cy - r * 0.4, r * 0.05, cx, cy, r);
   mar.addColorStop(0, '#6fd0ff'); mar.addColorStop(0.55, '#2a7fe0'); mar.addColorStop(1, '#0c3c96');
   ctx.fillStyle = mar; ctx.beginPath(); ctx.arc(cx, cy, r, 0, 2 * Math.PI); ctx.fill();
+  }
   // Meridianos y paralelos
   ctx.beginPath();
   for (const l of RETICULA) trazarLinea(ctx, V, l);
-  ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(255,255,255,0.16)'; ctx.stroke();
+  ctx.lineWidth = 1; ctx.strokeStyle = satelital ? 'rgba(255,255,255,0.09)' : 'rgba(255,255,255,0.16)'; ctx.stroke();
   // La tierra, sin fronteras (D-158): los países se rellenan juntos y no se trazan sus bordes
-  ctx.beginPath();
-  for (const a of liviano ? livianos() : anillos()) trazarAnillo(ctx, V, a);
-  ctx.fillStyle = '#8ee06a'; ctx.fill('evenodd');
+  if (!satelital) {
+    ctx.beginPath();
+    for (const a of liviano ? livianos() : anillos()) trazarAnillo(ctx, V, a);
+    ctx.fillStyle = '#8ee06a'; ctx.fill('evenodd');
+  }
   // Sombra en el borde y brillo, para que se lea como esfera
   const sombra = ctx.createRadialGradient(cx - r * 0.3, cy - r * 0.3, r * 0.5, cx, cy, r);
   sombra.addColorStop(0, 'rgba(0,0,40,0)'); sombra.addColorStop(1, 'rgba(0,0,40,0.38)');
@@ -226,4 +233,122 @@ export function ajustar(canvas) {
   if (canvas.width !== W || canvas.height !== H) { canvas.width = W; canvas.height = H; }
   canvas.getContext('2d').setTransform(dpr, 0, 0, dpr, 0, 0);
   return [r.width, r.height];
+}
+
+/* ---------- La imagen satelital (D-159) ---------- */
+
+/**
+ * La Tierra vista desde el satélite (Blue Marble de la NASA, septiembre de 2004), pegada al globo
+ * con WebGL: cada píxel del disco se invierte a latitud y longitud y se lee de la imagen. La chica
+ * llega primero; la nítida la reemplaza cuando termina de bajar. Sin WebGL, o mientras no llega
+ * ninguna, el globo se dibuja como antes, con el mapa vectorial.
+ */
+const IMAGENES = [2048, 4096].map(w => ({ w, url: new URL(`../../assets/img/tierra-2004-09-${w}.jpg`, import.meta.url).href }));
+let cargadas = null;
+const avisos = new Set();
+/** Las imágenes que ya llegaron, de la más nítida a la más chica. Pide bajarlas la primera vez. */
+function imagenes() {
+  if (!cargadas) {
+    cargadas = [];
+    for (const { w, url } of IMAGENES) {
+      const img = new Image();
+      img.decoding = 'async';
+      img.onload = () => { cargadas.push({ w, img }); cargadas.sort((a, b) => b.w - a.w); for (const f of avisos) f(); };
+      img.src = url;
+    }
+  }
+  return cargadas;
+}
+
+const VERT = 'attribute vec2 p; void main() { gl_Position = vec4(p, 0.0, 1.0); }';
+const FRAG = (derivadas) => `${derivadas ? '#extension GL_OES_standard_derivatives : enable\n' : ''}precision highp float;
+uniform sampler2D t;
+uniform vec2 c;      // centro del globo, en píxeles del canvas (y desde abajo)
+uniform float r;     // radio, en píxeles del canvas
+uniform vec4 giro;   // sen y cos de la latitud y de la longitud del centro
+void main() {
+  float x = (gl_FragCoord.x - c.x) / r, y = (gl_FragCoord.y - c.y) / r;
+  float q = x * x + y * y;
+  if (q > 1.0) discard;
+  float prof = sqrt(1.0 - q);
+  float Z = giro.y * y + giro.x * prof, A = -giro.x * y + giro.y * prof;
+  float X = A * giro.w - x * giro.z, Y = A * giro.z + x * giro.w;
+  float u = atan(Y, X) / 6.2831853 + 0.5, v = 0.5 - asin(clamp(Z, -1.0, 1.0)) / 3.1415927;
+  ${derivadas
+    // En la línea de cambio de fecha u salta de 1 a 0: se elige la versión de u que no salta ahí,
+    // para que el mipmap no dibuje una costura (Tarini)
+    ? 'float u2 = fract(u + 0.5) - 0.5; if (fwidth(u2) < fwidth(u) - 0.001) u = u2;'
+    : ''}
+  vec3 col = texture2D(t, vec2(u, v)).rgb;
+  // Un poco más clara que el original, que en un celular se ve oscura; el borde, suavizado
+  col = pow(col, vec3(0.85));
+  float a = clamp((1.0 - sqrt(q)) * r / 1.5, 0.0, 1.0);
+  gl_FragColor = vec4(col * a, a);
+}`;
+
+/**
+ * Prepara un canvas con WebGL para dibujar la Tierra. Devuelve `{ dibujar(V, w, h), lista() }`, o
+ * `null` si el navegador no tiene WebGL. `alLlegar` se llama cuando una imagen nueva está lista.
+ */
+export function satelite(canvas, alLlegar) {
+  let gl = null;
+  try { gl = canvas.getContext('webgl', { premultipliedAlpha: true, antialias: false }); } catch { /* sin WebGL */ }
+  if (!gl) return null;
+  const derivadas = !!gl.getExtension('OES_standard_derivatives');
+  const programa = gl.createProgram();
+  for (const [tipo, src] of [[gl.VERTEX_SHADER, VERT], [gl.FRAGMENT_SHADER, FRAG(derivadas)]]) {
+    const s = gl.createShader(tipo);
+    gl.shaderSource(s, src); gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) return null;
+    gl.attachShader(programa, s);
+  }
+  gl.linkProgram(programa);
+  if (!gl.getProgramParameter(programa, gl.LINK_STATUS)) return null;
+  gl.useProgram(programa);
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+  const p = gl.getAttribLocation(programa, 'p');
+  gl.enableVertexAttribArray(p);
+  gl.vertexAttribPointer(p, 2, gl.FLOAT, false, 0, 0);
+  const U = n => gl.getUniformLocation(programa, n);
+  const [uC, uR, uGiro] = [U('c'), U('r'), U('giro')];
+  const tex = gl.createTexture();
+  const maximo = gl.getParameter(gl.MAX_TEXTURE_SIZE);
+  let subida = 0;
+
+  const subir = () => {
+    // La más nítida que ya llegó y que este celular acepta
+    const mejor = imagenes().find(x => x.w <= maximo);
+    if (!mejor || mejor.w === subida) return;
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, mejor.img);
+    gl.generateMipmap(gl.TEXTURE_2D);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    // Sin derivadas no se puede evitar la costura del mipmap: se lee sin mipmap
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, derivadas ? gl.LINEAR_MIPMAP_LINEAR : gl.LINEAR);
+    subida = mejor.w;
+  };
+  const aviso = () => { subir(); alLlegar?.(); };
+  avisos.add(aviso);
+  subir();
+
+  return {
+    lista: () => subida > 0,
+    dibujar(V, w, h) {
+      if (!canvas.isConnected) { avisos.delete(aviso); return; }
+      const dpr = Math.min(3, window.devicePixelRatio || 1);
+      const W = Math.round(w * dpr), H = Math.round(h * dpr);
+      if (canvas.width !== W || canvas.height !== H) { canvas.width = W; canvas.height = H; }
+      gl.viewport(0, 0, W, H);
+      gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
+      if (!subida) return;
+      gl.uniform2f(uC, V.cx * dpr, H - V.cy * dpr);
+      gl.uniform1f(uR, V.r * dpr);
+      gl.uniform4f(uGiro, V.s0, V.c0, V.sl, V.cl);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    },
+  };
 }
