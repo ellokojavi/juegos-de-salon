@@ -26,6 +26,12 @@ const ZOOM_MAX = 24;
 /** Al mostrar la respuesta, se acerca a lo más esto: dos puntos muy juntos no llenan la pantalla. */
 const ZOOM_RESPUESTA = 10;
 const { ancho: W, alto: H } = MAPA;
+/**
+ * Dónde parte la vista: a 10° O, para que en un celular vertical se vean Sudamérica, Europa y
+ * África. Parte acercada hasta llenar el alto de la caja (dilema #85): con el mundo entero, en un
+ * celular quedaba una franja de mar vacío arriba y abajo. Alejando se vuelve a ver entero.
+ */
+const LON_INICIAL = -10;
 
 /** Los dibujos, en píxeles de pantalla: se escalan para verse del mismo tamaño con cualquier zoom. */
 const ALFILER = 'M0 0C-2-7-10-11-10-19a10 10 0 1 1 20 0c0 8-8 12-10 19z';
@@ -44,6 +50,7 @@ function crearMapa({ T, alTocar }) {
   const capa = s('g');
   svg.append(capa);
   const v = { cx: W / 2, cy: H / 2, z: 1 };
+  let inicial = true;
 
   const caja = () => svg.getBoundingClientRect();
   /** El ancho visible sin zoom: el mapa entero, contenido en la caja. */
@@ -53,6 +60,12 @@ function crearMapa({ T, alTocar }) {
   function aplicar() {
     const r = caja();
     if (!r.width || !r.height) return;
+    if (inicial) {
+      // El zoom con que el mapa llena el alto; en una caja apaisada (computador) ya lo llena sin zoom
+      inicial = false;
+      v.z = Math.max(1, base(r) / ((H * r.width) / r.height));
+      v.cx = motor.proyectar(0, LON_INICIAL)[0];
+    }
     const { w, h } = medidas(r);
     v.cx = w >= W ? W / 2 : Math.min(W - w / 2, Math.max(w / 2, v.cx));
     v.cy = h >= H ? H / 2 : Math.min(H - h / 2, Math.max(h / 2, v.cy));
@@ -149,6 +162,7 @@ function crearMapa({ T, alTocar }) {
     },
     /** La respuesta: el alfiler, la ciudad y la línea entre los dos. */
     respuesta(p, q) {
+      inicial = false;
       capa.innerHTML = '';
       // Por el lado corto: si están a más de medio mundo en el dibujo, la línea sale por el borde
       const lineas = Math.abs(p[0] - q[0]) > W / 2

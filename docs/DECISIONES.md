@@ -2035,6 +2035,10 @@ puntaje es el promedio de las cinco (D-113). La tarjeta usa las marcas de ¿En q
 - **Gestos:** arrastrar corre el mapa, pellizcar o tocar dos veces lo acerca (también la rueda y
   los botones + y −), y un toque pone el alfiler; tocar en otro lugar lo mueve. Confirmar es el
   botón (C-8).
+- **La vista inicial llena el alto de la caja** (dilema #85, opción B del dueño): en un celular
+  vertical, el mundo entero era una franja de 175 px con mar vacío arriba y abajo. Parte centrada
+  en 10° O (Sudamérica, Europa y África a la vista) y alejando se ve el mundo entero. Los botones
+  + y − van abajo a la derecha, sobre el océano Índico: no tapan Asia ni la Patagonia.
 - **Solo en el laboratorio** (`labs: true`, sin calendario ni tarjeta en la portada): se juega en
   `/copa/?practica=donde&labs`. Pasa a una copa sumándolo a `CALENDARIOS` (engine.js).
 **Por qué:** lo pidió el dueño, a la manera de los juegos en que se pone un alfiler en el mapa.
