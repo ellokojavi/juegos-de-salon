@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.70.3 — 2026-09-29
+- **¿En qué año?: "Ganaste 1 punto." en singular** cuando un hito da un solo punto (U-6).
+
 ## 0.70.2 — 2026-09-29
 - **¿Dónde queda?: la primera ciudad avisa que el globo se gira.** "↔ Arrastra para girar" arriba
   del globo, hasta el primer arrastre (#88).
