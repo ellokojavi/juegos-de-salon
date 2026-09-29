@@ -2078,3 +2078,18 @@ externa para unas 150 líneas de trigonometría.
 ciudad. La vista inicial del dilema #85 (llenar el alto de la caja) ya no aplica: el globo cabe
 entero y se ve como globo. La portada dibuja 30 cuadros por segundo con uno de cada cuatro puntos
 del mapa, y se detiene cuando sale de la pantalla.
+
+## D-157 · ¿Dónde queda? suma ciudades de segunda línea
+**Fecha:** 2026-09-28 · **Estado:** vigente
+**Decisión:** A las 306 ciudades de D-155 se suman 223 de segunda línea (529 en total): ciudades
+regionales que no son capitales ni de las más famosas, como Porto Alegre, Salta, Copiapó, Castro,
+Trujillo, Bilbao, Gdansk, Chengdú, Luxor, Mombasa o Queenstown. Van casi todas en los niveles 2 y
+3; el nivel 1 no cambia. Cada partida sigue siendo dos fáciles, dos medianas y una difícil.
+**Por qué:** lo pidió el dueño, para que ubicar el alfiler tenga más incertidumbre. Con solo
+capitales y ciudades famosas, la mediana y la difícil eran casi siempre una capital: se aprendían
+rápido o eran islas imposibles. Ahora la difícil puede ser Portland o Breslavia, que se saben más
+o menos dónde quedan pero no con precisión.
+**Consecuencias:** `tools/mapa.mjs revisar` comprueba que las 529 caen dentro de su país. Chile
+suma 13 (Copiapó, Calama, Rancagua, Talca, Chillán, Los Ángeles, Osorno, Castro, Puerto Natales,
+Ovalle, Vallenar, Tocopilla y Pucón): de a una por partida, porque cada partida es de países
+distintos.
