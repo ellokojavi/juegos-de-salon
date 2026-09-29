@@ -541,7 +541,6 @@ const ES = {
   // Laboratorio y práctica (D-101)
   backToLabs: '🧪 Volver al laboratorio',
   backToLabsShort: '‹ Laboratorio',
-  practiceTitle: 'Práctica en el laboratorio',
   // El minijuego suelto, abierto desde la portada (D-142)
   looseTitle: 'Minijuego de La Copa',
   looseHint: 'Acá lo juegas suelto: no cuenta para ninguna copa y puedes jugarlo las veces que quieras.',
