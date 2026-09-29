@@ -78,6 +78,10 @@ Las respuestas a dilemas (issues con la etiqueta `usabilidad`) se anotan aquí:
 - **Sin empates fuera de una copa** (#72): en el minijuego suelto, la práctica y la sesión de
   prueba, el puntaje no dice "Si empatas…" y el resultado dice solo "Tu tiempo fue 0:42.". El
   desempate vive aparte (`desempate` en `MINIJUEGOS`) y solo se suma dentro de una copa.
-- **El mapa de ¿Dónde queda? parte acercado** (#85, D-155): en un celular vertical la vista
-  inicial llena el alto de la caja, centrada en 10° O, y alejando se ve el mundo entero (opción B
-  del dueño). Los botones + y − van abajo a la derecha, sobre el Índico.
+- **¿Dónde queda? se juega en un globo** (D-156, reemplaza la decisión de #85): cada ciudad parte
+  con el globo entero a la vista, mirando al Atlántico; arrastrar lo gira sin fin. Los botones + y
+  − van abajo a la derecha. La portada es el globo girando solo.
+- **Pista de girar el globo** (#88, opción B): en la primera ciudad de cada partida, "↔ Arrastra
+  para girar" arriba al centro, sobre el Ártico (abajo chocaba con + y − en 320 px); se va con el primer arrastre y no vuelve.
+- **Los niveles de las ciudades chilenas quedan como están** (#90, opción B): Los Ángeles, Pucón y
+  Puerto Natales siguen en nivel 3; de vez en cuando la difícil es una "amable". No marcarlo.
