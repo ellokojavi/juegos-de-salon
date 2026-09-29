@@ -344,7 +344,7 @@ Not a game but a **tournament that lasts a week**. Someone creates a cup and sha
 
 It borrows what makes daily puzzles work (Wordle, Connections): same challenge for everyone, once a day, comparable scores, little luck, and a **share card** that shows how you did without giving the answer away. The minigames reuse the engines, decks and screens this app already had where it can.
 
-**The admin picks the week** (D-159): when creating the cup, which minigames go in and in what order, starting from a random proposal (no two days of the same skill in a row) for anyone who would rather not think about it. There are nine to choose from: the six below plus Zip, Tango and Where is it?. The Grand Final always closes the cup and does not change. Without a choice, this is the classic week:
+**The admin picks the week** (D-159): when creating the cup, which minigames go in and in what order, starting from a random proposal (no two days of the same skill in a row) for anyone who would rather not think about it. It is Timeline's hand and line: drag a day to another spot in the week, or drag a game from the hand onto the day it replaces. There are nine to choose from: the six below plus Zip, Tango and Where is it?. The Grand Final always closes the cup and does not change. Without a choice, this is the classic week:
 
 | Day | Minigame | Skill |
 |---|---|---|
