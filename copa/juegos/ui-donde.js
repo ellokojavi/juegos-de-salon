@@ -196,7 +196,7 @@ export function montar(raiz, ctx) {
       const f = e.filas[revelado];
       const mapa = crearMapa({ T, alTocar: () => {} });
       poner(pantalla, titulo(revelado, f.ciudad), caja(mapa),
-        el('div', { class: 'aviso ' + (f.pts >= 50 ? 'bien' : 'mal'), id: 'donde-aviso' }, `${motor.marca(f.km)} ${fmt(T.pinWas, { km: motor.km(f.km), pts: f.pts })}`),
+        el('div', { class: 'aviso ' + (f.pts >= 50 ? 'bien' : 'mal'), id: 'donde-aviso' }, `${motor.marca(f.km)} ${fmt(f.pts === 1 ? T.pinWasOne : T.pinWas, { km: motor.km(f.km), pts: f.pts })}`),
         e.fin
           ? el('button', { class: 'btn btn--yellow', id: 'btn-fin', onClick: () => { SFX.tap(); ctx.terminar(e); } }, ctx.textoFin || T.seeResults)
           : el('button', { class: 'btn btn--yellow', id: 'btn-siguiente', onClick: () => { SFX.tap(); revelado = null; dibujar(); } }, T.next));
