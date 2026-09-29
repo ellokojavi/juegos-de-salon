@@ -480,15 +480,19 @@ ok(await ev(`document.querySelectorAll('.rej.reina').length`) > 0 && !!await ev(
 await click('#btn-fin'); await sleep(500);
 ok(/^0/.test(await ev(`document.querySelector('.score-big')?.textContent || ''`)), 'Reinas: rendirse vale 0 puntos');
 // Desde la portada (D-142) la práctica es el minijuego suelto: sin prueba ni semilla, y vuelve al menú.
-// Vive en /minijuegos/ (D-149): un link viejo a /copa/?practica= sin &labs se va para allá.
+// Vive en /minijuegos/<id>/ (D-149, D-162): un link viejo a /copa/?practica= sin &labs se va para allá.
 await b.go(`${BASE}?practica=conexiones&prueba`, 1500); await preparar();
-ok(await ev(`location.pathname + location.search`) === '/minijuegos/?conexiones&prueba', 'minijuego suelto: el link viejo de la copa lleva a /minijuegos/');
-ok(!await ev(`document.getElementById('btn-ensayo')`) && await ev(`document.getElementById('btn-menu').getAttribute('href')`) === '../'
-  && await ev(`[...document.querySelectorAll('#jugar-body a')].some(a => a.getAttribute('href') === '../')`), 'minijuego suelto: sin prueba y de vuelta al menú');
+ok(await ev(`location.pathname + location.search`) === '/minijuegos/conexiones/?prueba', 'minijuego suelto: el link viejo de la copa lleva a /minijuegos/conexiones/');
+ok(!await ev(`document.getElementById('btn-ensayo')`) && await ev(`document.getElementById('btn-menu').href`) === `${SITIO}/`
+  && await ev(`[...document.querySelectorAll('#jugar-body a')].some(a => a.href === '${SITIO}/')`), 'minijuego suelto: sin prueba y de vuelta al menú');
+// Su página trae su propia tarjeta social: un link compartido muestra el minijuego, no La Copa (D-162)
+ok(/\/assets\/og\/conexiones\.jpg/.test(await ev(`document.querySelector('meta[property="og:image"]')?.content || ''`)), 'minijuego suelto: su página trae su propia tarjeta social');
 ok(!/copa/i.test(await ev(`location.href + ' ' + document.title`)), 'minijuego suelto: ni el link ni el título dicen copa');
 ok(!await ev(`document.body.innerText.includes('empatas')`), 'minijuego suelto: no habla de empates, no hay con quién (dilema #72)');
 // El 🐞 del resultado abre el formulario y vuelve al resultado (la página suelta necesita su pantalla)
+// El link de antes (/minijuegos/?reinas) se va a la página propia
 await b.go(`${SITIO}/minijuegos/?reinas&prueba`, 1500); await preparar();
+ok(await ev(`location.pathname + location.search`) === '/minijuegos/reinas/?prueba', 'minijuego suelto: /minijuegos/?reinas lleva a /minijuegos/reinas/');
 await click('#btn-empezar'); await sleep(300); await esperarCuenta();
 await click('#btn-rendirse'); await sleep(300); await click('#btn-fin'); await sleep(800);
 await click('#btn-reporte'); await sleep(300);
