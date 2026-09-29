@@ -442,7 +442,7 @@ const ES = {
   labTitle: 'Copa de prueba',
   labLead: 'Esta copa es del laboratorio. Para probar sin esperar, puedes pasarla al día siguiente: lo de hoy queda como ayer, en su día de gracia, y se abre el día que sigue para todos.',
   labNext: 'Pasar al día {d}',
-  labEnd: 'Terminar la copa',
+  labEnd: 'Pasar al cierre',
   labNextConfirm: '¿Pasar la copa al día {d}? El día {hoy} queda como ayer y el día {d} se abre para todos. No se puede deshacer.',
   labEndConfirm: '¿Terminar la copa ahora? Se cierra la final y se ve el podio. No se puede deshacer.',
   labNextDone: 'Listo: la copa está en el día {d}.',
