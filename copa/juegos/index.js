@@ -15,6 +15,7 @@ import * as zip from './zip.js';
 import * as tango from './tango.js';
 import * as anio from './anio.js';
 import * as final from './final.js';
+import * as donde from './donde.js';
 import * as uiLinea from './ui-linea.js';
 import * as uiNumero from './ui-numero.js';
 import * as uiConexiones from './ui-conexiones.js';
@@ -24,6 +25,7 @@ import * as uiZip from './ui-zip.js';
 import * as uiTango from './ui-tango.js';
 import * as uiAnio from './ui-anio.js';
 import * as uiFinal from './ui-final.js';
+import * as uiDonde from './ui-donde.js';
 
 import { temasDeLaCopa, DECKS } from './mazos.js';
 import { LETRAS } from '../engine.js';
@@ -55,5 +57,7 @@ export const JUEGOS = {
   zip: { generar: (codigo, dia) => ({ codigo, dia }), montar: uiZip.montar, resultado: uiZip.resultado, ejemplo: uiZip.ejemplo, ensayo: (c, d) => ({ codigo: codigoEnsayo(c), dia: d, tiempo: 60 * 1000 }) },
   tango: juego(tango, uiTango, (c, d) => tango.generar(codigoEnsayo(c), d, { sal: 'ensayo' })),
   anio: juego(anio, uiAnio, (c, d) => anio.generar(codigoEnsayo(c), d, { n: 2, tema: temaLibre(c), sal: 'ensayo' })),
+  // Dos ciudades que no son las del día: la prueba no puede adelantar ninguna
+  donde: juego(donde, uiDonde, (c, d) => donde.generar(codigoEnsayo(c), d, { niveles: [1, 2], sal: 'ensayo', sin: donde.generar(c, d).ciudades })),
   final: juego(final, uiFinal, (c, d) => final.generar(codigoEnsayo(c), d)),
 };

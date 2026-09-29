@@ -78,3 +78,6 @@ Las respuestas a dilemas (issues con la etiqueta `usabilidad`) se anotan aquí:
 - **Sin empates fuera de una copa** (#72): en el minijuego suelto, la práctica y la sesión de
   prueba, el puntaje no dice "Si empatas…" y el resultado dice solo "Tu tiempo fue 0:42.". El
   desempate vive aparte (`desempate` en `MINIJUEGOS`) y solo se suma dentro de una copa.
+- **El mapa de ¿Dónde queda? parte acercado** (#85, D-155): en un celular vertical la vista
+  inicial llena el alto de la caja, centrada en 10° O, y alejando se ve el mundo entero (opción B
+  del dueño). Los botones + y − van abajo a la derecha, sobre el Índico.
