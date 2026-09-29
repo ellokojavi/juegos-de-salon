@@ -169,11 +169,10 @@ export function dibujar(ctx, w, h, V, { marcas = {}, liviano = false, escala = 1
   ctx.beginPath();
   for (const l of RETICULA) trazarLinea(ctx, V, l);
   ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(255,255,255,0.16)'; ctx.stroke();
-  // Los países
+  // La tierra, sin fronteras (D-158): los países se rellenan juntos y no se trazan sus bordes
   ctx.beginPath();
   for (const a of liviano ? livianos() : anillos()) trazarAnillo(ctx, V, a);
   ctx.fillStyle = '#8ee06a'; ctx.fill('evenodd');
-  ctx.lineJoin = 'round'; ctx.lineWidth = liviano ? 0.6 : 0.8; ctx.strokeStyle = 'rgba(22, 86, 40, 0.75)'; ctx.stroke();
   // Sombra en el borde y brillo, para que se lea como esfera
   const sombra = ctx.createRadialGradient(cx - r * 0.3, cy - r * 0.3, r * 0.5, cx, cy, r);
   sombra.addColorStop(0, 'rgba(0,0,40,0)'); sombra.addColorStop(1, 'rgba(0,0,40,0.38)');
