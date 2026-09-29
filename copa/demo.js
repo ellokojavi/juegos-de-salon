@@ -53,6 +53,8 @@ export const ESCENAS = {
   jugador: { inicio: 3, jugadores: 5, jugaron: 3, yo: 'javi02', pantalla: 'tablero' },
   admin: { inicio: 3, jugadores: 5, jugaron: 3, yo: 'cata01', pantalla: 'admin' },
   final: { inicio: 6, jugadores: 5, jugaron: 6, yo: 'javi02', pantalla: 'tablero' },
+  // El último día, con gente que todavía no juega la final: el admin puede terminarla antes (D-161)
+  'final-admin': { inicio: 6, jugadores: 5, jugaron: 6, yo: 'cata01', pantalla: 'admin' },
   podio: { inicio: 7, jugadores: 5, jugaron: 7, yo: 'javi02', pantalla: 'tablero' },
   // La máxima densidad del gráfico y de la imagen que se comparte (D-141): 7 días, 10 jugadores
   llena: { inicio: 7, jugadores: 10, jugaron: 7, yo: 'javi02', pantalla: 'tablero', faltas: true },
