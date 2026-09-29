@@ -7,7 +7,7 @@
  * módulo de juegos/ui-*.js.
  *
  * URL: /copa/ (portada) · /copa/?K7Q2X (una copa) · /copa/?K7Q2X&prueba (sin Firebase).
- * La misma pantalla sirve los minijuegos sueltos de la portada en /minijuegos/reinas/ (D-149, D-161).
+ * La misma pantalla sirve los minijuegos sueltos de la portada en /minijuegos/reinas/ (D-149, D-162).
  */
 import { $, $$, el, vibrate, sparkles, keepAwake, confetti, shareLink, canShare } from '../assets/js/ui.js';
 import { applyStatic } from '../assets/js/i18n.js';
@@ -40,7 +40,7 @@ const PRUEBA = busqueda.includes('prueba');
 // la Copa de 3 días (D-100). ?tres se mantiene por los links que ya circulan.
 const LABS = busqueda.includes('labs');
 const TRES = PRUEBA || LABS || busqueda.includes('tres');
-// Los minijuegos sueltos de la portada viven en /minijuegos/<id>/ (D-149, D-161): la misma
+// Los minijuegos sueltos de la portada viven en /minijuegos/<id>/ (D-149, D-162): la misma
 // pantalla, pero fuera de una copa el link no dice "copa". Cada uno tiene su página, que dice cuál
 // es en `<body data-suelto="reinas">`, para que el link compartido traiga su propia tarjeta
 // social. /copa/?practica=<id>&labs queda para el laboratorio.
