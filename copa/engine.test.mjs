@@ -19,7 +19,7 @@ test('calendarios: la final siempre al final', () => {
   assert.equal(new Set(CALENDARIOS[7]).size, 7);
 });
 
-test('calendario a elección (D-159): juegos del pozo sin repetir y la final al último', () => {
+test('calendario a elección (D-161): juegos del pozo sin repetir y la final al último', () => {
   assert.ok(calendarioValido(['donde', 'tango', 'final'], 3));
   assert.ok(calendarioValido(CALENDARIOS[7], 7));
   assert.ok(!calendarioValido(['linea', 'final', 'tango'], 3), 'la final va al último');

@@ -310,7 +310,7 @@ await click('#btn-crear'); await sleep(900); // con varias sesiones probando a l
 await ev(`(()=>{const i=[...document.querySelectorAll('#crear-body input:not(.fecha):not(#crear-link)')];i[0].value='Copa de la oficina';i[1].value='Cata';i[2].value='1111';i[3].value='1111';return 1})()`);
 ok(await ev(`document.getElementById('crear-juegos').hidden`), 'los juegos se eligen después de la duración: antes no se ven');
 await ev(`(()=>{const o=[...document.querySelectorAll('#crear-body .opcion')];o[${SIETE ? 1 : 0}].click();o[3].click();return 1})()`); // parte mañana
-// Elegir los juegos (D-159): una propuesta al azar en la mano y la línea de Línea de Tiempo
+// Elegir los juegos (D-161): una propuesta al azar en la mano y la línea de Línea de Tiempo
 {
   const n = SIETE ? 7 : 3;
   const cal = () => ev(`[...document.querySelectorAll('#cal-elegir .event[data-dia]')].map(b=>b.dataset.juego)`);
@@ -340,8 +340,9 @@ await ev(`(()=>{const o=[...document.querySelectorAll('#crear-body .opcion')];o[
     'tocar un día lo deja elegido y abre las ranuras donde se puede mover');
   await ev(`(document.querySelector('#crear-body .panel').click(), 1)`);
   ok(await ev(`document.querySelectorAll('#cal-elegir .event.sel, #cal-elegir .slot').length`) === 0 && JSON.stringify(await cal()) === JSON.stringify(propuesta), 'un toque fuera de la lista lo suelta sin cambiar nada (C-8)');
+  await ev(`(document.getElementById('crear-juegos').scrollIntoView({block:'start'}), scrollBy(0,-12), 1)`); await sleep(150);
+  await b.shot('10-semana');
   await ev(`(document.getElementById('cal-elegir').scrollIntoView({block:'center'}), 1)`); await sleep(100);
-  await b.shot('crear-juegos');
   // Arrastrar (D-85): el último día hasta el primer lugar, con el puntero del mouse
   {
     const antes = await cal();

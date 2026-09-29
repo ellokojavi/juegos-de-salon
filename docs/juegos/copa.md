@@ -16,7 +16,7 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
   con su señal de uso. `/copa/?practica=<id>` sin `&labs` lleva ahí.
 - **Jugadores:** de 1 a 10 por copa. **Idioma:** solo español (D-98).
 - **Modalidades:** Copa de 7 días (la que se ofrece) y Copa de 3 días (solo pruebas).
-- **Calendario:** lo arma el admin al crear la copa (D-159): qué juegos entran y en qué orden,
+- **Calendario:** lo arma el admin al crear la copa (D-161): qué juegos entran y en qué orden,
   a partir de una propuesta al azar. La final va siempre el último día y no cambia.
 
 ## Reglas del torneo
@@ -73,7 +73,7 @@ por su agarre ⠿) y un juego de la mano, hasta el día que reemplaza; tocando s
 (el juego y después la ranura o el día). 🎲 propone otro orden. La final queda fija al último. El calendario se guarda en
 `meta.cal` y `nuevaMeta` rechaza uno que no se puede jugar (`calendarioValido`). Sin elección
 (las demos) se usa el de siempre, `CALENDARIOS`: Línea, Toque y Fama, Conexiones, Reinas, Palabra,
-Año y la final; o Línea, Conexiones y la final en la de 3 días (D-159).
+Año y la final; o Línea, Conexiones y la final en la de 3 días (D-161).
 
 Los tres juegos más nuevos del pozo son **〰️ Zip** (un solo trazo por todas las casillas, pasando por los números en orden; por niveles, tres minutos para resolver la mayor cantidad) y **☀️ Tango**
 (soles y lunas, mitad y mitad por línea, nunca tres seguidos, con marcas = y ×), y **📍 ¿Dónde

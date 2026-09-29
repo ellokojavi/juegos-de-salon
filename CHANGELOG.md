@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.73.0 — 2026-09-29
+- **La Copa: el admin elige los juegos y su orden al crearla** (D-161). Después de la duración
+  aparece "¿Qué se juega cada día?" con la mano y la línea de Línea de Tiempo: un día se arrastra
+  a otro lugar de la semana y un juego de los que quedan fuera, hasta el día que reemplaza (o
+  tocando: el juego y después dónde va). Parte con una propuesta al azar, sin dos días seguidos
+  de la misma habilidad, y 🎲 propone otra. Entran también Zip, Tango y ¿Dónde queda?: la copa de
+  7 días lleva seis de nueve. La final no cambia y va siempre al último.
+- **La Copa: la invitación muestra los juegos de la copa**, no los del calendario de siempre.
+
 ## 0.72.1 — 2026-09-29
 - **La Copa: la práctica del laboratorio ya no dice "Práctica en el laboratorio"** sobre el nombre
   del minijuego.
