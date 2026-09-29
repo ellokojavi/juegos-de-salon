@@ -143,6 +143,27 @@ function alfiler(ctx, x, y, k = 1) {
   ctx.restore();
 }
 
+/**
+ * Con perspectiva (la portada, que gira): el aro está pintado sobre la esfera, así que hacia el
+ * borde se achata en la dirección del radio, tanto como el coseno del ángulo con que se lo mira
+ * (`prof`); el alfiler se achica y se desvanece al irse por detrás, en vez de desaparecer de golpe.
+ */
+function blancoEnPerspectiva(ctx, V, x, y, prof, k) {
+  ctx.save();
+  ctx.globalAlpha = Math.min(1, prof * 4);
+  ctx.translate(x, y);
+  ctx.rotate(Math.atan2(y - V.cy, x - V.cx));
+  ctx.scale(Math.max(0.04, prof), 1);
+  blanco(ctx, 0, 0, k);
+  ctx.restore();
+}
+function alfilerEnPerspectiva(ctx, x, y, prof, k) {
+  ctx.save();
+  ctx.globalAlpha = Math.min(1, prof * 3);
+  alfiler(ctx, x, y, k * (0.35 + 0.65 * prof));
+  ctx.restore();
+}
+
 /** La ciudad de verdad: un punto amarillo con su aro. */
 function blanco(ctx, x, y, k = 1) {
   ctx.beginPath(); ctx.arc(x, y, 13 * k, 0, 2 * Math.PI); ctx.lineWidth = 3 * k; ctx.strokeStyle = '#ffd23f'; ctx.stroke();
@@ -154,7 +175,7 @@ function blanco(ctx, x, y, k = 1) {
  * Dibuja el globo. `vistaDe` sale de `vista()`; `marcas` puede traer `alfiler: [lat, lon]`,
  * `ciudad: [lat, lon]` y `linea: true` (el arco entre los dos); `liviano` usa menos puntos.
  */
-export function dibujar(ctx, w, h, V, { marcas = {}, liviano = false, escala = 1 } = {}) {
+export function dibujar(ctx, w, h, V, { marcas = {}, liviano = false, escala = 1, perspectiva = false } = {}) {
   ctx.clearRect(0, 0, w, h);
   const { cx, cy, r } = V;
   // Halo, como en el afiche
@@ -184,6 +205,13 @@ export function dibujar(ctx, w, h, V, { marcas = {}, liviano = false, escala = 1
   if (marcas.linea && marcas.alfiler && marcas.ciudad) {
     ctx.beginPath(); trazarLinea(ctx, V, arco(marcas.alfiler, marcas.ciudad));
     ctx.setLineDash([6 * escala, 5 * escala]); ctx.lineWidth = 2.5 * escala; ctx.strokeStyle = '#ffd23f'; ctx.stroke(); ctx.setLineDash([]);
+  }
+  if (perspectiva) {
+    const c = marcas.ciudad && girar(V, ...vector(...marcas.ciudad));
+    if (c && c[2] > 0) blancoEnPerspectiva(ctx, V, c[0], c[1], c[2], escala);
+    const p = marcas.alfiler && girar(V, ...vector(...marcas.alfiler));
+    if (p && p[2] > 0) alfilerEnPerspectiva(ctx, p[0], p[1], p[2], escala);
+    return;
   }
   const c = marcas.ciudad && enPantalla(V, ...marcas.ciudad);
   if (c) blanco(ctx, c[0], c[1], escala);
