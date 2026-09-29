@@ -4,9 +4,8 @@
  * vale hasta 100 puntos y se pierden 4 por cada 100 km de error.
  *
  * El mapa es propio y sin nombres (`mapa.js`, lo genera `tools/mapa.mjs`): uno de internet
- * trae los nombres de las ciudades escritos encima. Va en proyección de Miller, que se parece al
- * mapa del colegio y se invierte con una fórmula; la distancia se mide sobre la esfera, así que lo
- * que la proyección estira no cambia el puntaje.
+ * trae los nombres de las ciudades escritos encima. Se dibuja como un globo que se gira sin fin
+ * (`globo.js`); la vista y su inversa están aquí, y la distancia se mide sobre la esfera.
  */
 import { azar } from './semilla.js';
 import { CIUDADES } from './ciudades.js';
@@ -20,25 +19,41 @@ export const KM_POR_PUNTO = 25;
 export const EXACTO_KM = 25;
 const RADIO_KM = 6371;
 
-// El mapa: 10 unidades por grado de longitud, de 84° N a 57° S (lo que queda afuera es hielo)
+// El mapa: coordenadas enteras en décimas de grado (x = longitud, y = latitud), que el globo
+// convierte a vectores de la esfera una sola vez
 export const UNIDADES_POR_GRADO = 10;
-export const NORTE = 84;
-export const SUR = -57;
 const RAD = Math.PI / 180;
-const K = UNIDADES_POR_GRADO / RAD;
-const miller = lat => 1.25 * Math.log(Math.tan(Math.PI / 4 + 0.4 * lat * RAD));
-export const ANCHO = 360 * UNIDADES_POR_GRADO;
-export const ALTO = Math.round((miller(NORTE) - miller(SUR)) * K);
 
-/** Del globo al mapa: `[x, y]` en unidades del dibujo, con y hacia abajo. */
-export const proyectar = (lat, lon) => [(lon + 180) * UNIDADES_POR_GRADO, (miller(NORTE) - miller(lat)) * K];
+/** Del globo a la esfera: el vector unitario [x, y, z] de una latitud y longitud. */
+export const vector = (lat, lon) => [Math.cos(lat * RAD) * Math.cos(lon * RAD), Math.cos(lat * RAD) * Math.sin(lon * RAD), Math.sin(lat * RAD)];
 
-/** Del mapa al globo: `[lat, lon]`. La longitud se da vuelta al pasar el borde. */
-export function desproyectar(x, y) {
-  const m = miller(NORTE) - y / K;
-  const lat = (2.5 * Math.atan(Math.exp(0.8 * m)) - 0.625 * Math.PI) / RAD;
-  const lon = ((((x / UNIDADES_POR_GRADO) % 360) + 360) % 360) - 180;
-  return [lat, lon];
+/**
+ * La vista del globo (proyección ortográfica) mirando al punto `[lat0, lon0]`: de un vector de
+ * la esfera a `[x, y, prof]`, con x a la derecha, y hacia arriba, en radios del globo; `prof > 0`
+ * es la cara que se ve.
+ */
+export function ver([X, Y, Z], [lat0, lon0]) {
+  const s0 = Math.sin(lat0 * RAD), c0 = Math.cos(lat0 * RAD), sl = Math.sin(lon0 * RAD), cl = Math.cos(lon0 * RAD);
+  const A = X * cl + Y * sl, B = Y * cl - X * sl;
+  return [B, c0 * Z - s0 * A, s0 * Z + c0 * A];
+}
+
+/** Lo contrario: el `[lat, lon]` que se ve en `[x, y]` (en radios), o `null` fuera del globo. */
+export function tocado(x, y, [lat0, lon0]) {
+  const q = x * x + y * y;
+  if (q > 1) return null;
+  const prof = Math.sqrt(1 - q);
+  const s0 = Math.sin(lat0 * RAD), c0 = Math.cos(lat0 * RAD), sl = Math.sin(lon0 * RAD), cl = Math.cos(lon0 * RAD);
+  const Z = c0 * y + s0 * prof, A = -s0 * y + c0 * prof;
+  const X = A * cl - x * sl, Y = A * sl + x * cl;
+  return [Math.asin(Math.max(-1, Math.min(1, Z))) / RAD, Math.atan2(Y, X) / RAD];
+}
+
+/** El punto medio del arco entre dos lugares (para centrar la respuesta). */
+export function medio([la1, lo1], [la2, lo2]) {
+  const a = vector(la1, lo1), b = vector(la2, lo2);
+  const m = [a[0] + b[0], a[1] + b[1], a[2] + b[2]], n = Math.hypot(...m) || 1;
+  return [Math.asin(m[2] / n) / RAD, Math.atan2(m[1], m[0]) / RAD];
 }
 
 /** Distancia sobre la esfera (haversine), en kilómetros. */

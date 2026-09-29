@@ -1,5 +1,5 @@
 {
-  "version": "0.67.1",
+  "version": "0.68.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -62,6 +62,7 @@
         "copa/juegos/conexiones.js",
         "copa/juegos/donde.js",
         "copa/juegos/final.js",
+        "copa/juegos/globo.js",
         "copa/juegos/grillas.js",
         "copa/juegos/index.js",
         "copa/juegos/letras.js",
@@ -589,6 +590,7 @@
     "copa/juegos/conexiones.js",
     "copa/juegos/donde.js",
     "copa/juegos/final.js",
+    "copa/juegos/globo.js",
     "copa/juegos/grillas.js",
     "copa/juegos/index.js",
     "copa/juegos/letras.js",
