@@ -2204,3 +2204,31 @@ tarjeta de la primera, o sigue la redirección y llega a la genérica).
 trae la tarjeta de La Copa: para compartir un minijuego se comparte `/minijuegos/<id>/`.
 `tools/og.mjs imagenes` acepta `PUERTO` y `PUERTO_CDP`, y se detiene si su puerto está ocupado
 (antes fotografiaba la copia de otra sesión sin avisar).
+
+## D-163 · El admin elige los juegos de la copa y su orden
+**Fecha:** 2026-09-29 · **Estado:** vigente
+**Decisión:** Al crear una copa, después de elegir la duración aparece **¿Qué se juega cada día?**
+con la mano y la línea de Línea de Tiempo (`linea.css`, `arrastre.js`): arriba, en la mano, los
+juegos que **quedan fuera**; abajo, la semana, un día por fila y la final fija al último. Un día se
+arrastra a otro lugar de la semana (por su agarre ⠿ en un celular, para que el resto de la fila
+deje desplazar la página) y los demás se corren para hacerle lugar; un juego de la mano se arrastra
+hasta el día que reemplaza, y el reemplazado vuelve a la mano. Tocando se llega a lo mismo: el
+juego y después dónde va (una ranura "Mover aquí" o el día que se reemplaza). El pozo son los nueve minijuegos (`POZO`): los seis del calendario de
+siempre más Zip, Tango y ¿Dónde queda?. La copa de 7 días lleva seis de los nueve y la de 3, dos.
+La lista parte con **una propuesta al azar** que evita dos días seguidos de la misma habilidad
+(las dos de Toque y Fama, o Reinas, Zip y Tango), y 🎲 propone otra. La final no cambia: sus cinco
+rondas son las de siempre, aunque la copa no tenga alguno de esos juegos.
+**Por qué:** lo pidió el dueño, para que cada grupo arme la semana a su gusto; la propuesta al azar
+es para quien no quiere pensarlo, que así crea la copa sin un paso más. Con los seis de siempre en
+siete días no había nada que elegir, solo el orden: por eso entran Zip, Tango y ¿Dónde queda?,
+que ya estaban listos para la copa. No se inventa UX (D-102): es la mano, la línea y el arrastre
+de Línea de Tiempo, que el dueño pidió reusar. Arrastrando un día no se abren ranuras, como al
+tocar: la lista crecería bajo el dedo y el destino se correría; los demás días se corren en su
+lugar. Por lo mismo, la ayuda que cambia con lo elegido va en una línea de alto fijo.
+**Consecuencias:** es una excepción a "nada se preselecciona" (C-8, D-38), pedida por el dueño:
+la propuesta viene armada, pero nada se confirma sin tocar **Crear la copa**, y cambiarla no
+cuesta nada. Por eso soltar sí cambia la semana, sin botón de confirmar: arrastrar sigue siendo
+elegir (D-85), y lo irreversible es crear la copa. El calendario ya se guardaba en `meta.cal` y todas las pantallas lo leen de ahí
+(la invitación lo leía de `CALENDARIOS` y se corrigió), así que las copas ya creadas no cambian y
+las reglas de Firebase tampoco (aceptan cualquier texto de hasta 100 caracteres). La regla de la
+final dejó de decir "una de cada minijuego de la copa". `CALENDARIOS` queda para las demos.

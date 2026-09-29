@@ -61,6 +61,30 @@ ol.como li { line-height: 1.45; }
 .chip-btn.on { border-color: var(--cyan); background: rgba(46, 230, 214, 0.18); }
 .cal-mini { display: flex; justify-content: center; gap: 8px; font-size: 1.6rem; margin-bottom: 4px; }
 
+/* Elegir los juegos al crear la copa (D-163): la mano y la línea de Línea de Tiempo (linea.css) */
+.cal-estado { margin: 0 0 6px; display: grid; color: var(--yellow); font-weight: 800; font-size: 0.9rem; line-height: 1.35; }
+/* Las tres ayudas en la misma celda: la oculta sigue ocupando lugar, así el alto no cambia
+   (con clase y no con `hidden`, que base.css saca del flujo con !important) */
+.cal-estado > span { grid-area: 1 / 1; }
+.cal-estado > span.oculta { visibility: hidden; }
+#crear-juegos .hand .card { width: 112px; min-height: 76px; }
+#crear-juegos .hand .card.hueco, .cal-linea .event.hueco { opacity: 0.3; border-style: dashed; }
+.cal-linea .event {
+  width: 100%; grid-template-columns: 50px 28px 1fr 24px; margin: 3px 0; min-height: 52px; animation: none;
+  color: var(--ink); font-family: var(--font-body); text-align: left; cursor: pointer;
+}
+.cal-linea .event .y { font-size: 0.85rem; }
+.cal-linea .event .t { font-size: 0.92rem; font-weight: 900; }
+.cal-linea .event .t small { display: block; color: var(--muted); font-weight: 700; font-size: 0.75rem; }
+.cal-linea .event.sel { border-color: var(--yellow); background: rgba(255, 210, 63, 0.14); }
+/* Con un juego de fuera elegido, cada día es un destino; el de turno, encendido */
+.cal-linea.blanco .event[data-dia] { border-style: dashed; border-color: rgba(255, 210, 63, 0.55); }
+.cal-linea .event[data-dia].on { border: 2px solid var(--yellow); background: rgba(255, 210, 63, 0.22); box-shadow: 0 0 14px rgba(255, 210, 63, 0.3); }
+.cal-linea .event.fija { cursor: default; border-style: dashed; border-color: rgba(46, 230, 214, 0.45); }
+/* Por el agarre se arrastra en un celular: el resto de la fila deja desplazar la página */
+.cal-linea .agarre { color: var(--muted); font-size: 1.2rem; text-align: center; padding: 10px 0; touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none; }
+.cal-linea .slot { min-height: 44px; }
+
 /* Tablero */
 .copa-head { text-align: center; display: grid; gap: 8px; }
 .copa-head h1 { margin: 0; overflow-wrap: anywhere; }

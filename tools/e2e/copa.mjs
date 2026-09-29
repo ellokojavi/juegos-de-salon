@@ -308,7 +308,88 @@ await preparar();
 await revisarPantalla('portada');
 await click('#btn-crear'); await sleep(900); // con varias sesiones probando a la vez, la máquina anda lenta
 await ev(`(()=>{const i=[...document.querySelectorAll('#crear-body input:not(.fecha):not(#crear-link)')];i[0].value='Copa de la oficina';i[1].value='Cata';i[2].value='1111';i[3].value='1111';return 1})()`);
+ok(await ev(`document.getElementById('crear-juegos').hidden`), 'los juegos se eligen después de la duración: antes no se ven');
 await ev(`(()=>{const o=[...document.querySelectorAll('#crear-body .opcion')];o[${SIETE ? 1 : 0}].click();o[3].click();return 1})()`); // parte mañana
+// Elegir los juegos (D-163): una propuesta al azar en la mano y la línea de Línea de Tiempo
+{
+  const n = SIETE ? 7 : 3;
+  const cal = () => ev(`[...document.querySelectorAll('#cal-elegir .event[data-dia]')].map(b=>b.dataset.juego)`);
+  const fuera = () => ev(`[...document.querySelectorAll('#cal-fuera .card')].map(b=>b.dataset.juego)`);
+  const tocarDia = i => ev(`(document.querySelectorAll('#cal-elegir .event[data-dia]')[${i}].click(), 1)`);
+  const tocarFuera = id => ev(`(document.querySelector('#cal-fuera [data-juego="${id}"]').click(), 1)`);
+  const tocarRanura = k => ev(`(document.querySelector('#cal-elegir .slot[data-slot="${k}"]').click(), 1)`);
+  const centro = sel => ev(`(()=>{const r=document.querySelector('${sel}').getBoundingClientRect();return [Math.round(r.x+r.width/2),Math.round(r.y+r.height/2),Math.round(r.y)]})()`);
+  // Lleva la semana a `meta` tocando: un día se mueve a una ranura, uno de fuera reemplaza a un día
+  const armar = async (meta, revisar) => {
+    for (let i = 0; i < meta.length; i++) {
+      const ahora = await cal();
+      if (ahora[i] === meta[i]) continue;
+      const j = ahora.indexOf(meta[i]);
+      if (j >= 0) { await tocarDia(j); await tocarRanura(i); } else { await tocarFuera(meta[i]); await tocarDia(i); }
+      const despues = await cal();
+      if (revisar) ok(despues[i] === meta[i] && (j < 0 ? (await fuera()).includes(ahora[i]) : despues[i + 1] === ahora[i]),
+        j >= 0 ? `tocando: un día se mueve a otro lugar de la semana (${meta[i]} al día ${i + 1})` : `tocando: un juego de fuera reemplaza a un día (${ahora[i]} → ${meta[i]})`);
+    }
+  };
+  const propuesta = await cal();
+  ok(!await ev(`document.getElementById('crear-juegos').hidden`) && propuesta.length === n - 1 && new Set(propuesta).size === n - 1
+    && /La Gran Final/.test(await ev(`document.querySelector('#cal-elegir .event.fija').textContent`)), `al elegir la duración aparece una propuesta al azar de ${n - 1} juegos, con la final al último (${propuesta.join(', ')})`);
+  ok((await fuera()).length === 9 - (n - 1), 'los que no entraron quedan fuera, en la mano');
+  const altoAyuda = () => ev(`Math.round(document.querySelector('#crear-juegos .cal-estado').getBoundingClientRect().height)`);
+  const alto0 = await altoAyuda();
+  await tocarDia(0);
+  ok(await altoAyuda() === alto0, `la ayuda que cambia al elegir no cambia de alto (${alto0} px): lo de abajo no se corre bajo el dedo`);
+  ok(await ev(`document.querySelectorAll('#cal-elegir .event.sel').length`) === 1 && await ev(`document.querySelectorAll('#cal-elegir .slot').length`) === n - 2,
+    'tocar un día lo deja elegido y abre las ranuras donde se puede mover');
+  await ev(`(document.querySelector('#crear-body .panel').click(), 1)`);
+  ok(await ev(`document.querySelectorAll('#cal-elegir .event.sel, #cal-elegir .slot').length`) === 0 && JSON.stringify(await cal()) === JSON.stringify(propuesta), 'un toque fuera de la lista lo suelta sin cambiar nada (C-8)');
+  await ev(`(document.getElementById('crear-juegos').scrollIntoView({block:'start'}), scrollBy(0,-12), 1)`); await sleep(150);
+  await b.shot('10-semana');
+  await ev(`(document.getElementById('cal-elegir').scrollIntoView({block:'center'}), 1)`); await sleep(100);
+  // Arrastrar (D-85): el último día hasta el primer lugar, con el puntero del mouse
+  {
+    const antes = await cal();
+    const [x0, y0] = await centro(`#cal-elegir .event[data-dia="${n - 2}"]`);
+    const [, , top0] = await centro('#cal-elegir .event[data-dia="0"]');
+    await b.arrastre(x0, y0, x0, top0 + 4, 8);
+    const despues = await cal();
+    ok(despues[0] === antes[n - 2] && JSON.stringify(despues.slice(1)) === JSON.stringify(antes.slice(0, -1)), `arrastrar un día lo mueve a otro lugar de la semana (${antes[n - 2]} al día 1)`);
+  }
+  const dedo = (type, p) => b.send('Input.dispatchTouchEvent', { type, touchPoints: type === 'touchEnd' ? [] : [{ x: p[0], y: p[1], id: 1 }] });
+  const conDedo = async (desde, hasta) => {
+    await dedo('touchStart', desde); await dedo('touchMove', [desde[0], desde[1] + (hasta[1] < desde[1] ? -20 : 20)]); await sleep(16);
+    for (let k = 1; k <= 10; k++) { await dedo('touchMove', [desde[0], Math.round(desde[1] + (hasta[1] - desde[1]) * k / 10)]); await sleep(16); }
+    await dedo('touchEnd', hasta); await sleep(250);
+  };
+  // En un celular, un día se arrastra desde su agarre ⠿ (el resto de la fila deja desplazar la página)
+  {
+    const antes = await cal();
+    const desde = await centro('#cal-elegir .event[data-dia="0"] .agarre');
+    const [, , topUlt] = await centro('#cal-elegir .fija');
+    await conDedo(desde, [desde[0], topUlt - 6]);
+    const despues = await cal();
+    ok(despues[n - 2] === antes[0] && JSON.stringify(despues.slice(0, -1)) === JSON.stringify(antes.slice(1)), `con el dedo, un día se arrastra desde su agarre (${antes[0]} al día ${n - 1})`);
+  }
+  // Y con el dedo: un juego de la mano hasta el día 1, que queda fuera
+  {
+    const antes = await cal(), id = (await fuera())[0];
+    await ev(`(document.getElementById('cal-fuera').scrollIntoView({block:'center'}), 1)`); await sleep(100);
+    const desde = await centro(`#cal-fuera [data-juego="${id}"]`), hasta = await centro('#cal-elegir .event[data-dia="0"]');
+    await conDedo(desde, hasta);
+    const despues = await cal();
+    ok(despues[0] === id && (await fuera()).includes(antes[0]), `arrastrar un juego de fuera sobre un día lo reemplaza (${antes[0]} → ${id})`);
+  }
+  // Se arma el calendario de siempre, así el resto del guion sabe qué toca cada día. Primero uno
+  // al revés, para pasar seguro por los dos caminos de toques
+  const meta = SIETE ? ['linea', 'numero', 'conexiones', 'reinas', 'letras', 'anio'] : ['linea', 'conexiones'];
+  await armar(SIETE ? ['zip', 'anio', 'letras', 'reinas', 'conexiones', 'numero'] : ['tango', 'conexiones'], true);
+  await armar(meta, true);
+  await click('#btn-azar'); await sleep(100);
+  const otra = await cal();
+  ok(otra.length === n - 1 && new Set(otra).size === n - 1, `🎲 propone otro orden (${otra.join(', ')})`);
+  await armar(meta, false);
+  ok(JSON.stringify(await cal()) === JSON.stringify(meta), `el calendario queda como se armó (${meta.join(', ')})`);
+}
 // El link propio (D-121): se ve cómo queda y si está libre
 await ev(`(()=>{const i=document.getElementById('crear-link');i.value='Oficina';i.dispatchEvent(new Event('input'));return 1})()`); await sleep(700);
 ok(/juegosdesalon\.cl\/copa\/\?oficina está libre/.test(await ev(`document.getElementById('link-estado').textContent`)), 'el link propio muestra cómo queda y que está libre');
@@ -317,6 +398,7 @@ await click('#btn-crear-go'); await sleep(900);
 ok(/\?oficina&prueba$/.test(await ev('location.search')), 'la copa creada queda en ?oficina');
 const CODE = await ev('__copa.estado.code');
 ok(/^[A-HJ-NP-Z]{5}$/.test(CODE), `copa creada con código ${CODE}`);
+ok(await ev('__copa.estado.copa.meta.cal') === (SIETE ? 'linea,numero,conexiones,reinas,letras,anio,final' : 'linea,conexiones,final'), 'la copa guarda los juegos en el orden elegido');
 // Recién creada, el admin parte en Administrar, con la guía de la primera vez (D-110)
 ok(await pantalla() === 'admin' && !!await ev(`document.getElementById('admin-bienvenida')`), 'al crearla, el admin ve Administrar con la guía para invitar');
 ok(/Mensajes para los competidores/.test(await ev(`document.getElementById('admin-body').innerText`)), 'los mensajes son para los competidores');

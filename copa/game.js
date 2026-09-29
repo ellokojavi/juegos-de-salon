@@ -9,13 +9,14 @@
  * URL: /copa/ (portada) · /copa/?K7Q2X (una copa) · /copa/?K7Q2X&prueba (sin Firebase).
  * La misma pantalla sirve los minijuegos sueltos de la portada en /minijuegos/reinas/ (D-149, D-162).
  */
+import { crearArrastre } from '../assets/js/arrastre.js';
 import { $, $$, el, vibrate, sparkles, keepAwake, confetti, shareLink, canShare } from '../assets/js/ui.js';
 import { applyStatic } from '../assets/js/i18n.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { trackStart, versionOf } from '../assets/js/transport/stats.js';
 import { gameById } from '../assets/js/games.js';
 import {
-  CALENDARIOS, MAX_JUGADORES, COPA_MAX, aliasLimpio, esAlias, CODIGO, esCodigo, codigoAlAzar, pidAlAzar, limpiarNombre, claveNombre, esPin, hashPin,
+  POZO, calendarioAlAzar, calendario, MAX_JUGADORES, COPA_MAX, aliasLimpio, esAlias, CODIGO, esCodigo, codigoAlAzar, pidAlAzar, limpiarNombre, claveNombre, esPin, hashPin,
   fechaEn, sumarDias, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta, estadoDia, comodinDe, moverInicio, sinEmpezar, pasarDia, MAX_DIAS_INICIO, faltaGente,
   medianoche, menosJuegos, provisoria, ultimoDiaVisto, marcaDelDia, puedeComodin, multiplicador, posicionesDelDia, tabla, faltan, medallas, evolucion, visibleDia, reloj, mmss, juegoDelDia, esFinal, activos, ZONA,
   conCierre, cerradaAntes, anulado, puedeCerrar,
@@ -200,6 +201,122 @@ function campoFecha(hoy) {
   return { nodo, input, valida: () => /^\d{4}-\d{2}-\d{2}$/.test(input.value) && input.value >= hoy && input.value <= max };
 }
 
+/**
+ * Los juegos de la copa y su orden (D-163), con la mano y la línea de Línea de Tiempo (D-102):
+ * arriba los que quedan fuera, abajo la semana. Un día se arrastra a otro lugar de la semana, y un
+ * juego de fuera se arrastra hasta el día que reemplaza; tocando se llega a lo mismo (el juego y
+ * después dónde va). Parte con una propuesta al azar, para quien no quiere pensarlo. La final no
+ * se toca: siempre el último día.
+ */
+function elegirJuegos() {
+  // `sel`: lo elegido, { zona: 'dia' | 'fuera', id }. `destino`: dónde va ('s<k>' la ranura k,
+  // al tocar; 'm<k>' el lugar k de la semana, al arrastrar un día; 'r<i>' el día i que se reemplaza)
+  let cal = [], sel = null, destino = null, arrastrando = false;
+  const familia = id => MINIJUEGOS[id].habilidad;
+  // La ayuda larga no cambia; lo que cambia con lo elegido es una línea de alto fijo: si la
+  // página se moviera al elegir, el día de destino se correría bajo el dedo que arrastra. Los tres
+  // textos van apilados en la misma celda y solo se ve uno: el alto es el del más largo a cualquier
+  // ancho (a 320 px uno ocupa tres líneas y los otros dos, una o dos)
+  const AYUDAS = { nada: T.gamesPick, dia: T.gamesPickedDay, fuera: T.gamesPickedOut };
+  const estado = el('p', { class: 'cal-estado', 'aria-live': 'polite' },
+    Object.entries(AYUDAS).map(([k, txt]) => el('span', { 'data-ayuda': k }, txt)));
+  const mano = el('div', { class: 'hand', id: 'cal-fuera' });
+  const linea = el('div', { class: 'line cal-linea', id: 'cal-elegir' });
+  const dias = () => cal.slice(0, -1);
+  const fueraDe = () => POZO.filter(id => !cal.includes(id));
+  // Una ranura junto al día que se mueve lo dejaría donde está: no se ofrece
+  const ranuraSirve = k => !arrastrando && sel?.zona === 'dia' && k !== dias().indexOf(sel.id) && k !== dias().indexOf(sel.id) + 1;
+  /** La semana con el día elegido en el lugar k. */
+  const movido = k => { const d = dias(); d.splice(d.indexOf(sel.id), 1); d.splice(k, 0, sel.id); return d; };
+  // Arrastrando un día, los demás se corren para hacerle lugar: la lista no cambia de alto bajo el dedo
+  const moviendo = () => arrastrando && sel?.zona === 'dia';
+  const vista = () => (moviendo() && destino ? movido(Number(destino.slice(1))) : dias());
+
+  const aplicar = clave => {
+    const n = Number(clave.slice(1));
+    if (clave[0] === 'r' && sel.zona === 'fuera') cal[n] = sel.id;
+    if (clave[0] === 'm' && sel.zona === 'dia') cal = [...movido(n), 'final'];
+    if (clave[0] === 's' && sel.zona === 'dia') {
+      const d = dias(), i = d.indexOf(sel.id);
+      d.splice(i, 1); d.splice(n > i ? n - 1 : n, 0, sel.id);
+      cal = [...d, 'final'];
+    }
+  };
+  const tocarFuera = id => {
+    if (sel?.zona === 'dia') { cal[cal.indexOf(sel.id)] = id; sel = null; } else sel = sel?.id === id ? null : { zona: 'fuera', id };
+    SFX.tap(); pintar();
+  };
+  const tocarDia = i => {
+    if (sel?.zona === 'fuera') { cal[i] = sel.id; sel = null; } else sel = sel?.id === cal[i] ? null : { zona: 'dia', id: cal[i] };
+    SFX.tap(); pintar();
+  };
+  const tocarRanura = k => { aplicar(`s${k}`); sel = null; SFX.tap(); pintar(); };
+
+  const nombreJ = (id, sub = MINIJUEGOS[id].habilidad) => el('span', { class: 't' }, MINIJUEGOS[id].nombre, el('small', {}, sub));
+  const ranura = k => el('div', { class: 'slot', 'data-slot': k, 'data-clave': `s${k}`, onClick: () => tocarRanura(k) }, el('span', {}, T.gamesSlot));
+
+  function marcar() {
+    linea.querySelectorAll('[data-clave]').forEach(x => x.classList.toggle('on', x.dataset.clave === destino));
+  }
+  function pintar() {
+    mano.innerHTML = ''; linea.innerHTML = '';
+    poner(mano, fueraDe().map(id => el('button', {
+      type: 'button', class: `card${sel?.id === id ? (arrastrando ? ' hueco' : ' sel') : ''}`, 'data-juego': id, 'aria-pressed': String(sel?.id === id), onClick: () => tocarFuera(id),
+    }, el('span', { class: 'em' }, MINIJUEGOS[id].emoji), el('span', { class: 't' }, MINIJUEGOS[id].nombre))));
+    mano.classList.toggle('dim', sel?.zona === 'fuera');
+    linea.classList.toggle('blanco', sel?.zona === 'fuera');
+    vista().forEach((id, i) => {
+      if (ranuraSirve(i)) linea.append(ranura(i));
+      linea.append(el('button', {
+        type: 'button', class: `event${sel?.id === id ? (arrastrando ? ' hueco' : ' sel') : ''}`, 'data-dia': i, 'data-juego': id, 'data-clave': `${moviendo() ? 'm' : 'r'}${i}`,
+        'aria-pressed': String(sel?.id === id), onClick: () => tocarDia(i),
+      }, el('span', { class: 'y' }, fmt(T.gamesDay, { d: i + 1 })), el('span', { class: 'em' }, MINIJUEGOS[id].emoji), nombreJ(id),
+      el('span', { class: 'agarre', 'aria-hidden': 'true' }, '⠿')));
+    });
+    if (ranuraSirve(dias().length)) linea.append(ranura(dias().length));
+    linea.append(el('div', { class: 'event fija' }, el('span', { class: 'y' }, fmt(T.gamesDay, { d: cal.length })),
+      el('span', { class: 'em' }, MINIJUEGOS.final.emoji), nombreJ('final', T.gamesFinal)));
+    marcar();
+    const ayuda = sel?.zona || 'nada';
+    estado.querySelectorAll('[data-ayuda]').forEach(x => x.classList.toggle('oculta', x.dataset.ayuda !== ayuda));
+  }
+  const sortear = n => { cal = calendarioAlAzar(n, { familia }); sel = null; pintar(); };
+
+  const nodo = el('div', { class: 'panel', id: 'crear-juegos', hidden: true },
+    el('div', { class: 'field' }, el('label', {}, T.fGames), el('small', { class: 'muted' }, T.gamesHint)), estado,
+    el('div', { class: 'hand-title' }, el('b', {}, T.gamesOut)), mano,
+    el('div', { class: 'line-wrap' }, linea),
+    el('button', { type: 'button', class: 'btn btn--ghost btn--sm', id: 'btn-azar', onClick: () => { SFX.tap(); sortear(cal.length); } }, T.gamesShuffle));
+
+  // Arrastrar es elegir y soltar (D-85): el mismo estado al que se llega tocando. Nada se
+  // confirma hasta Crear la copa.
+  crearArrastre({
+    fuentes: [
+      { contenedor: mano, item: '.card', eje: 'vertical', nombre: 'fuera' },
+      { contenedor: linea, item: '.event[data-dia]', eje: 'libre', nombre: 'dia' },
+    ],
+    activo: () => nodo.isConnected && !nodo.hidden,
+    vibrar: vibrate,
+    avatar: item => el('div', { class: 'vilo-carta' }, el('span', { class: 'em' }, MINIJUEGOS[item.dataset.juego].emoji), el('span', { class: 't' }, MINIJUEGOS[item.dataset.juego].nombre)),
+    alAlzar: (item, zona) => {
+      sel = { zona, id: item.dataset.juego }; destino = null; arrastrando = true; pintar();
+    },
+    medir: () => [...linea.querySelectorAll('.event[data-dia]')].map(x => {
+      const r = x.getBoundingClientRect();
+      return { clave: x.dataset.clave, y: r.top + r.height / 2 + window.scrollY };
+    }),
+    sobre: clave => { destino = clave; if (moviendo()) pintar(); else marcar(); },
+    soltar: (clave, { cancelado }) => {
+      if (!cancelado && clave) { aplicar(clave); SFX.tap(); }
+      sel = null; destino = null; arrastrando = false; pintar();
+    },
+  });
+  // Un toque fuera de la lista suelta lo elegido (C-8). Con la ruta del evento, no con
+  // `contains`: el botón tocado ya se redibujó y quedó fuera del árbol.
+  document.addEventListener('click', ev => { if (sel && nodo.isConnected && !ev.composedPath().includes(nodo)) { sel = null; pintar(); } });
+  return { nodo, sortear, get cal() { return [...cal]; } };
+}
+
 function crearCopa() {
   mostrar('crear');
   const body = $('#crear-body');
@@ -208,10 +325,11 @@ function crearCopa() {
   const nombre = campo(T.fCopa, { placeholder: T.fCopaPh, maxlength: String(COPA_MAX) }, { contador: true });
   // La Copa de 3 días es solo para probar con amigos (D-100): se ofrece con ?tres en la URL
   // o en el modo de prueba, nunca en la portada.
+  const juegos = elegirJuegos();
   const modo = opciones([
-    TRES ? { valor: 3, titulo: T.mode3, sub: `${T.mode3Sub} ${CALENDARIOS[3].map(j => MINIJUEGOS[j].emoji).join(' ')}` } : null,
-    { valor: 7, titulo: T.mode7, sub: `${T.mode7Sub} ${CALENDARIOS[7].map(j => MINIJUEGOS[j].emoji).join(' ')}` },
-  ].filter(Boolean));
+    TRES ? { valor: 3, titulo: T.mode3, sub: T.mode3Sub } : null,
+    { valor: 7, titulo: T.mode7, sub: T.mode7Sub },
+  ].filter(Boolean), dias => { juegos.nodo.hidden = false; juegos.sortear(dias); });
   // Hoy, mañana u otra fecha de un calendario, hasta 30 días desde hoy (D-115)
   const hoyCrear = fechaEn(Date.now(), ZONA);
   const otraFecha = campoFecha(hoyCrear);
@@ -268,7 +386,7 @@ function crearCopa() {
       if (alias) { const x = await st.alias(alias); if (x && x.hasta > now) throw Object.assign(new Error('alias'), { code: 'alias' }); }
       const fechaInicio = inicio.valor === 'otra' ? otraFecha.input.value : sumarDias(fechaEn(now, ZONA), inicio.valor);
       // Las copas del laboratorio (y las de prueba) llevan la marca que deja pasar de día (D-115)
-      const meta = nuevaMeta({ nombre: n, dias: modo.valor, inicio: fechaInicio, tz: ZONA, admin: pid, creada: now, lab: LABS || PRUEBA, alias });
+      const meta = nuevaMeta({ nombre: n, dias: modo.valor, inicio: fechaInicio, tz: ZONA, admin: pid, creada: now, lab: LABS || PRUEBA, alias, cal: juegos.cal });
       await st.crear(code, meta, { pid, name: quien, at: now, pinHash: await hashPin(code, pid, pin1.input.value) });
       cuenta.nombre.set(quien);
       cuenta.recordar(code, pid, { nombre: quien, copa: n, fin: meta.end });
@@ -284,6 +402,7 @@ function crearCopa() {
     el('div', { class: 'panel' }, nombre.nodo,
       el('div', { class: 'field' }, el('label', {}, T.fMode), modo.nodo),
       el('div', { class: 'field' }, el('label', {}, T.fStart), inicio.nodo, otraFecha.nodo, el('small', { class: 'muted' }, fmt(T.startHint, { zona: zonaTexto(ZONA) })))),
+    juegos.nodo,
     el('div', { class: 'panel' }, link.nodo),
     el('div', { class: 'panel' }, yo.nodo, pin1.nodo, pin2.nodo, el('small', { class: 'muted' }, T.pinHint)),
     err, boton,
@@ -466,7 +585,7 @@ function entrar({ mantener = false } = {}) {
       el('p', { class: 'muted', style: 'margin:0' }, T.inviteTitle),
       el('h1', { class: 'display display--lg rainbow' }, meta.name),
       el('p', { class: 'lead' }, info)),
-    el('div', { class: 'cal-mini' }, CALENDARIOS[meta.days].map(j => el('span', { title: MINIJUEGOS[j].nombre }, MINIJUEGOS[j].emoji))),
+    el('div', { class: 'cal-mini' }, calendario(meta).map(j => el('span', { title: MINIJUEGOS[j].nombre }, MINIJUEGOS[j].emoji))),
     puedeEntrar ? null : el('p', { class: 'muted center' }, terminada(meta, now) ? T.closedEnded : L().closed && inscripcionAbierta(meta, now) ? T.closedByAdmin : T.closedJoin),
     tabs, caja,
   );

@@ -4,7 +4,7 @@
  * { s: puntaje, t: tarjeta, resumen }.
  *
  * Agregar un minijuego: su motor y su pantalla en esta carpeta, su texto en MINIJUEGOS de
- * rules.js y una entrada acá. Para que aparezca en una copa, sumarlo a CALENDARIOS (engine.js).
+ * rules.js y una entrada acá. Para que se pueda elegir en una copa, sumarlo a POZO (engine.js).
  */
 import * as linea from './linea.js';
 import * as numero from './numero.js';

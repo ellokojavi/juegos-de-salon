@@ -658,6 +658,13 @@
       "pie": "The admin shares messages with the group",
       "guion": "copa",
       "toma": "09-admin"
+    },
+    {
+      "seccion": "copa",
+      "imagen": "docs/screenshots/copa/10-semana.png",
+      "pie": "Creating a cup: drag the games into the week",
+      "guion": "copa",
+      "toma": "10-semana"
     }
   ],
   "fuentes": {
