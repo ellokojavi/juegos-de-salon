@@ -2056,7 +2056,8 @@ cambia si cambian los bordes o la proyección.
 **Decisión:** El mapa plano en proyección de Miller se cambia por un **globo**: una proyección
 ortográfica dibujada en un canvas (`copa/juegos/globo.js`). Arrastrar lo gira sin tope en
 longitud (pasados los 180° sigue); pellizcar, el doble toque, la rueda y + / − lo acercan hasta 40
-veces; un toque pone el alfiler. La respuesta centra el globo entre el alfiler y la ciudad, los
+veces; un toque pone el alfiler. El doble toque solo acerca: el toque espera 320 ms antes de
+poner el alfiler, por si llega el segundo (pedido del dueño; antes el primer toque ya lo ponía). La respuesta centra el globo entre el alfiler y la ciudad, los
 acerca a los dos y los une con el arco más corto sobre la esfera. Cada ciudad parte con el globo
 entero, mirando al Atlántico (10° N, 40° O). Los colores son los del afiche de "Próximamente":
 mar azul con brillo, tierra verde clara, meridianos y paralelos cada 30°.

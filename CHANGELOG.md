@@ -3,6 +3,8 @@
 ## 0.70.2 — 2026-09-29
 - **¿Dónde queda?: la primera ciudad avisa que el globo se gira.** "↔ Arrastra para girar" arriba
   del globo, hasta el primer arrastre (#88).
+- **¿Dónde queda?: el doble toque solo acerca.** Ya no pone ni mueve el alfiler; un toque solo
+  lo pone, un instante después.
 
 ## 0.70.1 — 2026-09-28
 - **¿Dónde queda?: vuelven las islas que faltaban en el globo.** Nueva Zelanda, Japón, Cuba,
