@@ -1765,7 +1765,8 @@ function practica(id) {
   body.innerHTML = '';
   poner(body, el('div', { class: 'stack' },
     el('div', { class: 'intro-hero' }, heroe(id, J),
-      el('p', { class: 'muted', style: 'margin:0' }, LABS ? T.practiceTitle : T.looseTitle),
+      // En el laboratorio no se rotula "Práctica en el laboratorio": el chip y el botón de volver ya lo dicen
+      LABS ? null : el('p', { class: 'muted', style: 'margin:0' }, T.looseTitle),
       el('h2', { class: 'display display--lg' }, J.nombre)),
     el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.howToPlay), dibujo(id), el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
       el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, puntajeTexto(J, false))),

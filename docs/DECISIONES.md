@@ -2112,7 +2112,52 @@ ciudad está pintado sobre la esfera, así que se achata en la dirección del ra
 coseno del ángulo con que se mira; el alfiler se achica (hasta un 35 %) y se desvanece al irse por
 detrás. En el juego las marcas siguen planas: ahí se miran de frente y tienen que leerse.
 
-## D-159 · El admin elige los juegos de la copa y su orden
+## D-159 · El globo de ¿Dónde queda? es una imagen satelital
+**Fecha:** 2026-09-29 · **Estado:** vigente
+**Decisión:** El globo muestra la Tierra vista desde el satélite: **Blue Marble Next Generation**
+de la NASA (dominio público), la de septiembre de 2004, con relieve y fondo marino. Se eligió
+septiembre porque es el mes con menos nieve en los dos hemisferios: el Sahara, Arabia, el Atacama
+y el interior de Australia se ven como desiertos, el Amazonas y el Congo como selva, Groenlandia y
+la Antártica como hielo. Sin nombres ni fronteras (D-158).
+- **Cómo se dibuja:** con WebGL, en un canvas debajo del de las marcas: cada píxel del disco se
+  invierte a latitud y longitud y se lee de la imagen (`satelite()` en `globo.js`). Encima siguen
+  la sombra del borde, el brillo, la retícula (más tenue) y las marcas.
+- **Dos imágenes** en `assets/img/`: una de 2048 px de ancho (0,5 MB) que llega rápido y otra de
+  4096 px (1,6 MB) que la reemplaza al bajar, si el celular la acepta. El nombre lleva el mes de
+  la imagen, porque `set-version.py` no estampa imágenes. Las rehace
+  `node tools/mapa.mjs satelite` (necesita internet y `sips`, de macOS).
+- **Sin WebGL, o mientras no llega ninguna imagen,** el globo se dibuja como antes, con el mapa
+  vectorial verde. El mapa vectorial (`mapa.js`) queda también para las pruebas: cada ciudad cae
+  en su país y sobre tierra.
+- **El zoom máximo baja de 40 a 16 veces** (unos 2 km por píxel en un celular): más allá la
+  imagen de 4096 px ya no tiene detalle. Sigue sobrando precisión para el puntaje (un punto cada
+  25 km). La respuesta acerca hasta 12 veces.
+**Por qué:** lo pidió el dueño: un mapa físico, con color de las zonas y volumen, para reconocer
+por ejemplo los desiertos, y con imagen satelital y no dibujada.
+**Alternativas descartadas:** los mapas físicos dibujados de Natural Earth (el dueño pidió
+satélite); la imagen de diciembre de la NASA (medio hemisferio norte bajo la nieve); una de 8192 px
+(6 MB, mucho para un celular).
+**Consecuencias:** la primera vez se bajan unos 2 MB más; el navegador los guarda. En la portada
+el globo que gira también es satelital.
+
+## D-160 · El globo satelital se ve nítido al acercarse: teselas
+**Fecha:** 2026-09-29 · **Estado:** vigente
+**Decisión:** Además de la imagen entera de 4096 px (D-159), la de la NASA de 21600 × 10800 se
+corta en **128 teselas** de 1350 px (16 columnas por 8 filas, 22,5° por lado) en
+`assets/img/tierra-2004-09/`. Cuando el globo se acerca más de lo que da la imagen entera, se bajan
+y se pintan encima solo las teselas que se ven; zoom afuera queda la imagen entera. El globo
+guarda en la tarjeta de video hasta 36 teselas y suelta las que llevan más rato sin verse.
+**Por qué:** el dueño vio la imagen estirada al acercar: con 4096 px para toda la Tierra, a 16
+veces cada píxel de la imagen ocupa varios de la pantalla. Las teselas dan la resolución completa
+de la fuente (más de 5 veces más nítida) sin bajarla entera.
+**Alternativas descartadas:** una imagen de 8192 px (6 MB, sigue siendo la mitad de nítida y la
+bajaría todo el mundo); la imagen completa como una sola textura (no cabe en la memoria de muchos
+celulares).
+**Consecuencias:** el repo suma 30 MB de teselas, unos 235 KB cada una; un jugador que acerca en
+una ciudad baja entre 1 y 9. Sin mipmap en las teselas (solo se usan acercando, y así no hay
+costura en la línea de cambio de fecha). Las rehace `node tools/mapa.mjs satelite`.
+
+## D-161 · El admin elige los juegos de la copa y su orden
 **Fecha:** 2026-09-29 · **Estado:** vigente
 **Decisión:** Al crear una copa, después de elegir la duración aparece **¿Qué se juega cada día?**
 con la mano y la línea de Línea de Tiempo (`linea.css`, `arrastre.js`): arriba, en la mano, los

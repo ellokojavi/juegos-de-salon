@@ -579,7 +579,7 @@ await b.go(`${BASE}?practica=${id}&prueba&labs${id === 'zip' ? '&zipSeg=12&semil
   ok(await ev(`!!document.getElementById('btn-ensayo')`) , `práctica de ${id}: la antesala ofrece la prueba como en la copa`);
   if (id === 'donde') {
     // La portada es el globo girando solo (y los demás minijuegos siguen con su emoji)
-    const cuadro = () => ev(`document.querySelector('.intro-hero .globo-portada')?.toDataURL().length + ':' + document.querySelector('.intro-hero .globo-portada')?.toDataURL().slice(-200)`);
+    const cuadro = () => ev(`document.querySelector('.intro-hero .globo-portada canvas:last-child')?.toDataURL().length + ':' + document.querySelector('.intro-hero .globo-portada canvas:last-child')?.toDataURL().slice(-200)`);
     const c1 = await cuadro(); await sleep(700); const c2 = await cuadro();
     ok(!c1.startsWith('undefined') && c1 !== c2, '¿Dónde queda?: la portada es un globo que gira');
     await b.shot('donde-portada');
@@ -667,6 +667,14 @@ await b.go(`${BASE}?practica=${id}&prueba&labs${id === 'zip' ? '&zipSeg=12&semil
     await sleep(200);
     const lon = (await vista()).centro[1];
     ok(lon < -170, `¿Dónde queda?: pasados los 180° el globo sigue girando (${lon.toFixed(1)}°)`);
+    // Acercado, se bajan las teselas nítidas de lo que se ve, y solo esas (D-160)
+    if (await ev(`!!document.createElement('canvas').getContext('webgl')`)) {
+      await ev(`document.querySelector('.mapa-globo').globo.girarA(-33, -70); for (let i = 0; i < 4; i++) document.getElementById('btn-acercar').click(); 1`);
+      await sleep(1500);
+      const teselas = await ev(`JSON.stringify(performance.getEntriesByType('resource').filter(e => e.name.includes('tierra-2004-09/')).map(e => e.name.split('/').pop()))`).then(JSON.parse);
+      ok(teselas.includes('5-4.jpg') && teselas.length <= 9, `¿Dónde queda?: acercado sobre Chile se bajan sus teselas (${teselas.join(', ')})`);
+      for (let i = 0; i < 4; i++) await click('#btn-alejar');
+    }
     await b.shot('donde-mapa');
   }
   await JUGAR[id](id === 'tango' ? 1 : 2);
