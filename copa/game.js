@@ -7,12 +7,13 @@
  * módulo de juegos/ui-*.js.
  *
  * URL: /copa/ (portada) · /copa/?K7Q2X (una copa) · /copa/?K7Q2X&prueba (sin Firebase).
- * La misma pantalla sirve los minijuegos sueltos de la portada en /minijuegos/?reinas (D-149).
+ * La misma pantalla sirve los minijuegos sueltos de la portada en /minijuegos/reinas/ (D-149, D-161).
  */
 import { $, $$, el, vibrate, sparkles, keepAwake, confetti, shareLink, canShare } from '../assets/js/ui.js';
 import { applyStatic } from '../assets/js/i18n.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { trackStart, versionOf } from '../assets/js/transport/stats.js';
+import { gameById } from '../assets/js/games.js';
 import {
   CALENDARIOS, MAX_JUGADORES, COPA_MAX, aliasLimpio, esAlias, CODIGO, esCodigo, codigoAlAzar, pidAlAzar, limpiarNombre, claveNombre, esPin, hashPin,
   fechaEn, sumarDias, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta, estadoDia, comodinDe, moverInicio, sinEmpezar, pasarDia, MAX_DIAS_INICIO, faltaGente,
@@ -39,14 +40,21 @@ const PRUEBA = busqueda.includes('prueba');
 // la Copa de 3 días (D-100). ?tres se mantiene por los links que ya circulan.
 const LABS = busqueda.includes('labs');
 const TRES = PRUEBA || LABS || busqueda.includes('tres');
-// Los minijuegos sueltos de la portada viven en /minijuegos/?<id> (D-149): la misma pantalla,
-// pero fuera de una copa el link no dice "copa". /copa/?practica=<id> queda para el laboratorio.
+// Los minijuegos sueltos de la portada viven en /minijuegos/<id>/ (D-149, D-161): la misma
+// pantalla, pero fuera de una copa el link no dice "copa". Cada uno tiene su página, que dice cuál
+// es en `<body data-suelto="reinas">`, para que el link compartido traiga su propia tarjeta
+// social. /copa/?practica=<id>&labs queda para el laboratorio.
 const SUELTO = document.body.hasAttribute('data-suelto');
 const PRACTICA = SUELTO
-  ? busqueda.find(x => !x.includes('=') && x !== 'prueba') || ''
+  ? document.body.dataset.suelto || busqueda.find(x => !x.includes('=') && x !== 'prueba') || ''
   : new URLSearchParams(location.search).get('practica');
-// Un link viejo a un minijuego suelto (/copa/?practica=reinas, sin &labs) se va a su lugar nuevo
-if (!SUELTO && PRACTICA && !LABS) location.replace(`../minijuegos/?${PRACTICA}${PRUEBA ? '&prueba' : ''}`);
+/** La raíz del sitio, desde donde esté la página (las de cada minijuego van un nivel más abajo). */
+const RAIZ = new URL('../', import.meta.url).href;
+/** Dónde vive un minijuego suelto: su página, o la genérica si no tiene (uno solo del laboratorio). */
+const paginaSuelta = id => (gameById(id)?.suelto ? `${RAIZ}minijuegos/${id}/${PRUEBA ? '?prueba' : ''}` : `${RAIZ}minijuegos/?${id}${PRUEBA ? '&prueba' : ''}`);
+// Un link viejo (/copa/?practica=reinas sin &labs, o /minijuegos/?reinas) se va a su lugar nuevo
+if (!SUELTO && PRACTICA && !LABS) location.replace(paginaSuelta(PRACTICA));
+if (SUELTO && !document.body.dataset.suelto && gameById(PRACTICA)?.suelto) location.replace(paginaSuelta(PRACTICA));
 const SEMILLA = (new URLSearchParams(location.search).get('semilla') || '').toUpperCase();
 // Las demos del laboratorio (D-110): solo en el modo de prueba, con el almacén local
 const DEMO = PRUEBA ? new URLSearchParams(location.search).get('demo') : null;
@@ -1631,17 +1639,17 @@ function explicacion(J, { s, ms, det, x = 1, final = false, copa = true }) {
  * laboratorio llega con `&labs` y queda como estaba.
  */
 const volverDePractica = () => (LABS
-  ? el('a', { class: 'btn btn--ghost btn--sm', href: '../labs/' }, T.backToLabs)
-  : el('a', { class: 'btn btn--ghost btn--sm', href: '../' }, T.backToMenu));
+  ? el('a', { class: 'btn btn--ghost btn--sm', href: `${RAIZ}labs/` }, T.backToLabs)
+  : el('a', { class: 'btn btn--ghost btn--sm', href: RAIZ }, T.backToMenu));
 
 function practica(id) {
   const J = MINIJUEGOS[id], mod = JUEGOS[id];
-  if (!J || !mod) { if (SUELTO) location.replace('../'); else portada(); return; }
+  if (!J || !mod) { if (SUELTO) location.replace(RAIZ); else portada(); return; }
   if (!LABS) document.title = `${J.nombre} ${J.emoji} · Juegos de Salón`;
   if (SUELTO) $('#chip-juego').textContent = `${J.emoji} ${J.nombre}`;
   const semilla = esCodigo(SEMILLA) ? SEMILLA : codigoAlAzar();
   const zipSeg = new URLSearchParams(location.search).get('zipSeg');
-  // Suelto, la semilla no va a la vista (D-142): el link queda en /minijuegos/?reinas
+  // Suelto, la semilla no va a la vista (D-142): el link queda en /minijuegos/reinas/
   if (!SUELTO) history.replaceState(null, '', `${location.pathname}?practica=${id}&semilla=${semilla}${PRUEBA ? '&prueba' : ''}${LABS ? '&labs' : ''}${zipSeg ? `&zipSeg=${zipSeg}` : ''}`);
   S.juego = { d: 1, id, practica: true, semilla };
   mostrar('jugar');
@@ -1745,7 +1753,7 @@ function resultadoPractica(id, semilla, r) {
   const J = MINIJUEGOS[id];
   mostrar('resultado');
   SFX.win();
-  const otra = SUELTO ? `${location.pathname}?${id}${PRUEBA ? '&prueba' : ''}` : `${location.pathname}?practica=${id}${PRUEBA ? '&prueba' : ''}${LABS ? '&labs' : ''}`;
+  const otra = SUELTO ? paginaSuelta(id) : `${location.pathname}?practica=${id}${PRUEBA ? '&prueba' : ''}${LABS ? '&labs' : ''}`;
   const body = $('#resultado-body');
   body.innerHTML = '';
   poner(body,
