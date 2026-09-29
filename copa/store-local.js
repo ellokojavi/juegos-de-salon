@@ -7,7 +7,7 @@
  * `?prueba` en la URL. Imita las reglas del servidor que importan para jugar: escribir una
  * sola vez, la ventana de cada día, el PIN y el comodín antes de empezar.
  */
-import { aliasHasta, MAX_JUGADORES, faltaGente, claveNombre, esCodigo, abierto, puedeComodin, inscripcionAbierta, sinEmpezar, terminada } from './engine.js';
+import { aliasHasta, MAX_JUGADORES, faltaGente, claveNombre, esCodigo, abierto, puedeComodin, inscripcionAbierta, sinEmpezar, terminada, conCierre, puedeCerrar } from './engine.js';
 
 const KEY = 'juegos-de-salon:copa:prueba';
 const RELOJ = 'juegos-de-salon:copa:prueba:reloj';
@@ -57,6 +57,8 @@ export function createLocalStore({ uid = null } = {}) {
     if (!L) throw falla('no-existe');
     return L;
   };
+  // Las ventanas con el cierre del admin aplicado (D-161): como las reglas, que miran `fin`
+  const vista = L => conCierre(L).meta;
   const sentado = (L, pid) => !!L._seats?.[pid]?.[yo];
   const esAdmin = L => sentado(L, L.meta.admin);
   const publica = L => {
@@ -109,7 +111,7 @@ export function createLocalStore({ uid = null } = {}) {
     async inscribir(code, { pid, name, at, pinHash }) {
       return cambiar(db => {
         const L = copa(db, code);
-        if (!inscripcionAbierta(L.meta, now(), L.closed)) throw falla('cerrada');
+        if (!inscripcionAbierta(vista(L), now(), L.closed)) throw falla('cerrada');
         const activos = Object.values(L.players).filter(p => !p.out);
         if (activos.length >= MAX_JUGADORES) throw falla('llena');
         if (Object.values(L.players).some(p => claveNombre(p.name) === claveNombre(name))) throw falla('nombre-repetido');
@@ -133,7 +135,7 @@ export function createLocalStore({ uid = null } = {}) {
         const L = copa(db, code);
         if (!sentado(L, pid)) throw falla('permiso');
         if (faltaGente(L)) throw falla('faltan');
-        if (!abierto(L.meta, dia, now())) throw falla('ventana');
+        if (!abierto(vista(L), dia, now())) throw falla('ventana');
         L.started[dia] ||= {};
         if (!L.started[dia][pid]) L.started[dia][pid] = now();
       });
@@ -143,7 +145,7 @@ export function createLocalStore({ uid = null } = {}) {
       return cambiar(db => {
         const L = copa(db, code);
         if (!sentado(L, pid)) throw falla('permiso');
-        if (!puedeComodin(L, dia, pid, now())) throw falla('comodin');
+        if (!puedeComodin(conCierre(L), dia, pid, now())) throw falla('comodin');
         L.wild[pid] = String(dia);
       });
     },
@@ -152,7 +154,7 @@ export function createLocalStore({ uid = null } = {}) {
       return cambiar(db => {
         const L = copa(db, code);
         if (!sentado(L, pid)) throw falla('permiso');
-        if (!abierto(L.meta, dia, now())) throw falla('ventana');
+        if (!abierto(vista(L), dia, now())) throw falla('ventana');
         L.results[dia] ||= {};
         if (L.results[dia][pid]) throw falla('ya-jugado');
         L.results[dia][pid] = { ...r, at: now() };
@@ -194,6 +196,7 @@ export function createLocalStore({ uid = null } = {}) {
         const L = copa(db, code);
         if (!esAdmin(L)) throw falla('permiso');
         // Una copa del laboratorio se puede correr siempre (pasar al día siguiente, D-115)
+        if (L.fin) throw falla('terminada');
         if (!L.meta.lab && !sinEmpezar(L)) throw falla('empezada');
         // Pasar de día (lab) necesita con quién jugar; mover el inicio de una copa sin empezar, no
         if (L.meta.lab && !sinEmpezar(L) && faltaGente(L)) throw falla('faltan');
@@ -203,12 +206,22 @@ export function createLocalStore({ uid = null } = {}) {
       });
     },
 
+    /** Terminar la copa antes de tiempo (D-161): solo su admin, una vez, ya partida y sin terminar. */
+    async terminarCopa(code) {
+      return cambiar(db => {
+        const L = copa(db, code);
+        if (!esAdmin(L)) throw falla('permiso');
+        if (!puedeCerrar(vista(L), now())) throw falla('fin');
+        L.fin = now();
+      });
+    },
+
     /** Cambiar el nombre de la copa (D-148): solo su admin y mientras no termine. */
     async renombrarCopa(code, name) {
       return cambiar(db => {
         const L = copa(db, code);
         if (!esAdmin(L)) throw falla('permiso');
-        if (terminada(L.meta, now())) throw falla('terminada');
+        if (terminada(vista(L), now())) throw falla('terminada');
         L.meta.name = name;
       });
     },

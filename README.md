@@ -361,8 +361,9 @@ The lab also has **〰️ Zip**, **☀️ Tango** and **📍 Where is it?** to t
 - **Results stay hidden until you play**: the table and the progress chart only add up the days you can already see, so they cannot spoil today.
 - **Accounts are a name and a PIN inside one cup**, backed by Firebase anonymous auth. The PIN hash lives where nobody can read it, and the rules only let a device write for a player if it sends the same hash (D-96).
 - **The admin plays too**, and can rename, remove or re-PIN players and share ready-made messages with the group: the invite, **today's reminder** (with who is still missing), the partial table and the final summary (D-99).
+- **The admin can end the cup early** (D-161), say when last place is not going to play the final: nobody plays after that, the table as it stands becomes final and the podium shows up; days that had not opened yet are dropped. Once a cup is over, the admin can **export the final table**: the shareable image with everyone's place day by day, or a CSV spreadsheet (final table, place after each day and every day's detail) for Excel or Google Sheets.
 - **Every day has a practice round first** (D-103): same mechanics, different content, and it does not count. Starting the real one shows a **3-to-1 countdown** and the board and clock appear only on "¡A jugar!" (D-105). When you finish, the result **explains how the score was calculated**, line by line (D-106).
-- **A new cup opens on the admin screen** with a short guide: share the invite, wait for people to join (they can before it starts), close sign-ups if you like, and move the start to today or tomorrow while nobody has played yet (D-110). The lab has **eight live demos** of the cup, as a player and as the admin.
+- **A new cup opens on the admin screen** with a short guide: share the invite, wait for people to join (they can before it starts), close sign-ups if you like, and move the start to today or tomorrow while nobody has played yet (D-110). The lab has **ten live demos** of the cup, as a player and as the admin.
 - **A cup can have its own link** (D-121): `juegosdesalon.cl/copa/?pirata` instead of a 5-letter code. It is an alias, unique while the cup lasts and free again a week after it ends.
 - **Bug reports need no account** (D-104): the 🐞 form posts straight to `feedback/` and remembers your name on that device; `node tools/reportes.mjs` reads them back.
 - **Spanish only for now** (D-98): the content is Chilean and does not translate. A 3-day cup exists for testing with `?tres` (D-100), and `?prueba` plays a cup with no Firebase, which is what the lab demos and the end-to-end scripts use.
@@ -492,6 +493,7 @@ node assets/js/transport/errors.test.mjs
 node assets/js/transport/ratelimit.test.mjs
 node assets/js/transport/stats.test.mjs
 node copa/juegos/juegos.test.mjs
+node copa/planilla.test.mjs
 node copa/reportes.test.mjs
 node copa/store.test.mjs
 node panel/adapta.test.mjs
@@ -584,7 +586,7 @@ batalla-naval/              Batalla Naval (engine.js + tests, game.js, rules.js,
 linea-de-tiempo/            Línea de Tiempo (engine.js + tests, game.js, rules.js, decks/)
 ahorcado/                   El Ahorcado (engine.js + tests, game.js, rules.js, decks/)
 dudo/                       Dudo (engine.js + tests, game.js, rules.js)
-copa/                       La Copa: tournament engine, stores (Firebase and local test), juegos/ with the minigames (solo.js mounts one as the play-alone mode of another game), desglose.js (score breakdown), reportes.js (auth-free bug reports), demo.js (lab demos)
+copa/                       La Copa: tournament engine, stores (Firebase and local test), juegos/ with the minigames (solo.js mounts one as the play-alone mode of another game), desglose.js (score breakdown), planilla.js (final table as CSV), reportes.js (auth-free bug reports), demo.js (lab demos)
 labs/                       The lab: games being tested before they reach the menu (not linked, not indexed)
 assets/js/arrastre.js       Shared drag and drop: dropping chooses, a button confirms
 assets/js/teclado.js        Shared Bulls and Cows keypad, with notes (long press to strike out a key)

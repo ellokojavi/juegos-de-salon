@@ -5,6 +5,7 @@ import {
   fechaEn, sumarDias, medianoche, ventanas, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta,
   aliasLimpio, esAlias, menosJuegos, provisoria, ultimoDiaVisto, marcaDelDia, aliasHasta, ALIAS_LIBRE_MS,
   estadoDia, puedeComodin, multiplicador, posicionesDelDia, tabla, faltan, medallas, reloj, mmss, juegoDelDia, evolucion,
+  cerrarEn, conCierre, cerradaAntes, anulado, puedeCerrar,
 } from './engine.js';
 
 let n = 0;
@@ -272,6 +273,41 @@ test('la marca de cada día en la imagen: puntos, comodín, no jugó o falta jug
   assert.equal(marca('cccccc', 1, dia(1)).tipo, 'falta'); // día de gracia: todavía puede
   assert.equal(marca('cccccc', 1, dia(2)).tipo, 'no');    // el día cerró
   assert.deepEqual(marca('aaaaaa', 7, dia(6)), { tipo: 'pts', pts: 20, final: true }); // la final vale doble
+});
+
+test('terminar la copa antes (D-161): todo cierra en `fin` y lo que no se abrió no cuenta', () => {
+  // El admin la termina el día 4 a mediodía: el día 3 estaba en su gracia y el 4 abierto
+  const fin = dia(3);
+  const L = conCierre({
+    meta: meta7, players, fin,
+    results: {
+      1: { aaaaaa: { s: 9, ms: 1 }, bbbbbb: { s: 5, ms: 1 }, cccccc: { s: 3, ms: 1 }, dddddd: { s: 1, ms: 1 } },
+      4: { bbbbbb: { s: 9, ms: 1 } },
+    },
+  });
+  const m = L.meta;
+  assert.ok(cerradaAntes(m) && !cerradaAntes(meta7));
+  assert.equal(m.end, fin);
+  assert.ok(terminada(m, fin) && !terminada(m, fin - 1));
+  assert.equal(diaActual(m, fin + 3 * 24 * H), 8);
+  assert.ok(abierto(m, 4, fin - 1) && !abierto(m, 4, fin));
+  assert.ok(!abierto(m, 3, fin));                       // su gracia se corta
+  assert.ok(!puedeCerrar(m, fin - 1));                  // ya tiene su cierre
+  assert.ok(puedeCerrar(meta7, dia(0)) && !puedeCerrar(meta7, meta7.win[1].a - 1) && !puedeCerrar(meta7, meta7.end));
+  // Los días 5 a 7 no se abrieron: anulados, fuera de la tabla, aunque el reloj pase por ellos
+  assert.ok(anulado(m, 5) && anulado(m, 7) && !anulado(m, 4));
+  assert.equal(estadoDia(L, 6, 'aaaaaa', dia(6)), 'anulado');
+  assert.equal(estadoDia(L, 4, 'aaaaaa', dia(6)), 'perdido');
+  const t = tabla(L, 'aaaaaa', dia(6));
+  assert.deepEqual(Object.keys(t[0].dias).map(Number), [1, 2, 3, 4]);
+  assert.equal(t.find(f => f.pid === 'bbbbbb').total, 8 + 10); // la final nunca llegó: nada vale doble
+  assert.equal(t.find(f => f.pid === 'aaaaaa').dias[4].jugo, false);
+  assert.ok(!provisoria(L, t, dia(6)));
+  assert.deepEqual(evolucion(L, 'aaaaaa', dia(6)).dias, [1, 2, 3, 4]);
+  assert.equal(medallas(L).campeon[0].name, 'Javi');
+  // Sin `fin`, la copa queda igual
+  assert.equal(conCierre({ meta: meta7 }).meta, meta7);
+  assert.equal(cerrarEn(meta7, meta7.end + 1), meta7);
 });
 
 test('el link propio: se normaliza y no se confunde con un código (D-121)', () => {
