@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.74.0 — 2026-09-29
+- **Cada minijuego tiene su propia tarjeta al compartirlo.** Un link a Reinas, Conexiones, Zip o
+  cualquier minijuego pegado en WhatsApp muestra ese minijuego, con su nombre, de qué se trata y su
+  imagen, y no la tarjeta de La Copa o del menú. Viven en `/minijuegos/reinas/` y así; los links de
+  antes siguen funcionando (D-162).
+
 ## 0.73.0 — 2026-09-29
 - **La Copa: el admin puede terminar la copa antes.** En Administrar, "Terminar la copa antes"
   la cierra en ese momento (por ejemplo, si el último no va a jugar la final): nadie más juega, la
