@@ -204,8 +204,12 @@ function elegirJuegos() {
   let cal = [], sel = null, destino = null, arrastrando = false;
   const familia = id => MINIJUEGOS[id].habilidad;
   // La ayuda larga no cambia; lo que cambia con lo elegido es una línea de alto fijo: si la
-  // página se moviera al elegir, el día de destino se correría bajo el dedo que arrastra
-  const estado = el('p', { class: 'cal-estado', 'aria-live': 'polite' });
+  // página se moviera al elegir, el día de destino se correría bajo el dedo que arrastra. Los tres
+  // textos van apilados en la misma celda y solo se ve uno: el alto es el del más largo a cualquier
+  // ancho (a 320 px uno ocupa tres líneas y los otros dos, una o dos)
+  const AYUDAS = { nada: T.gamesPick, dia: T.gamesPickedDay, fuera: T.gamesPickedOut };
+  const estado = el('p', { class: 'cal-estado', 'aria-live': 'polite' },
+    Object.entries(AYUDAS).map(([k, txt]) => el('span', { 'data-ayuda': k }, txt)));
   const mano = el('div', { class: 'hand', id: 'cal-fuera' });
   const linea = el('div', { class: 'line cal-linea', id: 'cal-elegir' });
   const dias = () => cal.slice(0, -1);
@@ -263,7 +267,8 @@ function elegirJuegos() {
     linea.append(el('div', { class: 'event fija' }, el('span', { class: 'y' }, fmt(T.gamesDay, { d: cal.length })),
       el('span', { class: 'em' }, MINIJUEGOS.final.emoji), nombreJ('final', T.gamesFinal)));
     marcar();
-    estado.textContent = !sel ? T.gamesPick : sel.zona === 'dia' ? T.gamesPickedDay : T.gamesPickedOut;
+    const ayuda = sel?.zona || 'nada';
+    estado.querySelectorAll('[data-ayuda]').forEach(x => x.classList.toggle('oculta', x.dataset.ayuda !== ayuda));
   }
   const sortear = n => { cal = calendarioAlAzar(n, { familia }); sel = null; pintar(); };
 
