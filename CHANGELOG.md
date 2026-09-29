@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.70.4 — 2026-09-29
+- **¿Dónde queda?: el globo va sin fronteras.** La tierra es un solo verde; hay que saber dónde
+  queda cada país (D-158).
+- **¿Dónde queda?: la portada gira con perspectiva.** El aro de la ciudad se achata hacia el borde
+  del globo y el alfiler se achica y se desvanece al irse por detrás, en vez de verse plano.
+
 ## 0.70.3 — 2026-09-29
 - **¿En qué año?: "Ganaste 1 punto." en singular** cuando un hito da un solo punto (U-6).
 

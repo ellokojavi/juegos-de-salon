@@ -172,7 +172,7 @@ export function portada() {
       const [w, h] = globo.ajustar(canvas);
       if (w) {
         const lon = quieto ? -60 : -60 + ((ahora - t0) / 1000) * 8;
-        globo.dibujar(canvas.getContext('2d'), w, h, globo.vista({ centro: [-12, envolver(lon)], r: Math.min(w, h) / 2 - 8, cx: w / 2, cy: h / 2 }), { marcas, liviano: true, escala: 0.7 });
+        globo.dibujar(canvas.getContext('2d'), w, h, globo.vista({ centro: [-12, envolver(lon)], r: Math.min(w, h) / 2 - 8, cx: w / 2, cy: h / 2 }), { marcas, liviano: true, escala: 0.7, perspectiva: true });
       }
     }
     if (!quieto) requestAnimationFrame(cuadro);
