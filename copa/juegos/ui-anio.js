@@ -25,7 +25,7 @@ export function montar(raiz, ctx) {
       const f = e.filas[revelado];
       poner(caja, el('p', { class: 'muted center', style: 'margin:0' }, fmt(T.yearOf, { i: revelado + 1, n: p.hitos.length })),
         el('div', { class: 'carta actual' }, el('span', { class: 'carta-emoji' }, f.hito.emoji), el('b', {}, f.hito.texto)),
-        el('div', { class: 'aviso ' + (f.pts >= 50 ? 'bien' : 'mal') }, `${motor.marca(f.hito.year, f.r)} ${fmt(T.yearWas, { v: motor.anioLabel(f.hito.year), pts: f.pts })}`),
+        el('div', { class: 'aviso ' + (f.pts >= 50 ? 'bien' : 'mal') }, `${motor.marca(f.hito.year, f.r)} ${fmt(f.pts === 1 ? T.yearWasOne : T.yearWas, { v: motor.anioLabel(f.hito.year), pts: f.pts })}`),
         el('p', { class: 'muted center' }, `${T.yearPh}: ${motor.anioLabel(f.r)}`),
         e.fin
           ? el('button', { class: 'btn btn--yellow', id: 'btn-fin', onClick: () => { SFX.tap(); ctx.terminar(e); } }, ctx.textoFin || T.seeResults)
