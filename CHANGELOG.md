@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.75.1 — 2026-09-29
+- **La Copa: con un juego en el aire, la ayuda dice "Suéltalo…"** al armar la semana, en vez de
+  "Toca…", que es lo que dice mientras se elige tocando (D-163).
+- **La carta que se arrastra ya no se sale de la pantalla.** Con el dedo en la primera carta de la
+  mano, la carta en vilo se cortaba por la izquierda; ahora sigue al dedo pero se queda a 8 px del
+  borde. Vale para Línea de Tiempo, Línea Relámpago y la semana de La Copa (`arrastre.js`).
+
 ## 0.75.0 — 2026-09-29
 - **La Copa: el admin elige los juegos y su orden al crearla** (D-163). Después de la duración
   aparece "¿Qué se juega cada día?" con la mano y la línea de Línea de Tiempo: un día se arrastra

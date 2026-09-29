@@ -156,6 +156,8 @@ const ES = {
   gamesPick: 'También puedes tocar un juego y después dónde va.',
   gamesPickedDay: 'Toca dónde lo quieres mover, o un juego de los que quedan fuera para cambiarlo.',
   gamesPickedOut: 'Toca el día que quieres reemplazar.',
+  gamesDragDay: 'Suéltalo donde lo quieres mover.',
+  gamesDragOut: 'Suéltalo sobre el día que quieres reemplazar.',
   gamesSlot: 'Mover aquí',
   gamesDay: 'Día {d}',
   gamesFinal: 'Siempre el último día, y vale doble',

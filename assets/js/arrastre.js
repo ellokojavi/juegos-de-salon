@@ -18,6 +18,9 @@
  *    que el navegador fabrica después: el toque muere en el contenedor y nunca llega a lo que se
  *    tocó (D-90, donde esto rompió la selección de barcos en Batalla Naval).
  *
+ * La carta en vilo sigue al dedo a lo ancho, pero nunca se sale de la pantalla (`xDentro`): con
+ * el dedo en la primera carta de la mano, centrada en él se cortaba por la izquierda.
+ *
  * El eje de la fuente evita el gesto ambiguo sin pedir un toque largo: en una tira que se
  * desplaza a lo ancho (`eje: 'vertical'` + `touch-action: pan-x` en el CSS), el navegador se
  * queda con el movimiento lateral —que es scroll— y nos entrega el vertical, que es el arrastre.
@@ -31,6 +34,8 @@ export const DESFASE = 60;
 export const ZONA = 96;
 /** Píxeles por cuadro del autoscroll, a fondo. */
 export const PASO_MAX = 14;
+/** Aire mínimo entre la carta en vilo y el borde de la pantalla. */
+export const MARGEN = 8;
 /** Más lejos que esto del destino más cercano, se entiende que se soltó fuera. */
 export const ALCANCE = 220;
 
@@ -62,6 +67,21 @@ export function pasoDeAutoscroll(clientY, alto, zona = ZONA, max = PASO_MAX) {
 }
 
 /**
+ * Dónde centrar la carta en vilo para que no se salga por un costado: sigue al dedo, pero
+ * nunca más cerca del borde que `margen`. Con el dedo en la primera carta de la mano, la
+ * carta centrada en él se cortaba por la izquierda en un celular de 320 px.
+ * @param {number} x        el dedo, en píxeles de pantalla
+ * @param {number} ancho    el ancho de la carta en vilo
+ * @param {number} pantalla el ancho de la pantalla
+ * @returns {number} el centro de la carta
+ */
+export function xDentro(x, ancho, pantalla, margen = MARGEN) {
+  const m = ancho / 2 + margen;
+  if (pantalla <= 2 * m) return pantalla / 2;
+  return Math.min(Math.max(x, m), pantalla - m);
+}
+
+/**
  * @typedef {object} Fuente
  * @property {Element} contenedor  elemento estable que delega y toma el puntero
  * @property {string}  item        selector de lo arrastrable dentro del contenedor
@@ -87,6 +107,7 @@ export function crearArrastre({ fuentes, activo, avatar, medir, sobre, apretar, 
   let vilo = null;          // contenedor fijo de la carta en vilo
   let gesto = null;         // gesto en curso
   let raf = 0;
+  let anchoVilo = 0;       // se mide al alzar: la carta la dibuja cada juego
   const zumbar = ms => { try { if (vibrar) vibrar(ms); } catch (_) { /* nada */ } };
 
   const montarVilo = nodo => {
@@ -99,9 +120,11 @@ export function crearArrastre({ fuentes, activo, avatar, medir, sobre, apretar, 
     vilo.innerHTML = '';
     vilo.append(nodo);
     vilo.classList.add('on');
+    // offsetWidth y no getBoundingClientRect: la carta entra con una animación de escala
+    anchoVilo = nodo.offsetWidth || 0;
   };
 
-  const mover = (x, y) => { if (vilo) vilo.style.transform = `translate3d(${x}px, ${y - DESFASE}px, 0)`; };
+  const mover = (x, y) => { if (vilo) vilo.style.transform = `translate3d(${xDentro(x, anchoVilo, window.innerWidth)}px, ${y - DESFASE}px, 0)`; };
 
   const repasar = () => {
     if (!gesto) return;

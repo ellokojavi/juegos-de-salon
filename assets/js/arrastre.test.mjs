@@ -4,7 +4,7 @@
  * punta a punta en Chrome; esto es lo que se puede equivocar en silencio.
  */
 import assert from 'node:assert/strict';
-import { destinoMasCercano, pasoDeAutoscroll, ALCANCE, ZONA, PASO_MAX } from './arrastre.js';
+import { destinoMasCercano, pasoDeAutoscroll, xDentro, ALCANCE, ZONA, PASO_MAX, MARGEN } from './arrastre.js';
 
 let hechas = 0;
 const prueba = (nombre, fn) => { fn(); hechas++; console.log('  ✓', nombre); };
@@ -82,6 +82,23 @@ prueba('el dedo fuera de la pantalla no acelera más allá del tope', () => {
 
 prueba('el paso es entero: media página no se corre medio píxel por cuadro', () => {
   for (let y = 0; y <= ALTO; y += 7) assert.ok(Number.isInteger(pasoDeAutoscroll(y, ALTO)), `paso entero en y=${y}`);
+});
+
+/* ---------- xDentro ---------- */
+
+prueba('la carta en vilo sigue al dedo por el medio de la pantalla', () => {
+  assert.equal(xDentro(160, 224, 390), 160);
+});
+
+prueba('cerca de un costado, la carta se queda entera dentro de la pantalla', () => {
+  // 320 px y la carta de 70vw (224 px): con el dedo en la primera carta de la mano (x = 60)
+  const c = xDentro(60, 224, 320);
+  assert.equal(c - 224 / 2, MARGEN);
+  assert.equal(xDentro(310, 224, 320) + 224 / 2, 320 - MARGEN);
+});
+
+prueba('si la carta no cabe con su margen, va centrada', () => {
+  assert.equal(xDentro(10, 400, 320), 160);
 });
 
 console.log(`\n${hechas} pruebas del arrastre, todas bien.`);
