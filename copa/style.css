@@ -62,7 +62,11 @@ ol.como li { line-height: 1.45; }
 .cal-mini { display: flex; justify-content: center; gap: 8px; font-size: 1.6rem; margin-bottom: 4px; }
 
 /* Elegir los juegos al crear la copa (D-163): la mano y la línea de Línea de Tiempo (linea.css) */
-.cal-estado { margin: 0 0 6px; min-height: 2.7em; color: var(--yellow); font-weight: 800; font-size: 0.9rem; line-height: 1.35; }
+.cal-estado { margin: 0 0 6px; display: grid; color: var(--yellow); font-weight: 800; font-size: 0.9rem; line-height: 1.35; }
+/* Las tres ayudas en la misma celda: la oculta sigue ocupando lugar, así el alto no cambia
+   (con clase y no con `hidden`, que base.css saca del flujo con !important) */
+.cal-estado > span { grid-area: 1 / 1; }
+.cal-estado > span.oculta { visibility: hidden; }
 #crear-juegos .hand .card { width: 112px; min-height: 76px; }
 #crear-juegos .hand .card.hueco, .cal-linea .event.hueco { opacity: 0.3; border-style: dashed; }
 .cal-linea .event {

@@ -335,7 +335,10 @@ await ev(`(()=>{const o=[...document.querySelectorAll('#crear-body .opcion')];o[
   ok(!await ev(`document.getElementById('crear-juegos').hidden`) && propuesta.length === n - 1 && new Set(propuesta).size === n - 1
     && /La Gran Final/.test(await ev(`document.querySelector('#cal-elegir .event.fija').textContent`)), `al elegir la duración aparece una propuesta al azar de ${n - 1} juegos, con la final al último (${propuesta.join(', ')})`);
   ok((await fuera()).length === 9 - (n - 1), 'los que no entraron quedan fuera, en la mano');
+  const altoAyuda = () => ev(`Math.round(document.querySelector('#crear-juegos .cal-estado').getBoundingClientRect().height)`);
+  const alto0 = await altoAyuda();
   await tocarDia(0);
+  ok(await altoAyuda() === alto0, `la ayuda que cambia al elegir no cambia de alto (${alto0} px): lo de abajo no se corre bajo el dedo`);
   ok(await ev(`document.querySelectorAll('#cal-elegir .event.sel').length`) === 1 && await ev(`document.querySelectorAll('#cal-elegir .slot').length`) === n - 2,
     'tocar un día lo deja elegido y abre las ranuras donde se puede mover');
   await ev(`(document.querySelector('#crear-body .panel').click(), 1)`);
