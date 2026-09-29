@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.70.1 — 2026-09-28
+- **¿Dónde queda?: vuelven las islas que faltaban en el globo.** Nueva Zelanda, Japón, Cuba,
+  Jamaica, Filipinas, Java, Madagascar, Rapa Nui y otras 280 islas habían quedado como un punto:
+  al simplificar el mapa, una isla dibujada en un solo trazo cerrado se borraba entera. Una prueba
+  nueva revisa que cada una de las 529 ciudades caiga sobre tierra dibujada.
+
 ## 0.70.0 — 2026-09-28
 - **¿Dónde queda?: 223 ciudades más, de segunda línea.** Porto Alegre, Salta, Copiapó, Castro,
   Bilbao, Chengdú, Luxor, Queenstown… Las medianas y las difíciles ya no son casi siempre

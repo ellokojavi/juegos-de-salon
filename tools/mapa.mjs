@@ -91,10 +91,12 @@ function simplificar(pts, tol) {
   while (pila.length) {
     const [a, b] = pila.pop();
     const [ax, ay] = pts[a], [bx, by] = pts[b];
-    const dx = bx - ax, dy = by - ay, L = Math.hypot(dx, dy) || 1;
+    const dx = bx - ax, dy = by - ay, L = Math.hypot(dx, dy);
     let max = -1, k = -1;
     for (let i = a + 1; i < b; i++) {
-      const d = Math.abs((pts[i][0] - ax) * dy - (pts[i][1] - ay) * dx) / L;
+      // Un arco cerrado (una isla entera) empieza y termina en el mismo punto: ahí no hay recta
+      // contra la cual medir, y medir contra una de largo cero borraba la isla (Nueva Zelanda, Japón)
+      const d = L ? Math.abs((pts[i][0] - ax) * dy - (pts[i][1] - ay) * dx) / L : Math.hypot(pts[i][0] - ax, pts[i][1] - ay);
       if (d > max) { max = d; k = i; }
     }
     if (max > tol) { keep[k] = 1; pila.push([a, k], [k, b]); }
@@ -110,13 +112,18 @@ async function generar() {
   // Sin saltos en la línea de cambio de fecha (Rusia, Fiyi): en la esfera 181° es −179°
   const A = arcos(topo).map(a => simplificar(sinSaltos(a).map(([lon, lat]) => [lon * U, lat * U]), TOLERANCIA));
   let d = '', puntos = 0, anillos = 0;
+  const conCiudad = r => {
+    const xs = r.map(q => q[0]), ys = r.map(q => q[1]), m = 0.3 * U;
+    return CIUDADES.some(c => c.lon * U > Math.min(...xs) - m && c.lon * U < Math.max(...xs) + m && c.lat * U > Math.min(...ys) - m && c.lat * U < Math.max(...ys) + m);
+  };
   const rombo = (x, y) => { d += `M${x} ${y + 1}l1-1-1-1-1 1z`; anillos++; puntos += 4; };
   for (const p of paises(topo)) {
     const todos = p.poligonos.flat().map(ix => anillo(ix, A, 360 * U).map(([x, y]) => [Math.round(x), Math.round(y)]));
     const mayor = Math.max(...todos.map(area));
     for (const r of todos) {
       // Las islas mínimas se van, salvo que sean lo más grande que tiene el país (Nauru, Tuvalu)
-      if (area(r) < AREA_MIN && area(r) < mayor) continue;
+      // o que haya una ciudad del juego en ellas (Hanga Roa en Rapa Nui, Tarawa en Kiribati)
+      if (area(r) < AREA_MIN && area(r) < mayor && !conCiudad(r)) continue;
       const pts = r.filter((q, i) => i === 0 || q[0] !== r[i - 1][0] || q[1] !== r[i - 1][1]);
       // Un país que cabe en una décima de grado: un rombo chico, para que se vea que ahí hay algo
       if (pts.length < 3) { rombo(...pts[0]); continue; }

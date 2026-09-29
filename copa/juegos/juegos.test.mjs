@@ -170,6 +170,43 @@ test('dónde queda: todos los países del mundo, sin repetir ni equivocar', () =
   for (const n of [1, 2, 3]) assert.ok(CIUDADES.filter(c => c.nivel === n).length >= 40, `pocas de nivel ${n}`);
 });
 
+test('dónde queda: cada ciudad cae sobre tierra dibujada en el mapa', () => {
+  // Lo que se dibuja, no los bordes originales: una simplificación mal hecha borró Nueva Zelanda y Japón
+  const anillos = MAPA.d.split('z').filter(Boolean).map(p => {
+    const n = p.match(/-?\d+/g).map(Number);
+    let x = n[0], y = n[1];
+    const r = [[x, y]];
+    for (let k = 2; k < n.length; k += 2) { x += n[k]; y += n[k + 1]; r.push([x, y]); }
+    return r;
+  });
+  const dentro = ([px, py], r) => {
+    let si = false;
+    for (let i = 0, j = r.length - 1; i < r.length; j = i++) {
+      const [xi, yi] = r[i], [xj, yj] = r[j];
+      if ((yi > py) !== (yj > py) && px < ((xj - xi) * (py - yi)) / (yj - yi) + xi) si = !si;
+    }
+    return si;
+  };
+  const aLaCosta = ([px, py], r) => {
+    let min = Infinity;
+    for (let i = 0, j = r.length - 1; i < r.length; j = i++) {
+      const [ax, ay] = r[j], [bx, by] = r[i], dx = bx - ax, dy = by - ay, L = dx * dx + dy * dy;
+      const t = L ? Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / L)) : 0;
+      min = Math.min(min, Math.hypot(px - ax - t * dx, py - ay - t * dy));
+    }
+    return min;
+  };
+  const lejos = [];
+  for (const c of CIUDADES) {
+    const ps = [0, 3600, -3600].map(k => [c.lon * donde.UNIDADES_POR_GRADO + k, c.lat * donde.UNIDADES_POR_GRADO]);
+    if (anillos.some(r => ps.some(p => dentro(p, r)))) continue;
+    // Una ciudad en la costa puede quedar un poco al agua por la simplificación: hasta 0,2° (unos 20 km)
+    const d = Math.min(...anillos.map(r => aLaCosta(ps[0], r))) / donde.UNIDADES_POR_GRADO;
+    if (d > 0.2) lejos.push(`${c.ciudad} (${d.toFixed(2)}°)`);
+  }
+  assert.deepEqual(lejos, [], `ciudades en el agua: ${lejos.join(', ')}`);
+});
+
 test('dónde queda: cinco ciudades, de la fácil a la difícil, de países distintos', () => {
   for (const c of CODIGOS) for (let d = 1; d <= 7; d++) {
     const p = donde.generar(c, d);
