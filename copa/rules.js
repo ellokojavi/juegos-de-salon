@@ -534,6 +534,7 @@ const ES = {
   yearPh: 'Año',
   bc: 'a. C.',
   yearWas: 'Fue en {v}. Ganaste {pts} puntos.',
+  yearWasOne: 'Fue en {v}. Ganaste 1 punto.',
   roundOf: 'Ronda {i} de 5',
 
   // Laboratorio y práctica (D-101)
