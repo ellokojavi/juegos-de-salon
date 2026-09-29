@@ -10,7 +10,7 @@ globalThis.sessionStorage = memoria();
 globalThis.addEventListener ||= () => {};
 
 const { createLocalStore } = await import('./store-local.js');
-const { nuevaMeta, hashPin, DIA_MS, fechaEn, moverInicio, sumarDias, inscripcionAbierta, pasarDia, diaActual, terminada } = await import('./engine.js');
+const { nuevaMeta, hashPin, DIA_MS, fechaEn, moverInicio, sumarDias, inscripcionAbierta, pasarDia, diaActual, terminada, conCierre } = await import('./engine.js');
 const { createCuenta } = await import('./cuenta.js');
 
 let n = 0;
@@ -161,6 +161,26 @@ await test('renombrar la copa: solo su admin y mientras no termine', async () =>
   await rechaza(otro.renombrarCopa(CODE, 'Otra copa'), 'permiso');
   await admin.renombrarCopa(CODE, 'La copa nueva');
   assert.equal((await admin.leer(CODE)).meta.name, 'La copa nueva');
+});
+
+await test('terminar la copa antes: solo el admin, una vez, y después nadie juega (D-161)', async () => {
+  const C3 = 'TUVWX';
+  const m3 = nuevaMeta({ nombre: 'Copa tres', dias: 3, inicio: fechaEn(admin.now()), admin: 'aaaaaa', creada: admin.now() });
+  await admin.crear(C3, m3, { pid: 'aaaaaa', name: 'Cata', at: 1, pinHash: 'h' });
+  await otro.inscribir(C3, { pid: 'bbbbbb', name: 'Javi', at: 2, pinHash: 'h' });
+  await rechaza(otro.terminarCopa(C3), 'permiso');
+  await admin.empezar(C3, 1, 'aaaaaa');
+  await admin.terminarCopa(C3);
+  const L3 = await admin.leer(C3);
+  assert.ok(L3.fin > 0);
+  assert.ok(terminada(conCierre(L3).meta, admin.now()));
+  await rechaza(admin.terminarCopa(C3), 'fin');
+  await rechaza(admin.resultado(C3, 1, 'aaaaaa', { s: 5, ms: 1, t: '' }), 'ventana');
+  await rechaza(otro.empezar(C3, 1, 'bbbbbb'), 'ventana');
+  await rechaza(otro.comodin(C3, 1, 'bbbbbb'), 'comodin');
+  await rechaza(admin.renombrarCopa(C3, 'Otra'), 'terminada');
+  await rechaza(intruso.inscribir(C3, { pid: 'cccccc', name: 'Pepe', at: 3, pinHash: 'h' }), 'cerrada');
+  await admin.eliminar(C3);
 });
 
 await test('escuchar avisa los cambios', async () => {

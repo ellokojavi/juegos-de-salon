@@ -29,6 +29,7 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
 | Final ×2 | El último día vale doble para todos. |
 | Resultados ocultos | Los puntajes de un día se ven después de jugarlo o cuando cierra. La tabla y el gráfico tampoco lo delatan: suman solo los días que ya puedes ver. |
 | Nombre | El admin lo puede cambiar hasta que la copa termina; el link sigue igual (D-148). |
+| Terminar antes | El admin puede terminar la copa en cualquier momento desde que parte. Nadie más juega, la tabla de ese momento queda como la final y los días que no alcanzaron a abrirse no se juegan ni suman (D-161). |
 | Inscripción | Abierta hasta que empieza la final. Los días que ya cerraron quedan con 0. |
 | Tabla | Suma de puntos. Desempata quien ganó más días y después quien quedó mejor en la final. Es **provisoria** mientras el último día que muestra sigue abierto y alguien no lo ha jugado (D-147). |
 | Medallas | Campeón, más días ganados, la remontada (más puestos subidos desde la mitad) y "al descenso" (el último). |
@@ -116,6 +117,7 @@ torneos/<código>/players/<pid>      { name, at, out? }
 torneos/<código>/started/<d>/<pid>  hora del servidor al tocar Empezar
 torneos/<código>/results/<d>/<pid>  { s, ms, t, r, at }
 torneos/<código>/wild/<pid>         "3" (el día del comodín, como texto)
+torneos/<código>/fin                hora del servidor en que el admin la terminó antes (D-161)
 torneoKeys/<código>/<pid>           hash del PIN (ilegible)
 torneoSeats/<código>/<pid>/<uid>    el mismo hash: el celular uid puede escribir por pid (ilegible)
 ```
@@ -141,6 +143,14 @@ un jugador, y compartir cuatro mensajes armados con el diálogo del celular (D-9
 **recordatorio del día** (sirve cualquier día: antes de empezar, con el día de gracia y con quién
 falta), tabla parcial y resumen final.
 
+**Terminar la copa antes** (D-161): desde que parte, el admin puede cerrarla en ese momento, por
+ejemplo si el último no va a jugar la final. Antes de confirmar ve quiénes todavía no juegan el día
+de hoy (y el de gracia) y si quedan días que no se van a jugar. No se puede deshacer.
+
+**Tabla final** (D-161): terminada la copa, sola o por el admin, Administrar ofrece la imagen de la
+tabla con las posiciones día a día y una planilla CSV (`planilla.js`) para Excel o Google Sheets,
+con la tabla final, el lugar de cada uno después de cada día y el detalle de cada día.
+
 ## Archivos
 
 | Archivo | Qué hace |
@@ -150,6 +160,7 @@ falta), tabla parcial y resumen final.
 | `juegos/ui-*.js` | La pantalla de cada minijuego |
 | `store-firebase.js` · `store-local.js` | El mismo almacén contra Firebase o contra localStorage (`?prueba`) |
 | `cuenta.js` | Con quién está sentado este celular y el intento a medio jugar |
+| `planilla.js` | La tabla final como CSV (D-161) |
 | `rules.js` | Textos y la explicación de cada minijuego |
 | `game.js` | Pantallas |
 
@@ -159,6 +170,7 @@ falta), tabla parcial y resumen final.
 node copa/engine.test.mjs
 node copa/juegos/juegos.test.mjs
 node copa/store.test.mjs
+node copa/planilla.test.mjs
 node tools/e2e/copa.mjs /tmp/copa            # Copa de 3 días, tres jugadores
 node tools/e2e/copa.mjs /tmp/copa --siete    # los siete minijuegos
 ```
