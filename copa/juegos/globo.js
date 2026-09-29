@@ -9,7 +9,7 @@
  * Los colores son los del afiche de "Próximamente": mar azul con brillo, tierra verde clara.
  */
 import { MAPA } from './mapa.js';
-import { vector, UNIDADES_POR_GRADO as U } from './donde.js';
+import { vector, tocado, UNIDADES_POR_GRADO as U } from './donde.js';
 
 const RAD = Math.PI / 180;
 
@@ -53,7 +53,7 @@ const RETICULA = (() => {
 
 /** La vista lista para girar: senos y cosenos del centro, centro y radio en pantalla. */
 export function vista({ centro: [lat0, lon0], r, cx, cy }) {
-  return { s0: Math.sin(lat0 * RAD), c0: Math.cos(lat0 * RAD), sl: Math.sin(lon0 * RAD), cl: Math.cos(lon0 * RAD), r, cx, cy };
+  return { centro: [lat0, lon0], s0: Math.sin(lat0 * RAD), c0: Math.cos(lat0 * RAD), sl: Math.sin(lon0 * RAD), cl: Math.cos(lon0 * RAD), r, cx, cy };
 }
 
 /** Un vector a pantalla: [px, py, prof]. Es `ver` del motor, desenrollado porque se llama miles de veces. */
@@ -266,6 +266,8 @@ uniform sampler2D t;
 uniform vec2 c;      // centro del globo, en píxeles del canvas (y desde abajo)
 uniform float r;     // radio, en píxeles del canvas
 uniform vec4 giro;   // sen y cos de la latitud y de la longitud del centro
+uniform vec4 rect;   // la tesela: esquina (u, v) y tamaño, en coordenadas de la imagen entera
+uniform float base;  // 1 para la imagen entera, 0 para una tesela
 void main() {
   float x = (gl_FragCoord.x - c.x) / r, y = (gl_FragCoord.y - c.y) / r;
   float q = x * x + y * y;
@@ -274,17 +276,56 @@ void main() {
   float Z = giro.y * y + giro.x * prof, A = -giro.x * y + giro.y * prof;
   float X = A * giro.w - x * giro.z, Y = A * giro.z + x * giro.w;
   float u = atan(Y, X) / 6.2831853 + 0.5, v = 0.5 - asin(clamp(Z, -1.0, 1.0)) / 3.1415927;
+  if (base < 0.5) {
+    // Una tesela solo pinta su rectángulo; lo demás queda con la imagen entera de abajo
+    u = (u - rect.x) / rect.z; v = (v - rect.y) / rect.w;
+    if (u < 0.0 || u > 1.0 || v < 0.0 || v > 1.0) discard;
+  } else {
   ${derivadas
     // En la línea de cambio de fecha u salta de 1 a 0: se elige la versión de u que no salta ahí,
     // para que el mipmap no dibuje una costura (Tarini)
     ? 'float u2 = fract(u + 0.5) - 0.5; if (fwidth(u2) < fwidth(u) - 0.001) u = u2;'
     : ''}
+  }
   vec3 col = texture2D(t, vec2(u, v)).rgb;
   // Un poco más clara que el original, que en un celular se ve oscura; el borde, suavizado
   col = pow(col, vec3(0.85));
   float a = clamp((1.0 - sqrt(q)) * r / 1.5, 0.0, 1.0);
   gl_FragColor = vec4(col * a, a);
 }`;
+
+/**
+ * Las teselas nítidas: la imagen de 21600 × 10800 en 16 × 8 cuadrados de 22,5° (los genera
+ * `tools/mapa.mjs satelite`). Se bajan una vez y las comparten todos los globos de la página.
+ */
+const TESELAS = { columnas: 16, filas: 8, lado: 1350, guardar: 36, dir: new URL('../../assets/img/tierra-2004-09/', import.meta.url).href };
+const bajadas = new Map();
+const tesela = clave => {
+  if (!bajadas.has(clave)) {
+    bajadas.set(clave, new Promise((ok, mal) => {
+      const img = new Image();
+      img.decoding = 'async';
+      img.onload = () => ok(img);
+      img.onerror = () => { bajadas.delete(clave); mal(); };
+      img.src = `${TESELAS.dir}${clave}.jpg`;
+    }));
+  }
+  return bajadas.get(clave);
+};
+
+/** Las teselas que se ven: se prueba una grilla de puntos de la pantalla y se anota la tesela de cada uno. */
+function visibles(V, w, h) {
+  const claves = new Set();
+  const N = 10;
+  for (let i = 0; i <= N; i++) for (let j = 0; j <= N; j++) {
+    const g = tocado(((w * i) / N - V.cx) / V.r, (V.cy - (h * j) / N) / V.r, V.centro);
+    if (!g) continue;
+    const f = Math.min(TESELAS.filas - 1, Math.floor((90 - g[0]) / (180 / TESELAS.filas)));
+    const c = Math.min(TESELAS.columnas - 1, Math.floor((g[1] + 180) / (360 / TESELAS.columnas)));
+    claves.add(`${f}-${c}`);
+  }
+  return claves;
+}
 
 /**
  * Prepara un canvas con WebGL para dibujar la Tierra. Devuelve `{ dibujar(V, w, h), lista() }`, o
@@ -312,7 +353,7 @@ export function satelite(canvas, alLlegar) {
   gl.enableVertexAttribArray(p);
   gl.vertexAttribPointer(p, 2, gl.FLOAT, false, 0, 0);
   const U = n => gl.getUniformLocation(programa, n);
-  const [uC, uR, uGiro] = [U('c'), U('r'), U('giro')];
+  const [uC, uR, uGiro, uRect, uBase] = [U('c'), U('r'), U('giro'), U('rect'), U('base')];
   const tex = gl.createTexture();
   const maximo = gl.getParameter(gl.MAX_TEXTURE_SIZE);
   let subida = 0;
@@ -335,6 +376,36 @@ export function satelite(canvas, alLlegar) {
   avisos.add(aviso);
   subir();
 
+  // Las teselas nítidas (D-160): se suben al llegar, sin mipmap (solo se usan acercando, y sin
+  // mipmap no hay costura en el borde), y se sueltan las que llevan rato sin verse
+  const teselas = new Map();
+  let cuadro = 0;
+  const conTeselas = maximo >= TESELAS.lado;
+  const usarTesela = clave => {
+    let t = teselas.get(clave);
+    if (!t) {
+      t = { tex: null, usado: 0 };
+      teselas.set(clave, t);
+      tesela(clave).then(img => {
+        if (!teselas.has(clave) || !canvas.isConnected) return;
+        t.tex = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, t.tex);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, img);
+        for (const [k, val] of [[gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE], [gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE], [gl.TEXTURE_MAG_FILTER, gl.LINEAR], [gl.TEXTURE_MIN_FILTER, gl.LINEAR]]) gl.texParameteri(gl.TEXTURE_2D, k, val);
+        alLlegar?.();
+      }, () => {});
+    }
+    t.usado = cuadro;
+    return t;
+  };
+  const soltarViejas = () => {
+    if (teselas.size <= TESELAS.guardar) return;
+    for (const [clave, t] of [...teselas].sort((a, b) => a[1].usado - b[1].usado).slice(0, teselas.size - TESELAS.guardar)) {
+      if (t.tex) gl.deleteTexture(t.tex);
+      teselas.delete(clave);
+    }
+  };
+
   return {
     lista: () => subida > 0,
     dibujar(V, w, h) {
@@ -348,7 +419,22 @@ export function satelite(canvas, alLlegar) {
       gl.uniform2f(uC, V.cx * dpr, H - V.cy * dpr);
       gl.uniform1f(uR, V.r * dpr);
       gl.uniform4f(uGiro, V.s0, V.c0, V.sl, V.cl);
+      gl.uniform1f(uBase, 1);
+      gl.bindTexture(gl.TEXTURE_2D, tex);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      // Acercado más de lo que da la imagen entera: encima, las teselas de lo que se ve
+      cuadro++;
+      if (!conTeselas || 2 * Math.PI * V.r * dpr < subida * 1.25) return;
+      gl.uniform1f(uBase, 0);
+      for (const clave of visibles(V, w, h)) {
+        const t = usarTesela(clave);
+        if (!t.tex) continue;
+        const [f, c] = clave.split('-').map(Number);
+        gl.uniform4f(uRect, c / TESELAS.columnas, f / TESELAS.filas, 1 / TESELAS.columnas, 1 / TESELAS.filas);
+        gl.bindTexture(gl.TEXTURE_2D, t.tex);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      }
+      soltarViejas();
     },
   };
 }
