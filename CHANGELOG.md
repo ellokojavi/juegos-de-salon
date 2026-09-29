@@ -1,6 +1,6 @@
 # Changelog
 
-## Próxima — 2026-09-28
+## 0.70.0 — 2026-09-28
 - **¿Dónde queda?: 223 ciudades más, de segunda línea.** Porto Alegre, Salta, Copiapó, Castro,
   Bilbao, Chengdú, Luxor, Queenstown… Las medianas y las difíciles ya no son casi siempre
   capitales: ahora hay que ubicar ciudades que uno sabe más o menos dónde quedan (D-157).
