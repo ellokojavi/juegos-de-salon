@@ -67,9 +67,10 @@ tableros más chicos), que no se guarda ni cuenta.
 
 Al crear la copa, apenas se elige la duración aparece **¿Qué se juega cada día?** con una propuesta
 al azar (`calendarioAlAzar`): juegos distintos del pozo (`POZO` en `engine.js`: los seis de siempre
-más Zip, Tango y ¿Dónde queda?), sin dos días seguidos de la misma habilidad. Se cambia tocando un
-juego y después otro: dos días se cambian de lugar, y un día con uno de los que quedan fuera se
-reemplazan; 🎲 propone otro orden. La final queda fija al último. El calendario se guarda en
+más Zip, Tango y ¿Dónde queda?), sin dos días seguidos de la misma habilidad. Es la mano y la línea
+de Línea de Tiempo con su arrastre: un día se arrastra a otro lugar de la semana (en un celular,
+por su agarre ⠿) y un juego de la mano, hasta el día que reemplaza; tocando se llega a lo mismo
+(el juego y después la ranura o el día). 🎲 propone otro orden. La final queda fija al último. El calendario se guarda en
 `meta.cal` y `nuevaMeta` rechaza uno que no se puede jugar (`calendarioValido`). Sin elección
 (las demos) se usa el de siempre, `CALENDARIOS`: Línea, Toque y Fama, Conexiones, Reinas, Palabra,
 Año y la final; o Línea, Conexiones y la final en la de 3 días (D-159).
