@@ -16,6 +16,8 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
   con su señal de uso. `/copa/?practica=<id>` sin `&labs` lleva ahí.
 - **Jugadores:** de 1 a 10 por copa. **Idioma:** solo español (D-98).
 - **Modalidades:** Copa de 7 días (la que se ofrece) y Copa de 3 días (solo pruebas).
+- **Calendario:** lo arma el admin al crear la copa (D-159): qué juegos entran y en qué orden,
+  a partir de una propuesta al azar. La final va siempre el último día y no cambia.
 
 ## Reglas del torneo
 
@@ -63,11 +65,19 @@ Antes de Empezar cada día se puede jugar una **sesión de prueba** (D-103): la 
 otro contenido (código derivado con `codigoEnsayo`, otra temática, una grilla fuera del sorteo,
 tableros más chicos), que no se guarda ni cuenta.
 
-La Copa de 3 días juega Línea, Conexiones y la final. En el laboratorio se pueden practicar además
-**〰️ Zip** (un solo trazo por todas las casillas, pasando por los números en orden; por niveles, tres minutos para resolver la mayor cantidad) y **☀️ Tango**
+Al crear la copa, apenas se elige la duración aparece **¿Qué se juega cada día?** con una propuesta
+al azar (`calendarioAlAzar`): juegos distintos del pozo (`POZO` en `engine.js`: los seis de siempre
+más Zip, Tango y ¿Dónde queda?), sin dos días seguidos de la misma habilidad. Se cambia tocando un
+juego y después otro: dos días se cambian de lugar, y un día con uno de los que quedan fuera se
+reemplazan; 🎲 propone otro orden. La final queda fija al último. El calendario se guarda en
+`meta.cal` y `nuevaMeta` rechaza uno que no se puede jugar (`calendarioValido`). Sin elección
+(las demos) se usa el de siempre, `CALENDARIOS`: Línea, Toque y Fama, Conexiones, Reinas, Palabra,
+Año y la final; o Línea, Conexiones y la final en la de 3 días (D-159).
+
+Los tres juegos más nuevos del pozo son **〰️ Zip** (un solo trazo por todas las casillas, pasando por los números en orden; por niveles, tres minutos para resolver la mayor cantidad) y **☀️ Tango**
 (soles y lunas, mitad y mitad por línea, nunca tres seguidos, con marcas = y ×), y **📍 ¿Dónde
 queda?** (cinco ciudades con su país, un alfiler en un globo sin nombres que se gira sin fin; 100
-puntos por ciudad menos 4 cada 100 km, D-155, D-156), candidatos a entrar al calendario.
+puntos por ciudad menos 4 cada 100 km, D-155, D-156).
 
 - **¿Dónde queda?** saca sus ciudades de `ciudades.js` (las 195 capitales, ciudades famosas y de
   segunda línea, 529 en total, con nivel y código ISO; D-157) y su mapa de `mapa.js`, que genera `node tools/mapa.mjs generar`; `revisar`
@@ -167,4 +177,4 @@ node tools/e2e/copa.mjs /tmp/copa --siete    # los siete minijuegos
 
 Recordatorios `.ics` (LIG-29), verificación cruzada de puntajes (LIG-30), papelera de copas
 viejas (LIG-31), inglés y portugués con contenido propio (LIG-32), avisos automáticos (LIG-33),
-calendario elegido por el admin (LIG-34) y que el panel del dueño muestre las copas y su progreso.
+minijuegos de reserva (LIG-82) y que el panel del dueño muestre las copas y su progreso.

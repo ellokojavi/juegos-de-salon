@@ -60,6 +60,22 @@ ol.como li { line-height: 1.45; }
 .chip-btn.on { border-color: var(--cyan); background: rgba(46, 230, 214, 0.18); }
 .cal-mini { display: flex; justify-content: center; gap: 8px; font-size: 1.6rem; margin-bottom: 4px; }
 
+/* Elegir los juegos al crear la copa (D-159) */
+.cal-elegir { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 6px; }
+.elegir-dia {
+  width: 100%; display: grid; grid-template-columns: 3.6em auto 1fr; align-items: center; gap: 10px; text-align: left;
+  background: rgba(0,0,0,0.25); border: 2px solid var(--glass-border); border-radius: 14px; padding: 8px 12px;
+  color: var(--ink); font: 700 1rem var(--font-body); min-height: 52px; cursor: pointer;
+}
+.elegir-dia.on { border-color: var(--yellow); background: rgba(255, 210, 63, 0.14); box-shadow: 0 0 0 1px var(--yellow) inset; }
+.elegir-dia.fija { cursor: default; border-style: dashed; border-color: rgba(46, 230, 214, 0.45); }
+.cal-num { color: var(--muted); font-weight: 900; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.04em; }
+.cal-emoji { font-size: 1.5rem; line-height: 1; }
+.cal-nombre { font-weight: 900; line-height: 1.2; }
+.cal-nombre small { display: block; color: var(--muted); font-weight: 700; font-size: 0.8rem; }
+.cal-fuera { display: flex; flex-wrap: wrap; gap: 8px; }
+.cal-fuera .chip-btn.on { border-color: var(--yellow); background: rgba(255, 210, 63, 0.14); }
+
 /* Tablero */
 .copa-head { text-align: center; display: grid; gap: 8px; }
 .copa-head h1 { margin: 0; overflow-wrap: anywhere; }
