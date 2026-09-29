@@ -581,7 +581,7 @@ await b.go(`${BASE}?practica=${id}&prueba&labs${id === 'zip' ? '&zipSeg=12&semil
     await b.send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: x0 - 72, y: y0, button: 'left', clickCount: 1, buttons: 0 });
     await sleep(200);
     const lon = (await vista()).centro[1];
-    ok(lon < -170, `¿Dónde queda?: pasado los 180° el globo sigue girando (${lon.toFixed(1)}°)`);
+    ok(lon < -170, `¿Dónde queda?: pasados los 180° el globo sigue girando (${lon.toFixed(1)}°)`);
     await b.shot('donde-mapa');
   }
   await JUGAR[id](id === 'tango' ? 1 : 2);

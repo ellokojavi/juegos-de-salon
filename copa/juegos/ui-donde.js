@@ -22,6 +22,8 @@ const ZOOM_MAX = 40;
 const ZOOM_RESPUESTA = 16;
 /** Hacia dónde mira el globo al empezar cada ciudad: el Atlántico, con América, Europa y África. */
 const CENTRO_INICIAL = [10, -40];
+/** El globo va esto más abajo en su caja: el alfiler clavado en el borde de arriba muestra la cabeza (30 px). */
+const AIRE = 12;
 const RAD = Math.PI / 180;
 const envolver = lon => ((((lon + 180) % 360) + 360) % 360) - 180;
 
@@ -39,8 +41,8 @@ function crearGlobo({ T, alTocar }) {
   const marcas = {};
   let w = 0, h = 0, pedido = false;
 
-  const radioBase = () => Math.max(40, Math.min(w, h) / 2 - 10);
-  const V = () => globo.vista({ centro: v.centro, r: radioBase() * v.z, cx: w / 2, cy: h / 2 });
+  const radioBase = () => Math.max(40, Math.min(w / 2, h / 2 - AIRE) - 10);
+  const V = () => globo.vista({ centro: v.centro, r: radioBase() * v.z, cx: w / 2, cy: h / 2 + AIRE });
   const pintar = () => {
     pedido = false;
     if (!canvas.isConnected) return;
@@ -53,7 +55,7 @@ function crearGlobo({ T, alTocar }) {
   /** El lugar del globo bajo un punto de la pantalla, o null si ahí hay espacio. */
   const bajo = (px, py) => {
     const [x, y] = local(px, py), R = radioBase() * v.z;
-    return motor.tocado((x - w / 2) / R, (h / 2 - y) / R, v.centro);
+    return motor.tocado((x - w / 2) / R, (h / 2 + AIRE - y) / R, v.centro);
   };
   const girar = (dx, dy) => {
     const R = radioBase() * v.z;
@@ -140,8 +142,8 @@ function crearGlobo({ T, alTocar }) {
       Object.assign(marcas, { alfiler: p, ciudad: q, linea: true });
       v.centro = motor.medio(p, q);
       const th = motor.distancia(p, q) / 6371;
-      // Un lugar a θ/2 del centro se ve a R·sen(θ/2) del centro: que quede dentro de la caja
-      v.z = Math.max(1, Math.min(ZOOM_RESPUESTA, (0.34 * Math.min(w || 300, h || 300)) / (radioBase() * Math.sin(Math.min(th / 2, Math.PI / 2)) || 1)));
+      // Un lugar a θ/2 del centro se ve a R·sen(θ/2) del centro: que quede dentro de la caja, con la cabeza del alfiler arriba y el aro de la ciudad abajo
+      v.z = Math.max(1, Math.min(ZOOM_RESPUESTA, (0.3 * Math.min(w || 300, h || 300)) / (radioBase() * Math.sin(Math.min(th / 2, Math.PI / 2)) || 1)));
       redibujar();
     },
     pintar,
