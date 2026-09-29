@@ -1358,7 +1358,7 @@ function antesDeJugar(d) {
     } catch (e) { avisoError(err, errorDe(e)); empezar.disabled = false; }
   });
   poner(body, el('div', { class: 'stack' },
-    el('div', { class: 'intro-hero' }, el('span', { class: 'icon' }, J.emoji),
+    el('div', { class: 'intro-hero' }, heroe(id, J),
       el('p', { class: 'muted', style: 'margin:0' }, fmt(T.dayOf, { d, n: meta.days })),
       el('h2', { class: 'display display--lg' }, J.nombre)),
     el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.howToPlay), dibujo(id), el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
@@ -1378,6 +1378,9 @@ function antesDeJugar(d) {
  * tienen, porque el tiempo desempata. El reloj parte cuando aparece "¡A jugar!", y ese cartel se
  * desvanece solo sobre el tablero. Resuelve la promesa en ese momento.
  */
+/** Lo de arriba de la antesala: la portada animada del minijuego si la tiene (el globo de ¿Dónde queda?), si no su emoji. */
+const heroe = (id, J) => JUEGOS[id]?.portada?.() ?? el('span', { class: 'icon' }, J.emoji);
+
 /** El dibujo que explica el minijuego antes del texto, si lo tiene (Reinas, Tango y Zip). */
 const dibujo = id => JUEGOS[id]?.ejemplo?.({ el, T }) ?? null;
 
@@ -1647,7 +1650,7 @@ function practica(id) {
   const body = $('#jugar-body');
   body.innerHTML = '';
   poner(body, el('div', { class: 'stack' },
-    el('div', { class: 'intro-hero' }, el('span', { class: 'icon' }, J.emoji),
+    el('div', { class: 'intro-hero' }, heroe(id, J),
       el('p', { class: 'muted', style: 'margin:0' }, LABS ? T.practiceTitle : T.looseTitle),
       el('h2', { class: 'display display--lg' }, J.nombre)),
     el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.howToPlay), dibujo(id), el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),

@@ -134,10 +134,11 @@ const jugarAnio = async nivel => {
   }
 };
 
-/** El punto de la pantalla donde queda un lugar del mapa de ¿Dónde queda?, con el zoom de ese momento. */
-const puntoDelMapa = (lat, lon) => ev(`(async()=>{const m=await import('/copa/juegos/donde.js');const [x,y]=m.proyectar(${lat},${lon});
-  const svg=document.querySelector('.mapa-svg'),r=svg.getBoundingClientRect(),[vx,vy,vw,vh]=svg.getAttribute('viewBox').split(' ').map(Number);
-  return JSON.stringify([r.left+(x-vx)/vw*r.width, r.top+(y-vy)/vh*r.height])})()`).then(JSON.parse);
+/** Gira el globo de ¿Dónde queda? hasta tener el lugar de frente y dice dónde queda en la pantalla. */
+const puntoDelMapa = async (lat, lon) => {
+  await ev(`document.querySelector('.mapa-globo').globo.girarA(${lat}, ${lon}); 1`);
+  return ev(`JSON.stringify(document.querySelector('.mapa-globo').globo.aPantalla(${lat}, ${lon}))`).then(JSON.parse);
+};
 
 const jugarDonde = async nivel => {
   const ciudades = await ev('JSON.stringify(window.__jugando.p.ciudades)').then(JSON.parse);
@@ -145,8 +146,6 @@ const jugarDonde = async nivel => {
     // nivel 2: justo en la ciudad; 1: unos 3° al lado; 0: al otro lado del mundo
     const lat = nivel === 2 ? c.lat : nivel === 1 ? c.lat + 3 : -c.lat;
     const lon = nivel === 0 ? (c.lon > 0 ? c.lon - 170 : c.lon + 170) : c.lon;
-    // Con el mapa entero a la vista, para que la ciudad no quede fuera de la caja
-    for (let k = 0; k < 5; k++) await click('#btn-alejar');
     await b.toque(...await puntoDelMapa(lat, lon));
     await sleep(450); // más que un doble toque: el siguiente toque no acerca
     await click('#btn-confirmar'); await sleep(150);
@@ -498,6 +497,13 @@ for (const id of ['linea', 'numero', 'conexiones', 'reinas', 'letras', 'zip', 't
   // Zip con semilla fija: el chequeo del aviso busca un trazo que llegue al final sin cubrir todo
 await b.go(`${BASE}?practica=${id}&prueba&labs${id === 'zip' ? '&zipSeg=12&semilla=KQRST' : ''}`, 1200); await preparar();
   ok(await ev(`!!document.getElementById('btn-ensayo')`) , `práctica de ${id}: la antesala ofrece la prueba como en la copa`);
+  if (id === 'donde') {
+    // La portada es el globo girando solo (y los demás minijuegos siguen con su emoji)
+    const cuadro = () => ev(`document.querySelector('.intro-hero .globo-portada')?.toDataURL().length + ':' + document.querySelector('.intro-hero .globo-portada')?.toDataURL().slice(-200)`);
+    const c1 = await cuadro(); await sleep(700); const c2 = await cuadro();
+    ok(!c1.startsWith('undefined') && c1 !== c2, '¿Dónde queda?: la portada es un globo que gira');
+    await b.shot('donde-portada');
+  }
   if (id === 'linea') {
     // La prueba desde el laboratorio: la misma que antes de un día (D-109), y vuelve a la antesala
     await click('#btn-ensayo'); await esperarCuenta();
@@ -553,23 +559,29 @@ await b.go(`${BASE}?practica=${id}&prueba&labs${id === 'zip' ? '&zipSeg=12&semil
   }
   if (id === 'tango') await b.shot('tango-tablero');
   if (id === 'donde') {
-    // Arrastrar corre el mapa sin poner el alfiler; el doble toque lo pone y acerca al doble
-    const vb = () => ev(`document.querySelector('.mapa-svg').getAttribute('viewBox')`).then(v => v.split(' ').map(Number));
-    const [x0, y0] = await puntoDelMapa(0, 20);
-    const antes = await vb();
-    // Parte acercado hasta llenar el alto de la caja, sin franjas de mar vacío (dilema #85)
-    const altoMapa = await ev(`import('/copa/juegos/mapa.js').then(m => m.MAPA.alto)`);
-    ok(antes[3] <= altoMapa + 1 && antes[1] >= -1, `¿Dónde queda?: el mapa parte llenando el alto de la caja (${Math.round(antes[3])} de ${altoMapa})`);
+    // Arrastrar gira el globo sin poner el alfiler; el doble toque lo pone y acerca al doble
+    const vista = () => ev(`JSON.stringify(document.querySelector('.mapa-globo').globo.vista())`).then(JSON.parse);
+    const antes = await vista();
+    ok(antes.z === 1 && await ev(`(()=>{const c=document.querySelector('.mapa-globo').getBoundingClientRect();return c.width>200&&c.height>150})()`), '¿Dónde queda?: el globo parte entero a la vista');
     ok(await ev(`document.getElementById('btn-confirmar').disabled`), '¿Dónde queda?: sin alfiler, Confirmar está apagado (C-8)');
+    const [x0, y0] = await ev(`(()=>{const c=document.querySelector('.mapa-globo').getBoundingClientRect();return JSON.stringify([c.left+c.width/2,c.top+c.height/2])})()`).then(JSON.parse);
     await b.toque(x0, y0); await sleep(60); await b.toque(x0, y0); await sleep(300);
-    const acercado = await vb();
-    ok(Math.abs(acercado[2] - antes[2] / 2) < 1 && await ev(`!!document.querySelector('.mapa-alfiler') && !document.getElementById('btn-confirmar').disabled`), `¿Dónde queda?: el doble toque pone el alfiler y acerca al doble (${antes[2]} → ${acercado[2]})`);
+    const acercado = await vista();
+    ok(acercado.z === 2 && await ev(`document.querySelector('.mapa-globo').dataset.alfiler === '1' && !document.getElementById('btn-confirmar').disabled`), `¿Dónde queda?: el doble toque pone el alfiler y acerca al doble (×${acercado.z})`);
+    // Un arrastre largo da la vuelta: la longitud sigue sin tope (el globo gira sin fin)
     await b.send('Input.dispatchMouseEvent', { type: 'mousePressed', x: x0, y: y0, button: 'left', clickCount: 1, buttons: 1 });
-    for (let i = 1; i <= 6; i++) await b.send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: x0 + 12 * i, y: y0, button: 'left', buttons: 1 });
-    await b.send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: x0 + 72, y: y0, button: 'left', clickCount: 1, buttons: 0 });
+    for (let i = 1; i <= 6; i++) await b.send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: x0 - 12 * i, y: y0, button: 'left', buttons: 1 });
+    await b.send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: x0 - 72, y: y0, button: 'left', clickCount: 1, buttons: 0 });
     await sleep(200);
-    const corrido = await vb();
-    ok(corrido[0] < acercado[0] && await ev(`document.querySelectorAll('.mapa-alfiler').length`) === 1, '¿Dónde queda?: arrastrar corre el mapa y no mueve el alfiler');
+    const girado = await vista();
+    ok(girado.centro[1] > acercado.centro[1] && girado.z === 2 && await ev(`document.querySelector('.mapa-globo').dataset.alfiler`) === '1', `¿Dónde queda?: arrastrar gira el globo (${acercado.centro[1].toFixed(1)}° → ${girado.centro[1].toFixed(1)}°) y no mueve el alfiler`);
+    await ev(`document.querySelector('.mapa-globo').globo.girarA(0, 175); 1`);
+    await b.send('Input.dispatchMouseEvent', { type: 'mousePressed', x: x0, y: y0, button: 'left', clickCount: 1, buttons: 1 });
+    for (let i = 1; i <= 6; i++) await b.send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: x0 - 12 * i, y: y0, button: 'left', buttons: 1 });
+    await b.send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: x0 - 72, y: y0, button: 'left', clickCount: 1, buttons: 0 });
+    await sleep(200);
+    const lon = (await vista()).centro[1];
+    ok(lon < -170, `¿Dónde queda?: pasados los 180° el globo sigue girando (${lon.toFixed(1)}°)`);
     await b.shot('donde-mapa');
   }
   await JUGAR[id](id === 'tango' ? 1 : 2);

@@ -2050,3 +2050,31 @@ arrastre para `arrastre.js`); un mapa de teselas (necesita red y trae nombres); 
 Taiwán (el dueño prefirió la lista de la ONU con sus observadores).
 **Consecuencias:** un minijuego más en el paso 1 del laboratorio. El mapa se rehace a mano; solo
 cambia si cambian los bordes o la proyección.
+
+## D-156 · ¿Dónde queda? se juega en un globo que gira sin fin, y su portada gira sola
+**Fecha:** 2026-09-28 · **Estado:** vigente (reemplaza el mapa plano de D-155 y la vista inicial del dilema #85)
+**Decisión:** El mapa plano en proyección de Miller se cambia por un **globo**: una proyección
+ortográfica dibujada en un canvas (`copa/juegos/globo.js`). Arrastrar lo gira sin tope en
+longitud (pasados los 180° sigue); pellizcar, el doble toque, la rueda y + / − lo acercan hasta 40
+veces; un toque pone el alfiler. La respuesta centra el globo entre el alfiler y la ciudad, los
+acerca a los dos y los une con el arco más corto sobre la esfera. Cada ciudad parte con el globo
+entero, mirando al Atlántico (10° N, 40° O). Los colores son los del afiche de "Próximamente":
+mar azul con brillo, tierra verde clara, meridianos y paralelos cada 30°.
+La **portada** del minijuego (la antesala de la práctica y de un día de copa) deja el emoji por el
+mismo globo en chico, girando a 8° por segundo con el alfiler en Brasil y la estrella en
+Valparaíso, como el afiche; con movimiento reducido queda quieto (C-8). Un minijuego puede tener
+portada exportando `portada()` desde su pantalla; los demás siguen con su emoji.
+- **El mapa** (`mapa.js`, 81 KB) pasa a décimas de grado sin proyectar, e incluye la Antártica:
+  el globo lo gira. Donde un país cruza el borde del globo, el recorte sigue el borde.
+- **Las pruebas** tocan cada ciudad girando el globo hasta tenerla de frente (`canvas.globo`
+  expone `girarA` y `aPantalla`, que la respuesta también usa).
+**Por qué:** lo pidió el dueño: un globo esférico que se pueda recorrer sin fin, y una portada
+animada como el afiche. En el mapa plano el Pacífico quedaba cortado en los bordes (Fiyi a un
+lado, Samoa al otro) y en un celular vertical sobraba mar (#85); el globo no tiene bordes.
+**Alternativas descartadas:** el mapa plano con vuelta infinita (sigue deformando cerca de los
+polos y no es lo que se pidió); una librería de mapas (d3-geo) desde un CDN: una dependencia
+externa para unas 150 líneas de trigonometría.
+**Consecuencias:** en el globo entero solo se ve medio mundo: hay que girarlo para llegar a la
+ciudad. La vista inicial del dilema #85 (llenar el alto de la caja) ya no aplica: el globo cabe
+entero y se ve como globo. La portada dibuja 30 cuadros por segundo con uno de cada cuatro puntos
+del mapa, y se detiene cuando sale de la pantalla.
