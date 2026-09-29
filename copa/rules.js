@@ -529,6 +529,7 @@ const ES = {
   pinWas: 'Quedaste a {km}. Ganaste {pts} puntos.',
   pinWasOne: 'Quedaste a {km}. Ganaste 1 punto.',
   mapLabel: 'Globo terráqueo sin nombres',
+  spinHint: '↔ Arrastra para girar',
   zoomIn: 'Acercar el globo',
   zoomOut: 'Alejar el globo',
   yearPh: 'Año',

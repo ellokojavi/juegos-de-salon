@@ -283,6 +283,8 @@ button.md-fila { cursor: pointer; }
 .mapa-caja { position: relative; height: clamp(160px, calc(100vh - 390px), 460px); height: clamp(160px, calc(100svh - 390px), 460px); border-radius: 14px; overflow: hidden; border: 2px solid var(--glass-border); }
 .mapa-caja { background: radial-gradient(circle at 50% 45%, #2a1250, #0e0520 75%); }
 .mapa-globo { display: block; width: 100%; height: 100%; touch-action: none; user-select: none; -webkit-user-select: none; cursor: crosshair; }
+.globo-pista { position: absolute; left: 50%; top: 10px; transform: translateX(-50%); pointer-events: none; white-space: nowrap;
+  background: rgba(21,7,38,0.8); color: #fff; font: 800 0.9rem var(--font-body); padding: 6px 12px; border-radius: 999px; border: 1px solid var(--glass-border); }
 .mapa-zoom { position: absolute; right: 8px; bottom: 8px; display: grid; gap: 6px; }
 .mapa-zoom .btn { width: 44px; min-height: 44px; padding: 0; font: 900 1.4rem var(--font-body); background: rgba(21,7,38,0.75); }
 .donde-ciudad b { overflow-wrap: anywhere; }

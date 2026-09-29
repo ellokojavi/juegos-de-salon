@@ -150,6 +150,8 @@ const jugarDonde = async nivel => {
     await sleep(450); // más que un doble toque: el siguiente toque no acerca
     await click('#btn-confirmar'); await sleep(150);
     if (await ev(`!!document.getElementById('btn-siguiente')`)) { await click('#btn-siguiente'); await sleep(120); }
+    // La pista de girar es solo de la primera ciudad (#88)
+    if (await ev(`!!document.querySelector('.mapa-globo') && !document.getElementById('btn-fin')`)) ok(!await ev(`document.getElementById('globo-pista')`), '¿Dónde queda?: la pista no vuelve en las ciudades siguientes');
   }
 };
 
@@ -559,21 +561,26 @@ await b.go(`${BASE}?practica=${id}&prueba&labs${id === 'zip' ? '&zipSeg=12&semil
   }
   if (id === 'tango') await b.shot('tango-tablero');
   if (id === 'donde') {
-    // Arrastrar gira el globo sin poner el alfiler; el doble toque lo pone y acerca al doble
+    // Arrastrar gira el globo sin poner el alfiler; el doble toque solo acerca al doble
     const vista = () => ev(`JSON.stringify(document.querySelector('.mapa-globo').globo.vista())`).then(JSON.parse);
     const antes = await vista();
     ok(antes.z === 1 && await ev(`(()=>{const c=document.querySelector('.mapa-globo').getBoundingClientRect();return c.width>200&&c.height>150})()`), '¿Dónde queda?: el globo parte entero a la vista');
     ok(await ev(`document.getElementById('btn-confirmar').disabled`), '¿Dónde queda?: sin alfiler, Confirmar está apagado (C-8)');
+    ok(await ev(`document.getElementById('globo-pista')?.textContent`) === '↔ Arrastra para girar', '¿Dónde queda?: la primera ciudad dice que el globo se gira (#88)');
     const [x0, y0] = await ev(`(()=>{const c=document.querySelector('.mapa-globo').getBoundingClientRect();return JSON.stringify([c.left+c.width/2,c.top+c.height/2])})()`).then(JSON.parse);
-    await b.toque(x0, y0); await sleep(60); await b.toque(x0, y0); await sleep(300);
+    await b.toque(x0, y0); await sleep(60); await b.toque(x0, y0); await sleep(500);
     const acercado = await vista();
-    ok(acercado.z === 2 && await ev(`document.querySelector('.mapa-globo').dataset.alfiler === '1' && !document.getElementById('btn-confirmar').disabled`), `¿Dónde queda?: el doble toque pone el alfiler y acerca al doble (×${acercado.z})`);
+    ok(acercado.z === 2 && await ev(`!document.querySelector('.mapa-globo').dataset.alfiler && document.getElementById('btn-confirmar').disabled`), `¿Dónde queda?: el doble toque acerca al doble (×${acercado.z}) sin poner el alfiler`);
+    // Un toque solo sí lo pone, pasado el momento en que podía ser un doble toque
+    await b.toque(x0, y0); await sleep(500);
+    ok(await ev(`document.querySelector('.mapa-globo').dataset.alfiler === '1' && !document.getElementById('btn-confirmar').disabled`), '¿Dónde queda?: un toque solo pone el alfiler');
     // Un arrastre largo da la vuelta: la longitud sigue sin tope (el globo gira sin fin)
     await b.send('Input.dispatchMouseEvent', { type: 'mousePressed', x: x0, y: y0, button: 'left', clickCount: 1, buttons: 1 });
     for (let i = 1; i <= 6; i++) await b.send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: x0 - 12 * i, y: y0, button: 'left', buttons: 1 });
     await b.send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: x0 - 72, y: y0, button: 'left', clickCount: 1, buttons: 0 });
     await sleep(200);
     const girado = await vista();
+    ok(!await ev(`document.getElementById('globo-pista')`), '¿Dónde queda?: la pista se va con el primer arrastre');
     ok(girado.centro[1] > acercado.centro[1] && girado.z === 2 && await ev(`document.querySelector('.mapa-globo').dataset.alfiler`) === '1', `¿Dónde queda?: arrastrar gira el globo (${acercado.centro[1].toFixed(1)}° → ${girado.centro[1].toFixed(1)}°) y no mueve el alfiler`);
     await ev(`document.querySelector('.mapa-globo').globo.girarA(0, 175); 1`);
     await b.send('Input.dispatchMouseEvent', { type: 'mousePressed', x: x0, y: y0, button: 'left', clickCount: 1, buttons: 1 });
