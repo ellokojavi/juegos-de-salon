@@ -208,13 +208,13 @@
         ".read": "$code.matches(/^[A-HJ-NP-Z]{5}$/)",
         ".write": "auth != null && $code.matches(/^[A-HJ-NP-Z]{5}$/) && !newData.exists() && root.child('torneoSeats/' + $code + '/' + root.child('torneos/' + $code + '/meta/admin').val() + '/' + auth.uid).exists()",
         "meta": {
-          ".write": "auth != null && $code.matches(/^[A-HJ-NP-Z]{5}$/) && (!data.exists() || (root.child('torneoSeats/' + $code + '/' + data.child('admin').val() + '/' + auth.uid).exists() && newData.child('admin').val() == data.child('admin').val() && newData.child('name').val() == data.child('name').val() && newData.child('days').val() == data.child('days').val() && newData.child('cal').val() == data.child('cal').val() && newData.child('createdAt').val() == data.child('createdAt').val() && newData.child('lab').val() == data.child('lab').val() && newData.child('alias').val() == data.child('alias').val() && (data.child('lab').val() == true || (!root.child('torneos/' + $code + '/started').exists() && newData.child('win/1/b').val() > now && newData.child('win/1/a').val() < now + 2764800000))))",
+          ".write": "auth != null && $code.matches(/^[A-HJ-NP-Z]{5}$/) && (!data.exists() || (root.child('torneoSeats/' + $code + '/' + data.child('admin').val() + '/' + auth.uid).exists() && !data.parent().child('fin').exists() && newData.child('admin').val() == data.child('admin').val() && newData.child('name').val() == data.child('name').val() && newData.child('days').val() == data.child('days').val() && newData.child('cal').val() == data.child('cal').val() && newData.child('createdAt').val() == data.child('createdAt').val() && newData.child('lab').val() == data.child('lab').val() && newData.child('alias').val() == data.child('alias').val() && (data.child('lab').val() == true || (!root.child('torneos/' + $code + '/started').exists() && newData.child('win/1/b').val() > now && newData.child('win/1/a').val() < now + 2764800000))))",
           ".validate": "newData.hasChildren(['v', 'name', 'days', 'start', 'tz', 'admin', 'cal', 'win', 'end', 'joinUntil', 'final', 'createdAt']) && newData.parent().child('players/' + newData.child('admin').val()).exists()",
           "v": {
             ".validate": "newData.isNumber()"
           },
           "name": {
-            ".write": "auth != null && $code.matches(/^[A-HJ-NP-Z]{5}$/) && data.exists() && now < data.parent().child('end').val() && root.child('torneoSeats/' + $code + '/' + data.parent().child('admin').val() + '/' + auth.uid).exists()",
+            ".write": "auth != null && $code.matches(/^[A-HJ-NP-Z]{5}$/) && data.exists() && now < data.parent().child('end').val() && root.child('torneoSeats/' + $code + '/' + data.parent().child('admin').val() + '/' + auth.uid).exists() && !data.parent().parent().child('fin').exists()",
             ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 40"
           },
           "days": {
@@ -264,7 +264,7 @@
         },
         "players": {
           "$pid": {
-            ".write": "auth != null && $code.matches(/^[A-HJ-NP-Z]{5}$/) && $pid.matches(/^[a-z0-9]{6}$/) && ((!data.exists() && now < newData.parent().parent().child('meta/joinUntil').val() && newData.parent().parent().child('closed').val() != true && newData.parent().parent().parent().parent().child('torneoSeats/' + $code + '/' + $pid + '/' + auth.uid).exists()) || (data.exists() && newData.exists() && root.child('torneoSeats/' + $code + '/' + root.child('torneos/' + $code + '/meta').child('admin').val() + '/' + auth.uid).exists()))",
+            ".write": "auth != null && $code.matches(/^[A-HJ-NP-Z]{5}$/) && $pid.matches(/^[a-z0-9]{6}$/) && ((!data.exists() && now < newData.parent().parent().child('meta/joinUntil').val() && newData.parent().parent().child('closed').val() != true && !newData.parent().parent().child('fin').exists() && newData.parent().parent().parent().parent().child('torneoSeats/' + $code + '/' + $pid + '/' + auth.uid).exists()) || (data.exists() && newData.exists() && root.child('torneoSeats/' + $code + '/' + root.child('torneos/' + $code + '/meta').child('admin').val() + '/' + auth.uid).exists()))",
             ".validate": "newData.hasChildren(['name', 'at'])",
             "name": {
               ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 20"
@@ -283,7 +283,7 @@
         "started": {
           "$d": {
             "$pid": {
-              ".write": "auth != null && $code.matches(/^[A-HJ-NP-Z]{5}$/) && $pid.matches(/^[a-z0-9]{6}$/) && $d.matches(/^[1-7]$/) && !data.exists() && root.child('torneoSeats/' + $code + '/' + $pid + '/' + auth.uid).exists() && now >= root.child('torneos/' + $code + '/meta').child('win/' + $d + '/a').val() && now < root.child('torneos/' + $code + '/meta').child('win/' + $d + '/b').val()",
+              ".write": "auth != null && $code.matches(/^[A-HJ-NP-Z]{5}$/) && $pid.matches(/^[a-z0-9]{6}$/) && $d.matches(/^[1-7]$/) && !data.exists() && root.child('torneoSeats/' + $code + '/' + $pid + '/' + auth.uid).exists() && now >= root.child('torneos/' + $code + '/meta').child('win/' + $d + '/a').val() && now < root.child('torneos/' + $code + '/meta').child('win/' + $d + '/b').val() && !root.child('torneos/' + $code + '/fin').exists()",
               ".validate": "newData.isNumber() && newData.val() <= now + 60000 && newData.val() > now - 60000"
             }
           }
@@ -291,7 +291,7 @@
         "results": {
           "$d": {
             "$pid": {
-              ".write": "auth != null && $code.matches(/^[A-HJ-NP-Z]{5}$/) && $pid.matches(/^[a-z0-9]{6}$/) && $d.matches(/^[1-7]$/) && !data.exists() && root.child('torneoSeats/' + $code + '/' + $pid + '/' + auth.uid).exists() && now >= root.child('torneos/' + $code + '/meta').child('win/' + $d + '/a').val() && now < root.child('torneos/' + $code + '/meta').child('win/' + $d + '/b').val()",
+              ".write": "auth != null && $code.matches(/^[A-HJ-NP-Z]{5}$/) && $pid.matches(/^[a-z0-9]{6}$/) && $d.matches(/^[1-7]$/) && !data.exists() && root.child('torneoSeats/' + $code + '/' + $pid + '/' + auth.uid).exists() && now >= root.child('torneos/' + $code + '/meta').child('win/' + $d + '/a').val() && now < root.child('torneos/' + $code + '/meta').child('win/' + $d + '/b').val() && !root.child('torneos/' + $code + '/fin').exists()",
               ".validate": "newData.hasChildren(['s', 'ms', 't', 'at'])",
               "s": {
                 ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 1000"
@@ -316,13 +316,17 @@
         },
         "wild": {
           "$pid": {
-            ".write": "auth != null && $code.matches(/^[A-HJ-NP-Z]{5}$/) && $pid.matches(/^[a-z0-9]{6}$/) && !data.exists() && root.child('torneoSeats/' + $code + '/' + $pid + '/' + auth.uid).exists()",
+            ".write": "auth != null && $code.matches(/^[A-HJ-NP-Z]{5}$/) && $pid.matches(/^[a-z0-9]{6}$/) && !data.exists() && root.child('torneoSeats/' + $code + '/' + $pid + '/' + auth.uid).exists() && !root.child('torneos/' + $code + '/fin').exists()",
             ".validate": "newData.isString() && newData.val().matches(/^[1-6]$/) && newData.val() != root.child('torneos/' + $code + '/meta').child('final').val() && !root.child('torneos/' + $code + '/started/' + newData.val() + '/' + $pid).exists() && now >= root.child('torneos/' + $code + '/meta').child('win/' + newData.val() + '/a').val() && now < root.child('torneos/' + $code + '/meta').child('win/' + newData.val() + '/b').val()"
           }
         },
         "closed": {
           ".write": "auth != null && $code.matches(/^[A-HJ-NP-Z]{5}$/) && root.child('torneoSeats/' + $code + '/' + root.child('torneos/' + $code + '/meta/admin').val() + '/' + auth.uid).exists()",
           ".validate": "newData.isBoolean() && newData.val() == true"
+        },
+        "fin": {
+          ".write": "auth != null && $code.matches(/^[A-HJ-NP-Z]{5}$/) && !data.exists() && root.child('torneoSeats/' + $code + '/' + root.child('torneos/' + $code + '/meta/admin').val() + '/' + auth.uid).exists() && now >= root.child('torneos/' + $code + '/meta/win/1/a').val() && now < root.child('torneos/' + $code + '/meta/end').val()",
+          ".validate": "newData.isNumber() && newData.val() <= now + 60000 && newData.val() > now - 60000"
         },
         "$other": {
           ".validate": false
