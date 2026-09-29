@@ -8,6 +8,7 @@ import * as letras from './juegos/letras.js';
 import * as tango from './juegos/tango.js';
 import * as anio from './juegos/anio.js';
 import * as final from './juegos/final.js';
+import * as donde from './juegos/donde.js';
 import { MINIJUEGOS } from './rules.js';
 
 /**
@@ -45,6 +46,7 @@ export function desglose(id, e, { T, fmt, mmss, copa = true }) {
       e.hechos ? fmt(copa ? T.bdLastLevel : T.bdLastLevelSolo, { t: mmss(e.ultimo || 0) }) : null,
     ].filter(Boolean);
     case 'anio': return [...e.filas.map(f => fmt(T.bdYear, { hito: f.hito.texto, r: anio.anioLabel(f.r), y: anio.anioLabel(f.hito.year), pts: f.pts })), T.bdAverage];
+    case 'donde': return [...e.filas.map(f => fmt(T.bdCity, { c: f.ciudad.ciudad, km: donde.km(f.km), pts: f.pts })), T.bdAverage];
     case 'final': return [...final.RONDAS.map(r => fmt(T.bdRound, {
       emoji: final.EMOJI[r], juego: MINIJUEGOS[r].nombre, pts: e[r] ? final.puntosRonda[r](e[r]) : 0,
     })), T.bdAverage];

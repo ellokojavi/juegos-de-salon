@@ -275,6 +275,23 @@ button.md-fila { cursor: pointer; }
 .anio-era { max-width: 260px; width: 100%; margin: 0 auto; }
 .anio-era button { white-space: nowrap; }
 
+/* ¿Dónde queda?: + y − abajo a la derecha, sobre el Índico de la vista inicial (a la izquierda tapaban la Patagonia) (dilema #85). El mapa se corre y se acerca con los dedos, así que no desplaza la página
+   (touch-action). Alto según la pantalla, para que Confirmar, y después el aviso y Siguiente, se
+   vean sin desplazar (C-8): lo que queda debajo del encabezado, la ciudad y esos dos (390 px).
+   svh es la pantalla con la barra del navegador a la vista; vh, para los navegadores sin svh */
+.mapa-caja { position: relative; height: clamp(160px, calc(100vh - 390px), 460px); height: clamp(160px, calc(100svh - 390px), 460px); border-radius: 14px; overflow: hidden; border: 2px solid var(--glass-border); }
+.mapa-svg { display: block; width: 100%; height: 100%; touch-action: none; user-select: none; -webkit-user-select: none; cursor: crosshair; }
+.mapa-mar { fill: #0d2a52; }
+.mapa-tierra { fill: #3d8a5a; stroke: rgba(255,255,255,0.45); stroke-width: 0.8; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.mapa-alfiler path { fill: var(--red); stroke: #fff; stroke-width: 2; }
+.mapa-alfiler .ojo { fill: #fff; }
+.mapa-ciudad circle { fill: var(--yellow); stroke: #3a1200; stroke-width: 2; }
+.mapa-ciudad .aro { fill: none; stroke: var(--yellow); stroke-width: 3; }
+.mapa-linea { stroke: var(--yellow); stroke-width: 2.5; stroke-dasharray: 6 5; vector-effect: non-scaling-stroke; }
+.mapa-zoom { position: absolute; right: 8px; bottom: 8px; display: grid; gap: 6px; }
+.mapa-zoom .btn { width: 44px; min-height: 44px; padding: 0; font: 900 1.4rem var(--font-body); background: rgba(21,7,38,0.75); }
+.donde-ciudad b { overflow-wrap: anywhere; }
+
 /* Reinas, Tango y Zip: grillas cuadradas que se tocan (C-8: 44 px en 320 de ancho con 7 u 8
    casillas no caben; el área de toque es la casilla entera y la grilla usa todo el ancho) */
 .rej-grid, .tan-grid, .zip-grid { display: grid; width: 100%; max-width: 440px; margin: 0 auto; user-select: none; -webkit-user-select: none; }

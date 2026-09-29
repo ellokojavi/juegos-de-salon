@@ -354,7 +354,7 @@ It borrows what makes daily puzzles work (Wordle, Connections): same challenge f
 | 6 | 📅 What year was it?: closer is better, older gets more slack | estimation |
 | 7 | 🏁 The Grand Final: five short rounds, one of each, worth double | everything |
 
-The lab also has **〰️ Zip** and **☀️ Tango** to try out. **The minigames also play on their own from the main menu** (D-142), one player and no cup: Timeline Flash and the number game are the *play alone* modes of Timeline and Bulls and Cows, in all three languages, and the other six (all but the final) have their own card, open at `/minijuegos/?<id>` (no "cup" in a link that has nothing to do with one, D-149) and play in Spanish. The cup does not invent its own UX (D-102): the timeline, the drag and drop and the keypad are the ones Timeline and Bulls and Cows already use, shared from `assets/`.
+The lab also has **〰️ Zip**, **☀️ Tango** and **📍 Where is it?** to try out. Where is it? gives you five cities, each with its country, and you drop a pin on a world map with no names on it: every city is worth up to 100 points, minus 4 per 100 km off. The cities are the capitals of every UN country and its two observers, plus famous ones, and the map is drawn from Natural Earth by `tools/mapa.mjs` (D-155). **The minigames also play on their own from the main menu** (D-142), one player and no cup: Timeline Flash and the number game are the *play alone* modes of Timeline and Bulls and Cows, in all three languages, and the other six (all but the final) have their own card, open at `/minijuegos/?<id>` (no "cup" in a link that has nothing to do with one, D-149) and play in Spanish. The cup does not invent its own UX (D-102): the timeline, the drag and drop and the keypad are the ones Timeline and Bulls and Cows already use, shared from `assets/`.
 
 - **Everything comes from a seed** (`code:day`), so everyone plays exactly the same content with no server (D-97).
 - **A day stays open until the next midnight** (a grace day), except the final. Time only breaks ties, and it is *active* time: it pauses while the screen is hidden (D-95).
@@ -600,6 +600,7 @@ manifest.webmanifest        PWA manifest (installable on the home screen)
 tools/set-version.py        Stamps the version (import maps + stylesheets) to avoid a mixed cache
 tools/readme.py             Keeps this README current: generated blocks, retaken screenshots, staleness report
 tools/og.mjs                Social cards: the Open Graph tags of each page and their images
+tools/mapa.mjs              The world map of Where is it? (Natural Earth, no names) and a check that every city falls in its country
 tools/hechos.mjs            The app's fact sheet (games, modes, themes, tests) read from the code
 tools/reportes.mjs          Reads the La Copa bug reports from Firebase (`--dias N`, `--json`)
 tools/reglas.mjs            Publishes the Firebase rules with a service-account key kept outside the repo
