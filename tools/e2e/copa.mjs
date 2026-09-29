@@ -356,9 +356,10 @@ await ev(`(()=>{const o=[...document.querySelectorAll('#crear-body .opcion')];o[
     ok(despues[0] === antes[n - 2] && JSON.stringify(despues.slice(1)) === JSON.stringify(antes.slice(0, -1)), `arrastrar un día lo mueve a otro lugar de la semana (${antes[n - 2]} al día 1)`);
   }
   const dedo = (type, p) => b.send('Input.dispatchTouchEvent', { type, touchPoints: type === 'touchEnd' ? [] : [{ x: p[0], y: p[1], id: 1 }] });
-  const conDedo = async (desde, hasta) => {
+  const conDedo = async (desde, hasta, enElAire = null) => {
     await dedo('touchStart', desde); await dedo('touchMove', [desde[0], desde[1] + (hasta[1] < desde[1] ? -20 : 20)]); await sleep(16);
     for (let k = 1; k <= 10; k++) { await dedo('touchMove', [desde[0], Math.round(desde[1] + (hasta[1] - desde[1]) * k / 10)]); await sleep(16); }
+    if (enElAire) { await sleep(120); await enElAire(); }
     await dedo('touchEnd', hasta); await sleep(250);
   };
   // En un celular, un día se arrastra desde su agarre ⠿ (el resto de la fila deja desplazar la página)
@@ -375,7 +376,11 @@ await ev(`(()=>{const o=[...document.querySelectorAll('#crear-body .opcion')];o[
     const antes = await cal(), id = (await fuera())[0];
     await ev(`(document.getElementById('cal-fuera').scrollIntoView({block:'center'}), 1)`); await sleep(100);
     const desde = await centro(`#cal-fuera [data-juego="${id}"]`), hasta = await centro('#cal-elegir .event[data-dia="0"]');
-    await conDedo(desde, hasta);
+    await conDedo(desde, hasta, async () => {
+      const aire = JSON.parse(await ev(`JSON.stringify({ayuda: [...document.querySelectorAll('.cal-estado [data-ayuda]:not(.oculta)')].map(x=>x.textContent).join(), izq: document.querySelector('.vilo-carta').getBoundingClientRect().left, der: document.querySelector('.vilo-carta').getBoundingClientRect().right, w: innerWidth})`));
+      ok(/^Suéltalo sobre el día/.test(aire.ayuda), `con el juego en el aire, la ayuda dice que se suelta, no que se toca («${aire.ayuda}»)`);
+      ok(aire.izq >= 0 && aire.der <= aire.w, `la carta en vilo no se sale de la pantalla aunque el dedo esté en la orilla (${Math.round(aire.izq)}–${Math.round(aire.der)} de ${aire.w})`);
+    });
     const despues = await cal();
     ok(despues[0] === id && (await fuera()).includes(antes[0]), `arrastrar un juego de fuera sobre un día lo reemplaza (${antes[0]} → ${id})`);
   }
