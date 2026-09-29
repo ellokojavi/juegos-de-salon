@@ -562,15 +562,19 @@ ok(await ev(`document.querySelectorAll('.rej.reina').length`) > 0 && !!await ev(
 await click('#btn-fin'); await sleep(500);
 ok(/^0/.test(await ev(`document.querySelector('.score-big')?.textContent || ''`)), 'Reinas: rendirse vale 0 puntos');
 // Desde la portada (D-142) la práctica es el minijuego suelto: sin prueba ni semilla, y vuelve al menú.
-// Vive en /minijuegos/ (D-149): un link viejo a /copa/?practica= sin &labs se va para allá.
+// Vive en /minijuegos/<id>/ (D-149, D-162): un link viejo a /copa/?practica= sin &labs se va para allá.
 await b.go(`${BASE}?practica=conexiones&prueba`, 1500); await preparar();
-ok(await ev(`location.pathname + location.search`) === '/minijuegos/?conexiones&prueba', 'minijuego suelto: el link viejo de la copa lleva a /minijuegos/');
-ok(!await ev(`document.getElementById('btn-ensayo')`) && await ev(`document.getElementById('btn-menu').getAttribute('href')`) === '../'
-  && await ev(`[...document.querySelectorAll('#jugar-body a')].some(a => a.getAttribute('href') === '../')`), 'minijuego suelto: sin prueba y de vuelta al menú');
+ok(await ev(`location.pathname + location.search`) === '/minijuegos/conexiones/?prueba', 'minijuego suelto: el link viejo de la copa lleva a /minijuegos/conexiones/');
+ok(!await ev(`document.getElementById('btn-ensayo')`) && await ev(`document.getElementById('btn-menu').href`) === `${SITIO}/`
+  && await ev(`[...document.querySelectorAll('#jugar-body a')].some(a => a.href === '${SITIO}/')`), 'minijuego suelto: sin prueba y de vuelta al menú');
+// Su página trae su propia tarjeta social: un link compartido muestra el minijuego, no La Copa (D-162)
+ok(/\/assets\/og\/conexiones\.jpg/.test(await ev(`document.querySelector('meta[property="og:image"]')?.content || ''`)), 'minijuego suelto: su página trae su propia tarjeta social');
 ok(!/copa/i.test(await ev(`location.href + ' ' + document.title`)), 'minijuego suelto: ni el link ni el título dicen copa');
 ok(!await ev(`document.body.innerText.includes('empatas')`), 'minijuego suelto: no habla de empates, no hay con quién (dilema #72)');
 // El 🐞 del resultado abre el formulario y vuelve al resultado (la página suelta necesita su pantalla)
+// El link de antes (/minijuegos/?reinas) se va a la página propia
 await b.go(`${SITIO}/minijuegos/?reinas&prueba`, 1500); await preparar();
+ok(await ev(`location.pathname + location.search`) === '/minijuegos/reinas/?prueba', 'minijuego suelto: /minijuegos/?reinas lleva a /minijuegos/reinas/');
 await click('#btn-empezar'); await sleep(300); await esperarCuenta();
 await click('#btn-rendirse'); await sleep(300); await click('#btn-fin'); await sleep(800);
 await click('#btn-reporte'); await sleep(300);
@@ -722,8 +726,8 @@ ok(await ev(`!!document.getElementById('btn-reporte-volver')`), 'después de env
 
 /* ---------- Las demos del laboratorio (D-110) ---------- */
 await b.go(`${SITIO}/labs/`, 1200);
-ok(await ev(`document.querySelectorAll('[data-demo]').length`) === 9, 'el laboratorio ofrece las nueve demos de la copa');
-const DEMOS = { nueva: 'admin', invitado: 'entrar', espera: 'tablero', 'sin-jugar': 'admin', jugador: 'tablero', admin: 'admin', final: 'tablero', podio: 'tablero', llena: 'tablero' };
+ok(await ev(`document.querySelectorAll('[data-demo]').length`) === 10, 'el laboratorio ofrece las diez demos de la copa');
+const DEMOS = { nueva: 'admin', invitado: 'entrar', espera: 'tablero', 'sin-jugar': 'admin', jugador: 'tablero', admin: 'admin', final: 'tablero', 'final-admin': 'admin', podio: 'tablero', llena: 'tablero' };
 for (const [demo, pant] of Object.entries(DEMOS)) {
   await b.go(`${BASE}?prueba&demo=${demo}`, 1500); await preparar();
   ok(await pantalla() === pant, `demo ${demo}: abre en ${pant}`);
@@ -760,6 +764,34 @@ await click('#btn-pasar-dia'); await sleep(400);
 ok(await ev('__copa.estado.copa.meta.start') !== inicioLab && /día 6/i.test(await ev(`document.getElementById('btn-pasar-dia')?.textContent || ''`)), 'copa de prueba: el admin la pasa al día 5 y el botón ofrece el 6');
 await revisarPantalla('admin-lab');
 await b.shot('admin-lab');
+
+// Terminar la copa antes (D-161): el día de la final, con gente sin jugar; después, exportar
+await b.go(`${BASE}?prueba&demo=final-admin`, 1500); await preparar();
+const avisoFin = await ev(`document.getElementById('admin-terminar')?.innerText || ''`);
+ok(/Falta que jueguen el día 7: .*Cata/.test(avisoFin) && !/no se juegan/.test(avisoFin), 'terminar antes: el admin ve quién no ha jugado la final');
+ok(!await ev(`document.getElementById('admin-exportar')`), 'mientras se juega no hay exportar');
+await revisarPantalla('admin-terminar');
+await ev(`document.getElementById('admin-terminar').scrollIntoView(); 1`);
+await b.shot('admin-terminar');
+await ev('window.confirm = () => false; 1');
+await click('#btn-terminar'); await sleep(300);
+ok(!await ev('__copa.estado.copa.fin'), 'terminar antes: sin confirmar no pasa nada');
+await ev('window.confirm = () => true; 1');
+await click('#btn-terminar'); await sleep(500);
+ok(!!await ev('__copa.estado.copa.fin') && !await ev(`document.getElementById('admin-terminar')`) && !!await ev(`document.getElementById('admin-exportar')`) && !!await ev(`document.getElementById('msg-final')`), 'terminar antes: la copa termina y aparecen el resumen final y exportar');
+await ev(`window.__descargas = []; URL.createObjectURL = x => { window.__descargas.push(x); return 'blob:prueba'; }; 1`);
+await click('#btn-exportar-planilla'); await sleep(300);
+const csv = await ev(`window.__descargas[0]?.text()`);
+const bom = await ev(`window.__descargas[0]?.arrayBuffer().then(x => [...new Uint8Array(x).slice(0, 3)].join(','))`);
+ok(bom === '239,187,191', 'exportar: la planilla lleva BOM, para que Excel lea los acentos');
+ok(/^🏆 Copa de la oficina\r\nEl admin la terminó antes/.test(csv || '') && /Tabla final/.test(csv) && /Posiciones día a día/.test(csv) && /Día 7 · La Gran Final/.test(csv), 'exportar: la planilla trae la tabla final, los lugares día a día y la final');
+await revisarPantalla('admin-exportar');
+await b.shot('admin-exportar');
+await click('#btn-exportar-imagen'); await sleep(1500);
+ok((await ev(`window.__compartido.length`)) + (await ev(`window.__descargas.length`)) >= 2, 'exportar: la imagen de la tabla final se comparte o se descarga');
+await ev(`[...document.querySelectorAll('#admin-body > button')].find(x => /Volver a la copa/.test(x.textContent))?.click(); 1`); await sleep(400);
+ok(await pantalla() === 'tablero' && !!await ev(`document.querySelector('.podio')`) && /terminó la copa antes/.test(await ev(`document.querySelector('.copa-head').innerText`)), 'terminar antes: el tablero muestra el podio y que el admin la cerró');
+await b.shot('tablero-terminada-antes');
 
 console.log('errores:', JSON.stringify(b.errors), JSON.stringify(b.logs));
 ok(!b.errors.length && !b.logs.length, 'consola sin errores');

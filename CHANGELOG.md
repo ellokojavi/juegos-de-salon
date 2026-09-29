@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.73.0 — 2026-09-29
+## 0.75.0 — 2026-09-29
 - **La Copa: el admin elige los juegos y su orden al crearla** (D-163). Después de la duración
   aparece "¿Qué se juega cada día?" con la mano y la línea de Línea de Tiempo: un día se arrastra
   a otro lugar de la semana y un juego de los que quedan fuera, hasta el día que reemplaza (o
@@ -8,6 +8,22 @@
   de la misma habilidad, y 🎲 propone otra. Entran también Zip, Tango y ¿Dónde queda?: la copa de
   7 días lleva seis de nueve. La final no cambia y va siempre al último.
 - **La Copa: la invitación muestra los juegos de la copa**, no los del calendario de siempre.
+
+## 0.74.0 — 2026-09-29
+- **Cada minijuego tiene su propia tarjeta al compartirlo.** Un link a Reinas, Conexiones, Zip o
+  cualquier minijuego pegado en WhatsApp muestra ese minijuego, con su nombre, de qué se trata y su
+  imagen, y no la tarjeta de La Copa o del menú. Viven en `/minijuegos/reinas/` y así; los links de
+  antes siguen funcionando (D-162).
+
+## 0.73.0 — 2026-09-29
+- **La Copa: el admin puede terminar la copa antes.** En Administrar, "Terminar la copa antes"
+  la cierra en ese momento (por ejemplo, si el último no va a jugar la final): nadie más juega, la
+  tabla queda como la final y aparece el podio. Antes de confirmar dice quién todavía no juega hoy.
+  Los días que no alcanzaron a abrirse no se juegan ni suman (D-161).
+- **La Copa: la tabla final se exporta.** Terminada la copa, Administrar ofrece compartir la imagen
+  de la tabla con las posiciones día a día y descargar una planilla CSV para Excel o Google Sheets.
+- **Reglas de Firebase:** `torneos/<código>/fin` (solo el admin, una vez) y, desde ahí, nadie empieza,
+  juega, usa el comodín, se inscribe ni renombra la copa. Publicar con `node tools/reglas.mjs publicar`.
 
 ## 0.72.1 — 2026-09-29
 - **La Copa: la práctica del laboratorio ya no dice "Práctica en el laboratorio"** sobre el nombre

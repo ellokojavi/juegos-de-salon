@@ -7,22 +7,25 @@
  * módulo de juegos/ui-*.js.
  *
  * URL: /copa/ (portada) · /copa/?K7Q2X (una copa) · /copa/?K7Q2X&prueba (sin Firebase).
- * La misma pantalla sirve los minijuegos sueltos de la portada en /minijuegos/?reinas (D-149).
+ * La misma pantalla sirve los minijuegos sueltos de la portada en /minijuegos/reinas/ (D-149, D-162).
  */
 import { crearArrastre } from '../assets/js/arrastre.js';
 import { $, $$, el, vibrate, sparkles, keepAwake, confetti, shareLink, canShare } from '../assets/js/ui.js';
 import { applyStatic } from '../assets/js/i18n.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { trackStart, versionOf } from '../assets/js/transport/stats.js';
+import { gameById } from '../assets/js/games.js';
 import {
   POZO, calendarioAlAzar, calendario, MAX_JUGADORES, COPA_MAX, aliasLimpio, esAlias, CODIGO, esCodigo, codigoAlAzar, pidAlAzar, limpiarNombre, claveNombre, esPin, hashPin,
   fechaEn, sumarDias, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta, estadoDia, comodinDe, moverInicio, sinEmpezar, pasarDia, MAX_DIAS_INICIO, faltaGente,
   medianoche, menosJuegos, provisoria, ultimoDiaVisto, marcaDelDia, puedeComodin, multiplicador, posicionesDelDia, tabla, faltan, medallas, evolucion, visibleDia, reloj, mmss, juegoDelDia, esFinal, activos, ZONA,
+  conCierre, cerradaAntes, anulado, puedeCerrar,
 } from './engine.js';
 import { GAME_ID, LOCALES, MINIJUEGOS, RONDAS_FINAL } from './rules.js';
 import { createCuenta } from './cuenta.js';
 import { JUEGOS } from './juegos/index.js';
 import { desglose } from './desglose.js';
+import { planilla } from './planilla.js';
 
 /** `append` que descarta los hijos nulos, como `el()` (sin esto, un null se escribe como texto). */
 const poner = (nodo, ...hijos) => nodo.append(...hijos.flat().filter(x => x !== null && x !== undefined && x !== false));
@@ -40,14 +43,21 @@ const PRUEBA = busqueda.includes('prueba');
 // la Copa de 3 días (D-100). ?tres se mantiene por los links que ya circulan.
 const LABS = busqueda.includes('labs');
 const TRES = PRUEBA || LABS || busqueda.includes('tres');
-// Los minijuegos sueltos de la portada viven en /minijuegos/?<id> (D-149): la misma pantalla,
-// pero fuera de una copa el link no dice "copa". /copa/?practica=<id> queda para el laboratorio.
+// Los minijuegos sueltos de la portada viven en /minijuegos/<id>/ (D-149, D-162): la misma
+// pantalla, pero fuera de una copa el link no dice "copa". Cada uno tiene su página, que dice cuál
+// es en `<body data-suelto="reinas">`, para que el link compartido traiga su propia tarjeta
+// social. /copa/?practica=<id>&labs queda para el laboratorio.
 const SUELTO = document.body.hasAttribute('data-suelto');
 const PRACTICA = SUELTO
-  ? busqueda.find(x => !x.includes('=') && x !== 'prueba') || ''
+  ? document.body.dataset.suelto || busqueda.find(x => !x.includes('=') && x !== 'prueba') || ''
   : new URLSearchParams(location.search).get('practica');
-// Un link viejo a un minijuego suelto (/copa/?practica=reinas, sin &labs) se va a su lugar nuevo
-if (!SUELTO && PRACTICA && !LABS) location.replace(`../minijuegos/?${PRACTICA}${PRUEBA ? '&prueba' : ''}`);
+/** La raíz del sitio, desde donde esté la página (las de cada minijuego van un nivel más abajo). */
+const RAIZ = new URL('../', import.meta.url).href;
+/** Dónde vive un minijuego suelto: su página, o la genérica si no tiene (uno solo del laboratorio). */
+const paginaSuelta = id => (gameById(id)?.suelto ? `${RAIZ}minijuegos/${id}/${PRUEBA ? '?prueba' : ''}` : `${RAIZ}minijuegos/?${id}${PRUEBA ? '&prueba' : ''}`);
+// Un link viejo (/copa/?practica=reinas sin &labs, o /minijuegos/?reinas) se va a su lugar nuevo
+if (!SUELTO && PRACTICA && !LABS) location.replace(paginaSuelta(PRACTICA));
+if (SUELTO && !document.body.dataset.suelto && gameById(PRACTICA)?.suelto) location.replace(paginaSuelta(PRACTICA));
 const SEMILLA = (new URLSearchParams(location.search).get('semilla') || '').toUpperCase();
 // Las demos del laboratorio (D-110): solo en el modo de prueba, con el almacén local
 const DEMO = PRUEBA ? new URLSearchParams(location.search).get('demo') : null;
@@ -90,7 +100,7 @@ function errorDe(e) {
     pin: 'errPinWrong', 'nombre-repetido': 'errRepetido', llena: 'errLlena', 'no-existe': 'errNoExiste',
     ventana: 'errVentana', 'ya-jugado': 'errYaJugado', comodin: 'errComodin', permiso: 'errPermiso',
     config: 'errConfig', offline: 'errOffline', busy: 'errOffline', cerrada: 'errCerrada',
-    reporte: 'errReport', empezada: 'errEmpezada', terminada: 'errTerminada', faltan: 'errFaltan', alias: 'errAlias',
+    reporte: 'errReport', empezada: 'errEmpezada', terminada: 'errTerminada', faltan: 'errFaltan', alias: 'errAlias', fin: 'errFin',
   };
   if (!mapa[code]) console.error(e);
   return T[mapa[code] || 'errNet'];
@@ -422,6 +432,8 @@ async function abrirCopa(code, { recienCreada = false, pantalla = null } = {}) {
   let primera = true;
   S.off = st.escuchar(code, L => {
     const habia = !!S.L?.meta;
+    // Si el admin la terminó antes (D-161), la copa se ve cerrada desde esa hora
+    L = conCierre(L);
     S.L = L;
     if (!L || !L.meta) {
       // La borró su admin (D-117): quien la tenía abierta se entera, y este celular la olvida
@@ -678,6 +690,7 @@ function misDias(d, now) {
       detalle = T.lastDay;
       accion = el('button', { class: 'btn btn--yellow btn--sm', 'data-dia': k, onClick: () => { SFX.tap(); jugar(k); } }, `${J.emoji} ${T.resume}`);
     } else if (est === 'perdido') detalle = T.notPlayed;
+    else if (est === 'anulado') detalle = T.dayCancelled;
     else detalle = fmt(T.opensOn, { fecha: fechaCorta(meta.win[k].a, meta.tz) });
     const contenido = [
       el('span', { class: 'md-dia' }, el('b', {}, fmt(T.dayShort, { d: k })), el('small', {}, fechaCorta(meta.win[k].a, meta.tz))),
@@ -789,11 +802,12 @@ function tablero() {
   const d = diaActual(meta, now);
   const body = $('#tablero-body');
   body.innerHTML = '';
-  const dias = Array.from({ length: meta.days }, (_, i) => i + 1);
+  // Los días que no alcanzaron a abrirse porque el admin terminó la copa antes no van en la tabla
+  const dias = Array.from({ length: meta.days }, (_, i) => i + 1).filter(k => !anulado(meta, k));
 
   let estadoTxt;
   if (d === 0) estadoTxt = fmt(T.before, { fecha: fechaLarga(meta.win[1].a, meta.tz) });
-  else if (d > meta.days) estadoTxt = T.over;
+  else if (d > meta.days) estadoTxt = cerradaAntes(meta) ? fmt(T.overEarly, { fecha: fechaLarga(meta.end, meta.tz) }) : T.over;
   // El día de la copa y la fecha, para que se lea igual que el calendario (D-120)
   else estadoTxt = `${fmt(T.dayOf, { d, n: meta.days })} · ${fechaLarga(meta.win[d].a, meta.tz)}`;
 
@@ -1209,6 +1223,16 @@ async function compartirImagen() {
   toast(T.imageDownloaded);
 }
 
+/** La tabla final como planilla CSV (D-161): se descarga, para abrirla en Excel o en Google Sheets. */
+function descargarPlanilla() {
+  const Lc = L(), { meta } = Lc;
+  const csv = planilla(Lc, { T, juegos: MINIJUEGOS, fmt, fecha: ms => fechaLarga(ms, meta.tz) });
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const a = el('a', { href: URL.createObjectURL(blob), download: `copa-${meta.alias || S.code.toLowerCase()}-tabla-final.csv` });
+  document.body.append(a); a.click(); a.remove();
+  toast(T.exportDone);
+}
+
 function mensajeFinal() {
   const Lc = L();
   const m = medallas(Lc);
@@ -1250,10 +1274,12 @@ function admin({ forzar = false } = {}) {
         el('li', {}, T.adminWelcome3),
         meta.alias ? el('li', {}, T.adminWelcomeAlias) : null)));
   }
-  const accion = (rotulo, id, fn, clase = 'btn btn--ghost btn--sm') => el('button', { class: clase, id, onClick: async ev => {
+  const accion = (rotulo, id, fn, clase = 'btn btn--ghost btn--sm', caja = err) => el('button', { class: clase, id, onClick: async ev => {
     SFX.tap(); ev.currentTarget.disabled = true;
     const b = ev.currentTarget;
-    try { await fn(); err.textContent = ''; } catch (e) { if (e?.code !== 'cancelado') avisoError(err, errorDe(e)); b.disabled = false; }
+    try { await fn(); caja.textContent = ''; } catch (e) { if (e?.code !== 'cancelado') avisoError(caja, errorDe(e)); }
+    // Lo que cambia la copa redibuja Administrar; exportar no, y el botón tiene que seguir sirviendo
+    b.disabled = false;
   } }, rotulo);
   poner(body, el('div', { class: 'panel stack' },
     el('p', { class: 'lead', style: 'margin:0' }, T.adminMsgs),
@@ -1263,6 +1289,18 @@ function admin({ forzar = false } = {}) {
     !terminada(meta, now) ? msg(T.msgToday, mensajeHoy, 'msg-hoy') : null,
     d >= 1 && !terminada(meta, now) ? msg(T.msgTable, mensajeTabla, 'msg-tabla') : null,
     terminada(meta, now) ? msg(T.msgFinal, mensajeFinal, 'msg-final') : null));
+
+  // Terminada (sola o por el admin), la tabla final se exporta: imagen y planilla (D-161)
+  if (terminada(meta, now)) {
+    const errExportar = el('div', { class: 'form-error', role: 'alert' });
+    poner(body, el('div', { class: 'panel stack', id: 'admin-exportar' },
+      el('p', { class: 'lead', style: 'margin:0' }, T.exportTitle),
+      el('p', { class: 'muted', style: 'margin:0' }, T.exportLead),
+      errExportar,
+      accion(`📤 ${T.exportImage}`, 'btn-exportar-imagen', () => compartirImagen(), 'btn btn--cyan btn--sm', errExportar),
+      accion(`⬇️ ${T.exportSheet}`, 'btn-exportar-planilla', async () => { descargarPlanilla(); }, 'btn btn--cyan btn--sm', errExportar)));
+  }
+
 
   // El nombre de la copa se puede cambiar mientras no termine (D-148); el link sigue igual
   if (!terminada(meta, now)) {
@@ -1354,6 +1392,25 @@ function admin({ forzar = false } = {}) {
           if (!confirm(T.joinCloseConfirm)) throw { code: 'cancelado' };
           await store.cerrarInscripcion(S.code, true);
         })));
+  }
+
+  // Terminar la copa antes (D-161): por ejemplo, si el último no va a jugar la final
+  if (puedeCerrar(meta, now)) {
+    const hoy = Math.min(d, meta.days);
+    const quienes = [hoy - 1, hoy].filter(k => k >= 1).map(k => ({ k, falta: faltan(Lc, k, now) })).filter(x => x.falta.length);
+    const quedan = hoy < meta.days;
+    const errTerminar = el('div', { class: 'form-error', role: 'alert' });
+    poner(body, el('div', { class: 'panel stack', id: 'admin-terminar' },
+      el('p', { class: 'lead', style: 'margin:0' }, T.endTitle),
+      el('p', { class: 'muted', style: 'margin:0' }, T.endLead),
+      quienes.map(x => el('div', { class: 'aviso' }, fmt(T.endMissing, { d: x.k, names: x.falta.map(j => j.name).join(', ') }))),
+      quedan ? el('p', { class: 'muted', style: 'margin:0' }, T.endCancelled) : null,
+      errTerminar,
+      accion(`🏁 ${T.endGo}`, 'btn-terminar', async () => {
+        if (!confirm(fmt(T.endConfirm, { copa: meta.name }))) throw { code: 'cancelado' };
+        await store.terminarCopa(S.code);
+        SFX.reveal(); toast(T.endDone);
+      }, 'btn btn--ghost', errTerminar)));
   }
 
   const lista = el('div', { class: 'admin-jugadores' });
@@ -1750,17 +1807,17 @@ function explicacion(J, { s, ms, det, x = 1, final = false, copa = true }) {
  * laboratorio llega con `&labs` y queda como estaba.
  */
 const volverDePractica = () => (LABS
-  ? el('a', { class: 'btn btn--ghost btn--sm', href: '../labs/' }, T.backToLabs)
-  : el('a', { class: 'btn btn--ghost btn--sm', href: '../' }, T.backToMenu));
+  ? el('a', { class: 'btn btn--ghost btn--sm', href: `${RAIZ}labs/` }, T.backToLabs)
+  : el('a', { class: 'btn btn--ghost btn--sm', href: RAIZ }, T.backToMenu));
 
 function practica(id) {
   const J = MINIJUEGOS[id], mod = JUEGOS[id];
-  if (!J || !mod) { if (SUELTO) location.replace('../'); else portada(); return; }
+  if (!J || !mod) { if (SUELTO) location.replace(RAIZ); else portada(); return; }
   if (!LABS) document.title = `${J.nombre} ${J.emoji} · Juegos de Salón`;
   if (SUELTO) $('#chip-juego').textContent = `${J.emoji} ${J.nombre}`;
   const semilla = esCodigo(SEMILLA) ? SEMILLA : codigoAlAzar();
   const zipSeg = new URLSearchParams(location.search).get('zipSeg');
-  // Suelto, la semilla no va a la vista (D-142): el link queda en /minijuegos/?reinas
+  // Suelto, la semilla no va a la vista (D-142): el link queda en /minijuegos/reinas/
   if (!SUELTO) history.replaceState(null, '', `${location.pathname}?practica=${id}&semilla=${semilla}${PRUEBA ? '&prueba' : ''}${LABS ? '&labs' : ''}${zipSeg ? `&zipSeg=${zipSeg}` : ''}`);
   S.juego = { d: 1, id, practica: true, semilla };
   mostrar('jugar');
@@ -1864,7 +1921,7 @@ function resultadoPractica(id, semilla, r) {
   const J = MINIJUEGOS[id];
   mostrar('resultado');
   SFX.win();
-  const otra = SUELTO ? `${location.pathname}?${id}${PRUEBA ? '&prueba' : ''}` : `${location.pathname}?practica=${id}${PRUEBA ? '&prueba' : ''}${LABS ? '&labs' : ''}`;
+  const otra = SUELTO ? paginaSuelta(id) : `${location.pathname}?practica=${id}${PRUEBA ? '&prueba' : ''}${LABS ? '&labs' : ''}`;
   const body = $('#resultado-body');
   body.innerHTML = '';
   poner(body,

@@ -89,6 +89,11 @@ se filtra se revoca ahí mismo. Sin la llave, se sigue pudiendo pegar a mano en 
 - `torneos/<code>/meta/name` lo puede cambiar solo el admin, en cualquier momento antes de que la
   copa termine (`now < meta/end`), con el mismo largo de 1 a 40 (D-148).
 
+- `torneos/<code>/fin` (D-161): la hora del servidor en que el admin terminó la copa antes. Solo lo
+  escribe el celular sentado como admin, **una vez**, con la copa ya partida y sin terminar. Desde ahí
+  las reglas no dejan escribir `started`, `results` ni `wild`, inscribirse, renombrar la copa ni
+  reescribir `meta`.
+
 - **Eliminar la copa** (D-117): el celular sentado como admin puede borrar de una vez
   `torneos/<code>`, `torneoKeys/<code>` y `torneoSeats/<code>` (solo el nodo entero, nunca a medias).
 

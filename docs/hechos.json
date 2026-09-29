@@ -1,5 +1,5 @@
 {
-  "version": "0.73.0",
+  "version": "0.72.1",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -86,6 +86,7 @@
         "copa/juegos/ui-tango.js",
         "copa/juegos/ui-zip.js",
         "copa/juegos/zip.js",
+        "copa/planilla.js",
         "copa/reportes.js",
         "copa/rules.js",
         "copa/store-firebase.js",
@@ -614,6 +615,7 @@
     "copa/juegos/ui-tango.js",
     "copa/juegos/ui-zip.js",
     "copa/juegos/zip.js",
+    "copa/planilla.js",
     "copa/reportes.js",
     "copa/rules.js",
     "copa/store-firebase.js",
@@ -656,6 +658,7 @@
     "batalla-naval/engine.test.mjs",
     "copa/engine.test.mjs",
     "copa/juegos/juegos.test.mjs",
+    "copa/planilla.test.mjs",
     "copa/reportes.test.mjs",
     "copa/store.test.mjs",
     "dudo/engine.test.mjs",
@@ -780,7 +783,7 @@
     }
   ],
   "capturas": {
-    "copa": 11,
+    "copa": 10,
     "linea-de-tiempo": 11,
     "toque-y-fama": 9,
     "ahorcado": 9,

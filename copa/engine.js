@@ -236,6 +236,34 @@ export const MAX_DIAS_INICIO = 30;
  */
 export const pasarDia = meta => moverInicio(meta, sumarDias(meta.start, -1));
 
+/**
+ * Terminar la copa antes de tiempo (D-161): el admin la cierra, por ejemplo cuando el último no
+ * va a jugar la final. Se guarda solo la hora del cierre (`fin`, la del servidor) y de ahí sale la
+ * copa como quedó: termina en `fin`, ningún día sigue abierto después, y los días que todavía no
+ * se habían abierto quedan anulados (no suman ni aparecen en la tabla).
+ */
+export function cerrarEn(meta, fin) {
+  if (!fin || fin >= meta.end) return meta;
+  const win = {};
+  for (const [d, w] of Object.entries(meta.win)) win[d] = { a: w.a, b: Math.min(w.b, fin), h: Math.min(w.h, fin) };
+  return { ...meta, win, end: fin, joinUntil: Math.min(meta.joinUntil ?? fin, fin), fin };
+}
+
+/** La copa tal como se ve, con el cierre del admin aplicado si lo hubo (`L.fin`). */
+export const conCierre = L => (L?.meta && L.fin ? { ...L, meta: cerrarEn(L.meta, L.fin) } : L);
+
+/** El admin la cerró antes de tiempo. */
+export const cerradaAntes = meta => !!meta?.fin;
+
+/** Un día que no alcanzó a abrirse porque el admin cerró la copa antes. */
+export const anulado = (meta, d) => !!meta.fin && !!meta.win[d] && meta.win[d].a >= meta.fin;
+
+/** Un día que ya se abrió en `now` (y que no quedó anulado): el que entra en la tabla. */
+const seAbrio = (meta, d, now) => now >= meta.win[d].a && !anulado(meta, d);
+
+/** Se puede terminar la copa: ya partió y todavía no termina. */
+export const puedeCerrar = (meta, now) => !meta.fin && now >= meta.win[1].a && now < meta.end;
+
 /** Nadie ha empezado ningún día: el inicio todavía se puede mover. */
 export const sinEmpezar = L => !Object.values(L?.started || {}).some(d => d && Object.keys(d).length);
 
@@ -245,11 +273,13 @@ export const sinEmpezar = L => !Object.values(L?.started || {}).some(d => d && O
 
 /**
  * 'futuro' · 'hoy' · 'gracia' (el de ayer, último día para jugarlo) · 'en-curso' (tocó
- * Empezar y no terminó) · 'jugado' · 'perdido' (cerró sin resultado).
+ * Empezar y no terminó) · 'jugado' · 'perdido' (cerró sin resultado) · 'anulado' (no alcanzó a
+ * abrirse: el admin cerró la copa antes, D-161).
  */
 export function estadoDia(L, d, pid, now) {
   const { meta } = L;
   if (L.results?.[d]?.[pid]) return 'jugado';
+  if (anulado(meta, d)) return 'anulado';
   if (now < meta.win[d].a) return 'futuro';
   if (now >= meta.win[d].b) return 'perdido';
   if (L.started?.[d]?.[pid]) return 'en-curso';
@@ -315,7 +345,7 @@ export function tabla(L, yo, now) {
   const jug = activos(L);
   const pids = jug.map(j => j.pid);
   const dias = [];
-  for (let d = 1; d <= L.meta.days; d++) if (now >= L.meta.win[d].a) dias.push(d);
+  for (let d = 1; d <= L.meta.days; d++) if (seAbrio(L.meta, d, now)) dias.push(d);
   const pos = Object.fromEntries(dias.map(d => [d, posicionesDelDia(L.results?.[d], pids)]));
   const vis = Object.fromEntries(dias.map(d => [d, visibleDia(L, d, yo, now)]));
 
@@ -362,7 +392,7 @@ export function tabla(L, yo, now) {
  */
 export function evolucion(L, yo, now) {
   const dias = [];
-  for (let d = 1; d <= L.meta.days; d++) if (now >= L.meta.win[d].a && visibleDia(L, d, yo, now)) dias.push(d);
+  for (let d = 1; d <= L.meta.days; d++) if (seAbrio(L.meta, d, now) && visibleDia(L, d, yo, now)) dias.push(d);
   const lugares = {};
   for (const d of dias) {
     const hasta = Object.fromEntries(Object.entries(L.results || {}).filter(([k]) => Number(k) <= d && dias.includes(Number(k))));
