@@ -193,6 +193,12 @@ async function revisar() {
  */
 const SATELITE = 'https://eoimages.gsfc.nasa.gov/images/imagerecords/73000/73801/world.topo.bathy.200409.3x21600x10800.jpg';
 export const IMAGENES = { 2048: 'assets/img/tierra-2004-09-2048.jpg', 4096: 'assets/img/tierra-2004-09-4096.jpg' };
+/**
+ * Y la imagen entera (21600 × 10800) en teselas de 1350 px, 16 columnas por 8 filas, de 22,5° por
+ * lado (D-160): el globo baja solo las que se ven cuando se acerca. `fila-columna.jpg`, desde
+ * arriba a la izquierda (90° N, 180° O).
+ */
+export const TESELAS = { dir: 'assets/img/tierra-2004-09', columnas: 16, filas: 8, lado: 1350 };
 
 async function satelite() {
   const tmp = `${tmpdir()}/tierra-${process.pid}.jpg`;
@@ -203,6 +209,19 @@ async function satelite() {
     execFileSync('sips', ['-s', 'format', 'jpeg', '-s', 'formatOptions', '78', '-z', String(w / 2), String(w), tmp, '--out', `${RAIZ}${ruta}`], { stdio: 'ignore' });
     console.log(ruta);
   }
+  // Las teselas: primero franjas (sips abre la imagen grande una vez por franja), después cada franja en cuadrados
+  const { dir, columnas, filas, lado } = TESELAS;
+  rmSync(`${RAIZ}${dir}`, { recursive: true, force: true });
+  mkdirSync(`${RAIZ}${dir}`, { recursive: true });
+  for (let f = 0; f < filas; f++) {
+    const franja = `${tmpdir()}/franja-${process.pid}.jpg`;
+    execFileSync('sips', ['-c', String(lado), String(columnas * lado), '--cropOffset', String(f * lado), '0', tmp, '--out', franja], { stdio: 'ignore' });
+    for (let c = 0; c < columnas; c++) {
+      execFileSync('sips', ['-s', 'format', 'jpeg', '-s', 'formatOptions', '72', '-c', String(lado), String(lado), '--cropOffset', '0', String(c * lado), franja, '--out', `${RAIZ}${dir}/${f}-${c}.jpg`], { stdio: 'ignore' });
+    }
+    rmSync(franja);
+  }
+  console.log(`${dir}/: ${columnas * filas} teselas de ${lado} px`);
   rmSync(tmp);
 }
 
