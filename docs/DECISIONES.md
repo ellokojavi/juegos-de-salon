@@ -2228,7 +2228,8 @@ lugar. Por lo mismo, la ayuda que cambia con lo elegido va en una línea de alto
 **Consecuencias:** es una excepción a "nada se preselecciona" (C-8, D-38), pedida por el dueño:
 la propuesta viene armada, pero nada se confirma sin tocar **Crear la copa**, y cambiarla no
 cuesta nada. Por eso soltar sí cambia la semana, sin botón de confirmar: arrastrar sigue siendo
-elegir (D-85), y lo irreversible es crear la copa. El calendario ya se guardaba en `meta.cal` y todas las pantallas lo leen de ahí
+elegir (D-85), y lo irreversible es crear la copa. Mientras el juego va en el aire, la ayuda
+dice "Suéltalo…" y no "Toca…" (pedido del dueño), en la misma celda de alto fijo que las otras. El calendario ya se guardaba en `meta.cal` y todas las pantallas lo leen de ahí
 (la invitación lo leía de `CALENDARIOS` y se corrigió), así que las copas ya creadas no cambian y
 las reglas de Firebase tampoco (aceptan cualquier texto de hasta 100 caracteres). La regla de la
 final dejó de decir "una de cada minijuego de la copa". `CALENDARIOS` queda para las demos.
