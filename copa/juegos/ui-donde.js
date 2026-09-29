@@ -32,7 +32,7 @@ const envolver = lon => ((((lon + 180) % 360) + 360) % 360) - 180;
  * El canvas lleva `.globo` con `aPantalla(lat, lon)` y `girarA(lat, lon)`: la respuesta los usa,
  * y también las pruebas de punta a punta, que tocan donde queda cada ciudad.
  */
-function crearGlobo({ T, alTocar }) {
+function crearGlobo({ T, alTocar, alGirar }) {
   const canvas = document.createElement('canvas');
   canvas.className = 'mapa-globo';
   canvas.setAttribute('role', 'img');
@@ -58,6 +58,7 @@ function crearGlobo({ T, alTocar }) {
     return motor.tocado((x - w / 2) / R, (h / 2 + AIRE - y) / R, v.centro);
   };
   const girar = (dx, dy) => {
+    alGirar?.();
     const R = radioBase() * v.z;
     v.centro = [Math.max(-89, Math.min(89, v.centro[0] + (dy / R) / RAD)), envolver(v.centro[1] - (dx / R) / RAD)];
     redibujar();
@@ -183,8 +184,10 @@ export function montar(raiz, ctx) {
   const { p, T, fmt, el, SFX } = ctx;
   let jugadas = Array.isArray(ctx.jugadas) ? ctx.jugadas.slice() : [];
   let revelado = null;
+  // La pista de que el globo se gira (#88): solo en la primera ciudad, hasta el primer arrastre
+  let girado = jugadas.length > 0;
 
-  const caja = mapa => el('div', { class: 'mapa-caja' }, mapa.canvas,
+  const caja = (mapa, pista = null) => el('div', { class: 'mapa-caja' }, mapa.canvas, pista,
     el('div', { class: 'mapa-zoom' },
       el('button', { type: 'button', class: 'btn btn--ghost', id: 'btn-acercar', 'aria-label': T.zoomIn, onClick: () => mapa.zoom(2) }, '+'),
       el('button', { type: 'button', class: 'btn btn--ghost', id: 'btn-alejar', 'aria-label': T.zoomOut, onClick: () => mapa.zoom(0.5) }, '−')));
@@ -219,19 +222,25 @@ export function montar(raiz, ctx) {
     const confirmar = el('button', { class: 'btn btn--yellow', id: 'btn-confirmar', disabled: true, onClick: () => {
       if (!pin) return;
       jugadas.push(motor.jugada(pin[0], pin[1]));
+      girado = true; // pasada la primera ciudad, la pista no vuelve
       ctx.guardar(jugadas);
       revelado = jugadas.length - 1;
       const pts = motor.estado(p, jugadas).filas[revelado].pts;
       if (pts >= 80) SFX.reveal(); else if (pts >= 20) SFX.tap(); else SFX.error();
       dibujar();
     } }, `📍 ${T.confirm}`);
-    const mapa = crearGlobo({ T, alTocar: q => {
-      SFX.tap();
-      pin = q;
-      mapa.alfiler(q);
-      confirmar.disabled = false;
-    } });
-    poner(pantalla, titulo(e.filas.length, c), caja(mapa), confirmar);
+    const pista = girado ? null : el('div', { class: 'globo-pista', id: 'globo-pista', 'aria-hidden': 'true' }, T.spinHint);
+    const mapa = crearGlobo({
+      T,
+      alTocar: q => {
+        SFX.tap();
+        pin = q;
+        mapa.alfiler(q);
+        confirmar.disabled = false;
+      },
+      alGirar: () => { if (!girado) { girado = true; pista?.remove(); } },
+    });
+    poner(pantalla, titulo(e.filas.length, c), caja(mapa, pista), confirmar);
     poner(raiz, pantalla);
     mapa.pintar();
   };
