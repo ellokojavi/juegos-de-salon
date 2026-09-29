@@ -2182,3 +2182,25 @@ alcanzó a abrirse, nadie tiene días ×2 salvo el comodín. Quien está jugando
 termina ve "El tiempo para jugar este día ya se terminó" al enviar. El CSV va separado por punto y
 coma y con BOM, para que Excel en español lo abra en columnas y con acentos. Nueva demo del
 laboratorio: `final-admin`.
+
+## D-162 · Cada minijuego suelto tiene su página y su tarjeta social
+**Fecha:** 2026-09-29 · **Estado:** vigente; cambia la alternativa que D-149 había descartado
+**Decisión:** Los minijuegos sueltos se abren en `/minijuegos/<id>/` (`/minijuegos/reinas/`), una
+página por minijuego con su propia tarjeta social (título, bajada e imagen de 1200×630 en
+`assets/og/<id>.jpg`). Las páginas no se escriben a mano: `node tools/og.mjs tarjetas` las genera
+copiando `minijuegos/index.html` un nivel más abajo, con su título, su tarjeta y
+`<body data-suelto="<id>">`, y `revisar` avisa si una quedó atrás. Como `set-version.py` corre
+`tarjetas` después de estampar, salen con el import map de la versión nueva. Los textos salen de
+`SUELTOS` en `games.js`, que suma ¿Dónde queda? con `labs: true`: tiene página y tarjeta, pero
+todavía no va en la portada. Los links de antes (`/minijuegos/?reinas` y `/copa/?practica=reinas`
+sin `&labs`) se van a la página nueva.
+**Por qué:** lo pidió el dueño: un link a un minijuego pegado en WhatsApp mostraba la tarjeta de
+La Copa o la del menú. Los robots que arman la tarjeta no corren JavaScript: leen el HTML tal como
+llega, y con una sola página para todos (`?reinas`) todos los links traían la misma.
+**Alternativas descartadas:** escribir las páginas a mano (lo que D-149 quería evitar: siete
+copias del import map que se separarían); una página que redirige (el robot se queda con la
+tarjeta de la primera, o sigue la redirección y llega a la genérica).
+**Consecuencias:** la práctica del laboratorio sigue en `/copa/?practica=<id>&labs` y su link
+trae la tarjeta de La Copa: para compartir un minijuego se comparte `/minijuegos/<id>/`.
+`tools/og.mjs imagenes` acepta `PUERTO` y `PUERTO_CDP`, y se detiene si su puerto está ocupado
+(antes fotografiaba la copia de otra sesión sin avisar).
