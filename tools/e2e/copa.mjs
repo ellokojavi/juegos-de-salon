@@ -310,7 +310,7 @@ await click('#btn-crear'); await sleep(900); // con varias sesiones probando a l
 await ev(`(()=>{const i=[...document.querySelectorAll('#crear-body input:not(.fecha):not(#crear-link)')];i[0].value='Copa de la oficina';i[1].value='Cata';i[2].value='1111';i[3].value='1111';return 1})()`);
 ok(await ev(`document.getElementById('crear-juegos').hidden`), 'los juegos se eligen después de la duración: antes no se ven');
 await ev(`(()=>{const o=[...document.querySelectorAll('#crear-body .opcion')];o[${SIETE ? 1 : 0}].click();o[3].click();return 1})()`); // parte mañana
-// Elegir los juegos (D-161): una propuesta al azar en la mano y la línea de Línea de Tiempo
+// Elegir los juegos (D-163): una propuesta al azar en la mano y la línea de Línea de Tiempo
 {
   const n = SIETE ? 7 : 3;
   const cal = () => ev(`[...document.querySelectorAll('#cal-elegir .event[data-dia]')].map(b=>b.dataset.juego)`);

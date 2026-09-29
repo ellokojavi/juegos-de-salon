@@ -2157,7 +2157,7 @@ celulares).
 una ciudad baja entre 1 y 9. Sin mipmap en las teselas (solo se usan acercando, y así no hay
 costura en la línea de cambio de fecha). Las rehace `node tools/mapa.mjs satelite`.
 
-## D-161 · El admin elige los juegos de la copa y su orden
+## D-163 · El admin elige los juegos de la copa y su orden
 **Fecha:** 2026-09-29 · **Estado:** vigente
 **Decisión:** Al crear una copa, después de elegir la duración aparece **¿Qué se juega cada día?**
 con la mano y la línea de Línea de Tiempo (`linea.css`, `arrastre.js`): arriba, en la mano, los
