@@ -2094,3 +2094,15 @@ o menos dónde quedan pero no con precisión.
 suma 13 (Copiapó, Calama, Rancagua, Talca, Chillán, Los Ángeles, Osorno, Castro, Puerto Natales,
 Ovalle, Vallenar, Tocopilla y Pucón): de a una por partida, porque cada partida es de países
 distintos.
+
+## D-158 · El globo de ¿Dónde queda? va sin fronteras
+**Fecha:** 2026-09-29 · **Estado:** vigente
+**Decisión:** El globo deja de trazar los bordes de los países: la tierra es un solo relleno
+verde sobre el mar, y lo único que la separa del agua es el color. Vale para el juego y para la
+portada. El mapa (`mapa.js`) sigue siendo por país, porque `tools/mapa.mjs revisar` y las pruebas
+comprueban cada ciudad contra su país.
+**Por qué:** lo pidió el dueño. Sin fronteras, ubicar una ciudad dentro de su país deja de ser
+calcar un contorno y pasa a depender de saber dónde queda el país: más incertidumbre, en la línea
+de D-157.
+**Consecuencias:** los países chicos sin costa (Luxemburgo, Andorra, Eswatini) ya no se distinguen
+de sus vecinos.
