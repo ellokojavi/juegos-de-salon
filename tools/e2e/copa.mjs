@@ -554,6 +554,13 @@ ok(tarjeta.soon && !tarjeta.href && tarjeta.rotulo === 'Próximamente', 'en el m
 await b.go(`${SITIO}/labs/`, 1500);
 ok(await ev(`document.querySelectorAll('#minis .mini-juego').length`) === 10 && await ev(`!!document.querySelector('#minis [data-id="donde"]')`), 'el laboratorio ofrece los diez minijuegos (con Zip, Tango y ¿Dónde queda?)');
 await b.shot('10-labs');
+// Los minijuegos con página propia se practican ahí, para que el link traiga su tarjeta (D-164)
+ok(await ev(`document.querySelector('#minis [data-id="donde"]').getAttribute('href')`) === '../minijuegos/donde/?labs'
+  && await ev(`document.querySelector('#minis [data-id="linea"]').getAttribute('href')`) === '../copa/?practica=linea&labs', 'laboratorio: ¿Dónde queda? abre su página; Línea Relámpago sigue en /copa/');
+ok(await ev(`document.querySelector('#minis [data-id="zip"] span').classList.contains('emoji-claro')`), 'laboratorio: el 〰️ de Zip lleva contorno claro');
+await b.go(`${BASE}?practica=tango&prueba&labs&semilla=KQRST`, 1500); await preparar();
+ok(await ev(`location.pathname + location.search`) === '/minijuegos/tango/?labs&prueba&semilla=KQRST', 'laboratorio: el link viejo va a la página del minijuego con su semilla');
+ok(!!await ev(`document.getElementById('btn-ensayo')`) && await ev(`document.getElementById('btn-menu').href`) === `${SITIO}/labs/`, 'laboratorio: en la página del minijuego sigue la sesión de prueba y se vuelve al laboratorio');
 // Rendirse en Reinas: dos toques, la solución a la vista y 0 puntos (D-110)
 await b.go(`${BASE}?practica=reinas&prueba&labs`, 1200); await preparar();
 await click('#btn-empezar'); await sleep(300); await esperarCuenta();
