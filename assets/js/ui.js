@@ -21,6 +21,18 @@ export function el(tag, attrs = {}, ...children) {
   return node;
 }
 
+/**
+ * Emojis que se dibujan casi negros (〰️, el de Zip) y sobre el fondo morado no se ven: donde van
+ * solos, sobre fondo oscuro, llevan un contorno claro (`.emoji-claro` en base.css). Es el mismo
+ * emoji; dentro de un botón amarillo o de un texto para compartir queda tal cual.
+ */
+export const EMOJI_OSCUROS = ['〰️'];
+export const claseEmoji = e => (EMOJI_OSCUROS.includes(e) ? 'emoji-claro' : '');
+/** Una clase más la del emoji, si le toca: `con('trophy pop', J.emoji)`. */
+export const con = (clase, e) => [clase, claseEmoji(e)].filter(Boolean).join(' ');
+/** "〰️ Zip" como nodos: el emoji en su propio span, para que el contorno no tome el texto. */
+export const conEmoji = (e, texto) => [el('span', { class: con('', e) }, e), ` ${texto}`];
+
 export function pick(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }

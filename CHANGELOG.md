@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.76.0 — 2026-09-30
+- **Zip se ve mejor.** Su 〰️ lleva un contorno claro donde va sobre el fondo morado: en el menú,
+  en la tarjeta al compartir y en sus pantallas (D-164).
+- **El laboratorio abre cada minijuego en su propia página.** Un link copiado desde ahí muestra en
+  WhatsApp la tarjeta del minijuego y no la de La Copa. La sesión de prueba y la semilla siguen igual (D-164).
+
 ## 0.75.1 — 2026-09-29
 - **La Copa: con un juego en el aire, la ayuda dice "Suéltalo…"** al armar la semana, en vez de
   "Toca…", que es lo que dice mientras se elige tocando (D-163).

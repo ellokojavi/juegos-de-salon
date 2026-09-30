@@ -2233,3 +2233,22 @@ dice "Suéltalo…" y no "Toca…" (pedido del dueño), en la misma celda de alt
 (la invitación lo leía de `CALENDARIOS` y se corrigió), así que las copas ya creadas no cambian y
 las reglas de Firebase tampoco (aceptan cualquier texto de hasta 100 caracteres). La regla de la
 final dejó de decir "una de cada minijuego de la copa". `CALENDARIOS` queda para las demos.
+
+## D-164 · El 〰️ de Zip lleva contorno claro, y el laboratorio juega en las páginas de cada minijuego
+**Fecha:** 2026-09-30 · **Estado:** vigente
+**Decisión:** Dos cambios:
+1. **Emojis oscuros con contorno claro.** El 〰️ de Zip se dibuja casi negro y sobre el fondo
+   morado no se veía. Sigue siendo el mismo emoji, con un contorno blanco (`.emoji-claro` en
+   `base.css`) donde va solo sobre fondo oscuro: la tarjeta de la portada, la imagen para compartir,
+   la lista del laboratorio, la ficha de arriba y las pantallas de La Copa. La lista de emojis que lo
+   llevan es `EMOJI_OSCUROS` en `assets/js/ui.js`; `con(clase, emoji)` y `conEmoji(emoji, texto)`
+   ponen la clase. En los botones amarillos y en los textos que se comparten queda tal cual.
+2. **La práctica del laboratorio se juega en `/minijuegos/<id>/?labs`** para los minijuegos que
+   tienen página (D-162), con todo lo del laboratorio: sesión de prueba, semilla en la URL, repetir
+   la misma partida y volver al laboratorio. Los que no tienen página (Línea Relámpago, el número,
+   la final) siguen en `/copa/?practica=<id>&labs`. Un link viejo del laboratorio se va a la página
+   nueva con su semilla.
+**Por qué:** lo pidió el dueño. Un link copiado desde el laboratorio traía la tarjeta de La Copa y
+no la del minijuego; y el 〰️ casi no se veía en la miniatura de WhatsApp ni en la portada.
+**Alternativas descartadas:** cambiar el emoji de Zip (el dueño quiso el mismo); pintarlo blanco
+con un filtro (deja de ser el emoji); poner el contorno en la caja del emoji (blanquea el fondo).
