@@ -1297,9 +1297,9 @@ function admin({ forzar = false } = {}) {
     poner(body, el('div', { class: 'panel stack', id: 'admin-exportar' },
       el('p', { class: 'lead', style: 'margin:0' }, T.exportTitle),
       el('p', { class: 'muted', style: 'margin:0' }, T.exportLead),
-      errExportar,
       accion(`📤 ${T.exportImage}`, 'btn-exportar-imagen', () => compartirImagen(), 'btn btn--cyan btn--sm', errExportar),
-      accion(`⬇️ ${T.exportSheet}`, 'btn-exportar-planilla', async () => { descargarPlanilla(); }, 'btn btn--cyan btn--sm', errExportar)));
+      accion(`⬇️ ${T.exportSheet}`, 'btn-exportar-planilla', async () => { descargarPlanilla(); }, 'btn btn--cyan btn--sm', errExportar),
+      errExportar));
   }
 
 
@@ -1406,12 +1406,12 @@ function admin({ forzar = false } = {}) {
       el('p', { class: 'muted', style: 'margin:0' }, T.endLead),
       quienes.map(x => el('div', { class: 'aviso' }, fmt(T.endMissing, { d: x.k, names: x.falta.map(j => j.name).join(', ') }))),
       quedan ? el('p', { class: 'muted', style: 'margin:0' }, T.endCancelled) : null,
-      errTerminar,
       accion(`🏁 ${T.endGo}`, 'btn-terminar', async () => {
         if (!confirm(fmt(T.endConfirm, { copa: meta.name }))) throw { code: 'cancelado' };
         await store.terminarCopa(S.code);
         SFX.reveal(); toast(T.endDone);
-      }, 'btn btn--ghost', errTerminar)));
+      }, 'btn btn--ghost', errTerminar),
+      errTerminar));
   }
 
   const lista = el('div', { class: 'admin-jugadores' });
@@ -1459,7 +1459,6 @@ function admin({ forzar = false } = {}) {
   poner(body, el('div', { class: 'panel stack peligro', id: 'admin-eliminar' },
     el('p', { class: 'lead', style: 'margin:0' }, T.deleteTitle),
     el('p', { class: 'muted', style: 'margin:0' }, T.deleteLead),
-    errBorrar,
     el('button', { class: 'btn btn--red', id: 'btn-eliminar', onClick: async ev => {
       SFX.tap();
       if (!confirm(fmt(T.deleteConfirm1, { copa: meta.name }))) return;
@@ -1478,7 +1477,8 @@ function admin({ forzar = false } = {}) {
         SFX.splash();
         eliminada(nombre);
       } catch (e) { S.eliminando = false; b.disabled = false; avisoError(errBorrar, errorDe(e)); }
-    } }, `🗑️ ${T.deleteGo}`)));
+    } }, `🗑️ ${T.deleteGo}`),
+    errBorrar));
 }
 
 /** La confirmación al admin de que su copa se borró (D-117). */
