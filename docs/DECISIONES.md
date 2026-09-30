@@ -2239,8 +2239,9 @@ final dejó de decir "una de cada minijuego de la copa". `CALENDARIOS` queda par
 **Decisión:** El botón de la invitación (el de la pantalla de la copa y el de Administrar) dibuja
 en un canvas de 1200 × 630 la misma tarjeta de `assets/og/copa.jpg`, pero con el título **"La Copa:
 <nombre>"**, y la comparte como archivo junto al texto de siempre (con el link al final). El título
-va en una línea grande si cabe; si no, corta después de "La Copa:" y achica la letra hasta tres
-líneas, para los nombres de 40 caracteres. Los chips dicen cuántos días dura y cuándo parte. Si el
+conserva la letra de la tarjeta social (Bangers, del mismo tamaño y con el mismo espacio entre
+letras, que la tarjeta espera a que cargue): si no cabe en una línea, corta después de "La Copa:"
+sin achicarse, y solo un nombre muy largo (hasta 40 caracteres) baja la letra, hasta tres líneas. Los chips dicen cuántos días dura y cuándo parte. Si el
 celular no comparte archivos (un computador), la invitación sale como antes: solo el texto.
 **Por qué:** lo pidió el dueño: la tarjeta que se ve en el chat decía solo "La Copa", y quien la
 recibe no sabe de qué grupo es. La vista previa del link no puede decirlo: el sitio es estático
