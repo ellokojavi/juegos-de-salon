@@ -973,10 +973,14 @@ async function tarjetaInvitacion() {
   c.shadowColor = 'rgba(255, 210, 63, 0.55)'; c.shadowBlur = 52;
   c.fillText('🏆', izq + 100, H / 2 - 20);
   c.restore();
-  // El título: "La Copa: <nombre>", en una línea grande o, si no cabe, en dos o tres más chicas
+  // El título: "La Copa: <nombre>" en Bangers y del tamaño de la tarjeta social (52 px al doble,
+  // con su 0,03em de espacio entre letras). Si no cabe en una línea, corta después de "La Copa:"
+  // sin achicarse; solo un nombre muy largo baja la letra, hasta tres líneas
   const titulo = fmt(T.inviteCardTitle, { copa: meta.name });
+  // letterSpacing no existe en todos los navegadores: sin él, las letras van juntas y ya
+  const titular = px => { c.font = fuente(400, px, DISPLAY); if ('letterSpacing' in c) c.letterSpacing = `${Math.round(px * 0.03)}px`; };
   const envolver = (txt, font, max) => {
-    c.font = font;
+    if (typeof font === 'number') titular(font); else { c.font = font; if ('letterSpacing' in c) c.letterSpacing = '0px'; }
     const out = [];
     let actual = '';
     txt.split(' ').forEach(p => {
@@ -986,29 +990,28 @@ async function tarjetaInvitacion() {
     if (actual) out.push(actual);
     return out;
   };
-  const cabe = (ls, px) => { c.font = fuente(400, px, DISPLAY); return ls.every(l => c.measureText(l).width <= ancho); };
+  const cabe = (ls, px) => { titular(px); return ls.every(l => c.measureText(l).width <= ancho); };
   let px = 104, lineas;
   for (; px >= 36; px -= 4) {
-    lineas = envolver(titulo, fuente(400, px, DISPLAY), ancho);
+    lineas = envolver(titulo, px, ancho);
     // En dos líneas, el corte va después de "La Copa:" y el nombre queda entero abajo
     const [antes, ...resto] = titulo.split(': ');
     if (lineas.length > 1 && resto.length && cabe([`${antes}:`, resto.join(': ')], px)) lineas = [`${antes}:`, resto.join(': ')];
-    const tope = px >= 72 ? 1 : px >= 52 ? 2 : 3;
+    const tope = px >= 64 ? 2 : 3;
     if (lineas.length <= tope && cabe(lineas, px)) break;
   }
   // Una palabra larguísima: se achica hasta que quepa
-  if (px < 36) { lineas = envolver(titulo, fuente(400, 36, DISPLAY), ancho).slice(0, 3); c.font = fuente(400, 36, DISPLAY); px = Math.floor(36 * Math.min(1, ancho / Math.max(...lineas.map(l => c.measureText(l).width)))); }
-  c.font = fuente(400, px, DISPLAY);
+  if (px < 36) { lineas = envolver(titulo, 36, ancho).slice(0, 3); titular(36); px = Math.floor(36 * Math.min(1, ancho / Math.max(...lineas.map(l => c.measureText(l).width)))); }
   const alto = px * 0.92;
   // Qué va debajo: la bajada y los chips
-  const renglones = envolver(T.inviteCardSub, fuente(800, 30), ancho);
+  const renglones = envolver(T.inviteCardSub, fuente(800, 34), ancho);
   const chips = [fmt(T.inviteCardDays, { dias: meta.days }), fmt(T.inviteCardStart, { fecha: new Intl.DateTimeFormat('es-CL', { timeZone: meta.tz, day: 'numeric', month: 'long' }).format(new Date(meta.win[1].a)) })];
-  const total = lineas.length * alto + 16 + renglones.length * 40 + 24 + 60;
+  const total = lineas.length * alto + 16 + renglones.length * 44 + 24 + 60;
   let y = (H - 40) / 2 - total / 2;
   c.textAlign = 'left'; c.textBaseline = 'alphabetic';
   lineas.forEach(l => {
     y += alto;
-    c.font = fuente(400, px, DISPLAY);
+    titular(px);
     const w = c.measureText(l).width;
     const arco = c.createLinearGradient(tx, 0, tx + Math.max(w, 1), 0);
     arco.addColorStop(0, '#ffd23f'); arco.addColorStop(1, '#ff2e88');
@@ -1016,8 +1019,9 @@ async function tarjetaInvitacion() {
     c.fillStyle = arco; c.fillText(l, tx, y);
   });
   y += 16;
-  c.fillStyle = '#ffffff'; c.font = fuente(800, 30);
-  renglones.forEach(r => { y += 40; c.fillText(r, tx, y - 8); });
+  if ('letterSpacing' in c) c.letterSpacing = '0px';
+  c.fillStyle = '#ffffff'; c.font = fuente(800, 34);
+  renglones.forEach(r => { y += 44; c.fillText(r, tx, y - 8); });
   y += 24;
   let cx = tx;
   c.font = fuente(900, 26);
