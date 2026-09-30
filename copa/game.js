@@ -10,7 +10,7 @@
  * La misma pantalla sirve los minijuegos sueltos de la portada en /minijuegos/reinas/ (D-149, D-162).
  */
 import { crearArrastre } from '../assets/js/arrastre.js';
-import { $, $$, el, vibrate, sparkles, keepAwake, confetti, shareLink, canShare } from '../assets/js/ui.js';
+import { $, $$, el, con, conEmoji, vibrate, sparkles, keepAwake, confetti, shareLink, canShare } from '../assets/js/ui.js';
 import { applyStatic } from '../assets/js/i18n.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { trackStart, versionOf } from '../assets/js/transport/stats.js';
@@ -49,16 +49,25 @@ const TRES = PRUEBA || LABS || busqueda.includes('tres');
 // social. /copa/?practica=<id>&labs queda para el laboratorio.
 const SUELTO = document.body.hasAttribute('data-suelto');
 const PRACTICA = SUELTO
-  ? document.body.dataset.suelto || busqueda.find(x => !x.includes('=') && x !== 'prueba') || ''
+  ? document.body.dataset.suelto || busqueda.find(x => !x.includes('=') && x !== 'prueba' && x !== 'labs') || ''
   : new URLSearchParams(location.search).get('practica');
 /** La raíz del sitio, desde donde esté la página (las de cada minijuego van un nivel más abajo). */
 const RAIZ = new URL('../', import.meta.url).href;
-/** Dónde vive un minijuego suelto: su página, o la genérica si no tiene (uno solo del laboratorio). */
-const paginaSuelta = id => (gameById(id)?.suelto ? `${RAIZ}minijuegos/${id}/${PRUEBA ? '?prueba' : ''}` : `${RAIZ}minijuegos/?${id}${PRUEBA ? '&prueba' : ''}`);
-// Un link viejo (/copa/?practica=reinas sin &labs, o /minijuegos/?reinas) se va a su lugar nuevo
-if (!SUELTO && PRACTICA && !LABS) location.replace(paginaSuelta(PRACTICA));
-if (SUELTO && !document.body.dataset.suelto && gameById(PRACTICA)?.suelto) location.replace(paginaSuelta(PRACTICA));
 const SEMILLA = (new URLSearchParams(location.search).get('semilla') || '').toUpperCase();
+/**
+ * Dónde vive un minijuego suelto: su página, o la genérica si no tiene. Desde el laboratorio
+ * también se juega ahí (D-164), con `?labs` y su semilla: así el link que se copia de la barra
+ * trae la tarjeta del minijuego y no la de La Copa.
+ */
+const paginaSuelta = (id, { semilla, zipSeg } = {}) => {
+  const q = [LABS && 'labs', PRUEBA && 'prueba', semilla && `semilla=${semilla}`, zipSeg && `zipSeg=${zipSeg}`].filter(Boolean).join('&');
+  return gameById(id)?.suelto ? `${RAIZ}minijuegos/${id}/${q ? `?${q}` : ''}` : `${RAIZ}minijuegos/?${[id, q].filter(Boolean).join('&')}`;
+};
+const semillaUrl = { semilla: SEMILLA, zipSeg: new URLSearchParams(location.search).get('zipSeg') };
+// Un link viejo (/copa/?practica=reinas, o /minijuegos/?reinas) se va a su lugar nuevo. Los del
+// laboratorio que no tienen página (Línea Relámpago, el número, la final) siguen en /copa/.
+if (!SUELTO && PRACTICA && (!LABS || gameById(PRACTICA)?.suelto)) location.replace(paginaSuelta(PRACTICA, semillaUrl));
+if (SUELTO && !document.body.dataset.suelto && gameById(PRACTICA)?.suelto) location.replace(paginaSuelta(PRACTICA, semillaUrl));
 // Las demos del laboratorio (D-110): solo en el modo de prueba, con el almacén local
 const DEMO = PRUEBA ? new URLSearchParams(location.search).get('demo') : null;
 const codigoUrl = (busqueda.find(x => CODIGO.test(x.toUpperCase()) && x.length === 5) || new URLSearchParams(location.search).get('c') || '').toUpperCase();
@@ -263,7 +272,7 @@ function elegirJuegos() {
     mano.innerHTML = ''; linea.innerHTML = '';
     poner(mano, fueraDe().map(id => el('button', {
       type: 'button', class: `card${sel?.id === id ? (arrastrando ? ' hueco' : ' sel') : ''}`, 'data-juego': id, 'aria-pressed': String(sel?.id === id), onClick: () => tocarFuera(id),
-    }, el('span', { class: 'em' }, MINIJUEGOS[id].emoji), el('span', { class: 't' }, MINIJUEGOS[id].nombre))));
+    }, el('span', { class: con('em', MINIJUEGOS[id].emoji) }, MINIJUEGOS[id].emoji), el('span', { class: 't' }, MINIJUEGOS[id].nombre))));
     mano.classList.toggle('dim', sel?.zona === 'fuera');
     linea.classList.toggle('blanco', sel?.zona === 'fuera');
     vista().forEach((id, i) => {
@@ -271,7 +280,7 @@ function elegirJuegos() {
       linea.append(el('button', {
         type: 'button', class: `event${sel?.id === id ? (arrastrando ? ' hueco' : ' sel') : ''}`, 'data-dia': i, 'data-juego': id, 'data-clave': `${moviendo() ? 'm' : 'r'}${i}`,
         'aria-pressed': String(sel?.id === id), onClick: () => tocarDia(i),
-      }, el('span', { class: 'y' }, fmt(T.gamesDay, { d: i + 1 })), el('span', { class: 'em' }, MINIJUEGOS[id].emoji), nombreJ(id),
+      }, el('span', { class: 'y' }, fmt(T.gamesDay, { d: i + 1 })), el('span', { class: con('em', MINIJUEGOS[id].emoji) }, MINIJUEGOS[id].emoji), nombreJ(id),
       el('span', { class: 'agarre', 'aria-hidden': 'true' }, '⠿')));
     });
     if (ranuraSirve(dias().length)) linea.append(ranura(dias().length));
@@ -298,7 +307,7 @@ function elegirJuegos() {
     ],
     activo: () => nodo.isConnected && !nodo.hidden,
     vibrar: vibrate,
-    avatar: item => el('div', { class: 'vilo-carta' }, el('span', { class: 'em' }, MINIJUEGOS[item.dataset.juego].emoji), el('span', { class: 't' }, MINIJUEGOS[item.dataset.juego].nombre)),
+    avatar: item => el('div', { class: 'vilo-carta' }, el('span', { class: con('em', MINIJUEGOS[item.dataset.juego].emoji) }, MINIJUEGOS[item.dataset.juego].emoji), el('span', { class: 't' }, MINIJUEGOS[item.dataset.juego].nombre)),
     alAlzar: (item, zona) => {
       sel = { zona, id: item.dataset.juego }; destino = null; arrastrando = true; pintar();
     },
@@ -586,7 +595,7 @@ function entrar({ mantener = false } = {}) {
       el('p', { class: 'muted', style: 'margin:0' }, T.inviteTitle),
       el('h1', { class: 'display display--lg rainbow' }, meta.name),
       el('p', { class: 'lead' }, info)),
-    el('div', { class: 'cal-mini' }, calendario(meta).map(j => el('span', { title: MINIJUEGOS[j].nombre }, MINIJUEGOS[j].emoji))),
+    el('div', { class: 'cal-mini' }, calendario(meta).map(j => el('span', { title: MINIJUEGOS[j].nombre, class: con('', MINIJUEGOS[j].emoji) }, MINIJUEGOS[j].emoji))),
     puedeEntrar ? null : el('p', { class: 'muted center' }, terminada(meta, now) ? T.closedEnded : L().closed && inscripcionAbierta(meta, now) ? T.closedByAdmin : T.closedJoin),
     tabs, caja,
   );
@@ -634,7 +643,7 @@ function tarjetaDia(d, rotulo) {
       el('span', { class: 'chip' + (rotulo === T.today ? ' chip--hot' : '') }, rotulo),
       el('span', { class: 'muted' }, `${fmt(T.dayOf, { d, n: meta.days })} · ${fechaCorta(meta.win[d].a, meta.tz)}`),
       x2 ? el('span', { class: claseX2(esFinal(meta, d)) }, esFinal(meta, d) ? T.x2 : `${T.x2} ${T.wildUsed}`) : null),
-    el('div', { class: 'dia-juego' }, el('span', { class: 'dia-emoji' }, J.emoji), el('div', {}, el('b', {}, J.nombre), el('small', { class: 'muted' }, hastaCuando(d, est, now)))),
+    el('div', { class: 'dia-juego' }, el('span', { class: con('dia-emoji', J.emoji) }, J.emoji), el('div', {}, el('b', {}, J.nombre), el('small', { class: 'muted' }, hastaCuando(d, est, now)))),
     est === 'jugado' ? el('p', { class: 'ok' }, `✅ ${T.played}`) : null,
     accion,
     el('p', { class: 'muted quienes' }, jugaron.length ? fmt(T.whoPlayed, { names: jugaron.map(j => j.name).join(', ') }) : T.nobodyPlayed),
@@ -695,7 +704,7 @@ function misDias(d, now) {
     else detalle = fmt(T.opensOn, { fecha: fechaCorta(meta.win[k].a, meta.tz) });
     const contenido = [
       el('span', { class: 'md-dia' }, el('b', {}, fmt(T.dayShort, { d: k })), el('small', {}, fechaCorta(meta.win[k].a, meta.tz))),
-      el('span', { class: 'md-emoji' }, J.emoji),
+      el('span', { class: con('md-emoji', J.emoji) }, J.emoji),
       el('span', { class: 'md-info' }, el('b', {}, J.nombre, x2 ? el('span', { class: `${claseX2(esFinal(meta, k))} md-x2` }, T.x2) : null), el('small', {}, detalle)),
       est === 'jugado' ? el('span', { class: 'md-go' }, '›') : accion,
     ];
@@ -1556,7 +1565,7 @@ function antesDeJugar(d) {
  * desvanece solo sobre el tablero. Resuelve la promesa en ese momento.
  */
 /** Lo de arriba de la antesala: la portada animada del minijuego si la tiene (el globo de ¿Dónde queda?), si no su emoji. */
-const heroe = (id, J) => JUEGOS[id]?.portada?.() ?? el('span', { class: 'icon' }, J.emoji);
+const heroe = (id, J) => JUEGOS[id]?.portada?.() ?? el('span', { class: con('icon', J.emoji) }, J.emoji);
 
 /** El dibujo que explica el minijuego antes del texto, si lo tiene (Reinas, Tango y Zip). */
 const dibujo = id => JUEGOS[id]?.ejemplo?.({ el, T }) ?? null;
@@ -1587,12 +1596,12 @@ function panelReglas(id, { copa = true } = {}) {
 function cuentaRegresiva(J) {
   // La Gran Final no la lleva: cada ronda ya parte con su propia presentación
   if (J === MINIJUEGOS.final) return Promise.resolve();
-  $('#jugar-head').replaceChildren(el('span', { class: 'jugar-titulo' }, `${J.emoji} ${J.nombre}`));
+  $('#jugar-head').replaceChildren(el('span', { class: 'jugar-titulo' }, conEmoji(J.emoji, J.nombre)));
   $('#jugar-body').innerHTML = '';
   return new Promise(listo => {
     const num = el('span', { class: 'cuenta-num' });
     const capa = el('div', { class: 'cuenta', id: 'cuenta', role: 'status', 'aria-live': 'assertive' },
-      el('p', { class: 'cuenta-juego' }, `${J.emoji} ${J.nombre}`), num);
+      el('p', { class: 'cuenta-juego' }, conEmoji(J.emoji, J.nombre)), num);
     document.body.append(capa);
     let n = 3;
     const paso = () => {
@@ -1644,7 +1653,7 @@ async function jugar(d) {
   const head = $('#jugar-head');
   head.innerHTML = '';
   const cron = el('span', { class: 'cron' }, fmt(T.timer, { t: mmss(reloj.leer(rel, now)) }));
-  head.append(el('span', { class: 'jugar-titulo' }, `${J.emoji} ${J.nombre}`), cron);
+  head.append(el('span', { class: 'jugar-titulo' }, conEmoji(J.emoji, J.nombre)), cron);
   clearInterval(S.reloj);
   S.reloj = setInterval(() => { if (S.pantalla === 'jugar') cron.textContent = fmt(T.timer, { t: mmss(reloj.leer(rel, ahora())) }); }, 1000);
   S.visibilidad && document.removeEventListener('visibilitychange', S.visibilidad);
@@ -1741,7 +1750,7 @@ function resultado(d, { recien = false, det = null } = {}) {
   const tarjeta = `${fmt(T.shareCardText, { copa: meta.name, d, emoji: J.emoji, juego: J.nombre, name: nombreDe(S.yo), resumen: mio.r || '' })}\n${mio.t || ''}`;
   poner(body, 
     el('div', { class: 'result-hero' },
-      el('span', { class: 'trophy' + (recien ? ' pop' : '') }, J.emoji),
+      el('span', { class: con('trophy' + (recien ? ' pop' : ''), J.emoji) }, J.emoji),
       el('h2', { class: 'display display--md' }, fmt(T.resultTitle, { d, juego: J.nombre })),
       el('p', { class: 'muted', style: 'margin:0' }, T.yourScore),
       el('div', { class: 'score-big' }, mio.r || String(mio.s)),
@@ -1815,11 +1824,13 @@ function practica(id) {
   const J = MINIJUEGOS[id], mod = JUEGOS[id];
   if (!J || !mod) { if (SUELTO) location.replace(RAIZ); else portada(); return; }
   if (!LABS) document.title = `${J.nombre} ${J.emoji} · Juegos de Salón`;
-  if (SUELTO) $('#chip-juego').textContent = `${J.emoji} ${J.nombre}`;
+  if (SUELTO) $('#chip-juego').replaceChildren(...conEmoji(J.emoji, J.nombre));
   const semilla = esCodigo(SEMILLA) ? SEMILLA : codigoAlAzar();
   const zipSeg = new URLSearchParams(location.search).get('zipSeg');
-  // Suelto, la semilla no va a la vista (D-142): el link queda en /minijuegos/reinas/
-  if (!SUELTO) history.replaceState(null, '', `${location.pathname}?practica=${id}&semilla=${semilla}${PRUEBA ? '&prueba' : ''}${LABS ? '&labs' : ''}${zipSeg ? `&zipSeg=${zipSeg}` : ''}`);
+  // Suelto, la semilla no va a la vista (D-142): el link queda en /minijuegos/reinas/. Desde el
+  // laboratorio sí, para poder repetir la partida.
+  if (SUELTO && LABS) history.replaceState(null, '', paginaSuelta(id, { semilla, zipSeg }));
+  else if (!SUELTO) history.replaceState(null, '', `${location.pathname}?practica=${id}&semilla=${semilla}${PRUEBA ? '&prueba' : ''}${LABS ? '&labs' : ''}${zipSeg ? `&zipSeg=${zipSeg}` : ''}`);
   S.juego = { d: 1, id, practica: true, semilla };
   mostrar('jugar');
   $('#jugar-head').innerHTML = '';
@@ -1861,7 +1872,7 @@ async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false } = {}) {
   const head = $('#jugar-head');
   head.innerHTML = '';
   const cron = el('span', { class: 'cron' }, fmt(T.timer, { t: '0:00' }));
-  poner(head, el('span', { class: 'jugar-titulo' }, `${J.emoji} ${J.nombre}`), ensayo ? el('span', { class: 'chip chip--gold' }, T.trialChip) : null, cron);
+  poner(head, el('span', { class: 'jugar-titulo' }, conEmoji(J.emoji, J.nombre)), ensayo ? el('span', { class: 'chip chip--gold' }, T.trialChip) : null, cron);
   clearInterval(S.reloj);
   S.reloj = setInterval(() => { if (S.pantalla === 'jugar') cron.textContent = fmt(T.timer, { t: mmss(reloj.leer(rel, Date.now())) }); }, 1000);
   S.visibilidad && document.removeEventListener('visibilitychange', S.visibilidad);
@@ -1927,7 +1938,7 @@ function resultadoPractica(id, semilla, r) {
   body.innerHTML = '';
   poner(body,
     el('div', { class: 'result-hero' },
-      el('span', { class: 'trophy pop' }, J.emoji),
+      el('span', { class: con('trophy pop', J.emoji) }, J.emoji),
       el('h2', { class: 'display display--md' }, J.nombre),
       el('p', { class: 'muted', style: 'margin:0' }, T.yourScore),
       el('div', { class: 'score-big' }, r.resumen || String(r.s)),
@@ -2036,8 +2047,8 @@ document.title = `${T.title} 🏆 · Juegos de Salón`;
 $('#sound-slot').append(soundToggle());
 // Mientras La Copa esté en el laboratorio, "volver" es volver ahí y no al menú (D-101)
 // Salvo el minijuego suelto de la portada (D-142, D-149), que vuelve a ella.
-if (!SUELTO) {
-  $('#btn-menu').setAttribute('href', '../labs/');
+if (!SUELTO || LABS) {
+  $('#btn-menu').setAttribute('href', `${RAIZ}labs/`);
   $('#btn-menu').textContent = T.backToLabsShort;
 }
 // Los reportes que no alcanzaron a enviarse se reintentan al abrir (D-109). En el modo de prueba
