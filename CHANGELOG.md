@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.75.2 — 2026-09-30
+- **La Copa: en Administrar, sin hueco vacío sobre los botones** de "Terminar la copa antes",
+  "Tabla final" y "Eliminar la copa" (U-11). El aviso de error va debajo del botón, como en
+  Nombre de la copa y Jugadores, y vacío no ocupa lugar.
+
 ## 0.75.1 — 2026-09-29
 - **La Copa: con un juego en el aire, la ayuda dice "Suéltalo…"** al armar la semana, en vez de
   "Toca…", que es lo que dice mientras se elige tocando (D-163).
