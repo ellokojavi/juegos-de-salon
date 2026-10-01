@@ -166,11 +166,12 @@ const tocarCasilla = sel => i => click(`${sel}[data-i="${i}"]`);
 const jugarReinas = async nivel => {
   const p = await ev('JSON.stringify(window.__jugando.p)').then(JSON.parse);
   const t = tocarCasilla('.rej');
-  // Cada error: la reina de la fila 0 y una pegada en diagonal en la fila 1 (un toque pone, otro saca: D-103)
+  // Cada error: la reina de la fila 0 y una pegada en diagonal en la fila 1 (un toque pone la reina,
+  // otro la cambia por X y otro la deja vacía: D-167)
   const pegada = 1 * p.n + (p.sol[0] === 0 ? 1 : p.sol[0] - 1);
   for (let e = 0; e < (nivel === 2 ? 0 : nivel === 1 ? 1 : 2); e++) {
     await t(p.sol[0]); await t(pegada);   // choque
-    await t(pegada); await t(p.sol[0]);   // se sacan las dos
+    await t(pegada); await t(pegada); await t(p.sol[0]); await t(p.sol[0]);   // se sacan las dos
   }
   for (let r = 0; r < p.n; r++) await t(r * p.n + p.sol[r]);
   await sleep(150);
@@ -579,6 +580,42 @@ ok(await ev(`document.querySelector('#minis [data-id="zip"] span').classList.con
 await b.go(`${BASE}?practica=tango&prueba&labs&semilla=KQRST`, 1500); await preparar();
 ok(await ev(`location.pathname + location.search`) === '/minijuegos/tango/?labs&prueba&semilla=KQRST', 'laboratorio: el link viejo va a la página del minijuego con su semilla');
 ok(!!await ev(`document.getElementById('btn-ensayo')`) && await ev(`document.getElementById('btn-menu').href`) === `${SITIO}/labs/`, 'laboratorio: en la página del minijuego sigue la sesión de prueba y se vuelve al laboratorio');
+// Arrastrar desde una casilla vacía pinta X en las vacías (D-166), con mouse y con el dedo, sin
+// estorbar al toque (reina) ni al toque largo (X)
+await b.go(`${BASE}?practica=reinas&prueba&labs`, 1200); await preparar();
+await click('#btn-empezar'); await sleep(300); await esperarCuenta();
+{
+  const N = await ev(`Math.round(Math.sqrt(document.querySelectorAll('.rej').length))`);
+  const centro = i => ev(`(()=>{const r=document.querySelector('.rej[data-i="${i}"]').getBoundingClientRect();return [Math.round(r.x+r.width/2),Math.round(r.y+r.height/2)]})()`);
+  const clases = () => ev(`[...document.querySelectorAll('.rej')].map(x=>x.classList.contains('reina')?'R':x.classList.contains('marca')?'X':'.').join('')`);
+  const [x0, y0] = await centro(0), [x1, y1] = await centro(N - 1);
+  await b.arrastre(x0, y0, x1, y1, 3);
+  let t = await clases();
+  ok(t.slice(0, N) === 'X'.repeat(N) && !t.slice(N).includes('X') && !t.includes('R'), 'Reinas: arrastrar a lo largo de una fila la llena de X, sin saltarse casillas');
+  const [xr, yr] = await centro(N); await b.toque(xr, yr);
+  t = await clases();
+  ok(t[N] === 'R' && t.slice(N + 1, 2 * N) === '.'.repeat(N - 1), 'Reinas: el toque sigue poniendo la reina');
+  // El ciclo del toque: reina → X → vacía → reina (D-167)
+  const ciclo = [];
+  for (let k = 0; k < 3; k++) { await b.toque(xr, yr); ciclo.push((await clases())[N]); }
+  ok(ciclo.join('') === 'X.R', 'Reinas: tocar otra vez la reina la cambia por X, después vacía y de nuevo reina');
+  const [xr2, yr2] = await centro(N + 3); await b.arrastre(xr, yr, xr2, yr2, 3);
+  t = await clases();
+  ok(t[N] === 'R' && t.slice(N + 1, 2 * N) === '.'.repeat(N - 1), 'Reinas: arrastrar desde una reina no pinta ni la saca');
+  // Con el dedo, por una columna: el tablero no desplaza la página
+  const col = 3, desde = await centro(2 * N + col), hasta = await centro((N - 1) * N + col);
+  const dedo = (type, [x, y] = [0, 0]) => b.send('Input.dispatchTouchEvent', { type, touchPoints: type === 'touchEnd' ? [] : [{ x, y }] });
+  await dedo('touchStart', desde);
+  for (let k = 1; k <= 4; k++) { await dedo('touchMove', [desde[0], Math.round(desde[1] + (hasta[1] - desde[1]) * k / 4)]); await sleep(30); }
+  await dedo('touchEnd'); await sleep(250);
+  t = await clases();
+  ok([...Array(N - 2).keys()].every(k => t[(k + 2) * N + col] === 'X') && t[N + col] === '.', 'Reinas: con el dedo, arrastrar por una columna la llena de X');
+  // Toque largo en una vacía: X, y el click de soltar no pone reina
+  const [xl, yl] = await centro(N + 6);
+  await b.send('Input.dispatchMouseEvent', { type: 'mousePressed', x: xl, y: yl, button: 'left', clickCount: 1, buttons: 1 }); await sleep(600);
+  await b.send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: xl, y: yl, button: 'left', clickCount: 1, buttons: 0 }); await sleep(200);
+  ok((await clases())[N + 6] === 'X', 'Reinas: el toque largo sigue poniendo la X');
+}
 // Rendirse en Reinas: dos toques, la solución a la vista y 0 puntos (D-110)
 await b.go(`${BASE}?practica=reinas&prueba&labs`, 1200); await preparar();
 await click('#btn-empezar'); await sleep(300); await esperarCuenta();
@@ -672,8 +709,12 @@ await b.go(`${BASE}?practica=${id}&prueba&labs${id === 'zip' ? '&zipSeg=12&semil
     await b.send('Input.dispatchMouseEvent', { type: 'mouseReleased', x, y, button: 'left', clickCount: 1, buttons: 0 });
     await sleep(300);
     ok(await ev(`document.querySelector('.rej[data-i="0"]').classList.contains('marca')`), 'Reinas: el toque largo marca la X y no pone reina');
-    await b.toque(x, y); await b.toque(x, y);   // un toque rápido de verdad pone la reina y otro la saca: queda vacía
-    ok(await ev(`!document.querySelector('.rej[data-i="0"]').classList.contains('reina')`), 'Reinas: después del toque largo, los toques rápidos no se pierden');
+    await b.toque(x, y); await b.toque(x, y);   // toques rápidos de verdad: la X pasa a vacía y después a reina (D-167)
+    ok(await ev(`document.querySelector('.rej[data-i="0"]').classList.contains('reina')`), 'Reinas: después del toque largo, los toques rápidos no se pierden');
+    await b.toque(x, y);
+    ok(await ev(`document.querySelector('.rej[data-i="0"]').classList.contains('marca')`), 'Reinas: otro toque cambia la reina por una X');
+    await b.toque(x, y);
+    ok(await ev(`document.querySelector('.rej[data-i="0"]').textContent === ''`), 'Reinas: y otro deja la casilla vacía');
   }
   if (id === 'tango') await b.shot('tango-tablero');
   if (id === 'donde') {
