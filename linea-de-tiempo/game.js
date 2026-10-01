@@ -7,8 +7,10 @@
  * Jugar solo es la ⏳ Línea Relámpago de La Copa (D-142): no pasa por el reductor, la monta
  * copa/juegos/solo.js con la pantalla de copa/juegos/ui-linea.js. Ver la sección "Jugar solo".
  */
-import { $, $$, el, vibrate, sparkles, keepAwake, confetti, shareLink, canShare } from '../assets/js/ui.js';
-import { getLang, langToggle, applyStatic, COMMON, withLang } from '../assets/js/i18n.js';
+import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../assets/js/ui.js';
+import { botonInvitar, botonResultadoSolo } from '../assets/js/compartir.js';
+import { gameById } from '../assets/js/games.js';
+import { getLang, langToggle, applyStatic, COMMON, withLang, SITIO } from '../assets/js/i18n.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { failWith } from '../assets/js/transport/errors.js';
 import { showHandoff, passBlock } from '../assets/js/handoff.js';
@@ -265,26 +267,17 @@ function renderLobby() {
   renderQr(url);
 }
 
-/** Botón de compartir: diálogo nativo del sistema si existe; si no, copia el enlace. */
 /**
- * "Javi te invita a jugar X en juegosdesalon.cl - Sala: WFBN". Nombra a quien toca compartir,
+ * "🎲 *X* · Sala WFBN" y "👋 Javi te invita a jugar en juegosdesalon.cl." (D-165). Nombra a quien toca compartir,
  * que es quien está invitando; el resto —de qué se trata el juego, para cuántos, cuánto dura—
  * lo pone la tarjeta que el chat arma sola con el link (D-72).
  */
 function textoInvitacion() {
-  return fmt(COMMON[lang].invite, { name: M.names[S.role] || '', game: T.title, code: S.code });
+  return fmt(COMMON[lang].invite, { emoji: gameById(GAME_ID)?.emoji || '🎲', name: M.names[S.role] || '', game: T.title, code: S.code });
 }
 
 function shareButton(url) {
-  const btn = el('button', { class: 'btn btn--cyan btn--sm', style: 'width:100%;max-width:320px' }, canShare() ? T.shareLink : T.copyLink);
-  btn.addEventListener('click', async () => {
-    SFX.tap();
-    // El texto que ve quien recibe el enlace lleva la temática que eligió el anfitrión
-    const deck = getDeck(M.config.theme);
-    const r = await shareLink({ title: T.title, text: textoInvitacion(), url });
-    if (r === 'copied') { btn.textContent = T.copied; setTimeout(() => { btn.textContent = canShare() ? T.shareLink : T.copyLink; }, 2000); }
-  });
-  return btn;
+  return botonInvitar({ T, titulo: T.title, url, texto: textoInvitacion, alTocar: () => SFX.tap() });
 }
 
 async function renderQr(url) {
@@ -934,6 +927,8 @@ function terminarSolo(partida, p, { s, t, ms, estado }) {
   if (s >= 50 || celebrar) { confetti({ count: s === 100 || celebrar ? 220 : 120, duration: 3000 }); SFX.win(); } else SFX.timeUp();
   const box = $('#sr-actions'); box.innerHTML = '';
   box.append(
+    // El mismo resultado que el minijuego de La Copa, con su imagen; la temática va en el título (D-165)
+    botonResultadoSolo({ C: COMMON[lang], emoji: gameById(GAME_ID)?.emoji || '⏳', juego: `${T.title}: ${deck.name[lang]}`, puntaje: `${s}/100`, tiempo: mmss(ms), tarjeta: t, url: withLang(`${SITIO}linea-de-tiempo/`), alTocar: () => SFX.tap() }),
     el('button', { class: 'btn btn--yellow', id: 'btn-solo-otra', onClick: () => { SFX.tap(); empezarSolo(partida.tema); } }, T.playAgain),
     el('button', { class: 'btn btn--ghost', onClick: () => { SFX.tap(); clearSession(); renderResumeSlot(); showScreen('screen-intro'); } }, T.changeMode),
     el('a', { class: 'btn btn--ghost', href: '../' }, T.backMenu),

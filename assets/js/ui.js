@@ -2,6 +2,7 @@
  * Utilidades de interfaz compartidas: partículas de fondo, confeti, vibración,
  * wake lock (que no se apague la pantalla) y helpers de DOM.
  */
+import { canShare, shareLink, EMOJI_OSCUROS } from './compartir.js';
 
 export const $ = (sel, root = document) => root.querySelector(sel);
 export const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
@@ -26,7 +27,7 @@ export function el(tag, attrs = {}, ...children) {
  * solos, sobre fondo oscuro, llevan un contorno claro (`.emoji-claro` en base.css). Es el mismo
  * emoji; dentro de un botón amarillo o de un texto para compartir queda tal cual.
  */
-export const EMOJI_OSCUROS = ['〰️'];
+export { EMOJI_OSCUROS }; // vive en compartir.js: la imagen que se comparte también los aclara
 export const claseEmoji = e => (EMOJI_OSCUROS.includes(e) ? 'emoji-claro' : '');
 /** Una clase más la del emoji, si le toca: `con('trophy pop', J.emoji)`. */
 export const con = (clase, e) => [clase, claseEmoji(e)].filter(Boolean).join(' ');
@@ -112,11 +113,8 @@ export function confetti({ duration = 2500, count = 160 } = {}) {
   requestAnimationFrame(frame);
 }
 
-/**
- * Comparte un enlace con el diálogo nativo del sistema (celulares) y, si no existe,
- * lo copia al portapapeles. Devuelve 'shared', 'copied' o 'failed'.
- */
-export const canShare = () => typeof navigator !== 'undefined' && typeof navigator.share === 'function';
+// Compartir vive en compartir.js (D-165); se reexporta para los que ya lo importan de aquí
+export { canShare, shareLink };
 
 /**
  * Botón redondo de la barra de arriba para compartir un link (📤). Donde hay diálogo nativo
@@ -133,15 +131,4 @@ export function shareButton({ title, text, url, label }) {
     setTimeout(() => { btn.textContent = '📤'; }, 2000);
   });
   return btn;
-}
-export async function shareLink({ title, text, url }) {
-  if (canShare()) {
-    try { await navigator.share(url ? { title, text, url } : { title, text }); return 'shared'; }
-    catch (e) { if (e && e.name === 'AbortError') return 'failed'; /* si no se pudo, cae al portapapeles */ }
-  }
-  // Sin diálogo nativo se copia el mensaje entero y no solo la URL: pegar en un chat "un link
-  // pelado" obliga a quien invita a escribir de qué se trata, que es justo lo que dice el texto.
-  const pegar = text ? (url ? `${text}\n${url}` : text) : url;
-  try { await navigator.clipboard.writeText(pegar); return 'copied'; }
-  catch (_) { try { prompt('URL', pegar); } catch (__) { /* nada */ } return 'failed'; }
 }

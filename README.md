@@ -362,7 +362,7 @@ The other three are **〰️ Zip**, **☀️ Tango** and **📍 Where is it?**. 
 - **A day stays open until the next midnight** (a grace day), except the final. Time only breaks ties, and it is *active* time: it pauses while the screen is hidden (D-95).
 - **Results stay hidden until you play**: the table and the progress chart only add up the days you can already see, so they cannot spoil today.
 - **Accounts are a name and a PIN inside one cup**, backed by Firebase anonymous auth. The PIN hash lives where nobody can read it, and the rules only let a device write for a player if it sends the same hash (D-96).
-- **The admin plays too**, and can rename, remove or re-PIN players and share ready-made messages with the group: the invite, **today's reminder** (with who is still missing), the partial table and the final summary (D-99).
+- **The admin plays too**, and can rename, remove or re-PIN players and share ready-made messages with the group: the invite, **today's reminder** (with who is still missing), the partial table and the final summary (D-99). The table goes out the same from everywhere — the chart, the admin, the podium — as the image plus the full text; each day's result also goes out with its own image, headed with the cup and the day (D-165).
 - **The admin can end the cup early** (D-161), say when last place is not going to play the final: nobody plays after that, the table as it stands becomes final and the podium shows up; days that had not opened yet are dropped. Once a cup is over, the admin can **export the final table**: the shareable image with everyone's place day by day, or a CSV spreadsheet (final table, place after each day and every day's detail) for Excel or Google Sheets.
 - **Every day has a practice round first** (D-103): same mechanics, different content, and it does not count. Starting the real one shows a **3-to-1 countdown** and the board and clock appear only on "¡A jugar!" (D-105). When you finish, the result **explains how the score was calculated**, line by line (D-106).
 - **A new cup opens on the admin screen** with a short guide: share the invite, wait for people to join (they can before it starts), close sign-ups if you like, and move the start to today or tomorrow while nobody has played yet (D-110). The lab has **ten live demos** of the cup, as a player and as the admin.
@@ -382,6 +382,16 @@ Spec and design: [docs/juegos/copa.md](docs/juegos/copa.md)
   phone's own share sheet — and where there is none, copies the text and the link — with the front
   door of the language you are reading in: `/`, `/pt/` or `/en/`, each with its own social card
   (D-74).
+- **One standard for everything that gets shared** (D-165), built for WhatsApp, in
+  `assets/js/compartir.js`. Every message opens with a header — `{emoji} *{title}* · {context}`,
+  like "🏆 *La Copa: Valdenenas* · Día 3 de 7" or "🃏 *Julepe* · Sala WFBN" —, says one thing
+  per line, and ends with the link on its own line. A result or a table always goes out as an
+  **image plus its text**, from whichever button: the image carries the same header on top and
+  the same link at the bottom, so forwarded on its own it still says which cup, which day or
+  which game it is. Invitations (a room, a cup, the app) go as text only: the link brings its own
+  social card. Results of playing a minigame alone (on its own page, or in Bulls and Cows and
+  Timeline) share the same result image, with a "can you beat me?" and the game's link. With no
+  share sheet (a computer), the image is downloaded and the text copied.
 - **Saved games:** every game stores its state on the device and offers to continue.
 - **Installable:** a PWA manifest to add it to the home screen. The screen stays awake while playing.
 
@@ -407,8 +417,9 @@ How it is put together (canon C-3):
 
 - `assets/js/i18n.js` keeps the language in `localStorage` (`juegos-de-salon:lang`), draws the
   🇨🇱 ES · 🇬🇧 EN · 🇧🇷 PT toggle and holds the shared text (`COMMON`): the menu and what goes out
-  when somebody shares the app, plus the two strings every game with rooms repeats word for word —
-  the room invitation (D-73) and the "or" between creating a room and joining one.
+  when somebody shares the app, plus the strings every game repeats word for word — the room
+  invitation (D-73, D-165), the "or" between creating a room and joining one, and the shared
+  result of playing a minigame alone.
 - Each game keeps its text in `LOCALES = { es, en, pt }` inside its `rules.js`. There is not a
   single literal string in `game.js`. Fixed HTML text is marked with `data-i18n`.
 - The menu registry (`games.js`), the 100 footer lines (`frases.js`) and every Timeline card
@@ -488,6 +499,7 @@ node julepe/engine.test.mjs
 node linea-de-tiempo/engine.test.mjs
 node toque-y-fama/engine.test.mjs
 node assets/js/arrastre.test.mjs
+node assets/js/compartir.test.mjs
 node assets/js/i18n.test.mjs
 node assets/js/transport/cleanup.test.mjs
 node assets/js/transport/dispose.test.mjs
@@ -581,6 +593,7 @@ assets/js/i18n.js           Language (ES/EN/PT): toggle, persistence and shared 
 assets/js/frases.js         Footer lines for the menu, 100 per language
 assets/js/sound.js          Synthesized sound effects and the mute button
 assets/js/ui.js             UI helpers: confetti, vibration, wake lock, DOM helpers
+assets/js/compartir.js      Everything that gets shared: the message header, the share sheet, the shared images (D-165)
 assets/js/firebase-config.js Public Firebase configuration
 cuarto-rey/                 Cuarto Rey (index.html, game.js, rules.js, style.css)
 toque-y-fama/               Toque y Fama (engine.js + tests, game.js, rules.js)

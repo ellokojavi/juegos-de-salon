@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.77.0 — 2026-10-01
+- **Todo lo que se comparte sigue un mismo estándar** (D-165). Cada mensaje abre con una cabecera
+  —"🏆 *La Copa: Valdenenas* · Día 3 de 7", "📊 … · Tabla de posiciones · día 3 de 7",
+  "🃏 *Julepe* · Sala WFBN"—, una idea por línea, y el link solo en la última. Cuando va una
+  imagen, lleva arriba la misma cabecera y abajo el mismo link.
+- **La Copa: el resultado del día se comparte con imagen**, que dice de qué copa y de qué día es,
+  quién jugó, el puntaje, el tiempo y la tarjeta de colores.
+- **La Copa: la tabla es una sola.** Desde el gráfico, "Tabla parcial", "Resumen final", el podio o
+  exportar, se manda la misma imagen con el texto completo. Terminada, dice "Tabla final".
+- **Jugar solo un minijuego también se comparte**, con la misma imagen de resultado y un reto: los
+  minijuegos sueltos y el modo solo de Toque y Fama y de Línea de Tiempo.
+- **Las invitaciones a una sala** llevan la cabecera del juego y el link en su propia línea.
+- Sin menú para compartir (computador), la imagen se descarga y el texto queda copiado.
+
 ## 0.76.0 — 2026-09-30
 - **Zip se ve mejor.** Su 〰️ lleva un contorno claro donde va sobre el fondo morado: en el menú,
   en la tarjeta al compartir y en sus pantallas (D-164).
