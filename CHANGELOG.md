@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.77.1 — 2026-10-01
+- **La Copa: cuando falta uno solo, el aviso va en singular** (U-6). El recordatorio dice
+  "👀 Falta por jugar hoy: Pancho.", la tabla parcial "Falta que juegue: Pancho." y, al terminar
+  antes, "Falta que juegue el día 7: Cata. … se queda sin los puntos". Con dos o más, igual que antes.
+
 ## 0.77.0 — 2026-10-01
 - **Todo lo que se comparte sigue un mismo estándar** (D-165). Cada mensaje abre con una cabecera
   —"🏆 *La Copa: Valdenenas* · Día 3 de 7", "📊 … · Tabla de posiciones · día 3 de 7",

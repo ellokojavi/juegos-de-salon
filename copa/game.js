@@ -975,7 +975,7 @@ function mensajeHoy() {
     partes.push(fmt(T.shareTodayGrace, { juego: `${Ja.emoji} ${Ja.nombre}` }));
   }
   const falta = faltan(Lc, hoy, now);
-  if (falta.length && falta.length < activos(Lc).length) partes.push(fmt(T.shareTodayMissing, { names: falta.map(j => j.name).join(', ') }));
+  if (falta.length && falta.length < activos(Lc).length) partes.push(fmt(falta.length === 1 ? T.shareTodayMissingOne : T.shareTodayMissing, { names: falta.map(j => j.name).join(', ') }));
   return mensajeCopa(cabCopa('🏆', fmt(T.ctxDay, { d: hoy, n: meta.days })), partes.join('\n'));
 }
 
@@ -1014,7 +1014,7 @@ function mensajeTabla() {
   const lista = filas.map(f => `${['🥇', '🥈', '🥉'][f.lugar - 1] || `${f.lugar}.`} ${nombreConJuegos(f.name, menos[f.pid])} · ${f.total} pts`).join('\n');
   const falta = faltan(Lc, d, now);
   // La cabecera lleva el último día que muestra la tabla; el aviso de abajo, el día que corre (#67)
-  return mensajeCopa(cabTabla(Lc, filas, now), lista, falta.length ? fmt(T.shareTableMissing, { d, names: falta.map(j => j.name).join(', ') }) : '');
+  return mensajeCopa(cabTabla(Lc, filas, now), lista, falta.length ? fmt(falta.length === 1 ? T.shareTableMissingOne : T.shareTableMissing, { d, names: falta.map(j => j.name).join(', ') }) : '');
 }
 
 /** "Tomario (-1J)": el nombre con cuántos juegos menos lleva (D-126). */
@@ -1425,7 +1425,7 @@ function admin({ forzar = false } = {}) {
     poner(body, el('div', { class: 'panel stack', id: 'admin-terminar' },
       el('p', { class: 'lead', style: 'margin:0' }, T.endTitle),
       el('p', { class: 'muted', style: 'margin:0' }, T.endLead),
-      quienes.map(x => el('div', { class: 'aviso' }, fmt(T.endMissing, { d: x.k, names: x.falta.map(j => j.name).join(', ') }))),
+      quienes.map(x => el('div', { class: 'aviso' }, fmt(x.falta.length === 1 ? T.endMissingOne : T.endMissing, { d: x.k, names: x.falta.map(j => j.name).join(', ') }))),
       quedan ? el('p', { class: 'muted', style: 'margin:0' }, T.endCancelled) : null,
       errTerminar,
       accion(`🏁 ${T.endGo}`, 'btn-terminar', async () => {
