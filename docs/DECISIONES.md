@@ -2252,3 +2252,64 @@ final dejó de decir "una de cada minijuego de la copa". `CALENDARIOS` queda par
 no la del minijuego; y el 〰️ casi no se veía en la miniatura de WhatsApp ni en la portada.
 **Alternativas descartadas:** cambiar el emoji de Zip (el dueño quiso el mismo); pintarlo blanco
 con un filtro (deja de ser el emoji); poner el contorno en la caja del emoji (blanquea el fondo).
+
+## D-165 · Todo lo que se comparte sigue un mismo estándar, con WhatsApp en mente
+**Fecha:** 2026-10-01 · **Estado:** vigente; ordena D-73, D-124, D-126 y D-141
+**Decisión:** Lo que la app comparte sale de un solo módulo, `assets/js/compartir.js`, con tres
+reglas:
+1. **El texto** abre con una cabecera — `{emoji} *{título}* · {contexto}` —, sigue con una idea
+   por línea, cada una con su emoji, y cierra con el link solo en su línea ("🔗 …"). El link va
+   siempre **dentro** del texto, también en las salas y en la portada (antes iba aparte, y Android
+   lo pegaba a la última frase, D-124).
+2. **La imagen**, cuando hay, lleva arriba **la misma cabecera** —el título en amarillo y el
+   contexto debajo— y abajo **el mismo link**. Quien la ve suelta en el grupo sabe de qué copa, de
+   qué día o de qué juego es, y adónde ir. Se manda **junto con** su texto, que repite lo que dice.
+3. **Las invitaciones** (a una sala, a una copa, a la app) van sin imagen dibujada: el link ya trae
+   su tarjeta social (D-72, D-162), que es la imagen que muestra WhatsApp.
+
+Cada cosa que se comparte, y con qué cabecera:
+
+| Qué | Dónde | Cabecera | Imagen |
+|---|---|---|---|
+| Invitación a una sala | los 6 juegos con sala | `🃏 *Julepe* · Sala WFBN` | la tarjeta del link |
+| Invitación a la copa | Administrar, tablero | `🏆 *La Copa: X* · ¡Estás invitado!` | la tarjeta del link |
+| Recordatorio | Administrar | `🏆 *La Copa: X* · Parte el …` / `· Día 3 de 7` | la tarjeta del link |
+| Resultado del día | resultado de la copa | `🏆 *La Copa: X* · Día 3 de 7` | **nueva**: el resultado |
+| Tabla parcial | tablero **y** Administrar | `📊 *La Copa: X* · Tabla de posiciones · día 3 de 7` | la tabla (D-141) |
+| Tabla final | podio, Administrar, exportar | `🏁 *La Copa: X* · Tabla final` | la tabla final con galvanos |
+| Minijuego jugado solo | minijuego suelto, Toque y Fama y Línea de Tiempo solos | `🔢 *Toque y Fama* · Jugando solo` | **nueva**: el resultado |
+| La app | portada | (texto de siempre) | la tarjeta del link |
+
+- **La tabla es una sola**, se comparta desde donde se comparta: el botón del gráfico, "Tabla
+  parcial" y "Resumen final" de Administrar, el podio y exportar mandan la misma imagen con el
+  texto completo (la lista con "(-1J)" y quién falta, o el campeón, el podio y las medallas). Antes
+  el admin mandaba solo texto, el gráfico mandaba la imagen con un título pelado y, terminada la
+  copa, la imagen seguía diciendo "Tabla de posiciones · día 7 de 7".
+- **El resultado de un minijuego de La Copa lleva imagen** (`laminaResultado`): la copa y el día en
+  la cabecera, y adentro el juego, quién lo jugó, el puntaje en grande, el tiempo y la tarjeta de
+  colores, que no revela la respuesta (U-32). El texto dice lo mismo en el mismo orden, y ahora
+  también el día "de cuántos" y el tiempo (si la tarjeta no lo trae ya, D-114).
+- **Jugar solo un minijuego también se comparte** —suelto en `/minijuegos/<id>/`, o dentro de Toque
+  y Fama y Línea de Tiempo—, con la misma imagen de resultado y un reto ("🤔 ¿Me ganas?") hacia la
+  página del juego. En los tres idiomas (`COMMON`). En el laboratorio no se ofrece.
+- **La invitación a una sala** pasa a `🃏 *Julepe* · Sala WFBN` + `👋 Javi te invita a jugar en
+  juegosdesalon.cl.`: dice lo mismo que D-73 (quién, a qué, dónde y el código) con la forma de los
+  demás. El botón, que estaba copiado igual en seis juegos, es `botonInvitar`.
+- **Sin menú del sistema** (un computador): la imagen se descarga y el texto queda copiado, para
+  pegarlo junto a ella; antes se perdía el texto.
+- Los emojis oscuros (〰️, D-164) llevan en la imagen un halo claro; `EMOJI_OSCUROS` vive ahora en
+  `compartir.js` (`ui.js` lo reexporta).
+
+**Por qué:** lo pidió el dueño: que una tabla de posiciones se vea igual se comparta desde donde se
+comparta, y que el resultado de un minijuego de copa diga de qué copa es, en la imagen y en el
+texto. WhatsApp es por donde se difunde la app: una imagen sin contexto, reenviada a otro grupo,
+no lleva a nadie a ninguna parte.
+**Alternativas descartadas:** un emoji fijo (🏆) para todo lo de la copa, con el tipo en el
+contexto ("🏆 … · 📊 Tabla"): dos emojis seguidos en la primera línea se leen peor, y el 📊 y el 🏁
+de D-124 ya distinguen a simple vista qué es cada mensaje. Dibujar imagen también para las
+invitaciones: la tarjeta social del link ya es esa imagen, y dos imágenes por mensaje confunden.
+**Consecuencias:** el título de la imagen de la tabla dice ahora "📊 La Copa: X" (antes "🏆 X"), y
+el archivo de la tabla terminada se llama `copa-<x>-tabla-final.png`. Los resultados de las
+partidas de los seis juegos con sala (quién ganó un Dudo) todavía no se comparten; si se agregan,
+usan `laminaResultado` y una cabecera con el juego. `tools/e2e/cdp.mjs` acepta `CHROME` para
+correr las pruebas fuera de un Mac.
