@@ -176,6 +176,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | LIG-81 | La imagen de la tabla mide lo que necesita, entre 1080 × 1080 y 1080 × 1350, sin aire de sobra (D-154). | ✅ v0.67.1 |
 | LIG-82 | El admin termina la copa antes (por ejemplo, si el último no va a jugar la final); los días sin abrir quedan anulados (D-161). | ✅ v0.73.0 |
 | LIG-83 | Terminada la copa, el admin exporta la tabla final: la imagen y una planilla CSV con la tabla, los lugares día a día y el detalle (D-161). | ✅ v0.73.0 |
+| LIG-85 | Reinas: arrastrar desde una casilla vacía pinta X en las vacías por donde pasa, sin tocar el toque ni el toque largo (D-166). | ⏳ en PR |
 | LIG-84 | Minijuegos de reserva (La Palabra, Ahorcado Contrarreloj), separados de LIG-34. | ⏳ pendiente |
 | LIG-46 | El teclado, el tablero y la línea se comparten con Toque y Fama y Línea de Tiempo (`assets/js/teclado.js`, `assets/css/teclado.css`, `assets/css/linea.css`). | ✅ v0.44 |
 
