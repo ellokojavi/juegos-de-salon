@@ -1,7 +1,8 @@
 // Helper mínimo para manejar Chrome headless por CDP sin dependencias.
 import { spawn } from 'node:child_process';
 import { writeFileSync } from 'node:fs';
-const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+// CHROME: otra ruta al navegador (Linux, una sesión en la nube)
+const CHROME = process.env.CHROME || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 export const sleep = ms => new Promise(r => setTimeout(r, ms));
 export async function launch({ port, dir, out, width = 390, height = 844 }) {
   const chrome = spawn(CHROME, ['--headless=new', `--remote-debugging-port=${port}`, `--window-size=${width},${height + 60}`, '--hide-scrollbars', '--no-first-run', `--user-data-dir=${dir}`, 'about:blank'], { stdio: 'ignore' });

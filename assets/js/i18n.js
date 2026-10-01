@@ -77,7 +77,15 @@ export const COMMON = {
     shareText: 'Juegos tradicionales para jugar con amigos desde el celular. Gratis, sin instalar y sin cuenta.',
     // La invitación a una sala: quién invita, a qué y adónde. Es el texto que más se lee de
     // toda la app, porque llega por WhatsApp a gente que todavía no la conoce.
-    invite: '{name} te invita a jugar {game} en juegosdesalon.cl - Sala: {code}',
+    // Con la cabecera de todo lo que se comparte (D-165): "🃏 *Julepe* · Sala WFBN"
+    invite: '{emoji} *{game}* · Sala {code}\n\n👋 {name} te invita a jugar en juegosdesalon.cl.',
+    // El resultado de jugar solo un minijuego (D-165): el texto y la imagen dicen lo mismo
+    shareResult: '📤 Compartir mi resultado',
+    shareSoloContext: 'Jugando solo',
+    shareSoloCta: '🤔 ¿Me ganas? Se juega gratis desde el celular:',
+    shareSoloImage: '🤔 ¿Me ganas?',
+    shareCopied: '¡Copiado! Pégalo en el chat.',
+    shareDownloaded: 'La imagen se descargó y el texto quedó copiado.',
   },
   en: {
     appTitle: 'Party Games',
@@ -91,7 +99,13 @@ export const COMMON = {
     code: 'code on GitHub', menu: 'Menu', soon: 'Coming soon', or: 'or',
     share: 'Share Party Games',
     shareText: 'Traditional games to play with friends from your phone. Free, no install, no account.',
-    invite: '{name} invites you to play {game} at juegosdesalon.cl - Room: {code}',
+    invite: '{emoji} *{game}* · Room {code}\n\n👋 {name} invites you to play at juegosdesalon.cl.',
+    shareResult: '📤 Share my result',
+    shareSoloContext: 'Playing solo',
+    shareSoloCta: '🤔 Can you beat me? It\'s free to play on your phone:',
+    shareSoloImage: '🤔 Can you beat me?',
+    shareCopied: 'Copied! Paste it in the chat.',
+    shareDownloaded: 'The image was downloaded and the text was copied.',
   },
   pt: {
     appTitle: 'Jogos de Salão',
@@ -105,7 +119,13 @@ export const COMMON = {
     code: 'código no GitHub', menu: 'Menu', soon: 'Em breve', or: 'ou',
     share: 'Compartilhar Jogos de Salão',
     shareText: 'Jogos tradicionais para jogar com amigos pelo celular. De graça, sem instalar e sem conta.',
-    invite: '{name} te convida pra jogar {game} em juegosdesalon.cl - Sala: {code}',
+    invite: '{emoji} *{game}* · Sala {code}\n\n👋 {name} te convida pra jogar em juegosdesalon.cl.',
+    shareResult: '📤 Compartilhar resultado',
+    shareSoloContext: 'Jogando sozinho',
+    shareSoloCta: '🤔 Consegue me vencer? É grátis e se joga pelo celular:',
+    shareSoloImage: '🤔 Consegue me vencer?',
+    shareCopied: 'Copiado! Cole no chat.',
+    shareDownloaded: 'A imagem foi baixada e o texto foi copiado.',
   },
 };
 
