@@ -44,7 +44,7 @@ export const MINIJUEGOS = {
     como: [
       'Pon una reina en cada fila, en cada columna y en cada zona de color.',
       'Dos reinas nunca se pueden tocar, ni siquiera en diagonal.',
-      'Toca una casilla para poner o sacar una reina. Mantenla apretada para marcarla con una X y descartarla, o arrastra el dedo desde una casilla vacía para llenar de X todo lo que pases. Hay una sola solución y se llega deduciendo, sin adivinar.',
+      'Toca una casilla para poner una reina; tócala otra vez para cambiarla por una X que la descarta, y una tercera para dejarla vacía. Arrastra el dedo desde una casilla vacía para llenar de X todo lo que pases. Hay una sola solución y se llega deduciendo, sin adivinar.',
     ],
     puntaje: 'Puntúa el tiempo que tardas en resolverlo: hasta 30 segundos vale 100 puntos, y después baja parejo hasta 10 puntos a los 5 minutos. Equivocarse no resta: las reinas que chocan se ven en rojo y las corriges. Si te rindes, ves la solución y el juego da 0 puntos.',
   },
@@ -546,7 +546,7 @@ const ES = {
   tangoExBad: 'Así no: tres iguales seguidos.',
   zipExOk: 'Así: un solo trazo que pasa por todas las casillas y toca los números en orden.',
   zipExBad: 'Así no: llegó al 4, pero quedaron casillas sin pintar.',
-  queensHint: '💡 Toca una casilla para poner o sacar una reina. Mantenla apretada para marcarla con una X, o arrastra el dedo desde una vacía para llenar de X una fila entera.',
+  queensHint: '💡 Un toque pone la reina, otro la cambia por una X y otro deja la casilla vacía. Arrastra el dedo desde una vacía para llenar de X una fila entera.',
   tangoCount: 'Errores: {e} · Pistas: {p}',
   clearAll: 'Borrar todo',
   clearAllSure: '¿Seguro? Toca de nuevo para borrar',
