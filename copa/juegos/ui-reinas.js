@@ -18,6 +18,7 @@ import * as motor from './reinas.js';
 export const ZONAS = ['#f6a96b', '#9ed48a', '#80aef5', '#ffe169', '#c9a2ec', '#ffa3c4', '#6fd3c8', '#e4e4e4', '#c9b48f', '#d7ef6e'];
 
 const LARGO_MS = 450;
+const CONFIRMAR_MS = 3000;
 
 /** Las casillas entre `a` y `b` (sin `a`, con `b`): un arrastre rápido salta casillas entre dos movimientos. */
 export function camino(n, a, b) {
@@ -71,6 +72,9 @@ export function montar(raiz, ctx) {
   // Mientras se arrastra no se redibuja la grilla (se perdería el dedo): se tocan solo las casillas.
   let gesto = null;
   let marcas = [];
+  // "Borrar todo" pide un segundo toque, como en Tango (D-169)
+  let armado = false;
+  let armadoTimer = null;
 
   const celdaEn = (x, y) => {
     const d = document.elementFromPoint(x, y)?.closest('.rej');
@@ -158,7 +162,7 @@ export function montar(raiz, ctx) {
         },
         onContextmenu: ev => ev.preventDefault(),
         // El teclado y los guiones llegan como click sin puntero (detail 0): esos nunca se tragan
-        onClick: ev => { if (tragar && ev.detail !== 0) { tragar = false; return; } jugar(motor.toque(i)); },
+        onClick: ev => { if (tragar && ev.detail !== 0) { tragar = false; return; } armado = false; jugar(motor.toque(i)); },
       }, v === motor.REINA ? '👑' : v === motor.MARCA ? '✕' : ''));
     }
     const reinas = e.marcas.filter(v => v === motor.REINA).length;
@@ -172,15 +176,32 @@ export function montar(raiz, ctx) {
     if (ctx.cierreAbajo) caja.append(...cierre);
     if (e.conflictos.size && !e.fin) caja.append(el('div', { class: 'aviso mal' }, T.queensClash));
     if (!e.fin) {
-      // Rendirse es definitivo: pide confirmar, como el comodín (D-110)
-      caja.append(el('button', {
-        type: 'button', class: 'btn btn--ghost btn--sm', id: 'btn-rendirse',
-        onClick: () => {
-          SFX.tap();
-          if (!confirm(T.giveUpConfirm)) return;
-          jugadas.push(motor.RENDIRSE); ctx.guardar(jugadas); SFX.error(); vibrate([40, 40, 40]); dibujar();
-        },
-      }, `🏳️ ${T.giveUp}`));
+      const vacio = e.marcas.every(v => v === motor.VACIO);
+      caja.append(el('div', { class: 'btn-row reinas-acciones' },
+        // Borrar todo deja el tablero en blanco; el reloj sigue (D-169). El primer toque solo lo arma.
+        el('button', {
+          type: 'button', class: 'btn btn--ghost btn--sm' + (armado ? ' armado' : ''), id: 'btn-borrar', disabled: vacio,
+          onClick: () => {
+            clearTimeout(armadoTimer);
+            if (armado) {
+              armado = false;
+              jugadas.push(motor.BORRAR); ctx.guardar(jugadas); SFX.splash(); vibrate([20, 30, 20]); dibujar();
+              return;
+            }
+            armado = true; SFX.tap(); vibrate(15);
+            armadoTimer = setTimeout(() => { armado = false; if (raiz.isConnected) dibujar(); }, CONFIRMAR_MS);
+            dibujar();
+          },
+        }, armado ? T.clearAllSure : `🧹 ${T.clearAll}`),
+        // Rendirse es definitivo: pide confirmar, como el comodín (D-110)
+        el('button', {
+          type: 'button', class: 'btn btn--ghost btn--sm', id: 'btn-rendirse',
+          onClick: () => {
+            SFX.tap();
+            if (!confirm(T.giveUpConfirm)) return;
+            jugadas.push(motor.RENDIRSE); ctx.guardar(jugadas); SFX.error(); vibrate([40, 40, 40]); dibujar();
+          },
+        }, `🏳️ ${T.giveUp}`)));
     }
     raiz.append(caja);
   };
