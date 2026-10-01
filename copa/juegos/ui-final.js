@@ -17,7 +17,7 @@ import * as uiReinas from './ui-reinas.js';
 import * as uiLetras from './ui-letras.js';
 import { leerJugadas } from './ui-numero.js';
 import * as uiAnio from './ui-anio.js';
-import { MINIJUEGOS, RONDAS_FINAL } from '../rules.js';
+import { minijuegos, rondasFinal } from '../rules.js';
 
 /** `append` que descarta los hijos nulos, como `el()` (sin esto, un null se escribe como texto). */
 const poner = (nodo, ...hijos) => nodo.append(...hijos.flat().filter(x => x !== null && x !== undefined && x !== false));
@@ -42,6 +42,7 @@ export function estados(p, jugadas) {
 
 export function montar(raiz, ctx) {
   const { p, T, fmt, el, SFX } = ctx;
+  const MINIJUEGOS = minijuegos(ctx.lang), RONDAS_FINAL = rondasFinal(ctx.lang);
   const j = ctx.jugadas && typeof ctx.jugadas === 'object' && !Array.isArray(ctx.jugadas) ? ctx.jugadas : {};
   const J = { ronda: j.ronda || 0, sub: { ...(j.sub || {}) }, hechas: { ...(j.hechas || {}) }, jugando: !!j.jugando };
   const guardar = () => ctx.guardar(J);
