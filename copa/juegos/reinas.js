@@ -155,6 +155,8 @@ export function tocar(marcas, j) {
  */
 /** Rendirse (D-110): una jugada más, que termina el tablero sin resolverlo y muestra la solución. */
 export const RENDIRSE = 'R';
+/** Borrar todo (D-169): el tablero vuelve a quedar en blanco. El reloj y los errores siguen. */
+export const BORRAR = 'B';
 
 export function estado(p, jugadas) {
   let marcas = new Array(p.n * p.n).fill(VACIO);
@@ -166,6 +168,7 @@ export function estado(p, jugadas) {
     return { marcas: sol, errores, fin: true, rendido: true, conflictos: new Set() };
   }
   for (const j of jugadas) {
+    if (j === BORRAR) { marcas = new Array(p.n * p.n).fill(VACIO); continue; }
     const antes = conflictos(p, marcas).size;
     const i = casilla(j);
     const era = marcas[i];
