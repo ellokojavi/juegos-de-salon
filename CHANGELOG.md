@@ -1,6 +1,6 @@
 # Changelog
 
-## Sin publicar (la versión se asigna al fusionar)
+## 0.80.0 — 2026-10-01
 - **La Copa y sus minijuegos, en inglés y portugués** (D-170). Todo se traduce: la portada, crear
   la copa, el tablero, las reglas de cada minijuego, el desglose del puntaje, Administrar y los
   reportes. El idioma se cambia con el toggle de la portada, de la invitación o del minijuego.
