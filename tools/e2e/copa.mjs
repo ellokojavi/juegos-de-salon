@@ -504,7 +504,8 @@ for (let d = 1; d <= dias; d++) {
     await click('#btn-tarjeta'); await sleep(800);
     if (d === 1 && j === 0) {
       console.log('  tarjeta:', JSON.stringify(await ev('window.__compartido.at(-1)?.text')));
-      ok(/Línea Relámpago\n👤 Cata · \d+\/100/.test(await ev('window.__compartido.at(-1)?.text')), 'el resultado para compartir dice el juego y quién lo jugó');
+      // El juego, quién y el puntaje van en la imagen: el texto es la cabecera y el link (D-171)
+      ok(/^🏆 \*La Copa: .+\* · Día 1 de 7\n\n🔗 \S+$/.test(await ev('window.__compartido.at(-1)?.text')), 'el texto del resultado no repite lo que dice la imagen');
       // Con su imagen y la cabecera de la copa, la misma del texto (D-165)
       ok(/^🏆 \*La Copa: .+\* · Día 1 de 7\n\n/.test(await ev('window.__compartido.at(-1)?.text')), 'el resultado abre con la cabecera de la copa y el día de cuántos');
       const f = await ev(`(()=>{const f=window.__compartido.at(-1)?.files?.[0];return f?{name:f.name,type:f.type,size:f.size}:null})()`);
@@ -525,6 +526,8 @@ for (let d = 1; d <= dias; d++) {
     console.log('  tabla parcial:', JSON.stringify(await ev('window.__compartido.at(-1)?.text')));
     // La tabla del admin es la misma del tablero: imagen y texto, con la misma cabecera (D-165)
     ok(/^📊 \*La Copa: .+\* · Tabla de posiciones( \(provisoria\))? · día 1 de 7\n\n/.test(await ev('window.__compartido.at(-1)?.text || ""')) && await ev('window.__compartido.at(-1)?.files?.[0]?.type') === 'image/png', 'la tabla parcial del admin va con su imagen y la cabecera de la tabla');
+    // La tabla no se escribe: la dice la imagen (D-171)
+    ok(!/ pts$/m.test(await ev('window.__compartido.at(-1)?.text || ""')), 'el texto de la tabla parcial no repite la tabla');
     await guardarImagen('tabla-parcial-imagen');
     await revisarPantalla('admin');
     await b.shot('09-admin');
@@ -562,6 +565,7 @@ await b.shot('07-grafico');
 await click('#btn-admin'); await sleep(300);
 await click('#msg-final'); await sleep(1200);
 console.log('  resumen final:', JSON.stringify(await ev('window.__compartido.at(-1)?.text')));
+ok(!/ pts$|^🥇/m.test(await ev('window.__compartido.at(-1)?.text || ""')), 'el resumen final no repite el podio de la imagen (D-171)');
 ok(await ev('window.__compartido.at(-1)?.files?.[0]?.name') === 'copa-oficina-tabla-final.png', 'el resumen final del admin va con la imagen de la tabla final');
 
 

@@ -2254,7 +2254,7 @@ no la del minijuego; y el 〰️ casi no se veía en la miniatura de WhatsApp ni
 con un filtro (deja de ser el emoji); poner el contorno en la caja del emoji (blanquea el fondo).
 
 ## D-165 · Todo lo que se comparte sigue un mismo estándar, con WhatsApp en mente
-**Fecha:** 2026-10-01 · **Estado:** vigente; ordena D-73, D-124, D-126 y D-141
+**Fecha:** 2026-10-01 · **Estado:** vigente; ordena D-73, D-124, D-126 y D-141; D-171 cambia lo que dice el texto que va con una imagen
 **Decisión:** Lo que la app comparte sale de un solo módulo, `assets/js/compartir.js`, con tres
 reglas:
 1. **El texto** abre con una cabecera — `{emoji} *{título}* · {contexto}` —, sigue con una idea
@@ -2438,3 +2438,32 @@ cómo se juega, puntaje) viven en `LOCALES[lang].juegos` y las rondas de la fina
 Los motores reciben `lang` (textos) y `palabras` (idioma de la copa) en `generar` y `ensayo`.
 Las reglas de Firebase aceptan `meta.lang` y no dejan cambiarlo. Una copa nueva en inglés o
 portugués necesita las reglas publicadas (`node tools/reglas.mjs publicar`, D-122).
+
+## D-171 · Con imagen, el texto no repite lo que la imagen dice
+**Fecha:** 2026-10-01 · **Estado:** vigente; cambia la regla 2 de D-165
+**Decisión:** Cuando lo que se comparte lleva imagen, el texto ya no la repite. Lleva la
+cabecera (D-165), solo lo que la imagen **no** trae y el link al final:
+
+| Qué | Antes (D-165) | Ahora |
+|---|---|---|
+| Tabla parcial | cabecera, la tabla escrita y quién falta | cabecera y "⏳ ¡Día 2 en curso! Falta que jueguen: …" |
+| Tabla final | cabecera, campeón, podio y medallas | cabecera y las medallas (más días ganados, la remontada, al descenso) |
+| Resultado del día | cabecera, juego, quién, puntaje, tiempo y tarjeta | cabecera |
+| Minijuego jugado solo | cabecera, puntaje, tiempo, tarjeta y el reto | cabecera y "🤔 ¿Me ganas?" |
+
+Lo que no lleva imagen (las invitaciones y el recordatorio) sigue igual: ahí el texto es todo.
+
+**Por qué:** lo pidió el dueño al ver la tabla en WhatsApp: la imagen y, debajo, la misma tabla
+escrita, ocho líneas más que nadie lee. La imagen es lo que se mira; el texto es para lo que ella
+no puede decir.
+
+**Alternativas descartadas:** sacar solo la tabla parcial (lo pidió el dueño así, pero la misma
+repetición estaba en la tabla final, el resultado del día y el resultado jugando solo, y pidió
+consistencia). Dejar la tarjeta de colores en el texto, al estilo Wordle (ya está en la imagen,
+en grande).
+
+**Consecuencias:** `shareCardText` y `shareFinalChamp` salen de los textos de La Copa.
+`textoResultadoSolo()` en `compartir.js` arma el texto de jugar solo y lo prueba
+`compartir.test.mjs`; `tools/e2e/copa.mjs` comprueba que el resultado del día, la tabla parcial y
+el resumen final no repitan la imagen. Si la imagen no se puede compartir (un computador), se
+descarga y el texto se copia igual: la imagen sigue llegando.

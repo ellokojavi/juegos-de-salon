@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.81.0 — 2026-10-01
+- **Lo que se comparte con imagen ya no repite la imagen en el texto** (D-171). La tabla parcial
+  lleva la cabecera y quién falta, sin la tabla escrita; la tabla final, la cabecera y las medallas;
+  el resultado del día, solo la cabecera; y jugar solo, la cabecera y el reto. Todo lo demás está en
+  la imagen.
+
 ## 0.80.0 — 2026-10-01
 - **La Copa y sus minijuegos, en inglés y portugués** (D-170). Todo se traduce: la portada, crear
   la copa, el tablero, las reglas de cada minijuego, el desglose del puntaje, Administrar y los

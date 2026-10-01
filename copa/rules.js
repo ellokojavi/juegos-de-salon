@@ -520,8 +520,6 @@ const ES = {
   shareBeforeClosed: '🎮 El primer juego es {juego}.\n🔑 Entra con tu nombre y tu PIN en este link:',
   shareBeforeText: '🎮 El primer juego es {juego}.\n✍️ Si todavía no te inscribes, entra con tu nombre y un PIN de 4 números en este link:',
   shareTableMissing: '⏳ ¡Día {d} en curso! Falta que jueguen: {names}.',
-  shareFinalChamp: 'Ganó {name} con {pts} puntos.',
-  shareCardText: '{emoji} {juego}\n👤 {name} · {resumen}',
   untilTomorrow: 'mañana a medianoche',
   untilToday: 'hoy a medianoche',
 
@@ -1144,8 +1142,6 @@ const EN = {
   shareBeforeClosed: '🎮 The first game is {juego}.\n🔑 Enter with your name and your PIN at this link:',
   shareBeforeText: '🎮 The first game is {juego}.\n✍️ If you haven\'t signed up yet, join with your name and a 4-digit PIN at this link:',
   shareTableMissing: '⏳ Day {d} in progress! Still to play: {names}.',
-  shareFinalChamp: '{name} won with {pts} points.',
-  shareCardText: '{emoji} {juego}\n👤 {name} · {resumen}',
   untilTomorrow: 'midnight tomorrow',
   untilToday: 'midnight today',
 
@@ -1762,8 +1758,6 @@ const PT = {
   shareBeforeClosed: '🎮 O primeiro jogo é {juego}.\n🔑 Entre com seu nome e seu PIN neste link:',
   shareBeforeText: '🎮 O primeiro jogo é {juego}.\n✍️ Se você ainda não se inscreveu, entre com seu nome e um PIN de 4 números neste link:',
   shareTableMissing: '⏳ Dia {d} rolando! Falta jogar: {names}.',
-  shareFinalChamp: '{name} ganhou com {pts} pontos.',
-  shareCardText: '{emoji} {juego}\n👤 {name} · {resumen}',
   untilTomorrow: 'amanhã à meia-noite',
   untilToday: 'hoje à meia-noite',
 
