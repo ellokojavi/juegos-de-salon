@@ -580,7 +580,8 @@ ok(await ev(`document.querySelector('#minis [data-id="zip"] span').classList.con
 await b.go(`${BASE}?practica=tango&prueba&labs&semilla=KQRST`, 1500); await preparar();
 ok(await ev(`location.pathname + location.search`) === '/minijuegos/tango/?labs&prueba&semilla=KQRST', 'laboratorio: el link viejo va a la página del minijuego con su semilla');
 ok(!!await ev(`document.getElementById('btn-ensayo')`) && await ev(`document.getElementById('btn-menu').href`) === `${SITIO}/labs/`, 'laboratorio: en la página del minijuego sigue la sesión de prueba y se vuelve al laboratorio');
-// Arrastrar desde una casilla vacía pinta X en las vacías (D-166), con mouse y con el dedo, sin
+// Arrastrar desde una casilla vacía pinta X en las vacías (D-166) y desde una X las borra (D-168),
+// con mouse y con el dedo, sin
 // estorbar al toque (reina) ni al toque largo (X)
 await b.go(`${BASE}?practica=reinas&prueba&labs`, 1200); await preparar();
 await click('#btn-empezar'); await sleep(300); await esperarCuenta();
@@ -610,11 +611,28 @@ await click('#btn-empezar'); await sleep(300); await esperarCuenta();
   await dedo('touchEnd'); await sleep(250);
   t = await clases();
   ok([...Array(N - 2).keys()].every(k => t[(k + 2) * N + col] === 'X') && t[N + col] === '.', 'Reinas: con el dedo, arrastrar por una columna la llena de X');
+  // Arrastrar desde una X las borra (D-168): las últimas cuatro de la fila 0
+  const [xb0, yb0] = await centro(N - 1), [xb1, yb1] = await centro(N - 4);
+  await b.arrastre(xb0, yb0, xb1, yb1, 3);
+  t = await clases();
+  ok(t.slice(0, N - 4) === 'X'.repeat(N - 4) && t.slice(N - 4, N) === '....' && t[2 * N + col] === 'X', 'Reinas: arrastrar desde una X borra las X por donde pasa');
+  // y pasa por encima de la reina sin sacarla: de la X de la casilla 1 a la reina de la fila 1
+  const [xc0, yc0] = await centro(1);
+  await b.arrastre(xc0, yc0, xr, yr, 3);
+  t = await clases();
+  ok(t[0] === 'X' && t[1] === '.' && t[N] === 'R', 'Reinas: el arrastre que borra no saca reinas');
   // Toque largo en una vacía: X, y el click de soltar no pone reina
   const [xl, yl] = await centro(N + 6);
   await b.send('Input.dispatchMouseEvent', { type: 'mousePressed', x: xl, y: yl, button: 'left', clickCount: 1, buttons: 1 }); await sleep(600);
   await b.send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: xl, y: yl, button: 'left', clickCount: 1, buttons: 0 }); await sleep(200);
   ok((await clases())[N + 6] === 'X', 'Reinas: el toque largo sigue poniendo la X');
+  // Borrar todo pide un segundo toque y deja el tablero en blanco (D-169)
+  await click('#btn-borrar'); await sleep(150);
+  ok(/[RX]/.test(await clases()) && await ev(`document.getElementById('btn-borrar').classList.contains('armado')`), 'Reinas: el primer toque de Borrar todo solo lo arma');
+  await click('#btn-borrar'); await sleep(200);
+  ok(!/[RX]/.test(await clases()) && await ev(`document.getElementById('btn-borrar').disabled`), 'Reinas: el segundo toque deja el tablero en blanco y el botón se apaga');
+  await b.toque(xr, yr);
+  ok((await clases())[N] === 'R', 'Reinas: después de borrar todo se sigue jugando');
 }
 // Rendirse en Reinas: dos toques, la solución a la vista y 0 puntos (D-110)
 await b.go(`${BASE}?practica=reinas&prueba&labs`, 1200); await preparar();
