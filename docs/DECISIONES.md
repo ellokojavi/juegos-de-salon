@@ -2372,3 +2372,19 @@ borrar como espejo de pintar, el gesto se entiende solo: el arrastre repite lo q
 **Alternativas descartadas:** D-166 había descartado borrar por miedo a un arrastre accidental que
 borre deducciones. Para empezar a borrar hay que apoyar el dedo justo en una X y llevarlo a otra
 casilla, y una X borrada de más se vuelve a pintar con el mismo gesto.
+
+## D-169 · Reinas: 🧹 Borrar todo
+**Fecha:** 2026-10-01 · **Estado:** vigente
+**Decisión:** Reinas trae el botón **🧹 Borrar todo**, al lado de Rendirse: deja el tablero en
+blanco (sin reinas ni X) para empezar de nuevo. Como en Tango, el primer toque solo lo arma
+("¿Seguro? Toca de nuevo para borrar") y el segundo, dentro de 3 segundos, borra. Con el tablero
+ya en blanco el botón queda apagado.
+- **Es una jugada más (`'B'`)**: la memoria de partida la recupera al volver.
+- **El reloj sigue corriendo** y los errores ya hechos se mantienen: puntúa el tiempo (D-107), y
+  empezar de nuevo no es empezar otro tablero.
+
+**Por qué:** El dueño lo pidió: cuando las X y las reinas de un intento enredan más de lo que
+ayudan, deshacerlas casilla por casilla cuesta más que empezar en limpio.
+
+**Alternativas descartadas:** reiniciar también el reloj: sería un tablero gratis después de
+haberlo mirado entero.

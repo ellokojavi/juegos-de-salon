@@ -626,6 +626,13 @@ await click('#btn-empezar'); await sleep(300); await esperarCuenta();
   await b.send('Input.dispatchMouseEvent', { type: 'mousePressed', x: xl, y: yl, button: 'left', clickCount: 1, buttons: 1 }); await sleep(600);
   await b.send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: xl, y: yl, button: 'left', clickCount: 1, buttons: 0 }); await sleep(200);
   ok((await clases())[N + 6] === 'X', 'Reinas: el toque largo sigue poniendo la X');
+  // Borrar todo pide un segundo toque y deja el tablero en blanco (D-169)
+  await click('#btn-borrar'); await sleep(150);
+  ok(/[RX]/.test(await clases()) && await ev(`document.getElementById('btn-borrar').classList.contains('armado')`), 'Reinas: el primer toque de Borrar todo solo lo arma');
+  await click('#btn-borrar'); await sleep(200);
+  ok(!/[RX]/.test(await clases()) && await ev(`document.getElementById('btn-borrar').disabled`), 'Reinas: el segundo toque deja el tablero en blanco y el botón se apaga');
+  await b.toque(xr, yr);
+  ok((await clases())[N] === 'R', 'Reinas: después de borrar todo se sigue jugando');
 }
 // Rendirse en Reinas: dos toques, la solución a la vista y 0 puntos (D-110)
 await b.go(`${BASE}?practica=reinas&prueba&labs`, 1200); await preparar();
