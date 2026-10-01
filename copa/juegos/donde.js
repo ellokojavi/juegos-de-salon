@@ -9,6 +9,7 @@
  */
 import { azar } from './semilla.js';
 import { CIUDADES } from './ciudades.js';
+import { ciudad, pais } from './nombres.js';
 
 export const CIUDADES_POR_JUEGO = 5;
 /** Dos fáciles, dos medianas y una difícil, en ese orden: sin esto, casi todas serían Funafuti. */
@@ -72,8 +73,14 @@ export function marca(km) {
   return p >= 80 ? '🟩' : p >= 50 ? '🟨' : p >= 20 ? '🟧' : '⬛';
 }
 
-/** El nombre como se muestra: "Valparaíso, Chile". Si la ciudad se llama igual que el país, una vez. */
-export const nombre = c => (c.ciudad === c.pais ? c.ciudad : `${c.ciudad}, ${c.pais}`);
+/**
+ * El nombre como se muestra: "Valparaíso, Chile". Si la ciudad se llama igual que el país, una vez.
+ * En inglés y portugués, con los nombres de nombres.js (D-170).
+ */
+export const nombre = (c, lang = 'es') => {
+  const x = ciudad(c.ciudad, lang), y = pais(c.pais, lang);
+  return x === y ? x : `${x}, ${y}`;
+};
 
 /**
  * Las ciudades del día, de la fácil a la difícil, cada una de un país distinto. `sin` deja
@@ -107,5 +114,5 @@ export const puntaje = e => (e.filas.length ? Math.round(e.total / e.filas.lengt
 
 export const tarjeta = e => e.filas.map(f => marca(f.km)).join('');
 
-/** "1.250 km": con punto de miles, como se escribe en Chile. */
-export const km = n => `${Math.round(n).toLocaleString('es-CL')} km`;
+/** "1.250 km": con punto de miles, como se escribe en Chile ("1,250 km" en inglés). */
+export const km = (n, lang = 'es') => `${Math.round(n).toLocaleString({ en: 'en-US', pt: 'pt-BR' }[lang] || 'es-CL')} km`;
