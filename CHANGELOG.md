@@ -1,6 +1,6 @@
 # Changelog
 
-## Por publicar
+## 0.79.0 — 2026-10-01
 - **Reinas: arrastrar desde una X las borra.** Es lo contrario de arrastrar desde una casilla
   vacía: el dedo borra las X por donde pasa y deja las reinas como estaban (D-168).
 - **Reinas: 🧹 Borrar todo** deja el tablero en blanco para empezar de nuevo, con un segundo toque
