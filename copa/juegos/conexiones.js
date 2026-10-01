@@ -12,7 +12,7 @@ export const ERRORES = 4;
 export const COLORES = ['amarillo', 'verde', 'azul', 'morado'];
 export const EMOJIS = ['🟨', '🟩', '🟦', '🟪'];
 
-/** Las grillas de cada idioma (D-168): cada uno tiene las suyas, no una traducción. */
+/** Las grillas de cada idioma (D-170): cada uno tiene las suyas, no una traducción. */
 const IDIOMAS = { en: EN, pt: PT };
 
 /**
@@ -26,7 +26,7 @@ export const grillaDe = (codigo, { desde = null, lang = 'es' } = {}) => {
   return lista[hash32(`${codigo}:grilla`) % lista.length];
 };
 
-/** `palabras`: el idioma de las palabras, el de la copa (D-168); sin él, `lang`. */
+/** `palabras`: el idioma de las palabras, el de la copa (D-170); sin él, `lang`. */
 export function generar(codigo, dia, { sal = 'conexiones', grilla, desde = null, lang = 'es', palabras = lang } = {}) {
   const g = grilla || grillaDe(codigo, { desde, lang: palabras });
   const a = azar(codigo, dia, sal);

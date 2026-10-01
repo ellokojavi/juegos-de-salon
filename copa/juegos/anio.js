@@ -9,7 +9,7 @@ export const HITOS = 6;
 /** Año de referencia fijo, no el de hoy: el puntaje no puede cambiar según cuándo se calcule. */
 export const REFERENCIA = 2026;
 
-/** `lang`: el idioma de los textos. Las cartas son las mismas en todos (D-168). */
+/** `lang`: el idioma de los textos. Las cartas son las mismas en todos (D-170). */
 export function generar(codigo, dia, { n = HITOS, tema, sal = 'anio', lang = 'es' } = {}) {
   const deck = tema || temasDeLaCopa(codigo).anio;
   const a = azar(codigo, dia, sal);

@@ -190,7 +190,7 @@ export function nuevaMeta({ nombre, dias, inicio, tz = ZONA, admin, creada, lab 
     // Una copa del laboratorio (D-115): su admin puede pasarla al día siguiente para probar
     ...(lab ? { lab: true } : {}),
     ...(alias ? { alias } : {}),
-    // El idioma de las palabras (D-168). El español no se escribe: así eran las copas de antes
+    // El idioma de las palabras (D-170). El español no se escribe: así eran las copas de antes
     ...(lang && lang !== 'es' ? { lang } : {}),
   };
 }

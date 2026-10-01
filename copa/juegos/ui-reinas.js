@@ -1,7 +1,8 @@
 /**
  * 👑 Reinas — pantalla. Un toque pasa la casilla por vacía → reina → X → vacía (D-167); el toque
  * largo pone o saca una X para descartar la casilla (D-103), como las notas de Toque y Fama, y arrastrar desde una casilla vacía
- * pinta X en las vacías por donde pasa, para descartar una fila entera de una pasada (D-166). Las
+ * pinta X en las vacías por donde pasa, para descartar una fila entera de una pasada (D-166); desde
+ * una X, las borra (D-168). Las
  * zonas se distinguen solo por el color, con la misma línea fina entre todas las casillas, como en
  * el juego original. Las reinas que chocan se ven en rojo en el acto. Las jugadas son los toques,
  * en orden (`'c' + i` el toque; el largo y cada X pintada, en negativo).
@@ -17,6 +18,7 @@ import * as motor from './reinas.js';
 export const ZONAS = ['#f6a96b', '#9ed48a', '#80aef5', '#ffe169', '#c9a2ec', '#ffa3c4', '#6fd3c8', '#e4e4e4', '#c9b48f', '#d7ef6e'];
 
 const LARGO_MS = 450;
+const CONFIRMAR_MS = 3000;
 
 /** Las casillas entre `a` y `b` (sin `a`, con `b`): un arrastre rápido salta casillas entre dos movimientos. */
 export function camino(n, a, b) {
@@ -65,22 +67,31 @@ export function montar(raiz, ctx) {
   // El toque largo termina con un click del mismo gesto (al levantar el dedo) que no tiene que
   // poner una reina. Se traga ese click y nada más: cualquier gesto nuevo empieza limpio.
   let tragar = false;
-  // El gesto en curso: dónde empezó, si pinta X (empezó en una casilla vacía) y si ya es arrastre.
+  // El gesto en curso: dónde empezó, qué hace el arrastre (pinta X si empezó en una casilla vacía,
+  // las borra si empezó en una X, nada si empezó en una reina) y si ya es arrastre.
   // Mientras se arrastra no se redibuja la grilla (se perdería el dedo): se tocan solo las casillas.
   let gesto = null;
   let marcas = [];
+  // "Borrar todo" pide un segundo toque, como en Tango (D-169)
+  let armado = false;
+  let armadoTimer = null;
 
   const celdaEn = (x, y) => {
     const d = document.elementFromPoint(x, y)?.closest('.rej');
     return d && raiz.contains(d) ? +d.dataset.i : null;
   };
-  /** Pinta la X en una casilla vacía durante el arrastre: es la misma jugada que el toque largo. */
-  const pintarX = i => {
-    if (marcas[i] !== motor.VACIO) return;
+  /**
+   * Pinta la X en una casilla vacía, o la borra, durante el arrastre: es la misma jugada que el
+   * toque largo, que pone o saca la X. Las reinas no se tocan.
+   */
+  const ARRASTRE = { pintar: [motor.VACIO, motor.MARCA], borrar: [motor.MARCA, motor.VACIO] };
+  const arrastrar = i => {
+    const [antes, despues] = ARRASTRE[gesto.modo];
+    if (marcas[i] !== antes) return;
     jugadas.push(motor.toqueLargo(i)); ctx.guardar(jugadas);
-    marcas[i] = motor.MARCA;
+    marcas[i] = despues;
     const b = raiz.querySelector(`.rej[data-i="${i}"]`);
-    if (b) { b.classList.add('marca'); b.textContent = '✕'; }
+    if (b) { b.classList.toggle('marca', despues === motor.MARCA); b.textContent = despues === motor.MARCA ? '✕' : ''; }
     vibrate(8);
   };
   const mover = ev => {
@@ -89,9 +100,9 @@ export function montar(raiz, ctx) {
     if (i === null || i === gesto.ultimo) return;
     // Salir de la casilla ya no es un toque largo
     if (gesto.timer) { clearTimeout(gesto.timer); gesto.timer = null; }
-    if (gesto.pintar) {
-      if (!gesto.arrastre) { gesto.arrastre = true; tragar = true; SFX.dice(); pintarX(gesto.i); }
-      camino(n, gesto.ultimo, i).forEach(pintarX);
+    if (gesto.modo) {
+      if (!gesto.arrastre) { gesto.arrastre = true; tragar = true; SFX.dice(); arrastrar(gesto.i); }
+      camino(n, gesto.ultimo, i).forEach(arrastrar);
     }
     gesto.ultimo = i;
   };
@@ -131,16 +142,18 @@ export function montar(raiz, ctx) {
         'data-i': i, disabled: e.fin, 'aria-label': `${r + 1}-${c + 1}`,
         style: `background:${ZONAS[z % ZONAS.length]}`,
         // El toque largo marca la X (como las notas del teclado de Toque y Fama); el toque normal
-        // pasa por reina, X y vacía. Si el dedo se va a otra casilla antes, es un arrastre: pinta X si empezó en una vacía.
+        // pasa por reina, X y vacía. Si el dedo se va a otra casilla antes, es un arrastre: pinta X si
+        // empezó en una vacía y las borra si empezó en una X.
         onPointerdown: ev => {
           if (!ev.isPrimary || e.fin) return;
           // Un dedo primario nuevo: el gesto anterior ya terminó aunque no llegara su pointerup
           if (gesto) soltar({ pointerId: gesto.id });
           tragar = false;
-          gesto = { id: ev.pointerId, i, ultimo: i, pintar: v === motor.VACIO, arrastre: false };
+          const modo = v === motor.VACIO ? 'pintar' : v === motor.MARCA ? 'borrar' : null;
+          gesto = { id: ev.pointerId, i, ultimo: i, modo, arrastre: false };
           gesto.timer = setTimeout(() => {
             if (!gesto) return;
-            // Si el dedo sigue y se arrastra, esta X ya está puesta y pinta las siguientes
+            // Si el dedo sigue y se arrastra, esta casilla ya cambió y el arrastre sigue con las siguientes
             gesto.timer = null; tragar = true; jugar(motor.toqueLargo(i));
           }, LARGO_MS);
           window.addEventListener('pointermove', mover);
@@ -149,7 +162,7 @@ export function montar(raiz, ctx) {
         },
         onContextmenu: ev => ev.preventDefault(),
         // El teclado y los guiones llegan como click sin puntero (detail 0): esos nunca se tragan
-        onClick: ev => { if (tragar && ev.detail !== 0) { tragar = false; return; } jugar(motor.toque(i)); },
+        onClick: ev => { if (tragar && ev.detail !== 0) { tragar = false; return; } armado = false; jugar(motor.toque(i)); },
       }, v === motor.REINA ? '👑' : v === motor.MARCA ? '✕' : ''));
     }
     const reinas = e.marcas.filter(v => v === motor.REINA).length;
@@ -163,15 +176,32 @@ export function montar(raiz, ctx) {
     if (ctx.cierreAbajo) caja.append(...cierre);
     if (e.conflictos.size && !e.fin) caja.append(el('div', { class: 'aviso mal' }, T.queensClash));
     if (!e.fin) {
-      // Rendirse es definitivo: pide confirmar, como el comodín (D-110)
-      caja.append(el('button', {
-        type: 'button', class: 'btn btn--ghost btn--sm', id: 'btn-rendirse',
-        onClick: () => {
-          SFX.tap();
-          if (!confirm(T.giveUpConfirm)) return;
-          jugadas.push(motor.RENDIRSE); ctx.guardar(jugadas); SFX.error(); vibrate([40, 40, 40]); dibujar();
-        },
-      }, `🏳️ ${T.giveUp}`));
+      const vacio = e.marcas.every(v => v === motor.VACIO);
+      caja.append(el('div', { class: 'btn-row reinas-acciones' },
+        // Borrar todo deja el tablero en blanco; el reloj sigue (D-169). El primer toque solo lo arma.
+        el('button', {
+          type: 'button', class: 'btn btn--ghost btn--sm' + (armado ? ' armado' : ''), id: 'btn-borrar', disabled: vacio,
+          onClick: () => {
+            clearTimeout(armadoTimer);
+            if (armado) {
+              armado = false;
+              jugadas.push(motor.BORRAR); ctx.guardar(jugadas); SFX.splash(); vibrate([20, 30, 20]); dibujar();
+              return;
+            }
+            armado = true; SFX.tap(); vibrate(15);
+            armadoTimer = setTimeout(() => { armado = false; if (raiz.isConnected) dibujar(); }, CONFIRMAR_MS);
+            dibujar();
+          },
+        }, armado ? T.clearAllSure : `🧹 ${T.clearAll}`),
+        // Rendirse es definitivo: pide confirmar, como el comodín (D-110)
+        el('button', {
+          type: 'button', class: 'btn btn--ghost btn--sm', id: 'btn-rendirse',
+          onClick: () => {
+            SFX.tap();
+            if (!confirm(T.giveUpConfirm)) return;
+            jugadas.push(motor.RENDIRSE); ctx.guardar(jugadas); SFX.error(); vibrate([40, 40, 40]); dibujar();
+          },
+        }, `🏳️ ${T.giveUp}`)));
     }
     raiz.append(caja);
   };

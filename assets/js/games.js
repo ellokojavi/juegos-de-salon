@@ -12,7 +12,7 @@ export const GAMES = [
     tagline: { es: 'Un torneo de una semana entre amigos: un minijuego distinto cada día y una tabla. Quien acumula más puntos se lleva la gloria.', en: 'A week-long tournament among friends: a different minigame every day and a leaderboard. Whoever piles up the most points takes the glory.', pt: 'Um torneio de uma semana entre amigos: um minijogo diferente por dia e uma tabela. Quem somar mais pontos fica com a glória.' },
     players: '2–10',
     duration: '7',
-    // No dura minutos sino días. Va en los tres idiomas (D-168): la copa elige el de sus palabras
+    // No dura minutos sino días. Va en los tres idiomas (D-170): la copa elige el de sus palabras
     durationUnit: { es: 'días', en: 'days', pt: 'dias' },
     // Cómo se juega, para la tabla del README: una copa no tiene modos de un celular o de sala.
     formato: { es: 'Cada uno en su celular, un juego por día', en: 'Each on their own phone, one game a day', pt: 'Cada um no seu celular, um jogo por dia' },
