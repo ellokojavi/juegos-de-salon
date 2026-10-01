@@ -17,6 +17,7 @@ import { MAPA } from './mapa.js';
 import { GRILLAS } from './grillas.js';
 import * as GRILLAS_MOD from './grillas.js';
 import { temasDeLaCopa } from './mazos.js';
+import { camino } from './ui-reinas.js';
 
 let n = 0;
 const test = (name, fn) => { try { fn(); n++; } catch (e) { console.error(`✗ ${name}`); throw e; } };
@@ -304,6 +305,12 @@ test('reinas: solución única, reglas y puntaje', () => {
   assert.equal(reinas.puntaje({ ...r, ms: 1000 }), 0);
   assert.equal(final.puntosRonda.reinas(r), 0);
   assert.equal(reinas.tarjeta(r), '👑 🏳️');
+  // Arrastrar pinta X: el arrastre rápido no salta casillas (D-166)
+  assert.deepEqual(camino(8, 0, 7), [1, 2, 3, 4, 5, 6, 7]);
+  assert.deepEqual(camino(8, 7, 4), [6, 5, 4]);
+  assert.deepEqual(camino(8, 3, 27), [11, 19, 27]);
+  assert.deepEqual(camino(8, 0, 18), [9, 18]);
+  assert.deepEqual(camino(8, 5, 5), []);
   // El toque largo pone y saca la X, y no cuenta como error ni como reina
   e = reinas.estado(p, [reinas.toqueLargo(5), reinas.toqueLargo(6), reinas.toqueLargo(6)]);
   assert.equal(e.marcas[5], reinas.MARCA); assert.equal(e.marcas[6], reinas.VACIO); assert.equal(e.errores, 0);

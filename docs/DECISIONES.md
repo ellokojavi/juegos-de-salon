@@ -2313,3 +2313,27 @@ el archivo de la tabla terminada se llama `copa-<x>-tabla-final.png`. Los result
 partidas de los seis juegos con sala (quién ganó un Dudo) todavía no se comparten; si se agregan,
 usan `laminaResultado` y una cabecera con el juego. `tools/e2e/cdp.mjs` acepta `CHROME` para
 correr las pruebas fuera de un Mac.
+
+## D-166 · Reinas: arrastrar desde una casilla vacía pinta X
+**Fecha:** 2026-10-01 · **Estado:** vigente; amplía D-103
+**Decisión:** En Reinas, apoyar el dedo en una casilla **vacía** y llevarlo a otra pinta una X en
+cada casilla vacía por donde pasa, como en el Queens de LinkedIn: descartar una fila o una columna
+deja de ser ocho toques largos. Las reglas del gesto:
+- **Es arrastre solo al entrar en otra casilla.** Un toque que tiembla dentro de la misma casilla
+  sigue siendo toque (reina) o, a los 450 ms, toque largo (X). Si el toque largo ya puso la X y el
+  dedo sigue, pinta las siguientes.
+- **Pinta solo casillas vacías**: las reinas y las X que ya estaban quedan igual. Empezar sobre una
+  reina o una X no pinta nada (y ya no es toque largo al salir de la casilla).
+- **No salta casillas**: si el dedo va rápido, se rellenan las del medio (`camino` de `ui-reinas.js`).
+- **Cada X pintada es una jugada de toque largo** (`-(i + 1)`): el motor, la memoria de partida y
+  el desglose no cambian. El click que llega al soltar se traga, como después del toque largo;
+  el del teclado (sin puntero) nunca.
+- **El tablero ya no desplaza la página**: `touch-action: none` en la grilla, como en Zip. Sin eso,
+  el celular toma el arrastre como scroll y lo corta.
+
+**Por qué:** El dueño lo pidió: en el Queens original es la forma natural de descartar filas
+enteras, y con el toque largo cada X costaba medio segundo.
+
+**Alternativas descartadas:** que arrastrar desde una X borre X (como algunos clones): no se pidió
+y un arrastre accidental borraría deducciones; un modo "lápiz X" con botón: un paso más y otro
+estado que recordar.
