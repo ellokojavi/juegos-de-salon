@@ -48,7 +48,7 @@ test('calendario a elección (D-163): juegos del pozo sin repetir y la final al 
   assert.equal(nuevaMeta({ ...base, cal: ['donde', 'zip', 'final'] }).cal, 'donde,zip,final');
   assert.equal(nuevaMeta(base).cal, 'linea,conexiones,final');
   assert.throws(() => nuevaMeta({ ...base, cal: ['zip', 'zip', 'final'] }), /calendario/);
-  // El idioma de las palabras (D-168): el español no se escribe, como en las copas de antes
+  // El idioma de las palabras (D-170): el español no se escribe, como en las copas de antes
   assert.equal(nuevaMeta(base).lang, undefined);
   assert.equal(nuevaMeta({ ...base, lang: 'es' }).lang, undefined);
   assert.equal(nuevaMeta({ ...base, lang: 'pt' }).lang, 'pt');

@@ -1,5 +1,5 @@
 /**
- * Las grillas de 🔗 Conexiones en inglés (D-168). Las mismas reglas que las de español
+ * Las grillas de 🔗 Conexiones en inglés (D-170). Las mismas reglas que las de español
  * (grillas.js): cuatro grupos de cuatro, del más fácil al más difícil, por significado (D-128) y
  * con distractores (D-102). Son propias del idioma, no una traducción: los distractores tienen
  * que funcionar en inglés (MANHATTAN es un trago y una isla; SALSA, un baile y una salsa).

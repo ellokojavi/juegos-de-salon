@@ -1,7 +1,7 @@
 # Changelog
 
 ## Sin publicar (la versión se asigna al fusionar)
-- **La Copa y sus minijuegos, en inglés y portugués** (D-168). Todo se traduce: la portada, crear
+- **La Copa y sus minijuegos, en inglés y portugués** (D-170). Todo se traduce: la portada, crear
   la copa, el tablero, las reglas de cada minijuego, el desglose del puntaje, Administrar y los
   reportes. El idioma se cambia con el toggle de la portada, de la invitación o del minijuego.
 - **Cada copa elige el idioma de sus palabras** al crearla (parte en el de quien la crea):
@@ -15,6 +15,12 @@
   Zip) ya no dicen "🇪🇸 In Spanish": se juegan en el idioma de quien juega.
 - **El selector de idioma (🇨🇱 ES · 🇬🇧 EN · 🇧🇷 PT) se toca más fácil:** sus botones miden 44 px
   de alto, como todos los demás (C-8). Vale para todos los juegos.
+
+## 0.79.0 — 2026-10-01
+- **Reinas: arrastrar desde una X las borra.** Es lo contrario de arrastrar desde una casilla
+  vacía: el dedo borra las X por donde pasa y deja las reinas como estaban (D-168).
+- **Reinas: 🧹 Borrar todo** deja el tablero en blanco para empezar de nuevo, con un segundo toque
+  para confirmar, como en Tango. El reloj sigue corriendo (D-169).
 
 ## 0.78.0 — 2026-10-01
 - **Reinas: arrastrar pinta X.** Arrastrar el dedo (o el mouse) desde una casilla vacía llena de X
