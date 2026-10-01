@@ -1,5 +1,9 @@
 # Changelog
 
+## Por publicar
+- **Reinas: arrastrar desde una X las borra.** Es lo contrario de arrastrar desde una casilla
+  vacía: el dedo borra las X por donde pasa y deja las reinas como estaban (D-168).
+
 ## 0.78.0 — 2026-10-01
 - **Reinas: arrastrar pinta X.** Arrastrar el dedo (o el mouse) desde una casilla vacía llena de X
   las casillas vacías por donde pasa: una fila o una columna se descarta de una pasada, como en el
