@@ -14,7 +14,9 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
   repetible; los que tienen página se van a `/minijuegos/<id>/?labs&semilla=K7Q2X`, D-164). Desde la portada el minijuego suelto es `/minijuegos/<id>/` (D-142, D-149, D-162): la misma
   pantalla, sin "copa" en el link, que vuelve al menú, sin sesión de prueba ni semilla a la vista, y
   con su señal de uso. `/copa/?practica=<id>` sin `&labs` lleva ahí.
-- **Jugadores:** de 1 a 10 por copa. **Idioma:** solo español (D-98).
+- **Jugadores:** de 1 a 10 por copa. **Idioma:** español, inglés y portugués (D-170). La
+  pantalla va en el idioma de quien mira; las palabras de Conexiones y Palabra, los mensajes al
+  grupo y su link, en el de la copa (`meta.lang`, se elige al crearla).
 - **Modalidades:** Copa de 7 días (la que se ofrece) y Copa de 3 días (solo pruebas).
 - **Calendario:** lo arma el admin al crear la copa (D-163): qué juegos entran y en qué orden,
   a partir de una propuesta al azar. La final va siempre el último día y no cambia.

@@ -198,6 +198,7 @@ details.panel summary::-webkit-details-marker { display: none; }
 }
 .lang-toggle button {
   border: 0; cursor: pointer; border-radius: 999px; padding: 7px 12px;
+  min-height: 44px; /* C-8: un dedo cabe, como en todos los botones */
   font: 900 0.9rem var(--font-body); color: var(--muted); background: transparent;
   transition: background 0.15s, color 0.15s, transform 0.1s;
 }

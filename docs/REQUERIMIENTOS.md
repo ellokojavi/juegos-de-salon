@@ -122,7 +122,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | LIG-29 | Recordatorios `.ics` para el calendario del celular. | ⏳ pendiente |
 | LIG-30 | Verificación cruzada: cada celular recalcula los puntajes ajenos desde las jugadas. | ⏳ pendiente |
 | LIG-31 | Papelera: borrar copas una semana después de terminadas. | ⏳ pendiente |
-| LIG-32 | Inglés y portugués, con contenido propio por idioma (D-98). | ⏳ pendiente |
+| LIG-32 | Inglés y portugués, con contenido propio por idioma (D-98, D-170). | ✅ D-170 |
 | LIG-33 | Avisos automáticos por WhatsApp, correo o push (D-99). | ⏳ pendiente |
 | LIG-34 | Calendario elegido por el admin al crear la copa: qué juegos y en qué orden, a partir de una propuesta al azar; la final no cambia (D-163). | ✅ v0.75.0 |
 | LIG-35 | Pantalla de espera antes del día 1: cuándo parte, calendario e inscritos. | ✅ v0.42 |

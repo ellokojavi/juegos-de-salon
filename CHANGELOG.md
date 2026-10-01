@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.80.0 — 2026-10-01
+- **La Copa y sus minijuegos, en inglés y portugués** (D-170). Todo se traduce: la portada, crear
+  la copa, el tablero, las reglas de cada minijuego, el desglose del puntaje, Administrar y los
+  reportes. El idioma se cambia con el toggle de la portada, de la invitación o del minijuego.
+- **Cada copa elige el idioma de sus palabras** al crearla (parte en el de quien la crea):
+  Conexiones y Toque y Fama: Palabra se juegan con las mismas palabras para todos, y la
+  invitación, los recordatorios, la tabla y los resultados que se comparten van en ese idioma.
+  Lo personal (la pantalla) va en el de cada uno.
+- **Contenido propio por idioma**, no traducido: grillas de Conexiones en inglés y en portugués,
+  palabras secretas de cinco letras en cada idioma (sin Ñ fuera del español) y los nombres de
+  países y ciudades de ¿Dónde queda?.
+- **Los minijuegos sueltos de la portada** (Conexiones, Palabra, ¿En qué año?, Reinas, Tango,
+  Zip) ya no dicen "🇪🇸 In Spanish": se juegan en el idioma de quien juega.
+- **El selector de idioma (🇨🇱 ES · 🇬🇧 EN · 🇧🇷 PT) se toca más fácil:** sus botones miden 44 px
+  de alto, como todos los demás (C-8). Vale para todos los juegos.
+
 ## 0.79.0 — 2026-10-01
 - **Reinas: arrastrar desde una X las borra.** Es lo contrario de arrastrar desde una casilla
   vacía: el dedo borra las X por donde pasa y deja las reinas como estaban (D-168).
