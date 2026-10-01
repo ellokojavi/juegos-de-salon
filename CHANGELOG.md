@@ -1,5 +1,11 @@
 # Changelog
 
+## Por publicar
+- **Reinas: arrastrar pinta X.** Arrastrar el dedo (o el mouse) desde una casilla vacía llena de X
+  las casillas vacías por donde pasa: una fila o una columna se descarta de una pasada, como en el
+  Queens de LinkedIn. Las reinas y las X que ya estaban no se tocan; el toque y el toque largo
+  siguen igual (D-166).
+
 ## 0.77.0 — 2026-10-01
 - **Todo lo que se comparte sigue un mismo estándar** (D-165). Cada mensaje abre con una cabecera
   —"🏆 *La Copa: Valdenenas* · Día 3 de 7", "📊 … · Tabla de posiciones · día 3 de 7",
