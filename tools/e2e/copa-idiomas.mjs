@@ -15,10 +15,11 @@ const ok = (cond, msg) => { console.log(`${cond ? '✓' : '✗'} ${msg}`); if (!
 const ev = expr => b.evaluate(expr);
 const texto = () => ev(`document.querySelector('.screen.active').innerText`);
 const preparar = () => ev(`(()=>{window.confirm=()=>true;window.__compartido=[];navigator.share=async d=>{window.__compartido.push(d)};navigator.canShare=()=>true;return 1})()`);
-/** C-8: sin scroll horizontal ni botones bajo 44 px. */
-const revisar = async nombre => {
-  const r = await ev(`(()=>{const ancho=document.documentElement.scrollWidth>innerWidth;const chicos=[...document.querySelectorAll('.screen.active button, .screen.active a.btn')].filter(x=>{const q=x.getBoundingClientRect();return q.height>0&&q.height<44&&!x.closest('.lang-toggle')}).map(x=>x.textContent.trim().slice(0,20));return {ancho,chicos}})()`);
+/** C-8: sin scroll horizontal ni botones bajo 44 px (en los tableros, las casillas no cuentan). */
+const revisar = async (nombre, { botones = true } = {}) => {
+  const r = await ev(`(()=>{const ancho=document.documentElement.scrollWidth>innerWidth;const chicos=[...document.querySelectorAll('.screen.active button, .screen.active a.btn')].filter(x=>{const q=x.getBoundingClientRect();return q.width&&q.height&&q.height<43.5&&!x.closest('.sol-grid')}).map(x=>x.textContent.trim().slice(0,20));return {ancho,chicos}})()`);
   ok(!r.ancho, `${nombre}: sin scroll horizontal`);
+  if (botones) ok(!r.chicos.length, `${nombre}: botones de 44 px o más ${r.chicos.length ? JSON.stringify(r.chicos) : ''}`);
   await b.shot(nombre);
 };
 
@@ -68,7 +69,7 @@ for (const [id, lang, espera] of [['letras', 'en', /Bulls and Cows: Word/i], ['c
   await ev(`document.getElementById('btn-empezar').click(); 1`); await sleep(4800);
   if (id === 'letras') ok(!(await ev(`[...document.querySelectorAll('.keypad button')].some(x=>x.textContent==='Ñ')`)), 'letras (en): el teclado no tiene Ñ');
   if (id === 'conexiones') ok(await ev(`(async()=>{const m=await import('/copa/juegos/grillas-pt.js');const w=[...document.querySelectorAll('#jugar-body button')].map(x=>x.textContent);return m.GRILLAS.some(g=>g.grupos.flatMap(x=>x.palabras).includes(w[0]))})()`), 'conexiones (pt): la grilla es una de las de portugués');
-  await revisar(`${lang}-suelto-${id}-juego`);
+  await revisar(`${lang}-suelto-${id}-juego`, { botones: false });
 }
 
 ok(!b.errors.length, `sin errores en la consola${b.errors.length ? ': ' + b.errors.join(' | ') : ''}`);

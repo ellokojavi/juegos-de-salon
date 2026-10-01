@@ -13,6 +13,8 @@
   países y ciudades de ¿Dónde queda?.
 - **Los minijuegos sueltos de la portada** (Conexiones, Palabra, ¿En qué año?, Reinas, Tango,
   Zip) ya no dicen "🇪🇸 In Spanish": se juegan en el idioma de quien juega.
+- **El selector de idioma (🇨🇱 ES · 🇬🇧 EN · 🇧🇷 PT) se toca más fácil:** sus botones miden 44 px
+  de alto, como todos los demás (C-8). Vale para todos los juegos.
 
 ## 0.78.0 — 2026-10-01
 - **Reinas: arrastrar pinta X.** Arrastrar el dedo (o el mouse) desde una casilla vacía llena de X
