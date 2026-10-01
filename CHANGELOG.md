@@ -1,6 +1,6 @@
 # Changelog
 
-## Sin publicar
+## 0.77.0 — 2026-10-01
 - **Todo lo que se comparte sigue un mismo estándar** (D-165). Cada mensaje abre con una cabecera
   —"🏆 *La Copa: Valdenenas* · Día 3 de 7", "📊 … · Tabla de posiciones · día 3 de 7",
   "🃏 *Julepe* · Sala WFBN"—, una idea por línea, y el link solo en la última. Cuando va una
