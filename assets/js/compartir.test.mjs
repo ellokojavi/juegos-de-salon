@@ -2,7 +2,7 @@
 // pasa cuando hay menú del sistema, cuando no, y cuando va una imagen.
 // Uso: node assets/js/compartir.test.mjs
 import assert from 'node:assert/strict';
-import { cabecera, conLink, compartir, puntajeYTiempo, nombreArchivo } from './compartir.js';
+import { cabecera, conLink, compartir, puntajeYTiempo, nombreArchivo, textoResultadoSolo } from './compartir.js';
 
 let n = 0;
 const caso = async (nombre, fn) => { await fn(); n++; };
@@ -77,6 +77,11 @@ await caso('cancelar el menú no copia ni descarga nada', async () => {
   globalThis.navigator.share = async () => { const e = new Error('x'); e.name = 'AbortError'; throw e; };
   assert.equal(await compartir({ titulo: 'X', texto: 'hola', url: 'https://a.b/', imagen }), 'failed');
   assert.deepEqual([r.copiado, r.descargado], [[], []]);
+});
+
+await caso('jugando solo, el texto no repite lo que dice la imagen (D-171)', () => {
+  const C = { shareSoloContext: 'Jugando solo', shareSoloCta: '🤔 ¿Me ganas?' };
+  assert.equal(textoResultadoSolo({ C, emoji: '🔢', juego: 'Toque y Fama' }), '🔢 *Toque y Fama* · Jugando solo\n\n🤔 ¿Me ganas?');
 });
 
 console.log(`compartir: ${n} casos en verde`);
