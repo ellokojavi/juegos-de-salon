@@ -97,7 +97,8 @@ Un modo que todavía no existe se muestra deshabilitado con "Próximamente", nun
 - Con más de dos jugadores, el reparto de roles es una carrera: se escribe el rol con un identificador de dispositivo y se relee para confirmar quién lo obtuvo. Nunca se asume que el primer rol libre que se leyó sigue libre.
 - Cuando hay más de dos jugadores, uno es anfitrión (rol A) y abre la partida cuando están todos.
 - Quien abre un enlace de sala (`?sala=CÓDIGO`) llega a una pantalla que **solo** deja unirse a esa sala: título propio de invitación, nada de botón para crear otra, el código va fijo y de solo lectura, y los ajustes de la partida no se muestran porque los fija el anfitrión. Ofrecer las dos cosas confunde a quien fue invitado.
-- El enlace de la sala se comparte con el diálogo nativo del sistema (`navigator.share`, helper `shareLink` en `ui.js`); copiar al portapapeles es solo el respaldo cuando el navegador no tiene ese diálogo. El diálogo del celular ya incluye copiar, así que no se pierde nada.
+- El enlace de la sala se comparte con el diálogo nativo del sistema (`botonInvitar` en `assets/js/compartir.js`); copiar al portapapeles es solo el respaldo cuando el navegador no tiene ese diálogo. El diálogo del celular ya incluye copiar, así que no se pierde nada.
+- **Todo lo que se comparte** pasa por `assets/js/compartir.js` y sigue su estándar (D-165, U-30, U-33): cabecera `{emoji} *{título}* · {contexto}`, una idea por línea y el link solo al final; si va imagen, lleva arriba la misma cabecera y abajo el mismo link (`lamina`, `laminaResultado`), y se manda junto con su texto. Un juego nuevo no arma su propio mensaje ni su propio botón.
 - Se muestra cuando el rival se desconecta y se retoma solo cuando vuelve.
 - La revancha crea una sala nueva y mueve a los dos jugadores; parte quien perdió.
 
@@ -272,6 +273,7 @@ como un error: se lee como que nadie jugó.
 - [ ] Tests del motor en verde y partida completa probada en cada modo, con capturas revisadas (C-12).
 - [ ] Versión estampada, publicada y comprobada en la URL pública (C-11).
 - [ ] Si tiene varios celulares, el chat de sala usa el módulo compartido y muere con la partida (C-15).
+- [ ] Lo que comparte (sala, resultado) sale de `compartir.js`, con la cabecera del estándar, y un resultado va con su imagen (C-7, D-165).
 - [ ] Registro en el menú, README, especificación, requerimientos, decisiones y changelog (C-2, C-13).
 - [ ] El panel lo muestra sin haberlo tocado: `node panel/adapta.test.mjs` en verde y una mirada a `node tools/e2e/mirar.mjs panel datos` (C-16).
 - [ ] Capturas del README rehechas y miradas, y `python3 tools/readme.py revisar` en verde (C-13).

@@ -22,10 +22,16 @@ const click = sel => ev(`(()=>{const x=document.querySelector(${JSON.stringify(s
 const pantalla = () => ev('__copa.estado.pantalla');
 const DIA = 24 * 60 * 60 * 1000;
 
-// En headless no hay diálogo de compartir: se atrapa lo que se habría mandado
-// y la barra del modo de prueba no sale en las capturas.
-const preparar = () => ev(`(()=>{window.confirm=()=>true;window.__compartido=[];navigator.share=async d=>{window.__compartido.push(d)};
+// En headless no hay diálogo de compartir: se atrapa lo que se habría mandado (como un celular,
+// que también comparte archivos) y la barra del modo de prueba no sale en las capturas.
+const preparar = () => ev(`(()=>{window.confirm=()=>true;window.__compartido=[];navigator.share=async d=>{window.__compartido.push(d)};navigator.canShare=()=>true;
   const st=document.createElement('style');st.textContent='.prueba-barra{display:none!important}';document.head.append(st);return 1})()`);
+
+/** La imagen del último compartido, a la carpeta de salida, para mirarla. */
+async function guardarImagen(nombre) {
+  const u = await ev(`(async()=>{const f=window.__compartido.at(-1)?.files?.[0];if(!f)return null;const r=new FileReader();return new Promise(ok=>{r.onload=()=>ok(r.result);r.readAsDataURL(f)})})()`);
+  if (u) (await import('node:fs')).writeFileSync(`${OUT}/${nombre}.png`, Buffer.from(u.split(',')[1], 'base64'));
+}
 
 /** Las tomas del README, con nombre fijo para que docs/capturas.json las encuentre. */
 const TOMAS = { numero: '02-numero', conexiones: '03-conexiones', reinas: '04-reinas', letras: '05-letras', anio: '06-anio' };
@@ -494,9 +500,16 @@ for (let d = 1; d <= dias; d++) {
     const id = await jugarDia(d, NIVELES[d - 1][j], { capturar, comodin: d === 2 && nombre === 'Javi' });
     if (capturar) await revisarPantalla(`resultado-${id}`);
     ok(await pantalla() === 'resultado', `${nombre} terminó el día ${d} (${id})`);
-    await click('#btn-tarjeta'); await sleep(100);
-    if (d === 1 && j === 0) console.log('  tarjeta:', JSON.stringify(await ev('window.__compartido.at(-1)?.text')));
-    if (d === 1 && j === 0) ok(/Línea Relámpago\n👤 Cata · \d+\/100/.test(await ev('window.__compartido.at(-1)?.text')), 'el resultado para compartir dice el juego y quién lo jugó');
+    await click('#btn-tarjeta'); await sleep(800);
+    if (d === 1 && j === 0) {
+      console.log('  tarjeta:', JSON.stringify(await ev('window.__compartido.at(-1)?.text')));
+      ok(/Línea Relámpago\n👤 Cata · \d+\/100/.test(await ev('window.__compartido.at(-1)?.text')), 'el resultado para compartir dice el juego y quién lo jugó');
+      // Con su imagen y la cabecera de la copa, la misma del texto (D-165)
+      ok(/^🏆 \*La Copa: .+\* · Día 1 de 7\n\n/.test(await ev('window.__compartido.at(-1)?.text')), 'el resultado abre con la cabecera de la copa y el día de cuántos');
+      const f = await ev(`(()=>{const f=window.__compartido.at(-1)?.files?.[0];return f?{name:f.name,type:f.type,size:f.size}:null})()`);
+      ok(f && f.type === 'image/png' && f.size > 20000 && f.name === 'copa-oficina-dia-1-cata.png', `el resultado se comparte con su imagen (${f?.name})`);
+      await guardarImagen('resultado-imagen');
+    }
     await click('#btn-volver'); await sleep(300);
     // Resultados ocultos: quien jugó primero no ve cuánto sacaron los que todavía no juegan (LIG-13)
   }
@@ -507,8 +520,11 @@ for (let d = 1; d <= dias; d++) {
     await click('#msg-hoy'); await sleep(100);
     console.log('  recordatorio:', JSON.stringify(await ev('window.__compartido.at(-1)?.text')));
     ok(/Faltan por jugar hoy: Pancho/.test(await ev('window.__compartido.at(-1)?.text')), 'el recordatorio dice quién falta');
-    await click('#msg-tabla'); await sleep(100);
+    await click('#msg-tabla'); await sleep(1200);
     console.log('  tabla parcial:', JSON.stringify(await ev('window.__compartido.at(-1)?.text')));
+    // La tabla del admin es la misma del tablero: imagen y texto, con la misma cabecera (D-165)
+    ok(/^📊 \*La Copa: .+\* · Tabla de posiciones( \(provisoria\))? · día 1 de 7\n\n/.test(await ev('window.__compartido.at(-1)?.text || ""')) && await ev('window.__compartido.at(-1)?.files?.[0]?.type') === 'image/png', 'la tabla parcial del admin va con su imagen y la cabecera de la tabla');
+    await guardarImagen('tabla-parcial-imagen');
     await revisarPantalla('admin');
     await b.shot('09-admin');
     // En el tablero, el gráfico también marca a Pancho con "(-1J)" y lo explica (D-126)
@@ -536,14 +552,16 @@ await b.shot('grafico-colores');
 await ev(`navigator.canShare = () => true; 1`);
 await click('#btn-imagen'); await sleep(1500);
 const img = await ev(`(async()=>{const d=window.__compartido.at(-1);const f=d?.files?.[0];if(!f)return null;const r=new FileReader();const u=await new Promise(ok=>{r.onload=()=>ok(r.result);r.readAsDataURL(f)});return {name:f.name,type:f.type,size:f.size,u}})()`);
-ok(img && img.type === 'image/png' && img.size > 20000 && /^copa-oficina-dia-\d\.png$/.test(img.name), `la tabla parcial se comparte como imagen (${img?.name})`);
+ok(img && img.type === 'image/png' && img.size > 20000 && img.name === 'copa-oficina-tabla-final.png', `la tabla se comparte como imagen (${img?.name})`);
+ok(/^🏁 \*La Copa: .+\* · Tabla final\n\n/.test(await ev('window.__compartido.at(-1)?.text || ""')), 'terminada, la imagen de la tabla va con el resumen final');
 if (img) (await import('node:fs')).writeFileSync(`${OUT}/tabla-imagen.png`, Buffer.from(img.u.split(',')[1], 'base64'));
 await ev(`document.querySelectorAll('.g-chip')[1].click(); 1`);
 await ev(`document.querySelector('svg.grafico').scrollIntoView(); 1`);
 await b.shot('07-grafico');
 await click('#btn-admin'); await sleep(300);
-await click('#msg-final'); await sleep(100);
+await click('#msg-final'); await sleep(1200);
 console.log('  resumen final:', JSON.stringify(await ev('window.__compartido.at(-1)?.text')));
+ok(await ev('window.__compartido.at(-1)?.files?.[0]?.name') === 'copa-oficina-tabla-final.png', 'el resumen final del admin va con la imagen de la tabla final');
 
 
 /* ---------- El laboratorio (D-101): la página, la práctica de cada minijuego y los reportes ---------- */
