@@ -63,7 +63,7 @@ for (const d of AHORCADO) {
   }
 }
 // Un juego que por ahora existe en un solo idioma lo declara en `idiomas` (así fue La Copa, D-98,
-// hasta D-168): su tarjeta del menú sí va en los tres, pero sus textos no se comparan.
+// hasta D-170): su tarjeta del menú sí va en los tres, pero sus textos no se comparan.
 const TRADUCIDOS = GAMES.filter(g => !g.idiomas || LANGS.every(l => g.idiomas.includes(l)));
 for (const g of TRADUCIDOS) {
   const { LOCALES } = await import(`../../${g.path}rules.js`);

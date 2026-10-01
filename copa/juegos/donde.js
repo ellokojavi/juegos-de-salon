@@ -75,7 +75,7 @@ export function marca(km) {
 
 /**
  * El nombre como se muestra: "Valparaíso, Chile". Si la ciudad se llama igual que el país, una vez.
- * En inglés y portugués, con los nombres de nombres.js (D-168).
+ * En inglés y portugués, con los nombres de nombres.js (D-170).
  */
 export const nombre = (c, lang = 'es') => {
   const x = ciudad(c.ciudad, lang), y = pais(c.pais, lang);

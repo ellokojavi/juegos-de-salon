@@ -1,5 +1,5 @@
 /**
- * Los nombres de ¿Dónde queda? en inglés y portugués (D-168): cada país y cada ciudad que no se
+ * Los nombres de ¿Dónde queda? en inglés y portugués (D-170): cada país y cada ciudad que no se
  * escribe igual que en español. `[inglés, portugués]`. Una ciudad que no está aquí se llama igual
  * en los tres (Nairobi, Lima, Tokio no: Tokyo y Tóquio). La lista de ciudades sigue siendo una,
  * en ciudades.js: aquí solo se traduce cómo se muestra.

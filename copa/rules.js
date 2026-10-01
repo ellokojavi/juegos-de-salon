@@ -1,7 +1,7 @@
 /**
  * La Copa — datos y textos. Sin lógica ni DOM (C-2).
  *
- * En español, inglés y portugués (D-168). La interfaz va en el idioma de quien mira; las palabras
+ * En español, inglés y portugués (D-170). La interfaz va en el idioma de quien mira; las palabras
  * de Conexiones y de Toque y Fama: Palabra van en el idioma de la copa, que se elige al crearla,
  * para que todos jueguen lo mismo. Ese contenido no se traduce: cada idioma tiene el suyo.
  */
@@ -9,7 +9,7 @@ export const GAME_ID = 'copa';
 
 /**
  * Lo que un minijuego es en cualquier idioma: su emoji y si está en el laboratorio. El nombre,
- * cómo se juega y cómo se puntúa van en `juegos` de cada idioma (D-168).
+ * cómo se juega y cómo se puntúa van en `juegos` de cada idioma (D-170).
  */
 const BASE = {
   linea: { emoji: '⏳' },
@@ -24,7 +24,7 @@ const BASE = {
   final: { emoji: '🏁' },
 };
 
-/** Los textos, uno por idioma (C-3, D-168). */
+/** Los textos, uno por idioma (C-3, D-170). */
 const ES = {
   // Los minijuegos (cómo se llaman, qué habilidad piden, cómo se juegan y cómo se puntúan)
   juegos: {
@@ -63,7 +63,7 @@ const ES = {
       como: [
         'Pon una reina en cada fila, en cada columna y en cada zona de color.',
         'Dos reinas nunca se pueden tocar, ni siquiera en diagonal.',
-        'Toca una casilla para poner una reina; tócala otra vez para cambiarla por una X que la descarta, y una tercera para dejarla vacía. Arrastra el dedo desde una casilla vacía para llenar de X todo lo que pases. Hay una sola solución y se llega deduciendo, sin adivinar.',
+        'Toca una casilla para poner una reina; tócala otra vez para cambiarla por una X que la descarta, y una tercera para dejarla vacía. Arrastra el dedo desde una casilla vacía para llenar de X todo lo que pases, o desde una X para borrarlas. Hay una sola solución y se llega deduciendo, sin adivinar.',
       ],
       puntaje: 'Puntúa el tiempo que tardas en resolverlo: hasta 30 segundos vale 100 puntos, y después baja parejo hasta 10 puntos a los 5 minutos. Equivocarse no resta: las reinas que chocan se ven en rojo y las corriges. Si te rindes, ves la solución y el juego da 0 puntos.',
     },
@@ -193,7 +193,7 @@ const ES = {
   pinHint: 'Con tu nombre y este PIN entras desde cualquier celular o computador. No lo compartas.',
   createGo: 'Crear la copa',
   creating: 'Creando la copa…',
-  // El idioma de las palabras (D-168): Conexiones y Palabra van en uno solo para todos
+  // El idioma de las palabras (D-170): Conexiones y Palabra van en uno solo para todos
   fLang: '¿En qué idioma van las palabras?',
   fLangHint: 'Conexiones y Toque y Fama: Palabra se juegan con palabras de este idioma, las mismas para todos. El resto, cada uno lo ve en su idioma.',
   langNames: { es: 'español', en: 'inglés', pt: 'portugués' },
@@ -572,7 +572,7 @@ const ES = {
   tangoExBad: 'Así no: tres iguales seguidos.',
   zipExOk: 'Así: un solo trazo que pasa por todas las casillas y toca los números en orden.',
   zipExBad: 'Así no: llegó al 4, pero quedaron casillas sin pintar.',
-  queensHint: '💡 Un toque pone la reina, otro la cambia por una X y otro deja la casilla vacía. Arrastra el dedo desde una vacía para llenar de X una fila entera.',
+  queensHint: '💡 Un toque pone la reina, otro la cambia por una X y otro deja la casilla vacía. Arrastra el dedo desde una vacía para llenar de X una fila entera, o desde una X para borrarlas.',
   tangoCount: 'Errores: {e} · Pistas: {p}',
   clearAll: 'Borrar todo',
   clearAllSure: '¿Seguro? Toca de nuevo para borrar',
@@ -691,7 +691,7 @@ const EN = {
       como: [
         'Place one queen in every row, every column and every color zone.',
         'Two queens can never touch, not even diagonally.',
-        'Tap a square to place a queen; tap it again to swap it for an X that rules it out, and a third time to clear it. Drag your finger from an empty square to fill everything you cross with X. There is only one solution and you get there by deduction, no guessing.',
+        'Tap a square to place a queen; tap it again to swap it for an X that rules it out, and a third time to clear it. Drag your finger from an empty square to fill everything you cross with X, or from an X to erase them. There is only one solution and you get there by deduction, no guessing.',
       ],
       puntaje: 'Your time is what scores: up to 30 seconds is worth 100 points, and then it goes down steadily to 10 points at 5 minutes. Mistakes don\'t cost anything: clashing queens show up in red and you fix them. If you give up, you see the solution and the game gives 0 points.',
     },
@@ -1192,7 +1192,7 @@ const EN = {
   tangoExBad: 'Not like this: three of the same in a row.',
   zipExOk: 'Like this: a single line that goes through every square and hits the numbers in order.',
   zipExBad: 'Not like this: it reached the 4, but some squares were left empty.',
-  queensHint: '💡 One tap places the queen, another swaps it for an X and another clears the square. Drag your finger from an empty one to fill a whole row with X.',
+  queensHint: '💡 One tap places the queen, another swaps it for an X and another clears the square. Drag your finger from an empty one to fill a whole row with X, or from an X to erase them.',
   tangoCount: 'Mistakes: {e} · Hints: {p}',
   clearAll: 'Clear all',
   clearAllSure: 'Sure? Tap again to clear',
@@ -1309,7 +1309,7 @@ const PT = {
       como: [
         'Coloque uma rainha em cada linha, em cada coluna e em cada zona de cor.',
         'Duas rainhas nunca podem se tocar, nem na diagonal.',
-        'Toque numa casa para colocar uma rainha; toque de novo para trocá-la por um X que a descarta, e uma terceira vez para deixá-la vazia. Arraste o dedo a partir de uma casa vazia para encher de X tudo o que você passar. Só existe uma solução e se chega nela deduzindo, sem chutar.',
+        'Toque numa casa para colocar uma rainha; toque de novo para trocá-la por um X que a descarta, e uma terceira vez para deixá-la vazia. Arraste o dedo a partir de uma casa vazia para encher de X tudo o que você passar, ou a partir de um X para apagá-los. Só existe uma solução e se chega nela deduzindo, sem chutar.',
       ],
       puntaje: 'O que pontua é o tempo que você leva para resolver: até 30 segundos vale 100 pontos, e depois cai por igual até 10 pontos aos 5 minutos. Errar não tira pontos: as rainhas que se chocam ficam em vermelho e você corrige. Se desistir, você vê a solução e o jogo dá 0 pontos.',
     },
@@ -1810,7 +1810,7 @@ const PT = {
   tangoExBad: 'Assim não: três iguais seguidos.',
   zipExOk: 'Assim: um só traço que passa por todas as casas e toca os números em ordem.',
   zipExBad: 'Assim não: chegou ao 4, mas ficaram casas sem pintar.',
-  queensHint: '💡 Um toque põe a rainha, outro a troca por um X e outro deixa a casa vazia. Arraste o dedo a partir de uma vazia para encher uma linha inteira de X.',
+  queensHint: '💡 Um toque põe a rainha, outro a troca por um X e outro deixa a casa vazia. Arraste o dedo a partir de uma vazia para encher uma linha inteira de X, ou a partir de um X para apagá-los.',
   tangoCount: 'Erros: {e} · Pistas: {p}',
   clearAll: 'Apagar tudo',
   clearAllSure: 'Certeza? Toque de novo para apagar',

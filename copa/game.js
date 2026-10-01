@@ -31,13 +31,13 @@ import { planilla } from './planilla.js';
 /** `append` que descarta los hijos nulos, como `el()` (sin esto, un null se escribe como texto). */
 const poner = (nodo, ...hijos) => nodo.append(...hijos.flat().filter(x => x !== null && x !== undefined && x !== false));
 
-// La pantalla va en el idioma de quien mira (D-168). Las palabras de Conexiones y de Palabra van
+// La pantalla va en el idioma de quien mira (D-170). Las palabras de Conexiones y de Palabra van
 // en el de la copa (`palabrasDe`), que es el mismo para todos.
 const LANG = getLang();
 const T = LOCALES[LANG] || LOCALES.es;
 const MINIJUEGOS = minijuegos(LANG);
 const RONDAS_FINAL = rondasFinal(LANG);
-/** El idioma de las palabras de una copa; las de antes de D-168 no lo dicen y son en español. */
+/** El idioma de las palabras de una copa; las de antes de D-170 no lo dicen y son en español. */
 const palabrasDe = meta => meta?.lang || 'es';
 /** "3º", o "#3" en inglés. */
 const ord = n => fmt(T.ord, { n });
@@ -132,7 +132,7 @@ function avisoError(caja, texto) {
   SFX.error(); vibrate([40, 40, 40]);
 }
 
-// Las fechas en el idioma de quien mira o, en lo que va al grupo, en el de la copa (D-168).
+// Las fechas en el idioma de quien mira o, en lo que va al grupo, en el de la copa (D-170).
 // En inglés la coma va ("Thursday, October 1"); en español y portugués se saca
 const LOCALE = { es: 'es-CL', en: 'en-US', pt: 'pt-BR' };
 const fechaLarga = (ms, tz = ZONA, lang = LANG) => { const f = new Intl.DateTimeFormat(LOCALE[lang] || LOCALE.es, { timeZone: tz, weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(ms)); return lang === 'en' ? f : f.replace(',', ''); };
@@ -204,7 +204,7 @@ const campoPin = label => campo(label, { inputmode: 'numeric', pattern: '[0-9]*'
 
 /**
  * Un grupo de opciones sin nada elegido de entrada (C-8, D-38). `inicial` solo para lo que tiene
- * una respuesta obvia y se ve antes de confirmar nada: el idioma de las palabras (D-168).
+ * una respuesta obvia y se ve antes de confirmar nada: el idioma de las palabras (D-170).
  */
 function opciones(items, onChange, { inicial = null } = {}) {
   let valor = inicial;
@@ -359,7 +359,7 @@ function crearCopa() {
     TRES ? { valor: 3, titulo: T.mode3, sub: T.mode3Sub } : null,
     { valor: 7, titulo: T.mode7, sub: T.mode7Sub },
   ].filter(Boolean), dias => { juegos.nodo.hidden = false; juegos.sortear(dias); });
-  // El idioma de las palabras de Conexiones y de Palabra (D-168): parte en el de quien la crea
+  // El idioma de las palabras de Conexiones y de Palabra (D-170): parte en el de quien la crea
   const mayuscula = x => x[0].toUpperCase() + x.slice(1);
   const idioma = opciones(LANGS.map(l => ({ valor: l, titulo: mayuscula(T.langNames[l]) })), null, { inicial: LANG });
   // Hoy, mañana u otra fecha de un calendario, hasta 30 días desde hoy (D-115)
@@ -940,7 +940,7 @@ async function compartir(texto, imagen = null) {
 }
 
 /**
- * Lo que va al grupo va en el idioma de la copa (D-168): los mensajes, la imagen, la planilla y el
+ * Lo que va al grupo va en el idioma de la copa (D-170): los mensajes, la imagen, la planilla y el
  * link. Cada uno ve la pantalla en su idioma, pero el chat del grupo es uno solo.
  */
 const G = () => {
@@ -1610,7 +1610,7 @@ function antesDeJugar(d) {
  * tienen, porque el tiempo desempata. El reloj parte cuando aparece "¡A jugar!", y ese cartel se
  * desvanece solo sobre el tablero. Resuelve la promesa en ese momento.
  */
-/** Los minijuegos que se juegan con palabras del idioma de la copa (D-168). */
+/** Los minijuegos que se juegan con palabras del idioma de la copa (D-170). */
 const CON_PALABRAS = ['conexiones', 'letras', 'final'];
 /** "Las palabras de esta copa van en inglés", solo si no es el idioma en que se está mirando. */
 const avisoPalabras = meta => (palabrasDe(meta) === LANG ? null
@@ -1681,7 +1681,7 @@ async function jugar(d) {
   // La cuenta va solo al empezar: si se retoma una partida, el tablero vuelve de una
   if (!guardado.reloj) await cuentaRegresiva(J);
   // Conexiones necesita saber cuándo empezó su día, para no cambiar de grilla a mitad (D-128)
-  // Los textos en el idioma de quien juega y las palabras en el de la copa (D-168)
+  // Los textos en el idioma de quien juega y las palabras en el de la copa (D-170)
   const p = mod.generar(S.code, d, { lang: LANG, palabras: palabrasDe(meta), ...(id === 'conexiones' ? { desde: meta.win[d].a } : {}) });
   const now = ahora();
   // El reloj se detiene cuando el tablero termina, no cuando se toca "Ver resultado" (D-130).
@@ -1924,7 +1924,7 @@ function practica(id) {
 }
 
 function jugarPractica(id, semilla) {
-  // Suelto, todo va en el idioma de quien juega: no hay con quién jugar lo mismo (D-168)
+  // Suelto, todo va en el idioma de quien juega: no hay con quién jugar lo mismo (D-170)
   const p = JUEGOS[id].generar(semilla, 1, { lang: LANG });
   // Solo en el modo de prueba: `&zipSeg=8` acorta el reloj de Zip para los guiones de punta a punta
   const seg = Number(new URLSearchParams(location.search).get('zipSeg'));

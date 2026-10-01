@@ -1,5 +1,5 @@
 /**
- * As grades de 🔗 Conexões em português do Brasil (D-168). Las mismas reglas que las de español
+ * As grades de 🔗 Conexões em português do Brasil (D-170). Las mismas reglas que las de español
  * (grillas.js): cuatro grupos de cuatro, del más fácil al más difícil, por significado (D-128) y
  * con distractores (D-102). Propias del idioma: COLAR es pegar y un collar, MANGUEIRA es una
  * manguera y un árbol de mangos, URUBU es un ave y la mascota del Flamengo.

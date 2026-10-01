@@ -1122,7 +1122,7 @@ suerte: una buena decisión puede perder al destapar.
 **Consecuencias:** el mismo código da la misma copa en cualquier navegador; las pruebas lo comparan.
 
 ## D-98 · La Copa va solo en español por ahora
-**Fecha:** 2026-09-23 · **Estado:** reemplazada por D-168
+**Fecha:** 2026-09-23 · **Estado:** reemplazada por D-170
 **Decisión:** La interfaz y el contenido de La Copa son solo en español, sin selector de idioma. Es
 una excepción a C-3: la entrada de `games.js` declara `idiomas: ['es']`, su tarjeta del menú sí va
 en los tres idiomas (y en inglés y portugués dice que por ahora es en español), y
@@ -2358,7 +2358,37 @@ sugiere. El ciclo se descubre solo, tocando de nuevo lo que se acaba de poner.
 primero porque se usa más, pero aquí cambiaría lo que el primer toque hace hoy, y las X en
 cantidad ya las pinta el arrastre. Quitar el toque largo: a quien ya lo aprendió no le estorba.
 
-## D-168 · La Copa y sus minijuegos en inglés y portugués: lo personal en tu idioma, lo del grupo en el de la copa
+## D-168 · Reinas: arrastrar desde una X las borra
+**Fecha:** 2026-10-01 · **Estado:** vigente; amplía D-166
+**Decisión:** El arrastre hace lo que diga la casilla donde empieza: desde una **vacía** pinta X
+en las vacías por donde pasa (D-166), desde una **X** borra las X por donde pasa, y desde una
+**reina** no hace nada. Las reinas nunca se tocan al arrastrar. Cada X borrada es una jugada de
+toque largo (que pone o saca la X), así que el motor no cambia. Si el toque largo ya sacó la X
+de la primera casilla y el dedo sigue, el arrastre sigue borrando.
+
+**Por qué:** El dueño lo pidió: deshacer una fila de X tenía que ser casilla por casilla. Con
+borrar como espejo de pintar, el gesto se entiende solo: el arrastre repite lo que hay donde empieza.
+
+**Alternativas descartadas:** D-166 había descartado borrar por miedo a un arrastre accidental que
+borre deducciones. Para empezar a borrar hay que apoyar el dedo justo en una X y llevarlo a otra
+casilla, y una X borrada de más se vuelve a pintar con el mismo gesto.
+
+## D-169 · Reinas: 🧹 Borrar todo
+**Fecha:** 2026-10-01 · **Estado:** vigente
+**Decisión:** Reinas trae el botón **🧹 Borrar todo**, al lado de Rendirse: deja el tablero en
+blanco (sin reinas ni X) para empezar de nuevo. Como en Tango, el primer toque solo lo arma
+("¿Seguro? Toca de nuevo para borrar") y el segundo, dentro de 3 segundos, borra. Con el tablero
+ya en blanco el botón queda apagado.
+- **Es una jugada más (`'B'`)**: la memoria de partida la recupera al volver.
+- **El reloj sigue corriendo** y los errores ya hechos se mantienen: puntúa el tiempo (D-107), y
+  empezar de nuevo no es empezar otro tablero.
+
+**Por qué:** El dueño lo pidió: cuando las X y las reinas de un intento enredan más de lo que
+ayudan, deshacerlas casilla por casilla cuesta más que empezar en limpio.
+
+**Alternativas descartadas:** reiniciar también el reloj: sería un tablero gratis después de
+haberlo mirado entero.
+## D-170 · La Copa y sus minijuegos en inglés y portugués: lo personal en tu idioma, lo del grupo en el de la copa
 **Fecha:** 2026-10-01 · **Estado:** vigente; reemplaza D-98 y cierra LIG-32
 **Decisión:** La Copa y los minijuegos sueltos pasan a los tres idiomas (C-3). Una regla para
 saber qué idioma manda: **lo personal va en el idioma de quien mira; lo del grupo, en el de la

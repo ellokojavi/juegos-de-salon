@@ -45,7 +45,7 @@ const temaLibre = codigo => {
 const juego = (motor, ui, ensayo) => ({ generar: motor.generar, montar: ui.montar, resultado: ui.resultado, ejemplo: ui.ejemplo, portada: ui.portada, ensayo });
 
 /**
- * `generar(código, día, opciones)` y `ensayo(código, día, opciones)` reciben el idioma (D-168):
+ * `generar(código, día, opciones)` y `ensayo(código, día, opciones)` reciben el idioma (D-170):
  * `lang`, el de quien juega, para los textos (hitos, ciudades), y `palabras`, el de la copa, para
  * las palabras que todos tienen que jugar iguales (Conexiones y Palabra). Sin `palabras`, `lang`.
  */

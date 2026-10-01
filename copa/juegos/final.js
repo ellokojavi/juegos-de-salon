@@ -16,7 +16,7 @@ export const NUMERO_CIFRAS = 3;
 export const NUMERO_INTENTOS = 7;
 export const LETRAS_INTENTOS = 6;
 
-/** `lang`: el idioma de los textos; `palabras`: el de la palabra secreta, el de la copa (D-168). */
+/** `lang`: el idioma de los textos; `palabras`: el de la palabra secreta, el de la copa (D-170). */
 export function generar(codigo, dia, { lang = 'es', palabras = lang } = {}) {
   const tema = temasDeLaCopa(codigo).final;
   return {

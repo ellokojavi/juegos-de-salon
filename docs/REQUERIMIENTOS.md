@@ -122,7 +122,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | LIG-29 | Recordatorios `.ics` para el calendario del celular. | ⏳ pendiente |
 | LIG-30 | Verificación cruzada: cada celular recalcula los puntajes ajenos desde las jugadas. | ⏳ pendiente |
 | LIG-31 | Papelera: borrar copas una semana después de terminadas. | ⏳ pendiente |
-| LIG-32 | Inglés y portugués, con contenido propio por idioma (D-98, D-168). | ✅ D-168 |
+| LIG-32 | Inglés y portugués, con contenido propio por idioma (D-98, D-170). | ✅ D-170 |
 | LIG-33 | Avisos automáticos por WhatsApp, correo o push (D-99). | ⏳ pendiente |
 | LIG-34 | Calendario elegido por el admin al crear la copa: qué juegos y en qué orden, a partir de una propuesta al azar; la final no cambia (D-163). | ✅ v0.75.0 |
 | LIG-35 | Pantalla de espera antes del día 1: cuándo parte, calendario e inscritos. | ✅ v0.42 |
@@ -178,6 +178,8 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | LIG-83 | Terminada la copa, el admin exporta la tabla final: la imagen y una planilla CSV con la tabla, los lugares día a día y el detalle (D-161). | ✅ v0.73.0 |
 | LIG-85 | Reinas: arrastrar desde una casilla vacía pinta X en las vacías por donde pasa, sin tocar el toque ni el toque largo (D-166). | ✅ v0.78.0 |
 | LIG-86 | Reinas: el toque cicla vacía → reina → X → vacía; el toque largo queda como atajo de la X (D-167). | ✅ v0.78.0 |
+| LIG-87 | Reinas: arrastrar desde una X borra las X por donde pasa; las reinas no se tocan (D-168). | ✅ v0.79.0 |
+| LIG-88 | Reinas: 🧹 Borrar todo deja el tablero en blanco, con confirmación; el reloj sigue (D-169). | ✅ v0.79.0 |
 | LIG-84 | Minijuegos de reserva (La Palabra, Ahorcado Contrarreloj), separados de LIG-34. | ⏳ pendiente |
 | LIG-46 | El teclado, el tablero y la línea se comparten con Toque y Fama y Línea de Tiempo (`assets/js/teclado.js`, `assets/css/teclado.css`, `assets/css/linea.css`). | ✅ v0.44 |
 

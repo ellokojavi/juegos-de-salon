@@ -1,4 +1,4 @@
-// La Copa en inglés y portugués (D-168): lo personal en el idioma de quien mira, lo del grupo en
+// La Copa en inglés y portugués (D-170): lo personal en el idioma de quien mira, lo del grupo en
 // el de la copa. Crea una copa con el almacén de prueba (`?prueba`) en cada idioma, revisa que
 // guarde el idioma de sus palabras, que la invitación avise si las palabras van en otro idioma y
 // que lo que se comparte salga en el de la copa; después abre los minijuegos sueltos.
@@ -43,7 +43,7 @@ for (const lang of ['en', 'pt']) {
   ok(meta?.lang === lang, `${lang}: la copa guarda meta.lang = ${meta?.lang}`);
   await revisar(`${lang}-02-admin`);
 
-  // Lo que va al grupo, en el idioma de la copa aunque quien comparte mire en otro (D-168)
+  // Lo que va al grupo, en el idioma de la copa aunque quien comparte mire en otro (D-170)
   await preparar();
   const otro = lang === 'en' ? 'pt' : 'en';
   await ev(`localStorage.setItem('juegos-de-salon:lang','${otro}'); 1`);

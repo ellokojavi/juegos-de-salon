@@ -22,7 +22,7 @@ export const PALABRAS = [
 ];
 
 /**
- * En inglés y en portugués (D-168): las de cada idioma, no una traducción. Las mismas reglas,
+ * En inglés y en portugués (D-170): las de cada idioma, no una traducción. Las mismas reglas,
  * sin Ñ: cinco letras distintas de la A a la Z. En portugués, sin tilde ni Ç (FOGÃO, BRAÇO no
  * entran), como el español deja fuera las tildes.
  */

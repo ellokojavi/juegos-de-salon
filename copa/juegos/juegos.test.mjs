@@ -324,6 +324,11 @@ test('reinas: solución única, reglas y puntaje', () => {
   assert.equal(reinas.estado(p, [reinas.toqueLargo(5), reinas.toque(5)]).marcas[5], reinas.VACIO);
   e = reinas.estado(p, [...toques(c0), ...toques(vecina), ...toques(vecina), ...toques(vecina), ...toques(vecina)]);
   assert.equal(e.errores, 2); assert.equal(e.marcas[vecina], reinas.REINA);
+  // Borrar todo deja el tablero en blanco; los errores quedan y se puede seguir jugando (D-169)
+  e = reinas.estado(p, [...toques(c0), ...toques(vecina), reinas.toqueLargo(5), reinas.BORRAR]);
+  assert.ok(e.marcas.every(v => v === reinas.VACIO)); assert.equal(e.errores, 1); assert.ok(!e.fin);
+  e = reinas.estado(p, [...toques(c0), reinas.BORRAR, ...bien]);
+  assert.ok(e.fin); assert.equal(e.errores, 0);
   // Las partidas de antes de D-167 guardaban el toque como el índice: pone o saca la reina
   e = reinas.estado(p, [reinas.toqueLargo(5), 5]);
   assert.equal(e.marcas[5], reinas.REINA);
@@ -507,7 +512,7 @@ test('una copa ya en su día de Conexiones conserva la grilla de antes (D-128)',
   }
 });
 
-// ── Inglés y portugués (D-168) ──
+// ── Inglés y portugués (D-170) ──
 
 test('grillas en inglés y portugués: las mismas reglas que las de español', () => {
   for (const [lang, M] of Object.entries({ en: GRILLAS_EN, pt: GRILLAS_PT })) {
