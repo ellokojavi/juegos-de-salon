@@ -45,6 +45,10 @@ Una carpeta por juego, con su propia URL (`/<id>/`) y siempre estos archivos:
 - Los textos fijos del HTML se marcan con `data-i18n="clave"` (o `data-i18n-html`) y se aplican con `applyStatic(T)`.
 - El idioma se lee con `getLang()` y el toggle `langToggle()` va en la intro de cada juego.
 - Las traducciones se adaptan, no se calcan: los chistes y las referencias locales se reemplazan por equivalentes. El portugués es el de Brasil, informal ("você", "celular", "rolê"), y los nombres de los juegos se traducen (Quarto Rei, Toque e Fama, Batalha Naval, Linha do Tempo) igual que en inglés (D-48).
+- **En La Copa, lo personal va en tu idioma y lo del grupo en el de la copa** (D-168): la pantalla
+  sigue el toggle de quien mira, pero las palabras de Conexiones y Palabra, los mensajes que se
+  comparten al grupo y su link van en el idioma que se eligió al crear la copa. El contenido con
+  palabras es propio de cada idioma, no una traducción.
 - **Los tres diccionarios tienen exactamente las mismas claves**, las listas el mismo largo y las plantillas las mismas `{llaves}`: un texto que falta en un idioma se ve como `undefined` en pantalla, y `errText` (C-14) busca la misma clave en cualquier idioma. Lo verifica `node assets/js/i18n.test.mjs` (menú, frases, mazos y todos los juegos). Los mazos de Línea de Tiempo llevan `es`, `en` y `pt` en cada carta, y el test del motor también lo exige.
 - Las plantillas usan `{llaves}` y una función `fmt()`; nunca se arman frases concatenando palabras sueltas.
 

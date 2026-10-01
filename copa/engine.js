@@ -177,7 +177,7 @@ export function ventanas(inicio, dias, tz = ZONA) {
  * Lo que se guarda al crear una copa. `win` lleva las ventanas ya calculadas porque las
  * reglas de la base no saben de zonas horarias: comparan `now` contra estos números.
  */
-export function nuevaMeta({ nombre, dias, inicio, tz = ZONA, admin, creada, lab = false, alias = null, cal = null }) {
+export function nuevaMeta({ nombre, dias, inicio, tz = ZONA, admin, creada, lab = false, alias = null, cal = null, lang = 'es' }) {
   if (!CALENDARIOS[dias]) throw new Error('modalidad');
   if (cal && !calendarioValido(cal, dias)) throw new Error('calendario');
   return {
@@ -190,6 +190,8 @@ export function nuevaMeta({ nombre, dias, inicio, tz = ZONA, admin, creada, lab 
     // Una copa del laboratorio (D-115): su admin puede pasarla al día siguiente para probar
     ...(lab ? { lab: true } : {}),
     ...(alias ? { alias } : {}),
+    // El idioma de las palabras (D-168). El español no se escribe: así eran las copas de antes
+    ...(lang && lang !== 'es' ? { lang } : {}),
   };
 }
 

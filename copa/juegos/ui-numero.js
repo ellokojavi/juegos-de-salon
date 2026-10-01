@@ -11,8 +11,8 @@ import { teclado, CIFRAS } from '../../assets/js/teclado.js';
 import { LOCALES as TYF_LOCALES } from '../../toque-y-fama/rules.js';
 
 export const TYF = TYF_LOCALES.es;
-/** Los textos de Toque y Fama en el idioma de quien juega: la copa va en español, pero el modo solo de Toque y Fama no. */
-const tyf = lang => TYF_LOCALES[lang] || TYF;
+/** Los textos de Toque y Fama en el idioma de quien juega (D-168). */
+export const tyf = lang => TYF_LOCALES[lang] || TYF;
 
 export const leerJugadas = j => (Array.isArray(j) ? { i: j.slice(), n: [] } : { i: (j?.i || []).slice(), n: (j?.n || []).slice() });
 

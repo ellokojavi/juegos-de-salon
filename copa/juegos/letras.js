@@ -5,15 +5,18 @@
  * pantalla de Toque y Fama.
  */
 import { azar } from './semilla.js';
-import { PALABRAS } from './palabras.js';
+import { palabrasDe } from './palabras.js';
 
 export const LARGO = 5;
 export const MAX_INTENTOS = 8;
 export const ALFABETO = 'QWERTYUIOPASDFGHJKLÑZXCVBNM'.split('');
+/** El teclado de cada idioma: la Ñ solo en español (D-168). */
+export const alfabeto = lang => (lang && lang !== 'es' ? ALFABETO.filter(l => l !== 'Ñ') : ALFABETO);
 
-export function generar(codigo, dia, { max = MAX_INTENTOS, sal = 'letras' } = {}) {
+/** `palabras`: el idioma de la palabra secreta, el de la copa (D-168); sin él, `lang`. */
+export function generar(codigo, dia, { max = MAX_INTENTOS, sal = 'letras', lang = 'es', palabras = lang } = {}) {
   const a = azar(codigo, dia, sal);
-  return { largo: LARGO, max, secreto: a.uno(PALABRAS) };
+  return { largo: LARGO, max, secreto: a.uno(palabrasDe(palabras)), ...(palabras !== 'es' ? { lang: palabras } : {}) };
 }
 
 export const valido = v => typeof v === 'string' && v.length === LARGO && new Set(v).size === LARGO && [...v].every(l => ALFABETO.includes(l));

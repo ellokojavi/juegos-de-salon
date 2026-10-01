@@ -4,25 +4,31 @@
  * se avisa "a una".
  */
 import { GRILLAS, GRILLA_ENSAYO, GRILLAS_ANTES_D128, CAMBIO_D128 } from './grillas.js';
+import * as EN from './grillas-en.js';
+import * as PT from './grillas-pt.js';
 import { azar, hash32 } from './semilla.js';
 
 export const ERRORES = 4;
 export const COLORES = ['amarillo', 'verde', 'azul', 'morado'];
 export const EMOJIS = ['🟨', '🟩', '🟦', '🟪'];
 
-/** La grilla de la copa: una por copa (la semilla del código, no la del día). */
+/** Las grillas de cada idioma (D-168): cada uno tiene las suyas, no una traducción. */
+const IDIOMAS = { en: EN, pt: PT };
+
 /**
  * La grilla de una copa: la misma posición de la lista para siempre. `desde` es cuándo empieza
  * el día de Conexiones de esa copa: si empezó antes del cambio a grupos por significado (D-128),
  * se sigue con la grilla de antes, para no cambiarla a mitad del día.
  */
-export const grillaDe = (codigo, { desde = null } = {}) => {
-  const lista = desde !== null && desde < CAMBIO_D128 ? GRILLAS_ANTES_D128 : GRILLAS;
+export const grillaDe = (codigo, { desde = null, lang = 'es' } = {}) => {
+  // D-128 es anterior a los otros idiomas: solo el español tiene grillas de antes
+  const lista = IDIOMAS[lang]?.GRILLAS || (desde !== null && desde < CAMBIO_D128 ? GRILLAS_ANTES_D128 : GRILLAS);
   return lista[hash32(`${codigo}:grilla`) % lista.length];
 };
 
-export function generar(codigo, dia, { sal = 'conexiones', grilla, desde = null } = {}) {
-  const g = grilla || grillaDe(codigo, { desde });
+/** `palabras`: el idioma de las palabras, el de la copa (D-168); sin él, `lang`. */
+export function generar(codigo, dia, { sal = 'conexiones', grilla, desde = null, lang = 'es', palabras = lang } = {}) {
+  const g = grilla || grillaDe(codigo, { desde, lang: palabras });
   const a = azar(codigo, dia, sal);
   return {
     id: g.id,
@@ -81,4 +87,4 @@ export const puntaje = e => Math.max(0, 25 * e.resueltos.length - 5 * e.errores)
 export const tarjeta = e => e.filas.map(f => f.map(n => EMOJIS[n]).join('')).join('\n');
 
 /** La sesión de prueba juega su propia grilla, fuera del sorteo (D-103). */
-export const ensayo = (codigo, dia) => generar(codigo, dia, { sal: 'ensayo', grilla: GRILLA_ENSAYO });
+export const ensayo = (codigo, dia, { lang = 'es', palabras = lang } = {}) => generar(codigo, dia, { sal: 'ensayo', grilla: IDIOMAS[palabras]?.GRILLA_ENSAYO || GRILLA_ENSAYO });

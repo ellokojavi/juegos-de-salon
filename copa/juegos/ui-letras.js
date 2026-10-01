@@ -7,10 +7,11 @@
  */
 import * as motor from './letras.js';
 import { teclado } from '../../assets/js/teclado.js';
-import { TYF, tablero, leerJugadas } from './ui-numero.js';
+import { tyf, tablero, leerJugadas } from './ui-numero.js';
 
 export function montar(raiz, ctx) {
   const { p, T, fmt, el, SFX, vibrate } = ctx;
+  const TYF = tyf(ctx.lang);
   const J = leerJugadas(ctx.jugadas);
   const notas = new Set(J.n);
   const guardar = () => ctx.guardar({ i: J.i, n: [...notas] });
@@ -35,7 +36,7 @@ export function montar(raiz, ctx) {
         // Lo que ya suma (D-108): cada letra en su lugar cuenta una vez
         e.encontradas ? el('p', { class: 'center ok', id: 'letras-encontradas', style: 'margin:0' }, fmt(e.encontradas === 1 ? T.famasFoundOne : T.famasFound, { n: e.encontradas, largo: p.largo, pts: motor.PUNTOS_FAMA * e.encontradas })) : null,
         teclado({
-          largo: p.largo, teclas: motor.ALFABETO, columnas: 10, acciones: 'abajo', submitLabel: TYF.guess, notes: notas, onNotesChange: guardar,
+          largo: p.largo, teclas: motor.alfabeto(p.lang), columnas: 10, acciones: 'abajo', submitLabel: TYF.guess, notes: notas, onNotesChange: guardar,
           valido: motor.valido, puede: motor.puede,
           onSubmit: v => {
             J.i.push(v); guardar();
@@ -46,7 +47,7 @@ export function montar(raiz, ctx) {
         }),
         el('p', { class: 'block-hint' }, T.blockHintLetters));
     }
-    caja.append(tablero(el, { filas: e.filas, largo: p.largo, titulo: T.yourGuesses, valor: letrasPintadas, completa: false }));
+    caja.append(tablero(el, { filas: e.filas, largo: p.largo, titulo: T.yourGuesses, lang: ctx.lang, valor: letrasPintadas, completa: false }));
     if (ctx.cierreAbajo) caja.append(...cierre);
     raiz.append(caja);
   };

@@ -1122,7 +1122,7 @@ suerte: una buena decisión puede perder al destapar.
 **Consecuencias:** el mismo código da la misma copa en cualquier navegador; las pruebas lo comparan.
 
 ## D-98 · La Copa va solo en español por ahora
-**Fecha:** 2026-09-23 · **Estado:** vigente
+**Fecha:** 2026-09-23 · **Estado:** reemplazada por D-168
 **Decisión:** La interfaz y el contenido de La Copa son solo en español, sin selector de idioma. Es
 una excepción a C-3: la entrada de `games.js` declara `idiomas: ['es']`, su tarjeta del menú sí va
 en los tres idiomas (y en inglés y portugués dice que por ahora es en español), y
@@ -2357,3 +2357,54 @@ sugiere. El ciclo se descubre solo, tocando de nuevo lo que se acaba de poner.
 **Alternativas descartadas:** el orden del Queens de LinkedIn (vacía → X → reina): allá la X va
 primero porque se usa más, pero aquí cambiaría lo que el primer toque hace hoy, y las X en
 cantidad ya las pinta el arrastre. Quitar el toque largo: a quien ya lo aprendió no le estorba.
+
+## D-168 · La Copa y sus minijuegos en inglés y portugués: lo personal en tu idioma, lo del grupo en el de la copa
+**Fecha:** 2026-10-01 · **Estado:** vigente; reemplaza D-98 y cierra LIG-32
+**Decisión:** La Copa y los minijuegos sueltos pasan a los tres idiomas (C-3). Una regla para
+saber qué idioma manda: **lo personal va en el idioma de quien mira; lo del grupo, en el de la
+copa.**
+1. **Juegos y minijuegos sueltos** (sin copa): todo en el idioma de quien juega, que se cambia con
+   el toggle de la intro. Lo que se comparte sale en ese idioma y el link lleva `?lang=` (D-74).
+   Es C-3 tal como estaba.
+2. **Cada copa tiene un idioma**, que se elige al crearla ("¿En qué idioma van las palabras?") y
+   parte en el de quien la crea. Se guarda en `meta.lang` (`en` o `pt`; el español no se escribe,
+   así las copas de antes siguen iguales) y no cambia. Manda en lo que el grupo tiene en común:
+   - **Las palabras** de 🔗 Conexiones y 🔤 Toque y Fama: Palabra (también la ronda de la final):
+     tienen que ser las mismas para todos o la copa deja de ser pareja.
+   - **Lo que va al grupo:** invitación, recordatorio, tabla, resumen final, "Compartir mi
+     resultado", la imagen y la planilla. El chat del grupo es uno solo.
+   - **El link que se comparte** lleva `?lang=` de la copa, así quien entra por primera vez llega
+     en ese idioma.
+3. **La pantalla de la copa** (reglas, botones, tablero, desglose) va en el idioma de quien mira:
+   el toggle está en la portada, en la invitación y en la antesala del minijuego suelto, nunca a
+   mitad de un juego. Si las palabras de la copa van en otro idioma, la invitación y la antesala de
+   Conexiones, Palabra y la final lo dicen ("🌐 Las palabras de esta copa van en inglés").
+   Los hitos de Línea Relámpago y ¿En qué año? y las ciudades de ¿Dónde queda? son las mismas
+   cartas en todos los idiomas: se muestran en el de quien mira sin cambiar lo que se juega.
+
+El contenido con palabras **es propio de cada idioma, no una traducción**: 13 grillas de
+Conexiones en inglés y 13 en portugués (`grillas-en.js`, `grillas-pt.js`, por significado y con
+distractores que funcionan en ese idioma, D-102 y D-128), más de 100 palabras secretas por idioma
+(`palabras.js`, sin Ñ ni tildes, con su teclado sin Ñ) y los nombres de los 195 países y de las
+ciudades que cambian de nombre (`nombres.js`).
+
+**Por qué:** lo pidió el dueño, que eligió esta modalidad entre tres: todo por persona, todo por
+copa, o mixta. D-98 había dejado la copa en español porque una copa mixta español/portugués "no
+sería pareja"; lo que no es parejo son las palabras, no las reglas. Fijar las palabras y los
+mensajes por copa y dejar libre la pantalla mantiene la copa pareja sin dejar afuera a quien no
+habla el idioma del grupo.
+
+**Alternativas descartadas:** todo por copa, sin toggle adentro (lo más simple, pero quien no lee
+el idioma de la copa no entiende ni las reglas). Todo por persona, también lo compartido (el
+chat del grupo recibiría mensajes en tres idiomas). Traducir las grillas y las palabras de
+español (los distractores y los chilenismos no sobreviven a la traducción). Un toggle a mitad de
+juego (recarga la página y no hace falta).
+
+**Consecuencias:** `games.js` ya no declara `idiomas: ['es']` en La Copa ni en los sueltos, y
+`i18n.test.mjs` compara los `LOCALES` de la copa como los de cualquier juego, con el nombre de
+cada suelto igual al de su minijuego en los tres idiomas. Los textos de cada minijuego (nombre,
+cómo se juega, puntaje) viven en `LOCALES[lang].juegos` y las rondas de la final en
+`LOCALES[lang].rondas`; `MINIJUEGOS` sigue exportado en español para el panel y las herramientas.
+Los motores reciben `lang` (textos) y `palabras` (idioma de la copa) en `generar` y `ensayo`.
+Las reglas de Firebase aceptan `meta.lang` y no dejan cambiarlo. Una copa nueva en inglés o
+portugués necesita las reglas publicadas (`node tools/reglas.mjs publicar`, D-122).
