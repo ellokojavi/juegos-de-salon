@@ -100,6 +100,7 @@ node copa/planilla.test.mjs            # la tabla final como CSV (D-161)
 node copa/reportes.test.mjs             # un reporte que no sale queda guardado y se reenvía
 node assets/js/arrastre.test.mjs
 node assets/js/i18n.test.mjs             # paridad es/en/pt (C-3)
+node assets/js/compartir.test.mjs        # el estándar de lo que se comparte (D-165)
 node assets/js/transport/cleanup.test.mjs
 node assets/js/transport/dispose.test.mjs
 node assets/js/transport/errors.test.mjs

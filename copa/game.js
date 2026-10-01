@@ -10,8 +10,9 @@
  * La misma pantalla sirve los minijuegos sueltos de la portada en /minijuegos/reinas/ (D-149, D-162).
  */
 import { crearArrastre } from '../assets/js/arrastre.js';
-import { $, $$, el, con, conEmoji, vibrate, sparkles, keepAwake, confetti, shareLink, canShare } from '../assets/js/ui.js';
-import { applyStatic } from '../assets/js/i18n.js';
+import { $, $$, el, con, conEmoji, vibrate, sparkles, keepAwake, confetti } from '../assets/js/ui.js';
+import { applyStatic, COMMON, SITIO } from '../assets/js/i18n.js';
+import { compartir as compartirAlChat, cabecera, lamina, laminaResultado, aArchivo, nombreArchivo, puntajeYTiempo, botonResultadoSolo, MARCO } from '../assets/js/compartir.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { trackStart, versionOf } from '../assets/js/transport/stats.js';
 import { gameById } from '../assets/js/games.js';
@@ -798,7 +799,7 @@ function grafico(now) {
   return el('div', { class: 'panel' }, el('p', { class: 'lead', style: 'margin-bottom:8px' }, T.progressTitle), svg, chips, notaJuegos, leyenda,
     el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-imagen', onClick: async ev2 => {
       SFX.tap(); const b = ev2.currentTarget; b.disabled = true;
-      try { await compartirImagen(); } finally { b.disabled = false; }
+      try { await compartirTabla(); } catch (e) { toast(errorDe(e)); } finally { b.disabled = false; }
     } }, `📤 ${T.shareImage}`));
 }
 
@@ -896,18 +897,35 @@ function podio() {
     medalla(T.medalWins, m.ganador?.filas, m.ganador ? ` (${m.ganador.n})` : ''),
     medalla(T.medalComeback, m.remontada?.filas, m.remontada ? ` (+${m.remontada.n})` : ''),
     medalla(T.medalLast, m.farolito),
-    el('button', { class: 'btn btn--cyan btn--sm', style: 'width:100%', onClick: () => compartir(mensajeFinal()) }, T.shareSummary));
+    el('button', { class: 'btn btn--cyan btn--sm', style: 'width:100%', id: 'btn-resumen', onClick: ev => conBoton(ev, compartirTabla) }, T.shareSummary));
 }
 
 /* ------------------------------------------------------------------ */
 /* Mensajes para el grupo (D-99)                                       */
 /* ------------------------------------------------------------------ */
 
-async function compartir(texto, url = urlPublica(S.code)) {
-  // El link va dentro del texto, en su propia línea al final (D-124): si va aparte, Android lo
-  // pega pegado a la última frase ("…Mica. https://…")
-  const r = await shareLink({ title: L().meta.name, text: `${texto}\n\n🔗 ${url}` });
+/**
+ * Todo lo que comparte la copa sale por aquí (D-165): el texto con la cabecera de la copa y el
+ * link en su línea al final (D-124), y la imagen si la hay. Sin menú del sistema, el texto queda
+ * copiado (y la imagen, descargada).
+ */
+async function compartir(texto, imagen = null) {
+  const r = await compartirAlChat({ titulo: L().meta.name, texto, url: urlPublica(S.code), imagen });
   if (r === 'copied') toast(T.copied);
+  if (r === 'downloaded') toast(T.imageDownloaded);
+}
+
+/** La cabecera de todo lo que la copa comparte, la misma en el texto y en la imagen (D-165). */
+const cabCopa = (emoji, contexto) => ({ emoji, titulo: fmt(T.shareHead, { copa: L().meta.name }), contexto });
+
+/** El mensaje entero: la cabecera y, separado por una línea, lo que dice. */
+const mensajeCopa = (cab, ...partes) => [cabecera(cab), ...partes].filter(Boolean).join('\n\n');
+
+/** Un botón que arma algo antes de compartir (una imagen tarda): se apaga mientras tanto. */
+async function conBoton(ev, fn) {
+  SFX.tap();
+  const b = ev.currentTarget; b.disabled = true;
+  try { await fn(); } catch (e) { toast(errorDe(e)); } finally { b.disabled = false; }
 }
 
 function toast(texto) {
@@ -924,14 +942,13 @@ function mensajeInvitacion() {
   const Lc = L(), { meta } = Lc;
   const nombres = activos(Lc).map(j => j.name);
   const lista = nombres.length > 1 ? `${nombres.slice(0, -1).join(', ')} y ${nombres.at(-1)}` : nombres[0] || '';
-  return fmt(T.shareInviteText, {
-    copa: meta.name, dias: meta.days, fecha: fechaLarga(meta.win[1].a, meta.tz),
+  return mensajeCopa(cabCopa('🏆', T.ctxInvite), fmt(T.shareInviteText, {
+    dias: meta.days, fecha: fechaLarga(meta.win[1].a, meta.tz),
     inscritos: nombres.length ? fmt(nombres.length === 1 ? T.shareInviteJoinedOne : T.shareInviteJoined, { names: lista }) : '',
-  }).replace(/\n{3,}/g, '\n\n');
+  }).replace(/\n{3,}/g, '\n\n'));
 }
 
 function invitar() {
-  const { meta } = L();
   return compartir(mensajeInvitacion());
 }
 
@@ -946,19 +963,44 @@ function mensajeHoy() {
   const d = diaActual(meta, now);
   if (d === 0) {
     const J1 = MINIJUEGOS[juegoDelDia(meta, 1)];
-    return fmt(Lc.closed ? T.shareBeforeClosed : T.shareBeforeText, { copa: meta.name, fecha: fechaLarga(meta.win[1].a, meta.tz), juego: `${J1.emoji} ${J1.nombre}` });
+    return mensajeCopa(cabCopa('🏆', fmt(T.ctxBefore, { fecha: fechaLarga(meta.win[1].a, meta.tz) })),
+      fmt(Lc.closed ? T.shareBeforeClosed : T.shareBeforeText, { juego: `${J1.emoji} ${J1.nombre}` }));
   }
   const hoy = Math.min(d, meta.days);
   const J = MINIJUEGOS[juegoDelDia(meta, hoy)];
   const hasta = esFinal(meta, hoy) ? T.untilToday : T.untilTomorrow;
-  const partes = [fmt(T.shareTodayText, { d: hoy, n: meta.days, copa: meta.name, juego: `${J.emoji} ${J.nombre}`, hasta })];
+  const partes = [fmt(T.shareTodayText, { juego: `${J.emoji} ${J.nombre}`, hasta })];
   if (hoy > 1 && abierto(meta, hoy - 1, now) && faltan(Lc, hoy - 1, now).length) {
     const Ja = MINIJUEGOS[juegoDelDia(meta, hoy - 1)];
     partes.push(fmt(T.shareTodayGrace, { juego: `${Ja.emoji} ${Ja.nombre}` }));
   }
   const falta = faltan(Lc, hoy, now);
   if (falta.length && falta.length < activos(Lc).length) partes.push(fmt(T.shareTodayMissing, { names: falta.map(j => j.name).join(', ') }));
-  return partes.join('\n');
+  return mensajeCopa(cabCopa('🏆', fmt(T.ctxDay, { d: hoy, n: meta.days })), partes.join('\n'));
+}
+
+/**
+ * La cabecera de la tabla, la misma en el texto y en la imagen (D-165): "📊 … · Tabla de
+ * posiciones · día 3 de 7", con "(provisoria)" si alguien todavía puede cambiarla (D-147), y
+ * "🏁 … · Tabla final" al terminar. El día es el último que muestra la tabla, no el de hoy si
+ * quien comparte todavía no lo juega (#67).
+ */
+function cabTabla(Lc, filas, now) {
+  const { meta } = Lc;
+  if (terminada(meta, now)) return cabCopa('🏁', T.ctxFinal);
+  const d = ultimoDiaVisto(filas) || Math.min(Math.max(diaActual(meta, now), 1), meta.days);
+  return cabCopa('📊', fmt(provisoria(Lc, filas, now) ? T.ctxTableProvisional : T.ctxTable, { d, n: meta.days }));
+}
+
+/**
+ * Compartir la tabla, desde donde sea (el gráfico del tablero, el podio, Administrar): siempre
+ * la imagen y el texto juntos, con la misma cabecera (D-165). Mientras se juega, la tabla
+ * parcial; terminada, el resumen final.
+ */
+async function compartirTabla() {
+  const Lc = L(), now = ahora();
+  const texto = terminada(Lc.meta, now) ? mensajeFinal() : mensajeTabla();
+  await compartir(texto, await imagenTabla());
 }
 
 function mensajeTabla() {
@@ -971,10 +1013,8 @@ function mensajeTabla() {
   const menos = menosJuegos(filas);
   const lista = filas.map(f => `${['🥇', '🥈', '🥉'][f.lugar - 1] || `${f.lugar}.`} ${nombreConJuegos(f.name, menos[f.pid])} · ${f.total} pts`).join('\n');
   const falta = faltan(Lc, d, now);
-  // El título lleva el último día que muestra la tabla; el aviso de abajo, el día que corre (#67)
-  let txt = fmt(provisoria(Lc, filas, now) ? T.shareTableTextProvisional : T.shareTableText, { copa: meta.name, d: ultimoDiaVisto(filas) || d, tabla: lista });
-  if (falta.length) txt += `\n\n${fmt(T.shareTableMissing, { d, names: falta.map(j => j.name).join(', ') })}`;
-  return txt;
+  // La cabecera lleva el último día que muestra la tabla; el aviso de abajo, el día que corre (#67)
+  return mensajeCopa(cabTabla(Lc, filas, now), lista, falta.length ? fmt(T.shareTableMissing, { d, names: falta.map(j => j.name).join(', ') }) : '');
 }
 
 /** "Tomario (-1J)": el nombre con cuántos juegos menos lleva (D-126). */
@@ -994,10 +1034,10 @@ const METALES = {
  * fila, así cada nombre aparece una sola vez. Cada punto dice qué pasó ese día: los puntos que
  * sacó (con anillo dorado si usó el comodín, cian en la final), "–" si no jugó un día que cerró
  * y "?" si todavía puede jugarlo. Con la copa terminada, el podio va en galvanos. Se dibuja en
- * un canvas de 1080 × 1350 (4:5) con las fuentes de la app y se comparte como archivo; si el
- * celular no puede, se descarga.
+ * un canvas de 1080 × 1350 (4:5) con las fuentes de la app, dentro del marco de toda imagen que
+ * se comparte: arriba la misma cabecera del texto, abajo el link (D-165). Devuelve el archivo.
  */
-async function compartirImagen() {
+async function imagenTabla() {
   const Lc = L(), { meta } = Lc;
   const now = ahora();
   const filas = tabla(Lc, S.yo, now);
@@ -1009,39 +1049,24 @@ async function compartirImagen() {
   // El último día que muestra la tabla, no el de hoy si quien comparte todavía no lo juega (#67)
   const d = ultimoDiaVisto(filas) || Math.min(Math.max(diaActual(meta, now), 1), meta.days);
   const n = filas.length;
+  const url = urlPublica(S.code);
   const W = 1080, ALTO = 1350; // hasta 4:5: se ve entera en WhatsApp y en el feed de Instagram
   // De arriba abajo (D-154): títulos, filas, rótulos de los días, leyenda y link. Las filas
   // crecen hasta llenar el 4:5, con tope para que pocos jugadores no queden gigantes; entonces la
   // imagen se acorta a lo que necesita, sin bajar de cuadrada. Lo que aún sobra se reparte
   // arriba y abajo del bloque, así nada queda pegado ni suelto
-  const ARRIBA = 225, EJE = 60, HUECO = 40, LEYENDA = conPills ? 96 : 40, ABAJO = 115;
+  const { arriba: ARRIBA, abajo: ABAJO } = MARCO, EJE = 60, HUECO = 40, LEYENDA = conPills ? 96 : 40;
   const resto = EJE + HUECO + LEYENDA;
   const fila = Math.max(60, Math.min(128, (ALTO - ARRIBA - ABAJO - resto) / Math.max(1, n)));
   const H = Math.max(W, ARRIBA + n * fila + resto + ABAJO);
   const g0 = ARRIBA + (H - ARRIBA - ABAJO - (n * fila + resto)) / 2;
-  const cv = document.createElement('canvas');
-  cv.width = W; cv.height = H;
-  const c = cv.getContext('2d');
-  try { await document.fonts?.ready; } catch (_) { /* nada */ }
+  // El marco: el fondo, la cabecera del texto (el nombre de la copa y "Tabla de posiciones · día 3
+  // de 7") y el link abajo
+  const { cv, c } = await lamina({ alto: H, cab: cabTabla(Lc, filas, now), url });
   const fuente = (peso, px, familia = 'Nunito, system-ui, sans-serif') => `${peso} ${px}px ${familia}`;
   const caja = (x0, y0, w, h, r) => { c.beginPath(); if (c.roundRect) c.roundRect(x0, y0, w, h, r); else c.rect(x0, y0, w, h); };
   const circulo = (cx, cy, r) => { c.beginPath(); c.arc(cx, cy, r, 0, Math.PI * 2); };
   const TINTA = '#1a0f33'; // el número dentro de un punto, y el fondo de los puntos huecos
-  // Fondo como el de la app
-  const fondo = c.createLinearGradient(0, 0, W, H);
-  fondo.addColorStop(0, '#3a0d5c'); fondo.addColorStop(1, '#120a2e');
-  c.fillStyle = fondo; c.fillRect(0, 0, W, H);
-  // Títulos
-  c.textAlign = 'center';
-  c.fillStyle = '#ffd23f';
-  // El nombre de la copa, achicando la letra hasta que quepa (llega a 40 caracteres)
-  let tam = 76;
-  do { c.font = fuente(400, tam, 'Bangers, Impact, sans-serif'); tam -= 4; } while (c.measureText(`🏆 ${meta.name}`).width > W - 100 && tam > 30);
-  c.fillText(`🏆 ${meta.name}`, W / 2, 115);
-  c.fillStyle = '#ffffff'; c.font = fuente(800, 40);
-  // Si alguien todavía puede jugar el último día que se ve, la tabla lo dice
-  const prov = provisoria(Lc, filas, now);
-  c.fillText(fmt(prov ? T.imageSubtitleProvisional : T.imageSubtitle, { d, n: meta.days }), W / 2, 180);
   // El eje que comparten: el centro de la fila i (0 = arriba) es también la altura del lugar i+1
   const yFila = i => g0 + (i + 0.5) * fila;
   const color = pid => colorDe(Lc, pid);
@@ -1216,21 +1241,7 @@ async function compartirImagen() {
     c.font = fuente(700, 26); c.fillStyle = 'rgba(255,255,255,0.6)'; c.textAlign = 'left';
     c.fillText(T.imagePillNote, x0 + wp + 14, ly + 59);
   }
-  // El link
-  c.textAlign = 'center'; c.font = fuente(800, 34); c.fillStyle = '#2ee6d6';
-  c.fillText(urlPublica(S.code).replace(/^https?:\/\//, ''), W / 2, H - 55);
-  const blob = await new Promise(r => cv.toBlob(r, 'image/png'));
-  const archivo = new File([blob], `copa-${meta.alias || S.code.toLowerCase()}-dia-${d}.png`, { type: 'image/png' });
-  try {
-    if (navigator.canShare?.({ files: [archivo] })) {
-      await navigator.share({ files: [archivo], title: meta.name, text: `${fmt(prov ? T.shareTableTextProvisional : T.shareTableText, { copa: meta.name, d, tabla: '' }).trim()}\n\n🔗 ${urlPublica(S.code)}` });
-      return;
-    }
-  } catch (e) { if (e?.name === 'AbortError') return; }
-  // Sin compartir archivos (computador): se descarga
-  const a = el('a', { href: URL.createObjectURL(blob), download: archivo.name });
-  document.body.append(a); a.click(); a.remove();
-  toast(T.imageDownloaded);
+  return aArchivo(cv, nombreArchivo('copa', meta.alias || S.code, fin ? 'tabla-final' : `dia-${d}`));
 }
 
 /** La tabla final como planilla CSV (D-161): se descarga, para abrirla en Excel o en Google Sheets. */
@@ -1254,7 +1265,7 @@ function mensajeFinal() {
     m.remontada && `${T.medalComeback}: ${m.remontada.filas.map(f => f.name).join(', ')}`,
     m.farolito && `${T.medalLast}: ${m.farolito.map(f => f.name).join(', ')}`,
   ].filter(Boolean).join('\n');
-  return fmt(T.shareFinalText, { copa: Lc.meta.name, campeon, podio: podioTxt }) + (extras ? `\n\n${extras}` : '');
+  return mensajeCopa(cabCopa('🏁', T.ctxFinal), `🏆 ${campeon}`, podioTxt, extras);
 }
 
 /* ------------------------------------------------------------------ */
@@ -1271,7 +1282,8 @@ function admin({ forzar = false } = {}) {
   body.innerHTML = '';
   const now = ahora();
   const d = diaActual(meta, now);
-  const msg = (rotulo, fn, id) => el('button', { class: 'btn btn--cyan btn--sm', id, onClick: () => { SFX.tap(); compartir(fn()); } }, `📤 ${rotulo}`);
+  // La tabla y el resumen van con su imagen, como desde el tablero y el podio (D-165)
+  const msg = (rotulo, fn, id) => el('button', { class: 'btn btn--cyan btn--sm', id, onClick: ev => conBoton(ev, () => (fn === mensajeTabla || fn === mensajeFinal ? compartirTabla() : compartir(fn()))) }, `📤 ${rotulo}`);
   const jug = activos(Lc);
   const err = el('div', { class: 'form-error', role: 'alert' });
   // La primera vez (recién creada, o mientras el admin siga solo): qué hacer ahora (D-110)
@@ -1307,7 +1319,7 @@ function admin({ forzar = false } = {}) {
       el('p', { class: 'lead', style: 'margin:0' }, T.exportTitle),
       el('p', { class: 'muted', style: 'margin:0' }, T.exportLead),
       errExportar,
-      accion(`📤 ${T.exportImage}`, 'btn-exportar-imagen', () => compartirImagen(), 'btn btn--cyan btn--sm', errExportar),
+      accion(`📤 ${T.exportImage}`, 'btn-exportar-imagen', () => compartirTabla(), 'btn btn--cyan btn--sm', errExportar),
       accion(`⬇️ ${T.exportSheet}`, 'btn-exportar-planilla', async () => { descargarPlanilla(); }, 'btn btn--cyan btn--sm', errExportar)));
   }
 
@@ -1746,8 +1758,6 @@ function resultado(d, { recien = false, det = null } = {}) {
   const body = $('#resultado-body');
   body.innerHTML = '';
   const ranking = jug.filter(j => pos[j.pid]).sort((a, b) => pos[a.pid].pos - pos[b.pid].pos);
-  // Completa (D-124): la copa, el día, el juego, quién lo jugó y cómo le fue
-  const tarjeta = `${fmt(T.shareCardText, { copa: meta.name, d, emoji: J.emoji, juego: J.nombre, name: nombreDe(S.yo), resumen: mio.r || '' })}\n${mio.t || ''}`;
   poner(body, 
     el('div', { class: 'result-hero' },
       el('span', { class: con('trophy' + (recien ? ' pop' : ''), J.emoji) }, J.emoji),
@@ -1759,7 +1769,7 @@ function resultado(d, { recien = false, det = null } = {}) {
       ? fmt(T.finalPos, { pos: `${yo.pos}º`, n, pts: yo.pts * x })
       : fmt(T.provisional, { pos: `${yo.pos}º`, n })),
     explicacion(J, { s: mio.s, ms: mio.ms, det, x, final: esFinal(meta, d) }),
-    el('button', { class: 'btn btn--cyan', id: 'btn-tarjeta', onClick: () => { SFX.tap(); compartir(tarjeta); } }, T.shareCard),
+    el('button', { class: 'btn btn--cyan', id: 'btn-tarjeta', onClick: ev => conBoton(ev, () => compartirResultado(d)) }, T.shareCard),
     el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.dayTable),
       el('div', { class: 'tabla' }, ranking.map(j => el('div', { class: 'fila' + (j.pid === S.yo ? ' yo' : '') },
         el('span', { class: 'lugar' }, `${pos[j.pid].pos}`),
@@ -1773,6 +1783,26 @@ function resultado(d, { recien = false, det = null } = {}) {
     el('button', { class: 'btn btn--yellow', id: 'btn-volver', onClick: () => { SFX.tap(); S.verDia = null; tablero(); } }, T.toBoard),
     botonReporte({ juego: id, dia: d }),
   );
+}
+
+/**
+ * El resultado del día, completo (D-124) y con su imagen (D-165): la cabecera de la copa con el
+ * día ("🏆 *La Copa: …* · Día 3 de 7"), el juego, quién lo jugó, cómo le fue y la tarjeta de
+ * colores. La imagen dice lo mismo, en el mismo orden.
+ */
+async function compartirResultado(d) {
+  const Lc = L(), { meta } = Lc;
+  const mio = Lc.results[d][S.yo];
+  const J = MINIJUEGOS[juegoDelDia(meta, d)];
+  const cab = cabCopa('🏆', fmt(T.ctxDay, { d, n: meta.days }));
+  const puntaje = mio.r || String(mio.s), tiempo = mmss(mio.ms);
+  const texto = mensajeCopa(cab, [fmt(T.shareCardText, { emoji: J.emoji, juego: J.nombre, name: nombreDe(S.yo), resumen: puntajeYTiempo(puntaje, tiempo, mio.t) }), mio.t].filter(Boolean).join('\n'));
+  const imagen = await laminaResultado({
+    cab, url: urlPublica(S.code), juego: J, nombre: nombreDe(S.yo), puntaje,
+    detalle: puntajeYTiempo('', tiempo, mio.t), tarjeta: mio.t,
+    archivo: nombreArchivo('copa', meta.alias || S.code, 'dia', d, nombreDe(S.yo)),
+  });
+  await compartir(texto, imagen);
 }
 
 /**
@@ -1945,6 +1975,8 @@ function resultadoPractica(id, semilla, r) {
       ...bajoElPuntaje(r.t, r.ms)),
     explicacion(J, { s: r.s, ms: r.ms, det: r.det, copa: false }),
     LABS ? el('p', { class: 'muted center' }, fmt(T.practiceSeed, { semilla })) : null,
+    // Suelto se comparte como cualquier minijuego jugado solo, con su página (D-162, D-165)
+    !LABS && gameById(id)?.suelto ? botonResultadoSolo({ C: COMMON.es, emoji: J.emoji, juego: J.nombre, puntaje: r.resumen || String(r.s), tiempo: mmss(r.ms), tarjeta: r.t, url: `${SITIO}minijuegos/${id}/`, alTocar: () => SFX.tap() }) : null,
     el('a', { class: 'btn btn--yellow', id: 'btn-otra', href: otra }, T.practiceAgain),
     LABS ? el('a', { class: 'btn btn--cyan btn--sm', id: 'btn-repetir', href: `${otra}&semilla=${semilla}` }, T.practiceSame) : null,
     botonReporte({ juego: id, semilla, puntaje: r.s, resumen: r.resumen }),

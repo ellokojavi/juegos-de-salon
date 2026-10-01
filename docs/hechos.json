@@ -1,5 +1,5 @@
 {
-  "version": "0.74.0",
+  "version": "0.76.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -15,7 +15,7 @@
     "en": 100,
     "pt": 100
   },
-  "clavesComunes": 17,
+  "clavesComunes": 23,
   "juegos": [
     {
       "id": "copa",
@@ -560,6 +560,7 @@
     "ahorcado/rules.js",
     "assets/js/arrastre.js",
     "assets/js/chat.js",
+    "assets/js/compartir.js",
     "assets/js/firebase-config.js",
     "assets/js/frases.js",
     "assets/js/games.js",
@@ -649,6 +650,7 @@
   "tests": [
     "ahorcado/engine.test.mjs",
     "assets/js/arrastre.test.mjs",
+    "assets/js/compartir.test.mjs",
     "assets/js/i18n.test.mjs",
     "assets/js/transport/cleanup.test.mjs",
     "assets/js/transport/dispose.test.mjs",

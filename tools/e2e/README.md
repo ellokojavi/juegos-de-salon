@@ -6,7 +6,7 @@ de salida donde deja capturas PNG, e imprime en consola lo que verificó.
 
 ## Requisitos
 
-- Google Chrome instalado en `/Applications/Google Chrome.app` (ruta en `cdp.mjs`).
+- Google Chrome instalado en `/Applications/Google Chrome.app` (ruta en `cdp.mjs`), u otro navegador con `CHROME=/ruta/al/chrome`.
 - Node 20 o superior (usa `fetch` y `WebSocket` nativos).
 - El sitio servido en `http://localhost:8765`:
 
