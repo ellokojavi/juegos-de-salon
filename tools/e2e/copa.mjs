@@ -565,7 +565,8 @@ await b.shot('07-grafico');
 await click('#btn-admin'); await sleep(300);
 await click('#msg-final'); await sleep(1200);
 console.log('  resumen final:', JSON.stringify(await ev('window.__compartido.at(-1)?.text')));
-ok(!/ pts$|^🥇/m.test(await ev('window.__compartido.at(-1)?.text || ""')), 'el resumen final no repite el podio de la imagen (D-171)');
+// El podio ("🥇 Cata · 30 pts") y el campeón van en la imagen; las medallas ("🥇 Más días ganados") no
+ok(!/ pts$|^🏆 /m.test(await ev('window.__compartido.at(-1)?.text || ""')), 'el resumen final no repite el podio de la imagen (D-171)');
 ok(await ev('window.__compartido.at(-1)?.files?.[0]?.name') === 'copa-oficina-tabla-final.png', 'el resumen final del admin va con la imagen de la tabla final');
 
 
