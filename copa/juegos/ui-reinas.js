@@ -1,7 +1,8 @@
 /**
  * 👑 Reinas — pantalla. Un toque pasa la casilla por vacía → reina → X → vacía (D-167); el toque
  * largo pone o saca una X para descartar la casilla (D-103), como las notas de Toque y Fama, y arrastrar desde una casilla vacía
- * pinta X en las vacías por donde pasa, para descartar una fila entera de una pasada (D-166). Las
+ * pinta X en las vacías por donde pasa, para descartar una fila entera de una pasada (D-166); desde
+ * una X, las borra (D-168). Las
  * zonas se distinguen solo por el color, con la misma línea fina entre todas las casillas, como en
  * el juego original. Las reinas que chocan se ven en rojo en el acto. Las jugadas son los toques,
  * en orden (`'c' + i` el toque; el largo y cada X pintada, en negativo).
@@ -65,7 +66,8 @@ export function montar(raiz, ctx) {
   // El toque largo termina con un click del mismo gesto (al levantar el dedo) que no tiene que
   // poner una reina. Se traga ese click y nada más: cualquier gesto nuevo empieza limpio.
   let tragar = false;
-  // El gesto en curso: dónde empezó, si pinta X (empezó en una casilla vacía) y si ya es arrastre.
+  // El gesto en curso: dónde empezó, qué hace el arrastre (pinta X si empezó en una casilla vacía,
+  // las borra si empezó en una X, nada si empezó en una reina) y si ya es arrastre.
   // Mientras se arrastra no se redibuja la grilla (se perdería el dedo): se tocan solo las casillas.
   let gesto = null;
   let marcas = [];
@@ -74,13 +76,18 @@ export function montar(raiz, ctx) {
     const d = document.elementFromPoint(x, y)?.closest('.rej');
     return d && raiz.contains(d) ? +d.dataset.i : null;
   };
-  /** Pinta la X en una casilla vacía durante el arrastre: es la misma jugada que el toque largo. */
-  const pintarX = i => {
-    if (marcas[i] !== motor.VACIO) return;
+  /**
+   * Pinta la X en una casilla vacía, o la borra, durante el arrastre: es la misma jugada que el
+   * toque largo, que pone o saca la X. Las reinas no se tocan.
+   */
+  const ARRASTRE = { pintar: [motor.VACIO, motor.MARCA], borrar: [motor.MARCA, motor.VACIO] };
+  const arrastrar = i => {
+    const [antes, despues] = ARRASTRE[gesto.modo];
+    if (marcas[i] !== antes) return;
     jugadas.push(motor.toqueLargo(i)); ctx.guardar(jugadas);
-    marcas[i] = motor.MARCA;
+    marcas[i] = despues;
     const b = raiz.querySelector(`.rej[data-i="${i}"]`);
-    if (b) { b.classList.add('marca'); b.textContent = '✕'; }
+    if (b) { b.classList.toggle('marca', despues === motor.MARCA); b.textContent = despues === motor.MARCA ? '✕' : ''; }
     vibrate(8);
   };
   const mover = ev => {
@@ -89,9 +96,9 @@ export function montar(raiz, ctx) {
     if (i === null || i === gesto.ultimo) return;
     // Salir de la casilla ya no es un toque largo
     if (gesto.timer) { clearTimeout(gesto.timer); gesto.timer = null; }
-    if (gesto.pintar) {
-      if (!gesto.arrastre) { gesto.arrastre = true; tragar = true; SFX.dice(); pintarX(gesto.i); }
-      camino(n, gesto.ultimo, i).forEach(pintarX);
+    if (gesto.modo) {
+      if (!gesto.arrastre) { gesto.arrastre = true; tragar = true; SFX.dice(); arrastrar(gesto.i); }
+      camino(n, gesto.ultimo, i).forEach(arrastrar);
     }
     gesto.ultimo = i;
   };
@@ -131,16 +138,18 @@ export function montar(raiz, ctx) {
         'data-i': i, disabled: e.fin, 'aria-label': `${r + 1}-${c + 1}`,
         style: `background:${ZONAS[z % ZONAS.length]}`,
         // El toque largo marca la X (como las notas del teclado de Toque y Fama); el toque normal
-        // pasa por reina, X y vacía. Si el dedo se va a otra casilla antes, es un arrastre: pinta X si empezó en una vacía.
+        // pasa por reina, X y vacía. Si el dedo se va a otra casilla antes, es un arrastre: pinta X si
+        // empezó en una vacía y las borra si empezó en una X.
         onPointerdown: ev => {
           if (!ev.isPrimary || e.fin) return;
           // Un dedo primario nuevo: el gesto anterior ya terminó aunque no llegara su pointerup
           if (gesto) soltar({ pointerId: gesto.id });
           tragar = false;
-          gesto = { id: ev.pointerId, i, ultimo: i, pintar: v === motor.VACIO, arrastre: false };
+          const modo = v === motor.VACIO ? 'pintar' : v === motor.MARCA ? 'borrar' : null;
+          gesto = { id: ev.pointerId, i, ultimo: i, modo, arrastre: false };
           gesto.timer = setTimeout(() => {
             if (!gesto) return;
-            // Si el dedo sigue y se arrastra, esta X ya está puesta y pinta las siguientes
+            // Si el dedo sigue y se arrastra, esta casilla ya cambió y el arrastre sigue con las siguientes
             gesto.timer = null; tragar = true; jugar(motor.toqueLargo(i));
           }, LARGO_MS);
           window.addEventListener('pointermove', mover);
