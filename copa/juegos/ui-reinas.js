@@ -1,10 +1,10 @@
 /**
- * 👑 Reinas — pantalla. Un toque pone o saca la reina; un toque largo pone o saca una X para
- * descartar la casilla (D-103), como las notas de Toque y Fama, y arrastrar desde una casilla vacía
+ * 👑 Reinas — pantalla. Un toque pasa la casilla por vacía → reina → X → vacía (D-167); el toque
+ * largo pone o saca una X para descartar la casilla (D-103), como las notas de Toque y Fama, y arrastrar desde una casilla vacía
  * pinta X en las vacías por donde pasa, para descartar una fila entera de una pasada (D-166). Las
  * zonas se distinguen solo por el color, con la misma línea fina entre todas las casillas, como en
  * el juego original. Las reinas que chocan se ven en rojo en el acto. Las jugadas son los toques,
- * en orden (el largo y cada X pintada, en negativo).
+ * en orden (`'c' + i` el toque; el largo y cada X pintada, en negativo).
  */
 import * as motor from './reinas.js';
 
@@ -122,7 +122,7 @@ export function montar(raiz, ctx) {
         const x = motor.estado(p, jugadas);
         if (x.errores > e.errores) { SFX.error(); vibrate([40, 40, 40]); }
         else if (x.fin) { SFX.win(); vibrate([30, 50, 30]); }
-        else if (j < 0) { SFX.dice(); vibrate([20, 30, 20]); }
+        else if (x.marcas[motor.casilla(j)] === motor.MARCA) { SFX.dice(); vibrate([20, 30, 20]); }
         else SFX.tap();
         dibujar();
       };
@@ -130,8 +130,8 @@ export function montar(raiz, ctx) {
         type: 'button', class: 'rej' + (v === motor.REINA ? ' reina' : v === motor.MARCA ? ' marca' : '') + (e.conflictos.has(i) ? ' choque' : ''),
         'data-i': i, disabled: e.fin, 'aria-label': `${r + 1}-${c + 1}`,
         style: `background:${ZONAS[z % ZONAS.length]}`,
-        // El toque largo marca la X; el toque normal, la reina (como las notas del teclado de Toque y
-        // Fama). Si el dedo se va a otra casilla antes, es un arrastre: pinta X si empezó en una vacía.
+        // El toque largo marca la X (como las notas del teclado de Toque y Fama); el toque normal
+        // pasa por reina, X y vacía. Si el dedo se va a otra casilla antes, es un arrastre: pinta X si empezó en una vacía.
         onPointerdown: ev => {
           if (!ev.isPrimary || e.fin) return;
           // Un dedo primario nuevo: el gesto anterior ya terminó aunque no llegara su pointerup
@@ -149,7 +149,7 @@ export function montar(raiz, ctx) {
         },
         onContextmenu: ev => ev.preventDefault(),
         // El teclado y los guiones llegan como click sin puntero (detail 0): esos nunca se tragan
-        onClick: ev => { if (tragar && ev.detail !== 0) { tragar = false; return; } jugar(i); },
+        onClick: ev => { if (tragar && ev.detail !== 0) { tragar = false; return; } jugar(motor.toque(i)); },
       }, v === motor.REINA ? '👑' : v === motor.MARCA ? '✕' : ''));
     }
     const reinas = e.marcas.filter(v => v === motor.REINA).length;

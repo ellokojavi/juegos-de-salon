@@ -283,7 +283,7 @@ test('reinas: solución única, reglas y puntaje', () => {
     assert.ok(reinas.resuelto(p, marcas));
   }
   const p = reinas.generar('KQRST', 4);
-  const toques = i => [i]; // un toque pone la reina (D-103)
+  const toques = i => [reinas.toque(i)]; // un toque pone la reina (D-103, D-167)
   const bien = p.sol.flatMap((col, r) => toques(r * p.n + col));
   let e = reinas.estado(p, bien);
   assert.ok(e.fin); assert.equal(e.errores, 0); assert.equal(reinas.puntaje({ ...e, ms: 20000 }), 100);
@@ -314,10 +314,17 @@ test('reinas: solución única, reglas y puntaje', () => {
   // El toque largo pone y saca la X, y no cuenta como error ni como reina
   e = reinas.estado(p, [reinas.toqueLargo(5), reinas.toqueLargo(6), reinas.toqueLargo(6)]);
   assert.equal(e.marcas[5], reinas.MARCA); assert.equal(e.marcas[6], reinas.VACIO); assert.equal(e.errores, 0);
-  // Un toque sobre una X pone la reina; otro la saca
+  // El toque cicla vacía → reina → X → vacía (D-167); la reina que pasa a X no es error
+  const ciclo = k => reinas.estado(p, Array(k).fill(reinas.toque(5))).marcas[5];
+  assert.deepEqual([0, 1, 2, 3, 4].map(ciclo), [reinas.VACIO, reinas.REINA, reinas.MARCA, reinas.VACIO, reinas.REINA]);
+  assert.equal(reinas.estado(p, [reinas.toqueLargo(5), reinas.toque(5)]).marcas[5], reinas.VACIO);
+  e = reinas.estado(p, [...toques(c0), ...toques(vecina), ...toques(vecina), ...toques(vecina), ...toques(vecina)]);
+  assert.equal(e.errores, 2); assert.equal(e.marcas[vecina], reinas.REINA);
+  // Las partidas de antes de D-167 guardaban el toque como el índice: pone o saca la reina
   e = reinas.estado(p, [reinas.toqueLargo(5), 5]);
   assert.equal(e.marcas[5], reinas.REINA);
   assert.equal(reinas.estado(p, [5, 5]).marcas[5], reinas.VACIO);
+  assert.equal(reinas.estado(p, [c0, vecina]).errores, 1);
 });
 
 test('tango: solución única, reglas y puntaje', () => {

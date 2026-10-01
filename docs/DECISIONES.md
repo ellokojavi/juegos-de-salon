@@ -2337,3 +2337,23 @@ enteras, y con el toque largo cada X costaba medio segundo.
 **Alternativas descartadas:** que arrastrar desde una X borre X (como algunos clones): no se pidió
 y un arrastre accidental borraría deducciones; un modo "lápiz X" con botón: un paso más y otro
 estado que recordar.
+
+## D-167 · Reinas: el toque cicla reina → X → vacía
+**Fecha:** 2026-10-01 · **Estado:** vigente; cambia el toque de D-103
+**Decisión:** Un toque pasa la casilla por un ciclo: **vacía → reina → X → vacía**. El primer
+toque sigue poniendo la reina, como desde D-103; tocarla otra vez la cambia por una X, y una
+tercera vez la deja vacía. El **toque largo** sigue poniendo o sacando la X, como atajo, pero la
+ayuda ya no lo menciona: lo que explica es el ciclo y el arrastre (D-166).
+- **Las jugadas guardan el toque nuevo como `'c' + índice`.** Las de antes de D-167 guardaban el
+  índice, que pone o saca la reina, y se siguen leyendo así: una partida a medio jugar al publicar
+  no cambia al recargarla.
+- **Error es poner una reina que choca**, venga del toque o del ciclo; cambiar una reina por X no.
+- Sacar una reina pasa de un toque a dos (reina → X → vacía). Casi siempre esa X sirve: si la reina
+  no iba ahí, la casilla queda descartada.
+
+**Por qué:** El dueño lo pidió: el toque largo pide intuición y memoria, nada en la pantalla lo
+sugiere. El ciclo se descubre solo, tocando de nuevo lo que se acaba de poner.
+
+**Alternativas descartadas:** el orden del Queens de LinkedIn (vacía → X → reina): allá la X va
+primero porque se usa más, pero aquí cambiaría lo que el primer toque hace hoy, y las X en
+cantidad ya las pinta el arrastre. Quitar el toque largo: a quien ya lo aprendió no le estorba.
