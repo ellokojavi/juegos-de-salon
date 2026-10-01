@@ -16,14 +16,15 @@ export const NUMERO_CIFRAS = 3;
 export const NUMERO_INTENTOS = 7;
 export const LETRAS_INTENTOS = 6;
 
-export function generar(codigo, dia) {
+/** `lang`: el idioma de los textos; `palabras`: el de la palabra secreta, el de la copa (D-170). */
+export function generar(codigo, dia, { lang = 'es', palabras = lang } = {}) {
   const tema = temasDeLaCopa(codigo).final;
   return {
-    linea: linea.generar(codigo, dia, { n: 4, tema, sal: 'final-linea' }),
+    linea: linea.generar(codigo, dia, { n: 4, tema, sal: 'final-linea', lang }),
     numero: numero.generar(codigo, dia, { cifras: NUMERO_CIFRAS, sal: 'final-numero' }),
     reinas: reinas.generar(codigo, dia, { n: 6, sal: 'final-reinas' }),
-    letras: letras.generar(codigo, dia, { max: LETRAS_INTENTOS, sal: 'final-letras' }),
-    anio: anio.generar(codigo, dia, { n: 2, tema, sal: 'final-anio' }),
+    letras: letras.generar(codigo, dia, { max: LETRAS_INTENTOS, sal: 'final-letras', palabras }),
+    anio: anio.generar(codigo, dia, { n: 2, tema, sal: 'final-anio', lang }),
   };
 }
 

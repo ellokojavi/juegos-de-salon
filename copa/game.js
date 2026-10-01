@@ -11,7 +11,7 @@
  */
 import { crearArrastre } from '../assets/js/arrastre.js';
 import { $, $$, el, con, conEmoji, vibrate, sparkles, keepAwake, confetti } from '../assets/js/ui.js';
-import { applyStatic, COMMON, SITIO } from '../assets/js/i18n.js';
+import { applyStatic, COMMON, SITIO, LANGS, getLang, langToggle, withLang } from '../assets/js/i18n.js';
 import { compartir as compartirAlChat, cabecera, lamina, laminaResultado, aArchivo, nombreArchivo, puntajeYTiempo, botonResultadoSolo, MARCO } from '../assets/js/compartir.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { trackStart, versionOf } from '../assets/js/transport/stats.js';
@@ -22,7 +22,7 @@ import {
   medianoche, menosJuegos, provisoria, ultimoDiaVisto, marcaDelDia, puedeComodin, multiplicador, posicionesDelDia, tabla, faltan, medallas, evolucion, visibleDia, reloj, mmss, juegoDelDia, esFinal, activos, ZONA,
   conCierre, cerradaAntes, anulado, puedeCerrar,
 } from './engine.js';
-import { GAME_ID, LOCALES, MINIJUEGOS, RONDAS_FINAL } from './rules.js';
+import { GAME_ID, LOCALES, minijuegos, rondasFinal, MINIJUEGOS as MINIJUEGOS_ES } from './rules.js';
 import { createCuenta } from './cuenta.js';
 import { JUEGOS } from './juegos/index.js';
 import { desglose } from './desglose.js';
@@ -31,7 +31,16 @@ import { planilla } from './planilla.js';
 /** `append` que descarta los hijos nulos, como `el()` (sin esto, un null se escribe como texto). */
 const poner = (nodo, ...hijos) => nodo.append(...hijos.flat().filter(x => x !== null && x !== undefined && x !== false));
 
-const T = LOCALES.es;
+// La pantalla va en el idioma de quien mira (D-170). Las palabras de Conexiones y de Palabra van
+// en el de la copa (`palabrasDe`), que es el mismo para todos.
+const LANG = getLang();
+const T = LOCALES[LANG] || LOCALES.es;
+const MINIJUEGOS = minijuegos(LANG);
+const RONDAS_FINAL = rondasFinal(LANG);
+/** El idioma de las palabras de una copa; las de antes de D-170 no lo dicen y son en español. */
+const palabrasDe = meta => meta?.lang || 'es';
+/** "3º", o "#3" en inglés. */
+const ord = n => fmt(T.ord, { n });
 const fmt = (s, vars = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (vars[k] !== undefined ? vars[k] : `{${k}}`));
 
 /* ------------------------------------------------------------------ */
@@ -123,16 +132,19 @@ function avisoError(caja, texto) {
   SFX.error(); vibrate([40, 40, 40]);
 }
 
-const fechaLarga = (ms, tz = ZONA) => new Intl.DateTimeFormat('es-CL', { timeZone: tz, weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(ms)).replace(',', '');
+// Las fechas en el idioma de quien mira o, en lo que va al grupo, en el de la copa (D-170).
+// En inglés la coma va ("Thursday, October 1"); en español y portugués se saca
+const LOCALE = { es: 'es-CL', en: 'en-US', pt: 'pt-BR' };
+const fechaLarga = (ms, tz = ZONA, lang = LANG) => { const f = new Intl.DateTimeFormat(LOCALE[lang] || LOCALE.es, { timeZone: tz, weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(ms)); return lang === 'en' ? f : f.replace(',', ''); };
 /** El nombre de la zona horaria de una copa, para decirlo en palabras (D-113). */
 const zonaTexto = tz => T.zones[tz] || fmt(T.zoneOther, { tz });
-const fechaCorta = (ms, tz = ZONA) => new Intl.DateTimeFormat('es-CL', { timeZone: tz, weekday: 'short', day: 'numeric' }).format(new Date(ms));
+const fechaCorta = (ms, tz = ZONA) => new Intl.DateTimeFormat(LOCALE[LANG] || LOCALE.es, { timeZone: tz, weekday: 'short', day: 'numeric' }).format(new Date(ms));
 
 function faltaPara(ms) {
   const m = Math.max(0, Math.round(ms / 60000));
-  if (m < 60) return `${m} min`;
+  if (m < 60) return fmt(T.inMin, { m });
   const h = Math.floor(m / 60);
-  return h < 48 ? `${h} h ${m % 60} min` : `${Math.floor(h / 24)} días`;
+  return h < 48 ? fmt(T.inHours, { h, m: m % 60 }) : fmt(T.inDays, { d: Math.floor(h / 24) });
 }
 
 /* ------------------------------------------------------------------ */
@@ -154,6 +166,8 @@ function portada() {
 
   const mias = cuenta.mias();
   poner(body, 
+    // El idioma se elige a mano, como en todos los juegos (C-3)
+    el('div', { class: 'center' }, langToggle()),
     el('button', { class: 'btn btn--yellow', id: 'btn-crear', onClick: () => { SFX.tap(); crearCopa(); } }, T.create),
     mias.length ? el('div', { class: 'panel' },
       el('p', { class: 'lead', style: 'margin-bottom:8px' }, T.mine),
@@ -188,11 +202,14 @@ function campo(label, attrs = {}, { contador = false } = {}) {
 }
 const campoPin = label => campo(label, { inputmode: 'numeric', pattern: '[0-9]*', maxlength: '4', type: 'password', class: 'pin' });
 
-/** Un grupo de opciones sin nada elegido de entrada (C-8, D-38). */
-function opciones(items, onChange) {
-  let valor = null;
+/**
+ * Un grupo de opciones sin nada elegido de entrada (C-8, D-38). `inicial` solo para lo que tiene
+ * una respuesta obvia y se ve antes de confirmar nada: el idioma de las palabras (D-170).
+ */
+function opciones(items, onChange, { inicial = null } = {}) {
+  let valor = inicial;
   const botones = items.map(it => el('button', {
-    type: 'button', class: 'opcion', 'aria-pressed': 'false',
+    type: 'button', class: 'opcion' + (it.valor === inicial ? ' on' : ''), 'aria-pressed': String(it.valor === inicial),
     onClick: () => {
       SFX.tap();
       valor = it.valor;
@@ -222,7 +239,8 @@ function elegirJuegos() {
   // `sel`: lo elegido, { zona: 'dia' | 'fuera', id }. `destino`: dónde va ('s<k>' la ranura k,
   // al tocar; 'm<k>' el lugar k de la semana, al arrastrar un día; 'r<i>' el día i que se reemplaza)
   let cal = [], sel = null, destino = null, arrastrando = false;
-  const familia = id => MINIJUEGOS[id].habilidad;
+  // La familia se compara en español: la misma semana al azar cualquiera sea el idioma
+  const familia = id => MINIJUEGOS_ES[id].habilidad;
   // La ayuda larga no cambia; lo que cambia con lo elegido es una línea de alto fijo: si la
   // página se moviera al elegir, el día de destino se correría bajo el dedo que arrastra. Los tres
   // textos van apilados en la misma celda y solo se ve uno: el alto es el del más largo a cualquier
@@ -341,6 +359,9 @@ function crearCopa() {
     TRES ? { valor: 3, titulo: T.mode3, sub: T.mode3Sub } : null,
     { valor: 7, titulo: T.mode7, sub: T.mode7Sub },
   ].filter(Boolean), dias => { juegos.nodo.hidden = false; juegos.sortear(dias); });
+  // El idioma de las palabras de Conexiones y de Palabra (D-170): parte en el de quien la crea
+  const mayuscula = x => x[0].toUpperCase() + x.slice(1);
+  const idioma = opciones(LANGS.map(l => ({ valor: l, titulo: mayuscula(T.langNames[l]) })), null, { inicial: LANG });
   // Hoy, mañana u otra fecha de un calendario, hasta 30 días desde hoy (D-115)
   const hoyCrear = fechaEn(Date.now(), ZONA);
   const otraFecha = campoFecha(hoyCrear);
@@ -397,7 +418,7 @@ function crearCopa() {
       if (alias) { const x = await st.alias(alias); if (x && x.hasta > now) throw Object.assign(new Error('alias'), { code: 'alias' }); }
       const fechaInicio = inicio.valor === 'otra' ? otraFecha.input.value : sumarDias(fechaEn(now, ZONA), inicio.valor);
       // Las copas del laboratorio (y las de prueba) llevan la marca que deja pasar de día (D-115)
-      const meta = nuevaMeta({ nombre: n, dias: modo.valor, inicio: fechaInicio, tz: ZONA, admin: pid, creada: now, lab: LABS || PRUEBA, alias, cal: juegos.cal });
+      const meta = nuevaMeta({ nombre: n, dias: modo.valor, inicio: fechaInicio, tz: ZONA, admin: pid, creada: now, lab: LABS || PRUEBA, alias, cal: juegos.cal, lang: idioma.valor });
       await st.crear(code, meta, { pid, name: quien, at: now, pinHash: await hashPin(code, pid, pin1.input.value) });
       cuenta.nombre.set(quien);
       cuenta.recordar(code, pid, { nombre: quien, copa: n, fin: meta.end });
@@ -414,6 +435,7 @@ function crearCopa() {
       el('div', { class: 'field' }, el('label', {}, T.fMode), modo.nodo),
       el('div', { class: 'field' }, el('label', {}, T.fStart), inicio.nodo, otraFecha.nodo, el('small', { class: 'muted' }, fmt(T.startHint, { zona: zonaTexto(ZONA) })))),
     juegos.nodo,
+    el('div', { class: 'panel' }, el('div', { class: 'field' }, el('label', {}, T.fLang), idioma.nodo, el('small', { class: 'muted' }, T.fLangHint))),
     el('div', { class: 'panel' }, link.nodo),
     el('div', { class: 'panel' }, yo.nodo, pin1.nodo, pin2.nodo, el('small', { class: 'muted' }, T.pinHint)),
     err, boton,
@@ -595,7 +617,9 @@ function entrar({ mantener = false } = {}) {
     el('div', { class: 'intro-hero' }, el('span', { class: 'icon' }, '🏆'),
       el('p', { class: 'muted', style: 'margin:0' }, T.inviteTitle),
       el('h1', { class: 'display display--lg rainbow' }, meta.name),
-      el('p', { class: 'lead' }, info)),
+      el('p', { class: 'lead' }, info),
+      avisoPalabras(meta),
+      el('div', { style: 'margin-top:6px' }, langToggle())),
     el('div', { class: 'cal-mini' }, calendario(meta).map(j => el('span', { title: MINIJUEGOS[j].nombre, class: con('', MINIJUEGOS[j].emoji) }, MINIJUEGOS[j].emoji))),
     puedeEntrar ? null : el('p', { class: 'muted center' }, terminada(meta, now) ? T.closedEnded : L().closed && inscripcionAbierta(meta, now) ? T.closedByAdmin : T.closedJoin),
     tabs, caja,
@@ -693,7 +717,7 @@ function misDias(d, now) {
     if (est === 'jugado') {
       const r = Lc.results[k][S.yo];
       const pos = posicionesDelDia(Lc.results[k], pids)[S.yo];
-      detalle = visibleDia(Lc, k, S.yo, now) && pos ? `${r.r || r.s} · ${pos.pos}º · +${pos.pts * multiplicador(Lc, k, S.yo)} ${T.pts}` : `${r.r || r.s}`;
+      detalle = visibleDia(Lc, k, S.yo, now) && pos ? `${r.r || r.s} · ${ord(pos.pos)} · +${pos.pts * multiplicador(Lc, k, S.yo)} ${T.pts}` : `${r.r || r.s}`;
     } else if (est === 'gracia') {
       detalle = T.lastDay;
       accion = faltaGente(Lc) ? null : el('button', { class: 'btn btn--yellow btn--sm', 'data-dia': k, onClick: () => { SFX.tap(); antesDeJugar(k); } }, `${J.emoji} ${T.play}`);
@@ -750,7 +774,7 @@ function grafico(now) {
   const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, class: 'grafico', role: 'img', 'aria-label': T.progressTitle });
   for (let l = 1; l <= n; l++) {
     svg.append(svgEl('line', { x1: izq, x2: W - der, y1: y(l), y2: y(l), class: 'g-grid' }));
-    svg.append(svgEl('text', { x: izq - 8, y: y(l) + 4, class: 'g-eje', 'text-anchor': 'end' }, `${l}º`));
+    svg.append(svgEl('text', { x: izq - 8, y: y(l) + 4, class: 'g-eje', 'text-anchor': 'end' }, ord(l)));
   }
   for (let k = 1; k <= meta.days; k++) svg.append(svgEl('text', { x: x(k), y: H - 6, class: 'g-eje', 'text-anchor': 'middle' }, fmt(T.dayShort, { d: k })));
   // Cada jugador con su color (D-125), fijo por orden de inscripción; tu línea, más gruesa y encima
@@ -768,7 +792,7 @@ function grafico(now) {
     const pts = f.lugares.map((l, i) => [x(ev.dias[i]), y(l)]);
     if (pts.length > 1) g.append(svgEl('polyline', { points: pts.map(p => p.join(',')).join(' '), class: 'g-linea' }));
     pts.forEach(([px, py], i) => {
-      const texto = fmt(T.progressPoint, { d: ev.dias[i], name: f.name, pos: f.lugares[i] });
+      const texto = fmt(T.progressPoint, { d: ev.dias[i], name: f.name, pos: ord(f.lugares[i]) });
       g.append(svgEl('circle', { cx: px, cy: py, r: mia ? 5 : 4, class: 'g-punto' }));
       const blanco = svgEl('circle', { cx: px, cy: py, r: 11, class: 'g-toque' }, svgEl('title', {}, texto));
       blanco.addEventListener('click', () => { leyenda.textContent = texto; destacar(f.pid); });
@@ -780,7 +804,7 @@ function grafico(now) {
       const marca = menos[f.pid] > 0 ? ` (-${menos[f.pid]}J)` : '';
       const ultimo = f.lugares[f.lugares.length - 1];
       const k = (enLugar[ultimo] = (enLugar[ultimo] ?? -1) + 1);
-      g.append(svgEl('text', { x: px + 9, y: py + 4 + k * 11, class: 'g-rotulo' }, `${corto} ${ultimo}º${marca}`));
+      g.append(svgEl('text', { x: px + 9, y: py + 4 + k * 11, class: 'g-rotulo' }, `${corto} ${ord(ultimo)}${marca}`));
     }
     svg.append(g);
   }
@@ -910,13 +934,22 @@ function podio() {
  * copiado (y la imagen, descargada).
  */
 async function compartir(texto, imagen = null) {
-  const r = await compartirAlChat({ titulo: L().meta.name, texto, url: urlPublica(S.code), imagen });
+  const r = await compartirAlChat({ titulo: L().meta.name, texto, url: withLang(urlPublica(S.code), G().lang), imagen });
   if (r === 'copied') toast(T.copied);
   if (r === 'downloaded') toast(T.imageDownloaded);
 }
 
+/**
+ * Lo que va al grupo va en el idioma de la copa (D-170): los mensajes, la imagen, la planilla y el
+ * link. Cada uno ve la pantalla en su idioma, pero el chat del grupo es uno solo.
+ */
+const G = () => {
+  const lang = palabrasDe(L()?.meta);
+  return { lang, T: LOCALES[lang] || LOCALES.es, J: minijuegos(lang) };
+};
+
 /** La cabecera de todo lo que la copa comparte, la misma en el texto y en la imagen (D-165). */
-const cabCopa = (emoji, contexto) => ({ emoji, titulo: fmt(T.shareHead, { copa: L().meta.name }), contexto });
+const cabCopa = (emoji, contexto) => ({ emoji, titulo: fmt(G().T.shareHead, { copa: L().meta.name }), contexto });
 
 /** El mensaje entero: la cabecera y, separado por una línea, lo que dice. */
 const mensajeCopa = (cab, ...partes) => [cabecera(cab), ...partes].filter(Boolean).join('\n\n');
@@ -941,10 +974,10 @@ function toast(texto) {
 function mensajeInvitacion() {
   const Lc = L(), { meta } = Lc;
   const nombres = activos(Lc).map(j => j.name);
-  const lista = nombres.length > 1 ? `${nombres.slice(0, -1).join(', ')} y ${nombres.at(-1)}` : nombres[0] || '';
-  return mensajeCopa(cabCopa('🏆', T.ctxInvite), fmt(T.shareInviteText, {
-    dias: meta.days, fecha: fechaLarga(meta.win[1].a, meta.tz),
-    inscritos: nombres.length ? fmt(nombres.length === 1 ? T.shareInviteJoinedOne : T.shareInviteJoined, { names: lista }) : '',
+  const lista = nombres.length > 1 ? fmt(G().T.listAnd, { a: nombres.slice(0, -1).join(', '), b: nombres.at(-1) }) : nombres[0] || '';
+  return mensajeCopa(cabCopa('🏆', G().T.ctxInvite), fmt(G().T.shareInviteText, {
+    dias: meta.days, fecha: fechaLarga(meta.win[1].a, meta.tz, G().lang),
+    inscritos: nombres.length ? fmt(nombres.length === 1 ? G().T.shareInviteJoinedOne : G().T.shareInviteJoined, { names: lista }) : '',
   }).replace(/\n{3,}/g, '\n\n'));
 }
 
@@ -962,21 +995,21 @@ function mensajeHoy() {
   const now = ahora();
   const d = diaActual(meta, now);
   if (d === 0) {
-    const J1 = MINIJUEGOS[juegoDelDia(meta, 1)];
-    return mensajeCopa(cabCopa('🏆', fmt(T.ctxBefore, { fecha: fechaLarga(meta.win[1].a, meta.tz) })),
-      fmt(Lc.closed ? T.shareBeforeClosed : T.shareBeforeText, { juego: `${J1.emoji} ${J1.nombre}` }));
+    const J1 = G().J[juegoDelDia(meta, 1)];
+    return mensajeCopa(cabCopa('🏆', fmt(G().T.ctxBefore, { fecha: fechaLarga(meta.win[1].a, meta.tz, G().lang) })),
+      fmt(Lc.closed ? G().T.shareBeforeClosed : G().T.shareBeforeText, { juego: `${J1.emoji} ${J1.nombre}` }));
   }
   const hoy = Math.min(d, meta.days);
-  const J = MINIJUEGOS[juegoDelDia(meta, hoy)];
-  const hasta = esFinal(meta, hoy) ? T.untilToday : T.untilTomorrow;
-  const partes = [fmt(T.shareTodayText, { juego: `${J.emoji} ${J.nombre}`, hasta })];
+  const J = G().J[juegoDelDia(meta, hoy)];
+  const hasta = esFinal(meta, hoy) ? G().T.untilToday : G().T.untilTomorrow;
+  const partes = [fmt(G().T.shareTodayText, { juego: `${J.emoji} ${J.nombre}`, hasta })];
   if (hoy > 1 && abierto(meta, hoy - 1, now) && faltan(Lc, hoy - 1, now).length) {
-    const Ja = MINIJUEGOS[juegoDelDia(meta, hoy - 1)];
-    partes.push(fmt(T.shareTodayGrace, { juego: `${Ja.emoji} ${Ja.nombre}` }));
+    const Ja = G().J[juegoDelDia(meta, hoy - 1)];
+    partes.push(fmt(G().T.shareTodayGrace, { juego: `${Ja.emoji} ${Ja.nombre}` }));
   }
   const falta = faltan(Lc, hoy, now);
-  if (falta.length && falta.length < activos(Lc).length) partes.push(fmt(T.shareTodayMissing, { names: falta.map(j => j.name).join(', ') }));
-  return mensajeCopa(cabCopa('🏆', fmt(T.ctxDay, { d: hoy, n: meta.days })), partes.join('\n'));
+  if (falta.length && falta.length < activos(Lc).length) partes.push(fmt(G().T.shareTodayMissing, { names: falta.map(j => j.name).join(', ') }));
+  return mensajeCopa(cabCopa('🏆', fmt(G().T.ctxDay, { d: hoy, n: meta.days })), partes.join('\n'));
 }
 
 /**
@@ -987,9 +1020,9 @@ function mensajeHoy() {
  */
 function cabTabla(Lc, filas, now) {
   const { meta } = Lc;
-  if (terminada(meta, now)) return cabCopa('🏁', T.ctxFinal);
+  if (terminada(meta, now)) return cabCopa('🏁', G().T.ctxFinal);
   const d = ultimoDiaVisto(filas) || Math.min(Math.max(diaActual(meta, now), 1), meta.days);
-  return cabCopa('📊', fmt(provisoria(Lc, filas, now) ? T.ctxTableProvisional : T.ctxTable, { d, n: meta.days }));
+  return cabCopa('📊', fmt(provisoria(Lc, filas, now) ? G().T.ctxTableProvisional : G().T.ctxTable, { d, n: meta.days }));
 }
 
 /**
@@ -1011,14 +1044,14 @@ function mensajeTabla() {
   const filas = tabla(Lc, S.yo, now);
   // Quien lleva menos juegos va marcado "(-1J)": la tabla parcial no lo castiga, lo explica (D-126)
   const menos = menosJuegos(filas);
-  const lista = filas.map(f => `${['🥇', '🥈', '🥉'][f.lugar - 1] || `${f.lugar}.`} ${nombreConJuegos(f.name, menos[f.pid])} · ${f.total} pts`).join('\n');
+  const lista = filas.map(f => `${['🥇', '🥈', '🥉'][f.lugar - 1] || `${f.lugar}.`} ${nombreConJuegos(f.name, menos[f.pid], G().T)} · ${f.total} ${G().T.pts}`).join('\n');
   const falta = faltan(Lc, d, now);
   // La cabecera lleva el último día que muestra la tabla; el aviso de abajo, el día que corre (#67)
-  return mensajeCopa(cabTabla(Lc, filas, now), lista, falta.length ? fmt(T.shareTableMissing, { d, names: falta.map(j => j.name).join(', ') }) : '');
+  return mensajeCopa(cabTabla(Lc, filas, now), lista, falta.length ? fmt(G().T.shareTableMissing, { d, names: falta.map(j => j.name).join(', ') }) : '');
 }
 
 /** "Tomario (-1J)": el nombre con cuántos juegos menos lleva (D-126). */
-const nombreConJuegos = (name, n) => (n > 0 ? fmt(T.fewerGames, { name, n }) : name);
+const nombreConJuegos = (name, n, TT = T) => (n > 0 ? fmt(TT.fewerGames, { name, n }) : name);
 
 /** Oro, plata y bronce para el podio de la tabla final (D-153): degradado, borde y tinta grabada. */
 const METALES = {
@@ -1082,7 +1115,7 @@ async function imagenTabla() {
   ev.dias.forEach((dia, i) => {
     const laFinal = esFinal(meta, dia);
     c.fillStyle = laFinal ? '#2ee6d6' : 'rgba(255,255,255,0.7)'; c.textAlign = laFinal ? 'left' : 'center';
-    c.fillText(laFinal ? T.imageFinal : fmt(T.dayShort, { d: dia }), laFinal ? x(i) - R - 4 : x(i), g0 + n * fila + 44);
+    c.fillText(laFinal ? G().T.imageFinal : fmt(G().T.dayShort, { d: dia }), laFinal ? x(i) - R - 4 : x(i), g0 + n * fila + 44);
   });
   // Las filas de la tabla, detrás de las líneas que llegan a ellas. Terminada, el podio en galvanos.
   const filaDe = Object.fromEntries(filas.map((f, i) => [f.pid, i]));
@@ -1171,19 +1204,19 @@ async function imagenTabla() {
       const base = i === m - 1 ? R : junto[i][f.pid].r; // el último cae en su fila, sin apretura
       const mk = marcas[f.pid][i], r = mia ? base + 2 : base;
       punto(px, py, r, mk, color(f.pid));
-      if (mk.tipo === 'comodin') pildora(px + r * 0.95, py - r * 0.95, T.x2);
+      if (mk.tipo === 'comodin') pildora(px + r * 0.95, py - r * 0.95, G().T.x2);
     });
   }
   // La pill de juegos por jugar: borde punteado, como el punto "?"; devuelve su ancho
   const pill = (x0, cy, k, px) => {
-    c.font = fuente(900, px); const txt = fmt(T.fewerGamesPill, { n: k });
+    c.font = fuente(900, px); const txt = fmt(G().T.fewerGamesPill, { n: k });
     const w = c.measureText(txt).width + px * 1.1, h = px * 1.55;
     c.fillStyle = 'rgba(255,255,255,0.10)'; caja(x0, cy - h / 2, w, h, h / 2); c.fill();
     c.setLineDash([4, 4]); c.lineWidth = 2.5; c.strokeStyle = 'rgba(255,255,255,0.75)'; c.stroke(); c.setLineDash([]);
     c.fillStyle = '#ffffff'; c.textAlign = 'left'; c.fillText(txt, x0 + px * 0.55, cy + px * 0.36);
     return w;
   };
-  const anchoPill = (k, px) => { c.font = fuente(900, px); return c.measureText(fmt(T.fewerGamesPill, { n: k })).width + px * 1.1; };
+  const anchoPill = (k, px) => { c.font = fuente(900, px); return c.measureText(fmt(G().T.fewerGamesPill, { n: k })).width + px * 1.1; };
   // El texto de cada fila: lugar, flecha, nombre (con su pill o la copa del campeón) y puntos
   const tamFila = Math.round(Math.min(42, fila * 0.4));
   // Lugar, flecha y nombre se corren con la letra
@@ -1199,7 +1232,7 @@ async function imagenTabla() {
     escribir(String(f.lugar), xLugar, '#ffd23f');
     if (f.flecha) { c.font = fuente(900, tamFila * 0.6); c.fillStyle = f.flecha > 0 ? '#9dff3a' : '#ff2e88'; c.fillText(f.flecha > 0 ? '▲' : '▼', xFlecha, y - 2); }
     c.textAlign = 'right'; c.font = fuente(900, tamFila);
-    const total = `${f.total} ${T.pts}`;
+    const total = `${f.total} ${G().T.pts}`;
     escribir(total, derTabla - 22, '#ffd23f');
     // Lo que va después del nombre: la copa del campeón o la pill; el nombre achica la letra
     // para que todo quepa antes de los puntos y, si aún no cabe, se corta con "…"
@@ -1220,8 +1253,8 @@ async function imagenTabla() {
   // La leyenda: los mismos puntos del gráfico, solo los que aparecen en él
   const hay = new Set(Object.values(marcas).flat().map(mk => mk.tipo));
   const items = [
-    ['pts', { tipo: 'pts', pts: 12 }, T.imageLegendPts], ['comodin', { tipo: 'comodin', pts: 10 }, T.imageLegendWild],
-    ['no', { tipo: 'no' }, T.imageLegendMissed], ['falta', { tipo: 'falta' }, T.imageLegendPending],
+    ['pts', { tipo: 'pts', pts: 12 }, G().T.imageLegendPts], ['comodin', { tipo: 'comodin', pts: 10 }, G().T.imageLegendWild],
+    ['no', { tipo: 'no' }, G().T.imageLegendMissed], ['falta', { tipo: 'falta' }, G().T.imageLegendPending],
   ].filter(([tipo]) => hay.has(tipo));
   // La leyenda va justo bajo los rótulos de los días, no pegada al link
   const ly = g0 + n * fila + EJE + HUECO + 17, rl = 17;
@@ -1236,10 +1269,10 @@ async function imagenTabla() {
   });
   if (conPills) {
     c.font = fuente(700, 26);
-    const wp = anchoPill(1, 22), wn = c.measureText(T.imagePillNote).width, x0 = (W - wp - 14 - wn) / 2;
+    const wp = anchoPill(1, 22), wn = c.measureText(G().T.imagePillNote).width, x0 = (W - wp - 14 - wn) / 2;
     pill(x0, ly + 50, 1, 22);
     c.font = fuente(700, 26); c.fillStyle = 'rgba(255,255,255,0.6)'; c.textAlign = 'left';
-    c.fillText(T.imagePillNote, x0 + wp + 14, ly + 59);
+    c.fillText(G().T.imagePillNote, x0 + wp + 14, ly + 59);
   }
   return aArchivo(cv, nombreArchivo('copa', meta.alias || S.code, fin ? 'tabla-final' : `dia-${d}`));
 }
@@ -1247,7 +1280,7 @@ async function imagenTabla() {
 /** La tabla final como planilla CSV (D-161): se descarga, para abrirla en Excel o en Google Sheets. */
 function descargarPlanilla() {
   const Lc = L(), { meta } = Lc;
-  const csv = planilla(Lc, { T, juegos: MINIJUEGOS, fmt, fecha: ms => fechaLarga(ms, meta.tz) });
+  const csv = planilla(Lc, { T: G().T, juegos: G().J, fmt, fecha: ms => fechaLarga(ms, meta.tz, G().lang) });
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
   const a = el('a', { href: URL.createObjectURL(blob), download: `copa-${meta.alias || S.code.toLowerCase()}-tabla-final.csv` });
   document.body.append(a); a.click(); a.remove();
@@ -1258,14 +1291,14 @@ function mensajeFinal() {
   const Lc = L();
   const m = medallas(Lc);
   const filas = tabla(Lc, S.yo, Lc.meta.end);
-  const campeon = m.campeon?.length === 1 ? fmt(T.shareFinalChamp, { name: m.campeon[0].name, pts: m.campeon[0].total }) : T.podiumTie;
+  const campeon = m.campeon?.length === 1 ? fmt(G().T.shareFinalChamp, { name: m.campeon[0].name, pts: m.campeon[0].total }) : G().T.podiumTie;
   const podioTxt = filas.slice(0, 3).map((f, i) => `${['🥇', '🥈', '🥉'][i]} ${f.name} · ${f.total} pts`).join('\n');
   const extras = [
-    m.ganador && `${T.medalWins}: ${m.ganador.filas.map(f => f.name).join(', ')} (${m.ganador.n})`,
-    m.remontada && `${T.medalComeback}: ${m.remontada.filas.map(f => f.name).join(', ')}`,
-    m.farolito && `${T.medalLast}: ${m.farolito.map(f => f.name).join(', ')}`,
+    m.ganador && `${G().T.medalWins}: ${m.ganador.filas.map(f => f.name).join(', ')} (${m.ganador.n})`,
+    m.remontada && `${G().T.medalComeback}: ${m.remontada.filas.map(f => f.name).join(', ')}`,
+    m.farolito && `${G().T.medalLast}: ${m.farolito.map(f => f.name).join(', ')}`,
   ].filter(Boolean).join('\n');
-  return mensajeCopa(cabCopa('🏁', T.ctxFinal), `🏆 ${campeon}`, podioTxt, extras);
+  return mensajeCopa(cabCopa('🏁', G().T.ctxFinal), `🏆 ${campeon}`, podioTxt, extras);
 }
 
 /* ------------------------------------------------------------------ */
@@ -1559,6 +1592,7 @@ function antesDeJugar(d) {
     el('div', { class: 'intro-hero' }, heroe(id, J),
       el('p', { class: 'muted', style: 'margin:0' }, fmt(T.dayOf, { d, n: meta.days })),
       el('h2', { class: 'display display--lg' }, J.nombre)),
+    CON_PALABRAS.includes(id) ? avisoPalabras(meta) : null,
     el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.howToPlay), dibujo(id), el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
       el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, puntajeTexto(J))),
     el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.wildTitle), comodin),
@@ -1576,6 +1610,12 @@ function antesDeJugar(d) {
  * tienen, porque el tiempo desempata. El reloj parte cuando aparece "¡A jugar!", y ese cartel se
  * desvanece solo sobre el tablero. Resuelve la promesa en ese momento.
  */
+/** Los minijuegos que se juegan con palabras del idioma de la copa (D-170). */
+const CON_PALABRAS = ['conexiones', 'letras', 'final'];
+/** "Las palabras de esta copa van en inglés", solo si no es el idioma en que se está mirando. */
+const avisoPalabras = meta => (palabrasDe(meta) === LANG ? null
+  : el('p', { class: 'muted center aviso-palabras', style: 'margin:0' }, fmt(T.wordsIn, { idioma: T.langNames[palabrasDe(meta)] })));
+
 /** Lo de arriba de la antesala: la portada animada del minijuego si la tiene (el globo de ¿Dónde queda?), si no su emoji. */
 const heroe = (id, J) => JUEGOS[id]?.portada?.() ?? el('span', { class: con('icon', J.emoji) }, J.emoji);
 
@@ -1641,7 +1681,8 @@ async function jugar(d) {
   // La cuenta va solo al empezar: si se retoma una partida, el tablero vuelve de una
   if (!guardado.reloj) await cuentaRegresiva(J);
   // Conexiones necesita saber cuándo empezó su día, para no cambiar de grilla a mitad (D-128)
-  const p = mod.generar(S.code, d, id === 'conexiones' ? { desde: meta.win[d].a } : undefined);
+  // Los textos en el idioma de quien juega y las palabras en el de la copa (D-170)
+  const p = mod.generar(S.code, d, { lang: LANG, palabras: palabrasDe(meta), ...(id === 'conexiones' ? { desde: meta.win[d].a } : {}) });
   const now = ahora();
   // El reloj se detiene cuando el tablero termina, no cuando se toca "Ver resultado" (D-130).
   // Detenido, queda así aunque se recargue la página.
@@ -1654,7 +1695,7 @@ async function jugar(d) {
   const persistir = () => cuenta.intento.guardar(S.code, d, S.yo, { jugadas, reloj: reloj.pausar(rel, ahora()), detenido, ...(fin ? { fin } : {}) });
   const cerrar = estado => {
     const r = mod.resultado(estado);
-    fin = { s: r.s, ms: r.ms ?? Math.round(reloj.leer(rel, ahora())), t: r.t, resumen: r.resumen, det: desglose(id, estado, { T, fmt, mmss }) };
+    fin = { s: r.s, ms: r.ms ?? Math.round(reloj.leer(rel, ahora())), t: r.t, resumen: r.resumen, det: desglose(id, estado, { T, fmt, mmss, lang: LANG }) };
     persistir();
     envio = mandar(d, fin);
     // Si falla, "Ver resultado" lo reintenta y lo dice en pantalla; aquí no hay nada que mostrar
@@ -1681,7 +1722,7 @@ async function jugar(d) {
   panelReglas(id);
   S.juego = { d, id };
   mod.montar(body, {
-    p, jugadas, T, fmt, el, SFX, vibrate,
+    p, jugadas, T, fmt, el, SFX, vibrate, lang: LANG,
     guardar(j) { jugadas = j; persistir(); },
     tiempo: () => Math.round(reloj.leer(rel, ahora())),
     // Cada juego lo llama cuando su tablero termina (resuelto, perdido o sin tiempo): el tiempo
@@ -1766,8 +1807,8 @@ function resultado(d, { recien = false, det = null } = {}) {
       el('div', { class: 'score-big' }, mio.r || String(mio.s)),
       ...bajoElPuntaje(mio.t, mio.ms)),
     el('p', { class: 'lead center' }, cerrado(meta, d, now) || terminada(meta, now)
-      ? fmt(T.finalPos, { pos: `${yo.pos}º`, n, pts: yo.pts * x })
-      : fmt(T.provisional, { pos: `${yo.pos}º`, n })),
+      ? fmt(T.finalPos, { pos: ord(yo.pos), n, pts: yo.pts * x })
+      : fmt(T.provisional, { pos: ord(yo.pos), n })),
     explicacion(J, { s: mio.s, ms: mio.ms, det, x, final: esFinal(meta, d) }),
     el('button', { class: 'btn btn--cyan', id: 'btn-tarjeta', onClick: ev => conBoton(ev, () => compartirResultado(d)) }, T.shareCard),
     el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.dayTable),
@@ -1793,10 +1834,10 @@ function resultado(d, { recien = false, det = null } = {}) {
 async function compartirResultado(d) {
   const Lc = L(), { meta } = Lc;
   const mio = Lc.results[d][S.yo];
-  const J = MINIJUEGOS[juegoDelDia(meta, d)];
-  const cab = cabCopa('🏆', fmt(T.ctxDay, { d, n: meta.days }));
+  const J = G().J[juegoDelDia(meta, d)];
+  const cab = cabCopa('🏆', fmt(G().T.ctxDay, { d, n: meta.days }));
   const puntaje = mio.r || String(mio.s), tiempo = mmss(mio.ms);
-  const texto = mensajeCopa(cab, [fmt(T.shareCardText, { emoji: J.emoji, juego: J.nombre, name: nombreDe(S.yo), resumen: puntajeYTiempo(puntaje, tiempo, mio.t) }), mio.t].filter(Boolean).join('\n'));
+  const texto = mensajeCopa(cab, [fmt(G().T.shareCardText, { emoji: J.emoji, juego: J.nombre, name: nombreDe(S.yo), resumen: puntajeYTiempo(puntaje, tiempo, mio.t) }), mio.t].filter(Boolean).join('\n'));
   const imagen = await laminaResultado({
     cab, url: urlPublica(S.code), juego: J, nombre: nombreDe(S.yo), puntaje,
     detalle: puntajeYTiempo('', tiempo, mio.t), tarjeta: mio.t,
@@ -1871,7 +1912,8 @@ function practica(id) {
     el('div', { class: 'intro-hero' }, heroe(id, J),
       // En el laboratorio no se rotula "Práctica en el laboratorio": el chip y el botón de volver ya lo dicen
       LABS ? null : el('p', { class: 'muted', style: 'margin:0' }, T.looseTitle),
-      el('h2', { class: 'display display--lg' }, J.nombre)),
+      el('h2', { class: 'display display--lg' }, J.nombre),
+      el('div', { style: 'margin-top:6px' }, langToggle())),
     el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.howToPlay), dibujo(id), el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
       el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, puntajeTexto(J, false))),
     // La misma antesala que un día de la copa (D-109): la sesión de prueba se elige antes de jugar
@@ -1882,7 +1924,8 @@ function practica(id) {
 }
 
 function jugarPractica(id, semilla) {
-  const p = JUEGOS[id].generar(semilla, 1);
+  // Suelto, todo va en el idioma de quien juega: no hay con quién jugar lo mismo (D-170)
+  const p = JUEGOS[id].generar(semilla, 1, { lang: LANG });
   // Solo en el modo de prueba: `&zipSeg=8` acorta el reloj de Zip para los guiones de punta a punta
   const seg = Number(new URLSearchParams(location.search).get('zipSeg'));
   if (PRUEBA && id === 'zip' && seg > 0) p.tiempo = seg * 1000;
@@ -1913,7 +1956,7 @@ async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false } = {}) {
   body.innerHTML = '';
   panelReglas(id, { copa: false });
   mod.montar(body, {
-    p, jugadas: undefined, T, fmt, el, SFX, vibrate,
+    p, jugadas: undefined, T, fmt, el, SFX, vibrate, lang: LANG,
     textoFin: ensayo ? T.trialEnd : undefined,
     guardar() { /* no se guarda: no cuenta */ },
     tiempo: () => Math.round(reloj.leer(rel, Date.now())),
@@ -1925,7 +1968,7 @@ async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false } = {}) {
       clearInterval(S.reloj);
       document.removeEventListener('visibilitychange', S.visibilidad);
       const r = mod.resultado(estado);
-      alTerminar({ ...r, ms: r.ms ?? Math.round(reloj.leer(rel, Date.now())), det: desglose(id, estado, { T, fmt, mmss, copa: false }) });
+      alTerminar({ ...r, ms: r.ms ?? Math.round(reloj.leer(rel, Date.now())), det: desglose(id, estado, { T, fmt, mmss, copa: false, lang: LANG }) });
     },
   });
 }
@@ -1935,14 +1978,14 @@ function ensayo(d) {
   const id = juegoDelDia(L().meta, d);
   mostrar('jugar');
   S.juego = { d, id, ensayo: true };
-  jugarSinPuntaje(id, JUEGOS[id].ensayo(S.code, d), r => resultadoEnsayo(id, r, () => antesDeJugar(d)), { ensayo: true });
+  jugarSinPuntaje(id, JUEGOS[id].ensayo(S.code, d, { lang: LANG, palabras: palabrasDe(L().meta) }), r => resultadoEnsayo(id, r, () => antesDeJugar(d)), { ensayo: true });
 }
 
 /** La sesión de prueba desde la práctica del laboratorio: la misma que antes de un día (D-109). */
 function ensayoPractica(id, semilla) {
   mostrar('jugar');
   S.juego = { d: 1, id, practica: true, ensayo: true, semilla };
-  jugarSinPuntaje(id, JUEGOS[id].ensayo(semilla, 1), r => resultadoEnsayo(id, r, () => practica(id)), { ensayo: true });
+  jugarSinPuntaje(id, JUEGOS[id].ensayo(semilla, 1, { lang: LANG }), r => resultadoEnsayo(id, r, () => practica(id)), { ensayo: true });
 }
 
 /** Fin de la sesión de prueba: cómo le fue, cómo se calcula, y de vuelta a la antesala. */
@@ -1976,7 +2019,7 @@ function resultadoPractica(id, semilla, r) {
     explicacion(J, { s: r.s, ms: r.ms, det: r.det, copa: false }),
     LABS ? el('p', { class: 'muted center' }, fmt(T.practiceSeed, { semilla })) : null,
     // Suelto se comparte como cualquier minijuego jugado solo, con su página (D-162, D-165)
-    !LABS && gameById(id)?.suelto ? botonResultadoSolo({ C: COMMON.es, emoji: J.emoji, juego: J.nombre, puntaje: r.resumen || String(r.s), tiempo: mmss(r.ms), tarjeta: r.t, url: `${SITIO}minijuegos/${id}/`, alTocar: () => SFX.tap() }) : null,
+    !LABS && gameById(id)?.suelto ? botonResultadoSolo({ C: COMMON[LANG] || COMMON.es, emoji: J.emoji, juego: J.nombre, puntaje: r.resumen || String(r.s), tiempo: mmss(r.ms), tarjeta: r.t, url: withLang(`${SITIO}minijuegos/${id}/`, LANG), alTocar: () => SFX.tap() }) : null,
     el('a', { class: 'btn btn--yellow', id: 'btn-otra', href: otra }, T.practiceAgain),
     LABS ? el('a', { class: 'btn btn--cyan btn--sm', id: 'btn-repetir', href: `${otra}&semilla=${semilla}` }, T.practiceSame) : null,
     botonReporte({ juego: id, semilla, puntaje: r.s, resumen: r.resumen }),
@@ -2074,7 +2117,7 @@ function reportar(extra = {}) {
 sparkles();
 initSound();
 applyStatic(T);
-document.documentElement.lang = 'es';
+document.documentElement.lang = LANG;
 document.title = `${T.title} 🏆 · Juegos de Salón`;
 $('#sound-slot').append(soundToggle());
 // Mientras La Copa esté en el laboratorio, "volver" es volver ahí y no al menú (D-101)
