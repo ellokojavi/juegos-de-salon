@@ -1036,22 +1036,23 @@ async function compartirTabla() {
   await compartir(texto, await imagenTabla());
 }
 
+/**
+ * El texto que acompaña a la imagen de la tabla parcial: la cabecera y quién falta hoy. La tabla
+ * misma no se escribe: ya la dice la imagen (D-171).
+ */
 function mensajeTabla() {
   const Lc = L(), { meta } = Lc;
   const now = ahora();
   const d = Math.min(diaActual(meta, now), meta.days);
   // La tabla que se comparte es la que ve el admin: no delata días que él no ha jugado
   const filas = tabla(Lc, S.yo, now);
-  // Quien lleva menos juegos va marcado "(-1J)": la tabla parcial no lo castiga, lo explica (D-126)
-  const menos = menosJuegos(filas);
-  const lista = filas.map(f => `${['🥇', '🥈', '🥉'][f.lugar - 1] || `${f.lugar}.`} ${nombreConJuegos(f.name, menos[f.pid], G().T)} · ${f.total} ${G().T.pts}`).join('\n');
   const falta = faltan(Lc, d, now);
   // La cabecera lleva el último día que muestra la tabla; el aviso de abajo, el día que corre (#67)
-  return mensajeCopa(cabTabla(Lc, filas, now), lista, falta.length ? fmt(G().T.shareTableMissing, { d, names: falta.map(j => j.name).join(', ') }) : '');
+  return mensajeCopa(cabTabla(Lc, filas, now), falta.length ? fmt(G().T.shareTableMissing, { d, names: falta.map(j => j.name).join(', ') }) : '');
 }
 
 /** "Tomario (-1J)": el nombre con cuántos juegos menos lleva (D-126). */
-const nombreConJuegos = (name, n, TT = T) => (n > 0 ? fmt(TT.fewerGames, { name, n }) : name);
+const nombreConJuegos = (name, n) => (n > 0 ? fmt(T.fewerGames, { name, n }) : name);
 
 /** Oro, plata y bronce para el podio de la tabla final (D-153): degradado, borde y tinta grabada. */
 const METALES = {
@@ -1287,18 +1288,19 @@ function descargarPlanilla() {
   toast(T.exportDone);
 }
 
+/**
+ * El texto que acompaña a la imagen de la tabla final: la cabecera y las medallas, que la imagen no
+ * trae. El campeón y el podio no se escriben: los dice la imagen con sus galvanos (D-171).
+ */
 function mensajeFinal() {
   const Lc = L();
   const m = medallas(Lc);
-  const filas = tabla(Lc, S.yo, Lc.meta.end);
-  const campeon = m.campeon?.length === 1 ? fmt(G().T.shareFinalChamp, { name: m.campeon[0].name, pts: m.campeon[0].total }) : G().T.podiumTie;
-  const podioTxt = filas.slice(0, 3).map((f, i) => `${['🥇', '🥈', '🥉'][i]} ${f.name} · ${f.total} pts`).join('\n');
   const extras = [
     m.ganador && `${G().T.medalWins}: ${m.ganador.filas.map(f => f.name).join(', ')} (${m.ganador.n})`,
     m.remontada && `${G().T.medalComeback}: ${m.remontada.filas.map(f => f.name).join(', ')}`,
     m.farolito && `${G().T.medalLast}: ${m.farolito.map(f => f.name).join(', ')}`,
   ].filter(Boolean).join('\n');
-  return mensajeCopa(cabCopa('🏁', G().T.ctxFinal), `🏆 ${campeon}`, podioTxt, extras);
+  return mensajeCopa(cabCopa('🏁', G().T.ctxFinal), extras);
 }
 
 /* ------------------------------------------------------------------ */
@@ -1837,7 +1839,8 @@ async function compartirResultado(d) {
   const J = G().J[juegoDelDia(meta, d)];
   const cab = cabCopa('🏆', fmt(G().T.ctxDay, { d, n: meta.days }));
   const puntaje = mio.r || String(mio.s), tiempo = mmss(mio.ms);
-  const texto = mensajeCopa(cab, [fmt(G().T.shareCardText, { emoji: J.emoji, juego: J.nombre, name: nombreDe(S.yo), resumen: puntajeYTiempo(puntaje, tiempo, mio.t) }), mio.t].filter(Boolean).join('\n'));
+  // El juego, quién, el puntaje, el tiempo y la tarjeta van en la imagen: el texto no los repite (D-171)
+  const texto = mensajeCopa(cab);
   const imagen = await laminaResultado({
     cab, url: urlPublica(S.code), juego: J, nombre: nombreDe(S.yo), puntaje,
     detalle: puntajeYTiempo('', tiempo, mio.t), tarjeta: mio.t,
