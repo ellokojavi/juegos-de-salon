@@ -9,3 +9,6 @@ arte-original/
 # Llaves de cuentas de servicio de Firebase: nunca en el repo (D-122)
 *firebase-admin*.json
 *-firebase-adminsdk-*.json
+
+# Caché de Python que deja tools/readme.py al correr
+__pycache__/
