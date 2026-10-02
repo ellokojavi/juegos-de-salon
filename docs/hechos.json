@@ -1,5 +1,5 @@
 {
-  "version": "0.78.0",
+  "version": "0.81.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -675,6 +675,7 @@
     "panel/adapta.test.mjs",
     "panel/aggregate.test.mjs",
     "panel/copas.test.mjs",
+    "tools/documentar.test.mjs",
     "toque-y-fama/engine.test.mjs"
   ],
   "e2e": [

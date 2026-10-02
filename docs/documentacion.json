@@ -1,5 +1,21 @@
 {
+  "nota": "Memoria del agente de documentación (D-172). La lee y la escribe tools/documentar.mjs: hasta qué commit de main se revisó, lo que quedó pendiente, los problemas ya conocidos que esperan al dueño y las rondas anteriores.",
   "revisadoHasta": "bd8b20adabe23d4fef76977c3629002e6b0db1d4",
-  "fecha": "2026-10-02",
-  "nota": "Último commit de main que revisó el agente de documentación (D-172). La ronda siguiente parte desde aquí."
+  "pendientes": [
+    "Capturas de partidas en línea (toque-y-fama, batalla-naval, linea-de-tiempo, dudo, ahorcado, julepe online): el entorno en la nube no llega a www.gstatic.com ni a *.firebaseio.com. Rehacerlas desde el Mac del dueño o abrir esos dominios."
+  ],
+  "conocidos": [
+    "D-73 está dos veces en docs/DECISIONES.md"
+  ],
+  "rondas": [
+    {
+      "fecha": "2026-10-02",
+      "desde": null,
+      "hasta": "bd8b20adabe23d4fef76977c3629002e6b0db1d4",
+      "pr": null,
+      "pendientes": [
+        "Primera ronda, a mano: README de Reinas, capturas sin red y el agente mismo."
+      ]
+    }
+  ]
 }
