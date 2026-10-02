@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.82.1 — 2026-10-02
+- **"‹ Laboratorio" en una sola línea** (U-12): en la práctica de un minijuego con nombre largo
+  (¿Dónde queda?, Toque y Fama: Palabra), el botón de volver partía y dejaba el ‹ solo arriba.
+
 ## 0.82.0 — 2026-10-02
 - **📍 ¿Dónde queda? sale del laboratorio** (D-174): su tarjeta ya no dice "Próximamente" y se
   juega suelto desde el menú, en `/minijuegos/donde/`, como los otros minijuegos de La Copa.
