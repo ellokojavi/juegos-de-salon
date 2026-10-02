@@ -4,7 +4,7 @@
  * ronda diaria y lo puede correr cualquier sesión antes de proponer una fusión.
  *
  *   node tools/documentar.mjs revisar [--desde <commit>]   # qué entró y qué falta documentar
- *   node tools/documentar.mjs anotar --pr <url> [--hasta <commit>] [--pendiente "texto"]…
+ *   node tools/documentar.mjs anotar --hasta <commit> [--pr <url>] [--pendiente "texto"]…
  *   node tools/documentar.mjs historial                    # las rondas anteriores y lo pendiente
  *
  * `revisar` parte del commit guardado en docs/documentacion.json (o de `--desde`), lista lo que
@@ -177,6 +177,6 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const codigo = orden === 'revisar' ? revisar(i < 0 ? null : resto[i + 1])
     : orden === 'anotar' ? anotar(resto)
     : orden === 'historial' ? historial()
-    : (console.error('Uso: node tools/documentar.mjs revisar [--desde <commit>] | anotar --pr <url> [--hasta <commit>] [--pendiente "…"] | historial'), 2);
+    : (console.error('Uso: node tools/documentar.mjs revisar [--desde <commit>] | anotar --hasta <commit> [--pr <url>] [--pendiente "…"] | historial'), 2);
   process.exit(codigo);
 }
