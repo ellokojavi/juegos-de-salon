@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.85.2 — 2026-10-02
+- **🧶 Desenredo: los hilos son cuerdas** (D-182): con una curva leve, un poco más gruesos y con
+  textura de cuerda torcida. Cada hilo tiene su forma y la mantiene al moverlo. Las reglas no
+  cambian: un cruce sigue siendo el de la línea recta.
+- **Desenredo: el nudo que arrastras ya no desaparece** mientras lo mueves. Chocaba con un estilo
+  del arrastre de Línea de Tiempo.
+
 ## 0.85.1 — 2026-10-02
 - **🧶 Desenredo, usabilidad:** la bajada del menú y de la tarjeta social queda en una frase, como
   la de los demás minijuegos; ya no repite con palabras los niveles y los minutos que la tarjeta

@@ -432,6 +432,26 @@ test('desenredo: qué cuenta como cruce', () => {
   assert.ok(cruces(p.hilos, p.sol.map(() => [500, 500])).total > 0);
 });
 
+test('desenredo: la cuerda es una curva leve, fija para cada hilo (D-182)', () => {
+  const { cuerda, trazoCuerda, ONDA, ONDA_MAX } = desenredo;
+  const bez = (a, [c1, c2], b, t) => [0, 1].map(k => (1 - t) ** 3 * a[k] + 3 * (1 - t) ** 2 * t * c1[k] + 3 * (1 - t) * t * t * c2[k] + t ** 3 * b[k]);
+  for (let sem = 0; sem < 200; sem++) {
+    const a = [100 + sem, 200], b = [800, 300 + 2 * sem];
+    const c = cuerda(a, b, sem);
+    let lejos = 0;
+    for (let t = 0; t <= 1; t += 0.05) lejos = Math.max(lejos, desenredo.distancia(bez(a, c, b, t), a, b));
+    // Se aparta poco de la recta: lo que se ve es lo que se cuenta como cruce
+    assert.ok(lejos <= Math.min(ONDA_MAX, ONDA * Math.hypot(b[0] - a[0], b[1] - a[1])) + 0.5, `semilla ${sem}: ${lejos}`);
+    assert.deepEqual(cuerda(a, b, sem), c);
+  }
+  // Hay de las dos formas, en S y en arco
+  const formas = new Set(Array.from({ length: 40 }, (_, s) => {
+    const [c1, c2] = cuerda([0, 0], [900, 0], s); return Math.sign(c1[1]) === Math.sign(c2[1]) ? 'arco' : 'ese';
+  }));
+  assert.equal(formas.size, 2);
+  assert.match(trazoCuerda([0, 0], [900, 0], 3), /^M0 0C[-\d. ]+ 900 0$/);
+});
+
 test('desenredo: puntaje, tarjeta y fin de la partida', () => {
   const D = desenredo;
   assert.equal(D.puntaje({ hechos: 0 }), 0);
