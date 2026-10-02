@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.82.1 — 2026-10-02
+- **La Copa: en Administrar, sin hueco vacío sobre los botones** de "Terminar la copa antes",
+  "Tabla final" y "Eliminar la copa" (U-11). El aviso de error va debajo del botón, como en
+  Nombre de la copa y Jugadores, y vacío no ocupa lugar.
+
 ## 0.82.0 — 2026-10-02
 - **📍 ¿Dónde queda? sale del laboratorio** (D-174): su tarjeta ya no dice "Próximamente" y se
   juega suelto desde el menú, en `/minijuegos/donde/`, como los otros minijuegos de La Copa.
