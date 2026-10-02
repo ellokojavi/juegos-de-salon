@@ -21,10 +21,9 @@ export const GAMES = [
     // Tiene de todo: aparece con cualquier tipo que se elija en los filtros de la portada
     tipos: ['palabras', 'logica', 'cultura'],
     path: 'copa/',
-    // En el laboratorio (D-101): la tarjeta se ve en el menú, apagada y con "Próximamente", y se
-    // juega desde /labs/ y desde los links de cada copa, que siguen trayendo su tarjeta social.
-    available: false,
-    labs: true,
+    // Salió del laboratorio (D-175): se abre desde el menú. /labs/ sigue para probar (la Copa de 3
+    // días, la práctica con semilla y las demos).
+    available: true,
   },
   {
     id: 'linea-de-tiempo',
