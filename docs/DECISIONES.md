@@ -2480,9 +2480,10 @@ cada juego, `CLAUDE.md`, el README con sus capturas y las tarjetas sociales.
 - **Herramienta:** `tools/documentar.mjs` (`revisar`, `anotar`, `historial`) lista lo que entró y
   comprueba lo que no necesita leer prosa: decisiones citadas que no existen o repetidas, pruebas
   que `CLAUDE.md` no nombra, guiones que `tools/e2e/README.md` no nombra y la versión sin entrada
-  en el CHANGELOG. La prueba `tools/documentar.test.mjs`. Cualquier sesión la puede correr.
-- **No es solo la ronda:** como el de usabilidad, revisa cada PR antes de proponer su fusión (con
-  `revisar --desde <base>`, arreglando en la rama del PR) y se le puede pedir a mano.
+  en el CHANGELOG. Su prueba es `tools/documentar.test.mjs`. Cualquier sesión la puede correr.
+- **No es solo la ronda:** como el de usabilidad, revisa cada PR antes de proponer su fusión (lo que
+  trae, con `git log <base>..HEAD`; las comprobaciones, con `revisar --desde <base>`; los arreglos,
+  en la rama del PR) y se le puede pedir a mano.
 - **Cuándo:** una Routine de Claude Code en la nube, todos los días a las **3:54 hora del
   Pacífico**, antes de la ronda de usabilidad (5:00, D-132). No necesita la llave de Firebase ni el
   Mac del dueño.

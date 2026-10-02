@@ -202,6 +202,11 @@ El README no se mantiene a pulso: `python3 tools/readme.py` lo sostiene.
   README es una toma nueva en el guion, no un recorte a mano. Se miran antes de publicar
   (C-12) y se guardan al doble del ancho con que se muestran.
 
+Lo que se atrasa igual lo recoge el agente `documentacion` (D-172): una ronda diaria sobre lo que
+entró a `main` y una revisión de cada PR antes de proponer su fusión, con
+`node tools/documentar.mjs revisar` y su memoria en `docs/documentacion.json`. No reemplaza esta
+regla: quien cambia algo lo documenta en su mismo PR.
+
 ## C-14 · Robustez
 
 - Nada de dependencias de npm ni de paso de compilación: el repo publicado se abre y funciona.
