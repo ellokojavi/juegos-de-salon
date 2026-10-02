@@ -31,7 +31,9 @@ const ANCHO = 1200, ALTO = 630;
 
 const disponibles = GAMES.filter(g => g.available);
 // Un juego del laboratorio no va en la portada, pero sus links sí se comparten: lleva su tarjeta (D-101).
-const conTarjeta = GAMES.filter(g => g.available || g.labs);
+// Lo mismo uno apagado que conserva su página (Julepe): quien tenga el link lo sigue compartiendo,
+// y sin esto su tarjeta se quedaba con el dibujo y los textos de cuando se apagó.
+const conTarjeta = GAMES.filter(g => g.available || g.labs || existsSync(join(RAIZ, g.id, 'index.html')));
 
 /**
  * Las tres puertas de entrada: la portada en español y las dos que dejan elegido el idioma

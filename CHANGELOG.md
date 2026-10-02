@@ -6,6 +6,25 @@
   6 a 15 nudos y cuatro minutos, como Zip: 10 puntos por nivel. Entra al pozo de La Copa con su
   propia habilidad (espacial) y tiene su página suelta en `/minijuegos/desenredo/`.
 
+## 0.84.4 — 2026-10-02
+- **Línea de Tiempo: el año del veredicto, grande.** Después de colocar una carta, el año en que
+  pasó es lo que se viene a mirar: ahora ocupa el ancho de la carta (antes era del tamaño del
+  texto). Vale también para el minijuego de Línea de Tiempo de La Copa.
+- **La tarjeta de La Copa resalta en el menú**: un degradé dorado, rosa y morado que se mueve
+  despacio y un borde dorado, para invitar a armar un torneo de varios días. Con "reducir
+  movimiento" queda quieto.
+
+## 0.84.3 — 2026-10-02
+- **Julepe vuelve a tener su tarjeta para compartir al día:** aunque está apagado, su página sigue
+  y su link se comparte, pero la tarjeta se había quedado como en 0.35.2. Ahora la rehace la misma
+  herramienta que las demás, con la bajada nueva, las píldoras centradas y el reloj ⏱️ a color.
+
+## 0.84.2 — 2026-10-02
+- **Tarjetas para compartir (lo que se ve al pegar un link en WhatsApp) sin textos desalineados:**
+  en las píldoras de jugadores y duración, el texto queda a la misma altura en las dos, y el reloj
+  ⏱️ sale a color. Los acentos de los títulos (SALÓN, ¿EN QUÉ AÑO?, ¿DÓNDE QUEDA?, LÍNEA DE
+  TIEMPO) ya no salen cortados. Las imágenes traen las bajadas cortas nuevas, y la del menú suma 🏆.
+
 ## 0.84.1 — 2026-10-02
 - **Conexiones, Reinas, Zip y los demás, jugados desde la portada, ya no se presentan como de
   La Copa:** su antesala no dice "Minijuego de La Copa" ni "no cuenta para ninguna copa" (U-8).

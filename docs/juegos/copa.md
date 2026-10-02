@@ -16,7 +16,8 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
   repetible; los que tienen página se van a `/minijuegos/<id>/?labs&semilla=K7Q2X`, D-164). Desde la portada el minijuego suelto es `/minijuegos/<id>/` (D-142, D-149, D-162): la misma
   pantalla, sin "copa" en el link, que vuelve al menú, sin sesión de prueba ni semilla a la vista, y
   con su señal de uso. `/copa/?practica=<id>` sin `&labs` lleva ahí.
-- **Jugadores:** de 1 a 10 por copa. **Idioma:** español, inglés y portugués (D-170). La
+- **Jugadores:** de 2 a 10 por copa (`MIN_JUGADORES` y `MAX_JUGADORES` en `engine.js`, D-118). Con
+  el administrador solo, la copa no parte y el tablero pide "al menos un jugador más". **Idioma:** español, inglés y portugués (D-170). La
   pantalla va en el idioma de quien mira; las palabras de Conexiones y Palabra, los mensajes al
   grupo y su link, en el de la copa (`meta.lang`, se elige al crearla).
 - **Modalidades:** Copa de 7 días (la que se ofrece) y Copa de 3 días (solo pruebas).
@@ -36,7 +37,7 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
 | Resultados ocultos | Los puntajes de un día se ven después de jugarlo o cuando cierra. La tabla y el gráfico tampoco lo delatan: suman solo los días que ya puedes ver. |
 | Nombre | El admin lo puede cambiar hasta que la copa termina; el link sigue igual (D-148). |
 | Terminar antes | El admin puede terminar la copa en cualquier momento desde que parte. Nadie más juega, la tabla de ese momento queda como la final y los días que no alcanzaron a abrirse no se juegan ni suman (D-161). |
-| Inscripción | Abierta hasta que empieza la final. Los días que ya cerraron quedan con 0. |
+| Inscripción | Abierta hasta que empieza la final, salvo que el administrador la cierre o la copa llegue a 10 (quien llega lee por qué no puede entrar: terminó, cerrada, cerrada por el administrador o llena). Los días que ya cerraron quedan con 0; el aviso sale desde el día 3, porque el día 2 el día 1 sigue en su día de gracia (D-177). |
 | Tabla | Suma de puntos. Desempata quien ganó más días y después quien quedó mejor en la final. Es **provisoria** mientras el último día que muestra sigue abierto y alguien no lo ha jugado (D-147). |
 | Medallas | Campeón, más días ganados, la remontada (más puestos subidos desde la mitad) y "al descenso" (el último). |
 
@@ -68,7 +69,9 @@ parte el reloj. Al terminar, el resultado explica **cómo se calculó el puntaje
 
 Antes de Empezar cada día se puede jugar una **sesión de prueba** (D-103): la misma mecánica con
 otro contenido (código derivado con `codigoEnsayo`, otra temática, una grilla fuera del sorteo,
-tableros más chicos), que no se guarda ni cuenta.
+tableros más chicos), que no se guarda ni cuenta. La antesala lo dice bajo el botón de la prueba,
+y las reglas plegadas de la prueba lo repiten: "La prueba es más corta que el juego de verdad y no
+cuenta para la copa" (`trialNote`, D-177).
 
 Al crear la copa, apenas se elige la duración aparece **¿Qué se juega cada día?** con una propuesta
 al azar (`calendarioAlAzar`): juegos distintos del pozo (`POZO` en `engine.js`: los seis de siempre
@@ -166,7 +169,11 @@ y un contexto en JSON: copa, jugador, pantalla, día, juego, semilla, URL y nave
 Quien crea la copa también juega. Puede renombrar, sacar (y volver a meter) y ponerle PIN nuevo a
 un jugador, y compartir cuatro mensajes armados con el diálogo del celular (D-99): invitación,
 **recordatorio del día** (sirve cualquier día: antes de empezar, con el día de gracia y con quién
-falta), tabla parcial y resumen final.
+falta), tabla parcial y resumen final. La **invitación** sigue en Administrar mientras alguien
+nuevo pueda entrar —inscripción abierta y menos de 10 jugadores—, no solo antes de partir; ya
+partida dice "📅 Ya partió: va en el día 3 de 7 y todavía puedes entrar." y, desde el día 3, que
+los días cerrados quedan en 0 (D-176, D-177). El botón "Invitar al grupo" del tablero sigue solo
+antes de partir.
 
 **Terminar la copa antes** (D-161): desde que parte, el admin puede cerrarla en ese momento, por
 ejemplo si el último no va a jugar la final. Antes de confirmar ve quiénes todavía no juegan el día
@@ -196,6 +203,7 @@ node copa/engine.test.mjs
 node copa/juegos/juegos.test.mjs
 node copa/store.test.mjs
 node copa/planilla.test.mjs
+node copa/reportes.test.mjs
 node tools/e2e/copa.mjs /tmp/copa            # Copa de 3 días, tres jugadores
 node tools/e2e/copa.mjs /tmp/copa --siete    # los siete minijuegos
 ```
@@ -203,5 +211,6 @@ node tools/e2e/copa.mjs /tmp/copa --siete    # los siete minijuegos
 ## Pendiente (después de la v1)
 
 Recordatorios `.ics` (LIG-29), verificación cruzada de puntajes (LIG-30), papelera de copas
-viejas (LIG-31), inglés y portugués con contenido propio (LIG-32), avisos automáticos (LIG-33),
-minijuegos de reserva (LIG-84) y que el panel del dueño muestre las copas y su progreso.
+viejas (LIG-31), avisos automáticos (LIG-33) y minijuegos de reserva (LIG-84). Ya no están
+pendientes: inglés y portugués con contenido propio (LIG-32, hecho en D-170) y las copas en el
+panel del dueño (D-137).
