@@ -98,7 +98,7 @@ const tematicas = DECKS.map(d => ({
   id: d.id, emoji: d.emoji, nombre: d.name, pista: d.hint, cartas: d.cards.length, desde: anios(d.cards)[0], hasta: anios(d.cards)[1],
 }));
 
-const modulos = archivos('', r => r.endsWith('.js') && !r.startsWith('tools/') && !r.endsWith('.test.mjs'));
+const modulos = archivos('', r => r.endsWith('.js') && !r.startsWith('tools/') && !r.startsWith('marketing/') && !r.endsWith('.test.mjs'));
 const versionados = [...leer('tools/set-version.py').matchAll(/'([\w./-]+\.js)'/g)].map(m => m[1]);
 const tests = archivos('', r => r.endsWith('.test.mjs'));
 const e2e = archivos('tools/e2e', r => r.endsWith('.mjs') && !r.endsWith('cdp.mjs')).map(r => r.replace('tools/e2e/', ''));

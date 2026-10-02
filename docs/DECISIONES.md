@@ -2562,3 +2562,24 @@ siguen con la frase vieja del menú hasta rehacerlas en el Mac del dueño: en la
 carga las fuentes. Las capturas del README que muestran estos textos se rehacen.
 **Alternativas descartadas:** acortar más allá del 40 % (se perdían reglas o se volvía telegrama,
 contra U-1); un botón para anotar al perdedor del chancho más tarde (cambio de diseño, aparte).
+
+## D-178 · Los assets de marketing viven en el repo, cada uno con su memoria
+**Fecha:** 2026-10-02 · **Estado:** vigente
+**Decisión:** El video promocional y lo que venga de marketing son objetos del repositorio, en
+`marketing/`: una carpeta por asset con sus fuentes, sus archivos finales (solo la última
+versión, en `salida/`), su forma de rehacerse y un README que es su memoria. `marketing/registro.json`
+los lista con versión, fecha, archivos y estado.
+- **Memoria:** el README de cada asset guarda lo que el dueño fue pidiendo en cada vuelta (en sus
+  palabras cuando importa), sus gustos destilados ("Lo que el dueño quiere"), cómo está hecho, las
+  trampas conocidas y la historia de versiones. Se lee entero antes de tocar el asset y se
+  actualiza al terminar cada vuelta.
+- **Para que ninguna sesión empiece de cero:** `CLAUDE.md` lo dice, y el skill
+  `.claude/skills/video-promo/` se carga solo cuando se trabaja en el video, nuevo o existente.
+- **El video** (`marketing/video-promo/`) se rehace entero con `construir.sh`: juega cada juego en
+  la app real con azar fijo, renderiza `promo.html` cuadro a cuadro en los dos formatos (16:9 para
+  YouTube y vertical) y le pone la canción del dueño. Las capturas no van al repo: se rehacen.
+**Por qué:** el video se hizo en cinco vueltas en dos sesiones, y lo aprendido (qué le gusta al
+dueño, la canción, las trampas del render) estaba solo en las conversaciones y en carpetas
+temporales que se borran.
+**Consecuencias:** los mp4 pesan (~25 MB cada uno) y se publican con el sitio en GitHub Pages; al
+reemplazarlos, el repo crece con cada versión. Si eso molesta, se pasan a Git LFS o a un release.
