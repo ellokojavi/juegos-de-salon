@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.82.2 — 2026-10-02
+- **La Copa: cuando falta uno solo, el aviso va en singular** (U-6). El recordatorio dice
+  "👀 Falta por jugar hoy: Pancho.", la tabla parcial "Falta que juegue: Pancho." y, al terminar
+  antes, "Falta que juegue el día 7: Cata. … se queda sin los puntos". Con dos o más, igual que antes.
+  En inglés la misma frase sirve para uno o varios; en portugués también va en singular.
+
 ## 0.82.1 — 2026-10-02
 - **La Copa: en Administrar, sin hueco vacío sobre los botones** de "Terminar la copa antes",
   "Tabla final" y "Eliminar la copa" (U-11). El aviso de error va debajo del botón, como en
