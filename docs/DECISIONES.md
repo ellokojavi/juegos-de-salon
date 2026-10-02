@@ -2514,3 +2514,15 @@ cambia nada: ya se podía elegir para cualquier día desde D-163.
 (D-170) ya estaban probados en el laboratorio y en copas de verdad.
 **Consecuencias:** la portada ofrece siete minijuegos sueltos. La captura del menú en el README se
 rehace. `labs` en `BASE` de `copa/rules.js` no se usa para la portada y queda como estaba.
+
+## D-175 · La Copa sale del laboratorio y llega al menú
+**Fecha:** 2026-10-02 · **Estado:** vigente; cierra el periodo de laboratorio de D-101
+**Decisión:** La Copa queda activa en el menú principal (`available: true` y sin `labs` en
+`games.js`): su tarjeta abre `/copa/`, sin "Próximamente". El botón "‹ Menú" de La Copa vuelve al
+menú; solo quien llega desde el laboratorio (`?labs`) vuelve a `/labs/`.
+- **El laboratorio sigue** para probar: la Copa de 3 días (D-100), la práctica con semilla, las
+  demos y la copa simulada. Las copas creadas desde ahí siguen marcadas en el panel.
+- **Lo que se ofrece desde el menú es la Copa de 7 días**, como siempre fue el plan (D-100).
+
+**Por qué:** El dueño lo pidió: la copa ya se probó con amigos (los reportes de 🐞, las rondas de
+usabilidad y los arreglos de La Copa en inglés y portugués) y ya se comparte por su link.

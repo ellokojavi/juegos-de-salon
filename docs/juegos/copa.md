@@ -1,13 +1,15 @@
 # La Copa 🏆
 
+**Estado:** en el menú (v0.83, D-175) · **Ruta:** `/copa/`
+
 Un torneo entre amigos que dura una semana: cada día se abre un minijuego distinto, idéntico
 para todos, que se juega **una sola vez** y reparte puntos según la posición del día. Gana
 quien suma más al cierre. Es la primera modalidad de la app que no es una partida sino una
 serie de partidas en el tiempo (un macro-juego). El diseño completo, con la revisión y el plan
 de construcción, se discutió en el documento *La Copa — requisitos del torneo de varios días*.
 
-- **Estado:** en el laboratorio (D-101). En el menú aparece como "Próximamente"; se prueba desde
-  **`/labs/`**.
+- **Estado:** en el menú desde D-175. **`/labs/`** sigue para probar: la Copa de 3 días, la
+  práctica con semilla y las demos (D-101).
 - **URL:** `/copa/` (portada) · `/copa/?K7Q2X` (una copa) · `/copa/?labs` (copa real con la Copa
   de 3 días, D-100; `?tres` sigue funcionando) · `?prueba` (almacén local y reloj adelantable, sin
   Firebase) · `/copa/?practica=<id>&labs&semilla=K7Q2X` (un minijuego suelto del laboratorio,

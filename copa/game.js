@@ -2123,9 +2123,8 @@ applyStatic(T);
 document.documentElement.lang = LANG;
 document.title = `${T.title} 🏆 · Juegos de Salón`;
 $('#sound-slot').append(soundToggle());
-// Mientras La Copa esté en el laboratorio, "volver" es volver ahí y no al menú (D-101)
-// Salvo el minijuego suelto de la portada (D-142, D-149), que vuelve a ella.
-if (!SUELTO || LABS) {
+// Desde el laboratorio (?labs), "volver" es volver ahí; si no, al menú (D-175)
+if (LABS) {
   $('#btn-menu').setAttribute('href', `${RAIZ}labs/`);
   $('#btn-menu').textContent = T.backToLabsShort;
 }
