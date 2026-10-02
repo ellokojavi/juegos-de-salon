@@ -777,6 +777,9 @@ await b.go(`${BASE}?practica=${id}&prueba&labs${id === 'zip' ? '&zipSeg=12&semil
     // Se toma un poco al lado del nudo: el área que se toca es más grande que el dibujo (C-8)
     await b.send('Input.dispatchMouseEvent', { type: 'mousePressed', x: x0 + 14, y: y0, button: 'left', clickCount: 1, buttons: 1 });
     for (let i = 1; i <= 3; i++) await b.send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: x0 + 14, y: y0 + 15 * i, button: 'left', buttons: 1 });
+    // A medio arrastre el nudo tomado se ve: con la clase .vilo lo escondía el CSS del arrastre compartido
+    ok(await ev(`(()=>{const c=document.querySelector('.des-tablero circle.tomado');return !!c&&c.getBoundingClientRect().width>20})()`), 'Desenredo: el nudo que se arrastra se ve mientras se mueve');
+    ok(await ev(`document.querySelectorAll('.des-tablero .des-hilo path.hebra').length`) > 0, 'Desenredo: los hilos se dibujan como cuerda (D-182)');
     await b.send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: x0 + 14, y: y0 + 45, button: 'left', clickCount: 1, buttons: 0 });
     const despues = await ev(`(()=>{const c=document.querySelector('.des-tablero circle[data-v="0"]');return JSON.stringify([c.cx.baseVal.value,c.cy.baseVal.value])})()`).then(JSON.parse);
     ok(despues[1] > antes[1] + 50 && Math.abs(despues[0] - antes[0]) < 2, `Desenredo: arrastrar desde al lado del nudo lo mueve (${antes} → ${despues})`);
