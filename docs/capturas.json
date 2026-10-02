@@ -151,7 +151,7 @@
     {
       "seccion": "cuarto-rey",
       "imagen": "docs/screenshots/cuarto-rey/06-minijuego.png",
-      "pie": "Mini-game with prompts",
+      "pie": "Minigame with prompts",
       "guion": "cuarto-rey",
       "toma": "06-minijuego"
     },
@@ -466,7 +466,7 @@
     {
       "seccion": "ahorcado",
       "imagen": "docs/screenshots/ahorcado/02-configuracion.png",
-      "pie": "Word, misses allowed and who plays",
+      "pie": "Word, lives and who plays",
       "guion": "ahorcado-local",
       "toma": "02-setup"
     },
@@ -501,7 +501,7 @@
     {
       "seccion": "ahorcado",
       "imagen": "docs/screenshots/ahorcado/07-varios-celulares.png",
-      "pie": "Everyone guessing at once",
+      "pie": "Each on their own phone, taking turns",
       "guion": "ahorcado-online",
       "toma": "04-play"
     },
@@ -515,7 +515,7 @@
     {
       "seccion": "ahorcado",
       "imagen": "docs/screenshots/ahorcado/09-solitario.png",
-      "pie": "Play alone: the app deals the word",
+      "pie": "Play alone: the phone deals the word",
       "guion": "ahorcado-local",
       "toma": "09-solo"
     },
@@ -536,7 +536,7 @@
     {
       "seccion": "julepe",
       "imagen": "docs/screenshots/julepe/03-declaracion.png",
-      "pie": "In or out, in secret",
+      "pie": "In or out, taking turns",
       "guion": "julepe-local",
       "toma": "03-declaracion"
     },
