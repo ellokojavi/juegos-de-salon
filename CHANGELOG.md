@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.84.1 — 2026-10-02
+- **Minijuegos sueltos sin "no cuenta para ninguna copa"** (U-8): fuera de La Copa no hay copa a
+  la vista, así que la antesala de Conexiones, Reinas, Zip y los demás ya no lo dice. En el
+  laboratorio sigue el aviso de que es una práctica.
+
 ## 0.84.0 — 2026-10-02
 - **Textos de explicación más cortos en todos los juegos** (D-177, U-8): reglas, ayudas, modos,
   antesalas de La Copa, Administrar y las frases del menú bajan un 37 %. Cada regla se dice una

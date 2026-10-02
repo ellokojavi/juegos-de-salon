@@ -1932,7 +1932,8 @@ function practica(id) {
       el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, puntajeTexto(J, false))),
     // La misma antesala que un día de la copa (D-109): la sesión de prueba se elige antes de jugar
     mod.ensayo && LABS ? el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-ensayo', onClick: () => { SFX.tap(); ensayoPractica(id, semilla); } }, `🧪 ${T.tryFirst}`) : null,
-    el('p', { class: 'muted center' }, LABS ? T.practiceHint : T.looseHint),
+    // Suelto no hace falta decir que no cuenta para una copa: no hay copa a la vista
+    LABS ? el('p', { class: 'muted center' }, T.practiceHint) : null,
     el('button', { class: 'btn btn--yellow', id: 'btn-empezar', onClick: () => { SFX.tap(); jugarPractica(id, semilla); } }, `${J.emoji} ${T.start}`),
     volverDePractica()));
 }
