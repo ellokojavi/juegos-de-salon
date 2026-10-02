@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.83.1 — 2026-10-02
+- **La Copa: en Administrar, la invitación sigue mientras alguien pueda entrar** (D-176). Antes
+  desaparecía apenas partía la copa, aunque la inscripción tardía siguiera abierta. Ahora está
+  mientras la inscripción esté abierta y haya cupo, y ya partida dice "📅 Ya partió: va en el día
+  3 de 7 y todavía puedes entrar." en vez de cuándo parte. El botón del tablero sigue solo antes
+  de partir.
+
+## 0.83.0 — 2026-10-02
+- **La Copa llega al menú.** Su tarjeta ya no dice "Próximamente": se abre desde la portada y su
+  botón "‹ Menú" vuelve al menú. El laboratorio (`/labs/`) sigue para probar, con la Copa de 3
+  días (D-175).
+
 ## 0.82.4 — 2026-10-02
 - **Arreglo: la invitación a una copa en inglés o portugués abre la copa.** El link lleva el idioma
   (`?pirata&lang=pt`, D-170) y, al sacarlo de la barra, el resto quedaba como `?pirata=`, que La Copa
