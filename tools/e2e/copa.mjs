@@ -574,7 +574,11 @@ ok(await ev('window.__compartido.at(-1)?.files?.[0]?.name') === 'copa-oficina-ta
 
 await b.go(`${SITIO}/`, 1500);
 const tarjeta = await ev(`(()=>{const c=[...document.querySelectorAll('.game-card')].find(x=>x.textContent.includes('La Copa'));return JSON.stringify({soon:c.classList.contains('soon'),href:c.getAttribute('href'),rotulo:c.querySelector('.proximamente')?.textContent})})()`).then(JSON.parse);
-ok(tarjeta.soon && !tarjeta.href && tarjeta.rotulo === 'Próximamente', 'en el menú La Copa se ve con Próximamente y no se abre');
+ok(!tarjeta.soon && tarjeta.href === 'copa/' && !tarjeta.rotulo, 'en el menú La Copa está activa y abre /copa/ (D-175)');
+await b.go(BASE, 1500);
+ok(await ev(`document.getElementById('btn-menu').href`) === `${SITIO}/`, 'La Copa sin ?labs vuelve al menú, no al laboratorio (D-175)');
+await b.go(`${BASE}?labs`, 1500);
+ok(await ev(`document.getElementById('btn-menu').href`) === `${SITIO}/labs/`, 'La Copa con ?labs vuelve al laboratorio');
 await b.go(`${SITIO}/labs/`, 1500);
 ok(await ev(`document.querySelectorAll('#minis .mini-juego').length`) === 10 && await ev(`!!document.querySelector('#minis [data-id="donde"]')`), 'el laboratorio ofrece los diez minijuegos (con Zip, Tango y ¿Dónde queda?)');
 await b.shot('10-labs');
