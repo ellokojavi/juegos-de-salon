@@ -1,7 +1,7 @@
 // Las comprobaciones y la memoria del agente de documentación (D-172).
 // Uso: node tools/documentar.test.mjs
 import assert from 'node:assert/strict';
-import { decisionesEscritas, decisionesCitadas, sinMencionar, changelogTiene, versionDe, memoriaNueva, anotarRonda, separar } from './documentar.mjs';
+import { decisionesEscritas, decisionesCitadas, sinMencionar, changelogTiene, versionDe, memoriaNueva, anotarRonda, separar, rango } from './documentar.mjs';
 
 let n = 0;
 const caso = (nombre, fn) => { fn(); n++; };
@@ -55,6 +55,22 @@ caso('la memoria guarda las últimas 60 rondas', () => {
   for (let i = 0; i < 70; i++) m = anotarRonda(m, { fecha: String(i), desde: null, hasta: String(i) });
   assert.equal(m.rondas.length, 60);
   assert.equal(m.rondas[0].hasta, '10');
+});
+
+caso('anotar dos veces la misma ronda la completa, no la duplica', () => {
+  let m = anotarRonda(memoriaNueva(), { fecha: '2026-10-02', desde: null, hasta: 'aaa', pendientes: ['capturas en línea'] });
+  m = anotarRonda(m, { fecha: '2026-10-02', desde: 'aaa', hasta: 'aaa', pr: 'https://x/7' });
+  assert.equal(m.rondas.length, 1);
+  assert.equal(m.rondas[0].pr, 'https://x/7');
+  assert.equal(m.rondas[0].desde, null, 'la ronda conserva desde dónde partió');
+  assert.deepEqual(m.pendientes, ['capturas en línea'], 'agregar el link no borra lo pendiente');
+  assert.deepEqual(m.rondas[0].pendientes, ['capturas en línea']);
+});
+
+caso('una ronda mira main desde la memoria; un PR, su rama desde la base', () => {
+  const memoria = { revisadoHasta: 'r0' };
+  assert.deepEqual(rango({ desde: null, memoria, main: 'm1', head: 'h1' }), { inicio: 'r0', punta: 'm1', donde: 'main' });
+  assert.deepEqual(rango({ desde: 'origin/main', memoria, main: 'm1', head: 'h1' }), { inicio: 'origin/main', punta: 'h1', donde: 'esta rama' });
 });
 
 console.log(`documentar: ${n} casos en verde`);

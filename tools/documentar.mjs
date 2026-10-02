@@ -62,15 +62,35 @@ export const separar = (problemas, conocidos = []) => ({
   viejos: problemas.filter(p => conocidos.includes(p)),
 });
 
-/** Cierra una ronda: avanza hasta dónde se revisó y reemplaza lo pendiente. */
+/**
+ * Cierra una ronda: avanza hasta dónde se revisó y reemplaza lo pendiente. Si la última ronda ya
+ * llegó a ese mismo commit, es la misma ronda: se completa (el link del PR, que se sabe después de
+ * abrirlo) en vez de duplicarse, y lo pendiente solo cambia si se anota algo.
+ */
 export function anotarRonda(memoria, { fecha, desde, hasta, pr = null, pendientes = [] }) {
+  const rondas = memoria.rondas || [];
+  const ultima = rondas.at(-1);
+  if (ultima && ultima.hasta === hasta) {
+    const suyos = pendientes.length ? pendientes : ultima.pendientes || [];
+    return {
+      ...memoria,
+      revisadoHasta: hasta,
+      pendientes: pendientes.length ? pendientes : memoria.pendientes || [],
+      rondas: [...rondas.slice(0, -1), { ...ultima, pr: pr || ultima.pr, pendientes: suyos }],
+    };
+  }
   return {
     ...memoria,
     revisadoHasta: hasta,
     pendientes,
-    rondas: [...(memoria.rondas || []), { fecha, desde, hasta, pr, pendientes }].slice(-60),
+    rondas: [...rondas, { fecha, desde, hasta, pr, pendientes }].slice(-60),
   };
 }
+
+/** Lo que muestra `revisar`: una ronda mira main desde la memoria; un PR, su rama desde la base. */
+export const rango = ({ desde, memoria, main, head }) => (desde
+  ? { inicio: desde, punta: head, donde: 'esta rama' }
+  : { inicio: memoria.revisadoHasta, punta: main, donde: 'main' });
 
 /* ------------------------------------------------------------------ */
 /* Con el repo                                                         */
@@ -124,8 +144,9 @@ export function comprobar() {
 
 function revisar(desde) {
   const m = leerMemoria();
-  const inicio = desde || m.revisadoHasta;
-  const punta = puntaMain();
+  // Con --desde es el modo PR: lo que trae esta rama desde su base, no lo que entró a main
+  const { inicio: pedido, punta, donde } = rango({ desde, memoria: m, main: puntaMain(), head: git('rev-parse', 'HEAD') });
+  const inicio = pedido ? git('rev-parse', pedido) : null;
   if (m.pendientes?.length) {
     console.log('Pendiente de la ronda anterior:');
     for (const p of m.pendientes) console.log(`  · ${p}`);
@@ -133,7 +154,7 @@ function revisar(desde) {
   }
   if (inicio) {
     const log = git('log', '--first-parent', '--format=%h %ad %s', '--date=short', `${inicio}..${punta}`);
-    console.log(log ? `Entró a main desde ${inicio.slice(0, 7)}:\n${log.split('\n').map(l => `  ${l}`).join('\n')}\n` : `Nada nuevo en main desde ${inicio.slice(0, 7)}.\n`);
+    console.log(log ? `Entró a ${donde} desde ${inicio.slice(0, 7)}:\n${log.split('\n').map(l => `  ${l}`).join('\n')}\n` : `Nada nuevo en ${donde} desde ${inicio.slice(0, 7)}.\n`);
     if (log) {
       const tocados = git('diff', '--stat=120', `${inicio}..${punta}`).split('\n').slice(-1)[0];
       console.log(`  (${tocados.trim()})\n`);
@@ -148,7 +169,7 @@ function revisar(desde) {
     console.log('\nYa conocidos (esperan al dueño, en "conocidos" de docs/documentacion.json):');
     for (const p of viejos) console.log(`  · ${p}`);
   }
-  console.log(`\nAl cerrar la ronda: node tools/documentar.mjs anotar --pr <url> --hasta ${punta.slice(0, 7)}`);
+  if (!desde) console.log(`\nAl cerrar la ronda: node tools/documentar.mjs anotar --hasta ${punta.slice(0, 7)} [--pendiente "…"], y con el PR abierto: anotar --hasta ${punta.slice(0, 7)} --pr <url>`);
   return nuevos.length ? 1 : 0;
 }
 
