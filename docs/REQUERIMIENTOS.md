@@ -40,6 +40,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | RP-31 | El panel muestra en vivo las partidas sin red que se están jugando (contra el celular, un celular, solo), con juego, modo, cuántos juegan y país, sin nombres (D-140). | ✅ v0.64.7 |
 | RP-32 | La portada ofrece los minijuegos de La Copa sueltos, de un jugador y sin copa: Conexiones, Toque y Fama: Palabra, ¿En qué año?, Reinas, Tango y Zip. En inglés y portugués la tarjeta avisa que se juegan en español (D-142). | ✅ v0.65 |
 | RP-33 | La portada se filtra por tipo de juego; el filtro queda en la URL, dice cuántos juegos se ven y se quita con un toque (D-142, D-149). | ✅ v0.65 |
+| RP-34 | Las explicaciones de todos los juegos (reglas, ayudas, modos, antesalas, Administrar y las frases del menú) son cortas: cada regla se dice una vez por pantalla, con frases completas, y una palabra por concepto: tachar, el celular, jugador, administrador, vidas, sorbos (D-177, U-5, U-8). | ✅ v0.84.0 |
 
 ## Cuarto Rey (CR)
 
@@ -181,6 +182,9 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | LIG-87 | Reinas: arrastrar desde una X borra las X por donde pasa; las reinas no se tocan (D-168). | ✅ v0.79.0 |
 | LIG-88 | Reinas: 🧹 Borrar todo deja el tablero en blanco, con confirmación; el reloj sigue (D-169). | ✅ v0.79.0 |
 | LIG-89 | La Copa sale del laboratorio: tarjeta activa en el menú principal y "‹ Menú" vuelve al menú; `/labs/` sigue para probar (D-175). | ✅ v0.83.0 |
+| LIG-90 | 📍 ¿Dónde queda? se juega suelto desde la portada, en `/minijuegos/donde/`, sin "Próximamente" (D-174). | ✅ v0.82.0 |
+| LIG-91 | En Administrar, la invitación sigue mientras alguien nuevo pueda entrar (inscripción abierta y cupo) y, ya partida, dice en qué día va (D-176). | ✅ v0.83.1 |
+| LIG-92 | Quien entra tarde lee que los días cerrados quedan en 0 desde el día 3 (el día 1 sigue en su gracia el día 2); con la copa llena lee que está llena; la sesión de prueba avisa que es más corta y no cuenta (D-177). | ✅ v0.84.0 |
 | LIG-84 | Minijuegos de reserva (La Palabra, Ahorcado Contrarreloj), separados de LIG-34. | ⏳ pendiente |
 | LIG-46 | El teclado, el tablero y la línea se comparten con Toque y Fama y Línea de Tiempo (`assets/js/teclado.js`, `assets/css/teclado.css`, `assets/css/linea.css`). | ✅ v0.44 |
 
@@ -256,11 +260,11 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | ID | Requerimiento | Estado |
 |---|---|---|
 | AH-01 | Palabra tapada que se adivina por letras; cada error dibuja un trazo del ahorcado. | ✅ v0.26 |
-| AH-02 | Errores permitidos configurables: 5, 6 u 8, y el último trazo siempre son los ojos en X. | ✅ v0.26 |
-| AH-03 | La palabra sale de una cadena entre jugadores (cada uno para el siguiente, con pista) o del mazo de la app. | ✅ v0.26 |
+| AH-02 | Vidas configurables: 5, 6 u 8 (hasta 0.84.0, "errores permitidos"), y el último trazo siempre son los ojos en X. | ✅ v0.26 |
+| AH-03 | La palabra sale de una cadena entre jugadores (cada uno para el siguiente, con pista) o del mazo del celular. | ✅ v0.26 |
 | AH-04 | Cinco temáticas y una mezcla, con palabra y pista propias en español, inglés y portugués. Con cadena, la temática sugiere palabras a quien escribe (D-62). | ✅ v0.26 |
-| AH-05 | Puntaje: los errores que le sobraron a quien adivinó; desempata quien gastó menos letras y después menos tiempo. Los colgados van al final, por cuánto revelaron, y si no la sacó nadie no hay ganador (D-61). | ✅ v0.26 |
-| AH-06 | Comprar una letra: revela la que falta más rara y cuesta un error (D-58). | ✅ v0.26 |
+| AH-05 | Puntaje: las vidas que le quedaron a quien adivinó; desempata quien gastó menos letras y después menos tiempo. Los colgados van al final, por cuánto revelaron, y si no la sacó nadie no hay ganador (D-61). | ✅ v0.26 |
+| AH-06 | Comprar una letra: revela la que falta más rara y cuesta una vida (D-58). | ✅ v0.26 |
 | AH-07 | Modo un celular, de 2 a 6 jugadores, con pantalla tapada para escribir y pase en cada letra (D-59). | ✅ v0.26 |
 | AH-08 | Modo varios celulares, de 2 a 6 (roles A–F), con sala, anfitrión y turnos alternados (D-66). | ✅ v0.26 |
 | AH-09 | Modo jugar solo: la app reparte una palabra de la temática elegida y el jugador la saca. Sin rival y sin secreto que comprometer (D-65). | ✅ v0.26 |
@@ -278,14 +282,14 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | ID | Requerimiento | Estado |
 |---|---|---|
 | JU-01 | Juego de bazas con baraja inglesa de 52 cartas, cinco por jugador y una vuelta que marca el triunfo. De 2 a 6 jugadores. | ✅ v0.34 |
-| JU-02 | El plato: cada jugador pone 2 tragos cuando queda vacío, y solo entonces. | ✅ v0.34 |
-| JU-03 | Declaración en secreto: ir (comprometerse a dos bazas) o pasarse (no juega, no bebe). | ✅ v0.34 |
+| JU-02 | El plato: cada jugador pone 2 sorbos cuando queda vacío, y solo entonces. | ✅ v0.34 |
+| JU-03 | Declaración por turno, desde la derecha del dador: ir (comprometerse a dos bazas) o pasarse (no juega, no bebe). Hasta 0.84.0 las reglas decían "en secreto" (D-177). | ✅ v0.34 |
 | JU-04 | Si se pasan todos, la mano se anula con el plato acumulado; si va uno solo, el dador se queda obligado (D-83). | ✅ v0.34 |
 | JU-05 | Cambio de hasta tres cartas desde la reserva propia, por puestos y no por nombre de carta (D-82). | ✅ v0.34 |
 | JU-06 | Las cinco bazas con las tres obligaciones —asistir, montar y fallar—: la app apaga las cartas que no se pueden tirar y dice por qué (C-8b). | ✅ v0.34 |
-| JU-07 | Julepe: quien fue y no hizo dos bazas se toma el plato entero, y lo bebido vuelve al plato (se dobla con dos julepes). | ✅ v0.34 |
-| JU-08 | Quien se salva reparte dos tragos por baza a quien quiera de la mesa. | ✅ v0.34 |
-| JU-09 | Partida de 5, 8 o 12 manos; gana quien terminó más seco, con tabla de tragos y julepes. | ✅ v0.34 |
+| JU-07 | Julepe: quien fue y no hizo dos bazas se toma el plato entero, y el plato pasa a la mano siguiente una vez por cada julepeado (se dobla con dos julepes). | ✅ v0.34 |
+| JU-08 | Quien se salva reparte dos sorbos por baza entre los demás. | ✅ v0.34 |
+| JU-09 | Partida de 5, 8 o 12 manos; gana quien terminó más seco, con tabla de sorbos y julepes. | ✅ v0.34 |
 | JU-10 | Modo un celular, de 2 a 6, con pase y resultado antes de cada pase (C-9). | ✅ v0.34 |
 | JU-11 | Modo varios celulares, de 2 a 6, con sala, QR y chat, y reparto cerrado por jugador (D-81). | ✅ v0.34 |
 | JU-12 | Modo contra el celular: mesa de tres contra dos rivales que solo miran sus propias cartas. | ✅ v0.34 |

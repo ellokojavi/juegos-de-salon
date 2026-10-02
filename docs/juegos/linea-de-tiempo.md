@@ -77,7 +77,9 @@ interrupción larga no decida el desempate.
 
 En varios celulares, el anfitrión (rol A) crea la sala y abre la partida con el botón **Empezar** cuando hay al menos dos jugadores; el mensaje `start` fija el orden. En la sala de espera, el anfitrión puede **cancelar la sala** y quien se unió puede **salir de la sala**: quien se va a propósito se despide y la sala se borra si no queda nadie (D-50). Cada celular ve solo su mano, y el veredicto de cada jugada se muestra a todos y se cierra solo.
 
-El botón de compartir usa el diálogo nativo del celular y el texto que lo acompaña nombra la temática elegida, para que quien recibe el enlace sepa a qué lo invitan.
+El botón de compartir usa el diálogo nativo del celular con el mensaje común de las salas, que dice quién invita (D-173); de qué se trata el juego lo cuenta la tarjeta que arma el chat con el link (D-72), así que el texto ya no nombra la temática.
+
+En la portada del juego, **🧭 ¿Cómo se juega?** va plegado (D-177, U-16): el lead ya dice de qué se trata, y las reglas se abren cuando hacen falta.
 
 En varios celulares hay además un **chat de sala** (canon C-15): una burbuja 💬 con globito de no leídos, disponible en la sala de espera y durante la partida. No aparece sobre el veredicto de una jugada, pero **sí sigue vivo en la pantalla final**, para celebrar o pedir revancha (D-35). No se guarda en ninguna parte: muere con la sala.
 
