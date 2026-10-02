@@ -517,6 +517,7 @@ node copa/store.test.mjs
 node panel/adapta.test.mjs
 node panel/aggregate.test.mjs
 node panel/copas.test.mjs
+node tools/documentar.test.mjs
 ```
 <!-- /generado -->
 
@@ -626,6 +627,8 @@ tools/hechos.mjs            The app's fact sheet (games, modes, themes, tests) r
 tools/reportes.mjs          Reads the La Copa bug reports from Firebase (`--dias N`, `--json`)
 tools/reglas.mjs            Publishes the Firebase rules with a service-account key kept outside the repo
 tools/dilemas.mjs           Usability dilemmas as GitHub issues: list, create, resolve, archive (D-132)
+tools/documentar.mjs        The documentation agent's memory and checks: what reached main since its last round, and what is still undocumented (D-172)
+.claude/agents/             The project's agents: usabilidad (daily usability round, D-132) and documentacion (daily documentation round, D-172)
 tools/e2e/                  Full games in headless Chrome; the screenshots come from here (see its README)
 pt/ · en/                   Language doors: they set the language and send you to the menu
 assets/og/                  The 1200×630 images shown when a link is shared

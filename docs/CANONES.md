@@ -281,3 +281,4 @@ como un error: se lee como que nadie jugó.
 - [ ] Registro en el menú, README, especificación, requerimientos, decisiones y changelog (C-2, C-13).
 - [ ] El panel lo muestra sin haberlo tocado: `node panel/adapta.test.mjs` en verde y una mirada a `node tools/e2e/mirar.mjs panel datos` (C-16).
 - [ ] Capturas del README rehechas y miradas, y `python3 tools/readme.py revisar` en verde (C-13).
+- [ ] `node tools/documentar.mjs revisar --desde origin/main` sin ✗ nuevos: decisiones, pruebas, guiones y CHANGELOG al día (D-172).
