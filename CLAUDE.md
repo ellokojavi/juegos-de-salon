@@ -27,6 +27,26 @@ Puede haber varias sesiones de Claude trabajando en este repo al mismo tiempo (D
   propio** (`pkill -f "remote-debugging-port=94xx"`). Nunca `pkill -f remote-debugging-port` a secas:
   mata las pruebas de todas las sesiones.
 
+## Lo que solo se puede hacer en el Mac
+
+Una sesión en la nube no puede hacer todo: no tiene la llave de Firebase, no tiene `sips` y su red no
+llega a algunos sitios (la NASA, por ejemplo). Cuando una tarea necesita el Mac Mini del dueño, **no se
+le pide a él que la corra**: la sesión busca una sesión abierta en el Mac y se la encarga sola.
+
+1. **Buscarla:** `list_sessions` (con `mine: true`, del servidor `claude-code-remote`) y quedarse con las
+   que tienen `environment_kind: "bridge"` (las del Mac), `connection_status: "connected"` y
+   `session_status: "SESSION_STATUS_IDLE"` (libres: nunca una que está `RUNNING` ni una archivada).
+   Si varias sirven, la que trabajó en ese mismo tema; si no, la más reciente.
+2. **Encargarla** con `send_message`, en un mensaje que se entienda solo: quién la pide (su
+   `session_id`), el porqué, la rama, los pasos exactos, cómo verificar que quedó bien, y que trabaje
+   en su propia copia (`git worktree`, ver arriba), suba a la rama indicada sin abrir PR ni fusionar
+   y responda con `send_message` al `session_id` de quien la pidió.
+3. **No quedarse esperando:** dejar un `send_later` de unos 20 minutos para revisar sus eventos
+   (`list_events`) y la rama si no ha respondido. Al llegar la respuesta, verificar el resultado
+   desde la nube antes de darlo por hecho.
+4. Si no hay ninguna sesión del Mac conectada y libre, recién ahí se le dice al dueño, en una línea,
+   qué hay que correr.
+
 ## Publicar
 
 ```bash
