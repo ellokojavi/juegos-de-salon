@@ -2528,7 +2528,7 @@ menú; solo quien llega desde el laboratorio (`?labs`) vuelve a `/labs/`.
 usabilidad y los arreglos de La Copa en inglés y portugués) y ya se comparte por su link.
 
 ## D-176 · En Administrar, la invitación sigue mientras alguien pueda entrar
-**Fecha:** 2026-10-02 · **Estado:** vigente; cambia la invitación de D-116 solo en Administrar
+**Fecha:** 2026-10-02 · **Estado:** vigente; cambia la invitación de D-116 solo en Administrar. D-177 corrige el día del aviso: sale desde el día 3, no desde el 2
 **Decisión:** El mensaje **Invitación** de Administrar ya no desaparece cuando parte la copa: está
 mientras alguien nuevo pueda inscribirse, es decir, con la inscripción abierta (hasta la final o
 hasta que el admin la cierre) y sin llegar al máximo de jugadores. Ya partida, la línea "📅 Parte

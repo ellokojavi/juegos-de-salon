@@ -33,8 +33,8 @@ Intro ──► Setup jugadores ──► Mesa (turnos) ──► Cuarto Rey ─
 | 2 | Toma el de la derecha | Nombra al jugador siguiente (D-04). +2. |
 | 3 | Toma el de la izquierda | Nombra al jugador anterior. +2. |
 | 4 | Cuenta Cuentos | Reglas + temporizador 5 s + selector de perdedor (+2). |
-| 5 | Penitencia | Penitencia al azar (24 opciones). Botones: otra, cumplida, se arrugó (+2). |
-| 6 | Chancho Inflado | Reglas (diferido, D-08) + selector de perdedor (+2). |
+| 5 | Penitencia | Cumple la penitencia o toma 2. Penitencia al azar (24 opciones). Botones: otra, cumplida, se arrugó (+2). |
+| 6 | Chancho Inflado | Reglas (diferido, D-08) + selector de perdedor (+2). El selector está solo mientras la carta está en la mesa: si el chancho pasa más adelante, el perdedor toma igual pero no queda anotado, y la pantalla lo dice así (D-177). |
 | 7 | Cultura Chupística | Reglas + categoría al azar (35) + selector de perdedor (+2). |
 | 8 | Regala 2 sorbos | Selector de jugadores: toca para asignar sorbos hasta completar 2. |
 | 9 | Nunca Nunca | Reglas + ideas al azar (16) + selector de perdedor (+2). |
@@ -62,7 +62,7 @@ Intro ──► Setup jugadores ──► Mesa (turnos) ──► Cuarto Rey ─
 v0.27 no la trae y se retoma igual, solo que al final no muestra historial.
 
 ## Idiomas
-Todos los textos viven en `rules.js` bajo `LOCALES.es`, `LOCALES.en` y `LOCALES.pt` (reglas, mensajes de reyes, mini-juegos, 24 penitencias, 35 categorías, 16 ideas de Nunca Nunca y la interfaz), con las mismas claves en los tres. Nombres en inglés: Fourth King, Story Time, Puffer Pig, Categories, Never Have I Ever, Dare. En portugués de Brasil: Quarto Rei, Era Uma Vez, Porquinho Bochechudo, Cultura de Boteco, Eu Nunca, Prenda; los sorbos son "goles" y el fondo es "vira, vira, vira" (D-48).
+Todos los textos viven en `rules.js` bajo `LOCALES.es`, `LOCALES.en` y `LOCALES.pt` (reglas, mensajes de reyes, minijuegos, 24 penitencias, 35 categorías, 16 ideas de Nunca Nunca y la interfaz), con las mismas claves en los tres. Nombres en inglés: Fourth King, Story Time, Puffer Pig, Categories, Never Have I Ever, Dare. En portugués de Brasil: Quarto Rei, Era Uma Vez, Porquinho Bochechudo, Cultura de Boteco, Eu Nunca, Prenda; los sorbos son "goles" y el fondo es "vira, vira, vira" (D-48).
 
 ## Ideas para versiones futuras
 - Modo “una carta por pantalla” para tablets en el centro de la mesa.
