@@ -3,9 +3,7 @@
   "pendientes": [
     "Capturas de partidas en línea (16, en toque-y-fama, batalla-naval, linea-de-tiempo, dudo, ahorcado y julepe): el entorno en la nube no llega a www.gstatic.com ni a *.firebaseio.com. Rehacerlas desde el Mac del dueño (python3 tools/readme.py capturas <sección>) o abrir esos dominios en el entorno."
   ],
-  "conocidos": [
-    "D-73 está dos veces en docs/DECISIONES.md"
-  ],
+  "conocidos": [],
   "rondas": [
     {
       "fecha": "2026-10-02",
