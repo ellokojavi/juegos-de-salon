@@ -2539,3 +2539,26 @@ día 2, el aviso de que los días cerrados quedan en 0 (el mismo que ve quien en
 estaba. La inscripción tardía está abierta a propósito (D-99, D-116), pero no había cómo invitar.
 **Consecuencias:** `shareInviteText` lleva `{cuando}` en vez de la fecha, que sale de
 `shareInviteStart` o `shareInviteGoing`.
+
+## D-177 · Textos de explicación más cortos y una palabra por concepto
+**Fecha:** 2026-10-02 · **Estado:** vigente
+**Decisión:** Se revisaron todas las explicaciones de los juegos (reglas, ayudas, modos, antesalas,
+Administrar y las frases del menú) y se acortaron un 37 % (193 textos, de unos 24.200 a 15.300
+caracteres en español), con la misma información para jugar. El criterio quedó como U-8: cada
+regla se dice una vez por pantalla. De paso se corrigieron los textos que decían algo distinto de
+lo que hace el juego (El Ahorcado por turnos, Julepe sin "en secreto" y con el plato y el montar
+bien explicados, las reglas de ases y de calzar en Dudo, cómo se gana en Línea de Tiempo, el
+chancho de Cuarto Rey, el empate por réplica en Toque y Fama, la final sin día de gracia y la
+copa llena en La Copa). El aviso de inscripción tardía de La Copa sale desde el día 3: el día 2
+el día 1 sigue en su día de gracia. La sesión de prueba avisa que es más corta que el juego.
+Palabras que el dueño fijó (U-5): **tachar** (no bloquear), **el celular** (no la app ni la IA),
+**jugador** (no competidor), **administrador** (no admin, en lo que ven los jugadores),
+**sorbos** en Julepe (no tragos) y **vidas** en El Ahorcado (no errores permitidos ni margen).
+Las reglas de Línea de Tiempo quedan plegadas (U-16). Tango queda con 3 consejos.
+**Por qué:** lo pidió el dueño: los textos eran largos y repetían la misma regla en pantallas
+seguidas (en La Copa, las reglas de cada minijuego se leen dos veces al día).
+**Consecuencias:** las imágenes de las tarjetas para compartir (`node tools/og.mjs imagenes`)
+siguen con la frase vieja del menú hasta rehacerlas en el Mac del dueño: en la nube Chrome no
+carga las fuentes. Las capturas del README que muestran estos textos se rehacen.
+**Alternativas descartadas:** acortar más allá del 40 % (se perdían reglas o se volvía telegrama,
+contra U-1); un botón para anotar al perdedor del chancho más tarde (cambio de diseño, aparte).

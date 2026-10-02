@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.84.0 — 2026-10-02
+- **Textos de explicación más cortos en todos los juegos** (D-177, U-8): reglas, ayudas, modos,
+  antesalas de La Copa, Administrar y las frases del menú bajan un 37 %. Cada regla se dice una
+  vez por pantalla, con frases completas.
+- **Reglas que no coincidían con el juego, corregidas:** El Ahorcado en varios celulares es por
+  turnos; en Julepe se dice por turno si vas (no "en secreto"), montar es superar la mayor del palo
+  de salida y el plato solo crece con dos julepeados o más; Dudo explica cómo se pasa a ases y
+  cuándo se puede calzar; Línea de Tiempo dice cómo se gana; Toque y Fama explica el empate por
+  réplica; el chancho de Cuarto Rey ya no promete anotarse "en cualquier momento".
+- **La Copa:** el aviso de que los días cerrados quedan en 0 sale desde el día 3 (el día 2 el
+  día 1 sigue en su día de gracia), también en la invitación; con la copa llena, quien llega lee
+  que está llena; "Cómo funciona" ya no le da día de gracia a la final; la sesión de prueba avisa
+  que es más corta que el juego y no cuenta.
+- **Una palabra por concepto** (U-5): tachar, el celular, jugador, administrador, vidas en El
+  Ahorcado, sorbos y "¿Cuántas manos?" en Julepe. Las reglas de Línea de Tiempo quedan plegadas.
+
 ## 0.83.1 — 2026-10-02
 - **La Copa: en Administrar, la invitación sigue mientras alguien pueda entrar** (D-176). Antes
   desaparecía apenas partía la copa, aunque la inscripción tardía siguiera abierta. Ahora está

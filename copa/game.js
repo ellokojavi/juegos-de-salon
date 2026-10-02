@@ -119,7 +119,7 @@ function errorDe(e) {
     pin: 'errPinWrong', 'nombre-repetido': 'errRepetido', llena: 'errLlena', 'no-existe': 'errNoExiste',
     ventana: 'errVentana', 'ya-jugado': 'errYaJugado', comodin: 'errComodin', permiso: 'errPermiso',
     config: 'errConfig', offline: 'errOffline', busy: 'errOffline', cerrada: 'errCerrada',
-    reporte: 'errReport', empezada: 'errEmpezada', terminada: 'errTerminada', faltan: 'errFaltan', alias: 'errAlias', fin: 'errFin',
+    reporte: 'errReport', empezada: 'errEmpezada', terminada: 'errTerminada', faltan: 'needSecond', alias: 'errAlias', fin: 'errFin',
   };
   if (!mapa[code]) console.error(e);
   return T[mapa[code] || 'errNet'];
@@ -433,7 +433,7 @@ function crearCopa() {
   poner(body, 
     el('div', { class: 'panel' }, nombre.nodo,
       el('div', { class: 'field' }, el('label', {}, T.fMode), modo.nodo),
-      el('div', { class: 'field' }, el('label', {}, T.fStart), inicio.nodo, otraFecha.nodo, el('small', { class: 'muted' }, fmt(T.startHint, { zona: zonaTexto(ZONA) })))),
+      el('div', { class: 'field' }, el('label', {}, T.fStart), inicio.nodo, otraFecha.nodo, el('small', { class: 'muted' }, fmt(T.startZone, { zona: zonaTexto(ZONA) })))),
     juegos.nodo,
     el('div', { class: 'panel' }, el('div', { class: 'field' }, el('label', {}, T.fLang), idioma.nodo, el('small', { class: 'muted' }, T.fLangHint))),
     el('div', { class: 'panel' }, link.nodo),
@@ -570,7 +570,7 @@ function entrar({ mantener = false } = {}) {
       } catch (e) { avisoError(err, errorDe(e)); b.disabled = false; b.textContent = T.joinGo; }
     });
     poner(caja, el('div', { class: 'panel' }, yo.nodo, p1.nodo, p2.nodo, el('small', { class: 'muted' }, T.pinHint)),
-      d > 1 ? el('p', { class: 'muted center' }, T.lateJoin) : null, err, b);
+      d > 2 ? el('p', { class: 'muted center' }, T.lateJoin) : null, err, b);
   };
   const inscrito = () => {
     entrarModo = 'inscrito';
@@ -621,7 +621,9 @@ function entrar({ mantener = false } = {}) {
       avisoPalabras(meta),
       el('div', { style: 'margin-top:6px' }, langToggle())),
     el('div', { class: 'cal-mini' }, calendario(meta).map(j => el('span', { title: MINIJUEGOS[j].nombre, class: con('', MINIJUEGOS[j].emoji) }, MINIJUEGOS[j].emoji))),
-    puedeEntrar ? null : el('p', { class: 'muted center' }, terminada(meta, now) ? T.closedEnded : L().closed && inscripcionAbierta(meta, now) ? T.closedByAdmin : T.closedJoin),
+    // Por qué no puede inscribirse: terminó, la cerró el administrador, está llena o ya va en la final
+    puedeEntrar ? null : el('p', { class: 'muted center' }, terminada(meta, now) ? T.closedEnded
+      : !inscripcionAbierta(meta, now) ? T.errCerrada : L().closed ? T.closedByAdmin : T.errLlena),
     tabs, caja,
   );
   if (!puedeEntrar || entrarModo === 'inscrito') $('#tab-inscrito').click();
@@ -855,7 +857,7 @@ function tablero() {
       esAdmin() ? el('button', { class: 'btn btn--ghost btn--sm', id: 'btn-admin', onClick: () => { SFX.tap(); admin(); } }, T.adminTab) : null)));
 
   if (terminada(meta, now)) poner(body, podio());
-  if (d === 0) poner(body, el('div', { class: 'panel center' }, el('p', { class: 'lead' }, faltaGente(L()) ? T.needSecondBefore : T.beforeSub)));
+  if (d === 0 && faltaGente(L())) poner(body, el('div', { class: 'panel center' }, el('p', { class: 'lead' }, T.needSecond)));
 
   // Tus días: el historial, el de hoy habilitado y los que vienen deshabilitados
   poner(body, misDias(d, now));
@@ -975,11 +977,12 @@ function mensajeInvitacion() {
   const Lc = L(), { meta } = Lc;
   const nombres = activos(Lc).map(j => j.name);
   const lista = nombres.length > 1 ? fmt(G().T.listAnd, { a: nombres.slice(0, -1).join(', '), b: nombres.at(-1) }) : nombres[0] || '';
-  // Ya partida (D-176): dice en qué día va y, si ya cerró alguno, que esos quedan en 0
+  // Ya partida (D-176): dice en qué día va y, si ya cerró alguno, que esos quedan en 0. El día 1
+  // cierra recién al empezar el 3: en el 2 todavía está en su día de gracia
   const d = diaActual(meta, ahora());
   const cuando = d === 0
     ? fmt(G().T.shareInviteStart, { fecha: fechaLarga(meta.win[1].a, meta.tz, G().lang) })
-    : [fmt(G().T.shareInviteGoing, { d, n: meta.days }), d > 1 ? G().T.lateJoin : ''].filter(Boolean).join(' ');
+    : [fmt(G().T.shareInviteGoing, { d, n: meta.days }), d > 2 ? G().T.lateJoin : ''].filter(Boolean).join(' ');
   return mensajeCopa(cabCopa('🏆', G().T.ctxInvite), fmt(G().T.shareInviteText, {
     dias: meta.days, cuando,
     inscritos: nombres.length ? fmt(nombres.length === 1 ? G().T.shareInviteJoinedOne : G().T.shareInviteJoined, { names: lista }) : '',
@@ -1332,9 +1335,9 @@ function admin({ forzar = false } = {}) {
       el('p', { class: 'lead', style: 'margin:0' }, `🎉 ${T.adminWelcomeTitle}`),
       el('ol', { class: 'como' },
         el('li', {}, T.adminWelcome1),
-        el('li', {}, fmt(T.adminWelcome2, { fecha: fechaLarga(meta.win[1].a, meta.tz) })),
-        el('li', {}, T.adminWelcome3),
-        meta.alias ? el('li', {}, T.adminWelcomeAlias) : null)));
+        el('li', {}, T.adminWelcome2),
+        // Con link propio, cerrar la inscripción deja de ser opcional
+        el('li', {}, meta.alias ? T.adminWelcomeAlias : T.adminWelcome3))));
   }
   const accion = (rotulo, id, fn, clase = 'btn btn--ghost btn--sm', caja = err) => el('button', { class: clase, id, onClick: async ev => {
     SFX.tap(); ev.currentTarget.disabled = true;
@@ -1437,7 +1440,7 @@ function admin({ forzar = false } = {}) {
       el('p', { class: 'muted', style: 'margin:0' }, T.labLead),
       faltaGente(Lc) ? el('div', { class: 'aviso', id: 'lab-falta-gente' }, T.labNeedSecond) : null,
       faltaGente(Lc) ? null : accion(`⏭️ ${siguiente > meta.days ? T.labEnd : fmt(T.labNext, { d: siguiente })}`, 'btn-pasar-dia', async () => {
-        if (!confirm(siguiente > meta.days ? T.labEndConfirm : fmt(T.labNextConfirm, { d: siguiente, hoy: Math.max(d, 1) }))) throw { code: 'cancelado' };
+        if (!confirm(siguiente > meta.days ? T.labEndConfirm : fmt(T.labNextConfirm, { d: siguiente }))) throw { code: 'cancelado' };
         await store.reprogramar(S.code, pasarDia(meta));
         SFX.reveal(); toast(siguiente > meta.days ? T.labEndDone : fmt(T.labNextDone, { d: siguiente }));
       }, 'btn btn--ghost')));
@@ -1603,7 +1606,8 @@ function antesDeJugar(d) {
     el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.howToPlay), dibujo(id), el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
       el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, puntajeTexto(J))),
     el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.wildTitle), comodin),
-    JUEGOS[id].ensayo ? el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-ensayo', onClick: () => { SFX.tap(); ensayo(d); } }, `🧪 ${T.tryFirst}`) : null,
+    JUEGOS[id].ensayo ? [el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-ensayo', onClick: () => { SFX.tap(); ensayo(d); } }, `🧪 ${T.tryFirst}`),
+      el('p', { class: 'muted center', id: 'nota-ensayo', style: 'margin:0' }, T.trialNote)] : null,
     el('p', { class: 'muted center' }, T.startWarn), err, empezar,
     el('button', { class: 'btn btn--ghost btn--sm', onClick: () => { SFX.tap(); tablero(); } }, T.toBoard)));
 }
@@ -1637,13 +1641,15 @@ const dibujo = id => JUEGOS[id]?.ejemplo?.({ el, T }) ?? null;
 /** Cómo se puntúa; el desempate solo dentro de una copa, donde hay con quién empatar (dilema #72). */
 const puntajeTexto = (J, copa = true) => (copa && J.desempate ? `${J.puntaje} ${J.desempate}` : J.puntaje);
 
-function panelReglas(id, { copa = true } = {}) {
+function panelReglas(id, { copa = true, prueba = false } = {}) {
   const J = MINIJUEGOS[id];
   const caja = $('#jugar-reglas');
   caja.innerHTML = '';
   if (!J) return;
   poner(caja, el('details', { class: 'panel reglas', id: 'reglas' },
     el('summary', {}, `📖 ${fmt(T.rulesOf, { juego: J.nombre })}`),
+    // En la sesión de prueba de un día, que es más corta y no cuenta
+    prueba ? el('p', { class: 'muted', id: 'nota-ensayo' }, T.trialNote) : null,
     dibujo(id),
     el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
     id === 'final' ? [el('p', { class: 'lead' }, T.finalRounds),
@@ -1962,7 +1968,7 @@ async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false } = {}) {
   document.addEventListener('visibilitychange', S.visibilidad);
   const body = $('#jugar-body');
   body.innerHTML = '';
-  panelReglas(id, { copa: false });
+  panelReglas(id, { copa: false, prueba: ensayo && !S.juego?.practica });
   mod.montar(body, {
     p, jugadas: undefined, T, fmt, el, SFX, vibrate, lang: LANG,
     textoFin: ensayo ? T.trialEnd : undefined,

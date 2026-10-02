@@ -743,7 +743,7 @@ function roundVerdict(role, v, nextName) {
       el('div', { class: 'big ' + (s.solved ? 'ok' : 'no') }, titulo),
       el('div', { class: 'muted', style: 'font-weight:800;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.08em' }, T.wordWas),
       letras,
-      el('div', { class: 'note' }, s.solved ? fmt(T.scoreWas, { n: s.score }) : T.scoreZero),
+      el('div', { class: 'note' }, s.solved ? fmt(s.score === 1 ? T.scoreWasOne : T.scoreWas, { n: s.score }) : T.scoreZero),
     ),
   );
   setTimeout(() => $('#handoff').classList.toggle('bad', !s.solved && propio), 0);
@@ -778,7 +778,7 @@ function renderResult(v) {
     : nadie ? T.winTitleNone
     : many ? T.winTitleMany
     : fmt(T.winTitle, { name: M.names[winners[0]] || '' });
-  $('#result-sub').textContent = soloYo ? (mia.solved ? fmt(T.soloScore, { n: mia.score, letters: mia.used.length }) : '')
+  $('#result-sub').textContent = soloYo ? (mia.solved ? fmt(mia.score === 1 ? T.soloScoreOne : T.soloScore, { n: mia.score, letters: mia.used.length }) : '')
     : meRole && !nadie ? (winners.includes(meRole) ? T.youWin : T.youLose) : '';
   $('#result-trophy').textContent = soloYo ? (mia.solved ? '🏆' : '💀')
     : nadie ? '💀' : (meRole && !winners.includes(meRole) ? '😵' : (many ? '🤝' : '🏆'));
@@ -790,7 +790,7 @@ function renderResult(v) {
   const rank = $('#result-ranking'); rank.innerHTML = '';
   (soloYo ? [] : v.rank).forEach((p, i) => {
     const s = v.st[p];
-    const info = s.solved ? fmt(T.rankLine, { n: s.score, letters: s.used.length }) : fmt(T.rankHanged, { letters: s.used.length });
+    const info = s.solved ? fmt(s.score === 1 ? T.rankLineOne : T.rankLine, { n: s.score, letters: s.used.length }) : fmt(T.rankHanged, { letters: s.used.length });
     rank.append(el('li', { class: winners.includes(p) ? 'top' : '' },
       el('span', { class: 'pos' }, ['🥇', '🥈', '🥉'][i] || `${i + 1}.`),
       el('span', { class: 'name' }, M.names[p] || ''),
@@ -961,7 +961,7 @@ function renderSetup(mode, prefillCode = '') {
   paintSrc();
   if (!invitado && mode !== 'solo') form.append(el('div', { class: 'field' }, el('label', {}, T.wordSource), srcSeg, srcHint));
 
-  // Errores permitidos
+  // Vidas
   const livesLabels = { 5: T.livesHard, 6: T.livesNormal, 8: T.livesEasy };
   const livesSeg = el('div', { class: 'seg' }, ...LIVES_OPTIONS.map(n => el('button', { type: 'button', class: n === config.lives ? 'on' : '', onClick: e => { config.lives = n; $$('button', livesSeg).forEach(b => b.classList.toggle('on', b === e.currentTarget)); SFX.tap(); } }, `${livesLabels[n]} · ${n}`)));
   if (!invitado) form.append(el('div', { class: 'field' }, el('label', {}, T.lives), livesSeg));
