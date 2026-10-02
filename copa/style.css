@@ -400,18 +400,24 @@ button.md-fila { cursor: pointer; }
 /* Desenredo (D-179): hilos y nudos en un SVG de 1000 × 1000. Los trazos miden en píxeles de pantalla
    (non-scaling-stroke) para verse iguales en cualquier ancho; el radio de los nudos lo pone el código. */
 .des-tablero { display: block; width: 100%; max-width: 440px; aspect-ratio: 1; margin: 0 auto; border: 2px solid var(--glass-border); border-radius: 10px; background: rgba(255,255,255,0.03); touch-action: none; user-select: none; -webkit-user-select: none; }
-.des-tablero line, .des-ej line { stroke: rgba(255,255,255,0.72); stroke-width: 2.5px; vector-effect: non-scaling-stroke; stroke-linecap: round; }
-.des-tablero line.mal, .des-ej line.mal { stroke: var(--red); stroke-width: 3.5px; }
-.des-tablero line.propio { stroke: var(--cyan); }
-.des-tablero line.propio.mal { stroke: var(--pink); }
+.des-hilo { --hilo: rgba(236, 228, 255, 0.82); }
+.des-hilo path { fill: none; vector-effect: non-scaling-stroke; stroke-linecap: round; }
+/* La cuerda (D-182): borde oscuro, alma del color del hilo y hebras cortadas encima, que hacen de torcido */
+.des-hilo .borde { stroke: rgba(14, 6, 32, 0.6); stroke-width: 6.5px; }
+.des-hilo .alma { stroke: var(--hilo); stroke-width: 4px; }
+.des-hilo .hebra { stroke: rgba(14, 6, 32, 0.32); stroke-width: 4px; stroke-linecap: butt; stroke-dasharray: 1.6px 3.2px; }
+.des-hilo.mal { --hilo: var(--red); }
+.des-tablero .des-hilo.propio { --hilo: var(--cyan); }
+.des-tablero .des-hilo.propio.mal { --hilo: var(--pink); }
 .des-tablero circle, .des-ej circle { fill: var(--yellow); stroke: var(--bg1); stroke-width: 2px; vector-effect: non-scaling-stroke; }
 .des-tablero circle.vecino { fill: var(--cyan); }
 .des-tablero circle.mal { fill: var(--red); }
-.des-tablero circle.vilo { fill: #fff; stroke: var(--cyan); stroke-width: 3px; }
-.des-tablero.fin line, .des-ej.fin line { stroke: var(--lime); }
+/* "tomado" y no "vilo": .vilo es la carta en vuelo del arrastre compartido (linea.css) y va con display: none */
+.des-tablero circle.tomado { fill: #fff; stroke: var(--cyan); stroke-width: 3px; }
+.des-tablero.fin .des-hilo, .des-ej.fin .des-hilo { --hilo: var(--lime); }
 .des-tablero.fin circle, .des-ej.fin circle { fill: var(--lime); }
 /* Se acabó el tiempo a medias: una solución, en otro color que un nivel resuelto (D-109) */
-.des-tablero.solucion line { stroke: var(--cyan); stroke-dasharray: 6px 4px; }
+.des-tablero.solucion .des-hilo { --hilo: var(--cyan); }
 .des-tablero.solucion circle { fill: var(--cyan); }
 .des-estado { margin: 0; min-height: 1.5em; font-weight: 900; color: var(--muted); }
 .des-estado.ok { color: var(--lime); }

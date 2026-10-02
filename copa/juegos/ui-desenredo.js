@@ -19,6 +19,17 @@ const NS = 'http://www.w3.org/2000/svg';
 const RADIO_PX = 11;
 const TOMAR_PX = 24;
 
+/**
+ * Un hilo dibujado como cuerda (D-182): un borde oscuro, el alma del color del hilo y encima las
+ * hebras, un trazo cortado que hace de torcido. Las tres capas comparten el mismo trazo curvo.
+ */
+const hiloNuevo = () => {
+  const g = svgEl('g', { class: 'des-hilo' });
+  g.append(svgEl('path', { class: 'borde' }), svgEl('path', { class: 'alma' }), svgEl('path', { class: 'hebra' }));
+  return g;
+};
+const ponerTrazo = (g, d) => { for (const x of g.children) x.setAttribute('d', d); };
+
 const svgEl = (tag, attrs = {}) => {
   const n = document.createElementNS(NS, tag);
   for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v);
@@ -37,7 +48,12 @@ const EJ_MAL = [[18, 18], [102, 18], [102, 102], [18, 102]];
 function tableroEjemplo(pos, bien) {
   const svg = svgEl('svg', { viewBox: '0 0 120 120', class: 'des-ej' + (bien ? ' fin' : ''), 'aria-hidden': 'true' });
   const malos = new Set(bien ? [] : [2, 4]); // las diagonales del cuadrado: 2–0 y 1–3
-  EJ_HILOS.forEach(([a, b], i) => svg.append(svgEl('line', { x1: pos[a][0], y1: pos[a][1], x2: pos[b][0], y2: pos[b][1], class: malos.has(i) ? 'mal' : '' })));
+  EJ_HILOS.forEach(([a, b], i) => {
+    const g = hiloNuevo();
+    if (malos.has(i)) g.classList.add('mal');
+    ponerTrazo(g, motor.trazoCuerda(pos[a], pos[b], a * 64 + b, { tope: 6 }));
+    svg.append(g);
+  });
   pos.forEach(([x, y]) => svg.append(svgEl('circle', { cx: x, cy: y, r: 8 })));
   return svg;
 }
@@ -74,7 +90,7 @@ export function montar(raiz, ctx) {
   caja.append(cabeza, el('p', { class: 'muted center', style: 'margin:0' }, T.desHint), tablero, estado, aviso);
   raiz.append(caja);
 
-  let lineas = [], circulos = [];
+  let hilos = [], circulos = [];
 
   /** Cuántas unidades del tablero mide un píxel de pantalla. */
   const escala = () => motor.LADO / (tablero.getBoundingClientRect().width || motor.LADO);
@@ -84,7 +100,7 @@ export function montar(raiz, ctx) {
     const guardadas = Array.isArray(J.pos) && J.pos.length === p.n ? J.pos : null;
     pos = (guardadas || p.inicio).map(q => q.slice());
     capaHilos.replaceChildren(); capaNudos.replaceChildren();
-    lineas = p.hilos.map(() => { const l = svgEl('line'); capaHilos.append(l); return l; });
+    hilos = p.hilos.map(() => { const g = hiloNuevo(); capaHilos.append(g); return g; });
     circulos = pos.map((_, v) => { const c = svgEl('circle', { 'data-v': v }); capaNudos.append(c); return c; });
     tablero.setAttribute('aria-label', fmt(T.desLevel, { k: k + 1, total: motor.NIVELES }));
     tablero.classList.remove('fin', 'solucion');
@@ -110,16 +126,16 @@ export function montar(raiz, ctx) {
     for (const [v, i] of encima) { malos.add(i); nudosMal.add(v); }
     const v0 = vilo?.v;
     p.hilos.forEach(([a, b], i) => {
-      const l = lineas[i];
-      l.setAttribute('x1', pos[a][0]); l.setAttribute('y1', pos[a][1]);
-      l.setAttribute('x2', pos[b][0]); l.setAttribute('y2', pos[b][1]);
-      l.setAttribute('class', [malos.has(i) && 'mal', v0 !== undefined && (a === v0 || b === v0) && 'propio'].filter(Boolean).join(' '));
+      const g = hilos[i];
+      // La forma sale de los dos nudos del hilo: se mantiene cuando se mueven
+      ponerTrazo(g, motor.trazoCuerda(pos[a], pos[b], a * 64 + b));
+      g.setAttribute('class', ['des-hilo', malos.has(i) && 'mal', v0 !== undefined && (a === v0 || b === v0) && 'propio'].filter(Boolean).join(' '));
     });
     const vecinos = new Set(v0 === undefined ? [] : p.hilos.filter(h => h.includes(v0)).map(([a, b]) => (a === v0 ? b : a)));
     circulos.forEach((c, v) => {
       c.setAttribute('cx', pos[v][0]); c.setAttribute('cy', pos[v][1]);
       c.setAttribute('r', v === v0 ? r * 1.45 : r);
-      c.setAttribute('class', [v === v0 && 'vilo', vecinos.has(v) && 'vecino', nudosMal.has(v) && 'mal'].filter(Boolean).join(' '));
+      c.setAttribute('class', [v === v0 && 'tomado', vecinos.has(v) && 'vecino', nudosMal.has(v) && 'mal'].filter(Boolean).join(' '));
     });
     // El nudo en vilo va encima de todos
     if (v0 !== undefined && capaNudos.lastChild !== circulos[v0]) capaNudos.append(circulos[v0]);
