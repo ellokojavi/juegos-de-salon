@@ -5,9 +5,11 @@
  *
  *   node tools/og.mjs tarjetas   reescribe el bloque <!-- generado: og --> de cada página, y
  *                                genera la página de cada minijuego suelto (minijuegos/<id>/)
- *   node tools/og.mjs imagenes   rehace las imágenes de 1200×630 con Chrome (necesita internet:
- *                                las fuentes vienen de Google Fonts)
- *   node tools/og.mjs revisar    ¿quedó alguna página sin bloque, o alguna imagen sin hacer?
+ *   node tools/og.mjs imagenes   rehace con Chrome las imágenes de 1200×630 que quedaron atrás
+ *                                (necesita internet: las fuentes vienen de Google Fonts).
+ *                                Con --todas, las rehace todas
+ *   node tools/og.mjs revisar    ¿quedó alguna página sin bloque, o alguna imagen sin hacer o
+ *                                hecha con otro dibujo u otros textos? (D-181)
  *
  * Los textos salen de assets/js/games.js, que es de donde sale también el menú: un solo lugar
  * donde cambiar el nombre o la bajada de un juego. `set-version.py` corre `tarjetas` en cada
@@ -15,6 +17,7 @@
  * navegador (y solo cambian si cambia un nombre, un emoji o el diseño de la tarjeta).
  */
 import { readFileSync, writeFileSync, mkdirSync, existsSync, rmSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { tmpdir } from 'node:os';
@@ -80,6 +83,26 @@ const paginas = () => [...PUERTAS.map(portada), ...conTarjeta.map(g => ({
   descripcion: `${m.tagline.es} Un jugador, ${m.duration} min. Gratis, sin instalar y sin cuenta.`,
   alt: `${m.name.es}: ${m.tagline.es}`,
 }))];
+
+/**
+ * La huella de una imagen (D-181): lo que la dibuja (tools/og/tarjeta.html) y lo que dice (el
+ * juego en games.js, o los textos de la portada). Cada imagen guarda la suya en
+ * assets/og/huellas.json al hacerse, y `revisar` la compara con la de hoy: así una imagen hecha
+ * con el dibujo viejo, o antes de cambiar una bajada, no pasa como si estuviera al día. Antes solo
+ * se revisaba que existiera, y las píldoras desalineadas volvían cada vez que alguien hacía una
+ * imagen desde una rama vieja.
+ */
+const HUELLAS = join(RAIZ, 'assets/og/huellas.json');
+const leerHuellas = () => { try { return JSON.parse(readFileSync(HUELLAS, 'utf8')); } catch (_) { return {}; } };
+function huella(p) {
+  const juego = p.juego && [...GAMES, ...SUELTOS].find(g => g.id === p.juego);
+  const dato = juego
+    ? { emoji: juego.emoji, name: juego.name, tagline: juego.tagline, players: juego.players, duration: juego.duration, durationUnit: juego.durationUnit }
+    : { lang: p.lang, textos: COMMON[p.lang], juegos: disponibles.map(g => [g.id, g.emoji]) };
+  return createHash('sha256').update(readFileSync(join(RAIZ, 'tools/og/tarjeta.html'), 'utf8')).update(JSON.stringify(dato)).digest('hex').slice(0, 16);
+}
+/** ¿La imagen falta, o se hizo con otro dibujo u otros textos? */
+const atrasada = (p, huellas = leerHuellas()) => !existsSync(join(RAIZ, `assets/og/${p.imagen}.jpg`)) || huellas[p.imagen] !== huella(p);
 
 /* ------------------------------------------------------------------ */
 /* La página de cada minijuego suelto                                  */
@@ -238,10 +261,14 @@ async function cmdImagenes() {
   await sleep(800);
   // Si el puerto ya lo tenía otro, python se fue y las fotos saldrían de la copia de otra sesión
   if (servidor.exitCode !== null) throw new Error(`el puerto ${PUERTO} está ocupado: PUERTO=87xx node tools/og.mjs imagenes`);
+  let toca = [];
   try {
     // El lienzo es de 600×315 y cdp fotografía al doble: 1200×630 exactos
     const b = await launch({ port: PUERTO_CDP, dir: `${tmp}/perfil`, out: tmp, width: ANCHO / 2, height: ALTO / 2 });
-    for (const p of paginas()) {
+    const huellas = leerHuellas();
+    // Solo las que quedaron atrás: rehacer las demás solo cambia bytes y ensucia el diff
+    toca = process.argv.includes('--todas') ? paginas() : paginas().filter(p => atrasada(p, huellas));
+    for (const p of toca) {
       // El `t` es para que Chrome no reuse la tarjeta de la vuelta pasada: sin eso, un cambio
       // en el dibujo o en base.css se fotografía viejo y no hay forma de darse cuenta.
       const q = `?t=${Date.now()}${p.juego ? `&juego=${p.juego}` : ''}&lang=${p.lang}`;
@@ -256,7 +283,11 @@ async function cmdImagenes() {
       // un degradado. 3 MB de PNG en el repo por siete imágenes que solo miran los robots.
       await jpeg(join(tmp, `${p.imagen}.png`), join(salida, `${p.imagen}.jpg`));
       console.log(`  assets/og/${p.imagen}.jpg  ↻`);
+      huellas[p.imagen] = huella(p);
     }
+    const ordenadas = Object.fromEntries(Object.keys(huellas).sort().map(k => [k, huellas[k]]));
+    writeFileSync(HUELLAS, JSON.stringify(ordenadas, null, 2) + '\n');
+    if (!toca.length) console.log('  ninguna quedó atrás (con --todas se rehacen igual)');
     if (b.errors.length) console.log('  errores:', JSON.stringify(b.errors.slice(0, 2)));
     b.close();
   } finally {
@@ -265,13 +296,18 @@ async function cmdImagenes() {
     // borrar, no importa, está en el temporal del sistema.
     try { rmSync(tmp, { recursive: true, force: true }); } catch (_) { /* nada */ }
   }
-  console.log(`${paginas().length} imagen(es) de ${ANCHO}×${ALTO}`);
+  console.log(`${toca.length} imagen(es) de ${ANCHO}×${ALTO}`);
   console.log('Míralas antes de publicar (C-12): git diff --stat assets/og');
 }
 
 /* ------------------------------------------------------------------ */
 /* Revisión                                                            */
 /* ------------------------------------------------------------------ */
+function revisarImagen(p, problemas) {
+  if (!existsSync(join(RAIZ, `assets/og/${p.imagen}.jpg`))) problemas.push(`falta assets/og/${p.imagen}.jpg  →  node tools/og.mjs imagenes`);
+  else if (atrasada(p)) problemas.push(`assets/og/${p.imagen}.jpg se hizo con otro dibujo o con otros textos  →  node tools/og.mjs imagenes`);
+}
+
 function cmdRevisar() {
   const problemas = [];
   for (const p of paginas()) {
@@ -280,7 +316,7 @@ function cmdRevisar() {
       if (!existsSync(ruta) || readFileSync(ruta, 'utf8') !== paginaSuelta(p, bloque(p))) {
         problemas.push(`${p.archivo} quedó atrás de minijuegos/index.html o de games.js  →  node tools/og.mjs tarjetas`);
       }
-      if (!existsSync(join(RAIZ, `assets/og/${p.imagen}.jpg`))) problemas.push(`falta assets/og/${p.imagen}.jpg  →  node tools/og.mjs imagenes`);
+      revisarImagen(p, problemas);
       continue;
     }
     const html = readFileSync(ruta, 'utf8');
@@ -288,9 +324,7 @@ function cmdRevisar() {
     else if (html.split(ABRE)[1].split(CIERRA)[0] !== bloque(p).split(ABRE)[1].split(CIERRA)[0]) {
       problemas.push(`${p.archivo} quedó atrás de games.js  →  node tools/og.mjs tarjetas`);
     }
-    if (!existsSync(join(RAIZ, `assets/og/${p.imagen}.jpg`))) {
-      problemas.push(`falta assets/og/${p.imagen}.jpg  →  node tools/og.mjs imagenes`);
-    }
+    revisarImagen(p, problemas);
   }
   problemas.forEach(x => console.log('  ERROR ·', x));
   if (!problemas.length) console.log(`tarjetas sociales al día · ${paginas().length} páginas`);
