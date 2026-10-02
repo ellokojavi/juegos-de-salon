@@ -129,15 +129,23 @@ export function conflictos(p, marcas) {
 export const resuelto = (p, marcas) => marcas.filter(v => v === REINA).length === p.n && conflictos(p, marcas).size === 0;
 
 /**
- * Un toque pone o saca la reina; un toque largo pone o saca la X, que es solo una ayuda para
- * descartar casillas (D-103). Las jugadas guardan el toque como el índice y el toque largo como
- * `-(índice + 1)`.
+ * Un toque pasa la casilla por un ciclo: vacía → reina → X → vacía (D-167). El toque largo pone o
+ * saca la X, que es solo una ayuda para descartar casillas (D-103). Las jugadas guardan el toque
+ * como `'c' + índice` y el toque largo como `-(índice + 1)`. Las partidas de antes de D-167
+ * guardaban el toque como el índice, que pone o saca la reina: se siguen leyendo así.
  */
+export const toque = i => `c${i}`;
 export const toqueLargo = i => -(i + 1);
+/** La casilla que toca una jugada (null si no toca ninguna, como rendirse). */
+export const casilla = j => (typeof j === 'number' ? (j >= 0 ? j : -j - 1) : typeof j === 'string' && j[0] === 'c' ? +j.slice(1) : null);
+const CICLO = { [VACIO]: REINA, [REINA]: MARCA, [MARCA]: VACIO };
 export function tocar(marcas, j) {
   const m = marcas.slice();
-  if (j >= 0) m[j] = m[j] === REINA ? VACIO : REINA;
-  else { const i = -j - 1; m[i] = m[i] === MARCA ? VACIO : MARCA; }
+  const i = casilla(j);
+  if (i === null) return m;
+  if (typeof j === 'string') m[i] = CICLO[m[i]];
+  else if (j >= 0) m[i] = m[i] === REINA ? VACIO : REINA;
+  else m[i] = m[i] === MARCA ? VACIO : MARCA;
   return m;
 }
 
@@ -147,6 +155,8 @@ export function tocar(marcas, j) {
  */
 /** Rendirse (D-110): una jugada más, que termina el tablero sin resolverlo y muestra la solución. */
 export const RENDIRSE = 'R';
+/** Borrar todo (D-169): el tablero vuelve a quedar en blanco. El reloj y los errores siguen. */
+export const BORRAR = 'B';
 
 export function estado(p, jugadas) {
   let marcas = new Array(p.n * p.n).fill(VACIO);
@@ -158,9 +168,12 @@ export function estado(p, jugadas) {
     return { marcas: sol, errores, fin: true, rendido: true, conflictos: new Set() };
   }
   for (const j of jugadas) {
+    if (j === BORRAR) { marcas = new Array(p.n * p.n).fill(VACIO); continue; }
     const antes = conflictos(p, marcas).size;
+    const i = casilla(j);
+    const era = marcas[i];
     marcas = tocar(marcas, j);
-    if (j >= 0 && marcas[j] === REINA && conflictos(p, marcas).size > antes) errores++;
+    if (i !== null && era !== REINA && marcas[i] === REINA && conflictos(p, marcas).size > antes) errores++;
   }
   return { marcas, errores, fin: resuelto(p, marcas), conflictos: conflictos(p, marcas) };
 }

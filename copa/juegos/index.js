@@ -44,20 +44,25 @@ const temaLibre = codigo => {
 
 const juego = (motor, ui, ensayo) => ({ generar: motor.generar, montar: ui.montar, resultado: ui.resultado, ejemplo: ui.ejemplo, portada: ui.portada, ensayo });
 
+/**
+ * `generar(código, día, opciones)` y `ensayo(código, día, opciones)` reciben el idioma (D-170):
+ * `lang`, el de quien juega, para los textos (hitos, ciudades), y `palabras`, el de la copa, para
+ * las palabras que todos tienen que jugar iguales (Conexiones y Palabra). Sin `palabras`, `lang`.
+ */
 export const JUEGOS = {
-  linea: juego(linea, uiLinea, (c, d) => linea.generar(codigoEnsayo(c), d, { n: 5, tema: temaLibre(c), sal: 'ensayo' })),
+  linea: juego(linea, uiLinea, (c, d, o = {}) => linea.generar(codigoEnsayo(c), d, { n: 5, tema: temaLibre(c), sal: 'ensayo', lang: o.lang })),
   numero: juego(numero, uiNumero, (c, d) => numero.generar(codigoEnsayo(c), d, { cifras: 3, sal: 'ensayo' })),
-  conexiones: juego(conexiones, uiConexiones, (c, d) => conexiones.ensayo(c, d)),
+  conexiones: juego(conexiones, uiConexiones, (c, d, o) => conexiones.ensayo(c, d, o)),
   reinas: juego(reinas, uiReinas, (c, d) => reinas.generar(codigoEnsayo(c), d, { n: 5, sal: 'ensayo' })),
-  letras: juego(letras, uiLetras, (c, d) => {
-    const real = letras.generar(c, d).secreto;
-    for (let k = 0; ; k++) { const p = letras.generar(codigoEnsayo(c), d, { sal: `ensayo-${k}` }); if (p.secreto !== real) return p; }
+  letras: juego(letras, uiLetras, (c, d, o = {}) => {
+    const real = letras.generar(c, d, o).secreto;
+    for (let k = 0; ; k++) { const p = letras.generar(codigoEnsayo(c), d, { ...o, sal: `ensayo-${k}` }); if (p.secreto !== real) return p; }
   }),
   // Zip se arma nivel por nivel dentro de la pantalla: lo generado es solo la semilla del día (D-103)
   zip: { generar: (codigo, dia) => ({ codigo, dia }), montar: uiZip.montar, resultado: uiZip.resultado, ejemplo: uiZip.ejemplo, ensayo: (c, d) => ({ codigo: codigoEnsayo(c), dia: d, tiempo: 60 * 1000 }) },
   tango: juego(tango, uiTango, (c, d) => tango.generar(codigoEnsayo(c), d, { sal: 'ensayo' })),
-  anio: juego(anio, uiAnio, (c, d) => anio.generar(codigoEnsayo(c), d, { n: 2, tema: temaLibre(c), sal: 'ensayo' })),
+  anio: juego(anio, uiAnio, (c, d, o = {}) => anio.generar(codigoEnsayo(c), d, { n: 2, tema: temaLibre(c), sal: 'ensayo', lang: o.lang })),
   // Dos ciudades que no son las del día: la prueba no puede adelantar ninguna
   donde: juego(donde, uiDonde, (c, d) => donde.generar(codigoEnsayo(c), d, { niveles: [1, 2], sal: 'ensayo', sin: donde.generar(c, d).ciudades })),
-  final: juego(final, uiFinal, (c, d) => final.generar(codigoEnsayo(c), d)),
+  final: juego(final, uiFinal, (c, d, o) => final.generar(codigoEnsayo(c), d, o)),
 };

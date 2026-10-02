@@ -9,6 +9,8 @@
  *   —el título y, debajo, el contexto—, y abajo el mismo link: quien la ve suelta en el grupo
  *   sabe de qué copa o de qué juego es y adónde ir. `lamina()` dibuja ese marco; lo de adentro es
  *   de quien la llama. `laminaResultado()` es el resultado de un minijuego, igual para todos.
+ * - **Con imagen, el texto no repite lo que ella dice** (D-171): lleva la cabecera, lo que la
+ *   imagen no trae (quién falta, las medallas, el reto) y el link.
  * - **Una invitación** (a una sala, a una copa, a la app) va sin imagen dibujada: el link ya trae
  *   su tarjeta social (D-72), que es la imagen que WhatsApp muestra.
  *
@@ -118,10 +120,13 @@ export function botonCompartir({ rotulo, clase = 'btn btn--cyan', id, armar, alT
 /** "🎯 78/100 · ⏱ 1:23": el tiempo solo si la tarjeta no lo trae ya (la de Reinas sí, D-114). */
 export const puntajeYTiempo = (puntaje, tiempo, tarjeta = '') => [puntaje, tiempo && !String(tarjeta).includes('⏱') ? `⏱ ${tiempo}` : ''].filter(Boolean).join(' · ');
 
+/** El texto del resultado jugando solo: la cabecera y el reto. El resto lo dice la imagen (D-171). */
+export const textoResultadoSolo = ({ C, emoji, juego }) => [cabecera({ emoji, titulo: juego, contexto: C.shareSoloContext }), C.shareSoloCta].join('\n\n');
+
 /**
- * El resultado de jugar solo un minijuego (D-165), suelto o dentro de un juego: el texto y la
- * imagen con la misma cabecera —"🔢 *Toque y Fama* · Jugando solo"—, el puntaje, el tiempo, la
- * tarjeta de colores y el reto. `C` son los textos comunes del idioma (`COMMON[lang]`).
+ * El resultado de jugar solo un minijuego (D-165), suelto o dentro de un juego: la imagen con la
+ * cabecera —"🔢 *Toque y Fama* · Jugando solo"—, el puntaje, el tiempo y la tarjeta de colores, y
+ * el texto con la misma cabecera y el reto. `C` son los textos comunes del idioma (`COMMON[lang]`).
  */
 export function botonResultadoSolo({ C, emoji, juego, puntaje, tiempo, tarjeta = '', url, alTocar }) {
   const cab = { emoji, titulo: juego, contexto: C.shareSoloContext };
@@ -131,7 +136,7 @@ export function botonResultadoSolo({ C, emoji, juego, puntaje, tiempo, tarjeta =
     avisos: { copied: C.shareCopied, downloaded: C.shareDownloaded },
     armar: async () => ({
       titulo: juego, url,
-      texto: [[cabecera(cab), `🎯 ${puntajeYTiempo(puntaje, tiempo, tarjeta)}`, tarjeta].filter(Boolean).join('\n'), C.shareSoloCta].join('\n\n'),
+      texto: textoResultadoSolo({ C, emoji, juego }),
       imagen: await laminaResultado({ cab, url, puntaje, detalle, tarjeta, pie: C.shareSoloImage, archivo: nombreArchivo(juego, 'resultado') }),
     }),
   });

@@ -9,13 +9,11 @@ export const GAMES = [
     id: 'copa',
     emoji: '🏆',
     name: { es: 'La Copa', en: 'The Cup', pt: 'A Copa' },
-    tagline: { es: 'Un torneo de una semana entre amigos: un minijuego distinto cada día y una tabla. Quien acumula más puntos se lleva la gloria.', en: 'A week-long tournament among friends: a different minigame every day and a leaderboard. Whoever piles up the most points takes the glory. In Spanish for now.', pt: 'Um torneio de uma semana entre amigos: um minijogo diferente por dia e uma tabela. Quem somar mais pontos fica com a glória. Por enquanto só em espanhol.' },
+    tagline: { es: 'Un torneo de una semana entre amigos: un minijuego distinto cada día y una tabla. Quien acumula más puntos se lleva la gloria.', en: 'A week-long tournament among friends: a different minigame every day and a leaderboard. Whoever piles up the most points takes the glory.', pt: 'Um torneio de uma semana entre amigos: um minijogo diferente por dia e uma tabela. Quem somar mais pontos fica com a glória.' },
     players: '2–10',
     duration: '7',
-    // No dura minutos sino días, y por ahora solo existe en español (D-98): el contenido de los
-    // minijuegos es chileno y no se traduce. Las pruebas de idiomas lo saben por `idiomas`.
+    // No dura minutos sino días. Va en los tres idiomas (D-170): la copa elige el de sus palabras
     durationUnit: { es: 'días', en: 'days', pt: 'dias' },
-    idiomas: ['es'],
     // Cómo se juega, para la tabla del README: una copa no tiene modos de un celular o de sala.
     formato: { es: 'Cada uno en su celular, un juego por día', en: 'Each on their own phone, one game a day', pt: 'Cada um no seu celular, um jogo por dia' },
     // Un torneo no es una partida: cada día manda su señal con `players: 1` y no pesa en MAX_PLAYERS.
@@ -128,7 +126,7 @@ export const GAMES = [
  * Línea Relámpago y Toque y Fama: adivina el número no están: son el modo solo de Línea de Tiempo
  * y de Toque y Fama. La Gran Final tampoco: repite los otros y es el cierre de la copa.
  *
- * El contenido es chileno y la pantalla va en español (D-98): la tarjeta se traduce, el juego no.
+ * Se juegan en el idioma de quien juega, con contenido propio de cada idioma (D-170).
  */
 export const SUELTOS = [
   {
@@ -186,9 +184,8 @@ export const SUELTOS = [
     tagline: { es: 'Te damos cinco ciudades y tú las ubicas en el globo. Mientras más cerca pongas el alfiler, más puntos.', en: 'We name five cities and you find them on the globe. The closer your pin, the more points.', pt: 'Damos cinco cidades e você as encontra no globo. Quanto mais perto o alfinete, mais pontos.' },
     tipos: ['cultura'],
     duration: '2–5',
-    labs: true,
   },
-].map(m => ({ ...m, players: '1', path: `minijuegos/${m.id}/`, idiomas: ['es'], available: !m.labs, suelto: true }));
+].map(m => ({ ...m, players: '1', path: `minijuegos/${m.id}/`, available: !m.labs, suelto: true }));
 
 /**
  * Los tipos de juego con que se filtra la portada (D-142), en el orden en que se ofrecen.
