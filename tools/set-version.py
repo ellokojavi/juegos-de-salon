@@ -18,7 +18,7 @@ import re, sys, json, pathlib, subprocess
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 MODULES = [
-    'assets/js/ui.js', 'assets/js/i18n.js', 'assets/js/sound.js', 'assets/js/games.js', 'assets/js/firebase-config.js', 'assets/js/frases.js',
+    'assets/js/ui.js', 'assets/js/compartir.js', 'assets/js/i18n.js', 'assets/js/sound.js', 'assets/js/games.js', 'assets/js/firebase-config.js', 'assets/js/frases.js',
     'cuarto-rey/game.js', 'cuarto-rey/rules.js',
     'toque-y-fama/game.js', 'toque-y-fama/rules.js', 'toque-y-fama/engine.js',
     'assets/js/transport/local.js', 'assets/js/transport/firebase.js', 'assets/js/transport/cleanup.js', 'assets/js/transport/dispose.js', 'assets/js/transport/errors.js', 'assets/js/transport/ratelimit.js', 'assets/js/transport/stats.js', 'assets/js/handoff.js', 'assets/js/session.js', 'assets/js/chat.js', 'assets/js/arrastre.js', 'assets/js/teclado.js',
@@ -33,10 +33,10 @@ MODULES = [
     'julepe/game.js', 'julepe/rules.js', 'julepe/engine.js', 'assets/js/sobre.js',
     'panel/panel.js', 'panel/aggregate.js', 'panel/copas.js',
     'copa/game.js', 'copa/rules.js', 'copa/engine.js', 'copa/cuenta.js', 'copa/store-local.js', 'copa/store-firebase.js', 'copa/reportes.js', 'copa/desglose.js', 'copa/demo.js', 'copa/planilla.js',
-    'copa/juegos/index.js', 'copa/juegos/semilla.js', 'copa/juegos/mazos.js', 'copa/juegos/grillas.js',
+    'copa/juegos/index.js', 'copa/juegos/semilla.js', 'copa/juegos/mazos.js', 'copa/juegos/grillas.js', 'copa/juegos/grillas-en.js', 'copa/juegos/grillas-pt.js',
     'copa/juegos/linea.js', 'copa/juegos/numero.js', 'copa/juegos/conexiones.js', 'copa/juegos/reinas.js',
     'copa/juegos/letras.js', 'copa/juegos/palabras.js', 'copa/juegos/zip.js', 'copa/juegos/tango.js', 'copa/juegos/anio.js', 'copa/juegos/final.js',
-    'copa/juegos/donde.js', 'copa/juegos/ciudades.js', 'copa/juegos/mapa.js', 'copa/juegos/globo.js', 'copa/juegos/ui-donde.js',
+    'copa/juegos/donde.js', 'copa/juegos/ciudades.js', 'copa/juegos/nombres.js', 'copa/juegos/mapa.js', 'copa/juegos/globo.js', 'copa/juegos/ui-donde.js',
     'copa/juegos/ui-linea.js', 'copa/juegos/ui-numero.js', 'copa/juegos/ui-conexiones.js', 'copa/juegos/ui-reinas.js',
     'copa/juegos/ui-letras.js', 'copa/juegos/ui-zip.js', 'copa/juegos/ui-tango.js', 'copa/juegos/ui-anio.js', 'copa/juegos/ui-final.js', 'copa/juegos/solo.js',
 ]

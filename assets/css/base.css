@@ -198,6 +198,7 @@ details.panel summary::-webkit-details-marker { display: none; }
 }
 .lang-toggle button {
   border: 0; cursor: pointer; border-radius: 999px; padding: 7px 12px;
+  min-height: 44px; /* C-8: un dedo cabe, como en todos los botones */
   font: 900 0.9rem var(--font-body); color: var(--muted); background: transparent;
   transition: background 0.15s, color 0.15s, transform 0.1s;
 }
@@ -324,3 +325,6 @@ details.panel summary::-webkit-details-marker { display: none; }
 .chat-form input::placeholder { color: rgba(255, 255, 255, 0.35); }
 .chat-send { width: 48px; height: 48px; border-radius: 50%; border: 0; background: var(--cyan); color: #03302c; font-size: 1.2rem; cursor: pointer; }
 .chat-send:active { transform: scale(0.94); }
+
+/* Un emoji casi negro (〰️) sobre el fondo morado: contorno claro, el mismo emoji (ui.js, EMOJI_OSCUROS) */
+.emoji-claro { filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff) drop-shadow(0 0 5px rgba(255, 255, 255, 0.55)); }

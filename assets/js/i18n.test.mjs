@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { LANGS, COMMON } from './i18n.js';
 import { GAMES, SUELTOS, TIPOS } from './games.js';
-import { MINIJUEGOS } from '../../copa/rules.js';
+import { MINIJUEGOS, minijuegos } from '../../copa/rules.js';
 import { FRASES } from './frases.js';
 import { DECKS } from '../../linea-de-tiempo/decks/index.js';
 import { DECKS as AHORCADO } from '../../ahorcado/decks/index.js';
@@ -47,7 +47,7 @@ for (const g of GAMES) { leaf(`GAMES.${g.id}.name`, g.name); leaf(`GAMES.${g.id}
 for (const g of SUELTOS) {
   leaf(`SUELTOS.${g.id}.name`, g.name); leaf(`SUELTOS.${g.id}.tagline`, g.tagline);
   assert.ok(MINIJUEGOS[g.id], `SUELTOS.${g.id}: no es un minijuego de La Copa`);
-  assert.equal(g.name.es, MINIJUEGOS[g.id].nombre, `SUELTOS.${g.id}: el nombre en español no es el de La Copa`);
+  for (const lang of LANGS) assert.equal(g.name[lang], minijuegos(lang)[g.id].nombre, `SUELTOS.${g.id}: el nombre en ${lang} no es el de La Copa`);
 }
 for (const [id, t] of Object.entries(TIPOS)) leaf(`TIPOS.${id}.name`, t.name);
 for (const g of [...GAMES, ...SUELTOS]) for (const t of g.tipos || []) assert.ok(TIPOS[t], `${g.id}: el tipo ${t} no está en TIPOS`);
@@ -62,8 +62,8 @@ for (const d of AHORCADO) {
     assert.ok(c[lang]?.hint?.trim(), `ahorcado/${d.id}/${c.id}: falta la pista en ${lang}`);
   }
 }
-// Un juego que por ahora existe en un solo idioma lo declara en `idiomas` (La Copa, D-98): su
-// tarjeta del menú sí va en los tres, pero sus textos no se comparan.
+// Un juego que por ahora existe en un solo idioma lo declara en `idiomas` (así fue La Copa, D-98,
+// hasta D-170): su tarjeta del menú sí va en los tres, pero sus textos no se comparan.
 const TRADUCIDOS = GAMES.filter(g => !g.idiomas || LANGS.every(l => g.idiomas.includes(l)));
 for (const g of TRADUCIDOS) {
   const { LOCALES } = await import(`../../${g.path}rules.js`);

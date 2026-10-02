@@ -20,3 +20,51 @@ export const PALABRAS = [
   'TECHO', 'TIGRE', 'TRIGO', 'TURNO', 'VERSO', 'VIAJE', 'VOLAR', 'LIMBO', 'CISNE', 'DISCO',
   'ROSCA', 'TRUCO', 'HOGAR', 'LUGAR', 'MIRLO', 'PULGA', 'PERSA', 'RUMBO', 'TIMON', 'VIRUS', 'ZURDO',
 ];
+
+/**
+ * En inglés y en portugués (D-170): las de cada idioma, no una traducción. Las mismas reglas,
+ * sin Ñ: cinco letras distintas de la A a la Z. En portugués, sin tilde ni Ç (FOGÃO, BRAÇO no
+ * entran), como el español deja fuera las tildes.
+ */
+export const PALABRAS_EN = [
+  'ABOUT', 'ACTOR', 'ADULT', 'AFTER', 'AGENT', 'ALIEN', 'ANGEL', 'ANGRY', 'APRIL', 'BACON',
+  'BADGE', 'BEACH', 'BEARD', 'BLACK', 'BLADE', 'BLAME', 'BLANK', 'BLOCK', 'BLOND', 'BOARD',
+  'BRAIN', 'BRAND', 'BREAD', 'BRICK', 'BRIDE', 'BRING', 'BROWN', 'BRUSH', 'CABIN', 'CAMEL',
+  'CANDY', 'CHAIR', 'CHALK', 'CHARM', 'CHART', 'CHEAP', 'CHEST', 'CHIEF', 'CHILD', 'CLAIM',
+  'CLEAN', 'CLIMB', 'CLOAK', 'CLOTH', 'CLOUD', 'CLOWN', 'COAST', 'CORAL', 'COUNT', 'CRANE',
+  'CRASH', 'CREAM', 'CRIME', 'CROWN', 'CRUMB', 'DANCE', 'DEPTH', 'DIRTY', 'DOUBT', 'DOZEN',
+  'DRAFT', 'DRAIN', 'DREAM', 'DRINK', 'DRIVE', 'EARLY', 'EARTH', 'EIGHT', 'EMPTY', 'FAINT',
+  'FAITH', 'FALSE', 'FANCY', 'FIELD', 'FIGHT', 'FLAME', 'FLASH', 'FLOAT', 'FLOUR', 'FOCUS',
+  'FORCE', 'FRAME', 'FRESH', 'FRONT', 'FROST', 'FRUIT', 'GHOST', 'GIANT', 'GLOVE', 'GRACE',
+  'GRADE', 'GRAIN', 'GRAPE', 'GRAPH', 'GUARD', 'GUEST', 'GUIDE', 'HABIT', 'HEART', 'HONEY',
+  'HORSE', 'HOTEL', 'HOUSE', 'HUMAN', 'JUICE', 'KNIFE', 'LASER', 'LAUGH', 'LEMON', 'LIGHT',
+  'LUNCH', 'MAGIC', 'MAJOR', 'MANGO', 'MARCH', 'MATCH', 'MOUSE', 'MOUTH', 'MUSIC', 'NIGHT',
+  'NOISE', 'NORTH', 'OCEAN', 'OFTEN', 'ORBIT', 'PAINT', 'PARTY', 'PIANO', 'PILOT', 'PLACE',
+  'PLANE', 'PLANT', 'PLATE', 'POINT', 'POUND', 'PRICE', 'PRIDE', 'PRINT', 'PROUD', 'QUIET',
+  'RADIO', 'RIVAL', 'ROAST', 'ROBIN', 'ROUGH', 'ROUND', 'ROYAL', 'SAINT', 'SCALE', 'SCARF',
+  'SHAPE', 'SHARK', 'SHIRT', 'SHORE', 'SHOUT', 'SLICE', 'SMILE', 'SNAKE', 'SOLAR', 'SOUTH',
+  'SPACE', 'SPARK', 'SPICE', 'SPORT', 'STAIR', 'STAMP', 'STONE', 'STORM', 'STORY', 'SUGAR',
+  'SWING', 'TABLE', 'TIGER', 'TOWEL', 'TRAIN', 'TRUCK', 'UNCLE', 'VOICE', 'WATER',
+  'WHALE', 'WHEAT', 'WORLD', 'WRIST', 'YOUTH', 'ZEBRA',
+];
+
+export const PALABRAS_PT = [
+  'ALUNO', 'AMIGO', 'ANTES', 'BARCO', 'BEIJO', 'BICHO', 'BLUSA', 'BOLHA', 'BOLSA', 'BRAVO',
+  'BRISA', 'CALDO', 'CALOR', 'CAMPO', 'CANTO', 'CARNE', 'CERTO', 'CHEIO', 'CHUVA', 'CINTO',
+  'CINZA', 'CLIMA', 'COBRE', 'COFRE', 'COLAR', 'CORDA', 'CURSO', 'CUSTO', 'DIGNO',
+  'DISCO', 'DOCES', 'DUPLO', 'FARDO', 'FEIRA', 'FESTA', 'FILME', 'FIRMA', 'FLUXO', 'FOLHA',
+  'FORMA', 'FREIO', 'FRUTA', 'FUNDO', 'GALHO', 'GARFO', 'GOLFE', 'GOLPE', 'GORDA', 'GRAVE',
+  'GRUPO', 'HUMOR', 'JEITO', 'JOGAR', 'JOVEM', 'JUNTO', 'JUSTO', 'LARGO', 'LENTO',
+  'LIMBO', 'LINDO', 'LITRO', 'LIVRO', 'LOUCA', 'LUGAR', 'LUVAS', 'MAGRO', 'MAIOR',
+  'MARCO', 'METRO', 'MILHO', 'MOEDA', 'MORTE', 'MOSCA', 'MUITO', 'MULTA',
+  'MUNDO', 'MUSGO', 'NOBRE', 'NORTE', 'NUVEM', 'OBRAS', 'OLHAR', 'ORDEM', 'OUTRA', 'PADRE',
+  'PALCO', 'PARDO', 'PASTO', 'PEDIR', 'PEDRA', 'PEITO', 'PERNA', 'PIANO', 'PILHA',
+  'PINGO', 'PISTA', 'PLANO', 'PLUMA', 'POMAR', 'PONTE', 'POSTE', 'POUCA', 'PRATO', 'PRAZO',
+  'PRETO', 'PRIMO', 'PULGA', 'PUNHO', 'QUASE', 'RAMOS', 'REINO', 'RESTO', 'RISCO', 'ROUPA',
+  'SABOR', 'SALTO', 'SANTO', 'SELVA', 'SENHA', 'SERVO', 'SINAL', 'SOBRE', 'SOLAR', 'SURDO',
+  'TALCO', 'TARDE', 'TECLA', 'TELHA', 'TEMPO', 'TERNO', 'TIGRE', 'TOCAR', 'TRIGO', 'TROCA',
+  'TURMA', 'TURNO', 'VENTO', 'VERSO', 'VIDRO', 'VIOLA', 'VOLTA', 'VULTO', 'ZEBRA',
+];
+
+/** Las palabras secretas de un idioma; sin idioma conocido, las de español. */
+export const palabrasDe = lang => ({ en: PALABRAS_EN, pt: PALABRAS_PT }[lang] || PALABRAS);
