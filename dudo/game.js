@@ -548,7 +548,7 @@ function renderLobby() {
 /**
  * "🎲 *Dudo* · Sala WFBN" y "👋 Javi te invita a jugar en juegosdesalon.cl." (D-165). Nombra a quien toca compartir,
  * que es quien invita; de qué se trata el juego lo cuenta la tarjeta que el chat arma con el
- * link (D-72, D-73).
+ * link (D-72, D-173).
  */
 function textoInvitacion() {
   return fmt(COMMON[lang].invite, { emoji: gameById(GAME_ID)?.emoji || '🎲', name: M.names[S.role] || '', game: T.title, code: S.code });
