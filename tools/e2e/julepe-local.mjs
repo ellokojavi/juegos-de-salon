@@ -6,7 +6,7 @@ import { launch, sleep } from './cdp.mjs';
 const OUT = process.argv[2];
 const b = await launch({ port: 9387, dir: `${OUT}/p`, out: OUT });
 const ev = e => b.evaluate(e);
-const SITIO = 'http://localhost:8765';
+const SITIO = process.env.SITIO || 'http://localhost:8765';
 const sacadas = new Set();
 const toma = async nombre => { if (!sacadas.has(nombre)) { sacadas.add(nombre); await b.shot(nombre); } };
 const pantalla = () => ev(`document.querySelector('.screen.active').id`);

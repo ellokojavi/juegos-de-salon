@@ -1,7 +1,7 @@
 // Línea de Tiempo con pozo común: una sola tira a la vista de todos (D-32)
 import { launch, sleep } from './cdp.mjs';
 const OUT = process.argv[2];
-const BASE = process.argv[3] || 'http://localhost:8765';
+const BASE = process.argv[3] || process.env.SITIO || 'http://localhost:8765';
 const b = await launch({ port: 9496, dir: `${OUT}/p`, out: OUT, width: 375, height: 812 });
 const v = () => b.evaluate(`(()=>{const s=window.__ldt.view();return JSON.stringify({done:s.done,current:s.current,shared:s.shared,target:s.target,mesa:s.table,scores:s.scores,winner:s.winner,pozo:s.poolLeft})})()`).then(JSON.parse);
 const pantalla = () => b.evaluate(`JSON.stringify({
