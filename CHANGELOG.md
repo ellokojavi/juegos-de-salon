@@ -1,9 +1,55 @@
 # Changelog
 
-## 0.77.1 — 2026-10-01
+## 0.82.2 — 2026-10-02
 - **La Copa: cuando falta uno solo, el aviso va en singular** (U-6). El recordatorio dice
   "👀 Falta por jugar hoy: Pancho.", la tabla parcial "Falta que juegue: Pancho." y, al terminar
   antes, "Falta que juegue el día 7: Cata. … se queda sin los puntos". Con dos o más, igual que antes.
+  En inglés la misma frase sirve para uno o varios; en portugués también va en singular.
+
+## 0.82.1 — 2026-10-02
+- **La Copa: en Administrar, sin hueco vacío sobre los botones** de "Terminar la copa antes",
+  "Tabla final" y "Eliminar la copa" (U-11). El aviso de error va debajo del botón, como en
+  Nombre de la copa y Jugadores, y vacío no ocupa lugar.
+
+## 0.82.0 — 2026-10-02
+- **📍 ¿Dónde queda? sale del laboratorio** (D-174): su tarjeta ya no dice "Próximamente" y se
+  juega suelto desde el menú, en `/minijuegos/donde/`, como los otros minijuegos de La Copa.
+
+## 0.81.0 — 2026-10-01
+- **Lo que se comparte con imagen ya no repite la imagen en el texto** (D-171). La tabla parcial
+  lleva la cabecera y quién falta, sin la tabla escrita; la tabla final, la cabecera y las medallas;
+  el resultado del día, solo la cabecera; y jugar solo, la cabecera y el reto. Todo lo demás está en
+  la imagen.
+
+## 0.80.0 — 2026-10-01
+- **La Copa y sus minijuegos, en inglés y portugués** (D-170). Todo se traduce: la portada, crear
+  la copa, el tablero, las reglas de cada minijuego, el desglose del puntaje, Administrar y los
+  reportes. El idioma se cambia con el toggle de la portada, de la invitación o del minijuego.
+- **Cada copa elige el idioma de sus palabras** al crearla (parte en el de quien la crea):
+  Conexiones y Toque y Fama: Palabra se juegan con las mismas palabras para todos, y la
+  invitación, los recordatorios, la tabla y los resultados que se comparten van en ese idioma.
+  Lo personal (la pantalla) va en el de cada uno.
+- **Contenido propio por idioma**, no traducido: grillas de Conexiones en inglés y en portugués,
+  palabras secretas de cinco letras en cada idioma (sin Ñ fuera del español) y los nombres de
+  países y ciudades de ¿Dónde queda?.
+- **Los minijuegos sueltos de la portada** (Conexiones, Palabra, ¿En qué año?, Reinas, Tango,
+  Zip) ya no dicen "🇪🇸 In Spanish": se juegan en el idioma de quien juega.
+- **El selector de idioma (🇨🇱 ES · 🇬🇧 EN · 🇧🇷 PT) se toca más fácil:** sus botones miden 44 px
+  de alto, como todos los demás (C-8). Vale para todos los juegos.
+
+## 0.79.0 — 2026-10-01
+- **Reinas: arrastrar desde una X las borra.** Es lo contrario de arrastrar desde una casilla
+  vacía: el dedo borra las X por donde pasa y deja las reinas como estaban (D-168).
+- **Reinas: 🧹 Borrar todo** deja el tablero en blanco para empezar de nuevo, con un segundo toque
+  para confirmar, como en Tango. El reloj sigue corriendo (D-169).
+
+## 0.78.0 — 2026-10-01
+- **Reinas: arrastrar pinta X.** Arrastrar el dedo (o el mouse) desde una casilla vacía llena de X
+  las casillas vacías por donde pasa: una fila o una columna se descarta de una pasada, como en el
+  Queens de LinkedIn. Las reinas y las X que ya estaban no se tocan; el toque y el toque largo
+  siguen igual (D-166).
+- **Reinas: tocar otra vez una reina la cambia por una X**, y un tercer toque deja la casilla
+  vacía. La X ya no depende de saber que existe el toque largo, que sigue funcionando (D-167).
 
 ## 0.77.0 — 2026-10-01
 - **Todo lo que se comparte sigue un mismo estándar** (D-165). Cada mensaje abre con una cabecera
@@ -943,7 +989,7 @@
 
 ## 0.31.0 — 2026-09-13
 - **La invitación a una sala dice quién invita**: *"Javi te invita a jugar Línea de Tiempo en
-  juegosdesalon.cl - Sala: WFBN"* (D-73). Antes decía "Únete a mi sala de Línea de Tiempo. Código:
+  juegosdesalon.cl - Sala: WFBN"* (D-173). Antes decía "Únete a mi sala de Línea de Tiempo. Código:
   WFBN", sin nombre: el mensaje llega por WhatsApp a gente que muchas veces no conoce la app, y lo
   primero que hace falta saber es de parte de quién viene. Nombra a quien toca compartir, que es
   quien está invitando.

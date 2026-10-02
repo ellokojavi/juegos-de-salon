@@ -18,7 +18,7 @@ await b.evaluate(`window.__ldt.session().transport.onPresence(p => {}); 1`); awa
 await b.evaluate(`document.querySelector('#lobby-box .btn--cyan').click(); 1`); await sleep(400);
 const compartido = await b.evaluate(`JSON.stringify(window.__shared)`);
 console.log('con navigator.share, el botón dice:', await btnText(), '| se compartió:', compartido);
-// La invitación dice quién invita, a qué juego y con qué código (D-73)
+// La invitación dice quién invita, a qué juego y con qué código (D-173)
 console.log('el texto nombra a quien invita:', /Javi/.test(compartido),
   '| el juego:', /Línea de Tiempo/.test(compartido),
   '| el dominio:', /juegosdesalon\.cl/.test(compartido),

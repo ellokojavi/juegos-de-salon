@@ -9,16 +9,15 @@
  */
 import * as motor from './linea.js';
 import { anioLabel as anioDeLaCopa } from './anio.js';
-import { yearLabel } from '../../linea-de-tiempo/engine.js';
 import { crearArrastre } from '../../assets/js/arrastre.js';
 import { showHandoff } from '../../assets/js/handoff.js';
 import { LOCALES as LT_LOCALES } from '../../linea-de-tiempo/rules.js';
 
 export function montar(raiz, ctx) {
   const { p, T, fmt, el, SFX, vibrate } = ctx;
-  // La copa va en español; el modo solo de Línea de Tiempo, en el idioma de quien juega
+  // En el idioma de quien juega, en la copa y en el modo solo de Línea de Tiempo (D-170)
   const LT = LT_LOCALES[ctx.lang] || LT_LOCALES.es;
-  const anioLabel = y => (ctx.lang && ctx.lang !== 'es' ? yearLabel(y, ctx.lang) : anioDeLaCopa(y));
+  const anioLabel = y => anioDeLaCopa(y, ctx.lang);
   let jugadas = Array.isArray(ctx.jugadas) ? ctx.jugadas.filter(j => j && typeof j === 'object') : [];
   const sel = { carta: null, ranura: null };
   let arrastre = null;
