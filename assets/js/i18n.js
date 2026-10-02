@@ -29,14 +29,22 @@ export function setLang(lang) {
  * saca de la barra de direcciones: lo que circula es la URL de siempre y el `?sala=` queda
  * intacto.
  */
+/**
+ * La búsqueda sin el `lang=`, tal como venía. No se rearma con URLSearchParams: eso le pega un
+ * "=" a cada parámetro suelto y `/copa/?pirata&lang=pt` quedaba en `?pirata=`, que La Copa ya no
+ * reconoce como el link de la copa (D-170).
+ */
+export const sinLang = search => {
+  const resto = String(search || '').replace(/^\?/, '').split('&').filter(p => p && !/^lang=/i.test(p));
+  return resto.length ? `?${resto.join('&')}` : '';
+};
+
 function idiomaDeLaUrl() {
   try {
-    const url = new URL(location.href);
-    const pedido = (url.searchParams.get('lang') || '').toLowerCase();
+    const pedido = (new URLSearchParams(location.search).get('lang') || '').toLowerCase();
     if (!LANGS.includes(pedido)) return;
     setLang(pedido);
-    url.searchParams.delete('lang');
-    history.replaceState(null, '', url.pathname + url.search + url.hash);
+    history.replaceState(null, '', location.pathname + sinLang(location.search) + location.hash);
   } catch (_) { /* una URL rara no puede dejar la app sin idioma */ }
 }
 idiomaDeLaUrl();

@@ -4,7 +4,7 @@
 // se ve como "undefined" en pantalla, así que esto se revisa antes de publicar.
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { LANGS, COMMON } from './i18n.js';
+import { LANGS, COMMON, sinLang } from './i18n.js';
 import { GAMES, SUELTOS, TIPOS } from './games.js';
 import { MINIJUEGOS, minijuegos } from '../../copa/rules.js';
 import { FRASES } from './frases.js';
@@ -37,6 +37,12 @@ function same(name, dict) {
 }
 
 assert.deepEqual(LANGS, ['es', 'en', 'pt']);
+// El idioma del link se saca sin tocar lo demás: un parámetro suelto no gana un "=" (D-170)
+assert.equal(sinLang('?pirata&lang=pt'), '?pirata');
+assert.equal(sinLang('?K7Q2X&prueba&lang=en'), '?K7Q2X&prueba');
+assert.equal(sinLang('?lang=pt&sala=WFBN'), '?sala=WFBN');
+assert.equal(sinLang('?lang=pt'), '');
+assert.equal(sinLang('?jugadores=solo&tipo=logica&LANG=en'), '?jugadores=solo&tipo=logica');
 same('COMMON', COMMON);
 same('FRASES', FRASES);
 for (const lang of LANGS) assert.equal(FRASES[lang].length, 100, `FRASES.${lang}: deben ser 100 frases`);
