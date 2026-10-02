@@ -7,6 +7,7 @@ import * as anio from './anio.js';
 import * as reinas from './reinas.js';
 import * as tango from './tango.js';
 import * as zip from './zip.js';
+import * as desenredo from './desenredo.js';
 import * as letras from './letras.js';
 import { PALABRAS, PALABRAS_EN, PALABRAS_PT } from './palabras.js';
 import * as conexiones from './conexiones.js';
@@ -391,6 +392,58 @@ test('zip: solución única, trazo y niveles', () => {
   assert.equal(zip.TIEMPO_MS, 180000);
 });
 
+test('desenredo: siempre tiene solución, empieza enredado y los niveles crecen (D-179)', () => {
+  const D = desenredo;
+  for (const c of CODIGOS) for (let k = 0; k < D.NIVELES; k++) {
+    const p = D.nivel(c, 3, k);
+    assert.equal(p.n, D.NUDOS[k], `${c} nivel ${k}`);
+    assert.equal(p.sol.length, p.n); assert.equal(p.inicio.length, p.n);
+    assert.ok(D.resuelto(p, p.sol), `${c} nivel ${k}: la solución tiene cruces`);
+    assert.ok(D.cruces(p.hilos, p.inicio).total >= Math.min(5, p.hilos.length / 2), `${c} nivel ${k}: empieza casi resuelto`);
+    // Todo en enteros y adentro del tablero
+    for (const q of [...p.sol, ...p.inicio]) assert.deepEqual(D.dentro(q), q);
+    // Ningún nudo con menos de dos hilos ni hilos repetidos
+    const grado = new Array(p.n).fill(0);
+    for (const [a, b] of p.hilos) { grado[a]++; grado[b]++; }
+    assert.ok(grado.every(g => g >= 2), `${c} nivel ${k}: nudo suelto`);
+    assert.equal(new Set(p.hilos.map(h => h.join('-'))).size, p.hilos.length);
+  }
+  // El mismo para todos, distinto por día
+  assert.deepEqual(D.generar('KQRST', 1, { n: 9 }), D.generar('KQRST', 1, { n: 9 }));
+  assert.notDeepEqual(D.generar('KQRST', 1, { n: 9 }).inicio, D.generar('KQRST', 2, { n: 9 }).inicio);
+  for (let k = 1; k < D.NIVELES; k++) assert.ok(D.NUDOS[k] > D.NUDOS[k - 1]);
+});
+
+test('desenredo: qué cuenta como cruce', () => {
+  const { seCruzan, cruces } = desenredo;
+  assert.ok(seCruzan([0, 0], [10, 10], [0, 10], [10, 0]));     // una X
+  assert.ok(!seCruzan([0, 0], [10, 0], [0, 5], [10, 5]));      // paralelos
+  assert.ok(seCruzan([0, 0], [10, 0], [5, 0], [20, 0]));       // encimados en la misma recta
+  assert.ok(seCruzan([0, 0], [10, 0], [5, 0], [5, 9]));        // uno termina sobre el otro
+  assert.ok(!seCruzan([0, 0], [10, 0], [11, 0], [20, 0]));     // en la misma recta, sin tocarse
+  // Hilos con un nudo en común no se cuentan entre sí
+  assert.equal(cruces([[0, 1], [0, 2]], [[0, 0], [100, 0], [0, 100]]).total, 0);
+  // Un hilo encima de un nudo ajeno cuenta, aunque no cruce ningún otro hilo
+  const c = cruces([[0, 1], [2, 3]], [[0, 0], [200, 0], [100, 5], [100, 300]]);
+  assert.deepEqual(c.encima, [[2, 0]]);
+  assert.equal(c.total, 1);
+  // Amontonar los nudos no resuelve nada (la trampa clásica)
+  const p = desenredo.nivel('KQRST', 1, 4);
+  assert.ok(cruces(p.hilos, p.sol.map(() => [500, 500])).total > 0);
+});
+
+test('desenredo: puntaje, tarjeta y fin de la partida', () => {
+  const D = desenredo;
+  assert.equal(D.puntaje({ hechos: 0 }), 0);
+  assert.equal(D.puntaje({ hechos: 7 }), 70);
+  assert.equal(D.puntaje({ hechos: 10 }), 100);
+  assert.equal(D.tarjeta({ hechos: 3 }), '🧶 🟩🟩🟩');
+  assert.equal(D.tarjeta({ hechos: 0 }), '🧶 ⬛');
+  assert.ok(D.finPartida({ hechos: 10, usado: 1000 }));
+  assert.ok(D.finPartida({ hechos: 2, usado: D.TIEMPO_MS }));
+  assert.ok(!D.finPartida({ hechos: 9, usado: D.TIEMPO_MS - 1 }));
+});
+
 test('sesión de prueba: otro contenido que el del día (D-103)', async () => {
   const { JUEGOS, codigoEnsayo } = await import('./index.js');
   for (const c of CODIGOS) {
@@ -468,6 +521,7 @@ test('final: cinco rondas, promedio de 0 a 100', () => {
     reinas: { fin: true, errores: 1, ms: 83000 },
     tango: { fin: true, errores: 2, pistas: 1 },
     zip: { hechos: 3, ultimo: 125000 },
+    desenredo: { hechos: 4, ultimo: 151000 },
     anio: anio.estado(pa, pa.hitos.map(h => h.year + 3)),
     final: { reinas: { fin: true, errores: 0 } },
   };
@@ -489,7 +543,7 @@ test('la copa no usa la temática de Brasil (D-111)', () => {
 test('todos los minijuegos puntúan de 0 a 100 (D-113)', () => {
   const tope = { linea: linea.puntaje({ aciertos: 9, marcas: Array(9).fill(true) }), numero: numero.puntaje({ resuelto: true, usados: 1 }),
     conexiones: conexiones.puntaje({ resueltos: [0, 1, 2, 3], errores: 0 }), reinas: reinas.puntaje({ fin: true, ms: 1000 }),
-    letras: letras.puntaje({ encontradas: 5, resuelto: true, usados: 1 }), zip: zip.puntaje({ hechos: 99 }),
+    letras: letras.puntaje({ encontradas: 5, resuelto: true, usados: 1 }), zip: zip.puntaje({ hechos: 99 }), desenredo: desenredo.puntaje({ hechos: desenredo.NIVELES }),
     tango: tango.puntaje({ fin: true, errores: 0, pistas: 0 }), anio: anio.puntaje({ filas: [{}, {}], total: 200 }),
     donde: donde.puntaje({ filas: [{}, {}, {}, {}, {}], total: 500 }) };
   for (const [id, s] of Object.entries(tope)) assert.equal(s, 100, id);

@@ -2583,3 +2583,36 @@ dueño, la canción, las trampas del render) estaba solo en las conversaciones y
 temporales que se borran.
 **Consecuencias:** los mp4 pesan (~25 MB cada uno) y se publican con el sitio en GitHub Pages; al
 reemplazarlos, el repo crece con cada versión. Si eso molesta, se pasan a Git LFS o a un release.
+
+## D-179 · Desenredo: el Untangle de Tatham, por niveles como Zip
+**Fecha:** 2026-10-02 · **Estado:** vigente (en el laboratorio)
+**Decisión:** Un minijuego nuevo de La Copa, **🧶 Desenredo** (*Untangle*, *Desenrola*), que se
+juega también suelto en `minijuegos/desenredo/`. Nudos unidos por hilos que se cruzan; se arrastran
+los nudos hasta que ningún hilo cruce a otro.
+- **Formato de Zip** (D-103): diez niveles de 6 a 15 nudos, uno más cada vez, y un reloj de
+  **cuatro minutos** de tiempo activo. Cada nivel resuelto vale 10 puntos; con los diez se termina
+  antes. El desempate es cuándo se resolvió el último nivel. Si el tiempo se acaba a medias, los
+  nudos se mueven a una solución, en cian (D-109).
+- **Siempre tiene solución, no una sola.** El generador arma primero el dibujo resuelto (nudos al
+  azar con distancia mínima e hilos de los pares más cercanos a los más lejanos, sin cruzarse, sin
+  pasar cerca de otro nudo y con hasta 4 por nudo; ninguno con menos de 2) y después reparte los
+  nudos en un círculo en desorden, como Planarity, buscando uno con cruces de sobra.
+- **Qué cuenta como cruce:** dos hilos sin nudo en común que se tocan (también encimados en la
+  misma recta) y un hilo que pasa a menos de 24 unidades (de 1000) de un nudo que no es suyo. Lo
+  segundo es lo que se ve en pantalla como cruce y cierra la trampa de amontonar todos los nudos.
+  Todo en enteros, con productos cruzados exactos: igual en cualquier navegador.
+- **El gesto:** el tablero toma el puntero (como Zip, D-85) y el nudo se elige por cercanía dentro
+  de 24 px, aunque se dibuje de 11 px de radio (C-8). Mientras se arrastra se resaltan sus vecinos
+  y sus hilos, y los cruces se pintan en vivo; el nivel se da por resuelto **al soltar**, no a
+  mitad de un arrastre.
+- **Habilidad propia, `espacial`:** ya había tres de `lógica` (Reinas, Zip y Tango) y el sorteo del
+  calendario evita dos días seguidos de la misma habilidad.
+**Por qué:** lo pidió el dueño tras la propuesta: un juego de mirar y mover, distinto de los de
+deducir, que entra en un celular y se compara bien entre amigos con el mismo tablero.
+**Consecuencias:** la sesión de prueba dura un minuto. `&zipSeg=` acorta también su reloj en el
+modo de prueba. La imagen de su tarjeta social se rehace con `node tools/og.mjs imagenes`.
+**Alternativas descartadas:** un tablero único puntuado por tiempo, como Reinas (la propuesta
+inicial; el dueño prefirió niveles); generar con rectas al azar como Planarity (los tamaños saltan
+de 6 a 10 a 15 nudos y no dan diez niveles parejos); prohibir soltar un nudo encima de otro (el
+cruce por cercanía ya lo resuelve sin un gesto que rebota).
+

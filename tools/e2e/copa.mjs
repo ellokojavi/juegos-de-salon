@@ -7,6 +7,7 @@
 // De acá salen las capturas del README (docs/capturas.json): las tomas con nombre fijo.
 import { launch, sleep } from './cdp.mjs';
 import { mkdirSync } from 'node:fs';
+import { POZO } from '../../copa/engine.js';
 
 const OUT = process.argv[2] || '/tmp/copa';
 const SIETE = !process.argv.includes('--tres');
@@ -224,6 +225,26 @@ const jugarZip = async () => {
   for (let w = 0; w < 40 && !await ev(`!!document.getElementById('btn-fin')`); w++) await sleep(500);
 };
 
+/**
+ * Desenredo (D-179): cada nudo se lleva a donde está en la solución con el mouse de verdad (CDP),
+ * y en dos niveles se arrastran todos. Después se espera que el reloj corto se acabe.
+ */
+const jugarDesenredo = async () => {
+  const { codigo, dia } = await ev('JSON.stringify(window.__jugando.p)').then(JSON.parse);
+  for (let k = 0; k < 2; k++) {
+    const sol = await ev(`(async()=>{const m=await import('/copa/juegos/desenredo.js');return JSON.stringify(m.nivel('${codigo}', ${dia}, ${k}).sol)})()`).then(JSON.parse);
+    for (let v = 0; v < sol.length; v++) {
+      const [x0, y0, x1, y1] = await ev(`(()=>{const t=document.querySelector('.des-tablero'),r=t.getBoundingClientRect(),s=r.width/1000,c=t.querySelector('circle[data-v="${v}"]');
+        return JSON.stringify([r.left+c.cx.baseVal.value*s, r.top+c.cy.baseVal.value*s, r.left+${sol[v][0]}*s, r.top+${sol[v][1]}*s])})()`).then(JSON.parse);
+      await b.send('Input.dispatchMouseEvent', { type: 'mousePressed', x: x0, y: y0, button: 'left', clickCount: 1, buttons: 1 });
+      for (let i = 1; i <= 4; i++) await b.send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: x0 + (x1 - x0) * i / 4, y: y0 + (y1 - y0) * i / 4, button: 'left', buttons: 1 });
+      await b.send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: x1, y: y1, button: 'left', clickCount: 1, buttons: 0 });
+    }
+    await sleep(900);
+  }
+  for (let w = 0; w < 60 && !await ev(`!!document.getElementById('btn-fin')`); w++) await sleep(500);
+};
+
 const jugarConexiones = async nivel => {
   const grupos = await ev('JSON.stringify(window.__jugando.p.grupos.map(g=>g.palabras))').then(JSON.parse);
   const probar = async palabras => {
@@ -251,7 +272,7 @@ const jugarFinal = async nivel => {
   }
 };
 
-const JUGAR = { donde: jugarDonde, linea: jugarLinea, numero: jugarNumero, anio: jugarAnio, reinas: jugarReinas, letras: jugarLetras, zip: jugarZip, tango: jugarTango, conexiones: jugarConexiones, final: jugarFinal };
+const JUGAR = { donde: jugarDonde, linea: jugarLinea, numero: jugarNumero, anio: jugarAnio, reinas: jugarReinas, letras: jugarLetras, zip: jugarZip, desenredo: jugarDesenredo, tango: jugarTango, conexiones: jugarConexiones, final: jugarFinal };
 
 /** La cuenta de 3 a 1 antes de cada juego (D-105): espera a que aparezca "¡A jugar!". */
 async function esperarCuenta({ revisar = false } = {}) {
@@ -343,7 +364,8 @@ await ev(`(()=>{const o=[...document.querySelectorAll('#crear-body .opcion')];o[
   const propuesta = await cal();
   ok(!await ev(`document.getElementById('crear-juegos').hidden`) && propuesta.length === n - 1 && new Set(propuesta).size === n - 1
     && /La Gran Final/.test(await ev(`document.querySelector('#cal-elegir .event.fija').textContent`)), `al elegir la duración aparece una propuesta al azar de ${n - 1} juegos, con la final al último (${propuesta.join(', ')})`);
-  ok((await fuera()).length === 9 - (n - 1), 'los que no entraron quedan fuera, en la mano');
+  // Del pozo de verdad: un minijuego nuevo no rompe la cuenta (C-16)
+  ok((await fuera()).length === POZO.length - (n - 1), 'los que no entraron quedan fuera, en la mano');
   const altoAyuda = () => ev(`Math.round(document.querySelector('#crear-juegos .cal-estado').getBoundingClientRect().height)`);
   const alto0 = await altoAyuda();
   await tocarDia(0);
@@ -582,7 +604,8 @@ ok(await ev(`document.getElementById('btn-menu').href`) === `${SITIO}/`, 'La Cop
 await b.go(`${BASE}?labs`, 1500);
 ok(await ev(`document.getElementById('btn-menu').href`) === `${SITIO}/labs/`, 'La Copa con ?labs vuelve al laboratorio');
 await b.go(`${SITIO}/labs/`, 1500);
-ok(await ev(`document.querySelectorAll('#minis .mini-juego').length`) === 10 && await ev(`!!document.querySelector('#minis [data-id="donde"]')`), 'el laboratorio ofrece los diez minijuegos (con Zip, Tango y ¿Dónde queda?)');
+// El pozo más la final, y el más nuevo entre ellos
+ok(await ev(`document.querySelectorAll('#minis .mini-juego').length`) === POZO.length + 1 && await ev(`!!document.querySelector('#minis [data-id="desenredo"]')`), `el laboratorio ofrece los ${POZO.length + 1} minijuegos (con Desenredo)`);
 await b.shot('10-labs');
 // Los minijuegos con página propia se practican ahí, para que el link traiga su tarjeta (D-164)
 ok(await ev(`document.querySelector('#minis [data-id="donde"]').getAttribute('href')`) === '../minijuegos/donde/?labs'
@@ -677,9 +700,10 @@ await click('#btn-reporte'); await sleep(300);
 ok(await ev(`document.querySelector('.screen.active')?.id`) === 'screen-reporte' && !!await ev(`document.getElementById('btn-enviar-reporte')`), 'minijuego suelto: el 🐞 del resultado abre el formulario');
 await ev(`[...document.querySelectorAll('#reporte-body .btn--ghost')].at(-1).click()`); await sleep(300);
 ok(await ev(`document.querySelector('.screen.active')?.id`) === 'screen-resultado', 'minijuego suelto: cancelar el reporte vuelve al resultado');
-for (const id of ['linea', 'numero', 'conexiones', 'reinas', 'letras', 'zip', 'tango', 'anio', 'donde', 'final']) {
-  // Zip con semilla fija: el chequeo del aviso busca un trazo que llegue al final sin cubrir todo
-await b.go(`${BASE}?practica=${id}&prueba&labs${id === 'zip' ? '&zipSeg=12&semilla=KQRST' : ''}`, 1200); await preparar();
+for (const id of ['linea', 'numero', 'conexiones', 'reinas', 'letras', 'zip', 'desenredo', 'tango', 'anio', 'donde', 'final']) {
+  // Zip con semilla fija: el chequeo del aviso busca un trazo que llegue al final sin cubrir todo.
+  // Desenredo con reloj corto también: dos niveles resueltos y el tiempo se acaba en el tercero
+await b.go(`${BASE}?practica=${id}&prueba&labs${id === 'zip' ? '&zipSeg=12&semilla=KQRST' : id === 'desenredo' ? '&zipSeg=25&semilla=KQRST' : ''}`, 1200); await preparar();
   ok(await ev(`!!document.getElementById('btn-ensayo')`) , `práctica de ${id}: la antesala ofrece la prueba como en la copa`);
   if (id === 'donde') {
     // La portada es el globo girando solo (y los demás minijuegos siguen con su emoji)
@@ -746,6 +770,19 @@ await b.go(`${BASE}?practica=${id}&prueba&labs${id === 'zip' ? '&zipSeg=12&semil
     await b.toque(x, y);
     ok(await ev(`document.querySelector('.rej[data-i="0"]').textContent === ''`), 'Reinas: y otro deja la casilla vacía');
   }
+  if (id === 'desenredo') {
+    // Arrastrar un nudo con el mouse de verdad lo mueve, y el contador de cruces se ve
+    const antes = await ev(`(()=>{const c=document.querySelector('.des-tablero circle[data-v="0"]');return JSON.stringify([c.cx.baseVal.value,c.cy.baseVal.value])})()`).then(JSON.parse);
+    const [x0, y0] = await ev(`(()=>{const c=document.querySelector('.des-tablero circle[data-v="0"]').getBoundingClientRect();return JSON.stringify([c.x+c.width/2,c.y+c.height/2])})()`).then(JSON.parse);
+    // Se toma un poco al lado del nudo: el área que se toca es más grande que el dibujo (C-8)
+    await b.send('Input.dispatchMouseEvent', { type: 'mousePressed', x: x0 + 14, y: y0, button: 'left', clickCount: 1, buttons: 1 });
+    for (let i = 1; i <= 3; i++) await b.send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: x0 + 14, y: y0 + 15 * i, button: 'left', buttons: 1 });
+    await b.send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: x0 + 14, y: y0 + 45, button: 'left', clickCount: 1, buttons: 0 });
+    const despues = await ev(`(()=>{const c=document.querySelector('.des-tablero circle[data-v="0"]');return JSON.stringify([c.cx.baseVal.value,c.cy.baseVal.value])})()`).then(JSON.parse);
+    ok(despues[1] > antes[1] + 50 && Math.abs(despues[0] - antes[0]) < 2, `Desenredo: arrastrar desde al lado del nudo lo mueve (${antes} → ${despues})`);
+    ok(/cruce/.test(await ev(`document.querySelector('.des-estado').textContent`)), 'Desenredo: bajo el tablero se cuentan los cruces');
+    await revisarPantalla('desenredo-tablero');
+  }
   if (id === 'tango') await b.shot('tango-tablero');
   if (id === 'donde') {
     // Arrastrar gira el globo sin poner el alfiler; el doble toque solo acerca al doble
@@ -794,6 +831,12 @@ await b.go(`${BASE}?practica=${id}&prueba&labs${id === 'zip' ? '&zipSeg=12&semil
     ok(await ev(`document.querySelector('#jugar-head .cron').textContent`) === cron0 && !await ev(`document.querySelector('.zip-reloj')`), `Zip: al acabarse el tiempo el reloj queda quieto en ${cron0} y la cuenta regresiva desaparece`);
     await b.shot('zip-solucion');
   }
+  if (id === 'desenredo') {
+    ok(await ev(`document.querySelector('.des-tablero').classList.contains('solucion') && !!document.getElementById('des-solucion')`), 'Desenredo: al acabarse el tiempo se ve una solución del nivel que quedó a medias');
+    ok(/Resolviste 2 niveles/.test(await ev(`document.querySelector('.zip-aviso').textContent`)), 'Desenredo: el aviso del final dice cuántos niveles se resolvieron');
+    ok(!/null|false|undefined/.test(await ev(`document.querySelector('.zip-aviso').textContent`)), 'Desenredo: el aviso del final no arrastra texto de más');
+    await sleep(900); await b.shot('desenredo-solucion');
+  }
   if (id === 'conexiones') ok(await ev(`document.querySelectorAll('.grupo').length === 4 && !document.querySelector('.grupo').classList.contains('pop')`), 'Conexiones: los grupos ya resueltos no se vuelven a animar');
   if (['conexiones', 'reinas', 'linea', 'letras'].includes(id)) {
     // El reloj se detiene al terminar el tablero, no al tocar "Ver resultado" (D-130)
@@ -806,7 +849,7 @@ await b.go(`${BASE}?practica=${id}&prueba&labs${id === 'zip' ? '&zipSeg=12&semil
   ok(r.p === 'resultado', `práctica de ${id}: se juega completa (${r.s})`);
   ok((await ev(`document.querySelector('#explicacion')?.innerText || ''`)).length > 40, `práctica de ${id}: explica cómo se calculó el puntaje`);
   if (id === 'donde') ok(r.s === '100/100', `¿Dónde queda?: el alfiler justo en cada ciudad son 100 puntos (${r.s})`);
-  if (['reinas', 'zip', 'tango', 'letras', 'donde'].includes(id)) await b.shot(`practica-${id}`);
+  if (['reinas', 'zip', 'desenredo', 'tango', 'letras', 'donde'].includes(id)) await b.shot(`practica-${id}`);
   if (id === 'reinas') { await revisarPantalla('practica-resultado'); await b.shot('11-practica'); }
 }
 // Un reporte desde la práctica

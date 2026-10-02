@@ -1882,7 +1882,7 @@ function explicacion(J, { s, ms, det, x = 1, final = false, copa = true }) {
     el('summary', { class: 'lead' }, `🧮 ${T.bdTitle}`),
     el('ul', {}, lineas.map(t => el('li', {}, t))),
     det?.length ? el('p', { class: 'explicacion-total' }, fmt(s === 1 ? T.bdTotalOne : T.bdTotal, { s })) : null,
-    J === MINIJUEGOS.zip ? null : el('p', { class: 'muted' }, fmt(copa ? T.bdTime : T.bdTimeSolo, { t: mmss(ms) })),
+    J === MINIJUEGOS.zip || J === MINIJUEGOS.desenredo ? null : el('p', { class: 'muted' }, fmt(copa ? T.bdTime : T.bdTimeSolo, { t: mmss(ms) })),
     copa ? el('p', { class: 'muted' }, T.bdPlaces) : null,
     copa && x > 1 ? el('p', { class: 'ok' }, final ? T.bdFinal : T.bdWild) : null);
 }
@@ -1940,9 +1940,9 @@ function practica(id) {
 function jugarPractica(id, semilla) {
   // Suelto, todo va en el idioma de quien juega: no hay con quién jugar lo mismo (D-170)
   const p = JUEGOS[id].generar(semilla, 1, { lang: LANG });
-  // Solo en el modo de prueba: `&zipSeg=8` acorta el reloj de Zip para los guiones de punta a punta
+  // Solo en el modo de prueba: `&zipSeg=8` acorta el reloj de Zip y de Desenredo para los guiones de punta a punta
   const seg = Number(new URLSearchParams(location.search).get('zipSeg'));
-  if (PRUEBA && id === 'zip' && seg > 0) p.tiempo = seg * 1000;
+  if (PRUEBA && (id === 'zip' || id === 'desenredo') && seg > 0) p.tiempo = seg * 1000;
   // Señal de uso para el panel (D-44): el suelto se cuenta como su propio juego; el laboratorio no
   if (!LABS && !PRUEBA) trackStart({ game: id, mode: 'solo', players: 1 });
   jugarSinPuntaje(id, p, r => resultadoPractica(id, semilla, r));
