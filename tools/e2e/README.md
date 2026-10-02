@@ -20,6 +20,16 @@ python3 -m http.server 8765
 mkdir -p /tmp/e2e && node tools/e2e/batalla-naval-local.mjs /tmp/e2e
 ```
 
+Con otra sesión probando al mismo tiempo (D-135), cada una sirve su copia en su puerto y usa sus
+propios Chrome: **todos** los guiones leen `SITIO`, y `PUERTO_CDP` reparte los puertos de Chrome
+desde ese número (`cdp.mjs`: el primer Chrome del guion usa `PUERTO_CDP`, el segundo el siguiente).
+Sin las variables, todo sigue en el 8765 y en los puertos de siempre.
+
+```bash
+SITIO=http://localhost:8791 PUERTO_CDP=9491 node tools/e2e/ahorcado-online.mjs /tmp/e2e
+pkill -f "remote-debugging-port=949[1-3]"   # solo los tuyos
+```
+
 `mirar.mjs` no es una prueba: abre una pantalla suelta para revisarla de a una, sin jugar la
 partida. `node tools/e2e/mirar.mjs ahorcado juego --ancho 320` saca la captura y avisa si hay
 scroll horizontal o botones bajo 44 px (C-8).

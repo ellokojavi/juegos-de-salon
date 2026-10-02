@@ -1,8 +1,10 @@
 // El veredicto habla en tercera persona cuando se equivocó otro jugador (D-36)
 import { launch, sleep } from './cdp.mjs';
+// Con varias sesiones a la vez, cada una sirve su copia en su puerto (D-135)
+const SITIO = process.env.SITIO || 'http://localhost:8765';
 const OUT = process.argv[2];
 const BASE = process.argv[3];
-const hosts = BASE ? [BASE, BASE] : ['http://localhost:8765', 'http://127.0.0.1:8765'];
+const hosts = BASE ? [BASE, BASE] : ['localhost', '127.0.0.1', '[::1]'].map(h => SITIO.replace('localhost', h)).slice(0, 2);
 const A = await launch({ port: 9468, dir: `${OUT}/vA`, out: OUT, width: 375, height: 812 });
 const B = await launch({ port: 9469, dir: `${OUT}/vB`, out: OUT, width: 375, height: 812 });
 const overlay = d => d.evaluate(`(()=>{const h=document.getElementById('handoff');return JSON.stringify({
