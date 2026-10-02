@@ -41,8 +41,8 @@ minijuego 🔢 de La Copa, con sus reglas, su pantalla y su puntaje, pero en el 
   los botones se vean sin desplazar en 812 px), el repaso colapsado y Jugar otra vez, Cambiar modo
   y Volver al menú. Confeti y sonido de victoria si lo saca; sonido de tiempo si no.
 - **Textos:** los de `LOCALES` del juego. `ui-numero` lee `solved`, `notSolved`, `triesLeft`,
-  `tryLeft1`, `seeResults` y `yourGuesses`; la ayuda del teclado es la del juego (`blockHint`, que
-  dice bloquear) pasada como `blockHintDigits`.
+  `tryLeft1`, `seeResults` y `yourGuesses`; la ayuda del teclado es la del juego (`blockHint`: "Mantén apretada
+  una cifra para tacharla") pasada como `blockHintDigits`.
 - **Memoria (C-6):** `{ mode: 'solo', codigo, jugadas: { i, n }, ms, done }` en el mismo
   `createSessionStore`, al empezar, tras cada intento o nota y al ocultar la pantalla. Al retomar se
   vuelve a montar con las jugadas y el tiempo. Una partida guardada del solo viejo (con `messages`
@@ -72,8 +72,8 @@ El estado (`view()`) se deriva de la lista de mensajes: fase (`lobby`, `secret`,
 - Revancha: quien la propone crea una sala nueva (queda como A) y avisa con `rematch`; el otro se une como B.
 - Presencia con `onDisconnect`; si el rival se desconecta, se avisa en pantalla.
 
-## Cifras bloqueadas (notas del jugador)
-En el teclado de adivinar, una pulsación larga (450 ms) sobre una cifra la marca como bloqueada: se ve tachada con 🚫, se quita de la entrada actual y el toque corto no la ingresa. Otra pulsación larga la libera. Las marcas son por jugador (en un celular cada uno tiene las suyas), duran toda la partida, se guardan con la sesión en modo dos celulares y se limpian en la revancha. Bajo el teclado hay una instrucción de una línea para usuarios nuevos.
+## Cifras tachadas (notas del jugador)
+En el teclado de adivinar, una pulsación larga (450 ms) sobre una cifra la tacha: se ve con 🚫, se quita de la entrada actual y el toque corto no la ingresa. Otra pulsación larga la destacha. En pantalla se dice **tachar**, no bloquear (U-5, D-177). El teclado con notas es el compartido, `assets/js/teclado.js` (D-102). Las marcas son por jugador (en un celular cada uno tiene las suyas), duran toda la partida, se guardan con la sesión en modo dos celulares y se limpian en la revancha. Bajo el teclado hay una instrucción de una línea para usuarios nuevos.
 
 ## Repaso al final
 Bajo “Los números secretos eran” hay un desplegable “🔎 Ver todos los intentos”, colapsado por defecto (una línea de alto, para que Revancha, Cambiar modo y Volver al menú queden a la vista en un celular de 812 px), con los tableros completos de ambos jugadores.

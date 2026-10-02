@@ -31,7 +31,7 @@ The menu can be filtered by kind of game (words, logic, trivia, cards and dice);
 
 ## 👑 Fourth King (Cuarto Rey)
 
-The classic drinking card game. The phone is the deck: each player draws a card and the app says what to do. It names who drinks, runs the mini-games (Cuenta Cuentos, Chancho Inflado, Cultura Chupística, Nunca Nunca), suggests dares and counts the kings. The fourth king ends the game: whoever draws it finishes their glass, and the last screen shows who it was, the sip ranking and, folded at the bottom, every card that came up and who drew it.
+The classic drinking card game. The phone is the deck: each player draws a card and the phone says what to do. It names who drinks, runs the minigames (Cuenta Cuentos, Chancho Inflado, Cultura Chupística, Nunca Nunca), suggests dares and counts the kings. The fourth king ends the game: whoever draws it drinks everything left in their glass, and the last screen shows who it was, the sip ranking and, folded at the bottom, every card that came up and who drew it.
 
 <!-- generado: capturas:cuarto-rey · written by python3 tools/readme.py actualizar -->
 <table>
@@ -42,7 +42,7 @@ The classic drinking card game. The phone is the deck: each player draws a card 
     <td align="center"><img src="docs/screenshots/cuarto-rey/05-carta.png" width="180" alt="Card and instruction"><br><sub>Card and instruction</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/cuarto-rey/06-minijuego.png" width="180" alt="Mini-game with prompts"><br><sub>Mini-game with prompts</sub></td>
+    <td align="center"><img src="docs/screenshots/cuarto-rey/06-minijuego.png" width="180" alt="Minigame with prompts"><br><sub>Minigame with prompts</sub></td>
     <td align="center"><img src="docs/screenshots/cuarto-rey/07-salud.png" width="180" alt="Cheers!"><br><sub>Cheers!</sub></td>
     <td align="center"><img src="docs/screenshots/cuarto-rey/08-pasale.png" width="180" alt="Pass the phone"><br><sub>Pass the phone</sub></td>
     <td align="center"><img src="docs/screenshots/cuarto-rey/09-cuarto-rey.png" width="180" alt="Fourth King!"><br><sub>Fourth King!</sub></td>
@@ -134,7 +134,7 @@ Spec and design: [docs/juegos/batalla-naval.md](docs/juegos/batalla-naval.md)
 
 ## ⏳ Timeline (Línea de Tiempo)
 
-You get events with no date on them and place them in the right spot on a shared timeline. Get it right and the card stays. Get it wrong and it is discarded, and you draw another one. The first player to run out of cards wins. The round is always played to the end, and if more than one player runs out, the fastest answer wins. The theme is picked at the start, and adding a new one is just a data file. Cards do not repeat across back-to-back games: each phone remembers the ones it has already shown.
+You get events with no date on them and place them in the right spot on a shared timeline. Get it right and the card stays. Get it wrong and it is discarded (with your own hand, you draw another one). The first player to correctly place the cards needed to win takes the game; with your own hand, the first to run out of cards. The round is always played to the end, and on a tie the fastest player wins. The rules on the game's front page are folded, one tap away (D-177). The theme is picked at the start, and adding a new one is just a data file. Cards do not repeat across back-to-back games: each phone remembers the ones it has already shown.
 
 <!-- generado: tematicas · written by python3 tools/readme.py actualizar -->
 | Theme | Cards | Years | What it covers |
@@ -189,18 +189,18 @@ Spec and design: [docs/juegos/linea-de-tiempo.md](docs/juegos/linea-de-tiempo.md
 <table>
   <tr>
     <td align="center"><img src="docs/screenshots/ahorcado/01-intro.png" width="180" alt="Game modes"><br><sub>Game modes</sub></td>
-    <td align="center"><img src="docs/screenshots/ahorcado/02-configuracion.png" width="180" alt="Word, misses allowed and who plays"><br><sub>Word, misses allowed and who plays</sub></td>
+    <td align="center"><img src="docs/screenshots/ahorcado/02-configuracion.png" width="180" alt="Word, lives and who plays"><br><sub>Word, lives and who plays</sub></td>
     <td align="center"><img src="docs/screenshots/ahorcado/03-escribir.png" width="180" alt="Each player writes for the next"><br><sub>Each player writes for the next</sub></td>
     <td align="center"><img src="docs/screenshots/ahorcado/04-juego.png" width="180" alt="Gallows, clue, word and keyboard"><br><sub>Gallows, clue, word and keyboard</sub></td>
   </tr>
   <tr>
     <td align="center"><img src="docs/screenshots/ahorcado/05-veredicto.png" width="180" alt="The letter and the handoff together"><br><sub>The letter and the handoff together</sub></td>
     <td align="center"><img src="docs/screenshots/ahorcado/06-sala.png" width="180" alt="Room with code and QR"><br><sub>Room with code and QR</sub></td>
-    <td align="center"><img src="docs/screenshots/ahorcado/07-varios-celulares.png" width="180" alt="Everyone guessing at once"><br><sub>Everyone guessing at once</sub></td>
+    <td align="center"><img src="docs/screenshots/ahorcado/07-varios-celulares.png" width="180" alt="Each on their own phone, taking turns"><br><sub>Each on their own phone, taking turns</sub></td>
     <td align="center"><img src="docs/screenshots/ahorcado/08-resultado.png" width="180" alt="Score and verified words"><br><sub>Score and verified words</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/ahorcado/09-solitario.png" width="180" alt="Play alone: the app deals the word"><br><sub>Play alone: the app deals the word</sub></td>
+    <td align="center"><img src="docs/screenshots/ahorcado/09-solitario.png" width="180" alt="Play alone: the phone deals the word"><br><sub>Play alone: the phone deals the word</sub></td>
     <td></td>
     <td></td>
     <td></td>
@@ -208,21 +208,21 @@ Spec and design: [docs/juegos/linea-de-tiempo.md](docs/juegos/linea-de-tiempo.md
 </table>
 <!-- /generado -->
 
-The classic word game, with the fix it has always needed: **nobody sits and watches**. Instead of one bored executioner and one guesser, every player writes the word for the next one, the last one writes for the first, and everyone guesses their own. Two players make a duel, six make a race. Your score is **the misses you had left over**, so cracking the word is not enough: you have to crack it cheap. Setting an impossible word earns nothing, and the player next to you writes yours anyway.
+The classic word game, with the fix it has always needed: **nobody sits and watches**. Instead of one bored executioner and one guesser, every player writes the word for the next one, the last one writes for the first, and everyone guesses their own. Two players make a duel, six make a race. Your score is **the lives you had left**, so cracking the word is not enough: you have to crack it cheap. Setting an impossible word earns nothing, and the player next to you writes yours anyway.
 
-| | 🤝 Chain | 🎴 App deck |
+| | 🤝 Chain | 🎴 Phone's deck |
 |---|---|---|
-| Who sets the word | Each player, for the next one, with a mandatory clue | The app, from the chosen theme |
+| Who sets the word | Each player, for the next one, with a mandatory clue | The phone, from the chosen theme |
 | What the theme is for | It suggests six words to whoever writes, who can take them, edit them or ignore them | It is where the word comes from |
 | The secret | It never travels: it is committed with a hash and verified at the end | There is none: it comes from the deck seed |
 
-Five themes and a mix (Chile, Animals, Food, Film and TV, Sports), each with its own words and clues per language. They are not translations, because a translated word changes length and difficulty. Misses allowed are configurable (5, 6 or 8), and the last stroke of the drawing is always the X eyes. You can **buy a letter** 💡: the rarest missing one shows up and it costs you a miss.
+Five themes and a mix (Chile, Animals, Food, Film and TV, Sports), each with its own words and clues per language. They are not translations, because a translated word changes length and difficulty. Lives are configurable (5, 6 or 8), each miss costs one, and the last stroke of the drawing is always the X eyes. You can **buy a letter** 💡: the rarest missing one shows up and it costs you a life.
 
-Turns alternate: you try a letter and the phone moves to the next player. All boards advance at the same time, so seeing that your neighbour has one life left while you still have four lands exactly when it matters.
+Turns alternate: you try a letter and the turn moves to the next player. All boards advance together, so seeing that your neighbour has one life left while you still have four lands exactly when it matters.
 
 - **📱 One phone:** two to six players, with a covered screen for writing the word. After each letter, the result and "pass the phone to X" share one screen.
 - **📡 Several phones:** a room with a code and a QR, up to six, taking turns one letter at a time so the sequence is visible (D-66). The rival strip shows lives and progress, never letters.
-- **🧍 Play alone:** the app deals a word from the chosen theme with its clue, and you crack it. There is no rival: the phone does not guess. Since the word comes from the deck there is no secret to commit, so this is the only mode that works without https (D-65).
+- **🧍 Play alone:** the phone deals a word from the chosen theme with its clue, and you crack it. There is no rival: the phone does not guess. Since the word comes from the deck there is no secret to commit, so this is the only mode that works without https (D-65).
 
 Spec and design: [docs/juegos/ahorcado.md](docs/juegos/ahorcado.md)
 
@@ -260,7 +260,7 @@ Here the phone does what a real table does badly: it rolls the dice, it **refuse
 In Spanish the faces are called the way they are called at a Chilean table (**ases, tontos, trenes, cuadras, quintas, sextas**), which is how the game is actually played here: "cuatro quintas", not "cuatro cincos". It ships on, and it can be turned off in settings to go back to numbers. In English and Portuguese the faces go by their number and the switch is not offered.
 
 - **📱 One phone:** two to six players. The phone is passed around and each player sees their dice behind a handoff screen (C-9).
-- **🤖 Versus the phone:** a duel. The app bets on probability and **only looks at its own dice**: the decision comes from how many unknown dice are left and how likely they are to cover the bid, not from peeking at yours.
+- **🤖 Versus the phone:** a duel. The phone bets on probability and **only looks at its own dice**: the decision comes from how many unknown dice are left and how likely they are to cover the bid, not from peeking at yours.
 - **📶 Several phones:** a room with a 4-letter code, a QR and chat, two to six players. Each phone rolls **its own** dice and publishes only the hash. On a call it reveals them and everyone verifies that nobody swapped them (C-10). This is why the dice are not derived from the shared seed like everything else this app deals: the code is public, and with a shared seed anyone could compute the rival's dice from the console (D-70).
 
 Spec and design: [docs/juegos/dudo.md](docs/juegos/dudo.md)
@@ -274,7 +274,7 @@ Spec and design: [docs/juegos/dudo.md](docs/juegos/dudo.md)
   <tr>
     <td align="center"><img src="docs/screenshots/julepe/01-intro.png" width="180" alt="Game modes"><br><sub>Game modes</sub></td>
     <td align="center"><img src="docs/screenshots/julepe/02-configuracion.png" width="180" alt="How many rivals and how many hands"><br><sub>How many rivals and how many hands</sub></td>
-    <td align="center"><img src="docs/screenshots/julepe/03-declaracion.png" width="180" alt="In or out, in secret"><br><sub>In or out, in secret</sub></td>
+    <td align="center"><img src="docs/screenshots/julepe/03-declaracion.png" width="180" alt="In or out, taking turns"><br><sub>In or out, taking turns</sub></td>
     <td align="center"><img src="docs/screenshots/julepe/04-cambio.png" width="180" alt="Swap up to three cards"><br><sub>Swap up to three cards</sub></td>
   </tr>
   <tr>
@@ -297,9 +297,9 @@ Spec and design: [docs/juegos/dudo.md](docs/juegos/dudo.md)
 > into something a new player can actually follow (D-88). The game itself is untouched and still
 > works at [`/julepe/`](https://juegosdesalon.cl/julepe/).
 
-A trick-taking game from the Tute family, played for drinks. There is a **pot** of sips on the table. You look at your five cards and say, in secret, whether you are **in** or **out**. Going in means committing to win **two of the five tricks**: make it and you are safe, and you get to hand out two sips per trick to anyone you like; fall short and you **drink the whole pot**. That is a **julep**. Everything drunk goes straight back into the pot, so two juleps in a row leave twenty sips sitting there before anyone notices.
+A trick-taking game from the Tute family, played for sips. There is a **pot** of sips on the table. You look at your five cards and, taking turns from the dealer's right, say whether you are **in** or **out**. Going in means committing to win **two of the five tricks**: make it and you are safe, and you get to hand out two sips per trick among the others; fall short and you **drink the whole pot**. That is a **julep**. The pot carries over to the next hand once for every player who got juleped, so two juleps in the same hand double it before anyone notices.
 
-The phone does what a real table does badly. It deals, it keeps the pot, it remembers who owes whom, and above all it **refuses illegal cards**: you must follow the suit led, you must play higher if you can win the trick, and you must trump when you are out of the suit. Those three rules are what people argue about all night; here the cards that cannot be played are simply dimmed, with a line saying which rule is doing it. Nobody has to learn a rule by breaking it.
+The phone does what a real table does badly. It deals, it keeps the pot, it remembers who owes whom, and above all it **refuses illegal cards**: you must follow the suit led, you must play higher than the highest card of that suit on the table if you can, and you must trump when you are out of the suit. Those three rules are what people argue about all night; here the cards that cannot be played are simply dimmed, with a line saying which rule is doing it. Nobody has to learn a rule by breaking it.
 
 If only one player goes in, the hand would be no hand at all, so **the dealer is dragged in** and has to play it (D-83). Dealing is a risk too, which is exactly the story the table tells afterwards.
 
@@ -359,12 +359,12 @@ It borrows what makes daily puzzles work (Wordle, Connections): same challenge f
 The other three are **〰️ Zip**, **☀️ Tango** and **📍 Where is it?**. Where is it? gives you five cities, each with its country, and you drop a pin on a satellite-image globe with no names on it (NASA's Blue Marble, so deserts, jungles and ice look like themselves), which spins endlessly as you drag it: every city is worth up to 100 points, minus 4 per 100 km off. The cities are the capitals of every UN country and its two observers, plus famous and second-tier ones (529 in all), and the borders used to check them come from Natural Earth via `tools/mapa.mjs` (D-155, D-159). **The minigames also play on their own from the main menu** (D-142), one player and no cup: Timeline Flash and the number game are the *play alone* modes of Timeline and Bulls and Cows, in all three languages, and the other seven (all but the final) have their own card, Where is it? included since D-174, open at `/minijuegos/<id>/` (no "cup" in a link that has nothing to do with one, D-149) and play in the player's language. Each of those pages is generated by `tools/og.mjs` with its own social card, so a link pasted in WhatsApp shows the minigame, not the cup (D-162). The cup does not invent its own UX (D-102): the timeline, the drag and drop and the keypad are the ones Timeline and Bulls and Cows already use, shared from `assets/`.
 
 - **Everything comes from a seed** (`code:day`), so everyone plays exactly the same content with no server (D-97).
-- **A day stays open until the next midnight** (a grace day), except the final. Time only breaks ties, and it is *active* time: it pauses while the screen is hidden (D-95).
+- **A day stays open until the next midnight** (a grace day), except the final. **Late sign-ups** are open until the final unless the admin closes them or the cup is full (ten players); a late player gets 0 for the days already closed, and the warning shows from day 3 on, because on day 2 day 1 is still in its grace day (D-177). Time only breaks ties, and it is *active* time: it pauses while the screen is hidden (D-95).
 - **Results stay hidden until you play**: the table and the progress chart only add up the days you can already see, so they cannot spoil today.
 - **Accounts are a name and a PIN inside one cup**, backed by Firebase anonymous auth. The PIN hash lives where nobody can read it, and the rules only let a device write for a player if it sends the same hash (D-96).
-- **The admin plays too**, and can rename, remove or re-PIN players and share ready-made messages with the group: the invite, **today's reminder** (with who is still missing), the partial table and the final summary (D-99). The table goes out the same from everywhere — the chart, the admin, the podium — as the image, with a short text that only adds what the image does not show (who is still missing, or the medals) (D-171); each day's result also goes out with its own image, headed with the cup and the day (D-165).
+- **The admin plays too**, and can rename, remove or re-PIN players and share ready-made messages with the group: the invite, **today's reminder** (with who is still missing), the partial table and the final summary (D-99). The invite stays in the admin screen for as long as someone new can still join (sign-ups open and fewer than ten players), and once the cup is under way it says which day it is on instead of when it starts (D-176). The table goes out the same from everywhere — the chart, the admin, the podium — as the image, with a short text that only adds what the image does not show (who is still missing, or the medals) (D-171); each day's result also goes out with its own image, headed with the cup and the day (D-165).
 - **The admin can end the cup early** (D-161), say when last place is not going to play the final: nobody plays after that, the table as it stands becomes final and the podium shows up; days that had not opened yet are dropped. Once a cup is over, the admin can **export the final table**: the shareable image with everyone's place day by day, or a CSV spreadsheet (final table, place after each day and every day's detail) for Excel or Google Sheets.
-- **Every day has a practice round first** (D-103): same mechanics, different content, and it does not count. Starting the real one shows a **3-to-1 countdown** and the board and clock appear only on "¡A jugar!" (D-105). When you finish, the result **explains how the score was calculated**, line by line (D-106).
+- **Every day has a practice round first** (D-103): same mechanics, different content, shorter, and it does not count, which the screen says right under its button and again in its folded rules (D-177). Starting the real one shows a **3-to-1 countdown** and the board and clock appear only on "¡A jugar!" (D-105). When you finish, the result **explains how the score was calculated**, line by line (D-106).
 - **A new cup opens on the admin screen** with a short guide: share the invite, wait for people to join (they can before it starts), close sign-ups if you like, and move the start to today or tomorrow while nobody has played yet (D-110). The lab has **ten live demos** of the cup, as a player and as the admin.
 - **A cup can have its own link** (D-121): `juegosdesalon.cl/copa/?pirata` instead of a 5-letter code. It is an alias, unique while the cup lasts and free again a week after it ends.
 - **Bug reports need no account** (D-104): the 🐞 form posts straight to `feedback/` and remembers your name on that device; `node tools/reportes.mjs` reads them back.

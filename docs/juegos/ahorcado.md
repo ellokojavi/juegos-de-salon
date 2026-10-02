@@ -5,8 +5,9 @@
 ## 1. Resumen
 
 Quinto juego de la app. El ahorcado de toda la vida, con el arreglo que le falta desde siempre:
-**nadie se queda mirando**. En vez de un verdugo aburrido y un adivinador, todos adivinan una
-palabra al mismo tiempo y se comparan. Con dos jugadores es un duelo; con seis, una carrera.
+**nadie se queda mirando**. En vez de un verdugo aburrido y un adivinador, cada jugador adivina
+su propia palabra, por turnos de una letra, y al final se comparan. Con dos jugadores es un duelo;
+con seis, una carrera.
 
 Sigue los [cánones](../CANONES.md). Dos excepciones documentadas, ambas en §6.
 
@@ -14,14 +15,14 @@ Sigue los [cánones](../CANONES.md). Dos excepciones documentadas, ambas en §6.
 
 | Regla | Decisión |
 |---|---|
-| Objetivo | Revelar tu palabra antes de que se te acaben los errores. |
-| Errores permitidos | 6 por defecto. Configurable: difícil 5, normal 6, fácil 8. |
+| Objetivo | Revelar tu palabra antes de quedarte sin vidas. |
+| Vidas | 6 por defecto. Configurable: difícil 5, normal 6, fácil 8. Cada letra errada cuesta una (en el código, `lives`; hasta 0.84.0 la pantalla decía "errores permitidos"). |
 | Una letra | Se toca una tecla y se confirma (C-8). Si está, aparece en todas sus posiciones; si no, se dibuja un trazo. |
-| Comprar una letra 💡 | Revela la letra que falta **más rara** y cuesta un error. Solo con 2 errores o más de margen. Sin tope: cada compra se paga sola. |
+| Comprar una letra 💡 | Revela la letra que falta **más rara** y cuesta una vida. Solo con 2 vidas o más. Sin tope: cada compra se paga sola. |
 | Turno | **Se alterna letra a letra** (D-59): pruebas una y le toca al siguiente que siga vivo. |
-| Ronda | Cada jugador adivina exactamente una palabra, pero todas avanzan en paralelo. |
-| Puntaje | Los errores que te sobraron (1 a 8). Te colgaron, 0. |
-| Ranking | Primero los que la sacaron (más margen, menos letras, menos tiempo); después los colgados, por cuánto revelaron (D-61). |
+| Ronda | Cada jugador adivina exactamente una palabra; todas avanzan a la vez, una letra por turno. |
+| Puntaje | Las vidas que te quedaron (1 a 8). Te colgaron, 0. |
+| Ranking | Primero los que la sacaron (más vidas, menos letras, menos tiempo); después los colgados, por cuánto revelaron (D-61). |
 | Desempate | Menos letras gastadas; si sigue empatado, menos tiempo acumulado. |
 | Fin | Termina cuando todos revelaron su palabra o los colgaron. Gana el puntaje más alto; si no la sacó nadie, no hay ganador (D-61). |
 
@@ -34,9 +35,9 @@ La sección **Palabra** de la configuración ofrece dos formas, en un selector d
 el emoji arriba y el nombre completo debajo (D-52). **Cadena viene elegida por defecto**, porque es
 la gracia del juego: elegirle la palabra a alguien que te está mirando.
 
-| | 🤝 Cadena | 🎴 Mazo de la app |
+| | 🤝 Cadena | 🎴 Mazo del celular |
 |---|---|---|
-| Quién la pone | Cada jugador le escribe la palabra **al siguiente**; el último se la escribe al primero | La app, de la temática elegida |
+| Quién la pone | Cada jugador le escribe la palabra **al siguiente**; el último se la escribe al primero | El celular, de la temática elegida |
 | Pista | Obligatoria, la escribe quien pone la palabra (máx. 40 caracteres) | La trae la carta |
 | Con 2 jugadores | El ahorcado clásico, cada uno le pone una al otro | Cada uno con su palabra |
 | Secreto | La palabra **no viaja**: se compromete con hash y se verifica al final (C-10) | No hay secreto: la palabra sale de la semilla del mazo |
@@ -79,15 +80,15 @@ letra cada uno, en el orden en que entraron (D-66). Quien no tiene el turno ve s
 teclado bloqueado, y la tira de rivales marca a quién le toca. Si alguien cierra la pestaña, el
 turno lo saltea para que la sala no se trabe. El anfitrión
 (rol A) abre la partida cuando están todos. Hay chat de sala (C-15) y sigue vivo en la pantalla
-final. La simultaneidad es una comodidad, no otro juego: el puntaje sigue siendo los errores que te
-sobraron, y el reloj solo desempata.
+final. Cada uno en su celular es una comodidad, no otro juego: el puntaje sigue siendo las vidas
+que te quedaron, y el reloj solo desempata.
 
-**Jugando solo** la app reparte una palabra de la temática elegida, con su pista, y el jugador la
+**Jugando solo** el celular reparte una palabra de la temática elegida, con su pista, y el jugador la
 saca. No hay rival: la máquina no adivina nada (D-65). Como la palabra sale del mazo y no la escribe
 nadie, tampoco hay secreto que comprometer, así que este es el único modo que anda sin https.
 
-La pantalla final es distinta: no hay ranking ni "ganó fulano", solo si la sacaste y con cuánto
-margen, y debajo la palabra que era.
+La pantalla final es distinta: no hay ranking ni "ganó fulano", solo si la sacaste y con cuántas
+vidas, y debajo la palabra que era.
 
 ## 4. Estado y protocolo
 
@@ -123,7 +124,7 @@ Todo el estado se deriva de **la semilla del mazo más la lista de mensajes**.
 - **El dibujo**: horca y monito en SVG, con el neón de la app. La horca (base, poste, viga y soga)
   está desde el principio en trazo apagado; cada error dibuja una parte del monito con
   `stroke-dasharray`, como si alguien la trazara. El último trazo, en las tres dificultades, son los
-  ojos en X: es el remate. Con un error de margen, la soga queda latiendo. Respeta
+  ojos en X: es el remate. Con una vida, la soga queda latiendo. Respeta
   `prefers-reduced-motion`: sin animación, el trazo aparece y ya.
 
   | Errores | Trazos |
@@ -144,12 +145,12 @@ Todo el estado se deriva de **la semilla del mazo más la lista de mensajes**.
 - **La tira de rivales** (varios celulares): un chip por jugador con su nombre, sus vidas y cuánto
   lleva revelado en barra. **Nunca qué letras** (D-55): mirar el tablero del de al lado no puede
   ser una forma de jugar.
-- **💡 Comprar una letra** es un botón aparte del teclado, con el precio escrito (“cuesta un
-  error”), y pide confirmar. Se deshabilita cuando queda un solo error.
+- **💡 Comprar una letra** es un botón aparte del teclado, con el precio escrito (“cuesta una
+  vida”), y pide confirmar. Se deshabilita cuando queda una sola vida.
 - **Al perder**, las letras que faltaban caen en su lugar en rojo, una por una, y recién ahí
   aparece el veredicto.
 - **Sonido** (C-4): cada acierto suena medio tono más arriba que el anterior, así que una racha se
-  escucha como una escala; el error es seco y sacude la pantalla; con un error de margen entra un
+  escucha como una escala; el error es seco y sacude la pantalla; con una sola vida entra un
   latido bajo. Confeti y sonido al ganar (C-1).
 
 ## 5b. Lo que apareció al construirlo
@@ -157,8 +158,8 @@ Todo el estado se deriva de **la semilla del mazo más la lista de mensajes**.
 - **En un celular, cada letra termina en una pantalla**: el resultado (“¡Va! La O aparece 2 veces”),
   la palabra como quedó, las vidas que sobran y, debajo, el pase al siguiente. No es un aviso de
   error —eso sería estorbar (D-56)—: es el traspaso, y por eso espera al jugador en vez de cerrarse.
-- **El veredicto de una ronda es solo para quien la jugó.** En varios celulares cada uno adivina a
-  la vez: taparle la pantalla a alguien que está en plena carrera para contarle cómo le fue a otro
+- **El veredicto de una ronda es solo para quien la jugó.** En varios celulares cada uno adivina su
+  palabra en su celular: taparle la pantalla a alguien que está en plena carrera para contarle cómo le fue a otro
   es peor que no contárselo. Los demás lo ven en la tira de rivales, que es donde ya están mirando.
 - **Un veredicto en pantalla congela el dibujo.** Mientras hay un overlay arriba, la partida no se
   vuelve a dibujar: un mensaje que llega —una respuesta, la jugada de otro— borraría lo que el
@@ -176,7 +177,7 @@ Todo el estado se deriva de **la semilla del mazo más la lista de mensajes**.
 
 - **C-8b · Una letra errada no bloquea la pantalla** (D-56). El canon pide que el error se quede en
   pantalla hasta que el jugador toque. Acá el error es la jugada normal del juego —en una partida
-  hay cinco o seis— y en varios celulares todos están jugando a la vez: un aviso que hay que cerrar
+  hay cinco o seis— y en varios celulares los turnos siguen corriendo: un aviso que hay que cerrar
   seis veces convierte el juego en un trámite. La señal sí es inconfundible (fondo rojo, sacudida,
   sonido propio, la tecla tachada y el trazo nuevo), y lo que sí se queda hasta que toquen es el
   veredicto de la ronda: te colgaron, o la sacaste.
