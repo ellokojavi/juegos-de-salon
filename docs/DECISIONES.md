@@ -1394,7 +1394,7 @@ la primera hace que el tablero parezca imposible.
 **Por qué:** probar una copa de 7 días con amigos no puede tomar 7 días.
 
 ## D-116 · Cada cosa en su momento de la copa
-**Fecha:** 2026-09-24 · **Estado:** vigente
+**Fecha:** 2026-09-24 · **Estado:** vigente; la invitación en Administrar la cambia D-176
 **Decisión:** Una revisión de lo que depende de la etapa de la copa (antes de partir, en juego,
 terminada) y de si la inscripción está cerrada:
 - **Invitación** (en Administrar y en el tablero): solo antes de partir y con la inscripción abierta.
@@ -2514,3 +2514,72 @@ cambia nada: ya se podía elegir para cualquier día desde D-163.
 (D-170) ya estaban probados en el laboratorio y en copas de verdad.
 **Consecuencias:** la portada ofrece siete minijuegos sueltos. La captura del menú en el README se
 rehace. `labs` en `BASE` de `copa/rules.js` no se usa para la portada y queda como estaba.
+
+## D-175 · La Copa sale del laboratorio y llega al menú
+**Fecha:** 2026-10-02 · **Estado:** vigente; cierra el periodo de laboratorio de D-101
+**Decisión:** La Copa queda activa en el menú principal (`available: true` y sin `labs` en
+`games.js`): su tarjeta abre `/copa/`, sin "Próximamente". El botón "‹ Menú" de La Copa vuelve al
+menú; solo quien llega desde el laboratorio (`?labs`) vuelve a `/labs/`.
+- **El laboratorio sigue** para probar: la Copa de 3 días (D-100), la práctica con semilla, las
+  demos y la copa simulada. Las copas creadas desde ahí siguen marcadas en el panel.
+- **Lo que se ofrece desde el menú es la Copa de 7 días**, como siempre fue el plan (D-100).
+
+**Por qué:** El dueño lo pidió: la copa ya se probó con amigos (los reportes de 🐞, las rondas de
+usabilidad y los arreglos de La Copa en inglés y portugués) y ya se comparte por su link.
+
+## D-176 · En Administrar, la invitación sigue mientras alguien pueda entrar
+**Fecha:** 2026-10-02 · **Estado:** vigente; cambia la invitación de D-116 solo en Administrar
+**Decisión:** El mensaje **Invitación** de Administrar ya no desaparece cuando parte la copa: está
+mientras alguien nuevo pueda inscribirse, es decir, con la inscripción abierta (hasta la final o
+hasta que el admin la cierre) y sin llegar al máximo de jugadores. Ya partida, la línea "📅 Parte
+el …" se cambia por "📅 Ya partió: va en el día {d} de {n} y todavía puedes entrar." y, desde el
+día 2, el aviso de que los días cerrados quedan en 0 (el mismo que ve quien entra tarde). El botón
+"Invitar al grupo" del tablero sigue solo antes de partir.
+**Por qué:** lo pidió el dueño: con la copa andando quería sumar a alguien y la invitación ya no
+estaba. La inscripción tardía está abierta a propósito (D-99, D-116), pero no había cómo invitar.
+**Consecuencias:** `shareInviteText` lleva `{cuando}` en vez de la fecha, que sale de
+`shareInviteStart` o `shareInviteGoing`.
+
+## D-177 · Textos de explicación más cortos y una palabra por concepto
+**Fecha:** 2026-10-02 · **Estado:** vigente
+**Decisión:** Se revisaron todas las explicaciones de los juegos (reglas, ayudas, modos, antesalas,
+Administrar y las frases del menú) y se acortaron un 37 % (193 textos, de unos 24.200 a 15.300
+caracteres en español), con la misma información para jugar. El criterio quedó como U-8: cada
+regla se dice una vez por pantalla. De paso se corrigieron los textos que decían algo distinto de
+lo que hace el juego (El Ahorcado por turnos, Julepe sin "en secreto" y con el plato y el montar
+bien explicados, las reglas de ases y de calzar en Dudo, cómo se gana en Línea de Tiempo, el
+chancho de Cuarto Rey, el empate por réplica en Toque y Fama, la final sin día de gracia y la
+copa llena en La Copa). El aviso de inscripción tardía de La Copa sale desde el día 3: el día 2
+el día 1 sigue en su día de gracia. La sesión de prueba avisa que es más corta que el juego.
+Palabras que el dueño fijó (U-5): **tachar** (no bloquear), **el celular** (no la app ni la IA),
+**jugador** (no competidor), **administrador** (no admin, en lo que ven los jugadores),
+**sorbos** en Julepe (no tragos) y **vidas** en El Ahorcado (no errores permitidos ni margen).
+Las reglas de Línea de Tiempo quedan plegadas (U-16). Tango queda con 3 consejos.
+**Por qué:** lo pidió el dueño: los textos eran largos y repetían la misma regla en pantallas
+seguidas (en La Copa, las reglas de cada minijuego se leen dos veces al día).
+**Consecuencias:** las imágenes de las tarjetas para compartir (`node tools/og.mjs imagenes`)
+siguen con la frase vieja del menú hasta rehacerlas en el Mac del dueño: en la nube Chrome no
+carga las fuentes. Las capturas del README que muestran estos textos se rehacen.
+**Alternativas descartadas:** acortar más allá del 40 % (se perdían reglas o se volvía telegrama,
+contra U-1); un botón para anotar al perdedor del chancho más tarde (cambio de diseño, aparte).
+
+## D-178 · Los assets de marketing viven en el repo, cada uno con su memoria
+**Fecha:** 2026-10-02 · **Estado:** vigente
+**Decisión:** El video promocional y lo que venga de marketing son objetos del repositorio, en
+`marketing/`: una carpeta por asset con sus fuentes, sus archivos finales (solo la última
+versión, en `salida/`), su forma de rehacerse y un README que es su memoria. `marketing/registro.json`
+los lista con versión, fecha, archivos y estado.
+- **Memoria:** el README de cada asset guarda lo que el dueño fue pidiendo en cada vuelta (en sus
+  palabras cuando importa), sus gustos destilados ("Lo que el dueño quiere"), cómo está hecho, las
+  trampas conocidas y la historia de versiones. Se lee entero antes de tocar el asset y se
+  actualiza al terminar cada vuelta.
+- **Para que ninguna sesión empiece de cero:** `CLAUDE.md` lo dice, y el skill
+  `.claude/skills/video-promo/` se carga solo cuando se trabaja en el video, nuevo o existente.
+- **El video** (`marketing/video-promo/`) se rehace entero con `construir.sh`: juega cada juego en
+  la app real con azar fijo, renderiza `promo.html` cuadro a cuadro en los dos formatos (16:9 para
+  YouTube y vertical) y le pone la canción del dueño. Las capturas no van al repo: se rehacen.
+**Por qué:** el video se hizo en cinco vueltas en dos sesiones, y lo aprendido (qué le gusta al
+dueño, la canción, las trampas del render) estaba solo en las conversaciones y en carpetas
+temporales que se borran.
+**Consecuencias:** los mp4 pesan (~25 MB cada uno) y se publican con el sitio en GitHub Pages; al
+reemplazarlos, el repo crece con cada versión. Si eso molesta, se pasan a Git LFS o a un release.

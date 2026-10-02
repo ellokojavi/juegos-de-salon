@@ -614,7 +614,7 @@ async function joinOnline(code, name, previousRole = null, savedSecret = null, s
  * sale de un código de 5 letras al azar, así la partida guardada es solo `{ codigo, jugadas, ms }`.
  */
 let soltarSolo = null;
-/** ui-numero usa las claves de la copa; la ayuda del teclado es la del juego (bloquear, no tachar). */
+/** ui-numero usa las claves de la copa; la ayuda del teclado es la del juego (la corta, sin "si crees que no está"). */
 const TN = { ...T, blockHintDigits: T.blockHint };
 const recordTexto = r => fmt(T.prevRecord, { s: r.s, t: mmss(r.ms) });
 
