@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.82.4 — 2026-10-02
+- **Arreglo: la invitación a una copa en inglés o portugués abre la copa.** El link lleva el idioma
+  (`?pirata&lang=pt`, D-170) y, al sacarlo de la barra, el resto quedaba como `?pirata=`, que La Copa
+  no reconocía: se abría la portada. Ahora se saca solo el `lang=`. Las copas en español no estaban
+  afectadas, porque su link no lleva idioma.
+
 ## 0.82.3 — 2026-10-02
 - **"‹ Laboratorio" en una sola línea** (U-12): en la práctica de un minijuego con nombre largo
   (¿Dónde queda?, Toque y Fama: Palabra), el botón de volver partía y dejaba el ‹ solo arriba.
