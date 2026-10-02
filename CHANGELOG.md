@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.82.3 — 2026-10-02
+- **"‹ Laboratorio" en una sola línea** (U-12): en la práctica de un minijuego con nombre largo
+  (¿Dónde queda?, Toque y Fama: Palabra), el botón de volver partía y dejaba el ‹ solo arriba.
+
 ## 0.82.2 — 2026-10-02
 - **La Copa: cuando falta uno solo, el aviso va en singular** (U-6). El recordatorio dice
   "👀 Falta por jugar hoy: Pancho.", la tabla parcial "Falta que juegue: Pancho." y, al terminar
