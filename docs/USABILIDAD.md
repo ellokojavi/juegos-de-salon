@@ -16,10 +16,14 @@ Cada regla tiene un ID (U-n) para citarla en los PR y en los issues.
   gramática o concordancia no es un texto nuevo.
 - **U-4 · Nombres propios sin artículo:** "La Copa: Valdenenas", nunca "la Valdenenas".
 - **U-5 · Un mismo concepto, una misma palabra** en toda la app (día de gracia, inscripción,
-  competidores, link, PIN).
+  jugadores, link, PIN, administrador, el celular, tachar, vidas, sorbos, "cada intento después
+  del primero", cantidades en cifras; D-177).
 - **U-6 · El plural y el singular concuerdan con el número** ("1 jugador inscrito", "2 pistas").
 - **U-7 · Los juegos por significado, no por juegos de palabras** (D-128): en Conexiones, lo que
   las cosas son; nada de "___ roja" o "esconden un animal".
+- **U-8 · Cada regla, una vez por pantalla** (D-177): si ya la dice un botón, la pantalla de justo
+  antes o una ayuda bajo el tablero, sale del texto de arriba. Sin frases que solo tranquilizan
+  ("hay una sola solución") ni que describen lo que ya se ve. Corto no es telegrama (U-1).
 
 ## Pantallas y botones
 
@@ -28,8 +32,9 @@ Cada regla tiene un ID (U-n) para citarla en los PR y en los issues.
   solos. El botón que cierra un tablero va debajo de lo que resume, no encima (La Gran Final).
 - **U-12 · Nada se encima:** nombres largos parten línea; etiquetas de empatados se apilan.
 - **U-13 · Lo que se muestra es lo que se juega:** el laboratorio tiene la misma UX que producción.
-- **U-14 · Cada cosa en su momento de la copa** (D-116): la invitación antes de partir, la tabla
-  parcial mientras se juega, el resumen al terminar, "sacar" nunca con la copa terminada.
+- **U-14 · Cada cosa en su momento de la copa** (D-116): la invitación mientras se pueda
+  entrar (en Administrar, D-176), la tabla parcial mientras se juega, el resumen al terminar,
+  "sacar" nunca con la copa terminada.
 - **U-15 · Las acciones que no se deshacen piden confirmación** (rendirse, eliminar la copa,
   cerrar la inscripción, mover el inicio). Eliminar pide escribir el nombre.
 
