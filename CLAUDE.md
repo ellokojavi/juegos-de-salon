@@ -177,6 +177,14 @@ node tools/dilemas.mjs archivar <n> "motivo"
 node tools/dilemas.mjs reabrir <n>
 ```
 
+## Documentación (D-172)
+
+El agente `documentacion` (`.claude/agents/documentacion.md`) revisa una vez al día, a las 3:54 hora
+del Pacífico, lo que entró a `main` desde el commit guardado en `docs/documentacion.json`, y abre un
+PR `Documentación al día: <fecha>` que no fusiona: CHANGELOG, decisiones, requerimientos, docs de
+cada juego, README con sus capturas y esta misma guía. Corre como Routine en la nube; también se
+le puede pedir a mano.
+
 ## Reportes de La Copa
 
 El botón 🐞 de La Copa escribe en `feedback/` sin cuenta (D-104). Para leerlos y conversarlos:

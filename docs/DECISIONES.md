@@ -2467,3 +2467,26 @@ en grande).
 `compartir.test.mjs`; `tools/e2e/copa.mjs` comprueba que el resultado del día, la tabla parcial y
 el resumen final no repitan la imagen. Si la imagen no se puede compartir (un computador), se
 descarga y el texto se copia igual: la imagen sigue llegando.
+
+## D-172 · Un agente de documentación con ronda diaria en la nube
+**Fecha:** 2026-10-02 · **Estado:** vigente
+**Decisión:** Un subagente (`.claude/agents/documentacion.md`) revisa una vez al día lo que entró
+a `main` y deja la documentación al día: `CHANGELOG.md`, decisiones, requerimientos, la doc de
+cada juego, `CLAUDE.md`, el README con sus capturas y las tarjetas sociales.
+- **Desde dónde:** `docs/documentacion.json` guarda `revisadoHasta`, el último commit de `main`
+  que revisó. Cada ronda parte de ahí, así que un día que no corre no deja nada sin revisar.
+- **Cuándo:** una Routine de Claude Code en la nube, todos los días a las **3:54 hora del
+  Pacífico**, antes de la ronda de usabilidad (5:00, D-132). No necesita la llave de Firebase ni el
+  Mac del dueño.
+- **Qué hace:** solo documentación, en un PR `Documentación al día: <fecha>` que **no fusiona**.
+  Si no entró nada nuevo, no abre PR.
+- **Qué no hace:** tocar código, reglas de Firebase o versiones, ni tomar decisiones: si un cambio
+  parece pedir una que nadie tomó, la pregunta va en el PR.
+- **Capturas:** las rehace con `--sin-red`; las de partidas en línea necesitan llegar a Firebase
+  (`www.gstatic.com` y `*.firebaseio.com`) y, si el entorno no llega, el PR lo dice.
+**Por qué:** lo pidió el dueño. Con varias sesiones fusionando seguido (D-135), el README, las
+capturas y el CHANGELOG se quedaban atrás: el 2026-10-02 las diez secciones del README tenían
+capturas más viejas que el código.
+**Alternativas descartadas:** una tarea en el Mac del dueño como la de usabilidad (depende de que
+esté prendido, y la documentación no necesita la llave). Que cada sesión deje todo documentado
+al fusionar (ya es la regla, C-13, y aun así se atrasa).
