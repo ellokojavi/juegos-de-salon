@@ -10,7 +10,10 @@ export async function launch({ port, dir, out, width = 390, height = 844 }) {
   process.on('uncaughtException', e => { console.error(e); try { chrome.kill(); } catch (_) {} process.exit(1); });
   process.on('unhandledRejection', e => { console.error(e); try { chrome.kill(); } catch (_) {} process.exit(1); });
   let targets;
-  for (let i = 0; i < 40; i++) { try { targets = await (await fetch(`http://localhost:${port}/json`)).json(); break; } catch { await sleep(500); } }
+  // Hasta 60 s: el primer Chrome de una máquina recién encendida (un runner de GitHub, D-179) tarda
+  // más de 20 en abrir su puerto, y esperar de más no cuesta nada cuando abre rápido
+  for (let i = 0; i < 120; i++) { try { targets = await (await fetch(`http://localhost:${port}/json`)).json(); break; } catch { await sleep(500); } }
+  if (!targets) throw new Error(`Chrome no abrió el puerto ${port} en 60 s (CHROME=${CHROME})`);
   const ws = new WebSocket(targets.find(t => t.type === 'page').webSocketDebuggerUrl);
   await new Promise(r => ws.onopen = r);
   let id = 0; const pending = new Map(); const errors = []; const logs = [];
