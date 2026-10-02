@@ -2503,3 +2503,14 @@ las citas que hablaban de la invitación.
 **Alternativas descartadas:** una tarea en el Mac del dueño como la de usabilidad (depende de que
 esté prendido, y la documentación no necesita la llave). Que cada sesión deje todo documentado
 al fusionar (ya es la regla, C-13, y aun así se atrasa).
+
+## D-174 · ¿Dónde queda? se juega suelto desde la portada
+**Fecha:** 2026-10-02 · **Estado:** vigente; cierra lo que D-155 y D-162 dejaron en el laboratorio
+**Decisión:** ¿Dónde queda? deja de llevar `labs: true` en `SUELTOS` (`assets/js/games.js`): su
+tarjeta aparece en la portada como los demás minijuegos sueltos, encendida y sin "Próximamente",
+y abre `/minijuegos/donde/`, que ya existía con su tarjeta social (D-162). Dentro de La Copa no
+cambia nada: ya se podía elegir para cualquier día desde D-163.
+**Por qué:** lo pidió el dueño. El globo, las 529 ciudades y los nombres en los tres idiomas
+(D-170) ya estaban probados en el laboratorio y en copas de verdad.
+**Consecuencias:** la portada ofrece siete minijuegos sueltos. La captura del menú en el README se
+rehace. `labs` en `BASE` de `copa/rules.js` no se usa para la portada y queda como estaba.
