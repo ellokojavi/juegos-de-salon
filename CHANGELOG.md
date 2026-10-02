@@ -1,5 +1,11 @@
 # Changelog
 
+## (versión al fusionar) — 2026-10-02
+- **🧶 Desenredo, minijuego nuevo en el laboratorio** (D-179): el Untangle de Simon Tatham. Nudos
+  unidos por hilos que se cruzan; se arrastran hasta que ningún hilo cruce a otro. Diez niveles de
+  6 a 15 nudos y cuatro minutos, como Zip: 10 puntos por nivel. Entra al pozo de La Copa con su
+  propia habilidad (espacial) y tiene su página suelta en `/minijuegos/desenredo/`.
+
 ## 0.84.1 — 2026-10-02
 - **Conexiones, Reinas, Zip y los demás, jugados desde la portada, ya no se presentan como de
   La Copa:** su antesala no dice "Minijuego de La Copa" ni "no cuenta para ninguna copa" (U-8).

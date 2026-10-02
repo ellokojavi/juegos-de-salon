@@ -16,6 +16,7 @@ import * as tango from './tango.js';
 import * as anio from './anio.js';
 import * as final from './final.js';
 import * as donde from './donde.js';
+import * as desenredo from './desenredo.js';
 import * as uiLinea from './ui-linea.js';
 import * as uiNumero from './ui-numero.js';
 import * as uiConexiones from './ui-conexiones.js';
@@ -26,6 +27,7 @@ import * as uiTango from './ui-tango.js';
 import * as uiAnio from './ui-anio.js';
 import * as uiFinal from './ui-final.js';
 import * as uiDonde from './ui-donde.js';
+import * as uiDesenredo from './ui-desenredo.js';
 
 import { temasDeLaCopa, DECKS } from './mazos.js';
 import { LETRAS } from '../engine.js';
@@ -60,6 +62,8 @@ export const JUEGOS = {
   }),
   // Zip se arma nivel por nivel dentro de la pantalla: lo generado es solo la semilla del día (D-103)
   zip: { generar: (codigo, dia) => ({ codigo, dia }), montar: uiZip.montar, resultado: uiZip.resultado, ejemplo: uiZip.ejemplo, ensayo: (c, d) => ({ codigo: codigoEnsayo(c), dia: d, tiempo: 60 * 1000 }) },
+  // Como Zip: los niveles se arman dentro de la pantalla y lo generado es solo la semilla del día (D-179)
+  desenredo: { generar: (codigo, dia) => ({ codigo, dia }), montar: uiDesenredo.montar, resultado: uiDesenredo.resultado, ejemplo: uiDesenredo.ejemplo, ensayo: (c, d) => ({ codigo: codigoEnsayo(c), dia: d, tiempo: 60 * 1000 }) },
   tango: juego(tango, uiTango, (c, d) => tango.generar(codigoEnsayo(c), d, { sal: 'ensayo' })),
   anio: juego(anio, uiAnio, (c, d, o = {}) => anio.generar(codigoEnsayo(c), d, { n: 2, tema: temaLibre(c), sal: 'ensayo', lang: o.lang })),
   // Dos ciudades que no son las del día: la prueba no puede adelantar ninguna

@@ -33,6 +33,7 @@ const PUNTAJE = {
   reinas: k => { const s = Math.max(10, Math.round(100 * k)); return { s, r: `${s}/100` }; },
   letras: k => { const s = Math.round(100 * k); return { s, r: `${s}/100` }; },
   zip: k => { const s = 10 * Math.round(8 * k); return { s, r: `${s}/100` }; },
+  desenredo: k => { const s = 10 * Math.round(9 * k); return { s, r: `${s}/100` }; },
   tango: k => { const s = Math.max(10, Math.round(100 * k)); return { s, r: `${s}/100` }; },
   anio: k => { const s = Math.round(100 * k); return { s, r: `${s}/100` }; },
   final: k => { const s = Math.round(100 * k); return { s, r: `${s}/100` }; },
