@@ -1394,7 +1394,7 @@ la primera hace que el tablero parezca imposible.
 **Por qué:** probar una copa de 7 días con amigos no puede tomar 7 días.
 
 ## D-116 · Cada cosa en su momento de la copa
-**Fecha:** 2026-09-24 · **Estado:** vigente
+**Fecha:** 2026-09-24 · **Estado:** vigente; la invitación en Administrar la cambia D-175
 **Decisión:** Una revisión de lo que depende de la etapa de la copa (antes de partir, en juego,
 terminada) y de si la inscripción está cerrada:
 - **Invitación** (en Administrar y en el tablero): solo antes de partir y con la inscripción abierta.
@@ -2514,3 +2514,16 @@ cambia nada: ya se podía elegir para cualquier día desde D-163.
 (D-170) ya estaban probados en el laboratorio y en copas de verdad.
 **Consecuencias:** la portada ofrece siete minijuegos sueltos. La captura del menú en el README se
 rehace. `labs` en `BASE` de `copa/rules.js` no se usa para la portada y queda como estaba.
+
+## D-175 · En Administrar, la invitación sigue mientras alguien pueda entrar
+**Fecha:** 2026-10-02 · **Estado:** vigente; cambia la invitación de D-116 solo en Administrar
+**Decisión:** El mensaje **Invitación** de Administrar ya no desaparece cuando parte la copa: está
+mientras alguien nuevo pueda inscribirse, es decir, con la inscripción abierta (hasta la final o
+hasta que el admin la cierre) y sin llegar al máximo de jugadores. Ya partida, la línea "📅 Parte
+el …" se cambia por "📅 Ya partió: va en el día {d} de {n} y todavía puedes entrar." y, desde el
+día 2, el aviso de que los días cerrados quedan en 0 (el mismo que ve quien entra tarde). El botón
+"Invitar al grupo" del tablero sigue solo antes de partir.
+**Por qué:** lo pidió el dueño: con la copa andando quería sumar a alguien y la invitación ya no
+estaba. La inscripción tardía está abierta a propósito (D-99, D-116), pero no había cómo invitar.
+**Consecuencias:** `shareInviteText` lleva `{cuando}` en vez de la fecha, que sale de
+`shareInviteStart` o `shareInviteGoing`.
