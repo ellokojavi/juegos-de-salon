@@ -975,8 +975,13 @@ function mensajeInvitacion() {
   const Lc = L(), { meta } = Lc;
   const nombres = activos(Lc).map(j => j.name);
   const lista = nombres.length > 1 ? fmt(G().T.listAnd, { a: nombres.slice(0, -1).join(', '), b: nombres.at(-1) }) : nombres[0] || '';
+  // Ya partida (D-176): dice en qué día va y, si ya cerró alguno, que esos quedan en 0
+  const d = diaActual(meta, ahora());
+  const cuando = d === 0
+    ? fmt(G().T.shareInviteStart, { fecha: fechaLarga(meta.win[1].a, meta.tz, G().lang) })
+    : [fmt(G().T.shareInviteGoing, { d, n: meta.days }), d > 1 ? G().T.lateJoin : ''].filter(Boolean).join(' ');
   return mensajeCopa(cabCopa('🏆', G().T.ctxInvite), fmt(G().T.shareInviteText, {
-    dias: meta.days, fecha: fechaLarga(meta.win[1].a, meta.tz, G().lang),
+    dias: meta.days, cuando,
     inscritos: nombres.length ? fmt(nombres.length === 1 ? G().T.shareInviteJoinedOne : G().T.shareInviteJoined, { names: lista }) : '',
   }).replace(/\n{3,}/g, '\n\n'));
 }
@@ -1340,9 +1345,9 @@ function admin({ forzar = false } = {}) {
   } }, rotulo);
   poner(body, el('div', { class: 'panel stack' },
     el('p', { class: 'lead', style: 'margin:0' }, T.adminMsgs),
-    // Cada mensaje, solo cuando tiene sentido (D-116): la invitación antes de partir y con la
-    // inscripción abierta; la tabla parcial mientras se juega; el resumen, al terminar
-    d === 0 && !Lc.closed ? msg(T.msgInvite, mensajeInvitacion, 'msg-invitar') : null,
+    // Cada mensaje, solo cuando tiene sentido (D-116): la invitación mientras alguien nuevo pueda
+    // entrar, también ya partida (D-176); la tabla parcial mientras se juega; el resumen, al terminar
+    inscripcionAbierta(meta, now, Lc.closed) && jug.length < MAX_JUGADORES ? msg(T.msgInvite, mensajeInvitacion, 'msg-invitar') : null,
     !terminada(meta, now) ? msg(T.msgToday, mensajeHoy, 'msg-hoy') : null,
     d >= 1 && !terminada(meta, now) ? msg(T.msgTable, mensajeTabla, 'msg-tabla') : null,
     terminada(meta, now) ? msg(T.msgFinal, mensajeFinal, 'msg-final') : null));
