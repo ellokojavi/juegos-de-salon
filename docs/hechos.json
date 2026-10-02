@@ -1,5 +1,5 @@
 {
-  "version": "0.84.0",
+  "version": "0.84.4",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -60,6 +60,7 @@
         "copa/juegos/anio.js",
         "copa/juegos/ciudades.js",
         "copa/juegos/conexiones.js",
+        "copa/juegos/desenredo.js",
         "copa/juegos/donde.js",
         "copa/juegos/final.js",
         "copa/juegos/globo.js",
@@ -80,6 +81,7 @@
         "copa/juegos/tango.js",
         "copa/juegos/ui-anio.js",
         "copa/juegos/ui-conexiones.js",
+        "copa/juegos/ui-desenredo.js",
         "copa/juegos/ui-donde.js",
         "copa/juegos/ui-final.js",
         "copa/juegos/ui-letras.js",
@@ -593,6 +595,7 @@
     "copa/juegos/anio.js",
     "copa/juegos/ciudades.js",
     "copa/juegos/conexiones.js",
+    "copa/juegos/desenredo.js",
     "copa/juegos/donde.js",
     "copa/juegos/final.js",
     "copa/juegos/globo.js",
@@ -613,6 +616,7 @@
     "copa/juegos/tango.js",
     "copa/juegos/ui-anio.js",
     "copa/juegos/ui-conexiones.js",
+    "copa/juegos/ui-desenredo.js",
     "copa/juegos/ui-donde.js",
     "copa/juegos/ui-final.js",
     "copa/juegos/ui-letras.js",

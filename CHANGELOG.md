@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.85.0 — 2026-10-02
+- **🧶 Desenredo, minijuego nuevo en el laboratorio** (D-179): el Untangle de Simon Tatham. Nudos
+  unidos por hilos que se cruzan; se arrastran hasta que ningún hilo cruce a otro. Diez niveles de
+  6 a 15 nudos y cuatro minutos, como Zip: 10 puntos por nivel. Entra al pozo de La Copa con su
+  propia habilidad (espacial) y tiene su página suelta en `/minijuegos/desenredo/`.
+
 ## 0.84.4 — 2026-10-02
 - **Línea de Tiempo: el año del veredicto, grande.** Después de colocar una carta, el año en que
   pasó es lo que se viene a mirar: ahora ocupa el ancho de la carta (antes era del tamaño del
