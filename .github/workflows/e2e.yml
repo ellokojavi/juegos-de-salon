@@ -58,6 +58,8 @@ jobs:
           printf '#!/bin/sh\nexec google-chrome --no-sandbox "$@"\n' > "$RUNNER_TEMP/chrome"
           chmod +x "$RUNNER_TEMP/chrome"
           echo "CHROME=$RUNNER_TEMP/chrome" >> "$GITHUB_ENV"
+          # El primer arranque en un runner recién encendido es lento: se paga aquí, no en la prueba
+          timeout 60 "$RUNNER_TEMP/chrome" --headless=new --dump-dom about:blank > /dev/null 2>&1 || true
 
       - name: ${{ matrix.guion }}
         env:
