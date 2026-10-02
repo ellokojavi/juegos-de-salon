@@ -31,9 +31,14 @@ const TAMBIEN_FIREBASE = new Set([
   'linea-de-tiempo-pozo.mjs',      // la segunda mitad juega en una sala
 ]);
 
+// Prueban algo que ya no existe: quedan fuera hasta que alguien los reescriba
+const OBSOLETOS = new Set([
+  'linea-de-tiempo-error.mjs',     // jugaba contra el celular, un modo que Línea de Tiempo ya no tiene (D-142)
+]);
+
 export const guiones = () => readdirSync(AQUI)
   .filter(f => f.endsWith('.mjs') && !f.endsWith('.test.mjs'))
-  .filter(f => !HERRAMIENTAS.has(f) && !CON_FIREBASE.test(f) && !TAMBIEN_FIREBASE.has(f))
+  .filter(f => !HERRAMIENTAS.has(f) && !CON_FIREBASE.test(f) && !TAMBIEN_FIREBASE.has(f) && !OBSOLETOS.has(f))
   .sort();
 
 /** Corre un guion; resuelve con { ok, motivo, ms, salida }. */

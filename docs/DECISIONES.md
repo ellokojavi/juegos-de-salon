@@ -2600,5 +2600,9 @@ falsas y escribirían en la base de producción desde cada PR. Un solo job con t
 más de media hora y un guion colgado taparía a los demás. Exigir que cada guion tenga sus
 chequeos con ✗: muchos solo imprimen lo que ven para que lo lea una persona; en CI igual caen
 si algo se rompe del todo, y pasarlos a chequeos se hace de a uno, cuando se toque cada guion.
+Al correrlos todos por primera vez, dos estaban atrasados: `linea-de-tiempo-solo` buscaba
+"Cambiar modo" por su posición, y Compartir (D-165) lo corrió de lugar (arreglado);
+`linea-de-tiempo-error` juega contra el celular, un modo que Línea de Tiempo ya no tiene (D-142),
+y queda en la lista `OBSOLETOS` de `ci.mjs` hasta que alguien lo reescriba.
 **Consecuencias:** un guion nuevo entra solo. Si abre salas de verdad, va en la lista de
 `ci.mjs`. Las capturas del README siguen a mano: un artefacto de CI no reemplaza mirarlas.
