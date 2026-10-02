@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.84.3 — 2026-10-02
+- **Julepe vuelve a tener su tarjeta para compartir al día:** aunque está apagado, su página sigue
+  y su link se comparte, pero la tarjeta se había quedado como en 0.35.2. Ahora la rehace la misma
+  herramienta que las demás, con la bajada nueva, las píldoras centradas y el reloj ⏱️ a color.
+
 ## 0.84.2 — 2026-10-02
 - **Tarjetas para compartir (lo que se ve al pegar un link en WhatsApp) sin textos desalineados:**
   en las píldoras de jugadores y duración, el texto queda a la misma altura en las dos, y el reloj
