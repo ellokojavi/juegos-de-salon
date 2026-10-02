@@ -1,8 +1,19 @@
 # Changelog
 
-## 0.82.1 — 2026-10-02
+## 0.82.3 — 2026-10-02
 - **"‹ Laboratorio" en una sola línea** (U-12): en la práctica de un minijuego con nombre largo
   (¿Dónde queda?, Toque y Fama: Palabra), el botón de volver partía y dejaba el ‹ solo arriba.
+
+## 0.82.2 — 2026-10-02
+- **La Copa: cuando falta uno solo, el aviso va en singular** (U-6). El recordatorio dice
+  "👀 Falta por jugar hoy: Pancho.", la tabla parcial "Falta que juegue: Pancho." y, al terminar
+  antes, "Falta que juegue el día 7: Cata. … se queda sin los puntos". Con dos o más, igual que antes.
+  En inglés la misma frase sirve para uno o varios; en portugués también va en singular.
+
+## 0.82.1 — 2026-10-02
+- **La Copa: en Administrar, sin hueco vacío sobre los botones** de "Terminar la copa antes",
+  "Tabla final" y "Eliminar la copa" (U-11). El aviso de error va debajo del botón, como en
+  Nombre de la copa y Jugadores, y vacío no ocupa lugar.
 
 ## 0.82.0 — 2026-10-02
 - **📍 ¿Dónde queda? sale del laboratorio** (D-174): su tarjeta ya no dice "Próximamente" y se

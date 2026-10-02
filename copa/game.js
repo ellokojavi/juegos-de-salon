@@ -1008,7 +1008,7 @@ function mensajeHoy() {
     partes.push(fmt(G().T.shareTodayGrace, { juego: `${Ja.emoji} ${Ja.nombre}` }));
   }
   const falta = faltan(Lc, hoy, now);
-  if (falta.length && falta.length < activos(Lc).length) partes.push(fmt(G().T.shareTodayMissing, { names: falta.map(j => j.name).join(', ') }));
+  if (falta.length && falta.length < activos(Lc).length) partes.push(fmt(falta.length === 1 ? G().T.shareTodayMissingOne : G().T.shareTodayMissing, { names: falta.map(j => j.name).join(', ') }));
   return mensajeCopa(cabCopa('🏆', fmt(G().T.ctxDay, { d: hoy, n: meta.days })), partes.join('\n'));
 }
 
@@ -1048,7 +1048,7 @@ function mensajeTabla() {
   const filas = tabla(Lc, S.yo, now);
   const falta = faltan(Lc, d, now);
   // La cabecera lleva el último día que muestra la tabla; el aviso de abajo, el día que corre (#67)
-  return mensajeCopa(cabTabla(Lc, filas, now), falta.length ? fmt(G().T.shareTableMissing, { d, names: falta.map(j => j.name).join(', ') }) : '');
+  return mensajeCopa(cabTabla(Lc, filas, now), falta.length ? fmt(falta.length === 1 ? G().T.shareTableMissingOne : G().T.shareTableMissing, { d, names: falta.map(j => j.name).join(', ') }) : '');
 }
 
 /** "Tomario (-1J)": el nombre con cuántos juegos menos lleva (D-126). */
@@ -1353,9 +1353,9 @@ function admin({ forzar = false } = {}) {
     poner(body, el('div', { class: 'panel stack', id: 'admin-exportar' },
       el('p', { class: 'lead', style: 'margin:0' }, T.exportTitle),
       el('p', { class: 'muted', style: 'margin:0' }, T.exportLead),
-      errExportar,
       accion(`📤 ${T.exportImage}`, 'btn-exportar-imagen', () => compartirTabla(), 'btn btn--cyan btn--sm', errExportar),
-      accion(`⬇️ ${T.exportSheet}`, 'btn-exportar-planilla', async () => { descargarPlanilla(); }, 'btn btn--cyan btn--sm', errExportar)));
+      accion(`⬇️ ${T.exportSheet}`, 'btn-exportar-planilla', async () => { descargarPlanilla(); }, 'btn btn--cyan btn--sm', errExportar),
+      errExportar));
   }
 
 
@@ -1460,14 +1460,14 @@ function admin({ forzar = false } = {}) {
     poner(body, el('div', { class: 'panel stack', id: 'admin-terminar' },
       el('p', { class: 'lead', style: 'margin:0' }, T.endTitle),
       el('p', { class: 'muted', style: 'margin:0' }, T.endLead),
-      quienes.map(x => el('div', { class: 'aviso' }, fmt(T.endMissing, { d: x.k, names: x.falta.map(j => j.name).join(', ') }))),
+      quienes.map(x => el('div', { class: 'aviso' }, fmt(x.falta.length === 1 ? T.endMissingOne : T.endMissing, { d: x.k, names: x.falta.map(j => j.name).join(', ') }))),
       quedan ? el('p', { class: 'muted', style: 'margin:0' }, T.endCancelled) : null,
-      errTerminar,
       accion(`🏁 ${T.endGo}`, 'btn-terminar', async () => {
         if (!confirm(fmt(T.endConfirm, { copa: meta.name }))) throw { code: 'cancelado' };
         await store.terminarCopa(S.code);
         SFX.reveal(); toast(T.endDone);
-      }, 'btn btn--ghost', errTerminar)));
+      }, 'btn btn--ghost', errTerminar),
+      errTerminar));
   }
 
   const lista = el('div', { class: 'admin-jugadores' });
@@ -1515,7 +1515,6 @@ function admin({ forzar = false } = {}) {
   poner(body, el('div', { class: 'panel stack peligro', id: 'admin-eliminar' },
     el('p', { class: 'lead', style: 'margin:0' }, T.deleteTitle),
     el('p', { class: 'muted', style: 'margin:0' }, T.deleteLead),
-    errBorrar,
     el('button', { class: 'btn btn--red', id: 'btn-eliminar', onClick: async ev => {
       SFX.tap();
       if (!confirm(fmt(T.deleteConfirm1, { copa: meta.name }))) return;
@@ -1534,7 +1533,8 @@ function admin({ forzar = false } = {}) {
         SFX.splash();
         eliminada(nombre);
       } catch (e) { S.eliminando = false; b.disabled = false; avisoError(errBorrar, errorDe(e)); }
-    } }, `🗑️ ${T.deleteGo}`)));
+    } }, `🗑️ ${T.deleteGo}`),
+    errBorrar));
 }
 
 /** La confirmación al admin de que su copa se borró (D-117). */
