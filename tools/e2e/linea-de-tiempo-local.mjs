@@ -1,4 +1,6 @@
 import { launch, sleep } from './cdp.mjs';
+// Con varias sesiones a la vez, cada una sirve su copia en su puerto (D-135)
+const SITIO = process.env.SITIO || 'http://localhost:8765';
 const OUT = process.argv[2];
 const b = await launch({ port: 9391, dir: `${OUT}/p`, out: OUT });
 const click = sel => b.evaluate(`(()=>{const x=document.querySelector('${sel}');if(!x)return 'no';x.click();return 'ok'})()`);
@@ -23,7 +25,7 @@ const playTurn = async (correct = true) => {
   return 'ok';
 };
 
-await b.go('http://localhost:8765/linea-de-tiempo/'); await b.evaluate(`localStorage.clear(); 1`); await b.go('http://localhost:8765/linea-de-tiempo/');
+await b.go(`${SITIO}/linea-de-tiempo/`); await b.evaluate(`localStorage.clear(); 1`); await b.go(`${SITIO}/linea-de-tiempo/`);
 console.log('modos:', await b.evaluate(`[...document.querySelectorAll('.mode')].map(m=>m.disabled?'off':'on').join(',')`));
 await b.shot('01-intro');
 // ---------- UN CELULAR, 3 jugadores, música ----------
@@ -45,7 +47,7 @@ console.log('tras fallar:', JSON.stringify(await v()));
 await handoff(); await sleep(300);
 // persistencia a mitad
 console.log('guardado:', await b.evaluate(`(()=>{const d=JSON.parse(localStorage.getItem('juegos-de-salon:linea-de-tiempo:session'));return JSON.stringify({mode:d.mode,msgs:d.messages.length,theme:d.config.theme,players:d.config.players,done:d.done})})()`));
-await b.go('http://localhost:8765/linea-de-tiempo/', 1200);
+await b.go(`${SITIO}/linea-de-tiempo/`, 1200);
 console.log('tras recargar → continuar:', await b.evaluate(`!!document.querySelector('#resume-slot .btn')`));
 await click('#resume-slot .btn'); await sleep(900);
 console.log('retomado:', JSON.stringify(await v()), '| pantalla:', await b.active());

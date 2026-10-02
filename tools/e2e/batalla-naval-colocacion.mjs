@@ -1,9 +1,11 @@
 import { launch, sleep } from './cdp.mjs';
+// Con varias sesiones a la vez, cada una sirve su copia en su puerto (D-135)
+const SITIO = process.env.SITIO || 'http://localhost:8765';
 const OUT = process.argv[2];
 const b = await launch({ port: 9461, dir: `${OUT}/p`, out: OUT });
 const tapCell = name => b.evaluate(`(()=>{const r=parseInt('${name}'.slice(1))-1,c='ABCDEFGHIJ'.indexOf('${name}'[0]);const x=document.querySelector('#place-grid .cell[data-r="'+r+'"][data-c="'+c+'"]');if(!x)return 'no';x.click();return 'ok'})()`);
 const state = () => b.evaluate(`(()=>{const d=__bn.session().draft.A;const sel=[...document.querySelectorAll('#place-grid .cell.sel')].map(x=>'ABCDEFGHIJ'[x.dataset.c]+(+x.dataset.r+1));const rot=document.querySelector('#place-grid .rot');const rc=rot?rot.parentElement:null;return JSON.stringify({sel:d.sel,dir:d.dir,layout:d.layout,selCells:sel,rotAt:rc?'ABCDEFGHIJ'[rc.dataset.c]+(+rc.dataset.r+1):null,count:document.getElementById('place-count').textContent})})()`).then(JSON.parse);
-await b.go('http://localhost:8765/batalla-naval/'); await b.evaluate(`localStorage.clear(); 1`); await b.go('http://localhost:8765/batalla-naval/');
+await b.go(`${SITIO}/batalla-naval/`); await b.evaluate(`localStorage.clear(); 1`); await b.go(`${SITIO}/batalla-naval/`);
 await b.evaluate(`document.querySelectorAll('.mode')[2].click(); 1`); await sleep(300);
 await b.evaluate(`(()=>{document.querySelector('#setup-form input').value='Javi';return 1})()`);
 await b.evaluate(`document.querySelector('#setup-actions .btn').click(); 1`); await sleep(400);
