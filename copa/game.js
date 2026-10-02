@@ -975,7 +975,7 @@ function mensajeInvitacion() {
   const Lc = L(), { meta } = Lc;
   const nombres = activos(Lc).map(j => j.name);
   const lista = nombres.length > 1 ? fmt(G().T.listAnd, { a: nombres.slice(0, -1).join(', '), b: nombres.at(-1) }) : nombres[0] || '';
-  // Ya partida (D-175): dice en qué día va y, si ya cerró alguno, que esos quedan en 0
+  // Ya partida (D-176): dice en qué día va y, si ya cerró alguno, que esos quedan en 0
   const d = diaActual(meta, ahora());
   const cuando = d === 0
     ? fmt(G().T.shareInviteStart, { fecha: fechaLarga(meta.win[1].a, meta.tz, G().lang) })
@@ -1346,7 +1346,7 @@ function admin({ forzar = false } = {}) {
   poner(body, el('div', { class: 'panel stack' },
     el('p', { class: 'lead', style: 'margin:0' }, T.adminMsgs),
     // Cada mensaje, solo cuando tiene sentido (D-116): la invitación mientras alguien nuevo pueda
-    // entrar, también ya partida (D-175); la tabla parcial mientras se juega; el resumen, al terminar
+    // entrar, también ya partida (D-176); la tabla parcial mientras se juega; el resumen, al terminar
     inscripcionAbierta(meta, now, Lc.closed) && jug.length < MAX_JUGADORES ? msg(T.msgInvite, mensajeInvitacion, 'msg-invitar') : null,
     !terminada(meta, now) ? msg(T.msgToday, mensajeHoy, 'msg-hoy') : null,
     d >= 1 && !terminada(meta, now) ? msg(T.msgTable, mensajeTabla, 'msg-tabla') : null,
@@ -2128,9 +2128,8 @@ applyStatic(T);
 document.documentElement.lang = LANG;
 document.title = `${T.title} 🏆 · Juegos de Salón`;
 $('#sound-slot').append(soundToggle());
-// Mientras La Copa esté en el laboratorio, "volver" es volver ahí y no al menú (D-101)
-// Salvo el minijuego suelto de la portada (D-142, D-149), que vuelve a ella.
-if (!SUELTO || LABS) {
+// Desde el laboratorio (?labs), "volver" es volver ahí; si no, al menú (D-175)
+if (LABS) {
   $('#btn-menu').setAttribute('href', `${RAIZ}labs/`);
   $('#btn-menu').textContent = T.backToLabsShort;
 }
