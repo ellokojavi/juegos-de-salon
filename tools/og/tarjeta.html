@@ -34,7 +34,13 @@
     .juego .nombre { font-family: var(--font-display); font-size: 52px; line-height: 0.92; letter-spacing: 0.03em; margin: 0 0 8px; }
     .juego .bajada { color: var(--ink); font-weight: 800; font-size: 17px; line-height: 1.3; margin: 0 0 12px; }
     .chips { display: flex; gap: 8px; flex-wrap: wrap; }
-    .chip2 { font-weight: 900; font-size: 14px; padding: 5px 12px; border-radius: 999px; background: var(--glass); border: 1px solid var(--glass-border); }
+    /*
+      El emoji va en su propia caja: con el texto en la misma línea, la fuente de emojis estira
+      la línea y corre el texto hacia abajo, distinto en cada píldora (👥 más que ⏱️). Con flex
+      y alto de línea 1 los dos quedan centrados por igual.
+    */
+    .chip2 { display: inline-flex; align-items: center; gap: 6px; font-weight: 900; font-size: 14px; line-height: 1; padding: 7px 12px; border-radius: 999px; background: var(--glass); border: 1px solid var(--glass-border); }
+    .chip2 .ico { font-size: 14px; line-height: 1; }
 
     /* ---- Tarjeta del menú: el nombre de la app y los juegos que hay ---- */
     .menu { justify-items: center; text-align: center; gap: 14px; }
@@ -85,9 +91,11 @@
         el('p', 'bajada', g.tagline[lang]),
       );
       const chips = el('div', 'chips');
+      // ⏱️ con su selector de variante (FE0F): sin él, Chrome lo dibuja como símbolo de texto
+      const chip = (ico, texto) => el('span', 'chip2', el('span', 'ico', ico), el('span', null, texto));
       chips.append(
-        el('span', 'chip2', `👥 ${g.players} ${g.players === '1' ? COMMON[lang].player : COMMON[lang].players}`),
-        el('span', 'chip2', `⏱ ${g.duration} ${g.durationUnit ? g.durationUnit[lang] : COMMON[lang].minutes}`),
+        chip('👥', `${g.players} ${g.players === '1' ? COMMON[lang].player : COMMON[lang].players}`),
+        chip('⏱️', `${g.duration} ${g.durationUnit ? g.durationUnit[lang] : COMMON[lang].minutes}`),
       );
       texto.append(chips);
       caja.append(el('div', con('emoji', g.emoji), g.emoji), texto, pie(GRATIS[lang]));
