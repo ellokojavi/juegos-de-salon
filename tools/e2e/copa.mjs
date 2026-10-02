@@ -681,6 +681,7 @@ await b.go(`${BASE}?practica=${id}&prueba&labs${id === 'zip' ? '&zipSeg=12&semil
     const c1 = await cuadro(); await sleep(700); const c2 = await cuadro();
     ok(!c1.startsWith('undefined') && c1 !== c2, '¿Dónde queda?: la portada es un globo que gira');
     await b.shot('donde-portada');
+    ok(await ev(`document.getElementById('btn-menu').getBoundingClientRect().height`) < 50, 'práctica: "‹ Laboratorio" va en una sola línea junto a un título largo (U-12)');
   }
   if (id === 'linea') {
     // La prueba desde el laboratorio: la misma que antes de un día (D-109), y vuelve a la antesala
