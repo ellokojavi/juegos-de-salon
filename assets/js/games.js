@@ -180,7 +180,7 @@ export const SUELTOS = [
     id: 'desenredo',
     emoji: '🧶',
     name: { es: 'Desenredo', en: 'Untangle', pt: 'Desenrola' },
-    tagline: { es: 'Arrastra los nudos hasta que ningún hilo se cruce. Son diez niveles, cada uno más enredado, y tienes cuatro minutos para resolver todos los que puedas.', en: 'Drag the knots until no threads cross. There are ten levels, each more tangled than the last, and you have four minutes to solve as many as you can.', pt: 'Arraste os nós até que nenhum fio se cruze. São dez níveis, cada um mais embaraçado, e você tem quatro minutos para resolver quantos conseguir.' },
+    tagline: { es: 'Arrastra los nudos hasta que ningún hilo se cruce.', en: 'Drag the knots until no threads cross.', pt: 'Arraste os nós até que nenhum fio se cruze.' },
     tipos: ['logica'],
     duration: '4',
     labs: true,

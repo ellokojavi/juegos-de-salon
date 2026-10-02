@@ -415,6 +415,8 @@ button.md-fila { cursor: pointer; }
 .des-tablero.solucion circle { fill: var(--cyan); }
 .des-estado { margin: 0; min-height: 1.5em; font-weight: 900; color: var(--muted); }
 .des-estado.ok { color: var(--lime); }
+/* Al terminar queda vacío: oculto, el aviso del final queda a la misma distancia del tablero que en Zip */
+.des-estado:empty { display: none; }
 .des-ej { width: 96px; height: 96px; border: 2px solid var(--glass-border); border-radius: 8px; }
 .tips ul { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
 .tips summary { min-height: 44px; }

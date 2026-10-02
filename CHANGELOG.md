@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.85.1 — 2026-10-02
+- **🧶 Desenredo, usabilidad:** la bajada del menú y de la tarjeta social queda en una frase, como
+  la de los demás minijuegos; ya no repite con palabras los niveles y los minutos que la tarjeta
+  dice en cifras (U-5, U-8). Al terminar, el contador de cruces vacío deja de abrir un hueco entre
+  el tablero y el aviso del final (U-11).
+
 ## 0.85.0 — 2026-10-02
 - **🧶 Desenredo, minijuego nuevo en el laboratorio** (D-179): el Untangle de Simon Tatham. Nudos
   unidos por hilos que se cruzan; se arrastran hasta que ningún hilo cruce a otro. Diez niveles de
