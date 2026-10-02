@@ -511,8 +511,8 @@ retoma con los nombres encendidos, que es el valor por defecto.
 **Consecuencias:** hay que **publicar las reglas** en la consola de Firebase para que el cambio de validación tenga efecto; hasta entonces un modo nuevo seguiría rechazado. El tope de jugadores dejó de ser un 6 escrito en dos archivos, pero los roles de sala (`A`–`F`) y el patrón `$p` de las reglas siguen topando en seis: un juego de más de seis en dos celulares es otro cambio. Un modo desconocido en la base ahora suma al total del juego: lo que antes se descartaba como basura, si tiene forma de modo, cuenta.
 
 
-## D-73 · La invitación dice quién invita
-**Fecha:** 2026-09-13 · **Estado:** vigente · **Amplía D-72**
+## D-173 · La invitación dice quién invita
+**Fecha:** 2026-09-13 · **Estado:** vigente · **Amplía D-72** · Nació como D-73, repetida con la del panel; se renumeró el 2026-10-02 (D-172)
 **Decisión:** Al compartir una sala, el mensaje es **"{nombre} te invita a jugar {juego} en juegosdesalon.cl - Sala: {código}"**. El texto es uno solo para los cuatro juegos con sala y vive en `COMMON` de `assets/js/i18n.js`, no en el `rules.js` de cada uno. Nombra a **quien toca compartir**, no al anfitrión: en una sala de seis cualquiera puede pasar el link, y el que invita es el que lo pasa.
 **Por qué:** el mensaje decía "Únete a mi sala de Línea de Tiempo. Código: WFBN" — sin nombre. Llega por WhatsApp a alguien que muchas veces no conoce la app, y lo primero que hace falta saber es de parte de quién viene. El resto —de qué se trata el juego, para cuántos, cuánto dura— ya no hace falta escribirlo: lo pone la tarjeta que el chat arma solo con el link (D-72), y por eso también se sacó la temática que algunos juegos metían en el texto.
 **Por qué compartido y no por juego:** eran cuatro juegos por tres idiomas, doce frases que decían lo mismo con doce redacciones distintas. La única parte que cambia es el nombre del juego, y ese ya viaja como `{game}`.
@@ -2254,7 +2254,7 @@ no la del minijuego; y el 〰️ casi no se veía en la miniatura de WhatsApp ni
 con un filtro (deja de ser el emoji); poner el contorno en la caja del emoji (blanquea el fondo).
 
 ## D-165 · Todo lo que se comparte sigue un mismo estándar, con WhatsApp en mente
-**Fecha:** 2026-10-01 · **Estado:** vigente; ordena D-73, D-124, D-126 y D-141; D-171 cambia lo que dice el texto que va con una imagen
+**Fecha:** 2026-10-01 · **Estado:** vigente; ordena D-173, D-124, D-126 y D-141; D-171 cambia lo que dice el texto que va con una imagen
 **Decisión:** Lo que la app comparte sale de un solo módulo, `assets/js/compartir.js`, con tres
 reglas:
 1. **El texto** abre con una cabecera — `{emoji} *{título}* · {contexto}` —, sigue con una idea
@@ -2293,7 +2293,7 @@ Cada cosa que se comparte, y con qué cabecera:
   y Fama y Línea de Tiempo—, con la misma imagen de resultado y un reto ("🤔 ¿Me ganas?") hacia la
   página del juego. En los tres idiomas (`COMMON`). En el laboratorio no se ofrece.
 - **La invitación a una sala** pasa a `🃏 *Julepe* · Sala WFBN` + `👋 Javi te invita a jugar en
-  juegosdesalon.cl.`: dice lo mismo que D-73 (quién, a qué, dónde y el código) con la forma de los
+  juegosdesalon.cl.`: dice lo mismo que D-173 (quién, a qué, dónde y el código) con la forma de los
   demás. El botón, que estaba copiado igual en seis juegos, es `botonInvitar`.
 - **Sin menú del sistema** (un computador): la imagen se descarga y el texto queda copiado, para
   pegarlo junto a ella; antes se perdía el texto.
@@ -2497,8 +2497,20 @@ cada juego, `CLAUDE.md`, el README con sus capturas y las tarjetas sociales.
 capturas y el CHANGELOG se quedaban atrás: el 2026-10-02 las diez secciones del README tenían
 capturas más viejas que el código.
 **Consecuencias:** la primera ronda encontró D-73 dos veces (el panel que se entera solo y la
-invitación que dice quién invita, de septiembre). Renumerar cambia referencias viejas, así que
-quedó en `conocidos` como pregunta para el dueño.
+invitación que dice quién invita, de septiembre). El dueño pidió renumerar: el panel se queda con
+D-73 y la invitación pasa a D-173, en su mismo lugar del archivo y con una nota; se corrigieron
+las citas que hablaban de la invitación.
 **Alternativas descartadas:** una tarea en el Mac del dueño como la de usabilidad (depende de que
 esté prendido, y la documentación no necesita la llave). Que cada sesión deje todo documentado
 al fusionar (ya es la regla, C-13, y aun así se atrasa).
+
+## D-174 · ¿Dónde queda? se juega suelto desde la portada
+**Fecha:** 2026-10-02 · **Estado:** vigente; cierra lo que D-155 y D-162 dejaron en el laboratorio
+**Decisión:** ¿Dónde queda? deja de llevar `labs: true` en `SUELTOS` (`assets/js/games.js`): su
+tarjeta aparece en la portada como los demás minijuegos sueltos, encendida y sin "Próximamente",
+y abre `/minijuegos/donde/`, que ya existía con su tarjeta social (D-162). Dentro de La Copa no
+cambia nada: ya se podía elegir para cualquier día desde D-163.
+**Por qué:** lo pidió el dueño. El globo, las 529 ciudades y los nombres en los tres idiomas
+(D-170) ya estaban probados en el laboratorio y en copas de verdad.
+**Consecuencias:** la portada ofrece siete minijuegos sueltos. La captura del menú en el README se
+rehace. `labs` en `BASE` de `copa/rules.js` no se usa para la portada y queda como estaba.

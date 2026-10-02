@@ -126,7 +126,7 @@ export const GAMES = [
  * Línea Relámpago y Toque y Fama: adivina el número no están: son el modo solo de Línea de Tiempo
  * y de Toque y Fama. La Gran Final tampoco: repite los otros y es el cierre de la copa.
  *
- * El contenido es chileno y la pantalla va en español (D-98): la tarjeta se traduce, el juego no.
+ * Se juegan en el idioma de quien juega, con contenido propio de cada idioma (D-170).
  */
 export const SUELTOS = [
   {
@@ -184,7 +184,6 @@ export const SUELTOS = [
     tagline: { es: 'Te damos cinco ciudades y tú las ubicas en el globo. Mientras más cerca pongas el alfiler, más puntos.', en: 'We name five cities and you find them on the globe. The closer your pin, the more points.', pt: 'Damos cinco cidades e você as encontra no globo. Quanto mais perto o alfinete, mais pontos.' },
     tipos: ['cultura'],
     duration: '2–5',
-    labs: true,
   },
 ].map(m => ({ ...m, players: '1', path: `minijuegos/${m.id}/`, available: !m.labs, suelto: true }));
 
