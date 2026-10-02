@@ -419,7 +419,7 @@ How it is put together (canon C-3):
 - `assets/js/i18n.js` keeps the language in `localStorage` (`juegos-de-salon:lang`), draws the
   🇨🇱 ES · 🇬🇧 EN · 🇧🇷 PT toggle and holds the shared text (`COMMON`): the menu and what goes out
   when somebody shares the app, plus the strings every game repeats word for word — the room
-  invitation (D-73, D-165), the "or" between creating a room and joining one, and the shared
+  invitation (D-173, D-165), the "or" between creating a room and joining one, and the shared
   result of playing a minigame alone.
 - Each game keeps its text in `LOCALES = { es, en, pt }` inside its `rules.js`. There is not a
   single literal string in `game.js`. Fixed HTML text is marked with `data-i18n`.
