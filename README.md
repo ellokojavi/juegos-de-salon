@@ -351,7 +351,7 @@ It borrows what makes daily puzzles work (Wordle, Connections): same challenge f
 | 1 | ⏳ Timeline Flash: 10 milestones, played from a hand with the Timeline drag and drop | knowledge |
 | 2 | 🔢 Bulls and Cows: guess the number, with the Bulls and Cows keypad and notes | deduction |
 | 3 | 🔗 Connections: 16 words, 4 groups, with red herrings | association |
-| 4 | 👑 Queens: one per row, column and color region, never touching; scored by solve time, mistakes are free, and you can give up | logic |
+| 4 | 👑 Queens: one per row, column and color region, never touching; a tap cycles queen → X → empty, dragging fills X (or erases them, starting on an X), and 🧹 Clear all starts over; scored by solve time, mistakes are free, and you can give up (D-166 to D-169) | logic |
 | 5 | 🔤 Bulls and Cows: Word: a 5-letter word, each letter colored by its clue; every letter you pin down scores, so getting close counts | deduction |
 | 6 | 📅 What year was it?: closer is better, older gets more slack | estimation |
 | 7 | 🏁 The Grand Final: five short rounds, one of each, worth double | everything |
@@ -368,7 +368,8 @@ The other three are **〰️ Zip**, **☀️ Tango** and **📍 Where is it?**. 
 - **A new cup opens on the admin screen** with a short guide: share the invite, wait for people to join (they can before it starts), close sign-ups if you like, and move the start to today or tomorrow while nobody has played yet (D-110). The lab has **ten live demos** of the cup, as a player and as the admin.
 - **A cup can have its own link** (D-121): `juegosdesalon.cl/copa/?pirata` instead of a 5-letter code. It is an alias, unique while the cup lasts and free again a week after it ends.
 - **Bug reports need no account** (D-104): the 🐞 form posts straight to `feedback/` and remembers your name on that device; `node tools/reportes.mjs` reads them back.
-- **Three languages, one rule** (D-170): what is personal follows your language, what belongs to the group follows the cup's. The screen (rules, board, scoring breakdown) follows each player's toggle; the cup's language, chosen when it is created, sets the words of Connections and Bulls and Cows: Word, so everyone plays the same ones, and every message shared with the group, with its link. Word content is written per language, not translated: Connections grids and secret words in English and Portuguese, plus country and city names for Where is it?. A 3-day cup exists for testing with `?tres` (D-100), and `?prueba` plays a cup with no Firebase, which is what the lab demos and the end-to-end scripts use.
+- **Three languages, one rule** (D-170): what is personal follows your language, what belongs to the group follows the cup's. The screen (rules, board, scoring breakdown) follows each player's toggle; the cup's language, chosen when it is created, sets the words of Connections and Bulls and Cows: Word, so everyone plays the same ones, and every message shared with the group, with its link. Word content is written per language, not translated: Connections grids and secret words in English and Portuguese, plus country and city names for Where is it?.
+- A 3-day cup exists for testing with `?tres` (D-100), and `?prueba` plays a cup with no Firebase, which is what the lab demos and the end-to-end scripts use.
 
 Spec and design: [docs/juegos/copa.md](docs/juegos/copa.md)
 
