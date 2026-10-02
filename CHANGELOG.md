@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.83.0 — 2026-10-02
+- **La Copa llega al menú.** Su tarjeta ya no dice "Próximamente": se abre desde la portada y su
+  botón "‹ Menú" vuelve al menú. El laboratorio (`/labs/`) sigue para probar, con la Copa de 3
+  días (D-175).
+
 ## 0.82.4 — 2026-10-02
 - **Arreglo: la invitación a una copa en inglés o portugués abre la copa.** El link lleva el idioma
   (`?pirata&lang=pt`, D-170) y, al sacarlo de la barra, el resto quedaba como `?pirata=`, que La Copa
