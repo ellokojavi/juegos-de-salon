@@ -617,7 +617,8 @@ const ES = {
 
   // Laboratorio y práctica (D-101)
   backToLabs: '🧪 Volver al laboratorio',
-  backToLabsShort: '‹ Laboratorio',
+  // Con espacio que no parte, para que el ‹ no quede solo en la primera línea (U-12)
+  backToLabsShort: '‹\u00a0Laboratorio',
   // El minijuego suelto, abierto desde la portada (D-142)
   looseTitle: 'Minijuego de La Copa',
   looseHint: 'Acá lo juegas suelto: no cuenta para ninguna copa y puedes jugarlo las veces que quieras.',
@@ -1238,7 +1239,7 @@ const EN = {
 
   // Laboratorio y práctica
   backToLabs: '🧪 Back to the lab',
-  backToLabsShort: '‹ Lab',
+  backToLabsShort: '‹\u00a0Lab',
   looseTitle: 'A minigame from The Cup',
   looseHint: 'Here you play it on its own: it doesn\'t count for any cup and you can play it as many times as you like.',
   backToMenu: 'Back to the menu',
@@ -1857,7 +1858,7 @@ const PT = {
 
   // Laboratorio y práctica
   backToLabs: '🧪 Voltar ao laboratório',
-  backToLabsShort: '‹ Laboratório',
+  backToLabsShort: '‹\u00a0Laboratório',
   looseTitle: 'Minijogo da Copa',
   looseHint: 'Aqui você joga avulso: não conta para nenhuma copa e dá para jogar quantas vezes quiser.',
   backToMenu: 'Voltar ao menu',
