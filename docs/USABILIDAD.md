@@ -54,8 +54,12 @@ Cada regla tiene un ID (U-n) para citarla en los PR y en los issues.
 
 ## Compartir
 
-- **U-30 · Formato de los mensajes:** título en negrita con "La Copa: {nombre}", una idea por
-  línea con su emoji al inicio, y el link solo en la última línea ("🔗 …").
+- **U-30 · Formato de los mensajes:** cabecera `{emoji} *{título}* · {contexto}` (en la copa,
+  "La Copa: {nombre}"), una idea por línea con su emoji al inicio, y el link solo en la última
+  línea ("🔗 …"). Vale para todo lo que se comparte, también las salas (D-165).
+- **U-33 · La imagen dice lo mismo que el texto:** arriba la misma cabecera (título y contexto),
+  abajo el mismo link. Un resultado o una tabla se comparten siempre con imagen y texto juntos,
+  desde cualquier botón; una invitación, solo con texto (la imagen la pone la tarjeta del link).
 - **U-31 · Completo:** el resultado dice copa, día, juego, jugador y puntaje; la tabla dice quién
   falta y marca "(-1J)" a quien lleva menos juegos.
 - **U-32 · Sin spoilers:** lo que se comparte no revela respuestas ni los minijuegos que vienen.

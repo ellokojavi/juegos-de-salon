@@ -22,10 +22,16 @@ const click = sel => ev(`(()=>{const x=document.querySelector(${JSON.stringify(s
 const pantalla = () => ev('__copa.estado.pantalla');
 const DIA = 24 * 60 * 60 * 1000;
 
-// En headless no hay diálogo de compartir: se atrapa lo que se habría mandado
-// y la barra del modo de prueba no sale en las capturas.
-const preparar = () => ev(`(()=>{window.confirm=()=>true;window.__compartido=[];navigator.share=async d=>{window.__compartido.push(d)};
+// En headless no hay diálogo de compartir: se atrapa lo que se habría mandado (como un celular,
+// que también comparte archivos) y la barra del modo de prueba no sale en las capturas.
+const preparar = () => ev(`(()=>{window.confirm=()=>true;window.__compartido=[];navigator.share=async d=>{window.__compartido.push(d)};navigator.canShare=()=>true;
   const st=document.createElement('style');st.textContent='.prueba-barra{display:none!important}';document.head.append(st);return 1})()`);
+
+/** La imagen del último compartido, a la carpeta de salida, para mirarla. */
+async function guardarImagen(nombre) {
+  const u = await ev(`(async()=>{const f=window.__compartido.at(-1)?.files?.[0];if(!f)return null;const r=new FileReader();return new Promise(ok=>{r.onload=()=>ok(r.result);r.readAsDataURL(f)})})()`);
+  if (u) (await import('node:fs')).writeFileSync(`${OUT}/${nombre}.png`, Buffer.from(u.split(',')[1], 'base64'));
+}
 
 /** Las tomas del README, con nombre fijo para que docs/capturas.json las encuentre. */
 const TOMAS = { numero: '02-numero', conexiones: '03-conexiones', reinas: '04-reinas', letras: '05-letras', anio: '06-anio' };
@@ -160,11 +166,12 @@ const tocarCasilla = sel => i => click(`${sel}[data-i="${i}"]`);
 const jugarReinas = async nivel => {
   const p = await ev('JSON.stringify(window.__jugando.p)').then(JSON.parse);
   const t = tocarCasilla('.rej');
-  // Cada error: la reina de la fila 0 y una pegada en diagonal en la fila 1 (un toque pone, otro saca: D-103)
+  // Cada error: la reina de la fila 0 y una pegada en diagonal en la fila 1 (un toque pone la reina,
+  // otro la cambia por X y otro la deja vacía: D-167)
   const pegada = 1 * p.n + (p.sol[0] === 0 ? 1 : p.sol[0] - 1);
   for (let e = 0; e < (nivel === 2 ? 0 : nivel === 1 ? 1 : 2); e++) {
     await t(p.sol[0]); await t(pegada);   // choque
-    await t(pegada); await t(p.sol[0]);   // se sacan las dos
+    await t(pegada); await t(pegada); await t(p.sol[0]); await t(p.sol[0]);   // se sacan las dos
   }
   for (let r = 0; r < p.n; r++) await t(r * p.n + p.sol[r]);
   await sleep(150);
@@ -494,9 +501,17 @@ for (let d = 1; d <= dias; d++) {
     const id = await jugarDia(d, NIVELES[d - 1][j], { capturar, comodin: d === 2 && nombre === 'Javi' });
     if (capturar) await revisarPantalla(`resultado-${id}`);
     ok(await pantalla() === 'resultado', `${nombre} terminó el día ${d} (${id})`);
-    await click('#btn-tarjeta'); await sleep(100);
-    if (d === 1 && j === 0) console.log('  tarjeta:', JSON.stringify(await ev('window.__compartido.at(-1)?.text')));
-    if (d === 1 && j === 0) ok(/Línea Relámpago\n👤 Cata · \d+\/100/.test(await ev('window.__compartido.at(-1)?.text')), 'el resultado para compartir dice el juego y quién lo jugó');
+    await click('#btn-tarjeta'); await sleep(800);
+    if (d === 1 && j === 0) {
+      console.log('  tarjeta:', JSON.stringify(await ev('window.__compartido.at(-1)?.text')));
+      // El juego, quién y el puntaje van en la imagen: el texto es la cabecera y el link (D-171)
+      ok(/^🏆 \*La Copa: .+\* · Día 1 de 7\n\n🔗 \S+$/.test(await ev('window.__compartido.at(-1)?.text')), 'el texto del resultado no repite lo que dice la imagen');
+      // Con su imagen y la cabecera de la copa, la misma del texto (D-165)
+      ok(/^🏆 \*La Copa: .+\* · Día 1 de 7\n\n/.test(await ev('window.__compartido.at(-1)?.text')), 'el resultado abre con la cabecera de la copa y el día de cuántos');
+      const f = await ev(`(()=>{const f=window.__compartido.at(-1)?.files?.[0];return f?{name:f.name,type:f.type,size:f.size}:null})()`);
+      ok(f && f.type === 'image/png' && f.size > 20000 && f.name === 'copa-oficina-dia-1-cata.png', `el resultado se comparte con su imagen (${f?.name})`);
+      await guardarImagen('resultado-imagen');
+    }
     await click('#btn-volver'); await sleep(300);
     // Resultados ocultos: quien jugó primero no ve cuánto sacaron los que todavía no juegan (LIG-13)
   }
@@ -507,8 +522,13 @@ for (let d = 1; d <= dias; d++) {
     await click('#msg-hoy'); await sleep(100);
     console.log('  recordatorio:', JSON.stringify(await ev('window.__compartido.at(-1)?.text')));
     ok(/Faltan por jugar hoy: Pancho/.test(await ev('window.__compartido.at(-1)?.text')), 'el recordatorio dice quién falta');
-    await click('#msg-tabla'); await sleep(100);
+    await click('#msg-tabla'); await sleep(1200);
     console.log('  tabla parcial:', JSON.stringify(await ev('window.__compartido.at(-1)?.text')));
+    // La tabla del admin es la misma del tablero: imagen y texto, con la misma cabecera (D-165)
+    ok(/^📊 \*La Copa: .+\* · Tabla de posiciones( \(provisoria\))? · día 1 de 7\n\n/.test(await ev('window.__compartido.at(-1)?.text || ""')) && await ev('window.__compartido.at(-1)?.files?.[0]?.type') === 'image/png', 'la tabla parcial del admin va con su imagen y la cabecera de la tabla');
+    // La tabla no se escribe: la dice la imagen (D-171)
+    ok(!/ pts$/m.test(await ev('window.__compartido.at(-1)?.text || ""')), 'el texto de la tabla parcial no repite la tabla');
+    await guardarImagen('tabla-parcial-imagen');
     await revisarPantalla('admin');
     await b.shot('09-admin');
     // En el tablero, el gráfico también marca a Pancho con "(-1J)" y lo explica (D-126)
@@ -536,14 +556,18 @@ await b.shot('grafico-colores');
 await ev(`navigator.canShare = () => true; 1`);
 await click('#btn-imagen'); await sleep(1500);
 const img = await ev(`(async()=>{const d=window.__compartido.at(-1);const f=d?.files?.[0];if(!f)return null;const r=new FileReader();const u=await new Promise(ok=>{r.onload=()=>ok(r.result);r.readAsDataURL(f)});return {name:f.name,type:f.type,size:f.size,u}})()`);
-ok(img && img.type === 'image/png' && img.size > 20000 && /^copa-oficina-dia-\d\.png$/.test(img.name), `la tabla parcial se comparte como imagen (${img?.name})`);
+ok(img && img.type === 'image/png' && img.size > 20000 && img.name === 'copa-oficina-tabla-final.png', `la tabla se comparte como imagen (${img?.name})`);
+ok(/^🏁 \*La Copa: .+\* · Tabla final\n\n/.test(await ev('window.__compartido.at(-1)?.text || ""')), 'terminada, la imagen de la tabla va con el resumen final');
 if (img) (await import('node:fs')).writeFileSync(`${OUT}/tabla-imagen.png`, Buffer.from(img.u.split(',')[1], 'base64'));
 await ev(`document.querySelectorAll('.g-chip')[1].click(); 1`);
 await ev(`document.querySelector('svg.grafico').scrollIntoView(); 1`);
 await b.shot('07-grafico');
 await click('#btn-admin'); await sleep(300);
-await click('#msg-final'); await sleep(100);
+await click('#msg-final'); await sleep(1200);
 console.log('  resumen final:', JSON.stringify(await ev('window.__compartido.at(-1)?.text')));
+// El podio ("🥇 Cata · 30 pts") y el campeón van en la imagen; las medallas ("🥇 Más días ganados") no
+ok(!/ pts$|^🏆 /m.test(await ev('window.__compartido.at(-1)?.text || ""')), 'el resumen final no repite el podio de la imagen (D-171)');
+ok(await ev('window.__compartido.at(-1)?.files?.[0]?.name') === 'copa-oficina-tabla-final.png', 'el resumen final del admin va con la imagen de la tabla final');
 
 
 /* ---------- El laboratorio (D-101): la página, la práctica de cada minijuego y los reportes ---------- */
@@ -554,6 +578,67 @@ ok(tarjeta.soon && !tarjeta.href && tarjeta.rotulo === 'Próximamente', 'en el m
 await b.go(`${SITIO}/labs/`, 1500);
 ok(await ev(`document.querySelectorAll('#minis .mini-juego').length`) === 10 && await ev(`!!document.querySelector('#minis [data-id="donde"]')`), 'el laboratorio ofrece los diez minijuegos (con Zip, Tango y ¿Dónde queda?)');
 await b.shot('10-labs');
+// Los minijuegos con página propia se practican ahí, para que el link traiga su tarjeta (D-164)
+ok(await ev(`document.querySelector('#minis [data-id="donde"]').getAttribute('href')`) === '../minijuegos/donde/?labs'
+  && await ev(`document.querySelector('#minis [data-id="linea"]').getAttribute('href')`) === '../copa/?practica=linea&labs', 'laboratorio: ¿Dónde queda? abre su página; Línea Relámpago sigue en /copa/');
+ok(await ev(`document.querySelector('#minis [data-id="zip"] span').classList.contains('emoji-claro')`), 'laboratorio: el 〰️ de Zip lleva contorno claro');
+await b.go(`${BASE}?practica=tango&prueba&labs&semilla=KQRST`, 1500); await preparar();
+ok(await ev(`location.pathname + location.search`) === '/minijuegos/tango/?labs&prueba&semilla=KQRST', 'laboratorio: el link viejo va a la página del minijuego con su semilla');
+ok(!!await ev(`document.getElementById('btn-ensayo')`) && await ev(`document.getElementById('btn-menu').href`) === `${SITIO}/labs/`, 'laboratorio: en la página del minijuego sigue la sesión de prueba y se vuelve al laboratorio');
+// Arrastrar desde una casilla vacía pinta X en las vacías (D-166) y desde una X las borra (D-168),
+// con mouse y con el dedo, sin
+// estorbar al toque (reina) ni al toque largo (X)
+await b.go(`${BASE}?practica=reinas&prueba&labs`, 1200); await preparar();
+await click('#btn-empezar'); await sleep(300); await esperarCuenta();
+{
+  const N = await ev(`Math.round(Math.sqrt(document.querySelectorAll('.rej').length))`);
+  const centro = i => ev(`(()=>{const r=document.querySelector('.rej[data-i="${i}"]').getBoundingClientRect();return [Math.round(r.x+r.width/2),Math.round(r.y+r.height/2)]})()`);
+  const clases = () => ev(`[...document.querySelectorAll('.rej')].map(x=>x.classList.contains('reina')?'R':x.classList.contains('marca')?'X':'.').join('')`);
+  const [x0, y0] = await centro(0), [x1, y1] = await centro(N - 1);
+  await b.arrastre(x0, y0, x1, y1, 3);
+  let t = await clases();
+  ok(t.slice(0, N) === 'X'.repeat(N) && !t.slice(N).includes('X') && !t.includes('R'), 'Reinas: arrastrar a lo largo de una fila la llena de X, sin saltarse casillas');
+  const [xr, yr] = await centro(N); await b.toque(xr, yr);
+  t = await clases();
+  ok(t[N] === 'R' && t.slice(N + 1, 2 * N) === '.'.repeat(N - 1), 'Reinas: el toque sigue poniendo la reina');
+  // El ciclo del toque: reina → X → vacía → reina (D-167)
+  const ciclo = [];
+  for (let k = 0; k < 3; k++) { await b.toque(xr, yr); ciclo.push((await clases())[N]); }
+  ok(ciclo.join('') === 'X.R', 'Reinas: tocar otra vez la reina la cambia por X, después vacía y de nuevo reina');
+  const [xr2, yr2] = await centro(N + 3); await b.arrastre(xr, yr, xr2, yr2, 3);
+  t = await clases();
+  ok(t[N] === 'R' && t.slice(N + 1, 2 * N) === '.'.repeat(N - 1), 'Reinas: arrastrar desde una reina no pinta ni la saca');
+  // Con el dedo, por una columna: el tablero no desplaza la página
+  const col = 3, desde = await centro(2 * N + col), hasta = await centro((N - 1) * N + col);
+  const dedo = (type, [x, y] = [0, 0]) => b.send('Input.dispatchTouchEvent', { type, touchPoints: type === 'touchEnd' ? [] : [{ x, y }] });
+  await dedo('touchStart', desde);
+  for (let k = 1; k <= 4; k++) { await dedo('touchMove', [desde[0], Math.round(desde[1] + (hasta[1] - desde[1]) * k / 4)]); await sleep(30); }
+  await dedo('touchEnd'); await sleep(250);
+  t = await clases();
+  ok([...Array(N - 2).keys()].every(k => t[(k + 2) * N + col] === 'X') && t[N + col] === '.', 'Reinas: con el dedo, arrastrar por una columna la llena de X');
+  // Arrastrar desde una X las borra (D-168): las últimas cuatro de la fila 0
+  const [xb0, yb0] = await centro(N - 1), [xb1, yb1] = await centro(N - 4);
+  await b.arrastre(xb0, yb0, xb1, yb1, 3);
+  t = await clases();
+  ok(t.slice(0, N - 4) === 'X'.repeat(N - 4) && t.slice(N - 4, N) === '....' && t[2 * N + col] === 'X', 'Reinas: arrastrar desde una X borra las X por donde pasa');
+  // y pasa por encima de la reina sin sacarla: de la X de la casilla 1 a la reina de la fila 1
+  const [xc0, yc0] = await centro(1);
+  await b.arrastre(xc0, yc0, xr, yr, 3);
+  t = await clases();
+  ok(t[0] === 'X' && t[1] === '.' && t[N] === 'R', 'Reinas: el arrastre que borra no saca reinas');
+  // Toque largo en una vacía: X, y el click de soltar no pone reina
+  const [xl, yl] = await centro(N + 6);
+  await b.send('Input.dispatchMouseEvent', { type: 'mousePressed', x: xl, y: yl, button: 'left', clickCount: 1, buttons: 1 }); await sleep(600);
+  await b.send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: xl, y: yl, button: 'left', clickCount: 1, buttons: 0 }); await sleep(200);
+  ok((await clases())[N + 6] === 'X', 'Reinas: el toque largo sigue poniendo la X');
+  // Borrar todo pide un segundo toque y deja el tablero en blanco (D-169)
+  await click('#btn-borrar'); await sleep(150);
+  ok(/[RX]/.test(await clases()) && await ev(`document.getElementById('btn-borrar').classList.contains('armado')`), 'Reinas: el primer toque de Borrar todo solo lo arma');
+  await click('#btn-borrar'); await sleep(200);
+  ok(!/[RX]/.test(await clases()) && await ev(`document.getElementById('btn-borrar').disabled`), 'Reinas: el segundo toque deja el tablero en blanco y el botón se apaga');
+  await b.toque(xr, yr);
+  ok((await clases())[N] === 'R', 'Reinas: después de borrar todo se sigue jugando');
+}
 // Rendirse en Reinas: dos toques, la solución a la vista y 0 puntos (D-110)
 await b.go(`${BASE}?practica=reinas&prueba&labs`, 1200); await preparar();
 await click('#btn-empezar'); await sleep(300); await esperarCuenta();
@@ -647,8 +732,12 @@ await b.go(`${BASE}?practica=${id}&prueba&labs${id === 'zip' ? '&zipSeg=12&semil
     await b.send('Input.dispatchMouseEvent', { type: 'mouseReleased', x, y, button: 'left', clickCount: 1, buttons: 0 });
     await sleep(300);
     ok(await ev(`document.querySelector('.rej[data-i="0"]').classList.contains('marca')`), 'Reinas: el toque largo marca la X y no pone reina');
-    await b.toque(x, y); await b.toque(x, y);   // un toque rápido de verdad pone la reina y otro la saca: queda vacía
-    ok(await ev(`!document.querySelector('.rej[data-i="0"]').classList.contains('reina')`), 'Reinas: después del toque largo, los toques rápidos no se pierden');
+    await b.toque(x, y); await b.toque(x, y);   // toques rápidos de verdad: la X pasa a vacía y después a reina (D-167)
+    ok(await ev(`document.querySelector('.rej[data-i="0"]').classList.contains('reina')`), 'Reinas: después del toque largo, los toques rápidos no se pierden');
+    await b.toque(x, y);
+    ok(await ev(`document.querySelector('.rej[data-i="0"]').classList.contains('marca')`), 'Reinas: otro toque cambia la reina por una X');
+    await b.toque(x, y);
+    ok(await ev(`document.querySelector('.rej[data-i="0"]').textContent === ''`), 'Reinas: y otro deja la casilla vacía');
   }
   if (id === 'tango') await b.shot('tango-tablero');
   if (id === 'donde') {

@@ -6,7 +6,9 @@
  * Los dados de cada ronda viajan como mensaje `roll`. En un celular van en claro —no hay a quién
  * escondérselos—; en la sala va el hash y se destapan al dudar, y ahí se verifican (C-10, D-70).
  */
-import { $, $$, el, vibrate, sparkles, keepAwake, confetti, shareLink, canShare } from '../assets/js/ui.js';
+import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../assets/js/ui.js';
+import { botonInvitar } from '../assets/js/compartir.js';
+import { gameById } from '../assets/js/games.js';
 import { getLang, langToggle, applyStatic, COMMON, withLang } from '../assets/js/i18n.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { showHandoff, passBlock } from '../assets/js/handoff.js';
@@ -544,22 +546,16 @@ function renderLobby() {
 }
 
 /**
- * "Javi te invita a jugar Dudo en juegosdesalon.cl - Sala: WFBN". Nombra a quien toca compartir,
+ * "🎲 *Dudo* · Sala WFBN" y "👋 Javi te invita a jugar en juegosdesalon.cl." (D-165). Nombra a quien toca compartir,
  * que es quien invita; de qué se trata el juego lo cuenta la tarjeta que el chat arma con el
- * link (D-72, D-73).
+ * link (D-72, D-173).
  */
 function textoInvitacion() {
-  return fmt(COMMON[lang].invite, { name: M.names[S.role] || '', game: T.title, code: S.code });
+  return fmt(COMMON[lang].invite, { emoji: gameById(GAME_ID)?.emoji || '🎲', name: M.names[S.role] || '', game: T.title, code: S.code });
 }
 
 function shareButton(url) {
-  const btn = el('button', { class: 'btn btn--cyan btn--sm', style: 'width:100%;max-width:320px' }, canShare() ? T.shareLink : T.copyLink);
-  btn.addEventListener('click', async () => {
-    SFX.tap();
-    const r = await shareLink({ title: T.title, text: textoInvitacion(), url });
-    if (r === 'copied') { btn.textContent = T.copied; setTimeout(() => { btn.textContent = canShare() ? T.shareLink : T.copyLink; }, 2000); }
-  });
-  return btn;
+  return botonInvitar({ T, titulo: T.title, url, texto: textoInvitacion, alTocar: () => SFX.tap() });
 }
 
 async function renderQr(url) {

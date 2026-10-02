@@ -213,7 +213,7 @@ export function montar(raiz, ctx) {
 
   const titulo = (i, c) => [
     el('p', { class: 'muted center', style: 'margin:0' }, fmt(T.cityOf, { i: i + 1, n: p.ciudades.length })),
-    el('div', { class: 'carta actual donde-ciudad' }, el('span', { class: 'carta-emoji' }, '📍'), el('b', {}, motor.nombre(c))),
+    el('div', { class: 'carta actual donde-ciudad' }, el('span', { class: 'carta-emoji' }, '📍'), el('b', {}, motor.nombre(c, ctx.lang))),
   ];
 
   const dibujar = () => {
@@ -226,7 +226,7 @@ export function montar(raiz, ctx) {
       const f = e.filas[revelado];
       const mapa = crearGlobo({ T, alTocar: () => {} });
       poner(pantalla, titulo(revelado, f.ciudad), caja(mapa),
-        el('div', { class: 'aviso ' + (f.pts >= 50 ? 'bien' : 'mal'), id: 'donde-aviso' }, `${motor.marca(f.km)} ${fmt(f.pts === 1 ? T.pinWasOne : T.pinWas, { km: motor.km(f.km), pts: f.pts })}`),
+        el('div', { class: 'aviso ' + (f.pts >= 50 ? 'bien' : 'mal'), id: 'donde-aviso' }, `${motor.marca(f.km)} ${fmt(f.pts === 1 ? T.pinWasOne : T.pinWas, { km: motor.km(f.km, ctx.lang), pts: f.pts })}`),
         e.fin
           ? el('button', { class: 'btn btn--yellow', id: 'btn-fin', onClick: () => { SFX.tap(); ctx.terminar(e); } }, ctx.textoFin || T.seeResults)
           : el('button', { class: 'btn btn--yellow', id: 'btn-siguiente', onClick: () => { SFX.tap(); revelado = null; dibujar(); } }, T.next));

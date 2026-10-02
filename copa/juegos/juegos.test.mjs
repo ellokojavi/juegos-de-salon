@@ -8,7 +8,7 @@ import * as reinas from './reinas.js';
 import * as tango from './tango.js';
 import * as zip from './zip.js';
 import * as letras from './letras.js';
-import { PALABRAS } from './palabras.js';
+import { PALABRAS, PALABRAS_EN, PALABRAS_PT } from './palabras.js';
 import * as conexiones from './conexiones.js';
 import * as final from './final.js';
 import * as donde from './donde.js';
@@ -16,7 +16,12 @@ import { CIUDADES } from './ciudades.js';
 import { MAPA } from './mapa.js';
 import { GRILLAS } from './grillas.js';
 import * as GRILLAS_MOD from './grillas.js';
+import * as GRILLAS_EN from './grillas-en.js';
+import * as GRILLAS_PT from './grillas-pt.js';
+import { PAISES, CIUDADES as NOMBRES_CIUDADES } from './nombres.js';
+import { JUEGOS } from './index.js';
 import { temasDeLaCopa } from './mazos.js';
+import { camino } from './ui-reinas.js';
 
 let n = 0;
 const test = (name, fn) => { try { fn(); n++; } catch (e) { console.error(`✗ ${name}`); throw e; } };
@@ -282,7 +287,7 @@ test('reinas: solución única, reglas y puntaje', () => {
     assert.ok(reinas.resuelto(p, marcas));
   }
   const p = reinas.generar('KQRST', 4);
-  const toques = i => [i]; // un toque pone la reina (D-103)
+  const toques = i => [reinas.toque(i)]; // un toque pone la reina (D-103, D-167)
   const bien = p.sol.flatMap((col, r) => toques(r * p.n + col));
   let e = reinas.estado(p, bien);
   assert.ok(e.fin); assert.equal(e.errores, 0); assert.equal(reinas.puntaje({ ...e, ms: 20000 }), 100);
@@ -304,13 +309,31 @@ test('reinas: solución única, reglas y puntaje', () => {
   assert.equal(reinas.puntaje({ ...r, ms: 1000 }), 0);
   assert.equal(final.puntosRonda.reinas(r), 0);
   assert.equal(reinas.tarjeta(r), '👑 🏳️');
+  // Arrastrar pinta X: el arrastre rápido no salta casillas (D-166)
+  assert.deepEqual(camino(8, 0, 7), [1, 2, 3, 4, 5, 6, 7]);
+  assert.deepEqual(camino(8, 7, 4), [6, 5, 4]);
+  assert.deepEqual(camino(8, 3, 27), [11, 19, 27]);
+  assert.deepEqual(camino(8, 0, 18), [9, 18]);
+  assert.deepEqual(camino(8, 5, 5), []);
   // El toque largo pone y saca la X, y no cuenta como error ni como reina
   e = reinas.estado(p, [reinas.toqueLargo(5), reinas.toqueLargo(6), reinas.toqueLargo(6)]);
   assert.equal(e.marcas[5], reinas.MARCA); assert.equal(e.marcas[6], reinas.VACIO); assert.equal(e.errores, 0);
-  // Un toque sobre una X pone la reina; otro la saca
+  // El toque cicla vacía → reina → X → vacía (D-167); la reina que pasa a X no es error
+  const ciclo = k => reinas.estado(p, Array(k).fill(reinas.toque(5))).marcas[5];
+  assert.deepEqual([0, 1, 2, 3, 4].map(ciclo), [reinas.VACIO, reinas.REINA, reinas.MARCA, reinas.VACIO, reinas.REINA]);
+  assert.equal(reinas.estado(p, [reinas.toqueLargo(5), reinas.toque(5)]).marcas[5], reinas.VACIO);
+  e = reinas.estado(p, [...toques(c0), ...toques(vecina), ...toques(vecina), ...toques(vecina), ...toques(vecina)]);
+  assert.equal(e.errores, 2); assert.equal(e.marcas[vecina], reinas.REINA);
+  // Borrar todo deja el tablero en blanco; los errores quedan y se puede seguir jugando (D-169)
+  e = reinas.estado(p, [...toques(c0), ...toques(vecina), reinas.toqueLargo(5), reinas.BORRAR]);
+  assert.ok(e.marcas.every(v => v === reinas.VACIO)); assert.equal(e.errores, 1); assert.ok(!e.fin);
+  e = reinas.estado(p, [...toques(c0), reinas.BORRAR, ...bien]);
+  assert.ok(e.fin); assert.equal(e.errores, 0);
+  // Las partidas de antes de D-167 guardaban el toque como el índice: pone o saca la reina
   e = reinas.estado(p, [reinas.toqueLargo(5), 5]);
   assert.equal(e.marcas[5], reinas.REINA);
   assert.equal(reinas.estado(p, [5, 5]).marcas[5], reinas.VACIO);
+  assert.equal(reinas.estado(p, [c0, vecina]).errores, 1);
 });
 
 test('tango: solución única, reglas y puntaje', () => {
@@ -487,6 +510,73 @@ test('una copa ya en su día de Conexiones conserva la grilla de antes (D-128)',
     assert.equal(conexiones.grillaDe(c, { desde: CAMBIO_D128 }), GRILLAS[i]);
     assert.equal(conexiones.generar(c, 3, { desde: CAMBIO_D128 - 1 }).id, GRILLAS_ANTES_D128[i].id);
   }
+});
+
+// ── Inglés y portugués (D-170) ──
+
+test('grillas en inglés y portugués: las mismas reglas que las de español', () => {
+  for (const [lang, M] of Object.entries({ en: GRILLAS_EN, pt: GRILLAS_PT })) {
+    assert.ok(M.GRILLAS.length >= 12, lang);
+    assert.equal(new Set(M.GRILLAS.map(g => g.id)).size, M.GRILLAS.length, lang);
+    for (const g of [...M.GRILLAS, M.GRILLA_ENSAYO]) {
+      assert.equal(g.grupos.length, 4, `${lang}/${g.id}`);
+      const todas = g.grupos.flatMap(x => x.palabras);
+      assert.equal(todas.length, 16, `${lang}/${g.id}`);
+      assert.equal(new Set(todas).size, 16, `${lang}/${g.id}: palabra repetida`);
+      for (const w of todas) {
+        assert.equal(w, w.toLocaleUpperCase(lang), `${lang}/${g.id}: ${w} no va en mayúsculas`);
+        assert.ok(w.length <= 14, `${lang}/${g.id}: ${w} es muy larga`);
+      }
+      assert.ok(g.grupos.every(x => x.nombre && x.nombre.length <= 40), `${lang}/${g.id}`);
+      for (const x of g.grupos) assert.ok(!/___|hidden|start with|end with|rhym|escond|começam|terminam|rimam/i.test(x.nombre), `${lang}/${g.id}: "${x.nombre}" parece un juego de palabras`);
+    }
+  }
+});
+
+test('conexiones: la grilla sale del idioma de las palabras de la copa', () => {
+  for (const c of CODIGOS) {
+    assert.ok(GRILLAS_EN.GRILLAS.includes(conexiones.grillaDe(c, { lang: 'en' })), c);
+    assert.ok(GRILLAS_PT.GRILLAS.includes(conexiones.grillaDe(c, { lang: 'pt' })), c);
+    // La interfaz en otro idioma no cambia la grilla: manda `palabras`, el idioma de la copa
+    assert.deepEqual(conexiones.generar(c, 3, { lang: 'en', palabras: 'es' }), conexiones.generar(c, 3));
+  }
+  assert.ok(conexiones.ensayo('KQRST', 1, { palabras: 'pt' }).orden.includes('MAÇÃ'));
+});
+
+test('letras: palabras en inglés y portugués, y teclado sin Ñ', () => {
+  for (const [lang, lista] of Object.entries({ en: PALABRAS_EN, pt: PALABRAS_PT })) {
+    assert.ok(lista.length >= 100, lang);
+    assert.equal(new Set(lista).size, lista.length, `${lang}: palabra repetida`);
+    for (const w of lista) assert.ok(/^[A-Z]{5}$/.test(w) && letras.valido(w), `${lang}: ${w}`);
+    assert.ok(!letras.alfabeto(lang).includes('Ñ'), lang);
+    assert.ok(lista.includes(letras.generar('KQRST', 5, { palabras: lang }).secreto), lang);
+  }
+  assert.ok(letras.alfabeto('es').includes('Ñ'));
+  // La palabra es la del idioma de la copa, aunque la pantalla esté en otro
+  assert.deepEqual(letras.generar('KQRST', 5, { lang: 'pt', palabras: 'es' }), letras.generar('KQRST', 5));
+  assert.equal(JUEGOS.final.generar('KQRST', 7, { lang: 'en', palabras: 'pt' }).letras.lang, 'pt');
+});
+
+test('¿En qué año? y Línea: las mismas cartas en todos los idiomas, con su texto', () => {
+  const es = anio.generar('KQRST', 2), en = anio.generar('KQRST', 2, { lang: 'en' });
+  assert.deepEqual(en.hitos.map(h => h.id), es.hitos.map(h => h.id));
+  assert.notEqual(en.hitos[0].texto, es.hitos[0].texto);
+  assert.equal(anio.anioLabel(-44, 'en'), '44 BC');
+  assert.equal(anio.anioLabel(-44, 'pt'), '44 a.C.');
+  assert.equal(anio.anioLabel(-44), '44 a. C.');
+  const l = linea.generar('KQRST', 1, { lang: 'pt' });
+  assert.deepEqual(l.mano.map(c => c.id), linea.generar('KQRST', 1).mano.map(c => c.id));
+});
+
+test('¿Dónde queda?: todos los países en inglés y portugués', () => {
+  for (const c of CIUDADES) assert.ok(PAISES[c.pais], `${c.pais} sin traducir`);
+  for (const k of Object.keys(NOMBRES_CIUDADES)) assert.ok(CIUDADES.some(c => c.ciudad === k), `${k} no es una ciudad del juego`);
+  const cairo = CIUDADES.find(c => c.ciudad === 'El Cairo');
+  assert.equal(donde.nombre(cairo), 'El Cairo, Egipto');
+  assert.equal(donde.nombre(cairo, 'en'), 'Cairo, Egypt');
+  assert.equal(donde.nombre(cairo, 'pt'), 'Cairo, Egito');
+  assert.equal(donde.nombre(CIUDADES.find(c => c.ciudad === 'Singapur'), 'en'), 'Singapore');
+  assert.equal(donde.km(1250, 'en'), '1,250 km');
 });
 
 console.log(`copa/juegos: ${n} tests OK`);

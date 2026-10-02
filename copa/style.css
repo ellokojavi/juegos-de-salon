@@ -6,6 +6,8 @@
 
 .intro-hero { text-align: center; padding: 6px 0 8px; }
 .intro-hero .icon { font-size: 4rem; display: block; animation: bounce 2.4s ease-in-out infinite; filter: drop-shadow(0 0 18px rgba(255, 210, 63, 0.6)); }
+/* El contorno claro de un emoji oscuro (〰️) más el halo dorado de siempre */
+.intro-hero .icon.emoji-claro { filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff) drop-shadow(0 0 18px rgba(255, 210, 63, 0.6)); }
 .intro-hero .globo-portada { position: relative; display: block; width: 150px; height: 150px; margin: 0 auto; }
 .globo-portada canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
 .intro-hero h1, .intro-hero h2 { margin: 4px 0 6px; overflow-wrap: anywhere; }
@@ -320,7 +322,7 @@ button.md-fila { cursor: pointer; }
 /* Reinas, Tango y Zip: grillas cuadradas que se tocan (C-8: 44 px en 320 de ancho con 7 u 8
    casillas no caben; el área de toque es la casilla entera y la grilla usa todo el ancho) */
 .rej-grid, .tan-grid, .zip-grid { display: grid; width: 100%; max-width: 440px; margin: 0 auto; user-select: none; -webkit-user-select: none; }
-.rej-grid { gap: 0; border: 3px solid #1a1a1a; border-radius: 8px; overflow: hidden; }
+.rej-grid { gap: 0; border: 3px solid #1a1a1a; border-radius: 8px; overflow: hidden; touch-action: none; }
 .rej { aspect-ratio: 1; min-width: 0; border: 1px solid #1a1a1a; padding: 0; font: 900 clamp(1rem, 5.5vw, 1.6rem)/1 var(--font-body); color: #1a1a1a; cursor: pointer; display: grid; place-items: center; }
 .rej.marca { color: rgba(0,0,0,0.45); font-size: clamp(0.8rem, 3.8vw, 1.1rem); }
 .rej.choque { box-shadow: inset 0 0 0 3px var(--red); background-image: repeating-linear-gradient(45deg, rgba(224,36,60,0.35) 0 4px, transparent 4px 8px) !important; }
@@ -393,8 +395,8 @@ button.md-fila { cursor: pointer; }
 .tan.revelada { box-shadow: inset 0 0 0 3px var(--cyan); cursor: default; }
 /* La revelada en una línea que choca: anillo cian por fuera y rojo por dentro, se ven los dos */
 .tan.revelada.choque { box-shadow: inset 0 0 0 3px var(--cyan), inset 0 0 0 6px var(--red); }
-.tango-acciones .btn, .zip-acciones .btn { white-space: normal; line-height: 1.15; }
-.tango-acciones .btn.armado, .zip-acciones .btn.armado { border-color: var(--yellow); color: var(--yellow); background: rgba(255, 210, 63, 0.12); }
+.tango-acciones .btn, .zip-acciones .btn, .reinas-acciones .btn { white-space: normal; line-height: 1.15; }
+.tango-acciones .btn.armado, .zip-acciones .btn.armado, .reinas-acciones .btn.armado { border-color: var(--yellow); color: var(--yellow); background: rgba(255, 210, 63, 0.12); }
 .tips ul { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
 .tips summary { min-height: 44px; }
 .jugar-head .chip { margin-left: auto; margin-right: 8px; }
