@@ -8,7 +8,8 @@ Estampa una versión en el sitio para evitar caché mezclada (HTML nuevo con JS 
 - Agrega ?v=VERSION a las hojas de estilo.
 - Actualiza el número de versión visible en el pie del menú.
 
-- Antes de estampar, revisa que el README no haya quedado viejo (tools/readme.py revisar):
+- Antes de estampar, revisa que el README no haya quedado viejo (tools/readme.py revisar)
+  y que las imágenes de las tarjetas sociales estén al día (tools/og.mjs revisar, D-181):
   la publicación es el único momento por el que pasan todos los cambios, así que es el
   lugar donde preguntarlo. Con --igual se estampa igual, para una urgencia.
 
@@ -49,6 +50,12 @@ def tarjetas_sociales():
     print('Tarjetas sociales:', ultima[-1] if ultima else r.stderr.strip())
 
 
+def revisar_imagenes():
+    """Las imágenes de las tarjetas, contra su dibujo y sus textos de hoy (D-181). True si están al día."""
+    print('Imágenes de las tarjetas:', flush=True)
+    return subprocess.run(['node', str(ROOT / 'tools/og.mjs'), 'revisar']).returncode == 0
+
+
 def revisar_readme():
     """El README, contra el código de hoy. Devuelve True si está al día."""
     print('README:', flush=True)
@@ -77,6 +84,12 @@ if __name__ == '__main__':
         sys.exit('uso: python3 tools/set-version.py X.Y.Z [--igual]')
     if not revisar_readme() and '--igual' not in sys.argv:
         sys.exit('\nel README quedó atrás del código. Arriba dice qué le falta.\n'
+                 'Para estampar igual (y arreglarlo después): '
+                 f'python3 tools/set-version.py {args[0]} --igual')
+    # Una imagen hecha con el dibujo viejo o antes de cambiar una bajada (las píldoras desalineadas
+    # volvieron así más de una vez): se rehace antes de publicar, no después (D-181)
+    if not revisar_imagenes() and '--igual' not in sys.argv:
+        sys.exit('\nhay imágenes de tarjetas que quedaron atrás: node tools/og.mjs imagenes\n'
                  'Para estampar igual (y arreglarlo después): '
                  f'python3 tools/set-version.py {args[0]} --igual')
     print()

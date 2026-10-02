@@ -2616,3 +2616,21 @@ inicial; el dueño prefirió niveles); generar con rectas al azar como Planarity
 de 6 a 10 a 15 nudos y no dan diez niveles parejos); prohibir soltar un nudo encima de otro (el
 cruce por cercanía ya lo resuelve sin un gesto que rebota).
 
+## D-181 · Cada imagen de tarjeta guarda su huella, y una atrasada no se publica
+**Fecha:** 2026-10-02 · **Estado:** vigente · **Amplía D-72**
+**Decisión:** `node tools/og.mjs imagenes` anota en `assets/og/huellas.json` la huella de cada
+imagen que hace: un hash del dibujo (`tools/og/tarjeta.html`) y de lo que la imagen dice (el emoji,
+el nombre, la bajada, los jugadores y la duración del juego en `games.js`, o los textos de la
+portada). `node tools/og.mjs revisar` la compara con la de hoy y da error si una imagen falta o se
+hizo con otro dibujo u otros textos. Lo corren CI (en cada PR) y `set-version.py` antes de
+estampar, que no estampa sin `--igual`. `imagenes` rehace solo las atrasadas; `--todas`, todas.
+**Por qué:** las píldoras desalineadas de jugadores y duración volvieron por tercera vez (0.84.2,
+0.84.3 y la de Desenredo en 0.85.0). El arreglo estaba en el dibujo, pero una imagen hecha desde
+una rama anterior a ese arreglo salía con el dibujo viejo, y `revisar` solo miraba que el archivo
+existiera. El error no está en el CSS sino en que nada delataba una imagen vieja.
+**Consecuencias:** cambiar `tarjeta.html` marca las 19 imágenes y obliga a rehacerlas (con Chrome
+y fuentes de Google: en el Mac del dueño, no en la nube). Cambiar una bajada marca solo la de ese
+juego. `base.css` no entra en la huella: cambia seguido por cosas que la tarjeta no usa.
+**Alternativas descartadas:** rehacer todas las imágenes en cada publicación (lento, necesita
+internet y Chrome, y llena el diff de bytes); comparar fechas de archivo (git no las conserva).
+
