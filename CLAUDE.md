@@ -199,6 +199,18 @@ node tools/documentar.mjs anotar --hasta <commit> [--pr <url>] [--pendiente "…
 node tools/documentar.mjs historial
 ```
 
+## Marketing y video promocional (D-178)
+
+Los assets de marketing viven en `marketing/`, cada uno con su carpeta y un README que es su
+memoria (lo que pidió el dueño en cada vuelta, cómo está hecho, cómo se rehace, la historia).
+**Antes de trabajar en el video, nuevo o existente, se lee `marketing/video-promo/README.md`
+entero** (el skill `video-promo` lo carga) y al terminar se anota la vuelta ahí y en
+`marketing/registro.json`. Solo la última versión de cada archivo final vive en el repo.
+
+```bash
+marketing/video-promo/construir.sh       # rehace el video entero (sitio servido en $SITIO)
+```
+
 ## Reportes de La Copa
 
 El botón 🐞 de La Copa escribe en `feedback/` sin cuenta (D-104). Para leerlos y conversarlos:

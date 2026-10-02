@@ -1,0 +1,564 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Juegos de Salón — Promo</title>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg1: #150726; --bg2: #2a0a4a; --bg3: #0b1e3f;
+    --pink: #ff2e88; --yellow: #ffd23f; --cyan: #2ee6d6; --lime: #9dff3a;
+    --orange: #ff7a1a; --purple: #8a4dff;
+    --display: 'Bangers', Impact, sans-serif;
+    --body: 'Nunito', system-ui, sans-serif;
+  }
+  html, body { margin: 0; background: #000; overflow: hidden; }
+  #stage {
+    position: relative; width: 1080px; height: 1920px; overflow: hidden;
+    font-family: var(--body); color: #fff;
+    background: linear-gradient(160deg, var(--bg1), var(--bg2) 55%, var(--bg3));
+  }
+  /* Abierto en un navegador normal: el escenario se achica hasta caber en la ventana */
+  body.preview { display: grid; place-items: center; height: 100vh; }
+  body.preview #stage { transform-origin: center; }
+
+  .abs { position: absolute; }
+  .layer { position: absolute; inset: 0; }
+  .blob { position: absolute; border-radius: 50%; filter: blur(90px); }
+  .dot { position: absolute; border-radius: 50%; }
+  .center { left: 0; right: 0; text-align: center; }
+
+  .disp { font-family: var(--display); letter-spacing: 0.04em; line-height: 0.95; }
+  .shadow { text-shadow: 0 8px 0 rgba(0,0,0,0.35); }
+  .glow-y { text-shadow: 0 8px 0 rgba(0,0,0,0.35), 0 0 50px rgba(255,210,63,0.6); }
+  .glow-c { text-shadow: 0 8px 0 rgba(0,0,0,0.35), 0 0 50px rgba(46,230,214,0.6); }
+  .glow-p { text-shadow: 0 8px 0 rgba(0,0,0,0.35), 0 0 50px rgba(255,46,136,0.7); }
+
+  .grad-logo {
+    background: linear-gradient(180deg, #e6ff5a 0%, #9dff3a 45%, #36d07a 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 9px 0 rgba(0,0,0,0.4)) drop-shadow(0 0 40px rgba(157,255,58,0.45));
+  }
+  .grad-gold {
+    background: linear-gradient(180deg, #fff3a8 0%, #ffd23f 45%, #ff9a1a 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 9px 0 rgba(0,0,0,0.4)) drop-shadow(0 0 50px rgba(255,210,63,0.55));
+  }
+
+  /* El celular */
+  .phone {
+    position: absolute; width: 560px; height: 1212px; left: 260px; top: 590px;
+    border-radius: 78px; background: #0d0718; padding: 18px; box-sizing: border-box;
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.14), 0 40px 90px rgba(0,0,0,0.6);
+    transform-style: preserve-3d;
+  }
+  .phone .screen { position: relative; width: 100%; height: 100%; border-radius: 60px; overflow: hidden; background: var(--bg1); }
+  .phone .screen img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; }
+  .phone .notch { position: absolute; top: 34px; left: 50%; width: 150px; height: 40px; margin-left: -75px; background: #000; border-radius: 22px; z-index: 3; }
+
+  .chip {
+    display: inline-flex; align-items: center; gap: 14px; padding: 14px 30px; border-radius: 999px;
+    background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.22);
+    font-weight: 900; font-size: 36px;
+  }
+  .card {
+    position: absolute; left: 110px; right: 110px; height: 230px; border-radius: 40px;
+    background: rgba(255,255,255,0.08); border: 3px solid rgba(255,255,255,0.18);
+    display: flex; align-items: center; gap: 40px; padding: 0 50px; box-sizing: border-box;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+  }
+  .card .ico { font-size: 110px; width: 170px; text-align: center; }
+  .card b { display: block; font-family: var(--display); font-size: 74px; letter-spacing: 0.04em; }
+  .card span { display: block; font-size: 38px; font-weight: 700; color: rgba(255,255,255,0.78); }
+  .url {
+    display: inline-block; padding: 34px 70px; border-radius: 999px;
+    background: linear-gradient(180deg, var(--yellow), var(--orange)); color: #3a1200;
+    font-family: var(--display); font-size: 104px; letter-spacing: 0.03em;
+    box-shadow: 0 14px 0 #9a4a00, 0 0 80px rgba(255,210,63,0.55);
+  }
+  .phone .screen .play { position: absolute; inset: 0; }
+  .touch { position: absolute; width: 74px; height: 74px; margin: -37px 0 0 -37px; border-radius: 50%; z-index: 5;
+    background: rgba(255,255,255,0.55); border: 3px solid rgba(255,255,255,0.95); box-shadow: 0 0 18px rgba(0,0,0,0.35); pointer-events: none; }
+  .ripple { position: absolute; width: 74px; height: 74px; margin: -37px 0 0 -37px; border-radius: 50%; z-index: 5;
+    border: 4px solid rgba(255,255,255,0.9); pointer-events: none; }
+  #cphone .screen img { height: auto; object-fit: initial; }
+  .emoji { font-family: 'Noto Color Emoji', 'Apple Color Emoji', sans-serif; }
+  .more-chip { display: inline-flex; align-items: center; gap: 16px; padding: 16px 34px; border-radius: 999px; margin: 12px;
+    background: rgba(255,255,255,0.12); border: 3px solid rgba(255,255,255,0.28); font-weight: 900; font-size: 50px; white-space: nowrap; }
+  .wide .phone { transform-origin: center; }
+  .mini { position: relative; margin: 0 auto; padding: 10px; border-radius: 34px; background: #0d0718; box-sizing: content-box;
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.16), 0 24px 50px rgba(0,0,0,0.5); }
+  .mscreen { position: relative; width: 100%; height: 100%; border-radius: 26px; overflow: hidden; background: var(--bg1); }
+  .mscreen img { position: absolute; left: 0; top: 0; width: 100%; }
+  .wide .mlabel { margin-left: -45px; margin-right: -45px; }
+  .mlabel { margin-top: 18px; font-weight: 900; font-size: 34px; line-height: 1.15; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="layer" id="bg"></div>
+  <div class="layer" id="dots"></div>
+
+  <!-- 1. Gancho -->
+  <div class="layer" id="s1">
+    <div class="abs center disp glow-y" id="h1" style="top:560px;font-size:150px;color:var(--yellow)">JUNTA A<br>TUS AMIGOS</div>
+    <div class="abs center disp glow-c" id="h2" style="top:900px;font-size:150px;color:var(--cyan)">SACA EL<br>CELULAR</div>
+    <div class="abs center disp glow-p" id="h3" style="top:1240px;font-size:178px;color:var(--pink)">¡Y A JUGAR!</div>
+  </div>
+
+  <!-- 2. Logo -->
+  <div class="layer" id="s2">
+    <div class="layer" id="orbit"></div>
+    <div class="abs center emoji" id="die" style="top:520px;font-size:230px">🎲</div>
+    <div class="abs center disp grad-logo" id="l1" style="top:820px;font-size:220px">JUEGOS</div>
+    <div class="abs center disp grad-logo" id="l2" style="top:1030px;font-size:220px">DE SALÓN</div>
+    <div class="abs center" id="l3" style="top:1300px;font-size:52px;font-weight:900;line-height:1.3;padding:0 90px">Los juegos de toda la vida,<br>en tu celular</div>
+  </div>
+
+  <!-- 3. Juegos -->
+  <div class="layer" id="s3">
+    <div class="abs" id="glow" style="left:90px;top:640px;width:900px;height:1100px;border-radius:50%;filter:blur(110px)"></div>
+    <div id="titles"></div>
+    <div class="phone" id="phone"><div class="screen" id="screen"></div></div>
+  </div>
+
+  <!-- 3b. Y muchos más -->
+  <div class="layer" id="s7">
+    <div class="abs center disp glow-y" id="x0" style="top:110px;font-size:130px;color:var(--yellow)">¡Y MUCHOS MÁS!</div>
+    <div class="layer" id="x1"></div>
+    <div class="abs center" id="x2" style="top:262px;font-size:44px;font-weight:900;color:rgba(255,255,255,0.85)">…y siempre van llegando nuevos</div>
+  </div>
+
+  <!-- 4. Modos -->
+  <div class="layer" id="s4">
+    <div class="abs center disp glow-y" id="m0" style="top:250px;font-size:140px;color:var(--yellow)">JUEGA COMO<br>QUIERAS</div>
+    <div class="card" id="m1" style="top:640px"><div class="ico emoji">📱</div><div><b style="color:var(--cyan)">EN UN CELULAR</b><span>que pasa de mano en mano</span></div></div>
+    <div class="card" id="m2" style="top:910px"><div class="ico emoji">📲</div><div><b style="color:var(--pink)">EN VARIOS</b><span>cada uno en el suyo, con un link</span></div></div>
+    <div class="card" id="m3" style="top:1180px"><div class="ico emoji">🤖</div><div><b style="color:var(--lime)">CONTRA EL CELULAR</b><span>o jugando solo</span></div></div>
+    <div class="abs center" id="m5" style="top:1450px;font-size:48px;font-weight:900">Y en <span style="color:var(--yellow)">tres idiomas</span>: tú eliges</div>
+    <div class="abs center" id="m4" style="top:1545px">
+      <span class="chip">🇪🇸&nbsp;Español</span>&nbsp;&nbsp;<span class="chip">🇬🇧&nbsp;English</span>&nbsp;&nbsp;<span class="chip">🇧🇷&nbsp;Português</span>
+    </div>
+  </div>
+
+  <!-- 5. La Copa -->
+  <div class="layer" id="s5">
+    <div class="abs center" id="c0" style="top:120px;font-size:64px;font-weight:900;line-height:1.2;padding:0 70px">¿Te atreves a desafiar<br>a tus amigos <span style="color:var(--yellow)">por una semana?</span></div>
+    <div class="abs center disp" id="c1" style="top:330px;font-size:230px"><span class="emoji" style="font-size:0.78em;vertical-align:0.06em">🏆</span> <span class="disp grad-gold">LA COPA</span></div>
+    <div class="abs center" id="c2" style="top:575px;font-size:46px;font-weight:900;line-height:1.3;padding:0 100px">Un juego distinto cada día.<br><span style="color:var(--yellow)">Quien suma más puntos, gana.</span></div>
+    <div class="phone" id="cphone"><div class="screen" id="cscreen"><img id="clarga" src="plays/copa-larga.png"><div class="touch" id="ctouch"></div></div></div>
+    <div class="layer" id="confetti"></div>
+  </div>
+
+  <!-- 6. Cierre -->
+  <div class="layer" id="s6">
+    <div class="abs center emoji" id="e0" style="top:330px;font-size:200px">🎲🃏👑</div>
+    <div class="abs center disp glow-c" id="e1" style="top:620px;font-size:165px;color:var(--cyan)">¡JUNTOS SE<br>JUEGA MEJOR!</div>
+    <div class="abs center" id="e2" style="top:1040px;font-size:46px;font-weight:900;color:rgba(255,255,255,0.9)">Gratis · Sin descargar nada · Sin cuentas</div>
+    <div class="abs center" id="e3" style="top:1230px"><span class="url">juegosdesalon.cl</span></div>
+    <div class="abs center" id="e4" style="top:1520px;font-size:42px;font-weight:700;color:rgba(255,255,255,0.7)">Abre el link y empieza a jugar</div>
+    <div class="abs center" id="e5" style="top:1640px;font-size:40px;font-weight:900;color:rgba(255,255,255,0.92)">🇪🇸 Español · 🇬🇧 English · 🇧🇷 Português</div>
+  </div>
+
+  <div class="layer" id="fade" style="background:#000;pointer-events:none"></div>
+</div>
+
+<script src="plays/plays.js"></script>
+<script>
+/* ---------- Formato: vertical 1080×1920 (Shorts, Reels, WhatsApp) o ?wide 1920×1080 (YouTube) ---------- */
+const WIDE = location.search.includes('wide');
+const W = WIDE ? 1920 : 1080, H = WIDE ? 1080 : 1920;
+const PS = WIDE ? 0.8 : 1;                           // escala del celular
+const $ = id => document.getElementById(id);
+const css = (el, o) => { for (const k in o) el.style[k] = o[k]; };
+css($('stage'), { width: W + 'px', height: H + 'px' });
+/** La columna de texto del horizontal: a la izquierda, junto al celular. */
+const COL = { left: '40px', right: '980px' };
+if (WIDE) {
+  document.body.classList.add('wide');
+  const L = {
+    h1: { top: '110px', fontSize: '130px' }, h2: { top: '410px', fontSize: '130px' }, h3: { top: '720px', fontSize: '160px' },
+    die: { top: '40px', fontSize: '190px' }, l1: { top: '270px', fontSize: '200px' }, l2: { top: '470px', fontSize: '200px' },
+    l3: { top: '750px', fontSize: '50px' },
+    glow: { left: '990px', top: '0px', width: '900px', height: '1080px' },
+    phone: { left: '1160px', top: '-66px' },
+    x0: { top: '40px', fontSize: '120px' }, x2: { top: '185px' },
+    m0: { top: '45px', fontSize: '110px' },
+    m1: { top: '220px', left: '380px', right: '380px', height: '170px' }, m2: { top: '410px', left: '380px', right: '380px', height: '170px' },
+    m3: { top: '600px', left: '380px', right: '380px', height: '170px' }, m5: { top: '810px', fontSize: '46px' }, m4: { top: '890px' },
+    c0: { top: '150px', fontSize: '50px', ...COL, padding: '0' }, c1: { top: '340px', fontSize: '180px', ...COL }, c2: { top: '610px', ...COL, padding: '0' },
+    cphone: { left: '1160px' },
+    e0: { top: '40px', fontSize: '150px' }, e1: { top: '230px', fontSize: '135px' }, e2: { top: '530px' }, e3: { top: '630px' },
+    e4: { top: '850px' }, e5: { top: '925px' },
+  };
+  for (const id in L) css($(id), L[id]);
+  $('m0').innerHTML = 'JUEGA COMO QUIERAS';
+  document.querySelectorAll('#s4 .card .ico').forEach(e => css(e, { fontSize: '90px', width: '140px' }));
+}
+
+/* ---------- Línea de tiempo. La canción va a 130 BPM y cada corte cae en un golpe. ---------- */
+const BEAT = 60 / 130;
+const FPS = 30;
+const GAMES = [
+  { emoji: '⏳', name: 'LÍNEA DE TIEMPO', line: '¿Qué pasó primero?',                 chip: '1–6 jugadores', img: 'linea',  color: [255, 210, 63], beats: 5 },
+  { emoji: '🔢', name: 'TOQUE Y FAMA',    line: 'Adivina el número secreto',          chip: '1–2 jugadores', img: 'toque',  color: [46, 230, 214], beats: 5 },
+  { emoji: '🎲', name: 'DUDO',            line: 'Apuesta y aguanta la cara',          chip: '1–6 jugadores', img: 'dudo',   color: [255, 122, 26], beats: 5 },
+  { emoji: '📍', name: '¿DÓNDE QUEDA?',   line: 'Encuentra la ciudad en el globo',     chip: '2–5 min',       img: 'donde',  color: [46, 160, 255], beats: 6 },
+  { emoji: '⚓', name: 'BATALLA NAVAL',   line: 'Hunde la flota rival',                chip: '1–2 jugadores', img: 'naval',  color: [46, 160, 255], beats: 5 },
+  { emoji: '👑', name: 'REINAS',          line: 'Una por fila, columna y color',       chip: '2–5 min',       img: 'reinas', color: [255, 46, 136], beats: 6 },
+  { emoji: '☀️', name: 'TANGO',           line: 'Soles y lunas, nunca tres seguidos',  chip: '3–8 min',       img: 'tango',  color: [255, 210, 63], beats: 5 },
+  { emoji: '〰️', name: 'ZIP',             line: 'Un solo trazo por todo el tablero',   chip: '3 min',         img: 'zip',    color: [255, 122, 26], beats: 7 },
+];
+const MORE = [['👑', 'Cuarto Rey', 'rey'], ['🔗', 'Conexiones', 'conexiones'], ['🪢', 'El Ahorcado', 'ahorcado'], ['📅', '¿En qué año?', 'anio'], ['🔤', 'Toque y Fama: Palabra', 'letras']];
+// Escenas en golpes: gancho 7 · logo 7 · juegos 44 · más 14 · modos 8 · La Copa 16 · cierre 9 = 105 (la canción con 4 compases repetidos, ver README)
+const S = {}; { let b = 0; for (const [k, n] of [['hook', 7], ['logo', 7], ['games', GAMES.reduce((s, g) => s + g.beats, 0)], ['more', 14], ['modes', 8], ['copa', 16], ['cta', 9]]) { S[k] = [b * BEAT, (b + n) * BEAT]; b += n; } }
+const DURATION = S.cta[1];
+const G0 = S.games[0], G1 = S.games[1];
+{ let t = G0; for (const g of GAMES) { g.len = g.beats * BEAT; g.t0 = t; t += g.len; } }
+const gameAt = t => { let i = 0; GAMES.forEach((g, k) => { if (t >= g.t0) i = k; }); return i; };
+
+/* ---------- Ayudas de cálculo ---------- */
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const prog = (t, a, b) => clamp((t - a) / (b - a));
+const lerp = (a, b, x) => a + (b - a) * x;
+const easeOut = x => 1 - Math.pow(1 - x, 3);
+const easeIn = x => x * x * x;
+const easeInOut = x => x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+const back = x => { const c1 = 2.2, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+const elastic = x => x === 0 ? 0 : x === 1 ? 1 : Math.pow(2, -10 * x) * Math.sin((x * 10 - 0.75) * (2 * Math.PI / 3)) + 1;
+function rng(seed) { return () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }; }
+const win = (t, a, b, fi = 0.25, fo = 0.3) => Math.min(prog(t, a, a + fi), 1 - prog(t, b - fo, b));
+/** Pulso: 1 en cada golpe de la canción, y se apaga. */
+const beat = t => Math.exp(-((t % BEAT) * 9));
+
+/* ---------- Lo que no cambia ---------- */
+const R = rng(7);
+const dots = [];
+for (let i = 0; i < 46; i++) {
+  const el = document.createElement('div'); el.className = 'dot';
+  const size = 6 + R() * 26;
+  const col = ['#ff2e88', '#ffd23f', '#2ee6d6', '#9dff3a', '#8a4dff', '#ffffff'][i % 6];
+  css(el, { width: size + 'px', height: size + 'px', background: col, opacity: 0.25 + R() * 0.45, boxShadow: `0 0 ${size}px ${col}` });
+  $('dots').appendChild(el);
+  dots.push({ el, x: R() * W, y: R() * H, sp: 20 + R() * 70, sway: R() * 6.28, amp: 10 + R() * 30 });
+}
+const blobs = [['#ff2e88', 900, -150, -200], ['#2ee6d6', 800, W - 480, 100], ['#8a4dff', 1000, 100, H - 620]].map(([c, s, x, y]) => {
+  const el = document.createElement('div'); el.className = 'blob';
+  css(el, { background: c, width: s + 'px', height: s + 'px', opacity: 0.4 });
+  $('bg').appendChild(el); return { el, s, x, y };
+});
+// Órbitas: centro y radios según el formato
+const OH = WIDE ? { cx: W / 2, cy: H / 2, rx: 1.7, ry: 0.95 } : { cx: 540, cy: 960, rx: 1, ry: 1.45 };
+const OL = WIDE ? { cx: W / 2, cy: 560, rx: 1.75, ry: 0.95 } : { cx: 540, cy: 1000, rx: 1, ry: 1.5 };
+
+const ORBIT = ['⏳', '🔢', '🪢', '🎲', '⚓', '👑', '🔗', '🧩', '🏆', '🃏'];
+const orbit = ORBIT.map(e => { const el = document.createElement('div'); el.className = 'abs emoji'; el.textContent = e; css(el, { fontSize: '96px', left: '0', top: '0' }); $('orbit').appendChild(el); return el; });
+const hookEmojis = ['🃏', '🎲', '🪢', '⚓', '👑', '⏳'].map(e => {
+  const el = document.createElement('div'); el.className = 'abs emoji'; el.textContent = e; css(el, { fontSize: '120px' }); $('s1').appendChild(el); return el;
+});
+
+const T = WIDE ? { emoji: 150, name: 360, line: 540, chip: 660, col: 'left:40px;right:980px' } : { emoji: 70, name: 250, line: 410, chip: 1830, col: '' };
+const titles = GAMES.map(g => {
+  const w = document.createElement('div'); w.className = 'layer';
+  const fs = g.name.length > 18 ? 92 : g.name.length > 13 ? 128 : 150;
+  w.innerHTML = `<div class="abs center emoji" style="top:${T.emoji}px;font-size:150px;${T.col}">${g.emoji}</div>
+    <div class="abs center disp shadow" style="top:${T.name}px;font-size:${fs}px;color:rgb(${g.color});${T.col}">${g.name}</div>
+    <div class="abs center" style="top:${T.line}px;font-size:52px;font-weight:900;${T.col}">${g.line}</div>
+    <div class="abs center" style="top:${T.chip}px;${T.col}"><span class="chip" style="font-size:32px;padding:10px 26px">${g.chip}</span></div>`;
+  $('titles').appendChild(w); return w;
+});
+
+/* Los juegos se juegan de verdad: una captura real por jugada (jugar.mjs), con un círculo donde fue el
+   dedo. Las capturas son de 390×844 px css; `sc` y `ox` las llevan a una pantalla. */
+function makePlayer(box, play, sc, ox, touchSize = 74) {
+  const P = { frames: play.map(f => { const img = document.createElement('img'); img.src = `plays/${f.img}`; box.appendChild(img); return img; }) };
+  P.touch = document.createElement('div'); P.touch.className = 'touch'; box.appendChild(P.touch);
+  P.ripple = document.createElement('div'); P.ripple.className = 'ripple'; box.appendChild(P.ripple);
+  if (touchSize !== 74) for (const e of [P.touch, P.ripple]) css(e, { width: touchSize + 'px', height: touchSize + 'px', margin: `${-touchSize / 2}px 0 0 ${-touchSize / 2}px` });
+  P.raw = play.map((f, k) => ({ k, tap: f.tap })).filter(x => x.tap).map(x => ({ ...x,
+    X: x.tap.x * sc - ox, Y: x.tap.y * sc,
+    path: x.tap.path ? x.tap.path.map(([dx, dy]) => [dx * sc, dy * sc]) : (x.tap.dx || x.tap.dy) ? [[0, 0], [x.tap.dx * sc, x.tap.dy * sc]] : null,
+    mids: x.tap.mids || 0 }));
+  P.raw.forEach(x => { x.lead = x.path ? (x.path.length > 2 ? 1.3 : x.mids ? 0.75 : 0.42) : 0; });
+  return P;
+}
+/** Reparte las jugadas entre a y b (segundos); un arrastre necesita su tiempo antes de llegar. */
+function schedule(P, a, b) {
+  const n = P.raw.length, leads = P.raw.reduce((s, x) => s + x.lead, 0);
+  const gap = n > 1 ? Math.max(0.16, (b - a - leads) / (n - 1)) : 0;
+  let cur = a - gap;
+  P.taps = P.raw.map(x => { cur += gap + x.lead; return { ...x, at: n > 1 ? cur : Math.max((a + b) / 2, a + x.lead) }; });
+}
+const along = (path, m) => {
+  if (m <= 0) return path[0];
+  const seg = [], tot = path.slice(1).reduce((s, q, i) => { const d = Math.hypot(q[0] - path[i][0], q[1] - path[i][1]); seg.push(d); return s + d; }, 0);
+  let left = m * tot;
+  for (let i = 0; i < seg.length; i++) { if (left <= seg[i] || i === seg.length - 1) { const f = seg[i] ? Math.min(1, left / seg[i]) : 1; return [lerp(path[i][0], path[i + 1][0], f), lerp(path[i][1], path[i + 1][1], f)]; } left -= seg[i]; }
+};
+/** Una jugada: el dedo baja, (arrastra,) sube; la pantalla responde justo después. */
+function playAt(P, lt) {
+  let k = 0;
+  P.taps.forEach(x => { if (lt >= x.at + 0.05) k = x.k; });
+  // Mientras dura un arrastre pasan sus capturas intermedias (el globo girando, el trazo creciendo)
+  for (const x of P.taps) if (x.mids && lt >= x.at - x.lead && lt < x.at + 0.05) {
+    const j = Math.min(x.mids, Math.floor(prog(lt, x.at - x.lead, x.at) * (x.mids + 1)));
+    k = x.k - x.mids - 1 + j;
+  }
+  P.frames.forEach((img, i) => { img.style.display = i === k ? '' : 'none'; });
+  P.touch.style.opacity = 0; P.ripple.style.opacity = 0;
+  for (const x of P.taps) {
+    const t0 = x.at - (x.path ? x.lead : 0.14), t1 = x.at + 0.12;
+    if (lt < t0 - 0.08 || lt > t1 + 0.1) continue;
+    const pin = easeOut(prog(lt, t0 - 0.08, t0)), pout = 1 - prog(lt, t1, t1 + 0.1);
+    const [dx, dy] = x.path ? along(x.path, x.mids ? prog(lt, t0, x.at) : easeInOut(prog(lt, t0, x.at))) : [0, 0];
+    const press = lt < x.at && !x.path ? lerp(1.25, 0.85, pin) : 0.85;
+    css(P.touch, { opacity: Math.min(pin, pout), left: x.X + dx + 'px', top: x.Y + dy + 'px', transform: `scale(${press})` });
+    if (!x.path && lt >= x.at) {
+      const r = prog(lt, x.at, x.at + 0.32);
+      css(P.ripple, { opacity: 1 - r, left: x.X + 'px', top: x.Y + 'px', transform: `scale(${1 + r * 1.6})` });
+    }
+  }
+}
+// El celular: pantalla de 524×1176, las capturas con object-fit: cover desde arriba
+const SC = 1176 / 844, OX = (390 * SC - 524) / 2;
+const shots = GAMES.map(g => {
+  const play = (window.PLAYS || {})[g.img];
+  if (!play) { const img = document.createElement('img'); img.src = `shots/${g.img}.png`; $('screen').appendChild(img); return img; }
+  const w = document.createElement('div'); w.className = 'play';
+  g.P = makePlayer(w, play, SC, OX);
+  schedule(g.P, 0.6, Math.min(g.len - 0.75, G1 - 0.65 - g.t0));
+  $('screen').appendChild(w); return w;
+});
+
+/* «Y muchos más»: una grilla de celulares chicos, cada uno jugando el suyo en bucle */
+const MT = WIDE ? { sw: 230, cols: [0, 1, 2, 3, 4].map(i => [W / 2 + (i - 2) * 350, 300]) }
+  : { sw: 250, cols: [[200, 370], [540, 370], [880, 370], [370, 1120], [710, 1120]] };
+const tiles = MORE.map(([emoji, name, id], i) => {
+  const sh = Math.round(MT.sw * 844 / 390), [cx, top] = MT.cols[i];
+  const t = document.createElement('div'); t.className = 'abs';
+  css(t, { left: cx - MT.sw / 2 - 10 + 'px', top: top + 'px', width: MT.sw + 20 + 'px', textAlign: 'center' });
+  t.innerHTML = `<div class="mini" style="width:${MT.sw}px;height:${sh}px"><div class="mscreen"></div></div>
+    <div class="mlabel"><span class="emoji">${emoji}</span> ${name}</div>`;
+  $('x1').appendChild(t);
+  const P = makePlayer(t.querySelector('.mscreen'), PLAYS[id], MT.sw / 390, 0, 34);
+  schedule(P, 0.45, 2.35);
+  return { el: t, P, delay: 0.35 + i * 0.22 };
+});
+const LOOP = 3.4;
+const confetti = [];
+{ const r = rng(42); const cols = ['#ff2e88', '#ffd23f', '#2ee6d6', '#9dff3a', '#8a4dff', '#ff7a1a'];
+  for (let i = 0; i < 90; i++) {
+    const el = document.createElement('div'); el.className = 'abs';
+    const w = 18 + r() * 18;
+    css(el, { width: w + 'px', height: w * 0.55 + 'px', background: cols[i % 6], borderRadius: '4px' });
+    $('confetti').appendChild(el);
+    const side = i % 2 ? 1 : -1;
+    confetti.push(WIDE
+      ? { el, t0: S.copa[0] + 0.6 + r() * 0.5, x: side > 0 ? W : 0, y: 760 + r() * 200, vx: -side * (400 + r() * 900), vy: -(1100 + r() * 600), g: 1500, spin: (r() - 0.5) * 1400 }
+      : { el, t0: S.copa[0] + 0.6 + r() * 0.5, x: side > 0 ? W : 0, y: 1300 + r() * 300, vx: -side * (300 + r() * 700), vy: -(1500 + r() * 900), g: 1900, spin: (r() - 0.5) * 1400 });
+  }
+}
+
+/* ---------- Dibujo: todo lo que se ve es función de t ---------- */
+function render(t) {
+  const gi = gameAt(t);
+  blobs.forEach((b, i) => {
+    const x = b.x + Math.sin(t * 0.35 + i * 2) * 120, y = b.y + Math.cos(t * 0.3 + i) * 140;
+    css(b.el, { transform: `translate(${x}px,${y}px) scale(${1 + 0.06 * beat(t) * (t > S.logo[0] ? 1 : 0)})` });
+  });
+  dots.forEach(d => {
+    const y = ((d.y - t * d.sp) % (H + 80) + H + 80) % (H + 80) - 40;
+    css(d.el, { transform: `translate(${d.x + Math.sin(t * 0.8 + d.sway) * d.amp}px,${y}px)` });
+  });
+
+  /* 1. Gancho */
+  { const [A, B] = S.hook, u = t - A;
+    const v = win(t, A, B, 0.01, 0.3);
+    css($('s1'), { opacity: v, display: v > 0 ? '' : 'none', transform: `scale(${1 + easeIn(prog(t, B - 0.35, B)) * 0.6})` });
+    if (v > 0) {
+      [['h1', 0.1, -4], ['h2', 2 * BEAT, 3], ['h3', 4 * BEAT, -2]].forEach(([id, a, rot]) => {
+        const p = prog(u, a, a + 0.42);
+        css($(id), { opacity: clamp(p * 3), transform: `scale(${lerp(2.6, 1, back(p))}) rotate(${rot * (1 - p) * 3 + rot * 0.4}deg)` });
+      });
+      hookEmojis.forEach((el, i) => {
+        const a = 0.15 + i * 0.42, p = easeOut(prog(u, a, a + 0.7));
+        const ang = i * 1.05 + t * 0.4, rad = lerp(1100, 470 + (i % 2) * 80, p);
+        css(el, { opacity: p, transform: `translate(${OH.cx - 60 + Math.cos(ang) * rad * OH.rx}px,${OH.cy - 60 + Math.sin(ang) * rad * OH.ry}px) rotate(${t * 40 + i * 50}deg)` });
+      });
+    } }
+
+  /* 2. Logo */
+  { const [A, B] = S.logo, u = t - A;
+    const v = win(t, A, B, 0.05, 0.3);
+    css($('s2'), { opacity: v, display: v > 0 ? '' : 'none' });
+    if (v > 0) {
+      const dp = prog(u, 0, 0.85);
+      css($('die'), { transform: `translateY(${lerp(-900, 0, elastic(dp))}px) rotate(${(1 - easeOut(dp)) * 540}deg) scale(${1 + 0.05 * beat(t)})` });
+      const p1 = back(prog(u, 0.35, 0.8)), p2 = back(prog(u, 0.55, 1.0));
+      css($('l1'), { transform: `translateX(${lerp(-1300, 0, p1)}px) rotate(-3deg)` });
+      css($('l2'), { transform: `translateX(${lerp(1300, 0, p2)}px) rotate(-3deg)` });
+      const p3 = easeOut(prog(u, 1.15, 1.7));
+      css($('l3'), { opacity: p3, transform: `translateY(${(1 - p3) * 40}px)` });
+      const out = easeIn(prog(t, B - 0.38, B));
+      orbit.forEach((el, i) => {
+        const a = 0.8 + i * 0.07, p = easeOut(prog(u, a, a + 0.55));
+        const ang = i / orbit.length * Math.PI * 2 + t * 0.5;
+        const r = lerp(0, 450, p) + out * 900;
+        css(el, { opacity: p, transform: `translate(${OL.cx - 55 + Math.cos(ang) * r * OL.rx}px,${OL.cy - 55 + Math.sin(ang) * r * OL.ry}px) scale(${0.6 + 0.4 * p})` });
+      });
+    } }
+
+  /* 3. Juegos */
+  const s3 = win(t, G0 - 0.2, G1, 0.2, 0.3);
+  css($('s3'), { opacity: s3, display: s3 > 0 ? '' : 'none' });
+  if (s3 > 0) {
+    const g = GAMES[gi];
+    const sp = 2 / g.len;                     // las entradas corren en unidades de 2 s
+    const lt = (t - g.t0) * sp;
+    const prev = GAMES[Math.max(0, gi - 1)].color, cur = g.color, cm = easeOut(clamp(lt / 0.5));
+    const col = prev.map((v, k) => Math.round(lerp(v, cur[k], gi === 0 ? 1 : cm)));
+    css($('glow'), { background: `rgba(${col},0.38)`, transform: `scale(${1 + 0.05 * beat(t)})` });
+    const enter = back(prog(t, G0 - 0.1, G0 + 0.6));
+    const bump = gi > 0 ? Math.exp(-lt * 6) * Math.sin(lt * 14) : 0;
+    const tilt = (gi % 2 ? 1 : -1) * 6;
+    const leave = easeIn(prog(t, G1 - 0.4, G1));
+    css($('phone'), {
+      transform: `perspective(2400px) translateY(${lerp(1400, 0, enter) + Math.sin(t * 1.6) * 12 + leave * 1400}px) rotateY(${tilt * easeOut(clamp(lt / 0.6)) + bump * 6}deg) rotateZ(${bump * 2}deg) scale(${(1 + bump * 0.03) * PS})`,
+      boxShadow: `0 0 0 3px rgba(255,255,255,0.14), 0 40px 90px rgba(0,0,0,0.6), 0 0 90px rgba(${col},0.55)`,
+    });
+    shots.forEach((img, i) => {
+      const gl = (t - GAMES[i].t0) * 2 / GAMES[i].len;
+      if (i === gi) {
+        const p = gi === 0 ? 1 : easeInOut(clamp(lt / 0.45));
+        css(img, { display: '', zIndex: 2, transform: `translateX(${(1 - p) * 100}%)`, filter: 'none' });
+      } else if (i === gi - 1 && lt < 0.45) {
+        const p = easeInOut(clamp(lt / 0.45));
+        css(img, { display: '', zIndex: 1, transform: `translateX(${-p * 35}%)`, filter: `brightness(${1 - p * 0.6})` });
+      } else css(img, { display: 'none' });
+      if (GAMES[i].P && img.style.display !== 'none') playAt(GAMES[i].P, i === gi ? t - GAMES[i].t0 : 99);
+    });
+    titles.forEach((w, i) => {
+      if (i !== gi) { w.style.display = 'none'; return; }
+      w.style.display = '';
+      const [em, nm, ln, ch] = w.children;
+      const o = 1 - easeIn(prog(lt, 1.75, 2)) * (gi < GAMES.length - 1 ? 1 : 0);
+      css(em, { opacity: o, transform: `scale(${back(prog(lt, 0.05, 0.45))}) rotate(${Math.sin(t * 3) * 8}deg)` });
+      const pn = back(prog(lt, 0.12, 0.5));
+      css(nm, { opacity: clamp(pn * 2) * o, transform: `translateY(${(1 - pn) * 80}px) scale(${1 + 0.03 * beat(t)})` });
+      const pl = easeOut(prog(lt, 0.3, 0.7));
+      css(ln, { opacity: pl * o, transform: `translateY(${(1 - pl) * 30}px)` });
+      const pc = back(prog(lt, 0.45, 0.85));
+      css(ch, { opacity: clamp(pc) * o, transform: `translateY(${(1 - pc) * 60}px)` });
+    });
+  }
+
+  /* 3b. Y muchos más */
+  { const [A, B] = S.more, u = t - A;
+    const v = win(t, A, B, 0.15, 0.3);
+    css($('s7'), { opacity: v, display: v > 0 ? '' : 'none' });
+    if (v > 0) {
+      const p0 = back(prog(u, 0, 0.4));
+      css($('x0'), { opacity: clamp(p0 * 2), transform: `scale(${lerp(2.2, 1, p0)}) rotate(-2deg)` });
+      tiles.forEach((T, i) => {
+        const p = back(prog(u, T.delay, T.delay + 0.45));
+        css(T.el, { opacity: clamp(p * 2), transform: `translateY(${(1 - p) * 120}px) scale(${0.6 + 0.4 * p}) rotate(${(i % 2 ? 1 : -1) * 1.5}deg)` });
+        const lt = u - T.delay - 0.5;
+        playAt(T.P, lt < 0 ? -1 : lt % LOOP);
+      });
+      const p2 = easeOut(prog(u, 0.35, 0.8));
+      css($('x2'), { opacity: p2, transform: `translateY(${(1 - p2) * 30}px)` });
+    } }
+
+  /* 4. Modos */
+  { const [A, B] = S.modes, u = t - A;
+    const v = win(t, A, B, 0.2, 0.3);
+    css($('s4'), { opacity: v, display: v > 0 ? '' : 'none' });
+    if (v > 0) {
+      const p0 = back(prog(u, 0.02, 0.42));
+      css($('m0'), { transform: `scale(${p0}) rotate(-2deg)` });
+      ['m1', 'm2', 'm3'].forEach((id, i) => {
+        const a = 0.4 + i * BEAT * 0.9, p = back(prog(u, a, a + 0.4));
+        css($(id), { opacity: clamp(p * 2), transform: `translateX(${(1 - p) * (i % 2 ? 1500 : -1500)}px) rotate(${(i - 1) * 1.2}deg)` });
+        css($(id).firstChild, { transform: `scale(${1 + 0.12 * beat(t) * (u > a + 0.4 ? 1 : 0)})` });
+      });
+      const p4 = easeOut(prog(u, 1.75, 2.1));
+      css($('m5'), { opacity: p4, transform: `scale(${lerp(0.7, 1, back(prog(u, 1.75, 2.1)))})` });
+      const p5 = easeOut(prog(u, 1.95, 2.35));
+      css($('m4'), { opacity: p5, transform: `translateY(${(1 - p5) * 50}px)` });
+      [...$('m4').querySelectorAll('.chip')].forEach((c, i) => {
+        const a = 2.3 + i * BEAT * 0.6, on = Math.exp(-Math.max(0, u - a) * 5) * (u >= a ? 1 : 0);
+        css(c, { transform: `scale(${1 + on * 0.18})`, borderColor: on > 0.05 ? `rgba(255,210,63,${0.25 + on * 0.75})` : '' });
+      });
+    } }
+
+  /* 5. La Copa */
+  { const [A, B] = S.copa, u = t - A;
+    const v = win(t, A, B, 0.15, 0.3);
+    css($('s5'), { opacity: v, display: v > 0 ? '' : 'none' });
+    if (v > 0) {
+      const p0 = back(prog(u, 0, 0.45));
+      css($('c0'), { opacity: clamp(p0 * 2), transform: `translateY(${(1 - p0) * -60}px)` });
+      const p1 = back(prog(u, 0.5, 1.0));
+      css($('c1'), { transform: `scale(${lerp(3, 1, p1)}) rotate(-2deg)`, opacity: clamp(p1 * 2) });
+      const p2 = easeOut(prog(u, 0.95, 1.45));
+      css($('c2'), { opacity: p2, transform: `translateY(${(1 - p2) * 30}px)` });
+      const p3 = back(prog(u, 1.2, 1.9));
+      css($('cphone'), { top: WIDE ? '150px' : '840px', transform: `perspective(2400px) translateY(${lerp(1300, 0, p3) + Math.sin(t * 1.6) * 12}px) rotateZ(${lerp(15, 3, p3)}deg) rotateY(-8deg) scale(${PS})`,
+        boxShadow: '0 0 0 3px rgba(255,255,255,0.14), 0 40px 90px rgba(0,0,0,0.6), 0 0 110px rgba(255,210,63,0.55)' });
+      // Tres pasadas sin apuro: el podio, el calendario, la tabla y el gráfico
+      const SW = [[2.5, 3.2, 0, 560], [4.2, 4.9, 560, 1150], [5.9, 6.6, 1150, 1700]];
+      let sc = 0; $('ctouch').style.opacity = 0;
+      for (const [a, b, y0, y1] of SW) {
+        if (u >= a) sc = lerp(y0, y1, easeOut(prog(u, a, b)));
+        if (u > a - 0.1 && u < a + 0.45) {
+          const m = easeInOut(prog(u, a, a + 0.35));
+          css($('ctouch'), { left: '300px', top: lerp(900, 420, m) + 'px', opacity: Math.min(prog(u, a - 0.1, a), 1 - prog(u, a + 0.35, a + 0.45)), transform: 'scale(0.85)' });
+        }
+      }
+      css($('clarga'), { transform: `translateY(${-sc}px)` });
+      confetti.forEach(c => {
+        const dt = t - c.t0;
+        if (dt < 0) { c.el.style.display = 'none'; return; }
+        c.el.style.display = '';
+        const x = c.x + c.vx * dt, y = c.y + c.vy * dt + 0.5 * c.g * dt * dt;
+        css(c.el, { transform: `translate(${x}px,${y}px) rotate(${c.spin * dt}deg) rotateX(${dt * 600}deg)` });
+      });
+    } }
+
+  /* 6. Cierre */
+  { const [A, B] = S.cta, u = t - A;
+    const v = win(t, A, B, 0.2, 0.01);
+    css($('s6'), { opacity: v, display: v > 0 ? '' : 'none' });
+    if (v > 0) {
+      const pe = back(prog(u, 0, 0.45));
+      css($('e0'), { transform: `scale(${pe}) translateY(${Math.sin(t * 3) * 12}px)` });
+      const p1 = back(prog(u, 0.2, 0.65));
+      css($('e1'), { transform: `scale(${lerp(2.4, 1, p1)}) rotate(-3deg)`, opacity: clamp(p1 * 2) });
+      const p2 = easeOut(prog(u, 0.7, 1.05));
+      css($('e2'), { opacity: p2, transform: `translateY(${(1 - p2) * 30}px)` });
+      const p3 = elastic(prog(u, 0.95, 1.8));
+      css($('e3'), { transform: `scale(${p3 * (1 + 0.04 * beat(t) * (u > 1.8 ? 1 : 0))})` });
+      css($('e4'), { opacity: easeOut(prog(u, 1.6, 2.0)) });
+      const p5 = back(prog(u, 1.9, 2.35));
+      css($('e5'), { opacity: clamp(p5 * 2), transform: `translateY(${(1 - p5) * 40}px)` });
+    } }
+
+  css($('fade'), { opacity: Math.max(1 - prog(t, 0, 0.2), prog(t, DURATION - 0.7, DURATION)) });
+}
+
+window.render = render;
+window.DURATION = DURATION;
+window.FPS = FPS;
+window.SIZE = [W, H];
+
+if (!location.search.includes('render')) {
+  document.body.classList.add('preview');
+  const fit = () => { $('stage').style.transform = `scale(${Math.min(innerWidth / W, innerHeight / H)})`; };
+  addEventListener('resize', fit); fit();
+  const start = performance.now();
+  const loop = () => { render(((performance.now() - start) / 1000) % DURATION); requestAnimationFrame(loop); };
+  document.fonts.ready.then(loop);
+} else render(0);
+</script>
+</body>
+</html>
