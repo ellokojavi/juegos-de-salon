@@ -1394,7 +1394,7 @@ la primera hace que el tablero parezca imposible.
 **Por qué:** probar una copa de 7 días con amigos no puede tomar 7 días.
 
 ## D-116 · Cada cosa en su momento de la copa
-**Fecha:** 2026-09-24 · **Estado:** vigente; la invitación en Administrar la cambia D-175
+**Fecha:** 2026-09-24 · **Estado:** vigente; la invitación en Administrar la cambia D-176
 **Decisión:** Una revisión de lo que depende de la etapa de la copa (antes de partir, en juego,
 terminada) y de si la inscripción está cerrada:
 - **Invitación** (en Administrar y en el tablero): solo antes de partir y con la inscripción abierta.
@@ -2515,7 +2515,19 @@ cambia nada: ya se podía elegir para cualquier día desde D-163.
 **Consecuencias:** la portada ofrece siete minijuegos sueltos. La captura del menú en el README se
 rehace. `labs` en `BASE` de `copa/rules.js` no se usa para la portada y queda como estaba.
 
-## D-175 · En Administrar, la invitación sigue mientras alguien pueda entrar
+## D-175 · La Copa sale del laboratorio y llega al menú
+**Fecha:** 2026-10-02 · **Estado:** vigente; cierra el periodo de laboratorio de D-101
+**Decisión:** La Copa queda activa en el menú principal (`available: true` y sin `labs` en
+`games.js`): su tarjeta abre `/copa/`, sin "Próximamente". El botón "‹ Menú" de La Copa vuelve al
+menú; solo quien llega desde el laboratorio (`?labs`) vuelve a `/labs/`.
+- **El laboratorio sigue** para probar: la Copa de 3 días (D-100), la práctica con semilla, las
+  demos y la copa simulada. Las copas creadas desde ahí siguen marcadas en el panel.
+- **Lo que se ofrece desde el menú es la Copa de 7 días**, como siempre fue el plan (D-100).
+
+**Por qué:** El dueño lo pidió: la copa ya se probó con amigos (los reportes de 🐞, las rondas de
+usabilidad y los arreglos de La Copa en inglés y portugués) y ya se comparte por su link.
+
+## D-176 · En Administrar, la invitación sigue mientras alguien pueda entrar
 **Fecha:** 2026-10-02 · **Estado:** vigente; cambia la invitación de D-116 solo en Administrar
 **Decisión:** El mensaje **Invitación** de Administrar ya no desaparece cuando parte la copa: está
 mientras alguien nuevo pueda inscribirse, es decir, con la inscripción abierta (hasta la final o

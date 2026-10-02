@@ -29,7 +29,8 @@ Cada regla tiene un ID (U-n) para citarla en los PR y en los issues.
 - **U-12 · Nada se encima:** nombres largos parten línea; etiquetas de empatados se apilan.
 - **U-13 · Lo que se muestra es lo que se juega:** el laboratorio tiene la misma UX que producción.
 - **U-14 · Cada cosa en su momento de la copa** (D-116): la invitación mientras se pueda
-  entrar (en Administrar, D-175), la tabla parcial mientras se juega, el resumen al terminar, "sacar" nunca con la copa terminada.
+  entrar (en Administrar, D-176), la tabla parcial mientras se juega, el resumen al terminar,
+  "sacar" nunca con la copa terminada.
 - **U-15 · Las acciones que no se deshacen piden confirmación** (rendirse, eliminar la copa,
   cerrar la inscripción, mover el inicio). Eliminar pide escribir el nombre.
 

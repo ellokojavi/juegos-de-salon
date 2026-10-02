@@ -17,7 +17,7 @@ The menu can be filtered by kind of game (words, logic, trivia, cards and dice);
 <!-- generado: juegos · written by python3 tools/readme.py actualizar -->
 | Game | Players | Modes | Status |
 |---|---|---|---|
-| 🏆 [The Cup / La Copa / A Copa](#-the-cup-la-copa) | 2 to 10 | Each on their own phone | 🧪 lab |
+| 🏆 [The Cup / La Copa / A Copa](#-the-cup-la-copa) | 2 to 10 | Each on their own phone | v0.83 |
 | ⏳ [Timeline / Línea de Tiempo / Linha do Tempo](#-timeline-línea-de-tiempo) | 1 to 6 | One phone · Several phones · Play alone | v0.9 |
 | 🔢 [Bulls and Cows / Toque y Fama / Toque e Fama](#-bulls-and-cows-toque-y-fama) | 1 to 2 | One phone · Two phones · Play alone | v0.4 |
 | 🪢 [Hangman / El Ahorcado / Forca](#-hangman-el-ahorcado) | 1 to 6 | One phone · Several phones · Play alone | v0.26 |
@@ -338,7 +338,7 @@ Spec and design: [docs/juegos/julepe.md](docs/juegos/julepe.md)
 </table>
 <!-- /generado -->
 
-**In the lab for now** (D-101): the menu shows it as *coming soon*, and it is tested at [`/labs/`](https://juegosdesalon.cl/labs/), where you can practice each minigame on its own, simulate a whole cup on one computer, or run a real 3-day cup with close friends. A 🐞 button sends bug reports and comments with their context, no login needed.
+**On the menu since D-175**, after a stint in the lab (D-101). The lab at [`/labs/`](https://juegosdesalon.cl/labs/) stays for testing: practice each minigame on its own, simulate a whole cup on one computer, or run a real 3-day cup with close friends. A 🐞 button sends bug reports and comments with their context, no login needed.
 
 Not a game but a **tournament that lasts a week**. Someone creates a cup and shares the link with the group; everyone joins with their name and a 4-digit PIN, from any phone or computer. Every day a different minigame opens, **the same one for everybody**, and it can be played **once**. Your score only matters against the others: the day hands out points by position (10, 8, 6, 5, 4, 3, 2, 1), so every day weighs the same (and every minigame scores 0 to 100 anyway, D-113) and one crushing day does not decide the cup (D-94). The final day is worth double, everyone gets one ×2 wildcard, and whoever has the most points on day 7 lifts the cup.
 
