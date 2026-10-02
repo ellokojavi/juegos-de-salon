@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.84.2 — 2026-10-02
+- **Línea de Tiempo: el año del veredicto, grande.** Después de colocar una carta, el año en que
+  pasó es lo que se viene a mirar: ahora ocupa el ancho de la carta (antes era del tamaño del
+  texto). Vale también para el minijuego de Línea de Tiempo de La Copa.
+- **La tarjeta de La Copa resalta en el menú**: un degradé dorado, rosa y morado que se mueve
+  despacio y un borde dorado, para invitar a armar un torneo de varios días. Con "reducir
+  movimiento" queda quieto.
+
 ## 0.84.1 — 2026-10-02
 - **Conexiones, Reinas, Zip y los demás, jugados desde la portada, ya no se presentan como de
   La Copa:** su antesala no dice "Minijuego de La Copa" ni "no cuenta para ninguna copa" (U-8).
