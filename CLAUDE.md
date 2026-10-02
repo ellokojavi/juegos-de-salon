@@ -71,13 +71,14 @@ estas tarjetas.
 
 ```bash
 node tools/og.mjs tarjetas    # reescribe el bloque <!-- generado: og --> (lo corre set-version.py)
-node tools/og.mjs imagenes    # rehace los 1200×630 con Chrome (necesita internet: Google Fonts)
-node tools/og.mjs revisar     # ¿falta una tarjeta o una imagen?
+node tools/og.mjs imagenes    # rehace con Chrome las 1200×630 atrasadas (--todas: todas; necesita internet)
+node tools/og.mjs revisar     # ¿falta una tarjeta, o una imagen se hizo con otro dibujo u otros textos? (D-181)
 ```
 
 Los textos salen de `assets/js/games.js` y el dibujo de [tools/og/tarjeta.html](tools/og/tarjeta.html),
 que importa los módulos reales. Las imágenes se rehacen a mano: solo cambian si cambia un nombre,
-un emoji o el diseño (D-72).
+un emoji, una bajada o el diseño (D-72). Cada una guarda la huella de su dibujo y sus textos, y una
+atrasada frena el PR y `set-version.py` (D-181): **se rehacen desde una rama al día con `main`**.
 
 ## Pruebas
 
