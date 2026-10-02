@@ -56,5 +56,14 @@ console.log('link que se comparte→', await b.evaluate(`(async () => {
   return withLang('https://juegosdesalon.cl/dudo/?sala=WFBN');
 })()`));
 
+/* 8. La invitación a una copa en otro idioma (D-170): el link sigue llevando a la copa. Sacar el
+   lang= no puede tocar el resto (antes `?K7Q2X&lang=pt` quedaba en `?K7Q2X=` y abría la portada) */
+await b.go(`${SITIO}/copa/?prueba&demo=invitado`, 2500);
+const copa = await b.evaluate('__copa.estado.code');
+await b.go(`${SITIO}/copa/?prueba&${copa}&lang=pt`, 2500);
+const inv = JSON.parse(await b.evaluate(`JSON.stringify({ lang: document.documentElement.lang, url: location.search, pantalla: __copa.estado.pantalla })`));
+console.log('copa con idioma     →', JSON.stringify(inv));
+if (inv.pantalla !== 'entrar' || inv.lang !== 'pt' || inv.url !== `?prueba&${copa}`) { console.log('✗ la invitación a una copa con ?lang= no abre la copa'); process.exitCode = 1; }
+
 console.log('errors:', JSON.stringify(b.errors), JSON.stringify(b.logs.filter(l => !/vibrate/i.test(l))));
 b.close();
