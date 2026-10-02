@@ -34,9 +34,9 @@ El README va **en inglés** (C-13, D-78); todo lo demás, en español chileno.
 
 - **Ronda** (la diaria, o "documenta lo último"): lo que entró a `main` desde `revisadoHasta`.
 - **Un PR** (antes de que otra sesión proponga fusionar el suyo, o si el dueño te pasa uno): solo
-  lo que trae ese PR. Sus commits salen de `git log --first-parent <base del PR>..HEAD` y su diff de
-  `git diff <base del PR> --stat`: `revisar --desde <base del PR>` lista lo que entró a `main`,
-  no a la rama, pero sus comprobaciones miran la copia de trabajo y sirven igual. Los arreglos
+  lo que trae ese PR, con `node tools/documentar.mjs revisar --desde <base del PR>`: con `--desde`
+  lista los commits de la rama (no los de `main`) y sus comprobaciones miran la copia de trabajo.
+  Los arreglos
   van **en la rama de ese PR**, con permiso de la sesión dueña (D-135). En este modo no tocas
   `revisadoHasta`: eso es de la ronda.
 
@@ -91,9 +91,9 @@ escribes en el PR como pregunta para el dueño.
 - Una rama `docs-<fecha>` desde `origin/main` (en una copia aparte si hay otras sesiones
   trabajando, D-135). Antes del último commit, cierra la ronda en tu memoria:
   `node tools/documentar.mjs anotar --hasta <commit revisado> --pendiente "…"` (una vez por cada
-  cosa que quede pendiente). Después de abrir el PR, escribe su link a mano en el `pr` de la última
-  ronda de `rondas`, en el commit siguiente: volver a correr `anotar` abriría otra ronda y dejaría
-  `pendientes` vacío.
+  cosa que quede pendiente). Después de abrir el PR, agrega su link con
+  `node tools/documentar.mjs anotar --hasta <el mismo commit> --pr <url>` en el commit siguiente:
+  con el mismo commit completa esa ronda, sin duplicarla ni borrar lo pendiente.
 - Las pruebas sin navegador en verde (`*.test.mjs`, `tools/readme.test.py`), `readme.py revisar`
   sin ERROR, `og.mjs revisar` en verde y `node tools/documentar.mjs revisar` sin ✗ nuevos.
 - **Un PR que nunca fusionas**, titulado `Documentación al día: <fecha>`, con una lista de lo que
