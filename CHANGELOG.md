@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.82.0 — 2026-10-02
+- **📍 ¿Dónde queda? sale del laboratorio** (D-174): su tarjeta ya no dice "Próximamente" y se
+  juega suelto desde el menú, en `/minijuegos/donde/`, como los otros minijuegos de La Copa.
+
 ## 0.81.0 — 2026-10-01
 - **Lo que se comparte con imagen ya no repite la imagen en el texto** (D-171). La tabla parcial
   lleva la cabecera y quién falta, sin la tabla escrita; la tabla final, la cabecera y las medallas;
