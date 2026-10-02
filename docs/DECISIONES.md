@@ -2634,3 +2634,23 @@ juego. `base.css` no entra en la huella: cambia seguido por cosas que la tarjeta
 **Alternativas descartadas:** rehacer todas las imágenes en cada publicación (lento, necesita
 internet y Chrome, y llena el diff de bytes); comparar fechas de archivo (git no las conserva).
 
+## D-182 · Desenredo: los hilos son cuerdas con una curva leve
+**Fecha:** 2026-10-02 · **Estado:** vigente · **Amplía D-179**
+**Decisión:** Los hilos de Desenredo se dibujan como cuerda y no como segmento recto: una curva
+de Bézier leve (se aparta de la recta a lo más un 6 % de su largo, con tope de 34 unidades de
+1000) y tres capas (borde oscuro de 6,5 px, alma de 4 px del color del hilo y hebras cortadas
+encima que hacen de torcido). La forma de cada hilo sale de sus dos nudos (`cuerda` en
+`desenredo.js`): unos van en S suave y otros en arco, y la mantienen al moverse. **Los cruces se
+siguen decidiendo sobre la recta**: la curva es solo dibujo.
+**Por qué:** lo pidió el dueño tras comparar en una maqueta hilos rectos y orgánicos: con la
+curva leve el juego se ve de lana, como su 🧶, sin tocar las reglas. Una curva más marcada habría
+obligado a contar los cruces sobre la curva (lo que se ve tiene que ser lo que cuenta), con un
+cálculo 500 veces más pesado y niveles que habría que volver a validar.
+**Consecuencias:** con una curva tan leve, lo que se ve y lo que se cuenta coinciden salvo en un
+roce casi tangente. De paso: el nudo que se arrastra llevaba la clase `vilo`, que `linea.css`
+oculta (es la carta en vuelo del arrastre compartido), y desaparecía mientras se movía. Ahora es
+`tomado`, y el guion de punta a punta revisa que se vea.
+**Alternativas descartadas:** curvas más marcadas contando cruces sobre la curva (ver arriba);
+curvas que se doblan para esquivar a sus vecinas (otro juego, y más difícil saber cuándo está
+resuelto).
+

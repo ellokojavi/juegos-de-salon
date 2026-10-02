@@ -102,7 +102,8 @@ puntos por ciudad menos 4 cada 100 km, D-155, D-156).
   azar bien repartidos y hilos de los pares más cercanos a los más lejanos, hasta 4 por nudo) y
   después reparte los nudos en un círculo en desorden: siempre tiene solución, pero no una sola.
   Todo en enteros sobre 1000 × 1000; un hilo que pasa a menos de 24 unidades de un nudo ajeno
-  cuenta como cruce, lo que además cierra la trampa de amontonar los nudos. Su habilidad es
+  cuenta como cruce, lo que además cierra la trampa de amontonar los nudos. Los hilos se dibujan como cuerdas con una curva leve (D-182), pero
+  los cruces se cuentan sobre la recta. Su habilidad es
   `espacial`, propia, para que el sorteo del calendario la pueda separar de Reinas, Zip y Tango.
 
 - **Línea y Año** usan temáticas distintas dentro de la misma copa (`temasDeLaCopa`), para que no
