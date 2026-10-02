@@ -852,7 +852,10 @@ await b.shot('copa-eliminada');
 
 // Cada mensaje solo cuando tiene sentido (D-116)
 await b.go(`${BASE}?prueba&demo=admin`, 1500); await preparar();
-ok(!await ev(`document.getElementById('msg-invitar')`) && !!await ev(`document.getElementById('msg-tabla')`) && !await ev(`document.getElementById('msg-final')`), 'día 4: sin invitación ni resumen final, con la tabla parcial');
+ok(!!await ev(`document.getElementById('msg-invitar')`) && !!await ev(`document.getElementById('msg-tabla')`) && !await ev(`document.getElementById('msg-final')`), 'día 4: con invitación (D-176) y la tabla parcial, sin resumen final');
+await ev(`window.__msgs = []; navigator.share = d => { window.__msgs.push(d.text); return Promise.resolve(); }; 1`);
+await click('#msg-invitar'); await sleep(400);
+ok(/día \d+ de \d+/.test(await ev(`(window.__msgs || []).join(' ')`) || '') && !/Parte el/.test(await ev(`(window.__msgs || []).join(' ')`) || ''), 'la invitación ya partida dice en qué día va (D-176)');
 await b.go(`${BASE}?prueba&demo=nueva`, 1500); await preparar();
 ok(!!await ev(`document.getElementById('lab-falta-gente')`) && !await ev(`document.getElementById('btn-pasar-dia')`), 'con el admin solo no se puede pasar de día (D-118)');
 ok(!!await ev(`document.getElementById('msg-invitar')`) && !await ev(`document.getElementById('msg-tabla')`), 'antes de partir: con invitación y sin tabla');
