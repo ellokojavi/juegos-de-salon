@@ -26,7 +26,8 @@ mkdir -p /tmp/e2e && node tools/e2e/batalla-naval-local.mjs /tmp/e2e
 (`.github/workflows/e2e.yml`, un job por guion). Un guion falla si sale con error, si imprime
 una línea con ✗ o ❌, o si pasa los 15 minutos. Los que solo imprimen lo que ven igual caen si
 algo se rompe del todo. Los `*-online`, los `*-chat` y los de la lista `TAMBIEN_FIREBASE` de
-`ci.mjs` abren salas de verdad y siguen a mano.
+`ci.mjs` abren salas de verdad y siguen a mano. Los de `OBSOLETOS` prueban algo que ya no
+existe y esperan que alguien los reescriba.
 
 ```bash
 node tools/e2e/ci.mjs              # todos los de CI, uno tras otro, con resumen
