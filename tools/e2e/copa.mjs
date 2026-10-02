@@ -275,7 +275,9 @@ async function jugarDia(d, nivel, { capturar = false, comodin = false } = {}) {
   if (capturar) await revisarPantalla(`antes-${d}`);
   if (capturar && d === 1) {
     // La sesión de prueba (D-103): otro contenido, no cuenta, y vuelve a Empezar
+    ok(/más corta/.test(await ev(`document.getElementById('nota-ensayo')?.textContent || ''`)), 'la antesala avisa que la prueba es más corta y no cuenta');
     await click('#btn-ensayo'); await esperarCuenta({ revisar: true });
+    ok(!!await ev(`document.querySelector('#reglas #nota-ensayo')`), 'las reglas plegadas de la prueba repiten el aviso');
     await ev(`(async()=>{const {JUEGOS}=await import('/copa/juegos/index.js');window.__jugando={p:JUEGOS.linea.ensayo(__copa.estado.code, 1)};return 1})()`);
     const real = await ev(`(async()=>{const {JUEGOS}=await import('/copa/juegos/index.js');return JUEGOS.linea.generar(__copa.estado.code, 1).tema})()`);
     ok(await ev('window.__jugando.p.tema') !== real && await ev(`document.querySelectorAll('.hand .card').length`) === 4, 'la sesión de prueba trae otro contenido y es más corta');
@@ -413,7 +415,7 @@ ok(/^[A-HJ-NP-Z]{5}$/.test(CODE), `copa creada con código ${CODE}`);
 ok(await ev('__copa.estado.copa.meta.cal') === (SIETE ? 'linea,numero,conexiones,reinas,letras,anio,final' : 'linea,conexiones,final'), 'la copa guarda los juegos en el orden elegido');
 // Recién creada, el admin parte en Administrar, con la guía de la primera vez (D-110)
 ok(await pantalla() === 'admin' && !!await ev(`document.getElementById('admin-bienvenida')`), 'al crearla, el admin ve Administrar con la guía para invitar');
-ok(/Mensajes para los competidores/.test(await ev(`document.getElementById('admin-body').innerText`)), 'los mensajes son para los competidores');
+ok(/Mensajes para los jugadores/.test(await ev(`document.getElementById('admin-body').innerText`)), 'los mensajes son para los jugadores');
 await revisarPantalla('admin-nueva');
 await b.shot('admin-nueva');
 await click('#msg-invitar'); await sleep(300);
@@ -574,7 +576,11 @@ ok(await ev('window.__compartido.at(-1)?.files?.[0]?.name') === 'copa-oficina-ta
 
 await b.go(`${SITIO}/`, 1500);
 const tarjeta = await ev(`(()=>{const c=[...document.querySelectorAll('.game-card')].find(x=>x.textContent.includes('La Copa'));return JSON.stringify({soon:c.classList.contains('soon'),href:c.getAttribute('href'),rotulo:c.querySelector('.proximamente')?.textContent})})()`).then(JSON.parse);
-ok(tarjeta.soon && !tarjeta.href && tarjeta.rotulo === 'Próximamente', 'en el menú La Copa se ve con Próximamente y no se abre');
+ok(!tarjeta.soon && tarjeta.href === 'copa/' && !tarjeta.rotulo, 'en el menú La Copa está activa y abre /copa/ (D-175)');
+await b.go(BASE, 1500);
+ok(await ev(`document.getElementById('btn-menu').href`) === `${SITIO}/`, 'La Copa sin ?labs vuelve al menú, no al laboratorio (D-175)');
+await b.go(`${BASE}?labs`, 1500);
+ok(await ev(`document.getElementById('btn-menu').href`) === `${SITIO}/labs/`, 'La Copa con ?labs vuelve al laboratorio');
 await b.go(`${SITIO}/labs/`, 1500);
 ok(await ev(`document.querySelectorAll('#minis .mini-juego').length`) === 10 && await ev(`!!document.querySelector('#minis [data-id="donde"]')`), 'el laboratorio ofrece los diez minijuegos (con Zip, Tango y ¿Dónde queda?)');
 await b.shot('10-labs');
@@ -830,7 +836,7 @@ for (const [demo, pant] of Object.entries(DEMOS)) {
   await b.shot(`demo-${demo}`);
 }
 await b.go(`${BASE}?prueba&demo=sin-jugar`, 1500); await preparar();
-ok(/nadie ha jugado/.test(await ev(`document.getElementById('admin-inicio')?.innerText || ''`)), 'demo sin-jugar: el admin ve que partió sin nadie y puede moverla');
+ok(/nadie ha jugado/i.test(await ev(`document.getElementById('admin-inicio')?.innerText || ''`)), 'demo sin-jugar: el admin ve que partió sin nadie y puede moverla');
 await b.go(`${BASE}?prueba&demo=jugador`, 1500); await preparar();
 ok(!!await ev(`document.querySelector('[data-dia="4"]')`), 'demo jugador: el día 4 se puede jugar');
 ok(await ev(`[...document.querySelectorAll('.tabla .fila')].every(f=>f.querySelectorAll('.pd').length===7) && !!document.querySelector('.tabla .pd.pendiente') && !!document.querySelector('.tabla .pd.abierto') && !!document.querySelector('.tabla-leyenda')`), 'la tabla muestra los 7 días de cada jugador, con estados y leyenda (D-131)');
@@ -848,7 +854,10 @@ await b.shot('copa-eliminada');
 
 // Cada mensaje solo cuando tiene sentido (D-116)
 await b.go(`${BASE}?prueba&demo=admin`, 1500); await preparar();
-ok(!await ev(`document.getElementById('msg-invitar')`) && !!await ev(`document.getElementById('msg-tabla')`) && !await ev(`document.getElementById('msg-final')`), 'día 4: sin invitación ni resumen final, con la tabla parcial');
+ok(!!await ev(`document.getElementById('msg-invitar')`) && !!await ev(`document.getElementById('msg-tabla')`) && !await ev(`document.getElementById('msg-final')`), 'día 4: con invitación (D-176) y la tabla parcial, sin resumen final');
+await ev(`window.__msgs = []; navigator.share = d => { window.__msgs.push(d.text); return Promise.resolve(); }; 1`);
+await click('#msg-invitar'); await sleep(400);
+ok(/día \d+ de \d+/.test(await ev(`(window.__msgs || []).join(' ')`) || '') && !/Parte el/.test(await ev(`(window.__msgs || []).join(' ')`) || ''), 'la invitación ya partida dice en qué día va (D-176)');
 await b.go(`${BASE}?prueba&demo=nueva`, 1500); await preparar();
 ok(!!await ev(`document.getElementById('lab-falta-gente')`) && !await ev(`document.getElementById('btn-pasar-dia')`), 'con el admin solo no se puede pasar de día (D-118)');
 ok(!!await ev(`document.getElementById('msg-invitar')`) && !await ev(`document.getElementById('msg-tabla')`), 'antes de partir: con invitación y sin tabla');
@@ -879,7 +888,7 @@ await click('#btn-exportar-planilla'); await sleep(300);
 const csv = await ev(`window.__descargas[0]?.text()`);
 const bom = await ev(`window.__descargas[0]?.arrayBuffer().then(x => [...new Uint8Array(x).slice(0, 3)].join(','))`);
 ok(bom === '239,187,191', 'exportar: la planilla lleva BOM, para que Excel lea los acentos');
-ok(/^🏆 Copa de la oficina\r\nEl admin la terminó antes/.test(csv || '') && /Tabla final/.test(csv) && /Posiciones día a día/.test(csv) && /Día 7 · La Gran Final/.test(csv), 'exportar: la planilla trae la tabla final, los lugares día a día y la final');
+ok(/^🏆 Copa de la oficina\r\nEl administrador la terminó antes/.test(csv || '') && /Tabla final/.test(csv) && /Posiciones día a día/.test(csv) && /Día 7 · La Gran Final/.test(csv), 'exportar: la planilla trae la tabla final, los lugares día a día y la final');
 await revisarPantalla('admin-exportar');
 await b.shot('admin-exportar');
 await click('#btn-exportar-imagen'); await sleep(1500);

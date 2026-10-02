@@ -180,6 +180,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | LIG-86 | Reinas: el toque cicla vacía → reina → X → vacía; el toque largo queda como atajo de la X (D-167). | ✅ v0.78.0 |
 | LIG-87 | Reinas: arrastrar desde una X borra las X por donde pasa; las reinas no se tocan (D-168). | ✅ v0.79.0 |
 | LIG-88 | Reinas: 🧹 Borrar todo deja el tablero en blanco, con confirmación; el reloj sigue (D-169). | ✅ v0.79.0 |
+| LIG-89 | La Copa sale del laboratorio: tarjeta activa en el menú principal y "‹ Menú" vuelve al menú; `/labs/` sigue para probar (D-175). | ✅ v0.83.0 |
 | LIG-84 | Minijuegos de reserva (La Palabra, Ahorcado Contrarreloj), separados de LIG-34. | ⏳ pendiente |
 | LIG-46 | El teclado, el tablero y la línea se comparten con Toque y Fama y Línea de Tiempo (`assets/js/teclado.js`, `assets/css/teclado.css`, `assets/css/linea.css`). | ✅ v0.44 |
 
