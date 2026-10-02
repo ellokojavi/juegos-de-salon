@@ -20,7 +20,7 @@
       "fecha": "2026-10-02",
       "desde": "bd8b20adabe23d4fef76977c3629002e6b0db1d4",
       "hasta": "120897ba0b5948f888dde870349419bac3859113",
-      "pr": null,
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/121",
       "pendientes": [
         "Capturas de partidas en línea (17: toque-y-fama 4, linea-de-tiempo 5, ahorcado 3, batalla-naval 2, dudo 2, julepe 1): el entorno en la nube no llega a www.gstatic.com ni a *.firebaseio.com (el proxy responde 403). Rehacerlas desde el Mac del dueño (python3 tools/readme.py capturas <sección>) o abrir esos dominios en el entorno.",
         "Imágenes de las tarjetas sociales (node tools/og.mjs imagenes) con las frases viejas del menú: se rehacen en el Mac del dueño (D-177)."
