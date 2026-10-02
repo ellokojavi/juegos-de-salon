@@ -45,6 +45,10 @@ Una carpeta por juego, con su propia URL (`/<id>/`) y siempre estos archivos:
 - Los textos fijos del HTML se marcan con `data-i18n="clave"` (o `data-i18n-html`) y se aplican con `applyStatic(T)`.
 - El idioma se lee con `getLang()` y el toggle `langToggle()` va en la intro de cada juego.
 - Las traducciones se adaptan, no se calcan: los chistes y las referencias locales se reemplazan por equivalentes. El portugués es el de Brasil, informal ("você", "celular", "rolê"), y los nombres de los juegos se traducen (Quarto Rei, Toque e Fama, Batalha Naval, Linha do Tempo) igual que en inglés (D-48).
+- **En La Copa, lo personal va en tu idioma y lo del grupo en el de la copa** (D-170): la pantalla
+  sigue el toggle de quien mira, pero las palabras de Conexiones y Palabra, los mensajes que se
+  comparten al grupo y su link van en el idioma que se eligió al crear la copa. El contenido con
+  palabras es propio de cada idioma, no una traducción.
 - **Los tres diccionarios tienen exactamente las mismas claves**, las listas el mismo largo y las plantillas las mismas `{llaves}`: un texto que falta en un idioma se ve como `undefined` en pantalla, y `errText` (C-14) busca la misma clave en cualquier idioma. Lo verifica `node assets/js/i18n.test.mjs` (menú, frases, mazos y todos los juegos). Los mazos de Línea de Tiempo llevan `es`, `en` y `pt` en cada carta, y el test del motor también lo exige.
 - Las plantillas usan `{llaves}` y una función `fmt()`; nunca se arman frases concatenando palabras sueltas.
 
@@ -198,6 +202,11 @@ El README no se mantiene a pulso: `python3 tools/readme.py` lo sostiene.
   README es una toma nueva en el guion, no un recorte a mano. Se miran antes de publicar
   (C-12) y se guardan al doble del ancho con que se muestran.
 
+Lo que se atrasa igual lo recoge el agente `documentacion` (D-172): una ronda diaria sobre lo que
+entró a `main` y una revisión de cada PR antes de proponer su fusión, con
+`node tools/documentar.mjs revisar` y su memoria en `docs/documentacion.json`. No reemplaza esta
+regla: quien cambia algo lo documenta en su mismo PR.
+
 ## C-14 · Robustez
 
 - Nada de dependencias de npm ni de paso de compilación: el repo publicado se abre y funciona.
@@ -277,3 +286,4 @@ como un error: se lee como que nadie jugó.
 - [ ] Registro en el menú, README, especificación, requerimientos, decisiones y changelog (C-2, C-13).
 - [ ] El panel lo muestra sin haberlo tocado: `node panel/adapta.test.mjs` en verde y una mirada a `node tools/e2e/mirar.mjs panel datos` (C-16).
 - [ ] Capturas del README rehechas y miradas, y `python3 tools/readme.py revisar` en verde (C-13).
+- [ ] `node tools/documentar.mjs revisar --desde origin/main` sin ✗ nuevos: decisiones, pruebas, guiones y CHANGELOG al día (D-172).
