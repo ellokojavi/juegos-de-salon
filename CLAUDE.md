@@ -100,6 +100,7 @@ node copa/planilla.test.mjs            # la tabla final como CSV (D-161)
 node copa/reportes.test.mjs             # un reporte que no sale queda guardado y se reenvía
 node assets/js/arrastre.test.mjs
 node assets/js/i18n.test.mjs             # paridad es/en/pt (C-3)
+node assets/js/compartir.test.mjs        # el estándar de lo que se comparte (D-165)
 node assets/js/transport/cleanup.test.mjs
 node assets/js/transport/dispose.test.mjs
 node assets/js/transport/errors.test.mjs
@@ -108,6 +109,7 @@ node assets/js/transport/stats.test.mjs
 node panel/aggregate.test.mjs
 node panel/adapta.test.mjs               # el panel se entera solo de lo nuevo (C-16)
 node panel/copas.test.mjs                # La Copa en el panel: en curso, minijuegos, participación
+node tools/documentar.test.mjs           # la memoria y las comprobaciones del agente de documentación
 python3 tools/readme.test.py       # qué cuenta como cambio para las capturas (D-51)
 python3 -m http.server 8765          # los módulos ES necesitan HTTP, no file://
 ```
@@ -174,6 +176,27 @@ node tools/dilemas.mjs crear <archivo.md>
 node tools/dilemas.mjs resolver <n> "decisión"   # y anotarla en docs/USABILIDAD.md
 node tools/dilemas.mjs archivar <n> "motivo"
 node tools/dilemas.mjs reabrir <n>
+```
+
+## Documentación (D-172)
+
+El agente `documentacion` (`.claude/agents/documentacion.md`) deja la documentación al día:
+CHANGELOG, decisiones, requerimientos, docs de cada juego, README con sus capturas y esta guía.
+Nunca fusiona ni toca código. Se usa de tres formas:
+
+- **Ronda diaria**, a las 3:54 hora del Pacífico (Routine en la nube): lo que entró a `main` desde
+  la última ronda, en un PR `Documentación al día: <fecha>`.
+- **Antes de proponer la fusión de un PR**, como el de usabilidad: revisa lo que trae ese PR y lo
+  documenta en su misma rama.
+- **A pedido**: "documenta lo último" o "revisa la documentación de este PR".
+
+Su memoria es `docs/documentacion.json` (hasta qué commit revisó, lo pendiente, los problemas que
+esperan al dueño y las rondas anteriores), y su herramienta, que cualquier sesión puede correr:
+
+```bash
+node tools/documentar.mjs revisar [--desde <commit>]   # qué entró y qué falta documentar
+node tools/documentar.mjs anotar --hasta <commit> [--pr <url>] [--pendiente "…"]
+node tools/documentar.mjs historial
 ```
 
 ## Reportes de La Copa

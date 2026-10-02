@@ -511,8 +511,8 @@ retoma con los nombres encendidos, que es el valor por defecto.
 **Consecuencias:** hay que **publicar las reglas** en la consola de Firebase para que el cambio de validación tenga efecto; hasta entonces un modo nuevo seguiría rechazado. El tope de jugadores dejó de ser un 6 escrito en dos archivos, pero los roles de sala (`A`–`F`) y el patrón `$p` de las reglas siguen topando en seis: un juego de más de seis en dos celulares es otro cambio. Un modo desconocido en la base ahora suma al total del juego: lo que antes se descartaba como basura, si tiene forma de modo, cuenta.
 
 
-## D-73 · La invitación dice quién invita
-**Fecha:** 2026-09-13 · **Estado:** vigente · **Amplía D-72**
+## D-173 · La invitación dice quién invita
+**Fecha:** 2026-09-13 · **Estado:** vigente · **Amplía D-72** · Nació como D-73, repetida con la del panel; se renumeró el 2026-10-02 (D-172)
 **Decisión:** Al compartir una sala, el mensaje es **"{nombre} te invita a jugar {juego} en juegosdesalon.cl - Sala: {código}"**. El texto es uno solo para los cuatro juegos con sala y vive en `COMMON` de `assets/js/i18n.js`, no en el `rules.js` de cada uno. Nombra a **quien toca compartir**, no al anfitrión: en una sala de seis cualquiera puede pasar el link, y el que invita es el que lo pasa.
 **Por qué:** el mensaje decía "Únete a mi sala de Línea de Tiempo. Código: WFBN" — sin nombre. Llega por WhatsApp a alguien que muchas veces no conoce la app, y lo primero que hace falta saber es de parte de quién viene. El resto —de qué se trata el juego, para cuántos, cuánto dura— ya no hace falta escribirlo: lo pone la tarjeta que el chat arma solo con el link (D-72), y por eso también se sacó la temática que algunos juegos metían en el texto.
 **Por qué compartido y no por juego:** eran cuatro juegos por tres idiomas, doce frases que decían lo mismo con doce redacciones distintas. La única parte que cambia es el nombre del juego, y ese ya viaja como `{game}`.
@@ -1122,7 +1122,7 @@ suerte: una buena decisión puede perder al destapar.
 **Consecuencias:** el mismo código da la misma copa en cualquier navegador; las pruebas lo comparan.
 
 ## D-98 · La Copa va solo en español por ahora
-**Fecha:** 2026-09-23 · **Estado:** vigente
+**Fecha:** 2026-09-23 · **Estado:** reemplazada por D-170
 **Decisión:** La interfaz y el contenido de La Copa son solo en español, sin selector de idioma. Es
 una excepción a C-3: la entrada de `games.js` declara `idiomas: ['es']`, su tarjeta del menú sí va
 en los tres idiomas (y en inglés y portugués dice que por ahora es en español), y
@@ -2233,3 +2233,284 @@ dice "Suéltalo…" y no "Toca…" (pedido del dueño), en la misma celda de alt
 (la invitación lo leía de `CALENDARIOS` y se corrigió), así que las copas ya creadas no cambian y
 las reglas de Firebase tampoco (aceptan cualquier texto de hasta 100 caracteres). La regla de la
 final dejó de decir "una de cada minijuego de la copa". `CALENDARIOS` queda para las demos.
+
+## D-164 · El 〰️ de Zip lleva contorno claro, y el laboratorio juega en las páginas de cada minijuego
+**Fecha:** 2026-09-30 · **Estado:** vigente
+**Decisión:** Dos cambios:
+1. **Emojis oscuros con contorno claro.** El 〰️ de Zip se dibuja casi negro y sobre el fondo
+   morado no se veía. Sigue siendo el mismo emoji, con un contorno blanco (`.emoji-claro` en
+   `base.css`) donde va solo sobre fondo oscuro: la tarjeta de la portada, la imagen para compartir,
+   la lista del laboratorio, la ficha de arriba y las pantallas de La Copa. La lista de emojis que lo
+   llevan es `EMOJI_OSCUROS` en `assets/js/ui.js`; `con(clase, emoji)` y `conEmoji(emoji, texto)`
+   ponen la clase. En los botones amarillos y en los textos que se comparten queda tal cual.
+2. **La práctica del laboratorio se juega en `/minijuegos/<id>/?labs`** para los minijuegos que
+   tienen página (D-162), con todo lo del laboratorio: sesión de prueba, semilla en la URL, repetir
+   la misma partida y volver al laboratorio. Los que no tienen página (Línea Relámpago, el número,
+   la final) siguen en `/copa/?practica=<id>&labs`. Un link viejo del laboratorio se va a la página
+   nueva con su semilla.
+**Por qué:** lo pidió el dueño. Un link copiado desde el laboratorio traía la tarjeta de La Copa y
+no la del minijuego; y el 〰️ casi no se veía en la miniatura de WhatsApp ni en la portada.
+**Alternativas descartadas:** cambiar el emoji de Zip (el dueño quiso el mismo); pintarlo blanco
+con un filtro (deja de ser el emoji); poner el contorno en la caja del emoji (blanquea el fondo).
+
+## D-165 · Todo lo que se comparte sigue un mismo estándar, con WhatsApp en mente
+**Fecha:** 2026-10-01 · **Estado:** vigente; ordena D-173, D-124, D-126 y D-141; D-171 cambia lo que dice el texto que va con una imagen
+**Decisión:** Lo que la app comparte sale de un solo módulo, `assets/js/compartir.js`, con tres
+reglas:
+1. **El texto** abre con una cabecera — `{emoji} *{título}* · {contexto}` —, sigue con una idea
+   por línea, cada una con su emoji, y cierra con el link solo en su línea ("🔗 …"). El link va
+   siempre **dentro** del texto, también en las salas y en la portada (antes iba aparte, y Android
+   lo pegaba a la última frase, D-124).
+2. **La imagen**, cuando hay, lleva arriba **la misma cabecera** —el título en amarillo y el
+   contexto debajo— y abajo **el mismo link**. Quien la ve suelta en el grupo sabe de qué copa, de
+   qué día o de qué juego es, y adónde ir. Se manda **junto con** su texto, que repite lo que dice.
+3. **Las invitaciones** (a una sala, a una copa, a la app) van sin imagen dibujada: el link ya trae
+   su tarjeta social (D-72, D-162), que es la imagen que muestra WhatsApp.
+
+Cada cosa que se comparte, y con qué cabecera:
+
+| Qué | Dónde | Cabecera | Imagen |
+|---|---|---|---|
+| Invitación a una sala | los 6 juegos con sala | `🃏 *Julepe* · Sala WFBN` | la tarjeta del link |
+| Invitación a la copa | Administrar, tablero | `🏆 *La Copa: X* · ¡Estás invitado!` | la tarjeta del link |
+| Recordatorio | Administrar | `🏆 *La Copa: X* · Parte el …` / `· Día 3 de 7` | la tarjeta del link |
+| Resultado del día | resultado de la copa | `🏆 *La Copa: X* · Día 3 de 7` | **nueva**: el resultado |
+| Tabla parcial | tablero **y** Administrar | `📊 *La Copa: X* · Tabla de posiciones · día 3 de 7` | la tabla (D-141) |
+| Tabla final | podio, Administrar, exportar | `🏁 *La Copa: X* · Tabla final` | la tabla final con galvanos |
+| Minijuego jugado solo | minijuego suelto, Toque y Fama y Línea de Tiempo solos | `🔢 *Toque y Fama* · Jugando solo` | **nueva**: el resultado |
+| La app | portada | (texto de siempre) | la tarjeta del link |
+
+- **La tabla es una sola**, se comparta desde donde se comparta: el botón del gráfico, "Tabla
+  parcial" y "Resumen final" de Administrar, el podio y exportar mandan la misma imagen con el
+  texto completo (la lista con "(-1J)" y quién falta, o el campeón, el podio y las medallas). Antes
+  el admin mandaba solo texto, el gráfico mandaba la imagen con un título pelado y, terminada la
+  copa, la imagen seguía diciendo "Tabla de posiciones · día 7 de 7".
+- **El resultado de un minijuego de La Copa lleva imagen** (`laminaResultado`): la copa y el día en
+  la cabecera, y adentro el juego, quién lo jugó, el puntaje en grande, el tiempo y la tarjeta de
+  colores, que no revela la respuesta (U-32). El texto dice lo mismo en el mismo orden, y ahora
+  también el día "de cuántos" y el tiempo (si la tarjeta no lo trae ya, D-114).
+- **Jugar solo un minijuego también se comparte** —suelto en `/minijuegos/<id>/`, o dentro de Toque
+  y Fama y Línea de Tiempo—, con la misma imagen de resultado y un reto ("🤔 ¿Me ganas?") hacia la
+  página del juego. En los tres idiomas (`COMMON`). En el laboratorio no se ofrece.
+- **La invitación a una sala** pasa a `🃏 *Julepe* · Sala WFBN` + `👋 Javi te invita a jugar en
+  juegosdesalon.cl.`: dice lo mismo que D-173 (quién, a qué, dónde y el código) con la forma de los
+  demás. El botón, que estaba copiado igual en seis juegos, es `botonInvitar`.
+- **Sin menú del sistema** (un computador): la imagen se descarga y el texto queda copiado, para
+  pegarlo junto a ella; antes se perdía el texto.
+- Los emojis oscuros (〰️, D-164) llevan en la imagen un halo claro; `EMOJI_OSCUROS` vive ahora en
+  `compartir.js` (`ui.js` lo reexporta).
+
+**Por qué:** lo pidió el dueño: que una tabla de posiciones se vea igual se comparta desde donde se
+comparta, y que el resultado de un minijuego de copa diga de qué copa es, en la imagen y en el
+texto. WhatsApp es por donde se difunde la app: una imagen sin contexto, reenviada a otro grupo,
+no lleva a nadie a ninguna parte.
+**Alternativas descartadas:** un emoji fijo (🏆) para todo lo de la copa, con el tipo en el
+contexto ("🏆 … · 📊 Tabla"): dos emojis seguidos en la primera línea se leen peor, y el 📊 y el 🏁
+de D-124 ya distinguen a simple vista qué es cada mensaje. Dibujar imagen también para las
+invitaciones: la tarjeta social del link ya es esa imagen, y dos imágenes por mensaje confunden.
+**Consecuencias:** el título de la imagen de la tabla dice ahora "📊 La Copa: X" (antes "🏆 X"), y
+el archivo de la tabla terminada se llama `copa-<x>-tabla-final.png`. Los resultados de las
+partidas de los seis juegos con sala (quién ganó un Dudo) todavía no se comparten; si se agregan,
+usan `laminaResultado` y una cabecera con el juego. `tools/e2e/cdp.mjs` acepta `CHROME` para
+correr las pruebas fuera de un Mac.
+
+## D-166 · Reinas: arrastrar desde una casilla vacía pinta X
+**Fecha:** 2026-10-01 · **Estado:** vigente; amplía D-103
+**Decisión:** En Reinas, apoyar el dedo en una casilla **vacía** y llevarlo a otra pinta una X en
+cada casilla vacía por donde pasa, como en el Queens de LinkedIn: descartar una fila o una columna
+deja de ser ocho toques largos. Las reglas del gesto:
+- **Es arrastre solo al entrar en otra casilla.** Un toque que tiembla dentro de la misma casilla
+  sigue siendo toque (reina) o, a los 450 ms, toque largo (X). Si el toque largo ya puso la X y el
+  dedo sigue, pinta las siguientes.
+- **Pinta solo casillas vacías**: las reinas y las X que ya estaban quedan igual. Empezar sobre una
+  reina o una X no pinta nada (y ya no es toque largo al salir de la casilla).
+- **No salta casillas**: si el dedo va rápido, se rellenan las del medio (`camino` de `ui-reinas.js`).
+- **Cada X pintada es una jugada de toque largo** (`-(i + 1)`): el motor, la memoria de partida y
+  el desglose no cambian. El click que llega al soltar se traga, como después del toque largo;
+  el del teclado (sin puntero) nunca.
+- **El tablero ya no desplaza la página**: `touch-action: none` en la grilla, como en Zip. Sin eso,
+  el celular toma el arrastre como scroll y lo corta.
+
+**Por qué:** El dueño lo pidió: en el Queens original es la forma natural de descartar filas
+enteras, y con el toque largo cada X costaba medio segundo.
+
+**Alternativas descartadas:** que arrastrar desde una X borre X (como algunos clones): no se pidió
+y un arrastre accidental borraría deducciones; un modo "lápiz X" con botón: un paso más y otro
+estado que recordar.
+
+## D-167 · Reinas: el toque cicla reina → X → vacía
+**Fecha:** 2026-10-01 · **Estado:** vigente; cambia el toque de D-103
+**Decisión:** Un toque pasa la casilla por un ciclo: **vacía → reina → X → vacía**. El primer
+toque sigue poniendo la reina, como desde D-103; tocarla otra vez la cambia por una X, y una
+tercera vez la deja vacía. El **toque largo** sigue poniendo o sacando la X, como atajo, pero la
+ayuda ya no lo menciona: lo que explica es el ciclo y el arrastre (D-166).
+- **Las jugadas guardan el toque nuevo como `'c' + índice`.** Las de antes de D-167 guardaban el
+  índice, que pone o saca la reina, y se siguen leyendo así: una partida a medio jugar al publicar
+  no cambia al recargarla.
+- **Error es poner una reina que choca**, venga del toque o del ciclo; cambiar una reina por X no.
+- Sacar una reina pasa de un toque a dos (reina → X → vacía). Casi siempre esa X sirve: si la reina
+  no iba ahí, la casilla queda descartada.
+
+**Por qué:** El dueño lo pidió: el toque largo pide intuición y memoria, nada en la pantalla lo
+sugiere. El ciclo se descubre solo, tocando de nuevo lo que se acaba de poner.
+
+**Alternativas descartadas:** el orden del Queens de LinkedIn (vacía → X → reina): allá la X va
+primero porque se usa más, pero aquí cambiaría lo que el primer toque hace hoy, y las X en
+cantidad ya las pinta el arrastre. Quitar el toque largo: a quien ya lo aprendió no le estorba.
+
+## D-168 · Reinas: arrastrar desde una X las borra
+**Fecha:** 2026-10-01 · **Estado:** vigente; amplía D-166
+**Decisión:** El arrastre hace lo que diga la casilla donde empieza: desde una **vacía** pinta X
+en las vacías por donde pasa (D-166), desde una **X** borra las X por donde pasa, y desde una
+**reina** no hace nada. Las reinas nunca se tocan al arrastrar. Cada X borrada es una jugada de
+toque largo (que pone o saca la X), así que el motor no cambia. Si el toque largo ya sacó la X
+de la primera casilla y el dedo sigue, el arrastre sigue borrando.
+
+**Por qué:** El dueño lo pidió: deshacer una fila de X tenía que ser casilla por casilla. Con
+borrar como espejo de pintar, el gesto se entiende solo: el arrastre repite lo que hay donde empieza.
+
+**Alternativas descartadas:** D-166 había descartado borrar por miedo a un arrastre accidental que
+borre deducciones. Para empezar a borrar hay que apoyar el dedo justo en una X y llevarlo a otra
+casilla, y una X borrada de más se vuelve a pintar con el mismo gesto.
+
+## D-169 · Reinas: 🧹 Borrar todo
+**Fecha:** 2026-10-01 · **Estado:** vigente
+**Decisión:** Reinas trae el botón **🧹 Borrar todo**, al lado de Rendirse: deja el tablero en
+blanco (sin reinas ni X) para empezar de nuevo. Como en Tango, el primer toque solo lo arma
+("¿Seguro? Toca de nuevo para borrar") y el segundo, dentro de 3 segundos, borra. Con el tablero
+ya en blanco el botón queda apagado.
+- **Es una jugada más (`'B'`)**: la memoria de partida la recupera al volver.
+- **El reloj sigue corriendo** y los errores ya hechos se mantienen: puntúa el tiempo (D-107), y
+  empezar de nuevo no es empezar otro tablero.
+
+**Por qué:** El dueño lo pidió: cuando las X y las reinas de un intento enredan más de lo que
+ayudan, deshacerlas casilla por casilla cuesta más que empezar en limpio.
+
+**Alternativas descartadas:** reiniciar también el reloj: sería un tablero gratis después de
+haberlo mirado entero.
+## D-170 · La Copa y sus minijuegos en inglés y portugués: lo personal en tu idioma, lo del grupo en el de la copa
+**Fecha:** 2026-10-01 · **Estado:** vigente; reemplaza D-98 y cierra LIG-32
+**Decisión:** La Copa y los minijuegos sueltos pasan a los tres idiomas (C-3). Una regla para
+saber qué idioma manda: **lo personal va en el idioma de quien mira; lo del grupo, en el de la
+copa.**
+1. **Juegos y minijuegos sueltos** (sin copa): todo en el idioma de quien juega, que se cambia con
+   el toggle de la intro. Lo que se comparte sale en ese idioma y el link lleva `?lang=` (D-74).
+   Es C-3 tal como estaba.
+2. **Cada copa tiene un idioma**, que se elige al crearla ("¿En qué idioma van las palabras?") y
+   parte en el de quien la crea. Se guarda en `meta.lang` (`en` o `pt`; el español no se escribe,
+   así las copas de antes siguen iguales) y no cambia. Manda en lo que el grupo tiene en común:
+   - **Las palabras** de 🔗 Conexiones y 🔤 Toque y Fama: Palabra (también la ronda de la final):
+     tienen que ser las mismas para todos o la copa deja de ser pareja.
+   - **Lo que va al grupo:** invitación, recordatorio, tabla, resumen final, "Compartir mi
+     resultado", la imagen y la planilla. El chat del grupo es uno solo.
+   - **El link que se comparte** lleva `?lang=` de la copa, así quien entra por primera vez llega
+     en ese idioma.
+3. **La pantalla de la copa** (reglas, botones, tablero, desglose) va en el idioma de quien mira:
+   el toggle está en la portada, en la invitación y en la antesala del minijuego suelto, nunca a
+   mitad de un juego. Si las palabras de la copa van en otro idioma, la invitación y la antesala de
+   Conexiones, Palabra y la final lo dicen ("🌐 Las palabras de esta copa van en inglés").
+   Los hitos de Línea Relámpago y ¿En qué año? y las ciudades de ¿Dónde queda? son las mismas
+   cartas en todos los idiomas: se muestran en el de quien mira sin cambiar lo que se juega.
+
+El contenido con palabras **es propio de cada idioma, no una traducción**: 13 grillas de
+Conexiones en inglés y 13 en portugués (`grillas-en.js`, `grillas-pt.js`, por significado y con
+distractores que funcionan en ese idioma, D-102 y D-128), más de 100 palabras secretas por idioma
+(`palabras.js`, sin Ñ ni tildes, con su teclado sin Ñ) y los nombres de los 195 países y de las
+ciudades que cambian de nombre (`nombres.js`).
+
+**Por qué:** lo pidió el dueño, que eligió esta modalidad entre tres: todo por persona, todo por
+copa, o mixta. D-98 había dejado la copa en español porque una copa mixta español/portugués "no
+sería pareja"; lo que no es parejo son las palabras, no las reglas. Fijar las palabras y los
+mensajes por copa y dejar libre la pantalla mantiene la copa pareja sin dejar afuera a quien no
+habla el idioma del grupo.
+
+**Alternativas descartadas:** todo por copa, sin toggle adentro (lo más simple, pero quien no lee
+el idioma de la copa no entiende ni las reglas). Todo por persona, también lo compartido (el
+chat del grupo recibiría mensajes en tres idiomas). Traducir las grillas y las palabras de
+español (los distractores y los chilenismos no sobreviven a la traducción). Un toggle a mitad de
+juego (recarga la página y no hace falta).
+
+**Consecuencias:** `games.js` ya no declara `idiomas: ['es']` en La Copa ni en los sueltos, y
+`i18n.test.mjs` compara los `LOCALES` de la copa como los de cualquier juego, con el nombre de
+cada suelto igual al de su minijuego en los tres idiomas. Los textos de cada minijuego (nombre,
+cómo se juega, puntaje) viven en `LOCALES[lang].juegos` y las rondas de la final en
+`LOCALES[lang].rondas`; `MINIJUEGOS` sigue exportado en español para el panel y las herramientas.
+Los motores reciben `lang` (textos) y `palabras` (idioma de la copa) en `generar` y `ensayo`.
+Las reglas de Firebase aceptan `meta.lang` y no dejan cambiarlo. Una copa nueva en inglés o
+portugués necesita las reglas publicadas (`node tools/reglas.mjs publicar`, D-122).
+
+## D-171 · Con imagen, el texto no repite lo que la imagen dice
+**Fecha:** 2026-10-01 · **Estado:** vigente; cambia la regla 2 de D-165
+**Decisión:** Cuando lo que se comparte lleva imagen, el texto ya no la repite. Lleva la
+cabecera (D-165), solo lo que la imagen **no** trae y el link al final:
+
+| Qué | Antes (D-165) | Ahora |
+|---|---|---|
+| Tabla parcial | cabecera, la tabla escrita y quién falta | cabecera y "⏳ ¡Día 2 en curso! Falta que jueguen: …" |
+| Tabla final | cabecera, campeón, podio y medallas | cabecera y las medallas (más días ganados, la remontada, al descenso) |
+| Resultado del día | cabecera, juego, quién, puntaje, tiempo y tarjeta | cabecera |
+| Minijuego jugado solo | cabecera, puntaje, tiempo, tarjeta y el reto | cabecera y "🤔 ¿Me ganas?" |
+
+Lo que no lleva imagen (las invitaciones y el recordatorio) sigue igual: ahí el texto es todo.
+
+**Por qué:** lo pidió el dueño al ver la tabla en WhatsApp: la imagen y, debajo, la misma tabla
+escrita, ocho líneas más que nadie lee. La imagen es lo que se mira; el texto es para lo que ella
+no puede decir.
+
+**Alternativas descartadas:** sacar solo la tabla parcial (lo pidió el dueño así, pero la misma
+repetición estaba en la tabla final, el resultado del día y el resultado jugando solo, y pidió
+consistencia). Dejar la tarjeta de colores en el texto, al estilo Wordle (ya está en la imagen,
+en grande).
+
+**Consecuencias:** `shareCardText` y `shareFinalChamp` salen de los textos de La Copa.
+`textoResultadoSolo()` en `compartir.js` arma el texto de jugar solo y lo prueba
+`compartir.test.mjs`; `tools/e2e/copa.mjs` comprueba que el resultado del día, la tabla parcial y
+el resumen final no repitan la imagen. Si la imagen no se puede compartir (un computador), se
+descarga y el texto se copia igual: la imagen sigue llegando.
+
+## D-172 · Un agente de documentación con ronda diaria en la nube
+**Fecha:** 2026-10-02 · **Estado:** vigente
+**Decisión:** Un subagente (`.claude/agents/documentacion.md`) revisa una vez al día lo que entró
+a `main` y deja la documentación al día: `CHANGELOG.md`, decisiones, requerimientos, la doc de
+cada juego, `CLAUDE.md`, el README con sus capturas y las tarjetas sociales.
+- **Memoria:** `docs/documentacion.json` guarda hasta qué commit de `main` revisó, lo que quedó
+  pendiente, los problemas que ya se le preguntaron al dueño (`conocidos`) y el historial de
+  rondas. Cada ronda parte de ahí, así que un día que no corre no deja nada sin revisar, y lo que no
+  alcanzó a hacer no se olvida.
+- **Herramienta:** `tools/documentar.mjs` (`revisar`, `anotar`, `historial`) lista lo que entró y
+  comprueba lo que no necesita leer prosa: decisiones citadas que no existen o repetidas, pruebas
+  que `CLAUDE.md` no nombra, guiones que `tools/e2e/README.md` no nombra y la versión sin entrada
+  en el CHANGELOG. Su prueba es `tools/documentar.test.mjs`. Cualquier sesión la puede correr.
+- **No es solo la ronda:** como el de usabilidad, revisa cada PR antes de proponer su fusión (lo que
+  trae y sus comprobaciones, con `revisar --desde <base>`, que mira la rama; los arreglos, en la
+  rama del PR) y se le puede pedir a mano.
+- **Cuándo:** una Routine de Claude Code en la nube, todos los días a las **3:54 hora del
+  Pacífico**, antes de la ronda de usabilidad (5:00, D-132). No necesita la llave de Firebase ni el
+  Mac del dueño.
+- **Qué hace:** solo documentación, en un PR `Documentación al día: <fecha>` que **no fusiona**.
+  Si no entró nada nuevo, no abre PR.
+- **Qué no hace:** tocar código, reglas de Firebase o versiones, ni tomar decisiones: si un cambio
+  parece pedir una que nadie tomó, la pregunta va en el PR.
+- **Capturas:** las rehace con `--sin-red`; las de partidas en línea necesitan llegar a Firebase
+  (`www.gstatic.com` y `*.firebaseio.com`) y, si el entorno no llega, el PR lo dice.
+**Por qué:** lo pidió el dueño. Con varias sesiones fusionando seguido (D-135), el README, las
+capturas y el CHANGELOG se quedaban atrás: el 2026-10-02 las diez secciones del README tenían
+capturas más viejas que el código.
+**Consecuencias:** la primera ronda encontró D-73 dos veces (el panel que se entera solo y la
+invitación que dice quién invita, de septiembre). El dueño pidió renumerar: el panel se queda con
+D-73 y la invitación pasa a D-173, en su mismo lugar del archivo y con una nota; se corrigieron
+las citas que hablaban de la invitación.
+**Alternativas descartadas:** una tarea en el Mac del dueño como la de usabilidad (depende de que
+esté prendido, y la documentación no necesita la llave). Que cada sesión deje todo documentado
+al fusionar (ya es la regla, C-13, y aun así se atrasa).
+
+## D-174 · ¿Dónde queda? se juega suelto desde la portada
+**Fecha:** 2026-10-02 · **Estado:** vigente; cierra lo que D-155 y D-162 dejaron en el laboratorio
+**Decisión:** ¿Dónde queda? deja de llevar `labs: true` en `SUELTOS` (`assets/js/games.js`): su
+tarjeta aparece en la portada como los demás minijuegos sueltos, encendida y sin "Próximamente",
+y abre `/minijuegos/donde/`, que ya existía con su tarjeta social (D-162). Dentro de La Copa no
+cambia nada: ya se podía elegir para cualquier día desde D-163.
+**Por qué:** lo pidió el dueño. El globo, las 529 ciudades y los nombres en los tres idiomas
+(D-170) ya estaban probados en el laboratorio y en copas de verdad.
+**Consecuencias:** la portada ofrece siete minijuegos sueltos. La captura del menú en el README se
+rehace. `labs` en `BASE` de `copa/rules.js` no se usa para la portada y queda como estaba.
