@@ -72,7 +72,7 @@ tableros más chicos), que no se guarda ni cuenta.
 
 Al crear la copa, apenas se elige la duración aparece **¿Qué se juega cada día?** con una propuesta
 al azar (`calendarioAlAzar`): juegos distintos del pozo (`POZO` en `engine.js`: los seis de siempre
-más Zip, Tango y ¿Dónde queda?), sin dos días seguidos de la misma habilidad. Es la mano y la línea
+más Zip, Tango, ¿Dónde queda? y Desenredo), sin dos días seguidos de la misma habilidad. Es la mano y la línea
 de Línea de Tiempo con su arrastre: un día se arrastra a otro lugar de la semana (en un celular,
 por su agarre ⠿) y un juego de la mano, hasta el día que reemplaza; tocando se llega a lo mismo
 (el juego y después la ranura o el día). 🎲 propone otro orden. La final queda fija al último. El calendario se guarda en
@@ -91,6 +91,16 @@ puntos por ciudad menos 4 cada 100 km, D-155, D-156).
   están en el motor, `donde.js`; `globo.js` lo dibuja en un canvas, recortando cada país en el
   borde, y la distancia se mide sobre la esfera. La antesala muestra el globo girando solo
   (`portada()` de `ui-donde.js`).
+
+- **🧶 Desenredo** (D-179, en el laboratorio) es el Untangle de Simon Tatham: nudos unidos por
+  hilos que se cruzan, y se arrastran los nudos hasta que ningún hilo cruce a otro. Por niveles
+  como Zip: diez, de 6 a 15 nudos, y cuatro minutos; 10 puntos por nivel y el desempate es cuándo
+  se resolvió el último. El motor (`desenredo.js`) arma primero un dibujo sin cruces (nudos al
+  azar bien repartidos y hilos de los pares más cercanos a los más lejanos, hasta 4 por nudo) y
+  después reparte los nudos en un círculo en desorden: siempre tiene solución, pero no una sola.
+  Todo en enteros sobre 1000 × 1000; un hilo que pasa a menos de 24 unidades de un nudo ajeno
+  cuenta como cruce, lo que además cierra la trampa de amontonar los nudos. Su habilidad es
+  `espacial`, propia, para que el sorteo del calendario la pueda separar de Reinas, Zip y Tango.
 
 - **Línea y Año** usan temáticas distintas dentro de la misma copa (`temasDeLaCopa`), para que no
   sean dos días de lo mismo.
