@@ -20,7 +20,7 @@ export const CALENDARIOS = {
 export const MODALIDADES = Object.keys(CALENDARIOS).map(Number);
 
 /** Los minijuegos que el admin puede poner en los días antes de la final (D-163). */
-export const POZO = ['linea', 'numero', 'conexiones', 'reinas', 'letras', 'anio', 'zip', 'tango', 'donde'];
+export const POZO = ['linea', 'numero', 'conexiones', 'reinas', 'letras', 'anio', 'zip', 'tango', 'donde', 'desenredo'];
 
 /** ¿Es un calendario que se puede jugar? Juegos del pozo sin repetir, y la final al último. */
 export function calendarioValido(cal, dias) {
