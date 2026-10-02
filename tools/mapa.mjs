@@ -4,7 +4,7 @@
  *
  *   node tools/mapa.mjs generar    # reescribe copa/juegos/mapa.js (necesita internet)
  *   node tools/mapa.mjs revisar    # ¿cada ciudad cae dentro de su país? ¿falta algún país?
- *   node tools/mapa.mjs satelite   # rehace las imágenes satelitales del globo (internet y macOS: usa sips)
+ *   node tools/mapa.mjs satelite   # rehace las imágenes satelitales del globo (internet, macOS por sips y Pillow)
  *
  * Los bordes son los de Natural Earth 1:50m (dominio público), en el TopoJSON de `world-atlas`,
  * bajados de jsDelivr. El mapa sale sin nombres, simplificado y en décimas de grado enteras
@@ -200,6 +200,19 @@ export const IMAGENES = { 2048: 'assets/img/tierra-2004-09-2048.jpg', 4096: 'ass
  */
 export const TESELAS = { dir: 'assets/img/tierra-2004-09', columnas: 16, filas: 8, lado: 1350 };
 
+/** Trozar la imagen grande en teselas `fila-columna.jpg` (argumentos: imagen, carpeta, columnas, filas, lado). */
+const TROZAR = `
+import sys
+from PIL import Image
+Image.MAX_IMAGE_PIXELS = None
+fuente, dir, columnas, filas, lado = sys.argv[1], sys.argv[2], *map(int, sys.argv[3:])
+img = Image.open(fuente).convert('RGB')
+assert img.size == (columnas * lado, filas * lado), f'la imagen mide {img.size}'
+for f in range(filas):
+    for c in range(columnas):
+        img.crop((c * lado, f * lado, (c + 1) * lado, (f + 1) * lado)).save(f'{dir}/{f}-{c}.jpg', quality=72)
+`;
+
 async function satelite() {
   const tmp = `${tmpdir()}/tierra-${process.pid}.jpg`;
   // 30 MB: con curl y reintentos, que el servidor de la NASA a veces corta a la mitad
@@ -209,18 +222,16 @@ async function satelite() {
     execFileSync('sips', ['-s', 'format', 'jpeg', '-s', 'formatOptions', '78', '-z', String(w / 2), String(w), tmp, '--out', `${RAIZ}${ruta}`], { stdio: 'ignore' });
     console.log(ruta);
   }
-  // Las teselas: primero franjas (sips abre la imagen grande una vez por franja), después cada franja en cuadrados
+  // Las teselas, con Pillow: sips recorta mal con --cropOffset (un 0 lo toma como "al centro" y la
+  // última fila le salió igual a la primera), y así quedaron mal el polo norte, la Antártida y la
+  // columna de 180° O hasta la 0.84
   const { dir, columnas, filas, lado } = TESELAS;
+  try { execFileSync('python3', ['-c', 'import PIL']); } catch {
+    throw new Error('Para trozar la imagen en teselas hace falta Python 3 con Pillow (pip3 install pillow)');
+  }
   rmSync(`${RAIZ}${dir}`, { recursive: true, force: true });
   mkdirSync(`${RAIZ}${dir}`, { recursive: true });
-  for (let f = 0; f < filas; f++) {
-    const franja = `${tmpdir()}/franja-${process.pid}.jpg`;
-    execFileSync('sips', ['-c', String(lado), String(columnas * lado), '--cropOffset', String(f * lado), '0', tmp, '--out', franja], { stdio: 'ignore' });
-    for (let c = 0; c < columnas; c++) {
-      execFileSync('sips', ['-s', 'format', 'jpeg', '-s', 'formatOptions', '72', '-c', String(lado), String(lado), '--cropOffset', '0', String(c * lado), franja, '--out', `${RAIZ}${dir}/${f}-${c}.jpg`], { stdio: 'ignore' });
-    }
-    rmSync(franja);
-  }
+  execFileSync('python3', ['-c', TROZAR, tmp, `${RAIZ}${dir}`, String(columnas), String(filas), String(lado)], { stdio: 'inherit' });
   console.log(`${dir}/: ${columnas * filas} teselas de ${lado} px`);
   rmSync(tmp);
 }
