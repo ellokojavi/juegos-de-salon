@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.84.2 — 2026-10-02
+- **Tarjetas para compartir (lo que se ve al pegar un link en WhatsApp) sin textos desalineados:**
+  en las píldoras de jugadores y duración, el texto queda a la misma altura en las dos, y el reloj
+  ⏱️ sale a color. Los acentos de los títulos (SALÓN, ¿EN QUÉ AÑO?, ¿DÓNDE QUEDA?, LÍNEA DE
+  TIEMPO) ya no salen cortados. Las imágenes traen las bajadas cortas nuevas, y la del menú suma 🏆.
+
 ## 0.84.1 — 2026-10-02
 - **Conexiones, Reinas, Zip y los demás, jugados desde la portada, ya no se presentan como de
   La Copa:** su antesala no dice "Minijuego de La Copa" ni "no cuenta para ninguna copa" (U-8).
