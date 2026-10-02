@@ -1808,7 +1808,7 @@ Copa y que su nombre en español sea el mismo. El récord viejo de esos dos soli
 uso, y una partida guardada del solitario viejo no se ofrece para retomar.
 
 ## D-143 · Las pruebas sin navegador corren solas en GitHub
-**Fecha:** 2026-09-25 · **Estado:** vigente
+**Fecha:** 2026-09-25 · **Estado:** vigente; las de punta a punta se sumaron en D-179
 **Decisión:** `.github/workflows/pruebas.yml` corre en cada PR y en cada fusión a main:
 todos los `*.test.mjs` y `*.test.py` del repo (los busca con `git ls-files`, sin lista),
 `tools/readme.py revisar` y `tools/og.mjs revisar`. El PR muestra ✅ o ❌ antes de fusionar.
@@ -2583,3 +2583,22 @@ dueño, la canción, las trampas del render) estaba solo en las conversaciones y
 temporales que se borran.
 **Consecuencias:** los mp4 pesan (~25 MB cada uno) y se publican con el sitio en GitHub Pages; al
 reemplazarlos, el repo crece con cada versión. Si eso molesta, se pasan a Git LFS o a un release.
+
+## D-179 · Las pruebas de punta a punta corren solas en GitHub
+**Fecha:** 2026-10-02 · **Estado:** vigente; completa D-143
+**Decisión:** `.github/workflows/e2e.yml` corre las pruebas de `tools/e2e/` en Chrome en cada PR
+y en cada fusión a main, un job por guion y en paralelo. El PR muestra cuál falló y deja sus
+capturas como artefacto. `tools/e2e/ci.mjs` decide cuáles: todos los guiones menos las
+herramientas (`mirar`, `contacto`) y **los que abren salas en el Firebase de producción**
+(`*-online`, `*-chat` y una lista corta en `ci.mjs`), que siguen a mano. Un guion falla si sale
+con error, si imprime una línea con ✗ o ❌, o si pasa los 15 minutos.
+**Por qué:** el dueño pidió automatizar lo más posible. Correrlas a mano costaba unos minutos por
+guion y se corrían solo los del juego que se tocaba. Un cambio en algo compartido (el arrastre,
+`i18n.js`, el transporte) podía romper otro juego sin que nadie lo viera hasta jugarlo.
+**Alternativas descartadas:** correr también los que usan Firebase: llenarían el panel de salas
+falsas y escribirían en la base de producción desde cada PR. Un solo job con todos: tardaría
+más de media hora y un guion colgado taparía a los demás. Exigir que cada guion tenga sus
+chequeos con ✗: muchos solo imprimen lo que ven para que lo lea una persona; en CI igual caen
+si algo se rompe del todo, y pasarlos a chequeos se hace de a uno, cuando se toque cada guion.
+**Consecuencias:** un guion nuevo entra solo. Si abre salas de verdad, va en la lista de
+`ci.mjs`. Las capturas del README siguen a mano: un artefacto de CI no reemplaza mirarlas.
