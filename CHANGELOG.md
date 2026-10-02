@@ -974,7 +974,7 @@
 
 ## 0.31.0 — 2026-09-13
 - **La invitación a una sala dice quién invita**: *"Javi te invita a jugar Línea de Tiempo en
-  juegosdesalon.cl - Sala: WFBN"* (D-73). Antes decía "Únete a mi sala de Línea de Tiempo. Código:
+  juegosdesalon.cl - Sala: WFBN"* (D-173). Antes decía "Únete a mi sala de Línea de Tiempo. Código:
   WFBN", sin nombre: el mensaje llega por WhatsApp a gente que muchas veces no conoce la app, y lo
   primero que hace falta saber es de parte de quién viene. Nombra a quien toca compartir, que es
   quien está invitando.
