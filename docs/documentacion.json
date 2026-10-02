@@ -1,7 +1,8 @@
 {
-  "revisadoHasta": "bd8b20adabe23d4fef76977c3629002e6b0db1d4",
+  "revisadoHasta": "120897ba0b5948f888dde870349419bac3859113",
   "pendientes": [
-    "Capturas de partidas en línea (16, en toque-y-fama, batalla-naval, linea-de-tiempo, dudo, ahorcado y julepe): el entorno en la nube no llega a www.gstatic.com ni a *.firebaseio.com. Rehacerlas desde el Mac del dueño (python3 tools/readme.py capturas <sección>) o abrir esos dominios en el entorno."
+    "Capturas de partidas en línea (17: toque-y-fama 4, linea-de-tiempo 5, ahorcado 3, batalla-naval 2, dudo 2, julepe 1): el entorno en la nube no llega a www.gstatic.com ni a *.firebaseio.com (el proxy responde 403). Rehacerlas desde el Mac del dueño (python3 tools/readme.py capturas <sección>) o abrir esos dominios en el entorno.",
+    "Imágenes de las tarjetas sociales (node tools/og.mjs imagenes) con las frases viejas del menú: se rehacen en el Mac del dueño (D-177)."
   ],
   "conocidos": [],
   "rondas": [
@@ -14,6 +15,16 @@
         "Capturas de partidas en línea (16, en toque-y-fama, batalla-naval, linea-de-tiempo, dudo, ahorcado y julepe): el entorno en la nube no llega a www.gstatic.com ni a *.firebaseio.com. Rehacerlas desde el Mac del dueño (python3 tools/readme.py capturas <sección>) o abrir esos dominios en el entorno."
       ],
       "nota": "Primera ronda, a mano: README de Reinas, 53 capturas rehechas sin red y revisadas en hojas de contacto, y el agente mismo."
+    },
+    {
+      "fecha": "2026-10-02",
+      "desde": "bd8b20adabe23d4fef76977c3629002e6b0db1d4",
+      "hasta": "120897ba0b5948f888dde870349419bac3859113",
+      "pr": null,
+      "pendientes": [
+        "Capturas de partidas en línea (17: toque-y-fama 4, linea-de-tiempo 5, ahorcado 3, batalla-naval 2, dudo 2, julepe 1): el entorno en la nube no llega a www.gstatic.com ni a *.firebaseio.com (el proxy responde 403). Rehacerlas desde el Mac del dueño (python3 tools/readme.py capturas <sección>) o abrir esos dominios en el entorno.",
+        "Imágenes de las tarjetas sociales (node tools/og.mjs imagenes) con las frases viejas del menú: se rehacen en el Mac del dueño (D-177)."
+      ]
     }
   ],
   "nota": "Memoria del agente de documentación (D-172). La lee y la escribe tools/documentar.mjs: hasta qué commit de main se revisó, lo que quedó pendiente, los problemas ya conocidos que esperan al dueño y las rondas anteriores."

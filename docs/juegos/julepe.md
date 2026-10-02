@@ -6,21 +6,21 @@
 
 ## 1. Resumen
 
-Juego de bazas de la familia del Tute, adaptado a tragos. En cada mano hay un **plato** de tragos
-sobre la mesa. Cada jugador mira sus cinco cartas y dice, en secreto, si **va** o **se pasa**.
-Ir es comprometerse a ganar **dos bazas de las cinco**: quien va y lo consigue se salva y además
-reparte dos tragos por baza a quien quiera; quien va y no llega **se toma el plato entero**, y eso
-es el **julepe**. Lo que se bebió vuelve al plato, así que la mano siguiente sale más cara: dos
-julepes seguidos dejan un plato de veinte antes de que nadie se dé cuenta.
+Juego de bazas de la familia del Tute, adaptado a sorbos. En cada mano hay un **plato** de sorbos
+sobre la mesa. Cada jugador mira sus cinco cartas y, por turno desde la derecha de quien repartió,
+dice si **va** o **se pasa**. Ir es comprometerse a ganar **dos bazas de las cinco**: quien va y lo
+consigue se salva y además reparte dos sorbos por baza entre los demás; quien va y no llega **se
+toma el plato entero**, y eso es el **julepe**. El plato pasa a la mano siguiente una vez por cada
+julepeado: con dos julepes en la misma mano, la siguiente se juega por el doble.
 
 El celular hace lo que en la mesa real se hace mal: baraja, **no deja tirar una carta que no
-corresponde** —asistir, montar y fallar son tres reglas que en una mesa con tragos se discuten
-toda la noche—, lleva la cuenta del plato y se acuerda de quién le debe tragos a quién.
+corresponde** —asistir, montar y fallar son tres reglas que en una mesa con sorbos se discuten
+toda la noche—, lleva la cuenta del plato y se acuerda de quién le debe sorbos a quién.
 
 ## 2. Reglas
 
 - **Baraja inglesa de 52 cartas**, sin comodines. De mayor a menor: A > K > Q > J > 10 > … > 2.
-- **El plato:** cuando está vacío, cada jugador pone 2 tragos. Solo se vuelve a poner cuando se
+- **El plato:** cuando está vacío, cada jugador pone 2 sorbos. Solo se vuelve a poner cuando se
   vacía, y se vacía cuando nadie se julepea.
 - **Reparto:** cinco cartas a cada uno y una más a la vista; el palo de esa carta es el **triunfo**
   y le gana a cualquier carta de los otros palos. El reparto rota hacia la derecha.
@@ -37,8 +37,8 @@ toda la noche—, lleva la cuenta del plato y se acuerda de quién le debe trago
   3. **fallar**: si no tiene del palo de salida pero tiene triunfos, juega un triunfo.
   Si no puede ninguna, tira lo que quiera. Se lleva la baza el triunfo más alto, y si no hubo, la
   carta más alta del palo de salida. Quien gana la baza abre la siguiente.
-- **La cuenta:** con dos bazas o más, se salva y reparte `2 × bazas` tragos a quien quiera de la
-  mesa, todos a la misma persona o repartidos. Con menos de dos, **julepe**: se toma el plato
+- **La cuenta:** con dos bazas o más, se salva y reparte `2 × bazas` sorbos entre los demás
+  (no a sí mismo), todos a la misma persona o repartidos. Con menos de dos, **julepe**: se toma el plato
   entero. El plato de la mano siguiente es el plato por la cantidad de julepes (dos julepes lo
   doblan); si no hubo ninguno, queda vacío y se vuelve a poner.
 - **Fin de la partida:** 5, 8 o 12 manos, a elección. Gana quien terminó más seco.
@@ -102,7 +102,7 @@ es la única verdad; lo que no corresponde se descarta en silencio.
 | `va` / `paso` | el de turno | — |
 | `cambia` | el de turno | `i`: los puestos que suelta, `'0,3'` o `''` |
 | `juega` | el de turno | `c`: la carta, `'10♦'` |
-| `regala` | el que se salvó | `a`: un rol por cada baza ganada, `'B,B,C'` (dos tragos cada uno) |
+| `regala` | el que se salvó | `a`: un rol por cada baza ganada, `'B,B,C'` (dos sorbos cada uno) |
 | `revela` | cada uno | `n` y `cs`: las ocho cartas que le tocaron en esa mano, al cerrarla |
 | `chat` | cada uno | `text` (no es parte del estado, C-15) |
 
@@ -113,7 +113,7 @@ Tres decisiones, todas con lo que ese jugador ve y nada más (`julepe/engine.js`
 - **Ir o pasarse.** Le pone número a la mano: un triunfo vale de 0,30 (el 2) a 0,90 (el as), porque
   aunque sea bajo corta; fuera del triunfo solo mandan el as (0,65) y el rey (0,45). Se descuenta
   un 8% por cada rival de más y se suma lo que espera mejorar con el cambio. Entra si la suma pasa
-  un umbral que **se mueve con el plato**: arriesgar veinte tragos por el derecho a repartir cuatro
+  un umbral que **se mueve con el plato**: arriesgar veinte sorbos por el derecho a repartir cuatro
   no es lo mismo que arriesgar seis. Queda un poco de ruido para que dos bots con la misma mano no
   hagan siempre lo mismo.
 - **Qué cambia.** Guarda triunfos, ases y reyes; suelta lo bajo, y antes lo de los palos donde
@@ -121,7 +121,7 @@ Tres decisiones, todas con lo que ese jugador ve y nada más (`julepe/engine.js`
 - **Qué tira.** Abriendo: con dos triunfos o más sale de triunfo para arrastrar los del resto; si
   no, un as de otro palo; si no, lo más barato. Siguiendo: si puede ganar la baza, la gana con lo
   más barato que le sirva; si ya está perdida, suelta su peor carta.
-- **A quién le da los tragos.** Todos a la misma persona, y a la que va más seca.
+- **A quién le da los sorbos.** Todos a la misma persona, y a la que va más seca.
 
 ## 7. Archivos
 
