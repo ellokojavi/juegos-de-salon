@@ -73,6 +73,44 @@ export const dentro = ([x, y]) => [
 ];
 
 /* ------------------------------------------------------------------ */
+/* La cuerda (D-182)                                                   */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Cuánto se curva un hilo, como fracción de su largo, y lo más que se aparta de la recta. Es una
+ * curva leve y solo de dibujo: los cruces se siguen decidiendo sobre la recta (`cruces`), así que
+ * tiene que ser lo bastante chica para que lo que se ve y lo que se cuenta no se contradigan.
+ */
+export const ONDA = 0.06;
+export const ONDA_MAX = 34;
+
+/** Un entero de 32 bits revuelto: la forma de cada hilo sale de sus dos nudos, igual en cada redibujo. */
+const revolver = n => { n = Math.imul(n ^ (n >>> 16), 0x45d9f3b); n = Math.imul(n ^ (n >>> 16), 0x45d9f3b); return (n ^ (n >>> 16)) >>> 0; };
+
+/**
+ * Los dos puntos de control de la curva de Bézier de un hilo entre `a` y `b`. Cada hilo tiene su
+ * forma, fija mientras no cambien sus nudos de identidad: unos en S suave y otros en arco, como una
+ * cuerda que no está del todo tensa. La curva sigue al hilo cuando se mueven los nudos.
+ */
+export function cuerda(a, b, semilla, { onda = ONDA, tope = ONDA_MAX } = {}) {
+  const h = revolver(semilla + 1);
+  const dx = b[0] - a[0], dy = b[1] - a[1], largo = Math.hypot(dx, dy) || 1;
+  const nx = -dy / largo, ny = dx / largo;
+  const k = Math.min(tope, onda * largo) * (h & 1 ? 1 : -1);
+  const f1 = 0.6 + 0.4 * ((h >>> 2) & 255) / 255, f2 = 0.6 + 0.4 * ((h >>> 10) & 255) / 255;
+  const ese = (h >>> 1) & 1;                     // 1: en S; 0: en arco
+  const o1 = k * f1, o2 = (ese ? -1 : 1) * k * f2;
+  return [[a[0] + dx / 3 + nx * o1, a[1] + dy / 3 + ny * o1], [a[0] + 2 * dx / 3 + nx * o2, a[1] + 2 * dy / 3 + ny * o2]];
+}
+
+/** El trazo SVG de un hilo como cuerda. */
+export function trazoCuerda(a, b, semilla, opciones) {
+  const [c1, c2] = cuerda(a, b, semilla, opciones);
+  const r = x => Math.round(x * 10) / 10;
+  return `M${r(a[0])} ${r(a[1])}C${r(c1[0])} ${r(c1[1])} ${r(c2[0])} ${r(c2[1])} ${r(b[0])} ${r(b[1])}`;
+}
+
+/* ------------------------------------------------------------------ */
 /* Generador                                                           */
 /* ------------------------------------------------------------------ */
 
