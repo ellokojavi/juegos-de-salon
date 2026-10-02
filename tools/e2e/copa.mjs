@@ -521,7 +521,7 @@ for (let d = 1; d <= dias; d++) {
     await click('#btn-admin'); await sleep(300);
     await click('#msg-hoy'); await sleep(100);
     console.log('  recordatorio:', JSON.stringify(await ev('window.__compartido.at(-1)?.text')));
-    ok(/Faltan por jugar hoy: Pancho/.test(await ev('window.__compartido.at(-1)?.text')), 'el recordatorio dice quién falta');
+    ok(/Falta por jugar hoy: Pancho\./.test(await ev('window.__compartido.at(-1)?.text')), 'el recordatorio dice quién falta');
     await click('#msg-tabla'); await sleep(1200);
     console.log('  tabla parcial:', JSON.stringify(await ev('window.__compartido.at(-1)?.text')));
     // La tabla del admin es la misma del tablero: imagen y texto, con la misma cabecera (D-165)
@@ -863,7 +863,7 @@ await b.shot('admin-lab');
 // Terminar la copa antes (D-161): el día de la final, con gente sin jugar; después, exportar
 await b.go(`${BASE}?prueba&demo=final-admin`, 1500); await preparar();
 const avisoFin = await ev(`document.getElementById('admin-terminar')?.innerText || ''`);
-ok(/Falta que jueguen el día 7: .*Cata/.test(avisoFin) && !/no se juegan/.test(avisoFin), 'terminar antes: el admin ve quién no ha jugado la final');
+ok(/Falta que juegue(n)? el día 7: .*Cata/.test(avisoFin) && !/no se juegan/.test(avisoFin), 'terminar antes: el admin ve quién no ha jugado la final');
 ok(!await ev(`document.getElementById('admin-exportar')`), 'mientras se juega no hay exportar');
 await revisarPantalla('admin-terminar');
 await ev(`document.getElementById('admin-terminar').scrollIntoView(); 1`);
