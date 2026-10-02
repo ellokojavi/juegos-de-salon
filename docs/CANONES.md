@@ -202,6 +202,11 @@ El README no se mantiene a pulso: `python3 tools/readme.py` lo sostiene.
   README es una toma nueva en el guion, no un recorte a mano. Se miran antes de publicar
   (C-12) y se guardan al doble del ancho con que se muestran.
 
+Lo que se atrasa igual lo recoge el agente `documentacion` (D-172): una ronda diaria sobre lo que
+entró a `main` y una revisión de cada PR antes de proponer su fusión, con
+`node tools/documentar.mjs revisar` y su memoria en `docs/documentacion.json`. No reemplaza esta
+regla: quien cambia algo lo documenta en su mismo PR.
+
 ## C-14 · Robustez
 
 - Nada de dependencias de npm ni de paso de compilación: el repo publicado se abre y funciona.
@@ -281,3 +286,4 @@ como un error: se lee como que nadie jugó.
 - [ ] Registro en el menú, README, especificación, requerimientos, decisiones y changelog (C-2, C-13).
 - [ ] El panel lo muestra sin haberlo tocado: `node panel/adapta.test.mjs` en verde y una mirada a `node tools/e2e/mirar.mjs panel datos` (C-16).
 - [ ] Capturas del README rehechas y miradas, y `python3 tools/readme.py revisar` en verde (C-13).
+- [ ] `node tools/documentar.mjs revisar --desde origin/main` sin ✗ nuevos: decisiones, pruebas, guiones y CHANGELOG al día (D-172).
