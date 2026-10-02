@@ -53,6 +53,12 @@
     .pie .dominio { color: var(--yellow); letter-spacing: 0.04em; }
     /* La animación del degradado deja el título de un color distinto en cada foto */
     .rainbow { animation: none; }
+    /*
+      El degradado se pinta solo dentro de la caja del título (background-clip: text), y con alto
+      de línea bajo 1 la caja no alcanza a los acentos de las mayúsculas: la Ó de SALÓN y la Ñ de
+      AÑO salían cortadas. Relleno arriba para que entren y margen negativo para no mover nada.
+    */
+    .nombre.rainbow, .titulo.rainbow { padding-top: 0.2em; margin-top: -0.2em; }
   </style>
 </head>
 <body>
