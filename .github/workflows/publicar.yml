@@ -1,4 +1,4 @@
-# Publica el sitio en GitHub Pages en cada fusión a main (D-190). Se publica solo public/ —sin las
+# Publica el sitio en GitHub Pages en cada fusión a main (D-192). Se publica solo public/ —sin las
 # pruebas—: docs/, tools/, marketing/ y lo demás del repo no son parte del sitio.
 # Antes corren las pruebas (pruebas.yml): con una en rojo, el sitio publicado no cambia.
 #

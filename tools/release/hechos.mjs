@@ -65,7 +65,7 @@ function variantes(L, EN) {
     .map(k => ({ clave: k, es: L[k], en: EN[k] || L[k] }));
 }
 
-/** La carpeta del juego, que es su URL y no su id (D-190): 'ahorcado' vive en public/hangman/. */
+/** La carpeta del juego, que es su URL y no su id (D-192): 'ahorcado' vive en public/hangman/. */
 const carpeta = g => g.path.replace(/\/$/, '');
 
 const juegos = [];
@@ -101,7 +101,7 @@ const tematicas = DECKS.map(d => ({
   id: d.id, emoji: d.emoji, nombre: d.name, pista: d.hint, cartas: d.cards.length, desde: anios(d.cards)[0], hasta: anios(d.cards)[1],
 }));
 
-// Todos entran solos al import map (set-version.py, D-190): ya no hay "sin versionar" que vigilar
+// Todos entran solos al import map (set-version.py, D-192): ya no hay "sin versionar" que vigilar
 const modulos = archivos('public', r => r.endsWith('.js'));
 const tests = archivos('', r => r.endsWith('.test.mjs'));
 const e2e = archivos('tools/e2e', r => r.endsWith('.mjs') && !r.endsWith('cdp.mjs')).map(r => r.replace('tools/e2e/', ''));

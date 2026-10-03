@@ -484,7 +484,7 @@ keyed by name instead of thrown away. See [docs/PANEL.md](docs/PANEL.md).
 
 ## Stack
 
-Plain HTML, CSS and JavaScript (ES modules). No build step, no npm dependencies. The site is the `public/` folder, published as a static site on GitHub Pages by a workflow on every merge to `main`, once the tests pass (D-190). Everything else in the repo (docs, tools, marketing) is the workshop, and is not published. The two-phone mode uses **Firebase Realtime Database** (free plan) as a live room. See [firebase/README.md](firebase/README.md).
+Plain HTML, CSS and JavaScript (ES modules). No build step, no npm dependencies. The site is the `public/` folder, published as a static site on GitHub Pages by a workflow on every merge to `main`, once the tests pass (D-192). Everything else in the repo (docs, tools, marketing) is the workshop, and is not published. The two-phone mode uses **Firebase Realtime Database** (free plan) as a live room. See [firebase/README.md](firebase/README.md).
 
 ## Running it locally
 
@@ -591,7 +591,7 @@ To add a screen to this README: take the shot in the e2e script, add the entry t
 
 ## Layout
 
-The repo root is not the web root (D-190). `public/` is the site, exactly as it is served: folder =
+The repo root is not the web root (D-192). `public/` is the site, exactly as it is served: folder =
 URL, in English. Everything next to it is the workshop.
 
 ```
@@ -615,7 +615,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   assets/js/transport/        Transports: local (same phone), firebase (room) and stats (usage signals)
   assets/og/                  The 1200×630 images shown when a link is shared
   manifest.webmanifest        PWA manifest (installable on the home screen)
-  ahorcado/ copa/ …           Bridge pages: the old Spanish URLs, forwarding to the new ones (generated, D-190)
+  ahorcado/ copa/ …           Bridge pages: the old Spanish URLs, forwarding to the new ones (generated, D-192)
 docs/                       Requirements, decisions, canons, one spec per game (docs/games/) and the README screenshots
 firebase/                   Realtime Database security rules and notes
 tools/

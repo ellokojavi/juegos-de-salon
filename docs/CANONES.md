@@ -22,7 +22,7 @@ Cada canon tiene un ID (C-n) para citarlo en el código, en los commits y en las
 ## C-2 · Estructura de un juego
 
 Una carpeta por juego dentro de `public/` (la raíz del sitio: carpeta = URL), con nombre en inglés,
-en minúsculas y con guiones (`public/hangman/` → `/hangman/`, D-190), y siempre estos archivos:
+en minúsculas y con guiones (`public/hangman/` → `/hangman/`, D-192), y siempre estos archivos:
 
 ```
 public/<carpeta>/
@@ -34,14 +34,14 @@ public/<carpeta>/
   game.js         Máquina de estados y render. Lo único que toca el DOM
 ```
 
-- **El id no es la carpeta** (D-190): el `id` es un dato —lo guardan las salas, el panel y el
+- **El id no es la carpeta** (D-192): el `id` es un dato —lo guardan las salas, el panel y el
   `localStorage`— y no cambia nunca; la carpeta es la URL y va en `path`. Un juego nuevo puede usar
   el mismo nombre en inglés para los dos. Si una carpeta se renombra, la ruta vieja queda como
   página puente (la genera `node tools/release/og.mjs tarjetas`).
 - Los minijuegos de La Copa siguen la misma idea en `public/cup/games/<carpeta>/`: `engine.js`
   (reglas puras), `ui.js` (pantalla) y sus datos propios; lo común a todos queda en `games/`.
 - El juego se registra en `public/assets/js/games.js` con `id`, `emoji`, `name` y `tagline` por idioma, `players`, `duration`, `path` y `available`. Con sala, también `jugadas`: los tipos de mensaje que hace una persona, que es lo que el panel cuenta como jugadas (D-138).
-- Sus módulos entran solos al import map: `set-version.py` recorre `public/` (C-11, D-190).
+- Sus módulos entran solos al import map: `set-version.py` recorre `public/` (C-11, D-192).
 - Reutilizar siempre los módulos compartidos antes de escribir uno nuevo:
   `public/assets/js/ui.js` (DOM, confeti, vibración, wake lock), `i18n.js`, `sound.js`, `session.js`, `handoff.js`, `transport/`.
 
@@ -162,8 +162,8 @@ Cuando cada dispositivo guarda un secreto (un número, una flota):
 
 - Antes de cada publicación: `python3 tools/release/set-version.py X.Y.Z`. Estampa `?v=` en los import maps y las hojas de estilo para que el navegador no mezcle archivos viejos y nuevos.
 - Ese mismo comando revisa antes que el README no haya quedado atrás del código (C-13) y no estampa si lo quedó. Con `--igual` se estampa igual, para una urgencia.
-- Los módulos nuevos entran solos: el script recorre `public/**/*.js` y estampa toda página de `public/` que cargue módulos (D-190).
-- Se publica solo `public/`, con `.github/workflows/publicar.yml`, en cada fusión a main y solo si las pruebas pasan (D-190).
+- Los módulos nuevos entran solos: el script recorre `public/**/*.js` y estampa toda página de `public/` que cargue módulos (D-192).
+- Se publica solo `public/`, con `.github/workflows/publicar.yml`, en cada fusión a main y solo si las pruebas pasan (D-192).
 - El menú dibuja la lista de juegos **antes** que cualquier adorno, y los adornos van en `try/catch`: un adorno roto no puede dejar la app vacía.
 - Cada cambio publicado entra en `CHANGELOG.md` con su versión.
 - Se verifica que el sitio publicado sirva la versión nueva antes de darla por lista.

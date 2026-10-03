@@ -3,7 +3,7 @@
  * Para agregar un juego nuevo: crear su carpeta public/<carpeta>/ con su index.html y agregar una
  * entrada aquí. Los textos van por idioma ({ es, en, pt }). El menú principal se genera desde esta lista.
  *
- * El `id` y la carpeta son dos cosas (D-190): el id es un dato —lo guardan las salas de Firebase, el
+ * El `id` y la carpeta son dos cosas (D-192): el id es un dato —lo guardan las salas de Firebase, el
  * panel y el localStorage— y no cambia nunca; la carpeta es la URL (`path`) y va en inglés. Los
  * juegos de antes conservan su id en español ('ahorcado' vive en /hangman/) y su ruta vieja
  * (/<id>/) queda como página puente, que genera `node tools/release/og.mjs tarjetas`.
@@ -118,7 +118,7 @@ export const GAMES = [
 
 /**
  * Los minijuegos de La Copa que se juegan sueltos desde la portada (D-142), de a uno y sin copa:
- * abren `minigames/<slug>/` (D-149, D-162, D-190), la pantalla de práctica de La Copa con un link que no
+ * abren `minigames/<slug>/` (D-149, D-162, D-192), la pantalla de práctica de La Copa con un link que no
  * dice "copa": no guarda nada y no cuenta para ninguna copa. Van aparte de GAMES porque no son una
  * carpeta con su `rules.js`: el README y las pruebas de idioma de los juegos no los recorren. Su
  * página y su tarjeta social las genera `node tools/release/og.mjs tarjetas` a partir de minigames/index.html.

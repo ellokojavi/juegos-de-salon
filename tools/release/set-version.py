@@ -3,7 +3,7 @@
 Estampa una versión en el sitio para evitar caché mezclada (HTML nuevo con JS viejo).
 
 - Escribe/actualiza un <script type="importmap"> en cada página de public/ que carga módulos, que
-  mapea TODOS los módulos JS del sitio (public/**/*.js, D-190) a la misma ruta con ?v=VERSION.
+  mapea TODOS los módulos JS del sitio (public/**/*.js, D-192) a la misma ruta con ?v=VERSION.
   Los import maps se aplican también a los imports anidados (un módulo que importa a otro) y a
   los import() dinámicos.
 - Agrega ?v=VERSION a las hojas de estilo.
@@ -23,7 +23,7 @@ SITIO = ROOT / 'public'
 
 
 def modulos():
-    """Todos los módulos JS del sitio (D-190): uno nuevo entra solo, sin lista que mantener."""
+    """Todos los módulos JS del sitio (D-192): uno nuevo entra solo, sin lista que mantener."""
     return sorted(str(f.relative_to(SITIO)) for f in SITIO.rglob('*.js'))
 
 

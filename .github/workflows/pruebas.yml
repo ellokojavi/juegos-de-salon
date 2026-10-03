@@ -1,5 +1,5 @@
 # Las pruebas sin navegador, en cada PR y en cada fusión a main (D-143). En main las llama
-# publicar.yml antes de publicar (D-190): si no pasan, el sitio no cambia.
+# publicar.yml antes de publicar (D-192): si no pasan, el sitio no cambia.
 # Las de punta a punta (tools/e2e/) y las capturas siguen a mano: necesitan Chrome y ojos.
 
 name: Pruebas

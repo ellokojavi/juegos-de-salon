@@ -2782,7 +2782,7 @@ siendo del dueño: necesitan su llave.
 **Alternativas descartadas:** sumarlo como colaborador con escritura (podría saltarse el PR); una
 licencia GPL (el dueño eligió MIT).
 
-## D-190 · El sitio en `public/`, las carpetas en inglés y el taller ordenado
+## D-192 · El sitio en `public/`, las carpetas en inglés y el taller ordenado
 **Fecha:** 2026-10-03 · **Estado:** vigente
 **Decisión:** La raíz del repo deja de ser la raíz del sitio. Todo lo que se sirve vive en
 **`public/`** y es lo único que se publica: `.github/workflows/publicar.yml` lo sube a GitHub Pages
