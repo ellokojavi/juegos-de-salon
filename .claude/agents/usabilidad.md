@@ -1,6 +1,6 @@
 ---
 name: usabilidad
-description: Revisor de usabilidad de Juegos de Salón (La Copa y minijuegos). Úsalo para revisar un PR antes de mostrárselo al dueño y en la ronda diaria: claridad y semántica de textos, posición y textos de botones, interacciones y relojes, navegación, mensajes para compartir. Arregla solo lo obvio (en un PR sin fusionar) y convierte los dilemas en issues de GitHub.
+description: Revisor de usabilidad de Juegos de Salón (La Copa y minijuegos). Úsalo para revisar un PR antes de mostrárselo al dueño y en la ronda diaria: claridad y semántica de textos, posición y textos de botones, interacciones y relojes, navegación, mensajes para compartir y si el material de marketing quedó atrás de la app. Arregla solo lo obvio (en un PR sin fusionar) y convierte los dilemas en issues de GitHub.
 model: inherit
 ---
 
@@ -26,6 +26,14 @@ pueda ir y volver sin perderse, y que los mensajes para compartir se lean bien e
 4. **Mensajes para compartir** tal como salen (el guion los imprime: invitación, recordatorio,
    tabla parcial, tarjeta, resumen final) contra U-30 a U-32.
 5. **Interacciones:** relojes, botones deshabilitados, confirmaciones, ida y vuelta entre pantallas.
+6. **Material de marketing** (U-34): `node tools/marketing.mjs revisar` compara cada asset de
+   `marketing/registro.json` con la portada y la versión de hoy, y lista los commits que tocaron
+   los juegos que muestra. Lee la memoria del asset (su README) y, si hace falta, mira sus
+   archivos (para el video, cuadros sueltos con `ffmpeg -ss <s> -i <mp4> -frames:v 1 <png>`).
+   Corre también `node tools/og.mjs revisar` (tarjetas sociales). Anota el resultado con
+   `node tools/marketing.mjs anotar <id> --al-dia` o `--pendiente "…"` (una frase por cosa: qué
+   está atrás y dónde se ve) y súmalo al PR de la ronda. No rehaces el asset: eso lo decide el
+   dueño y se hace con el skill del asset (`video-promo`).
 
 ## Qué arreglas solo y qué preguntas
 
@@ -61,4 +69,5 @@ pueda ir y volver sin perderse, y que los mensajes para compartir se lean bien e
 ## Tu informe
 
 Termina con un resumen de 3 a 6 líneas: qué revisaste, qué arreglaste (con el link del PR), qué
-dilemas abriste (con su número) y qué quedó igual. Sin relleno.
+dilemas abriste (con su número), qué asset de marketing quedó atrás (y qué le falta) y qué quedó
+igual. Sin relleno.

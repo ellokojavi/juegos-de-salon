@@ -84,6 +84,14 @@ Cada regla tiene un ID (U-n) para citarla en los PR y en los issues.
   falta y marca "(-1J)" a quien lleva menos juegos.
 - **U-32 · Sin spoilers:** lo que se comparte no revela respuestas ni los minijuegos que vienen.
 
+## Marketing
+
+- **U-34 · El marketing muestra la app de hoy:** cada asset de `marketing/` (el video y lo que
+  venga) y las tarjetas sociales enseñan los juegos que hay, con sus nombres, emojis, textos y
+  pantallas actuales. Un juego nuevo que no sale, uno que ya no está, un nombre o un texto viejo o
+  una pantalla que cambió se anotan como pendiente del asset (`node tools/marketing.mjs anotar`).
+  Rehacerlo lo decide el dueño: el revisor anota, no rehace.
+
 ## Resuelto con el dueño
 
 Las respuestas a dilemas (issues con la etiqueta `usabilidad`) se anotan aquí:
