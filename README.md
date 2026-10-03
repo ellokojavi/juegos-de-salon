@@ -436,9 +436,15 @@ How it is put together (canon C-3):
   applied, it is saved, and the parameter is removed from the address bar. **A room invitation
   carries it**, so whoever gets the link opens the app in the language it was sent in. This is not
   detection: somebody chose, for themselves or for the person getting the link.
-- To add a language: add it to `LANGS` and to the toggle in `i18n.js`, then add the dictionary in
-  `COMMON`, `games.js`, `frases.js`, the six `rules.js`, `decks/index.js` and every card. The
+- To add a language: add it to `IDIOMAS` and to the toggle in `i18n.js`, then add the dictionary in
+  `COMMON`, `games.js`, `frases.js`, the eight `rules.js`, `decks/index.js` and every card. The
   parity test says what is missing.
+- **A new language starts in the lab** (D-191). **German** is fully written but listed in
+  `EN_LABS`, so it is only offered on a device that came in through
+  [`/labs/de/`](https://juegosdesalon.cl/labs/de/) (or a `?lang=de` link). There, every "‹ Menu"
+  leads back to the lab and a 🐞 button in the top bar sends comments with their context, so
+  German-speaking friends can review the draft before everyone sees it. The plan and the glossary
+  are in [docs/ALEMAN.md](docs/ALEMAN.md).
 - In The Cup, the screen follows each player's language, but the words of Connections and Word, the
   messages shared with the group and their link follow the language picked when the cup is created
   (D-170).
@@ -595,7 +601,8 @@ To add a screen to this README: take the shot in the e2e script, add the entry t
 index.html                  Main menu (generated from assets/js/games.js)
 assets/css/base.css         Shared styles and animations (party theme, turn transitions)
 assets/js/games.js          Game registry (text in es, en and pt)
-assets/js/i18n.js           Language (ES/EN/PT): toggle, persistence and shared text; i18n.test.mjs checks parity
+assets/js/i18n.js           Language (ES/EN/PT, and DE in the lab): toggle, persistence and shared text; i18n.test.mjs checks parity
+assets/js/labs-idioma.js    A language in the lab: keeps navigation inside /labs/<lang>/ and adds the 🐞 comment button
 assets/js/frases.js         Footer lines for the menu, 100 per language
 assets/js/azar.js           The menu's Random game button and the roll that opens a game (D-188)
 assets/js/dado3d.js         The die in WebGL: rounded white cube, light and one emoji per face
@@ -609,8 +616,8 @@ batalla-naval/              Batalla Naval (engine.js + tests, game.js, rules.js,
 linea-de-tiempo/            Línea de Tiempo (engine.js + tests, game.js, rules.js, decks/)
 ahorcado/                   El Ahorcado (engine.js + tests, game.js, rules.js, decks/)
 dudo/                       Dudo (engine.js + tests, game.js, rules.js)
-copa/                       La Copa: tournament engine, stores (Firebase and local test), juegos/ with the minigames (solo.js mounts one as the play-alone mode of another game; grillas-en.js, grillas-pt.js and nombres.js hold the English and Portuguese word content), desglose.js (score breakdown), planilla.js (final table as CSV), reportes.js (auth-free bug reports), demo.js (lab demos)
-labs/                       The lab: games being tested before they reach the menu (not linked, not indexed)
+copa/                       La Copa: tournament engine, stores (Firebase and local test), juegos/ with the minigames (solo.js mounts one as the play-alone mode of another game; grillas-en.js, grillas-pt.js, grillas-de.js and nombres.js hold the English, Portuguese and German word content), desglose.js (score breakdown), planilla.js (final table as CSV), reportes.js (auth-free bug reports), demo.js (lab demos)
+labs/                       The lab: games being tested before they reach the menu (not linked, not indexed); labs/de/ is the German lab
 assets/js/arrastre.js       Shared drag and drop: dropping chooses, a button confirms
 assets/js/teclado.js        Shared Bulls and Cows keypad, with notes (long press to strike out a key)
 assets/css/linea.css        Shared timeline, hand, slots and verdict (Timeline and the cup)
@@ -672,5 +679,6 @@ These documents are in Spanish, like the rest of the project.
 - [Toque y Fama: estudio de factibilidad y propuesta de mecánica](docs/juegos/toque-y-fama-factibilidad.md)
 - [Especificación: Toque y Fama](docs/juegos/toque-y-fama.md)
 - [Changelog](CHANGELOG.md)
+- [El alemán](docs/ALEMAN.md)
 - [Guía de usabilidad](docs/USABILIDAD.md)
 <!-- /generado -->
