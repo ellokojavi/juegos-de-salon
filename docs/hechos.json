@@ -1,5 +1,5 @@
 {
-  "version": "0.85.4",
+  "version": "0.86.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -58,6 +58,7 @@
         "copa/game.js",
         "copa/index.html",
         "copa/juegos/anio.js",
+        "copa/juegos/audiencia.js",
         "copa/juegos/ciudades.js",
         "copa/juegos/conexiones.js",
         "copa/juegos/desenredo.js",
@@ -593,6 +594,7 @@
     "copa/engine.js",
     "copa/game.js",
     "copa/juegos/anio.js",
+    "copa/juegos/audiencia.js",
     "copa/juegos/ciudades.js",
     "copa/juegos/conexiones.js",
     "copa/juegos/desenredo.js",
