@@ -9,7 +9,7 @@ import * as tango from './tango.js';
 import * as zip from './zip.js';
 import * as desenredo from './desenredo.js';
 import * as letras from './letras.js';
-import { PALABRAS, PALABRAS_EN, PALABRAS_PT } from './palabras.js';
+import { PALABRAS, PALABRAS_EN, PALABRAS_PT, PALABRAS_DE } from './palabras.js';
 import * as conexiones from './conexiones.js';
 import * as final from './final.js';
 import * as donde from './donde.js';
@@ -19,6 +19,7 @@ import { GRILLAS } from './grillas.js';
 import * as GRILLAS_MOD from './grillas.js';
 import * as GRILLAS_EN from './grillas-en.js';
 import * as GRILLAS_PT from './grillas-pt.js';
+import * as GRILLAS_DE from './grillas-de.js';
 import { PAISES, CIUDADES as NOMBRES_CIUDADES } from './nombres.js';
 import { JUEGOS } from './index.js';
 import { temasDeLaCopa } from './mazos.js';
@@ -364,6 +365,19 @@ test('tango: solución única, reglas y puntaje', () => {
   // tres soles seguidos rompen la regla
   const g = new Array(36).fill(tango.VACIO); g[0] = g[1] = g[2] = tango.SOL;
   assert.ok(tango.violaciones({ n: 6, marcas: [] }, g).has(0));
+  // El choque del último toque queda pendiente: contado, pero se perdona si se vuelve a esa
+  // casilla, y deja de estar pendiente al tocar otra (#135). La pantalla lo marca recién ahí.
+  assert.equal(e.pendiente, -1);
+  const L = p.sol.map((v, i) => i).filter(i => !tango.esDada(p, i));
+  const choca = (pre, i) => p.sol[i] === tango.LUNA && tango.estado(p, [...pre, i]).mal.size > tango.estado(p, pre).mal.size;
+  const paso = L.find(i => choca([], i));
+  assert.ok(paso !== undefined);
+  const otra = L.find(i => i !== paso);
+  const ahora = tango.estado(p, [paso]);
+  assert.equal(ahora.pendiente, paso); assert.equal(ahora.errores, 1);
+  assert.equal(tango.estado(p, [paso, paso]).errores, 0);   // el sol de paso a la luna no cuenta
+  const dejado = tango.estado(p, [paso, otra]);
+  assert.equal(dejado.errores, 1 + (dejado.pendiente >= 0 ? 1 : 0)); assert.notEqual(dejado.pendiente, paso);
 });
 
 test('zip: solución única, trazo y niveles', () => {
@@ -598,7 +612,7 @@ test('el público de la copa decide qué contenido local entra (D-186, D-187)', 
   assert.ok(cartaLocal.size >= 2);
   const codigos = [...CODIGOS, ...Array.from({ length: 80 }, (_, i) => 'ABCDEFGHJKLMNPQRSTUVWXYZ'.slice(i % 19, i % 19 + 5))];
   const vistos = { global: new Set(), cl: new Set(), br: new Set() };
-  for (const aud of ['global', 'cl', 'br']) for (const c of codigos) for (const lang of ['es', 'en', 'pt']) {
+  for (const aud of ['global', 'cl', 'br']) for (const c of codigos) for (const lang of ['es', 'en', 'pt', 'de']) {
     const o = { lang, palabras: lang, aud };
     const temas = Object.values(temasDeLaCopa(c, { aud }));
     temas.forEach(t => vistos[aud].add(t));
@@ -620,7 +634,7 @@ test('el público de la copa decide qué contenido local entra (D-186, D-187)', 
   assert.ok(vistos.br.has('brasil') && !vistos.br.has('chile'));
   assert.ok(!vistos.global.has('chile') && !vistos.global.has('brasil'));
   // Grillas de sobra para cada público en cada idioma
-  for (const aud of ['global', 'cl', 'br']) for (const M of [GRILLAS_MOD, GRILLAS_EN, GRILLAS_PT]) assert.ok(M.GRILLAS.filter(g => !fuera(g.local, aud)).length >= 7, aud);
+  for (const aud of ['global', 'cl', 'br']) for (const M of [GRILLAS_MOD, GRILLAS_EN, GRILLAS_PT, GRILLAS_DE]) assert.ok(M.GRILLAS.filter(g => !fuera(g.local, aud)).length >= 7, aud);
   // El público de una copa: el suyo; global si era de las `intl`; y sin él, como las de antes
   assert.equal(audienciaDe({ aud: 'br' }), 'br');
   assert.equal(audienciaDe({ intl: true }), 'global');
@@ -631,7 +645,7 @@ test('el público de la copa decide qué contenido local entra (D-186, D-187)', 
 });
 
 test('las instrucciones de cada minijuego son concisas, en los tres idiomas (U-18, D-184)', () => {
-  for (const lang of ['es', 'en', 'pt']) for (const [id, J] of Object.entries(TEXTOS[lang].juegos)) {
+  for (const lang of ['es', 'en', 'pt', 'de']) for (const [id, J] of Object.entries(TEXTOS[lang].juegos)) {
     assert.ok(J.como.length <= 3, `${lang} ${id}: ${J.como.length} puntos en "Cómo se juega" (máximo 3)`);
     const largo = J.como.join(' ').length;
     assert.ok(largo <= 280, `${lang} ${id}: "Cómo se juega" tiene ${largo} caracteres (máximo 280)`);
@@ -661,7 +675,7 @@ test('una copa ya en su día de Conexiones conserva la grilla de antes (D-128)',
 // ── Inglés y portugués (D-170) ──
 
 test('grillas en inglés y portugués: las mismas reglas que las de español', () => {
-  for (const [lang, M] of Object.entries({ en: GRILLAS_EN, pt: GRILLAS_PT })) {
+  for (const [lang, M] of Object.entries({ en: GRILLAS_EN, pt: GRILLAS_PT, de: GRILLAS_DE })) {
     assert.ok(M.GRILLAS.length >= 12, lang);
     assert.equal(new Set(M.GRILLAS.map(g => g.id)).size, M.GRILLAS.length, lang);
     for (const g of [...M.GRILLAS, M.GRILLA_ENSAYO]) {
@@ -690,7 +704,7 @@ test('conexiones: la grilla sale del idioma de las palabras de la copa', () => {
 });
 
 test('letras: palabras en inglés y portugués, y teclado sin Ñ', () => {
-  for (const [lang, lista] of Object.entries({ en: PALABRAS_EN, pt: PALABRAS_PT })) {
+  for (const [lang, lista] of Object.entries({ en: PALABRAS_EN, pt: PALABRAS_PT, de: PALABRAS_DE })) {
     assert.ok(lista.length >= 100, lang);
     assert.equal(new Set(lista).size, lista.length, `${lang}: palabra repetida`);
     for (const w of lista) assert.ok(/^[A-Z]{5}$/.test(w) && letras.valido(w), `${lang}: ${w}`);
@@ -709,6 +723,7 @@ test('¿En qué año? y Línea: las mismas cartas en todos los idiomas, con su t
   assert.notEqual(en.hitos[0].texto, es.hitos[0].texto);
   assert.equal(anio.anioLabel(-44, 'en'), '44 BC');
   assert.equal(anio.anioLabel(-44, 'pt'), '44 a.C.');
+  assert.equal(anio.anioLabel(-44, 'de'), '44 v. Chr.');
   assert.equal(anio.anioLabel(-44), '44 a. C.');
   const l = linea.generar('KQRST', 1, { lang: 'pt' });
   assert.deepEqual(l.mano.map(c => c.id), linea.generar('KQRST', 1).mano.map(c => c.id));
