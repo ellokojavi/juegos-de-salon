@@ -157,8 +157,9 @@ const r2 = await res();
 console.log('resultado 2:', JSON.stringify(r2));
 ok(r2.puntos === '100' && /récord/i.test(r2.record), 'línea perfecta: 100 puntos y nuevo récord');
 await b.shot('solo-7-perfecta');
-// Cambiar de modo vuelve a la intro sin nada que retomar
-await b.evaluate(`[...document.querySelectorAll('#sr-actions .btn')][1].click(); 1`); await sleep(500);
+// Cambiar de modo vuelve a la intro sin nada que retomar. Es el penúltimo botón: arriba se
+// sumó Compartir (D-165) y abajo va Volver al menú
+await b.evaluate(`[...document.querySelectorAll('#sr-actions .btn')].at(-2).click(); 1`); await sleep(500);
 ok((await b.active()) === 'screen-intro' && (await b.evaluate(`!document.querySelector('#resume-slot .panel')`)), 'Cambiar modo vuelve a la intro');
 
 /* 6 · El solitario viejo no se ofrece ---------------------------------------------- */
