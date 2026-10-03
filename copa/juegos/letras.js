@@ -10,13 +10,20 @@ import { palabrasDe } from './palabras.js';
 export const LARGO = 5;
 export const MAX_INTENTOS = 8;
 export const ALFABETO = 'QWERTYUIOPASDFGHJKLÑZXCVBNM'.split('');
-/** El teclado de cada idioma: la Ñ solo en español (D-170). */
-export const alfabeto = lang => (lang && lang !== 'es' ? ALFABETO.filter(l => l !== 'Ñ') : ALFABETO);
+/**
+ * El teclado de cada idioma, en el orden de dibujo: la Ñ solo en español (D-170) y en alemán
+ * QWERTZ (D-191). Donde el español tiene la Ñ, los demás dejan un hueco (`null`): así la tercera
+ * fila empieza en su letra, como en un teclado de verdad, y no queda una Z o una Y colgando al
+ * final de la segunda.
+ */
+const QWERTZ = 'QWERTZUIOPASDFGHJKLÑYXCVBNM'.split('');
+const sinÑ = teclas => teclas.map(l => (l === 'Ñ' ? null : l));
+export const alfabeto = lang => (lang === 'de' ? sinÑ(QWERTZ) : lang && lang !== 'es' ? sinÑ(ALFABETO) : ALFABETO);
 
 /** `palabras`: el idioma de la palabra secreta, el de la copa (D-170); sin él, `lang`. */
-export function generar(codigo, dia, { max = MAX_INTENTOS, sal = 'letras', lang = 'es', palabras = lang } = {}) {
+export function generar(codigo, dia, { max = MAX_INTENTOS, sal = 'letras', lang = 'es', palabras = lang, aud = null } = {}) {
   const a = azar(codigo, dia, sal);
-  return { largo: LARGO, max, secreto: a.uno(palabrasDe(palabras)), ...(palabras !== 'es' ? { lang: palabras } : {}) };
+  return { largo: LARGO, max, secreto: a.uno(palabrasDe(palabras, { aud })), ...(palabras !== 'es' ? { lang: palabras } : {}) };
 }
 
 export const valido = v => typeof v === 'string' && v.length === LARGO && new Set(v).size === LARGO && [...v].every(l => ALFABETO.includes(l));
