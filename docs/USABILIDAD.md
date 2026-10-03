@@ -111,3 +111,5 @@ Las respuestas a dilemas (issues con la etiqueta `usabilidad`) se anotan aquí:
   Puerto Natales siguen en nivel 3; de vez en cuando la difícil es una "amable". No marcarlo.
 - **Juego al azar no se cancela** (#139, opción A): tirar el dado es un compromiso. Sin ✕ ni
   Escape; tocar durante la tirada abre el juego de inmediato y "atrás" vuelve al menú limpio (D-188).
+- **El 🐞 del laboratorio alemán puede achicar el nombre del juego en la barra** (#159): a 320 px
+  queda en "Sc…"; se deja así porque es temporal y el nombre entero está en el título (D-191).
