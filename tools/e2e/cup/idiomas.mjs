@@ -60,8 +60,10 @@ for (const lang of ['en', 'pt']) {
 }
 
 // Los minijuegos sueltos, en el idioma de quien juega
+// El id es el de siempre ('letras'); la carpeta, en inglés ('word'): D-192
+const CARPETA = { letras: 'word', conexiones: 'connections', anio: 'year', reinas: 'queens', donde: 'where' };
 for (const [id, lang, espera] of [['letras', 'en', /Bulls and Cows: Word/i], ['conexiones', 'pt', /Conexões/i], ['anio', 'en', /What Year/i], ['reinas', 'pt', /Rainhas/i], ['donde', 'en', /Where Is It/i]]) {
-  await b.go(`${SITIO}/minigames/${id}/?prueba&lang=${lang}`, 2000);
+  await b.go(`${SITIO}/minigames/${CARPETA[id]}/?prueba&lang=${lang}`, 2000);
   const t = await texto();
   ok(espera.test(t), `${id} (${lang}): la antesala está traducida`);
   ok(!/🇪🇸/.test(t), `${id} (${lang}): sin la píldora de "solo en español"`);
