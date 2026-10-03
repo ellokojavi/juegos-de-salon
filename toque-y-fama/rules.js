@@ -198,7 +198,7 @@ const DE = {
   lobbyTitle: 'Raum erstellt', lobbyCode: 'Code', lobbyShare: 'Sag deinem Gegner den Code oder lass ihn den QR-Code scannen.', lobbyWaiting: 'Warte auf deinen Gegner', lobbyJoined: '{name} ist dabei!', shareLink: '📤 Link teilen', copyLink: '📋 Link kopieren', copied: 'Kopiert!',
   lobbyCancel: 'Raum auflösen', lobbyLeave: 'Raum verlassen',
   // Geheimzahl
-  secretTitle: 'Deine geheime Zahl', secretFor: 'Geheime Zahl von {name}', secretHint: '{n} verschiedene Ziffern. Nicht spicken lassen.', secretHintNoZero: '{n} verschiedene Ziffern, ohne Null am Anfang. Nicht spicken lassen.',
+  secretTitle: 'Deine geheime Zahl', secretFor: 'Geheime Zahl von {name}', secretHint: '{n} verschiedene Ziffern. Lass niemanden hinschauen.', secretHintNoZero: '{n} verschiedene Ziffern, ohne Null am Anfang. Lass niemanden hinschauen.',
   confirm: 'Los!', hide: 'Verdecken', tapToReveal: 'Tippen zum Ansehen', secretSaved: 'Geheime Zahl gespeichert 🔒',
   waitingSecret: 'Warte, bis {name} eine geheime Zahl wählt', bothReady: 'Beide bereit!',
   // Spiel

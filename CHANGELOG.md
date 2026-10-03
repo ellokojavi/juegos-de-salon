@@ -3,7 +3,8 @@
 ## 0.91.0 — 2026-10-03
 - **Sin destello de idioma** (D-192): al abrir una página en inglés, portugués o alemán ya no se
   ven los textos en español una fracción de segundo antes de cambiar.
-- **Laboratorio alemán** (D-192): una copa con palabras en alemán cambia de día a medianoche de
+- **Laboratorio alemán** (D-192): todo el alemán pasa a Hochdeutsch común para Alemania, Austria
+  y Suiza (con ß, sin palabras ni referencias de un solo país). Una copa con palabras en alemán cambia de día a medianoche de
   Europa central (Berlín, Viena, Zúrich), y las instrucciones de Palabra y del Ahorcado dicen que
   las diéresis van sin puntos (Ä es A) y la ß como SS.
 

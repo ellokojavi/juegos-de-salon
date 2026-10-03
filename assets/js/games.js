@@ -90,7 +90,7 @@ export const GAMES = [
     tipos: ['mesa'],
     emoji: '🍹',
     name: { es: 'Julepe', en: 'Julep', pt: 'Paga o Bolo', de: 'Julepe' },
-    tagline: { es: 'Dices si vas o te pasas. Si vas y no haces dos bazas, te tomas todo el plato.', en: 'Say if you are in or out. Go in, miss two tricks, and you drink the whole pot.', pt: 'Você diz se entra ou passa. Se entrar e não fizer duas vazas, bebe o bolo inteiro.', de: 'Sag, ob du mitgehst oder passt. Gehst du mit und machst keine zwei Stiche, trinkst du den ganzen Pott.' },
+    tagline: { es: 'Dices si vas o te pasas. Si vas y no haces dos bazas, te tomas todo el plato.', en: 'Say if you are in or out. Go in, miss two tricks, and you drink the whole pot.', pt: 'Você diz se entra ou passa. Se entrar e não fizer duas vazas, bebe o bolo inteiro.', de: 'Sag, ob du mitgehst oder passt. Gehst du mit und machst keine zwei Stiche, trinkst du den ganzen Topf.' },
     players: '1–6',
     duration: '15–30',
     jugadas: ['va', 'paso', 'cambia', 'juega', 'regala'],

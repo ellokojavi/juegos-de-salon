@@ -2829,9 +2829,13 @@ toggle de quien no lo pidió); una copia aparte de la app en `/labs/de/` (se des
 no prueba las salas de verdad); que el alemán faltante cayera al inglés (esconde lo que falta
 traducir: la prueba de paridad no lo vería).
 
-## D-192 · El alemán: hora de Europa central, diéresis dichas y sin destello de idioma
+## D-192 · El alemán: Hochdeutsch para los tres países, hora de Europa central, diéresis dichas y sin destello
 **Fecha:** 2026-10-03 · **Estado:** vigente
-**Decisión:** Tres ajustes que pidió el dueño al probar el laboratorio alemán (D-191):
+**Decisión:** Cuatro ajustes que pidió el dueño al probar el laboratorio alemán (D-191):
+- **Alemán estándar común (Hochdeutsch) para Alemania, Austria y Suiza, con ß**: palabras que se
+  usan en los tres y nada que conozca uno solo (Späti, Bundesliga, Skat, Brötchen/Semmel). Los
+  suizos no escriben la ß pero la leen sin problema. El criterio está en el glosario de
+  [ALEMAN.md](ALEMAN.md); todo el borrador se revisó con él.
 - **Una copa en alemán cambia de día a medianoche de Europa central** (`Europe/Berlin`, que es
   también la hora de Viena y Zúrich): `zonaDeIdioma` en `copa/engine.js` elige la zona según el
   idioma de las palabras al crearla, y la nota bajo "Empieza" cambia al elegir el idioma. Las
