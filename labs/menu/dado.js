@@ -45,9 +45,15 @@ function tirar(pool, { lang, base, T }) {
   const destino = base + elegido.path;
   const quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // Las caras tienen las puntas redondeadas: por las esquinas se veía el fondo oscuro. Un cubo
-  // blanco de puntas rectas, apenas más adentro, rellena esos huecos
-  const relleno = CARAS.map(t => el('div', { class: 'azar-relleno', style: `transform:${t} translateZ(calc(var(--medio) - 1.5px))` }));
+  // Los cantos redondeados: las caras tienen las puntas redondas y por las esquinas se veía el
+  // fondo. Detrás de cada cara van capas cada vez más hondas y más anchas, que son cortes de un
+  // cubo de cantos redondos (radio R): juntas dibujan la curva del canto y de la esquina.
+  const R = 0.16;
+  const relleno = CARAS.flatMap(t => [0.2, 0.45, 0.7, 1].map(f => {
+    const rho = R * Math.sqrt(1 - (1 - f) ** 2);
+    const lado = v => `calc(var(--lado) * ${v.toFixed(4)})`;
+    return el('div', { class: 'azar-relleno', style: `inset:${lado(R - rho)};border-radius:${lado(rho)};transform:${t} translateZ(${lado(0.5 - R * f)})` });
+  }));
   const cubo = el('div', { class: 'azar-cubo' }, ...relleno, ...caras.map((g, i) =>
     el('div', { class: 'azar-cara', style: `transform:${CARAS[i]} translateZ(var(--medio))` },
       el('span', { class: con('', g.emoji) }, g.emoji))));
