@@ -5,7 +5,7 @@
  *
  *   node tools/release/og.mjs tarjetas   reescribe el bloque <!-- generado: og --> de cada página,
  *                                genera la página de cada minijuego suelto (public/minigames/<slug>/)
- *                                y las páginas puente de las rutas viejas (D-190)
+ *                                y las páginas puente de las rutas viejas (D-192)
  *   node tools/release/og.mjs imagenes   rehace con Chrome las imágenes de 1200×630 que quedaron atrás
  *                                (necesita internet: las fuentes vienen de Google Fonts).
  *                                Con --todas, las rehace todas
@@ -132,7 +132,7 @@ function paginaSuelta(p, bloqueOg) {
 /* Las páginas puente de las rutas viejas                              */
 /* ------------------------------------------------------------------ */
 /**
- * Las carpetas pasaron al inglés (D-190): /ahorcado/ es /hangman/. Pero los links viejos siguen
+ * Las carpetas pasaron al inglés (D-192): /ahorcado/ es /hangman/. Pero los links viejos siguen
  * circulando —las invitaciones a una sala por WhatsApp, el link propio de una copa
  * (/copa/?pirata), los marcadores—, así que cada ruta vieja queda como una página puente que manda
  * a la nueva con lo mismo detrás (?sala=…, ?pirata, &lang=…, #…). Lleva la tarjeta de la página
@@ -158,7 +158,7 @@ function paginaPuente(p) {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${escapa(p.titulo)}</title>
-  <!-- Página puente (D-190): esta ruta se mudó a ${p.a.replace(/^(\.\.\/)+/, '/')}. La genera node tools/release/og.mjs tarjetas: no se edita a mano. -->${og}
+  <!-- Página puente (D-192): esta ruta se mudó a ${p.a.replace(/^(\.\.\/)+/, '/')}. La genera node tools/release/og.mjs tarjetas: no se edita a mano. -->${og}
   <script>location.replace('${p.a}' + location.search + location.hash);</script>
   <noscript><meta http-equiv="refresh" content="0; url=${p.a}"></noscript>
 </head>
