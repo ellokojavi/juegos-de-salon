@@ -96,7 +96,7 @@ puntos por ciudad menos 4 cada 100 km, D-155, D-156).
   borde, y la distancia se mide sobre la esfera. La antesala muestra el globo girando solo
   (`portada()` de `ui-donde.js`).
 
-- **🧶 Desenredo** (D-179, en el laboratorio) es el Untangle de Simon Tatham: nudos unidos por
+- **🧶 Desenredo** (D-179; fuera del laboratorio desde D-190) es el Untangle de Simon Tatham: nudos unidos por
   hilos que se cruzan, y se arrastran los nudos hasta que ningún hilo cruce a otro. Por niveles
   como Zip: diez, de 6 a 15 nudos, y cuatro minutos; 10 puntos por nivel y el desempate es cuándo
   se resolvió el último. El motor (`desenredo.js`) arma primero un dibujo sin cruces (nudos al
