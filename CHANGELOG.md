@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.89.0 — 2026-10-03
+- **🧶 Desenredo sale del laboratorio** (D-190): su tarjeta ya no dice "Próximamente" y se juega
+  suelto desde el menú, en `/minijuegos/desenredo/`. En La Copa se puede elegir para cualquier día,
+  como los demás minijuegos.
+
 ## 0.88.0 — 2026-10-03
 - **🎲 Juego al azar** (D-188): un botón bajo el título del menú tira un dado blanco en 3D con un
   juego en cada cara; rueda, rebota, cae en uno y lo abre. Nunca sale La Copa, y si hay un filtro
