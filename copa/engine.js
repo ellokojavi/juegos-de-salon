@@ -390,6 +390,17 @@ export function tabla(L, yo, now) {
 }
 
 /**
+ * Por qué el 1.° quedó arriba del 2.° con los mismos puntos (dilema #79): 'dias' si ganó más días,
+ * 'final' si ganaron los mismos y quedó mejor en la final. Null si no empatan en puntos, o si
+ * empatan en todo y comparten el primer lugar (el orden alfabético no es un desempate).
+ */
+export function desempate(filas) {
+  const [a, b] = filas || [];
+  if (!a || !b || a.total !== b.total || a.lugar === b.lugar) return null;
+  return { pts: a.total, criterio: a.ganados !== b.ganados ? 'dias' : 'final' };
+}
+
+/**
  * Cómo fue cambiando la tabla, día por día, tal como la ve `yo`: el lugar de cada jugador
  * después de cada día que ya puede ver (los que jugó o los cerrados). Para el gráfico de
  * progreso del tablero. Devuelve { dias: [1, 2, …], filas: [{ pid, name, lugares: [..] }] }.
