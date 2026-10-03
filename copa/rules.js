@@ -21,7 +21,7 @@ const BASE = {
   zip: { emoji: '〰️', labs: true },
   tango: { emoji: '☀️', labs: true },
   donde: { emoji: '📍', labs: true },
-  desenredo: { emoji: '🧶', labs: true },
+  desenredo: { emoji: '🧶' },
   final: { emoji: '🏁' },
 };
 
