@@ -32,7 +32,8 @@ pkill -f "remote-debugging-port=949[1-3]"   # solo los tuyos
 
 `mirar.mjs` no es una prueba: abre una pantalla suelta para revisarla de a una, sin jugar la
 partida. `node tools/e2e/mirar.mjs ahorcado juego --ancho 320` saca la captura y avisa si hay
-scroll horizontal o botones bajo 44 px (C-8).
+scroll horizontal o botones bajo 44 px (C-8). Con `--idioma de` pone la marca del laboratorio, igual que
+entrar por `/labs/de/`: el alemán solo se ofrece así (D-191).
 
 `contacto.mjs` tampoco: arma una hoja con **todas** las capturas del README de una sección,
 al tamaño en que el README las muestra, para mirarlas juntas antes de publicar (D-76).
