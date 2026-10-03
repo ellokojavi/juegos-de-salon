@@ -114,8 +114,11 @@ puntos por ciudad menos 4 cada 100 km, D-155, D-156).
   y después saca las que sobran; Zip suma números sobre un camino al azar y después saca los que
   sobran (quedan 7 a 12 en 6 × 6).
 - **Tango** no cuenta como error pasar por el sol para llegar a la luna: solo dejar la casilla
-  rompiendo una regla (D-102). La casilla con sol es ámbar y la de luna azul noche, con la luna
-  plateada: los dos emojis son amarillos y así no se confunden (D-146).
+  rompiendo una regla (D-102). La pantalla dice lo mismo: el choque se pinta en rojo recién cuando
+  el jugador toca otra casilla, nunca por tiempo; con el tablero lleno se muestra sin contarse,
+  para que se vea qué arreglar (#135). La casilla con sol es ámbar y la de luna azul noche, con la luna
+  plateada: los dos emojis son amarillos y así no se confunden (D-146). Las dadas llevan su color más
+  vivo (el sol, además, el borde entero) y un candado chico (#61).
 - **Toque y Fama: Palabra** acepta cualquier combinación de 5 letras distintas como intento, sin
   diccionario, igual que Toque y Fama acepta cualquier número de cifras distintas. La palabra
   secreta sale de la lista del idioma de la copa (`juegos/palabras.js`: 120 en español, 185 en
