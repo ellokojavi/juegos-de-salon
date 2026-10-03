@@ -525,6 +525,7 @@ node panel/adapta.test.mjs
 node panel/aggregate.test.mjs
 node panel/copas.test.mjs
 node tools/documentar.test.mjs
+node tools/marketing.test.mjs
 ```
 <!-- /generado -->
 

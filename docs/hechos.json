@@ -1,5 +1,5 @@
 {
-  "version": "0.88.0",
+  "version": "0.90.4",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -707,6 +707,7 @@
     "panel/aggregate.test.mjs",
     "panel/copas.test.mjs",
     "tools/documentar.test.mjs",
+    "tools/marketing.test.mjs",
     "toque-y-fama/engine.test.mjs"
   ],
   "e2e": [
@@ -717,6 +718,7 @@
     "batalla-naval-colocacion.mjs",
     "batalla-naval-local.mjs",
     "batalla-naval-online.mjs",
+    "ci.mjs",
     "compartir-sala.mjs",
     "contacto.mjs",
     "copa-idiomas.mjs",
