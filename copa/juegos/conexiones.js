@@ -3,9 +3,11 @@
  * Se eligen cuatro y se confirma; hay cuatro errores permitidos. Si quedó a una de un grupo,
  * se avisa "a una".
  */
+import { fuera } from './audiencia.js';
 import { GRILLAS, GRILLA_ENSAYO, GRILLAS_ANTES_D128, CAMBIO_D128 } from './grillas.js';
 import * as EN from './grillas-en.js';
 import * as PT from './grillas-pt.js';
+import * as DE from './grillas-de.js';
 import { azar, hash32 } from './semilla.js';
 
 export const ERRORES = 4;
@@ -13,22 +15,24 @@ export const COLORES = ['amarillo', 'verde', 'azul', 'morado'];
 export const EMOJIS = ['🟨', '🟩', '🟦', '🟪'];
 
 /** Las grillas de cada idioma (D-170): cada uno tiene las suyas, no una traducción. */
-const IDIOMAS = { en: EN, pt: PT };
+const IDIOMAS = { en: EN, pt: PT, de: DE };
 
 /**
  * La grilla de una copa: la misma posición de la lista para siempre. `desde` es cuándo empieza
  * el día de Conexiones de esa copa: si empezó antes del cambio a grupos por significado (D-128),
  * se sigue con la grilla de antes, para no cambiarla a mitad del día.
  */
-export const grillaDe = (codigo, { desde = null, lang = 'es' } = {}) => {
+export const grillaDe = (codigo, { desde = null, lang = 'es', aud = null } = {}) => {
   // D-128 es anterior a los otros idiomas: solo el español tiene grillas de antes
-  const lista = IDIOMAS[lang]?.GRILLAS || (desde !== null && desde < CAMBIO_D128 ? GRILLAS_ANTES_D128 : GRILLAS);
+  const todas = IDIOMAS[lang]?.GRILLAS || (desde !== null && desde < CAMBIO_D128 ? GRILLAS_ANTES_D128 : GRILLAS);
+  // Sin las grillas con palabras de un país que no es el del público (D-186, D-187)
+  const lista = aud ? todas.filter(g => !fuera(g.local, aud)) : todas;
   return lista[hash32(`${codigo}:grilla`) % lista.length];
 };
 
 /** `palabras`: el idioma de las palabras, el de la copa (D-170); sin él, `lang`. */
-export function generar(codigo, dia, { sal = 'conexiones', grilla, desde = null, lang = 'es', palabras = lang } = {}) {
-  const g = grilla || grillaDe(codigo, { desde, lang: palabras });
+export function generar(codigo, dia, { sal = 'conexiones', grilla, desde = null, lang = 'es', palabras = lang, aud = null } = {}) {
+  const g = grilla || grillaDe(codigo, { desde, lang: palabras, aud });
   const a = azar(codigo, dia, sal);
   return {
     id: g.id,

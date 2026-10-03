@@ -27,6 +27,13 @@ Puede haber varias sesiones de Claude trabajando en este repo al mismo tiempo (D
   propio** (`pkill -f "remote-debugging-port=94xx"`). Nunca `pkill -f remote-debugging-port` a secas:
   mata las pruebas de todas las sesiones.
 
+## Si trabajas en un fork (D-189)
+
+Quien aporta desde afuera sigue [CONTRIBUTING.md](CONTRIBUTING.md): rama de tema y PR hacia
+`ellokojavi/juegos-de-salon`. Ahí Claude **no** estampa versión ni escribe el CHANGELOG, numera las
+decisiones como `D-??`, no publica reglas de Firebase ni lee el panel o los reportes (necesitan la
+llave del dueño) y no fusiona. Todo lo demás de esta guía vale igual.
+
 ## Publicar
 
 ```bash
@@ -71,13 +78,14 @@ estas tarjetas.
 
 ```bash
 node tools/og.mjs tarjetas    # reescribe el bloque <!-- generado: og --> (lo corre set-version.py)
-node tools/og.mjs imagenes    # rehace los 1200×630 con Chrome (necesita internet: Google Fonts)
-node tools/og.mjs revisar     # ¿falta una tarjeta o una imagen?
+node tools/og.mjs imagenes    # rehace con Chrome las 1200×630 atrasadas (--todas: todas; necesita internet)
+node tools/og.mjs revisar     # ¿falta una tarjeta, o una imagen se hizo con otro dibujo u otros textos? (D-181)
 ```
 
 Los textos salen de `assets/js/games.js` y el dibujo de [tools/og/tarjeta.html](tools/og/tarjeta.html),
 que importa los módulos reales. Las imágenes se rehacen a mano: solo cambian si cambia un nombre,
-un emoji o el diseño (D-72).
+un emoji, una bajada o el diseño (D-72). Cada una guarda la huella de su dibujo y sus textos, y una
+atrasada frena el PR y `set-version.py` (D-181): **se rehacen desde una rama al día con `main`**.
 
 ## Pruebas
 
@@ -85,6 +93,9 @@ GitHub corre todas las de abajo (menos el servidor) en cada PR y en cada fusión
 (`.github/workflows/pruebas.yml`, D-143): el PR muestra ✅ o ❌. Encuentra solo cualquier
 `*.test.mjs` o `*.test.py`, así que un test nuevo no se agrega al workflow. Igual se corren
 aquí antes de abrir el PR. Las de punta a punta también corren en GitHub (ver abajo).
+
+**No se fusiona un PR hasta que GitHub muestre ✅ en su check `pruebas`**, aunque las pruebas ya
+hayan pasado aquí: abrir el PR, esperar el resultado y recién ahí fusionar.
 
 ```bash
 node toque-y-fama/engine.test.mjs
@@ -99,7 +110,7 @@ node copa/store.test.mjs
 node copa/planilla.test.mjs            # la tabla final como CSV (D-161)
 node copa/reportes.test.mjs             # un reporte que no sale queda guardado y se reenvía
 node assets/js/arrastre.test.mjs
-node assets/js/i18n.test.mjs             # paridad es/en/pt (C-3)
+node assets/js/i18n.test.mjs             # paridad es/en/pt/de (C-3, D-191)
 node assets/js/compartir.test.mjs        # el estándar de lo que se comparte (D-165)
 node assets/js/transport/cleanup.test.mjs
 node assets/js/transport/dispose.test.mjs
@@ -142,7 +153,7 @@ tailscale serve --https=443 off
 sirven el sitio en el puerto 8765, corren `node tools/e2e/<script>.mjs <carpeta-salida>` y
 revisan las capturas.
 
-**GitHub las corre en cada PR y en cada fusión a main** (`.github/workflows/e2e.yml`, D-179):
+**GitHub las corre en cada PR y en cada fusión a main** (`.github/workflows/e2e.yml`, D-193):
 cada guion en su propio job, en paralelo, y el PR muestra cuál falló, con sus capturas como
 artefacto. `tools/e2e/ci.mjs` decide cuáles: todos menos los que abren salas en el Firebase de
 producción (`*-online`, `*-chat` y los de su lista), que siguen a mano. Un guion nuevo entra
@@ -172,6 +183,14 @@ node tools/reglas.mjs revisar      # ¿lo publicado es lo del repo?
 
 Necesita la llave de la cuenta de servicio en `~/.config/juegos-de-salon/firebase-admin.json`
 (fuera del repo). Si no está, el script dice cómo crearla.
+
+## Textos para el jugador
+
+Antes de escribir instrucciones, ayudas o bajadas, leer U-1, U-8 y **U-18** en
+[docs/USABILIDAD.md](docs/USABILIDAD.md): la meta primero y con verbo, a lo más 3 puntos, nada
+de lo que el dibujo de ejemplo ya muestra y el puntaje en una frase, en frases completas.
+`node copa/juegos/juegos.test.mjs` frena unas instrucciones de minijuego que pasen de 280
+caracteres (D-184).
 
 ## Usabilidad (D-132)
 
@@ -219,6 +238,18 @@ entero** (el skill `video-promo` lo carga) y al terminar se anota la vuelta ahí
 
 ```bash
 marketing/video-promo/construir.sh       # rehace el video entero (sitio servido en $SITIO)
+```
+
+## El alemán en el laboratorio (D-191)
+
+El alemán tiene todos sus textos pero solo se ofrece en el dispositivo que entra por `/labs/de/`
+(o un link con `?lang=de`): ahí los "‹ Menú" vuelven al laboratorio y 🐞 manda comentarios a
+`feedback/`. El plan, lo que falta para publicarlo y el **glosario** que toda traducción respeta
+están en [docs/ALEMAN.md](docs/ALEMAN.md). Un texto nuevo para el jugador va también en `DE`: la
+prueba de paridad lo exige.
+
+```bash
+node tools/e2e/mirar.mjs dudo intro --idioma de --ancho 320   # pone la marca del laboratorio sola
 ```
 
 ## Reportes de La Copa

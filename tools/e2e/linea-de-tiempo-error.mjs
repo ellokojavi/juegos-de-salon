@@ -1,4 +1,6 @@
 import { launch, sleep } from './cdp.mjs';
+// Con varias sesiones a la vez, cada una sirve su copia en su puerto (D-135)
+const SITIO = process.env.SITIO || 'http://localhost:8765';
 const OUT = process.argv[2];
 const b = await launch({ port: 9441, dir: `${OUT}/p`, out: OUT, width: 375, height: 812 });
 const click = sel => b.evaluate(`(()=>{const x=document.querySelector('${sel}');if(!x)return 'no';x.click();return 'ok'})()`);
@@ -9,7 +11,7 @@ const play = async (correct) => {
   await click('#place-row .btn'); await sleep(700);
 };
 const overlay = () => b.evaluate(`(()=>{const h=document.getElementById('handoff');return JSON.stringify({visible:!h.hidden,bad:h.classList.contains('bad'),texto:h.innerText.replace(/\\n+/g,' | ').slice(0,260)})})()`).then(JSON.parse);
-await b.go('http://localhost:8765/linea-de-tiempo/'); await b.evaluate(`localStorage.clear(); 1`); await b.go('http://localhost:8765/linea-de-tiempo/');
+await b.go(`${SITIO}/linea-de-tiempo/`); await b.evaluate(`localStorage.clear(); 1`); await b.go(`${SITIO}/linea-de-tiempo/`);
 await b.evaluate(`document.querySelectorAll('.mode')[2].click(); 1`); await sleep(300);
 await b.evaluate(`(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}));return 1})()`);
 await click('#setup-actions .btn'); await sleep(900);

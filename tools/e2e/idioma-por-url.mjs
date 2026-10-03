@@ -3,7 +3,7 @@
 import { launch, sleep } from './cdp.mjs';
 const OUT = process.argv[2];
 const b = await launch({ port: 9495, dir: `${OUT}/p`, out: OUT });
-const SITIO = 'http://localhost:8765';
+const SITIO = process.env.SITIO || 'http://localhost:8765';
 
 const mirar = () => b.evaluate(`JSON.stringify({
   lang: document.documentElement.lang,

@@ -1,10 +1,10 @@
 // Ejecutar: node assets/js/i18n.test.mjs
-// Paridad de idiomas (C-3, D-48): es, en y pt tienen las mismas claves, listas del mismo largo,
+// Paridad de idiomas (C-3, D-48, D-191): es, en, pt y de tienen las mismas claves, listas del mismo largo,
 // las mismas {llaves} en las plantillas y ningún texto vacío. Un texto que falta en un idioma
 // se ve como "undefined" en pantalla, así que esto se revisa antes de publicar.
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { LANGS, COMMON, sinLang } from './i18n.js';
+import { LANGS, IDIOMAS, EN_LABS, COMMON, sinLang } from './i18n.js';
 import { GAMES, SUELTOS, TIPOS } from './games.js';
 import { MINIJUEGOS, minijuegos } from '../../copa/rules.js';
 import { FRASES } from './frases.js';
@@ -16,12 +16,12 @@ const flat = (o, p = '') => Object.entries(o).flatMap(([k, v]) => v && typeof v 
 const holes = s => (String(s).match(/\{\w+\}/g) || []).sort().join(',');
 
 /** Un valor por idioma ({ es: 'x', en: 'y', pt: 'z' }) se compara como si fuera un diccionario de una clave. */
-const leaf = (name, obj) => same(name, Object.fromEntries(LANGS.map(l => [l, { v: obj[l] }])));
+const leaf = (name, obj) => same(name, Object.fromEntries(IDIOMAS.map(l => [l, { v: obj[l] }])));
 
 /** Compara un diccionario por idioma contra el base, clave por clave. */
 function same(name, dict) {
   const base = Object.fromEntries(flat(dict[BASE]));
-  for (const lang of LANGS) {
+  for (const lang of IDIOMAS) {
     assert.ok(dict[lang], `${name}: falta el idioma ${lang}`);
     const other = Object.fromEntries(flat(dict[lang]));
     for (const k of Object.keys(base)) {
@@ -36,7 +36,10 @@ function same(name, dict) {
   }
 }
 
+// Fuera del laboratorio se ofrecen los de siempre; los del laboratorio tienen sus textos igual (D-191)
 assert.deepEqual(LANGS, ['es', 'en', 'pt']);
+assert.deepEqual(IDIOMAS, ['es', 'en', 'pt', 'de']);
+assert.deepEqual(EN_LABS, ['de']);
 // El idioma del link se saca sin tocar lo demás: un parámetro suelto no gana un "=" (D-170)
 assert.equal(sinLang('?pirata&lang=pt'), '?pirata');
 assert.equal(sinLang('?K7Q2X&prueba&lang=en'), '?K7Q2X&prueba');
@@ -45,32 +48,32 @@ assert.equal(sinLang('?lang=pt'), '');
 assert.equal(sinLang('?jugadores=solo&tipo=logica&LANG=en'), '?jugadores=solo&tipo=logica');
 same('COMMON', COMMON);
 same('FRASES', FRASES);
-for (const lang of LANGS) assert.equal(FRASES[lang].length, 100, `FRASES.${lang}: deben ser 100 frases`);
-for (const lang of LANGS) assert.equal(new Set(FRASES[lang]).size, 100, `FRASES.${lang}: hay frases repetidas`);
+for (const lang of IDIOMAS) assert.equal(FRASES[lang].length, 100, `FRASES.${lang}: deben ser 100 frases`);
+for (const lang of IDIOMAS) assert.equal(new Set(FRASES[lang]).size, 100, `FRASES.${lang}: hay frases repetidas`);
 for (const g of GAMES) { leaf(`GAMES.${g.id}.name`, g.name); leaf(`GAMES.${g.id}.tagline`, g.tagline); }
 // Los minijuegos sueltos de la portada (D-142): su tarjeta va en los tres idiomas y cada uno
 // tiene que existir en La Copa, o la tarjeta abriría una práctica que no hay.
 for (const g of SUELTOS) {
   leaf(`SUELTOS.${g.id}.name`, g.name); leaf(`SUELTOS.${g.id}.tagline`, g.tagline);
   assert.ok(MINIJUEGOS[g.id], `SUELTOS.${g.id}: no es un minijuego de La Copa`);
-  for (const lang of LANGS) assert.equal(g.name[lang], minijuegos(lang)[g.id].nombre, `SUELTOS.${g.id}: el nombre en ${lang} no es el de La Copa`);
+  for (const lang of IDIOMAS) assert.equal(g.name[lang], minijuegos(lang)[g.id].nombre, `SUELTOS.${g.id}: el nombre en ${lang} no es el de La Copa`);
 }
 for (const [id, t] of Object.entries(TIPOS)) leaf(`TIPOS.${id}.name`, t.name);
 for (const g of [...GAMES, ...SUELTOS]) for (const t of g.tipos || []) assert.ok(TIPOS[t], `${g.id}: el tipo ${t} no está en TIPOS`);
 for (const d of DECKS) {
   leaf(`DECKS.${d.id}.name`, d.name); leaf(`DECKS.${d.id}.hint`, d.hint);
-  for (const c of d.cards) for (const lang of LANGS) assert.ok(c[lang] && c[lang].trim(), `${d.id}/${c.id}: falta ${lang}`);
+  for (const c of d.cards) for (const lang of IDIOMAS) assert.ok(c[lang] && c[lang].trim(), `${d.id}/${c.id}: falta ${lang}`);
 }
 for (const d of AHORCADO) {
   leaf(`AHORCADO.${d.id}.name`, d.name); leaf(`AHORCADO.${d.id}.hint`, d.hint);
-  for (const c of d.cards) for (const lang of LANGS) {
+  for (const c of d.cards) for (const lang of IDIOMAS) {
     assert.ok(c[lang]?.w?.trim(), `ahorcado/${d.id}/${c.id}: falta la palabra en ${lang}`);
     assert.ok(c[lang]?.hint?.trim(), `ahorcado/${d.id}/${c.id}: falta la pista en ${lang}`);
   }
 }
 // Un juego que por ahora existe en un solo idioma lo declara en `idiomas` (así fue La Copa, D-98,
 // hasta D-170): su tarjeta del menú sí va en los tres, pero sus textos no se comparan.
-const TRADUCIDOS = GAMES.filter(g => !g.idiomas || LANGS.every(l => g.idiomas.includes(l)));
+const TRADUCIDOS = GAMES.filter(g => !g.idiomas || IDIOMAS.every(l => g.idiomas.includes(l)));
 for (const g of TRADUCIDOS) {
   const { LOCALES } = await import(`../../${g.path}rules.js`);
   same(`LOCALES de ${g.id}`, LOCALES);
@@ -106,7 +109,7 @@ function clavesDirectas(src, lang) {
 for (const g of TRADUCIDOS) {
   const src = await readFile(new URL(`../../${g.path}rules.js`, import.meta.url), 'utf8');
   const cuantas = {};
-  for (const lang of LANGS) {
+  for (const lang of IDIOMAS) {
     const claves = clavesDirectas(src, lang);
     assert.ok(claves?.length, `rules.js de ${g.id}: no se encontró el bloque const ${lang.toUpperCase()} = {`);
     const vistas = new Set(), repes = new Set();
@@ -121,4 +124,4 @@ for (const g of TRADUCIDOS) {
     `rules.js de ${g.id}: los tres idiomas no dieron la misma cantidad de claves (${JSON.stringify(cuantas)})`);
 }
 
-console.log(`i18n: los tres idiomas tienen las mismas claves en menú, frases, mazos y los ${GAMES.length} juegos`);
+console.log(`i18n: los ${IDIOMAS.length} idiomas tienen las mismas claves en menú, frases, mazos y los ${GAMES.length} juegos`);

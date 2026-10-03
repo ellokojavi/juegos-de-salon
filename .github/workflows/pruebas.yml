@@ -1,5 +1,5 @@
 # Las pruebas sin navegador, en cada PR y en cada fusión a main (D-143).
-# Las de punta a punta (tools/e2e/) corren aparte, en e2e.yml (D-179). Las capturas siguen a mano.
+# Las de punta a punta (tools/e2e/) corren aparte, en e2e.yml (D-193). Las capturas siguen a mano.
 
 name: Pruebas
 

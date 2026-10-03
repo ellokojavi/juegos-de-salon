@@ -4,8 +4,10 @@
 // Cada "celular" es un Chrome con su propio perfil y su propio origen, para que no compartan
 // localStorage (ver el README de esta carpeta).
 import { launch, sleep } from './cdp.mjs';
+// Con varias sesiones a la vez, cada una sirve su copia en su puerto (D-135)
+const SITIO = process.env.SITIO || 'http://localhost:8765';
 const OUT = process.argv[2];
-const hosts = ['http://localhost:8765', 'http://127.0.0.1:8765', 'http://[::1]:8765'];
+const hosts = ['localhost', '127.0.0.1', '[::1]'].map(h => SITIO.replace('localhost', h));
 const A = await launch({ port: 9386, dir: `${OUT}/pA`, out: OUT, width: 375, height: 812 });
 const B = await launch({ port: 9387, dir: `${OUT}/pB`, out: OUT, width: 375, height: 812 });
 const C = await launch({ port: 9388, dir: `${OUT}/pC`, out: OUT, width: 375, height: 812 });
