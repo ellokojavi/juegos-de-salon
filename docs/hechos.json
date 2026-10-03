@@ -1,5 +1,5 @@
 {
-  "version": "0.86.0",
+  "version": "0.87.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -641,6 +641,7 @@
     "julepe/engine.js",
     "julepe/game.js",
     "julepe/rules.js",
+    "labs/menu/dado.js",
     "linea-de-tiempo/decks/brasil.js",
     "linea-de-tiempo/decks/chile.js",
     "linea-de-tiempo/decks/futbol.js",
@@ -658,7 +659,9 @@
     "toque-y-fama/game.js",
     "toque-y-fama/rules.js"
   ],
-  "sinVersionar": [],
+  "sinVersionar": [
+    "labs/menu/dado.js"
+  ],
   "tests": [
     "ahorcado/engine.test.mjs",
     "assets/js/arrastre.test.mjs",
