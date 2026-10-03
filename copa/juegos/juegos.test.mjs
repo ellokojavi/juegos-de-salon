@@ -586,6 +586,18 @@ test('todos los minijuegos puntúan de 0 a 100 (D-113)', () => {
   for (const [id, s] of Object.entries(tope)) assert.equal(s, 100, id);
 });
 
+const { LOCALES: TEXTOS } = await import('../rules.js');
+test('las instrucciones de cada minijuego son concisas, en los tres idiomas (U-18, D-184)', () => {
+  for (const lang of ['es', 'en', 'pt']) for (const [id, J] of Object.entries(TEXTOS[lang].juegos)) {
+    assert.ok(J.como.length <= 3, `${lang} ${id}: ${J.como.length} puntos en "Cómo se juega" (máximo 3)`);
+    const largo = J.como.join(' ').length;
+    assert.ok(largo <= 280, `${lang} ${id}: "Cómo se juega" tiene ${largo} caracteres (máximo 280)`);
+    assert.ok(J.puntaje.length <= 170, `${lang} ${id}: el puntaje tiene ${J.puntaje.length} caracteres (máximo 170)`);
+    // La meta, no la descripción de lo que se ve
+    assert.ok(!/^(Hay|There (is|are)|Há) /.test(J.como[0]), `${lang} ${id}: el primer punto describe la pantalla en vez de decir qué hacer`);
+  }
+});
+
 test('Conexiones agrupa por significado, no por juegos de palabras (D-128)', () => {
   for (const g of GRILLAS) for (const x of g.grupos) {
     assert.ok(!/___|escond|empiezan|terminan|riman|tienen (dientes|cuello|ojos)/i.test(x.nombre), `${g.id}: "${x.nombre}" parece un juego de palabras`);
