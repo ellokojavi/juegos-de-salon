@@ -2828,3 +2828,25 @@ fusionar, D-122). Sacar el alemán del laboratorio es quitarlo de `EN_LABS` y su
 toggle de quien no lo pidió); una copia aparte de la app en `/labs/de/` (se desactualiza al tiro y
 no prueba las salas de verdad); que el alemán faltante cayera al inglés (esconde lo que falta
 traducir: la prueba de paridad no lo vería).
+
+## D-192 · El alemán: hora de Europa central, diéresis dichas y sin destello de idioma
+**Fecha:** 2026-10-03 · **Estado:** vigente
+**Decisión:** Tres ajustes que pidió el dueño al probar el laboratorio alemán (D-191):
+- **Una copa en alemán cambia de día a medianoche de Europa central** (`Europe/Berlin`, que es
+  también la hora de Viena y Zúrich): `zonaDeIdioma` en `copa/engine.js` elige la zona según el
+  idioma de las palabras al crearla, y la nota bajo "Empieza" cambia al elegir el idioma. Las
+  demás copas siguen en la hora del Pacífico (D-113). Después de creada, todo usa `meta.tz`.
+- **Las diéresis se dejan fuera, pero se dice**: en Palabra y en el Ahorcado no hay teclas Ä, Ö,
+  Ü ni ß. Las instrucciones en alemán lo dicen: "Umlaute stehen ohne Punkte: Ä ist A" (y en el
+  Ahorcado, la ß se escribe SS). Las listas de palabras siguen evitándolas.
+- **Sin destello de idioma**: el HTML trae los textos en español y los módulos los cambiaban al
+  cargar, así que quien juega en otro idioma veía "Dudo" una fracción de segundo antes de
+  "Lügenwürfel" (pasaba también en inglés y portugués). Un script en el `<head>` de cada página
+  deja la página sin pintar (`html.i18n-pendiente`) hasta `DOMContentLoaded`, cuando los módulos
+  ya pusieron los textos; un tope de 1,5 s la muestra igual si algo falla. En español no cambia
+  nada.
+**Por qué:** con la hora del Pacífico, el día de una copa alemana partía a las 9:00. Sin decirlo,
+un alemán busca la tecla Ü y no la encuentra. Y el destello se nota en cada página que se abre.
+**Alternativas descartadas:** escribir las diéresis como AE, OE y UE (es la convención alemana sin
+teclado alemán, pero cambia el largo de las palabras y el dueño prefirió quitar los puntos); una
+zona por país (Alemania, Austria y Suiza comparten la hora).

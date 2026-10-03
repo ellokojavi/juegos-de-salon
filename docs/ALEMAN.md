@@ -61,6 +61,14 @@ las pantallas de `tools/e2e/mirar.mjs` a 320 px, y después con los textos alema
   escribir. Se publican después de fusionar con `node tools/reglas.mjs publicar` (D-122).
 - `mirar.mjs --idioma de` funciona: pone la marca del laboratorio igual que `/labs/de/`.
 
+## Decidido con el dueño (D-192)
+
+- **Una copa en alemán va con la hora de Europa central** (Berlín, Viena, Zúrich): el día
+  cambia a medianoche de allá, no del Pacífico.
+- **Sin diéresis en Palabra ni en el Ahorcado, pero dicho**: las instrucciones avisan que las
+  palabras con Ä, Ö y Ü van sin los puntos (Ä es A) y la ß como SS.
+- **Sin destello**: en otro idioma que el español, la página no se pinta hasta tener sus textos.
+
 ## Lo que falta para sacarlo del laboratorio
 
 Ordenado por lo que más se nota.
@@ -84,13 +92,8 @@ Ordenado por lo que más se nota.
    comprobaciones son `lang === 'en' ? … : <portugués>`), `sala-error.mjs`,
    `linea-de-tiempo-solo.mjs`, `idioma-por-url.mjs` (la puerta `/de/`).
 7. **Decisiones de producto**, no de código:
-   - **Huso horario de una copa alemana**: hoy toda copa cambia de día a medianoche del Pacífico
-     (D-113), que en Berlín son las 9:00. Una copa entre alemanes necesitaría `Europe/Berlin`.
    - **Un público `de`** (como `cl` y `br`, D-187) solo si se escribe contenido propio de
      Alemania: un mazo alemán de Línea de Tiempo, grillas o palabras solo para alemanes.
-   - **Las diéresis en el Ahorcado y en Palabra**: hoy se evitan las palabras con Ä, Ö, Ü y ß
-     (el teclado no las tiene y `normalize` las pliega a A, O, U, y la ß a SS). Sumar teclas
-     ÄÖÜ cambia el teclado de 7 columnas del Ahorcado y la regla `/^[A-Z]{5}$/` de Palabra.
    - **Austria y Suiza**: el borrador es alemán de Alemania (Handy, Brötchen); en Suiza no se usa
      la ß.
 

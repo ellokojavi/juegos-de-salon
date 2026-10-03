@@ -19,7 +19,7 @@ import { gameById } from '../assets/js/games.js';
 import {
   POZO, calendarioAlAzar, calendario, MAX_JUGADORES, COPA_MAX, aliasLimpio, esAlias, CODIGO, esCodigo, codigoAlAzar, pidAlAzar, limpiarNombre, claveNombre, esPin, hashPin,
   fechaEn, sumarDias, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta, estadoDia, comodinDe, moverInicio, sinEmpezar, pasarDia, MAX_DIAS_INICIO, faltaGente,
-  medianoche, menosJuegos, provisoria, ultimoDiaVisto, marcaDelDia, puedeComodin, multiplicador, posicionesDelDia, tabla, faltan, medallas, evolucion, visibleDia, reloj, mmss, juegoDelDia, esFinal, activos, ZONA,
+  medianoche, menosJuegos, provisoria, ultimoDiaVisto, marcaDelDia, puedeComodin, multiplicador, posicionesDelDia, tabla, faltan, medallas, evolucion, visibleDia, reloj, mmss, juegoDelDia, esFinal, activos, ZONA, zonaDeIdioma,
   conCierre, cerradaAntes, anulado, puedeCerrar,
 } from './engine.js';
 import { GAME_ID, LOCALES, minijuegos, rondasFinal, MINIJUEGOS as MINIJUEGOS_ES } from './rules.js';
@@ -362,13 +362,16 @@ function crearCopa() {
   ].filter(Boolean), dias => { juegos.nodo.hidden = false; juegos.sortear(dias); });
   // El idioma de las palabras de Conexiones y de Palabra (D-170): parte en el de quien la crea
   const mayuscula = x => x[0].toUpperCase() + x.slice(1);
-  const idioma = opciones(LANGS.map(l => ({ valor: l, titulo: mayuscula(T.langNames[l]) })), null, { inicial: LANG });
+  // La hora de la copa sigue al idioma de sus palabras (D-192): en alemán, la de Europa central
+  const notaZona = el('small', { class: 'muted', id: 'crear-zona' }, fmt(T.startZone, { zona: zonaTexto(zonaDeIdioma(LANG)) }));
+  const idioma = opciones(LANGS.map(l => ({ valor: l, titulo: mayuscula(T.langNames[l]) })),
+    l => { notaZona.textContent = fmt(T.startZone, { zona: zonaTexto(zonaDeIdioma(l)) }); }, { inicial: LANG });
   // El público (D-187): global, Chile o Brasil. Parte en el del idioma de quien la crea
   const alcance = opciones([{ valor: 'global', titulo: T.audGlobal }, { valor: 'cl', titulo: T.audCl }, { valor: 'br', titulo: T.audBr }], null,
     { inicial: { es: 'cl', pt: 'br' }[LANG] || 'global' });
   alcance.nodo.classList.add('tres');
   // Hoy, mañana u otra fecha de un calendario, hasta 30 días desde hoy (D-115)
-  const hoyCrear = fechaEn(Date.now(), ZONA);
+  const hoyCrear = fechaEn(Date.now(), zonaDeIdioma(idioma.valor));
   const otraFecha = campoFecha(hoyCrear);
   const inicio = opciones([{ valor: 0, titulo: T.startToday }, { valor: 1, titulo: T.startTomorrow }, { valor: 'otra', titulo: T.startOther }],
     v => { otraFecha.nodo.hidden = v !== 'otra'; if (v === 'otra') otraFecha.input.focus(); });
@@ -421,9 +424,10 @@ function crearCopa() {
       const pid = pidAlAzar();
       const now = st.now();
       if (alias) { const x = await st.alias(alias); if (x && x.hasta > now) throw Object.assign(new Error('alias'), { code: 'alias' }); }
-      const fechaInicio = inicio.valor === 'otra' ? otraFecha.input.value : sumarDias(fechaEn(now, ZONA), inicio.valor);
+      const zona = zonaDeIdioma(idioma.valor);
+      const fechaInicio = inicio.valor === 'otra' ? otraFecha.input.value : sumarDias(fechaEn(now, zona), inicio.valor);
       // Las copas del laboratorio (y las de prueba) llevan la marca que deja pasar de día (D-115)
-      const meta = nuevaMeta({ nombre: n, dias: modo.valor, inicio: fechaInicio, tz: ZONA, admin: pid, creada: now, lab: LABS || PRUEBA, alias, cal: juegos.cal, lang: idioma.valor, aud: alcance.valor });
+      const meta = nuevaMeta({ nombre: n, dias: modo.valor, inicio: fechaInicio, tz: zona, admin: pid, creada: now, lab: LABS || PRUEBA, alias, cal: juegos.cal, lang: idioma.valor, aud: alcance.valor });
       await st.crear(code, meta, { pid, name: quien, at: now, pinHash: await hashPin(code, pid, pin1.input.value) });
       cuenta.nombre.set(quien);
       cuenta.recordar(code, pid, { nombre: quien, copa: n, fin: meta.end });
@@ -438,7 +442,7 @@ function crearCopa() {
   poner(body, 
     el('div', { class: 'panel' }, nombre.nodo,
       el('div', { class: 'field' }, el('label', {}, T.fMode), modo.nodo),
-      el('div', { class: 'field' }, el('label', {}, T.fStart), inicio.nodo, otraFecha.nodo, el('small', { class: 'muted' }, fmt(T.startZone, { zona: zonaTexto(ZONA) })))),
+      el('div', { class: 'field' }, el('label', {}, T.fStart), inicio.nodo, otraFecha.nodo, notaZona)),
     juegos.nodo,
     el('div', { class: 'panel' }, el('div', { class: 'field' }, el('label', {}, T.fLang), idioma.nodo, el('small', { class: 'muted' }, T.fLangHint)),
       el('div', { class: 'field', id: 'crear-alcance' }, el('label', {}, T.fScope), alcance.nodo, el('small', { class: 'muted' }, T.fScopeHint))),

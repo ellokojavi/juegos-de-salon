@@ -216,7 +216,7 @@ const DE = {
   title: 'Galgenmännchen',
   lead: 'Jeder Spieler errät sein eigenes Wort.',
   howTitle: '🧠 So geht’s',
-  howText: 'Rate einen Buchstaben nach dem anderen. Ist er im Wort, erscheint er an allen seinen Stellen. Wenn nicht, wird ein Teil des Galgenmännchens gezeichnet. Ist die Zeichnung fertig, hängst du. <b>Wer sein Wort mit den meisten Leben errät, gewinnt.</b>',
+  howText: 'Rate einen Buchstaben nach dem anderen. Ist er im Wort, erscheint er an allen seinen Stellen. Wenn nicht, wird ein Teil des Galgenmännchens gezeichnet. Ist die Zeichnung fertig, hängst du. Umlaute stehen ohne Punkte (Ä ist A) und ß als SS. <b>Wer sein Wort mit den meisten Leben errät, gewinnt.</b>',
   modeLocal: '📱 Ein Handy', modeLocalHint: 'Ihr reicht das Handy nach jedem Buchstaben weiter.',
   modeOnline: '📡 Mehrere Handys', modeOnlineHint: 'Jeder spielt abwechselnd auf seinem eigenen Handy.',
   modeSolo: '🧍 Allein spielen', modeSoloHint: 'Das Handy wählt ein Wort zum Thema und du errätst es.',
@@ -240,7 +240,7 @@ const DE = {
   lobbyCancel: 'Raum auflösen', lobbyLeave: 'Raum verlassen',
   invitedTitle: 'Du bist eingeladen!', invited: '📩 Raum {code}', invitedHint: 'Gib deinen Namen ein und steig ein. Wer dich eingeladen hat, stellt das Spiel ein.',
   // Wort schreiben
-  wordTitle: 'Ein Wort für {name}', wordHint: '3 bis 14 Buchstaben. Ein kurzer Satz geht auch: Leerzeichen gibt’s gratis.',
+  wordTitle: 'Ein Wort für {name}', wordHint: '3 bis 14 Buchstaben, Umlaute ohne Punkte (Ä ist A). Ein kurzer Satz geht auch: Leerzeichen gibt’s gratis.',
   wordPlaceholder: 'Das Wort', hintLabel: 'Der Hinweis', hintPlaceholder: 'Ein kurzer, ehrlicher Hinweis', wordSave: 'Fertig, speichern',
   wordSaved: 'Wort gespeichert 🔒', waitingWords: 'Warte, bis {name} ein Wort schreibt', waitingWordsMany: 'Noch {n} Wörter fehlen',
   errWordShort: 'Zu kurz: mindestens 3 Buchstaben.', errWordLong: 'Zu lang: höchstens 14 Buchstaben.',
