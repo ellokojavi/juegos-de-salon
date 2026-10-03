@@ -109,3 +109,5 @@ Las respuestas a dilemas (issues con la etiqueta `usabilidad`) se anotan aquí:
   para girar" arriba al centro, sobre el Ártico (abajo chocaba con + y − en 320 px); se va con el primer arrastre y no vuelve.
 - **Los niveles de las ciudades chilenas quedan como están** (#90, opción B): Los Ángeles, Pucón y
   Puerto Natales siguen en nivel 3; de vez en cuando la difícil es una "amable". No marcarlo.
+- **Juego al azar no se cancela** (#139, opción A): tirar el dado es un compromiso. Sin ✕ ni
+  Escape; tocar durante la tirada abre el juego de inmediato y "atrás" vuelve al menú limpio (D-188).
