@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.90.5 — 2026-10-03
+- **README al día, con capturas** (C-13): la tabla de juegos suma los minijuegos que se juegan
+  sueltos desde la portada (`tools/hechos.mjs` ahora lee `SUELTOS`, así que uno nuevo aparece
+  solo), con sus nombres en la tabla de idiomas. Se rehicieron las capturas de todas las
+  secciones con las fuentes reales; el pie de Cuarto Rey "Cheers!" pasa a "Who drinks", porque
+  esa pantalla cambia de título según la carta.
+- **"Actualiza el README" es una pasada entera** (CLAUDE.md): bloques generados, prosa y capturas.
+
 ## 0.90.4 — 2026-10-03
 - **💬 El aviso del chat ya no se come los toques** (#48, U-12): la etiqueta que asoma junto a la
   burbuja cuando llega un mensaje deja pasar los toques, así que tocar "🔁 Revancha" (o lo que
