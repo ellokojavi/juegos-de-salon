@@ -1,6 +1,6 @@
 # Diseño: Línea de Tiempo ⏳
 
-**Estado:** implementado (v0.9, los tres modos) · **Fecha:** 2026-09-09 · **Ruta:** `/timeline/` · **Jugadores:** 1 a 6 · **Idiomas:** es, en (“Timeline”), pt (“Linha do Tempo”)
+**Estado:** implementado (v0.9, los tres modos) · **Fecha:** 2026-09-09 · **Ruta:** `/timeline/` · **Jugadores:** 1 a 6 · **Idiomas:** es, en (“Timeline”), pt (“Linha do Tempo”) y, en el laboratorio, de (“Zeitstrahl”, D-191)
 
 ## 1. Resumen
 
@@ -207,7 +207,7 @@ Bangers: ahí el 1 y el 7 son casi el mismo trazo y un 1917 se puede leer como 1
 
 ```
 public/timeline/
-  index.html · style.css · rules.js (LOCALES es/en/pt, config) · engine.js + engine.test.mjs · game.js
+  index.html · style.css · rules.js (LOCALES es/en/pt/de, config) · engine.js + engine.test.mjs · game.js
   decks/index.js · decks/<temática>.js
 ```
 

@@ -32,7 +32,8 @@ export function montar(raiz, ctx) {
       if (!ctx.cierreAbajo) caja.append(...cierre);
     } else {
       const quedan = p.max - e.usados;
-      caja.append(el('p', { class: 'muted center', style: 'margin:0' }, quedan === 1 ? T.tryLeft1 : fmt(T.triesLeft, { n: quedan })),
+      // Sin los `null`: `append` los escribe como el texto "null"
+      caja.append(...[el('p', { class: 'muted center', style: 'margin:0' }, quedan === 1 ? T.tryLeft1 : fmt(T.triesLeft, { n: quedan })),
         // Lo que ya suma (D-108): cada letra en su lugar cuenta una vez
         e.encontradas ? el('p', { class: 'center ok', id: 'letras-encontradas', style: 'margin:0' }, fmt(e.encontradas === 1 ? T.famasFoundOne : T.famasFound, { n: e.encontradas, largo: p.largo, pts: motor.PUNTOS_FAMA * e.encontradas })) : null,
         teclado({
@@ -45,7 +46,7 @@ export function montar(raiz, ctx) {
             dibujar();
           },
         }),
-        el('p', { class: 'block-hint' }, T.blockHintLetters));
+        el('p', { class: 'block-hint' }, T.blockHintLetters)].filter(Boolean));
     }
     caja.append(tablero(el, { filas: e.filas, largo: p.largo, titulo: T.yourGuesses, lang: ctx.lang, valor: letrasPintadas, completa: false }));
     if (ctx.cierreAbajo) caja.append(...cierre);

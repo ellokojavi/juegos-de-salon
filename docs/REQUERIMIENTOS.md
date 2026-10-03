@@ -41,6 +41,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | RP-32 | La portada ofrece los minijuegos de La Copa sueltos, de un jugador y sin copa: Conexiones, Toque y Fama: Palabra, ¿En qué año?, Reinas, Tango y Zip. En inglés y portugués la tarjeta avisa que se juegan en español (D-142). | ✅ v0.65 |
 | RP-33 | La portada se filtra por tipo de juego; el filtro queda en la URL, dice cuántos juegos se ven y se quita con un toque (D-142, D-149). | ✅ v0.65 |
 | RP-34 | Las explicaciones de todos los juegos (reglas, ayudas, modos, antesalas, Administrar y las frases del menú) son cortas: cada regla se dice una vez por pantalla, con frases completas, y una palabra por concepto: tachar, el celular, jugador, administrador, vidas, sorbos (D-177, U-5, U-8). | ✅ v0.84.0 |
+| RP-35 | Jugar en alemán: toda la experiencia en el idioma elegido, con las mismas claves que los otros tres, primero solo en el laboratorio (`/labs/de/`), con un botón para que quienes lo prueban comenten (D-191). Sale del laboratorio cuando lo revisen hablantes de alemán ([ALEMAN.md](ALEMAN.md)). | 🧪 en el laboratorio |
 
 ## Cuarto Rey (CR)
 

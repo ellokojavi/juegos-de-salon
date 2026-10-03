@@ -8,8 +8,9 @@ for (const d of DECKS) {
   assert.ok(d.cards.length >= 80, `${d.id} tiene pocas cartas`);
   assert.equal(new Set(d.cards.map(c => c.id)).size, d.cards.length, `${d.id} tiene ids repetidos`);
   for (const c of d.cards) {
-    assert.ok(c.id && typeof c.year === 'number' && c.emoji && c.es && c.en && c.pt, `carta incompleta en ${d.id}: ${c.id}`);
+    assert.ok(c.id && typeof c.year === 'number' && c.emoji && c.es && c.en && c.pt && c.de, `carta incompleta en ${d.id}: ${c.id}`);
     assert.ok(!/'/.test(c.pt), `apóstrofo recto en pt de ${d.id}: ${c.id}`);
+    assert.ok(!/'/.test(c.de), `apóstrofo recto en de de ${d.id}: ${c.id}`);
     assert.ok(c.year > -4000 && c.year <= 2026, `año fuera de rango en ${d.id}: ${c.id}`);
   }
 }
@@ -246,4 +247,5 @@ assert.equal(yearLabel(1969), '1969');
 assert.equal(yearLabel(-753), '753 a.C.');
 assert.equal(yearLabel(-753, 'en'), '753 BC');
 assert.equal(yearLabel(-753, 'pt'), '753 a.C.');
+assert.equal(yearLabel(-753, 'de'), '753 v. Chr.');
 console.log('engine: todos los tests OK');
