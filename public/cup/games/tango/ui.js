@@ -2,9 +2,11 @@
  * ☀️ Tango — pantalla. Como el Tango de LinkedIn: un toque pone un sol, otro una luna, otro
  * limpia. Las casillas dadas no se tocan. Las marcas = y ≠ van sobre el borde entre dos
  * casillas. Lo que rompe una regla se ve en rojo, pero no en el acto: para poner una luna hay
- * que pasar por el sol, y ese sol de paso no debe acusar nada. El choque espera ESPERA_CHOQUE_MS;
- * si en ese lapso se vuelve a tocar la misma casilla, no aparece. Es lo mismo que ya hace el
- * puntaje (motor.estado): el sol de paso no cuenta como error.
+ * que pasar por el sol, y ese sol de paso no debe acusar nada. El choque se marca recién cuando
+ * el jugador toca otra casilla (o borra todo o pide pista), sin apuro de reloj: igual que lo
+ * cuenta el puntaje (motor.estado), así lo rojo es exactamente lo que se cobra (#135). Con el
+ * tablero lleno no queda otra casilla que tocar: ahí el choque se muestra, sin sonar ni contarse,
+ * para que el jugador vea qué arreglar.
  *
  * Además (D-103): **borrar todo**, que pide un segundo toque para confirmar; una **pista** que
  * revela una casilla y cuesta 15 puntos, también con segundo toque; y **consejos** para cuando
@@ -17,7 +19,6 @@ const CLASE = { [motor.SOL]: 'sol', [motor.LUNA]: 'luna' };
 /** Los dos emojis son amarillos: la casilla de noche y la luna plateada los separan (D-146). */
 const icono = (el, v) => el('span', { class: `tan-ico ${CLASE[v]}` }, ICONO[v]);
 const CONFIRMAR_MS = 3000;
-const ESPERA_CHOQUE_MS = 500;
 
 /**
  * El dibujo de las reglas, como el de Reinas (D-134): un tablero de 6 × 6 resuelto, con una
@@ -52,9 +53,6 @@ export function montar(raiz, ctx) {
   let jugadas = Array.isArray(ctx.jugadas) ? ctx.jugadas.slice() : [];
   let armado = null;          // qué acción espera su segundo toque: 'borrar' | 'pista'
   let armadoTimer = null;
-  // El choque recién hecho, mientras espera: se sigue viendo lo de antes del toque
-  let espera = null;          // { i, mal, errores }: la casilla y lo de antes del toque, o null
-  let esperaTimer = null;
   const { n } = p;
 
   const avisar = () => { SFX.error(); vibrate([40, 40, 40]); };
@@ -63,20 +61,10 @@ export function montar(raiz, ctx) {
     const antes = motor.estado(p, jugadas);
     jugadas.push(j); ctx.guardar(jugadas);
     const x = motor.estado(p, jugadas);
-    // Se fue a otra casilla antes de que el choque se viera: el aviso va ahora
-    const dejado = espera && espera.i !== j;
-    clearTimeout(esperaTimer); espera = null;
+    // Dejó atrás una casilla en choque: ahora sí cuenta, y ahora se ve y suena
+    const dejado = antes.pendiente >= 0 && antes.pendiente !== j;
     if (dejado) avisar();
-    if (x.errores > antes.errores) {
-      // El motor ya lo cuenta, y lo perdona si el toque siguiente es en la misma casilla
-      if (!dejado) SFX.tap();
-      espera = { i: j, mal: antes.mal, errores: antes.errores };
-      esperaTimer = setTimeout(() => {
-        espera = null;
-        if (!raiz.isConnected) return;
-        avisar(); dibujar();
-      }, ESPERA_CHOQUE_MS);
-    } else if (x.fin) { SFX.win(); vibrate([30, 50, 30]); }
+    if (x.fin) { SFX.win(); vibrate([30, 50, 30]); }
     else if (!dejado) SFX.tap();
     dibujar();
   };
@@ -95,8 +83,17 @@ export function montar(raiz, ctx) {
 
   const dibujar = () => {
     const e = motor.estado(p, jugadas);
-    const mal = espera ? new Set([...e.mal].filter(i => espera.mal.has(i))) : e.mal;
-    const errores = espera ? espera.errores : e.errores;
+    // El último toque rompió una regla, pero todavía se perdona si se vuelve a tocar la misma
+    // casilla: no se cuenta ni se pinta lo que trajo ese toque, solo lo que ya estaba en rojo.
+    // Con el tablero lleno sí se pinta, porque ya no hay otra casilla que tocar.
+    let mal = e.mal, errores = e.errores;
+    if (e.pendiente >= 0) {
+      errores--;
+      if (!e.g.every(Boolean)) {
+        const previo = motor.estado(p, jugadas.slice(0, -1)).mal;
+        mal = new Set([...e.mal].filter(i => previo.has(i)));
+      }
+    }
     // Terminado el tablero, el tiempo se detiene aquí y no al tocar el botón (D-130)
     if (e.fin) ctx.pararReloj?.(e);
     raiz.innerHTML = '';

@@ -184,7 +184,8 @@ const jugarTango = async nivel => {
   const valor = i => ev(`Number(document.querySelector('.tan[data-i="${i}"]').dataset.v)`);
   const libres = p.sol.map((v, i) => i).filter(i => p.dadas[i] === undefined);
   if (nivel < 2) {
-    // El sol de paso a la luna no acusa nada: el choque espera 0,5 s (y si se deja, aparece)
+    // El sol de paso a la luna no acusa nada: el choque se marca recién al tocar otra casilla,
+    // igual que lo cuenta el puntaje, y nunca por tiempo (#135)
     // Una casilla donde el sol choca, con un sol puesto antes si hace falta (el tablero es al azar)
     const [previo, paso] = await ev(`(async()=>{const m=await import('/cup/games/tango/engine.js');const p=window.__jugando.p;
       const L=[${libres}], choca=(pre,i)=>p.sol[i]===m.LUNA&&m.estado(p,[...pre,i]).mal.size>m.estado(p,pre).mal.size;
@@ -194,13 +195,18 @@ const jugarTango = async nivel => {
     ok(paso >= 0, 'Tango: hay una casilla donde probar el sol de paso');
     if (paso >= 0) {
       const choques = () => ev(`document.querySelectorAll('.tan.choque').length`);
-      if (previo >= 0) { await t(previo); await sleep(650); }
+      const cuenta = () => ev(`document.querySelector('.tango-juego p.muted')?.textContent || ''`);
+      if (previo >= 0) await t(previo);
       await t(paso);
       ok(await choques() === 0, 'Tango: el sol que choca no se marca en el acto');
-      await t(paso); await sleep(900);
+      await sleep(900);
+      ok(await choques() === 0 && !/[1-9]/.test(await cuenta()), 'Tango: el sol que choca no se marca ni se cuenta con el tiempo (#135)');
+      await t(paso); await sleep(300);
       ok(await valor(paso) === p.sol[paso] && await choques() === 0, 'Tango: sol y luna seguidos no dejan choque ni aviso');
-      await t(paso); await t(paso); await sleep(650);
-      ok(await choques() > 0, 'Tango: el sol que se deja se marca a los 0,5 s');
+      await t(paso); await t(paso);
+      const otra = libres.find(i => i !== paso && i !== previo);
+      await t(otra);
+      ok(await choques() > 0 && /1/.test(await cuenta()), 'Tango: el sol que se deja se marca y se cuenta al tocar otra casilla');
     }
     // Borrar todo (dos toques) y una pista (dos toques), las ayudas de D-103
     await t(libres[0]);

@@ -156,20 +156,26 @@ export function pista(p, g, fijas = new Set()) {
  * regla solo cuenta como error si el jugador **deja** la casilla así: si el toque siguiente es
  * sobre la misma casilla, era un paso de camino. Borrar todo no devuelve los errores ni las
  * pistas, pero sí deja puestas las casillas reveladas.
+ *
+ * `pendiente` es la casilla del último toque cuando rompió una regla: ese error ya está contado,
+ * pero se perdona si el toque siguiente vuelve a ella. Si no hay, es -1 (#135).
  */
 export function estado(p, jugadas) {
   let g = inicial(p);
-  let errores = 0, pistas = 0;
+  let errores = 0, pistas = 0, pendiente = -1;
   const fijas = new Set();
   jugadas.forEach((j, k) => {
     if (j === BORRAR) { const h = inicial(p); fijas.forEach(i => { h[i] = p.sol[i]; }); g = h; return; }
     if (j && typeof j === 'object') { g = g.slice(); g[j.h] = p.sol[j.h]; fijas.add(j.h); pistas++; return; }
     const antes = violaciones(p, g).size;
     g = tocar(p, g, j, fijas);
-    if (g[j] && violaciones(p, g).size > antes && jugadas[k + 1] !== j) errores++;
+    if (g[j] && violaciones(p, g).size > antes && jugadas[k + 1] !== j) {
+      errores++;
+      if (k === jugadas.length - 1) pendiente = j;
+    }
   });
   const mal = violaciones(p, g);
-  return { g, errores, pistas, fijas, mal, fin: g.every(Boolean) && mal.size === 0 };
+  return { g, errores, pistas, fijas, mal, pendiente, fin: g.every(Boolean) && mal.size === 0 };
 }
 
 /** 100 menos 10 por jugada que rompe una regla y 15 por pista, con piso de 10. */

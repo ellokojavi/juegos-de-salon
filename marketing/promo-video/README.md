@@ -19,6 +19,25 @@ En `salida/` vive **solo la última versión**: al publicar una nueva, se reempl
 Las anteriores quedan en la historia de git. Ojo: GitHub Pages publica el repo entero, así que
 los mp4 también quedan en `juegosdesalon.cl/marketing/promo-video/output/…`.
 
+## Pendiente: versión 6
+
+Registrada el 2026-10-03 a pedido del dueño: **no empezarla hasta que él la pida.** Sale de la
+revisión de usabilidad (U-34, `node tools/agents/marketing.mjs revisar`):
+
+- **Sumar 🧶 Desenredo**, que salió del laboratorio en 0.89.0. Hoy no está ni entre los ocho
+  juegos ni en la grilla de "¡Y muchos más!". Decidir con el dueño si entra a la escena de juegos
+  (y cuál sale, o cuántos golpes más dura) o a la grilla.
+- **Recapturar todo con la app de hoy** (0.90.5 o la que haya). Las capturas de la v5 son de la
+  0.82.x, así que se ven atrás:
+  - Textos más cortos en todos los juegos (0.84.0, D-177).
+  - ☀️ Tango: candado chico en las casillas dadas (0.87.1), el sol dado más intenso (0.90.3), y el
+    choque que se marca al tocar otra casilla (0.90.3). Revisar que la jugada de "sol, sol, luna
+    (dos toques)" se siga viendo bien.
+  - 🏆 La Copa: si el podio que se muestra tiene empate en puntos, ahora sale la línea "⚖️ Empate
+    en … puntos" (0.90.2).
+- Al terminar: la vuelta en [Historia](#historia), `registro.json` (versión, fecha, `app`) y
+  `node tools/agents/marketing.mjs anotar video-promo --al-dia`.
+
 ## Lo que el dueño quiere
 
 Lo que fue pidiendo en cada vuelta, para no tener que volver a preguntarlo:

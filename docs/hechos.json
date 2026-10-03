@@ -1,5 +1,5 @@
 {
-  "version": "0.90.1",
+  "version": "0.91.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -459,6 +459,130 @@
       ]
     }
   ],
+  "sueltos": [
+    {
+      "id": "conexiones",
+      "emoji": "🔗",
+      "nombre": {
+        "es": "Conexiones",
+        "en": "Connections",
+        "pt": "Conexões",
+        "de": "Verbindungen"
+      },
+      "tipos": [
+        "palabras",
+        "cultura"
+      ],
+      "duracion": "3–8",
+      "labs": false
+    },
+    {
+      "id": "letras",
+      "emoji": "🔤",
+      "nombre": {
+        "es": "Toque y Fama: Palabra",
+        "en": "Bulls and Cows: Word",
+        "pt": "Toque e Fama: Palavra",
+        "de": "Bullen und Kühe: Wort"
+      },
+      "tipos": [
+        "palabras",
+        "logica"
+      ],
+      "duracion": "3–8",
+      "labs": false
+    },
+    {
+      "id": "anio",
+      "emoji": "📅",
+      "nombre": {
+        "es": "¿En qué año?",
+        "en": "What Year?",
+        "pt": "Em que ano?",
+        "de": "Welches Jahr?"
+      },
+      "tipos": [
+        "cultura"
+      ],
+      "duracion": "2–5",
+      "labs": false
+    },
+    {
+      "id": "reinas",
+      "emoji": "👑",
+      "nombre": {
+        "es": "Reinas",
+        "en": "Queens",
+        "pt": "Rainhas",
+        "de": "Damen"
+      },
+      "tipos": [
+        "logica"
+      ],
+      "duracion": "2–5",
+      "labs": false
+    },
+    {
+      "id": "tango",
+      "emoji": "☀️",
+      "nombre": {
+        "es": "Tango",
+        "en": "Tango",
+        "pt": "Tango",
+        "de": "Tango"
+      },
+      "tipos": [
+        "logica"
+      ],
+      "duracion": "3–8",
+      "labs": false
+    },
+    {
+      "id": "zip",
+      "emoji": "〰️",
+      "nombre": {
+        "es": "Zip",
+        "en": "Zip",
+        "pt": "Zip",
+        "de": "Zip"
+      },
+      "tipos": [
+        "logica"
+      ],
+      "duracion": "3",
+      "labs": false
+    },
+    {
+      "id": "desenredo",
+      "emoji": "🧶",
+      "nombre": {
+        "es": "Desenredo",
+        "en": "Untangle",
+        "pt": "Desenrola",
+        "de": "Entwirren"
+      },
+      "tipos": [
+        "logica"
+      ],
+      "duracion": "4",
+      "labs": false
+    },
+    {
+      "id": "donde",
+      "emoji": "📍",
+      "nombre": {
+        "es": "¿Dónde queda?",
+        "en": "Where Is It?",
+        "pt": "Onde fica?",
+        "de": "Wo liegt das?"
+      },
+      "tipos": [
+        "cultura"
+      ],
+      "duracion": "2–5",
+      "labs": false
+    }
+  ],
   "tematicas": [
     {
       "id": "historia",
@@ -706,7 +830,8 @@
     "public/panel/aggregate.test.mjs",
     "public/panel/copas.test.mjs",
     "public/timeline/engine.test.mjs",
-    "tools/agents/documentar.test.mjs"
+    "tools/agents/documentar.test.mjs",
+    "tools/agents/marketing.test.mjs"
   ],
   "e2e": [
     "battleship/alineacion.mjs",

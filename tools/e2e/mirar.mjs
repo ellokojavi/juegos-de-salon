@@ -17,6 +17,7 @@
  */
 import { launch, sleep } from './cdp.mjs';
 import { EN_LABS, LABS_KEY } from '../../public/assets/js/i18n.js';
+import { gameById } from '../../public/assets/js/games.js';
 
 const args = process.argv.slice(2);
 const pos = args.filter(a => !a.startsWith('--'));
@@ -54,6 +55,14 @@ const BN_FALLA = rol => `(()=>{const S=window.__bn.session(),L=S.layouts['${rol 
   T={carrier:5,battleship:4,cruiser:3,submarine:3,destroyer:2},o=new Set();
   for(const [id,p] of Object.entries(L)) for(let i=0;i<T[id];i++) o.add((p.dir==='h'?p.r:p.r+i)+','+(p.dir==='h'?p.c+i:p.c));
   for(let r=0;r<10;r++) for(let c=0;c<10;c++) if(!o.has(r+','+c)) return S.transport.send({t:'shot',from:'${rol}',cell:'ABCDEFGHIJ'[c]+(r+1)});})()`;
+
+/* --- Tango: empezar y llenar el tablero con el motor de verdad (ver su entrada) --- */
+const TAN_EMPEZAR = `document.getElementById('btn-empezar').click()`;
+const TAN_LLENAR = choque => `(async()=>{const {JUEGOS}=await import('/cup/games/index.js');const p=JUEGOS.tango.generar(__copa.estado.juego.semilla,1);
+  const L=p.sol.map((v,i)=>i).filter(i=>p.dadas[i]===undefined), u=${choque}?L.filter(i=>p.sol[i]===2).at(-1):L.at(-1);
+  const c=i=>document.querySelector('.tan[data-i="'+i+'"]');
+  for(const i of L){if(i===u)continue;for(let k=0;k<3&&Number(c(i).dataset.v)!==p.sol[i];k++)c(i).click();}
+  if(${choque})c(u).click();})()`;
 
 /**
  * Cómo llegar a cada pantalla. Cada paso es un trocito de JS que se corre en la página;
@@ -279,6 +288,16 @@ const CAMINOS = {
     ],
   },
   /**
+   * Tango suelto, el minijuego ☀️ de La Copa. `juego` es el tablero lleno menos una casilla,
+   * para comparar el sol dado con el jugado (#61); `choque`, lleno con un último sol que choca,
+   * que es el único choque que se ve sin tocar otra casilla (#135).
+   */
+  tango: {
+    intro: [],
+    juego: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, TAN_LLENAR(false)],
+    choque: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, TAN_LLENAR(true)],
+  },
+  /**
    * El panel del dueño no es un juego, pero se mira igual: `window.__panel.seed` lo dibuja
    * con datos sembrados, sin entrar con Google ni tocar la base (C-14). Los datos traen a
    * propósito un juego (`juego-nuevo`), un modo (`equipos`) y un idioma (`fr`) que no están
@@ -292,6 +311,9 @@ const CAMINOS = {
 };
 
 const camino = CAMINOS[juego]?.[pantalla];
+// Se pide por el id ('ahorcado') y se abre su carpeta ('/hangman/'): no son lo mismo (D-192).
+// Lo que no es un juego (el panel) es su propia carpeta.
+const ruta = gameById(juego)?.path || `${juego}/`;
 if (!camino) {
   const hay = Object.keys(CAMINOS[juego] || {});
   console.error(hay.length ? `No conozco "${pantalla}". Hay: ${hay.join(', ')}` : `No conozco el juego "${juego}". Hay: ${Object.keys(CAMINOS).join(', ')}`);
@@ -300,13 +322,13 @@ if (!camino) {
 
 // `--cdp` o PUERTO_CDP cambian el puerto de Chrome: dos sesiones mirando a la vez no se pisan (D-135)
 const b = await launch({ port: Number(flag('cdp', process.env.PUERTO_CDP || '9451')), dir: `${salida}/perfil`, out: salida, width: ancho, height: alto });
-await b.go(`${base}/${juego}/`, 1500);
+await b.go(`${base}/${ruta}`, 1500);
 // El idioma se guarda como texto pelado: getLang() compara contra ['es','en','pt'] y un
 // JSON.stringify le dejaba las comillas dentro, así que --idioma no hacía nada.
 // Un idioma del laboratorio (D-191) se ofrece solo con su marca puesta, como al entrar por /labs/de/
 const labs = EN_LABS.includes(idioma) ? `localStorage.setItem('${LABS_KEY}', '${idioma}');` : '';
 await b.evaluate(`localStorage.clear(); localStorage.setItem('juegos-de-salon:lang', '${idioma}'); ${labs} 1`);
-await b.go(`${base}/${juego}/`, 1500);
+await b.go(`${base}/${ruta}`, 1500);
 // Muescas de verdad: Chrome fija los insets del sistema y la página los lee con
 // env(safe-area-inset-*), igual que en un celular. Sobreescribir las variables CSS —como se
 // hacía antes— no es lo mismo: pinta los márgenes pero no cambia el viewport (D-77).
@@ -340,7 +362,8 @@ const revision = await b.evaluate(`(()=>{
   });
 })()`).then(JSON.parse);
 
-const nombre = `${juego}-${pantalla}-${ancho}`;
+// Por si un día una entrada lleva una barra: la captura queda plana
+const nombre = `${juego.replace(/\//g, "-")}-${pantalla}-${ancho}`;
 await b.shot(nombre);
 console.log(`${salida}/${nombre}.png · ${ancho}×${alto} · ${idioma}`);
 console.log(`  pantalla: ${revision.pantalla}`);

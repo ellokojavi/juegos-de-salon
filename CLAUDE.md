@@ -37,8 +37,12 @@ Puede haber varias sesiones de Claude trabajando en este repo al mismo tiempo (D
 - Antes de tocar la rama de otro PR, preguntarle a esa sesión (ListAgents / SendMessage).
 - **Pruebas en paralelo:** servir la copia propia en un puerto propio (`python3 -m http.server 87xx -d public`),
   correr los guiones con `SITIO=http://localhost:87xx PUERTO_CDP=94xx` y **matar solo el Chrome
-  propio** (`pkill -f "remote-debugging-port=94xx"`). Nunca `pkill -f remote-debugging-port` a secas:
+  propio** (`pkill -f "remote-debugging-port=948[4]"`). Nunca `pkill -f remote-debugging-port` a secas:
   mata las pruebas de todas las sesiones.
+  - **El corchete en el último dígito no es adorno:** sin él, el patrón también calza con la línea de
+    comandos del propio shell que corre `pkill`, y lo mata (sale con 144 a mitad de camino).
+  - **Un guion puede abrir varios Chrome:** el segundo usa `PUERTO_CDP + 1`, y así (`tools/e2e/cdp.mjs`).
+    Entre sesiones, dejar diez puertos de distancia (9480, 9490…), no puertos vecinos.
 
 ## Si trabajas en un fork (D-189)
 
@@ -57,6 +61,11 @@ Estampa la versión y, antes, revisa que el README no haya quedado atrás del c�
 si lo quedó, no estampa y dice qué le falta (C-13, D-51).
 
 ## Mantener el README al día
+
+**"Actualiza el README" es una pasada entera**, por pedido del dueño: bloques generados, prosa
+**y capturas**. Se rehacen todas las secciones que `revisar` marque con capturas atrasadas, se
+miran en la hoja de contacto y recién ahí se sella. No se entrega un README al día con avisos de
+capturas pendientes.
 
 **El README va en inglés** (C-13, D-78): es la cara pública del proyecto. Todo el resto de la
 documentación, y los mensajes de las herramientas, siguen en español.
@@ -134,6 +143,7 @@ node public/panel/aggregate.test.mjs
 node public/panel/adapta.test.mjs               # el panel se entera solo de lo nuevo (C-16)
 node public/panel/copas.test.mjs                # La Copa en el panel: en curso, minijuegos, participación
 node tools/agents/documentar.test.mjs           # la memoria y las comprobaciones del agente de documentación
+node tools/agents/marketing.test.mjs            # qué cuenta como marketing atrasado (U-34)
 python3 tools/release/readme.test.py       # qué cuenta como cambio para las capturas (D-51)
 python3 -m http.server 8765 -d public   # el sitio es public/; los módulos ES necesitan HTTP, no file://
 ```
@@ -174,8 +184,10 @@ solo; para que falle en rojo, que imprima ✗ o ❌ o salga con error. Aquí se 
 
 ```bash
 node tools/e2e/ci.mjs              # todos los de CI, con resumen; o: node tools/e2e/ci.mjs cup/torneo.mjs
-``` Antes de repetir uno que falló, matar solo el Chrome propio:
-`pkill -f "remote-debugging-port=<puerto>"` (ver "Varias sesiones a la vez").
+```
+
+Antes de repetir uno que falló, matar solo el Chrome propio:
+`pkill -f "remote-debugging-port=948[4]"`, con el corchete (ver "Varias sesiones a la vez").
 
 ## Panel del dueño
 
@@ -251,6 +263,14 @@ entero** (el skill `promo-video` lo carga) y al terminar se anota la vuelta ahí
 
 ```bash
 marketing/promo-video/construir.sh       # rehace el video entero (sitio servido en $SITIO)
+```
+
+El agente de usabilidad revisa en su ronda si cada asset quedó atrás de la app (U-34) y lo anota
+en `marketing/registro.json`; no lo rehace:
+
+```bash
+node tools/agents/marketing.mjs revisar                          # ¿qué asset quedó atrás y por qué?
+node tools/agents/marketing.mjs anotar <id> --pendiente "…"      # o --al-dia
 ```
 
 ## El alemán en el laboratorio (D-191)

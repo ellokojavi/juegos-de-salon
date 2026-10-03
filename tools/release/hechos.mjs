@@ -38,7 +38,7 @@ function archivos(dir = '', filtro = () => true) {
 
 // ------------------------------------------------------------------ juegos
 
-const { GAMES } = await import(join(RAIZ, 'public/assets/js/games.js'));
+const { GAMES, SUELTOS } = await import(join(RAIZ, 'public/assets/js/games.js'));
 const { DECKS } = await import(join(RAIZ, 'public/timeline/decks/index.js'));
 const { LANGS, COMMON } = await import(join(RAIZ, 'public/assets/js/i18n.js'));
 const { FRASES } = await import(join(RAIZ, 'public/assets/js/frases.js'));
@@ -94,6 +94,12 @@ for (const g of GAMES) {
   });
 }
 
+// Los minijuegos de La Copa que se juegan sueltos desde la portada (D-142): van en la tabla de
+// juegos del README, aparte, porque no tienen rules.js ni modos.
+const sueltos = SUELTOS.map(m => ({
+  id: m.id, emoji: m.emoji, nombre: m.name, tipos: m.tipos, duracion: m.duration, labs: !!m.labs,
+}));
+
 // ------------------------------------------------------------- lo compartido
 
 const anios = cartas => [Math.min(...cartas.map(c => c.year)), Math.max(...cartas.map(c => c.year))];
@@ -123,6 +129,7 @@ console.log(JSON.stringify({
   frases: Object.fromEntries(LANGS.map(l => [l, FRASES[l].length])),
   clavesComunes: Object.keys(COMMON.es).length,
   juegos,
+  sueltos,
   tematicas,
   modulos,
   tests,
