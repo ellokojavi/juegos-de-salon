@@ -23,4 +23,8 @@ archivos, formatos, duración y estado de cada asset.
   quedan en la historia de git. Lo que se rehace solo (capturas, cuadros sueltos, intermedios)
   no va al repo.
 - Todo lo de esta carpeta se publica con el sitio (GitHub Pages): nada privado acá.
+- **El agente de usabilidad revisa cada asset en su ronda diaria** (U-34): `node tools/marketing.mjs
+  revisar` dice qué quedó atrás de la app (un juego nuevo que no sale, una versión vieja, commits
+  que tocaron lo que muestra) y lo anota en el campo `revision` de `registro.json`. Rehacerlo lo
+  decide el dueño.
 - Un asset nuevo es una carpeta nueva con su README, que sigue el de `video-promo/` como modelo.

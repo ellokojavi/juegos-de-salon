@@ -225,6 +225,8 @@
 .ship-chip.done .barco-tira { filter: saturate(0.4) brightness(1.15); }
 .place-actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 10px; }
 .place-actions .btn { font-size: 1.05rem; min-height: 46px; padding: 8px 6px; }
+/* Al poner el quinto barco la pantalla baja hasta ¡Zarpar! (dilema #47): que no quede pegado al borde */
+#place-sail .btn { scroll-margin-bottom: 16px; }
 
 /* ---------- Batalla ---------- */
 /* De quién es el turno no puede vivir solo en las palabras del titular: dos frases distintas
