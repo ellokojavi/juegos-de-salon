@@ -16,6 +16,7 @@
  * Para probar que el juego funciona están los guiones de partida; esto es para mirar.
  */
 import { launch, sleep } from './cdp.mjs';
+import { EN_LABS, LABS_KEY } from '../../public/assets/js/i18n.js';
 
 const args = process.argv.slice(2);
 const pos = args.filter(a => !a.startsWith('--'));
@@ -45,7 +46,7 @@ const BN_CPU = [
   `document.querySelector('#setup-actions .btn--yellow').click()`,
 ];
 const BN_ZARPA = [
-  `[...document.querySelectorAll('#place-actions .btn')].find(b=>/azar/.test(b.textContent)).click()`,
+  `[...document.querySelectorAll('#place-actions .btn')].find(b=>/azar|random|aleat|zufällig/i.test(b.textContent)).click()`,
   `document.querySelector('#place-sail .btn').click()`,
 ];
 const BN_FRENA = `(()=>{const S=window.__bn.session();clearTimeout(S.cpuTimer);S.cpuTimer='frenado';})()`;
@@ -140,7 +141,7 @@ const CAMINOS = {
       `document.querySelectorAll('.pinta')[5].click()`,
       `document.querySelector('#actions .btn--yellow').click()`,
       `1`,   // el celular se demora en cantar su apuesta: un paso de espera
-      `[...document.querySelectorAll('#actions .btn')].find(b=>/Dudo|Liar|Duvido/i.test(b.textContent))?.click()`,
+      `[...document.querySelectorAll('#actions .btn')].find(b=>/Dudo|Liar|Duvido|Zweifeln/i.test(b.textContent))?.click()`,
     ],
   },
   'cuarto-rey': {
@@ -262,10 +263,10 @@ const CAMINOS = {
    */
   'linea-de-tiempo': {
     intro: [],
-    solo: [`[...document.querySelectorAll('.mode')].find(m=>/solo|alone|sozinho/i.test(m.textContent)).click()`],
-    'solo-juego': [`[...document.querySelectorAll('.mode')].find(m=>/solo|alone|sozinho/i.test(m.textContent)).click()`, `document.getElementById('btn-solo-empezar').click()`],
+    solo: [`[...document.querySelectorAll('.mode')].find(m=>/solo|alone|sozinho|allein/i.test(m.textContent)).click()`],
+    'solo-juego': [`[...document.querySelectorAll('.mode')].find(m=>/solo|alone|sozinho|allein/i.test(m.textContent)).click()`, `document.getElementById('btn-solo-empezar').click()`],
     'solo-resultado': [
-      `[...document.querySelectorAll('.mode')].find(m=>/solo|alone|sozinho/i.test(m.textContent)).click()`,
+      `[...document.querySelectorAll('.mode')].find(m=>/solo|alone|sozinho|allein/i.test(m.textContent)).click()`,
       `document.getElementById('btn-solo-empezar').click()`,
       `(async()=>{const L=await import('../cup/games/timeline/engine.js');const s=__ldt.solo();const p=L.generar(s.codigo,1,{tema:s.tema,excluir:s.skip});
         let j=[];for(const c of p.mano){const l=L.estado(p,j).linea;const bien=L.huecoCorrecto(l,c);j=[...j,{c:c.id,at:j.length?bien:(bien?0:l.length)}];}
@@ -302,7 +303,9 @@ const b = await launch({ port: Number(flag('cdp', process.env.PUERTO_CDP || '945
 await b.go(`${base}/${juego}/`, 1500);
 // El idioma se guarda como texto pelado: getLang() compara contra ['es','en','pt'] y un
 // JSON.stringify le dejaba las comillas dentro, así que --idioma no hacía nada.
-await b.evaluate(`localStorage.clear(); localStorage.setItem('juegos-de-salon:lang', '${idioma}'); 1`);
+// Un idioma del laboratorio (D-191) se ofrece solo con su marca puesta, como al entrar por /labs/de/
+const labs = EN_LABS.includes(idioma) ? `localStorage.setItem('${LABS_KEY}', '${idioma}');` : '';
+await b.evaluate(`localStorage.clear(); localStorage.setItem('juegos-de-salon:lang', '${idioma}'); ${labs} 1`);
 await b.go(`${base}/${juego}/`, 1500);
 // Muescas de verdad: Chrome fija los insets del sistema y la página los lee con
 // env(safe-area-inset-*), igual que en un celular. Sobreescribir las variables CSS —como se

@@ -211,4 +211,70 @@ const PT = {
   chatPlaceholder: 'Escreve algo…', chatEmpty: 'Aqui dá para zoar enquanto adivinham. Some quando a sala fecha.',
 };
 
-export const LOCALES = { es: ES, en: EN, pt: PT };
+const DE = {
+  docTitle: 'Galgenmännchen 🪢 · Salonspiele', gameChip: '🪢 Galgenmännchen', menu: '‹ Menü',
+  title: 'Galgenmännchen',
+  lead: 'Jeder Spieler errät sein eigenes Wort.',
+  howTitle: '🧠 So geht’s',
+  howText: 'Rate einen Buchstaben nach dem anderen. Ist er im Wort, erscheint er an allen seinen Stellen. Wenn nicht, wird ein Teil des Galgenmännchens gezeichnet. Ist die Zeichnung fertig, hängst du. <b>Wer sein Wort mit den meisten Leben errät, gewinnt.</b>',
+  modeLocal: '📱 Ein Handy', modeLocalHint: 'Ihr reicht das Handy nach jedem Buchstaben weiter.',
+  modeOnline: '📡 Mehrere Handys', modeOnlineHint: 'Jeder spielt abwechselnd auf seinem eigenen Handy.',
+  modeSolo: '🧍 Allein spielen', modeSoloHint: 'Das Handy wählt ein Wort zum Thema und du errätst es.',
+  // Einstellungen
+  setupTitle: 'Wie spielen wir?', theme: 'Thema', wordSource: 'Das Wort',
+  srcNeedsHttps: 'Unter dieser Adresse geht nur der Stapel, denn die Kette braucht https.',
+  srcChain: 'Kette', srcChainHint: 'Jeder schreibt dem Nächsten ein Wort, mit einem Hinweis.',
+  srcDeck: 'Vom Handy', srcDeckHint: 'Das Handy verteilt Wörter zum Thema, jeweils mit Hinweis.',
+  lives: 'Leben', livesHard: 'Schwer', livesNormal: 'Normal', livesEasy: 'Leicht',
+  buyLabel: 'Buchstaben kaufen erlauben', buyHint: 'Deckt den seltensten fehlenden Buchstaben auf und kostet ein Leben.',
+  players: 'Spieler', playerPlaceholder: 'Spieler {n}', addPlayer: '＋ Spieler hinzufügen', removePlayer: 'Spieler entfernen', maxPlayers: 'Höchstens {n} Spieler',
+  yourName: 'Dein Name', start: 'Los geht’s!', create: 'Raum erstellen', joinTitle: 'Einem Raum beitreten', codePlaceholder: 'CODE', join: 'Beitreten',
+  errName: 'Der Name fehlt.', errNames: 'Namen fehlen oder sind doppelt.', errCode: 'Der Code hat 4 Buchstaben.',
+  errNotFound: 'Diesen Raum gibt es nicht. Prüf den Code.', errFull: 'Der Raum ist schon voll.', errExpired: 'Dieser Raum ist abgelaufen.', errOtherGame: 'Dieser Code gehört zu einem anderen Spiel.', errNet: 'Keine Verbindung. Hast du Internet?',
+  errOffline: 'Der Raum ließ sich nicht öffnen. Vielleicht liegt es an deinem Internet oder es spielen gerade sehr viele. Versuch es in ein paar Minuten nochmal oder spiel mit einem Handy, dafür brauchst du kein Internet.',
+  errTooMany: 'Du hast viele Räume hintereinander geöffnet. Warte kurz und versuch es nochmal.',
+  // Raum
+  lobbyTitle: 'Raum erstellt', lobbyCode: 'Code', lobbyShare: 'Sag den anderen den Code oder lass sie den QR-Code scannen.',
+  lobbyPlayers: 'Im Raum', lobbyStart: 'Starten!', lobbyNeedMore: 'Zu wenig Spieler…', lobbyWaitHost: 'Warte, bis {name} startet',
+  shareLink: '📤 Link teilen', copyLink: '📋 Link kopieren', copied: 'Kopiert!',
+  lobbyCancel: 'Raum auflösen', lobbyLeave: 'Raum verlassen',
+  invitedTitle: 'Du bist eingeladen!', invited: '📩 Raum {code}', invitedHint: 'Gib deinen Namen ein und steig ein. Wer dich eingeladen hat, stellt das Spiel ein.',
+  // Wort schreiben
+  wordTitle: 'Ein Wort für {name}', wordHint: '3 bis 14 Buchstaben. Ein kurzer Satz geht auch: Leerzeichen gibt’s gratis.',
+  wordPlaceholder: 'Das Wort', hintLabel: 'Der Hinweis', hintPlaceholder: 'Ein kurzer, ehrlicher Hinweis', wordSave: 'Fertig, speichern',
+  wordSaved: 'Wort gespeichert 🔒', waitingWords: 'Warte, bis {name} ein Wort schreibt', waitingWordsMany: 'Noch {n} Wörter fehlen',
+  errWordShort: 'Zu kurz: mindestens 3 Buchstaben.', errWordLong: 'Zu lang: höchstens 14 Buchstaben.',
+  errWordLetters: 'Nur Buchstaben, keine Zahlen oder Zeichen.', errWordPoor: 'Mit nur einem einzigen Buchstaben gibt es kein Spiel.',
+  errHint: 'Der Hinweis fehlt. Ohne Hinweis ist es unfair.',
+  suggestLabel: 'Vorschläge zu {theme}',
+  suggestHint: 'Tippe auf einen, um ihn zu nehmen. Danach kannst du ihn ändern.',
+  errSecure: 'Um das Wort geheim zu schreiben, musst du das Spiel über https oder localhost öffnen.',
+  coverLabel: 'Jetzt schreibt', coverTap: 'Tippen zum Schreiben', hide: 'Verdecken',
+  // Spiel
+  turnYou: 'Du bist dran, {name}!', turnOther: '{name} ist dran…', yourWord: 'Dein Wort, {name}', waitingTurn: 'Warte auf {name}…',
+  wordOf: 'Das Wort von {name}', hintIs: 'Hinweis', livesLeft: 'Noch {n} Leben', oneLifeLeft: 'Nur noch ein Leben!',
+  pickLetter: 'Wähl einen Buchstaben auf der Tastatur.', tryLetter: '🔤 {letter} probieren',
+  buyBtn: '💡 Buchstaben kaufen', buyCost: 'kostet ein Leben', buyTitle: 'Einen Buchstaben kaufen?',
+  buyText: 'Der seltenste fehlende Buchstabe wird aufgedeckt und kostet dich ein Leben.', buyYes: 'Ja, kaufen', buyNo: 'Lieber nicht',
+  bought: '💡 {name} hat das {letter} gekauft.', rivalsTitle: 'Die anderen',
+  offline: '{name} ist getrennt. Warte, bis er zurückkommt…',
+  // Urteile
+  hitTitle: 'Drin!', missTitle: 'Nicht drin', buyDone: 'Gekauft', hitOther: '{name} hat getroffen', missOther: '{name} lag daneben',
+  letterIn: 'Das {letter} kommt {n}-mal vor.', letterInOne: 'Das {letter} ist drin.', letterOut: 'Das {letter} ist nicht im Wort.',
+  solvedTitle: 'Geschafft!', hangedTitle: 'Du hängst', solvedOther: '{name} hat es geschafft!', hangedOther: '{name} hängt',
+  wordWas: 'Das Wort war', scoreWas: 'Dir blieben {n} Leben', scoreZero: 'Keine Leben mehr', scoreWasOne: 'Dir blieb 1 Leben',
+  // Handy weitergeben
+  hoPass: 'Gib das Handy an', hoReady: 'Bereit, ich bin’s!', hoContinue: 'Weiter', tapContinue: 'Tippen zum Weitermachen',
+  // Ergebnis
+  soloWordWas: 'Das Wort war', soloScore: 'Dir blieben {n} Leben und du hast es mit {letters} Buchstaben geschafft.', soloScoreOne: 'Dir blieb 1 Leben und du hast es mit {letters} Buchstaben geschafft.',
+  winTitle: '{name} gewinnt!', winTitleMany: 'Unentschieden!', winTitleNone: 'Keiner hat es geschafft', youWin: 'Du hast gewonnen!', youLose: 'Verloren… diesmal.',
+  rankLine: '{n} Leben · {letters} Buchstaben', rankLineOne: '1 Leben · {letters} Buchstaben', rankHanged: 'Gehängt · {letters} Buchstaben', rankBought: 'gekauft: {n}',
+  wordsWere: 'Die Wörter waren', verified: 'geprüft ✅', notVerified: '⚠️ passt nicht (geschummelt?)',
+  rematch: '🔁 Revanche', rematchWaiting: 'Warte auf {name} für die Revanche', changeMode: 'Modus ändern', backMenu: 'Zurück zum Menü',
+  resumeTitle: '⏯ Ein Spiel ist noch offen', resume: 'Weiter', delete: 'Löschen',
+  // Raum-Chat
+  chatTitle: 'Raum-Chat', chatOpen: 'Chat öffnen', chatClose: 'Chat schließen', chatSend: 'Senden',
+  chatPlaceholder: 'Schreib was…', chatEmpty: 'Hier könnt ihr euch beim Raten necken. Der Chat wird gelöscht, wenn der Raum schließt.',
+};
+
+export const LOCALES = { es: ES, en: EN, pt: PT, de: DE };

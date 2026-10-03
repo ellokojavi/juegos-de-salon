@@ -1,6 +1,6 @@
 # Especificación: Toque y Fama 🔢
 
-**Ruta:** `/bulls-and-cows/` · **Jugadores:** 1–2 · **Versión:** 0.4 · **Idiomas:** es, en (“Bulls and Cows”), pt (“Toque e Fama”)
+**Ruta:** `/bulls-and-cows/` · **Jugadores:** 1–2 · **Versión:** 0.4 · **Idiomas:** es, en (“Bulls and Cows”), pt (“Toque e Fama”) y, en el laboratorio, de (“Bullen und Kühe”, D-191)
 
 ## Reglas implementadas
 - Cada jugador elige un número secreto de **3, 4 o 5 cifras distintas** (4 por defecto). Cero inicial permitido (configurable). Jugando solo no se configura nada (D-142).

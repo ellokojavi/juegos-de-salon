@@ -107,6 +107,9 @@ GitHub corre todas las de abajo (menos el servidor) en cada PR y en cada fusión
 `*.test.mjs` o `*.test.py`, así que un test nuevo no se agrega al workflow. Igual se corren
 aquí antes de abrir el PR; las de punta a punta siguen a mano.
 
+**No se fusiona un PR hasta que GitHub muestre ✅ en su check `pruebas`**, aunque las pruebas ya
+hayan pasado aquí: abrir el PR, esperar el resultado y recién ahí fusionar.
+
 ```bash
 node public/bulls-and-cows/engine.test.mjs
 node public/battleship/engine.test.mjs
@@ -120,7 +123,7 @@ node public/cup/store.test.mjs
 node public/cup/planilla.test.mjs            # la tabla final como CSV (D-161)
 node public/cup/reportes.test.mjs             # un reporte que no sale queda guardado y se reenvía
 node public/assets/js/arrastre.test.mjs
-node public/assets/js/i18n.test.mjs             # paridad es/en/pt (C-3)
+node public/assets/js/i18n.test.mjs             # paridad es/en/pt/de (C-3, D-191)
 node public/assets/js/compartir.test.mjs        # el estándar de lo que se comparte (D-165)
 node public/assets/js/transport/cleanup.test.mjs
 node public/assets/js/transport/dispose.test.mjs
@@ -238,6 +241,18 @@ entero** (el skill `promo-video` lo carga) y al terminar se anota la vuelta ahí
 
 ```bash
 marketing/promo-video/construir.sh       # rehace el video entero (sitio servido en $SITIO)
+```
+
+## El alemán en el laboratorio (D-191)
+
+El alemán tiene todos sus textos pero solo se ofrece en el dispositivo que entra por `/labs/de/`
+(o un link con `?lang=de`): ahí los "‹ Menú" vuelven al laboratorio y 🐞 manda comentarios a
+`feedback/`. El plan, lo que falta para publicarlo y el **glosario** que toda traducción respeta
+están en [docs/ALEMAN.md](docs/ALEMAN.md). Un texto nuevo para el jugador va también en `DE`: la
+prueba de paridad lo exige.
+
+```bash
+node tools/e2e/mirar.mjs dudo intro --idioma de --ancho 320   # pone la marca del laboratorio sola
 ```
 
 ## Reportes de La Copa

@@ -64,10 +64,12 @@ export function teclado({ largo, teclas, valido, puede, onSubmit, submitLabel, c
     }, d);
     return b;
   };
-  for (const d of teclas) keys.push(key(d));
+  // Una tecla `null` es un hueco: ocupa su lugar en la grilla y no se aprieta
+  const celdas = teclas.map(d => (d === null ? el('span', { class: 'hueco', 'aria-hidden': 'true' }) : key(d)));
+  for (const c of celdas) if (c.dataset.d !== undefined) keys.push(c);
   const pad = acciones === 'fin'
-    ? el('div', { class: 'keypad' }, ...keys.slice(0, -1), del, keys[keys.length - 1], ok)
-    : el('div', { class: 'keypad keypad--letras', style: `grid-template-columns: repeat(${columnas}, 1fr)` }, ...keys, del, ok);
+    ? el('div', { class: 'keypad' }, ...celdas.slice(0, -1), del, celdas[celdas.length - 1], ok)
+    : el('div', { class: 'keypad keypad--letras', style: `grid-template-columns: repeat(${columnas}, 1fr)` }, ...celdas, del, ok);
   refresh();
   return el('div', {}, entry, pad);
 }
