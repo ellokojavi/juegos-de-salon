@@ -39,8 +39,11 @@ export function createChat({ mount, T, nameOf, isMine, onSend }) {
   let lastFrom = null;          // agrupa mensajes seguidos del mismo jugador
 
   const badge = el('span', { class: 'chat-badge', hidden: true }, '0');
-  // Etiqueta que se asoma al lado de la burbuja con el mensaje recién llegado
-  const peek = el('button', { class: 'chat-peek', type: 'button', hidden: true, onClick: () => toggle(true) });
+  // Etiqueta que se asoma al lado de la burbuja con el mensaje recién llegado. Es solo un aviso:
+  // no se toca ni recibe foco, así un toque encima cae en el botón de abajo ("Revancha"); el chat
+  // se abre con la burbuja (dilema #48). Los lectores de pantalla lo oyen por `live`.
+  const peek = el('div', { class: 'chat-peek', hidden: true, 'aria-hidden': 'true' });
+  const live = el('div', { class: 'chat-live', role: 'status', 'aria-live': 'polite' });
   let peekTimer = null;
   const fab = el('button', { class: 'chat-fab', type: 'button', 'aria-label': T.chatOpen, onClick: () => toggle(true) }, '💬', badge);
   const list = el('div', { class: 'chat-list' }, el('p', { class: 'chat-empty' }, T.chatEmpty));
@@ -64,7 +67,7 @@ export function createChat({ mount, T, nameOf, isMine, onSend }) {
     panel,
   );
   mount.classList.add('chat');
-  mount.append(fab, peek, sheet);
+  mount.append(fab, peek, live, sheet);
 
   /* ---------- teclado del celular ----------
      El teclado no achica la ventana en iOS: tapa lo que hay abajo. visualViewport
@@ -92,6 +95,7 @@ export function createChat({ mount, T, nameOf, isMine, onSend }) {
       el('span', { class: 'txt' }, text),
     );
     peek.hidden = false;
+    live.textContent = `${nameOf(role)}: ${text}`;
     peek.classList.remove('leaving'); void peek.offsetWidth; peek.classList.add('in');
     peekTimer = setTimeout(hidePeek, PEEK_MS);
   }

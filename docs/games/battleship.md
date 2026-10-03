@@ -41,6 +41,7 @@ Intro (reglas, modos) → Setup (nombres, tiro extra) → [Lobby: código + QR +
 - Casillas inválidas (fuera de borde o superpuestas) se muestran en rojo y no se aceptan.
 - **🎲 Al azar** coloca toda la flota válida en un toque (mismo generador que usa la IA). **Limpiar** vacía el tablero.
 - **¡Zarpar!** se habilita con los 5 barcos puestos. Al confirmar se envía el compromiso `sha256(layout + sal)`.
+- Al poner el quinto barco (tocando, arrastrando o con Al azar), si **¡Zarpar!** quedó bajo el pliegue la pantalla baja sola hasta él (suave, o de golpe con `prefers-reduced-motion`). Solo en el paso a "todos colocados": mover un barco ya puesto no la mueve, y con un arrastre baja al soltar (dilema #47).
 
 ### 3.2 Batalla
 - Arriba, **grilla de disparos** al rival (grande, es donde se toca): agua 🌊 en gris, tocado 💥 en naranjo, hundido 🔥 en rojo con el contorno del barco. Tocar una casilla la selecciona; **🎯 ¡Fuego!** confirma (evita disparos por error). Opción “disparo directo con un toque” en configuración.

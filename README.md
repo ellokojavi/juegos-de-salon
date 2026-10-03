@@ -14,6 +14,8 @@ The menu can be filtered by kind of game (words, logic, trivia, cards and dice);
 
 ## Games
 
+The eight games come first; after them, The Cup's minigames, which also play on their own from the menu, one player and no cup.
+
 <!-- generado: juegos · written by python3 tools/release/readme.py actualizar -->
 | Game | Players | Modes | Status |
 |---|---|---|---|
@@ -25,6 +27,14 @@ The menu can be filtered by kind of game (words, logic, trivia, cards and dice);
 | ⚓ [Battleship / Batalla Naval / Batalha Naval](#-battleship-batalla-naval) | 1 to 2 | One phone · Two phones · Versus the phone | v0.6 |
 | 🍹 [Julep / Julepe / Paga o Bolo](#-julep-julepe) | 1 to 6 | One phone · Several phones · Versus the phone | ⏸ paused |
 | 👑 [Fourth King / Cuarto Rey / Quarto Rei](#-fourth-king-cuarto-rey) | 4 to 6 | One phone | v0.27 |
+| 🔗 [Connections / Conexiones / Conexões](https://juegosdesalon.cl/minigames/conexiones/) | 1 | Play alone | Cup minigame |
+| 🔤 [Bulls and Cows: Word / Toque y Fama: Palabra / Toque e Fama: Palavra](https://juegosdesalon.cl/minigames/letras/) | 1 | Play alone | Cup minigame |
+| 📅 [What Year? / ¿En qué año? / Em que ano?](https://juegosdesalon.cl/minigames/anio/) | 1 | Play alone | Cup minigame |
+| 👑 [Queens / Reinas / Rainhas](https://juegosdesalon.cl/minigames/reinas/) | 1 | Play alone | Cup minigame |
+| ☀️ [Tango](https://juegosdesalon.cl/minigames/tango/) | 1 | Play alone | Cup minigame |
+| 〰️ [Zip](https://juegosdesalon.cl/minigames/zip/) | 1 | Play alone | Cup minigame |
+| 🧶 [Untangle / Desenredo / Desenrola](https://juegosdesalon.cl/minigames/desenredo/) | 1 | Play alone | Cup minigame |
+| 📍 [Where Is It? / ¿Dónde queda? / Onde fica?](https://juegosdesalon.cl/minigames/donde/) | 1 | Play alone | Cup minigame |
 <!-- /generado -->
 
 ---
@@ -43,7 +53,7 @@ The classic drinking card game. The phone is the deck: each player draws a card 
   </tr>
   <tr>
     <td align="center"><img src="docs/screenshots/fourth-king/06-minijuego.png" width="180" alt="Minigame with prompts"><br><sub>Minigame with prompts</sub></td>
-    <td align="center"><img src="docs/screenshots/fourth-king/07-salud.png" width="180" alt="Cheers!"><br><sub>Cheers!</sub></td>
+    <td align="center"><img src="docs/screenshots/fourth-king/07-salud.png" width="180" alt="Who drinks"><br><sub>Who drinks</sub></td>
     <td align="center"><img src="docs/screenshots/fourth-king/08-pasale.png" width="180" alt="Pass the phone"><br><sub>Pass the phone</sub></td>
     <td align="center"><img src="docs/screenshots/fourth-king/09-cuarto-rey.png" width="180" alt="Fourth King!"><br><sub>Fourth King!</sub></td>
   </tr>
@@ -399,7 +409,7 @@ Spec and design: [docs/games/cup.md](docs/games/cup.md)
 
 ### Languages
 
-The whole experience is translated: the menu and its footer lines, the six games with all their modes, the rooms, the chat, the transport errors, the "pass the phone" screens and the cards of every Timeline theme. Portuguese is the Brazilian one, informal, and the names are translated the same way as in English:
+The whole experience is translated: the menu and its footer lines, the eight games with all their modes, the Cup's minigames, the rooms, the chat, the transport errors, the "pass the phone" screens and the cards of every Timeline theme. Portuguese is the Brazilian one, informal, and the names are translated the same way as in English:
 
 <!-- generado: idiomas · written by python3 tools/release/readme.py actualizar -->
 | Español | English | Português |
@@ -413,6 +423,14 @@ The whole experience is translated: the menu and its footer lines, the six games
 | Batalla Naval | Battleship | Batalha Naval |
 | Julepe | Julep | Paga o Bolo |
 | Cuarto Rey | Fourth King | Quarto Rei |
+| Conexiones | Connections | Conexões |
+| Toque y Fama: Palabra | Bulls and Cows: Word | Toque e Fama: Palavra |
+| ¿En qué año? | What Year? | Em que ano? |
+| Reinas | Queens | Rainhas |
+| Tango | Tango | Tango |
+| Zip | Zip | Zip |
+| Desenredo | Untangle | Desenrola |
+| ¿Dónde queda? | Where Is It? | Onde fica? |
 <!-- /generado -->
 
 How it is put together (canon C-3):
@@ -525,6 +543,7 @@ node public/panel/adapta.test.mjs
 node public/panel/aggregate.test.mjs
 node public/panel/copas.test.mjs
 node tools/agents/documentar.test.mjs
+node tools/agents/marketing.test.mjs
 ```
 <!-- /generado -->
 

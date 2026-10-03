@@ -101,6 +101,17 @@ console.log('B comenta:', await say(B, 'revancha altiro'));
 await sleep(2500);
 console.log('A lo recibe en el resultado → etiqueta:', JSON.stringify((await chat(A)).etiqueta));
 await A.shot('bn-chat-04-resultado');
+// Un toque en "Revancha" justo bajo la etiqueta pide la revancha, no abre el chat (dilema #48)
+const bajo = JSON.parse(await A.evaluate(`(()=>{const p=document.querySelector('.chat-peek');const b=[...document.querySelectorAll('.screen.active .btn')].find(x=>/Revancha/.test(x.textContent));
+  if(!p||p.hidden||!b)return JSON.stringify({});const P=p.getBoundingClientRect(),B=b.getBoundingClientRect();
+  const x=Math.round((Math.max(P.left,B.left)+Math.min(P.right,B.right))/2),y=Math.round((Math.max(P.top,B.top)+Math.min(P.bottom,B.bottom))/2);
+  const se=!(P.right<B.left||P.left>B.right||P.bottom<B.top||P.top>B.bottom);const e=document.elementFromPoint(x,y);
+  return JSON.stringify({se,x,y,cae:e&&e.closest('.btn')===b?'Revancha':e?.className})})()`));
+if (bajo.se) {
+  await A.toque(bajo.x, bajo.y); await sleep(250);
+  const r = await A.evaluate(`JSON.stringify({chat:!document.querySelector('.chat-sheet').hidden,pidio:!!document.querySelector('.screen.active .waiting')||!document.querySelector('#screen-result.active')})`).then(JSON.parse);
+  console.log('toque en Revancha bajo la etiqueta → cae en:', bajo.cae, '(debe ser Revancha) | chat abierto:', r.chat, '(debe ser false) | pidió revancha:', r.pidio, '(debe ser true)');
+} else console.log('toque bajo la etiqueta → la etiqueta no tapa Revancha en esta partida:', JSON.stringify(bajo));
 console.log('errors A:', JSON.stringify(A.errors), JSON.stringify(A.logs));
 console.log('errors B:', JSON.stringify(B.errors), JSON.stringify(B.logs));
 A.close(); B.close();

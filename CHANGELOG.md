@@ -1,16 +1,5 @@
 # Changelog
 
-## 0.90.2 — 2026-10-03
-- **🏆 La Copa: cuatro dilemas de usabilidad resueltos.**
-  - El recordatorio del día abre con el emoji del minijuego ("⏳ Hoy toca Línea Relámpago."), sin
-    emoji en medio de la frase (#114, U-2).
-  - La bienvenida del admin con link propio dice una sola vez que cierre la inscripción, con el
-    porqué al lado (#102).
-  - Los botones de Administrar dicen la acción: "📤 Invitar al grupo", "📤 Recordar el juego de
-    hoy" y "📤 Compartir la tabla" (#65, U-5, U-17).
-  - Si el 1.° y el 2.° empatan en puntos, el podio y el resumen dicen qué desempató: "⚖️ Empate en
-    68 puntos: desempató quien ganó más días." "Cómo funciona" cuenta el desempate (#79).
-
 ## 0.91.0 — 2026-10-03
 - **Las direcciones pasan al inglés** (D-192): `/hangman/`, `/cup/`, `/timeline/`, `/bulls-and-cows/`,
   `/liars-dice/`, `/battleship/`, `/julep/`, `/fourth-king/` y `/minigames/<slug>/`. Los links
@@ -23,6 +12,43 @@
 - **El taller, ordenado:** `tools/` por función (`release/`, `firebase/`, `generators/`, `agents/`,
   `e2e/<juego>/`), un minijuego de La Copa por carpeta (`cup/games/<slug>/`) y el import map de
   versiones armado solo, sin lista que mantener.
+
+## 0.90.6 — 2026-10-03
+- **README al día, con capturas** (C-13): la tabla de juegos suma los minijuegos que se juegan
+  sueltos desde la portada (`tools/release/hechos.mjs` ahora lee `SUELTOS`, así que uno nuevo aparece
+  solo), con sus nombres en la tabla de idiomas. Se rehicieron las capturas de todas las
+  secciones con las fuentes reales; el pie de Cuarto Rey "Cheers!" pasa a "Who drinks", porque
+  esa pantalla cambia de título según la carta.
+- **"Actualiza el README" es una pasada entera** (CLAUDE.md): bloques generados, prosa y capturas.
+
+## 0.90.5 — 2026-10-03
+- **⚓ Batalla Naval: la pantalla baja hasta ¡Zarpar!** (#47): en un celular chico, al poner el
+  quinto barco, si "⚓ ¡Zarpar!" no se ve, la pantalla baja sola hasta él. Pasa una vez, al
+  completar la flota (tocando, arrastrando o con Al azar), y nunca a mitad de un arrastre.
+
+## 0.90.4 — 2026-10-03
+- **💬 El aviso del chat ya no se come los toques** (#48, U-12): la etiqueta que asoma junto a la
+  burbuja cuando llega un mensaje deja pasar los toques, así que tocar "🔁 Revancha" (o lo que
+  quede debajo) hace lo que dice el botón. El chat se abre con la burbuja. Vale para los seis
+  juegos con chat; los lectores de pantalla siguen oyendo cada mensaje.
+
+## 0.90.3 — 2026-10-03
+- **☀️ Tango: el choque se marca al tocar otra casilla** (#135): sin la espera de 500 ms. Un sol
+  de paso que rompe una regla se pinta en rojo (con sonido y vibración) recién cuando el jugador
+  toca otra casilla, que es cuando el puntaje lo cobra: lo rojo es lo que cuenta. El puntaje no
+  cambia. Con el tablero lleno, el último choque se ve sin sonar ni contar.
+- **El sol dado se distingue del jugado** (#61): ámbar más intenso y borde propio.
+
+## 0.90.2 — 2026-10-03
+- **🏆 La Copa: cuatro dilemas de usabilidad resueltos.**
+  - El recordatorio del día abre con el emoji del minijuego ("⏳ Hoy toca Línea Relámpago."), sin
+    emoji en medio de la frase (#114, U-2).
+  - La bienvenida del admin con link propio dice una sola vez que cierre la inscripción, con el
+    porqué al lado (#102).
+  - Los botones de Administrar dicen la acción: "📤 Invitar al grupo", "📤 Recordar el juego de
+    hoy" y "📤 Compartir la tabla" (#65, U-5, U-17).
+  - Si el 1.° y el 2.° empatan en puntos, el podio y el resumen dicen qué desempató: "⚖️ Empate en
+    68 puntos: desempató quien ganó más días." "Cómo funciona" cuenta el desempate (#79).
 
 ## 0.90.1 — 2026-10-03
 - **☀️ Tango: el sol de paso ya no se marca como choque en iPhone** (U-20, reporte 🐞 del 2-oct).
