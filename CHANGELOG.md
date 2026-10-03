@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.91.0 — 2026-10-03
+- **Sin destello de idioma** (D-192): al abrir una página en inglés, portugués o alemán ya no se
+  ven los textos en español una fracción de segundo antes de cambiar.
+- **Laboratorio alemán** (D-192): una copa con palabras en alemán cambia de día a medianoche de
+  Europa central (Berlín, Viena, Zúrich), y las instrucciones de Palabra y del Ahorcado dicen que
+  las diéresis van sin puntos (Ä es A) y la ß como SS.
+
 ## 0.90.0 — 2026-10-03
 - **🇩🇪 El alemán, en el laboratorio** (D-191): la app entera en alemán (Salonspiele) para que la
   revisen amigos que lo hablan, en `/labs/de/`. Solo ese celular ofrece DE en el toggle; ahí los

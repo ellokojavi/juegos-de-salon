@@ -392,3 +392,6 @@ html:lang(de) body { -webkit-hyphens: auto; hyphens: auto; overflow-wrap: break-
 .labs-caja details summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; }
 .labs-contexto { font-size: 0.72rem; white-space: pre-wrap; overflow-wrap: anywhere; color: var(--muted); margin: 6px 0 0; }
 .topbar .labs-bicho { flex: none; border-color: rgba(255, 122, 26, 0.6); font-size: 1.1rem; }
+
+/* Mientras los textos del idioma elegido no están puestos, no se pinta nada (D-192) */
+html.i18n-pendiente body { visibility: hidden; }
