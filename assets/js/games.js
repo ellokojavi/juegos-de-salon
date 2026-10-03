@@ -183,7 +183,6 @@ export const SUELTOS = [
     tagline: { es: 'Arrastra los nudos hasta que ningún hilo se cruce.', en: 'Drag the knots until no threads cross.', pt: 'Arraste os nós até que nenhum fio se cruze.', de: 'Zieh die Knoten, bis sich keine Fäden mehr kreuzen.' },
     tipos: ['logica'],
     duration: '4',
-    labs: true,
   },
   {
     id: 'donde',

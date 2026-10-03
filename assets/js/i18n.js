@@ -11,7 +11,7 @@ const KEY = 'juegos-de-salon:lang';
 export const IDIOMAS = ['es', 'en', 'pt', 'de'];
 
 /**
- * Los idiomas que están en el laboratorio (D-190): tienen sus textos, pero solo se ofrecen en el
+ * Los idiomas que están en el laboratorio (D-191): tienen sus textos, pero solo se ofrecen en el
  * dispositivo que entró por `/labs/<idioma>/` o por un link con `?lang=<idioma>`. Ahí quedan
  * marcados en `LABS_KEY`; en todos los demás la app sigue en español, inglés y portugués.
  */

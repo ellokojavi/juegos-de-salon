@@ -12,7 +12,7 @@ export const MAX_INTENTOS = 8;
 export const ALFABETO = 'QWERTYUIOPASDFGHJKLÑZXCVBNM'.split('');
 /**
  * El teclado de cada idioma, en el orden de dibujo: la Ñ solo en español (D-170) y en alemán
- * QWERTZ (D-190). Donde el español tiene la Ñ, los demás dejan un hueco (`null`): así la tercera
+ * QWERTZ (D-191). Donde el español tiene la Ñ, los demás dejan un hueco (`null`): así la tercera
  * fila empieza en su letra, como en un teclado de verdad, y no queda una Z o una Y colgando al
  * final de la segunda.
  */
