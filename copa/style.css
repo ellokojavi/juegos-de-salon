@@ -361,6 +361,13 @@ button.md-fila { cursor: pointer; }
 .tan.dada[data-v="1"] { background: rgba(255, 196, 70, 0.68); }
 .tan.dada[data-v="2"] { background: rgba(38, 54, 150, 0.95); }
 .tan-ico.luna { filter: grayscale(1) brightness(1.5); }
+/* Las casillas que no se tocan (las dadas y las que reveló una pista) llevan un candado chico en la
+   esquina libre: las marcas = y ≠ van en los bordes derecho e inferior */
+.tan.dada::before, .tan.revelada::before { content: ""; position: absolute; top: 3px; left: 3px; width: 26%; max-width: 14px; aspect-ratio: 1;
+  background: rgba(255, 255, 255, 0.85); pointer-events: none;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 7V5a3.5 3.5 0 0 1 7 0v2h.5A1.5 1.5 0 0 1 13.5 8.5v5A1.5 1.5 0 0 1 12 15H4a1.5 1.5 0 0 1-1.5-1.5v-5A1.5 1.5 0 0 1 4 7h.5zm1.8 0h3.4V5a1.7 1.7 0 0 0-3.4 0v2z'/%3E%3C/svg%3E") center / contain no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 7V5a3.5 3.5 0 0 1 7 0v2h.5A1.5 1.5 0 0 1 13.5 8.5v5A1.5 1.5 0 0 1 12 15H4a1.5 1.5 0 0 1-1.5-1.5v-5A1.5 1.5 0 0 1 4 7h.5zm1.8 0h3.4V5a1.7 1.7 0 0 0-3.4 0v2z'/%3E%3C/svg%3E") center / contain no-repeat; }
+.tan.revelada::before { background: var(--cyan); }
 .tan.choque, .tan.choque[data-v] { box-shadow: inset 0 0 0 3px var(--red); background: rgba(224, 36, 60, 0.25); }
 .tan-marca { position: absolute; z-index: 2; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; font: 900 1.35rem/1 system-ui, -apple-system, 'Segoe UI', sans-serif; box-shadow: 0 0 0 2px var(--bg1), 0 2px 6px rgba(0,0,0,0.4); pointer-events: none; }
 /* Igual y distinto con colores propios, además del signo (D-112): el ≠ casi no se distinguía del = */

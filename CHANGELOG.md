@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.87.1 — 2026-10-03
+- **Tango: las casillas que no se pueden cambiar llevan un candado chico** en la esquina: las que
+  vienen puestas (candado blanco) y las que reveló una pista (candado cian, como su borde). La
+  esquina superior izquierda queda libre de las marcas = y ≠, que van en los otros bordes.
+
 ## 0.87.0 — 2026-10-03
 - **La Copa: el público se elige entre 🌎 Global, 🇨🇱 Chile y 🇧🇷 Brasil** (D-187). Global deja
   fuera lo que se conoce solo en Chile o en Brasil (lo que antes era "Internacional"). Chile y
