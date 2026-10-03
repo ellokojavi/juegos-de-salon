@@ -261,6 +261,9 @@
           "alias": {
             ".validate": "newData.isString() && newData.val().matches(/^[a-z0-9][a-z0-9-]{1,18}[a-z0-9]$/)"
           },
+          "intl": {
+            ".validate": "newData.isBoolean() && newData.val() == true"
+          },
           "$other": {
             ".validate": false
           }

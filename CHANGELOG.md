@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.86.0 — 2026-10-03
+- **La Copa puede ser internacional** (D-186): al crearla se elige "Con temas locales" o
+  "Internacional". La internacional deja fuera lo que se conoce solo en Chile o en Brasil: la
+  temática Chile de Línea de Tiempo, las grillas de Conexiones con palabras locales, algunas
+  palabras chilenas y las ciudades chilenas y brasileñas que no son capitales. La invitación y el
+  tablero lo dicen. Las copas de siempre no cambian.
+
 ## 0.85.4 — 2026-10-02
 - **🧶 Desenredo: instrucciones más cortas** (U-18, D-184): de 337 a 209 caracteres. La meta va
   primero y no se repite lo que muestra el dibujo de ejemplo.
