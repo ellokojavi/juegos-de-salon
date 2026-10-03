@@ -24,6 +24,21 @@ Cada regla tiene un ID (U-n) para citarla en los PR y en los issues.
 - **U-8 · Cada regla, una vez por pantalla** (D-177): si ya la dice un botón, la pantalla de justo
   antes o una ayuda bajo el tablero, sale del texto de arriba. Sin frases que solo tranquilizan
   ("hay una sola solución") ni que describen lo que ya se ve. Corto no es telegrama (U-1).
+- **U-18 · Instrucciones concisas** (D-184). Al escribir "Cómo se juega" y "Puntaje" de un
+  juego o minijuego:
+  - **La meta primero, en una frase con verbo:** qué hace el jugador ("Arrastra los nudos hasta
+    que ningún hilo se cruce"), no qué hay en pantalla ("Hay nudos unidos por hilos").
+  - **A lo más 3 puntos**, cada uno una sola idea en una o dos frases cortas. Solo lo que cambia
+    cómo se juega: la meta, la regla que no es obvia y el límite (tiempo, intentos, niveles).
+  - **Lo que el dibujo de ejemplo ya muestra no se escribe**, ni en el texto ni en su pie: si el
+    dibujo pinta en rojo lo que se cruza, el texto no dice "se ven en rojo".
+  - **Los colores, los gestos finos y los mensajes de la pantalla no se anuncian:** se descubren
+    jugando, y ya los dice la ayuda bajo el tablero.
+  - **El puntaje en una frase**, sin topes que salen solos de la regla ("10 niveles, 10 puntos
+    cada uno" ya dice que son 100).
+  - **Tope que vigila una prueba** (`copa/juegos/juegos.test.mjs`), en los tres idiomas: 280
+    caracteres para "Cómo se juega" y 170 para el puntaje. Es un techo, no una meta: la mitad de
+    los minijuegos queda bajo 210.
 
 ## Pantallas y botones
 
@@ -94,3 +109,5 @@ Las respuestas a dilemas (issues con la etiqueta `usabilidad`) se anotan aquí:
   para girar" arriba al centro, sobre el Ártico (abajo chocaba con + y − en 320 px); se va con el primer arrastre y no vuelve.
 - **Los niveles de las ciudades chilenas quedan como están** (#90, opción B): Los Ángeles, Pucón y
   Puerto Natales siguen en nivel 3; de vez en cuando la difícil es una "amable". No marcarlo.
+- **Juego al azar no se cancela** (#139, opción A): tirar el dado es un compromiso. Sin ✕ ni
+  Escape; tocar durante la tirada abre el juego de inmediato y "atrás" vuelve al menú limpio (D-188).

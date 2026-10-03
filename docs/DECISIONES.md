@@ -1808,7 +1808,7 @@ Copa y que su nombre en español sea el mismo. El récord viejo de esos dos soli
 uso, y una partida guardada del solitario viejo no se ofrece para retomar.
 
 ## D-143 · Las pruebas sin navegador corren solas en GitHub
-**Fecha:** 2026-09-25 · **Estado:** vigente; las de punta a punta se sumaron en D-179
+**Fecha:** 2026-09-25 · **Estado:** vigente; las de punta a punta se sumaron en D-193
 **Decisión:** `.github/workflows/pruebas.yml` corre en cada PR y en cada fusión a main:
 todos los `*.test.mjs` y `*.test.py` del repo (los busca con `git ls-files`, sin lista),
 `tools/readme.py revisar` y `tools/og.mjs revisar`. El PR muestra ✅ o ❌ antes de fusionar.
@@ -2584,7 +2584,252 @@ temporales que se borran.
 **Consecuencias:** los mp4 pesan (~25 MB cada uno) y se publican con el sitio en GitHub Pages; al
 reemplazarlos, el repo crece con cada versión. Si eso molesta, se pasan a Git LFS o a un release.
 
-## D-179 · Las pruebas de punta a punta corren solas en GitHub
+## D-179 · Desenredo: el Untangle de Tatham, por niveles como Zip
+**Fecha:** 2026-10-02 · **Estado:** vigente; salió del laboratorio en D-190
+**Decisión:** Un minijuego nuevo de La Copa, **🧶 Desenredo** (*Untangle*, *Desenrola*), que se
+juega también suelto en `minijuegos/desenredo/`. Nudos unidos por hilos que se cruzan; se arrastran
+los nudos hasta que ningún hilo cruce a otro.
+- **Formato de Zip** (D-103): diez niveles de 6 a 15 nudos, uno más cada vez, y un reloj de
+  **cuatro minutos** de tiempo activo. Cada nivel resuelto vale 10 puntos; con los diez se termina
+  antes. El desempate es cuándo se resolvió el último nivel. Si el tiempo se acaba a medias, los
+  nudos se mueven a una solución, en cian (D-109).
+- **Siempre tiene solución, no una sola.** El generador arma primero el dibujo resuelto (nudos al
+  azar con distancia mínima e hilos de los pares más cercanos a los más lejanos, sin cruzarse, sin
+  pasar cerca de otro nudo y con hasta 4 por nudo; ninguno con menos de 2) y después reparte los
+  nudos en un círculo en desorden, como Planarity, buscando uno con cruces de sobra.
+- **Qué cuenta como cruce:** dos hilos sin nudo en común que se tocan (también encimados en la
+  misma recta) y un hilo que pasa a menos de 24 unidades (de 1000) de un nudo que no es suyo. Lo
+  segundo es lo que se ve en pantalla como cruce y cierra la trampa de amontonar todos los nudos.
+  Todo en enteros, con productos cruzados exactos: igual en cualquier navegador.
+- **El gesto:** el tablero toma el puntero (como Zip, D-85) y el nudo se elige por cercanía dentro
+  de 24 px, aunque se dibuje de 11 px de radio (C-8). Mientras se arrastra se resaltan sus vecinos
+  y sus hilos, y los cruces se pintan en vivo; el nivel se da por resuelto **al soltar**, no a
+  mitad de un arrastre.
+- **Habilidad propia, `espacial`:** ya había tres de `lógica` (Reinas, Zip y Tango) y el sorteo del
+  calendario evita dos días seguidos de la misma habilidad.
+**Por qué:** lo pidió el dueño tras la propuesta: un juego de mirar y mover, distinto de los de
+deducir, que entra en un celular y se compara bien entre amigos con el mismo tablero.
+**Consecuencias:** la sesión de prueba dura un minuto. `&zipSeg=` acorta también su reloj en el
+modo de prueba. La imagen de su tarjeta social se rehace con `node tools/og.mjs imagenes`.
+**Alternativas descartadas:** un tablero único puntuado por tiempo, como Reinas (la propuesta
+inicial; el dueño prefirió niveles); generar con rectas al azar como Planarity (los tamaños saltan
+de 6 a 10 a 15 nudos y no dan diez niveles parejos); prohibir soltar un nudo encima de otro (el
+cruce por cercanía ya lo resuelve sin un gesto que rebota).
+
+## D-181 · Cada imagen de tarjeta guarda su huella, y una atrasada no se publica
+**Fecha:** 2026-10-02 · **Estado:** vigente · **Amplía D-72**
+**Decisión:** `node tools/og.mjs imagenes` anota en `assets/og/huellas.json` la huella de cada
+imagen que hace: un hash del dibujo (`tools/og/tarjeta.html`) y de lo que la imagen dice (el emoji,
+el nombre, la bajada, los jugadores y la duración del juego en `games.js`, o los textos de la
+portada). `node tools/og.mjs revisar` la compara con la de hoy y da error si una imagen falta o se
+hizo con otro dibujo u otros textos. Lo corren CI (en cada PR) y `set-version.py` antes de
+estampar, que no estampa sin `--igual`. `imagenes` rehace solo las atrasadas; `--todas`, todas.
+**Por qué:** las píldoras desalineadas de jugadores y duración volvieron por tercera vez (0.84.2,
+0.84.3 y la de Desenredo en 0.85.0). El arreglo estaba en el dibujo, pero una imagen hecha desde
+una rama anterior a ese arreglo salía con el dibujo viejo, y `revisar` solo miraba que el archivo
+existiera. El error no está en el CSS sino en que nada delataba una imagen vieja.
+**Consecuencias:** cambiar `tarjeta.html` marca las 19 imágenes y obliga a rehacerlas (con Chrome
+y fuentes de Google: en el Mac del dueño, no en la nube). Cambiar una bajada marca solo la de ese
+juego. `base.css` no entra en la huella: cambia seguido por cosas que la tarjeta no usa.
+**Alternativas descartadas:** rehacer todas las imágenes en cada publicación (lento, necesita
+internet y Chrome, y llena el diff de bytes); comparar fechas de archivo (git no las conserva).
+
+## D-182 · Desenredo: los hilos son cuerdas con una curva leve
+**Fecha:** 2026-10-02 · **Estado:** vigente · **Amplía D-179**
+**Decisión:** Los hilos de Desenredo se dibujan como cuerda y no como segmento recto: una curva
+de Bézier leve (se aparta de la recta a lo más un 6 % de su largo, con tope de 34 unidades de
+1000) y tres capas (borde oscuro de 6,5 px, alma de 4 px del color del hilo y hebras cortadas
+encima que hacen de torcido). La forma de cada hilo sale de sus dos nudos (`cuerda` en
+`desenredo.js`): unos van en S suave y otros en arco, y la mantienen al moverse. **Los cruces se
+siguen decidiendo sobre la recta**: la curva es solo dibujo.
+**Por qué:** lo pidió el dueño tras comparar en una maqueta hilos rectos y orgánicos: con la
+curva leve el juego se ve de lana, como su 🧶, sin tocar las reglas. Una curva más marcada habría
+obligado a contar los cruces sobre la curva (lo que se ve tiene que ser lo que cuenta), con un
+cálculo 500 veces más pesado y niveles que habría que volver a validar.
+**Consecuencias:** con una curva tan leve, lo que se ve y lo que se cuenta coinciden salvo en un
+roce casi tangente. De paso: el nudo que se arrastra llevaba la clase `vilo`, que `linea.css`
+oculta (es la carta en vuelo del arrastre compartido), y desaparecía mientras se movía. Ahora es
+`tomado`, y el guion de punta a punta revisa que se vea.
+**Alternativas descartadas:** curvas más marcadas contando cruces sobre la curva (ver arriba);
+curvas que se doblan para esquivar a sus vecinas (otro juego, y más difícil saber cuándo está
+resuelto).
+
+## D-183 · Desenredo: la cuerda lleva una segunda onda y dos cabos
+**Fecha:** 2026-10-02 · **Estado:** vigente · **Amplía D-182**
+**Decisión:** Sobre la curva leve de cada hilo va una segunda onda, más corta y más baja: de 2 a
+4 vueltas según el largo (una cada ~150 unidades), de alto 1,6 % del largo con tope de 8, con su
+fase propia y apagada en las puntas (envolvente seno), así el hilo sigue naciendo en el centro del
+nudo. La cuerda se dibuja con los puntos unidos por curvas suaves (Catmull-Rom). La textura pasa a
+dos cabos: la hebra oscura y un brillo claro, cortados y desfasados, que se alternan.
+**Por qué:** lo pidió el dueño: con una sola curva la cuerda se veía bien, pero la torsión no se
+sentía natural.
+**Consecuencias:** las dos ondas juntas se apartan de la recta a lo más 42 de 1000 unidades en los
+hilos largos (34 + 8); los cruces se siguen contando sobre la recta (D-182). El test lo acota.
+
+## D-184 · Instrucciones concisas: reglas escritas y un tope que lo vigila
+**Fecha:** 2026-10-02 · **Estado:** vigente · **Amplía D-177**
+**Decisión:** Las instrucciones de cada juego siguen U-18 (`docs/USABILIDAD.md`): la meta primero
+y con verbo (no "Hay nudos unidos por hilos"), a lo más 3 puntos de una idea cada uno, nada de lo
+que el dibujo de ejemplo ya muestra, sin anunciar colores ni mensajes que se ven jugando, y el
+puntaje en una frase sin topes que salen solos de la regla. Una prueba en
+`copa/juegos/juegos.test.mjs` lo vigila en los tres idiomas: 3 puntos, 280 caracteres para "Cómo
+se juega", 170 para el puntaje, y que el primer punto no empiece describiendo la pantalla.
+Desenredo bajó de 337 a 209 caracteres: "se ven en rojo" lo mostraba el dibujo, "Hay nudos unidos
+por hilos" describía la pantalla y "hasta 100" salía solo de 10 niveles de 10 puntos.
+**Por qué:** el dueño vio que la antesala de Desenredo, escrita después de D-177, no seguía esos
+recortes. D-177 fue una pasada a mano; sin una regla escrita y una prueba, cada juego nuevo
+vuelve a escribir largo.
+**Consecuencias:** el tope es un techo y no una meta (la mitad de los minijuegos queda bajo 210);
+Tango (273) y Zip (258) quedan cerca. `CLAUDE.md` y la lista de chequeo de `CANONES.md` lo
+nombran. La prueba mide largo y forma, no claridad: eso sigue siendo del agente de usabilidad.
+**Alternativas descartadas:** un tope por punto (los juegos con un punto largo y dos cortos, como
+Palabra, quedan bien); topes distintos por idioma (inglés y portugués quedan a ±10 % del español).
+
+## D-185 · Desenredo: menos ondulación en la cuerda
+**Fecha:** 2026-10-02 · **Estado:** vigente · **Corrige D-183**
+**Decisión:** La segunda onda baja a menos de la mitad (0,7 % del largo, tope 3,5 de 1000) y se
+alarga (2 a 3 vueltas, una cada ~230 unidades), y la curva de base queda un poco más tensa (4,5 %
+del largo, tope 26). La textura de dos cabos sigue igual.
+**Por qué:** el dueño vio la cuerda de 0.85.3 demasiado ondulada.
+
+## D-186 · La copa puede ser internacional: sin temas de Chile ni de Brasil
+**Fecha:** 2026-10-03 · **Estado:** reemplazada por D-187 (internacional pasó a ser 🌎 global)
+**Decisión:** Al crear una copa se elige **¿Qué temas incluye?**: con temas locales (como hasta
+ahora, y lo que viene marcado) o internacional. Una copa internacional lleva `meta.intl: true` y
+deja fuera lo que se conoce solo en Chile o en Brasil:
+- **Línea Relámpago, ¿En qué año? y la final:** la temática Chile (Brasil ya estaba fuera, D-111)
+  y, en las demás, las cartas marcadas `local` (la fundación de Colo-Colo y la Copa América de
+  Chile). El fútbol de Brasil se queda: sus Mundiales son de todo el mundo.
+- **Conexiones:** las grillas marcadas `local`: en español, los golpes "en chileno" y los cortes
+  de carne chilenos; en portugués, las de folclore, clubes, cortes, danzas, árboles y pintores de
+  Brasil. Quedan 10, 13 y 7 grillas (español, inglés y portugués).
+- **Palabra:** CABRO, HUASO y PISCO.
+- **¿Dónde queda?:** las ciudades de Chile y de Brasil que no son su capital, salvo Río de Janeiro
+  y São Paulo. Sus niveles se pensaron para un grupo chileno (Antofagasta es nivel 1).
+La invitación y el tablero lo dicen ("🌍 Copa internacional…"). Las reglas de Firebase aceptan
+`intl` como `true`, igual que `lab`.
+**Por qué:** lo pidió el dueño, para jugar con gente de otros países.
+**Consecuencias:** una copa sin la marca genera exactamente lo mismo que antes (se comparó en
+15.120 tableros), así que las copas en curso no cambian. Lo local se marca en los datos (`local`
+en cartas y grillas, la lista `LOCALES` de palabras, `local()` en `donde.js`): una carta o grilla
+nueva con contenido local se marca al escribirla. Los minijuegos sueltos no cambian.
+**Alternativas descartadas:** decidirlo por el idioma de la copa (un grupo chileno puede jugar en
+inglés, y uno extranjero en español); sacar también Brasil del fútbol (sus Mundiales se conocen en
+todas partes).
+
+## D-187 · El público de la copa: 🌎 global, 🇨🇱 Chile o 🇧🇷 Brasil
+**Fecha:** 2026-10-03 · **Estado:** vigente · **Reemplaza D-186**
+**Decisión:** "¿Qué temas incluye?" (local o internacional) pasa a ser **¿Para qué público es?**,
+con tres opciones: 🌎 Global, 🇨🇱 Chile y 🇧🇷 Brasil. Se guarda en `meta.aud` (`global`, `cl` o
+`br`). Lo local va marcado con su país: `local: 'cl'` o `'br'` en cartas y grillas, las temáticas
+Chile y Brasil, las palabras chilenas y las ciudades que no son capitales (`local()` en
+`donde.js` devuelve el país). `copa/juegos/audiencia.js` decide qué queda fuera:
+- **🌎 Global:** lo de los dos países. Genera exactamente lo mismo que "Internacional" de D-186.
+- **🇨🇱 Chile:** lo de Brasil (la temática Brasil sigue fuera, como en D-111).
+- **🇧🇷 Brasil:** lo de Chile. **Y entra la temática Brasil**, que antes no entraba a ninguna copa.
+El formulario parte en el público del idioma de quien crea la copa (español → Chile, portugués →
+Brasil, inglés → global). La invitación y el tablero dicen el público con su bandera.
+**Por qué:** lo pidió el dueño, para definir la audiencia de cada país y no solo "con o sin" lo
+local.
+**Consecuencias:** las copas sin `aud` se juegan como antes (todo lo local salvo la temática
+Brasil): se comparó en 15.120 tableros. Las `intl: true` de D-186 se leen como global, y las
+reglas de Firebase aceptan los dos campos. Un país nuevo es una entrada en `AUDIENCIAS` y su
+marca en el contenido.
+**Alternativas descartadas:** que Chile deje entrar también lo de Brasil (un grupo chileno no
+resuelve la temática Brasil, D-111); deducir el público del idioma (son cosas distintas: un grupo
+brasileño puede jugar en español).
+
+
+## D-188 · Juego al azar: un dado que rueda sobre el menú
+**Fecha:** 2026-10-03 · **Estado:** vigente
+**Decisión:** El menú tiene un botón **🎲 Juego al azar** bajo la bajada. Al tocarlo, un dado
+blanco de cantos redondos, con un juego en cada cara, entra rodando sobre la misma portada,
+rebota tres veces y cae con el elegido adelante; abajo dice "¡Te tocó! <juego>" y a los 1,3 s se
+abre su pantalla principal. Tocar mientras rueda lo abre de inmediato.
+- **Qué puede salir:** las tarjetas que se ven y se pueden abrir, menos La Copa (es una semana con
+  amigos, no una partida para sacar al azar). Con un filtro de tipo puesto, sale uno de esos.
+  Entran los minijuegos sueltos de la portada.
+- **El dado es WebGL** (`assets/js/dado3d.js`, sin librerías): una malla de cubo de cantos
+  redondos, luz difusa, brillo y un emoji por cara en una textura. Los botes y la sombra del
+  suelo son animaciones CSS; el giro, uno solo que frena parejo de principio a fin.
+- Con "reducir movimiento" el dado aparece quieto; sin WebGL aparece el emoji del elegido.
+**Por qué:** lo pidió el dueño. Se probó primero en `/labs/menu/` (D-42) y se iteró ahí: la
+primera versión, un cubo de `div`s en 3D, se veía tosca; con las esquinas redondeadas a punta de
+capas quedaban huecos negros, y recalcular el sombreado de 80 capas en cada cuadro la trababa en
+el celular. En WebGL un cuadro se dibuja en 0,3 ms y la tirada corre a 60 cuadros por segundo.
+**Consecuencias:** el espejo `labs/menu/` se borra al promoverlo. Una tirada no se cancela
+(dilema #139, opción A): tirar es un compromiso; tocar durante la tirada abre el juego y "atrás"
+vuelve al menú.
+**Alternativas descartadas:** el cubo de capas de HTML (se veía de cartón y no se podía redondear
+sin huecos); una librería 3D (un archivo grande para un solo dado, en una app sin dependencias).
+
+## D-189 · Aportes de afuera: fork, PR y `main` protegida
+**Fecha:** 2026-10-03 · **Estado:** vigente
+**Decisión:** Quien quiera aportar lo hace con un **fork y un PR** hacia `main`, siguiendo
+[CONTRIBUTING.md](../CONTRIBUTING.md). `main` queda protegida en GitHub: no se sube directo, todo
+entra por PR y con la prueba `pruebas` en verde (no pide aprobaciones: el dueño fusiona los suyos
+solo). El proyecto pasa a tener **licencia MIT**. En un PR de afuera no se estampa versión ni se
+escribe el CHANGELOG, y las decisiones van como `D-??`: se numeran al fusionar, como ya se hacía
+entre sesiones (D-135).
+**Por qué:** un amigo del dueño quiere sumar funciones. Sin protección, un colaborador con acceso
+de escritura podía subir a `main`, que se publica al tiro en juegosdesalon.cl sin pasar por las
+pruebas. Sin licencia, legalmente nadie más tenía derecho a usar el código. Y las reglas del
+proyecto estaban escritas para el dueño y sus sesiones de Claude, sin un punto de entrada para
+alguien nuevo.
+**Consecuencias:** los modos con sala de quien prueba desde su fork abren salas en la base de
+producción (avisado en la guía). Publicar reglas de Firebase, el panel y los reportes siguen
+siendo del dueño: necesitan su llave.
+**Alternativas descartadas:** sumarlo como colaborador con escritura (podría saltarse el PR); una
+licencia GPL (el dueño eligió MIT).
+
+## D-190 · Desenredo sale del laboratorio
+**Fecha:** 2026-10-03 · **Estado:** vigente; cierra lo que D-179 dejó en el laboratorio
+**Decisión:** Desenredo deja de llevar `labs: true` en `SUELTOS` (`assets/js/games.js`) y en `BASE`
+(`copa/rules.js`): su tarjeta aparece en la portada, encendida y sin "Próximamente", y abre
+`/minijuegos/desenredo/`, que ya tenía su tarjeta social. En La Copa sigue en el `POZO` desde D-179:
+el admin lo puede poner en cualquier día y el calendario al azar lo puede proponer.
+**Por qué:** lo pidió el dueño: el juego ya está en condiciones de pasar a producción, tras las
+vueltas de las cuerdas (D-182, D-183, D-185) y de las instrucciones (D-184).
+**Consecuencias:** la portada ofrece ocho minijuegos sueltos y el dado del menú (D-188) también
+puede caer en él. La captura del menú en el README se rehace.
+
+## D-191 · Un idioma nuevo entra por el laboratorio: el alemán
+**Fecha:** 2026-10-03 · **Estado:** vigente
+**Decisión:** El alemán (**Salonspiele**) se suma completo —los textos de los ocho juegos, las
+frases, los mazos, las grillas y palabras de La Copa y los nombres de ¿Dónde queda?— pero **solo
+se ofrece en el laboratorio**: en el dispositivo que entra por `/labs/de/` o por un link con
+`?lang=de`. En `assets/js/i18n.js`, `IDIOMAS` son todos los que tienen diccionario (las pruebas
+de paridad los recorren todos) y `LANGS` los que se ofrecen en ese dispositivo; `EN_LABS` dice
+cuáles están en el laboratorio. Ahí, `assets/js/labs-idioma.js` hace que los links al menú y a
+`/labs/` vuelvan a `/labs/de/` y pone un botón 🐞 en la barra de arriba que manda comentarios a
+`feedback/` (D-104) con el contexto: página, pantalla, idioma, tamaño y versión. "Labor
+verlassen" saca la marca y deja la app en inglés. Ver [ALEMAN.md](ALEMAN.md).
+**Por qué:** el dueño quiere que amigos que hablan alemán lo revisen antes de publicarlo. Un
+borrador hecho con IA no puede aparecer en el toggle de todos, pero los amigos tienen que poder
+jugarlo de verdad, en su celular, con salas y copas reales. Un dispositivo marcado no se sale del
+laboratorio sin querer: un "‹ Menú" que llevara a la portada de siempre lo dejaría sin forma de
+volver ni de comentar.
+**Arreglos que salieron de medir el alemán** (con un pseudo-alemán ~40 % más largo y después con
+los textos de verdad, a 320 px):
+- Los títulos con degradado (`.rainbow`) cortaban los acentos sobre mayúscula (ya pasaba con
+  SALÓN y SALÃO): un relleno arriba agranda la caja pintada.
+- La barra de arriba: "‹ Menú" no se achica y el chip del juego se corta con "…" en vez de bajar
+  a dos líneas (ya pasaba con "⚓ Batalla Naval").
+- Con `lang="de"`, guiones automáticos (`hyphens: auto`) y, si igual no cabe, la palabra se parte.
+- Lo que caía al español sin avisar: "v. Chr.", fechas y números `de-DE`, el alfabeto del
+  Ahorcado, el teclado QWERTZ de Palabra (con un hueco donde el español tiene la Ñ, así la Z en
+  inglés y la Y en alemán ya no cuelgan al final de la segunda fila).
+- De paso: Palabra mostraba "null" mientras no se encontraba ninguna letra, y el título de la
+  pestaña de La Copa decía "Juegos de Salón" en cualquier idioma.
+**Consecuencias:** las reglas de Firebase aceptan `lang: "de"` en una copa (se publican al
+fusionar, D-122). Sacar el alemán del laboratorio es quitarlo de `EN_LABS` y sumar su puerta
+`/de/` con la tarjeta social; lo que falta está en ALEMAN.md. Otro idioma puede entrar igual.
+**Alternativas descartadas:** sumarlo al toggle de todos con un aviso de borrador (se ve en el
+toggle de quien no lo pidió); una copia aparte de la app en `/labs/de/` (se desactualiza al tiro y
+no prueba las salas de verdad); que el alemán faltante cayera al inglés (esconde lo que falta
+traducir: la prueba de paridad no lo vería).
+
+## D-193 · Las pruebas de punta a punta corren solas en GitHub
 **Fecha:** 2026-10-02 · **Estado:** vigente; completa D-143
 **Decisión:** `.github/workflows/e2e.yml` corre las pruebas de `tools/e2e/` en Chrome en cada PR
 y en cada fusión a main, un job por guion y en paralelo. El PR muestra cuál falló y deja sus

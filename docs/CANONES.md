@@ -11,7 +11,8 @@ Cada canon tiene un ID (C-n) para citarlo en el código, en los commits y en las
 
 ## C-1 · Identidad y tono
 
-- Español chileno informal por defecto; inglés y portugués son opcionales y se eligen a mano (C-3). Tuteo, humor liviano, sin groserías fuertes.
+- Español chileno informal por defecto; inglés y portugués son opcionales y se eligen a mano; el alemán, solo en el laboratorio (C-3, D-191). Tuteo, humor liviano, sin groserías fuertes.
+- **Instrucciones concisas** (U-8, U-18, D-184): la meta primero y con verbo, a lo más 3 puntos, nada de lo que el dibujo de ejemplo ya muestra y el puntaje en una frase. Un tope en `copa/juegos/juegos.test.mjs` frena lo que se pasa. Concisas no es telegrama: frases completas (U-1).
 - Paleta y tipografías compartidas desde `assets/css/base.css`: fondo oscuro con degradados, acentos neón (rosado, amarillo, cian, lima), **Bangers** en títulos y **Nunito** en el cuerpo.
 - **Las cifras que el jugador lee o compara** (teclados, intentos, números secretos) van en `var(--font-num)` (Nunito 900) con `tabular-nums`, nunca en Bangers: ahí el 1 y el 7 son casi el mismo trazo y los jugadores se equivocan (D-30). Bangers se queda en títulos, nombres, palabras y códigos de sala (letras, sin I ni O).
 - Nada de estilos "de marca" propios por juego: un juego puede tener colores temáticos (el mar en Batalla Naval), pero botones, paneles, chips y títulos salen de las clases comunes.
@@ -49,8 +50,12 @@ Una carpeta por juego, con su propia URL (`/<id>/`) y siempre estos archivos:
   sigue el toggle de quien mira, pero las palabras de Conexiones y Palabra, los mensajes que se
   comparten al grupo y su link van en el idioma que se eligió al crear la copa. El contenido con
   palabras es propio de cada idioma, no una traducción.
-- **Los tres diccionarios tienen exactamente las mismas claves**, las listas el mismo largo y las plantillas las mismas `{llaves}`: un texto que falta en un idioma se ve como `undefined` en pantalla, y `errText` (C-14) busca la misma clave en cualquier idioma. Lo verifica `node assets/js/i18n.test.mjs` (menú, frases, mazos y todos los juegos). Los mazos de Línea de Tiempo llevan `es`, `en` y `pt` en cada carta, y el test del motor también lo exige.
+- **Todos los diccionarios (`IDIOMAS`, también los del laboratorio) tienen exactamente las mismas claves**, las listas el mismo largo y las plantillas las mismas `{llaves}`: un texto que falta en un idioma se ve como `undefined` en pantalla, y `errText` (C-14) busca la misma clave en cualquier idioma. Lo verifica `node assets/js/i18n.test.mjs` (menú, frases, mazos y todos los juegos). Los mazos de Línea de Tiempo llevan `es`, `en`, `pt` y `de` en cada carta, y el test del motor también lo exige.
 - Las plantillas usan `{llaves}` y una función `fmt()`; nunca se arman frases concatenando palabras sueltas.
+- **Un idioma nuevo entra por el laboratorio** (D-191): con todos sus textos (la paridad recorre
+  `IDIOMAS`), pero en `EN_LABS`, que lo ofrece solo en el dispositivo que entró por
+  `/labs/<idioma>/`. Sale del laboratorio cuando quienes lo hablan lo revisaron. Hoy ahí está el
+  alemán ([ALEMAN.md](ALEMAN.md)): de Alemania, con "du", y su glosario fijo.
 
 ## C-4 · Sonido y vibración
 
@@ -273,12 +278,13 @@ como un error: se lee como que nadie jugó.
 ## Lista de chequeo antes de dar por listo un juego
 
 - [ ] Los tres modos funcionan y la partida se puede retomar en **todos** (C-5, C-6).
-- [ ] Todo el texto está en español, inglés y portugués, con las mismas claves en los tres, sin cadenas sueltas en el código (C-3).
+- [ ] Las instrucciones siguen U-18: la meta primero, a lo más 3 puntos, sin repetir el dibujo de ejemplo (C-1).
+- [ ] Todo el texto está en español, inglés, portugués y alemán (el de `IDIOMAS`, también el del laboratorio), con las mismas claves en todos, sin cadenas sueltas en el código (C-3, D-191).
 - [ ] Hay sonido y vibración en las acciones clave, con botón de silencio (C-4).
 - [ ] Los botones tienen 44 px, los botones finales se ven sin desplazar y no hay scroll horizontal (C-8).
 - [ ] En un celular, el resultado se ve antes del pase, y lo secreto va tapado (C-9).
 - [ ] Los secretos se comprometen y verifican (C-10).
-- [ ] Las fallas de sala se ven en pantalla, en los tres idiomas, y la consola queda limpia (C-14).
+- [ ] Las fallas de sala se ven en pantalla, en todos los idiomas, y la consola queda limpia (C-14).
 - [ ] Tests del motor en verde y partida completa probada en cada modo, con capturas revisadas (C-12).
 - [ ] Versión estampada, publicada y comprobada en la URL pública (C-11).
 - [ ] Si tiene varios celulares, el chat de sala usa el módulo compartido y muere con la partida (C-15).

@@ -1,3 +1,5 @@
+import { fuera } from './audiencia.js';
+
 /**
  * Las palabras secretas de 🔤 Toque y Fama: Palabra. Cinco letras distintas, sin tilde (la Ñ
  * vale), comunes en Chile. Las reglas del test (copa/juegos/juegos.test.mjs): cinco letras,
@@ -66,5 +68,34 @@ export const PALABRAS_PT = [
   'TURMA', 'TURNO', 'VENTO', 'VERSO', 'VIDRO', 'VIOLA', 'VOLTA', 'VULTO', 'ZEBRA',
 ];
 
+/**
+ * En alemán, para el laboratorio: las mismas reglas, sin Ñ. Sin Ä, Ö, Ü ni ß (BLÜTE, SCHÖN no
+ * entran), como el portugués deja fuera las tildes y la Ç.
+ */
+export const PALABRAS_DE = [
+  'ABEND', 'ADLER', 'ANGST', 'ANKER', 'APFEL', 'ARMUT', 'BADEN', 'BAUEN', 'BAUER', 'BIRNE',
+  'BLECH', 'BLICK', 'BLITZ', 'BLOND', 'BLUME', 'BODEN', 'BOGEN', 'BOHNE', 'BRAUN', 'BRAUT',
+  'BRIEF', 'BRUST', 'BUCHT', 'DACHS', 'DAMPF', 'DATUM', 'DOCHT', 'DRAHT', 'FADEN', 'FALKE',
+  'FARBE', 'FISCH', 'FLACH', 'FLUCH', 'FRECH', 'FUCHS', 'GABEL', 'GEIST', 'GLANZ', 'GRUBE',
+  'GURKE', 'HABEN', 'HAFEN', 'HAGEL', 'HONIG', 'HOBEL', 'HOLEN', 'HOSEN', 'HOTEL', 'HUMOR',
+  'HUNDE', 'INSEL', 'JACKE', 'JUBEL', 'KABEL', 'KAMEL', 'KAMIN', 'KAMPF', 'KATZE', 'KELCH',
+  'KLANG', 'KLEID', 'KLEIN', 'KNOPF', 'KOHLE', 'KOMET', 'KRAFT', 'KRANZ', 'KREIS', 'KRONE',
+  'KUGEL', 'KUNST', 'LACHS', 'LAGER', 'LAMPE', 'LAUNE', 'LICHT', 'LINDE', 'LOBEN', 'LOCKE',
+  'LUNGE', 'MACHT', 'MAGEN', 'MALEN', 'MARKT', 'MAUER', 'MILCH', 'MONAT', 'MUSIK', 'MUTIG',
+  'NABEL', 'NACHT', 'NADEL', 'NARBE', 'NUDEL', 'ONKEL', 'ORGEL', 'OSTEN', 'PAKET', 'PALME',
+  'PAUSE', 'PFEIL', 'PFERD', 'PFUND', 'PILOT', 'PILZE', 'PLATZ', 'PREIS', 'PRINZ', 'PROBE',
+  'PUDEL', 'PUNKT', 'QUARK', 'RADIO', 'RATEN', 'RAUCH', 'RAUPE', 'REGAL', 'RINDE', 'ROMAN',
+  'RUFEN', 'RUHIG', 'SAGEN', 'SAHNE', 'SAUER', 'SCHAF', 'SCHAL', 'SORTE', 'SPATZ', 'SPECK',
+  'SPIEL', 'SPORT', 'STARK', 'STAUB', 'STEIN', 'STERN', 'STIRN', 'STOCK', 'STOLZ', 'STROM',
+  'STUFE', 'STUHL', 'STURM', 'TAFEL', 'TAUBE', 'TEICH', 'THEMA', 'TIGER', 'TISCH', 'TRAUM',
+  'TRUHE', 'VOGEL', 'WAGEN', 'WEICH', 'WOCHE', 'WOLKE', 'WURST', 'ZANGE', 'ZEBRA', 'ZUNGE',
+  'ZWEIG', 'ZWERG',
+];
+
 /** Las palabras secretas de un idioma; sin idioma conocido, las de español. */
-export const palabrasDe = lang => ({ en: PALABRAS_EN, pt: PALABRAS_PT }[lang] || PALABRAS);
+/** Las que solo se dicen en Chile: una copa que no es para Chile no las usa (D-186, D-187). */
+export const LOCALES = new Set(['CABRO', 'HUASO', 'PISCO']);
+export const palabrasDe = (lang, { aud = null } = {}) => {
+  const lista = { en: PALABRAS_EN, pt: PALABRAS_PT, de: PALABRAS_DE }[lang] || PALABRAS;
+  return fuera('cl', aud) ? lista.filter(p => !LOCALES.has(p)) : lista;
+};

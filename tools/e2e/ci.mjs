@@ -1,4 +1,4 @@
-// Corre las pruebas de punta a punta que no tocan el Firebase de producción (D-179).
+// Corre las pruebas de punta a punta que no tocan el Firebase de producción (D-193).
 //
 // Uso:
 //   node tools/e2e/ci.mjs                 # todas, una tras otra, con el resumen al final

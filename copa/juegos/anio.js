@@ -10,10 +10,10 @@ export const HITOS = 6;
 export const REFERENCIA = 2026;
 
 /** `lang`: el idioma de los textos. Las cartas son las mismas en todos (D-170). */
-export function generar(codigo, dia, { n = HITOS, tema, sal = 'anio', lang = 'es' } = {}) {
-  const deck = tema || temasDeLaCopa(codigo).anio;
+export function generar(codigo, dia, { n = HITOS, tema, sal = 'anio', lang = 'es', aud = null } = {}) {
+  const deck = tema || temasDeLaCopa(codigo, { aud }).anio;
   const a = azar(codigo, dia, sal);
-  return { tema: deck, temaNombre: mazo(deck).name[lang] || mazo(deck).name.es, temaEmoji: mazo(deck).emoji, hitos: cartas(a, deck, n, { lang }) };
+  return { tema: deck, temaNombre: mazo(deck).name[lang] || mazo(deck).name.es, temaEmoji: mazo(deck).emoji, hitos: cartas(a, deck, n, { lang, aud }) };
 }
 
 /**
@@ -49,4 +49,4 @@ export const tarjeta = e => e.filas.map(f => marca(f.hito.year, f.r)).join('');
  * El año como se escribe: los negativos son antes de Cristo. El teclado acepta hasta cuatro
  * cifras y un botón "a. C." (algunos hitos de Historia son de antes de Cristo).
  */
-export const anioLabel = (y, lang = 'es') => (y < 0 ? `${-y} ${{ en: 'BC', pt: 'a.C.' }[lang] || 'a. C.'}` : String(y));
+export const anioLabel = (y, lang = 'es') => (y < 0 ? `${-y} ${{ en: 'BC', pt: 'a.C.', de: 'v. Chr.' }[lang] || 'a. C.'}` : String(y));

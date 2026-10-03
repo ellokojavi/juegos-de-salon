@@ -48,6 +48,10 @@ test('calendario a elección (D-163): juegos del pozo sin repetir y la final al 
   assert.equal(nuevaMeta({ ...base, cal: ['donde', 'zip', 'final'] }).cal, 'donde,zip,final');
   assert.equal(nuevaMeta(base).cal, 'linea,conexiones,final');
   assert.throws(() => nuevaMeta({ ...base, cal: ['zip', 'zip', 'final'] }), /calendario/);
+  // El público (D-187): se escribe si es uno de los tres; sin él, como las copas de antes
+  assert.equal(nuevaMeta({ ...base, aud: 'br' }).aud, 'br');
+  assert.ok(!('aud' in nuevaMeta(base)));
+  assert.ok(!('aud' in nuevaMeta({ ...base, aud: 'xx' })));
   // El idioma de las palabras (D-170): el español no se escribe, como en las copas de antes
   assert.equal(nuevaMeta(base).lang, undefined);
   assert.equal(nuevaMeta({ ...base, lang: 'es' }).lang, undefined);

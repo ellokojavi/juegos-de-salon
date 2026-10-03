@@ -1,5 +1,81 @@
 # Changelog
 
+## 0.90.0 — 2026-10-03
+- **🇩🇪 El alemán, en el laboratorio** (D-191): la app entera en alemán (Salonspiele) para que la
+  revisen amigos que lo hablan, en `/labs/de/`. Solo ese celular ofrece DE en el toggle; ahí los
+  "‹ Menü" vuelven al laboratorio y 🐞 en la barra de arriba manda comentarios con su contexto
+  (`node tools/reportes.mjs`). Es un borrador con glosario fijo: ver `docs/ALEMAN.md`.
+- **Arreglos para todos**, que salieron de medir el alemán a 320 px: los acentos de los títulos
+  con degradado ya no salen cortados (SALÓN, SALÃO); la barra de arriba no se parte en dos líneas
+  (el nombre del juego se corta con "…"); Palabra ya no muestra "null", su teclado deja un hueco
+  donde el español tiene la Ñ y el botón Probar va a lo ancho; el título de la pestaña de La Copa
+  sale en el idioma de quien mira.
+- **Reglas de Firebase:** una copa puede guardar `lang: "de"`.
+
+## 0.89.0 — 2026-10-03
+- **🧶 Desenredo sale del laboratorio** (D-190): su tarjeta ya no dice "Próximamente" y se juega
+  suelto desde el menú, en `/minijuegos/desenredo/`. En La Copa se puede elegir para cualquier día,
+  como los demás minijuegos.
+
+## 0.88.0 — 2026-10-03
+- **🎲 Juego al azar** (D-188): un botón bajo el título del menú tira un dado blanco en 3D con un
+  juego en cada cara; rueda, rebota, cae en uno y lo abre. Nunca sale La Copa, y si hay un filtro
+  de tipo puesto, sale uno de esos. Se probó primero en el laboratorio.
+
+## 0.87.1 — 2026-10-03
+- **Tango: las casillas que no se pueden cambiar llevan un candado chico** en la esquina: las que
+  vienen puestas (candado blanco) y las que reveló una pista (candado cian, como su borde). La
+  esquina superior izquierda queda libre de las marcas = y ≠, que van en los otros bordes.
+
+## 0.87.0 — 2026-10-03
+- **La Copa: el público se elige entre 🌎 Global, 🇨🇱 Chile y 🇧🇷 Brasil** (D-187). Global deja
+  fuera lo que se conoce solo en Chile o en Brasil (lo que antes era "Internacional"). Chile y
+  Brasil suman los temas de su país y dejan fuera los del otro. Una copa para Brasil juega
+  también la temática Brasil de Línea de Tiempo. La invitación y el tablero dicen el público.
+
+## 0.86.0 — 2026-10-03
+- **La Copa puede ser internacional** (D-186): al crearla se elige "Con temas locales" o
+  "Internacional". La internacional deja fuera lo que se conoce solo en Chile o en Brasil: la
+  temática Chile de Línea de Tiempo, las grillas de Conexiones con palabras locales, algunas
+  palabras chilenas y las ciudades chilenas y brasileñas que no son capitales. La invitación y el
+  tablero lo dicen. Las copas de siempre no cambian.
+
+## 0.85.4 — 2026-10-02
+- **🧶 Desenredo: instrucciones más cortas** (U-18, D-184): de 337 a 209 caracteres. La meta va
+  primero y no se repite lo que muestra el dibujo de ejemplo.
+- **Reglas para instrucciones concisas** (U-18): la meta primero, a lo más 3 puntos y el puntaje
+  en una frase. Una prueba frena las que pasen de 280 caracteres, en los tres idiomas.
+- **Desenredo: cuerdas menos onduladas** (D-185): la segunda onda queda a menos de la mitad y la
+  curva más tensa.
+
+## 0.85.3 — 2026-10-02
+- **🧶 Desenredo: cuerdas más naturales** (D-183): cada cuerda lleva una segunda onda, más corta y
+  suave, y una textura de dos cabos (uno oscuro y uno claro) que se alternan como en una cuerda
+  torcida.
+
+## 0.85.2 — 2026-10-02
+- **🧶 Desenredo: los hilos son cuerdas** (D-182): con una curva leve, un poco más gruesos y con
+  textura de cuerda torcida. Cada hilo tiene su forma y la mantiene al moverlo. Las reglas no
+  cambian: un cruce sigue siendo el de la línea recta.
+- **Desenredo: el nudo que arrastras ya no desaparece** mientras lo mueves. Chocaba con un estilo
+  del arrastre de Línea de Tiempo.
+
+## 0.85.1 — 2026-10-02
+- **🧶 Desenredo, usabilidad:** la bajada del menú y de la tarjeta social queda en una frase, como
+  la de los demás minijuegos; ya no repite con palabras los niveles y los minutos que la tarjeta
+  dice en cifras (U-5, U-8). Al terminar, el contador de cruces vacío deja de abrir un hueco entre
+  el tablero y el aviso del final (U-11).
+- **Tarjetas para compartir: una imagen atrasada ya no se publica** (D-181). La de Desenredo había
+  salido con las píldoras desalineadas, el mismo error de 0.84.2 y 0.84.3, porque se hizo desde
+  una rama anterior al arreglo. Cada imagen guarda ahora la huella del dibujo y de los textos con
+  que se hizo; si no coinciden con los de hoy, las pruebas del PR y `set-version.py` lo detienen.
+
+## 0.85.0 — 2026-10-02
+- **🧶 Desenredo, minijuego nuevo en el laboratorio** (D-179): el Untangle de Simon Tatham. Nudos
+  unidos por hilos que se cruzan; se arrastran hasta que ningún hilo cruce a otro. Diez niveles de
+  6 a 15 nudos y cuatro minutos, como Zip: 10 puntos por nivel. Entra al pozo de La Copa con su
+  propia habilidad (espacial) y tiene su página suelta en `/minijuegos/desenredo/`.
+
 ## 0.84.4 — 2026-10-02
 - **Línea de Tiempo: el año del veredicto, grande.** Después de colocar una carta, el año en que
   pasó es lo que se viene a mirar: ahora ocupa el ancho de la carta (antes era del tamaño del

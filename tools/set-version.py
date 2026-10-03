@@ -8,7 +8,8 @@ Estampa una versión en el sitio para evitar caché mezclada (HTML nuevo con JS 
 - Agrega ?v=VERSION a las hojas de estilo.
 - Actualiza el número de versión visible en el pie del menú.
 
-- Antes de estampar, revisa que el README no haya quedado viejo (tools/readme.py revisar):
+- Antes de estampar, revisa que el README no haya quedado viejo (tools/readme.py revisar)
+  y que las imágenes de las tarjetas sociales estén al día (tools/og.mjs revisar, D-181):
   la publicación es el único momento por el que pasan todos los cambios, así que es el
   lugar donde preguntarlo. Con --igual se estampa igual, para una urgencia.
 
@@ -18,10 +19,10 @@ import re, sys, json, pathlib, subprocess
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 MODULES = [
-    'assets/js/ui.js', 'assets/js/compartir.js', 'assets/js/i18n.js', 'assets/js/sound.js', 'assets/js/games.js', 'assets/js/firebase-config.js', 'assets/js/frases.js',
+    'assets/js/ui.js', 'assets/js/compartir.js', 'assets/js/i18n.js', 'assets/js/sound.js', 'assets/js/games.js', 'assets/js/firebase-config.js', 'assets/js/frases.js', 'assets/js/azar.js', 'assets/js/dado3d.js',
     'cuarto-rey/game.js', 'cuarto-rey/rules.js',
     'toque-y-fama/game.js', 'toque-y-fama/rules.js', 'toque-y-fama/engine.js',
-    'assets/js/transport/local.js', 'assets/js/transport/firebase.js', 'assets/js/transport/cleanup.js', 'assets/js/transport/dispose.js', 'assets/js/transport/errors.js', 'assets/js/transport/ratelimit.js', 'assets/js/transport/stats.js', 'assets/js/handoff.js', 'assets/js/session.js', 'assets/js/chat.js', 'assets/js/arrastre.js', 'assets/js/teclado.js',
+    'assets/js/transport/local.js', 'assets/js/transport/firebase.js', 'assets/js/transport/cleanup.js', 'assets/js/transport/dispose.js', 'assets/js/transport/errors.js', 'assets/js/transport/ratelimit.js', 'assets/js/transport/stats.js', 'assets/js/handoff.js', 'assets/js/session.js', 'assets/js/chat.js', 'assets/js/arrastre.js', 'assets/js/teclado.js', 'assets/js/labs-idioma.js',
     'batalla-naval/game.js', 'batalla-naval/rules.js', 'batalla-naval/engine.js', 'batalla-naval/flota.js',
     'linea-de-tiempo/game.js', 'linea-de-tiempo/rules.js', 'linea-de-tiempo/engine.js',
     'linea-de-tiempo/decks/index.js', 'linea-de-tiempo/decks/historia.js', 'linea-de-tiempo/decks/musica.js',
@@ -33,20 +34,26 @@ MODULES = [
     'julepe/game.js', 'julepe/rules.js', 'julepe/engine.js', 'assets/js/sobre.js',
     'panel/panel.js', 'panel/aggregate.js', 'panel/copas.js',
     'copa/game.js', 'copa/rules.js', 'copa/engine.js', 'copa/cuenta.js', 'copa/store-local.js', 'copa/store-firebase.js', 'copa/reportes.js', 'copa/desglose.js', 'copa/demo.js', 'copa/planilla.js',
-    'copa/juegos/index.js', 'copa/juegos/semilla.js', 'copa/juegos/mazos.js', 'copa/juegos/grillas.js', 'copa/juegos/grillas-en.js', 'copa/juegos/grillas-pt.js',
+    'copa/juegos/index.js', 'copa/juegos/audiencia.js', 'copa/juegos/semilla.js', 'copa/juegos/mazos.js', 'copa/juegos/grillas.js', 'copa/juegos/grillas-en.js', 'copa/juegos/grillas-pt.js', 'copa/juegos/grillas-de.js',
     'copa/juegos/linea.js', 'copa/juegos/numero.js', 'copa/juegos/conexiones.js', 'copa/juegos/reinas.js',
-    'copa/juegos/letras.js', 'copa/juegos/palabras.js', 'copa/juegos/zip.js', 'copa/juegos/tango.js', 'copa/juegos/anio.js', 'copa/juegos/final.js',
+    'copa/juegos/letras.js', 'copa/juegos/palabras.js', 'copa/juegos/zip.js', 'copa/juegos/desenredo.js', 'copa/juegos/tango.js', 'copa/juegos/anio.js', 'copa/juegos/final.js',
     'copa/juegos/donde.js', 'copa/juegos/ciudades.js', 'copa/juegos/nombres.js', 'copa/juegos/mapa.js', 'copa/juegos/globo.js', 'copa/juegos/ui-donde.js',
     'copa/juegos/ui-linea.js', 'copa/juegos/ui-numero.js', 'copa/juegos/ui-conexiones.js', 'copa/juegos/ui-reinas.js',
-    'copa/juegos/ui-letras.js', 'copa/juegos/ui-zip.js', 'copa/juegos/ui-tango.js', 'copa/juegos/ui-anio.js', 'copa/juegos/ui-final.js', 'copa/juegos/solo.js',
+    'copa/juegos/ui-letras.js', 'copa/juegos/ui-zip.js', 'copa/juegos/ui-desenredo.js', 'copa/juegos/ui-tango.js', 'copa/juegos/ui-anio.js', 'copa/juegos/ui-final.js', 'copa/juegos/solo.js',
 ]
-PAGES = { 'index.html': '', 'cuarto-rey/index.html': '../', 'toque-y-fama/index.html': '../', 'batalla-naval/index.html': '../', 'linea-de-tiempo/index.html': '../', 'ahorcado/index.html': '../', 'dudo/index.html': '../', 'julepe/index.html': '../', 'panel/index.html': '../', 'copa/index.html': '../', 'minijuegos/index.html': '../', 'labs/index.html': '../' }
+PAGES = { 'index.html': '', 'cuarto-rey/index.html': '../', 'toque-y-fama/index.html': '../', 'batalla-naval/index.html': '../', 'linea-de-tiempo/index.html': '../', 'ahorcado/index.html': '../', 'dudo/index.html': '../', 'julepe/index.html': '../', 'panel/index.html': '../', 'copa/index.html': '../', 'minijuegos/index.html': '../', 'labs/index.html': '../', 'labs/de/index.html': '../../' }
 
 def tarjetas_sociales():
     """Las etiquetas de Open Graph salen de games.js: se rehacen antes de estampar (D-72)."""
     r = subprocess.run(['node', str(ROOT / 'tools/og.mjs'), 'tarjetas'], capture_output=True, text=True)
     ultima = [l for l in r.stdout.splitlines() if l and not l.startswith('  ')]
     print('Tarjetas sociales:', ultima[-1] if ultima else r.stderr.strip())
+
+
+def revisar_imagenes():
+    """Las imágenes de las tarjetas, contra su dibujo y sus textos de hoy (D-181). True si están al día."""
+    print('Imágenes de las tarjetas:', flush=True)
+    return subprocess.run(['node', str(ROOT / 'tools/og.mjs'), 'revisar']).returncode == 0
 
 
 def revisar_readme():
@@ -77,6 +84,12 @@ if __name__ == '__main__':
         sys.exit('uso: python3 tools/set-version.py X.Y.Z [--igual]')
     if not revisar_readme() and '--igual' not in sys.argv:
         sys.exit('\nel README quedó atrás del código. Arriba dice qué le falta.\n'
+                 'Para estampar igual (y arreglarlo después): '
+                 f'python3 tools/set-version.py {args[0]} --igual')
+    # Una imagen hecha con el dibujo viejo o antes de cambiar una bajada (las píldoras desalineadas
+    # volvieron así más de una vez): se rehace antes de publicar, no después (D-181)
+    if not revisar_imagenes() and '--igual' not in sys.argv:
+        sys.exit('\nhay imágenes de tarjetas que quedaron atrás: node tools/og.mjs imagenes\n'
                  'Para estampar igual (y arreglarlo después): '
                  f'python3 tools/set-version.py {args[0]} --igual')
     print()

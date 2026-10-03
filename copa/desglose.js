@@ -41,7 +41,7 @@ export function desglose(id, e, { T, fmt, mmss, copa = true, lang = 'es' }) {
       resta('bdHints', e.pistas || 0, { pts: tango.COSTO_PISTA * (e.pistas || 0), c: tango.COSTO_PISTA }),
       T.bdFloor10,
     ].filter(Boolean) : [T.bdNotSolved];
-    case 'zip': return [
+    case 'zip': case 'desenredo': return [
       fmt(e.hechos === 1 ? T.bdLevelsOne : T.bdLevels, { n: e.hechos || 0, pts: Math.min(100, 10 * (e.hechos || 0)) }),
       e.hechos ? fmt(copa ? T.bdLastLevel : T.bdLastLevelSolo, { t: mmss(e.ultimo || 0) }) : null,
     ].filter(Boolean);

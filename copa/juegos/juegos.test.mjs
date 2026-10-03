@@ -7,8 +7,9 @@ import * as anio from './anio.js';
 import * as reinas from './reinas.js';
 import * as tango from './tango.js';
 import * as zip from './zip.js';
+import * as desenredo from './desenredo.js';
 import * as letras from './letras.js';
-import { PALABRAS, PALABRAS_EN, PALABRAS_PT } from './palabras.js';
+import { PALABRAS, PALABRAS_EN, PALABRAS_PT, PALABRAS_DE } from './palabras.js';
 import * as conexiones from './conexiones.js';
 import * as final from './final.js';
 import * as donde from './donde.js';
@@ -18,6 +19,7 @@ import { GRILLAS } from './grillas.js';
 import * as GRILLAS_MOD from './grillas.js';
 import * as GRILLAS_EN from './grillas-en.js';
 import * as GRILLAS_PT from './grillas-pt.js';
+import * as GRILLAS_DE from './grillas-de.js';
 import { PAISES, CIUDADES as NOMBRES_CIUDADES } from './nombres.js';
 import { JUEGOS } from './index.js';
 import { temasDeLaCopa } from './mazos.js';
@@ -391,6 +393,95 @@ test('zip: solución única, trazo y niveles', () => {
   assert.equal(zip.TIEMPO_MS, 180000);
 });
 
+test('desenredo: siempre tiene solución, empieza enredado y los niveles crecen (D-179)', () => {
+  const D = desenredo;
+  for (const c of CODIGOS) for (let k = 0; k < D.NIVELES; k++) {
+    const p = D.nivel(c, 3, k);
+    assert.equal(p.n, D.NUDOS[k], `${c} nivel ${k}`);
+    assert.equal(p.sol.length, p.n); assert.equal(p.inicio.length, p.n);
+    assert.ok(D.resuelto(p, p.sol), `${c} nivel ${k}: la solución tiene cruces`);
+    assert.ok(D.cruces(p.hilos, p.inicio).total >= Math.min(5, p.hilos.length / 2), `${c} nivel ${k}: empieza casi resuelto`);
+    // Todo en enteros y adentro del tablero
+    for (const q of [...p.sol, ...p.inicio]) assert.deepEqual(D.dentro(q), q);
+    // Ningún nudo con menos de dos hilos ni hilos repetidos
+    const grado = new Array(p.n).fill(0);
+    for (const [a, b] of p.hilos) { grado[a]++; grado[b]++; }
+    assert.ok(grado.every(g => g >= 2), `${c} nivel ${k}: nudo suelto`);
+    assert.equal(new Set(p.hilos.map(h => h.join('-'))).size, p.hilos.length);
+  }
+  // El mismo para todos, distinto por día
+  assert.deepEqual(D.generar('KQRST', 1, { n: 9 }), D.generar('KQRST', 1, { n: 9 }));
+  assert.notDeepEqual(D.generar('KQRST', 1, { n: 9 }).inicio, D.generar('KQRST', 2, { n: 9 }).inicio);
+  for (let k = 1; k < D.NIVELES; k++) assert.ok(D.NUDOS[k] > D.NUDOS[k - 1]);
+});
+
+test('desenredo: qué cuenta como cruce', () => {
+  const { seCruzan, cruces } = desenredo;
+  assert.ok(seCruzan([0, 0], [10, 10], [0, 10], [10, 0]));     // una X
+  assert.ok(!seCruzan([0, 0], [10, 0], [0, 5], [10, 5]));      // paralelos
+  assert.ok(seCruzan([0, 0], [10, 0], [5, 0], [20, 0]));       // encimados en la misma recta
+  assert.ok(seCruzan([0, 0], [10, 0], [5, 0], [5, 9]));        // uno termina sobre el otro
+  assert.ok(!seCruzan([0, 0], [10, 0], [11, 0], [20, 0]));     // en la misma recta, sin tocarse
+  // Hilos con un nudo en común no se cuentan entre sí
+  assert.equal(cruces([[0, 1], [0, 2]], [[0, 0], [100, 0], [0, 100]]).total, 0);
+  // Un hilo encima de un nudo ajeno cuenta, aunque no cruce ningún otro hilo
+  const c = cruces([[0, 1], [2, 3]], [[0, 0], [200, 0], [100, 5], [100, 300]]);
+  assert.deepEqual(c.encima, [[2, 0]]);
+  assert.equal(c.total, 1);
+  // Amontonar los nudos no resuelve nada (la trampa clásica)
+  const p = desenredo.nivel('KQRST', 1, 4);
+  assert.ok(cruces(p.hilos, p.sol.map(() => [500, 500])).total > 0);
+});
+
+test('desenredo: la cuerda es una curva leve, fija para cada hilo (D-182)', () => {
+  const { cuerda, trazoCuerda, ONDA, ONDA_MAX } = desenredo;
+  const bez = (a, [c1, c2], b, t) => [0, 1].map(k => (1 - t) ** 3 * a[k] + 3 * (1 - t) ** 2 * t * c1[k] + 3 * (1 - t) * t * t * c2[k] + t ** 3 * b[k]);
+  for (let sem = 0; sem < 200; sem++) {
+    const a = [100 + sem, 200], b = [800, 300 + 2 * sem];
+    const c = cuerda(a, b, sem);
+    let lejos = 0;
+    for (let t = 0; t <= 1; t += 0.05) lejos = Math.max(lejos, desenredo.distancia(bez(a, c, b, t), a, b));
+    // Se aparta poco de la recta: lo que se ve es lo que se cuenta como cruce
+    assert.ok(lejos <= Math.min(ONDA_MAX, ONDA * Math.hypot(b[0] - a[0], b[1] - a[1])) + 0.5, `semilla ${sem}: ${lejos}`);
+    assert.deepEqual(cuerda(a, b, sem), c);
+  }
+  // Hay de las dos formas, en S y en arco
+  const formas = new Set(Array.from({ length: 40 }, (_, s) => {
+    const [c1, c2] = cuerda([0, 0], [900, 0], s); return Math.sign(c1[1]) === Math.sign(c2[1]) ? 'arco' : 'ese';
+  }));
+  assert.equal(formas.size, 2);
+  assert.match(trazoCuerda([0, 0], [900, 0], 3), /^M0 0(C[-\d. ]+)+ 900 0$/);
+});
+
+test('desenredo: la segunda onda de la cuerda, chica y apagada en las puntas (D-183)', () => {
+  const { puntosCuerda, ONDA, ONDA_MAX, ONDA2_MAX } = desenredo;
+  for (let sem = 0; sem < 200; sem++) {
+    const a = [60 + 3 * sem, 120], b = [900, 200 + 3 * sem];
+    const P = puntosCuerda(a, b, sem), L = Math.hypot(b[0] - a[0], b[1] - a[1]);
+    // Nace y termina justo en los nudos
+    assert.deepEqual(P[0].map(Math.round), a); assert.deepEqual(P.at(-1).map(Math.round), b);
+    // Con las dos ondas sigue cerca de la recta: los cruces se cuentan sobre ella
+    const lejos = Math.max(...P.map(p => desenredo.distancia(p, a, b)));
+    assert.ok(lejos <= Math.min(ONDA_MAX, ONDA * L) + ONDA2_MAX + 0.5, `semilla ${sem}: ${lejos}`);
+    assert.deepEqual(puntosCuerda(a, b, sem), P);
+  }
+  // La segunda onda se nota: la cuerda no es la misma curva lisa de antes
+  const liso = puntosCuerda([0, 0], [900, 0], 4, { onda2: 0 }), ondulado = puntosCuerda([0, 0], [900, 0], 4);
+  assert.ok(Math.max(...liso.map((p, i) => Math.abs(p[1] - ondulado[i][1]))) > 3);
+});
+
+test('desenredo: puntaje, tarjeta y fin de la partida', () => {
+  const D = desenredo;
+  assert.equal(D.puntaje({ hechos: 0 }), 0);
+  assert.equal(D.puntaje({ hechos: 7 }), 70);
+  assert.equal(D.puntaje({ hechos: 10 }), 100);
+  assert.equal(D.tarjeta({ hechos: 3 }), '🧶 🟩🟩🟩');
+  assert.equal(D.tarjeta({ hechos: 0 }), '🧶 ⬛');
+  assert.ok(D.finPartida({ hechos: 10, usado: 1000 }));
+  assert.ok(D.finPartida({ hechos: 2, usado: D.TIEMPO_MS }));
+  assert.ok(!D.finPartida({ hechos: 9, usado: D.TIEMPO_MS - 1 }));
+});
+
 test('sesión de prueba: otro contenido que el del día (D-103)', async () => {
   const { JUEGOS, codigoEnsayo } = await import('./index.js');
   for (const c of CODIGOS) {
@@ -468,6 +559,7 @@ test('final: cinco rondas, promedio de 0 a 100', () => {
     reinas: { fin: true, errores: 1, ms: 83000 },
     tango: { fin: true, errores: 2, pistas: 1 },
     zip: { hechos: 3, ultimo: 125000 },
+    desenredo: { hechos: 4, ultimo: 151000 },
     anio: anio.estado(pa, pa.hitos.map(h => h.year + 3)),
     final: { reinas: { fin: true, errores: 0 } },
   };
@@ -489,10 +581,65 @@ test('la copa no usa la temática de Brasil (D-111)', () => {
 test('todos los minijuegos puntúan de 0 a 100 (D-113)', () => {
   const tope = { linea: linea.puntaje({ aciertos: 9, marcas: Array(9).fill(true) }), numero: numero.puntaje({ resuelto: true, usados: 1 }),
     conexiones: conexiones.puntaje({ resueltos: [0, 1, 2, 3], errores: 0 }), reinas: reinas.puntaje({ fin: true, ms: 1000 }),
-    letras: letras.puntaje({ encontradas: 5, resuelto: true, usados: 1 }), zip: zip.puntaje({ hechos: 99 }),
+    letras: letras.puntaje({ encontradas: 5, resuelto: true, usados: 1 }), zip: zip.puntaje({ hechos: 99 }), desenredo: desenredo.puntaje({ hechos: desenredo.NIVELES }),
     tango: tango.puntaje({ fin: true, errores: 0, pistas: 0 }), anio: anio.puntaje({ filas: [{}, {}], total: 200 }),
     donde: donde.puntaje({ filas: [{}, {}, {}, {}, {}], total: 500 }) };
   for (const [id, s] of Object.entries(tope)) assert.equal(s, 100, id);
+});
+
+const { LOCALES: TEXTOS } = await import('../rules.js');
+const { LOCALES } = await import('./palabras.js');
+const { DECKS: TODOS } = await import('../../linea-de-tiempo/decks/index.js');
+const AUD = await import('./audiencia.js');
+test('el público de la copa decide qué contenido local entra (D-186, D-187)', () => {
+  const { local } = donde;
+  const { fuera, audienciaDe } = AUD;
+  const pais = { chile: 'cl', brasil: 'br' };
+  const cartaLocal = new Map(TODOS.flatMap(d => d.cards.filter(c => c.local).map(c => [c.id, c.local])));
+  assert.ok(cartaLocal.size >= 2);
+  const codigos = [...CODIGOS, ...Array.from({ length: 80 }, (_, i) => 'ABCDEFGHJKLMNPQRSTUVWXYZ'.slice(i % 19, i % 19 + 5))];
+  const vistos = { global: new Set(), cl: new Set(), br: new Set() };
+  for (const aud of ['global', 'cl', 'br']) for (const c of codigos) for (const lang of ['es', 'en', 'pt', 'de']) {
+    const o = { lang, palabras: lang, aud };
+    const temas = Object.values(temasDeLaCopa(c, { aud }));
+    temas.forEach(t => vistos[aud].add(t));
+    for (const t of temas) assert.ok(!fuera(pais[t], aud), `${aud} ${c}: temática ${t}`);
+    for (let d = 1; d <= 7; d += 3) {
+      const l = JUEGOS.linea.generar(c, d, o), y = JUEGOS.anio.generar(c, d, o), f = JUEGOS.final.generar(c, d, o);
+      for (const x of [l.base, ...l.mano, ...y.hitos, f.linea.base, ...f.linea.mano, ...f.anio.hitos]) assert.ok(!fuera(cartaLocal.get(x.id), aud), `${aud} ${c} ${d}: ${x.id}`);
+      const g = conexiones.grillaDe(c, { lang, aud });
+      assert.ok(!fuera(g.local, aud), `${aud} ${c} ${lang}: grilla ${g.id}`);
+      assert.equal(JUEGOS.conexiones.generar(c, d, o).id, g.id);
+      if (fuera('cl', aud)) assert.ok(!LOCALES.has(JUEGOS.letras.generar(c, d, o).secreto), `${aud} ${c} ${d}: palabra local`);
+      for (const x of [...JUEGOS.donde.generar(c, d, o).ciudades, ...JUEGOS.donde.ensayo(c, d, o).ciudades]) assert.ok(!fuera(local(x), aud), `${aud} ${c} ${d}: ${x.ciudad}`);
+      const e = JUEGOS.linea.ensayo(c, d, o);
+      assert.ok(!fuera(pais[e.tema], aud) && !temas.includes(e.tema), `ensayo ${aud} ${c}: ${e.tema}`);
+    }
+  }
+  // Cada público tiene lo suyo: Chile juega la temática Chile y Brasil la de Brasil
+  assert.ok(vistos.cl.has('chile') && !vistos.cl.has('brasil'));
+  assert.ok(vistos.br.has('brasil') && !vistos.br.has('chile'));
+  assert.ok(!vistos.global.has('chile') && !vistos.global.has('brasil'));
+  // Grillas de sobra para cada público en cada idioma
+  for (const aud of ['global', 'cl', 'br']) for (const M of [GRILLAS_MOD, GRILLAS_EN, GRILLAS_PT, GRILLAS_DE]) assert.ok(M.GRILLAS.filter(g => !fuera(g.local, aud)).length >= 7, aud);
+  // El público de una copa: el suyo; global si era de las `intl`; y sin él, como las de antes
+  assert.equal(audienciaDe({ aud: 'br' }), 'br');
+  assert.equal(audienciaDe({ intl: true }), 'global');
+  assert.equal(audienciaDe({}), null);
+  assert.equal(audienciaDe({ aud: 'xx' }), null);
+  assert.ok(codigos.some(c => Object.values(temasDeLaCopa(c)).includes('chile')));
+  assert.ok(!codigos.some(c => Object.values(temasDeLaCopa(c)).includes('brasil')));
+});
+
+test('las instrucciones de cada minijuego son concisas, en los tres idiomas (U-18, D-184)', () => {
+  for (const lang of ['es', 'en', 'pt', 'de']) for (const [id, J] of Object.entries(TEXTOS[lang].juegos)) {
+    assert.ok(J.como.length <= 3, `${lang} ${id}: ${J.como.length} puntos en "Cómo se juega" (máximo 3)`);
+    const largo = J.como.join(' ').length;
+    assert.ok(largo <= 280, `${lang} ${id}: "Cómo se juega" tiene ${largo} caracteres (máximo 280)`);
+    assert.ok(J.puntaje.length <= 170, `${lang} ${id}: el puntaje tiene ${J.puntaje.length} caracteres (máximo 170)`);
+    // La meta, no la descripción de lo que se ve
+    assert.ok(!/^(Hay|There (is|are)|Há) /.test(J.como[0]), `${lang} ${id}: el primer punto describe la pantalla en vez de decir qué hacer`);
+  }
 });
 
 test('Conexiones agrupa por significado, no por juegos de palabras (D-128)', () => {
@@ -515,7 +662,7 @@ test('una copa ya en su día de Conexiones conserva la grilla de antes (D-128)',
 // ── Inglés y portugués (D-170) ──
 
 test('grillas en inglés y portugués: las mismas reglas que las de español', () => {
-  for (const [lang, M] of Object.entries({ en: GRILLAS_EN, pt: GRILLAS_PT })) {
+  for (const [lang, M] of Object.entries({ en: GRILLAS_EN, pt: GRILLAS_PT, de: GRILLAS_DE })) {
     assert.ok(M.GRILLAS.length >= 12, lang);
     assert.equal(new Set(M.GRILLAS.map(g => g.id)).size, M.GRILLAS.length, lang);
     for (const g of [...M.GRILLAS, M.GRILLA_ENSAYO]) {
@@ -544,7 +691,7 @@ test('conexiones: la grilla sale del idioma de las palabras de la copa', () => {
 });
 
 test('letras: palabras en inglés y portugués, y teclado sin Ñ', () => {
-  for (const [lang, lista] of Object.entries({ en: PALABRAS_EN, pt: PALABRAS_PT })) {
+  for (const [lang, lista] of Object.entries({ en: PALABRAS_EN, pt: PALABRAS_PT, de: PALABRAS_DE })) {
     assert.ok(lista.length >= 100, lang);
     assert.equal(new Set(lista).size, lista.length, `${lang}: palabra repetida`);
     for (const w of lista) assert.ok(/^[A-Z]{5}$/.test(w) && letras.valido(w), `${lang}: ${w}`);
@@ -563,6 +710,7 @@ test('¿En qué año? y Línea: las mismas cartas en todos los idiomas, con su t
   assert.notEqual(en.hitos[0].texto, es.hitos[0].texto);
   assert.equal(anio.anioLabel(-44, 'en'), '44 BC');
   assert.equal(anio.anioLabel(-44, 'pt'), '44 a.C.');
+  assert.equal(anio.anioLabel(-44, 'de'), '44 v. Chr.');
   assert.equal(anio.anioLabel(-44), '44 a. C.');
   const l = linea.generar('KQRST', 1, { lang: 'pt' });
   assert.deepEqual(l.mano.map(c => c.id), linea.generar('KQRST', 1).mano.map(c => c.id));
