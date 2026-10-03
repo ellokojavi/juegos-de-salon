@@ -5,19 +5,19 @@
  * Antes de cada ronda se explica cómo se juega (LIG-36): en la Copa de 3 días la final
  * mezcla juegos que nadie ha visto.
  */
-import * as final from './final.js';
-import * as linea from './linea.js';
-import * as numero from './numero.js';
-import * as reinas from './reinas.js';
-import * as letras from './letras.js';
-import * as anio from './anio.js';
-import * as uiLinea from './ui-linea.js';
-import * as uiNumero from './ui-numero.js';
-import * as uiReinas from './ui-reinas.js';
-import * as uiLetras from './ui-letras.js';
-import { leerJugadas } from './ui-numero.js';
-import * as uiAnio from './ui-anio.js';
-import { minijuegos, rondasFinal } from '../rules.js';
+import * as final from './engine.js';
+import * as linea from '../timeline/engine.js';
+import * as numero from '../number/engine.js';
+import * as reinas from '../queens/engine.js';
+import * as letras from '../word/engine.js';
+import * as anio from '../year/engine.js';
+import * as uiLinea from '../timeline/ui.js';
+import * as uiNumero from '../number/ui.js';
+import * as uiReinas from '../queens/ui.js';
+import * as uiLetras from '../word/ui.js';
+import { leerJugadas } from '../number/ui.js';
+import * as uiAnio from '../year/ui.js';
+import { minijuegos, rondasFinal } from '../../rules.js';
 
 /** `append` que descarta los hijos nulos, como `el()` (sin esto, un null se escribe como texto). */
 const poner = (nodo, ...hijos) => nodo.append(...hijos.flat().filter(x => x !== null && x !== undefined && x !== false));

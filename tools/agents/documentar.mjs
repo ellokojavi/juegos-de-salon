@@ -3,9 +3,9 @@
  * La memoria y las comprobaciones del agente de documentación (D-172). Lo usa el agente en su
  * ronda diaria y lo puede correr cualquier sesión antes de proponer una fusión.
  *
- *   node tools/documentar.mjs revisar [--desde <commit>]   # qué entró y qué falta documentar
- *   node tools/documentar.mjs anotar --hasta <commit> [--pr <url>] [--pendiente "texto"]…
- *   node tools/documentar.mjs historial                    # las rondas anteriores y lo pendiente
+ *   node tools/agents/documentar.mjs revisar [--desde <commit>]   # qué entró y qué falta documentar
+ *   node tools/agents/documentar.mjs anotar --hasta <commit> [--pr <url>] [--pendiente "texto"]…
+ *   node tools/agents/documentar.mjs historial                    # las rondas anteriores y lo pendiente
  *
  * `revisar` parte del commit guardado en docs/documentacion.json (o de `--desde`), lista lo que
  * entró a main y comprueba lo que se puede comprobar sin leer prosa:
@@ -23,11 +23,11 @@ import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
-export const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..');
+export const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 export const MEMORIA = join(RAIZ, 'docs/documentacion.json');
 
 /* ------------------------------------------------------------------ */
-/* Comprobaciones puras (las prueba tools/documentar.test.mjs)         */
+/* Comprobaciones puras (las prueba tools/agents/documentar.test.mjs)         */
 /* ------------------------------------------------------------------ */
 
 /** Los números de decisión que tienen su título "## D-n" en DECISIONES.md, y los repetidos. */
@@ -45,7 +45,9 @@ export function decisionesEscritas(decisiones) {
 export const decisionesCitadas = texto => new Set([...texto.matchAll(/\bD-(\d+)\b/g)].map(m => Number(m[1])));
 
 /** Lo que falta de `lista` en `texto` (por nombre de archivo, con o sin ruta). */
-export const sinMencionar = (lista, texto) => lista.filter(f => !texto.includes(f) && !texto.includes(f.split('/').pop()));
+// Un guion de punta a punta se nombra desde tools/e2e/ ("hangman/local.mjs"); los demás, por su ruta o su nombre
+const corto = f => (f.startsWith('tools/e2e/') ? f.slice('tools/e2e/'.length) : f.split('/').pop());
+export const sinMencionar = (lista, texto) => lista.filter(f => !texto.includes(f) && !texto.includes(corto(f)));
 
 /** ¿CHANGELOG.md tiene la entrada "## <versión>"? */
 export const changelogTiene = (changelog, version) => new RegExp(`^## ${version.replace(/\./g, '\\.')}\\b`, 'm').test(changelog);
@@ -132,11 +134,11 @@ export function comprobar() {
   for (const f of sinMencionar(pruebas, leer('CLAUDE.md'))) problemas.push(`la prueba ${f} no está en la lista de CLAUDE.md`);
 
   // Guiones de punta a punta que su README no nombra
-  const guiones = archivos.filter(f => /^tools\/e2e\/[^/]+\.mjs$/.test(f) && !/cdp\.mjs$/.test(f));
+  const guiones = archivos.filter(f => /^tools\/e2e\/.+\.mjs$/.test(f) && !/cdp\.mjs$/.test(f));
   for (const f of sinMencionar(guiones, leer('tools/e2e/README.md'))) problemas.push(`el guion ${f} no está en tools/e2e/README.md`);
 
   // La versión publicada tiene su entrada
-  const version = versionDe(leer('index.html'));
+  const version = versionDe(leer('public/index.html'));
   if (version && !changelogTiene(leer('CHANGELOG.md'), version)) problemas.push(`la versión ${version} no tiene entrada en CHANGELOG.md`);
 
   return problemas;
@@ -169,7 +171,7 @@ function revisar(desde) {
     console.log('\nYa conocidos (esperan al dueño, en "conocidos" de docs/documentacion.json):');
     for (const p of viejos) console.log(`  · ${p}`);
   }
-  if (!desde) console.log(`\nAl cerrar la ronda: node tools/documentar.mjs anotar --hasta ${punta.slice(0, 7)} [--pendiente "…"], y con el PR abierto: anotar --hasta ${punta.slice(0, 7)} --pr <url>`);
+  if (!desde) console.log(`\nAl cerrar la ronda: node tools/agents/documentar.mjs anotar --hasta ${punta.slice(0, 7)} [--pendiente "…"], y con el PR abierto: anotar --hasta ${punta.slice(0, 7)} --pr <url>`);
   return nuevos.length ? 1 : 0;
 }
 
@@ -198,6 +200,6 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const codigo = orden === 'revisar' ? revisar(i < 0 ? null : resto[i + 1])
     : orden === 'anotar' ? anotar(resto)
     : orden === 'historial' ? historial()
-    : (console.error('Uso: node tools/documentar.mjs revisar [--desde <commit>] | anotar --hasta <commit> [--pr <url>] [--pendiente "…"] | historial'), 2);
+    : (console.error('Uso: node tools/agents/documentar.mjs revisar [--desde <commit>] | anotar --hasta <commit> [--pr <url>] [--pendiente "…"] | historial'), 2);
   process.exit(codigo);
 }

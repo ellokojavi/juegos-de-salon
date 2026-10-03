@@ -1,6 +1,6 @@
 # Diseño: Batalla Naval ⚓
 
-**Estado:** implementado (v0.6) · **Fecha:** 2026-09-08 · **Ruta:** `/batalla-naval/` · **Jugadores:** 1 a 2 · **Idiomas:** es, en (“Battleship”), pt (“Batalha Naval”)
+**Estado:** implementado (v0.6) · **Fecha:** 2026-09-08 · **Ruta:** `/battleship/` · **Jugadores:** 1 a 2 · **Idiomas:** es, en (“Battleship”), pt (“Batalha Naval”)
 
 ## 1. Resumen
 
@@ -35,7 +35,7 @@ Intro (reglas, modos) → Setup (nombres, tiro extra) → [Lobby: código + QR +
 
 ### 3.1 Colocar flota (la pantalla clave)
 - Grilla 10×10 grande (casillas de ~32 px) con letras y números.
-- Los barcos se dibujan en **pixel art visto desde arriba** (D-91): cada casilla pinta un trozo de 16×16 y juntos arman el barco; el agua es una baldosa repetida. Sale de `flota.js`, que **genera** `tools/flota.py`.
+- Los barcos se dibujan en **pixel art visto desde arriba** (D-91): cada casilla pinta un trozo de 16×16 y juntos arman el barco; el agua es una baldosa repetida. Sale de `flota.js`, que **genera** `tools/generators/flota.py`.
 - Lista de barcos debajo como fichas, en tres columnas (el barco en chico arriba del nombre, para que las cinco quepan en dos filas sin desplazar): 🚢 5 · 4 · 3 · 3 · 2. Se toca una ficha (queda seleccionada) y luego una casilla de la grilla: el barco se coloca desde esa casilla hacia la derecha (horizontal) o hacia abajo (vertical). La ficha también se puede **arrastrar** hasta el tablero y soltarla ahí (D-90).
 - Tocar un barco ya puesto lo **selecciona** (queda amarillo) y muestra un botón **↻** en su esquina superior derecha para girarlo ahí mismo: gira sobre su proa y, si ahí no cabe, gira igual y se acomoda en el lugar libre más cercano, a lo más una casilla más allá de lo que cubría (D-136); solo si cerca no hay espacio no gira y la casilla parpadea. Con un barco seleccionado, tocar una casilla vacía lo **mueve** y **arrastrarlo** también. Arrastrar cualquier barco —desde su ficha o desde el tablero— lo deja seleccionado, así que nunca se mueve uno mientras hay otro en amarillo (D-90). Tocarlo de nuevo lo deselecciona; seleccionar otro quita el color y el botón. El botón inferior **Girar ↔/↕** sirve además para elegir la orientación antes de colocar.
 - Casillas inválidas (fuera de borde o superpuestas) se muestran en rojo y no se aceptan.
@@ -63,7 +63,7 @@ Intro (reglas, modos) → Setup (nombres, tiro extra) → [Lobby: código + QR +
 ### 3.3 Resultado
 Ganador, disparos totales y precisión de cada uno, ambas flotas reveladas (con los disparos encima), verificación ✅ del compromiso, desplegable con la secuencia de disparos, Revancha / Cambiar modo / Menú.
 
-## 4. Motor (`batalla-naval/engine.js`, puro y testeable)
+## 4. Motor (`public/battleship/engine.js`, puro y testeable)
 
 ```js
 export const FLEET = [ { id: 'carrier', size: 5 }, { id: 'battleship', size: 4 }, { id: 'cruiser', size: 3 }, { id: 'submarine', size: 3 }, { id: 'destroyer', size: 2 } ];
@@ -92,11 +92,11 @@ export async function sha256, randomNonce, verifyPlayer({ layout, salt, commit, 
 { "t": "chat",    "from": "A", "text": "te voy a hundir el portaaviones" }
 ```
 
-`chat` solo existe en dos celulares y no es parte del estado: el reductor lo dibuja con `assets/js/chat.js` y lo olvida (C-15). El chat se ve en la sala de espera, mientras se espera la flota del rival, en la batalla y en el resultado; **mientras uno coloca su propia flota se guarda**, porque esa pantalla llena el celular justo y la burbuja tapaba los botones de abajo (lo que llega en ese rato espera en el globito, D-138). Para el panel, la única jugada es `shot` (D-138).
+`chat` solo existe en dos celulares y no es parte del estado: el reductor lo dibuja con `public/assets/js/chat.js` y lo olvida (C-15). El chat se ve en la sala de espera, mientras se espera la flota del rival, en la batalla y en el resultado; **mientras uno coloca su propia flota se guarda**, porque esa pantalla llena el celular justo y la burbuja tapaba los botones de abajo (lo que llega en ese rato espera en el globito, D-138). Para el panel, la única jugada es `shot` (D-138).
 
 Estado derivado (`view()`): fase (`lobby`, `placing`, `play`, `reveal`, `done`), quién dispara (a partir del historial y la regla de tiro extra), disparo pendiente, barcos hundidos por lado, ganador. Disparos repetidos a la misma casilla se rechazan en el reductor. Mensajes en serie, como en D-20.
 
-Sala en Firebase: mismas reglas de seguridad (el campo `game` distingue el juego, y el lobby puede cancelar la sala, D-50); los mensajes `reply` con `cells` caben en la validación actual (`t`, `from`, `at` obligatorios). Se agregará `batalla-naval/` a `MODULES` en `tools/set-version.py`.
+Sala en Firebase: mismas reglas de seguridad (el campo `game` distingue el juego, y el lobby puede cancelar la sala, D-50); los mensajes `reply` con `cells` caben en la validación actual (`t`, `from`, `at` obligatorios). Sus módulos entran solos al import map (D-190).
 
 ## 6. IA “contra el celular”
 
@@ -119,26 +119,26 @@ Promedio esperado: 45 a 55 disparos para hundir la flota (un humano promedio ron
 ## 8. Archivos previstos
 
 ```
-batalla-naval/
+public/battleship/
   index.html · style.css · rules.js (LOCALES es/en, FLEET, config por defecto)
   engine.js · engine.test.mjs
   game.js (reductor, agentes, bot, render: colocación y batalla)
-  transport/ → se reutilizan los de Toque y Fama moviéndolos a assets/js/transport/ (local.js, firebase.js con parámetro game)
+  transport/ → se reutilizan los de Toque y Fama moviéndolos a public/assets/js/transport/ (local.js, firebase.js con parámetro game)
 ```
-Mover los transportes a `assets/js/transport/` es la única refactorización previa: Toque y Fama pasa a importarlos de ahí.
+Mover los transportes a `public/assets/js/transport/` es la única refactorización previa: Toque y Fama pasa a importarlos de ahí.
 
 ## 8b. Estado de la implementación (v0.6)
-- Fase 0: transportes movidos a `assets/js/transport/`; `randomRoomCode` vive en el transporte de Firebase. Nuevo módulo compartido `assets/js/handoff.js` (overlay de pase y pantalla tapada) y estilos `.cover` en `base.css`.
+- Fase 0: transportes movidos a `public/assets/js/transport/`; `randomRoomCode` vive en el transporte de Firebase. Nuevo módulo compartido `public/assets/js/handoff.js` (overlay de pase y pantalla tapada) y estilos `.cover` en `base.css`.
 - Fase 1: motor con tests (`engine.test.mjs`, IA ≈ 50 disparos promedio), colocación por toque/girar/arrastrar/al azar, modo un celular y contra el celular.
 - Fase 2: dos celulares con sala, QR, reconexión (flota guardada en `juegos-de-salon:bn:session`), presencia y revancha (parte el perdedor).
-- Fase 3: sonidos propios (`SFX.splash`, `hit`, `sink`, `siren`), capturas en `docs/screenshots/batalla-naval/`, README.
+- Fase 3: sonidos propios (`SFX.splash`, `hit`, `sink`, `siren`), capturas en `docs/screenshots/battleship/`, README.
 - Diferencia con el diseño: la opción “disparo directo con un toque” es el toggle “Confirmar cada disparo” (activado por defecto).
 
 ## 9. Plan y estimación
 
 | Fase | Contenido | Esfuerzo |
 |---|---|---|
-| 0 | Mover transportes a `assets/js/transport/` y registrar en el import map | 0,5 sesión |
+| 0 | Mover transportes a `public/assets/js/transport/` y registrar en el import map | 0,5 sesión |
 | 1 | Motor con tests, colocación de flota (toque, girar, arrastrar, al azar), modo un celular y contra el celular con IA | 1,5 sesiones |
 | 2 | Dos celulares: sala, compromiso, reconexión, revancha; pruebas con dos instancias | 1 sesión |
 | 3 | Sonidos propios, capturas, README y docs | 0,5 sesión |

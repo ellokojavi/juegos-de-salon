@@ -17,5 +17,5 @@ const ejecutable = process.env.CHROME || (fs.existsSync('/opt/pw-browsers/chromi
 
 /** Abre Chrome. Como root (en la nube) necesita --no-sandbox. */
 export const abrir = () => chromium.launch({ executablePath: ejecutable, args: process.getuid?.() === 0 ? ['--no-sandbox'] : [] });
-/** El sitio servido en local (C: «python3 -m http.server 8765» desde la raíz del repo). */
+/** El sitio servido en local (C: «python3 -m http.server 8765 -d public»). */
 export const SITIO = process.env.SITIO || 'http://localhost:8765';

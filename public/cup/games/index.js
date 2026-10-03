@@ -6,28 +6,28 @@
  * Agregar un minijuego: su motor y su pantalla en esta carpeta, su texto en MINIJUEGOS de
  * rules.js y una entrada acá. Para que se pueda elegir en una copa, sumarlo a POZO (engine.js).
  */
-import * as linea from './linea.js';
-import * as numero from './numero.js';
-import * as conexiones from './conexiones.js';
-import * as reinas from './reinas.js';
-import * as letras from './letras.js';
-import * as zip from './zip.js';
-import * as tango from './tango.js';
-import * as anio from './anio.js';
-import * as final from './final.js';
-import * as donde from './donde.js';
-import * as desenredo from './desenredo.js';
-import * as uiLinea from './ui-linea.js';
-import * as uiNumero from './ui-numero.js';
-import * as uiConexiones from './ui-conexiones.js';
-import * as uiReinas from './ui-reinas.js';
-import * as uiLetras from './ui-letras.js';
-import * as uiZip from './ui-zip.js';
-import * as uiTango from './ui-tango.js';
-import * as uiAnio from './ui-anio.js';
-import * as uiFinal from './ui-final.js';
-import * as uiDonde from './ui-donde.js';
-import * as uiDesenredo from './ui-desenredo.js';
+import * as linea from './timeline/engine.js';
+import * as numero from './number/engine.js';
+import * as conexiones from './connections/engine.js';
+import * as reinas from './queens/engine.js';
+import * as letras from './word/engine.js';
+import * as zip from './zip/engine.js';
+import * as tango from './tango/engine.js';
+import * as anio from './year/engine.js';
+import * as final from './final/engine.js';
+import * as donde from './where/engine.js';
+import * as desenredo from './untangle/engine.js';
+import * as uiLinea from './timeline/ui.js';
+import * as uiNumero from './number/ui.js';
+import * as uiConexiones from './connections/ui.js';
+import * as uiReinas from './queens/ui.js';
+import * as uiLetras from './word/ui.js';
+import * as uiZip from './zip/ui.js';
+import * as uiTango from './tango/ui.js';
+import * as uiAnio from './year/ui.js';
+import * as uiFinal from './final/ui.js';
+import * as uiDonde from './where/ui.js';
+import * as uiDesenredo from './untangle/ui.js';
 
 import { temasDeLaCopa, decksDe } from './mazos.js';
 import { LETRAS } from '../engine.js';

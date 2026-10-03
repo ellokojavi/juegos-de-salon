@@ -12,7 +12,7 @@
  * activo (se pausa con la pantalla oculta). Las jugadas son la partida entera:
  * `{ hechos, pos, usado, ultimo }`.
  */
-import * as motor from './desenredo.js';
+import * as motor from './engine.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 /** El radio con que se dibuja un nudo y el radio en que se lo puede tomar, en píxeles de pantalla. */

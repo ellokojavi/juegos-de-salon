@@ -1,6 +1,6 @@
 # Diseño: Línea de Tiempo ⏳
 
-**Estado:** implementado (v0.9, los tres modos) · **Fecha:** 2026-09-09 · **Ruta:** `/linea-de-tiempo/` · **Jugadores:** 1 a 6 · **Idiomas:** es, en (“Timeline”), pt (“Linha do Tempo”)
+**Estado:** implementado (v0.9, los tres modos) · **Fecha:** 2026-09-09 · **Ruta:** `/timeline/` · **Jugadores:** 1 a 6 · **Idiomas:** es, en (“Timeline”), pt (“Linha do Tempo”)
 
 ## 1. Resumen
 
@@ -102,18 +102,18 @@ intentos, con nombre, forma de repartir y tamaño de mano (D-27, D-32, D-43); es
   temática (“¡Nuevo récord!” o el anterior) y la línea como quedó, plegada. Botones: Jugar otra
   vez (misma temática), Cambiar modo y Volver al menú, a la vista sin desplazar en 812 px (C-8).
 - **Récord:** uno por temática, en `juegos-de-salon:linea-de-tiempo:record-relampago`: más puntos y,
-  a igual puntaje, menos tiempo (`crearRecord` de `copa/juegos/solo.js`). El récord del solitario
+  a igual puntaje, menos tiempo (`crearRecord` de `public/cup/games/solo.js`). El récord del solitario
   viejo (`…:record`, por intentos) no se compara y queda sin uso.
-- **Semilla:** un código de 5 letras al azar (`codigoAlAzar` de `copa/engine.js`) y
-  `generar(codigo, 1, { tema, lang, excluir })` de `copa/juegos/linea.js`. `excluir` deja fuera las
+- **Semilla:** un código de 5 letras al azar (`codigoAlAzar` de `public/cup/engine.js`) y
+  `generar(codigo, 1, { tema, lang, excluir })` de `public/cup/games/timeline/engine.js`. `excluir` deja fuera las
   cartas vistas hace poco (D-34); si con eso no alcanzan diez hitos de años separados, se reparte
   sin excluir.
 - **Memoria de partida (C-6):** `{ mode: 'solo', codigo, tema, skip, jugadas, ms, done }` en el
   almacén de siempre; al retomar se vuelve a montar la pantalla con las mismas jugadas y el reloj
   donde iba. Una partida guardada del solitario viejo (con `messages`) no se ofrece: se borra.
 - **Panel:** `trackStart({ game, mode: 'solo', players: 1 })` al empezar, no al retomar (D-44).
-- No pasa por el reductor de mensajes: lo monta `jugarSolo` de `copa/juegos/solo.js` con la pantalla
-  de `copa/juegos/ui-linea.js`, que es la misma de La Copa.
+- No pasa por el reductor de mensajes: lo monta `jugarSolo` de `public/cup/games/solo.js` con la pantalla
+  de `public/cup/games/timeline/ui.js`, que es la misma de La Copa.
 
 Se descartó jugar contra una IA porque la máquina conoce los años y la partida no tenía sentido (D-27).
 
@@ -150,7 +150,7 @@ falta mensajes de respuesta.
   Un **error** tiñe la pantalla de rojo, sacude la carta, suena distinto y explica entre qué hitos iba y entre
   cuáles se puso; se queda hasta que el jugador toca. Mientras tanto, el celular no juega y las jugadas de
   otros esperan.
-- **Arrastrar** (D-85, `assets/js/arrastre.js`). La carta se puede sacar de la mano hacia abajo y
+- **Arrastrar** (D-85, `public/assets/js/arrastre.js`). La carta se puede sacar de la mano hacia abajo y
   soltarla sobre una ranura; mientras viaja se dibuja en grande —268 px, texto de 15 px— y 60 px por
   sobre el dedo, que si no la tapa. El destino se marca abriendo la ranura con la carta dentro, y los
   dos hitos entre los que caería encienden su año. **Soltar elige, no coloca**: el botón amarillo
@@ -182,9 +182,9 @@ Seis temáticas, cada una en su archivo dentro de `decks/`:
 - Hitos **reconocibles**, con años indiscutibles: si la fecha se discute, la carta no entra.
 - Y que se puedan **situar**: nada de “un gran incendio” o “manifestaciones” a secas, porque eso pasa cada pocos años. Superlativo, nombre propio o cifra que ancle el año (D-37).
 - Cada mazo trae al menos noventa cartas, bien repartidas en el tiempo.
-- Los mazos se registran en `decks/index.js` con su nombre, su pista y su emoji por idioma. Además el
-  archivo nuevo tiene que sumarse a `MODULES` en `tools/set-version.py`, o el import map no lo versiona
-  y el navegador puede mezclar un índice nuevo con un mazo en caché (C-11). Nada más hay que tocar:
+- Los mazos se registran en `decks/index.js` con su nombre, su pista y su emoji por idioma. El archivo
+  nuevo entra solo al import map (C-11, D-190), así que el navegador no mezcla un índice nuevo con un
+  mazo en caché. Nada más hay que tocar:
   la grilla de temáticas se dibuja sola a partir del registro.
 - El test del motor exige por carta `id` único, `year` numérico entre -4000 y 2026, `emoji` y los tres
   idiomas, y rechaza el apóstrofo recto en `pt` (se usa ’).
@@ -206,15 +206,15 @@ Bangers: ahí el 1 y el 7 son casi el mismo trazo y un 1917 se puede leer como 1
 ## 7. Archivos
 
 ```
-linea-de-tiempo/
+public/timeline/
   index.html · style.css · rules.js (LOCALES es/en/pt, config) · engine.js + engine.test.mjs · game.js
   decks/index.js · decks/<temática>.js
 ```
 
-Del lado compartido usa `assets/js/chat.js` (chat de sala) montado en `<div id="chat">`, hermano de `#handoff`,
-y `assets/css/linea.css` (la mano, la línea y el veredicto). Jugar solo usa además `copa/juegos/linea.js`
-(motor), `copa/juegos/ui-linea.js` (pantalla), `copa/juegos/solo.js` (reloj, guardado y récord) y
-`codigoAlAzar` de `copa/engine.js` (D-142).
+Del lado compartido usa `public/assets/js/chat.js` (chat de sala) montado en `<div id="chat">`, hermano de `#handoff`,
+y `public/assets/css/linea.css` (la mano, la línea y el veredicto). Jugar solo usa además `public/cup/games/timeline/engine.js`
+(motor), `public/cup/games/timeline/ui.js` (pantalla), `public/cup/games/solo.js` (reloj, guardado y récord) y
+`codigoAlAzar` de `public/cup/engine.js` (D-142).
 
 ## 8. Plan
 
@@ -239,7 +239,7 @@ y `assets/css/linea.css` (la mano, la línea y el veredicto). Jugar solo usa ade
 - Con el chat cerrado, cada mensaje nuevo se asoma 4,2 s en una etiqueta al lado de la burbuja (nombre y texto, dos líneas como máximo). Tocarla abre el chat; llega otro y manda el último.
 - Al reconectar se recupera la conversación desde la sala, sin sonido ni globito (los mensajes de los primeros 1,5 s se consideran historia).
 - El teclado del celular no achica la ventana: el panel se levanta con `visualViewport` y el campo usa 16 px para que iOS no haga zoom.
-- Prueba: `node tools/e2e/linea-de-tiempo-chat.mjs <carpeta>`.
+- Prueba: `node tools/e2e/timeline/chat.mjs <carpeta>`.
 
 ## 9. Variantes futuras
 Más temáticas (cine, deporte, ciencia, Chile), mazo musical con adelantos de audio del catálogo de

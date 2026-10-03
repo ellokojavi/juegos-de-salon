@@ -40,7 +40,7 @@ const ES = {
   guess: 'Probar', famas: 'famas', toques: 'toques', fama: 'fama', toque: 'toque', none: 'nada', famaShort: 'F', toqueShort: 'T',
   boardOf: 'Intentos de {name}', noGuesses: 'Aún sin intentos', tries: '{n} {word}', tryOne: 'intento', tryMany: 'intentos',
   replicaNotice: '¡{name} acertó! {other} tiene un último intento para empatar.',
-  // jugar solo = el minijuego de La Copa (D-142). Estas claves las lee también copa/juegos/ui-numero.js
+  // jugar solo = el minijuego de La Copa (D-142). Estas claves las lee también cup/games/number/ui.js
   soloHow: [
     'El número secreto tiene 4 cifras distintas y puede empezar con cero.',
     'Escribe un número y toca Probar para ver sus famas y sus toques.',

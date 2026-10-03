@@ -1,4 +1,4 @@
-// Tests de los reportes sin cuenta (D-104, D-109): node copa/reportes.test.mjs
+// Tests de los reportes sin cuenta (D-104, D-109): node public/cup/reportes.test.mjs
 import assert from 'node:assert/strict';
 import { enviarReporte, reenviarPendientes } from './reportes.js';
 

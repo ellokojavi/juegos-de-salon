@@ -1,6 +1,6 @@
 // El Ahorcado con tres celulares contra Firebase real: cadena, todos adivinando a la vez,
 // reconexión a mitad y revancha.
-import { launch, sleep } from './cdp.mjs';
+import { launch, sleep } from '../cdp.mjs';
 // Con varias sesiones a la vez, cada una sirve su copia en su puerto (D-135)
 const SITIO = process.env.SITIO || 'http://localhost:8765';
 const OUT = process.argv[2];
@@ -55,9 +55,9 @@ const playLetter = async (d, role, acierta = true) => {
   return pick;
 };
 
-for (const [i, k] of [[0, 'A'], [1, 'B'], [2, 'C']]) { await devs[k].go(hosts[i] + '/ahorcado/', 1800); await devs[k].evaluate(`localStorage.clear(); 1`); }
+for (const [i, k] of [[0, 'A'], [1, 'B'], [2, 'C']]) { await devs[k].go(hosts[i] + '/hangman/', 1800); await devs[k].evaluate(`localStorage.clear(); 1`); }
 // A crea la sala con cadena
-await A.go(hosts[0] + '/ahorcado/', 1500);
+await A.go(hosts[0] + '/hangman/', 1500);
 await A.evaluate(`document.querySelectorAll('.mode')[1].click(); 1`); await sleep(500);
 await setName(A, NOMBRE.A);
 await clickText(A, '#setup-form .seg--src button', 'Cadena|Chain|Corrente'); await sleep(150);
@@ -68,7 +68,7 @@ await A.shot('01-lobby-A');
 // B y C entran por el enlace
 for (const [i, k] of [[1, 'B'], [2, 'C']]) {
   const d = devs[k];
-  await d.go(`${hosts[i]}/ahorcado/?sala=${code}`, 2200);
+  await d.go(`${hosts[i]}/hangman/?sala=${code}`, 2200);
   await setName(d, NOMBRE[k]);
   await clickText(d, '#setup-actions .btn', 'Unirse|Join'); await sleep(4500);
   console.log(`${k} entró → pantalla:`, await d.active(), '| rol:', await d.evaluate(`window.__ahorcado.session().role`));
@@ -125,7 +125,7 @@ while (guard++ < 60) {
     recargado = true;
     await A.shot('05-mid-A');
     // C se cae y vuelve a mitad de partida
-    await C.go(`${hosts[2]}/ahorcado/?sala=${code}`, 6000);
+    await C.go(`${hosts[2]}/hangman/?sala=${code}`, 6000);
     console.log('C tras recargar:', await C.active(), '| rol:', await C.evaluate(`window.__ahorcado.session()?.role`), '|', JSON.stringify((await v(C)).st?.C));
     await C.shot('05-reconnect-C');
   }

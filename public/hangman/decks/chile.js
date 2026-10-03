@@ -2,7 +2,7 @@
  * Mazo Chile: lo que aparece en cualquier sobremesa chilena.
  * Formato: { id, emoji, es: { w, hint }, en: {...}, pt: {...} }.
  * Las palabras NO son traducciones: cada idioma elige la suya, porque una palabra
- * traducida cambia de largo y de dificultad (ver docs/juegos/ahorcado.md).
+ * traducida cambia de largo y de dificultad (ver docs/games/hangman.md).
  */
 export const CHILE = [
   { id: 'cl-cordillera', emoji: '🏔', es: { w: 'cordillera', hint: 'La pared de roca que tapa el este' }, en: { w: 'andes', hint: 'The mountain wall along Chile' }, pt: { w: 'cordilheira', hint: 'A parede de rocha a leste' } },

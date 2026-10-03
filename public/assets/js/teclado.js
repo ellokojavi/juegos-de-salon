@@ -1,7 +1,7 @@
 /**
  * El teclado de Toque y Fama, compartido (D-102).
  *
- * Salió de toque-y-fama/game.js para que La Copa use el mismo: las casillas de arriba, las
+ * Salió de bulls-and-cows/game.js para que La Copa use el mismo: las casillas de arriba, las
  * teclas, borrar y confirmar, y las **notas**: un toque largo sobre una tecla la tacha (🚫) y
  * deja de escribirse, para descartar cifras o letras que ya se sabe que no van. Un toque
  * normal sobre una tachada solo la sacude. Nada de esto sabe de las reglas del juego: qué es

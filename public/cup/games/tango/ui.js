@@ -10,7 +10,7 @@
  * revela una casilla y cuesta 15 puntos, también con segundo toque; y **consejos** para cuando
  * uno se queda atascado. Las jugadas son los índices tocados, 'C' (borrar todo) y { h } (pista).
  */
-import * as motor from './tango.js';
+import * as motor from './engine.js';
 
 const ICONO = { [motor.SOL]: '☀️', [motor.LUNA]: '🌙' };
 const CLASE = { [motor.SOL]: 'sol', [motor.LUNA]: 'luna' };

@@ -1,5 +1,5 @@
 // Línea de Tiempo con tres celulares contra Firebase real
-import { launch, sleep } from './cdp.mjs';
+import { launch, sleep } from '../cdp.mjs';
 // Con varias sesiones a la vez, cada una sirve su copia en su puerto (D-135)
 const SITIO = process.env.SITIO || 'http://localhost:8765';
 const OUT = process.argv[2];
@@ -22,9 +22,9 @@ const play = async (d, role) => {
   return click(d, '#place-row .btn');
 };
 
-for (const [i, [k, d]] of Object.entries(devs).entries()) { await d.go(hosts[i] + '/linea-de-tiempo/', 1800); await d.evaluate(`localStorage.clear(); 1`); }
+for (const [i, [k, d]] of Object.entries(devs).entries()) { await d.go(hosts[i] + '/timeline/', 1800); await d.evaluate(`localStorage.clear(); 1`); }
 // A crea la sala
-await A.go(hosts[0] + '/linea-de-tiempo/', 1500);
+await A.go(hosts[0] + '/timeline/', 1500);
 await A.evaluate(`document.querySelectorAll('.mode')[1].click(); 1`); await sleep(400);
 await setName(A, 'Javi');
 await clickText(A, '#setup-actions .btn', 'Crear'); await sleep(5000);
@@ -34,7 +34,7 @@ await A.shot('01-lobby-A');
 // B y C se unen por el enlace
 for (const [i, k] of [[1, 'B'], [2, 'C']]) {
   const d = devs[k];
-  await d.go(`${hosts[i]}/linea-de-tiempo/?sala=${code}`, 2000);
+  await d.go(`${hosts[i]}/timeline/?sala=${code}`, 2000);
   await setName(d, k === 'B' ? 'Cata' : 'Nico');
   await clickText(d, '#setup-actions .btn', 'Unirse'); await sleep(4500);
   console.log(`${k} entró → pantalla:`, await d.active(), '| rol:', await d.evaluate(`window.__ldt.session().role`));
@@ -62,7 +62,7 @@ while (guard++ < 24) {
     await A.shot('04-mid-A'); await B.shot('04-mid-B');
     console.log('título de la mano en B:', await B.evaluate(`document.getElementById('hand-title').textContent`));
     // reconexión de C a mitad de partida
-    await C.go(`${hosts[2]}/linea-de-tiempo/?sala=${code}`, 6000);
+    await C.go(`${hosts[2]}/timeline/?sala=${code}`, 6000);
     console.log('C tras recargar:', await C.active(), JSON.stringify(await v(C)), '| rol:', await C.evaluate(`window.__ldt.session()?.role`));
     await C.shot('04-reconnect-C');
   }

@@ -3,8 +3,8 @@
  * otros nueve se juegan desde la mano, en el orden que el jugador quiera, igual que en el modo
  * solo de Línea de Tiempo. Un error deja la carta en su lugar, marcada, y se sigue.
  */
-import { azar } from './semilla.js';
-import { cartas, temasDeLaCopa, mazo } from './mazos.js';
+import { azar } from '../semilla.js';
+import { cartas, temasDeLaCopa, mazo } from '../mazos.js';
 
 export const CARTAS = 10;
 

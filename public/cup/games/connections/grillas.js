@@ -9,7 +9,7 @@
  * roja", "esconden un animal", "empiezan con una nota"): eso resultó demasiado difícil.
  * Temas generales, no solo chilenos: una grilla de comunas de Santiago se resolvía de memoria.
  *
- * Las reglas del test (copa/juegos/juegos.test.mjs):
+ * Las reglas del test (cup/games/juegos.test.mjs):
  * - 16 palabras distintas por grilla, en mayúsculas y de 14 caracteres como mucho.
  * - Cada palabra es del suyo sin discusión cuando se mira la grilla entera: el distractor
  *   calza en otro grupo, pero ese grupo ya tiene sus cuatro sin él.

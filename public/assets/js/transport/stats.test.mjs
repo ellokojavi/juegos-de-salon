@@ -1,4 +1,4 @@
-// Ejecutar: node assets/js/transport/stats.test.mjs
+// Ejecutar: node public/assets/js/transport/stats.test.mjs
 import assert from 'node:assert/strict';
 import {
   envOf, versionOf, tzKey, langKey, fingerprint, startChanges, roomRecord, dayPath,
@@ -16,10 +16,10 @@ function fakeApi({ fail = false } = {}) {
 }
 
 // Entorno según la URL
-assert.equal(envOf({ hostname: 'localhost', pathname: '/toque-y-fama/' }), 'dev');
+assert.equal(envOf({ hostname: 'localhost', pathname: '/bulls-and-cows/' }), 'dev');
 assert.equal(envOf({ hostname: '127.0.0.1' }), 'dev');
-assert.equal(envOf({ hostname: 'ellokojavi.github.io', pathname: '/juegos-de-salon/linea-de-tiempo/' }), 'prod');
-assert.equal(envOf({ hostname: 'ellokojavi.github.io', pathname: '/juegos-de-salon/toque-y-fama/' }), 'prod');
+assert.equal(envOf({ hostname: 'ellokojavi.github.io', pathname: '/juegos-de-salon/timeline/' }), 'prod');
+assert.equal(envOf({ hostname: 'ellokojavi.github.io', pathname: '/juegos-de-salon/bulls-and-cows/' }), 'prod');
 assert.equal(envOf({}), 'prod');
 // Tailscale y la red de la casa también son pruebas (D-138)
 assert.equal(envOf({ hostname: 'mac-mini.tail1234.ts.net' }), 'dev');

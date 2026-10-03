@@ -1,13 +1,13 @@
 ---
-name: video-promo
+name: promo-video
 description: El video promocional de Juegos de Salón (y cualquier asset de marketing). Úsalo siempre que se trabaje en el video, sea una versión nueva, un cambio a la existente, sus textos para YouTube, su música o un video nuevo desde cero, antes de tocar nada. Trae la memoria completa del video, lo que el dueño ya pidió, cómo se rehace y cómo dejar anotada la vuelta.
 ---
 
 # Video promocional
 
-El video y su memoria viven en `marketing/video-promo/` (D-178).
+El video y su memoria viven en `marketing/promo-video/` (D-178).
 
-1. **Lee entero `marketing/video-promo/README.md` antes de proponer o tocar nada.** Ahí está lo
+1. **Lee entero `marketing/promo-video/README.md` antes de proponer o tocar nada.** Ahí está lo
    que el dueño quiere (sus pedidos de cada versión), el guion actual, cómo está hecho, la
    canción, las trampas conocidas y la historia. Lee también `marketing/README.md` (las reglas
    de los assets) y `marketing/registro.json`. Un video nuevo desde cero parte igual: lo que el

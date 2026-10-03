@@ -32,7 +32,7 @@ cualquier cosa, sea una partida o un minijuego, y no se pueden partir por juego.
 No usa señales aparte: lee `torneos/` tal como lo guarda la copa (el dueño ya podía leerlo en las
 reglas). El calendario de cada copa dice qué minijuego tocó cada día, y cada resultado trae su
 puntaje (0 a 100), su tiempo y su hora. Las cuentas de la copa (qué día va, la tabla) salen del
-motor de la copa, `copa/engine.js`; el panel no las repite.
+motor de la copa, `public/cup/engine.js`; el panel no las repite.
 
 - **Jugando ahora:** tocó Empezar hace menos de media hora y todavía no hay resultado. Mira todos
   los días abiertos, porque el de ayer se puede jugar hasta el fin de hoy.
@@ -91,7 +91,7 @@ las cifras reales. `lab` quedó solo para leer lo que se guardó mientras existi
 **Qué cuenta cada cifra** (D-138):
 
 - **Jugadas** son los mensajes de sala que hizo una persona: un disparo, un intento, una apuesta.
-  Cada juego los declara en `jugadas` de `assets/js/games.js`. No cuentan las respuestas
+  Cada juego los declara en `jugadas` de `public/assets/js/games.js`. No cuentan las respuestas
   automáticas (`reply`), el anti-trampa (`commit`, `reveal`), las entradas (`hello`), la revancha
   ni el chat. Un juego que no declara `jugadas` cuenta todo menos entradas y chat.
 - **Mensajes de chat**: solo cuántos. El panel nunca muestra qué dicen.
@@ -111,7 +111,7 @@ de esconderlas: si una sala real no alcanzó a registrarse, tiene que poder vers
 
 ## Qué se registra y qué no
 
-Sale del celular, por día y por entorno (`assets/js/transport/stats.js`):
+Sale del celular, por día y por entorno (`public/assets/js/transport/stats.js`):
 
 - **Dos celulares:** `rooms/<CÓDIGO>` con juego, hora del servidor, versión de la app, los
   nombres de quienes entraron (`players/A..F`), el país de cada celular (`co/A..F`, dos
@@ -147,7 +147,7 @@ más nueva a la más vieja y paginada de a 20:
 ## Los rangos (D-80)
 
 El selector de arriba manda en toda la página, incluida la bitácora: **7, 30, 60 y 90 días, 1
-año y lo que va del año** (desde el 1 de enero). La lista vive en `panel/aggregate.js`, así que
+año y lo que va del año** (desde el 1 de enero). La lista vive en `public/panel/aggregate.js`, así que
 agregar un rango es sumar una línea.
 
 - **Se baja lo que el rango pide, y nunca menos de lo ya bajado.** Mirar la semana no descarga
@@ -191,20 +191,20 @@ de eso, un `401` en ese `fetch` es una señal de que las reglas y el código se 
 ## Archivos
 
 ```
-panel/
+public/panel/
   index.html          Pantalla de entrada y el panel. Solo en español (ver abajo)
   style.css           Lo específico del panel; el resto sale de base.css
   panel.js            Entrada con Google, lecturas en vivo y dibujo
   aggregate.js        Agregación pura (sin DOM ni Firebase)
-  aggregate.test.mjs  node panel/aggregate.test.mjs
+  aggregate.test.mjs  node public/panel/aggregate.test.mjs
   copas.js            La Copa: copas en curso, cifras del rango y bitácora (puro, sobre el motor de la copa)
-  copas.test.mjs      node panel/copas.test.mjs
-  adapta.test.mjs     node panel/adapta.test.mjs — que el panel se entere solo (C-16)
-assets/js/transport/
+  copas.test.mjs      node public/panel/copas.test.mjs
+  adapta.test.mjs     node public/panel/adapta.test.mjs — que el panel se entere solo (C-16)
+public/assets/js/transport/
   stats.js            Registro desde los juegos y el transporte, por REST
-  stats.test.mjs      node assets/js/transport/stats.test.mjs
+  stats.test.mjs      node public/assets/js/transport/stats.test.mjs
   dispose.js          Despedida de una sala: lo que hace que una cancelada no se vea viva
-  dispose.test.mjs    node assets/js/transport/dispose.test.mjs
+  dispose.test.mjs    node public/assets/js/transport/dispose.test.mjs
 ```
 
 `window.__panel.seed({ rooms, days, torneos, vista })` dibuja el panel con datos sembrados sin
@@ -215,7 +215,7 @@ con el motor de verdad y abre esa vista.
 ## Cuando entra un juego, un modo o un idioma nuevo
 
 **No hay que tocar el panel** (canon C-16, D-73). Esta página no tiene listas propias: los
-juegos y los modos los lee de `assets/js/games.js`, los entornos de `transport/stats.js` y los
+juegos y los modos los lee de `public/assets/js/games.js`, los entornos de `transport/stats.js` y los
 idiomas de `i18n.js`. Un juego nuevo aparece con su emoji y su nombre apenas manda su primera
 señal; un modo nuevo es una línea en `MODES` de `games.js` y entra con su ícono, su color y su
 lugar en la leyenda.
@@ -227,7 +227,7 @@ panel, y porque lo de un juego que ya se fue del menú queda guardado igual.
 
 - Para verlo: `node tools/e2e/mirar.mjs panel datos`, que siembra el panel con un juego, un
   modo y un idioma que no existen en el registro.
-- Para que no se rompa: `node panel/adapta.test.mjs`, que falla si vuelve a aparecer una lista
+- Para que no se rompa: `node public/panel/adapta.test.mjs`, que falla si vuelve a aparecer una lista
   copiada en el panel o una enumeración en las reglas de la base.
 - El tope de jugadores por partida sale de `MAX_PLAYERS`, derivado del juego más numeroso. Los
   roles de sala (`A`–`F`) siguen topando en seis: un juego de más de seis en dos celulares

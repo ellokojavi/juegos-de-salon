@@ -1,7 +1,7 @@
 // Cuarto Rey de punta a punta: mazo completo hasta el cuarto rey, botón de sonido
 // y el idioma inglés. Las tomas llevan el nombre de las capturas del README
-// (docs/capturas.json), así `python3 tools/readme.py capturas cuarto-rey` las rehace.
-import { launch, sleep } from './cdp.mjs';
+// (docs/capturas.json), así `python3 tools/release/readme.py capturas cuarto-rey` las rehace.
+import { launch, sleep } from '../cdp.mjs';
 const OUT = process.argv[2];
 const b = await launch({ port: 9341, dir: `${OUT}/p`, out: OUT });
 const ev = e => b.evaluate(e);
@@ -23,7 +23,7 @@ await ev(`document.querySelector('.sound-toggle').click(); 1`);
 console.log('after toggle:', await ev(`document.querySelector('.sound-toggle').textContent + ' muted=' + localStorage.getItem('juegos-de-salon:muted')`));
 await ev(`document.querySelector('.sound-toggle').click(); 1`);
 
-await b.go(`${SITIO}/cuarto-rey/`);
+await b.go(`${SITIO}/fourth-king/`);
 console.log('game sound btn:', await ev(`document.querySelector('.sound-toggle')?.textContent`), 'audio ctx ok:', await ev(`typeof AudioContext`));
 await toma('02-intro');
 await jugar(['Javi', 'Cata', 'Pancho', 'Fran'], '04-mesa');
@@ -75,7 +75,7 @@ await b.go(`${SITIO}/`); await ev(`localStorage.removeItem('juegos-de-salon:cuar
 await ev(`[...document.querySelectorAll('.lang-toggle button')].find(x=>/EN/.test(x.textContent)).click(); 1`); await sleep(1200);
 console.log('menú en inglés:', await ev(`document.querySelector('.game-card')?.innerText.replace(/\\n/g,' | ')`));
 await toma('11-menu-en');
-await b.go(`${SITIO}/cuarto-rey/`);
+await b.go(`${SITIO}/fourth-king/`);
 await jugar(['Javi', 'Cata', 'Pancho', 'Fran'], '12-mesa-en');
 console.log('mesa en inglés:', await ev(`[...document.querySelectorAll('#screen-play .deck-count, #screen-play .tap')].map(x=>x.textContent.trim()).join(' | ')`));
 

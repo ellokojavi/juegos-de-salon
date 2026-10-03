@@ -1,4 +1,4 @@
-import { launch, sleep } from './cdp.mjs';
+import { launch, sleep } from '../cdp.mjs';
 // Con varias sesiones a la vez, cada una sirve su copia en su puerto (D-135)
 const SITIO = process.env.SITIO || 'http://localhost:8765';
 const OUT = process.argv[2];
@@ -6,7 +6,7 @@ const OUT = process.argv[2];
 const measure = `(sel)=>{const out=[];for(const g of document.querySelectorAll(sel+' .grid')){const lbls=[...g.querySelectorAll('.lbl')].slice(11);let maxDelta=0;for(let r=0;r<10;r++){const l=lbls[r].getBoundingClientRect();const c=g.querySelector('.cell[data-r="'+r+'"][data-c="0"]').getBoundingClientRect();const d=Math.abs((l.top+l.bottom)/2-(c.top+c.bottom)/2);maxDelta=Math.max(maxDelta,d);}out.push({maxDeltaPx:Math.round(maxDelta*10)/10, cell:Math.round(g.querySelector('.cell').getBoundingClientRect().height)});}return JSON.stringify(out)}`;
 for (const [w, h, tag] of [[375, 812, 'iphone'], [320, 568, 'se'], [430, 932, 'promax']]) {
   const b = await launch({ port: 9460, dir: `${OUT}/p-${tag}`, out: OUT, width: w, height: h });
-  await b.go(`${SITIO}/batalla-naval/`); await b.evaluate(`localStorage.clear(); 1`); await b.go(`${SITIO}/batalla-naval/`);
+  await b.go(`${SITIO}/battleship/`); await b.evaluate(`localStorage.clear(); 1`); await b.go(`${SITIO}/battleship/`);
   await b.evaluate(`document.querySelectorAll('.mode')[2].click(); 1`); await sleep(300);
   await b.evaluate(`(()=>{document.querySelector('#setup-form input').value='Javi';return 1})()`);
   await b.evaluate(`document.querySelector('#setup-actions .btn').click(); 1`); await sleep(400);

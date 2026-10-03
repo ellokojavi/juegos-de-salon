@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 """
-Ejecutar: python3 tools/readme.test.py
+Ejecutar: python3 tools/release/readme.test.py
 
-Prueba la parte de `tools/readme.py` que decide si un cambio cuenta o no: el estampado de
+Prueba la parte de `tools/release/readme.py` que decide si un cambio cuenta o no: el estampado de
 versión toca los seis `index.html` en cada publicación (C-11) y no cambia ninguna pantalla,
 así que no puede envejecer las capturas (D-51).
 """
 import importlib.util, pathlib, sys
 
-RAIZ = pathlib.Path(__file__).resolve().parent.parent
-spec = importlib.util.spec_from_file_location('readme', RAIZ / 'tools/readme.py')
+RAIZ = pathlib.Path(__file__).resolve().parents[2]
+spec = importlib.util.spec_from_file_location('readme', RAIZ / 'tools/release/readme.py')
 readme = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(readme)
 

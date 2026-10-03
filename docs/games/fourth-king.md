@@ -1,6 +1,6 @@
 # Especificación: Cuarto Rey 👑
 
-**Ruta:** `/cuarto-rey/` · **Jugadores:** 4 a 6 · **Versión:** 0.27 · **Idiomas:** es, en, pt (“Quarto Rei”)
+**Ruta:** `/fourth-king/` · **Jugadores:** 4 a 6 · **Versión:** 0.27 · **Idiomas:** es, en, pt (“Quarto Rei”)
 
 ## Origen
 Juego de naipes para tomar, popular en Chile. Reglas base según instrucciones entregadas por el cliente (ver abajo). El celular reemplaza al mazo (D-12).

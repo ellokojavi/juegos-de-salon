@@ -1,4 +1,4 @@
-// Ejecutar: node panel/aggregate.test.mjs
+// Ejecutar: node public/panel/aggregate.test.mjs
 import assert from 'node:assert/strict';
 import { MODE_IDS } from '../assets/js/games.js';
 import { DAY, roomLog, paginate, flagOf, whenLabel, RANGOS, rangeOf, groupDays, periodLabel, ROOM_TTL, liveRooms, esJugada, connections, summarize, top, tzLabel, ago, dayLabel, codesOfDays, splitByEnv, liveLocal, VIVA_SIN_RED_MS } from './aggregate.js';

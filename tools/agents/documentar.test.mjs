@@ -1,5 +1,5 @@
 // Las comprobaciones y la memoria del agente de documentación (D-172).
-// Uso: node tools/documentar.test.mjs
+// Uso: node tools/agents/documentar.test.mjs
 import assert from 'node:assert/strict';
 import { decisionesEscritas, decisionesCitadas, sinMencionar, changelogTiene, versionDe, memoriaNueva, anotarRonda, separar, rango } from './documentar.mjs';
 
@@ -17,11 +17,11 @@ caso('las decisiones citadas, sin confundir otras siglas', () => {
 });
 
 caso('lo que un texto no menciona, por ruta o por nombre', () => {
-  const claude = 'node copa/engine.test.mjs\nnode panel/adapta.test.mjs';
-  assert.deepEqual(sinMencionar(['copa/engine.test.mjs', 'tools/nuevo.test.mjs'], claude), ['tools/nuevo.test.mjs']);
+  const claude = 'node public/cup/engine.test.mjs\nnode public/panel/adapta.test.mjs';
+  assert.deepEqual(sinMencionar(['public/cup/engine.test.mjs', 'tools/nuevo.test.mjs'], claude), ['tools/nuevo.test.mjs']);
   // tools/e2e/README.md nombra los guiones sin la carpeta
-  assert.deepEqual(sinMencionar(['tools/e2e/copa.mjs'], '`node tools/e2e/copa.mjs <salida>`'), []);
-  assert.deepEqual(sinMencionar(['tools/e2e/copa.mjs'], 'el guion copa.mjs'), []);
+  assert.deepEqual(sinMencionar(['tools/e2e/cup/torneo.mjs'], '`node tools/e2e/cup/torneo.mjs <salida>`'), []);
+  assert.deepEqual(sinMencionar(['tools/e2e/cup/torneo.mjs'], 'el guion cup/torneo.mjs'), []);
 });
 
 caso('la versión estampada y su entrada en el CHANGELOG', () => {

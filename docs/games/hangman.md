@@ -1,6 +1,6 @@
 # Diseño: El Ahorcado 🪢
 
-**Estado:** implementado (v0.26, los tres modos) · **Fecha:** 2026-09-12 · **Ruta:** `/ahorcado/` · **Jugadores:** 1 a 6 · **Idiomas:** es, en (“Hangman”), pt (“Forca”)
+**Estado:** implementado (v0.26, los tres modos) · **Fecha:** 2026-09-12 · **Ruta:** `/hangman/` · **Jugadores:** 1 a 6 · **Idiomas:** es, en (“Hangman”), pt (“Forca”)
 
 ## 1. Resumen
 
@@ -59,7 +59,7 @@ Chile 🇨🇱 · Animales 🐾 · Comida 🍕 · Cine y series 🎬 · Deportes
 Cada carta es una entrada con palabra y pista en los tres idiomas, como las cartas de Línea de
 Tiempo. **No son traducciones**: cada idioma tiene su propia palabra para esa carta, porque una
 palabra traducida cambia de largo y de dificultad. Las tres listas tienen el mismo largo y las
-mismas claves, y lo verifica `assets/js/i18n.test.mjs` (C-3). Palabras de 4 a 12 letras, sin
+mismas claves, y lo verifica `public/assets/js/i18n.test.mjs` (C-3). Palabras de 4 a 12 letras, sin
 nombres propios salvo en Cine y series.
 
 ## 3. Modos
@@ -203,7 +203,7 @@ medias” con Continuar y Borrar.
 ## 9. Archivos
 
 ```
-ahorcado/
+public/hangman/
   index.html       Pantallas, barra superior, #handoff, #cover, #chat
   style.css        El dibujo, el teclado, la tira de rivales
   rules.js         GAME_ID, DEFAULT_CONFIG, LOCALES = { es, en, pt }
@@ -214,8 +214,8 @@ ahorcado/
   game.js          Máquina de estados y render
 ```
 
-Registro en `assets/js/games.js` (`players: '1–6'`, `duration: '5–12'`) y en `MODULES` de
-`tools/set-version.py` (C-11). Gancho `window.__ahorcado` para las pruebas (C-14) y
+Registro en `public/assets/js/games.js` (`players: '1–6'`, `duration: '5–12'`); sus módulos entran solos al
+import map (C-11, D-190). Gancho `window.__ahorcado` para las pruebas (C-14) y
 `trackStart({ game: 'ahorcado', mode, players })` en los modos sin red (D-44).
 
 ## 10. Decisiones que deja este juego

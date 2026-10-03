@@ -1,5 +1,5 @@
 // Chat de sala en Toque y Fama: dos celulares contra Firebase real (canon C-15)
-import { launch, sleep } from './cdp.mjs';
+import { launch, sleep } from '../cdp.mjs';
 // Con varias sesiones a la vez, cada una sirve su copia en su puerto (D-135)
 const SITIO = process.env.SITIO || 'http://localhost:8765';
 const OUT = process.argv[2];
@@ -20,26 +20,26 @@ const say = async (d, text) => {
 };
 const close = d => d.evaluate(`document.querySelector('.chat-x')?.click(); 1`);
 
-await A.go(hosts[0] + '/toque-y-fama/', 1500); await A.evaluate(`localStorage.clear(); 1`);
-await B.go(hosts[1] + '/toque-y-fama/', 1500); await B.evaluate(`localStorage.clear(); 1`);
+await A.go(hosts[0] + '/bulls-and-cows/', 1500); await A.evaluate(`localStorage.clear(); 1`);
+await B.go(hosts[1] + '/bulls-and-cows/', 1500); await B.evaluate(`localStorage.clear(); 1`);
 
 // --- un celular: no debe haber chat ---
-await A.go(hosts[0] + '/toque-y-fama/', 1500);
+await A.go(hosts[0] + '/bulls-and-cows/', 1500);
 await A.evaluate(`document.querySelectorAll('.mode')[0].click(); 1`); await sleep(400);
 await A.evaluate(`(()=>{const xs=document.querySelectorAll('#setup-form input');xs[0].value='Javi';xs[1].value='Cata';return 1})()`);
 await A.evaluate(`document.querySelector('#setup-actions .btn').click(); 1`); await sleep(900);
 console.log('un celular → chat montado:', (await chat(A)).montado, '(debe ser false)');
 
 // --- sala ---
-await A.go(hosts[0] + '/toque-y-fama/', 1500); await A.evaluate(`localStorage.clear(); 1`);
-await A.go(hosts[0] + '/toque-y-fama/', 1500);
+await A.go(hosts[0] + '/bulls-and-cows/', 1500); await A.evaluate(`localStorage.clear(); 1`);
+await A.go(hosts[0] + '/bulls-and-cows/', 1500);
 await A.evaluate(`document.querySelectorAll('.mode')[1].click(); 1`); await sleep(400);
 await A.evaluate(`(()=>{document.querySelector('#setup-form input').value='Javi';return 1})()`);
 await A.evaluate(`document.querySelectorAll('#setup-actions .btn')[0].click(); 1`); await sleep(4500);
 const code = await A.evaluate(`document.querySelector('.code-big')?.textContent`);
 console.log('sala:', code, '| chat en la sala de espera:', JSON.stringify(await chat(A)));
 await A.shot('tyf-chat-01-lobby');
-await B.go(`${hosts[1]}/toque-y-fama/?sala=${code}`, 2000);
+await B.go(`${hosts[1]}/bulls-and-cows/?sala=${code}`, 2000);
 await B.evaluate(`(()=>{document.querySelector('#setup-form input').value='Cata';return 1})()`);
 await B.evaluate(`[...document.querySelectorAll('#setup-actions .btn')].find(b=>/Unirse|Join/.test(b.textContent)).click(); 1`); await sleep(4500);
 console.log('B entró:', await B.active(), '| rol:', await B.evaluate(`__tyf.session().role`));

@@ -1,4 +1,4 @@
-// Ejecutar: node linea-de-tiempo/engine.test.mjs
+// Ejecutar: node public/timeline/engine.test.mjs
 import assert from 'node:assert/strict';
 import { rng, shuffleSeeded, deal, dealShared, isCorrect, correctSlot, buildState, yearLabel, timeLabel, MAX_MOVE_MS } from './engine.js';
 import { DECKS, getDeck } from './decks/index.js';

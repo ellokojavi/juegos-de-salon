@@ -6,9 +6,9 @@
  * Las jugadas son `{ i: intentos, n: cifras tachadas }`. Una lista suelta (copas guardadas
  * antes de las notas) se lee como los intentos.
  */
-import * as motor from './numero.js';
-import { teclado, CIFRAS } from '../../assets/js/teclado.js';
-import { LOCALES as TYF_LOCALES } from '../../toque-y-fama/rules.js';
+import * as motor from './engine.js';
+import { teclado, CIFRAS } from '../../../assets/js/teclado.js';
+import { LOCALES as TYF_LOCALES } from '../../../bulls-and-cows/rules.js';
 
 export const TYF = TYF_LOCALES.es;
 /** Los textos de Toque y Fama en el idioma de quien juega (D-170). */

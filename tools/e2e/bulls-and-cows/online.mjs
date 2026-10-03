@@ -1,12 +1,12 @@
 // Dos celulares: dos instancias de Chrome (orígenes distintos → localStorage separado) contra Firebase real.
-import { launch, sleep } from './cdp.mjs';
+import { launch, sleep } from '../cdp.mjs';
 // Con varias sesiones a la vez, cada una sirve su copia en su puerto (D-135)
 const SITIO = process.env.SITIO || 'http://localhost:8765';
 const OUT = process.argv[2];
 const A = await launch({ port: 9424, dir: `${OUT}/pA`, out: OUT });
 const B = await launch({ port: 9425, dir: `${OUT}/pB`, out: OUT });
-await A.go(`${SITIO}/toque-y-fama/`); await A.evaluate(`localStorage.clear(); 1`); await A.go(`${SITIO}/toque-y-fama/`);
-await B.go('http://127.0.0.1:8765/toque-y-fama/'); await B.evaluate(`localStorage.clear(); 1`); await B.go('http://127.0.0.1:8765/toque-y-fama/');
+await A.go(`${SITIO}/bulls-and-cows/`); await A.evaluate(`localStorage.clear(); 1`); await A.go(`${SITIO}/bulls-and-cows/`);
+await B.go('http://127.0.0.1:8765/bulls-and-cows/'); await B.evaluate(`localStorage.clear(); 1`); await B.go('http://127.0.0.1:8765/bulls-and-cows/');
 // A crea sala
 await A.evaluate(`document.querySelectorAll('.mode')[1].click(); 1`); await sleep(300); await A.shot('20-setup-online');
 await A.evaluate(`(()=>{document.querySelector('#setup-form input').value='Javi';return 1})()`);
@@ -14,7 +14,7 @@ await A.evaluate(`document.querySelectorAll('#setup-actions .btn')[0].click(); 1
 const code = await A.evaluate(`document.querySelector('.code-big')?.textContent`);
 console.log('sala creada:', code, 'screen A:', await A.active()); await A.shot('21-lobby-A');
 // B se une por URL con ?sala=
-await B.go(`http://127.0.0.1:8765/toque-y-fama/?sala=${code}`, 1500); await B.shot('22-join-B');
+await B.go(`http://127.0.0.1:8765/bulls-and-cows/?sala=${code}`, 1500); await B.shot('22-join-B');
 await B.evaluate(`(()=>{document.querySelector('#setup-form input').value='Cata';return 1})()`);
 await B.evaluate(`[...document.querySelectorAll('#setup-actions .btn')].find(b=>/Unirse|Join/.test(b.textContent)).click(); 1`); await sleep(4000);
 console.log('B screen:', await B.active(), 'A screen:', await A.active()); await A.shot('23-lobby-A-joined'); await B.shot('23-secret-B');
@@ -38,7 +38,7 @@ while (guard++ < 16) {
   if (guard === 2) {
     await A.shot('26-mid-A'); await B.shot('26-mid-B');
     // Reconexión a mitad de partida: A recarga y debe retomar con su secreto
-    await A.go(`${SITIO}/toque-y-fama/?sala=${code}`, 6000);
+    await A.go(`${SITIO}/bulls-and-cows/?sala=${code}`, 6000);
     console.log('A tras recargar a mitad:', await A.active(), JSON.stringify(await A.view()), 'secreto guardado:', await A.evaluate(`!!__tyf.session()?.secrets?.A`));
     await A.shot('26-reloaded-A');
   }

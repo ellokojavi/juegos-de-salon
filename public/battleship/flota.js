@@ -1,7 +1,7 @@
 /**
  * La flota y el agua, en pixel art (D-91).
  *
- * **Generado por `tools/flota.py`.** Para cambiar un barco se edita ese script y se vuelve a
+ * **Generado por `tools/generators/flota.py`.** Para cambiar un barco se edita ese script y se vuelve a
  * correr; lo que se escriba a mano acá se pierde en la próxima pasada.
  *
  * Cada casilla del tablero dibuja un trozo de 16×16 píxeles, visto desde arriba y con la proa

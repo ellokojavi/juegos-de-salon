@@ -1,10 +1,10 @@
-import { launch, sleep } from './cdp.mjs';
+import { launch, sleep } from '../cdp.mjs';
 const OUT = process.argv[2];
 // SITIO y PUERTO_CDP: otro servidor y otro Chrome, para no chocar con otra sesión que prueba en paralelo (D-135)
 const SITIO = process.env.SITIO || 'http://localhost:8765';
 const b = await launch({ port: Number(process.env.PUERTO_CDP) || 9380, dir: `${OUT}/profile`, out: OUT });
 await b.go(`${SITIO}/`); await b.evaluate(`localStorage.clear(); 1`); await b.go(`${SITIO}/`); await b.shot('00-menu');
-await b.go(`${SITIO}/toque-y-fama/`); await b.shot('01-intro');
+await b.go(`${SITIO}/bulls-and-cows/`); await b.shot('01-intro');
 // ---- MODO LOCAL: Javi 1234, Cata 5678 ----
 await b.evaluate(`document.querySelectorAll('.mode')[0].click(); 1`); await sleep(400); await b.shot('02-setup-local');
 await b.evaluate(`(()=>{const i=document.querySelectorAll('#setup-form input');i[0].value='Javi';i[1].value='Cata';return 1})()`);
@@ -30,10 +30,10 @@ console.log('local result:', await b.evaluate(`document.getElementById('result-t
 await b.evaluate(`document.querySelector('#result-actions .btn').click(); 1`); await sleep(600);
 console.log('rematch → screen:', await b.active(), 'phase:', (await b.view()).phase);
 // ---- JUGAR SOLO (D-142): el minijuego 🔢 de La Copa, 10 intentos y de 0 a 100 puntos ----
-const TYF = `${SITIO}/toque-y-fama/`;
+const TYF = `${SITIO}/bulls-and-cows/`;
 const numeros = [];
 for (const a of '0123456789') for (const c of '0123456789') for (const d of '0123456789') for (const e of '0123456789') { const n = a + c + d + e; if (new Set(n).size === 4) numeros.push(n); }
-const secretoDe = () => b.evaluate(`(async()=>{const m=await import('../copa/juegos/numero.js');return m.generar(__tyf.guardada().codigo,1).secreto})()`);
+const secretoDe = () => b.evaluate(`(async()=>{const m=await import('../cup/games/number/engine.js');return m.generar(__tyf.guardada().codigo,1).secreto})()`);
 const intentos = () => b.evaluate(`(__tyf.guardada()?.jugadas?.i||[]).length`);
 const fin = async () => { await b.evaluate(`document.getElementById('btn-fin').click(); 1`); await sleep(4200); }; // después del confeti, que tapa el récord
 const resumen = () => b.evaluate(`document.getElementById('solo-result').innerText.replace(/\\n+/g,' / ')`);

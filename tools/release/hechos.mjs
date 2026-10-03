@@ -1,13 +1,13 @@
 /**
  * Hoja de hechos de la app: lo que el README afirma, leído del código real.
  *
- *   node tools/hechos.mjs            imprime el JSON
+ *   node tools/release/hechos.mjs            imprime el JSON
  *
  * No inventa nada ni describe: solo junta los datos que el README cuenta
  * (juegos, modos, temáticas, idiomas, módulos, tests, documentos, capturas)
  * importando los módulos de verdad. De acá
  * salen los bloques generados del README y la comparación que hace
- * `tools/readme.py revisar` para avisar que un cambio dejó el texto viejo.
+ * `tools/release/readme.py revisar` para avisar que un cambio dejó el texto viejo.
  *
  * Regla de qué entra acá: un dato que, si cambia, obliga a mirar el README.
  * Los textos de ayuda y las bajadas quedan fuera a propósito: cambian seguido
@@ -17,7 +17,7 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
-const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..');
+const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const leer = r => readFileSync(join(RAIZ, r), 'utf8');
 const hay = r => { try { statSync(join(RAIZ, r)); return true; } catch { return false; } };
 
@@ -38,14 +38,14 @@ function archivos(dir = '', filtro = () => true) {
 
 // ------------------------------------------------------------------ juegos
 
-const { GAMES } = await import(join(RAIZ, 'assets/js/games.js'));
-const { DECKS } = await import(join(RAIZ, 'linea-de-tiempo/decks/index.js'));
-const { LANGS, COMMON } = await import(join(RAIZ, 'assets/js/i18n.js'));
-const { FRASES } = await import(join(RAIZ, 'assets/js/frases.js'));
+const { GAMES } = await import(join(RAIZ, 'public/assets/js/games.js'));
+const { DECKS } = await import(join(RAIZ, 'public/timeline/decks/index.js'));
+const { LANGS, COMMON } = await import(join(RAIZ, 'public/assets/js/i18n.js'));
+const { FRASES } = await import(join(RAIZ, 'public/assets/js/frases.js'));
 
 /** El estado publicado del juego, según la cabecera de su especificación. */
-function estado(id) {
-  const ruta = `docs/juegos/${id}.md`;
+function estado(g) {
+  const ruta = `docs/games/${carpeta(g)}.md`;
   if (!hay(ruta)) return null;
   const cabecera = leer(ruta).split('\n').slice(0, 6).join(' ');
   const m = cabecera.match(/\(v(\d+\.\d+)[^)]*\)/) || cabecera.match(/\*\*Versión:\*\*\s*(\d+\.\d+)/);
@@ -65,15 +65,18 @@ function variantes(L, EN) {
     .map(k => ({ clave: k, es: L[k], en: EN[k] || L[k] }));
 }
 
+/** La carpeta del juego, que es su URL y no su id (D-190): 'ahorcado' vive en public/hangman/. */
+const carpeta = g => g.path.replace(/\/$/, '');
+
 const juegos = [];
 for (const g of GAMES) {
-  const { LOCALES } = await import(join(RAIZ, g.id, 'rules.js'));
+  const { LOCALES } = await import(join(RAIZ, 'public', g.path, 'rules.js'));
   // Hay dos formas de escribir un rules.js: los textos sueltos (El Ahorcado) o dentro de `ui`
   // (Cuarto Rey, Dudo). Se miran las dos, o los modos de esos juegos no se ven desde acá.
   const es = { ...LOCALES.es, ...(LOCALES.es.ui || {}) };
   const EN = LOCALES.en || LOCALES.es; // La Copa va solo en español por ahora (D-98)
   const en = { ...EN, ...(EN.ui || {}) };
-  const html = leer(`${g.id}/index.html`);
+  const html = leer(`public/${g.path}index.html`);
   juegos.push({
     id: g.id,
     emoji: g.emoji,
@@ -82,12 +85,12 @@ for (const g of GAMES) {
     duracion: g.duration,
     disponible: g.available,
     labs: !!g.labs,
-    estado: estado(g.id),
+    estado: estado(g),
     modos: g.formato ? [{ clave: 'formato', es: g.formato.es, en: g.formato.en }] : modos(es, en),
     variantes: variantes(es, en),
     pantallas: [...html.matchAll(/id="screen-([a-z-]+)"/g)].map(m => m[1]),
     chat: /id="chat"/.test(html),
-    archivos: archivos(g.id, r => !r.endsWith('.test.mjs')),
+    archivos: archivos(`public/${carpeta(g)}`, r => !r.endsWith('.test.mjs')),
   });
 }
 
@@ -98,8 +101,8 @@ const tematicas = DECKS.map(d => ({
   id: d.id, emoji: d.emoji, nombre: d.name, pista: d.hint, cartas: d.cards.length, desde: anios(d.cards)[0], hasta: anios(d.cards)[1],
 }));
 
-const modulos = archivos('', r => r.endsWith('.js') && !r.startsWith('tools/') && !r.startsWith('marketing/') && !r.endsWith('.test.mjs'));
-const versionados = [...leer('tools/set-version.py').matchAll(/'([\w./-]+\.js)'/g)].map(m => m[1]);
+// Todos entran solos al import map (set-version.py, D-190): ya no hay "sin versionar" que vigilar
+const modulos = archivos('public', r => r.endsWith('.js'));
 const tests = archivos('', r => r.endsWith('.test.mjs'));
 const e2e = archivos('tools/e2e', r => r.endsWith('.mjs') && !r.endsWith('cdp.mjs')).map(r => r.replace('tools/e2e/', ''));
 
@@ -111,10 +114,10 @@ const documentos = [
   'firebase/README.md', 'tools/e2e/README.md', 'CHANGELOG.md',
 ].filter(hay).map(ruta => ({ ruta, titulo: titulo(ruta) }));
 
-const capturas = Object.fromEntries(GAMES.map(g => [g.id, archivos(`docs/screenshots/${g.id}`, r => r.endsWith('.png')).length]));
+const capturas = Object.fromEntries(GAMES.map(g => [g.id, archivos(`docs/screenshots/${carpeta(g)}`, r => r.endsWith('.png')).length]));
 
 console.log(JSON.stringify({
-  version: (leer('index.html').match(/v(\d+\.\d+\.\d+) ·/) || [, null])[1],
+  version: (leer('public/index.html').match(/v(\d+\.\d+\.\d+) ·/) || [, null])[1],
   app: Object.fromEntries(LANGS.map(l => [l, COMMON[l].appTitle])),
   idiomas: LANGS,
   frases: Object.fromEntries(LANGS.map(l => [l, FRASES[l].length])),
@@ -122,7 +125,6 @@ console.log(JSON.stringify({
   juegos,
   tematicas,
   modulos,
-  sinVersionar: modulos.filter(m => !versionados.includes(m)),
   tests,
   e2e,
   documentos,

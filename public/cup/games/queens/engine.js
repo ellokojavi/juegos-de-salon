@@ -3,7 +3,7 @@
  * zona de color, y dos reinas nunca se tocan, ni en diagonal. La solución es única: el
  * generador rehace las zonas hasta que el resolvedor encuentra una sola.
  */
-import { azar } from './semilla.js';
+import { azar } from '../semilla.js';
 
 export const VACIO = 0, MARCA = 1, REINA = 2;
 

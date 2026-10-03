@@ -1,7 +1,7 @@
 // Chat de sala en Batalla Naval: dos celulares contra Firebase real (canon C-15, D-138)
-// Uso: SITIO=http://localhost:87xx PUERTO_CDP=94xx node tools/e2e/batalla-naval-chat.mjs <salida>
+// Uso: SITIO=http://localhost:87xx PUERTO_CDP=94xx node tools/e2e/battleship/chat.mjs <salida>
 // Usa PUERTO_CDP y el siguiente, uno por celular (D-135).
-import { launch, sleep } from './cdp.mjs';
+import { launch, sleep } from '../cdp.mjs';
 const OUT = process.argv[2];
 const SITIO = process.env.SITIO || 'http://localhost:8765';
 // Dos orígenes distintos para que cada celular tenga su propio localStorage
@@ -30,10 +30,10 @@ const close = d => d.evaluate(`document.querySelector('.chat-x')?.click(); 1`);
 const tapa = d => d.evaluate(`(()=>{const f=document.querySelector('.chat-fab');if(!f||f.offsetParent===null)return '[]';const a=f.getBoundingClientRect();window.scrollTo(0,document.body.scrollHeight);const b=f.getBoundingClientRect();
   const hits=[...document.querySelectorAll('.screen.active button, .screen.active a.btn')].filter(x=>{const r=x.getBoundingClientRect();return r.width&&!(r.right<b.left||r.left>b.right||r.bottom<b.top||r.top>b.bottom)}).map(x=>x.textContent.trim().slice(0,30));window.scrollTo(0,0);return JSON.stringify(hits)})()`).then(JSON.parse);
 
-for (const [d, h] of [[A, hosts[0]], [B, hosts[1]]]) { await d.go(h + '/batalla-naval/', 1500); await d.evaluate(`localStorage.clear(); 1`); }
+for (const [d, h] of [[A, hosts[0]], [B, hosts[1]]]) { await d.go(h + '/battleship/', 1500); await d.evaluate(`localStorage.clear(); 1`); }
 
 // --- un celular: no hay chat ---
-await A.go(hosts[0] + '/batalla-naval/', 1500);
+await A.go(hosts[0] + '/battleship/', 1500);
 await A.evaluate(`document.querySelectorAll('.mode')[0].click(); 1`); await sleep(400);
 await A.evaluate(`(()=>{const xs=document.querySelectorAll('#setup-form input');xs[0].value='Javi';xs[1].value='Cata';return 1})()`);
 await clickText(A, '#setup-actions .btn', 'jugar'); await sleep(900);
@@ -41,14 +41,14 @@ console.log('un celular → chat montado:', (await chat(A)).montado, '(debe ser 
 await A.evaluate(`localStorage.clear(); 1`);
 
 // --- sala ---
-await A.go(hosts[0] + '/batalla-naval/', 1500);
+await A.go(hosts[0] + '/battleship/', 1500);
 await A.evaluate(`document.querySelectorAll('.mode')[1].click(); 1`); await sleep(300);
 await A.evaluate(`(()=>{document.querySelector('#setup-form input').value='Javi';return 1})()`);
 await clickText(A, '#setup-actions .btn', 'Crear'); await sleep(4500);
 const code = await A.evaluate(`document.querySelector('.code-big')?.textContent`);
 console.log('sala:', code, '| chat en la sala de espera:', JSON.stringify(await chat(A)), '| tapa:', JSON.stringify(await tapa(A)));
 await A.shot('bn-chat-01-lobby');
-await B.go(`${hosts[1]}/batalla-naval/?sala=${code}`, 1800);
+await B.go(`${hosts[1]}/battleship/?sala=${code}`, 1800);
 await B.evaluate(`(()=>{document.querySelector('#setup-form input').value='Cata';return 1})()`);
 await clickText(B, '#setup-actions .btn', 'Unirse'); await sleep(4500);
 console.log('B entró:', await B.active());
@@ -80,7 +80,7 @@ await A.shot('bn-chat-03-batalla');
 await close(B);
 
 // --- recarga: el chat vuelve desde la sala, sin globito ---
-await A.go(`${hosts[0]}/batalla-naval/?sala=${code}`, 6000);
+await A.go(`${hosts[0]}/battleship/?sala=${code}`, 6000);
 const cR = await chat(A);
 console.log('A tras recargar → mensajes:', cR.mensajes.length, '(debe ser 2) | no leídos:', cR.noLeidos, '(debe ser 0)');
 

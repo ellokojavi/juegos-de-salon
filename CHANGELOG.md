@@ -988,7 +988,7 @@
   por celda. Contra quien lee patrones —que es lo que hace una persona después de un par de
   partidas— el farol vale +4,4 puntos; contra quien solo calcula cuesta 3,6. Quedó en 0,7 y no en 1
   porque con la perilla al tope **nunca** cantaría su pinta más fuerte, que es un patrón tan legible
-  como cantarla siempre. Todo anotado en [docs/juegos/dudo.md](docs/juegos/dudo.md).
+  como cantarla siempre. Todo anotado en [docs/juegos/dudo.md](docs/games/liars-dice.md).
 - **Los títulos del README llevan los dos nombres**: `👑 Fourth King (Cuarto Rey)`. Primero el
   inglés, que es por lo que alguien de afuera busca el juego; entre paréntesis, el nombre de verdad,
   que es el que va a ver en la pantalla de la app.

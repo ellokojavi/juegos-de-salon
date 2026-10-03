@@ -1,6 +1,6 @@
 /**
  * Dudo — datos y textos en español, inglés y portugués.
- * Solo datos, sin lógica. Ver docs/juegos/dudo.md.
+ * Solo datos, sin lógica. Ver docs/games/liars-dice.md.
  */
 
 export const GAME_ID = 'dudo';

@@ -2,9 +2,9 @@
  * Las cartas de Línea de Tiempo que usan ⏳ Línea Relámpago, 📅 ¿En qué año? y la final.
  *
  * Cada copa elige de entrada dos temáticas distintas: una para la línea y otra para los años,
- * así un día de historia no se repite con el otro (ver la revisión en docs/juegos/copa.md).
+ * así un día de historia no se repite con el otro (ver la revisión en docs/games/cup.md).
  */
-import { DECKS as TODOS } from '../../linea-de-tiempo/decks/index.js';
+import { DECKS as TODOS } from '../../timeline/decks/index.js';
 import { azar } from './semilla.js';
 import { fuera as fueraPara } from './audiencia.js';
 

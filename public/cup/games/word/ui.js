@@ -5,9 +5,9 @@
  *
  * Las jugadas son `{ i: intentos, n: letras tachadas }`.
  */
-import * as motor from './letras.js';
-import { teclado } from '../../assets/js/teclado.js';
-import { tyf, tablero, leerJugadas } from './ui-numero.js';
+import * as motor from './engine.js';
+import { teclado } from '../../../assets/js/teclado.js';
+import { tyf, tablero, leerJugadas } from '../number/ui.js';
 
 export function montar(raiz, ctx) {
   const { p, T, fmt, el, SFX, vibrate } = ctx;

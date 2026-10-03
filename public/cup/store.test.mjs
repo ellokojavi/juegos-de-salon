@@ -1,4 +1,4 @@
-// Tests del almacén de prueba de La Copa (las reglas que imita): node copa/store.test.mjs
+// Tests del almacén de prueba de La Copa (las reglas que imita): node public/cup/store.test.mjs
 import assert from 'node:assert/strict';
 
 const memoria = () => {

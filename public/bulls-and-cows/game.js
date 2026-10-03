@@ -6,7 +6,7 @@
  * Cada dispositivo calcula automáticamente las respuestas para los intentos contra SU secreto.
  *
  * Jugar solo no pasa por el reductor: es el minijuego 🔢 de La Copa (D-142), con sus 10 intentos,
- * su puntaje de 0 a 100 y su reloj (copa/juegos/ui-numero.js montado con copa/juegos/solo.js).
+ * su puntaje de 0 a 100 y su reloj (cup/games/number/ui.js montado con cup/games/solo.js).
  */
 import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../assets/js/ui.js';
 import { botonInvitar, botonResultadoSolo } from '../assets/js/compartir.js';
@@ -21,10 +21,10 @@ import { teclado, CIFRAS } from '../assets/js/teclado.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
 import { trackStart } from '../assets/js/transport/stats.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
-import { codigoAlAzar } from '../copa/engine.js';
-import * as numero from '../copa/juegos/numero.js';
-import * as uiNumero from '../copa/juegos/ui-numero.js';
-import { jugarSolo, crearRecord, mmss } from '../copa/juegos/solo.js';
+import { codigoAlAzar } from '../cup/engine.js';
+import * as numero from '../cup/games/number/engine.js';
+import * as uiNumero from '../cup/games/number/ui.js';
+import { jugarSolo, crearRecord, mmss } from '../cup/games/solo.js';
 
 const lang = getLang();
 const T = LOCALES[lang];
@@ -684,7 +684,7 @@ function soloFin(codigo, p, { s, t, ms, estado }) {
       uiNumero.tablero(el, { filas: estado.filas, largo: p.cifras, titulo: T.yourGuesses, lang, valor: f => el('span', { class: 'val' }, f.v) })),
     el('div', { class: 'stack', id: 'solo-actions' },
       // El mismo resultado que el minijuego de La Copa, con su imagen (D-165)
-      botonResultadoSolo({ C: COMMON[lang], emoji: gameById(GAME_ID)?.emoji || '🔢', juego: T.title, puntaje: `${s}/100`, tiempo: mmss(ms), tarjeta: t, url: withLang(`${SITIO}toque-y-fama/`), alTocar: () => SFX.tap() }),
+      botonResultadoSolo({ C: COMMON[lang], emoji: gameById(GAME_ID)?.emoji || '🔢', juego: T.title, puntaje: `${s}/100`, tiempo: mmss(ms), tarjeta: t, url: withLang(`${SITIO}bulls-and-cows/`), alTocar: () => SFX.tap() }),
       el('button', { class: 'btn btn--yellow', onClick: () => { SFX.tap(); soloNueva(); } }, T.playAgain),
       el('button', { class: 'btn btn--ghost', onClick: () => { SFX.tap(); clearSession(); location.href = location.pathname; } }, T.changeMode),
       el('a', { class: 'btn btn--ghost', href: '../' }, T.backMenu)),

@@ -1,7 +1,7 @@
 /* ==========================================================
    El teclado, los tableros de intentos y las pistas de famas y toques, compartidos (D-102)
    Los usan Toque y Fama y, en La Copa, 🔢 Toque y Fama: adivina el número y 🔤 Toque y Fama
-   con letras. Salieron de toque-y-fama/style.css sin cambios.
+   con letras. Salieron de bulls-and-cows/style.css sin cambios.
    ========================================================== */
 /* Keypad. Las cifras van en Nunito 900, no en Bangers: ahí el 1 y el 7 se confunden (D-30) */
 .entry { display: flex; justify-content: center; gap: 10px; margin: 10px 0 14px; }

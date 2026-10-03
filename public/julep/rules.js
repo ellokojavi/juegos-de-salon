@@ -1,6 +1,6 @@
 /**
  * Julepe — datos y textos en español, inglés y portugués.
- * Solo datos, sin lógica. Ver docs/juegos/julepe.md.
+ * Solo datos, sin lógica. Ver docs/games/julep.md.
  *
  * El nombre cambia en cada idioma porque en cada idioma se reconoce otra cosa (D-48, D-84):
  * en español es **Julepe**; en inglés, **Julep**, que es un trago y suena igual; y en portugués

@@ -1,8 +1,8 @@
-import { fuera } from './audiencia.js';
+import { fuera } from '../audiencia.js';
 
 /**
  * Las palabras secretas de 🔤 Toque y Fama: Palabra. Cinco letras distintas, sin tilde (la Ñ
- * vale), comunes en Chile. Las reglas del test (copa/juegos/juegos.test.mjs): cinco letras,
+ * vale), comunes en Chile. Las reglas del test (cup/games/juegos.test.mjs): cinco letras,
  * todas distintas, solo A–Z y Ñ, y sin repetir palabras en la lista.
  *
  * Los intentos pueden ser cualquier combinación de cinco letras distintas: no hay diccionario,

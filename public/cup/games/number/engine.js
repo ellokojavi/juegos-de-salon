@@ -2,8 +2,8 @@
  * 🔢 El Número del Día — motor puro. Toque y Fama de un solo lado: el número lo pone la
  * semilla, así que es el mismo para todos, y cada intento se responde con el motor del juego.
  */
-import { score, isValid } from '../../toque-y-fama/engine.js';
-import { azar } from './semilla.js';
+import { score, isValid } from '../../../bulls-and-cows/engine.js';
+import { azar } from '../semilla.js';
 
 export const CIFRAS = 4;
 export const MAX_INTENTOS = 10;

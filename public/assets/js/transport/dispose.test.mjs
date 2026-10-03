@@ -1,4 +1,4 @@
-// Ejecutar: node assets/js/transport/dispose.test.mjs
+// Ejecutar: node public/assets/js/transport/dispose.test.mjs
 import assert from 'node:assert/strict';
 import { deserted, disposeRoom, farewell } from './dispose.js';
 

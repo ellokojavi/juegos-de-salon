@@ -3,12 +3,12 @@
  * mundo o una ciudad famosa, con su país. Se toca el mapa donde se cree que queda; cada ciudad
  * vale hasta 100 puntos y se pierden 4 por cada 100 km de error.
  *
- * El mapa es propio y sin nombres (`mapa.js`, lo genera `tools/mapa.mjs`): uno de internet
+ * El mapa es propio y sin nombres (`mapa.js`, lo genera `tools/generators/mapa.mjs`): uno de internet
  * trae los nombres de las ciudades escritos encima. Se dibuja como un globo que se gira sin fin
  * (`globo.js`); la vista y su inversa están aquí, y la distancia se mide sobre la esfera.
  */
-import { azar } from './semilla.js';
-import { fuera as fueraPara } from './audiencia.js';
+import { azar } from '../semilla.js';
+import { fuera as fueraPara } from '../audiencia.js';
 import { CIUDADES } from './ciudades.js';
 import { ciudad, pais } from './nombres.js';
 

@@ -11,7 +11,7 @@ import { readFileSync, existsSync, statSync } from 'node:fs';
 import { createSign } from 'node:crypto';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
-import { firebaseConfig } from '../assets/js/firebase-config.js';
+import { firebaseConfig } from '../../public/assets/js/firebase-config.js';
 
 export const LLAVE = process.env.FIREBASE_LLAVE || join(homedir(), '.config/juegos-de-salon/firebase-admin.json');
 const SCOPES = 'https://www.googleapis.com/auth/firebase.database https://www.googleapis.com/auth/userinfo.email';

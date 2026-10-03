@@ -2,7 +2,7 @@
 // Comprueba que nadie pueda tirar una carta ilegal, que el plato se acumule con cada julepe,
 // que el reparto de tragos cuadre y que la partida se pueda retomar (C-6). Las tomas llevan el
 // nombre de las capturas del README (docs/capturas.json).
-import { launch, sleep } from './cdp.mjs';
+import { launch, sleep } from '../cdp.mjs';
 const OUT = process.argv[2];
 const b = await launch({ port: 9387, dir: `${OUT}/p`, out: OUT });
 const ev = e => b.evaluate(e);
@@ -54,7 +54,7 @@ const legalesOk = () => ev(`(()=>{
 
 await b.go(`${SITIO}/`);
 await ev(`localStorage.clear(); 1`);
-await b.go(`${SITIO}/julepe/`);
+await b.go(`${SITIO}/julep/`);
 await toma('01-intro');
 console.log('modos:', await ev(`[...document.querySelectorAll('.mode')].map(m=>m.innerText.split('\\n')[0]).join(' | ')`));
 
@@ -101,7 +101,7 @@ await sleep(4200);   // el confeti dura 4 s y taparía el título de la captura 
 await toma('08-resultado');
 
 /* ---------------- Tres en un celular ---------------- */
-await b.go(`${SITIO}/julepe/`); await ev(`localStorage.clear(); 1`); await b.go(`${SITIO}/julepe/`);
+await b.go(`${SITIO}/julep/`); await ev(`localStorage.clear(); 1`); await b.go(`${SITIO}/julep/`);
 await ev(`document.querySelectorAll('.mode')[0].click(); 1`); await sleep(300);
 await ev(`(()=>{const n=['Javi','Cata','Nico'];[...document.querySelectorAll('#setup-form input')].forEach((i,k)=>{i.value=n[k];i.dispatchEvent(new Event('input',{bubbles:true}))});return 1})()`);
 await ev(`document.querySelectorAll('.largos button')[0].click(); 1`);   // partida corta
@@ -123,7 +123,7 @@ while ((await pantalla()) !== 'screen-result' && vueltas++ < 500) {
   if (!retomada && v.manoN === 1 && v.phase === 'baza') {
     retomada = true;
     const antes = JSON.stringify(v.historia.length) + '/' + v.manoN;
-    await b.go(`${SITIO}/julepe/`); await sleep(400);
+    await b.go(`${SITIO}/julep/`); await sleep(400);
     await ev(`(()=>{const b=[...document.querySelectorAll('#resume-slot .btn')][0]; if(b) b.click(); return 1})()`);
     await sleep(700);
     const ahora = await vista();

@@ -10,7 +10,7 @@
  * Se juega por niveles contra el reloj, como Zip (D-103, D-179): diez niveles, cada uno con más
  * nudos que el anterior. Todos ven los mismos.
  */
-import { azar } from './semilla.js';
+import { azar } from '../semilla.js';
 
 export const LADO = 1000;
 /** Lo más cerca del borde que puede quedar un nudo. */

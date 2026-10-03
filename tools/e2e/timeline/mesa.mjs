@@ -1,5 +1,5 @@
 // Todas las cartas a la vista: mesa completa desde el primer turno y sin reposición (D-43)
-import { launch, sleep } from './cdp.mjs';
+import { launch, sleep } from '../cdp.mjs';
 const OUT = process.argv[2];
 const BASE = process.argv[3] || process.env.SITIO || 'http://localhost:8765';
 const b = await launch({ port: 9498, dir: `${OUT}/m`, out: OUT, width: 375, height: 812 });
@@ -21,8 +21,8 @@ const play = async (bien = true) => {
   return info;
 };
 
-await b.go(`${BASE}/linea-de-tiempo/`, 1500); await b.evaluate(`localStorage.clear(); 1`);
-await b.go(`${BASE}/linea-de-tiempo/`, 1500);
+await b.go(`${BASE}/timeline/`, 1500); await b.evaluate(`localStorage.clear(); 1`);
+await b.go(`${BASE}/timeline/`, 1500);
 await b.evaluate(`document.querySelectorAll('.mode')[0].click(); 1`); await sleep(400);
 console.log('el setup abre en →', await b.evaluate(`document.querySelector('#setup-form .seg--cards button.on')?.textContent`), '(debe ser todas a la vista)');
 console.log('opciones de cartas:', await b.evaluate(`[...document.querySelectorAll('#setup-form .seg--cards button')].map(x=>x.textContent).join(' | ')`));

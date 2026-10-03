@@ -1,6 +1,6 @@
 # Diseño: Dudo 🎲
 
-**Ruta:** `/dudo/` · **Jugadores:** 2 a 6 · **Versión:** 0.32 · **Idiomas:** es, en, pt (“Dado Mentiroso”)
+**Ruta:** `/liars-dice/` · **Jugadores:** 2 a 6 · **Versión:** 0.32 · **Idiomas:** es, en, pt (“Dado Mentiroso”)
 
 ## 1. Resumen
 
@@ -185,8 +185,8 @@ de que llegara.
 ## 8. Archivos
 
 ```
-dudo/index.html · dudo/style.css · dudo/rules.js · dudo/game.js
-dudo/engine.js · dudo/engine.test.mjs
-tools/e2e/dudo-local.mjs   un celular y contra el celular
-tools/e2e/dudo-online.mjs  tres celulares contra Firebase real
+public/liars-dice/index.html · public/liars-dice/style.css · public/liars-dice/rules.js · public/liars-dice/game.js
+public/liars-dice/engine.js · public/liars-dice/engine.test.mjs
+tools/e2e/liars-dice/local.mjs   un celular y contra el celular
+tools/e2e/liars-dice/online.mjs  tres celulares contra Firebase real
 ```

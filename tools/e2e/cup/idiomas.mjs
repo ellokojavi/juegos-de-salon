@@ -3,8 +3,8 @@
 // guarde el idioma de sus palabras, que la invitación avise si las palabras van en otro idioma y
 // que lo que se comparte salga en el de la copa; después abre los minijuegos sueltos.
 //
-// Uso: python3 -m http.server 8765 (en otra terminal) y node tools/e2e/copa-idiomas.mjs <carpeta-salida>
-import { launch, sleep } from './cdp.mjs';
+// Uso: python3 -m http.server 8765 (en otra terminal) y node tools/e2e/cup/idiomas.mjs <carpeta-salida>
+import { launch, sleep } from '../cdp.mjs';
 import { mkdirSync } from 'node:fs';
 
 const OUT = process.argv[2] || '/tmp/copa-idiomas';
@@ -25,9 +25,9 @@ const revisar = async (nombre, { botones = true } = {}) => {
 
 for (const lang of ['en', 'pt']) {
   // Una copa nueva, creada con la pantalla en `lang`: sus palabras parten en ese idioma
-  await b.go(`${SITIO}/copa/?prueba&lang=${lang}`);
+  await b.go(`${SITIO}/cup/?prueba&lang=${lang}`);
   await ev(`sessionStorage.clear(); 1`);
-  await b.go(`${SITIO}/copa/?prueba`);
+  await b.go(`${SITIO}/cup/?prueba`);
   ok(await ev(`document.documentElement.lang`) === lang, `${lang}: la página queda en el idioma pedido por el link`);
   const portada = await texto();
   ok(lang === 'en' ? /Create a cup/i.test(portada) : /Criar uma copa/i.test(portada), `${lang}: la portada está traducida`);
@@ -47,7 +47,7 @@ for (const lang of ['en', 'pt']) {
   await preparar();
   const otro = lang === 'en' ? 'pt' : 'en';
   await ev(`localStorage.setItem('juegos-de-salon:lang','${otro}'); 1`);
-  await b.go(`${SITIO}/copa/?prueba&${meta ? (await ev('__copa.estado.code')) : ''}`, 2500);
+  await b.go(`${SITIO}/cup/?prueba&${meta ? (await ev('__copa.estado.code')) : ''}`, 2500);
   await preparar();
   const enOtro = await texto();
   ok(otro === 'en' ? /Standings|Schedule|Day/.test(enOtro) : /Tabela|Calendário|Dia/.test(enOtro), `${lang}: la pantalla sigue el idioma de quien mira (${otro})`);
@@ -61,14 +61,14 @@ for (const lang of ['en', 'pt']) {
 
 // Los minijuegos sueltos, en el idioma de quien juega
 for (const [id, lang, espera] of [['letras', 'en', /Bulls and Cows: Word/i], ['conexiones', 'pt', /Conexões/i], ['anio', 'en', /What Year/i], ['reinas', 'pt', /Rainhas/i], ['donde', 'en', /Where Is It/i]]) {
-  await b.go(`${SITIO}/minijuegos/${id}/?prueba&lang=${lang}`, 2000);
+  await b.go(`${SITIO}/minigames/${id}/?prueba&lang=${lang}`, 2000);
   const t = await texto();
   ok(espera.test(t), `${id} (${lang}): la antesala está traducida`);
   ok(!/🇪🇸/.test(t), `${id} (${lang}): sin la píldora de "solo en español"`);
   await revisar(`${lang}-suelto-${id}-antesala`);
   await ev(`document.getElementById('btn-empezar').click(); 1`); await sleep(4800);
   if (id === 'letras') ok(!(await ev(`[...document.querySelectorAll('.keypad button')].some(x=>x.textContent==='Ñ')`)), 'letras (en): el teclado no tiene Ñ');
-  if (id === 'conexiones') ok(await ev(`(async()=>{const m=await import('/copa/juegos/grillas-pt.js');const w=[...document.querySelectorAll('#jugar-body button')].map(x=>x.textContent);return m.GRILLAS.some(g=>g.grupos.flatMap(x=>x.palabras).includes(w[0]))})()`), 'conexiones (pt): la grilla es una de las de portugués');
+  if (id === 'conexiones') ok(await ev(`(async()=>{const m=await import('/cup/games/connections/grillas-pt.js');const w=[...document.querySelectorAll('#jugar-body button')].map(x=>x.textContent);return m.GRILLAS.some(g=>g.grupos.flatMap(x=>x.palabras).includes(w[0]))})()`), 'conexiones (pt): la grilla es una de las de portugués');
   await revisar(`${lang}-suelto-${id}-juego`, { botones: false });
 }
 

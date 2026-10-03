@@ -16,7 +16,7 @@ import {
 } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js';
 import { firebaseConfig } from '../assets/js/firebase-config.js';
 import { GAMES, gameById, gameLabel, isTorneo, MODES, MODE_IDS, ROOM_MODE, modeIcon } from '../assets/js/games.js';
-import { MINIJUEGOS } from '../copa/rules.js';
+import { MINIJUEGOS } from '../cup/rules.js';
 import { LANGS } from '../assets/js/i18n.js';
 import { ENVS } from '../assets/js/transport/stats.js';
 import { $, el } from '../assets/js/ui.js';

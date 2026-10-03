@@ -7,7 +7,7 @@
  * el juego original. Las reinas que chocan se ven en rojo en el acto. Las jugadas son los toques,
  * en orden (`'c' + i` el toque; el largo y cada X pintada, en negativo).
  */
-import * as motor from './reinas.js';
+import * as motor from './engine.js';
 
 /**
  * Colores de zona: claros, para que la reina negra y la X se lean encima (contraste ≥ 9:1), y

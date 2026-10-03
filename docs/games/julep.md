@@ -1,6 +1,6 @@
 # Diseño: Julepe 🍹
 
-**Ruta:** `/julepe/` · **Jugadores:** 2 a 6 · **Versión:** 0.34 · **Idiomas:** es, en (“Julep”), pt (“Paga o Bolo”)
+**Ruta:** `/julep/` · **Jugadores:** 2 a 6 · **Versión:** 0.34 · **Idiomas:** es, en (“Julep”), pt (“Paga o Bolo”)
 
 **Estado:** fuera del menú por ahora, mientras se reescriben las reglas (D-88). El juego sigue entero acá.
 
@@ -71,7 +71,7 @@ se juega; un hash no sirve para eso.
 
 La solución, en tres piezas:
 
-1. **Sobres cerrados** (`assets/js/sobre.js`, D-81). Cada celular genera un par de llaves al entrar
+1. **Sobres cerrados** (`public/assets/js/sobre.js`, D-81). Cada celular genera un par de llaves al entrar
    a la sala y publica la pública con su nombre. Quien reparte cierra la mano de cada uno con la
    llave de esa persona (RSA-OAEP del propio navegador, sin bibliotecas). Solo ese celular la abre.
 2. **La reserva** (D-82). A cada jugador le tocan ocho cartas: las cinco de la mano y tres tapadas.
@@ -108,7 +108,7 @@ es la única verdad; lo que no corresponde se descarta en silencio.
 
 ## 6. El celular que juega
 
-Tres decisiones, todas con lo que ese jugador ve y nada más (`julepe/engine.js`):
+Tres decisiones, todas con lo que ese jugador ve y nada más (`public/julep/engine.js`):
 
 - **Ir o pasarse.** Le pone número a la mano: un triunfo vale de 0,30 (el 2) a 0,90 (el as), porque
   aunque sea bajo corta; fuera del triunfo solo mandan el as (0,65) y el rey (0,45). Se descuenta
@@ -126,14 +126,14 @@ Tres decisiones, todas con lo que ese jugador ve y nada más (`julepe/engine.js`
 ## 7. Archivos
 
 ```
-julepe/
+public/julep/
   index.html        Pantallas, barra superior, #handoff y #cover
   style.css         Naipes, mesa, plato, cierre de la mano
   rules.js          GAME_ID, DEFAULT_CONFIG, LARGOS y LOCALES = { es, en, pt }
   engine.js         Cartas, obligaciones, plato, julepe, bots y el reductor. Sin DOM
-  engine.test.mjs   node julepe/engine.test.mjs
+  engine.test.mjs   node public/julep/engine.test.mjs
   game.js           Máquina de estados y render; lo único que toca el DOM
-assets/js/sobre.js  Sobres cerrados de la sala (compartido, D-81)
-tools/e2e/julepe-local.mjs    Partida completa contra el celular y en un celular
-tools/e2e/julepe-online.mjs   Sala de tres celulares contra Firebase
+public/assets/js/sobre.js  Sobres cerrados de la sala (compartido, D-81)
+tools/e2e/julep/local.mjs    Partida completa contra el celular y en un celular
+tools/e2e/julep/online.mjs   Sala de tres celulares contra Firebase
 ```

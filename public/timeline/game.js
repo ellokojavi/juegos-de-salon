@@ -5,7 +5,7 @@
  * El estado se deriva de la semilla del mazo más las jugadas, así que no hacen falta respuestas.
  *
  * Jugar solo es la ⏳ Línea Relámpago de La Copa (D-142): no pasa por el reductor, la monta
- * copa/juegos/solo.js con la pantalla de copa/juegos/ui-linea.js. Ver la sección "Jugar solo".
+ * cup/games/solo.js con la pantalla de cup/games/timeline/ui.js. Ver la sección "Jugar solo".
  */
 import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../assets/js/ui.js';
 import { botonInvitar, botonResultadoSolo } from '../assets/js/compartir.js';
@@ -20,10 +20,10 @@ import { trackStart } from '../assets/js/transport/stats.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import { crearArrastre } from '../assets/js/arrastre.js';
 import { buildState, correctSlot, randomSeed, yearLabel, timeLabel } from './engine.js';
-import { generar as generarLinea, CARTAS as CARTAS_SOLO } from '../copa/juegos/linea.js';
-import * as uiLinea from '../copa/juegos/ui-linea.js';
-import { jugarSolo, crearRecord, mmss } from '../copa/juegos/solo.js';
-import { codigoAlAzar } from '../copa/engine.js';
+import { generar as generarLinea, CARTAS as CARTAS_SOLO } from '../cup/games/timeline/engine.js';
+import * as uiLinea from '../cup/games/timeline/ui.js';
+import { jugarSolo, crearRecord, mmss } from '../cup/games/solo.js';
+import { codigoAlAzar } from '../cup/engine.js';
 import { DECKS, getDeck } from './decks/index.js';
 import { GAME_ID, DEFAULT_CONFIG, HAND_SIZES, MIN_PLAYERS, MAX_PLAYERS, VISIBLE, SPREAD_FACTOR, LOCALES } from './rules.js';
 
@@ -843,7 +843,7 @@ function selectorDeTematica(config) {
  * Diez hitos de la temática elegida: el primero ya puesto y nueve en la mano, en el orden que
  * se quiera; un error deja la carta en su lugar, en rojo, y se sigue. Puntaje de 0 a 100 y
  * reloj de tiempo activo, como en la copa. La partida entera sale de `codigo` (la semilla de
- * copa/juegos/linea.js) más las jugadas, así que la memoria de partida (C-6) guarda solo eso:
+ * cup/games/timeline/engine.js) más las jugadas, así que la memoria de partida (C-6) guarda solo eso:
  * `{ mode: 'solo', codigo, tema, skip, jugadas, ms, done }`. `skip` son las cartas vistas hace
  * poco que se dejaron fuera (D-34): sin ellas, la misma semilla repartiría otras cartas.
  */
@@ -928,7 +928,7 @@ function terminarSolo(partida, p, { s, t, ms, estado }) {
   const box = $('#sr-actions'); box.innerHTML = '';
   box.append(
     // El mismo resultado que el minijuego de La Copa, con su imagen; la temática va en el título (D-165)
-    botonResultadoSolo({ C: COMMON[lang], emoji: gameById(GAME_ID)?.emoji || '⏳', juego: `${T.title}: ${deck.name[lang]}`, puntaje: `${s}/100`, tiempo: mmss(ms), tarjeta: t, url: withLang(`${SITIO}linea-de-tiempo/`), alTocar: () => SFX.tap() }),
+    botonResultadoSolo({ C: COMMON[lang], emoji: gameById(GAME_ID)?.emoji || '⏳', juego: `${T.title}: ${deck.name[lang]}`, puntaje: `${s}/100`, tiempo: mmss(ms), tarjeta: t, url: withLang(`${SITIO}timeline/`), alTocar: () => SFX.tap() }),
     el('button', { class: 'btn btn--yellow', id: 'btn-solo-otra', onClick: () => { SFX.tap(); empezarSolo(partida.tema); } }, T.playAgain),
     el('button', { class: 'btn btn--ghost', onClick: () => { SFX.tap(); clearSession(); renderResumeSlot(); showScreen('screen-intro'); } }, T.changeMode),
     el('a', { class: 'btn btn--ghost', href: '../' }, T.backMenu),

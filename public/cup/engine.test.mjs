@@ -1,4 +1,4 @@
-// Tests del motor de La Copa: node copa/engine.test.mjs
+// Tests del motor de La Copa: node public/cup/engine.test.mjs
 import assert from 'node:assert/strict';
 import {
   CALENDARIOS, POZO, calendarioValido, calendarioAlAzar, PUNTOS, esCodigo, codigoAlAzar, pidAlAzar, PID, limpiarNombre, claveNombre, esPin, hashPin,
