@@ -199,12 +199,13 @@ export function pickLang(obj, lang = getLang()) {
 export function langToggle(onChange = () => location.reload()) {
   const current = getLang();
   const wrap = el('div', { class: 'lang-toggle', role: 'group', 'aria-label': 'Idioma / Language / Idioma / Sprache' });
-  const labels = { es: '🇨🇱 ES', en: '🇬🇧 EN', pt: '🇧🇷 PT', de: '🇩🇪 DE' };
+  // La bandera va aparte: con cuatro idiomas en un celular angosto se esconde (base.css)
+  const flags = { es: '🇨🇱', en: '🇬🇧', pt: '🇧🇷', de: '🇩🇪' };
   for (const lang of LANGS) {
     wrap.append(el('button', {
       type: 'button', class: lang === current ? 'on' : '', 'aria-pressed': lang === current ? 'true' : 'false',
       onClick: () => { if (lang === getLang()) return; setLang(lang); onChange(lang); },
-    }, labels[lang]));
+    }, el('span', { class: 'flag' }, flags[lang] + ' '), lang.toUpperCase()));
   }
   return wrap;
 }

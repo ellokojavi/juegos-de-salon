@@ -203,7 +203,7 @@ const DE = {
   waitingSecret: 'Warte, bis {name} eine geheime Zahl wählt', bothReady: 'Beide bereit!',
   // Spiel
   turnYou: 'Du bist dran! Rate die Zahl von {name}', turnOther: '{name} ist dran…', waitingReply: 'Warte auf die Antwort…', round: 'Runde {n}',
-  blockHint: '💡 Halte eine Ziffer gedrückt, um sie durchzustreichen. Nochmal, um es rückgängig zu machen.',
+  blockHint: '💡 Halte eine Ziffer gedrückt, um sie durchzustreichen. Nochmal, um das zurückzunehmen.',
   mySecret: 'Deine geheime Zahl', tapToShow: 'tippen zum Zeigen', tapToHide: 'tippen zum Verbergen',
   guess: 'Raten', famas: 'Bullen', toques: 'Kühe', fama: 'Bulle', toque: 'Kuh', none: 'nichts', famaShort: 'B', toqueShort: 'K',
   boardOf: 'Versuche von {name}', noGuesses: 'Noch keine Versuche', tries: '{n} {word}', tryOne: 'Versuch', tryMany: 'Versuche',
