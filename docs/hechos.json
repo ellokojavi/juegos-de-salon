@@ -1,5 +1,5 @@
 {
-  "version": "0.88.0",
+  "version": "0.90.4",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -466,7 +466,8 @@
       "nombre": {
         "es": "Conexiones",
         "en": "Connections",
-        "pt": "Conexões"
+        "pt": "Conexões",
+        "de": "Verbindungen"
       },
       "tipos": [
         "palabras",
@@ -481,7 +482,8 @@
       "nombre": {
         "es": "Toque y Fama: Palabra",
         "en": "Bulls and Cows: Word",
-        "pt": "Toque e Fama: Palavra"
+        "pt": "Toque e Fama: Palavra",
+        "de": "Bullen und Kühe: Wort"
       },
       "tipos": [
         "palabras",
@@ -496,7 +498,8 @@
       "nombre": {
         "es": "¿En qué año?",
         "en": "What Year?",
-        "pt": "Em que ano?"
+        "pt": "Em que ano?",
+        "de": "Welches Jahr?"
       },
       "tipos": [
         "cultura"
@@ -510,7 +513,8 @@
       "nombre": {
         "es": "Reinas",
         "en": "Queens",
-        "pt": "Rainhas"
+        "pt": "Rainhas",
+        "de": "Damen"
       },
       "tipos": [
         "logica"
@@ -524,7 +528,8 @@
       "nombre": {
         "es": "Tango",
         "en": "Tango",
-        "pt": "Tango"
+        "pt": "Tango",
+        "de": "Tango"
       },
       "tipos": [
         "logica"
@@ -538,7 +543,8 @@
       "nombre": {
         "es": "Zip",
         "en": "Zip",
-        "pt": "Zip"
+        "pt": "Zip",
+        "de": "Zip"
       },
       "tipos": [
         "logica"
@@ -552,13 +558,14 @@
       "nombre": {
         "es": "Desenredo",
         "en": "Untangle",
-        "pt": "Desenrola"
+        "pt": "Desenrola",
+        "de": "Entwirren"
       },
       "tipos": [
         "logica"
       ],
       "duracion": "4",
-      "labs": true
+      "labs": false
     },
     {
       "id": "donde",
@@ -566,7 +573,8 @@
       "nombre": {
         "es": "¿Dónde queda?",
         "en": "Where Is It?",
-        "pt": "Onde fica?"
+        "pt": "Onde fica?",
+        "de": "Wo liegt das?"
       },
       "tipos": [
         "cultura"
