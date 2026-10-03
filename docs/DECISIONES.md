@@ -2762,3 +2762,22 @@ el celular. En WebGL un cuadro se dibuja en 0,3 ms y la tirada corre a 60 cuadro
 vuelve al menú.
 **Alternativas descartadas:** el cubo de capas de HTML (se veía de cartón y no se podía redondear
 sin huecos); una librería 3D (un archivo grande para un solo dado, en una app sin dependencias).
+
+## D-189 · Aportes de afuera: fork, PR y `main` protegida
+**Fecha:** 2026-10-03 · **Estado:** vigente
+**Decisión:** Quien quiera aportar lo hace con un **fork y un PR** hacia `main`, siguiendo
+[CONTRIBUTING.md](../CONTRIBUTING.md). `main` queda protegida en GitHub: no se sube directo, todo
+entra por PR y con la prueba `pruebas` en verde (no pide aprobaciones: el dueño fusiona los suyos
+solo). El proyecto pasa a tener **licencia MIT**. En un PR de afuera no se estampa versión ni se
+escribe el CHANGELOG, y las decisiones van como `D-??`: se numeran al fusionar, como ya se hacía
+entre sesiones (D-135).
+**Por qué:** un amigo del dueño quiere sumar funciones. Sin protección, un colaborador con acceso
+de escritura podía subir a `main`, que se publica al tiro en juegosdesalon.cl sin pasar por las
+pruebas. Sin licencia, legalmente nadie más tenía derecho a usar el código. Y las reglas del
+proyecto estaban escritas para el dueño y sus sesiones de Claude, sin un punto de entrada para
+alguien nuevo.
+**Consecuencias:** los modos con sala de quien prueba desde su fork abren salas en la base de
+producción (avisado en la guía). Publicar reglas de Firebase, el panel y los reportes siguen
+siendo del dueño: necesitan su llave.
+**Alternativas descartadas:** sumarlo como colaborador con escritura (podría saltarse el PR); una
+licencia GPL (el dueño eligió MIT).
