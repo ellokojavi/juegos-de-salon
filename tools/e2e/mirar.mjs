@@ -16,6 +16,7 @@
  * Para probar que el juego funciona están los guiones de partida; esto es para mirar.
  */
 import { launch, sleep } from './cdp.mjs';
+import { EN_LABS, LABS_KEY } from '../../assets/js/i18n.js';
 
 const args = process.argv.slice(2);
 const pos = args.filter(a => !a.startsWith('--'));
@@ -45,7 +46,7 @@ const BN_CPU = [
   `document.querySelector('#setup-actions .btn--yellow').click()`,
 ];
 const BN_ZARPA = [
-  `[...document.querySelectorAll('#place-actions .btn')].find(b=>/azar/.test(b.textContent)).click()`,
+  `[...document.querySelectorAll('#place-actions .btn')].find(b=>/azar|random|aleat|zufällig/i.test(b.textContent)).click()`,
   `document.querySelector('#place-sail .btn').click()`,
 ];
 const BN_FRENA = `(()=>{const S=window.__bn.session();clearTimeout(S.cpuTimer);S.cpuTimer='frenado';})()`;
@@ -53,6 +54,14 @@ const BN_FALLA = rol => `(()=>{const S=window.__bn.session(),L=S.layouts['${rol 
   T={carrier:5,battleship:4,cruiser:3,submarine:3,destroyer:2},o=new Set();
   for(const [id,p] of Object.entries(L)) for(let i=0;i<T[id];i++) o.add((p.dir==='h'?p.r:p.r+i)+','+(p.dir==='h'?p.c+i:p.c));
   for(let r=0;r<10;r++) for(let c=0;c<10;c++) if(!o.has(r+','+c)) return S.transport.send({t:'shot',from:'${rol}',cell:'ABCDEFGHIJ'[c]+(r+1)});})()`;
+
+/* --- Tango: empezar y llenar el tablero con el motor de verdad (ver su entrada) --- */
+const TAN_EMPEZAR = `document.getElementById('btn-empezar').click()`;
+const TAN_LLENAR = choque => `(async()=>{const {JUEGOS}=await import('/copa/juegos/index.js');const p=JUEGOS.tango.generar(__copa.estado.juego.semilla,1);
+  const L=p.sol.map((v,i)=>i).filter(i=>p.dadas[i]===undefined), u=${choque}?L.filter(i=>p.sol[i]===2).at(-1):L.at(-1);
+  const c=i=>document.querySelector('.tan[data-i="'+i+'"]');
+  for(const i of L){if(i===u)continue;for(let k=0;k<3&&Number(c(i).dataset.v)!==p.sol[i];k++)c(i).click();}
+  if(${choque})c(u).click();})()`;
 
 /**
  * Cómo llegar a cada pantalla. Cada paso es un trocito de JS que se corre en la página;
@@ -140,7 +149,7 @@ const CAMINOS = {
       `document.querySelectorAll('.pinta')[5].click()`,
       `document.querySelector('#actions .btn--yellow').click()`,
       `1`,   // el celular se demora en cantar su apuesta: un paso de espera
-      `[...document.querySelectorAll('#actions .btn')].find(b=>/Dudo|Liar|Duvido/i.test(b.textContent))?.click()`,
+      `[...document.querySelectorAll('#actions .btn')].find(b=>/Dudo|Liar|Duvido|Zweifeln/i.test(b.textContent))?.click()`,
     ],
   },
   'cuarto-rey': {
@@ -262,10 +271,10 @@ const CAMINOS = {
    */
   'linea-de-tiempo': {
     intro: [],
-    solo: [`[...document.querySelectorAll('.mode')].find(m=>/solo|alone|sozinho/i.test(m.textContent)).click()`],
-    'solo-juego': [`[...document.querySelectorAll('.mode')].find(m=>/solo|alone|sozinho/i.test(m.textContent)).click()`, `document.getElementById('btn-solo-empezar').click()`],
+    solo: [`[...document.querySelectorAll('.mode')].find(m=>/solo|alone|sozinho|allein/i.test(m.textContent)).click()`],
+    'solo-juego': [`[...document.querySelectorAll('.mode')].find(m=>/solo|alone|sozinho|allein/i.test(m.textContent)).click()`, `document.getElementById('btn-solo-empezar').click()`],
     'solo-resultado': [
-      `[...document.querySelectorAll('.mode')].find(m=>/solo|alone|sozinho/i.test(m.textContent)).click()`,
+      `[...document.querySelectorAll('.mode')].find(m=>/solo|alone|sozinho|allein/i.test(m.textContent)).click()`,
       `document.getElementById('btn-solo-empezar').click()`,
       `(async()=>{const L=await import('../copa/juegos/linea.js');const s=__ldt.solo();const p=L.generar(s.codigo,1,{tema:s.tema,excluir:s.skip});
         let j=[];for(const c of p.mano){const l=L.estado(p,j).linea;const bien=L.huecoCorrecto(l,c);j=[...j,{c:c.id,at:j.length?bien:(bien?0:l.length)}];}
@@ -276,6 +285,16 @@ const CAMINOS = {
       `document.getElementById('btn-fin').click()`,
       `1`, `1`, `1`, `1`,   // que pase el confeti
     ],
+  },
+  /**
+   * Tango suelto, el minijuego ☀️ de La Copa. `juego` es el tablero lleno menos una casilla,
+   * para comparar el sol dado con el jugado (#61); `choque`, lleno con un último sol que choca,
+   * que es el único choque que se ve sin tocar otra casilla (#135).
+   */
+  'minijuegos/tango': {
+    intro: [],
+    juego: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, TAN_LLENAR(false)],
+    choque: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, TAN_LLENAR(true)],
   },
   /**
    * El panel del dueño no es un juego, pero se mira igual: `window.__panel.seed` lo dibuja
@@ -302,7 +321,9 @@ const b = await launch({ port: Number(flag('cdp', process.env.PUERTO_CDP || '945
 await b.go(`${base}/${juego}/`, 1500);
 // El idioma se guarda como texto pelado: getLang() compara contra ['es','en','pt'] y un
 // JSON.stringify le dejaba las comillas dentro, así que --idioma no hacía nada.
-await b.evaluate(`localStorage.clear(); localStorage.setItem('juegos-de-salon:lang', '${idioma}'); 1`);
+// Un idioma del laboratorio (D-191) se ofrece solo con su marca puesta, como al entrar por /labs/de/
+const labs = EN_LABS.includes(idioma) ? `localStorage.setItem('${LABS_KEY}', '${idioma}');` : '';
+await b.evaluate(`localStorage.clear(); localStorage.setItem('juegos-de-salon:lang', '${idioma}'); ${labs} 1`);
 await b.go(`${base}/${juego}/`, 1500);
 // Muescas de verdad: Chrome fija los insets del sistema y la página los lee con
 // env(safe-area-inset-*), igual que en un celular. Sobreescribir las variables CSS —como se
@@ -337,7 +358,8 @@ const revision = await b.evaluate(`(()=>{
   });
 })()`).then(JSON.parse);
 
-const nombre = `${juego}-${pantalla}-${ancho}`;
+// Los minijuegos sueltos viven en una subcarpeta (minijuegos/tango): la captura queda plana
+const nombre = `${juego.replace(/\//g, "-")}-${pantalla}-${ancho}`;
 await b.shot(nombre);
 console.log(`${salida}/${nombre}.png · ${ancho}×${alto} · ${idioma}`);
 console.log(`  pantalla: ${revision.pantalla}`);

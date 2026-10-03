@@ -1,6 +1,6 @@
 # Diseño: Batalla Naval ⚓
 
-**Estado:** implementado (v0.6) · **Fecha:** 2026-09-08 · **Ruta:** `/batalla-naval/` · **Jugadores:** 1 a 2 · **Idiomas:** es, en (“Battleship”), pt (“Batalha Naval”)
+**Estado:** implementado (v0.6) · **Fecha:** 2026-09-08 · **Ruta:** `/batalla-naval/` · **Jugadores:** 1 a 2 · **Idiomas:** es, en (“Battleship”), pt (“Batalha Naval”) y, en el laboratorio, de (“Schiffe versenken”, D-191)
 
 ## 1. Resumen
 
@@ -110,7 +110,7 @@ Promedio esperado: 45 a 55 disparos para hundir la flota (un humano promedio ron
 
 - Misma identidad: fondo neón, Bangers en títulos, botones pill, confeti al ganar. Paleta del mar: casillas azul profundo, agua gris-azul, tocado naranjo, hundido rojo con brillo.
 - Grilla táctil: casillas mínimas de 30 px en 375 px de ancho. Es una sola grilla CSS de 11×11 donde la primera fila y la primera columna son las etiquetas, así números y letras quedan alineados con las casillas en todos los navegadores (v0.9.4). Sin scroll horizontal.
-- Todo en español, inglés y portugués (“Battleship”, “Batalha Naval”): agua/miss/água, tocado/hit/acertou, hundido/sunk/afundou, ¡Fuego!/Fire!/Fogo!, ¡Zarpar!/Set sail!/Zarpar!
+- Todo en español, inglés y portugués (“Battleship”, “Batalha Naval”): agua/miss/água, tocado/hit/acertou, hundido/sunk/afundou, ¡Fuego!/Fire!/Fogo!, ¡Zarpar!/Set sail!/Zarpar! En el laboratorio, también en alemán (“Schiffe versenken”: Wasser, Treffer, versenkt; D-191).
 - Accesible con dedo: selección + confirmación antes de disparar; vibración en tocado/hundido.
 - Las dos pantallas de turno se miran sin jugar una partida: `node tools/e2e/mirar.mjs batalla-naval juego` y `… espera`.
 - El hundimiento no se mira con una captura sino con varias seguidas: el guion que las saca vive en la historia de D-93.

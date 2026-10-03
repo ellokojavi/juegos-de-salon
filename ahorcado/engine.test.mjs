@@ -19,7 +19,7 @@ assert.deepEqual(positionsOf('el mar', 'á'), [4], 'la tilde del intento no impo
 assert.deepEqual(lettersOf('la paltá').sort(), ['A', 'L', 'P', 'T']);
 
 /* ---------- alfabetos y frecuencias ---------- */
-for (const lang of ['es', 'en', 'pt']) {
+for (const lang of ['es', 'en', 'pt', 'de']) {
   assert.equal(FREQ[lang].length, ALPHABETS[lang].length, `${lang}: la frecuencia no cubre el alfabeto`);
   assert.deepEqual([...FREQ[lang]].sort(), [...ALPHABETS[lang]].sort(), `${lang}: frecuencia y alfabeto no coinciden`);
 }
