@@ -128,6 +128,7 @@
     }
     .azar-escena { --lado: min(38vw, 150px); --medio: calc(var(--lado) / 2); width: var(--lado); height: var(--lado); perspective: 700px; position: relative; }
     .azar-salto, .azar-cubo { position: absolute; inset: 0; transform-style: preserve-3d; will-change: transform; }
+    .azar-relleno { position: absolute; inset: 0; background: #fff; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
     .azar-cara {
       position: absolute; inset: 0; display: grid; place-items: center; font-size: calc(var(--lado) * 0.52); border-radius: 22%;
       background: linear-gradient(145deg, #fff, #ffe9f3 60%, #f6d2e4); box-shadow: inset 0 0 0 3px rgba(255, 46, 136, 0.35), inset 0 -8px 16px rgba(194, 24, 91, 0.18);

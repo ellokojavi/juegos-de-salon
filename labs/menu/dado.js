@@ -45,7 +45,10 @@ function tirar(pool, { lang, base, T }) {
   const destino = base + elegido.path;
   const quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  const cubo = el('div', { class: 'azar-cubo' }, ...caras.map((g, i) =>
+  // Las caras tienen las puntas redondeadas: por las esquinas se veía el fondo oscuro. Un cubo
+  // blanco de puntas rectas, apenas más adentro, rellena esos huecos
+  const relleno = CARAS.map(t => el('div', { class: 'azar-relleno', style: `transform:${t} translateZ(calc(var(--medio) - 1.5px))` }));
+  const cubo = el('div', { class: 'azar-cubo' }, ...relleno, ...caras.map((g, i) =>
     el('div', { class: 'azar-cara', style: `transform:${CARAS[i]} translateZ(var(--medio))` },
       el('span', { class: con('', g.emoji) }, g.emoji))));
   // El salto y el giro van en dos capas: cada uno con su propia curva, sin tirones entre tramos
