@@ -8,6 +8,12 @@
   Europa central (Berlín, Viena, Zúrich), y las instrucciones de Palabra y del Ahorcado dicen que
   las diéresis van sin puntos (Ä es A) y la ß como SS.
 
+## 0.90.1 — 2026-10-03
+- **☀️ Tango: el sol de paso ya no se marca como choque en iPhone** (U-20, reporte 🐞 del 2-oct).
+  Para poner una luna hay que pasar por el sol; si se tocaba dos veces rápido la misma casilla,
+  iOS podía tomar el segundo toque como zoom y el sol quedaba en rojo. El tablero ya no acepta
+  ese gesto (`touch-action: manipulation`, como el teclado de los juegos).
+
 ## 0.90.0 — 2026-10-03
 - **🇩🇪 El alemán, en el laboratorio** (D-191): la app entera en alemán (Salonspiele) para que la
   revisen amigos que lo hablan, en `/labs/de/`. Solo ese celular ofrece DE en el toggle; ahí los
