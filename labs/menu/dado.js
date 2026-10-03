@@ -48,10 +48,12 @@ function tirar(pool, { lang, base, T }) {
   const cubo = el('div', { class: 'azar-cubo' }, ...caras.map((g, i) =>
     el('div', { class: 'azar-cara', style: `transform:${CARAS[i]} translateZ(var(--medio))` },
       el('span', { class: con('', g.emoji) }, g.emoji))));
+  // El salto y el giro van en dos capas: cada uno con su propia curva, sin tirones entre tramos
+  const salto = el('div', { class: 'azar-salto' }, cubo);
   const sombra = el('div', { class: 'azar-sombra' });
   const nombre = el('div', { class: 'azar-nombre', 'aria-live': 'assertive' });
   const capa = el('div', { class: 'azar-capa', role: 'dialog', 'aria-modal': 'true', 'aria-label': T.boton, tabindex: '-1' },
-    el('div', { class: 'azar-escena' }, sombra, cubo), nombre);
+    el('div', { class: 'azar-escena' }, sombra, salto), nombre);
   document.body.append(capa);
   document.body.classList.add('azar-abierto');
   // El foco entra al diálogo: con teclado, Enter o espacio también lo abren de inmediato
@@ -74,31 +76,33 @@ function tirar(pool, { lang, base, T }) {
 
   if (quieto) { cubo.style.transform = 'rotateX(-12deg) rotateY(12deg)'; revelar(); return; }
 
-  // Rueda: entra desde abajo girando, rebota dos veces y se asienta con la cara 0 adelante.
+  // Rueda: entra desde abajo y rebota tres veces, cada vez más bajo. El giro es uno solo que
+  // frena parejo de principio a fin, así no cambia de velocidad de golpe en cada bote.
   // Las vueltas son múltiplos de 360 para terminar exactamente en la cara elegida.
-  const vx = 360 * (3 + azar(2)), vy = 360 * (2 + azar(2)) * (Math.random() < 0.5 ? -1 : 1);
+  const vx = 360 * 2, vy = 360 * (1 + azar(2)) * (Math.random() < 0.5 ? -1 : 1);
   // Termina un poco ladeado para que se vea que es un cubo
   const fin = `rotateX(${vx - 12}deg) rotateY(${vy + 12}deg)`;
-  const DUR = 1500;
-  SFX.dice();
-  setTimeout(() => SFX.dice(), 520);
-  setTimeout(() => SFX.dice(), 900);
-  cubo.animate([
-    { transform: `translateY(60vh) rotateX(0deg) rotateY(0deg) scale(0.6)`, offset: 0, easing: 'cubic-bezier(0.2, 0.7, 0.4, 1)' },
-    { transform: `translateY(-90px) rotateX(${vx * 0.55}deg) rotateY(${vy * 0.55}deg) scale(1.05)`, offset: 0.35, easing: 'cubic-bezier(0.5, 0, 1, 1)' },
-    { transform: `translateY(0) rotateX(${vx * 0.8}deg) rotateY(${vy * 0.8}deg) scale(1)`, offset: 0.6, easing: 'cubic-bezier(0, 0, 0.4, 1)' },
-    { transform: `translateY(-34px) rotateX(${vx * 0.93}deg) rotateY(${vy * 0.93}deg)`, offset: 0.76, easing: 'cubic-bezier(0.6, 0, 1, 1)' },
-    { transform: `translateY(0) rotateX(${vx + 6}deg) rotateY(${vy - 6}deg)`, offset: 0.9, easing: 'ease-out' },
-    { transform: `translateY(0) ${fin}`, offset: 1 },
+  const DUR = 2300;
+  // Los botes: [momento (0–1), altura en px]. Subir frena (ease-out) y bajar acelera (ease-in)
+  const BOTES = [[0.3, -120], [0.52, 0], [0.66, -42], [0.77, 0], [0.84, -12], [0.9, 0]];
+  const sube = 'cubic-bezier(0.2, 0.6, 0.4, 1)';
+  const baja = 'cubic-bezier(0.6, 0, 0.8, 0.4)';
+  salto.animate([
+    { transform: 'translateY(55vh) scale(0.7)', offset: 0, easing: sube },
+    ...BOTES.map(([offset, y]) => ({ transform: `translateY(${y}px) scale(1)`, offset, easing: y ? baja : sube })),
+    { transform: 'translateY(0) scale(1)', offset: 1 },
   ], { duration: DUR, fill: 'forwards' });
   sombra.animate([
-    { transform: 'scale(0.3)', opacity: 0 },
-    { transform: 'scale(0.55)', opacity: 0.3, offset: 0.35 },
-    { transform: 'scale(1)', opacity: 0.6, offset: 0.6 },
-    { transform: 'scale(0.75)', opacity: 0.4, offset: 0.76 },
-    { transform: 'scale(1)', opacity: 0.6, offset: 0.9 },
-    { transform: 'scale(1)', opacity: 0.6 },
+    { transform: 'scale(0.3)', opacity: 0, offset: 0, easing: sube },
+    ...BOTES.map(([offset, y]) => ({ transform: `scale(${1 + y / 240})`, opacity: 0.6 + y / 300, offset, easing: y ? baja : sube })),
+    { transform: 'scale(1)', opacity: 0.6, offset: 1 },
   ], { duration: DUR, fill: 'forwards' });
+  cubo.animate([
+    { transform: 'rotateX(0deg) rotateY(0deg)' },
+    { transform: fin },
+  ], { duration: DUR * 0.97, easing: 'cubic-bezier(0.25, 0.6, 0.3, 1)', fill: 'forwards' });
   cubo.style.transform = fin;
-  setTimeout(revelar, DUR);
+  // El ruido de los dados en cada bote, más suave a medida que se asienta
+  for (const [offset, y] of BOTES) if (!y) setTimeout(() => SFX.dice(), DUR * offset);
+  setTimeout(revelar, DUR + 100);
 }
