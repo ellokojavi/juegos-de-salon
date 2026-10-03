@@ -2666,3 +2666,29 @@ sentía natural.
 **Consecuencias:** las dos ondas juntas se apartan de la recta a lo más 42 de 1000 unidades en los
 hilos largos (34 + 8); los cruces se siguen contando sobre la recta (D-182). El test lo acota.
 
+## D-184 · Instrucciones concisas: reglas escritas y un tope que lo vigila
+**Fecha:** 2026-10-02 · **Estado:** vigente · **Amplía D-177**
+**Decisión:** Las instrucciones de cada juego siguen U-18 (`docs/USABILIDAD.md`): la meta primero
+y con verbo (no "Hay nudos unidos por hilos"), a lo más 3 puntos de una idea cada uno, nada de lo
+que el dibujo de ejemplo ya muestra, sin anunciar colores ni mensajes que se ven jugando, y el
+puntaje en una frase sin topes que salen solos de la regla. Una prueba en
+`copa/juegos/juegos.test.mjs` lo vigila en los tres idiomas: 3 puntos, 280 caracteres para "Cómo
+se juega", 170 para el puntaje, y que el primer punto no empiece describiendo la pantalla.
+Desenredo bajó de 337 a 209 caracteres: "se ven en rojo" lo mostraba el dibujo, "Hay nudos unidos
+por hilos" describía la pantalla y "hasta 100" salía solo de 10 niveles de 10 puntos.
+**Por qué:** el dueño vio que la antesala de Desenredo, escrita después de D-177, no seguía esos
+recortes. D-177 fue una pasada a mano; sin una regla escrita y una prueba, cada juego nuevo
+vuelve a escribir largo.
+**Consecuencias:** el tope es un techo y no una meta (la mitad de los minijuegos queda bajo 210);
+Tango (273) y Zip (258) quedan cerca. `CLAUDE.md` y la lista de chequeo de `CANONES.md` lo
+nombran. La prueba mide largo y forma, no claridad: eso sigue siendo del agente de usabilidad.
+**Alternativas descartadas:** un tope por punto (los juegos con un punto largo y dos cortos, como
+Palabra, quedan bien); topes distintos por idioma (inglés y portugués quedan a ±10 % del español).
+
+## D-185 · Desenredo: menos ondulación en la cuerda
+**Fecha:** 2026-10-02 · **Estado:** vigente · **Corrige D-183**
+**Decisión:** La segunda onda baja a menos de la mitad (0,7 % del largo, tope 3,5 de 1000) y se
+alarga (2 a 3 vueltas, una cada ~230 unidades), y la curva de base queda un poco más tensa (4,5 %
+del largo, tope 26). La textura de dos cabos sigue igual.
+**Por qué:** el dueño vio la cuerda de 0.85.3 demasiado ondulada.
+
