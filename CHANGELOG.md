@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.90.2 — 2026-10-03
+- **🏆 La Copa: cuatro dilemas de usabilidad resueltos.**
+  - El recordatorio del día abre con el emoji del minijuego ("⏳ Hoy toca Línea Relámpago."), sin
+    emoji en medio de la frase (#114, U-2).
+  - La bienvenida del admin con link propio dice una sola vez que cierre la inscripción, con el
+    porqué al lado (#102).
+  - Los botones de Administrar dicen la acción: "📤 Invitar al grupo", "📤 Recordar el juego de
+    hoy" y "📤 Compartir la tabla" (#65, U-5, U-17).
+  - Si el 1.° y el 2.° empatan en puntos, el podio y el resumen dicen qué desempató: "⚖️ Empate en
+    68 puntos: desempató quien ganó más días." "Cómo funciona" cuenta el desempate (#79).
+
 ## 0.90.1 — 2026-10-03
 - **☀️ Tango: el sol de paso ya no se marca como choque en iPhone** (U-20, reporte 🐞 del 2-oct).
   Para poner una luna hay que pasar por el sol; si se tocaba dos veces rápido la misma casilla,
