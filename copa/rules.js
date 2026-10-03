@@ -198,6 +198,11 @@ const ES = {
   // El idioma de las palabras (D-170): Conexiones y Palabra van en uno solo para todos
   fLang: '¿En qué idioma van las palabras?',
   fLangHint: 'Los minijuegos con palabras van en este idioma para todos.',
+  fScope: '¿Qué temas incluye?',
+  fScopeHint: 'Internacional deja fuera lo que se conoce solo en Chile o en Brasil.',
+  scopeLocal: 'Con temas locales',
+  scopeIntl: 'Internacional',
+  intlNote: '🌍 Copa internacional: sin temas que se conocen solo en Chile o en Brasil.',
   langNames: { es: 'español', en: 'inglés', pt: 'portugués' },
   wordsIn: '🌐 Las palabras de esta copa van en {idioma}.',
 
@@ -835,6 +840,11 @@ const EN = {
   creating: 'Creating the cup…',
   fLang: 'What language are the words in?',
   fLangHint: 'The word minigames are in this language for everyone.',
+  fScope: 'What topics does it include?',
+  fScopeHint: 'International leaves out what people only know in Chile or Brazil.',
+  scopeLocal: 'With local topics',
+  scopeIntl: 'International',
+  intlNote: '🌍 International cup: no topics that people only know in Chile or Brazil.',
   langNames: { es: 'Spanish', en: 'English', pt: 'Portuguese' },
   wordsIn: '🌐 The words in this cup are in {idioma}.',
 
@@ -1463,6 +1473,11 @@ const PT = {
   creating: 'Criando a copa…',
   fLang: 'Em que idioma vão as palavras?',
   fLangHint: 'Os minijogos com palavras ficam neste idioma para todos.',
+  fScope: 'Que temas inclui?',
+  fScopeHint: 'Internacional deixa de fora o que só se conhece no Chile ou no Brasil.',
+  scopeLocal: 'Com temas locais',
+  scopeIntl: 'Internacional',
+  intlNote: '🌍 Copa internacional: sem temas que só se conhecem no Chile ou no Brasil.',
   langNames: { es: 'espanhol', en: 'inglês', pt: 'português' },
   wordsIn: '🌐 As palavras desta copa vão em {idioma}.',
 

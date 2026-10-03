@@ -429,11 +429,22 @@ await ev(`(()=>{const o=[...document.querySelectorAll('#crear-body .opcion')];o[
 // El link propio (D-121): se ve cómo queda y si está libre
 await ev(`(()=>{const i=document.getElementById('crear-link');i.value='Oficina';i.dispatchEvent(new Event('input'));return 1})()`); await sleep(700);
 ok(/juegosdesalon\.cl\/copa\/\?oficina está libre/.test(await ev(`document.getElementById('link-estado').textContent`)), 'el link propio muestra cómo queda y que está libre');
+// Con temas locales o internacional (D-186): parte en local, y se puede cambiar y volver
+{
+  const alcance = () => ev(`document.querySelector('#crear-alcance .opcion.on')?.textContent || ''`);
+  ok(/Con temas locales/.test(await alcance()), 'crear: la copa parte con temas locales');
+  await ev(`[...document.querySelectorAll('#crear-alcance .opcion')][1].click(); 1`);
+  ok(/Internacional/.test(await alcance()), 'crear: se puede elegir una copa internacional');
+  await ev(`(document.getElementById('crear-alcance').scrollIntoView({block:'center'}), 1)`); await sleep(150);
+  await b.shot('crear-internacional');
+  await ev(`[...document.querySelectorAll('#crear-alcance .opcion')][0].click(); 1`);
+}
 await revisarPantalla('crear');
 await click('#btn-crear-go'); await sleep(900);
 ok(/\?oficina&prueba$/.test(await ev('location.search')), 'la copa creada queda en ?oficina');
 const CODE = await ev('__copa.estado.code');
 ok(/^[A-HJ-NP-Z]{5}$/.test(CODE), `copa creada con código ${CODE}`);
+ok(!('intl' in await ev('__copa.estado.copa.meta').then(m => m || {})), 'una copa con temas locales no lleva la marca internacional');
 ok(await ev('__copa.estado.copa.meta.cal') === (SIETE ? 'linea,numero,conexiones,reinas,letras,anio,final' : 'linea,conexiones,final'), 'la copa guarda los juegos en el orden elegido');
 // Recién creada, el admin parte en Administrar, con la guía de la primera vez (D-110)
 ok(await pantalla() === 'admin' && !!await ev(`document.getElementById('admin-bienvenida')`), 'al crearla, el admin ve Administrar con la guía para invitar');
@@ -942,6 +953,19 @@ ok((await ev(`window.__compartido.length`)) + (await ev(`window.__descargas.leng
 await ev(`[...document.querySelectorAll('#admin-body > button')].find(x => /Volver a la copa/.test(x.textContent))?.click(); 1`); await sleep(400);
 ok(await pantalla() === 'tablero' && !!await ev(`document.querySelector('.podio')`) && /terminó la copa antes/.test(await ev(`document.querySelector('.copa-head').innerText`)), 'terminar antes: el tablero muestra el podio y que el admin la cerró');
 await b.shot('tablero-terminada-antes');
+
+// Una copa internacional (D-186): la invitación y el tablero lo dicen, y su Línea no trae la temática Chile
+{
+  const code = await ev(`(async()=>{const E=await import('/copa/engine.js');const st=__copa.store;await st.listo();const now=st.now();
+    let c=null;for(const x of ['WQXYZ','WQXYA','WQXYB']){if(!(await st.existe(x))){c=x;break}}
+    const meta=E.nuevaMeta({nombre:'Copa mundial',dias:7,inicio:E.sumarDias(E.fechaEn(now,E.ZONA),1),tz:E.ZONA,admin:'zzz111',creada:now,lab:true,intl:true});
+    await st.crear(c,meta,{pid:'zzz111',name:'Ana',at:now,pinHash:'x'});return c})()`);
+  await ev('sessionStorage.clear(); 1');
+  await b.go(`${BASE}?${code}&prueba`, 1500);
+  ok(/Copa internacional/.test(await ev(`document.getElementById('aviso-intl')?.textContent || ''`)), 'copa internacional: la invitación lo dice');
+  ok(await ev(`(async()=>{const {JUEGOS}=await import('/copa/juegos/index.js');return [1,2,3,4,5,6,7].every(d=>JUEGOS.linea.generar('${code}',d,{intl:true}).tema!=='chile')})()`), 'copa internacional: Línea Relámpago no usa la temática Chile');
+  await b.shot('invitacion-internacional');
+}
 
 console.log('errores:', JSON.stringify(b.errors), JSON.stringify(b.logs));
 ok(!b.errors.length && !b.logs.length, 'consola sin errores');
