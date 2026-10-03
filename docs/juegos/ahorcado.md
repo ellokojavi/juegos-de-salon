@@ -1,6 +1,6 @@
 # Diseño: El Ahorcado 🪢
 
-**Estado:** implementado (v0.26, los tres modos) · **Fecha:** 2026-09-12 · **Ruta:** `/ahorcado/` · **Jugadores:** 1 a 6 · **Idiomas:** es, en (“Hangman”), pt (“Forca”)
+**Estado:** implementado (v0.26, los tres modos) · **Fecha:** 2026-09-12 · **Ruta:** `/ahorcado/` · **Jugadores:** 1 a 6 · **Idiomas:** es, en (“Hangman”), pt (“Forca”) y, en el laboratorio, de (“Galgenmännchen”, D-191)
 
 ## 1. Resumen
 
@@ -56,9 +56,10 @@ jugaría sabiendo la respuesta.
 
 Chile 🇨🇱 · Animales 🐾 · Comida 🍕 · Cine y series 🎬 · Deportes ⚽ · Mezcla 🎲
 
-Cada carta es una entrada con palabra y pista en los tres idiomas, como las cartas de Línea de
-Tiempo. **No son traducciones**: cada idioma tiene su propia palabra para esa carta, porque una
-palabra traducida cambia de largo y de dificultad. Las tres listas tienen el mismo largo y las
+Cada carta es una entrada con palabra y pista en los cuatro idiomas (el alemán, en el
+laboratorio, D-191), como las cartas de Línea de Tiempo. **No son traducciones**: cada idioma
+tiene su propia palabra para esa carta, porque una palabra traducida cambia de largo y de
+dificultad. Las cuatro listas tienen el mismo largo y las
 mismas claves, y lo verifica `assets/js/i18n.test.mjs` (C-3). Palabras de 4 a 12 letras, sin
 nombres propios salvo en Cine y series.
 
@@ -190,8 +191,10 @@ Todo el estado se deriva de **la semilla del mazo más la lista de mensajes**.
 
 Todo se compara normalizado: mayúsculas, sin tildes y con Ç plegada a C. Tocar la **A** revela
 también las **Á**, y se muestra la palabra con su tilde puesta. La **Ñ tiene tecla propia y solo en
-español**: es una letra distinta, no una N con adorno, y en inglés y portugués no existe. El teclado
-queda en 27 teclas en español y 26 en los otros dos.
+español**: es una letra distinta, no una N con adorno, y en inglés, portugués y alemán no existe. El
+teclado queda en 27 teclas en español y 26 en los otros tres. En alemán no hay teclas Ä, Ö, Ü ni ß:
+las palabras alemanas del mazo las evitan, y el alfabeto y las frecuencias (`ALPHABETS`, `FREQ` en
+`engine.js`) tienen su propia entrada `de` (D-191).
 
 ## 8. Memoria de partida (C-6)
 
@@ -206,9 +209,9 @@ medias” con Continuar y Borrar.
 ahorcado/
   index.html       Pantallas, barra superior, #handoff, #cover, #chat
   style.css        El dibujo, el teclado, la tira de rivales
-  rules.js         GAME_ID, DEFAULT_CONFIG, LOCALES = { es, en, pt }
+  rules.js         GAME_ID, DEFAULT_CONFIG, LOCALES = { es, en, pt, de }
   decks/index.js   Temáticas: chile, animales, comida, cine, deportes, mezcla
-  decks/<tema>.js  Cartas con palabra y pista en los tres idiomas
+  decks/<tema>.js  Cartas con palabra y pista en los cuatro idiomas
   engine.js        normalize, isValidWord, reveal, rarest, score, view, cpuGuess
   engine.test.mjs  Tests del motor
   game.js          Máquina de estados y render

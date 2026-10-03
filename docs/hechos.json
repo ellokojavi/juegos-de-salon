@@ -1,5 +1,5 @@
 {
-  "version": "0.85.0",
+  "version": "0.88.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -23,7 +23,8 @@
       "nombre": {
         "es": "La Copa",
         "en": "The Cup",
-        "pt": "A Copa"
+        "pt": "A Copa",
+        "de": "Der Pokal"
       },
       "jugadores": "2 to 10",
       "duracion": "7",
@@ -58,12 +59,14 @@
         "copa/game.js",
         "copa/index.html",
         "copa/juegos/anio.js",
+        "copa/juegos/audiencia.js",
         "copa/juegos/ciudades.js",
         "copa/juegos/conexiones.js",
         "copa/juegos/desenredo.js",
         "copa/juegos/donde.js",
         "copa/juegos/final.js",
         "copa/juegos/globo.js",
+        "copa/juegos/grillas-de.js",
         "copa/juegos/grillas-en.js",
         "copa/juegos/grillas-pt.js",
         "copa/juegos/grillas.js",
@@ -105,7 +108,8 @@
       "nombre": {
         "es": "Línea de Tiempo",
         "en": "Timeline",
-        "pt": "Linha do Tempo"
+        "pt": "Linha do Tempo",
+        "de": "Zeitstrahl"
       },
       "jugadores": "1 to 6",
       "duracion": "10–20",
@@ -177,7 +181,8 @@
       "nombre": {
         "es": "Toque y Fama",
         "en": "Bulls and Cows",
-        "pt": "Toque e Fama"
+        "pt": "Toque e Fama",
+        "de": "Bullen und Kühe"
       },
       "jugadores": "1 to 2",
       "duracion": "5–12",
@@ -228,7 +233,8 @@
       "nombre": {
         "es": "El Ahorcado",
         "en": "Hangman",
-        "pt": "Forca"
+        "pt": "Forca",
+        "de": "Galgenmännchen"
       },
       "jugadores": "1 to 6",
       "duracion": "5–12",
@@ -282,7 +288,8 @@
       "nombre": {
         "es": "Dudo",
         "en": "Liar's Dice",
-        "pt": "Dado Mentiroso"
+        "pt": "Dado Mentiroso",
+        "de": "Lügenwürfel"
       },
       "jugadores": "1 to 6",
       "duracion": "10–20",
@@ -329,7 +336,8 @@
       "nombre": {
         "es": "Batalla Naval",
         "en": "Battleship",
-        "pt": "Batalha Naval"
+        "pt": "Batalha Naval",
+        "de": "Schiffe versenken"
       },
       "jugadores": "1 to 2",
       "duracion": "10–20",
@@ -378,7 +386,8 @@
       "nombre": {
         "es": "Julepe",
         "en": "Julep",
-        "pt": "Paga o Bolo"
+        "pt": "Paga o Bolo",
+        "de": "Julepe"
       },
       "jugadores": "1 to 6",
       "duracion": "15–30",
@@ -425,7 +434,8 @@
       "nombre": {
         "es": "Cuarto Rey",
         "en": "Fourth King",
-        "pt": "Quarto Rei"
+        "pt": "Quarto Rei",
+        "de": "Der vierte König"
       },
       "jugadores": "4 to 6",
       "duracion": "20–40",
@@ -456,12 +466,14 @@
       "nombre": {
         "es": "Historia",
         "en": "History",
-        "pt": "História"
+        "pt": "História",
+        "de": "Geschichte"
       },
       "pista": {
         "es": "Hitos de la humanidad",
         "en": "Milestones of humankind",
-        "pt": "Marcos da humanidade"
+        "pt": "Marcos da humanidade",
+        "de": "Meilensteine der Menschheit"
       },
       "cartas": 98,
       "desde": -2560,
@@ -473,12 +485,14 @@
       "nombre": {
         "es": "Música",
         "en": "Music",
-        "pt": "Música"
+        "pt": "Música",
+        "de": "Musik"
       },
       "pista": {
         "es": "De Beethoven a TikTok",
         "en": "From Beethoven to TikTok",
-        "pt": "De Beethoven ao TikTok"
+        "pt": "De Beethoven ao TikTok",
+        "de": "Von Beethoven bis TikTok"
       },
       "cartas": 89,
       "desde": 1600,
@@ -490,12 +504,14 @@
       "nombre": {
         "es": "Chile",
         "en": "Chile",
-        "pt": "Chile"
+        "pt": "Chile",
+        "de": "Chile"
       },
       "pista": {
         "es": "Del terremoto del 60 al estallido",
         "en": "From the 1960 quake to the uprising",
-        "pt": "Do terremoto de 1960 aos protestos de 2019"
+        "pt": "Do terremoto de 1960 aos protestos de 2019",
+        "de": "Vom Erdbeben 1960 bis zu den Protesten 2019"
       },
       "cartas": 127,
       "desde": 1520,
@@ -507,12 +523,14 @@
       "nombre": {
         "es": "Cultura pop",
         "en": "Pop culture",
-        "pt": "Cultura pop"
+        "pt": "Cultura pop",
+        "de": "Popkultur"
       },
       "pista": {
         "es": "Cine, memes y videojuegos",
         "en": "Movies, memes and video games",
-        "pt": "Cinema, memes e videogames"
+        "pt": "Cinema, memes e videogames",
+        "de": "Filme, Memes und Videospiele"
       },
       "cartas": 110,
       "desde": 1928,
@@ -524,12 +542,14 @@
       "nombre": {
         "es": "Brasil",
         "en": "Brazil",
-        "pt": "Brasil"
+        "pt": "Brasil",
+        "de": "Brasilien"
       },
       "pista": {
         "es": "De Cabral a la COP30, con novelas y carnaval",
         "en": "From Cabral to COP30, telenovelas and carnival included",
-        "pt": "De Cabral à COP30, com novela e carnaval"
+        "pt": "De Cabral à COP30, com novela e carnaval",
+        "de": "Von Cabral bis zur COP30, mit Telenovelas und Karneval"
       },
       "cartas": 140,
       "desde": 1500,
@@ -541,12 +561,14 @@
       "nombre": {
         "es": "Fútbol",
         "en": "Soccer",
-        "pt": "Futebol"
+        "pt": "Futebol",
+        "de": "Fußball"
       },
       "pista": {
         "es": "Mundiales, clubes, goles y fichajes",
         "en": "World Cups, clubs, goals and transfers",
-        "pt": "Copas, clubes, gols e contratações"
+        "pt": "Copas, clubes, gols e contratações",
+        "de": "WMs, Vereine, Tore und Transfers"
       },
       "cartas": 123,
       "desde": 1863,
@@ -564,13 +586,16 @@
     "ahorcado/game.js",
     "ahorcado/rules.js",
     "assets/js/arrastre.js",
+    "assets/js/azar.js",
     "assets/js/chat.js",
     "assets/js/compartir.js",
+    "assets/js/dado3d.js",
     "assets/js/firebase-config.js",
     "assets/js/frases.js",
     "assets/js/games.js",
     "assets/js/handoff.js",
     "assets/js/i18n.js",
+    "assets/js/labs-idioma.js",
     "assets/js/session.js",
     "assets/js/sobre.js",
     "assets/js/sound.js",
@@ -593,12 +618,14 @@
     "copa/engine.js",
     "copa/game.js",
     "copa/juegos/anio.js",
+    "copa/juegos/audiencia.js",
     "copa/juegos/ciudades.js",
     "copa/juegos/conexiones.js",
     "copa/juegos/desenredo.js",
     "copa/juegos/donde.js",
     "copa/juegos/final.js",
     "copa/juegos/globo.js",
+    "copa/juegos/grillas-de.js",
     "copa/juegos/grillas-en.js",
     "copa/juegos/grillas-pt.js",
     "copa/juegos/grillas.js",
@@ -726,6 +753,10 @@
     {
       "ruta": "docs/AGREGAR-JUEGO.md",
       "titulo": "Cómo agregar un juego nuevo"
+    },
+    {
+      "ruta": "docs/ALEMAN.md",
+      "titulo": "El alemán"
     },
     {
       "ruta": "docs/CANONES.md",

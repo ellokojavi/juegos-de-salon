@@ -399,4 +399,127 @@ const PT = {
   },
 };
 
-export const LOCALES = { es: ES, en: EN, pt: PT };
+/* ================================================================== */
+/* DEUTSCH                                                             */
+/* ================================================================== */
+const DE = {
+  paloNames: { '♠': 'Pik', '♥': 'Herz', '♦': 'Karo', '♣': 'Kreuz' },
+  rankNames: { A: 'Ass', K: 'König', Q: 'Dame', J: 'Bube' },
+  ui: {
+    docTitle: 'Julepe 🍹 · Salonspiele', gameChip: '🍹 Julepe', menu: '‹ Menü',
+    title: 'Julepe', lead: 'Wenn du mitgehst und keine zwei der fünf Stiche holst, trinkst du den ganzen Pott.',
+    leadExplain: 'Ein Spiel hat mehrere Runden. In jeder Runde gibt es fünf Stiche, je eine Karte pro Spieler.',
+    rulesSummary: '🍹 Wie spielt man?',
+    whoPlays: 'Wer spielt mit?',
+    setupHint: 'Tragt euch in der Sitzreihenfolge ein, nach rechts herum.',
+    lobbyTitle: 'Raum erstellt', historyTitle: '🍹 Runde für Runde',
+    beforeTitle: '🍹 Bevor es losgeht',
+    beforeText: 'Jeder mit vollem Glas. Deine Schlucke trinkst du, wann du willst.',
+
+    modeLocal: '📱 Ein Handy', modeLocalHint: 'Ihr gebt das Handy herum und jeder schaut heimlich auf seine Karten.',
+    modeOnline: '📡 Mehrere Handys', modeOnlineHint: 'Jeder spielt auf seinem Handy und sieht nur seine Karten.',
+    modeCpu: '🤖 Gegen das Handy', modeCpuHint: 'Du spielst gegen 1 bis 5 Gegner im Handy, die deine Karten nicht sehen.',
+
+    playerPlaceholder: 'Spieler {n}', removePlayer: 'Spieler entfernen', addPlayer: '+ Spieler hinzufügen',
+    start: 'Los geht’s!', yourName: 'Dein Name', cpuName: 'Handy', cpuNameN: 'Handy {n}',
+    handsLabel: 'Wie viele Runden?', handsHint: 'Nach der letzten Runde gewinnt, wer am wenigsten getrunken hat.',
+    handsOption: '{n} Runden',
+    rivalsLabel: 'Wie viele Gegner?', rivalsHint: 'Mit mehr Gegnern sind zwei Stiche schwerer und der Pott wird größer.',
+    rivalsOption: '{n} Gegner', rivalsOne: '1 Gegner',
+    errMin: 'Ihr braucht mindestens {n} Spieler.', errNames: 'Alle Spieler brauchen einen Namen.',
+    errDup: 'Manche Namen sind doppelt. Nehmt Spitznamen.',
+    errName: 'Gib deinen Namen ein.', errCode: 'Der Code hat vier Buchstaben.',
+
+    setupOnline: 'Julepe-Raum', invitedTitle: 'Du bist eingeladen!',
+    invitedHint: 'Gib deinen Namen ein und komm rein. Wer den Raum erstellt hat, startet das Spiel.',
+    yourNameLabel: 'Dein Name', create: '🍹 Raum erstellen', join: 'Beitreten',
+    joinTitle: 'Hast du einen Code?', codePlaceholder: 'CODE', invited: '📩 Raum {code}',
+    lobbyCode: 'Code', lobbyShare: 'Sag den anderen den Code oder lass sie den QR-Code scannen.',
+    lobbyPlayers: 'Im Raum', lobbyStart: 'Los geht’s!', lobbyNeedMore: 'Zu wenig Spieler',
+    lobbyWaitHost: 'Warte, bis {name} das Spiel startet',
+    lobbyCancel: 'Raum auflösen', lobbyLeave: 'Raum verlassen',
+    shareLink: '📤 Link teilen', copyLink: '📋 Link kopieren', copied: 'Kopiert!',
+    rematch: '🔁 Revanche', changeMode: 'Modus wechseln',
+
+    errNotFound: 'Diesen Raum gibt es nicht. Prüf den Code.', errFull: 'Der Raum ist schon voll.',
+    errExpired: 'Dieser Raum ist abgelaufen.', errOtherGame: 'Dieser Code gehört zu einem anderen Spiel.',
+    errNet: 'Keine Verbindung. Hast du Internet?',
+    errOffline: 'Der Raum ließ sich nicht öffnen. Vielleicht liegt es an deinem Internet oder es spielen gerade sehr viele. Versuch es in ein paar Minuten nochmal oder spiel auf einem Handy ganz ohne Internet.',
+    errTooMany: 'Du hast zu viele Räume hintereinander geöffnet. Warte kurz und versuch es nochmal.',
+    errSecure: 'Für mehrere Handys braucht es eine sichere Verbindung (https).',
+
+    chatTitle: 'Raum-Chat', chatOpen: 'Chat öffnen', chatClose: 'Chat schließen', chatSend: 'Senden',
+    chatPlaceholder: 'Schreib was…', chatEmpty: 'Hier dürft ihr euch necken, während die Schlucke verteilt werden. Alles wird gelöscht, wenn der Raum endet.',
+
+    resumeTitle: '⏯ Da ist noch ein Spiel offen', resumeText: 'Runde {n}. Im Pott sind {plato} Schlucke.',
+    resume: 'Weiter', delete: 'Löschen',
+
+    rules: [
+      'Wenn der Pott leer ist, gibt jeder <b>zwei Schlucke</b> hinein.',
+      'Jeder bekommt fünf Karten und eine weitere wird aufgedeckt: Ihre Farbe ist <b>Trumpf</b> und sticht alle anderen Farben.',
+      'Reihum, rechts vom Geber beginnend, sagt jeder, ob er <b>mitgeht</b> oder <b>passt</b>. Passen kostet nichts.',
+      'Mitgehen heißt, du musst <b>zwei der fünf Stiche</b> holen. Geht nur einer mit, muss der Geber mitspielen.',
+      'Wer mitgeht, tauscht bis zu drei Karten, dann werden die fünf Stiche gespielt.',
+      'Du musst die ausgespielte Farbe bedienen und, wenn möglich, höher als die höchste Karte dieser Farbe auf dem Tisch. Hast du die Farbe nicht, musst du Trumpf spielen.',
+      'Wer mitging und zwei Stiche oder mehr holt, ist gerettet und <b>verteilt zwei Schlucke pro Stich</b> an die anderen.',
+      'Wer mitging und keine zwei Stiche holt, <b>trinkt den ganzen Pott</b>: Das ist der Julepe. Der Pott wandert in die nächste Runde, einmal für jeden, den es erwischt hat.',
+    ],
+
+    potLabel: 'Der Pott', potSips: '{n} Schlucke', potOne: '1 Schluck',
+    potKept: 'Der Pott bleibt stehen',
+    handOf: 'Runde {n} von {total}', trumpLabel: 'Trumpf', dealerIs: '{name} gibt',
+    turnOf: '{name} ist dran', yourTurn: 'Du bist dran!', waitingFor: 'Warte auf {name}…',
+    dealing: 'Karten werden verteilt…', yourCards: 'Deine Karten', tricksLabel: 'Stiche', cardOf: '{suit} {rank}',
+
+    declareTitle: 'Gehst du mit oder passt du?',
+    declareHint: 'Wenn du mitgehst, brauchst du zwei Stiche, sonst trinkst du den ganzen Pott.',
+    goDo: 'Ich geh mit!', passDo: 'Ich passe',
+    declWent: 'geht mit', declPassed: 'passt', declForced: 'muss mit', declThinking: 'überlegt…',
+    allPassedTitle: 'Alle haben gepasst',
+    allPassedText: 'Niemand wollte diese Runde spielen. Der Pott bleibt stehen und {name} gibt.',
+
+    changeTitle: 'Tausch bis zu drei Karten',
+    changeHint: 'Tippe die Karten an, die du loswerden willst, und du bekommst gleich viele neue.',
+    changeDo: '{n} tauschen', changeOne: '1 Karte tauschen', changeKeep: 'Ich behalte sie',
+    changedSome: '{name} hat {n} Karten getauscht', changedOne: '{name} hat 1 Karte getauscht', changedNone: '{name} behält die eigenen Karten',
+
+    trickOf: 'Stich {n} von 5', pickCard: 'Wähle eine Karte', playDo: '{card} spielen',
+    lockedWhy: 'Die grauen Karten darfst du nicht spielen: {why}',
+    whyFollow: 'du musst die ausgespielte Farbe bedienen', whyTop: 'du musst höher spielen als die höchste Karte der ausgespielten Farbe',
+    whyTrump: 'ohne die ausgespielte Farbe musst du Trumpf spielen',
+    trickWon: 'Der Stich geht an {name}', trickWonYou: 'Der Stich gehört dir!',
+    opensTrick: '{name} spielt aus', opensTrickYou: 'Du spielst aus',
+
+    giveTitle: 'Gerettet: Verteile {n} Schlucke',
+    giveLeft: 'Noch {n} Schlucke zu verteilen', giveLeftOne: 'Noch 1 Schluck zu verteilen',
+    giveDone: 'Fertig, bestätige unten', giveDo: 'Verteilt!',
+    giveWait: '{name} verteilt gerade Schlucke…',
+    gaveLine: '{name} gab {to} {n} Schlucke',
+
+    handOverTitle: 'Runde vorbei',
+    julepeTitle: 'JULEPE!', julepeYou: 'Keine zwei Stiche: Du trinkst den ganzen Pott.',
+    julepeOther: '{name} hat keine zwei Stiche und trinkt den ganzen Pott.',
+    julepeBoth: '{names} haben keine zwei Stiche und trinken jeweils den ganzen Pott.',
+    drinksNow: '{n} Schlucke', savedTitle: 'Alle gerettet!',
+    savedText: 'Niemanden hat es erwischt, also wird der Pott geleert.',
+    potNext: 'Pott für die nächste Runde: {n} Schlucke',
+    tricksOf: '{n} Stiche', tricksOfOne: '1 Stich', tricksNone: 'kein Stich',
+    goOn: 'Tippen für weiter',
+    sealVerified: 'Karten geprüft ✅', sealBad: '⚠️ Die Karten von {name} stimmen nicht',
+    sealWait: 'Noch nicht alle Karten aufgedeckt', sealOpen: 'Ohne Umschläge: In diesem Raum gehen die Karten offen herum',
+    showHand: 'Was jeder auf der Hand hatte',
+
+    hoPass: 'Gib das Handy an', hoReady: 'Okay, das bin ich!',
+    coverLabel: 'Alle anderen wegschauen. Das sind die Karten von', coverTap: 'Meine Karten',
+
+    winner: '{name} gewinnt und hat am wenigsten getrunken!', winnerYou: 'Du gewinnst! Keiner blieb trockener als du.',
+    loserYou: '{name} gewinnt. Du hast mehr getrunken.', winnerTie: 'Unentschieden zwischen {names}!',
+    endStats: '{manos} Runden gespielt', endSips: 'Schlucke heute Abend (ca.)',
+    sipsOf: '{n} Schlucke', julepesOf: '{n}× Julepe',
+    endAgain: 'Noch ein Spiel!', changePlayers: 'Spieler ändern', backMenu: 'Zurück zum Menü',
+    histHand: 'Runde {n}', histVoid: 'alle gepasst', histPot: 'Pott mit {n}',
+    histJulepe: 'Julepe: {names}', histSaved: 'gerettet: {names}',
+  },
+};
+
+export const LOCALES = { es: ES, en: EN, pt: PT, de: DE };
