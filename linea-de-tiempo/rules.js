@@ -198,4 +198,67 @@ const PT = {
   chatPlaceholder: 'Escreva algo…', chatEmpty: 'Aqui vocês podem comentar a partida. Some quando ela termina.',
 };
 
-export const LOCALES = { es: ES, en: EN, pt: PT };
+const DE = {
+  docTitle: 'Zeitstrahl ⏳ · Salonspiele', gameChip: '⏳ Zeitstrahl', menu: '‹ Menü',
+  title: 'Zeitstrahl',
+  lead: 'Leg jedes Ereignis an die richtige Stelle im Zeitstrahl, ohne sein Jahr zu sehen.',
+  howTitle: '🧭 Wie spielt man?',
+  howText: 'Wenn du dran bist, wählst du eine Karte und die Stelle im Zeitstrahl, an die sie deiner Meinung nach gehört. Liegst du richtig, bleibt die Karte liegen. Liegst du falsch, fliegt sie raus. Wer zuerst genug Karten richtig gelegt hat, gewinnt. Die Runde wird zu Ende gespielt, und bei Gleichstand gewinnt der Schnellste.',
+  modeLocal: '📱 Ein Handy, bis zu 6', modeLocalHint: 'Ihr reicht das Handy Zug um Zug weiter.',
+  modeOnline: '📡 Mehrere Handys', modeOnlineHint: 'Ein Raum mit Code für bis zu 6 Spieler.',
+  modeSolo: '🧍 Allein spielen', modeSoloHint: 'Leg neun Ereignisse gegen die Uhr.',
+  // Einstellungen
+  setupTitle: 'Wie spielen wir?', theme: 'Thema', handSize: 'Karten auf der Hand',
+  cardsMode: 'Karten', modeOwn: 'Eigene Hand', modeShared: 'Offene Auslage', modeAll: 'Alle offen',
+  ownHint: 'Jeder spielt mit seiner eigenen Hand.',
+  sharedHint: 'Alle wählen aus {n} offenen Karten, die vom Stapel nachgefüllt werden.',
+  allHint: 'Alle wählen aus {n} offenen Karten, die nicht nachgefüllt werden.',
+  toWin: 'Karten zum Sieg', visibleTitle: 'Offene Karten',
+  short: 'Kurz', normal: 'Normal', long: 'Lang',
+  players: 'Spieler', playerPlaceholder: 'Spieler {n}', addPlayer: '+ Spieler hinzufügen', maxPlayers: 'Höchstens {n} Spieler', removePlayer: 'Spieler entfernen',
+  yourName: 'Dein Name', start: 'Los geht’s!',
+  errName: 'Der Name fehlt.', errNames: 'Namen fehlen oder sind doppelt.',
+  create: 'Raum erstellen', joinTitle: 'Du hast einen Code? Komm rein!', codePlaceholder: 'CODE', join: 'Beitreten', errCode: 'Der Code hat 4 Buchstaben.',
+  errNotFound: 'Diesen Raum gibt es nicht. Prüf den Code.', errFull: 'Der Raum ist schon voll.', errExpired: 'Dieser Raum ist abgelaufen.', errOtherGame: 'Dieser Code gehört zu einem anderen Spiel.', errNet: 'Keine Verbindung. Hast du Internet?',
+  errOffline: 'Der Raum ließ sich nicht öffnen. Vielleicht liegt es an deinem Internet oder es spielen gerade sehr viele. Versuch es in ein paar Minuten nochmal oder spiel mit einem Handy, dafür brauchst du kein Internet.',
+  errTooMany: 'Du hast viele Räume hintereinander geöffnet. Warte kurz und versuch es nochmal.',
+  invitedTitle: 'Du bist eingeladen!', invited: '📩 Raum {code}', invitedHint: 'Gib deinen Namen ein und steig ein. Wer dich eingeladen hat, stellt das Spiel ein.',
+  lobbyTitle: 'Raum erstellt', lobbyCode: 'Code', lobbyShare: 'Sag den anderen den Code oder lass sie den QR-Code scannen.', shareLink: '📤 Link teilen', copyLink: '📋 Link kopieren', copied: 'Kopiert!',
+  lobbyPlayers: 'Im Raum', lobbyWaitHost: 'Warte, bis {name} startet', lobbyStart: '🚀 Starten!', lobbyNeedMore: 'Zu wenig Spieler',
+  lobbyCancel: 'Raum auflösen', lobbyLeave: 'Raum verlassen',
+  offline: '{name} ist getrennt', waitingTurn: 'Warte auf {name}…', placedBy: '{name} hat gelegt',
+  // Spiel
+  turnYou: 'Du bist dran, {name}!', turnOther: '{name} ist dran',
+  yourHand: 'Deine Hand', handOf: 'Hand von {name}', pickCard: 'Wähl eine Karte', pickSlot: 'Wohin gehört sie?', place: '📍 Hier ablegen',
+  timeline: 'Zeitstrahl', cardsLeft: '{n}', poolLeft: 'Noch {n} im Stapel',
+  tableLeft: 'Noch {n} Karten auf dem Tisch', tableLeftOne: 'Noch 1 Karte auf dem Tisch',
+  slotFirst: '↑ Ganz am Anfang', slotLast: '↓ Ganz am Ende', slotBetween: 'Hier',
+  correct: 'Richtig!', wrong: 'Daneben!', correctOther: '{name} liegt richtig!', wrongOther: '{name} liegt daneben!',
+  wasYear: 'Es war {year}', goesHere: 'Gehörte hierhin ↓', drewNew: 'Die Karte fliegt raus und du ziehst eine neue.', drewNewOther: 'Die Karte fliegt raus und es wird eine neue gezogen.',
+  whyWrong: 'Das war {year}: Die Karte gehörte {where}.', wherePlaced: 'Du hast sie {where} gelegt.', wherePlacedOther: 'Gelegt wurde sie {where}.', between: 'zwischen {a} und {b}', beforeOf: 'vor {b}', afterOf: 'nach {a}', tapContinue: 'Tippen zum Weitermachen',
+  hoPass: 'Gib das Handy an', hoReady: 'Bereit, ich bin’s!', hoContinue: 'Weiter',
+  // Ergebnis
+  winTitle: '{name} gewinnt!', winTitleMany: 'Unentschieden!', youWin: 'Du hast gewonnen!', youLose: 'Verloren… diesmal.',
+  wonOnTime: '⚡ Gleichstand ohne Karten: Der Schnellste gewinnt', wonOnTimeShared: '⚡ Gleichstand: Der Schnellste gewinnt',
+  stats: '{ok} von {total} richtig', ranking: 'Endstand', cardsHeld: '{n} Karten', cardHeld: '1 Karte', noCards: 'keine Karten',
+  finalLine: 'So sieht der Zeitstrahl aus', rematch: '🔁 Revanche', changeMode: 'Modus ändern', backMenu: 'Zurück zum Menü',
+  resumeTitle: '⏯ Ein Spiel ist noch offen', resume: 'Weiter', delete: 'Löschen',
+  // allein spielen: der ⏳ Blitz-Zeitstrahl aus dem Pokal (D-142)
+  soloTitle: '⏳ Blitz-Zeitstrahl',
+  soloHow: [
+    'Es gibt 10 Ereignisse: Das erste liegt schon im Zeitstrahl, die anderen 9 hast du auf der Hand.',
+    'Tippe auf eine Karte und auf die passende Stelle (oder zieh sie hin) und dann auf Hier ablegen.',
+    'Liegst du falsch, kommt die Karte rot markiert an die richtige Stelle.',
+  ],
+  soloScoreTitle: '🎯 Punkte',
+  soloScore: 'Alle 9 Karten richtig gelegt sind 100 Punkte. Bei gleicher Punktzahl zählt für deinen Rekord die kürzere Zeit.',
+  lineaLleva: '{ok} von {n} richtig', lineaQuedan: 'Noch {n}', lineaFin: 'Du hast {ok} von {n} Karten richtig gelegt.', seeResults: 'Ergebnis',
+  soloPerfect: 'Perfekter Zeitstrahl!', soloDone: 'Zeitstrahl fertig!', soloResult: 'Du hast {ok} von {n} Karten in {t} richtig gelegt.',
+  newRecord: '🏆 Neuer Rekord!', prevRecord: 'Dein Rekord bei {tema}: {s} Punkte in {t}.',
+  playAgain: '🔁 Nochmal spielen',
+  // Raum-Chat (nur mehrere Handys)
+  chatTitle: 'Raum-Chat', chatOpen: 'Chat öffnen', chatClose: 'Chat schließen', chatSend: 'Senden',
+  chatPlaceholder: 'Schreib was…', chatEmpty: 'Hier könnt ihr das Spiel kommentieren. Der Chat wird gelöscht, wenn es endet.',
+};
+
+export const LOCALES = { es: ES, en: EN, pt: PT, de: DE };
