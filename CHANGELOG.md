@@ -11,6 +11,19 @@
   - Si el 1.° y el 2.° empatan en puntos, el podio y el resumen dicen qué desempató: "⚖️ Empate en
     68 puntos: desempató quien ganó más días." "Cómo funciona" cuenta el desempate (#79).
 
+## 0.91.0 — 2026-10-03
+- **Las direcciones pasan al inglés** (D-192): `/hangman/`, `/cup/`, `/timeline/`, `/bulls-and-cows/`,
+  `/liars-dice/`, `/battleship/`, `/julep/`, `/fourth-king/` y `/minigames/<slug>/`. Los links
+  viejos siguen andando: cada ruta en español es una página puente que manda a la nueva con todo
+  lo que traía (la sala, el nombre de la copa, el idioma) y con la misma tarjeta para los chats.
+  Nada guardado cambia: los ids de los juegos son los de siempre.
+- **El sitio vive en `public/`** y es lo único que se publica, con un workflow que corre las
+  pruebas antes: si una falla, el sitio no cambia. `docs/`, `tools/`, las reglas de Firebase y el
+  video dejan de ser públicos.
+- **El taller, ordenado:** `tools/` por función (`release/`, `firebase/`, `generators/`, `agents/`,
+  `e2e/<juego>/`), un minijuego de La Copa por carpeta (`cup/games/<slug>/`) y el import map de
+  versiones armado solo, sin lista que mantener.
+
 ## 0.90.1 — 2026-10-03
 - **☀️ Tango: el sol de paso ya no se marca como choque en iPhone** (U-20, reporte 🐞 del 2-oct).
   Para poner una luna hay que pasar por el sol; si se tocaba dos veces rápido la misma casilla,
