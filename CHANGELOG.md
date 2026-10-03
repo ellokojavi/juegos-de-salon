@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.90.5 — 2026-10-03
+- **⚓ Batalla Naval: la pantalla baja hasta ¡Zarpar!** (#47): en un celular chico, al poner el
+  quinto barco, si "⚓ ¡Zarpar!" no se ve, la pantalla baja sola hasta él. Pasa una vez, al
+  completar la flota (tocando, arrastrando o con Al azar), y nunca a mitad de un arrastre.
+
 ## 0.90.4 — 2026-10-03
 - **💬 El aviso del chat ya no se come los toques** (#48, U-12): la etiqueta que asoma junto a la
   burbuja cuando llega un mensaje deja pasar los toques, así que tocar "🔁 Revancha" (o lo que
