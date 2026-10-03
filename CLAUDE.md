@@ -94,6 +94,9 @@ GitHub corre todas las de abajo (menos el servidor) en cada PR y en cada fusión
 `*.test.mjs` o `*.test.py`, así que un test nuevo no se agrega al workflow. Igual se corren
 aquí antes de abrir el PR; las de punta a punta siguen a mano.
 
+**No se fusiona un PR hasta que GitHub muestre ✅ en su check `pruebas`**, aunque las pruebas ya
+hayan pasado aquí: abrir el PR, esperar el resultado y recién ahí fusionar.
+
 ```bash
 node toque-y-fama/engine.test.mjs
 node batalla-naval/engine.test.mjs
