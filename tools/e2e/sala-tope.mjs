@@ -1,6 +1,8 @@
 // Tope de salas por celular (C-7, D-41): pasado el límite, el juego lo dice y no toca la red.
 // Se siembra el historial en localStorage en vez de abrir 20 salas de verdad contra Firebase.
 import { launch, sleep } from './cdp.mjs';
+// Con varias sesiones a la vez, cada una sirve su copia en su puerto (D-135)
+const SITIO = process.env.SITIO || 'http://localhost:8765';
 
 const OUT = process.argv[2];
 const b = await launch({ port: 9443, dir: `${OUT}/p`, out: OUT, width: 375, height: 812 });
@@ -8,7 +10,7 @@ const b = await launch({ port: 9443, dir: `${OUT}/p`, out: OUT, width: 375, heig
 const error = () => b.evaluate(`document.querySelector('#setup-error')?.textContent || ''`);
 
 async function intento(juego, salas, etiqueta) {
-  await b.go(`http://localhost:8765/${juego}/`);
+  await b.go(`${SITIO}/${juego}/`);
   await b.evaluate(`(()=>{
     localStorage.clear();
     const now = Date.now();
@@ -16,7 +18,7 @@ async function intento(juego, salas, etiqueta) {
     localStorage.setItem('juegos-de-salon:rooms-created', JSON.stringify(h));
     return 1;
   })()`);
-  await b.go(`http://localhost:8765/${juego}/`);
+  await b.go(`${SITIO}/${juego}/`);
   await b.evaluate(`document.querySelectorAll('.mode')[1].click(); 1`); await sleep(400);
   await b.evaluate(`(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}));return 1})()`);
 
