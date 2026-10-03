@@ -10,10 +10,10 @@ export const HITOS = 6;
 export const REFERENCIA = 2026;
 
 /** `lang`: el idioma de los textos. Las cartas son las mismas en todos (D-170). */
-export function generar(codigo, dia, { n = HITOS, tema, sal = 'anio', lang = 'es' } = {}) {
-  const deck = tema || temasDeLaCopa(codigo).anio;
+export function generar(codigo, dia, { n = HITOS, tema, sal = 'anio', lang = 'es', intl = false } = {}) {
+  const deck = tema || temasDeLaCopa(codigo, { intl }).anio;
   const a = azar(codigo, dia, sal);
-  return { tema: deck, temaNombre: mazo(deck).name[lang] || mazo(deck).name.es, temaEmoji: mazo(deck).emoji, hitos: cartas(a, deck, n, { lang }) };
+  return { tema: deck, temaNombre: mazo(deck).name[lang] || mazo(deck).name.es, temaEmoji: mazo(deck).emoji, hitos: cartas(a, deck, n, { lang, intl }) };
 }
 
 /**
