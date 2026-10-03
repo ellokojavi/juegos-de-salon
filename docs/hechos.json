@@ -1,5 +1,5 @@
 {
-  "version": "0.87.0",
+  "version": "0.87.1",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -565,8 +565,10 @@
     "ahorcado/game.js",
     "ahorcado/rules.js",
     "assets/js/arrastre.js",
+    "assets/js/azar.js",
     "assets/js/chat.js",
     "assets/js/compartir.js",
+    "assets/js/dado3d.js",
     "assets/js/firebase-config.js",
     "assets/js/frases.js",
     "assets/js/games.js",
@@ -641,8 +643,6 @@
     "julepe/engine.js",
     "julepe/game.js",
     "julepe/rules.js",
-    "labs/menu/dado.js",
-    "labs/menu/dado3d.js",
     "linea-de-tiempo/decks/brasil.js",
     "linea-de-tiempo/decks/chile.js",
     "linea-de-tiempo/decks/futbol.js",
@@ -660,10 +660,7 @@
     "toque-y-fama/game.js",
     "toque-y-fama/rules.js"
   ],
-  "sinVersionar": [
-    "labs/menu/dado.js",
-    "labs/menu/dado3d.js"
-  ],
+  "sinVersionar": [],
   "tests": [
     "ahorcado/engine.test.mjs",
     "assets/js/arrastre.test.mjs",
