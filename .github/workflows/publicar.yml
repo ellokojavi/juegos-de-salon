@@ -1,0 +1,50 @@
+# Publica el sitio en GitHub Pages en cada fusión a main (D-190). Se publica solo public/ —sin las
+# pruebas—: docs/, tools/, marketing/ y lo demás del repo no son parte del sitio.
+# Antes corren las pruebas (pruebas.yml): con una en rojo, el sitio publicado no cambia.
+#
+# Requiere, una sola vez, Settings → Pages → Source: "GitHub Actions" (no "Deploy from a branch").
+# El dominio juegosdesalon.cl se configura ahí mismo y se mantiene; public/CNAME queda por si acaso.
+
+name: Publicar
+
+on:
+  push:
+    branches: [main]
+  # Para volver a publicar a mano (Actions → Publicar → Run workflow)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Una publicación a la vez, y la que está saliendo no se corta
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  pruebas:
+    uses: ./.github/workflows/pruebas.yml
+
+  publicar:
+    needs: pruebas
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.publicar.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Armar el sitio (public/ sin las pruebas)
+        run: rsync -a --exclude='*.test.mjs' public/ _site/
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - id: publicar
+        uses: actions/deploy-pages@v4

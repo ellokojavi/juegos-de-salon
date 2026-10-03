@@ -3,7 +3,7 @@
 //
 // Cada "celular" es un Chrome con su propio perfil y su propio origen, para que no compartan
 // localStorage (ver el README de esta carpeta).
-import { launch, sleep } from './cdp.mjs';
+import { launch, sleep } from '../cdp.mjs';
 // Con varias sesiones a la vez, cada una sirve su copia en su puerto (D-135)
 const SITIO = process.env.SITIO || 'http://localhost:8765';
 const OUT = process.argv[2];
@@ -49,7 +49,7 @@ const jugar = d => d.evaluate(`(()=>{
 })()`);
 
 /* ---------------- Sala ---------------- */
-await A.go(`${hosts[0]}/julepe/`); await A.evaluate(`localStorage.clear(); 1`); await A.go(`${hosts[0]}/julepe/`);
+await A.go(`${hosts[0]}/julep/`); await A.evaluate(`localStorage.clear(); 1`); await A.go(`${hosts[0]}/julep/`);
 await click(A, '.modes .mode:nth-child(2)'); await sleep(400);
 await setName(A, NOMBRE.A);
 await click(A, '#setup-actions .btn--yellow'); await sleep(5000);
@@ -59,8 +59,8 @@ console.log('sala:', code, '| pantalla de A:', await pantalla(A));
 for (const [rol, dev] of [['B', B], ['C', C]]) {
   const host = hosts[rol === 'B' ? 1 : 2];
   // Entra por el enlace de invitación, que es como llega de verdad
-  await dev.go(`${host}/julepe/?sala=${code}`); await dev.evaluate(`localStorage.clear(); 1`);
-  await dev.go(`${host}/julepe/?sala=${code}`); await sleep(1200);
+  await dev.go(`${host}/julep/?sala=${code}`); await dev.evaluate(`localStorage.clear(); 1`);
+  await dev.go(`${host}/julep/?sala=${code}`); await sleep(1200);
   await setName(dev, NOMBRE[rol]);
   await dev.evaluate(`[...document.querySelectorAll('#setup-actions .btn')].find(x=>/Unirse|Join|Entrar/i.test(x.textContent)).click(); 1`);
   await sleep(4500);
@@ -111,7 +111,7 @@ while (vueltas++ < 500) {
   const vb = await vista(B);
   if (!reconectado && vb.mano === 1 && vb.phase === 'baza') {
     reconectado = true;
-    await B.go(`${hosts[1]}/julepe/?sala=${code}`); await sleep(9000);   // entrar a la sala tiene tope de 12 s
+    await B.go(`${hosts[1]}/julep/?sala=${code}`); await sleep(9000);   // entrar a la sala tiene tope de 12 s
     const ahora = await vista(B);
     console.log('B recargó →', await pantalla(B), '· mano', ahora.mano, '· sus cartas:', (ahora.mias || []).join(' ') || '⚠️ perdió su mano');
     // Si no volvió a la mesa, lo primero que hay que saber es si la partida quedó guardada

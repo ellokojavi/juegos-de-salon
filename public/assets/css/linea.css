@@ -1,7 +1,7 @@
 /* ==========================================================
    La línea y la mano, compartidas (D-102)
    Las usan Línea de Tiempo y ⏳ Línea Relámpago de La Copa: la misma carta, las mismas
-   ranuras, el mismo arrastre (D-85) y el mismo veredicto. Salieron de linea-de-tiempo/style.css
+   ranuras, el mismo arrastre (D-85) y el mismo veredicto. Salieron de timeline/style.css
    sin cambios: lo que se toque acá cambia los dos juegos a la vez.
    ========================================================== */
 .hand-title { display: flex; justify-content: space-between; align-items: baseline; margin: 4px 0; }
@@ -108,7 +108,7 @@ body.arrastrando .place-row { opacity: 0; pointer-events: none; }
 .vilo-carta .y { font: 900 1.35rem var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); }
 @keyframes alzar { from { transform: translate(-50%, -100%) scale(0.55); } to { transform: translate(-50%, -100%) scale(1); } }
 @media (prefers-reduced-motion: reduce) { .vilo-carta { animation: none; } }
-/* ---------- ⏳ Línea Relámpago (copa/juegos/ui-linea.js) ----------
+/* ---------- ⏳ Línea Relámpago (cup/games/timeline/ui.js) ----------
    La juegan La Copa y el modo solo de Línea de Tiempo (D-142): la carta mal puesta queda en
    su lugar, marcada en rojo. */
 .lt-juego .status { text-align: center; margin: 0 0 8px; }

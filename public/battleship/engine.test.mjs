@@ -1,4 +1,4 @@
-// Ejecutar: node batalla-naval/engine.test.mjs
+// Ejecutar: node public/battleship/engine.test.mjs
 import assert from 'node:assert/strict';
 import { N, FLEET, cellName, parseCell, isCell, cellsOf, isValidPlacement, isValidLayout, randomLayout, rotateNear, occupancy, layoutKey, shoot, sunkShips, allSunk, Hunter, nextShooter, sha256, verifyPlayer } from './engine.js';
 

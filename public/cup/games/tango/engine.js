@@ -4,7 +4,7 @@
  * marcas entre casillas vecinas: "=" (iguales) y "×" (distintas). Algunas casillas vienen puestas.
  * La solución es única: el generador suma pistas hasta que el resolvedor encuentra una sola.
  */
-import { azar } from './semilla.js';
+import { azar } from '../semilla.js';
 
 export const VACIO = 0, SOL = 1, LUNA = 2;
 

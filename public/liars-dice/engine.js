@@ -126,7 +126,7 @@ export function credibility({ myDice, bid, totalDice }) {
 /**
  * Cuánto se arriesga el celular a mentir. El número salió de un torneo contra tres rivales de
  * prueba —uno que solo calcula, uno que supone que tienes lo que cantas y uno que supone lo
- * contrario— y no de la intuición (ver docs/juegos/dudo.md).
+ * contrario— y no de la intuición (ver docs/games/liars-dice.md).
  *
  * No es 1 a propósito: con la perilla al tope **nunca** cantaría su pinta más fuerte, que es
  * un patrón tan legible como cantarla siempre. En 0,7 miente dos de cada tres veces que puede,
@@ -138,7 +138,7 @@ export const AGRESIVIDAD = 0.7;
  * Lo mínimo creíble que puede ser un farol. Mentir no es apostar lo improbable: si la apuesta
  * disfrazada ya es más falsa que cierta, no es un farol, es regalar un dado. Con el umbral en
  * 0,45 el celular perdía veinte puntos contra un rival que solo calcula; subirlo deja el
- * disfraz —cantar una pinta que no tiene— sin pagar por él (ver docs/juegos/dudo.md).
+ * disfraz —cantar una pinta que no tiene— sin pagar por él (ver docs/games/liars-dice.md).
  */
 const UMBRAL_FAROL = 0.62;
 
@@ -147,7 +147,7 @@ const UMBRAL_FAROL = 0.62;
  * pinta que no se tiene es casi gratis —con la mesa entera sin destapar, "un seis" es cierto
  * igual— y ya rompe la lectura. Disfrazar a mitad de ronda es caro: sube la escalera en una
  * pinta donde el celular está flaco y después le toca a él vivir con esa apuesta. Se miden por
- * separado y se pesan por separado (ver docs/juegos/dudo.md).
+ * separado y se pesan por separado (ver docs/games/liars-dice.md).
  */
 export const MEZCLA = { abrir: 1, disfraz: 1, apriete: 1 };
 
@@ -158,7 +158,7 @@ const unoDe = (lista, rand) => lista[Math.min(lista.length - 1, Math.floor(rand(
  * La jugada del celular. Recibe **solo sus propios dados** y lo que está a la vista: no
  * mira los del rival aunque el aparato los tenga a mano en el modo de un celular.
  *
- * Miente de tres formas, y las tres tienen su motivo (ver docs/juegos/dudo.md):
+ * Miente de tres formas, y las tres tienen su motivo (ver docs/games/liars-dice.md):
  *  - **disfraza la mano**: canta una pinta que no es la más fuerte que tiene, mientras la
  *    apuesta siga siendo creíble. Sin esto el celular es un libro abierto: siempre nombraba la
  *    pinta de la que más tenía, así que dos de cada tres apuestas delataban su mano.
@@ -167,7 +167,7 @@ const unoDe = (lista, rand) => lista[Math.min(lista.length - 1, Math.floor(rand(
  *
  * Lo que **no** hace es exagerar la cantidad por encima de la mínima legal. Era la única mentira
  * que tenía antes, y medida sola gana el 21% de las partidas contra el 46% del celular honesto:
- * subir de más le regala al rival un piso más alto sin comprarle nada a cambio (ver docs/juegos/dudo.md).
+ * subir de más le regala al rival un piso más alto sin comprarle nada a cambio (ver docs/games/liars-dice.md).
  *
  * `rivales` son los dados que le quedan a cada uno de los otros; sin eso no puede saber a
  * quién apretar.

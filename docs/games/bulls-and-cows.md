@@ -1,6 +1,6 @@
 # Especificación: Toque y Fama 🔢
 
-**Ruta:** `/toque-y-fama/` · **Jugadores:** 1–2 · **Versión:** 0.4 · **Idiomas:** es, en (“Bulls and Cows”), pt (“Toque e Fama”)
+**Ruta:** `/bulls-and-cows/` · **Jugadores:** 1–2 · **Versión:** 0.4 · **Idiomas:** es, en (“Bulls and Cows”), pt (“Toque e Fama”)
 
 ## Reglas implementadas
 - Cada jugador elige un número secreto de **3, 4 o 5 cifras distintas** (4 por defecto). Cero inicial permitido (configurable). Jugando solo no se configura nada (D-142).
@@ -11,9 +11,9 @@
 ## Modos
 | Modo | Cómo | Transporte |
 |---|---|---|
-| 📱 Un celular, dos jugadores | Cada uno ingresa su secreto con la pantalla tapada; tras cada intento aparece, en una sola pantalla, la respuesta (toques y famas) y debajo “Pásale el celular a X”. | `assets/js/transport/local.js` (memoria) |
-| 🧍 Jugar solo | Es el minijuego 🔢 “Toque y Fama: adivina el número” de La Copa (D-142): 4 cifras distintas (puede empezar con cero), 10 intentos y puntaje de 0 a 100 con reloj de tiempo activo. Sin configuración. Ver “Jugar solo” más abajo. | Sin transporte: `copa/juegos/ui-numero.js` montado con `copa/juegos/solo.js` |
-| 📡 Dos celulares | Sala con código de 4 letras y QR (`?sala=CODE`). Cada celular calcula las respuestas contra su propio secreto. | `assets/js/transport/firebase.js` (Realtime Database) |
+| 📱 Un celular, dos jugadores | Cada uno ingresa su secreto con la pantalla tapada; tras cada intento aparece, en una sola pantalla, la respuesta (toques y famas) y debajo “Pásale el celular a X”. | `public/assets/js/transport/local.js` (memoria) |
+| 🧍 Jugar solo | Es el minijuego 🔢 “Toque y Fama: adivina el número” de La Copa (D-142): 4 cifras distintas (puede empezar con cero), 10 intentos y puntaje de 0 a 100 con reloj de tiempo activo. Sin configuración. Ver “Jugar solo” más abajo. | Sin transporte: `public/cup/games/number/ui.js` montado con `public/cup/games/solo.js` |
+| 📡 Dos celulares | Sala con código de 4 letras y QR (`?sala=CODE`). Cada celular calcula las respuestas contra su propio secreto. | `public/assets/js/transport/firebase.js` (Realtime Database) |
 
 ## Recordatorio del número propio
 En la pantalla de juego aparece una ficha “🔒 Tu número secreto”. En dos celulares se ve directo; en un celular parte oculta (••••) y se muestra al tocarla, porque el celular pasa de mano.
@@ -30,8 +30,8 @@ configurables, intentos ilimitados y récord por menos intentos (D-129). Ahora e
 minijuego 🔢 de La Copa, con sus reglas, su pantalla y su puntaje, pero en el idioma de quien juega:
 
 - **Reglas:** 4 cifras distintas, puede empezar con cero, 10 intentos. Puntaje de 0 a 100: 100 al
-  primer intento y 10 menos por cada uno más; 0 si no lo saca (`copa/juegos/numero.js`).
-- **Número:** sale de un código de 5 letras al azar (`codigoAlAzar` de `copa/engine.js`) con
+  primer intento y 10 menos por cada uno más; 0 si no lo saca (`public/cup/games/number/engine.js`).
+- **Número:** sale de un código de 5 letras al azar (`codigoAlAzar` de `public/cup/engine.js`) con
   `numero.generar(codigo, 1)`. No hay secreto que guardar ni que verificar.
 - **Pantallas:** una previa con “Cómo se juega” (3 puntos), cómo se calcula el puntaje, el récord y
   Empezar; la del juego (`#screen-solo`) con el título y el reloj arriba y `ui-numero` montado por
@@ -73,7 +73,7 @@ El estado (`view()`) se deriva de la lista de mensajes: fase (`lobby`, `secret`,
 - Presencia con `onDisconnect`; si el rival se desconecta, se avisa en pantalla.
 
 ## Cifras tachadas (notas del jugador)
-En el teclado de adivinar, una pulsación larga (450 ms) sobre una cifra la tacha: se ve con 🚫, se quita de la entrada actual y el toque corto no la ingresa. Otra pulsación larga la destacha. En pantalla se dice **tachar**, no bloquear (U-5, D-177). El teclado con notas es el compartido, `assets/js/teclado.js` (D-102). Las marcas son por jugador (en un celular cada uno tiene las suyas), duran toda la partida, se guardan con la sesión en modo dos celulares y se limpian en la revancha. Bajo el teclado hay una instrucción de una línea para usuarios nuevos.
+En el teclado de adivinar, una pulsación larga (450 ms) sobre una cifra la tacha: se ve con 🚫, se quita de la entrada actual y el toque corto no la ingresa. Otra pulsación larga la destacha. En pantalla se dice **tachar**, no bloquear (U-5, D-177). El teclado con notas es el compartido, `public/assets/js/teclado.js` (D-102). Las marcas son por jugador (en un celular cada uno tiene las suyas), duran toda la partida, se guardan con la sesión en modo dos celulares y se limpian en la revancha. Bajo el teclado hay una instrucción de una línea para usuarios nuevos.
 
 ## Repaso al final
 Bajo “Los números secretos eran” hay un desplegable “🔎 Ver todos los intentos”, colapsado por defecto (una línea de alto, para que Revancha, Cambiar modo y Volver al menú queden a la vista en un celular de 812 px), con los tableros completos de ambos jugadores.
@@ -92,7 +92,7 @@ En los tableros las pistas van abreviadas (“3F 1T”, en inglés “3B 1C”) 
 
 Burbuja 💬 con globito de no leídos, disponible desde la sala de espera y durante toda la partida
 (también mientras cada uno elige su número secreto, que es puro tiempo muerto). Usa el módulo
-compartido `assets/js/chat.js` montado en `<div id="chat">`, hermano de `#handoff` (canon C-15).
+compartido `public/assets/js/chat.js` montado en `<div id="chat">`, hermano de `#handoff` (canon C-15).
 Sigue vivo en la pantalla de resultado, para celebrar o pedir revancha (D-35), y no se guarda en ninguna parte: muere con la sala. Al reconectar, la
 conversación vuelve desde la sala, sin sonido ni globito. Se cierra solo cuando llega tu turno,
 salvo que estés escribiendo. Con el chat en pantalla, la pantalla de juego deja aire abajo para
@@ -103,13 +103,13 @@ Compromiso `sha256(secreto + sal privada)` al inicio; al final se revelan secret
 
 ## Archivos
 ```
-toque-y-fama/
+public/bulls-and-cows/
   index.html · style.css · rules.js (LOCALES es/en, config por defecto)
   engine.js (score, isValid, randomSecret, sha256, verifyPlayer) · engine.test.mjs
-  game.js (reductor, agentes locales, render; jugar solo con copa/juegos/ui-numero.js y solo.js)
-firebase/database.rules.json · assets/js/firebase-config.js
+  game.js (reductor, agentes locales, render; jugar solo con public/cup/games/number/ui.js y solo.js)
+firebase/database.rules.json · public/assets/js/firebase-config.js
 ```
-Tests del motor: `node toque-y-fama/engine.test.mjs`.
+Tests del motor: `node public/bulls-and-cows/engine.test.mjs`.
 
 ## Pendientes / ideas
 - Modo espectador (leer la sala sin rol).

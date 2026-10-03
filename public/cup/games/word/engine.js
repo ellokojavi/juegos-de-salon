@@ -4,7 +4,7 @@
  * toques como Toque y Fama, y además marca cada letra: así se juega como Wordle sobre la
  * pantalla de Toque y Fama.
  */
-import { azar } from './semilla.js';
+import { azar } from '../semilla.js';
 import { palabrasDe } from './palabras.js';
 
 export const LARGO = 5;

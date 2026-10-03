@@ -1,4 +1,4 @@
-// Ejecutar: node assets/js/transport/ratelimit.test.mjs
+// Ejecutar: node public/assets/js/transport/ratelimit.test.mjs
 import assert from 'node:assert/strict';
 import { LIMITS, allow, checkQuota, load, note, noteCreated, prune } from './ratelimit.js';
 

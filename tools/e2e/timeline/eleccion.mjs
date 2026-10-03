@@ -1,6 +1,6 @@
 // Que se coloque la carta que el jugador eligió, y ninguna otra (D-38).
-// Se juega en el modo solo, la ⏳ Línea Relámpago (D-142), que usa copa/juegos/ui-linea.js.
-import { launch, sleep } from './cdp.mjs';
+// Se juega en el modo solo, la ⏳ Línea Relámpago (D-142), que usa cup/games/timeline/ui.js.
+import { launch, sleep } from '../cdp.mjs';
 const OUT = process.argv[2];
 const BASE = process.argv[3] || process.env.SITIO || 'http://localhost:8765';
 const b = await launch({ port: Number(process.env.PUERTO_CDP) || 9495, dir: `${OUT}/p`, out: OUT, width: 375, height: 812 });
@@ -12,8 +12,8 @@ const estado = () => b.evaluate(`JSON.stringify({
   jugadas: window.__ldt.solo().jugadas.length,
 })`).then(JSON.parse);
 
-await b.go(`${BASE}/linea-de-tiempo/`, 1500); await b.evaluate(`localStorage.clear(); 1`);
-await b.go(`${BASE}/linea-de-tiempo/`, 1500);
+await b.go(`${BASE}/timeline/`, 1500); await b.evaluate(`localStorage.clear(); 1`);
+await b.go(`${BASE}/timeline/`, 1500);
 await b.evaluate(`document.querySelectorAll('.mode')[2].click(); 1`); await sleep(400);
 await b.evaluate(`document.getElementById('btn-solo-empezar').click(); 1`); await sleep(1200);
 

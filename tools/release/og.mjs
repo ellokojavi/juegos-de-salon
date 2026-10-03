@@ -3,15 +3,16 @@
  * WhatsApp, en un chat o en una red. Importa a esta app más que a otras: los links de sala se
  * comparten por WhatsApp, así que la invitación a jugar **es** una tarjeta de estas.
  *
- *   node tools/og.mjs tarjetas   reescribe el bloque <!-- generado: og --> de cada página, y
- *                                genera la página de cada minijuego suelto (minijuegos/<id>/)
- *   node tools/og.mjs imagenes   rehace con Chrome las imágenes de 1200×630 que quedaron atrás
+ *   node tools/release/og.mjs tarjetas   reescribe el bloque <!-- generado: og --> de cada página,
+ *                                genera la página de cada minijuego suelto (public/minigames/<slug>/)
+ *                                y las páginas puente de las rutas viejas (D-190)
+ *   node tools/release/og.mjs imagenes   rehace con Chrome las imágenes de 1200×630 que quedaron atrás
  *                                (necesita internet: las fuentes vienen de Google Fonts).
  *                                Con --todas, las rehace todas
- *   node tools/og.mjs revisar    ¿quedó alguna página sin bloque, o alguna imagen sin hacer o
+ *   node tools/release/og.mjs revisar    ¿quedó alguna página sin bloque, o alguna imagen sin hacer o
  *                                hecha con otro dibujo u otros textos? (D-181)
  *
- * Los textos salen de assets/js/games.js, que es de donde sale también el menú: un solo lugar
+ * Los textos salen de public/assets/js/games.js, que es de donde sale también el menú: un solo lugar
  * donde cambiar el nombre o la bajada de un juego. `set-version.py` corre `tarjetas` en cada
  * publicación para que no se queden atrás; las imágenes se rehacen a mano, porque necesitan
  * navegador (y solo cambian si cambia un nombre, un emoji o el diseño de la tarjeta).
@@ -22,10 +23,10 @@ import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
-import { GAMES, SUELTOS } from '../assets/js/games.js';
-import { COMMON } from '../assets/js/i18n.js';
+import { GAMES, SUELTOS } from '../../public/assets/js/games.js';
+import { COMMON } from '../../public/assets/js/i18n.js';
 
-const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..');
+const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const SITIO = 'https://juegosdesalon.cl';
 // Con varias sesiones a la vez, cada una los suyos (D-135): PUERTO=87xx PUERTO_CDP=94xx
 const PUERTO = Number(process.env.PUERTO) || 8791;
@@ -36,16 +37,16 @@ const disponibles = GAMES.filter(g => g.available);
 // Un juego del laboratorio no va en la portada, pero sus links sí se comparten: lleva su tarjeta (D-101).
 // Lo mismo uno apagado que conserva su página (Julepe): quien tenga el link lo sigue compartiendo,
 // y sin esto su tarjeta se quedaba con el dibujo y los textos de cuando se apagó.
-const conTarjeta = GAMES.filter(g => g.available || g.labs || existsSync(join(RAIZ, g.id, 'index.html')));
+const conTarjeta = GAMES.filter(g => g.available || g.labs || existsSync(join(RAIZ, 'public', g.path, 'index.html')));
 
 /**
  * Las tres puertas de entrada: la portada en español y las dos que dejan elegido el idioma
  * (/pt/ y /en/). Cada una se comparte en su idioma, así que su tarjeta también (D-74).
  */
 const PUERTAS = [
-  { lang: 'es', archivo: 'index.html', ruta: '/', imagen: 'menu' },
-  { lang: 'pt', archivo: 'pt/index.html', ruta: '/pt/', imagen: 'menu-pt' },
-  { lang: 'en', archivo: 'en/index.html', ruta: '/en/', imagen: 'menu-en' },
+  { lang: 'es', archivo: 'public/index.html', ruta: '/', imagen: 'menu' },
+  { lang: 'pt', archivo: 'public/pt/index.html', ruta: '/pt/', imagen: 'menu-pt' },
+  { lang: 'en', archivo: 'public/en/index.html', ruta: '/en/', imagen: 'menu-en' },
 ];
 /** El cierre de la bajada. Es la única frase que no sale de la app: se dice a los robots. */
 const GRATIS = { es: 'Gratis, sin instalar y sin cuenta.', en: 'Free, no install, no account.', pt: 'De graça, sem instalar e sem conta.' };
@@ -65,8 +66,8 @@ const portada = p => ({
 
 const paginas = () => [...PUERTAS.map(portada), ...conTarjeta.map(g => ({
   lang: 'es',
-  archivo: `${g.id}/index.html`,
-  ruta: `/${g.id}/`,
+  archivo: `public/${g.path}index.html`,
+  ruta: `/${g.path}`,
   imagen: g.id,
   juego: g.id,
   titulo: `${g.name.es} ${g.emoji} · Juegos de Salón`,
@@ -74,8 +75,8 @@ const paginas = () => [...PUERTAS.map(portada), ...conTarjeta.map(g => ({
   alt: `${g.name.es}: ${g.tagline.es}`,
 })), ...SUELTOS.map(m => ({
   lang: 'es',
-  archivo: `minijuegos/${m.id}/index.html`,
-  ruta: `/minijuegos/${m.id}/`,
+  archivo: `public/${m.path}index.html`,
+  ruta: `/${m.path}`,
   imagen: m.id,
   juego: m.id,
   suelto: true,
@@ -85,38 +86,38 @@ const paginas = () => [...PUERTAS.map(portada), ...conTarjeta.map(g => ({
 }))];
 
 /**
- * La huella de una imagen (D-181): lo que la dibuja (tools/og/tarjeta.html) y lo que dice (el
+ * La huella de una imagen (D-181): lo que la dibuja (tools/release/og/tarjeta.html) y lo que dice (el
  * juego en games.js, o los textos de la portada). Cada imagen guarda la suya en
- * assets/og/huellas.json al hacerse, y `revisar` la compara con la de hoy: así una imagen hecha
+ * public/assets/og/huellas.json al hacerse, y `revisar` la compara con la de hoy: así una imagen hecha
  * con el dibujo viejo, o antes de cambiar una bajada, no pasa como si estuviera al día. Antes solo
  * se revisaba que existiera, y las píldoras desalineadas volvían cada vez que alguien hacía una
  * imagen desde una rama vieja.
  */
-const HUELLAS = join(RAIZ, 'assets/og/huellas.json');
+const HUELLAS = join(RAIZ, 'public/assets/og/huellas.json');
 const leerHuellas = () => { try { return JSON.parse(readFileSync(HUELLAS, 'utf8')); } catch (_) { return {}; } };
 function huella(p) {
   const juego = p.juego && [...GAMES, ...SUELTOS].find(g => g.id === p.juego);
   const dato = juego
     ? { emoji: juego.emoji, name: juego.name, tagline: juego.tagline, players: juego.players, duration: juego.duration, durationUnit: juego.durationUnit }
     : { lang: p.lang, textos: COMMON[p.lang], juegos: disponibles.map(g => [g.id, g.emoji]) };
-  return createHash('sha256').update(readFileSync(join(RAIZ, 'tools/og/tarjeta.html'), 'utf8')).update(JSON.stringify(dato)).digest('hex').slice(0, 16);
+  return createHash('sha256').update(readFileSync(join(RAIZ, 'tools/release/og/tarjeta.html'), 'utf8')).update(JSON.stringify(dato)).digest('hex').slice(0, 16);
 }
 /** ¿La imagen falta, o se hizo con otro dibujo u otros textos? */
-const atrasada = (p, huellas = leerHuellas()) => !existsSync(join(RAIZ, `assets/og/${p.imagen}.jpg`)) || huellas[p.imagen] !== huella(p);
+const atrasada = (p, huellas = leerHuellas()) => !existsSync(join(RAIZ, `public/assets/og/${p.imagen}.jpg`)) || huellas[p.imagen] !== huella(p);
 
 /* ------------------------------------------------------------------ */
 /* La página de cada minijuego suelto                                  */
 /* ------------------------------------------------------------------ */
 /**
  * Un robot de WhatsApp no corre JavaScript: lee las etiquetas del HTML tal como llega. Con una
- * sola página para todos (/minijuegos/?reinas) cada link traía la misma tarjeta, así que cada
- * minijuego tiene la suya (D-162). Es una copia de minijuegos/index.html un nivel más abajo, con
+ * sola página para todos (/minigames/?reinas) cada link traía la misma tarjeta, así que cada
+ * minijuego tiene la suya (D-162). Es una copia de public/minigames/index.html un nivel más abajo, con
  * su título, su tarjeta y `data-suelto="<id>"`: se rehace, no se edita. Como set-version.py corre
  * esto después de estampar, la copia sale con el import map de la versión nueva.
  */
-const AVISO_COPIA = () => `  <!-- Generada por node tools/og.mjs tarjetas a partir de minijuegos/index.html: no se edita a mano (D-162). -->`;
+const AVISO_COPIA = () => `  <!-- Generada por node tools/release/og.mjs tarjetas a partir de public/minigames/index.html: no se edita a mano (D-162). -->`;
 function paginaSuelta(p, bloqueOg) {
-  let html = readFileSync(join(RAIZ, 'minijuegos/index.html'), 'utf8');
+  let html = readFileSync(join(RAIZ, 'public/minigames/index.html'), 'utf8');
   // Sus etiquetas genéricas y el comentario que explica la página de todos
   html = html.replace(/^ {2}<!-- Los minijuegos de La Copa[\s\S]*?-->\n/m, '');
   html = html.replace(/^ {2}<meta (name="description"|property="og:[^"]*"|name="twitter:[^"]*").*\n/gm, '');
@@ -128,9 +129,50 @@ function paginaSuelta(p, bloqueOg) {
 }
 
 /* ------------------------------------------------------------------ */
+/* Las páginas puente de las rutas viejas                              */
+/* ------------------------------------------------------------------ */
+/**
+ * Las carpetas pasaron al inglés (D-190): /ahorcado/ es /hangman/. Pero los links viejos siguen
+ * circulando —las invitaciones a una sala por WhatsApp, el link propio de una copa
+ * (/copa/?pirata), los marcadores—, así que cada ruta vieja queda como una página puente que manda
+ * a la nueva con lo mismo detrás (?sala=…, ?pirata, &lang=…, #…). Lleva la tarjeta de la página
+ * nueva: un robot de chat no corre JavaScript y lee lo que encuentra en la vieja.
+ *
+ * La ruta vieja sale del id, que era la carpeta (/<id>/ y /minijuegos/<id>/): un juego nuevo con su
+ * carpeta igual a su id no tiene puente.
+ */
+const puentes = () => [
+  ...paginas().filter(p => p.juego && !p.suelto && `/${p.juego}/` !== p.ruta)
+    .map(p => ({ ...p, viejo: `public/${p.juego}/index.html`, a: `..${p.ruta}` })),
+  ...paginas().filter(p => p.suelto)
+    .map(p => ({ ...p, viejo: `public/minijuegos/${p.juego}/index.html`, a: `../..${p.ruta}` })),
+  // La página genérica (/minijuegos/?reinas), que ya mandaba cada link viejo a su lugar
+  { viejo: 'public/minijuegos/index.html', a: '../minigames/', titulo: 'Juegos de Salón 🎲' },
+];
+
+function paginaPuente(p) {
+  const og = p.ruta ? `\n${bloque(p)}` : '';
+  return `<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>${escapa(p.titulo)}</title>
+  <!-- Página puente (D-190): esta ruta se mudó a ${p.a.replace(/^(\.\.\/)+/, '/')}. La genera node tools/release/og.mjs tarjetas: no se edita a mano. -->${og}
+  <script>location.replace('${p.a}' + location.search + location.hash);</script>
+  <noscript><meta http-equiv="refresh" content="0; url=${p.a}"></noscript>
+</head>
+<body>
+  <p><a href="${p.a}">${escapa(p.titulo)}</a></p>
+</body>
+</html>
+`;
+}
+
+/* ------------------------------------------------------------------ */
 /* Las etiquetas                                                       */
 /* ------------------------------------------------------------------ */
-const ABRE = '  <!-- generado: og · lo reescribe node tools/og.mjs tarjetas -->';
+const ABRE = '  <!-- generado: og · lo reescribe node tools/release/og.mjs tarjetas -->';
 const CIERRA = '  <!-- /generado -->';
 const escapa = s => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 
@@ -140,7 +182,7 @@ const escapa = s => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</
  * antes en el archivo, así que "el primero" terminaba siendo el de la vuelta pasada.
  */
 function version() {
-  const m = readFileSync(join(RAIZ, 'index.html'), 'utf8').match(/base\.css\?v=(\d+\.\d+\.\d+)/);
+  const m = readFileSync(join(RAIZ, 'public/index.html'), 'utf8').match(/base\.css\?v=(\d+\.\d+\.\d+)/);
   return m ? m[1] : '0';
 }
 
@@ -215,6 +257,14 @@ function cmdTarjetas() {
     if (antes !== html) { writeFileSync(ruta, html); tocadas++; }
     console.log(`  ${p.archivo}${antes !== html ? '  ↻' : '  ='}`);
   }
+  for (const p of puentes()) {
+    const ruta = join(RAIZ, p.viejo);
+    const antes = existsSync(ruta) ? readFileSync(ruta, 'utf8') : '';
+    const html = paginaPuente(p);
+    mkdirSync(dirname(ruta), { recursive: true });
+    if (antes !== html) { writeFileSync(ruta, html); tocadas++; }
+    console.log(`  ${p.viejo}${antes !== html ? '  ↻' : '  ='}`);
+  }
   console.log(tocadas ? `${tocadas} página(s) con tarjeta nueva` : 'las tarjetas ya estaban al día');
 }
 
@@ -249,7 +299,7 @@ const jpeg = (origen, destino) => new Promise((ok, falla) => {
 });
 
 async function cmdImagenes() {
-  const { launch, sleep } = await import('./e2e/cdp.mjs');
+  const { launch, sleep } = await import('../e2e/cdp.mjs');
   const salida = join(RAIZ, 'assets/og');
   mkdirSync(salida, { recursive: true });
   // Fuera del repo: acá solo quedan los PNG intermedios y el perfil de Chrome
@@ -257,10 +307,11 @@ async function cmdImagenes() {
   rmSync(tmp, { recursive: true, force: true });
   mkdirSync(tmp, { recursive: true });
 
+  // Desde la raíz del repo, no desde public/: la tarjeta vive en tools/ e importa de /public/assets/
   const servidor = spawn('python3', ['-m', 'http.server', String(PUERTO)], { cwd: RAIZ, stdio: 'ignore' });
   await sleep(800);
   // Si el puerto ya lo tenía otro, python se fue y las fotos saldrían de la copia de otra sesión
-  if (servidor.exitCode !== null) throw new Error(`el puerto ${PUERTO} está ocupado: PUERTO=87xx node tools/og.mjs imagenes`);
+  if (servidor.exitCode !== null) throw new Error(`el puerto ${PUERTO} está ocupado: PUERTO=87xx node tools/release/og.mjs imagenes`);
   let toca = [];
   try {
     // El lienzo es de 600×315 y cdp fotografía al doble: 1200×630 exactos
@@ -272,7 +323,7 @@ async function cmdImagenes() {
       // El `t` es para que Chrome no reuse la tarjeta de la vuelta pasada: sin eso, un cambio
       // en el dibujo o en base.css se fotografía viejo y no hay forma de darse cuenta.
       const q = `?t=${Date.now()}${p.juego ? `&juego=${p.juego}` : ''}&lang=${p.lang}`;
-      await b.go(`http://localhost:${PUERTO}/tools/og/tarjeta.html${q}`, 1200);
+      await b.go(`http://localhost:${PUERTO}/tools/release/og/tarjeta.html${q}`, 1200);
       // Sin esperar a las fuentes, el título sale en la tipografía de reemplazo
       for (let i = 0; i < 20 && !(await b.evaluate(`document.body.dataset.listo === '1'`)); i++) await sleep(200);
       await sleep(300);
@@ -282,7 +333,7 @@ async function cmdImagenes() {
       // En JPEG pesan cuatro veces menos y a este tamaño no se nota: son letras grandes sobre
       // un degradado. 3 MB de PNG en el repo por siete imágenes que solo miran los robots.
       await jpeg(join(tmp, `${p.imagen}.png`), join(salida, `${p.imagen}.jpg`));
-      console.log(`  assets/og/${p.imagen}.jpg  ↻`);
+      console.log(`  public/assets/og/${p.imagen}.jpg  ↻`);
       huellas[p.imagen] = huella(p);
     }
     const ordenadas = Object.fromEntries(Object.keys(huellas).sort().map(k => [k, huellas[k]]));
@@ -304,8 +355,8 @@ async function cmdImagenes() {
 /* Revisión                                                            */
 /* ------------------------------------------------------------------ */
 function revisarImagen(p, problemas) {
-  if (!existsSync(join(RAIZ, `assets/og/${p.imagen}.jpg`))) problemas.push(`falta assets/og/${p.imagen}.jpg  →  node tools/og.mjs imagenes`);
-  else if (atrasada(p)) problemas.push(`assets/og/${p.imagen}.jpg se hizo con otro dibujo o con otros textos  →  node tools/og.mjs imagenes`);
+  if (!existsSync(join(RAIZ, `public/assets/og/${p.imagen}.jpg`))) problemas.push(`falta public/assets/og/${p.imagen}.jpg  →  node tools/release/og.mjs imagenes`);
+  else if (atrasada(p)) problemas.push(`public/assets/og/${p.imagen}.jpg se hizo con otro dibujo o con otros textos  →  node tools/release/og.mjs imagenes`);
 }
 
 function cmdRevisar() {
@@ -314,17 +365,23 @@ function cmdRevisar() {
     const ruta = join(RAIZ, p.archivo);
     if (p.suelto) {
       if (!existsSync(ruta) || readFileSync(ruta, 'utf8') !== paginaSuelta(p, bloque(p))) {
-        problemas.push(`${p.archivo} quedó atrás de minijuegos/index.html o de games.js  →  node tools/og.mjs tarjetas`);
+        problemas.push(`${p.archivo} quedó atrás de public/minigames/index.html o de games.js  →  node tools/release/og.mjs tarjetas`);
       }
       revisarImagen(p, problemas);
       continue;
     }
     const html = readFileSync(ruta, 'utf8');
-    if (!html.includes(ABRE)) problemas.push(`${p.archivo} no tiene tarjeta social  →  node tools/og.mjs tarjetas`);
+    if (!html.includes(ABRE)) problemas.push(`${p.archivo} no tiene tarjeta social  →  node tools/release/og.mjs tarjetas`);
     else if (html.split(ABRE)[1].split(CIERRA)[0] !== bloque(p).split(ABRE)[1].split(CIERRA)[0]) {
-      problemas.push(`${p.archivo} quedó atrás de games.js  →  node tools/og.mjs tarjetas`);
+      problemas.push(`${p.archivo} quedó atrás de games.js  →  node tools/release/og.mjs tarjetas`);
     }
     revisarImagen(p, problemas);
+  }
+  for (const p of puentes()) {
+    const ruta = join(RAIZ, p.viejo);
+    if (!existsSync(ruta) || readFileSync(ruta, 'utf8') !== paginaPuente(p)) {
+      problemas.push(`${p.viejo}: falta la página puente o quedó atrás  →  node tools/release/og.mjs tarjetas`);
+    }
   }
   problemas.forEach(x => console.log('  ERROR ·', x));
   if (!problemas.length) console.log(`tarjetas sociales al día · ${paginas().length} páginas`);
@@ -336,6 +393,6 @@ if (cmd === 'tarjetas') cmdTarjetas();
 else if (cmd === 'imagenes') await cmdImagenes();
 else if (cmd === 'revisar') process.exit(cmdRevisar());
 else {
-  console.error('Uso: node tools/og.mjs tarjetas | imagenes | revisar');
+  console.error('Uso: node tools/release/og.mjs tarjetas | imagenes | revisar');
   process.exit(1);
 }

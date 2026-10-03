@@ -2,12 +2,12 @@
  * La Copa — pantallas. Lo único que toca el DOM (C-2).
  *
  * Una copa es un torneo de 3 o 7 días: cada día un minijuego igual para todos que se juega
- * una vez (ver docs/juegos/copa.md). Las reglas del torneo viven en engine.js; los datos en
+ * una vez (ver docs/games/cup.md). Las reglas del torneo viven en engine.js; los datos en
  * el almacén (Firebase, o el de prueba con `?prueba`); cada minijuego se dibuja con su
  * módulo de juegos/ui-*.js.
  *
- * URL: /copa/ (portada) · /copa/?K7Q2X (una copa) · /copa/?K7Q2X&prueba (sin Firebase).
- * La misma pantalla sirve los minijuegos sueltos de la portada en /minijuegos/reinas/ (D-149, D-162).
+ * URL: /cup/ (portada) · /cup/?K7Q2X (una copa) · /cup/?K7Q2X&prueba (sin Firebase).
+ * La misma pantalla sirve los minijuegos sueltos de la portada en /minigames/queens/ (D-149, D-162).
  */
 import { crearArrastre } from '../assets/js/arrastre.js';
 import { $, $$, el, con, conEmoji, vibrate, sparkles, keepAwake, confetti } from '../assets/js/ui.js';
@@ -24,8 +24,8 @@ import {
 } from './engine.js';
 import { GAME_ID, LOCALES, minijuegos, rondasFinal, MINIJUEGOS as MINIJUEGOS_ES } from './rules.js';
 import { createCuenta } from './cuenta.js';
-import { JUEGOS } from './juegos/index.js';
-import { audienciaDe } from './juegos/audiencia.js';
+import { JUEGOS } from './games/index.js';
+import { audienciaDe } from './games/audiencia.js';
 import { desglose } from './desglose.js';
 import { planilla } from './planilla.js';
 
@@ -54,10 +54,10 @@ const PRUEBA = busqueda.includes('prueba');
 // la Copa de 3 días (D-100). ?tres se mantiene por los links que ya circulan.
 const LABS = busqueda.includes('labs');
 const TRES = PRUEBA || LABS || busqueda.includes('tres');
-// Los minijuegos sueltos de la portada viven en /minijuegos/<id>/ (D-149, D-162): la misma
+// Los minijuegos sueltos de la portada viven en /minigames/<slug>/ (D-149, D-162, D-190): la misma
 // pantalla, pero fuera de una copa el link no dice "copa". Cada uno tiene su página, que dice cuál
 // es en `<body data-suelto="reinas">`, para que el link compartido traiga su propia tarjeta
-// social. /copa/?practica=<id>&labs queda para el laboratorio.
+// social. /cup/?practica=<id>&labs queda para el laboratorio.
 const SUELTO = document.body.hasAttribute('data-suelto');
 const PRACTICA = SUELTO
   ? document.body.dataset.suelto || busqueda.find(x => !x.includes('=') && x !== 'prueba' && x !== 'labs') || ''
@@ -72,11 +72,11 @@ const SEMILLA = (new URLSearchParams(location.search).get('semilla') || '').toUp
  */
 const paginaSuelta = (id, { semilla, zipSeg } = {}) => {
   const q = [LABS && 'labs', PRUEBA && 'prueba', semilla && `semilla=${semilla}`, zipSeg && `zipSeg=${zipSeg}`].filter(Boolean).join('&');
-  return gameById(id)?.suelto ? `${RAIZ}minijuegos/${id}/${q ? `?${q}` : ''}` : `${RAIZ}minijuegos/?${[id, q].filter(Boolean).join('&')}`;
+  return gameById(id)?.suelto ? `${RAIZ}${gameById(id).path}${q ? `?${q}` : ''}` : `${RAIZ}minigames/?${[id, q].filter(Boolean).join('&')}`;
 };
 const semillaUrl = { semilla: SEMILLA, zipSeg: new URLSearchParams(location.search).get('zipSeg') };
-// Un link viejo (/copa/?practica=reinas, o /minijuegos/?reinas) se va a su lugar nuevo. Los del
-// laboratorio que no tienen página (Línea Relámpago, el número, la final) siguen en /copa/.
+// Un link viejo (/cup/?practica=reinas, o /minigames/?reinas) se va a su lugar nuevo. Los del
+// laboratorio que no tienen página (Línea Relámpago, el número, la final) siguen en /cup/.
 if (!SUELTO && PRACTICA && (!LABS || gameById(PRACTICA)?.suelto)) location.replace(paginaSuelta(PRACTICA, semillaUrl));
 if (SUELTO && !document.body.dataset.suelto && gameById(PRACTICA)?.suelto) location.replace(paginaSuelta(PRACTICA, semillaUrl));
 // Las demos del laboratorio (D-110): solo en el modo de prueba, con el almacén local
@@ -106,7 +106,7 @@ const S = { code: null, L: null, yo: null, pantalla: null, off: null, juego: nul
 // copa ya sabe por dentro si es del laboratorio (D-121)
 const enlace = code => (S.code === code && S.L?.meta?.alias) || code;
 const urlCopa = code => `${location.origin}${location.pathname}?${enlace(code)}${PRUEBA ? '&prueba' : ''}`;
-const urlPublica = code => (PRUEBA ? urlCopa(code) : `https://juegosdesalon.cl/copa/?${enlace(code)}`);
+const urlPublica = code => (PRUEBA ? urlCopa(code) : `https://juegosdesalon.cl/cup/?${enlace(code)}`);
 
 function mostrar(id) {
   S.pantalla = id;
@@ -385,7 +385,7 @@ function crearCopa() {
     const a = aliasLimpio(link.input.value);
     linkLibre = null;
     if (!link.input.value.trim()) { linkEstado.textContent = T.fLinkHint; linkEstado.className = 'muted link-estado'; return; }
-    const url = `juegosdesalon.cl/copa/?${a}`;
+    const url = `juegosdesalon.cl/cup/?${a}`;
     if (!esAlias(a) || RESERVADAS.includes(a)) { linkEstado.textContent = fmt(T.fLinkBad, { url }); linkEstado.className = 'link-estado mal'; return; }
     linkEstado.textContent = fmt(T.fLinkChecking, { url }); linkEstado.className = 'muted link-estado';
     try {
@@ -410,7 +410,7 @@ function crearCopa() {
     if (!esPin(pin1.input.value)) return avisoError(err, T.errPin);
     if (pin1.input.value !== pin2.input.value) return avisoError(err, T.errPin2);
     const alias = link.input.value.trim() ? aliasLimpio(link.input.value) : null;
-    if (alias && (!esAlias(alias) || RESERVADAS.includes(alias))) return avisoError(err, fmt(T.fLinkBad, { url: `juegosdesalon.cl/copa/?${alias}` }));
+    if (alias && (!esAlias(alias) || RESERVADAS.includes(alias))) return avisoError(err, fmt(T.fLinkBad, { url: `juegosdesalon.cl/cup/?${alias}` }));
     boton.disabled = true; boton.textContent = T.creating; err.textContent = '';
     try {
       const st = await abrirStore();
@@ -1906,7 +1906,7 @@ function explicacion(J, { s, ms, det, x = 1, final = false, copa = true }) {
 /* ------------------------------------------------------------------ */
 
 /**
- * `/copa/?practica=<id>` juega un minijuego suelto con contenido al azar, para probar su
+ * `/cup/?practica=<id>` juega un minijuego suelto con contenido al azar, para probar su
  * mecánica antes de armar una copa. La semilla se muestra al final y va en la URL
  * (`&semilla=K7Q2X`): con ella se repite exactamente la misma partida para reportar un error.
  */
@@ -1926,7 +1926,7 @@ function practica(id) {
   if (SUELTO) $('#chip-juego').replaceChildren(...conEmoji(J.emoji, J.nombre));
   const semilla = esCodigo(SEMILLA) ? SEMILLA : codigoAlAzar();
   const zipSeg = new URLSearchParams(location.search).get('zipSeg');
-  // Suelto, la semilla no va a la vista (D-142): el link queda en /minijuegos/reinas/. Desde el
+  // Suelto, la semilla no va a la vista (D-142): el link queda en /minigames/queens/. Desde el
   // laboratorio sí, para poder repetir la partida.
   if (SUELTO && LABS) history.replaceState(null, '', paginaSuelta(id, { semilla, zipSeg }));
   else if (!SUELTO) history.replaceState(null, '', `${location.pathname}?practica=${id}&semilla=${semilla}${PRUEBA ? '&prueba' : ''}${LABS ? '&labs' : ''}${zipSeg ? `&zipSeg=${zipSeg}` : ''}`);
@@ -2047,7 +2047,7 @@ function resultadoPractica(id, semilla, r) {
     explicacion(J, { s: r.s, ms: r.ms, det: r.det, copa: false }),
     LABS ? el('p', { class: 'muted center' }, fmt(T.practiceSeed, { semilla })) : null,
     // Suelto se comparte como cualquier minijuego jugado solo, con su página (D-162, D-165)
-    !LABS && gameById(id)?.suelto ? botonResultadoSolo({ C: COMMON[LANG] || COMMON.es, emoji: J.emoji, juego: J.nombre, puntaje: r.resumen || String(r.s), tiempo: mmss(r.ms), tarjeta: r.t, url: withLang(`${SITIO}minijuegos/${id}/`, LANG), alTocar: () => SFX.tap() }) : null,
+    !LABS && gameById(id)?.suelto ? botonResultadoSolo({ C: COMMON[LANG] || COMMON.es, emoji: J.emoji, juego: J.nombre, puntaje: r.resumen || String(r.s), tiempo: mmss(r.ms), tarjeta: r.t, url: withLang(`${SITIO}${gameById(id).path}`, LANG), alTocar: () => SFX.tap() }) : null,
     el('a', { class: 'btn btn--yellow', id: 'btn-otra', href: otra }, T.practiceAgain),
     LABS ? el('a', { class: 'btn btn--cyan btn--sm', id: 'btn-repetir', href: `${otra}&semilla=${semilla}` }, T.practiceSame) : null,
     botonReporte({ juego: id, semilla, puntaje: r.s, resumen: r.resumen }),

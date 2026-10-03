@@ -1,4 +1,4 @@
-// Ejecutar: node assets/js/transport/errors.test.mjs
+// Ejecutar: node public/assets/js/transport/errors.test.mjs
 import assert from 'node:assert/strict';
 import { errText, failWith, transportErrorKey, waitConnected, withTimeout } from './errors.js';
 

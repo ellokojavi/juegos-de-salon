@@ -21,7 +21,7 @@ export function setLang(lang) {
 
 /**
  * El idioma también puede venir en el link: `juegosdesalon.cl/?lang=pt`, o pegado a la
- * invitación de una sala, `/dudo/?sala=WFBN&lang=pt`. Quien comparte elige el idioma con el que
+ * invitación de una sala, `/liars-dice/?sala=WFBN&lang=pt`. Quien comparte elige el idioma con el que
  * va a llegar el que recibe, que es lo mismo que hace el toggle pero para otra persona: sigue
  * sin detectarse nada del navegador (D-47, D-74).
  *
@@ -31,7 +31,7 @@ export function setLang(lang) {
  */
 /**
  * La búsqueda sin el `lang=`, tal como venía. No se rearma con URLSearchParams: eso le pega un
- * "=" a cada parámetro suelto y `/copa/?pirata&lang=pt` quedaba en `?pirata=`, que La Copa ya no
+ * "=" a cada parámetro suelto y `/cup/?pirata&lang=pt` quedaba en `?pirata=`, que La Copa ya no
  * reconoce como el link de la copa (D-170).
  */
 export const sinLang = search => {

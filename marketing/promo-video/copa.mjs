@@ -9,7 +9,7 @@ fs.mkdirSync(path.join(dir, 'plays'), { recursive: true });
 const b = await abrir();
 const p = await b.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 });
 await p.goto(SITIO + '/'); await p.evaluate(() => { localStorage.clear(); localStorage.setItem('juegos-de-salon:lang', 'es'); });
-await p.goto(SITIO + '/copa/?prueba&labs&demo=podio'); await p.waitForTimeout(4000);
+await p.goto(SITIO + '/cup/?prueba&labs&demo=podio'); await p.waitForTimeout(4000);
 await p.screenshot({ path: path.join(dir, 'plays/copa-larga.png'), fullPage: true });
 await b.close();
 console.log('listo plays/copa-larga.png');

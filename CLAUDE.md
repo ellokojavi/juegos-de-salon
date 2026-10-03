@@ -3,6 +3,19 @@
 App web estática (HTML, CSS y JavaScript con módulos ES, sin build ni npm) con juegos de salón,
 publicada en GitHub Pages: https://juegosdesalon.cl/
 
+## Dónde está cada cosa (D-190)
+
+- **`public/` es el sitio**, tal como se sirve: carpeta = URL, en inglés (`public/hangman/` →
+  `/hangman/`). Es lo único que se publica: `.github/workflows/publicar.yml` lo sube a Pages en cada
+  fusión a main, si las pruebas pasan. Se sirve con `python3 -m http.server 8765 -d public`.
+- **El id de un juego no es su carpeta**: `'ahorcado'` vive en `/hangman/`. El id lo guardan las
+  salas, el panel y el `localStorage`, y no se cambia. Las rutas viejas en español (`public/ahorcado/`,
+  `public/copa/`, `public/minijuegos/…`) son páginas puente generadas: no se editan.
+- **El taller**, al lado: `docs/`, `firebase/`, `marketing/` y `tools/` por función (`release/`,
+  `firebase/`, `generators/`, `agents/`, `e2e/<juego>/`).
+- Las carpetas nuevas van en inglés. La documentación, los mensajes y los nombres de archivo de las
+  herramientas siguen en español.
+
 ## Antes de construir o modificar un juego
 
 Leer **[docs/CANONES.md](docs/CANONES.md)**: son las reglas de construcción de todos los juegos
@@ -22,7 +35,7 @@ Puede haber varias sesiones de Claude trabajando en este repo al mismo tiempo (D
   numerarlos antes produce choques (dos "0.61"). Las decisiones (D-n) también: se toma el número
   siguiente al más alto en `main` **y en los PR abiertos** (`gh pr list`).
 - Antes de tocar la rama de otro PR, preguntarle a esa sesión (ListAgents / SendMessage).
-- **Pruebas en paralelo:** servir la copia propia en un puerto propio (`python3 -m http.server 87xx`),
+- **Pruebas en paralelo:** servir la copia propia en un puerto propio (`python3 -m http.server 87xx -d public`),
   correr los guiones con `SITIO=http://localhost:87xx PUERTO_CDP=94xx` y **matar solo el Chrome
   propio** (`pkill -f "remote-debugging-port=94xx"`). Nunca `pkill -f remote-debugging-port` a secas:
   mata las pruebas de todas las sesiones.
@@ -37,7 +50,7 @@ llave del dueño) y no fusiona. Todo lo demás de esta guía vale igual.
 ## Publicar
 
 ```bash
-python3 tools/set-version.py X.Y.Z   # obligatorio antes de cada commit publicado (C-11)
+python3 tools/release/set-version.py X.Y.Z   # obligatorio antes de cada commit publicado (C-11)
 ```
 
 Estampa la versión y, antes, revisa que el README no haya quedado atrás del código:
@@ -49,13 +62,13 @@ si lo quedó, no estampa y dice qué le falta (C-13, D-51).
 documentación, y los mensajes de las herramientas, siguen en español.
 
 El README repite datos que el código ya sabe y muestra capturas que envejecen.
-`tools/readme.py` genera lo derivable, delata lo que cambió y rehace las capturas:
+`tools/release/readme.py` genera lo derivable, delata lo que cambió y rehace las capturas:
 
 ```bash
-python3 tools/readme.py revisar        # ¿quedó algo atrás? (lo corre set-version.py)
-python3 tools/readme.py actualizar     # reescribe los bloques <!-- generado: ... -->
-python3 tools/readme.py capturas <seccion> [--sin-red]   # rehace las capturas con Chrome
-python3 tools/readme.py sellar         # "ya releí el README con estos hechos"
+python3 tools/release/readme.py revisar        # ¿quedó algo atrás? (lo corre set-version.py)
+python3 tools/release/readme.py actualizar     # reescribe los bloques <!-- generado: ... -->
+python3 tools/release/readme.py capturas <seccion> [--sin-red]   # rehace las capturas con Chrome
+python3 tools/release/readme.py sellar         # "ya releí el README con estos hechos"
 ```
 
 Rehacerlas no es revisarlas. Antes de publicar, la hoja de contacto pone todas las capturas de
@@ -66,7 +79,7 @@ node tools/e2e/contacto.mjs cuarto-rey --salida /tmp/contacto
 ```
 
 Dentro de las marcas `<!-- generado: ... -->` no se edita a mano. La prosa sí es a mano:
-`revisar` compara los hechos de hoy (`tools/hechos.mjs`, que importa los módulos reales)
+`revisar` compara los hechos de hoy (`tools/release/hechos.mjs`, que importa los módulos reales)
 contra el último sello (`docs/hechos.json`) y dice qué sección releer. Cada captura declara
 en [docs/capturas.json](docs/capturas.json) de qué guion de `tools/e2e/` y de qué toma sale.
 
@@ -77,12 +90,12 @@ otras apps: los links de sala se comparten por ahí, así que la invitación a j
 estas tarjetas.
 
 ```bash
-node tools/og.mjs tarjetas    # reescribe el bloque <!-- generado: og --> (lo corre set-version.py)
-node tools/og.mjs imagenes    # rehace con Chrome las 1200×630 atrasadas (--todas: todas; necesita internet)
-node tools/og.mjs revisar     # ¿falta una tarjeta, o una imagen se hizo con otro dibujo u otros textos? (D-181)
+node tools/release/og.mjs tarjetas    # reescribe el bloque <!-- generado: og --> (lo corre set-version.py)
+node tools/release/og.mjs imagenes    # rehace con Chrome las 1200×630 atrasadas (--todas: todas; necesita internet)
+node tools/release/og.mjs revisar     # ¿falta una tarjeta, o una imagen se hizo con otro dibujo u otros textos? (D-181)
 ```
 
-Los textos salen de `assets/js/games.js` y el dibujo de [tools/og/tarjeta.html](tools/og/tarjeta.html),
+Los textos salen de `public/assets/js/games.js` y el dibujo de [tools/release/og/tarjeta.html](tools/release/og/tarjeta.html),
 que importa los módulos reales. Las imágenes se rehacen a mano: solo cambian si cambia un nombre,
 un emoji, una bajada o el diseño (D-72). Cada una guarda la huella de su dibujo y sus textos, y una
 atrasada frena el PR y `set-version.py` (D-181): **se rehacen desde una rama al día con `main`**.
@@ -95,31 +108,31 @@ GitHub corre todas las de abajo (menos el servidor) en cada PR y en cada fusión
 aquí antes de abrir el PR; las de punta a punta siguen a mano.
 
 ```bash
-node toque-y-fama/engine.test.mjs
-node batalla-naval/engine.test.mjs
-node linea-de-tiempo/engine.test.mjs
-node ahorcado/engine.test.mjs
-node dudo/engine.test.mjs
-node julepe/engine.test.mjs
-node copa/engine.test.mjs               # La Copa: torneo, minijuegos y almacén de prueba
-node copa/juegos/juegos.test.mjs
-node copa/store.test.mjs
-node copa/planilla.test.mjs            # la tabla final como CSV (D-161)
-node copa/reportes.test.mjs             # un reporte que no sale queda guardado y se reenvía
-node assets/js/arrastre.test.mjs
-node assets/js/i18n.test.mjs             # paridad es/en/pt (C-3)
-node assets/js/compartir.test.mjs        # el estándar de lo que se comparte (D-165)
-node assets/js/transport/cleanup.test.mjs
-node assets/js/transport/dispose.test.mjs
-node assets/js/transport/errors.test.mjs
-node assets/js/transport/ratelimit.test.mjs
-node assets/js/transport/stats.test.mjs
-node panel/aggregate.test.mjs
-node panel/adapta.test.mjs               # el panel se entera solo de lo nuevo (C-16)
-node panel/copas.test.mjs                # La Copa en el panel: en curso, minijuegos, participación
-node tools/documentar.test.mjs           # la memoria y las comprobaciones del agente de documentación
-python3 tools/readme.test.py       # qué cuenta como cambio para las capturas (D-51)
-python3 -m http.server 8765          # los módulos ES necesitan HTTP, no file://
+node public/bulls-and-cows/engine.test.mjs
+node public/battleship/engine.test.mjs
+node public/timeline/engine.test.mjs
+node public/hangman/engine.test.mjs
+node public/liars-dice/engine.test.mjs
+node public/julep/engine.test.mjs
+node public/cup/engine.test.mjs               # La Copa: torneo, minijuegos y almacén de prueba
+node public/cup/games/juegos.test.mjs
+node public/cup/store.test.mjs
+node public/cup/planilla.test.mjs            # la tabla final como CSV (D-161)
+node public/cup/reportes.test.mjs             # un reporte que no sale queda guardado y se reenvía
+node public/assets/js/arrastre.test.mjs
+node public/assets/js/i18n.test.mjs             # paridad es/en/pt (C-3)
+node public/assets/js/compartir.test.mjs        # el estándar de lo que se comparte (D-165)
+node public/assets/js/transport/cleanup.test.mjs
+node public/assets/js/transport/dispose.test.mjs
+node public/assets/js/transport/errors.test.mjs
+node public/assets/js/transport/ratelimit.test.mjs
+node public/assets/js/transport/stats.test.mjs
+node public/panel/aggregate.test.mjs
+node public/panel/adapta.test.mjs               # el panel se entera solo de lo nuevo (C-16)
+node public/panel/copas.test.mjs                # La Copa en el panel: en curso, minijuegos, participación
+node tools/agents/documentar.test.mjs           # la memoria y las comprobaciones del agente de documentación
+python3 tools/release/readme.test.py       # qué cuenta como cambio para las capturas (D-51)
+python3 -m http.server 8765 -d public   # el sitio es public/; los módulos ES necesitan HTTP, no file://
 ```
 
 ## Mirar una pantalla
@@ -153,9 +166,9 @@ revisan las capturas. Antes de repetir uno que falló, matar solo el Chrome prop
 
 ## Panel del dueño
 
-`panel/` es una página privada (entrada con Google, lectura solo para el UID del dueño en las
+`public/panel/` es una página privada (entrada con Google, lectura solo para el UID del dueño en las
 reglas) que muestra salas vivas, partidas por juego y modo, jugadores, origen e idioma. Las
-señales las mandan los juegos con `trackStart` y el transporte (`assets/js/transport/stats.js`).
+señales las mandan los juegos con `trackStart` y el transporte (`public/assets/js/transport/stats.js`).
 Ver [docs/PANEL.md](docs/PANEL.md) y D-44. `window.__panel.seed({ rooms, days, torneos, vista })` lo dibuja con
 datos sembrados sin entrar. Tres vistas: Resumen, La Copa y Juegos (D-137).
 
@@ -164,8 +177,8 @@ datos sembrados sin entrar. Tres vistas: Resumen, La Copa y Juegos (D-137).
 Cuando un cambio toca `firebase/database.rules.json`, después de fusionar se publican así (D-122):
 
 ```bash
-node tools/reglas.mjs publicar     # sube las reglas y verifica que quedaron
-node tools/reglas.mjs revisar      # ¿lo publicado es lo del repo?
+node tools/firebase/reglas.mjs publicar     # sube las reglas y verifica que quedaron
+node tools/firebase/reglas.mjs revisar      # ¿lo publicado es lo del repo?
 ```
 
 Necesita la llave de la cuenta de servicio en `~/.config/juegos-de-salon/firebase-admin.json`
@@ -176,7 +189,7 @@ Necesita la llave de la cuenta de servicio en `~/.config/juegos-de-salon/firebas
 Antes de escribir instrucciones, ayudas o bajadas, leer U-1, U-8 y **U-18** en
 [docs/USABILIDAD.md](docs/USABILIDAD.md): la meta primero y con verbo, a lo más 3 puntos, nada
 de lo que el dibujo de ejemplo ya muestra y el puntaje en una frase, en frases completas.
-`node copa/juegos/juegos.test.mjs` frena unas instrucciones de minijuego que pasen de 280
+`node public/cup/games/juegos.test.mjs` frena unas instrucciones de minijuego que pasen de 280
 caracteres (D-184).
 
 ## Usabilidad (D-132)
@@ -186,12 +199,12 @@ dueño y hace una ronda diaria a las 5:00 hora del Pacífico. Su guía es
 [docs/USABILIDAD.md](docs/USABILIDAD.md). Los dilemas son issues de GitHub y se manejan desde aquí:
 
 ```bash
-node tools/dilemas.mjs listar [--todos]
-node tools/dilemas.mjs ver <n>
-node tools/dilemas.mjs crear <archivo.md>
-node tools/dilemas.mjs resolver <n> "decisión"   # y anotarla en docs/USABILIDAD.md
-node tools/dilemas.mjs archivar <n> "motivo"
-node tools/dilemas.mjs reabrir <n>
+node tools/agents/dilemas.mjs listar [--todos]
+node tools/agents/dilemas.mjs ver <n>
+node tools/agents/dilemas.mjs crear <archivo.md>
+node tools/agents/dilemas.mjs resolver <n> "decisión"   # y anotarla en docs/USABILIDAD.md
+node tools/agents/dilemas.mjs archivar <n> "motivo"
+node tools/agents/dilemas.mjs reabrir <n>
 ```
 
 ## Documentación (D-172)
@@ -210,21 +223,21 @@ Su memoria es `docs/documentacion.json` (hasta qué commit revisó, lo pendiente
 esperan al dueño y las rondas anteriores), y su herramienta, que cualquier sesión puede correr:
 
 ```bash
-node tools/documentar.mjs revisar [--desde <commit>]   # qué entró y qué falta documentar
-node tools/documentar.mjs anotar --hasta <commit> [--pr <url>] [--pendiente "…"]
-node tools/documentar.mjs historial
+node tools/agents/documentar.mjs revisar [--desde <commit>]   # qué entró y qué falta documentar
+node tools/agents/documentar.mjs anotar --hasta <commit> [--pr <url>] [--pendiente "…"]
+node tools/agents/documentar.mjs historial
 ```
 
 ## Marketing y video promocional (D-178)
 
 Los assets de marketing viven en `marketing/`, cada uno con su carpeta y un README que es su
 memoria (lo que pidió el dueño en cada vuelta, cómo está hecho, cómo se rehace, la historia).
-**Antes de trabajar en el video, nuevo o existente, se lee `marketing/video-promo/README.md`
-entero** (el skill `video-promo` lo carga) y al terminar se anota la vuelta ahí y en
+**Antes de trabajar en el video, nuevo o existente, se lee `marketing/promo-video/README.md`
+entero** (el skill `promo-video` lo carga) y al terminar se anota la vuelta ahí y en
 `marketing/registro.json`. Solo la última versión de cada archivo final vive en el repo.
 
 ```bash
-marketing/video-promo/construir.sh       # rehace el video entero (sitio servido en $SITIO)
+marketing/promo-video/construir.sh       # rehace el video entero (sitio servido en $SITIO)
 ```
 
 ## Reportes de La Copa
@@ -232,7 +245,7 @@ marketing/video-promo/construir.sh       # rehace el video entero (sitio servido
 El botón 🐞 de La Copa escribe en `feedback/` sin cuenta (D-104). Para leerlos y conversarlos:
 
 ```bash
-node tools/reportes.mjs            # todos; --dias 3 para los recientes, --json para el crudo
+node tools/firebase/reportes.mjs            # todos; --dias 3 para los recientes, --json para el crudo
 ```
 
 ## ¿Hay alguien jugando?
@@ -241,10 +254,10 @@ Antes de proponer una fusión a main: salas en vivo y copas en curso, leídas co
 (misma llave que las reglas; solo lectura).
 
 ```bash
-node tools/en-curso.mjs            # sale con 3 si hay algo en juego; --todo, --json
+node tools/firebase/en-curso.mjs            # sale con 3 si hay algo en juego; --todo, --json
 ```
 
 ## Documentación
 
 `docs/PANEL.md` · `docs/REQUERIMIENTOS.md` · `docs/DECISIONES.md` (ADR) · `docs/AGREGAR-JUEGO.md` ·
-`docs/juegos/<id>.md` · `firebase/README.md` · `CHANGELOG.md`
+`docs/games/<carpeta>.md` · `firebase/README.md` · `CHANGELOG.md`

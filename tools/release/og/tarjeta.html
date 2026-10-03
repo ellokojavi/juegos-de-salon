@@ -7,12 +7,12 @@
   <title>Tarjeta social</title>
   <!--
     La imagen que se ve cuando alguien pega un link de la app en WhatsApp o en un chat.
-    Se dibuja acá con los estilos y los datos reales (assets/js/games.js), y `node tools/og.mjs
+    Se dibuja acá con los estilos y los datos reales (public/assets/js/games.js), y `node tools/release/og.mjs
     imagenes` la fotografía a 1200×630. No se abre a mano: se mira con la captura.
-      /tools/og/tarjeta.html?juego=dudo   una tarjeta por juego (o por minijuego suelto: ?juego=reinas)
-      /tools/og/tarjeta.html              la del menú
+      /tools/release/og/tarjeta.html?juego=dudo   una tarjeta por juego (o por minijuego suelto: ?juego=reinas)
+      /tools/release/og/tarjeta.html              la del menú
   -->
-  <link rel="stylesheet" href="/assets/css/base.css">
+  <link rel="stylesheet" href="/public/assets/css/base.css">
   <style>
     /* El lienzo es de 600×315 y se fotografía al doble: 1200×630, la medida que piden las redes */
     html, body { margin: 0; padding: 0; width: 600px; height: 315px; overflow: hidden; }
@@ -64,9 +64,9 @@
 <body>
   <div class="tarjeta" id="tarjeta"></div>
   <script type="module">
-    import { GAMES, SUELTOS } from '/assets/js/games.js';
-    import { COMMON, getLang } from '/assets/js/i18n.js';
-    import { con } from '/assets/js/ui.js';
+    import { GAMES, SUELTOS } from '/public/assets/js/games.js';
+    import { COMMON, getLang } from '/public/assets/js/i18n.js';
+    import { con } from '/public/assets/js/ui.js';
 
     const id = new URLSearchParams(location.search).get('juego');
     // El idioma se pide con ?lang= en la URL, pero se lee con getLang(): i18n.js lo aplica al

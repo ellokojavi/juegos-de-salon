@@ -1,4 +1,4 @@
-// Tests de la planilla de la tabla final (D-161): node copa/planilla.test.mjs
+// Tests de la planilla de la tabla final (D-161): node public/cup/planilla.test.mjs
 import assert from 'node:assert/strict';
 import { nuevaMeta, conCierre } from './engine.js';
 import { filasPlanilla, planilla } from './planilla.js';

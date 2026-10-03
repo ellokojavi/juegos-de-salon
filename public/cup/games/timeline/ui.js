@@ -7,11 +7,11 @@
  *
  * Las jugadas son `{ c: id de la carta, at: ranura }`, en orden.
  */
-import * as motor from './linea.js';
-import { anioLabel as anioDeLaCopa } from './anio.js';
-import { crearArrastre } from '../../assets/js/arrastre.js';
-import { showHandoff } from '../../assets/js/handoff.js';
-import { LOCALES as LT_LOCALES } from '../../linea-de-tiempo/rules.js';
+import * as motor from './engine.js';
+import { anioLabel as anioDeLaCopa } from '../year/engine.js';
+import { crearArrastre } from '../../../assets/js/arrastre.js';
+import { showHandoff } from '../../../assets/js/handoff.js';
+import { LOCALES as LT_LOCALES } from '../../../timeline/rules.js';
 
 export function montar(raiz, ctx) {
   const { p, T, fmt, el, SFX, vibrate } = ctx;

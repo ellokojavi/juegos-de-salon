@@ -1,4 +1,4 @@
-import { launch, sleep } from './cdp.mjs';
+import { launch, sleep } from '../cdp.mjs';
 // Con varias sesiones a la vez, cada una sirve su copia en su puerto (D-135)
 const SITIO = process.env.SITIO || 'http://localhost:8765';
 const OUT = process.argv[2];
@@ -67,7 +67,7 @@ const hastaResultado = async () => {
   return await b.active();
 };
 
-await b.go(`${SITIO}/ahorcado/`); await b.evaluate(`localStorage.clear(); 1`); await b.go(`${SITIO}/ahorcado/`);
+await b.go(`${SITIO}/hangman/`); await b.evaluate(`localStorage.clear(); 1`); await b.go(`${SITIO}/hangman/`);
 console.log('modos:', await b.evaluate(`[...document.querySelectorAll('.mode')].map(m=>m.textContent.replace(/\\s+/g,' ').trim()+(m.disabled?' (off)':'')).join(' | ')`));
 await b.shot('01-intro');
 
@@ -132,7 +132,7 @@ const quien = Object.keys(antes.st).find(r => desp.st[r].bought > antes.st[r].bo
 console.log('compró:', quien, '| vidas', antes.st[quien]?.lives, '→', desp.st[quien]?.lives, '| patrón', desp.st[quien]?.pattern);
 
 // Memoria de partida a mitad (C-6, AH-11)
-await b.go(`${SITIO}/ahorcado/`, 1300);
+await b.go(`${SITIO}/hangman/`, 1300);
 console.log('tras recargar → continuar:', await b.evaluate(`!!document.querySelector('#resume-slot .btn')`));
 await click('#resume-slot .btn'); await sleep(1000);
 await tap();
@@ -166,7 +166,7 @@ console.log('resultado:', await b.evaluate(`document.getElementById('result-titl
 console.log('palabras reveladas:', await b.evaluate(`document.getElementById('result-words').innerText.replace(/\\n/g,' · ')`));
 
 /* ---------------- JUGAR SOLO ---------------- */
-await b.go(`${SITIO}/ahorcado/`); await b.evaluate(`localStorage.clear(); 1`); await b.go(`${SITIO}/ahorcado/`);
+await b.go(`${SITIO}/hangman/`); await b.evaluate(`localStorage.clear(); 1`); await b.go(`${SITIO}/hangman/`);
 await b.evaluate(`document.querySelectorAll('.mode')[2].click(); 1`); await sleep(350);
 // La palabra sale del mazo, así que no hay de dónde elegirla ni a quién escribírsela (D-65)
 console.log('jugando solo · temática:', await b.evaluate(`!!document.querySelector('.themes')`),

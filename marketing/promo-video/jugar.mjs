@@ -18,21 +18,21 @@ const TANGO = [1,1,2,1,2,2,2,1,2,1,1,2,2,2,1,2,1,1,1,1,2,1,2,2,2,2,1,2,1,1,1,2,1
 const TAN = i => `document.querySelector('.tan[data-i="${i}"]')`;
 const REJ = i => `document.querySelector('.rej[data-i="${i}"]')`;
 const PLAYS = {
-  linea: { url: '/linea-de-tiempo/', steps: [
+  linea: { url: '/timeline/', steps: [
     `[...document.querySelectorAll('.mode')].find(m=>/solo/i.test(m.textContent)).click()`,
     `document.getElementById('btn-solo-empezar').click()`, { wait: 1500 }, { snap: true },
     { tap: `document.querySelectorAll('#solo-juego .hand .card')[1]` },
     { tap: `[...document.querySelectorAll('#solo-juego .line .slot')].at(-1)` },
     { tap: `document.getElementById('btn-colocar')`, after: 900 },
   ] },
-  toque: { url: '/toque-y-fama/', steps: [
+  toque: { url: '/bulls-and-cows/', steps: [
     `document.querySelectorAll('.mode')[2].click()`, `document.getElementById('btn-solo-empezar').click()`, { wait: 800 },
     `(()=>{const k=d=>[...document.querySelectorAll('.screen.active .keypad button')].find(x=>x.textContent===d).click();for(const d of '0123')k(d);document.querySelector('.screen.active .keypad .ok').click()})()`,
     { wait: 600 }, { snap: true },
     ...'4517'.split('').map(d => ({ tap: `[...document.querySelectorAll('.screen.active .keypad button')].find(x=>x.textContent==='${d}')`, after: 150 })),
     { tap: `document.querySelector('.screen.active .keypad .ok')`, after: 700 },
   ] },
-  ahorcado: { url: '/ahorcado/', steps: [
+  ahorcado: { url: '/hangman/', steps: [
     `document.querySelectorAll('.mode')[2].click()`,
     `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
     `document.querySelector('#setup-actions .btn').click()`, { wait: 1200 },
@@ -43,7 +43,7 @@ const PLAYS = {
     { tap: `(()=>{const w=__ahorcado.view().words.A.toUpperCase();const l=[...new Set(w.replace(/[^A-ZÑ]/g,''))][2];return [...document.querySelectorAll('button')].find(b=>b.textContent.trim()===l)})()`, after: 250 },
     { tap: `[...document.querySelectorAll('.btn')].find(b=>/Probar la/i.test(b.textContent))`, after: 700 },
   ] },
-  dudo: { url: '/dudo/', steps: [
+  dudo: { url: '/liars-dice/', steps: [
     `document.querySelectorAll('.mode')[2].click()`,
     `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
     `document.querySelector('#setup-actions .btn--yellow').click()`, { wait: 1200 }, { snap: true },
@@ -52,7 +52,7 @@ const PLAYS = {
     { tap: `document.querySelector('#actions .btn--yellow')`, after: 2600 },
     { tap: `[...document.querySelectorAll('#actions .btn')].find(b=>/Dudo/i.test(b.textContent))`, after: 1500 },
   ] },
-  naval: { url: '/batalla-naval/', steps: [
+  naval: { url: '/battleship/', steps: [
     `document.querySelectorAll('.mode')[2].click()`,
     `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
     `document.querySelector('#setup-actions .btn--yellow').click()`, { wait: 500 },
@@ -65,14 +65,14 @@ const PLAYS = {
     { tap: 'BARCO_B2', after: 300 },
     { tap: 'FUEGO', after: 1100 },
   ] },
-  rey: { url: '/cuarto-rey/', seed: 17, steps: [
+  rey: { url: '/fourth-king/', seed: 17, steps: [
     `document.getElementById('btn-go-setup').click()`,
     `[...document.querySelectorAll('#players-form input')].forEach((i,k)=>{i.value=['Javi','Cata','Pancho','Fran'][k];i.dispatchEvent(new Event('input',{bubbles:true}))})`,
     `document.getElementById('btn-start').click()`, { wait: 900 }, { snap: true },
     { tap: `document.getElementById('card')`, after: 1400 },
     { tap: `[...document.querySelectorAll('#result .btn')].at(-1)`, after: 500, luego: `(()=>{const h=document.getElementById('handoff');if(!h.hidden&&/Sigan/i.test(h.innerText))h.click()})()` },
   ] },
-  reinas: { url: '/minijuegos/reinas/?semilla=WNDRN', steps: [
+  reinas: { url: '/minigames/queens/?semilla=WNDRN', steps: [
     `document.getElementById('btn-empezar').click()`, { wait: 4500 },
     // cinco reinas ya puestas (solución de WNDRN: 7,0,5,2,4,1,6,3); en cámara: X por la fila 6 y las tres últimas
     ...[7, 0, 5, 2, 4].map((c, r) => `document.querySelector('.rej[data-i="${r * 8 + c}"]').click()`), { wait: 600 }, { snap: true },
@@ -81,7 +81,7 @@ const PLAYS = {
     { tap: REJ(6 * 8 + 6), after: 350 },
     { tap: REJ(7 * 8 + 3), after: 1200 },
   ] },
-  tango: { url: '/minijuegos/tango/?semilla=WNDRN', steps: [
+  tango: { url: '/minigames/tango/?semilla=WNDRN', steps: [
     `document.getElementById('btn-empezar').click()`, { wait: 4500 },
     // todo resuelto menos tres casillas (solución de WNDRN); en cámara: sol, sol y luna (dos toques)
     `(()=>{const S=${JSON.stringify(TANGO)};for(let i=0;i<36;i++){if([30,34,35].includes(i))continue;const b=document.querySelector('.tan[data-i="'+i+'"]');if(!b||b.disabled)continue;for(let k=0;k<S[i];k++)document.querySelector('.tan[data-i="'+i+'"]').click();}})()`,
@@ -91,22 +91,22 @@ const PLAYS = {
     { tap: TAN(34), after: 250 },
     { tap: TAN(34), after: 1200 },
   ] },
-  zip: { url: '/minijuegos/zip/?semilla=WNDRN', steps: [
+  zip: { url: '/minigames/zip/?semilla=WNDRN', steps: [
     `document.getElementById('btn-empezar').click()`, { wait: 4500 }, { snap: true },
     // el nivel 1 de un solo trazo, del 1 al 5 pasando por todas
     { trazo: [6, 7, 3, 2, 1, 0, 4, 5, 9, 8, 12, 13, 14, 10, 11, 15], after: 60 },
   ] },
-  conexiones: { url: '/minijuegos/conexiones/?semilla=WNDRN', steps: [
+  conexiones: { url: '/minigames/connections/?semilla=WNDRN', steps: [
     `document.getElementById('btn-empezar').click()`, { wait: 4500 }, { snap: true },
     ...['PICASSO', 'DALÍ', 'MIRÓ', 'VELÁZQUEZ'].map(w => ({ tap: BOTON(w), after: 200 })),
     { tap: `document.getElementById('btn-confirmar')`, after: 1200 },
   ] },
-  anio: { url: '/minijuegos/anio/?semilla=WNDRN', steps: [
+  anio: { url: '/minigames/year/?semilla=WNDRN', steps: [
     `document.getElementById('btn-empezar').click()`, { wait: 4500 }, { snap: true },
     ...'1985'.split('').map(d => ({ tap: BOTON(d), after: 180 })),
     { tap: `[...document.querySelectorAll('button')].find(b=>/^OK$/i.test(b.textContent.trim()))`, after: 1200 },
   ] },
-  letras: { url: '/minijuegos/letras/?semilla=WNDRN', steps: [
+  letras: { url: '/minigames/word/?semilla=WNDRN', steps: [
     `document.getElementById('btn-empezar').click()`, { wait: 4500 },
     // El "null" suelto bajo los intentos es un error de la app (ui-letras.js); no va en el video
     `(()=>{const f=()=>document.querySelectorAll('.letras-juego, .stack').forEach(n=>[...n.childNodes].forEach(c=>{if(c.nodeType===3&&c.textContent==='null')c.remove()}));f();new MutationObserver(f).observe(document.body,{childList:true,subtree:true})})()`,
@@ -115,7 +115,7 @@ const PLAYS = {
     ...'CLAVO'.split('').map(c => ({ tap: BOTON(c), after: 160 })),
     { tap: `[...document.querySelectorAll('button')].find(b=>/Probar/i.test(b.textContent))`, after: 1000 },
   ] },
-  donde: { url: '/minijuegos/donde/?semilla=WNDRN', steps: [
+  donde: { url: '/minigames/where/?semilla=WNDRN', steps: [
     `document.getElementById('btn-empezar').click()`, { wait: 5000 }, { snap: true },
     { drag: [`document.querySelector('canvas')`, 120, -20], mids: 14, after: 400 },
     { tap: `document.querySelector('canvas')`, at: DONDE, after: 600 },

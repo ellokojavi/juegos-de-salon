@@ -1,7 +1,7 @@
 /**
  * Los reportes y comentarios de La Copa (LIG-42, D-104): van por REST a `feedback/` de Firebase,
  * sin cuenta ni sesión anónima, así que cualquiera que abra la página puede mandar uno. `at` lo
- * pone el servidor. Se leen con `node tools/reportes.mjs`.
+ * pone el servidor. Se leen con `node tools/firebase/reportes.mjs`.
  *
  * Si no se puede enviar (sin red, o las reglas lo rechazan), el reporte queda guardado en el
  * dispositivo y se reintenta la próxima vez que se abra La Copa (D-109): un reporte escrito no

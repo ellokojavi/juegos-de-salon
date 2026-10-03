@@ -1,5 +1,5 @@
 // Chat de sala en Línea de Tiempo: dos celulares contra Firebase real (canon C-15)
-import { launch, sleep } from './cdp.mjs';
+import { launch, sleep } from '../cdp.mjs';
 // Con varias sesiones a la vez, cada una sirve su copia en su puerto (D-135)
 const SITIO = process.env.SITIO || 'http://localhost:8765';
 const OUT = process.argv[2];
@@ -33,26 +33,26 @@ const play = async (d, role) => {
 };
 const closeVerdict = async d => { await d.evaluate(`document.getElementById('handoff').click(); 1`); await sleep(300); };
 
-for (const [i, [, d]] of Object.entries(devs).entries()) { await d.go(hosts[i] + '/linea-de-tiempo/', 1500); await d.evaluate(`localStorage.clear(); 1`); }
+for (const [i, [, d]] of Object.entries(devs).entries()) { await d.go(hosts[i] + '/timeline/', 1500); await d.evaluate(`localStorage.clear(); 1`); }
 
 // --- modo un celular: no debe haber chat ---
-await A.go(hosts[0] + '/linea-de-tiempo/', 1500);
+await A.go(hosts[0] + '/timeline/', 1500);
 await A.evaluate(`document.querySelectorAll('.mode')[0].click(); 1`); await sleep(400);
 await A.evaluate(`(()=>{const xs=document.querySelectorAll('#setup-form input');xs[0].value='Javi';xs[0].dispatchEvent(new Event('input',{bubbles:true}));xs[1].value='Cata';xs[1].dispatchEvent(new Event('input',{bubbles:true}));return 1})()`);
 await clickText(A, '#setup-actions .btn', 'jugar'); await sleep(1200);
 console.log('un celular → chat montado:', (await chat(A)).montado, '(debe ser false)');
 
 // --- sala con dos celulares ---
-await A.go(hosts[0] + '/linea-de-tiempo/', 1500);
+await A.go(hosts[0] + '/timeline/', 1500);
 await A.evaluate(`localStorage.clear(); 1`);
-await A.go(hosts[0] + '/linea-de-tiempo/', 1500);
+await A.go(hosts[0] + '/timeline/', 1500);
 await A.evaluate(`document.querySelectorAll('.mode')[1].click(); 1`); await sleep(400);
 await setName(A, 'Javi');
 await A.evaluate(`(()=>{const b=[...document.querySelectorAll('.seg button')].find(x=>/3$/.test(x.textContent.trim()));if(b)b.click();return 1})()`);
 await clickText(A, '#setup-actions .btn', 'Crear'); await sleep(5000);
 const code = await A.evaluate(`document.querySelector('.code-big')?.textContent`);
 console.log('sala:', code);
-await B.go(`${hosts[1]}/linea-de-tiempo/?sala=${code}`, 2000);
+await B.go(`${hosts[1]}/timeline/?sala=${code}`, 2000);
 await setName(B, 'Cata');
 await clickText(B, '#setup-actions .btn', 'Unirse'); await sleep(5000);
 console.log('B entró como', await B.evaluate(`window.__ldt.session().role`), '| pantalla:', await B.active());
@@ -101,7 +101,7 @@ await A.shot('chat-06-veredicto');
 for (const k of ['A', 'B']) await closeVerdict(devs[k]);
 
 // --- reconexión: vuelve la historia del chat, sin sonido ni globito ---
-await B.go(`${hosts[1]}/linea-de-tiempo/?sala=${code}`, 8000);
+await B.go(`${hosts[1]}/timeline/?sala=${code}`, 8000);
 const cRe = await chat(B);
 console.log('B tras recargar → pantalla:', await B.active(), '| mensajes recuperados:', cRe.mensajes.length, '| no leídos:', cRe.noLeidos, '(debe ser 0)');
 await B.shot('chat-06b-reconexion');

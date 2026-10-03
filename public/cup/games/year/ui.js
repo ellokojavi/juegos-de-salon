@@ -2,8 +2,8 @@
  * 📅 ¿En qué año? — pantalla. El año se escribe con el teclado de Toque y Fama (D-102), con un
  * interruptor aparte para antes de Cristo. Las jugadas son los años respondidos (negativos: a. C.).
  */
-import * as motor from './anio.js';
-import { teclado, CIFRAS } from '../../assets/js/teclado.js';
+import * as motor from './engine.js';
+import { teclado, CIFRAS } from '../../../assets/js/teclado.js';
 
 /** `append` que descarta los hijos nulos, como `el()` (sin esto, un null se escribe como texto). */
 const poner = (nodo, ...hijos) => nodo.append(...hijos.flat().filter(x => x !== null && x !== undefined && x !== false));

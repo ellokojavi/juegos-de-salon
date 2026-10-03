@@ -1,6 +1,6 @@
-"""Dibuja la flota y el agua de Batalla Naval, y escribe `batalla-naval/flota.js`.
+"""Dibuja la flota y el agua de Batalla Naval, y escribe `public/battleship/flota.js`.
 
-    python3 tools/flota.py        # rehace el módulo con los mapas
+    python3 tools/generators/flota.py        # rehace el módulo con los mapas
 
 El módulo que sale es **generado**: para cambiar un barco se toca este archivo y se vuelve a
 correr, no se editan los mapas a mano (se perderían en la siguiente pasada).
@@ -311,7 +311,7 @@ NOMBRES = {'carrier': 'Portaaviones (5)', 'battleship': 'Acorazado (4)', 'cruise
 CABEZA = """/**
  * La flota y el agua, en pixel art (D-91).
  *
- * **Generado por `tools/flota.py`.** Para cambiar un barco se edita ese script y se vuelve a
+ * **Generado por `tools/generators/flota.py`.** Para cambiar un barco se edita ese script y se vuelve a
  * correr; lo que se escriba a mano acá se pierde en la próxima pasada.
  *
  * Cada casilla del tablero dibuja un trozo de 16×16 píxeles, visto desde arriba y con la proa
@@ -414,6 +414,7 @@ partes.append('};\n')
 partes.append(COLA)
 
 import pathlib
-destino = pathlib.Path(__file__).resolve().parent.parent / 'batalla-naval' / 'flota.js'
+RAIZ = pathlib.Path(__file__).resolve().parents[2]
+destino = RAIZ / 'public' / 'battleship' / 'flota.js'
 destino.write_text(''.join(partes), encoding='utf-8')
-print(f'escrito: {destino.relative_to(destino.parent.parent)} ({len(FLOTA)} barcos, {sum(len(v) for v in FLOTA.values())} trozos)')
+print(f'escrito: {destino.relative_to(RAIZ)} ({len(FLOTA)} barcos, {sum(len(v) for v in FLOTA.values())} trozos)')

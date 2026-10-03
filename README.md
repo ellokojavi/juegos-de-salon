@@ -6,7 +6,7 @@ The menu can be filtered by kind of game (words, logic, trivia, cards and dice);
 
 **Play:** https://juegosdesalon.cl/
 
-<!-- generado: capturas:portada · written by python3 tools/readme.py actualizar -->
+<!-- generado: capturas:portada · written by python3 tools/release/readme.py actualizar -->
 <p align="center"><img src="docs/screenshots/menu.png" width="220" alt="Main menu"></p>
 <!-- /generado -->
 
@@ -14,7 +14,7 @@ The menu can be filtered by kind of game (words, logic, trivia, cards and dice);
 
 ## Games
 
-<!-- generado: juegos · written by python3 tools/readme.py actualizar -->
+<!-- generado: juegos · written by python3 tools/release/readme.py actualizar -->
 | Game | Players | Modes | Status |
 |---|---|---|---|
 | 🏆 [The Cup / La Copa / A Copa](#-the-cup-la-copa) | 2 to 10 | Each on their own phone | v0.83 |
@@ -33,30 +33,30 @@ The menu can be filtered by kind of game (words, logic, trivia, cards and dice);
 
 The classic drinking card game. The phone is the deck: each player draws a card and the phone says what to do. It names who drinks, runs the minigames (Cuenta Cuentos, Chancho Inflado, Cultura Chupística, Nunca Nunca), suggests dares and counts the kings. The fourth king ends the game: whoever draws it drinks everything left in their glass, and the last screen shows who it was, the sip ranking and, folded at the bottom, every card that came up and who drew it.
 
-<!-- generado: capturas:cuarto-rey · written by python3 tools/readme.py actualizar -->
+<!-- generado: capturas:cuarto-rey · written by python3 tools/release/readme.py actualizar -->
 <table>
   <tr>
-    <td align="center"><img src="docs/screenshots/cuarto-rey/02-intro.png" width="180" alt="Intro and rules"><br><sub>Intro and rules</sub></td>
-    <td align="center"><img src="docs/screenshots/cuarto-rey/03-jugadores.png" width="180" alt="Players and gender"><br><sub>Players and gender</sub></td>
-    <td align="center"><img src="docs/screenshots/cuarto-rey/04-mesa.png" width="180" alt="Tap to draw a card"><br><sub>Tap to draw a card</sub></td>
-    <td align="center"><img src="docs/screenshots/cuarto-rey/05-carta.png" width="180" alt="Card and instruction"><br><sub>Card and instruction</sub></td>
+    <td align="center"><img src="docs/screenshots/fourth-king/02-intro.png" width="180" alt="Intro and rules"><br><sub>Intro and rules</sub></td>
+    <td align="center"><img src="docs/screenshots/fourth-king/03-jugadores.png" width="180" alt="Players and gender"><br><sub>Players and gender</sub></td>
+    <td align="center"><img src="docs/screenshots/fourth-king/04-mesa.png" width="180" alt="Tap to draw a card"><br><sub>Tap to draw a card</sub></td>
+    <td align="center"><img src="docs/screenshots/fourth-king/05-carta.png" width="180" alt="Card and instruction"><br><sub>Card and instruction</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/cuarto-rey/06-minijuego.png" width="180" alt="Minigame with prompts"><br><sub>Minigame with prompts</sub></td>
-    <td align="center"><img src="docs/screenshots/cuarto-rey/07-salud.png" width="180" alt="Cheers!"><br><sub>Cheers!</sub></td>
-    <td align="center"><img src="docs/screenshots/cuarto-rey/08-pasale.png" width="180" alt="Pass the phone"><br><sub>Pass the phone</sub></td>
-    <td align="center"><img src="docs/screenshots/cuarto-rey/09-cuarto-rey.png" width="180" alt="Fourth King!"><br><sub>Fourth King!</sub></td>
+    <td align="center"><img src="docs/screenshots/fourth-king/06-minijuego.png" width="180" alt="Minigame with prompts"><br><sub>Minigame with prompts</sub></td>
+    <td align="center"><img src="docs/screenshots/fourth-king/07-salud.png" width="180" alt="Cheers!"><br><sub>Cheers!</sub></td>
+    <td align="center"><img src="docs/screenshots/fourth-king/08-pasale.png" width="180" alt="Pass the phone"><br><sub>Pass the phone</sub></td>
+    <td align="center"><img src="docs/screenshots/fourth-king/09-cuarto-rey.png" width="180" alt="Fourth King!"><br><sub>Fourth King!</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/cuarto-rey/10-final.png" width="180" alt="Sip ranking"><br><sub>Sip ranking</sub></td>
-    <td align="center"><img src="docs/screenshots/cuarto-rey/13-historial.png" width="180" alt="Every card that came up"><br><sub>Every card that came up</sub></td>
+    <td align="center"><img src="docs/screenshots/fourth-king/10-final.png" width="180" alt="Sip ranking"><br><sub>Sip ranking</sub></td>
+    <td align="center"><img src="docs/screenshots/fourth-king/13-historial.png" width="180" alt="Every card that came up"><br><sub>Every card that came up</sub></td>
     <td></td>
     <td></td>
   </tr>
 </table>
 <!-- /generado -->
 
-Spec: [docs/juegos/cuarto-rey.md](docs/juegos/cuarto-rey.md)
+Spec: [docs/games/fourth-king.md](docs/games/fourth-king.md)
 
 ## 🔢 Bulls and Cows (Toque y Fama)
 
@@ -67,22 +67,22 @@ Each player picks a secret number with no repeated digits and tries to crack the
 - **🧍 Play alone:** The Cup's number minigame. The phone picks a 4-digit number and you get 10 guesses: 100 points on the first one and 10 less for each extra guess, with a clock and a record for your best score. Clues are spelled out in full ("2 famas, 1 toque").
 - **💬 Room chat:** on two phones there is a chat to trash-talk while guessing, and it stays alive on the final screen to celebrate or ask for a rematch. New messages peek out next to the bubble.
 
-<!-- generado: capturas:toque-y-fama · written by python3 tools/readme.py actualizar -->
+<!-- generado: capturas:toque-y-fama · written by python3 tools/release/readme.py actualizar -->
 <table>
   <tr>
-    <td align="center"><img src="docs/screenshots/toque-y-fama/01-intro.png" width="180" alt="Game modes"><br><sub>Game modes</sub></td>
-    <td align="center"><img src="docs/screenshots/toque-y-fama/02-secreto.png" width="180" alt="Secret number"><br><sub>Secret number</sub></td>
-    <td align="center"><img src="docs/screenshots/toque-y-fama/03-tablero.png" width="180" alt="Board and keypad"><br><sub>Board and keypad</sub></td>
-    <td align="center"><img src="docs/screenshots/toque-y-fama/04-pasale.png" width="180" alt="Answer and handoff on one screen"><br><sub>Answer and handoff on one screen</sub></td>
+    <td align="center"><img src="docs/screenshots/bulls-and-cows/01-intro.png" width="180" alt="Game modes"><br><sub>Game modes</sub></td>
+    <td align="center"><img src="docs/screenshots/bulls-and-cows/02-secreto.png" width="180" alt="Secret number"><br><sub>Secret number</sub></td>
+    <td align="center"><img src="docs/screenshots/bulls-and-cows/03-tablero.png" width="180" alt="Board and keypad"><br><sub>Board and keypad</sub></td>
+    <td align="center"><img src="docs/screenshots/bulls-and-cows/04-pasale.png" width="180" alt="Answer and handoff on one screen"><br><sub>Answer and handoff on one screen</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/toque-y-fama/06-sala.png" width="180" alt="Room with code and QR"><br><sub>Room with code and QR</sub></td>
-    <td align="center"><img src="docs/screenshots/toque-y-fama/07-dos-celulares.png" width="180" alt="Game on two phones"><br><sub>Game on two phones</sub></td>
-    <td align="center"><img src="docs/screenshots/toque-y-fama/08-verificado.png" width="180" alt="Verified secrets"><br><sub>Verified secrets</sub></td>
-    <td align="center"><img src="docs/screenshots/toque-y-fama/05-resultado.png" width="180" alt="Playing alone: a new record"><br><sub>Playing alone: a new record</sub></td>
+    <td align="center"><img src="docs/screenshots/bulls-and-cows/06-sala.png" width="180" alt="Room with code and QR"><br><sub>Room with code and QR</sub></td>
+    <td align="center"><img src="docs/screenshots/bulls-and-cows/07-dos-celulares.png" width="180" alt="Game on two phones"><br><sub>Game on two phones</sub></td>
+    <td align="center"><img src="docs/screenshots/bulls-and-cows/08-verificado.png" width="180" alt="Verified secrets"><br><sub>Verified secrets</sub></td>
+    <td align="center"><img src="docs/screenshots/bulls-and-cows/05-resultado.png" width="180" alt="Playing alone: a new record"><br><sub>Playing alone: a new record</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/toque-y-fama/09-chat.png" width="180" alt="Room chat"><br><sub>Room chat</sub></td>
+    <td align="center"><img src="docs/screenshots/bulls-and-cows/09-chat.png" width="180" alt="Room chat"><br><sub>Room chat</sub></td>
     <td></td>
     <td></td>
     <td></td>
@@ -90,13 +90,13 @@ Each player picks a secret number with no repeated digits and tries to crack the
 </table>
 <!-- /generado -->
 
-Spec: [docs/juegos/toque-y-fama.md](docs/juegos/toque-y-fama.md) · Feasibility study: [docs/juegos/toque-y-fama-factibilidad.md](docs/juegos/toque-y-fama-factibilidad.md)
+Spec: [docs/games/bulls-and-cows.md](docs/games/bulls-and-cows.md) · Feasibility study: [docs/games/bulls-and-cows-factibilidad.md](docs/games/bulls-and-cows-factibilidad.md)
 
 ## ⚓ Battleship (Batalla Naval)
 
 Sink the fleet. Each player hides 5 ships on a 10×10 board and fires in turns: miss, hit or sunk. A hit lets you fire again. Ships are placed by tapping or by dragging them from the list onto the board, with rotate and "random". The phone answers on its own and keeps score.
 
-The fleet is drawn in **pixel art, seen from above** (D-91): every square paints one 16×16 piece — stern, middle sections, bow — and together they make the ship, so a carrier is a flight deck with a jet parked on it and a submarine is a thin hull with its periscope up. Every ship begins and ends in a point, and turning one is the same drawing rotated 90°. The sea is a single tile repeated in every square. The art lives in `batalla-naval/flota.js`, **generated** by `python3 tools/flota.py`: to change a ship you edit the script and run it again.
+The fleet is drawn in **pixel art, seen from above** (D-91): every square paints one 16×16 piece — stern, middle sections, bow — and together they make the ship, so a carrier is a flight deck with a jet parked on it and a submarine is a thin hull with its periscope up. Every ship begins and ends in a point, and turning one is the same drawing rotated 90°. The sea is a single tile repeated in every square. The art lives in `public/battleship/flota.js`, **generated** by `python3 tools/generators/flota.py`: to change a ship you edit the script and run it again.
 
 Sinking a ship **takes a second and a half** (D-93): a flash on the cell you fired at, fire running
 along the hull one square at a time out from the hit, the whole hull slipping under once the fire
@@ -113,30 +113,30 @@ a chime, a buzz and the tab title announce your turn when the phone is face down
 - **📡 Two phones:** a room with a code, a QR and chat. Each phone answers the shots against its own fleet, and at the end both fleets are revealed and verified. The chat steps aside while you place your own fleet, which fills the whole screen, and comes back with its unread badge once you are waiting for the rival (D-138).
 - **🤖 Versus the phone:** an AI that hunts by parity and chases after a hit. It sinks a fleet in about 50 shots.
 
-<!-- generado: capturas:batalla-naval · written by python3 tools/readme.py actualizar -->
+<!-- generado: capturas:batalla-naval · written by python3 tools/release/readme.py actualizar -->
 <table>
   <tr>
-    <td align="center"><img src="docs/screenshots/batalla-naval/01-intro.png" width="180" alt="Game modes"><br><sub>Game modes</sub></td>
-    <td align="center"><img src="docs/screenshots/batalla-naval/02-flota.png" width="180" alt="Placing the fleet"><br><sub>Placing the fleet</sub></td>
-    <td align="center"><img src="docs/screenshots/batalla-naval/03-batalla.png" width="180" alt="Battle"><br><sub>Battle</sub></td>
-    <td align="center"><img src="docs/screenshots/batalla-naval/04-pase.png" width="180" alt="Result and handoff"><br><sub>Result and handoff</sub></td>
+    <td align="center"><img src="docs/screenshots/battleship/01-intro.png" width="180" alt="Game modes"><br><sub>Game modes</sub></td>
+    <td align="center"><img src="docs/screenshots/battleship/02-flota.png" width="180" alt="Placing the fleet"><br><sub>Placing the fleet</sub></td>
+    <td align="center"><img src="docs/screenshots/battleship/03-batalla.png" width="180" alt="Battle"><br><sub>Battle</sub></td>
+    <td align="center"><img src="docs/screenshots/battleship/04-pase.png" width="180" alt="Result and handoff"><br><sub>Result and handoff</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/batalla-naval/06-sala.png" width="180" alt="Room with code and QR"><br><sub>Room with code and QR</sub></td>
-    <td align="center"><img src="docs/screenshots/batalla-naval/07-dos-celulares.png" width="180" alt="Game on two phones"><br><sub>Game on two phones</sub></td>
-    <td align="center"><img src="docs/screenshots/batalla-naval/05-resultado.png" width="180" alt="Result with both fleets"><br><sub>Result with both fleets</sub></td>
+    <td align="center"><img src="docs/screenshots/battleship/06-sala.png" width="180" alt="Room with code and QR"><br><sub>Room with code and QR</sub></td>
+    <td align="center"><img src="docs/screenshots/battleship/07-dos-celulares.png" width="180" alt="Game on two phones"><br><sub>Game on two phones</sub></td>
+    <td align="center"><img src="docs/screenshots/battleship/05-resultado.png" width="180" alt="Result with both fleets"><br><sub>Result with both fleets</sub></td>
     <td></td>
   </tr>
 </table>
 <!-- /generado -->
 
-Spec and design: [docs/juegos/batalla-naval.md](docs/juegos/batalla-naval.md)
+Spec and design: [docs/games/battleship.md](docs/games/battleship.md)
 
 ## ⏳ Timeline (Línea de Tiempo)
 
 You get events with no date on them and place them in the right spot on a shared timeline. Get it right and the card stays. Get it wrong and it is discarded (with your own hand, you draw another one). The first player to correctly place the cards needed to win takes the game; with your own hand, the first to run out of cards. The round is always played to the end, and on a tie the fastest player wins. The rules on the game's front page are folded, one tap away (D-177). The theme is picked at the start, and adding a new one is just a data file. Cards do not repeat across back-to-back games: each phone remembers the ones it has already shown.
 
-<!-- generado: tematicas · written by python3 tools/readme.py actualizar -->
+<!-- generado: tematicas · written by python3 tools/release/readme.py actualizar -->
 | Theme | Cards | Years | What it covers |
 |---|---|---|---|
 | 📜 History | 98 | 2560 BC to 2022 | Milestones of humankind |
@@ -156,51 +156,51 @@ You get events with no date on them and place them in the right spot on a shared
 - **💬 Room chat:** on several phones there is a chat to comment on the plays while waiting for your turn, and it stays alive on the final screen. New messages peek out for a few seconds next to the bubble.
 - **Drag a card into place.** Pull a card down out of your hand and drop it where you think it goes. While it travels it is drawn large and above your finger: in the hand a card is 130px wide and its title sits at 11px, which is unreadable on a narrow phone exactly when you have to decide. A card you already placed can be picked up again and moved, or dropped outside the timeline to send it back to your hand. Dropping only **chooses** — the yellow button is still the one that places it, so nothing irreversible happens by accident, and tapping works exactly as before.
 
-<!-- generado: capturas:linea-de-tiempo · written by python3 tools/readme.py actualizar -->
+<!-- generado: capturas:linea-de-tiempo · written by python3 tools/release/readme.py actualizar -->
 <table>
   <tr>
-    <td align="center"><img src="docs/screenshots/linea-de-tiempo/01-intro.png" width="180" alt="Game modes"><br><sub>Game modes</sub></td>
-    <td align="center"><img src="docs/screenshots/linea-de-tiempo/02-tematica.png" width="180" alt="Theme and players"><br><sub>Theme and players</sub></td>
-    <td align="center"><img src="docs/screenshots/linea-de-tiempo/03-juego.png" width="180" alt="Hand and timeline"><br><sub>Hand and timeline</sub></td>
-    <td align="center"><img src="docs/screenshots/linea-de-tiempo/04-veredicto.png" width="180" alt="Verdict and handoff"><br><sub>Verdict and handoff</sub></td>
+    <td align="center"><img src="docs/screenshots/timeline/01-intro.png" width="180" alt="Game modes"><br><sub>Game modes</sub></td>
+    <td align="center"><img src="docs/screenshots/timeline/02-tematica.png" width="180" alt="Theme and players"><br><sub>Theme and players</sub></td>
+    <td align="center"><img src="docs/screenshots/timeline/03-juego.png" width="180" alt="Hand and timeline"><br><sub>Hand and timeline</sub></td>
+    <td align="center"><img src="docs/screenshots/timeline/04-veredicto.png" width="180" alt="Verdict and handoff"><br><sub>Verdict and handoff</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/linea-de-tiempo/06-sala.png" width="180" alt="Room with code and QR"><br><sub>Room with code and QR</sub></td>
-    <td align="center"><img src="docs/screenshots/linea-de-tiempo/07-varios-celulares.png" width="180" alt="Game on several phones"><br><sub>Game on several phones</sub></td>
-    <td align="center"><img src="docs/screenshots/linea-de-tiempo/05-resultado.png" width="180" alt="Result and ranking"><br><sub>Result and ranking</sub></td>
-    <td align="center"><img src="docs/screenshots/linea-de-tiempo/08-chat.png" width="180" alt="Room chat"><br><sub>Room chat</sub></td>
+    <td align="center"><img src="docs/screenshots/timeline/06-sala.png" width="180" alt="Room with code and QR"><br><sub>Room with code and QR</sub></td>
+    <td align="center"><img src="docs/screenshots/timeline/07-varios-celulares.png" width="180" alt="Game on several phones"><br><sub>Game on several phones</sub></td>
+    <td align="center"><img src="docs/screenshots/timeline/05-resultado.png" width="180" alt="Result and ranking"><br><sub>Result and ranking</sub></td>
+    <td align="center"><img src="docs/screenshots/timeline/08-chat.png" width="180" alt="Room chat"><br><sub>Room chat</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/linea-de-tiempo/09-chat-aviso.png" width="180" alt="New message label"><br><sub>New message label</sub></td>
-    <td align="center"><img src="docs/screenshots/linea-de-tiempo/10-pozo-comun.png" width="180" alt="Shared pool"><br><sub>Shared pool</sub></td>
-    <td align="center"><img src="docs/screenshots/linea-de-tiempo/11-todas-a-la-vista.png" width="180" alt="All cards on the table"><br><sub>All cards on the table</sub></td>
+    <td align="center"><img src="docs/screenshots/timeline/09-chat-aviso.png" width="180" alt="New message label"><br><sub>New message label</sub></td>
+    <td align="center"><img src="docs/screenshots/timeline/10-pozo-comun.png" width="180" alt="Shared pool"><br><sub>Shared pool</sub></td>
+    <td align="center"><img src="docs/screenshots/timeline/11-todas-a-la-vista.png" width="180" alt="All cards on the table"><br><sub>All cards on the table</sub></td>
     <td></td>
   </tr>
 </table>
 <!-- /generado -->
 
-Spec and design: [docs/juegos/linea-de-tiempo.md](docs/juegos/linea-de-tiempo.md)
+Spec and design: [docs/games/timeline.md](docs/games/timeline.md)
 
 ---
 
 ## 🪢 Hangman (El Ahorcado)
 
-<!-- generado: capturas:ahorcado · written by python3 tools/readme.py actualizar -->
+<!-- generado: capturas:ahorcado · written by python3 tools/release/readme.py actualizar -->
 <table>
   <tr>
-    <td align="center"><img src="docs/screenshots/ahorcado/01-intro.png" width="180" alt="Game modes"><br><sub>Game modes</sub></td>
-    <td align="center"><img src="docs/screenshots/ahorcado/02-configuracion.png" width="180" alt="Word, lives and who plays"><br><sub>Word, lives and who plays</sub></td>
-    <td align="center"><img src="docs/screenshots/ahorcado/03-escribir.png" width="180" alt="Each player writes for the next"><br><sub>Each player writes for the next</sub></td>
-    <td align="center"><img src="docs/screenshots/ahorcado/04-juego.png" width="180" alt="Gallows, clue, word and keyboard"><br><sub>Gallows, clue, word and keyboard</sub></td>
+    <td align="center"><img src="docs/screenshots/hangman/01-intro.png" width="180" alt="Game modes"><br><sub>Game modes</sub></td>
+    <td align="center"><img src="docs/screenshots/hangman/02-configuracion.png" width="180" alt="Word, lives and who plays"><br><sub>Word, lives and who plays</sub></td>
+    <td align="center"><img src="docs/screenshots/hangman/03-escribir.png" width="180" alt="Each player writes for the next"><br><sub>Each player writes for the next</sub></td>
+    <td align="center"><img src="docs/screenshots/hangman/04-juego.png" width="180" alt="Gallows, clue, word and keyboard"><br><sub>Gallows, clue, word and keyboard</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/ahorcado/05-veredicto.png" width="180" alt="The letter and the handoff together"><br><sub>The letter and the handoff together</sub></td>
-    <td align="center"><img src="docs/screenshots/ahorcado/06-sala.png" width="180" alt="Room with code and QR"><br><sub>Room with code and QR</sub></td>
-    <td align="center"><img src="docs/screenshots/ahorcado/07-varios-celulares.png" width="180" alt="Each on their own phone, taking turns"><br><sub>Each on their own phone, taking turns</sub></td>
-    <td align="center"><img src="docs/screenshots/ahorcado/08-resultado.png" width="180" alt="Score and verified words"><br><sub>Score and verified words</sub></td>
+    <td align="center"><img src="docs/screenshots/hangman/05-veredicto.png" width="180" alt="The letter and the handoff together"><br><sub>The letter and the handoff together</sub></td>
+    <td align="center"><img src="docs/screenshots/hangman/06-sala.png" width="180" alt="Room with code and QR"><br><sub>Room with code and QR</sub></td>
+    <td align="center"><img src="docs/screenshots/hangman/07-varios-celulares.png" width="180" alt="Each on their own phone, taking turns"><br><sub>Each on their own phone, taking turns</sub></td>
+    <td align="center"><img src="docs/screenshots/hangman/08-resultado.png" width="180" alt="Score and verified words"><br><sub>Score and verified words</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/ahorcado/09-solitario.png" width="180" alt="Play alone: the phone deals the word"><br><sub>Play alone: the phone deals the word</sub></td>
+    <td align="center"><img src="docs/screenshots/hangman/09-solitario.png" width="180" alt="Play alone: the phone deals the word"><br><sub>Play alone: the phone deals the word</sub></td>
     <td></td>
     <td></td>
     <td></td>
@@ -224,28 +224,28 @@ Turns alternate: you try a letter and the turn moves to the next player. All boa
 - **📡 Several phones:** a room with a code and a QR, up to six, taking turns one letter at a time so the sequence is visible (D-66). The rival strip shows lives and progress, never letters.
 - **🧍 Play alone:** the phone deals a word from the chosen theme with its clue, and you crack it. There is no rival: the phone does not guess. Since the word comes from the deck there is no secret to commit, so this is the only mode that works without https (D-65).
 
-Spec and design: [docs/juegos/ahorcado.md](docs/juegos/ahorcado.md)
+Spec and design: [docs/games/hangman.md](docs/games/hangman.md)
 
 ---
 
 ## 🎲 Liar's Dice (Dudo)
 
-<!-- generado: capturas:dudo · written by python3 tools/readme.py actualizar -->
+<!-- generado: capturas:dudo · written by python3 tools/release/readme.py actualizar -->
 <table>
   <tr>
-    <td align="center"><img src="docs/screenshots/dudo/01-intro.png" width="180" alt="Game modes"><br><sub>Game modes</sub></td>
-    <td align="center"><img src="docs/screenshots/dudo/02-configuracion.png" width="180" alt="Who plays and whether calzar is on"><br><sub>Who plays and whether calzar is on</sub></td>
-    <td align="center"><img src="docs/screenshots/dudo/03-mesa.png" width="180" alt="Your dice and the table"><br><sub>Your dice and the table</sub></td>
-    <td align="center"><img src="docs/screenshots/dudo/04-apuesta.png" width="180" alt="Pick face and count"><br><sub>Pick face and count</sub></td>
+    <td align="center"><img src="docs/screenshots/liars-dice/01-intro.png" width="180" alt="Game modes"><br><sub>Game modes</sub></td>
+    <td align="center"><img src="docs/screenshots/liars-dice/02-configuracion.png" width="180" alt="Who plays and whether calzar is on"><br><sub>Who plays and whether calzar is on</sub></td>
+    <td align="center"><img src="docs/screenshots/liars-dice/03-mesa.png" width="180" alt="Your dice and the table"><br><sub>Your dice and the table</sub></td>
+    <td align="center"><img src="docs/screenshots/liars-dice/04-apuesta.png" width="180" alt="Pick face and count"><br><sub>Pick face and count</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/dudo/05-destape.png" width="180" alt="The table opens up and counts"><br><sub>The table opens up and counts</sub></td>
-    <td align="center"><img src="docs/screenshots/dudo/07-pase.png" width="180" alt="Pass the phone"><br><sub>Pass the phone</sub></td>
-    <td align="center"><img src="docs/screenshots/dudo/08-sala.png" width="180" alt="Room with code and QR"><br><sub>Room with code and QR</sub></td>
-    <td align="center"><img src="docs/screenshots/dudo/09-destape-verificado.png" width="180" alt="The table opens up and verifies"><br><sub>The table opens up and verifies</sub></td>
+    <td align="center"><img src="docs/screenshots/liars-dice/05-destape.png" width="180" alt="The table opens up and counts"><br><sub>The table opens up and counts</sub></td>
+    <td align="center"><img src="docs/screenshots/liars-dice/07-pase.png" width="180" alt="Pass the phone"><br><sub>Pass the phone</sub></td>
+    <td align="center"><img src="docs/screenshots/liars-dice/08-sala.png" width="180" alt="Room with code and QR"><br><sub>Room with code and QR</sub></td>
+    <td align="center"><img src="docs/screenshots/liars-dice/09-destape-verificado.png" width="180" alt="The table opens up and verifies"><br><sub>The table opens up and verifies</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/dudo/06-resultado.png" width="180" alt="Who won and how it went"><br><sub>Who won and how it went</sub></td>
+    <td align="center"><img src="docs/screenshots/liars-dice/06-resultado.png" width="180" alt="Who won and how it went"><br><sub>Who won and how it went</sub></td>
     <td></td>
     <td></td>
     <td></td>
@@ -263,29 +263,29 @@ In Spanish the faces are called the way they are called at a Chilean table (**as
 - **🤖 Versus the phone:** a duel. The phone bets on probability and **only looks at its own dice**: the decision comes from how many unknown dice are left and how likely they are to cover the bid, not from peeking at yours.
 - **📶 Several phones:** a room with a 4-letter code, a QR and chat, two to six players. Each phone rolls **its own** dice and publishes only the hash. On a call it reveals them and everyone verifies that nobody swapped them (C-10). This is why the dice are not derived from the shared seed like everything else this app deals: the code is public, and with a shared seed anyone could compute the rival's dice from the console (D-70).
 
-Spec and design: [docs/juegos/dudo.md](docs/juegos/dudo.md)
+Spec and design: [docs/games/liars-dice.md](docs/games/liars-dice.md)
 
 ---
 
 ## 🍹 Julep (Julepe)
 
-<!-- generado: capturas:julepe · written by python3 tools/readme.py actualizar -->
+<!-- generado: capturas:julepe · written by python3 tools/release/readme.py actualizar -->
 <table>
   <tr>
-    <td align="center"><img src="docs/screenshots/julepe/01-intro.png" width="180" alt="Game modes"><br><sub>Game modes</sub></td>
-    <td align="center"><img src="docs/screenshots/julepe/02-configuracion.png" width="180" alt="How many rivals and how many hands"><br><sub>How many rivals and how many hands</sub></td>
-    <td align="center"><img src="docs/screenshots/julepe/03-declaracion.png" width="180" alt="In or out, taking turns"><br><sub>In or out, taking turns</sub></td>
-    <td align="center"><img src="docs/screenshots/julepe/04-cambio.png" width="180" alt="Swap up to three cards"><br><sub>Swap up to three cards</sub></td>
+    <td align="center"><img src="docs/screenshots/julep/01-intro.png" width="180" alt="Game modes"><br><sub>Game modes</sub></td>
+    <td align="center"><img src="docs/screenshots/julep/02-configuracion.png" width="180" alt="How many rivals and how many hands"><br><sub>How many rivals and how many hands</sub></td>
+    <td align="center"><img src="docs/screenshots/julep/03-declaracion.png" width="180" alt="In or out, taking turns"><br><sub>In or out, taking turns</sub></td>
+    <td align="center"><img src="docs/screenshots/julep/04-cambio.png" width="180" alt="Swap up to three cards"><br><sub>Swap up to three cards</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/julepe/05-baza.png" width="180" alt="Illegal cards are dimmed"><br><sub>Illegal cards are dimmed</sub></td>
-    <td align="center"><img src="docs/screenshots/julepe/06-julepe.png" width="180" alt="A julep: drink the whole pot"><br><sub>A julep: drink the whole pot</sub></td>
-    <td align="center"><img src="docs/screenshots/julepe/07-reparto.png" width="180" alt="Handing out the sips you won"><br><sub>Handing out the sips you won</sub></td>
-    <td align="center"><img src="docs/screenshots/julepe/09-pase.png" width="180" alt="Pass the phone"><br><sub>Pass the phone</sub></td>
+    <td align="center"><img src="docs/screenshots/julep/05-baza.png" width="180" alt="Illegal cards are dimmed"><br><sub>Illegal cards are dimmed</sub></td>
+    <td align="center"><img src="docs/screenshots/julep/06-julepe.png" width="180" alt="A julep: drink the whole pot"><br><sub>A julep: drink the whole pot</sub></td>
+    <td align="center"><img src="docs/screenshots/julep/07-reparto.png" width="180" alt="Handing out the sips you won"><br><sub>Handing out the sips you won</sub></td>
+    <td align="center"><img src="docs/screenshots/julep/09-pase.png" width="180" alt="Pass the phone"><br><sub>Pass the phone</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/julepe/online-01-sala.png" width="180" alt="Room with code and QR"><br><sub>Room with code and QR</sub></td>
-    <td align="center"><img src="docs/screenshots/julepe/08-resultado.png" width="180" alt="Who drank the least"><br><sub>Who drank the least</sub></td>
+    <td align="center"><img src="docs/screenshots/julep/online-01-sala.png" width="180" alt="Room with code and QR"><br><sub>Room with code and QR</sub></td>
+    <td align="center"><img src="docs/screenshots/julep/08-resultado.png" width="180" alt="Who drank the least"><br><sub>Who drank the least</sub></td>
     <td></td>
     <td></td>
   </tr>
@@ -295,7 +295,7 @@ Spec and design: [docs/juegos/dudo.md](docs/juegos/dudo.md)
 > **Paused for now.** Several rounds of rewriting the rules text still did not make the game land
 > — not even for the person writing them. It is off the main menu while the rules get reworked
 > into something a new player can actually follow (D-88). The game itself is untouched and still
-> works at [`/julepe/`](https://juegosdesalon.cl/julepe/).
+> works at [`/julep/`](https://juegosdesalon.cl/julep/).
 
 A trick-taking game from the Tute family, played for sips. There is a **pot** of sips on the table. You look at your five cards and, taking turns from the dealer's right, say whether you are **in** or **out**. Going in means committing to win **two of the five tricks**: make it and you are safe, and you get to hand out two sips per trick among the others; fall short and you **drink the whole pot**. That is a **julep**. The pot carries over to the next hand once for every player who got juleped, so two juleps in the same hand double it before anyone notices.
 
@@ -309,30 +309,30 @@ If only one player goes in, the hand would be no hand at all, so **the dealer is
 
 The name changes in each language, because a name only works if it is recognised (D-84): the English cousin of this game is *Loo*, which today reads as the toilet, so in English it is **Julep** — a real word, a drink, and one letter from the original. In Portuguese there is no relative to borrow from, but *o bolo* is what the pot is called in Brazil, so it is **Paga o Bolo**.
 
-Spec and design: [docs/juegos/julepe.md](docs/juegos/julepe.md)
+Spec and design: [docs/games/julep.md](docs/games/julep.md)
 
 ---
 
 ## 🏆 The Cup (La Copa)
 
-<!-- generado: capturas:copa · written by python3 tools/readme.py actualizar -->
+<!-- generado: capturas:copa · written by python3 tools/release/readme.py actualizar -->
 <table>
   <tr>
-    <td align="center"><img src="docs/screenshots/copa/00-invitacion.png" width="180" alt="The invite: your name and a 4-digit PIN"><br><sub>The invite: your name and a 4-digit PIN</sub></td>
-    <td align="center"><img src="docs/screenshots/copa/01-tablero.png" width="180" alt="Your days: past ones done, today open"><br><sub>Your days: past ones done, today open</sub></td>
-    <td align="center"><img src="docs/screenshots/copa/02-numero.png" width="180" alt="Day 2: Bulls and Cows, guess the number"><br><sub>Day 2: Bulls and Cows, guess the number</sub></td>
-    <td align="center"><img src="docs/screenshots/copa/03-conexiones.png" width="180" alt="Day 3: Connections, with red herrings"><br><sub>Day 3: Connections, with red herrings</sub></td>
+    <td align="center"><img src="docs/screenshots/cup/00-invitacion.png" width="180" alt="The invite: your name and a 4-digit PIN"><br><sub>The invite: your name and a 4-digit PIN</sub></td>
+    <td align="center"><img src="docs/screenshots/cup/01-tablero.png" width="180" alt="Your days: past ones done, today open"><br><sub>Your days: past ones done, today open</sub></td>
+    <td align="center"><img src="docs/screenshots/cup/02-numero.png" width="180" alt="Day 2: Bulls and Cows, guess the number"><br><sub>Day 2: Bulls and Cows, guess the number</sub></td>
+    <td align="center"><img src="docs/screenshots/cup/03-conexiones.png" width="180" alt="Day 3: Connections, with red herrings"><br><sub>Day 3: Connections, with red herrings</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/copa/04-reinas.png" width="180" alt="Day 4: Queens"><br><sub>Day 4: Queens</sub></td>
-    <td align="center"><img src="docs/screenshots/copa/05-letras.png" width="180" alt="Day 5: Bulls and Cows: Word"><br><sub>Day 5: Bulls and Cows: Word</sub></td>
-    <td align="center"><img src="docs/screenshots/copa/06-anio.png" width="180" alt="Day 6: What year was it?"><br><sub>Day 6: What year was it?</sub></td>
-    <td align="center"><img src="docs/screenshots/copa/07-grafico.png" width="180" alt="Everyone's place, day by day"><br><sub>Everyone's place, day by day</sub></td>
+    <td align="center"><img src="docs/screenshots/cup/04-reinas.png" width="180" alt="Day 4: Queens"><br><sub>Day 4: Queens</sub></td>
+    <td align="center"><img src="docs/screenshots/cup/05-letras.png" width="180" alt="Day 5: Bulls and Cows: Word"><br><sub>Day 5: Bulls and Cows: Word</sub></td>
+    <td align="center"><img src="docs/screenshots/cup/06-anio.png" width="180" alt="Day 6: What year was it?"><br><sub>Day 6: What year was it?</sub></td>
+    <td align="center"><img src="docs/screenshots/cup/07-grafico.png" width="180" alt="Everyone's place, day by day"><br><sub>Everyone's place, day by day</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/copa/08-podio.png" width="180" alt="Podium and medals"><br><sub>Podium and medals</sub></td>
-    <td align="center"><img src="docs/screenshots/copa/09-admin.png" width="180" alt="The admin shares messages with the group"><br><sub>The admin shares messages with the group</sub></td>
-    <td align="center"><img src="docs/screenshots/copa/10-semana.png" width="180" alt="Creating a cup: drag the games into the week"><br><sub>Creating a cup: drag the games into the week</sub></td>
+    <td align="center"><img src="docs/screenshots/cup/08-podio.png" width="180" alt="Podium and medals"><br><sub>Podium and medals</sub></td>
+    <td align="center"><img src="docs/screenshots/cup/09-admin.png" width="180" alt="The admin shares messages with the group"><br><sub>The admin shares messages with the group</sub></td>
+    <td align="center"><img src="docs/screenshots/cup/10-semana.png" width="180" alt="Creating a cup: drag the games into the week"><br><sub>Creating a cup: drag the games into the week</sub></td>
     <td></td>
   </tr>
 </table>
@@ -356,7 +356,7 @@ It borrows what makes daily puzzles work (Wordle, Connections): same challenge f
 | 6 | 📅 What year was it?: closer is better, older gets more slack | estimation |
 | 7 | 🏁 The Grand Final: five short rounds, one of each, worth double | everything |
 
-The other four are **〰️ Zip**, **☀️ Tango**, **📍 Where is it?** and **🧶 Untangle**, still in the lab: Simon Tatham's puzzle, where you drag knots until no thread crosses another, in ten levels of 6 to 15 knots against a four-minute clock, like Zip. The tangle is built from an untangled drawing, so it always has a solution, and a thread running over a knot counts as a crossing, so piling the knots up doesn't help (D-179). Where is it? gives you five cities, each with its country, and you drop a pin on a satellite-image globe with no names on it (NASA's Blue Marble, so deserts, jungles and ice look like themselves), which spins endlessly as you drag it: every city is worth up to 100 points, minus 4 per 100 km off. The cities are the capitals of every UN country and its two observers, plus famous and second-tier ones (529 in all), and the borders used to check them come from Natural Earth via `tools/mapa.mjs` (D-155, D-159). **The minigames also play on their own from the main menu** (D-142), one player and no cup: Timeline Flash and the number game are the *play alone* modes of Timeline and Bulls and Cows, in all three languages, and the other seven (all but the final) have their own card, Where is it? included since D-174, open at `/minijuegos/<id>/` (no "cup" in a link that has nothing to do with one, D-149) and play in the player's language. Each of those pages is generated by `tools/og.mjs` with its own social card, so a link pasted in WhatsApp shows the minigame, not the cup (D-162). The cup does not invent its own UX (D-102): the timeline, the drag and drop and the keypad are the ones Timeline and Bulls and Cows already use, shared from `assets/`.
+The other four are **〰️ Zip**, **☀️ Tango**, **📍 Where is it?** and **🧶 Untangle**, still in the lab: Simon Tatham's puzzle, where you drag knots until no thread crosses another, in ten levels of 6 to 15 knots against a four-minute clock, like Zip. The tangle is built from an untangled drawing, so it always has a solution, and a thread running over a knot counts as a crossing, so piling the knots up doesn't help (D-179). Where is it? gives you five cities, each with its country, and you drop a pin on a satellite-image globe with no names on it (NASA's Blue Marble, so deserts, jungles and ice look like themselves), which spins endlessly as you drag it: every city is worth up to 100 points, minus 4 per 100 km off. The cities are the capitals of every UN country and its two observers, plus famous and second-tier ones (529 in all), and the borders used to check them come from Natural Earth via `tools/generators/mapa.mjs` (D-155, D-159). **The minigames also play on their own from the main menu** (D-142), one player and no cup: Timeline Flash and the number game are the *play alone* modes of Timeline and Bulls and Cows, in all three languages, and the other seven (all but the final) have their own card, Where is it? included since D-174, open at `/minigames/<id>/` (no "cup" in a link that has nothing to do with one, D-149) and play in the player's language. Each of those pages is generated by `tools/release/og.mjs` with its own social card, so a link pasted in WhatsApp shows the minigame, not the cup (D-162). The cup does not invent its own UX (D-102): the timeline, the drag and drop and the keypad are the ones Timeline and Bulls and Cows already use, shared from `public/assets/`.
 
 - **Everything comes from a seed** (`code:day`), so everyone plays exactly the same content with no server (D-97).
 - **A day stays open until the next midnight** (a grace day), except the final. **Late sign-ups** are open until the final unless the admin closes them or the cup is full (ten players); a late player gets 0 for the days already closed, and the warning shows from day 3 on, because on day 2 day 1 is still in its grace day (D-177). Time only breaks ties, and it is *active* time: it pauses while the screen is hidden (D-95).
@@ -366,13 +366,13 @@ The other four are **〰️ Zip**, **☀️ Tango**, **📍 Where is it?** and *
 - **The admin can end the cup early** (D-161), say when last place is not going to play the final: nobody plays after that, the table as it stands becomes final and the podium shows up; days that had not opened yet are dropped. Once a cup is over, the admin can **export the final table**: the shareable image with everyone's place day by day, or a CSV spreadsheet (final table, place after each day and every day's detail) for Excel or Google Sheets.
 - **Every day has a practice round first** (D-103): same mechanics, different content, shorter, and it does not count, which the screen says right under its button and again in its folded rules (D-177). Starting the real one shows a **3-to-1 countdown** and the board and clock appear only on "¡A jugar!" (D-105). When you finish, the result **explains how the score was calculated**, line by line (D-106).
 - **A new cup opens on the admin screen** with a short guide: share the invite, wait for people to join (they can before it starts), close sign-ups if you like, and move the start to today or tomorrow while nobody has played yet (D-110). The lab has **ten live demos** of the cup, as a player and as the admin.
-- **A cup can have its own link** (D-121): `juegosdesalon.cl/copa/?pirata` instead of a 5-letter code. It is an alias, unique while the cup lasts and free again a week after it ends.
-- **Bug reports need no account** (D-104): the 🐞 form posts straight to `feedback/` and remembers your name on that device; `node tools/reportes.mjs` reads them back.
+- **A cup can have its own link** (D-121): `juegosdesalon.cl/cup/?pirata` instead of a 5-letter code. It is an alias, unique while the cup lasts and free again a week after it ends.
+- **Bug reports need no account** (D-104): the 🐞 form posts straight to `feedback/` and remembers your name on that device; `node tools/firebase/reportes.mjs` reads them back.
 - **Three languages, one rule** (D-170): what is personal follows your language, what belongs to the group follows the cup's. The screen (rules, board, scoring breakdown) follows each player's toggle; the cup's language, chosen when it is created, sets the words of Connections and Bulls and Cows: Word, so everyone plays the same ones, and every message shared with the group, with its link. Word content is written per language, not translated: Connections grids and secret words in English and Portuguese, plus country and city names for Where is it?.
 - **Who it's for** (D-186, D-187): when creating a cup, the admin picks its audience: 🌎 Global, 🇨🇱 Chile or 🇧🇷 Brazil. Content that people only know in one of those countries is tagged with it: Timeline's Chile and Brazil themes and a few local cards, the Connections grids with Chilean or Brazilian words, a few Chilean secret words, and Chilean and Brazilian cities that aren't capitals (Rio and São Paulo count as global). A global cup leaves out both countries' topics; a Chilean or Brazilian cup adds its own and leaves out the other's. Cups created before keep their content.
 - A 3-day cup exists for testing with `?tres` (D-100), and `?prueba` plays a cup with no Firebase, which is what the lab demos and the end-to-end scripts use.
 
-Spec and design: [docs/juegos/copa.md](docs/juegos/copa.md)
+Spec and design: [docs/games/cup.md](docs/games/cup.md)
 
 ---
 
@@ -385,7 +385,7 @@ Spec and design: [docs/juegos/copa.md](docs/juegos/copa.md)
   door of the language you are reading in: `/`, `/pt/` or `/en/`, each with its own social card
   (D-74).
 - **One standard for everything that gets shared** (D-165), built for WhatsApp, in
-  `assets/js/compartir.js`. Every message opens with a header — `{emoji} *{title}* · {context}`,
+  `public/assets/js/compartir.js`. Every message opens with a header — `{emoji} *{title}* · {context}`,
   like "🏆 *La Copa: Valdenenas* · Día 3 de 7" or "🃏 *Julepe* · Sala WFBN" —, says one thing
   per line, and ends with the link on its own line. A result or a table always goes out as an
   **image plus its text**, from whichever button: the image carries the same header on top and
@@ -401,7 +401,7 @@ Spec and design: [docs/juegos/copa.md](docs/juegos/copa.md)
 
 The whole experience is translated: the menu and its footer lines, the six games with all their modes, the rooms, the chat, the transport errors, the "pass the phone" screens and the cards of every Timeline theme. Portuguese is the Brazilian one, informal, and the names are translated the same way as in English:
 
-<!-- generado: idiomas · written by python3 tools/readme.py actualizar -->
+<!-- generado: idiomas · written by python3 tools/release/readme.py actualizar -->
 | Español | English | Português |
 |---|---|---|
 | Juegos de Salón | Party Games | Jogos de Salão |
@@ -417,7 +417,7 @@ The whole experience is translated: the menu and its footer lines, the six games
 
 How it is put together (canon C-3):
 
-- `assets/js/i18n.js` keeps the language in `localStorage` (`juegos-de-salon:lang`), draws the
+- `public/assets/js/i18n.js` keeps the language in `localStorage` (`juegos-de-salon:lang`), draws the
   🇨🇱 ES · 🇬🇧 EN · 🇧🇷 PT toggle and holds the shared text (`COMMON`): the menu and what goes out
   when somebody shares the app, plus the strings every game repeats word for word — the room
   invitation (D-173, D-165), the "or" between creating a room and joining one, and the shared
@@ -426,7 +426,7 @@ How it is put together (canon C-3):
   single literal string in `game.js`. Fixed HTML text is marked with `data-i18n`.
 - The menu registry (`games.js`), the 100 footer lines (`frases.js`) and every Timeline card
   (`decks/*.js`) carry all three languages.
-- **The three dictionaries have exactly the same keys.** `node assets/js/i18n.test.mjs` checks
+- **The three dictionaries have exactly the same keys.** `node public/assets/js/i18n.test.mjs` checks
   keys, list lengths, the `{braces}` in templates and that no text is empty. A missing string
   would show up as `undefined` on screen.
 - Translations are adapted, not copied: in Portuguese the Santiago districts become bairros, the
@@ -445,11 +445,11 @@ How it is put together (canon C-3):
 - The owner dashboard is Spanish only (an exception recorded in `docs/PANEL.md`), and so is
   `manifest.webmanifest`, because there is one manifest for the whole app.
 
-<!-- generado: capturas:idiomas · written by python3 tools/readme.py actualizar -->
+<!-- generado: capturas:idiomas · written by python3 tools/release/readme.py actualizar -->
 <table>
   <tr>
-    <td align="center"><img src="docs/screenshots/cuarto-rey/11-menu-en.png" width="180" alt="Menu in English"><br><sub>Menu in English</sub></td>
-    <td align="center"><img src="docs/screenshots/cuarto-rey/12-mesa-en.png" width="180" alt="Table in English"><br><sub>Table in English</sub></td>
+    <td align="center"><img src="docs/screenshots/fourth-king/11-menu-en.png" width="180" alt="Menu in English"><br><sub>Menu in English</sub></td>
+    <td align="center"><img src="docs/screenshots/fourth-king/12-mesa-en.png" width="180" alt="Table in English"><br><sub>Table in English</sub></td>
     <td></td>
     <td></td>
   </tr>
@@ -478,47 +478,47 @@ the bottom there is a **log of the rooms that were played** in that range, newes
 day and time, the players with the flag of their country, the game and who won. Test rooms run in
 the development environment, so they are out by default.
 
-It keeps no lists of its own. Games and modes are read from the registry in `assets/js/games.js`,
+It keeps no lists of its own. Games and modes are read from the registry in `public/assets/js/games.js`,
 so a new game shows up there by itself, and anything it does not recognize yet is drawn anyway,
 keyed by name instead of thrown away. See [docs/PANEL.md](docs/PANEL.md).
 
 ## Stack
 
-Plain HTML, CSS and JavaScript (ES modules). No build step, no npm dependencies. It is published as a static site on GitHub Pages from the `main` branch. The two-phone mode uses **Firebase Realtime Database** (free plan) as a live room. See [firebase/README.md](firebase/README.md).
+Plain HTML, CSS and JavaScript (ES modules). No build step, no npm dependencies. The site is the `public/` folder, published as a static site on GitHub Pages by a workflow on every merge to `main`, once the tests pass (D-190). Everything else in the repo (docs, tools, marketing) is the workshop, and is not published. The two-phone mode uses **Firebase Realtime Database** (free plan) as a live room. See [firebase/README.md](firebase/README.md).
 
 ## Running it locally
 
 ```bash
-python3 -m http.server 8765
+python3 -m http.server 8765 -d public
 ```
 
 Then open http://localhost:8765 (ES modules have to be served over HTTP). Tests for the engines, the languages and the shared modules:
 
-<!-- generado: pruebas · written by python3 tools/readme.py actualizar -->
+<!-- generado: pruebas · written by python3 tools/release/readme.py actualizar -->
 ```bash
-node ahorcado/engine.test.mjs
-node batalla-naval/engine.test.mjs
-node copa/engine.test.mjs
-node dudo/engine.test.mjs
-node julepe/engine.test.mjs
-node linea-de-tiempo/engine.test.mjs
-node toque-y-fama/engine.test.mjs
-node assets/js/arrastre.test.mjs
-node assets/js/compartir.test.mjs
-node assets/js/i18n.test.mjs
-node assets/js/transport/cleanup.test.mjs
-node assets/js/transport/dispose.test.mjs
-node assets/js/transport/errors.test.mjs
-node assets/js/transport/ratelimit.test.mjs
-node assets/js/transport/stats.test.mjs
-node copa/juegos/juegos.test.mjs
-node copa/planilla.test.mjs
-node copa/reportes.test.mjs
-node copa/store.test.mjs
-node panel/adapta.test.mjs
-node panel/aggregate.test.mjs
-node panel/copas.test.mjs
-node tools/documentar.test.mjs
+node public/battleship/engine.test.mjs
+node public/bulls-and-cows/engine.test.mjs
+node public/cup/engine.test.mjs
+node public/hangman/engine.test.mjs
+node public/julep/engine.test.mjs
+node public/liars-dice/engine.test.mjs
+node public/timeline/engine.test.mjs
+node public/assets/js/arrastre.test.mjs
+node public/assets/js/compartir.test.mjs
+node public/assets/js/i18n.test.mjs
+node public/assets/js/transport/cleanup.test.mjs
+node public/assets/js/transport/dispose.test.mjs
+node public/assets/js/transport/errors.test.mjs
+node public/assets/js/transport/ratelimit.test.mjs
+node public/assets/js/transport/stats.test.mjs
+node public/cup/games/juegos.test.mjs
+node public/cup/planilla.test.mjs
+node public/cup/reportes.test.mjs
+node public/cup/store.test.mjs
+node public/panel/adapta.test.mjs
+node public/panel/aggregate.test.mjs
+node public/panel/copas.test.mjs
+node tools/agents/documentar.test.mjs
 ```
 <!-- /generado -->
 
@@ -545,7 +545,7 @@ Retaking them is not reviewing them. Together they show what a single image hide
 To try it on a real phone, and to hand the link to someone else, serve the working tree over Tailscale without publishing anything (D-67):
 
 ```bash
-tailscale serve --bg 8765          # served at https://<machine>.<tailnet>.ts.net/
+tailscale serve --bg 8765          # with the server above running; served at https://<machine>.<tailnet>.ts.net/
 tailscale serve --https=443 off    # and this takes it down
 ```
 
@@ -556,7 +556,7 @@ It is the whole app over HTTPS, so the modes that need a secure context work too
 Before committing a new version, stamp it into the site (import maps and stylesheets carry `?v=`), so the browser never mixes old and new files:
 
 ```bash
-python3 tools/set-version.py 0.4.6
+python3 tools/release/set-version.py 0.4.6
 ```
 
 ## Keeping this README current
@@ -564,14 +564,14 @@ python3 tools/set-version.py 0.4.6
 This file states things the code already knows (how many games there are, what modes each one has, how many cards each theme carries, which tests run) and shows screenshots of screens that change. None of that announces when it goes stale, so there is a tool:
 
 ```bash
-python3 tools/readme.py revisar          # did anything fall behind the code?
-python3 tools/readme.py actualizar       # rewrites the generated blocks
-python3 tools/readme.py capturas <section> [--sin-red]   # retakes the screenshots
-python3 tools/readme.py sellar           # "I have read it again against these facts"
+python3 tools/release/readme.py revisar          # did anything fall behind the code?
+python3 tools/release/readme.py actualizar       # rewrites the generated blocks
+python3 tools/release/readme.py capturas <section> [--sin-red]   # retakes the screenshots
+python3 tools/release/readme.py sellar           # "I have read it again against these facts"
 ```
 
 - **Anything derivable is generated.** Everything between `<!-- generado: ... -->` and
-  `<!-- /generado -->` is written by `actualizar` from [`tools/hechos.mjs`](tools/hechos.mjs),
+  `<!-- /generado -->` is written by `actualizar` from [`tools/release/hechos.mjs`](tools/release/hechos.mjs),
   which imports the real modules (`games.js`, the `rules.js` files, `decks/index.js`). Nothing in
   there is edited by hand: the games table, the themes, the names per language, the tests, the
   document index and the screenshot galleries.
@@ -591,52 +591,41 @@ To add a screen to this README: take the shot in the e2e script, add the entry t
 
 ## Layout
 
+The repo root is not the web root (D-190). `public/` is the site, exactly as it is served: folder =
+URL, in English. Everything next to it is the workshop.
+
 ```
-index.html                  Main menu (generated from assets/js/games.js)
-assets/css/base.css         Shared styles and animations (party theme, turn transitions)
-assets/js/games.js          Game registry (text in es, en and pt)
-assets/js/i18n.js           Language (ES/EN/PT): toggle, persistence and shared text; i18n.test.mjs checks parity
-assets/js/frases.js         Footer lines for the menu, 100 per language
-assets/js/azar.js           The menu's Random game button and the roll that opens a game (D-188)
-assets/js/dado3d.js         The die in WebGL: rounded white cube, light and one emoji per face
-assets/js/sound.js          Synthesized sound effects and the mute button
-assets/js/ui.js             UI helpers: confetti, vibration, wake lock, DOM helpers
-assets/js/compartir.js      Everything that gets shared: the message header, the share sheet, the shared images (D-165)
-assets/js/firebase-config.js Public Firebase configuration
-cuarto-rey/                 Cuarto Rey (index.html, game.js, rules.js, style.css)
-toque-y-fama/               Toque y Fama (engine.js + tests, game.js, rules.js)
-batalla-naval/              Batalla Naval (engine.js + tests, game.js, rules.js, flota.js: el pixel art)
-linea-de-tiempo/            Línea de Tiempo (engine.js + tests, game.js, rules.js, decks/)
-ahorcado/                   El Ahorcado (engine.js + tests, game.js, rules.js, decks/)
-dudo/                       Dudo (engine.js + tests, game.js, rules.js)
-copa/                       La Copa: tournament engine, stores (Firebase and local test), juegos/ with the minigames (solo.js mounts one as the play-alone mode of another game; grillas-en.js, grillas-pt.js and nombres.js hold the English and Portuguese word content), desglose.js (score breakdown), planilla.js (final table as CSV), reportes.js (auth-free bug reports), demo.js (lab demos)
-labs/                       The lab: games being tested before they reach the menu (not linked, not indexed)
-assets/js/arrastre.js       Shared drag and drop: dropping chooses, a button confirms
-assets/js/teclado.js        Shared Bulls and Cows keypad, with notes (long press to strike out a key)
-assets/css/linea.css        Shared timeline, hand, slots and verdict (Timeline and the cup)
-assets/css/teclado.css      Shared keypad, guess boards and clues (Bulls and Cows and the cup)
-assets/js/handoff.js        Shared transitions: pass the phone, covered screen
-assets/js/chat.js           Shared room chat (multi-phone modes)
-assets/js/session.js        Shared saved games (resume in any mode)
-assets/js/transport/        Shared transports: local (same phone), firebase (room) and stats (usage signals)
-panel/                      Private owner dashboard: summary, La Copa and games views (Google sign-in; see docs/PANEL.md)
+public/                     The site (juegosdesalon.cl/): the only folder that gets published
+  index.html                  Main menu (generated from assets/js/games.js)
+  en/ · pt/                   Language doors: they set the language and send you to the menu
+  cup/                        The Cup: tournament engine, stores (Firebase and local test), desglose.js (score breakdown), planilla.js (final table as CSV), reportes.js (auth-free bug reports), demo.js (lab demos)
+    games/                    The minigames: one folder each (engine.js + ui.js + its own word content); solo.js mounts one as the play-alone mode of another game
+  timeline/                   Timeline (engine.js + tests, game.js, rules.js, decks/)
+  bulls-and-cows/             Bulls and Cows (engine.js + tests, game.js, rules.js)
+  hangman/                    Hangman (engine.js + tests, game.js, rules.js, decks/)
+  liars-dice/                 Liar's Dice (engine.js + tests, game.js, rules.js)
+  battleship/                 Battleship (engine.js + tests, game.js, rules.js, flota.js: the pixel art)
+  julep/                      Julep (engine.js + tests, game.js, rules.js)
+  fourth-king/                Fourth King (game.js, rules.js)
+  minigames/                  The cup's minigames played on their own, one page each (generated)
+  labs/                       The lab: games being tested before they reach the menu (not linked, not indexed)
+  panel/                      Private owner dashboard: summary, The Cup and games views (Google sign-in; see docs/PANEL.md)
+  assets/css/                 Shared styles: base.css (party theme), linea.css (timeline), teclado.css (keypad)
+  assets/js/                  Shared modules: games.js (game registry), i18n.js, ui.js, sound.js, compartir.js (everything shared, D-165), handoff.js, chat.js, session.js, arrastre.js (drag and drop), teclado.js, azar.js and dado3d.js (Random game), frases.js
+  assets/js/transport/        Transports: local (same phone), firebase (room) and stats (usage signals)
+  assets/og/                  The 1200×630 images shown when a link is shared
+  manifest.webmanifest        PWA manifest (installable on the home screen)
+  ahorcado/ copa/ …           Bridge pages: the old Spanish URLs, forwarding to the new ones (generated, D-190)
+docs/                       Requirements, decisions, canons, one spec per game (docs/games/) and the README screenshots
 firebase/                   Realtime Database security rules and notes
-manifest.webmanifest        PWA manifest (installable on the home screen)
-tools/set-version.py        Stamps the version (import maps + stylesheets) to avoid a mixed cache
-tools/readme.py             Keeps this README current: generated blocks, retaken screenshots, staleness report
-tools/og.mjs                Social cards: the Open Graph tags of each page and their images
-tools/mapa.mjs              The world of Where is it?: Natural Earth borders (a check that every city falls in its country) and the NASA satellite images of the globe
-tools/hechos.mjs            The app's fact sheet (games, modes, themes, tests) read from the code
-tools/reportes.mjs          Reads the La Copa bug reports from Firebase (`--dias N`, `--json`)
-tools/reglas.mjs            Publishes the Firebase rules with a service-account key kept outside the repo
-tools/dilemas.mjs           Usability dilemmas as GitHub issues: list, create, resolve, archive (D-132)
-tools/documentar.mjs        The documentation agent's memory and checks: what reached main since its last round, and what is still undocumented (D-172)
-.claude/agents/             The project's agents: usabilidad (daily usability round, D-132) and documentacion (daily documentation round, D-172)
-tools/e2e/                  Full games in headless Chrome; the screenshots come from here (see its README)
-pt/ · en/                   Language doors: they set the language and send you to the menu
-assets/og/                  The 1200×630 images shown when a link is shared
-docs/capturas.json          Screenshot catalog: the caption and the script each one comes from
-docs/                       Requirements, decisions, specs and screenshots
+tools/
+  release/                    Publishing: set-version.py (version stamp), readme.py + hechos.mjs (this README), og.mjs (social cards and bridge pages)
+  firebase/                   reglas.mjs (publish the rules), reportes.mjs (The Cup bug reports), en-curso.mjs (anyone playing?)
+  generators/                 mapa.mjs (the world of Where is it?), flota.py (the Battleship fleet)
+  agents/                     dilemas.mjs (usability dilemmas as issues, D-132), documentar.mjs (the documentation agent, D-172)
+  e2e/                        Full games in headless Chrome, one folder per game; the screenshots come from here
+marketing/                  The promo video and its memory
+.claude/                    The project's agents (usabilidad, documentacion) and skills
 ```
 
 ## Contributing
@@ -654,7 +643,7 @@ guide, in Spanish like the rest of the docs, is [CONTRIBUTING.md](CONTRIBUTING.m
 
 These documents are in Spanish, like the rest of the project.
 
-<!-- generado: documentacion · written by python3 tools/readme.py actualizar -->
+<!-- generado: documentacion · written by python3 tools/release/readme.py actualizar -->
 - [Cánones y estándares de Juegos de Salón](docs/CANONES.md)
 - [Requerimientos](docs/REQUERIMIENTOS.md)
 - [Decisiones de diseño y arquitectura](docs/DECISIONES.md)
@@ -662,15 +651,15 @@ These documents are in Spanish, like the rest of the project.
 - [Panel del dueño](docs/PANEL.md)
 - [Pruebas de punta a punta (Chrome headless por CDP)](tools/e2e/README.md)
 - [Firebase](firebase/README.md)
-- [Diseño: El Ahorcado](docs/juegos/ahorcado.md)
-- [Diseño: Batalla Naval](docs/juegos/batalla-naval.md)
-- [La Copa](docs/juegos/copa.md)
-- [Especificación: Cuarto Rey](docs/juegos/cuarto-rey.md)
-- [Diseño: Dudo](docs/juegos/dudo.md)
-- [Diseño: Julepe](docs/juegos/julepe.md)
-- [Diseño: Línea de Tiempo](docs/juegos/linea-de-tiempo.md)
-- [Toque y Fama: estudio de factibilidad y propuesta de mecánica](docs/juegos/toque-y-fama-factibilidad.md)
-- [Especificación: Toque y Fama](docs/juegos/toque-y-fama.md)
+- [Diseño: Batalla Naval](docs/games/battleship.md)
+- [Toque y Fama: estudio de factibilidad y propuesta de mecánica](docs/games/bulls-and-cows-factibilidad.md)
+- [Especificación: Toque y Fama](docs/games/bulls-and-cows.md)
+- [La Copa](docs/games/cup.md)
+- [Especificación: Cuarto Rey](docs/games/fourth-king.md)
+- [Diseño: El Ahorcado](docs/games/hangman.md)
+- [Diseño: Julepe](docs/games/julep.md)
+- [Diseño: Dudo](docs/games/liars-dice.md)
+- [Diseño: Línea de Tiempo](docs/games/timeline.md)
 - [Changelog](CHANGELOG.md)
 - [Guía de usabilidad](docs/USABILIDAD.md)
 <!-- /generado -->

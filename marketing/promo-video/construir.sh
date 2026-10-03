@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 # Rehace el video promocional entero: capturas → render vertical y horizontal → música → mp4.
-#   marketing/video-promo/construir.sh            (todo)
-#   marketing/video-promo/construir.sh --sin-capturas   (usa las de plays/ que ya están)
-# Necesita: el sitio servido en $SITIO (python3 -m http.server 8765 desde la raíz del repo),
+#   marketing/promo-video/construir.sh            (todo)
+#   marketing/promo-video/construir.sh --sin-capturas   (usa las de plays/ que ya están)
+# Necesita: el sitio servido en $SITIO (python3 -m http.server 8765 -d public),
 # Playwright (ver navegador.mjs), ffmpeg y Pillow. Ver README.md.
 set -euo pipefail
 cd "$(dirname "$0")"
 export SITIO="${SITIO:-http://localhost:8765}"
 
 if [[ "${1:-}" != "--sin-capturas" ]]; then
-  curl -sf -o /dev/null "$SITIO/" || { echo "El sitio no responde en $SITIO: python3 -m http.server 8765 desde la raíz del repo"; exit 1; }
+  curl -sf -o /dev/null "$SITIO/" || { echo "El sitio no responde en $SITIO: python3 -m http.server 8765 -d public"; exit 1; }
   rm -rf plays
   node jugar.mjs
   node copa.mjs

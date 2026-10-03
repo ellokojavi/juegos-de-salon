@@ -12,8 +12,8 @@ Cada canon tiene un ID (C-n) para citarlo en el código, en los commits y en las
 ## C-1 · Identidad y tono
 
 - Español chileno informal por defecto; inglés y portugués son opcionales y se eligen a mano (C-3). Tuteo, humor liviano, sin groserías fuertes.
-- **Instrucciones concisas** (U-8, U-18, D-184): la meta primero y con verbo, a lo más 3 puntos, nada de lo que el dibujo de ejemplo ya muestra y el puntaje en una frase. Un tope en `copa/juegos/juegos.test.mjs` frena lo que se pasa. Concisas no es telegrama: frases completas (U-1).
-- Paleta y tipografías compartidas desde `assets/css/base.css`: fondo oscuro con degradados, acentos neón (rosado, amarillo, cian, lima), **Bangers** en títulos y **Nunito** en el cuerpo.
+- **Instrucciones concisas** (U-8, U-18, D-184): la meta primero y con verbo, a lo más 3 puntos, nada de lo que el dibujo de ejemplo ya muestra y el puntaje en una frase. Un tope en `public/cup/games/juegos.test.mjs` frena lo que se pasa. Concisas no es telegrama: frases completas (U-1).
+- Paleta y tipografías compartidas desde `public/assets/css/base.css`: fondo oscuro con degradados, acentos neón (rosado, amarillo, cian, lima), **Bangers** en títulos y **Nunito** en el cuerpo.
 - **Las cifras que el jugador lee o compara** (teclados, intentos, números secretos) van en `var(--font-num)` (Nunito 900) con `tabular-nums`, nunca en Bangers: ahí el 1 y el 7 son casi el mismo trazo y los jugadores se equivocan (D-30). Bangers se queda en títulos, nombres, palabras y códigos de sala (letras, sin I ni O).
 - Nada de estilos "de marca" propios por juego: un juego puede tener colores temáticos (el mar en Batalla Naval), pero botones, paneles, chips y títulos salen de las clases comunes.
 - Cada juego tiene un emoji propio que lo identifica en el menú, la pestaña y la barra superior.
@@ -21,22 +21,29 @@ Cada canon tiene un ID (C-n) para citarlo en el código, en los commits y en las
 
 ## C-2 · Estructura de un juego
 
-Una carpeta por juego, con su propia URL (`/<id>/`) y siempre estos archivos:
+Una carpeta por juego dentro de `public/` (la raíz del sitio: carpeta = URL), con nombre en inglés,
+en minúsculas y con guiones (`public/hangman/` → `/hangman/`, D-190), y siempre estos archivos:
 
 ```
-<id>/
+public/<carpeta>/
   index.html      Pantallas como <section class="screen">, barra superior, contenedores #handoff y #cover
   style.css       Solo lo específico del juego
   rules.js        GAME_ID, DEFAULT_CONFIG y LOCALES = { es, en, pt }. Datos, sin lógica ni DOM
   engine.js       Reglas puras, sin DOM ni estado global. Testeable con node
-  engine.test.mjs Tests del motor (node <id>/engine.test.mjs)
+  engine.test.mjs Tests del motor (node public/<carpeta>/engine.test.mjs)
   game.js         Máquina de estados y render. Lo único que toca el DOM
 ```
 
-- El juego se registra en `assets/js/games.js` con `id`, `emoji`, `name` y `tagline` por idioma, `players`, `duration`, `path` y `available`. Con sala, también `jugadas`: los tipos de mensaje que hace una persona, que es lo que el panel cuenta como jugadas (D-138).
-- Sus módulos se agregan a `MODULES` en `tools/set-version.py` (C-11).
+- **El id no es la carpeta** (D-190): el `id` es un dato —lo guardan las salas, el panel y el
+  `localStorage`— y no cambia nunca; la carpeta es la URL y va en `path`. Un juego nuevo puede usar
+  el mismo nombre en inglés para los dos. Si una carpeta se renombra, la ruta vieja queda como
+  página puente (la genera `node tools/release/og.mjs tarjetas`).
+- Los minijuegos de La Copa siguen la misma idea en `public/cup/games/<carpeta>/`: `engine.js`
+  (reglas puras), `ui.js` (pantalla) y sus datos propios; lo común a todos queda en `games/`.
+- El juego se registra en `public/assets/js/games.js` con `id`, `emoji`, `name` y `tagline` por idioma, `players`, `duration`, `path` y `available`. Con sala, también `jugadas`: los tipos de mensaje que hace una persona, que es lo que el panel cuenta como jugadas (D-138).
+- Sus módulos entran solos al import map: `set-version.py` recorre `public/` (C-11, D-190).
 - Reutilizar siempre los módulos compartidos antes de escribir uno nuevo:
-  `assets/js/ui.js` (DOM, confeti, vibración, wake lock), `i18n.js`, `sound.js`, `session.js`, `handoff.js`, `transport/`.
+  `public/assets/js/ui.js` (DOM, confeti, vibración, wake lock), `i18n.js`, `sound.js`, `session.js`, `handoff.js`, `transport/`.
 
 ## C-3 · Idiomas
 
@@ -50,12 +57,12 @@ Una carpeta por juego, con su propia URL (`/<id>/`) y siempre estos archivos:
   sigue el toggle de quien mira, pero las palabras de Conexiones y Palabra, los mensajes que se
   comparten al grupo y su link van en el idioma que se eligió al crear la copa. El contenido con
   palabras es propio de cada idioma, no una traducción.
-- **Los tres diccionarios tienen exactamente las mismas claves**, las listas el mismo largo y las plantillas las mismas `{llaves}`: un texto que falta en un idioma se ve como `undefined` en pantalla, y `errText` (C-14) busca la misma clave en cualquier idioma. Lo verifica `node assets/js/i18n.test.mjs` (menú, frases, mazos y todos los juegos). Los mazos de Línea de Tiempo llevan `es`, `en` y `pt` en cada carta, y el test del motor también lo exige.
+- **Los tres diccionarios tienen exactamente las mismas claves**, las listas el mismo largo y las plantillas las mismas `{llaves}`: un texto que falta en un idioma se ve como `undefined` en pantalla, y `errText` (C-14) busca la misma clave en cualquier idioma. Lo verifica `node public/assets/js/i18n.test.mjs` (menú, frases, mazos y todos los juegos). Los mazos de Línea de Tiempo llevan `es`, `en` y `pt` en cada carta, y el test del motor también lo exige.
 - Las plantillas usan `{llaves}` y una función `fmt()`; nunca se arman frases concatenando palabras sueltas.
 
 ## C-4 · Sonido y vibración
 
-- Efectos sintetizados con Web Audio en `assets/js/sound.js`. Sin archivos de audio.
+- Efectos sintetizados con Web Audio en `public/assets/js/sound.js`. Sin archivos de audio.
 - Botón 🔊/🔇 en la barra superior de cada juego. La preferencia se guarda y vale para toda la app.
 - Se desbloquea el audio con el primer toque (`initSound()`), requisito de iOS.
 - Hay sonido en: toque de botón, acción principal del juego, resultado (bueno y malo), cambio de turno, final.
@@ -75,7 +82,7 @@ Un modo que todavía no existe se muestra deshabilitado con "Próximamente", nun
 
 **Toda partida en curso se puede retomar.** Vale para un celular, contra el celular y dos celulares.
 
-- Se guarda con `createSessionStore(GAME_ID)` de `assets/js/session.js`, bajo `juegos-de-salon:<id>:session`, con caducidad de 12 horas.
+- Se guarda con `createSessionStore(GAME_ID)` de `public/assets/js/session.js`, bajo `juegos-de-salon:<id>:session`, con caducidad de 12 horas.
 - Se guarda después de cada acción que cambia el estado, no solo al final de un turno. Incluye el trabajo a medio hacer (una flota a medio colocar, notas del jugador).
 - La intro muestra un panel "⏯ Hay una partida a medias" con **Continuar** y **Borrar** mientras exista una partida sin terminar.
 - Al terminar la partida se marca `done: true` y el panel deja de ofrecerse.
@@ -90,20 +97,20 @@ Un modo que todavía no existe se muestra deshabilitado con "Próximamente", nun
 - El estado de una partida se deriva de una **lista de mensajes** (`view()`), nunca de variables sueltas de turno. Así la reconexión es "volver a leer los mensajes".
 - Los mensajes se procesan en serie; los duplicados y los fuera de turno se descartan en el reductor.
 - Todos los modos usan la misma lógica: cambia el transporte, no el juego.
-  `assets/js/transport/local.js` (mismo dispositivo, también para la IA) y `firebase.js` (sala remota).
+  `public/assets/js/transport/local.js` (mismo dispositivo, también para la IA) y `firebase.js` (sala remota).
 - Interfaz del transporte: `create`, `join`, `send`, `onMessage`, `onPresence`, `leave`, `dispose`.
 - **Campos reservados del transporte:** `from`, `at` (marca de tiempo) e `id`. Un juego que necesite enviar una posición o una cantidad usa otro nombre, o el transporte se lo pisará sin avisar.
 - Salas: código de 4 letras mayúsculas sin I ni O, QR con `?sala=CÓDIGO`, campo `game` para separar juegos, caducidad de media hora sin jugadas y de 6 horas en total (D-89). Roles de A a F (hasta seis jugadores).
 - **Antes de tocar la sala se espera la conexión.** Crear o entrar espera a `.info/connected` (8 s) y corre con tope (12 s), y el tope de salas por celular se revisa antes de la red (`errors.js`, `ratelimit.js`). Sin eso, quedarse sin señal se ve como un botón pegado para siempre.
 - **Un celular no puede abrir salas sin parar:** 20 por hora y 80 por día (D-41). El tope está sobre el uso legítimo más intenso, no sobre el promedio, porque la revancha abre sala nueva. Si `localStorage` falla, se deja crear: bloquear a un jugador legítimo es peor que dejar pasar a un abusivo.
-- **Cada partida deja una señal de uso para el panel del dueño** (`assets/js/transport/stats.js`, D-44). El transporte apunta las salas solo; los modos sin red llaman `trackStart({ game, mode, players })` al empezar (no al retomar). Es un `fetch` por REST, sin SDK, mejor esfuerzo: nunca se espera ni se muestra. De los modos sin red no sale ningún nombre, y nunca sale un secreto, el chat ni una IP. De una **sala** quedan además el país del celular y quién ganó, que es lo que el panel muestra como bitácora (D-79). Una partida sin red se ve en vivo en el panel porque `trackStart` le arranca un latido (D-140): el juego no tiene que hacer nada más.
-- **Irse a propósito cierra la sala.** `leave()` suelta los oyentes y deja la sala esperando; `dispose()` es la despedida: escribe `left` en el rol y borra la sala si con eso no queda nadie adentro (`assets/js/transport/dispose.js`, D-50). Lo llaman el botón de cancelar o salir de la sala del lobby, el de cambiar de modo al final y el cambio a la sala de la revancha. **Cerrar la pestaña o quedarse sin señal no es irse:** eso solo apaga `online`, porque esa partida se puede retomar (C-6), así que nada de esto cuelga de `pagehide`. Nunca lanza, lleva tope corto y, si falla, la sala queda marcada y la borra la papelera.
-- **Las salas vencidas se borran solas.** Al crear o entrar a una sala, el celular la apunta en la papelera (`cleanup/days/<día>`) y de vez en cuando barre los días pendientes borrando lo vencido (`assets/js/transport/cleanup.js`, D-39). Nada de esto se le muestra al jugador ni puede voltear una partida: si falla, barre el celular siguiente.
+- **Cada partida deja una señal de uso para el panel del dueño** (`public/assets/js/transport/stats.js`, D-44). El transporte apunta las salas solo; los modos sin red llaman `trackStart({ game, mode, players })` al empezar (no al retomar). Es un `fetch` por REST, sin SDK, mejor esfuerzo: nunca se espera ni se muestra. De los modos sin red no sale ningún nombre, y nunca sale un secreto, el chat ni una IP. De una **sala** quedan además el país del celular y quién ganó, que es lo que el panel muestra como bitácora (D-79). Una partida sin red se ve en vivo en el panel porque `trackStart` le arranca un latido (D-140): el juego no tiene que hacer nada más.
+- **Irse a propósito cierra la sala.** `leave()` suelta los oyentes y deja la sala esperando; `dispose()` es la despedida: escribe `left` en el rol y borra la sala si con eso no queda nadie adentro (`public/assets/js/transport/dispose.js`, D-50). Lo llaman el botón de cancelar o salir de la sala del lobby, el de cambiar de modo al final y el cambio a la sala de la revancha. **Cerrar la pestaña o quedarse sin señal no es irse:** eso solo apaga `online`, porque esa partida se puede retomar (C-6), así que nada de esto cuelga de `pagehide`. Nunca lanza, lleva tope corto y, si falla, la sala queda marcada y la borra la papelera.
+- **Las salas vencidas se borran solas.** Al crear o entrar a una sala, el celular la apunta en la papelera (`cleanup/days/<día>`) y de vez en cuando barre los días pendientes borrando lo vencido (`public/assets/js/transport/cleanup.js`, D-39). Nada de esto se le muestra al jugador ni puede voltear una partida: si falla, barre el celular siguiente.
 - Con más de dos jugadores, el reparto de roles es una carrera: se escribe el rol con un identificador de dispositivo y se relee para confirmar quién lo obtuvo. Nunca se asume que el primer rol libre que se leyó sigue libre.
 - Cuando hay más de dos jugadores, uno es anfitrión (rol A) y abre la partida cuando están todos.
 - Quien abre un enlace de sala (`?sala=CÓDIGO`) llega a una pantalla que **solo** deja unirse a esa sala: título propio de invitación, nada de botón para crear otra, el código va fijo y de solo lectura, y los ajustes de la partida no se muestran porque los fija el anfitrión. Ofrecer las dos cosas confunde a quien fue invitado.
-- El enlace de la sala se comparte con el diálogo nativo del sistema (`botonInvitar` en `assets/js/compartir.js`); copiar al portapapeles es solo el respaldo cuando el navegador no tiene ese diálogo. El diálogo del celular ya incluye copiar, así que no se pierde nada.
-- **Todo lo que se comparte** pasa por `assets/js/compartir.js` y sigue su estándar (D-165, U-30, U-33): cabecera `{emoji} *{título}* · {contexto}`, una idea por línea y el link solo al final; si va imagen, lleva arriba la misma cabecera y abajo el mismo link (`lamina`, `laminaResultado`), y se manda junto con su texto. Un juego nuevo no arma su propio mensaje ni su propio botón.
+- El enlace de la sala se comparte con el diálogo nativo del sistema (`botonInvitar` en `public/assets/js/compartir.js`); copiar al portapapeles es solo el respaldo cuando el navegador no tiene ese diálogo. El diálogo del celular ya incluye copiar, así que no se pierde nada.
+- **Todo lo que se comparte** pasa por `public/assets/js/compartir.js` y sigue su estándar (D-165, U-30, U-33): cabecera `{emoji} *{título}* · {contexto}`, una idea por línea y el link solo al final; si va imagen, lleva arriba la misma cabecera y abajo el mismo link (`lamina`, `laminaResultado`), y se manda junto con su texto. Un juego nuevo no arma su propio mensaje ni su propio botón.
 - Se muestra cuando el rival se desconecta y se retoma solo cuando vuelve.
 - La revancha crea una sala nueva y mueve a los dos jugadores; parte quien perdió.
 
@@ -122,7 +129,7 @@ Un modo que todavía no existe se muestra deshabilitado con "Próximamente", nun
 - Un toque fuera de un elemento seleccionado lo deselecciona.
 - **Arrastrar es elegir, nunca confirmar** (D-85). Donde haya arrastre, soltar deja la jugada
   elegida y la acción irreversible sigue colgando del botón que la nombra; el camino de toques
-  queda intacto, y el gesto sale de `assets/js/arrastre.js`, no de una implementación propia.
+  queda intacto, y el gesto sale de `public/assets/js/arrastre.js`, no de una implementación propia.
   Lo que se arrastra se dibuja en grande y **por sobre el dedo**: si el texto era chico en la
   lista, arrastrarlo bajo el dedo lo deja igual de ilegible y además tapado.
 - Se muestra en pantalla lo que el jugador necesita recordar (su número secreto, su flota), tapado si el celular pasa de mano.
@@ -138,7 +145,7 @@ Un modo que todavía no existe se muestra deshabilitado con "Próximamente", nun
 ## C-9 · Transiciones de "pasar el celular"
 
 - En modo un celular, entre turnos siempre hay: **resultado de lo que acaba de pasar** y, debajo, **"Pásale el celular a X"** con un botón. Nunca se salta el resultado.
-- Se usa `assets/js/handoff.js` (`showHandoff`, `passBlock`, `showCover`), no una implementación propia.
+- Se usa `public/assets/js/handoff.js` (`showHandoff`, `passBlock`, `showCover`), no una implementación propia.
 - Cuando hay un botón de pase, solo el botón avanza: un toque accidental no puede cerrar la pantalla antes de leerla.
 - La información secreta se tapa con `showCover` antes de que el siguiente jugador mire.
 
@@ -153,9 +160,10 @@ Cuando cada dispositivo guarda un secreto (un número, una flota):
 
 ## C-11 · Publicación y versionado
 
-- Antes de cada publicación: `python3 tools/set-version.py X.Y.Z`. Estampa `?v=` en los import maps y las hojas de estilo para que el navegador no mezcle archivos viejos y nuevos.
+- Antes de cada publicación: `python3 tools/release/set-version.py X.Y.Z`. Estampa `?v=` en los import maps y las hojas de estilo para que el navegador no mezcle archivos viejos y nuevos.
 - Ese mismo comando revisa antes que el README no haya quedado atrás del código (C-13) y no estampa si lo quedó. Con `--igual` se estampa igual, para una urgencia.
-- Los módulos nuevos se agregan a `MODULES` en ese script, o quedarán sin versionar.
+- Los módulos nuevos entran solos: el script recorre `public/**/*.js` y estampa toda página de `public/` que cargue módulos (D-190).
+- Se publica solo `public/`, con `.github/workflows/publicar.yml`, en cada fusión a main y solo si las pruebas pasan (D-190).
 - El menú dibuja la lista de juegos **antes** que cualquier adorno, y los adornos van en `try/catch`: un adorno roto no puede dejar la app vacía.
 - Cada cambio publicado entra en `CHANGELOG.md` con su versión.
 - Se verifica que el sitio publicado sirva la versión nueva antes de darla por lista.
@@ -174,7 +182,7 @@ Cuando cada dispositivo guarda un secreto (un número, una flota):
 
 Con cada juego o cambio relevante se actualiza:
 
-- `docs/juegos/<id>.md`: reglas, modos, flujo, protocolo de mensajes, archivos.
+- `docs/games/<carpeta>.md`: reglas, modos, flujo, protocolo de mensajes, archivos.
 - `docs/REQUERIMIENTOS.md`: requerimientos con prefijo propio y estado.
 - `docs/DECISIONES.md`: una decisión numerada (D-n) por cada elección no obvia, con su porqué y sus consecuencias.
 - `README.md`: sección del juego con capturas, **en inglés** (ver abajo).
@@ -188,11 +196,11 @@ pies de foto de `docs/capturas.json` se escriben en inglés. Los cánones, las d
 especificaciones y los mensajes de las herramientas siguen en español, que es el idioma en que se
 piensa este proyecto.
 
-El README no se mantiene a pulso: `python3 tools/readme.py` lo sostiene.
+El README no se mantiene a pulso: `python3 tools/release/readme.py` lo sostiene.
 
 - Lo derivable del código —tabla de juegos, modos, temáticas con su cuenta de cartas, nombres
   por idioma, tests, índice de documentos y galerías de capturas— vive entre marcas
-  `<!-- generado: ... -->` y lo reescribe `actualizar` desde `tools/hechos.mjs`, que importa
+  `<!-- generado: ... -->` y lo reescribe `actualizar` desde `tools/release/hechos.mjs`, que importa
   los módulos de verdad. Dentro de esas marcas no se edita a mano.
 - La prosa la escribe una persona. `revisar` compara los hechos de hoy contra el último sello
   (`docs/hechos.json`) y nombra qué cambió y qué sección hay que releer; `sellar` lo anota
@@ -205,7 +213,7 @@ El README no se mantiene a pulso: `python3 tools/readme.py` lo sostiene.
 
 Lo que se atrasa igual lo recoge el agente `documentacion` (D-172): una ronda diaria sobre lo que
 entró a `main` y una revisión de cada PR antes de proponer su fusión, con
-`node tools/documentar.mjs revisar` y su memoria en `docs/documentacion.json`. No reemplaza esta
+`node tools/agents/documentar.mjs revisar` y su memoria en `docs/documentacion.json`. No reemplaza esta
 regla: quien cambia algo lo documenta en su mismo PR.
 
 ## C-14 · Robustez
@@ -216,14 +224,14 @@ regla: quien cambia algo lo documenta en su mismo PR.
 - La pantalla no se apaga jugando (`keepAwake()`).
 - Los errores previsibles se muestran al jugador en su idioma, con una salida clara; nunca una pantalla en blanco.
 - **El mensaje no inventa la causa.** Si desde el navegador no se puede distinguir entre dos causas (quedarse sin señal y toparse con el tope de conexiones se ven igual), el texto las nombra a las dos en vez de elegir una. Precisión falsa es peor que vaguedad honesta (D-40).
-- Los errores del transporte se traducen con `errText`/`failWith` de `assets/js/transport/errors.js`, nunca con un mapa propio en cada juego.
+- Los errores del transporte se traducen con `errText`/`failWith` de `public/assets/js/transport/errors.js`, nunca con un mapa propio en cada juego.
 - **A la consola solo va lo inesperado.** Un error previsto que ya se le mostró al jugador no se registra: si la consola se llena de fallas normales, "consola sin errores" deja de servir como criterio (C-12).
 
 ## C-15 · Chat de sala
 
 Solo en los modos de **varios celulares**: en un celular la gente está mirando la misma pantalla y hablando en voz alta, y en solitario no hay con quién.
 
-- Se usa `assets/js/chat.js` (`createChat`), no una implementación propia. Los textos salen de `LOCALES` del juego (C-3).
+- Se usa `public/assets/js/chat.js` (`createChat`), no una implementación propia. Los textos salen de `LOCALES` del juego (C-3).
 - Vive en su propio contenedor (`<div id="chat">`), hermano de `#handoff` y **fuera** de las `.screen`: los re-render de la partida no pueden borrar lo que el jugador está escribiendo.
 - Los mensajes viajan por el mismo transporte que las jugadas (`{ t: 'chat', text }`), pero **no son parte del estado**: el reductor los dibuja y no los guarda. Un mensaje de chat no vuelve a dibujar la partida.
 - El chat **muere con la sala**, no con la partida: sigue vivo en la pantalla de victoria o derrota, que es donde la conversación se cierra sola (D-35). No se guarda en la memoria de partida (C-6), y la revancha crea una sala nueva y por lo tanto un chat en blanco. Al reconectar se recupera de la sala, sin sonido ni globito de no leídos.
@@ -242,10 +250,10 @@ un idioma o un entorno nuevo tiene que aparecer ahí sin que nadie se acuerde de
 porque el día que se agrega un juego nadie se acuerda del panel, y una cifra que falta no se ve
 como un error: se lee como que nadie jugó.
 
-- **Una lista por eje, y una sola.** Los juegos y los modos viven en `assets/js/games.js`
+- **Una lista por eje, y una sola.** Los juegos y los modos viven en `public/assets/js/games.js`
   (`GAMES`, `MODES`, y de ahí salen `gameLabel`, `modeIcon`, `ROOM_MODE`, `LOCAL_MODES` y
-  `MAX_PLAYERS`); los entornos, en `assets/js/transport/stats.js` (`ENVS`); los idiomas, en
-  `assets/js/i18n.js` (`LANGS`). El panel las importa. No las copia **en ninguna parte**: ni en
+  `MAX_PLAYERS`); los entornos, en `public/assets/js/transport/stats.js` (`ENVS`); los idiomas, en
+  `public/assets/js/i18n.js` (`LANGS`). El panel las importa. No las copia **en ninguna parte**: ni en
   el JavaScript, ni en las opciones del HTML, ni en una regla de CSS por modo.
 - **Lo desconocido se muestra, no se descarta.** Una señal de un juego, un modo o un idioma que
   el panel no conoce se dibuja igual, con su clave cruda por nombre. Pasa siempre: la app
@@ -261,7 +269,7 @@ como un error: se lee como que nadie jugó.
 - **El color y el ícono se reparten, no se asignan uno por uno.** Los colores de las barras se
   toman por orden de la paleta y el ícono sale del registro: un modo nuevo entra con su color y
   con `·` mientras nadie le elija emoji, nunca gris ni invisible.
-- **Lo vigila un test, no la memoria:** `node panel/adapta.test.mjs` inventa un juego, un modo y
+- **Lo vigila un test, no la memoria:** `node public/panel/adapta.test.mjs` inventa un juego, un modo y
   una partida más numerosa, y exige que lleguen hasta la barra; además falla si el panel o las
   reglas vuelven a nombrar un juego o un modo. Para mirarlo: `node tools/e2e/mirar.mjs panel datos`,
   que siembra el panel con un juego y un modo que no existen.
@@ -286,6 +294,6 @@ como un error: se lee como que nadie jugó.
 - [ ] Si tiene varios celulares, el chat de sala usa el módulo compartido y muere con la partida (C-15).
 - [ ] Lo que comparte (sala, resultado) sale de `compartir.js`, con la cabecera del estándar, y un resultado va con su imagen (C-7, D-165).
 - [ ] Registro en el menú, README, especificación, requerimientos, decisiones y changelog (C-2, C-13).
-- [ ] El panel lo muestra sin haberlo tocado: `node panel/adapta.test.mjs` en verde y una mirada a `node tools/e2e/mirar.mjs panel datos` (C-16).
-- [ ] Capturas del README rehechas y miradas, y `python3 tools/readme.py revisar` en verde (C-13).
-- [ ] `node tools/documentar.mjs revisar --desde origin/main` sin ✗ nuevos: decisiones, pruebas, guiones y CHANGELOG al día (D-172).
+- [ ] El panel lo muestra sin haberlo tocado: `node public/panel/adapta.test.mjs` en verde y una mirada a `node tools/e2e/mirar.mjs panel datos` (C-16).
+- [ ] Capturas del README rehechas y miradas, y `python3 tools/release/readme.py revisar` en verde (C-13).
+- [ ] `node tools/agents/documentar.mjs revisar --desde origin/main` sin ✗ nuevos: decisiones, pruebas, guiones y CHANGELOG al día (D-172).

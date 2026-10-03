@@ -1,5 +1,5 @@
 // Línea de Tiempo con pozo común: una sola tira a la vista de todos (D-32)
-import { launch, sleep } from './cdp.mjs';
+import { launch, sleep } from '../cdp.mjs';
 const OUT = process.argv[2];
 const BASE = process.argv[3] || process.env.SITIO || 'http://localhost:8765';
 const b = await launch({ port: 9496, dir: `${OUT}/p`, out: OUT, width: 375, height: 812 });
@@ -19,8 +19,8 @@ const play = async () => {
   return info;
 };
 
-await b.go(`${BASE}/linea-de-tiempo/`, 1500); await b.evaluate(`localStorage.clear(); 1`);
-await b.go(`${BASE}/linea-de-tiempo/`, 1500);
+await b.go(`${BASE}/timeline/`, 1500); await b.evaluate(`localStorage.clear(); 1`);
+await b.go(`${BASE}/timeline/`, 1500);
 await b.evaluate(`document.querySelectorAll('.mode')[0].click(); 1`); await sleep(400);
 // El setup abre en "todas a la vista" (D-43): hay que pedir mano propia a propósito
 await b.evaluate(`(()=>{const x=[...document.querySelectorAll('.seg button')].find(e=>/Mano propia|Own hand/.test(e.textContent));x.click();return 1})()`); await sleep(300);
@@ -66,15 +66,15 @@ await b.shot('pozo-04-resultado');
 // --- El ajuste viaja en la sala: el que se une juega con el pozo del anfitrión ---
 const B = await launch({ port: 9497, dir: `${OUT}/pB`, out: OUT, width: 375, height: 812 });
 const hostBase = BASE, guestBase = BASE.includes('localhost') ? BASE.replace('localhost', '127.0.0.1') : BASE;
-await b.go(`${hostBase}/linea-de-tiempo/`, 1500); await b.evaluate(`localStorage.clear(); 1`);
-await b.go(`${hostBase}/linea-de-tiempo/`, 1500);
+await b.go(`${hostBase}/timeline/`, 1500); await b.evaluate(`localStorage.clear(); 1`);
+await b.go(`${hostBase}/timeline/`, 1500);
 await b.evaluate(`document.querySelectorAll('.mode')[1].click(); 1`); await sleep(400);
 await b.evaluate(`(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}));return 1})()`);
 await b.evaluate(`(()=>{const x=[...document.querySelectorAll('.seg button')].find(e=>/Pozo|Shared/.test(e.textContent));x.click();return 1})()`); await sleep(200);
 await b.evaluate(`[...document.querySelectorAll('#setup-actions .btn')].find(x=>/Crear|Create/.test(x.textContent)).click(); 1`); await sleep(5000);
 const code = await b.evaluate(`document.querySelector('.code-big')?.textContent`);
-await B.go(`${guestBase}/linea-de-tiempo/?sala=${code}`, 2000); await B.evaluate(`localStorage.clear(); 1`);
-await B.go(`${guestBase}/linea-de-tiempo/?sala=${code}`, 2000);
+await B.go(`${guestBase}/timeline/?sala=${code}`, 2000); await B.evaluate(`localStorage.clear(); 1`);
+await B.go(`${guestBase}/timeline/?sala=${code}`, 2000);
 await B.evaluate(`(()=>{const i=document.querySelector('#setup-form input');i.value='Cata';i.dispatchEvent(new Event('input',{bubbles:true}));return 1})()`);
 await B.evaluate(`[...document.querySelectorAll('#setup-actions .btn')].find(x=>/Unirse|Join/.test(x.textContent)).click(); 1`); await sleep(5000);
 await b.evaluate(`[...document.querySelectorAll('#lobby-box .btn')].find(x=>/Empezar|Start/.test(x.textContent))?.click(); 1`); await sleep(4000);

@@ -2,11 +2,11 @@
 """
 El README, al día: bloques generados del código, capturas rehechas por el navegador.
 
-  python3 tools/readme.py revisar      ¿El README quedó viejo? (lo corre set-version.py)
-  python3 tools/readme.py actualizar   Reescribe los bloques generados del README
-  python3 tools/readme.py capturas [seccion] [--sin-red]
+  python3 tools/release/readme.py revisar      ¿El README quedó viejo? (lo corre set-version.py)
+  python3 tools/release/readme.py actualizar   Reescribe los bloques generados del README
+  python3 tools/release/readme.py capturas [seccion] [--sin-red]
                                        Rehace las capturas con Chrome headless
-  python3 tools/readme.py sellar       "Ya revisé el README con estos hechos"
+  python3 tools/release/readme.py sellar       "Ya revisé el README con estos hechos"
 
 Por qué existe: el README cuenta cosas que el código sabe —cuántos juegos hay, qué
 modos tiene cada uno, cuántas cartas trae cada temática, qué tests hay— y muestra
@@ -16,7 +16,7 @@ capturas de pantallas que cambian. Nada de eso avisa cuando queda viejo. Acá:
 
          <!-- generado: juegos -->  ...  <!-- /generado -->
 
-     nadie edita a mano: `actualizar` lo reescribe desde `tools/hechos.mjs`, que
+     nadie edita a mano: `actualizar` lo reescribe desde `tools/release/hechos.mjs`, que
      importa los módulos de verdad.
 
   2. Lo que es prosa —cómo se juega, por qué está bueno— lo escribe una persona,
@@ -35,7 +35,7 @@ README quedó atrás.
 """
 import json, os, re, shutil, socket, subprocess, sys, tempfile, time, pathlib
 
-RAIZ = pathlib.Path(__file__).resolve().parent.parent
+RAIZ = pathlib.Path(__file__).resolve().parents[2]
 README = RAIZ / 'README.md'
 CATALOGO = RAIZ / 'docs/capturas.json'
 SELLO = RAIZ / 'docs/hechos.json'
@@ -46,7 +46,7 @@ MARCA = re.compile(r'(<!-- generado: ([\w:-]+)[^>]*-->\n)(.*?)(<!-- /generado --
 
 def hechos():
     """La hoja de hechos de la app, leída del código real."""
-    salida = subprocess.run(['node', str(RAIZ / 'tools/hechos.mjs')], cwd=RAIZ,
+    salida = subprocess.run(['node', str(RAIZ / 'tools/release/hechos.mjs')], cwd=RAIZ,
                             capture_output=True, text=True)
     if salida.returncode:
         sys.exit(f'no se pudo leer los hechos de la app:\n{salida.stderr.strip()}')
@@ -136,7 +136,7 @@ def bloque_documentacion(H, C):
     def peso(d):
         if d['ruta'] in ORDEN_DOCS:
             return (0, ORDEN_DOCS.index(d['ruta']))
-        if d['ruta'].startswith('docs/juegos/'):
+        if d['ruta'].startswith('docs/games/'):
             return (1, d['ruta'])
         return (2, d['ruta'] != 'CHANGELOG.md', d['ruta'])
     return '\n'.join(f"- [{d['titulo']}]({d['ruta']})" for d in sorted(H['documentos'], key=peso)) + '\n'
@@ -203,8 +203,8 @@ def cmd_actualizar():
         print('los bloques generados ya estaban al día')
     print('\nLo que queda es prosa y no lo escribe una herramienta:\n'
           '  [ ] La sección del juego que cambió: ¿sigue contando lo que hace hoy?\n'
-          '  [ ] python3 tools/readme.py capturas <seccion>  si cambió alguna pantalla\n'
-          '  [ ] python3 tools/readme.py sellar             cuando ya lo releíste')
+          '  [ ] python3 tools/release/readme.py capturas <seccion>  si cambió alguna pantalla\n'
+          '  [ ] python3 tools/release/readme.py sellar             cuando ya lo releíste')
     return 1 if desconocidos else 0
 
 
@@ -268,7 +268,7 @@ SECCIONES = {
     'tematicas': 'la sección de Línea de Tiempo (las temáticas se cuentan en la prosa)',
     'idiomas': 'la sección Idiomas', 'frases': 'la sección Idiomas',
     'app': 'la portada y la tabla de nombres', 'modulos': 'el árbol de Estructura',
-    'sinVersionar': 'set-version.py (C-11)', 'tests': 'la sección Correr en local',
+    'tests': 'la sección Correr en local',
     'e2e': 'las pruebas de punta a punta (tools/e2e/README.md)',
     'documentos': 'el índice de Documentación', 'capturas': 'las galerías de capturas',
 }
@@ -352,11 +352,11 @@ def cmd_revisar():
         if nuevo is None:
             problemas.append(f'<!-- generado: {nombre} --> no lo sabe generar nadie')
         elif nuevo != actual:
-            problemas.append(f'el bloque "{nombre}" quedó viejo  →  python3 tools/readme.py actualizar')
+            problemas.append(f'el bloque "{nombre}" quedó viejo  →  python3 tools/release/readme.py actualizar')
 
     # 2. Los hechos, contra el último sello: lo que cambió pide releer prosa
     if not SELLO.exists():
-        problemas.append('falta docs/hechos.json  →  python3 tools/readme.py sellar')
+        problemas.append('falta docs/hechos.json  →  python3 tools/release/readme.py sellar')
     else:
         for ruta, antes, ahora in diferencias(json.loads(SELLO.read_text()), H):
             raiz = ruta.split('.')[0]
@@ -364,14 +364,14 @@ def cmd_revisar():
                 continue
             donde = SECCIONES.get(raiz, 'el README')
             problemas.append(f'{contar(ruta, antes, ahora)}\n'
-                             f'           relee {donde}; después: python3 tools/readme.py sellar')
+                             f'           relee {donde}; después: python3 tools/release/readme.py sellar')
 
     # 3. Las capturas: catálogo, archivos y guiones que las sacan
     en_catalogo = {c['imagen'] for c in C['capturas']}
     for c in C['capturas']:
         if not (RAIZ / c['imagen']).exists():
             problemas.append(f"{c['imagen']} está en el catálogo pero no existe  →  "
-                             f"python3 tools/readme.py capturas {c['seccion']}")
+                             f"python3 tools/release/readme.py capturas {c['seccion']}")
         guion = C['guiones'].get(c['guion'])
         if not guion:
             problemas.append(f"{c['imagen']} dice salir del guion \"{c['guion']}\", que no está en el catálogo")
@@ -390,7 +390,7 @@ def cmd_revisar():
                   and (RAIZ / c['imagen']).exists() and git_fecha([c['imagen']]) < codigo]
         if viejas:
             avisos.append(f'{seccion}: {len(viejas)} captura(s) más viejas que el código que muestran  →  '
-                          f'python3 tools/readme.py capturas {seccion}')
+                          f'python3 tools/release/readme.py capturas {seccion}')
 
     # 5. Enlaces e imágenes del README que no existen
     for ruta in set(re.findall(r'\]\(([^)#\s]+)\)', texto)) | set(re.findall(r'<img src="([^"]+)"', texto)):
@@ -473,7 +473,7 @@ def cmd_capturas(seccion=None, sin_red=False):
 
     servidor = None
     if not servidor_vivo():
-        servidor = subprocess.Popen([sys.executable, '-m', 'http.server', str(PUERTO)],
+        servidor = subprocess.Popen([sys.executable, '-m', 'http.server', str(PUERTO), '-d', 'public'],
                                     cwd=RAIZ, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         for _ in range(20):
             if servidor_vivo():

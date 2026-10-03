@@ -1,4 +1,4 @@
-// Ejecutar: node assets/js/i18n.test.mjs
+// Ejecutar: node public/assets/js/i18n.test.mjs
 // Paridad de idiomas (C-3, D-48): es, en y pt tienen las mismas claves, listas del mismo largo,
 // las mismas {llaves} en las plantillas y ningún texto vacío. Un texto que falta en un idioma
 // se ve como "undefined" en pantalla, así que esto se revisa antes de publicar.
@@ -6,10 +6,10 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { LANGS, COMMON, sinLang } from './i18n.js';
 import { GAMES, SUELTOS, TIPOS } from './games.js';
-import { MINIJUEGOS, minijuegos } from '../../copa/rules.js';
+import { MINIJUEGOS, minijuegos } from '../../cup/rules.js';
 import { FRASES } from './frases.js';
-import { DECKS } from '../../linea-de-tiempo/decks/index.js';
-import { DECKS as AHORCADO } from '../../ahorcado/decks/index.js';
+import { DECKS } from '../../timeline/decks/index.js';
+import { DECKS as AHORCADO } from '../../hangman/decks/index.js';
 
 const BASE = 'es';
 const flat = (o, p = '') => Object.entries(o).flatMap(([k, v]) => v && typeof v === 'object' && !Array.isArray(v) ? flat(v, p + k + '.') : [[p + k, v]]);
@@ -64,8 +64,8 @@ for (const d of DECKS) {
 for (const d of AHORCADO) {
   leaf(`AHORCADO.${d.id}.name`, d.name); leaf(`AHORCADO.${d.id}.hint`, d.hint);
   for (const c of d.cards) for (const lang of LANGS) {
-    assert.ok(c[lang]?.w?.trim(), `ahorcado/${d.id}/${c.id}: falta la palabra en ${lang}`);
-    assert.ok(c[lang]?.hint?.trim(), `ahorcado/${d.id}/${c.id}: falta la pista en ${lang}`);
+    assert.ok(c[lang]?.w?.trim(), `hangman/${d.id}/${c.id}: falta la palabra en ${lang}`);
+    assert.ok(c[lang]?.hint?.trim(), `hangman/${d.id}/${c.id}: falta la pista en ${lang}`);
   }
 }
 // Un juego que por ahora existe en un solo idioma lo declara en `idiomas` (así fue La Copa, D-98,

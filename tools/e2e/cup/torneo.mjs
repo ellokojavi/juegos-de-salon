@@ -2,12 +2,12 @@
 // con el almacén de prueba (`?prueba`) y el reloj adelantado día por día. Cada "celular" es
 // la misma pestaña con el sessionStorage limpio: la cuenta de prueba vive ahí.
 //
-// Uso: python3 -m http.server 8765 (en otra terminal) y node tools/e2e/copa.mjs <carpeta-salida>
+// Uso: python3 -m http.server 8765 (en otra terminal) y node tools/e2e/cup/torneo.mjs <carpeta-salida>
 // Con --tres juega la Copa de 3 días (la de probar, D-100), que es más corta.
 // De acá salen las capturas del README (docs/capturas.json): las tomas con nombre fijo.
-import { launch, sleep } from './cdp.mjs';
+import { launch, sleep } from '../cdp.mjs';
 import { mkdirSync } from 'node:fs';
-import { POZO } from '../../copa/engine.js';
+import { POZO } from '../../../public/cup/engine.js';
 
 const OUT = process.argv[2] || '/tmp/copa';
 const SIETE = !process.argv.includes('--tres');
@@ -16,7 +16,7 @@ mkdirSync(OUT, { recursive: true });
 const b = await launch({ port: Number(process.env.PUERTO_CDP) || 9377, dir: `${OUT}/perfil`, out: OUT });
 // SITIO permite probar otra copia del repo servida en otro puerto (la ronda de usabilidad, D-132)
 const SITIO = process.env.SITIO || 'http://localhost:8765';
-const BASE = `${SITIO}/copa/`;
+const BASE = `${SITIO}/cup/`;
 const ok = (cond, msg) => { console.log(`${cond ? '✓' : '✗'} ${msg}`); if (!cond) process.exitCode = 1; };
 const ev = expr => b.evaluate(expr);
 const click = sel => ev(`(()=>{const x=document.querySelector(${JSON.stringify(sel)});if(!x)return 'no';if(x.disabled)return 'disabled';x.click();return 'ok'})()`);
@@ -186,7 +186,7 @@ const jugarTango = async nivel => {
   if (nivel < 2) {
     // El sol de paso a la luna no acusa nada: el choque espera 0,5 s (y si se deja, aparece)
     // Una casilla donde el sol choca, con un sol puesto antes si hace falta (el tablero es al azar)
-    const [previo, paso] = await ev(`(async()=>{const m=await import('/copa/juegos/tango.js');const p=window.__jugando.p;
+    const [previo, paso] = await ev(`(async()=>{const m=await import('/cup/games/tango/engine.js');const p=window.__jugando.p;
       const L=[${libres}], choca=(pre,i)=>p.sol[i]===m.LUNA&&m.estado(p,[...pre,i]).mal.size>m.estado(p,pre).mal.size;
       for (const i of L) if (choca([],i)) return [-1,i];
       for (const a of L) if (!m.estado(p,[a]).mal.size) for (const i of L) if (i!==a&&choca([a],i)) return [a,i];
@@ -218,7 +218,7 @@ const jugarTango = async nivel => {
 const jugarZip = async () => {
   const { codigo, dia } = await ev('JSON.stringify(window.__jugando.p)').then(JSON.parse);
   for (let k = 0; k < 2; k++) {
-    const sol = await ev(`(async()=>{const m=await import('/copa/juegos/zip.js');return JSON.stringify(m.nivel('${codigo}', ${dia}, ${k}).sol)})()`).then(JSON.parse);
+    const sol = await ev(`(async()=>{const m=await import('/cup/games/zip/engine.js');return JSON.stringify(m.nivel('${codigo}', ${dia}, ${k}).sol)})()`).then(JSON.parse);
     for (const i of sol) await click(`.zc[data-i="${i}"]`);
     await sleep(700);
   }
@@ -232,7 +232,7 @@ const jugarZip = async () => {
 const jugarDesenredo = async () => {
   const { codigo, dia } = await ev('JSON.stringify(window.__jugando.p)').then(JSON.parse);
   for (let k = 0; k < 2; k++) {
-    const sol = await ev(`(async()=>{const m=await import('/copa/juegos/desenredo.js');return JSON.stringify(m.nivel('${codigo}', ${dia}, ${k}).sol)})()`).then(JSON.parse);
+    const sol = await ev(`(async()=>{const m=await import('/cup/games/untangle/engine.js');return JSON.stringify(m.nivel('${codigo}', ${dia}, ${k}).sol)})()`).then(JSON.parse);
     for (let v = 0; v < sol.length; v++) {
       const [x0, y0, x1, y1] = await ev(`(()=>{const t=document.querySelector('.des-tablero'),r=t.getBoundingClientRect(),s=r.width/1000,c=t.querySelector('circle[data-v="${v}"]');
         return JSON.stringify([r.left+c.cx.baseVal.value*s, r.top+c.cy.baseVal.value*s, r.left+${sol[v][0]}*s, r.top+${sol[v][1]}*s])})()`).then(JSON.parse);
@@ -299,8 +299,8 @@ async function jugarDia(d, nivel, { capturar = false, comodin = false } = {}) {
     ok(/más corta/.test(await ev(`document.getElementById('nota-ensayo')?.textContent || ''`)), 'la antesala avisa que la prueba es más corta y no cuenta');
     await click('#btn-ensayo'); await esperarCuenta({ revisar: true });
     ok(!!await ev(`document.querySelector('#reglas #nota-ensayo')`), 'las reglas plegadas de la prueba repiten el aviso');
-    await ev(`(async()=>{const {JUEGOS}=await import('/copa/juegos/index.js');window.__jugando={p:JUEGOS.linea.ensayo(__copa.estado.code, 1)};return 1})()`);
-    const real = await ev(`(async()=>{const {JUEGOS}=await import('/copa/juegos/index.js');return JUEGOS.linea.generar(__copa.estado.code, 1).tema})()`);
+    await ev(`(async()=>{const {JUEGOS}=await import('/cup/games/index.js');window.__jugando={p:JUEGOS.linea.ensayo(__copa.estado.code, 1)};return 1})()`);
+    const real = await ev(`(async()=>{const {JUEGOS}=await import('/cup/games/index.js');return JUEGOS.linea.generar(__copa.estado.code, 1).tema})()`);
     ok(await ev('window.__jugando.p.tema') !== real && await ev(`document.querySelectorAll('.hand .card').length`) === 4, 'la sesión de prueba trae otro contenido y es más corta');
     await revisarPantalla('ensayo');
     await jugarLinea(2);
@@ -315,7 +315,7 @@ async function jugarDia(d, nivel, { capturar = false, comodin = false } = {}) {
     await b.shot(`fallo-dia${d}`);
   }
   const id = await ev('__copa.estado.juego.id');
-  await ev(`(async()=>{const {JUEGOS}=await import('/copa/juegos/index.js');window.__jugando={p:JUEGOS[${JSON.stringify(id)}].generar(__copa.estado.code, ${d})};return 1})()`);
+  await ev(`(async()=>{const {JUEGOS}=await import('/cup/games/index.js');window.__jugando={p:JUEGOS[${JSON.stringify(id)}].generar(__copa.estado.code, ${d})};return 1})()`);
   await JUGAR[id](nivel, { arrastrar: capturar && id === 'linea' });
   if (capturar) { await revisarPantalla(`juego-${id}`); if (TOMAS[id]) await b.shot(TOMAS[id]); }
   // El resultado sale apenas termina el tablero, antes de tocar "Ver resultado" (D-150)
@@ -610,7 +610,7 @@ ok(await ev('window.__compartido.at(-1)?.files?.[0]?.name') === 'copa-oficina-ta
 
 await b.go(`${SITIO}/`, 1500);
 const tarjeta = await ev(`(()=>{const c=[...document.querySelectorAll('.game-card')].find(x=>x.textContent.includes('La Copa'));return JSON.stringify({soon:c.classList.contains('soon'),href:c.getAttribute('href'),rotulo:c.querySelector('.proximamente')?.textContent})})()`).then(JSON.parse);
-ok(!tarjeta.soon && tarjeta.href === 'copa/' && !tarjeta.rotulo, 'en el menú La Copa está activa y abre /copa/ (D-175)');
+ok(!tarjeta.soon && tarjeta.href === 'cup/' && !tarjeta.rotulo, 'en el menú La Copa está activa y abre /cup/ (D-175)');
 await b.go(BASE, 1500);
 ok(await ev(`document.getElementById('btn-menu').href`) === `${SITIO}/`, 'La Copa sin ?labs vuelve al menú, no al laboratorio (D-175)');
 await b.go(`${BASE}?labs`, 1500);
@@ -620,11 +620,11 @@ await b.go(`${SITIO}/labs/`, 1500);
 ok(await ev(`document.querySelectorAll('#minis .mini-juego').length`) === POZO.length + 1 && await ev(`!!document.querySelector('#minis [data-id="desenredo"]')`), `el laboratorio ofrece los ${POZO.length + 1} minijuegos (con Desenredo)`);
 await b.shot('10-labs');
 // Los minijuegos con página propia se practican ahí, para que el link traiga su tarjeta (D-164)
-ok(await ev(`document.querySelector('#minis [data-id="donde"]').getAttribute('href')`) === '../minijuegos/donde/?labs'
-  && await ev(`document.querySelector('#minis [data-id="linea"]').getAttribute('href')`) === '../copa/?practica=linea&labs', 'laboratorio: ¿Dónde queda? abre su página; Línea Relámpago sigue en /copa/');
+ok(await ev(`document.querySelector('#minis [data-id="donde"]').getAttribute('href')`) === '../minigames/where/?labs'
+  && await ev(`document.querySelector('#minis [data-id="linea"]').getAttribute('href')`) === '../cup/?practica=linea&labs', 'laboratorio: ¿Dónde queda? abre su página; Línea Relámpago sigue en /cup/');
 ok(await ev(`document.querySelector('#minis [data-id="zip"] span').classList.contains('emoji-claro')`), 'laboratorio: el 〰️ de Zip lleva contorno claro');
 await b.go(`${BASE}?practica=tango&prueba&labs&semilla=KQRST`, 1500); await preparar();
-ok(await ev(`location.pathname + location.search`) === '/minijuegos/tango/?labs&prueba&semilla=KQRST', 'laboratorio: el link viejo va a la página del minijuego con su semilla');
+ok(await ev(`location.pathname + location.search`) === '/minigames/tango/?labs&prueba&semilla=KQRST', 'laboratorio: el link viejo va a la página del minijuego con su semilla');
 ok(!!await ev(`document.getElementById('btn-ensayo')`) && await ev(`document.getElementById('btn-menu').href`) === `${SITIO}/labs/`, 'laboratorio: en la página del minijuego sigue la sesión de prueba y se vuelve al laboratorio');
 // Arrastrar desde una casilla vacía pinta X en las vacías (D-166) y desde una X las borra (D-168),
 // con mouse y con el dedo, sin
@@ -693,9 +693,9 @@ ok(await ev(`document.querySelectorAll('.rej.reina').length`) > 0 && !!await ev(
 await click('#btn-fin'); await sleep(500);
 ok(/^0/.test(await ev(`document.querySelector('.score-big')?.textContent || ''`)), 'Reinas: rendirse vale 0 puntos');
 // Desde la portada (D-142) la práctica es el minijuego suelto: sin prueba ni semilla, y vuelve al menú.
-// Vive en /minijuegos/<id>/ (D-149, D-162): un link viejo a /copa/?practica= sin &labs se va para allá.
+// Vive en /minigames/<id>/ (D-149, D-162): un link viejo a /cup/?practica= sin &labs se va para allá.
 await b.go(`${BASE}?practica=conexiones&prueba`, 1500); await preparar();
-ok(await ev(`location.pathname + location.search`) === '/minijuegos/conexiones/?prueba', 'minijuego suelto: el link viejo de la copa lleva a /minijuegos/conexiones/');
+ok(await ev(`location.pathname + location.search`) === '/minigames/connections/?prueba', 'minijuego suelto: el link viejo de la copa lleva a /minigames/connections/');
 ok(!await ev(`document.getElementById('btn-ensayo')`) && await ev(`document.getElementById('btn-menu').href`) === `${SITIO}/`
   && await ev(`[...document.querySelectorAll('#jugar-body a')].some(a => a.href === '${SITIO}/')`), 'minijuego suelto: sin prueba y de vuelta al menú');
 // Su página trae su propia tarjeta social: un link compartido muestra el minijuego, no La Copa (D-162)
@@ -703,9 +703,9 @@ ok(/\/assets\/og\/conexiones\.jpg/.test(await ev(`document.querySelector('meta[p
 ok(!/copa/i.test(await ev(`location.href + ' ' + document.title`)), 'minijuego suelto: ni el link ni el título dicen copa');
 ok(!await ev(`document.body.innerText.includes('empatas')`), 'minijuego suelto: no habla de empates, no hay con quién (dilema #72)');
 // El 🐞 del resultado abre el formulario y vuelve al resultado (la página suelta necesita su pantalla)
-// El link de antes (/minijuegos/?reinas) se va a la página propia
-await b.go(`${SITIO}/minijuegos/?reinas&prueba`, 1500); await preparar();
-ok(await ev(`location.pathname + location.search`) === '/minijuegos/reinas/?prueba', 'minijuego suelto: /minijuegos/?reinas lleva a /minijuegos/reinas/');
+// El link de antes (/minigames/?reinas) se va a la página propia
+await b.go(`${SITIO}/minigames/?reinas&prueba`, 1500); await preparar();
+ok(await ev(`location.pathname + location.search`) === '/minigames/queens/?prueba', 'minijuego suelto: /minigames/?reinas lleva a /minigames/queens/');
 await click('#btn-empezar'); await sleep(300); await esperarCuenta();
 await click('#btn-rendirse'); await sleep(300); await click('#btn-fin'); await sleep(800);
 await click('#btn-reporte'); await sleep(300);
@@ -728,7 +728,7 @@ await b.go(`${BASE}?practica=${id}&prueba&labs${id === 'zip' ? '&zipSeg=12&semil
   if (id === 'linea') {
     // La prueba desde el laboratorio: la misma que antes de un día (D-109), y vuelve a la antesala
     await click('#btn-ensayo'); await esperarCuenta();
-    await ev(`(async()=>{const {JUEGOS}=await import('/copa/juegos/index.js');window.__jugando={p:JUEGOS.linea.ensayo(__copa.estado.juego.semilla, 1)};return 1})()`);
+    await ev(`(async()=>{const {JUEGOS}=await import('/cup/games/index.js');window.__jugando={p:JUEGOS.linea.ensayo(__copa.estado.juego.semilla, 1)};return 1})()`);
     await jugarLinea(2); await click('#btn-fin'); await sleep(300);
     ok(!!await ev(`document.getElementById('btn-volver-ensayo')`), 'la prueba del laboratorio termina con la vuelta a la antesala');
     await click('#btn-volver-ensayo'); await sleep(300);
@@ -744,10 +744,10 @@ await b.go(`${BASE}?practica=${id}&prueba&labs${id === 'zip' ? '&zipSeg=12&semil
       await ev(`document.querySelector('#reglas summary').click(); window.scrollTo(0,0); 1`);
     }
   }
-  await ev(`(async()=>{const {JUEGOS}=await import('/copa/juegos/index.js');window.__jugando={p:JUEGOS['${id}'].generar(__copa.estado.juego.semilla, 1)};return 1})()`);
+  await ev(`(async()=>{const {JUEGOS}=await import('/cup/games/index.js');window.__jugando={p:JUEGOS['${id}'].generar(__copa.estado.juego.semilla, 1)};return 1})()`);
   if (id === 'zip') {
     // Llegar al último número sin cubrir todo: el aviso va bajo la grilla y no la mueve, y la cabeza no tapa el número
-    const z = await ev(`(async()=>{const z=await import('/copa/juegos/zip.js');const p=z.nivel(__copa.estado.juego.semilla,1,0);const N=p.n*p.n;
+    const z = await ev(`(async()=>{const z=await import('/cup/games/zip/engine.js');const p=z.nivel(__copa.estado.juego.semilla,1,0);const N=p.n*p.n;
       const ini=+Object.keys(p.numeros).find(k=>p.numeros[k]===1);let f=null,k=0;
       const dfs=t=>{if(f||k++>200000)return;if(z.estado(p,t).faltan){f=t.slice();return}for(let i=0;i<N;i++)if(z.puedeIr(p,t,i)){t.push(i);dfs(t);t.pop()}};dfs([ini]);
       const g=document.querySelector('.zip-grid');const top0=g.getBoundingClientRect().top;
@@ -832,7 +832,7 @@ await b.go(`${BASE}?practica=${id}&prueba&labs${id === 'zip' ? '&zipSeg=12&semil
     if (await ev(`!!document.createElement('canvas').getContext('webgl')`)) {
       await ev(`document.querySelector('.mapa-globo').globo.girarA(-33, -70); for (let i = 0; i < 4; i++) document.getElementById('btn-acercar').click(); 1`);
       await sleep(1500);
-      const teselas = await ev(`JSON.stringify(performance.getEntriesByType('resource').filter(e => e.name.includes('tierra-2004-09/')).map(e => e.name.split('/').pop()))`).then(JSON.parse);
+      const teselas = await ev(`JSON.stringify(performance.getEntriesByType('resource').filter(e => e.name.includes('earth-2004-09/')).map(e => e.name.split('/').pop()))`).then(JSON.parse);
       ok(teselas.includes('5-4.jpg') && teselas.length <= 9, `¿Dónde queda?: acercado sobre Chile se bajan sus teselas (${teselas.join(', ')})`);
       for (let i = 0; i < 4; i++) await click('#btn-alejar');
     }
@@ -957,14 +957,14 @@ await b.shot('tablero-terminada-antes');
 
 // Una copa para Brasil (D-187): la invitación lo dice, y su Línea puede traer la temática Brasil pero nunca la de Chile
 {
-  const code = await ev(`(async()=>{const E=await import('/copa/engine.js');const st=__copa.store;await st.listo();const now=st.now();
+  const code = await ev(`(async()=>{const E=await import('/cup/engine.js');const st=__copa.store;await st.listo();const now=st.now();
     let c=null;for(const x of ['WQXYZ','WQXYA','WQXYB']){if(!(await st.existe(x))){c=x;break}}
     const meta=E.nuevaMeta({nombre:'Copa do Brasil',dias:7,inicio:E.sumarDias(E.fechaEn(now,E.ZONA),1),tz:E.ZONA,admin:'zzz111',creada:now,lab:true,aud:'br'});
     await st.crear(c,meta,{pid:'zzz111',name:'Ana',at:now,pinHash:'x'});return c})()`);
   await ev('sessionStorage.clear(); 1');
   await b.go(`${BASE}?${code}&prueba`, 1500);
   ok(await ev(`document.getElementById('aviso-aud')?.dataset.aud`) === 'br' && /Brasil/.test(await ev(`document.getElementById('aviso-aud').textContent`)), 'copa para Brasil: la invitación lo dice');
-  ok(await ev(`(async()=>{const {JUEGOS}=await import('/copa/juegos/index.js');return [1,2,3,4,5,6,7].every(d=>JUEGOS.linea.generar('${code}',d,{aud:'br'}).tema!=='chile')})()`), 'copa para Brasil: Línea Relámpago no usa la temática Chile');
+  ok(await ev(`(async()=>{const {JUEGOS}=await import('/cup/games/index.js');return [1,2,3,4,5,6,7].every(d=>JUEGOS.linea.generar('${code}',d,{aud:'br'}).tema!=='chile')})()`), 'copa para Brasil: Línea Relámpago no usa la temática Chile');
   await b.shot('invitacion-brasil');
 }
 
