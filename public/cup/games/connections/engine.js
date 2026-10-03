@@ -3,11 +3,11 @@
  * Se eligen cuatro y se confirma; hay cuatro errores permitidos. Si quedó a una de un grupo,
  * se avisa "a una".
  */
-import { fuera } from './audiencia.js';
+import { fuera } from '../audiencia.js';
 import { GRILLAS, GRILLA_ENSAYO, GRILLAS_ANTES_D128, CAMBIO_D128 } from './grillas.js';
 import * as EN from './grillas-en.js';
 import * as PT from './grillas-pt.js';
-import { azar, hash32 } from './semilla.js';
+import { azar, hash32 } from '../semilla.js';
 
 export const ERRORES = 4;
 export const COLORES = ['amarillo', 'verde', 'azul', 'morado'];

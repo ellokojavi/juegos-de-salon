@@ -1,28 +1,28 @@
-// Tests de los minijuegos de La Copa: node copa/juegos/juegos.test.mjs
+// Tests de los minijuegos de La Copa: node public/cup/games/juegos.test.mjs
 import assert from 'node:assert/strict';
 import { hash32, azar } from './semilla.js';
-import * as numero from './numero.js';
-import * as linea from './linea.js';
-import * as anio from './anio.js';
-import * as reinas from './reinas.js';
-import * as tango from './tango.js';
-import * as zip from './zip.js';
-import * as desenredo from './desenredo.js';
-import * as letras from './letras.js';
-import { PALABRAS, PALABRAS_EN, PALABRAS_PT } from './palabras.js';
-import * as conexiones from './conexiones.js';
-import * as final from './final.js';
-import * as donde from './donde.js';
-import { CIUDADES } from './ciudades.js';
-import { MAPA } from './mapa.js';
-import { GRILLAS } from './grillas.js';
-import * as GRILLAS_MOD from './grillas.js';
-import * as GRILLAS_EN from './grillas-en.js';
-import * as GRILLAS_PT from './grillas-pt.js';
-import { PAISES, CIUDADES as NOMBRES_CIUDADES } from './nombres.js';
+import * as numero from './number/engine.js';
+import * as linea from './timeline/engine.js';
+import * as anio from './year/engine.js';
+import * as reinas from './queens/engine.js';
+import * as tango from './tango/engine.js';
+import * as zip from './zip/engine.js';
+import * as desenredo from './untangle/engine.js';
+import * as letras from './word/engine.js';
+import { PALABRAS, PALABRAS_EN, PALABRAS_PT } from './word/palabras.js';
+import * as conexiones from './connections/engine.js';
+import * as final from './final/engine.js';
+import * as donde from './where/engine.js';
+import { CIUDADES } from './where/ciudades.js';
+import { MAPA } from './where/mapa.js';
+import { GRILLAS } from './connections/grillas.js';
+import * as GRILLAS_MOD from './connections/grillas.js';
+import * as GRILLAS_EN from './connections/grillas-en.js';
+import * as GRILLAS_PT from './connections/grillas-pt.js';
+import { PAISES, CIUDADES as NOMBRES_CIUDADES } from './where/nombres.js';
 import { JUEGOS } from './index.js';
 import { temasDeLaCopa } from './mazos.js';
-import { camino } from './ui-reinas.js';
+import { camino } from './queens/ui.js';
 
 let n = 0;
 const test = (name, fn) => { try { fn(); n++; } catch (e) { console.error(`✗ ${name}`); throw e; } };
@@ -587,8 +587,8 @@ test('todos los minijuegos puntúan de 0 a 100 (D-113)', () => {
 });
 
 const { LOCALES: TEXTOS } = await import('../rules.js');
-const { LOCALES } = await import('./palabras.js');
-const { DECKS: TODOS } = await import('../../linea-de-tiempo/decks/index.js');
+const { LOCALES } = await import('./word/palabras.js');
+const { DECKS: TODOS } = await import('../../timeline/decks/index.js');
 const AUD = await import('./audiencia.js');
 test('el público de la copa decide qué contenido local entra (D-186, D-187)', () => {
   const { local } = donde;

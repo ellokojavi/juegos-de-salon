@@ -2,12 +2,12 @@
  * 🏁 La Gran Final — motor puro. Cinco rondas cortas seguidas, una de cada minijuego de la
  * semana que tiene versión corta, cada una de 0 a 100. Vale doble en la tabla.
  */
-import * as linea from './linea.js';
-import * as numero from './numero.js';
-import * as reinas from './reinas.js';
-import * as letras from './letras.js';
-import * as anio from './anio.js';
-import { temasDeLaCopa } from './mazos.js';
+import * as linea from '../timeline/engine.js';
+import * as numero from '../number/engine.js';
+import * as reinas from '../queens/engine.js';
+import * as letras from '../word/engine.js';
+import * as anio from '../year/engine.js';
+import { temasDeLaCopa } from '../mazos.js';
 
 export const RONDAS = ['linea', 'numero', 'reinas', 'letras', 'anio'];
 export const EMOJI = { linea: '⏳', numero: '🔢', reinas: '👑', letras: '🔤', anio: '📅' };

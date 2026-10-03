@@ -2,7 +2,7 @@
  * La Copa — motor del torneo (sin DOM). Testeable con node.
  *
  * Un torneo de 3 o 7 días entre amigos: cada día un minijuego idéntico para todos, que se
- * juega una vez y reparte puntos por posición (ver docs/juegos/copa.md).
+ * juega una vez y reparte puntos por posición (ver docs/games/cup.md).
  *
  * Todo lo de acá son funciones puras sobre los datos de la copa tal como vienen del
  * almacén (`meta`, `players`, `started`, `results`, `wild`) y una hora `now`. El almacén no
@@ -92,7 +92,7 @@ function cryptoRand() {
 export const limpiarNombre = (s, max = NOMBRE_MAX) => String(s || '').replace(/\s+/g, ' ').trim().slice(0, max);
 
 /**
- * El link propio de una copa (D-121): `juegosdesalon.cl/copa/?pirata`. Minúsculas, números y
+ * El link propio de una copa (D-121): `juegosdesalon.cl/cup/?pirata`. Minúsculas, números y
  * guiones, de 3 a 20; "Pirata", " pirata " y "PIRATA" son el mismo. No puede tener la forma de
  * un código (5 letras sin I ni O), para que un link nunca se confunda con otro.
  */

@@ -1,6 +1,6 @@
 /**
  * Registro de temáticas. Para agregar una: crear el archivo del mazo y sumarlo aquí.
- * Cada carta: { id, year, emoji, es, en, pt } (ver docs/juegos/linea-de-tiempo.md).
+ * Cada carta: { id, year, emoji, es, en, pt } (ver docs/games/timeline.md).
  */
 import { HISTORIA } from './historia.js';
 import { MUSICA } from './musica.js';

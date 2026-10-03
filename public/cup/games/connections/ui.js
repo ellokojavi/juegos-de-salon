@@ -1,7 +1,7 @@
 /**
  * 🔗 Conexiones — pantalla. Las jugadas son los intentos (cada uno, cuatro palabras).
  */
-import * as motor from './conexiones.js';
+import * as motor from './engine.js';
 
 /** `append` que descarta los hijos nulos, como `el()` (sin esto, un null se escribe como texto). */
 const poner = (nodo, ...hijos) => nodo.append(...hijos.flat().filter(x => x !== null && x !== undefined && x !== false));

@@ -182,7 +182,7 @@ async function act() {
     S.botAt = M.plays.length;
     const mine = diceOf(v, 'B');
     if (!mine) return;
-    // Los dados que le quedan al rival: sin eso no sabe a quién apretar (ver docs/juegos/dudo.md)
+    // Los dados que le quedan al rival: sin eso no sabe a quién apretar (ver docs/games/liars-dice.md)
     const jugada = botMove({
       myDice: mine, bid: v.bid, totalDice: v.totalDice, canCalzar: v.canCalzar,
       rivales: v.alive.filter(r => r !== 'B').map(r => v.st[r].dice),

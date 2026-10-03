@@ -9,7 +9,7 @@
  * Los colores son los del afiche de "Próximamente": mar azul con brillo, tierra verde clara.
  */
 import { MAPA } from './mapa.js';
-import { vector, tocado, UNIDADES_POR_GRADO as U } from './donde.js';
+import { vector, tocado, UNIDADES_POR_GRADO as U } from './engine.js';
 
 const RAD = Math.PI / 180;
 
@@ -243,7 +243,7 @@ export function ajustar(canvas) {
  * llega primero; la nítida la reemplaza cuando termina de bajar. Sin WebGL, o mientras no llega
  * ninguna, el globo se dibuja como antes, con el mapa vectorial.
  */
-const IMAGENES = [2048, 4096].map(w => ({ w, url: new URL(`../../assets/img/tierra-2004-09-${w}.jpg`, import.meta.url).href }));
+const IMAGENES = [2048, 4096].map(w => ({ w, url: new URL(`../../../assets/img/earth-2004-09-${w}.jpg`, import.meta.url).href }));
 let cargadas = null;
 const avisos = new Set();
 /** Las imágenes que ya llegaron, de la más nítida a la más chica. Pide bajarlas la primera vez. */
@@ -296,9 +296,9 @@ void main() {
 
 /**
  * Las teselas nítidas: la imagen de 21600 × 10800 en 16 × 8 cuadrados de 22,5° (los genera
- * `tools/mapa.mjs satelite`). Se bajan una vez y las comparten todos los globos de la página.
+ * `tools/generators/mapa.mjs satelite`). Se bajan una vez y las comparten todos los globos de la página.
  */
-const TESELAS = { columnas: 16, filas: 8, lado: 1350, guardar: 36, dir: new URL('../../assets/img/tierra-2004-09/', import.meta.url).href };
+const TESELAS = { columnas: 16, filas: 8, lado: 1350, guardar: 36, dir: new URL('../../../assets/img/earth-2004-09/', import.meta.url).href };
 const bajadas = new Map();
 const tesela = clave => {
   if (!bajadas.has(clave)) {

@@ -7,7 +7,7 @@
  * Se juega por niveles contra el reloj (D-103): tres minutos para resolver la mayor cantidad de
  * tableros, cada uno igual o más grande que el anterior. Todos ven los mismos niveles.
  */
-import { azar } from './semilla.js';
+import { azar } from '../semilla.js';
 
 const vecinos = (n, i) => {
   const r = Math.floor(i / n), c = i % n, out = [];

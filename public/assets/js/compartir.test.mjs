@@ -1,6 +1,6 @@
 // El estándar de lo que se comparte (D-165): la cabecera, el link en su línea al final, y qué
 // pasa cuando hay menú del sistema, cuando no, y cuando va una imagen.
-// Uso: node assets/js/compartir.test.mjs
+// Uso: node public/assets/js/compartir.test.mjs
 import assert from 'node:assert/strict';
 import { cabecera, conLink, compartir, puntajeYTiempo, nombreArchivo, textoResultadoSolo } from './compartir.js';
 

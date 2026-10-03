@@ -2,7 +2,7 @@
 
 **Estado:** aprobado e implementado (v0.4) · **Fecha:** 2026-09-08 · **Autor:** equipo del proyecto
 
-> Nota de implementación: el sorteo verificable de quién parte (§4.2) se reemplazó por una regla determinista (parte el invitado; en la revancha, el perdedor). Ver decisión D-19. El compromiso usa una sal privada además del hash (D-21). La especificación vigente está en [toque-y-fama.md](toque-y-fama.md).
+> Nota de implementación: el sorteo verificable de quién parte (§4.2) se reemplazó por una regla determinista (parte el invitado; en la revancha, el perdedor). Ver decisión D-19. El compromiso usa una sal privada además del hash (D-21). La especificación vigente está en [toque-y-fama.md](bulls-and-cows.md).
 
 ## 1. Resumen
 
@@ -108,7 +108,7 @@ Intro y reglas
 ### 4.4 Motor del juego (puro, testeable)
 
 ```js
-// toque-y-fama/engine.js
+// public/bulls-and-cows/engine.js
 export function score(guess, secret) {
   let famas = 0, toques = 0;
   for (let i = 0; i < guess.length; i++) {
@@ -144,16 +144,16 @@ GitHub Pages solo sirve archivos: no hay servidor propio, ni WebSockets, ni esta
 
 **Diseño desacoplado:** el juego habla con una interfaz `Transport` (`createRoom`, `joinRoom`, `send`, `onMessage`, `onPresence`, `leave`). Se implementan dos transportes en la Fase 2: `local` (modo A, mismo celular) y `firebase`. Si más adelante se quiere quitar la dependencia, se agrega `peerjs` o `qr` sin tocar la lógica del juego.
 
-**Salas por código de 4 letras** (sin vocales ni caracteres ambiguos, p. ej. `KXTR`) más un QR con la URL `…/toque-y-fama/?sala=KXTR`. Las salas expiran a las 6 horas (regla de seguridad + limpieza al crear).
+**Salas por código de 4 letras** (sin vocales ni caracteres ambiguos, p. ej. `KXTR`) más un QR con la URL `…/bulls-and-cows/?sala=KXTR`. Las salas expiran a las 6 horas (regla de seguridad + limpieza al crear).
 
-**Qué necesita el dueño del proyecto:** crear un proyecto en Firebase (gratuito), activar Realtime Database y pegar la configuración pública en `assets/js/firebase-config.js`. Las reglas de seguridad propuestas van en el anexo A.
+**Qué necesita el dueño del proyecto:** crear un proyecto en Firebase (gratuito), activar Realtime Database y pegar la configuración pública en `public/assets/js/firebase-config.js`. Las reglas de seguridad propuestas van en el anexo A.
 
 Si se prefiere **no crear ninguna cuenta**, la alternativa es PeerJS (opción 2) con la advertencia clara en pantalla de “ambos en la misma Wi‑Fi”, y el modo de un celular como respaldo.
 
 ## 6. Arquitectura propuesta
 
 ```
-toque-y-fama/
+public/bulls-and-cows/
   index.html          intro → modo → sala/secreto → tablero → resultado
   style.css           teclado numérico grande, tablero de intentos, fichas de toque/fama
   rules.js            LOCALES es/en (textos), configuración por defecto
@@ -163,7 +163,7 @@ toque-y-fama/
     index.js          interfaz Transport y selección (local | firebase)
     local.js          modo un celular
     firebase.js       sala en Realtime Database
-assets/js/firebase-config.js   claves públicas (solo si se aprueba la opción 1)
+public/assets/js/firebase-config.js   claves públicas (solo si se aprueba la opción 1)
 ```
 
 Estructura de la sala en la base de datos:

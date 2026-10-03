@@ -1,8 +1,12 @@
 /**
  * Registro central de juegos.
- * Para agregar un juego nuevo: crear carpeta /<id>/ con su index.html
- * y agregar una entrada aquí. Los textos van por idioma ({ es, en, pt }).
- * El menú principal se genera desde esta lista.
+ * Para agregar un juego nuevo: crear su carpeta public/<carpeta>/ con su index.html y agregar una
+ * entrada aquí. Los textos van por idioma ({ es, en, pt }). El menú principal se genera desde esta lista.
+ *
+ * El `id` y la carpeta son dos cosas (D-190): el id es un dato —lo guardan las salas de Firebase, el
+ * panel y el localStorage— y no cambia nunca; la carpeta es la URL (`path`) y va en inglés. Los
+ * juegos de antes conservan su id en español ('ahorcado' vive en /hangman/) y su ruta vieja
+ * (/<id>/) queda como página puente, que genera `node tools/release/og.mjs tarjetas`.
  */
 export const GAMES = [
   {
@@ -20,7 +24,7 @@ export const GAMES = [
     torneo: true,
     // Tiene de todo: aparece con cualquier tipo que se elija en los filtros de la portada
     tipos: ['palabras', 'logica', 'cultura'],
-    path: 'copa/',
+    path: 'cup/',
     // Salió del laboratorio (D-175): se abre desde el menú. /labs/ sigue para probar (la Copa de 3
     // días, la práctica con semilla y las demos).
     available: true,
@@ -34,7 +38,7 @@ export const GAMES = [
     players: '1–6',
     duration: '10–20',
     jugadas: ['place'],
-    path: 'linea-de-tiempo/',
+    path: 'timeline/',
     available: true,
   },
   {
@@ -46,7 +50,7 @@ export const GAMES = [
     players: '1–2',
     duration: '5–12',
     jugadas: ['guess'],
-    path: 'toque-y-fama/',
+    path: 'bulls-and-cows/',
     available: true,
   },
   {
@@ -58,7 +62,7 @@ export const GAMES = [
     players: '1–6',
     duration: '5–12',
     jugadas: ['word', 'guess', 'buy'],
-    path: 'ahorcado/',
+    path: 'hangman/',
     available: true,
   },
   {
@@ -70,7 +74,7 @@ export const GAMES = [
     players: '1–6',
     duration: '10–20',
     jugadas: ['bid', 'dudo', 'calza'],
-    path: 'dudo/',
+    path: 'liars-dice/',
     available: true,
   },
   {
@@ -82,7 +86,7 @@ export const GAMES = [
     players: '1–2',
     duration: '10–20',
     jugadas: ['shot'],
-    path: 'batalla-naval/',
+    path: 'battleship/',
     available: true,
   },
   {
@@ -94,9 +98,9 @@ export const GAMES = [
     players: '1–6',
     duration: '15–30',
     jugadas: ['va', 'paso', 'cambia', 'juega', 'regala'],
-    path: 'julepe/',
+    path: 'julep/',
     // Fuera del menú por ahora: las reglas no quedaron claras y se están reescribiendo (D-88).
-    // El juego sigue entero en /julepe/, solo no se ofrece desde acá.
+    // El juego sigue entero en /julep/, solo no se ofrece desde acá.
     available: false,
   },
   {
@@ -107,17 +111,17 @@ export const GAMES = [
     tagline: { es: 'Naipes, sorbos y el temido cuarto rey.', en: 'Cards, sips and the dreaded fourth king.', pt: 'Cartas, goles e o temido quarto rei.' },
     players: '4–6',
     duration: '20–40',
-    path: 'cuarto-rey/',
+    path: 'fourth-king/',
     available: true,
   },
 ];
 
 /**
  * Los minijuegos de La Copa que se juegan sueltos desde la portada (D-142), de a uno y sin copa:
- * abren `minijuegos/<id>/` (D-149, D-162), la pantalla de práctica de La Copa con un link que no
+ * abren `minigames/<slug>/` (D-149, D-162, D-190), la pantalla de práctica de La Copa con un link que no
  * dice "copa": no guarda nada y no cuenta para ninguna copa. Van aparte de GAMES porque no son una
  * carpeta con su `rules.js`: el README y las pruebas de idioma de los juegos no los recorren. Su
- * página y su tarjeta social las genera `node tools/og.mjs tarjetas` a partir de minijuegos/index.html.
+ * página y su tarjeta social las genera `node tools/release/og.mjs tarjetas` a partir de minigames/index.html.
  *
  * Uno con `labs: true` todavía no va en la portada, pero su link ya se comparte: tiene página y
  * tarjeta igual (como La Copa, D-101).
@@ -130,6 +134,7 @@ export const GAMES = [
 export const SUELTOS = [
   {
     id: 'conexiones',
+    slug: 'connections',
     emoji: '🔗',
     name: { es: 'Conexiones', en: 'Connections', pt: 'Conexões' },
     tagline: { es: 'Arma cuatro grupos de cuatro palabras que tienen algo en común.', en: 'Sort sixteen words into four groups of four that share something.', pt: 'Monte quatro grupos de quatro palavras que têm algo em comum.' },
@@ -138,6 +143,7 @@ export const SUELTOS = [
   },
   {
     id: 'letras',
+    slug: 'word',
     emoji: '🔤',
     name: { es: 'Toque y Fama: Palabra', en: 'Bulls and Cows: Word', pt: 'Toque e Fama: Palavra' },
     tagline: { es: 'Adivina la palabra secreta de cinco letras con toques y famas.', en: 'Crack the five-letter secret word with bulls and cows.', pt: 'Descubra a palavra secreta de cinco letras com toques e famas.' },
@@ -146,6 +152,7 @@ export const SUELTOS = [
   },
   {
     id: 'anio',
+    slug: 'year',
     emoji: '📅',
     name: { es: '¿En qué año?', en: 'What Year?', pt: 'Em que ano?' },
     tagline: { es: 'Adivina en qué año pasó cada hito. Mientras más cerca, más puntos.', en: 'Guess the year each milestone happened. The closer you get, the more points.', pt: 'Adivinhe em que ano aconteceu cada marco. Quanto mais perto, mais pontos.' },
@@ -154,6 +161,7 @@ export const SUELTOS = [
   },
   {
     id: 'reinas',
+    slug: 'queens',
     emoji: '👑',
     name: { es: 'Reinas', en: 'Queens', pt: 'Rainhas' },
     tagline: { es: 'Pon una reina en cada fila, columna y zona de color, sin que se toquen.', en: 'Place one queen in every row, column and color zone, with none touching.', pt: 'Coloque uma rainha em cada linha, coluna e zona de cor, sem que se toquem.' },
@@ -162,6 +170,7 @@ export const SUELTOS = [
   },
   {
     id: 'tango',
+    slug: 'tango',
     emoji: '☀️',
     name: { es: 'Tango', en: 'Tango', pt: 'Tango' },
     tagline: { es: 'Llena la grilla con soles y lunas sin poner tres iguales seguidos.', en: 'Fill the grid with suns and moons without ever putting three in a row.', pt: 'Preencha a grade com sóis e luas sem colocar três iguais seguidos.' },
@@ -170,6 +179,7 @@ export const SUELTOS = [
   },
   {
     id: 'zip',
+    slug: 'zip',
     emoji: '〰️',
     name: { es: 'Zip', en: 'Zip', pt: 'Zip' },
     tagline: { es: 'Une los números en orden con un solo trazo que pase por todas las casillas.', en: 'Connect the numbers in order with a single line that fills every square.', pt: 'Ligue os números em ordem com um só traço que passe por todas as casas.' },
@@ -178,6 +188,7 @@ export const SUELTOS = [
   },
   {
     id: 'desenredo',
+    slug: 'untangle',
     emoji: '🧶',
     name: { es: 'Desenredo', en: 'Untangle', pt: 'Desenrola' },
     tagline: { es: 'Arrastra los nudos hasta que ningún hilo se cruce.', en: 'Drag the knots until no threads cross.', pt: 'Arraste os nós até que nenhum fio se cruze.' },
@@ -187,13 +198,14 @@ export const SUELTOS = [
   },
   {
     id: 'donde',
+    slug: 'where',
     emoji: '📍',
     name: { es: '¿Dónde queda?', en: 'Where Is It?', pt: 'Onde fica?' },
     tagline: { es: 'Ubica cinco ciudades en el globo. Mientras más cerca, más puntos.', en: 'Find five cities on the globe. The closer your pin, the more points.', pt: 'Encontre cinco cidades no globo. Quanto mais perto o alfinete, mais pontos.' },
     tipos: ['cultura'],
     duration: '2–5',
   },
-].map(m => ({ ...m, players: '1', path: `minijuegos/${m.id}/`, available: !m.labs, suelto: true }));
+].map(m => ({ ...m, players: '1', path: `minigames/${m.slug}/`, available: !m.labs, suelto: true }));
 
 /**
  * Los tipos de juego con que se filtra la portada (D-142), en el orden en que se ofrecen.

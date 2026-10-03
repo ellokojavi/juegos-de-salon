@@ -3,12 +3,12 @@
  * Los dilemas de usabilidad (D-132): issues de GitHub con la etiqueta `usabilidad`, manejados
  * desde la conversación con Claude, no desde GitHub.
  *
- *   node tools/dilemas.mjs listar [--todos]           # abiertos (o todos) con su estado
- *   node tools/dilemas.mjs ver <n>                     # el dilema y sus comentarios
- *   node tools/dilemas.mjs crear <archivo.md>          # la 1.ª línea "# Título", el resto es el cuerpo
- *   node tools/dilemas.mjs resolver <n> "decisión"     # anota la decisión y lo cierra como resuelto
- *   node tools/dilemas.mjs archivar <n> "motivo"       # lo cierra como descartado
- *   node tools/dilemas.mjs reabrir <n>
+ *   node tools/agents/dilemas.mjs listar [--todos]           # abiertos (o todos) con su estado
+ *   node tools/agents/dilemas.mjs ver <n>                     # el dilema y sus comentarios
+ *   node tools/agents/dilemas.mjs crear <archivo.md>          # la 1.ª línea "# Título", el resto es el cuerpo
+ *   node tools/agents/dilemas.mjs resolver <n> "decisión"     # anota la decisión y lo cierra como resuelto
+ *   node tools/agents/dilemas.mjs archivar <n> "motivo"       # lo cierra como descartado
+ *   node tools/agents/dilemas.mjs reabrir <n>
  *
  * Estados: `usabilidad` + `pendiente` (espera al dueño) → `resuelto` (cerrado con la decisión) o
  * `archivado` (cerrado sin hacerse). Usa el CLI `gh` ya autenticado.
@@ -55,7 +55,7 @@ switch (accion) {
     break;
   }
   case 'crear': {
-    if (!a1) salir('Uso: node tools/dilemas.mjs crear <archivo.md>', 2);
+    if (!a1) salir('Uso: node tools/agents/dilemas.mjs crear <archivo.md>', 2);
     const texto = readFileSync(a1, 'utf8');
     const [primera, ...resto] = texto.split('\n');
     const titulo = primera.replace(/^#\s*/, '').trim();
@@ -67,7 +67,7 @@ switch (accion) {
   }
   case 'resolver': {
     const n = numero(a1);
-    if (!a2) salir('Uso: node tools/dilemas.mjs resolver <n> "decisión"', 2);
+    if (!a2) salir('Uso: node tools/agents/dilemas.mjs resolver <n> "decisión"', 2);
     asegurarEtiquetas();
     gh('issue', 'comment', n, '-R', REPO, '--body', `✅ **Decisión del dueño:** ${a2}\n\n_Queda anotada en docs/USABILIDAD.md._`);
     gh('issue', 'edit', n, '-R', REPO, '--add-label', 'resuelto', '--remove-label', 'pendiente');
@@ -93,5 +93,5 @@ switch (accion) {
     break;
   }
   default:
-    salir('Uso: node tools/dilemas.mjs listar [--todos] | ver <n> | crear <archivo.md> | resolver <n> "decisión" | archivar <n> "motivo" | reabrir <n>', 2);
+    salir('Uso: node tools/agents/dilemas.mjs listar [--todos] | ver <n> | crear <archivo.md> | resolver <n> "decisión" | archivar <n> "motivo" | reabrir <n>', 2);
 }

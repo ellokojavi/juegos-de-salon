@@ -1,6 +1,6 @@
 /**
  * Agregación de las señales de uso para el panel (D-44). Funciones puras, sin DOM ni
- * Firebase, para poder probarlas con node (`node panel/aggregate.test.mjs`).
+ * Firebase, para poder probarlas con node (`node public/panel/aggregate.test.mjs`).
  *
  * Entra lo que hay en la base:
  *   - `rooms`: las salas de `rooms/`, tal como están (solo el dueño puede listarlas)

@@ -1,7 +1,7 @@
 /**
  * Registro de temáticas. Para agregar una: crear el archivo del mazo y sumarlo aquí.
  * Cada carta: { id, emoji, es: { w, hint }, en: {...}, pt: {...} }.
- * "Mezcla" no tiene archivo propio: son todas las cartas juntas (ver docs/juegos/ahorcado.md).
+ * "Mezcla" no tiene archivo propio: son todas las cartas juntas (ver docs/games/hangman.md).
  */
 import { CHILE } from './chile.js';
 import { ANIMALES } from './animales.js';

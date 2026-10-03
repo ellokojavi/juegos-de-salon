@@ -3,12 +3,12 @@
  * estado con que terminó. Se muestra al terminar el día, la práctica y la sesión de prueba. Los
  * textos son de rules.js (C-3); aquí solo se hacen las cuentas, con las mismas funciones del motor.
  */
-import * as numero from './juegos/numero.js';
-import * as letras from './juegos/letras.js';
-import * as tango from './juegos/tango.js';
-import * as anio from './juegos/anio.js';
-import * as final from './juegos/final.js';
-import * as donde from './juegos/donde.js';
+import * as numero from './games/number/engine.js';
+import * as letras from './games/word/engine.js';
+import * as tango from './games/tango/engine.js';
+import * as anio from './games/year/engine.js';
+import * as final from './games/final/engine.js';
+import * as donde from './games/where/engine.js';
 import { minijuegos } from './rules.js';
 
 /**

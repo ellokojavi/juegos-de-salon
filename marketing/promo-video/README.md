@@ -9,15 +9,15 @@ video** (D-178), y al terminar cada vuelta se anota en [Historia](#historia) y e
 
 | | |
 |---|---|
-| Archivos | [`salida/promo-youtube-16x9.mp4`](salida/promo-youtube-16x9.mp4) (1920×1080, YouTube) · [`salida/promo-vertical.mp4`](salida/promo-vertical.mp4) (1080×1920, Shorts, Reels, estados de WhatsApp) |
+| Archivos | [`salida/promo-youtube-16x9.mp4`](output/promo-youtube-16x9.mp4) (1920×1080, YouTube) · [`salida/promo-vertical.mp4`](output/promo-vertical.mp4) (1080×1920, Shorts, Reels, estados de WhatsApp) |
 | Duración | 48,5 s, H.264 + AAC 256 kb/s, 30 cuadros por segundo |
 | Idioma | Español (dice que la app también está en inglés y portugués) |
-| Música | [`musica/cancion.mp3`](musica/cancion.mp3), la que puso el dueño (ver [La canción](#la-canción)) |
+| Música | [`musica/cancion.mp3`](music/cancion.mp3), la que puso el dueño (ver [La canción](#la-canción)) |
 | App que muestra | 0.82.x (las capturas de la v5 son de antes de los textos cortos de 0.84.0) |
 
 En `salida/` vive **solo la última versión**: al publicar una nueva, se reemplazan los dos mp4.
 Las anteriores quedan en la historia de git. Ojo: GitHub Pages publica el repo entero, así que
-los mp4 también quedan en `juegosdesalon.cl/marketing/video-promo/salida/…`.
+los mp4 también quedan en `juegosdesalon.cl/marketing/promo-video/output/…`.
 
 ## Lo que el dueño quiere
 
@@ -83,7 +83,7 @@ La grilla de "¡Y muchos más!": 👑 Cuarto Rey (saca el As: "¡Todos toman!"),
 - **El azar está fijo:** cada juego entra con una `?semilla=` (los sueltos usan `WNDRN`) y
   `jugar.mjs` reemplaza `Math.random` y `crypto.getRandomValues` por uno con semilla. Así cada
   corrida reparte lo mismo y los toques caen donde deben. Las soluciones de Reinas, Tango y Zip
-  salen de `generar(semilla, 1)` de cada motor (`copa/juegos/*.js`).
+  salen de `generar(semilla, 1)` de cada motor (`public/cup/games/*.js`).
 - **La Copa** es la demo `podio` del laboratorio, capturada entera de arriba abajo (`copa.mjs`).
 - **`render.mjs`** dibuja cuadro a cuadro con Playwright y se los pasa a ffmpeg (sin audio).
 - **`construir.sh`** hace todo: capturas, `preparar.py` (achica y escribe `plays/plays.js`),
@@ -92,8 +92,8 @@ La grilla de "¡Y muchos más!": 👑 Cuarto Rey (saca el As: "¡Todos toman!"),
 ## Rehacerlo
 
 ```bash
-python3 -m http.server 8765                   # desde la raíz del repo, en otra terminal
-marketing/video-promo/construir.sh            # unos 30 min: capturas, dos renders y la música
+python3 -m http.server 8765 -d public         # en otra terminal
+marketing/promo-video/construir.sh            # unos 30 min: capturas, dos renders y la música
 ```
 
 Necesita Playwright (`npm i -g playwright`, o `PLAYWRIGHT=<ruta a index.mjs>`), ffmpeg y Pillow
@@ -142,7 +142,7 @@ la música (89 golpes sola, 105 con la repetición) y la cuenta de `construir.sh
   (`DONDE`, por defecto 217,546: Santiago). Se revisa con `hoja.py` después de cada captura.
 - **Cuarto Rey responde a la posición real del mouse**, no a `.click()`; los arrastres de Reinas
   y Zip necesitan eventos de puntero de verdad: por eso `jugar.mjs` usa el mouse de Playwright.
-- **El "null" de Toque y Fama: Palabra** (un error de la app en `copa/juegos/ui-letras.js`: un
+- **El "null" de Toque y Fama: Palabra** (un error de la app en `public/cup/games/word/ui.js`: un
   `append` nativo recibe `null`) se borra de la pantalla al capturar. Cuando se arregle en la app,
   sobra ese paso de `jugar.mjs`.
 - **El servidor local se cae** en sesiones largas: `construir.sh` avisa si `SITIO` no responde.

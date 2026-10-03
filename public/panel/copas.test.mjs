@@ -1,6 +1,6 @@
-// Ejecutar: node panel/copas.test.mjs
+// Ejecutar: node public/panel/copas.test.mjs
 import assert from 'node:assert/strict';
-import { nuevaMeta, DIA_MS } from '../copa/engine.js';
+import { nuevaMeta, DIA_MS } from '../cup/engine.js';
 import { summarize, groupDays, dayOf } from './aggregate.js';
 import { isTorneo, GAMES } from '../assets/js/games.js';
 import { JUGANDO_MS, copaDe, copasDe, estadoCopa, copasEnCurso, resumenCopas, bitacoraCopas, pct, duracion, inicioLabel } from './copas.js';

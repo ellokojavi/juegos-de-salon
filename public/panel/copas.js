@@ -1,6 +1,6 @@
 /**
  * La Copa en el panel del dueño. Funciones puras, sin DOM ni Firebase, para poder probarlas
- * con node (`node panel/copas.test.mjs`).
+ * con node (`node public/panel/copas.test.mjs`).
  *
  * Entra `torneos/` tal como está en la base: por código, `meta`, `players`, `started/<día>`,
  * `results/<día>` y `wild`. No hace falta ninguna señal aparte: el calendario de cada copa
@@ -11,7 +11,7 @@
  * `torneos/` no está separado por entorno como `stats/`: una copa de prueba es tan real como
  * la de un grupo de amigos. Por eso cada copa trae su marca de laboratorio.
  */
-import { juegoDelDia, diaActual, terminada, abierto, cerrado, activos, tabla, inscripcionAbierta, calendario } from '../copa/engine.js';
+import { juegoDelDia, diaActual, terminada, abierto, cerrado, activos, tabla, inscripcionAbierta, calendario } from '../cup/engine.js';
 import { dayOf } from './aggregate.js';
 
 /**

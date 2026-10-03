@@ -9,11 +9,11 @@
  *   4. un desliz lateral en la mano es scroll, y no elige nada (D-38)
  *
  * Se juega en el modo solo, que es la ⏳ Línea Relámpago de La Copa (D-142): el mismo arrastre
- * de assets/js/arrastre.js, montado por copa/juegos/ui-linea.js, y sin pases de por medio.
+ * de assets/js/arrastre.js, montado por cup/games/timeline/ui.js, y sin pases de por medio.
  *
- * Uso: SITIO=http://localhost:87xx PUERTO_CDP=94xx node tools/e2e/linea-de-tiempo-arrastre.mjs <salida>
+ * Uso: SITIO=http://localhost:87xx PUERTO_CDP=94xx node tools/e2e/timeline/arrastre.mjs <salida>
  */
-import { launch, sleep } from './cdp.mjs';
+import { launch, sleep } from '../cdp.mjs';
 
 const out = process.argv[2] || '/tmp/ldt-arrastre';
 const SITIO = process.env.SITIO || 'http://localhost:8765';
@@ -44,8 +44,8 @@ async function arrastrar(desde, hasta, { pasos = 10, tiron = true, soltar = true
   if (soltar) { await dedo('touchEnd', hasta); await sleep(250); }
 }
 
-await b.go(`${SITIO}/linea-de-tiempo/`); await b.evaluate(`localStorage.clear(); 1`);
-await b.go(`${SITIO}/linea-de-tiempo/`);
+await b.go(`${SITIO}/timeline/`); await b.evaluate(`localStorage.clear(); 1`);
+await b.go(`${SITIO}/timeline/`);
 
 // Jugar solo: la pantalla de juego sin pases de por medio
 await b.evaluate(`[...document.querySelectorAll('.mode')].find(m=>/solo/i.test(m.textContent)).click(); 1`); await sleep(300);

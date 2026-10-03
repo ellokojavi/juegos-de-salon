@@ -11,13 +11,13 @@ de salida donde deja capturas PNG, e imprime en consola lo que verificó.
 - El sitio servido en `http://localhost:8765`:
 
 ```bash
-python3 -m http.server 8765
+python3 -m http.server 8765 -d public
 ```
 
 ## Uso
 
 ```bash
-mkdir -p /tmp/e2e && node tools/e2e/batalla-naval-local.mjs /tmp/e2e
+mkdir -p /tmp/e2e && node tools/e2e/battleship/local.mjs /tmp/e2e
 ```
 
 Con otra sesión probando al mismo tiempo (D-135), cada una sirve su copia en su puerto y usa sus
@@ -26,7 +26,7 @@ desde ese número (`cdp.mjs`: el primer Chrome del guion usa `PUERTO_CDP`, el se
 Sin las variables, todo sigue en el 8765 y en los puertos de siempre.
 
 ```bash
-SITIO=http://localhost:8791 PUERTO_CDP=9491 node tools/e2e/ahorcado-online.mjs /tmp/e2e
+SITIO=http://localhost:8791 PUERTO_CDP=9491 node tools/e2e/hangman/online.mjs /tmp/e2e
 pkill -f "remote-debugging-port=949[1-3]"   # solo los tuyos
 ```
 
@@ -43,33 +43,33 @@ node tools/e2e/contacto.mjs cuarto-rey --salida /tmp/contacto
 
 | Script | Qué prueba |
 |---|---|
-| `cuarto-rey.mjs` | Botón de sonido, mazo completo hasta el cuarto rey y el menú en inglés |
-| `toque-y-fama-local.mjs` | Un celular y jugar solo (dos veces, para ver el récord), hasta el resultado |
-| `toque-y-fama-online.mjs` | Dos celulares contra Firebase real: unión por URL, recarga a mitad, revancha |
-| `batalla-naval-local.mjs` | Colocación, batalla en un celular y contra el celular |
-| `batalla-naval-colocacion.mjs` | Seleccionar, girar, mover y deseleccionar barcos en la grilla |
-| `batalla-naval-alineacion.mjs` | Que los números de fila queden alineados con las casillas en tres anchos |
-| `batalla-naval-online.mjs` | Dos celulares contra Firebase real, con recarga y revancha |
-| `batalla-naval-chat.mjs` | Chat de sala: se guarda al colocar la flota propia, globito y etiqueta, no mueve la partida, vuelve al recargar y sigue en el resultado. |
-| `ahorcado-local.mjs` | Cadena de tres en un celular, comprar una letra, retomar y el solitario |
-| `ahorcado-online.mjs` | Tres celulares contra Firebase real: cadena, reconexión a mitad y revancha |
-| `dudo-local.mjs` | Duelo contra el celular y partida de tres en un celular, con retomar a mitad |
-| `dudo-online.mjs` | Tres celulares contra Firebase real: sala, destape verificado, recarga a mitad y revancha |
-| `julepe-local.mjs` | Mesa de tres contra el celular y partida en un celular, con retomar a mitad |
-| `julepe-online.mjs` | Tres celulares contra Firebase real: reparto cerrado, sello de cartas verificadas, recarga a mitad y chat |
-| `linea-de-tiempo-local.mjs` | Un celular con tres jugadores, con retomar a mitad |
-| `linea-de-tiempo-solo.mjs` | Jugar solo (⏳ Línea Relámpago): solo la temática, error en rojo, retomar, puntaje, récord por temática, cartas sin repetir, en/pt |
-| `linea-de-tiempo-error.mjs` | Pantalla de error que se queda hasta tocar; el rival espera |
-| `linea-de-tiempo-online.mjs` | Tres celulares contra Firebase real, recarga y revancha |
-| `toque-y-fama-chat.mjs` | Chat de sala en Toque y Fama: no leídos, etiqueta, y que muera con la partida |
-| `linea-de-tiempo-eleccion.mjs` | Que se coloque la carta elegida y que sin elegir no se pueda colocar nada |
-| `linea-de-tiempo-veredicto.mjs` | Que el veredicto hable en tercera persona cuando se equivocó otro |
-| `linea-de-tiempo-mazos.mjs` | Todas las temáticas y que diez partidas seguidas no repitan cartas |
-| `linea-de-tiempo-pozo.mjs` | Pozo común: tira de 6, reposición por el final, meta y ajuste que viaja en la sala |
-| `linea-de-tiempo-mesa.mjs` | Todas a la vista: mesa del doble de la meta y sin reposición |
-| `linea-de-tiempo-arrastre.mjs` | El gesto de arrastrar con eventos táctiles: elegir sin colocar, retomar, soltar fuera y desliz lateral |
-| `linea-de-tiempo-empate.mjs` | Que la ronda se termine y que el empate lo gane el más rápido |
-| `linea-de-tiempo-chat.mjs` | Chat de sala: no leídos, freno al spam, veredicto que lo tapa, reconexión y muerte al terminar |
+| `fourth-king/partida.mjs` | Botón de sonido, mazo completo hasta el cuarto rey y el menú en inglés |
+| `bulls-and-cows/local.mjs` | Un celular y jugar solo (dos veces, para ver el récord), hasta el resultado |
+| `bulls-and-cows/online.mjs` | Dos celulares contra Firebase real: unión por URL, recarga a mitad, revancha |
+| `battleship/local.mjs` | Colocación, batalla en un celular y contra el celular |
+| `battleship/colocacion.mjs` | Seleccionar, girar, mover y deseleccionar barcos en la grilla |
+| `battleship/alineacion.mjs` | Que los números de fila queden alineados con las casillas en tres anchos |
+| `battleship/online.mjs` | Dos celulares contra Firebase real, con recarga y revancha |
+| `battleship/chat.mjs` | Chat de sala: se guarda al colocar la flota propia, globito y etiqueta, no mueve la partida, vuelve al recargar y sigue en el resultado. |
+| `hangman/local.mjs` | Cadena de tres en un celular, comprar una letra, retomar y el solitario |
+| `hangman/online.mjs` | Tres celulares contra Firebase real: cadena, reconexión a mitad y revancha |
+| `liars-dice/local.mjs` | Duelo contra el celular y partida de tres en un celular, con retomar a mitad |
+| `liars-dice/online.mjs` | Tres celulares contra Firebase real: sala, destape verificado, recarga a mitad y revancha |
+| `julep/local.mjs` | Mesa de tres contra el celular y partida en un celular, con retomar a mitad |
+| `julep/online.mjs` | Tres celulares contra Firebase real: reparto cerrado, sello de cartas verificadas, recarga a mitad y chat |
+| `timeline/local.mjs` | Un celular con tres jugadores, con retomar a mitad |
+| `timeline/solo.mjs` | Jugar solo (⏳ Línea Relámpago): solo la temática, error en rojo, retomar, puntaje, récord por temática, cartas sin repetir, en/pt |
+| `timeline/error.mjs` | Pantalla de error que se queda hasta tocar; el rival espera |
+| `timeline/online.mjs` | Tres celulares contra Firebase real, recarga y revancha |
+| `bulls-and-cows/chat.mjs` | Chat de sala en Toque y Fama: no leídos, etiqueta, y que muera con la partida |
+| `timeline/eleccion.mjs` | Que se coloque la carta elegida y que sin elegir no se pueda colocar nada |
+| `timeline/veredicto.mjs` | Que el veredicto hable en tercera persona cuando se equivocó otro |
+| `timeline/mazos.mjs` | Todas las temáticas y que diez partidas seguidas no repitan cartas |
+| `timeline/pozo.mjs` | Pozo común: tira de 6, reposición por el final, meta y ajuste que viaja en la sala |
+| `timeline/mesa.mjs` | Todas a la vista: mesa del doble de la meta y sin reposición |
+| `timeline/arrastre.mjs` | El gesto de arrastrar con eventos táctiles: elegir sin colocar, retomar, soltar fuera y desliz lateral |
+| `timeline/empate.mjs` | Que la ronda se termine y que el empate lo gane el más rápido |
+| `timeline/chat.mjs` | Chat de sala: no leídos, freno al spam, veredicto que lo tapa, reconexión y muerte al terminar |
 | `memoria-de-partida.mjs` | Guardar y retomar en los tres juegos (canon C-6) |
 | `versionado.mjs` | Que todos los módulos carguen con `?v=` del import map |
 | `compartir-sala.mjs` | Botón de compartir: diálogo nativo si existe, copiar si no |
@@ -82,9 +82,9 @@ node tools/e2e/contacto.mjs cuarto-rey --salida /tmp/contacto
 
 Varias de estas tomas son las imágenes que muestra el README. El catálogo
 [`docs/capturas.json`](../../docs/capturas.json) dice cuál sale de qué guion y con qué
-nombre, y `python3 tools/readme.py capturas <seccion>` corre los guiones que hagan falta y
+nombre, y `python3 tools/release/readme.py capturas <seccion>` corre los guiones que hagan falta y
 copia los PNG a `docs/screenshots/` (ver D-51). Por eso, al renombrar o sacar una toma de
-un guion conviene correr `python3 tools/readme.py revisar`: avisa si dejó una imagen huérfana.
+un guion conviene correr `python3 tools/release/readme.py revisar`: avisa si dejó una imagen huérfana.
 
 Rehacerlas no es revisarlas: después de `capturas`, la hoja de contacto (`contacto.mjs`) las
 pone juntas y ahí se ve lo que una imagen sola no delata —una fila más ancha que la de arriba,
@@ -110,13 +110,13 @@ Firebase real, así que necesitan internet y dejan salas de prueba que caducan a
 
 ## La Copa
 
-`node tools/e2e/copa.mjs <salida> [--siete]` juega una Copa de 3 días (o la de 7 con `--siete`) con
+`node tools/e2e/cup/torneo.mjs <salida> [--siete]` juega una Copa de 3 días (o la de 7 con `--siete`) con
 tres jugadores en un solo Chrome, con el almacén de prueba y el reloj adelantado día por día. Cada
 jugador es la misma pestaña con el `sessionStorage` limpio. Revisa en cada pantalla que no haya
 scroll horizontal ni botones bajo 44 px (C-8), y captura el recordatorio, la tabla parcial y el
 resumen que compartiría la admin.
 
-`node tools/e2e/copa-idiomas.mjs <salida>` crea una copa en inglés y otra en portugués (D-170):
+`node tools/e2e/cup/idiomas.mjs <salida>` crea una copa en inglés y otra en portugués (D-170):
 revisa que la copa guarde el idioma de sus palabras, que la pantalla siga el idioma de quien mira
 y que lo que se comparte al grupo salga en el de la copa, con su `?lang=`. Después abre cinco
 minijuegos sueltos en inglés o portugués (el teclado de Palabra sin Ñ, la grilla de Conexiones de

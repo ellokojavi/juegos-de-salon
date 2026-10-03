@@ -9,7 +9,7 @@
  * oculta) para resolver la mayor cantidad de tableros. Las jugadas son la partida entera:
  * `{ hechos, trazo, usado, ultimo }`.
  */
-import * as motor from './zip.js';
+import * as motor from './engine.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 /** Cuánto espera Borrar todo el segundo toque, como en Tango. */

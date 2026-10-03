@@ -1,7 +1,7 @@
 /**
  * Cuarto Rey — datos del juego en español, inglés y portugués: mazo, reglas por carta,
  * minijuegos, penitencias, categorías y textos de interfaz.
- * Solo datos, sin lógica. Ver docs/juegos/cuarto-rey.md.
+ * Solo datos, sin lógica. Ver docs/games/fourth-king.md.
  */
 
 export const SUITS = [

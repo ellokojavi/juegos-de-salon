@@ -2,13 +2,13 @@
 /**
  * El mapa de ¿Dónde queda? (La Copa).
  *
- *   node tools/mapa.mjs generar    # reescribe copa/juegos/mapa.js (necesita internet)
- *   node tools/mapa.mjs revisar    # ¿cada ciudad cae dentro de su país? ¿falta algún país?
- *   node tools/mapa.mjs satelite   # rehace las imágenes satelitales del globo (internet y macOS: usa sips)
+ *   node tools/generators/mapa.mjs generar    # reescribe public/cup/games/where/mapa.js (necesita internet)
+ *   node tools/generators/mapa.mjs revisar    # ¿cada ciudad cae dentro de su país? ¿falta algún país?
+ *   node tools/generators/mapa.mjs satelite   # rehace las imágenes satelitales del globo (internet y macOS: usa sips)
  *
  * Los bordes son los de Natural Earth 1:50m (dominio público), en el TopoJSON de `world-atlas`,
  * bajados de jsDelivr. El mapa sale sin nombres, simplificado y en décimas de grado enteras
- * (x = longitud, y = latitud), con la forma de una ruta SVG: el globo (`copa/juegos/globo.js`)
+ * (x = longitud, y = latitud), con la forma de una ruta SVG: el globo (`public/cup/games/where/globo.js`)
  * lo pasa a la esfera y lo gira.
  * Se rehace a mano; solo cambia si cambian los bordes o la proyección.
  */
@@ -16,12 +16,12 @@ import { writeFileSync, mkdirSync, rmSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
-import { UNIDADES_POR_GRADO as U, distancia } from '../copa/juegos/donde.js';
-import { CIUDADES } from '../copa/juegos/ciudades.js';
+import { UNIDADES_POR_GRADO as U, distancia } from '../../public/cup/games/where/engine.js';
+import { CIUDADES } from '../../public/cup/games/where/ciudades.js';
 
-const RAIZ = fileURLToPath(new URL('..', import.meta.url));
+const RAIZ = fileURLToPath(new URL('../..', import.meta.url));
 const FUENTE = 'https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-50m.json';
-const SALIDA = `${RAIZ}copa/juegos/mapa.js`;
+const SALIDA = `${RAIZ}public/cup/games/where/mapa.js`;
 /** Tolerancia de la simplificación y área mínima de una isla, en décimas de grado. */
 const TOLERANCIA = 0.6;
 const AREA_MIN = 3;
@@ -141,12 +141,12 @@ async function generar() {
   for (const c of CIUDADES.filter(c => c.capital && !ids.has(c.iso))) rombo(Math.round(c.lon * U), Math.round(c.lat * U));
   const js = `/**
  * El mapa de ¿Dónde queda?: los países sin nombres, en décimas de grado (x = longitud, y = latitud).
- * Generado por \`node tools/mapa.mjs generar\` desde Natural Earth 1:50m (dominio público). No se edita a mano.
+ * Generado por \`node tools/generators/mapa.mjs generar\` desde Natural Earth 1:50m (dominio público). No se edita a mano.
  */
 export const MAPA = { d: '${d}' };
 `;
   writeFileSync(SALIDA, js);
-  console.log(`copa/juegos/mapa.js: ${anillos} anillos, ${puntos} puntos, ${(js.length / 1024).toFixed(0)} KB`);
+  console.log(`public/cup/games/where/mapa.js: ${anillos} anillos, ${puntos} puntos, ${(js.length / 1024).toFixed(0)} KB`);
 }
 
 /** ¿El punto está dentro del anillo? (rayo, en grados). */
@@ -192,19 +192,19 @@ async function revisar() {
  * se queda con la vieja en caché (set-version.py no estampa imágenes).
  */
 const SATELITE = 'https://eoimages.gsfc.nasa.gov/images/imagerecords/73000/73801/world.topo.bathy.200409.3x21600x10800.jpg';
-export const IMAGENES = { 2048: 'assets/img/tierra-2004-09-2048.jpg', 4096: 'assets/img/tierra-2004-09-4096.jpg' };
+export const IMAGENES = { 2048: 'public/assets/img/earth-2004-09-2048.jpg', 4096: 'public/assets/img/earth-2004-09-4096.jpg' };
 /**
  * Y la imagen entera (21600 × 10800) en teselas de 1350 px, 16 columnas por 8 filas, de 22,5° por
  * lado (D-160): el globo baja solo las que se ven cuando se acerca. `fila-columna.jpg`, desde
  * arriba a la izquierda (90° N, 180° O).
  */
-export const TESELAS = { dir: 'assets/img/tierra-2004-09', columnas: 16, filas: 8, lado: 1350 };
+export const TESELAS = { dir: 'public/assets/img/earth-2004-09', columnas: 16, filas: 8, lado: 1350 };
 
 async function satelite() {
   const tmp = `${tmpdir()}/tierra-${process.pid}.jpg`;
   // 30 MB: con curl y reintentos, que el servidor de la NASA a veces corta a la mitad
   execFileSync('curl', ['-sSfL', '--retry', '4', '-C', '-', '-o', tmp, SATELITE], { stdio: 'inherit' });
-  mkdirSync(`${RAIZ}assets/img`, { recursive: true });
+  mkdirSync(`${RAIZ}public/assets/img`, { recursive: true });
   for (const [w, ruta] of Object.entries(IMAGENES)) {
     execFileSync('sips', ['-s', 'format', 'jpeg', '-s', 'formatOptions', '78', '-z', String(w / 2), String(w), tmp, '--out', `${RAIZ}${ruta}`], { stdio: 'ignore' });
     console.log(ruta);
@@ -229,4 +229,4 @@ const orden = process.argv[2];
 if (orden === 'generar') await generar();
 else if (orden === 'revisar') await revisar();
 else if (orden === 'satelite') await satelite();
-else { console.log('Uso: node tools/mapa.mjs generar | revisar | satelite'); process.exitCode = 2; }
+else { console.log('Uso: node tools/generators/mapa.mjs generar | revisar | satelite'); process.exitCode = 2; }

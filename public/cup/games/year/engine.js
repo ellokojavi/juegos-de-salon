@@ -2,8 +2,8 @@
  * 📅 ¿En qué año? — motor puro. Seis hitos de una temática distinta a la de la línea, y se
  * escribe el año. Cada hito da hasta 100 puntos; el margen crece con la antigüedad.
  */
-import { azar } from './semilla.js';
-import { cartas, temasDeLaCopa, mazo } from './mazos.js';
+import { azar } from '../semilla.js';
+import { cartas, temasDeLaCopa, mazo } from '../mazos.js';
 
 export const HITOS = 6;
 /** Año de referencia fijo, no el de hoy: el puntaje no puede cambiar según cuándo se calcule. */

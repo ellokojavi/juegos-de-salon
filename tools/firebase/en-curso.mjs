@@ -4,18 +4,18 @@
  * administrador (solo lectura). Sirve para decidir cuándo fusionar a main sin cortarle una
  * partida a nadie.
  *
- *   node tools/en-curso.mjs            el resumen
- *   node tools/en-curso.mjs --todo     también las salas abandonadas y las copas terminadas
- *   node tools/en-curso.mjs --json     tal cual, para procesarlo
+ *   node tools/firebase/en-curso.mjs            el resumen
+ *   node tools/firebase/en-curso.mjs --todo     también las salas abandonadas y las copas terminadas
+ *   node tools/firebase/en-curso.mjs --json     tal cual, para procesarlo
  *
  * Sale con 0 si no hay nada en juego y con 3 si lo hay (1 y 2 quedan para los errores).
- * Necesita la llave de la cuenta de servicio (ver tools/firebase-admin.mjs).
+ * Necesita la llave de la cuenta de servicio (ver tools/firebase/firebase-admin.mjs).
  */
 import { token, leer } from './firebase-admin.mjs';
-import { GAMES } from '../assets/js/games.js';
-import { IDLE_TTL, ROOM_TTL } from '../assets/js/transport/cleanup.js';
-import { diaActual, juegoDelDia, terminada, inscripcionAbierta } from '../copa/engine.js';
-import { MINIJUEGOS } from '../copa/rules.js';
+import { GAMES } from '../../public/assets/js/games.js';
+import { IDLE_TTL, ROOM_TTL } from '../../public/assets/js/transport/cleanup.js';
+import { diaActual, juegoDelDia, terminada, inscripcionAbierta } from '../../public/cup/engine.js';
+import { MINIJUEGOS } from '../../public/cup/rules.js';
 
 /** Una sala sin jugadas hace menos de esto cuenta como partida viva; más, como pausa. */
 const JUGANDO_MS = 5 * 60 * 1000;

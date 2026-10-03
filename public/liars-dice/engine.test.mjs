@@ -1,4 +1,4 @@
-// Ejecutar: node dudo/engine.test.mjs
+// Ejecutar: node public/liars-dice/engine.test.mjs
 import assert from 'node:assert/strict';
 import {
   PINTAS, DICE_PER_PLAYER, rollDice, readDice, writeDice, countPinta,
@@ -84,7 +84,7 @@ assert.ok(credibility({ myDice: [2, 2, 2], bid: { n: 9, p: 5 }, totalDice: 10 })
   });
   assert.equal(calza.t, 'calza', 'con la cantidad exacta en la mano, calzar es lo obvio');
 
-  /* ---- las tres formas de mentir (ver docs/juegos/dudo.md) ---- */
+  /* ---- las tres formas de mentir (ver docs/games/liars-dice.md) ---- */
   const siempre = () => 0;      // rand() = 0: miente siempre que pueda
   const nunca = () => 0.999;    // rand() casi 1: no miente nunca
 

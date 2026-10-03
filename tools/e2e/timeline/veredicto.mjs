@@ -1,5 +1,5 @@
 // El veredicto habla en tercera persona cuando se equivocó otro jugador (D-36)
-import { launch, sleep } from './cdp.mjs';
+import { launch, sleep } from '../cdp.mjs';
 // Con varias sesiones a la vez, cada una sirve su copia en su puerto (D-135)
 const SITIO = process.env.SITIO || 'http://localhost:8765';
 const OUT = process.argv[2];
@@ -20,13 +20,13 @@ const jugar = async (d, { bien }) => {
   await d.evaluate(`(()=>{const x=document.querySelector('#place-row .btn');if(x&&!x.disabled)x.click();})(); 1`);
 };
 
-for (const [i, d] of [A, B].entries()) { await d.go(hosts[i] + '/linea-de-tiempo/', 1500); await d.evaluate(`localStorage.clear(); 1`); }
-await A.go(hosts[0] + '/linea-de-tiempo/', 1500);
+for (const [i, d] of [A, B].entries()) { await d.go(hosts[i] + '/timeline/', 1500); await d.evaluate(`localStorage.clear(); 1`); }
+await A.go(hosts[0] + '/timeline/', 1500);
 await A.evaluate(`document.querySelectorAll('.mode')[1].click(); 1`); await sleep(400);
 await A.evaluate(`(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}));return 1})()`);
 await A.evaluate(`[...document.querySelectorAll('#setup-actions .btn')].find(x=>/Crear|Create/.test(x.textContent)).click(); 1`); await sleep(5000);
 const code = await A.evaluate(`document.querySelector('.code-big')?.textContent`);
-await B.go(`${hosts[1]}/linea-de-tiempo/?sala=${code}`, 2000);
+await B.go(`${hosts[1]}/timeline/?sala=${code}`, 2000);
 await B.evaluate(`(()=>{const i=document.querySelector('#setup-form input');i.value='Cata';i.dispatchEvent(new Event('input',{bubbles:true}));return 1})()`);
 await B.evaluate(`[...document.querySelectorAll('#setup-actions .btn')].find(x=>/Unirse|Join/.test(x.textContent)).click(); 1`); await sleep(5000);
 await A.evaluate(`[...document.querySelectorAll('#lobby-box .btn')].find(x=>/Empezar|Start/.test(x.textContent))?.click(); 1`); await sleep(4000);

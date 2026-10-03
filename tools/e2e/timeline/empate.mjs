@@ -1,5 +1,5 @@
 // Línea de Tiempo: la ronda se termina y el empate lo gana quien respondió más rápido (D-31)
-import { launch, sleep } from './cdp.mjs';
+import { launch, sleep } from '../cdp.mjs';
 const OUT = process.argv[2];
 const BASE = process.argv[3] || process.env.SITIO || 'http://localhost:8765';
 const b = await launch({ port: 9494, dir: `${OUT}/p`, out: OUT, width: 375, height: 812 });
@@ -15,8 +15,8 @@ const play = async pausa => {
   return `${info.p}:${r}`;
 };
 
-await b.go(`${BASE}/linea-de-tiempo/`, 1500); await b.evaluate(`localStorage.clear(); 1`);
-await b.go(`${BASE}/linea-de-tiempo/`, 1500);
+await b.go(`${BASE}/timeline/`, 1500); await b.evaluate(`localStorage.clear(); 1`);
+await b.go(`${BASE}/timeline/`, 1500);
 await b.evaluate(`document.querySelectorAll('.mode')[0].click(); 1`); await sleep(400);
 await b.evaluate(`(()=>{const xs=document.querySelectorAll('#setup-form input');xs[0].value='Javi';xs[0].dispatchEvent(new Event('input',{bubbles:true}));xs[1].value='Cata';xs[1].dispatchEvent(new Event('input',{bubbles:true}));return 1})()`);
 await b.evaluate(`(()=>{const x=[...document.querySelectorAll('.seg button')].find(e=>/Mano propia|Own hand/.test(e.textContent));if(x)x.click();return 1})()`); await sleep(150);

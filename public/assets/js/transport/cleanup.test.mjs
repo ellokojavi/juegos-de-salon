@@ -1,4 +1,4 @@
-// Ejecutar: node assets/js/transport/cleanup.test.mjs
+// Ejecutar: node public/assets/js/transport/cleanup.test.mjs
 import assert from 'node:assert/strict';
 import { ROOM_TTL, dayOf, daysToSweep, noteRoom, sweep } from './cleanup.js';
 

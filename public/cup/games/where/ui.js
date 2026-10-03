@@ -6,9 +6,9 @@
  *
  * La portada del minijuego (`portada`) es el mismo globo, chico y girando solo.
  */
-import * as motor from './donde.js';
+import * as motor from './engine.js';
 import * as globo from './globo.js';
-import { UMBRAL } from '../../assets/js/arrastre.js';
+import { UMBRAL } from '../../../assets/js/arrastre.js';
 
 /** `append` que descarta los hijos nulos, como `el()` (sin esto, un null se escribe como texto). */
 const poner = (nodo, ...hijos) => nodo.append(...hijos.flat().filter(x => x !== null && x !== undefined && x !== false));

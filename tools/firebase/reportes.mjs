@@ -3,11 +3,11 @@
  * Los reportes y comentarios que la gente mandó desde La Copa (D-104), leídos de `feedback/` en
  * Firebase. Sin cuenta: el nodo se lee libre.
  *
- *   node tools/reportes.mjs              todos, del más nuevo al más viejo
- *   node tools/reportes.mjs --dias 3     solo los de los últimos 3 días
- *   node tools/reportes.mjs --json       tal cual, para procesarlos
+ *   node tools/firebase/reportes.mjs              todos, del más nuevo al más viejo
+ *   node tools/firebase/reportes.mjs --dias 3     solo los de los últimos 3 días
+ *   node tools/firebase/reportes.mjs --json       tal cual, para procesarlos
  */
-import { firebaseConfig } from '../assets/js/firebase-config.js';
+import { firebaseConfig } from '../../public/assets/js/firebase-config.js';
 
 const args = process.argv.slice(2);
 const dias = Number(args[args.indexOf('--dias') + 1]) || (args.includes('--dias') ? 1 : 0);

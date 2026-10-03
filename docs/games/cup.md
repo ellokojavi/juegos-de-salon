@@ -1,6 +1,6 @@
 # La Copa 🏆
 
-**Estado:** en el menú (v0.83, D-175) · **Ruta:** `/copa/`
+**Estado:** en el menú (v0.83, D-175) · **Ruta:** `/cup/`
 
 Un torneo entre amigos que dura una semana: cada día se abre un minijuego distinto, idéntico
 para todos, que se juega **una sola vez** y reparte puntos según la posición del día. Gana
@@ -10,14 +10,14 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
 
 - **Estado:** en el menú desde D-175. **`/labs/`** sigue para probar: la Copa de 3 días, la
   práctica con semilla y las demos (D-101).
-- **URL:** `/copa/` (portada) · `/copa/?K7Q2X` (una copa) · `/copa/?labs` (copa real con la Copa
+- **URL:** `/cup/` (portada) · `/cup/?K7Q2X` (una copa) · `/cup/?labs` (copa real con la Copa
   de 3 días, D-100; `?tres` sigue funcionando) · `?prueba` (almacén local y reloj adelantable, sin
-  Firebase) · `/copa/?practica=<id>&labs&semilla=K7Q2X` (un minijuego suelto del laboratorio,
-  repetible; los que tienen página se van a `/minijuegos/<id>/?labs&semilla=K7Q2X`, D-164). Desde la portada el minijuego suelto es `/minijuegos/<id>/` (D-142, D-149, D-162): la misma
+  Firebase) · `/cup/?practica=<id>&labs&semilla=K7Q2X` (un minijuego suelto del laboratorio,
+  repetible; los que tienen página se van a `/minigames/<id>/?labs&semilla=K7Q2X`, D-164). Desde la portada el minijuego suelto es `/minigames/<id>/` (D-142, D-149, D-162): la misma
   pantalla, sin "copa" en el link, que vuelve al menú, sin sesión de prueba ni semilla a la vista, y
-  con su señal de uso. `/copa/?practica=<id>` sin `&labs` lleva ahí.
+  con su señal de uso. `/cup/?practica=<id>` sin `&labs` lleva ahí.
 - **Jugadores:** de 2 a 10 por copa (`MIN_JUGADORES` y `MAX_JUGADORES` en `engine.js`, D-118). Con
-  el administrador solo, la copa no parte y el tablero pide "al menos un jugador más". **Público:** 🌎 global, 🇨🇱 Chile o 🇧🇷 Brasil, que se elige al crear la copa (D-187, `meta.aud`; las copas `intl` de D-186 se leen como global). Decide qué contenido local entra (`copa/juegos/audiencia.js`).
+  el administrador solo, la copa no parte y el tablero pide "al menos un jugador más". **Público:** 🌎 global, 🇨🇱 Chile o 🇧🇷 Brasil, que se elige al crear la copa (D-187, `meta.aud`; las copas `intl` de D-186 se leen como global). Decide qué contenido local entra (`public/cup/games/audiencia.js`).
   **Idioma:** español, inglés y portugués (D-170). La
   pantalla va en el idioma de quien mira; las palabras de Conexiones y Palabra, los mensajes al
   grupo y su link, en el de la copa (`meta.lang`, se elige al crearla).
@@ -62,11 +62,11 @@ Todos los minijuegos puntúan **de 0 a 100** (D-113). Igual lo que decide la cop
 Recién creada, la copa abre en **Administrar** con una guía para invitar (D-110). Ahí el admin
 comparte los mensajes, **cierra o reabre la inscripción** y **mueve el inicio a hoy o mañana**
 mientras nadie haya jugado. En el laboratorio, `?prueba&demo=<escena>` abre una copa de ejemplo
-en cualquier punto (`copa/demo.js`).
+en cualquier punto (`public/cup/demo.js`).
 
 Al tocar Empezar, una **cuenta de 3 a 1** y "¡A jugar!" (D-105): recién ahí aparece el tablero y
 parte el reloj. Al terminar, el resultado explica **cómo se calculó el puntaje** línea por línea
-(`copa/desglose.js`, D-106).
+(`public/cup/desglose.js`, D-106).
 
 Antes de Empezar cada día se puede jugar una **sesión de prueba** (D-103): la misma mecánica con
 otro contenido (código derivado con `codigoEnsayo`, otra temática, una grilla fuera del sorteo,
@@ -90,7 +90,7 @@ queda?** (cinco ciudades con su país, un alfiler en un globo sin nombres que se
 puntos por ciudad menos 4 cada 100 km, D-155, D-156).
 
 - **¿Dónde queda?** saca sus ciudades de `ciudades.js` (las 195 capitales, ciudades famosas y de
-  segunda línea, 529 en total, con nivel y código ISO; D-157) y su mapa de `mapa.js`, que genera `node tools/mapa.mjs generar`; `revisar`
+  segunda línea, 529 en total, con nivel y código ISO; D-157) y su mapa de `mapa.js`, que genera `node tools/generators/mapa.mjs generar`; `revisar`
   comprueba que cada ciudad cae dentro de su país. La vista del globo (ortográfica) y su inversa
   están en el motor, `donde.js`; `globo.js` lo dibuja en un canvas, recortando cada país en el
   borde, y la distancia se mide sobre la esfera. La antesala muestra el globo girando solo
@@ -155,7 +155,7 @@ torneoSeats/<código>/<pid>/<uid>    el mismo hash: el celular uid puede escribi
 Las reglas imponen: escribir una sola vez, las ventanas de cada día con la hora del servidor, el
 comodín antes de Empezar y fuera de la final, la inscripción antes de la final y que solo el admin
 renombre, saque o cambie PINes. El árbol no se llama `copas` porque las reglas no pueden nombrar
-juegos (C-16, `panel/adapta.test.mjs`).
+juegos (C-16, `public/panel/adapta.test.mjs`).
 
 ## Laboratorio, práctica y reportes
 
@@ -164,7 +164,7 @@ arma el contenido con una semilla al azar como si fuera el día 1 de una copa co
 muestra al final. El botón **🐞 Reportar un problema o dejar un comentario** (práctica, tablero y
 resultado) guarda en `feedback/<id>`, por REST y sin cuenta (D-104), el texto, un nombre opcional, la versión
 y un contexto en JSON: copa, jugador, pantalla, día, juego, semilla, URL y navegador. Se leen con
-`node tools/reportes.mjs`; en `?prueba` queda en `localStorage` (`juegos-de-salon:copa:prueba:reportes`).
+`node tools/firebase/reportes.mjs`; en `?prueba` queda en `localStorage` (`juegos-de-salon:copa:prueba:reportes`).
 
 ## Admin
 
@@ -201,13 +201,13 @@ con la tabla final, el lugar de cada uno después de cada día y el detalle de c
 ## Pruebas
 
 ```bash
-node copa/engine.test.mjs
-node copa/juegos/juegos.test.mjs
-node copa/store.test.mjs
-node copa/planilla.test.mjs
-node copa/reportes.test.mjs
-node tools/e2e/copa.mjs /tmp/copa            # Copa de 3 días, tres jugadores
-node tools/e2e/copa.mjs /tmp/copa --siete    # los siete minijuegos
+node public/cup/engine.test.mjs
+node public/cup/games/juegos.test.mjs
+node public/cup/store.test.mjs
+node public/cup/planilla.test.mjs
+node public/cup/reportes.test.mjs
+node tools/e2e/cup/torneo.mjs /tmp/copa            # Copa de 3 días, tres jugadores
+node tools/e2e/cup/torneo.mjs /tmp/copa --siete    # los siete minijuegos
 ```
 
 ## Pendiente (después de la v1)

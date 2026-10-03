@@ -1,4 +1,4 @@
-// Ejecutar: node toque-y-fama/engine.test.mjs
+// Ejecutar: node public/bulls-and-cows/engine.test.mjs
 import { score, isValid, randomSecret, sha256, verifyPlayer } from './engine.js';
 import assert from 'node:assert/strict';
 

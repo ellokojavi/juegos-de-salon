@@ -18,14 +18,14 @@ para no hacer trabajo que después no calza.
 ## Levantarlo
 
 ```bash
-python3 -m http.server 8765      # los módulos ES necesitan HTTP, no file://
+python3 -m http.server 8765 -d public   # el sitio es public/; los módulos ES necesitan HTTP
 ```
 
-y abrir http://localhost:8765/. Para mirarlo en el celular, cualquier forma de servir la carpeta
+y abrir http://localhost:8765/. Para mirarlo en el celular, cualquier forma de servir `public/`
 en la red local sirve.
 
 **Ojo:** los modos de varios celulares usan la base de Firebase **de producción** (la
-configuración pública está en `assets/js/firebase-config.js`). Una sala abierta desde tu
+configuración pública está en `public/assets/js/firebase-config.js`). Una sala abierta desde tu
 computador es una sala de verdad: aparece en el panel del dueño. No rompe nada, pero ábrelas lo
 justo.
 
@@ -44,7 +44,7 @@ Lo que más se olvida:
 - **Todo texto va en español, inglés y portugués de Brasil**, con las mismas claves en los tres
   (C-3). Español chileno, tuteo. Inglés y portugués adaptados, no calcados.
 - **Reusar antes de inventar**: el arrastre, el teclado, el chat, las pantallas de pasar el
-  celular y lo que se comparte ya existen en `assets/` (D-102).
+  celular y lo que se comparte ya existen en `public/assets/` (D-102).
 - **Botones de 44 px y sin scroll horizontal** a 320 px de ancho (C-8).
 
 ## Pruebas
@@ -54,7 +54,7 @@ Lo mismo, en tu computador:
 
 ```bash
 for f in $(git ls-files '*.test.mjs'); do node "$f" || echo "FALLA $f"; done
-python3 tools/readme.py revisar
+python3 tools/release/readme.py revisar
 ```
 
 Las pruebas de punta a punta (`tools/e2e/`) juegan partidas completas en Chrome; ver su README.
@@ -62,13 +62,13 @@ Para mirar una pantalla suelta: `node tools/e2e/mirar.mjs <juego> <pantalla> --a
 
 ## Lo que hace el dueño al fusionar (no lo hagas en tu PR)
 
-- **El número de versión** (`tools/set-version.py`) y su entrada en `CHANGELOG.md`: se asignan al
+- **El número de versión** (`tools/release/set-version.py`) y su entrada en `CHANGELOG.md`: se asignan al
   fusionar, en el orden en que entran los PR. Describe tu cambio en el PR y basta.
 - **El número de las decisiones** (D-n): si tu cambio necesita una, escríbela como `D-??` y se
   numera al fusionar.
 - **Publicar las reglas de Firebase** (`firebase/database.rules.json`): necesitan una llave que
   solo tiene el dueño. Si tu PR las cambia, dilo en la descripción.
-- **El panel del dueño** (`panel/`) no se puede abrir sin su cuenta; para mirarlo hay datos
+- **El panel del dueño** (`public/panel/`) no se puede abrir sin su cuenta; para mirarlo hay datos
   sembrados (`node tools/e2e/mirar.mjs panel datos`).
 
 ## Con Claude Code

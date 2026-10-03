@@ -2,7 +2,7 @@
 // Comprueba que la apuesta suba de verdad, que el destape cuente bien, que el celular nunca
 // haga una jugada ilegal y que la partida se pueda retomar (C-6). Las tomas llevan el nombre
 // de las capturas del README (docs/capturas.json).
-import { launch, sleep } from './cdp.mjs';
+import { launch, sleep } from '../cdp.mjs';
 const OUT = process.argv[2];
 const b = await launch({ port: 9385, dir: `${OUT}/p`, out: OUT });
 const ev = e => b.evaluate(e);
@@ -29,7 +29,7 @@ const seguir = () => ev(`(()=>{const h=document.getElementById('handoff');if(h.h
 
 await b.go(`${SITIO}/`);
 await ev(`localStorage.clear(); 1`);
-await b.go(`${SITIO}/dudo/`);
+await b.go(`${SITIO}/liars-dice/`);
 await toma('01-intro');
 console.log('modos:', await ev(`[...document.querySelectorAll('.mode')].map(m=>m.innerText.split('\\n')[0]+(m.disabled?' (deshabilitado)':'')).join(' | ')`));
 
@@ -72,7 +72,7 @@ await toma('06-resultado');
 console.log('historial:', await ev(`document.querySelectorAll('#history-list li').length`), 'rondas anotadas');
 
 /* ---------------- Tres jugadores en un celular ---------------- */
-await b.go(`${SITIO}/dudo/`); await ev(`localStorage.clear(); 1`); await b.go(`${SITIO}/dudo/`);
+await b.go(`${SITIO}/liars-dice/`); await ev(`localStorage.clear(); 1`); await b.go(`${SITIO}/liars-dice/`);
 await ev(`document.querySelectorAll('.mode')[0].click(); 1`); await sleep(300);
 await ev(`document.querySelector('#setup-actions .btn--ghost').click(); 1`); await sleep(200);
 await toma('02-configuracion');
@@ -86,7 +86,7 @@ await toma('07-pase');
 await seguir(); await sleep(400);
 await apostar(0); await sleep(400);
 const antes = await guardado();
-await b.go(`${SITIO}/dudo/`);
+await b.go(`${SITIO}/liars-dice/`);
 console.log('retomar → panel:', await ev(`!!document.querySelector('#resume-slot .btn--cyan')`),
   '· mensajes guardados:', (antes?.messages || []).length);
 await ev(`document.querySelector('#resume-slot .btn--cyan').click(); 1`); await sleep(700);

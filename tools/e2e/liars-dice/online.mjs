@@ -3,7 +3,7 @@
 //
 // Cada "celular" es un Chrome con su propio perfil y su propio origen, para que no compartan
 // localStorage (ver el README de esta carpeta).
-import { launch, sleep } from './cdp.mjs';
+import { launch, sleep } from '../cdp.mjs';
 // Con varias sesiones a la vez, cada una sirve su copia en su puerto (D-135)
 const SITIO = process.env.SITIO || 'http://localhost:8765';
 const OUT = process.argv[2];
@@ -35,7 +35,7 @@ const jugar = async (d, dudar = false) => d.evaluate(`(()=>{
 })()`);
 
 /* ---------------- Sala ---------------- */
-await A.go(`${hosts[0]}/dudo/`); await A.evaluate(`localStorage.clear(); 1`); await A.go(`${hosts[0]}/dudo/`);
+await A.go(`${hosts[0]}/liars-dice/`); await A.evaluate(`localStorage.clear(); 1`); await A.go(`${hosts[0]}/liars-dice/`);
 await click(A, '.modes .mode:nth-child(2)'); await sleep(400);
 await setName(A, NOMBRE.A);
 await click(A, '#setup-actions .btn--yellow'); await sleep(5000);
@@ -45,8 +45,8 @@ console.log('sala:', code, '| pantalla de A:', await pantalla(A));
 for (const [rol, dev] of [['B', B], ['C', C]]) {
   const host = hosts[rol === 'B' ? 1 : 2];
   // Entra por el enlace de invitación, que es como llega de verdad (RP-18)
-  await dev.go(`${host}/dudo/?sala=${code}`); await dev.evaluate(`localStorage.clear(); 1`);
-  await dev.go(`${host}/dudo/?sala=${code}`); await sleep(1200);
+  await dev.go(`${host}/liars-dice/?sala=${code}`); await dev.evaluate(`localStorage.clear(); 1`);
+  await dev.go(`${host}/liars-dice/?sala=${code}`); await sleep(1200);
   await setName(dev, NOMBRE[rol]);
   await dev.evaluate(`[...document.querySelectorAll('#setup-actions .btn')].find(x=>/Unirse|Join|Entrar/i.test(x.textContent)).click(); 1`);
   await sleep(4500);
@@ -80,7 +80,7 @@ while (vueltas++ < 80) {
   // A mitad de partida, un celular recarga: tiene que volver a su sala con los dados que tenía
   if (!reconectado && v.round >= 3 && v.phase === 'bid') {
     reconectado = true;
-    await B.go(`${hosts[1]}/dudo/?sala=${code}`); await sleep(4500);
+    await B.go(`${hosts[1]}/liars-dice/?sala=${code}`); await sleep(4500);
     const vuelto = await estado(B);
     console.log('B recargó a mitad →', await pantalla(B), '· ronda', vuelto.round, '· sus dados:',
       await B.evaluate(`(()=>{const s=window.__dudo.session();const v=window.__dudo.view();return (s.secrets[v.round]?.dice||[]).join(',')||'(los tira de nuevo)'})()`));

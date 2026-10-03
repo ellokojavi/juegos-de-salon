@@ -5,7 +5,7 @@
  * `código:día:sal`, así que es idéntico en todos los celulares sin que nada viaje por la red.
  * Solo aritmética entera: el mismo número da la misma partida en cualquier navegador.
  */
-import { rng as mulberry } from '../../linea-de-tiempo/engine.js';
+import { rng as mulberry } from '../../timeline/engine.js';
 
 /** Hash de 32 bits de un texto (FNV-1a con una vuelta de mezcla al final). */
 export function hash32(texto) {

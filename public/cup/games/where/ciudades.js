@@ -3,7 +3,7 @@
  * observadores (el Vaticano y Palestina), y ciudades famosas que no son capitales.
  *
  * Cada fila: ciudad, país, latitud, longitud, nivel (1 fácil · 2 mediana · 3 difícil) y el código
- * numérico ISO 3166 del país, con que `tools/mapa.mjs revisar` comprueba que la ciudad cae dentro
+ * numérico ISO 3166 del país, con que `tools/generators/mapa.mjs revisar` comprueba que la ciudad cae dentro
  * de su país en el mapa. La capital es la sede del gobierno salvo que el dueño decida otra cosa:
  * La Paz para Bolivia y Ámsterdam para los Países Bajos.
  */

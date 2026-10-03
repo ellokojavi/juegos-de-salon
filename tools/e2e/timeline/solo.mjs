@@ -10,14 +10,14 @@
  *   6. una partida guardada del solitario viejo (con `messages`) no se ofrece
  *   7. inglés y portugués
  *
- * Uso: SITIO=http://localhost:87xx PUERTO_CDP=94xx node tools/e2e/linea-de-tiempo-solo.mjs <salida>
+ * Uso: SITIO=http://localhost:87xx PUERTO_CDP=94xx node tools/e2e/timeline/solo.mjs <salida>
  */
-import { launch, sleep } from './cdp.mjs';
+import { launch, sleep } from '../cdp.mjs';
 
 const OUT = process.argv[2] || '/tmp/ldt-solo';
 const SITIO = process.env.SITIO || 'http://localhost:8765';
 const CDP = Number(process.env.PUERTO_CDP) || 9456;
-const URL = `${SITIO}/linea-de-tiempo/`;
+const URL = `${SITIO}/timeline/`;
 const b = await launch({ port: CDP, dir: `${OUT}/p`, out: OUT, width: 375, height: 812 });
 const ok = (cond, texto) => console.log(`  ${cond ? '✅' : '❌'} ${texto}`);
 const click = sel => b.evaluate(`(()=>{const x=document.querySelector('${sel}');if(!x)return 'no';x.click();return 'ok'})()`);
@@ -31,12 +31,12 @@ const tablero = () => b.evaluate(`JSON.stringify({
 })`).then(JSON.parse);
 const sinScrollLateral = () => b.evaluate(`document.documentElement.scrollWidth <= window.innerWidth`);
 /** Las diez cartas de la partida guardada, del mismo motor que las reparte */
-const cartasDe = () => b.evaluate(`(async()=>{const L=await import('${SITIO}/copa/juegos/linea.js');const s=JSON.parse(localStorage.getItem('juegos-de-salon:linea-de-tiempo:session'));const p=L.generar(s.codigo,1,{tema:s.tema,excluir:s.skip});return JSON.stringify([p.base.id,...p.mano.map(c=>c.id)])})()`).then(JSON.parse);
+const cartasDe = () => b.evaluate(`(async()=>{const L=await import('${SITIO}/cup/games/timeline/engine.js');const s=JSON.parse(localStorage.getItem('juegos-de-salon:linea-de-tiempo:session'));const p=L.generar(s.codigo,1,{tema:s.tema,excluir:s.skip});return JSON.stringify([p.base.id,...p.mano.map(c=>c.id)])})()`).then(JSON.parse);
 
 /** Juega la primera carta de la mano, bien o mal. El año sale del mismo motor que la reparte. */
 async function jugar(bien) {
   const info = await b.evaluate(`(async()=>{
-    const L = await import('${SITIO}/copa/juegos/linea.js');
+    const L = await import('${SITIO}/cup/games/timeline/engine.js');
     const s = window.__ldt.solo();
     const p = L.generar(s.codigo, 1, { tema: s.tema, excluir: s.skip });
     const e = L.estado(p, s.jugadas);

@@ -1,4 +1,4 @@
-// Ejecutar: node ahorcado/engine.test.mjs
+// Ejecutar: node public/hangman/engine.test.mjs
 import assert from 'node:assert/strict';
 import {
   ALPHABETS, FREQ, normalize, shapeOf, positionsOf, lettersOf, wordProblem, rarest,
