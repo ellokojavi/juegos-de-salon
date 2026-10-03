@@ -2739,3 +2739,25 @@ marca en el contenido.
 resuelve la temática Brasil, D-111); deducir el público del idioma (son cosas distintas: un grupo
 brasileño puede jugar en español).
 
+
+## D-188 · Juego al azar: un dado que rueda sobre el menú
+**Fecha:** 2026-10-03 · **Estado:** vigente
+**Decisión:** El menú tiene un botón **🎲 Juego al azar** bajo la bajada. Al tocarlo, un dado
+blanco de cantos redondos, con un juego en cada cara, entra rodando sobre la misma portada,
+rebota tres veces y cae con el elegido adelante; abajo dice "¡Te tocó! <juego>" y a los 1,3 s se
+abre su pantalla principal. Tocar mientras rueda lo abre de inmediato.
+- **Qué puede salir:** las tarjetas que se ven y se pueden abrir, menos La Copa (es una semana con
+  amigos, no una partida para sacar al azar). Con un filtro de tipo puesto, sale uno de esos.
+  Entran los minijuegos sueltos de la portada.
+- **El dado es WebGL** (`assets/js/dado3d.js`, sin librerías): una malla de cubo de cantos
+  redondos, luz difusa, brillo y un emoji por cara en una textura. Los botes y la sombra del
+  suelo son animaciones CSS; el giro, uno solo que frena parejo de principio a fin.
+- Con "reducir movimiento" el dado aparece quieto; sin WebGL aparece el emoji del elegido.
+**Por qué:** lo pidió el dueño. Se probó primero en `/labs/menu/` (D-42) y se iteró ahí: la
+primera versión, un cubo de `div`s en 3D, se veía tosca; con las esquinas redondeadas a punta de
+capas quedaban huecos negros, y recalcular el sombreado de 80 capas en cada cuadro la trababa en
+el celular. En WebGL un cuadro se dibuja en 0,3 ms y la tirada corre a 60 cuadros por segundo.
+**Consecuencias:** el espejo `labs/menu/` se borra al promoverlo. Queda abierto si se puede
+cancelar una tirada (dilema #139: hoy cualquier toque abre el juego).
+**Alternativas descartadas:** el cubo de capas de HTML (se veía de cartón y no se podía redondear
+sin huecos); una librería 3D (un archivo grande para un solo dado, en una app sin dependencias).
