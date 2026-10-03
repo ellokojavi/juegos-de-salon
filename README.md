@@ -2,7 +2,7 @@
 
 Mobile-first web app with party games to play with friends: card games, drinking games, guessing games. Open it on a phone or tablet, pick a game from the menu, type in the players, and the phone runs the game. In Spanish, English and Portuguese.
 
-The menu can be filtered by kind of game (words, logic, trivia, cards and dice); how many are playing is chosen inside each game. The filter lives in the link, so going back from a game keeps it and a filtered menu can be shared. Besides the games below, the menu offers The Cup's minigames on their own, for one player: Connections, Bulls and Cows: Word, What Year?, Where Is It?, Queens, Tango and Zip. They play in all three languages.
+The menu can be filtered by kind of game (words, logic, trivia, cards and dice); how many are playing is chosen inside each game. The filter lives in the link, so going back from a game keeps it and a filtered menu can be shared. A 🎲 **Random game** button rolls a 3D die over the menu, one game per face, and opens whichever lands on top: never The Cup, and only the filtered kind if a filter is on (D-188). Besides the games below, the menu offers The Cup's minigames on their own, for one player: Connections, Bulls and Cows: Word, What Year?, Where Is It?, Queens, Tango and Zip. They play in all three languages.
 
 **Play:** https://juegosdesalon.cl/
 
@@ -597,6 +597,8 @@ assets/css/base.css         Shared styles and animations (party theme, turn tran
 assets/js/games.js          Game registry (text in es, en and pt)
 assets/js/i18n.js           Language (ES/EN/PT): toggle, persistence and shared text; i18n.test.mjs checks parity
 assets/js/frases.js         Footer lines for the menu, 100 per language
+assets/js/azar.js           The menu's Random game button and the roll that opens a game (D-188)
+assets/js/dado3d.js         The die in WebGL: rounded white cube, light and one emoji per face
 assets/js/sound.js          Synthesized sound effects and the mute button
 assets/js/ui.js             UI helpers: confetti, vibration, wake lock, DOM helpers
 assets/js/compartir.js      Everything that gets shared: the message header, the share sheet, the shared images (D-165)
