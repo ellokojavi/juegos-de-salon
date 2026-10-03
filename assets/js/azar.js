@@ -1,5 +1,5 @@
 /**
- * Juego al azar (en el laboratorio): un botón del menú que tira un dado y abre lo que salió.
+ * Juego al azar (D-188): un botón del menú que tira un dado y abre lo que salió.
  *
  * El dado es un cubo con un juego en cada cara. Se lanza sobre la misma portada, rueda, rebota y
  * cae con la cara del elegido hacia adelante; abajo aparece su nombre y se abre el juego. Tocar
@@ -9,10 +9,10 @@
  * Con "reducir movimiento" el dado no rueda: aparece quieto en la cara elegida. Sin WebGL
  * aparece el emoji del elegido, grande, en vez del dado.
  */
-import { el } from '../../assets/js/ui.js';
+import { el } from './ui.js';
 import { crearDado } from './dado3d.js';
-import { pickLang } from '../../assets/js/i18n.js';
-import { SFX } from '../../assets/js/sound.js';
+import { pickLang } from './i18n.js';
+import { SFX } from './sound.js';
 
 export const TEXTOS = {
   es: { boton: 'Juego al azar', tocó: '¡Te tocó!', aria: 'Abrir un juego al azar' },

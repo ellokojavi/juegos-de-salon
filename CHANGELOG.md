@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.88.0 — 2026-10-03
+- **🎲 Juego al azar** (D-188): un botón bajo el título del menú tira un dado blanco en 3D con un
+  juego en cada cara; rueda, rebota, cae en uno y lo abre. Nunca sale La Copa, y si hay un filtro
+  de tipo puesto, sale uno de esos. Se probó primero en el laboratorio.
+
 ## 0.87.1 — 2026-10-03
 - **Tango: las casillas que no se pueden cambiar llevan un candado chico** en la esquina: las que
   vienen puestas (candado blanco) y las que reveló una pista (candado cian, como su borde). La

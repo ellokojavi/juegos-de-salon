@@ -19,7 +19,7 @@ import re, sys, json, pathlib, subprocess
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 MODULES = [
-    'assets/js/ui.js', 'assets/js/compartir.js', 'assets/js/i18n.js', 'assets/js/sound.js', 'assets/js/games.js', 'assets/js/firebase-config.js', 'assets/js/frases.js',
+    'assets/js/ui.js', 'assets/js/compartir.js', 'assets/js/i18n.js', 'assets/js/sound.js', 'assets/js/games.js', 'assets/js/firebase-config.js', 'assets/js/frases.js', 'assets/js/azar.js', 'assets/js/dado3d.js',
     'cuarto-rey/game.js', 'cuarto-rey/rules.js',
     'toque-y-fama/game.js', 'toque-y-fama/rules.js', 'toque-y-fama/engine.js',
     'assets/js/transport/local.js', 'assets/js/transport/firebase.js', 'assets/js/transport/cleanup.js', 'assets/js/transport/dispose.js', 'assets/js/transport/errors.js', 'assets/js/transport/ratelimit.js', 'assets/js/transport/stats.js', 'assets/js/handoff.js', 'assets/js/session.js', 'assets/js/chat.js', 'assets/js/arrastre.js', 'assets/js/teclado.js',
