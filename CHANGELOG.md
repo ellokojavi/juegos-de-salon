@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.85.4 — 2026-10-02
+- **🧶 Desenredo: instrucciones más cortas** (U-18, D-184): de 337 a 209 caracteres. La meta va
+  primero y no se repite lo que muestra el dibujo de ejemplo.
+- **Reglas para instrucciones concisas** (U-18): la meta primero, a lo más 3 puntos y el puntaje
+  en una frase. Una prueba frena las que pasen de 280 caracteres, en los tres idiomas.
+- **Desenredo: cuerdas menos onduladas** (D-185): la segunda onda queda a menos de la mitad y la
+  curva más tensa.
+
 ## 0.85.3 — 2026-10-02
 - **🧶 Desenredo: cuerdas más naturales** (D-183): cada cuerda lleva una segunda onda, más corta y
   suave, y una textura de dos cabos (uno oscuro y uno claro) que se alternan como en una cuerda
