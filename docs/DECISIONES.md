@@ -2654,3 +2654,15 @@ oculta (es la carta en vuelo del arrastre compartido), y desaparecía mientras s
 curvas que se doblan para esquivar a sus vecinas (otro juego, y más difícil saber cuándo está
 resuelto).
 
+## D-183 · Desenredo: la cuerda lleva una segunda onda y dos cabos
+**Fecha:** 2026-10-02 · **Estado:** vigente · **Amplía D-182**
+**Decisión:** Sobre la curva leve de cada hilo va una segunda onda, más corta y más baja: de 2 a
+4 vueltas según el largo (una cada ~150 unidades), de alto 1,6 % del largo con tope de 8, con su
+fase propia y apagada en las puntas (envolvente seno), así el hilo sigue naciendo en el centro del
+nudo. La cuerda se dibuja con los puntos unidos por curvas suaves (Catmull-Rom). La textura pasa a
+dos cabos: la hebra oscura y un brillo claro, cortados y desfasados, que se alternan.
+**Por qué:** lo pidió el dueño: con una sola curva la cuerda se veía bien, pero la torsión no se
+sentía natural.
+**Consecuencias:** las dos ondas juntas se apartan de la recta a lo más 42 de 1000 unidades en los
+hilos largos (34 + 8); los cruces se siguen contando sobre la recta (D-182). El test lo acota.
+
