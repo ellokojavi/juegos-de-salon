@@ -449,7 +449,24 @@ test('desenredo: la cuerda es una curva leve, fija para cada hilo (D-182)', () =
     const [c1, c2] = cuerda([0, 0], [900, 0], s); return Math.sign(c1[1]) === Math.sign(c2[1]) ? 'arco' : 'ese';
   }));
   assert.equal(formas.size, 2);
-  assert.match(trazoCuerda([0, 0], [900, 0], 3), /^M0 0C[-\d. ]+ 900 0$/);
+  assert.match(trazoCuerda([0, 0], [900, 0], 3), /^M0 0(C[-\d. ]+)+ 900 0$/);
+});
+
+test('desenredo: la segunda onda de la cuerda, chica y apagada en las puntas (D-183)', () => {
+  const { puntosCuerda, ONDA, ONDA_MAX, ONDA2_MAX } = desenredo;
+  for (let sem = 0; sem < 200; sem++) {
+    const a = [60 + 3 * sem, 120], b = [900, 200 + 3 * sem];
+    const P = puntosCuerda(a, b, sem), L = Math.hypot(b[0] - a[0], b[1] - a[1]);
+    // Nace y termina justo en los nudos
+    assert.deepEqual(P[0].map(Math.round), a); assert.deepEqual(P.at(-1).map(Math.round), b);
+    // Con las dos ondas sigue cerca de la recta: los cruces se cuentan sobre ella
+    const lejos = Math.max(...P.map(p => desenredo.distancia(p, a, b)));
+    assert.ok(lejos <= Math.min(ONDA_MAX, ONDA * L) + ONDA2_MAX + 0.5, `semilla ${sem}: ${lejos}`);
+    assert.deepEqual(puntosCuerda(a, b, sem), P);
+  }
+  // La segunda onda se nota: la cuerda no es la misma curva lisa de antes
+  const liso = puntosCuerda([0, 0], [900, 0], 4, { onda2: 0 }), ondulado = puntosCuerda([0, 0], [900, 0], 4);
+  assert.ok(Math.max(...liso.map((p, i) => Math.abs(p[1] - ondulado[i][1]))) > 3);
 });
 
 test('desenredo: puntaje, tarjeta y fin de la partida', () => {

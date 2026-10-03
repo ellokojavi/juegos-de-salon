@@ -21,11 +21,12 @@ const TOMAR_PX = 24;
 
 /**
  * Un hilo dibujado como cuerda (D-182): un borde oscuro, el alma del color del hilo y encima las
- * hebras, un trazo cortado que hace de torcido. Las tres capas comparten el mismo trazo curvo.
+ * hebras: una oscura y una clara que se alternan, como los dos cabos de una cuerda torcida (D-183).
+ * Las cuatro capas comparten el mismo trazo.
  */
 const hiloNuevo = () => {
   const g = svgEl('g', { class: 'des-hilo' });
-  g.append(svgEl('path', { class: 'borde' }), svgEl('path', { class: 'alma' }), svgEl('path', { class: 'hebra' }));
+  g.append(svgEl('path', { class: 'borde' }), svgEl('path', { class: 'alma' }), svgEl('path', { class: 'hebra' }), svgEl('path', { class: 'brillo' }));
   return g;
 };
 const ponerTrazo = (g, d) => { for (const x of g.children) x.setAttribute('d', d); };
@@ -51,7 +52,7 @@ function tableroEjemplo(pos, bien) {
   EJ_HILOS.forEach(([a, b], i) => {
     const g = hiloNuevo();
     if (malos.has(i)) g.classList.add('mal');
-    ponerTrazo(g, motor.trazoCuerda(pos[a], pos[b], a * 64 + b, { tope: 6 }));
+    ponerTrazo(g, motor.trazoCuerda(pos[a], pos[b], a * 64 + b, { tope: 6, tope2: 1.5 }));
     svg.append(g);
   });
   pos.forEach(([x, y]) => svg.append(svgEl('circle', { cx: x, cy: y, r: 8 })));

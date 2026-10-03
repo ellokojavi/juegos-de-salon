@@ -405,7 +405,10 @@ button.md-fila { cursor: pointer; }
 /* La cuerda (D-182): borde oscuro, alma del color del hilo y hebras cortadas encima, que hacen de torcido */
 .des-hilo .borde { stroke: rgba(14, 6, 32, 0.6); stroke-width: 6.5px; }
 .des-hilo .alma { stroke: var(--hilo); stroke-width: 4px; }
-.des-hilo .hebra { stroke: rgba(14, 6, 32, 0.32); stroke-width: 4px; stroke-linecap: butt; stroke-dasharray: 1.6px 3.2px; }
+.des-hilo path { stroke-linejoin: round; }
+/* Los dos cabos (D-183): la hebra oscura y el brillo claro se alternan a lo largo de la cuerda */
+.des-hilo .hebra { stroke: rgba(14, 6, 32, 0.34); stroke-width: 4px; stroke-linecap: butt; stroke-dasharray: 2px 3px; }
+.des-hilo .brillo { stroke: rgba(255, 255, 255, 0.38); stroke-width: 1.4px; stroke-linecap: butt; stroke-dasharray: 1.2px 3.8px; stroke-dashoffset: -2.6px; }
 .des-hilo.mal { --hilo: var(--red); }
 .des-tablero .des-hilo.propio { --hilo: var(--cyan); }
 .des-tablero .des-hilo.propio.mal { --hilo: var(--pink); }

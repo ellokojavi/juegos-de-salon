@@ -103,11 +103,49 @@ export function cuerda(a, b, semilla, { onda = ONDA, tope = ONDA_MAX } = {}) {
   return [[a[0] + dx / 3 + nx * o1, a[1] + dy / 3 + ny * o1], [a[0] + 2 * dx / 3 + nx * o2, a[1] + 2 * dy / 3 + ny * o2]];
 }
 
-/** El trazo SVG de un hilo como cuerda. */
+/**
+ * La segunda onda (D-183): sobre la curva leve, una ondulación más corta y más baja, como la que
+ * deja la torsión de una cuerda. Va de 2 a 4 vueltas según el largo, con su fase propia, y se
+ * apaga en las puntas (envolvente seno) para que el hilo siga naciendo en el centro del nudo.
+ */
+export const ONDA2 = 0.016;
+export const ONDA2_MAX = 8;
+const VUELTA = 150;   // cuánto mide, en unidades del tablero, una vuelta de la segunda onda
+
+/** Los puntos de una cuerda: la curva leve con la segunda onda encima, de `a` a `b`. */
+export function puntosCuerda(a, b, semilla, { onda = ONDA, tope = ONDA_MAX, onda2 = ONDA2, tope2 = ONDA2_MAX } = {}) {
+  const [c1, c2] = cuerda(a, b, semilla, { onda, tope });
+  const h = revolver(semilla * 7 + 3);
+  const largo = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1;
+  const vueltas = Math.max(2, Math.min(4, Math.round(largo / VUELTA)));
+  const fase = (h & 1023) / 1023 * 2 * Math.PI;
+  const alto = Math.min(tope2, onda2 * largo);
+  const n = Math.max(10, Math.min(48, Math.round(largo / 18)));
+  const bez = t => { const u = 1 - t; return [0, 1].map(k => u * u * u * a[k] + 3 * u * u * t * c1[k] + 3 * u * t * t * c2[k] + t * t * t * b[k]); };
+  const out = [];
+  for (let i = 0; i <= n; i++) {
+    const t = i / n, p = bez(t);
+    // La normal de la curva en ese punto, por diferencia
+    const q = bez(Math.min(1, t + 0.01)), o = bez(Math.max(0, t - 0.01));
+    const dx = q[0] - o[0], dy = q[1] - o[1], l = Math.hypot(dx, dy) || 1;
+    const d = alto * Math.sin(Math.PI * t) * Math.sin(2 * Math.PI * vueltas * t + fase);
+    out.push([p[0] - (dy / l) * d, p[1] + (dx / l) * d]);
+  }
+  return out;
+}
+
+/** El trazo SVG de un hilo como cuerda: los puntos unidos con curvas suaves (Catmull-Rom). */
 export function trazoCuerda(a, b, semilla, opciones) {
-  const [c1, c2] = cuerda(a, b, semilla, opciones);
+  const P = puntosCuerda(a, b, semilla, opciones);
   const r = x => Math.round(x * 10) / 10;
-  return `M${r(a[0])} ${r(a[1])}C${r(c1[0])} ${r(c1[1])} ${r(c2[0])} ${r(c2[1])} ${r(b[0])} ${r(b[1])}`;
+  let d = `M${r(P[0][0])} ${r(P[0][1])}`;
+  for (let i = 0; i < P.length - 1; i++) {
+    const p0 = P[i - 1] || P[i], p1 = P[i], p2 = P[i + 1], p3 = P[i + 2] || p2;
+    const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
+    const c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+    d += `C${r(c1[0])} ${r(c1[1])} ${r(c2[0])} ${r(c2[1])} ${r(p2[0])} ${r(p2[1])}`;
+  }
+  return d;
 }
 
 /* ------------------------------------------------------------------ */
