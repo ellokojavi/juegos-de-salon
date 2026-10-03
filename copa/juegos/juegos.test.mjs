@@ -589,34 +589,45 @@ test('todos los minijuegos puntúan de 0 a 100 (D-113)', () => {
 const { LOCALES: TEXTOS } = await import('../rules.js');
 const { LOCALES } = await import('./palabras.js');
 const { DECKS: TODOS } = await import('../../linea-de-tiempo/decks/index.js');
-test('copa internacional: nada que se conozca solo en Chile o en Brasil (D-186)', () => {
+const AUD = await import('./audiencia.js');
+test('el público de la copa decide qué contenido local entra (D-186, D-187)', () => {
   const { local } = donde;
-  const cartaLocal = new Set(TODOS.flatMap(d => d.cards.filter(c => c.local).map(c => c.id)));
+  const { fuera, audienciaDe } = AUD;
+  const pais = { chile: 'cl', brasil: 'br' };
+  const cartaLocal = new Map(TODOS.flatMap(d => d.cards.filter(c => c.local).map(c => [c.id, c.local])));
   assert.ok(cartaLocal.size >= 2);
-  const codigos = [...CODIGOS, ...Array.from({ length: 120 }, (_, i) => 'ABCDEFGHJKLMNPQRSTUVWXYZ'.slice(i % 19, i % 19 + 5))];
-  for (const c of codigos) for (const lang of ['es', 'en', 'pt']) {
-    const o = { lang, palabras: lang, intl: true };
-    const temas = Object.values(temasDeLaCopa(c, { intl: true }));
-    assert.ok(!temas.includes('chile') && !temas.includes('brasil'), `${c}: ${temas}`);
-    for (let d = 1; d <= 7; d++) {
-      const l = JUEGOS.linea.generar(c, d, o), y = JUEGOS.anio.generar(c, d, o);
-      for (const x of [l.base, ...l.mano, ...y.hitos]) assert.ok(!cartaLocal.has(x.id), `${c} ${d}: ${x.id}`);
-          const g = conexiones.grillaDe(c, { lang, intl: true });
+  const codigos = [...CODIGOS, ...Array.from({ length: 80 }, (_, i) => 'ABCDEFGHJKLMNPQRSTUVWXYZ'.slice(i % 19, i % 19 + 5))];
+  const vistos = { global: new Set(), cl: new Set(), br: new Set() };
+  for (const aud of ['global', 'cl', 'br']) for (const c of codigos) for (const lang of ['es', 'en', 'pt']) {
+    const o = { lang, palabras: lang, aud };
+    const temas = Object.values(temasDeLaCopa(c, { aud }));
+    temas.forEach(t => vistos[aud].add(t));
+    for (const t of temas) assert.ok(!fuera(pais[t], aud), `${aud} ${c}: temática ${t}`);
+    for (let d = 1; d <= 7; d += 3) {
+      const l = JUEGOS.linea.generar(c, d, o), y = JUEGOS.anio.generar(c, d, o), f = JUEGOS.final.generar(c, d, o);
+      for (const x of [l.base, ...l.mano, ...y.hitos, f.linea.base, ...f.linea.mano, ...f.anio.hitos]) assert.ok(!fuera(cartaLocal.get(x.id), aud), `${aud} ${c} ${d}: ${x.id}`);
+      const g = conexiones.grillaDe(c, { lang, aud });
+      assert.ok(!fuera(g.local, aud), `${aud} ${c} ${lang}: grilla ${g.id}`);
       assert.equal(JUEGOS.conexiones.generar(c, d, o).id, g.id);
-      assert.ok(!g.local, `${c} ${lang}: grilla ${g.id}`);
-      assert.ok(!LOCALES.has(JUEGOS.letras.generar(c, d, o).secreto), `${c} ${d}: palabra local`);
-      for (const ciudad of JUEGOS.donde.generar(c, d, o).ciudades) assert.ok(!local(ciudad), `${c} ${d}: ${ciudad.ciudad}`);
-      for (const ciudad of JUEGOS.donde.ensayo(c, d, o).ciudades) assert.ok(!local(ciudad), `ensayo ${c} ${d}: ${ciudad.ciudad}`);
-      const f = JUEGOS.final.generar(c, d, o);
-      for (const x of [f.linea.base, ...f.linea.mano, ...f.anio.hitos]) assert.ok(!cartaLocal.has(x.id));
+      if (fuera('cl', aud)) assert.ok(!LOCALES.has(JUEGOS.letras.generar(c, d, o).secreto), `${aud} ${c} ${d}: palabra local`);
+      for (const x of [...JUEGOS.donde.generar(c, d, o).ciudades, ...JUEGOS.donde.ensayo(c, d, o).ciudades]) assert.ok(!fuera(local(x), aud), `${aud} ${c} ${d}: ${x.ciudad}`);
       const e = JUEGOS.linea.ensayo(c, d, o);
-      assert.ok(!['chile', 'brasil'].includes(e.tema) && !temas.includes(e.tema), `ensayo ${c}: ${e.tema}`);
+      assert.ok(!fuera(pais[e.tema], aud) && !temas.includes(e.tema), `ensayo ${aud} ${c}: ${e.tema}`);
     }
   }
-  // Cada idioma conserva grillas de sobra para una copa internacional
-  for (const M of [GRILLAS_MOD, GRILLAS_EN, GRILLAS_PT]) assert.ok(M.GRILLAS.filter(g => !g.local).length >= 7);
-  // Y sin la marca, todo como antes: lo local sigue saliendo en las copas de siempre
+  // Cada público tiene lo suyo: Chile juega la temática Chile y Brasil la de Brasil
+  assert.ok(vistos.cl.has('chile') && !vistos.cl.has('brasil'));
+  assert.ok(vistos.br.has('brasil') && !vistos.br.has('chile'));
+  assert.ok(!vistos.global.has('chile') && !vistos.global.has('brasil'));
+  // Grillas de sobra para cada público en cada idioma
+  for (const aud of ['global', 'cl', 'br']) for (const M of [GRILLAS_MOD, GRILLAS_EN, GRILLAS_PT]) assert.ok(M.GRILLAS.filter(g => !fuera(g.local, aud)).length >= 7, aud);
+  // El público de una copa: el suyo; global si era de las `intl`; y sin él, como las de antes
+  assert.equal(audienciaDe({ aud: 'br' }), 'br');
+  assert.equal(audienciaDe({ intl: true }), 'global');
+  assert.equal(audienciaDe({}), null);
+  assert.equal(audienciaDe({ aud: 'xx' }), null);
   assert.ok(codigos.some(c => Object.values(temasDeLaCopa(c)).includes('chile')));
+  assert.ok(!codigos.some(c => Object.values(temasDeLaCopa(c)).includes('brasil')));
 });
 
 test('las instrucciones de cada minijuego son concisas, en los tres idiomas (U-18, D-184)', () => {

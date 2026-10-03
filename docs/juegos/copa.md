@@ -17,7 +17,7 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
   pantalla, sin "copa" en el link, que vuelve al menú, sin sesión de prueba ni semilla a la vista, y
   con su señal de uso. `/copa/?practica=<id>` sin `&labs` lleva ahí.
 - **Jugadores:** de 2 a 10 por copa (`MIN_JUGADORES` y `MAX_JUGADORES` en `engine.js`, D-118). Con
-  el administrador solo, la copa no parte y el tablero pide "al menos un jugador más". **Temas:** con temas locales o internacional, que se elige al crear la copa (D-186, `meta.intl`).
+  el administrador solo, la copa no parte y el tablero pide "al menos un jugador más". **Público:** 🌎 global, 🇨🇱 Chile o 🇧🇷 Brasil, que se elige al crear la copa (D-187, `meta.aud`; las copas `intl` de D-186 se leen como global). Decide qué contenido local entra (`copa/juegos/audiencia.js`).
   **Idioma:** español, inglés y portugués (D-170). La
   pantalla va en el idioma de quien mira; las palabras de Conexiones y Palabra, los mensajes al
   grupo y su link, en el de la copa (`meta.lang`, se elige al crearla).

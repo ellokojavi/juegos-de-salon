@@ -3,6 +3,7 @@
  * Se eligen cuatro y se confirma; hay cuatro errores permitidos. Si quedó a una de un grupo,
  * se avisa "a una".
  */
+import { fuera } from './audiencia.js';
 import { GRILLAS, GRILLA_ENSAYO, GRILLAS_ANTES_D128, CAMBIO_D128 } from './grillas.js';
 import * as EN from './grillas-en.js';
 import * as PT from './grillas-pt.js';
@@ -20,17 +21,17 @@ const IDIOMAS = { en: EN, pt: PT };
  * el día de Conexiones de esa copa: si empezó antes del cambio a grupos por significado (D-128),
  * se sigue con la grilla de antes, para no cambiarla a mitad del día.
  */
-export const grillaDe = (codigo, { desde = null, lang = 'es', intl = false } = {}) => {
+export const grillaDe = (codigo, { desde = null, lang = 'es', aud = null } = {}) => {
   // D-128 es anterior a los otros idiomas: solo el español tiene grillas de antes
   const todas = IDIOMAS[lang]?.GRILLAS || (desde !== null && desde < CAMBIO_D128 ? GRILLAS_ANTES_D128 : GRILLAS);
-  // En una copa internacional (D-186), sin las grillas con palabras de Chile o de Brasil
-  const lista = intl ? todas.filter(g => !g.local) : todas;
+  // Sin las grillas con palabras de un país que no es el del público (D-186, D-187)
+  const lista = aud ? todas.filter(g => !fuera(g.local, aud)) : todas;
   return lista[hash32(`${codigo}:grilla`) % lista.length];
 };
 
 /** `palabras`: el idioma de las palabras, el de la copa (D-170); sin él, `lang`. */
-export function generar(codigo, dia, { sal = 'conexiones', grilla, desde = null, lang = 'es', palabras = lang, intl = false } = {}) {
-  const g = grilla || grillaDe(codigo, { desde, lang: palabras, intl });
+export function generar(codigo, dia, { sal = 'conexiones', grilla, desde = null, lang = 'es', palabras = lang, aud = null } = {}) {
+  const g = grilla || grillaDe(codigo, { desde, lang: palabras, aud });
   const a = azar(codigo, dia, sal);
   return {
     id: g.id,
