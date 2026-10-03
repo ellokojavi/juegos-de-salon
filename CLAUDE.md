@@ -27,6 +27,13 @@ Puede haber varias sesiones de Claude trabajando en este repo al mismo tiempo (D
   propio** (`pkill -f "remote-debugging-port=94xx"`). Nunca `pkill -f remote-debugging-port` a secas:
   mata las pruebas de todas las sesiones.
 
+## Si trabajas en un fork (D-189)
+
+Quien aporta desde afuera sigue [CONTRIBUTING.md](CONTRIBUTING.md): rama de tema y PR hacia
+`ellokojavi/juegos-de-salon`. Ahí Claude **no** estampa versión ni escribe el CHANGELOG, numera las
+decisiones como `D-??`, no publica reglas de Firebase ni lee el panel o los reportes (necesitan la
+llave del dueño) y no fusiona. Todo lo demás de esta guía vale igual.
+
 ## Publicar
 
 ```bash
