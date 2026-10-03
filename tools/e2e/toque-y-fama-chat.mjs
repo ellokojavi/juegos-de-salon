@@ -1,8 +1,10 @@
 // Chat de sala en Toque y Fama: dos celulares contra Firebase real (canon C-15)
 import { launch, sleep } from './cdp.mjs';
+// Con varias sesiones a la vez, cada una sirve su copia en su puerto (D-135)
+const SITIO = process.env.SITIO || 'http://localhost:8765';
 const OUT = process.argv[2];
 const BASE = process.argv[3];
-const hosts = BASE ? [BASE, BASE] : ['http://localhost:8765', 'http://127.0.0.1:8765'];
+const hosts = BASE ? [BASE, BASE] : ['localhost', '127.0.0.1', '[::1]'].map(h => SITIO.replace('localhost', h)).slice(0, 2);
 const A = await launch({ port: 9466, dir: `${OUT}/cA`, out: OUT, width: 375, height: 812 });
 const B = await launch({ port: 9467, dir: `${OUT}/cB`, out: OUT, width: 375, height: 812 });
 const chat = d => d.evaluate(`(()=>{const m=document.getElementById('chat');const b=document.querySelector('.chat-badge');const p=document.querySelector('.chat-peek');return JSON.stringify({

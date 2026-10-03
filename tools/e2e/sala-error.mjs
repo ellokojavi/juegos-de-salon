@@ -2,6 +2,8 @@
 // Se le corta la red a la base (no al sitio), que es como se ve quedarse sin señal o toparse
 // con el tope de conexiones del plan gratuito.
 import { launch, sleep } from './cdp.mjs';
+// Con varias sesiones a la vez, cada una sirve su copia en su puerto (D-135)
+const SITIO = process.env.SITIO || 'http://localhost:8765';
 
 const OUT = process.argv[2];
 const b = await launch({ port: 9442, dir: `${OUT}/p`, out: OUT, width: 375, height: 812 });
@@ -20,9 +22,9 @@ const botonVivo = () => b.evaluate(`(()=>{const b=document.querySelector('#setup
 
 async function intento(lang, juego, etiqueta) {
   await red(true);
-  await b.go(`http://localhost:8765/${juego}/`);
+  await b.go(`${SITIO}/${juego}/`);
   await b.evaluate(`localStorage.clear(); localStorage.setItem('juegos-de-salon:lang','${lang}'); 1`);
-  await b.go(`http://localhost:8765/${juego}/`);
+  await b.go(`${SITIO}/${juego}/`);
   const precarga = await b.evaluate(`import('../assets/js/transport/firebase.js').then(()=>'ok',e=>'falló: '+e)`);
   console.log(`${etiqueta} · SDK precargado:`, precarga);
   await red(false);

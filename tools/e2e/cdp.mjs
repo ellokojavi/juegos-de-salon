@@ -4,7 +4,20 @@ import { writeFileSync } from 'node:fs';
 // CHROME: otra ruta al navegador (Linux, una sesión en la nube)
 const CHROME = process.env.CHROME || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 export const sleep = ms => new Promise(r => setTimeout(r, ms));
-export async function launch({ port, dir, out, width = 390, height = 844 }) {
+/**
+ * Con PUERTO_CDP, cada sesión usa sus propios puertos de Chrome (D-135): el primer puerto distinto
+ * que pide un guion pasa a ser PUERTO_CDP, el segundo PUERTO_CDP + 1, y así. Pedir de nuevo el mismo
+ * puerto da el mismo. Sin PUERTO_CDP, el guion usa los que escribió.
+ */
+const BASE_CDP = Number(process.env.PUERTO_CDP) || 0;
+const asignados = new Map();
+const puertoCdp = port => {
+  if (!BASE_CDP) return port;
+  if (!asignados.has(port)) asignados.set(port, BASE_CDP + asignados.size);
+  return asignados.get(port);
+};
+export async function launch({ port: pedido, dir, out, width = 390, height = 844 }) {
+  const port = puertoCdp(pedido);
   const chrome = spawn(CHROME, ['--headless=new', `--remote-debugging-port=${port}`, `--window-size=${width},${height + 60}`, '--hide-scrollbars', '--no-first-run', `--user-data-dir=${dir}`, 'about:blank'], { stdio: 'ignore' });
   process.on('exit', () => { try { chrome.kill(); } catch (_) {} });
   process.on('uncaughtException', e => { console.error(e); try { chrome.kill(); } catch (_) {} process.exit(1); });
