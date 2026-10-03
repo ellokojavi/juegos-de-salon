@@ -1,5 +1,5 @@
 {
-  "version": "0.87.1",
+  "version": "0.88.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -448,6 +448,122 @@
         "cuarto-rey/rules.js",
         "cuarto-rey/style.css"
       ]
+    }
+  ],
+  "sueltos": [
+    {
+      "id": "conexiones",
+      "emoji": "🔗",
+      "nombre": {
+        "es": "Conexiones",
+        "en": "Connections",
+        "pt": "Conexões"
+      },
+      "tipos": [
+        "palabras",
+        "cultura"
+      ],
+      "duracion": "3–8",
+      "labs": false
+    },
+    {
+      "id": "letras",
+      "emoji": "🔤",
+      "nombre": {
+        "es": "Toque y Fama: Palabra",
+        "en": "Bulls and Cows: Word",
+        "pt": "Toque e Fama: Palavra"
+      },
+      "tipos": [
+        "palabras",
+        "logica"
+      ],
+      "duracion": "3–8",
+      "labs": false
+    },
+    {
+      "id": "anio",
+      "emoji": "📅",
+      "nombre": {
+        "es": "¿En qué año?",
+        "en": "What Year?",
+        "pt": "Em que ano?"
+      },
+      "tipos": [
+        "cultura"
+      ],
+      "duracion": "2–5",
+      "labs": false
+    },
+    {
+      "id": "reinas",
+      "emoji": "👑",
+      "nombre": {
+        "es": "Reinas",
+        "en": "Queens",
+        "pt": "Rainhas"
+      },
+      "tipos": [
+        "logica"
+      ],
+      "duracion": "2–5",
+      "labs": false
+    },
+    {
+      "id": "tango",
+      "emoji": "☀️",
+      "nombre": {
+        "es": "Tango",
+        "en": "Tango",
+        "pt": "Tango"
+      },
+      "tipos": [
+        "logica"
+      ],
+      "duracion": "3–8",
+      "labs": false
+    },
+    {
+      "id": "zip",
+      "emoji": "〰️",
+      "nombre": {
+        "es": "Zip",
+        "en": "Zip",
+        "pt": "Zip"
+      },
+      "tipos": [
+        "logica"
+      ],
+      "duracion": "3",
+      "labs": false
+    },
+    {
+      "id": "desenredo",
+      "emoji": "🧶",
+      "nombre": {
+        "es": "Desenredo",
+        "en": "Untangle",
+        "pt": "Desenrola"
+      },
+      "tipos": [
+        "logica"
+      ],
+      "duracion": "4",
+      "labs": true
+    },
+    {
+      "id": "donde",
+      "emoji": "📍",
+      "nombre": {
+        "es": "¿Dónde queda?",
+        "en": "Where Is It?",
+        "pt": "Onde fica?"
+      },
+      "tipos": [
+        "cultura"
+      ],
+      "duracion": "2–5",
+      "labs": false
     }
   ],
   "tematicas": [

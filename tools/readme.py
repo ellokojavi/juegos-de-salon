@@ -96,6 +96,13 @@ def bloque_juegos(H, C):
         estado = '🧪 lab' if j.get('labs') else '⏸ paused' if not j['disponible'] else (j['estado'] or '-')
         filas.append(f"| {j['emoji']} [{nombres}]({ancla(titulo_juego(j))}) | {j['jugadores']} "
                      f"| {modos} | {estado} |")
+    # Los minijuegos de La Copa sueltos (D-142): uno solo, en su página, sin copa. El link va a
+    # la página jugable, porque no tienen sección propia en el README.
+    for m in H.get('sueltos', []):
+        nombres = ' / '.join(dict.fromkeys([m['nombre']['en'], m['nombre']['es'], m['nombre']['pt']]))
+        estado = '🧪 lab' if m['labs'] else 'Cup minigame'
+        filas.append(f"| {m['emoji']} [{nombres}](https://juegosdesalon.cl/minijuegos/{m['id']}/) | 1 "
+                     f"| Play alone | {estado} |")
     return '\n'.join(filas) + '\n'
 
 
@@ -111,7 +118,7 @@ def bloque_tematicas(H, C):
 def bloque_idiomas(H, C):
     filas = ['| Español | English | Português |', '|---|---|---|',
              f"| {H['app']['es']} | {H['app']['en']} | {H['app']['pt']} |"]
-    for j in H['juegos']:
+    for j in H['juegos'] + H.get('sueltos', []):
         filas.append(f"| {j['nombre']['es']} | {j['nombre']['en']} | {j['nombre']['pt']} |")
     return '\n'.join(filas) + '\n'
 
@@ -265,6 +272,7 @@ def contar(ruta, antes, ahora):
 
 SECCIONES = {
     'juegos': 'la sección del juego y la tabla de arriba',
+    'sueltos': 'la tabla de juegos, la portada y la sección de La Copa',
     'tematicas': 'la sección de Línea de Tiempo (las temáticas se cuentan en la prosa)',
     'idiomas': 'la sección Idiomas', 'frases': 'la sección Idiomas',
     'app': 'la portada y la tabla de nombres', 'modulos': 'el árbol de Estructura',
