@@ -128,13 +128,11 @@
     }
     .azar-escena { --lado: min(38vw, 150px); --medio: calc(var(--lado) / 2); width: var(--lado); height: var(--lado); perspective: 700px; position: relative; }
     .azar-salto, .azar-cubo { position: absolute; inset: 0; transform-style: preserve-3d; will-change: transform; }
-    /* Un dado blanco: caras lisas que se sombrean apenas hacia el canto, y cantos redondos gris
-       perla (el relleno de atrás) que se leen como la curva del borde de un dado de verdad */
-    .azar-relleno { position: absolute; background: #e6e8ed; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+    /* Un dado blanco entero: caras, cantos y esquinas redondas (el relleno de atrás), todo blanco */
+    .azar-relleno { position: absolute; background: #fff; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
     .azar-cara {
       position: absolute; inset: 0; display: grid; place-items: center; font-size: calc(var(--lado) * 0.5); border-radius: 16%;
-      background: radial-gradient(circle at 42% 38%, #fff 0 52%, #f3f4f7 78%, #e8eaef 100%);
-      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9), inset 0 0 calc(var(--lado) * 0.08) rgba(90, 96, 120, 0.22);
+      background: #fff;
       backface-visibility: hidden; -webkit-backface-visibility: hidden;
     }
     .azar-sombra {
