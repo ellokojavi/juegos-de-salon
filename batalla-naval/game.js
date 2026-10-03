@@ -442,6 +442,9 @@ function buildPlacement(role) {
   const placedCount = () => FLEET.filter(f => d.layout[f.id]).length;
   let drag = null;          // { ship, dir, offset, moved, x, y, target }
   let justDragged = false;  // el click que viene después de soltar no es un toque
+  // ¿La flota ya estaba completa en el repintado anterior? Al pasar a completa, la pantalla baja
+  // hasta ¡Zarpar! si quedó bajo el pliegue (dilema #47): en un celular chico no se ve cómo seguir.
+  let estabaCompleta = isValidLayout(d.layout);
 
   const flash = cell => { cell.classList.remove('shake'); void cell.offsetWidth; cell.classList.add('shake'); vibrate([20, 30, 20]); SFX.error(); };
 
@@ -477,7 +480,17 @@ function buildPlacement(role) {
       el('button', { class: 'btn btn--ghost', onClick: () => { d.layout = {}; d.sel = FLEET[0].id; SFX.tap(); paint(); } }, T.clear),
     );
     const sail = $('#place-sail'); sail.innerHTML = '';
-    sail.append(el('button', { class: 'btn btn--yellow', disabled: !isValidLayout(d.layout), onClick: async () => { if (!isValidLayout(d.layout)) return; SFX.pass(); await setLayout(role, d.layout); } }, T.sail));
+    const completa = isValidLayout(d.layout);
+    const zarpar = el('button', { class: 'btn btn--yellow', disabled: !completa, onClick: async () => { if (!isValidLayout(d.layout)) return; SFX.pass(); await setLayout(role, d.layout); } }, T.sail);
+    sail.append(zarpar);
+    // Solo en el paso a "todos colocados", nunca al mover un barco que ya estaba puesto. Con el
+    // barco en el aire no se baja (el repintado del arrastre no cambia la flota; el de soltar sí).
+    // `nearest` no mueve nada si ¡Zarpar! ya se ve, como pasa casi siempre con 🎲 Al azar.
+    if (completa && !estabaCompleta && !(drag && drag.moved)) {
+      const quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      zarpar.scrollIntoView({ block: 'nearest', behavior: quieto ? 'auto' : 'smooth' });
+    }
+    estabaCompleta = completa;
     saveSession(); // conserva el borrador de la flota si el jugador sale a mitad de la colocación
   };
 
