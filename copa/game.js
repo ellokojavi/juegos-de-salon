@@ -134,9 +134,9 @@ function avisoError(caja, texto) {
 }
 
 // Las fechas en el idioma de quien mira o, en lo que va al grupo, en el de la copa (D-170).
-// En inglés la coma va ("Thursday, October 1"); en español y portugués se saca
-const LOCALE = { es: 'es-CL', en: 'en-US', pt: 'pt-BR' };
-const fechaLarga = (ms, tz = ZONA, lang = LANG) => { const f = new Intl.DateTimeFormat(LOCALE[lang] || LOCALE.es, { timeZone: tz, weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(ms)); return lang === 'en' ? f : f.replace(',', ''); };
+// En inglés y en alemán la coma va ("Thursday, October 1", "Donnerstag, 1. Oktober"); en español y portugués se saca
+const LOCALE = { es: 'es-CL', en: 'en-US', pt: 'pt-BR', de: 'de-DE' };
+const fechaLarga = (ms, tz = ZONA, lang = LANG) => { const f = new Intl.DateTimeFormat(LOCALE[lang] || LOCALE.es, { timeZone: tz, weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(ms)); return lang === 'en' || lang === 'de' ? f : f.replace(',', ''); };
 /** El nombre de la zona horaria de una copa, para decirlo en palabras (D-113). */
 const zonaTexto = tz => T.zones[tz] || fmt(T.zoneOther, { tz });
 const fechaCorta = (ms, tz = ZONA) => new Intl.DateTimeFormat(LOCALE[LANG] || LOCALE.es, { timeZone: tz, weekday: 'short', day: 'numeric' }).format(new Date(ms));
@@ -1922,7 +1922,7 @@ const volverDePractica = () => (LABS
 function practica(id) {
   const J = MINIJUEGOS[id], mod = JUEGOS[id];
   if (!J || !mod) { if (SUELTO) location.replace(RAIZ); else portada(); return; }
-  if (!LABS) document.title = `${J.nombre} ${J.emoji} · Juegos de Salón`;
+  if (!LABS) document.title = `${J.nombre} ${J.emoji} · ${(COMMON[LANG] || COMMON.es).appTitle}`;
   if (SUELTO) $('#chip-juego').replaceChildren(...conEmoji(J.emoji, J.nombre));
   const semilla = esCodigo(SEMILLA) ? SEMILLA : codigoAlAzar();
   const zipSeg = new URLSearchParams(location.search).get('zipSeg');
@@ -2146,7 +2146,7 @@ sparkles();
 initSound();
 applyStatic(T);
 document.documentElement.lang = LANG;
-document.title = `${T.title} 🏆 · Juegos de Salón`;
+document.title = `${T.title} 🏆 · ${(COMMON[LANG] || COMMON.es).appTitle}`;
 $('#sound-slot').append(soundToggle());
 // Desde el laboratorio (?labs), "volver" es volver ahí; si no, al menú (D-175)
 if (LABS) {

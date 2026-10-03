@@ -99,7 +99,14 @@ body {
 .display--lg { font-size: clamp(2rem, 9vw, 3.2rem); }
 .display--md { font-size: clamp(1.5rem, 6.5vw, 2.2rem); }
 .display--sm { font-size: clamp(1.2rem, 5vw, 1.6rem); }
+/*
+ * El degradado se pinta dentro de la caja del texto, y con line-height 0.95 los acentos sobre
+ * mayúscula quedan fuera: la Ó de SALÓN y la Ã de SALÃO salían cortadas, y en alemán se perdían
+ * las diéresis de casi cada título (Ä, Ö, Ü). El relleno arriba agranda la caja pintada y el
+ * margen negativo deja el título donde estaba (D-190).
+ */
 .rainbow {
+  padding-top: 0.2em; margin-top: -0.2em;
   background: linear-gradient(90deg, var(--yellow), var(--pink), var(--cyan), var(--lime), var(--yellow));
   background-size: 300% 100%;
   -webkit-background-clip: text; background-clip: text; color: transparent;
@@ -167,7 +174,16 @@ details.panel summary::-webkit-details-marker { display: none; }
 
 /* --- Cabecera compartida --- */
 .topbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; }
+/*
+ * A 320 px el nombre del juego no cabe siempre en la barra ("⚓ Batalla Naval", y en alemán
+ * "🪢 Galgenmännchen"): partía el chip en dos líneas y arrastraba a "‹ Menú". El menú no se
+ * achica y el chip se corta con "…": el nombre entero está en el título de la pantalla (D-190).
+ */
+.topbar .tools { min-width: 0; }
+.topbar .tools > :not(.chip) { flex: none; }
+.topbar .tools .chip { display: block; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .topbar .back {
+  flex: none; white-space: nowrap;
   color: var(--ink); text-decoration: none; font-weight: 900; font-size: 1rem;
   background: var(--glass); border: 1px solid var(--glass-border); border-radius: 999px; padding: 8px 14px;
 }
@@ -328,3 +344,40 @@ details.panel summary::-webkit-details-marker { display: none; }
 
 /* Un emoji casi negro (〰️) sobre el fondo morado: contorno claro, el mismo emoji (ui.js, EMOJI_OSCUROS) */
 .emoji-claro { filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff) drop-shadow(0 0 5px rgba(255, 255, 255, 0.55)); }
+
+/*
+ * En alemán las palabras compuestas son largas y no caben en una columna angosta: se cortan
+ * con guion, según el diccionario del navegador (necesita el lang del <html>, que pone
+ * setLang), y si igual no caben se parten antes que desbordar la pantalla (D-190).
+ */
+html:lang(de) body { -webkit-hyphens: auto; hyphens: auto; overflow-wrap: break-word; }
+
+/* --- Un idioma en el laboratorio (D-190, assets/js/labs-idioma.js) --- */
+.labs-tabs { position: fixed; left: 0; top: 46%; z-index: 40; display: grid; gap: 6px; }
+.labs-tab {
+  width: 34px; height: 44px; display: grid; place-items: center; font-size: 1.1rem; text-decoration: none;
+  border: 1px solid rgba(255, 122, 26, 0.6); border-left: 0; border-radius: 0 14px 14px 0; cursor: pointer;
+  background: rgba(42, 10, 74, 0.92); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45); color: var(--ink);
+}
+.labs-tab:active { transform: scale(0.94); }
+.labs-capa {
+  position: fixed; inset: 0; z-index: 60; display: grid; place-items: end center;
+  background: rgba(10, 2, 20, 0.6); padding: 12px 12px calc(12px + env(safe-area-inset-bottom, 0px));
+}
+.labs-caja {
+  width: 100%; max-width: 480px; max-height: calc(100svh - 24px); overflow-y: auto;
+  background: linear-gradient(180deg, rgba(42, 10, 74, 0.99), rgba(21, 7, 38, 0.99)); animation: slideUp 0.25s ease-out both;
+}
+.labs-caja h2 { margin: 0; }
+.labs-texto, .labs-nombre {
+  width: 100%; font: 700 16px/1.4 var(--font-body); color: var(--ink); background: rgba(0, 0, 0, 0.3);
+  border: 2px solid transparent; border-radius: 14px; padding: 12px 14px; outline: none;
+}
+.labs-texto { resize: vertical; }
+.labs-texto:focus, .labs-nombre:focus { border-color: var(--cyan); }
+.labs-error { color: var(--pink); font-weight: 800; min-height: 1em; }
+.labs-error:empty { display: none; }
+.labs-aviso { margin: 0; font-weight: 800; line-height: 1.5; }
+.labs-caja details summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; }
+.labs-contexto { font-size: 0.72rem; white-space: pre-wrap; overflow-wrap: anywhere; color: var(--muted); margin: 6px 0 0; }
+.topbar .labs-bicho { flex: none; border-color: rgba(255, 122, 26, 0.6); font-size: 1.1rem; }

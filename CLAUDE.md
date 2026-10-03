@@ -107,7 +107,7 @@ node copa/store.test.mjs
 node copa/planilla.test.mjs            # la tabla final como CSV (D-161)
 node copa/reportes.test.mjs             # un reporte que no sale queda guardado y se reenvía
 node assets/js/arrastre.test.mjs
-node assets/js/i18n.test.mjs             # paridad es/en/pt (C-3)
+node assets/js/i18n.test.mjs             # paridad es/en/pt/de (C-3, D-190)
 node assets/js/compartir.test.mjs        # el estándar de lo que se comparte (D-165)
 node assets/js/transport/cleanup.test.mjs
 node assets/js/transport/dispose.test.mjs
@@ -225,6 +225,18 @@ entero** (el skill `video-promo` lo carga) y al terminar se anota la vuelta ahí
 
 ```bash
 marketing/video-promo/construir.sh       # rehace el video entero (sitio servido en $SITIO)
+```
+
+## El alemán en el laboratorio (D-190)
+
+El alemán tiene todos sus textos pero solo se ofrece en el dispositivo que entra por `/labs/de/`
+(o un link con `?lang=de`): ahí los "‹ Menú" vuelven al laboratorio y 🐞 manda comentarios a
+`feedback/`. El plan, lo que falta para publicarlo y el **glosario** que toda traducción respeta
+están en [docs/ALEMAN.md](docs/ALEMAN.md). Un texto nuevo para el jugador va también en `DE`: la
+prueba de paridad lo exige.
+
+```bash
+node tools/e2e/mirar.mjs dudo intro --idioma de --ancho 320   # pone la marca del laboratorio sola
 ```
 
 ## Reportes de La Copa
