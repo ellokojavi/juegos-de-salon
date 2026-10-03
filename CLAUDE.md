@@ -164,6 +164,14 @@ node tools/reglas.mjs revisar      # ¿lo publicado es lo del repo?
 Necesita la llave de la cuenta de servicio en `~/.config/juegos-de-salon/firebase-admin.json`
 (fuera del repo). Si no está, el script dice cómo crearla.
 
+## Textos para el jugador
+
+Antes de escribir instrucciones, ayudas o bajadas, leer U-1, U-8 y **U-18** en
+[docs/USABILIDAD.md](docs/USABILIDAD.md): la meta primero y con verbo, a lo más 3 puntos, nada
+de lo que el dibujo de ejemplo ya muestra y el puntaje en una frase, en frases completas.
+`node copa/juegos/juegos.test.mjs` frena unas instrucciones de minijuego que pasen de 280
+caracteres (D-184).
+
 ## Usabilidad (D-132)
 
 El agente `usabilidad` (`.claude/agents/usabilidad.md`) revisa cada PR antes de mostrárselo al

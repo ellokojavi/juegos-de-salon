@@ -81,8 +81,8 @@ export const dentro = ([x, y]) => [
  * curva leve y solo de dibujo: los cruces se siguen decidiendo sobre la recta (`cruces`), así que
  * tiene que ser lo bastante chica para que lo que se ve y lo que se cuenta no se contradigan.
  */
-export const ONDA = 0.06;
-export const ONDA_MAX = 34;
+export const ONDA = 0.045;
+export const ONDA_MAX = 26;
 
 /** Un entero de 32 bits revuelto: la forma de cada hilo sale de sus dos nudos, igual en cada redibujo. */
 const revolver = n => { n = Math.imul(n ^ (n >>> 16), 0x45d9f3b); n = Math.imul(n ^ (n >>> 16), 0x45d9f3b); return (n ^ (n >>> 16)) >>> 0; };
@@ -105,19 +105,19 @@ export function cuerda(a, b, semilla, { onda = ONDA, tope = ONDA_MAX } = {}) {
 
 /**
  * La segunda onda (D-183): sobre la curva leve, una ondulación más corta y más baja, como la que
- * deja la torsión de una cuerda. Va de 2 a 4 vueltas según el largo, con su fase propia, y se
- * apaga en las puntas (envolvente seno) para que el hilo siga naciendo en el centro del nudo.
+ * deja la torsión de una cuerda. Va de 2 a 3 vueltas según el largo, con su fase propia (más baja
+ * y más larga desde D-185: en D-183 se veía demasiado ondulada), y se apaga en las puntas (envolvente seno) para que el hilo siga naciendo en el centro del nudo.
  */
-export const ONDA2 = 0.016;
-export const ONDA2_MAX = 8;
-const VUELTA = 150;   // cuánto mide, en unidades del tablero, una vuelta de la segunda onda
+export const ONDA2 = 0.007;
+export const ONDA2_MAX = 3.5;
+const VUELTA = 230;   // cuánto mide, en unidades del tablero, una vuelta de la segunda onda
 
 /** Los puntos de una cuerda: la curva leve con la segunda onda encima, de `a` a `b`. */
 export function puntosCuerda(a, b, semilla, { onda = ONDA, tope = ONDA_MAX, onda2 = ONDA2, tope2 = ONDA2_MAX } = {}) {
   const [c1, c2] = cuerda(a, b, semilla, { onda, tope });
   const h = revolver(semilla * 7 + 3);
   const largo = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1;
-  const vueltas = Math.max(2, Math.min(4, Math.round(largo / VUELTA)));
+  const vueltas = Math.max(2, Math.min(3, Math.round(largo / VUELTA)));
   const fase = (h & 1023) / 1023 * 2 * Math.PI;
   const alto = Math.min(tope2, onda2 * largo);
   const n = Math.max(10, Math.min(48, Math.round(largo / 18)));

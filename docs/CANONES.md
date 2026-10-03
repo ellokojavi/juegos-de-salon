@@ -12,6 +12,7 @@ Cada canon tiene un ID (C-n) para citarlo en el código, en los commits y en las
 ## C-1 · Identidad y tono
 
 - Español chileno informal por defecto; inglés y portugués son opcionales y se eligen a mano (C-3). Tuteo, humor liviano, sin groserías fuertes.
+- **Instrucciones concisas** (U-8, U-18, D-184): la meta primero y con verbo, a lo más 3 puntos, nada de lo que el dibujo de ejemplo ya muestra y el puntaje en una frase. Un tope en `copa/juegos/juegos.test.mjs` frena lo que se pasa. Concisas no es telegrama: frases completas (U-1).
 - Paleta y tipografías compartidas desde `assets/css/base.css`: fondo oscuro con degradados, acentos neón (rosado, amarillo, cian, lima), **Bangers** en títulos y **Nunito** en el cuerpo.
 - **Las cifras que el jugador lee o compara** (teclados, intentos, números secretos) van en `var(--font-num)` (Nunito 900) con `tabular-nums`, nunca en Bangers: ahí el 1 y el 7 son casi el mismo trazo y los jugadores se equivocan (D-30). Bangers se queda en títulos, nombres, palabras y códigos de sala (letras, sin I ni O).
 - Nada de estilos "de marca" propios por juego: un juego puede tener colores temáticos (el mar en Batalla Naval), pero botones, paneles, chips y títulos salen de las clases comunes.
@@ -273,6 +274,7 @@ como un error: se lee como que nadie jugó.
 ## Lista de chequeo antes de dar por listo un juego
 
 - [ ] Los tres modos funcionan y la partida se puede retomar en **todos** (C-5, C-6).
+- [ ] Las instrucciones siguen U-18: la meta primero, a lo más 3 puntos, sin repetir el dibujo de ejemplo (C-1).
 - [ ] Todo el texto está en español, inglés y portugués, con las mismas claves en los tres, sin cadenas sueltas en el código (C-3).
 - [ ] Hay sonido y vibración en las acciones clave, con botón de silencio (C-4).
 - [ ] Los botones tienen 44 px, los botones finales se ven sin desplazar y no hay scroll horizontal (C-8).
