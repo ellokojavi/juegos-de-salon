@@ -6,7 +6,31 @@
 import { el } from './ui.js';
 
 const KEY = 'juegos-de-salon:lang';
-export const LANGS = ['es', 'en', 'pt'];
+
+/** Todos los idiomas que tienen diccionario. Las pruebas de paridad los recorren todos (C-3). */
+export const IDIOMAS = ['es', 'en', 'pt', 'de'];
+
+/**
+ * Los idiomas que están en el laboratorio (D-190): tienen sus textos, pero solo se ofrecen en el
+ * dispositivo que entró por `/labs/<idioma>/` o por un link con `?lang=<idioma>`. Ahí quedan
+ * marcados en `LABS_KEY`; en todos los demás la app sigue en español, inglés y portugués.
+ */
+export const EN_LABS = ['de'];
+export const LABS_KEY = 'juegos-de-salon:labs-idioma';
+
+function idiomaDeLabs() {
+  try {
+    const pedido = (new URLSearchParams(location.search).get('lang') || '').toLowerCase();
+    if (EN_LABS.includes(pedido)) localStorage.setItem(LABS_KEY, pedido);
+    const v = localStorage.getItem(LABS_KEY);
+    return EN_LABS.includes(v) ? v : '';
+  } catch (_) { return ''; }
+}
+/** El idioma del laboratorio activo en este dispositivo, o '' si no hay. */
+export const LABS_IDIOMA = idiomaDeLabs();
+
+/** Los idiomas que se ofrecen aquí: los de siempre y, en el laboratorio, el suyo. */
+export const LANGS = IDIOMAS.filter(l => !EN_LABS.includes(l) || l === LABS_IDIOMA);
 
 export function getLang() {
   try { const v = localStorage.getItem(KEY); if (LANGS.includes(v)) return v; } catch (_) { /* nada */ }
@@ -49,6 +73,11 @@ function idiomaDeLaUrl() {
 }
 idiomaDeLaUrl();
 
+// En el laboratorio, cada página suma sus pestañas 🧪 y 🐞 y no deja que la navegación se salga
+if (LABS_IDIOMA && typeof document !== 'undefined') {
+  import('./labs-idioma.js').then(m => m.iniciarLabs(LABS_IDIOMA)).catch(() => {});
+}
+
 /** La app en la web. Las puertas por idioma son /pt/ y /en/ (D-74). */
 export const SITIO = 'https://juegosdesalon.cl/';
 
@@ -57,7 +86,7 @@ export const SITIO = 'https://juegosdesalon.cl/';
  * Es la misma idea que `withLang` —quien manda el link elige con qué idioma llega— pero con
  * las puertas, que son las que traen su propia tarjeta social en ese idioma (D-74).
  */
-export const homeUrl = (lang = getLang()) => SITIO + (lang === 'es' ? '' : `${lang}/`);
+export const homeUrl = (lang = getLang()) => SITIO + (lang === 'es' ? '' : EN_LABS.includes(lang) ? `labs/${lang}/` : `${lang}/`);
 
 /**
  * Un link para compartir, con el idioma pegado si no es el de siempre. Así el que recibe la
@@ -135,6 +164,26 @@ export const COMMON = {
     shareCopied: 'Copiado! Cole no chat.',
     shareDownloaded: 'A imagem foi baixada e o texto foi copiado.',
   },
+  de: {
+    appTitle: 'Salonspiele',
+    appSub: 'Klassische Spiele auf deinem Handy, für allein oder mit Freunden.',
+    players: 'Spieler', minutes: 'Min.',
+    footer: 'Trink verantwortungsvoll und hab Wasser dabei. Wer fährt, trinkt nicht. 🚕',
+    player: 'Spieler',
+    filters: 'Spiele filtern',
+    shown: 'Du siehst {n} von {total} Spielen.', clearFilters: 'Alle zeigen',
+    onlySpanish: 'Auf Spanisch',
+    code: 'Code auf GitHub', menu: 'Menü', soon: 'Demnächst', or: 'oder',
+    share: 'Salonspiele teilen',
+    shareText: 'Klassische Spiele mit Freunden, direkt auf dem Handy. Gratis, ohne Installation und ohne Konto.',
+    invite: '{emoji} *{game}* · Raum {code}\n\n👋 {name} lädt dich zum Spielen auf juegosdesalon.cl ein.',
+    shareResult: '📤 Ergebnis teilen',
+    shareSoloContext: 'Allein gespielt',
+    shareSoloCta: '🤔 Schlägst du mich? Gratis auf dem Handy spielen:',
+    shareSoloImage: '🤔 Schlägst du mich?',
+    shareCopied: 'Kopiert! Füg es im Chat ein.',
+    shareDownloaded: 'Das Bild wurde gespeichert und der Text kopiert.',
+  },
 };
 
 /** Devuelve `obj[lang]` si es un objeto por idioma; si no, el valor tal cual. */
@@ -149,8 +198,8 @@ export function pickLang(obj, lang = getLang()) {
  */
 export function langToggle(onChange = () => location.reload()) {
   const current = getLang();
-  const wrap = el('div', { class: 'lang-toggle', role: 'group', 'aria-label': 'Idioma / Language / Idioma' });
-  const labels = { es: '🇨🇱 ES', en: '🇬🇧 EN', pt: '🇧🇷 PT' };
+  const wrap = el('div', { class: 'lang-toggle', role: 'group', 'aria-label': 'Idioma / Language / Idioma / Sprache' });
+  const labels = { es: '🇨🇱 ES', en: '🇬🇧 EN', pt: '🇧🇷 PT', de: '🇩🇪 DE' };
   for (const lang of LANGS) {
     wrap.append(el('button', {
       type: 'button', class: lang === current ? 'on' : '', 'aria-pressed': lang === current ? 'true' : 'false',

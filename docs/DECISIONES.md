@@ -2781,3 +2781,39 @@ producción (avisado en la guía). Publicar reglas de Firebase, el panel y los r
 siendo del dueño: necesitan su llave.
 **Alternativas descartadas:** sumarlo como colaborador con escritura (podría saltarse el PR); una
 licencia GPL (el dueño eligió MIT).
+
+## D-190 · Un idioma nuevo entra por el laboratorio: el alemán
+**Fecha:** 2026-10-03 · **Estado:** vigente
+**Decisión:** El alemán (**Salonspiele**) se suma completo —los textos de los ocho juegos, las
+frases, los mazos, las grillas y palabras de La Copa y los nombres de ¿Dónde queda?— pero **solo
+se ofrece en el laboratorio**: en el dispositivo que entra por `/labs/de/` o por un link con
+`?lang=de`. En `assets/js/i18n.js`, `IDIOMAS` son todos los que tienen diccionario (las pruebas
+de paridad los recorren todos) y `LANGS` los que se ofrecen en ese dispositivo; `EN_LABS` dice
+cuáles están en el laboratorio. Ahí, `assets/js/labs-idioma.js` hace que los links al menú y a
+`/labs/` vuelvan a `/labs/de/` y pone un botón 🐞 en la barra de arriba que manda comentarios a
+`feedback/` (D-104) con el contexto: página, pantalla, idioma, tamaño y versión. "Labor
+verlassen" saca la marca y deja la app en inglés. Ver [ALEMAN.md](ALEMAN.md).
+**Por qué:** el dueño quiere que amigos que hablan alemán lo revisen antes de publicarlo. Un
+borrador hecho con IA no puede aparecer en el toggle de todos, pero los amigos tienen que poder
+jugarlo de verdad, en su celular, con salas y copas reales. Un dispositivo marcado no se sale del
+laboratorio sin querer: un "‹ Menú" que llevara a la portada de siempre lo dejaría sin forma de
+volver ni de comentar.
+**Arreglos que salieron de medir el alemán** (con un pseudo-alemán ~40 % más largo y después con
+los textos de verdad, a 320 px):
+- Los títulos con degradado (`.rainbow`) cortaban los acentos sobre mayúscula (ya pasaba con
+  SALÓN y SALÃO): un relleno arriba agranda la caja pintada.
+- La barra de arriba: "‹ Menú" no se achica y el chip del juego se corta con "…" en vez de bajar
+  a dos líneas (ya pasaba con "⚓ Batalla Naval").
+- Con `lang="de"`, guiones automáticos (`hyphens: auto`) y, si igual no cabe, la palabra se parte.
+- Lo que caía al español sin avisar: "v. Chr.", fechas y números `de-DE`, el alfabeto del
+  Ahorcado, el teclado QWERTZ de Palabra (con un hueco donde el español tiene la Ñ, así la Z en
+  inglés y la Y en alemán ya no cuelgan al final de la segunda fila).
+- De paso: Palabra mostraba "null" mientras no se encontraba ninguna letra, y el título de la
+  pestaña de La Copa decía "Juegos de Salón" en cualquier idioma.
+**Consecuencias:** las reglas de Firebase aceptan `lang: "de"` en una copa (se publican al
+fusionar, D-122). Sacar el alemán del laboratorio es quitarlo de `EN_LABS` y sumar su puerta
+`/de/` con la tarjeta social; lo que falta está en ALEMAN.md. Otro idioma puede entrar igual.
+**Alternativas descartadas:** sumarlo al toggle de todos con un aviso de borrador (se ve en el
+toggle de quien no lo pidió); una copia aparte de la app en `/labs/de/` (se desactualiza al tiro y
+no prueba las salas de verdad); que el alemán faltante cayera al inglés (esconde lo que falta
+traducir: la prueba de paridad no lo vería).

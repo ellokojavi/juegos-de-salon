@@ -173,4 +173,62 @@ const PT = {
   resumeTitle: '⏯ Tem uma partida pela metade', resume: 'Continuar', delete: 'Apagar',
 };
 
-export const LOCALES = { es: ES, en: EN, pt: PT };
+const DE = {
+  docTitle: 'Bullen und Kühe 🔢 · Salonspiele', gameChip: '🔢 Bullen und Kühe', menu: '‹ Menü',
+  title: 'Bullen und Kühe',
+  lead: 'Jeder wählt eine geheime Zahl ohne doppelte Ziffern. Knack die Zahl deines Gegners, bevor er deine knackt.',
+  howTitle: '🧠 So geht’s',
+  howText: 'Für jeden Versuch bekommst du Hinweise: Ein <b>Bulle</b> ist eine richtige Ziffer an der richtigen Stelle, eine <b>Kuh</b> eine richtige Ziffer an der falschen Stelle. Wer die Zahl zuerst knackt, gewinnt.',
+  example: 'Beispiel: geheime Zahl 1234, Versuch 1356 → 1 Bulle (die 1) und 1 Kuh (die 3).',
+  modeLocal: '📱 Ein Handy, zwei Spieler', modeLocalHint: 'Ihr reicht das Handy weiter. Zwischen den Zügen wird der Bildschirm verdeckt.',
+  modeOnline: '📡 Zwei Handys', modeOnlineHint: 'Jeder spielt auf seinem eigenen Handy.',
+  modeSolo: '🧍 Allein spielen', modeSoloHint: 'Das Handy wählt die geheime Zahl und du knackst sie.',
+  // Einstellungen
+  setupTitle: 'Wie spielen wir?', digits: 'Ziffern', replica: 'Recht auf Antwort', replicaHint: 'Knackt der Startspieler die Zahl, hat der andere noch einen letzten Versuch zum Ausgleich.',
+  zeroFirst: 'Null am Anfang erlauben', yourName: 'Dein Name', p1: 'Spieler 1', p2: 'Spieler 2',
+  start: 'Los geht’s!', create: 'Raum erstellen', joinTitle: 'Einem Raum beitreten', codePlaceholder: 'CODE', join: 'Beitreten',
+  errName: 'Der Name fehlt.', errNames: 'Namen fehlen oder sind doppelt.', errCode: 'Der Code hat 4 Buchstaben.',
+  errNotFound: 'Diesen Raum gibt es nicht. Prüf den Code.', errFull: 'Der Raum ist schon voll.', errExpired: 'Dieser Raum ist abgelaufen.', errOtherGame: 'Dieser Code gehört zu einem anderen Spiel.', errNet: 'Keine Verbindung. Hast du Internet?',
+  errOffline: 'Der Raum ließ sich nicht öffnen. Vielleicht liegt es an deinem Internet oder es spielen gerade sehr viele. Versuch es in ein paar Minuten nochmal oder spiel mit einem Handy, dafür brauchst du kein Internet.',
+  errTooMany: 'Du hast viele Räume hintereinander geöffnet. Warte kurz und versuch es nochmal.',
+  // Raum
+  chatTitle: 'Raum-Chat', chatOpen: 'Chat öffnen', chatClose: 'Chat schließen', chatSend: 'Senden',
+  chatPlaceholder: 'Schreib was…', chatEmpty: 'Hier könnt ihr euch beim Raten necken. Der Chat wird gelöscht, wenn das Spiel endet.',
+  invitedTitle: 'Du bist eingeladen!', invited: '📩 Raum {code}', invitedHint: 'Gib deinen Namen ein und steig ein. Wer dich eingeladen hat, stellt das Spiel ein.',
+  lobbyTitle: 'Raum erstellt', lobbyCode: 'Code', lobbyShare: 'Sag deinem Gegner den Code oder lass ihn den QR-Code scannen.', lobbyWaiting: 'Warte auf deinen Gegner', lobbyJoined: '{name} ist dabei!', shareLink: '📤 Link teilen', copyLink: '📋 Link kopieren', copied: 'Kopiert!',
+  lobbyCancel: 'Raum auflösen', lobbyLeave: 'Raum verlassen',
+  // Geheimzahl
+  secretTitle: 'Deine geheime Zahl', secretFor: 'Geheime Zahl von {name}', secretHint: '{n} verschiedene Ziffern. Nicht spicken lassen.', secretHintNoZero: '{n} verschiedene Ziffern, ohne Null am Anfang. Nicht spicken lassen.',
+  confirm: 'Los!', hide: 'Verdecken', tapToReveal: 'Tippen zum Ansehen', secretSaved: 'Geheime Zahl gespeichert 🔒',
+  waitingSecret: 'Warte, bis {name} eine geheime Zahl wählt', bothReady: 'Beide bereit!',
+  // Spiel
+  turnYou: 'Du bist dran! Rate die Zahl von {name}', turnOther: '{name} ist dran…', waitingReply: 'Warte auf die Antwort…', round: 'Runde {n}',
+  blockHint: '💡 Halte eine Ziffer gedrückt, um sie durchzustreichen. Nochmal, um es rückgängig zu machen.',
+  mySecret: 'Deine geheime Zahl', tapToShow: 'tippen zum Zeigen', tapToHide: 'tippen zum Verbergen',
+  guess: 'Raten', famas: 'Bullen', toques: 'Kühe', fama: 'Bulle', toque: 'Kuh', none: 'nichts', famaShort: 'B', toqueShort: 'K',
+  boardOf: 'Versuche von {name}', noGuesses: 'Noch keine Versuche', tries: '{n} {word}', tryOne: 'Versuch', tryMany: 'Versuche',
+  replicaNotice: '{name} hat sie geknackt! {other} hat noch einen letzten Versuch zum Ausgleich.',
+  // allein spielen
+  soloHow: [
+    'Die geheime Zahl hat 4 verschiedene Ziffern und kann mit Null beginnen.',
+    'Gib eine Zahl ein und tippe auf Raten, um ihre Bullen und Kühe zu sehen.',
+    'Du hast 10 Versuche und die Uhr läuft, während du spielst.',
+  ],
+  scoringTitle: '🏅 Punkte',
+  soloScoring: 'Knackst du sie beim ersten Versuch, gibt es 100 Punkte, für jeden weiteren Versuch 10 weniger. Knackst du sie nicht, gibt es 0 Punkte.',
+  soloStart: '🔢 Starten', soloTitle: '🔢 Zahl knacken', soloTimer: '⏱ {t}',
+  triesLeft: 'Noch {n} Versuche.', tryLeft1: 'Noch 1 Versuch.', yourGuesses: 'Deine Versuche',
+  solved: 'Geknackt!', notSolved: 'Keine Versuche mehr. Die Zahl war {v}.', seeResults: 'Ergebnis',
+  offline: 'Gegner getrennt. Warte, bis er zurückkommt…', reconnecting: 'Verbinde neu…',
+  // Handy weitergeben
+  hoPass: 'Gib das Handy an', hoReady: 'Bereit, ich bin’s!', hoResult: 'Antwort', hoContinue: 'Weiter',
+  // Ergebnis
+  winTitle: '{name} gewinnt!', tieTitle: 'Unentschieden!', youWin: 'Du hast gewonnen!', youLose: 'Verloren… diesmal.',
+  inTries: '({n} {word})', secretsWere: 'Die geheimen Zahlen waren', replayTitle: '🔎 Alle Versuche ansehen', verified: 'geprüft ✅', notVerified: '⚠️ passt nicht (geschummelt?)',
+  rematch: '🔁 Revanche', rematchWaiting: 'Warte auf {name} für die Revanche', changeMode: 'Modus ändern', backMenu: 'Zurück zum Menü',
+  soloWin: 'Geknackt!', soloLose: 'Nicht geknackt', yourScore: 'Deine Punkte', soloSummary: 'Du hast {n} {word} gebraucht, die Uhr zeigte {t}.',
+  newRecord: '🏆 Neuer Rekord!', prevRecord: 'Dein Rekord: {s} Punkte in {t}.', soloSecretWas: 'Die geheime Zahl war', playAgain: '🔁 Nochmal spielen',
+  resumeTitle: '⏯ Ein Spiel ist noch offen', resume: 'Weiter', delete: 'Löschen',
+};
+
+export const LOCALES = { es: ES, en: EN, pt: PT, de: DE };
