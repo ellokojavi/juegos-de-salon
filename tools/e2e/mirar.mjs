@@ -54,6 +54,14 @@ const BN_FALLA = rol => `(()=>{const S=window.__bn.session(),L=S.layouts['${rol 
   for(const [id,p] of Object.entries(L)) for(let i=0;i<T[id];i++) o.add((p.dir==='h'?p.r:p.r+i)+','+(p.dir==='h'?p.c+i:p.c));
   for(let r=0;r<10;r++) for(let c=0;c<10;c++) if(!o.has(r+','+c)) return S.transport.send({t:'shot',from:'${rol}',cell:'ABCDEFGHIJ'[c]+(r+1)});})()`;
 
+/* --- Tango: empezar y llenar el tablero con el motor de verdad (ver su entrada) --- */
+const TAN_EMPEZAR = `document.getElementById('btn-empezar').click()`;
+const TAN_LLENAR = choque => `(async()=>{const {JUEGOS}=await import('/copa/juegos/index.js');const p=JUEGOS.tango.generar(__copa.estado.juego.semilla,1);
+  const L=p.sol.map((v,i)=>i).filter(i=>p.dadas[i]===undefined), u=${choque}?L.filter(i=>p.sol[i]===2).at(-1):L.at(-1);
+  const c=i=>document.querySelector('.tan[data-i="'+i+'"]');
+  for(const i of L){if(i===u)continue;for(let k=0;k<3&&Number(c(i).dataset.v)!==p.sol[i];k++)c(i).click();}
+  if(${choque})c(u).click();})()`;
+
 /**
  * Cómo llegar a cada pantalla. Cada paso es un trocito de JS que se corre en la página;
  * si un juego necesita otra cosa, se suma acá y no en un guion nuevo.
@@ -278,6 +286,16 @@ const CAMINOS = {
     ],
   },
   /**
+   * Tango suelto, el minijuego ☀️ de La Copa. `juego` es el tablero lleno menos una casilla,
+   * para comparar el sol dado con el jugado (#61); `choque`, lleno con un último sol que choca,
+   * que es el único choque que se ve sin tocar otra casilla (#135).
+   */
+  'minijuegos/tango': {
+    intro: [],
+    juego: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, TAN_LLENAR(false)],
+    choque: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, TAN_LLENAR(true)],
+  },
+  /**
    * El panel del dueño no es un juego, pero se mira igual: `window.__panel.seed` lo dibuja
    * con datos sembrados, sin entrar con Google ni tocar la base (C-14). Los datos traen a
    * propósito un juego (`juego-nuevo`), un modo (`equipos`) y un idioma (`fr`) que no están
@@ -337,7 +355,8 @@ const revision = await b.evaluate(`(()=>{
   });
 })()`).then(JSON.parse);
 
-const nombre = `${juego}-${pantalla}-${ancho}`;
+// Los minijuegos sueltos viven en una subcarpeta (minijuegos/tango): la captura queda plana
+const nombre = `${juego.replace(/\//g, "-")}-${pantalla}-${ancho}`;
 await b.shot(nombre);
 console.log(`${salida}/${nombre}.png · ${ancho}×${alto} · ${idioma}`);
 console.log(`  pantalla: ${revision.pantalla}`);
