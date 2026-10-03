@@ -296,7 +296,8 @@ button.md-fila { cursor: pointer; }
 .keypad--letras { max-width: 460px; gap: 4px; }
 .keypad--letras button { font: 900 1.05rem var(--font-body); min-height: 48px; padding: 0; }
 .keypad--letras button.del, .keypad--letras button.ok { grid-column: span 2; }
-.keypad--letras button.ok { font-size: 1.3rem; grid-column: span 3; }
+/* Probar no cabe junto a ⌫ y caía solo a la izquierda de una fila nueva: va a lo ancho, centrado (U-11) */
+.keypad--letras button.ok { font-size: 1.3rem; grid-column: 1 / -1; }
 .letras-juego .entry .box { width: clamp(44px, 14vw, 58px); font-family: var(--font-body); }
 .board li .val.letras { display: flex; gap: 3px; letter-spacing: 0; }
 .letra { display: inline-grid; place-items: center; width: 1.6em; height: 1.6em; border-radius: 6px; font: 900 0.95rem var(--font-body); background: rgba(255,255,255,0.1); }
