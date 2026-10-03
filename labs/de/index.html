@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#150726">
+  <!-- El laboratorio no se anuncia: no está en el menú ni en los buscadores (D-101) -->
+  <meta name="robots" content="noindex, nofollow">
+  <title>Deutsch-Labor 🧪 · Salonspiele</title>
+  <link rel="icon" href="../../assets/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../assets/css/base.css?v=0.90.0">
+  <!--
+    La portada del alemán en el laboratorio (D-191). Entrar aquí deja el alemán disponible en este
+    dispositivo: el toggle muestra DE, los links al menú vuelven aquí y en cada página aparecen 🧪
+    y 🐞 (assets/js/labs-idioma.js). La primera vez la app queda en alemán; después se respeta lo
+    que la persona elija en el toggle. Va antes de cargar los módulos: i18n.js lee la marca al
+    cargarse.
+  -->
+  <script>
+    try {
+      if (localStorage.getItem('juegos-de-salon:labs-idioma') !== 'de') {
+        localStorage.setItem('juegos-de-salon:labs-idioma', 'de');
+        localStorage.setItem('juegos-de-salon:lang', 'de');
+      }
+    } catch (_) { /* sin almacenamiento: el alemán igual llega por ?lang=de */ }
+  </script>
+  <style>
+    .hero { text-align: center; padding: 6px 0 4px; }
+    .hero .icon { font-size: 3.6rem; display: block; }
+    .hero h1 { margin: 4px 0; }
+    .aviso-labs { border-color: rgba(255, 122, 26, 0.55); }
+    .seccion { display: grid; gap: 10px; }
+    .seccion h2 { font-family: var(--font-display); font-size: 1.6rem; letter-spacing: 0.04em; margin: 0; }
+    ol.pasos { margin: 0; padding-left: 1.3em; display: grid; gap: 8px; font-weight: 700; line-height: 1.45; }
+    .juegos { display: grid; gap: 8px; }
+    .juego {
+      display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 12px; text-decoration: none; color: var(--ink);
+      background: rgba(0,0,0,0.25); border: 2px solid var(--glass-border); border-radius: 14px; padding: 10px 12px; min-height: 52px;
+    }
+    .juego > span:first-child { font-size: 1.8rem; }
+    .juego b { display: block; font-weight: 900; }
+    .juego small { display: block; color: var(--muted); font-weight: 700; font-size: 0.8rem; line-height: 1.35; }
+    .btn { text-decoration: none; display: flex; align-items: center; justify-content: center; }
+    .link-btn { background: none; border: 0; color: var(--muted); font: 700 0.9rem var(--font-body); text-decoration: underline; cursor: pointer; min-height: 44px; padding: 0 8px; }
+  </style>
+  <script type="importmap" id="importmap">{"imports": {"../../assets/js/ui.js": "../../assets/js/ui.js?v=0.90.0", "../../assets/js/compartir.js": "../../assets/js/compartir.js?v=0.90.0", "../../assets/js/i18n.js": "../../assets/js/i18n.js?v=0.90.0", "../../assets/js/sound.js": "../../assets/js/sound.js?v=0.90.0", "../../assets/js/games.js": "../../assets/js/games.js?v=0.90.0", "../../assets/js/firebase-config.js": "../../assets/js/firebase-config.js?v=0.90.0", "../../assets/js/frases.js": "../../assets/js/frases.js?v=0.90.0", "../../assets/js/azar.js": "../../assets/js/azar.js?v=0.90.0", "../../assets/js/dado3d.js": "../../assets/js/dado3d.js?v=0.90.0", "../../cuarto-rey/game.js": "../../cuarto-rey/game.js?v=0.90.0", "../../cuarto-rey/rules.js": "../../cuarto-rey/rules.js?v=0.90.0", "../../toque-y-fama/game.js": "../../toque-y-fama/game.js?v=0.90.0", "../../toque-y-fama/rules.js": "../../toque-y-fama/rules.js?v=0.90.0", "../../toque-y-fama/engine.js": "../../toque-y-fama/engine.js?v=0.90.0", "../../assets/js/transport/local.js": "../../assets/js/transport/local.js?v=0.90.0", "../../assets/js/transport/firebase.js": "../../assets/js/transport/firebase.js?v=0.90.0", "../../assets/js/transport/cleanup.js": "../../assets/js/transport/cleanup.js?v=0.90.0", "../../assets/js/transport/dispose.js": "../../assets/js/transport/dispose.js?v=0.90.0", "../../assets/js/transport/errors.js": "../../assets/js/transport/errors.js?v=0.90.0", "../../assets/js/transport/ratelimit.js": "../../assets/js/transport/ratelimit.js?v=0.90.0", "../../assets/js/transport/stats.js": "../../assets/js/transport/stats.js?v=0.90.0", "../../assets/js/handoff.js": "../../assets/js/handoff.js?v=0.90.0", "../../assets/js/session.js": "../../assets/js/session.js?v=0.90.0", "../../assets/js/chat.js": "../../assets/js/chat.js?v=0.90.0", "../../assets/js/arrastre.js": "../../assets/js/arrastre.js?v=0.90.0", "../../assets/js/teclado.js": "../../assets/js/teclado.js?v=0.90.0", "../../assets/js/labs-idioma.js": "../../assets/js/labs-idioma.js?v=0.90.0", "../../batalla-naval/game.js": "../../batalla-naval/game.js?v=0.90.0", "../../batalla-naval/rules.js": "../../batalla-naval/rules.js?v=0.90.0", "../../batalla-naval/engine.js": "../../batalla-naval/engine.js?v=0.90.0", "../../batalla-naval/flota.js": "../../batalla-naval/flota.js?v=0.90.0", "../../linea-de-tiempo/game.js": "../../linea-de-tiempo/game.js?v=0.90.0", "../../linea-de-tiempo/rules.js": "../../linea-de-tiempo/rules.js?v=0.90.0", "../../linea-de-tiempo/engine.js": "../../linea-de-tiempo/engine.js?v=0.90.0", "../../linea-de-tiempo/decks/index.js": "../../linea-de-tiempo/decks/index.js?v=0.90.0", "../../linea-de-tiempo/decks/historia.js": "../../linea-de-tiempo/decks/historia.js?v=0.90.0", "../../linea-de-tiempo/decks/musica.js": "../../linea-de-tiempo/decks/musica.js?v=0.90.0", "../../linea-de-tiempo/decks/chile.js": "../../linea-de-tiempo/decks/chile.js?v=0.90.0", "../../linea-de-tiempo/decks/pop.js": "../../linea-de-tiempo/decks/pop.js?v=0.90.0", "../../linea-de-tiempo/decks/brasil.js": "../../linea-de-tiempo/decks/brasil.js?v=0.90.0", "../../linea-de-tiempo/decks/futbol.js": "../../linea-de-tiempo/decks/futbol.js?v=0.90.0", "../../ahorcado/game.js": "../../ahorcado/game.js?v=0.90.0", "../../ahorcado/rules.js": "../../ahorcado/rules.js?v=0.90.0", "../../ahorcado/engine.js": "../../ahorcado/engine.js?v=0.90.0", "../../ahorcado/decks/index.js": "../../ahorcado/decks/index.js?v=0.90.0", "../../ahorcado/decks/chile.js": "../../ahorcado/decks/chile.js?v=0.90.0", "../../ahorcado/decks/animales.js": "../../ahorcado/decks/animales.js?v=0.90.0", "../../ahorcado/decks/comida.js": "../../ahorcado/decks/comida.js?v=0.90.0", "../../ahorcado/decks/cine.js": "../../ahorcado/decks/cine.js?v=0.90.0", "../../ahorcado/decks/deportes.js": "../../ahorcado/decks/deportes.js?v=0.90.0", "../../dudo/game.js": "../../dudo/game.js?v=0.90.0", "../../dudo/rules.js": "../../dudo/rules.js?v=0.90.0", "../../dudo/engine.js": "../../dudo/engine.js?v=0.90.0", "../../julepe/game.js": "../../julepe/game.js?v=0.90.0", "../../julepe/rules.js": "../../julepe/rules.js?v=0.90.0", "../../julepe/engine.js": "../../julepe/engine.js?v=0.90.0", "../../assets/js/sobre.js": "../../assets/js/sobre.js?v=0.90.0", "../../panel/panel.js": "../../panel/panel.js?v=0.90.0", "../../panel/aggregate.js": "../../panel/aggregate.js?v=0.90.0", "../../panel/copas.js": "../../panel/copas.js?v=0.90.0", "../../copa/game.js": "../../copa/game.js?v=0.90.0", "../../copa/rules.js": "../../copa/rules.js?v=0.90.0", "../../copa/engine.js": "../../copa/engine.js?v=0.90.0", "../../copa/cuenta.js": "../../copa/cuenta.js?v=0.90.0", "../../copa/store-local.js": "../../copa/store-local.js?v=0.90.0", "../../copa/store-firebase.js": "../../copa/store-firebase.js?v=0.90.0", "../../copa/reportes.js": "../../copa/reportes.js?v=0.90.0", "../../copa/desglose.js": "../../copa/desglose.js?v=0.90.0", "../../copa/demo.js": "../../copa/demo.js?v=0.90.0", "../../copa/planilla.js": "../../copa/planilla.js?v=0.90.0", "../../copa/juegos/index.js": "../../copa/juegos/index.js?v=0.90.0", "../../copa/juegos/audiencia.js": "../../copa/juegos/audiencia.js?v=0.90.0", "../../copa/juegos/semilla.js": "../../copa/juegos/semilla.js?v=0.90.0", "../../copa/juegos/mazos.js": "../../copa/juegos/mazos.js?v=0.90.0", "../../copa/juegos/grillas.js": "../../copa/juegos/grillas.js?v=0.90.0", "../../copa/juegos/grillas-en.js": "../../copa/juegos/grillas-en.js?v=0.90.0", "../../copa/juegos/grillas-pt.js": "../../copa/juegos/grillas-pt.js?v=0.90.0", "../../copa/juegos/grillas-de.js": "../../copa/juegos/grillas-de.js?v=0.90.0", "../../copa/juegos/linea.js": "../../copa/juegos/linea.js?v=0.90.0", "../../copa/juegos/numero.js": "../../copa/juegos/numero.js?v=0.90.0", "../../copa/juegos/conexiones.js": "../../copa/juegos/conexiones.js?v=0.90.0", "../../copa/juegos/reinas.js": "../../copa/juegos/reinas.js?v=0.90.0", "../../copa/juegos/letras.js": "../../copa/juegos/letras.js?v=0.90.0", "../../copa/juegos/palabras.js": "../../copa/juegos/palabras.js?v=0.90.0", "../../copa/juegos/zip.js": "../../copa/juegos/zip.js?v=0.90.0", "../../copa/juegos/desenredo.js": "../../copa/juegos/desenredo.js?v=0.90.0", "../../copa/juegos/tango.js": "../../copa/juegos/tango.js?v=0.90.0", "../../copa/juegos/anio.js": "../../copa/juegos/anio.js?v=0.90.0", "../../copa/juegos/final.js": "../../copa/juegos/final.js?v=0.90.0", "../../copa/juegos/donde.js": "../../copa/juegos/donde.js?v=0.90.0", "../../copa/juegos/ciudades.js": "../../copa/juegos/ciudades.js?v=0.90.0", "../../copa/juegos/nombres.js": "../../copa/juegos/nombres.js?v=0.90.0", "../../copa/juegos/mapa.js": "../../copa/juegos/mapa.js?v=0.90.0", "../../copa/juegos/globo.js": "../../copa/juegos/globo.js?v=0.90.0", "../../copa/juegos/ui-donde.js": "../../copa/juegos/ui-donde.js?v=0.90.0", "../../copa/juegos/ui-linea.js": "../../copa/juegos/ui-linea.js?v=0.90.0", "../../copa/juegos/ui-numero.js": "../../copa/juegos/ui-numero.js?v=0.90.0", "../../copa/juegos/ui-conexiones.js": "../../copa/juegos/ui-conexiones.js?v=0.90.0", "../../copa/juegos/ui-reinas.js": "../../copa/juegos/ui-reinas.js?v=0.90.0", "../../copa/juegos/ui-letras.js": "../../copa/juegos/ui-letras.js?v=0.90.0", "../../copa/juegos/ui-zip.js": "../../copa/juegos/ui-zip.js?v=0.90.0", "../../copa/juegos/ui-desenredo.js": "../../copa/juegos/ui-desenredo.js?v=0.90.0", "../../copa/juegos/ui-tango.js": "../../copa/juegos/ui-tango.js?v=0.90.0", "../../copa/juegos/ui-anio.js": "../../copa/juegos/ui-anio.js?v=0.90.0", "../../copa/juegos/ui-final.js": "../../copa/juegos/ui-final.js?v=0.90.0", "../../copa/juegos/solo.js": "../../copa/juegos/solo.js?v=0.90.0"}}</script>
+</head>
+<body>
+  <main class="app">
+    <div class="topbar" style="justify-content:flex-end">
+      <div class="tools"><div id="lang-slot"></div><span id="sound-slot"></span></div>
+    </div>
+
+    <div class="hero">
+      <span class="icon">🧪</span>
+      <h1 class="display display--lg rainbow">Deutsch-Labor</h1>
+      <p class="lead">Salonspiele lernt gerade Deutsch. Hilf uns dabei!</p>
+    </div>
+
+    <div class="stack">
+      <section class="panel seccion aviso-labs">
+        <h2>So geht's</h2>
+        <ol class="pasos">
+          <li>Spiel ein paar Runden: allein, zu zweit an einem Handy oder online mit Freunden.</li>
+          <li>Achte auf die Texte: abgeschnitten, holprig, falsch übersetzt oder einfach nicht so, wie man es sagt.</li>
+          <li>Tipp oben auf 🐞 und schreib, was dir auffällt – am besten nach dem Spiel, denn die Uhr läuft weiter. „‹ Menü“ bringt dich hierher zurück.</li>
+        </ol>
+        <button type="button" class="btn btn--yellow" id="btn-feedback">🐞 Feedback geben</button>
+        <p class="muted" style="margin:0">Die Übersetzung ist ein erster Entwurf. Lieber zu viel Feedback als zu wenig – auch Kleinigkeiten helfen.</p>
+      </section>
+
+      <section class="panel seccion">
+        <h2>Spiele</h2>
+        <div class="juegos" id="juegos"></div>
+      </section>
+
+      <section class="panel seccion">
+        <h2>Minispiele</h2>
+        <p class="muted" style="margin:0">Die Spiele aus dem Pokal, einzeln und allein gespielt.</p>
+        <div class="juegos" id="minis"></div>
+      </section>
+
+      <a class="btn btn--ghost" href="../../" data-labs-libre>🏠 Die Startseite ansehen</a>
+    </div>
+
+    <footer class="muted" style="text-align:center;padding-top:24px;font-size:0.85rem">
+      <p id="labs-version">Version: …</p>
+      <button type="button" class="link-btn" id="btn-salir">Labor verlassen</button>
+    </footer>
+  </main>
+
+  <script type="module">
+    import { sparkles, el, con } from '../../assets/js/ui.js';
+    import { soundToggle, initSound, SFX } from '../../assets/js/sound.js';
+    import { langToggle, setLang, getLang, pickLang, LABS_KEY } from '../../assets/js/i18n.js';
+    import { GAMES, SUELTOS } from '../../assets/js/games.js';
+    import { versionOf } from '../../assets/js/transport/stats.js';
+    import { abrirFeedback } from '../../assets/js/labs-idioma.js';
+    sparkles();
+    initSound();
+    document.documentElement.lang = getLang();
+    document.getElementById('sound-slot').append(soundToggle());
+    document.getElementById('lang-slot').append(langToggle());
+    document.addEventListener('click', e => { if (e.target.closest('a')) SFX.tap(); });
+    document.getElementById('btn-feedback').addEventListener('click', () => { SFX.tap(); abrirFeedback(); });
+    // Los juegos salen del registro: uno nuevo aparece solo (C-16)
+    const tarjeta = g => el('a', { class: 'juego', href: `../../${g.path}`, 'data-id': g.id },
+      el('span', { class: con('', g.emoji) }, g.emoji),
+      el('span', {}, el('b', {}, pickLang(g.name)), el('small', {}, pickLang(g.tagline))));
+    document.getElementById('juegos').append(...GAMES.filter(g => g.available).map(tarjeta));
+    document.getElementById('minis').append(...SUELTOS.map(tarjeta));
+    document.getElementById('labs-version').textContent = `Version: ${versionOf(document.getElementById('importmap')?.textContent || '')}`;
+    // Salir: el alemán deja de ofrecerse en este dispositivo y la app vuelve al inglés
+    document.getElementById('btn-salir').addEventListener('click', () => {
+      try { localStorage.removeItem(LABS_KEY); } catch (_) { /* nada */ }
+      if (getLang() === 'de') setLang('en');
+      location.href = '../../';
+    });
+  </script>
+</body>
+</html>
