@@ -105,7 +105,7 @@ atrasada frena el PR y `set-version.py` (D-181): **se rehacen desde una rama al 
 GitHub corre todas las de abajo (menos el servidor) en cada PR y en cada fusión a main
 (`.github/workflows/pruebas.yml`, D-143): el PR muestra ✅ o ❌. Encuentra solo cualquier
 `*.test.mjs` o `*.test.py`, así que un test nuevo no se agrega al workflow. Igual se corren
-aquí antes de abrir el PR; las de punta a punta siguen a mano.
+aquí antes de abrir el PR. Las de punta a punta también corren en GitHub (ver abajo).
 
 **No se fusiona un PR hasta que GitHub muestre ✅ en su check `pruebas`**, aunque las pruebas ya
 hayan pasado aquí: abrir el PR, esperar el resultado y recién ahí fusionar.
@@ -164,7 +164,17 @@ tailscale serve --https=443 off
 
 `tools/e2e/` tiene scripts que juegan partidas completas en Chrome headless (ver su README):
 sirven el sitio en el puerto 8765, corren `node tools/e2e/<script>.mjs <carpeta-salida>` y
-revisan las capturas. Antes de repetir uno que falló, matar solo el Chrome propio:
+revisan las capturas.
+
+**GitHub las corre en cada PR y en cada fusión a main** (`.github/workflows/e2e.yml`, D-193):
+cada guion en su propio job, en paralelo, y el PR muestra cuál falló, con sus capturas como
+artefacto. `tools/e2e/ci.mjs` decide cuáles: todos menos los que abren salas en el Firebase de
+producción (los `online.mjs`, los `chat.mjs` y los de su lista), que siguen a mano. Un guion nuevo entra
+solo; para que falle en rojo, que imprima ✗ o ❌ o salga con error. Aquí se corren igual:
+
+```bash
+node tools/e2e/ci.mjs              # todos los de CI, con resumen; o: node tools/e2e/ci.mjs cup/torneo.mjs
+``` Antes de repetir uno que falló, matar solo el Chrome propio:
 `pkill -f "remote-debugging-port=<puerto>"` (ver "Varias sesiones a la vez").
 
 ## Panel del dueño

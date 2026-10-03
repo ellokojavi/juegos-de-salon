@@ -4,7 +4,7 @@ import {
   CALENDARIOS, POZO, calendarioValido, calendarioAlAzar, PUNTOS, esCodigo, codigoAlAzar, pidAlAzar, PID, limpiarNombre, claveNombre, esPin, hashPin,
   fechaEn, sumarDias, medianoche, ventanas, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta,
   aliasLimpio, esAlias, menosJuegos, provisoria, ultimoDiaVisto, marcaDelDia, aliasHasta, ALIAS_LIBRE_MS,
-  estadoDia, puedeComodin, multiplicador, posicionesDelDia, tabla, faltan, medallas, reloj, mmss, juegoDelDia, evolucion,
+  estadoDia, puedeComodin, multiplicador, posicionesDelDia, tabla, desempate, faltan, medallas, reloj, mmss, juegoDelDia, evolucion,
   cerrarEn, conCierre, cerradaAntes, anulado, puedeCerrar,
 } from './engine.js';
 
@@ -361,6 +361,34 @@ test('el nombre de la copa llega a 40 caracteres; el de un jugador, a 20 (D-119)
   assert.equal(m.name, 'Copa Pirata (1ra prueba)');
   assert.equal(nuevaMeta({ nombre: 'x'.repeat(60), dias: 7, inicio: '2026-10-01', admin: 'a', creada: 1 }).name.length, 40);
   assert.equal(limpiarNombre('y'.repeat(30)).length, 20);
+});
+
+test('desempate del primer lugar: más días ganados y después la final (#79)', () => {
+  const fin = meta7.end;
+  // Cata gana los días 1 y 2 sola (20); Javi gana el 3 sola con comodín (20): más días ganados
+  const porDias = { meta: meta7, players, wild: { bbbbbb: 3 }, results: {
+    1: { aaaaaa: { s: 5, ms: 5 } }, 2: { aaaaaa: { s: 5, ms: 5 } }, 3: { bbbbbb: { s: 5, ms: 5 } },
+  } };
+  const t1 = tabla(porDias, null, fin);
+  assert.deepEqual([t1[0].name, t1[0].total, t1[1].name, t1[1].total], ['Cata', 20, 'Javi', 20]);
+  assert.deepEqual(desempate(t1), { pts: 20, criterio: 'dias' });
+  // Un día ganado cada uno y 26 puntos: Javi gana el 1 (10) y es 2.° en la final (16); Cata es
+  // 3.ª el día 2 (6) y gana la final (20). Desempata la final
+  const porFinal = { meta: meta7, players, results: {
+    1: { bbbbbb: { s: 5, ms: 5 } },
+    2: { cccccc: { s: 9, ms: 5 }, dddddd: { s: 7, ms: 5 }, aaaaaa: { s: 5, ms: 5 } },
+    7: { aaaaaa: { s: 9, ms: 5 }, bbbbbb: { s: 5, ms: 5 } },
+  } };
+  const t2 = tabla(porFinal, null, fin);
+  assert.deepEqual([t2[0].name, t2[0].total, t2[1].name, t2[1].total], ['Cata', 26, 'Javi', 26]);
+  assert.deepEqual(desempate(t2), { pts: 26, criterio: 'final' });
+  // Iguales en todo: comparten el primer lugar y no hay desempate que contar
+  const iguales = tabla({ meta: meta7, players, results: { 1: { aaaaaa: { s: 5, ms: 5 } }, 2: { bbbbbb: { s: 5, ms: 5 } } } }, null, fin);
+  assert.equal(iguales[0].lugar, iguales[1].lugar);
+  assert.equal(desempate(iguales), null);
+  // Sin empate en puntos, nada
+  assert.equal(desempate(tabla({ meta: meta7, players, results: { 1: { aaaaaa: { s: 5, ms: 5 }, bbbbbb: { s: 1, ms: 5 } } } }, null, fin)), null);
+  assert.equal(desempate([]), null);
 });
 
 await new Promise(r => setTimeout(r, 50));
