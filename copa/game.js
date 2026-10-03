@@ -19,7 +19,7 @@ import { gameById } from '../assets/js/games.js';
 import {
   POZO, calendarioAlAzar, calendario, MAX_JUGADORES, COPA_MAX, aliasLimpio, esAlias, CODIGO, esCodigo, codigoAlAzar, pidAlAzar, limpiarNombre, claveNombre, esPin, hashPin,
   fechaEn, sumarDias, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta, estadoDia, comodinDe, moverInicio, sinEmpezar, pasarDia, MAX_DIAS_INICIO, faltaGente,
-  medianoche, menosJuegos, provisoria, ultimoDiaVisto, marcaDelDia, puedeComodin, multiplicador, posicionesDelDia, tabla, faltan, medallas, evolucion, visibleDia, reloj, mmss, juegoDelDia, esFinal, activos, ZONA,
+  medianoche, menosJuegos, provisoria, ultimoDiaVisto, marcaDelDia, puedeComodin, multiplicador, posicionesDelDia, tabla, desempate, faltan, medallas, evolucion, visibleDia, reloj, mmss, juegoDelDia, esFinal, activos, ZONA,
   conCierre, cerradaAntes, anulado, puedeCerrar,
 } from './engine.js';
 import { GAME_ID, LOCALES, minijuegos, rondasFinal, MINIJUEGOS as MINIJUEGOS_ES } from './rules.js';
@@ -915,6 +915,12 @@ function tablero() {
 
 let celebrado = false;
 
+/** "⚖️ Empate en 68 puntos: desempató quien ganó más días.", si el 1.° y el 2.° empatan en puntos (#79). */
+function lineaDesempate(TT, filas) {
+  const e = desempate(filas);
+  return e ? fmt(e.criterio === 'dias' ? TT.tieDays : TT.tieFinal, { pts: e.pts }) : '';
+}
+
 function podio() {
   const Lc = L();
   const m = medallas(Lc);
@@ -927,6 +933,7 @@ function podio() {
     el('h2', { class: 'display display--md center' }, titulo),
     el('div', { class: 'escalones' }, [1, 0, 2].map(i => top[i] ? el('div', { class: `escalon e${i + 1}` },
       el('span', { class: 'medal' }, ['🥇', '🥈', '🥉'][i]), el('b', {}, top[i].name), el('small', {}, `${top[i].total} ${T.pts}`)) : null)),
+    desempate(filas) ? el('p', { class: 'center', id: 'podio-desempate', style: 'margin:0' }, lineaDesempate(T, filas)) : null,
     medalla(T.medalChamp, m.campeon),
     medalla(T.medalWins, m.ganador?.filas, m.ganador ? ` (${m.ganador.n})` : ''),
     medalla(T.medalComeback, m.remontada?.filas, m.remontada ? ` (+${m.remontada.n})` : ''),
@@ -1013,15 +1020,15 @@ function mensajeHoy() {
   if (d === 0) {
     const J1 = G().J[juegoDelDia(meta, 1)];
     return mensajeCopa(cabCopa('🏆', fmt(G().T.ctxBefore, { fecha: fechaLarga(meta.win[1].a, meta.tz, G().lang) })),
-      fmt(Lc.closed ? G().T.shareBeforeClosed : G().T.shareBeforeText, { juego: `${J1.emoji} ${J1.nombre}` }));
+      fmt(Lc.closed ? G().T.shareBeforeClosed : G().T.shareBeforeText, { emoji: J1.emoji, juego: J1.nombre }));
   }
   const hoy = Math.min(d, meta.days);
   const J = G().J[juegoDelDia(meta, hoy)];
   const hasta = esFinal(meta, hoy) ? G().T.untilToday : G().T.untilTomorrow;
-  const partes = [fmt(G().T.shareTodayText, { juego: `${J.emoji} ${J.nombre}`, hasta })];
+  const partes = [fmt(G().T.shareTodayText, { emoji: J.emoji, juego: J.nombre, hasta })];
   if (hoy > 1 && abierto(meta, hoy - 1, now) && faltan(Lc, hoy - 1, now).length) {
     const Ja = G().J[juegoDelDia(meta, hoy - 1)];
-    partes.push(fmt(G().T.shareTodayGrace, { juego: `${Ja.emoji} ${Ja.nombre}` }));
+    partes.push(fmt(G().T.shareTodayGrace, { juego: Ja.nombre }));
   }
   const falta = faltan(Lc, hoy, now);
   if (falta.length && falta.length < activos(Lc).length) partes.push(fmt(falta.length === 1 ? G().T.shareTodayMissingOne : G().T.shareTodayMissing, { names: falta.map(j => j.name).join(', ') }));
@@ -1312,6 +1319,7 @@ function mensajeFinal() {
   const Lc = L();
   const m = medallas(Lc);
   const extras = [
+    lineaDesempate(G().T, tabla(Lc, null, Lc.meta.end)),
     m.ganador && `${G().T.medalWins}: ${m.ganador.filas.map(f => f.name).join(', ')} (${m.ganador.n})`,
     m.remontada && `${G().T.medalComeback}: ${m.remontada.filas.map(f => f.name).join(', ')}`,
     m.farolito && `${G().T.medalLast}: ${m.farolito.map(f => f.name).join(', ')}`,
@@ -1344,7 +1352,7 @@ function admin({ forzar = false } = {}) {
       el('ol', { class: 'como' },
         el('li', {}, T.adminWelcome1),
         el('li', {}, T.adminWelcome2),
-        // Con link propio, cerrar la inscripción deja de ser opcional
+        // Con link propio, cerrar la inscripción deja de ser opcional, y el paso dice por qué (#102)
         el('li', {}, meta.alias ? T.adminWelcomeAlias : T.adminWelcome3))));
   }
   const accion = (rotulo, id, fn, clase = 'btn btn--ghost btn--sm', caja = err) => el('button', { class: clase, id, onClick: async ev => {
