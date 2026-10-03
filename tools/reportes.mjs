@@ -26,7 +26,7 @@ console.log(`${lista.length} reporte(s)${dias ? ` en los últimos ${dias} días`
 for (const r of lista) {
   let ctx = {};
   try { ctx = JSON.parse(r.contexto || '{}'); } catch (_) { /* nada */ }
-  const donde = [ctx.copa && `copa ${ctx.copa}`, ctx.dia && `día ${ctx.dia}`, ctx.juego, ctx.semilla && `semilla ${ctx.semilla}`, ctx.pantalla].filter(Boolean).join(' · ');
+  const donde = [ctx.labs && `🧪 labs ${ctx.labs}`, ctx.copa && `copa ${ctx.copa}`, ctx.dia && `día ${ctx.dia}`, ctx.juego, ctx.semilla && `semilla ${ctx.semilla}`, ctx.url, ctx.pantalla, ctx.pantallaTam].filter(Boolean).join(' · ');
   console.log(`── ${r.at ? fecha(r.at) : '(sin fecha)'} · ${r.nombre || 'anónimo'} · v${r.v || '?'}`);
   if (donde) console.log(`   ${donde}`);
   console.log(`   ${String(r.texto || '').replace(/\n/g, '\n   ')}`);
