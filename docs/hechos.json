@@ -1,5 +1,5 @@
 {
-  "version": "0.90.0",
+  "version": "0.90.1",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -717,6 +717,7 @@
     "bulls-and-cows/chat.mjs",
     "bulls-and-cows/local.mjs",
     "bulls-and-cows/online.mjs",
+    "ci.mjs",
     "compartir-sala.mjs",
     "contacto.mjs",
     "cup/idiomas.mjs",

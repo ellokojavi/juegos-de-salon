@@ -558,6 +558,7 @@ for (let d = 1; d <= dias; d++) {
     await click('#msg-hoy'); await sleep(100);
     console.log('  recordatorio:', JSON.stringify(await ev('window.__compartido.at(-1)?.text')));
     ok(/Falta por jugar hoy: Pancho\./.test(await ev('window.__compartido.at(-1)?.text')), 'el recordatorio dice quién falta');
+    ok(/\n\n⏳ Hoy toca Línea Relámpago\.\n/.test(await ev('window.__compartido.at(-1)?.text')), 'el recordatorio abre la línea con el emoji del minijuego, no a mitad de frase (dilema #114)');
     await click('#msg-tabla'); await sleep(1200);
     console.log('  tabla parcial:', JSON.stringify(await ev('window.__compartido.at(-1)?.text')));
     // La tabla del admin es la misma del tablero: imagen y texto, con la misma cabecera (D-165)
