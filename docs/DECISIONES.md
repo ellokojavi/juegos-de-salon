@@ -2757,7 +2757,8 @@ abre su pantalla principal. Tocar mientras rueda lo abre de inmediato.
 primera versión, un cubo de `div`s en 3D, se veía tosca; con las esquinas redondeadas a punta de
 capas quedaban huecos negros, y recalcular el sombreado de 80 capas en cada cuadro la trababa en
 el celular. En WebGL un cuadro se dibuja en 0,3 ms y la tirada corre a 60 cuadros por segundo.
-**Consecuencias:** el espejo `labs/menu/` se borra al promoverlo. Queda abierto si se puede
-cancelar una tirada (dilema #139: hoy cualquier toque abre el juego).
+**Consecuencias:** el espejo `labs/menu/` se borra al promoverlo. Una tirada no se cancela
+(dilema #139, opción A): tirar es un compromiso; tocar durante la tirada abre el juego y "atrás"
+vuelve al menú.
 **Alternativas descartadas:** el cubo de capas de HTML (se veía de cartón y no se podía redondear
 sin huecos); una librería 3D (un archivo grande para un solo dado, en una app sin dependencias).
