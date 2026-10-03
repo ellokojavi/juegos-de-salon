@@ -24,8 +24,12 @@ Puede haber varias sesiones de Claude trabajando en este repo al mismo tiempo (D
 - Antes de tocar la rama de otro PR, preguntarle a esa sesión (ListAgents / SendMessage).
 - **Pruebas en paralelo:** servir la copia propia en un puerto propio (`python3 -m http.server 87xx`),
   correr los guiones con `SITIO=http://localhost:87xx PUERTO_CDP=94xx` y **matar solo el Chrome
-  propio** (`pkill -f "remote-debugging-port=94xx"`). Nunca `pkill -f remote-debugging-port` a secas:
+  propio** (`pkill -f "remote-debugging-port=948[4]"`). Nunca `pkill -f remote-debugging-port` a secas:
   mata las pruebas de todas las sesiones.
+  - **El corchete en el último dígito no es adorno:** sin él, el patrón también calza con la línea de
+    comandos del propio shell que corre `pkill`, y lo mata (sale con 144 a mitad de camino).
+  - **Un guion puede abrir varios Chrome:** el segundo usa `PUERTO_CDP + 1`, y así (`tools/e2e/cdp.mjs`).
+    Entre sesiones, dejar diez puertos de distancia (9480, 9490…), no puertos vecinos.
 
 ## Si trabajas en un fork (D-189)
 
@@ -162,8 +166,10 @@ solo; para que falle en rojo, que imprima ✗ o ❌ o salga con error. Aquí se 
 
 ```bash
 node tools/e2e/ci.mjs              # todos los de CI, con resumen; o: node tools/e2e/ci.mjs copa.mjs
-``` Antes de repetir uno que falló, matar solo el Chrome propio:
-`pkill -f "remote-debugging-port=<puerto>"` (ver "Varias sesiones a la vez").
+```
+
+Antes de repetir uno que falló, matar solo el Chrome propio:
+`pkill -f "remote-debugging-port=948[4]"`, con el corchete (ver "Varias sesiones a la vez").
 
 ## Panel del dueño
 
