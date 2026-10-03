@@ -8,6 +8,19 @@
   Europa central (Berlín, Viena, Zúrich), y las instrucciones de Palabra y del Ahorcado dicen que
   las diéresis van sin puntos (Ä es A) y la ß como SS.
 
+## 0.90.6 — 2026-10-03
+- **README al día, con capturas** (C-13): la tabla de juegos suma los minijuegos que se juegan
+  sueltos desde la portada (`tools/hechos.mjs` ahora lee `SUELTOS`, así que uno nuevo aparece
+  solo), con sus nombres en la tabla de idiomas. Se rehicieron las capturas de todas las
+  secciones con las fuentes reales; el pie de Cuarto Rey "Cheers!" pasa a "Who drinks", porque
+  esa pantalla cambia de título según la carta.
+- **"Actualiza el README" es una pasada entera** (CLAUDE.md): bloques generados, prosa y capturas.
+
+## 0.90.5 — 2026-10-03
+- **⚓ Batalla Naval: la pantalla baja hasta ¡Zarpar!** (#47): en un celular chico, al poner el
+  quinto barco, si "⚓ ¡Zarpar!" no se ve, la pantalla baja sola hasta él. Pasa una vez, al
+  completar la flota (tocando, arrastrando o con Al azar), y nunca a mitad de un arrastre.
+
 ## 0.90.4 — 2026-10-03
 - **💬 El aviso del chat ya no se come los toques** (#48, U-12): la etiqueta que asoma junto a la
   burbuja cuando llega un mensaje deja pasar los toques, así que tocar "🔁 Revancha" (o lo que
