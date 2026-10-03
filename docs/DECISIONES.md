@@ -2585,7 +2585,7 @@ temporales que se borran.
 reemplazarlos, el repo crece con cada versión. Si eso molesta, se pasan a Git LFS o a un release.
 
 ## D-179 · Desenredo: el Untangle de Tatham, por niveles como Zip
-**Fecha:** 2026-10-02 · **Estado:** vigente (en el laboratorio)
+**Fecha:** 2026-10-02 · **Estado:** vigente; salió del laboratorio en D-190
 **Decisión:** Un minijuego nuevo de La Copa, **🧶 Desenredo** (*Untangle*, *Desenrola*), que se
 juega también suelto en `minijuegos/desenredo/`. Nudos unidos por hilos que se cruzan; se arrastran
 los nudos hasta que ningún hilo cruce a otro.
@@ -2692,3 +2692,139 @@ alarga (2 a 3 vueltas, una cada ~230 unidades), y la curva de base queda un poco
 del largo, tope 26). La textura de dos cabos sigue igual.
 **Por qué:** el dueño vio la cuerda de 0.85.3 demasiado ondulada.
 
+## D-186 · La copa puede ser internacional: sin temas de Chile ni de Brasil
+**Fecha:** 2026-10-03 · **Estado:** reemplazada por D-187 (internacional pasó a ser 🌎 global)
+**Decisión:** Al crear una copa se elige **¿Qué temas incluye?**: con temas locales (como hasta
+ahora, y lo que viene marcado) o internacional. Una copa internacional lleva `meta.intl: true` y
+deja fuera lo que se conoce solo en Chile o en Brasil:
+- **Línea Relámpago, ¿En qué año? y la final:** la temática Chile (Brasil ya estaba fuera, D-111)
+  y, en las demás, las cartas marcadas `local` (la fundación de Colo-Colo y la Copa América de
+  Chile). El fútbol de Brasil se queda: sus Mundiales son de todo el mundo.
+- **Conexiones:** las grillas marcadas `local`: en español, los golpes "en chileno" y los cortes
+  de carne chilenos; en portugués, las de folclore, clubes, cortes, danzas, árboles y pintores de
+  Brasil. Quedan 10, 13 y 7 grillas (español, inglés y portugués).
+- **Palabra:** CABRO, HUASO y PISCO.
+- **¿Dónde queda?:** las ciudades de Chile y de Brasil que no son su capital, salvo Río de Janeiro
+  y São Paulo. Sus niveles se pensaron para un grupo chileno (Antofagasta es nivel 1).
+La invitación y el tablero lo dicen ("🌍 Copa internacional…"). Las reglas de Firebase aceptan
+`intl` como `true`, igual que `lab`.
+**Por qué:** lo pidió el dueño, para jugar con gente de otros países.
+**Consecuencias:** una copa sin la marca genera exactamente lo mismo que antes (se comparó en
+15.120 tableros), así que las copas en curso no cambian. Lo local se marca en los datos (`local`
+en cartas y grillas, la lista `LOCALES` de palabras, `local()` en `donde.js`): una carta o grilla
+nueva con contenido local se marca al escribirla. Los minijuegos sueltos no cambian.
+**Alternativas descartadas:** decidirlo por el idioma de la copa (un grupo chileno puede jugar en
+inglés, y uno extranjero en español); sacar también Brasil del fútbol (sus Mundiales se conocen en
+todas partes).
+
+## D-187 · El público de la copa: 🌎 global, 🇨🇱 Chile o 🇧🇷 Brasil
+**Fecha:** 2026-10-03 · **Estado:** vigente · **Reemplaza D-186**
+**Decisión:** "¿Qué temas incluye?" (local o internacional) pasa a ser **¿Para qué público es?**,
+con tres opciones: 🌎 Global, 🇨🇱 Chile y 🇧🇷 Brasil. Se guarda en `meta.aud` (`global`, `cl` o
+`br`). Lo local va marcado con su país: `local: 'cl'` o `'br'` en cartas y grillas, las temáticas
+Chile y Brasil, las palabras chilenas y las ciudades que no son capitales (`local()` en
+`donde.js` devuelve el país). `copa/juegos/audiencia.js` decide qué queda fuera:
+- **🌎 Global:** lo de los dos países. Genera exactamente lo mismo que "Internacional" de D-186.
+- **🇨🇱 Chile:** lo de Brasil (la temática Brasil sigue fuera, como en D-111).
+- **🇧🇷 Brasil:** lo de Chile. **Y entra la temática Brasil**, que antes no entraba a ninguna copa.
+El formulario parte en el público del idioma de quien crea la copa (español → Chile, portugués →
+Brasil, inglés → global). La invitación y el tablero dicen el público con su bandera.
+**Por qué:** lo pidió el dueño, para definir la audiencia de cada país y no solo "con o sin" lo
+local.
+**Consecuencias:** las copas sin `aud` se juegan como antes (todo lo local salvo la temática
+Brasil): se comparó en 15.120 tableros. Las `intl: true` de D-186 se leen como global, y las
+reglas de Firebase aceptan los dos campos. Un país nuevo es una entrada en `AUDIENCIAS` y su
+marca en el contenido.
+**Alternativas descartadas:** que Chile deje entrar también lo de Brasil (un grupo chileno no
+resuelve la temática Brasil, D-111); deducir el público del idioma (son cosas distintas: un grupo
+brasileño puede jugar en español).
+
+
+## D-188 · Juego al azar: un dado que rueda sobre el menú
+**Fecha:** 2026-10-03 · **Estado:** vigente
+**Decisión:** El menú tiene un botón **🎲 Juego al azar** bajo la bajada. Al tocarlo, un dado
+blanco de cantos redondos, con un juego en cada cara, entra rodando sobre la misma portada,
+rebota tres veces y cae con el elegido adelante; abajo dice "¡Te tocó! <juego>" y a los 1,3 s se
+abre su pantalla principal. Tocar mientras rueda lo abre de inmediato.
+- **Qué puede salir:** las tarjetas que se ven y se pueden abrir, menos La Copa (es una semana con
+  amigos, no una partida para sacar al azar). Con un filtro de tipo puesto, sale uno de esos.
+  Entran los minijuegos sueltos de la portada.
+- **El dado es WebGL** (`assets/js/dado3d.js`, sin librerías): una malla de cubo de cantos
+  redondos, luz difusa, brillo y un emoji por cara en una textura. Los botes y la sombra del
+  suelo son animaciones CSS; el giro, uno solo que frena parejo de principio a fin.
+- Con "reducir movimiento" el dado aparece quieto; sin WebGL aparece el emoji del elegido.
+**Por qué:** lo pidió el dueño. Se probó primero en `/labs/menu/` (D-42) y se iteró ahí: la
+primera versión, un cubo de `div`s en 3D, se veía tosca; con las esquinas redondeadas a punta de
+capas quedaban huecos negros, y recalcular el sombreado de 80 capas en cada cuadro la trababa en
+el celular. En WebGL un cuadro se dibuja en 0,3 ms y la tirada corre a 60 cuadros por segundo.
+**Consecuencias:** el espejo `labs/menu/` se borra al promoverlo. Una tirada no se cancela
+(dilema #139, opción A): tirar es un compromiso; tocar durante la tirada abre el juego y "atrás"
+vuelve al menú.
+**Alternativas descartadas:** el cubo de capas de HTML (se veía de cartón y no se podía redondear
+sin huecos); una librería 3D (un archivo grande para un solo dado, en una app sin dependencias).
+
+## D-189 · Aportes de afuera: fork, PR y `main` protegida
+**Fecha:** 2026-10-03 · **Estado:** vigente
+**Decisión:** Quien quiera aportar lo hace con un **fork y un PR** hacia `main`, siguiendo
+[CONTRIBUTING.md](../CONTRIBUTING.md). `main` queda protegida en GitHub: no se sube directo, todo
+entra por PR y con la prueba `pruebas` en verde (no pide aprobaciones: el dueño fusiona los suyos
+solo). El proyecto pasa a tener **licencia MIT**. En un PR de afuera no se estampa versión ni se
+escribe el CHANGELOG, y las decisiones van como `D-??`: se numeran al fusionar, como ya se hacía
+entre sesiones (D-135).
+**Por qué:** un amigo del dueño quiere sumar funciones. Sin protección, un colaborador con acceso
+de escritura podía subir a `main`, que se publica al tiro en juegosdesalon.cl sin pasar por las
+pruebas. Sin licencia, legalmente nadie más tenía derecho a usar el código. Y las reglas del
+proyecto estaban escritas para el dueño y sus sesiones de Claude, sin un punto de entrada para
+alguien nuevo.
+**Consecuencias:** los modos con sala de quien prueba desde su fork abren salas en la base de
+producción (avisado en la guía). Publicar reglas de Firebase, el panel y los reportes siguen
+siendo del dueño: necesitan su llave.
+**Alternativas descartadas:** sumarlo como colaborador con escritura (podría saltarse el PR); una
+licencia GPL (el dueño eligió MIT).
+
+## D-190 · Desenredo sale del laboratorio
+**Fecha:** 2026-10-03 · **Estado:** vigente; cierra lo que D-179 dejó en el laboratorio
+**Decisión:** Desenredo deja de llevar `labs: true` en `SUELTOS` (`assets/js/games.js`) y en `BASE`
+(`copa/rules.js`): su tarjeta aparece en la portada, encendida y sin "Próximamente", y abre
+`/minijuegos/desenredo/`, que ya tenía su tarjeta social. En La Copa sigue en el `POZO` desde D-179:
+el admin lo puede poner en cualquier día y el calendario al azar lo puede proponer.
+**Por qué:** lo pidió el dueño: el juego ya está en condiciones de pasar a producción, tras las
+vueltas de las cuerdas (D-182, D-183, D-185) y de las instrucciones (D-184).
+**Consecuencias:** la portada ofrece ocho minijuegos sueltos y el dado del menú (D-188) también
+puede caer en él. La captura del menú en el README se rehace.
+
+## D-191 · Un idioma nuevo entra por el laboratorio: el alemán
+**Fecha:** 2026-10-03 · **Estado:** vigente
+**Decisión:** El alemán (**Salonspiele**) se suma completo —los textos de los ocho juegos, las
+frases, los mazos, las grillas y palabras de La Copa y los nombres de ¿Dónde queda?— pero **solo
+se ofrece en el laboratorio**: en el dispositivo que entra por `/labs/de/` o por un link con
+`?lang=de`. En `assets/js/i18n.js`, `IDIOMAS` son todos los que tienen diccionario (las pruebas
+de paridad los recorren todos) y `LANGS` los que se ofrecen en ese dispositivo; `EN_LABS` dice
+cuáles están en el laboratorio. Ahí, `assets/js/labs-idioma.js` hace que los links al menú y a
+`/labs/` vuelvan a `/labs/de/` y pone un botón 🐞 en la barra de arriba que manda comentarios a
+`feedback/` (D-104) con el contexto: página, pantalla, idioma, tamaño y versión. "Labor
+verlassen" saca la marca y deja la app en inglés. Ver [ALEMAN.md](ALEMAN.md).
+**Por qué:** el dueño quiere que amigos que hablan alemán lo revisen antes de publicarlo. Un
+borrador hecho con IA no puede aparecer en el toggle de todos, pero los amigos tienen que poder
+jugarlo de verdad, en su celular, con salas y copas reales. Un dispositivo marcado no se sale del
+laboratorio sin querer: un "‹ Menú" que llevara a la portada de siempre lo dejaría sin forma de
+volver ni de comentar.
+**Arreglos que salieron de medir el alemán** (con un pseudo-alemán ~40 % más largo y después con
+los textos de verdad, a 320 px):
+- Los títulos con degradado (`.rainbow`) cortaban los acentos sobre mayúscula (ya pasaba con
+  SALÓN y SALÃO): un relleno arriba agranda la caja pintada.
+- La barra de arriba: "‹ Menú" no se achica y el chip del juego se corta con "…" en vez de bajar
+  a dos líneas (ya pasaba con "⚓ Batalla Naval").
+- Con `lang="de"`, guiones automáticos (`hyphens: auto`) y, si igual no cabe, la palabra se parte.
+- Lo que caía al español sin avisar: "v. Chr.", fechas y números `de-DE`, el alfabeto del
+  Ahorcado, el teclado QWERTZ de Palabra (con un hueco donde el español tiene la Ñ, así la Z en
+  inglés y la Y en alemán ya no cuelgan al final de la segunda fila).
+- De paso: Palabra mostraba "null" mientras no se encontraba ninguna letra, y el título de la
+  pestaña de La Copa decía "Juegos de Salón" en cualquier idioma.
+**Consecuencias:** las reglas de Firebase aceptan `lang: "de"` en una copa (se publican al
+fusionar, D-122). Sacar el alemán del laboratorio es quitarlo de `EN_LABS` y sumar su puerta
+`/de/` con la tarjeta social; lo que falta está en ALEMAN.md. Otro idioma puede entrar igual.
+**Alternativas descartadas:** sumarlo al toggle de todos con un aviso de borrador (se ve en el
+toggle de quien no lo pidió); una copia aparte de la app en `/labs/de/` (se desactualiza al tiro y
+no prueba las salas de verdad); que el alemán faltante cayera al inglés (esconde lo que falta
+traducir: la prueba de paridad no lo vería).

@@ -25,6 +25,7 @@ import {
 import { GAME_ID, LOCALES, minijuegos, rondasFinal, MINIJUEGOS as MINIJUEGOS_ES } from './rules.js';
 import { createCuenta } from './cuenta.js';
 import { JUEGOS } from './juegos/index.js';
+import { audienciaDe } from './juegos/audiencia.js';
 import { desglose } from './desglose.js';
 import { planilla } from './planilla.js';
 
@@ -133,9 +134,9 @@ function avisoError(caja, texto) {
 }
 
 // Las fechas en el idioma de quien mira o, en lo que va al grupo, en el de la copa (D-170).
-// En inglés la coma va ("Thursday, October 1"); en español y portugués se saca
-const LOCALE = { es: 'es-CL', en: 'en-US', pt: 'pt-BR' };
-const fechaLarga = (ms, tz = ZONA, lang = LANG) => { const f = new Intl.DateTimeFormat(LOCALE[lang] || LOCALE.es, { timeZone: tz, weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(ms)); return lang === 'en' ? f : f.replace(',', ''); };
+// En inglés y en alemán la coma va ("Thursday, October 1", "Donnerstag, 1. Oktober"); en español y portugués se saca
+const LOCALE = { es: 'es-CL', en: 'en-US', pt: 'pt-BR', de: 'de-DE' };
+const fechaLarga = (ms, tz = ZONA, lang = LANG) => { const f = new Intl.DateTimeFormat(LOCALE[lang] || LOCALE.es, { timeZone: tz, weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(ms)); return lang === 'en' || lang === 'de' ? f : f.replace(',', ''); };
 /** El nombre de la zona horaria de una copa, para decirlo en palabras (D-113). */
 const zonaTexto = tz => T.zones[tz] || fmt(T.zoneOther, { tz });
 const fechaCorta = (ms, tz = ZONA) => new Intl.DateTimeFormat(LOCALE[LANG] || LOCALE.es, { timeZone: tz, weekday: 'short', day: 'numeric' }).format(new Date(ms));
@@ -362,6 +363,10 @@ function crearCopa() {
   // El idioma de las palabras de Conexiones y de Palabra (D-170): parte en el de quien la crea
   const mayuscula = x => x[0].toUpperCase() + x.slice(1);
   const idioma = opciones(LANGS.map(l => ({ valor: l, titulo: mayuscula(T.langNames[l]) })), null, { inicial: LANG });
+  // El público (D-187): global, Chile o Brasil. Parte en el del idioma de quien la crea
+  const alcance = opciones([{ valor: 'global', titulo: T.audGlobal }, { valor: 'cl', titulo: T.audCl }, { valor: 'br', titulo: T.audBr }], null,
+    { inicial: { es: 'cl', pt: 'br' }[LANG] || 'global' });
+  alcance.nodo.classList.add('tres');
   // Hoy, mañana u otra fecha de un calendario, hasta 30 días desde hoy (D-115)
   const hoyCrear = fechaEn(Date.now(), ZONA);
   const otraFecha = campoFecha(hoyCrear);
@@ -418,7 +423,7 @@ function crearCopa() {
       if (alias) { const x = await st.alias(alias); if (x && x.hasta > now) throw Object.assign(new Error('alias'), { code: 'alias' }); }
       const fechaInicio = inicio.valor === 'otra' ? otraFecha.input.value : sumarDias(fechaEn(now, ZONA), inicio.valor);
       // Las copas del laboratorio (y las de prueba) llevan la marca que deja pasar de día (D-115)
-      const meta = nuevaMeta({ nombre: n, dias: modo.valor, inicio: fechaInicio, tz: ZONA, admin: pid, creada: now, lab: LABS || PRUEBA, alias, cal: juegos.cal, lang: idioma.valor });
+      const meta = nuevaMeta({ nombre: n, dias: modo.valor, inicio: fechaInicio, tz: ZONA, admin: pid, creada: now, lab: LABS || PRUEBA, alias, cal: juegos.cal, lang: idioma.valor, aud: alcance.valor });
       await st.crear(code, meta, { pid, name: quien, at: now, pinHash: await hashPin(code, pid, pin1.input.value) });
       cuenta.nombre.set(quien);
       cuenta.recordar(code, pid, { nombre: quien, copa: n, fin: meta.end });
@@ -435,7 +440,8 @@ function crearCopa() {
       el('div', { class: 'field' }, el('label', {}, T.fMode), modo.nodo),
       el('div', { class: 'field' }, el('label', {}, T.fStart), inicio.nodo, otraFecha.nodo, el('small', { class: 'muted' }, fmt(T.startZone, { zona: zonaTexto(ZONA) })))),
     juegos.nodo,
-    el('div', { class: 'panel' }, el('div', { class: 'field' }, el('label', {}, T.fLang), idioma.nodo, el('small', { class: 'muted' }, T.fLangHint))),
+    el('div', { class: 'panel' }, el('div', { class: 'field' }, el('label', {}, T.fLang), idioma.nodo, el('small', { class: 'muted' }, T.fLangHint)),
+      el('div', { class: 'field', id: 'crear-alcance' }, el('label', {}, T.fScope), alcance.nodo, el('small', { class: 'muted' }, T.fScopeHint))),
     el('div', { class: 'panel' }, link.nodo),
     el('div', { class: 'panel' }, yo.nodo, pin1.nodo, pin2.nodo, el('small', { class: 'muted' }, T.pinHint)),
     err, boton,
@@ -619,6 +625,7 @@ function entrar({ mantener = false } = {}) {
       el('h1', { class: 'display display--lg rainbow' }, meta.name),
       el('p', { class: 'lead' }, info),
       avisoPalabras(meta),
+      avisoAudiencia(meta),
       el('div', { style: 'margin-top:6px' }, langToggle())),
     el('div', { class: 'cal-mini' }, calendario(meta).map(j => el('span', { title: MINIJUEGOS[j].nombre, class: con('', MINIJUEGOS[j].emoji) }, MINIJUEGOS[j].emoji))),
     // Por qué no puede inscribirse: terminó, la cerró el administrador, está llena o ya va en la final
@@ -851,6 +858,7 @@ function tablero() {
   poner(body, el('div', { class: 'copa-head' },
     el('h1', { class: 'display display--md rainbow' }, `🏆 ${meta.name}`),
     el('p', { class: 'lead', style: 'margin:0' }, estadoTxt),
+    avisoAudiencia(meta),
     el('div', { class: 'btn-row' },
       // Invitar tiene sentido antes de que parta; después, el admin lo tiene en Administrar
       d === 0 && !L().closed ? el('button', { class: 'btn btn--ghost btn--sm', id: 'btn-invitar', onClick: () => { SFX.tap(); invitar(); } }, T.shareInvite) : null,
@@ -1624,6 +1632,11 @@ function antesDeJugar(d) {
 /** Los minijuegos que se juegan con palabras del idioma de la copa (D-170). */
 const CON_PALABRAS = ['conexiones', 'letras', 'final'];
 /** "Las palabras de esta copa van en inglés", solo si no es el idioma en que se está mirando. */
+/** El público de la copa se dice en la invitación y en el tablero (D-186, D-187). */
+const avisoAudiencia = meta => {
+  const aud = audienciaDe(meta);
+  return aud ? el('p', { class: 'muted center', id: 'aviso-aud', 'data-aud': aud, style: 'margin:0' }, T[{ global: 'audNoteGlobal', cl: 'audNoteCl', br: 'audNoteBr' }[aud]]) : null;
+};
 const avisoPalabras = meta => (palabrasDe(meta) === LANG ? null
   : el('p', { class: 'muted center aviso-palabras', style: 'margin:0' }, fmt(T.wordsIn, { idioma: T.langNames[palabrasDe(meta)] })));
 
@@ -1695,7 +1708,8 @@ async function jugar(d) {
   if (!guardado.reloj) await cuentaRegresiva(J);
   // Conexiones necesita saber cuándo empezó su día, para no cambiar de grilla a mitad (D-128)
   // Los textos en el idioma de quien juega y las palabras en el de la copa (D-170)
-  const p = mod.generar(S.code, d, { lang: LANG, palabras: palabrasDe(meta), ...(id === 'conexiones' ? { desde: meta.win[d].a } : {}) });
+  // El público de la copa decide qué contenido local entra (D-187)
+  const p = mod.generar(S.code, d, { lang: LANG, palabras: palabrasDe(meta), aud: audienciaDe(meta), ...(id === 'conexiones' ? { desde: meta.win[d].a } : {}) });
   const now = ahora();
   // El reloj se detiene cuando el tablero termina, no cuando se toca "Ver resultado" (D-130).
   // Detenido, queda así aunque se recargue la página.
@@ -1908,7 +1922,7 @@ const volverDePractica = () => (LABS
 function practica(id) {
   const J = MINIJUEGOS[id], mod = JUEGOS[id];
   if (!J || !mod) { if (SUELTO) location.replace(RAIZ); else portada(); return; }
-  if (!LABS) document.title = `${J.nombre} ${J.emoji} · Juegos de Salón`;
+  if (!LABS) document.title = `${J.nombre} ${J.emoji} · ${(COMMON[LANG] || COMMON.es).appTitle}`;
   if (SUELTO) $('#chip-juego').replaceChildren(...conEmoji(J.emoji, J.nombre));
   const semilla = esCodigo(SEMILLA) ? SEMILLA : codigoAlAzar();
   const zipSeg = new URLSearchParams(location.search).get('zipSeg');
@@ -1992,7 +2006,7 @@ function ensayo(d) {
   const id = juegoDelDia(L().meta, d);
   mostrar('jugar');
   S.juego = { d, id, ensayo: true };
-  jugarSinPuntaje(id, JUEGOS[id].ensayo(S.code, d, { lang: LANG, palabras: palabrasDe(L().meta) }), r => resultadoEnsayo(id, r, () => antesDeJugar(d)), { ensayo: true });
+  jugarSinPuntaje(id, JUEGOS[id].ensayo(S.code, d, { lang: LANG, palabras: palabrasDe(L().meta), aud: audienciaDe(L().meta) }), r => resultadoEnsayo(id, r, () => antesDeJugar(d)), { ensayo: true });
 }
 
 /** La sesión de prueba desde la práctica del laboratorio: la misma que antes de un día (D-109). */
@@ -2132,7 +2146,7 @@ sparkles();
 initSound();
 applyStatic(T);
 document.documentElement.lang = LANG;
-document.title = `${T.title} 🏆 · Juegos de Salón`;
+document.title = `${T.title} 🏆 · ${(COMMON[LANG] || COMMON.es).appTitle}`;
 $('#sound-slot').append(soundToggle());
 // Desde el laboratorio (?labs), "volver" es volver ahí; si no, al menú (D-175)
 if (LABS) {

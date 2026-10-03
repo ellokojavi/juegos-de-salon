@@ -1,10 +1,50 @@
 # Changelog
 
-## 0.85.5 — 2026-10-03
+## 0.90.1 — 2026-10-03
 - **☀️ Tango: el sol de paso ya no se marca como choque en iPhone** (U-20, reporte 🐞 del 2-oct).
   Para poner una luna hay que pasar por el sol; si se tocaba dos veces rápido la misma casilla,
   iOS podía tomar el segundo toque como zoom y el sol quedaba en rojo. El tablero ya no acepta
   ese gesto (`touch-action: manipulation`, como el teclado de los juegos).
+
+## 0.90.0 — 2026-10-03
+- **🇩🇪 El alemán, en el laboratorio** (D-191): la app entera en alemán (Salonspiele) para que la
+  revisen amigos que lo hablan, en `/labs/de/`. Solo ese celular ofrece DE en el toggle; ahí los
+  "‹ Menü" vuelven al laboratorio y 🐞 en la barra de arriba manda comentarios con su contexto
+  (`node tools/reportes.mjs`). Es un borrador con glosario fijo: ver `docs/ALEMAN.md`.
+- **Arreglos para todos**, que salieron de medir el alemán a 320 px: los acentos de los títulos
+  con degradado ya no salen cortados (SALÓN, SALÃO); la barra de arriba no se parte en dos líneas
+  (el nombre del juego se corta con "…"); Palabra ya no muestra "null", su teclado deja un hueco
+  donde el español tiene la Ñ y el botón Probar va a lo ancho; el título de la pestaña de La Copa
+  sale en el idioma de quien mira.
+- **Reglas de Firebase:** una copa puede guardar `lang: "de"`.
+
+## 0.89.0 — 2026-10-03
+- **🧶 Desenredo sale del laboratorio** (D-190): su tarjeta ya no dice "Próximamente" y se juega
+  suelto desde el menú, en `/minijuegos/desenredo/`. En La Copa se puede elegir para cualquier día,
+  como los demás minijuegos.
+
+## 0.88.0 — 2026-10-03
+- **🎲 Juego al azar** (D-188): un botón bajo el título del menú tira un dado blanco en 3D con un
+  juego en cada cara; rueda, rebota, cae en uno y lo abre. Nunca sale La Copa, y si hay un filtro
+  de tipo puesto, sale uno de esos. Se probó primero en el laboratorio.
+
+## 0.87.1 — 2026-10-03
+- **Tango: las casillas que no se pueden cambiar llevan un candado chico** en la esquina: las que
+  vienen puestas (candado blanco) y las que reveló una pista (candado cian, como su borde). La
+  esquina superior izquierda queda libre de las marcas = y ≠, que van en los otros bordes.
+
+## 0.87.0 — 2026-10-03
+- **La Copa: el público se elige entre 🌎 Global, 🇨🇱 Chile y 🇧🇷 Brasil** (D-187). Global deja
+  fuera lo que se conoce solo en Chile o en Brasil (lo que antes era "Internacional"). Chile y
+  Brasil suman los temas de su país y dejan fuera los del otro. Una copa para Brasil juega
+  también la temática Brasil de Línea de Tiempo. La invitación y el tablero dicen el público.
+
+## 0.86.0 — 2026-10-03
+- **La Copa puede ser internacional** (D-186): al crearla se elige "Con temas locales" o
+  "Internacional". La internacional deja fuera lo que se conoce solo en Chile o en Brasil: la
+  temática Chile de Línea de Tiempo, las grillas de Conexiones con palabras locales, algunas
+  palabras chilenas y las ciudades chilenas y brasileñas que no son capitales. La invitación y el
+  tablero lo dicen. Las copas de siempre no cambian.
 
 ## 0.85.4 — 2026-10-02
 - **🧶 Desenredo: instrucciones más cortas** (U-18, D-184): de 337 a 209 caracteres. La meta va

@@ -1,6 +1,6 @@
 # Especificación: Cuarto Rey 👑
 
-**Ruta:** `/cuarto-rey/` · **Jugadores:** 4 a 6 · **Versión:** 0.27 · **Idiomas:** es, en, pt (“Quarto Rei”)
+**Ruta:** `/cuarto-rey/` · **Jugadores:** 4 a 6 · **Versión:** 0.27 · **Idiomas:** es, en, pt (“Quarto Rei”) y, en el laboratorio, de (“Der vierte König”, D-191)
 
 ## Origen
 Juego de naipes para tomar, popular en Chile. Reglas base según instrucciones entregadas por el cliente (ver abajo). El celular reemplaza al mazo (D-12).
@@ -62,7 +62,7 @@ Intro ──► Setup jugadores ──► Mesa (turnos) ──► Cuarto Rey ─
 v0.27 no la trae y se retoma igual, solo que al final no muestra historial.
 
 ## Idiomas
-Todos los textos viven en `rules.js` bajo `LOCALES.es`, `LOCALES.en` y `LOCALES.pt` (reglas, mensajes de reyes, minijuegos, 24 penitencias, 35 categorías, 16 ideas de Nunca Nunca y la interfaz), con las mismas claves en los tres. Nombres en inglés: Fourth King, Story Time, Puffer Pig, Categories, Never Have I Ever, Dare. En portugués de Brasil: Quarto Rei, Era Uma Vez, Porquinho Bochechudo, Cultura de Boteco, Eu Nunca, Prenda; los sorbos son "goles" y el fondo es "vira, vira, vira" (D-48).
+Todos los textos viven en `rules.js` bajo `LOCALES.es`, `LOCALES.en`, `LOCALES.pt` y `LOCALES.de` (reglas, mensajes de reyes, minijuegos, 24 penitencias, 35 categorías, 16 ideas de Nunca Nunca y la interfaz), con las mismas claves en todos. Nombres en inglés: Fourth King, Story Time, Puffer Pig, Categories, Never Have I Ever, Dare. En portugués de Brasil: Quarto Rei, Era Uma Vez, Porquinho Bochechudo, Cultura de Boteco, Eu Nunca, Prenda; los sorbos son "goles" y el fondo es "vira, vira, vira" (D-48). En el laboratorio, `LOCALES.de` (D-191) adapta el juego a un grupo alemán en vez de calcarlo: Der vierte König, Wort für Wort, Hamsterbacken, Kategorien, Ich hab noch nie, Aufgabe; el glosario está en [ALEMAN.md](../ALEMAN.md).
 
 ## Ideas para versiones futuras
 - Modo “una carta por pantalla” para tablets en el centro de la mesa.

@@ -17,7 +17,8 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
   pantalla, sin "copa" en el link, que vuelve al menú, sin sesión de prueba ni semilla a la vista, y
   con su señal de uso. `/copa/?practica=<id>` sin `&labs` lleva ahí.
 - **Jugadores:** de 2 a 10 por copa (`MIN_JUGADORES` y `MAX_JUGADORES` en `engine.js`, D-118). Con
-  el administrador solo, la copa no parte y el tablero pide "al menos un jugador más". **Idioma:** español, inglés y portugués (D-170). La
+  el administrador solo, la copa no parte y el tablero pide "al menos un jugador más". **Público:** 🌎 global, 🇨🇱 Chile o 🇧🇷 Brasil, que se elige al crear la copa (D-187, `meta.aud`; las copas `intl` de D-186 se leen como global). Decide qué contenido local entra (`copa/juegos/audiencia.js`).
+  **Idioma:** español, inglés y portugués (D-170); el alemán, solo en el laboratorio (D-191). La
   pantalla va en el idioma de quien mira; las palabras de Conexiones y Palabra, los mensajes al
   grupo y su link, en el de la copa (`meta.lang`, se elige al crearla).
 - **Modalidades:** Copa de 7 días (la que se ofrece) y Copa de 3 días (solo pruebas).
@@ -95,7 +96,7 @@ puntos por ciudad menos 4 cada 100 km, D-155, D-156).
   borde, y la distancia se mide sobre la esfera. La antesala muestra el globo girando solo
   (`portada()` de `ui-donde.js`).
 
-- **🧶 Desenredo** (D-179, en el laboratorio) es el Untangle de Simon Tatham: nudos unidos por
+- **🧶 Desenredo** (D-179; fuera del laboratorio desde D-190) es el Untangle de Simon Tatham: nudos unidos por
   hilos que se cruzan, y se arrastran los nudos hasta que ningún hilo cruce a otro. Por niveles
   como Zip: diez, de 6 a 15 nudos, y cuatro minutos; 10 puntos por nivel y el desempate es cuándo
   se resolvió el último. El motor (`desenredo.js`) arma primero un dibujo sin cruces (nudos al
@@ -117,7 +118,10 @@ puntos por ciudad menos 4 cada 100 km, D-155, D-156).
   plateada: los dos emojis son amarillos y así no se confunden (D-146).
 - **Toque y Fama: Palabra** acepta cualquier combinación de 5 letras distintas como intento, sin
   diccionario, igual que Toque y Fama acepta cualquier número de cifras distintas. La palabra
-  secreta sale de una lista de 120 palabras comunes (`juegos/palabras.js`).
+  secreta sale de la lista del idioma de la copa (`juegos/palabras.js`: 120 en español, 185 en
+  inglés, 143 en portugués y 162 en alemán). El teclado es QWERTY con Ñ en español; en inglés y
+  portugués deja un hueco donde iría la Ñ, y en alemán es QWERTZ con el mismo hueco, así la tercera
+  fila empieza en su letra (`alfabeto(lang)` en `letras.js`, D-170, D-191).
 - **¿En qué año?** tiene un margen que crece con la antigüedad: `max(8, (2026 − año) / 4)` años.
 - Las copas creadas antes de D-102 con el Solitario o Dudo en el calendario juegan Reinas y Toque y
   Fama: Palabra en esos días.
