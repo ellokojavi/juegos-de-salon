@@ -124,6 +124,7 @@
       position: fixed; inset: 0; z-index: 100; display: grid; place-content: center; justify-items: center; gap: calc(min(38vw, 150px) * 0.55 + 20px);
       background: radial-gradient(circle at 50% 45%, rgba(40, 12, 70, 0.82), rgba(10, 3, 20, 0.94));
       backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); animation: fadeIn 0.2s ease-out both; cursor: pointer;
+      outline: none;
     }
     .azar-escena { --lado: min(38vw, 150px); --medio: calc(var(--lado) / 2); width: var(--lado); height: var(--lado); perspective: 700px; position: relative; }
     .azar-cubo { position: absolute; inset: 0; transform-style: preserve-3d; }
@@ -147,7 +148,7 @@
 </head>
 <body>
   <main class="app">
-    <div class="topbar"><a class="back" href="../">‹ Laboratorio</a><div class="tools"><div id="lang-slot"></div><span id="sound-slot"></span><span id="share-slot"></span></div></div>
+    <div class="topbar"><a class="back" href="../" aria-label="Volver al laboratorio">‹ Lab</a><div class="tools"><div id="lang-slot"></div><span id="sound-slot"></span></div></div>
     <header class="hero">
       <span class="emoji bounce"><span class="emoji-swap" id="hero-emoji" aria-hidden="true">🎲</span></span>
       <h1 class="display display--xl rainbow" data-i18n="appTitle">Juegos de Salón</h1>
@@ -168,8 +169,8 @@
 
   <script type="module">
     import { PORTADA, TIPOS, rangoJugadores } from '../../assets/js/games.js';
-    import { sparkles, el, shareButton, con } from '../../assets/js/ui.js';
-    import { getLang, langToggle, applyStatic, pickLang, COMMON, homeUrl } from '../../assets/js/i18n.js';
+    import { sparkles, el, con } from '../../assets/js/ui.js';
+    import { getLang, langToggle, applyStatic, pickLang, COMMON } from '../../assets/js/i18n.js';
     import { FRASES } from '../../assets/js/frases.js';
     import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
     import { botonAzar } from './dado.js';
@@ -183,10 +184,7 @@
     applyStatic(T);
     document.title = `${T.appTitle} 🎲`;
     document.getElementById('lang-slot').append(langToggle());
-    // Compartir la app: la portada del idioma en que se está mirando (D-74).
-    document.getElementById('share-slot').append(shareButton({
-      title: T.appTitle, text: T.shareText, url: homeUrl(lang), label: T.share,
-    }));
+    // Sin el botón de compartir del menú real: en el espejo no hace falta, y junto a "‹ Lab" la barra se salía de la pantalla
 
     // 1) Lo importante primero: la lista de juegos, con los minijuegos sueltos al final (D-142).
     const list = document.getElementById('games');

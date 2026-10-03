@@ -50,14 +50,20 @@ function tirar(pool, { lang, base, T }) {
       el('span', { class: con('', g.emoji) }, g.emoji))));
   const sombra = el('div', { class: 'azar-sombra' });
   const nombre = el('div', { class: 'azar-nombre', 'aria-live': 'assertive' });
-  const capa = el('div', { class: 'azar-capa', role: 'dialog', 'aria-modal': 'true', 'aria-label': T.boton },
+  const capa = el('div', { class: 'azar-capa', role: 'dialog', 'aria-modal': 'true', 'aria-label': T.boton, tabindex: '-1' },
     el('div', { class: 'azar-escena' }, sombra, cubo), nombre);
   document.body.append(capa);
   document.body.classList.add('azar-abierto');
+  // El foco entra al diálogo: con teclado, Enter o espacio también lo abren de inmediato
+  capa.focus({ preventScroll: true });
 
   let ido = false;
   const ir = () => { if (ido) return; ido = true; location.href = destino; };
   capa.addEventListener('click', ir);
+  capa.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); ir(); } });
+  // Volver con "atrás" desde el juego restaura la página tal como quedó (bfcache): sin esto, el
+  // dado seguía encima del menú y ya no se podía tocar nada
+  addEventListener('pageshow', e => { if (e.persisted) { capa.remove(); document.body.classList.remove('azar-abierto'); } }, { once: true });
 
   const revelar = () => {
     SFX.reveal();
