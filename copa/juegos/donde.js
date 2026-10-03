@@ -126,4 +126,4 @@ export const puntaje = e => (e.filas.length ? Math.round(e.total / e.filas.lengt
 export const tarjeta = e => e.filas.map(f => marca(f.km)).join('');
 
 /** "1.250 km": con punto de miles, como se escribe en Chile ("1,250 km" en inglés). */
-export const km = (n, lang = 'es') => `${Math.round(n).toLocaleString({ en: 'en-US', pt: 'pt-BR' }[lang] || 'es-CL')} km`;
+export const km = (n, lang = 'es') => `${Math.round(n).toLocaleString({ en: 'en-US', pt: 'pt-BR', de: 'de-DE' }[lang] || 'es-CL')} km`;

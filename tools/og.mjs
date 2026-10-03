@@ -23,7 +23,7 @@ import { fileURLToPath } from 'node:url';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { GAMES, SUELTOS } from '../assets/js/games.js';
-import { COMMON } from '../assets/js/i18n.js';
+import { COMMON, LANGS } from '../assets/js/i18n.js';
 
 const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..');
 const SITIO = 'https://juegosdesalon.cl';
@@ -94,10 +94,15 @@ const paginas = () => [...PUERTAS.map(portada), ...conTarjeta.map(g => ({
  */
 const HUELLAS = join(RAIZ, 'assets/og/huellas.json');
 const leerHuellas = () => { try { return JSON.parse(readFileSync(HUELLAS, 'utf8')); } catch (_) { return {}; } };
+/**
+ * Solo los idiomas que tienen tarjeta (`LANGS`, sin los del laboratorio, D-190): sumar el alemán
+ * a games.js no cambia ninguna imagen, así que tampoco puede dejarlas atrasadas.
+ */
+const enTarjetas = o => (o && typeof o === 'object' ? Object.fromEntries(LANGS.filter(l => l in o).map(l => [l, o[l]])) : o);
 function huella(p) {
   const juego = p.juego && [...GAMES, ...SUELTOS].find(g => g.id === p.juego);
   const dato = juego
-    ? { emoji: juego.emoji, name: juego.name, tagline: juego.tagline, players: juego.players, duration: juego.duration, durationUnit: juego.durationUnit }
+    ? { emoji: juego.emoji, name: enTarjetas(juego.name), tagline: enTarjetas(juego.tagline), players: juego.players, duration: juego.duration, durationUnit: enTarjetas(juego.durationUnit) }
     : { lang: p.lang, textos: COMMON[p.lang], juegos: disponibles.map(g => [g.id, g.emoji]) };
   return createHash('sha256').update(readFileSync(join(RAIZ, 'tools/og/tarjeta.html'), 'utf8')).update(JSON.stringify(dato)).digest('hex').slice(0, 16);
 }
