@@ -81,6 +81,8 @@ export const GRILLAS = [
   },
   {
     id: 'avion',
+    // Con palabras que solo se conocen en Chile: fuera de una copa internacional (D-186)
+    local: 'cl',
     grupos: [
       { nombre: 'Signos de puntuación', palabras: ['COMA', 'PUNTO', 'GUION', 'PARÉNTESIS'] },
       { nombre: 'Tipos de letra', palabras: ['ARIAL', 'TIMES', 'CALIBRI', 'VERDANA'] },
@@ -117,6 +119,8 @@ export const GRILLAS = [
   },
   {
     id: 'pantalla',
+    // Con palabras que solo se conocen en Chile: fuera de una copa internacional (D-186)
+    local: 'cl',
     grupos: [
       { nombre: 'Redes sociales', palabras: ['TIKTOK', 'INSTAGRAM', 'FACEBOOK', 'LINKEDIN'] },
       { nombre: 'Se hacen en el computador', palabras: ['COPIAR', 'PEGAR', 'GUARDAR', 'IMPRIMIR'] },
@@ -198,6 +202,8 @@ export const GRILLAS_ANTES_D128 = [
   },
   {
     id: 'avion',
+    // Con palabras que solo se conocen en Chile: fuera de una copa internacional (D-186)
+    local: 'cl',
     grupos: [
       { nombre: 'Signos de puntuación', palabras: ['COMA', 'PUNTO', 'GUION', 'PARÉNTESIS'] },
       { nombre: 'Tipos de letra', palabras: ['ARIAL', 'TIMES', 'CALIBRI', 'VERDANA'] },
@@ -234,6 +240,8 @@ export const GRILLAS_ANTES_D128 = [
   },
   {
     id: 'pantalla',
+    // Con palabras que solo se conocen en Chile: fuera de una copa internacional (D-186)
+    local: 'cl',
     grupos: [
       { nombre: 'Redes sociales', palabras: ['TIKTOK', 'INSTAGRAM', 'FACEBOOK', 'LINKEDIN'] },
       { nombre: 'Se hacen en el computador', palabras: ['COPIAR', 'PEGAR', 'GUARDAR', 'IMPRIMIR'] },
