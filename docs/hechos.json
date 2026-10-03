@@ -642,6 +642,7 @@
     "julepe/game.js",
     "julepe/rules.js",
     "labs/menu/dado.js",
+    "labs/menu/dado3d.js",
     "linea-de-tiempo/decks/brasil.js",
     "linea-de-tiempo/decks/chile.js",
     "linea-de-tiempo/decks/futbol.js",
@@ -660,7 +661,8 @@
     "toque-y-fama/rules.js"
   ],
   "sinVersionar": [
-    "labs/menu/dado.js"
+    "labs/menu/dado.js",
+    "labs/menu/dado3d.js"
   ],
   "tests": [
     "ahorcado/engine.test.mjs",
