@@ -639,6 +639,17 @@ docs/capturas.json          Screenshot catalog: the caption and the script each 
 docs/                       Requirements, decisions, specs and screenshots
 ```
 
+## Contributing
+
+Fork the repo, work on a topic branch and open a pull request to `main`; the tests run on every
+PR. `main` is protected and whatever lands there goes live at once, so nothing gets in without a
+PR. Version numbers, the changelog and Firebase rules are handled by the owner when merging. The
+guide, in Spanish like the rest of the docs, is [CONTRIBUTING.md](CONTRIBUTING.md) (D-189).
+
+## License
+
+[MIT](LICENSE).
+
 ## Documentation
 
 These documents are in Spanish, like the rest of the project.
