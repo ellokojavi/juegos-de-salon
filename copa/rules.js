@@ -1107,7 +1107,7 @@ const EN = {
   adminTitle: 'Manage the cup',
   adminMsgs: 'Messages for the players',
   msgInvite: 'Invite the group',
-  msgToday: 'Remind of today\'s game',
+  msgToday: 'Send today\'s reminder',
   msgTable: 'Share the standings',
   msgFinal: 'Final summary',
   adminPlayers: 'Players',
