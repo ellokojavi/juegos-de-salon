@@ -25,6 +25,6 @@ Módulos compartidos: `assets/js/handoff.js` (pásale el celular, pantalla tapad
 
 Convenciones:
 - Idioma: leer `getLang()` de `assets/js/i18n.js`, marcar textos fijos del HTML con `data-i18n="clave"` (o `data-i18n-html`) y llamar `applyStatic(LOCALES[lang].ui)` al iniciar. Incluir `langToggle()` en la intro del juego.
-- Textos en español chileno informal, tuteo, sin groserías fuertes. Inglés y portugués de Brasil adaptados, no calcados (C-3, D-48).
+- Textos en español chileno informal, tuteo, sin groserías fuertes. Inglés, portugués de Brasil y alemán adaptados, no calcados (C-3, D-48). El alemán está en el laboratorio, pero la prueba de paridad lo pide igual, con el glosario de [ALEMAN.md](ALEMAN.md) (D-191).
 - Botones de acción principal con `.btn` (rosado) o `.btn--yellow`; secundarios con `.btn--ghost`.
 - Usar `vibrate()` en momentos clave y `confetti()` en cierres.

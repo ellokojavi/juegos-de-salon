@@ -296,7 +296,8 @@ button.md-fila { cursor: pointer; }
 .keypad--letras { max-width: 460px; gap: 4px; }
 .keypad--letras button { font: 900 1.05rem var(--font-body); min-height: 48px; padding: 0; }
 .keypad--letras button.del, .keypad--letras button.ok { grid-column: span 2; }
-.keypad--letras button.ok { font-size: 1.3rem; grid-column: span 3; }
+/* Probar no cabe junto a ⌫ y caía solo a la izquierda de una fila nueva: va a lo ancho, centrado (U-11) */
+.keypad--letras button.ok { font-size: 1.3rem; grid-column: 1 / -1; }
 .letras-juego .entry .box { width: clamp(44px, 14vw, 58px); font-family: var(--font-body); }
 .board li .val.letras { display: flex; gap: 3px; letter-spacing: 0; }
 .letra { display: inline-grid; place-items: center; width: 1.6em; height: 1.6em; border-radius: 6px; font: 900 0.95rem var(--font-body); background: rgba(255,255,255,0.1); }
@@ -352,7 +353,9 @@ button.md-fila { cursor: pointer; }
 .zip-ej b { display: grid; place-items: center; width: 64%; aspect-ratio: 1; border-radius: 50%; background: #1a1a1a; color: #fff; font: 900 0.75rem/1 var(--font-num); box-shadow: 0 0 0 2px #fff; }
 .zip-ej .zip-trazo { z-index: 1; }
 .zip-ej.fin .zip-trazo polyline { stroke: var(--lime); }
-.tan-grid { gap: 4px; }
+/* Dos toques rápidos en la misma casilla (sol y luego luna) no son un zoom: sin esto, iOS se come
+   el segundo y el sol de paso se ve como choque (reporte 🐞 del 2-oct) */
+.tan-grid { gap: 4px; touch-action: manipulation; }
 .tan { position: relative; aspect-ratio: 1; color: inherit; min-width: 0; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.1); font-size: clamp(1.2rem, 7vw, 2rem); cursor: pointer; padding: 0; display: grid; place-items: center; }
 .tan.dada { background: rgba(255,255,255,0.28); cursor: default; }
 /* Día y noche (D-146): el sol y la luna son emojis amarillos; el fondo y la luna plateada los separan */
