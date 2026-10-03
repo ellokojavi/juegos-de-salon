@@ -8,6 +8,7 @@
  * (`globo.js`); la vista y su inversa están aquí, y la distancia se mide sobre la esfera.
  */
 import { azar } from './semilla.js';
+import { fuera as fueraPara } from './audiencia.js';
 import { CIUDADES } from './ciudades.js';
 import { ciudad, pais } from './nombres.js';
 
@@ -86,12 +87,22 @@ export const nombre = (c, lang = 'es') => {
  * Las ciudades del día, de la fácil a la difícil, cada una de un país distinto. `sin` deja
  * afuera las de otra partida (la sesión de prueba no puede adelantar las del día).
  */
-export function generar(codigo, dia, { niveles = NIVELES, sal = 'donde', sin = [] } = {}) {
+/**
+ * Lo local (D-186, D-187): las ciudades de Chile y de Brasil que no son su
+ * capital, salvo Río de Janeiro y São Paulo, que se conocen en todo el mundo. Los niveles se
+ * pensaron para un grupo chileno: Antofagasta o Punta Arenas valen nivel 1 solo en Chile.
+ */
+const MUNDIALES = new Set(['Río de Janeiro', 'São Paulo']);
+const PAIS_LOCAL = { Chile: 'cl', Brasil: 'br' };
+/** De qué país es local una ciudad ('cl', 'br'), o `null` si se conoce en todas partes (D-187). */
+export const local = c => (PAIS_LOCAL[c.pais] && !c.capital && !MUNDIALES.has(c.ciudad) ? PAIS_LOCAL[c.pais] : null);
+
+export function generar(codigo, dia, { niveles = NIVELES, sal = 'donde', sin = [], aud = null } = {}) {
   const a = azar(codigo, dia, sal);
   const fuera = new Set(sin.map(c => c.ciudad));
   const paises = new Set();
   const ciudades = niveles.map(n => {
-    const c = a.barajar(CIUDADES.filter(x => x.nivel === n && !fuera.has(x.ciudad) && !paises.has(x.pais)))[0];
+    const c = a.barajar(CIUDADES.filter(x => x.nivel === n && !fuera.has(x.ciudad) && !paises.has(x.pais) && !fueraPara(local(x), aud)))[0];
     paises.add(c.pais);
     return c;
   });
@@ -115,4 +126,4 @@ export const puntaje = e => (e.filas.length ? Math.round(e.total / e.filas.lengt
 export const tarjeta = e => e.filas.map(f => marca(f.km)).join('');
 
 /** "1.250 km": con punto de miles, como se escribe en Chile ("1,250 km" en inglés). */
-export const km = (n, lang = 'es') => `${Math.round(n).toLocaleString({ en: 'en-US', pt: 'pt-BR' }[lang] || 'es-CL')} km`;
+export const km = (n, lang = 'es') => `${Math.round(n).toLocaleString({ en: 'en-US', pt: 'pt-BR', de: 'de-DE' }[lang] || 'es-CL')} km`;

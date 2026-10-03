@@ -1,6 +1,6 @@
 # Diseño: Julepe 🍹
 
-**Ruta:** `/julepe/` · **Jugadores:** 2 a 6 · **Versión:** 0.34 · **Idiomas:** es, en (“Julep”), pt (“Paga o Bolo”)
+**Ruta:** `/julepe/` · **Jugadores:** 2 a 6 · **Versión:** 0.34 · **Idiomas:** es, en (“Julep”), pt (“Paga o Bolo”) y, en el laboratorio, de (“Julepe”, D-191)
 
 **Estado:** fuera del menú por ahora, mientras se reescriben las reglas (D-88). El juego sigue entero acá.
 
