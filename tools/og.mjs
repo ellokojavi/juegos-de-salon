@@ -95,7 +95,7 @@ const paginas = () => [...PUERTAS.map(portada), ...conTarjeta.map(g => ({
 const HUELLAS = join(RAIZ, 'assets/og/huellas.json');
 const leerHuellas = () => { try { return JSON.parse(readFileSync(HUELLAS, 'utf8')); } catch (_) { return {}; } };
 /**
- * Solo los idiomas que tienen tarjeta (`LANGS`, sin los del laboratorio, D-190): sumar el alemán
+ * Solo los idiomas que tienen tarjeta (`LANGS`, sin los del laboratorio, D-191): sumar el alemán
  * a games.js no cambia ninguna imagen, así que tampoco puede dejarlas atrasadas.
  */
 const enTarjetas = o => (o && typeof o === 'object' ? Object.fromEntries(LANGS.filter(l => l in o).map(l => [l, o[l]])) : o);

@@ -12,7 +12,7 @@ export const ALPHABETS = {
   es: 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ',
   en: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
   pt: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
-  // Alemán, en el laboratorio (D-190): sin Ä, Ö, Ü ni ß en el teclado; los mazos las evitan
+  // Alemán, en el laboratorio (D-191): sin Ä, Ö, Ü ni ß en el teclado; los mazos las evitan
   de: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
 };
 

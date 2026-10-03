@@ -1,5 +1,5 @@
 // Ejecutar: node assets/js/i18n.test.mjs
-// Paridad de idiomas (C-3, D-48, D-190): es, en, pt y de tienen las mismas claves, listas del mismo largo,
+// Paridad de idiomas (C-3, D-48, D-191): es, en, pt y de tienen las mismas claves, listas del mismo largo,
 // las mismas {llaves} en las plantillas y ningún texto vacío. Un texto que falta en un idioma
 // se ve como "undefined" en pantalla, así que esto se revisa antes de publicar.
 import assert from 'node:assert/strict';
@@ -36,7 +36,7 @@ function same(name, dict) {
   }
 }
 
-// Fuera del laboratorio se ofrecen los de siempre; los del laboratorio tienen sus textos igual (D-190)
+// Fuera del laboratorio se ofrecen los de siempre; los del laboratorio tienen sus textos igual (D-191)
 assert.deepEqual(LANGS, ['es', 'en', 'pt']);
 assert.deepEqual(IDIOMAS, ['es', 'en', 'pt', 'de']);
 assert.deepEqual(EN_LABS, ['de']);
