@@ -49,7 +49,16 @@
         "anio",
         "letras"
       ],
-      "estado": "entregado al dueño; sin publicar en YouTube todavía"
+      "estado": "entregado al dueño; sin publicar en YouTube todavía",
+      "revision": {
+        "fecha": "2026-10-03",
+        "app": "0.89.0",
+        "al_dia": false,
+        "pendiente": [
+          "Falta 🧶 Desenredo, que salió del laboratorio en 0.89.0: no está ni entre los ocho juegos ni en la grilla de ¡Y muchos más!",
+          "Las capturas son de la app 0.82.x: Tango todavía sin el candado chico en las casillas dadas (0.87.1), y antes de los textos más cortos de 0.84.0 (D-177)"
+        ]
+      }
     }
   ]
 }

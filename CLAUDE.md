@@ -121,6 +121,7 @@ node panel/aggregate.test.mjs
 node panel/adapta.test.mjs               # el panel se entera solo de lo nuevo (C-16)
 node panel/copas.test.mjs                # La Copa en el panel: en curso, minijuegos, participación
 node tools/documentar.test.mjs           # la memoria y las comprobaciones del agente de documentación
+node tools/marketing.test.mjs            # qué cuenta como marketing atrasado (U-34)
 python3 tools/readme.test.py       # qué cuenta como cambio para las capturas (D-51)
 python3 -m http.server 8765          # los módulos ES necesitan HTTP, no file://
 ```
@@ -228,6 +229,14 @@ entero** (el skill `video-promo` lo carga) y al terminar se anota la vuelta ahí
 
 ```bash
 marketing/video-promo/construir.sh       # rehace el video entero (sitio servido en $SITIO)
+```
+
+El agente de usabilidad revisa en su ronda si cada asset quedó atrás de la app (U-34) y lo anota
+en `marketing/registro.json`; no lo rehace:
+
+```bash
+node tools/marketing.mjs revisar                          # ¿qué asset quedó atrás y por qué?
+node tools/marketing.mjs anotar <id> --pendiente "…"      # o --al-dia
 ```
 
 ## Reportes de La Copa
