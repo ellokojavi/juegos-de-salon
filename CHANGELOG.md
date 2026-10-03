@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.85.5 — 2026-10-03
+- **☀️ Tango: el sol de paso ya no se marca como choque en iPhone** (U-20, reporte 🐞 del 2-oct).
+  Para poner una luna hay que pasar por el sol; si se tocaba dos veces rápido la misma casilla,
+  iOS podía tomar el segundo toque como zoom y el sol quedaba en rojo. El tablero ya no acepta
+  ese gesto (`touch-action: manipulation`, como el teclado de los juegos).
+
 ## 0.85.4 — 2026-10-02
 - **🧶 Desenredo: instrucciones más cortas** (U-18, D-184): de 337 a 209 caracteres. La meta va
   primero y no se repite lo que muestra el dibujo de ejemplo.
