@@ -53,7 +53,7 @@ The classic drinking card game. The phone is the deck: each player draws a card 
   </tr>
   <tr>
     <td align="center"><img src="docs/screenshots/cuarto-rey/06-minijuego.png" width="180" alt="Minigame with prompts"><br><sub>Minigame with prompts</sub></td>
-    <td align="center"><img src="docs/screenshots/cuarto-rey/07-salud.png" width="180" alt="Cheers!"><br><sub>Cheers!</sub></td>
+    <td align="center"><img src="docs/screenshots/cuarto-rey/07-salud.png" width="180" alt="Who drinks"><br><sub>Who drinks</sub></td>
     <td align="center"><img src="docs/screenshots/cuarto-rey/08-pasale.png" width="180" alt="Pass the phone"><br><sub>Pass the phone</sub></td>
     <td align="center"><img src="docs/screenshots/cuarto-rey/09-cuarto-rey.png" width="180" alt="Fourth King!"><br><sub>Fourth King!</sub></td>
   </tr>
