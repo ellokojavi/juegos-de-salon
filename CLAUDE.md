@@ -96,7 +96,7 @@ atrasada frena el PR y `set-version.py` (D-181): **se rehacen desde una rama al 
 GitHub corre todas las de abajo (menos el servidor) en cada PR y en cada fusión a main
 (`.github/workflows/pruebas.yml`, D-143): el PR muestra ✅ o ❌. Encuentra solo cualquier
 `*.test.mjs` o `*.test.py`, así que un test nuevo no se agrega al workflow. Igual se corren
-aquí antes de abrir el PR; las de punta a punta siguen a mano.
+aquí antes de abrir el PR. Las de punta a punta también corren en GitHub (ver abajo).
 
 **No se fusiona un PR hasta que GitHub muestre ✅ en su check `pruebas`**, aunque las pruebas ya
 hayan pasado aquí: abrir el PR, esperar el resultado y recién ahí fusionar.
@@ -125,6 +125,7 @@ node panel/aggregate.test.mjs
 node panel/adapta.test.mjs               # el panel se entera solo de lo nuevo (C-16)
 node panel/copas.test.mjs                # La Copa en el panel: en curso, minijuegos, participación
 node tools/documentar.test.mjs           # la memoria y las comprobaciones del agente de documentación
+node tools/marketing.test.mjs            # qué cuenta como marketing atrasado (U-34)
 python3 tools/readme.test.py       # qué cuenta como cambio para las capturas (D-51)
 python3 -m http.server 8765          # los módulos ES necesitan HTTP, no file://
 ```
@@ -155,7 +156,19 @@ tailscale serve --https=443 off
 
 `tools/e2e/` tiene scripts que juegan partidas completas en Chrome headless (ver su README):
 sirven el sitio en el puerto 8765, corren `node tools/e2e/<script>.mjs <carpeta-salida>` y
-revisan las capturas. Antes de repetir uno que falló, matar solo el Chrome propio:
+revisan las capturas.
+
+**GitHub las corre en cada PR y en cada fusión a main** (`.github/workflows/e2e.yml`, D-193):
+cada guion en su propio job, en paralelo, y el PR muestra cuál falló, con sus capturas como
+artefacto. `tools/e2e/ci.mjs` decide cuáles: todos menos los que abren salas en el Firebase de
+producción (`*-online`, `*-chat` y los de su lista), que siguen a mano. Un guion nuevo entra
+solo; para que falle en rojo, que imprima ✗ o ❌ o salga con error. Aquí se corren igual:
+
+```bash
+node tools/e2e/ci.mjs              # todos los de CI, con resumen; o: node tools/e2e/ci.mjs copa.mjs
+```
+
+Antes de repetir uno que falló, matar solo el Chrome propio:
 `pkill -f "remote-debugging-port=948[4]"`, con el corchete (ver "Varias sesiones a la vez").
 
 ## Panel del dueño
@@ -232,6 +245,14 @@ entero** (el skill `video-promo` lo carga) y al terminar se anota la vuelta ahí
 
 ```bash
 marketing/video-promo/construir.sh       # rehace el video entero (sitio servido en $SITIO)
+```
+
+El agente de usabilidad revisa en su ronda si cada asset quedó atrás de la app (U-34) y lo anota
+en `marketing/registro.json`; no lo rehace:
+
+```bash
+node tools/marketing.mjs revisar                          # ¿qué asset quedó atrás y por qué?
+node tools/marketing.mjs anotar <id> --pendiente "…"      # o --al-dia
 ```
 
 ## El alemán en el laboratorio (D-191)
