@@ -67,4 +67,9 @@ export const PALABRAS_PT = [
 ];
 
 /** Las palabras secretas de un idioma; sin idioma conocido, las de español. */
-export const palabrasDe = lang => ({ en: PALABRAS_EN, pt: PALABRAS_PT }[lang] || PALABRAS);
+/** Las que solo se dicen en Chile: una copa internacional no las usa (D-186). */
+export const LOCALES = new Set(['CABRO', 'HUASO', 'PISCO']);
+export const palabrasDe = (lang, { intl = false } = {}) => {
+  const lista = { en: PALABRAS_EN, pt: PALABRAS_PT }[lang] || PALABRAS;
+  return intl ? lista.filter(p => !LOCALES.has(p)) : lista;
+};

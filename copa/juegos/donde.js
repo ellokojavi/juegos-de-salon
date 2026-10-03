@@ -86,12 +86,20 @@ export const nombre = (c, lang = 'es') => {
  * Las ciudades del día, de la fácil a la difícil, cada una de un país distinto. `sin` deja
  * afuera las de otra partida (la sesión de prueba no puede adelantar las del día).
  */
-export function generar(codigo, dia, { niveles = NIVELES, sal = 'donde', sin = [] } = {}) {
+/**
+ * Lo local en una copa internacional (D-186): las ciudades de Chile y de Brasil que no son su
+ * capital, salvo Río de Janeiro y São Paulo, que se conocen en todo el mundo. Los niveles se
+ * pensaron para un grupo chileno: Antofagasta o Punta Arenas valen nivel 1 solo en Chile.
+ */
+const MUNDIALES = new Set(['Río de Janeiro', 'São Paulo']);
+export const local = c => (c.pais === 'Chile' || c.pais === 'Brasil') && !c.capital && !MUNDIALES.has(c.ciudad);
+
+export function generar(codigo, dia, { niveles = NIVELES, sal = 'donde', sin = [], intl = false } = {}) {
   const a = azar(codigo, dia, sal);
   const fuera = new Set(sin.map(c => c.ciudad));
   const paises = new Set();
   const ciudades = niveles.map(n => {
-    const c = a.barajar(CIUDADES.filter(x => x.nivel === n && !fuera.has(x.ciudad) && !paises.has(x.pais)))[0];
+    const c = a.barajar(CIUDADES.filter(x => x.nivel === n && !fuera.has(x.ciudad) && !paises.has(x.pais) && !(intl && local(x))))[0];
     paises.add(c.pais);
     return c;
   });

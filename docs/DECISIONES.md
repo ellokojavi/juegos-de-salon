@@ -2692,3 +2692,28 @@ alarga (2 a 3 vueltas, una cada ~230 unidades), y la curva de base queda un poco
 del largo, tope 26). La textura de dos cabos sigue igual.
 **Por qué:** el dueño vio la cuerda de 0.85.3 demasiado ondulada.
 
+## D-186 · La copa puede ser internacional: sin temas de Chile ni de Brasil
+**Fecha:** 2026-10-03 · **Estado:** vigente
+**Decisión:** Al crear una copa se elige **¿Qué temas incluye?**: con temas locales (como hasta
+ahora, y lo que viene marcado) o internacional. Una copa internacional lleva `meta.intl: true` y
+deja fuera lo que se conoce solo en Chile o en Brasil:
+- **Línea Relámpago, ¿En qué año? y la final:** la temática Chile (Brasil ya estaba fuera, D-111)
+  y, en las demás, las cartas marcadas `local` (la fundación de Colo-Colo y la Copa América de
+  Chile). El fútbol de Brasil se queda: sus Mundiales son de todo el mundo.
+- **Conexiones:** las grillas marcadas `local`: en español, los golpes "en chileno" y los cortes
+  de carne chilenos; en portugués, las de folclore, clubes, cortes, danzas, árboles y pintores de
+  Brasil. Quedan 10, 13 y 7 grillas (español, inglés y portugués).
+- **Palabra:** CABRO, HUASO y PISCO.
+- **¿Dónde queda?:** las ciudades de Chile y de Brasil que no son su capital, salvo Río de Janeiro
+  y São Paulo. Sus niveles se pensaron para un grupo chileno (Antofagasta es nivel 1).
+La invitación y el tablero lo dicen ("🌍 Copa internacional…"). Las reglas de Firebase aceptan
+`intl` como `true`, igual que `lab`.
+**Por qué:** lo pidió el dueño, para jugar con gente de otros países.
+**Consecuencias:** una copa sin la marca genera exactamente lo mismo que antes (se comparó en
+15.120 tableros), así que las copas en curso no cambian. Lo local se marca en los datos (`local`
+en cartas y grillas, la lista `LOCALES` de palabras, `local()` en `donde.js`): una carta o grilla
+nueva con contenido local se marca al escribirla. Los minijuegos sueltos no cambian.
+**Alternativas descartadas:** decidirlo por el idioma de la copa (un grupo chileno puede jugar en
+inglés, y uno extranjero en español); sacar también Brasil del fútbol (sus Mundiales se conocen en
+todas partes).
+
