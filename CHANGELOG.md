@@ -1,5 +1,41 @@
 # Changelog
 
+## 0.90.3 — 2026-10-03
+- **☀️ Tango: el choque se marca al tocar otra casilla** (#135): sin la espera de 500 ms. Un sol
+  de paso que rompe una regla se pinta en rojo (con sonido y vibración) recién cuando el jugador
+  toca otra casilla, que es cuando el puntaje lo cobra: lo rojo es lo que cuenta. El puntaje no
+  cambia. Con el tablero lleno, el último choque se ve sin sonar ni contar.
+- **El sol dado se distingue del jugado** (#61): ámbar más intenso y borde propio.
+
+## 0.90.2 — 2026-10-03
+- **🏆 La Copa: cuatro dilemas de usabilidad resueltos.**
+  - El recordatorio del día abre con el emoji del minijuego ("⏳ Hoy toca Línea Relámpago."), sin
+    emoji en medio de la frase (#114, U-2).
+  - La bienvenida del admin con link propio dice una sola vez que cierre la inscripción, con el
+    porqué al lado (#102).
+  - Los botones de Administrar dicen la acción: "📤 Invitar al grupo", "📤 Recordar el juego de
+    hoy" y "📤 Compartir la tabla" (#65, U-5, U-17).
+  - Si el 1.° y el 2.° empatan en puntos, el podio y el resumen dicen qué desempató: "⚖️ Empate en
+    68 puntos: desempató quien ganó más días." "Cómo funciona" cuenta el desempate (#79).
+
+## 0.90.1 — 2026-10-03
+- **☀️ Tango: el sol de paso ya no se marca como choque en iPhone** (U-20, reporte 🐞 del 2-oct).
+  Para poner una luna hay que pasar por el sol; si se tocaba dos veces rápido la misma casilla,
+  iOS podía tomar el segundo toque como zoom y el sol quedaba en rojo. El tablero ya no acepta
+  ese gesto (`touch-action: manipulation`, como el teclado de los juegos).
+
+## 0.90.0 — 2026-10-03
+- **🇩🇪 El alemán, en el laboratorio** (D-191): la app entera en alemán (Salonspiele) para que la
+  revisen amigos que lo hablan, en `/labs/de/`. Solo ese celular ofrece DE en el toggle; ahí los
+  "‹ Menü" vuelven al laboratorio y 🐞 en la barra de arriba manda comentarios con su contexto
+  (`node tools/reportes.mjs`). Es un borrador con glosario fijo: ver `docs/ALEMAN.md`.
+- **Arreglos para todos**, que salieron de medir el alemán a 320 px: los acentos de los títulos
+  con degradado ya no salen cortados (SALÓN, SALÃO); la barra de arriba no se parte en dos líneas
+  (el nombre del juego se corta con "…"); Palabra ya no muestra "null", su teclado deja un hueco
+  donde el español tiene la Ñ y el botón Probar va a lo ancho; el título de la pestaña de La Copa
+  sale en el idioma de quien mira.
+- **Reglas de Firebase:** una copa puede guardar `lang: "de"`.
+
 ## 0.89.0 — 2026-10-03
 - **🧶 Desenredo sale del laboratorio** (D-190): su tarjeta ya no dice "Próximamente" y se juega
   suelto desde el menú, en `/minijuegos/desenredo/`. En La Copa se puede elegir para cualquier día,

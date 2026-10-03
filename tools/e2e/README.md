@@ -30,9 +30,25 @@ SITIO=http://localhost:8791 PUERTO_CDP=9491 node tools/e2e/ahorcado-online.mjs /
 pkill -f "remote-debugging-port=949[1-3]"   # solo los tuyos
 ```
 
+## En GitHub (D-193)
+
+`ci.mjs` corre los guiones que no tocan el Firebase de producción, y GitHub lo usa en cada PR
+(`.github/workflows/e2e.yml`, un job por guion). Un guion falla si sale con error, si imprime
+una línea con ✗ o ❌, o si pasa los 15 minutos. Los que solo imprimen lo que ven igual caen si
+algo se rompe del todo. Los `*-online`, los `*-chat` y los de la lista `TAMBIEN_FIREBASE` de
+`ci.mjs` abren salas de verdad y siguen a mano. Los de `OBSOLETOS` prueban algo que ya no
+existe y esperan que alguien los reescriba.
+
+```bash
+node tools/e2e/ci.mjs              # todos los de CI, uno tras otro, con resumen
+node tools/e2e/ci.mjs --lista      # cuáles son
+node tools/e2e/ci.mjs copa.mjs     # solo ese
+```
+
 `mirar.mjs` no es una prueba: abre una pantalla suelta para revisarla de a una, sin jugar la
 partida. `node tools/e2e/mirar.mjs ahorcado juego --ancho 320` saca la captura y avisa si hay
-scroll horizontal o botones bajo 44 px (C-8).
+scroll horizontal o botones bajo 44 px (C-8). Con `--idioma de` pone la marca del laboratorio, igual que
+entrar por `/labs/de/`: el alemán solo se ofrece así (D-191).
 
 `contacto.mjs` tampoco: arma una hoja con **todas** las capturas del README de una sección,
 al tamaño en que el README las muestra, para mirarlas juntas antes de publicar (D-76).

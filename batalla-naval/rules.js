@@ -125,4 +125,45 @@ const PT = {
   rematch: '🔁 Revanche', changeMode: 'Mudar o modo', backMenu: 'Voltar ao menu',
 };
 
-export const LOCALES = { es: ES, en: EN, pt: PT };
+const DE = {
+  docTitle: 'Schiffe versenken ⚓ · Salonspiele', gameChip: '⚓ Schiffe versenken', menu: '‹ Menü',
+  title: 'Schiffe versenken',
+  lead: 'Versteck deine Flotte und versenk die deines Gegners, bevor er deine versenkt.',
+  howTitle: '🧭 So geht’s',
+  howText: 'Jede Flotte hat 5 Schiffe auf einem 10×10-Feld. Abwechselnd schießt ihr auf ein Feld des Gegners: <b>Wasser</b>, wenn dort nichts ist, <b>Treffer</b>, wenn du ein Schiff erwischst, und <b>versenkt</b>, wenn du alle seine Felder getroffen hast.',
+  modeLocal: '📱 Ein Handy, zwei Spieler', modeLocalHint: 'Ihr reicht das Handy weiter. Zwischen den Zügen wird deine Flotte verdeckt.',
+  modeOnline: '📡 Zwei Handys', modeOnlineHint: 'Jeder spielt auf seinem eigenen Handy.',
+  modeCpu: '🤖 Gegen das Handy', modeCpuHint: 'Das Handy stellt seine Flotte auf und schießt auf deine.',
+  setupTitle: 'Wie spielen wir?', extraShot: 'Extraschuss bei Treffer', extraShotHint: 'Triffst oder versenkst du, schießt du nochmal.', confirmShot: 'Jeden Schuss bestätigen', confirmShotHint: 'Du wählst das Feld und tippst dann auf Feuer!',
+  yourName: 'Dein Name', p1: 'Spieler 1', p2: 'Spieler 2', cpuName: 'Handy', start: 'Los geht’s!',
+  errName: 'Der Name fehlt.', errNames: 'Namen fehlen oder sind doppelt.',
+  create: 'Raum erstellen', joinTitle: 'Einem Raum beitreten', codePlaceholder: 'CODE', join: 'Beitreten', errCode: 'Der Code hat 4 Buchstaben.',
+  errNotFound: 'Diesen Raum gibt es nicht. Prüf den Code.', errFull: 'Der Raum ist schon voll.', errExpired: 'Dieser Raum ist abgelaufen.', errOtherGame: 'Dieser Code gehört zu einem anderen Spiel.', errNet: 'Keine Verbindung. Hast du Internet?',
+  errOffline: 'Der Raum ließ sich nicht öffnen. Vielleicht liegt es an deinem Internet oder es spielen gerade sehr viele. Versuch es in ein paar Minuten nochmal oder spiel mit einem Handy, dafür brauchst du kein Internet.',
+  errTooMany: 'Du hast viele Räume hintereinander geöffnet. Warte kurz und versuch es nochmal.',
+  invitedTitle: 'Du bist eingeladen!', invited: '📩 Raum {code}', invitedHint: 'Gib deinen Namen ein und steig ein. Wer dich eingeladen hat, stellt das Spiel ein.',
+  lobbyTitle: 'Raum erstellt', lobbyCode: 'Code', lobbyShare: 'Sag deinem Gegner den Code oder lass ihn den QR-Code scannen.', lobbyWaiting: 'Warte auf deinen Gegner', lobbyJoined: '{name} ist dabei!', shareLink: '📤 Link teilen', copyLink: '📋 Link kopieren', copied: 'Kopiert!',
+  lobbyCancel: 'Raum auflösen', lobbyLeave: 'Raum verlassen',
+  chatTitle: 'Raum-Chat', chatOpen: 'Chat öffnen', chatClose: 'Chat schließen', chatSend: 'Senden',
+  chatPlaceholder: 'Schreib was…', chatEmpty: 'Hier könnt ihr euch zwischen den Schüssen necken. Der Chat wird gelöscht, wenn der Raum schließt.',
+  offline: 'Gegner getrennt. Warte, bis er zurückkommt…', rematchWaiting: 'Warte auf {name} für die Revanche',
+  resumeTitle: '⏯ Eine Schlacht ist noch offen', resume: 'Weiter', delete: 'Löschen',
+  // Aufstellen
+  placeTitle: 'Stell deine Flotte auf', placeFor: 'Flotte von {name}', placeHint: 'Tippe auf ein Schiff und dann auf ein Feld, oder zieh es hin. Tippe auf ein gesetztes Schiff, um es zu drehen oder zu verschieben.',
+  ships: { carrier: 'Flugzeugträger', battleship: 'Schlachtschiff', cruiser: 'Kreuzer', submarine: 'U-Boot', destroyer: 'Zerstörer' },
+  rotate: '↻ Drehen {dir}', random: '🎲 Zufällig', clear: '🧹 Leeren', sail: '⚓ Leinen los!', placed: '{n} von 5 Schiffen',
+  fleetSaved: 'Flotte bereit 🔒', waitingFleet: 'Warte, bis {name} die Flotte aufgestellt hat', tapToReveal: 'Tippen zum Ansehen', hoPass: 'Gib das Handy an', hoReady: 'Bereit, ich bin’s!',
+  // Schlacht
+  turnYou: 'Du bist dran!', turnYouSub: 'Schieß auf die Flotte von {name}', turnOther: '{name} ist dran', turnOtherSub: 'Du wirst ins Visier genommen…',
+  notYourTurn: 'Warte, bis du dran bist: Jetzt schießt {name}.', extraGo: '{result} Schieß nochmal', waitingReply: 'Warte auf die Antwort…',
+  fire: '🎯 Feuer!', enemyBoard: 'Flotte von {name}', myBoard: 'Meine Flotte', showFleet: 'tippen, um meine Flotte zu zeigen', hideFleet: 'tippen zum Verbergen',
+  agua: 'Wasser', tocado: 'Treffer!', hundido: 'Versenkt!', sunkShip: '{ship} von {name} versenkt!', sunkMine: 'Dein {ship} wurde versenkt!',
+  shotAt: '{name} schoss auf {cell}',
+  hoResult: 'Ergebnis', hoContinue: 'Weiter',
+  // Ergebnis
+  winTitle: '{name} gewinnt!', youWin: 'Du hast gewonnen!', youLose: 'Versenkt… diesmal.', stats: '{shots} Schüsse · {acc} % Trefferquote', fleetsWere: 'Die Flotten waren',
+  verified: 'geprüft ✅', notVerified: '⚠️ passt nicht (geschummelt?)', replayTitle: '🔎 Alle Schüsse ansehen', shotsOf: 'Schüsse von {name}',
+  rematch: '🔁 Revanche', changeMode: 'Modus ändern', backMenu: 'Zurück zum Menü',
+};
+
+export const LOCALES = { es: ES, en: EN, pt: PT, de: DE };
