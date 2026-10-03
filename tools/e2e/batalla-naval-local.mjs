@@ -1,4 +1,6 @@
 import { launch, sleep } from './cdp.mjs';
+// Con varias sesiones a la vez, cada una sirve su copia en su puerto (D-135)
+const SITIO = process.env.SITIO || 'http://localhost:8765';
 const OUT = process.argv[2];
 const b = await launch({ port: 9381, dir: `${OUT}/p`, out: OUT });
 const bv = () => b.evaluate(`JSON.stringify(window.__bn.view())`).then(JSON.parse);
@@ -10,7 +12,7 @@ const shipCells = async role => b.evaluate(`(()=>{const L=__bn.session().layouts
 const missCell = async role => { const cells = await shipCells(role); for (let r = 0; r < 10; r++) for (let c = 0; c < 10; c++) { const n = 'ABCDEFGHIJ'[c] + (r + 1); if (!cells.includes(n)) return n; } };
 const handoffBtn = async () => { await b.evaluate(`document.querySelector('#handoff .btn')?.click(); 1`); await sleep(450); };
 
-await b.go('http://localhost:8765/batalla-naval/'); await b.evaluate(`localStorage.clear(); 1`); await b.go('http://localhost:8765/batalla-naval/');
+await b.go(`${SITIO}/batalla-naval/`); await b.evaluate(`localStorage.clear(); 1`); await b.go(`${SITIO}/batalla-naval/`);
 console.log('modos:', await b.evaluate(`[...document.querySelectorAll('.mode')].map(m=>m.disabled?'off':'on').join(',')`)); await b.shot('01-intro');
 // ---- LOCAL ----
 await click('.mode'); await sleep(300); await b.shot('02-setup');
@@ -46,7 +48,7 @@ await b.evaluate(`document.getElementById('handoff').click(); 1`); await sleep(5
 console.log('tras cerrar el resultado del último disparo → pantalla:', await b.active());
 await b.evaluate(`document.querySelector('#result-replay summary').click(); 1`); await sleep(300); await b.shot('12-result-replay');
 // ---- CPU ----
-await b.go('http://localhost:8765/batalla-naval/'); await b.evaluate(`document.querySelectorAll('.mode')[2].click(); 1`); await sleep(300);
+await b.go(`${SITIO}/batalla-naval/`); await b.evaluate(`document.querySelectorAll('.mode')[2].click(); 1`); await sleep(300);
 await b.evaluate(`(()=>{document.querySelector('#setup-form input').value='Javi';return 1})()`);
 await click('#setup-actions .btn'); await sleep(400); await clickText('#place-actions .btn', 'azar'); await click('#place-sail .btn'); await sleep(2500);
 console.log('cpu: fase', (await bv()).phase, 'tirador', (await bv()).shooter, 'disparos', await b.evaluate(`__bn.match().shots.length`));
