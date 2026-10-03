@@ -103,7 +103,7 @@ body {
  * El degradado se pinta dentro de la caja del texto, y con line-height 0.95 los acentos sobre
  * mayúscula quedan fuera: la Ó de SALÓN y la Ã de SALÃO salían cortadas, y en alemán se perdían
  * las diéresis de casi cada título (Ä, Ö, Ü). El relleno arriba agranda la caja pintada y el
- * margen negativo deja el título donde estaba (D-190).
+ * margen negativo deja el título donde estaba (D-191).
  */
 .rainbow {
   padding-top: 0.2em; margin-top: -0.2em;
@@ -177,7 +177,7 @@ details.panel summary::-webkit-details-marker { display: none; }
 /*
  * A 320 px el nombre del juego no cabe siempre en la barra ("⚓ Batalla Naval", y en alemán
  * "🪢 Galgenmännchen"): partía el chip en dos líneas y arrastraba a "‹ Menú". El menú no se
- * achica y el chip se corta con "…": el nombre entero está en el título de la pantalla (D-190).
+ * achica y el chip se corta con "…": el nombre entero está en el título de la pantalla (D-191).
  */
 .topbar .tools { min-width: 0; }
 .topbar .tools > :not(.chip) { flex: none; }
@@ -348,11 +348,11 @@ details.panel summary::-webkit-details-marker { display: none; }
 /*
  * En alemán las palabras compuestas son largas y no caben en una columna angosta: se cortan
  * con guion, según el diccionario del navegador (necesita el lang del <html>, que pone
- * setLang), y si igual no caben se parten antes que desbordar la pantalla (D-190).
+ * setLang), y si igual no caben se parten antes que desbordar la pantalla (D-191).
  */
 html:lang(de) body { -webkit-hyphens: auto; hyphens: auto; overflow-wrap: break-word; }
 
-/* --- Un idioma en el laboratorio (D-190, assets/js/labs-idioma.js) --- */
+/* --- Un idioma en el laboratorio (D-191, assets/js/labs-idioma.js) --- */
 .labs-tabs { position: fixed; left: 0; top: 46%; z-index: 40; display: grid; gap: 6px; }
 .labs-tab {
   width: 34px; height: 44px; display: grid; place-items: center; font-size: 1.1rem; text-decoration: none;

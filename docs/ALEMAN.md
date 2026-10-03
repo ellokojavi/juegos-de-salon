@@ -1,6 +1,6 @@
 # El alemán
 
-Juegos de Salón en alemán (**Salonspiele**). Hoy vive **en el laboratorio** (D-190): tiene todos
+Juegos de Salón en alemán (**Salonspiele**). Hoy vive **en el laboratorio** (D-191): tiene todos
 sus textos, pero solo se ofrece en el dispositivo que entró por `/labs/de/`. El resto de la gente
 sigue viendo español, inglés y portugués como siempre.
 

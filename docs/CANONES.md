@@ -52,7 +52,7 @@ Una carpeta por juego, con su propia URL (`/<id>/`) y siempre estos archivos:
   palabras es propio de cada idioma, no una traducción.
 - **Todos los diccionarios (`IDIOMAS`, también los del laboratorio) tienen exactamente las mismas claves**, las listas el mismo largo y las plantillas las mismas `{llaves}`: un texto que falta en un idioma se ve como `undefined` en pantalla, y `errText` (C-14) busca la misma clave en cualquier idioma. Lo verifica `node assets/js/i18n.test.mjs` (menú, frases, mazos y todos los juegos). Los mazos de Línea de Tiempo llevan `es`, `en`, `pt` y `de` en cada carta, y el test del motor también lo exige.
 - Las plantillas usan `{llaves}` y una función `fmt()`; nunca se arman frases concatenando palabras sueltas.
-- **Un idioma nuevo entra por el laboratorio** (D-190): con todos sus textos (la paridad recorre
+- **Un idioma nuevo entra por el laboratorio** (D-191): con todos sus textos (la paridad recorre
   `IDIOMAS`), pero en `EN_LABS`, que lo ofrece solo en el dispositivo que entró por
   `/labs/<idioma>/`. Sale del laboratorio cuando quienes lo hablan lo revisaron. Hoy ahí está el
   alemán ([ALEMAN.md](ALEMAN.md)): de Alemania, con "du", y su glosario fijo.

@@ -1,5 +1,5 @@
 /**
- * Un idioma en el laboratorio (D-190). Lo carga i18n.js solo en el dispositivo que entró por
+ * Un idioma en el laboratorio (D-191). Lo carga i18n.js solo en el dispositivo que entró por
  * `/labs/<idioma>/` (o por un link con `?lang=<idioma>`), y hace tres cosas en todas las páginas:
  *
  * - **La navegación no se sale del laboratorio:** un link al menú (`../`) o al laboratorio de
