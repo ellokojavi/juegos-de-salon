@@ -12,6 +12,8 @@ export const ALPHABETS = {
   es: 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ',
   en: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
   pt: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+  // Alemán, en el laboratorio (D-191): sin Ä, Ö, Ü ni ß en el teclado; los mazos las evitan
+  de: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
 };
 
 /**
@@ -22,6 +24,7 @@ export const FREQ = {
   es: 'EAOSRNIDLCTUMPBGVYQHFZJÑXWK',
   en: 'ETAOINSHRDLCUMWFGYPBVKJXQZ',
   pt: 'AEOSRINDMUTCLPVGHQBFZJXKWY',
+  de: 'ENIRSATDHULCGMOBWFKZPVJYXQ',
 };
 
 export const LIVES_OPTIONS = [5, 6, 8];
