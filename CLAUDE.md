@@ -3,7 +3,7 @@
 App web estática (HTML, CSS y JavaScript con módulos ES, sin build ni npm) con juegos de salón,
 publicada en GitHub Pages: https://juegosdesalon.cl/
 
-## Dónde está cada cosa (D-190)
+## Dónde está cada cosa (D-192)
 
 - **`public/` es el sitio**, tal como se sirve: carpeta = URL, en inglés (`public/hangman/` →
   `/hangman/`). Es lo único que se publica: `.github/workflows/publicar.yml` lo sube a Pages en cada

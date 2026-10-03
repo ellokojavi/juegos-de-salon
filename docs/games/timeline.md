@@ -183,7 +183,7 @@ Seis temáticas, cada una en su archivo dentro de `decks/`:
 - Y que se puedan **situar**: nada de “un gran incendio” o “manifestaciones” a secas, porque eso pasa cada pocos años. Superlativo, nombre propio o cifra que ancle el año (D-37).
 - Cada mazo trae al menos noventa cartas, bien repartidas en el tiempo.
 - Los mazos se registran en `decks/index.js` con su nombre, su pista y su emoji por idioma. El archivo
-  nuevo entra solo al import map (C-11, D-190), así que el navegador no mezcla un índice nuevo con un
+  nuevo entra solo al import map (C-11, D-192), así que el navegador no mezcla un índice nuevo con un
   mazo en caché. Nada más hay que tocar:
   la grilla de temáticas se dibuja sola a partir del registro.
 - El test del motor exige por carta `id` único, `year` numérico entre -4000 y 2026, `emoji` y los tres

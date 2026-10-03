@@ -215,7 +215,7 @@ public/hangman/
 ```
 
 Registro en `public/assets/js/games.js` (`players: '1–6'`, `duration: '5–12'`); sus módulos entran solos al
-import map (C-11, D-190). Gancho `window.__ahorcado` para las pruebas (C-14) y
+import map (C-11, D-192). Gancho `window.__ahorcado` para las pruebas (C-14) y
 `trackStart({ game: 'ahorcado', mode, players })` en los modos sin red (D-44).
 
 ## 10. Decisiones que deja este juego

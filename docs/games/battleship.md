@@ -96,7 +96,7 @@ export async function sha256, randomNonce, verifyPlayer({ layout, salt, commit, 
 
 Estado derivado (`view()`): fase (`lobby`, `placing`, `play`, `reveal`, `done`), quién dispara (a partir del historial y la regla de tiro extra), disparo pendiente, barcos hundidos por lado, ganador. Disparos repetidos a la misma casilla se rechazan en el reductor. Mensajes en serie, como en D-20.
 
-Sala en Firebase: mismas reglas de seguridad (el campo `game` distingue el juego, y el lobby puede cancelar la sala, D-50); los mensajes `reply` con `cells` caben en la validación actual (`t`, `from`, `at` obligatorios). Sus módulos entran solos al import map (D-190).
+Sala en Firebase: mismas reglas de seguridad (el campo `game` distingue el juego, y el lobby puede cancelar la sala, D-50); los mensajes `reply` con `cells` caben en la validación actual (`t`, `from`, `at` obligatorios). Sus módulos entran solos al import map (D-192).
 
 ## 6. IA “contra el celular”
 
