@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.90.3 — 2026-10-03
+- **☀️ Tango: el choque se marca al tocar otra casilla** (#135): sin la espera de 500 ms. Un sol
+  de paso que rompe una regla se pinta en rojo (con sonido y vibración) recién cuando el jugador
+  toca otra casilla, que es cuando el puntaje lo cobra: lo rojo es lo que cuenta. El puntaje no
+  cambia. Con el tablero lleno, el último choque se ve sin sonar ni contar.
+- **El sol dado se distingue del jugado** (#61): ámbar más intenso y borde propio.
+
 ## 0.90.2 — 2026-10-03
 - **🏆 La Copa: cuatro dilemas de usabilidad resueltos.**
   - El recordatorio del día abre con el emoji del minijuego ("⏳ Hoy toca Línea Relámpago."), sin
