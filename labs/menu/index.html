@@ -128,8 +128,9 @@
     }
     .azar-escena { --lado: min(38vw, 150px); --medio: calc(var(--lado) / 2); width: var(--lado); height: var(--lado); perspective: 700px; position: relative; }
     .azar-salto, .azar-cubo { position: absolute; inset: 0; transform-style: preserve-3d; will-change: transform; }
-    /* Un dado blanco entero: caras, cantos y esquinas redondas (el relleno de atrás), todo blanco */
-    .azar-relleno { position: absolute; background: #fff; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+    /* Un dado blanco entero: caras, cantos y esquinas redondas (el relleno de atrás). El sombreado
+       de cada cara lo pone dado.js según hacia dónde apunta */
+    .azar-relleno { position: absolute; background: #fff; }
     .azar-cara {
       position: absolute; inset: 0; display: grid; place-items: center; font-size: calc(var(--lado) * 0.5); border-radius: 16%;
       background: #fff;
