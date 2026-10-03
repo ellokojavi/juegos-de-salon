@@ -1,3 +1,5 @@
+import { fuera } from './audiencia.js';
+
 /**
  * Las palabras secretas de 🔤 Toque y Fama: Palabra. Cinco letras distintas, sin tilde (la Ñ
  * vale), comunes en Chile. Las reglas del test (copa/juegos/juegos.test.mjs): cinco letras,
@@ -67,9 +69,9 @@ export const PALABRAS_PT = [
 ];
 
 /** Las palabras secretas de un idioma; sin idioma conocido, las de español. */
-/** Las que solo se dicen en Chile: una copa internacional no las usa (D-186). */
+/** Las que solo se dicen en Chile: una copa que no es para Chile no las usa (D-186, D-187). */
 export const LOCALES = new Set(['CABRO', 'HUASO', 'PISCO']);
-export const palabrasDe = (lang, { intl = false } = {}) => {
+export const palabrasDe = (lang, { aud = null } = {}) => {
   const lista = { en: PALABRAS_EN, pt: PALABRAS_PT }[lang] || PALABRAS;
-  return intl ? lista.filter(p => !LOCALES.has(p)) : lista;
+  return fuera('cl', aud) ? lista.filter(p => !LOCALES.has(p)) : lista;
 };

@@ -2693,7 +2693,7 @@ del largo, tope 26). La textura de dos cabos sigue igual.
 **Por qué:** el dueño vio la cuerda de 0.85.3 demasiado ondulada.
 
 ## D-186 · La copa puede ser internacional: sin temas de Chile ni de Brasil
-**Fecha:** 2026-10-03 · **Estado:** vigente
+**Fecha:** 2026-10-03 · **Estado:** reemplazada por D-187 (internacional pasó a ser 🌎 global)
 **Decisión:** Al crear una copa se elige **¿Qué temas incluye?**: con temas locales (como hasta
 ahora, y lo que viene marcado) o internacional. Una copa internacional lleva `meta.intl: true` y
 deja fuera lo que se conoce solo en Chile o en Brasil:
@@ -2716,4 +2716,26 @@ nueva con contenido local se marca al escribirla. Los minijuegos sueltos no camb
 **Alternativas descartadas:** decidirlo por el idioma de la copa (un grupo chileno puede jugar en
 inglés, y uno extranjero en español); sacar también Brasil del fútbol (sus Mundiales se conocen en
 todas partes).
+
+## D-187 · El público de la copa: 🌎 global, 🇨🇱 Chile o 🇧🇷 Brasil
+**Fecha:** 2026-10-03 · **Estado:** vigente · **Reemplaza D-186**
+**Decisión:** "¿Qué temas incluye?" (local o internacional) pasa a ser **¿Para qué público es?**,
+con tres opciones: 🌎 Global, 🇨🇱 Chile y 🇧🇷 Brasil. Se guarda en `meta.aud` (`global`, `cl` o
+`br`). Lo local va marcado con su país: `local: 'cl'` o `'br'` en cartas y grillas, las temáticas
+Chile y Brasil, las palabras chilenas y las ciudades que no son capitales (`local()` en
+`donde.js` devuelve el país). `copa/juegos/audiencia.js` decide qué queda fuera:
+- **🌎 Global:** lo de los dos países. Genera exactamente lo mismo que "Internacional" de D-186.
+- **🇨🇱 Chile:** lo de Brasil (la temática Brasil sigue fuera, como en D-111).
+- **🇧🇷 Brasil:** lo de Chile. **Y entra la temática Brasil**, que antes no entraba a ninguna copa.
+El formulario parte en el público del idioma de quien crea la copa (español → Chile, portugués →
+Brasil, inglés → global). La invitación y el tablero dicen el público con su bandera.
+**Por qué:** lo pidió el dueño, para definir la audiencia de cada país y no solo "con o sin" lo
+local.
+**Consecuencias:** las copas sin `aud` se juegan como antes (todo lo local salvo la temática
+Brasil): se comparó en 15.120 tableros. Las `intl: true` de D-186 se leen como global, y las
+reglas de Firebase aceptan los dos campos. Un país nuevo es una entrada en `AUDIENCIAS` y su
+marca en el contenido.
+**Alternativas descartadas:** que Chile deje entrar también lo de Brasil (un grupo chileno no
+resuelve la temática Brasil, D-111); deducir el público del idioma (son cosas distintas: un grupo
+brasileño puede jugar en español).
 
