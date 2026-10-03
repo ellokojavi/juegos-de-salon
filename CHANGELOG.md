@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.90.4 — 2026-10-03
+- **💬 El aviso del chat ya no se come los toques** (#48, U-12): la etiqueta que asoma junto a la
+  burbuja cuando llega un mensaje deja pasar los toques, así que tocar "🔁 Revancha" (o lo que
+  quede debajo) hace lo que dice el botón. El chat se abre con la burbuja. Vale para los seis
+  juegos con chat; los lectores de pantalla siguen oyendo cada mensaje.
+
 ## 0.90.3 — 2026-10-03
 - **☀️ Tango: el choque se marca al tocar otra casilla** (#135): sin la espera de 500 ms. Un sol
   de paso que rompe una regla se pinta en rojo (con sonido y vibración) recién cuando el jugador
