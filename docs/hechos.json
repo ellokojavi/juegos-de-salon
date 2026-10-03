@@ -831,6 +831,7 @@
     "panel/aggregate.test.mjs",
     "panel/copas.test.mjs",
     "tools/documentar.test.mjs",
+    "tools/marketing.test.mjs",
     "toque-y-fama/engine.test.mjs"
   ],
   "e2e": [
