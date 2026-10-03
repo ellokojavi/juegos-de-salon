@@ -428,7 +428,7 @@ await ev(`(()=>{const o=[...document.querySelectorAll('#crear-body .opcion')];o[
 }
 // El link propio (D-121): se ve cómo queda y si está libre
 await ev(`(()=>{const i=document.getElementById('crear-link');i.value='Oficina';i.dispatchEvent(new Event('input'));return 1})()`); await sleep(700);
-ok(/juegosdesalon\.cl\/copa\/\?oficina está libre/.test(await ev(`document.getElementById('link-estado').textContent`)), 'el link propio muestra cómo queda y que está libre');
+ok(/juegosdesalon\.cl\/cup\/\?oficina está libre/.test(await ev(`document.getElementById('link-estado').textContent`)), 'el link propio muestra cómo queda y que está libre');
 // El público (D-187): tres opciones; en español parte en Chile, y se puede cambiar y volver
 {
   const alcance = () => ev(`document.querySelector('#crear-alcance .opcion.on')?.textContent || ''`);
