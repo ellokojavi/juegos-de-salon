@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.90.0 — 2026-10-03
+- **🇩🇪 El alemán, en el laboratorio** (D-191): la app entera en alemán (Salonspiele) para que la
+  revisen amigos que lo hablan, en `/labs/de/`. Solo ese celular ofrece DE en el toggle; ahí los
+  "‹ Menü" vuelven al laboratorio y 🐞 en la barra de arriba manda comentarios con su contexto
+  (`node tools/firebase/reportes.mjs`). Es un borrador con glosario fijo: ver `docs/ALEMAN.md`.
+- **Arreglos para todos**, que salieron de medir el alemán a 320 px: los acentos de los títulos
+  con degradado ya no salen cortados (SALÓN, SALÃO); la barra de arriba no se parte en dos líneas
+  (el nombre del juego se corta con "…"); Palabra ya no muestra "null", su teclado deja un hueco
+  donde el español tiene la Ñ y el botón Probar va a lo ancho; el título de la pestaña de La Copa
+  sale en el idioma de quien mira.
+- **Reglas de Firebase:** una copa puede guardar `lang: "de"`.
+
+## 0.89.0 — 2026-10-03
+- **🧶 Desenredo sale del laboratorio** (D-190): su tarjeta ya no dice "Próximamente" y se juega
+  suelto desde el menú, en `/minigames/untangle/`. En La Copa se puede elegir para cualquier día,
+  como los demás minijuegos.
+
 ## 0.88.0 — 2026-10-03
 - **🎲 Juego al azar** (D-188): un botón bajo el título del menú tira un dado blanco en 3D con un
   juego en cada cara; rueda, rebota, cae en uno y lo abre. Nunca sale La Copa, y si hay un filtro
