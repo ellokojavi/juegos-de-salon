@@ -2585,7 +2585,7 @@ temporales que se borran.
 reemplazarlos, el repo crece con cada versión. Si eso molesta, se pasan a Git LFS o a un release.
 
 ## D-179 · Desenredo: el Untangle de Tatham, por niveles como Zip
-**Fecha:** 2026-10-02 · **Estado:** vigente (en el laboratorio)
+**Fecha:** 2026-10-02 · **Estado:** vigente; salió del laboratorio en D-190
 **Decisión:** Un minijuego nuevo de La Copa, **🧶 Desenredo** (*Untangle*, *Desenrola*), que se
 juega también suelto en `minijuegos/desenredo/`. Nudos unidos por hilos que se cruzan; se arrastran
 los nudos hasta que ningún hilo cruce a otro.
@@ -2781,3 +2781,14 @@ producción (avisado en la guía). Publicar reglas de Firebase, el panel y los r
 siendo del dueño: necesitan su llave.
 **Alternativas descartadas:** sumarlo como colaborador con escritura (podría saltarse el PR); una
 licencia GPL (el dueño eligió MIT).
+
+## D-190 · Desenredo sale del laboratorio
+**Fecha:** 2026-10-03 · **Estado:** vigente; cierra lo que D-179 dejó en el laboratorio
+**Decisión:** Desenredo deja de llevar `labs: true` en `SUELTOS` (`assets/js/games.js`) y en `BASE`
+(`copa/rules.js`): su tarjeta aparece en la portada, encendida y sin "Próximamente", y abre
+`/minijuegos/desenredo/`, que ya tenía su tarjeta social. En La Copa sigue en el `POZO` desde D-179:
+el admin lo puede poner en cualquier día y el calendario al azar lo puede proponer.
+**Por qué:** lo pidió el dueño: el juego ya está en condiciones de pasar a producción, tras las
+vueltas de las cuerdas (D-182, D-183, D-185) y de las instrucciones (D-184).
+**Consecuencias:** la portada ofrece ocho minijuegos sueltos y el dado del menú (D-188) también
+puede caer en él. La captura del menú en el README se rehace.
