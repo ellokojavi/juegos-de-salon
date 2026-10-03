@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.85.3 — 2026-10-02
+- **🧶 Desenredo: cuerdas más naturales** (D-183): cada cuerda lleva una segunda onda, más corta y
+  suave, y una textura de dos cabos (uno oscuro y uno claro) que se alternan como en una cuerda
+  torcida.
+
 ## 0.85.2 — 2026-10-02
 - **🧶 Desenredo: los hilos son cuerdas** (D-182): con una curva leve, un poco más gruesos y con
   textura de cuerda torcida. Cada hilo tiene su forma y la mantiene al moverlo. Las reglas no
