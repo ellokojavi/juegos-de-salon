@@ -81,7 +81,7 @@ export const GRILLAS = [
   },
   {
     id: 'avion',
-    // Con palabras que solo se conocen en Chile: fuera de una copa internacional (D-186)
+    // Con palabras que solo se conocen en Chile: solo en copas sin público o para Chile (D-186, D-187)
     local: 'cl',
     grupos: [
       { nombre: 'Signos de puntuación', palabras: ['COMA', 'PUNTO', 'GUION', 'PARÉNTESIS'] },
@@ -119,7 +119,7 @@ export const GRILLAS = [
   },
   {
     id: 'pantalla',
-    // Con palabras que solo se conocen en Chile: fuera de una copa internacional (D-186)
+    // Con palabras que solo se conocen en Chile: solo en copas sin público o para Chile (D-186, D-187)
     local: 'cl',
     grupos: [
       { nombre: 'Redes sociales', palabras: ['TIKTOK', 'INSTAGRAM', 'FACEBOOK', 'LINKEDIN'] },
@@ -202,7 +202,7 @@ export const GRILLAS_ANTES_D128 = [
   },
   {
     id: 'avion',
-    // Con palabras que solo se conocen en Chile: fuera de una copa internacional (D-186)
+    // Con palabras que solo se conocen en Chile: solo en copas sin público o para Chile (D-186, D-187)
     local: 'cl',
     grupos: [
       { nombre: 'Signos de puntuación', palabras: ['COMA', 'PUNTO', 'GUION', 'PARÉNTESIS'] },
@@ -240,7 +240,7 @@ export const GRILLAS_ANTES_D128 = [
   },
   {
     id: 'pantalla',
-    // Con palabras que solo se conocen en Chile: fuera de una copa internacional (D-186)
+    // Con palabras que solo se conocen en Chile: solo en copas sin público o para Chile (D-186, D-187)
     local: 'cl',
     grupos: [
       { nombre: 'Redes sociales', palabras: ['TIKTOK', 'INSTAGRAM', 'FACEBOOK', 'LINKEDIN'] },

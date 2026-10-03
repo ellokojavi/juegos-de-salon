@@ -43,7 +43,7 @@ export const GRILLAS = [
   },
   {
     id: 'cores',
-    // Con palabras que solo se conocen en Brasil: fuera de una copa internacional (D-186)
+    // Con palabras que solo se conocen en Brasil: solo en copas sin público o para Brasil (D-186, D-187)
     local: 'br',
     grupos: [
       { nombre: 'Frutas', palabras: ['CEREJA', 'PÊSSEGO', 'FRAMBOESA', 'AMEIXA'] },
@@ -63,7 +63,7 @@ export const GRILLAS = [
   },
   {
     id: 'festa',
-    // Con palabras que solo se conocen en Brasil: fuera de una copa internacional (D-186)
+    // Con palabras que solo se conocen en Brasil: solo en copas sin público o para Brasil (D-186, D-187)
     local: 'br',
     grupos: [
       { nombre: 'Frutas tropicais', palabras: ['ABACAXI', 'MANGA', 'MAMÃO', 'MARACUJÁ'] },
@@ -74,7 +74,7 @@ export const GRILLAS = [
   },
   {
     id: 'aviao',
-    // Con palabras que solo se conocen en Brasil: fuera de una copa internacional (D-186)
+    // Con palabras que solo se conocen en Brasil: solo en copas sin público o para Brasil (D-186, D-187)
     local: 'br',
     grupos: [
       { nombre: 'Sinais de pontuação', palabras: ['VÍRGULA', 'PONTO', 'HÍFEN', 'TRAVESSÃO'] },
@@ -94,7 +94,7 @@ export const GRILLAS = [
   },
   {
     id: 'cozinha',
-    // Con palabras que solo se conocen en Brasil: fuera de una copa internacional (D-186)
+    // Con palabras que solo se conocen en Brasil: solo en copas sin público o para Brasil (D-186, D-187)
     local: 'br',
     grupos: [
       { nombre: 'Utensílios de cozinha', palabras: ['BATEDOR', 'ESCORREDOR', 'RALADOR', 'CONCHA'] },
@@ -105,7 +105,7 @@ export const GRILLAS = [
   },
   {
     id: 'mitos',
-    // Con palabras que solo se conocen en Brasil: fuera de una copa internacional (D-186)
+    // Con palabras que solo se conocen en Brasil: solo en copas sin público o para Brasil (D-186, D-187)
     local: 'br',
     grupos: [
       { nombre: 'Filhotes', palabras: ['BEZERRO', 'CORDEIRO', 'POTRO', 'LEITÃO'] },
@@ -125,7 +125,7 @@ export const GRILLAS = [
   },
   {
     id: 'futebol',
-    // Con palabras que solo se conocen en Brasil: fuera de una copa internacional (D-186)
+    // Con palabras que solo se conocen en Brasil: solo en copas sin público o para Brasil (D-186, D-187)
     local: 'br',
     grupos: [
       { nombre: 'Clubes de futebol', palabras: ['FLAMENGO', 'PALMEIRAS', 'CORINTHIANS', 'GRÊMIO'] },

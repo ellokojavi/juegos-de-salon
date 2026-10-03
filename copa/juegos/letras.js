@@ -14,9 +14,9 @@ export const ALFABETO = 'QWERTYUIOPASDFGHJKLÑZXCVBNM'.split('');
 export const alfabeto = lang => (lang && lang !== 'es' ? ALFABETO.filter(l => l !== 'Ñ') : ALFABETO);
 
 /** `palabras`: el idioma de la palabra secreta, el de la copa (D-170); sin él, `lang`. */
-export function generar(codigo, dia, { max = MAX_INTENTOS, sal = 'letras', lang = 'es', palabras = lang, intl = false } = {}) {
+export function generar(codigo, dia, { max = MAX_INTENTOS, sal = 'letras', lang = 'es', palabras = lang, aud = null } = {}) {
   const a = azar(codigo, dia, sal);
-  return { largo: LARGO, max, secreto: a.uno(palabrasDe(palabras, { intl })), ...(palabras !== 'es' ? { lang: palabras } : {}) };
+  return { largo: LARGO, max, secreto: a.uno(palabrasDe(palabras, { aud })), ...(palabras !== 'es' ? { lang: palabras } : {}) };
 }
 
 export const valido = v => typeof v === 'string' && v.length === LARGO && new Set(v).size === LARGO && [...v].every(l => ALFABETO.includes(l));

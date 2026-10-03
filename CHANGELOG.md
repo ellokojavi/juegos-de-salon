@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.87.0 — 2026-10-03
+- **La Copa: el público se elige entre 🌎 Global, 🇨🇱 Chile y 🇧🇷 Brasil** (D-187). Global deja
+  fuera lo que se conoce solo en Chile o en Brasil (lo que antes era "Internacional"). Chile y
+  Brasil suman los temas de su país y dejan fuera los del otro. Una copa para Brasil juega
+  también la temática Brasil de Línea de Tiempo. La invitación y el tablero dicen el público.
+
 ## 0.86.0 — 2026-10-03
 - **La Copa puede ser internacional** (D-186): al crearla se elige "Con temas locales" o
   "Internacional". La internacional deja fuera lo que se conoce solo en Chile o en Brasil: la
