@@ -6,9 +6,11 @@
  * en cualquier parte mientras rueda lo abre de inmediato. La Copa no entra: es una semana con
  * amigos, no una partida para sacar al azar.
  *
- * Con "reducir movimiento" el dado no rueda: aparece quieto en la cara elegida.
+ * Con "reducir movimiento" el dado no rueda: aparece quieto en la cara elegida. Sin WebGL
+ * aparece el emoji del elegido, grande, en vez del dado.
  */
-import { el, con } from '../../assets/js/ui.js';
+import { el } from '../../assets/js/ui.js';
+import { crearDado } from './dado3d.js';
 import { pickLang } from '../../assets/js/i18n.js';
 import { SFX } from '../../assets/js/sound.js';
 
@@ -17,9 +19,6 @@ export const TEXTOS = {
   en: { boton: 'Random game', tocó: 'You got…', aria: 'Open a random game' },
   pt: { boton: 'Jogo aleatório', tocó: 'Você tirou…', aria: 'Abrir um jogo aleatório' },
 };
-
-// Dónde va cada cara del cubo. La 0 mira hacia adelante: ahí va el elegido
-const CARAS = ['rotateY(0deg)', 'rotateY(90deg)', 'rotateY(180deg)', 'rotateY(-90deg)', 'rotateX(90deg)', 'rotateX(-90deg)'];
 
 const azar = n => Math.floor(Math.random() * n);
 const barajar = xs => { const a = xs.slice(); for (let i = a.length - 1; i > 0; i--) { const j = azar(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; };
@@ -45,50 +44,10 @@ function tirar(pool, { lang, base, T }) {
   const destino = base + elegido.path;
   const quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // Los cantos redondeados: las caras tienen las puntas redondas y por las esquinas se veía el
-  // fondo. Detrás de cada cara van capas cada vez más hondas y más anchas, que son cortes de un
-  // cubo de cantos redondos (radio R): juntas dibujan la curva del canto y de la esquina. Van
-  // parejas a lo largo de la curva, y se ven por los dos lados:
-  // si no, mirando por entre dos capas se veía a través del dado.
-  const R = 0.16;
-  const lado = v => `calc(var(--lado) * ${v.toFixed(4)})`;
-  // Un corte cada 6° del arco del canto, desde 24° (más cerca, chocaba con la cara)
-  const ANGULOS = Array.from({ length: 12 }, (_, i) => (24 + i * 6) * Math.PI / 180);
-  const familias = CARAS.map(t => ANGULOS.map(a => {
-    const f = 1 - Math.cos(a), rho = R * Math.sin(a);
-    // 1,5 px más chicas: el corte del medio llega justo al plano de las caras y se asomaba por ellas
-    return el('div', { class: 'azar-relleno', style: `inset:calc(${lado(R - rho)} + 1.5px);border-radius:${lado(rho)};transform:${t} translateZ(${lado(0.5 - R * f)})` });
-  }));
-  const caraEls = caras.map((g, i) =>
-    el('div', { class: 'azar-cara', style: `transform:${CARAS[i]} translateZ(var(--medio))` },
-      el('span', { class: con('', g.emoji) }, g.emoji)));
-  const cubo = el('div', { class: 'azar-cubo' }, ...familias.flat(), ...caraEls);
-  // Las sombras: una luz fija adelante, un poco arriba y a la izquierda. En cada cuadro se mira hacia dónde
-  // apunta cada cara y se oscurece según cuánto le da la luz, así las caras de los lados se ven
-  // en sombra y el dado tiene volumen mientras gira. La cara que mira de frente queda blanca.
-  const LUZ = (() => { const v = [-0.25, -0.45, 1]; const n = Math.hypot(...v); return v.map(x => x / n); })();
-  const gris = c => `rgb(${Math.round(c) - 4}, ${Math.round(c) - 2}, ${Math.round(c)})`;
-  const normales = CARAS.map(t => new DOMMatrix(t).transformPoint(new DOMPoint(0, 0, 1)));
-  // Los cantos van todos de un mismo tono, el promedio de las caras que se ven: con el tono de
-  // su propia cara, en las esquinas se cruzaban los cortes de tres tonos y se veía una trama
-  const sombrear = () => {
-    const m = new DOMMatrix(getComputedStyle(cubo).transform), o = m.transformPoint(new DOMPoint(0, 0, 0));
-    let suma = 0, peso = 0;
-    normales.forEach((n, i) => {
-      const w = m.transformPoint(new DOMPoint(n.x, n.y, n.z));
-      const luz = Math.max(0, (w.x - o.x) * LUZ[0] + (w.y - o.y) * LUZ[1] + (w.z - o.z) * LUZ[2]);
-      const c = 140 + 115 * Math.min(1, luz / 0.7);
-      caraEls[i].style.background = gris(c);
-      const mira = Math.max(0, w.z - o.z);
-      suma += c * mira; peso += mira;
-    });
-    const canto = gris(peso ? suma / peso : 255);
-    for (const capa of familias.flat()) capa.style.background = canto;
-  };
-  const animarSombras = () => { if (!capa.isConnected) return; sombrear(); requestAnimationFrame(animarSombras); };
-
+  // El dado se dibuja en WebGL (dado3d.js); la cara 0, la de adelante, es la del elegido
+  const lienzo = el('canvas', { class: 'azar-lienzo', 'aria-hidden': 'true' });
   // El salto y el giro van en dos capas: cada uno con su propia curva, sin tirones entre tramos
-  const salto = el('div', { class: 'azar-salto' }, cubo);
+  const salto = el('div', { class: 'azar-salto' }, lienzo);
   const sombra = el('div', { class: 'azar-sombra' });
   const nombre = el('div', { class: 'azar-nombre', 'aria-live': 'assertive' });
   const capa = el('div', { class: 'azar-capa', role: 'dialog', 'aria-modal': 'true', 'aria-label': T.boton, tabindex: '-1' },
@@ -113,14 +72,20 @@ function tirar(pool, { lang, base, T }) {
     setTimeout(ir, quieto ? 1100 : 1300);
   };
 
-  if (quieto) { cubo.style.transform = 'rotateX(-16deg) rotateY(16deg)'; sombrear(); revelar(); return; }
+  // Termina un poco ladeado, mostrando el canto de arriba y el de la derecha, para que se vea que es un cubo
+  const FX = 18, FY = -20;
+  const dado = crearDado(lienzo, caras.map(g => g.emoji));
+  if (!dado) {
+    lienzo.replaceWith(el('div', { class: 'azar-sin-3d' }, elegido.emoji));
+    revelar();
+    return;
+  }
+  if (quieto) { dado.dibujar(FX, FY); revelar(); return; }
 
   // Rueda: entra desde abajo y rebota tres veces, cada vez más bajo. El giro es uno solo que
   // frena parejo de principio a fin, así no cambia de velocidad de golpe en cada bote.
-  // Las vueltas son múltiplos de 360 para terminar exactamente en la cara elegida.
+  // Las vueltas son enteras para terminar exactamente en la cara elegida.
   const vx = 360 * 2, vy = 360 * (1 + azar(2)) * (Math.random() < 0.5 ? -1 : 1);
-  // Termina un poco ladeado para que se vea que es un cubo
-  const fin = `rotateX(${vx - 16}deg) rotateY(${vy + 16}deg)`;
   const DUR = 2300;
   // Los botes: [momento (0–1), altura en px]. Subir frena (ease-out) y bajar acelera (ease-in)
   const BOTES = [[0.3, -120], [0.52, 0], [0.66, -42], [0.77, 0], [0.84, -12], [0.9, 0]];
@@ -136,12 +101,17 @@ function tirar(pool, { lang, base, T }) {
     ...BOTES.map(([offset, y]) => ({ transform: `scale(${1 + y / 240})`, opacity: 0.6 + y / 300, offset, easing: y ? baja : sube })),
     { transform: 'scale(1)', opacity: 0.6, offset: 1 },
   ], { duration: DUR, fill: 'forwards' });
-  cubo.animate([
-    { transform: 'rotateX(0deg) rotateY(0deg)' },
-    { transform: fin },
-  ], { duration: DUR * 0.97, easing: 'cubic-bezier(0.25, 0.6, 0.3, 1)', fill: 'forwards' });
-  cubo.style.transform = fin;
-  requestAnimationFrame(animarSombras);
+  // El giro lo dibuja WebGL cuadro a cuadro: arranca rápido y frena parejo hasta quedar quieto
+  const GIRO = DUR * 0.97, t0 = performance.now();
+  const frena = t => 1 - (1 - t) ** 3.2;
+  const girar = ahora => {
+    if (!capa.isConnected) return;
+    const t = Math.min(1, (ahora - t0) / GIRO), e = frena(t);
+    // Le faltan vx y vy grados por girar, que se van acabando: al final queda en (FX, FY)
+    dado.dibujar(FX + vx * (1 - e), FY + vy * (1 - e));
+    if (t < 1) requestAnimationFrame(girar);
+  };
+  requestAnimationFrame(girar);
   // El ruido de los dados en cada bote, más suave a medida que se asienta
   for (const [offset, y] of BOTES) if (!y) setTimeout(() => SFX.dice(), DUR * offset);
   setTimeout(revelar, DUR + 100);
