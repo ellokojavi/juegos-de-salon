@@ -717,6 +717,7 @@
     "batalla-naval-colocacion.mjs",
     "batalla-naval-local.mjs",
     "batalla-naval-online.mjs",
+    "ci.mjs",
     "compartir-sala.mjs",
     "contacto.mjs",
     "copa-idiomas.mjs",

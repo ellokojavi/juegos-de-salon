@@ -39,7 +39,7 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
 | Nombre | El admin lo puede cambiar hasta que la copa termina; el link sigue igual (D-148). |
 | Terminar antes | El admin puede terminar la copa en cualquier momento desde que parte. Nadie más juega, la tabla de ese momento queda como la final y los días que no alcanzaron a abrirse no se juegan ni suman (D-161). |
 | Inscripción | Abierta hasta que empieza la final, salvo que el administrador la cierre o la copa llegue a 10 (quien llega lee por qué no puede entrar: terminó, cerrada, cerrada por el administrador o llena). Los días que ya cerraron quedan con 0; el aviso sale desde el día 3, porque el día 2 el día 1 sigue en su día de gracia (D-177). |
-| Tabla | Suma de puntos. Desempata quien ganó más días y después quien quedó mejor en la final. Es **provisoria** mientras el último día que muestra sigue abierto y alguien no lo ha jugado (D-147). |
+| Tabla | Suma de puntos. Desempata quien ganó más días y después quien quedó mejor en la final; si el 1.° y el 2.° empatan en puntos, el podio y el resumen dicen cuál de los dos criterios decidió (dilema #79). Es **provisoria** mientras el último día que muestra sigue abierto y alguien no lo ha jugado (D-147). |
 | Medallas | Campeón, más días ganados, la remontada (más puestos subidos desde la mitad) y "al descenso" (el último). |
 
 ## Los minijuegos
@@ -114,8 +114,11 @@ puntos por ciudad menos 4 cada 100 km, D-155, D-156).
   y después saca las que sobran; Zip suma números sobre un camino al azar y después saca los que
   sobran (quedan 7 a 12 en 6 × 6).
 - **Tango** no cuenta como error pasar por el sol para llegar a la luna: solo dejar la casilla
-  rompiendo una regla (D-102). La casilla con sol es ámbar y la de luna azul noche, con la luna
-  plateada: los dos emojis son amarillos y así no se confunden (D-146).
+  rompiendo una regla (D-102). La pantalla dice lo mismo: el choque se pinta en rojo recién cuando
+  el jugador toca otra casilla, nunca por tiempo; con el tablero lleno se muestra sin contarse,
+  para que se vea qué arreglar (#135). La casilla con sol es ámbar y la de luna azul noche, con la luna
+  plateada: los dos emojis son amarillos y así no se confunden (D-146). Las dadas llevan su color más
+  vivo (el sol, además, el borde entero) y un candado chico (#61).
 - **Toque y Fama: Palabra** acepta cualquier combinación de 5 letras distintas como intento, sin
   diccionario, igual que Toque y Fama acepta cualquier número de cifras distintas. La palabra
   secreta sale de la lista del idioma de la copa (`juegos/palabras.js`: 120 en español, 185 en

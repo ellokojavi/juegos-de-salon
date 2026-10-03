@@ -365,6 +365,19 @@ test('tango: solución única, reglas y puntaje', () => {
   // tres soles seguidos rompen la regla
   const g = new Array(36).fill(tango.VACIO); g[0] = g[1] = g[2] = tango.SOL;
   assert.ok(tango.violaciones({ n: 6, marcas: [] }, g).has(0));
+  // El choque del último toque queda pendiente: contado, pero se perdona si se vuelve a esa
+  // casilla, y deja de estar pendiente al tocar otra (#135). La pantalla lo marca recién ahí.
+  assert.equal(e.pendiente, -1);
+  const L = p.sol.map((v, i) => i).filter(i => !tango.esDada(p, i));
+  const choca = (pre, i) => p.sol[i] === tango.LUNA && tango.estado(p, [...pre, i]).mal.size > tango.estado(p, pre).mal.size;
+  const paso = L.find(i => choca([], i));
+  assert.ok(paso !== undefined);
+  const otra = L.find(i => i !== paso);
+  const ahora = tango.estado(p, [paso]);
+  assert.equal(ahora.pendiente, paso); assert.equal(ahora.errores, 1);
+  assert.equal(tango.estado(p, [paso, paso]).errores, 0);   // el sol de paso a la luna no cuenta
+  const dejado = tango.estado(p, [paso, otra]);
+  assert.equal(dejado.errores, 1 + (dejado.pendiente >= 0 ? 1 : 0)); assert.notEqual(dejado.pendiente, paso);
 });
 
 test('zip: solución única, trazo y niveles', () => {
