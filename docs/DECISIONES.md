@@ -3076,3 +3076,26 @@ pantalla, y en un celular en la mitad. Un mapa es mejor mientras más grande se 
 entrada de la pantalla se apaga en este modo) ni con `align-self: center`, que Chrome también
 aplica a lo fijo. La pantalla no se desplaza: lo que no quepa tiene que desplazarse dentro de su
 widget, como las reglas abiertas.
+
+## D-204 · Publicar más rápido: los guiones largos en partes y la revisión de un PR, acotada
+**Fecha:** 2026-10-04 · **Estado:** vigente; amplía D-132, D-172 y D-193
+**Decisión:** Lo que hace esperar un PR se acorta sin sacar ninguna revisión:
+- **CI en partes.** El check `Punta a punta` tarda lo que su job más lento. `cup/torneo.mjs`
+  (9 min) se corre en tres jobs (`--parte copa`, `laboratorio`, `demos`) y `cup-games/idiomas.mjs`
+  (7 min) en uno por juego. La lista de partes vive en `PARTES` de `tools/e2e/ci.mjs`; sin parte,
+  cada guion sigue corriendo entero.
+- **El agente de usabilidad, en un PR, mira solo lo que el PR cambia**: si no toca nada visible
+  termina sin correr nada; si toca un juego, mira sus pantallas con `mirar.mjs`; si toca La
+  Copa, corre solo la parte del torneo que le toca. No repite lo que GitHub ya corre. Los reportes
+  🐞, el marketing (U-34) y la copa entera quedan para la ronda diaria.
+- **Usabilidad y documentación se lanzan a la vez** antes de proponer una fusión, no una después
+  de la otra: uno toca la app (en su propio PR) y el otro los documentos (en la rama del PR).
+- **`readme.py capturas` corre los guiones de a tres a la vez** (`CAPTURAS_JUNTOS`), cada uno con
+  sus puertos de Chrome (D-135) y el más largo primero: rehacer todas las secciones tarda poco más
+  que `cup/torneo.mjs`, no la suma de todos los guiones.
+**Por qué:** Pedido del dueño: las publicaciones se demoraban, sobre todo por las revisiones de
+usabilidad y las imágenes. Medido en GitHub: `Pruebas` tarda 25 s y `Publicar` 1 min, pero
+`Punta a punta` ~10 min, y dos guiones explicaban todo (los demás terminan antes de 3,5 min). La
+revisión de usabilidad de cada PR jugaba la copa entera aunque el PR fuera de otro juego.
+**Consecuencias:** Una parte nueva de un guion largo se suma a `PARTES`; las partes tienen que
+poder correr solas, sin depender del estado que dejó la anterior.

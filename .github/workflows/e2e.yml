@@ -1,5 +1,6 @@
 # Las pruebas de punta a punta en Chrome, en cada PR y en cada fusión a main (D-193).
-# Cada guion de tools/e2e/ corre en su propio job, en paralelo. Los que abren salas en el
+# Cada guion de tools/e2e/ corre en su propio job, en paralelo, y los largos se reparten en partes
+# (`cup/torneo.mjs:copa`): el job más lento marca cuánto espera el PR. Los que abren salas en el
 # Firebase de producción quedan fuera y siguen a mano: la lista la decide tools/e2e/ci.mjs,
 # así que un guion nuevo entra solo.
 
@@ -68,11 +69,12 @@ jobs:
         run: node tools/e2e/ci.mjs ${{ matrix.guion }}
 
       # Las capturas de lo que falló, para mirarlas sin repetir la corrida. El nombre de un
-      # artefacto no admite "/", y los guiones van en carpetas por juego (cup/torneo.mjs)
+      # artefacto no admite "/" ni ":", y los guiones van en carpetas por juego, con su parte
+      # (cup/torneo.mjs:copa)
       - if: failure()
         env:
           GUION: ${{ matrix.guion }}
-        run: echo "ARTEFACTO=capturas-${GUION//\//-}" >> "$GITHUB_ENV"
+        run: echo "ARTEFACTO=capturas-${GUION//[\/:]/-}" >> "$GITHUB_ENV"
       - if: failure()
         uses: actions/upload-artifact@v4
         with:

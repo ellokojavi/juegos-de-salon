@@ -39,10 +39,16 @@ algo se rompe del todo. Los `online.mjs`, los `chat.mjs` y los de la lista `TAMB
 `ci.mjs` abren salas de verdad y siguen a mano. Los de `OBSOLETOS` prueban algo que ya no
 existe y esperan que alguien los reescriba.
 
+El check entero tarda lo que su job más lento, así que los guiones largos se reparten en partes
+(`PARTES` en `ci.mjs`, D-204): `cup/torneo.mjs` en `copa`, `laboratorio` y `demos`, y
+`cup-games/idiomas.mjs` en un job por juego. Cada parte le llega al guion como `--parte <nombre>`;
+sin parte, el guion corre entero (así lo corren `readme.py capturas` y quien lo prueba a mano).
+
 ```bash
 node tools/e2e/ci.mjs              # todos los de CI, uno tras otro, con resumen
-node tools/e2e/ci.mjs --lista      # cuáles son
+node tools/e2e/ci.mjs --lista      # cuáles son (con sus partes)
 node tools/e2e/ci.mjs cup/torneo.mjs   # solo ese
+node tools/e2e/ci.mjs cup/torneo.mjs:demos   # solo esa parte
 ```
 
 `mirar.mjs` no es una prueba: abre una pantalla suelta para revisarla de a una, sin jugar la

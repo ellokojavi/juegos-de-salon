@@ -4,6 +4,7 @@
 //   node tools/e2e/ci.mjs                 # todas, una tras otra, con el resumen al final
 //   node tools/e2e/ci.mjs --lista         # los guiones que corren, en JSON (para la matriz de GitHub)
 //   node tools/e2e/ci.mjs cup/torneo.mjs  # solo esos (la ruta desde tools/e2e/)
+//   node tools/e2e/ci.mjs cup/torneo.mjs:copa   # solo una parte de un guion largo (ver PARTES)
 //
 // Necesita el sitio servido en http://localhost:8765 (los guiones lo tienen fijo) y Chrome en
 // CHROME. Un guion falla si sale con error, si imprime una línea con ✗ o ❌, o si no termina en
@@ -13,6 +14,7 @@ import { spawn } from 'node:child_process';
 import { readdirSync, statSync, mkdirSync, appendFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { SUELTOS } from '../../public/assets/js/games.js';
 
 const AQUI = dirname(fileURLToPath(import.meta.url));
 const SALIDA = process.env.SALIDA_E2E || '/tmp/e2e';
@@ -36,6 +38,14 @@ const OBSOLETOS = new Set([
   'timeline/error.mjs',            // jugaba contra el celular, un modo que Línea de Tiempo ya no tiene (D-142)
 ]);
 
+// Los guiones largos se reparten en partes, cada una en su propio job de GitHub: el más lento
+// marca cuánto tarda el check entero. Cada parte llega al guion como `--parte <nombre>`. Aquí,
+// sin parte, se corren enteros.
+const PARTES = {
+  'cup/torneo.mjs': ['copa', 'laboratorio', 'demos'],
+  'cup-games/idiomas.mjs': SUELTOS.map(m => m.slug),
+};
+
 /** Los guiones, con su ruta desde tools/e2e/: los de cada juego van en su carpeta (D-192). */
 const todos = (dir = '') => readdirSync(join(AQUI, dir)).flatMap(f => {
   const rel = dir ? `${dir}/${f}` : f;
@@ -47,13 +57,17 @@ export const guiones = () => todos()
   .filter(f => !HERRAMIENTAS.has(f) && !CON_FIREBASE.test(f) && !TAMBIEN_FIREBASE.has(f) && !OBSOLETOS.has(f))
   .sort();
 
-/** Corre un guion; resuelve con { ok, motivo, ms, salida }. */
+/** Lo que corre GitHub: cada guion, o cada parte de los que tienen (`cup/torneo.mjs:copa`). */
+export const trabajos = () => guiones().flatMap(g => PARTES[g] ? PARTES[g].map(p => `${g}:${p}`) : [g]);
+
+/** Corre un guion o una parte suya (`guion:parte`); resuelve con { ok, motivo, ms, salida }. */
 function correr(guion) {
-  const dir = join(SALIDA, guion.replace(/\.mjs$/, ''));
+  const [archivo, parte] = guion.split(':');
+  const dir = join(SALIDA, archivo.replace(/\.mjs$/, ''), parte || '');
   mkdirSync(dir, { recursive: true });
   const t0 = Date.now();
   return new Promise(ok => {
-    const p = spawn(process.execPath, [join(AQUI, guion), dir], { stdio: ['ignore', 'pipe', 'pipe'] });
+    const p = spawn(process.execPath, [join(AQUI, archivo), dir, ...(parte ? ['--parte', parte] : [])], { stdio: ['ignore', 'pipe', 'pipe'] });
     let salida = '';
     const anotar = d => { salida += d; process.stdout.write(d); };
     p.stdout.on('data', anotar);
@@ -72,7 +86,7 @@ function correr(guion) {
 
 const args = process.argv.slice(2);
 if (args.includes('--lista')) {
-  console.log(JSON.stringify(guiones()));
+  console.log(JSON.stringify(trabajos()));
 } else {
   const elegidos = args.length ? args : guiones();
   const resultados = [];
