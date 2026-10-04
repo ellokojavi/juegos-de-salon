@@ -96,12 +96,12 @@ def bloque_juegos(H, C):
         estado = '🧪 lab' if j.get('labs') else '⏸ paused' if not j['disponible'] else (j['estado'] or '-')
         filas.append(f"| {j['emoji']} [{nombres}]({ancla(titulo_juego(j))}) | {j['jugadores']} "
                      f"| {modos} | {estado} |")
-    # Los minijuegos de La Copa sueltos (D-142): uno solo, en su página, sin copa. El link va a
+    # Los juegos de La Copa sueltos (D-142): uno solo, en su página, sin copa. El link va a
     # la página jugable, porque no tienen sección propia en el README.
     for m in H.get('sueltos', []):
         nombres = ' / '.join(dict.fromkeys([m['nombre']['en'], m['nombre']['es'], m['nombre']['pt']]))
-        estado = '🧪 lab' if m['labs'] else 'Cup minigame'
-        filas.append(f"| {m['emoji']} [{nombres}](https://juegosdesalon.cl/minigames/{m['id']}/) | 1 "
+        estado = '🧪 lab' if m['labs'] else 'Also in The Cup'
+        filas.append(f"| {m['emoji']} [{nombres}](https://juegosdesalon.cl/{m['path']}) | 1 "
                      f"| Play alone | {estado} |")
     return '\n'.join(filas) + '\n'
 

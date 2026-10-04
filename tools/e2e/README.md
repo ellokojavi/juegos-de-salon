@@ -135,5 +135,5 @@ resumen que compartiría la admin.
 `node tools/e2e/cup/idiomas.mjs <salida>` crea una copa en inglés y otra en portugués (D-170):
 revisa que la copa guarde el idioma de sus palabras, que la pantalla siga el idioma de quien mira
 y que lo que se comparte al grupo salga en el de la copa, con su `?lang=`. Después abre cinco
-minijuegos sueltos en inglés o portugués (el teclado de Palabra sin Ñ, la grilla de Conexiones de
+juegos sueltos en inglés o portugués (el teclado de Palabra sin Ñ, la grilla de Conexiones de
 portugués).
