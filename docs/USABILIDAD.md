@@ -36,7 +36,7 @@ Cada regla tiene un ID (U-n) para citarla en los PR y en los issues.
     jugando, y ya los dice la ayuda bajo el tablero.
   - **El puntaje en una frase**, sin topes que salen solos de la regla ("10 niveles, 10 puntos
     cada uno" ya dice que son 100).
-  - **Tope que vigila una prueba** (`copa/juegos/juegos.test.mjs`), en los tres idiomas: 280
+  - **Tope que vigila una prueba** (`public/cup/games/juegos.test.mjs`), en los tres idiomas: 280
     caracteres para "Cómo se juega" y 170 para el puntaje. Es un techo, no una meta: la mitad de
     los minijuegos queda bajo 210.
 
@@ -89,7 +89,7 @@ Cada regla tiene un ID (U-n) para citarla en los PR y en los issues.
 - **U-34 · El marketing muestra la app de hoy:** cada asset de `marketing/` (el video y lo que
   venga) y las tarjetas sociales enseñan los juegos que hay, con sus nombres, emojis, textos y
   pantallas actuales. Un juego nuevo que no sale, uno que ya no está, un nombre o un texto viejo o
-  una pantalla que cambió se anotan como pendiente del asset (`node tools/marketing.mjs anotar`).
+  una pantalla que cambió se anotan como pendiente del asset (`node tools/agents/marketing.mjs anotar`).
   Rehacerlo lo decide el dueño: el revisor anota, no rehace.
 
 ## Resuelto con el dueño
