@@ -205,5 +205,19 @@ await test('cuenta: sesión por copa y copas de prueba aparte', async () => {
   assert.equal(c.quien('ABCDE'), null);
 });
 
+await test('el país de cada jugador: al crear, al inscribirse y, para los de antes, una vez después (D-207, D-209)', async () => {
+  const C4 = 'WXYZA';
+  const m4 = nuevaMeta({ nombre: 'Copa con banderas', dias: 3, inicio: hoy, admin: 'aaaaaa', creada: admin.now() });
+  await admin.crear(C4, m4, { pid: 'aaaaaa', name: 'Cata', at: 1, pinHash: 'h', co: 'CL' });
+  await otro.inscribir(C4, { pid: 'bbbbbb', name: 'Javi', at: 2, pinHash: 'h' });
+  let L = await admin.leer(C4);
+  assert.equal(L.players.aaaaaa.co, 'CL');
+  assert.equal(L.players.bbbbbb.co, undefined, 'sin país conocido no se guarda nada');
+  await otro.ponerPais(C4, 'bbbbbb', 'AR');
+  await otro.ponerPais(C4, 'bbbbbb', 'PE');
+  L = await admin.leer(C4);
+  assert.equal(L.players.bbbbbb.co, 'AR', 'el país se anota una vez y no se pisa');
+});
+
 console.log(`copa/store: ${n} tests OK`);
 process.exit(0);
