@@ -198,7 +198,7 @@ export const COMMON = {
       nameLabel: 'Your name', namePh: 'What your friends call you', pinLabel: 'Your 4-digit PIN',
       pinWarn: 'Don\'t use your bank PIN.',
       playingAs: 'Playing as {name}', logout: 'Sign out',
-      sameName: 'There are already {n} with that name and another PIN. If it\'s you, check your PIN. If not, create your player.',
+      sameName: 'Players with that name and another PIN: {n}. If it\'s you, check your PIN. If not, create your player.',
       create: 'Create my player', retry: 'Try another PIN',
       created: 'All set, {name}! Your scores count from now on.',
       welcome: 'Welcome back, {name}!',

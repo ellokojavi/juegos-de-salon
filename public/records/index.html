@@ -129,7 +129,7 @@
       elegido = id;
       fichas.querySelectorAll('button').forEach(b => { const on = b.dataset.id === id; b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); });
       const g = juegos.find(j => j.id === id);
-      ranuraJuego.replaceChildren(bloqueRanking({ juego: id, titulo: fmt(T.titleOf, { game: `${g.emoji} ${pickLang(g.name, lang)}` }), pestanas: ['semana', 'siempre', 'amigos', 'copa'], alTocar: tap }));
+      ranuraJuego.replaceChildren(bloqueRanking({ juego: id, titulo: conEmoji(g.emoji, fmt(T.titleOf, { game: pickLang(g.name, lang) })), pestanas: ['semana', 'siempre', 'amigos', 'copa'], alTocar: tap }));
     }
 
     const campeones = bloqueCampeones({ max: 20, enlace: false, ultimas: 10 });
