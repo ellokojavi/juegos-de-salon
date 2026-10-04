@@ -85,7 +85,7 @@ En varios celulares hay además un **chat de sala** (canon C-15): una burbuja �
 
 ### Jugar solo: la ⏳ Línea Relámpago de La Copa (D-142)
 
-Jugar solo es el minijuego ⏳ Línea Relámpago de La Copa, con las mismas reglas, la misma pantalla y
+Jugar solo es el juego ⏳ Línea Relámpago de La Copa, con las mismas reglas, la misma pantalla y
 el mismo puntaje, pero en el idioma de quien juega y con las seis temáticas (Brasil incluida, que en
 la copa queda fuera por D-111). Antes era un solitario que vaciaba la mano en la menor cantidad de
 intentos, con nombre, forma de repartir y tamaño de mano (D-27, D-32, D-43); eso se fue.

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.95.0 — 2026-10-04
+- **Ya no hay minijuegos** (D-198): Conexiones, Reinas, Tango, Zip, Desenredo, ¿Dónde queda?,
+  ¿En qué año? y Toque y Fama: Palabra son juegos como los demás. Viven en la raíz (`/queens/`,
+  `/tango/`, `/connections/`…) y los links con `/minigames/` siguen andando. La Copa dice "un
+  juego distinto cada día" en los cuatro idiomas, y el panel los cuenta como juegos.
+
 ## 0.94.0 — 2026-10-04
 - **🇩🇪 El alemán, para todos** (D-197): sale del laboratorio. El toggle ofrece DE en cualquier
   celular y `juegosdesalon.cl/de/` deja la app en alemán, con su tarjeta para los chats

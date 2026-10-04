@@ -1,4 +1,4 @@
-// Tests de los minijuegos de La Copa: node public/cup/games/juegos.test.mjs
+// Tests de los juegos de La Copa: node public/cup/games/juegos.test.mjs
 import assert from 'node:assert/strict';
 import { hash32, azar } from './semilla.js';
 import * as numero from './number/engine.js';
@@ -591,7 +591,7 @@ test('la copa no usa la temática de Brasil (D-111)', () => {
   for (const c of codigos) assert.ok(!Object.values(temasDeLaCopa(c)).includes('brasil'), c);
 });
 
-test('todos los minijuegos puntúan de 0 a 100 (D-113)', () => {
+test('todos los juegos puntúan de 0 a 100 (D-113)', () => {
   const tope = { linea: linea.puntaje({ aciertos: 9, marcas: Array(9).fill(true) }), numero: numero.puntaje({ resuelto: true, usados: 1 }),
     conexiones: conexiones.puntaje({ resueltos: [0, 1, 2, 3], errores: 0 }), reinas: reinas.puntaje({ fin: true, ms: 1000 }),
     letras: letras.puntaje({ encontradas: 5, resuelto: true, usados: 1 }), zip: zip.puntaje({ hechos: 99 }), desenredo: desenredo.puntaje({ hechos: desenredo.NIVELES }),
@@ -644,7 +644,7 @@ test('el público de la copa decide qué contenido local entra (D-186, D-187)', 
   assert.ok(!codigos.some(c => Object.values(temasDeLaCopa(c)).includes('brasil')));
 });
 
-test('las instrucciones de cada minijuego son concisas, en los tres idiomas (U-18, D-184)', () => {
+test('las instrucciones de cada juego son concisas, en los tres idiomas (U-18, D-184)', () => {
   for (const lang of ['es', 'en', 'pt', 'de']) for (const [id, J] of Object.entries(TEXTOS[lang].juegos)) {
     assert.ok(J.como.length <= 3, `${lang} ${id}: ${J.como.length} puntos en "Cómo se juega" (máximo 3)`);
     const largo = J.como.join(' ').length;

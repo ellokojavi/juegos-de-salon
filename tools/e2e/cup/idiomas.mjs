@@ -1,7 +1,7 @@
 // La Copa en inglés y portugués (D-170): lo personal en el idioma de quien mira, lo del grupo en
 // el de la copa. Crea una copa con el almacén de prueba (`?prueba`) en cada idioma, revisa que
 // guarde el idioma de sus palabras, que la invitación avise si las palabras van en otro idioma y
-// que lo que se comparte salga en el de la copa; después abre los minijuegos sueltos.
+// que lo que se comparte salga en el de la copa; después abre los juegos sueltos.
 //
 // Uso: python3 -m http.server 8765 (en otra terminal) y node tools/e2e/cup/idiomas.mjs <carpeta-salida>
 import { launch, sleep } from '../cdp.mjs';
@@ -59,11 +59,11 @@ for (const lang of ['en', 'pt']) {
   await ev(`localStorage.setItem('juegos-de-salon:lang','${lang}'); 1`);
 }
 
-// Los minijuegos sueltos, en el idioma de quien juega
+// Los juegos sueltos, en el idioma de quien juega
 // El id es el de siempre ('letras'); la carpeta, en inglés ('word'): D-192
 const CARPETA = { letras: 'word', conexiones: 'connections', anio: 'year', reinas: 'queens', donde: 'where' };
 for (const [id, lang, espera] of [['letras', 'en', /Bulls and Cows: Word/i], ['conexiones', 'pt', /Conexões/i], ['anio', 'en', /What Year/i], ['reinas', 'pt', /Rainhas/i], ['donde', 'en', /Where Is It/i]]) {
-  await b.go(`${SITIO}/minigames/${CARPETA[id]}/?prueba&lang=${lang}`, 2000);
+  await b.go(`${SITIO}/${CARPETA[id]}/?prueba&lang=${lang}`, 2000);
   const t = await texto();
   ok(espera.test(t), `${id} (${lang}): la antesala está traducida`);
   ok(!/🇪🇸/.test(t), `${id} (${lang}): sin la píldora de "solo en español"`);

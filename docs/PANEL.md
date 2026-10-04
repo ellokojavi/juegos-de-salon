@@ -17,28 +17,28 @@ URL (`/panel/#torneo`), así que un enlace o una recarga vuelven a la misma.
 
 | Vista | Ahora | En el rango |
 |---|---|---|
-| **📊 Resumen** | Salas en juego, copas en curso, gente jugando un minijuego, celulares conectados. Las dos listas: copas en curso y salas vivas. | Partidas de juegos contra minijuegos de La Copa, en total y por día. Copas activas, celulares que jugaron. De dónde, idiomas, hora y cuota. |
-| **🏆 La Copa** | Copas en curso con el minijuego de hoy, quién ya lo jugó (✓), quién lo está jugando (punto verde), quién va primero y el último resultado. | Copas activas y nuevas, inscritos, minijuegos jugados y sin terminar, participación. Por minijuego: jugadas, puntaje promedio, tiempo típico y en cuántas copas. Minijuegos por día. La lista de copas con su ganador o quién va primero. |
+| **📊 Resumen** | Salas en juego, copas en curso, gente jugando La Copa, celulares conectados. Las dos listas: copas en curso y salas vivas. | Partidas de los juegos contra días jugados de La Copa, en total y por día. Copas activas, celulares que jugaron. De dónde, idiomas, hora y cuota. |
+| **🏆 La Copa** | Copas en curso con el juego de hoy, quién ya lo jugó (✓), quién lo está jugando (punto verde), quién va primero y el último resultado. | Copas activas y nuevas, inscritos, juegos jugados y sin terminar, participación. Por juego: jugadas, puntaje promedio, tiempo típico y en cuántas copas. Juegos por día. La lista de copas con su ganador o quién va primero. |
 | **🎲 Juegos** | Salas vivas, como siempre. | Los juegos de una partida, sin La Copa: por juego y modo, jugadores por partida, por día y la bitácora de salas. |
 
 **Qué es torneo y qué es juego** lo dice el registro (`torneo: true` en `games.js`), no el panel:
 un segundo torneo entraría solo a su vista (C-16). El nombre de la pestaña también sale de ahí.
 
 **De dónde, idiomas y hora** van solo en el resumen y enteros: los manda el celular al empezar
-cualquier cosa, sea una partida o un minijuego, y no se pueden partir por juego.
+cualquier cosa, sea una partida o un juego, y no se pueden partir por juego.
 
 ## La Copa en el panel (D-137)
 
 No usa señales aparte: lee `torneos/` tal como lo guarda la copa (el dueño ya podía leerlo en las
-reglas). El calendario de cada copa dice qué minijuego tocó cada día, y cada resultado trae su
+reglas). El calendario de cada copa dice qué juego tocó cada día, y cada resultado trae su
 puntaje (0 a 100), su tiempo y su hora. Las cuentas de la copa (qué día va, la tabla) salen del
 motor de la copa, `public/cup/engine.js`; el panel no las repite.
 
 - **Jugando ahora:** tocó Empezar hace menos de media hora y todavía no hay resultado. Mira todos
   los días abiertos, porque el de ayer se puede jugar hasta el fin de hoy.
-- **Minijuego sin terminar:** tocó Empezar y no dejó resultado, y ya no lo está jugando (pasó
-  media hora o el día cerró). Se dibuja en gris detrás de las jugadas de su minijuego.
-- **Participación:** minijuegos jugados de los que se podían jugar, en los días ya cerrados: uno
+- **Juego sin terminar:** tocó Empezar y no dejó resultado, y ya no lo está jugando (pasó
+  media hora o el día cerró). Se dibuja en gris detrás de las jugadas de su juego.
+- **Participación:** juegos jugados de los que se podían jugar, en los días ya cerrados: uno
   por jugador inscrito por día. Quien se inscribió después de que un día cerró no debía ese día.
   Una copa sin días cerrados muestra "sin días cerrados", no 0 %.
 - **Inscripción abierta:** según las fechas y según el admin: si la cerró (`closed`), no se dice abierta.
@@ -81,7 +81,7 @@ registro en `live/<id>` (un id al azar de diez letras y números) y le sube `bea
 minuto mientras la pantalla está a la vista y alguien la tocó hace menos de cinco minutos. El
 panel la muestra mientras `beat` tenga menos de tres minutos. Una partida retomada después de
 recargar la página no vuelve a aparecer: `trackStart` se llama al empezar, no al retomar. Los
-días de La Copa no se muestran acá: quién está jugando un minijuego ya se ve en *Copas en curso*.
+días de La Copa no se muestran acá: quién está jugando un juego ya se ve en *Copas en curso*.
 
 **Entorno**: el selector separa lo publicado (`prod`) de las pruebas (`dev`): el computador, la
 red de la casa (10/8, 172.16/12, 192.168/16, `.local`) y Tailscale (`*.ts.net`, D-67, D-138).

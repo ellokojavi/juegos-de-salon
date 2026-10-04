@@ -180,7 +180,7 @@ pre.tarjeta { font: 1.2rem/1.35 var(--font-body); text-align: center; white-spac
 .acciones input.mini { flex: 1 1 8em; min-width: 0; }
 .mini-btn { background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: var(--ink); font: 800 0.9rem var(--font-body); border-radius: 10px; padding: 8px 12px; min-height: 44px; cursor: pointer; }
 
-/* ---------- Minijuegos ---------- */
+/* ---------- Juegos ---------- */
 .carta {
   display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; column-gap: 10px; align-items: center;
   background: var(--card); color: var(--card-ink); border-radius: 14px; padding: 10px 12px; font-weight: 800; box-shadow: 0 4px 0 rgba(0,0,0,0.3);
@@ -282,7 +282,7 @@ button.md-fila { cursor: pointer; }
 .reporte-contexto { font-size: 0.72rem; white-space: pre-wrap; overflow-wrap: anywhere; color: var(--muted); margin: 6px 0 0; }
 #reporte-body details summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; }
 
-/* ---------- Minijuegos de la v2 (D-102) ---------- */
+/* ---------- Juegos de la v2 (D-102) ---------- */
 
 /* Línea Relámpago: todo lo demás viene de assets/css/linea.css */
 .lt-juego .status { text-align: center; margin: 0 0 8px; }

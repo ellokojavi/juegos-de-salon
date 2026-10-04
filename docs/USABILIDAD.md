@@ -25,7 +25,7 @@ Cada regla tiene un ID (U-n) para citarla en los PR y en los issues.
   antes o una ayuda bajo el tablero, sale del texto de arriba. Sin frases que solo tranquilizan
   ("hay una sola solución") ni que describen lo que ya se ve. Corto no es telegrama (U-1).
 - **U-18 · Instrucciones concisas** (D-184). Al escribir "Cómo se juega" y "Puntaje" de un
-  juego o minijuego:
+  juego:
   - **La meta primero, en una frase con verbo:** qué hace el jugador ("Arrastra los nudos hasta
     que ningún hilo se cruce"), no qué hay en pantalla ("Hay nudos unidos por hilos").
   - **A lo más 3 puntos**, cada uno una sola idea en una o dos frases cortas. Solo lo que cambia
@@ -38,7 +38,7 @@ Cada regla tiene un ID (U-n) para citarla en los PR y en los issues.
     cada uno" ya dice que son 100).
   - **Tope que vigila una prueba** (`public/cup/games/juegos.test.mjs`), en los tres idiomas: 280
     caracteres para "Cómo se juega" y 170 para el puntaje. Es un techo, no una meta: la mitad de
-    los minijuegos queda bajo 210.
+    los juegos queda bajo 210.
 
 ## Pantallas y botones
 
@@ -53,7 +53,7 @@ Cada regla tiene un ID (U-n) para citarla en los PR y en los issues.
 - **U-15 · Las acciones que no se deshacen piden confirmación** (rendirse, eliminar la copa,
   cerrar la inscripción, mover el inicio). Eliminar pide escribir el nombre.
 
-- **U-16 · Las reglas están a mano sin estorbar:** plegadas debajo del tablero en cada minijuego
+- **U-16 · Las reglas están a mano sin estorbar:** plegadas debajo del tablero en cada juego
   (D-133), con las mismas palabras de los botones.
 - **U-17 · El botón dice la acción, nada más:** verbo y objeto, en una sola línea a 320 px (unos
   18 caracteres). Lo que haya que explicar va en el texto de arriba. Si dos botones se parecen,
@@ -82,7 +82,7 @@ Cada regla tiene un ID (U-n) para citarla en los PR y en los issues.
   desde cualquier botón; una invitación, solo con texto (la imagen la pone la tarjeta del link).
 - **U-31 · Completo:** el resultado dice copa, día, juego, jugador y puntaje; la tabla dice quién
   falta y marca "(-1J)" a quien lleva menos juegos.
-- **U-32 · Sin spoilers:** lo que se comparte no revela respuestas ni los minijuegos que vienen.
+- **U-32 · Sin spoilers:** lo que se comparte no revela respuestas ni los juegos que vienen.
 
 ## Marketing
 
@@ -107,9 +107,9 @@ Las respuestas a dilemas (issues con la etiqueta `usabilidad`) se anotan aquí:
 - **"Ver todos" en la portada** (#71, D-149): con un solo filtro posible, el enlace bajo las fichas
   dice "Ver todos" (EN "Show all", PT "Ver todos") y no "Quitar filtros". El aviso de lista vacía
   se borró: solo se ofrecen tipos con algún juego.
-- **Sin empates fuera de una copa** (#72): en el minijuego suelto, la práctica y la sesión de
+- **Sin empates fuera de una copa** (#72): en el juego suelto, la práctica y la sesión de
   prueba, el puntaje no dice "Si empatas…" y el resultado dice solo "Tu tiempo fue 0:42.". El
-  desempate vive aparte (`desempate` en `MINIJUEGOS`) y solo se suma dentro de una copa.
+  desempate vive aparte (`desempate` en `JUEGOS_COPA`) y solo se suma dentro de una copa.
 - **¿Dónde queda? se juega en un globo** (D-156, reemplaza la decisión de #85): cada ciudad parte
   con el globo entero a la vista, mirando al Atlántico; arrastrar lo gira sin fin. Los botones + y
   − van abajo a la derecha. La portada es el globo girando solo.
@@ -121,7 +121,7 @@ Las respuestas a dilemas (issues con la etiqueta `usabilidad`) se anotan aquí:
   Escape; tocar durante la tirada abre el juego de inmediato y "atrás" vuelve al menú limpio (D-188).
 - **Dilemas sin backlog** (2026-10-03): el dueño pide que los dilemas no se acumulen. Se resuelven
   con la opción recomendada y se arreglan apenas se pueda; él corrige después si algo no le gusta.
-- **El emoji del minijuego encabeza el recordatorio** (#114, opción B): "⏳ Hoy toca Línea
+- **El emoji del juego encabeza el recordatorio** (#114, opción B): "⏳ Hoy toca Línea
   Relámpago."; la línea de gracia queda con 🕐 y el nombre sin emoji.
 - **Bienvenida del admin sin repetir** (#102, opción A): con link propio, el paso 3 dice "Cuando
   estén todos, cierra la inscripción: tu link es fácil de adivinar y así no se suma nadie más."

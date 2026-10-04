@@ -119,7 +119,7 @@ export const COMMON = {
     // toda la app, porque llega por WhatsApp a gente que todavía no la conoce.
     // Con la cabecera de todo lo que se comparte (D-165): "🃏 *Julepe* · Sala WFBN"
     invite: '{emoji} *{game}* · Sala {code}\n\n👋 {name} te invita a jugar en juegosdesalon.cl.',
-    // El resultado de jugar solo un minijuego (D-165): el texto y la imagen dicen lo mismo
+    // El resultado de jugar solo un juego (D-165): el texto y la imagen dicen lo mismo
     shareResult: '📤 Compartir mi resultado',
     shareSoloContext: 'Jugando solo',
     shareSoloCta: '🤔 ¿Me ganas? Se juega gratis desde el celular:',

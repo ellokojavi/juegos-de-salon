@@ -25,7 +25,7 @@ const JUGADORES = [
 /** Días que alguien no jugó, para que la escena llena muestre "(-1J)" (D-126). */
 const FALTAS = { tere08: [4], isid10: [2, 5] };
 
-/** Puntajes creíbles por minijuego: `k` de 0 a 1 dice qué tan bien le fue. */
+/** Puntajes creíbles por juego: `k` de 0 a 1 dice qué tan bien le fue. */
 const PUNTAJE = {
   linea: k => { const s = Math.round((100 * Math.round(9 * k)) / 9); return { s, r: `${s}/100` }; },
   numero: k => { const s = 100 - 10 * Math.round(9 * (1 - k)); return { s, r: `${s}/100` }; },

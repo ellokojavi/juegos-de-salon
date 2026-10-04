@@ -1,7 +1,7 @@
 /**
  * Panel del dueño (D-44): entra con Google, lee las salas vivas, `stats/<env>/days` y las
  * copas de `torneos/`, y dibuja lo que arman `aggregate.js` y `copas.js`. Tres vistas: el
- * resumen, el torneo (La Copa y sus minijuegos) y los juegos de una partida. Solo en español: no es una pantalla de jugador
+ * resumen, el torneo (La Copa y sus juegos) y los juegos de una partida. Solo en español: no es una pantalla de jugador
  * (excepción a C-3, anotada en docs/PANEL.md).
  *
  * Nada de acá escribe en la base. Las reglas solo dejan leer al UID del dueño; si la
@@ -16,7 +16,7 @@ import {
 } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js';
 import { firebaseConfig } from '../assets/js/firebase-config.js';
 import { GAMES, gameById, gameLabel, isTorneo, MODES, MODE_IDS, ROOM_MODE, modeIcon } from '../assets/js/games.js';
-import { MINIJUEGOS } from '../cup/rules.js';
+import { JUEGOS_COPA } from '../cup/rules.js';
 import { LANGS } from '../assets/js/i18n.js';
 import { ENVS } from '../assets/js/transport/stats.js';
 import { $, el } from '../assets/js/ui.js';
@@ -179,8 +179,8 @@ const modeColor = mode => PALETA[Math.max(0, MODOS.indexOf(mode)) % PALETA.lengt
 /** Colores de las barras que no son de modo: el total, lo que se juega sin red y los idiomas. */
 const C_TOTAL = 'var(--cyan)', C_SIN_RED = 'var(--yellow)', C_IDIOMA = 'var(--lime)', C_TORNEO = 'var(--pink)';
 
-/** El minijuego con su emoji y su nombre, del registro de la copa; uno que no está, por su clave. */
-const miniLabel = id => (MINIJUEGOS[id] ? `${MINIJUEGOS[id].emoji} ${MINIJUEGOS[id].nombre}` : String(id || '?'));
+/** El juego con su emoji y su nombre, del registro de la copa; uno que no está, por su clave. */
+const miniLabel = id => (JUEGOS_COPA[id] ? `${JUEGOS_COPA[id].emoji} ${JUEGOS_COPA[id].nombre}` : String(id || '?'));
 const esJuego = id => !isTorneo(id);
 const torneoNombre = TORNEO ? TORNEO.name.es : 'el torneo';
 
@@ -209,7 +209,7 @@ function tile(value, label, hot = false) {
  */
 function bar(label, segments, max, { note = '', sub = '', detail = '', cifra = null } = {}) {
   // La cifra de la derecha es la suma de los segmentos, salvo que la barra diga otra: en los
-  // minijuegos, el gris de los que quedaron sin terminar se dibuja pero no se cuenta como jugado.
+  // juegos, el gris de los que quedaron sin terminar se dibuja pero no se cuenta como jugado.
   const total = cifra ?? segments.reduce((s, x) => s + x.value, 0);
   const track = el('div', { class: 'track' });
   for (const x of segments) if (x.value > 0) track.append(el('div', { class: 'fill', style: `width:${max ? (x.value / max) * 100 : 0}%;background:${x.color}`, title: `${x.title || ''} ${n(x.value)}`.trim() }));
@@ -265,7 +265,7 @@ function filaSinRed(p, now) {
 }
 
 /**
- * Una copa en curso: en qué día va, qué minijuego toca, quién ya lo jugó (✓) y quién lo está
+ * Una copa en curso: en qué día va, qué juego toca, quién ya lo jugó (✓) y quién lo está
  * jugando en este momento (punto verde). El de ayer se puede jugar hasta el fin de hoy, así que
  * alguien puede estar jugando un día que no es el último: eso va en su propia línea.
  */
@@ -312,13 +312,13 @@ function renderNow() {
     tile(active.length, 'salas en juego', active.length > 0),
     tile(sinRed.length, 'partidas sin red ahora', sinRed.length > 0),
     tile(enCurso.length, 'copas en curso', enCurso.length > 0),
-    tile(jugandoMini, 'jugando un minijuego ahora', jugandoMini > 0),
+    tile(jugandoMini, 'jugando La Copa ahora', jugandoMini > 0),
     tile(connections(live), 'celulares conectados'),
   );
   if (S.vista === 'torneo') tiles.append(
     tile(enCurso.length, 'copas en curso', enCurso.length > 0),
-    tile(jugandoMini, 'jugando un minijuego ahora', jugandoMini > 0),
-    tile(deHoy ? `${n(jugaronHoy)}/${n(deHoy)}` : '—', 'jugaron el minijuego de hoy'),
+    tile(jugandoMini, 'jugando La Copa ahora', jugandoMini > 0),
+    tile(deHoy ? `${n(jugaronHoy)}/${n(deHoy)}` : '—', 'jugaron el juego de hoy'),
     tile(copas.length - enCurso.length, 'por empezar'),
   );
   if (S.vista === 'juegos') tiles.append(
@@ -355,7 +355,7 @@ function renderRange() {
   const today = dayOf(now);
   const rango = rangeOf(S.range);
   // Los juegos de una partida por un lado y el torneo por otro: el torneo manda una señal por
-  // día jugado y se mide mejor con sus propios datos (`torneos/`), que dicen qué minijuego fue.
+  // día jugado y se mide mejor con sus propios datos (`torneos/`), que dicen qué juego fue.
   const s = summarize(S.days, { from: rango.from, to: rango.to, incluye: esJuego });
   const hoy = summarize(S.days, { from: today, to: today, incluye: esJuego });
   const todo = summarize(S.days, { from: rango.from, to: rango.to });
@@ -372,18 +372,18 @@ function renderRange() {
   // terminar, un mismo celular suma una vez por cada partida, y el día es el de UTC.
   if (S.vista === 'resumen') tiles.append(
     tile(s.partidas, 'partidas de juegos empezadas'),
-    tile(rc.jugadas, `minijuegos de ${torneoNombre}`),
+    tile(rc.jugadas, `juegos de ${torneoNombre}`),
     tile(rc.copas, 'copas activas'),
     tile(todo.devices, 'entradas de un celular a una partida'),
-    tile(hoy.partidas + miniHoy, 'partidas y minijuegos hoy'),
+    tile(hoy.partidas + miniHoy, `partidas hoy, con ${torneoNombre}`),
   );
   if (S.vista === 'torneo') tiles.append(
     tile(rc.copas, 'copas activas'),
     tile(rc.nuevas, 'copas nuevas'),
     tile(rc.inscripciones, 'jugadores inscritos'),
-    tile(rc.jugadas, 'minijuegos jugados'),
+    tile(rc.jugadas, 'juegos jugados'),
     tile(part === null ? '—' : `${part}%`, 'participación'),
-    tile(rc.abandonos, 'minijuegos sin terminar'),
+    tile(rc.abandonos, 'juegos sin terminar'),
   );
   if (S.vista === 'juegos') tiles.append(
     tile(s.partidas, 'partidas empezadas'),
@@ -395,7 +395,7 @@ function renderRange() {
   );
 
   // --- Resumen: el torneo contra los demás juegos -------------------------
-  const tipos = [[gameLabel(TORNEO?.id), C_TORNEO, rc.jugadas, 'minijuegos jugados'], ['🎲 Otros juegos', C_TOTAL, s.partidas, 'partidas']];
+  const tipos = [[gameLabel(TORNEO?.id), C_TORNEO, rc.jugadas, 'juegos jugados'], ['🎲 Otros juegos', C_TOTAL, s.partidas, 'partidas']];
   const maxT = Math.max(0, ...tipos.map(t => t[2]));
   fill($('#by-kind'), tipos.map(([label, color, v, sub]) => bar(label, [seg(color, v)], maxT, { sub })));
   const juntos = s.byDay.map((d, i) => ({ day: d.day, juegos: d.total, torneo: rc.porDia[i]?.total || 0 }));
@@ -405,12 +405,12 @@ function renderRange() {
   $('#by-day-kind-title').textContent = { dia: 'Por día', semana: 'Por semana', mes: 'Por mes' }[rango.grano];
   $('#kind-legend').replaceChildren(
     el('i', { class: 'sw', style: `background:${C_TOTAL}` }), ' Partidas de juegos  ',
-    el('i', { class: 'sw', style: `background:${C_TORNEO}` }), ` Minijuegos de ${torneoNombre}`,
+    el('i', { class: 'sw', style: `background:${C_TORNEO}` }), ` Juegos de ${torneoNombre}`,
     rango.grano === 'semana' ? '. La fecha es el lunes de cada semana.' : '');
 
-  // --- El torneo: minijuegos y copas --------------------------------------
-  const maxM = Math.max(0, ...rc.porMinijuego.map(m => m.jugadas + m.abandonos));
-  fill($('#by-mini'), rc.porMinijuego.map(m => bar(miniLabel(m.id), [seg(C_TORNEO, m.jugadas), seg('rgba(255,255,255,0.25)', m.abandonos)], maxM, {
+  // --- El torneo: juegos y copas --------------------------------------
+  const maxM = Math.max(0, ...rc.porJuego.map(m => m.jugadas + m.abandonos));
+  fill($('#by-mini'), rc.porJuego.map(m => bar(miniLabel(m.id), [seg(C_TORNEO, m.jugadas), seg('rgba(255,255,255,0.25)', m.abandonos)], maxM, {
     cifra: m.jugadas,
     detail: [
       m.promedio === null ? null : `puntaje promedio ${m.promedio}/100`,
@@ -418,11 +418,11 @@ function renderRange() {
       m.abandonos ? `${n(m.abandonos)} sin terminar` : null,
       `en ${n(m.copas)} copa${m.copas === 1 ? '' : 's'}`,
     ].filter(Boolean).join(' · '),
-  })), S.torneosLoaded ? 'Ningún minijuego jugado en este rango.' : 'Cargando las copas…');
+  })), S.torneosLoaded ? 'Ningún juego jugado en este rango.' : 'Cargando las copas…');
   const periodosM = groupDays(rc.porDia, rango.grano);
   const maxMD = Math.max(0, ...periodosM.map(d => d.total));
   fill($('#mini-by-day'), periodosM.map(d => bar(d.label, [seg(C_TORNEO, d.total)], maxMD)));
-  $('#mini-by-day-title').textContent = { dia: 'Minijuegos por día', semana: 'Minijuegos por semana', mes: 'Minijuegos por mes' }[rango.grano];
+  $('#mini-by-day-title').textContent = { dia: 'Juegos por día', semana: 'Juegos por semana', mes: 'Juegos por mes' }[rango.grano];
   renderCopaLog(now);
 
   // --- Los juegos de una partida ------------------------------------------
@@ -489,7 +489,7 @@ function renderCopaLog(now) {
       el('div', { class: 'who' },
         el('span', { class: 'q' }, estado(c)),
         el('span', { class: 'q' }, `${n(c.jugadores)} ${c.jugadores === 1 ? 'jugador' : 'jugadores'}`),
-        el('span', { class: 'q', title: 'Minijuegos jugados de los que se podían jugar, en los días que ya cerraron' }, p === null ? 'sin días cerrados' : `participación ${p}%`),
+        el('span', { class: 'q', title: 'Juegos jugados de los que se podían jugar, en los días que ya cerraron' }, p === null ? 'sin días cerrados' : `participación ${p}%`),
       ),
       el('div', { class: 'win' }, quien(c)),
     );

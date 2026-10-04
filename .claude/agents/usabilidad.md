@@ -1,6 +1,6 @@
 ---
 name: usabilidad
-description: Revisor de usabilidad de Juegos de Salón (La Copa y minijuegos). Úsalo para revisar un PR antes de mostrárselo al dueño y en la ronda diaria: claridad y semántica de textos, posición y textos de botones, interacciones y relojes, navegación, mensajes para compartir y si el material de marketing quedó atrás de la app. Arregla solo lo obvio (en un PR sin fusionar) y convierte los dilemas en issues de GitHub.
+description: Revisor de usabilidad de Juegos de Salón (La Copa y juegos). Úsalo para revisar un PR antes de mostrárselo al dueño y en la ronda diaria: claridad y semántica de textos, posición y textos de botones, interacciones y relojes, navegación, mensajes para compartir y si el material de marketing quedó atrás de la app. Arregla solo lo obvio (en un PR sin fusionar) y convierte los dilemas en issues de GitHub.
 model: inherit
 ---
 

@@ -2,7 +2,7 @@
 
 **Estado:** en el menú (v0.83, D-175) · **Ruta:** `/cup/`
 
-Un torneo entre amigos que dura una semana: cada día se abre un minijuego distinto, idéntico
+Un torneo entre amigos que dura una semana: cada día se abre un juego distinto, idéntico
 para todos, que se juega **una sola vez** y reparte puntos según la posición del día. Gana
 quien suma más al cierre. Es la primera modalidad de la app que no es una partida sino una
 serie de partidas en el tiempo (un macro-juego). El diseño completo, con la revisión y el plan
@@ -12,8 +12,8 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
   práctica con semilla y las demos (D-101).
 - **URL:** `/cup/` (portada) · `/cup/?K7Q2X` (una copa) · `/cup/?labs` (copa real con la Copa
   de 3 días, D-100; `?tres` sigue funcionando) · `?prueba` (almacén local y reloj adelantable, sin
-  Firebase) · `/cup/?practica=<id>&labs&semilla=K7Q2X` (un minijuego suelto del laboratorio,
-  repetible; los que tienen página se van a `/minigames/<id>/?labs&semilla=K7Q2X`, D-164). Desde la portada el minijuego suelto es `/minigames/<id>/` (D-142, D-149, D-162): la misma
+  Firebase) · `/cup/?practica=<id>&labs&semilla=K7Q2X` (un juego suelto del laboratorio,
+  repetible; los que tienen página se van a `/<slug>/?labs&semilla=K7Q2X`, D-164). Desde la portada el juego suelto es `/<slug>/` (D-142, D-149, D-162, D-198): la misma
   pantalla, sin "copa" en el link, que vuelve al menú, sin sesión de prueba ni semilla a la vista, y
   con su señal de uso. `/cup/?practica=<id>` sin `&labs` lleva ahí.
 - **Jugadores:** de 2 a 10 por copa (`MIN_JUGADORES` y `MAX_JUGADORES` en `engine.js`, D-118). Con
@@ -32,7 +32,7 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
 | Días | El día 1 parte a las 00:00 del día de inicio, en la zona de la copa (`meta.tz`: hora del Pacífico en las nuevas, D-113; hora de Chile en las anteriores). Cada día termina a las 23:59. |
 | Día de gracia | Un día se puede jugar ese día o el siguiente, con puntaje completo. La final no tiene gracia: la copa cierra a las 23:59 del último día, y ahí vence también la gracia del penúltimo. |
 | Un intento | "Cómo se juega" no cuenta. El intento empieza al tocar **Empezar**; recargar retoma el mismo intento (C-6). |
-| Puntos del día | Por posición entre quienes jugaron: 10-8-6-5-4-3-2-1-1-1. Manda el puntaje del minijuego; a igual puntaje, el menor **tiempo activo** (D-95). Empate total: comparten la mejor posición. |
+| Puntos del día | Por posición entre quienes jugaron: 10-8-6-5-4-3-2-1-1-1. Manda el puntaje del juego; a igual puntaje, el menor **tiempo activo** (D-95). Empate total: comparten la mejor posición. |
 | Comodín ×2 | Uno por jugador y copa. Se activa antes de Empezar (el servidor lo rechaza después). No vale en la final. |
 | Final ×2 | El último día vale doble para todos. |
 | Resultados ocultos | Los puntajes de un día se ven después de jugarlo o cuando cierra. La tabla y el gráfico tampoco lo delatan: suman solo los días que ya puedes ver. |
@@ -42,14 +42,14 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
 | Tabla | Suma de puntos. Desempata quien ganó más días y después quien quedó mejor en la final; si el 1.° y el 2.° empatan en puntos, el podio y el resumen dicen cuál de los dos criterios decidió (dilema #79). Es **provisoria** mientras el último día que muestra sigue abierto y alguien no lo ha jugado (D-147). |
 | Medallas | Campeón, más días ganados, la remontada (más puestos subidos desde la mitad) y "al descenso" (el último). |
 
-## Los minijuegos
+## Los juegos
 
 Todo el contenido de un día sale de una semilla `código:día:sal` (D-97): es idéntico para todos
 sin que nada viaje por la red.
 
-Todos los minijuegos puntúan **de 0 a 100** (D-113). Igual lo que decide la copa es el lugar de cada día.
+Todos los juegos puntúan **de 0 a 100** (D-113). Igual lo que decide la copa es el lugar de cada día.
 
-| Día | Minijuego | Puntaje (0 a 100) | Reusa |
+| Día | Juego | Puntaje (0 a 100) | Reusa |
 |---|---|---|---|
 | 1 | ⏳ Línea Relámpago: 10 hitos, 9 en la mano en cualquier orden | 100 × aciertos / 9 | la mano, las ranuras, el arrastre y el veredicto de Línea de Tiempo |
 | 2 | 🔢 Toque y Fama: adivina el número. 4 cifras, 10 intentos | 100 − 10 × (intentos − 1), 0 si no | el teclado con notas, el tablero y las pistas de Toque y Fama |
@@ -165,7 +165,7 @@ juegos (C-16, `public/panel/adapta.test.mjs`).
 
 ## Laboratorio, práctica y reportes
 
-`/labs/` (D-101) ofrece la práctica de cada minijuego, la copa simulada y la copa real. La práctica
+`/labs/` (D-101) ofrece la práctica de cada juego, la copa simulada y la copa real. La práctica
 arma el contenido con una semilla al azar como si fuera el día 1 de una copa con ese código, y la
 muestra al final. El botón **🐞 Reportar un problema o dejar un comentario** (práctica, tablero y
 resultado) guarda en `feedback/<id>`, por REST y sin cuenta (D-104), el texto, un nombre opcional, la versión
@@ -196,12 +196,12 @@ con la tabla final, el lugar de cada uno después de cada día y el detalle de c
 | Archivo | Qué hace |
 |---|---|
 | `engine.js` | Calendario, ventanas con zona horaria, puntos, tabla, evolución, medallas, reloj activo |
-| `juegos/*.js` | Motor puro de cada minijuego, la semilla y las grillas |
-| `juegos/ui-*.js` | La pantalla de cada minijuego |
+| `juegos/*.js` | Motor puro de cada juego, la semilla y las grillas |
+| `juegos/ui-*.js` | La pantalla de cada juego |
 | `store-firebase.js` · `store-local.js` | El mismo almacén contra Firebase o contra localStorage (`?prueba`) |
 | `cuenta.js` | Con quién está sentado este celular y el intento a medio jugar |
 | `planilla.js` | La tabla final como CSV (D-161) |
-| `rules.js` | Textos y la explicación de cada minijuego |
+| `rules.js` | Textos y la explicación de cada juego |
 | `game.js` | Pantallas |
 
 ## Pruebas
@@ -213,12 +213,12 @@ node public/cup/store.test.mjs
 node public/cup/planilla.test.mjs
 node public/cup/reportes.test.mjs
 node tools/e2e/cup/torneo.mjs /tmp/copa            # Copa de 3 días, tres jugadores
-node tools/e2e/cup/torneo.mjs /tmp/copa --siete    # los siete minijuegos
+node tools/e2e/cup/torneo.mjs /tmp/copa --siete    # los siete juegos
 ```
 
 ## Pendiente (después de la v1)
 
 Recordatorios `.ics` (LIG-29), verificación cruzada de puntajes (LIG-30), papelera de copas
-viejas (LIG-31), avisos automáticos (LIG-33) y minijuegos de reserva (LIG-84). Ya no están
+viejas (LIG-31), avisos automáticos (LIG-33) y juegos de reserva (LIG-84). Ya no están
 pendientes: inglés y portugués con contenido propio (LIG-32, hecho en D-170) y las copas en el
 panel del dueño (D-137).

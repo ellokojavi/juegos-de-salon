@@ -82,11 +82,11 @@ assert.equal(rc.inscripciones, 4);
 assert.equal(rc.jugadas, 3);
 // Fausto dejó el 1 (el día cerró) y Cata el 3 (pasó media hora); Javi y Fausto siguen jugando
 assert.equal(rc.abandonos, 2);
-const linea = rc.porMinijuego.find(m => m.id === 'linea');
+const linea = rc.porJuego.find(m => m.id === 'linea');
 assert.deepEqual({ ...linea }, { id: 'linea', jugadas: 2, abandonos: 1, copas: 1, promedio: 90, medianaMs: 55000 });
-assert.equal(rc.porMinijuego[0].id, 'linea', 'el más jugado primero');
-assert.equal(rc.porMinijuego.find(m => m.id === 'conexiones').jugadas, 0);
-assert.equal(rc.porMinijuego.find(m => m.id === 'conexiones').promedio, null, 'sin jugadas no hay promedio');
+assert.equal(rc.porJuego[0].id, 'linea', 'el más jugado primero');
+assert.equal(rc.porJuego.find(m => m.id === 'conexiones').jugadas, 0);
+assert.equal(rc.porJuego.find(m => m.id === 'conexiones').promedio, null, 'sin jugadas no hay promedio');
 assert.equal(rc.porDia.length, 7);
 assert.equal(rc.porDia.reduce((k, d) => k + d.total, 0), 3);
 assert.deepEqual(rc.participacion, { jugado: 2, esperado: 3 });
@@ -136,7 +136,7 @@ assert.ok(JUGANDO_MS > 0 && JUGANDO_MS < DIA_MS);
 const cerrada = estadoCopa(copaDe('OFICI', { ...torneos.OFICI, closed: true }), now);
 assert.equal(c.inscripcion, true, 'sin cerrar, la inscripción sigue abierta');
 assert.equal(cerrada.inscripcion, false, 'el admin la cerró: no se puede decir abierta');
-// Leo entra el día 3: el día 1 ya había cerrado, así que no le faltó ese minijuego
+// Leo entra el día 3: el día 1 ya había cerrado, así que no le faltó ese juego
 const tarde = { ...torneos.OFICI, players: { ...players, gggggg: { name: 'Leo', at: meta.win[1].b + 1000 } } };
 assert.deepEqual(estadoCopa(copaDe('OFICI', tarde), now).participacion, { jugado: 2, esperado: 3 }, 'el día 1 no se le cobra a quien llegó después');
 assert.deepEqual(resumenCopas({ OFICI: tarde }, semana, now).participacion, { jugado: 2, esperado: 3 });

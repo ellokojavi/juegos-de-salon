@@ -927,7 +927,7 @@ function terminarSolo(partida, p, { s, t, ms, estado }) {
   if (s >= 50 || celebrar) { confetti({ count: s === 100 || celebrar ? 220 : 120, duration: 3000 }); SFX.win(); } else SFX.timeUp();
   const box = $('#sr-actions'); box.innerHTML = '';
   box.append(
-    // El mismo resultado que el minijuego de La Copa, con su imagen; la temática va en el título (D-165)
+    // El mismo resultado que el juego de La Copa, con su imagen; la temática va en el título (D-165)
     botonResultadoSolo({ C: COMMON[lang], emoji: gameById(GAME_ID)?.emoji || '⏳', juego: `${T.title}: ${deck.name[lang]}`, puntaje: `${s}/100`, tiempo: mmss(ms), tarjeta: t, url: withLang(`${SITIO}timeline/`), alTocar: () => SFX.tap() }),
     el('button', { class: 'btn btn--yellow', id: 'btn-solo-otra', onClick: () => { SFX.tap(); empezarSolo(partida.tema); } }, T.playAgain),
     el('button', { class: 'btn btn--ghost', onClick: () => { SFX.tap(); clearSession(); renderResumeSlot(); showScreen('screen-intro'); } }, T.changeMode),

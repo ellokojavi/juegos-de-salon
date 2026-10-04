@@ -16,7 +16,7 @@ idioma. El **glosario** sigue vigente: toda traducción al alemán lo respeta.
 | La marca del dispositivo: `juegos-de-salon:labs-idioma` = `de` | la pone `/labs/de/` o `?lang=de` |
 | Pestañas 🧪 (vuelve al laboratorio) y 🐞 (comentario) en todas las páginas | `public/assets/js/labs-idioma.js` |
 | Mientras se juega en alemán, los links al menú (`../`) y a `/labs/` llevan a `/labs/de/` (D-195) | el mismo módulo (un link con `data-labs-libre` pasa) |
-| Portada del laboratorio, en alemán, con todos los juegos y minijuegos | `public/labs/de/index.html` |
+| Portada del laboratorio, en alemán, con todos los juegos | `public/labs/de/index.html` |
 | Salir: "Labor verlassen" saca la marca y deja la app en inglés | la misma portada |
 
 Las pruebas de paridad (`node public/assets/js/i18n.test.mjs`) recorren `IDIOMAS`, así que el alemán
@@ -166,7 +166,7 @@ Austria y Suiza, **con ß** (los suizos no la escriben, pero la leen sin problem
 | ronda · partida · revancha | Runde · Spiel · Revanche |
 | ‹ Menú | ‹ Menü |
 | empate | Unentschieden |
-| minijuego | Minispiel |
+| juego | Spiel |
 | a. C. | v. Chr. |
 | Dudo: dudar · calzar · as | Zweifeln! · Genau! (Punktlandung) · Ass |
 | Toque y Fama: toque · fama | Kuh · Bulle |
