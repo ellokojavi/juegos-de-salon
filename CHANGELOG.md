@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.98.0 — 2026-10-04
+- **¿Dónde queda? a pantalla completa** (D-203): el globo ocupa toda la pantalla, en el celular y
+  en el computador. La ciudad, el reloj, las reglas plegadas, la brújula, + y − y Confirmar flotan
+  encima.
+
 ## 0.97.0 — 2026-10-04
 - **¿Dónde queda?: el mapa se gira con dos dedos** (D-200), como en los mapas del celular. Con el
   mapa girado aparece una brújula sobre + y −; tocarla vuelve a poner el norte arriba.
