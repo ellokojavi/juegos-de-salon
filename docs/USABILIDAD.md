@@ -4,7 +4,9 @@ La guía que aplica el agente de usabilidad (D-132) en cada revisión. Reúne lo
 decidió. **Crece con cada dilema resuelto**: la respuesta del dueño se anota aquí con su número de
 issue, para no volver a preguntarla.
 
-Cada regla tiene un ID (U-n) para citarla en los PR y en los issues.
+Cada regla tiene un ID (U-n) para citarla en los PR y en los issues. Los IDs van por bloques
+(1–18 textos, pantallas y botones; 20–23 interacciones; 30–34 compartir y marketing): U-9 y U-19
+nunca se usaron, y no se renumera.
 
 ## Textos
 
@@ -12,8 +14,9 @@ Cada regla tiene un ID (U-n) para citarla en los PR y en los issues.
   la app. Los modos y pantallas se nombran completos. Más largo pero inequívoco vale más que breve.
   En los botones no: ver U-17.
 - **U-2 · Emojis al inicio de línea o en botones y títulos**, no en medio de una frase.
-- **U-3 · Los textos nuevos se acuerdan con el dueño** antes de publicarse. Corregir ortografía,
-  gramática o concordancia no es un texto nuevo.
+- **U-3 · Los textos nuevos salen con la mejor propuesta** y se anotan en el PR para que el dueño
+  los vea; si algo no le gusta, lo corrige después (D-213, como "Dilemas sin backlog"). Corregir
+  ortografía, gramática o concordancia no es un texto nuevo.
 - **U-4 · Nombres propios sin artículo:** "La Copa: Valdenenas", nunca "la Valdenenas".
 - **U-5 · Un mismo concepto, una misma palabra** en toda la app (día de gracia, inscripción,
   jugadores, link, PIN, administrador, el celular, tachar, vidas, sorbos, "cada intento después
@@ -36,9 +39,10 @@ Cada regla tiene un ID (U-n) para citarla en los PR y en los issues.
     jugando, y ya los dice la ayuda bajo el tablero.
   - **El puntaje en una frase**, sin topes que salen solos de la regla ("10 niveles, 10 puntos
     cada uno" ya dice que son 100).
-  - **Tope que vigila una prueba** (`public/cup/games/juegos.test.mjs`), en los tres idiomas: 280
-    caracteres para "Cómo se juega" y 170 para el puntaje. Es un techo, no una meta: la mitad de
-    los juegos queda bajo 210.
+  - **Tope que vigila una prueba** (`public/cup/games/juegos.test.mjs`), en los cuatro idiomas: a
+    lo más 3 puntos y 280 caracteres para "Cómo se juega", y 170 para el puntaje. Además frena un
+    primer punto que describe la pantalla ("Hay…", "There is…", "Há…"); en alemán eso todavía no
+    lo mira. Es un techo, no una meta: la mitad de los juegos queda bajo 210.
 
 ## Pantallas y botones
 
@@ -137,5 +141,6 @@ Las respuestas a dilemas (issues con la etiqueta `usabilidad`) se anotan aquí:
   el chat.
 - **Batalla Naval baja a ¡Zarpar!** (#47, opción B): al completar la flota, si ¡Zarpar! no se ve,
   la pantalla baja hasta él. Una sola vez, al soltar.
-- **El 🐞 del laboratorio alemán puede achicar el nombre del juego en la barra** (#159): a 320 px
-  queda en "Sc…"; se deja así porque es temporal y el nombre entero está en el título (D-191).
+- ~~**El 🐞 del laboratorio alemán puede achicar el nombre del juego en la barra**~~ (#159): ya no
+  aplica: el alemán salió del laboratorio (D-197) y ya no muestra 🐞. Vuelve a valer para el
+  próximo idioma que entre al laboratorio (D-191).
