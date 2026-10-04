@@ -1,13 +1,12 @@
 # El alemán
 
-Juegos de Salón en alemán (**Salonspiele**). Hoy vive **en el laboratorio** (D-191): tiene todos
-sus textos, pero solo se ofrece en el dispositivo que entró por `/labs/de/`. El resto de la gente
-sigue viendo español, inglés y portugués como siempre.
+Juegos de Salón en alemán (**Salonspiele**). **Salió del laboratorio** (D-197): se ofrece a
+todos en el toggle, con su puerta `https://juegosdesalon.cl/de/` y su tarjeta social, como el
+inglés y el portugués. El link del laboratorio, `/labs/de/`, quedó como página puente hacia `/de/`
+para quienes lo revisaron.
 
-- Para probar: `https://juegosdesalon.cl/labs/de/` (local: `http://localhost:8765/labs/de/`)
-- Para invitar a alguien: mandarle ese link. Un link con `?lang=de` también lo deja dentro.
-- Los comentarios llegan a `feedback/` y se leen con `node tools/firebase/reportes.mjs` (traen
-  `"labs":"de"` en el contexto).
+Lo de abajo cuenta cómo se hizo y cómo pasó por el laboratorio (D-191), que queda para el próximo
+idioma. El **glosario** sigue vigente: toda traducción al alemán lo respeta.
 
 ## Cómo funciona el laboratorio de un idioma
 
@@ -70,7 +69,14 @@ las pantallas de `tools/e2e/mirar.mjs` a 320 px, y después con los textos alema
   palabras con Ä, Ö y Ü van sin los puntos (Ä es A) y la ß como SS.
 - **Sin destello**: en otro idioma que el español, la página no se pinta hasta tener sus textos.
 
-## Lo que falta para sacarlo del laboratorio
+## Cómo salió del laboratorio (D-197)
+
+Los pasos que este documento dejaba anotados, y cómo quedaron:
+
+- Hecho: sacarlo de `EN_LABS`, la puerta `/de/` con su tarjeta (`og.mjs` y `og/tarjeta.html`), el README, C-3 en CANONES, el CONTRIBUTING y el guion `idioma-por-url.mjs` (prueba `/de/` y el puente de `/labs/de/`).
+- Pendiente: las imágenes que se comparten (punto 4) y los guiones de La Copa y de Línea de Tiempo que solo recorren inglés y portugués (punto 6); el video promocional sigue diciendo tres idiomas.
+
+La lista original:
 
 Ordenado por lo que más se nota.
 

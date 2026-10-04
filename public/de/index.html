@@ -1,10 +1,18 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="de">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#150726">
   <title>Salonspiele 🎲</title>
-  <!-- Página puente (D-192): esta ruta se mudó a /de/. La genera node tools/release/og.mjs tarjetas: no se edita a mano. -->
+  <!--
+    Puerta de entrada en un idioma. No es una copia de la app: deja elegido el idioma y manda a
+    la portada, que es una sola para todos (D-74, D-197). Existe para poder compartir un link que
+    llegue en el idioma correcto —juegosdesalon.cl/de/— y para que la tarjeta del chat también
+    salga en ese idioma.
+  -->
+  <link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+  <meta http-equiv="refresh" content="0; url=../?lang=de">
   <!-- generado: og · lo reescribe node tools/release/og.mjs tarjetas -->
   <meta name="description" content="Klassische Spiele auf deinem Handy, für allein oder mit Freunden: Der Pokal, Zeitstrahl, Bullen und Kühe, Galgenmännchen, Lügenwürfel, Schiffe versenken und Der vierte König. Kostenlos, ohne Installation und ohne Konto.">
   <link rel="canonical" href="https://juegosdesalon.cl/de/">
@@ -33,10 +41,13 @@
   <meta name="twitter:image" content="https://juegosdesalon.cl/assets/og/menu-de.jpg?v=0.94.0">
   <meta name="twitter:image:alt" content="Salonspiele: 🏆 ⏳ 🔢 🪢 🎲 ⚓ 👑">
   <!-- /generado -->
-  <script>location.replace('../../de/' + location.search + location.hash);</script>
-  <noscript><meta http-equiv="refresh" content="0; url=../../de/"></noscript>
+  <link rel="stylesheet" href="../assets/css/base.css">
 </head>
 <body>
-  <p><a href="../../de/">Salonspiele 🎲</a></p>
+  <main class="app">
+    <p class="lead center" style="margin-top:40vh">Wir bringen dich zu juegosdesalon.cl auf Deutsch …</p>
+    <p class="center"><a class="btn btn--cyan btn--sm" href="../?lang=de">juegosdesalon.cl</a></p>
+  </main>
+  <script>location.replace('../?lang=de');</script>
 </body>
 </html>

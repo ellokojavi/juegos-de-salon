@@ -1,6 +1,6 @@
 # 🎲 Juegos de Salón
 
-Mobile-first web app with party games to play with friends: card games, drinking games, guessing games. Open it on a phone or tablet, pick a game from the menu, type in the players, and the phone runs the game. In Spanish, English and Portuguese.
+Mobile-first web app with party games to play with friends: card games, drinking games, guessing games. Open it on a phone or tablet, pick a game from the menu, type in the players, and the phone runs the game. In Spanish, English, Portuguese and German.
 
 The menu can be filtered by kind of game (words, logic, trivia, cards and dice); how many are playing is chosen inside each game. The filter lives in the link, so going back from a game keeps it and a filtered menu can be shared. A 🎲 **Random game** button rolls a 3D die over the menu, one game per face, and opens whichever lands on top: never The Cup, and only the filtered kind if a filter is on (D-188). Besides the games below, the menu offers The Cup's minigames on their own, for one player: Connections, Bulls and Cows: Word, What Year?, Where Is It?, Queens, Tango, Zip and Untangle. They play in all three languages.
 
@@ -378,7 +378,7 @@ The other four are **〰️ Zip**, **☀️ Tango**, **📍 Where is it?** and *
 - **A new cup opens on the admin screen** with a short guide: share the invite, wait for people to join (they can before it starts), close sign-ups if you like, and move the start to today or tomorrow while nobody has played yet (D-110). The lab has **ten live demos** of the cup, as a player and as the admin.
 - **A cup can have its own link** (D-121): `juegosdesalon.cl/cup/?pirata` instead of a 5-letter code. It is an alias, unique while the cup lasts and free again a week after it ends.
 - **Bug reports need no account** (D-104): the 🐞 form posts straight to `feedback/` and remembers your name on that device; `node tools/firebase/reportes.mjs` reads them back.
-- **Three languages, one rule** (D-170): what is personal follows your language, what belongs to the group follows the cup's. The screen (rules, board, scoring breakdown) follows each player's toggle; the cup's language, chosen when it is created, sets the words of Connections and Bulls and Cows: Word, so everyone plays the same ones, and every message shared with the group, with its link. Word content is written per language, not translated: Connections grids and secret words in English and Portuguese, plus country and city names for Where is it?.
+- **Many languages, one rule** (D-170): what is personal follows your language, what belongs to the group follows the cup's. The screen (rules, board, scoring breakdown) follows each player's toggle; the cup's language, chosen when it is created, sets the words of Connections and Bulls and Cows: Word, so everyone plays the same ones, and every message shared with the group, with its link. Word content is written per language, not translated: Connections grids and secret words in English, Portuguese and German, plus country and city names for Where is it?.
 - **Who it's for** (D-186, D-187): when creating a cup, the admin picks its audience: 🌎 Global, 🇨🇱 Chile or 🇧🇷 Brazil. Content that people only know in one of those countries is tagged with it: Timeline's Chile and Brazil themes and a few local cards, the Connections grids with Chilean or Brazilian words, a few Chilean secret words, and Chilean and Brazilian cities that aren't capitals (Rio and São Paulo count as global). A global cup leaves out both countries' topics; a Chilean or Brazilian cup adds its own and leaves out the other's. Cups created before keep their content.
 - A 3-day cup exists for testing with `?tres` (D-100), and `?prueba` plays a cup with no Firebase, which is what the lab demos and the end-to-end scripts use.
 
@@ -409,60 +409,59 @@ Spec and design: [docs/games/cup.md](docs/games/cup.md)
 
 ### Languages
 
-The whole experience is translated: the menu and its footer lines, the eight games with all their modes, the Cup's minigames, the rooms, the chat, the transport errors, the "pass the phone" screens and the cards of every Timeline theme. Portuguese is the Brazilian one, informal, and the names are translated the same way as in English:
+The whole experience is translated: the menu and its footer lines, the eight games with all their modes, the Cup's minigames, the rooms, the chat, the transport errors, the "pass the phone" screens and the cards of every Timeline theme. Portuguese is the Brazilian one, informal; German is standard German for Germany, Austria and Switzerland (D-194). The names are translated the same way in every language:
 
 <!-- generado: idiomas · written by python3 tools/release/readme.py actualizar -->
-| Español | English | Português |
-|---|---|---|
-| Juegos de Salón | Party Games | Jogos de Salão |
-| La Copa | The Cup | A Copa |
-| Línea de Tiempo | Timeline | Linha do Tempo |
-| Toque y Fama | Bulls and Cows | Toque e Fama |
-| El Ahorcado | Hangman | Forca |
-| Dudo | Liar's Dice | Dado Mentiroso |
-| Batalla Naval | Battleship | Batalha Naval |
-| Julepe | Julep | Paga o Bolo |
-| Cuarto Rey | Fourth King | Quarto Rei |
-| Conexiones | Connections | Conexões |
-| Toque y Fama: Palabra | Bulls and Cows: Word | Toque e Fama: Palavra |
-| ¿En qué año? | What Year? | Em que ano? |
-| Reinas | Queens | Rainhas |
-| Tango | Tango | Tango |
-| Zip | Zip | Zip |
-| Desenredo | Untangle | Desenrola |
-| ¿Dónde queda? | Where Is It? | Onde fica? |
+| Español | English | Português | Deutsch |
+|---|---|---|---|
+| Juegos de Salón | Party Games | Jogos de Salão | Salonspiele |
+| La Copa | The Cup | A Copa | Der Pokal |
+| Línea de Tiempo | Timeline | Linha do Tempo | Zeitstrahl |
+| Toque y Fama | Bulls and Cows | Toque e Fama | Bullen und Kühe |
+| El Ahorcado | Hangman | Forca | Galgenmännchen |
+| Dudo | Liar's Dice | Dado Mentiroso | Lügenwürfel |
+| Batalla Naval | Battleship | Batalha Naval | Schiffe versenken |
+| Julepe | Julep | Paga o Bolo | Julepe |
+| Cuarto Rey | Fourth King | Quarto Rei | Der vierte König |
+| Conexiones | Connections | Conexões | Verbindungen |
+| Toque y Fama: Palabra | Bulls and Cows: Word | Toque e Fama: Palavra | Bullen und Kühe: Wort |
+| ¿En qué año? | What Year? | Em que ano? | Welches Jahr? |
+| Reinas | Queens | Rainhas | Damen |
+| Tango | Tango | Tango | Tango |
+| Zip | Zip | Zip | Zip |
+| Desenredo | Untangle | Desenrola | Entwirren |
+| ¿Dónde queda? | Where Is It? | Onde fica? | Wo liegt das? |
 <!-- /generado -->
 
 How it is put together (canon C-3):
 
 - `public/assets/js/i18n.js` keeps the language in `localStorage` (`juegos-de-salon:lang`), draws the
-  🇨🇱 ES · 🇬🇧 EN · 🇧🇷 PT toggle and holds the shared text (`COMMON`): the menu and what goes out
+  🇨🇱 ES · 🇬🇧 EN · 🇧🇷 PT · 🇩🇪 DE toggle and holds the shared text (`COMMON`): the menu and what goes out
   when somebody shares the app, plus the strings every game repeats word for word — the room
   invitation (D-173, D-165), the "or" between creating a room and joining one, and the shared
   result of playing a minigame alone.
-- Each game keeps its text in `LOCALES = { es, en, pt }` inside its `rules.js`. There is not a
+- Each game keeps its text in `LOCALES = { es, en, pt, de }` inside its `rules.js`. There is not a
   single literal string in `game.js`. Fixed HTML text is marked with `data-i18n`.
 - The menu registry (`games.js`), the 100 footer lines (`frases.js`) and every Timeline card
-  (`decks/*.js`) carry all three languages.
-- **The three dictionaries have exactly the same keys.** `node public/assets/js/i18n.test.mjs` checks
+  (`decks/*.js`) carry all four languages.
+- **The four dictionaries have exactly the same keys.** `node public/assets/js/i18n.test.mjs` checks
   keys, list lengths, the `{braces}` in templates and that no text is empty. A missing string
   would show up as `undefined` on screen.
 - Translations are adapted, not copied: in Portuguese the Santiago districts become bairros, the
   dare becomes a prenda and "fondo" becomes "vira, vira, vira".
 - **The language can travel in the link** (D-74): `juegosdesalon.cl/?lang=pt` on any page, or the
-  `juegosdesalon.cl/pt/` and `/en/` doors, which set the language and send you to the menu. It is
+  `juegosdesalon.cl/pt/`, `/en/` and `/de/` doors, which set the language and send you to the menu. It is
   applied, it is saved, and the parameter is removed from the address bar. **A room invitation
   carries it**, so whoever gets the link opens the app in the language it was sent in. This is not
   detection: somebody chose, for themselves or for the person getting the link.
 - To add a language: add it to `IDIOMAS` and to the toggle in `i18n.js`, then add the dictionary in
   `COMMON`, `games.js`, `frases.js`, the eight `rules.js`, `decks/index.js` and every card. The
   parity test says what is missing.
-- **A new language starts in the lab** (D-191). **German** is fully written but listed in
-  `EN_LABS`, so it is only offered on a device that came in through
-  [`/labs/de/`](https://juegosdesalon.cl/labs/de/) (or a `?lang=de` link). There, every "‹ Menu"
-  leads back to the lab and a 🐞 button in the top bar sends comments with their context, so
-  German-speaking friends can review the draft before everyone sees it. The plan and the glossary
-  are in [docs/ALEMAN.md](docs/ALEMAN.md).
+- **A new language starts in the lab** (D-191): listed in `EN_LABS`, it is only offered on a device
+  that came in through `/labs/<lang>/`, where every "‹ Menu" leads back to the lab and a 🐞 button
+  sends comments, so native speakers can review the draft before everyone sees it. **German** went
+  through it and is now offered to everyone (D-197); the old `/labs/de/` link forwards to `/de/`.
+  Its glossary is in [docs/ALEMAN.md](docs/ALEMAN.md).
 - In The Cup, the screen follows each player's language, but the words of Connections and Word, the
   messages shared with the group and their link follow the language picked when the cup is created
   (D-170).
@@ -622,7 +621,7 @@ URL, in English. Everything next to it is the workshop.
 ```
 public/                     The site (juegosdesalon.cl/): the only folder that gets published
   index.html                  Main menu (generated from assets/js/games.js)
-  en/ · pt/                   Language doors: they set the language and send you to the menu
+  en/ · pt/ · de/             Language doors: they set the language and send you to the menu
   cup/                        The Cup: tournament engine, stores (Firebase and local test), desglose.js (score breakdown), planilla.js (final table as CSV), reportes.js (auth-free bug reports), demo.js (lab demos)
     games/                    The minigames: one folder each (engine.js + ui.js + its own word content in each language); solo.js mounts one as the play-alone mode of another game
   timeline/                   Timeline (engine.js + tests, game.js, rules.js, decks/)
@@ -633,10 +632,10 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   julep/                      Julep (engine.js + tests, game.js, rules.js)
   fourth-king/                Fourth King (game.js, rules.js)
   minigames/                  The cup's minigames played on their own, one page each (generated)
-  labs/                       The lab: games being tested before they reach the menu (not linked, not indexed); labs/de/ is the German lab
+  labs/                       The lab: games being tested before they reach the menu (not linked, not indexed); labs/de/ forwards to /de/ (German left the lab, D-197)
   panel/                      Private owner dashboard: summary, The Cup and games views (Google sign-in; see docs/PANEL.md)
   assets/css/                 Shared styles: base.css (party theme), linea.css (timeline), teclado.css (keypad)
-  assets/js/                  Shared modules: games.js (game registry), i18n.js (ES/EN/PT, and DE in the lab), labs-idioma.js (a language in the lab), ui.js, sound.js, compartir.js (everything shared, D-165), handoff.js, chat.js, session.js, arrastre.js (drag and drop), teclado.js, azar.js and dado3d.js (Random game), frases.js
+  assets/js/                  Shared modules: games.js (game registry), i18n.js (ES/EN/PT/DE), labs-idioma.js (a new language in the lab, D-191), ui.js, sound.js, compartir.js (everything shared, D-165), handoff.js, chat.js, session.js, arrastre.js (drag and drop), teclado.js, azar.js and dado3d.js (Random game), frases.js
   assets/js/transport/        Transports: local (same phone), firebase (room) and stats (usage signals)
   assets/og/                  The 1200×630 images shown when a link is shared
   manifest.webmanifest        PWA manifest (installable on the home screen)

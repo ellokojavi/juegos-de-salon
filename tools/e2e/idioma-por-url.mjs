@@ -37,6 +37,16 @@ await limpio('/en/');
 await sleep(1200);
 console.log('/en/                →', JSON.stringify(await mirar()));
 
+/* 4b. El alemán, fuera del laboratorio (D-197): su puerta /de/, y el link viejo /labs/de/ que
+   tienen sus revisores, que ahora es una página puente hacia /de/ */
+for (const ruta of ['/de/', '/labs/de/']) {
+  await limpio(ruta);
+  await sleep(1600);
+  const de = await mirar();
+  console.log(`${ruta.padEnd(20)}→`, JSON.stringify(de));
+  if (de.lang !== 'de' || de.guardado !== 'de' || de.url !== '/') { console.log(`✗ ${ruta} no deja la app en alemán en la portada`); process.exitCode = 1; }
+}
+
 /* 5. Queda guardado: la visita siguiente, sin nada en el link, sigue en ese idioma */
 await b.go(`${SITIO}/`, 1500);
 console.log('y a la vuelta       →', JSON.stringify(await mirar()));

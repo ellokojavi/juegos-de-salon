@@ -116,10 +116,10 @@ def bloque_tematicas(H, C):
 
 
 def bloque_idiomas(H, C):
-    filas = ['| Español | English | Português |', '|---|---|---|',
-             f"| {H['app']['es']} | {H['app']['en']} | {H['app']['pt']} |"]
+    filas = ['| Español | English | Português | Deutsch |', '|---|---|---|---|',
+             f"| {H['app']['es']} | {H['app']['en']} | {H['app']['pt']} | {H['app']['de']} |"]
     for j in H['juegos'] + H.get('sueltos', []):
-        filas.append(f"| {j['nombre']['es']} | {j['nombre']['en']} | {j['nombre']['pt']} |")
+        filas.append(f"| {j['nombre']['es']} | {j['nombre']['en']} | {j['nombre']['pt']} | {j['nombre']['de']} |")
     return '\n'.join(filas) + '\n'
 
 
