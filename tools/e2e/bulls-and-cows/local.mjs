@@ -29,7 +29,7 @@ console.log('local result:', await b.evaluate(`document.getElementById('result-t
 // Revancha local
 await b.evaluate(`document.querySelector('#result-actions .btn').click(); 1`); await sleep(600);
 console.log('rematch → screen:', await b.active(), 'phase:', (await b.view()).phase);
-// ---- JUGAR SOLO (D-142): el minijuego 🔢 de La Copa, 10 intentos y de 0 a 100 puntos ----
+// ---- JUGAR SOLO (D-142): el juego 🔢 de La Copa, 10 intentos y de 0 a 100 puntos ----
 const TYF = `${SITIO}/bulls-and-cows/`;
 const numeros = [];
 for (const a of '0123456789') for (const c of '0123456789') for (const d of '0123456789') for (const e of '0123456789') { const n = a + c + d + e; if (new Set(n).size === 4) numeros.push(n); }

@@ -51,15 +51,21 @@ const RETICULA = (() => {
   return lineas;
 })();
 
-/** La vista lista para girar: senos y cosenos del centro, centro y radio en pantalla. */
-export function vista({ centro: [lat0, lon0], r, cx, cy }) {
-  return { centro: [lat0, lon0], s0: Math.sin(lat0 * RAD), c0: Math.cos(lat0 * RAD), sl: Math.sin(lon0 * RAD), cl: Math.cos(lon0 * RAD), r, cx, cy };
+/**
+ * La vista lista para girar: senos y cosenos del centro y del rumbo (el giro de la vista en su
+ * centro, en grados; 0 es el norte arriba), centro y radio en pantalla.
+ */
+export function vista({ centro: [lat0, lon0], rumbo = 0, r, cx, cy }) {
+  return {
+    centro: [lat0, lon0], rumbo, s0: Math.sin(lat0 * RAD), c0: Math.cos(lat0 * RAD), sl: Math.sin(lon0 * RAD), cl: Math.cos(lon0 * RAD),
+    sr: Math.sin(rumbo * RAD), cr: Math.cos(rumbo * RAD), r, cx, cy,
+  };
 }
 
 /** Un vector a pantalla: [px, py, prof]. Es `ver` del motor, desenrollado porque se llama miles de veces. */
 const girar = (V, X, Y, Z) => {
-  const A = X * V.cl + Y * V.sl, B = Y * V.cl - X * V.sl;
-  return [V.cx + V.r * B, V.cy - V.r * (V.c0 * Z - V.s0 * A), V.s0 * Z + V.c0 * A];
+  const A = X * V.cl + Y * V.sl, B = Y * V.cl - X * V.sl, C = V.c0 * Z - V.s0 * A;
+  return [V.cx + V.r * (V.cr * B - V.sr * C), V.cy - V.r * (V.sr * B + V.cr * C), V.s0 * Z + V.c0 * A];
 };
 
 /** El arco por el borde del globo, de un ángulo a otro por el lado corto. */
@@ -266,10 +272,12 @@ uniform sampler2D t;
 uniform vec2 c;      // centro del globo, en píxeles del canvas (y desde abajo)
 uniform float r;     // radio, en píxeles del canvas
 uniform vec4 giro;   // sen y cos de la latitud y de la longitud del centro
+uniform vec2 rumbo;  // sen y cos del giro de la vista en su centro (0: el norte arriba)
 uniform vec4 rect;   // la tesela: esquina (u, v) y tamaño, en coordenadas de la imagen entera
 uniform float base;  // 1 para la imagen entera, 0 para una tesela
 void main() {
-  float x = (gl_FragCoord.x - c.x) / r, y = (gl_FragCoord.y - c.y) / r;
+  float x0 = (gl_FragCoord.x - c.x) / r, y0 = (gl_FragCoord.y - c.y) / r;
+  float x = rumbo.y * x0 + rumbo.x * y0, y = rumbo.y * y0 - rumbo.x * x0;
   float q = x * x + y * y;
   if (q > 1.0) discard;
   float prof = sqrt(1.0 - q);
@@ -318,7 +326,7 @@ function visibles(V, w, h) {
   const claves = new Set();
   const N = 10;
   for (let i = 0; i <= N; i++) for (let j = 0; j <= N; j++) {
-    const g = tocado(((w * i) / N - V.cx) / V.r, (V.cy - (h * j) / N) / V.r, V.centro);
+    const g = tocado(((w * i) / N - V.cx) / V.r, (V.cy - (h * j) / N) / V.r, V.centro, V.rumbo);
     if (!g) continue;
     const f = Math.min(TESELAS.filas - 1, Math.floor((90 - g[0]) / (180 / TESELAS.filas)));
     const c = Math.min(TESELAS.columnas - 1, Math.floor((g[1] + 180) / (360 / TESELAS.columnas)));
@@ -353,7 +361,7 @@ export function satelite(canvas, alLlegar) {
   gl.enableVertexAttribArray(p);
   gl.vertexAttribPointer(p, 2, gl.FLOAT, false, 0, 0);
   const U = n => gl.getUniformLocation(programa, n);
-  const [uC, uR, uGiro, uRect, uBase] = [U('c'), U('r'), U('giro'), U('rect'), U('base')];
+  const [uC, uR, uGiro, uRumbo, uRect, uBase] = [U('c'), U('r'), U('giro'), U('rumbo'), U('rect'), U('base')];
   const tex = gl.createTexture();
   const maximo = gl.getParameter(gl.MAX_TEXTURE_SIZE);
   let subida = 0;
@@ -419,6 +427,7 @@ export function satelite(canvas, alLlegar) {
       gl.uniform2f(uC, V.cx * dpr, H - V.cy * dpr);
       gl.uniform1f(uR, V.r * dpr);
       gl.uniform4f(uGiro, V.s0, V.c0, V.sl, V.cl);
+      gl.uniform2f(uRumbo, V.sr, V.cr);
       gl.uniform1f(uBase, 1);
       gl.bindTexture(gl.TEXTURE_2D, tex);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);

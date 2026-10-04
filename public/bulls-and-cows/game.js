@@ -5,7 +5,7 @@
  *  - online: este celular tiene un rol; el otro celular el opuesto (transporte Firebase)
  * Cada dispositivo calcula automáticamente las respuestas para los intentos contra SU secreto.
  *
- * Jugar solo no pasa por el reductor: es el minijuego 🔢 de La Copa (D-142), con sus 10 intentos,
+ * Jugar solo no pasa por el reductor: es el juego 🔢 de La Copa (D-142), con sus 10 intentos,
  * su puntaje de 0 a 100 y su reloj (cup/games/number/ui.js montado con cup/games/solo.js).
  */
 import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../assets/js/ui.js';
@@ -606,7 +606,7 @@ async function joinOnline(code, name, previousRole = null, savedSecret = null, s
 }
 
 /* ------------------------------------------------------------------ */
-/* Jugar solo: el minijuego 🔢 de La Copa (D-142)                      */
+/* Jugar solo: el juego 🔢 de La Copa (D-142)                      */
 /* ------------------------------------------------------------------ */
 /**
  * Las mismas reglas, el mismo puntaje y la misma pantalla que en la copa: 4 cifras distintas
@@ -643,7 +643,7 @@ function soloNueva() {
   soloJugar(partida);
 }
 
-/** Monta el minijuego con lo guardado (o de cero) y guarda cada jugada (C-6). */
+/** Monta el juego con lo guardado (o de cero) y guarda cada jugada (C-6). */
 function soloJugar(partida) {
   const { codigo } = partida;
   soltarSolo?.();
@@ -693,7 +693,7 @@ function soloFin(codigo, p, { s, t, ms, estado }) {
         marcar: true, nota: fmt(T.discardedNote, { c: numero.PENA_DESCARTE }), // los intentos que las pistas ya descartaban (D-204)
       })),
     el('div', { class: 'stack', id: 'solo-actions' },
-      // El mismo resultado que el minijuego de La Copa, con su imagen (D-165)
+      // El mismo resultado que el juego de La Copa, con su imagen (D-165)
       botonResultadoSolo({ C: COMMON[lang], emoji: gameById(GAME_ID)?.emoji || '🔢', juego: T.title, puntaje: `${s}/100`, tiempo: mmss(ms), tarjeta: t, url: withLang(`${SITIO}bulls-and-cows/`), alTocar: () => SFX.tap() }),
       el('button', { class: 'btn btn--yellow', onClick: () => { SFX.tap(); soloNueva(); } }, T.playAgain),
       el('button', { class: 'btn btn--ghost', onClick: () => { SFX.tap(); clearSession(); location.href = location.pathname; } }, T.changeMode),
@@ -717,7 +717,7 @@ function renderResumeSlot() {
   if (!saved || saved.done) return;
   if (saved.mode === 'online' && !saved.code) return;
   // Las partidas del antiguo modo contra el celular (D-129) no se pueden retomar como solo, ni las
-  // del solo con bot (D-142): esas guardaban mensajes y no el código del minijuego
+  // del solo con bot (D-142): esas guardaban mensajes y no el código del juego
   if (!['online', 'local', 'solo'].includes(saved.mode)) return;
   if (saved.mode === 'solo' && typeof saved.codigo !== 'string') return;
   const label = saved.mode === 'online' ? `${T.lobbyCode}: ${saved.code}` : { local: T.modeLocal, solo: T.modeSolo }[saved.mode];

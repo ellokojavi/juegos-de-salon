@@ -1,13 +1,12 @@
 # El alemán
 
-Juegos de Salón en alemán (**Salonspiele**). Hoy vive **en el laboratorio** (D-191): tiene todos
-sus textos, pero solo se ofrece en el dispositivo que entró por `/labs/de/`. El resto de la gente
-sigue viendo español, inglés y portugués como siempre.
+Juegos de Salón en alemán (**Salonspiele**). **Salió del laboratorio** (D-197): se ofrece a
+todos en el toggle, con su puerta `https://juegosdesalon.cl/de/` y su tarjeta social, como el
+inglés y el portugués. El link del laboratorio, `/labs/de/`, quedó como página puente hacia `/de/`
+para quienes lo revisaron.
 
-- Para probar: `https://juegosdesalon.cl/labs/de/` (local: `http://localhost:8765/labs/de/`)
-- Para invitar a alguien: mandarle ese link. Un link con `?lang=de` también lo deja dentro.
-- Los comentarios llegan a `feedback/` y se leen con `node tools/firebase/reportes.mjs` (traen
-  `"labs":"de"` en el contexto).
+Lo de abajo cuenta cómo se hizo y cómo pasó por el laboratorio (D-191), que queda para el próximo
+idioma. El **glosario** sigue vigente: toda traducción al alemán lo respeta.
 
 ## Cómo funciona el laboratorio de un idioma
 
@@ -17,7 +16,7 @@ sigue viendo español, inglés y portugués como siempre.
 | La marca del dispositivo: `juegos-de-salon:labs-idioma` = `de` | la pone `/labs/de/` o `?lang=de` |
 | Pestañas 🧪 (vuelve al laboratorio) y 🐞 (comentario) en todas las páginas | `public/assets/js/labs-idioma.js` |
 | Mientras se juega en alemán, los links al menú (`../`) y a `/labs/` llevan a `/labs/de/` (D-195) | el mismo módulo (un link con `data-labs-libre` pasa) |
-| Portada del laboratorio, en alemán, con todos los juegos y minijuegos | `public/labs/de/index.html` |
+| Portada del laboratorio, en alemán, con todos los juegos | `public/labs/de/index.html` |
 | Salir: "Labor verlassen" saca la marca y deja la app en inglés | la misma portada |
 
 Las pruebas de paridad (`node public/assets/js/i18n.test.mjs`) recorren `IDIOMAS`, así que el alemán
@@ -70,7 +69,24 @@ las pantallas de `tools/e2e/mirar.mjs` a 320 px, y después con los textos alema
   palabras con Ä, Ö y Ü van sin los puntos (Ä es A) y la ß como SS.
 - **Sin destello**: en otro idioma que el español, la página no se pinta hasta tener sus textos.
 
-## Lo que falta para sacarlo del laboratorio
+## Cómo salió del laboratorio (D-197)
+
+Los pasos que este documento dejaba anotados, y cómo quedaron:
+
+- Hecho: sacarlo de `EN_LABS`, la puerta `/de/` con su tarjeta (`og.mjs` y `og/tarjeta.html`), el README, C-3 en CANONES, el CONTRIBUTING y el guion `idioma-por-url.mjs` (prueba `/de/` y el puente de `/labs/de/`).
+- Revisado el 4 de octubre: **las imágenes que se comparten** (punto 4) caben en alemán. La tabla de
+  La Copa (a mitad de semana y la final de 10 jugadores con podio) y los resultados, con el
+  minijuego de nombre más largo ("Bullen und Kühe: Zahl knacken"), se ven bien y las diéresis no se
+  cortan. La leyenda completa de la tabla, el caso más ancho y que ninguna demo muestra, mide 810 px
+  de 1080 en alemán (en inglés, 858).
+- Hecho el 4 de octubre (D-199): **los guiones de punta a punta** (punto 6) recorren todos los
+  idiomas de `LANGS`, y cada juego tiene su prueba de idiomas. Encontraron dos cosas del alemán:
+  en la antesala de Palabra la nota de las diéresis empujaba "Zurück zum Menü" fuera de la pantalla
+  (se acortó: "Ä, Ö und Ü schreibst du als A, O und U."), y `timeline/solo.mjs` no encontraba el
+  modo "Allein spielen".
+- Pendiente: el video promocional, que sigue diciendo tres idiomas.
+
+La lista original:
 
 Ordenado por lo que más se nota.
 
@@ -160,7 +176,7 @@ Austria y Suiza, **con ß** (los suizos no la escriben, pero la leen sin problem
 | ronda · partida · revancha | Runde · Spiel · Revanche |
 | ‹ Menú | ‹ Menü |
 | empate | Unentschieden |
-| minijuego | Minispiel |
+| juego | Spiel |
 | a. C. | v. Chr. |
 | Dudo: dudar · calzar · as | Zweifeln! · Genau! (Punktlandung) · Ass |
 | Toque y Fama: toque · fama | Kuh · Bulle |

@@ -11,7 +11,7 @@ Cada canon tiene un ID (C-n) para citarlo en el código, en los commits y en las
 
 ## C-1 · Identidad y tono
 
-- Español chileno informal por defecto; inglés y portugués son opcionales y se eligen a mano; el alemán, solo en el laboratorio (C-3, D-191). Tuteo, humor liviano, sin groserías fuertes.
+- Español chileno informal por defecto; inglés, portugués y alemán son opcionales y se eligen a mano (C-3, D-197). Tuteo, humor liviano, sin groserías fuertes.
 - **Instrucciones concisas** (U-8, U-18, D-184): la meta primero y con verbo, a lo más 3 puntos, nada de lo que el dibujo de ejemplo ya muestra y el puntaje en una frase. Un tope en `public/cup/games/juegos.test.mjs` frena lo que se pasa. Concisas no es telegrama: frases completas (U-1).
 - Paleta y tipografías compartidas desde `public/assets/css/base.css`: fondo oscuro con degradados, acentos neón (rosado, amarillo, cian, lima), **Bangers** en títulos y **Nunito** en el cuerpo.
 - **Las cifras que el jugador lee o compara** (teclados, intentos, números secretos) van en `var(--font-num)` (Nunito 900) con `tabular-nums`, nunca en Bangers: ahí el 1 y el 7 son casi el mismo trazo y los jugadores se equivocan (D-30). Bangers se queda en títulos, nombres, palabras y códigos de sala (letras, sin I ni O).
@@ -38,7 +38,7 @@ public/<carpeta>/
   `localStorage`— y no cambia nunca; la carpeta es la URL y va en `path`. Un juego nuevo puede usar
   el mismo nombre en inglés para los dos. Si una carpeta se renombra, la ruta vieja queda como
   página puente (la genera `node tools/release/og.mjs tarjetas`).
-- Los minijuegos de La Copa siguen la misma idea en `public/cup/games/<carpeta>/`: `engine.js`
+- Los juegos de La Copa siguen la misma idea en `public/cup/games/<carpeta>/`: `engine.js`
   (reglas puras), `ui.js` (pantalla) y sus datos propios; lo común a todos queda en `games/`.
 - El juego se registra en `public/assets/js/games.js` con `id`, `emoji`, `name` y `tagline` por idioma, `players`, `duration`, `path` y `available`. Con sala, también `jugadas`: los tipos de mensaje que hace una persona, que es lo que el panel cuenta como jugadas (D-138).
 - Sus módulos entran solos al import map: `set-version.py` recorre `public/` (C-11, D-192).
@@ -47,9 +47,9 @@ public/<carpeta>/
 
 ## C-3 · Idiomas
 
-- **Español es el idioma por defecto.** Quien entra a juegosdesalon.cl sin haber elegido nada ve la app en español, sea cual sea el idioma de su navegador: nunca se detecta con `navigator.language`. Inglés y portugués son opcionales: solo se activan cuando la persona toca el toggle, y la elección queda guardada en el dispositivo (D-47).
-- **El idioma también puede venir en el link:** `?lang=pt` en cualquier página, o las puertas `/pt/` y `/en/`. Se aplica, se guarda y el parámetro se saca de la barra. No es detección: alguien lo eligió, para sí mismo o para quien recibe el link. La invitación a una sala lo lleva pegado con `withLang()` (D-74).
-- Todo texto visible vive en `LOCALES.es`, `LOCALES.en` y `LOCALES.pt` de `rules.js`. Ninguna cadena literal en `game.js`.
+- **Español es el idioma por defecto.** Quien entra a juegosdesalon.cl sin haber elegido nada ve la app en español, sea cual sea el idioma de su navegador: nunca se detecta con `navigator.language`. Inglés, portugués y alemán son opcionales: solo se activan cuando la persona toca el toggle, y la elección queda guardada en el dispositivo (D-47, D-197).
+- **El idioma también puede venir en el link:** `?lang=pt` en cualquier página, o las puertas `/pt/`, `/en/` y `/de/`. Se aplica, se guarda y el parámetro se saca de la barra. No es detección: alguien lo eligió, para sí mismo o para quien recibe el link. La invitación a una sala lo lleva pegado con `withLang()` (D-74).
+- Todo texto visible vive en `LOCALES.es`, `LOCALES.en`, `LOCALES.pt` y `LOCALES.de` de `rules.js`. Ninguna cadena literal en `game.js`.
 - Los textos fijos del HTML se marcan con `data-i18n="clave"` (o `data-i18n-html`) y se aplican con `applyStatic(T)`.
 - El idioma se lee con `getLang()` y el toggle `langToggle()` va en la intro de cada juego.
 - Las traducciones se adaptan, no se calcan: los chistes y las referencias locales se reemplazan por equivalentes. El portugués es el de Brasil, informal ("você", "celular", "rolê"), y los nombres de los juegos se traducen (Quarto Rei, Toque e Fama, Batalha Naval, Linha do Tempo) igual que en inglés (D-48).
@@ -61,8 +61,8 @@ public/<carpeta>/
 - Las plantillas usan `{llaves}` y una función `fmt()`; nunca se arman frases concatenando palabras sueltas.
 - **Un idioma nuevo entra por el laboratorio** (D-191): con todos sus textos (la paridad recorre
   `IDIOMAS`), pero en `EN_LABS`, que lo ofrece solo en el dispositivo que entró por
-  `/labs/<idioma>/`. Sale del laboratorio cuando quienes lo hablan lo revisaron. Hoy ahí está el
-  alemán ([ALEMAN.md](ALEMAN.md)): de Alemania, con "du", y su glosario fijo.
+  `/labs/<idioma>/`. Sale del laboratorio cuando quienes lo hablan lo revisaron. Hoy no hay
+  ninguno: el alemán pasó por ahí y salió (D-197); su glosario fijo está en [ALEMAN.md](ALEMAN.md).
 
 ## C-4 · Sonido y vibración
 
@@ -181,6 +181,10 @@ Cuando cada dispositivo guarda un secreto (un número, una flota):
 - Se revisan capturas reales de cada pantalla, no solo el resultado de los asertos: los problemas de diseño se ven, no se afirman. Rehacerlas no es revisarlas: antes de publicar se mira la hoja de contacto (`node tools/e2e/contacto.mjs <seccion>`), que las pone juntas al tamaño del README (D-76).
 - Una captura se saca con la pantalla quieta. Congelada a media animación, una lista con entradas escalonadas se fotografía con las filas a distintos anchos y parece un error de CSS que no existe (D-76).
 - Consola sin errores es parte del criterio de aceptación.
+- **Cada pantalla se prueba en todos los idiomas que se ofrecen** (D-199): el `idiomas.mjs` de cada
+  juego en `tools/e2e/` recorre las pantallas de `caminos.mjs` en cada idioma de `LANGS` contra
+  el español. Un guion que mira algo de un idioma recorre `LANGS`, no una lista escrita a mano, y
+  saca del diccionario lo que espera: así un idioma nuevo queda probado el día que entra.
 
 ## C-13 · Documentación
 
@@ -288,6 +292,7 @@ como un error: se lee como que nadie jugó.
 - [ ] Los tres modos funcionan y la partida se puede retomar en **todos** (C-5, C-6).
 - [ ] Las instrucciones siguen U-18: la meta primero, a lo más 3 puntos, sin repetir el dibujo de ejemplo (C-1).
 - [ ] Todo el texto está en español, inglés, portugués y alemán (el de `IDIOMAS`, también el del laboratorio), con las mismas claves en todos, sin cadenas sueltas en el código (C-3, D-191).
+- [ ] Sus pantallas están en `tools/e2e/caminos.mjs` y su `idiomas.mjs` pasa en todos los idiomas (C-12, D-199).
 - [ ] Hay sonido y vibración en las acciones clave, con botón de silencio (C-4).
 - [ ] Los botones tienen 44 px, los botones finales se ven sin desplazar y no hay scroll horizontal (C-8).
 - [ ] En un celular, el resultado se ve antes del pase, y lo secreto va tapado (C-9).

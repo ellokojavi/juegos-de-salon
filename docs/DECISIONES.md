@@ -2936,6 +2936,146 @@ muesca. Tocar un tipo estando pegada lleva la lista filtrada a su primera tarjet
 **Por qué:** lo pidió el dueño. Sin esto, cambiar de tipo desde abajo obligaba a subir, y al
 filtrar a media lista se quedaba mirando el medio de una lista más corta.
 
+## D-197 · El alemán sale del laboratorio
+**Fecha:** 2026-10-04 · **Estado:** vigente; cierra el paso de D-191 para el alemán
+**Decisión:** El alemán se ofrece a todos, como el inglés y el portugués: `EN_LABS` queda vacío,
+el toggle muestra 🇩🇪 DE en cualquier dispositivo y hay puerta `/de/` con su tarjeta social
+(`menu-de.jpg`, `de_DE`). El link del laboratorio, `/labs/de/`, pasa a ser una página puente hacia
+`/de/` (la genera `og.mjs tarjetas`, como las de D-192): sus revisores lo tienen guardado. La
+sección del alemán sale de `/labs/`. El **mecanismo** del laboratorio de idiomas (`EN_LABS`,
+`LABS_KEY`, `labs-idioma.js`) queda, sin ningún idioma: el próximo entra por ahí (D-191).
+**Por qué:** el dueño dio por buena la revisión: "ya tenemos la versión en alemán en producción".
+**Consecuencias:** un dispositivo que tenía la marca del laboratorio (`juegos-de-salon:labs-idioma`)
+deja de ver 🧪 y 🐞 y de volver al laboratorio al tocar "‹ Menú"; si estaba en alemán, sigue en
+alemán. Las huellas de las 19 imágenes de tarjetas (D-181) se migraron sin rehacerlas: al publicar
+el alemán cambian los idiomas que entran en la huella y el dibujo ganó el "gratis" en alemán, pero
+ninguna de esas imágenes cambia; cada huella se comprobó contra el cálculo anterior. `menu-de.jpg`
+se hizo en la nube (`og.mjs imagenes` usa ImageMagick donde no hay `sips`), con las fuentes de la
+app; sus emojis son los de Linux, no los de Apple. Las imágenes que se comparten se revisaron
+en alemán el mismo día y caben; quedan pendientes los guiones de punta a punta que solo recorren
+inglés y portugués (ver docs/ALEMAN.md).
+**Alternativas descartadas:** borrar también el mecanismo del laboratorio (el próximo idioma lo
+necesitaría de nuevo); dejar `/labs/de/` como estaba (mostraría un laboratorio que ya no es).
+
+## D-198 · No hay minijuegos: los juegos de La Copa son juegos
+**Fecha:** 2026-10-03 · **Estado:** vigente; complementa D-142, D-149, D-162 y D-192
+**Decisión:** La app deja de distinguir entre juegos y minijuegos. Conexiones, Reinas, Tango, Zip,
+Desenredo, ¿Dónde queda?, ¿En qué año? y Toque y Fama: Palabra son juegos como los demás:
+- **Sus direcciones pasan a la raíz**, como las de cualquier juego: `/queens/`, `/tango/`,
+  `/connections/`… Las de antes (`/minigames/<slug>/`, `/minijuegos/<id>/` y las genéricas
+  `/minigames/?reinas`) quedan como páginas puente generadas. El molde de esas páginas pasa de
+  `public/minigames/index.html` a `public/cup/suelto/index.html`.
+- **La Copa habla de juegos:** "cada día un juego distinto", "Seis juegos y la final", la columna
+  "Juego" de la planilla y la invitación, en los cuatro idiomas (juego, game, jogo, Spiel). El
+  panel, igual.
+- **En el código** el registro de La Copa se llama `JUEGOS_COPA` / `juegosCopa(lang)` (antes
+  `MINIJUEGOS` / `minijuegos(lang)`), y el panel cuenta `porJuego`.
+- Los ids no cambian (`reinas`, `conexiones`…): los guardan las copas, el panel y el
+  `localStorage`. `SUELTOS` sigue aparte de `GAMES` en `games.js` solo por cómo están hechos
+  (su motor vive en `cup/games/`, sin `rules.js`), no por lo que son.
+
+Los "minijuegos" de **Cuarto Rey** (Cuenta Cuentos, Chancho Inflado, Cultura Chupística, Nunca
+Nunca) son otra cosa —lo que manda hacer una carta— y conservan su nombre. Las decisiones y el
+CHANGELOG anteriores no se reescriben: cuentan lo que era cierto entonces.
+**Por qué:** lo pidió el dueño: la distinción ya no sirve. Desde D-142 los juegos de La Copa
+están en la portada, con sus filtros y su tarjeta, al lado de los otros; llamarlos "mini" los hacía
+parecer menos, y la URL `/minigames/` lo repetía en cada link compartido.
+
+## D-199 · Todas las pantallas se prueban en todos los idiomas
+**Fecha:** 2026-10-04 · **Estado:** vigente; complementa C-3, C-12, D-193 y D-197
+**Decisión:** Las pruebas de punta a punta recorren **todos los idiomas de `LANGS`**, no una lista
+escrita en cada guion:
+- **Cada juego tiene su prueba de idiomas**, `tools/e2e/<carpeta>/idiomas.mjs` (y
+  `cup-games/idiomas.mjs` para los juegos de La Copa que se juegan sueltos). Recorre cada pantalla
+  de `tools/e2e/caminos.mjs` en cada idioma y la compara con la misma en español: la página en
+  ese idioma y en la misma pantalla, nada a medio armar (`undefined`, `NaN`, `{marcador}`), nada
+  en español (ni un texto de los diccionarios que en ese idioma diga otra cosa, ni una línea larga
+  idéntica a la de la pantalla en español) y nada que el texto más largo rompa (scroll
+  horizontal, botones bajo 44 px o que se salgan por abajo y que el español no tenga). La lógica
+  es una sola, `tools/e2e/idiomas-comun.mjs`; GitHub corre cada juego en su propio job (D-193).
+- **Los caminos a cada pantalla salen de `mirar.mjs`** a `tools/e2e/caminos.mjs`, que comparten:
+  una pantalla nueva para mirar queda también probada en todos los idiomas. Se sumaron La Copa
+  (portada y formulario, con `?prueba`) y los juegos sueltos que no tenían camino (antesala y
+  juego empezado).
+- **Los guiones que miran algo de un idioma** —`cup/idiomas.mjs`, la parte en otros idiomas de
+  `timeline/solo.mjs`, `sala-error.mjs` e `idioma-por-url.mjs`— recorren `LANGS` y sacan lo que
+  esperan de los diccionarios (`LOCALES`, `SUELTOS`), no de textos copiados al guion. `sala-error`
+  ahora falla en rojo si un juego no muestra su `errOffline`; antes solo lo imprimía.
+**Por qué:** lo pidió el dueño: "Guiones de La Copa y de Línea de Tiempo, así como todo juego
+existente, debe probar alemán además. Y en general todos los idiomas disponibles". Con el alemán
+en producción (D-197), los guiones seguían probando solo inglés y portugués, y cada idioma nuevo
+habría obligado a reescribirlos. Leer `LANGS` y los diccionarios hace que el próximo idioma quede
+probado el día que entra, también desde el laboratorio (D-191).
+**Consecuencias:** la primera pasada encontró dos cosas del alemán: en la antesala de Palabra, la
+nota de las diéresis empujaba "Zurück zum Menü" por debajo del borde (se acortó la frase), y
+`timeline/solo.mjs` no encontraba el modo "Allein spielen" (se cayó a mitad de la pasada alemana).
+Las pruebas de idiomas suman unos 2 minutos por juego en CI, en paralelo. Comparan contra el
+español, así que no repiten lo que ya está mal en español: eso lo cuentan los guiones de cada juego.
+**Alternativas descartadas:** un solo guion para todos los juegos (en CI no se vería cuál falló);
+revisar solo las claves de los diccionarios (ya lo hace `i18n.test.mjs`, y no ve un texto escrito
+a mano en el HTML ni un botón que el alemán saca de la pantalla); mirar las capturas a ojo en cada
+idioma (no escala: son más de cien tomas).
+
+## D-200 · ¿Dónde queda?: el globo se gira con dos dedos y la brújula endereza el norte
+**Fecha:** 2026-10-04 · **Estado:** vigente; complementa D-155
+**Decisión:** Además de arrastrar y pellizcar, dos dedos que giran hacen girar el mapa en torno a
+ellos, como en los mapas del celular. El giro empieza pasados 12° de torsión, para que un pellizco
+no lo tuerza, y al soltar a menos de 6° del norte el mapa queda derecho. Con el mapa girado aparece
+una brújula sobre los botones + y −, con la N apuntando al norte; tocarla lo endereza. Cada ciudad
+empieza con el norte arriba.
+- La vista del motor lleva un `rumbo` (grados, contra el reloj): `ver` y `tocado` lo aplican, y el
+  globo y la imagen satelital también. El arrastre de un dedo se lleva a la vista derecha antes de
+  girar el globo, así lo que está bajo el dedo lo sigue.
+**Por qué:** lo pidió el dueño, para corregir los puntos cardinales: girando el globo hacia un
+polo, o buscando una ciudad en un país largo, uno quiere orientar el mapa a su modo. Es el gesto
+que todos conocen de los mapas (no reinventar, D-102), y la brújula, la forma conocida de volver.
+
+## D-201 · Las teselas satelitales se cortan con PIL, no con sips
+**Fecha:** 2026-10-04 · **Estado:** vigente; corrige D-160
+**Decisión:** `node tools/generators/mapa.mjs satelite` corta las 128 teselas con
+`tools/generators/teselas.py` (PIL, que el repo ya usa en `readme.py`) y no con sips. Las teselas
+se rehicieron: ahora cada `fila-columna.jpg` es de verdad su cuadrado de 22,5°.
+**Por qué:** el dueño vio otra vez el polo norte "mal parchado": al acercarse, encima del Ártico
+aparecía un abanico estirado con los lagos de África. sips tiene dos trampas: con
+`--cropOffset 0 0` corta del centro y no de la esquina (la fila 0, el Ártico, salió con la franja
+del ecuador, y la columna 0 con la del centro), e ignora algunos cortes que tocan el borde. Con
+eso casi todas las teselas quedaron corridas, aunque solo cerca del polo se notaba a la vista.
+**Alternativas descartadas:** seguir con sips esquivando el `0 0` (dar vuelta la imagen, `0.0`):
+probado, y sus cortes en el borde siguen fallando sin avisar.
+
+## D-202 · ¿Dónde queda?: el zoom llega a 64 veces
+**Fecha:** 2026-10-04 · **Estado:** vigente; cambia el tope de D-159
+**Decisión:** El globo se acerca hasta 64 veces (antes 16): en un celular, unos 600 m por píxel y
+unos 200 km de lado a lado. La respuesta sigue acercando hasta 12.
+**Por qué:** hubo quejas de que el zoom no alcanzaba. El tope de 16 se puso cuando solo estaba la
+imagen de 4096 px (D-159) y quedó igual al llegar las teselas (D-160). Y se pensó en la imagen, no
+en el dedo: a 16, un toque erra por unos 10 píxeles, unos 20 a 25 km, justo el margen del 🎯. A
+64 erra por unos 6 km. Pasado 16 la imagen se ablanda (cada píxel de la fuente ocupa hasta cuatro
+de la pantalla), pero costas, ríos, lagos y cordilleras se siguen leyendo.
+**Alternativas descartadas:** la imagen de la NASA de 500 m por píxel (unas 2.000 teselas y
+240 MB en el repo, y las ciudades casi no se ven en ella); un tope de 48 (el dueño eligió 64).
+
+## D-203 · ¿Dónde queda? se juega a pantalla completa
+**Fecha:** 2026-10-04 · **Estado:** vigente; complementa C-8, D-133, D-159 y D-202
+**Decisión:** El globo de ¿Dónde queda? ocupa la ventana entera y todo lo demás flota encima,
+suelto y en La Copa por igual; reemplaza a la vista en caja:
+- **Arriba**, la barra (‹ Menú y 🔊) con el reloj en una píldora al medio; debajo, la ciudad
+  ("Ciudad 1 de 5" y su nombre) y las **reglas plegadas** como un widget que se abre sobre el
+  globo y se desplaza por dentro (D-133). El nombre del juego no se repite: lo dice la ciudad.
+- **Abajo**, la pista de girar, + y − y la acción: Confirmar, o el resultado y Siguiente.
+- **El globo se centra entre la ciudad y la acción** y puede pasar 60 px por debajo de ellas;
+  la respuesta encuadra el alfiler y la ciudad en esa franja. El tope de acercamiento se mide en
+  radio del globo en píxeles, no en veces el globo: en un computador el globo entero es el doble
+  que en un celular. Es 11000, unas 64 veces el globo de un celular (D-202, unos 600 m por píxel).
+- **La cáscara se entera por el juego**: `pantallaCompleta` en su `ui.js` hace que `cup/game.js`
+  ponga `pantalla-completa` en el `body` al montarlo, y `mostrar()` la quita al cambiar de pantalla.
+  Otro juego de La Copa puede pedir lo mismo.
+**Por qué:** En un computador el globo quedaba en una caja de unos 410×320 px, un 13 % de la
+pantalla, y en un celular en la mitad. Un mapa es mejor mientras más grande se vea.
+**Consecuencias:** Lo que flota no puede quedar dentro de algo con `transform` (la animación de
+entrada de la pantalla se apaga en este modo) ni con `align-self: center`, que Chrome también
+aplica a lo fijo. La pantalla no se desplaza: lo que no quepa tiene que desplazarse dentro de su
+widget, como las reglas abiertas.
 ## D-204 · Toque y Fama: los 100 puntos son de quien deduce, no de quien tiene suerte
 **Fecha:** 2026-10-04 · **Estado:** vigente; reemplaza la regla de puntaje de D-113 para el 🔢 y
 alcanza también su ronda de La Gran Final

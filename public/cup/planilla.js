@@ -16,7 +16,7 @@ const celda = v => {
 
 /**
  * Las filas de la planilla (listas de celdas). `T` son los textos de rules.js, `juegos` el
- * registro MINIJUEGOS y `fecha` convierte un instante en texto legible.
+ * registro JUEGOS_COPA y `fecha` convierte un instante en texto legible.
  */
 export function filasPlanilla(L, { T, juegos, fmt, fecha }) {
   const { meta } = L;

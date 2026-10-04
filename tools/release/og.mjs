@@ -4,8 +4,8 @@
  * comparten por WhatsApp, así que la invitación a jugar **es** una tarjeta de estas.
  *
  *   node tools/release/og.mjs tarjetas   reescribe el bloque <!-- generado: og --> de cada página,
- *                                genera la página de cada minijuego suelto (public/minigames/<slug>/)
- *                                y las páginas puente de las rutas viejas (D-192)
+ *                                genera la página de cada juego de La Copa (public/<slug>/)
+ *                                y las páginas puente de las rutas viejas (D-192, D-198)
  *   node tools/release/og.mjs imagenes   rehace con Chrome las imágenes de 1200×630 que quedaron atrás
  *                                (necesita internet: las fuentes vienen de Google Fonts).
  *                                Con --todas, las rehace todas
@@ -40,19 +40,20 @@ const disponibles = GAMES.filter(g => g.available);
 const conTarjeta = GAMES.filter(g => g.available || g.labs || existsSync(join(RAIZ, 'public', g.path, 'index.html')));
 
 /**
- * Las tres puertas de entrada: la portada en español y las dos que dejan elegido el idioma
- * (/pt/ y /en/). Cada una se comparte en su idioma, así que su tarjeta también (D-74).
+ * Las puertas de entrada: la portada en español y las que dejan elegido el idioma (/pt/, /en/
+ * y /de/). Cada una se comparte en su idioma, así que su tarjeta también (D-74, D-197).
  */
 const PUERTAS = [
   { lang: 'es', archivo: 'public/index.html', ruta: '/', imagen: 'menu' },
   { lang: 'pt', archivo: 'public/pt/index.html', ruta: '/pt/', imagen: 'menu-pt' },
   { lang: 'en', archivo: 'public/en/index.html', ruta: '/en/', imagen: 'menu-en' },
+  { lang: 'de', archivo: 'public/de/index.html', ruta: '/de/', imagen: 'menu-de' },
 ];
 /** El cierre de la bajada. Es la única frase que no sale de la app: se dice a los robots. */
-const GRATIS = { es: 'Gratis, sin instalar y sin cuenta.', en: 'Free, no install, no account.', pt: 'De graça, sem instalar e sem conta.' };
+const GRATIS = { es: 'Gratis, sin instalar y sin cuenta.', en: 'Free, no install, no account.', pt: 'De graça, sem instalar e sem conta.', de: 'Kostenlos, ohne Installation und ohne Konto.' };
 /** "A, B y C" en cada idioma. */
 const lista = lang => disponibles.map(g => g.name[lang]).join(', ')
-  .replace(/, ([^,]*)$/, ` ${{ es: 'y', en: 'and', pt: 'e' }[lang]} $1`);
+  .replace(/, ([^,]*)$/, ` ${{ es: 'y', en: 'and', pt: 'e', de: 'und' }[lang]} $1`);
 
 const portada = p => ({
   ...p,
@@ -111,23 +112,24 @@ function huella(p) {
 const atrasada = (p, huellas = leerHuellas()) => !existsSync(join(RAIZ, `public/assets/og/${p.imagen}.jpg`)) || huellas[p.imagen] !== huella(p);
 
 /* ------------------------------------------------------------------ */
-/* La página de cada minijuego suelto                                  */
+/* La página de cada juego de La Copa                                  */
 /* ------------------------------------------------------------------ */
 /**
  * Un robot de WhatsApp no corre JavaScript: lee las etiquetas del HTML tal como llega. Con una
- * sola página para todos (/minigames/?reinas) cada link traía la misma tarjeta, así que cada
- * minijuego tiene la suya (D-162). Es una copia de public/minigames/index.html un nivel más abajo, con
- * su título, su tarjeta y `data-suelto="<id>"`: se rehace, no se edita. Como set-version.py corre
+ * sola página para todos (/cup/suelto/?reinas) cada link traía la misma tarjeta, así que cada
+ * juego tiene la suya (D-162), en la raíz como los demás (D-198). Es una copia de
+ * public/cup/suelto/index.html un nivel más arriba, con su título, su tarjeta y
+ * `data-suelto="<id>"`: se rehace, no se edita. Como set-version.py corre
  * esto después de estampar, la copia sale con el import map de la versión nueva.
  */
-const AVISO_COPIA = () => `  <!-- Generada por node tools/release/og.mjs tarjetas a partir de public/minigames/index.html: no se edita a mano (D-162). -->`;
+const AVISO_COPIA = () => `  <!-- Generada por node tools/release/og.mjs tarjetas a partir de public/cup/suelto/index.html: no se edita a mano (D-162). -->`;
 function paginaSuelta(p, bloqueOg) {
-  let html = readFileSync(join(RAIZ, 'public/minigames/index.html'), 'utf8');
+  let html = readFileSync(join(RAIZ, 'public/cup/suelto/index.html'), 'utf8');
   // Sus etiquetas genéricas y el comentario que explica la página de todos
-  html = html.replace(/^ {2}<!-- Los minijuegos de La Copa[\s\S]*?-->\n/m, '');
+  html = html.replace(/^ {2}<!-- Los juegos de La Copa[\s\S]*?-->\n/m, '');
   html = html.replace(/^ {2}<meta (name="description"|property="og:[^"]*"|name="twitter:[^"]*").*\n/gm, '');
-  // Un nivel más abajo: las rutas relativas (href, src, el import map y el import) suben uno más
-  html = html.replace(/(["'])\.\.\//g, '$1../../');
+  // Un nivel más arriba: las rutas relativas (href, src, el import map y el import) suben uno menos
+  html = html.replace(/(["'])\.\.\/\.\.\//g, '$1../');
   html = html.replace(/<title>.*<\/title>/, `<title>${escapa(p.titulo)}</title>\n${AVISO_COPIA()}`);
   html = html.replace('<body data-suelto>', `<body data-suelto="${p.juego}">`);
   return html.replace(/^( *<link rel="manifest".*\n)/m, `${bloqueOg}\n$1`);
@@ -144,15 +146,22 @@ function paginaSuelta(p, bloqueOg) {
  * nueva: un robot de chat no corre JavaScript y lee lo que encuentra en la vieja.
  *
  * La ruta vieja sale del id, que era la carpeta (/<id>/ y /minijuegos/<id>/): un juego nuevo con su
- * carpeta igual a su id no tiene puente.
+ * carpeta igual a su id no tiene puente. Los juegos de La Copa vivieron además en /minigames/<slug>/
+ * hasta que dejaron de ser "minijuegos" (D-198).
  */
 const puentes = () => [
   ...paginas().filter(p => p.juego && !p.suelto && `/${p.juego}/` !== p.ruta)
     .map(p => ({ ...p, viejo: `public/${p.juego}/index.html`, a: `..${p.ruta}` })),
-  ...paginas().filter(p => p.suelto)
-    .map(p => ({ ...p, viejo: `public/minijuegos/${p.juego}/index.html`, a: `../..${p.ruta}` })),
-  // La página genérica (/minijuegos/?reinas), que ya mandaba cada link viejo a su lugar
-  { viejo: 'public/minijuegos/index.html', a: '../minigames/', titulo: 'Juegos de Salón 🎲' },
+  ...paginas().filter(p => p.suelto).flatMap(p => [
+    { ...p, viejo: `public/minijuegos/${p.juego}/index.html`, a: `../..${p.ruta}` },
+    { ...p, viejo: `public/minigames/${p.ruta.split('/')[1]}/index.html`, a: `../..${p.ruta}` },
+  ]),
+  // Las páginas genéricas (/minijuegos/?reinas, /minigames/?reinas): el molde manda cada link a su lugar
+  { viejo: 'public/minijuegos/index.html', a: '../cup/suelto/', titulo: 'Juegos de Salón 🎲' },
+  { viejo: 'public/minigames/index.html', a: '../cup/suelto/', titulo: 'Juegos de Salón 🎲' },
+  // El laboratorio del alemán, que ya salió de ahí (D-197): sus revisores tienen ese link
+  ...paginas().filter(p => p.puerta && p.lang === 'de')
+    .map(p => ({ ...p, viejo: 'public/labs/de/index.html', a: `../..${p.ruta}` })),
 ];
 
 function paginaPuente(p) {
@@ -191,7 +200,7 @@ function version() {
   return m ? m[1] : '0';
 }
 
-const LOCALE = { es: 'es_CL', en: 'en_US', pt: 'pt_BR' };
+const LOCALE = { es: 'es_CL', en: 'en_US', pt: 'pt_BR', de: 'de_DE' };
 
 function bloque(p) {
   const img = `${SITIO}/assets/og/${p.imagen}.jpg?v=${version()}`;
@@ -299,13 +308,17 @@ const MARGEN = `(()=>{
 
 /** PNG → JPEG con la herramienta que trae macOS, la misma que usa readme.py para las capturas. */
 const jpeg = (origen, destino) => new Promise((ok, falla) => {
-  const s = spawn('sips', ['-s', 'format', 'jpeg', '-s', 'formatOptions', '82', origen, '--out', destino], { stdio: 'ignore' });
-  s.on('close', c => (c === 0 ? ok() : falla(new Error(`sips salió con ${c}`))));
+  // Fuera del Mac (una sesión en la nube) no hay sips: ImageMagick hace lo mismo
+  const mac = process.platform === 'darwin';
+  const s = mac
+    ? spawn('sips', ['-s', 'format', 'jpeg', '-s', 'formatOptions', '82', origen, '--out', destino], { stdio: 'ignore' })
+    : spawn('convert', [origen, '-quality', '82', destino], { stdio: 'ignore' });
+  s.on('close', c => (c === 0 ? ok() : falla(new Error(`${mac ? 'sips' : 'convert'} salió con ${c}`))));
 });
 
 async function cmdImagenes() {
   const { launch, sleep } = await import('../e2e/cdp.mjs');
-  const salida = join(RAIZ, 'assets/og');
+  const salida = join(RAIZ, 'public/assets/og');
   mkdirSync(salida, { recursive: true });
   // Fuera del repo: acá solo quedan los PNG intermedios y el perfil de Chrome
   const tmp = join(tmpdir(), 'juegos-de-salon-og');
@@ -353,7 +366,7 @@ async function cmdImagenes() {
     try { rmSync(tmp, { recursive: true, force: true }); } catch (_) { /* nada */ }
   }
   console.log(`${toca.length} imagen(es) de ${ANCHO}×${ALTO}`);
-  console.log('Míralas antes de publicar (C-12): git diff --stat assets/og');
+  console.log('Míralas antes de publicar (C-12): git diff --stat public/assets/og');
 }
 
 /* ------------------------------------------------------------------ */
@@ -370,7 +383,7 @@ function cmdRevisar() {
     const ruta = join(RAIZ, p.archivo);
     if (p.suelto) {
       if (!existsSync(ruta) || readFileSync(ruta, 'utf8') !== paginaSuelta(p, bloque(p))) {
-        problemas.push(`${p.archivo} quedó atrás de public/minigames/index.html o de games.js  →  node tools/release/og.mjs tarjetas`);
+        problemas.push(`${p.archivo} quedó atrás de public/cup/suelto/index.html o de games.js  →  node tools/release/og.mjs tarjetas`);
       }
       revisarImagen(p, problemas);
       continue;

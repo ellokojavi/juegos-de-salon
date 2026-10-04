@@ -9,7 +9,7 @@
     La imagen que se ve cuando alguien pega un link de la app en WhatsApp o en un chat.
     Se dibuja acá con los estilos y los datos reales (public/assets/js/games.js), y `node tools/release/og.mjs
     imagenes` la fotografía a 1200×630. No se abre a mano: se mira con la captura.
-      /tools/release/og/tarjeta.html?juego=dudo   una tarjeta por juego (o por minijuego suelto: ?juego=reinas)
+      /tools/release/og/tarjeta.html?juego=dudo   una tarjeta por juego (o por juego suelto: ?juego=reinas)
       /tools/release/og/tarjeta.html              la del menú
   -->
   <link rel="stylesheet" href="/public/assets/css/base.css">
@@ -80,7 +80,7 @@
       return n;
     };
     // La misma frase que el pie de la tarjeta de cada juego, en los tres idiomas
-    const GRATIS = { es: 'Gratis y sin instalar', en: 'Free, no install', pt: 'De graça, sem instalar' };
+    const GRATIS = { es: 'Gratis y sin instalar', en: 'Free, no install', pt: 'De graça, sem instalar', de: 'Kostenlos, ohne Installation' };
     const pie = (izq) => {
       const p = el('div', 'pie');
       p.append(el('span', null, izq), el('span', 'dominio', 'juegosdesalon.cl'));

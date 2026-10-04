@@ -8,7 +8,7 @@
  * - **La imagen**, cuando hay (un resultado, una tabla), lleva arriba la misma cabecera del texto
  *   —el título y, debajo, el contexto—, y abajo el mismo link: quien la ve suelta en el grupo
  *   sabe de qué copa o de qué juego es y adónde ir. `lamina()` dibuja ese marco; lo de adentro es
- *   de quien la llama. `laminaResultado()` es el resultado de un minijuego, igual para todos.
+ *   de quien la llama. `laminaResultado()` es el resultado de un juego, igual para todos.
  * - **Con imagen, el texto no repite lo que ella dice** (D-171): lleva la cabecera, lo que la
  *   imagen no trae (quién falta, las medallas, el reto) y el link.
  * - **Una invitación** (a una sala, a una copa, a la app) va sin imagen dibujada: el link ya trae
@@ -124,7 +124,7 @@ export const puntajeYTiempo = (puntaje, tiempo, tarjeta = '') => [puntaje, tiemp
 export const textoResultadoSolo = ({ C, emoji, juego }) => [cabecera({ emoji, titulo: juego, contexto: C.shareSoloContext }), C.shareSoloCta].join('\n\n');
 
 /**
- * El resultado de jugar solo un minijuego (D-165), suelto o dentro de un juego: la imagen con la
+ * El resultado de jugar solo un juego (D-165), suelto o dentro de un juego: la imagen con la
  * cabecera —"🔢 *Toque y Fama* · Jugando solo"—, el puntaje, el tiempo y la tarjeta de colores, y
  * el texto con la misma cabecera y el reto. `C` son los textos comunes del idioma (`COMMON[lang]`).
  */
@@ -203,7 +203,7 @@ export async function lamina({ alto, cab, url }) {
 export const aArchivo = (cv, nombre) => new Promise((ok, mal) => cv.toBlob(b => (b ? ok(new File([b], nombre, { type: 'image/png' })) : mal(new Error('canvas'))), 'image/png'));
 
 /**
- * El resultado de un minijuego como imagen (D-165), el mismo en La Copa, suelto y dentro de un
+ * El resultado de un juego como imagen (D-165), el mismo en La Copa, suelto y dentro de un
  * juego: el marco con la cabecera del texto, y adentro lo mismo que dice el texto, en el mismo
  * orden —el juego (si la cabecera no lo nombra ya), quién lo jugó, el puntaje en grande, el
  * detalle (el tiempo) y la tarjeta de colores, que no revela la respuesta (U-32)—.
