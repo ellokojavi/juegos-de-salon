@@ -5,7 +5,7 @@
  *   node tools/e2e/contacto.mjs cuarto-rey      # solo esa sección
  *   node tools/e2e/contacto.mjs --salida /tmp/contacto
  *
- * Por qué existe: las capturas se rehacen solas (`tools/readme.py capturas`), pero nadie las
+ * Por qué existe: las capturas se rehacen solas (`tools/release/readme.py capturas`), pero nadie las
  * mira una por una, y así se publicó una lista de jugadores congelada a mitad de animación,
  * con las filas a distintas escalas (D-76). Puestas en fila y al tamaño en que el README las
  * muestra, un ancho distinto o una pantalla que no corresponde al pie saltan a la vista.

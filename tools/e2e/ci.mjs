@@ -3,14 +3,14 @@
 // Uso:
 //   node tools/e2e/ci.mjs                 # todas, una tras otra, con el resumen al final
 //   node tools/e2e/ci.mjs --lista         # los guiones que corren, en JSON (para la matriz de GitHub)
-//   node tools/e2e/ci.mjs copa.mjs        # solo esos
+//   node tools/e2e/ci.mjs cup/torneo.mjs  # solo esos (la ruta desde tools/e2e/)
 //
 // Necesita el sitio servido en http://localhost:8765 (los guiones lo tienen fijo) y Chrome en
 // CHROME. Un guion falla si sale con error, si imprime una línea con ✗ o ❌, o si no termina en
 // TOPE_MS. Muchos guiones solo imprimen lo que ven, para que lo lea una persona: en CI igual
 // pillan lo que se rompe del todo (un botón que ya no está hace caer el guion).
 import { spawn } from 'node:child_process';
-import { readdirSync, mkdirSync, appendFileSync } from 'node:fs';
+import { readdirSync, statSync, mkdirSync, appendFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -21,22 +21,28 @@ const TOPE_MS = 15 * 60 * 1000;
 // No son pruebas: miran o arman hojas de capturas
 const HERRAMIENTAS = new Set(['cdp.mjs', 'ci.mjs', 'mirar.mjs', 'contacto.mjs']);
 // Abren salas o se unen a ellas en el Firebase de producción: siguen a mano
-const CON_FIREBASE = /-online\.mjs$|-chat\.mjs$/;
+const CON_FIREBASE = /(^|\/)(online|chat)\.mjs$/;
 const TAMBIEN_FIREBASE = new Set([
   'versionado.mjs',                // abre una sala para ver que firebase.js carga versionado
   'compartir-sala.mjs',            // abre una sala de Línea de Tiempo
   'enlace-invitacion.mjs',         // entra a ?sala= en los cuatro juegos con sala
-  'idioma-por-url.mjs',            // abre /dudo/?sala=WFBN
-  'linea-de-tiempo-veredicto.mjs', // dos celulares en una sala
-  'linea-de-tiempo-pozo.mjs',      // la segunda mitad juega en una sala
+  'idioma-por-url.mjs',            // abre /liars-dice/?sala=WFBN
+  'timeline/veredicto.mjs',        // dos celulares en una sala
+  'timeline/pozo.mjs',             // la segunda mitad juega en una sala
 ]);
 
 // Prueban algo que ya no existe: quedan fuera hasta que alguien los reescriba
 const OBSOLETOS = new Set([
-  'linea-de-tiempo-error.mjs',     // jugaba contra el celular, un modo que Línea de Tiempo ya no tiene (D-142)
+  'timeline/error.mjs',            // jugaba contra el celular, un modo que Línea de Tiempo ya no tiene (D-142)
 ]);
 
-export const guiones = () => readdirSync(AQUI)
+/** Los guiones, con su ruta desde tools/e2e/: los de cada juego van en su carpeta (D-192). */
+const todos = (dir = '') => readdirSync(join(AQUI, dir)).flatMap(f => {
+  const rel = dir ? `${dir}/${f}` : f;
+  return statSync(join(AQUI, rel)).isDirectory() ? todos(rel) : [rel];
+});
+
+export const guiones = () => todos()
   .filter(f => f.endsWith('.mjs') && !f.endsWith('.test.mjs'))
   .filter(f => !HERRAMIENTAS.has(f) && !CON_FIREBASE.test(f) && !TAMBIEN_FIREBASE.has(f) && !OBSOLETOS.has(f))
   .sort();

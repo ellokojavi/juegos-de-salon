@@ -16,7 +16,8 @@
  * Para probar que el juego funciona están los guiones de partida; esto es para mirar.
  */
 import { launch, sleep } from './cdp.mjs';
-import { EN_LABS, LABS_KEY } from '../../assets/js/i18n.js';
+import { EN_LABS, LABS_KEY } from '../../public/assets/js/i18n.js';
+import { gameById } from '../../public/assets/js/games.js';
 
 const args = process.argv.slice(2);
 const pos = args.filter(a => !a.startsWith('--'));
@@ -57,7 +58,7 @@ const BN_FALLA = rol => `(()=>{const S=window.__bn.session(),L=S.layouts['${rol 
 
 /* --- Tango: empezar y llenar el tablero con el motor de verdad (ver su entrada) --- */
 const TAN_EMPEZAR = `document.getElementById('btn-empezar').click()`;
-const TAN_LLENAR = choque => `(async()=>{const {JUEGOS}=await import('/copa/juegos/index.js');const p=JUEGOS.tango.generar(__copa.estado.juego.semilla,1);
+const TAN_LLENAR = choque => `(async()=>{const {JUEGOS}=await import('/cup/games/index.js');const p=JUEGOS.tango.generar(__copa.estado.juego.semilla,1);
   const L=p.sol.map((v,i)=>i).filter(i=>p.dadas[i]===undefined), u=${choque}?L.filter(i=>p.sol[i]===2).at(-1):L.at(-1);
   const c=i=>document.querySelector('.tan[data-i="'+i+'"]');
   for(const i of L){if(i===u)continue;for(let k=0;k<3&&Number(c(i).dataset.v)!==p.sol[i];k++)c(i).click();}
@@ -95,7 +96,7 @@ const SEMBRAR_PANEL = vista => `(async()=>{const DIA=86400000,ahora=Date.now(),h
       days[hoy]={...(days[hoy]||{}),rooms:{...((days[hoy]||{}).rooms||{}),ABCD:{game:'dudo',at:ahora-4*60000,players:{A:'Javi',B:'Cata'},co:{A:'CL',B:'CL'},end:{winner:'A',name:'Javi',at:ahora}},EFGH:{game:'juego-nuevo',at:ahora-2*3600000,players:{A:'Fausto'},co:{A:'UY'}},CPSV:{game:'batalla-naval',at:ahora-24*60000,players:{A:'Tomiguel',B:'SVS'},co:{A:'CL',B:'CL'}}},local:{dudo:{local:{4:6},cpu:{1:3}},'juego-nuevo':{equipos:{6:5}},ahorcado:{local:{3:4}}},origin:{America__Santiago:12,Europe__Madrid:2},lang:{'es-CL':12,'pt-BR':2},applang:{es:11,pt:2,fr:1},hour:{14:4,21:9}};
       days[hoy-1]={...(days[hoy-1]||{}),local:{'linea-de-tiempo':{solo:{1:7}}},origin:{America__Santiago:5},lang:{'es-CL':5},applang:{es:5},hour:{20:5}};
       
-      const {nuevaMeta}=await import('/copa/engine.js');
+      const {nuevaMeta}=await import('/cup/engine.js');
       const Z='America/Santiago', fecha=k=>new Date(ahora-k*DIA).toLocaleDateString('en-CA',{timeZone:Z});
       const nombres=['Javi','Cata','Pancho','Fran','Sofi','Nico','Leo'];
       const copa=(nombre,dias,hace,n,{lab=false,alias=null}={})=>{
@@ -258,7 +259,7 @@ const CAMINOS = {
     'solo-resultado': [
       `document.querySelectorAll('.mode')[2].click()`,
       `document.getElementById('btn-solo-empezar').click()`,
-      `(async()=>{const m=await import('../copa/juegos/numero.js');const s=m.generar(__tyf.guardada().codigo,1).secreto;
+      `(async()=>{const m=await import('../cup/games/number/engine.js');const s=m.generar(__tyf.guardada().codigo,1).secreto;
         const probar=n=>{for(const d of n)[...document.querySelectorAll('.screen.active .keypad button')].find(x=>x.textContent===d).click();document.querySelector('.screen.active .keypad .ok').click()};
         probar(s==='0123'?'4567':'0123');probar(s);})()`,
       `document.getElementById('btn-fin').click()`,
@@ -276,7 +277,7 @@ const CAMINOS = {
     'solo-resultado': [
       `[...document.querySelectorAll('.mode')].find(m=>/solo|alone|sozinho|allein/i.test(m.textContent)).click()`,
       `document.getElementById('btn-solo-empezar').click()`,
-      `(async()=>{const L=await import('../copa/juegos/linea.js');const s=__ldt.solo();const p=L.generar(s.codigo,1,{tema:s.tema,excluir:s.skip});
+      `(async()=>{const L=await import('../cup/games/timeline/engine.js');const s=__ldt.solo();const p=L.generar(s.codigo,1,{tema:s.tema,excluir:s.skip});
         let j=[];for(const c of p.mano){const l=L.estado(p,j).linea;const bien=L.huecoCorrecto(l,c);j=[...j,{c:c.id,at:j.length?bien:(bien?0:l.length)}];}
         const esperar=async f=>{for(let i=0;i<40&&!f();i++)await new Promise(r=>setTimeout(r,50));return f();};
         for(const x of j){(await esperar(()=>document.getElementById('handoff').hidden&&document.querySelector('#solo-juego .hand .card[data-card="'+x.c+'"]'))).click();
@@ -291,7 +292,7 @@ const CAMINOS = {
    * para comparar el sol dado con el jugado (#61); `choque`, lleno con un último sol que choca,
    * que es el único choque que se ve sin tocar otra casilla (#135).
    */
-  'minijuegos/tango': {
+  tango: {
     intro: [],
     juego: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, TAN_LLENAR(false)],
     choque: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, TAN_LLENAR(true)],
@@ -310,6 +311,9 @@ const CAMINOS = {
 };
 
 const camino = CAMINOS[juego]?.[pantalla];
+// Se pide por el id ('ahorcado') y se abre su carpeta ('/hangman/'): no son lo mismo (D-192).
+// Lo que no es un juego (el panel) es su propia carpeta.
+const ruta = gameById(juego)?.path || `${juego}/`;
 if (!camino) {
   const hay = Object.keys(CAMINOS[juego] || {});
   console.error(hay.length ? `No conozco "${pantalla}". Hay: ${hay.join(', ')}` : `No conozco el juego "${juego}". Hay: ${Object.keys(CAMINOS).join(', ')}`);
@@ -318,13 +322,13 @@ if (!camino) {
 
 // `--cdp` o PUERTO_CDP cambian el puerto de Chrome: dos sesiones mirando a la vez no se pisan (D-135)
 const b = await launch({ port: Number(flag('cdp', process.env.PUERTO_CDP || '9451')), dir: `${salida}/perfil`, out: salida, width: ancho, height: alto });
-await b.go(`${base}/${juego}/`, 1500);
+await b.go(`${base}/${ruta}`, 1500);
 // El idioma se guarda como texto pelado: getLang() compara contra ['es','en','pt'] y un
 // JSON.stringify le dejaba las comillas dentro, así que --idioma no hacía nada.
 // Un idioma del laboratorio (D-191) se ofrece solo con su marca puesta, como al entrar por /labs/de/
 const labs = EN_LABS.includes(idioma) ? `localStorage.setItem('${LABS_KEY}', '${idioma}');` : '';
 await b.evaluate(`localStorage.clear(); localStorage.setItem('juegos-de-salon:lang', '${idioma}'); ${labs} 1`);
-await b.go(`${base}/${juego}/`, 1500);
+await b.go(`${base}/${ruta}`, 1500);
 // Muescas de verdad: Chrome fija los insets del sistema y la página los lee con
 // env(safe-area-inset-*), igual que en un celular. Sobreescribir las variables CSS —como se
 // hacía antes— no es lo mismo: pinta los márgenes pero no cambia el viewport (D-77).
@@ -358,7 +362,7 @@ const revision = await b.evaluate(`(()=>{
   });
 })()`).then(JSON.parse);
 
-// Los minijuegos sueltos viven en una subcarpeta (minijuegos/tango): la captura queda plana
+// Por si un día una entrada lleva una barra: la captura queda plana
 const nombre = `${juego.replace(/\//g, "-")}-${pantalla}-${ancho}`;
 await b.shot(nombre);
 console.log(`${salida}/${nombre}.png · ${ancho}×${alto} · ${idioma}`);

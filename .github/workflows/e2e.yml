@@ -45,10 +45,11 @@ jobs:
         with:
           node-version: 24
 
-      # Los guiones tienen fijo el puerto 8765 (los módulos ES necesitan HTTP, no file://)
+      # Los guiones tienen fijo el puerto 8765 (los módulos ES necesitan HTTP, no file://).
+      # El sitio es public/ (D-192)
       - name: Servir el sitio
         run: |
-          python3 -m http.server 8765 > /dev/null 2>&1 &
+          python3 -m http.server 8765 -d public > /dev/null 2>&1 &
           for i in $(seq 1 20); do curl -sf http://localhost:8765/ > /dev/null && exit 0; sleep 0.5; done
           echo "::error::el servidor no levantó"; exit 1
 
@@ -66,10 +67,15 @@ jobs:
           SALIDA_E2E: ${{ runner.temp }}/e2e
         run: node tools/e2e/ci.mjs ${{ matrix.guion }}
 
-      # Las capturas de lo que falló, para mirarlas sin repetir la corrida
+      # Las capturas de lo que falló, para mirarlas sin repetir la corrida. El nombre de un
+      # artefacto no admite "/", y los guiones van en carpetas por juego (cup/torneo.mjs)
+      - if: failure()
+        env:
+          GUION: ${{ matrix.guion }}
+        run: echo "ARTEFACTO=capturas-${GUION//\//-}" >> "$GITHUB_ENV"
       - if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: capturas-${{ matrix.guion }}
+          name: ${{ env.ARTEFACTO }}
           path: ${{ runner.temp }}/e2e
           retention-days: 7
