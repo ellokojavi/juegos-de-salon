@@ -42,9 +42,8 @@ justo.
 Lo que más se olvida:
 
 - **Todo texto va en español, inglés, portugués de Brasil y alemán**, con las mismas claves en
-  todos (C-3). Español chileno, tuteo. Los demás adaptados, no calcados. El alemán vive en el
-  laboratorio (D-191) pero la prueba de paridad lo exige igual; su glosario está en
-  [docs/ALEMAN.md](docs/ALEMAN.md).
+  todos (C-3). Español chileno, tuteo. Los demás adaptados, no calcados. El glosario del alemán
+  está en [docs/ALEMAN.md](docs/ALEMAN.md).
 - **Reusar antes de inventar**: el arrastre, el teclado, el chat, las pantallas de pasar el
   celular y lo que se comparte ya existen en `public/assets/` (D-102).
 - **Botones de 44 px y sin scroll horizontal** a 320 px de ancho (C-8).

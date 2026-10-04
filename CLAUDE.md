@@ -273,16 +273,18 @@ node tools/agents/marketing.mjs revisar                          # ¿qué asset 
 node tools/agents/marketing.mjs anotar <id> --pendiente "…"      # o --al-dia
 ```
 
-## El alemán en el laboratorio (D-191)
+## Idiomas: español, inglés, portugués y alemán (D-197)
 
-El alemán tiene todos sus textos pero solo se ofrece en el dispositivo que entra por `/labs/de/`
-(o un link con `?lang=de`): ahí los "‹ Menú" vuelven al laboratorio y 🐞 manda comentarios a
-`feedback/`. El plan, lo que falta para publicarlo y el **glosario** que toda traducción respeta
-están en [docs/ALEMAN.md](docs/ALEMAN.md). Un texto nuevo para el jugador va también en `DE`: la
-prueba de paridad lo exige.
+El alemán salió del laboratorio y se ofrece a todos, con su puerta `/de/` como `/en/` y `/pt/`.
+Un texto nuevo para el jugador va en los cuatro: la prueba de paridad lo exige. El **glosario** que
+toda traducción al alemán respeta está en [docs/ALEMAN.md](docs/ALEMAN.md).
+
+Un idioma nuevo entra por el laboratorio (D-191): se agrega a `EN_LABS` en `i18n.js` y solo se
+ofrece en el dispositivo que entra por `/labs/<idioma>/`, con 🐞 para que lo revisen quienes lo
+hablan. Hoy `EN_LABS` está vacío.
 
 ```bash
-node tools/e2e/mirar.mjs dudo intro --idioma de --ancho 320   # pone la marca del laboratorio sola
+node tools/e2e/mirar.mjs dudo intro --idioma de --ancho 320
 ```
 
 ## Reportes de La Copa

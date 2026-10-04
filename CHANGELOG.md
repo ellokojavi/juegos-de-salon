@@ -1,13 +1,16 @@
 # Changelog
 
-## 0.94.0 — 2026-10-03
-- **Ya no hay minijuegos** (D-197): Conexiones, Reinas, Tango, Zip, Desenredo, ¿Dónde queda?,
+## 0.95.0 — 2026-10-04
+- **Ya no hay minijuegos** (D-198): Conexiones, Reinas, Tango, Zip, Desenredo, ¿Dónde queda?,
   ¿En qué año? y Toque y Fama: Palabra son juegos como los demás. Viven en la raíz (`/queens/`,
   `/tango/`, `/connections/`…) y los links con `/minigames/` siguen andando. La Copa dice "un
-  juego distinto cada día" en los cuatro idiomas, y el panel y el laboratorio alemán los muestran
-  en una sola lista.
-- `og.mjs imagenes` guardaba las tarjetas en `assets/og/` en vez de `public/assets/og/` desde la
-  mudanza a `public/`: ahora las deja donde se publican.
+  juego distinto cada día" en los cuatro idiomas, y el panel los cuenta como juegos.
+
+## 0.94.0 — 2026-10-04
+- **🇩🇪 El alemán, para todos** (D-197): sale del laboratorio. El toggle ofrece DE en cualquier
+  celular y `juegosdesalon.cl/de/` deja la app en alemán, con su tarjeta para los chats
+  (Salonspiele). El link del laboratorio, `/labs/de/`, ahora lleva a `/de/`, y el laboratorio ya
+  no muestra la sección del alemán. Quien tenía la marca del laboratorio deja de ver 🧪 y 🐞.
 
 ## 0.93.0 — 2026-10-03
 - **Portada: los filtros quedan pegados arriba** (D-196). Al bajar por la lista, los tipos de
