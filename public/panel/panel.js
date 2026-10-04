@@ -19,7 +19,7 @@ import {
   getDatabase, ref, onValue, query, orderByChild, orderByKey, startAt,
 } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js';
 import { firebaseConfig } from '../assets/js/firebase-config.js';
-import { GAMES, SUELTOS, gameById, gameLabel, isTorneo, MODES, MODE_IDS, ROOM_MODE, modeIcon } from '../assets/js/games.js';
+import { GAMES, SUELTOS, gameById, gameLabel as etiquetaRegistro, isTorneo, MODES, MODE_IDS, ROOM_MODE, modeIcon } from '../assets/js/games.js';
 import { JUEGOS_COPA } from '../cup/rules.js';
 import { LANGS } from '../assets/js/i18n.js';
 import { ENVS } from '../assets/js/transport/stats.js';
@@ -196,6 +196,21 @@ const esJuego = id => !isTorneo(id);
 const torneoNombre = TORNEO ? TORNEO.name.es : 'el torneo';
 const torneoLabel = TORNEO ? gameLabel(TORNEO.id) : '🏆 Torneo';
 
+/**
+ * El nombre de un juego con su emoji. Un juego de La Copa jugado suelto (Conexiones, Toque y Fama:
+ * Palabra…) manda su id de la copa; está en el registro de sueltos o en el de la copa, no en el de
+ * juegos, y antes salía con su clave cruda (`letras`). Uno que no está en ninguno, por su id (C-16).
+ */
+function gameLabel(id) {
+  if (gameById(id)) return etiquetaRegistro(id);
+  const s = SUELTOS.find(x => x.id === id);
+  if (s) return `${s.emoji} ${s.name.es}`;
+  if (JUEGOS_COPA[id]) return miniLabel(id);
+  return etiquetaRegistro(id);
+}
+const nombreJuego = id => gameLabel(id).replace(/^\S+\s/, '');
+const emojiJuego = id => (gameLabel(id) !== id ? gameLabel(id).split(' ')[0] : '🎲');
+
 /** Idiomas conocidos primero, en el orden de la app; detrás, lo que haya llegado. */
 const ordenIdiomas = pares => [
   ...LANGS.map(l => pares.find(([k]) => k === l)).filter(Boolean),
@@ -310,9 +325,9 @@ function filaSinRed(p, now) {
   const modo = MODES[p.mode] ? `${modeIcon(p.mode)} ${MODES[p.mode].label}` : p.mode;
   const cuantos = p.n === 1 ? '1 jugador' : `${n(p.n)} jugadores`;
   return enlace('juego', [p.game], { class: 'room active' },
-    el('div', { class: 'code' }, gameById(p.game)?.emoji || '🎲'),
+    el('div', { class: 'code' }, emojiJuego(p.game)),
     el('div', { class: 'cuerpo' },
-      el('div', { class: 'who' }, el('span', {}, el('i', { class: 'on' }), gameById(p.game)?.name?.es || p.game)),
+      el('div', { class: 'who' }, el('span', {}, el('i', { class: 'on' }), nombreJuego(p.game))),
       el('div', { class: 'sub' }, `${modo} · ${cuantos}`, bandera(p.co))),
     el('div', { class: 'meta' }, `empezó ${ago(p.at, now)}`, el('br'), `última señal ${ago(p.beat, now)}`),
   );
@@ -337,12 +352,12 @@ function filaCopa(c, now) {
       el('div', { class: 'cname' }, c.name, c.lab ? el('span', { class: 'tag', title: 'Creada desde el laboratorio: su admin puede adelantar los días para probar' }, 'laboratorio') : null),
       el('div', { class: 'sub' }, cuando),
       el('div', { class: 'who' }, ...gente),
-      atrasados.length ? el('div', { class: 'sub' }, 'Jugando ahora un día anterior: ', atrasados.map(x => `${x.name} (día ${x.dia}, ${miniLabel(x.juego)})`).join(', ')) : null,
+      atrasados.length ? el('div', { class: 'sub' }, 'Jugando ahora un día anterior: ', ...atrasados.flatMap((x, i) => [i ? ', ' : '', quien(x.name, x.co), ` (día ${x.dia}, ${miniLabel(x.juego)})`])) : null,
     ),
     el('div', { class: 'meta' },
       hoy ? `jugaron ${hoy.jugaron} de ${hoy.jugadores.length}` : (c.inscripcion ? 'inscripción abierta' : 'inscripción cerrada'), el('br'),
       c.ultimo ? `último resultado ${ago(c.ultimo, now)}` : 'sin resultados', el('br'),
-      c.primero ? `va primero ${c.primero.name}${c.primero.empatados > 1 ? ` y ${c.primero.empatados - 1} más` : ''} (${n(c.primero.total)})` : '',
+      c.primero ? ['va primero ', quien(c.primero.name, c.primero.co), `${c.primero.empatados > 1 ? ` y ${c.primero.empatados - 1} más` : ''} (${n(c.primero.total)})`] : '',
     ),
   );
 }
@@ -552,7 +567,7 @@ function vistaFichaCopa(code, now) {
       cierra ? ['Cierra', cierra] : null,
       [f.estado === 'terminada' ? 'Terminó' : 'Termina', whenLabel(m.end)],
       ['Inscripción', inscripcion],
-      ['Jugadores', `${f.jugadores}${f.retirados.length ? ` · retirados: ${f.retirados.map(r => r.name).join(', ')}` : ''}`],
+      ['Jugadores', [`${f.jugadores}`, ...(f.retirados.length ? [' · retirados: ', ...f.retirados.flatMap((r, i) => [i ? ', ' : '', quien(r.name, r.co)])] : [])]],
     ]),
     el('a', { class: 'btn btn--ghost btn--sm abrir', href: `../cup/?${f.alias || code}`, target: '_blank', rel: 'noopener' }, 'Abrir la copa ↗'),
   ];
@@ -647,7 +662,7 @@ function bitacora(rango, game = null) {
   const { rows, page, pages, total, desde } = paginate(filas, { page: S.logPage, perPage: POR_PAGINA });
   S.logPage = page;
   return el('div', { class: 'panel', id: 'salas-jugadas' },
-    el('p', { class: 'lead' }, game ? `Salas de ${gameById(game)?.name?.es || game}` : 'Salas jugadas'),
+    el('p', { class: 'lead' }, game ? `Salas de ${nombreJuego(game)}` : 'Salas jugadas'),
     el('p', { class: 'muted small' }, `Las del rango, de la más nueva a la más vieja, en ${ZONA_NOMBRE}. Toca una para ver su ficha. Las partidas de prueba corren en el entorno de pruebas: para verlas, cambia el entorno arriba.`),
     el('label', { class: 'check' }, el('input', { type: 'checkbox', checked: S.logSolas || null, onChange: e => { S.logSolas = e.target.checked; S.logPage = 1; render(); } }), ' Incluir salas donde nunca entró nadie más'),
     lista(rows.map(filaSalaLog), S.logSolas ? 'Ninguna sala en este rango.' : 'Ninguna sala jugada en este rango.', 'log'),

@@ -3207,3 +3207,18 @@ la cuota de conexiones simultáneas. Las reglas nuevas hay que publicarlas antes
 versión; sin ellas cada visita recibe un 401 callado y no se cuenta, sin romper nada. Una página
 de entrada nueva tiene que llamar a `trackVisit()`: `stats.test.mjs` lo exige para cada `game.js`,
 la portada y el laboratorio.
+
+## D-209 · La bandera junto a cada nombre, también para los de antes
+**Fecha:** 2026-10-04 · **Estado:** vigente; completa D-207
+**Decisión:** Todo nombre de jugador que muestra el panel lleva la bandera de su país, si se
+conoce: en las fichas, en "va primero", en quien juega un día anterior, en los retirados y en
+cada evento de la historia de una copa (que ahora empieza siempre por el nombre de quien lo hizo).
+Quien se inscribió en una copa antes de que se guardara el país lo anota solo la próxima vez que
+abre su copa: el celular escribe `co` en su propio registro, una vez, y una regla nueva lo deja
+(su asiento, y solo si no había uno). Los juegos de La Copa jugados sueltos se nombran con su
+nombre en el panel (antes salían con su clave: `letras`).
+**Por qué:** Lo pidió el dueño: la bandera tiene que estar junto a cada nombre, en La Copa y en
+cualquier juego. Sin completar a los de antes, las copas en curso se verían sin banderas hasta
+la próxima.
+**Consecuencias:** Quien no vuelva a abrir su copa queda sin bandera. Las partidas sin red siguen
+sin nombres (D-44): ahí solo hay país.
