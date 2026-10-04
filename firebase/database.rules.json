@@ -122,6 +122,12 @@
                     ".validate": false
                   }
                 },
+                "l": {
+                  "$p": {
+                    ".write": "$env.matches(/^[a-z]{2,10}$/) && $day.matches(/^[0-9]{5}$/) && $code.matches(/^[A-Z]{4}$/) && $p.matches(/^[A-F]$/) && !data.exists()",
+                    ".validate": "newData.isString() && newData.val().matches(/^[a-z]{2}$/)"
+                  }
+                },
                 "$other": {
                   ".validate": false
                 }
@@ -174,6 +180,9 @@
                   "$other": {
                     ".validate": false
                   }
+                },
+                "l": {
+                  ".validate": "newData.isString() && newData.val().matches(/^[a-z]{2}$/)"
                 },
                 "$other": {
                   ".validate": false

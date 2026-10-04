@@ -53,22 +53,23 @@ const SEMBRAR_PANEL = vista => `(async()=>{const DIA=86400000,ahora=Date.now(),h
       for(let k=0;k<26;k++){
         const d=hoy-(k%7), code=String.fromCharCode(65+k%26)+'BCD'.slice(0,3);
         const a=gente[k%gente.length], b=gente[(k+3)%gente.length];
-        const r={game:juegos[k%juegos.length],at:(d*DIA)+((10+k%12)*3600000),v:'0.33.6',players:{A:a[0],B:b[0]},co:{A:a[1],B:b[1]}};
+        const lg=k%4===1?'pt':k%4===2?'en':'es';
+        const r={game:juegos[k%juegos.length],at:(d*DIA)+((10+k%12)*3600000),v:'0.33.6',players:{A:a[0],B:b[0]},co:{A:a[1],B:b[1]},...(k%5===4?{}:{l:{A:lg,B:k%6===0?'pt':lg}})};
         if(k%7===3) r.end={winner:'tie',at:r.at};
         else if(k%5!==1) r.end={winner:k%2?'A':'B',name:k%2?a[0]:b[0],at:r.at};
         if(k%9===4){ delete r.players.B; delete r.co.B; delete r.end; }
         (dias[d]=dias[d]||{rooms:{}}).rooms[code]=r;
       }
       const days={...dias};
-      days[hoy]={...(days[hoy]||{}),rooms:{...((days[hoy]||{}).rooms||{}),ABCD:{game:'dudo',at:ahora-4*60000,players:{A:'Javi',B:'Cata'},co:{A:'CL',B:'CL'},end:{winner:'A',name:'Javi',at:ahora}},EFGH:{game:'juego-nuevo',at:ahora-2*3600000,players:{A:'Fausto'},co:{A:'UY'}},CPSV:{game:'batalla-naval',at:ahora-24*60000,players:{A:'Tomiguel',B:'SVS'},co:{A:'CL',B:'CL'}}},local:{dudo:{local:{4:6},cpu:{1:3}},'juego-nuevo':{equipos:{6:5}},ahorcado:{local:{3:4}}},origin:{America__Santiago:12,Europe__Madrid:2},lang:{'es-CL':12,'pt-BR':2},applang:{es:11,pt:2,fr:1},hour:{14:4,21:9}};
+      days[hoy]={...(days[hoy]||{}),rooms:{...((days[hoy]||{}).rooms||{}),ABCD:{game:'dudo',at:ahora-4*60000,players:{A:'Javi',B:'Cata'},co:{A:'CL',B:'CL'},l:{A:'es',B:'pt'},end:{winner:'A',name:'Javi',at:ahora}},EFGH:{game:'juego-nuevo',at:ahora-2*3600000,players:{A:'Fausto'},co:{A:'UY'}},CPSV:{game:'batalla-naval',at:ahora-24*60000,players:{A:'Tomiguel',B:'SVS'},co:{A:'CL',B:'CL'}}},local:{dudo:{local:{4:6},cpu:{1:3}},'juego-nuevo':{equipos:{6:5}},ahorcado:{local:{3:4}}},origin:{America__Santiago:12,Europe__Madrid:2},lang:{'es-CL':12,'pt-BR':2},applang:{es:11,pt:2,fr:1},hour:{14:4,21:9}};
       days[hoy-1]={...(days[hoy-1]||{}),local:{'linea-de-tiempo':{solo:{1:7}}},origin:{America__Santiago:5},lang:{'es-CL':5},applang:{es:5},hour:{20:5}};
       
       const {nuevaMeta}=await import('/cup/engine.js');
       const Z='America/Santiago', fecha=k=>new Date(ahora-k*DIA).toLocaleDateString('en-CA',{timeZone:Z});
       const nombres=['Javi','Cata','Pancho','Fran','Sofi','Nico','Leo'];
-      const copa=(nombre,dias,hace,n,{lab=false,alias=null}={})=>{
+      const copa=(nombre,dias,hace,n,{lab=false,alias=null,lang='es'}={})=>{
         const pids=nombres.slice(0,n).map((g,i)=>'p'+String(i).padStart(5,'0'));
-        const meta=nuevaMeta({nombre,dias,inicio:fecha(hace),tz:Z,admin:pids[0],creada:ahora-(Math.max(hace,0)+1)*DIA,lab,alias});
+        const meta=nuevaMeta({nombre,dias,inicio:fecha(hace),tz:Z,admin:pids[0],creada:ahora-(Math.max(hace,0)+1)*DIA,lab,alias,lang});
         // El país de cada inscrito (D-207); el último, de antes de que se guardara, va sin bandera
         const co=['CL','CL','AR','CL','PE','MX','ES'];
         const players=Object.fromEntries(pids.map((p,i)=>[p,{name:nombres[i],at:ahora-(Math.max(hace,0)+1)*DIA+(i+1)*3600000,...(i<n-1?{co:co[i]}:{})}]));
@@ -89,14 +90,14 @@ const SEMBRAR_PANEL = vista => `(async()=>{const DIA=86400000,ahora=Date.now(),h
         }
         return {meta,players,started,results};
       };
-      const torneos={OFICI:copa('Copa de la oficina',7,2,5,{alias:'oficina'}),PRIMO:copa('Los primos',3,0,3),LABOR:copa('Prueba del laboratorio',3,1,2,{lab:true}),AGOST:copa('Copa de agosto',7,20,6,{alias:'agosto'}),FINDE:copa('Copa del finde',3,-2,2)};
+      const torneos={OFICI:copa('Copa de la oficina',7,2,5,{alias:'oficina'}),PRIMO:copa('Los primos',3,0,3,{lang:'pt'}),LABOR:copa('Prueba del laboratorio',3,1,2,{lab:true}),AGOST:copa('Copa de agosto',7,20,6,{alias:'agosto'}),FINDE:copa('Copa del finde',3,-2,2)};
       // En la oficina, Cata jugó el día 2 de comodín y el admin cerró la inscripción: la historia los muestra sin hora
       torneos.OFICI.wild={p00001:'2'};torneos.OFICI.closed=true;
       // Partidas sin red con hora (D-140), para la ficha de un juego
       // Tráfico del sitio (D-208): una semana de visitas, con orígenes, links marcados y páginas
       for(let k=0;k<7;k++){const d=hoy-k,f=7-k;days[d]=days[d]||{};Object.assign(days[d],{vistas:{inicio:9*f,cup:6*f,hangman:2*f,connections:f,labs:1},entradas:{inicio:5*f,cup:3*f,hangman:f,connections:1},juegan:{inicio:2*f,cup:2*f,hangman:1},ref:{directo:5*f,google_com:2*f,google_cl:f,instagram_com:f,chatgpt_com:1},via:{link:3*f,instagram:1},retorno:{nueva:4*f,vuelve:5*f},disp:{celular:7*f,computador:2*f},pais:{CL:7*f,AR:f,ES:1}});}
       // Con nombre y final desde D-210: uno jugando, uno que ganó, un solitario terminado y uno sin nombre
-      days[hoy].live={k3p9aaaaaa:{game:'dudo',mode:'cpu',n:1,co:'CL',name:'Javi',v:'0.93.0',at:ahora-15*60000,beat:ahora-60000},q8w7aaaaaa:{game:'dudo',mode:'local',n:4,co:'AR',name:'Fran, Leo, Ana, Bia',v:'0.92.1',at:ahora-5*3600000,beat:ahora-4*3600000,fin:{at:ahora-4*3600000,g:'Leo',d:'9 rondas'}},t1t2aaaaaa:{game:'toque-y-fama',mode:'solo',n:1,co:'MX',name:'Nico',v:'0.99.0',at:ahora-3*3600000,beat:ahora-3*3600000+120000,fin:{at:ahora-3*3600000+150000,d:'80/100 · 6 intentos · 2:30'}},s0s0aaaaaa:{game:'ahorcado',mode:'solo',n:1,co:'PE',v:'0.90.0',at:ahora-2*DIA,beat:ahora-2*DIA+300000}};
+      days[hoy].live={k3p9aaaaaa:{game:'dudo',mode:'cpu',n:1,co:'CL',l:'es',name:'Javi',v:'0.93.0',at:ahora-15*60000,beat:ahora-60000},q8w7aaaaaa:{game:'dudo',mode:'local',n:4,co:'AR',name:'Fran, Leo, Ana, Bia',v:'0.92.1',at:ahora-5*3600000,beat:ahora-4*3600000,fin:{at:ahora-4*3600000,g:'Leo',d:'9 rondas'}},t1t2aaaaaa:{game:'toque-y-fama',mode:'solo',n:1,co:'MX',l:'en',name:'Nico',v:'0.99.0',at:ahora-3*3600000,beat:ahora-3*3600000+120000,fin:{at:ahora-3*3600000+150000,d:'80/100 · 6 intentos · 2:30'}},s0s0aaaaaa:{game:'ahorcado',mode:'solo',n:1,co:'PE',v:'0.90.0',at:ahora-2*DIA,beat:ahora-2*DIA+300000}};
       // Los días de copa también mandan su señal: el panel no los cuenta entre las partidas de los juegos
       days[hoy].local.copa={copa:{1:9}};
       window.__panel.seed({rooms,days,torneos,vista:'${vista}'});})()`;

@@ -140,7 +140,7 @@ export function liveLocal(days, now = Date.now()) {
     for (const [id, r] of Object.entries(days?.[String(d)]?.live || {})) {
       const beat = Math.max(Number(r?.beat) || 0, Number(r?.at) || 0);
       if (!r?.game || now - beat > VIVA_SIN_RED_MS) continue;
-      out.push({ id, game: r.game, mode: r.mode, n: Number(r.n) || 1, co: r.co || '', name: r.name || '', at: Number(r.at) || beat, beat });
+      out.push({ id, game: r.game, mode: r.mode, n: Number(r.n) || 1, co: r.co || '', lang: r.l || '', name: r.name || '', at: Number(r.at) || beat, beat });
     }
   }
   return out.sort((a, b) => b.beat - a.beat);
@@ -161,7 +161,7 @@ export function localLog(days, { from, to, game = null } = {}) {
       // Quién jugó y cómo terminó, si la app lo supo (D-210). Con final, lo que duró es exacto
       const fin = r.fin && typeof r.fin === 'object' ? { at: Number(r.fin.at) || 0, ganador: r.fin.g || '', empate: !!r.fin.e, detalle: r.fin.d || '' } : null;
       const hasta = fin?.at > at ? fin.at : beat;
-      out.push({ id, day: d, game: r.game, mode: r.mode, n: Number(r.n) || 1, co: r.co || '', name: r.name || '', v: r.v || '', at, beat, fin, minMs: Math.max(0, hasta - at) });
+      out.push({ id, day: d, game: r.game, mode: r.mode, n: Number(r.n) || 1, co: r.co || '', lang: r.l || '', name: r.name || '', v: r.v || '', at, beat, fin, minMs: Math.max(0, hasta - at) });
     }
   }
   return out.sort((a, b) => b.at - a.at || a.id.localeCompare(b.id));
@@ -176,6 +176,33 @@ export function paisesDeSalas(days, now = Date.now()) {
   const out = {};
   for (const d of [hoy - 1, hoy]) {
     for (const [code, r] of Object.entries(days?.[String(d)]?.rooms || {})) if (r?.co) out[code] = { ...(out[code] || {}), ...r.co };
+  }
+  return out;
+}
+
+/** El idioma de cada jugador de las salas registradas hoy y ayer, por código (D-211): `{ ABCD: { A: 'es' } }`. */
+export function idiomasDeSalas(days, now = Date.now()) {
+  const hoy = dayOf(now);
+  const out = {};
+  for (const d of [hoy - 1, hoy]) {
+    for (const [code, r] of Object.entries(days?.[String(d)]?.rooms || {})) if (r?.l) out[code] = { ...(out[code] || {}), ...r.l };
+  }
+  return out;
+}
+
+/**
+ * En qué idioma se jugó en el rango (D-211): una vez por jugador de cada sala con rival y una
+ * vez por partida sin red. Lo de antes de que se anotara no cuenta: no se sabe.
+ */
+export function idiomasDelRango(days, { from, to, incluye = () => true }) {
+  const out = {};
+  for (let d = from; d <= to; d++) {
+    const b = days?.[String(d)] || {};
+    for (const r of Object.values(b.rooms || {})) {
+      if (!r || !incluye(r.game || '?') || Object.keys(r.players || {}).length < 2) continue;
+      for (const l of Object.values(r.l || {})) add(out, l);
+    }
+    for (const r of Object.values(b.live || {})) if (r?.l && incluye(r.game || '?')) add(out, r.l);
   }
   return out;
 }
@@ -251,14 +278,14 @@ export function actividad(r) {
  * Nadie conectado no es lo mismo que cerrada: los dos pueden volver a retomar la partida
  * hasta que la sala venza (C-6), así que esas siguen apareciendo, apagadas.
  */
-export function liveRooms(rooms, now = Date.now(), paises = {}) {
+export function liveRooms(rooms, now = Date.now(), paises = {}, idiomas = {}) {
   const out = [];
   for (const [code, r] of Object.entries(rooms || {})) {
     if (!r || typeof r.createdAt !== 'number' || r.createdAt < now - ROOM_TTL) continue;
     if (typeof r.lastAt === 'number' && r.lastAt < now - IDLE_TTL) continue;
     if (deserted(r.players)) continue;
     const players = Object.entries(r.players || {}).sort(([a], [b]) => a.localeCompare(b))
-      .map(([role, p]) => ({ role, name: p?.name || '?', online: !!p?.online, left: !!p?.left, co: paises[code]?.[role] || '' }));
+      .map(([role, p]) => ({ role, name: p?.name || '?', online: !!p?.online, left: !!p?.left, co: paises[code]?.[role] || '', lang: idiomas[code]?.[role] || '' }));
     const msgs = Object.values(r.messages || {}).filter(Boolean);
     const game = r.game || '?';
     // Se separan las jugadas de la charla (D-138). Una sala trae además mensajes que nadie
@@ -382,7 +409,7 @@ export function roomLog(days, { from, to, soloJugadas = true } = {}) {
       if (!r) continue;
       const players = Object.entries(r.players || {})
         .sort(([a], [b]) => a.localeCompare(b))
-        .map(([role, name]) => ({ role, name: String(name || '?'), co: r.co?.[role] || '' }));
+        .map(([role, name]) => ({ role, name: String(name || '?'), co: r.co?.[role] || '', lang: r.l?.[role] || '' }));
       if (soloJugadas && players.length < 2) continue;
       const fin = r.end || null;
       const rol = fin && /^[A-F]$/.test(fin.winner || '') ? fin.winner : '';
@@ -391,6 +418,8 @@ export function roomLog(days, { from, to, soloJugadas = true } = {}) {
       filas.push({
         code, day: d, at, game: r.game || '?', v: r.v || '',
         players, endAt: endAt || null,
+        // En qué idioma se jugó: el de cada jugador, sin repetir (D-211); vacío en las de antes
+        langs: [...new Set(players.map(p => p.lang).filter(Boolean))],
         // Desde que se creó hasta que alguien ganó: incluye la espera del rival
         durMs: endAt > at ? endAt - at : null,
         // Empate es un resultado, no un dato que falte: se distingue de la sala sin registro.
