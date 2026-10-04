@@ -1,7 +1,7 @@
 // Ejecutar: node public/panel/aggregate.test.mjs
 import assert from 'node:assert/strict';
 import { MODE_IDS } from '../assets/js/games.js';
-import { DAY, roomLog, paginate, flagOf, whenLabel, RANGOS, rangeOf, groupDays, periodLabel, ROOM_TTL, liveRooms, esJugada, connections, summarize, top, tzLabel, ago, dayLabel, codesOfDays, splitByEnv, liveLocal, VIVA_SIN_RED_MS, ZONA_PANEL, horaLabel, fechaLabel, diaPanel, localLog, paisesDeSalas, paisesDelRango, salaDe, mediana, trafico, origenLabel, origenesAgrupados } from './aggregate.js';
+import { DAY, roomLog, paginate, flagOf, whenLabel, RANGOS, rangeOf, groupDays, periodLabel, ROOM_TTL, liveRooms, esJugada, connections, summarize, top, tzLabel, ago, dayLabel, codesOfDays, splitByEnv, liveLocal, VIVA_SIN_RED_MS, ZONA_PANEL, horaLabel, fechaLabel, diaPanel, localLog, paisesDeSalas, paisesDelRango, salaDe, mediana, trafico, origenLabel, origenesAgrupados, idiomasDeSalas, idiomasDelRango } from './aggregate.js';
 import { ZONA as ZONA_COPA } from '../cup/engine.js';
 
 const now = 20342 * DAY + 15 * 60 * 60 * 1000; // día 20342, 15:00 UTC
@@ -185,7 +185,8 @@ assert.equal(ninguna.ajenas.length, 3);
     ['ABCD', 'EFGH', 'IJKL', 'MNOP'], 'pidiéndolas, esas salas sí salen');
 
   const ganada = filas.find(f => f.code === 'ABCD');
-  assert.deepEqual(ganada.players, [{ role: 'A', name: 'Javi', co: 'CL' }, { role: 'B', name: 'Cata', co: 'BR' }]);
+  assert.deepEqual(ganada.players, [{ role: 'A', name: 'Javi', co: 'CL', lang: '' }, { role: 'B', name: 'Cata', co: 'BR', lang: '' }]);
+  assert.deepEqual(ganada.langs, [], 'una sala de antes de D-211 no sabe su idioma');
   assert.equal(ganada.winnerName, 'Cata');
   assert.equal(ganada.empate, false);
 
@@ -383,5 +384,23 @@ assert.equal(origenLabel('instagram_com'), 'Instagram');
 assert.equal(origenLabel('t_co'), 'X (Twitter)');
 assert.equal(origenLabel('com_google_android_gm'), 'Gmail');
 assert.equal(origenLabel('elmostrador_cl'), 'elmostrador.cl', 'un sitio que no se conoce, con su nombre');
+
+// --- El idioma de cada partida (D-211) ---------------------------------------
+{
+  const d = 20342;
+  const days = { [d]: {
+    rooms: { ABCD: { game: 'dudo', at: d * DAY, players: { A: 'Javi', B: 'Ana' }, l: { A: 'es', B: 'pt' } }, SOLO: { game: 'dudo', players: { A: 'x' }, l: { A: 'en' } } },
+    live: { aaaaaaaaaa: { game: 'dudo', mode: 'cpu', n: 1, at: d * DAY, l: 'de' }, bbbbbbbbbb: { game: 'ahorcado', mode: 'solo', n: 1, at: d * DAY } },
+  } };
+  const [sala] = roomLog(days, { from: d, to: d });
+  assert.deepEqual(sala.langs, ['es', 'pt'], 'cada uno en el suyo');
+  assert.deepEqual(sala.players.map(p => p.lang), ['es', 'pt']);
+  assert.equal(localLog(days, { from: d, to: d, game: 'dudo' })[0].lang, 'de');
+  assert.deepEqual(idiomasDeSalas(days, d * DAY + 1000), { ABCD: { A: 'es', B: 'pt' }, SOLO: { A: 'en' } });
+  assert.deepEqual(idiomasDelRango(days, { from: d, to: d }), { es: 1, pt: 1, de: 1 }, 'sin la sala sin rival y sin lo que no se sabe');
+  assert.deepEqual(idiomasDelRango(days, { from: d, to: d, incluye: g => g === 'ahorcado' }), {});
+  const vivas = liveRooms({ ABCD: { createdAt: d * DAY, game: 'dudo', players: { A: { name: 'Javi' }, B: { name: 'Ana' } } } }, d * DAY + 1000, {}, idiomasDeSalas(days, d * DAY + 1000));
+  assert.deepEqual(vivas[0].players.map(p => p.lang), ['es', 'pt']);
+}
 
 console.log('aggregate.test.mjs: todo en verde');

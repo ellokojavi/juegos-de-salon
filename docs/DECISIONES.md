@@ -3241,3 +3241,14 @@ más para quien juega) y seguir sin nombres con más detalle.
 que los de las salas. Las partidas de antes no tienen ni nombre ni final. Cuarto Rey no tiene
 ganador: manda los nombres, no el final. Reglas nuevas en `stats/<env>/days/<día>/live/<id>`
 (`name` y `fin`).
+
+## D-211 · Cada copa, sala y partida sin red dice en qué idioma se jugó
+**Fecha:** 2026-10-04 · **Estado:** vigente; completa D-46 y D-207
+**Decisión:** Cada sala guarda el idioma en que juega cada jugador (`rooms/<código>/l/<rol>`, el
+que eligió en la app, no el del navegador) y cada partida sin red el suyo (`live/<id>/l`). Las
+copas ya lo tenían (`meta.lang`). El panel lo muestra como una etiqueta corta (`ES`, `PT`, o
+`ES · PT` si en una sala cada uno jugó en el suyo) en todas las listas y fichas, y suma un
+desglose: copas por idioma en La Copa y "En qué idioma" en la ficha de cada juego.
+**Por qué:** Lo pidió el dueño: saber en qué idioma se juega cada copa y cada juego. El contador
+del idioma elegido (`applang`, D-46) decía cuánto, pero no de qué partida.
+**Consecuencias:** Lo de antes no tiene idioma y no lleva etiqueta. Reglas nuevas, solo agregan.
