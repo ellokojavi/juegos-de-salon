@@ -14,7 +14,7 @@ import { $, $$, el, con, conEmoji, vibrate, sparkles, keepAwake, confetti } from
 import { applyStatic, COMMON, SITIO, LANGS, getLang, langToggle, withLang } from '../assets/js/i18n.js';
 import { compartir as compartirAlChat, cabecera, lamina, laminaResultado, aArchivo, nombreArchivo, puntajeYTiempo, botonResultadoSolo, MARCO } from '../assets/js/compartir.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
-import { trackStart, versionOf, countryOf } from '../assets/js/transport/stats.js';
+import { trackStart, versionOf, countryOf, trackVisit } from '../assets/js/transport/stats.js';
 import { gameById } from '../assets/js/games.js';
 import {
   POZO, calendarioAlAzar, calendario, MAX_JUGADORES, COPA_MAX, aliasLimpio, esAlias, CODIGO, esCodigo, codigoAlAzar, pidAlAzar, limpiarNombre, claveNombre, esPin, hashPin,
@@ -28,6 +28,9 @@ import { JUEGOS } from './games/index.js';
 import { audienciaDe } from './games/audiencia.js';
 import { desglose } from './desglose.js';
 import { planilla } from './planilla.js';
+
+// Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
+trackVisit();
 
 /** `append` que descarta los hijos nulos, como `el()` (sin esto, un null se escribe como texto). */
 const poner = (nodo, ...hijos) => nodo.append(...hijos.flat().filter(x => x !== null && x !== undefined && x !== false));

@@ -14,7 +14,7 @@ import { failWith } from '../assets/js/transport/errors.js';
 import { showHandoff, passBlock, showCover } from '../assets/js/handoff.js';
 import { createChat } from '../assets/js/chat.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
-import { trackStart } from '../assets/js/transport/stats.js';
+import { trackStart, trackVisit } from '../assets/js/transport/stats.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import {
   ALPHABETS, LIVES_OPTIONS, MAX_LETTERS, buildState, dealWords, normalize,
@@ -22,6 +22,9 @@ import {
 } from './engine.js';
 import { DECKS, getDeck } from './decks/index.js';
 import { GAME_ID, DEFAULT_CONFIG, GALLOWS, PARTS, MAX_HINT, MIN_PLAYERS, MAX_PLAYERS, LOCALES } from './rules.js';
+
+// Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
+trackVisit();
 
 const lang = getLang();
 const T = LOCALES[lang];

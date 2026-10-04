@@ -19,7 +19,7 @@ import {
   getDatabase, ref, onValue, query, orderByChild, orderByKey, startAt,
 } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js';
 import { firebaseConfig } from '../assets/js/firebase-config.js';
-import { GAMES, gameById, gameLabel, isTorneo, MODES, MODE_IDS, ROOM_MODE, modeIcon } from '../assets/js/games.js';
+import { GAMES, SUELTOS, gameById, gameLabel, isTorneo, MODES, MODE_IDS, ROOM_MODE, modeIcon } from '../assets/js/games.js';
 import { JUEGOS_COPA } from '../cup/rules.js';
 import { LANGS } from '../assets/js/i18n.js';
 import { ENVS } from '../assets/js/transport/stats.js';
@@ -28,7 +28,7 @@ import { copaDe, copasEnCurso, resumenCopas, bitacoraCopas, fichaCopa, buscarCop
 import {
   ROOM_TTL, liveRooms, connections, summarize, top, tzLabel, ago, dayOf, codesOfDays, splitByEnv, liveLocal, roomLog,
   paginate, flagOf, whenLabel, horaLabel, fechaLabel, diaPanel, ZONA_PANEL, ZONA_NOMBRE, RANGOS, RANGO_POR_DEFECTO, rangeOf,
-  groupDays, localLog, paisesDeSalas, paisesDelRango, salaDe, mediana,
+  groupDays, localLog, paisesDeSalas, paisesDelRango, salaDe, mediana, trafico, origenesAgrupados, origenLabel, dayLabel,
 } from './aggregate.js';
 import { SECCIONES, leerRuta, rutaA, seccionDe } from './rutas.js';
 
@@ -734,6 +734,88 @@ function vistaSala(code, dia, now) {
 }
 
 /* ------------------------------------------------------------------ */
+/* Tráfico del sitio (D-208)                                           */
+/* ------------------------------------------------------------------ */
+/**
+ * Una página por su carpeta, con el nombre del juego que vive ahí: el registro dice la carpeta de
+ * cada juego (`path`) y de cada juego suelto (`slug`), así que uno nuevo se nombra solo (C-16).
+ */
+function paginaLabel(p) {
+  if (p === 'inicio') return '🏠 Portada';
+  if (p === 'labs') return '🧪 Laboratorio';
+  const g = GAMES.find(x => x.path === `${p}/`);
+  if (g) return gameLabel(g.id);
+  const s = SUELTOS.find(x => x.slug === p);
+  if (s) return `${s.emoji} ${s.name.es}`;
+  return `/${p}/`;
+}
+
+/** Cómo se llama un canal: la marca que la app pone en lo que comparte, o la que vino en el enlace. */
+const canalLabel = k => (k === 'link' ? '🔗 Link compartido desde la app' : k);
+const porcentaje = (a, b) => (b ? `${Math.round((a / b) * 100)}%` : '—');
+
+function vistaTrafico(now) {
+  const rango = rangeOf(S.range);
+  const t = trafico(S.days, { from: rango.from, to: rango.to });
+  const hoy = trafico(S.days, { from: dayOf(now), to: dayOf(now) });
+  const nota = 'Visitas al sitio, jueguen o no. Una visita es una pestaña: cuenta una vez, en la página donde empezó, y cada página que abre después suma una vista. Sin IP, sin cookies y sin identificar a nadie: del lugar de donde vino solo se guarda el dominio. Días UTC.';
+  if (t.desde === null) {
+    return [...titulo(`📈 Tráfico · ${tituloRango()}`, nota),
+      el('p', { class: 'empty' }, S.daysLoaded ? 'Todavía no hay visitas registradas en este rango: se empezaron a contar con D-208. Las partidas y La Copa siguen en sus secciones.' : 'Cargando…')];
+  }
+  const periodos = groupDays(t.porDia, rango.grano);
+  const maxD = Math.max(0, ...periodos.map(d => d.visitas));
+  const origenes = top(origenesAgrupados(t.ref), 15);
+  const maxO = Math.max(0, ...origenes.map(([, v]) => v));
+  // Bajo cada origen, los dominios que junta: "Google" puede ser google.cl y google.com
+  const dominiosDe = nombre => Object.keys(t.ref).filter(k => origenLabel(k) === nombre && k !== 'directo').map(k => k.replace(/_/g, '.')).join(', ');
+  const canales = top(t.via, 10);
+  const maxC = Math.max(0, ...canales.map(([, v]) => v));
+  const paginas = Object.entries(t.paginas).sort((a, b) => b[1].entradas - a[1].entradas || b[1].vistas - a[1].vistas);
+  const maxP = Math.max(0, ...paginas.map(([, p]) => p.vistas));
+  const disp = top(t.disp, 5);
+  const maxDi = Math.max(0, ...disp.map(([, v]) => v));
+  const ret = [['nueva', 'Primera vez'], ['vuelve', 'Ya había venido']].map(([k, l]) => [l, t.retorno[k] || 0]);
+  const maxR = Math.max(0, ...ret.map(([, v]) => v));
+  const paises = top(t.pais, 15);
+  const maxPa = Math.max(0, ...paises.map(([, v]) => v));
+  const C_JUEGAN = 'var(--lime)';
+
+  return [
+    ...titulo(`📈 Tráfico · ${tituloRango()}`, nota),
+    t.desde > rango.from ? el('p', { class: 'muted small' }, `Se cuenta desde el ${dayLabel(t.desde)}: antes de eso no hay visitas registradas.`) : null,
+    el('div', { class: 'tiles' },
+      tile(t.visitas, 'visitas'),
+      tile(t.vistas, `páginas vistas · ${t.visitas ? (t.vistas / t.visitas).toLocaleString('es-CL', { maximumFractionDigits: 1 }) : '—'} por visita`),
+      tile(porcentaje(t.juegan, t.visitas), `llegaron a jugar · ${n(t.juegan)} visitas`, { info: 'empezaron una partida o un juego de la copa' }),
+      tile(porcentaje(t.retorno.nueva || 0, t.visitas), 'visitas de primera vez', { info: 'una marca en el navegador: no identifica a nadie' }),
+      tile(hoy.visitas, 'visitas hoy (día UTC)'),
+    ),
+    bloque({ dia: 'Visitas por día', semana: 'Visitas por semana', mes: 'Visitas por mes' }[rango.grano],
+      `En verde, las que llegaron a jugar.${rango.grano === 'semana' ? ' La fecha es el lunes de cada semana.' : ''}`,
+      lista(periodos.map(d => bar(d.label, [seg(C_JUEGAN, d.juegan), seg(C_TOTAL, Math.max(0, d.visitas - d.juegan))], maxD, { cifra: d.visitas })), 'Nada todavía.', 'bars')),
+    el('div', { class: 'grid2' },
+      bloque('De dónde llegan', 'El sitio desde el que tocaron el link. WhatsApp y casi todas las apps de chat no lo dicen: esas visitas caen en "Directo o sin dato", junto con quien escribió la dirección o la tenía guardada.',
+        lista(origenes.map(([k, v]) => bar(k, [seg(C_TOTAL, v)], maxO, { sub: dominiosDe(k) })), 'Nada todavía.', 'bars')),
+      bloque('Por qué link', 'Lo que la app comparte lleva su marca (?de=link): así se sabe cuántas visitas llegaron por una invitación aunque el chat no lo diga. También cuenta utm_source o ?de= si se los pones a mano a un link.',
+        lista(canales.map(([k, v]) => bar(canalLabel(k), [seg(C_TORNEO, v)], maxC)), 'Ninguna visita con marca en este rango.', 'bars'),
+        t.visitas ? el('p', { class: 'muted small', style: 'margin-top:8px' }, `Sin marca: ${n(Math.max(0, t.visitas - canales.reduce((k, [, v]) => k + v, 0)))} visitas.`) : null),
+    ),
+    bloque('Páginas', 'Vistas de cada página y, al lado, cuántas visitas empezaron ahí y cuántas de esas llegaron a jugar.',
+      lista(paginas.map(([k, p]) => bar(paginaLabel(k), [seg(C_TOTAL, p.vistas)], maxP, {
+        detail: p.entradas ? `${n(p.entradas)} visita${p.entradas === 1 ? '' : 's'} empezaron acá · ${porcentaje(p.juegan, p.entradas)} llegaron a jugar` : 'ninguna visita empezó acá',
+      })), 'Nada todavía.', 'bars')),
+    el('div', { class: 'grid2' },
+      bloque('Aparato', null, lista(disp.map(([k, v]) => bar(k.charAt(0).toUpperCase() + k.slice(1), [seg(C_IDIOMA, v)], maxDi)), 'Nada todavía.', 'bars')),
+      bloque('Primera vez o vuelve', 'Por visita. "Ya había venido" sale de una marca que deja el navegador; quien borra los datos o usa modo privado cuenta como primera vez.',
+        lista(ret.map(([l, v]) => bar(l, [seg(C_IDIOMA, v)], maxR)), 'Nada todavía.', 'bars')),
+    ),
+    bloque('País de las visitas', 'Del huso horario del celular, como en las salas (D-79).',
+      lista(paises.map(([k, v]) => bar(`${flagOf(k)} ${nombreDePais(k)}`.trim(), [seg(C_TORNEO, v)], maxPa)), 'Nada todavía.', 'bars')),
+  ];
+}
+
+/* ------------------------------------------------------------------ */
 /* Audiencia                                                           */
 /* ------------------------------------------------------------------ */
 function vistaAudiencia(now) {
@@ -802,6 +884,7 @@ const SECCION = {
   ahora: ['🟢', 'Ahora'],
   torneo: TORNEO ? [TORNEO.emoji, TORNEO.name.es] : ['🏆', 'Torneo'],
   juegos: ['🎲', 'Juegos'],
+  trafico: ['📈', 'Tráfico'],
   audiencia: ['🌎', 'Audiencia'],
 };
 
@@ -827,6 +910,7 @@ function render() {
   else if (sec === 'sala') nodos = vistaSala(args[0].toUpperCase(), args[1], now);
   else if (sec === 'juegos') nodos = vistaJuegos();
   else if (sec === 'audiencia') nodos = vistaAudiencia(now);
+  else if (sec === 'trafico') nodos = vistaTrafico(now);
   else nodos = vistaAhora(now);
   $('#vista').replaceChildren(...nodos.flat().filter(Boolean));
   renderNav(now);

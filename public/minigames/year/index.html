@@ -28,7 +28,7 @@
   <meta name="twitter:image" content="https://juegosdesalon.cl/assets/og/anio.jpg">
   <meta name="twitter:image:alt" content="¿En qué año?: Adivina en qué año pasó cada hito. Mientras más cerca, más puntos.">
   <!-- /generado -->
-  <script>location.replace('../../year/' + location.search + location.hash);</script>
+  <script>try { if (sessionStorage.getItem('juegos-de-salon:ref') === null) sessionStorage.setItem('juegos-de-salon:ref', document.referrer); } catch (e) {} location.replace('../../year/' + location.search + location.hash);</script>
   <noscript><meta http-equiv="refresh" content="0; url=../../year/"></noscript>
 </head>
 <body>

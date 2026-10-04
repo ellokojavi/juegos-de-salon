@@ -19,6 +19,16 @@
  *                                                   `beat` sube cada minuto mientras alguien
  *                                                   toca la pantalla (D-140)
  *
+ * Y el tráfico del sitio (D-208), aunque nadie juegue:
+ *
+ *   vistas/<página>: cada vez que se abre una página (`hangman`, `cup`, `inicio`…)
+ *   entradas/<página>: visitas, por la página donde empezaron (una por pestaña)
+ *   ref/<dominio>: de dónde llegó la visita (`google_com`, `directo`); solo el dominio
+ *   via/<canal>: la marca del enlace (`?de=compartir`, `utm_source`), si traía una
+ *   retorno/<nueva|vuelve>: si este navegador ya había venido (una marca local, sin id)
+ *   disp/<celular|tableta|computador>, pais/<CL>: de la visita
+ *   juegan/<página>: visitas que llegaron a empezar algo, por su página de entrada
+ *
  * Va por la REST API con un `fetch` y `keepalive`: los modos sin red no cargan el SDK de
  * Firebase ni abren una conexión persistente, así que no pesan en la carga ni gastan la
  * cuota de conexiones simultáneas (D-41). Todo es mejor esfuerzo: si falla, nadie se entera
@@ -320,6 +330,128 @@ export function trackStart(info) {
     const s = stats();
     if (pararVivo) { pararVivo(); pararVivo = null; }
     if (esEnVivo(info?.mode)) pararVivo = startLive(s.api, s.fp, info);
+    notePlayed(s.api, s.fp);
     return noteStart(s.api, s.fp, info);
   } catch (_) { return Promise.resolve(); }
+}
+
+/* ------------------------------------------------------------------ */
+/* Tráfico del sitio (D-208)                                           */
+/* ------------------------------------------------------------------ */
+/**
+ * Cuánta gente entra al sitio y de dónde llega, aunque no juegue. Mismas reglas que lo demás
+ * (D-44): contadores por día, sin IP, sin la dirección completa de donde vino (solo el dominio)
+ * y sin ningún identificador. "Vuelve" es una marca en el navegador que dice "ya vine", y no viaja.
+ *
+ * Una visita es una pestaña: se cuenta una vez, en la página donde empezó, con su origen. Cada
+ * página que se abre después suma una vista. Si en esa visita se empieza algo, suma `juegan`
+ * en su página de entrada: así se ve qué entradas terminan en partidas.
+ */
+export const VISITA_KEY = 'juegos-de-salon:visita';    // sessionStorage: la página donde empezó esta visita
+export const JUGO_KEY = 'juegos-de-salon:visita-jugo'; // sessionStorage: esta visita ya empezó algo
+export const VINO_KEY = 'juegos-de-salon:vino';        // localStorage: este navegador ya había venido
+export const REF_KEY = 'juegos-de-salon:ref';           // sessionStorage: el origen, guardado por una página puente
+
+/** Lo que cabe en una clave de la base: minúsculas, números y guiones, acotado. */
+const clave = (x, max = 40) => String(x || '').toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, max);
+
+/** La página, por su primera carpeta: `/hangman/` → `hangman`, `/` → `inicio`. */
+export function paginaDe(pathname = '/') {
+  const primera = String(pathname).split('/').filter(Boolean)[0] || '';
+  return clave(primera.replace(/\.html?$/, '').replace(/^index$/, '')) || 'inicio';
+}
+
+/**
+ * El dominio de donde llegó, como clave (`www.google.com` → `google_com`), o `directo` si no
+ * hay o si es el mismo sitio. Los puntos no caben en una clave de la base: van como `_`, que
+ * ningún dominio usa. Los prefijos que solo distinguen versiones de un mismo sitio se quitan
+ * (`m.`, `l.`, `lm.` de Facebook e Instagram). Lo que viene de una app de Android
+ * (`android-app://com.google.android.gm`) se queda con el nombre de la app.
+ */
+export function origenDe(referrer, propio = '') {
+  let host = '';
+  try { host = new URL(String(referrer || '')).hostname.toLowerCase(); } catch (_) { return 'directo'; }
+  if (!host) return 'directo';
+  const sinPrefijo = h => h.replace(/^(www\d?|m|l|lm|mobile|amp)\./, '');
+  if (propio && sinPrefijo(host) === sinPrefijo(String(propio).toLowerCase())) return 'directo';
+  const k = sinPrefijo(host).replace(/[^a-z0-9.-]/g, '').replace(/\./g, '_').slice(0, 60);
+  return k || 'directo';
+}
+
+/** La marca del enlace: `?de=compartir` o `?utm_source=instagram`. Vacía si no trae. */
+export function canalDe(search = '') {
+  let q;
+  try { q = new URLSearchParams(String(search || '')); } catch (_) { return ''; }
+  return clave(q.get('de') || q.get('utm_source') || '', 20);
+}
+
+/** Qué aparato es, a grandes rasgos. Un iPad moderno dice ser Mac: se le nota por la pantalla táctil. */
+export function dispositivoDe({ ua = '', platform = '', touch = 0 } = {}) {
+  if (/iPad|Tablet/i.test(ua) || (/Mac/.test(platform) && touch > 1)) return 'tableta';
+  if (/Mobi|Android|iPhone/i.test(ua)) return 'celular';
+  return 'computador';
+}
+
+/**
+ * Los contadores que suben al abrir una página. `primera` dice si es la primera página de la
+ * visita: solo esa cuenta la entrada, el origen, el canal, si vuelve, el aparato y el país.
+ */
+export function visitChanges(fp, { pagina, primera, origen, canal, vuelve, disp }) {
+  const c = { [`vistas/${pagina}`]: INC };
+  if (!primera) return c;
+  c[`entradas/${pagina}`] = INC;
+  c[`ref/${origen || 'directo'}`] = INC;
+  if (canal) c[`via/${canal}`] = INC;
+  c[`retorno/${vuelve ? 'vuelve' : 'nueva'}`] = INC;
+  c[`disp/${disp}`] = INC;
+  c[`pais/${fp.co || 'desconocido'}`] = INC;
+  return c;
+}
+
+/** Lee y escribe una clave del almacenamiento sin que un navegador que lo bloquea rompa nada. */
+const leer = (st, k) => { try { return st?.getItem(k) ?? null; } catch (_) { return null; } };
+const poner = (st, k, v) => { try { st?.setItem(k, v); } catch (_) { /* privado o lleno */ } };
+const sacar = (st, k) => { try { st?.removeItem(k); } catch (_) { /* nada */ } };
+
+/**
+ * Anota la visita a esta página. Todo lo de afuera entra por parámetro para probarlo con node.
+ * El panel no se cuenta: es el dueño mirando, no tráfico.
+ */
+export function noteVisit(api, fp, {
+  loc = globalThis.location, doc = globalThis.document, nav = globalThis.navigator,
+  sesion = globalThis.sessionStorage, local = globalThis.localStorage, now = Date.now(),
+} = {}) {
+  const pagina = paginaDe(loc?.pathname);
+  if (pagina === 'panel') return Promise.resolve();
+  const entrada = leer(sesion, VISITA_KEY);
+  const primera = !entrada;
+  let datos = { pagina, primera };
+  if (primera) {
+    // Una página puente o de idioma redirige en el acto y se lleva el origen: lo deja guardado
+    const puente = leer(sesion, REF_KEY);
+    sacar(sesion, REF_KEY);
+    const vuelve = !!leer(local, VINO_KEY);
+    datos = {
+      ...datos, vuelve,
+      origen: origenDe(puente ?? doc?.referrer, loc?.hostname),
+      canal: canalDe(loc?.search),
+      disp: dispositivoDe({ ua: nav?.userAgent, platform: nav?.platform, touch: nav?.maxTouchPoints }),
+    };
+    poner(sesion, VISITA_KEY, pagina);
+    poner(local, VINO_KEY, '1');
+  }
+  return quiet(() => api.patch(dayPath(fp.env, dayOf(now)), visitChanges(fp, datos)));
+}
+
+/** Esta visita empezó algo: suma una sola vez, en su página de entrada. */
+export function notePlayed(api, fp, { sesion = globalThis.sessionStorage, now = Date.now() } = {}) {
+  const entrada = leer(sesion, VISITA_KEY);
+  if (!entrada || leer(sesion, JUGO_KEY)) return Promise.resolve();
+  poner(sesion, JUGO_KEY, '1');
+  return quiet(() => api.patch(dayPath(fp.env, dayOf(now)), { [`juegan/${clave(entrada)}`]: INC }));
+}
+
+/** Atajo para las páginas: `trackVisit()` al cargar. Nunca lanza ni se espera. */
+export function trackVisit() {
+  try { const s = stats(); return noteVisit(s.api, s.fp); } catch (_) { return Promise.resolve(); }
 }

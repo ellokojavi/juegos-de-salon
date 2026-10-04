@@ -12,6 +12,7 @@ assert.deepEqual(leerRuta('#/juego/batalla-naval?r=30d&e=dev'), { sec: 'juego', 
 
 // Lo que no se entiende cae en la primera sección
 assert.equal(leerRuta('#/nada').sec, 'ahora');
+assert.equal(leerRuta('#/trafico').sec, 'trafico');
 assert.equal(leerRuta('#/sala').sec, 'ahora', 'una ficha sin código no es una ficha');
 
 // Los enlaces de antes de D-207 siguen sirviendo

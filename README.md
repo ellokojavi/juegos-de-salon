@@ -495,8 +495,10 @@ log at the bottom of the dashboard shows. Live rooms show **plays and chat messa
 only what a person did counts as a play (a shot, a guess, a bid), never the automatic answers, and
 of the chat only the number of messages is shown, never what they say (D-138).
 
-It is navigated like a small site (D-207): four sections, **Now**, **La Copa**, **Games** and
-**Audience**, and a page for each thing that exists. A cup's page has its full standings, a grid of
+It is navigated like a small site (D-207): five sections, **Now**, **La Copa**, **Games**,
+**Traffic** and **Audience**, and a page for each thing that exists. Traffic counts visits even when
+nobody plays: pages viewed, where visitors come from (the domain only), which shared link brought
+them, first-time or returning, device, country, and how many visits end up playing (D-208). A cup's page has its full standings, a grid of
 every player and day (score, time, points, left unfinished, wildcard) and its history, event by
 event. A game's page has its modes, how long its rooms last, its rooms and its offline games; a
 room's page has its players, winner and duration. Every number opens the list that adds up to it,
@@ -642,7 +644,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   fourth-king/                Fourth King (game.js, rules.js)
   connections/ · queens/ …    The Cup's games played on their own, one page each (generated from cup/suelto/)
   labs/                       The lab: games being tested before they reach the menu (not linked, not indexed); labs/de/ forwards to /de/ (German left the lab, D-197)
-  panel/                      Private owner dashboard: now, The Cup, games and audience, with a page per cup, game and room (Google sign-in; see docs/PANEL.md)
+  panel/                      Private owner dashboard: now, The Cup, games, traffic and audience, with a page per cup, game and room (Google sign-in; see docs/PANEL.md)
   assets/css/                 Shared styles: base.css (party theme), linea.css (timeline), teclado.css (keypad)
   assets/js/                  Shared modules: games.js (game registry), i18n.js (ES/EN/PT/DE), labs-idioma.js (a new language in the lab, D-191), ui.js, sound.js, compartir.js (everything shared, D-165), handoff.js, chat.js, session.js, arrastre.js (drag and drop), teclado.js, azar.js and dado3d.js (Random game), frases.js
   assets/js/transport/        Transports: local (same phone), firebase (room) and stats (usage signals)

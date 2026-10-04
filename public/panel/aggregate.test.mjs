@@ -1,7 +1,7 @@
 // Ejecutar: node public/panel/aggregate.test.mjs
 import assert from 'node:assert/strict';
 import { MODE_IDS } from '../assets/js/games.js';
-import { DAY, roomLog, paginate, flagOf, whenLabel, RANGOS, rangeOf, groupDays, periodLabel, ROOM_TTL, liveRooms, esJugada, connections, summarize, top, tzLabel, ago, dayLabel, codesOfDays, splitByEnv, liveLocal, VIVA_SIN_RED_MS, ZONA_PANEL, horaLabel, fechaLabel, diaPanel, localLog, paisesDeSalas, paisesDelRango, salaDe, mediana } from './aggregate.js';
+import { DAY, roomLog, paginate, flagOf, whenLabel, RANGOS, rangeOf, groupDays, periodLabel, ROOM_TTL, liveRooms, esJugada, connections, summarize, top, tzLabel, ago, dayLabel, codesOfDays, splitByEnv, liveLocal, VIVA_SIN_RED_MS, ZONA_PANEL, horaLabel, fechaLabel, diaPanel, localLog, paisesDeSalas, paisesDelRango, salaDe, mediana, trafico, origenLabel, origenesAgrupados } from './aggregate.js';
 import { ZONA as ZONA_COPA } from '../cup/engine.js';
 
 const now = 20342 * DAY + 15 * 60 * 60 * 1000; // día 20342, 15:00 UTC
@@ -356,5 +356,25 @@ assert.equal(ZONA_PANEL, ZONA_COPA, 'el panel lee la hora en el mismo reloj con 
 assert.equal(mediana([]), null);
 assert.equal(mediana([5, 1, 100]), 5, 'la mediana no la arrastra el que dejó el celular encendido');
 assert.equal(mediana([1, 2, 3, 4]), 3);
+
+// --- Tráfico del sitio (D-208) -------------------------------------------
+{
+  const d = 20342;
+  const days = {
+    [d - 1]: { vistas: { inicio: 5, hangman: 2 }, entradas: { inicio: 3, hangman: 1 }, juegan: { inicio: 1 }, ref: { directo: 2, google_cl: 1, google_com: 1 }, via: { link: 1 }, retorno: { nueva: 3, vuelve: 1 }, disp: { celular: 4 }, pais: { CL: 3, AR: 1 } },
+    [d]: { vistas: { cup: 4 }, entradas: { cup: 2 }, juegan: { cup: 2 }, ref: { directo: 2 } },
+  };
+  const t = trafico(days, { from: d - 3, to: d });
+  assert.deepEqual([t.visitas, t.vistas, t.juegan], [6, 11, 3]);
+  assert.equal(t.desde, d - 1, 'el primer día con visitas registradas');
+  assert.deepEqual(t.paginas.inicio, { vistas: 5, entradas: 3, juegan: 1 });
+  assert.deepEqual(t.porDia.map(x => x.visitas), [0, 0, 4, 2]);
+  assert.deepEqual(origenesAgrupados(t.ref), { 'Directo o sin dato': 4, Google: 2 }, 'dos dominios de Google son una barra');
+  assert.equal(trafico({}, { from: d, to: d }).desde, null, 'sin registro, se dice que no hay datos');
+}
+assert.equal(origenLabel('instagram_com'), 'Instagram');
+assert.equal(origenLabel('t_co'), 'X (Twitter)');
+assert.equal(origenLabel('com_google_android_gm'), 'Gmail');
+assert.equal(origenLabel('elmostrador_cl'), 'elmostrador.cl', 'un sitio que no se conoce, con su nombre');
 
 console.log('aggregate.test.mjs: todo en verde');

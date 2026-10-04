@@ -19,12 +19,15 @@ import { GAME_ID, DEFAULT_CONFIG, DIGIT_OPTIONS, LOCALES } from './rules.js';
 import { createChat } from '../assets/js/chat.js';
 import { teclado, CIFRAS } from '../assets/js/teclado.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
-import { trackStart } from '../assets/js/transport/stats.js';
+import { trackStart, trackVisit } from '../assets/js/transport/stats.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import { codigoAlAzar } from '../cup/engine.js';
 import * as numero from '../cup/games/number/engine.js';
 import * as uiNumero from '../cup/games/number/ui.js';
 import { jugarSolo, crearRecord, mmss } from '../cup/games/solo.js';
+
+// Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
+trackVisit();
 
 const lang = getLang();
 const T = LOCALES[lang];

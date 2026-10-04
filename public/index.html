@@ -237,6 +237,8 @@
     import { FRASES } from './assets/js/frases.js';
     import { SFX, soundToggle, initSound } from './assets/js/sound.js';
     import { botonAzar } from './assets/js/azar.js';
+    import { trackVisit } from './assets/js/transport/stats.js';
+    trackVisit(); // el tráfico del sitio (D-208)
     sparkles();
     initSound();
     document.getElementById('sound-slot').append(soundToggle());

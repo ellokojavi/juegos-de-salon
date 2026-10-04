@@ -28,7 +28,7 @@
   <meta name="twitter:image" content="https://juegosdesalon.cl/assets/og/julepe.jpg">
   <meta name="twitter:image:alt" content="Julepe: Dices si vas o te pasas. Si vas y no haces dos bazas, te tomas todo el plato.">
   <!-- /generado -->
-  <script>location.replace('../julep/' + location.search + location.hash);</script>
+  <script>try { if (sessionStorage.getItem('juegos-de-salon:ref') === null) sessionStorage.setItem('juegos-de-salon:ref', document.referrer); } catch (e) {} location.replace('../julep/' + location.search + location.hash);</script>
   <noscript><meta http-equiv="refresh" content="0; url=../julep/"></noscript>
 </head>
 <body>

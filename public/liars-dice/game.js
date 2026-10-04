@@ -15,13 +15,16 @@ import { showHandoff, passBlock } from '../assets/js/handoff.js';
 import { failWith } from '../assets/js/transport/errors.js';
 import { createChat } from '../assets/js/chat.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
-import { trackStart } from '../assets/js/transport/stats.js';
+import { trackStart, trackVisit } from '../assets/js/transport/stats.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import {
   PINTAS, MIN_PLAYERS, MAX_PLAYERS, MIN_CALZAR, buildState, botMove, minBid, bidOk,
   readDice, rollDice, writeDice, countPinta, sha256, randomSalt, verifyOpen,
 } from './engine.js';
 import { GAME_ID, DEFAULT_CONFIG, CHILENO, LOCALES } from './rules.js';
+
+// Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
+trackVisit();
 
 const lang = getLang();
 const L = LOCALES[lang];
