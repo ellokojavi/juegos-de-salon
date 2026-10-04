@@ -110,8 +110,18 @@ const urlPublica = code => (PRUEBA ? urlCopa(code) : `https://juegosdesalon.cl/c
 
 function mostrar(id) {
   S.pantalla = id;
+  // Cada juego a pantalla completa (¿Dónde queda?) la pide de nuevo al montarse
+  pantallaCompleta(false);
   $$('.screen').forEach(s => s.classList.toggle('active', s.id === `screen-${id}`));
   window.scrollTo(0, 0);
+}
+
+/**
+ * Un juego a pantalla completa (D-203) ocupa la ventana entera: la barra, el reloj y las reglas
+ * plegadas flotan encima de él en vez de ir arriba y abajo de su caja.
+ */
+function pantallaCompleta(si) {
+  document.body.classList.toggle('pantalla-completa', !!si);
 }
 
 function errorDe(e) {
@@ -1760,6 +1770,7 @@ async function jugar(d) {
   body.innerHTML = '';
   panelReglas(id);
   S.juego = { d, id };
+  pantallaCompleta(mod.pantallaCompleta);
   mod.montar(body, {
     p, jugadas, T, fmt, el, SFX, vibrate, lang: LANG,
     guardar(j) { jugadas = j; persistir(); },
@@ -1995,6 +2006,7 @@ async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false } = {}) {
   const body = $('#jugar-body');
   body.innerHTML = '';
   panelReglas(id, { copa: false, prueba: ensayo && !S.juego?.practica });
+  pantallaCompleta(mod.pantallaCompleta);
   mod.montar(body, {
     p, jugadas: undefined, T, fmt, el, SFX, vibrate, lang: LANG,
     textoFin: ensayo ? T.trialEnd : undefined,
