@@ -70,7 +70,7 @@ export function groupDays(byDay, grano = 'dia') {
     const f = new Date(fila.day * DAY);
     const clave = grano === 'mes' ? dayOf(Date.UTC(f.getUTCFullYear(), f.getUTCMonth(), 1)) : lunesDe(fila.day);
     // Se suma cada cifra de la fila, sea cual sea: el panel junta así las partidas de los juegos
-    // con los minijuegos de un torneo sin que esto tenga que saber de ninguno de los dos.
+    // con los juegos de un torneo sin que esto tenga que saber de ninguno de los dos.
     const caja = cajones.get(clave) || { day: clave };
     for (const [k, v] of Object.entries(fila)) if (k !== 'day' && typeof v === 'number') caja[k] = (caja[k] || 0) + v;
     cajones.set(clave, caja);

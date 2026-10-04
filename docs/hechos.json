@@ -1,5 +1,5 @@
 {
-  "version": "0.91.0",
+  "version": "0.93.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -99,7 +99,8 @@
         "public/cup/rules.js",
         "public/cup/store-firebase.js",
         "public/cup/store-local.js",
-        "public/cup/style.css"
+        "public/cup/style.css",
+        "public/cup/suelto/index.html"
       ]
     },
     {
@@ -474,7 +475,8 @@
         "cultura"
       ],
       "duracion": "3–8",
-      "labs": false
+      "labs": false,
+      "path": "connections/"
     },
     {
       "id": "letras",
@@ -490,7 +492,8 @@
         "logica"
       ],
       "duracion": "3–8",
-      "labs": false
+      "labs": false,
+      "path": "word/"
     },
     {
       "id": "anio",
@@ -505,7 +508,8 @@
         "cultura"
       ],
       "duracion": "2–5",
-      "labs": false
+      "labs": false,
+      "path": "year/"
     },
     {
       "id": "reinas",
@@ -520,7 +524,8 @@
         "logica"
       ],
       "duracion": "2–5",
-      "labs": false
+      "labs": false,
+      "path": "queens/"
     },
     {
       "id": "tango",
@@ -535,7 +540,8 @@
         "logica"
       ],
       "duracion": "3–8",
-      "labs": false
+      "labs": false,
+      "path": "tango/"
     },
     {
       "id": "zip",
@@ -550,7 +556,8 @@
         "logica"
       ],
       "duracion": "3",
-      "labs": false
+      "labs": false,
+      "path": "zip/"
     },
     {
       "id": "desenredo",
@@ -565,7 +572,8 @@
         "logica"
       ],
       "duracion": "4",
-      "labs": false
+      "labs": false,
+      "path": "untangle/"
     },
     {
       "id": "donde",
@@ -580,7 +588,8 @@
         "cultura"
       ],
       "duracion": "2–5",
-      "labs": false
+      "labs": false,
+      "path": "where/"
     }
   ],
   "tematicas": [

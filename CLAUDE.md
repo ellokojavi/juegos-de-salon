@@ -10,7 +10,7 @@ publicada en GitHub Pages: https://juegosdesalon.cl/
   fusión a main, si las pruebas pasan. Se sirve con `python3 -m http.server 8765 -d public`.
 - **El id de un juego no es su carpeta**: `'ahorcado'` vive en `/hangman/`. El id lo guardan las
   salas, el panel y el `localStorage`, y no se cambia. Las rutas viejas en español (`public/ahorcado/`,
-  `public/copa/`, `public/minijuegos/…`) son páginas puente generadas: no se editan.
+  `public/copa/`, `public/minijuegos/…`, `public/minigames/…`) son páginas puente generadas: no se editan.
 - **El taller**, al lado: `docs/`, `firebase/`, `marketing/` y `tools/` por función (`release/`,
   `firebase/`, `generators/`, `agents/`, `e2e/<juego>/`).
 - Las carpetas nuevas van en inglés. La documentación, los mensajes y los nombres de archivo de las
@@ -126,7 +126,7 @@ node public/timeline/engine.test.mjs
 node public/hangman/engine.test.mjs
 node public/liars-dice/engine.test.mjs
 node public/julep/engine.test.mjs
-node public/cup/engine.test.mjs               # La Copa: torneo, minijuegos y almacén de prueba
+node public/cup/engine.test.mjs               # La Copa: torneo, juegos y almacén de prueba
 node public/cup/games/juegos.test.mjs
 node public/cup/store.test.mjs
 node public/cup/planilla.test.mjs            # la tabla final como CSV (D-161)
@@ -141,7 +141,7 @@ node public/assets/js/transport/ratelimit.test.mjs
 node public/assets/js/transport/stats.test.mjs
 node public/panel/aggregate.test.mjs
 node public/panel/adapta.test.mjs               # el panel se entera solo de lo nuevo (C-16)
-node public/panel/copas.test.mjs                # La Copa en el panel: en curso, minijuegos, participación
+node public/panel/copas.test.mjs                # La Copa en el panel: en curso, juegos, participación
 node tools/agents/documentar.test.mjs           # la memoria y las comprobaciones del agente de documentación
 node tools/agents/marketing.test.mjs            # qué cuenta como marketing atrasado (U-34)
 python3 tools/release/readme.test.py       # qué cuenta como cambio para las capturas (D-51)
@@ -214,7 +214,7 @@ Necesita la llave de la cuenta de servicio en `~/.config/juegos-de-salon/firebas
 Antes de escribir instrucciones, ayudas o bajadas, leer U-1, U-8 y **U-18** en
 [docs/USABILIDAD.md](docs/USABILIDAD.md): la meta primero y con verbo, a lo más 3 puntos, nada
 de lo que el dibujo de ejemplo ya muestra y el puntaje en una frase, en frases completas.
-`node public/cup/games/juegos.test.mjs` frena unas instrucciones de minijuego que pasen de 280
+`node public/cup/games/juegos.test.mjs` frena unas instrucciones de juego que pasen de 280
 caracteres (D-184).
 
 ## Usabilidad (D-132)

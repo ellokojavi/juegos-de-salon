@@ -2,7 +2,7 @@
 
 Mobile-first web app with party games to play with friends: card games, drinking games, guessing games. Open it on a phone or tablet, pick a game from the menu, type in the players, and the phone runs the game. In Spanish, English and Portuguese.
 
-The menu can be filtered by kind of game (words, logic, trivia, cards and dice); how many are playing is chosen inside each game. The filter lives in the link, so going back from a game keeps it and a filtered menu can be shared. A 🎲 **Random game** button rolls a 3D die over the menu, one game per face, and opens whichever lands on top: never The Cup, and only the filtered kind if a filter is on (D-188). Besides the games below, the menu offers The Cup's minigames on their own, for one player: Connections, Bulls and Cows: Word, What Year?, Where Is It?, Queens, Tango, Zip and Untangle. They play in all three languages.
+The menu can be filtered by kind of game (words, logic, trivia, cards and dice); how many are playing is chosen inside each game. The filter lives in the link, so going back from a game keeps it and a filtered menu can be shared. A 🎲 **Random game** button rolls a 3D die over the menu, one game per face, and opens whichever lands on top: never The Cup, and only the filtered kind if a filter is on (D-188). The games The Cup is made of (Connections, Bulls and Cows: Word, What Year?, Where Is It?, Queens, Tango, Zip and Untangle) are on the menu too, as games like any other: one player, in all three languages (D-197).
 
 **Play:** https://juegosdesalon.cl/
 
@@ -14,7 +14,7 @@ The menu can be filtered by kind of game (words, logic, trivia, cards and dice);
 
 ## Games
 
-The eight games come first; after them, The Cup's minigames, which also play on their own from the menu, one player and no cup.
+The games with their own section below come first; after them, the one-player games that also make up The Cup, each opening on its own page.
 
 <!-- generado: juegos · written by python3 tools/release/readme.py actualizar -->
 | Game | Players | Modes | Status |
@@ -27,14 +27,14 @@ The eight games come first; after them, The Cup's minigames, which also play on 
 | ⚓ [Battleship / Batalla Naval / Batalha Naval](#-battleship-batalla-naval) | 1 to 2 | One phone · Two phones · Versus the phone | v0.6 |
 | 🍹 [Julep / Julepe / Paga o Bolo](#-julep-julepe) | 1 to 6 | One phone · Several phones · Versus the phone | ⏸ paused |
 | 👑 [Fourth King / Cuarto Rey / Quarto Rei](#-fourth-king-cuarto-rey) | 4 to 6 | One phone | v0.27 |
-| 🔗 [Connections / Conexiones / Conexões](https://juegosdesalon.cl/minigames/conexiones/) | 1 | Play alone | Cup minigame |
-| 🔤 [Bulls and Cows: Word / Toque y Fama: Palabra / Toque e Fama: Palavra](https://juegosdesalon.cl/minigames/letras/) | 1 | Play alone | Cup minigame |
-| 📅 [What Year? / ¿En qué año? / Em que ano?](https://juegosdesalon.cl/minigames/anio/) | 1 | Play alone | Cup minigame |
-| 👑 [Queens / Reinas / Rainhas](https://juegosdesalon.cl/minigames/reinas/) | 1 | Play alone | Cup minigame |
-| ☀️ [Tango](https://juegosdesalon.cl/minigames/tango/) | 1 | Play alone | Cup minigame |
-| 〰️ [Zip](https://juegosdesalon.cl/minigames/zip/) | 1 | Play alone | Cup minigame |
-| 🧶 [Untangle / Desenredo / Desenrola](https://juegosdesalon.cl/minigames/desenredo/) | 1 | Play alone | Cup minigame |
-| 📍 [Where Is It? / ¿Dónde queda? / Onde fica?](https://juegosdesalon.cl/minigames/donde/) | 1 | Play alone | Cup minigame |
+| 🔗 [Connections / Conexiones / Conexões](https://juegosdesalon.cl/connections/) | 1 | Play alone | Also in The Cup |
+| 🔤 [Bulls and Cows: Word / Toque y Fama: Palabra / Toque e Fama: Palavra](https://juegosdesalon.cl/word/) | 1 | Play alone | Also in The Cup |
+| 📅 [What Year? / ¿En qué año? / Em que ano?](https://juegosdesalon.cl/year/) | 1 | Play alone | Also in The Cup |
+| 👑 [Queens / Reinas / Rainhas](https://juegosdesalon.cl/queens/) | 1 | Play alone | Also in The Cup |
+| ☀️ [Tango](https://juegosdesalon.cl/tango/) | 1 | Play alone | Also in The Cup |
+| 〰️ [Zip](https://juegosdesalon.cl/zip/) | 1 | Play alone | Also in The Cup |
+| 🧶 [Untangle / Desenredo / Desenrola](https://juegosdesalon.cl/untangle/) | 1 | Play alone | Also in The Cup |
+| 📍 [Where Is It? / ¿Dónde queda? / Onde fica?](https://juegosdesalon.cl/where/) | 1 | Play alone | Also in The Cup |
 <!-- /generado -->
 
 ---
@@ -74,7 +74,7 @@ Each player picks a secret number with no repeated digits and tries to crack the
 
 - **📱 One phone:** players pass the phone around, and the screen is covered between turns.
 - **📡 Two phones:** a room with a 4-letter code and a QR. Each phone keeps its own secret and answers the rival's guesses. At the end both reveal and everything is verified.
-- **🧍 Play alone:** The Cup's number minigame. The phone picks a 4-digit number and you get 10 guesses: 100 points on the first one and 10 less for each extra guess, with a clock and a record for your best score. Clues are spelled out in full ("2 famas, 1 toque").
+- **🧍 Play alone:** The Cup's number game. The phone picks a 4-digit number and you get 10 guesses: 100 points on the first one and 10 less for each extra guess, with a clock and a record for your best score. Clues are spelled out in full ("2 famas, 1 toque").
 - **💬 Room chat:** on two phones there is a chat to trash-talk while guessing, and it stays alive on the final screen to celebrate or ask for a rematch. New messages peek out next to the bubble.
 
 <!-- generado: capturas:toque-y-fama · written by python3 tools/release/readme.py actualizar -->
@@ -348,15 +348,15 @@ Spec and design: [docs/games/julep.md](docs/games/julep.md)
 </table>
 <!-- /generado -->
 
-**On the menu since D-175**, after a stint in the lab (D-101). The lab at [`/labs/`](https://juegosdesalon.cl/labs/) stays for testing: practice each minigame on its own, simulate a whole cup on one computer, or run a real 3-day cup with close friends. A 🐞 button sends bug reports and comments with their context, no login needed.
+**On the menu since D-175**, after a stint in the lab (D-101). The lab at [`/labs/`](https://juegosdesalon.cl/labs/) stays for testing: practice each game on its own, simulate a whole cup on one computer, or run a real 3-day cup with close friends. A 🐞 button sends bug reports and comments with their context, no login needed.
 
-Not a game but a **tournament that lasts a week**. Someone creates a cup and shares the link with the group; everyone joins with their name and a 4-digit PIN, from any phone or computer. Every day a different minigame opens, **the same one for everybody**, and it can be played **once**. Your score only matters against the others: the day hands out points by position (10, 8, 6, 5, 4, 3, 2, 1), so every day weighs the same (and every minigame scores 0 to 100 anyway, D-113) and one crushing day does not decide the cup (D-94). The final day is worth double, everyone gets one ×2 wildcard, and whoever has the most points on day 7 lifts the cup.
+Not a game but a **tournament that lasts a week**. Someone creates a cup and shares the link with the group; everyone joins with their name and a 4-digit PIN, from any phone or computer. Every day a different game opens, **the same one for everybody**, and it can be played **once**. Your score only matters against the others: the day hands out points by position (10, 8, 6, 5, 4, 3, 2, 1), so every day weighs the same (and every game scores 0 to 100 anyway, D-113) and one crushing day does not decide the cup (D-94). The final day is worth double, everyone gets one ×2 wildcard, and whoever has the most points on day 7 lifts the cup.
 
-It borrows what makes daily puzzles work (Wordle, Connections): same challenge for everyone, once a day, comparable scores, little luck, and a **share card** that shows how you did without giving the answer away. The minigames reuse the engines, decks and screens this app already had where it can.
+It borrows what makes daily puzzles work (Wordle, Connections): same challenge for everyone, once a day, comparable scores, little luck, and a **share card** that shows how you did without giving the answer away. The games reuse the engines, decks and screens this app already had where it can.
 
-**The admin picks the week** (D-163): when creating the cup, which minigames go in and in what order, starting from a random proposal (no two days of the same skill in a row) for anyone who would rather not think about it. It is Timeline's hand and line: drag a day to another spot in the week, or drag a game from the hand onto the day it replaces. There are ten to choose from: the six below plus Zip, Tango, Where is it? and Untangle. The Grand Final always closes the cup and does not change. Without a choice, this is the classic week:
+**The admin picks the week** (D-163): when creating the cup, which games go in and in what order, starting from a random proposal (no two days of the same skill in a row) for anyone who would rather not think about it. It is Timeline's hand and line: drag a day to another spot in the week, or drag a game from the hand onto the day it replaces. There are ten to choose from: the six below plus Zip, Tango, Where is it? and Untangle. The Grand Final always closes the cup and does not change. Without a choice, this is the classic week:
 
-| Day | Minigame | Skill |
+| Day | Game | Skill |
 |---|---|---|
 | 1 | ⏳ Timeline Flash: 10 milestones, played from a hand with the Timeline drag and drop | knowledge |
 | 2 | 🔢 Bulls and Cows: guess the number, with the Bulls and Cows keypad and notes | deduction |
@@ -366,7 +366,7 @@ It borrows what makes daily puzzles work (Wordle, Connections): same challenge f
 | 6 | 📅 What year was it?: closer is better, older gets more slack | estimation |
 | 7 | 🏁 The Grand Final: five short rounds, one of each, worth double | everything |
 
-The other four are **〰️ Zip**, **☀️ Tango**, **📍 Where is it?** and **🧶 Untangle**. Untangle is Simon Tatham's puzzle, where you drag knots until no thread crosses another, in ten levels of 6 to 15 knots against a four-minute clock, like Zip. The tangle is built from an untangled drawing, so it always has a solution, and a thread running over a knot counts as a crossing, so piling the knots up doesn't help (D-179). Where is it? gives you five cities, each with its country, and you drop a pin on a satellite-image globe with no names on it (NASA's Blue Marble, so deserts, jungles and ice look like themselves), which spins endlessly as you drag it: every city is worth up to 100 points, minus 4 per 100 km off. The cities are the capitals of every UN country and its two observers, plus famous and second-tier ones (529 in all), and the borders used to check them come from Natural Earth via `tools/generators/mapa.mjs` (D-155, D-159). **The minigames also play on their own from the main menu** (D-142), one player and no cup: Timeline Flash and the number game are the *play alone* modes of Timeline and Bulls and Cows, in all three languages, and the other eight (all but the final) have their own card, Where is it? included since D-174 and Untangle since D-190, open at `/minigames/<id>/` (no "cup" in a link that has nothing to do with one, D-149) and play in the player's language. Each of those pages is generated by `tools/release/og.mjs` with its own social card, so a link pasted in WhatsApp shows the minigame, not the cup (D-162). The cup does not invent its own UX (D-102): the timeline, the drag and drop and the keypad are the ones Timeline and Bulls and Cows already use, shared from `public/assets/`.
+The other four are **〰️ Zip**, **☀️ Tango**, **📍 Where is it?** and **🧶 Untangle**. Untangle is Simon Tatham's puzzle, where you drag knots until no thread crosses another, in ten levels of 6 to 15 knots against a four-minute clock, like Zip. The tangle is built from an untangled drawing, so it always has a solution, and a thread running over a knot counts as a crossing, so piling the knots up doesn't help (D-179). Where is it? gives you five cities, each with its country, and you drop a pin on a satellite-image globe with no names on it (NASA's Blue Marble, so deserts, jungles and ice look like themselves), which spins endlessly as you drag it: every city is worth up to 100 points, minus 4 per 100 km off. The cities are the capitals of every UN country and its two observers, plus famous and second-tier ones (529 in all), and the borders used to check them come from Natural Earth via `tools/generators/mapa.mjs` (D-155, D-159). **The games also play on their own from the main menu** (D-142), one player and no cup: Timeline Flash and the number game are the *play alone* modes of Timeline and Bulls and Cows, in all three languages, and the other eight (all but the final) have their own card, Where is it? included since D-174 and Untangle since D-190, open at `/<slug>/` like any other game (`/queens/`, `/tango/`…; no "cup" in a link that has nothing to do with one, D-149, D-197) and play in the player's language. Each of those pages is generated by `tools/release/og.mjs` with its own social card, so a link pasted in WhatsApp shows the game, not the cup (D-162). The cup does not invent its own UX (D-102): the timeline, the drag and drop and the keypad are the ones Timeline and Bulls and Cows already use, shared from `public/assets/`.
 
 - **Everything comes from a seed** (`code:day`), so everyone plays exactly the same content with no server (D-97).
 - **A day stays open until the next midnight** (a grace day), except the final. **Late sign-ups** are open until the final unless the admin closes them or the cup is full (ten players); a late player gets 0 for the days already closed, and the warning shows from day 3 on, because on day 2 day 1 is still in its grace day (D-177). Time only breaks ties, and it is *active* time: it pauses while the screen is hidden (D-95).
@@ -401,7 +401,7 @@ Spec and design: [docs/games/cup.md](docs/games/cup.md)
   **image plus its text**, from whichever button: the image carries the same header on top and
   the same link at the bottom, so forwarded on its own it still says which cup, which day or
   which game it is. **The text never repeats the image** (D-171): it carries the header, only what the image cannot say (who is still missing, the medals, the dare) and the link. Invitations (a room, a cup, the app) go as text only: the link brings its own
-  social card. Results of playing a minigame alone (on its own page, or in Bulls and Cows and
+  social card. Results of playing a game alone (on its own page, or in Bulls and Cows and
   Timeline) share the same result image, with a "can you beat me?" and the game's link. With no
   share sheet (a computer), the image is downloaded and the text copied.
 - **Saved games:** every game stores its state on the device and offers to continue.
@@ -409,7 +409,7 @@ Spec and design: [docs/games/cup.md](docs/games/cup.md)
 
 ### Languages
 
-The whole experience is translated: the menu and its footer lines, the eight games with all their modes, the Cup's minigames, the rooms, the chat, the transport errors, the "pass the phone" screens and the cards of every Timeline theme. Portuguese is the Brazilian one, informal, and the names are translated the same way as in English:
+The whole experience is translated: the menu and its footer lines, every game with all its modes, the rooms, the chat, the transport errors, the "pass the phone" screens and the cards of every Timeline theme. Portuguese is the Brazilian one, informal, and the names are translated the same way as in English:
 
 <!-- generado: idiomas · written by python3 tools/release/readme.py actualizar -->
 | Español | English | Português |
@@ -439,7 +439,7 @@ How it is put together (canon C-3):
   🇨🇱 ES · 🇬🇧 EN · 🇧🇷 PT toggle and holds the shared text (`COMMON`): the menu and what goes out
   when somebody shares the app, plus the strings every game repeats word for word — the room
   invitation (D-173, D-165), the "or" between creating a room and joining one, and the shared
-  result of playing a minigame alone.
+  result of playing a game alone.
 - Each game keeps its text in `LOCALES = { es, en, pt }` inside its `rules.js`. There is not a
   single literal string in `game.js`. Fixed HTML text is marked with `data-i18n`.
 - The menu registry (`games.js`), the 100 footer lines (`frases.js`) and every Timeline card
@@ -493,7 +493,7 @@ of the chat only the number of messages is shown, never what they say (D-138).
 
 It has three views: a summary, **La Copa** and the other **games**. La Copa is measured from its
 own tournament data, so the dashboard shows at any moment which cups are running, today's
-minigame in each one, who already played it and who is playing it right now; and, per minigame,
+game in each one, who already played it and who is playing it right now; and, per game,
 how many were finished or left unfinished, the average score and the typical time. The games view
 counts one-sitting games without La Copa's days.
 
@@ -624,7 +624,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   index.html                  Main menu (generated from assets/js/games.js)
   en/ · pt/                   Language doors: they set the language and send you to the menu
   cup/                        The Cup: tournament engine, stores (Firebase and local test), desglose.js (score breakdown), planilla.js (final table as CSV), reportes.js (auth-free bug reports), demo.js (lab demos)
-    games/                    The minigames: one folder each (engine.js + ui.js + its own word content in each language); solo.js mounts one as the play-alone mode of another game
+    games/                    The games: one folder each (engine.js + ui.js + its own word content in each language); solo.js mounts one as the play-alone mode of another game
   timeline/                   Timeline (engine.js + tests, game.js, rules.js, decks/)
   bulls-and-cows/             Bulls and Cows (engine.js + tests, game.js, rules.js)
   hangman/                    Hangman (engine.js + tests, game.js, rules.js, decks/)
@@ -632,7 +632,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   battleship/                 Battleship (engine.js + tests, game.js, rules.js, flota.js: the pixel art)
   julep/                      Julep (engine.js + tests, game.js, rules.js)
   fourth-king/                Fourth King (game.js, rules.js)
-  minigames/                  The cup's minigames played on their own, one page each (generated)
+  connections/ · queens/ …    The Cup's games played on their own, one page each (generated from cup/suelto/)
   labs/                       The lab: games being tested before they reach the menu (not linked, not indexed); labs/de/ is the German lab
   panel/                      Private owner dashboard: summary, The Cup and games views (Google sign-in; see docs/PANEL.md)
   assets/css/                 Shared styles: base.css (party theme), linea.css (timeline), teclado.css (keypad)

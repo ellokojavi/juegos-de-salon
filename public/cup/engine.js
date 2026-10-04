@@ -1,7 +1,7 @@
 /**
  * La Copa — motor del torneo (sin DOM). Testeable con node.
  *
- * Un torneo de 3 o 7 días entre amigos: cada día un minijuego idéntico para todos, que se
+ * Un torneo de 3 o 7 días entre amigos: cada día un juego idéntico para todos, que se
  * juega una vez y reparte puntos por posición (ver docs/games/cup.md).
  *
  * Todo lo de acá son funciones puras sobre los datos de la copa tal como vienen del
@@ -19,7 +19,7 @@ export const CALENDARIOS = {
 };
 export const MODALIDADES = Object.keys(CALENDARIOS).map(Number);
 
-/** Los minijuegos que el admin puede poner en los días antes de la final (D-163). */
+/** Los juegos que el admin puede poner en los días antes de la final (D-163). */
 export const POZO = ['linea', 'numero', 'conexiones', 'reinas', 'letras', 'anio', 'zip', 'tango', 'donde', 'desenredo'];
 
 /** ¿Es un calendario que se puede jugar? Juegos del pozo sin repetir, y la final al último. */
@@ -203,7 +203,7 @@ export function nuevaMeta({ nombre, dias, inicio, tz = ZONA, admin, creada, lab 
   };
 }
 
-/** Los minijuegos que salieron (D-102) se juegan como sus reemplazos, para no romper copas viejas. */
+/** Los juegos que salieron (D-102) se juegan como sus reemplazos, para no romper copas viejas. */
 const REEMPLAZOS = { solitario: 'reinas', dudo: 'letras' };
 export const calendario = meta => String(meta.cal || '').split(',').map(id => REEMPLAZOS[id] || id);
 export const juegoDelDia = (meta, d) => calendario(meta)[d - 1] || null;
@@ -325,7 +325,7 @@ export function activos(L) {
 }
 
 /**
- * Las posiciones de un día. Manda el puntaje del minijuego; a igual puntaje, el menor tiempo.
+ * Las posiciones de un día. Manda el puntaje del juego; a igual puntaje, el menor tiempo.
  * Si empatan en las dos cosas, comparten la mejor posición.
  */
 export function posicionesDelDia(resultados = {}, pids) {

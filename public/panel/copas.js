@@ -4,7 +4,7 @@
  *
  * Entra `torneos/` tal como está en la base: por código, `meta`, `players`, `started/<día>`,
  * `results/<día>` y `wild`. No hace falta ninguna señal aparte: el calendario de cada copa
- * dice qué minijuego tocó cada día, y cada resultado trae su puntaje (`s`), su tiempo (`ms`)
+ * dice qué juego tocó cada día, y cada resultado trae su puntaje (`s`), su tiempo (`ms`)
  * y su hora (`at`). Las reglas de la copa (qué día va, quién va primero) salen del motor de
  * la copa y no se repiten acá.
  *
@@ -15,7 +15,7 @@ import { juegoDelDia, diaActual, terminada, abierto, cerrado, activos, tabla, in
 import { dayOf } from './aggregate.js';
 
 /**
- * Cuánto se da por "jugando ahora" a quien tocó Empezar y no ha terminado. Un minijuego se
+ * Cuánto se da por "jugando ahora" a quien tocó Empezar y no ha terminado. Un juego se
  * juega en minutos; pasada media hora sin resultado, lo más probable es que lo haya dejado.
  */
 export const JUGANDO_MS = 30 * 60 * 1000;
@@ -41,7 +41,7 @@ export function copasDe(torneos) {
 
 /**
  * ¿Le tocaba jugar el día `d` a este jugador? Quien se inscribió después de que ese día cerró
- * no pudo jugarlo: no cuenta como minijuego que faltó.
+ * no pudo jugarlo: no cuenta como juego que faltó.
  */
 const debia = (m, d, j) => !(typeof j.at === 'number' && j.at >= m.win[d].b);
 
@@ -53,7 +53,7 @@ export function ultimoResultado(L) {
 }
 
 /**
- * Qué pasa en una copa ahora: en qué día va, qué minijuego toca, quién lo jugó, quién lo está
+ * Qué pasa en una copa ahora: en qué día va, qué juego toca, quién lo jugó, quién lo está
  * jugando, quién va primero y cuánto se ha jugado de lo que había para jugar.
  *
  * Puede haber más de un día abierto a la vez (el de ayer se puede jugar hasta el fin de hoy),
@@ -89,7 +89,7 @@ export function estadoCopa(L, now = Date.now()) {
   } : null;
   if (hoy) hoy.jugaron = hoy.jugadores.filter(j => j.jugo).length;
 
-  // De los días que ya cerraron, cuántos minijuegos se jugaron de los que se podían jugar
+  // De los días que ya cerraron, cuántos juegos se jugaron de los que se podían jugar
   let esperado = 0, jugado = 0;
   for (let d = 1; d <= m.days; d++) {
     if (!cerrado(m, d, now)) continue;
@@ -133,13 +133,13 @@ const mediana = xs => {
 /**
  * Las cifras de La Copa en un rango de días (números de día, como el resto del panel).
  *
- * - Una **jugada** es un minijuego terminado: un resultado cuya hora cae en el rango.
- * - Un **abandono** es un minijuego empezado que no terminó: tocó Empezar y no dejó resultado,
+ * - Una **jugada** es un juego terminado: un resultado cuya hora cae en el rango.
+ * - Un **abandono** es un juego empezado que no terminó: tocó Empezar y no dejó resultado,
  *   y ya no lo está jugando (el día cerró o pasó media hora).
- * - La **participación** es cuántos minijuegos se jugaron de los que se podían jugar: en cada
+ * - La **participación** es cuántos juegos se jugaron de los que se podían jugar: en cada
  *   día cerrado de cada copa, uno por jugador inscrito antes de que ese día cerrara.
  *
- * Por minijuego salen jugadas, abandonos, puntaje promedio (0 a 100) y tiempo mediano: el
+ * Por juego salen jugadas, abandonos, puntaje promedio (0 a 100) y tiempo mediano: el
  * promedio del tiempo lo arrastra una sola persona que dejó el celular media hora encendido.
  */
 export function resumenCopas(torneos, { from, to }, now = Date.now()) {
@@ -184,7 +184,7 @@ export function resumenCopas(torneos, { from, to }, now = Date.now()) {
     }
   }
 
-  const porMinijuego = Object.values(mini).map(c => ({
+  const porJuego = Object.values(mini).map(c => ({
     id: c.id, jugadas: c.jugadas, abandonos: c.abandonos, copas: c.copas.size,
     promedio: c.jugadas ? Math.round(c.suma / c.jugadas) : null, medianaMs: mediana(c.tiempos),
   })).sort((a, b) => b.jugadas - a.jugadas || b.abandonos - a.abandonos || a.id.localeCompare(b.id));
@@ -195,7 +195,7 @@ export function resumenCopas(torneos, { from, to }, now = Date.now()) {
   return {
     copas: enRango.length,
     nuevas: enRango.filter(L => enElRango(L.meta.createdAt)).length,
-    inscripciones, jugadas, abandonos, participacion: { jugado, esperado }, porMinijuego, porDia,
+    inscripciones, jugadas, abandonos, participacion: { jugado, esperado }, porJuego, porDia,
   };
 }
 
@@ -209,7 +209,7 @@ export function bitacoraCopas(torneos, { from, to }, now = Date.now()) {
 /** Porcentaje entero, o `null` si no había nada que jugar todavía. */
 export const pct = ({ jugado, esperado }) => (esperado ? Math.round((jugado / esperado) * 100) : null);
 
-/** "2:15" o "1:02:15": el tiempo de un minijuego. */
+/** "2:15" o "1:02:15": el tiempo de un juego. */
 export function duracion(ms) {
   const s = Math.round((Number(ms) || 0) / 1000);
   const h = Math.floor(s / 3600), mm = Math.floor((s % 3600) / 60), ss = s % 60;

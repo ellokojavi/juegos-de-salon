@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.94.0 — 2026-10-03
+- **Ya no hay minijuegos** (D-197): Conexiones, Reinas, Tango, Zip, Desenredo, ¿Dónde queda?,
+  ¿En qué año? y Toque y Fama: Palabra son juegos como los demás. Viven en la raíz (`/queens/`,
+  `/tango/`, `/connections/`…) y los links con `/minigames/` siguen andando. La Copa dice "un
+  juego distinto cada día" en los cuatro idiomas, y el panel y el laboratorio alemán los muestran
+  en una sola lista.
+- `og.mjs imagenes` guardaba las tarjetas en `assets/og/` en vez de `public/assets/og/` desde la
+  mudanza a `public/`: ahora las deja donde se publican.
+
 ## 0.93.0 — 2026-10-03
 - **Portada: los filtros quedan pegados arriba** (D-196). Al bajar por la lista, los tipos de
   juego (Palabras, Lógica, Cultura, Cartas/Dados) se quedan a mano. Elegir uno desde abajo lleva

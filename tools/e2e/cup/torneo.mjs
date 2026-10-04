@@ -78,7 +78,7 @@ async function sentarse(code, nombre, pin) {
   await click('#btn-sentarse'); await sleep(500);
 }
 
-/* ---------- Cómo juega cada uno cada minijuego. `nivel` de 0 (mal) a 2 (perfecto). ---------- */
+/* ---------- Cómo juega cada uno cada juego. `nivel` de 0 (mal) a 2 (perfecto). ---------- */
 
 /** Cierra el veredicto de Línea (el acierto se cierra solo; el error espera un toque). */
 const cerrarVeredicto = async () => { await sleep(150); await ev(`(()=>{const h=document.getElementById('handoff');if(!h.hidden)h.click();return 1})()`); await sleep(380); };
@@ -370,7 +370,7 @@ await ev(`(()=>{const o=[...document.querySelectorAll('#crear-body .opcion')];o[
   const propuesta = await cal();
   ok(!await ev(`document.getElementById('crear-juegos').hidden`) && propuesta.length === n - 1 && new Set(propuesta).size === n - 1
     && /La Gran Final/.test(await ev(`document.querySelector('#cal-elegir .event.fija').textContent`)), `al elegir la duración aparece una propuesta al azar de ${n - 1} juegos, con la final al último (${propuesta.join(', ')})`);
-  // Del pozo de verdad: un minijuego nuevo no rompe la cuenta (C-16)
+  // Del pozo de verdad: un juego nuevo no rompe la cuenta (C-16)
   ok((await fuera()).length === POZO.length - (n - 1), 'los que no entraron quedan fuera, en la mano');
   const altoAyuda = () => ev(`Math.round(document.querySelector('#crear-juegos .cal-estado').getBoundingClientRect().height)`);
   const alto0 = await altoAyuda();
@@ -564,7 +564,7 @@ for (let d = 1; d <= dias; d++) {
     await click('#msg-hoy'); await sleep(100);
     console.log('  recordatorio:', JSON.stringify(await ev('window.__compartido.at(-1)?.text')));
     ok(/Falta por jugar hoy: Pancho\./.test(await ev('window.__compartido.at(-1)?.text')), 'el recordatorio dice quién falta');
-    ok(/\n\n⏳ Hoy toca Línea Relámpago\.\n/.test(await ev('window.__compartido.at(-1)?.text')), 'el recordatorio abre la línea con el emoji del minijuego, no a mitad de frase (dilema #114)');
+    ok(/\n\n⏳ Hoy toca Línea Relámpago\.\n/.test(await ev('window.__compartido.at(-1)?.text')), 'el recordatorio abre la línea con el emoji del juego, no a mitad de frase (dilema #114)');
     await click('#msg-tabla'); await sleep(1200);
     console.log('  tabla parcial:', JSON.stringify(await ev('window.__compartido.at(-1)?.text')));
     // La tabla del admin es la misma del tablero: imagen y texto, con la misma cabecera (D-165)
@@ -613,7 +613,7 @@ ok(!/ pts$|^🏆 /m.test(await ev('window.__compartido.at(-1)?.text || ""')), 'e
 ok(await ev('window.__compartido.at(-1)?.files?.[0]?.name') === 'copa-oficina-tabla-final.png', 'el resumen final del admin va con la imagen de la tabla final');
 
 
-/* ---------- El laboratorio (D-101): la página, la práctica de cada minijuego y los reportes ---------- */
+/* ---------- El laboratorio (D-101): la página, la práctica de cada juego y los reportes ---------- */
 
 await b.go(`${SITIO}/`, 1500);
 const tarjeta = await ev(`(()=>{const c=[...document.querySelectorAll('.game-card')].find(x=>x.textContent.includes('La Copa'));return JSON.stringify({soon:c.classList.contains('soon'),href:c.getAttribute('href'),rotulo:c.querySelector('.proximamente')?.textContent})})()`).then(JSON.parse);
@@ -624,15 +624,15 @@ await b.go(`${BASE}?labs`, 1500);
 ok(await ev(`document.getElementById('btn-menu').href`) === `${SITIO}/labs/`, 'La Copa con ?labs vuelve al laboratorio');
 await b.go(`${SITIO}/labs/`, 1500);
 // El pozo más la final, y el más nuevo entre ellos
-ok(await ev(`document.querySelectorAll('#minis .mini-juego').length`) === POZO.length + 1 && await ev(`!!document.querySelector('#minis [data-id="desenredo"]')`), `el laboratorio ofrece los ${POZO.length + 1} minijuegos (con Desenredo)`);
+ok(await ev(`document.querySelectorAll('#minis .mini-juego').length`) === POZO.length + 1 && await ev(`!!document.querySelector('#minis [data-id="desenredo"]')`), `el laboratorio ofrece los ${POZO.length + 1} juegos (con Desenredo)`);
 await b.shot('10-labs');
-// Los minijuegos con página propia se practican ahí, para que el link traiga su tarjeta (D-164)
-ok(await ev(`document.querySelector('#minis [data-id="donde"]').getAttribute('href')`) === '../minigames/where/?labs'
+// Los juegos con página propia se practican ahí, para que el link traiga su tarjeta (D-164)
+ok(await ev(`document.querySelector('#minis [data-id="donde"]').getAttribute('href')`) === '../where/?labs'
   && await ev(`document.querySelector('#minis [data-id="linea"]').getAttribute('href')`) === '../cup/?practica=linea&labs', 'laboratorio: ¿Dónde queda? abre su página; Línea Relámpago sigue en /cup/');
 ok(await ev(`document.querySelector('#minis [data-id="zip"] span').classList.contains('emoji-claro')`), 'laboratorio: el 〰️ de Zip lleva contorno claro');
 await b.go(`${BASE}?practica=tango&prueba&labs&semilla=KQRST`, 1500); await preparar();
-ok(await ev(`location.pathname + location.search`) === '/minigames/tango/?labs&prueba&semilla=KQRST', 'laboratorio: el link viejo va a la página del minijuego con su semilla');
-ok(!!await ev(`document.getElementById('btn-ensayo')`) && await ev(`document.getElementById('btn-menu').href`) === `${SITIO}/labs/`, 'laboratorio: en la página del minijuego sigue la sesión de prueba y se vuelve al laboratorio');
+ok(await ev(`location.pathname + location.search`) === '/tango/?labs&prueba&semilla=KQRST', 'laboratorio: el link viejo va a la página del juego con su semilla');
+ok(!!await ev(`document.getElementById('btn-ensayo')`) && await ev(`document.getElementById('btn-menu').href`) === `${SITIO}/labs/`, 'laboratorio: en la página del juego sigue la sesión de prueba y se vuelve al laboratorio');
 // Arrastrar desde una casilla vacía pinta X en las vacías (D-166) y desde una X las borra (D-168),
 // con mouse y con el dedo, sin
 // estorbar al toque (reina) ni al toque largo (X)
@@ -699,33 +699,35 @@ await click('#btn-rendirse'); await sleep(300);
 ok(await ev(`document.querySelectorAll('.rej.reina').length`) > 0 && !!await ev(`document.getElementById('btn-fin')`), 'Reinas: al rendirse se ve la solución');
 await click('#btn-fin'); await sleep(500);
 ok(/^0/.test(await ev(`document.querySelector('.score-big')?.textContent || ''`)), 'Reinas: rendirse vale 0 puntos');
-// Desde la portada (D-142) la práctica es el minijuego suelto: sin prueba ni semilla, y vuelve al menú.
-// Vive en /minigames/<id>/ (D-149, D-162): un link viejo a /cup/?practica= sin &labs se va para allá.
+// Desde la portada (D-142) la práctica es el juego suelto: sin prueba ni semilla, y vuelve al menú.
+// Vive en /<slug>/ (D-149, D-162, D-197): un link viejo a /cup/?practica= sin &labs se va para allá.
 await b.go(`${BASE}?practica=conexiones&prueba`, 1500); await preparar();
-ok(await ev(`location.pathname + location.search`) === '/minigames/connections/?prueba', 'minijuego suelto: el link viejo de la copa lleva a /minigames/connections/');
+ok(await ev(`location.pathname + location.search`) === '/connections/?prueba', 'juego suelto: el link viejo de la copa lleva a /connections/');
 ok(!await ev(`document.getElementById('btn-ensayo')`) && await ev(`document.getElementById('btn-menu').href`) === `${SITIO}/`
-  && await ev(`[...document.querySelectorAll('#jugar-body a')].some(a => a.href === '${SITIO}/')`), 'minijuego suelto: sin prueba y de vuelta al menú');
-// Su página trae su propia tarjeta social: un link compartido muestra el minijuego, no La Copa (D-162)
-ok(/\/assets\/og\/conexiones\.jpg/.test(await ev(`document.querySelector('meta[property="og:image"]')?.content || ''`)), 'minijuego suelto: su página trae su propia tarjeta social');
-ok(!/copa/i.test(await ev(`location.href + ' ' + document.title`)), 'minijuego suelto: ni el link ni el título dicen copa');
-ok(!await ev(`document.body.innerText.includes('empatas')`), 'minijuego suelto: no habla de empates, no hay con quién (dilema #72)');
+  && await ev(`[...document.querySelectorAll('#jugar-body a')].some(a => a.href === '${SITIO}/')`), 'juego suelto: sin prueba y de vuelta al menú');
+// Su página trae su propia tarjeta social: un link compartido muestra el juego, no La Copa (D-162)
+ok(/\/assets\/og\/conexiones\.jpg/.test(await ev(`document.querySelector('meta[property="og:image"]')?.content || ''`)), 'juego suelto: su página trae su propia tarjeta social');
+ok(!/copa/i.test(await ev(`location.href + ' ' + document.title`)), 'juego suelto: ni el link ni el título dicen copa');
+ok(!await ev(`document.body.innerText.includes('empatas')`), 'juego suelto: no habla de empates, no hay con quién (dilema #72)');
 // El 🐞 del resultado abre el formulario y vuelve al resultado (la página suelta necesita su pantalla)
-// El link de antes (/minigames/?reinas) se va a la página propia
+// Los links de antes (/minigames/?reinas, /minigames/queens/) se van a la página propia
 await b.go(`${SITIO}/minigames/?reinas&prueba`, 1500); await preparar();
-ok(await ev(`location.pathname + location.search`) === '/minigames/queens/?prueba', 'minijuego suelto: /minigames/?reinas lleva a /minigames/queens/');
+ok(await ev(`location.pathname + location.search`) === '/queens/?prueba', 'juego suelto: /minigames/?reinas lleva a /queens/');
+await b.go(`${SITIO}/minigames/queens/?prueba`, 1500); await preparar();
+ok(await ev(`location.pathname + location.search`) === '/queens/?prueba', 'juego suelto: /minigames/queens/ lleva a /queens/');
 await click('#btn-empezar'); await sleep(300); await esperarCuenta();
 await click('#btn-rendirse'); await sleep(300); await click('#btn-fin'); await sleep(800);
 await click('#btn-reporte'); await sleep(300);
-ok(await ev(`document.querySelector('.screen.active')?.id`) === 'screen-reporte' && !!await ev(`document.getElementById('btn-enviar-reporte')`), 'minijuego suelto: el 🐞 del resultado abre el formulario');
+ok(await ev(`document.querySelector('.screen.active')?.id`) === 'screen-reporte' && !!await ev(`document.getElementById('btn-enviar-reporte')`), 'juego suelto: el 🐞 del resultado abre el formulario');
 await ev(`[...document.querySelectorAll('#reporte-body .btn--ghost')].at(-1).click()`); await sleep(300);
-ok(await ev(`document.querySelector('.screen.active')?.id`) === 'screen-resultado', 'minijuego suelto: cancelar el reporte vuelve al resultado');
+ok(await ev(`document.querySelector('.screen.active')?.id`) === 'screen-resultado', 'juego suelto: cancelar el reporte vuelve al resultado');
 for (const id of ['linea', 'numero', 'conexiones', 'reinas', 'letras', 'zip', 'desenredo', 'tango', 'anio', 'donde', 'final']) {
   // Zip con semilla fija: el chequeo del aviso busca un trazo que llegue al final sin cubrir todo.
   // Desenredo con reloj corto también: dos niveles resueltos y el tiempo se acaba en el tercero
 await b.go(`${BASE}?practica=${id}&prueba&labs${id === 'zip' ? '&zipSeg=12&semilla=KQRST' : id === 'desenredo' ? '&zipSeg=25&semilla=KQRST' : ''}`, 1200); await preparar();
   ok(await ev(`!!document.getElementById('btn-ensayo')`) , `práctica de ${id}: la antesala ofrece la prueba como en la copa`);
   if (id === 'donde') {
-    // La portada es el globo girando solo (y los demás minijuegos siguen con su emoji)
+    // La portada es el globo girando solo (y los demás juegos siguen con su emoji)
     const cuadro = () => ev(`document.querySelector('.intro-hero .globo-portada canvas:last-child')?.toDataURL().length + ':' + document.querySelector('.intro-hero .globo-portada canvas:last-child')?.toDataURL().slice(-200)`);
     const c1 = await cuadro(); await sleep(700); const c2 = await cuadro();
     ok(!c1.startsWith('undefined') && c1 !== c2, '¿Dónde queda?: la portada es un globo que gira');
