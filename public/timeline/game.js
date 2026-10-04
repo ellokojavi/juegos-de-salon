@@ -1,0 +1,959 @@
+/**
+ * Línea de Tiempo — lógica de juego.
+ * Reductor de mensajes único para los modos con varios jugadores (canon C-7):
+ *  - local: 2 a 6 jugadores en este celular · online: varios celulares
+ * El estado se deriva de la semilla del mazo más las jugadas, así que no hacen falta respuestas.
+ *
+ * Jugar solo es la ⏳ Línea Relámpago de La Copa (D-142): no pasa por el reductor, la monta
+ * cup/games/solo.js con la pantalla de cup/games/timeline/ui.js. Ver la sección "Jugar solo".
+ */
+import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../assets/js/ui.js';
+import { botonInvitar, botonResultadoSolo } from '../assets/js/compartir.js';
+import { gameById } from '../assets/js/games.js';
+import { getLang, langToggle, applyStatic, COMMON, withLang, SITIO } from '../assets/js/i18n.js';
+import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
+import { failWith } from '../assets/js/transport/errors.js';
+import { showHandoff, passBlock } from '../assets/js/handoff.js';
+import { createChat } from '../assets/js/chat.js';
+import { createLocalTransport } from '../assets/js/transport/local.js';
+import { trackStart } from '../assets/js/transport/stats.js';
+import { createSessionStore, createNameStore } from '../assets/js/session.js';
+import { crearArrastre } from '../assets/js/arrastre.js';
+import { buildState, correctSlot, randomSeed, yearLabel, timeLabel } from './engine.js';
+import { generar as generarLinea, CARTAS as CARTAS_SOLO } from '../cup/games/timeline/engine.js';
+import * as uiLinea from '../cup/games/timeline/ui.js';
+import { jugarSolo, crearRecord, mmss } from '../cup/games/solo.js';
+import { codigoAlAzar } from '../cup/engine.js';
+import { DECKS, getDeck } from './decks/index.js';
+import { GAME_ID, DEFAULT_CONFIG, HAND_SIZES, MIN_PLAYERS, MAX_PLAYERS, VISIBLE, SPREAD_FACTOR, LOCALES } from './rules.js';
+
+const lang = getLang();
+const T = LOCALES[lang];
+const fmt = (s, vars = {}) => s.replace(/\{(\w+)\}/g, (_, k) => (vars[k] !== undefined ? vars[k] : `{${k}}`));
+const ROLES = ['A', 'B', 'C', 'D', 'E', 'F'];
+const store = createSessionStore(GAME_ID);
+const nameStore = createNameStore(GAME_ID);
+/**
+ * Récord de jugar solo, por temática: el mejor puntaje y, a igualdad, el menor tiempo (D-142).
+ * Clave propia: el récord del solitario viejo (por intentos, `…:record`) no se compara con este.
+ */
+const recordSolo = crearRecord(`juegos-de-salon:${GAME_ID}:record-relampago`);
+
+/**
+ * Formas de repartir que ofrece la pantalla de configuración, en el orden en que se muestran.
+ * `spread` despliega el doble de la meta desde el primer turno y no repone nada (D-43).
+ */
+const tableSize = config => (config.spread ? SPREAD_FACTOR * config.handSize : VISIBLE);
+const CARD_MODES = [
+  { id: 'all', emoji: '🗂', shared: true, spread: true, label: () => T.modeAll, hint: c => fmt(T.allHint, { n: tableSize(c) }) },
+  { id: 'pool', emoji: '🃏', shared: true, spread: false, label: () => T.modeShared, hint: () => fmt(T.sharedHint, { n: VISIBLE }) },
+  { id: 'own', emoji: '🙋', shared: false, spread: false, label: () => T.modeOwn, hint: () => T.ownHint },
+];
+const cardModeOf = config => (config?.shared ? (config.spread ? CARD_MODES[0] : CARD_MODES[1]) : CARD_MODES[2]);
+
+const SEEN_KEY = `juegos-de-salon:${GAME_ID}:vistas`;
+/** Cartas que quedan disponibles como mínimo al excluir las vistas hace poco. */
+const MIN_DISPONIBLES = 70;
+/**
+ * Cartas vistas hace poco, por temática (D-34). Al armar una partida se excluyen las
+ * más recientes, así jugar diez veces seguidas no repite siempre los mismos hitos.
+ * La lista viaja en la config, de modo que todos los celulares de la sala excluyen lo mismo.
+ */
+const seen = {
+  all() { try { return JSON.parse(localStorage.getItem(SEEN_KEY) || '{}'); } catch (_) { return {}; } },
+  add(theme, ids) {
+    try {
+      const all = this.all();
+      const antes = (all[theme] || []).filter(id => !ids.includes(id));
+      all[theme] = [...antes, ...ids].slice(-200);
+      localStorage.setItem(SEEN_KEY, JSON.stringify(all));
+    } catch (_) { /* sin memoria, se juega igual */ }
+  },
+  recent(theme) {
+    const total = getDeck(theme).cards.length;
+    const max = Math.max(0, total - MIN_DISPONIBLES);
+    return (this.all()[theme] || []).slice(-max);
+  },
+};
+/** Config lista para empezar: semilla nueva y las cartas recién vistas fuera. */
+const freshConfig = config => ({ ...config, seed: randomSeed(), skip: seen.recent(config.theme) });
+
+let S = null;   // sesión: modo, transporte, roles locales, selección de la interfaz
+let M = null;   // partida: config, nombres y jugadas
+let chat = null; // chat de sala: solo en varios celulares (canon C-15)
+
+/* ------------------------------------------------------------------ */
+/* Estado                                                              */
+/* ------------------------------------------------------------------ */
+function newMatch(config) {
+  // `players` viene en la configuración salvo en varios celulares, donde lo fija el anfitrión con `start`.
+  return { config, players: config.players || null, names: {}, moves: [], rematch: {}, presence: {}, seen: new Set() };
+}
+
+function apply(msg) {
+  if (msg.id && M.seen.has(msg.id)) return; if (msg.id) M.seen.add(msg.id);
+  switch (msg.t) {
+    case 'hello': M.names[msg.from] = msg.name; break;
+    case 'start': {
+      if (M.players || msg.from !== 'A') return;                  // solo el anfitrión y una vez
+      const order = (msg.order || []).filter(r => M.names[r]);
+      if (order.length >= MIN_PLAYERS) M.players = order;
+      break;
+    }
+    case 'place': {
+      const v = view();
+      if (v.lobby || v.done || v.current !== msg.from) return;    // sin empezar o fuera de turno
+      if (!v.hands[msg.from]?.includes(msg.card)) return;         // carta que no tiene
+      // Ojo: `at` es campo reservado del transporte (marca de tiempo), la ranura viaja como `slot`
+      if (!(msg.slot >= 0 && msg.slot <= v.line.length)) return;  // ranura inválida
+      // `ms`: lo que tardó el jugador en responder. Sirve para desempatar al final (D-31).
+      M.moves.push({ from: msg.from, card: msg.card, at: msg.slot, ms: Number.isFinite(msg.ms) ? msg.ms : 0 });
+      break;
+    }
+    case 'rematch': if (!M.rematch[msg.from]) M.rematch[msg.from] = msg.code || true; break;
+    // El chat no es parte del estado de la partida: se dibuja y se olvida (canon C-15)
+    case 'chat': if (chat) chat.add(msg, { live: !!S?.live }); return 'chat';
+  }
+  return null;
+}
+
+/** Vista derivada: manos, línea, turno, ganador. Sin jugadores fijados, la partida aún no empieza. */
+function view() {
+  if (!M.players) return { lobby: true, done: false };
+  const fuera = M.config.skip && M.config.skip.length ? new Set(M.config.skip) : null;
+  const cards = fuera ? getDeck(M.config.theme).cards.filter(c => !fuera.has(c.id)) : getDeck(M.config.theme).cards;
+  const st = buildState({ cards, seed: M.config.seed, players: M.players, handSize: M.config.handSize, moves: M.moves, shared: !!M.config.shared, visible: tableSize(M.config), refill: !M.config.spread });
+  return { ...st, cards };
+}
+
+/* ------------------------------------------------------------------ */
+/* Sesión                                                              */
+/* ------------------------------------------------------------------ */
+function startSession({ mode, transport, roles, config, names, code = null, role = null }) {
+  // Cambiar de sala (la revancha crea una nueva) es irse de la anterior para siempre: se
+  // despide en vez de solo soltar los oyentes, así no queda una sala muerta viéndose viva.
+  if (S?.transport) S.transport.dispose();
+  S = { mode, transport, roles, code, role, uiRole: null, selCard: null, selSlot: null, lastShown: -1, live: false };
+  M = newMatch(config);
+  setupChat(mode);
+  // Lo que llega en los primeros instantes es la historia de la sala que se relee al entrar:
+  // se dibuja en el chat, pero sin sonido ni globito de no leídos.
+  const sess = S;
+  setTimeout(() => { if (S === sess) S.live = true; }, 1500);
+  Object.entries(names).forEach(([r, name]) => { if (name) transport.send({ t: 'hello', from: r, name }); });
+  transport.onMessage(m => { if (apply(m) === 'chat') return; onChange(); });
+  transport.onPresence(p => { M.presence = p; if (view().lobby) renderLobby(); });
+}
+
+let chain = Promise.resolve();
+function onChange() { chain = chain.then(async () => { await act(); render(); }).catch(e => console.error(e)); }
+
+async function act() {
+  saveSession();
+  if (!M?.players) return;
+  const v = view();
+  // Se anota lo repartido al empezar, cada cierto rato y al terminar (D-34)
+  if (S.seenAt == null || v.done || v.history.length >= S.seenAt + 6) {
+    S.seenAt = v.history.length;
+    seen.add(M.config.theme, [...new Set([...v.line, ...Object.values(v.hands).flat()])]);
+  }
+}
+
+/* ---------- Persistencia (canon C-6) ---------- */
+function saveSession() {
+  if (!S || !M) return;
+  const done = view().done;
+  if (S.mode === 'online') store.save({ mode: 'online', code: S.code, role: S.role, name: M.names[S.role], config: M.config, done });
+  else store.save({ mode: S.mode, config: M.config, messages: S.transport.messages || [], done });
+}
+function loadSession() { return store.load(); }
+function clearSession() { store.clear(); }
+
+async function resume(saved) {
+  if (saved.mode === 'solo') {
+    // Solo lo propio de la partida: `at` lo pone el almacén en cada escritura (C-6)
+    const { codigo, tema, skip = [], jugadas, ms = 0 } = saved;
+    return montarSolo({ mode: 'solo', codigo, tema, skip, jugadas, ms, done: false });
+  }
+  if (saved.mode === 'online') return joinOnline(saved.code, saved.name, saved.role);
+  return restoreLocal(saved);
+}
+
+function restoreLocal(saved) {
+  const transport = createLocalTransport({ seed: saved.messages || [] });
+  startSession({ mode: saved.mode, transport, roles: saved.config.players, config: saved.config, names: {} });
+  S.lastShown = M.moves.length - 1;
+  S.uiRole = null; // fuerza la pantalla de pase al retomar
+  keepAwake();
+  onChange();
+}
+
+/* ------------------------------------------------------------------ */
+/* Render                                                              */
+/* ------------------------------------------------------------------ */
+function showScreen(id) { $$('.screen').forEach(s => s.classList.toggle('active', s.id === id)); window.scrollTo({ top: 0, behavior: 'instant' }); }
+
+function eventRow(cardId, byId, fresh = false) {
+  const c = byId[cardId];
+  return el('div', { class: 'event' + (fresh ? ' fresh' : '') },
+    el('span', { class: 'y' }, yearLabel(c.year, lang)),
+    el('span', { class: 'em' }, c.emoji),
+    el('span', { class: 't' }, c[lang]),
+  );
+}
+
+function render() {
+  if (!M) return;
+  const v = view();
+  // El chat acompaña la sala, la partida y también el resultado: ahí se celebra y se cierra
+  // la conversación. Muere con la sala, no con la partida (D-35).
+  if (chat) chat.show();
+  if (v.lobby) return renderLobby();
+  if (v.done) return renderResult(v);
+  renderPlay(v);
+}
+
+/** Crea (o bota) el chat de sala. Solo tiene sentido con un jugador por celular. */
+function setupChat(mode) {
+  if (chat) { chat.destroy(); chat = null; }
+  const mount = $('#chat');
+  if (!mount) return;
+  mount.hidden = true;
+  if (mode !== 'online') return;
+  chat = createChat({
+    mount, T,
+    nameOf: r => M.names[r] || '…',
+    isMine: r => r === S.role,
+    onSend: text => S.transport.send({ t: 'chat', from: S.role, text }),
+  });
+}
+
+/* ---------- Sala (varios celulares) ---------- */
+
+/**
+ * Irse de la sala a propósito: este rol se despide y, si no queda nadie, la sala se borra
+ * en el acto en vez de quedar seis horas pareciendo viva (D-50). Cerrar la pestaña no pasa
+ * por acá: esa partida se puede retomar y la sala tiene que seguir esperando (C-6).
+ */
+async function leaveRoom(btn) {
+  SFX.tap();
+  if (btn) btn.disabled = true;
+  clearSession();
+  await S.transport.dispose();
+  location.href = location.pathname;
+}
+
+function renderLobby() {
+  if (S.mode !== 'online' || !M) return;
+  showScreen('screen-lobby');
+  const box = $('#lobby-box'); box.innerHTML = '';
+  // Con el idioma pegado: quien reciba la invitación abre la app como quien la mandó (D-74)
+  const url = withLang(`${location.origin}${location.pathname}?sala=${S.code}`);
+  const joined = ROLES.filter(r => M.names[r]);
+  const host = 'A';
+  box.append(
+    el('div', { class: 'muted', style: 'font-weight:800' }, T.lobbyCode),
+    el('div', { class: 'code-big' }, S.code),
+    el('div', { class: 'qr', id: 'qr' }),
+    el('p', { class: 'muted', style: 'font-size:0.9rem' }, T.lobbyShare),
+    shareButton(url),
+    el('p', { class: 'lead', style: 'margin:12px 0 4px' }, `${T.lobbyPlayers} (${joined.length}/${MAX_PLAYERS})`),
+    el('div', { class: 'lobby-players' }, ...joined.map(r => el('span', { class: 'p' + (r === S.role ? ' me' : '') + (M.presence[r]?.online === false ? ' off' : '') }, M.names[r]))),
+    S.role === host
+      ? el('button', { class: 'btn btn--yellow', disabled: joined.length < MIN_PLAYERS, onClick: () => { SFX.pass(); S.transport.send({ t: 'start', from: 'A', order: joined }); } }, joined.length < MIN_PLAYERS ? T.lobbyNeedMore : T.lobbyStart)
+      : el('p', { class: 'waiting' }, el('span', { class: 'dots' }, fmt(T.lobbyWaitHost, { name: M.names[host] || '…' }))),
+    el('button', { class: 'btn btn--ghost btn--sm', style: 'margin-top:10px', onClick: e => leaveRoom(e.currentTarget) }, S.role === 'A' ? T.lobbyCancel : T.lobbyLeave),
+  );
+  renderQr(url);
+}
+
+/**
+ * "🎲 *X* · Sala WFBN" y "👋 Javi te invita a jugar en juegosdesalon.cl." (D-165). Nombra a quien toca compartir,
+ * que es quien está invitando; el resto —de qué se trata el juego, para cuántos, cuánto dura—
+ * lo pone la tarjeta que el chat arma sola con el link (D-72).
+ */
+function textoInvitacion() {
+  return fmt(COMMON[lang].invite, { emoji: gameById(GAME_ID)?.emoji || '🎲', name: M.names[S.role] || '', game: T.title, code: S.code });
+}
+
+function shareButton(url) {
+  return botonInvitar({ T, titulo: T.title, url, texto: textoInvitacion, alTocar: () => SFX.tap() });
+}
+
+async function renderQr(url) {
+  try {
+    if (!window.qrcode) await new Promise((res, rej) => { const sc = document.createElement('script'); sc.src = 'https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js'; sc.onload = res; sc.onerror = rej; document.head.append(sc); });
+    const qr = window.qrcode(0, 'M'); qr.addData(url); qr.make();
+    const box = $('#qr'); if (box) box.innerHTML = qr.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
+  } catch (_) { const box = $('#qr'); if (box) box.remove(); }
+}
+
+function renderPlay(v) {
+  // Con una carta en el aire no se redibuja: se iría el elemento que el dedo tiene tomado.
+  // Lo que llegue mientras tanto se pinta al soltar, que siempre termina en renderPlay.
+  if (arrastre && arrastre.activa()) return;
+  showScreen('screen-play');
+  const isLocalTurn = S.roles.includes(v.current);
+  // Varios celulares: el veredicto de cada jugada se muestra a todos.
+  // Un acierto (o la jugada de otro) se cierra solo; un error propio se queda hasta que el jugador toque,
+  // con fondo rojo y una explicación de dónde iba la carta.
+  if (S.mode === 'online' && v.history.length > S.lastShown + 1) {
+    if (S.sticky && !$('#handoff').hidden) return;        // el jugador aún lee su error: lo nuevo espera
+    const last = v.history[v.history.length - 1];
+    S.lastShown = v.history.length - 1;
+    if (chat) chat.close();
+    const mine = S.roles.includes(last.from);
+    const stage = verdictStage(last, v, null);
+    const gen = (S.verdictGen = (S.verdictGen || 0) + 1);
+    S.sticky = mine && !last.ok;
+    const next = showHandoff([stage], () => { if (S.verdictGen === gen) S.sticky = false; S.selCard = null; S.selSlot = null; render(); });
+    // Solo el temporizador del veredicto vigente puede cerrarlo; un error propio se queda hasta tocar
+    if (!S.sticky) setTimeout(() => { if (S.verdictGen === gen && !$('#handoff').hidden) next(); }, 2400);
+    return;
+  }
+
+  // Modo un celular: mostrar el resultado de la jugada anterior y pasar el celular
+  if (S.mode === 'local' && v.history.length > S.lastShown + 1) {
+    const last = v.history[v.history.length - 1];
+    S.lastShown = v.history.length - 1;
+    const turnPasses = v.current !== last.from;
+    const stage = verdictStage(last, v, turnPasses ? M.names[v.current] : null);
+    showHandoff([stage], () => { S.uiRole = v.current; S.selCard = null; S.selSlot = null; render(); }, { tapAdvances: !turnPasses });
+    return;
+  }
+  if (S.mode === 'local' && S.uiRole !== v.current) {
+    const stage = passBlock({ label: T.hoPass, name: M.names[v.current], button: T.hoReady });
+    showHandoff([stage], () => { S.uiRole = v.current; S.selCard = null; S.selSlot = null; render(); }, { tapAdvances: false });
+    return;
+  }
+
+  // Cronómetro del turno: parte cuando el jugador ya ve el tablero y puede jugar.
+  // No se muestra durante la partida; solo se suma y aparece al final (D-31).
+  const turnKey = `${v.current}:${v.history.length}`;
+  if (isLocalTurn && S.turnKey !== turnKey) { S.turnKey = turnKey; S.turnStart = Date.now(); }
+
+  // Rol que mira la pantalla
+  const me = S.mode === 'online' ? S.role : v.current;
+  // Si el chat quedó abierto y llega mi turno, se cierra para dejar ver el tablero
+  // (salvo que esté escribiendo algo: eso no se bota).
+  if (chat && isLocalTurn) chat.closeIfIdle();
+  $('#status-who').textContent = isLocalTurn ? fmt(T.turnYou, { name: M.names[v.current] }) : fmt(T.turnOther, { name: M.names[v.current] });
+  marcarEstado(v, isLocalTurn);
+
+  // Marcador
+  const score = $('#score'); score.innerHTML = '';
+  // Con pozo común el número es lo colocado sobre la meta; con mano propia, lo que queda por colocar
+  for (const p of M.players) {
+    score.append(el('span', { class: 'p' + (p === v.current ? ' turn' : '') }, M.names[p],
+      el('span', { class: 'n' }, v.shared ? `${v.scores[p]}/${v.target}` : v.hands[p].length)));
+  }
+
+  // Mano
+  const hand = v.hands[me] || [];
+  // La carta se elige tocándola, nunca sola: en la tira hay que desplazarse y un toque que
+  // se va en scroll no puede terminar colocando la primera carta (D-38).
+  if (S.selCard && !hand.includes(S.selCard)) S.selCard = null;
+  $('#hand-title').textContent = v.shared ? T.visibleTitle : (S.mode === 'local' ? fmt(T.handOf, { name: M.names[me] }) : T.yourHand);
+  // Con todas a la vista el mazo de atrás no entra nunca: lo que se acaba es la mesa (D-43)
+  $('#pool-left').textContent = M.config.spread
+    ? (v.table.length === 1 ? T.tableLeftOne : fmt(T.tableLeft, { n: v.table.length }))
+    : fmt(T.poolLeft, { n: v.poolLeft });
+  pintarMano(v, hand, isLocalTurn);
+  pintarLinea(v, isLocalTurn);
+  pintarConfirmar(v, isLocalTurn);
+  const fresh = $('#line').querySelector('.event.fresh'); if (fresh) fresh.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+}
+
+/**
+ * La mano se reconstruye entera sólo fuera de un gesto: en medio de uno, el botón que el
+ * dedo tiene tomado no se puede reemplazar sin llevarse la captura del puntero (D-85).
+ * Para encender la carta bajo el dedo está `marcarMano`, que sólo toca clases.
+ */
+function pintarMano(v, hand, isLocalTurn) {
+  const handBox = $('#hand'); handBox.innerHTML = '';
+  for (const id of hand) {
+    const c = v.byId[id];
+    handBox.append(el('button', { class: 'card' + (S.selCard === id ? ' sel' : ''), disabled: !isLocalTurn, 'data-card': id, onClick: elegirConTeclado(() => { S.selCard = id; S.selSlot = null; }) },
+      el('span', { class: 'em' }, c.emoji), el('span', { class: 't' }, c[lang])));
+  }
+  marcarMano(isLocalTurn);
+}
+
+/** La carta elegida se marca en la propia mano; no hay barra aparte (D-33) */
+function marcarMano(isLocalTurn) {
+  $$('#hand .card').forEach(b => b.classList.toggle('sel', b.dataset.card === S.selCard));
+  $('#hand').classList.toggle('dim', !!(isLocalTurn && S.selCard));
+}
+
+/** La línea de estado, que cambia con la selección: "elige una carta" → "elige el lugar". */
+function marcarEstado(v, isLocalTurn) {
+  const offline = S.mode === 'online' ? M.players?.length && ROLES.find(r => M.presence[r]?.online === false && M.names[r]) : null;
+  $('#status-sub').textContent = isLocalTurn ? (S.selCard ? T.pickSlot : T.pickCard)
+    : offline ? fmt(T.offline, { name: M.names[offline] })
+    : (S.mode === 'online' ? fmt(T.waitingTurn, { name: M.names[v.current] }) : '');
+}
+
+/** Lo que muestra una ranura: la carta elegida dentro, o el cartel de dónde va. */
+function contenidoRanura(i, v) {
+  const sel = S.selCard ? v.byId[S.selCard] : null;
+  return (S.selSlot === i && sel)
+    ? el('span', { class: 'ghost', 'data-card': S.selCard }, el('span', { class: 'y' }, '?'), el('span', { class: 'em' }, sel.emoji), el('span', { class: 't' }, sel[lang]))
+    : el('span', {}, i === 0 ? T.slotFirst : i === v.line.length ? T.slotLast : T.slotBetween);
+}
+
+/**
+ * Elegir una carta o un lugar **no cambia la línea**: cambian las ranuras y nada más. Esto
+ * repinta solo esas, sin tocar las filas de hitos. Reconstruir la línea entera las hacía
+ * reproducir de nuevo su animación de entrada, y el tablero daba un salto en cada toque y en
+ * cada cambio de destino mientras se arrastra (D-87).
+ */
+function marcarRanuras(v) {
+  for (const d of $$('#line .slot')) {
+    const i = +d.dataset.slot;
+    d.classList.toggle('on', S.selSlot === i);
+    d.replaceChildren(contenidoRanura(i, v));
+  }
+  $$('#line .event.vecino').forEach(e => e.classList.remove('vecino'));
+}
+
+/** Línea de tiempo con ranuras. La ranura elegida se abre y muestra la carta en su lugar. */
+function pintarLinea(v, isLocalTurn) {
+  const line = $('#line'); line.innerHTML = '';
+  const elegirRanura = i => { S.selSlot = S.selSlot === i ? null : i; SFX.tap(); vibrate(8); marcarRanuras(v); pintarConfirmar(v, isLocalTurn); marcarEstado(v, isLocalTurn); };
+  const slot = i => el('div', { class: 'slot' + (S.selSlot === i ? ' on' : ''), 'data-slot': i, onPointerdown: e => {
+    if (!isLocalTurn || !S.selCard) return;
+    if (e.target.closest('.ghost')) return;   // esa la lleva el arrastre de la carta ya puesta
+    elegirRanura(i);
+  }, onClick: elegirConTeclado(() => { if (isLocalTurn && S.selCard) elegirRanura(i); }) },
+    contenidoRanura(i, v));
+  if (isLocalTurn) line.append(slot(0));
+  v.line.forEach((id, i) => {
+    const fresh = v.history.length && v.history[v.history.length - 1].ok && v.history[v.history.length - 1].card === id;
+    const row = eventRow(id, v.byId, fresh); row.dataset.ev = i;   // para encender los vecinos al arrastrar
+    line.append(row);
+    if (isLocalTurn) line.append(slot(i + 1));
+  });
+}
+
+/**
+ * La selección se hace al apretar, para que la carta se encienda bajo el dedo y no al
+ * soltarlo. Pero `pointerdown` no cubre dos casos que sí llegan como `click`: el teclado
+ * (Enter sobre un botón) y los guiones de punta a punta, que llaman a `el.click()`. Los dos
+ * llegan con `detail === 0`; un toque o un clic de verdad llega con 1 o más, y ese ya lo
+ * atendió `pointerdown`. Así el mismo control sirve para las dos formas sin elegir dos veces.
+ */
+const elegirConTeclado = accion => e => {
+  if (e.detail !== 0) return;
+  accion();
+  SFX.tap();
+  repintar();
+};
+
+/* ------------------------------------------------------------------ */
+/* Arrastrar la carta a la línea (D-85)                                 */
+/* ------------------------------------------------------------------ */
+/**
+ * Arrastrar es elegir, nunca colocar: soltar sobre una ranura deja la carta y el lugar
+ * elegidos, y el botón amarillo sigue siendo el único que confirma (C-8). Se arrastra desde
+ * la mano y también desde la carta ya puesta —la del año en "?"—, que se puede llevar a otra
+ * ranura o soltar fuera de la línea para devolverla a la mano.
+ */
+let arrastre = null;
+/** Selección de antes de apretar, para devolverla si el gesto resulta ser scroll de la mano */
+let selPrevia = null;
+
+const enTurno = () => !!(M && S && S.transport && !view().done && S.roles.includes(view().current));
+/** Repintado liviano: ranuras, mano y botón. Las filas de hitos no se tocan (D-87). */
+const repintar = () => { const v = view(); marcarMano(true); marcarRanuras(v); pintarConfirmar(v, true); marcarEstado(v, true); };
+
+function montarArrastre() {
+  arrastre = crearArrastre({
+    fuentes: [
+      // La mano se desplaza a lo ancho: el navegador se queda con el gesto lateral y nos
+      // deja el vertical (`touch-action: pan-x` en el CSS), sin necesidad de toque largo.
+      { contenedor: $('#hand'), item: '.card', eje: 'vertical', nombre: 'mano' },
+      { contenedor: $('#line'), item: '.ghost', eje: 'libre', nombre: 'linea' },
+    ],
+    activo: () => enTurno() && $('#handoff').hidden && $('#cover').hidden,
+    vibrar: vibrate,
+    avatar: item => {
+      const c = view().byId[item.dataset.card];
+      return el('div', { class: 'vilo-carta' },
+        el('span', { class: 'em' }, c.emoji), el('span', { class: 't' }, c[lang]), el('span', { class: 'y' }, '?'));
+    },
+    // En coordenadas de documento: así la página se puede correr sola sin invalidar lo medido
+    medir: () => $$('#line .slot').map(s => {
+      const r = s.getBoundingClientRect();
+      return { clave: +s.dataset.slot, y: r.top + r.height / 2 + window.scrollY };
+    }),
+    // El destino se marca abriendo la ranura con la carta dentro: es el mismo hueco que deja
+    // el camino de toques, así que soltar no cambia de estado, solo lo deja quieto.
+    sobre: clave => {
+      if (S.selSlot === clave) return;
+      S.selSlot = clave; repintar();
+      if (clave === null) return;
+      // Los dos hitos entre los que cae encienden su año. Van muy por debajo de la ranura:
+      // el destino es uno solo, y dos bordes del mismo color no se distinguen entre sí.
+      for (const i of [clave - 1, clave]) $(`#line .event[data-ev="${i}"]`)?.classList.add('vecino');
+    },
+    // Se enciende al apretar, no al soltar: el jugador ve elegida la carta que tiene bajo el dedo
+    apretar: (item, nombre) => {
+      if (nombre !== 'mano') return;
+      selPrevia = { card: S.selCard, slot: S.selSlot };
+      S.selCard = item.dataset.card; S.selSlot = null;
+      SFX.tap(); vibrate(8); repintar();
+    },
+    // Retomar la carta puesta cierra su ranura antes de medir: lo medido vale todo el arrastre
+    alAlzar: (item, nombre) => {
+      if (nombre === 'linea') { selPrevia = { card: S.selCard, slot: S.selSlot }; S.selSlot = null; repintar(); }
+      // El lugar que dejó la carta queda marcado en la mano, venga el gesto de donde venga
+      const enMano = $(`#hand .card[data-card="${item.dataset.card}"]`);
+      if (enMano) enMano.classList.add('hueco');
+    },
+    // El gesto era scroll de la mano, no arrastre: se devuelve lo que había (D-38)
+    abandonar: () => { if (selPrevia) { S.selCard = selPrevia.card; S.selSlot = selPrevia.slot; repintar(); } },
+    // Un toque sobre la carta puesta la saca de la línea; sobre la mano ya eligió `apretar`
+    toque: (item, nombre) => { if (nombre === 'linea') { S.selSlot = null; SFX.tap(); vibrate(8); repintar(); } },
+    soltar: (clave, { nombre, cancelado }) => {
+      if (cancelado) { if (selPrevia) { S.selCard = selPrevia.card; S.selSlot = selPrevia.slot; } }
+      else if (clave === null) {
+        // Fuera de la línea: desde la mano queda elegida sin lugar; retomada desde la línea,
+        // se descarta y la carta vuelve a la mano sin elegir.
+        S.selSlot = null;
+        if (nombre === 'linea') S.selCard = null;
+      } else { S.selSlot = clave; SFX.tap(); vibrate(12); }
+      selPrevia = null;
+      $$('#hand .card.hueco').forEach(b => b.classList.remove('hueco'));
+      repintar();
+    },
+  });
+}
+
+/** El botón que confirma: dice sobre qué carta actúa, nunca sólo la acción (C-8, D-38). */
+function pintarConfirmar(v, isLocalTurn) {
+  const row = $('#place-row'); row.innerHTML = '';
+  if (!isLocalTurn) return;
+  const elegida = S.selCard ? v.byId[S.selCard] : null;
+  row.append(el('button', { class: 'btn btn--yellow', disabled: S.selSlot === null || !S.selCard, onClick: () => {
+    SFX.flip();
+    S.transport.send({ t: 'place', from: v.current, card: S.selCard, slot: S.selSlot, ms: S.turnStart ? Date.now() - S.turnStart : 0 });
+    S.selCard = null; S.selSlot = null;
+  } }, T.place, elegida && S.selSlot !== null ? el('small', {}, `${elegida.emoji} ${elegida[lang]}`) : null));
+}
+
+function playVerdictSound(ok) { if (ok) { SFX.reveal(); vibrate([30, 30]); } else { SFX.timeUp(); vibrate([120, 60, 120, 60, 200]); } }
+
+/** Pantalla entre turnos: veredicto de la jugada y, si cambia el turno, el pase del celular. */
+/** "entre 1453 · Cae Constantinopla y 1492 · Colón…", o "antes de…" / "después de…" en los bordes. */
+function whereText([a, b], byId) {
+  const lbl = id => `<b>${yearLabel(byId[id].year, lang)}</b> · ${byId[id][lang]}`;
+  if (a && b) return fmt(T.between, { a: lbl(a), b: lbl(b) });
+  if (b) return fmt(T.beforeOf, { b: lbl(b) });
+  return fmt(T.afterOf, { a: lbl(a) });
+}
+
+function verdictStage(last, v, nextName) {
+  const c = v.byId[last.card];
+  playVerdictSound(last.ok);
+  // Si jugó otro, el veredicto habla de él: "¡Cata se equivocó!", no "¡Te equivocaste!"
+  const mine = S.mode === 'local' || S.roles.includes(last.from);
+  const quien = M.names[last.from];
+  const titulo = mine ? (last.ok ? T.correct : T.wrong) : fmt(last.ok ? T.correctOther : T.wrongOther, { name: quien });
+  const stage = el('div', { class: 'stage pop' },
+    el('div', { class: 'verdict' },
+      el('div', { class: 'big ' + (last.ok ? 'ok' : 'no') }, titulo),
+      el('div', { class: 'card-big' }, el('span', { class: 'em' }, c.emoji), el('span', { class: 't' }, c[lang]), el('span', { class: 'y' }, yearLabel(c.year, lang))),
+      el('div', { class: 'note' }, last.ok ? `${quien} 👏` : (mine ? `${quien} · ${T.drewNew}` : `${quien} · ${T.drewNewOther}`)),
+      last.ok ? null : el('div', { class: 'why', html: `${fmt(T.whyWrong, { year: `<b>${yearLabel(c.year, lang)}</b>`, where: whereText(last.correctBetween, v.byId) })}<br>${fmt(mine ? T.wherePlaced : T.wherePlacedOther, { where: whereText(last.placedBetween, v.byId) })}` }),
+    ),
+  );
+  // El fondo rojo del error es solo para el que se equivocó: al resto le llega como noticia
+  setTimeout(() => $('#handoff').classList.toggle('bad', !last.ok && mine), 0);
+  if (nextName) {
+    stage.append(el('div', { class: 'pass-divider', style: 'width:60%;height:1px;background:var(--glass-border);margin:10px auto 2px' }));
+    const pb = passBlock({ label: T.hoPass, name: nextName, button: T.hoReady, small: true });
+    stage.append(pb);
+    stage.setAdvance = fn => pb.setAdvance(() => { SFX.pass(); fn(); });
+  } else stage.append(el('div', { class: 'hint', style: 'margin-top:14px' }, (last.ok ? T.hoContinue : T.tapContinue) + ' ›'));
+  return stage;
+}
+
+const cardsLabel = n => (n === 0 ? T.noCards : n === 1 ? T.cardHeld : fmt(T.cardsHeld, { n }));
+
+function renderResult(v) {
+  const already = $('#screen-result').classList.contains('active');
+  if (!already) showScreen('screen-result');
+  const winners = v.winner || [];
+  // Quién ganó, para la lista de salas del panel del dueño (D-79). Solo en sala, y una sola
+  // vez: al volver a dibujar la misma pantalla no se repite. Mejor esfuerzo, como todo lo
+  // que va al panel: si no sale, la partida no se entera.
+  if (!already && S.mode === 'online') {
+    S.transport?.noteWinner?.(winners.length === 1 ? { role: winners[0], name: M.names[winners[0]] } : {});
+  }
+  const meRole = S.mode === 'online' ? S.role : null;
+  const many = winners.length > 1;
+  const okOf = p => v.history.filter(h => h.from === p && h.ok).length;
+  const totalOf = p => v.history.filter(h => h.from === p).length;
+  // Empate a cartas: ganó quien respondió en menos tiempo (D-31)
+  const llegaron = v.shared ? M.players.filter(p => v.scores[p] >= v.target) : M.players.filter(p => v.hands[p].length === 0);
+  const porTiempo = winners.length === 1 && llegaron.length > 1;
+  $('#result-note').textContent = porTiempo ? (v.shared ? T.wonOnTimeShared : T.wonOnTime) : '';
+  $('#result-note').hidden = !porTiempo;
+  $('#result-title').textContent = many ? T.winTitleMany : fmt(T.winTitle, { name: M.names[winners[0]] });
+  $('#result-sub').textContent = (meRole ? (winners.includes(meRole) ? T.youWin : T.youLose) + ' · ' : '') + fmt(T.stats, { ok: okOf(winners[0]), total: totalOf(winners[0]) });
+  $('#result-trophy').textContent = meRole && !winners.includes(meRole) ? '😵' : (many ? '🤝' : '🏆');
+
+  const rank = $('#result-ranking'); rank.innerHTML = '';
+  // Si dos jugadores caen en el mismo segundo, se muestran décimas: si no, el ranking
+  // parecería arbitrario justo cuando el tiempo es lo que decidió la partida (D-31).
+  const distintos = d => new Set(M.players.map(p => timeLabel(v.times[p] || 0, { decimals: d }))).size === M.players.length;
+  let decimals = 0;
+  while (decimals < 2 && !distintos(decimals)) decimals++;
+  // Menos cartas primero; a igualdad de cartas manda el tiempo (D-31)
+  const order = M.players.slice().sort((a, b) =>
+    (v.shared ? v.scores[b] - v.scores[a] : v.hands[a].length - v.hands[b].length) || (v.times[a] || 0) - (v.times[b] || 0) || okOf(b) - okOf(a));
+  order.forEach((p, i) => {
+    // "Sin cartas" no se repite: ya se dice arriba y así la fila cabe en una línea
+    const quedan = !v.shared && v.hands[p].length ? `${cardsLabel(v.hands[p].length)} · ` : '';
+    rank.append(el('li', { class: winners.includes(p) ? 'top' : '' },
+      el('span', { class: 'pos' }, ['🥇', '🥈', '🥉'][i] || `${i + 1}.`),
+      el('span', { class: 'name' }, M.names[p]),
+      el('span', { class: 'info' },
+        `${quedan}${fmt(T.stats, { ok: okOf(p), total: totalOf(p) })} · `,
+        el('span', { class: 'time' }, `⏱ ${timeLabel(v.times[p] || 0, { decimals })}`),
+      ),
+    ));
+  });
+  const rline = $('#result-line'); rline.innerHTML = '';
+  v.line.forEach(id => rline.append(eventRow(id, v.byId)));
+  if (!already) { $('#result-replay').open = false; if (!meRole || winners.includes(meRole)) { confetti({ count: 220, duration: 3500 }); SFX.win(); } else SFX.timeUp(); }
+
+  const box = $('#result-actions'); box.innerHTML = '';
+  // Revancha propuesta por otro: me uno a su sala nueva
+  if (S.mode === 'online' && !S.switching) {
+    const proposed = ROLES.filter(r => r !== S.role).map(r => M.rematch[r]).find(c => typeof c === 'string');
+    if (proposed && proposed !== S.code) { S.switching = true; joinOnline(proposed, M.names[S.role]).catch(e => { console.error(e); S.switching = false; }); }
+  }
+  box.append(
+    el('button', { class: 'btn btn--yellow', onClick: rematch }, T.rematch),
+    el('button', { class: 'btn btn--ghost', onClick: e => leaveRoom(e.currentTarget) }, T.changeMode),
+    el('a', { class: 'btn btn--ghost', href: '../' }, T.backMenu),
+  );
+}
+
+async function rematch() {
+  SFX.tap();
+  if (S.mode === 'online') {
+    if (M.rematch[S.role]) return;
+    const others = ROLES.filter(r => M.names[r] && r !== S.role);
+    const proposed = others.map(r => M.rematch[r]).find(c => typeof c === 'string');
+    if (proposed) { S.switching = true; return joinOnline(proposed, M.names[S.role]); }
+    const { createFirebaseTransport } = await import('../assets/js/transport/firebase.js');
+    const t = createFirebaseTransport({ game: GAME_ID, maxPlayers: MAX_PLAYERS });
+    const config = freshConfig(M.config);   // mantiene tema, cartas y pozo común
+    S.switching = true;
+    const code = await t.create({ config, name: M.names[S.role] });
+    S.transport.send({ t: 'rematch', from: S.role, code });
+    M.rematch[S.role] = code;
+    setTimeout(() => startOnline(t, code, 'A', M.names[S.role], config), 600);
+    return;
+  }
+  startLocalMode(S.mode, { ...M.names }, freshConfig(M.config));
+}
+
+/* ---------- Varios celulares ---------- */
+async function startOnline(transport, code, role, name, config) {
+  startSession({ mode: 'online', transport, roles: [role], config, names: { [role]: name }, code, role });
+  history.replaceState(null, '', `${location.pathname}?sala=${code}`);
+  keepAwake();
+  saveSession();
+  render();
+}
+async function createOnline(name, config) {
+  const { createFirebaseTransport } = await import('../assets/js/transport/firebase.js');
+  const t = createFirebaseTransport({ game: GAME_ID, maxPlayers: MAX_PLAYERS });
+  const code = await t.create({ config, name });
+  await startOnline(t, code, 'A', name, config);
+}
+async function joinOnline(code, name, previousRole = null) {
+  const { createFirebaseTransport } = await import('../assets/js/transport/firebase.js');
+  const t = createFirebaseTransport({ game: GAME_ID, maxPlayers: MAX_PLAYERS });
+  const { role, config } = await t.join(code, { name, previousRole });
+  await startOnline(t, code, role, name, config || DEFAULT_CONFIG);
+}
+
+/* ------------------------------------------------------------------ */
+/* Modos y arranque                                                    */
+/* ------------------------------------------------------------------ */
+function startLocalMode(mode, names, config) {
+  clearSession();
+  const transport = createLocalTransport();
+  startSession({ mode, transport, roles: config.players, config, names });
+  keepAwake();
+  trackStart({ game: GAME_ID, mode, players: config.players.length }); // señal de uso para el panel (D-44)
+}
+
+function renderModes() {
+  const box = $('#modes'); box.innerHTML = '';
+  const modes = [['local', T.modeLocal, T.modeLocalHint, true], ['online', T.modeOnline, T.modeOnlineHint, true], ['solo', T.modeSolo, T.modeSoloHint, true]];
+  for (const [m, label, hint, ok] of modes) box.append(el('button', { class: 'mode', disabled: !ok, onClick: () => { SFX.tap(); if (m === 'solo') renderSoloSetup(); else renderSetup(m); } }, el('span', {}, el('b', {}, label), el('small', {}, hint)), el('span', { class: 'go' }, ok ? '›' : '⏳')));
+}
+
+function renderResumeSlot() {
+  const slot = $('#resume-slot'); slot.innerHTML = '';
+  const saved = loadSession();
+  if (!saved || saved.done) return;
+  if (saved.mode === 'online' && !saved.code) return;
+  // Una partida del solitario viejo (con `messages`, D-27) ya no se puede jugar: se olvida (D-142)
+  if (saved.mode === 'solo' && !esPartidaSolo(saved)) { clearSession(); return; }
+  const deck = getDeck(saved.mode === 'solo' ? saved.tema : saved.config?.theme);
+  // El emoji va con el nombre, como la temática: acá no hay pastilla que lo muestre aparte (D-52)
+  let label;
+  if (saved.mode === 'solo') label = T.modeSolo;
+  else {
+    const cards = cardModeOf(saved.config);
+    label = (saved.mode === 'online' ? `${T.lobbyCode}: ${saved.code}` : T.modeLocal) + ` · ${cards.emoji} ${cards.label()}`;
+  }
+  slot.append(el('div', { class: 'panel pop' },
+    el('p', { class: 'lead', style: 'margin-bottom:4px' }, T.resumeTitle),
+    el('p', { class: 'muted' }, `${deck.emoji} ${deck.name[lang]} · ${label}`),
+    el('div', { class: 'btn-row' },
+      el('button', { class: 'btn btn--cyan btn--sm', onClick: async () => { try { await resume(saved); } catch (e) { clearSession(); renderResumeSlot(); } } }, T.resume),
+      el('button', { class: 'btn btn--ghost btn--sm', onClick: () => { clearSession(); renderResumeSlot(); } }, T.delete),
+    ),
+  ));
+}
+
+function renderSetup(mode, prefillCode = '') {
+  showScreen('screen-setup');
+  // Quien llega por un enlace no viene a configurar nada: viene invitado
+  $('#screen-setup h2').textContent = prefillCode ? T.invitedTitle : T.setupTitle;
+  const config = { ...DEFAULT_CONFIG };
+  const form = $('#setup-form'); form.innerHTML = '';
+  const err = $('#setup-error'); err.textContent = '';
+  let draft = mode === 'local' ? ['', ''] : [nameStore.get()];
+
+  // Temática
+  const themes = selectorDeTematica(config);
+  // Quien llega invitado no configura nada: la partida ya viene armada por el anfitrión.
+  const invitado = !!prefillCode;
+  if (!invitado) form.append(el('div', { class: 'field' }, el('label', {}, T.theme), themes));
+
+  // Jugadores
+  const playersBox = el('div');
+  const addBtn = el('button', { class: 'btn btn--ghost btn--sm', style: 'width:100%', onClick: () => { if (draft.length < MAX_PLAYERS) { draft.push(''); paintPlayers(); } } }, T.addPlayer);
+  const paintPlayers = () => {
+    playersBox.innerHTML = '';
+    draft.forEach((name, i) => {
+      const input = el('input', { type: 'text', maxlength: 14, placeholder: fmt(T.playerPlaceholder, { n: i + 1 }), value: name, autocomplete: 'off', onInput: e => { draft[i] = e.target.value; } });
+      playersBox.append(el('div', { class: 'player-row' }, el('span', { class: 'num' }, i + 1), input,
+        el('button', { class: 'del', type: 'button', 'aria-label': T.removePlayer, disabled: draft.length <= MIN_PLAYERS, onClick: () => { draft.splice(i, 1); paintPlayers(); } }, '✕')));
+    });
+    addBtn.disabled = draft.length >= MAX_PLAYERS;
+    addBtn.textContent = draft.length >= MAX_PLAYERS ? fmt(T.maxPlayers, { n: MAX_PLAYERS }) : T.addPlayer;
+  };
+  if (mode === 'local') { paintPlayers(); form.append(el('div', { class: 'field' }, el('label', {}, T.players), playersBox, addBtn)); }
+  else {
+    const input = el('input', { class: 'name', type: 'text', maxlength: 14, placeholder: T.yourName, value: draft[0], autocomplete: 'off', onInput: e => { draft[0] = e.target.value; } });
+    form.append(el('div', { class: 'field field--name' }, el('label', {}, T.yourName), input));
+  }
+
+  // De dónde salen las cartas: todas a la vista, pozo común que se repone o mano propia (D-32, D-43)
+  const modeHint = el('p', { class: 'muted', style: 'font-size:0.8rem;margin:2px 0 0' });
+  const sizeLabel = el('label', {});
+  const paintCards = () => {
+    const actual = cardModeOf(config);
+    sizeLabel.textContent = config.shared ? T.toWin : T.handSize;
+    modeHint.textContent = actual.hint(config);
+    $$('button', modeSeg).forEach((b, i) => b.classList.toggle('on', CARD_MODES[i] === actual));
+  };
+  // Las tres van lado a lado, como el toggle de idioma: apiladas se comían media pantalla
+  // del celular. El emoji arriba y el nombre completo debajo, que puede ocupar dos líneas
+  // antes que acortarse (C-8, D-52).
+  const modeSeg = el('div', { class: 'seg seg--cards' }, ...CARD_MODES.map(m =>
+    el('button', { type: 'button', onClick: () => { config.shared = m.shared; config.spread = m.spread; SFX.tap(); paintCards(); } },
+      el('span', { class: 'em' }, m.emoji), el('span', { class: 'txt' }, m.label()))));
+  if (!invitado) form.append(el('div', { class: 'field' }, el('label', {}, T.cardsMode), modeSeg, modeHint));
+
+  // Cuántas cartas: en mano (mano propia) o para ganar (pozo común y todas a la vista).
+  // Con todas a la vista este número manda también el tamaño de la mesa, así que el
+  // texto de ayuda se vuelve a escribir con cada cambio.
+  const sizeLabels = { 3: T.short, 5: T.normal, 7: T.long };
+  const seg = el('div', { class: 'seg' }, ...HAND_SIZES.map(n => el('button', { type: 'button', class: n === config.handSize ? 'on' : '', onClick: e => { config.handSize = n; $$('button', seg).forEach(b => b.classList.toggle('on', b === e.currentTarget)); SFX.tap(); paintCards(); } }, `${sizeLabels[n]} · ${n}`)));
+  paintCards();
+  if (!invitado) form.append(el('div', { class: 'field' }, sizeLabel, seg));
+
+  const fail = msg => { err.textContent = msg; err.classList.remove('shake'); void err.offsetWidth; err.classList.add('shake'); SFX.error(); vibrate([30, 30, 30]); };
+  const actions = $('#setup-actions'); actions.innerHTML = '';
+  if (mode === 'online') {
+    const codeInput = el('input', { type: 'text', class: 'code', maxlength: 4, placeholder: T.codePlaceholder, value: prefillCode, autocapitalize: 'characters', autocomplete: 'off' });
+    const createBtn = el('button', { class: 'btn btn--yellow', onClick: async () => {
+      const name = draft[0].trim(); if (!name) return fail(T.errName);
+      nameStore.set(name); SFX.tap(); createBtn.disabled = true;
+      try { await createOnline(name, freshConfig(config)); } catch (e) { failWith(e, T, fail); }
+      createBtn.disabled = false;
+    } }, T.create);
+    const joinBtn = el('button', { class: 'btn btn--cyan', onClick: async () => {
+      const name = draft[0].trim(); const code = codeInput.value.trim().toUpperCase();
+      if (!name) return fail(T.errName);
+      if (!/^[A-Z]{4}$/.test(code)) return fail(T.errCode);
+      nameStore.set(name); SFX.tap(); joinBtn.disabled = true;
+      try { await joinOnline(code, name); } catch (e) { failWith(e, T, fail); }
+      joinBtn.disabled = false;
+    } }, T.join);
+    // Con un enlace de sala solo se puede entrar a ESA sala: crear otra desde aquí confunde.
+    const joinPanel = extra => el('div', { class: 'panel' }, extra, el('div', { class: 'field' }, codeInput), joinBtn);
+    if (prefillCode) {
+      codeInput.readOnly = true;
+      actions.append(joinPanel(el('div', {},
+        el('p', { class: 'lead', style: 'margin-bottom:2px' }, fmt(T.invited, { code: prefillCode })),
+        el('p', { class: 'muted', style: 'margin:0 0 8px' }, T.invitedHint),
+      )));
+    } else {
+      actions.append(createBtn, el('div', { class: 'or' }, `— ${COMMON[lang].or} —`), joinPanel(el('p', { class: 'lead', style: 'margin-bottom:8px' }, T.joinTitle)));
+    }
+    return;
+  }
+  actions.append(el('button', { class: 'btn btn--yellow', onClick: () => {
+    const list = draft.map(n => n.trim());
+    if (list.some(n => !n) || new Set(list.map(n => n.toLowerCase())).size !== list.length) return fail(T.errNames);
+    const players = ROLES.slice(0, list.length);
+    const names = Object.fromEntries(players.map((p, i) => [p, list[i]]));
+    SFX.tap();
+    startLocalMode('local', names, { ...freshConfig(config), players });
+  } }, T.start));
+}
+
+/** Las temáticas en tarjetas de a dos; la elegida queda en `config.theme`. */
+function selectorDeTematica(config) {
+  const themes = el('div', { class: 'themes' });
+  const paintThemes = () => {
+    themes.innerHTML = '';
+    for (const d of DECKS) themes.append(el('button', { type: 'button', class: 'theme-card' + (config.theme === d.id ? ' on' : ''), 'data-tema': d.id, onClick: () => { config.theme = d.id; SFX.tap(); paintThemes(); } },
+      el('span', { class: 'em' }, d.emoji), el('b', {}, d.name[lang]), el('small', {}, d.hint[lang])));
+  };
+  paintThemes();
+  return themes;
+}
+
+/* ------------------------------------------------------------------ */
+/* Jugar solo: la ⏳ Línea Relámpago de La Copa (D-142)                 */
+/* ------------------------------------------------------------------ */
+/**
+ * Diez hitos de la temática elegida: el primero ya puesto y nueve en la mano, en el orden que
+ * se quiera; un error deja la carta en su lugar, en rojo, y se sigue. Puntaje de 0 a 100 y
+ * reloj de tiempo activo, como en la copa. La partida entera sale de `codigo` (la semilla de
+ * cup/games/timeline/engine.js) más las jugadas, así que la memoria de partida (C-6) guarda solo eso:
+ * `{ mode: 'solo', codigo, tema, skip, jugadas, ms, done }`. `skip` son las cartas vistas hace
+ * poco que se dejaron fuera (D-34): sin ellas, la misma semilla repartiría otras cartas.
+ */
+let soltarSolo = null;
+
+/** ¿Es una partida del solo de ahora? Las del solitario viejo traían `messages` y `config`. */
+const esPartidaSolo = x => !!(x && x.mode === 'solo' && typeof x.codigo === 'string' && x.tema && Array.isArray(x.jugadas));
+
+function renderSoloSetup() {
+  showScreen('screen-setup');
+  $('#screen-setup h2').textContent = T.setupTitle;
+  const config = { theme: DEFAULT_CONFIG.theme };
+  const form = $('#setup-form'); form.innerHTML = '';
+  $('#setup-error').textContent = '';
+  form.append(
+    el('div', { class: 'field' }, el('label', {}, T.theme), selectorDeTematica(config)),
+    // Las reglas van plegadas (C-8), salvo para quien todavía no termina ninguna partida sola:
+    // así la primera vez se leen, y después el botón de empezar queda a la vista.
+    el('details', { class: 'solo-como', open: !DECKS.some(d => recordSolo.get(d.id)) },
+      el('summary', {}, T.howTitle),
+      el('ol', {}, ...T.soloHow.map(t => el('li', {}, t))),
+      el('p', { class: 'lead' }, T.soloScoreTitle),
+      el('p', { class: 'muted' }, T.soloScore)),
+  );
+  const actions = $('#setup-actions'); actions.innerHTML = '';
+  actions.append(el('button', { class: 'btn btn--yellow', id: 'btn-solo-empezar', onClick: () => { SFX.tap(); empezarSolo(config.theme); } }, T.start));
+}
+
+/** Una partida nueva: semilla al azar, fuera las cartas vistas hace poco (D-34). */
+function empezarSolo(tema) {
+  const codigo = codigoAlAzar();
+  let skip = seen.recent(tema);
+  // Si al dejar fuera las vistas no alcanzan diez hitos con años separados, se reparte sin excluir
+  if (generarLinea(codigo, 1, { tema, lang, excluir: skip }).mano.length < CARTAS_SOLO - 1) skip = [];
+  const p = generarLinea(codigo, 1, { tema, lang, excluir: skip });
+  seen.add(tema, [p.base.id, ...p.mano.map(c => c.id)]);
+  const partida = { mode: 'solo', codigo, tema, skip, jugadas: [], ms: 0, done: false };
+  store.save(partida);   // empezar una partida nueva borra la guardada (C-6)
+  trackStart({ game: GAME_ID, mode: 'solo', players: 1 }); // señal de uso para el panel (D-44)
+  montarSolo(partida);
+}
+
+/** Monta la pantalla de juego; sirve para empezar y para retomar (con lo guardado). */
+function montarSolo(partida) {
+  soltarSolo?.();
+  const p = generarLinea(partida.codigo, 1, { tema: partida.tema, lang, excluir: partida.skip });
+  showScreen('screen-solo');
+  keepAwake();
+  soltarSolo = jugarSolo($('#solo-juego'), {
+    mod: uiLinea, p, lang, T, fmt, el, SFX, vibrate,
+    jugadas: partida.jugadas, ms: partida.ms || 0,
+    guardar: ({ jugadas, ms }) => { partida.jugadas = jugadas; partida.ms = ms; store.save(partida); },
+    alTerminar: r => terminarSolo(partida, p, r),
+    cron: t => { $('#solo-cron').textContent = t; },
+  });
+}
+
+function terminarSolo(partida, p, { s, t, ms, estado }) {
+  soltarSolo = null;
+  partida.ms = ms; partida.done = true;
+  store.save(partida);   // terminada: ya no se ofrece retomarla (C-6)
+  const deck = getDeck(partida.tema);
+  const { nuevo, antes } = recordSolo.anotar(partida.tema, { s, ms });
+  // Un cero no se celebra como récord aunque sea la primera partida de la temática
+  const celebrar = nuevo && s > 0;
+  showScreen('screen-solo-result');
+  $('#sr-trophy').textContent = s === 100 ? '🏆' : celebrar ? '🏅' : s >= 50 ? '✅' : '😵';
+  $('#sr-title').textContent = s === 100 ? T.soloPerfect : T.soloDone;
+  $('#sr-puntos').textContent = s;
+  $('#sr-sub').textContent = fmt(T.soloResult, { ok: estado.aciertos, n: estado.marcas.length, t: mmss(ms) });
+  $('#sr-record').textContent = celebrar ? T.newRecord : antes ? fmt(T.prevRecord, { tema: deck.name[lang], s: antes.s, t: mmss(antes.ms) }) : '';
+  $('#sr-record').hidden = !$('#sr-record').textContent;
+  $('#sr-tarjeta').textContent = t;
+  // La línea como quedó, con los errores en rojo; plegada, para que los botones se vean (C-8)
+  const linea = $('#sr-line'); linea.innerHTML = '';
+  for (const c of estado.linea) {
+    linea.append(el('div', { class: 'event' + (c.ok === false ? ' fallo' : '') },
+      el('span', { class: 'y' }, yearLabel(c.year, lang)), el('span', { class: 'em' }, c.emoji), el('span', { class: 't' }, c.texto)));
+  }
+  $('#sr-replay').open = false;
+  if (s >= 50 || celebrar) { confetti({ count: s === 100 || celebrar ? 220 : 120, duration: 3000 }); SFX.win(); } else SFX.timeUp();
+  const box = $('#sr-actions'); box.innerHTML = '';
+  box.append(
+    // El mismo resultado que el minijuego de La Copa, con su imagen; la temática va en el título (D-165)
+    botonResultadoSolo({ C: COMMON[lang], emoji: gameById(GAME_ID)?.emoji || '⏳', juego: `${T.title}: ${deck.name[lang]}`, puntaje: `${s}/100`, tiempo: mmss(ms), tarjeta: t, url: withLang(`${SITIO}timeline/`), alTocar: () => SFX.tap() }),
+    el('button', { class: 'btn btn--yellow', id: 'btn-solo-otra', onClick: () => { SFX.tap(); empezarSolo(partida.tema); } }, T.playAgain),
+    el('button', { class: 'btn btn--ghost', onClick: () => { SFX.tap(); clearSession(); renderResumeSlot(); showScreen('screen-intro'); } }, T.changeMode),
+    el('a', { class: 'btn btn--ghost', href: '../' }, T.backMenu),
+  );
+}
+
+function init() {
+  document.documentElement.lang = lang;
+  document.title = T.docTitle;
+  applyStatic(T);
+  $('#lang-slot').append(langToggle());
+  $('#sound-slot').append(soundToggle());
+  initSound();
+  sparkles(12);
+  renderModes();
+  renderResumeSlot();
+  montarArrastre();
+  const code = new URLSearchParams(location.search).get('sala');
+  if (code && /^[A-Z]{4}$/i.test(code)) {
+    const saved = loadSession();
+    if (saved && saved.mode === 'online' && saved.code === code.toUpperCase() && !saved.done) joinOnline(saved.code, saved.name, saved.role).catch(() => { clearSession(); renderSetup('online', code.toUpperCase()); });
+    else renderSetup('online', code.toUpperCase());
+  }
+}
+init();
+// Gancho de depuración (solo lectura) para pruebas automatizadas (canon C-14).
+window.__ldt = { view: () => (M ? view() : null), match: () => M, session: () => S, solo: () => { const x = loadSession(); return esPartidaSolo(x) ? x : null; } };
+void correctSlot;

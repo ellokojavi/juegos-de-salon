@@ -5,15 +5,15 @@
       "id": "video-promo",
       "tipo": "video",
       "titulo": "Video promocional de Juegos de Salón",
-      "carpeta": "marketing/video-promo/",
-      "memoria": "marketing/video-promo/README.md",
+      "carpeta": "marketing/promo-video/",
+      "memoria": "marketing/promo-video/README.md",
       "version": 5,
       "fecha": "2026-10-02",
       "idioma": "es",
       "app": "0.82.x",
       "archivos": [
         {
-          "ruta": "marketing/video-promo/salida/promo-youtube-16x9.mp4",
+          "ruta": "marketing/promo-video/output/promo-youtube-16x9.mp4",
           "formato": "16:9",
           "ancho": 1920,
           "alto": 1080,
@@ -21,7 +21,7 @@
           "uso": "YouTube"
         },
         {
-          "ruta": "marketing/video-promo/salida/promo-vertical.mp4",
+          "ruta": "marketing/promo-video/output/promo-vertical.mp4",
           "formato": "9:16",
           "ancho": 1080,
           "alto": 1920,
@@ -29,9 +29,9 @@
           "uso": "Shorts, Reels, estados de WhatsApp"
         }
       ],
-      "fuente": "marketing/video-promo/promo.html",
-      "construir": "marketing/video-promo/construir.sh",
-      "musica": "marketing/video-promo/musica/cancion.mp3",
+      "fuente": "marketing/promo-video/promo.html",
+      "construir": "marketing/promo-video/construir.sh",
+      "musica": "marketing/promo-video/music/cancion.mp3",
       "juegos": [
         "linea-de-tiempo",
         "toque-y-fama",
@@ -49,7 +49,16 @@
         "anio",
         "letras"
       ],
-      "estado": "entregado al dueño; sin publicar en YouTube todavía"
+      "estado": "entregado al dueño; sin publicar en YouTube todavía. v6 registrada como pendiente (ver README), sin empezar hasta que el dueño la pida",
+      "revision": {
+        "fecha": "2026-10-03",
+        "app": "0.89.0",
+        "al_dia": false,
+        "pendiente": [
+          "Falta 🧶 Desenredo, que salió del laboratorio en 0.89.0: no está ni entre los ocho juegos ni en la grilla de ¡Y muchos más!",
+          "Las capturas son de la app 0.82.x: Tango todavía sin el candado chico en las casillas dadas (0.87.1), y antes de los textos más cortos de 0.84.0 (D-177)"
+        ]
+      }
     }
   ]
 }

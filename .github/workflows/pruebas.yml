@@ -1,12 +1,12 @@
-# Las pruebas sin navegador, en cada PR y en cada fusión a main (D-143).
-# Las de punta a punta (tools/e2e/) y las capturas siguen a mano: necesitan Chrome y ojos.
+# Las pruebas sin navegador, en cada PR y en cada fusión a main (D-143). En main las llama
+# publicar.yml antes de publicar (D-192): si no pasan, el sitio no cambia.
+# Las de punta a punta (tools/e2e/) corren aparte, en e2e.yml (D-193). Las capturas siguen a mano.
 
 name: Pruebas
 
 on:
   pull_request:
-  push:
-    branches: [main]
+  workflow_call:
 
 jobs:
   pruebas:
@@ -44,7 +44,7 @@ jobs:
 
       # Lo mismo que revisa set-version.py antes de estampar (C-11, C-13).
       - name: README al día
-        run: python3 tools/readme.py revisar
+        run: python3 tools/release/readme.py revisar
 
       - name: Tarjetas sociales al día
-        run: node tools/og.mjs revisar
+        run: node tools/release/og.mjs revisar
