@@ -475,3 +475,65 @@ export function dayLabel(day) {
   const d = new Date(day * DAY);
   return d.toLocaleDateString('es-CL', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' });
 }
+
+/* ------------------------------------------------------------------ */
+/* Tráfico del sitio (D-208)                                           */
+/* ------------------------------------------------------------------ */
+/**
+ * Las visitas del rango, de `stats/<env>/days/<día>`: cuántas, cuántas páginas vieron, cuántas
+ * llegaron a jugar, y de cada una su página de entrada, de dónde llegó, por qué enlace, si es
+ * nueva o vuelve, el aparato y el país. Antes de la versión que lo anota no hay nada, y se dice:
+ * `desde` es el primer día con visitas registradas.
+ */
+export function trafico(days, { from, to }) {
+  const paginas = {}, ref = {}, via = {}, retorno = {}, disp = {}, pais = {};
+  const porDia = [];
+  let visitas = 0, vistas = 0, juegan = 0, desde = null;
+  const pagina = k => (paginas[k] ||= { vistas: 0, entradas: 0, juegan: 0 });
+  for (let d = from; d <= to; d++) {
+    const b = (days || {})[String(d)] || {};
+    const fila = { day: d, visitas: 0, vistas: 0, juegan: 0 };
+    for (const [k, v] of Object.entries(b.vistas || {})) { pagina(k).vistas += Number(v) || 0; fila.vistas += Number(v) || 0; }
+    for (const [k, v] of Object.entries(b.entradas || {})) { pagina(k).entradas += Number(v) || 0; fila.visitas += Number(v) || 0; }
+    for (const [k, v] of Object.entries(b.juegan || {})) { pagina(k).juegan += Number(v) || 0; fila.juegan += Number(v) || 0; }
+    for (const [k, v] of Object.entries(b.ref || {})) add(ref, k, Number(v) || 0);
+    for (const [k, v] of Object.entries(b.via || {})) add(via, k, Number(v) || 0);
+    for (const [k, v] of Object.entries(b.retorno || {})) add(retorno, k, Number(v) || 0);
+    for (const [k, v] of Object.entries(b.disp || {})) add(disp, k, Number(v) || 0);
+    for (const [k, v] of Object.entries(b.pais || {})) add(pais, k, Number(v) || 0);
+    if (desde === null && (fila.visitas || fila.vistas)) desde = d;
+    visitas += fila.visitas; vistas += fila.vistas; juegan += fila.juegan;
+    porDia.push(fila);
+  }
+  return { visitas, vistas, juegan, desde, porDia, paginas, ref, via, retorno, disp, pais };
+}
+
+/**
+ * Sitios conocidos, para leer los orígenes de un vistazo: `google_cl` y `google_com` son
+ * Google. No es una lista de lo que se cuenta: un dominio que no está aparece con su nombre.
+ */
+const SITIOS = [
+  // Lo más específico primero: la app de Gmail también dice google
+  [/^com_google_android_gm$/, 'Gmail'],
+  [/(^|_)google(_|$)|^com_google_android_googlequicksearchbox$/, 'Google'],
+  [/(^|_)(instagram)_com$/, 'Instagram'], [/(^|_)facebook_com$|^fb_me$/, 'Facebook'],
+  [/(^|_)whatsapp_(com|net)$|^wa_me$/, 'WhatsApp'], [/^t_co$|(^|_)(x|twitter)_com$/, 'X (Twitter)'],
+  [/(^|_)bing_com$/, 'Bing'], [/(^|_)duckduckgo_com$/, 'DuckDuckGo'], [/(^|_)yahoo_com$/, 'Yahoo'],
+  [/(^|_)(chatgpt_com|openai_com)$/, 'ChatGPT'], [/(^|_)perplexity_ai$/, 'Perplexity'], [/(^|_)claude_ai$/, 'Claude'],
+  [/(^|_)youtube_com$|^youtu_be$/, 'YouTube'], [/(^|_)tiktok_com$/, 'TikTok'], [/(^|_)linkedin_com$|^lnkd_in$/, 'LinkedIn'],
+  [/(^|_)reddit_com$/, 'Reddit'], [/(^|_)github_com$|_github_io$/, 'GitHub'],
+];
+
+/** El nombre de un origen: `google_cl` → Google, `directo` → Directo o sin dato, `algo_cl` → algo.cl. */
+export function origenLabel(k) {
+  if (!k || k === 'directo') return 'Directo o sin dato';
+  for (const [re, nombre] of SITIOS) if (re.test(k)) return nombre;
+  return k.replace(/_/g, '.');
+}
+
+/** Suma los orígenes por su nombre: dos dominios de Google son una sola barra. */
+export function origenesAgrupados(ref) {
+  const out = {};
+  for (const [k, v] of Object.entries(ref || {})) add(out, origenLabel(k), v);
+  return out;
+}

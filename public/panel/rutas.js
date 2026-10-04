@@ -8,6 +8,7 @@
  *   #/juegos                     los juegos de una partida
  *   #/juego/<id>                 la ficha de un juego (el id del registro, no su carpeta)
  *   #/sala/ABCD                  la ficha de una sala; #/sala/ABCD/20342 si es la de ese día
+ *   #/trafico                    visitas al sitio, de dónde llegan y cuántas terminan jugando (D-208)
  *   #/audiencia                  de dónde, idiomas y hora
  *
  * El rango y el entorno van detrás, solo si no son los de siempre: `#/torneo?r=30d&e=dev`.
@@ -15,7 +16,7 @@
  */
 
 /** Las secciones, en el orden de la navegación. La primera es la que abre el panel. */
-export const SECCIONES = ['ahora', 'torneo', 'juegos', 'audiencia'];
+export const SECCIONES = ['ahora', 'torneo', 'juegos', 'trafico', 'audiencia'];
 
 /** A qué sección pertenece cada ficha: es la que queda marcada en la navegación. */
 const FICHAS = { juego: 'juegos', sala: 'juegos' };

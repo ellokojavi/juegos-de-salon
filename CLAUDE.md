@@ -178,7 +178,7 @@ node tools/e2e/mirar.mjs ahorcado juego --ancho 320
 node tools/e2e/mirar.mjs ahorcado resultado --idioma pt
 node tools/e2e/mirar.mjs panel datos --ancho 900   # el panel, con datos sembrados
 node tools/e2e/mirar.mjs panel copa-ficha   # la ficha de una copa (también ahora, torneo, copa-dias,
-                                            # copa-historia, juegos, juego-ficha, sala-ficha, audiencia)
+                                            # copa-historia, juegos, juego-ficha, sala-ficha, trafico, audiencia)
 ```
 
 Saca la captura y avisa si hay scroll horizontal o botones bajo 44 px (C-8). Los caminos a

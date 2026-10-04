@@ -37,6 +37,23 @@ export const canShare = () => typeof navigator !== 'undefined' && typeof navigat
 /** La primera línea de todo mensaje: `🏆 *La Copa: Valdenenas* · Día 3 de 7`. */
 export const cabecera = ({ emoji, titulo, contexto }) => `${emoji} *${titulo}*${contexto ? ` · ${contexto}` : ''}`;
 
+/**
+ * Un link del sitio que sale compartido lleva `de=link` (D-208). WhatsApp y casi todas las apps
+ * de chat no dicen de dónde viene quien toca un link, así que sin la marca esas visitas se ven
+ * como "directo". Va al final de la búsqueda, donde ningún juego lo confunde con un código de
+ * copa o de sala (los que se leen sin `=`). Todo lo que se comparte acá es un link del sitio
+ * (sale de `SITIO`); uno que no es una dirección web, o que ya trae la marca, queda igual.
+ */
+export const MARCA_COMPARTIDO = 'de=link';
+export function marcarCompartido(url) {
+  if (!url) return url;
+  let u;
+  try { u = new URL(url); } catch (_) { return url; }
+  if (!/^https?:$/.test(u.protocol) || u.searchParams.has('de')) return url;
+  const [base, hash = ''] = String(url).split('#');
+  return `${base}${base.includes('?') ? '&' : '?'}${MARCA_COMPARTIDO}${hash ? `#${hash}` : ''}`;
+}
+
 /** El texto entero tal como llega al chat: lo que dice y, al final, el link en su línea. */
 export const conLink = (texto, url) => [texto, url && `🔗 ${url}`].filter(Boolean).join('\n\n');
 
@@ -45,7 +62,7 @@ export const conLink = (texto, url) => [texto, url && `🔗 ${url}`].filter(Bool
  * y descarga la imagen. Devuelve 'shared', 'copied', 'downloaded' o 'failed'.
  */
 export async function compartir({ titulo, texto, url, imagen = null }) {
-  const completo = conLink(texto, url);
+  const completo = conLink(texto, marcarCompartido(url));
   const cancelado = e => e && e.name === 'AbortError';
   if (imagen && typeof navigator !== 'undefined' && navigator.canShare?.({ files: [imagen] })) {
     try { await navigator.share({ files: [imagen], title: titulo, text: completo }); return 'shared'; }

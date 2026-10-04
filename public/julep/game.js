@@ -18,7 +18,7 @@ import { showHandoff, passBlock } from '../assets/js/handoff.js';
 import { failWith } from '../assets/js/transport/errors.js';
 import { createChat } from '../assets/js/chat.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
-import { trackStart } from '../assets/js/transport/stats.js';
+import { trackStart, trackVisit } from '../assets/js/transport/stats.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import { haySobres, nuevasLlaves, cierra, abre } from '../assets/js/sobre.js';
 import {
@@ -28,6 +28,9 @@ import {
   botDeclara, botCambia, botJuega, botRegala,
 } from './engine.js';
 import { GAME_ID, DEFAULT_CONFIG, LARGOS, RIVALES, RIVALES_POR_DEFECTO, LOCALES } from './rules.js';
+
+// Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
+trackVisit();
 
 const lang = getLang();
 const L = LOCALES[lang];

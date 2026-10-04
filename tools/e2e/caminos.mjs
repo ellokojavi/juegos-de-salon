@@ -93,6 +93,8 @@ const SEMBRAR_PANEL = vista => `(async()=>{const DIA=86400000,ahora=Date.now(),h
       // En la oficina, Cata jugó el día 2 de comodín y el admin cerró la inscripción: la historia los muestra sin hora
       torneos.OFICI.wild={p00001:'2'};torneos.OFICI.closed=true;
       // Partidas sin red con hora (D-140), para la ficha de un juego
+      // Tráfico del sitio (D-208): una semana de visitas, con orígenes, links marcados y páginas
+      for(let k=0;k<7;k++){const d=hoy-k,f=7-k;days[d]=days[d]||{};Object.assign(days[d],{vistas:{inicio:9*f,cup:6*f,hangman:2*f,connections:f,labs:1},entradas:{inicio:5*f,cup:3*f,hangman:f,connections:1},juegan:{inicio:2*f,cup:2*f,hangman:1},ref:{directo:5*f,google_com:2*f,google_cl:f,instagram_com:f,chatgpt_com:1},via:{link:3*f,instagram:1},retorno:{nueva:4*f,vuelve:5*f},disp:{celular:7*f,computador:2*f},pais:{CL:7*f,AR:f,ES:1}});}
       days[hoy].live={k3p9aaaaaa:{game:'dudo',mode:'cpu',n:1,co:'CL',v:'0.93.0',at:ahora-15*60000,beat:ahora-60000},q8w7aaaaaa:{game:'dudo',mode:'local',n:4,co:'AR',v:'0.92.1',at:ahora-5*3600000,beat:ahora-4*3600000}};
       // Los días de copa también mandan su señal: el panel no los cuenta entre las partidas de los juegos
       days[hoy].local.copa={copa:{1:9}};
@@ -287,7 +289,7 @@ export const CAMINOS = {
    */
   panel: {
     ...Object.fromEntries([['datos', '/audiencia'], ['ahora', '/ahora'], ['resumen', '/ahora'], ['torneo', '/torneo'], ['juegos', '/juegos'], ['audiencia', '/audiencia'],
-      ['copa-ficha', '/torneo/OFICI'], ['juego-ficha', '/juego/dudo'], ['sala-ficha', '/sala/CPSV']].map(([toma, vista]) => [toma, [SEMBRAR_PANEL(vista)]])),
+      ['copa-ficha', '/torneo/OFICI'], ['juego-ficha', '/juego/dudo'], ['sala-ficha', '/sala/CPSV'], ['trafico', '/trafico']].map(([toma, vista]) => [toma, [SEMBRAR_PANEL(vista)]])),
     // Las otras dos pestañas de la ficha de una copa (D-207)
     'copa-dias': [SEMBRAR_PANEL('/torneo/OFICI'), `[...document.querySelectorAll('.subtabs button')][1].click()`],
     'copa-historia': [SEMBRAR_PANEL('/torneo/OFICI'), `[...document.querySelectorAll('.subtabs button')][2].click()`],
