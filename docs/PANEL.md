@@ -24,7 +24,7 @@ Los enlaces de antes (`#torneo`, `#resumen`, `#juegos`) siguen sirviendo.
 | `#/torneo` | Cifras de La Copa en el rango, la lista de copas con filtro por estado (en curso, por empezar, terminadas, laboratorio), por juego y por día. |
 | `#/torneo/<CÓDIGO>` | **Ficha de copa.** Cabecera (link propio, admin, idioma, audiencia, días, cuándo cierra cada día abierto, inscripción) y tres pestañas: **Tabla** completa, incluidos los días que los jugadores todavía no ven; **Día a día**, la grilla jugador × día con puntaje, tiempo, puntos, jugando ahora, sin terminar, no jugó, comodín y ×2; **Historia**, evento por evento (creada, inscripciones, empezó y terminó cada día, sin terminar, abrió y cerró cada día, fin), y aparte lo que la base guarda sin hora (comodín, retiros, inscripción cerrada). |
 | `#/juegos` | Los juegos de una partida: cifras, partidas por juego y modo (cada barra abre su ficha), jugadores por partida, por día y la bitácora de salas. |
-| `#/juego/<id>` | **Ficha de juego.** Partidas, en dos celulares, sin red, salas sin rival y duración típica de sus salas; por modo, por día, sus salas y sus partidas sin red con hora (D-140). |
+| `#/juego/<id>` | **Ficha de juego.** Partidas, en dos celulares, sin red, salas sin rival y duración típica de sus salas; por modo, por día, sus salas y sus partidas sin red con hora, quién jugó y cómo terminó (D-140, D-210). |
 | `#/sala/<CÓDIGO>[/<día>]` | **Ficha de sala.** Juego, creada, terminó, cuánto duró, quién ganó, versión y jugadores con su país; si sigue viva, jugadas, chat (solo cuántos) y quién está conectado. Los códigos se reciclan: con el día se pide una en particular. |
 | `#/trafico` | **Tráfico del sitio** (D-208): visitas, páginas vistas, cuántas llegan a jugar, visitas por día, de dónde llegan (por sitio, con sus dominios), por qué link (`de=link` de lo compartido, `utm_source`), páginas con sus entradas y cuántas juegan, aparato, primera vez o vuelve y país. |
 | `#/audiencia` | Cifras del rango, La Copa contra los otros juegos, de dónde (zona horaria), el país de los jugadores de salas, idiomas, hora y cuota. |
@@ -141,7 +141,9 @@ Sale del celular, por día y por entorno (`public/assets/js/transport/stats.js`)
   acá solo los lee el dueño. El país y el ganador se anotan desde la versión 0.33.6 (D-79).
 - **Un celular, contra el celular, solo:** un contador por juego, modo y cantidad de
   jugadores, y mientras se juega un registro en vivo con juego, modo, cantidad de jugadores,
-  país del celular y la hora de la última señal (D-140). **Ningún nombre.**
+  país del celular y la hora de la última señal (D-140). Desde D-210 lleva también quién juega
+  (`name`: los nombres de la partida, o el último que la persona escribió en la app; si nunca
+  puso uno, nada) y cómo terminó (`fin`: quién ganó, empate o un detalle como "80/100 · 2:30").
 - **Cualquier modo:** contador de zona horaria, idioma del navegador, idioma elegido en el
   juego y hora local.
 - **Cualquier página que se abra** (D-208): `vistas/<página>`; y una vez por pestaña,
@@ -150,8 +152,8 @@ Sale del celular, por día y por entorno (`public/assets/js/transport/stats.js`)
   `juegan/<página de entrada>`. El panel no se cuenta.
 
 No sale nunca: dirección IP (no hay servidor que la vea y no se consulta a nadie), los
-secretos de las partidas, el chat, ni el nombre de nadie en los modos sin red. Quién ganó sí
-sale, pero solo de las salas: de una partida en un celular no se sabe ni quién jugó (D-79).
+secretos de las partidas ni el chat. En los modos sin red sale el nombre que la persona ya
+escribió en la app, nunca uno que se le pida para esto (D-210, que cambia lo que decía D-44).
 Todo es mejor esfuerzo: si el envío falla, nadie se entera y la partida sigue igual.
 
 ## La bitácora de salas (D-79)
