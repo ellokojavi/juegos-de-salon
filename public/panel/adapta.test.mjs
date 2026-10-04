@@ -72,7 +72,7 @@ const lleno = summarize({
 assert.equal(lleno.byPlayers[MAX_PLAYERS], 2, 'la partida más numerosa que existe no se recorta');
 
 // --- El panel no copia listas -------------------------------------------
-const fuentes = ['public/panel/panel.js', 'public/panel/aggregate.js', 'public/panel/copas.js'].map(r => [r, leer(r)]);
+const fuentes = ['public/panel/panel.js', 'public/panel/aggregate.js', 'public/panel/copas.js', 'public/panel/rutas.js'].map(r => [r, leer(r)]);
 for (const [ruta, src] of fuentes) {
   for (const id of GAME_IDS) assert.ok(!src.includes(`'${id}'`), `${ruta} nombra el juego ${id}: los juegos salen de games.js (C-16)`);
   for (const m of MODE_IDS) assert.ok(!src.includes(`'${m}'`), `${ruta} nombra el modo ${m}: los modos salen de games.js (C-16)`);
@@ -80,7 +80,7 @@ for (const [ruta, src] of fuentes) {
 }
 const html = leer('public/panel/index.html');
 assert.match(html, /<select id="env"><\/select>/, 'los entornos los pone panel.js, no el HTML');
-assert.match(html, /id="modes-legend"><\/p>/, 'la leyenda de modos la escribe panel.js');
+assert.match(fuentes[0][1], /MODE_IDS\.filter\(m => !MODES\[m\]\.torneo\)\.map/, 'la leyenda de modos la escribe panel.js desde el registro');
 for (const m of MODE_IDS) assert.ok(!html.includes(MODES[m].icon), `el HTML del panel dibuja el ícono de ${m} a mano`);
 
 // --- Las reglas de la base validan por forma, no por lista --------------
