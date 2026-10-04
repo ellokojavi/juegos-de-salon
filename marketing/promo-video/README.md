@@ -27,6 +27,8 @@ revisión de usabilidad (U-34, `node tools/agents/marketing.mjs revisar`):
 - **Sumar 🧶 Desenredo**, que salió del laboratorio en 0.89.0. Hoy no está ni entre los ocho
   juegos ni en la grilla de "¡Y muchos más!". Decidir con el dueño si entra a la escena de juegos
   (y cuál sale, o cuántos golpes más dura) o a la grilla.
+- **Cuatro idiomas, no tres:** desde 0.94.0 (D-197) la portada ofrece también el alemán. La escena
+  de modos ("Y en tres idiomas") y el cierre muestran 🇪🇸 🇬🇧 🇧🇷: sumar 🇩🇪 y ajustar el texto.
 - **Recapturar todo con la app de hoy** (0.90.5 o la que haya). Las capturas de la v5 son de la
   0.82.x, así que se ven atrás:
   - Textos más cortos en todos los juegos (0.84.0, D-177).
