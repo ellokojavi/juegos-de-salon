@@ -700,7 +700,7 @@ ok(await ev(`document.querySelectorAll('.rej.reina').length`) > 0 && !!await ev(
 await click('#btn-fin'); await sleep(500);
 ok(/^0/.test(await ev(`document.querySelector('.score-big')?.textContent || ''`)), 'Reinas: rendirse vale 0 puntos');
 // Desde la portada (D-142) la práctica es el juego suelto: sin prueba ni semilla, y vuelve al menú.
-// Vive en /<slug>/ (D-149, D-162, D-198): un link viejo a /cup/?practica= sin &labs se va para allá.
+// Vive en /<slug>/ (D-149, D-162, D-199): un link viejo a /cup/?practica= sin &labs se va para allá.
 await b.go(`${BASE}?practica=conexiones&prueba`, 1500); await preparar();
 ok(await ev(`location.pathname + location.search`) === '/connections/?prueba', 'juego suelto: el link viejo de la copa lleva a /connections/');
 ok(!await ev(`document.getElementById('btn-ensayo')`) && await ev(`document.getElementById('btn-menu').href`) === `${SITIO}/`

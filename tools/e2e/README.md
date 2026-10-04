@@ -47,8 +47,8 @@ node tools/e2e/ci.mjs cup/torneo.mjs   # solo ese
 
 `mirar.mjs` no es una prueba: abre una pantalla suelta para revisarla de a una, sin jugar la
 partida. `node tools/e2e/mirar.mjs ahorcado juego --ancho 320` saca la captura y avisa si hay
-scroll horizontal o botones bajo 44 px (C-8). Con `--idioma de` pone la marca del laboratorio, igual que
-entrar por `/labs/de/`: el alemán solo se ofrece así (D-191).
+scroll horizontal o botones bajo 44 px (C-8). `--idioma de` (o `en`, `pt`) la abre en ese idioma. Los
+caminos a cada pantalla están en [`caminos.mjs`](caminos.mjs), que comparte con las pruebas de idiomas.
 
 `contacto.mjs` tampoco: arma una hoja con **todas** las capturas del README de una sección,
 al tamaño en que el README las muestra, para mirarlas juntas antes de publicar (D-76).
@@ -74,7 +74,7 @@ node tools/e2e/contacto.mjs cuarto-rey --salida /tmp/contacto
 | `julep/local.mjs` | Mesa de tres contra el celular y partida en un celular, con retomar a mitad |
 | `julep/online.mjs` | Tres celulares contra Firebase real: reparto cerrado, sello de cartas verificadas, recarga a mitad y chat |
 | `timeline/local.mjs` | Un celular con tres jugadores, con retomar a mitad |
-| `timeline/solo.mjs` | Jugar solo (⏳ Línea Relámpago): solo la temática, error en rojo, retomar, puntaje, récord por temática, cartas sin repetir, en/pt |
+| `timeline/solo.mjs` | Jugar solo (⏳ Línea Relámpago): solo la temática, error en rojo, retomar, puntaje, récord por temática, cartas sin repetir, y en cada idioma |
 | `timeline/error.mjs` | Pantalla de error que se queda hasta tocar; el rival espera |
 | `timeline/online.mjs` | Tres celulares contra Firebase real, recarga y revancha |
 | `bulls-and-cows/chat.mjs` | Chat de sala en Toque y Fama: no leídos, etiqueta, y que muera con la partida |
@@ -90,9 +90,37 @@ node tools/e2e/contacto.mjs cuarto-rey --salida /tmp/contacto
 | `versionado.mjs` | Que todos los módulos carguen con `?v=` del import map |
 | `compartir-sala.mjs` | Botón de compartir: diálogo nativo si existe, copiar si no |
 | `enlace-invitacion.mjs` | Quien llega por un enlace solo puede unirse a esa sala, en los cuatro juegos con sala |
-| `sala-error.mjs` | Sin llegar a Firebase: el mensaje se ve en los cuatro juegos con sala y en los tres idiomas |
-| `idioma-por-url.mjs` | El idioma que viene en el link: `?lang=`, las puertas `/pt/` y `/en/`, y la invitación |
+| `sala-error.mjs` | Sin llegar a Firebase: el mensaje de cada juego con sala, Toque y Fama en cada idioma y los demás repartidos entre ellos |
+| `idioma-por-url.mjs` | El idioma que viene en el link, en cada idioma: `?lang=`, las puertas (`/en/`, `/pt/`, `/de/`), el puente `/labs/de/` y las invitaciones a sala y a copa |
 | `sala-tope.mjs` | Pasado el tope de salas por celular, avisa al instante y sin tocar la red |
+| `hangman/idiomas.mjs` | El Ahorcado en todos los idiomas: cada pantalla de `caminos.mjs` contra el español (D-199) |
+| `battleship/idiomas.mjs` | Batalla Naval en todos los idiomas: cada pantalla de `caminos.mjs` contra el español (D-199) |
+| `bulls-and-cows/idiomas.mjs` | Toque y Fama en todos los idiomas: cada pantalla de `caminos.mjs` contra el español (D-199) |
+| `timeline/idiomas.mjs` | Línea de Tiempo en todos los idiomas: cada pantalla de `caminos.mjs` contra el español (D-199) |
+| `liars-dice/idiomas.mjs` | Dudo en todos los idiomas: cada pantalla de `caminos.mjs` contra el español (D-199) |
+| `julep/idiomas.mjs` | Julepe en todos los idiomas: cada pantalla de `caminos.mjs` contra el español (D-199) |
+| `fourth-king/idiomas.mjs` | Cuarto Rey en todos los idiomas: cada pantalla de `caminos.mjs` contra el español (D-199) |
+| `cup-games/idiomas.mjs` | Los juegos sueltos de La Copa en todos los idiomas: cada pantalla de `caminos.mjs` contra el español (D-199) |
+
+## Todos los idiomas (D-199)
+
+Cada juego tiene su `<carpeta>/idiomas.mjs` (`hangman/`, `battleship/`, `bulls-and-cows/`,
+`timeline/`, `liars-dice/`, `julep/`, `fourth-king/`, y `cup-games/` para los juegos de La Copa
+que se juegan sueltos). Recorren cada pantalla de [`caminos.mjs`](caminos.mjs) en cada idioma de
+`LANGS` —un idioma nuevo entra solo— y la comparan con la misma pantalla en español:
+
+- la página está en ese idioma (`<html lang>`) y llega a la misma pantalla;
+- no asoma `undefined`, `NaN`, `[object …]` ni un `{marcador}` sin reemplazar;
+- no quedó nada en español: ni un texto de los diccionarios (`LOCALES` del juego y `COMMON`) que
+  en ese idioma diga otra cosa, ni una línea larga idéntica a la de la pantalla en español, que
+  es como se delata un texto escrito a mano fuera de los diccionarios;
+- el texto más largo no rompe la pantalla (C-8): sin scroll horizontal, botones bajo 44 px ni
+  botones que se salgan por abajo que el español no tenga.
+
+La lógica vive en [`idiomas-comun.mjs`](idiomas-comun.mjs), y cada toma queda como captura
+`<pantalla>-<idioma>.png`. Una pantalla nueva para revisar en todos los idiomas se agrega a
+`caminos.mjs`, el mismo catálogo que usa `mirar.mjs`; un juego nuevo, con un `idiomas.mjs` de
+tres líneas. `cup/idiomas.mjs` hace lo mismo con la portada de La Copa y su formulario.
 
 ## De acá salen las capturas del README
 
@@ -132,8 +160,9 @@ jugador es la misma pestaña con el `sessionStorage` limpio. Revisa en cada pant
 scroll horizontal ni botones bajo 44 px (C-8), y captura el recordatorio, la tabla parcial y el
 resumen que compartiría la admin.
 
-`node tools/e2e/cup/idiomas.mjs <salida>` crea una copa en inglés y otra en portugués (D-170):
-revisa que la copa guarde el idioma de sus palabras, que la pantalla siga el idioma de quien mira
-y que lo que se comparte al grupo salga en el de la copa, con su `?lang=`. Después abre cinco
-juegos sueltos en inglés o portugués (el teclado de Palabra sin Ñ, la grilla de Conexiones de
-portugués).
+`node tools/e2e/cup/idiomas.mjs <salida>` crea una copa en cada idioma que no es el español
+(D-170, D-199): revisa que la copa guarde el idioma de sus palabras, que la pantalla siga el idioma
+de quien mira (otro, el siguiente de la lista) y que lo que se comparte al grupo salga en el de la
+copa, con su `?lang=`. Después abre cinco juegos sueltos en cada idioma (el teclado de Palabra sin
+Ñ, la grilla de Conexiones del idioma) y recorre la portada y el formulario de crear contra el
+español. Los textos esperados salen de los diccionarios, no están escritos en el guion.

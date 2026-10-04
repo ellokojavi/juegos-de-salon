@@ -160,8 +160,8 @@ node tools/e2e/mirar.mjs panel torneo     # la vista de La Copa (también resume
 ```
 
 Saca la captura y avisa si hay scroll horizontal o botones bajo 44 px (C-8). Los caminos a
-cada pantalla están declarados arriba del archivo: agregar uno es sumar una entrada, no
-escribir un guion nuevo.
+cada pantalla están en `tools/e2e/caminos.mjs`: agregar uno es sumar una entrada, no escribir un
+guion nuevo, y con eso la pantalla entra también a las pruebas de idiomas.
 
 Para verlo en un celular de verdad, se sirve el árbol de trabajo por Tailscale (D-67):
 
@@ -185,6 +185,13 @@ solo; para que falle en rojo, que imprima ✗ o ❌ o salga con error. Aquí se 
 ```bash
 node tools/e2e/ci.mjs              # todos los de CI, con resumen; o: node tools/e2e/ci.mjs cup/torneo.mjs
 ```
+
+**Todos los idiomas** (D-199): cada juego tiene su `tools/e2e/<carpeta>/idiomas.mjs` (y
+`cup-games/` para los juegos sueltos de La Copa), que recorre cada pantalla de `caminos.mjs` en
+cada idioma de `LANGS` contra el español: nada sin traducir, nada a medio armar y nada que el texto
+más largo rompa. Un idioma nuevo entra solo. Los guiones que miran algo de un idioma (La Copa,
+Línea de Tiempo jugando solo, `sala-error`, `idioma-por-url`) también recorren `LANGS` y sacan lo
+que esperan de los diccionarios, no de textos escritos a mano.
 
 Antes de repetir uno que falló, matar solo el Chrome propio:
 `pkill -f "remote-debugging-port=948[4]"`, con el corchete (ver "Varias sesiones a la vez").

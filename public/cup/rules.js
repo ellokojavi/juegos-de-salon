@@ -1997,7 +1997,7 @@ const DE = {
     letras: {
       nombre: 'Bullen und Kühe: Wort', habilidad: 'Kombinieren',
       como: [
-        'Errate in 8 Versuchen ein geheimes Wort aus 5 verschiedenen Buchstaben. Umlaute stehen ohne Punkte: Ä ist A, Ö ist O, Ü ist U.',
+        'Errate in 8 Versuchen ein geheimes Wort aus 5 verschiedenen Buchstaben. Ä, Ö und Ü schreibst du als A, O und U.',
         'Gib 5 verschiedene Buchstaben ein, auch ohne Sinn, und tippe auf Raten. Gelb heißt: richtig platziert (Bulle). Hellblau: im Wort, aber woanders (Kuh).',
       ],
       puntaje: 'Jeder Buchstabe, den du an seiner Stelle findest, bringt einmalig 10 Punkte. Das Wort zu knacken bringt 50 dazu, minus 5 für jeden Versuch nach dem ersten.',
