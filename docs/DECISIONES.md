@@ -3143,3 +3143,37 @@ leyó como proyectos distintos: no se distinguía el trabajo en curso del abando
 pierde nada —el historial vive en el repo— y `git worktree list` vuelve a ser una lista corta de
 lo que de verdad está abierto. La regla la escribió una sesión del 2026-10-04 como D-197, en una
 rama que nunca se subió (ese número quedó para el alemán); se rescató al limpiar las carpetas.
+
+## D-207 · El panel se navega: secciones, fichas y la hora del Pacífico
+**Fecha:** 2026-10-04 · **Estado:** vigente; reemplaza las tres vistas de D-137
+**Decisión:** El panel deja de ser una página larga con tres pestañas y pasa a navegarse como un
+sitio: cuatro secciones (Ahora, La Copa, Juegos, Audiencia) y una ficha por cada cosa que existe.
+La de una copa tiene la tabla completa, la grilla jugador × día (puntaje, tiempo, puntos, jugando,
+sin terminar, no jugó, comodín) y su historia evento por evento; la de un juego, sus modos, la
+duración típica de sus salas, sus salas y sus partidas sin red con hora; la de una sala, quién
+jugó, quién ganó y cuánto duró. Toda vista vive en el `#` de la URL (`public/panel/rutas.js`) y
+los enlaces de antes siguen sirviendo. Cada cifra de Ahora filtra la lista que la suma. Lo pidió
+el dueño con estas condiciones:
+- **La hora es la del Pacífico** (Los Ángeles), la misma con que La Copa parte sus días. Los
+  contadores de `stats/` siguen por día UTC y se rotulan así.
+- **Las copas de prueba no se ocultan**: ya se parecen a las de producción. Llevan su etiqueta y
+  tienen un filtro propio.
+- **Cada nombre lleva la bandera de su país**, para saber dónde se juega. Las salas ya lo tenían
+  (D-79); La Copa guarda ahora `co` al crear o inscribirse (regla nueva en
+  `torneos/<código>/players/<pid>/co`), y los reportes 🐞 lo llevan en su contexto.
+- **Se busca por código o link propio, no por nombre**: juntar todo lo de una persona es seguirla,
+  y el panel mira señales (D-44).
+- **Lo que leen los reportes queda en el navegador**: el panel no escribe en la base.
+De paso, una copa que el admin terminó antes (`fin`, D-161) ya no sale en curso hasta su fecha:
+el panel le aplica el cierre igual que la copa.
+**Por qué:** Con tres pestañas nada se podía abrir: una copa era una fila de texto, no había dónde
+ver quién jugó qué día ni la historia de una sala, y las cifras no llevaban a la lista que las
+formaba. Los datos ya estaban en la base; faltaba poder recorrerlos. La hora del Pacífico evita
+leer la ventana de un día de copa en un reloj y sus jugadas en otro.
+**Consecuencias:** `panel.js` dibuja por ruta; `copas.js` suma `fichaCopa`, `historiaCopa` y
+`buscarCopa`; `aggregate.js`, la hora del panel, las partidas sin red del rango (`localLog`), el
+país de las salas y la sala por código. La regla de `co` es nueva y opcional: hay que publicarla
+**antes** de que salga la versión que lo escribe, porque una inscripción con `co` y las reglas
+viejas se rechaza. Queda para después (propuesta del 2026-10-04): una línea de tiempo de toda la
+app, los reportes en el panel (LIG-44), una sección de salud de los datos y señales nuevas
+(cuándo entró el rival, cuándo cerró el admin la inscripción).
