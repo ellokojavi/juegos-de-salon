@@ -407,7 +407,7 @@ Spec and design: [docs/games/cup.md](docs/games/cup.md)
 - **Leaderboards** (D-212): signing in is optional and needs no account — a name and a 4-digit
   PIN, the same idea as The Cup, that works on any phone. Signed in, every game played alone on its
   own page keeps your best score and counts your games. Each game's page shows its leaderboard
-  (this week, all time, friends and in a cup), with your neighbours when you are below the top ten.
+  (this week, all time, friends and in The Cup), with your neighbours when you are below the top ten.
   `/records/` (🏆 on the menu) adds the All-Rounder, the sum of your best score in every game, and
   The Cup's medal table. Two people may share a name; with different PINs they are different players.
 - **Saved games:** every game stores its state on the device and offers to continue.
