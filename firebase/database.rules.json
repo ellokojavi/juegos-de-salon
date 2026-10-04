@@ -153,6 +153,28 @@
                 "co": {
                   ".validate": "newData.isString() && newData.val().matches(/^[A-Z]{2}$/)"
                 },
+                "name": {
+                  ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 60"
+                },
+                "fin": {
+                  ".write": "$env.matches(/^[a-z]{2,10}$/) && $day.matches(/^[0-9]{5}$/) && $id.matches(/^[a-z0-9]{10}$/) && data.parent().child('at').exists() && !data.exists()",
+                  ".validate": "newData.hasChildren(['at'])",
+                  "at": {
+                    ".validate": "newData.isNumber() && newData.val() <= now + 60000 && newData.val() > now - 60000"
+                  },
+                  "g": {
+                    ".validate": "newData.isString() && newData.val().length <= 20"
+                  },
+                  "e": {
+                    ".validate": "newData.isBoolean()"
+                  },
+                  "d": {
+                    ".validate": "newData.isString() && newData.val().length <= 40"
+                  },
+                  "$other": {
+                    ".validate": false
+                  }
+                },
                 "$other": {
                   ".validate": false
                 }

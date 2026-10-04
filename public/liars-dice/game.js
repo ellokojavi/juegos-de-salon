@@ -15,7 +15,7 @@ import { showHandoff, passBlock } from '../assets/js/handoff.js';
 import { failWith } from '../assets/js/transport/errors.js';
 import { createChat } from '../assets/js/chat.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
-import { trackStart, trackVisit } from '../assets/js/transport/stats.js';
+import { trackStart, trackVisit, trackFinish } from '../assets/js/transport/stats.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import {
   PINTAS, MIN_PLAYERS, MAX_PLAYERS, MIN_CALZAR, buildState, botMove, minBid, bidOk,
@@ -472,6 +472,8 @@ function renderResult(v) {
   if (!already && S.mode === 'online') {
     S.transport?.noteWinner?.({ role: v.winner, name: nameOf(v.winner) });
   }
+  // Sin red, cómo terminó, para el panel (D-210)
+  if (!already && S.mode !== 'online') trackFinish({ ganador: nameOf(v.winner), detalle: `${v.history.length} rondas` });
   const gane = S.mode === 'cpu' && v.winner === 'A';
   $('#result-trophy').textContent = S.mode === 'cpu' && !gane ? '🎲' : '🏆';
   $('#result-title').textContent = S.mode === 'cpu'
@@ -626,7 +628,7 @@ function startMatch(mode, names, config) {
   S.shownRound = 0;
   S.shownWin = false;
   keepAwake();
-  trackStart({ game: GAME_ID, mode, players: mode === 'cpu' ? 1 : players.length }); // señal de uso (D-44)
+  trackStart({ game: GAME_ID, mode, players: mode === 'cpu' ? 1 : players.length, nombres: mode === 'cpu' ? [names?.A] : players.map(r => names?.[r]) }); // señal de uso (D-44, D-210)
   onChange();
 }
 

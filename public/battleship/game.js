@@ -12,7 +12,7 @@ import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { failWith } from '../assets/js/transport/errors.js';
 import { showHandoff, passBlock, showCover } from '../assets/js/handoff.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
-import { trackStart, trackVisit } from '../assets/js/transport/stats.js';
+import { trackStart, trackVisit, trackFinish } from '../assets/js/transport/stats.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import { UMBRAL } from '../assets/js/arrastre.js';
 import { createChat } from '../assets/js/chat.js';
@@ -753,6 +753,8 @@ function renderResult(v) {
   if (!already && S.mode === 'online') {
     S.transport?.noteWinner?.({ role: v.winner, name: M.names[v.winner] });
   }
+  // Sin red, cómo terminó, para el panel (D-210)
+  if (!already && S.mode !== 'online') trackFinish({ ganador: M.names[v.winner] });
   const meRole = S.mode === 'cpu' ? 'A' : (S.mode === 'online' ? S.role : null);
   const title = $('#result-title'), sub = $('#result-sub'), trophy = $('#result-trophy');
   title.textContent = fmt(T.winTitle, { name: M.names[v.winner] });
@@ -864,7 +866,7 @@ function startLocalMode(mode, names, config) {
   const bot = mode === 'cpu' ? { role: 'B', hunter: new Hunter() } : null;
   startSession({ mode, transport, roles: ['A', 'B'], config, names, bot });
   keepAwake();
-  trackStart({ game: GAME_ID, mode, players: mode === 'cpu' ? 1 : 2 }); // señal de uso para el panel (D-44)
+  trackStart({ game: GAME_ID, mode, players: mode === 'cpu' ? 1 : 2, nombres: mode === 'cpu' ? [names.A] : Object.values(names || {}) }); // señal de uso (D-44, D-210)
 }
 
 function renderModes() {

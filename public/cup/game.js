@@ -14,7 +14,7 @@ import { $, $$, el, con, conEmoji, vibrate, sparkles, keepAwake, confetti } from
 import { applyStatic, COMMON, SITIO, LANGS, getLang, langToggle, withLang } from '../assets/js/i18n.js';
 import { compartir as compartirAlChat, cabecera, lamina, laminaResultado, aArchivo, nombreArchivo, puntajeYTiempo, botonResultadoSolo, MARCO } from '../assets/js/compartir.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
-import { trackStart, versionOf, countryOf, trackVisit } from '../assets/js/transport/stats.js';
+import { trackStart, versionOf, countryOf, trackVisit, trackFinish } from '../assets/js/transport/stats.js';
 import { gameById } from '../assets/js/games.js';
 import {
   POZO, calendarioAlAzar, calendario, MAX_JUGADORES, COPA_MAX, aliasLimpio, esAlias, CODIGO, esCodigo, codigoAlAzar, pidAlAzar, limpiarNombre, claveNombre, esPin, hashPin,
@@ -2060,6 +2060,7 @@ function resultadoEnsayo(id, r, volver) {
 
 function resultadoPractica(id, semilla, r) {
   const J = JUEGOS_COPA[id];
+  trackFinish({ detalle: `${r.s}/100${r.ms ? ` · ${mmss(r.ms)}` : ''}` });   // cómo salió, para el panel (D-210)
   mostrar('resultado');
   SFX.win();
   const otra = SUELTO ? paginaSuelta(id) : `${location.pathname}?practica=${id}${PRUEBA ? '&prueba' : ''}${LABS ? '&labs' : ''}`;
