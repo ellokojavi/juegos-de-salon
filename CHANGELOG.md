@@ -1,10 +1,15 @@
 # Changelog
 
-## 0.97.1 — 2026-10-04
+## 0.98.1 — 2026-10-04
 - **README: capturas rehechas en todas las secciones** después de la mudanza a `public/` (D-192),
   con los emojis de Apple y las salas en el Firebase real. La del cuarto rey ya no sale con el
   confeti tapando la instrucción, y los guiones de sala de Toque y Fama y Batalla Naval abren el
   segundo celular en el servidor propio de la sesión, no en el 8765 (D-135).
+
+## 0.98.0 — 2026-10-04
+- **¿Dónde queda? a pantalla completa** (D-203): el globo ocupa toda la pantalla, en el celular y
+  en el computador. La ciudad, el reloj, las reglas plegadas, la brújula, + y − y Confirmar flotan
+  encima.
 
 ## 0.97.0 — 2026-10-04
 - **¿Dónde queda?: el mapa se gira con dos dedos** (D-200), como en los mapas del celular. Con el
