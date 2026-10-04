@@ -28,7 +28,7 @@ import { copaDe, copasEnCurso, resumenCopas, bitacoraCopas, fichaCopa, buscarCop
 import {
   ROOM_TTL, liveRooms, connections, summarize, top, tzLabel, ago, dayOf, codesOfDays, splitByEnv, liveLocal, roomLog,
   paginate, flagOf, whenLabel, horaLabel, fechaLabel, diaPanel, ZONA_PANEL, ZONA_NOMBRE, RANGOS, RANGO_POR_DEFECTO, rangeOf,
-  groupDays, localLog, paisesDeSalas, paisesDelRango, salaDe, mediana, trafico, origenesAgrupados, origenLabel, dayLabel,
+  groupDays, localLog, paisesDeSalas, paisesDelRango, salaDe, mediana, idiomasDeSalas, idiomasDelRango, trafico, origenesAgrupados, origenLabel, dayLabel,
 } from './aggregate.js';
 import { SECCIONES, leerRuta, rutaA, seccionDe } from './rutas.js';
 
@@ -239,6 +239,15 @@ const bandera = co => (co ? el('span', { class: 'flag', title: nombreDePais(co) 
 /** Un nombre con la bandera de su país (D-207): saber dónde se juega es lo que pidió el dueño. */
 const quien = (name, co) => el('span', { class: 'quien' }, name, bandera(co));
 
+/**
+ * El idioma en que se jugó, como etiqueta corta (`ES`) con su nombre al pasar el dedo (D-211).
+ * Una lista se dice una vez cada uno; sin idioma conocido (lo de antes) no va nada.
+ */
+const idiomaTag = langs => {
+  const ls = [...new Set((Array.isArray(langs) ? langs : [langs]).filter(Boolean))];
+  return ls.length ? el('span', { class: 'idioma', title: `Se jugó en ${ls.map(nombreDeIdioma).join(' y ')}` }, ls.map(l => l.toUpperCase()).join(' · ')) : null;
+};
+
 /** Una cifra. Si lleva `href` u `onClick`, se abre en la lista que la suma: toda cifra se puede revisar. */
 function tile(value, label, { hot = false, href = null, onClick = null, pressed = null, info = '' } = {}) {
   const hijos = [el('b', {}, typeof value === 'string' ? value : n(value)), el('small', {}, label), info ? el('span', { class: 'i' }, info) : null];
@@ -300,7 +309,7 @@ function tituloRango() {
 
 /** Las salas vivas del entorno mirado, con el país de cada jugador; y aparte las de otro entorno (D-45). */
 function salasVivas(now) {
-  const vivas = liveRooms(S.rooms, now, paisesDeSalas(S.days, now));
+  const vivas = liveRooms(S.rooms, now, paisesDeSalas(S.days, now), idiomasDeSalas(S.days, now));
   return splitByEnv(vivas, codesOfDays(S.days, now), { loaded: S.daysLoaded });
 }
 
@@ -310,7 +319,7 @@ function salasVivas(now) {
 /** Una sala viva: se abre en su ficha. */
 function filaSala(r, now) {
   return enlace('sala', [r.code], { class: `room${r.active ? ' active' : ''}` },
-    el('div', {}, el('div', { class: 'code' }, r.code), el('div', { class: 'meta', style: 'text-align:left' }, gameLabel(r.game))),
+    el('div', {}, el('div', { class: 'code' }, r.code), el('div', { class: 'meta', style: 'text-align:left' }, gameLabel(r.game), ' ', idiomaTag(r.players.map(p => p.lang)))),
     el('div', { class: 'who' }, r.players.map(p => el('span', {}, el('i', { class: p.online ? 'on' : '' }), quien(p.name, p.co)))),
     el('div', { class: 'meta' }, jugadasDe(r.jugadas), el('br'), chatDe(r.chat), el('br'),
       r.lastPlayAt ? `última jugada ${ago(r.lastPlayAt, now)}` : `actividad ${ago(r.lastAt, now)}`, el('br'), `creada ${ago(r.createdAt, now)}`),
@@ -330,7 +339,7 @@ function filaSinRed(p, now) {
       el('div', { class: 'cname' }, nombreJuego(p.game)),
       // Quién juega, si la app lo sabe (D-210); si no, solo su bandera
       el('div', { class: 'who' }, el('span', {}, el('i', { class: 'on' }), p.name ? quien(p.name, p.co) : ['sin nombre', bandera(p.co)])),
-      el('div', { class: 'sub' }, `${modo} · ${cuantos}`)),
+      el('div', { class: 'sub' }, `${modo} · ${cuantos} `, idiomaTag(p.lang))),
     el('div', { class: 'meta' }, `empezó ${ago(p.at, now)}`, el('br'), `última señal ${ago(p.beat, now)}`),
   );
 }
@@ -351,7 +360,7 @@ function filaCopa(c, now) {
   return enlace('torneo', [c.code], { class: `room copa${c.jugando.length ? ' active' : ''}` },
     el('div', {}, el('div', { class: 'code' }, c.code), c.alias ? el('div', { class: 'meta', style: 'text-align:left' }, `/${c.alias}`) : null),
     el('div', { class: 'cuerpo' },
-      el('div', { class: 'cname' }, c.name, c.lab ? el('span', { class: 'tag', title: 'Creada desde el laboratorio: su admin puede adelantar los días para probar' }, 'laboratorio') : null),
+      el('div', { class: 'cname' }, c.name, ' ', idiomaTag(c.lang), c.lab ? el('span', { class: 'tag', title: 'Creada desde el laboratorio: su admin puede adelantar los días para probar' }, 'laboratorio') : null),
       el('div', { class: 'sub' }, cuando),
       el('div', { class: 'who' }, ...gente),
       atrasados.length ? el('div', { class: 'sub' }, 'Jugando ahora un día anterior: ', ...atrasados.flatMap((x, i) => [i ? ', ' : '', quien(x.name, x.co), ` (día ${x.dia}, ${miniLabel(x.juego)})`])) : null,
@@ -375,7 +384,7 @@ function filaCopaLog(c) {
       : el('span', { class: 'va', title: 'Va primero en la tabla' }, '▲ ', quien(c.primero.name, c.primero.co), otros);
   return enlace('torneo', [c.code], { class: 'log-row' },
     el('div', { class: 'when' }, inicioLabel(c.start), el('br'), el('span', { class: 'code' }, c.code)),
-    el('div', { class: 'game' }, c.name, c.lab ? el('span', { class: 'tag' }, 'laboratorio') : null),
+    el('div', { class: 'game' }, c.name, ' ', idiomaTag(c.lang), c.lab ? el('span', { class: 'tag' }, 'laboratorio') : null),
     el('div', { class: 'who' },
       el('span', { class: 'q' }, estadoTexto(c)),
       el('span', { class: 'q' }, `${n(c.jugadores)} ${c.jugadores === 1 ? 'jugador' : 'jugadores'}`),
@@ -392,7 +401,7 @@ function filaSalaLog(f) {
       : el('span', { class: 'none', title: 'Esta sala terminó sin que quedara registro de quién ganó' }, '—');
   return enlace('sala', [f.code, f.day], { class: 'log-row' },
     el('div', { class: 'when' }, whenLabel(f.at), el('br'), el('span', { class: 'code' }, f.code)),
-    el('div', { class: 'game' }, gameLabel(f.game)),
+    el('div', { class: 'game' }, gameLabel(f.game), ' ', idiomaTag(f.langs)),
     el('div', { class: 'who' }, ...f.players.map(p => el('span', { class: 'q' }, quien(p.name, p.co)))),
     el('div', { class: 'win' }, ganador),
   );
@@ -411,7 +420,7 @@ function filaSinRedLog(p, { conJuego = false } = {}) {
         : el('span', { class: 'va' }, '✓ terminó');
   return el('div', { class: 'log-row' },
     el('div', { class: 'when' }, whenLabel(p.at), p.v ? [el('br'), `v${p.v}`] : null),
-    el('div', { class: 'game' }, conJuego ? [gameLabel(p.game), el('br')] : null, el('small', {}, modo)),
+    el('div', { class: 'game' }, conJuego ? [gameLabel(p.game), ' ', idiomaTag(p.lang), el('br')] : null, el('small', {}, modo, conJuego ? null : [' ', idiomaTag(p.lang)])),
     el('div', { class: 'who' },
       el('span', { class: 'q' }, p.name ? quien(p.name, p.co) : ['sin nombre', bandera(p.co)]),
       p.n > 1 && !p.name ? el('span', { class: 'q' }, `${n(p.n)} jugadores`) : null,
@@ -486,6 +495,13 @@ function vistaAhora(now) {
 /* ------------------------------------------------------------------ */
 /* La Copa                                                             */
 /* ------------------------------------------------------------------ */
+/** Barras por idioma, en el orden de la app y con su nombre (D-211). */
+function porIdioma(titulo, nota, cuenta) {
+  const pares = ordenIdiomas(Object.entries(cuenta || {}).filter(([, v]) => v > 0));
+  const max = Math.max(0, ...pares.map(([, v]) => v));
+  return bloque(titulo, nota, lista(pares.map(([k, v]) => bar(`${k.toUpperCase()} · ${nombreDeIdioma(k)}`, [seg(C_IDIOMA, v)], max)), 'Nada todavía.', 'bars'));
+}
+
 function vistaCopa(now) {
   const rango = rangeOf(S.range);
   const rc = resumenCopas(S.torneos, rango, now);
@@ -510,6 +526,7 @@ function vistaCopa(now) {
       tile(part === null ? '—' : `${part}%`, 'participación', { info: 'jugados de los que se podían jugar, en días cerrados' }),
       tile(rc.abandonos, 'juegos sin terminar'),
     ),
+    porIdioma('Copas por idioma', 'El idioma que eligió quien creó la copa: en ese idioma la juegan todos.', todas.reduce((m, c) => ({ ...m, [c.lang]: (m[c.lang] || 0) + 1 }), {})),
     bloque('Copas', 'De la más nueva a la más vieja. Toca una para ver su tabla, cada día y su historia.',
       filtros(ESTADOS.map(([v, l]) => [v, `${l} · ${todas.filter(c => es(c, v)).length}`]), S.filtroCopas, v => { S.filtroCopas = v; render(); }, 'Qué copas mostrar'),
       lista(todas.filter(c => es(c, S.filtroCopas)).map(filaCopaLog), cargando || 'Ninguna copa así en este rango.', 'log')),
@@ -731,7 +748,9 @@ function vistaFichaJuego(id) {
       tile(s.sinRival, 'salas sin rival'),
       tile(durTipica ? minutos(durTipica) : '—', 'duración típica de las salas que terminaron', { info: 'desde que se creó hasta que alguien ganó: incluye la espera del rival' }),
     ),
-    bloque('Por modo', null, lista(modos.map(m => bar(modoDe(m), [segModo(m, fila[m])], maxM)), 'Nada en este rango.', 'bars')),
+    el('div', { class: 'grid2' },
+      bloque('Por modo', null, lista(modos.map(m => bar(modoDe(m), [segModo(m, fila[m])], maxM)), 'Nada en este rango.', 'bars')),
+      porIdioma('En qué idioma', 'Una vez por jugador de cada sala y una vez por partida sin red. Se anota desde D-211.', idiomasDelRango(S.days, { from: rango.from, to: rango.to, incluye: g => g === id }))),
     graficosJuego(s, rango),
     bitacora(rango, id),
     bloque('Partidas sin red', NOTA_SIN_RED,
@@ -763,6 +782,7 @@ function vistaSala(code, dia, now) {
       reg?.v ? el('span', { class: 'tag' }, `v${reg.v}`) : null),
     datos([
       ['Juego', game ? enlace('juego', [game], {}, gameLabel(game)) : '?'],
+      ['Idioma', (reg?.langs?.length ? reg.langs : (viva?.players || []).map(p => p.lang).filter(Boolean)).map(nombreDeIdioma).filter((x, i, a) => a.indexOf(x) === i).join(' y ') || 'sin dato (de antes de D-211)'],
       ['Creada', whenLabel(reg?.at || viva.createdAt)],
       reg?.endAt ? ['Terminó', whenLabel(reg.endAt)] : null,
       reg?.durMs ? ['Duró', minutos(reg.durMs)] : null,
@@ -773,7 +793,7 @@ function vistaSala(code, dia, now) {
     ]),
     bloque('Jugadores', null, lista(jugadores.map(p => el('div', { class: 'puesto' },
       el('span', { class: 'lugar' }, p.role),
-      el('span', { class: 'nombre' }, quien(p.name, p.co)),
+      el('span', { class: 'nombre' }, quien(p.name, p.co), ' ', idiomaTag(p.lang)),
       el('span', { class: 'pts' }, viva ? (enLinea(p.role) ? el('span', { class: 'on-txt' }, '● conectado') : 'desconectado') : reg?.winner === p.role ? '🏆' : ''))), 'Sin jugadores.', 'tabla')),
     el('p', { class: 'muted small' }, viva
       ? 'La sala sigue viva: se borra sola a la media hora sin movimiento. Del chat solo se cuenta cuántos mensajes hubo.'
