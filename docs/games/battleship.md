@@ -103,7 +103,7 @@ Ganador, disparos totales y precisión de cada uno, ambas flotas reveladas (con 
 
 Estado derivado (`view()`): fase (`lobby`, `placing`, `play`, `reveal`, `done`), quién dispara (a partir del historial y la regla de tiro extra), disparo pendiente, barcos hundidos por lado, ganador. Disparos repetidos a la misma casilla se rechazan en el reductor. Mensajes en serie, como en D-20.
 
-Sala en Firebase: mismas reglas de seguridad (el campo `game` distingue el juego, y el lobby puede cancelar la sala, D-50); los mensajes `reply` con `cells` caben en la validación actual (`t`, `from`, `at` obligatorios). Sus módulos entran solos al import map (D-192).
+Sala en Firebase: mismas reglas de seguridad (el campo `game` distingue el juego, y el lobby puede cancelar la sala, D-50); los mensajes `reply` con `cells` caben en la validación actual (`t`, `from`, `at` obligatorios). Sus módulos entran solos al import map de la copia que se publica (C-11, D-205).
 
 ## Archivos
 
