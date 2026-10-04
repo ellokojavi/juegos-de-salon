@@ -79,8 +79,9 @@ assert.deepEqual(Object.keys(online).sort(), ['applang/en', 'hour/21', 'lang/es-
 
 // Registro de sala
 assert.deepEqual(roomRecord(fp, { game: 'batalla-naval', role: 'A', name: 'Javi' }), {
-  game: 'batalla-naval', at: { '.sv': 'timestamp' }, v: '0.20.0', players: { A: 'Javi' },
-});
+  game: 'batalla-naval', at: { '.sv': 'timestamp' }, v: '0.20.0', players: { A: 'Javi' }, l: { A: 'en' },
+}, 'con el idioma en que juega quien la creó (D-211)');
+assert.equal('l' in roomRecord({ ...fp, app: 'desconocido' }, { game: 'x', role: 'A', name: 'n' }), false, 'sin idioma sabido, no va');
 assert.equal(roomRecord(fp, { game: 'x', role: 'A', name: 'n'.repeat(30) }).players.A.length, 20);
 
 // Rutas por día y entorno
@@ -113,7 +114,7 @@ assert.equal(dayPath('prod', 20342), 'stats/prod/days/20342');
   assert.equal(api.calls[0].path, 'stats/dev/days/20341');
   assert.deepEqual(api.calls[0].changes['rooms/ABCD'].players, { A: 'Cata' });
   await notePlayer(api, { ...fp, env: 'dev' }, { code: 'ABCD', createdAt, role: 'B', name: 'Fausto' });
-  assert.deepEqual(api.calls[1].changes, { 'rooms/ABCD/players/B': 'Fausto' });
+  assert.deepEqual(api.calls[1].changes, { 'rooms/ABCD/players/B': 'Fausto', 'rooms/ABCD/l/B': 'en' });
 }
 
 // Mejor esfuerzo: un rechazo de las reglas no se propaga
@@ -359,6 +360,16 @@ assert.equal(dispositivoDe({ ua: 'Mozilla/5.0 (Macintosh)', platform: 'MacIntel'
   // Las claves nuevas caben en las reglas
   const reglas = JSON.parse(readFileSync(new URL('../../../../firebase/database.rules.json', import.meta.url), 'utf8')).rules.stats.$env.days.$day.live.$id;
   assert.ok(reglas.name && reglas.fin?.g && reglas.fin?.d && reglas.fin?.e, 'las reglas aceptan name y fin');
+}
+
+// --- El idioma de cada partida (D-211) ------------------------------------------
+{
+  const api = fakeApi();
+  await notePlayer(api, { env: 'prod', app: 'pt', co: 'BR' }, { code: 'ABCD', createdAt: 20000 * DAY, role: 'B', name: 'Ana' });
+  assert.equal(api.calls[0].changes['rooms/ABCD/l/B'], 'pt', 'quien entra anota su idioma');
+  assert.equal(liveRecord({ v: '1', app: 'de' }, { game: 'dudo', mode: 'cpu', players: 1 }).l, 'de');
+  const reglas = JSON.parse(readFileSync(new URL('../../../../firebase/database.rules.json', import.meta.url), 'utf8')).rules.stats.$env.days.$day;
+  assert.ok(reglas.rooms.$code.l?.$p && reglas.live.$id.l, 'las reglas aceptan el idioma');
 }
 
 console.log('stats.test.mjs: todo en verde');
