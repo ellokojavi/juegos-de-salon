@@ -158,7 +158,7 @@ siendo aparte. Las copas del laboratorio no cuentan.
 
 ```
 torneos/<código>/meta               nombre, días, calendario, ventanas, admin, joinUntil, final
-torneos/<código>/players/<pid>      { name, at, out? }
+torneos/<código>/players/<pid>      { name, at, out?, co?, j? }   co: país (D-209); j: su jugador de los rankings (D-212)
 torneos/<código>/started/<d>/<pid>  hora del servidor al tocar Empezar
 torneos/<código>/results/<d>/<pid>  { s, ms, t, r, at }
 torneos/<código>/wild/<pid>         "3" (el día del comodín, como texto)

@@ -162,6 +162,7 @@ node public/assets/js/transport/stats.test.mjs
 node public/panel/aggregate.test.mjs
 node public/panel/adapta.test.mjs               # el panel se entera solo de lo nuevo (C-16)
 node public/panel/copas.test.mjs                # La Copa en el panel: en curso, juegos, participación
+node public/panel/rutas.test.mjs                # la vista del panel queda en la URL, y los enlaces de antes sirven (D-207)
 node tools/agents/documentar.test.mjs           # la memoria y las comprobaciones del agente de documentación
 node tools/agents/marketing.test.mjs            # qué cuenta como marketing atrasado (U-34)
 node tools/release/version.test.mjs             # la versión sale del CHANGELOG (D-205)
@@ -228,6 +229,20 @@ reglas) que muestra salas vivas, partidas por juego y modo, jugadores, origen e 
 señales las mandan los juegos con `trackStart` y el transporte (`public/assets/js/transport/stats.js`).
 Ver [docs/PANEL.md](docs/PANEL.md) y D-44. `window.__panel.seed({ rooms, days, torneos, vista })` (`vista` es una ruta: `/torneo/OFICI`) lo dibuja con
 datos sembrados sin entrar. Se navega por secciones (Ahora, La Copa, Juegos, Audiencia) y fichas de cada copa, juego y sala, con la hora del Pacífico (D-207).
+
+## Rankings (D-212)
+
+Quien quiere aparecer en los rankings entra con su nombre y un PIN de 4 dígitos, una vez para toda
+la app. La lógica pura está en `public/assets/js/records.js`; el jugador del celular y su almacén,
+en `jugador.js` (`jugador-firebase.js` y `jugador-local.js`, el de prueba); las piezas de pantalla,
+en `ranking.js` con `public/assets/css/ranking.css`. Se ven en la antesala de cada juego suelto de
+La Copa, en la portada de La Copa (Campeones) y en `/records/` (el 🏆 de la barra de la portada).
+
+En localhost y con `?prueba` se usa el almacén de prueba, para que los guiones no escriban en los
+rankings de verdad; **`?records=firebase` fuerza Firebase** para mirarlo a mano. Las páginas de los
+juegos sueltos cargan `ranking.css` porque lo carga su molde, `public/cup/suelto/index.html`, del que
+`og.mjs tarjetas` las genera. Las reglas nuevas (`jugadores`, `records`, `torneoPodios`…) se publican
+como cualquier otra (ver abajo).
 
 ## Reglas de Firebase
 
