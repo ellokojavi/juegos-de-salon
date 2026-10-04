@@ -38,7 +38,7 @@ test('semilla: determinista y distinta por día y por sal', () => {
   assert.deepEqual(x.slice().sort(), [1, 2, 3, 4, 5, 6, 7, 8]);
 });
 
-test('número: cifras distintas, mismo para todos, puntaje de 10 a 0', () => {
+test('número: cifras distintas y las mismas para todos', () => {
   for (const c of CODIGOS) {
     const p = numero.generar(c, 2);
     assert.equal(p.secreto.length, 4);
@@ -48,14 +48,37 @@ test('número: cifras distintas, mismo para todos, puntaje de 10 a 0', () => {
   const p = { cifras: 4, secreto: '1234' };
   const e1 = numero.estado(p, ['1234']);
   assert.ok(e1.resuelto && e1.fin);
-  assert.equal(numero.puntaje(e1), 100);
   const e2 = numero.estado(p, ['5678', '1243']);
   assert.equal(e2.fin, false);
   assert.equal(numero.tarjeta(e2), '⚪⚪⚪⚪\n🟢🟢🟡🟡');
   const e3 = numero.estado(p, Array(10).fill('5678'));
   assert.ok(e3.fin && !e3.resuelto);
-  assert.equal(numero.puntaje(e3), 0);
+});
+
+// El 100 es de quien deduce, no de quien tiene suerte: lo que resta son los intentos que las
+// pistas ya descartaban, no los intentos a secas (D-197)
+test('número: 100 si ningún intento estaba descartado, aunque sean muchos (D-197)', () => {
+  const p = { cifras: 4, secreto: '1234' };
+  // Seis intentos, todos posibles con las pistas que había en la mesa
+  const coherente = numero.estado(p, ['0567', '4123', '2341', '3214', '3412', '1234']);
+  assert.ok(coherente.resuelto);
+  assert.equal(coherente.usados, 6);
+  assert.deepEqual(coherente.filas.map(f => f.descartado), [false, false, false, false, false, false]);
+  assert.equal(coherente.descartados, 0);
+  assert.equal(numero.puntaje(coherente), 100);
+  // Al primer intento también son 100: no hay pistas que lo descarten
+  assert.equal(numero.puntaje(numero.estado(p, ['1234'])), 100);
+  // Repetir un intento es regalarlo, y cada regalado resta 15
+  const sucio = numero.estado(p, ['5678', '5678', '9012', '1234']);
+  assert.deepEqual(sucio.filas.map(f => f.descartado), [false, true, false, false]);
+  assert.equal(numero.puntaje(sucio), 85);
+  // '0234' no puede ser: contra '1234' (3 famas) daría 3 famas y da 2
+  const dos = numero.estado(p, ['1239', '0234', '1234']);
+  assert.equal(dos.descartados, 1);
+  assert.equal(numero.puntaje(dos), 85);
+  // Sacándolo nunca baja de 10; sin sacarlo son 0
   assert.equal(numero.puntaje(numero.estado(p, [...Array(9).fill('5678'), '1234'])), 10);
+  assert.equal(numero.puntaje(numero.estado(p, Array(10).fill('5678'))), 0);
 });
 
 test('temas: línea, años y final distintos', () => {
@@ -567,7 +590,7 @@ test('final: cinco rondas, promedio de 0 a 100', () => {
   const mmss = ms => `${Math.floor(ms / 60000)}:${String(Math.floor(ms / 1000) % 60).padStart(2, '0')}`;
   const pa = anio.generar('KQRST', 3);
   const casos = {
-    numero: numero.estado(numero.generar('KQRST', 2), ['1234', numero.generar('KQRST', 2).secreto]),
+    numero: numero.estado({ cifras: 4, secreto: '1234' }, ['5678', '5678', '9012', '1234']),
     conexiones: { resueltos: [0, 1, 2], errores: 2 },
     reinas: { fin: true, errores: 1, ms: 83000 },
     tango: { fin: true, errores: 2, pistas: 1 },
@@ -582,6 +605,8 @@ test('final: cinco rondas, promedio de 0 a 100', () => {
   }
   assert.match(desglose('tango', casos.tango, { T, fmt, mmss }).join(' '), /se restan 20 .*1 pista, que resta 15/);
   assert.match(desglose('zip', casos.zip, { T, fmt, mmss }).join(' '), /3 niveles.*30 puntos.*2:05/);
+  assert.match(desglose('numero', casos.numero, { T, fmt, mmss }).join(' '), /4 de 10 intentos.*1 intento que las pistas ya descartaban, que resta 15.*nunca baja de 10/);
+  assert.match(desglose('numero', numero.estado({ cifras: 4, secreto: '1234' }, ['1234']), { T, fmt, mmss }).join(' '), /Todos tus intentos podían ser el número/);
   assert.deepEqual(desglose('reinas', { fin: false, errores: 0 }, { T, fmt, mmss }), [T.bdNotSolved]);
   n++;
 }
@@ -592,7 +617,7 @@ test('la copa no usa la temática de Brasil (D-111)', () => {
 });
 
 test('todos los minijuegos puntúan de 0 a 100 (D-113)', () => {
-  const tope = { linea: linea.puntaje({ aciertos: 9, marcas: Array(9).fill(true) }), numero: numero.puntaje({ resuelto: true, usados: 1 }),
+  const tope = { linea: linea.puntaje({ aciertos: 9, marcas: Array(9).fill(true) }), numero: numero.puntaje({ resuelto: true, descartados: 0 }),
     conexiones: conexiones.puntaje({ resueltos: [0, 1, 2, 3], errores: 0 }), reinas: reinas.puntaje({ fin: true, ms: 1000 }),
     letras: letras.puntaje({ encontradas: 5, resuelto: true, usados: 1 }), zip: zip.puntaje({ hechos: 99 }), desenredo: desenredo.puntaje({ hechos: desenredo.NIVELES }),
     tango: tango.puntaje({ fin: true, errores: 0, pistas: 0 }), anio: anio.puntaje({ filas: [{}, {}], total: 200 }),

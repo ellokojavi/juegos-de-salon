@@ -19,16 +19,40 @@ export const valido = (valor, cifras = CIFRAS) => isValid(valor, cifras);
 /** La respuesta a un intento: { famas, toques }. */
 export const responder = (intento, secreto) => score(intento, secreto);
 
+/**
+ * ¿Las pistas anteriores ya descartaban este intento? Un número que no puede ser el secreto es
+ * un intento regalado. No se mira el secreto, sino las respuestas que ya están en la mesa: como
+ * `score` es simétrico (las famas y los toques entre dos números son los mismos en los dos
+ * sentidos), el intento es posible si contra cada intento anterior da justo sus famas y toques.
+ */
+export const descartado = (intento, anteriores) => anteriores.some(f => {
+  const s = responder(intento, f.v);
+  return s.famas !== f.famas || s.toques !== f.toques;
+});
+
 /** El estado a partir de la lista de intentos. */
 export function estado(p, intentos, max = MAX_INTENTOS) {
-  const filas = intentos.map(v => ({ v, ...responder(v, p.secreto) }));
+  const filas = [];
+  for (const v of intentos) filas.push({ v, ...responder(v, p.secreto), descartado: descartado(v, filas) });
   const resuelto = filas.some(f => f.famas === p.cifras);
-  return { filas, resuelto, fin: resuelto || filas.length >= max, usados: filas.length };
+  return {
+    filas, resuelto, fin: resuelto || filas.length >= max, usados: filas.length,
+    descartados: filas.filter(f => f.descartado).length,
+  };
 }
 
-/** Puntaje del día: 11 menos los intentos si lo sacó; 0 si no (de 1 a 10 intentos → 10 a 1). */
-/** De 0 a 100 (D-113): 100 al primer intento y 10 menos por cada uno más (con 10 intentos, 10 al último). */
-export const puntaje = (e, max = MAX_INTENTOS) => (e.resuelto ? Math.round((100 * (max + 1 - e.usados)) / max) : 0);
+export const PENA_DESCARTE = 15;
+/**
+ * De 0 a 100 (D-197): 100 si cada intento podía ser el número y 15 menos por cada intento que las
+ * pistas ya descartaban; sacándolo nunca baja de 10, como en Tango. 0 si no lo saca.
+ *
+ * Antes (D-113) eran 100 al primer intento y 10 menos por cada uno más. El primer intento no tiene
+ * pistas: ese 100 era 1 en 5040 de suerte y quien deducía impecable no pasaba de 60, el mismo
+ * puntaje que quien tiraba al aire y tenía suerte. Jugando siempre un número posible se saca en
+ * 10 intentos o menos siempre (el peor secreto de los 5040 pide exactamente 10), así que el 100
+ * es alcanzable sin suerte y el tope no deja a nadie afuera.
+ */
+export const puntaje = e => (e.resuelto ? Math.max(10, 100 - PENA_DESCARTE * (e.descartados || 0)) : 0);
 
 /** Cada intento es una fila: 🟢 por fama, 🟡 por toque y ⚪ por el resto. Nunca las cifras. */
 export function tarjeta(e) {

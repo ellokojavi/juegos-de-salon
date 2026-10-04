@@ -17,11 +17,16 @@ import { minijuegos } from './rules.js';
  */
 export function desglose(id, e, { T, fmt, mmss, copa = true, lang = 'es' }) {
   if (!e) return null;
-  const intentos = (x, max) => (x.resuelto
-    ? [fmt(T.bdTries, { u: x.usados, max }), fmt(T.bdTriesPts, { menos: 10 * (x.usados - 1), s: numero.puntaje(x, max) })]
-    : [T.bdNotSolved]);
   // Un descuento en cero no se nombra; uno solo va en singular (las claves terminadas en One)
   const resta = (clave, n, v) => (n ? fmt(n === 1 ? T[`${clave}One`] : T[clave], { n, ...v }) : null);
+  // El número: 100 menos los intentos que las pistas ya descartaban, con suelo de 10 (D-197)
+  const intentos = (x, max) => (x.resuelto
+    ? [
+      fmt(T.bdTries, { u: x.usados, max }),
+      resta('bdDiscards', x.descartados, { pts: numero.PENA_DESCARTE * x.descartados, c: numero.PENA_DESCARTE }) || T.bdNoDiscards,
+      x.descartados ? T.bdFloor10Solved : null,
+    ].filter(Boolean)
+    : [T.bdNotSolved]);
   switch (id) {
     case 'linea': return [fmt(T.bdLinea, { n: e.aciertos, total: e.marcas.length, s: Math.round((100 * e.aciertos) / (e.marcas.length || 1)) })];
     case 'numero': return intentos(e, numero.MAX_INTENTOS);
