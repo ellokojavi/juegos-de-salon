@@ -11,7 +11,7 @@
 3. **Seguir el flujo estándar** de pantallas: `intro` (dinámica y materiales) → `setup` (jugadores) → `play` → `end`. Guardar el estado en `localStorage` con la clave `juegos-de-salon:<id>:game` y reutilizar `juegos-de-salon:players` para los nombres.
 4. **Documentar**: crear `docs/games/<carpeta>.md` con la especificación, agregar requerimientos con prefijo propio en `docs/REQUERIMIENTOS.md` y registrar decisiones nuevas en `docs/DECISIONES.md`.
 5. **Si el juego usa varios celulares**, seguir el patrón de Toque y Fama: estado derivado de una lista de mensajes, interfaz `Transport` (`create`, `join`, `send`, `onMessage`, `onPresence`, `leave`) con implementaciones `local` y `firebase`, y reglas de seguridad en `firebase/database.rules.json` (campo `game` en la sala para separar juegos).
-6. **Sus módulos JS entran solos** al import map de versiones: `tools/release/set-version.py` recorre `public/` (D-192).
+6. **Sus módulos JS entran solos** al import map de versiones: al publicar, `tools/release/set-version.py` recorre el sitio (D-192, D-205).
 7. **Dejar la señal de uso para el panel** (D-44): al empezar una partida sin red, llamar `trackStart({ game, mode, players })` de `public/assets/js/transport/stats.js` (no al retomar). Las salas de dos celulares las apunta el transporte solo. El panel no hay que tocarlo: el juego nuevo aparece ahí con su emoji y su nombre en cuanto manda la primera señal (C-16). Si el juego estrena un **modo** que no está en `MODES` de `public/assets/js/games.js`, se agrega esa línea y basta. Ver `docs/PANEL.md`.
 8. **Sumarlo al README**, que es la única parte del proyecto que va en inglés (C-13, D-78): la
    sección del juego con su prosa, las tomas nuevas en el guion de `tools/e2e/` y sus entradas en
@@ -19,7 +19,7 @@
    y `actualizar`. La tabla de juegos y los modos se generan solos desde el `en` de `rules.js`.
 9. **Probar en el celular** desde la URL publicada y actualizar `CHANGELOG.md`.
 
-Publicar: antes de cada commit que se publique, correr `python3 tools/release/set-version.py X.Y.Z` (nueva versión) para que el navegador no mezcle archivos en caché.
+Publicar: al fusionar, la entrada de la versión en `CHANGELOG.md`. `publicar.yml` la estampa en lo que publica para que el navegador no mezcle archivos en caché (D-205).
 
 Módulos compartidos: `public/assets/js/handoff.js` (pásale el celular, pantalla tapada), `public/assets/js/transport/` (local y Firebase), `public/assets/js/sound.js`, `public/assets/js/i18n.js`.
 

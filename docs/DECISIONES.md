@@ -98,7 +98,7 @@ Registro tipo ADR (Architecture Decision Record). Las decisiones se numeran y no
 **Por qué:** Con solo 5040 secretos posibles, un hash sin sal se rompe por fuerza bruta en milisegundos. La sal privada lo impide y la revelación final permite detectar respuestas falsas.
 
 ## D-22 · Versionado de archivos con import maps para evitar caché mezclada
-**Fecha:** 2026-09-08 · **Estado:** vigente
+**Fecha:** 2026-09-08 · **Estado:** vigente; desde D-205 se estampa al publicar, en la copia que se sube, no en git
 **Decisión:** Cada página lleva un `<script type="importmap">` que mapea todos los módulos JS del sitio a su ruta con `?v=VERSION`, y las hojas de estilo llevan el mismo sufijo. Se estampa con `python3 tools/set-version.py X.Y.Z` en cada publicación. Además, el menú dibuja la lista de juegos antes de cualquier decoración y las decoraciones van en `try/catch`.
 **Por qué:** GitHub Pages y los navegadores cachean cada archivo por separado (10 minutos en Pages). Tras una publicación, un celular podía recibir el `index.html` nuevo con un `i18n.js` viejo; el código nuevo esperaba datos que el archivo viejo no tenía, fallaba, y el menú quedaba vacío (ocurrió con la v0.4.5). Con el import map, cambiar la versión cambia la URL de todos los módulos, incluidos los importados por otros módulos y los `import()` dinámicos, así que una página nueva siempre trae JS nuevo.
 **Consecuencias:** Hay que correr el script al publicar (queda documentado en el README y en AGREGAR-JUEGO). Los import maps funcionan en Chrome 89+, Safari 16.4+ y Firefox 108+; en navegadores más antiguos los módulos cargan igual, solo sin el sufijo.
@@ -304,7 +304,7 @@ Registro tipo ADR (Architecture Decision Record). Las decisiones se numeran y no
 **Consecuencias:** Las reglas se **publican a mano** en la consola ([Realtime Database → Rules](https://console.firebase.google.com/u/0/project/juegos-de-salon/database/juegos-de-salon-default-rtdb/rules)), paso que ya se hizo para esta versión. Mientras unas reglas nuevas no estén publicadas, la despedida se escribe igual pero el borrado se rechaza y la sala espera su vencimiento; el panel igual deja de mostrarla viva, porque eso lo decide el cliente. Alguien que sepa el código de una sala puede escribir la despedida de otro rol y, si todos quedan despedidos, borrarla: es el mismo alcance que ya tenía cualquiera que supiera el código (puede leer la sala y escribir mensajes, C-15), y no abre nada nuevo. Una sala que se quedó sin jugadores apuntados no se borra: `deserted` exige que haya alguien adentro, para que la sala recién creada —que existe un instante sin jugadores— no sea borrable por nadie.
 
 ## D-51 · El README se sostiene solo: lo derivable se genera, lo escrito se delata, las capturas se rehacen
-**Fecha:** 2026-09-11 · **Estado:** vigente
+**Fecha:** 2026-09-11 · **Estado:** vigente; desde D-205 `revisar` lo corre el check `pruebas`, no `set-version.py`
 **Decisión:** El README deja de mantenerse a pulso. `tools/hechos.mjs` importa los módulos reales y arma una hoja de hechos (juegos, modos, temáticas con su cuenta de cartas, idiomas, módulos, tests, documentos, capturas). `tools/readme.py` la usa para tres cosas: **generar** lo derivable dentro de marcas `<!-- generado: ... -->`; **delatar** lo que cambió desde el último sello (`docs/hechos.json`) nombrando qué sección de prosa hay que releer, con `sellar` para anotar que se releyó; y **rehacer las capturas** corriendo los guiones de `tools/e2e/` según el catálogo `docs/capturas.json`, que dice de qué guion y de qué toma sale cada imagen. `set-version.py` corre `revisar` antes de estampar, así que un README viejo frena la publicación (C-11, C-13).
 **Por qué:** El README es la cara del proyecto y la única documentación que lee alguien de afuera, y se pudre en silencio. Al escribir esto decía "las cartas de los cuatro mazos" cuando había seis, daba a Cuarto Rey una versión que su propia especificación no reconocía, y sus capturas eran de pantallas que ya habían cambiado. Nada de eso lo avisa un test: son datos repetidos a mano en prosa. Repetidos a mano y sin dueño, cada cambio de la app los deja un poco más falsos.
 **Por qué no generarlo todo:** Porque lo que hace bueno a este README es lo que no se puede derivar: por qué el juego está entretenido, qué se siente al pasar el celular, el chiste de las temáticas. Un README generado entero sería un listado correcto que no lee nadie. Por eso la herramienta se parte en dos: escribe las tablas y deja la prosa en paz, pero no deja que la prosa envejezca callada.
@@ -494,7 +494,7 @@ tres y termina en dos. Una partida guardada de antes no trae `chileno` en su con
 retoma con los nombres encendidos, que es el valor por defecto.
 
 ## D-72 · La tarjeta que se ve al compartir un link
-**Fecha:** 2026-09-13 · **Estado:** vigente
+**Fecha:** 2026-09-13 · **Estado:** vigente; desde D-205 `set-version.py` ya no corre `og.mjs tarjetas`: un bloque atrasado lo frena el check `pruebas`
 **Decisión:** Cada página publicada —el menú y los seis juegos— lleva sus propias etiquetas de Open Graph y de Twitter, con su título, su bajada y una imagen propia de 1200×630 en `assets/og/`. Las etiquetas las escribe `node tools/og.mjs tarjetas` desde `assets/js/games.js`, dentro de un bloque `<!-- generado: og -->`, y `set-version.py` lo corre en cada publicación. Las imágenes las dibuja `tools/og/tarjeta.html` —con los estilos y los datos reales— y las fotografía `node tools/og.mjs imagenes`.
 **Por qué por página y no una sola para todo el sitio:** en esta app el link que más se comparte no es la portada, es **la invitación a una sala**: `juegosdesalon.cl/toque-y-fama/?sala=WDDT`, pegado en un WhatsApp. Con una tarjeta única, esa invitación mostraba el nombre del sitio y nada más; ahora muestra de qué juego es la sala, para cuántos y cuánto dura, que es exactamente lo que necesita saber el que la recibe. Antes de esto no había ninguna etiqueta: un link pegado en un chat salía sin imagen y con el título pelado.
 **Por qué generadas y no escritas a mano:** son siete páginas por veinte etiquetas. Escribirlas a mano es copiar el nombre y la bajada de cada juego a un segundo lugar, y ese segundo lugar envejece: `games.js` ya es de donde salen el menú y el README. `revisar` avisa si una página quedó atrás o si falta una imagen.
@@ -2617,7 +2617,7 @@ de 6 a 10 a 15 nudos y no dan diez niveles parejos); prohibir soltar un nudo enc
 cruce por cercanía ya lo resuelve sin un gesto que rebota).
 
 ## D-181 · Cada imagen de tarjeta guarda su huella, y una atrasada no se publica
-**Fecha:** 2026-10-02 · **Estado:** vigente · **Amplía D-72**
+**Fecha:** 2026-10-02 · **Estado:** vigente · **Amplía D-72** · desde D-205 frena el check `pruebas`, no `set-version.py` (ya no hay `--igual`)
 **Decisión:** `node tools/og.mjs imagenes` anota en `assets/og/huellas.json` la huella de cada
 imagen que hace: un hash del dibujo (`tools/og/tarjeta.html`) y de lo que la imagen dice (el emoji,
 el nombre, la bajada, los jugadores y la duración del juego en `games.js`, o los textos de la
@@ -3076,3 +3076,56 @@ pantalla, y en un celular en la mitad. Un mapa es mejor mientras más grande se 
 entrada de la pantalla se apaga en este modo) ni con `align-self: center`, que Chrome también
 aplica a lo fijo. La pantalla no se desplaza: lo que no quepa tiene que desplazarse dentro de su
 widget, como las reglas abiertas.
+
+## D-204 · Publicar más rápido: los guiones largos en partes y la revisión de un PR, acotada
+**Fecha:** 2026-10-04 · **Estado:** vigente; amplía D-132, D-172 y D-193
+**Decisión:** Lo que hace esperar un PR se acorta sin sacar ninguna revisión:
+- **CI en partes.** El check `Punta a punta` tarda lo que su job más lento. `cup/torneo.mjs`
+  (9 min) se corre en tres jobs (`--parte copa`, `laboratorio`, `demos`) y `cup-games/idiomas.mjs`
+  (7 min) en uno por juego. La lista de partes vive en `PARTES` de `tools/e2e/ci.mjs`; sin parte,
+  cada guion sigue corriendo entero.
+- **El agente de usabilidad, en un PR, mira solo lo que el PR cambia**: si no toca nada visible
+  termina sin correr nada; si toca un juego, mira sus pantallas con `mirar.mjs`; si toca La
+  Copa, corre solo la parte del torneo que le toca. No repite lo que GitHub ya corre. Los reportes
+  🐞, el marketing (U-34) y la copa entera quedan para la ronda diaria.
+- **Usabilidad y documentación se lanzan a la vez** antes de proponer una fusión, no una después
+  de la otra: uno toca la app (en su propio PR) y el otro los documentos (en la rama del PR).
+- **`readme.py capturas` corre los guiones de a tres a la vez** (`CAPTURAS_JUNTOS`), cada uno con
+  sus puertos de Chrome (D-135) y el más largo primero: rehacer todas las secciones tarda poco más
+  que `cup/torneo.mjs`, no la suma de todos los guiones.
+**Por qué:** Pedido del dueño: las publicaciones se demoraban, sobre todo por las revisiones de
+usabilidad y las imágenes. Medido en GitHub: `Pruebas` tarda 25 s y `Publicar` 1 min, pero
+`Punta a punta` ~10 min, y dos guiones explicaban todo (los demás terminan antes de 3,5 min). La
+revisión de usabilidad de cada PR jugaba la copa entera aunque el PR fuera de otro juego.
+**Consecuencias:** Una parte nueva de un guion largo se suma a `PARTES`; las partes tienen que
+poder correr solas, sin depender del estado que dejó la anterior.
+
+## D-205 · La versión se estampa al publicar, no en git
+**Fecha:** 2026-10-04 · **Estado:** vigente; reemplaza el estampado a mano de C-11 y amplía D-72, D-181, D-193 y D-204
+**Decisión:** Las páginas de `public/` en git ya no llevan versión: ni import map, ni `?v=` en las
+hojas de estilo y las imágenes de las tarjetas, y el pie del menú dice `v0.0.0`.
+- **El número es la primera entrada de `CHANGELOG.md`** (`## X.Y.Z — fecha`), que se escribe al
+  fusionar, como antes. `tools/release/version.mjs` y `set-version.py --version` lo leen de ahí.
+- **`publicar.yml` estampa la copia que sube** (`set-version.py --sitio _site`), con la clave de
+  caché `X.Y.Z-<commit>`: cada publicación invalida la caché aunque alguien fusione sin subir la
+  versión. Después comprueba que el sitio en línea sirva esa clave (C-11), hasta 5 minutos.
+  `pruebas.yml` estampa una copia que se tira en cada PR, para que un estampado roto se vea ahí.
+- **El README y las tarjetas atrasados los frena el check `pruebas`** de cada PR y de cada
+  publicación, ya no `set-version.py`.
+- **Un PR que solo trae documentación** (`docs/`, `marketing/`, `.claude/` y los `.md` fuera de
+  `public/` y `tools/e2e/`) **no corre las pruebas de punta a punta**: la lista de `ci.mjs --lista
+  --cambios` sale vacía (`tools/e2e/cambios.mjs`). El check queda en verde en segundos.
+- **Si `Punta a punta` sale en rojo en `main`**, el job `avisar` abre un issue "main en rojo: Punta
+  a punta" con los guiones que fallaron y el link a la corrida, o comenta el que ya esté abierto.
+  La publicación no lo espera.
+**Por qué:** Pedido del dueño, para publicar más rápido. Cada estampado reescribía unos 55
+archivos, así que dos PR abiertos siempre chocaban y el segundo tenía que traer `main`,
+reestampar y correr CI de nuevo (pasó en #172 y #175 el mismo día), aunque `main` no exige estar
+al día (solo exige el check `pruebas`). Sin la versión en git, chocan solo en la línea del
+CHANGELOG. Y como ya no se trae `main` a cada PR, lo fusionado se prueba de verdad recién en
+`main`: por eso esa corrida ahora avisa.
+**Consecuencias:** Para mirar el sitio estampado en local, se estampa una copia
+(`set-version.py --sitio /tmp/sitio`); `public/` no se estampa nunca. Sin estampar, las
+estadísticas de una prueba local salen sin versión (`versionOf` no encuentra el import map), como
+ya pasaba en `dev`. Las capturas no envejecen por el commit que sacó la versión: `readme.py` no
+cuenta la línea del import map como cambio.

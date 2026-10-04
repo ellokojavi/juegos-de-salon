@@ -63,7 +63,7 @@ Para mirar una pantalla suelta: `node tools/e2e/mirar.mjs <juego> <pantalla> --a
 
 ## Lo que hace el dueño al fusionar (no lo hagas en tu PR)
 
-- **El número de versión** (`tools/release/set-version.py`) y su entrada en `CHANGELOG.md`: se asignan al
+- **El número de versión**, que es su entrada en `CHANGELOG.md` (D-205): se asigna al
   fusionar, en el orden en que entran los PR. Describe tu cambio en el PR y basta.
 - **El número de las decisiones** (D-n): si tu cambio necesita una, escríbela como `D-??` y se
   numera al fusionar.

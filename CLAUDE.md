@@ -53,12 +53,19 @@ llave del dueño) y no fusiona. Todo lo demás de esta guía vale igual.
 
 ## Publicar
 
+La versión ya no se estampa en git (D-205): las páginas de `public/` no llevan `?v=` ni import
+map. Al fusionar se escribe la entrada de la versión en `CHANGELOG.md` (`## X.Y.Z — fecha`) y
+`.github/workflows/publicar.yml` hace el resto: corre las pruebas, estampa esa versión en la copia
+que publica (con el commit en la clave de caché) y comprueba que el sitio en línea la sirva.
+
 ```bash
-python3 tools/release/set-version.py X.Y.Z   # obligatorio antes de cada commit publicado (C-11)
+python3 tools/release/set-version.py --version             # la versión de hoy, la del CHANGELOG
+python3 tools/release/set-version.py --sitio /tmp/sitio    # estampa una copia, como al publicar
 ```
 
-Estampa la versión y, antes, revisa que el README no haya quedado atrás del código:
-si lo quedó, no estampa y dice qué le falta (C-13, D-51).
+Que el README y las tarjetas no hayan quedado atrás lo frena el check `pruebas` de cada PR
+(C-13, D-51, D-181). Dos PR abiertos ya no chocan en los `index.html`: solo en la línea del
+CHANGELOG, si los dos la escriben.
 
 ## Mantener el README al día
 
@@ -74,7 +81,7 @@ El README repite datos que el código ya sabe y muestra capturas que envejecen.
 `tools/release/readme.py` genera lo derivable, delata lo que cambió y rehace las capturas:
 
 ```bash
-python3 tools/release/readme.py revisar        # ¿quedó algo atrás? (lo corre set-version.py)
+python3 tools/release/readme.py revisar        # ¿quedó algo atrás? (lo corre el check pruebas)
 python3 tools/release/readme.py actualizar     # reescribe los bloques <!-- generado: ... -->
 python3 tools/release/readme.py capturas <seccion> [--sin-red]   # rehace las capturas con Chrome
 python3 tools/release/readme.py sellar         # "ya releí el README con estos hechos"
@@ -99,7 +106,7 @@ otras apps: los links de sala se comparten por ahí, así que la invitación a j
 estas tarjetas.
 
 ```bash
-node tools/release/og.mjs tarjetas    # reescribe el bloque <!-- generado: og --> (lo corre set-version.py)
+node tools/release/og.mjs tarjetas    # reescribe el bloque <!-- generado: og --> (si falta, el check pruebas lo dice)
 node tools/release/og.mjs imagenes    # rehace con Chrome las 1200×630 atrasadas (--todas: todas; necesita internet)
 node tools/release/og.mjs revisar     # ¿falta una tarjeta, o una imagen se hizo con otro dibujo u otros textos? (D-181)
 ```
@@ -107,7 +114,8 @@ node tools/release/og.mjs revisar     # ¿falta una tarjeta, o una imagen se hiz
 Los textos salen de `public/assets/js/games.js` y el dibujo de [tools/release/og/tarjeta.html](tools/release/og/tarjeta.html),
 que importa los módulos reales. Las imágenes se rehacen a mano: solo cambian si cambia un nombre,
 un emoji, una bajada o el diseño (D-72). Cada una guarda la huella de su dibujo y sus textos, y una
-atrasada frena el PR y `set-version.py` (D-181): **se rehacen desde una rama al día con `main`**.
+atrasada frena el PR (D-181): **se rehacen desde una rama al día con `main`**. La URL de cada
+imagen lleva `?v=` solo en el sitio publicado: la pone `set-version.py` al publicar (D-205).
 
 ## Pruebas
 
@@ -144,6 +152,8 @@ node public/panel/adapta.test.mjs               # el panel se entera solo de lo 
 node public/panel/copas.test.mjs                # La Copa en el panel: en curso, juegos, participación
 node tools/agents/documentar.test.mjs           # la memoria y las comprobaciones del agente de documentación
 node tools/agents/marketing.test.mjs            # qué cuenta como marketing atrasado (U-34)
+node tools/release/version.test.mjs             # la versión sale del CHANGELOG (D-205)
+node tools/e2e/cambios.test.mjs                 # qué PR se salta las pruebas de punta a punta (D-205)
 python3 tools/release/readme.test.py       # qué cuenta como cambio para las capturas (D-51)
 python3 -m http.server 8765 -d public   # el sitio es public/; los módulos ES necesitan HTTP, no file://
 ```
@@ -178,9 +188,11 @@ revisan las capturas.
 
 **GitHub las corre en cada PR y en cada fusión a main** (`.github/workflows/e2e.yml`, D-193):
 cada guion en su propio job, en paralelo, y el PR muestra cuál falló, con sus capturas como
-artefacto. `tools/e2e/ci.mjs` decide cuáles: todos menos los que abren salas en el Firebase de
-producción (los `online.mjs`, los `chat.mjs` y los de su lista), que siguen a mano. Un guion nuevo entra
-solo; para que falle en rojo, que imprima ✗ o ❌ o salga con error. Aquí se corren igual:
+artefacto. Los largos se reparten en partes (`PARTES` en `ci.mjs`, D-204): el check tarda lo que
+su job más lento, así que un guion que pase de ~4 min se parte. `tools/e2e/ci.mjs` decide
+cuáles: todos menos los que abren salas en el Firebase de producción (los `online.mjs`, los
+`chat.mjs` y los de su lista), que siguen a mano. Un guion nuevo entra solo; para que falle en
+rojo, que imprima ✗ o ❌ o salga con error. Aquí se corren igual:
 
 ```bash
 node tools/e2e/ci.mjs              # todos los de CI, con resumen; o: node tools/e2e/ci.mjs cup/torneo.mjs
@@ -227,8 +239,12 @@ caracteres (D-184).
 ## Usabilidad (D-132)
 
 El agente `usabilidad` (`.claude/agents/usabilidad.md`) revisa cada PR antes de mostrárselo al
-dueño y hace una ronda diaria a las 5:00 hora del Pacífico. Su guía es
-[docs/USABILIDAD.md](docs/USABILIDAD.md). Los dilemas son issues de GitHub y se manejan desde aquí:
+dueño y hace una ronda diaria a las 5:00 hora del Pacífico. En un PR mira solo lo que el PR
+cambia y no repite lo que GitHub ya corre; la revisión completa (reportes, marketing, la copa
+entera) es de la ronda (D-204). **Antes de proponer una fusión, los agentes de usabilidad y de
+documentación se lanzan a la vez**, en el mismo mensaje: uno toca la app y el otro los documentos.
+Su guía es [docs/USABILIDAD.md](docs/USABILIDAD.md). Los dilemas son issues de GitHub y se
+manejan desde aquí:
 
 ```bash
 node tools/agents/dilemas.mjs listar [--todos]
