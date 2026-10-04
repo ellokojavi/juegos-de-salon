@@ -42,6 +42,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | RP-33 | La portada se filtra por tipo de juego; el filtro queda en la URL, dice cuántos juegos se ven y se quita con un toque (D-142, D-149); al bajar, los filtros quedan pegados arriba (D-196). | ✅ v0.93 |
 | RP-34 | Las explicaciones de todos los juegos (reglas, ayudas, modos, antesalas, Administrar y las frases del menú) son cortas: cada regla se dice una vez por pantalla, con frases completas, y una palabra por concepto: tachar, el celular, jugador, administrador, vidas, sorbos (D-177, U-5, U-8). | ✅ v0.84.0 |
 | RP-35 | Jugar en alemán: toda la experiencia en el idioma elegido, con las mismas claves que los otros tres, primero solo en el laboratorio (`/labs/de/`), con un botón para que quienes lo prueban comenten (D-191). Sale del laboratorio cuando lo revisen hablantes de alemán ([ALEMAN.md](ALEMAN.md)). | 🧪 en el laboratorio |
+| RP-36 | El panel se navega por secciones (Ahora, La Copa, Juegos, Audiencia) con una ficha por copa, juego y sala: la tabla, la grilla jugador × día y la historia de una copa; los modos, las salas y las partidas sin red de un juego. Cada cifra abre la lista que la suma, cada nombre lleva la bandera de su país, la vista queda en la URL y las horas son del Pacífico (D-207). | ⏳ en PR |
 
 ## Cuarto Rey (CR)
 
@@ -132,7 +133,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | LIG-37 | Tiempo activo: el cronómetro se pausa con la pantalla oculta (D-95). | ✅ v0.42 |
 | LIG-38 | Tablero con tus días: los pasados con su resultado y deshabilitados, hoy habilitado, los que vienen deshabilitados. | ✅ v0.42 |
 | LIG-39 | Gráfico de tu posición día a día. | ✅ v0.42 |
-| LIG-40 | El panel del dueño muestra las copas creadas y su progreso. | ⏳ pendiente |
+| LIG-40 | El panel del dueño muestra las copas creadas y su progreso. | ✅ D-137; ficha de cada copa con D-207 |
 | LIG-41 | Práctica de cada juego suelto, con semilla repetible, desde el laboratorio (D-101). | ✅ v0.43 |
 | LIG-42 | Reportar un problema o dejar un comentario con su contexto, desde la práctica, el tablero y el resultado, sin cuenta (D-104). | ✅ v0.45 (se leen con `node tools/firebase/reportes.mjs`) |
 | LIG-43 | Laboratorio `/labs/`: La Copa sale del menú (Próximamente) y se prueba ahí, con la Copa de 3 días. | ✅ v0.43 |

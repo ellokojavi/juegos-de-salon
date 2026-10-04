@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { nuevaMeta, DIA_MS } from '../cup/engine.js';
 import { summarize, groupDays, dayOf } from './aggregate.js';
 import { isTorneo, GAMES } from '../assets/js/games.js';
-import { JUGANDO_MS, copaDe, copasDe, estadoCopa, copasEnCurso, resumenCopas, bitacoraCopas, pct, duracion, inicioLabel } from './copas.js';
+import { JUGANDO_MS, copaDe, copasDe, estadoCopa, copasEnCurso, resumenCopas, bitacoraCopas, pct, duracion, inicioLabel, fichaCopa, historiaCopa, buscarCopa, paisDe } from './copas.js';
 
 // Una copa de 7 días que empezó hace dos días y medio: el día 1 cerró, el 2 y el 3 están abiertos
 const ZONA = 'America/Santiago';
@@ -14,7 +14,7 @@ assert.ok(now >= meta.win[1].b, 'el día 1 ya cerró');
 assert.ok(now < meta.win[2].b, 'el día 2 sigue abierto (se juega hasta el fin del día 3)');
 
 const players = {
-  aaaaaa: { name: 'Javi', at: 1 },
+  aaaaaa: { name: 'Javi', at: 1, co: 'CL' },
   bbbbbb: { name: 'Cata', at: 2 },
   cccccc: { name: 'Fausto', at: 3 },
   dddddd: { name: 'Sacado', at: 4, out: true },
@@ -53,7 +53,7 @@ assert.deepEqual(c.participacion, { jugado: 2, esperado: 3 });
 assert.equal(pct(c.participacion), 67);
 // Día 1: empate en puntaje y gana quien tardó menos (Cata 10, Javi 8). Día 2: solo Javi (10).
 // El dueño ve la tabla completa, con el día 2 que los demás todavía no pueden ver.
-assert.deepEqual({ ...c.primero }, { name: 'Javi', total: 18, empatados: 1 });
+assert.deepEqual({ ...c.primero }, { name: 'Javi', co: 'CL', total: 18, empatados: 1 });
 assert.equal(c.ultimo, meta.win[2].a + 201000);
 assert.equal(c.lab, true);
 assert.equal(c.alias, 'oficina');
@@ -140,5 +140,59 @@ assert.equal(cerrada.inscripcion, false, 'el admin la cerró: no se puede decir 
 const tarde = { ...torneos.OFICI, players: { ...players, gggggg: { name: 'Leo', at: meta.win[1].b + 1000 } } };
 assert.deepEqual(estadoCopa(copaDe('OFICI', tarde), now).participacion, { jugado: 2, esperado: 3 }, 'el día 1 no se le cobra a quien llegó después');
 assert.deepEqual(resumenCopas({ OFICI: tarde }, semana, now).participacion, { jugado: 2, esperado: 3 });
+
+// --- La ficha de una copa (D-207) ---------------------------------------
+const L = copaDe('OFICI', { ...torneos.OFICI, wild: { bbbbbb: '2' } });
+const f = fichaCopa(L, now);
+assert.equal(paisDe(L, 'aaaaaa'), 'CL');
+assert.equal(paisDe(L, 'bbbbbb'), '', 'quien se inscribió antes de que se guardara el país va sin bandera');
+assert.deepEqual(f.admin, { pid: 'aaaaaa', name: 'Javi', co: 'CL' });
+assert.deepEqual(f.dias.slice(0, 4).map(x => x.estado), ['cerrado', 'abierto', 'abierto', 'futuro']);
+assert.deepEqual([f.dias[0].jugaron, f.dias[0].de], [2, 3], 'el día 1: jugaron 2 de 3');
+assert.equal(f.dias[6].final, true);
+assert.deepEqual(f.retirados.map(x => x.name), ['Sacado'], 'el retirado no está en la grilla, pero se nombra');
+assert.equal(f.grilla.length, 3);
+assert.equal(f.grilla[0].name, 'Javi', 'la grilla va en el orden de la tabla');
+const fila = n => f.grilla.find(x => x.name === n).casillas.map(c => c.tipo);
+assert.deepEqual(fila('Javi').slice(0, 4), ['jugo', 'jugo', 'jugando', 'futuro']);
+assert.deepEqual(fila('Cata').slice(0, 4), ['jugo', 'abierto', 'sin-terminar', 'futuro'], 'Cata dejó el día 3 hace dos horas');
+assert.deepEqual(fila('Fausto').slice(0, 3), ['sin-terminar', 'jugando', 'abierto'], 'Fausto dejó el 1 y juega el 2 ahora');
+const javi1 = f.grilla[0].casillas[0];
+assert.deepEqual([javi1.s, javi1.ms, javi1.pts], [90, 60000, 8], 'empató en puntaje con Cata y fue más lento: segundo, 8 puntos');
+assert.equal(f.grilla.find(x => x.name === 'Cata').casillas[1].comodin, true, 'el comodín se marca en su día');
+assert.equal(f.grilla.find(x => x.name === 'Cata').casillas[1].x2, true);
+assert.equal(f.grilla[0].casillas[6].x2, true, 'la final vale doble');
+// Un día cerrado que no empezó: no jugó, salvo que se haya inscrito después
+const ausente = fichaCopa(copaDe('OFICI', { ...torneos.OFICI, players: { ...players, eeeeee: { name: 'Ana', at: 5 }, gggggg: { name: 'Leo', at: meta.win[1].b + 1000 } } }), now);
+assert.equal(ausente.grilla.find(x => x.name === 'Ana').casillas[0].tipo, 'no-jugo');
+assert.equal(ausente.grilla.find(x => x.name === 'Leo').casillas[0].tipo, 'no-debia');
+
+// La historia: con hora lo que la base guarda con hora; aparte lo que no
+const h = historiaCopa(copaDe('OFICI', { ...torneos.OFICI, closed: true, wild: { bbbbbb: '2' } }), now);
+assert.ok(h.eventos.every((e, i, a) => i === 0 || a[i - 1].at >= e.at), 'del más nuevo al más viejo');
+const tipos = t => h.eventos.filter(e => e.tipo === t);
+assert.equal(tipos('creada').length, 1);
+assert.equal(tipos('termino').length, 3);
+assert.equal(tipos('empezo').length, 7);
+assert.deepEqual(tipos('sin-terminar').map(e => [e.pid, e.dia]).sort(), [['bbbbbb', 3], ['cccccc', 1]]);
+assert.deepEqual(tipos('cerro').map(e => e.dia), [1], 'solo el día 1 cerró');
+assert.match(tipos('cerro')[0].texto, /jugaron 2 de 3/);
+assert.equal(tipos('fin').length, 0, 'la copa no ha terminado');
+assert.deepEqual(h.sinHora.map(e => e.tipo).sort(), ['cerrada', 'comodin', 'retiro'], 'el comodín, el retiro y el cierre no tienen hora en la base');
+
+// Terminada antes por el admin (D-161): ya no sale en curso, y los días que no abrieron quedan anulados
+const finAt = now - 60 * 60 * 1000;
+const cortada = copaDe('OFICI', { ...torneos.OFICI, fin: finAt });
+assert.equal(estadoCopa(cortada, now).estado, 'terminada', 'el panel la mostraba en curso hasta su fecha');
+assert.equal(copasEnCurso({ OFICI: { ...torneos.OFICI, fin: finAt } }, now).length, 0);
+const fc = fichaCopa(cortada, now);
+assert.equal(fc.dias[3].estado, 'anulado');
+assert.equal(fc.grilla[0].casillas[3].tipo, 'anulado');
+assert.ok(fc.historia.eventos.some(e => e.tipo === 'fin' && e.at === finAt && /antes de tiempo/.test(e.texto)));
+
+// Buscar por código o por link propio
+assert.equal(buscarCopa(torneos, 'ofici')?.code, 'OFICI');
+assert.equal(buscarCopa(torneos, '/oficina')?.code, 'OFICI');
+assert.equal(buscarCopa(torneos, 'nada'), null);
 
 console.log('copas.test.mjs: todo en verde');

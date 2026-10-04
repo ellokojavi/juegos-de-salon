@@ -495,16 +495,17 @@ log at the bottom of the dashboard shows. Live rooms show **plays and chat messa
 only what a person did counts as a play (a shot, a guess, a bid), never the automatic answers, and
 of the chat only the number of messages is shown, never what they say (D-138).
 
-It has three views: a summary, **La Copa** and the other **games**. La Copa is measured from its
-own tournament data, so the dashboard shows at any moment which cups are running, today's
-game in each one, who already played it and who is playing it right now; and, per game,
-how many were finished or left unfinished, the average score and the typical time. The games view
-counts one-sitting games without La Copa's days.
+It is navigated like a small site (D-207): four sections, **Now**, **La Copa**, **Games** and
+**Audience**, and a page for each thing that exists. A cup's page has its full standings, a grid of
+every player and day (score, time, points, left unfinished, wildcard) and its history, event by
+event. A game's page has its modes, how long its rooms last, its rooms and its offline games; a
+room's page has its players, winner and duration. Every number opens the list that adds up to it,
+every player's name carries the flag of their country, and each view lives in the URL, so Back and
+a saved link return to it. Times are Pacific time, the same clock La Copa uses for its days.
 
-One range selector drives the whole page: 7, 30, 60 or 90 days, one year, or the year so far. At
-the bottom there is a **log of the rooms that were played** in that range, newest first and paged:
-day and time, the players with the flag of their country, the game and who won. Test rooms run in
-the development environment, so they are out by default.
+One range selector drives the whole page: 7, 30, 60 or 90 days, one year, or the year so far. Test
+rooms run in the development environment, so they are out by default; test cups show up with the
+rest, since they are not split by environment.
 
 It keeps no lists of its own. Games and modes are read from the registry in `public/assets/js/games.js`,
 so a new game shows up there by itself, and anything it does not recognize yet is drawn anyway,
@@ -546,6 +547,7 @@ node public/cup/store.test.mjs
 node public/panel/adapta.test.mjs
 node public/panel/aggregate.test.mjs
 node public/panel/copas.test.mjs
+node public/panel/rutas.test.mjs
 node tools/agents/documentar.test.mjs
 node tools/agents/marketing.test.mjs
 node tools/e2e/cambios.test.mjs
@@ -640,7 +642,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   fourth-king/                Fourth King (game.js, rules.js)
   connections/ · queens/ …    The Cup's games played on their own, one page each (generated from cup/suelto/)
   labs/                       The lab: games being tested before they reach the menu (not linked, not indexed); labs/de/ forwards to /de/ (German left the lab, D-197)
-  panel/                      Private owner dashboard: summary, The Cup and games views (Google sign-in; see docs/PANEL.md)
+  panel/                      Private owner dashboard: now, The Cup, games and audience, with a page per cup, game and room (Google sign-in; see docs/PANEL.md)
   assets/css/                 Shared styles: base.css (party theme), linea.css (timeline), teclado.css (keypad)
   assets/js/                  Shared modules: games.js (game registry), i18n.js (ES/EN/PT/DE), labs-idioma.js (a new language in the lab, D-191), ui.js, sound.js, compartir.js (everything shared, D-165), handoff.js, chat.js, session.js, arrastre.js (drag and drop), teclado.js, azar.js and dado3d.js (Random game), frases.js
   assets/js/transport/        Transports: local (same phone), firebase (room) and stats (usage signals)

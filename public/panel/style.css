@@ -1,5 +1,6 @@
 /* Panel del dueño: solo lo específico de esta página; el resto sale de base.css (C-1). */
 .app--panel { max-width: 760px; }
+@media (min-width: 960px) { .app--panel { max-width: 1120px; } }
 .intro-hero { text-align: center; margin-bottom: 18px; }
 .intro-hero .icon { font-size: 4rem; display: block; }
 .small { font-size: 0.9rem; margin: 0 0 10px; }
@@ -20,7 +21,12 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0
 .filters #updated { margin-left: auto; font-size: 0.85rem; }
 
 .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 12px; }
-.tile { background: var(--glass); border: 1px solid var(--glass-border); border-radius: 18px; padding: 12px 14px; }
+.tile { background: var(--glass); border: 1px solid var(--glass-border); border-radius: 18px; padding: 12px 14px; display: flex; flex-direction: column; gap: 2px; text-align: left; color: var(--ink); font: inherit; text-decoration: none; }
+/* Una cifra que se abre en la lista que la suma (D-207): se nota que se toca */
+.tile--link { cursor: pointer; }
+.tile--link:hover, .tile--link:focus-visible { border-color: var(--cyan); outline: none; }
+.tile--link[aria-pressed="true"] { border-color: var(--lime); background: rgba(157, 255, 58, 0.1); }
+.tile .i { margin-top: auto; padding-top: 4px; color: var(--muted); font-size: 0.72rem; font-weight: 800; opacity: 0.8; }
 .tile b { display: block; font-family: var(--font-num); font-variant-numeric: tabular-nums; font-weight: 900; font-size: 2rem; line-height: 1.1; }
 .tile small { color: var(--muted); font-weight: 800; }
 .tile--hot b { color: var(--lime); }
@@ -120,3 +126,128 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0
   .room.copa { grid-template-columns: auto 1fr; }
   .room.copa .meta { grid-column: 1 / -1; text-align: left; white-space: normal; }
 }
+
+/* ---------- Navegación por secciones y fichas (D-207) ---------- */
+.cuerpo-panel { display: block; }
+.vista { min-width: 0; }
+.vista > h2:first-child, .vista > .migas + h2, .vista > .migas + .ficha-titulo h2 { margin-top: 6px; }
+.nav-panel { display: flex; gap: 4px; }
+.nav-panel a {
+  position: relative; display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 10px 12px;
+  border-radius: 14px; color: var(--muted); text-decoration: none; font-weight: 900;
+}
+.nav-panel a:hover, .nav-panel a:focus-visible { background: var(--glass); color: var(--ink); outline: none; }
+.nav-panel a[aria-current="page"] { background: var(--ink); color: var(--bg1); }
+.nav-panel .ico { font-size: 1.15rem; width: 1.4em; text-align: center; }
+.nav-panel .vivo { width: 9px; height: 9px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 6px var(--lime); margin-left: auto; }
+/* Computador: una columna a la izquierda que acompaña al bajar */
+@media (min-width: 960px) {
+  .cuerpo-panel { display: grid; grid-template-columns: 200px 1fr; gap: 22px; align-items: start; }
+  .nav-panel { flex-direction: column; position: sticky; top: calc(var(--safe-top) + 12px); }
+}
+/* Celular y tableta: la barra abajo, siempre a mano */
+@media (max-width: 959px) {
+  .nav-panel {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; justify-content: space-around;
+    padding: 6px 8px calc(6px + var(--safe-bottom)); background: rgba(21, 7, 38, 0.94);
+    border-top: 1px solid var(--glass-border); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  }
+  .nav-panel a { flex: 1; flex-direction: column; gap: 2px; padding: 6px 4px; font-size: 0.72rem; max-width: 140px; }
+  .nav-panel .vivo { position: absolute; top: 6px; right: calc(50% - 18px); margin: 0; }
+  #screen-panel { padding-bottom: calc(76px + var(--safe-bottom)); }
+}
+
+/* Buscar por código o link */
+.buscar { flex: 1 1 200px; display: flex; }
+.buscar input {
+  flex: 1; min-width: 0; min-height: 44px; border: 1px solid var(--glass-border); background: var(--glass); color: var(--ink);
+  border-radius: 999px; padding: 10px 14px; font: inherit; font-weight: 800;
+}
+.buscar input::placeholder { color: var(--muted); font-weight: 700; }
+.buscar-msg { margin: 0 0 10px; color: var(--yellow); font-weight: 800; font-size: 0.9rem; }
+
+/* Filtros dentro de un bloque */
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 10px; }
+.chips button {
+  appearance: none; min-height: 44px; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--glass-border);
+  background: transparent; color: var(--muted); font: inherit; font-weight: 900; font-size: 0.88rem; cursor: pointer;
+}
+.chips button[aria-pressed="true"] { background: var(--ink); color: var(--bg1); border-color: var(--ink); }
+
+/* Filas que se abren en su ficha */
+a.room, a.log-row, a.bar--link { color: inherit; text-decoration: none; }
+a.room:hover, a.room:focus-visible, a.log-row:hover, a.log-row:focus-visible { border-color: var(--cyan); outline: none; }
+a.bar--link { border-radius: 10px; padding: 4px 6px; margin: -4px -6px; }
+a.bar--link:hover, a.bar--link:focus-visible { background: var(--glass); outline: none; }
+a.bar--link .label { text-decoration: underline; text-decoration-color: rgba(255, 255, 255, 0.3); text-underline-offset: 3px; }
+
+/* Nombre con bandera */
+.quien { display: inline; }
+.quien .flag, .flag { font-style: normal; }
+
+/* Fichas: migas, título, datos */
+.migas { display: flex; flex-wrap: wrap; align-items: center; gap: 2px; font-size: 0.85rem; font-weight: 800; color: var(--muted); margin: 4px 0 2px; }
+.migas a { color: var(--cyan); text-decoration: none; padding: 10px 0; }
+.migas a:hover { text-decoration: underline; }
+.ficha-titulo { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin: 6px 0 10px; }
+.ficha-titulo h2 { margin: 0 !important; letter-spacing: 0.06em; }
+.estado { font-size: 0.78rem; font-weight: 900; padding: 4px 10px; border-radius: 999px; background: rgba(255, 255, 255, 0.1); color: var(--muted); }
+.estado--en-curso { background: rgba(157, 255, 58, 0.16); color: var(--lime); }
+.estado--por-empezar { background: rgba(46, 230, 214, 0.15); color: var(--cyan); }
+.datos { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px 16px; margin: 0 0 12px; padding: 14px; border-radius: 18px; background: var(--glass); border: 1px solid var(--glass-border); }
+.datos div { min-width: 0; }
+.datos dt { color: var(--muted); font-size: 0.7rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.08em; }
+.datos dd { margin: 2px 0 0; font-weight: 800; overflow-wrap: anywhere; }
+.datos dd a { color: var(--cyan); }
+.abrir { width: auto; margin: 0 0 12px; }
+.mas { width: auto; margin-top: 10px; }
+
+/* Pestañas de una ficha */
+.subtabs { display: flex; gap: 4px; margin: 4px 0 12px; border-bottom: 1px solid var(--glass-border); overflow-x: auto; }
+.subtabs button {
+  appearance: none; min-height: 44px; padding: 10px 14px; border: 0; border-bottom: 3px solid transparent; background: none;
+  color: var(--muted); font: inherit; font-weight: 900; cursor: pointer; white-space: nowrap;
+}
+.subtabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--pink); }
+
+/* Tabla de posiciones y jugadores de una sala */
+.tabla { display: flex; flex-direction: column; gap: 6px; }
+.puesto { display: grid; grid-template-columns: 2.2em 1fr auto; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 12px; background: rgba(0, 0, 0, 0.22); }
+.puesto .lugar { font-family: var(--font-display); font-size: 1.3rem; text-align: center; opacity: 0.8; }
+.puesto .nombre { font-weight: 900; min-width: 0; overflow-wrap: anywhere; }
+.puesto .nombre small { color: var(--muted); font-weight: 800; }
+.puesto .pts { font-family: var(--font-num); font-variant-numeric: tabular-nums; font-weight: 900; font-size: 1.1rem; white-space: nowrap; }
+.puesto .pts small { color: var(--muted); font-size: 0.75rem; }
+.on-txt { color: var(--lime); font-size: 0.85rem; }
+
+/* Grilla jugador × día: se desliza de lado si no cabe, sin mover la página (C-8) */
+.grilla { overflow-x: auto; margin: 0 -4px; padding: 0 4px; }
+.grilla table { border-collapse: separate; border-spacing: 4px; font-size: 0.85rem; min-width: 100%; }
+.grilla th { font-weight: 900; color: var(--muted); text-align: center; padding: 4px; white-space: nowrap; line-height: 1.3; }
+.grilla th small { font-weight: 800; }
+.grilla tbody th { text-align: left; color: var(--ink); position: sticky; left: 0; background: rgba(42, 10, 74, 0.96); border-radius: 10px; padding: 4px 8px; z-index: 1; }
+.grilla td { text-align: center; border-radius: 10px; padding: 6px 4px; min-width: 62px; background: rgba(0, 0, 0, 0.22); font-weight: 800; line-height: 1.25; }
+.grilla td b { display: block; font-family: var(--font-num); font-variant-numeric: tabular-nums; font-size: 1.05rem; }
+.grilla td small { display: block; color: var(--muted); font-size: 0.7rem; font-weight: 800; }
+.grilla td small.x2 { color: var(--yellow); }
+.grilla .c-jugo { background: rgba(157, 255, 58, 0.14); }
+.grilla .c-jugo b { color: var(--lime); }
+.grilla .c-jugando { box-shadow: inset 0 0 0 2px var(--lime); color: var(--lime); }
+.grilla .c-sin { background: rgba(255, 255, 255, 0.06); color: var(--muted); font-size: 0.75rem; }
+.grilla .c-no { color: var(--red); }
+.grilla .c-abierto, .grilla .c-nada { color: var(--muted); }
+.grilla .c-futuro { background: transparent; border: 1px dashed var(--glass-border); color: var(--muted); }
+.grilla .c-total { font-family: var(--font-num); font-variant-numeric: tabular-nums; font-size: 1.05rem; background: none; }
+.leyenda { margin-top: 10px; }
+
+/* Historia de una copa */
+.historia { display: flex; flex-direction: column; }
+.historia + .historia { margin-top: 14px; }
+.dia-grupo { margin: 12px 0 4px; font-size: 0.75rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
+.historia .dia-grupo:first-child { margin-top: 0; }
+.evento { display: grid; grid-template-columns: 3.4em 1.6em 1fr; gap: 8px; align-items: start; padding: 7px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
+.evento .hora { font-family: var(--font-num); font-variant-numeric: tabular-nums; color: var(--muted); font-weight: 800; font-size: 0.85rem; padding-top: 1px; }
+.evento .que { font-weight: 800; font-size: 0.92rem; }
+.evento .que small { display: block; color: var(--muted); font-size: 0.8rem; }
+
+.pie { margin-top: 20px; }
