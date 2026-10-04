@@ -117,7 +117,7 @@ function mostrar(id) {
 }
 
 /**
- * Un juego a pantalla completa (D-200) ocupa la ventana entera: la barra, el reloj y las reglas
+ * Un juego a pantalla completa (D-203) ocupa la ventana entera: la barra, el reloj y las reglas
  * plegadas flotan encima de él en vez de ir arriba y abajo de su caja.
  */
 function pantallaCompleta(si) {

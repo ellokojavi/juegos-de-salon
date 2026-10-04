@@ -306,7 +306,7 @@ button.md-fila { cursor: pointer; }
 .anio-era { max-width: 260px; width: 100%; margin: 0 auto; }
 .anio-era button { white-space: nowrap; }
 
-/* ¿Dónde queda? a pantalla completa (D-200): el globo ocupa la ventana entera y lo demás flota
+/* ¿Dónde queda? a pantalla completa (D-203): el globo ocupa la ventana entera y lo demás flota
    encima. Arriba, la barra (‹ Menú y 🔊) con el reloj en medio; debajo, la ciudad y las reglas
    plegadas; abajo, la pista, + y − y la acción. El globo se gira y se acerca con los dedos, así
    que nada desplaza la página (touch-action). Los widgets van en una columna fija que no recibe
@@ -364,6 +364,10 @@ body.pantalla-completa #jugar-reglas .reglas { width: fit-content; max-width: 10
 body.pantalla-completa #jugar-reglas .reglas > summary { min-height: 44px; padding: 6px 14px; }
 body.pantalla-completa #jugar-reglas .reglas[open] { width: 100%; max-height: calc(100svh - var(--safe-top) - var(--safe-bottom) - 330px); min-height: 120px; overflow-y: auto; overscroll-behavior: contain; }
 body.pantalla-completa #jugar-reglas .reglas[open] > summary { position: sticky; top: 0; background: rgba(21,7,38,0.97); }
+/* La brújula: la N y su punta roja apuntan al norte del mapa girado */
+.brujula-aguja { display: grid; justify-items: center; font: 900 0.8rem/1 var(--font-body); }
+.brujula-aguja::before { content: ''; border: 6px solid transparent; border-top: 0; border-bottom: 11px solid #ff4d4d; margin-bottom: 2px; }
+.donde-ciudad b { overflow-wrap: anywhere; }
 
 /* Reinas, Tango y Zip: grillas cuadradas que se tocan (C-8: 44 px en 320 de ancho con 7 u 8
    casillas no caben; el área de toque es la casilla entera y la grilla usa todo el ancho) */
