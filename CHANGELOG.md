@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.99.2 — 2026-10-04
+- **Panel: quién juega sin red** (D-210): las partidas contra el celular, en un celular o en
+  solitario muestran el nombre que la persona ya usa en la app, con su bandera, y cómo terminaron
+  (quién ganó, o el puntaje y el tiempo jugando solo). La sección Juegos las lista todas.
+
 ## 0.99.1 — 2026-10-04
 - **Panel: la bandera junto a cada nombre** (D-209), también en "va primero", en los retirados y
   en la historia de una copa. Quien se inscribió antes de que La Copa guardara el país lo anota

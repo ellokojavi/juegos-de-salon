@@ -5,6 +5,7 @@ import {
   noteStart, noteRoom, notePlayer, noteEnd, endRecord, countryOf, regionOfLang, restApi,
   liveId, liveRecord, startLive, esEnVivo, LATIDO_MS, QUIETO_MS,
   paginaDe, origenDe, canalDe, dispositivoDe, visitChanges, noteVisit, notePlayed, VISITA_KEY, VINO_KEY, REF_KEY,
+  nombreDelCelular, nombresDe, finRecord,
 } from './stats.js';
 import { readFileSync } from 'node:fs';
 
@@ -326,6 +327,38 @@ assert.equal(dispositivoDe({ ua: 'Mozilla/5.0 (Macintosh)', platform: 'MacIntel'
   assert.match(leer('index.html'), /trackVisit\(\)/, 'la portada no cuenta la visita');
   assert.match(leer('labs/index.html'), /trackVisit\(\)/, 'el laboratorio no cuenta la visita');
   assert.doesNotMatch(leer('panel/panel.js'), /trackVisit/, 'el panel no es tráfico');
+}
+
+// --- Quién juega sin red y cómo terminó (D-210) ------------------------------
+{
+  const almacen = obj => ({ getItem: k => (k in obj ? obj[k] : null), key: i => Object.keys(obj)[i], get length() { return Object.keys(obj).length; } });
+  assert.equal(nombreDelCelular('toque-y-fama', almacen({ 'juegos-de-salon:toque-y-fama:name': 'Javi', 'juegos-de-salon:copa:nombre': '"Otro"' })), 'Javi', 'primero el de este juego');
+  assert.equal(nombreDelCelular('toque-y-fama', almacen({ 'juegos-de-salon:copa:nombre': '"Cata"' })), 'Cata', 'si no, el de La Copa');
+  assert.equal(nombreDelCelular('toque-y-fama', almacen({ 'juegos-de-salon:dudo:name': 'Pancho', 'juegos-de-salon:dudo:session': '{}' })), 'Pancho', 'si no, el de cualquier juego');
+  assert.equal(nombreDelCelular('toque-y-fama', almacen({})), '', 'nunca se inventa uno');
+  assert.equal(nombreDelCelular('x', { getItem() { throw new Error('bloqueado'); } }), '');
+  assert.equal(nombresDe(['Javi', ' Cata ', '', 'Javi', null]), 'Javi, Cata');
+  assert.equal(nombresDe([]), '');
+  assert.equal(liveRecord({ v: '1' }, { game: 'dudo', mode: 'cpu', players: 1, name: 'Javi' }).name, 'Javi');
+  assert.equal('name' in liveRecord({ v: '1' }, { game: 'dudo', mode: 'cpu', players: 1 }), false, 'sin nombre no va el campo');
+  assert.deepEqual(finRecord({ ganador: 'Javi', detalle: '7 intentos' }), { at: { '.sv': 'timestamp' }, g: 'Javi', d: '7 intentos' });
+  assert.deepEqual(finRecord({ empate: true, ganador: 'x' }), { at: { '.sv': 'timestamp' }, e: true }, 'un empate no tiene ganador');
+  assert.deepEqual(finRecord({ detalle: '80/100 · 2:31' }), { at: { '.sv': 'timestamp' }, d: '80/100 · 2:31' });
+  // El final se anota una vez y deja de latir
+  const api = fakeApi();
+  let latidos = 0;
+  const parar = startLive(api, { env: 'prod', v: '1' }, { game: 'dudo', mode: 'cpu', players: 1, name: 'Javi' },
+    { id: 'abcdefghij', now: () => 20000 * DAY, doc: null, every: () => 7, stopEvery: () => { latidos++; } });
+  assert.equal(api.calls[0].changes['live/abcdefghij'].name, 'Javi');
+  await parar.terminar({ ganador: 'Javi' });
+  await parar.terminar({ ganador: 'Otro' });
+  const fines = api.calls.filter(c => 'live/abcdefghij/fin' in c.changes);
+  assert.equal(fines.length, 1, 'una sola vez');
+  assert.equal(fines[0].changes['live/abcdefghij/fin'].g, 'Javi');
+  assert.ok(latidos >= 1, 'al terminar deja de latir');
+  // Las claves nuevas caben en las reglas
+  const reglas = JSON.parse(readFileSync(new URL('../../../../firebase/database.rules.json', import.meta.url), 'utf8')).rules.stats.$env.days.$day.live.$id;
+  assert.ok(reglas.name && reglas.fin?.g && reglas.fin?.d && reglas.fin?.e, 'las reglas aceptan name y fin');
 }
 
 console.log('stats.test.mjs: todo en verde');

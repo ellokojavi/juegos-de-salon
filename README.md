@@ -489,8 +489,9 @@ How it is put together (canon C-3):
 `/panel/` is a private page that shows how much the app is played and from where: live rooms and
 connected phones, games by title and mode, players per game, time zone, language and time of day.
 You sign in with Google, and only the owner of the Firebase project can read it. These are
-anonymized usage signals, not people: offline modes send counters only, and an IP or a secret never
-leave the phone. A room also records the country of each phone and who won, which is what the room
+usage signals, not tracking: an IP or a secret never leave the phone. Offline games send the
+game, mode and country, plus the name the player already typed somewhere in the app (if any) and how
+the game ended (D-210). A room also records the country of each phone and who won, which is what the room
 log at the bottom of the dashboard shows. Live rooms show **plays and chat messages separately**:
 only what a person did counts as a play (a shot, a guess, a bid), never the automatic answers, and
 of the chat only the number of messages is shown, never what they say (D-138).
