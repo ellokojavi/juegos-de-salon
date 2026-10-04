@@ -1,12 +1,20 @@
 # Changelog
 
-## 0.96.0 — 2026-10-04
+## 0.97.0 — 2026-10-04
 - **¿Dónde queda?: el mapa se gira con dos dedos** (D-200), como en los mapas del celular. Con el
   mapa girado aparece una brújula sobre + y −; tocarla vuelve a poner el norte arriba.
 - **¿Dónde queda?: el zoom llega a 64 veces** (D-202, antes 16), para que el dedo pueda apuntar
   dentro de los 25 km del 🎯.
 - **¿Dónde queda?: se acabó el polo mal parchado** (D-201). Las imágenes nítidas que se cargan al
   acercar estaban cortadas corridas: sobre el Ártico aparecía África estirada. Se rehicieron todas.
+
+## 0.96.0 — 2026-10-04
+- **Todas las pantallas, probadas en todos los idiomas** (D-199): cada juego tiene una prueba que
+  recorre sus pantallas en español, inglés, portugués y alemán, y avisa si algo quedó sin traducir,
+  a medio armar o fuera de la pantalla. Las pruebas de La Copa, Línea de Tiempo, los errores de sala
+  y los links con idioma ahora prueban también el alemán, y cualquier idioma que se sume.
+- **Palabra en alemán**: la nota de las diéresis es más corta y el botón "Zurück zum Menü" vuelve a
+  caber en la pantalla.
 
 ## 0.95.0 — 2026-10-04
 - **Ya no hay minijuegos** (D-198): Conexiones, Reinas, Tango, Zip, Desenredo, ¿Dónde queda?,

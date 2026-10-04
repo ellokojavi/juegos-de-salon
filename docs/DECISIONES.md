@@ -2981,6 +2981,41 @@ CHANGELOG anteriores no se reescriben: cuentan lo que era cierto entonces.
 están en la portada, con sus filtros y su tarjeta, al lado de los otros; llamarlos "mini" los hacía
 parecer menos, y la URL `/minigames/` lo repetía en cada link compartido.
 
+## D-199 · Todas las pantallas se prueban en todos los idiomas
+**Fecha:** 2026-10-04 · **Estado:** vigente; complementa C-3, C-12, D-193 y D-197
+**Decisión:** Las pruebas de punta a punta recorren **todos los idiomas de `LANGS`**, no una lista
+escrita en cada guion:
+- **Cada juego tiene su prueba de idiomas**, `tools/e2e/<carpeta>/idiomas.mjs` (y
+  `cup-games/idiomas.mjs` para los juegos de La Copa que se juegan sueltos). Recorre cada pantalla
+  de `tools/e2e/caminos.mjs` en cada idioma y la compara con la misma en español: la página en
+  ese idioma y en la misma pantalla, nada a medio armar (`undefined`, `NaN`, `{marcador}`), nada
+  en español (ni un texto de los diccionarios que en ese idioma diga otra cosa, ni una línea larga
+  idéntica a la de la pantalla en español) y nada que el texto más largo rompa (scroll
+  horizontal, botones bajo 44 px o que se salgan por abajo y que el español no tenga). La lógica
+  es una sola, `tools/e2e/idiomas-comun.mjs`; GitHub corre cada juego en su propio job (D-193).
+- **Los caminos a cada pantalla salen de `mirar.mjs`** a `tools/e2e/caminos.mjs`, que comparten:
+  una pantalla nueva para mirar queda también probada en todos los idiomas. Se sumaron La Copa
+  (portada y formulario, con `?prueba`) y los juegos sueltos que no tenían camino (antesala y
+  juego empezado).
+- **Los guiones que miran algo de un idioma** —`cup/idiomas.mjs`, la parte en otros idiomas de
+  `timeline/solo.mjs`, `sala-error.mjs` e `idioma-por-url.mjs`— recorren `LANGS` y sacan lo que
+  esperan de los diccionarios (`LOCALES`, `SUELTOS`), no de textos copiados al guion. `sala-error`
+  ahora falla en rojo si un juego no muestra su `errOffline`; antes solo lo imprimía.
+**Por qué:** lo pidió el dueño: "Guiones de La Copa y de Línea de Tiempo, así como todo juego
+existente, debe probar alemán además. Y en general todos los idiomas disponibles". Con el alemán
+en producción (D-197), los guiones seguían probando solo inglés y portugués, y cada idioma nuevo
+habría obligado a reescribirlos. Leer `LANGS` y los diccionarios hace que el próximo idioma quede
+probado el día que entra, también desde el laboratorio (D-191).
+**Consecuencias:** la primera pasada encontró dos cosas del alemán: en la antesala de Palabra, la
+nota de las diéresis empujaba "Zurück zum Menü" por debajo del borde (se acortó la frase), y
+`timeline/solo.mjs` no encontraba el modo "Allein spielen" (se cayó a mitad de la pasada alemana).
+Las pruebas de idiomas suman unos 2 minutos por juego en CI, en paralelo. Comparan contra el
+español, así que no repiten lo que ya está mal en español: eso lo cuentan los guiones de cada juego.
+**Alternativas descartadas:** un solo guion para todos los juegos (en CI no se vería cuál falló);
+revisar solo las claves de los diccionarios (ya lo hace `i18n.test.mjs`, y no ve un texto escrito
+a mano en el HTML ni un botón que el alemán saca de la pantalla); mirar las capturas a ojo en cada
+idioma (no escala: son más de cien tomas).
+
 ## D-200 · ¿Dónde queda?: el globo se gira con dos dedos y la brújula endereza el norte
 **Fecha:** 2026-10-04 · **Estado:** vigente; complementa D-155
 **Decisión:** Además de arrastrar y pellizcar, dos dedos que giran hacen girar el mapa en torno a

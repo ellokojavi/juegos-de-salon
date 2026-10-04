@@ -13,6 +13,7 @@
  * Uso: SITIO=http://localhost:87xx PUERTO_CDP=94xx node tools/e2e/timeline/solo.mjs <salida>
  */
 import { launch, sleep } from '../cdp.mjs';
+import { LANGS } from '../../../public/assets/js/i18n.js';
 
 const OUT = process.argv[2] || '/tmp/ldt-solo';
 const SITIO = process.env.SITIO || 'http://localhost:8765';
@@ -57,7 +58,7 @@ const terminar = async () => {
 
 async function configurar(tema, lang = '') {
   await b.go(URL + (lang ? `?lang=${lang}` : ''), 1200);
-  await b.evaluate(`[...document.querySelectorAll('.mode')].find(m=>/solo|alone|sozinho/i.test(m.textContent)).click(); 1`); await sleep(300);
+  await b.evaluate(`[...document.querySelectorAll('.mode')].find(m=>/solo|alone|sozinho|allein/i.test(m.textContent)).click(); 1`); await sleep(300);
   if (tema) { await b.evaluate(`document.querySelector('.theme-card[data-tema="${tema}"]').click(); 1`); await sleep(100); }
 }
 
@@ -167,8 +168,8 @@ await b.evaluate(`localStorage.setItem('juegos-de-salon:linea-de-tiempo:session'
 await b.go(URL, 1200);
 ok(await b.evaluate(`!document.querySelector('#resume-slot .panel')`), 'una partida del solitario viejo no se ofrece para retomar');
 
-/* 7 · Inglés y portugués ----------------------------------------------------------- */
-for (const lang of ['en', 'pt']) {
+/* 7 · Los otros idiomas, todos los que se ofrecen (D-199) ------------------------- */
+for (const lang of LANGS.filter(l => l !== 'es')) {
   await configurar('brasil', lang);
   const plegado = await b.evaluate(`JSON.stringify({abiertas: document.querySelector('.solo-como').open, empezar: document.getElementById('btn-solo-empezar').getBoundingClientRect().bottom <= innerHeight})`).then(JSON.parse);
   ok(!plegado.abiertas && plegado.empezar, `${lang}: ya jugó, así que las reglas van plegadas y Empezar se ve sin desplazar`);
