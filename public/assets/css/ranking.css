@@ -12,6 +12,7 @@
 }
 .rk-ver { display: flex; align-items: center; justify-content: center; margin-top: 4px; }
 
+.rk-invita:not([open]) { padding-top: 6px; padding-bottom: 6px; }   /* plegada, deja ver los botones del final (C-8) */
 .rk-invita summary { cursor: pointer; font-weight: 900; min-height: 44px; display: flex; align-items: center; }
 .rk-invita[open] summary { margin-bottom: 6px; }
 .rk-hint { margin: 0 0 10px; font-size: 0.92rem; }
@@ -39,6 +40,11 @@
   padding: 8px 4px; border-radius: 10px; cursor: pointer; min-height: 44px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .rk-seg button.on { background: var(--yellow); color: #3a1200; }
+/* A 320 px las cuatro pestañas no caben en una línea: se achican y, si igual no, parten línea (U-12) */
+@media (max-width: 360px) {
+  .rk-seg { gap: 2px; }
+  .rk-seg button { flex: 1 1 auto; font-size: 0.8rem; padding: 6px 3px; white-space: normal; line-height: 1.1; overflow: visible; text-overflow: clip; }
+}
 
 .rk-lista { display: grid; gap: 4px; }
 .rk-centro { text-align: center; margin: 8px 0; }
@@ -48,8 +54,9 @@
 }
 .rk-fila.yo { box-shadow: 0 0 0 2px var(--cyan) inset; background: rgba(46, 230, 214, 0.12); }
 .rk-puesto { text-align: center; font: 900 1rem var(--font-num); font-variant-numeric: tabular-nums; }
-.rk-nombre { font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
-.rk-nombre small { color: var(--cyan); font-weight: 900; }
+.rk-nombre { font-weight: 800; display: flex; align-items: baseline; gap: 4px; min-width: 0; }
+.rk-n { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.rk-nombre small { color: var(--cyan); font-weight: 900; flex-shrink: 0; }
 .rk-puntos { font: 900 1.05rem var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); }
 .rk-tiempo { font-family: var(--font-num); font-variant-numeric: tabular-nums; color: var(--muted); min-width: 3.2em; text-align: right; }
 .rk-medallas { grid-column: 3 / 5; font-family: var(--font-num); font-variant-numeric: tabular-nums; white-space: nowrap; }
