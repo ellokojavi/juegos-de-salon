@@ -7,7 +7,7 @@
  * módulo de juegos/ui-*.js.
  *
  * URL: /cup/ (portada) · /cup/?K7Q2X (una copa) · /cup/?K7Q2X&prueba (sin Firebase).
- * La misma pantalla sirve los juegos sueltos de la portada en /queens/ (D-149, D-162, D-197).
+ * La misma pantalla sirve los juegos sueltos de la portada en /queens/ (D-149, D-162, D-198).
  */
 import { crearArrastre } from '../assets/js/arrastre.js';
 import { $, $$, el, con, conEmoji, vibrate, sparkles, keepAwake, confetti } from '../assets/js/ui.js';
@@ -54,7 +54,7 @@ const PRUEBA = busqueda.includes('prueba');
 // la Copa de 3 días (D-100). ?tres se mantiene por los links que ya circulan.
 const LABS = busqueda.includes('labs');
 const TRES = PRUEBA || LABS || busqueda.includes('tres');
-// Los juegos sueltos de la portada viven en /<slug>/ (D-149, D-162, D-192, D-197): la misma
+// Los juegos sueltos de la portada viven en /<slug>/ (D-149, D-162, D-192, D-198): la misma
 // pantalla, pero fuera de una copa el link no dice "copa". Cada uno tiene su página, que dice cuál
 // es en `<body data-suelto="reinas">`, para que el link compartido traiga su propia tarjeta
 // social. /cup/?practica=<id>&labs queda para el laboratorio.

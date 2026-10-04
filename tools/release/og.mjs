@@ -5,7 +5,7 @@
  *
  *   node tools/release/og.mjs tarjetas   reescribe el bloque <!-- generado: og --> de cada página,
  *                                genera la página de cada juego de La Copa (public/<slug>/)
- *                                y las páginas puente de las rutas viejas (D-192, D-197)
+ *                                y las páginas puente de las rutas viejas (D-192, D-198)
  *   node tools/release/og.mjs imagenes   rehace con Chrome las imágenes de 1200×630 que quedaron atrás
  *                                (necesita internet: las fuentes vienen de Google Fonts).
  *                                Con --todas, las rehace todas
@@ -40,19 +40,20 @@ const disponibles = GAMES.filter(g => g.available);
 const conTarjeta = GAMES.filter(g => g.available || g.labs || existsSync(join(RAIZ, 'public', g.path, 'index.html')));
 
 /**
- * Las tres puertas de entrada: la portada en español y las dos que dejan elegido el idioma
- * (/pt/ y /en/). Cada una se comparte en su idioma, así que su tarjeta también (D-74).
+ * Las puertas de entrada: la portada en español y las que dejan elegido el idioma (/pt/, /en/
+ * y /de/). Cada una se comparte en su idioma, así que su tarjeta también (D-74, D-197).
  */
 const PUERTAS = [
   { lang: 'es', archivo: 'public/index.html', ruta: '/', imagen: 'menu' },
   { lang: 'pt', archivo: 'public/pt/index.html', ruta: '/pt/', imagen: 'menu-pt' },
   { lang: 'en', archivo: 'public/en/index.html', ruta: '/en/', imagen: 'menu-en' },
+  { lang: 'de', archivo: 'public/de/index.html', ruta: '/de/', imagen: 'menu-de' },
 ];
 /** El cierre de la bajada. Es la única frase que no sale de la app: se dice a los robots. */
-const GRATIS = { es: 'Gratis, sin instalar y sin cuenta.', en: 'Free, no install, no account.', pt: 'De graça, sem instalar e sem conta.' };
+const GRATIS = { es: 'Gratis, sin instalar y sin cuenta.', en: 'Free, no install, no account.', pt: 'De graça, sem instalar e sem conta.', de: 'Kostenlos, ohne Installation und ohne Konto.' };
 /** "A, B y C" en cada idioma. */
 const lista = lang => disponibles.map(g => g.name[lang]).join(', ')
-  .replace(/, ([^,]*)$/, ` ${{ es: 'y', en: 'and', pt: 'e' }[lang]} $1`);
+  .replace(/, ([^,]*)$/, ` ${{ es: 'y', en: 'and', pt: 'e', de: 'und' }[lang]} $1`);
 
 const portada = p => ({
   ...p,
@@ -116,7 +117,7 @@ const atrasada = (p, huellas = leerHuellas()) => !existsSync(join(RAIZ, `public/
 /**
  * Un robot de WhatsApp no corre JavaScript: lee las etiquetas del HTML tal como llega. Con una
  * sola página para todos (/cup/suelto/?reinas) cada link traía la misma tarjeta, así que cada
- * juego tiene la suya (D-162), en la raíz como los demás (D-197). Es una copia de
+ * juego tiene la suya (D-162), en la raíz como los demás (D-198). Es una copia de
  * public/cup/suelto/index.html un nivel más arriba, con su título, su tarjeta y
  * `data-suelto="<id>"`: se rehace, no se edita. Como set-version.py corre
  * esto después de estampar, la copia sale con el import map de la versión nueva.
@@ -146,7 +147,7 @@ function paginaSuelta(p, bloqueOg) {
  *
  * La ruta vieja sale del id, que era la carpeta (/<id>/ y /minijuegos/<id>/): un juego nuevo con su
  * carpeta igual a su id no tiene puente. Los juegos de La Copa vivieron además en /minigames/<slug>/
- * hasta que dejaron de ser "minijuegos" (D-197).
+ * hasta que dejaron de ser "minijuegos" (D-198).
  */
 const puentes = () => [
   ...paginas().filter(p => p.juego && !p.suelto && `/${p.juego}/` !== p.ruta)
@@ -158,6 +159,9 @@ const puentes = () => [
   // Las páginas genéricas (/minijuegos/?reinas, /minigames/?reinas): el molde manda cada link a su lugar
   { viejo: 'public/minijuegos/index.html', a: '../cup/suelto/', titulo: 'Juegos de Salón 🎲' },
   { viejo: 'public/minigames/index.html', a: '../cup/suelto/', titulo: 'Juegos de Salón 🎲' },
+  // El laboratorio del alemán, que ya salió de ahí (D-197): sus revisores tienen ese link
+  ...paginas().filter(p => p.puerta && p.lang === 'de')
+    .map(p => ({ ...p, viejo: 'public/labs/de/index.html', a: `../..${p.ruta}` })),
 ];
 
 function paginaPuente(p) {
@@ -196,7 +200,7 @@ function version() {
   return m ? m[1] : '0';
 }
 
-const LOCALE = { es: 'es_CL', en: 'en_US', pt: 'pt_BR' };
+const LOCALE = { es: 'es_CL', en: 'en_US', pt: 'pt_BR', de: 'de_DE' };
 
 function bloque(p) {
   const img = `${SITIO}/assets/og/${p.imagen}.jpg?v=${version()}`;
@@ -304,8 +308,12 @@ const MARGEN = `(()=>{
 
 /** PNG → JPEG con la herramienta que trae macOS, la misma que usa readme.py para las capturas. */
 const jpeg = (origen, destino) => new Promise((ok, falla) => {
-  const s = spawn('sips', ['-s', 'format', 'jpeg', '-s', 'formatOptions', '82', origen, '--out', destino], { stdio: 'ignore' });
-  s.on('close', c => (c === 0 ? ok() : falla(new Error(`sips salió con ${c}`))));
+  // Fuera del Mac (una sesión en la nube) no hay sips: ImageMagick hace lo mismo
+  const mac = process.platform === 'darwin';
+  const s = mac
+    ? spawn('sips', ['-s', 'format', 'jpeg', '-s', 'formatOptions', '82', origen, '--out', destino], { stdio: 'ignore' })
+    : spawn('convert', [origen, '-quality', '82', destino], { stdio: 'ignore' });
+  s.on('close', c => (c === 0 ? ok() : falla(new Error(`${mac ? 'sips' : 'convert'} salió con ${c}`))));
 });
 
 async function cmdImagenes() {
