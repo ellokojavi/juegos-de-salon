@@ -56,6 +56,12 @@ export const DIA_MS = 24 * 60 * 60 * 1000;
 // La hora de las copas nuevas (D-113): la del Pacífico, donde está el dueño. Cada copa guarda la
 // suya en `meta.tz`, así que las ya creadas siguen con la hora de Chile.
 export const ZONA = 'America/Los_Angeles';
+/**
+ * Una copa en alemán cambia de día a medianoche de Europa central (D-194): con la del Pacífico,
+ * el día nuevo partía a las 9:00 en Berlín. Berlín vale también para Viena y Zúrich.
+ */
+export const ZONAS_POR_IDIOMA = { de: 'Europe/Berlin' };
+export const zonaDeIdioma = lang => ZONAS_POR_IDIOMA[lang] || ZONA;
 
 /** Código de copa: 5 letras sin las ambiguas (I, O). 24⁵ ≈ 7,9 millones. */
 export const LETRAS = 'ABCDEFGHJKLMNPQRSTUVWXYZ';

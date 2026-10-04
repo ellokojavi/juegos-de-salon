@@ -137,3 +137,5 @@ Las respuestas a dilemas (issues con la etiqueta `usabilidad`) se anotan aquí:
   el chat.
 - **Batalla Naval baja a ¡Zarpar!** (#47, opción B): al completar la flota, si ¡Zarpar! no se ve,
   la pantalla baja hasta él. Una sola vez, al soltar.
+- **El 🐞 del laboratorio alemán puede achicar el nombre del juego en la barra** (#159): a 320 px
+  queda en "Sc…"; se deja así porque es temporal y el nombre entero está en el título (D-191).

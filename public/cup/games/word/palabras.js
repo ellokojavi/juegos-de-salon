@@ -70,7 +70,8 @@ export const PALABRAS_PT = [
 
 /**
  * En alemán, para el laboratorio: las mismas reglas, sin Ñ. Sin Ä, Ö, Ü ni ß (BLÜTE, SCHÖN no
- * entran), como el portugués deja fuera las tildes y la Ç.
+ * entran), como el portugués deja fuera las tildes y la Ç. Solo palabras de los tres países
+ * (D-194): ni QUARK ni SAHNE, que en Austria son Topfen y Obers.
  */
 export const PALABRAS_DE = [
   'ABEND', 'ADLER', 'ANGST', 'ANKER', 'APFEL', 'ARMUT', 'BADEN', 'BAUEN', 'BAUER', 'BIRNE',
@@ -84,8 +85,8 @@ export const PALABRAS_DE = [
   'LUNGE', 'MACHT', 'MAGEN', 'MALEN', 'MARKT', 'MAUER', 'MILCH', 'MONAT', 'MUSIK', 'MUTIG',
   'NABEL', 'NACHT', 'NADEL', 'NARBE', 'NUDEL', 'ONKEL', 'ORGEL', 'OSTEN', 'PAKET', 'PALME',
   'PAUSE', 'PFEIL', 'PFERD', 'PFUND', 'PILOT', 'PILZE', 'PLATZ', 'PREIS', 'PRINZ', 'PROBE',
-  'PUDEL', 'PUNKT', 'QUARK', 'RADIO', 'RATEN', 'RAUCH', 'RAUPE', 'REGAL', 'RINDE', 'ROMAN',
-  'RUFEN', 'RUHIG', 'SAGEN', 'SAHNE', 'SAUER', 'SCHAF', 'SCHAL', 'SORTE', 'SPATZ', 'SPECK',
+  'PUDEL', 'PUNKT', 'RADIO', 'RATEN', 'RAUCH', 'RAUPE', 'REGAL', 'RINDE', 'ROMAN',
+  'RUFEN', 'RUHIG', 'SAGEN', 'SAUER', 'SCHAF', 'SCHAL', 'SORTE', 'SPATZ', 'SPECK',
   'SPIEL', 'SPORT', 'STARK', 'STAUB', 'STEIN', 'STERN', 'STIRN', 'STOCK', 'STOLZ', 'STROM',
   'STUFE', 'STUHL', 'STURM', 'TAFEL', 'TAUBE', 'TEICH', 'THEMA', 'TIGER', 'TISCH', 'TRAUM',
   'TRUHE', 'VOGEL', 'WAGEN', 'WEICH', 'WOCHE', 'WOLKE', 'WURST', 'ZANGE', 'ZEBRA', 'ZUNGE',

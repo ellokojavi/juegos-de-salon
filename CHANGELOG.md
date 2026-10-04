@@ -1,6 +1,13 @@
 # Changelog
 
 ## 0.91.0 — 2026-10-03
+- **Sin destello de idioma** (D-194): al abrir una página en inglés, portugués o alemán ya no se
+  ven los textos en español una fracción de segundo antes de cambiar.
+- **Laboratorio alemán** (D-194): todo el alemán pasa a Hochdeutsch común para Alemania, Austria
+  y Suiza (con ß, sin palabras ni referencias de un solo país). Una copa con palabras en alemán cambia de día a medianoche de
+  Europa central (Berlín, Viena, Zúrich), y las instrucciones de Palabra y del Ahorcado dicen que
+  las diéresis van sin puntos (Ä es A) y la ß como SS.
+
 - **Las direcciones pasan al inglés** (D-192): `/hangman/`, `/cup/`, `/timeline/`, `/bulls-and-cows/`,
   `/liars-dice/`, `/battleship/`, `/julep/`, `/fourth-king/` y `/minigames/<slug>/`. Los links
   viejos siguen andando: cada ruta en español es una página puente que manda a la nueva con todo

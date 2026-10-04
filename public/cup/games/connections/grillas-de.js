@@ -8,12 +8,16 @@
  *
  * La ß se escribe SS (GIESSKANNE): cada palabra tiene que ser igual a su toLocaleUpperCase('de').
  * Las diéresis Ä, Ö y Ü sí van.
+ *
+ * Hochdeutsch para Alemania, Austria y Suiza (D-194): nada que conozca un solo país (ni SYLT, ni
+ * SKAT, ni los Bundesländer) y palabras que se dicen igual en los tres (no SCHNÜRSENKEL, que en
+ * Austria es Schuhband). MANHATTAN es cóctel e isla; FLÜGEL, ala de pollo y de avión.
  */
 export const GRILLAS = [
   {
     id: 'schuh',
     grupos: [
-      { nombre: 'Teile eines Schuhs', palabras: ['SOHLE', 'SCHNÜRSENKEL', 'ABSATZ', 'ZUNGE'] },
+      { nombre: 'Teile eines Schuhs', palabras: ['SOHLE', 'ÖSE', 'ABSATZ', 'ZUNGE'] },
       { nombre: 'Beim Billard', palabras: ['QUEUE', 'KREIDE', 'BANDE', 'KUGEL'] },
       { nombre: 'Brennstoffe', palabras: ['HOLZ', 'KOHLE', 'BENZIN', 'DIESEL'] },
       { nombre: 'Werkzeuge', palabras: ['HAMMER', 'ZANGE', 'SÄGE', 'FEILE'] },
@@ -49,7 +53,7 @@ export const GRILLAS = [
   {
     id: 'farben',
     grupos: [
-      { nombre: 'Obst', palabras: ['KIRSCHE', 'PFIRSICH', 'HIMBEERE', 'PFLAUME'] },
+      { nombre: 'Obst', palabras: ['KIRSCHE', 'PFIRSICH', 'HIMBEERE', 'MELONE'] },
       { nombre: 'Farben', palabras: ['TÜRKIS', 'OCKER', 'MAGENTA', 'ORANGE'] },
       { nombre: 'Edelsteine', palabras: ['RUBIN', 'SMARAGD', 'SAPHIR', 'TOPAS'] },
       { nombre: 'Bäume', palabras: ['EICHE', 'KIEFER', 'WEIDE', 'AHORN'] },
@@ -70,7 +74,7 @@ export const GRILLAS = [
       { nombre: 'Tropische Früchte', palabras: ['ANANAS', 'MANGO', 'PAPAYA', 'MARACUJA'] },
       { nombre: 'Pixar-Filme', palabras: ['CARS', 'SOUL', 'OBEN', 'COCO'] },
       { nombre: 'Tänze', palabras: ['SALSA', 'WALZER', 'TANGO', 'SAMBA'] },
-      { nombre: 'Soßen', palabras: ['PESTO', 'AIOLI', 'KETCHUP', 'HOLLANDAISE'] },
+      { nombre: 'Saucen', palabras: ['PESTO', 'AIOLI', 'KETCHUP', 'HOLLANDAISE'] },
     ],
   },
   {
@@ -78,26 +82,26 @@ export const GRILLAS = [
     grupos: [
       { nombre: 'Satzzeichen', palabras: ['KOMMA', 'PUNKT', 'DOPPELPUNKT', 'BINDESTRICH'] },
       { nombre: 'Schriftarten', palabras: ['ARIAL', 'TIMES', 'CALIBRI', 'VERDANA'] },
-      { nombre: 'Fleischstücke', palabras: ['FILET', 'HÜFTE', 'BRUST', 'KEULE'] },
-      { nombre: 'Teile eines Flugzeugs', palabras: ['FLÜGEL', 'COCKPIT', 'HECK', 'RUMPF'] },
+      { nombre: 'Teile eines Huhns', palabras: ['BRUST', 'FLÜGEL', 'SCHENKEL', 'LEBER'] },
+      { nombre: 'Teile eines Flugzeugs', palabras: ['FAHRWERK', 'COCKPIT', 'HECK', 'RUMPF'] },
     ],
   },
   {
     id: 'welt',
     grupos: [
       { nombre: 'Flüsse in Europa', palabras: ['DONAU', 'SEINE', 'THEMSE', 'RHEIN'] },
-      { nombre: 'Inseln', palabras: ['KUBA', 'MALTA', 'SYLT', 'KRETA'] },
+      { nombre: 'Inseln', palabras: ['KUBA', 'MALTA', 'SIZILIEN', 'KRETA'] },
       { nombre: 'Cocktails', palabras: ['MOJITO', 'DAIQUIRI', 'MARGARITA', 'MANHATTAN'] },
-      { nombre: 'Bundesländer', palabras: ['BAYERN', 'HESSEN', 'SACHSEN', 'HAMBURG'] },
+      { nombre: 'Hauptstädte', palabras: ['MADRID', 'WIEN', 'BERN', 'OSLO'] },
     ],
   },
   {
     id: 'kueche',
     grupos: [
-      { nombre: 'Küchenhelfer', palabras: ['SCHNEEBESEN', 'SIEB', 'REIBE', 'KELLE'] },
+      { nombre: 'Küchenhelfer', palabras: ['TRICHTER', 'SIEB', 'REIBE', 'KELLE'] },
       { nombre: 'Kräuter', palabras: ['BASILIKUM', 'OREGANO', 'ROSMARIN', 'THYMIAN'] },
       { nombre: 'Maler', palabras: ['REMBRANDT', 'MONET', 'DÜRER', 'PICASSO'] },
-      { nombre: 'Preise', palabras: ['NOBEL', 'OSCAR', 'GRAMMY', 'BAMBI'] },
+      { nombre: 'Preise', palabras: ['NOBEL', 'OSCAR', 'GRAMMY', 'PULITZER'] },
     ],
   },
   {
@@ -122,7 +126,7 @@ export const GRILLAS = [
     id: 'spiele',
     grupos: [
       { nombre: 'Brettspiele', palabras: ['SCHACH', 'DAME', 'MONOPOLY', 'SCRABBLE'] },
-      { nombre: 'Kartenspiele', palabras: ['SKAT', 'POKER', 'ROMMÉ', 'DOPPELKOPF'] },
+      { nombre: 'Kartenspiele', palabras: ['BRIDGE', 'POKER', 'ROMMÉ', 'CANASTA'] },
       { nombre: 'Olympische Sportarten', palabras: ['FECHTEN', 'RUDERN', 'BOGENSCHIESSEN', 'JUDO'] },
       { nombre: 'Auf dem Spielplatz', palabras: ['SCHAUKEL', 'RUTSCHE', 'SANDKASTEN', 'WIPPE'] },
     ],
@@ -133,7 +137,7 @@ export const GRILLAS = [
       { nombre: 'Sitzmöbel', palabras: ['BANK', 'STUHL', 'HOCKER', 'SESSEL'] },
       { nombre: 'Große Bauwerke', palabras: ['BURG', 'PALAST', 'FESTUNG', 'KATHEDRALE'] },
       { nombre: 'Zum Angeln', palabras: ['KÖDER', 'HAKEN', 'SCHNUR', 'ROLLE'] },
-      { nombre: 'Teile einer Tür', palabras: ['SCHLOSS', 'KLINKE', 'ANGEL', 'RAHMEN'] },
+      { nombre: 'Teile einer Tür', palabras: ['SCHLOSS', 'SCHWELLE', 'ANGEL', 'RAHMEN'] },
     ],
   },
   {
