@@ -36,10 +36,11 @@ function same(name, dict) {
   }
 }
 
-// Fuera del laboratorio se ofrecen los de siempre; los del laboratorio tienen sus textos igual (D-191)
-assert.deepEqual(LANGS, ['es', 'en', 'pt']);
+// Se ofrecen todos los que tienen diccionario: el alemán salió del laboratorio (D-197), que queda
+// vacío hasta el próximo idioma (D-191)
+assert.deepEqual(LANGS, ['es', 'en', 'pt', 'de']);
 assert.deepEqual(IDIOMAS, ['es', 'en', 'pt', 'de']);
-assert.deepEqual(EN_LABS, ['de']);
+assert.deepEqual(EN_LABS, []);
 // El idioma del link se saca sin tocar lo demás: un parámetro suelto no gana un "=" (D-170)
 assert.equal(sinLang('?pirata&lang=pt'), '?pirata');
 assert.equal(sinLang('?K7Q2X&prueba&lang=en'), '?K7Q2X&prueba');
