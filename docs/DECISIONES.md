@@ -2980,3 +2980,17 @@ CHANGELOG anteriores no se reescriben: cuentan lo que era cierto entonces.
 **Por qué:** lo pidió el dueño: la distinción ya no sirve. Desde D-142 los juegos de La Copa
 están en la portada, con sus filtros y su tarjeta, al lado de los otros; llamarlos "mini" los hacía
 parecer menos, y la URL `/minigames/` lo repetía en cada link compartido.
+
+## D-199 · ¿Dónde queda?: el globo se gira con dos dedos y la brújula endereza el norte
+**Fecha:** 2026-10-04 · **Estado:** vigente; complementa D-155
+**Decisión:** Además de arrastrar y pellizcar, dos dedos que giran hacen girar el mapa en torno a
+ellos, como en los mapas del celular. El giro empieza pasados 12° de torsión, para que un pellizco
+no lo tuerza, y al soltar a menos de 6° del norte el mapa queda derecho. Con el mapa girado aparece
+una brújula sobre los botones + y −, con la N apuntando al norte; tocarla lo endereza. Cada ciudad
+empieza con el norte arriba.
+- La vista del motor lleva un `rumbo` (grados, contra el reloj): `ver` y `tocado` lo aplican, y el
+  globo y la imagen satelital también. El arrastre de un dedo se lleva a la vista derecha antes de
+  girar el globo, así lo que está bajo el dedo lo sigue.
+**Por qué:** lo pidió el dueño, para corregir los puntos cardinales: girando el globo hacia un
+polo, o buscando una ciudad en un país largo, uno quiere orientar el mapa a su modo. Es el gesto
+que todos conocen de los mapas (no reinventar, D-102), y la brújula, la forma conocida de volver.
