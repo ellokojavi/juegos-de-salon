@@ -173,7 +173,7 @@ function paginaPuente(p) {
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${escapa(p.titulo)}</title>
   <!-- Página puente (D-192): esta ruta se mudó a ${p.a.replace(/^(\.\.\/)+/, '/')}. La genera node tools/release/og.mjs tarjetas: no se edita a mano. -->${og}
-  <script>location.replace('${p.a}' + location.search + location.hash);</script>
+  <script>try { if (sessionStorage.getItem('juegos-de-salon:ref') === null) sessionStorage.setItem('juegos-de-salon:ref', document.referrer); } catch (e) {} location.replace('${p.a}' + location.search + location.hash);</script>
   <noscript><meta http-equiv="refresh" content="0; url=${p.a}"></noscript>
 </head>
 <body>

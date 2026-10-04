@@ -28,7 +28,7 @@
   <meta name="twitter:image" content="https://juegosdesalon.cl/assets/og/copa.jpg">
   <meta name="twitter:image:alt" content="La Copa: Un torneo de una semana entre amigos, con un juego distinto cada día.">
   <!-- /generado -->
-  <script>location.replace('../cup/' + location.search + location.hash);</script>
+  <script>try { if (sessionStorage.getItem('juegos-de-salon:ref') === null) sessionStorage.setItem('juegos-de-salon:ref', document.referrer); } catch (e) {} location.replace('../cup/' + location.search + location.hash);</script>
   <noscript><meta http-equiv="refresh" content="0; url=../cup/"></noscript>
 </head>
 <body>

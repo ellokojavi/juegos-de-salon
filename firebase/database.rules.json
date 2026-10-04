@@ -192,6 +192,54 @@
                 ".validate": "newData.isNumber() && ((!data.exists() && newData.val() == 1) || newData.val() == data.val() + 1)"
               }
             },
+            "vistas": {
+              "$pagina": {
+                ".write": "$env.matches(/^[a-z]{2,10}$/) && $day.matches(/^[0-9]{5}$/) && $pagina.matches(/^[a-z0-9-]{1,40}$/)",
+                ".validate": "newData.isNumber() && ((!data.exists() && newData.val() == 1) || newData.val() == data.val() + 1)"
+              }
+            },
+            "entradas": {
+              "$entrada": {
+                ".write": "$env.matches(/^[a-z]{2,10}$/) && $day.matches(/^[0-9]{5}$/) && $entrada.matches(/^[a-z0-9-]{1,40}$/)",
+                ".validate": "newData.isNumber() && ((!data.exists() && newData.val() == 1) || newData.val() == data.val() + 1)"
+              }
+            },
+            "juegan": {
+              "$jugo": {
+                ".write": "$env.matches(/^[a-z]{2,10}$/) && $day.matches(/^[0-9]{5}$/) && $jugo.matches(/^[a-z0-9-]{1,40}$/)",
+                ".validate": "newData.isNumber() && ((!data.exists() && newData.val() == 1) || newData.val() == data.val() + 1)"
+              }
+            },
+            "ref": {
+              "$ref": {
+                ".write": "$env.matches(/^[a-z]{2,10}$/) && $day.matches(/^[0-9]{5}$/) && $ref.matches(/^[a-z0-9_-]{1,60}$/)",
+                ".validate": "newData.isNumber() && ((!data.exists() && newData.val() == 1) || newData.val() == data.val() + 1)"
+              }
+            },
+            "via": {
+              "$via": {
+                ".write": "$env.matches(/^[a-z]{2,10}$/) && $day.matches(/^[0-9]{5}$/) && $via.matches(/^[a-z0-9-]{1,20}$/)",
+                ".validate": "newData.isNumber() && ((!data.exists() && newData.val() == 1) || newData.val() == data.val() + 1)"
+              }
+            },
+            "retorno": {
+              "$retorno": {
+                ".write": "$env.matches(/^[a-z]{2,10}$/) && $day.matches(/^[0-9]{5}$/) && $retorno.matches(/^[a-z]{1,12}$/)",
+                ".validate": "newData.isNumber() && ((!data.exists() && newData.val() == 1) || newData.val() == data.val() + 1)"
+              }
+            },
+            "disp": {
+              "$disp": {
+                ".write": "$env.matches(/^[a-z]{2,10}$/) && $day.matches(/^[0-9]{5}$/) && $disp.matches(/^[a-z]{1,12}$/)",
+                ".validate": "newData.isNumber() && ((!data.exists() && newData.val() == 1) || newData.val() == data.val() + 1)"
+              }
+            },
+            "pais": {
+              "$pais": {
+                ".write": "$env.matches(/^[a-z]{2,10}$/) && $day.matches(/^[0-9]{5}$/) && $pais.matches(/^([A-Z]{2}|desconocido)$/)",
+                ".validate": "newData.isNumber() && ((!data.exists() && newData.val() == 1) || newData.val() == data.val() + 1)"
+              }
+            },
             "$other": {
               ".validate": false
             }

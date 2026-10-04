@@ -28,7 +28,7 @@
   <meta name="twitter:image" content="https://juegosdesalon.cl/assets/og/tango.jpg">
   <meta name="twitter:image:alt" content="Tango: Llena la grilla con soles y lunas sin poner tres iguales seguidos.">
   <!-- /generado -->
-  <script>location.replace('../../tango/' + location.search + location.hash);</script>
+  <script>try { if (sessionStorage.getItem('juegos-de-salon:ref') === null) sessionStorage.setItem('juegos-de-salon:ref', document.referrer); } catch (e) {} location.replace('../../tango/' + location.search + location.hash);</script>
   <noscript><meta http-equiv="refresh" content="0; url=../../tango/"></noscript>
 </head>
 <body>
