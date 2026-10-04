@@ -44,7 +44,7 @@
 .board li .clue .t { background: var(--cyan); color: #03302c; }
 .board li .clue .z { background: rgba(255,255,255,0.15); color: var(--muted); }
 .board li.hit { background: linear-gradient(90deg, rgba(255, 210, 63, 0.35), rgba(255, 46, 136, 0.35)); }
-/* El intento que las pistas ya descartaban: solo con el tablero terminado (D-197) */
+/* El intento que las pistas ya descartaban: solo con el tablero terminado (D-204) */
 .board li .clue .d { background: rgba(255,255,255,0.1); padding: 3px 6px; }
 .board li.out { background: rgba(0,0,0,0.4); }
 .board li.out .val { color: var(--muted); }

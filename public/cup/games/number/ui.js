@@ -38,7 +38,7 @@ export function pistas(el, g, largo, grande = false, completa = grande, TYF = ty
  * Las pistas van completas; Letras las abrevia porque sus letras de colores no dejan espacio.
  *
  * Con `marcar` cada intento que las pistas ya descartaban lleva ⚠️ y `nota` lo explica debajo
- * (D-197). Solo se marca con el tablero terminado: avisarlo mientras se juega sería soplar que
+ * (D-204). Solo se marca con el tablero terminado: avisarlo mientras se juega sería soplar que
  * ese número no puede ser el secreto.
  */
 export function tablero(el, { filas, largo, titulo, valor = f => f.v, completa = true, lang, marcar = false, nota = '' }) {

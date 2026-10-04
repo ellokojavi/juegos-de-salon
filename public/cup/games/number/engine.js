@@ -43,7 +43,7 @@ export function estado(p, intentos, max = MAX_INTENTOS) {
 
 export const PENA_DESCARTE = 15;
 /**
- * De 0 a 100 (D-197): 100 si cada intento podía ser el número y 15 menos por cada intento que las
+ * De 0 a 100 (D-204): 100 si cada intento podía ser el número y 15 menos por cada intento que las
  * pistas ya descartaban; sacándolo nunca baja de 10, como en Tango. 0 si no lo saca.
  *
  * Antes (D-113) eran 100 al primer intento y 10 menos por cada uno más. El primer intento no tiene

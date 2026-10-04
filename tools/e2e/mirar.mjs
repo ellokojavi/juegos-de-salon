@@ -265,7 +265,7 @@ const CAMINOS = {
       `document.getElementById('btn-fin').click()`,
       `1`, `1`, `1`, `1`,   // que pase el confeti
     ],
-    // El mismo resultado con un intento regalado: repite el primero, que las pistas ya descartaban (D-197)
+    // El mismo resultado con un intento regalado: repite el primero, que las pistas ya descartaban (D-204)
     'solo-descarte': [
       `document.querySelectorAll('.mode')[2].click()`,
       `document.getElementById('btn-solo-empezar').click()`,
