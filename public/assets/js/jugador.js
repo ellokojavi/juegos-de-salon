@@ -161,6 +161,7 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
      * Anotar una partida terminada. Se cuenta siempre; el puntaje entra a la tabla de siempre y
      * a la de la semana si las mejora, y al Todoterreno si es un juego suelto. Sin jugador, no
      * hace nada y devuelve null. Si el PIN cambió en otro celular, este queda afuera ('pin').
+     * Un 0 (rendirse) cuenta como partida jugada, pero no entra a las tablas (dilema #185).
      */
     async anotar({ juego, variante = '', s, ms }) {
       const yo = api.yo();
@@ -180,7 +181,7 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
       for (const [nombre, p] of [['siempre', SIEMPRE], ['semana', sem]]) {
         const antes = await almacen.get(`records/${t}/${p}/${yo.jid}`);
         anotarMejor(t, p, antes);
-        const nuevo = esMejor(r, antes);
+        const nuevo = r.s > 0 && esMejor(r, antes);
         out[nombre] = { nuevo, antes: antes ? { s: antes.s, ms: antes.ms } : null, periodo: p };
         if (nuevo) cambios[`records/${t}/${p}/${yo.jid}`] = { ...r, at: HORA, n: yo.n };
       }
