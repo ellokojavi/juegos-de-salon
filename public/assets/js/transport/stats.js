@@ -184,10 +184,15 @@ export function startChanges(fp, { game, mode, players } = {}) {
   return changes;
 }
 
+/** El idioma en que se juega, en dos letras (`es`), o vacío si la app no lo sabe (D-211). */
+export const idiomaDe = fp => (/^[a-z]{2}$/.test(fp?.app || '') ? fp.app : '');
+
 /** Registro de una sala nueva (dos celulares), con el nombre y el país de quien la creó. */
 export function roomRecord(fp, { game, role, name }) {
   const r = { game, at: STAMP, v: fp.v, players: { [role]: String(name || '').slice(0, 20) } };
   if (fp.co) r.co = { [role]: fp.co };
+  // En qué idioma juega cada uno (D-211): el que eligió en la app, no el del navegador
+  if (idiomaDe(fp)) r.l = { [role]: idiomaDe(fp) };
   return r;
 }
 
@@ -241,6 +246,7 @@ export function noteRoom(api, fp, { code, createdAt, game, role, name }) {
 export function notePlayer(api, fp, { code, createdAt, role, name }) {
   const cambios = { [`rooms/${code}/players/${role}`]: String(name || '').slice(0, 20) };
   if (fp.co) cambios[`rooms/${code}/co/${role}`] = fp.co;
+  if (idiomaDe(fp)) cambios[`rooms/${code}/l/${role}`] = idiomaDe(fp);
   return quiet(() => api.patch(dayPath(fp.env, dayOf(createdAt)), cambios));
 }
 
@@ -309,6 +315,7 @@ export function liveRecord(fp, { game, mode, players, name = '' }) {
   const n = Math.min(MAX_PLAYERS, Math.max(1, Number(players) || 1));
   const r = { game, mode, n, at: STAMP, beat: STAMP, v: fp.v };
   if (fp.co) r.co = fp.co;
+  if (idiomaDe(fp)) r.l = idiomaDe(fp);
   if (name) r.name = String(name).slice(0, NOMBRE_MAX);
   return r;
 }

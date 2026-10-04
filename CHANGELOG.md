@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.99.3 — 2026-10-04
+- **Panel: en qué idioma se jugó** (D-211): cada copa, sala y partida sin red lleva una etiqueta
+  con su idioma (ES, EN, PT, DE; las dos si en una sala cada uno jugó en el suyo), y hay un
+  desglose de copas por idioma y del idioma de cada juego.
+
 ## 0.99.2 — 2026-10-04
 - **Panel: quién juega sin red** (D-210): las partidas contra el celular, en un celular o en
   solitario muestran el nombre que la persona ya usa en la app, con su bandera, y cómo terminaron
