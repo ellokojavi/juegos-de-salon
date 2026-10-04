@@ -178,9 +178,11 @@ revisan las capturas.
 
 **GitHub las corre en cada PR y en cada fusión a main** (`.github/workflows/e2e.yml`, D-193):
 cada guion en su propio job, en paralelo, y el PR muestra cuál falló, con sus capturas como
-artefacto. `tools/e2e/ci.mjs` decide cuáles: todos menos los que abren salas en el Firebase de
-producción (los `online.mjs`, los `chat.mjs` y los de su lista), que siguen a mano. Un guion nuevo entra
-solo; para que falle en rojo, que imprima ✗ o ❌ o salga con error. Aquí se corren igual:
+artefacto. Los largos se reparten en partes (`PARTES` en `ci.mjs`, D-204): el check tarda lo que
+su job más lento, así que un guion que pase de ~4 min se parte. `tools/e2e/ci.mjs` decide
+cuáles: todos menos los que abren salas en el Firebase de producción (los `online.mjs`, los
+`chat.mjs` y los de su lista), que siguen a mano. Un guion nuevo entra solo; para que falle en
+rojo, que imprima ✗ o ❌ o salga con error. Aquí se corren igual:
 
 ```bash
 node tools/e2e/ci.mjs              # todos los de CI, con resumen; o: node tools/e2e/ci.mjs cup/torneo.mjs
@@ -227,8 +229,12 @@ caracteres (D-184).
 ## Usabilidad (D-132)
 
 El agente `usabilidad` (`.claude/agents/usabilidad.md`) revisa cada PR antes de mostrárselo al
-dueño y hace una ronda diaria a las 5:00 hora del Pacífico. Su guía es
-[docs/USABILIDAD.md](docs/USABILIDAD.md). Los dilemas son issues de GitHub y se manejan desde aquí:
+dueño y hace una ronda diaria a las 5:00 hora del Pacífico. En un PR mira solo lo que el PR
+cambia y no repite lo que GitHub ya corre; la revisión completa (reportes, marketing, la copa
+entera) es de la ronda (D-204). **Antes de proponer una fusión, los agentes de usabilidad y de
+documentación se lanzan a la vez**, en el mismo mensaje: uno toca la app y el otro los documentos.
+Su guía es [docs/USABILIDAD.md](docs/USABILIDAD.md). Los dilemas son issues de GitHub y se
+manejan desde aquí:
 
 ```bash
 node tools/agents/dilemas.mjs listar [--todos]

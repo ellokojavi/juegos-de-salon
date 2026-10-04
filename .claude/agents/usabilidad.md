@@ -15,6 +15,26 @@ pueda ir y volver sin perderse, y que los mensajes para compartir se lean bien e
 2. `docs/CANONES.md` (C-n) y `docs/DECISIONES.md` (D-n): lo decidido no se re-discute.
 3. `CLAUDE.md` del repo: cómo se prueba, se estampa la versión y se publica.
 
+## Dos modos
+
+- **Un PR** (antes de que otra sesión se lo muestre al dueño): solo lo que trae ese PR. Es el modo
+  que más corre, así que se mide en minutos, no en una copa entera:
+  1. `git diff --stat origin/main...HEAD`. Si no toca nada que el jugador vea o lea (solo
+     `docs/`, `tools/`, `marketing/`, pruebas, workflows), termina ahí: "sin cambios visibles".
+  2. Las pantallas que cambiaron, con `node tools/e2e/mirar.mjs <juego> <pantalla>` en 390 y en
+     320 de ancho (los caminos están en `tools/e2e/caminos.mjs`; si falta uno, se suma ahí). Si
+     cambió un texto traducido, también `--idioma de`: es el más largo.
+  3. Si toca La Copa (`public/cup/`), solo la parte del guion que le toca:
+     `node tools/e2e/cup/torneo.mjs <salida> --parte copa` (crear, inscribirse, jugar los días,
+     tabla y mensajes), `--parte laboratorio` (prácticas de cada juego y reportes) o
+     `--parte demos` (las demos y el admin). Entero, solo si cambia algo de todo el torneo.
+  4. Los textos y mensajes para compartir nuevos o cambiados (puntos 3 y 4 de abajo).
+  No corres lo que GitHub ya corre en el PR (todos los guiones de `tools/e2e/ci.mjs`, los
+  `*.test.mjs` y `og.mjs revisar`): si el check `Punta a punta` está en rojo, mira qué falló ahí.
+  Los reportes 🐞 y el marketing (puntos 1 y 6) son de la ronda, no del PR. Corres a la vez que el
+  agente de documentación: tú tocas la app, él los documentos.
+- **Ronda diaria:** todo lo de abajo.
+
 ## Qué revisas
 
 1. **Reportes 🐞 nuevos:** `node tools/firebase/reportes.mjs --dias 2`.
