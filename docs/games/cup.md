@@ -86,8 +86,9 @@ Año y la final; o Línea, Conexiones y la final en la de 3 días (D-163).
 
 Los tres juegos más nuevos del pozo son **〰️ Zip** (un solo trazo por todas las casillas, pasando por los números en orden; por niveles, tres minutos para resolver la mayor cantidad) y **☀️ Tango**
 (soles y lunas, mitad y mitad por línea, nunca tres seguidos, con marcas = y ×), y **📍 ¿Dónde
-queda?** (cinco ciudades con su país, un alfiler en un globo sin nombres que se gira sin fin; 100
-puntos por ciudad menos 4 cada 100 km, D-155, D-156).
+queda?** (cinco ciudades con su país, un alfiler en un globo sin nombres que se gira sin fin y,
+con dos dedos, también en torno a la pantalla, con una brújula que endereza el norte; 100 puntos
+por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
 
 - **¿Dónde queda?** saca sus ciudades de `ciudades.js` (las 195 capitales, ciudades famosas y de
   segunda línea, 529 en total, con nivel y código ISO; D-157) y su mapa de `mapa.js`, que genera `node tools/generators/mapa.mjs generar`; `revisar`

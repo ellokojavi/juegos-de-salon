@@ -3015,3 +3015,42 @@ español, así que no repiten lo que ya está mal en español: eso lo cuentan lo
 revisar solo las claves de los diccionarios (ya lo hace `i18n.test.mjs`, y no ve un texto escrito
 a mano en el HTML ni un botón que el alemán saca de la pantalla); mirar las capturas a ojo en cada
 idioma (no escala: son más de cien tomas).
+
+## D-200 · ¿Dónde queda?: el globo se gira con dos dedos y la brújula endereza el norte
+**Fecha:** 2026-10-04 · **Estado:** vigente; complementa D-155
+**Decisión:** Además de arrastrar y pellizcar, dos dedos que giran hacen girar el mapa en torno a
+ellos, como en los mapas del celular. El giro empieza pasados 12° de torsión, para que un pellizco
+no lo tuerza, y al soltar a menos de 6° del norte el mapa queda derecho. Con el mapa girado aparece
+una brújula sobre los botones + y −, con la N apuntando al norte; tocarla lo endereza. Cada ciudad
+empieza con el norte arriba.
+- La vista del motor lleva un `rumbo` (grados, contra el reloj): `ver` y `tocado` lo aplican, y el
+  globo y la imagen satelital también. El arrastre de un dedo se lleva a la vista derecha antes de
+  girar el globo, así lo que está bajo el dedo lo sigue.
+**Por qué:** lo pidió el dueño, para corregir los puntos cardinales: girando el globo hacia un
+polo, o buscando una ciudad en un país largo, uno quiere orientar el mapa a su modo. Es el gesto
+que todos conocen de los mapas (no reinventar, D-102), y la brújula, la forma conocida de volver.
+
+## D-201 · Las teselas satelitales se cortan con PIL, no con sips
+**Fecha:** 2026-10-04 · **Estado:** vigente; corrige D-160
+**Decisión:** `node tools/generators/mapa.mjs satelite` corta las 128 teselas con
+`tools/generators/teselas.py` (PIL, que el repo ya usa en `readme.py`) y no con sips. Las teselas
+se rehicieron: ahora cada `fila-columna.jpg` es de verdad su cuadrado de 22,5°.
+**Por qué:** el dueño vio otra vez el polo norte "mal parchado": al acercarse, encima del Ártico
+aparecía un abanico estirado con los lagos de África. sips tiene dos trampas: con
+`--cropOffset 0 0` corta del centro y no de la esquina (la fila 0, el Ártico, salió con la franja
+del ecuador, y la columna 0 con la del centro), e ignora algunos cortes que tocan el borde. Con
+eso casi todas las teselas quedaron corridas, aunque solo cerca del polo se notaba a la vista.
+**Alternativas descartadas:** seguir con sips esquivando el `0 0` (dar vuelta la imagen, `0.0`):
+probado, y sus cortes en el borde siguen fallando sin avisar.
+
+## D-202 · ¿Dónde queda?: el zoom llega a 64 veces
+**Fecha:** 2026-10-04 · **Estado:** vigente; cambia el tope de D-159
+**Decisión:** El globo se acerca hasta 64 veces (antes 16): en un celular, unos 600 m por píxel y
+unos 200 km de lado a lado. La respuesta sigue acercando hasta 12.
+**Por qué:** hubo quejas de que el zoom no alcanzaba. El tope de 16 se puso cuando solo estaba la
+imagen de 4096 px (D-159) y quedó igual al llegar las teselas (D-160). Y se pensó en la imagen, no
+en el dedo: a 16, un toque erra por unos 10 píxeles, unos 20 a 25 km, justo el margen del 🎯. A
+64 erra por unos 6 km. Pasado 16 la imagen se ablanda (cada píxel de la fuente ocupa hasta cuatro
+de la pantalla), pero costas, ríos, lagos y cordilleras se siguen leyendo.
+**Alternativas descartadas:** la imagen de la NASA de 500 m por píxel (unas 2.000 teselas y
+240 MB en el repo, y las ciudades casi no se ven en ella); un tope de 48 (el dueño eligió 64).
