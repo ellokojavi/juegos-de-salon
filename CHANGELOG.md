@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.98.2 — 2026-10-04
+- **Publicar es más rápido** (D-204, D-205): las pruebas de punta a punta más largas corren en
+  partes a la vez, la versión se pone al publicar y no en cada PR (dos cambios abiertos ya no
+  chocan), y un cambio que solo trae documentación no espera esas pruebas. Si fallan después de
+  fusionar, se abre un aviso solo. Para quien juega no cambia nada.
+
 ## 0.98.1 — 2026-10-04
 - **README: capturas rehechas en todas las secciones** después de la mudanza a `public/` (D-192),
   con los emojis de Apple y las salas en el Firebase real. La del cuarto rey ya no sale con el
