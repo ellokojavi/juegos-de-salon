@@ -134,6 +134,11 @@ assert.equal((await cel1.tabla('reinas')).top.length, 0);
 r = await cel1.anotar({ juego: 'reinas', s: 50, ms: 1000 });
 assert.ok(r.semana.nuevo && !r.siempre.nuevo);
 assert.equal((await cel1.tabla('reinas')).top.length, 1);
+// Rendirse (0 puntos) cuenta como partida, pero no entra a las tablas (#185)
+r = await cel2.anotar({ juego: 'tango', s: 0, ms: 5000 });
+assert.ok(!r.siempre.nuevo && !r.semana.nuevo);
+assert.equal((await cel2.tabla('tango', 'siempre')).top.length, 0);
+assert.equal((await cel2.perfil()).juegos.tango.n, 1);
 // Todoterreno: la suma de los mejores de cada juego
 await cel1.anotar({ juego: 'zip', s: 30, ms: 1000 });
 t = await cel1.tabla('todoterreno', 'siempre');

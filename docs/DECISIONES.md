@@ -3287,7 +3287,8 @@ juega igual y nada sale del celular.
 - **Qué cuenta.** Los juegos sueltos de la portada, jugados como cualquiera los juega: sin el
   laboratorio y sin una semilla elegida en el link, que dejaría repetir el mismo tablero. Los días
   de una copa cuentan en "En copa", salvo las copas del laboratorio. Toque y Fama solo y Línea
-  Relámpago siguen con su récord local por ahora.
+  Relámpago siguen con su récord local por ahora. Rendirse (0 puntos) cuenta como partida jugada, pero no entra a
+  las tablas: un 0 no es un récord (dilema #185).
 **Por qué:** El dueño pidió rankings de cada juego y de La Copa con una identidad que la gente
 pueda reusar sin crear cuentas, aceptando que los nombres se repitan. Nombre y PIN ya era lo que
 La Copa usaba y entendían sus jugadores. Guardar solo el mejor de cada uno, con su clave de orden,
