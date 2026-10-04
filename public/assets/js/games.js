@@ -13,7 +13,7 @@ export const GAMES = [
     id: 'copa',
     emoji: '🏆',
     name: { es: 'La Copa', en: 'The Cup', pt: 'A Copa', de: 'Der Pokal' },
-    tagline: { es: 'Un torneo de una semana entre amigos, con un minijuego distinto cada día.', en: 'A week-long tournament among friends, with a different minigame every day.', pt: 'Um torneio de uma semana entre amigos, com um minijogo diferente por dia.', de: 'Ein Turnier unter Freunden, eine Woche lang, mit einem anderen Minispiel pro Tag.' },
+    tagline: { es: 'Un torneo de una semana entre amigos, con un juego distinto cada día.', en: 'A week-long tournament among friends, with a different game every day.', pt: 'Um torneio de uma semana entre amigos, com um jogo diferente por dia.', de: 'Ein Turnier unter Freunden, eine Woche lang, mit einem anderen Spiel pro Tag.' },
     players: '2–10',
     duration: '7',
     // No dura minutos sino días. Va en los tres idiomas (D-170): la copa elige el de sus palabras
@@ -117,11 +117,12 @@ export const GAMES = [
 ];
 
 /**
- * Los minijuegos de La Copa que se juegan sueltos desde la portada (D-142), de a uno y sin copa:
- * abren `minigames/<slug>/` (D-149, D-162, D-192), la pantalla de práctica de La Copa con un link que no
- * dice "copa": no guarda nada y no cuenta para ninguna copa. Van aparte de GAMES porque no son una
- * carpeta con su `rules.js`: el README y las pruebas de idioma de los juegos no los recorren. Su
- * página y su tarjeta social las genera `node tools/release/og.mjs tarjetas` a partir de minigames/index.html.
+ * Los juegos de La Copa, que también se juegan desde la portada (D-142), de a uno y sin copa: son
+ * juegos como los demás (D-198) y abren `<slug>/` (D-149, D-162, D-192), la pantalla de práctica de
+ * La Copa con un link que no dice "copa": no guarda nada y no cuenta para ninguna copa. Van aparte
+ * de GAMES solo por cómo están hechos: no son una carpeta con su `rules.js` (su motor y su pantalla
+ * viven en cup/games/), así que el README y las pruebas de idioma de los juegos no los recorren. Su
+ * página y su tarjeta social las genera `node tools/release/og.mjs tarjetas` a partir de cup/suelto/index.html.
  *
  * Uno con `labs: true` todavía no va en la portada, pero su link ya se comparte: tiene página y
  * tarjeta igual (como La Copa, D-101).
@@ -204,7 +205,7 @@ export const SUELTOS = [
     tipos: ['cultura'],
     duration: '2–5',
   },
-].map(m => ({ ...m, players: '1', path: `minigames/${m.slug}/`, available: !m.labs, suelto: true }));
+].map(m => ({ ...m, players: '1', path: `${m.slug}/`, available: !m.labs, suelto: true }));
 
 /**
  * Los tipos de juego con que se filtra la portada (D-142), en el orden en que se ofrecen.
@@ -217,7 +218,7 @@ export const TIPOS = {
   mesa: { emoji: '🎲', name: { es: 'Cartas/Dados', en: 'Cards/Dice', pt: 'Cartas/Dados', de: 'Karten/Würfel' } },
 };
 
-/** Todo lo que ofrece la portada: los juegos y, después, los minijuegos sueltos. */
+/** Todo lo que ofrece la portada: los juegos de GAMES y, después, los de La Copa. */
 export const PORTADA = [...GAMES, ...SUELTOS.filter(m => !m.labs)];
 
 /** Cuántos juegan como mínimo y como máximo ("1–6" → [1, 6]; "1" → [1, 1]). */
@@ -242,7 +243,7 @@ export function rangoJugadores(players) {
 /** Los ids, en el orden del menú. */
 export const GAME_IDS = GAMES.map(g => g.id);
 
-// Con los sueltos: el panel también los nombra cuando mandan su señal de uso (C-16)
+// Con los de La Copa: el panel también los nombra cuando mandan su señal de uso (C-16)
 const BY_ID = Object.fromEntries([...GAMES, ...SUELTOS].map(g => [g.id, g]));
 
 /** El juego con ese id, o `null` si no está registrado. */
@@ -296,7 +297,7 @@ export const MODE_KEY = /^[a-z][a-z-]{0,15}$/;
 export const isLocalMode = mode => MODE_KEY.test(String(mode || '')) && !MODES[mode]?.room;
 
 /**
- * ¿Es un torneo (un juego que dura días y se juega en minijuegos) o un juego de una partida?
+ * ¿Es un torneo (un juego que dura días y se juega un juego por día) o un juego de una partida?
  * El panel separa por esto y no por nombre, así que un segundo torneo entraría solo (C-16).
  */
 export const isTorneo = id => !!BY_ID[id]?.torneo;

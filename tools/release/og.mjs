@@ -4,8 +4,8 @@
  * comparten por WhatsApp, así que la invitación a jugar **es** una tarjeta de estas.
  *
  *   node tools/release/og.mjs tarjetas   reescribe el bloque <!-- generado: og --> de cada página,
- *                                genera la página de cada minijuego suelto (public/minigames/<slug>/)
- *                                y las páginas puente de las rutas viejas (D-192)
+ *                                genera la página de cada juego de La Copa (public/<slug>/)
+ *                                y las páginas puente de las rutas viejas (D-192, D-198)
  *   node tools/release/og.mjs imagenes   rehace con Chrome las imágenes de 1200×630 que quedaron atrás
  *                                (necesita internet: las fuentes vienen de Google Fonts).
  *                                Con --todas, las rehace todas
@@ -112,23 +112,24 @@ function huella(p) {
 const atrasada = (p, huellas = leerHuellas()) => !existsSync(join(RAIZ, `public/assets/og/${p.imagen}.jpg`)) || huellas[p.imagen] !== huella(p);
 
 /* ------------------------------------------------------------------ */
-/* La página de cada minijuego suelto                                  */
+/* La página de cada juego de La Copa                                  */
 /* ------------------------------------------------------------------ */
 /**
  * Un robot de WhatsApp no corre JavaScript: lee las etiquetas del HTML tal como llega. Con una
- * sola página para todos (/minigames/?reinas) cada link traía la misma tarjeta, así que cada
- * minijuego tiene la suya (D-162). Es una copia de public/minigames/index.html un nivel más abajo, con
- * su título, su tarjeta y `data-suelto="<id>"`: se rehace, no se edita. Como set-version.py corre
+ * sola página para todos (/cup/suelto/?reinas) cada link traía la misma tarjeta, así que cada
+ * juego tiene la suya (D-162), en la raíz como los demás (D-198). Es una copia de
+ * public/cup/suelto/index.html un nivel más arriba, con su título, su tarjeta y
+ * `data-suelto="<id>"`: se rehace, no se edita. Como set-version.py corre
  * esto después de estampar, la copia sale con el import map de la versión nueva.
  */
-const AVISO_COPIA = () => `  <!-- Generada por node tools/release/og.mjs tarjetas a partir de public/minigames/index.html: no se edita a mano (D-162). -->`;
+const AVISO_COPIA = () => `  <!-- Generada por node tools/release/og.mjs tarjetas a partir de public/cup/suelto/index.html: no se edita a mano (D-162). -->`;
 function paginaSuelta(p, bloqueOg) {
-  let html = readFileSync(join(RAIZ, 'public/minigames/index.html'), 'utf8');
+  let html = readFileSync(join(RAIZ, 'public/cup/suelto/index.html'), 'utf8');
   // Sus etiquetas genéricas y el comentario que explica la página de todos
-  html = html.replace(/^ {2}<!-- Los minijuegos de La Copa[\s\S]*?-->\n/m, '');
+  html = html.replace(/^ {2}<!-- Los juegos de La Copa[\s\S]*?-->\n/m, '');
   html = html.replace(/^ {2}<meta (name="description"|property="og:[^"]*"|name="twitter:[^"]*").*\n/gm, '');
-  // Un nivel más abajo: las rutas relativas (href, src, el import map y el import) suben uno más
-  html = html.replace(/(["'])\.\.\//g, '$1../../');
+  // Un nivel más arriba: las rutas relativas (href, src, el import map y el import) suben uno menos
+  html = html.replace(/(["'])\.\.\/\.\.\//g, '$1../');
   html = html.replace(/<title>.*<\/title>/, `<title>${escapa(p.titulo)}</title>\n${AVISO_COPIA()}`);
   html = html.replace('<body data-suelto>', `<body data-suelto="${p.juego}">`);
   return html.replace(/^( *<link rel="manifest".*\n)/m, `${bloqueOg}\n$1`);
@@ -145,15 +146,19 @@ function paginaSuelta(p, bloqueOg) {
  * nueva: un robot de chat no corre JavaScript y lee lo que encuentra en la vieja.
  *
  * La ruta vieja sale del id, que era la carpeta (/<id>/ y /minijuegos/<id>/): un juego nuevo con su
- * carpeta igual a su id no tiene puente.
+ * carpeta igual a su id no tiene puente. Los juegos de La Copa vivieron además en /minigames/<slug>/
+ * hasta que dejaron de ser "minijuegos" (D-198).
  */
 const puentes = () => [
   ...paginas().filter(p => p.juego && !p.suelto && `/${p.juego}/` !== p.ruta)
     .map(p => ({ ...p, viejo: `public/${p.juego}/index.html`, a: `..${p.ruta}` })),
-  ...paginas().filter(p => p.suelto)
-    .map(p => ({ ...p, viejo: `public/minijuegos/${p.juego}/index.html`, a: `../..${p.ruta}` })),
-  // La página genérica (/minijuegos/?reinas), que ya mandaba cada link viejo a su lugar
-  { viejo: 'public/minijuegos/index.html', a: '../minigames/', titulo: 'Juegos de Salón 🎲' },
+  ...paginas().filter(p => p.suelto).flatMap(p => [
+    { ...p, viejo: `public/minijuegos/${p.juego}/index.html`, a: `../..${p.ruta}` },
+    { ...p, viejo: `public/minigames/${p.ruta.split('/')[1]}/index.html`, a: `../..${p.ruta}` },
+  ]),
+  // Las páginas genéricas (/minijuegos/?reinas, /minigames/?reinas): el molde manda cada link a su lugar
+  { viejo: 'public/minijuegos/index.html', a: '../cup/suelto/', titulo: 'Juegos de Salón 🎲' },
+  { viejo: 'public/minigames/index.html', a: '../cup/suelto/', titulo: 'Juegos de Salón 🎲' },
   // El laboratorio del alemán, que ya salió de ahí (D-197): sus revisores tienen ese link
   ...paginas().filter(p => p.puerta && p.lang === 'de')
     .map(p => ({ ...p, viejo: 'public/labs/de/index.html', a: `../..${p.ruta}` })),
@@ -361,7 +366,7 @@ async function cmdImagenes() {
     try { rmSync(tmp, { recursive: true, force: true }); } catch (_) { /* nada */ }
   }
   console.log(`${toca.length} imagen(es) de ${ANCHO}×${ALTO}`);
-  console.log('Míralas antes de publicar (C-12): git diff --stat assets/og');
+  console.log('Míralas antes de publicar (C-12): git diff --stat public/assets/og');
 }
 
 /* ------------------------------------------------------------------ */
@@ -378,7 +383,7 @@ function cmdRevisar() {
     const ruta = join(RAIZ, p.archivo);
     if (p.suelto) {
       if (!existsSync(ruta) || readFileSync(ruta, 'utf8') !== paginaSuelta(p, bloque(p))) {
-        problemas.push(`${p.archivo} quedó atrás de public/minigames/index.html o de games.js  →  node tools/release/og.mjs tarjetas`);
+        problemas.push(`${p.archivo} quedó atrás de public/cup/suelto/index.html o de games.js  →  node tools/release/og.mjs tarjetas`);
       }
       revisarImagen(p, problemas);
       continue;

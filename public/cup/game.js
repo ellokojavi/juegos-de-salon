@@ -1,13 +1,13 @@
 /**
  * La Copa — pantallas. Lo único que toca el DOM (C-2).
  *
- * Una copa es un torneo de 3 o 7 días: cada día un minijuego igual para todos que se juega
+ * Una copa es un torneo de 3 o 7 días: cada día un juego igual para todos que se juega
  * una vez (ver docs/games/cup.md). Las reglas del torneo viven en engine.js; los datos en
- * el almacén (Firebase, o el de prueba con `?prueba`); cada minijuego se dibuja con su
+ * el almacén (Firebase, o el de prueba con `?prueba`); cada juego se dibuja con su
  * módulo de juegos/ui-*.js.
  *
  * URL: /cup/ (portada) · /cup/?K7Q2X (una copa) · /cup/?K7Q2X&prueba (sin Firebase).
- * La misma pantalla sirve los minijuegos sueltos de la portada en /minigames/queens/ (D-149, D-162).
+ * La misma pantalla sirve los juegos sueltos de la portada en /queens/ (D-149, D-162, D-198).
  */
 import { crearArrastre } from '../assets/js/arrastre.js';
 import { $, $$, el, con, conEmoji, vibrate, sparkles, keepAwake, confetti } from '../assets/js/ui.js';
@@ -22,7 +22,7 @@ import {
   medianoche, menosJuegos, provisoria, ultimoDiaVisto, marcaDelDia, puedeComodin, multiplicador, posicionesDelDia, tabla, desempate, faltan, medallas, evolucion, visibleDia, reloj, mmss, juegoDelDia, esFinal, activos, ZONA, zonaDeIdioma,
   conCierre, cerradaAntes, anulado, puedeCerrar,
 } from './engine.js';
-import { GAME_ID, LOCALES, minijuegos, rondasFinal, MINIJUEGOS as MINIJUEGOS_ES } from './rules.js';
+import { GAME_ID, LOCALES, juegosCopa, rondasFinal, JUEGOS_COPA as JUEGOS_COPA_ES } from './rules.js';
 import { createCuenta } from './cuenta.js';
 import { JUEGOS } from './games/index.js';
 import { audienciaDe } from './games/audiencia.js';
@@ -36,7 +36,7 @@ const poner = (nodo, ...hijos) => nodo.append(...hijos.flat().filter(x => x !== 
 // en el de la copa (`palabrasDe`), que es el mismo para todos.
 const LANG = getLang();
 const T = LOCALES[LANG] || LOCALES.es;
-const MINIJUEGOS = minijuegos(LANG);
+const JUEGOS_COPA = juegosCopa(LANG);
 const RONDAS_FINAL = rondasFinal(LANG);
 /** El idioma de las palabras de una copa; las de antes de D-170 no lo dicen y son en español. */
 const palabrasDe = meta => meta?.lang || 'es';
@@ -54,7 +54,7 @@ const PRUEBA = busqueda.includes('prueba');
 // la Copa de 3 días (D-100). ?tres se mantiene por los links que ya circulan.
 const LABS = busqueda.includes('labs');
 const TRES = PRUEBA || LABS || busqueda.includes('tres');
-// Los minijuegos sueltos de la portada viven en /minigames/<slug>/ (D-149, D-162, D-192): la misma
+// Los juegos sueltos de la portada viven en /<slug>/ (D-149, D-162, D-192, D-198): la misma
 // pantalla, pero fuera de una copa el link no dice "copa". Cada uno tiene su página, que dice cuál
 // es en `<body data-suelto="reinas">`, para que el link compartido traiga su propia tarjeta
 // social. /cup/?practica=<id>&labs queda para el laboratorio.
@@ -62,20 +62,20 @@ const SUELTO = document.body.hasAttribute('data-suelto');
 const PRACTICA = SUELTO
   ? document.body.dataset.suelto || busqueda.find(x => !x.includes('=') && x !== 'prueba' && x !== 'labs') || ''
   : new URLSearchParams(location.search).get('practica');
-/** La raíz del sitio, desde donde esté la página (las de cada minijuego van un nivel más abajo). */
+/** La raíz del sitio, desde donde esté la página (las de cada juego van un nivel más abajo). */
 const RAIZ = new URL('../', import.meta.url).href;
 const SEMILLA = (new URLSearchParams(location.search).get('semilla') || '').toUpperCase();
 /**
- * Dónde vive un minijuego suelto: su página, o la genérica si no tiene. Desde el laboratorio
+ * Dónde vive un juego suelto: su página, o la genérica si no tiene. Desde el laboratorio
  * también se juega ahí (D-164), con `?labs` y su semilla: así el link que se copia de la barra
- * trae la tarjeta del minijuego y no la de La Copa.
+ * trae la tarjeta del juego y no la de La Copa.
  */
 const paginaSuelta = (id, { semilla, zipSeg } = {}) => {
   const q = [LABS && 'labs', PRUEBA && 'prueba', semilla && `semilla=${semilla}`, zipSeg && `zipSeg=${zipSeg}`].filter(Boolean).join('&');
-  return gameById(id)?.suelto ? `${RAIZ}${gameById(id).path}${q ? `?${q}` : ''}` : `${RAIZ}minigames/?${[id, q].filter(Boolean).join('&')}`;
+  return gameById(id)?.suelto ? `${RAIZ}${gameById(id).path}${q ? `?${q}` : ''}` : `${RAIZ}cup/suelto/?${[id, q].filter(Boolean).join('&')}`;
 };
 const semillaUrl = { semilla: SEMILLA, zipSeg: new URLSearchParams(location.search).get('zipSeg') };
-// Un link viejo (/cup/?practica=reinas, o /minigames/?reinas) se va a su lugar nuevo. Los del
+// Un link viejo (/cup/?practica=reinas, o /cup/suelto/?reinas) se va a su lugar nuevo. Los del
 // laboratorio que no tienen página (Línea Relámpago, el número, la final) siguen en /cup/.
 if (!SUELTO && PRACTICA && (!LABS || gameById(PRACTICA)?.suelto)) location.replace(paginaSuelta(PRACTICA, semillaUrl));
 if (SUELTO && !document.body.dataset.suelto && gameById(PRACTICA)?.suelto) location.replace(paginaSuelta(PRACTICA, semillaUrl));
@@ -241,7 +241,7 @@ function elegirJuegos() {
   // al tocar; 'm<k>' el lugar k de la semana, al arrastrar un día; 'r<i>' el día i que se reemplaza)
   let cal = [], sel = null, destino = null, arrastrando = false;
   // La familia se compara en español: la misma semana al azar cualquiera sea el idioma
-  const familia = id => MINIJUEGOS_ES[id].habilidad;
+  const familia = id => JUEGOS_COPA_ES[id].habilidad;
   // La ayuda larga no cambia; lo que cambia con lo elegido es una línea de alto fijo: si la
   // página se moviera al elegir, el día de destino se correría bajo el dedo que arrastra. Los tres
   // textos van apilados en la misma celda y solo se ve uno: el alto es el del más largo a cualquier
@@ -282,7 +282,7 @@ function elegirJuegos() {
   };
   const tocarRanura = k => { aplicar(`s${k}`); sel = null; SFX.tap(); pintar(); };
 
-  const nombreJ = (id, sub = MINIJUEGOS[id].habilidad) => el('span', { class: 't' }, MINIJUEGOS[id].nombre, el('small', {}, sub));
+  const nombreJ = (id, sub = JUEGOS_COPA[id].habilidad) => el('span', { class: 't' }, JUEGOS_COPA[id].nombre, el('small', {}, sub));
   const ranura = k => el('div', { class: 'slot', 'data-slot': k, 'data-clave': `s${k}`, onClick: () => tocarRanura(k) }, el('span', {}, T.gamesSlot));
 
   function marcar() {
@@ -292,7 +292,7 @@ function elegirJuegos() {
     mano.innerHTML = ''; linea.innerHTML = '';
     poner(mano, fueraDe().map(id => el('button', {
       type: 'button', class: `card${sel?.id === id ? (arrastrando ? ' hueco' : ' sel') : ''}`, 'data-juego': id, 'aria-pressed': String(sel?.id === id), onClick: () => tocarFuera(id),
-    }, el('span', { class: con('em', MINIJUEGOS[id].emoji) }, MINIJUEGOS[id].emoji), el('span', { class: 't' }, MINIJUEGOS[id].nombre))));
+    }, el('span', { class: con('em', JUEGOS_COPA[id].emoji) }, JUEGOS_COPA[id].emoji), el('span', { class: 't' }, JUEGOS_COPA[id].nombre))));
     mano.classList.toggle('dim', sel?.zona === 'fuera');
     linea.classList.toggle('blanco', sel?.zona === 'fuera');
     vista().forEach((id, i) => {
@@ -300,12 +300,12 @@ function elegirJuegos() {
       linea.append(el('button', {
         type: 'button', class: `event${sel?.id === id ? (arrastrando ? ' hueco' : ' sel') : ''}`, 'data-dia': i, 'data-juego': id, 'data-clave': `${moviendo() ? 'm' : 'r'}${i}`,
         'aria-pressed': String(sel?.id === id), onClick: () => tocarDia(i),
-      }, el('span', { class: 'y' }, fmt(T.gamesDay, { d: i + 1 })), el('span', { class: con('em', MINIJUEGOS[id].emoji) }, MINIJUEGOS[id].emoji), nombreJ(id),
+      }, el('span', { class: 'y' }, fmt(T.gamesDay, { d: i + 1 })), el('span', { class: con('em', JUEGOS_COPA[id].emoji) }, JUEGOS_COPA[id].emoji), nombreJ(id),
       el('span', { class: 'agarre', 'aria-hidden': 'true' }, '⠿')));
     });
     if (ranuraSirve(dias().length)) linea.append(ranura(dias().length));
     linea.append(el('div', { class: 'event fija' }, el('span', { class: 'y' }, fmt(T.gamesDay, { d: cal.length })),
-      el('span', { class: 'em' }, MINIJUEGOS.final.emoji), nombreJ('final', T.gamesFinal)));
+      el('span', { class: 'em' }, JUEGOS_COPA.final.emoji), nombreJ('final', T.gamesFinal)));
     marcar();
     const ayuda = !sel ? 'nada' : arrastrando ? `arr-${sel.zona}` : sel.zona;
     estado.querySelectorAll('[data-ayuda]').forEach(x => x.classList.toggle('oculta', x.dataset.ayuda !== ayuda));
@@ -327,7 +327,7 @@ function elegirJuegos() {
     ],
     activo: () => nodo.isConnected && !nodo.hidden,
     vibrar: vibrate,
-    avatar: item => el('div', { class: 'vilo-carta' }, el('span', { class: con('em', MINIJUEGOS[item.dataset.juego].emoji) }, MINIJUEGOS[item.dataset.juego].emoji), el('span', { class: 't' }, MINIJUEGOS[item.dataset.juego].nombre)),
+    avatar: item => el('div', { class: 'vilo-carta' }, el('span', { class: con('em', JUEGOS_COPA[item.dataset.juego].emoji) }, JUEGOS_COPA[item.dataset.juego].emoji), el('span', { class: 't' }, JUEGOS_COPA[item.dataset.juego].nombre)),
     alAlzar: (item, zona) => {
       sel = { zona, id: item.dataset.juego }; destino = null; arrastrando = true; pintar();
     },
@@ -631,7 +631,7 @@ function entrar({ mantener = false } = {}) {
       avisoPalabras(meta),
       avisoAudiencia(meta),
       el('div', { style: 'margin-top:6px' }, langToggle())),
-    el('div', { class: 'cal-mini' }, calendario(meta).map(j => el('span', { title: MINIJUEGOS[j].nombre, class: con('', MINIJUEGOS[j].emoji) }, MINIJUEGOS[j].emoji))),
+    el('div', { class: 'cal-mini' }, calendario(meta).map(j => el('span', { title: JUEGOS_COPA[j].nombre, class: con('', JUEGOS_COPA[j].emoji) }, JUEGOS_COPA[j].emoji))),
     // Por qué no puede inscribirse: terminó, la cerró el administrador, está llena o ya va en la final
     puedeEntrar ? null : el('p', { class: 'muted center' }, terminada(meta, now) ? T.closedEnded
       : !inscripcionAbierta(meta, now) ? T.errCerrada : L().closed ? T.closedByAdmin : T.errLlena),
@@ -664,7 +664,7 @@ const claseX2 = final => `chip ${final ? 'chip--final' : 'chip--gold'}`;
 
 function tarjetaDia(d, rotulo) {
   const Lc = L(), { meta } = Lc;
-  const id = juegoDelDia(meta, d), J = MINIJUEGOS[id];
+  const id = juegoDelDia(meta, d), J = JUEGOS_COPA[id];
   const now = ahora();
   const est = estadoDia(Lc, d, S.yo, now);
   const x2 = multiplicador(Lc, d, S.yo) === 2;
@@ -723,7 +723,7 @@ function misDias(d, now) {
   const filas = [];
   for (let k = 1; k <= meta.days; k++) {
     if (k === d) { filas.push(tarjetaDia(k, T.today)); continue; }
-    const J = MINIJUEGOS[juegoDelDia(meta, k)];
+    const J = JUEGOS_COPA[juegoDelDia(meta, k)];
     const est = estadoDia(Lc, k, S.yo, now);
     const x2 = esFinal(meta, k) || w === k;
     let detalle, accion = null, clase = est;
@@ -966,7 +966,7 @@ async function compartir(texto, imagen = null) {
  */
 const G = () => {
   const lang = palabrasDe(L()?.meta);
-  return { lang, T: LOCALES[lang] || LOCALES.es, J: minijuegos(lang) };
+  return { lang, T: LOCALES[lang] || LOCALES.es, J: juegosCopa(lang) };
 };
 
 /** La cabecera de todo lo que la copa comparte, la misma en el texto y en la imagen (D-165). */
@@ -990,7 +990,7 @@ function toast(texto) {
 
 /**
  * La invitación promocional (D-127): el reto, cuándo parte, cuánto toma y quiénes ya están.
- * Los minijuegos no se nombran: son sorpresa.
+ * Los juegos no se nombran: son sorpresa.
  */
 function mensajeInvitacion() {
   const Lc = L(), { meta } = Lc;
@@ -1583,7 +1583,7 @@ function eliminada(nombre) {
 
 function antesDeJugar(d) {
   const Lc = L(), { meta } = Lc;
-  const id = juegoDelDia(meta, d), J = MINIJUEGOS[id];
+  const id = juegoDelDia(meta, d), J = JUEGOS_COPA[id];
   mostrar('jugar');
   $('#jugar-head').innerHTML = '';
   const body = $('#jugar-body');
@@ -1641,7 +1641,7 @@ function antesDeJugar(d) {
  * tienen, porque el tiempo desempata. El reloj parte cuando aparece "¡A jugar!", y ese cartel se
  * desvanece solo sobre el tablero. Resuelve la promesa en ese momento.
  */
-/** Los minijuegos que se juegan con palabras del idioma de la copa (D-170). */
+/** Los juegos que se juegan con palabras del idioma de la copa (D-170). */
 const CON_PALABRAS = ['conexiones', 'letras', 'final'];
 /** "Las palabras de esta copa van en inglés", solo si no es el idioma en que se está mirando. */
 /** El público de la copa se dice en la invitación y en el tablero (D-186, D-187). */
@@ -1652,14 +1652,14 @@ const avisoAudiencia = meta => {
 const avisoPalabras = meta => (palabrasDe(meta) === LANG ? null
   : el('p', { class: 'muted center aviso-palabras', style: 'margin:0' }, fmt(T.wordsIn, { idioma: T.langNames[palabrasDe(meta)] })));
 
-/** Lo de arriba de la antesala: la portada animada del minijuego si la tiene (el globo de ¿Dónde queda?), si no su emoji. */
+/** Lo de arriba de la antesala: la portada animada del juego si la tiene (el globo de ¿Dónde queda?), si no su emoji. */
 const heroe = (id, J) => JUEGOS[id]?.portada?.() ?? el('span', { class: con('icon', J.emoji) }, J.emoji);
 
-/** El dibujo que explica el minijuego antes del texto, si lo tiene (Reinas, Tango y Zip). */
+/** El dibujo que explica el juego antes del texto, si lo tiene (Reinas, Tango y Zip). */
 const dibujo = id => JUEGOS[id]?.ejemplo?.({ el, T }) ?? null;
 
 /**
- * Las reglas del minijuego, plegadas debajo del tablero (D-133): no molestan mientras se juega y
+ * Las reglas del juego, plegadas debajo del tablero (D-133): no molestan mientras se juega y
  * están a mano ante la duda. Son las mismas de la pantalla de antes de jugar, con las palabras
  * de los botones que se ven al jugar. En la final, además, las cinco rondas.
  */
@@ -1667,7 +1667,7 @@ const dibujo = id => JUEGOS[id]?.ejemplo?.({ el, T }) ?? null;
 const puntajeTexto = (J, copa = true) => (copa && J.desempate ? `${J.puntaje} ${J.desempate}` : J.puntaje);
 
 function panelReglas(id, { copa = true, prueba = false } = {}) {
-  const J = MINIJUEGOS[id];
+  const J = JUEGOS_COPA[id];
   const caja = $('#jugar-reglas');
   caja.innerHTML = '';
   if (!J) return;
@@ -1678,14 +1678,14 @@ function panelReglas(id, { copa = true, prueba = false } = {}) {
     dibujo(id),
     el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
     id === 'final' ? [el('p', { class: 'lead' }, T.finalRounds),
-      el('ul', { class: 'como' }, Object.entries(RONDAS_FINAL).map(([r, x]) => el('li', {}, `${MINIJUEGOS[r].emoji} ${MINIJUEGOS[r].nombre}: ${x}`)))] : null,
+      el('ul', { class: 'como' }, Object.entries(RONDAS_FINAL).map(([r, x]) => el('li', {}, `${JUEGOS_COPA[r].emoji} ${JUEGOS_COPA[r].nombre}: ${x}`)))] : null,
     el('p', { class: 'lead' }, T.scoring),
     el('p', { class: 'muted' }, puntajeTexto(J, copa))));
 }
 
 function cuentaRegresiva(J) {
   // La Gran Final no la lleva: cada ronda ya parte con su propia presentación
-  if (J === MINIJUEGOS.final) return Promise.resolve();
+  if (J === JUEGOS_COPA.final) return Promise.resolve();
   $('#jugar-head').replaceChildren(el('span', { class: 'jugar-titulo' }, conEmoji(J.emoji, J.nombre)));
   $('#jugar-body').innerHTML = '';
   return new Promise(listo => {
@@ -1710,7 +1710,7 @@ function cuentaRegresiva(J) {
 
 async function jugar(d) {
   const Lc = L(), { meta } = Lc;
-  const id = juegoDelDia(meta, d), J = MINIJUEGOS[id], mod = JUEGOS[id];
+  const id = juegoDelDia(meta, d), J = JUEGOS_COPA[id], mod = JUEGOS[id];
   const guardado = cuenta.intento.leer(S.code, d, S.yo) || {};
   // Si ya había terminado pero no se alcanzó a guardar el resultado, se reintenta de una
   if (guardado.fin) { enviar(d, guardado.fin); return; }
@@ -1828,7 +1828,7 @@ function resultado(d, { recien = false, det = null } = {}) {
   if (!mio) { tablero(); return; }
   S.verDia = d;
   mostrar('resultado');
-  const id = juegoDelDia(meta, d), J = MINIJUEGOS[id];
+  const id = juegoDelDia(meta, d), J = JUEGOS_COPA[id];
   const now = ahora();
   const jug = activos(Lc);
   const pos = posicionesDelDia(Lc.results[d], jug.map(j => j.pid));
@@ -1908,22 +1908,22 @@ function explicacion(J, { s, ms, det, x = 1, final = false, copa = true }) {
     el('summary', { class: 'lead' }, `🧮 ${T.bdTitle}`),
     el('ul', {}, lineas.map(t => el('li', {}, t))),
     det?.length ? el('p', { class: 'explicacion-total' }, fmt(s === 1 ? T.bdTotalOne : T.bdTotal, { s })) : null,
-    J === MINIJUEGOS.zip || J === MINIJUEGOS.desenredo ? null : el('p', { class: 'muted' }, fmt(copa ? T.bdTime : T.bdTimeSolo, { t: mmss(ms) })),
+    J === JUEGOS_COPA.zip || J === JUEGOS_COPA.desenredo ? null : el('p', { class: 'muted' }, fmt(copa ? T.bdTime : T.bdTimeSolo, { t: mmss(ms) })),
     copa ? el('p', { class: 'muted' }, T.bdPlaces) : null,
     copa && x > 1 ? el('p', { class: 'ok' }, final ? T.bdFinal : T.bdWild) : null);
 }
 
 /* ------------------------------------------------------------------ */
-/* Práctica: un minijuego suelto, sin copa ni Firebase (LIG-41)        */
+/* Práctica: un juego suelto, sin copa ni Firebase (LIG-41)        */
 /* ------------------------------------------------------------------ */
 
 /**
- * `/cup/?practica=<id>` juega un minijuego suelto con contenido al azar, para probar su
+ * `/cup/?practica=<id>` juega un juego suelto con contenido al azar, para probar su
  * mecánica antes de armar una copa. La semilla se muestra al final y va en la URL
  * (`&semilla=K7Q2X`): con ella se repite exactamente la misma partida para reportar un error.
  */
 /**
- * Desde la portada (D-142) la práctica es el minijuego suelto: vuelve al menú, no ofrece la sesión
+ * Desde la portada (D-142) la práctica es el juego suelto: vuelve al menú, no ofrece la sesión
  * de prueba (jugar otra vez ya es probar) ni muestra la semilla, y manda su señal de uso. Desde el
  * laboratorio llega con `&labs` y queda como estaba.
  */
@@ -1932,13 +1932,13 @@ const volverDePractica = () => (LABS
   : el('a', { class: 'btn btn--ghost btn--sm', href: RAIZ }, T.backToMenu));
 
 function practica(id) {
-  const J = MINIJUEGOS[id], mod = JUEGOS[id];
+  const J = JUEGOS_COPA[id], mod = JUEGOS[id];
   if (!J || !mod) { if (SUELTO) location.replace(RAIZ); else portada(); return; }
   if (!LABS) document.title = `${J.nombre} ${J.emoji} · ${(COMMON[LANG] || COMMON.es).appTitle}`;
   if (SUELTO) $('#chip-juego').replaceChildren(...conEmoji(J.emoji, J.nombre));
   const semilla = esCodigo(SEMILLA) ? SEMILLA : codigoAlAzar();
   const zipSeg = new URLSearchParams(location.search).get('zipSeg');
-  // Suelto, la semilla no va a la vista (D-142): el link queda en /minigames/queens/. Desde el
+  // Suelto, la semilla no va a la vista (D-142): el link queda en /queens/. Desde el
   // laboratorio sí, para poder repetir la partida.
   if (SUELTO && LABS) history.replaceState(null, '', paginaSuelta(id, { semilla, zipSeg }));
   else if (!SUELTO) history.replaceState(null, '', `${location.pathname}?practica=${id}&semilla=${semilla}${PRUEBA ? '&prueba' : ''}${LABS ? '&labs' : ''}${zipSeg ? `&zipSeg=${zipSeg}` : ''}`);
@@ -1975,11 +1975,11 @@ function jugarPractica(id, semilla) {
 }
 
 /**
- * Juega un minijuego sin que cuente: la práctica del laboratorio y la sesión de prueba antes de
+ * Juega un juego sin que cuente: la práctica del laboratorio y la sesión de prueba antes de
  * un día de la copa (D-103). Nada se guarda ni se envía; el reloj corre igual, para que se vea.
  */
 async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false } = {}) {
-  const J = MINIJUEGOS[id], mod = JUEGOS[id];
+  const J = JUEGOS_COPA[id], mod = JUEGOS[id];
   await cuentaRegresiva(J);
   let rel = reloj.nuevo(Date.now());
   const head = $('#jugar-head');
@@ -2038,12 +2038,12 @@ function resultadoEnsayo(id, r, volver) {
     el('div', { class: 'result-hero' }, el('span', { class: 'trophy pop' }, '🧪'),
       el('h2', { class: 'display display--md' }, T.trialDoneTitle)),
     el('div', { class: 'aviso' }, fmt(T.trialDone, { resumen: r.resumen || r.s })),
-    explicacion(MINIJUEGOS[id], { s: r.s, ms: r.ms, det: r.det, copa: false }),
+    explicacion(JUEGOS_COPA[id], { s: r.s, ms: r.ms, det: r.det, copa: false }),
     el('button', { class: 'btn btn--yellow', id: 'btn-volver-ensayo', onClick: () => { SFX.tap(); volver(); } }, T.trialBack));
 }
 
 function resultadoPractica(id, semilla, r) {
-  const J = MINIJUEGOS[id];
+  const J = JUEGOS_COPA[id];
   mostrar('resultado');
   SFX.win();
   const otra = SUELTO ? paginaSuelta(id) : `${location.pathname}?practica=${id}${PRUEBA ? '&prueba' : ''}${LABS ? '&labs' : ''}`;
@@ -2058,7 +2058,7 @@ function resultadoPractica(id, semilla, r) {
       ...bajoElPuntaje(r.t, r.ms)),
     explicacion(J, { s: r.s, ms: r.ms, det: r.det, copa: false }),
     LABS ? el('p', { class: 'muted center' }, fmt(T.practiceSeed, { semilla })) : null,
-    // Suelto se comparte como cualquier minijuego jugado solo, con su página (D-162, D-165)
+    // Suelto se comparte como cualquier juego jugado solo, con su página (D-162, D-165)
     !LABS && gameById(id)?.suelto ? botonResultadoSolo({ C: COMMON[LANG] || COMMON.es, emoji: J.emoji, juego: J.nombre, puntaje: r.resumen || String(r.s), tiempo: mmss(r.ms), tarjeta: r.t, url: withLang(`${SITIO}${gameById(id).path}`, LANG), alTocar: () => SFX.tap() }) : null,
     el('a', { class: 'btn btn--yellow', id: 'btn-otra', href: otra }, T.practiceAgain),
     LABS ? el('a', { class: 'btn btn--cyan btn--sm', id: 'btn-repetir', href: `${otra}&semilla=${semilla}` }, T.practiceSame) : null,

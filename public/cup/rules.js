@@ -8,7 +8,7 @@
 export const GAME_ID = 'copa';
 
 /**
- * Lo que un minijuego es en cualquier idioma: su emoji y si está en el laboratorio. El nombre,
+ * Lo que un juego es en cualquier idioma: su emoji y si está en el laboratorio. El nombre,
  * cómo se juega y cómo se puntúa van en `juegos` de cada idioma (D-170).
  */
 const BASE = {
@@ -27,7 +27,7 @@ const BASE = {
 
 /** Los textos, uno por idioma (C-3, D-170). */
 const ES = {
-  // Los minijuegos (cómo se llaman, qué habilidad piden, cómo se juegan y cómo se puntúan)
+  // Los juegos (cómo se llaman, qué habilidad piden, cómo se juegan y cómo se puntúan)
   juegos: {
     linea: {
       nombre: 'Línea Relámpago', habilidad: 'saber',
@@ -144,10 +144,10 @@ const ES = {
   title: 'La Copa',
   menu: '‹ Menú',
   chip: '🏆 La Copa',
-  lead: 'Cada día hay un minijuego que todos juegan una sola vez. Gana quien suma más puntos.',
+  lead: 'Cada día hay un juego que todos juegan una sola vez. Gana quien suma más puntos.',
   howTitle: 'Cómo funciona',
   howItems: [
-    'Cada minijuego se puede jugar ese día o al día siguiente, salvo la final.',
+    'Cada juego se puede jugar ese día o al día siguiente, salvo la final.',
     'El primero del día suma 10 puntos, el segundo 8, el tercero 6 y así hasta 1.',
     'Tienes un comodín que duplica tus puntos de un día. La final vale doble para todos.',
     'Si dos terminan con los mismos puntos, desempata quien ganó más días y, si siguen iguales, quien quedó mejor en la final.',
@@ -168,13 +168,13 @@ const ES = {
   fCopaPh: 'Copa de la oficina',
   fMode: '¿Cuánto dura?',
   mode3: 'Copa de 3 días',
-  mode3Sub: 'Para probar: dos minijuegos y la final.',
+  mode3Sub: 'Para probar: dos juegos y la final.',
   mode7: 'Copa de 7 días',
-  mode7Sub: 'Seis minijuegos y la final.',
+  mode7Sub: 'Seis juegos y la final.',
   fGames: '¿Qué se juega cada día?',
   gamesHint: 'Te proponemos una semana al azar, y puedes cambiarla.',
-  gamesPick: 'Arrastra o toca un día para moverlo, o un minijuego de los que quedan fuera para reemplazar un día.',
-  gamesPickedDay: 'Toca dónde moverlo, o un minijuego de los que quedan fuera para cambiarlo.',
+  gamesPick: 'Arrastra o toca un día para moverlo, o un juego de los que quedan fuera para reemplazar un día.',
+  gamesPickedDay: 'Toca dónde moverlo, o un juego de los que quedan fuera para cambiarlo.',
   gamesPickedOut: 'Toca el día que quieres reemplazar.',
   gamesDragDay: 'Suéltalo donde lo quieres mover.',
   gamesDragOut: 'Suéltalo sobre el día que quieres reemplazar.',
@@ -198,7 +198,7 @@ const ES = {
   creating: 'Creando la copa…',
   // El idioma de las palabras (D-170): Conexiones y Palabra van en uno solo para todos
   fLang: '¿En qué idioma van las palabras?',
-  fLangHint: 'Los minijuegos con palabras van en este idioma para todos.',
+  fLangHint: 'Los juegos con palabras van en este idioma para todos.',
   fScope: '¿Para qué público es?',
   fScopeHint: 'Global deja fuera lo que se conoce solo en Chile o en Brasil. Chile y Brasil suman los temas de su país.',
   audGlobal: '🌎 Global',
@@ -265,7 +265,7 @@ const ES = {
   csvWins: 'Días ganados',
   csvDay: 'Día {d} · {juego}',
   csvDayNum: 'Día',
-  csvGame: 'Minijuego',
+  csvGame: 'Juego',
   csvResult: 'Resultado',
   csvScore: 'Puntaje',
   csvTime: 'Tiempo',
@@ -520,7 +520,7 @@ const ES = {
   ctxTable: 'Tabla de posiciones · día {d} de {n}',
   ctxTableProvisional: 'Tabla de posiciones (provisoria) · día {d} de {n}',
   ctxFinal: 'Tabla final',
-  shareInviteText: '¿Te la puedes? Son {dias} días y {dias} minijuegos, con una sola oportunidad al día. Todos juegan lo mismo y la tabla dice quién manda. Quien acumula más puntos se lleva la gloria. 🥇\n\n{cuando}\n⏱️ Unos pocos minutos al día, desde tu celular.\n{inscritos}\n\n🔑 Entra con tu nombre y un PIN de 4 números:',
+  shareInviteText: '¿Te la puedes? Son {dias} días y {dias} juegos, con una sola oportunidad al día. Todos juegan lo mismo y la tabla dice quién manda. Quien acumula más puntos se lleva la gloria. 🥇\n\n{cuando}\n⏱️ Unos pocos minutos al día, desde tu celular.\n{inscritos}\n\n🔑 Entra con tu nombre y un PIN de 4 números:',
   shareInviteStart: '📅 Parte el {fecha}.',
   shareInviteGoing: '📅 Ya partió: va en el día {d} de {n} y todavía puedes entrar.',
   shareInviteJoined: '👥 Ya se inscribieron: {names}.',
@@ -537,7 +537,7 @@ const ES = {
   untilTomorrow: 'mañana a medianoche',
   untilToday: 'hoy a medianoche',
 
-  // Pantalla de minijuego
+  // Pantalla de juego
   confirm: 'Confirmar',
   confirmShort: 'OK',
   dc: 'd. C.',
@@ -642,7 +642,7 @@ const ES = {
   backToLabs: '🧪 Volver al laboratorio',
   // Con espacio que no parte, para que el ‹ no quede solo en la primera línea (U-12)
   backToLabsShort: '‹\u00a0Laboratorio',
-  // El minijuego suelto, abierto desde la portada (D-142)
+  // El juego suelto, abierto desde la portada (D-142)
   backToMenu: 'Volver al menú',
   practiceHint: 'Es una práctica: no cuenta para ninguna copa y puedes jugarla las veces que quieras.',
   practiceSeed: 'Esta partida es la semilla {semilla}. Si vas a reportar un problema, con ella se repite la misma partida.',
@@ -793,10 +793,10 @@ const EN = {
   title: 'The Cup',
   menu: '‹ Menu',
   chip: '🏆 The Cup',
-  lead: 'Every day there is a minigame that everyone plays just once. Whoever scores the most points wins.',
+  lead: 'Every day there is a game that everyone plays just once. Whoever scores the most points wins.',
   howTitle: 'How it works',
   howItems: [
-    'Each minigame can be played that day or the next, except the final.',
+    'Each game can be played that day or the next, except the final.',
     'First place of the day scores 10 points, second 8, third 6 and so on down to 1.',
     'You have a wildcard that doubles your points for one day. The final is worth double for everyone.',
     'If two finish level on points, the one who won more days goes ahead and, if they are still level, the one who did better in the final.',
@@ -817,13 +817,13 @@ const EN = {
   fCopaPh: 'The Office Cup',
   fMode: 'How long does it last?',
   mode3: '3-day cup',
-  mode3Sub: 'To try it out: two minigames and the final.',
+  mode3Sub: 'To try it out: two games and the final.',
   mode7: '7-day cup',
-  mode7Sub: 'Six minigames and the final.',
+  mode7Sub: 'Six games and the final.',
   fGames: 'What gets played each day?',
   gamesHint: 'Here is a random week, and you can change it.',
-  gamesPick: 'Drag or tap a day to move it, or one of the minigames left out to replace a day.',
-  gamesPickedDay: 'Tap where to move it, or one of the minigames left out to swap it.',
+  gamesPick: 'Drag or tap a day to move it, or one of the games left out to replace a day.',
+  gamesPickedDay: 'Tap where to move it, or one of the games left out to swap it.',
   gamesPickedOut: 'Tap the day you want to replace.',
   gamesDragDay: 'Drop it where you want to move it.',
   gamesDragOut: 'Drop it on the day you want to replace.',
@@ -846,7 +846,7 @@ const EN = {
   createGo: 'Create the cup',
   creating: 'Creating the cup…',
   fLang: 'What language are the words in?',
-  fLangHint: 'The word minigames are in this language for everyone.',
+  fLangHint: 'The word games are in this language for everyone.',
   fScope: 'Who is it for?',
   fScopeHint: 'Global leaves out what people only know in Chile or Brazil. Chile and Brazil add their own country\'s topics.',
   audGlobal: '🌎 Global',
@@ -913,7 +913,7 @@ const EN = {
   csvWins: 'Days won',
   csvDay: 'Day {d} · {juego}',
   csvDayNum: 'Day',
-  csvGame: 'Minigame',
+  csvGame: 'Game',
   csvResult: 'Result',
   csvScore: 'Score',
   csvTime: 'Time',
@@ -1166,7 +1166,7 @@ const EN = {
   ctxTable: 'Standings · day {d} of {n}',
   ctxTableProvisional: 'Standings (provisional) · day {d} of {n}',
   ctxFinal: 'Final standings',
-  shareInviteText: 'Think you\'ve got what it takes? It\'s {dias} days and {dias} minigames, with one shot a day. Everyone plays the same thing and the standings say who rules. Whoever piles up the most points takes the glory. 🥇\n\n{cuando}\n⏱️ A few minutes a day, from your phone.\n{inscritos}\n\n🔑 Join with your name and a 4-digit PIN:',
+  shareInviteText: 'Think you\'ve got what it takes? It\'s {dias} days and {dias} games, with one shot a day. Everyone plays the same thing and the standings say who rules. Whoever piles up the most points takes the glory. 🥇\n\n{cuando}\n⏱️ A few minutes a day, from your phone.\n{inscritos}\n\n🔑 Join with your name and a 4-digit PIN:',
   shareInviteStart: '📅 Starts {fecha}.',
   shareInviteGoing: '📅 It\'s on: day {d} of {n}, and you can still join.',
   shareInviteJoined: '👥 Already signed up: {names}.',
@@ -1183,7 +1183,7 @@ const EN = {
   untilTomorrow: 'midnight tomorrow',
   untilToday: 'midnight today',
 
-  // Pantalla de minijuego
+  // Pantalla de juego
   confirm: 'Confirm',
   confirmShort: 'OK',
   dc: 'AD',
@@ -1432,10 +1432,10 @@ const PT = {
   title: 'A Copa',
   menu: '‹ Menu',
   chip: '🏆 A Copa',
-  lead: 'Todo dia tem um minijogo que todos jogam uma vez só. Ganha quem somar mais pontos.',
+  lead: 'Todo dia tem um jogo que todos jogam uma vez só. Ganha quem somar mais pontos.',
   howTitle: 'Como funciona',
   howItems: [
-    'Cada minijogo pode ser jogado nesse dia ou no dia seguinte, menos a final.',
+    'Cada jogo pode ser jogado nesse dia ou no dia seguinte, menos a final.',
     'O primeiro do dia soma 10 pontos, o segundo 8, o terceiro 6 e assim até 1.',
     'Você tem um coringa que dobra seus pontos de um dia. A final vale o dobro para todos.',
     'Se dois terminarem com os mesmos pontos, desempata quem ganhou mais dias e, se continuarem iguais, quem foi melhor na final.',
@@ -1456,13 +1456,13 @@ const PT = {
   fCopaPh: 'Copa do escritório',
   fMode: 'Quanto tempo dura?',
   mode3: 'Copa de 3 dias',
-  mode3Sub: 'Para testar: dois minijogos e a final.',
+  mode3Sub: 'Para testar: dois jogos e a final.',
   mode7: 'Copa de 7 dias',
-  mode7Sub: 'Seis minijogos e a final.',
+  mode7Sub: 'Seis jogos e a final.',
   fGames: 'O que se joga em cada dia?',
   gamesHint: 'A gente sugere uma semana ao acaso, e você pode mudar.',
-  gamesPick: 'Arraste ou toque num dia para movê-lo, ou num dos minijogos que ficaram de fora para substituir um dia.',
-  gamesPickedDay: 'Toque onde movê-lo, ou num dos minijogos de fora para trocá-lo.',
+  gamesPick: 'Arraste ou toque num dia para movê-lo, ou num dos jogos que ficaram de fora para substituir um dia.',
+  gamesPickedDay: 'Toque onde movê-lo, ou num dos jogos de fora para trocá-lo.',
   gamesPickedOut: 'Toque no dia que você quer substituir.',
   gamesDragDay: 'Solte onde quer movê-lo.',
   gamesDragOut: 'Solte sobre o dia que você quer substituir.',
@@ -1485,7 +1485,7 @@ const PT = {
   createGo: 'Criar a copa',
   creating: 'Criando a copa…',
   fLang: 'Em que idioma vão as palavras?',
-  fLangHint: 'Os minijogos com palavras ficam neste idioma para todos.',
+  fLangHint: 'Os jogos com palavras ficam neste idioma para todos.',
   fScope: 'Para qual público?',
   fScopeHint: 'Global deixa de fora o que só se conhece no Chile ou no Brasil. Chile e Brasil somam os temas do seu país.',
   audGlobal: '🌎 Global',
@@ -1552,7 +1552,7 @@ const PT = {
   csvWins: 'Dias ganhos',
   csvDay: 'Dia {d} · {juego}',
   csvDayNum: 'Dia',
-  csvGame: 'Minijogo',
+  csvGame: 'Jogo',
   csvResult: 'Resultado',
   csvScore: 'Pontuação',
   csvTime: 'Tempo',
@@ -1805,7 +1805,7 @@ const PT = {
   ctxTable: 'Tabela · dia {d} de {n}',
   ctxTableProvisional: 'Tabela (provisória) · dia {d} de {n}',
   ctxFinal: 'Tabela final',
-  shareInviteText: 'Encara? São {dias} dias e {dias} minijogos, com uma chance só por dia. Todo mundo joga o mesmo e a tabela diz quem manda. Quem somar mais pontos fica com a glória. 🥇\n\n{cuando}\n⏱️ Uns poucos minutos por dia, pelo celular.\n{inscritos}\n\n🔑 Entre com seu nome e um PIN de 4 números:',
+  shareInviteText: 'Encara? São {dias} dias e {dias} jogos, com uma chance só por dia. Todo mundo joga o mesmo e a tabela diz quem manda. Quem somar mais pontos fica com a glória. 🥇\n\n{cuando}\n⏱️ Uns poucos minutos por dia, pelo celular.\n{inscritos}\n\n🔑 Entre com seu nome e um PIN de 4 números:',
   shareInviteStart: '📅 Começa {fecha}.',
   shareInviteGoing: '📅 Já começou: está no dia {d} de {n} e você ainda pode entrar.',
   shareInviteJoined: '👥 Já se inscreveram: {names}.',
@@ -1822,7 +1822,7 @@ const PT = {
   untilTomorrow: 'amanhã à meia-noite',
   untilToday: 'hoje à meia-noite',
 
-  // Pantalla de minijuego
+  // Pantalla de juego
   confirm: 'Confirmar',
   confirmShort: 'OK',
   dc: 'd.C.',
@@ -2071,10 +2071,10 @@ const DE = {
   title: 'Der Pokal',
   menu: '‹ Menü',
   chip: '🏆 Der Pokal',
-  lead: 'Jeden Tag gibt es ein Minispiel, das alle genau einmal spielen. Wer die meisten Punkte sammelt, gewinnt.',
+  lead: 'Jeden Tag gibt es ein Spiel, das alle genau einmal spielen. Wer die meisten Punkte sammelt, gewinnt.',
   howTitle: 'So läuft’s',
   howItems: [
-    'Jedes Minispiel kannst du am selben oder am nächsten Tag spielen, außer das Finale.',
+    'Jedes Spiel kannst du am selben oder am nächsten Tag spielen, außer das Finale.',
     'Der Tagesbeste bekommt 10 Punkte, der Zweite 8, der Dritte 6 und so weiter bis 1.',
     'Du hast einen Joker, der deine Punkte eines Tages verdoppelt. Das Finale zählt für alle doppelt.',
     'Bei Punktgleichheit gewinnt, wer mehr Tage gewonnen hat, und wenn es dann noch gleich steht, wer im Finale besser war.',
@@ -2095,13 +2095,13 @@ const DE = {
   fCopaPh: 'Büro-Pokal',
   fMode: 'Wie lange dauert er?',
   mode3: '3-Tage-Pokal',
-  mode3Sub: 'Zum Ausprobieren: zwei Minispiele und das Finale.',
+  mode3Sub: 'Zum Ausprobieren: zwei Spiele und das Finale.',
   mode7: '7-Tage-Pokal',
-  mode7Sub: 'Sechs Minispiele und das Finale.',
+  mode7Sub: 'Sechs Spiele und das Finale.',
   fGames: 'Was wird an welchem Tag gespielt?',
   gamesHint: 'Hier ist eine zufällige Woche, du kannst sie ändern.',
-  gamesPick: 'Zieh einen Tag oder tippe ihn an, um ihn zu verschieben, oder tippe eins der übrigen Minispiele an, um einen Tag zu ersetzen.',
-  gamesPickedDay: 'Tippe an, wohin er soll, oder auf eins der übrigen Minispiele, um ihn zu tauschen.',
+  gamesPick: 'Zieh einen Tag oder tippe ihn an, um ihn zu verschieben, oder tippe eins der übrigen Spiele an, um einen Tag zu ersetzen.',
+  gamesPickedDay: 'Tippe an, wohin er soll, oder auf eins der übrigen Spiele, um ihn zu tauschen.',
   gamesPickedOut: 'Tippe auf den Tag, den du ersetzen willst.',
   gamesDragDay: 'Lass ihn dort los, wo er hin soll.',
   gamesDragOut: 'Lass es auf dem Tag los, den du ersetzen willst.',
@@ -2124,7 +2124,7 @@ const DE = {
   createGo: 'Pokal erstellen',
   creating: 'Pokal wird erstellt…',
   fLang: 'In welcher Sprache sind die Wörter?',
-  fLangHint: 'Die Minispiele mit Wörtern laufen für alle in dieser Sprache.',
+  fLangHint: 'Die Spiele mit Wörtern laufen für alle in dieser Sprache.',
   fScope: 'Für wen ist er?',
   fScopeHint: 'Global lässt weg, was man nur in Chile oder Brasilien kennt. Chile und Brasilien nehmen Themen aus dem eigenen Land dazu.',
   audGlobal: '🌎 Global',
@@ -2191,7 +2191,7 @@ const DE = {
   csvWins: 'Tagessiege',
   csvDay: 'Tag {d} · {juego}',
   csvDayNum: 'Tag',
-  csvGame: 'Minispiel',
+  csvGame: 'Spiel',
   csvResult: 'Ergebnis',
   csvScore: 'Punktzahl',
   csvTime: 'Zeit',
@@ -2444,7 +2444,7 @@ const DE = {
   ctxTable: 'Tabelle · Tag {d} von {n}',
   ctxTableProvisional: 'Tabelle (vorläufig) · Tag {d} von {n}',
   ctxFinal: 'Endtabelle',
-  shareInviteText: 'Traust du dich? {dias} Tage, {dias} Minispiele und nur eine Chance pro Tag. Alle spielen dasselbe, und die Tabelle zeigt, wer hier das Sagen hat. Wer die meisten Punkte sammelt, holt sich den Ruhm. 🥇\n\n{cuando}\n⏱️ Ein paar Minuten am Tag, auf deinem Handy.\n{inscritos}\n\n🔑 Komm mit deinem Namen und einer 4-stelligen PIN rein:',
+  shareInviteText: 'Traust du dich? {dias} Tage, {dias} Spiele und nur eine Chance pro Tag. Alle spielen dasselbe, und die Tabelle zeigt, wer hier das Sagen hat. Wer die meisten Punkte sammelt, holt sich den Ruhm. 🥇\n\n{cuando}\n⏱️ Ein paar Minuten am Tag, auf deinem Handy.\n{inscritos}\n\n🔑 Komm mit deinem Namen und einer 4-stelligen PIN rein:',
   shareInviteStart: '📅 Start am {fecha}.',
   shareInviteGoing: '📅 Läuft schon: Wir sind bei Tag {d} von {n}, und du kannst noch einsteigen.',
   shareInviteJoined: '👥 Schon dabei: {names}.',
@@ -2461,7 +2461,7 @@ const DE = {
   untilTomorrow: 'morgen um Mitternacht',
   untilToday: 'heute um Mitternacht',
 
-  // Pantalla de minijuego
+  // Pantalla de juego
   confirm: 'Bestätigen',
   confirmShort: 'OK',
   dc: 'n. Chr.',
@@ -2597,13 +2597,13 @@ const DE = {
 
 export const LOCALES = { es: ES, en: EN, pt: PT, de: DE };
 
-/** Los minijuegos en un idioma: lo de BASE más sus textos. */
-export const minijuegos = (lang = 'es') => {
+/** Los juegos en un idioma: lo de BASE más sus textos. */
+export const juegosCopa = (lang = 'es') => {
   const L = LOCALES[lang] || ES;
   return Object.fromEntries(Object.entries(BASE).map(([id, b]) => [id, { ...b, ...L.juegos[id] }]));
 };
-/** En español: el panel, las herramientas y las pruebas nombran los minijuegos así. */
-export const MINIJUEGOS = minijuegos('es');
+/** En español: el panel, las herramientas y las pruebas nombran los juegos así. */
+export const JUEGOS_COPA = juegosCopa('es');
 /** Las rondas de la Gran Final, con su explicación, en un idioma. */
 export const rondasFinal = (lang = 'es') => (LOCALES[lang] || ES).rondas;
 export const RONDAS_FINAL = ES.rondas;
