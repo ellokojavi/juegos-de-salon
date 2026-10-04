@@ -42,6 +42,10 @@ día UTC y se rotulan así; la hora del gráfico de audiencia es la local del ce
 versión (del huso horario del celular, como en las salas); quien se inscribió antes lo anota
 solo la próxima vez que abre su copa (D-209). Los reportes 🐞 lo llevan en su contexto (`pais`).
 
+**El idioma de cada partida** (D-211): cada copa, sala y partida sin red lleva su etiqueta (`ES`,
+`PT`; `ES · PT` si en una sala cada uno jugó en el suyo). Sale de `meta.lang` en las copas, de
+`l/<rol>` en las salas y de `l` en las partidas sin red; lo de antes no lo tiene.
+
 **Las copas de prueba no se ocultan**: ya se parecen a las reales. Salen con las demás, con la
 etiqueta "laboratorio" donde corresponde, y con un filtro para verlas solas.
 
