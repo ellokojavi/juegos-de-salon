@@ -8,7 +8,7 @@ ES: sin build, sin npm y sin cuenta de nada para trabajar en ella.
 1. Haz un **fork** de `ellokojavi/juegos-de-salon` en GitHub y clónalo.
 2. Crea una **rama con nombre de tema** (`dudo-modo-rapido`, no `v0-90`).
 3. Trabaja, prueba (abajo) y abre un **PR hacia `main`**. Las pruebas corren solas en el PR y
-   muestran ✅ o ❌; un PR en rojo no se fusiona.
+   muestran ✅ o ❌ en dos checks, `pruebas` y `Punta a punta`; con uno en rojo no se fusiona.
 4. El dueño lo revisa, lo fusiona y lo publica. `main` está protegida: nada entra sin PR, y lo
    que entra a `main` sale al tiro en https://juegosdesalon.cl/.
 
@@ -31,7 +31,7 @@ justo.
 
 ## Antes de escribir código
 
-- **[docs/CANONES.md](docs/CANONES.md)**: las reglas de todos los juegos (idiomas, sonido, modos,
+- **[docs/CANONES.md](docs/CANONES.md)**: las reglas de hoy de todos los juegos (idiomas, sonido, modos,
   memoria de partida, interfaz táctil, anti-trampa, pruebas, documentación). Al final tiene una
   lista de chequeo.
 - **[docs/USABILIDAD.md](docs/USABILIDAD.md)**: cómo se escriben los textos y dónde van los botones.
@@ -55,7 +55,9 @@ Lo mismo, en tu computador:
 
 ```bash
 for f in $(git ls-files '*.test.mjs'); do node "$f" || echo "FALLA $f"; done
+for f in $(git ls-files '*.test.py'); do python3 "$f" || echo "FALLA $f"; done
 python3 tools/release/readme.py revisar
+node tools/release/og.mjs revisar
 ```
 
 Las pruebas de punta a punta (`tools/e2e/`) juegan partidas completas en Chrome; ver su README.

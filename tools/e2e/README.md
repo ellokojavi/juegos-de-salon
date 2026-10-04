@@ -26,9 +26,13 @@ desde ese número (`cdp.mjs`: el primer Chrome del guion usa `PUERTO_CDP`, el se
 Sin las variables, todo sigue en el 8765 y en los puertos de siempre.
 
 ```bash
-SITIO=http://localhost:8791 PUERTO_CDP=9491 node tools/e2e/hangman/online.mjs /tmp/e2e
-pkill -f "remote-debugging-port=949[1-3]"   # solo los tuyos
+SITIO=http://localhost:8791 PUERTO_CDP=9610 node tools/e2e/hangman/online.mjs /tmp/e2e
+pkill -f "remote-debugging-port=961[0-3]"   # solo los tuyos
 ```
+
+Los puertos de Chrome de las sesiones van de 9600 en adelante, de a diez (9600, 9610…): algunos
+guiones todavía tienen puertos fijos entre 9231 y 9498, y un `pkill` en ese rango puede matar el
+Chrome de otra sesión (D-213).
 
 ## En GitHub (D-193)
 
