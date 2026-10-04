@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.93.0 — 2026-10-03
+- **Portada: los filtros quedan pegados arriba** (D-196). Al bajar por la lista, los tipos de
+  juego (Palabras, Lógica, Cultura, Cartas/Dados) se quedan a mano. Elegir uno desde abajo lleva
+  la lista a su primera tarjeta.
+
 ## 0.92.1 — 2026-10-03
 - **Laboratorio alemán: el idioma ya no se queda pegado en alemán** (D-195). Con otro idioma
   elegido, "‹ Menú" lleva al menú de siempre en ese idioma (antes llevaba a la portada del
