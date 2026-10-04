@@ -59,8 +59,15 @@ export const guiones = () => todos()
   .filter(f => !HERRAMIENTAS.has(f) && !CON_FIREBASE.test(f) && !TAMBIEN_FIREBASE.has(f) && !OBSOLETOS.has(f))
   .sort();
 
-/** Lo que corre GitHub: cada guion, o cada parte de los que tienen (`cup/torneo.mjs:copa`). */
-export const trabajos = () => guiones().flatMap(g => PARTES[g] ? PARTES[g].map(p => `${g}:${p}`) : [g]);
+/**
+ * Lo que corre GitHub: cada guion, o cada parte de los que tienen (`cup/torneo.mjs:copa`). Los más
+ * largos primero (el tamaño del guion sirve de aproximación): GitHub corre unos veinte jobs a la
+ * vez y arranca la matriz en orden, así que un largo al final de la lista espera en la cola y
+ * alarga todo el check.
+ */
+export const trabajos = () => guiones()
+  .sort((a, b) => statSync(join(AQUI, b)).size - statSync(join(AQUI, a)).size)
+  .flatMap(g => PARTES[g] ? PARTES[g].map(p => `${g}:${p}`) : [g]);
 
 /** Corre un guion o una parte suya (`guion:parte`); resuelve con { ok, motivo, ms, salida }. */
 function correr(guion) {
