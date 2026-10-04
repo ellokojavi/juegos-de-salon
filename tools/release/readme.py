@@ -2,7 +2,7 @@
 """
 El README, al día: bloques generados del código, capturas rehechas por el navegador.
 
-  python3 tools/release/readme.py revisar      ¿El README quedó viejo? (lo corre set-version.py)
+  python3 tools/release/readme.py revisar      ¿El README quedó viejo? (lo corre el check pruebas)
   python3 tools/release/readme.py actualizar   Reescribe los bloques generados del README
   python3 tools/release/readme.py capturas [seccion] [--sin-red]
                                        Rehace las capturas con Chrome headless
@@ -29,11 +29,12 @@ capturas de pantallas que cambian. Nada de eso avisa cuando queda viejo. Acá:
      copia los PNG a docs/screenshots/. Las que dependen de una sala de Firebase
      van marcadas `"red": true` y se saltan con --sin-red.
 
-El gancho para que esto pase siempre y no cuando alguien se acuerde: `set-version.py`
-—obligatorio antes de cada publicación (C-11)— corre `revisar` y se planta si el
-README quedó atrás.
+El gancho para que esto pase siempre y no cuando alguien se acuerde: el check `pruebas`
+corre `revisar` en cada PR y antes de cada publicación (C-11, D-205), y queda en rojo si
+el README quedó atrás.
 """
 import json, os, re, shutil, socket, subprocess, sys, tempfile, time, pathlib
+from concurrent.futures import ThreadPoolExecutor
 
 RAIZ = pathlib.Path(__file__).resolve().parents[2]
 README = RAIZ / 'README.md'
@@ -284,9 +285,12 @@ SECCIONES = {
 
 COMMITS_MIRADOS = 40   # tope de commits que se revisan hacia atrás buscando uno de verdad
 
-#: Las marcas que estampa set-version.py: `?v=0.25.2` en el import map y las hojas de
-#: estilo, y `v0.25.2 ·` en el pie del menú.
+#: Las marcas que estampaba set-version.py en git hasta D-205: `?v=0.25.2` en el import map, las
+#: hojas de estilo y las tarjetas, y `v0.25.2 ·` en el pie del menú. Hoy solo se estampa la copia
+#: que se publica, pero las capturas miran commits viejos.
 ESTAMPA = re.compile(r'\?v=\d+\.\d+\.\d+|v\d+\.\d+\.\d+ ·')
+#: La línea entera del import map: el commit que sacó la versión de git la borró (D-205)
+IMPORT_MAP = re.compile(r'^\s*<script type="importmap" id="importmap">.*</script>\s*$')
 
 
 def git(*args, rutas=()):
@@ -300,18 +304,19 @@ def solo_estampa(diff):
     ¿Ese diff no cambia nada más que la versión estampada?
 
     Se comparan las líneas quitadas contra las puestas con el número de versión borrado: si
-    quedan iguales, lo único que pasó fue una publicación. No basta con "todas las líneas
-    tienen un ?v=", porque el import map es una línea sola y enorme que también cambia
-    cuando se agrega un módulo, y eso sí es un cambio.
+    quedan iguales, lo único que pasó fue una publicación. La línea del import map no cuenta:
+    es maquinaria de la versión, y el módulo nuevo que la cambia se ve en su propio archivo.
     """
     mas, menos = [], []
     for linea in diff.splitlines():
         if linea.startswith(('+++', '---')):
             continue
+        if IMPORT_MAP.match(linea[1:]):
+            continue
         if linea.startswith('+'):
-            mas.append(ESTAMPA.sub('V', linea[1:]))
+            mas.append(ESTAMPA.sub('', linea[1:]))
         elif linea.startswith('-'):
-            menos.append(ESTAMPA.sub('V', linea[1:]))
+            menos.append(ESTAMPA.sub('', linea[1:]))
     return bool(mas or menos) and sorted(mas) == sorted(menos)
 
 
@@ -319,8 +324,8 @@ def git_fecha(rutas):
     """
     Cuándo cambió de verdad por última vez alguno de esos caminos (0 si nunca).
 
-    El estampado de versión no cuenta: `set-version.py` reescribe los seis `index.html` en
-    cada publicación (C-11) y eso no cambia ninguna pantalla. Sin esta salvedad, publicar
+    El estampado de versión no cuenta: hasta D-205 `set-version.py` reescribía todos los
+    `index.html` en cada publicación (C-11) y eso no cambia ninguna pantalla. Sin esta salvedad, publicar
     dejaba "más viejas que el código" a las capturas de todos los juegos, incluidos los que
     nadie tocó, y el aviso dejaba de querer decir algo (D-51).
     """
@@ -368,7 +373,7 @@ def cmd_revisar():
     else:
         for ruta, antes, ahora in diferencias(json.loads(SELLO.read_text()), H):
             raiz = ruta.split('.')[0]
-            if raiz == 'version':  # la versión la estampa set-version.py; el README no la cita
+            if raiz == 'version':  # la versión es la del CHANGELOG (D-205); el README no la cita
                 continue
             donde = SECCIONES.get(raiz, 'el README')
             problemas.append(f'{contar(ruta, antes, ahora)}\n'
@@ -490,19 +495,42 @@ def cmd_capturas(seccion=None, sin_red=False):
         print(f'servidor propio en el puerto {PUERTO}')
 
     nuevas, iguales, fallaron = [], [], []
+    # Los guiones corren de a JUNTOS a la vez, cada uno con sus puertos de Chrome (D-135): seguidos,
+    # rehacer todas las secciones tomaba la suma de todos; así, poco más que el más largo
+    # (cup/torneo.mjs). Con una máquina cargada, CAPTURAS_JUNTOS=1 vuelve a uno por uno.
+    juntos = max(1, int(os.environ.get('CAPTURAS_JUNTOS', 3)))
+    base_cdp = int(os.environ.get('PUERTO_CDP') or 9600)
+
+    def correr(i, g, tmp):
+        guion = C['guiones'][g]
+        env = {**os.environ, 'SITIO': os.environ.get('SITIO', f'http://localhost:{PUERTO}'),
+               'PUERTO_CDP': str(base_cdp + 10 * i)}
+        return subprocess.run(['node', f"tools/e2e/{guion['archivo']}", tmp], cwd=RAIZ, env=env,
+                              stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+
     try:
-        for g in guiones:
-            guion = C['guiones'][g]
-            print(f"\n▶ {guion['archivo']}  ({guion['que']}{', necesita internet' if guion['red'] else ''})")
-            with tempfile.TemporaryDirectory() as tmp:
-                r = subprocess.run(['node', f"tools/e2e/{guion['archivo']}", tmp], cwd=RAIZ,
-                                   env={**os.environ, 'SITIO': os.environ.get('SITIO', f'http://localhost:{PUERTO}')})
+        with tempfile.TemporaryDirectory() as raiz_tmp, ThreadPoolExecutor(juntos) as pool:
+            tmps = {g: pathlib.Path(raiz_tmp) / str(i) for i, g in enumerate(guiones)}
+            for t in tmps.values():
+                t.mkdir()
+            # Los más largos primero (el largo del guion sirve de aproximación): si cup/torneo.mjs
+            # parte al último, todo espera a que termine
+            largo = lambda g: (RAIZ / 'tools/e2e' / C['guiones'][g]['archivo']).stat().st_size
+            corriendo = {g: pool.submit(correr, i, g, str(tmps[g]))
+                         for i, g in sorted(enumerate(guiones), key=lambda x: -largo(x[1]))}
+            for g in guiones:
+                guion = C['guiones'][g]
+                r = corriendo[g].result()
+                tmp = tmps[g]
+                print(f"\n▶ {guion['archivo']}  ({guion['que']}{', necesita internet' if guion['red'] else ''})")
+                print(r.stdout, end='')
                 if r.returncode:
                     fallaron.append(guion['archivo'])
-                    print(f"  falló. Si quedó un Chrome vivo: pkill -f remote-debugging-port")
+                    puerto = str(base_cdp + 10 * list(guiones).index(g))
+                    print(f'  falló. Si quedó un Chrome vivo: pkill -f "remote-debugging-port={puerto[:-1]}[{puerto[-1]}]"')
                     continue
                 for c in [t for t in tomas if t['guion'] == g]:
-                    origen = pathlib.Path(tmp) / f"{c['toma']}.png"
+                    origen = tmp / f"{c['toma']}.png"
                     if not origen.exists():
                         fallaron.append(f"{guion['archivo']} → {c['toma']}")
                         print(f"  sin toma \"{c['toma']}\": el guion no llegó hasta ahí")

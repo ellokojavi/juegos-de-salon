@@ -1,5 +1,6 @@
 # Publica el sitio en GitHub Pages en cada fusión a main (D-192). Se publica solo public/ —sin las
-# pruebas—: docs/, tools/, marketing/ y lo demás del repo no son parte del sitio.
+# pruebas—: docs/, tools/, marketing/ y lo demás del repo no son parte del sitio. La versión se
+# estampa aquí, en la copia que se publica (D-205).
 # Antes corren las pruebas (pruebas.yml): con una en rojo, el sitio publicado no cambia.
 #
 # Requiere, una sola vez, Settings → Pages → Source: "GitHub Actions" (no "Deploy from a branch").
@@ -40,6 +41,11 @@ jobs:
       - name: Armar el sitio (public/ sin las pruebas)
         run: rsync -a --exclude='*.test.mjs' public/ _site/
 
+      # La versión no está en git: se estampa aquí, solo en la copia que se publica (D-205). El
+      # número sale de la primera entrada de CHANGELOG.md, y la clave de caché lleva el commit.
+      - name: Estampar la versión
+        run: python3 tools/release/set-version.py --sitio _site --commit "$GITHUB_SHA"
+
       - uses: actions/configure-pages@v5
 
       - uses: actions/upload-pages-artifact@v3
@@ -48,3 +54,17 @@ jobs:
 
       - id: publicar
         uses: actions/deploy-pages@v4
+
+      # C-11: se da por publicada cuando el sitio sirve la versión nueva, no cuando termina la subida
+      - name: Comprobar que el sitio sirve la versión nueva
+        env:
+          URL: ${{ steps.publicar.outputs.page_url }}
+        run: |
+          clave="$(python3 tools/release/set-version.py --version)-${GITHUB_SHA:0:7}"
+          for i in $(seq 1 20); do
+            if curl -sfL "${URL}?t=$(date +%s)" | grep -q "base.css?v=$clave"; then
+              echo "publicada: $clave"; exit 0
+            fi
+            sleep 15
+          done
+          echo "::error::$URL no sirve $clave después de 5 minutos"; exit 1
