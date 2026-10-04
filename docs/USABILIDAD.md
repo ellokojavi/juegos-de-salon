@@ -16,7 +16,8 @@ nunca se usaron, y no se renumera.
 - **U-2 · Emojis al inicio de línea o en botones y títulos**, no en medio de una frase.
 - **U-3 · Los textos nuevos salen con la mejor propuesta** y se anotan en el PR para que el dueño
   los vea; si algo no le gusta, lo corrige después (D-213, como "Dilemas sin backlog"). Corregir
-  ortografía, gramática o concordancia no es un texto nuevo.
+  ortografía, gramática o concordancia no es un texto nuevo. La excepción es lo que una copa está
+  jugando hoy: eso no cambia, ni siquiera el texto (U-21).
 - **U-4 · Nombres propios sin artículo:** "La Copa: Valdenenas", nunca "la Valdenenas".
 - **U-5 · Un mismo concepto, una misma palabra** en toda la app (día de gracia, inscripción,
   jugadores, link, PIN, administrador, el celular, tachar, vidas, sorbos, "cada intento después
