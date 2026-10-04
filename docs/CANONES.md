@@ -181,6 +181,10 @@ Cuando cada dispositivo guarda un secreto (un número, una flota):
 - Se revisan capturas reales de cada pantalla, no solo el resultado de los asertos: los problemas de diseño se ven, no se afirman. Rehacerlas no es revisarlas: antes de publicar se mira la hoja de contacto (`node tools/e2e/contacto.mjs <seccion>`), que las pone juntas al tamaño del README (D-76).
 - Una captura se saca con la pantalla quieta. Congelada a media animación, una lista con entradas escalonadas se fotografía con las filas a distintos anchos y parece un error de CSS que no existe (D-76).
 - Consola sin errores es parte del criterio de aceptación.
+- **Cada pantalla se prueba en todos los idiomas que se ofrecen** (D-199): el `idiomas.mjs` de cada
+  juego en `tools/e2e/` recorre las pantallas de `caminos.mjs` en cada idioma de `LANGS` contra
+  el español. Un guion que mira algo de un idioma recorre `LANGS`, no una lista escrita a mano, y
+  saca del diccionario lo que espera: así un idioma nuevo queda probado el día que entra.
 
 ## C-13 · Documentación
 
@@ -288,6 +292,7 @@ como un error: se lee como que nadie jugó.
 - [ ] Los tres modos funcionan y la partida se puede retomar en **todos** (C-5, C-6).
 - [ ] Las instrucciones siguen U-18: la meta primero, a lo más 3 puntos, sin repetir el dibujo de ejemplo (C-1).
 - [ ] Todo el texto está en español, inglés, portugués y alemán (el de `IDIOMAS`, también el del laboratorio), con las mismas claves en todos, sin cadenas sueltas en el código (C-3, D-191).
+- [ ] Sus pantallas están en `tools/e2e/caminos.mjs` y su `idiomas.mjs` pasa en todos los idiomas (C-12, D-199).
 - [ ] Hay sonido y vibración en las acciones clave, con botón de silencio (C-4).
 - [ ] Los botones tienen 44 px, los botones finales se ven sin desplazar y no hay scroll horizontal (C-8).
 - [ ] En un celular, el resultado se ve antes del pase, y lo secreto va tapado (C-9).
