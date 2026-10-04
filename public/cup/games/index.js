@@ -1,9 +1,9 @@
 /**
- * Registro de los minijuegos de La Copa. Cada uno: `generar(código, día)` (motor puro, igual
+ * Registro de los juegos de La Copa. Cada uno: `generar(código, día)` (motor puro, igual
  * en todos los celulares), `montar(raíz, ctx)` (su pantalla) y `resultado(estado)` →
  * { s: puntaje, t: tarjeta, resumen }.
  *
- * Agregar un minijuego: su motor y su pantalla en esta carpeta, su texto en MINIJUEGOS de
+ * Agregar un juego: su motor y su pantalla en esta carpeta, su texto en JUEGOS_COPA de
  * rules.js y una entrada acá. Para que se pueda elegir en una copa, sumarlo a POZO (engine.js).
  */
 import * as linea from './timeline/engine.js';

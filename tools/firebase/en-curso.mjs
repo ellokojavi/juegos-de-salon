@@ -15,7 +15,7 @@ import { token, leer } from './firebase-admin.mjs';
 import { GAMES } from '../../public/assets/js/games.js';
 import { IDLE_TTL, ROOM_TTL } from '../../public/assets/js/transport/cleanup.js';
 import { diaActual, juegoDelDia, terminada, inscripcionAbierta } from '../../public/cup/engine.js';
-import { MINIJUEGOS } from '../../public/cup/rules.js';
+import { JUEGOS_COPA } from '../../public/cup/rules.js';
 
 /** Una sala sin jugadas hace menos de esto cuenta como partida viva; más, como pausa. */
 const JUGANDO_MS = 5 * 60 * 1000;
@@ -57,7 +57,7 @@ const copas = Object.entries(torneos || {}).filter(([, x]) => x.meta?.win).map((
   return {
     codigo, nombre: m.name, alias: m.alias || null, prueba: !!m.lab, dias: m.days, dia,
     estado: terminada(m, ahora) ? 'terminada' : dia === 0 ? 'por empezar' : 'en curso',
-    hoy, hoyNombre: hoy ? MINIJUEGOS[hoy]?.nombre || hoy : null,
+    hoy, hoyNombre: hoy ? JUEGOS_COPA[hoy]?.nombre || hoy : null,
     jugadores: jugadores.length, jugaronHoy: hechos, inscripcion: inscripcionAbierta(m, ahora),
     termina: m.end, tz: m.tz, ultimo: Math.max(0, ...marcas) || null,
   };

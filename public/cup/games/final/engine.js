@@ -1,5 +1,5 @@
 /**
- * 🏁 La Gran Final — motor puro. Cinco rondas cortas seguidas, una de cada minijuego de la
+ * 🏁 La Gran Final — motor puro. Cinco rondas cortas seguidas, una de cada juego de la
  * semana que tiene versión corta, cada una de 0 a 100. Vale doble en la tabla.
  */
 import * as linea from '../timeline/engine.js';

@@ -38,7 +38,7 @@ public/<carpeta>/
   `localStorage`— y no cambia nunca; la carpeta es la URL y va en `path`. Un juego nuevo puede usar
   el mismo nombre en inglés para los dos. Si una carpeta se renombra, la ruta vieja queda como
   página puente (la genera `node tools/release/og.mjs tarjetas`).
-- Los minijuegos de La Copa siguen la misma idea en `public/cup/games/<carpeta>/`: `engine.js`
+- Los juegos de La Copa siguen la misma idea en `public/cup/games/<carpeta>/`: `engine.js`
   (reglas puras), `ui.js` (pantalla) y sus datos propios; lo común a todos queda en `games/`.
 - El juego se registra en `public/assets/js/games.js` con `id`, `emoji`, `name` y `tagline` por idioma, `players`, `duration`, `path` y `available`. Con sala, también `jugadas`: los tipos de mensaje que hace una persona, que es lo que el panel cuenta como jugadas (D-138).
 - Sus módulos entran solos al import map: `set-version.py` recorre `public/` (C-11, D-192).
