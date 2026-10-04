@@ -3129,3 +3129,17 @@ CHANGELOG. Y como ya no se trae `main` a cada PR, lo fusionado se prueba de verd
 estadísticas de una prueba local salen sin versión (`versionOf` no encuentra el import map), como
 ya pasaba en `dev`. Las capturas no envejecen por el commit que sacó la versión: `readme.py` no
 cuenta la línea del import map como cambio.
+
+## D-206 · El worktree de una sesión se borra al fusionar su PR
+**Fecha:** 2026-10-04 · **Estado:** vigente; completa D-135
+**Decisión:** La copia de trabajo que D-135 manda crear (`../juegos-de-salon-<tema>`) se borra
+cuando su PR entra a `main`, junto con la rama local: `git worktree remove` y `git branch -d`,
+desde la carpeta principal (y `git worktree prune` si alguna se borró a mano). Los dos se niegan
+si hay trabajo que no está en `main`, y entonces se mira antes de forzar. Sin trabajo en curso, en
+`Projects/` se ve una sola carpeta `juegos-de-salon`. Quedó en CLAUDE.md.
+**Por qué:** D-135 dijo cómo abrir la copia pero no cómo cerrarla. Al 2026-10-04 se habían
+acumulado 26 carpetas `juegos-de-salon-*` (2,1 GB), todas de ramas ya fusionadas, y el dueño las
+leyó como proyectos distintos: no se distinguía el trabajo en curso del abandonado. Borrarlas no
+pierde nada —el historial vive en el repo— y `git worktree list` vuelve a ser una lista corta de
+lo que de verdad está abierto. La regla la escribió una sesión del 2026-10-04 como D-197, en una
+rama que nunca se subió (ese número quedó para el alemán); se rescató al limpiar las carpetas.
