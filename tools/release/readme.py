@@ -34,6 +34,7 @@ El gancho para que esto pase siempre y no cuando alguien se acuerde: `set-versio
 README quedó atrás.
 """
 import json, os, re, shutil, socket, subprocess, sys, tempfile, time, pathlib
+from concurrent.futures import ThreadPoolExecutor
 
 RAIZ = pathlib.Path(__file__).resolve().parents[2]
 README = RAIZ / 'README.md'
@@ -490,19 +491,42 @@ def cmd_capturas(seccion=None, sin_red=False):
         print(f'servidor propio en el puerto {PUERTO}')
 
     nuevas, iguales, fallaron = [], [], []
+    # Los guiones corren de a JUNTOS a la vez, cada uno con sus puertos de Chrome (D-135): seguidos,
+    # rehacer todas las secciones tomaba la suma de todos; así, poco más que el más largo
+    # (cup/torneo.mjs). Con una máquina cargada, CAPTURAS_JUNTOS=1 vuelve a uno por uno.
+    juntos = max(1, int(os.environ.get('CAPTURAS_JUNTOS', 3)))
+    base_cdp = int(os.environ.get('PUERTO_CDP') or 9600)
+
+    def correr(i, g, tmp):
+        guion = C['guiones'][g]
+        env = {**os.environ, 'SITIO': os.environ.get('SITIO', f'http://localhost:{PUERTO}'),
+               'PUERTO_CDP': str(base_cdp + 10 * i)}
+        return subprocess.run(['node', f"tools/e2e/{guion['archivo']}", tmp], cwd=RAIZ, env=env,
+                              stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+
     try:
-        for g in guiones:
-            guion = C['guiones'][g]
-            print(f"\n▶ {guion['archivo']}  ({guion['que']}{', necesita internet' if guion['red'] else ''})")
-            with tempfile.TemporaryDirectory() as tmp:
-                r = subprocess.run(['node', f"tools/e2e/{guion['archivo']}", tmp], cwd=RAIZ,
-                                   env={**os.environ, 'SITIO': os.environ.get('SITIO', f'http://localhost:{PUERTO}')})
+        with tempfile.TemporaryDirectory() as raiz_tmp, ThreadPoolExecutor(juntos) as pool:
+            tmps = {g: pathlib.Path(raiz_tmp) / str(i) for i, g in enumerate(guiones)}
+            for t in tmps.values():
+                t.mkdir()
+            # Los más largos primero (el largo del guion sirve de aproximación): si cup/torneo.mjs
+            # parte al último, todo espera a que termine
+            largo = lambda g: (RAIZ / 'tools/e2e' / C['guiones'][g]['archivo']).stat().st_size
+            corriendo = {g: pool.submit(correr, i, g, str(tmps[g]))
+                         for i, g in sorted(enumerate(guiones), key=lambda x: -largo(x[1]))}
+            for g in guiones:
+                guion = C['guiones'][g]
+                r = corriendo[g].result()
+                tmp = tmps[g]
+                print(f"\n▶ {guion['archivo']}  ({guion['que']}{', necesita internet' if guion['red'] else ''})")
+                print(r.stdout, end='')
                 if r.returncode:
                     fallaron.append(guion['archivo'])
-                    print(f"  falló. Si quedó un Chrome vivo: pkill -f remote-debugging-port")
+                    puerto = str(base_cdp + 10 * list(guiones).index(g))
+                    print(f'  falló. Si quedó un Chrome vivo: pkill -f "remote-debugging-port={puerto[:-1]}[{puerto[-1]}]"')
                     continue
                 for c in [t for t in tomas if t['guion'] == g]:
-                    origen = pathlib.Path(tmp) / f"{c['toma']}.png"
+                    origen = tmp / f"{c['toma']}.png"
                     if not origen.exists():
                         fallaron.append(f"{guion['archivo']} → {c['toma']}")
                         print(f"  sin toma \"{c['toma']}\": el guion no llegó hasta ahí")
