@@ -1,10 +1,8 @@
 # Diseño: Julepe 🍹
 
-**Ruta:** `/julep/` · **Jugadores:** 2 a 6 · **Versión:** 0.34 · **Idiomas:** es, en (“Julep”), pt (“Paga o Bolo”) y, en el laboratorio, de (“Julepe”, D-191)
+**Ruta:** `/julep/` (id `julepe`) · **Jugadores:** 2 a 6 · **Desde:** v0.34 · **Estado:** fuera del menú (v0.34, D-88) · **Idiomas:** es, en (“Julep”), pt (“Paga o Bolo”) y de (“Julepe”, D-191, D-197)
 
-**Estado:** fuera del menú por ahora, mientras se reescriben las reglas (D-88). El juego sigue entero acá.
-
-## 1. Resumen
+## Resumen
 
 Juego de bazas de la familia del Tute, adaptado a sorbos. En cada mano hay un **plato** de sorbos
 sobre la mesa. Cada jugador mira sus cinco cartas y, por turno desde la derecha de quien repartió,
@@ -17,7 +15,9 @@ El celular hace lo que en la mesa real se hace mal: baraja, **no deja tirar una 
 corresponde** —asistir, montar y fallar son tres reglas que en una mesa con sorbos se discuten
 toda la noche—, lleva la cuenta del plato y se acuerda de quién le debe sorbos a quién.
 
-## 2. Reglas
+**Estado:** fuera del menú por ahora, mientras se reescriben las reglas (D-88): en `games.js` va con `available: false`. El juego sigue entero en `/julep/`.
+
+## Reglas
 
 - **Baraja inglesa de 52 cartas**, sin comodines. De mayor a menor: A > K > Q > J > 10 > … > 2.
 - **El plato:** cuando está vacío, cada jugador pone 2 sorbos. Solo se vuelve a poner cuando se
@@ -47,14 +47,14 @@ toda la noche—, lleva la cuenta del plato y se acuerda de quién le debe sorbo
 
 **Obligar a sobremontar el triunfo** (cuando la baza ya viene fallada, jugar un triunfo más alto
 si se tiene) es regla de mesa en el Bourré y en varias casas. Acá no está: son cuatro reglas para
-explicar en tres idiomas en la primera baza de la noche, y la tercera ya es la que más cuesta. El
+explicar en varios idiomas en la primera baza de la noche, y la tercera ya es la que más cuesta. El
 motor la tiene a un `if` de distancia, en `legales()`.
 
 **Apostar el plato** (subir la entrada, o que el que se salva se lleve el plato) tampoco: el plato
 que crece solo con los julepes ya es el motor del juego, y sumarle una apuesta lo convierte en otra
 cosa.
 
-## 3. Modos
+## Modos
 
 | Modo | Jugadores | Cómo |
 |---|---|---|
@@ -62,7 +62,7 @@ cosa.
 | 📡 Varios celulares | 2 a 6 | Sala con código de 4 letras, QR y chat. El reparto viaja **cerrado para cada jugador** (D-81) y al cerrar la mano cada celular destapa lo suyo para que todos verifiquen (C-10). |
 | 🤖 Contra el celular | 1 | De uno a cinco rivales del aparato, a elección: declaran, cambian y juegan mirando **solo sus propias cartas**. |
 
-## 4. De dónde salen las cartas, y por qué no de la semilla
+### De dónde salen las cartas, y por qué no de la semilla
 
 Es el mismo problema de los dados del Dudo (D-70): el código es público, así que una semilla
 compartida deja a cualquiera calcular la mano del rival abriendo la consola. Pero las cartas son
@@ -89,24 +89,7 @@ el mismo trato de la mesa real —el que baraja podría marcar las cartas— y p
 en cada mano. Si el navegador no tiene `crypto.subtle` (http sin más), no se puede cerrar nada: el
 reparto va en claro y el cierre de la mano lo dice, en vez de fingir un secreto que no existe (C-14).
 
-## 5. Protocolo de mensajes
-
-Todo el estado sale de la lista de mensajes (C-7). `buildState({ players, config, plays, yo, privadas })`
-es la única verdad; lo que no corresponde se descarta en silencio.
-
-| Mensaje | De | Qué lleva |
-|---|---|---|
-| `hello` | cada uno | `name` y, en la sala, `pub` (su llave pública) |
-| `start` | anfitrión | `order`: la mesa, en el orden de llegada |
-| `reparte` | el dador | `n` (nº de mano), `triunfo`, y `m` (manos en claro, un celular) **o** `s` (un sobre por jugador, sala) |
-| `va` / `paso` | el de turno | — |
-| `cambia` | el de turno | `i`: los puestos que suelta, `'0,3'` o `''` |
-| `juega` | el de turno | `c`: la carta, `'10♦'` |
-| `regala` | el que se salvó | `a`: un rol por cada baza ganada, `'B,B,C'` (dos sorbos cada uno) |
-| `revela` | cada uno | `n` y `cs`: las ocho cartas que le tocaron en esa mano, al cerrarla |
-| `chat` | cada uno | `text` (no es parte del estado, C-15) |
-
-## 6. El celular que juega
+### El celular que juega
 
 Tres decisiones, todas con lo que ese jugador ve y nada más (`public/julep/engine.js`):
 
@@ -123,13 +106,41 @@ Tres decisiones, todas con lo que ese jugador ve y nada más (`public/julep/engi
   más barato que le sirva; si ya está perdida, suelta su peor carta.
 - **A quién le da los sorbos.** Todos a la misma persona, y a la que va más seca.
 
-## 7. Archivos
+## Flujo
+
+```
+Intro (modos) → Setup (nombres, largo de la partida) → [Lobby: código + QR]
+   → Mesa: reparto → declarar (va / paso) → cambio → cinco bazas → cierre de la mano (plato, julepe, sorbos) → … → Resultado
+```
+
+Son las pantallas de `index.html`: `screen-intro`, `screen-setup`, `screen-lobby`, `screen-play` y
+`screen-result`; cada paso de la mano se dibuja dentro de `screen-play`. En un celular, entre turno
+y turno va el pase (C-9), con el resultado antes de cada pase.
+
+## Protocolo de mensajes
+
+Todo el estado sale de la lista de mensajes (C-7). `buildState({ players, config, plays, yo, privadas })`
+es la única verdad; lo que no corresponde se descarta en silencio.
+
+| Mensaje | De | Qué lleva |
+|---|---|---|
+| `hello` | cada uno | `name` y, en la sala, `pub` (su llave pública) |
+| `start` | anfitrión | `order`: la mesa, en el orden de llegada |
+| `reparte` | el dador | `n` (nº de mano), `triunfo`, y `m` (manos en claro, un celular) **o** `s` (un sobre por jugador, sala) |
+| `va` / `paso` | el de turno | — |
+| `cambia` | el de turno | `i`: los puestos que suelta, `'0,3'` o `''` |
+| `juega` | el de turno | `c`: la carta, `'10♦'` |
+| `regala` | el que se salvó | `a`: un rol por cada baza ganada, `'B,B,C'` (dos sorbos cada uno) |
+| `revela` | cada uno | `n` y `cs`: las ocho cartas que le tocaron en esa mano, al cerrarla |
+| `chat` | cada uno | `text` (no es parte del estado, C-15) |
+
+## Archivos
 
 ```
 public/julep/
   index.html        Pantallas, barra superior, #handoff y #cover
   style.css         Naipes, mesa, plato, cierre de la mano
-  rules.js          GAME_ID, DEFAULT_CONFIG, LARGOS y LOCALES = { es, en, pt }
+  rules.js          GAME_ID, DEFAULT_CONFIG, LARGOS y LOCALES = { es, en, pt, de }
   engine.js         Cartas, obligaciones, plato, julepe, bots y el reductor. Sin DOM
   engine.test.mjs   node public/julep/engine.test.mjs
   game.js           Máquina de estados y render; lo único que toca el DOM
@@ -137,3 +148,9 @@ public/assets/js/sobre.js  Sobres cerrados de la sala (compartido, D-81)
 tools/e2e/julep/local.mjs    Partida completa contra el celular y en un celular
 tools/e2e/julep/online.mjs   Sala de tres celulares contra Firebase
 ```
+
+Gancho de pruebas (C-14): `window.__julepe` (`view`, `match`, `session`).
+
+## Excepciones a los cánones
+
+Ninguna. Las cartas no salen de la semilla (C-7) a propósito: van en sobres cerrados y se verifican al cerrar la mano, que es como se cumple C-10 cuando el secreto hay que entregarlo (ver “De dónde salen las cartas”).

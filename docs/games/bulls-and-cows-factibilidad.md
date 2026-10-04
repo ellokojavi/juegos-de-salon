@@ -1,8 +1,10 @@
 # Toque y Fama: estudio de factibilidad y propuesta de mecánica
 
+> **Documento histórico** (2026-09-08): es el estudio previo a construir el juego y no se mantiene al día. Lo vigente está en [bulls-and-cows.md](bulls-and-cows.md) (D-213).
+
 **Estado:** aprobado e implementado (v0.4) · **Fecha:** 2026-09-08 · **Autor:** equipo del proyecto
 
-> Nota de implementación: el sorteo verificable de quién parte (§4.2) se reemplazó por una regla determinista (parte el invitado; en la revancha, el perdedor). Ver decisión D-19. El compromiso usa una sal privada además del hash (D-21). La especificación vigente está en [toque-y-fama.md](bulls-and-cows.md).
+> Nota de implementación: el sorteo verificable de quién parte (§4.2) se reemplazó por una regla determinista (parte el invitado; en la revancha, el perdedor). Ver decisión D-19. El compromiso usa una sal privada además del hash (D-21). La especificación vigente está en [bulls-and-cows.md](bulls-and-cows.md). Después de este estudio, el modo contra el celular se reemplazó por jugar solo (D-129, D-142), los transportes se movieron a `public/assets/js/transport/` (Batalla Naval, BN-10) y los textos llegaron a es, en, pt y de.
 
 ## 1. Resumen
 
