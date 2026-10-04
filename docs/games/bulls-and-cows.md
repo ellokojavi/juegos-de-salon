@@ -29,15 +29,18 @@ Hasta D-142 el modo solo pasaba por el reductor con un bot B que elegía el núm
 configurables, intentos ilimitados y récord por menos intentos (D-129). Ahora es exactamente el
 minijuego 🔢 de La Copa, con sus reglas, su pantalla y su puntaje, pero en el idioma de quien juega:
 
-- **Reglas:** 4 cifras distintas, puede empezar con cero, 10 intentos. Puntaje de 0 a 100: 100 al
-  primer intento y 10 menos por cada uno más; 0 si no lo saca (`public/cup/games/number/engine.js`).
+- **Reglas:** 4 cifras distintas, puede empezar con cero, 10 intentos. Puntaje de 0 a 100: parte
+  en 100 y cada intento que las pistas ya descartaban —uno que, con lo respondido hasta ahí, no
+  podía ser el secreto— resta 15, con mínimo 10 si lo saca; 0 si no lo saca (D-197,
+  `public/cup/games/number/engine.js`). Terminado el tablero, esos intentos llevan ⚠️ y una línea
+  debajo lo explica; mientras se juega no se marca nada, porque sería soplar.
 - **Número:** sale de un código de 5 letras al azar (`codigoAlAzar` de `public/cup/engine.js`) con
   `numero.generar(codigo, 1)`. No hay secreto que guardar ni que verificar.
 - **Pantallas:** una previa con “Cómo se juega” (3 puntos), cómo se calcula el puntaje, el récord y
   Empezar; la del juego (`#screen-solo`) con el título y el reloj arriba y `ui-numero` montado por
   `jugarSolo` (el reloj solo corre con la pantalla visible, D-95, y se detiene al terminar el
   tablero); y el resultado propio: puntaje X/100, intentos y tiempo, récord, número secreto, la
-  tarjeta de emojis (🟢 fama, 🟡 toque, ⚪ nada; con más de 5 intentos va en dos columnas para que
+  tarjeta de emojis (🟢 fama, 🟡 toque, ⚪ nada; desde 3 intentos va en dos columnas para que
   los botones se vean sin desplazar en 812 px), el repaso colapsado y Jugar otra vez, Cambiar modo
   y Volver al menú. Confeti y sonido de victoria si lo saca; sonido de tiempo si no.
 - **Textos:** los de `LOCALES` del juego. `ui-numero` lee `solved`, `notSolved`, `triesLeft`,
@@ -47,6 +50,9 @@ minijuego 🔢 de La Copa, con sus reglas, su pantalla y su puntaje, pero en el 
   `createSessionStore`, al empezar, tras cada intento o nota y al ocultar la pantalla. Al retomar se
   vuelve a montar con las jugadas y el tiempo. Una partida guardada del solo viejo (con `messages`
   y sin `codigo`) no se ofrece.
+- **Resultado:** bajo "Usaste N intentos y el reloj marcó T" va, en letra chica, cuántos intentos
+  estaban descartados y cuántos puntos restaron. La tarjeta de emojis va en dos columnas desde 3
+  intentos (antes, desde 6), para que esa línea no empuje los botones fuera de pantalla (C-8).
 - **Récord:** el mejor `{ s, ms }` en `juegos-de-salon:toque-y-fama:record-solo` (`crearRecord`):
   más puntos y, a igualdad, menos tiempo. Un 0 no se anota. La clave vieja (`…:record`, por
   intentos) queda sin uso.

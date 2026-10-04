@@ -265,6 +265,16 @@ const CAMINOS = {
       `document.getElementById('btn-fin').click()`,
       `1`, `1`, `1`, `1`,   // que pase el confeti
     ],
+    // El mismo resultado con un intento regalado: repite el primero, que las pistas ya descartaban (D-197)
+    'solo-descarte': [
+      `document.querySelectorAll('.mode')[2].click()`,
+      `document.getElementById('btn-solo-empezar').click()`,
+      `(async()=>{const m=await import('../cup/games/number/engine.js');const s=m.generar(__tyf.guardada().codigo,1).secreto;
+        const probar=n=>{for(const d of n)[...document.querySelectorAll('.screen.active .keypad button')].find(x=>x.textContent===d).click();document.querySelector('.screen.active .keypad .ok').click()};
+        const a=s==='0123'?'4567':'0123';probar(a);probar(a);probar(s);})()`,
+      `document.getElementById('btn-fin').click()`,
+      `1`, `1`, `1`, `1`,
+    ],
   },
   /**
    * Línea de Tiempo jugando solo: la ⏳ Línea Relámpago de La Copa (D-142). Para el resultado

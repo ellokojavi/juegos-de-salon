@@ -36,15 +36,25 @@ export function pistas(el, g, largo, grande = false, completa = grande, TYF = ty
 /**
  * El tablero de intentos de Toque y Fama, de un solo jugador. `valor` dibuja el intento.
  * Las pistas van completas; Letras las abrevia porque sus letras de colores no dejan espacio.
+ *
+ * Con `marcar` cada intento que las pistas ya descartaban lleva ⚠️ y `nota` lo explica debajo
+ * (D-197). Solo se marca con el tablero terminado: avisarlo mientras se juega sería soplar que
+ * ese número no puede ser el secreto.
  */
-export function tablero(el, { filas, largo, titulo, valor = f => f.v, completa = true, lang }) {
+export function tablero(el, { filas, largo, titulo, valor = f => f.v, completa = true, lang, marcar = false, nota = '' }) {
   const TYF = tyf(lang);
   const tries = n => (n === 1 ? TYF.tryOne : TYF.tryMany);
-  const lista = el('ol', {}, ...filas.map(f => el('li', { class: f.famas === largo ? 'hit' : '' }, valor(f), pistas(el, f, largo, false, completa, TYF))));
+  const fuera = marcar && filas.some(f => f.descartado);
+  const fila = f => {
+    const clue = pistas(el, f, largo, false, completa, TYF);
+    if (marcar && f.descartado) clue.prepend(el('span', { class: 'd', title: nota }, '⚠️'));
+    return el('li', { class: [f.famas === largo ? 'hit' : '', marcar && f.descartado ? 'out' : ''].filter(Boolean).join(' ') }, valor(f), clue);
+  };
   return el('div', { class: 'board turn board--solo' },
     el('h3', {}, titulo),
     el('div', { class: 'count' }, filas.length ? `${filas.length} ${tries(filas.length)}` : TYF.noGuesses),
-    filas.length ? lista : el('div', { class: 'empty' }, '—'));
+    filas.length ? el('ol', {}, ...filas.map(fila)) : el('div', { class: 'empty' }, '—'),
+    fuera && nota ? el('p', { class: 'board-note' }, nota) : null);
 }
 
 export function montar(raiz, ctx) {
@@ -82,11 +92,14 @@ export function montar(raiz, ctx) {
         }),
         el('p', { class: 'block-hint' }, T.blockHintDigits)); // "tachar", como en Palabra y en las reglas (U-5)
     }
-    caja.append(tablero(el, { filas: e.filas, largo: p.cifras, titulo: T.yourGuesses, lang, valor: f => el('span', { class: 'val' }, f.v) }));
+    caja.append(tablero(el, {
+      filas: e.filas, largo: p.cifras, titulo: T.yourGuesses, lang, valor: f => el('span', { class: 'val' }, f.v),
+      marcar: e.fin, nota: fmt(TYF.discardedNote, { c: motor.PENA_DESCARTE }),
+    }));
     if (ctx.cierreAbajo) caja.append(...cierre);
     raiz.append(caja);
   };
   dibujar();
 }
 
-export const resultado = (e, max = motor.MAX_INTENTOS) => ({ s: motor.puntaje(e, max), t: motor.tarjeta(e), resumen: `${motor.puntaje(e, max)}/100` });
+export const resultado = e => ({ s: motor.puntaje(e), t: motor.tarjeta(e), resumen: `${motor.puntaje(e)}/100` });

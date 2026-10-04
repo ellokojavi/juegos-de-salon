@@ -2935,3 +2935,38 @@ Ver todos") se queda pegada arriba, con fondo oscuro desenfocado que tapa tambi�
 muesca. Tocar un tipo estando pegada lleva la lista filtrada a su primera tarjeta, justo debajo.
 **Por qué:** lo pidió el dueño. Sin esto, cambiar de tipo desde abajo obligaba a subir, y al
 filtrar a media lista se quedaba mirando el medio de una lista más corta.
+
+## D-197 · Toque y Fama: los 100 puntos son de quien deduce, no de quien tiene suerte
+**Fecha:** 2026-10-04 · **Estado:** vigente; reemplaza la regla de puntaje de D-113 para el 🔢 y
+alcanza también su ronda de La Gran Final
+**Decisión:** El minijuego 🔢 "Toque y Fama: adivina el número" (y el modo de jugar solo, que es
+el mismo, D-142) parte en 100 puntos y resta 15 por cada intento que **las pistas ya descartaban**:
+un número que, con lo respondido hasta ahí, no podía ser el secreto. Sacándolo, el puntaje nunca
+baja de 10; sin sacarlo son 0, como antes. Los intentos a secas no restan nada.
+- **Cómo se mide** (`public/cup/games/number/engine.js`): un intento es posible si contra cada
+  intento anterior da justo las famas y los toques que ese intento recibió. No se mira el número
+  secreto: `score` es simétrico, así que comparar el intento nuevo contra los viejos es lo mismo
+  que filtrar los 5040 candidatos. Repetir un intento también está descartado.
+- **Se avisa al final, nunca antes**: mientras se juega, el tablero no marca nada; marcarlo sería
+  soplar que ese número no puede ser el secreto. Terminado el tablero, cada fila descartada lleva
+  ⚠️ y una línea debajo lo explica; el desglose (D-106) lo pone en la cuenta y el resultado del
+  modo solo lo resume en una línea.
+- **La tarjeta de emojis no cambia** (D-165): sigue siendo 🟢🟡⚪ por intento.
+**Por qué:** con la regla de D-113 (100 al primer intento, 10 menos por cada uno más) el 100 era
+1 en 5040 de suerte, porque el primer intento no tiene ninguna pista. Simulando los 5040 secretos,
+un jugador fuerte (minimax) necesita 5,4 intentos en promedio y 7 en el peor caso: su techo real
+era 60, el mismo puntaje que el de quien tira al aire y tiene suerte. El minijuego dice que la
+habilidad es **deducir**, y ahora eso es lo que se mide.
+**El tope de 10 intentos alcanza:** jugando siempre un número posible se saca en 10 intentos o
+menos *siempre* (el peor de los 5040 pide exactamente 10, y es uno solo), así que la regla no deja
+a nadie afuera del 100 por mala suerte.
+En la ronda del número de La Gran Final (3 cifras, 7 intentos) eso no está garantizado: jugando
+coherente pero eligiendo mal se puede pasar de 7 y quedar en 0, igual que antes de este cambio.
+**Alternativas descartadas:** una meseta de intentos (100 hasta el quinto, menos después) premiaba
+la suerte igual que la deducción; una mezcla 70/30 entre deducir y rapidez pedía dos frases de
+puntaje (U-18); el crédito parcial por famas al estilo de Palabra (D-108) y la apertura regalada
+quedaron para más adelante, si hace falta.
+**Consecuencias:** el 100 se amontona entre quienes juegan limpio, y en la copa los desempata el
+tiempo, que ya se guardaba (`tabla` en `public/cup/engine.js`). Un intento de sacrificio —el que
+los expertos usan para sacar información sabiendo que no puede ser el número— pasa a costar 15;
+con 10 intentos nunca hace falta. Las copas ya jugadas guardan su puntaje tal como se calculó.

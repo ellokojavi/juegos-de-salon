@@ -31,7 +31,7 @@ export function generar(codigo, dia, { lang = 'es', palabras = lang, aud = null 
 /** De 0 a 100 por ronda, a partir del estado de cada motor. */
 export const puntosRonda = {
   linea: e => Math.round((100 * e.aciertos) / e.marcas.length || 0),
-  numero: e => (e.resuelto ? Math.max(10, 100 - 15 * (e.usados - 1)) : 0),
+  numero: e => numero.puntaje(e), // la misma regla del día: los intentos descartados restan (D-197)
   reinas: e => (e.fin && !e.rendido ? 100 : 0), // sin castigo por error (D-107); el tiempo de la final desempata
   letras: e => letras.puntaje(e), // las mismas famas y el mismo bono del día (D-108)
   anio: e => Math.round(e.total / e.filas.length || 0),
