@@ -14,7 +14,7 @@ export const POP = [
   { id: 'pop-psicosis', year: 1960, emoji: '🚿', es: 'Hitchcock estrena Psicosis', en: 'Hitchcock releases Psycho', pt: 'Hitchcock lança Psicose', de: 'Hitchcock bringt Psycho ins Kino' },
   { id: 'pop-2001', year: 1968, emoji: '🛰️', es: 'Se estrena 2001: Odisea del espacio', en: '2001: A Space Odyssey premieres', pt: 'Estreia 2001: Uma Odisseia no Espaço', de: '2001: Odyssee im Weltraum kommt ins Kino' },
   { id: 'pop-sesamo', year: 1969, emoji: '🧸', es: 'Debuta Plaza Sésamo', en: 'Sesame Street premieres', pt: 'Estreia Vila Sésamo nos Estados Unidos', de: 'Die Sesamstraße startet in den USA' },
-  { id: 'pop-pong', year: 1972, emoji: '🏓', es: 'Pong inaugura los videojuegos en los bares', en: 'Pong brings video games to the bar', pt: 'Pong leva os videogames para os bares', de: 'Pong bringt Videospiele in die Kneipe' },
+  { id: 'pop-pong', year: 1972, emoji: '🏓', es: 'Pong inaugura los videojuegos en los bares', en: 'Pong brings video games to the bar', pt: 'Pong leva os videogames para os bares', de: 'Pong bringt Videospiele in die Bars' },
   { id: 'pop-rubik', year: 1974, emoji: '🧩', es: 'Se inventa el cubo Rubik', en: 'The Rubik’s Cube is invented', pt: 'É inventado o cubo mágico', de: 'Der Zauberwürfel wird erfunden' },
   { id: 'pop-tiburon', year: 1975, emoji: '🦈', es: 'Tiburón inventa el éxito de verano', en: 'Jaws invents the summer blockbuster', pt: 'Tubarão inventa o blockbuster de verão', de: 'Der weiße Hai erfindet den Sommer-Blockbuster' },
   { id: 'pop-star-wars', year: 1977, emoji: '🌌', es: 'Se estrena La Guerra de las Galaxias', en: 'Star Wars hits cinemas', pt: 'Star Wars chega aos cinemas', de: 'Krieg der Sterne kommt ins Kino' },
