@@ -181,6 +181,11 @@ export function createFirebaseStore() {
       await escribir({ [`torneos/${code}/meta/name`]: name }, 'terminada');
     },
 
+    /** El país de un jugador inscrito antes de que se guardara (D-209): solo el suyo y una vez. */
+    async ponerPais(code, pid, co) {
+      await escribir({ [`torneos/${code}/players/${pid}/co`]: co });
+    },
+
     async renombrar(code, pid, name) {
       await escribir({ [`torneos/${code}/players/${pid}/name`]: name });
     },

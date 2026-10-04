@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.99.1 — 2026-10-04
+- **Panel: la bandera junto a cada nombre** (D-209), también en "va primero", en los retirados y
+  en la historia de una copa. Quien se inscribió antes de que La Copa guardara el país lo anota
+  solo la próxima vez que abre su copa.
+- Panel: los juegos de La Copa jugados sueltos salen con su nombre, no con su clave.
+
 ## 0.99.0 — 2026-10-04
 - **El panel se navega** (D-207): cuatro secciones —Ahora, La Copa, Juegos, Audiencia— y una ficha
   por cada copa, juego y sala. La de una copa trae la tabla completa, una grilla de cada jugador

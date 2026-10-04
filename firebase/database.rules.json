@@ -333,6 +333,7 @@
               ".validate": "newData.isBoolean()"
             },
             "co": {
+              ".write": "auth != null && $code.matches(/^[A-HJ-NP-Z]{5}$/) && $pid.matches(/^[a-z0-9]{6}$/) && !data.exists() && root.child('torneoSeats/' + $code + '/' + $pid + '/' + auth.uid).exists()",
               ".validate": "newData.isString() && newData.val().matches(/^[A-Z]{2}$/)"
             },
             "$other": {
