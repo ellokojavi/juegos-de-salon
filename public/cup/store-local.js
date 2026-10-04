@@ -226,6 +226,13 @@ export function createLocalStore({ uid = null } = {}) {
       });
     },
 
+    async ponerPais(code, pid, co) {
+      return cambiar(db => {
+        const p = copa(db, code).players[pid];
+        if (p && !p.co) p.co = co;
+      });
+    },
+
     async renombrar(code, pid, name) {
       return cambiar(db => {
         const L = copa(db, code);

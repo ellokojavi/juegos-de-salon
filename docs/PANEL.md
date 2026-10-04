@@ -39,8 +39,8 @@ día UTC y se rotulan así; la hora del gráfico de audiencia es la local del ce
 
 **Cada nombre lleva la bandera de su país.** En las salas sale de `co` (D-79). En La Copa, de
 `co` en `torneos/<código>/players/<pid>`, que la copa guarda al crear o inscribirse desde esta
-versión (del huso horario del celular, como en las salas); quien se inscribió antes va sin
-bandera. Los reportes 🐞 lo llevan en su contexto (`pais`).
+versión (del huso horario del celular, como en las salas); quien se inscribió antes lo anota
+solo la próxima vez que abre su copa (D-209). Los reportes 🐞 lo llevan en su contexto (`pais`).
 
 **Las copas de prueba no se ocultan**: ya se parecen a las reales. Salen con las demás, con la
 etiqueta "laboratorio" donde corresponde, y con un filtro para verlas solas.
