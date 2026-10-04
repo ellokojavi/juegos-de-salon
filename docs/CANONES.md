@@ -28,7 +28,7 @@ en minúsculas y con guiones (`public/hangman/` → `/hangman/`, D-192), y siemp
 public/<carpeta>/
   index.html      Pantallas como <section class="screen">, barra superior, contenedores #handoff y #cover
   style.css       Solo lo específico del juego
-  rules.js        GAME_ID, DEFAULT_CONFIG y LOCALES = { es, en, pt }. Datos, sin lógica ni DOM
+  rules.js        GAME_ID, DEFAULT_CONFIG y LOCALES = { es, en, pt, de }. Datos, sin lógica ni DOM
   engine.js       Reglas puras, sin DOM ni estado global. Testeable con node
   engine.test.mjs Tests del motor (node public/<carpeta>/engine.test.mjs)
   game.js         Máquina de estados y render. Lo único que toca el DOM
@@ -41,7 +41,8 @@ public/<carpeta>/
 - Los juegos de La Copa siguen la misma idea en `public/cup/games/<carpeta>/`: `engine.js`
   (reglas puras), `ui.js` (pantalla) y sus datos propios; lo común a todos queda en `games/`.
 - El juego se registra en `public/assets/js/games.js` con `id`, `emoji`, `name` y `tagline` por idioma, `players`, `duration`, `path` y `available`. Con sala, también `jugadas`: los tipos de mensaje que hace una persona, que es lo que el panel cuenta como jugadas (D-138).
-- Sus módulos entran solos al import map: al publicar, `set-version.py` recorre el sitio (C-11, D-192, D-205).
+- Las páginas en git no llevan import map: lo escribe `set-version.py` solo en la copia que se publica,
+  recorriendo todos los módulos del sitio, así que los de un juego nuevo entran solos (C-11, D-192, D-205).
 - Reutilizar siempre los módulos compartidos antes de escribir uno nuevo:
   `public/assets/js/ui.js` (DOM, confeti, vibración, wake lock), `i18n.js`, `sound.js`, `session.js`, `handoff.js`, `transport/`.
 
@@ -80,7 +81,9 @@ Un juego para dos personas ofrece los tres modos, en este orden en la intro:
 2. **📡 Dos celulares** (sala con código de 4 letras y QR).
 3. **Un jugador**: **🤖 Contra el celular** cuando el juego tiene información oculta que le da sentido a una IA (Batalla Naval, Dudo), o **🧍 Jugar solo** con puntaje y récord cuando un rival de máquina no agrega nada (Línea de Tiempo, ver D-27; Toque y Fama, ver D-129). La tarjeta del menú dice "1–N jugadores".
 
-Un modo que todavía no existe se muestra deshabilitado con "Próximamente", nunca se oculta.
+Un juego de grupo (más de dos) elige si se ofrece en un celular, en varios o en los dos; lo que
+no ofrece no se muestra (D-213). "Próximamente", deshabilitado y a la vista, es solo para un
+modo que el juego piensa tener.
 
 ## C-6 · Memoria de partida (obligatorio en todos los modos)
 
@@ -100,14 +103,20 @@ Un modo que todavía no existe se muestra deshabilitado con "Próximamente", nun
 
 - El estado de una partida se deriva de una **lista de mensajes** (`view()`), nunca de variables sueltas de turno. Así la reconexión es "volver a leer los mensajes".
 - Los mensajes se procesan en serie; los duplicados y los fuera de turno se descartan en el reductor.
+- **Lo que se reparte sale de la semilla:** cartas, palabras y todo lo repartible se derivan de la
+  semilla compartida que va en la lista de mensajes, así cada celular llega al mismo reparto sin
+  mandarlo. La excepción es lo oculto que nadie debe poder calcular con el código, que es público: los
+  dados de Dudo van comprometidos con hash y sal (D-70) y las manos de Julepe en sobres cerrados
+  (D-81). Ver C-10.
 - Todos los modos usan la misma lógica: cambia el transporte, no el juego.
   `public/assets/js/transport/local.js` (mismo dispositivo, también para la IA) y `firebase.js` (sala remota).
 - Interfaz del transporte: `create`, `join`, `send`, `onMessage`, `onPresence`, `leave`, `dispose`.
 - **Campos reservados del transporte:** `from`, `at` (marca de tiempo) e `id`. Un juego que necesite enviar una posición o una cantidad usa otro nombre, o el transporte se lo pisará sin avisar.
+- **Firebase no guarda una lista vacía:** el campo simplemente no queda. Una lista que puede ir vacía viaja como texto (`"1,4,8"`, o `""`) y el motor la lee aceptando la cadena, la lista cruda del transporte local y el campo ausente (D-60).
 - Salas: código de 4 letras mayúsculas sin I ni O, QR con `?sala=CÓDIGO`, campo `game` para separar juegos, caducidad de media hora sin jugadas y de 6 horas en total (D-89). Roles de A a F (hasta seis jugadores).
 - **Antes de tocar la sala se espera la conexión.** Crear o entrar espera a `.info/connected` (8 s) y corre con tope (12 s), y el tope de salas por celular se revisa antes de la red (`errors.js`, `ratelimit.js`). Sin eso, quedarse sin señal se ve como un botón pegado para siempre.
 - **Un celular no puede abrir salas sin parar:** 20 por hora y 80 por día (D-41). El tope está sobre el uso legítimo más intenso, no sobre el promedio, porque la revancha abre sala nueva. Si `localStorage` falla, se deja crear: bloquear a un jugador legítimo es peor que dejar pasar a un abusivo.
-- **Cada partida deja una señal de uso para el panel del dueño** (`public/assets/js/transport/stats.js`, D-44). El transporte apunta las salas solo; los modos sin red llaman `trackStart({ game, mode, players })` al empezar (no al retomar). Es un `fetch` por REST, sin SDK, mejor esfuerzo: nunca se espera ni se muestra. De los modos sin red no sale ningún nombre, y nunca sale un secreto, el chat ni una IP. De una **sala** quedan además el país del celular y quién ganó, que es lo que el panel muestra como bitácora (D-79). Una partida sin red se ve en vivo en el panel porque `trackStart` le arranca un latido (D-140): el juego no tiene que hacer nada más.
+- **Cada partida deja una señal de uso para el panel del dueño** (`public/assets/js/transport/stats.js`, D-44). El transporte apunta las salas solo; los modos sin red llaman `trackStart({ game, mode, players })` al empezar (no al retomar) y `trackFinish({ ganador, empate, detalle })` al terminar. Es un `fetch` por REST, sin SDK, mejor esfuerzo: nunca se espera ni se muestra. Un modo sin red manda quién juega —los nombres que la partida ya tiene (`nombres` en `trackStart`) o, si no hay, el último que la persona escribió en la app (`nombreDelCelular`)— y cómo terminó, una sola vez (D-210), además del idioma elegido en la app (D-211). Nunca sale un secreto, el chat ni una IP. De una **sala** quedan además el país del celular y quién ganó, que es lo que el panel muestra como bitácora (D-79). Una partida sin red se ve en vivo en el panel porque `trackStart` le arranca un latido (D-140): el juego no tiene que hacer nada más.
 - **Irse a propósito cierra la sala.** `leave()` suelta los oyentes y deja la sala esperando; `dispose()` es la despedida: escribe `left` en el rol y borra la sala si con eso no queda nadie adentro (`public/assets/js/transport/dispose.js`, D-50). Lo llaman el botón de cancelar o salir de la sala del lobby, el de cambiar de modo al final y el cambio a la sala de la revancha. **Cerrar la pestaña o quedarse sin señal no es irse:** eso solo apaga `online`, porque esa partida se puede retomar (C-6), así que nada de esto cuelga de `pagehide`. Nunca lanza, lleva tope corto y, si falla, la sala queda marcada y la borra la papelera.
 - **Las salas vencidas se borran solas.** Al crear o entrar a una sala, el celular la apunta en la papelera (`cleanup/days/<día>`) y de vez en cuando barre los días pendientes borrando lo vencido (`public/assets/js/transport/cleanup.js`, D-39). Nada de esto se le muestra al jugador ni puede voltear una partida: si falla, barre el celular siguiente.
 - Con más de dos jugadores, el reparto de roles es una carrera: se escribe el rol con un identificador de dispositivo y se relee para confirmar quién lo obtuvo. Nunca se asume que el primer rol libre que se leyó sigue libre.
@@ -121,8 +130,9 @@ Un modo que todavía no existe se muestra deshabilitado con "Próximamente", nun
 ## C-8 · Interfaz táctil
 
 - Objetivos táctiles de 44 px como mínimo; los controles pequeños llevan área táctil ampliada invisible.
+- `.app` mide `calc(100svh - muescas)`, el alto chico de la pantalla, no `100dvh`: lo que se apoya abajo tiene que verse también cuando el navegador muestra toda su interfaz. Se revisa con `node tools/e2e/mirar.mjs <juego> <pantalla> --muescas` (D-77).
 - Las acciones irreversibles se confirman: seleccionar y luego confirmar (por ejemplo elegir casilla y tocar "¡Fuego!").
-- **Nada se preselecciona.** La app no elige por el jugador: sin selección explícita, el botón de confirmar va deshabilitado. En una lista que se desplaza, un toque puede irse en scroll y no llegar nunca; si había algo preseleccionado, el jugador termina confirmando lo que no eligió (D-38).
+- **Nada se preselecciona** en una jugada que se confirma. La app no elige por el jugador: sin selección explícita, el botón de confirmar va deshabilitado. En una lista que se desplaza, un toque puede irse en scroll y no llegar nunca; si había algo preseleccionado, el jugador termina confirmando lo que no eligió (D-38). Un ajuste de la partida sí puede venir con un valor por defecto, si se ve y se puede cambiar antes de empezar (D-213).
 - El botón que confirma **dice sobre qué actúa** ("Colocar aquí · 🔍 Se funda Google"), no solo la acción.
 - Nada importante bajo la línea de flotación en un celular de 812 px: los botones de la pantalla final deben verse sin desplazar.
 - Si una lista puede crecer sin límite, el botón de confirmar va flotando (`position: sticky; bottom: 0`) con un degradado detrás, nunca al final del contenido.
@@ -131,9 +141,13 @@ Un modo que todavía no existe se muestra deshabilitado con "Próximamente", nun
 - Las etiquetas de una grilla (letras, números) van **dentro** de la misma grilla CSS, como una fila y una columna más; nunca en un contenedor aparte que se alinea "a ojo", porque cada navegador lo estira distinto (pasó en Safari con Batalla Naval).
 - Se respeta `prefers-reduced-motion`.
 - Un toque fuera de un elemento seleccionado lo deselecciona.
+- **De quién es el turno se ve sin leer** (D-92): con señales redundantes —el color y la forma de la barra de estado o el asiento encendido, lo tocable vivo y lo ajeno apagado—, un toque fuera de turno que responde (C-8b) y, al llegar el turno, `SFX.turn()` con vibración.
 - **Arrastrar es elegir, nunca confirmar** (D-85). Donde haya arrastre, soltar deja la jugada
   elegida y la acción irreversible sigue colgando del botón que la nombra; el camino de toques
   queda intacto, y el gesto sale de `public/assets/js/arrastre.js`, no de una implementación propia.
+  El navegador no se lo puede llevar: `overscroll-behavior: none` en `<html>` y `<body>` (que el
+  deslizar para actualizar no recargue la partida) y `touch-action` en toda la zona de arrastre, no
+  solo en cada pieza (D-86). Un gesto nuevo se prueba en un celular de verdad (D-67).
   Lo que se arrastra se dibuja en grande y **por sobre el dedo**: si el texto era chico en la
   lista, arrastrarlo bajo el dedo lo deja igual de ilegible y además tapado.
 - Se muestra en pantalla lo que el jugador necesita recordar (su número secreto, su flota), tapado si el celular pasa de mano.
@@ -143,14 +157,15 @@ Un modo que todavía no existe se muestra deshabilitado con "Próximamente", nun
 - Un error se muestra con una señal inconfundible (color, sacudida, sonido propio) y se queda en pantalla hasta que el jugador toca; nunca se cierra solo ni lo pisa la jugada de otro.
 - Esa señal es **para quien se equivocó**. A los demás el mismo hecho les llega como noticia, en tercera persona y sin el fondo rojo: “¡Cata se equivocó!”, no “¡Te equivocaste!” (D-36).
 - Va acompañado de una explicación corta y concreta de qué estuvo mal, con los datos del juego (por ejemplo, entre qué hitos iba la carta y entre cuáles se puso).
-- Un acierto o la jugada de otro puede cerrarse solo tras un par de segundos; un toque lo cierra antes.
+- Un acierto o la jugada de otro puede cerrarse solo tras un par de segundos, si después no viene un pase de celular; un toque lo cierra antes. Si viene un pase, manda C-9 (D-213).
 - El temporizador que cierra un aviso solo puede cerrar ese aviso, no uno más nuevo.
+- **Excepción, cuando errar es la jugada normal** (D-56): en El Ahorcado, una letra que no está no abre un aviso que haya que cerrar en los modos donde el celular no cambia de mano; se señala por cuatro canales (color, sacudida, sonido y el dibujo que avanza) y el juego sigue. El veredicto de la ronda sí se queda hasta que el jugador toque.
 
 ## C-9 · Transiciones de "pasar el celular"
 
 - En modo un celular, entre turnos siempre hay: **resultado de lo que acaba de pasar** y, debajo, **"Pásale el celular a X"** con un botón. Nunca se salta el resultado.
 - Se usa `public/assets/js/handoff.js` (`showHandoff`, `passBlock`, `showCover`), no una implementación propia.
-- Cuando hay un botón de pase, solo el botón avanza: un toque accidental no puede cerrar la pantalla antes de leerla.
+- Cuando hay un botón de pase, solo el botón avanza: un toque accidental no puede cerrar la pantalla antes de leerla. El resultado se queda hasta el botón; nada lo cierra con un temporizador (D-213).
 - La información secreta se tapa con `showCover` antes de que el siguiente jugador mire.
 
 ## C-10 · Anti-trampa
@@ -161,6 +176,7 @@ Cuando cada dispositivo guarda un secreto (un número, una flota):
 - Al terminar se revelan los secretos y cada dispositivo verifica el hash **y** recalcula todas las respuestas dadas por el rival.
 - El resultado se muestra al jugador: "verificado ✅" o "⚠️ no coincide".
 - El secreto nunca viaja por la red durante la partida.
+- **Lo oculto que sí tiene que viajar** no sale de la semilla (C-7): los dados se tiran en cada celular y se publica `sha256(dados + sal)`, que se verifica al destapar (D-70); un reparto se cierra por jugador, con la llave pública de cada uno (`public/assets/js/sobre.js`), y al cerrar la mano cada uno destapa lo suyo para verificarlo contra lo jugado (D-81).
 
 ## C-11 · Publicación y versionado
 
@@ -191,7 +207,9 @@ Cuando cada dispositivo guarda un secreto (un número, una flota):
 
 Con cada juego o cambio relevante se actualiza:
 
-- `docs/games/<carpeta>.md`: reglas, modos, flujo, protocolo de mensajes, archivos.
+- `docs/games/<carpeta>.md`: la especificación, con estas secciones en este orden: Resumen,
+  Reglas, Modos, Flujo, Protocolo de mensajes, Archivos y Excepciones a los cánones (D-213). Lo que
+  un juego necesite además va en una sección propia. Los juegos de La Copa viven en `cup.md`.
 - `docs/REQUERIMIENTOS.md`: requerimientos con prefijo propio y estado.
 - `docs/DECISIONES.md`: una decisión numerada (D-n) por cada elección no obvia, con su porqué y sus consecuencias.
 - `README.md`: sección del juego con capturas, **en inglés** (ver abajo).
@@ -219,6 +237,8 @@ El README no se mantiene a pulso: `python3 tools/release/readme.py` lo sostiene.
   de qué toma sale cada imagen, y `capturas <seccion>` las rehace. Una pantalla nueva en el
   README es una toma nueva en el guion, no un recorte a mano. Se miran antes de publicar
   (C-12) y se guardan al doble del ancho con que se muestran.
+- Una captura atrasada es un aviso en un PR cualquiera, no lo frena. Solo "actualiza el README"
+  exige dejarlas todas al día (D-213).
 
 Lo que se atrasa igual lo recoge el agente `documentacion` (D-172): una ronda diaria sobre lo que
 entró a `main` y una revisión de cada PR antes de proponer su fusión, con
@@ -229,11 +249,12 @@ regla: quien cambia algo lo documenta en su mismo PR.
 
 - Nada de dependencias de npm ni de paso de compilación: el repo publicado se abre y funciona.
 - Las bibliotecas externas (QR) se cargan bajo demanda y su falla no rompe la pantalla.
-- Cada juego expone un gancho de solo lectura (`window.__<id>`) para las pruebas automatizadas.
+- Cada juego expone un gancho de solo lectura `window.__…` para las pruebas automatizadas, nombrado en la especificación del juego (D-213).
 - La pantalla no se apaga jugando (`keepAwake()`).
 - Los errores previsibles se muestran al jugador en su idioma, con una salida clara; nunca una pantalla en blanco.
 - **El mensaje no inventa la causa.** Si desde el navegador no se puede distinguir entre dos causas (quedarse sin señal y toparse con el tope de conexiones se ven igual), el texto las nombra a las dos en vez de elegir una. Precisión falsa es peor que vaguedad honesta (D-40).
 - Los errores del transporte se traducen con `errText`/`failWith` de `public/assets/js/transport/errors.js`, nunca con un mapa propio en cada juego.
+- **Un reintento nunca traba** (U-22, D-123): si una escritura que se hace una sola vez choca al reintentar, primero se mira si la anterior llegó (aunque el celular haya mostrado error); si llegó, se sigue como si hubiera salido bien.
 - **A la consola solo va lo inesperado.** Un error previsto que ya se le mostró al jugador no se registra: si la consola se llena de fallas normales, "consola sin errores" deja de servir como criterio (C-12).
 
 ## C-15 · Chat de sala
@@ -290,7 +311,7 @@ como un error: se lee como que nadie jugó.
 
 ## Lista de chequeo antes de dar por listo un juego
 
-- [ ] Los tres modos funcionan y la partida se puede retomar en **todos** (C-5, C-6).
+- [ ] Los modos que ofrece (los tres, si es para dos) funcionan y la partida se puede retomar en **todos** (C-5, C-6).
 - [ ] Las instrucciones siguen U-18: la meta primero, a lo más 3 puntos, sin repetir el dibujo de ejemplo (C-1).
 - [ ] Todo el texto está en español, inglés, portugués y alemán (el de `IDIOMAS`, también el del laboratorio), con las mismas claves en todos, sin cadenas sueltas en el código (C-3, D-191).
 - [ ] Sus pantallas están en `tools/e2e/caminos.mjs` y su `idiomas.mjs` pasa en todos los idiomas (C-12, D-199).
@@ -301,9 +322,10 @@ como un error: se lee como que nadie jugó.
 - [ ] Las fallas de sala se ven en pantalla, en todos los idiomas, y la consola queda limpia (C-14).
 - [ ] Tests del motor en verde y partida completa probada en cada modo, con capturas revisadas (C-12).
 - [ ] Entrada con su versión en `CHANGELOG.md`; publicada y comprobada en la URL pública por `publicar.yml` (C-11, D-205).
-- [ ] Si tiene varios celulares, el chat de sala usa el módulo compartido y muere con la partida (C-15).
+- [ ] Si tiene varios celulares, el chat de sala usa el módulo compartido y muere con la sala (C-15).
 - [ ] Lo que comparte (sala, resultado) sale de `compartir.js`, con la cabecera del estándar, y un resultado va con su imagen (C-7, D-165).
-- [ ] Registro en el menú, README, especificación, requerimientos, decisiones y changelog (C-2, C-13).
+- [ ] Registro en el menú, README, especificación, requerimientos y decisiones (C-2, C-13).
+- [ ] Las excepciones a los cánones están escritas en su especificación (C-13).
 - [ ] El panel lo muestra sin haberlo tocado: `node public/panel/adapta.test.mjs` en verde y una mirada a `node tools/e2e/mirar.mjs panel datos` (C-16).
 - [ ] Capturas del README rehechas y miradas, y `python3 tools/release/readme.py revisar` en verde (C-13).
 - [ ] `node tools/agents/documentar.mjs revisar --desde origin/main` sin ✗ nuevos: decisiones, pruebas, guiones y CHANGELOG al día (D-172).
