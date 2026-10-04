@@ -1,7 +1,7 @@
 /**
  * 📍 ¿Dónde queda? — pantalla. Un globo sin nombres (`globo.js`) que se gira sin fin
  * arrastrando, se acerca pellizcando, con doble toque (o con la rueda y los botones + y −) y se
- * gira con dos dedos, como un mapa del celular; la brújula vuelve a poner el norte arriba (D-199). Un
+ * gira con dos dedos, como un mapa del celular; la brújula vuelve a poner el norte arriba (D-200). Un
  * toque pone el alfiler; tocar otra vez lo mueve; el doble toque solo acerca. El alfiler no se
  * arrastra, porque arrastrar ya gira el globo. Confirmar es el botón (C-8). Las jugadas son `[lat, lon]` de cada alfiler confirmado.
  *
@@ -18,7 +18,7 @@ const poner = (nodo, ...hijos) => nodo.append(...hijos.flat().filter(x => x !== 
 const DOBLE_MS = 320;
 const DOBLE_PX = 30;
 /**
- * Cuánto se puede acercar, en veces el globo entero: en un celular, unos 600 m por píxel (D-201).
+ * Cuánto se puede acercar, en veces el globo entero: en un celular, unos 600 m por píxel (D-202).
  * La imagen se ablanda pasado 16 (las teselas dan 1,85 km por píxel, D-160), pero el dedo tiene
  * que poder apuntar dentro de los 25 km del 🎯: a 16, un toque erra por unos 20 km.
  */

@@ -2981,7 +2981,7 @@ CHANGELOG anteriores no se reescriben: cuentan lo que era cierto entonces.
 están en la portada, con sus filtros y su tarjeta, al lado de los otros; llamarlos "mini" los hacía
 parecer menos, y la URL `/minigames/` lo repetía en cada link compartido.
 
-## D-199 · ¿Dónde queda?: el globo se gira con dos dedos y la brújula endereza el norte
+## D-200 · ¿Dónde queda?: el globo se gira con dos dedos y la brújula endereza el norte
 **Fecha:** 2026-10-04 · **Estado:** vigente; complementa D-155
 **Decisión:** Además de arrastrar y pellizcar, dos dedos que giran hacen girar el mapa en torno a
 ellos, como en los mapas del celular. El giro empieza pasados 12° de torsión, para que un pellizco
@@ -2995,7 +2995,7 @@ empieza con el norte arriba.
 polo, o buscando una ciudad en un país largo, uno quiere orientar el mapa a su modo. Es el gesto
 que todos conocen de los mapas (no reinventar, D-102), y la brújula, la forma conocida de volver.
 
-## D-200 · Las teselas satelitales se cortan con PIL, no con sips
+## D-201 · Las teselas satelitales se cortan con PIL, no con sips
 **Fecha:** 2026-10-04 · **Estado:** vigente; corrige D-160
 **Decisión:** `node tools/generators/mapa.mjs satelite` corta las 128 teselas con
 `tools/generators/teselas.py` (PIL, que el repo ya usa en `readme.py`) y no con sips. Las teselas
@@ -3008,7 +3008,7 @@ eso casi todas las teselas quedaron corridas, aunque solo cerca del polo se nota
 **Alternativas descartadas:** seguir con sips esquivando el `0 0` (dar vuelta la imagen, `0.0`):
 probado, y sus cortes en el borde siguen fallando sin avisar.
 
-## D-201 · ¿Dónde queda?: el zoom llega a 64 veces
+## D-202 · ¿Dónde queda?: el zoom llega a 64 veces
 **Fecha:** 2026-10-04 · **Estado:** vigente; cambia el tope de D-159
 **Decisión:** El globo se acerca hasta 64 veces (antes 16): en un celular, unos 600 m por píxel y
 unos 200 km de lado a lado. La respuesta sigue acercando hasta 12.
