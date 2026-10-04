@@ -116,3 +116,4 @@ Ninguna aceptada. Lo que sigue no cumple el canon y **queda pendiente: se lleva 
 - **Los botones de género miden menos de 44 px de ancho** (40 px, 36 px en pantallas angostas) (C-8).
 - **Sin gancho `window.__`** para las pruebas automatizadas (C-14).
 - **Los nombres no usan `createNameStore`** (C-6): se recuerdan en `juegos-de-salon:players` con código propio.
+- **No llama `trackFinish`** al terminar (C-7, D-210): el panel ve que la partida empezó, pero no cómo terminó.
