@@ -447,6 +447,11 @@ How it is put together (canon C-3):
 - **The four dictionaries have exactly the same keys.** `node public/assets/js/i18n.test.mjs` checks
   keys, list lengths, the `{braces}` in templates and that no text is empty. A missing string
   would show up as `undefined` on screen.
+- **Every screen is tested in every language** (D-199). Each game has a
+  `tools/e2e/<folder>/idiomas.mjs` that walks its screens in each language of `LANGS` and compares
+  them with the Spanish ones: nothing left in Spanish, nothing half-built (`undefined`, a
+  `{placeholder}`) and no button that the longer German text pushes off the screen. A new
+  language is tested the day it arrives.
 - Translations are adapted, not copied: in Portuguese the Santiago districts become bairros, the
   dare becomes a prenda and "fondo" becomes "vira, vira, vira".
 - **The language can travel in the link** (D-74): `juegosdesalon.cl/?lang=pt` on any page, or the
@@ -556,7 +561,7 @@ node tools/e2e/mirar.mjs ahorcado resultado --idioma pt
 node tools/e2e/mirar.mjs panel datos --ancho 900
 ```
 
-It takes the screenshot and reports horizontal scroll, buttons under 44 px and anything that falls below the bottom edge, which is what the canon asks you to look at on every screen. The path to each screen is declared at the top of the file: adding one is adding an entry, not writing a new script.
+It takes the screenshot and reports horizontal scroll, buttons under 44 px and anything that falls below the bottom edge, which is what the canon asks you to look at on every screen. The path to each screen lives in `tools/e2e/caminos.mjs`: adding one is adding an entry, not writing a new script, and the screen is then tested in every language too.
 
 To look at **all** the screenshots in this README at once, before publishing them, the contact sheet puts them side by side at the size they will be seen:
 
