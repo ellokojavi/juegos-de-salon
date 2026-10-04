@@ -88,7 +88,8 @@
     import { soundToggle, initSound, SFX } from '../assets/js/sound.js';
     import { JUEGOS_COPA } from '../cup/rules.js';
     import { gameById } from '../assets/js/games.js';
-    import { versionOf } from '../assets/js/transport/stats.js';
+    import { versionOf, trackVisit } from '../assets/js/transport/stats.js';
+    trackVisit(); // el tráfico del sitio (D-208)
     // La versión activa sale del import map que estampa set-version.py: la que de verdad cargó
     document.getElementById('labs-version').textContent = `Versión activa: v${versionOf(document.getElementById('importmap')?.textContent)}`;
     sparkles();

@@ -28,7 +28,7 @@
   <meta name="twitter:image" content="https://juegosdesalon.cl/assets/og/linea-de-tiempo.jpg">
   <meta name="twitter:image:alt" content="Línea de Tiempo: Ubica los hitos en el orden correcto. Seis temáticas, de la historia al fútbol.">
   <!-- /generado -->
-  <script>location.replace('../timeline/' + location.search + location.hash);</script>
+  <script>try { if (sessionStorage.getItem('juegos-de-salon:ref') === null) sessionStorage.setItem('juegos-de-salon:ref', document.referrer); } catch (e) {} location.replace('../timeline/' + location.search + location.hash);</script>
   <noscript><meta http-equiv="refresh" content="0; url=../timeline/"></noscript>
 </head>
 <body>

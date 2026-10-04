@@ -28,7 +28,7 @@
   <meta name="twitter:image" content="https://juegosdesalon.cl/assets/og/letras.jpg">
   <meta name="twitter:image:alt" content="Toque y Fama: Palabra: Adivina la palabra secreta de cinco letras con toques y famas.">
   <!-- /generado -->
-  <script>location.replace('../../word/' + location.search + location.hash);</script>
+  <script>try { if (sessionStorage.getItem('juegos-de-salon:ref') === null) sessionStorage.setItem('juegos-de-salon:ref', document.referrer); } catch (e) {} location.replace('../../word/' + location.search + location.hash);</script>
   <noscript><meta http-equiv="refresh" content="0; url=../../word/"></noscript>
 </head>
 <body>

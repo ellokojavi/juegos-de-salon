@@ -43,6 +43,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | RP-34 | Las explicaciones de todos los juegos (reglas, ayudas, modos, antesalas, Administrar y las frases del menú) son cortas: cada regla se dice una vez por pantalla, con frases completas, y una palabra por concepto: tachar, el celular, jugador, administrador, vidas, sorbos (D-177, U-5, U-8). | ✅ v0.84.0 |
 | RP-35 | Jugar en alemán: toda la experiencia en el idioma elegido, con las mismas claves que los otros tres, primero solo en el laboratorio (`/labs/de/`), con un botón para que quienes lo prueban comenten (D-191). Sale del laboratorio cuando lo revisen hablantes de alemán ([ALEMAN.md](ALEMAN.md)). | 🧪 en el laboratorio |
 | RP-36 | El panel se navega por secciones (Ahora, La Copa, Juegos, Audiencia) con una ficha por copa, juego y sala: la tabla, la grilla jugador × día y la historia de una copa; los modos, las salas y las partidas sin red de un juego. Cada cifra abre la lista que la suma, cada nombre lleva la bandera de su país, la vista queda en la URL y las horas son del Pacífico (D-207). | ⏳ en PR |
+| RP-37 | El panel muestra el tráfico del sitio aunque nadie juegue: visitas, páginas vistas, de dónde llegan (solo el dominio), por qué link, si es primera vez, aparato, país y cuántas visitas llegan a jugar, por página de entrada. Los links que comparte la app llevan su marca, porque WhatsApp no dice de dónde viene nadie (D-208). | ⏳ en PR |
 
 ## Cuarto Rey (CR)
 

@@ -3177,3 +3177,33 @@ país de las salas y la sala por código. La regla de `co` es nueva y opcional: 
 viejas se rechaza. Queda para después (propuesta del 2026-10-04): una línea de tiempo de toda la
 app, los reportes en el panel (LIG-44), una sección de salud de los datos y señales nuevas
 (cuándo entró el rival, cuándo cerró el admin la inscripción).
+
+## D-208 · El tráfico del sitio, aunque nadie juegue
+**Fecha:** 2026-10-04 · **Estado:** vigente; completa D-44
+**Decisión:** Cada página que se abre manda una señal, aunque nadie llegue a jugar, y el panel
+la muestra en una sección nueva, **Tráfico** (`#/trafico`). Una **visita** es una pestaña: se
+cuenta una vez, en la página donde empezó, con de dónde llegó (solo el dominio: `google_com`,
+`instagram_com`, `directo`), la marca del link (`?de=` o `utm_source`), si el navegador ya había
+venido, el aparato y el país. Cada página que se abre después suma una **vista**. Si la visita
+empieza una partida o un juego de la copa, suma **juegan** en su página de entrada: así se ve qué
+entradas terminan jugando. Todo va en contadores por día en `stats/<env>/days/<día>`
+(`vistas`, `entradas`, `juegan`, `ref`, `via`, `retorno`, `disp`, `pais`), con reglas nuevas.
+Se eligió esto en vez de un servicio de afuera (Cloudflare Web Analytics) por pedido del dueño:
+queda en el panel, junto a las partidas, y con las mismas reglas de privacidad.
+- **WhatsApp no dice de dónde viene nadie.** Por eso los links que comparte la app llevan
+  `de=link` al final (`marcarCompartido` en `compartir.js`): una visita que llega por una
+  invitación se cuenta como tal aunque el chat no lo diga. Va detrás de todo y con `=`, así que
+  ningún juego lo confunde con un código de copa o de sala.
+- **Las páginas puente y las de idioma** (`/dudo/`, `/en/`…) redirigen en el acto y se llevarían
+  el origen: lo dejan guardado en la pestaña antes de irse, y la primera página lo usa una vez.
+- **"Ya había venido"** es una marca en el navegador (`localStorage`) que no viaja ni identifica a
+  nadie: quien borra los datos o usa modo privado cuenta como primera vez.
+- **El panel no se cuenta**: es el dueño mirando.
+**Por qué:** El panel solo veía a quien empezaba a jugar. No se sabía cuánta gente entra y se va,
+por dónde llega ni qué páginas convierten en partidas, que es lo que hace falta para saber si
+una publicación o un link compartido trae gente.
+**Consecuencias:** Una escritura por página abierta, por REST y sin abrir conexión (D-41): no gasta
+la cuota de conexiones simultáneas. Las reglas nuevas hay que publicarlas antes de que salga la
+versión; sin ellas cada visita recibe un 401 callado y no se cuenta, sin romper nada. Una página
+de entrada nueva tiene que llamar a `trackVisit()`: `stats.test.mjs` lo exige para cada `game.js`,
+la portada y el laboratorio.

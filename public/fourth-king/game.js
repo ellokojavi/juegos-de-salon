@@ -8,8 +8,11 @@ import { $, $$, el, pick, shuffle, vibrate, sparkles, keepAwake, confetti } from
 import { getLang, langToggle, applyStatic } from '../assets/js/i18n.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { createSessionStore } from '../assets/js/session.js';
-import { trackStart } from '../assets/js/transport/stats.js';
+import { trackStart, trackVisit } from '../assets/js/transport/stats.js';
 import { SUITS, RANKS, MIN_PLAYERS, MAX_PLAYERS, SORBOS, CARD_RULES, LOCALES } from './rules.js';
+
+// Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
+trackVisit();
 
 const STORAGE_PLAYERS = 'juegos-de-salon:players';
 const store = createSessionStore('cuarto-rey', { legacyKeys: ['juegos-de-salon:cuarto-rey:game'] });

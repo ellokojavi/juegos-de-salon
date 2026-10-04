@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.99.0 — 2026-10-04
+- **El panel se navega** (D-207): cuatro secciones —Ahora, La Copa, Juegos, Audiencia— y una ficha
+  por cada copa, juego y sala. La de una copa trae la tabla completa, una grilla de cada jugador
+  por cada día y su historia evento por evento. Cada cifra de Ahora abre la lista que la suma, la
+  vista queda en la URL y las horas son del Pacífico. Cada nombre lleva la bandera de su país: La
+  Copa lo guarda ahora al inscribirse, y los reportes 🐞 también.
+- **El tráfico del sitio, aunque nadie juegue** (D-208): visitas, páginas vistas, de dónde llegan
+  (solo el dominio), por qué link, primera vez o vuelve, aparato, país y cuántas visitas llegan a
+  jugar, en la sección nueva 📈 Tráfico del panel. Los links que comparte la app llevan `de=link`
+  al final: WhatsApp no dice de dónde viene nadie.
+- Arreglo: una copa que el admin terminó antes ya no sale en curso en el panel.
+
 ## 0.98.2 — 2026-10-04
 - **Publicar es más rápido** (D-204, D-205): las pruebas de punta a punta más largas corren en
   partes a la vez, la versión se pone al publicar y no en cada PR (dos cambios abiertos ya no

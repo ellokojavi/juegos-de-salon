@@ -28,7 +28,7 @@
   <meta name="twitter:image" content="https://juegosdesalon.cl/assets/og/ahorcado.jpg">
   <meta name="twitter:image:alt" content="El Ahorcado: Adivina tu palabra antes de quedarte sin vidas. Acá nadie se queda mirando.">
   <!-- /generado -->
-  <script>location.replace('../hangman/' + location.search + location.hash);</script>
+  <script>try { if (sessionStorage.getItem('juegos-de-salon:ref') === null) sessionStorage.setItem('juegos-de-salon:ref', document.referrer); } catch (e) {} location.replace('../hangman/' + location.search + location.hash);</script>
   <noscript><meta http-equiv="refresh" content="0; url=../hangman/"></noscript>
 </head>
 <body>

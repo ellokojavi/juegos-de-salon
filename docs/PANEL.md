@@ -26,6 +26,7 @@ Los enlaces de antes (`#torneo`, `#resumen`, `#juegos`) siguen sirviendo.
 | `#/juegos` | Los juegos de una partida: cifras, partidas por juego y modo (cada barra abre su ficha), jugadores por partida, por día y la bitácora de salas. |
 | `#/juego/<id>` | **Ficha de juego.** Partidas, en dos celulares, sin red, salas sin rival y duración típica de sus salas; por modo, por día, sus salas y sus partidas sin red con hora (D-140). |
 | `#/sala/<CÓDIGO>[/<día>]` | **Ficha de sala.** Juego, creada, terminó, cuánto duró, quién ganó, versión y jugadores con su país; si sigue viva, jugadas, chat (solo cuántos) y quién está conectado. Los códigos se reciclan: con el día se pide una en particular. |
+| `#/trafico` | **Tráfico del sitio** (D-208): visitas, páginas vistas, cuántas llegan a jugar, visitas por día, de dónde llegan (por sitio, con sus dominios), por qué link (`de=link` de lo compartido, `utm_source`), páginas con sus entradas y cuántas juegan, aparato, primera vez o vuelve y país. |
 | `#/audiencia` | Cifras del rango, La Copa contra los otros juegos, de dónde (zona horaria), el país de los jugadores de salas, idiomas, hora y cuota. |
 
 Arriba, además del entorno y el rango, un **buscador**: un código de cinco letras o un link propio
@@ -143,6 +144,10 @@ Sale del celular, por día y por entorno (`public/assets/js/transport/stats.js`)
   país del celular y la hora de la última señal (D-140). **Ningún nombre.**
 - **Cualquier modo:** contador de zona horaria, idioma del navegador, idioma elegido en el
   juego y hora local.
+- **Cualquier página que se abra** (D-208): `vistas/<página>`; y una vez por pestaña,
+  `entradas/<página>`, `ref/<dominio>` (solo el dominio, nunca la dirección), `via/<marca>`,
+  `retorno/<nueva|vuelve>`, `disp/<aparato>` y `pais/<país>`. Si esa visita empieza algo,
+  `juegan/<página de entrada>`. El panel no se cuenta.
 
 No sale nunca: dirección IP (no hay servidor que la vea y no se consulta a nadie), los
 secretos de las partidas, el chat, ni el nombre de nadie en los modos sin red. Quién ganó sí
@@ -235,7 +240,7 @@ public/assets/js/transport/
 entrar (gancho de solo lectura, C-14): sirve para probar la página sin cuenta ni base. `vista` es
 una ruta (`/torneo/OFICI`). `node tools/e2e/mirar.mjs panel <toma>` lo siembra con copas armadas
 con el motor de verdad y abre esa vista. Las tomas: `ahora`, `torneo`, `copa-ficha`, `copa-dias`,
-`copa-historia`, `juegos`, `juego-ficha`, `sala-ficha`, `audiencia` y `datos`.
+`copa-historia`, `juegos`, `juego-ficha`, `sala-ficha`, `trafico`, `audiencia` y `datos`.
 
 ## Cuando entra un juego, un modo o un idioma nuevo
 
