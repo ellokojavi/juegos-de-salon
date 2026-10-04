@@ -3,7 +3,7 @@
 
 Lo llama `node tools/generators/mapa.mjs satelite`. Antes las cortaba sips, que con
 `--cropOffset 0 0` corta del centro y no de la esquina, e ignora algunos cortes que tocan el
-borde: las teselas del polo norte salieron con la franja del ecuador (D-200). PIL corta exacto.
+borde: las teselas del polo norte salieron con la franja del ecuador (D-201). PIL corta exacto.
 
     python3 tools/generators/teselas.py <imagen> <carpeta> <columnas> <filas> <lado>
 """
