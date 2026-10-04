@@ -153,7 +153,7 @@ node public/cup/reportes.test.mjs             # un reporte que no sale queda gua
 node public/assets/js/arrastre.test.mjs
 node public/assets/js/i18n.test.mjs             # paridad es/en/pt/de (C-3, D-191)
 node public/assets/js/compartir.test.mjs        # el estándar de lo que se comparte (D-165)
-node public/assets/js/records.test.mjs          # rankings: orden, semanas, Todoterreno, medallero y el almacén de prueba (D-211)
+node public/assets/js/records.test.mjs          # rankings: orden, semanas, Todoterreno, medallero y el almacén de prueba (D-212)
 node public/assets/js/transport/cleanup.test.mjs
 node public/assets/js/transport/dispose.test.mjs
 node public/assets/js/transport/errors.test.mjs

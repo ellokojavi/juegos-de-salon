@@ -187,7 +187,7 @@ export function createFirebaseStore() {
     },
 
     /**
-     * El jugador de los rankings detrás de este jugador de la copa (D-211): así sus amigos lo
+     * El jugador de los rankings detrás de este jugador de la copa (D-212): así sus amigos lo
      * encuentran y el podio de la copa suma a su medallero. Las reglas piden estar sentado como
      * los dos.
      */

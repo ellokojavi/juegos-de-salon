@@ -48,7 +48,7 @@ const RONDAS_FINAL = rondasFinal(LANG);
 const palabrasDe = meta => meta?.lang || 'es';
 /** "3º", o "#3" en inglés. */
 const ord = n => fmt(T.ord, { n });
-/** Los textos de los rankings, compartidos con /records/ (D-211). */
+/** Los textos de los rankings, compartidos con /records/ (D-212). */
 const RK = (COMMON[LANG] || COMMON.es).rk;
 const fmt = (s, vars = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (vars[k] !== undefined ? vars[k] : `{${k}}`));
 
@@ -199,7 +199,7 @@ function portada() {
     el('details', { class: 'panel' },
       el('summary', {}, T.howTitle),
       el('ol', { class: 'como' }, T.howItems.map(x => el('li', {}, x)))),
-    // Los campeones de las copas terminadas (D-211): al final, para no empujar lo de crear o entrar
+    // Los campeones de las copas terminadas (D-212): al final, para no empujar lo de crear o entrar
     bloqueCampeones(),
   );
 }
@@ -531,7 +531,7 @@ async function abrirCopa(code, { recienCreada = false, pantalla = null } = {}) {
 }
 
 /**
- * La copa y los rankings (D-211). Si en este celular hay un jugador, el de la copa queda
+ * La copa y los rankings (D-212). Si en este celular hay un jugador, el de la copa queda
  * enlazado a él; los de la copa que también lo están pasan a ser sus amigos; y cuando la copa
  * termina, su podio se guarda una vez para el medallero. Todo es de adorno: nunca frena la copa.
  */
@@ -1859,7 +1859,7 @@ async function enviar(d, fin, envio = null) {
     return;
   }
   cuenta.intento.borrar(S.code, d, S.yo);
-  // El puntaje del día cuenta para el ranking "En copa" de ese juego (D-211). No se espera.
+  // El puntaje del día cuenta para el ranking "En copa" de ese juego (D-212). No se espera.
   if (leerYo() && !L().meta.lab) jugador().then(J => J.anotar({ juego: juegoDelDia(L().meta, d), variante: 'copa', s: fin.s, ms: fin.ms })).catch(() => {});
   SFX.win(); vibrate([30, 50, 30]);
   // La copa llega por el oyente; si todavía no trae el resultado, se dibuja con el propio
@@ -2012,7 +2012,7 @@ function practica(id) {
     mod.ensayo && LABS ? el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-ensayo', onClick: () => { SFX.tap(); ensayoPractica(id, semilla); } }, `🧪 ${T.tryFirst}`) : null,
     // Suelto no hace falta decir que no cuenta para una copa: no hay copa a la vista
     LABS ? el('p', { class: 'muted center' }, T.practiceHint) : null,
-    // Entrar es opcional y se ofrece antes de jugar (D-211): sin jugador se juega igual
+    // Entrar es opcional y se ofrece antes de jugar (D-212): sin jugador se juega igual
     rankea(id) ? bloqueJugador({ alTocar: () => SFX.tap() }) : null,
     el('button', { class: 'btn btn--yellow', id: 'btn-empezar', onClick: () => { SFX.tap(); jugarPractica(id, semilla); } }, `${J.emoji} ${T.start}`),
     volverDePractica(),
@@ -2020,7 +2020,7 @@ function practica(id) {
 }
 
 /**
- * ¿Esta partida cuenta para los rankings (D-211)? Los juegos sueltos de la portada, jugados como
+ * ¿Esta partida cuenta para los rankings (D-212)? Los juegos sueltos de la portada, jugados como
  * cualquiera los juega: sin el laboratorio y sin una semilla elegida, que dejaría repetir el mismo
  * tablero hasta sacarle el máximo.
  */
@@ -2108,7 +2108,7 @@ function resultadoEnsayo(id, r, volver) {
 
 function resultadoPractica(id, semilla, r) {
   const J = JUEGOS_COPA[id];
-  // Los rankings (D-211): se anota si hay jugador; si entra recién aquí, esta partida igual cuenta
+  // Los rankings (D-212): se anota si hay jugador; si entra recién aquí, esta partida igual cuenta
   const cuentaRk = rankea(id);
   const ranking = cuentaRk ? bloqueRanking({ juego: id, titulo: fmt(RK.titleOf, { game: J.nombre }), pestanas: ['semana', 'siempre', 'amigos'], alTocar: () => SFX.tap() }) : null;
   const aviso = el('div', {});

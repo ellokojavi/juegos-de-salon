@@ -1,5 +1,5 @@
 // Ejecutar: node public/assets/js/records.test.mjs
-// Los récords y rankings de los jugadores (D-211): orden, semanas, Todoterreno y medallero.
+// Los récords y rankings de los jugadores (D-212): orden, semanas, Todoterreno y medallero.
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import {

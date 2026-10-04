@@ -1,5 +1,5 @@
 /**
- * Las piezas de pantalla de los rankings (D-211): entrar con nombre y PIN, una tabla con sus
+ * Las piezas de pantalla de los rankings (D-212): entrar con nombre y PIN, una tabla con sus
  * pestañas (semana, siempre, amigos, en copa), el aviso de récord al terminar y el medallero de
  * La Copa. Las usan la antesala y el resultado de cada juego, la portada de La Copa y /records/.
  * Los estilos van en assets/css/ranking.css; los textos, en `COMMON[lang].rk` (C-3).
