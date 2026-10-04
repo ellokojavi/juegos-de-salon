@@ -27,11 +27,23 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
+      # En un PR que solo trae documentación (docs/, marketing/, .claude/, los .md) la lista sale
+      # vacía y no corre ningún guion: el check queda en verde en segundos (D-205)
       - id: lista
-        run: echo "guiones=$(node tools/e2e/ci.mjs --lista)" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          if [ -n "$PR" ]; then
+            gh api "repos/$GITHUB_REPOSITORY/pulls/$PR/files" --paginate --jq '.[].filename' > "$RUNNER_TEMP/cambios"
+            echo "guiones=$(node tools/e2e/ci.mjs --lista --cambios "$RUNNER_TEMP/cambios")" >> "$GITHUB_OUTPUT"
+          else
+            echo "guiones=$(node tools/e2e/ci.mjs --lista)" >> "$GITHUB_OUTPUT"
+          fi
 
   e2e:
     needs: lista
+    if: needs.lista.outputs.guiones != '[]'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     strategy:
@@ -81,3 +93,30 @@ jobs:
           name: ${{ env.ARTEFACTO }}
           path: ${{ runner.temp }}/e2e
           retention-days: 7
+
+  # En main nadie mira el check: si sale en rojo, abre un issue (o comenta el que ya está abierto)
+  # con los guiones que fallaron y el link a la corrida, donde están sus capturas (D-205). No frena
+  # la publicación, que corre aparte en publicar.yml.
+  avisar:
+    needs: [lista, e2e]
+    if: failure() && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      issues: write
+    steps:
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          CORRIDA: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          titulo="main en rojo: Punta a punta"
+          fallaron=$(gh run view "$GITHUB_RUN_ID" -R "$GITHUB_REPOSITORY" --json jobs \
+            --jq '.jobs[] | select(.conclusion == "failure") | "- `" + .name + "`"')
+          cuerpo=$(printf 'Las pruebas de punta a punta fallaron en `main` después de fusionar %s.\n\n%s\n\nCorrida y capturas: %s\n\nEl sitio ya se publicó (publicar.yml no las espera): revisar si lo publicado está roto (D-205).' \
+            "${GITHUB_SHA:0:7}" "$fallaron" "$CORRIDA")
+          abierto=$(gh issue list -R "$GITHUB_REPOSITORY" --state open --search "\"$titulo\" in:title" --json number --jq '.[0].number // empty')
+          if [ -n "$abierto" ]; then
+            gh issue comment "$abierto" -R "$GITHUB_REPOSITORY" --body "$cuerpo"
+          else
+            gh issue create -R "$GITHUB_REPOSITORY" --title "$titulo" --body "$cuerpo"
+          fi

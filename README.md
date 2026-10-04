@@ -548,6 +548,8 @@ node public/panel/aggregate.test.mjs
 node public/panel/copas.test.mjs
 node tools/agents/documentar.test.mjs
 node tools/agents/marketing.test.mjs
+node tools/e2e/cambios.test.mjs
+node tools/release/version.test.mjs
 ```
 <!-- /generado -->
 
@@ -582,10 +584,10 @@ It is the whole app over HTTPS, so the modes that need a secure context work too
 
 ## Publishing a version
 
-Before committing a new version, stamp it into the site (import maps and stylesheets carry `?v=`), so the browser never mixes old and new files:
+The version is the top entry of `CHANGELOG.md`, written when a pull request is merged. Pages in git carry no version: the publish workflow stamps it into the copy it uploads (import maps, stylesheets and social card images get `?v=<version>-<commit>`), so the browser never mixes old and new files and two open pull requests never clash over it. To try the stamp locally, on a copy:
 
 ```bash
-python3 tools/release/set-version.py 0.4.6
+python3 tools/release/set-version.py --sitio /tmp/site
 ```
 
 ## Keeping this README current
@@ -612,8 +614,8 @@ python3 tools/release/readme.py sellar           # "I have read it again against
   `capturas` runs the scripts in headless Chrome, copies the PNGs and saves them at twice the width
   they are shown at. The ones that need a Firebase room are marked and skipped with `--sin-red`.
   Look at them before publishing: design problems are seen, not asserted (C-12).
-- **The hook that makes it happen** is `set-version.py`, required before publishing (C-11). It runs
-  `revisar` and refuses to stamp if the README fell behind. For an emergency, `--igual`.
+- **The hook that makes it happen** is the `pruebas` check on every pull request and before every
+  publish (C-11): it runs `revisar` and stays red if the README fell behind.
 
 To add a screen to this README: take the shot in the e2e script, add the entry to
 `docs/capturas.json`, then run `capturas` and `actualizar`.
@@ -648,7 +650,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
 docs/                       Requirements, decisions, canons, one spec per game (docs/games/) and the README screenshots
 firebase/                   Realtime Database security rules and notes
 tools/
-  release/                    Publishing: set-version.py (version stamp), readme.py + hechos.mjs (this README), og.mjs (social cards and bridge pages)
+  release/                    Publishing: set-version.py (version stamp, at publish time), readme.py + hechos.mjs (this README), og.mjs (social cards and bridge pages)
   firebase/                   reglas.mjs (publish the rules), reportes.mjs (The Cup bug reports), en-curso.mjs (anyone playing?)
   generators/                 mapa.mjs (the world of Where is it?), flota.py (the Battleship fleet)
   agents/                     dilemas.mjs (usability dilemmas as issues, D-132), documentar.mjs (the documentation agent, D-172)

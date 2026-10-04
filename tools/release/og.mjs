@@ -13,8 +13,8 @@
  *                                hecha con otro dibujo u otros textos? (D-181)
  *
  * Los textos salen de public/assets/js/games.js, que es de donde sale también el menú: un solo lugar
- * donde cambiar el nombre o la bajada de un juego. `set-version.py` corre `tarjetas` en cada
- * publicación para que no se queden atrás; las imágenes se rehacen a mano, porque necesitan
+ * donde cambiar el nombre o la bajada de un juego. `revisar`, en el check `pruebas` de cada PR, frena
+ * unas tarjetas que se quedaron atrás de games.js; las imágenes se rehacen a mano, porque necesitan
  * navegador (y solo cambian si cambia un nombre, un emoji o el diseño de la tarjeta).
  */
 import { readFileSync, writeFileSync, mkdirSync, existsSync, rmSync } from 'node:fs';
@@ -119,8 +119,8 @@ const atrasada = (p, huellas = leerHuellas()) => !existsSync(join(RAIZ, `public/
  * sola página para todos (/cup/suelto/?reinas) cada link traía la misma tarjeta, así que cada
  * juego tiene la suya (D-162), en la raíz como los demás (D-198). Es una copia de
  * public/cup/suelto/index.html un nivel más arriba, con su título, su tarjeta y
- * `data-suelto="<id>"`: se rehace, no se edita. Como set-version.py corre
- * esto después de estampar, la copia sale con el import map de la versión nueva.
+ * `data-suelto="<id>"`: se rehace, no se edita. Como la original, va sin versión: el
+ * import map lo pone set-version.py al publicar (D-205).
  */
 const AVISO_COPIA = () => `  <!-- Generada por node tools/release/og.mjs tarjetas a partir de public/cup/suelto/index.html: no se edita a mano (D-162). -->`;
 function paginaSuelta(p, bloqueOg) {
@@ -190,20 +190,12 @@ const ABRE = '  <!-- generado: og · lo reescribe node tools/release/og.mjs tarj
 const CIERRA = '  <!-- /generado -->';
 const escapa = s => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 
-/**
- * La versión estampada, para que un cambio de imagen no se quede pegado en la caché de WhatsApp.
- * Se lee de la hoja de estilos y no del primer `?v=` que aparezca: el bloque de las tarjetas va
- * antes en el archivo, así que "el primero" terminaba siendo el de la vuelta pasada.
- */
-function version() {
-  const m = readFileSync(join(RAIZ, 'public/index.html'), 'utf8').match(/base\.css\?v=(\d+\.\d+\.\d+)/);
-  return m ? m[1] : '0';
-}
-
 const LOCALE = { es: 'es_CL', en: 'en_US', pt: 'pt_BR', de: 'de_DE' };
 
 function bloque(p) {
-  const img = `${SITIO}/assets/og/${p.imagen}.jpg?v=${version()}`;
+  // Sin ?v=: lo pone set-version.py al publicar, para que un cambio de dibujo no se quede pegado
+  // en la caché de WhatsApp (D-72) sin ensuciar cada PR con la versión (D-205)
+  const img = `${SITIO}/assets/og/${p.imagen}.jpg`;
   const url = SITIO + p.ruta;
   const otros = Object.keys(LOCALE).filter(l => l !== p.lang);
   const meta = [

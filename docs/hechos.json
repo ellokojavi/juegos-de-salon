@@ -843,7 +843,9 @@
     "public/panel/copas.test.mjs",
     "public/timeline/engine.test.mjs",
     "tools/agents/documentar.test.mjs",
-    "tools/agents/marketing.test.mjs"
+    "tools/agents/marketing.test.mjs",
+    "tools/e2e/cambios.test.mjs",
+    "tools/release/version.test.mjs"
   ],
   "e2e": [
     "battleship/alineacion.mjs",
@@ -856,6 +858,8 @@
     "bulls-and-cows/idiomas.mjs",
     "bulls-and-cows/local.mjs",
     "bulls-and-cows/online.mjs",
+    "cambios.mjs",
+    "cambios.test.mjs",
     "caminos.mjs",
     "ci.mjs",
     "compartir-sala.mjs",
