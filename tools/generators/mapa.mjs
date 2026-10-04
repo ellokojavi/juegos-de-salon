@@ -209,7 +209,7 @@ async function satelite() {
     execFileSync('sips', ['-s', 'format', 'jpeg', '-s', 'formatOptions', '78', '-z', String(w / 2), String(w), tmp, '--out', `${RAIZ}${ruta}`], { stdio: 'ignore' });
     console.log(ruta);
   }
-  // Las teselas, con PIL: sips corta del centro cuando el corte parte en la esquina (D-200)
+  // Las teselas, con PIL: sips corta del centro cuando el corte parte en la esquina (D-201)
   const { dir, columnas, filas, lado } = TESELAS;
   rmSync(`${RAIZ}${dir}`, { recursive: true, force: true });
   mkdirSync(`${RAIZ}${dir}`, { recursive: true });

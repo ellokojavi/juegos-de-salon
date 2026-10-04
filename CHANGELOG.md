@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.96.0 — 2026-10-04
+- **¿Dónde queda?: el mapa se gira con dos dedos** (D-200), como en los mapas del celular. Con el
+  mapa girado aparece una brújula sobre + y −; tocarla vuelve a poner el norte arriba.
+- **¿Dónde queda?: el zoom llega a 64 veces** (D-202, antes 16), para que el dedo pueda apuntar
+  dentro de los 25 km del 🎯.
+- **¿Dónde queda?: se acabó el polo mal parchado** (D-201). Las imágenes nítidas que se cargan al
+  acercar estaban cortadas corridas: sobre el Ártico aparecía África estirada. Se rehicieron todas.
+
 ## 0.95.0 — 2026-10-04
 - **Ya no hay minijuegos** (D-198): Conexiones, Reinas, Tango, Zip, Desenredo, ¿Dónde queda?,
   ¿En qué año? y Toque y Fama: Palabra son juegos como los demás. Viven en la raíz (`/queens/`,

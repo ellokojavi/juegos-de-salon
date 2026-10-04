@@ -33,7 +33,7 @@ export const vector = (lat, lon) => [Math.cos(lat * RAD) * Math.cos(lon * RAD), 
  * La vista del globo (proyección ortográfica) mirando al punto `[lat0, lon0]`: de un vector de
  * la esfera a `[x, y, prof]`, con x a la derecha, y hacia arriba, en radios del globo; `prof > 0`
  * es la cara que se ve. `rumbo` gira la vista en torno a su centro, en grados y contra el reloj:
- * con 0, el norte queda arriba (D-199).
+ * con 0, el norte queda arriba (D-200).
  */
 export function ver([X, Y, Z], [lat0, lon0], rumbo = 0) {
   const s0 = Math.sin(lat0 * RAD), c0 = Math.cos(lat0 * RAD), sl = Math.sin(lon0 * RAD), cl = Math.cos(lon0 * RAD);
