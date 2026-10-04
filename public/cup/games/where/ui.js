@@ -18,10 +18,11 @@ const poner = (nodo, ...hijos) => nodo.append(...hijos.flat().filter(x => x !== 
 const DOBLE_MS = 320;
 const DOBLE_PX = 30;
 /**
- * Cuánto se puede acercar, en veces el globo entero: en un celular, unos 2 km por píxel. Más allá
- * la imagen satelital (4096 px de ancho, D-159) ya no tiene detalle que mostrar.
+ * Cuánto se puede acercar, en veces el globo entero: en un celular, unos 600 m por píxel (D-201).
+ * La imagen se ablanda pasado 16 (las teselas dan 1,85 km por píxel, D-160), pero el dedo tiene
+ * que poder apuntar dentro de los 25 km del 🎯: a 16, un toque erra por unos 20 km.
  */
-const ZOOM_MAX = 16;
+const ZOOM_MAX = 64;
 /** Al mostrar la respuesta, se acerca a lo más esto: dos puntos muy juntos no llenan la pantalla. */
 const ZOOM_RESPUESTA = 12;
 /** Hacia dónde mira el globo al empezar cada ciudad: el Atlántico, con América, Europa y África. */

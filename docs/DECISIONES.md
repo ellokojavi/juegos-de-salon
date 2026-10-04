@@ -3007,3 +3007,15 @@ del ecuador, y la columna 0 con la del centro), e ignora algunos cortes que toca
 eso casi todas las teselas quedaron corridas, aunque solo cerca del polo se notaba a la vista.
 **Alternativas descartadas:** seguir con sips esquivando el `0 0` (dar vuelta la imagen, `0.0`):
 probado, y sus cortes en el borde siguen fallando sin avisar.
+
+## D-201 · ¿Dónde queda?: el zoom llega a 64 veces
+**Fecha:** 2026-10-04 · **Estado:** vigente; cambia el tope de D-159
+**Decisión:** El globo se acerca hasta 64 veces (antes 16): en un celular, unos 600 m por píxel y
+unos 200 km de lado a lado. La respuesta sigue acercando hasta 12.
+**Por qué:** hubo quejas de que el zoom no alcanzaba. El tope de 16 se puso cuando solo estaba la
+imagen de 4096 px (D-159) y quedó igual al llegar las teselas (D-160). Y se pensó en la imagen, no
+en el dedo: a 16, un toque erra por unos 10 píxeles, unos 20 a 25 km, justo el margen del 🎯. A
+64 erra por unos 6 km. Pasado 16 la imagen se ablanda (cada píxel de la fuente ocupa hasta cuatro
+de la pantalla), pero costas, ríos, lagos y cordilleras se siguen leyendo.
+**Alternativas descartadas:** la imagen de la NASA de 500 m por píxel (unas 2.000 teselas y
+240 MB en el repo, y las ciudades casi no se ven en ella); un tope de 48 (el dueño eligió 64).
