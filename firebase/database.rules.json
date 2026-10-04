@@ -256,7 +256,7 @@
             ".validate": "newData.isBoolean() && newData.val() == true"
           },
           "lang": {
-            ".validate": "newData.isString() && newData.val().matches(/^(en|pt)$/)"
+            ".validate": "newData.isString() && newData.val().matches(/^(en|pt|de)$/)"
           },
           "alias": {
             ".validate": "newData.isString() && newData.val().matches(/^[a-z0-9][a-z0-9-]{1,18}[a-z0-9]$/)"

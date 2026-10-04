@@ -80,7 +80,7 @@ Registro tipo ADR (Architecture Decision Record). Las decisiones se numeran y no
 ## D-18 · Transporte para juegos con varios celulares
 **Fecha:** 2026-09-08 · **Estado:** vigente (aprobada por el dueño del proyecto)
 **Decisión:** Los juegos con dos o más celulares hablan con una interfaz `Transport` (`createRoom`, `joinRoom`, `send`, `onMessage`, `onPresence`, `leave`). La primera implementación remota sería **Firebase Realtime Database** (salas por código de 4 letras, mensajes append-only, expiración a 6 h); se mantiene un transporte `local` para jugar en un solo celular.
-**Por qué:** Desde GitHub Pages no hay servidor; una base en tiempo real gratuita funciona entre redes distintas (4G y Wi‑Fi), da reconexión y estado persistente sin código propio, y sirve para futuros juegos de 4 a 6 celulares. WebRTC (PeerJS o QR) queda como alternativa sin cuenta, limitada por NAT fuera de la misma Wi‑Fi. Detalle y comparación en [juegos/toque-y-fama-factibilidad.md](juegos/toque-y-fama-factibilidad.md).
+**Por qué:** Desde GitHub Pages no hay servidor; una base en tiempo real gratuita funciona entre redes distintas (4G y Wi‑Fi), da reconexión y estado persistente sin código propio, y sirve para futuros juegos de 4 a 6 celulares. WebRTC (PeerJS o QR) queda como alternativa sin cuenta, limitada por NAT fuera de la misma Wi‑Fi. Detalle y comparación en [juegos/toque-y-fama-factibilidad.md](games/bulls-and-cows-factibilidad.md).
 **Consecuencias:** Proyecto de Firebase `juegos-de-salon` creado el 2026-09-08 (plan Spark, sin Analytics ni Gemini). Reglas publicadas y versionadas en `firebase/database.rules.json`; configuración pública en `assets/js/firebase-config.js`. Ver [firebase/README.md](../firebase/README.md).
 
 ## D-19 · Quién parte en Toque y Fama: determinista, sin sorteo
@@ -1808,7 +1808,7 @@ Copa y que su nombre en español sea el mismo. El récord viejo de esos dos soli
 uso, y una partida guardada del solitario viejo no se ofrece para retomar.
 
 ## D-143 · Las pruebas sin navegador corren solas en GitHub
-**Fecha:** 2026-09-25 · **Estado:** vigente
+**Fecha:** 2026-09-25 · **Estado:** vigente; las de punta a punta se sumaron en D-193
 **Decisión:** `.github/workflows/pruebas.yml` corre en cada PR y en cada fusión a main:
 todos los `*.test.mjs` y `*.test.py` del repo (los busca con `git ls-files`, sin lista),
 `tools/readme.py revisar` y `tools/og.mjs revisar`. El PR muestra ✅ o ❌ antes de fusionar.
@@ -2585,7 +2585,7 @@ temporales que se borran.
 reemplazarlos, el repo crece con cada versión. Si eso molesta, se pasan a Git LFS o a un release.
 
 ## D-179 · Desenredo: el Untangle de Tatham, por niveles como Zip
-**Fecha:** 2026-10-02 · **Estado:** vigente (en el laboratorio)
+**Fecha:** 2026-10-02 · **Estado:** vigente; salió del laboratorio en D-190
 **Decisión:** Un minijuego nuevo de La Copa, **🧶 Desenredo** (*Untangle*, *Desenrola*), que se
 juega también suelto en `minijuegos/desenredo/`. Nudos unidos por hilos que se cruzan; se arrastran
 los nudos hasta que ningún hilo cruce a otro.
@@ -2781,3 +2781,149 @@ producción (avisado en la guía). Publicar reglas de Firebase, el panel y los r
 siendo del dueño: necesitan su llave.
 **Alternativas descartadas:** sumarlo como colaborador con escritura (podría saltarse el PR); una
 licencia GPL (el dueño eligió MIT).
+
+## D-190 · Desenredo sale del laboratorio
+**Fecha:** 2026-10-03 · **Estado:** vigente; cierra lo que D-179 dejó en el laboratorio
+**Decisión:** Desenredo deja de llevar `labs: true` en `SUELTOS` (`public/assets/js/games.js`) y en `BASE`
+(`public/cup/rules.js`): su tarjeta aparece en la portada, encendida y sin "Próximamente", y abre
+`/minigames/untangle/`, que ya tenía su tarjeta social. En La Copa sigue en el `POZO` desde D-179:
+el admin lo puede poner en cualquier día y el calendario al azar lo puede proponer.
+**Por qué:** lo pidió el dueño: el juego ya está en condiciones de pasar a producción, tras las
+vueltas de las cuerdas (D-182, D-183, D-185) y de las instrucciones (D-184).
+**Consecuencias:** la portada ofrece ocho minijuegos sueltos y el dado del menú (D-188) también
+puede caer en él. La captura del menú en el README se rehace.
+
+## D-191 · Un idioma nuevo entra por el laboratorio: el alemán
+**Fecha:** 2026-10-03 · **Estado:** vigente
+**Decisión:** El alemán (**Salonspiele**) se suma completo —los textos de los ocho juegos, las
+frases, los mazos, las grillas y palabras de La Copa y los nombres de ¿Dónde queda?— pero **solo
+se ofrece en el laboratorio**: en el dispositivo que entra por `/labs/de/` o por un link con
+`?lang=de`. En `public/assets/js/i18n.js`, `IDIOMAS` son todos los que tienen diccionario (las pruebas
+de paridad los recorren todos) y `LANGS` los que se ofrecen en ese dispositivo; `EN_LABS` dice
+cuáles están en el laboratorio. Ahí, `public/assets/js/labs-idioma.js` hace que los links al menú y a
+`/labs/` vuelvan a `/labs/de/` y pone un botón 🐞 en la barra de arriba que manda comentarios a
+`feedback/` (D-104) con el contexto: página, pantalla, idioma, tamaño y versión. "Labor
+verlassen" saca la marca y deja la app en inglés. Ver [ALEMAN.md](ALEMAN.md).
+**Por qué:** el dueño quiere que amigos que hablan alemán lo revisen antes de publicarlo. Un
+borrador hecho con IA no puede aparecer en el toggle de todos, pero los amigos tienen que poder
+jugarlo de verdad, en su celular, con salas y copas reales. Un dispositivo marcado no se sale del
+laboratorio sin querer: un "‹ Menú" que llevara a la portada de siempre lo dejaría sin forma de
+volver ni de comentar.
+**Arreglos que salieron de medir el alemán** (con un pseudo-alemán ~40 % más largo y después con
+los textos de verdad, a 320 px):
+- Los títulos con degradado (`.rainbow`) cortaban los acentos sobre mayúscula (ya pasaba con
+  SALÓN y SALÃO): un relleno arriba agranda la caja pintada.
+- La barra de arriba: "‹ Menú" no se achica y el chip del juego se corta con "…" en vez de bajar
+  a dos líneas (ya pasaba con "⚓ Batalla Naval").
+- Con `lang="de"`, guiones automáticos (`hyphens: auto`) y, si igual no cabe, la palabra se parte.
+- Lo que caía al español sin avisar: "v. Chr.", fechas y números `de-DE`, el alfabeto del
+  Ahorcado, el teclado QWERTZ de Palabra (con un hueco donde el español tiene la Ñ, así la Z en
+  inglés y la Y en alemán ya no cuelgan al final de la segunda fila).
+- De paso: Palabra mostraba "null" mientras no se encontraba ninguna letra, y el título de la
+  pestaña de La Copa decía "Juegos de Salón" en cualquier idioma.
+**Consecuencias:** las reglas de Firebase aceptan `lang: "de"` en una copa (se publican al
+fusionar, D-122). Sacar el alemán del laboratorio es quitarlo de `EN_LABS` y sumar su puerta
+`/de/` con la tarjeta social; lo que falta está en ALEMAN.md. Otro idioma puede entrar igual.
+**Alternativas descartadas:** sumarlo al toggle de todos con un aviso de borrador (se ve en el
+toggle de quien no lo pidió); una copia aparte de la app en `/labs/de/` (se desactualiza al tiro y
+no prueba las salas de verdad); que el alemán faltante cayera al inglés (esconde lo que falta
+traducir: la prueba de paridad no lo vería).
+
+## D-192 · El sitio en `public/`, las carpetas en inglés y el taller ordenado
+**Fecha:** 2026-10-03 · **Estado:** vigente
+**Decisión:** La raíz del repo deja de ser la raíz del sitio. Todo lo que se sirve vive en
+**`public/`** y es lo único que se publica: `.github/workflows/publicar.yml` lo sube a GitHub Pages
+en cada fusión a main (sin los `*.test.mjs`), después de correr `pruebas.yml`; si una prueba falla,
+el sitio no cambia. Las **carpetas van en inglés**, también las que son URL: `/hangman/`, `/cup/`,
+`/timeline/`, `/bulls-and-cows/`, `/liars-dice/`, `/battleship/`, `/julep/`, `/fourth-king/` y
+`/minigames/<slug>/` (`connections`, `word`, `year`, `queens`, `tango`, `zip`, `untangle`, `where`).
+El **id de cada juego no cambia** (`'ahorcado'`, `'copa'`, `'reinas'`…): es un dato que guardan las
+salas de Firebase, las estadísticas del panel, las reglas y el `localStorage`; la carpeta pasa a ser
+`path` en `games.js` (y `slug` en los minijuegos sueltos). Cada **ruta vieja queda como página
+puente** —la genera `og.mjs tarjetas`, con la tarjeta de la página nueva— que redirige
+conservando lo que va detrás (`?sala=…`, `?pirata`, `&lang=…`, `#…`). Además:
+- `set-version.py` arma el import map recorriendo `public/**/*.js` y estampa toda página de
+  `public/` que cargue módulos: desaparece la lista `MODULES` que había que mantener a mano.
+- Los minijuegos de La Copa tienen carpeta propia: `public/cup/games/<slug>/` con `engine.js`,
+  `ui.js` y sus datos; lo común (`index.js`, `semilla.js`, `audiencia.js`, `mazos.js`, `solo.js`)
+  queda en `games/`.
+- `tools/` se ordena por función: `release/` (versión, README, tarjetas), `firebase/` (reglas,
+  reportes, en curso), `generators/` (mapa, flota), `agents/` (dilemas, documentación) y
+  `e2e/<juego>/`. Las especificaciones pasan a `docs/games/<carpeta>.md`; el video, a
+  `marketing/promo-video/` (y su skill, a `promo-video`).
+**Por qué:** la raíz mezclaba el sitio con el taller (18 carpetas y 8 archivos), y GitHub Pages
+publicaba todo: `docs/`, `tools/`, las reglas de Firebase, 49 MB de video y cada test eran
+públicos en juegosdesalon.cl. El dueño pidió además nombres en inglés por convención, para
+internacionalizar la navegación. Separar el id de la carpeta es lo que permite renombrar sin
+perder nada guardado.
+**Consecuencias:** una vez, el dueño cambia Settings → Pages → Source a "GitHub Actions" (el
+dominio se mantiene). Los links viejos siguen funcionando con un salto más; Google tarda unas
+semanas en cambiar sus resultados a las URL nuevas (las puentes llevan `canonical` a la nueva). Las
+huellas de las tarjetas (D-181) se migraron sin rehacer imágenes: solo cambiaron las rutas desde
+donde importa el dibujo, y cada huella vieja se comprobó contra el dibujo anterior antes de
+reemplazarla. Los comandos de las herramientas cambian de ruta (`node tools/release/og.mjs`…), y
+los Routines que los nombran se actualizan al fusionar.
+**Alternativas descartadas:** dejar las URL en español y mover solo el taller (no internacionaliza
+la navegación); un `404.html` que redirija en vez de páginas puente (deja la raíz más limpia, pero
+un link viejo pegado en un chat quedaba sin tarjeta y Google veía 404); cambiar también los ids
+(rompía las salas abiertas, las copas en curso, el panel y las partidas guardadas); una sola
+carpeta `juegos/` para todos (cambiaba las URL sin ganar nada a cambio).
+
+## D-193 · Las pruebas de punta a punta corren solas en GitHub
+**Fecha:** 2026-10-02 · **Estado:** vigente; completa D-143
+**Decisión:** `.github/workflows/e2e.yml` corre las pruebas de `tools/e2e/` en Chrome en cada PR
+y en cada fusión a main, un job por guion y en paralelo. El PR muestra cuál falló y deja sus
+capturas como artefacto. `tools/e2e/ci.mjs` decide cuáles: todos los guiones menos las
+herramientas (`mirar`, `contacto`) y **los que abren salas en el Firebase de producción**
+(`*-online`, `*-chat` y una lista corta en `ci.mjs`), que siguen a mano. Un guion falla si sale
+con error, si imprime una línea con ✗ o ❌, o si pasa los 15 minutos.
+**Por qué:** el dueño pidió automatizar lo más posible. Correrlas a mano costaba unos minutos por
+guion y se corrían solo los del juego que se tocaba. Un cambio en algo compartido (el arrastre,
+`i18n.js`, el transporte) podía romper otro juego sin que nadie lo viera hasta jugarlo.
+**Alternativas descartadas:** correr también los que usan Firebase: llenarían el panel de salas
+falsas y escribirían en la base de producción desde cada PR. Un solo job con todos: tardaría
+más de media hora y un guion colgado taparía a los demás. Exigir que cada guion tenga sus
+chequeos con ✗: muchos solo imprimen lo que ven para que lo lea una persona; en CI igual caen
+si algo se rompe del todo, y pasarlos a chequeos se hace de a uno, cuando se toque cada guion.
+Al correrlos todos por primera vez, dos estaban atrasados: `linea-de-tiempo-solo` buscaba
+"Cambiar modo" por su posición, y Compartir (D-165) lo corrió de lugar (arreglado);
+`linea-de-tiempo-error` juega contra el celular, un modo que Línea de Tiempo ya no tiene (D-142),
+y queda en la lista `OBSOLETOS` de `ci.mjs` hasta que alguien lo reescriba.
+**Consecuencias:** un guion nuevo entra solo. Si abre salas de verdad, va en la lista de
+`ci.mjs`. Las capturas del README siguen a mano: un artefacto de CI no reemplaza mirarlas.
+
+## D-194 · El alemán: Hochdeutsch para los tres países, hora de Europa central, diéresis dichas y sin destello
+**Fecha:** 2026-10-03 · **Estado:** vigente
+**Decisión:** Cuatro ajustes que pidió el dueño al probar el laboratorio alemán (D-191):
+- **Alemán estándar común (Hochdeutsch) para Alemania, Austria y Suiza, con ß**: palabras que se
+  usan en los tres y nada que conozca uno solo (Späti, Bundesliga, Skat, Brötchen/Semmel). Los
+  suizos no escriben la ß pero la leen sin problema. El criterio está en el glosario de
+  [ALEMAN.md](ALEMAN.md); todo el borrador se revisó con él.
+- **Una copa en alemán cambia de día a medianoche de Europa central** (`Europe/Berlin`, que es
+  también la hora de Viena y Zúrich): `zonaDeIdioma` en `public/cup/engine.js` elige la zona según el
+  idioma de las palabras al crearla, y la nota bajo "Empieza" cambia al elegir el idioma. Las
+  demás copas siguen en la hora del Pacífico (D-113). Después de creada, todo usa `meta.tz`.
+- **Las diéresis se dejan fuera, pero se dice**: en Palabra y en el Ahorcado no hay teclas Ä, Ö,
+  Ü ni ß. Las instrucciones en alemán lo dicen: "Umlaute stehen ohne Punkte: Ä ist A" (y en el
+  Ahorcado, la ß se escribe SS). Las listas de palabras siguen evitándolas.
+- **Sin destello de idioma**: el HTML trae los textos en español y los módulos los cambiaban al
+  cargar, así que quien juega en otro idioma veía "Dudo" una fracción de segundo antes de
+  "Lügenwürfel" (pasaba también en inglés y portugués). Un script en el `<head>` de cada página
+  deja la página sin pintar (`html.i18n-pendiente`) hasta `DOMContentLoaded`, cuando los módulos
+  ya pusieron los textos; un tope de 1,5 s la muestra igual si algo falla. En español no cambia
+  nada.
+**Por qué:** con la hora del Pacífico, el día de una copa alemana partía a las 9:00. Sin decirlo,
+un alemán busca la tecla Ü y no la encuentra. Y el destello se nota en cada página que se abre.
+**Alternativas descartadas:** escribir las diéresis como AE, OE y UE (es la convención alemana sin
+teclado alemán, pero cambia el largo de las palabras y el dueño prefirió quitar los puntos); una
+zona por país (Alemania, Austria y Suiza comparten la hora).
+
+## D-195 · En el laboratorio de un idioma, el menú depende del idioma elegido
+**Fecha:** 2026-10-03 · **Estado:** vigente; ajusta D-191
+**Decisión:** En un dispositivo marcado por el laboratorio alemán, "‹ Menú" lleva a `/labs/de/`
+**solo mientras se juega en alemán**. Con otro idioma elegido en el toggle, lleva al menú de
+siempre. En la portada del laboratorio, elegir otro idioma también lleva al menú de siempre en ese
+idioma. El alemán sigue en el toggle de ese celular y 🐞 sigue en la barra.
+**Por qué:** el dueño elegía español y al volver al menú quedaba "pegado en alemán": el toggle
+guardaba bien el español, pero "‹ Menú" lo llevaba a la portada del laboratorio, que está escrita
+en alemán.
