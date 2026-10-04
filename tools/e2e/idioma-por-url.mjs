@@ -42,7 +42,7 @@ await b.go(`${SITIO}/`, 1500);
 console.log('y a la vuelta       →', JSON.stringify(await mirar()));
 
 /* 6. La invitación a una sala llega en el idioma de quien la mandó */
-await limpio('/dudo/?sala=WFBN&lang=pt');
+await limpio('/liars-dice/?sala=WFBN&lang=pt');
 console.log('sala con idioma     →', await b.evaluate(`JSON.stringify({
   lang: document.documentElement.lang,
   url: location.pathname + location.search,
@@ -53,14 +53,14 @@ console.log('sala con idioma     →', await b.evaluate(`JSON.stringify({
 /* 7. Y el link que arma el juego para compartir lleva el idioma pegado */
 console.log('link que se comparte→', await b.evaluate(`(async () => {
   const { withLang } = await import('/assets/js/i18n.js');
-  return withLang('https://juegosdesalon.cl/dudo/?sala=WFBN');
+  return withLang('https://juegosdesalon.cl/liars-dice/?sala=WFBN');
 })()`));
 
 /* 8. La invitación a una copa en otro idioma (D-170): el link sigue llevando a la copa. Sacar el
    lang= no puede tocar el resto (antes `?K7Q2X&lang=pt` quedaba en `?K7Q2X=` y abría la portada) */
-await b.go(`${SITIO}/copa/?prueba&demo=invitado`, 2500);
+await b.go(`${SITIO}/cup/?prueba&demo=invitado`, 2500);
 const copa = await b.evaluate('__copa.estado.code');
-await b.go(`${SITIO}/copa/?prueba&${copa}&lang=pt`, 2500);
+await b.go(`${SITIO}/cup/?prueba&${copa}&lang=pt`, 2500);
 const inv = JSON.parse(await b.evaluate(`JSON.stringify({ lang: document.documentElement.lang, url: location.search, pantalla: __copa.estado.pantalla })`));
 console.log('copa con idioma     →', JSON.stringify(inv));
 if (inv.pantalla !== 'entrar' || inv.lang !== 'pt' || inv.url !== `?prueba&${copa}`) { console.log('✗ la invitación a una copa con ?lang= no abre la copa'); process.exitCode = 1; }

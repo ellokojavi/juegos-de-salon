@@ -80,7 +80,7 @@ Registro tipo ADR (Architecture Decision Record). Las decisiones se numeran y no
 ## D-18 · Transporte para juegos con varios celulares
 **Fecha:** 2026-09-08 · **Estado:** vigente (aprobada por el dueño del proyecto)
 **Decisión:** Los juegos con dos o más celulares hablan con una interfaz `Transport` (`createRoom`, `joinRoom`, `send`, `onMessage`, `onPresence`, `leave`). La primera implementación remota sería **Firebase Realtime Database** (salas por código de 4 letras, mensajes append-only, expiración a 6 h); se mantiene un transporte `local` para jugar en un solo celular.
-**Por qué:** Desde GitHub Pages no hay servidor; una base en tiempo real gratuita funciona entre redes distintas (4G y Wi‑Fi), da reconexión y estado persistente sin código propio, y sirve para futuros juegos de 4 a 6 celulares. WebRTC (PeerJS o QR) queda como alternativa sin cuenta, limitada por NAT fuera de la misma Wi‑Fi. Detalle y comparación en [juegos/toque-y-fama-factibilidad.md](juegos/toque-y-fama-factibilidad.md).
+**Por qué:** Desde GitHub Pages no hay servidor; una base en tiempo real gratuita funciona entre redes distintas (4G y Wi‑Fi), da reconexión y estado persistente sin código propio, y sirve para futuros juegos de 4 a 6 celulares. WebRTC (PeerJS o QR) queda como alternativa sin cuenta, limitada por NAT fuera de la misma Wi‑Fi. Detalle y comparación en [juegos/toque-y-fama-factibilidad.md](games/bulls-and-cows-factibilidad.md).
 **Consecuencias:** Proyecto de Firebase `juegos-de-salon` creado el 2026-09-08 (plan Spark, sin Analytics ni Gemini). Reglas publicadas y versionadas en `firebase/database.rules.json`; configuración pública en `assets/js/firebase-config.js`. Ver [firebase/README.md](../firebase/README.md).
 
 ## D-19 · Quién parte en Toque y Fama: determinista, sin sorteo
@@ -2784,9 +2784,9 @@ licencia GPL (el dueño eligió MIT).
 
 ## D-190 · Desenredo sale del laboratorio
 **Fecha:** 2026-10-03 · **Estado:** vigente; cierra lo que D-179 dejó en el laboratorio
-**Decisión:** Desenredo deja de llevar `labs: true` en `SUELTOS` (`assets/js/games.js`) y en `BASE`
-(`copa/rules.js`): su tarjeta aparece en la portada, encendida y sin "Próximamente", y abre
-`/minijuegos/desenredo/`, que ya tenía su tarjeta social. En La Copa sigue en el `POZO` desde D-179:
+**Decisión:** Desenredo deja de llevar `labs: true` en `SUELTOS` (`public/assets/js/games.js`) y en `BASE`
+(`public/cup/rules.js`): su tarjeta aparece en la portada, encendida y sin "Próximamente", y abre
+`/minigames/untangle/`, que ya tenía su tarjeta social. En La Copa sigue en el `POZO` desde D-179:
 el admin lo puede poner en cualquier día y el calendario al azar lo puede proponer.
 **Por qué:** lo pidió el dueño: el juego ya está en condiciones de pasar a producción, tras las
 vueltas de las cuerdas (D-182, D-183, D-185) y de las instrucciones (D-184).
@@ -2798,9 +2798,9 @@ puede caer en él. La captura del menú en el README se rehace.
 **Decisión:** El alemán (**Salonspiele**) se suma completo —los textos de los ocho juegos, las
 frases, los mazos, las grillas y palabras de La Copa y los nombres de ¿Dónde queda?— pero **solo
 se ofrece en el laboratorio**: en el dispositivo que entra por `/labs/de/` o por un link con
-`?lang=de`. En `assets/js/i18n.js`, `IDIOMAS` son todos los que tienen diccionario (las pruebas
+`?lang=de`. En `public/assets/js/i18n.js`, `IDIOMAS` son todos los que tienen diccionario (las pruebas
 de paridad los recorren todos) y `LANGS` los que se ofrecen en ese dispositivo; `EN_LABS` dice
-cuáles están en el laboratorio. Ahí, `assets/js/labs-idioma.js` hace que los links al menú y a
+cuáles están en el laboratorio. Ahí, `public/assets/js/labs-idioma.js` hace que los links al menú y a
 `/labs/` vuelvan a `/labs/de/` y pone un botón 🐞 en la barra de arriba que manda comentarios a
 `feedback/` (D-104) con el contexto: página, pantalla, idioma, tamaño y versión. "Labor
 verlassen" saca la marca y deja la app en inglés. Ver [ALEMAN.md](ALEMAN.md).
@@ -2828,6 +2828,46 @@ fusionar, D-122). Sacar el alemán del laboratorio es quitarlo de `EN_LABS` y su
 toggle de quien no lo pidió); una copia aparte de la app en `/labs/de/` (se desactualiza al tiro y
 no prueba las salas de verdad); que el alemán faltante cayera al inglés (esconde lo que falta
 traducir: la prueba de paridad no lo vería).
+
+## D-192 · El sitio en `public/`, las carpetas en inglés y el taller ordenado
+**Fecha:** 2026-10-03 · **Estado:** vigente
+**Decisión:** La raíz del repo deja de ser la raíz del sitio. Todo lo que se sirve vive en
+**`public/`** y es lo único que se publica: `.github/workflows/publicar.yml` lo sube a GitHub Pages
+en cada fusión a main (sin los `*.test.mjs`), después de correr `pruebas.yml`; si una prueba falla,
+el sitio no cambia. Las **carpetas van en inglés**, también las que son URL: `/hangman/`, `/cup/`,
+`/timeline/`, `/bulls-and-cows/`, `/liars-dice/`, `/battleship/`, `/julep/`, `/fourth-king/` y
+`/minigames/<slug>/` (`connections`, `word`, `year`, `queens`, `tango`, `zip`, `untangle`, `where`).
+El **id de cada juego no cambia** (`'ahorcado'`, `'copa'`, `'reinas'`…): es un dato que guardan las
+salas de Firebase, las estadísticas del panel, las reglas y el `localStorage`; la carpeta pasa a ser
+`path` en `games.js` (y `slug` en los minijuegos sueltos). Cada **ruta vieja queda como página
+puente** —la genera `og.mjs tarjetas`, con la tarjeta de la página nueva— que redirige
+conservando lo que va detrás (`?sala=…`, `?pirata`, `&lang=…`, `#…`). Además:
+- `set-version.py` arma el import map recorriendo `public/**/*.js` y estampa toda página de
+  `public/` que cargue módulos: desaparece la lista `MODULES` que había que mantener a mano.
+- Los minijuegos de La Copa tienen carpeta propia: `public/cup/games/<slug>/` con `engine.js`,
+  `ui.js` y sus datos; lo común (`index.js`, `semilla.js`, `audiencia.js`, `mazos.js`, `solo.js`)
+  queda en `games/`.
+- `tools/` se ordena por función: `release/` (versión, README, tarjetas), `firebase/` (reglas,
+  reportes, en curso), `generators/` (mapa, flota), `agents/` (dilemas, documentación) y
+  `e2e/<juego>/`. Las especificaciones pasan a `docs/games/<carpeta>.md`; el video, a
+  `marketing/promo-video/` (y su skill, a `promo-video`).
+**Por qué:** la raíz mezclaba el sitio con el taller (18 carpetas y 8 archivos), y GitHub Pages
+publicaba todo: `docs/`, `tools/`, las reglas de Firebase, 49 MB de video y cada test eran
+públicos en juegosdesalon.cl. El dueño pidió además nombres en inglés por convención, para
+internacionalizar la navegación. Separar el id de la carpeta es lo que permite renombrar sin
+perder nada guardado.
+**Consecuencias:** una vez, el dueño cambia Settings → Pages → Source a "GitHub Actions" (el
+dominio se mantiene). Los links viejos siguen funcionando con un salto más; Google tarda unas
+semanas en cambiar sus resultados a las URL nuevas (las puentes llevan `canonical` a la nueva). Las
+huellas de las tarjetas (D-181) se migraron sin rehacer imágenes: solo cambiaron las rutas desde
+donde importa el dibujo, y cada huella vieja se comprobó contra el dibujo anterior antes de
+reemplazarla. Los comandos de las herramientas cambian de ruta (`node tools/release/og.mjs`…), y
+los Routines que los nombran se actualizan al fusionar.
+**Alternativas descartadas:** dejar las URL en español y mover solo el taller (no internacionaliza
+la navegación); un `404.html` que redirija en vez de páginas puente (deja la raíz más limpia, pero
+un link viejo pegado en un chat quedaba sin tarjeta y Google veía 404); cambiar también los ids
+(rompía las salas abiertas, las copas en curso, el panel y las partidas guardadas); una sola
+carpeta `juegos/` para todos (cambiaba las URL sin ganar nada a cambio).
 
 ## D-193 · Las pruebas de punta a punta corren solas en GitHub
 **Fecha:** 2026-10-02 · **Estado:** vigente; completa D-143

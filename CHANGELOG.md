@@ -1,8 +1,21 @@
 # Changelog
 
+## 0.91.0 — 2026-10-03
+- **Las direcciones pasan al inglés** (D-192): `/hangman/`, `/cup/`, `/timeline/`, `/bulls-and-cows/`,
+  `/liars-dice/`, `/battleship/`, `/julep/`, `/fourth-king/` y `/minigames/<slug>/`. Los links
+  viejos siguen andando: cada ruta en español es una página puente que manda a la nueva con todo
+  lo que traía (la sala, el nombre de la copa, el idioma) y con la misma tarjeta para los chats.
+  Nada guardado cambia: los ids de los juegos son los de siempre.
+- **El sitio vive en `public/`** y es lo único que se publica, con un workflow que corre las
+  pruebas antes: si una falla, el sitio no cambia. `docs/`, `tools/`, las reglas de Firebase y el
+  video dejan de ser públicos.
+- **El taller, ordenado:** `tools/` por función (`release/`, `firebase/`, `generators/`, `agents/`,
+  `e2e/<juego>/`), un minijuego de La Copa por carpeta (`cup/games/<slug>/`) y el import map de
+  versiones armado solo, sin lista que mantener.
+
 ## 0.90.6 — 2026-10-03
 - **README al día, con capturas** (C-13): la tabla de juegos suma los minijuegos que se juegan
-  sueltos desde la portada (`tools/hechos.mjs` ahora lee `SUELTOS`, así que uno nuevo aparece
+  sueltos desde la portada (`tools/release/hechos.mjs` ahora lee `SUELTOS`, así que uno nuevo aparece
   solo), con sus nombres en la tabla de idiomas. Se rehicieron las capturas de todas las
   secciones con las fuentes reales; el pie de Cuarto Rey "Cheers!" pasa a "Who drinks", porque
   esa pantalla cambia de título según la carta.
@@ -47,7 +60,7 @@
 - **🇩🇪 El alemán, en el laboratorio** (D-191): la app entera en alemán (Salonspiele) para que la
   revisen amigos que lo hablan, en `/labs/de/`. Solo ese celular ofrece DE en el toggle; ahí los
   "‹ Menü" vuelven al laboratorio y 🐞 en la barra de arriba manda comentarios con su contexto
-  (`node tools/reportes.mjs`). Es un borrador con glosario fijo: ver `docs/ALEMAN.md`.
+  (`node tools/firebase/reportes.mjs`). Es un borrador con glosario fijo: ver `docs/ALEMAN.md`.
 - **Arreglos para todos**, que salieron de medir el alemán a 320 px: los acentos de los títulos
   con degradado ya no salen cortados (SALÓN, SALÃO); la barra de arriba no se parte en dos líneas
   (el nombre del juego se corta con "…"); Palabra ya no muestra "null", su teclado deja un hueco
@@ -57,7 +70,7 @@
 
 ## 0.89.0 — 2026-10-03
 - **🧶 Desenredo sale del laboratorio** (D-190): su tarjeta ya no dice "Próximamente" y se juega
-  suelto desde el menú, en `/minijuegos/desenredo/`. En La Copa se puede elegir para cualquier día,
+  suelto desde el menú, en `/minigames/untangle/`. En La Copa se puede elegir para cualquier día,
   como los demás minijuegos.
 
 ## 0.88.0 — 2026-10-03
@@ -1048,7 +1061,7 @@
   por celda. Contra quien lee patrones —que es lo que hace una persona después de un par de
   partidas— el farol vale +4,4 puntos; contra quien solo calcula cuesta 3,6. Quedó en 0,7 y no en 1
   porque con la perilla al tope **nunca** cantaría su pinta más fuerte, que es un patrón tan legible
-  como cantarla siempre. Todo anotado en [docs/juegos/dudo.md](docs/juegos/dudo.md).
+  como cantarla siempre. Todo anotado en [docs/juegos/dudo.md](docs/games/liars-dice.md).
 - **Los títulos del README llevan los dos nombres**: `👑 Fourth King (Cuarto Rey)`. Primero el
   inglés, que es por lo que alguien de afuera busca el juego; entre paréntesis, el nombre de verdad,
   que es el que va a ver en la pantalla de la app.
