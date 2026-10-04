@@ -132,7 +132,7 @@ modo que el juego piensa tener.
 - Objetivos táctiles de 44 px como mínimo; los controles pequeños llevan área táctil ampliada invisible.
 - `.app` mide `calc(100svh - muescas)`, el alto chico de la pantalla, no `100dvh`: lo que se apoya abajo tiene que verse también cuando el navegador muestra toda su interfaz. Se revisa con `node tools/e2e/mirar.mjs <juego> <pantalla> --muescas` (D-77).
 - Las acciones irreversibles se confirman: seleccionar y luego confirmar (por ejemplo elegir casilla y tocar "¡Fuego!").
-- **Nada se preselecciona** en una jugada que se confirma. La app no elige por el jugador: sin selección explícita, el botón de confirmar va deshabilitado. En una lista que se desplaza, un toque puede irse en scroll y no llegar nunca; si había algo preseleccionado, el jugador termina confirmando lo que no eligió (D-38). Un ajuste de la partida sí puede venir con un valor por defecto, si se ve y se puede cambiar antes de empezar (D-213).
+- **Nada se preselecciona** en una jugada que se confirma. La app no elige por el jugador: sin selección explícita, el botón de confirmar va deshabilitado. En una lista que se desplaza, un toque puede irse en scroll y no llegar nunca; si había algo preseleccionado, el jugador termina confirmando lo que no eligió (D-38). Un ajuste de la partida sí puede venir con un valor por defecto, si se ve y se puede cambiar antes de empezar (D-213). **Jugada** es lo que se elige durante la partida y se confirma con un botón (una casilla, una carta, una apuesta, una respuesta). **Ajuste** es lo que se elige antes de que la partida empiece y vale para toda ella (jugadores, mazo, temática, número de rondas, el género en Cuarto Rey, las opciones de una copa al crearla o inscribirse), aunque se elija entre una partida y la siguiente.
 - El botón que confirma **dice sobre qué actúa** ("Colocar aquí · 🔍 Se funda Google"), no solo la acción.
 - Nada importante bajo la línea de flotación en un celular de 812 px: los botones de la pantalla final deben verse sin desplazar.
 - Si una lista puede crecer sin límite, el botón de confirmar va flotando (`position: sticky; bottom: 0`) con un degradado detrás, nunca al final del contenido.
@@ -321,7 +321,7 @@ como un error: se lee como que nadie jugó.
 - [ ] Los secretos se comprometen y verifican (C-10).
 - [ ] Las fallas de sala se ven en pantalla, en todos los idiomas, y la consola queda limpia (C-14).
 - [ ] Tests del motor en verde y partida completa probada en cada modo, con capturas revisadas (C-12).
-- [ ] Entrada con su versión en `CHANGELOG.md`; publicada y comprobada en la URL pública por `publicar.yml` (C-11, D-205).
+- [ ] Lo que cambió, descrito en el PR para que quien fusiona escriba la entrada de `CHANGELOG.md` con su versión; publicada y comprobada en la URL pública por `publicar.yml` (C-11, D-205).
 - [ ] Si tiene varios celulares, el chat de sala usa el módulo compartido y muere con la sala (C-15).
 - [ ] Lo que comparte (sala, resultado) sale de `compartir.js`, con la cabecera del estándar, y un resultado va con su imagen (C-7, D-165).
 - [ ] Registro en el menú, README, especificación, requerimientos y decisiones (C-2, C-13).

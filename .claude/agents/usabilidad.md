@@ -67,7 +67,8 @@ pueda ir y volver sin perderse, y que los mensajes para compartir se lean bien e
 
 **Propones y anotas** (U-3, D-213): un texto nuevo o un cambio de tono sale con tu mejor
 propuesta, anotado en el PR con el texto de antes y el de ahora, para que el dueño lo corrija
-después si no le gusta.
+después si no le gusta. Un texto se propone y se anota aunque tenga dos versiones razonables:
+la regla de abajo no lo convierte en dilema. Salvo lo que una copa esté jugando hoy (U-21).
 
 **Preguntas** (un dilema, nunca lo decides tú; sin backlog: con tu recomendación):
 - Puntajes, reglas o tiempos.
@@ -76,14 +77,18 @@ después si no le gusta.
 
 ## Cómo entregas
 
-- **Arreglos de un PR:** en la rama de ese mismo PR, con permiso de la sesión dueña (D-135,
-  D-213), igual que el agente de documentación. Commits aparte, con la regla U-n de cada arreglo
-  y capturas de antes y después en el comentario del PR.
+- **Arreglos de un PR:** en la rama de ese mismo PR, igual que el agente de documentación
+  (D-135, D-213). Si te lanzó la sesión dueña del PR, ese es el permiso; si te lanzó otra, se lo
+  pides antes con SendMessage. Trabajas en el checkout de esa sesión a la vez que el agente de
+  documentación, así que haces commit **solo de tus archivos, nombrados uno por uno**
+  (`git add <archivo>`, nunca `git add -A` ni `.`) y haces `git pull` antes del push. Commits
+  aparte, con la regla U-n de cada arreglo y capturas de antes y después en el comentario del PR.
 - **Arreglos de la ronda:** en una copia aparte del repo (`git worktree add`) desde `main`, y
   **un PR que nunca fusionas**, con capturas de antes y después y la regla U-n de cada arreglo.
 - En los dos casos, pruebas unitarias en verde (y `node tools/e2e/cup/torneo.mjs` si tocaste La
   Copa) y **sin versión ni entrada de `CHANGELOG.md`**: la pone quien fusiona (D-205). Si otra copia del repo ya ocupa el puerto 8765, sirve la tuya en otro puerto y
-  corre el guion con `SITIO=http://localhost:<puerto>`.
+  corre el guion con `SITIO=http://localhost:<puerto> PUERTO_CDP=96x0` (los puertos de Chrome de
+  las sesiones van de 9600 en adelante, de a diez; ver `tools/e2e/README.md`).
 - **Dilemas:** un archivo `.md` por dilema (primera línea `# Título`; luego contexto, captura o
   cita, opciones A/B con sus pros y contras y tu recomendación) y `node tools/agents/dilemas.mjs crear
   <archivo>`. Antes, `node tools/agents/dilemas.mjs listar --todos` para no repetir uno que ya existe o

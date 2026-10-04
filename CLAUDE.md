@@ -77,8 +77,10 @@ llave del dueño) y no fusiona. Todo lo demás de esta guía vale igual.
    los documentos. Los dos arreglan en la rama del mismo PR (D-213).
 2. **¿Hay alguien jugando?** `node tools/firebase/en-curso.mjs` (sale con 3 si hay salas en vivo
    o copas en curso; necesita la llave del dueño).
-3. **No se fusiona sin ✅ en GitHub en los dos checks, `pruebas` y `Punta a punta`** (D-143,
-   D-193, D-213), aunque ya hayan pasado aquí.
+3. **No se fusiona sin ✅ en GitHub en `pruebas` y en `Punta a punta`** (D-143,
+   D-193, D-213), aunque ya hayan pasado aquí. `Punta a punta` es un workflow con un job por
+   guion: vale que ninguno esté en rojo. En un PR que solo trae documentación no corre ningún
+   guion, y basta con que el job `lista` salga en verde.
 
 ## Al fusionar y publicar (C-11, D-205)
 
