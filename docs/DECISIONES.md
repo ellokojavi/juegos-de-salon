@@ -2927,3 +2927,11 @@ idioma. El alemán sigue en el toggle de ese celular y 🐞 sigue en la barra.
 **Por qué:** el dueño elegía español y al volver al menú quedaba "pegado en alemán": el toggle
 guardaba bien el español, pero "‹ Menú" lo llevaba a la portada del laboratorio, que está escrita
 en alemán.
+
+## D-196 · Los filtros de la portada quedan pegados arriba
+**Fecha:** 2026-10-03 · **Estado:** vigente; complementa D-142 y D-149
+**Decisión:** Al bajar por la lista de juegos, la barra de tipos (y la línea "Se ven N de M ·
+Ver todos") se queda pegada arriba, con fondo oscuro desenfocado que tapa también la franja de la
+muesca. Tocar un tipo estando pegada lleva la lista filtrada a su primera tarjeta, justo debajo.
+**Por qué:** lo pidió el dueño. Sin esto, cambiar de tipo desde abajo obligaba a subir, y al
+filtrar a media lista se quedaba mirando el medio de una lista más corta.
