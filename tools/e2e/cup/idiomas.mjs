@@ -38,6 +38,8 @@ for (const [i, lang] of OTROS.entries()) {
   await b.go(`${SITIO}/cup/?prueba&lang=${lang}`);
   await ev(`sessionStorage.clear(); 1`);
   await b.go(`${SITIO}/cup/?prueba`);
+  // Con varios Chrome a la vez (o el primero de un runner) la portada tarda más que la espera fija
+  for (let k = 0; k < 40 && !(await ev(`!!document.getElementById('btn-crear')?.offsetParent && document.documentElement.lang === '${lang}'`)); k++) await sleep(250);
   ok(await ev(`document.documentElement.lang`) === lang, `${lang}: la página queda en el idioma pedido por el link`);
   const portada = await texto();
   ok(tiene(portada, sinEmoji(T.create)), `${lang}: la portada está traducida (${sinEmoji(T.create)})`);

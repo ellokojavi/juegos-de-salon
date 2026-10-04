@@ -93,6 +93,14 @@ node tools/e2e/contacto.mjs cuarto-rey --salida /tmp/contacto
 | `sala-error.mjs` | Sin llegar a Firebase: el mensaje de cada juego con sala, Toque y Fama en cada idioma y los demás repartidos entre ellos |
 | `idioma-por-url.mjs` | El idioma que viene en el link, en cada idioma: `?lang=`, las puertas (`/en/`, `/pt/`, `/de/`), el puente `/labs/de/` y las invitaciones a sala y a copa |
 | `sala-tope.mjs` | Pasado el tope de salas por celular, avisa al instante y sin tocar la red |
+| `hangman/idiomas.mjs` | El Ahorcado en todos los idiomas: cada pantalla de `caminos.mjs` contra el español (D-199) |
+| `battleship/idiomas.mjs` | Batalla Naval en todos los idiomas: cada pantalla de `caminos.mjs` contra el español (D-199) |
+| `bulls-and-cows/idiomas.mjs` | Toque y Fama en todos los idiomas: cada pantalla de `caminos.mjs` contra el español (D-199) |
+| `timeline/idiomas.mjs` | Línea de Tiempo en todos los idiomas: cada pantalla de `caminos.mjs` contra el español (D-199) |
+| `liars-dice/idiomas.mjs` | Dudo en todos los idiomas: cada pantalla de `caminos.mjs` contra el español (D-199) |
+| `julep/idiomas.mjs` | Julepe en todos los idiomas: cada pantalla de `caminos.mjs` contra el español (D-199) |
+| `fourth-king/idiomas.mjs` | Cuarto Rey en todos los idiomas: cada pantalla de `caminos.mjs` contra el español (D-199) |
+| `cup-games/idiomas.mjs` | Los juegos sueltos de La Copa en todos los idiomas: cada pantalla de `caminos.mjs` contra el español (D-199) |
 
 ## Todos los idiomas (D-199)
 
