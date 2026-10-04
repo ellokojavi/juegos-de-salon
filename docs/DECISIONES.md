@@ -2994,3 +2994,16 @@ empieza con el norte arriba.
 **Por qué:** lo pidió el dueño, para corregir los puntos cardinales: girando el globo hacia un
 polo, o buscando una ciudad en un país largo, uno quiere orientar el mapa a su modo. Es el gesto
 que todos conocen de los mapas (no reinventar, D-102), y la brújula, la forma conocida de volver.
+
+## D-200 · Las teselas satelitales se cortan con PIL, no con sips
+**Fecha:** 2026-10-04 · **Estado:** vigente; corrige D-160
+**Decisión:** `node tools/generators/mapa.mjs satelite` corta las 128 teselas con
+`tools/generators/teselas.py` (PIL, que el repo ya usa en `readme.py`) y no con sips. Las teselas
+se rehicieron: ahora cada `fila-columna.jpg` es de verdad su cuadrado de 22,5°.
+**Por qué:** el dueño vio otra vez el polo norte "mal parchado": al acercarse, encima del Ártico
+aparecía un abanico estirado con los lagos de África. sips tiene dos trampas: con
+`--cropOffset 0 0` corta del centro y no de la esquina (la fila 0, el Ártico, salió con la franja
+del ecuador, y la columna 0 con la del centro), e ignora algunos cortes que tocan el borde. Con
+eso casi todas las teselas quedaron corridas, aunque solo cerca del polo se notaba a la vista.
+**Alternativas descartadas:** seguir con sips esquivando el `0 0` (dar vuelta la imagen, `0.0`):
+probado, y sus cortes en el borde siguen fallando sin avisar.
