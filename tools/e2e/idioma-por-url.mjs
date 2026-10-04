@@ -1,6 +1,9 @@
-// El idioma que viene en el link (D-74): /?lang=pt, la puerta /pt/, y la invitación a una sala
+// El idioma que viene en el link (D-74), en todos los que se ofrecen (D-199): /?lang=pt, la puerta /pt/, y la invitación a una sala
 // que llega en el idioma de quien la mandó. Sin red: no se abre ninguna sala de verdad.
 import { launch, sleep } from './cdp.mjs';
+import { LANGS } from '../../public/assets/js/i18n.js';
+const OTROS = LANGS.filter(l => l !== 'es');   // todos los que se ofrecen (D-199)
+const mal = msg => { console.log(`✗ ${msg}`); process.exitCode = 1; };
 const OUT = process.argv[2];
 const b = await launch({ port: 9495, dir: `${OUT}/p`, out: OUT });
 const SITIO = process.env.SITIO || 'http://localhost:8765';
@@ -20,31 +23,26 @@ await limpio('/');
 console.log('portada pelada      →', JSON.stringify(await mirar()));
 
 /* 2. El idioma pedido en la URL, y la URL queda limpia */
-await limpio('/?lang=pt');
-console.log('/?lang=pt           →', JSON.stringify(await mirar()));
-await limpio('/?lang=en');
-console.log('/?lang=en           →', JSON.stringify(await mirar()));
+for (const lang of OTROS) {
+  await limpio(`/?lang=${lang}`);
+  const m = await mirar();
+  console.log(`/?lang=${lang}`.padEnd(20) + '→', JSON.stringify(m));
+  if (m.lang !== lang || m.guardado !== lang || m.url !== '/') mal(`/?lang=${lang} no deja la portada en ${lang} con la URL limpia`);
+}
 
 /* 3. Un idioma que no existe no cambia nada */
 await limpio('/?lang=fr');
 console.log('/?lang=fr (no está) →', JSON.stringify(await mirar()));
 
-/* 4. La puerta de entrada: /pt/ deja elegido el idioma y manda a la portada */
-await limpio('/pt/');
-await sleep(1200);
-console.log('/pt/                →', JSON.stringify(await mirar()));
-await limpio('/en/');
-await sleep(1200);
-console.log('/en/                →', JSON.stringify(await mirar()));
-
-/* 4b. El alemán, fuera del laboratorio (D-197): su puerta /de/, y el link viejo /labs/de/ que
-   tienen sus revisores, que ahora es una página puente hacia /de/ */
-for (const ruta of ['/de/', '/labs/de/']) {
+/* 4. La puerta de entrada de cada idioma (/pt/, /en/, /de/…) lo deja elegido y manda a la portada.
+   /labs/de/ es el link viejo de los revisores del alemán, hoy una página puente hacia /de/ (D-197) */
+for (const ruta of [...OTROS.map(l => `/${l}/`), '/labs/de/']) {
+  const lang = ruta.split('/').at(-2);
   await limpio(ruta);
   await sleep(1600);
-  const de = await mirar();
-  console.log(`${ruta.padEnd(20)}→`, JSON.stringify(de));
-  if (de.lang !== 'de' || de.guardado !== 'de' || de.url !== '/') { console.log(`✗ ${ruta} no deja la app en alemán en la portada`); process.exitCode = 1; }
+  const m = await mirar();
+  console.log(`${ruta.padEnd(20)}→`, JSON.stringify(m));
+  if (m.lang !== lang || m.guardado !== lang || m.url !== '/') mal(`${ruta} no deja la app en ${lang} en la portada`);
 }
 
 /* 5. Queda guardado: la visita siguiente, sin nada en el link, sigue en ese idioma */
@@ -52,13 +50,17 @@ await b.go(`${SITIO}/`, 1500);
 console.log('y a la vuelta       →', JSON.stringify(await mirar()));
 
 /* 6. La invitación a una sala llega en el idioma de quien la mandó */
-await limpio('/liars-dice/?sala=WFBN&lang=pt');
-console.log('sala con idioma     →', await b.evaluate(`JSON.stringify({
-  lang: document.documentElement.lang,
-  url: location.pathname + location.search,
-  titulo: document.querySelector('#screen-setup h2')?.textContent,
-  codigo: document.querySelector('#setup-actions input.code')?.value,
-})`));
+for (const lang of OTROS) {
+  await limpio(`/liars-dice/?sala=WFBN&lang=${lang}`);
+  const sala = JSON.parse(await b.evaluate(`JSON.stringify({
+    lang: document.documentElement.lang,
+    url: location.pathname + location.search,
+    titulo: document.querySelector('#screen-setup h2')?.textContent,
+    codigo: document.querySelector('#setup-actions input.code')?.value,
+  })`));
+  console.log(`sala en ${lang}`.padEnd(20) + '→', JSON.stringify(sala));
+  if (sala.lang !== lang || sala.url !== '/liars-dice/?sala=WFBN') mal(`la invitación a una sala con ?lang=${lang} no llega en ${lang}`);
+}
 
 /* 7. Y el link que arma el juego para compartir lleva el idioma pegado */
 console.log('link que se comparte→', await b.evaluate(`(async () => {
@@ -70,10 +72,12 @@ console.log('link que se comparte→', await b.evaluate(`(async () => {
    lang= no puede tocar el resto (antes `?K7Q2X&lang=pt` quedaba en `?K7Q2X=` y abría la portada) */
 await b.go(`${SITIO}/cup/?prueba&demo=invitado`, 2500);
 const copa = await b.evaluate('__copa.estado.code');
-await b.go(`${SITIO}/cup/?prueba&${copa}&lang=pt`, 2500);
-const inv = JSON.parse(await b.evaluate(`JSON.stringify({ lang: document.documentElement.lang, url: location.search, pantalla: __copa.estado.pantalla })`));
-console.log('copa con idioma     →', JSON.stringify(inv));
-if (inv.pantalla !== 'entrar' || inv.lang !== 'pt' || inv.url !== `?prueba&${copa}`) { console.log('✗ la invitación a una copa con ?lang= no abre la copa'); process.exitCode = 1; }
+for (const lang of OTROS) {
+  await b.go(`${SITIO}/cup/?prueba&${copa}&lang=${lang}`, 2500);
+  const inv = JSON.parse(await b.evaluate(`JSON.stringify({ lang: document.documentElement.lang, url: location.search, pantalla: __copa.estado.pantalla })`));
+  console.log(`copa en ${lang}`.padEnd(20) + '→', JSON.stringify(inv));
+  if (inv.pantalla !== 'entrar' || inv.lang !== lang || inv.url !== `?prueba&${copa}`) mal(`la invitación a una copa con ?lang=${lang} no abre la copa`);
+}
 
 console.log('errors:', JSON.stringify(b.errors), JSON.stringify(b.logs.filter(l => !/vibrate/i.test(l))));
 b.close();
