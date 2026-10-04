@@ -179,6 +179,9 @@ assert.deepEqual(tipos('cerro').map(e => e.dia), [1], 'solo el día 1 cerró');
 assert.match(tipos('cerro')[0].texto, /jugaron 2 de 3/);
 assert.equal(tipos('fin').length, 0, 'la copa no ha terminado');
 assert.deepEqual(h.sinHora.map(e => e.tipo).sort(), ['cerrada', 'comodin', 'retiro'], 'el comodín, el retiro y el cierre no tienen hora en la base');
+// Cada evento con una persona trae su pid y empieza con su nombre: el panel le pone la bandera (D-209)
+for (const e of [...h.eventos, ...h.sinHora].filter(e => e.pid)) assert.ok(e.texto.startsWith(players[e.pid].name), `${e.tipo}: "${e.texto}" no empieza con el nombre`);
+assert.ok(h.sinHora.find(e => e.tipo === 'cerrada').pid, 'el cierre de la inscripción dice quién fue: el admin');
 
 // Terminada antes por el admin (D-161): ya no sale en curso, y los días que no abrieron quedan anulados
 const finAt = now - 60 * 60 * 1000;
