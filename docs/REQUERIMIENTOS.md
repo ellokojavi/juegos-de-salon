@@ -38,7 +38,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | RP-29 | El panel muestra la **bitácora de salas jugadas** del rango elegido (7 o 30 días), paginada: día y hora, jugadores con la bandera de su país, juego y ganador. Las pruebas y las salas donde nunca entró nadie más quedan fuera por defecto (D-79). | ✅ v0.33.6 |
 | RP-27 | Una sala que se cancela se cierra en el acto: quien se va a propósito se despide, la sala queda sin nadie y se borra sola, y el panel deja de mostrarla viva. Cerrar la pestaña no cancela nada: esa partida se puede retomar (D-50). | ✅ v0.25 |
 | RP-31 | El panel muestra en vivo las partidas sin red que se están jugando (contra el celular, un celular, solo), con juego, modo, cuántos juegan y país, sin nombres (D-140). | ✅ v0.64.7 |
-| RP-32 | La portada ofrece los minijuegos de La Copa sueltos, de un jugador y sin copa: Conexiones, Toque y Fama: Palabra, ¿En qué año?, Reinas, Tango y Zip. En inglés y portugués la tarjeta avisa que se juegan en español (D-142). | ✅ v0.65 |
+| RP-32 | La portada ofrece los juegos de La Copa sueltos, de un jugador y sin copa: Conexiones, Toque y Fama: Palabra, ¿En qué año?, Reinas, Tango y Zip. En inglés y portugués la tarjeta avisa que se juegan en español (D-142). | ✅ v0.65 |
 | RP-33 | La portada se filtra por tipo de juego; el filtro queda en la URL, dice cuántos juegos se ven y se quita con un toque (D-142, D-149); al bajar, los filtros quedan pegados arriba (D-196). | ✅ v0.93 |
 | RP-34 | Las explicaciones de todos los juegos (reglas, ayudas, modos, antesalas, Administrar y las frases del menú) son cortas: cada regla se dice una vez por pantalla, con frases completas, y una palabra por concepto: tachar, el celular, jugador, administrador, vidas, sorbos (D-177, U-5, U-8). | ✅ v0.84.0 |
 | RP-35 | Jugar en alemán: toda la experiencia en el idioma elegido, con las mismas claves que los otros tres, primero solo en el laboratorio (`/labs/de/`), con un botón para que quienes lo prueban comenten (D-191). Sale del laboratorio cuando lo revisen hablantes de alemán ([ALEMAN.md](ALEMAN.md)). | 🧪 en el laboratorio |
@@ -128,12 +128,12 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | LIG-33 | Avisos automáticos por WhatsApp, correo o push (D-99). | ⏳ pendiente |
 | LIG-34 | Calendario elegido por el admin al crear la copa: qué juegos y en qué orden, a partir de una propuesta al azar; la final no cambia (D-163). | ✅ v0.75.0 |
 | LIG-35 | Pantalla de espera antes del día 1: cuándo parte, calendario e inscritos. | ✅ v0.42 |
-| LIG-36 | "Cómo se juega" antes de cada minijuego y de cada ronda de la final; el intento empieza en Empezar. | ✅ v0.42 |
+| LIG-36 | "Cómo se juega" antes de cada juego y de cada ronda de la final; el intento empieza en Empezar. | ✅ v0.42 |
 | LIG-37 | Tiempo activo: el cronómetro se pausa con la pantalla oculta (D-95). | ✅ v0.42 |
 | LIG-38 | Tablero con tus días: los pasados con su resultado y deshabilitados, hoy habilitado, los que vienen deshabilitados. | ✅ v0.42 |
 | LIG-39 | Gráfico de tu posición día a día. | ✅ v0.42 |
 | LIG-40 | El panel del dueño muestra las copas creadas y su progreso. | ⏳ pendiente |
-| LIG-41 | Práctica de cada minijuego suelto, con semilla repetible, desde el laboratorio (D-101). | ✅ v0.43 |
+| LIG-41 | Práctica de cada juego suelto, con semilla repetible, desde el laboratorio (D-101). | ✅ v0.43 |
 | LIG-42 | Reportar un problema o dejar un comentario con su contexto, desde la práctica, el tablero y el resultado, sin cuenta (D-104). | ✅ v0.45 (se leen con `node tools/firebase/reportes.mjs`) |
 | LIG-43 | Laboratorio `/labs/`: La Copa sale del menú (Próximamente) y se prueba ahí, con la Copa de 3 días. | ✅ v0.43 |
 | LIG-44 | El panel del dueño muestra los reportes. | ⏳ pendiente |
@@ -155,7 +155,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | LIG-61 | Demos de cada vista de la copa en el laboratorio (D-110). | ✅ v0.48 |
 | LIG-62 | Rendirse en Reinas (D-110). | ✅ v0.48 |
 | LIG-63 | La copa no usa la temática de Brasil (D-111). | ✅ v0.48 |
-| LIG-64 | Todos los minijuegos puntúan de 0 a 100 (D-113). | ✅ v0.49 |
+| LIG-64 | Todos los juegos puntúan de 0 a 100 (D-113). | ✅ v0.49 |
 | LIG-65 | Las copas nuevas usan la hora del Pacífico y Administrar muestra la zona (D-113). | ✅ v0.49 |
 | LIG-66 | Inicio de la copa: hoy, mañana u otra fecha (hasta 30 días) con calendario (D-115). | ✅ v0.51 |
 | LIG-67 | Copas del laboratorio: el admin pasa al día siguiente (D-115). | ✅ v0.51 |
@@ -164,14 +164,14 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | LIG-70 | El nombre de la copa llega a 40 caracteres, con contador (D-119). | ✅ v0.55 |
 | LIG-71 | Link propio de la copa (?pirata), único mientras dure y reusable 7 días después de terminar (D-121). | ✅ v0.57 |
 | LIG-72 | Compartir la tabla parcial como imagen, con "(-1J)" para quien lleva menos juegos (D-126). | ✅ v0.59 |
-| LIG-73 | Invitación promocional, sin revelar los minijuegos (D-127). | ✅ v0.60 |
+| LIG-73 | Invitación promocional, sin revelar los juegos (D-127). | ✅ v0.60 |
 | LIG-74 | Conexiones agrupa por significado, sin juegos de palabras (D-128). | ✅ v0.61 |
 | LIG-75 | El tiempo se corta al terminar el tablero, no al tocar "Ver resultado" (D-130). | ✅ v0.62 |
 | LIG-75 | El tiempo se corta al terminar el tablero, no al tocar "Ver resultado" (D-130). | ✅ v0.62 |
 | LIG-76 | La tabla muestra los 7 días de cada jugador con su estado y una leyenda (D-131). | ✅ v0.63 |
 | LIG-75 | El tiempo se corta al terminar el tablero, no al tocar "Ver resultado" (D-130). | ✅ v0.62 |
 | LIG-76 | La tabla muestra los 7 días de cada jugador con su estado y una leyenda (D-131). | ✅ v0.63 |
-| LIG-77 | Reglas plegadas debajo del tablero en cada minijuego, con las palabras de sus botones (D-133). | ✅ v0.64 |
+| LIG-77 | Reglas plegadas debajo del tablero en cada juego, con las palabras de sus botones (D-133). | ✅ v0.64 |
 | LIG-78 | La imagen de la tabla pone gráfico y tabla en el mismo eje, con todos los días y los empates a la vista (D-141). | ✅ v0.64.9 |
 | LIG-79 | El resultado del día se envía apenas termina el tablero, no al tocar "Ver resultado" (D-150). | ✅ v0.66.1 |
 | LIG-80 | La imagen de la tabla muestra los puntos de cada día, el comodín, quién no jugó y quién todavía puede, con leyenda; "(-1J)" en pill y el podio final en galvanos; 4:5 (D-153). | ✅ v0.67.0 |
@@ -186,7 +186,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | LIG-90 | 📍 ¿Dónde queda? se juega suelto desde la portada, en `/minigames/where/`, sin "Próximamente" (D-174). | ✅ v0.82.0 |
 | LIG-91 | En Administrar, la invitación sigue mientras alguien nuevo pueda entrar (inscripción abierta y cupo) y, ya partida, dice en qué día va (D-176). | ✅ v0.83.1 |
 | LIG-92 | Quien entra tarde lee que los días cerrados quedan en 0 desde el día 3 (el día 1 sigue en su gracia el día 2); con la copa llena lee que está llena; la sesión de prueba avisa que es más corta y no cuenta (D-177). | ✅ v0.84.0 |
-| LIG-84 | Minijuegos de reserva (La Palabra, Ahorcado Contrarreloj), separados de LIG-34. | ⏳ pendiente |
+| LIG-84 | Juegos de reserva (La Palabra, Ahorcado Contrarreloj), separados de LIG-34. | ⏳ pendiente |
 | LIG-46 | El teclado, el tablero y la línea se comparten con Toque y Fama y Línea de Tiempo (`public/assets/js/teclado.js`, `public/assets/css/teclado.css`, `public/assets/css/linea.css`). | ✅ v0.44 |
 
 ## Requerimientos no funcionales

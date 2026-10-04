@@ -4,7 +4,7 @@
  * toque pone el alfiler; tocar otra vez lo mueve; el doble toque solo acerca. El alfiler no se
  * arrastra, porque arrastrar ya gira el globo. Confirmar es el botón (C-8). Las jugadas son `[lat, lon]` de cada alfiler confirmado.
  *
- * La portada del minijuego (`portada`) es el mismo globo, chico y girando solo.
+ * La portada del juego (`portada`) es el mismo globo, chico y girando solo.
  */
 import * as motor from './engine.js';
 import * as globo from './globo.js';

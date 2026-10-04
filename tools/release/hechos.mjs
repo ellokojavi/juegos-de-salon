@@ -94,10 +94,10 @@ for (const g of GAMES) {
   });
 }
 
-// Los minijuegos de La Copa que se juegan sueltos desde la portada (D-142): van en la tabla de
+// Los juegos de La Copa que se juegan sueltos desde la portada (D-142): van en la tabla de
 // juegos del README, aparte, porque no tienen rules.js ni modos.
 const sueltos = SUELTOS.map(m => ({
-  id: m.id, emoji: m.emoji, nombre: m.name, tipos: m.tipos, duracion: m.duration, labs: !!m.labs,
+  id: m.id, emoji: m.emoji, nombre: m.name, tipos: m.tipos, duracion: m.duration, labs: !!m.labs, path: m.path,
 }));
 
 // ------------------------------------------------------------- lo compartido

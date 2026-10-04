@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { LANGS, IDIOMAS, EN_LABS, COMMON, sinLang } from './i18n.js';
 import { GAMES, SUELTOS, TIPOS } from './games.js';
-import { MINIJUEGOS, minijuegos } from '../../cup/rules.js';
+import { JUEGOS_COPA, juegosCopa } from '../../cup/rules.js';
 import { FRASES } from './frases.js';
 import { DECKS } from '../../timeline/decks/index.js';
 import { DECKS as AHORCADO } from '../../hangman/decks/index.js';
@@ -51,12 +51,12 @@ same('FRASES', FRASES);
 for (const lang of IDIOMAS) assert.equal(FRASES[lang].length, 100, `FRASES.${lang}: deben ser 100 frases`);
 for (const lang of IDIOMAS) assert.equal(new Set(FRASES[lang]).size, 100, `FRASES.${lang}: hay frases repetidas`);
 for (const g of GAMES) { leaf(`GAMES.${g.id}.name`, g.name); leaf(`GAMES.${g.id}.tagline`, g.tagline); }
-// Los minijuegos sueltos de la portada (D-142): su tarjeta va en los tres idiomas y cada uno
+// Los juegos sueltos de la portada (D-142): su tarjeta va en los tres idiomas y cada uno
 // tiene que existir en La Copa, o la tarjeta abriría una práctica que no hay.
 for (const g of SUELTOS) {
   leaf(`SUELTOS.${g.id}.name`, g.name); leaf(`SUELTOS.${g.id}.tagline`, g.tagline);
-  assert.ok(MINIJUEGOS[g.id], `SUELTOS.${g.id}: no es un minijuego de La Copa`);
-  for (const lang of IDIOMAS) assert.equal(g.name[lang], minijuegos(lang)[g.id].nombre, `SUELTOS.${g.id}: el nombre en ${lang} no es el de La Copa`);
+  assert.ok(JUEGOS_COPA[g.id], `SUELTOS.${g.id}: no es un juego de La Copa`);
+  for (const lang of IDIOMAS) assert.equal(g.name[lang], juegosCopa(lang)[g.id].nombre, `SUELTOS.${g.id}: el nombre en ${lang} no es el de La Copa`);
 }
 for (const [id, t] of Object.entries(TIPOS)) leaf(`TIPOS.${id}.name`, t.name);
 for (const g of [...GAMES, ...SUELTOS]) for (const t of g.tipos || []) assert.ok(TIPOS[t], `${g.id}: el tipo ${t} no está en TIPOS`);

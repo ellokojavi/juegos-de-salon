@@ -20,7 +20,7 @@ const SITIO = process.env.SITIO || 'http://localhost:8765';
 const b = await launch({ port: Number(process.env.PUERTO_CDP) || 9231, dir: `${out}/p`, out, width: 375, height: 812 });
 const click = sel => b.evaluate(`(()=>{const x=document.querySelector('${sel}');if(!x)return 'no';x.click();return 'ok'})()`);
 const clickText = (sel, re) => b.evaluate(`(()=>{const x=[...document.querySelectorAll('${sel}')].find(e=>new RegExp('${re}','i').test(e.textContent));if(!x)return 'no';x.click();return 'ok'})()`);
-// La selección vive en la pantalla del minijuego: se lee de la carta marcada y la ranura abierta
+// La selección vive en la pantalla del juego: se lee de la carta marcada y la ranura abierta
 const sel = () => b.evaluate(`(()=>{const c=document.querySelector('#solo-juego .hand .card.sel');const r=document.querySelector('#solo-juego .line .slot.on');return JSON.stringify({card:c?c.dataset.card:null,slot:r?+r.dataset.slot:null})})()`).then(JSON.parse);
 const jugadas = () => b.evaluate(`window.__ldt.solo().jugadas.length`);
 const centro = s => b.evaluate(`(()=>{const x=document.querySelector('${s}');if(!x)return null;const r=x.getBoundingClientRect();return JSON.stringify({x:Math.round(r.left+r.width/2),y:Math.round(r.top+r.height/2)})})()`).then(v => (v ? JSON.parse(v) : null));

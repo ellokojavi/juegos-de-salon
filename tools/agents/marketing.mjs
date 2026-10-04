@@ -53,8 +53,8 @@ function commitsDesde(fecha, carpetas) {
   } catch { return []; }
 }
 
-// Las carpetas van en inglés y no son el id (D-192): un juego vive en public/<path>; un minijuego
-// suelto, en public/minigames/<slug>/, y su motor y su pantalla en public/cup/games/<slug>/.
+// Las carpetas van en inglés y no son el id (D-192): un juego vive en public/<path>; un juego
+// suelto, en public/<slug>/, y su motor y su pantalla en public/cup/games/<slug>/.
 const carpetas = id => {
   const g = GAMES.find(x => x.id === id);
   if (g) return [`public/${g.path}`];

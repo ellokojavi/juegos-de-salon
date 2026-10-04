@@ -1,5 +1,5 @@
 /**
- * El modo solo de un juego con su minijuego de La Copa (D-142). Toque y Fama juega 🔢 Adivina el
+ * El modo solo de un juego hecho con uno de La Copa (D-142). Toque y Fama juega 🔢 Adivina el
  * número y Línea de Tiempo juega ⏳ Línea Relámpago: la misma pantalla, las mismas reglas y el
  * mismo puntaje de 0 a 100 que en la copa, pero en el idioma de quien juega y dentro del juego,
  * con su memoria de partida (C-6).
@@ -13,7 +13,7 @@ import { reloj, mmss } from '../engine.js';
 export { mmss };
 
 /**
- * Monta el minijuego `mod` (su `montar` y su `resultado`) en `raiz`.
+ * Monta el juego `mod` (su `montar` y su `resultado`) en `raiz`.
  *
  * - `jugadas` y `ms`: lo guardado, para retomar; sin ellos parte de cero.
  * - `guardar({ jugadas, ms })`: después de cada jugada y al pausar el reloj.

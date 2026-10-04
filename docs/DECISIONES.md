@@ -2935,3 +2935,27 @@ Ver todos") se queda pegada arriba, con fondo oscuro desenfocado que tapa tambi�
 muesca. Tocar un tipo estando pegada lleva la lista filtrada a su primera tarjeta, justo debajo.
 **Por qué:** lo pidió el dueño. Sin esto, cambiar de tipo desde abajo obligaba a subir, y al
 filtrar a media lista se quedaba mirando el medio de una lista más corta.
+
+## D-197 · No hay minijuegos: los juegos de La Copa son juegos
+**Fecha:** 2026-10-03 · **Estado:** vigente; complementa D-142, D-149, D-162 y D-192
+**Decisión:** La app deja de distinguir entre juegos y minijuegos. Conexiones, Reinas, Tango, Zip,
+Desenredo, ¿Dónde queda?, ¿En qué año? y Toque y Fama: Palabra son juegos como los demás:
+- **Sus direcciones pasan a la raíz**, como las de cualquier juego: `/queens/`, `/tango/`,
+  `/connections/`… Las de antes (`/minigames/<slug>/`, `/minijuegos/<id>/` y las genéricas
+  `/minigames/?reinas`) quedan como páginas puente generadas. El molde de esas páginas pasa de
+  `public/minigames/index.html` a `public/cup/suelto/index.html`.
+- **La Copa habla de juegos:** "cada día un juego distinto", "Seis juegos y la final", la columna
+  "Juego" de la planilla y la invitación, en los cuatro idiomas (juego, game, jogo, Spiel). El
+  panel y la portada del laboratorio alemán, igual: una sola lista de juegos.
+- **En el código** el registro de La Copa se llama `JUEGOS_COPA` / `juegosCopa(lang)` (antes
+  `MINIJUEGOS` / `minijuegos(lang)`), y el panel cuenta `porJuego`.
+- Los ids no cambian (`reinas`, `conexiones`…): los guardan las copas, el panel y el
+  `localStorage`. `SUELTOS` sigue aparte de `GAMES` en `games.js` solo por cómo están hechos
+  (su motor vive en `cup/games/`, sin `rules.js`), no por lo que son.
+
+Los "minijuegos" de **Cuarto Rey** (Cuenta Cuentos, Chancho Inflado, Cultura Chupística, Nunca
+Nunca) son otra cosa —lo que manda hacer una carta— y conservan su nombre. Las decisiones y el
+CHANGELOG anteriores no se reescriben: cuentan lo que era cierto entonces.
+**Por qué:** lo pidió el dueño: la distinción ya no sirve. Desde D-142 los juegos de La Copa
+están en la portada, con sus filtros y su tarjeta, al lado de los otros; llamarlos "mini" los hacía
+parecer menos, y la URL `/minigames/` lo repetía en cada link compartido.

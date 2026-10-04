@@ -249,7 +249,7 @@ const CAMINOS = {
     espera: [...BN_CPU, ...BN_ZARPA, BN_FRENA, BN_FALLA('B'), BN_FALLA('A')],
   },
   /**
-   * Toque y Fama jugando solo: el minijuego 🔢 de La Copa (D-142). Para el resultado se juega
+   * Toque y Fama jugando solo: el juego 🔢 de La Copa (D-142). Para el resultado se juega
    * sola: un intento errado y el bueno, que sale del código guardado con el mismo motor.
    */
   'toque-y-fama': {
@@ -288,7 +288,7 @@ const CAMINOS = {
     ],
   },
   /**
-   * Tango suelto, el minijuego ☀️ de La Copa. `juego` es el tablero lleno menos una casilla,
+   * Tango suelto, el juego ☀️ de La Copa. `juego` es el tablero lleno menos una casilla,
    * para comparar el sol dado con el jugado (#61); `choque`, lleno con un último sol que choca,
    * que es el único choque que se ve sin tocar otra casilla (#135).
    */
