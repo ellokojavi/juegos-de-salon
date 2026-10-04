@@ -112,6 +112,8 @@ export function estadoCopa(L, now = Date.now()) {
 
   return {
     code: L.code, name: m.name, alias: m.alias || null, lab: !!m.lab, days: m.days, start: m.start, tz: m.tz, fin: L.fin || null,
+    // El idioma de la copa (D-211): la meta solo lo guarda si no es español
+    lang: m.lang || 'es',
     createdAt: m.createdAt || 0, end: m.end, estado, dia, hoy, jugando,
     jugadores: jug.length, inscripcion: estado !== 'terminada' && inscripcionAbierta(m, now, L.closed),
     participacion: { jugado, esperado }, primero, ultimo: ultimoResultado(L),

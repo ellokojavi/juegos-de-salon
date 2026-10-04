@@ -251,3 +251,6 @@ a.bar--link .label { text-decoration: underline; text-decoration-color: rgba(255
 .evento .que small { display: block; color: var(--muted); font-size: 0.8rem; }
 
 .pie { margin-top: 20px; }
+
+/* El idioma en que se jugó (D-211): una etiqueta corta, como la de laboratorio */
+.idioma { display: inline-block; padding: 1px 7px; border-radius: 6px; font-size: 0.68rem; font-weight: 900; letter-spacing: 0.06em; vertical-align: middle; background: rgba(157, 255, 58, 0.14); color: var(--lime); white-space: nowrap; }
