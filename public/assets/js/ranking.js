@@ -118,7 +118,8 @@ function fila(f, yo) {
   const mia = yo && f.jid === yo;
   return el('div', { class: 'rk-fila' + (mia ? ' yo' : ''), 'data-jid': f.jid },
     el('span', { class: 'rk-puesto' }, f.puesto == null ? '·' : MEDALLA[f.puesto - 1] || `${f.puesto}`),
-    el('span', { class: 'rk-nombre' }, f.n || '?', mia ? el('small', {}, ` (${T.you})`) : null),
+    // El "(tú)" va fuera del recorte: un nombre largo se corta, pero se sigue viendo cuál es el propio
+    el('span', { class: 'rk-nombre' }, el('span', { class: 'rk-n' }, f.n || '?'), mia ? el('small', {}, `(${T.you})`) : null),
     el('span', { class: 'rk-puntos' }, `${f.s}`),
     el('small', { class: 'rk-tiempo' }, mmss(f.ms)));
 }
@@ -185,8 +186,10 @@ export function avisoPartida({ juego, variante = '', s, ms, alAnotar = () => {} 
       const J = await jugador();
       const r = await J.anotar({ juego, variante, s, ms });
       if (!r) return;
-      if (r.siempre.nuevo) caja.append(el('p', { class: 'rk-record pop' }, T.newRecord));
-      else if (r.semana.nuevo) caja.append(el('p', { class: 'rk-record pop' }, T.newWeek));
+      // Un 0 (rendirse) no se celebra: "¡Récord nuevo!" bajo un 0/100 contradice la pantalla
+      const celebra = Number(s) > 0;
+      if (celebra && r.siempre.nuevo) caja.append(el('p', { class: 'rk-record pop' }, T.newRecord));
+      else if (celebra && r.semana.nuevo) caja.append(el('p', { class: 'rk-record pop' }, T.newWeek));
       else if (r.siempre.antes) caja.append(el('p', { class: 'muted center' }, fmt(T.best, { s: r.siempre.antes.s, t: mmss(r.siempre.antes.ms) })));
       alAnotar(r);
     } catch (e) {
