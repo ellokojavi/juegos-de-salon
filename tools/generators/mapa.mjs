@@ -4,7 +4,7 @@
  *
  *   node tools/generators/mapa.mjs generar    # reescribe public/cup/games/where/mapa.js (necesita internet)
  *   node tools/generators/mapa.mjs revisar    # ¿cada ciudad cae dentro de su país? ¿falta algún país?
- *   node tools/generators/mapa.mjs satelite   # rehace las imágenes satelitales del globo (internet y macOS: usa sips)
+ *   node tools/generators/mapa.mjs satelite   # rehace las imágenes satelitales del globo (internet, sips de macOS y PIL)
  *
  * Los bordes son los de Natural Earth 1:50m (dominio público), en el TopoJSON de `world-atlas`,
  * bajados de jsDelivr. El mapa sale sin nombres, simplificado y en décimas de grado enteras
@@ -209,18 +209,11 @@ async function satelite() {
     execFileSync('sips', ['-s', 'format', 'jpeg', '-s', 'formatOptions', '78', '-z', String(w / 2), String(w), tmp, '--out', `${RAIZ}${ruta}`], { stdio: 'ignore' });
     console.log(ruta);
   }
-  // Las teselas: primero franjas (sips abre la imagen grande una vez por franja), después cada franja en cuadrados
+  // Las teselas, con PIL: sips corta del centro cuando el corte parte en la esquina (D-200)
   const { dir, columnas, filas, lado } = TESELAS;
   rmSync(`${RAIZ}${dir}`, { recursive: true, force: true });
   mkdirSync(`${RAIZ}${dir}`, { recursive: true });
-  for (let f = 0; f < filas; f++) {
-    const franja = `${tmpdir()}/franja-${process.pid}.jpg`;
-    execFileSync('sips', ['-c', String(lado), String(columnas * lado), '--cropOffset', String(f * lado), '0', tmp, '--out', franja], { stdio: 'ignore' });
-    for (let c = 0; c < columnas; c++) {
-      execFileSync('sips', ['-s', 'format', 'jpeg', '-s', 'formatOptions', '72', '-c', String(lado), String(lado), '--cropOffset', '0', String(c * lado), franja, '--out', `${RAIZ}${dir}/${f}-${c}.jpg`], { stdio: 'ignore' });
-    }
-    rmSync(franja);
-  }
+  execFileSync('python3', [`${RAIZ}tools/generators/teselas.py`, tmp, `${RAIZ}${dir}`, String(columnas), String(filas), String(lado)], { stdio: 'inherit' });
   console.log(`${dir}/: ${columnas * filas} teselas de ${lado} px`);
   rmSync(tmp);
 }
