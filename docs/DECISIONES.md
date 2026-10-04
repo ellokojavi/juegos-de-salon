@@ -3015,3 +3015,25 @@ español, así que no repiten lo que ya está mal en español: eso lo cuentan lo
 revisar solo las claves de los diccionarios (ya lo hace `i18n.test.mjs`, y no ve un texto escrito
 a mano en el HTML ni un botón que el alemán saca de la pantalla); mirar las capturas a ojo en cada
 idioma (no escala: son más de cien tomas).
+
+## D-200 · ¿Dónde queda? se juega a pantalla completa
+**Fecha:** 2026-10-04 · **Estado:** prototipo; complementa C-8, D-133 y D-159
+**Decisión:** El globo de ¿Dónde queda? ocupa la ventana entera y todo lo demás flota encima,
+suelto y en La Copa por igual; reemplaza a la vista en caja:
+- **Arriba**, la barra (‹ Menú y 🔊) con el reloj en una píldora al medio; debajo, la ciudad
+  ("Ciudad 1 de 5" y su nombre) y las **reglas plegadas** como un widget que se abre sobre el
+  globo y se desplaza por dentro (D-133). El nombre del juego no se repite: lo dice la ciudad.
+- **Abajo**, la pista de girar, + y − y la acción: Confirmar, o el resultado y Siguiente.
+- **El globo se centra entre la ciudad y la acción** y puede pasar 60 px por debajo de ellas;
+  la respuesta encuadra el alfiler y la ciudad en esa franja. El tope de acercamiento se mide en
+  radio del globo en píxeles (3000, unos 2 km por píxel), no en veces el globo: en un computador
+  el globo entero es el doble que en un celular.
+- **La cáscara se entera por el juego**: `pantallaCompleta` en su `ui.js` hace que `cup/game.js`
+  ponga `pantalla-completa` en el `body` al montarlo, y `mostrar()` la quita al cambiar de pantalla.
+  Otro juego de La Copa puede pedir lo mismo.
+**Por qué:** En un computador el globo quedaba en una caja de unos 410×320 px, un 13 % de la
+pantalla, y en un celular en la mitad. Un mapa es mejor mientras más grande se vea.
+**Consecuencias:** Lo que flota no puede quedar dentro de algo con `transform` (la animación de
+entrada de la pantalla se apaga en este modo) ni con `align-self: center`, que Chrome también
+aplica a lo fijo. La pantalla no se desplaza: lo que no quepa tiene que desplazarse dentro de su
+widget, como las reglas abiertas.

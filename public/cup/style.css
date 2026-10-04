@@ -306,19 +306,64 @@ button.md-fila { cursor: pointer; }
 .anio-era { max-width: 260px; width: 100%; margin: 0 auto; }
 .anio-era button { white-space: nowrap; }
 
-/* ¿Dónde queda?: + y − abajo a la derecha, donde el globo entero deja espacio. El globo se gira y se acerca con los dedos, así que no desplaza la página
-   (touch-action). Alto según la pantalla, para que Confirmar, y después el aviso y Siguiente, se
-   vean sin desplazar (C-8): lo que queda debajo del encabezado, la ciudad y esos dos (390 px).
-   svh es la pantalla con la barra del navegador a la vista; vh, para los navegadores sin svh */
-.mapa-caja { position: relative; height: clamp(160px, calc(100vh - 390px), 460px); height: clamp(160px, calc(100svh - 390px), 460px); border-radius: 14px; overflow: hidden; border: 2px solid var(--glass-border); }
-.mapa-caja { background: radial-gradient(circle at 50% 45%, #2a1250, #0e0520 75%); }
+/* ¿Dónde queda? a pantalla completa (D-200): el globo ocupa la ventana entera y lo demás flota
+   encima. Arriba, la barra (‹ Menú y 🔊) con el reloj en medio; debajo, la ciudad y las reglas
+   plegadas; abajo, la pista, + y − y la acción. El globo se gira y se acerca con los dedos, así
+   que nada desplaza la página (touch-action). Los widgets van en una columna fija que no recibe
+   toques (pointer-events: none): solo sus botones, así el globo se toca entre ellos. */
+.mapa-caja { position: fixed; inset: 0; z-index: -1; pointer-events: auto; background: radial-gradient(circle at 50% 45%, #2a1250, #0e0520 75%); }
 .mapa-satelite { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 .mapa-globo { position: relative; display: block; width: 100%; height: 100%; touch-action: none; user-select: none; -webkit-user-select: none; cursor: crosshair; }
-.globo-pista { position: absolute; left: 50%; top: 10px; transform: translateX(-50%); pointer-events: none; white-space: nowrap;
+.globo-pista { pointer-events: none; white-space: nowrap; align-self: center;
   background: rgba(21,7,38,0.8); color: #fff; font: 800 0.9rem var(--font-body); padding: 6px 12px; border-radius: 999px; border: 1px solid var(--glass-border); }
-.mapa-zoom { position: absolute; right: 8px; bottom: 8px; display: grid; gap: 6px; }
+.mapa-zoom { display: grid; gap: 6px; margin-left: auto; pointer-events: auto; }
 .mapa-zoom .btn { width: 44px; min-height: 44px; padding: 0; font: 900 1.4rem var(--font-body); background: rgba(21,7,38,0.75); }
-.donde-ciudad b { overflow-wrap: anywhere; }
+.donde-ciudad { padding: 8px 14px; box-shadow: 0 6px 18px rgba(0,0,0,0.35); }
+.donde-nombre { display: grid; min-width: 0; }
+.donde-nombre b { overflow-wrap: anywhere; }
+.donde-cual { color: #6b4a00; font-weight: 800; font-size: 0.78rem; }
+.donde-abajo { display: grid; gap: 8px; pointer-events: none; }
+.donde-fila { position: relative; display: flex; align-items: flex-end; gap: 8px; }
+.donde-fila .globo-pista { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); }
+.donde-accion { pointer-events: auto; gap: 8px; }
+.donde-accion .aviso { background: rgba(21,7,38,0.85); border: 1px solid var(--glass-border); }
+.donde-accion .aviso.bien { background: rgba(26,48,8,0.9); }
+.donde-accion .aviso.mal { background: rgba(70,8,20,0.9); }
+.donde-accion .btn { box-shadow: 0 6px 18px rgba(0,0,0,0.4); }
+
+/* La cáscara, cuando el juego pide pantalla completa: la página no se desplaza, la pantalla de
+   jugar es una columna fija del alto de la ventana y sus partes se ordenan dentro (display:
+   contents deja a la ciudad, las reglas y la acción como hermanas). Sin la animación de entrada:
+   su transform dejaría a lo fijo atrapado dentro de la pantalla en vez de la ventana. */
+body.pantalla-completa { overflow: hidden; overscroll-behavior: none; }
+body.pantalla-completa .topbar { position: fixed; z-index: 3; margin: 0;
+  top: calc(var(--safe-top) + 12px); left: calc(16px + env(safe-area-inset-left, 0px)); right: calc(16px + env(safe-area-inset-right, 0px)); }
+body.pantalla-completa .topbar .back, body.pantalla-completa .topbar .tools > * { box-shadow: 0 4px 14px rgba(0,0,0,0.35); }
+body.pantalla-completa .topbar .back { background: rgba(21,7,38,0.75); }
+body.pantalla-completa .topbar .chip { display: none; }
+body.pantalla-completa #screen-jugar.active { animation: none; position: fixed; inset: 0; z-index: 2; pointer-events: none; gap: 8px;
+  padding: calc(var(--safe-top) + 12px + 44px + 10px) calc(16px + env(safe-area-inset-right, 0px)) calc(var(--safe-bottom) + 16px) calc(16px + env(safe-area-inset-left, 0px)); }
+body.pantalla-completa #jugar-body, body.pantalla-completa .donde-juego { display: contents; }
+body.pantalla-completa #screen-jugar > *, body.pantalla-completa .donde-juego > * { width: 100%; max-width: 440px; align-self: center; }
+body.pantalla-completa .donde-juego > .mapa-caja { width: auto; max-width: none; align-self: stretch; }
+body.pantalla-completa .donde-arriba { order: 1; pointer-events: auto; }
+body.pantalla-completa #jugar-reglas { order: 2; pointer-events: none; }
+body.pantalla-completa #jugar-reglas .reglas { pointer-events: auto; }
+body.pantalla-completa .donde-abajo { order: 3; margin-top: auto; }
+/* El reloj, una píldora en medio de la barra; el nombre del juego ya lo dice la ciudad */
+body.pantalla-completa #jugar-head { position: fixed; z-index: 4; top: calc(var(--safe-top) + 12px); left: 50%; transform: translateX(-50%);
+  width: auto; min-height: 44px; margin: 0; padding: 0 14px; gap: 8px; border-radius: 999px; pointer-events: auto;
+  background: rgba(21,7,38,0.75); border: 1px solid var(--glass-border); box-shadow: 0 4px 14px rgba(0,0,0,0.35); }
+body.pantalla-completa #jugar-head:empty { display: none; }
+body.pantalla-completa #jugar-head .jugar-titulo { display: none; }
+body.pantalla-completa #jugar-head .chip { margin: 0; }
+body.pantalla-completa #jugar-head .cron { color: var(--ink); }
+/* Las reglas, un widget plegado bajo la ciudad: cerrado es una píldora a la izquierda; abierto,
+   una tarjeta del ancho de la ciudad que se desplaza por dentro y no tapa la acción */
+body.pantalla-completa #jugar-reglas .reglas { width: fit-content; max-width: 100%; margin: 0; background: rgba(21,7,38,0.85); box-shadow: 0 4px 14px rgba(0,0,0,0.35); }
+body.pantalla-completa #jugar-reglas .reglas > summary { min-height: 44px; padding: 6px 14px; }
+body.pantalla-completa #jugar-reglas .reglas[open] { width: 100%; max-height: calc(100svh - var(--safe-top) - var(--safe-bottom) - 330px); min-height: 120px; overflow-y: auto; overscroll-behavior: contain; }
+body.pantalla-completa #jugar-reglas .reglas[open] > summary { position: sticky; top: 0; background: rgba(21,7,38,0.97); }
 
 /* Reinas, Tango y Zip: grillas cuadradas que se tocan (C-8: 44 px en 320 de ancho con 7 u 8
    casillas no caben; el área de toque es la casilla entera y la grilla usa todo el ancho) */
