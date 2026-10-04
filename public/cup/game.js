@@ -857,6 +857,7 @@ function tablero() {
   const Lc = L();
   if (!Lc || !S.yo) return;
   if (!Lc.players?.[S.yo]) { cuenta.olvidar(S.code); S.yo = null; entrar(); return; }
+  anotarPais(Lc);
   mostrar('tablero');
   const { meta } = Lc;
   const now = ahora();
@@ -2107,6 +2108,19 @@ function botonReporte(extra = {}) {
  */
 function miPais() {
   try { return countryOf({ tz: Intl.DateTimeFormat().resolvedOptions().timeZone, lang: navigator.language }); } catch (_) { return ''; }
+}
+
+/**
+ * Quien se inscribió antes de que la copa guardara el país (D-207) lo anota la próxima vez que
+ * abre su copa, una sola vez y sin esperar: el panel del dueño pone la bandera junto a cada
+ * nombre (D-209). Si no se sabe o falla, nada: quien juega no se entera.
+ */
+let paisAnotado = false;
+function anotarPais(Lc) {
+  if (paisAnotado || !S.yo || Lc.players?.[S.yo]?.co) return;
+  paisAnotado = true;
+  const co = miPais();
+  if (co) store.ponerPais?.(S.code, S.yo, co).catch(() => { /* mejor esfuerzo */ });
 }
 
 /**

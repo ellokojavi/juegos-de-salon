@@ -293,7 +293,7 @@ export function historiaCopa(L, now = Date.now()) {
   if (m.createdAt) ev.push({ at: m.createdAt, tipo: 'creada', pid: m.admin, texto: `${admin} creó la copa: ${m.days} días` });
   for (const [pid, p] of Object.entries(L.players)) {
     if (typeof p?.at === 'number' && p.at > 1e12 && pid !== m.admin) ev.push({ at: p.at, tipo: 'inscripcion', pid, texto: `${p.name} se inscribió` });
-    if (p?.out) sinHora.push({ tipo: 'retiro', pid, texto: `El admin retiró a ${p.name}` });
+    if (p?.out) sinHora.push({ tipo: 'retiro', pid, texto: `${p.name} salió de la copa: lo retiró el admin` });
   }
   const jug = activos(L);
   for (let d = 1; d <= m.days; d++) {
@@ -317,8 +317,9 @@ export function historiaCopa(L, now = Date.now()) {
     }
   }
   for (const [pid, d] of Object.entries(L.wild || {})) sinHora.push({ tipo: 'comodin', pid, dia: Number(d), texto: `${nombre(pid)} usó el comodín en el día ${d}` });
-  if (L.closed) sinHora.push({ tipo: 'cerrada', texto: `${admin} cerró la inscripción` });
-  if (L.fin) ev.push({ at: L.fin, tipo: 'fin', texto: `${admin} terminó la copa antes de tiempo` });
+  // Con el pid del admin, para que su nombre lleve la bandera como los demás
+  if (L.closed) sinHora.push({ tipo: 'cerrada', pid: m.admin, texto: `${admin} cerró la inscripción` });
+  if (L.fin) ev.push({ at: L.fin, tipo: 'fin', pid: m.admin, texto: `${admin} terminó la copa antes de tiempo` });
   else if (terminada(m, now)) ev.push({ at: m.end, tipo: 'fin', texto: 'La copa terminó' });
   // A igual hora, primero lo que ocurrió después en la lógica: el cierre antes que la apertura del día siguiente
   const peso = { fin: 0, cerro: 1, termino: 2, 'sin-terminar': 3, empezo: 4, abrio: 5, inscripcion: 6, creada: 7 };
