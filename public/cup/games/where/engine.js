@@ -32,16 +32,20 @@ export const vector = (lat, lon) => [Math.cos(lat * RAD) * Math.cos(lon * RAD), 
 /**
  * La vista del globo (proyección ortográfica) mirando al punto `[lat0, lon0]`: de un vector de
  * la esfera a `[x, y, prof]`, con x a la derecha, y hacia arriba, en radios del globo; `prof > 0`
- * es la cara que se ve.
+ * es la cara que se ve. `rumbo` gira la vista en torno a su centro, en grados y contra el reloj:
+ * con 0, el norte queda arriba (D-200).
  */
-export function ver([X, Y, Z], [lat0, lon0]) {
+export function ver([X, Y, Z], [lat0, lon0], rumbo = 0) {
   const s0 = Math.sin(lat0 * RAD), c0 = Math.cos(lat0 * RAD), sl = Math.sin(lon0 * RAD), cl = Math.cos(lon0 * RAD);
-  const A = X * cl + Y * sl, B = Y * cl - X * sl;
-  return [B, c0 * Z - s0 * A, s0 * Z + c0 * A];
+  const A = X * cl + Y * sl, B = Y * cl - X * sl, C = c0 * Z - s0 * A;
+  const sr = Math.sin(rumbo * RAD), cr = Math.cos(rumbo * RAD);
+  return [cr * B - sr * C, sr * B + cr * C, s0 * Z + c0 * A];
 }
 
 /** Lo contrario: el `[lat, lon]` que se ve en `[x, y]` (en radios), o `null` fuera del globo. */
-export function tocado(x, y, [lat0, lon0]) {
+export function tocado(x0, y0, [lat0, lon0], rumbo = 0) {
+  const sr = Math.sin(rumbo * RAD), cr = Math.cos(rumbo * RAD);
+  const x = cr * x0 + sr * y0, y = cr * y0 - sr * x0;
   const q = x * x + y * y;
   if (q > 1) return null;
   const prof = Math.sqrt(1 - q);
