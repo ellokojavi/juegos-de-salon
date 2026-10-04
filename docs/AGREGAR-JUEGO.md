@@ -13,6 +13,10 @@
 5. **Si el juego usa varios celulares**, seguir el patrón de Toque y Fama: estado derivado de una lista de mensajes, interfaz `Transport` (`create`, `join`, `send`, `onMessage`, `onPresence`, `leave`) con implementaciones `local` y `firebase`, y reglas de seguridad en `firebase/database.rules.json` (campo `game` en la sala para separar juegos).
 6. **Sus módulos JS entran solos** al import map de versiones: al publicar, `tools/release/set-version.py` recorre el sitio (D-192, D-205).
 7. **Dejar la señal de uso para el panel** (D-44): al empezar una partida sin red, llamar `trackStart({ game, mode, players })` de `public/assets/js/transport/stats.js` (no al retomar). Las salas de dos celulares las apunta el transporte solo. El panel no hay que tocarlo: el juego nuevo aparece ahí con su emoji y su nombre en cuanto manda la primera señal (C-16). Si el juego estrena un **modo** que no está en `MODES` de `public/assets/js/games.js`, se agrega esa línea y basta. Ver `docs/PANEL.md`.
+7b. **Rankings** (D-212): hoy anotan récords solo los juegos sueltos de La Copa (los que tienen
+   `suelto` en `games.js`), y lo hace `public/cup/game.js` sin que el juego haga nada: su página
+   sale de `public/cup/suelto/index.html`, que ya carga `ranking.css`. Un juego de salón no anota
+   récords; si uno nuevo debería, es una decisión para el dueño, no algo que se agrega de pasada.
 8. **Sumarlo al README**, que es la única parte del proyecto que va en inglés (C-13, D-78): la
    sección del juego con su prosa, las tomas nuevas en el guion de `tools/e2e/` y sus entradas en
    `docs/capturas.json`, con el `pie` en inglés. Después, `python3 tools/release/readme.py capturas <seccion>`
