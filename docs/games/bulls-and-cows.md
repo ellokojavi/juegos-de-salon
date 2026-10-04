@@ -31,7 +31,7 @@ minijuego 🔢 de La Copa, con sus reglas, su pantalla y su puntaje, pero en el 
 
 - **Reglas:** 4 cifras distintas, puede empezar con cero, 10 intentos. Puntaje de 0 a 100: parte
   en 100 y cada intento que las pistas ya descartaban —uno que, con lo respondido hasta ahí, no
-  podía ser el secreto— resta 15, con mínimo 10 si lo saca; 0 si no lo saca (D-197,
+  podía ser el secreto— resta 15, con mínimo 10 si lo saca; 0 si no lo saca (D-204,
   `public/cup/games/number/engine.js`). Terminado el tablero, esos intentos llevan ⚠️ y una línea
   debajo lo explica; mientras se juega no se marca nada, porque sería soplar.
 - **Número:** sale de un código de 5 letras al azar (`codigoAlAzar` de `public/cup/engine.js`) con

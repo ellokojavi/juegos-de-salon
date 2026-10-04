@@ -19,7 +19,7 @@ export function desglose(id, e, { T, fmt, mmss, copa = true, lang = 'es' }) {
   if (!e) return null;
   // Un descuento en cero no se nombra; uno solo va en singular (las claves terminadas en One)
   const resta = (clave, n, v) => (n ? fmt(n === 1 ? T[`${clave}One`] : T[clave], { n, ...v }) : null);
-  // El número: 100 menos los intentos que las pistas ya descartaban, con suelo de 10 (D-197)
+  // El número: 100 menos los intentos que las pistas ya descartaban, con suelo de 10 (D-204)
   const intentos = (x, max) => (x.resuelto
     ? [
       fmt(T.bdTries, { u: x.usados, max }),

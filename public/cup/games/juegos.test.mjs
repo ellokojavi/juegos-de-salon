@@ -56,8 +56,8 @@ test('número: cifras distintas y las mismas para todos', () => {
 });
 
 // El 100 es de quien deduce, no de quien tiene suerte: lo que resta son los intentos que las
-// pistas ya descartaban, no los intentos a secas (D-197)
-test('número: 100 si ningún intento estaba descartado, aunque sean muchos (D-197)', () => {
+// pistas ya descartaban, no los intentos a secas (D-204)
+test('número: 100 si ningún intento estaba descartado, aunque sean muchos (D-204)', () => {
   const p = { cifras: 4, secreto: '1234' };
   // Seis intentos, todos posibles con las pistas que había en la mesa
   const coherente = numero.estado(p, ['0567', '4123', '2341', '3214', '3412', '1234']);

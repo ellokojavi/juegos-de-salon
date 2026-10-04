@@ -1,7 +1,7 @@
 # Changelog
 
-## 0.94.0 — 2026-10-04
-- **Toque y Fama: los 100 puntos ahora se pueden sacar deduciendo** (D-197). El 🔢 de La Copa, el
+## 0.99.0 — 2026-10-04
+- **Toque y Fama: los 100 puntos ahora se pueden sacar deduciendo** (D-204). El 🔢 de La Copa, el
   modo de jugar solo y la ronda del número de La Gran Final parten en 100 y restan 15 por cada
   intento que las pistas ya descartaban, en vez de restar por cada intento. Sacándolo, el mínimo
   es 10. Antes, el 100 pedía acertar al primer intento: 1 en 5040 de pura suerte. Terminado el

@@ -2936,7 +2936,7 @@ muesca. Tocar un tipo estando pegada lleva la lista filtrada a su primera tarjet
 **Por qué:** lo pidió el dueño. Sin esto, cambiar de tipo desde abajo obligaba a subir, y al
 filtrar a media lista se quedaba mirando el medio de una lista más corta.
 
-## D-197 · Toque y Fama: los 100 puntos son de quien deduce, no de quien tiene suerte
+## D-204 · Toque y Fama: los 100 puntos son de quien deduce, no de quien tiene suerte
 **Fecha:** 2026-10-04 · **Estado:** vigente; reemplaza la regla de puntaje de D-113 para el 🔢 y
 alcanza también su ronda de La Gran Final
 **Decisión:** El minijuego 🔢 "Toque y Fama: adivina el número" (y el modo de jugar solo, que es

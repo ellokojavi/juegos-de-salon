@@ -675,7 +675,7 @@ function soloFin(codigo, p, { s, t, ms, estado }) {
       el('p', { class: 'muted' }, T.yourScore),
       el('div', { class: 'score-big', id: 'solo-puntaje' }, `${s}/100`),
       el('p', { class: 'muted' }, fmt(T.soloSummary, { n, word: triesWord(n), t: mmss(ms) })),
-      // Por qué no son 100: los intentos que las pistas ya descartaban (D-197). Corto y en letra
+      // Por qué no son 100: los intentos que las pistas ya descartaban (D-204). Corto y en letra
       // chica para que quepa en una línea a 320 px y no empuje los botones (C-8); el repaso los marca
       estado.resuelto && estado.descartados
         ? el('p', { class: 'muted nota-descarte' }, fmt(estado.descartados === 1 ? T.discardedScoreOne : T.discardedScore, { n: estado.descartados, pts: 100 - s }))
@@ -684,13 +684,13 @@ function soloFin(codigo, p, { s, t, ms, estado }) {
     el('div', { class: 'panel solo-fin' },
       el('div', {}, el('small', {}, T.soloSecretWas), el('div', { class: 'n' }, p.secreto)),
       // Dos columnas desde 3 intentos: con el aviso de los descartados, en una el repaso y los
-      // botones se iban fuera de pantalla a 320 px (C-8, D-197)
+      // botones se iban fuera de pantalla a 320 px (C-8, D-204)
       el('div', { class: 'tarjeta' + (n > 2 ? ' tarjeta--2' : ''), 'aria-hidden': 'true' }, ...t.split('\n').map(fila => el('span', {}, fila)))),
     // El repaso va colapsado para que los botones queden a la vista (C-8)
     el('details', { class: 'panel replay' }, el('summary', {}, T.replayTitle),
       uiNumero.tablero(el, {
         filas: estado.filas, largo: p.cifras, titulo: T.yourGuesses, lang, valor: f => el('span', { class: 'val' }, f.v),
-        marcar: true, nota: fmt(T.discardedNote, { c: numero.PENA_DESCARTE }), // los intentos que las pistas ya descartaban (D-197)
+        marcar: true, nota: fmt(T.discardedNote, { c: numero.PENA_DESCARTE }), // los intentos que las pistas ya descartaban (D-204)
       })),
     el('div', { class: 'stack', id: 'solo-actions' },
       // El mismo resultado que el minijuego de La Copa, con su imagen (D-165)
