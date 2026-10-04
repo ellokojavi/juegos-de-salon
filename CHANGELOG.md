@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.98.0 — 2026-10-04
+- **¿Dónde queda? a pantalla completa** (D-203): el globo ocupa toda la pantalla, en el celular y
+  en el computador. La ciudad, el reloj, las reglas plegadas, la brújula, + y − y Confirmar flotan
+  encima.
+
+## 0.97.0 — 2026-10-04
+- **¿Dónde queda?: el mapa se gira con dos dedos** (D-200), como en los mapas del celular. Con el
+  mapa girado aparece una brújula sobre + y −; tocarla vuelve a poner el norte arriba.
+- **¿Dónde queda?: el zoom llega a 64 veces** (D-202, antes 16), para que el dedo pueda apuntar
+  dentro de los 25 km del 🎯.
+- **¿Dónde queda?: se acabó el polo mal parchado** (D-201). Las imágenes nítidas que se cargan al
+  acercar estaban cortadas corridas: sobre el Ártico aparecía África estirada. Se rehicieron todas.
+
 ## 0.96.0 — 2026-10-04
 - **Todas las pantallas, probadas en todos los idiomas** (D-199): cada juego tiene una prueba que
   recorre sus pantallas en español, inglés, portugués y alemán, y avisa si algo quedó sin traducir,
