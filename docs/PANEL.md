@@ -10,22 +10,43 @@ qué horas, no para identificar a nadie (D-44).
 No aparece en el menú ni se indexa. El código es público como todo el repo: lo que protege
 los datos son las reglas de Firebase, que solo dejan leer al UID del dueño.
 
-## Las tres vistas (D-137)
+## Secciones y fichas (D-207)
 
-Arriba, debajo del entorno y el rango, tres botones separan lo que se mira. La vista queda en la
-URL (`/panel/#torneo`), así que un enlace o una recarga vuelven a la misma.
+El panel se navega como un sitio: cuatro secciones fijas y una ficha por cada cosa que existe.
+A la izquierda en el computador; abajo, como barra, en el celular. Todo queda en el `#` de la
+URL (`public/panel/rutas.js`), así que Atrás, una recarga o un enlace guardado vuelven al mismo
+lugar; el rango y el entorno van detrás solo si no son los de siempre (`#/torneo?r=30d&e=dev`).
+Los enlaces de antes (`#torneo`, `#resumen`, `#juegos`) siguen sirviendo.
 
-| Vista | Ahora | En el rango |
-|---|---|---|
-| **📊 Resumen** | Salas en juego, copas en curso, gente jugando La Copa, celulares conectados. Las dos listas: copas en curso y salas vivas. | Partidas de los juegos contra días jugados de La Copa, en total y por día. Copas activas, celulares que jugaron. De dónde, idiomas, hora y cuota. |
-| **🏆 La Copa** | Copas en curso con el juego de hoy, quién ya lo jugó (✓), quién lo está jugando (punto verde), quién va primero y el último resultado. | Copas activas y nuevas, inscritos, juegos jugados y sin terminar, participación. Por juego: jugadas, puntaje promedio, tiempo típico y en cuántas copas. Juegos por día. La lista de copas con su ganador o quién va primero. |
-| **🎲 Juegos** | Salas vivas, como siempre. | Los juegos de una partida, sin La Copa: por juego y modo, jugadores por partida, por día y la bitácora de salas. |
+| Dirección | Qué muestra |
+|---|---|
+| `#/ahora` | Lo que está en juego, sin depender del rango: salas en juego, partidas sin red, copas en curso y celulares conectados. Cada cifra filtra la lista de abajo, que junta copas, salas y partidas sin red de lo más reciente a lo más quieto. Debajo, las copas por empezar. |
+| `#/torneo` | Cifras de La Copa en el rango, la lista de copas con filtro por estado (en curso, por empezar, terminadas, laboratorio), por juego y por día. |
+| `#/torneo/<CÓDIGO>` | **Ficha de copa.** Cabecera (link propio, admin, idioma, audiencia, días, cuándo cierra cada día abierto, inscripción) y tres pestañas: **Tabla** completa, incluidos los días que los jugadores todavía no ven; **Día a día**, la grilla jugador × día con puntaje, tiempo, puntos, jugando ahora, sin terminar, no jugó, comodín y ×2; **Historia**, evento por evento (creada, inscripciones, empezó y terminó cada día, sin terminar, abrió y cerró cada día, fin), y aparte lo que la base guarda sin hora (comodín, retiros, inscripción cerrada). |
+| `#/juegos` | Los juegos de una partida: cifras, partidas por juego y modo (cada barra abre su ficha), jugadores por partida, por día y la bitácora de salas. |
+| `#/juego/<id>` | **Ficha de juego.** Partidas, en dos celulares, sin red, salas sin rival y duración típica de sus salas; por modo, por día, sus salas y sus partidas sin red con hora (D-140). |
+| `#/sala/<CÓDIGO>[/<día>]` | **Ficha de sala.** Juego, creada, terminó, cuánto duró, quién ganó, versión y jugadores con su país; si sigue viva, jugadas, chat (solo cuántos) y quién está conectado. Los códigos se reciclan: con el día se pide una en particular. |
+| `#/audiencia` | Cifras del rango, La Copa contra los otros juegos, de dónde (zona horaria), el país de los jugadores de salas, idiomas, hora y cuota. |
+
+Arriba, además del entorno y el rango, un **buscador**: un código de cinco letras o un link propio
+abre la ficha de esa copa; uno de cuatro, la de esa sala. No se busca por nombre de jugador:
+juntar todo lo de una persona en una pantalla es seguirla, y el panel mira señales (D-44).
+
+**La hora es la del Pacífico** (Los Ángeles), la misma con que La Copa parte sus días: la hora de
+un juego y la ventana de su día se leen en el mismo reloj. Los contadores de `stats/` siguen por
+día UTC y se rotulan así; la hora del gráfico de audiencia es la local del celular.
+
+**Cada nombre lleva la bandera de su país.** En las salas sale de `co` (D-79). En La Copa, de
+`co` en `torneos/<código>/players/<pid>`, que la copa guarda al crear o inscribirse desde esta
+versión (del huso horario del celular, como en las salas); quien se inscribió antes va sin
+bandera. Los reportes 🐞 lo llevan en su contexto (`pais`).
+
+**Las copas de prueba no se ocultan**: ya se parecen a las reales. Salen con las demás, con la
+etiqueta "laboratorio" donde corresponde, y con un filtro para verlas solas.
 
 **Qué es torneo y qué es juego** lo dice el registro (`torneo: true` en `games.js`), no el panel:
-un segundo torneo entraría solo a su vista (C-16). El nombre de la pestaña también sale de ahí.
-
-**De dónde, idiomas y hora** van solo en el resumen y enteros: los manda el celular al empezar
-cualquier cosa, sea una partida o un juego, y no se pueden partir por juego.
+el nombre y el emoji de la sección salen de ahí (C-16). Por lo mismo la sección se llama `torneo`
+en la URL y no `copa`, que es el id del juego.
 
 ## La Copa en el panel (D-137)
 
@@ -197,7 +218,10 @@ public/panel/
   panel.js            Entrada con Google, lecturas en vivo y dibujo
   aggregate.js        Agregación pura (sin DOM ni Firebase)
   aggregate.test.mjs  node public/panel/aggregate.test.mjs
-  copas.js            La Copa: copas en curso, cifras del rango y bitácora (puro, sobre el motor de la copa)
+  copas.js            La Copa: copas en curso, cifras del rango, bitácora y la ficha de una copa
+                      (grilla jugador × día e historia; puro, sobre el motor de la copa)
+  rutas.js            Las direcciones del panel (D-207)
+  rutas.test.mjs      node public/panel/rutas.test.mjs
   copas.test.mjs      node public/panel/copas.test.mjs
   adapta.test.mjs     node public/panel/adapta.test.mjs — que el panel se entere solo (C-16)
 public/assets/js/transport/
@@ -208,9 +232,10 @@ public/assets/js/transport/
 ```
 
 `window.__panel.seed({ rooms, days, torneos, vista })` dibuja el panel con datos sembrados sin
-entrar (gancho de solo lectura, C-14): sirve para probar la página sin cuenta ni base.
-`node tools/e2e/mirar.mjs panel torneo` (o `resumen`, `juegos`) lo siembra con copas armadas
-con el motor de verdad y abre esa vista.
+entrar (gancho de solo lectura, C-14): sirve para probar la página sin cuenta ni base. `vista` es
+una ruta (`/torneo/OFICI`). `node tools/e2e/mirar.mjs panel <toma>` lo siembra con copas armadas
+con el motor de verdad y abre esa vista. Las tomas: `ahora`, `torneo`, `copa-ficha`, `copa-dias`,
+`copa-historia`, `juegos`, `juego-ficha`, `sala-ficha`, `audiencia` y `datos`.
 
 ## Cuando entra un juego, un modo o un idioma nuevo
 

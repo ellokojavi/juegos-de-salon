@@ -177,7 +177,8 @@ Para revisar cómo quedó una pantalla concreta, sin jugar una partida entera:
 node tools/e2e/mirar.mjs ahorcado juego --ancho 320
 node tools/e2e/mirar.mjs ahorcado resultado --idioma pt
 node tools/e2e/mirar.mjs panel datos --ancho 900   # el panel, con datos sembrados
-node tools/e2e/mirar.mjs panel torneo     # la vista de La Copa (también resumen, juegos)
+node tools/e2e/mirar.mjs panel copa-ficha   # la ficha de una copa (también ahora, torneo, copa-dias,
+                                            # copa-historia, juegos, juego-ficha, sala-ficha, audiencia)
 ```
 
 Saca la captura y avisa si hay scroll horizontal o botones bajo 44 px (C-8). Los caminos a
@@ -224,8 +225,8 @@ Antes de repetir uno que falló, matar solo el Chrome propio:
 `public/panel/` es una página privada (entrada con Google, lectura solo para el UID del dueño en las
 reglas) que muestra salas vivas, partidas por juego y modo, jugadores, origen e idioma. Las
 señales las mandan los juegos con `trackStart` y el transporte (`public/assets/js/transport/stats.js`).
-Ver [docs/PANEL.md](docs/PANEL.md) y D-44. `window.__panel.seed({ rooms, days, torneos, vista })` lo dibuja con
-datos sembrados sin entrar. Tres vistas: Resumen, La Copa y Juegos (D-137).
+Ver [docs/PANEL.md](docs/PANEL.md) y D-44. `window.__panel.seed({ rooms, days, torneos, vista })` (`vista` es una ruta: `/torneo/OFICI`) lo dibuja con
+datos sembrados sin entrar. Se navega por secciones (Ahora, La Copa, Juegos, Audiencia) y fichas de cada copa, juego y sala, con la hora del Pacífico (D-207).
 
 ## Reglas de Firebase
 

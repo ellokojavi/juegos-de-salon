@@ -78,7 +78,7 @@ export function createLocalStore({ uid = null } = {}) {
 
     async existe(code) { return !!leerTodo()[code]; },
 
-    async crear(code, meta, { pid, name, at, pinHash }) {
+    async crear(code, meta, { pid, name, at, pinHash, co = '' }) {
       return cambiar(db => {
         if (!esCodigo(code)) throw falla('codigo');
         if (db[code]) throw falla('ocupado');
@@ -91,7 +91,7 @@ export function createLocalStore({ uid = null } = {}) {
           guardarAlias(al);
         }
         db[code] = {
-          meta, players: { [pid]: { name, at } }, started: {}, results: {}, wild: {},
+          meta, players: { [pid]: { name, at, ...(co ? { co } : {}) } }, started: {}, results: {}, wild: {},
           _keys: { [pid]: pinHash }, _seats: { [pid]: { [yo]: true } },
         };
       });
@@ -108,7 +108,7 @@ export function createLocalStore({ uid = null } = {}) {
 
     async leer(code) { return publica(leerTodo()[code]); },
 
-    async inscribir(code, { pid, name, at, pinHash }) {
+    async inscribir(code, { pid, name, at, pinHash, co = '' }) {
       return cambiar(db => {
         const L = copa(db, code);
         if (!inscripcionAbierta(vista(L), now(), L.closed)) throw falla('cerrada');
@@ -116,7 +116,7 @@ export function createLocalStore({ uid = null } = {}) {
         if (activos.length >= MAX_JUGADORES) throw falla('llena');
         if (Object.values(L.players).some(p => claveNombre(p.name) === claveNombre(name))) throw falla('nombre-repetido');
         if (L.players[pid]) throw falla('ocupado');
-        L.players[pid] = { name, at };
+        L.players[pid] = { name, at, ...(co ? { co } : {}) };
         L._keys[pid] = pinHash;
         L._seats[pid] = { [yo]: true };
       });
