@@ -122,15 +122,17 @@
     .filtros-barra {
       position: sticky; top: var(--safe-top); z-index: 5;
       margin: 0 -18px; padding: 8px 18px;
-      transition: background 0.2s, box-shadow 0.2s;
     }
-    .filtros-barra.pegada {
-      border-radius: 0 0 20px 20px;
+    /* El fondo es una sola capa que sube hasta tapar también la franja de la muesca, para que las
+       tarjetas no se vean pasar por detrás de la hora: con una capa aparte para la franja, el
+       desenfoque no le llegaba y se leían las tarjetas, o quedaba una costura de dos colores (U-12). */
+    .filtros-barra::before {
+      content: ''; position: absolute; z-index: -1; inset: calc(-1 * var(--safe-top)) 0 0 0;
+      border-radius: 0 0 20px 20px; pointer-events: none; opacity: 0; transition: opacity 0.2s;
       background: rgba(21, 7, 38, 0.82); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
       box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12), 0 10px 24px rgba(0, 0, 0, 0.35);
     }
-    /* La franja de la muesca también se tapa, para que las tarjetas no se vean pasar por ahí */
-    .filtros-barra.pegada::before { content: ''; position: absolute; left: 0; right: 0; bottom: 100%; height: var(--safe-top); background: inherit; }
+    .filtros-barra.pegada::before { opacity: 1; }
     .link-btn { background: none; border: 0; color: var(--yellow); font: 900 0.9rem var(--font-body); text-decoration: underline; cursor: pointer; min-height: 44px; padding: 0 6px; }
     .game-card[hidden] { display: none; }
     /* La Copa es otra cosa que una partida: una semana con amigos. Su tarjeta lo dice con un
