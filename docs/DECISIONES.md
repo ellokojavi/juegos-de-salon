@@ -3275,7 +3275,7 @@ juega igual y nada sale del celular.
   top es una sola consulta (`orderByChild('k')`, `limitToFirst`). Las reglas recalculan `k`, exigen
   que el nombre sea el del jugador y que el récord nuevo sea mejor que el guardado.
 - **Lo que se muestra.** La antesala de cada juego tiene su ranking con pestañas Semana, Siempre,
-  Amigos y En copa: las 10 primeras y, si quien mira quedó más abajo, sus vecinos. Se leen 100
+  Amigos y En La Copa (dilema #187): las 10 primeras y, si quien mira quedó más abajo, sus vecinos. Se leen 100
   filas de una vez; más abajo de eso, los vecinos se piden aparte. **Amigos** son los de tus copas
   que también entraron con su jugador: el jugador de la copa guarda `players/<pid>/j`. El
   **Todoterreno** suma tu mejor puntaje en cada juego suelto. **Campeones de La Copa**: cuando una
@@ -3286,7 +3286,7 @@ juega igual y nada sale del celular.
   (`n` y `at`), aunque no sea récord: es su historial y deja servida una racha.
 - **Qué cuenta.** Los juegos sueltos de la portada, jugados como cualquiera los juega: sin el
   laboratorio y sin una semilla elegida en el link, que dejaría repetir el mismo tablero. Los días
-  de una copa cuentan en "En copa", salvo las copas del laboratorio. Toque y Fama solo y Línea
+  de una copa cuentan en "En La Copa", salvo las copas del laboratorio. Toque y Fama solo y Línea
   Relámpago siguen con su récord local por ahora. Rendirse (0 puntos) cuenta como partida jugada, pero no entra a
   las tablas: un 0 no es un récord (dilema #185).
 **Por qué:** El dueño pidió rankings de cada juego y de La Copa con una identidad que la gente

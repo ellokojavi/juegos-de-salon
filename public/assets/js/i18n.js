@@ -129,7 +129,7 @@ export const COMMON = {
     // Los rankings y el jugador (D-212): nombre y PIN, como en La Copa, pero para todos los juegos
     rk: {
       title: 'Ranking', titleOf: 'Ranking de {game}',
-      week: 'Semana', always: 'Siempre', friends: 'Amigos', cup: 'En copa',
+      week: 'Semana', always: 'Siempre', friends: 'Amigos', cup: 'En La Copa',
       loading: 'Cargando el ranking…',
       error: 'No se pudo cargar el ranking. Revisa tu conexión.',
       empty: 'Todavía nadie. ¡Sé el primero!',
@@ -186,7 +186,7 @@ export const COMMON = {
     shareDownloaded: 'The image was downloaded and the text was copied.',
     rk: {
       title: 'Leaderboard', titleOf: '{game} leaderboard',
-      week: 'Week', always: 'All time', friends: 'Friends', cup: 'In a Cup',
+      week: 'Week', always: 'All time', friends: 'Friends', cup: 'In The Cup',
       loading: 'Loading the leaderboard…',
       error: 'Couldn\'t load the leaderboard. Check your connection.',
       empty: 'Nobody yet. Be the first!',
