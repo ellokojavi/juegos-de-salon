@@ -2,6 +2,8 @@
 import { launch, sleep } from '../cdp.mjs';
 // Con varias sesiones a la vez, cada una sirve su copia en su puerto (D-135)
 const SITIO = process.env.SITIO || 'http://localhost:8765';
+// El otro celular entra por 127.0.0.1: otro origen, otro localStorage
+const SITIO_B = SITIO.replace('localhost', '127.0.0.1');
 const OUT = process.argv[2];
 const A = await launch({ port: 9422, dir: `${OUT}/pA`, out: OUT });
 const B = await launch({ port: 9423, dir: `${OUT}/pB`, out: OUT });
@@ -14,13 +16,13 @@ const shipCells = (d, role) => d.evaluate(`(()=>{const L=__bn.session().layouts[
 const missCell = async (d, role) => { const cells = await shipCells(d, role); for (let r = 0; r < 10; r++) for (let c = 0; c < 10; c++) { const n = 'ABCDEFGHIJ'[c] + (r + 1); if (!cells.includes(n)) return n; } };
 
 await A.go(`${SITIO}/battleship/`); await A.evaluate(`localStorage.clear(); 1`); await A.go(`${SITIO}/battleship/`);
-await B.go('http://127.0.0.1:8765/battleship/'); await B.evaluate(`localStorage.clear(); 1`);
+await B.go(`${SITIO_B}/battleship/`); await B.evaluate(`localStorage.clear(); 1`);
 await A.evaluate(`document.querySelectorAll('.mode')[1].click(); 1`); await sleep(300); await A.shot('20-setup-online');
 await A.evaluate(`(()=>{document.querySelector('#setup-form input').value='Javi';return 1})()`);
 await clickText(A, '#setup-actions .btn', 'Crear'); await sleep(4000);
 const code = await A.evaluate(`document.querySelector('.code-big')?.textContent`);
 console.log('sala:', code, '| A:', await A.active()); await A.shot('21-lobby');
-await B.go(`http://127.0.0.1:8765/battleship/?sala=${code}`, 1500);
+await B.go(`${SITIO_B}/battleship/?sala=${code}`, 1500);
 await B.evaluate(`(()=>{document.querySelector('#setup-form input').value='Cata';return 1})()`);
 await clickText(B, '#setup-actions .btn', 'Unirse'); await sleep(4000);
 console.log('tras unirse → A:', await A.active(), 'B:', await B.active());
@@ -36,7 +38,7 @@ console.log('B agua:', await fireAt(B, await missCell(A, 'A'))); await sleep(300
 console.log('turno →', (await bv(A)).shooter);
 console.log('A agua:', await fireAt(A, await missCell(B, 'B'))); await sleep(3000);
 // reconexión de B a mitad de partida
-await B.go(`http://127.0.0.1:8765/battleship/?sala=${code}`, 6000);
+await B.go(`${SITIO_B}/battleship/?sala=${code}`, 6000);
 console.log('B tras recargar:', await B.active(), JSON.stringify(await bv(B)), '| flota guardada:', await B.evaluate(`!!__bn.session()?.layouts?.B`));
 await B.shot('24-reloaded-B');
 let guard = 0;

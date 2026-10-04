@@ -34,9 +34,10 @@ for (let i = 0; i < 60; i++) {
   await ev(`document.getElementById('card').click(); 1`); await sleep(1300);
   const kind = await ev(`JSON.parse(localStorage.getItem('juegos-de-salon:cuarto-rey:session')).state.current?.card?.rank`);
   // El cuarto rey es el único que se anuncia en grande, con confeti y sin botón de "siguiente"
-  // El confeti recién lanzado tapa la carta y los nombres: se le da un respiro para que baje.
+  // El confeti recién lanzado tapa la carta, los nombres y la instrucción: se espera a que
+  // termine (3,5 s), porque en Chrome headless cae más lento y a medio camino tapa las letras.
   // La pantalla espera al toque del jugador, así que no se pasa sola.
-  if (await ev(`!!document.querySelector('#result .display--lg')`)) { await sleep(1400); await toma('09-cuarto-rey'); }
+  if (await ev(`!!document.querySelector('#result .display--lg')`)) { await sleep(3000); await toma('09-cuarto-rey'); }
   else if (await ev(`!!document.querySelector('#result .helper')`)) await toma('06-minijuego');
   else if (['A', '2', '3', '10', 'J', 'Q'].includes(kind)) await toma('05-carta');
   if (kind === '4') { await ev(`[...document.querySelectorAll('#result .helper button')][0].click(); 1`); await sleep(1500); }
