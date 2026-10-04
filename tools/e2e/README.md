@@ -46,7 +46,8 @@ sin parte, el guion corre entero (así lo corren `readme.py capturas` y quien lo
 
 Un PR que solo trae documentación (`docs/`, `marketing/`, `.claude/` y los `.md` fuera de `public/`
 y de esta carpeta) no corre ningún guion: `ci.mjs --lista --cambios <archivo>` sale vacía, y
-[`cambios.mjs`](cambios.mjs) decide qué cuenta como documentación (D-205). Si las pruebas salen
+[`cambios.mjs`](cambios.mjs) decide qué cuenta como documentación (D-205; lo prueba
+`node tools/e2e/cambios.test.mjs`). Si las pruebas salen
 en rojo en `main`, el job `avisar` abre un issue "main en rojo: Punta a punta".
 
 ```bash
@@ -98,7 +99,7 @@ node tools/e2e/contacto.mjs cuarto-rey --salida /tmp/contacto
 | `timeline/empate.mjs` | Que la ronda se termine y que el empate lo gane el más rápido |
 | `timeline/chat.mjs` | Chat de sala: no leídos, freno al spam, veredicto que lo tapa, reconexión y muerte al terminar |
 | `memoria-de-partida.mjs` | Guardar y retomar en los tres juegos (canon C-6) |
-| `versionado.mjs` | Que todos los módulos carguen con `?v=` del import map |
+| `versionado.mjs` | Que todos los módulos carguen con `?v=` del import map. Desde D-205 `public/` no lo lleva: correrlo contra una copia estampada (`set-version.py --sitio /tmp/sitio`, servida y pasada en `SITIO`) |
 | `compartir-sala.mjs` | Botón de compartir: diálogo nativo si existe, copiar si no |
 | `enlace-invitacion.mjs` | Quien llega por un enlace solo puede unirse a esa sala, en los cuatro juegos con sala |
 | `sala-error.mjs` | Sin llegar a Firebase: el mensaje de cada juego con sala, Toque y Fama en cada idioma y los demás repartidos entre ellos |

@@ -98,7 +98,7 @@ Registro tipo ADR (Architecture Decision Record). Las decisiones se numeran y no
 **Por qué:** Con solo 5040 secretos posibles, un hash sin sal se rompe por fuerza bruta en milisegundos. La sal privada lo impide y la revelación final permite detectar respuestas falsas.
 
 ## D-22 · Versionado de archivos con import maps para evitar caché mezclada
-**Fecha:** 2026-09-08 · **Estado:** vigente
+**Fecha:** 2026-09-08 · **Estado:** vigente; desde D-205 se estampa al publicar, en la copia que se sube, no en git
 **Decisión:** Cada página lleva un `<script type="importmap">` que mapea todos los módulos JS del sitio a su ruta con `?v=VERSION`, y las hojas de estilo llevan el mismo sufijo. Se estampa con `python3 tools/set-version.py X.Y.Z` en cada publicación. Además, el menú dibuja la lista de juegos antes de cualquier decoración y las decoraciones van en `try/catch`.
 **Por qué:** GitHub Pages y los navegadores cachean cada archivo por separado (10 minutos en Pages). Tras una publicación, un celular podía recibir el `index.html` nuevo con un `i18n.js` viejo; el código nuevo esperaba datos que el archivo viejo no tenía, fallaba, y el menú quedaba vacío (ocurrió con la v0.4.5). Con el import map, cambiar la versión cambia la URL de todos los módulos, incluidos los importados por otros módulos y los `import()` dinámicos, así que una página nueva siempre trae JS nuevo.
 **Consecuencias:** Hay que correr el script al publicar (queda documentado en el README y en AGREGAR-JUEGO). Los import maps funcionan en Chrome 89+, Safari 16.4+ y Firefox 108+; en navegadores más antiguos los módulos cargan igual, solo sin el sufijo.
@@ -304,7 +304,7 @@ Registro tipo ADR (Architecture Decision Record). Las decisiones se numeran y no
 **Consecuencias:** Las reglas se **publican a mano** en la consola ([Realtime Database → Rules](https://console.firebase.google.com/u/0/project/juegos-de-salon/database/juegos-de-salon-default-rtdb/rules)), paso que ya se hizo para esta versión. Mientras unas reglas nuevas no estén publicadas, la despedida se escribe igual pero el borrado se rechaza y la sala espera su vencimiento; el panel igual deja de mostrarla viva, porque eso lo decide el cliente. Alguien que sepa el código de una sala puede escribir la despedida de otro rol y, si todos quedan despedidos, borrarla: es el mismo alcance que ya tenía cualquiera que supiera el código (puede leer la sala y escribir mensajes, C-15), y no abre nada nuevo. Una sala que se quedó sin jugadores apuntados no se borra: `deserted` exige que haya alguien adentro, para que la sala recién creada —que existe un instante sin jugadores— no sea borrable por nadie.
 
 ## D-51 · El README se sostiene solo: lo derivable se genera, lo escrito se delata, las capturas se rehacen
-**Fecha:** 2026-09-11 · **Estado:** vigente
+**Fecha:** 2026-09-11 · **Estado:** vigente; desde D-205 `revisar` lo corre el check `pruebas`, no `set-version.py`
 **Decisión:** El README deja de mantenerse a pulso. `tools/hechos.mjs` importa los módulos reales y arma una hoja de hechos (juegos, modos, temáticas con su cuenta de cartas, idiomas, módulos, tests, documentos, capturas). `tools/readme.py` la usa para tres cosas: **generar** lo derivable dentro de marcas `<!-- generado: ... -->`; **delatar** lo que cambió desde el último sello (`docs/hechos.json`) nombrando qué sección de prosa hay que releer, con `sellar` para anotar que se releyó; y **rehacer las capturas** corriendo los guiones de `tools/e2e/` según el catálogo `docs/capturas.json`, que dice de qué guion y de qué toma sale cada imagen. `set-version.py` corre `revisar` antes de estampar, así que un README viejo frena la publicación (C-11, C-13).
 **Por qué:** El README es la cara del proyecto y la única documentación que lee alguien de afuera, y se pudre en silencio. Al escribir esto decía "las cartas de los cuatro mazos" cuando había seis, daba a Cuarto Rey una versión que su propia especificación no reconocía, y sus capturas eran de pantallas que ya habían cambiado. Nada de eso lo avisa un test: son datos repetidos a mano en prosa. Repetidos a mano y sin dueño, cada cambio de la app los deja un poco más falsos.
 **Por qué no generarlo todo:** Porque lo que hace bueno a este README es lo que no se puede derivar: por qué el juego está entretenido, qué se siente al pasar el celular, el chiste de las temáticas. Un README generado entero sería un listado correcto que no lee nadie. Por eso la herramienta se parte en dos: escribe las tablas y deja la prosa en paz, pero no deja que la prosa envejezca callada.
@@ -494,7 +494,7 @@ tres y termina en dos. Una partida guardada de antes no trae `chileno` en su con
 retoma con los nombres encendidos, que es el valor por defecto.
 
 ## D-72 · La tarjeta que se ve al compartir un link
-**Fecha:** 2026-09-13 · **Estado:** vigente
+**Fecha:** 2026-09-13 · **Estado:** vigente; desde D-205 `set-version.py` ya no corre `og.mjs tarjetas`: un bloque atrasado lo frena el check `pruebas`
 **Decisión:** Cada página publicada —el menú y los seis juegos— lleva sus propias etiquetas de Open Graph y de Twitter, con su título, su bajada y una imagen propia de 1200×630 en `assets/og/`. Las etiquetas las escribe `node tools/og.mjs tarjetas` desde `assets/js/games.js`, dentro de un bloque `<!-- generado: og -->`, y `set-version.py` lo corre en cada publicación. Las imágenes las dibuja `tools/og/tarjeta.html` —con los estilos y los datos reales— y las fotografía `node tools/og.mjs imagenes`.
 **Por qué por página y no una sola para todo el sitio:** en esta app el link que más se comparte no es la portada, es **la invitación a una sala**: `juegosdesalon.cl/toque-y-fama/?sala=WDDT`, pegado en un WhatsApp. Con una tarjeta única, esa invitación mostraba el nombre del sitio y nada más; ahora muestra de qué juego es la sala, para cuántos y cuánto dura, que es exactamente lo que necesita saber el que la recibe. Antes de esto no había ninguna etiqueta: un link pegado en un chat salía sin imagen y con el título pelado.
 **Por qué generadas y no escritas a mano:** son siete páginas por veinte etiquetas. Escribirlas a mano es copiar el nombre y la bajada de cada juego a un segundo lugar, y ese segundo lugar envejece: `games.js` ya es de donde salen el menú y el README. `revisar` avisa si una página quedó atrás o si falta una imagen.
@@ -2617,7 +2617,7 @@ de 6 a 10 a 15 nudos y no dan diez niveles parejos); prohibir soltar un nudo enc
 cruce por cercanía ya lo resuelve sin un gesto que rebota).
 
 ## D-181 · Cada imagen de tarjeta guarda su huella, y una atrasada no se publica
-**Fecha:** 2026-10-02 · **Estado:** vigente · **Amplía D-72**
+**Fecha:** 2026-10-02 · **Estado:** vigente · **Amplía D-72** · desde D-205 frena el check `pruebas`, no `set-version.py` (ya no hay `--igual`)
 **Decisión:** `node tools/og.mjs imagenes` anota en `assets/og/huellas.json` la huella de cada
 imagen que hace: un hash del dibujo (`tools/og/tarjeta.html`) y de lo que la imagen dice (el emoji,
 el nombre, la bajada, los jugadores y la duración del juego en `games.js`, o los textos de la
