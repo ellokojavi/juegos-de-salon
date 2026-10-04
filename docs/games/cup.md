@@ -146,7 +146,7 @@ un jugador, su `uid` tiene que estar "sentado" como ese `pid`, y las reglas solo
 si trae el mismo `sha256("copa:código:pid:PIN")` que se guardó al inscribirse, en una rama que
 nadie puede leer.
 
-**Con los rankings (D-211).** Si en el celular hay un jugador de los rankings (nombre y PIN para
+**Con los rankings (D-212).** Si en el celular hay un jugador de los rankings (nombre y PIN para
 toda la app), al inscribirse el nombre viene puesto, y al abrir la copa su jugador queda enlazado
 en `players/<pid>/j`. Con eso: los de la copa que también lo están pasan a ser sus **amigos** en
 los rankings; cada día jugado cuenta para el ranking **En copa** de ese juego; y cuando la copa

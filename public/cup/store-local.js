@@ -226,7 +226,7 @@ export function createLocalStore({ uid = null } = {}) {
       });
     },
 
-    /** El jugador de los rankings detrás de este jugador de la copa (D-211). */
+    /** El jugador de los rankings detrás de este jugador de la copa (D-212). */
     async enlazar(code, pid, jid) {
       return cambiar(db => {
         const p = copa(db, code).players[pid];

@@ -3242,7 +3242,7 @@ que los de las salas. Las partidas de antes no tienen ni nombre ni final. Cuarto
 ganador: manda los nombres, no el final. Reglas nuevas en `stats/<env>/days/<día>/live/<id>`
 (`name` y `fin`).
 
-## D-211 · Un jugador es un nombre y un PIN para todos los juegos, y sus récords van a rankings
+## D-212 · Un jugador es un nombre y un PIN para todos los juegos, y sus récords van a rankings
 **Fecha:** 2026-10-04 · **Estado:** vigente; amplía D-96 fuera de La Copa y abre una excepción a C-7
 **Decisión:** Quien quiere aparecer en los rankings entra con **su nombre y un PIN de 4 dígitos**,
 como en La Copa, pero una vez para toda la app y en cualquier celular. Es opcional y se ofrece

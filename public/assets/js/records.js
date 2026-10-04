@@ -1,5 +1,5 @@
 /**
- * Los récords y rankings de los jugadores (D-211): lógica pura, sin DOM ni red. La usan
+ * Los récords y rankings de los jugadores (D-212): lógica pura, sin DOM ni red. La usan
  * `jugador.js` (el almacén), `ranking.js` (la pantalla) y las reglas de Firebase repiten lo que
  * hace falta para que nadie escriba un récord peor, con otro nombre o fuera de orden.
  *
