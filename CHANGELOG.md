@@ -6,6 +6,44 @@
   intento que las pistas ya descartaban, en vez de restar por cada intento. Sacándolo, el mínimo
   es 10. Antes, el 100 pedía acertar al primer intento: 1 en 5040 de pura suerte. Terminado el
   tablero, los intentos descartados llevan ⚠️ y el resultado dice cuántos puntos costaron.
+## 0.98.1 — 2026-10-04
+- **README: capturas rehechas en todas las secciones** después de la mudanza a `public/` (D-192),
+  con los emojis de Apple y las salas en el Firebase real. La del cuarto rey ya no sale con el
+  confeti tapando la instrucción, y los guiones de sala de Toque y Fama y Batalla Naval abren el
+  segundo celular en el servidor propio de la sesión, no en el 8765 (D-135).
+
+## 0.98.0 — 2026-10-04
+- **¿Dónde queda? a pantalla completa** (D-203): el globo ocupa toda la pantalla, en el celular y
+  en el computador. La ciudad, el reloj, las reglas plegadas, la brújula, + y − y Confirmar flotan
+  encima.
+
+## 0.97.0 — 2026-10-04
+- **¿Dónde queda?: el mapa se gira con dos dedos** (D-200), como en los mapas del celular. Con el
+  mapa girado aparece una brújula sobre + y −; tocarla vuelve a poner el norte arriba.
+- **¿Dónde queda?: el zoom llega a 64 veces** (D-202, antes 16), para que el dedo pueda apuntar
+  dentro de los 25 km del 🎯.
+- **¿Dónde queda?: se acabó el polo mal parchado** (D-201). Las imágenes nítidas que se cargan al
+  acercar estaban cortadas corridas: sobre el Ártico aparecía África estirada. Se rehicieron todas.
+
+## 0.96.0 — 2026-10-04
+- **Todas las pantallas, probadas en todos los idiomas** (D-199): cada juego tiene una prueba que
+  recorre sus pantallas en español, inglés, portugués y alemán, y avisa si algo quedó sin traducir,
+  a medio armar o fuera de la pantalla. Las pruebas de La Copa, Línea de Tiempo, los errores de sala
+  y los links con idioma ahora prueban también el alemán, y cualquier idioma que se sume.
+- **Palabra en alemán**: la nota de las diéresis es más corta y el botón "Zurück zum Menü" vuelve a
+  caber en la pantalla.
+
+## 0.95.0 — 2026-10-04
+- **Ya no hay minijuegos** (D-198): Conexiones, Reinas, Tango, Zip, Desenredo, ¿Dónde queda?,
+  ¿En qué año? y Toque y Fama: Palabra son juegos como los demás. Viven en la raíz (`/queens/`,
+  `/tango/`, `/connections/`…) y los links con `/minigames/` siguen andando. La Copa dice "un
+  juego distinto cada día" en los cuatro idiomas, y el panel los cuenta como juegos.
+
+## 0.94.0 — 2026-10-04
+- **🇩🇪 El alemán, para todos** (D-197): sale del laboratorio. El toggle ofrece DE en cualquier
+  celular y `juegosdesalon.cl/de/` deja la app en alemán, con su tarjeta para los chats
+  (Salonspiele). El link del laboratorio, `/labs/de/`, ahora lleva a `/de/`, y el laboratorio ya
+  no muestra la sección del alemán. Quien tenía la marca del laboratorio deja de ver 🧪 y 🐞.
 
 ## 0.93.0 — 2026-10-03
 - **Portada: los filtros quedan pegados arriba** (D-196). Al bajar por la lista, los tipos de

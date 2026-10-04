@@ -1,19 +1,22 @@
 {
-  "version": "0.91.0",
+  "version": "0.98.1",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
-    "pt": "Jogos de Salão"
+    "pt": "Jogos de Salão",
+    "de": "Salonspiele"
   },
   "idiomas": [
     "es",
     "en",
-    "pt"
+    "pt",
+    "de"
   ],
   "frases": {
     "es": 100,
     "en": 100,
-    "pt": 100
+    "pt": 100,
+    "de": 100
   },
   "clavesComunes": 23,
   "juegos": [
@@ -99,7 +102,8 @@
         "public/cup/rules.js",
         "public/cup/store-firebase.js",
         "public/cup/store-local.js",
-        "public/cup/style.css"
+        "public/cup/style.css",
+        "public/cup/suelto/index.html"
       ]
     },
     {
@@ -474,7 +478,8 @@
         "cultura"
       ],
       "duracion": "3–8",
-      "labs": false
+      "labs": false,
+      "path": "connections/"
     },
     {
       "id": "letras",
@@ -490,7 +495,8 @@
         "logica"
       ],
       "duracion": "3–8",
-      "labs": false
+      "labs": false,
+      "path": "word/"
     },
     {
       "id": "anio",
@@ -505,7 +511,8 @@
         "cultura"
       ],
       "duracion": "2–5",
-      "labs": false
+      "labs": false,
+      "path": "year/"
     },
     {
       "id": "reinas",
@@ -520,7 +527,8 @@
         "logica"
       ],
       "duracion": "2–5",
-      "labs": false
+      "labs": false,
+      "path": "queens/"
     },
     {
       "id": "tango",
@@ -535,7 +543,8 @@
         "logica"
       ],
       "duracion": "3–8",
-      "labs": false
+      "labs": false,
+      "path": "tango/"
     },
     {
       "id": "zip",
@@ -550,7 +559,8 @@
         "logica"
       ],
       "duracion": "3",
-      "labs": false
+      "labs": false,
+      "path": "zip/"
     },
     {
       "id": "desenredo",
@@ -565,7 +575,8 @@
         "logica"
       ],
       "duracion": "4",
-      "labs": false
+      "labs": false,
+      "path": "untangle/"
     },
     {
       "id": "donde",
@@ -580,7 +591,8 @@
         "cultura"
       ],
       "duracion": "2–5",
-      "labs": false
+      "labs": false,
+      "path": "where/"
     }
   ],
   "tematicas": [
@@ -837,23 +849,32 @@
     "battleship/alineacion.mjs",
     "battleship/chat.mjs",
     "battleship/colocacion.mjs",
+    "battleship/idiomas.mjs",
     "battleship/local.mjs",
     "battleship/online.mjs",
     "bulls-and-cows/chat.mjs",
+    "bulls-and-cows/idiomas.mjs",
     "bulls-and-cows/local.mjs",
     "bulls-and-cows/online.mjs",
+    "caminos.mjs",
     "ci.mjs",
     "compartir-sala.mjs",
     "contacto.mjs",
+    "cup-games/idiomas.mjs",
     "cup/idiomas.mjs",
     "cup/torneo.mjs",
     "enlace-invitacion.mjs",
+    "fourth-king/idiomas.mjs",
     "fourth-king/partida.mjs",
+    "hangman/idiomas.mjs",
     "hangman/local.mjs",
     "hangman/online.mjs",
     "idioma-por-url.mjs",
+    "idiomas-comun.mjs",
+    "julep/idiomas.mjs",
     "julep/local.mjs",
     "julep/online.mjs",
+    "liars-dice/idiomas.mjs",
     "liars-dice/local.mjs",
     "liars-dice/online.mjs",
     "memoria-de-partida.mjs",
@@ -865,6 +886,7 @@
     "timeline/eleccion.mjs",
     "timeline/empate.mjs",
     "timeline/error.mjs",
+    "timeline/idiomas.mjs",
     "timeline/local.mjs",
     "timeline/mazos.mjs",
     "timeline/mesa.mjs",

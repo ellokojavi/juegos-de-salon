@@ -10,7 +10,7 @@ publicada en GitHub Pages: https://juegosdesalon.cl/
   fusión a main, si las pruebas pasan. Se sirve con `python3 -m http.server 8765 -d public`.
 - **El id de un juego no es su carpeta**: `'ahorcado'` vive en `/hangman/`. El id lo guardan las
   salas, el panel y el `localStorage`, y no se cambia. Las rutas viejas en español (`public/ahorcado/`,
-  `public/copa/`, `public/minijuegos/…`) son páginas puente generadas: no se editan.
+  `public/copa/`, `public/minijuegos/…`, `public/minigames/…`) son páginas puente generadas: no se editan.
 - **El taller**, al lado: `docs/`, `firebase/`, `marketing/` y `tools/` por función (`release/`,
   `firebase/`, `generators/`, `agents/`, `e2e/<juego>/`).
 - Las carpetas nuevas van en inglés. La documentación, los mensajes y los nombres de archivo de las
@@ -126,7 +126,7 @@ node public/timeline/engine.test.mjs
 node public/hangman/engine.test.mjs
 node public/liars-dice/engine.test.mjs
 node public/julep/engine.test.mjs
-node public/cup/engine.test.mjs               # La Copa: torneo, minijuegos y almacén de prueba
+node public/cup/engine.test.mjs               # La Copa: torneo, juegos y almacén de prueba
 node public/cup/games/juegos.test.mjs
 node public/cup/store.test.mjs
 node public/cup/planilla.test.mjs            # la tabla final como CSV (D-161)
@@ -141,7 +141,7 @@ node public/assets/js/transport/ratelimit.test.mjs
 node public/assets/js/transport/stats.test.mjs
 node public/panel/aggregate.test.mjs
 node public/panel/adapta.test.mjs               # el panel se entera solo de lo nuevo (C-16)
-node public/panel/copas.test.mjs                # La Copa en el panel: en curso, minijuegos, participación
+node public/panel/copas.test.mjs                # La Copa en el panel: en curso, juegos, participación
 node tools/agents/documentar.test.mjs           # la memoria y las comprobaciones del agente de documentación
 node tools/agents/marketing.test.mjs            # qué cuenta como marketing atrasado (U-34)
 python3 tools/release/readme.test.py       # qué cuenta como cambio para las capturas (D-51)
@@ -160,8 +160,8 @@ node tools/e2e/mirar.mjs panel torneo     # la vista de La Copa (también resume
 ```
 
 Saca la captura y avisa si hay scroll horizontal o botones bajo 44 px (C-8). Los caminos a
-cada pantalla están declarados arriba del archivo: agregar uno es sumar una entrada, no
-escribir un guion nuevo.
+cada pantalla están en `tools/e2e/caminos.mjs`: agregar uno es sumar una entrada, no escribir un
+guion nuevo, y con eso la pantalla entra también a las pruebas de idiomas.
 
 Para verlo en un celular de verdad, se sirve el árbol de trabajo por Tailscale (D-67):
 
@@ -185,6 +185,13 @@ solo; para que falle en rojo, que imprima ✗ o ❌ o salga con error. Aquí se 
 ```bash
 node tools/e2e/ci.mjs              # todos los de CI, con resumen; o: node tools/e2e/ci.mjs cup/torneo.mjs
 ```
+
+**Todos los idiomas** (D-199): cada juego tiene su `tools/e2e/<carpeta>/idiomas.mjs` (y
+`cup-games/` para los juegos sueltos de La Copa), que recorre cada pantalla de `caminos.mjs` en
+cada idioma de `LANGS` contra el español: nada sin traducir, nada a medio armar y nada que el texto
+más largo rompa. Un idioma nuevo entra solo. Los guiones que miran algo de un idioma (La Copa,
+Línea de Tiempo jugando solo, `sala-error`, `idioma-por-url`) también recorren `LANGS` y sacan lo
+que esperan de los diccionarios, no de textos escritos a mano.
 
 Antes de repetir uno que falló, matar solo el Chrome propio:
 `pkill -f "remote-debugging-port=948[4]"`, con el corchete (ver "Varias sesiones a la vez").
@@ -214,7 +221,7 @@ Necesita la llave de la cuenta de servicio en `~/.config/juegos-de-salon/firebas
 Antes de escribir instrucciones, ayudas o bajadas, leer U-1, U-8 y **U-18** en
 [docs/USABILIDAD.md](docs/USABILIDAD.md): la meta primero y con verbo, a lo más 3 puntos, nada
 de lo que el dibujo de ejemplo ya muestra y el puntaje en una frase, en frases completas.
-`node public/cup/games/juegos.test.mjs` frena unas instrucciones de minijuego que pasen de 280
+`node public/cup/games/juegos.test.mjs` frena unas instrucciones de juego que pasen de 280
 caracteres (D-184).
 
 ## Usabilidad (D-132)
@@ -273,16 +280,18 @@ node tools/agents/marketing.mjs revisar                          # ¿qué asset 
 node tools/agents/marketing.mjs anotar <id> --pendiente "…"      # o --al-dia
 ```
 
-## El alemán en el laboratorio (D-191)
+## Idiomas: español, inglés, portugués y alemán (D-197)
 
-El alemán tiene todos sus textos pero solo se ofrece en el dispositivo que entra por `/labs/de/`
-(o un link con `?lang=de`): ahí los "‹ Menú" vuelven al laboratorio y 🐞 manda comentarios a
-`feedback/`. El plan, lo que falta para publicarlo y el **glosario** que toda traducción respeta
-están en [docs/ALEMAN.md](docs/ALEMAN.md). Un texto nuevo para el jugador va también en `DE`: la
-prueba de paridad lo exige.
+El alemán salió del laboratorio y se ofrece a todos, con su puerta `/de/` como `/en/` y `/pt/`.
+Un texto nuevo para el jugador va en los cuatro: la prueba de paridad lo exige. El **glosario** que
+toda traducción al alemán respeta está en [docs/ALEMAN.md](docs/ALEMAN.md).
+
+Un idioma nuevo entra por el laboratorio (D-191): se agrega a `EN_LABS` en `i18n.js` y solo se
+ofrece en el dispositivo que entra por `/labs/<idioma>/`, con 🐞 para que lo revisen quienes lo
+hablan. Hoy `EN_LABS` está vacío.
 
 ```bash
-node tools/e2e/mirar.mjs dudo intro --idioma de --ancho 320   # pone la marca del laboratorio sola
+node tools/e2e/mirar.mjs dudo intro --idioma de --ancho 320
 ```
 
 ## Reportes de La Copa

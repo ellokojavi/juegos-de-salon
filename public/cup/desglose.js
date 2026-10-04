@@ -1,5 +1,5 @@
 /**
- * Cómo se llegó al puntaje (D-106): la cuenta de cada minijuego, línea por línea, a partir del
+ * Cómo se llegó al puntaje (D-106): la cuenta de cada juego, línea por línea, a partir del
  * estado con que terminó. Se muestra al terminar el día, la práctica y la sesión de prueba. Los
  * textos son de rules.js (C-3); aquí solo se hacen las cuentas, con las mismas funciones del motor.
  */
@@ -9,7 +9,7 @@ import * as tango from './games/tango/engine.js';
 import * as anio from './games/year/engine.js';
 import * as final from './games/final/engine.js';
 import * as donde from './games/where/engine.js';
-import { minijuegos } from './rules.js';
+import { juegosCopa } from './rules.js';
 
 /**
  * Las líneas del desglose; la última es el total. `null` si el juego no lo tiene. Con `copa: false`
@@ -53,7 +53,7 @@ export function desglose(id, e, { T, fmt, mmss, copa = true, lang = 'es' }) {
     case 'anio': return [...e.filas.map(f => fmt(T.bdYear, { hito: f.hito.texto, r: anio.anioLabel(f.r, lang), y: anio.anioLabel(f.hito.year, lang), pts: f.pts })), T.bdAverage];
     case 'donde': return [...e.filas.map(f => fmt(T.bdCity, { c: donde.nombre(f.ciudad, lang), km: donde.km(f.km, lang), pts: f.pts })), T.bdAverage];
     case 'final': return [...final.RONDAS.map(r => fmt(T.bdRound, {
-      emoji: final.EMOJI[r], juego: minijuegos(lang)[r].nombre, pts: e[r] ? final.puntosRonda[r](e[r]) : 0,
+      emoji: final.EMOJI[r], juego: juegosCopa(lang)[r].nombre, pts: e[r] ? final.puntosRonda[r](e[r]) : 0,
     })), T.bdAverage];
     default: return null;
   }

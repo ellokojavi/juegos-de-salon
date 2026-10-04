@@ -92,7 +92,7 @@
 
 /* Con el chat en pantalla, la burbuja flota abajo a la derecha: que no tape el último intento */
 body.chat-on #screen-play, body.chat-on #screen-lobby, body.chat-on #screen-result { padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)); }
-/* Jugar solo: el minijuego de La Copa (D-142). El tablero (.board--solo) ocupa todo el ancho */
+/* Jugar solo: el juego de La Copa (D-142). El tablero (.board--solo) ocupa todo el ancho */
 .como { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; color: var(--muted); font-weight: 700; }
 .solo-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 8px; min-height: 1.5em; }
 .solo-titulo { font-weight: 900; }

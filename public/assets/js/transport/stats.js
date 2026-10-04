@@ -247,7 +247,7 @@ export function noteEnd(api, fp, { code, createdAt, role, name }) {
  * manda un latido cada `LATIDO_MS` mientras la pantalla está a la vista y alguien la tocó hace
  * menos de `QUIETO_MS`. El celular olvidado en la pantalla final deja de latir solo.
  *
- * Los días de La Copa no: el panel ya sabe quién está jugando un minijuego por `torneos/`.
+ * Los días de La Copa no: el panel ya sabe quién está jugando un juego por `torneos/`.
  */
 export const LATIDO_MS = 60 * 1000;
 export const QUIETO_MS = 5 * 60 * 1000;
