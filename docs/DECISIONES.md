@@ -2951,9 +2951,9 @@ alemán. Las huellas de las 19 imágenes de tarjetas (D-181) se migraron sin reh
 el alemán cambian los idiomas que entran en la huella y el dibujo ganó el "gratis" en alemán, pero
 ninguna de esas imágenes cambia; cada huella se comprobó contra el cálculo anterior. `menu-de.jpg`
 se hizo en la nube (`og.mjs imagenes` usa ImageMagick donde no hay `sips`), con las fuentes de la
-app; sus emojis son los de Linux, no los de Apple. Quedan pendientes las imágenes que se comparten
-con textos alemanes largos y los guiones de punta a punta que solo recorren inglés y portugués
-(ver docs/ALEMAN.md).
+app; sus emojis son los de Linux, no los de Apple. Las imágenes que se comparten se revisaron
+en alemán el mismo día y caben; quedan pendientes los guiones de punta a punta que solo recorren
+inglés y portugués (ver docs/ALEMAN.md).
 **Alternativas descartadas:** borrar también el mecanismo del laboratorio (el próximo idioma lo
 necesitaría de nuevo); dejar `/labs/de/` como estaba (mostraría un laboratorio que ya no es).
 
