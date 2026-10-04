@@ -1,5 +1,5 @@
 {
-  "version": "0.98.1",
+  "version": "0.98.2",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -808,6 +808,7 @@
     "public/panel/aggregate.js",
     "public/panel/copas.js",
     "public/panel/panel.js",
+    "public/panel/rutas.js",
     "public/timeline/decks/brasil.js",
     "public/timeline/decks/chile.js",
     "public/timeline/decks/futbol.js",
@@ -841,6 +842,7 @@
     "public/panel/adapta.test.mjs",
     "public/panel/aggregate.test.mjs",
     "public/panel/copas.test.mjs",
+    "public/panel/rutas.test.mjs",
     "public/timeline/engine.test.mjs",
     "tools/agents/documentar.test.mjs",
     "tools/agents/marketing.test.mjs",

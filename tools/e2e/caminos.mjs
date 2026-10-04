@@ -69,7 +69,9 @@ const SEMBRAR_PANEL = vista => `(async()=>{const DIA=86400000,ahora=Date.now(),h
       const copa=(nombre,dias,hace,n,{lab=false,alias=null}={})=>{
         const pids=nombres.slice(0,n).map((g,i)=>'p'+String(i).padStart(5,'0'));
         const meta=nuevaMeta({nombre,dias,inicio:fecha(hace),tz:Z,admin:pids[0],creada:ahora-(Math.max(hace,0)+1)*DIA,lab,alias});
-        const players=Object.fromEntries(pids.map((p,i)=>[p,{name:nombres[i],at:i+1}]));
+        // El país de cada inscrito (D-207); el último, de antes de que se guardara, va sin bandera
+        const co=['CL','CL','AR','CL','PE','MX','ES'];
+        const players=Object.fromEntries(pids.map((p,i)=>[p,{name:nombres[i],at:ahora-(Math.max(hace,0)+1)*DIA+(i+1)*3600000,...(i<n-1?{co:co[i]}:{})}]));
         const started=[null],results=[null];
         for(let d=1;d<=dias;d++){
           started[d]={};results[d]={};
@@ -88,6 +90,10 @@ const SEMBRAR_PANEL = vista => `(async()=>{const DIA=86400000,ahora=Date.now(),h
         return {meta,players,started,results};
       };
       const torneos={OFICI:copa('Copa de la oficina',7,2,5,{alias:'oficina'}),PRIMO:copa('Los primos',3,0,3),LABOR:copa('Prueba del laboratorio',3,1,2,{lab:true}),AGOST:copa('Copa de agosto',7,20,6,{alias:'agosto'}),FINDE:copa('Copa del finde',3,-2,2)};
+      // En la oficina, Cata jugó el día 2 de comodín y el admin cerró la inscripción: la historia los muestra sin hora
+      torneos.OFICI.wild={p00001:'2'};torneos.OFICI.closed=true;
+      // Partidas sin red con hora (D-140), para la ficha de un juego
+      days[hoy].live={k3p9aaaaaa:{game:'dudo',mode:'cpu',n:1,co:'CL',v:'0.93.0',at:ahora-15*60000,beat:ahora-60000},q8w7aaaaaa:{game:'dudo',mode:'local',n:4,co:'AR',v:'0.92.1',at:ahora-5*3600000,beat:ahora-4*3600000}};
       // Los días de copa también mandan su señal: el panel no los cuenta entre las partidas de los juegos
       days[hoy].local.copa={copa:{1:9}};
       window.__panel.seed({rooms,days,torneos,vista:'${vista}'});})()`;
@@ -277,9 +283,15 @@ export const CAMINOS = {
    *
    * Las copas se arman con el motor de verdad (`nuevaMeta`): una a media semana con alguien
    * jugando ahora, una que empieza hoy, una de laboratorio, una terminada y una por empezar.
-   * Cada toma abre una de las tres vistas (D-136); `datos` es la del resumen.
+   * Cada toma abre una sección o una ficha por su ruta (D-207); `datos` es la de audiencia.
    */
-  panel: Object.fromEntries([['datos', 'resumen'], ['resumen', 'resumen'], ['torneo', 'torneo'], ['juegos', 'juegos']].map(([toma, vista]) => [toma, [SEMBRAR_PANEL(vista)]])),
+  panel: {
+    ...Object.fromEntries([['datos', '/audiencia'], ['ahora', '/ahora'], ['resumen', '/ahora'], ['torneo', '/torneo'], ['juegos', '/juegos'], ['audiencia', '/audiencia'],
+      ['copa-ficha', '/torneo/OFICI'], ['juego-ficha', '/juego/dudo'], ['sala-ficha', '/sala/CPSV']].map(([toma, vista]) => [toma, [SEMBRAR_PANEL(vista)]])),
+    // Las otras dos pestañas de la ficha de una copa (D-207)
+    'copa-dias': [SEMBRAR_PANEL('/torneo/OFICI'), `[...document.querySelectorAll('.subtabs button')][1].click()`],
+    'copa-historia': [SEMBRAR_PANEL('/torneo/OFICI'), `[...document.querySelectorAll('.subtabs button')][2].click()`],
+  },
 };
 
 /**

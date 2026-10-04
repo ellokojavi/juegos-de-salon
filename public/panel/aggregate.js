@@ -20,6 +20,28 @@ export const ACTIVE_MS = 10 * 60 * 1000;      // una sala está "en juego" si hu
 export const dayOf = ts => Math.floor(ts / DAY);
 
 /**
+ * La hora del panel: la del Pacífico (Los Ángeles), la misma con que La Copa parte sus días, así
+ * que la hora de un juego y la ventana de su día se leen en el mismo reloj (D-207). Vale para
+ * todo lo que la base guarda con hora exacta. Lo que solo se sabe por día (los contadores de
+ * `stats/`) sigue en días UTC, y el panel lo rotula así.
+ */
+export const ZONA_PANEL = 'America/Los_Angeles';
+export const ZONA_NOMBRE = 'hora del Pacífico';
+
+/** "14:05", en la hora del panel. 24 horas: "02:05 p. m." ocupa el doble en una lista. */
+export function horaLabel(ts) {
+  return new Date(ts).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: ZONA_PANEL });
+}
+
+/** "sáb 4 oct", en la hora del panel. */
+export function fechaLabel(ts) {
+  return new Date(ts).toLocaleDateString('es-CL', { weekday: 'short', day: 'numeric', month: 'short', timeZone: ZONA_PANEL });
+}
+
+/** El día del calendario en la hora del panel, como texto ordenable ("2026-10-04"): para agrupar eventos. */
+export const diaPanel = ts => new Date(ts).toLocaleDateString('en-CA', { timeZone: ZONA_PANEL });
+
+/**
  * Los rangos que el panel ofrece (D-80). Viven acá y no en el HTML: el selector, el título, la
  * ventana que se baja de la base y el grano de la barra por día salen todos de esta lista, así
  * que agregar un rango es sumar una línea.
@@ -125,6 +147,52 @@ export function liveLocal(days, now = Date.now()) {
 }
 
 /**
+ * Las partidas sin red del rango con hora (D-140), de la más nueva a la más vieja: juego, modo,
+ * cuántos juegan, país, versión, cuándo empezó y su última señal, que dice cuánto se jugó como
+ * mínimo. Antes de la v0.64.7 no hay de estas: de esos días solo quedan los contadores.
+ */
+export function localLog(days, { from, to, game = null } = {}) {
+  const out = [];
+  for (let d = from; d <= to; d++) {
+    for (const [id, r] of Object.entries(days?.[String(d)]?.live || {})) {
+      if (!r?.game || (game && r.game !== game)) continue;
+      const at = Number(r.at) || 0;
+      const beat = Math.max(Number(r.beat) || 0, at);
+      out.push({ id, day: d, game: r.game, mode: r.mode, n: Number(r.n) || 1, co: r.co || '', v: r.v || '', at, beat, minMs: Math.max(0, beat - at) });
+    }
+  }
+  return out.sort((a, b) => b.at - a.at || a.id.localeCompare(b.id));
+}
+
+/**
+ * El país de cada jugador de las salas registradas hoy y ayer, por código: `{ ABCD: { A: 'CL' } }`.
+ * La sala viva (`rooms/`) no lo trae; lo anotó `stats/` al entrar cada uno (D-79).
+ */
+export function paisesDeSalas(days, now = Date.now()) {
+  const hoy = dayOf(now);
+  const out = {};
+  for (const d of [hoy - 1, hoy]) {
+    for (const [code, r] of Object.entries(days?.[String(d)]?.rooms || {})) if (r?.co) out[code] = { ...(out[code] || {}), ...r.co };
+  }
+  return out;
+}
+
+/**
+ * Cuántos jugadores de las salas del rango había de cada país (`co`). Cuenta una vez a cada
+ * jugador de cada sala: el mismo celular en cinco revanchas suma cinco. No son personas.
+ */
+export function paisesDelRango(days, { from, to, incluye = () => true }) {
+  const out = {};
+  for (let d = from; d <= to; d++) {
+    for (const r of Object.values(days?.[String(d)]?.rooms || {})) {
+      if (!r || !incluye(r.game || '?') || Object.keys(r.players || {}).length < 2) continue;
+      for (const role of Object.keys(r.players || {})) add(out, r.co?.[role] || 'desconocido');
+    }
+  }
+  return out;
+}
+
+/**
  * Parte las salas vivas entre las del entorno mirado y las demás (D-45).
  * `rooms/` es el nodo real del transporte y no está separado por entorno: una partida de
  * prueba en localhost es una sala igual de real que la de un jugador. El entorno se sabe por
@@ -180,14 +248,14 @@ export function actividad(r) {
  * Nadie conectado no es lo mismo que cerrada: los dos pueden volver a retomar la partida
  * hasta que la sala venza (C-6), así que esas siguen apareciendo, apagadas.
  */
-export function liveRooms(rooms, now = Date.now()) {
+export function liveRooms(rooms, now = Date.now(), paises = {}) {
   const out = [];
   for (const [code, r] of Object.entries(rooms || {})) {
     if (!r || typeof r.createdAt !== 'number' || r.createdAt < now - ROOM_TTL) continue;
     if (typeof r.lastAt === 'number' && r.lastAt < now - IDLE_TTL) continue;
     if (deserted(r.players)) continue;
     const players = Object.entries(r.players || {}).sort(([a], [b]) => a.localeCompare(b))
-      .map(([role, p]) => ({ role, name: p?.name || '?', online: !!p?.online, left: !!p?.left }));
+      .map(([role, p]) => ({ role, name: p?.name || '?', online: !!p?.online, left: !!p?.left, co: paises[code]?.[role] || '' }));
     const msgs = Object.values(r.messages || {}).filter(Boolean);
     const game = r.game || '?';
     // Se separan las jugadas de la charla (D-138). Una sala trae además mensajes que nadie
@@ -315,9 +383,13 @@ export function roomLog(days, { from, to, soloJugadas = true } = {}) {
       if (soloJugadas && players.length < 2) continue;
       const fin = r.end || null;
       const rol = fin && /^[A-F]$/.test(fin.winner || '') ? fin.winner : '';
+      const at = Number(r.at) || d * DAY;
+      const endAt = Number(fin?.at) || 0;
       filas.push({
-        code, day: d, at: Number(r.at) || d * DAY, game: r.game || '?', v: r.v || '',
-        players,
+        code, day: d, at, game: r.game || '?', v: r.v || '',
+        players, endAt: endAt || null,
+        // Desde que se creó hasta que alguien ganó: incluye la espera del rival
+        durMs: endAt > at ? endAt - at : null,
         // Empate es un resultado, no un dato que falte: se distingue de la sala sin registro.
         empate: !!fin && fin.winner === 'tie',
         winner: rol,
@@ -326,6 +398,25 @@ export function roomLog(days, { from, to, soloJugadas = true } = {}) {
     }
   }
   return filas.sort((a, b) => b.at - a.at || a.code.localeCompare(b.code));
+}
+
+/** La mediana de una lista de números, o `null` si está vacía: el tiempo típico sin que lo arrastre uno. */
+export function mediana(xs) {
+  const o = xs.filter(x => typeof x === 'number' && x >= 0).sort((a, b) => a - b);
+  if (!o.length) return null;
+  const k = Math.floor(o.length / 2);
+  return o.length % 2 ? o[k] : Math.round((o[k - 1] + o[k]) / 2);
+}
+
+/**
+ * Una sala registrada, por código. Los códigos son de cuatro letras y se reciclan, así que se
+ * puede pedir la de un día; sin día, la más nueva de las bajadas. `null` si no está.
+ */
+export function salaDe(days, code, day = null) {
+  const dias = Object.keys(days || {}).map(Number).filter(d => !Number.isNaN(d));
+  if (!dias.length) return null;
+  const from = day ?? Math.min(...dias), to = day ?? Math.max(...dias);
+  return roomLog(days, { from, to, soloJugadas: false }).find(f => f.code === code) || null;
 }
 
 /** Una página de la bitácora, y cuántas hay. `page` empieza en 1 y se acota a lo que existe. */
@@ -346,13 +437,10 @@ export function flagOf(co) {
   return String.fromCodePoint(...[...co.toUpperCase()].map(c => 0x1f1e6 + c.charCodeAt(0) - 65));
 }
 
-/** Día y hora de una sala, en la zona horaria de quien mira el panel. */
+/** Día y hora de una sala, en la hora del panel (D-207). */
 export function whenLabel(ts) {
-  const d = new Date(ts);
-  const dia = d.toLocaleDateString('es-CL', { day: 'numeric', month: 'short' });
-  // 24 horas: "02:00 p. m." ocupa el doble y en una lista de veinte filas se lee peor
-  const hora = d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit', hour12: false });
-  return `${dia}, ${hora}`;
+  const dia = new Date(ts).toLocaleDateString('es-CL', { day: 'numeric', month: 'short', timeZone: ZONA_PANEL });
+  return `${dia}, ${horaLabel(ts)}`;
 }
 
 /** Pares [clave, valor] de mayor a menor, con tope. */
