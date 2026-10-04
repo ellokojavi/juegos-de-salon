@@ -3054,3 +3054,25 @@ en el dedo: a 16, un toque erra por unos 10 píxeles, unos 20 a 25 km, justo el 
 de la pantalla), pero costas, ríos, lagos y cordilleras se siguen leyendo.
 **Alternativas descartadas:** la imagen de la NASA de 500 m por píxel (unas 2.000 teselas y
 240 MB en el repo, y las ciudades casi no se ven en ella); un tope de 48 (el dueño eligió 64).
+
+## D-203 · ¿Dónde queda? se juega a pantalla completa
+**Fecha:** 2026-10-04 · **Estado:** vigente; complementa C-8, D-133, D-159 y D-202
+**Decisión:** El globo de ¿Dónde queda? ocupa la ventana entera y todo lo demás flota encima,
+suelto y en La Copa por igual; reemplaza a la vista en caja:
+- **Arriba**, la barra (‹ Menú y 🔊) con el reloj en una píldora al medio; debajo, la ciudad
+  ("Ciudad 1 de 5" y su nombre) y las **reglas plegadas** como un widget que se abre sobre el
+  globo y se desplaza por dentro (D-133). El nombre del juego no se repite: lo dice la ciudad.
+- **Abajo**, la pista de girar, + y − y la acción: Confirmar, o el resultado y Siguiente.
+- **El globo se centra entre la ciudad y la acción** y puede pasar 60 px por debajo de ellas;
+  la respuesta encuadra el alfiler y la ciudad en esa franja. El tope de acercamiento se mide en
+  radio del globo en píxeles, no en veces el globo: en un computador el globo entero es el doble
+  que en un celular. Es 11000, unas 64 veces el globo de un celular (D-202, unos 600 m por píxel).
+- **La cáscara se entera por el juego**: `pantallaCompleta` en su `ui.js` hace que `cup/game.js`
+  ponga `pantalla-completa` en el `body` al montarlo, y `mostrar()` la quita al cambiar de pantalla.
+  Otro juego de La Copa puede pedir lo mismo.
+**Por qué:** En un computador el globo quedaba en una caja de unos 410×320 px, un 13 % de la
+pantalla, y en un celular en la mitad. Un mapa es mejor mientras más grande se vea.
+**Consecuencias:** Lo que flota no puede quedar dentro de algo con `transform` (la animación de
+entrada de la pantalla se apaga en este modo) ni con `align-self: center`, que Chrome también
+aplica a lo fijo. La pantalla no se desplaza: lo que no quepa tiene que desplazarse dentro de su
+widget, como las reglas abiertas.
