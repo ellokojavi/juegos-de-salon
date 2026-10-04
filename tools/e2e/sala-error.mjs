@@ -1,7 +1,15 @@
-// Sin llegar a Firebase: el jugador tiene que enterarse, en su idioma (los tres), y con una salida (C-14, D-40).
+// Sin llegar a Firebase: el jugador tiene que enterarse, en su idioma (todos los que se ofrecen:
+// D-199), y con una salida (C-14, D-40).
 // Se le corta la red a la base (no al sitio), que es como se ve quedarse sin señal o toparse
 // con el tope de conexiones del plan gratuito.
 import { launch, sleep } from './cdp.mjs';
+import { LANGS } from '../../public/assets/js/i18n.js';
+import { gameById } from '../../public/assets/js/games.js';
+import { LOCALES as TYF } from '../../public/bulls-and-cows/rules.js';
+import { LOCALES as LDT } from '../../public/timeline/rules.js';
+import { LOCALES as BN } from '../../public/battleship/rules.js';
+import { LOCALES as AH } from '../../public/hangman/rules.js';
+import { LOCALES as DU } from '../../public/liars-dice/rules.js';
 // Con varias sesiones a la vez, cada una sirve su copia en su puerto (D-135)
 const SITIO = process.env.SITIO || 'http://localhost:8765';
 
@@ -22,9 +30,10 @@ const botonVivo = () => b.evaluate(`(()=>{const b=document.querySelector('#setup
 
 async function intento(lang, juego, etiqueta) {
   await red(true);
-  await b.go(`${SITIO}/${juego}/`);
+  const ruta = gameById(juego).path;
+  await b.go(`${SITIO}/${ruta}`);
   await b.evaluate(`localStorage.clear(); localStorage.setItem('juegos-de-salon:lang','${lang}'); 1`);
-  await b.go(`${SITIO}/${juego}/`);
+  await b.go(`${SITIO}/${ruta}`);
   const precarga = await b.evaluate(`import('../assets/js/transport/firebase.js').then(()=>'ok',e=>'falló: '+e)`);
   console.log(`${etiqueta} · SDK precargado:`, precarga);
   await red(false);
@@ -45,23 +54,26 @@ async function intento(lang, juego, etiqueta) {
   return texto;
 }
 
-const es = await intento('es', 'toque-y-fama', 'es');
-const en = await intento('en', 'toque-y-fama', 'en');
-const pt = await intento('pt', 'toque-y-fama', 'pt');
-const ldt = await intento('es', 'linea-de-tiempo', 'ldt');
-const bn = await intento('es', 'batalla-naval', 'bn');
-const ah = await intento('es', 'ahorcado', 'ah');
-const du = await intento('es', 'dudo', 'du');
+/**
+ * Toque y Fama en cada idioma; los demás juegos, uno cada uno, repartidos entre los idiomas: el
+ * texto sale de `errText` (transport/errors.js), que es uno solo para todos los juegos. Lo que se
+ * espera es el `errOffline` de su diccionario, no el genérico `errNet` ("¿Hay internet?").
+ */
+const casos = [
+  ...LANGS.map(lang => ['toque-y-fama', TYF, lang]),
+  ['linea-de-tiempo', LDT], ['batalla-naval', BN], ['ahorcado', AH],
+  ['dudo', Object.fromEntries(Object.entries(DU).map(([l, d]) => [l, d.ui]))],   // Dudo los guarda en `ui`
+].map(([juego, L, lang], i) => [juego, L, lang || LANGS[(i + 1) % LANGS.length]]);
 
-const ok = t => t && !/Hay internet|Is there internet|Tem internet/.test(t) && /celular|phone/.test(t);
+const resultados = [];
+for (const [juego, L, lang] of casos) resultados.push([juego, L, lang, await intento(lang, juego, `${juego}-${lang}`)]);
+
 console.log('\n--- resumen ---');
-console.log('es: mensaje nuevo, no el genérico →', ok(es));
-console.log('en: traducido, no el genérico   →', ok(en) && /Couldn/.test(en));
-console.log('pt: traducido, no el genérico   →', ok(pt) && /Não foi possível abrir/.test(pt));
-console.log('línea de tiempo                 →', ok(ldt));
-console.log('batalla naval                   →', ok(bn));
-console.log('el ahorcado                     →', ok(ah));
-console.log('dudo                            →', ok(du));
+for (const [juego, L, lang, texto] of resultados) {
+  const bien = texto === L[lang].errOffline;
+  console.log(`${bien ? '✓' : '✗'} ${juego} (${lang}): ${bien ? 'el mensaje de sala que no abre, traducido' : `esperaba ${JSON.stringify(L[lang].errOffline.slice(0, 50))}…`}`);
+  if (!bien) process.exitCode = 1;
+}
 console.log('errors:', JSON.stringify(b.errors));
 console.log('logs:', JSON.stringify(b.logs.filter(l => !/firebaseio|net::ERR_BLOCKED/.test(l))));
 b.close();

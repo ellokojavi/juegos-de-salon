@@ -19,7 +19,7 @@ const SALIDA = process.env.SALIDA_E2E || '/tmp/e2e';
 const TOPE_MS = 15 * 60 * 1000;
 
 // No son pruebas: miran o arman hojas de capturas
-const HERRAMIENTAS = new Set(['cdp.mjs', 'ci.mjs', 'mirar.mjs', 'contacto.mjs']);
+const HERRAMIENTAS = new Set(['cdp.mjs', 'ci.mjs', 'mirar.mjs', 'contacto.mjs', 'caminos.mjs', 'idiomas-comun.mjs']);
 // Abren salas o se unen a ellas en el Firebase de producción: siguen a mano
 const CON_FIREBASE = /(^|\/)(online|chat)\.mjs$/;
 const TAMBIEN_FIREBASE = new Set([
