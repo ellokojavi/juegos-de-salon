@@ -67,11 +67,12 @@ export function createFirebaseStore() {
       return (await withTimeout(get(ref(db, `torneos/${code}/meta/v`)), OP_MS)).exists();
     },
 
-    async crear(code, meta, { pid, name, at, pinHash }) {
+    async crear(code, meta, { pid, name, at, pinHash, co = '' }) {
       const uid = await listo();
       await escribir({
         [`torneos/${code}/meta`]: { ...meta, createdAt: serverTimestamp() },
-        [`torneos/${code}/players/${pid}`]: { name, at: serverTimestamp() },
+        // El país va solo si se sabe: el panel lo pone junto al nombre (D-207)
+        [`torneos/${code}/players/${pid}`]: { name, at: serverTimestamp(), ...(co ? { co } : {}) },
         [`torneoKeys/${code}/${pid}`]: pinHash,
         [`torneoSeats/${code}/${pid}/${uid}`]: pinHash,
         // El link propio, en la misma escritura: si otro lo tomó justo antes, no se crea nada (D-121)
@@ -100,10 +101,10 @@ export function createFirebaseStore() {
       return (await withTimeout(get(ref(db, `torneos/${code}`)), OP_MS)).val();
     },
 
-    async inscribir(code, { pid, name, pinHash }) {
+    async inscribir(code, { pid, name, pinHash, co = '' }) {
       const uid = await listo();
       await escribir({
-        [`torneos/${code}/players/${pid}`]: { name, at: serverTimestamp() },
+        [`torneos/${code}/players/${pid}`]: { name, at: serverTimestamp(), ...(co ? { co } : {}) },
         [`torneoKeys/${code}/${pid}`]: pinHash,
         [`torneoSeats/${code}/${pid}/${uid}`]: pinHash,
       }, 'llena');

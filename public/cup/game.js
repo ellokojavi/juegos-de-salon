@@ -14,7 +14,7 @@ import { $, $$, el, con, conEmoji, vibrate, sparkles, keepAwake, confetti } from
 import { applyStatic, COMMON, SITIO, LANGS, getLang, langToggle, withLang } from '../assets/js/i18n.js';
 import { compartir as compartirAlChat, cabecera, lamina, laminaResultado, aArchivo, nombreArchivo, puntajeYTiempo, botonResultadoSolo, MARCO } from '../assets/js/compartir.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
-import { trackStart, versionOf } from '../assets/js/transport/stats.js';
+import { trackStart, versionOf, countryOf } from '../assets/js/transport/stats.js';
 import { gameById } from '../assets/js/games.js';
 import {
   POZO, calendarioAlAzar, calendario, MAX_JUGADORES, COPA_MAX, aliasLimpio, esAlias, CODIGO, esCodigo, codigoAlAzar, pidAlAzar, limpiarNombre, claveNombre, esPin, hashPin,
@@ -438,7 +438,7 @@ function crearCopa() {
       const fechaInicio = inicio.valor === 'otra' ? otraFecha.input.value : sumarDias(fechaEn(now, zona), inicio.valor);
       // Las copas del laboratorio (y las de prueba) llevan la marca que deja pasar de día (D-115)
       const meta = nuevaMeta({ nombre: n, dias: modo.valor, inicio: fechaInicio, tz: zona, admin: pid, creada: now, lab: LABS || PRUEBA, alias, cal: juegos.cal, lang: idioma.valor, aud: alcance.valor });
-      await st.crear(code, meta, { pid, name: quien, at: now, pinHash: await hashPin(code, pid, pin1.input.value) });
+      await st.crear(code, meta, { pid, name: quien, at: now, pinHash: await hashPin(code, pid, pin1.input.value), co: miPais() });
       cuenta.nombre.set(quien);
       cuenta.recordar(code, pid, { nombre: quien, copa: n, fin: meta.end });
       history.replaceState(null, '', `${location.pathname}?${alias || code}${PRUEBA ? '&prueba' : ''}`);
@@ -581,7 +581,7 @@ function entrar({ mantener = false } = {}) {
       b.disabled = true; b.textContent = T.joining;
       try {
         const pid = pidAlAzar();
-        await store.inscribir(S.code, { pid, name: n, at: ahora(), pinHash: await hashPin(S.code, pid, p1.input.value) });
+        await store.inscribir(S.code, { pid, name: n, at: ahora(), pinHash: await hashPin(S.code, pid, p1.input.value), co: miPais() });
         cuenta.nombre.set(n);
         cuenta.recordar(S.code, pid, { nombre: n, copa: meta.name, fin: meta.end });
         S.yo = pid;
@@ -2098,6 +2098,15 @@ function botonReporte(extra = {}) {
 }
 
 /**
+ * El país de este celular en dos letras (`CL`), del huso horario y si no del idioma, igual que
+ * el de las salas (D-79). Va al inscribirse y en los reportes, para que el panel del dueño sepa
+ * dónde se juega (D-207). Si no se sabe, vacío: mejor sin bandera que con una inventada.
+ */
+function miPais() {
+  try { return countryOf({ tz: Intl.DateTimeFormat().resolvedOptions().timeZone, lang: navigator.language }); } catch (_) { return ''; }
+}
+
+/**
  * El formulario va en su propia pantalla y vuelve a la que se estaba mirando. Además del
  * texto se manda el contexto, a la vista de quien reporta: copa, día, pantalla, versión y
  * navegador. Nunca el PIN ni lo que se está jugando.
@@ -2105,7 +2114,8 @@ function botonReporte(extra = {}) {
 function reportar(extra = {}) {
   const volverA = S.pantalla;
   const contexto = {
-    copa: S.code || null, jugador: S.yo ? nombreDe(S.yo) : null, pantalla: volverA,
+    // El país va arriba: el contexto se corta a 500 letras y lo de abajo es lo que se pierde
+    copa: S.code || null, jugador: S.yo ? nombreDe(S.yo) : null, pais: miPais() || null, pantalla: volverA,
     dia: S.verDia || S.juego?.d || null, ...extra,
     url: location.pathname + location.search, navegador: navigator.userAgent.slice(0, 160),
   };

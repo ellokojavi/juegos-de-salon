@@ -11,7 +11,7 @@
  * `torneos/` no está separado por entorno como `stats/`: una copa de prueba es tan real como
  * la de un grupo de amigos. Por eso cada copa trae su marca de laboratorio.
  */
-import { juegoDelDia, diaActual, terminada, abierto, cerrado, activos, tabla, inscripcionAbierta, calendario } from '../cup/engine.js';
+import { juegoDelDia, diaActual, terminada, abierto, cerrado, activos, tabla, inscripcionAbierta, calendario, cerrarEn, comodinDe, esFinal } from '../cup/engine.js';
 import { dayOf } from './aggregate.js';
 
 /**
@@ -27,12 +27,21 @@ function porDia(nodo) {
   return out;
 }
 
-/** Una copa como la entiende el motor, o `null` si no alcanza a ser una (le falta el calendario). */
+/**
+ * Una copa como la entiende el motor, o `null` si no alcanza a ser una (le falta el calendario).
+ *
+ * Si el admin la terminó antes (`fin`, D-161), se ve como quedó: termina ahí y los días que no
+ * alcanzaron a abrir no cuentan. Sin esto el panel la seguía mostrando en curso hasta su fecha.
+ */
 export function copaDe(code, x) {
   const m = x?.meta;
   if (!m?.days || !m.win?.[1] || typeof m.end !== 'number') return null;
-  return { code, meta: m, players: x.players || {}, started: porDia(x.started), results: porDia(x.results), wild: x.wild || {}, closed: x.closed === true };
+  const fin = typeof x.fin === 'number' ? x.fin : null;
+  return { code, meta: fin ? cerrarEn(m, fin) : m, players: x.players || {}, started: porDia(x.started), results: porDia(x.results), wild: x.wild || {}, closed: x.closed === true, fin };
 }
+
+/** El país de un jugador de la copa (`co`, dos letras), si se inscribió con una versión que lo guarda. */
+export const paisDe = (L, pid) => (/^[A-Z]{2}$/.test(L.players?.[pid]?.co || '') ? L.players[pid].co : '');
 
 /** Todas las copas de `torneos/`, las rotas fuera. */
 export function copasDe(torneos) {
@@ -75,14 +84,14 @@ export function estadoCopa(L, now = Date.now()) {
     if (!abierto(m, d, now)) continue;
     for (const [pid, at] of Object.entries(L.started[d] || {})) {
       if (!pids.has(pid) || L.results[d]?.[pid] || typeof at !== 'number' || now - at > JUGANDO_MS) continue;
-      jugando.push({ pid, name: nombre(pid), dia: d, juego: juegoDelDia(m, d), desde: at });
+      jugando.push({ pid, name: nombre(pid), co: paisDe(L, pid), dia: d, juego: juegoDelDia(m, d), desde: at });
     }
   }
 
   const hoy = estado === 'en-curso' ? {
     dia, juego: juegoDelDia(m, dia),
     jugadores: jug.map(j => ({
-      pid: j.pid, name: j.name,
+      pid: j.pid, name: j.name, co: paisDe(L, j.pid),
       jugo: !!L.results[dia]?.[j.pid],
       jugando: jugando.some(x => x.pid === j.pid && x.dia === dia),
     })),
@@ -99,10 +108,10 @@ export function estadoCopa(L, now = Date.now()) {
   }
 
   const filas = jug.length ? tabla(L, null, Math.max(now, m.end)) : [];
-  const primero = filas[0] && filas[0].total > 0 ? { name: filas[0].name, total: filas[0].total, empatados: filas.filter(f => f.lugar === 1).length } : null;
+  const primero = filas[0] && filas[0].total > 0 ? { name: filas[0].name, co: paisDe(L, filas[0].pid), total: filas[0].total, empatados: filas.filter(f => f.lugar === 1).length } : null;
 
   return {
-    code: L.code, name: m.name, alias: m.alias || null, lab: !!m.lab, days: m.days, start: m.start, tz: m.tz,
+    code: L.code, name: m.name, alias: m.alias || null, lab: !!m.lab, days: m.days, start: m.start, tz: m.tz, fin: L.fin || null,
     createdAt: m.createdAt || 0, end: m.end, estado, dia, hoy, jugando,
     jugadores: jug.length, inscripcion: estado !== 'terminada' && inscripcionAbierta(m, now, L.closed),
     participacion: { jugado, esperado }, primero, ultimo: ultimoResultado(L),
@@ -224,3 +233,129 @@ export function inicioLabel(start) {
   return new Date(Date.UTC(y, mo - 1, d)).toLocaleDateString('es-CL', { day: 'numeric', month: 'short', timeZone: 'UTC' });
 }
 
+
+/* ------------------------------------------------------------------ */
+/* La ficha de una copa                                                */
+/* ------------------------------------------------------------------ */
+
+/** La copa con ese código, o la que tiene ese link propio (`/oficina`). `null` si no hay ninguna. */
+export function buscarCopa(torneos, q) {
+  const t = String(q || '').trim().replace(/^\//, '');
+  if (!t) return null;
+  const copas = copasDe(torneos);
+  return copas.find(L => L.code === t.toUpperCase()) || copas.find(L => L.meta.alias && L.meta.alias === t.toLowerCase()) || null;
+}
+
+/**
+ * Qué pasó con un jugador en un día de la copa: una casilla de la grilla jugador × día.
+ *
+ *   jugo          tiene resultado: puntaje, tiempo y los puntos que le dio en la tabla
+ *   jugando       tocó Empezar hace menos de media hora y el día sigue abierto
+ *   sin-terminar  tocó Empezar y no dejó resultado (pasó media hora o el día cerró)
+ *   abierto       el día está abierto y todavía no lo empieza
+ *   no-jugo       el día cerró sin que lo empezara
+ *   no-debia      se inscribió después de que ese día cerró: no le tocaba
+ *   anulado       el admin terminó la copa antes de que ese día abriera
+ *   futuro        el día todavía no abre
+ *
+ * `x2` dice si ese día vale doble para él: la final, o el día que eligió de comodín.
+ */
+export function casilla(L, d, j, filaTabla, now = Date.now()) {
+  const m = L.meta;
+  const w = m.win[d];
+  const x2 = esFinal(m, d) || comodinDe(L, j.pid) === d;
+  const comodin = comodinDe(L, j.pid) === d;
+  const r = L.results[d]?.[j.pid];
+  if (r) return { tipo: 'jugo', s: Number(r.s) || 0, ms: Number(r.ms) || 0, at: r.at || 0, pts: filaTabla?.dias?.[d]?.pts ?? null, x2, comodin };
+  if (L.fin && w.a >= L.fin) return { tipo: 'anulado', x2, comodin };
+  if (now < w.a) return { tipo: 'futuro', x2, comodin };
+  const empezo = L.started[d]?.[j.pid];
+  if (typeof empezo === 'number') {
+    const sigue = abierto(m, d, now) && now - empezo <= JUGANDO_MS;
+    return { tipo: sigue ? 'jugando' : 'sin-terminar', desde: empezo, x2, comodin };
+  }
+  if (abierto(m, d, now)) return { tipo: 'abierto', x2, comodin };
+  if (!debia(m, d, j)) return { tipo: 'no-debia', x2, comodin };
+  return { tipo: 'no-jugo', x2, comodin };
+}
+
+/**
+ * Lo que pasó en la copa, del más nuevo al más viejo. Cada evento: `{ at, tipo, texto, pid? }`.
+ * Lo que la base guarda sin hora (el comodín, el retiro, la inscripción cerrada) va aparte, en
+ * `sinHora`: ponerle una hora inventada sería mentir sobre cuándo pasó.
+ */
+export function historiaCopa(L, now = Date.now()) {
+  const m = L.meta;
+  const ev = [];
+  const sinHora = [];
+  const nombre = pid => L.players[pid]?.name || '?';
+  const admin = nombre(m.admin);
+  if (m.createdAt) ev.push({ at: m.createdAt, tipo: 'creada', pid: m.admin, texto: `${admin} creó la copa: ${m.days} días` });
+  for (const [pid, p] of Object.entries(L.players)) {
+    if (typeof p?.at === 'number' && p.at > 1e12 && pid !== m.admin) ev.push({ at: p.at, tipo: 'inscripcion', pid, texto: `${p.name} se inscribió` });
+    if (p?.out) sinHora.push({ tipo: 'retiro', pid, texto: `El admin retiró a ${p.name}` });
+  }
+  const jug = activos(L);
+  for (let d = 1; d <= m.days; d++) {
+    const juego = juegoDelDia(m, d);
+    for (const [pid, at] of Object.entries(L.started[d] || {})) {
+      if (typeof at !== 'number') continue;
+      ev.push({ at, tipo: 'empezo', pid, dia: d, juego, texto: `${nombre(pid)} empezó el día ${d}` });
+      const r = L.results[d]?.[pid];
+      if (r?.at) ev.push({ at: r.at, tipo: 'termino', pid, dia: d, juego, s: Number(r.s) || 0, ms: Number(r.ms) || 0, texto: `${nombre(pid)} terminó el día ${d}` });
+      else if (!abierto(m, d, now) || now - at > JUGANDO_MS) ev.push({ at: Math.min(at + JUGANDO_MS, m.win[d].b), tipo: 'sin-terminar', pid, dia: d, juego, texto: `${nombre(pid)} dejó sin terminar el día ${d}` });
+    }
+    // Un resultado sin "empezó" (de antes de que se anotara) igual cuenta
+    for (const [pid, r] of Object.entries(L.results[d] || {})) {
+      if (r?.at && typeof L.started[d]?.[pid] !== 'number') ev.push({ at: r.at, tipo: 'termino', pid, dia: d, juego, s: Number(r.s) || 0, ms: Number(r.ms) || 0, texto: `${nombre(pid)} terminó el día ${d}` });
+    }
+    if (m.win[d].a <= now && !(L.fin && m.win[d].a >= L.fin)) ev.push({ at: m.win[d].a, tipo: 'abrio', dia: d, juego, texto: `Abrió el día ${d}` });
+    if (cerrado(m, d, now) && !(L.fin && m.win[d].a >= L.fin)) {
+      const tocaba = jug.filter(j => debia(m, d, j));
+      const jugaron = tocaba.filter(j => L.results[d]?.[j.pid]).length;
+      ev.push({ at: m.win[d].b, tipo: 'cerro', dia: d, juego, texto: `Cerró el día ${d}: jugaron ${jugaron} de ${tocaba.length}` });
+    }
+  }
+  for (const [pid, d] of Object.entries(L.wild || {})) sinHora.push({ tipo: 'comodin', pid, dia: Number(d), texto: `${nombre(pid)} usó el comodín en el día ${d}` });
+  if (L.closed) sinHora.push({ tipo: 'cerrada', texto: `${admin} cerró la inscripción` });
+  if (L.fin) ev.push({ at: L.fin, tipo: 'fin', texto: `${admin} terminó la copa antes de tiempo` });
+  else if (terminada(m, now)) ev.push({ at: m.end, tipo: 'fin', texto: 'La copa terminó' });
+  // A igual hora, primero lo que ocurrió después en la lógica: el cierre antes que la apertura del día siguiente
+  const peso = { fin: 0, cerro: 1, termino: 2, 'sin-terminar': 3, empezo: 4, abrio: 5, inscripcion: 6, creada: 7 };
+  ev.sort((a, b) => b.at - a.at || (peso[a.tipo] ?? 9) - (peso[b.tipo] ?? 9));
+  return { eventos: ev, sinHora };
+}
+
+/**
+ * Todo lo de una copa para su ficha: lo de `estadoCopa`, más la tabla completa, cada día con su
+ * juego y su ventana, la grilla jugador × día, los retirados y la historia.
+ */
+export function fichaCopa(L, now = Date.now()) {
+  const m = L.meta;
+  const base = estadoCopa(L, now);
+  const jug = activos(L);
+  const filas = jug.length ? tabla(L, null, Math.max(now, m.end)) : [];
+  const porPid = Object.fromEntries(filas.map(f => [f.pid, f]));
+  const dias = [];
+  for (let d = 1; d <= m.days; d++) {
+    const w = m.win[d];
+    const anuladoDia = !!L.fin && w.a >= L.fin;
+    const estado = anuladoDia ? 'anulado' : now < w.a ? 'futuro' : abierto(m, d, now) ? 'abierto' : 'cerrado';
+    const tocaba = jug.filter(j => debia(m, d, j));
+    dias.push({ d, juego: juegoDelDia(m, d), a: w.a, b: w.b, estado, final: esFinal(m, d), jugaron: tocaba.filter(j => L.results[d]?.[j.pid]).length, de: tocaba.length });
+  }
+  const orden = filas.length ? filas.map(f => jug.find(j => j.pid === f.pid)) : jug;
+  const grilla = orden.map(j => {
+    const f = porPid[j.pid];
+    return { pid: j.pid, name: j.name, co: paisDe(L, j.pid), at: j.at, lugar: f?.lugar ?? null, total: f?.total ?? 0, comodin: comodinDe(L, j.pid) || null,
+      casillas: dias.map(x => casilla(L, x.d, j, f, now)) };
+  });
+  const retirados = Object.entries(L.players).filter(([, p]) => p?.out).map(([pid, p]) => ({ pid, name: p.name, co: paisDe(L, pid) }));
+  const abiertoHoy = dias.filter(x => x.estado === 'abierto').map(x => x.d);
+  return {
+    ...base,
+    admin: { pid: m.admin, name: L.players[m.admin]?.name || '?', co: paisDe(L, m.admin) },
+    lang: m.lang || 'es', aud: m.aud || null, closed: L.closed, joinUntil: m.joinUntil ?? null,
+    dias, abiertos: abiertoHoy, grilla, retirados, historia: historiaCopa(L, now),
+  };
+}

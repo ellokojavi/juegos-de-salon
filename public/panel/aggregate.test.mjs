@@ -1,7 +1,8 @@
 // Ejecutar: node public/panel/aggregate.test.mjs
 import assert from 'node:assert/strict';
 import { MODE_IDS } from '../assets/js/games.js';
-import { DAY, roomLog, paginate, flagOf, whenLabel, RANGOS, rangeOf, groupDays, periodLabel, ROOM_TTL, liveRooms, esJugada, connections, summarize, top, tzLabel, ago, dayLabel, codesOfDays, splitByEnv, liveLocal, VIVA_SIN_RED_MS } from './aggregate.js';
+import { DAY, roomLog, paginate, flagOf, whenLabel, RANGOS, rangeOf, groupDays, periodLabel, ROOM_TTL, liveRooms, esJugada, connections, summarize, top, tzLabel, ago, dayLabel, codesOfDays, splitByEnv, liveLocal, VIVA_SIN_RED_MS, ZONA_PANEL, horaLabel, fechaLabel, diaPanel, localLog, paisesDeSalas, paisesDelRango, salaDe, mediana } from './aggregate.js';
+import { ZONA as ZONA_COPA } from '../cup/engine.js';
 
 const now = 20342 * DAY + 15 * 60 * 60 * 1000; // día 20342, 15:00 UTC
 
@@ -299,5 +300,61 @@ assert.equal(ninguna.ajenas.length, 3);
   assert.deepEqual(liveLocal({}, now), []);
   assert.deepEqual(liveLocal({ 20342: { live: { x: { game: 'dudo', at: now } } } }, now).length, 1, 'recién empezada, antes del primer latido');
 }
+
+// --- La hora del panel (D-207) -------------------------------------------
+assert.equal(ZONA_PANEL, ZONA_COPA, 'el panel lee la hora en el mismo reloj con que La Copa parte sus días');
+{
+  // 15:00 UTC del 12 de septiembre de 2025 (verano del norte): 08:00 en Los Ángeles
+  const t = Date.UTC(2025, 8, 12, 15, 0);
+  assert.equal(horaLabel(t), '08:00');
+  assert.match(whenLabel(t), /12 sept?\.?, 08:00/);
+  assert.match(fechaLabel(t), /12/);
+  // 05:00 UTC del 13: todavía es el 12 en el Pacífico
+  assert.equal(diaPanel(Date.UTC(2025, 8, 13, 5, 0)), '2025-09-12');
+}
+
+// --- Partidas sin red con hora, del rango ---------------------------------
+{
+  const d = 20342;
+  const days = { [d]: { live: {
+    aaaaaaaaaa: { game: 'dudo', mode: 'cpu', n: 1, co: 'CL', v: '0.93.0', at: d * DAY + 1000, beat: d * DAY + 11 * 60000 },
+    bbbbbbbbbb: { game: 'linea-de-tiempo', mode: 'solo', n: 1, at: d * DAY + 5000, beat: d * DAY + 5000 },
+  } }, [d - 1]: { live: { cccccccccc: { game: 'dudo', mode: 'local', n: 3, at: (d - 1) * DAY } } } };
+  const todas = localLog(days, { from: d - 1, to: d });
+  assert.deepEqual(todas.map(x => x.id), ['bbbbbbbbbb', 'aaaaaaaaaa', 'cccccccccc'], 'la más nueva primero');
+  assert.equal(todas[1].minMs, 11 * 60000 - 1000, 'jugó al menos desde que empezó hasta la última señal');
+  assert.deepEqual(localLog(days, { from: d - 1, to: d, game: 'dudo' }).map(x => x.id), ['aaaaaaaaaa', 'cccccccccc']);
+  assert.deepEqual(localLog(days, { from: d, to: d, game: 'dudo' }).map(x => x.co), ['CL']);
+}
+
+// --- El país junto a cada nombre --------------------------------------------
+{
+  const hoy = 20342;
+  const days = { [hoy]: { rooms: { ABCD: { game: 'dudo', at: now, players: { A: 'Javi', B: 'Cata' }, co: { A: 'CL', B: 'AR' } } } } };
+  assert.deepEqual(paisesDeSalas(days, now), { ABCD: { A: 'CL', B: 'AR' } });
+  const vivas = liveRooms({ ABCD: rooms.ABCD }, now, paisesDeSalas(days, now));
+  assert.deepEqual(vivas[0].players.map(p => [p.name, p.co]), [['Javi', 'CL'], ['Cata', 'AR']], 'la sala viva toma el país de lo que anotó stats/');
+  assert.deepEqual(liveRooms({ ABCD: rooms.ABCD }, now)[0].players.map(p => p.co), ['', ''], 'sin registro, sin bandera');
+  const rango = { ...days, [hoy - 1]: { rooms: { SOLO: { game: 'dudo', players: { A: 'x' }, co: { A: 'PE' } }, DOSS: { game: 'dudo', players: { A: 'x', B: 'y' }, co: { A: 'CL' } } } } };
+  assert.deepEqual(paisesDelRango(rango, { from: hoy - 1, to: hoy }), { CL: 2, AR: 1, desconocido: 1 }, 'cuenta jugadores de salas con rival');
+}
+
+// --- Una sala por código, con su duración ---------------------------------------
+{
+  const d = 20342;
+  const days = {
+    [d - 3]: { rooms: { ABCD: { game: 'dudo', at: (d - 3) * DAY, players: { A: 'Viejo', B: 'Otro' } } } },
+    [d]: { rooms: { ABCD: { game: 'dudo', at: d * DAY + 1000, players: { A: 'Javi', B: 'Cata' }, end: { winner: 'B', at: d * DAY + 1000 + 25 * 60000 } } } },
+  };
+  assert.equal(salaDe(days, 'ABCD').players[0].name, 'Javi', 'sin día, la más nueva: los códigos se reciclan');
+  assert.equal(salaDe(days, 'ABCD', d - 3).players[0].name, 'Viejo');
+  assert.equal(salaDe(days, 'ABCD').durMs, 25 * 60000);
+  assert.equal(salaDe(days, 'ABCD', d - 3).durMs, null, 'sin final registrado no hay duración');
+  assert.equal(salaDe(days, 'ZZZZ'), null);
+  assert.equal(salaDe({}, 'ABCD'), null);
+}
+assert.equal(mediana([]), null);
+assert.equal(mediana([5, 1, 100]), 5, 'la mediana no la arrastra el que dejó el celular encendido');
+assert.equal(mediana([1, 2, 3, 4]), 3);
 
 console.log('aggregate.test.mjs: todo en verde');

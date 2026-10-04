@@ -284,6 +284,9 @@
             "out": {
               ".validate": "newData.isBoolean()"
             },
+            "co": {
+              ".validate": "newData.isString() && newData.val().matches(/^[A-Z]{2}$/)"
+            },
             "$other": {
               ".validate": false
             }
