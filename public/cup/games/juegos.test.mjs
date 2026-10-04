@@ -139,12 +139,15 @@ test('dónde queda: distancia, puntos y marcas', () => {
 
 test('dónde queda: el globo va y vuelve', () => {
   const centros = [[10, -40], [-33, -70], [60, 100], [0, 180], [-80, 20]];
-  for (const c of centros) for (const [lat, lon] of [[-33.45, -70.67], [64.15, -21.94], [1.29, 103.85], [0, 0], [-41.29, 174.78], [-18.14, 178.44]]) {
-    const [x, y, prof] = donde.ver(donde.vector(lat, lon), c);
+  for (const rumbo of [0, 37, -120, 180]) for (const c of centros) for (const [lat, lon] of [[-33.45, -70.67], [64.15, -21.94], [1.29, 103.85], [0, 0], [-41.29, 174.78], [-18.14, 178.44]]) {
+    const [x, y, prof] = donde.ver(donde.vector(lat, lon), c, rumbo);
     if (prof <= 0) continue;
-    const [la, lo] = donde.tocado(x, y, c);
-    assert.ok(Math.abs(la - lat) < 1e-9 && Math.abs(((lo - lon + 540) % 360) - 180) < 1e-9, `${lat},${lon} desde ${c} → ${la},${lo}`);
+    const [la, lo] = donde.tocado(x, y, c, rumbo);
+    assert.ok(Math.abs(la - lat) < 1e-9 && Math.abs(((lo - lon + 540) % 360) - 180) < 1e-9, `${lat},${lon} desde ${c} con rumbo ${rumbo} → ${la},${lo}`);
   }
+  // Con el mapa girado un cuarto contra el reloj, el norte queda a la izquierda
+  const [nx, ny] = donde.ver(donde.vector(10, 0), [0, 0], 90);
+  assert.ok(nx < -0.1 && Math.abs(ny) < 1e-9, `${nx},${ny}`);
   // El centro de la vista se ve en el medio, de frente; lo de las antípodas no se ve
   assert.deepEqual(donde.ver(donde.vector(-33, -70), [-33, -70]).map(n => Math.round(n * 1e9) / 1e9), [0, 0, 1]);
   assert.ok(donde.ver(donde.vector(33, 110), [-33, -70])[2] < 0);
