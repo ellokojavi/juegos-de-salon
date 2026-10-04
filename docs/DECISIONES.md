@@ -3222,3 +3222,22 @@ cualquier juego. Sin completar a los de antes, las copas en curso se verían sin
 la próxima.
 **Consecuencias:** Quien no vuelva a abrir su copa queda sin bandera. Las partidas sin red siguen
 sin nombres (D-44): ahí solo hay país.
+
+## D-210 · Las partidas sin red dicen quién jugó y cómo terminó
+**Fecha:** 2026-10-04 · **Estado:** vigente; cambia D-44 para los modos sin red
+**Decisión:** Una partida contra el celular, en un solo celular o en solitario manda, además de
+juego, modo y país, **quién juega** y **cómo terminó**. El nombre no se pide para esto: son los
+nombres que la partida ya tiene (los de un celular pasándose, o el de quien juega contra el
+celular) o, si no hay, el último que la persona escribió en la app: el de ese juego, el de La
+Copa o el de cualquier otro (`nombreDelCelular`). Si nunca escribió uno, la partida sale "sin
+nombre", con su bandera. Al terminar, cada juego anota quién ganó, si fue empate, o un detalle
+(`80/100 · 6 intentos · 2:30` jugando solo) en `live/<id>/fin`, una vez, y deja de latir.
+En el panel, la sección Juegos lista todas las partidas sin red del rango con esos datos, y la
+ficha de cada juego, las suyas.
+**Por qué:** El dueño tiene amigos jugando Toque y Fama solos y no los veía: el panel solo
+mostraba "una partida sin red en Chile". Eligió esto entre pedir un nombre al empezar (un paso
+más para quien juega) y seguir sin nombres con más detalle.
+**Consecuencias:** El nombre es el que la persona ya usa en la app y solo lo lee el dueño, igual
+que los de las salas. Las partidas de antes no tienen ni nombre ni final. Cuarto Rey no tiene
+ganador: manda los nombres, no el final. Reglas nuevas en `stats/<env>/days/<día>/live/<id>`
+(`name` y `fin`).

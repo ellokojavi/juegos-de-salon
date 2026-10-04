@@ -325,6 +325,13 @@ assert.equal(ZONA_PANEL, ZONA_COPA, 'el panel lee la hora en el mismo reloj con 
   assert.equal(todas[1].minMs, 11 * 60000 - 1000, 'jugó al menos desde que empezó hasta la última señal');
   assert.deepEqual(localLog(days, { from: d - 1, to: d, game: 'dudo' }).map(x => x.id), ['aaaaaaaaaa', 'cccccccccc']);
   assert.deepEqual(localLog(days, { from: d, to: d, game: 'dudo' }).map(x => x.co), ['CL']);
+  // Con nombre y final (D-210): lo que duró sale del final, no de la última señal
+  const conFin = { [d]: { live: { zzzzzzzzzz: { game: 'toque-y-fama', mode: 'solo', n: 1, name: 'Javi', at: d * DAY, beat: d * DAY + 60000, fin: { at: d * DAY + 150000, d: '80/100 · 2:30' } } } } };
+  const [x] = localLog(conFin, { from: d, to: d });
+  assert.equal(x.name, 'Javi');
+  assert.deepEqual(x.fin, { at: d * DAY + 150000, ganador: '', empate: false, detalle: '80/100 · 2:30' });
+  assert.equal(x.minMs, 150000);
+  assert.equal(todas[0].fin, null, 'sin final, null');
 }
 
 // --- El país junto a cada nombre --------------------------------------------

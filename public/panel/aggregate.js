@@ -140,7 +140,7 @@ export function liveLocal(days, now = Date.now()) {
     for (const [id, r] of Object.entries(days?.[String(d)]?.live || {})) {
       const beat = Math.max(Number(r?.beat) || 0, Number(r?.at) || 0);
       if (!r?.game || now - beat > VIVA_SIN_RED_MS) continue;
-      out.push({ id, game: r.game, mode: r.mode, n: Number(r.n) || 1, co: r.co || '', at: Number(r.at) || beat, beat });
+      out.push({ id, game: r.game, mode: r.mode, n: Number(r.n) || 1, co: r.co || '', name: r.name || '', at: Number(r.at) || beat, beat });
     }
   }
   return out.sort((a, b) => b.beat - a.beat);
@@ -158,7 +158,10 @@ export function localLog(days, { from, to, game = null } = {}) {
       if (!r?.game || (game && r.game !== game)) continue;
       const at = Number(r.at) || 0;
       const beat = Math.max(Number(r.beat) || 0, at);
-      out.push({ id, day: d, game: r.game, mode: r.mode, n: Number(r.n) || 1, co: r.co || '', v: r.v || '', at, beat, minMs: Math.max(0, beat - at) });
+      // Quién jugó y cómo terminó, si la app lo supo (D-210). Con final, lo que duró es exacto
+      const fin = r.fin && typeof r.fin === 'object' ? { at: Number(r.fin.at) || 0, ganador: r.fin.g || '', empate: !!r.fin.e, detalle: r.fin.d || '' } : null;
+      const hasta = fin?.at > at ? fin.at : beat;
+      out.push({ id, day: d, game: r.game, mode: r.mode, n: Number(r.n) || 1, co: r.co || '', name: r.name || '', v: r.v || '', at, beat, fin, minMs: Math.max(0, hasta - at) });
     }
   }
   return out.sort((a, b) => b.at - a.at || a.id.localeCompare(b.id));

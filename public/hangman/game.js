@@ -14,7 +14,7 @@ import { failWith } from '../assets/js/transport/errors.js';
 import { showHandoff, passBlock, showCover } from '../assets/js/handoff.js';
 import { createChat } from '../assets/js/chat.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
-import { trackStart, trackVisit } from '../assets/js/transport/stats.js';
+import { trackStart, trackVisit, trackFinish } from '../assets/js/transport/stats.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import {
   ALPHABETS, LIVES_OPTIONS, MAX_LETTERS, buildState, dealWords, normalize,
@@ -770,6 +770,10 @@ function renderResult(v) {
   if (!already && S.mode === 'online') {
     S.transport?.noteWinner?.(winners.length === 1 ? { role: winners[0], name: M.names[winners[0]] } : {});
   }
+  // Sin red, cómo terminó, para el panel (D-210): jugando solo, si salió o no
+  if (!already && S.mode !== 'online') {
+    trackFinish(winners.length === 1 ? { ganador: M.names[winners[0]] } : winners.length > 1 ? { empate: true } : { detalle: 'se colgaron todos' });
+  }
   const meRole = S.mode === 'online' ? S.role : null;
   const many = winners.length > 1;
   // Se colgaron todos: no hay a quién coronar, y el trofeo sobra (D-61)
@@ -876,7 +880,7 @@ function startLocalMode(mode, names, config) {
   const transport = createLocalTransport();
   startSession({ mode, transport, roles: config.players, config, names });
   keepAwake();
-  trackStart({ game: GAME_ID, mode, players: config.players.length }); // señal de uso (D-44)
+  trackStart({ game: GAME_ID, mode, players: config.players.length, nombres: config.players.map(r => names?.[r]) }); // señal de uso (D-44, D-210)
 }
 
 function renderModes() {

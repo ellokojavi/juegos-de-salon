@@ -2,7 +2,8 @@
  * Registro de uso para el panel del dueño (canon C-7, D-44).
  *
  * Son señales para ver cuánto y desde dónde se juega, no para identificar a nadie: no viaja
- * ninguna IP, ningún secreto ni el chat, y de los modos sin red no sale ni un nombre. Lo que
+ * ninguna IP, ningún secreto ni el chat. De los modos sin red sale solo el nombre que la persona
+ * ya escribió en la app, si lo hay (D-210). Lo que
  * se apunta, por día y por entorno, en `stats/<env>/days/<día>`:
  *
  *   rooms/<CÓDIGO>: { game, at, v, players: { A: 'Javi' },     solo dos celulares: la sala ya
@@ -15,9 +16,11 @@
  *   origin/<zona horaria>: celulares que empezaron o entraron a una partida
  *   lang/<idioma del navegador>: ídem
  *   hour/<hora local 0–23>: ídem
- *   live/<id>: { game, mode, n, at, beat, v, co }   una partida sin red que se está jugando:
- *                                                   `beat` sube cada minuto mientras alguien
- *                                                   toca la pantalla (D-140)
+ *   live/<id>: { game, mode, n, at, beat, v, co,    una partida sin red que se está jugando:
+ *                name, fin }                        `beat` sube cada minuto mientras alguien
+ *                                                   toca la pantalla (D-140). `name` es quién
+ *                                                   juega, si la app lo sabe, y `fin` cómo
+ *                                                   terminó (D-210)
  *
  * Y el tráfico del sitio (D-208), aunque nadie juegue:
  *
@@ -273,24 +276,65 @@ export function liveId(rand = Math.random) {
 /** ¿Este modo se muestra en vivo? Los sin red, menos el día jugado de un torneo. */
 export const esEnVivo = mode => isLocalMode(mode) && !MODES[mode]?.torneo;
 
-/** Registro de una partida sin red que empieza: juego, modo, cuántos juegan y el país, sin nombres. */
-export function liveRecord(fp, { game, mode, players }) {
+/**
+ * Quién juega en este celular, si la app ya lo sabe (D-210): los nombres que el juego tiene para
+ * esta partida (los de un celular pasándose), o si no, el último que la persona escribió en este
+ * juego, en La Copa o en cualquier otro. Nunca se pide uno para esto: si no hay, va vacío.
+ */
+export const NOMBRE_MAX = 60;
+export function nombreDelCelular(game, storage = globalThis.localStorage) {
+  const leer = k => { try { return storage?.getItem(k) || ''; } catch (_) { return ''; } };
+  const propio = leer(`juegos-de-salon:${game}:name`);
+  if (propio) return propio;
+  let copa = '';
+  try { copa = JSON.parse(leer('juegos-de-salon:copa:nombre') || '""') || ''; } catch (_) { /* nada */ }
+  if (copa) return String(copa);
+  try {
+    for (let i = 0; i < (storage?.length || 0); i++) {
+      const k = storage.key(i);
+      if (/^juegos-de-salon:[^:]+:name$/.test(k || '') && leer(k)) return leer(k);
+    }
+  } catch (_) { /* nada */ }
+  return '';
+}
+
+/** Los nombres de una partida en una línea: "Javi, Cata", sin repetidos ni vacíos, acotada. */
+export function nombresDe(lista) {
+  const vistos = [...new Set((lista || []).map(x => String(x || '').replace(/\s+/g, ' ').trim()).filter(Boolean))];
+  return vistos.join(', ').slice(0, NOMBRE_MAX);
+}
+
+/** Registro de una partida sin red que empieza: juego, modo, cuántos juegan, el país y, si se sabe, quién (D-210). */
+export function liveRecord(fp, { game, mode, players, name = '' }) {
   const n = Math.min(MAX_PLAYERS, Math.max(1, Number(players) || 1));
   const r = { game, mode, n, at: STAMP, beat: STAMP, v: fp.v };
   if (fp.co) r.co = fp.co;
+  if (name) r.name = String(name).slice(0, NOMBRE_MAX);
   return r;
+}
+
+/**
+ * Cómo terminó una partida sin red (D-210): quién ganó (`g`), si fue empate (`e`) y un detalle
+ * corto ("7 intentos en 2:31"). Jugando solo no hay ganador: va el detalle.
+ */
+export function finRecord({ ganador = '', empate = false, detalle = '' } = {}) {
+  const f = { at: STAMP };
+  if (empate) f.e = true;
+  else if (ganador) f.g = String(ganador).slice(0, 20);
+  if (detalle) f.d = String(detalle).slice(0, 40);
+  return f;
 }
 
 /**
  * Arranca el latido de una partida sin red y devuelve con qué pararlo. Todo lo de afuera
  * (reloj, documento, temporizador) entra por parámetro para probarlo con node.
  */
-export function startLive(api, fp, { game, mode, players }, {
+export function startLive(api, fp, { game, mode, players, name = '' }, {
   id = liveId(), now = Date.now, doc = globalThis.document,
   every = (f, ms) => setInterval(f, ms), stopEvery = clearInterval,
 } = {}) {
   const path = dayPath(fp.env, dayOf(now()));
-  quiet(() => api.patch(path, { [`live/${id}`]: liveRecord(fp, { game, mode, players }) }));
+  quiet(() => api.patch(path, { [`live/${id}`]: liveRecord(fp, { game, mode, players, name }) }));
   let tocado = now();
   const toque = () => { tocado = now(); };
   const opts = { capture: true, passive: true };
@@ -300,11 +344,20 @@ export function startLive(api, fp, { game, mode, players }, {
     if (doc?.visibilityState === 'hidden' || now() - tocado > QUIETO_MS) return;
     quiet(() => api.patch(path, { [`live/${id}/beat`]: STAMP }));
   }, LATIDO_MS);
-  return () => {
+  let terminada = false;
+  const parar = () => {
     stopEvery(timer);
     doc?.removeEventListener?.('pointerdown', toque, opts);
     doc?.removeEventListener?.('keydown', toque, opts);
   };
+  // Terminar: deja cómo salió, una sola vez, y deja de latir
+  parar.terminar = info => {
+    if (terminada) return Promise.resolve();
+    terminada = true;
+    parar();
+    return quiet(() => api.patch(path, { [`live/${id}/fin`]: finRecord(info) }));
+  };
+  return parar;
 }
 
 /** Lo que usan los juegos y el transporte: la API real y la huella del navegador, de una. */
@@ -329,7 +382,9 @@ export function trackStart(info) {
   try {
     const s = stats();
     if (pararVivo) { pararVivo(); pararVivo = null; }
-    if (esEnVivo(info?.mode)) pararVivo = startLive(s.api, s.fp, info);
+    // Quién juega: los nombres de la partida o, si no los hay, el que este celular ya conoce (D-210)
+    const name = nombresDe(info?.nombres) || nombreDelCelular(info?.game);
+    if (esEnVivo(info?.mode)) pararVivo = startLive(s.api, s.fp, { ...info, name });
     notePlayed(s.api, s.fp);
     return noteStart(s.api, s.fp, info);
   } catch (_) { return Promise.resolve(); }
@@ -454,4 +509,17 @@ export function notePlayed(api, fp, { sesion = globalThis.sessionStorage, now = 
 /** Atajo para las páginas: `trackVisit()` al cargar. Nunca lanza ni se espera. */
 export function trackVisit() {
   try { const s = stats(); return noteVisit(s.api, s.fp); } catch (_) { return Promise.resolve(); }
+}
+
+/**
+ * Atajo para los juegos: la partida sin red que se está jugando terminó (D-210). En sala no hace
+ * nada: ahí el ganador va por `trackEnd`. Nunca lanza ni se espera.
+ */
+export function trackFinish(info) {
+  try {
+    const p = pararVivo;
+    if (!p?.terminar) return Promise.resolve();
+    pararVivo = null;
+    return p.terminar(info);
+  } catch (_) { return Promise.resolve(); }
 }

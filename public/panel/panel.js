@@ -319,7 +319,7 @@ function filaSala(r, now) {
 
 /**
  * Una partida sin red que se está jugando (D-140): el juego, el modo con su nombre completo,
- * cuántos juegan en ese celular y de qué país es. Sin nombres: de estos modos no sale ninguno.
+ * cuántos juegan en ese celular, de qué país es y, si la app lo sabe, quién juega (D-210).
  */
 function filaSinRed(p, now) {
   const modo = MODES[p.mode] ? `${modeIcon(p.mode)} ${MODES[p.mode].label}` : p.mode;
@@ -327,8 +327,10 @@ function filaSinRed(p, now) {
   return enlace('juego', [p.game], { class: 'room active' },
     el('div', { class: 'code' }, emojiJuego(p.game)),
     el('div', { class: 'cuerpo' },
-      el('div', { class: 'who' }, el('span', {}, el('i', { class: 'on' }), nombreJuego(p.game))),
-      el('div', { class: 'sub' }, `${modo} · ${cuantos}`, bandera(p.co))),
+      el('div', { class: 'cname' }, nombreJuego(p.game)),
+      // Quién juega, si la app lo sabe (D-210); si no, solo su bandera
+      el('div', { class: 'who' }, el('span', {}, el('i', { class: 'on' }), p.name ? quien(p.name, p.co) : ['sin nombre', bandera(p.co)])),
+      el('div', { class: 'sub' }, `${modo} · ${cuantos}`)),
     el('div', { class: 'meta' }, `empezó ${ago(p.at, now)}`, el('br'), `última señal ${ago(p.beat, now)}`),
   );
 }
@@ -394,6 +396,28 @@ function filaSalaLog(f) {
     el('div', { class: 'who' }, ...f.players.map(p => el('span', { class: 'q' }, quien(p.name, p.co)))),
     el('div', { class: 'win' }, ganador),
   );
+}
+
+/**
+ * Una partida sin red ya jugada (D-140, D-210): cuándo, el juego si se pide, quién jugó con su
+ * bandera (o "sin nombre", si la app no lo sabía), el modo y cómo terminó.
+ */
+function filaSinRedLog(p, { conJuego = false } = {}) {
+  const modo = MODES[p.mode] ? `${modeIcon(p.mode)} ${MODES[p.mode].label}` : p.mode;
+  const fin = p.fin;
+  const resultado = !fin ? el('span', { class: 'none', title: 'No llegó al final, o es de antes de que se anotara (D-210)' }, `al menos ${minutos(p.minMs)}`)
+    : fin.empate ? el('span', { class: 'tie' }, '🤝 Empate')
+      : fin.ganador ? el('span', { class: 'won' }, '🏆 ', quien(fin.ganador, p.co))
+        : el('span', { class: 'va' }, '✓ terminó');
+  return el('div', { class: 'log-row' },
+    el('div', { class: 'when' }, whenLabel(p.at), p.v ? [el('br'), `v${p.v}`] : null),
+    el('div', { class: 'game' }, conJuego ? [gameLabel(p.game), el('br')] : null, el('small', {}, modo)),
+    el('div', { class: 'who' },
+      el('span', { class: 'q' }, p.name ? quien(p.name, p.co) : ['sin nombre', bandera(p.co)]),
+      p.n > 1 && !p.name ? el('span', { class: 'q' }, `${n(p.n)} jugadores`) : null,
+      fin?.detalle ? el('span', { class: 'q' }, fin.detalle) : null,
+      fin ? el('span', { class: 'q' }, `duró ${minutos(p.minMs)}`) : null),
+    el('div', { class: 'win' }, resultado));
 }
 
 /** El paginado de una lista: anterior, cuántas y siguiente. */
@@ -637,9 +661,22 @@ function vistaJuegos() {
       lista(games.map(([id, g]) => bar(gameLabel(id), MODOS.map(m => segModo(m, g[m] || 0)), maxGame,
         { note: MODOS.filter(m => g[m]).map(m => `${modeIcon(m)}${n(g[m])}`).join(' '), href: ir('juego', [id]) })), 'Nada todavía.', 'bars')),
     graficosJuego(s, rango),
+    sinRedRecientes(rango),
     bitacora(rango),
   ];
 }
+
+/** Las partidas sin red de todos los juegos (sin La Copa): ahí están quienes juegan solos (D-210). */
+function sinRedRecientes(rango) {
+  const todas = localLog(S.days, { from: rango.from, to: rango.to }).filter(p => esJuego(p.game));
+  const visibles = S.sinRedTodas ? todas : todas.slice(0, SIN_RED_VISIBLES);
+  return bloque('Partidas sin red', NOTA_SIN_RED,
+    lista(visibles.map(p => filaSinRedLog(p, { conJuego: true })), 'Ninguna en este rango.', 'log'),
+    todas.length > SIN_RED_VISIBLES ? el('button', { type: 'button', class: 'btn btn--ghost btn--sm mas', onClick: () => { S.sinRedTodas = !S.sinRedTodas; render(); } }, S.sinRedTodas ? 'Ver menos' : `Ver las ${n(todas.length)}`) : null);
+}
+
+/** Qué dice cada partida sin red, y desde cuándo (D-140, D-210). */
+const NOTA_SIN_RED = 'Contra el celular, en un solo celular o en solitario, de la más nueva a la más vieja. Con hora desde la versión 0.64.7 (D-140); con nombre y resultado desde la 0.99.2 (D-210). El nombre es el que la persona ya escribió en la app; si nunca puso uno, sale "sin nombre". Sin final, "al menos" va desde que empezó hasta su última señal.';
 
 /** Jugadores por partida y partidas por día: los mismos en la vista de juegos y en la ficha de uno. */
 function graficosJuego(s, rango) {
@@ -697,12 +734,8 @@ function vistaFichaJuego(id) {
     bloque('Por modo', null, lista(modos.map(m => bar(modoDe(m), [segModo(m, fila[m])], maxM)), 'Nada en este rango.', 'bars')),
     graficosJuego(s, rango),
     bitacora(rango, id),
-    bloque('Partidas sin red', 'Con hora desde la versión 0.64.7 (D-140); de antes solo queda el contador del día. De estas partidas no llega ningún nombre. "Al menos" va desde que empezó hasta su última señal: el celular deja de avisar a los cinco minutos sin que nadie toque la pantalla.',
-      lista(visibles.map(p => el('div', { class: 'log-row' },
-        el('div', { class: 'when' }, whenLabel(p.at)),
-        el('div', { class: 'game' }, modoDe(p.mode)),
-        el('div', { class: 'who' }, el('span', { class: 'q' }, p.n === 1 ? '1 jugador' : `${n(p.n)} jugadores`, bandera(p.co)), p.v ? el('span', { class: 'q' }, `v${p.v}`) : null),
-        el('div', { class: 'win' }, el('span', { class: 'va' }, `al menos ${minutos(p.minMs)}`)))), 'Ninguna en este rango.', 'log'),
+    bloque('Partidas sin red', NOTA_SIN_RED,
+      lista(visibles.map(p => filaSinRedLog(p)), 'Ninguna en este rango.', 'log'),
       sinRed.length > SIN_RED_VISIBLES ? el('button', { type: 'button', class: 'btn btn--ghost btn--sm mas', onClick: () => { S.sinRedTodas = !S.sinRedTodas; render(); } }, S.sinRedTodas ? 'Ver menos' : `Ver las ${n(sinRed.length)}`) : null),
   ];
 }
