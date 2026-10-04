@@ -16,6 +16,7 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { GAMES, SUELTOS, PORTADA } from '../../public/assets/js/games.js';
+import { versionHoy } from '../release/version.mjs';
 
 const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const REGISTRO = join(RAIZ, 'marketing', 'registro.json');
@@ -39,15 +40,10 @@ function menor(a, b) {
   return a1 < b1 || (a1 === b1 && a2 < b2);
 }
 
-function versionHoy() {
-  const m = readFileSync(join(RAIZ, 'public/index.html'), 'utf8').match(/v(\d+\.\d+\.\d+) ·/);
-  return m ? m[1] : null;
-}
-
 function commitsDesde(fecha, carpetas) {
   try {
     return execFileSync('git', ['log', '--oneline', '--no-merges', `--since=${fecha}`, '--', ...carpetas,
-      // set-version.py estampa todas las páginas: eso no cambia lo que se ve.
+      // Hasta D-205 set-version.py estampaba todas las páginas: eso no cambia lo que se ve.
       ':(exclude,glob)**/index.html'],
       { cwd: RAIZ, encoding: 'utf8' }).trim().split('\n').filter(Boolean);
   } catch { return []; }
