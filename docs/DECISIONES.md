@@ -2917,3 +2917,13 @@ un alemán busca la tecla Ü y no la encuentra. Y el destello se nota en cada p�
 **Alternativas descartadas:** escribir las diéresis como AE, OE y UE (es la convención alemana sin
 teclado alemán, pero cambia el largo de las palabras y el dueño prefirió quitar los puntos); una
 zona por país (Alemania, Austria y Suiza comparten la hora).
+
+## D-195 · En el laboratorio de un idioma, el menú depende del idioma elegido
+**Fecha:** 2026-10-03 · **Estado:** vigente; ajusta D-191
+**Decisión:** En un dispositivo marcado por el laboratorio alemán, "‹ Menú" lleva a `/labs/de/`
+**solo mientras se juega en alemán**. Con otro idioma elegido en el toggle, lleva al menú de
+siempre. En la portada del laboratorio, elegir otro idioma también lleva al menú de siempre en ese
+idioma. El alemán sigue en el toggle de ese celular y 🐞 sigue en la barra.
+**Por qué:** el dueño elegía español y al volver al menú quedaba "pegado en alemán": el toggle
+guardaba bien el español, pero "‹ Menú" lo llevaba a la portada del laboratorio, que está escrita
+en alemán.
