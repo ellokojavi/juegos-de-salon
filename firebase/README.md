@@ -10,7 +10,7 @@ Proyecto: `juegos-de-salon` (plan Spark, gratuito). Creado el 2026-09-08.
 
 - **Realtime Database:** `https://juegos-de-salon-default-rtdb.firebaseio.com` (us-central1).
 - **Reglas de seguridad:** [database.rules.json](database.rules.json). Son la copia de lo publicado en la consola; si se cambian, hay que volver a publicarlas en *Realtime Database → Rules*.
-- **App web:** `juegos-de-salon-web`. Su configuración pública está en `assets/js/firebase-config.js`.
+- **App web:** `juegos-de-salon-web`. Su configuración pública está en `public/assets/js/firebase-config.js`.
 - Google Analytics y Gemini quedaron desactivados (no se necesitan).
 
 ## Publicar las reglas
@@ -48,7 +48,7 @@ se entera: el transporte y las señales de uso son mejor esfuerzo y fallan calla
 
 ## La Copa (`torneos`, `torneoKeys`, `torneoSeats`)
 
-Los torneos de varios días (D-94, [docs/juegos/copa.md](../docs/juegos/copa.md)) viven en su
+Los torneos de varios días (D-94, [docs/games/cup.md](../docs/games/cup.md)) viven en su
 propio árbol porque duran una semana y las salas mueren a la media hora (D-89).
 
 - **Necesitan el acceso anónimo de Firebase Auth** (D-96): *Authentication → Sign-in method →
@@ -67,8 +67,8 @@ propio árbol porque duran una semana y las salas mueren a la media hora (D-89).
 ## Publicar las reglas (D-122)
 
 ```bash
-node tools/reglas.mjs publicar    # sube database.rules.json y verifica que quedó
-node tools/reglas.mjs revisar     # ¿lo publicado es lo del repo?
+node tools/firebase/reglas.mjs publicar    # sube database.rules.json y verifica que quedó
+node tools/firebase/reglas.mjs revisar     # ¿lo publicado es lo del repo?
 ```
 
 Usa la llave de una cuenta de servicio guardada fuera del repo en
@@ -108,7 +108,7 @@ de la copa más 7 días.
 
 El botón 🐞 de La Copa (D-101, D-104) escribe en `feedback/<id>` **por REST y sin cuenta**:
 `texto` (hasta 1000 caracteres), `nombre` opcional, `contexto` (JSON, hasta 500), `v` y `at` del
-servidor. Se escribe una sola vez y **se lee sin cuenta**: `node tools/reportes.mjs` los muestra
+servidor. Se escribe una sola vez y **se lee sin cuenta**: `node tools/firebase/reportes.mjs` los muestra
 (`--dias 3` para los recientes). No llevan PIN ni datos de la cuenta.
 
 ## La papelera (`cleanup`)
@@ -134,8 +134,8 @@ cleanup/
 - `sweptDay` evita repetir trabajo, pero cualquiera puede adelantarla (solo hacia adelante y
   nunca más allá de hoy), así que el barrido siempre repasa los últimos 8 días igual.
 
-Lógica y tests: [`assets/js/transport/cleanup.js`](../assets/js/transport/cleanup.js) ·
-`node assets/js/transport/cleanup.test.mjs`.
+Lógica y tests: [`public/assets/js/transport/cleanup.js`](../public/assets/js/transport/cleanup.js) ·
+`node public/assets/js/transport/cleanup.test.mjs`.
 
 ## La despedida (`left`)
 
@@ -149,8 +149,8 @@ si al releer no queda nadie sin despedirse, borra la sala en el acto.
 - Son dos escrituras y en ese orden, porque las reglas miran la sala **antes** del borrado.
 - La regla enumera los seis roles: las reglas de Firebase no saben recorrer hijos.
 
-Lógica y tests: [`assets/js/transport/dispose.js`](../assets/js/transport/dispose.js) ·
-`node assets/js/transport/dispose.test.mjs`.
+Lógica y tests: [`public/assets/js/transport/dispose.js`](../public/assets/js/transport/dispose.js) ·
+`node public/assets/js/transport/dispose.test.mjs`.
 
 > **Una sola vez, al publicar esto:** las salas creadas antes de la papelera no están apuntadas
 > en ningún balde y nadie las va a barrer. Se borran a mano desde *Realtime Database → Datos*,
@@ -179,15 +179,15 @@ stats/prod/days/20342/
 - `stats/` no entra en la papelera: son unos cientos de bytes por partida.
 - **Las claves se validan por forma, no por lista** (canon C-16, D-73): el juego
   (`^[a-z-]{1,40}$`), el modo (`^[a-z][a-z-]{0,15}$`, la misma forma que `MODE_KEY` en
-  `assets/js/games.js`), la cantidad de jugadores (`^[1-9][0-9]?$`) y el entorno
+  `public/assets/js/games.js`), la cantidad de jugadores (`^[1-9][0-9]?$`) y el entorno
   (`^[a-z]{2,10}$`). Así un juego o un modo nuevo empieza a contarse el día que sale
   publicado, sin tener que acordarse de venir a republicar las reglas. Una lista acá rechaza
   la señal en el servidor, la partida ni se entera y el dato no existe nunca más.
 - Lo que **sí** obliga a tocar las reglas: una categoría de señal nueva (cualquier cosa que no
   sea `rooms`, `local`, `origin`, `lang`, `applang` o `hour`), porque `$other` las rechaza.
 
-Módulo y tests: [`assets/js/transport/stats.js`](../assets/js/transport/stats.js) ·
-`node assets/js/transport/stats.test.mjs` · `node panel/adapta.test.mjs` (compara la forma de
+Módulo y tests: [`public/assets/js/transport/stats.js`](../public/assets/js/transport/stats.js) ·
+`node public/assets/js/transport/stats.test.mjs` · `node public/panel/adapta.test.mjs` (compara la forma de
 las reglas con la del código).
 
 ## El panel: Authentication y el UID del dueño (una sola vez)

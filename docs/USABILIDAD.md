@@ -36,7 +36,7 @@ Cada regla tiene un ID (U-n) para citarla en los PR y en los issues.
     jugando, y ya los dice la ayuda bajo el tablero.
   - **El puntaje en una frase**, sin topes que salen solos de la regla ("10 niveles, 10 puntos
     cada uno" ya dice que son 100).
-  - **Tope que vigila una prueba** (`copa/juegos/juegos.test.mjs`), en los tres idiomas: 280
+  - **Tope que vigila una prueba** (`public/cup/games/juegos.test.mjs`), en los tres idiomas: 280
     caracteres para "Cómo se juega" y 170 para el puntaje. Es un techo, no una meta: la mitad de
     los minijuegos queda bajo 210.
 
@@ -84,6 +84,14 @@ Cada regla tiene un ID (U-n) para citarla en los PR y en los issues.
   falta y marca "(-1J)" a quien lleva menos juegos.
 - **U-32 · Sin spoilers:** lo que se comparte no revela respuestas ni los minijuegos que vienen.
 
+## Marketing
+
+- **U-34 · El marketing muestra la app de hoy:** cada asset de `marketing/` (el video y lo que
+  venga) y las tarjetas sociales enseñan los juegos que hay, con sus nombres, emojis, textos y
+  pantallas actuales. Un juego nuevo que no sale, uno que ya no está, un nombre o un texto viejo o
+  una pantalla que cambió se anotan como pendiente del asset (`node tools/agents/marketing.mjs anotar`).
+  Rehacerlo lo decide el dueño: el revisor anota, no rehace.
+
 ## Resuelto con el dueño
 
 Las respuestas a dilemas (issues con la etiqueta `usabilidad`) se anotan aquí:
@@ -111,3 +119,23 @@ Las respuestas a dilemas (issues con la etiqueta `usabilidad`) se anotan aquí:
   Puerto Natales siguen en nivel 3; de vez en cuando la difícil es una "amable". No marcarlo.
 - **Juego al azar no se cancela** (#139, opción A): tirar el dado es un compromiso. Sin ✕ ni
   Escape; tocar durante la tirada abre el juego de inmediato y "atrás" vuelve al menú limpio (D-188).
+- **Dilemas sin backlog** (2026-10-03): el dueño pide que los dilemas no se acumulen. Se resuelven
+  con la opción recomendada y se arreglan apenas se pueda; él corrige después si algo no le gusta.
+- **El emoji del minijuego encabeza el recordatorio** (#114, opción B): "⏳ Hoy toca Línea
+  Relámpago."; la línea de gracia queda con 🕐 y el nombre sin emoji.
+- **Bienvenida del admin sin repetir** (#102, opción A): con link propio, el paso 3 dice "Cuando
+  estén todos, cierra la inscripción: tu link es fácil de adivinar y así no se suma nadie más."
+- **Botones de Administrar con verbo** (#65, opción A): "📤 Invitar al grupo" (el mismo del
+  tablero), "📤 Recordar el juego de hoy" y "📤 Compartir la tabla".
+- **El empate en puntos se explica donde se ve** (#79, opción B): bajo el podio y en el resumen,
+  solo si 1.° y 2.° empatan, "⚖️ Empate en 68 puntos: desempató quien ganó más días." (o "…quien
+  quedó mejor en la final"); y el desempate en "Cómo funciona".
+- **Tango marca el choque al tocar otra casilla** (#135, opción B): sin espera de 500 ms. Lo rojo
+  es lo que se cobra; el último toque del tablero lleno se pinta sin sonar ni contar.
+- **Sol dado más intenso** (#61, opción A): ámbar al 84 % con borde propio.
+- **La etiqueta del chat no se toca** (#48, opción B): deja pasar los toques; solo la burbuja abre
+  el chat.
+- **Batalla Naval baja a ¡Zarpar!** (#47, opción B): al completar la flota, si ¡Zarpar! no se ve,
+  la pantalla baja hasta él. Una sola vez, al soltar.
+- **El 🐞 del laboratorio alemán puede achicar el nombre del juego en la barra** (#159): a 320 px
+  queda en "Sc…"; se deja así porque es temporal y el nombre entero está en el título (D-191).

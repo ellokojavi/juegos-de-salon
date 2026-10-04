@@ -10,5 +10,5 @@ arte-original/
 *firebase-admin*.json
 *-firebase-adminsdk-*.json
 
-# Caché de Python que deja tools/readme.py al correr
+# Caché de Python que deja tools/release/readme.py al correr
 __pycache__/

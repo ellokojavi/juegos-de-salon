@@ -1,5 +1,90 @@
 # Changelog
 
+## 0.92.1 — 2026-10-03
+- **Laboratorio alemán: el idioma ya no se queda pegado en alemán** (D-195). Con otro idioma
+  elegido, "‹ Menú" lleva al menú de siempre en ese idioma (antes llevaba a la portada del
+  laboratorio, que está en alemán). En alemán sigue volviendo al laboratorio.
+
+## 0.91.0 — 2026-10-03
+- **Sin destello de idioma** (D-194): al abrir una página en inglés, portugués o alemán ya no se
+  ven los textos en español una fracción de segundo antes de cambiar.
+- **Laboratorio alemán** (D-194): todo el alemán pasa a Hochdeutsch común para Alemania, Austria
+  y Suiza (con ß, sin palabras ni referencias de un solo país). Una copa con palabras en alemán cambia de día a medianoche de
+  Europa central (Berlín, Viena, Zúrich), y las instrucciones de Palabra y del Ahorcado dicen que
+  las diéresis van sin puntos (Ä es A) y la ß como SS.
+
+- **Las direcciones pasan al inglés** (D-192): `/hangman/`, `/cup/`, `/timeline/`, `/bulls-and-cows/`,
+  `/liars-dice/`, `/battleship/`, `/julep/`, `/fourth-king/` y `/minigames/<slug>/`. Los links
+  viejos siguen andando: cada ruta en español es una página puente que manda a la nueva con todo
+  lo que traía (la sala, el nombre de la copa, el idioma) y con la misma tarjeta para los chats.
+  Nada guardado cambia: los ids de los juegos son los de siempre.
+- **El sitio vive en `public/`** y es lo único que se publica, con un workflow que corre las
+  pruebas antes: si una falla, el sitio no cambia. `docs/`, `tools/`, las reglas de Firebase y el
+  video dejan de ser públicos.
+- **El taller, ordenado:** `tools/` por función (`release/`, `firebase/`, `generators/`, `agents/`,
+  `e2e/<juego>/`), un minijuego de La Copa por carpeta (`cup/games/<slug>/`) y el import map de
+  versiones armado solo, sin lista que mantener.
+
+## 0.90.6 — 2026-10-03
+- **README al día, con capturas** (C-13): la tabla de juegos suma los minijuegos que se juegan
+  sueltos desde la portada (`tools/release/hechos.mjs` ahora lee `SUELTOS`, así que uno nuevo aparece
+  solo), con sus nombres en la tabla de idiomas. Se rehicieron las capturas de todas las
+  secciones con las fuentes reales; el pie de Cuarto Rey "Cheers!" pasa a "Who drinks", porque
+  esa pantalla cambia de título según la carta.
+- **"Actualiza el README" es una pasada entera** (CLAUDE.md): bloques generados, prosa y capturas.
+
+## 0.90.5 — 2026-10-03
+- **⚓ Batalla Naval: la pantalla baja hasta ¡Zarpar!** (#47): en un celular chico, al poner el
+  quinto barco, si "⚓ ¡Zarpar!" no se ve, la pantalla baja sola hasta él. Pasa una vez, al
+  completar la flota (tocando, arrastrando o con Al azar), y nunca a mitad de un arrastre.
+
+## 0.90.4 — 2026-10-03
+- **💬 El aviso del chat ya no se come los toques** (#48, U-12): la etiqueta que asoma junto a la
+  burbuja cuando llega un mensaje deja pasar los toques, así que tocar "🔁 Revancha" (o lo que
+  quede debajo) hace lo que dice el botón. El chat se abre con la burbuja. Vale para los seis
+  juegos con chat; los lectores de pantalla siguen oyendo cada mensaje.
+
+## 0.90.3 — 2026-10-03
+- **☀️ Tango: el choque se marca al tocar otra casilla** (#135): sin la espera de 500 ms. Un sol
+  de paso que rompe una regla se pinta en rojo (con sonido y vibración) recién cuando el jugador
+  toca otra casilla, que es cuando el puntaje lo cobra: lo rojo es lo que cuenta. El puntaje no
+  cambia. Con el tablero lleno, el último choque se ve sin sonar ni contar.
+- **El sol dado se distingue del jugado** (#61): ámbar más intenso y borde propio.
+
+## 0.90.2 — 2026-10-03
+- **🏆 La Copa: cuatro dilemas de usabilidad resueltos.**
+  - El recordatorio del día abre con el emoji del minijuego ("⏳ Hoy toca Línea Relámpago."), sin
+    emoji en medio de la frase (#114, U-2).
+  - La bienvenida del admin con link propio dice una sola vez que cierre la inscripción, con el
+    porqué al lado (#102).
+  - Los botones de Administrar dicen la acción: "📤 Invitar al grupo", "📤 Recordar el juego de
+    hoy" y "📤 Compartir la tabla" (#65, U-5, U-17).
+  - Si el 1.° y el 2.° empatan en puntos, el podio y el resumen dicen qué desempató: "⚖️ Empate en
+    68 puntos: desempató quien ganó más días." "Cómo funciona" cuenta el desempate (#79).
+
+## 0.90.1 — 2026-10-03
+- **☀️ Tango: el sol de paso ya no se marca como choque en iPhone** (U-20, reporte 🐞 del 2-oct).
+  Para poner una luna hay que pasar por el sol; si se tocaba dos veces rápido la misma casilla,
+  iOS podía tomar el segundo toque como zoom y el sol quedaba en rojo. El tablero ya no acepta
+  ese gesto (`touch-action: manipulation`, como el teclado de los juegos).
+
+## 0.90.0 — 2026-10-03
+- **🇩🇪 El alemán, en el laboratorio** (D-191): la app entera en alemán (Salonspiele) para que la
+  revisen amigos que lo hablan, en `/labs/de/`. Solo ese celular ofrece DE en el toggle; ahí los
+  "‹ Menü" vuelven al laboratorio y 🐞 en la barra de arriba manda comentarios con su contexto
+  (`node tools/firebase/reportes.mjs`). Es un borrador con glosario fijo: ver `docs/ALEMAN.md`.
+- **Arreglos para todos**, que salieron de medir el alemán a 320 px: los acentos de los títulos
+  con degradado ya no salen cortados (SALÓN, SALÃO); la barra de arriba no se parte en dos líneas
+  (el nombre del juego se corta con "…"); Palabra ya no muestra "null", su teclado deja un hueco
+  donde el español tiene la Ñ y el botón Probar va a lo ancho; el título de la pestaña de La Copa
+  sale en el idioma de quien mira.
+- **Reglas de Firebase:** una copa puede guardar `lang: "de"`.
+
+## 0.89.0 — 2026-10-03
+- **🧶 Desenredo sale del laboratorio** (D-190): su tarjeta ya no dice "Próximamente" y se juega
+  suelto desde el menú, en `/minigames/untangle/`. En La Copa se puede elegir para cualquier día,
+  como los demás minijuegos.
+
 ## 0.88.0 — 2026-10-03
 - **🎲 Juego al azar** (D-188): un botón bajo el título del menú tira un dado blanco en 3D con un
   juego en cada cara; rueda, rebota, cae en uno y lo abre. Nunca sale La Copa, y si hay un filtro
@@ -988,7 +1073,7 @@
   por celda. Contra quien lee patrones —que es lo que hace una persona después de un par de
   partidas— el farol vale +4,4 puntos; contra quien solo calcula cuesta 3,6. Quedó en 0,7 y no en 1
   porque con la perilla al tope **nunca** cantaría su pinta más fuerte, que es un patrón tan legible
-  como cantarla siempre. Todo anotado en [docs/juegos/dudo.md](docs/juegos/dudo.md).
+  como cantarla siempre. Todo anotado en [docs/juegos/dudo.md](docs/games/liars-dice.md).
 - **Los títulos del README llevan los dos nombres**: `👑 Fourth King (Cuarto Rey)`. Primero el
   inglés, que es por lo que alguien de afuera busca el juego; entre paréntesis, el nombre de verdad,
   que es el que va a ver en la pantalla de la app.

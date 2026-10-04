@@ -41,6 +41,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | RP-32 | La portada ofrece los minijuegos de La Copa sueltos, de un jugador y sin copa: Conexiones, Toque y Fama: Palabra, ¿En qué año?, Reinas, Tango y Zip. En inglés y portugués la tarjeta avisa que se juegan en español (D-142). | ✅ v0.65 |
 | RP-33 | La portada se filtra por tipo de juego; el filtro queda en la URL, dice cuántos juegos se ven y se quita con un toque (D-142, D-149). | ✅ v0.65 |
 | RP-34 | Las explicaciones de todos los juegos (reglas, ayudas, modos, antesalas, Administrar y las frases del menú) son cortas: cada regla se dice una vez por pantalla, con frases completas, y una palabra por concepto: tachar, el celular, jugador, administrador, vidas, sorbos (D-177, U-5, U-8). | ✅ v0.84.0 |
+| RP-35 | Jugar en alemán: toda la experiencia en el idioma elegido, con las mismas claves que los otros tres, primero solo en el laboratorio (`/labs/de/`), con un botón para que quienes lo prueban comenten (D-191). Sale del laboratorio cuando lo revisen hablantes de alemán ([ALEMAN.md](ALEMAN.md)). | 🧪 en el laboratorio |
 
 ## Cuarto Rey (CR)
 
@@ -50,7 +51,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | CR-02 | Mazo inglés de 52 cartas, sin jokers, barajado al azar. El celular reemplaza al mazo físico. | ✅ |
 | CR-03 | Los jugadores sacan cartas por turnos, en orden de asiento hacia la derecha. | ✅ |
 | CR-04 | Todos ven la carta que salió (pantalla grande, carta con animación de volteo). | ✅ |
-| CR-05 | Regla por carta según instrucciones originales (A al K), ver [especificación](juegos/cuarto-rey.md). | ✅ |
+| CR-05 | Regla por carta según instrucciones originales (A al K), ver [especificación](games/fourth-king.md). | ✅ |
 | CR-06 | Para 2 y 3 la app nombra explícitamente al compañero de la derecha / izquierda. | ✅ |
 | CR-07 | Para J y Q la app nombra a quiénes les toca tomar según el género registrado. | ✅ |
 | CR-08 | Para 8 la app permite elegir a quién se regalan los 2 sorbos (repartidos o a una sola persona). | ✅ |
@@ -68,7 +69,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | CR-21 | Todo el contenido del juego (reglas, mini-juegos, penitencias, categorías, ideas de Nunca Nunca) disponible en español e inglés. | ✅ v0.2 |
 | CR-22 | Todo el contenido del juego en portugués (Quarto Rei, Era Uma Vez, Porquinho Bochechudo, Cultura de Boteco, Eu Nunca, prendas y categorías adaptadas). | ✅ v0.22 |
 
-## Dudo (DU) — ver [especificación](juegos/dudo.md)
+## Dudo (DU) — ver [especificación](games/liars-dice.md)
 
 | ID | Requerimiento | Estado |
 |---|---|---|
@@ -88,13 +89,13 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | DU-14 | Ronda obligada: con un jugador en un dado, esa ronda se juega sin comodín y sin cambiar de pinta. | ⏳ pendiente |
 | DU-15 | En español, las pintas se nombran como en la mesa chilena (ases, tontos, trenes, cuadras, quintas y sextas), con un interruptor para volver a los números. Encendido por defecto; inglés y portugués van por número (D-71). | ✅ v0.29 |
 
-## La Copa (LIG) — ver [docs/juegos/copa.md](juegos/copa.md)
+## La Copa (LIG) — ver [docs/games/cup.md](games/cup.md)
 
 | ID | Requerimiento | Estado |
 |---|---|---|
-| LIG-1 | Tarjeta "La Copa" en el menú principal que lleva a `/copa/`. | ✅ v0.42 |
+| LIG-1 | Tarjeta "La Copa" en el menú principal que lleva a `/cup/`. | ✅ v0.42 |
 | LIG-2 | Crear una copa: nombre, duración, inicio hoy o mañana, nombre y PIN del admin. | ✅ v0.42 |
-| LIG-3 | Código de 5 letras sin I ni O y link `/copa/?CÓDIGO`. | ✅ v0.42 |
+| LIG-3 | Código de 5 letras sin I ni O y link `/cup/?CÓDIGO`. | ✅ v0.42 |
 | LIG-4 | Inscribirse con nombre (hasta 20 caracteres, no repetido) y PIN de 4 dígitos escrito dos veces. | ✅ v0.42 |
 | LIG-5 | Entrar como jugador ya inscrito tocando el nombre y escribiendo el PIN; el celular recuerda la sesión. | ✅ v0.42 |
 | LIG-6 | Máximo 10 jugadores por copa (lo cuida el celular; las reglas no cuentan hijos). | ✅ v0.42 |
@@ -133,7 +134,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | LIG-39 | Gráfico de tu posición día a día. | ✅ v0.42 |
 | LIG-40 | El panel del dueño muestra las copas creadas y su progreso. | ⏳ pendiente |
 | LIG-41 | Práctica de cada minijuego suelto, con semilla repetible, desde el laboratorio (D-101). | ✅ v0.43 |
-| LIG-42 | Reportar un problema o dejar un comentario con su contexto, desde la práctica, el tablero y el resultado, sin cuenta (D-104). | ✅ v0.45 (se leen con `node tools/reportes.mjs`) |
+| LIG-42 | Reportar un problema o dejar un comentario con su contexto, desde la práctica, el tablero y el resultado, sin cuenta (D-104). | ✅ v0.45 (se leen con `node tools/firebase/reportes.mjs`) |
 | LIG-43 | Laboratorio `/labs/`: La Copa sale del menú (Próximamente) y se prueba ahí, con la Copa de 3 días. | ✅ v0.43 |
 | LIG-44 | El panel del dueño muestra los reportes. | ⏳ pendiente |
 | LIG-45 | 〰️ Zip y ☀️ Tango en el laboratorio, con solución única, para decidir si entran al calendario. | ✅ v0.44 |
@@ -182,11 +183,11 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | LIG-87 | Reinas: arrastrar desde una X borra las X por donde pasa; las reinas no se tocan (D-168). | ✅ v0.79.0 |
 | LIG-88 | Reinas: 🧹 Borrar todo deja el tablero en blanco, con confirmación; el reloj sigue (D-169). | ✅ v0.79.0 |
 | LIG-89 | La Copa sale del laboratorio: tarjeta activa en el menú principal y "‹ Menú" vuelve al menú; `/labs/` sigue para probar (D-175). | ✅ v0.83.0 |
-| LIG-90 | 📍 ¿Dónde queda? se juega suelto desde la portada, en `/minijuegos/donde/`, sin "Próximamente" (D-174). | ✅ v0.82.0 |
+| LIG-90 | 📍 ¿Dónde queda? se juega suelto desde la portada, en `/minigames/where/`, sin "Próximamente" (D-174). | ✅ v0.82.0 |
 | LIG-91 | En Administrar, la invitación sigue mientras alguien nuevo pueda entrar (inscripción abierta y cupo) y, ya partida, dice en qué día va (D-176). | ✅ v0.83.1 |
 | LIG-92 | Quien entra tarde lee que los días cerrados quedan en 0 desde el día 3 (el día 1 sigue en su gracia el día 2); con la copa llena lee que está llena; la sesión de prueba avisa que es más corta y no cuenta (D-177). | ✅ v0.84.0 |
 | LIG-84 | Minijuegos de reserva (La Palabra, Ahorcado Contrarreloj), separados de LIG-34. | ⏳ pendiente |
-| LIG-46 | El teclado, el tablero y la línea se comparten con Toque y Fama y Línea de Tiempo (`assets/js/teclado.js`, `assets/css/teclado.css`, `assets/css/linea.css`). | ✅ v0.44 |
+| LIG-46 | El teclado, el tablero y la línea se comparten con Toque y Fama y Línea de Tiempo (`public/assets/js/teclado.js`, `public/assets/css/teclado.css`, `public/assets/css/linea.css`). | ✅ v0.44 |
 
 ## Requerimientos no funcionales
 
@@ -195,7 +196,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 - **Privacidad:** no se envía nada que identifique a una persona. La partida vive en `localStorage` del dispositivo; a Firebase van la sala (modo de dos celulares) y señales de uso anonimizadas para el panel del dueño: contadores por juego, modo, jugadores, zona horaria, idioma y hora (D-44). Nunca IP, secretos, chat ni quién ganó.
 - **Responsabilidad:** el menú incluye un mensaje de consumo responsable.
 
-## Toque y Fama (TF) — ver [especificación](juegos/toque-y-fama.md) y [estudio de factibilidad](juegos/toque-y-fama-factibilidad.md)
+## Toque y Fama (TF) — ver [especificación](games/bulls-and-cows.md) y [estudio de factibilidad](games/bulls-and-cows-factibilidad.md)
 
 | ID | Requerimiento | Estado |
 |---|---|---|
@@ -216,7 +217,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | TF-13 | Pulsación larga sobre una cifra del teclado la marca como bloqueada (no está en el número secreto). Las marcas son por jugador, se recuerdan durante la partida y se ven tachadas; otra pulsación larga las libera. Instrucción breve en pantalla. | ✅ v0.4.2 |
 | TF-14 | En el resultado, bloque colapsado “Ver todos los intentos” con los tableros de ambos jugadores; colapsado no empuja los botones fuera de la pantalla. | ✅ v0.4.3 |
 
-## Batalla Naval (BN) — ver [docs/juegos/batalla-naval.md](juegos/batalla-naval.md)
+## Batalla Naval (BN) — ver [docs/games/battleship.md](games/battleship.md)
 
 | ID | Requerimiento | Estado |
 |---|---|---|
@@ -230,9 +231,9 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | BN-08 | Selección + confirmación “¡Fuego!” antes de disparar (con opción de disparo directo). | ✅ v0.6 |
 | BN-09 | Textos en español e inglés (“Battleship”); sonidos de agua, impacto y hundimiento. | ✅ v0.6 |
 | BN-16 | Textos en portugués (“Batalha Naval”: água, acertou, afundou). | ✅ v0.22 |
-| BN-10 | Los transportes `local` y `firebase` se mueven a `assets/js/transport/` para compartirlos entre juegos. | ✅ v0.6 |
+| BN-10 | Los transportes `local` y `firebase` se mueven a `public/assets/js/transport/` para compartirlos entre juegos. | ✅ v0.6 |
 
-## Línea de Tiempo (LT) — ver [docs/juegos/linea-de-tiempo.md](juegos/linea-de-tiempo.md)
+## Línea de Tiempo (LT) — ver [docs/games/timeline.md](games/timeline.md)
 
 | ID | Requerimiento | Estado |
 |---|---|---|
@@ -255,7 +256,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | LT-15 | Opción de todas las cartas a la vista: se despliega el doble de la meta desde el primer turno, no entra ninguna carta nueva y la mesa solo se achica. Es la opción marcada al abrir la configuración. | ✅ v0.21 |
 | LT-16 | Arrastrar la carta de la mano a su lugar en la línea, y retomar la ya puesta para moverla o devolverla. Soltar elige; el botón coloca. | ✅ v0.35 |
 
-## El Ahorcado (AH) — ver [docs/juegos/ahorcado.md](juegos/ahorcado.md)
+## El Ahorcado (AH) — ver [docs/games/hangman.md](games/hangman.md)
 
 | ID | Requerimiento | Estado |
 |---|---|---|
@@ -277,7 +278,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | AH-17 | Al confirmar una letra, un cartel breve dice cómo fue antes de que cambie el turno (D-63). | ✅ v0.26 |
 | AH-15 | Entra al menú publicado cuando esté probado de punta a punta y con capturas en el README. | ✅ v0.26 |
 
-## Julepe (JU) — ver [docs/juegos/julepe.md](juegos/julepe.md)
+## Julepe (JU) — ver [docs/games/julep.md](games/julep.md)
 
 | ID | Requerimiento | Estado |
 |---|---|---|

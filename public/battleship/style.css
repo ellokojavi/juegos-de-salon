@@ -1,0 +1,314 @@
+/* ==========================================================
+   Batalla Naval — estilos propios
+   ========================================================== */
+.screen { display: none; flex-direction: column; flex: 1; }
+.screen.active { display: flex; animation: slideUp 0.3s ease-out both; }
+
+.intro-hero { text-align: center; padding: 6px 0 8px; }
+.intro-hero .icon { font-size: 4.2rem; display: block; animation: bounce 2.4s ease-in-out infinite; filter: drop-shadow(0 0 18px rgba(46, 230, 214, 0.6)); }
+.modes { display: grid; gap: 10px; }
+.mode {
+  display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px; text-align: left;
+  background: var(--glass); border: 2px solid var(--glass-border); border-radius: var(--radius); padding: 14px 16px;
+  color: var(--ink); cursor: pointer; font-family: var(--font-body); transition: transform 0.1s, border-color 0.2s;
+}
+.mode:active { transform: scale(0.98); }
+.mode:disabled { opacity: 0.5; cursor: not-allowed; }
+.mode b { font-family: var(--font-display); font-size: 1.4rem; letter-spacing: 0.04em; text-transform: uppercase; display: block; }
+.mode small { color: var(--muted); font-weight: 700; }
+.mode .go { font-family: var(--font-display); font-size: 2rem; color: var(--yellow); }
+
+/* Setup (mismos componentes que Toque y Fama) */
+.field { display: grid; gap: 6px; margin-bottom: 12px; }
+.field label { font-weight: 900; font-size: 0.9rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+.field input { width: 100%; font: 900 1.15rem var(--font-body); color: var(--ink); background: rgba(0,0,0,0.3); border: 2px solid transparent; border-radius: 14px; padding: 13px 14px; outline: none; }
+.field input:focus { border-color: var(--cyan); }
+.field input::placeholder { color: rgba(255,255,255,0.35); }
+.toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: rgba(0,0,0,0.25); border-radius: 14px; padding: 10px 12px; margin-bottom: 8px; }
+.toggle-row b { display: block; }
+.toggle-row small { color: var(--muted); }
+.switch { width: 52px; height: 30px; border-radius: 999px; background: rgba(255,255,255,0.2); border: 0; position: relative; cursor: pointer; flex-shrink: 0; }
+.switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: #fff; transition: transform 0.2s; }
+.switch.on { background: var(--lime); }
+.switch.on::after { transform: translateX(22px); }
+.form-error { color: var(--yellow); font-weight: 800; text-align: center; min-height: 1.4em; margin: 6px 0; }
+#screen-setup > h2 { margin-bottom: 16px; }
+
+/* ---------- Grilla ---------- */
+/* Una sola grilla de 11×11: la primera fila y la primera columna son las etiquetas.
+   Así los números y letras comparten las pistas con las casillas y no se desalinean (Safari incluido). */
+.grid-wrap { margin: 0 auto; width: 100%; max-width: 420px; user-select: none; -webkit-user-select: none; touch-action: none; }
+.grid-wrap.small { max-width: 220px; }
+.grid { display: grid; grid-template-columns: 18px repeat(10, minmax(0, 1fr)); grid-auto-rows: auto; gap: 2px; min-width: 0; }
+/* `line-height: 1` no es cosmético: sin eso, el número de la fila es más alto que la casilla
+   cuando la grilla es chica, y es ÉL el que manda el alto de la fila. La grilla quedaba con
+   aire entre filas y ninguna entre columnas, o sea rectangular teniendo casillas cuadradas. */
+.grid .lbl { color: var(--muted); font-weight: 900; font-size: 0.7rem; line-height: 1; text-align: center; display: grid; place-items: center; min-width: 0; min-height: 0; }
+.grid .lbl.corner { min-height: 10px; }
+:root {
+  /* La flota, en pixel art (D-91). El barco elegido es el mismo dibujo con esta paleta
+     cambiada, así que acá se decide de qué color es toda la flota. */
+  --casco-borde: #1d2740; --casco-luz: #eef3fa; --casco: #a9b7c9;
+  --casco-sombra: #73839a; --casco-medio: #8795ab; --cubierta: #5d6c85;
+  --marca: var(--yellow); --antena: var(--cyan); --espuma: rgba(255, 255, 255, 0.45);
+}
+.cell {
+  min-width: 0; overflow: hidden; aspect-ratio: 1; border-radius: 4px;
+  background: #132a45 var(--agua, none) center / 100% 100%; image-rendering: pixelated;
+  border: 1px solid rgba(46, 230, 214, 0.14);
+  display: grid; place-items: center; font-size: clamp(0.7rem, 3.2vw, 1.05rem); line-height: 1; position: relative; transition: background 0.15s, transform 0.1s;
+}
+/* El trozo de barco que le toca a esta casilla. Vertical = el mismo dibujo girado. El giro vive
+   en una variable y no escrito en el `transform`, para que el hundimiento pueda componer sobre
+   él sin borrarlo ni tener que escribir dos animaciones, una por orientación (D-93). */
+.cell .barco { position: absolute; inset: 0; width: 100%; height: 100%; display: block; --giro: 0deg; transform: rotate(var(--giro)); }
+.cell .barco.v { --giro: 90deg; }
+.grid-wrap.small .cell { font-size: 0.55rem; border-radius: 2px; }
+.grid-wrap.small .grid { grid-template-columns: 14px repeat(10, minmax(0, 1fr)); }
+.cell.ship.sel {
+  --casco-borde: #6d3400; --casco-luz: #fff6d8; --casco: #ffc247;
+  --casco-sombra: #e08a10; --casco-medio: #f0a520; --cubierta: #c06f06;
+  border-color: #fff; overflow: visible; z-index: 2; box-shadow: 0 0 10px rgba(255, 210, 63, 0.7);
+}
+.cell .rot {
+  position: absolute; top: -16px; right: -16px; width: 40px; height: 40px; border-radius: 50%; border: 3px solid #fff; cursor: pointer;
+  background: var(--pink); color: #fff; font: 900 22px/1 var(--font-body); display: grid; place-items: center; box-shadow: 0 3px 8px rgba(0,0,0,0.55); z-index: 3;
+  animation: pop 0.25s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; touch-action: manipulation;
+}
+/* Área táctil extra invisible alrededor del botón (44×44 mínimo recomendado) */
+.cell .rot::before { content: ''; position: absolute; inset: -6px; border-radius: 50%; }
+.cell .rot:active { transform: scale(0.9) rotate(90deg); }
+.cell.ghost-ok { background: rgba(157, 255, 58, 0.45); border-color: var(--lime); }
+.cell.ghost-bad { background: rgba(255, 46, 136, 0.55); border-color: var(--pink); }
+/* Un disparo al agua no cambia el mar: le queda el mismo patrón con un halo oscuro,
+   como el hoyo que deja la bomba, y el punto encima. */
+.cell.agua { box-shadow: inset 0 0 7px 3px rgba(0, 0, 0, 0.55); border-color: rgba(46, 230, 214, 0.08); }
+.cell.agua::after { content: '•'; color: rgba(255,255,255,0.6); font-size: 1.2em; }
+/* Tocado y hundido tampoco borran el mar: le ponen un resplandor por dentro. Así el agua
+   sigue siendo agua alrededor del barco, que es lo que se está quemando. */
+.cell.tocado { box-shadow: inset 0 0 8px 4px rgba(255, 122, 26, 0.75); border-color: #ffd0a0; }
+.cell.tocado::after { content: '💥'; }
+/* Hundido: el casco cambia de paleta y queda quemado —negro, brasas, óxido— debajo del 🔥.
+   Por eso el fondo rojo se ve solo alrededor del barco: el agua ardiendo, no un cuadrado. */
+.cell.hundido {
+  --casco-borde: #240a0a; --casco-luz: #ffb07a; --casco: #8c4133;
+  --casco-sombra: #57231c; --casco-medio: #6f3226; --cubierta: #431c17;
+  --marca: var(--orange); --antena: var(--orange); --espuma: rgba(255, 180, 120, 0.5);
+  border-color: #ffb3d1;
+  box-shadow: inset 0 0 9px 4px rgba(224, 36, 60, 0.8), 0 0 10px rgba(255, 46, 136, 0.55);
+}
+.cell.tocado .barco { filter: saturate(0.55) brightness(0.9); }
+.cell.hundido::after { content: '🔥'; }
+
+/* ---------- El hundimiento, mientras pasa (D-93) ----------
+   Hundir es el único momento en que la grilla regala casillas que nadie disparó: le pegaste a
+   una y aparecen las otras cuatro. Antes esa revelación ocurría en un repintado. Ahora el fuego
+   corre por el casco casilla por casilla —ahí se lee el largo y el sentido del barco— y recién
+   cuando la cascada termina el casco entero se va bajo el agua.
+   `--t` es el lugar de esta casilla en la cascada; `--tFin`, cuándo termina. Los pone game.js,
+   y pueden venir en negativo: así un repintado a mitad de camino retoma la animación donde iba
+   en vez de reiniciarla. */
+.cell.hundiendo { overflow: visible; z-index: 3; animation: aguaArde 900ms ease-out forwards var(--t, 0ms); }
+.cell.hundiendo::after { animation: brasa 900ms ease-out forwards var(--t, 0ms); }
+/* El fuego va escalonado; el casco, no: un barco no se hunde de a pedazos. Por eso el casco
+   arranca en `--tFin`, igual para todos los trozos, y baja derecho. Escorarlo pediría girar
+   cada trozo sobre el centro del barco y no sobre el suyo, y el trozo vertical ya gira 90°:
+   hacerlo sobre un punto lejano lo lanza una casilla entera. Bajar derecho ya se lee. */
+.cell.hundiendo .barco { animation: seVa 620ms ease-in forwards var(--tFin, 0ms); }
+
+/**
+ * El ANTES de cada casilla. La casilla ya lleva `hundido` desde el primer repintado —casco
+ * quemado, borde rosado y 🔥 son su estado normal—, así que sin esto el barco entero aparece
+ * ardiendo en el fotograma cero y la cascada no muestra nada: cinco cuadrados con fuego.
+ *
+ * Esto vivía en los fotogramas, hasta mirarlo de cerca: Chrome no anima variables CSS sin
+ * registrar ni `content`, así que los ignoraba en silencio. Ahora la clase la saca game.js con
+ * un temporizador por casilla, y las animaciones van en `forwards` para no pisarla antes de
+ * tiempo. El borde importa tanto como el resto: es lo que más se ve de lejos.
+ */
+.cell.hundiendo.aun-vivo {
+  --casco-borde: #1d2740; --casco-luz: #eef3fa; --casco: #a9b7c9;
+  --casco-sombra: #73839a; --casco-medio: #8795ab; --cubierta: #5d6c85;
+  --marca: var(--yellow); --antena: var(--cyan); --espuma: rgba(255, 255, 255, 0.45);
+  border-color: #ffd0a0; box-shadow: inset 0 0 8px 4px rgba(255, 122, 26, 0.75);
+}
+.cell.hundiendo.aun-vivo::after { content: '💥'; }
+
+@keyframes aguaArde {
+  0%   { box-shadow: inset 0 0 6px 2px rgba(255, 122, 26, 0.5); }
+  6%   { box-shadow: inset 0 0 16px 9px rgba(255, 246, 220, 0.95); }
+  22%  { box-shadow: inset 0 0 12px 6px rgba(255, 140, 40, 0.85); }
+  100% { box-shadow: inset 0 0 9px 4px rgba(224, 36, 60, 0.8), 0 0 10px rgba(255, 46, 136, 0.55); }
+}
+@keyframes brasa { 0% { transform: scale(1); } 7% { transform: scale(1.6); } 30% { transform: scale(1); } }
+/* El casco se va bajo el agua y vuelve a asomar hecho pecio, en su sitio: no desaparece, porque
+   el barco hundido se le queda mostrando al rival, quemado y ardiendo (D-91). Por eso el último
+   fotograma es exactamente el estado de reposo —sin desplazar, sin apagar—: la animación lleva
+   hasta donde ya estaba y no deja nada colgando cuando termina. */
+@keyframes seVa {
+  0%   { transform: translateY(0) scale(1) rotate(var(--giro)); opacity: 1; filter: none; }
+  16%  { transform: translateY(-7%) scale(1.04) rotate(var(--giro)); opacity: 1; filter: none; }
+  58%  { transform: translateY(17%) scale(0.87) rotate(var(--giro)); opacity: 0.45; filter: brightness(0.55); }
+  100% { transform: translateY(0) scale(1) rotate(var(--giro)); opacity: 1; filter: none; }
+}
+
+/* El fogonazo de la casilla que se disparó: la onda sale de ahí y no del barco entero. */
+.cell.impacto::before {
+  content: ''; position: absolute; inset: 0; border-radius: 4px; z-index: 4;
+  animation: onda 620ms cubic-bezier(0.1, 0.7, 0.3, 1) both;
+}
+@keyframes onda {
+  0%   { box-shadow: 0 0 0 0 rgba(255,255,255,0.95), inset 0 0 12px 6px rgba(255,255,255,0.9); }
+  100% { box-shadow: 0 0 0 16px rgba(255,255,255,0), inset 0 0 12px 6px rgba(255,255,255,0); }
+}
+
+/* La espuma sube del medio del casco cuando el sonido va en las burbujas: `SFX.sink` las toca
+   entre los 0,5 y los 0,95 s, así que la imagen y el ruido cuentan lo mismo al mismo tiempo. */
+.burbuja {
+  position: absolute; left: 50%; bottom: 6%; width: 34%; height: 34%; border-radius: 50%;
+  background: radial-gradient(circle at 34% 30%, #fff, rgba(255,255,255,0.35) 62%, rgba(255,255,255,0) 72%);
+  pointer-events: none; z-index: 6; animation: sube 780ms ease-out both;
+}
+@keyframes sube {
+  0%   { transform: translate(-50%, 20%) scale(0.25); opacity: 0; }
+  20%  { opacity: 1; }
+  100% { transform: translate(calc(-50% + var(--dx, 0px)), -150%) scale(1.15); opacity: 0; }
+}
+.cell.ship.tocado::after, .cell.ship.hundido::after { content: '💥'; }
+/* El dibujo del barco va posicionado, así que pinta por encima de lo que no lo está: sin esto
+   el 💥 y el 🔥 quedaban debajo del casco y no se veían. */
+.cell::after { position: relative; z-index: 2; }
+.cell.last { outline: 2px solid var(--yellow); outline-offset: -1px; animation: lastPulse 1.2s ease-in-out infinite; }
+@keyframes lastPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(255, 210, 63, 0.6); } 50% { box-shadow: 0 0 8px 3px rgba(255, 210, 63, 0.35); } }
+.cell.aim { outline: 3px solid var(--yellow); outline-offset: -1px; transform: scale(1.12); z-index: 1; background: rgba(255, 210, 63, 0.35); }
+.cell.aim::after { content: '🎯'; }
+/* El tablero enemigo ocupa media pantalla: es el cartel más grande que hay para decir de quién
+   es el turno. Vivo cuando puedes disparar, apagado cuando no. Apagado no es tapado: los
+   impactos se siguen leyendo, que para eso se mira el tablero mientras esperas. */
+.enemy .grid-wrap { border-radius: 10px; padding: 3px; transition: box-shadow 0.25s, background 0.25s; }
+/* El aro va también fuera de la animación: con `prefers-reduced-motion` el latido se corta y,
+   si el aro viviera solo en los fotogramas, el tablero se quedaría sin la señal que importa. */
+.enemy.live .grid-wrap {
+  background: rgba(46, 230, 214, 0.07); box-shadow: 0 0 0 2px rgba(46, 230, 214, 0.65), 0 0 18px rgba(46, 230, 214, 0.28);
+  animation: turnoVivo 2.2s ease-in-out infinite;
+}
+@keyframes turnoVivo {
+  0%, 100% { box-shadow: 0 0 0 2px rgba(46, 230, 214, 0.45), 0 0 14px rgba(46, 230, 214, 0.18); }
+  50% { box-shadow: 0 0 0 2px rgba(46, 230, 214, 0.85), 0 0 24px rgba(46, 230, 214, 0.45); }
+}
+.enemy.locked { opacity: 0.45; filter: saturate(0.5); transition: opacity 0.25s, filter 0.25s; }
+.enemy.live .cell:not(.agua):not(.tocado):not(.hundido) { cursor: pointer; }
+.enemy.live .cell:not(.agua):not(.tocado):not(.hundido):active { transform: scale(0.9); }
+.enemy.locked .cell:not(.agua):not(.tocado):not(.hundido) { cursor: not-allowed; }
+
+/* ---------- Colocación ---------- */
+.place-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }
+.place-top .count { color: var(--muted); font-weight: 900; }
+/* Tres columnas con el dibujo arriba del nombre: las cinco fichas caben en dos filas. En una
+   fila que se envuelve sola quedaban en tres y la última no se veía sin desplazar en un
+   celular con la barra del navegador abajo. Van en una fila que se envuelve, con el ancho de una
+   columna, para que las dos de abajo queden centradas y no pegadas a la izquierda (U-11). */
+.ships { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 8px 0 10px; }
+.ship-chip {
+  flex: 0 0 calc((100% - 12px) / 3);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-width: 0; min-height: 44px; padding: 6px 4px; border-radius: 12px; cursor: grab;
+  /* La ficha se arrastra al tablero: el navegador no puede llevarse el gesto para desplazar la
+     página (D-86), y arrastrar un botón no debe seleccionar su texto. */
+  touch-action: none; user-select: none; -webkit-user-select: none;
+  background: var(--glass); border: 2px solid var(--glass-border); color: var(--ink); font: 800 0.8rem/1.1 var(--font-body); transition: transform 0.1s, border-color 0.15s;
+}
+.ship-chip .barco-tira { display: flex; gap: 1px; }
+.ship-chip .barco-tira .barco { width: 12px; height: 12px; display: block; background: #132a45; border-radius: 2px; }
+.ship-chip.sel { border-color: var(--yellow); background: rgba(255, 210, 63, 0.18); }
+.ship-chip:active { cursor: grabbing; }
+.ship-chip.done { opacity: 0.45; }
+.ship-chip.done .barco-tira { filter: saturate(0.4) brightness(1.15); }
+.place-actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+.place-actions .btn { font-size: 1.05rem; min-height: 46px; padding: 8px 6px; }
+/* Al poner el quinto barco la pantalla baja hasta ¡Zarpar! (dilema #47): que no quede pegado al borde */
+#place-sail .btn { scroll-margin-bottom: 16px; }
+
+/* ---------- Batalla ---------- */
+/* De quién es el turno no puede vivir solo en las palabras del titular: dos frases distintas
+   del mismo tamaño y del mismo color se leen igual de lejos, y los jugadores no sabían cuándo
+   les tocaba (D-92). La barra cambia de forma y de color, y el tablero del rival se apaga
+   cuando no se puede disparar: dos señales redundantes, ninguna que haya que leer. */
+.status {
+  text-align: center; margin: 3px 0 6px; border-radius: 14px; padding: 4px 12px 5px;
+  border: 2px solid transparent; transition: background 0.25s, border-color 0.25s;
+}
+.status .who { font-family: var(--font-display); font-size: clamp(1.5rem, 7vw, 2.2rem); line-height: 1.12; letter-spacing: 0.04em; text-shadow: 0 4px 0 rgba(0,0,0,0.35), 0 0 24px rgba(46, 230, 214, 0.5); }
+.status .sub { color: var(--muted); font-weight: 800; font-size: 0.9rem; min-height: 1.3em; }
+/* El ícono va aparte del texto: es una señal, no una palabra de la frase. Va algo más chico
+   que el titular porque un emoji ocupa más alto que las mayúsculas de Bangers y, si no, es él
+   el que manda el alto de la barra. */
+.status .ico { font-family: var(--font-body); font-size: 0.82em; margin-right: 6px; }
+.status.mine { background: rgba(157, 255, 58, 0.14); border-color: var(--lime); }
+.status.mine .who { color: var(--lime); text-shadow: 0 4px 0 rgba(0,0,0,0.4), 0 0 24px rgba(157, 255, 58, 0.55); }
+/* Apagada a propósito: sin borde vivo, sin brillo y con el titular en gris. */
+.status.theirs { background: rgba(0, 0, 0, 0.28); border-color: var(--glass-border); }
+.status.theirs .who { color: var(--muted); text-shadow: none; }
+.status.theirs .ico { opacity: 0.8; }
+/* Tocaste el tablero fuera de turno: la barra se sacude y te dice por qué (C-8b). */
+.status.flash { animation: shake 0.6s both; }
+.status.flash .sub { color: var(--yellow); }
+.score { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin: 4px 0 8px; font-weight: 900; font-size: 0.85rem; }
+.score .side { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.score .fleet { letter-spacing: 0.05em; font-size: 1rem; }
+.score .fleet .sunk { opacity: 0.25; filter: grayscale(1); }
+.board-title { text-align: center; font-family: var(--font-display); font-size: 1.05rem; letter-spacing: 0.05em; margin: 6px 0 4px; color: var(--muted); }
+.fire-row { display: grid; grid-template-columns: 1fr; gap: 8px; margin: 10px auto; max-width: 420px; }
+.toast .coord { font: 900 1.35rem var(--font-num); font-variant-numeric: tabular-nums; letter-spacing: 0.04em; }
+.toast { text-align: center; font-family: var(--font-display); font-size: 1.6rem; letter-spacing: 0.05em; color: var(--yellow); text-shadow: 0 3px 0 rgba(0,0,0,0.35); min-height: 1.4em; animation: pop 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
+.toast.agua { color: var(--cyan); }
+.toast.hundido { color: var(--pink); }
+.mine-wrap { margin-top: 10px; display: grid; justify-items: center; gap: 4px; }
+.mine-cover { position: relative; }
+.mine-cover .veil {
+  position: absolute; inset: -4px; border-radius: 12px; display: grid; place-items: center; cursor: pointer;
+  background: linear-gradient(160deg, rgba(21, 7, 38, 0.96), rgba(42, 10, 74, 0.96)); border: 1px solid var(--glass-border);
+  font-weight: 900; color: var(--muted); font-size: 0.85rem; text-align: center; padding: 8px;
+}
+.mine-cover.shown .veil { display: none; }
+
+/* Resultado */
+.result-hero { text-align: center; padding: 2px 0 6px; }
+.result-hero .trophy { font-size: 4.2rem; display: block; animation: pop 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
+.fleets { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.fleets .f { display: grid; justify-items: center; gap: 4px; min-width: 0; }
+.fleets .f b { font-family: var(--font-display); font-size: 1.1rem; letter-spacing: 0.05em; }
+.fleets .grid-wrap.small { max-width: 100%; }
+.fleets .grid .lbl { font-size: 0.6rem; }
+.fleets .grid { grid-template-columns: 14px repeat(10, minmax(0, 1fr)); }
+.fleets .f small { color: var(--muted); font-weight: 800; text-align: center; }
+.replay { margin-top: 10px; padding: 12px 16px; }
+.replay summary { font-size: 1rem; }
+.replay .shots { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.replay ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; font-weight: 800; font-size: 0.85rem; }
+.replay li { display: flex; justify-content: space-between; background: rgba(0,0,0,0.25); border-radius: 8px; padding: 4px 8px; }
+.replay li .r { font-family: var(--font-display); letter-spacing: 0.05em; }
+.replay li .r.agua { color: var(--cyan); } .replay li .r.tocado { color: var(--orange); } .replay li .r.hundido { color: var(--pink); }
+#screen-result .stack { margin-top: 12px !important; }
+
+/* Etapa de resultado en el pase (modo un celular) */
+/* La casilla es un dato que se lee y se canta: cifras en Nunito, no en Bangers (D-30) */
+.shot-big { font: 900 clamp(2.1rem, 10.5vw, 3rem) var(--font-num); font-variant-numeric: tabular-nums; letter-spacing: 0.12em; color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35); }
+.shot-result { font-family: var(--font-display); font-size: 1.8rem; letter-spacing: 0.05em; }
+.shot-result.agua { color: var(--cyan); } .shot-result.tocado { color: var(--orange); } .shot-result.hundido { color: var(--pink); }
+.pass-divider { width: 60%; height: 1px; background: var(--glass-border); margin: 6px auto 2px; }
+
+/* Lobby y unión (dos celulares) */
+.field input.code { text-transform: uppercase; letter-spacing: 0.4em; text-align: center; font-family: var(--font-display); font-size: 2rem; }
+.or { text-align: center; color: var(--muted); font-weight: 900; margin: 6px 0; }
+#screen-lobby > h2 { margin-bottom: 16px; }
+.code-big { font-family: var(--font-display); font-size: clamp(3.4rem, 22vw, 5.5rem); letter-spacing: 0.25em; text-align: center; color: var(--yellow); text-shadow: 0 5px 0 rgba(0,0,0,0.4), 0 0 30px rgba(255, 210, 63, 0.6); margin: 4px 0; padding-left: 0.25em; }
+.qr { display: grid; place-items: center; margin: 8px auto; background: #fff; border-radius: 16px; padding: 8px; width: fit-content; }
+.qr svg { display: block; width: min(52vw, 220px); height: auto; }
+.waiting { text-align: center; color: var(--muted); font-weight: 800; }
+.waiting .dots::after, .dots::after { content: '…'; animation: dots 1.2s steps(4) infinite; }
+@keyframes dots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } }
+
+/* Con el chat en pantalla, la burbuja flota abajo a la derecha (78 px del borde, 54 de alto):
+   al fondo de la página tiene que quedar aire para que no tape mi flota ni los botones del final
+   (C-15, C-8). En la colocación no hace falta: ahí el chat se guarda. */
+body.chat-on #screen-lobby, body.chat-on #screen-play, body.chat-on #screen-result { padding-bottom: calc(140px + env(safe-area-inset-bottom, 0px)); }
