@@ -2,9 +2,11 @@
  * Un idioma en el laboratorio (D-191). Lo carga i18n.js solo en el dispositivo que entró por
  * `/labs/<idioma>/` (o por un link con `?lang=<idioma>`), y hace tres cosas en todas las páginas:
  *
- * - **La navegación no se sale del laboratorio:** un link al menú (`../`) o al laboratorio de
- *   siempre (`/labs/`) lleva a la portada del laboratorio del idioma. Un link con
- *   `data-labs-libre` pasa igual (la portada del laboratorio ofrece mirar el menú de verdad).
+ * - **Mientras se juega en el idioma del laboratorio, la navegación no se sale de él:** un link
+ *   al menú (`../`) o al laboratorio de siempre (`/labs/`) lleva a la portada del laboratorio del
+ *   idioma. Con otro idioma elegido en el toggle, el menú es el de siempre: la portada del
+ *   laboratorio está escrita en su idioma, y volver a ella después de elegir español se veía como
+ *   un toggle pegado en alemán (D-195). Un link con `data-labs-libre` pasa siempre.
  * - **🐞 en la barra de arriba** abre el formulario de comentarios. Donde no hay "‹ Menú" (la
  *   portada), dos pestañas al borde: 🧪 vuelve al laboratorio y 🐞.
  * - **Los comentarios** van a `feedback/` como los de La Copa (D-104), con el contexto de dónde
@@ -14,7 +16,7 @@
  * Los textos van en el idioma del laboratorio, que es el de quienes prueban.
  */
 import { el } from './ui.js';
-import { LABS_IDIOMA } from './i18n.js';
+import { LABS_IDIOMA, getLang } from './i18n.js';
 import { versionOf } from './transport/stats.js';
 import { enviarReporte, reenviarPendientes } from '../../cup/reportes.js';
 
@@ -51,6 +53,7 @@ export function iniciarLabs(idioma) {
   document.addEventListener('click', e => {
     const a = e.target.closest?.('a[href]');
     if (!a || a.hasAttribute('data-labs-libre') || a.target === '_blank') return;
+    if (getLang() !== idioma) return;
     let destino;
     try { destino = new URL(a.getAttribute('href'), location.href); } catch (_) { return; }
     if (destino.origin !== raiz.origin) return;

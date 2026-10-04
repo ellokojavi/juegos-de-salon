@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.92.1 — 2026-10-03
+- **Laboratorio alemán: el idioma ya no se queda pegado en alemán** (D-195). Con otro idioma
+  elegido, "‹ Menú" lleva al menú de siempre en ese idioma (antes llevaba a la portada del
+  laboratorio, que está en alemán). En alemán sigue volviendo al laboratorio.
+
 ## 0.91.0 — 2026-10-03
 - **Sin destello de idioma** (D-194): al abrir una página en inglés, portugués o alemán ya no se
   ven los textos en español una fracción de segundo antes de cambiar.
