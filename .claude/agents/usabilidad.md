@@ -75,7 +75,7 @@ pueda ir y volver sin perderse, y que los mensajes para compartir se lean bien e
 
 - **Arreglos:** en una copia aparte del repo (`git worktree add`), sobre la punta de la cadena de
   PRs abiertos de La Copa (la rama del PR abierto más reciente) o sobre `main` si no hay. Pruebas
-  unitarias y `node tools/e2e/cup/torneo.mjs` en verde, `python3 tools/release/set-version.py` con la versión de
+  unitarias y `node tools/e2e/cup/torneo.mjs` en verde, la entrada de `CHANGELOG.md` con la versión de
   parche siguiente, y **un PR que nunca fusionas**, con capturas de antes y después y la regla U-n
   de cada arreglo. Si otra copia del repo ya ocupa el puerto 8765, sirve la tuya en otro puerto y
   corre el guion con `SITIO=http://localhost:<puerto>`.

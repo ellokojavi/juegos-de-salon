@@ -41,7 +41,7 @@ public/<carpeta>/
 - Los juegos de La Copa siguen la misma idea en `public/cup/games/<carpeta>/`: `engine.js`
   (reglas puras), `ui.js` (pantalla) y sus datos propios; lo común a todos queda en `games/`.
 - El juego se registra en `public/assets/js/games.js` con `id`, `emoji`, `name` y `tagline` por idioma, `players`, `duration`, `path` y `available`. Con sala, también `jugadas`: los tipos de mensaje que hace una persona, que es lo que el panel cuenta como jugadas (D-138).
-- Sus módulos entran solos al import map: `set-version.py` recorre `public/` (C-11, D-192).
+- Sus módulos entran solos al import map: al publicar, `set-version.py` recorre el sitio (C-11, D-192, D-205).
 - Reutilizar siempre los módulos compartidos antes de escribir uno nuevo:
   `public/assets/js/ui.js` (DOM, confeti, vibración, wake lock), `i18n.js`, `sound.js`, `session.js`, `handoff.js`, `transport/`.
 
@@ -164,13 +164,14 @@ Cuando cada dispositivo guarda un secreto (un número, una flota):
 
 ## C-11 · Publicación y versionado
 
-- Antes de cada publicación: `python3 tools/release/set-version.py X.Y.Z`. Estampa `?v=` en los import maps y las hojas de estilo para que el navegador no mezcle archivos viejos y nuevos.
-- Ese mismo comando revisa antes que el README no haya quedado atrás del código (C-13) y no estampa si lo quedó. Con `--igual` se estampa igual, para una urgencia.
-- Los módulos nuevos entran solos: el script recorre `public/**/*.js` y estampa toda página de `public/` que cargue módulos (D-192).
+- La versión de una publicación es la primera entrada de `CHANGELOG.md` (`## X.Y.Z — fecha`), que se escribe al fusionar. Las páginas en git no la llevan (D-205).
+- Al publicar, `publicar.yml` corre `set-version.py --sitio _site`: estampa `?v=X.Y.Z-<commit>` en los import maps, las hojas de estilo y las imágenes de las tarjetas, y la versión en el pie del menú, solo en la copia que se sube. Así el navegador no mezcla archivos viejos y nuevos, y dos PR abiertos no chocan.
+- Que el README (C-13) y las tarjetas (D-181) no hayan quedado atrás lo frena el check `pruebas` de cada PR, y se vuelve a revisar antes de publicar.
+- Los módulos nuevos entran solos: el script recorre `**/*.js` del sitio y estampa toda página que cargue módulos (D-192).
 - Se publica solo `public/`, con `.github/workflows/publicar.yml`, en cada fusión a main y solo si las pruebas pasan (D-192).
 - El menú dibuja la lista de juegos **antes** que cualquier adorno, y los adornos van en `try/catch`: un adorno roto no puede dejar la app vacía.
 - Cada cambio publicado entra en `CHANGELOG.md` con su versión.
-- Se verifica que el sitio publicado sirva la versión nueva antes de darla por lista.
+- Se verifica que el sitio publicado sirva la versión nueva antes de darla por lista: lo hace el último paso de `publicar.yml` (D-205).
 
 ## C-12 · Pruebas
 
@@ -213,7 +214,7 @@ El README no se mantiene a pulso: `python3 tools/release/readme.py` lo sostiene.
 - La prosa la escribe una persona. `revisar` compara los hechos de hoy contra el último sello
   (`docs/hechos.json`) y nombra qué cambió y qué sección hay que releer; `sellar` lo anota
   cuando ya se releyó. Un cambio material que no pasó por ahí no llega a publicarse:
-  `set-version.py` corre `revisar` antes de estampar (C-11).
+  el check `pruebas` corre `revisar` en cada PR y antes de publicar (C-11, D-205).
 - Las capturas salen de los guiones de `tools/e2e/`: `docs/capturas.json` dice de qué guion y
   de qué toma sale cada imagen, y `capturas <seccion>` las rehace. Una pantalla nueva en el
   README es una toma nueva en el guion, no un recorte a mano. Se miran antes de publicar
@@ -299,7 +300,7 @@ como un error: se lee como que nadie jugó.
 - [ ] Los secretos se comprometen y verifican (C-10).
 - [ ] Las fallas de sala se ven en pantalla, en todos los idiomas, y la consola queda limpia (C-14).
 - [ ] Tests del motor en verde y partida completa probada en cada modo, con capturas revisadas (C-12).
-- [ ] Versión estampada, publicada y comprobada en la URL pública (C-11).
+- [ ] Entrada con su versión en `CHANGELOG.md`; publicada y comprobada en la URL pública por `publicar.yml` (C-11, D-205).
 - [ ] Si tiene varios celulares, el chat de sala usa el módulo compartido y muere con la partida (C-15).
 - [ ] Lo que comparte (sala, resultado) sale de `compartir.js`, con la cabecera del estándar, y un resultado va con su imagen (C-7, D-165).
 - [ ] Registro en el menú, README, especificación, requerimientos, decisiones y changelog (C-2, C-13).
