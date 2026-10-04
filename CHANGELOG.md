@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.94.0 — 2026-10-04
+- **🇩🇪 El alemán, para todos** (D-197): sale del laboratorio. El toggle ofrece DE en cualquier
+  celular y `juegosdesalon.cl/de/` deja la app en alemán, con su tarjeta para los chats
+  (Salonspiele). El link del laboratorio, `/labs/de/`, ahora lleva a `/de/`, y el laboratorio ya
+  no muestra la sección del alemán. Quien tenía la marca del laboratorio deja de ver 🧪 y 🐞.
+
 ## 0.93.0 — 2026-10-03
 - **Portada: los filtros quedan pegados arriba** (D-196). Al bajar por la lista, los tipos de
   juego (Palabras, Lógica, Cultura, Cartas/Dados) se quedan a mano. Elegir uno desde abajo lleva
