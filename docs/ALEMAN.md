@@ -79,8 +79,12 @@ Los pasos que este documento dejaba anotados, y cómo quedaron:
   minijuego de nombre más largo ("Bullen und Kühe: Zahl knacken"), se ven bien y las diéresis no se
   cortan. La leyenda completa de la tabla, el caso más ancho y que ninguna demo muestra, mide 810 px
   de 1080 en alemán (en inglés, 858).
-- Pendiente: los guiones de La Copa y de Línea de Tiempo que solo recorren inglés y portugués
-  (punto 6), y el video promocional, que sigue diciendo tres idiomas.
+- Hecho el 4 de octubre (D-199): **los guiones de punta a punta** (punto 6) recorren todos los
+  idiomas de `LANGS`, y cada juego tiene su prueba de idiomas. Encontraron dos cosas del alemán:
+  en la antesala de Palabra la nota de las diéresis empujaba "Zurück zum Menü" fuera de la pantalla
+  (se acortó: "Ä, Ö und Ü schreibst du als A, O und U."), y `timeline/solo.mjs` no encontraba el
+  modo "Allein spielen".
+- Pendiente: el video promocional, que sigue diciendo tres idiomas.
 
 La lista original:
 
