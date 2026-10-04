@@ -156,7 +156,7 @@ function startGame(players) {
   };
   save();
   enterPlay();
-  trackStart({ game: 'cuarto-rey', mode: 'local', players: players.length }); // señal de uso para el panel (D-44)
+  trackStart({ game: 'cuarto-rey', mode: 'local', players: players.length, nombres: players.map(p => p?.name || p) }); // señal de uso (D-44, D-210)
 }
 
 function enterPlay() {

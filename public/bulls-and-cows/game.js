@@ -19,7 +19,7 @@ import { GAME_ID, DEFAULT_CONFIG, DIGIT_OPTIONS, LOCALES } from './rules.js';
 import { createChat } from '../assets/js/chat.js';
 import { teclado, CIFRAS } from '../assets/js/teclado.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
-import { trackStart, trackVisit } from '../assets/js/transport/stats.js';
+import { trackStart, trackVisit, trackFinish } from '../assets/js/transport/stats.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import { codigoAlAzar } from '../cup/engine.js';
 import * as numero from '../cup/games/number/engine.js';
@@ -502,6 +502,8 @@ function renderResult(v) {
   if (!already && S.mode === 'online') {
     S.transport?.noteWinner?.(v.tie ? {} : { role: v.winner, name: M.names[v.winner] });
   }
+  // Sin red, cómo terminó, para el panel (D-210)
+  if (!already && S.mode !== 'online') trackFinish(v.tie ? { empate: true } : { ganador: M.names[v.winner], detalle: `${M.guesses.filter(g => g.from === v.winner).length} intentos` });
   const meRole = S.mode === 'online' ? S.role : null;
   const title = $('#result-title'), sub = $('#result-sub'), trophy = $('#result-trophy');
   if (v.tie) { title.textContent = T.tieTitle; trophy.textContent = '🤝'; sub.textContent = ''; }
@@ -581,7 +583,7 @@ function startLocalMode(mode, names, config) {
   const transport = createLocalTransport();
   startSession({ mode, transport, roles: ['A', 'B'], config, names });
   keepAwake();
-  trackStart({ game: GAME_ID, mode, players: 2 }); // señal de uso para el panel (D-44)
+  trackStart({ game: GAME_ID, mode, players: 2, nombres: mode === 'cpu' ? [names.A] : Object.values(names || {}) }); // señal de uso (D-44, D-210)
 }
 
 async function startOnline(transport, code, role, name, config) {
@@ -665,6 +667,8 @@ function soloJugar(partida) {
 
 function soloFin(codigo, p, { s, t, ms, estado }) {
   store.save({ mode: 'solo', codigo, jugadas: { i: estado.filas.map(f => f.v), n: [] }, ms, done: true });
+  // Cómo salió, para el panel (D-210)
+  trackFinish({ detalle: `${s}/100 · ${estado.usados} intentos · ${mmss(ms)}` });
   // El récord solo se anota con puntos: un 0 no es un récord que valga la pena celebrar
   const antes = record.get();
   const { nuevo } = s > 0 ? record.anotar('', { s, ms }) : { nuevo: false };
