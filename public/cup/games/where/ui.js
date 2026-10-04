@@ -1,6 +1,7 @@
 /**
  * 📍 ¿Dónde queda? — pantalla. Un globo sin nombres (`globo.js`) que se gira sin fin
- * arrastrando y se acerca pellizcando, con doble toque (o con la rueda y los botones + y −). Un
+ * arrastrando, se acerca pellizcando, con doble toque (o con la rueda y los botones + y −) y se
+ * gira con dos dedos, como un mapa del celular; la brújula vuelve a poner el norte arriba (D-199). Un
  * toque pone el alfiler; tocar otra vez lo mueve; el doble toque solo acerca. El alfiler no se
  * arrastra, porque arrastrar ya gira el globo. Confirmar es el botón (C-8). Las jugadas son `[lat, lon]` de cada alfiler confirmado.
  *
@@ -27,6 +28,12 @@ const ZOOM_RESPUESTA = 12;
 const CENTRO_INICIAL = [10, -40];
 /** El globo va esto más abajo en su caja: el alfiler clavado en el borde de arriba muestra la cabeza (30 px). */
 const AIRE = 12;
+/**
+ * Dos dedos solo giran el mapa pasado este ángulo, como en los mapas del celular: sin esto, cada
+ * pellizco lo torcería un poco. Y al soltar cerca del norte, el norte queda justo arriba.
+ */
+const GIRO_UMBRAL = 12;
+const GIRO_IMAN = 6;
 const RAD = Math.PI / 180;
 const envolver = lon => ((((lon + 180) % 360) + 360) % 360) - 180;
 
@@ -44,13 +51,13 @@ function crearGlobo({ T, alTocar, alGirar }) {
   const fondo = document.createElement('canvas');
   fondo.className = 'mapa-satelite';
   fondo.setAttribute('aria-hidden', 'true');
-  const v = { centro: CENTRO_INICIAL.slice(), z: 1 };
+  const v = { centro: CENTRO_INICIAL.slice(), z: 1, rumbo: 0 };
   const marcas = {};
   let w = 0, h = 0, pedido = false;
   const sat = globo.satelite(fondo, () => redibujar());
 
   const radioBase = () => Math.max(40, Math.min(w / 2, h / 2 - AIRE) - 10);
-  const V = () => globo.vista({ centro: v.centro, r: radioBase() * v.z, cx: w / 2, cy: h / 2 + AIRE });
+  const V = () => globo.vista({ centro: v.centro, rumbo: v.rumbo, r: radioBase() * v.z, cx: w / 2, cy: h / 2 + AIRE });
   const pintar = () => {
     pedido = false;
     if (!canvas.isConnected) return;
@@ -66,17 +73,51 @@ function crearGlobo({ T, alTocar, alGirar }) {
   /** El lugar del globo bajo un punto de la pantalla, o null si ahí hay espacio. */
   const bajo = (px, py) => {
     const [x, y] = local(px, py), R = radioBase() * v.z;
-    return motor.tocado((x - w / 2) / R, (h / 2 + AIRE - y) / R, v.centro);
+    return motor.tocado((x - w / 2) / R, (h / 2 + AIRE - y) / R, v.centro, v.rumbo);
   };
-  const girar = (dx, dy) => {
+  const girar = (dx0, dy0) => {
     alGirar?.();
+    // El arrastre, llevado a la vista con el norte arriba
+    const sr = Math.sin(v.rumbo * RAD), cr = Math.cos(v.rumbo * RAD);
+    const dx = cr * dx0 - sr * dy0, dy = sr * dx0 + cr * dy0;
     const R = radioBase() * v.z;
     v.centro = [Math.max(-89, Math.min(89, v.centro[0] + (dy / R) / RAD)), envolver(v.centro[1] - (dx / R) / RAD)];
     redibujar();
   };
-  function zoom(f, px, py) {
+  // La brújula: aparece con el mapa girado, apunta al norte y al tocarla lo vuelve arriba
+  const aguja = document.createElement('span');
+  aguja.className = 'brujula-aguja';
+  aguja.textContent = 'N';
+  const brujula = document.createElement('button');
+  brujula.type = 'button';
+  brujula.className = 'btn btn--ghost brujula';
+  brujula.id = 'btn-norte';
+  brujula.hidden = true;
+  brujula.setAttribute('aria-label', T.northUp);
+  brujula.append(aguja);
+  const rumbo = r => {
+    v.rumbo = envolver(r);
+    brujula.hidden = v.rumbo === 0;
+    aguja.style.transform = `rotate(${-v.rumbo}deg)`;
+    canvas.dataset.rumbo = Math.round(v.rumbo);
+  };
+  let animando = 0;
+  brujula.addEventListener('click', () => {
+    const r0 = v.rumbo, t0 = performance.now(), id = ++animando;
+    const paso = t => {
+      if (id !== animando) return;
+      const k = Math.min(1, (t - t0) / 250);
+      rumbo(k < 1 ? r0 * (1 - k) ** 2 : 0);
+      redibujar();
+      if (k < 1) requestAnimationFrame(paso);
+    };
+    requestAnimationFrame(paso);
+  });
+
+  function zoom(f, px, py, giro = 0) {
     const g = px === undefined ? null : bajo(px, py);
     v.z = Math.min(ZOOM_MAX, Math.max(1, v.z * f));
+    if (giro) { animando++; rumbo(v.rumbo + giro); }
     // Lo que estaba bajo el dedo sigue bajo el dedo: se corrige el centro un par de veces
     for (let k = 0; g && k < 3; k++) {
       const g2 = bajo(px, py);
@@ -88,14 +129,14 @@ function crearGlobo({ T, alTocar, alGirar }) {
 
   // Un dedo que se mueve gira el globo; dos, lo acercan; un toque quieto es el alfiler
   const dedos = new Map();
-  let movido = false, varios = false, previa = null, ultimo = null;
+  let movido = false, varios = false, previa = null, ultimo = null, torsion = 0, girando = false;
   const pinza = () => {
     const [a, b] = [...dedos.values()];
-    return { d: Math.hypot(a.x - b.x, a.y - b.y), x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+    return { d: Math.hypot(a.x - b.x, a.y - b.y), x: (a.x + b.x) / 2, y: (a.y + b.y) / 2, a: Math.atan2(b.y - a.y, b.x - a.x) / RAD };
   };
   canvas.addEventListener('pointerdown', e => {
     dedos.set(e.pointerId, { x: e.clientX, y: e.clientY, x0: e.clientX, y0: e.clientY });
-    if (dedos.size === 1) { movido = false; varios = false; } else { varios = true; previa = pinza(); }
+    if (dedos.size === 1) { movido = false; varios = false; } else { varios = true; previa = pinza(); torsion = 0; girando = false; }
     canvas.setPointerCapture?.(e.pointerId);
   });
   canvas.addEventListener('pointermove', e => {
@@ -105,7 +146,14 @@ function crearGlobo({ T, alTocar, alGirar }) {
     d.x = e.clientX; d.y = e.clientY;
     if (dedos.size >= 2) {
       const ahora = pinza();
-      if (previa && previa.d > 0) { girar(ahora.x - previa.x, ahora.y - previa.y); zoom(ahora.d / previa.d, ahora.x, ahora.y); }
+      if (previa && previa.d > 0) {
+        // Los dedos giran a favor del reloj en la pantalla (y hacia abajo): el rumbo, al revés
+        const da = -envolver(ahora.a - previa.a);
+        torsion += da;
+        if (Math.abs(torsion) > GIRO_UMBRAL) girando = true;
+        girar(ahora.x - previa.x, ahora.y - previa.y);
+        zoom(ahora.d / previa.d, ahora.x, ahora.y, girando ? da : 0);
+      }
       previa = ahora;
       return;
     }
@@ -118,6 +166,10 @@ function crearGlobo({ T, alTocar, alGirar }) {
     const unico = dedos.size === 1 && !movido && !varios;
     dedos.delete(e.pointerId);
     previa = dedos.size >= 2 ? pinza() : null;
+    if (girando && dedos.size < 2) {
+      girando = false;
+      if (Math.abs(v.rumbo) < GIRO_IMAN) { rumbo(0); redibujar(); }
+    }
     if (!unico || e.type !== 'pointerup') return;
     // Un toque espera un momento antes de poner el alfiler: si llega un segundo toque, era un
     // doble toque, que solo acerca en torno al dedo y no pone ni mueve el alfiler
@@ -144,11 +196,12 @@ function crearGlobo({ T, alTocar, alGirar }) {
       return [r.left + p[0], r.top + p[1]];
     },
     girarA(lat, lon) { v.centro = [lat, lon]; pintar(); },
-    vista: () => ({ centro: v.centro.slice(), z: v.z }),
+    vista: () => ({ centro: v.centro.slice(), z: v.z, rumbo: v.rumbo }),
   };
   return {
     canvas,
     fondo,
+    brujula,
     zoom: f => { const r = canvas.getBoundingClientRect(); zoom(f, r.left + r.width / 2, r.top + r.height / 2); },
     alfiler(q) { marcas.alfiler = q; canvas.dataset.alfiler = q ? '1' : ''; redibujar(); },
     /** La respuesta: el alfiler, la ciudad y el arco entre los dos, con los dos a la vista. */
@@ -207,7 +260,7 @@ export function montar(raiz, ctx) {
   let girado = jugadas.length > 0;
 
   const caja = (mapa, pista = null) => el('div', { class: 'mapa-caja' }, mapa.fondo, mapa.canvas, pista,
-    el('div', { class: 'mapa-zoom' },
+    el('div', { class: 'mapa-zoom' }, mapa.brujula,
       el('button', { type: 'button', class: 'btn btn--ghost', id: 'btn-acercar', 'aria-label': T.zoomIn, onClick: () => mapa.zoom(2) }, '+'),
       el('button', { type: 'button', class: 'btn btn--ghost', id: 'btn-alejar', 'aria-label': T.zoomOut, onClick: () => mapa.zoom(0.5) }, '−')));
 

@@ -318,6 +318,9 @@ button.md-fila { cursor: pointer; }
   background: rgba(21,7,38,0.8); color: #fff; font: 800 0.9rem var(--font-body); padding: 6px 12px; border-radius: 999px; border: 1px solid var(--glass-border); }
 .mapa-zoom { position: absolute; right: 8px; bottom: 8px; display: grid; gap: 6px; }
 .mapa-zoom .btn { width: 44px; min-height: 44px; padding: 0; font: 900 1.4rem var(--font-body); background: rgba(21,7,38,0.75); }
+/* La brújula: la N y su punta roja apuntan al norte del mapa girado */
+.brujula-aguja { display: grid; justify-items: center; font: 900 0.8rem/1 var(--font-body); }
+.brujula-aguja::before { content: ''; border: 6px solid transparent; border-top: 0; border-bottom: 11px solid #ff4d4d; margin-bottom: 2px; }
 .donde-ciudad b { overflow-wrap: anywhere; }
 
 /* Reinas, Tango y Zip: grillas cuadradas que se tocan (C-8: 44 px en 320 de ancho con 7 u 8
