@@ -35,6 +35,17 @@ Puede haber varias sesiones de Claude trabajando en este repo al mismo tiempo (D
   numerarlos antes produce choques (dos "0.61"). Las decisiones (D-n) también: se toma el número
   siguiente al más alto en `main` **y en los PR abiertos** (`gh pr list`).
 - Antes de tocar la rama de otro PR, preguntarle a esa sesión (ListAgents / SendMessage).
+- **Al fusionar, la copia se borra.** El worktree y su rama son andamios, no el edificio: cuando el
+  PR entra a `main`, se sacan en el mismo movimiento, desde la carpeta principal.
+  ```bash
+  git worktree remove ../juegos-de-salon-<tema>   # se niega si quedó algo sin commitear
+  git branch -d <rama>                            # se niega si la rama no estaba fusionada
+  ```
+  Si alguno se niega, hay trabajo que no está en `main`: se mira antes de forzar (`--force`, `-D`).
+  El 2026-10-04 había 26 carpetas `juegos-de-salon-*` (2,1 GB) de ramas ya fusionadas, y el dueño
+  no podía distinguir el trabajo en curso del abandonado; una de ellas guardaba un commit que
+  nunca se subió. Sin trabajo pendiente se ve **una sola** carpeta `juegos-de-salon`. Para ver qué
+  quedó vivo: `git worktree list`; si una carpeta se borró a mano, `git worktree prune` (D-206).
 - **Pruebas en paralelo:** servir la copia propia en un puerto propio (`python3 -m http.server 87xx -d public`),
   correr los guiones con `SITIO=http://localhost:87xx PUERTO_CDP=94xx` y **matar solo el Chrome
   propio** (`pkill -f "remote-debugging-port=948[4]"`). Nunca `pkill -f remote-debugging-port` a secas:
