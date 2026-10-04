@@ -4,7 +4,9 @@ import {
   envOf, versionOf, tzKey, langKey, fingerprint, startChanges, roomRecord, dayPath,
   noteStart, noteRoom, notePlayer, noteEnd, endRecord, countryOf, regionOfLang, restApi,
   liveId, liveRecord, startLive, esEnVivo, LATIDO_MS, QUIETO_MS,
+  paginaDe, origenDe, canalDe, dispositivoDe, visitChanges, noteVisit, notePlayed, VISITA_KEY, VINO_KEY, REF_KEY,
 } from './stats.js';
+import { readFileSync } from 'node:fs';
 
 const INC = { '.sv': { increment: 1 } };
 const DAY = 24 * 60 * 60 * 1000;
@@ -232,6 +234,98 @@ assert.equal(dayPath('prod', 20342), 'stats/prod/days/20342');
 
   // Mejor esfuerzo: si la base dice que no, nadie se entera
   startLive(fakeApi({ fail: true }), { env: 'prod', v: '1' }, { game: 'x', mode: 'cpu' }, { now: () => t, doc: null, every: () => 0, stopEvery: () => {} })();
+}
+
+// --- Tráfico del sitio (D-208) ---------------------------------------------
+assert.equal(paginaDe('/'), 'inicio');
+assert.equal(paginaDe('/hangman/'), 'hangman');
+assert.equal(paginaDe('/labs/de/'), 'labs', 'la página es su primera carpeta');
+assert.equal(paginaDe('/index.html'), 'inicio');
+assert.equal(origenDe('', 'juegosdesalon.cl'), 'directo');
+assert.equal(origenDe('https://juegosdesalon.cl/hangman/', 'juegosdesalon.cl'), 'directo', 'pasar de una página a otra no es un origen');
+assert.equal(origenDe('https://www.google.com/search?q=juegos', 'juegosdesalon.cl'), 'google_com', 'solo el dominio, nunca lo que se buscó');
+assert.equal(origenDe('https://l.instagram.com/?u=https%3A%2F%2Fjuegosdesalon.cl', 'x'), 'instagram_com');
+assert.equal(origenDe('https://lm.facebook.com/l.php?u=x', 'x'), 'facebook_com');
+assert.equal(origenDe('android-app://com.google.android.gm/', 'x'), 'com_google_android_gm');
+assert.equal(origenDe('no es una url', 'x'), 'directo');
+assert.equal(canalDe('?oficina&de=link'), 'link');
+assert.equal(canalDe('?utm_source=Instagram&utm_medium=bio'), 'instagram');
+assert.equal(canalDe('?de=<script>'), 'script', 'lo raro se limpia');
+assert.equal(canalDe(''), '');
+assert.equal(dispositivoDe({ ua: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) Mobile' }), 'celular');
+assert.equal(dispositivoDe({ ua: 'Mozilla/5.0 (Linux; Android 14) Mobile' }), 'celular');
+assert.equal(dispositivoDe({ ua: 'Mozilla/5.0 (Macintosh)', platform: 'MacIntel', touch: 5 }), 'tableta', 'un iPad que dice ser Mac');
+assert.equal(dispositivoDe({ ua: 'Mozilla/5.0 (Macintosh)', platform: 'MacIntel', touch: 0 }), 'computador');
+
+// Las claves que salen caben en las reglas de la base
+{
+  const reglas = JSON.parse(readFileSync(new URL('../../../../firebase/database.rules.json', import.meta.url), 'utf8')).rules.stats.$env.days.$day;
+  const patron = (cat, v) => new RegExp(/.*\.matches\(\/(.+?)\/\)$/.exec(reglas[cat][`$${v}`]['.write'])[1]);
+  for (const k of ['inicio', 'hangman', 'connections']) assert.match(k, patron('vistas', 'pagina'));
+  for (const k of ['google_com', 'directo', 'com_google_android_gm']) assert.match(k, patron('ref', 'ref'));
+  assert.match('link', patron('via', 'via'));
+  for (const k of ['nueva', 'vuelve']) assert.match(k, patron('retorno', 'retorno'));
+  for (const k of ['celular', 'tableta', 'computador']) assert.match(k, patron('disp', 'disp'));
+  for (const k of ['CL', 'desconocido']) assert.match(k, patron('pais', 'pais'));
+}
+
+// Una visita: la primera página cuenta la entrada y su origen; las siguientes, solo la vista
+{
+  const fp = { env: 'prod', co: 'CL' };
+  assert.deepEqual(visitChanges(fp, { pagina: 'cup', primera: false }), { 'vistas/cup': INC });
+  assert.deepEqual(visitChanges(fp, { pagina: 'cup', primera: true, origen: 'google_com', canal: 'link', vuelve: true, disp: 'celular' }),
+    { 'vistas/cup': INC, 'entradas/cup': INC, 'ref/google_com': INC, 'via/link': INC, 'retorno/vuelve': INC, 'disp/celular': INC, 'pais/CL': INC });
+  assert.deepEqual(visitChanges({ env: 'prod' }, { pagina: 'x', primera: true, disp: 'celular' })['pais/desconocido'], INC);
+}
+{
+  const almacen = () => { const m = new Map(); return { getItem: k => (m.has(k) ? m.get(k) : null), setItem: (k, v) => m.set(k, String(v)), removeItem: k => m.delete(k), m }; };
+  const sesion = almacen(), local = almacen();
+  const now = 20000 * DAY + 1000;
+  const ctx = (pathname, extra = {}) => ({ loc: { pathname, search: '', hostname: 'juegosdesalon.cl', ...extra.loc }, doc: { referrer: extra.ref ?? '' },
+    nav: { userAgent: 'Android Mobile' }, sesion, local, now });
+  const api = fakeApi();
+  // Llegó por una página puente, que dejó guardado el origen antes de redirigir
+  sesion.setItem(REF_KEY, 'https://www.instagram.com/');
+  await noteVisit(api, { env: 'prod', co: 'AR' }, ctx('/liars-dice/', { ref: 'https://juegosdesalon.cl/dudo/' }));
+  assert.equal(api.calls[0].path, 'stats/prod/days/20000');
+  assert.deepEqual(Object.keys(api.calls[0].changes).sort(), ['disp/celular', 'entradas/liars-dice', 'pais/AR', 'ref/instagram_com', 'retorno/nueva', 'vistas/liars-dice']);
+  assert.equal(sesion.getItem(REF_KEY), null, 'el origen guardado se usa una vez');
+  assert.equal(local.getItem(VINO_KEY), '1');
+  // Otra página de la misma visita: solo la vista
+  await noteVisit(api, { env: 'prod' }, ctx('/', { ref: 'https://juegosdesalon.cl/liars-dice/' }));
+  assert.deepEqual(api.calls[1].changes, { 'vistas/inicio': INC });
+  // Empezó una partida: suma una vez, en su página de entrada
+  await notePlayed(api, { env: 'prod' }, { sesion, now });
+  await notePlayed(api, { env: 'prod' }, { sesion, now });
+  assert.deepEqual(api.calls.slice(2).map(c => c.changes), [{ 'juegan/liars-dice': INC }], 'una visita juega una vez');
+  // Otra pestaña otro día: vuelve
+  sesion.m.clear();
+  await noteVisit(api, { env: 'prod' }, { ...ctx('/cup/'), loc: { pathname: '/cup/', search: '?oficina&de=link', hostname: 'juegosdesalon.cl' } });
+  assert.deepEqual(api.calls.at(-1).changes['retorno/vuelve'], INC);
+  assert.deepEqual(api.calls.at(-1).changes['via/link'], INC);
+  assert.deepEqual(api.calls.at(-1).changes['ref/directo'], INC);
+  // El panel no es tráfico
+  const antes = api.calls.length;
+  await noteVisit(api, { env: 'prod' }, ctx('/panel/'));
+  assert.equal(api.calls.length, antes);
+  // Sin almacenamiento (privado, bloqueado) igual cuenta, sin romper nada
+  const roto = { getItem() { throw new Error('x'); }, setItem() { throw new Error('x'); }, removeItem() { throw new Error('x'); } };
+  await noteVisit(fakeApi({ fail: true }), { env: 'prod' }, { ...ctx('/'), sesion: roto, local: roto });
+  assert.equal(sesion.getItem(VISITA_KEY), 'cup');
+}
+
+// Toda página con la que se entra al sitio cuenta su visita (D-208): un juego nuevo no puede olvidarlo
+{
+  const { readdirSync, existsSync } = await import('node:fs');
+  const raiz = new URL('../../../', import.meta.url);
+  const leer = r => readFileSync(new URL(r, raiz), 'utf8');
+  for (const d of readdirSync(raiz)) {
+    const g = `${d}/game.js`;
+    if (existsSync(new URL(g, raiz))) assert.match(leer(g), /\ntrackVisit\(\);/, `${g} no cuenta la visita (trackVisit)`);
+  }
+  assert.match(leer('index.html'), /trackVisit\(\)/, 'la portada no cuenta la visita');
+  assert.match(leer('labs/index.html'), /trackVisit\(\)/, 'el laboratorio no cuenta la visita');
+  assert.doesNotMatch(leer('panel/panel.js'), /trackVisit/, 'el panel no es tráfico');
 }
 
 console.log('stats.test.mjs: todo en verde');
