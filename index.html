@@ -117,6 +117,20 @@
     .filtros-cuenta[hidden] { display: none; }
     /* Una línea que se apaga en las puntas: acá terminan los filtros y empiezan los juegos */
     .filtros-fin { border: 0; height: 1px; margin: 12px 6% 4px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.28), transparent); }
+    /* Al bajar por la lista, los filtros se quedan pegados arriba: cambiar de tipo no obliga a
+       volver a subir. Sin fondo mientras están en su lugar; pegados, toman el del sitio. */
+    .filtros-barra {
+      position: sticky; top: var(--safe-top); z-index: 5;
+      margin: 0 -18px; padding: 8px 18px;
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+    .filtros-barra.pegada {
+      border-radius: 0 0 20px 20px;
+      background: rgba(21, 7, 38, 0.82); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12), 0 10px 24px rgba(0, 0, 0, 0.35);
+    }
+    /* La franja de la muesca también se tapa, para que las tarjetas no se vean pasar por ahí */
+    .filtros-barra.pegada::before { content: ''; position: absolute; left: 0; right: 0; bottom: 100%; height: var(--safe-top); background: inherit; }
     .link-btn { background: none; border: 0; color: var(--yellow); font: 900 0.9rem var(--font-body); text-decoration: underline; cursor: pointer; min-height: 44px; padding: 0 6px; }
     .game-card[hidden] { display: none; }
     /* La Copa es otra cosa que una partida: una semana con amigos. Su tarjeta lo dice con un
@@ -181,8 +195,11 @@
       <div class="azar-slot" id="azar-slot"></div>
     </header>
 
-    <section class="filtros" id="filtros"></section>
-    <p class="filtros-cuenta" id="filtros-cuenta" aria-live="polite" hidden></p>
+    <div class="filtros-marca" id="filtros-marca" aria-hidden="true"></div>
+    <div class="filtros-barra" id="filtros-barra">
+      <section class="filtros" id="filtros"></section>
+      <p class="filtros-cuenta" id="filtros-cuenta" aria-live="polite" hidden></p>
+    </div>
     <hr class="filtros-fin" aria-hidden="true">
     <section class="games" id="games" aria-label="Lista de juegos"></section>
 
@@ -287,6 +304,16 @@
         history.replaceState(history.state, '', url.pathname + url.search + url.hash);
       };
       aplicar(true);
+      // Pegados arriba (ver .filtros-barra): la marca invisible de su lugar de siempre dice si se
+      // pasó de largo. Al cambiar de tipo estando pegados, la lista vuelve a empezar justo debajo.
+      const barra = document.getElementById('filtros-barra');
+      const marca = document.getElementById('filtros-marca');
+      new IntersectionObserver(([e]) => barra.classList.toggle('pegada', !e.isIntersecting && e.boundingClientRect.top < 0)).observe(marca);
+      barra.addEventListener('click', e => {
+        if (!e.target.closest('button') || !barra.classList.contains('pegada')) return;
+        const tope = parseFloat(getComputedStyle(barra).top) || 0;
+        window.scrollTo({ top: marca.getBoundingClientRect().top + window.scrollY - tope });
+      });
       window.__portada = { get filtro() { return { ...filtro }; }, get visibles() { return tarjetas.filter(t => !t.card.hidden).map(t => t.g.id); } };
     } catch (e) { console.warn('filtros del menú:', e); }
 
