@@ -226,6 +226,14 @@ export function createLocalStore({ uid = null } = {}) {
       });
     },
 
+    /** El jugador de los rankings detrás de este jugador de la copa (D-211). */
+    async enlazar(code, pid, jid) {
+      return cambiar(db => {
+        const p = copa(db, code).players[pid];
+        if (p) p.j = jid;
+      });
+    },
+
     async ponerPais(code, pid, co) {
       return cambiar(db => {
         const p = copa(db, code).players[pid];

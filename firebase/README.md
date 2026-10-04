@@ -104,6 +104,27 @@ escribe si no existe, si venció (`hasta < now`) o si apunta a la misma copa, y 
 admin de esa copa y con `meta/alias` igual al alias; se borra solo por ese admin. `hasta` es el fin
 de la copa más 7 días.
 
+## Jugadores y rankings (`jugadores`, `jugadorKeys`, `jugadorSeats`, `jugadorNombres`, `records`, `torneoPodios`, D-211)
+
+El mismo mecanismo que La Copa, para toda la app:
+
+- `jugadores/<jid>` = `{ n, at, juegos: { <juego>: { n, at } } }`. Se lee sin cuenta por jid (no se
+  lista). Se crea una vez, con el asiento en la misma escritura; `juegos/<juego>/n` solo sube de a uno.
+- `jugadorKeys/<jid>`: sha256 del PIN. Nadie lo lee. Se crea con el jugador; lo cambia quien está sentado.
+- `jugadorSeats/<jid>/<uid>`: el celular `uid` escribe por `jid` si trae el hash de `jugadorKeys`.
+  Quien está sentado puede reemplazar todos los asientos (cambiar el PIN saca a los demás).
+- `jugadorNombres/<clave>/<jid>` = `true`: quiénes usan ese nombre. Se lee por clave, para entrar.
+- `records/<tabla>/<período>/<jid>` = `{ s, ms, k, at, n }`, con `.indexOn: k`. Se lee sin cuenta.
+  Escribe solo el jugador sentado, con `k` recalculado, `n` igual a su nombre y `k` menor que el
+  guardado. La tabla y el período se validan por forma, sin nombrar juegos (C-16).
+- `torneoPodios/<código>`: el podio de una copa terminada, con `.indexOn: end`. Se lee sin cuenta.
+  Lo escribe una vez alguien sentado en esa copa (`por`), con la copa terminada, sin `lab`, y con
+  los nombres y `j` que la copa tiene.
+- `torneos/<código>/players/<pid>/j`: el jugador de los rankings detrás del de la copa. Lo escribe
+  quien está sentado como los dos.
+
+El dueño (su UID) puede escribir y borrar en todas estas ramas, para moderar.
+
 ## Reportes (`feedback`)
 
 El botón 🐞 de La Copa (D-101, D-104) escribe en `feedback/<id>` **por REST y sin cuenta**:

@@ -28,6 +28,9 @@ import { JUEGOS } from './games/index.js';
 import { audienciaDe } from './games/audiencia.js';
 import { desglose } from './desglose.js';
 import { planilla } from './planilla.js';
+import { bloqueJugador, bloqueRanking, avisoPartida, bloqueCampeones } from '../assets/js/ranking.js';
+import { jugador, leerYo } from '../assets/js/jugador.js';
+import { podioDe } from '../assets/js/records.js';
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
 trackVisit();
@@ -45,6 +48,8 @@ const RONDAS_FINAL = rondasFinal(LANG);
 const palabrasDe = meta => meta?.lang || 'es';
 /** "3º", o "#3" en inglés. */
 const ord = n => fmt(T.ord, { n });
+/** Los textos de los rankings, compartidos con /records/ (D-211). */
+const RK = (COMMON[LANG] || COMMON.es).rk;
 const fmt = (s, vars = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (vars[k] !== undefined ? vars[k] : `{${k}}`));
 
 /* ------------------------------------------------------------------ */
@@ -194,6 +199,8 @@ function portada() {
     el('details', { class: 'panel' },
       el('summary', {}, T.howTitle),
       el('ol', { class: 'como' }, T.howItems.map(x => el('li', {}, x)))),
+    // Los campeones de las copas terminadas (D-211): al final, para no empujar lo de crear o entrar
+    bloqueCampeones(),
   );
 }
 
@@ -389,7 +396,7 @@ function crearCopa() {
   const inicio = opciones([{ valor: 0, titulo: T.startToday }, { valor: 1, titulo: T.startTomorrow }, { valor: 'otra', titulo: T.startOther }],
     v => { otraFecha.nodo.hidden = v !== 'otra'; if (v === 'otra') otraFecha.input.focus(); });
   inicio.nodo.classList.add('tres');
-  const yo = campo(T.fYou, { placeholder: T.fYouPh, maxlength: '20', value: cuenta.nombre.get() }, { contador: true });
+  const yo = campo(T.fYou, { placeholder: T.fYouPh, maxlength: '20', value: cuenta.nombre.get() || leerYo()?.n || '' }, { contador: true });
   const pin1 = campoPin(T.fPin), pin2 = campoPin(T.fPin2);
   const boton = el('button', { class: 'btn btn--yellow', id: 'btn-crear-go' }, T.createGo);
   // El link propio, opcional (D-121): se ve cómo queda y si está libre mientras se escribe
@@ -507,18 +514,47 @@ async function abrirCopa(code, { recienCreada = false, pantalla = null } = {}) {
       const pid = cuenta.quien(code);
       if (pid && L.players?.[pid]) {
         S.yo = pid;
+        vincularJugador(L);
         cuenta.recordar(code, pid, { nombre: L.players[pid].name, copa: L.meta.name, fin: L.meta.end });
         // Recién creada, el admin parte en Administrar, con la guía de la primera vez (D-110)
         if (recienCreada) { S.bienvenida = true; admin(); } else if (pantalla === 'admin') admin(); else tablero();
       } else entrar();
       return;
     }
+    vincularJugador(L);
     // Lo que llega mientras se mira algo que depende de la copa, se redibuja
     if (S.pantalla === 'tablero') tablero();
     else if (S.pantalla === 'admin') admin();
     else if (S.pantalla === 'resultado' && S.verDia) resultado(S.verDia);
     else if (S.pantalla === 'entrar') entrar({ mantener: true });
   }, e => espera(errorDe(e), { error: true, reintentar: () => location.reload() }));
+}
+
+/**
+ * La copa y los rankings (D-211). Si en este celular hay un jugador, el de la copa queda
+ * enlazado a él; los de la copa que también lo están pasan a ser sus amigos; y cuando la copa
+ * termina, su podio se guarda una vez para el medallero. Todo es de adorno: nunca frena la copa.
+ */
+let podioGuardado = false;
+async function vincularJugador(Lc) {
+  try {
+    if (!Lc?.meta || !S.yo || !Lc.players?.[S.yo]) return;
+    const J = await jugador();
+    J.conocer(Object.fromEntries(Object.values(Lc.players).filter(p => p?.j).map(p => [p.j, p.name])));
+    const yo = leerYo();
+    if (yo && Lc.players[S.yo].j !== yo.jid && S.enlazado !== yo.jid) {
+      S.enlazado = yo.jid;
+      await store.enlazar(S.code, S.yo, yo.jid);
+    }
+    if (!podioGuardado && !Lc.meta.lab && terminada(Lc.meta, ahora()) && activos(Lc).length >= 2) {
+      podioGuardado = true;
+      const fin = Lc.meta.end;
+      await J.guardarPodio(S.code, {
+        name: Lc.meta.name, end: Math.min(fin, ahora()), de: activos(Lc).length, dias: Lc.meta.days, por: S.yo,
+        p: podioDe(tabla(Lc, null, fin), Lc.players),
+      });
+    }
+  } catch (_) { /* sin red o sin permiso: la copa sigue igual */ }
 }
 
 const L = () => S.L;
@@ -1823,6 +1859,8 @@ async function enviar(d, fin, envio = null) {
     return;
   }
   cuenta.intento.borrar(S.code, d, S.yo);
+  // El puntaje del día cuenta para el ranking "En copa" de ese juego (D-211). No se espera.
+  if (leerYo() && !L().meta.lab) jugador().then(J => J.anotar({ juego: juegoDelDia(L().meta, d), variante: 'copa', s: fin.s, ms: fin.ms })).catch(() => {});
   SFX.win(); vibrate([30, 50, 30]);
   // La copa llega por el oyente; si todavía no trae el resultado, se dibuja con el propio
   const Lc = L();
@@ -1974,9 +2012,19 @@ function practica(id) {
     mod.ensayo && LABS ? el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-ensayo', onClick: () => { SFX.tap(); ensayoPractica(id, semilla); } }, `🧪 ${T.tryFirst}`) : null,
     // Suelto no hace falta decir que no cuenta para una copa: no hay copa a la vista
     LABS ? el('p', { class: 'muted center' }, T.practiceHint) : null,
+    // Entrar es opcional y se ofrece antes de jugar (D-211): sin jugador se juega igual
+    rankea(id) ? bloqueJugador({ alTocar: () => SFX.tap() }) : null,
     el('button', { class: 'btn btn--yellow', id: 'btn-empezar', onClick: () => { SFX.tap(); jugarPractica(id, semilla); } }, `${J.emoji} ${T.start}`),
-    volverDePractica()));
+    volverDePractica(),
+    rankea(id) ? bloqueRanking({ juego: id, titulo: fmt(RK.titleOf, { game: J.nombre }), pestanas: ['semana', 'siempre', 'amigos', 'copa'], alTocar: () => SFX.tap() }) : null));
 }
+
+/**
+ * ¿Esta partida cuenta para los rankings (D-211)? Los juegos sueltos de la portada, jugados como
+ * cualquiera los juega: sin el laboratorio y sin una semilla elegida, que dejaría repetir el mismo
+ * tablero hasta sacarle el máximo.
+ */
+const rankea = id => !LABS && !SEMILLA && !!gameById(id)?.suelto;
 
 function jugarPractica(id, semilla) {
   // Suelto, todo va en el idioma de quien juega: no hay con quién jugar lo mismo (D-170)
@@ -2060,6 +2108,21 @@ function resultadoEnsayo(id, r, volver) {
 
 function resultadoPractica(id, semilla, r) {
   const J = JUEGOS_COPA[id];
+  // Los rankings (D-211): se anota si hay jugador; si entra recién aquí, esta partida igual cuenta
+  const cuentaRk = rankea(id);
+  const ranking = cuentaRk ? bloqueRanking({ juego: id, titulo: fmt(RK.titleOf, { game: J.nombre }), pestanas: ['semana', 'siempre', 'amigos'], alTocar: () => SFX.tap() }) : null;
+  const aviso = el('div', {});
+  let anotada = false;
+  const anotar = () => {
+    if (!cuentaRk || anotada || !leerYo()) return;
+    anotada = true;
+    aviso.replaceChildren(avisoPartida({ juego: id, s: r.s, ms: r.ms, alAnotar: () => ranking?.recargar() }));
+  };
+  if (cuentaRk) {
+    // Plegado: los botones del final tienen que verse sin desplazar (C-8)
+    if (leerYo()) anotar(); else aviso.append(bloqueJugador({ alTocar: () => SFX.tap() }));
+    jugador().then(Jg => { const off = Jg.escuchar(() => { if (S.pantalla !== 'resultado') { off(); return; } anotar(); }); }).catch(() => {});
+  }
   trackFinish({ detalle: `${r.s}/100${r.ms ? ` · ${mmss(r.ms)}` : ''}` });   // cómo salió, para el panel (D-210)
   mostrar('resultado');
   SFX.win();
@@ -2073,6 +2136,7 @@ function resultadoPractica(id, semilla, r) {
       el('p', { class: 'muted', style: 'margin:0' }, T.yourScore),
       el('div', { class: 'score-big' }, r.resumen || String(r.s)),
       ...bajoElPuntaje(r.t, r.ms)),
+    aviso,
     explicacion(J, { s: r.s, ms: r.ms, det: r.det, copa: false }),
     LABS ? el('p', { class: 'muted center' }, fmt(T.practiceSeed, { semilla })) : null,
     // Suelto se comparte como cualquier juego jugado solo, con su página (D-162, D-165)
@@ -2080,7 +2144,8 @@ function resultadoPractica(id, semilla, r) {
     el('a', { class: 'btn btn--yellow', id: 'btn-otra', href: otra }, T.practiceAgain),
     LABS ? el('a', { class: 'btn btn--cyan btn--sm', id: 'btn-repetir', href: `${otra}&semilla=${semilla}` }, T.practiceSame) : null,
     botonReporte({ juego: id, semilla, puntaje: r.s, resumen: r.resumen }),
-    volverDePractica());
+    volverDePractica(),
+    ranking);
 }
 
 /* ------------------------------------------------------------------ */
