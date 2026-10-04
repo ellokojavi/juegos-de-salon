@@ -74,7 +74,13 @@ las pantallas de `tools/e2e/mirar.mjs` a 320 px, y después con los textos alema
 Los pasos que este documento dejaba anotados, y cómo quedaron:
 
 - Hecho: sacarlo de `EN_LABS`, la puerta `/de/` con su tarjeta (`og.mjs` y `og/tarjeta.html`), el README, C-3 en CANONES, el CONTRIBUTING y el guion `idioma-por-url.mjs` (prueba `/de/` y el puente de `/labs/de/`).
-- Pendiente: las imágenes que se comparten (punto 4) y los guiones de La Copa y de Línea de Tiempo que solo recorren inglés y portugués (punto 6); el video promocional sigue diciendo tres idiomas.
+- Revisado el 4 de octubre: **las imágenes que se comparten** (punto 4) caben en alemán. La tabla de
+  La Copa (a mitad de semana y la final de 10 jugadores con podio) y los resultados, con el
+  minijuego de nombre más largo ("Bullen und Kühe: Zahl knacken"), se ven bien y las diéresis no se
+  cortan. La leyenda completa de la tabla, el caso más ancho y que ninguna demo muestra, mide 810 px
+  de 1080 en alemán (en inglés, 858).
+- Pendiente: los guiones de La Copa y de Línea de Tiempo que solo recorren inglés y portugués
+  (punto 6), y el video promocional, que sigue diciendo tres idiomas.
 
 La lista original:
 
