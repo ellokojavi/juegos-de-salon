@@ -3,8 +3,9 @@
 Ejecutar: python3 tools/release/readme.test.py
 
 Prueba la parte de `tools/release/readme.py` que decide si un cambio cuenta o no: el estampado de
-versión toca los seis `index.html` en cada publicación (C-11) y no cambia ninguna pantalla,
-así que no puede envejecer las capturas (D-51).
+versión tocaba todos los `index.html` en cada publicación (C-11) y no cambia ninguna pantalla,
+así que no puede envejecer las capturas (D-51). Desde D-205 la versión ya no está en git, pero los
+commits viejos que miran las capturas siguen trayendo esos estampados.
 """
 import importlib.util, pathlib, sys
 
@@ -25,6 +26,15 @@ CASOS = [
     ('el import map entero, con varios módulos',
      '-{"a.js": "a.js?v=0.25.2", "b.js": "b.js?v=0.25.2"}\n'
      '+{"a.js": "a.js?v=0.25.3", "b.js": "b.js?v=0.25.3"}', True),
+    # El día que la versión salió de git (D-205): el import map se fue entero y las marcas, sin número
+    ('la versión sacada de las páginas',
+     '-  <script type="importmap" id="importmap">{"imports": {"./a.js": "./a.js?v=0.98.1"}}</script>\n'
+     '-  <link rel="stylesheet" href="style.css?v=0.98.1">\n'
+     '+  <link rel="stylesheet" href="style.css">\n'
+     '-  <meta property="og:image" content="https://x.cl/assets/og/menu.jpg?v=0.98.1">\n'
+     '+  <meta property="og:image" content="https://x.cl/assets/og/menu.jpg">\n'
+     '-  <p class="pie">v0.98.1 · hecho con cariño</p>\n'
+     '+  <p class="pie">v0.0.0 · hecho con cariño</p>', True),
     # Lo que sí es un cambio, aunque la línea lleve un ?v= al lado
     ('un módulo nuevo en el import map',
      '-{"a.js": "a.js?v=0.25.2"}\n'
@@ -45,7 +55,7 @@ for nombre, diff, esperado in CASOS:
         fallas += 1
         print(f'  ✗ {nombre}: devolvió {obtenido} y se esperaba {esperado}')
 
-# La marca reconoce las dos formas que estampa set-version.py, y ninguna otra versión suelta
+# La marca reconoce las dos formas que estampaba set-version.py, y ninguna otra versión suelta
 assert readme.ESTAMPA.search('href="a.css?v=1.2.3"'), 'no reconoce ?v='
 assert readme.ESTAMPA.search('v0.25.2 · Juegos de Salón'), 'no reconoce la del pie'
 assert not readme.ESTAMPA.search('la versión 1.2.3 del juego'), 'reconoce de más'

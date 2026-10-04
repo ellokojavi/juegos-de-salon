@@ -42,7 +42,14 @@ jobs:
           done
           exit $fallas
 
-      # Lo mismo que revisa set-version.py antes de estampar (C-11, C-13).
+      # Lo que publicar.yml hace con la versión, en una copia que se tira (D-205): si el estampado
+      # se rompe, se sabe en el PR y no al publicar
+      - name: Estampado de la versión
+        run: |
+          cp -r public "$RUNNER_TEMP/sitio"
+          python3 tools/release/set-version.py --sitio "$RUNNER_TEMP/sitio" --commit "$GITHUB_SHA"
+
+      # El README y las tarjetas, al día: frenan el PR y la publicación (C-11, C-13, D-181)
       - name: README al día
         run: python3 tools/release/readme.py revisar
 

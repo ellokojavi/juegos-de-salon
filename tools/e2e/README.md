@@ -44,6 +44,11 @@ El check entero tarda lo que su job más lento, así que los guiones largos se r
 `cup-games/idiomas.mjs` en un job por juego. Cada parte le llega al guion como `--parte <nombre>`;
 sin parte, el guion corre entero (así lo corren `readme.py capturas` y quien lo prueba a mano).
 
+Un PR que solo trae documentación (`docs/`, `marketing/`, `.claude/` y los `.md` fuera de `public/`
+y de esta carpeta) no corre ningún guion: `ci.mjs --lista --cambios <archivo>` sale vacía, y
+[`cambios.mjs`](cambios.mjs) decide qué cuenta como documentación (D-205). Si las pruebas salen
+en rojo en `main`, el job `avisar` abre un issue "main en rojo: Punta a punta".
+
 ```bash
 node tools/e2e/ci.mjs              # todos los de CI, uno tras otro, con resumen
 node tools/e2e/ci.mjs --lista      # cuáles son (con sus partes)

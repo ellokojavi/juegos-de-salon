@@ -3099,3 +3099,33 @@ usabilidad y las imágenes. Medido en GitHub: `Pruebas` tarda 25 s y `Publicar` 
 revisión de usabilidad de cada PR jugaba la copa entera aunque el PR fuera de otro juego.
 **Consecuencias:** Una parte nueva de un guion largo se suma a `PARTES`; las partes tienen que
 poder correr solas, sin depender del estado que dejó la anterior.
+
+## D-205 · La versión se estampa al publicar, no en git
+**Fecha:** 2026-10-04 · **Estado:** vigente; reemplaza el estampado a mano de C-11 y amplía D-72, D-181, D-193 y D-204
+**Decisión:** Las páginas de `public/` en git ya no llevan versión: ni import map, ni `?v=` en las
+hojas de estilo y las imágenes de las tarjetas, y el pie del menú dice `v0.0.0`.
+- **El número es la primera entrada de `CHANGELOG.md`** (`## X.Y.Z — fecha`), que se escribe al
+  fusionar, como antes. `tools/release/version.mjs` y `set-version.py --version` lo leen de ahí.
+- **`publicar.yml` estampa la copia que sube** (`set-version.py --sitio _site`), con la clave de
+  caché `X.Y.Z-<commit>`: cada publicación invalida la caché aunque alguien fusione sin subir la
+  versión. Después comprueba que el sitio en línea sirva esa clave (C-11), hasta 5 minutos.
+  `pruebas.yml` estampa una copia que se tira en cada PR, para que un estampado roto se vea ahí.
+- **El README y las tarjetas atrasados los frena el check `pruebas`** de cada PR y de cada
+  publicación, ya no `set-version.py`.
+- **Un PR que solo trae documentación** (`docs/`, `marketing/`, `.claude/` y los `.md` fuera de
+  `public/` y `tools/e2e/`) **no corre las pruebas de punta a punta**: la lista de `ci.mjs --lista
+  --cambios` sale vacía (`tools/e2e/cambios.mjs`). El check queda en verde en segundos.
+- **Si `Punta a punta` sale en rojo en `main`**, el job `avisar` abre un issue "main en rojo: Punta
+  a punta" con los guiones que fallaron y el link a la corrida, o comenta el que ya esté abierto.
+  La publicación no lo espera.
+**Por qué:** Pedido del dueño, para publicar más rápido. Cada estampado reescribía unos 55
+archivos, así que dos PR abiertos siempre chocaban y el segundo tenía que traer `main`,
+reestampar y correr CI de nuevo (pasó en #172 y #175 el mismo día), aunque `main` no exige estar
+al día (solo exige el check `pruebas`). Sin la versión en git, chocan solo en la línea del
+CHANGELOG. Y como ya no se trae `main` a cada PR, lo fusionado se prueba de verdad recién en
+`main`: por eso esa corrida ahora avisa.
+**Consecuencias:** Para mirar el sitio estampado en local, se estampa una copia
+(`set-version.py --sitio /tmp/sitio`); `public/` no se estampa nunca. Sin estampar, las
+estadísticas de una prueba local salen sin versión (`versionOf` no encuentra el import map), como
+ya pasaba en `dev`. Las capturas no envejecen por el commit que sacó la versión: `readme.py` no
+cuenta la línea del import map como cambio.

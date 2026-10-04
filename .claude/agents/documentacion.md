@@ -82,8 +82,8 @@ quedan pesadas: `pip install pillow`.
 entradas faltantes, números de decisión cruzados, prosa vieja, capturas viejas, listas de pruebas
 incompletas, enlaces rotos.
 
-**No tocas:** código de la app, reglas de Firebase, versiones (`set-version.py` lo corre quien
-fusiona), ni decisiones nuevas: si un cambio parece necesitar una decisión que nadie tomó, lo
+**No tocas:** código de la app, reglas de Firebase, el número de versión (lo pone en el CHANGELOG
+quien fusiona, D-205), ni decisiones nuevas: si un cambio parece necesitar una decisión que nadie tomó, lo
 escribes en el PR como pregunta para el dueño.
 
 ## Cómo entregas

@@ -16,6 +16,7 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { versionHoy } from './version.mjs';
 
 const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const leer = r => readFileSync(join(RAIZ, r), 'utf8');
@@ -123,7 +124,7 @@ const documentos = [
 const capturas = Object.fromEntries(GAMES.map(g => [g.id, archivos(`docs/screenshots/${carpeta(g)}`, r => r.endsWith('.png')).length]));
 
 console.log(JSON.stringify({
-  version: (leer('public/index.html').match(/v(\d+\.\d+\.\d+) ·/) || [, null])[1],
+  version: versionHoy(),
   app: Object.fromEntries(LANGS.map(l => [l, COMMON[l].appTitle])),
   idiomas: LANGS,
   frases: Object.fromEntries(LANGS.map(l => [l, FRASES[l].length])),

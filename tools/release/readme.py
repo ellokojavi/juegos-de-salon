@@ -2,7 +2,7 @@
 """
 El README, al día: bloques generados del código, capturas rehechas por el navegador.
 
-  python3 tools/release/readme.py revisar      ¿El README quedó viejo? (lo corre set-version.py)
+  python3 tools/release/readme.py revisar      ¿El README quedó viejo? (lo corre el check pruebas)
   python3 tools/release/readme.py actualizar   Reescribe los bloques generados del README
   python3 tools/release/readme.py capturas [seccion] [--sin-red]
                                        Rehace las capturas con Chrome headless
@@ -29,9 +29,9 @@ capturas de pantallas que cambian. Nada de eso avisa cuando queda viejo. Acá:
      copia los PNG a docs/screenshots/. Las que dependen de una sala de Firebase
      van marcadas `"red": true` y se saltan con --sin-red.
 
-El gancho para que esto pase siempre y no cuando alguien se acuerde: `set-version.py`
-—obligatorio antes de cada publicación (C-11)— corre `revisar` y se planta si el
-README quedó atrás.
+El gancho para que esto pase siempre y no cuando alguien se acuerde: el check `pruebas`
+corre `revisar` en cada PR y antes de cada publicación (C-11, D-205), y queda en rojo si
+el README quedó atrás.
 """
 import json, os, re, shutil, socket, subprocess, sys, tempfile, time, pathlib
 from concurrent.futures import ThreadPoolExecutor
@@ -285,9 +285,12 @@ SECCIONES = {
 
 COMMITS_MIRADOS = 40   # tope de commits que se revisan hacia atrás buscando uno de verdad
 
-#: Las marcas que estampa set-version.py: `?v=0.25.2` en el import map y las hojas de
-#: estilo, y `v0.25.2 ·` en el pie del menú.
+#: Las marcas que estampaba set-version.py en git hasta D-205: `?v=0.25.2` en el import map, las
+#: hojas de estilo y las tarjetas, y `v0.25.2 ·` en el pie del menú. Hoy solo se estampa la copia
+#: que se publica, pero las capturas miran commits viejos.
 ESTAMPA = re.compile(r'\?v=\d+\.\d+\.\d+|v\d+\.\d+\.\d+ ·')
+#: La línea entera del import map: el commit que sacó la versión de git la borró (D-205)
+IMPORT_MAP = re.compile(r'^\s*<script type="importmap" id="importmap">.*</script>\s*$')
 
 
 def git(*args, rutas=()):
@@ -301,18 +304,19 @@ def solo_estampa(diff):
     ¿Ese diff no cambia nada más que la versión estampada?
 
     Se comparan las líneas quitadas contra las puestas con el número de versión borrado: si
-    quedan iguales, lo único que pasó fue una publicación. No basta con "todas las líneas
-    tienen un ?v=", porque el import map es una línea sola y enorme que también cambia
-    cuando se agrega un módulo, y eso sí es un cambio.
+    quedan iguales, lo único que pasó fue una publicación. La línea del import map no cuenta:
+    es maquinaria de la versión, y el módulo nuevo que la cambia se ve en su propio archivo.
     """
     mas, menos = [], []
     for linea in diff.splitlines():
         if linea.startswith(('+++', '---')):
             continue
+        if IMPORT_MAP.match(linea[1:]):
+            continue
         if linea.startswith('+'):
-            mas.append(ESTAMPA.sub('V', linea[1:]))
+            mas.append(ESTAMPA.sub('', linea[1:]))
         elif linea.startswith('-'):
-            menos.append(ESTAMPA.sub('V', linea[1:]))
+            menos.append(ESTAMPA.sub('', linea[1:]))
     return bool(mas or menos) and sorted(mas) == sorted(menos)
 
 
@@ -320,8 +324,8 @@ def git_fecha(rutas):
     """
     Cuándo cambió de verdad por última vez alguno de esos caminos (0 si nunca).
 
-    El estampado de versión no cuenta: `set-version.py` reescribe los seis `index.html` en
-    cada publicación (C-11) y eso no cambia ninguna pantalla. Sin esta salvedad, publicar
+    El estampado de versión no cuenta: hasta D-205 `set-version.py` reescribía todos los
+    `index.html` en cada publicación (C-11) y eso no cambia ninguna pantalla. Sin esta salvedad, publicar
     dejaba "más viejas que el código" a las capturas de todos los juegos, incluidos los que
     nadie tocó, y el aviso dejaba de querer decir algo (D-51).
     """
@@ -369,7 +373,7 @@ def cmd_revisar():
     else:
         for ruta, antes, ahora in diferencias(json.loads(SELLO.read_text()), H):
             raiz = ruta.split('.')[0]
-            if raiz == 'version':  # la versión la estampa set-version.py; el README no la cita
+            if raiz == 'version':  # la versión es la del CHANGELOG (D-205); el README no la cita
                 continue
             donde = SECCIONES.get(raiz, 'el README')
             problemas.append(f'{contar(ruta, antes, ahora)}\n'
