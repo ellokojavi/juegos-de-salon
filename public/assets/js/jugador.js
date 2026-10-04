@@ -1,5 +1,5 @@
 /**
- * El jugador de este celular y sus récords (D-211). Entrar es opcional: sin jugador todo se
+ * El jugador de este celular y sus récords (D-212). Entrar es opcional: sin jugador todo se
  * juega igual que siempre y nada sale del celular; con jugador, el mejor puntaje de cada juego
  * va a los rankings y se cuentan sus partidas.
  *
@@ -65,7 +65,7 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
   const quedar = (jid, n) => {
     escribir(KEY, { jid, n });
     avisar();
-    // Lo que ya tenía en el servidor, para que el Todoterreno sume desde ahí (D-211)
+    // Lo que ya tenía en el servidor, para que el Todoterreno sume desde ahí (D-212)
     sincronizar().catch(() => {});
     return { jid, n };
   };

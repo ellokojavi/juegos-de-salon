@@ -126,7 +126,7 @@ export const COMMON = {
     shareSoloImage: '🤔 ¿Me ganas?',
     shareCopied: '¡Copiado! Pégalo en el chat.',
     shareDownloaded: 'La imagen se descargó y el texto quedó copiado.',
-    // Los rankings y el jugador (D-211): nombre y PIN, como en La Copa, pero para todos los juegos
+    // Los rankings y el jugador (D-212): nombre y PIN, como en La Copa, pero para todos los juegos
     rk: {
       title: 'Ranking', titleOf: 'Ranking de {game}',
       week: 'Semana', always: 'Siempre', friends: 'Amigos', cup: 'En copa',

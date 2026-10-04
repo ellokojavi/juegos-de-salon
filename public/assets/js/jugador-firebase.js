@@ -1,5 +1,5 @@
 /**
- * El almacén de los jugadores y sus récords en Firebase Realtime Database (D-211), con acceso
+ * El almacén de los jugadores y sus récords en Firebase Realtime Database (D-212), con acceso
  * anónimo, como La Copa (D-96). Misma interfaz que `jugador-local.js`; las reglas están en
  * firebase/database.rules.json.
  */

@@ -104,7 +104,7 @@ escribe si no existe, si venció (`hasta < now`) o si apunta a la misma copa, y 
 admin de esa copa y con `meta/alias` igual al alias; se borra solo por ese admin. `hasta` es el fin
 de la copa más 7 días.
 
-## Jugadores y rankings (`jugadores`, `jugadorKeys`, `jugadorSeats`, `jugadorNombres`, `records`, `torneoPodios`, D-211)
+## Jugadores y rankings (`jugadores`, `jugadorKeys`, `jugadorSeats`, `jugadorNombres`, `records`, `torneoPodios`, D-212)
 
 El mismo mecanismo que La Copa, para toda la app:
 

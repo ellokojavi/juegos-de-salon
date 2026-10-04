@@ -1,5 +1,5 @@
 /**
- * El almacén de prueba de los jugadores y sus récords (D-211): la base de datos vive en el
+ * El almacén de prueba de los jugadores y sus récords (D-212): la base de datos vive en el
  * `localStorage` y hace cumplir lo mismo que las reglas de Firebase para estas ramas. Lo usan
  * las pruebas con node, los guiones de punta a punta y el sitio servido en localhost, para que
  * nada de eso escriba en los rankings de verdad.
