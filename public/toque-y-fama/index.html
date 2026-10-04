@@ -28,7 +28,7 @@
   <meta name="twitter:image" content="https://juegosdesalon.cl/assets/og/toque-y-fama.jpg">
   <meta name="twitter:image:alt" content="Toque y Fama: Adivina el número secreto con toques y famas.">
   <!-- /generado -->
-  <script>location.replace('../bulls-and-cows/' + location.search + location.hash);</script>
+  <script>try { if (sessionStorage.getItem('juegos-de-salon:ref') === null) sessionStorage.setItem('juegos-de-salon:ref', document.referrer); } catch (e) {} location.replace('../bulls-and-cows/' + location.search + location.hash);</script>
   <noscript><meta http-equiv="refresh" content="0; url=../bulls-and-cows/"></noscript>
 </head>
 <body>

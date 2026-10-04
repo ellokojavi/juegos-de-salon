@@ -48,6 +48,7 @@
     <p class="lead center" style="margin-top:40vh">Wir bringen dich zu juegosdesalon.cl auf Deutsch …</p>
     <p class="center"><a class="btn btn--cyan btn--sm" href="../?lang=de">juegosdesalon.cl</a></p>
   </main>
-  <script>location.replace('../?lang=de');</script>
+  <!-- Guarda de dónde llegó antes de irse: si no, la portada cree que vino de esta misma página (D-208) -->
+  <script>try { if (sessionStorage.getItem('juegos-de-salon:ref') === null) sessionStorage.setItem('juegos-de-salon:ref', document.referrer); } catch (e) {} location.replace('../?lang=de');</script>
 </body>
 </html>
