@@ -6,9 +6,9 @@ const urls = async () => b.evaluate(`performance.getEntriesByType('resource').ma
 await b.go(`${SITIO}/`); await b.evaluate(`localStorage.clear(); 1`); await b.go(`${SITIO}/`);
 console.log('menú → tarjetas:', await b.evaluate(`document.querySelectorAll('.game-card').length`), '| recursos:', JSON.stringify(await urls()));
 await b.shot('menu');
-await b.go(`${SITIO}/cuarto-rey/`);
+await b.go(`${SITIO}/fourth-king/`);
 console.log('cuarto-rey → reglas listadas:', await b.evaluate(`document.querySelectorAll('#rules-list li').length`), '| recursos:', JSON.stringify(await urls()));
-await b.go(`${SITIO}/toque-y-fama/`);
+await b.go(`${SITIO}/bulls-and-cows/`);
 console.log('toque-y-fama → modos:', await b.evaluate(`document.querySelectorAll('.mode').length`), '| recursos:', JSON.stringify(await urls()));
 // modo online carga firebase.js por import() dinámico: debe salir versionado
 await b.evaluate(`document.querySelectorAll('.mode')[1].click(); 1`); await sleep(300);

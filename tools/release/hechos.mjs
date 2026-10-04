@@ -1,0 +1,139 @@
+/**
+ * Hoja de hechos de la app: lo que el README afirma, leído del código real.
+ *
+ *   node tools/release/hechos.mjs            imprime el JSON
+ *
+ * No inventa nada ni describe: solo junta los datos que el README cuenta
+ * (juegos, modos, temáticas, idiomas, módulos, tests, documentos, capturas)
+ * importando los módulos de verdad. De acá
+ * salen los bloques generados del README y la comparación que hace
+ * `tools/release/readme.py revisar` para avisar que un cambio dejó el texto viejo.
+ *
+ * Regla de qué entra acá: un dato que, si cambia, obliga a mirar el README.
+ * Los textos de ayuda y las bajadas quedan fuera a propósito: cambian seguido
+ * y no se citan en el README, y un soplón que grita por todo no lo mira nadie.
+ */
+import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
+
+const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+const leer = r => readFileSync(join(RAIZ, r), 'utf8');
+const hay = r => { try { statSync(join(RAIZ, r)); return true; } catch { return false; } };
+
+const IGNORA = new Set(['.git', '.claude', 'node_modules', 'arte-original']);
+function archivos(dir = '', filtro = () => true) {
+  const out = [];
+  // Un juego recién agregado todavía no tiene carpeta de capturas: eso es cero capturas,
+  // no una falla de la herramienta.
+  if (!hay(dir)) return out;
+  for (const nombre of readdirSync(join(RAIZ, dir))) {
+    if (nombre.startsWith('.') || IGNORA.has(nombre)) continue;
+    const rel = dir ? `${dir}/${nombre}` : nombre;
+    if (statSync(join(RAIZ, rel)).isDirectory()) out.push(...archivos(rel, filtro));
+    else if (filtro(rel)) out.push(rel);
+  }
+  return out.sort();
+}
+
+// ------------------------------------------------------------------ juegos
+
+const { GAMES, SUELTOS } = await import(join(RAIZ, 'public/assets/js/games.js'));
+const { DECKS } = await import(join(RAIZ, 'public/timeline/decks/index.js'));
+const { LANGS, COMMON } = await import(join(RAIZ, 'public/assets/js/i18n.js'));
+const { FRASES } = await import(join(RAIZ, 'public/assets/js/frases.js'));
+
+/** El estado publicado del juego, según la cabecera de su especificación. */
+function estado(g) {
+  const ruta = `docs/games/${carpeta(g)}.md`;
+  if (!hay(ruta)) return null;
+  const cabecera = leer(ruta).split('\n').slice(0, 6).join(' ');
+  const m = cabecera.match(/\(v(\d+\.\d+)[^)]*\)/) || cabecera.match(/\*\*Versión:\*\*\s*(\d+\.\d+)/);
+  return m ? `v${m[1]}` : null;
+}
+
+/** Los modos de juego: las claves modeX que tienen su modeXHint al lado.
+    Van en los dos idiomas porque el README es en inglés y la tabla de juegos sale de acá (D-78). */
+function modos(L, EN) {
+  return Object.keys(L).filter(k => /^mode[A-Z]/.test(k) && L[k + 'Hint'] !== undefined)
+    .map(k => ({ clave: k, es: L[k], en: EN[k] || L[k] }));
+}
+
+/** Las variantes de un juego: claves modeX sin ayuda propia (el reparto de Línea de Tiempo). */
+function variantes(L, EN) {
+  return Object.keys(L).filter(k => /^mode[A-Z]/.test(k) && !k.endsWith('Hint') && L[k + 'Hint'] === undefined)
+    .map(k => ({ clave: k, es: L[k], en: EN[k] || L[k] }));
+}
+
+/** La carpeta del juego, que es su URL y no su id (D-192): 'ahorcado' vive en public/hangman/. */
+const carpeta = g => g.path.replace(/\/$/, '');
+
+const juegos = [];
+for (const g of GAMES) {
+  const { LOCALES } = await import(join(RAIZ, 'public', g.path, 'rules.js'));
+  // Hay dos formas de escribir un rules.js: los textos sueltos (El Ahorcado) o dentro de `ui`
+  // (Cuarto Rey, Dudo). Se miran las dos, o los modos de esos juegos no se ven desde acá.
+  const es = { ...LOCALES.es, ...(LOCALES.es.ui || {}) };
+  const EN = LOCALES.en || LOCALES.es; // La Copa va solo en español por ahora (D-98)
+  const en = { ...EN, ...(EN.ui || {}) };
+  const html = leer(`public/${g.path}index.html`);
+  juegos.push({
+    id: g.id,
+    emoji: g.emoji,
+    nombre: g.name,
+    jugadores: g.players.replace('–', ' to '),   // "1 to 6": lo lee la tabla del README, que es en inglés
+    duracion: g.duration,
+    disponible: g.available,
+    labs: !!g.labs,
+    estado: estado(g),
+    modos: g.formato ? [{ clave: 'formato', es: g.formato.es, en: g.formato.en }] : modos(es, en),
+    variantes: variantes(es, en),
+    pantallas: [...html.matchAll(/id="screen-([a-z-]+)"/g)].map(m => m[1]),
+    chat: /id="chat"/.test(html),
+    archivos: archivos(`public/${carpeta(g)}`, r => !r.endsWith('.test.mjs')),
+  });
+}
+
+// Los minijuegos de La Copa que se juegan sueltos desde la portada (D-142): van en la tabla de
+// juegos del README, aparte, porque no tienen rules.js ni modos.
+const sueltos = SUELTOS.map(m => ({
+  id: m.id, emoji: m.emoji, nombre: m.name, tipos: m.tipos, duracion: m.duration, labs: !!m.labs,
+}));
+
+// ------------------------------------------------------------- lo compartido
+
+const anios = cartas => [Math.min(...cartas.map(c => c.year)), Math.max(...cartas.map(c => c.year))];
+const tematicas = DECKS.map(d => ({
+  id: d.id, emoji: d.emoji, nombre: d.name, pista: d.hint, cartas: d.cards.length, desde: anios(d.cards)[0], hasta: anios(d.cards)[1],
+}));
+
+// Todos entran solos al import map (set-version.py, D-192): ya no hay "sin versionar" que vigilar
+const modulos = archivos('public', r => r.endsWith('.js'));
+const tests = archivos('', r => r.endsWith('.test.mjs'));
+const e2e = archivos('tools/e2e', r => r.endsWith('.mjs') && !r.endsWith('cdp.mjs')).map(r => r.replace('tools/e2e/', ''));
+
+// El título es el H1 del documento, sin el emoji con que termina.
+const titulo = ruta => (leer(ruta).match(/^#\s+(.+)$/m) || [, ruta])[1]
+  .replace(/[\p{Extended_Pictographic}\uFE0F\s]+$/u, '').trim();
+const documentos = [
+  ...archivos('docs', r => r.endsWith('.md')),
+  'firebase/README.md', 'tools/e2e/README.md', 'CHANGELOG.md',
+].filter(hay).map(ruta => ({ ruta, titulo: titulo(ruta) }));
+
+const capturas = Object.fromEntries(GAMES.map(g => [g.id, archivos(`docs/screenshots/${carpeta(g)}`, r => r.endsWith('.png')).length]));
+
+console.log(JSON.stringify({
+  version: (leer('public/index.html').match(/v(\d+\.\d+\.\d+) ·/) || [, null])[1],
+  app: Object.fromEntries(LANGS.map(l => [l, COMMON[l].appTitle])),
+  idiomas: LANGS,
+  frases: Object.fromEntries(LANGS.map(l => [l, FRASES[l].length])),
+  clavesComunes: Object.keys(COMMON.es).length,
+  juegos,
+  sueltos,
+  tematicas,
+  modulos,
+  tests,
+  e2e,
+  documentos,
+  capturas,
+}, null, 2));
