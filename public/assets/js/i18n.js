@@ -1,7 +1,7 @@
 /**
  * Idioma compartido por toda la app.
  * El idioma se elige con un toggle en el menú (y en la intro de cada juego)
- * y se guarda en localStorage. Por defecto: español. Idiomas: es, en, pt (D-47).
+ * y se guarda en localStorage. Por defecto: español. Idiomas: es, en, pt (D-47) y de (D-197).
  */
 import { el } from './ui.js';
 
@@ -13,9 +13,12 @@ export const IDIOMAS = ['es', 'en', 'pt', 'de'];
 /**
  * Los idiomas que están en el laboratorio (D-191): tienen sus textos, pero solo se ofrecen en el
  * dispositivo que entró por `/labs/<idioma>/` o por un link con `?lang=<idioma>`. Ahí quedan
- * marcados en `LABS_KEY`; en todos los demás la app sigue en español, inglés y portugués.
+ * marcados en `LABS_KEY`; en todos los demás la app sigue con los idiomas publicados.
+ *
+ * Hoy no hay ninguno: el alemán salió del laboratorio (D-197). El mecanismo queda para el
+ * próximo idioma, que entra por aquí igual que entró el alemán.
  */
-export const EN_LABS = ['de'];
+export const EN_LABS = [];
 export const LABS_KEY = 'juegos-de-salon:labs-idioma';
 
 function idiomaDeLabs() {
@@ -78,11 +81,11 @@ if (LABS_IDIOMA && typeof document !== 'undefined') {
   import('./labs-idioma.js').then(m => m.iniciarLabs(LABS_IDIOMA)).catch(() => {});
 }
 
-/** La app en la web. Las puertas por idioma son /pt/ y /en/ (D-74). */
+/** La app en la web. Las puertas por idioma son /pt/, /en/ y /de/ (D-74, D-197). */
 export const SITIO = 'https://juegosdesalon.cl/';
 
 /**
- * La portada para compartir, en el idioma de quien comparte: la de siempre, `/pt/` o `/en/`.
+ * La portada para compartir, en el idioma de quien comparte: la de siempre, `/pt/`, `/en/` o `/de/`.
  * Es la misma idea que `withLang` —quien manda el link elige con qué idioma llega— pero con
  * las puertas, que son las que traen su propia tarjeta social en ese idioma (D-74).
  */

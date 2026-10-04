@@ -2935,3 +2935,24 @@ Ver todos") se queda pegada arriba, con fondo oscuro desenfocado que tapa tambi�
 muesca. Tocar un tipo estando pegada lleva la lista filtrada a su primera tarjeta, justo debajo.
 **Por qué:** lo pidió el dueño. Sin esto, cambiar de tipo desde abajo obligaba a subir, y al
 filtrar a media lista se quedaba mirando el medio de una lista más corta.
+
+## D-197 · El alemán sale del laboratorio
+**Fecha:** 2026-10-04 · **Estado:** vigente; cierra el paso de D-191 para el alemán
+**Decisión:** El alemán se ofrece a todos, como el inglés y el portugués: `EN_LABS` queda vacío,
+el toggle muestra 🇩🇪 DE en cualquier dispositivo y hay puerta `/de/` con su tarjeta social
+(`menu-de.jpg`, `de_DE`). El link del laboratorio, `/labs/de/`, pasa a ser una página puente hacia
+`/de/` (la genera `og.mjs tarjetas`, como las de D-192): sus revisores lo tienen guardado. La
+sección del alemán sale de `/labs/`. El **mecanismo** del laboratorio de idiomas (`EN_LABS`,
+`LABS_KEY`, `labs-idioma.js`) queda, sin ningún idioma: el próximo entra por ahí (D-191).
+**Por qué:** el dueño dio por buena la revisión: "ya tenemos la versión en alemán en producción".
+**Consecuencias:** un dispositivo que tenía la marca del laboratorio (`juegos-de-salon:labs-idioma`)
+deja de ver 🧪 y 🐞 y de volver al laboratorio al tocar "‹ Menú"; si estaba en alemán, sigue en
+alemán. Las huellas de las 19 imágenes de tarjetas (D-181) se migraron sin rehacerlas: al publicar
+el alemán cambian los idiomas que entran en la huella y el dibujo ganó el "gratis" en alemán, pero
+ninguna de esas imágenes cambia; cada huella se comprobó contra el cálculo anterior. `menu-de.jpg`
+se hizo en la nube (`og.mjs imagenes` usa ImageMagick donde no hay `sips`), con las fuentes de la
+app; sus emojis son los de Linux, no los de Apple. Quedan pendientes las imágenes que se comparten
+con textos alemanes largos y los guiones de punta a punta que solo recorren inglés y portugués
+(ver docs/ALEMAN.md).
+**Alternativas descartadas:** borrar también el mecanismo del laboratorio (el próximo idioma lo
+necesitaría de nuevo); dejar `/labs/de/` como estaba (mostraría un laboratorio que ya no es).
