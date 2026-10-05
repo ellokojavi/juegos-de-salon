@@ -1,10 +1,12 @@
 # Diseño: Batalla Naval ⚓
 
-**Estado:** implementado (v0.6) · **Fecha:** 2026-09-08 · **Ruta:** `/battleship/` · **Jugadores:** 1 a 2 · **Idiomas:** es, en (“Battleship”), pt (“Batalha Naval”) y, en el laboratorio, de (“Schiffe versenken”, D-191)
+**Ruta:** `/battleship/` (id `batalla-naval`) · **Jugadores:** 1 a 2 · **Desde:** v0.6 (2026-09-08) · **Estado:** publicado (v0.6) · **Idiomas:** es, en (“Battleship”), pt (“Batalha Naval”) y de (“Schiffe versenken”, D-191, D-197)
 
-## 1. Resumen
+## Resumen
 
 Tercer juego de la app: el clásico de hundir la flota del rival. Reutiliza la arquitectura de Toque y Fama (D-20): un reductor de mensajes único para tres modos, transportes `local` y `firebase`, compromiso con sal y verificación al final, reconexión y revancha. Lo nuevo es el motor de tablero, la interfaz de colocación de barcos por toque, la grilla de disparos y una IA de cacería.
+
+## Reglas
 
 Reglas acordadas con el dueño del proyecto:
 
@@ -18,22 +20,33 @@ Reglas acordadas con el dueño del proyecto:
 | Fin | Gana quien hunde las 5 naves del rival. Sin réplica: con tiro extra el turno es una secuencia, no un intento único | — |
 | Respuestas | Agua 🌊 · Tocado 💥 · Hundido 🔥 (con el nombre y las casillas del barco hundido) | — |
 
-## 2. Modos
+### Variantes futuras (no en v1)
+
+Flota de 10 barcos, regla de “sin contacto” con agua automática alrededor del hundido, tableros de 8×8 para partidas rápidas, salvas (varios disparos por turno según barcos vivos), modo espectador.
+
+## Modos
 
 | Modo | Cómo | Transporte |
 |---|---|---|
 | 📱 Un celular | Cada jugador coloca su flota con la pantalla tapada. En cada turno se ve solo el tablero de disparos del jugador activo (su flota queda oculta tras una ficha “ver mi flota”, igual que el número secreto en Toque y Fama). Al fallar, pantalla de resultado + “Pásale el celular a X”. | `local` |
-| 🤖 Contra el celular | La IA coloca al azar y dispara con cacería por paridad + persecución al acertar (ver §6). | `local` + bot |
+| 🤖 Contra el celular | La IA coloca al azar y dispara con cacería por paridad + persecución al acertar (ver “IA contra el celular”). | `local` + bot |
 | 📡 Dos celulares | Sala con código y QR (`?sala=CODE`, `game: 'batalla-naval'`). Cada celular responde los disparos contra su propia flota. | `firebase` |
 
-## 3. Flujo de pantallas
+### IA “contra el celular”
+
+1. **Cacería:** dispara al azar solo a casillas de paridad (tablero de ajedrez), porque el barco más chico mide 2: garantiza encontrar todo con la mitad de disparos.
+2. **Persecución:** al tocar, prueba las 4 vecinas; con dos tocados alineados sigue la línea en ambos sentidos hasta hundir o fallar.
+3. Al hundir vuelve a cacería. Cuando solo quedan barcos grandes, ajusta la paridad al tamaño mínimo restante.
+Promedio esperado: 45 a 55 disparos para hundir la flota (un humano promedio ronda 60).
+
+## Flujo
 
 ```
 Intro (reglas, modos) → Setup (nombres, tiro extra) → [Lobby: código + QR + cancelar la sala]
    → Colocar flota → Batalla (dos grillas) → Resultado (flotas reveladas y verificadas) → Revancha
 ```
 
-### 3.1 Colocar flota (la pantalla clave)
+### Colocar flota (la pantalla clave)
 - Grilla 10×10 grande (casillas de ~32 px) con letras y números.
 - Los barcos se dibujan en **pixel art visto desde arriba** (D-91): cada casilla pinta un trozo de 16×16 y juntos arman el barco; el agua es una baldosa repetida. Sale de `flota.js`, que **genera** `tools/generators/flota.py`.
 - Lista de barcos debajo como fichas, en tres columnas (el barco en chico arriba del nombre, para que las cinco quepan en dos filas sin desplazar): 🚢 5 · 4 · 3 · 3 · 2. Se toca una ficha (queda seleccionada) y luego una casilla de la grilla: el barco se coloca desde esa casilla hacia la derecha (horizontal) o hacia abajo (vertical). La ficha también se puede **arrastrar** hasta el tablero y soltarla ahí (D-90).
@@ -43,8 +56,8 @@ Intro (reglas, modos) → Setup (nombres, tiro extra) → [Lobby: código + QR +
 - **¡Zarpar!** se habilita con los 5 barcos puestos. Al confirmar se envía el compromiso `sha256(layout + sal)`.
 - Al poner el quinto barco (tocando, arrastrando o con Al azar), si **¡Zarpar!** quedó bajo el pliegue la pantalla baja sola hasta él (suave, o de golpe con `prefers-reduced-motion`). Solo en el paso a "todos colocados": mover un barco ya puesto no la mueve, y con un arrastre baja al soltar (dilema #47).
 
-### 3.2 Batalla
-- Arriba, **grilla de disparos** al rival (grande, es donde se toca): agua 🌊 en gris, tocado 💥 en naranjo, hundido 🔥 en rojo con el contorno del barco. Tocar una casilla la selecciona; **🎯 ¡Fuego!** confirma (evita disparos por error). Opción “disparo directo con un toque” en configuración.
+### Batalla
+- Arriba, **grilla de disparos** al rival (grande, es donde se toca): agua 🌊 en gris, tocado 💥 en naranjo, hundido 🔥 en rojo con el contorno del barco. Tocar una casilla la selecciona; **🎯 ¡Fuego!** confirma (evita disparos por error). Opción “disparo directo con un toque” en configuración: es el toggle “Confirmar cada disparo”, activado por defecto.
 - Abajo, **mi flota** en una grilla chica (mitad de tamaño) con los impactos recibidos. En modo un celular esta grilla va tapada con “toca para ver”.
 - Marcador: barcos hundidos de cada lado como iconos tachados (🚢🚢🚢🚢🚢).
 - **Turno: cuatro señales, ninguna de leer** (D-92). La barra de estado se rellena en lima con 🎯
@@ -61,27 +74,20 @@ Intro (reglas, modos) → Setup (nombres, tiro extra) → [Lobby: código + QR +
 - Sonidos: splash al agua, explosión al tocar, explosión larga + vibración al hundir, sirena al
   perder la flota, campanita al llegar el turno (espera 650 ms si acaba de sonar un resultado).
 
-### 3.3 Resultado
+### Resultado
 Ganador, disparos totales y precisión de cada uno, ambas flotas reveladas (con los disparos encima), verificación ✅ del compromiso, desplegable con la secuencia de disparos, Revancha / Cambiar modo / Menú.
 
-## 4. Motor (`public/battleship/engine.js`, puro y testeable)
+### Interfaz y estilo
 
-```js
-export const FLEET = [ { id: 'carrier', size: 5 }, { id: 'battleship', size: 4 }, { id: 'cruiser', size: 3 }, { id: 'submarine', size: 3 }, { id: 'destroyer', size: 2 } ];
-// layout: { carrier: { r: 0, c: 3, dir: 'h' }, ... }   celda: 'B4' ↔ { r: 3, c: 1 }
-export function cellsOf(ship, placement)            // casillas que ocupa un barco
-export function isValidLayout(layout, N = 10)       // dentro del tablero y sin superposición
-export function randomLayout(N = 10)                // flota válida al azar
-export function shoot(layout, shotsSoFar, cell)     // → { result: 'agua' | 'tocado' | 'hundido', ship?: id, cells?: [...] }
-export function allSunk(layout, shots)              // fin de partida
-export function nextShooter(current, result, extraShot) // quién dispara después
-export class Hunter { next(); learn(cell, result) } // IA (ver §6)
-export async function sha256, randomNonce, verifyPlayer({ layout, salt, commit, repliesGiven })
-```
+- Misma identidad: fondo neón, Bangers en títulos, botones pill, confeti al ganar. Paleta del mar: casillas azul profundo, agua gris-azul, tocado naranjo, hundido rojo con brillo.
+- Grilla táctil: casillas mínimas de 30 px en 375 px de ancho. Es una sola grilla CSS de 11×11 donde la primera fila y la primera columna son las etiquetas, así números y letras quedan alineados con las casillas en todos los navegadores (v0.9.4). Sin scroll horizontal.
+- Todo en español, inglés, portugués y alemán (“Battleship”, “Batalha Naval”, “Schiffe versenken”): agua/miss/água/Wasser, tocado/hit/acertou/Treffer, hundido/sunk/afundou/versenkt, ¡Fuego!/Fire!/Fogo!, ¡Zarpar!/Set sail!/Zarpar! (D-191, D-197).
+- Accesible con dedo: selección + confirmación antes de disparar; vibración en tocado/hundido.
+- Las dos pantallas de turno se miran sin jugar una partida: `node tools/e2e/mirar.mjs batalla-naval juego` y `… espera`.
+- El hundimiento no se mira con una captura sino con varias seguidas: el guion que las saca vive en la historia de D-93.
+- Las casillas que se leen (el aviso de cada disparo y la casilla grande del resultado) van en Nunito 900, no en Bangers: ahí el 1 y el 7 se confunden y se dispara al lugar equivocado (D-30, canon C-1). Los números de fila de la grilla ya estaban en Nunito.
 
-`verifyPlayer` recalcula cada respuesta dada por el rival contra su layout revelado, igual que en Toque y Fama.
-
-## 5. Protocolo de mensajes y estado
+## Protocolo de mensajes
 
 ```jsonc
 { "t": "hello",   "from": "A", "name": "Javi" }
@@ -97,52 +103,44 @@ export async function sha256, randomNonce, verifyPlayer({ layout, salt, commit, 
 
 Estado derivado (`view()`): fase (`lobby`, `placing`, `play`, `reveal`, `done`), quién dispara (a partir del historial y la regla de tiro extra), disparo pendiente, barcos hundidos por lado, ganador. Disparos repetidos a la misma casilla se rechazan en el reductor. Mensajes en serie, como en D-20.
 
-Sala en Firebase: mismas reglas de seguridad (el campo `game` distingue el juego, y el lobby puede cancelar la sala, D-50); los mensajes `reply` con `cells` caben en la validación actual (`t`, `from`, `at` obligatorios). Sus módulos entran solos al import map (D-192).
+Sala en Firebase: mismas reglas de seguridad (el campo `game` distingue el juego, y el lobby puede cancelar la sala, D-50); los mensajes `reply` con `cells` caben en la validación actual (`t`, `from`, `at` obligatorios). Sus módulos entran solos al import map de la copia que se publica (C-11, D-205).
 
-## 6. IA “contra el celular”
-
-1. **Cacería:** dispara al azar solo a casillas de paridad (tablero de ajedrez), porque el barco más chico mide 2: garantiza encontrar todo con la mitad de disparos.
-2. **Persecución:** al tocar, prueba las 4 vecinas; con dos tocados alineados sigue la línea en ambos sentidos hasta hundir o fallar.
-3. Al hundir vuelve a cacería. Cuando solo quedan barcos grandes, ajusta la paridad al tamaño mínimo restante.
-Promedio esperado: 45 a 55 disparos para hundir la flota (un humano promedio ronda 60).
-
-## 7. Interfaz y estilo
-
-- Misma identidad: fondo neón, Bangers en títulos, botones pill, confeti al ganar. Paleta del mar: casillas azul profundo, agua gris-azul, tocado naranjo, hundido rojo con brillo.
-- Grilla táctil: casillas mínimas de 30 px en 375 px de ancho. Es una sola grilla CSS de 11×11 donde la primera fila y la primera columna son las etiquetas, así números y letras quedan alineados con las casillas en todos los navegadores (v0.9.4). Sin scroll horizontal.
-- Todo en español, inglés y portugués (“Battleship”, “Batalha Naval”): agua/miss/água, tocado/hit/acertou, hundido/sunk/afundou, ¡Fuego!/Fire!/Fogo!, ¡Zarpar!/Set sail!/Zarpar! En el laboratorio, también en alemán (“Schiffe versenken”: Wasser, Treffer, versenkt; D-191).
-- Accesible con dedo: selección + confirmación antes de disparar; vibración en tocado/hundido.
-- Las dos pantallas de turno se miran sin jugar una partida: `node tools/e2e/mirar.mjs batalla-naval juego` y `… espera`.
-- El hundimiento no se mira con una captura sino con varias seguidas: el guion que las saca vive en la historia de D-93.
-
-- Las casillas que se leen (el aviso de cada disparo y la casilla grande del resultado) van en Nunito 900, no en Bangers: ahí el 1 y el 7 se confunden y se dispara al lugar equivocado (D-30, canon C-1). Los números de fila de la grilla ya estaban en Nunito.
-
-## 8. Archivos previstos
+## Archivos
 
 ```
 public/battleship/
-  index.html · style.css · rules.js (LOCALES es/en, FLEET, config por defecto)
+  index.html · style.css · rules.js (LOCALES es/en/pt/de, FLEET, config por defecto)
   engine.js · engine.test.mjs
+  flota.js (pixel art de los barcos; lo genera tools/generators/flota.py)
   game.js (reductor, agentes, bot, render: colocación y batalla)
-  transport/ → se reutilizan los de Toque y Fama moviéndolos a public/assets/js/transport/ (local.js, firebase.js con parámetro game)
+public/assets/js/transport/ (local.js, firebase.js con parámetro game) · public/assets/js/handoff.js
 ```
-Mover los transportes a `public/assets/js/transport/` es la única refactorización previa: Toque y Fama pasa a importarlos de ahí.
 
-## 8b. Estado de la implementación (v0.6)
-- Fase 0: transportes movidos a `public/assets/js/transport/`; `randomRoomCode` vive en el transporte de Firebase. Nuevo módulo compartido `public/assets/js/handoff.js` (overlay de pase y pantalla tapada) y estilos `.cover` en `base.css`.
-- Fase 1: motor con tests (`engine.test.mjs`, IA ≈ 50 disparos promedio), colocación por toque/girar/arrastrar/al azar, modo un celular y contra el celular.
-- Fase 2: dos celulares con sala, QR, reconexión (flota guardada en `juegos-de-salon:bn:session`), presencia y revancha (parte el perdedor).
-- Fase 3: sonidos propios (`SFX.splash`, `hit`, `sink`, `siren`), capturas en `docs/screenshots/battleship/`, README.
-- Diferencia con el diseño: la opción “disparo directo con un toque” es el toggle “Confirmar cada disparo” (activado por defecto).
+Batalla Naval fue el juego que movió los transportes de Toque y Fama a `public/assets/js/transport/`
+y creó `handoff.js` (overlay de pase y pantalla tapada), para compartirlos entre juegos (BN-10). La
+flota se guarda para reconectar en `juegos-de-salon:bn:session`. Sonidos propios: `SFX.splash`,
+`hit`, `sink`, `siren`. Capturas en `docs/screenshots/battleship/`.
 
-## 9. Plan y estimación
+Tests del motor: `node public/battleship/engine.test.mjs` (incluye la IA, ≈ 50 disparos promedio).
+Gancho de pruebas (C-14): `window.__bn` (`view`, `match`, `session`).
 
-| Fase | Contenido | Esfuerzo |
-|---|---|---|
-| 0 | Mover transportes a `public/assets/js/transport/` y registrar en el import map | 0,5 sesión |
-| 1 | Motor con tests, colocación de flota (toque, girar, arrastrar, al azar), modo un celular y contra el celular con IA | 1,5 sesiones |
-| 2 | Dos celulares: sala, compromiso, reconexión, revancha; pruebas con dos instancias | 1 sesión |
-| 3 | Sonidos propios, capturas, README y docs | 0,5 sesión |
+### Motor (`public/battleship/engine.js`, puro y testeable)
 
-## 10. Variantes futuras (no en v1)
-Flota de 10 barcos, regla de “sin contacto” con agua automática alrededor del hundido, tableros de 8×8 para partidas rápidas, salvas (varios disparos por turno según barcos vivos), modo espectador.
+```js
+export const FLEET = [ { id: 'carrier', size: 5 }, { id: 'battleship', size: 4 }, { id: 'cruiser', size: 3 }, { id: 'submarine', size: 3 }, { id: 'destroyer', size: 2 } ];
+// layout: { carrier: { r: 0, c: 3, dir: 'h' }, ... }   celda: 'B4' ↔ { r: 3, c: 1 }
+export function cellsOf(ship, placement)            // casillas que ocupa un barco
+export function isValidLayout(layout, N = 10)       // dentro del tablero y sin superposición
+export function randomLayout(N = 10)                // flota válida al azar
+export function shoot(layout, shotsSoFar, cell)     // → { result: 'agua' | 'tocado' | 'hundido', ship?: id, cells?: [...] }
+export function allSunk(layout, shots)              // fin de partida
+export function nextShooter(current, result, extraShot) // quién dispara después
+export class Hunter { next(); learn(cell, result) } // IA 
+export async function sha256, randomNonce, verifyPlayer({ layout, salt, commit, repliesGiven })
+```
+
+`verifyPlayer` recalcula cada respuesta dada por el rival contra su layout revelado, igual que en Toque y Fama.
+
+## Excepciones a los cánones
+
+Ninguna. La flota se compromete con `sha256(JSON(layout)+sal)` y se verifica al final, recalculando cada respuesta (C-10).

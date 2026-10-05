@@ -2,13 +2,15 @@
 
 Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde decisiones, commits e issues.
 
+Los IDs no se reusan: un requerimiento que cambia conserva su ID y su texto se actualiza citando la decisión que lo cambió (D-213).
+
 ## Plataforma (RP)
 
 | ID | Requerimiento | Estado |
 |---|---|---|
 | RP-01 | App web que funcione en celulares y tablets (mobile-first) y también en navegador de escritorio. | ✅ v0.1 |
 | RP-02 | Menú principal para escoger el juego a jugar. | ✅ v0.1 |
-| RP-03 | Varios juegos disponibles desde la misma dirección; cada juego con su propia URL (`/<id-juego>/`). | ✅ v0.1 (estructura) |
+| RP-03 | Varios juegos disponibles desde la misma dirección; cada juego con su propia URL, que es su carpeta en inglés (`/hangman/`), no su id (`ahorcado`); las rutas viejas en español son páginas puente (D-192). | ✅ v0.1 (estructura); carpetas en inglés en v0.91.0 |
 | RP-04 | Cada juego presenta su dinámica (reglas, materiales) antes de empezar. | ✅ v0.1 |
 | RP-05 | Cada juego prepara a los jugadores (ingreso de nombres y datos necesarios). | ✅ v0.1 |
 | RP-06 | El celular/tablet es la interfaz principal: guía turnos, situaciones y decisiones. | ✅ v0.1 |
@@ -20,8 +22,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | RP-12 | Idioma español chileno, informal. | ✅ v0.1 |
 | RP-13 | Funcionar sin conexión (service worker). | ⏳ pendiente |
 | RP-14 | Sonidos en las acciones clave, con botón para silenciar. | ✅ v0.3 |
-| RP-15 | Jugar en español o inglés, con un toggle al inicio (menú) que aplica a todos los juegos. | ✅ v0.2 |
-| RP-25 | Jugar en portugués (de Brasil): toda la experiencia —menú, juegos, salas, chat, errores, cartas— en el idioma elegido, con las mismas claves que español e inglés (D-48). | ✅ v0.22 |
+| RP-15 | Jugar en español o inglés, con un toggle al inicio (menú) que aplica a todos los juegos. Después se sumaron el portugués (RP-25, D-48) y el alemán (RP-35, D-197). | ✅ v0.2 |
 | RP-16 | Toda partida en curso se puede retomar, en todos los juegos y en todos los modos (canon C-6). | ✅ v0.7 |
 | RP-17 | Cánones de construcción documentados y revisados antes de crear o cambiar un juego. | ✅ v0.7 |
 | RP-18 | Quien entra por un enlace de sala solo puede unirse a esa sala: no se le ofrece crear otra ni configurar la partida. | ✅ v0.10.1 |
@@ -30,21 +31,25 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | RP-21 | Un celular no puede abrir salas sin parar: hay un tope por dispositivo que protege la cuota del plan gratuito. | ✅ v0.19 |
 | RP-22 | Vigilar el uso de la cuota de Firebase (conexiones simultáneas y descarga mensual) con una alerta antes de llegar al techo. | ⏳ pendiente (consola) |
 | RP-23 | Un panel privado del dueño (`/panel/`), con entrada por Google, que muestra salas vivas, celulares conectados, partidas por juego y modo, jugadores por partida, origen (zona horaria), idioma y hora del día (D-44). | ✅ v0.20 |
-| RP-24 | Los juegos registran señales de uso anonimizadas: de los modos sin red solo contadores, de las salas lo que ya viaja a Firebase. Nunca IP, secretos ni chat. Desde v0.33.6, de una sala también el país del celular y quién ganó (D-79). | ✅ v0.20 |
-| RP-25 | El panel separa por entorno también las salas vivas, que viven en un `rooms/` común a todos: las de otro entorno no se cuentan y se nombran debajo de la lista, para que ninguna desaparezca en silencio (D-45). | ✅ v0.21.1 |
+| RP-24 | Los juegos registran señales de uso para el panel del dueño: de las salas lo que ya viaja a Firebase y, desde v0.33.6, el país del celular y quién ganó (D-79); de los modos sin red, desde v0.99.2, quién juega (el nombre que ya usa en la app) y cómo terminó (D-210). Nunca IP, secretos ni chat. | ✅ v0.20 |
+| RP-25 | Jugar en portugués (de Brasil): toda la experiencia —menú, juegos, salas, chat, errores, cartas— en el idioma elegido, con las mismas claves que español e inglés (D-48). | ✅ v0.22 |
 | RP-26 | Se registra el idioma elegido en el juego, aparte del idioma del navegador: uno dice de dónde es la persona y el otro en cuál prefiere jugar (D-46). | ✅ v0.21.2 |
-| RP-28 | El idioma puede venir en el link (`?lang=`, y las puertas `/pt/` y `/en/`) y viaja pegado a la invitación de una sala, para que quien la reciba abra la app en el idioma en que se la mandaron (D-74). | ✅ v0.33 |
-| RP-30 | El panel filtra todo —cifras, barras y bitácora— con seis rangos: 7, 30, 60 y 90 días, 1 año y lo que va del año. Se baja de la base solo lo que el rango pide (D-80). | ✅ v0.33.7 |
-| RP-29 | El panel muestra la **bitácora de salas jugadas** del rango elegido (7 o 30 días), paginada: día y hora, jugadores con la bandera de su país, juego y ganador. Las pruebas y las salas donde nunca entró nadie más quedan fuera por defecto (D-79). | ✅ v0.33.6 |
 | RP-27 | Una sala que se cancela se cierra en el acto: quien se va a propósito se despide, la sala queda sin nadie y se borra sola, y el panel deja de mostrarla viva. Cerrar la pestaña no cancela nada: esa partida se puede retomar (D-50). | ✅ v0.25 |
-| RP-31 | El panel muestra en vivo las partidas sin red que se están jugando (contra el celular, un celular, solo), con juego, modo, cuántos juegan y país, sin nombres (D-140). | ✅ v0.64.7 |
-| RP-32 | La portada ofrece los juegos de La Copa sueltos, de un jugador y sin copa: Conexiones, Toque y Fama: Palabra, ¿En qué año?, Reinas, Tango y Zip. En inglés y portugués la tarjeta avisa que se juegan en español (D-142). | ✅ v0.65 |
+| RP-28 | El idioma puede venir en el link (`?lang=`, y las puertas `/en/`, `/pt/` y `/de/`, esta desde D-197) y viaja pegado a la invitación de una sala, para que quien la reciba abra la app en el idioma en que se la mandaron (D-74). | ✅ v0.33 |
+| RP-29 | El panel muestra la **bitácora de salas jugadas** del rango elegido (7 o 30 días), paginada: día y hora, jugadores con la bandera de su país, juego y ganador. Las pruebas y las salas donde nunca entró nadie más quedan fuera por defecto (D-79). | ✅ v0.33.6 |
+| RP-30 | El panel filtra todo —cifras, barras y bitácora— con seis rangos: 7, 30, 60 y 90 días, 1 año y lo que va del año. Se baja de la base solo lo que el rango pide (D-80). | ✅ v0.33.7 |
+| RP-31 | El panel muestra en vivo las partidas sin red que se están jugando (contra el celular, un celular, solo), con juego, modo, cuántos juegan y país (D-140); desde v0.99.2, también quién juega y cómo terminó (D-210, RP-40). | ✅ v0.64.7 |
+| RP-32 | La portada ofrece los juegos de La Copa sueltos, de un jugador y sin copa: Conexiones, Toque y Fama: Palabra, ¿En qué año?, Reinas, Tango, Zip, Desenredo (D-190) y ¿Dónde queda? (D-174). Se juegan en el idioma de quien juega, con contenido propio de cada idioma (D-170); antes la tarjeta avisaba que se jugaban en español (D-142). | ✅ v0.65 |
 | RP-33 | La portada se filtra por tipo de juego; el filtro queda en la URL, en inglés (`?type=logic`, D-214), dice cuántos juegos se ven y se quita con un toque (D-142, D-149); al bajar, los filtros quedan pegados arriba (D-196). | ✅ v0.93 |
 | RP-34 | Las explicaciones de todos los juegos (reglas, ayudas, modos, antesalas, Administrar y las frases del menú) son cortas: cada regla se dice una vez por pantalla, con frases completas, y una palabra por concepto: tachar, el celular, jugador, administrador, vidas, sorbos (D-177, U-5, U-8). | ✅ v0.84.0 |
-| RP-35 | Jugar en alemán: toda la experiencia en el idioma elegido, con las mismas claves que los otros tres, primero solo en el laboratorio (`/labs/de/`), con un botón para que quienes lo prueban comenten (D-191). Sale del laboratorio cuando lo revisen hablantes de alemán ([ALEMAN.md](ALEMAN.md)). | 🧪 en el laboratorio |
+| RP-35 | Jugar en alemán: toda la experiencia en el idioma elegido, con las mismas claves que los otros tres, primero solo en el laboratorio (`/labs/de/`), con un botón para que quienes lo prueban comenten (D-191). Salió del laboratorio y se ofrece a todos, con su puerta `/de/` (D-197); el glosario está en [ALEMAN.md](ALEMAN.md). | ✅ v0.94.0 |
 | RP-36 | El panel se navega por secciones (Ahora, La Copa, Juegos, Audiencia) con una ficha por copa, juego y sala: la tabla, la grilla jugador × día y la historia de una copa; los modos, las salas y las partidas sin red de un juego. Cada cifra abre la lista que la suma, cada nombre lleva la bandera de su país, la vista queda en la URL y las horas son del Pacífico (D-207). | ✅ v0.99.0 |
 | RP-37 | El panel muestra el tráfico del sitio aunque nadie juegue: visitas, páginas vistas, de dónde llegan (solo el dominio), por qué link, si es primera vez, aparato, país y cuántas visitas llegan a jugar, por página de entrada. Los links que comparte la app llevan su marca, porque WhatsApp no dice de dónde viene nadie (D-208). | ✅ v0.99.0 |
-| RP-38 | Rankings con identidad sin cuenta: nombre y PIN de 4 dígitos, opcionales y válidos en cualquier celular. Récord por juego de la semana y de siempre, amigos de La Copa, ranking "en copa", Todoterreno y medallero de campeones de La Copa, en la antesala de cada juego, en la portada de La Copa y en `/records/` (D-212). | ⏳ en PR |
+| RP-38 | El panel separa por entorno también las salas vivas, que viven en un `rooms/` común a todos: las de otro entorno no se cuentan y se nombran debajo de la lista, para que ninguna desaparezca en silencio (D-45). Hasta D-213 se anotaba como RP-25, que repetía un ID. | ✅ v0.21.1 |
+| RP-39 | Cada nombre de jugador que muestra el panel lleva la bandera de su país, si se conoce: fichas, "va primero", retirados e historia de una copa. Quien se inscribió en una copa antes de que se guardara el país lo anota solo al volver a abrirla (D-209). | ✅ v0.99.1 |
+| RP-40 | Rankings con identidad sin cuenta: nombre y PIN de 4 dígitos, opcionales y válidos en cualquier celular. Récord por juego de la semana y de siempre, amigos de La Copa, la pestaña "Copa", Todoterreno y medallero de campeones de La Copa, en la antesala de cada juego, en la portada de La Copa y en `/records/`. Parte en el laboratorio (D-212). | ✅ v0.100.0 (en el laboratorio) |
+| RP-40 | Las partidas sin red (contra el celular, un celular, solo) mandan al panel quién juega —los nombres que la partida ya tiene o el último que la persona escribió en la app, nunca uno pedido para esto— y cómo terminó: quién ganó, empate o el puntaje jugando solo. El panel las lista en Juegos y en la ficha de cada juego (D-210, que cambia D-44 para estos modos). | ✅ v0.99.2 |
+| RP-41 | Cada copa, sala y partida sin red dice en qué idioma se jugó (el elegido en la app, por jugador en una sala), con una etiqueta en el panel y un desglose por idioma en La Copa y en la ficha de cada juego (D-211). | ✅ v0.99.3 |
 
 ## Cuarto Rey (CR)
 
@@ -141,6 +146,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | LIG-43 | Laboratorio `/labs/`: La Copa sale del menú (Próximamente) y se prueba ahí, con la Copa de 3 días. | ✅ v0.43 |
 | LIG-44 | El panel del dueño muestra los reportes. | ⏳ pendiente |
 | LIG-45 | 〰️ Zip y ☀️ Tango en el laboratorio, con solución única, para decidir si entran al calendario. | ✅ v0.44 |
+| LIG-46 | El teclado, el tablero y la línea se comparten con Toque y Fama y Línea de Tiempo (`public/assets/js/teclado.js`, `public/assets/css/teclado.css`, `public/assets/css/linea.css`). | ✅ v0.44 |
 | LIG-47 | Sesión de prueba antes de cada día: la misma mecánica con otro contenido, que no cuenta (D-103). | ✅ v0.45 |
 | LIG-48 | Zip por niveles contra el reloj (3 minutos) y aviso cuando el trazo llega al final sin pasar por todas. | ✅ v0.45 |
 | LIG-49 | Reinas: toque para la reina, toque largo para la X. Tango: ≠, borrar todo, pista (−15) y consejos. | ✅ v0.45 |
@@ -170,9 +176,6 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | LIG-73 | Invitación promocional, sin revelar los juegos (D-127). | ✅ v0.60 |
 | LIG-74 | Conexiones agrupa por significado, sin juegos de palabras (D-128). | ✅ v0.61 |
 | LIG-75 | El tiempo se corta al terminar el tablero, no al tocar "Ver resultado" (D-130). | ✅ v0.62 |
-| LIG-75 | El tiempo se corta al terminar el tablero, no al tocar "Ver resultado" (D-130). | ✅ v0.62 |
-| LIG-76 | La tabla muestra los 7 días de cada jugador con su estado y una leyenda (D-131). | ✅ v0.63 |
-| LIG-75 | El tiempo se corta al terminar el tablero, no al tocar "Ver resultado" (D-130). | ✅ v0.62 |
 | LIG-76 | La tabla muestra los 7 días de cada jugador con su estado y una leyenda (D-131). | ✅ v0.63 |
 | LIG-77 | Reglas plegadas debajo del tablero en cada juego, con las palabras de sus botones (D-133). | ✅ v0.64 |
 | LIG-78 | La imagen de la tabla pone gráfico y tabla en el mismo eje, con todos los días y los empates a la vista (D-141). | ✅ v0.64.9 |
@@ -181,6 +184,7 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | LIG-81 | La imagen de la tabla mide lo que necesita, entre 1080 × 1080 y 1080 × 1350, sin aire de sobra (D-154). | ✅ v0.67.1 |
 | LIG-82 | El admin termina la copa antes (por ejemplo, si el último no va a jugar la final); los días sin abrir quedan anulados (D-161). | ✅ v0.73.0 |
 | LIG-83 | Terminada la copa, el admin exporta la tabla final: la imagen y una planilla CSV con la tabla, los lugares día a día y el detalle (D-161). | ✅ v0.73.0 |
+| LIG-84 | Juegos de reserva (La Palabra, Ahorcado Contrarreloj), separados de LIG-34. | ⏳ pendiente |
 | LIG-85 | Reinas: arrastrar desde una casilla vacía pinta X en las vacías por donde pasa, sin tocar el toque ni el toque largo (D-166). | ✅ v0.78.0 |
 | LIG-86 | Reinas: el toque cicla vacía → reina → X → vacía; el toque largo queda como atajo de la X (D-167). | ✅ v0.78.0 |
 | LIG-87 | Reinas: arrastrar desde una X borra las X por donde pasa; las reinas no se tocan (D-168). | ✅ v0.79.0 |
@@ -189,14 +193,12 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | LIG-90 | 📍 ¿Dónde queda? se juega suelto desde la portada, en `/minigames/where/`, sin "Próximamente" (D-174). | ✅ v0.82.0 |
 | LIG-91 | En Administrar, la invitación sigue mientras alguien nuevo pueda entrar (inscripción abierta y cupo) y, ya partida, dice en qué día va (D-176). | ✅ v0.83.1 |
 | LIG-92 | Quien entra tarde lee que los días cerrados quedan en 0 desde el día 3 (el día 1 sigue en su gracia el día 2); con la copa llena lee que está llena; la sesión de prueba avisa que es más corta y no cuenta (D-177). | ✅ v0.84.0 |
-| LIG-84 | Juegos de reserva (La Palabra, Ahorcado Contrarreloj), separados de LIG-34. | ⏳ pendiente |
-| LIG-46 | El teclado, el tablero y la línea se comparten con Toque y Fama y Línea de Tiempo (`public/assets/js/teclado.js`, `public/assets/css/teclado.css`, `public/assets/css/linea.css`). | ✅ v0.44 |
 
 ## Requerimientos no funcionales
 
 - **Accesible al tacto:** botones de al menos 44 px de alto, texto grande, alto contraste sobre fondo oscuro.
 - **Rendimiento:** carga inicial < 200 KB sin contar fuentes web; sin frameworks.
-- **Privacidad:** no se envía nada que identifique a una persona. La partida vive en `localStorage` del dispositivo; a Firebase van la sala (modo de dos celulares) y señales de uso anonimizadas para el panel del dueño: contadores por juego, modo, jugadores, zona horaria, idioma y hora (D-44). Nunca IP, secretos, chat ni quién ganó.
+- **Privacidad:** la partida vive en `localStorage` del dispositivo; a Firebase van la sala (modos de varios celulares) y señales de uso para el panel del dueño: contadores por juego, modo, jugadores, zona horaria, idioma y hora (D-44). De una sala, además, el país y quién ganó (D-79); de una partida sin red, quién juega (el nombre que ya usa en la app) y cómo terminó (D-210). Esos nombres solo los lee el dueño. Nunca IP, secretos ni chat.
 - **Responsabilidad:** el menú incluye un mensaje de consumo responsable.
 
 ## Toque y Fama (TF) — ver [especificación](games/bulls-and-cows.md) y [estudio de factibilidad](games/bulls-and-cows-factibilidad.md)
@@ -212,13 +214,13 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | TF-07 | Reconexión: si un celular se cierra, retoma la partida desde la sala (secreto guardado en el dispositivo). | ✅ v0.4 |
 | TF-08 | Derecho a réplica configurable. Quién parte es determinista: el invitado en la primera partida, el perdedor en la revancha (ver D-19). | ✅ v0.4 |
 | TF-09 | Textos en español e inglés (“Bulls and Cows”). | ✅ v0.4 |
-| TF-18 | Textos en portugués (“Toque e Fama”). | ✅ v0.22 |
-| TF-19 | Jugar solo: el celular elige el número y el jugador lo adivina en la menor cantidad de intentos, con récord por cifras y cero al inicio; pistas con palabra completa en su tablero (D-129). | ✅ v0.61 |
 | TF-10 | Revancha en los tres modos; en dos celulares se crea una sala nueva y ambos se mueven solos. | ✅ v0.4 |
 | TF-11 | Indicador de rival desconectado en modo dos celulares. | ✅ v0.4 |
 | TF-12 | Al adivinar, el jugador ve su propio número como recordatorio. En modo un celular parte oculto y se muestra al tocarlo. | ✅ v0.4.1 |
 | TF-13 | Pulsación larga sobre una cifra del teclado la marca como bloqueada (no está en el número secreto). Las marcas son por jugador, se recuerdan durante la partida y se ven tachadas; otra pulsación larga las libera. Instrucción breve en pantalla. | ✅ v0.4.2 |
 | TF-14 | En el resultado, bloque colapsado “Ver todos los intentos” con los tableros de ambos jugadores; colapsado no empuja los botones fuera de la pantalla. | ✅ v0.4.3 |
+| TF-18 | Textos en portugués (“Toque e Fama”). | ✅ v0.22 |
+| TF-19 | Jugar solo: el celular elige el número y el jugador lo adivina en la menor cantidad de intentos, con récord por cifras y cero al inicio; pistas con palabra completa en su tablero (D-129). | ✅ v0.61 |
 
 ## Batalla Naval (BN) — ver [docs/games/battleship.md](games/battleship.md)
 
@@ -233,8 +235,8 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | BN-07 | Reconexión, revancha (parte el perdedor), presencia. | ✅ v0.6 |
 | BN-08 | Selección + confirmación “¡Fuego!” antes de disparar (con opción de disparo directo). | ✅ v0.6 |
 | BN-09 | Textos en español e inglés (“Battleship”); sonidos de agua, impacto y hundimiento. | ✅ v0.6 |
-| BN-16 | Textos en portugués (“Batalha Naval”: água, acertou, afundou). | ✅ v0.22 |
 | BN-10 | Los transportes `local` y `firebase` se mueven a `public/assets/js/transport/` para compartirlos entre juegos. | ✅ v0.6 |
+| BN-16 | Textos en portugués (“Batalha Naval”: água, acertou, afundou). | ✅ v0.22 |
 
 ## Línea de Tiempo (LT) — ver [docs/games/timeline.md](games/timeline.md)
 
@@ -250,14 +252,14 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | LT-08 | Mazo determinista por semilla, para que todos los dispositivos vean el mismo reparto. | ✅ v0.8 |
 | LT-09 | Memoria de partida en todos los modos (canon C-6). | ✅ v0.8 |
 | LT-10 | Textos en español e inglés. | ✅ v0.8 |
-| LT-16 | Textos y los cuatro mazos en portugués (“Linha do Tempo”). | ✅ v0.22 |
 | LT-11 | Chat de sala en varios celulares, en la sala de espera y durante la partida; muere con la partida (canon C-15). | ✅ v0.10 |
 | LT-12 | La ronda se juega completa y, si más de uno queda sin cartas, gana quien respondió en menos tiempo. El tiempo se muestra solo al final. | ✅ v0.12 |
 | LT-13 | Opción de pozo común: 6 cartas a la vista para todos, se reponen por el final, y gana quien coloque primero las cartas acordadas. | ✅ v0.13 |
 | LT-14 | Cuatro temáticas (Historia, Música, Chile, Cultura pop) y cartas que no se repiten entre partidas seguidas. | ✅ v0.14 |
-| LT-17 | Mazos de Brasil (historia, tele, música y farándula, 140 cartas) y de Fútbol mundial (123 cartas), en los tres idiomas. | ✅ v0.23 |
 | LT-15 | Opción de todas las cartas a la vista: se despliega el doble de la meta desde el primer turno, no entra ninguna carta nueva y la mesa solo se achica. Es la opción marcada al abrir la configuración. | ✅ v0.21 |
-| LT-16 | Arrastrar la carta de la mano a su lugar en la línea, y retomar la ya puesta para moverla o devolverla. Soltar elige; el botón coloca. | ✅ v0.35 |
+| LT-16 | Arrastrar la carta de la mano a su lugar en la línea, y retomar la ya puesta para moverla o devolverla. Soltar elige; el botón coloca (D-85). | ✅ v0.35 |
+| LT-17 | Mazos de Brasil (historia, tele, música y farándula, 140 cartas) y de Fútbol mundial (123 cartas), en los tres idiomas. | ✅ v0.23 |
+| LT-18 | Textos y los cuatro mazos en portugués (“Linha do Tempo”). Hasta D-213 se anotaba como LT-16, que repetía un ID. | ✅ v0.22 |
 
 ## El Ahorcado (AH) — ver [docs/games/hangman.md](games/hangman.md)
 
@@ -277,9 +279,9 @@ Documento vivo. Cada requerimiento tiene un ID para poder referenciarlo desde de
 | AH-12 | Teclado de 27 teclas en español y 26 en los otros idiomas; acentos plegados y Ñ aparte (D-57). | ✅ v0.26 |
 | AH-13 | Chat de sala en varios celulares (canon C-15). | ✅ v0.26 |
 | AH-14 | La tira de rivales muestra vidas y avance, nunca las letras (D-55). | ✅ v0.26 |
+| AH-15 | Entra al menú publicado cuando esté probado de punta a punta y con capturas en el README. | ✅ v0.26 |
 | AH-16 | Turnos alternados letra a letra, salteando a quien ya terminó y a quien se fue de la sala (D-59, D-66). | ✅ v0.26 |
 | AH-17 | Al confirmar una letra, un cartel breve dice cómo fue antes de que cambie el turno (D-63). | ✅ v0.26 |
-| AH-15 | Entra al menú publicado cuando esté probado de punta a punta y con capturas en el README. | ✅ v0.26 |
 
 ## Julepe (JU) — ver [docs/games/julep.md](games/julep.md)
 

@@ -1,6 +1,8 @@
 # La Copa 🏆
 
-**Estado:** en el menú (v0.83, D-175) · **Ruta:** `/cup/`
+**Ruta:** `/cup/` (id `copa`) · **Jugadores:** 2 a 10 por copa · **Desde:** v0.42 · **Estado:** en el menú (v0.83, D-175) · **Idiomas:** es, en, pt y de (D-170, D-191, D-197)
+
+## Resumen
 
 Un torneo entre amigos que dura una semana: cada día se abre un juego distinto, idéntico
 para todos, que se juega **una sola vez** y reparte puntos según la posición del día. Gana
@@ -8,7 +10,7 @@ quien suma más al cierre. Es la primera modalidad de la app que no es una parti
 serie de partidas en el tiempo (un macro-juego). El diseño completo, con la revisión y el plan
 de construcción, se discutió en el documento *La Copa — requisitos del torneo de varios días*.
 
-- **Estado:** en el menú desde D-175. **`/labs/`** sigue para probar: la Copa de 3 días, la
+- **Estado:** en el menú desde v0.83.0 (D-175). **`/labs/`** sigue para probar: la Copa de 3 días, la
   práctica con semilla y las demos (D-101).
 - **URL:** `/cup/` (portada) · `/cup/?K7Q2X` (una copa) · `/cup/?labs` (copa real con la Copa
   de 3 días, D-100; `?tres` sigue funcionando) · `?prueba` (almacén local y reloj adelantable, sin
@@ -18,14 +20,21 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
   con su señal de uso. `/cup/?practica=<id>` sin `&labs` lleva ahí.
 - **Jugadores:** de 2 a 10 por copa (`MIN_JUGADORES` y `MAX_JUGADORES` en `engine.js`, D-118). Con
   el administrador solo, la copa no parte y el tablero pide "al menos un jugador más". **Público:** 🌎 global, 🇨🇱 Chile o 🇧🇷 Brasil, que se elige al crear la copa (D-187, `meta.aud`; las copas `intl` de D-186 se leen como global). Decide qué contenido local entra (`public/cup/games/audiencia.js`).
-  **Idioma:** español, inglés y portugués (D-170); el alemán, solo en el laboratorio (D-191). La
+  **Idioma:** español, inglés, portugués (D-170) y alemán (D-191, para todos desde D-197). La
   pantalla va en el idioma de quien mira; las palabras de Conexiones y Palabra, los mensajes al
   grupo y su link, en el de la copa (`meta.lang`, se elige al crearla).
 - **Modalidades:** Copa de 7 días (la que se ofrece) y Copa de 3 días (solo pruebas).
 - **Calendario:** lo arma el admin al crear la copa (D-163): qué juegos entran y en qué orden,
   a partir de una propuesta al azar. La final va siempre el último día y no cambia.
 
-## Reglas del torneo
+### Pendiente (después de la v1)
+
+Recordatorios `.ics` (LIG-29), verificación cruzada de puntajes (LIG-30), papelera de copas
+viejas (LIG-31), avisos automáticos (LIG-33) y juegos de reserva (LIG-84). Ya no están
+pendientes: inglés y portugués con contenido propio (LIG-32, hecho en D-170) y las copas en el
+panel del dueño (D-137).
+
+## Reglas
 
 | Regla | Detalle |
 |---|---|
@@ -42,7 +51,42 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
 | Tabla | Suma de puntos. Desempata quien ganó más días y después quien quedó mejor en la final; si el 1.° y el 2.° empatan en puntos, el podio y el resumen dicen cuál de los dos criterios decidió (dilema #79). Es **provisoria** mientras el último día que muestra sigue abierto y alguien no lo ha jugado (D-147). |
 | Medallas | Campeón, más días ganados, la remontada (más puestos subidos desde la mitad) y "al descenso" (el último). |
 
-## Los juegos
+### Cuenta: nombre y PIN
+
+No hay cuentas de la app: una persona es un `pid` de 6 caracteres dentro de una copa, con nombre
+y PIN de 4 dígitos (D-96). El celular entra con acceso anónimo de Firebase Auth; para escribir por
+un jugador, su `uid` tiene que estar "sentado" como ese `pid`, y las reglas solo aceptan el asiento
+si trae el mismo `sha256("copa:código:pid:PIN")` que se guardó al inscribirse, en una rama que
+nadie puede leer.
+
+**Con los rankings (D-212).** Si en el celular hay un jugador de los rankings (nombre y PIN para
+toda la app), al inscribirse el nombre viene puesto, y al abrir la copa su jugador queda enlazado
+en `players/<pid>/j`. Con eso: los de la copa que también lo están pasan a ser sus **amigos** en
+los rankings; cada día jugado cuenta para la pestaña **Copa** del ranking de ese juego; y cuando la
+copa termina, el primero que la abre guarda su podio en `torneoPodios/<código>`, del que sale el
+medallero de **Campeones de La Copa** al final de la portada. El PIN de la copa sigue siendo aparte.
+Las copas del laboratorio no cuentan.
+
+### Admin
+
+Quien crea la copa también juega. Puede renombrar, sacar (y volver a meter) y ponerle PIN nuevo a
+un jugador, y compartir cuatro mensajes armados con el diálogo del celular (D-99): invitación,
+**recordatorio del día** (sirve cualquier día: antes de empezar, con el día de gracia y con quién
+falta), tabla parcial y resumen final. La **invitación** sigue en Administrar mientras alguien
+nuevo pueda entrar —inscripción abierta y menos de 10 jugadores—, no solo antes de partir; ya
+partida dice "📅 Ya partió: va en el día 3 de 7 y todavía puedes entrar." y, desde el día 3, que
+los días cerrados quedan en 0 (D-176, D-177). El botón "Invitar al grupo" del tablero sigue solo
+antes de partir.
+
+**Terminar la copa antes** (D-161): desde que parte, el admin puede cerrarla en ese momento, por
+ejemplo si el último no va a jugar la final. Antes de confirmar ve quiénes todavía no juegan el día
+de hoy (y el de gracia) y si quedan días que no se van a jugar. No se puede deshacer.
+
+**Tabla final** (D-161): terminada la copa, sola o por el admin, Administrar ofrece la imagen de la
+tabla con las posiciones día a día y una planilla CSV (`planilla.js`) para Excel o Google Sheets,
+con la tabla final, el lugar de cada uno después de cada día y el detalle de cada día.
+
+## Juegos
 
 Todo el contenido de un día sale de una semilla `código:día:sal` (D-97): es idéntico para todos
 sin que nada viaje por la red.
@@ -53,7 +97,7 @@ Todos los juegos puntúan **de 0 a 100** (D-113). Igual lo que decide la copa es
 |---|---|---|---|
 | 1 | ⏳ Línea Relámpago: 10 hitos, 9 en la mano en cualquier orden | 100 × aciertos / 9 | la mano, las ranuras, el arrastre y el veredicto de Línea de Tiempo |
 | 2 | 🔢 Toque y Fama: adivina el número. 4 cifras, 10 intentos | 100 − 10 × (intentos − 1), 0 si no | el teclado con notas, el tablero y las pistas de Toque y Fama |
-| 3 | 🔗 Conexiones: 16 palabras, 4 grupos, 4 errores | 25 × grupo − 5 × error | 12 grillas por significado, con distractores (`juegos/grillas.js`, D-128) |
+| 3 | 🔗 Conexiones: 16 palabras, 4 grupos, 4 errores | 25 × grupo − 5 × error | 12 grillas por significado, con distractores (`public/cup/games/connections/grillas.js` y sus versiones por idioma, D-128) |
 | 4 | 👑 Reinas: una por fila, columna y zona, sin tocarse | por tiempo: 100 hasta 30 s, 10 a los 5 min (D-107) | nuevo (Queens de LinkedIn) |
 | 5 | 🔤 Toque y Fama: Palabra. 5 letras, 8 intentos | 10 × letra encontrada en su lugar (una vez por lugar) + si la saca 50 − 5 × (intentos − 1) (D-108) | lo mismo que el día 2, con letras |
 | 6 | 📅 ¿En qué año?: 6 hitos | promedio de los hitos (100 cada uno, baja con la distancia) | mazos de Línea de Tiempo y teclado de Toque y Fama |
@@ -90,17 +134,17 @@ queda?** (cinco ciudades con su país, un alfiler en un globo sin nombres que se
 con dos dedos, también en torno a la pantalla, con una brújula que endereza el norte; 100 puntos
 por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
 
-- **¿Dónde queda?** saca sus ciudades de `ciudades.js` (las 195 capitales, ciudades famosas y de
-  segunda línea, 529 en total, con nivel y código ISO; D-157) y su mapa de `mapa.js`, que genera `node tools/generators/mapa.mjs generar`; `revisar`
+- **¿Dónde queda?** saca sus ciudades de `games/where/ciudades.js` (las 195 capitales, ciudades famosas y de
+  segunda línea, 529 en total, con nivel y código ISO; D-157) y su mapa de `games/where/mapa.js`, que genera `node tools/generators/mapa.mjs generar`; `revisar`
   comprueba que cada ciudad cae dentro de su país. La vista del globo (ortográfica) y su inversa
-  están en el motor, `donde.js`; `globo.js` lo dibuja en un canvas, recortando cada país en el
+  están en el motor, `games/where/engine.js`; `games/where/globo.js` lo dibuja en un canvas, recortando cada país en el
   borde, y la distancia se mide sobre la esfera. La antesala muestra el globo girando solo
-  (`portada()` de `ui-donde.js`).
+  (`portada()` de `games/where/ui.js`).
 
 - **🧶 Desenredo** (D-179; fuera del laboratorio desde D-190) es el Untangle de Simon Tatham: nudos unidos por
   hilos que se cruzan, y se arrastran los nudos hasta que ningún hilo cruce a otro. Por niveles
   como Zip: diez, de 6 a 15 nudos, y cuatro minutos; 10 puntos por nivel y el desempate es cuándo
-  se resolvió el último. El motor (`desenredo.js`) arma primero un dibujo sin cruces (nudos al
+  se resolvió el último. El motor (`games/untangle/engine.js`) arma primero un dibujo sin cruces (nudos al
   azar bien repartidos y hilos de los pares más cercanos a los más lejanos, hasta 4 por nudo) y
   después reparte los nudos en un círculo en desorden: siempre tiene solución, pero no una sola.
   Todo en enteros sobre 1000 × 1000; un hilo que pasa a menos de 24 unidades de un nudo ajeno
@@ -122,15 +166,30 @@ por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
   vivo (el sol, además, el borde entero) y un candado chico (#61).
 - **Toque y Fama: Palabra** acepta cualquier combinación de 5 letras distintas como intento, sin
   diccionario, igual que Toque y Fama acepta cualquier número de cifras distintas. La palabra
-  secreta sale de la lista del idioma de la copa (`juegos/palabras.js`: 120 en español, 185 en
+  secreta sale de la lista del idioma de la copa (`games/word/palabras.js`: 120 en español, 185 en
   inglés, 143 en portugués y 162 en alemán). El teclado es QWERTY con Ñ en español; en inglés y
   portugués deja un hueco donde iría la Ñ, y en alemán es QWERTZ con el mismo hueco, así la tercera
-  fila empieza en su letra (`alfabeto(lang)` en `letras.js`, D-170, D-191).
+  fila empieza en su letra (`alfabeto(lang)` en `games/word/engine.js`, D-170, D-191).
 - **¿En qué año?** tiene un margen que crece con la antigüedad: `max(8, (2026 − año) / 4)` años.
 - Las copas creadas antes de D-102 con el Solitario o Dudo en el calendario juegan Reinas y Toque y
   Fama: Palabra en esos días.
 
-## Flujo y pantallas
+## Modos
+
+Una copa no tiene los modos de C-5: es un torneo de varios días en que cada jugador juega solo,
+en su celular, el juego del día, y lo que se comparte es la tabla. Los juegos de la copa se juegan
+además **sueltos**, de un jugador y sin copa, desde la portada (`/<slug>/`, D-142, D-198).
+
+### Laboratorio, práctica y reportes
+
+`/labs/` (D-101) ofrece la práctica de cada juego, la copa simulada y la copa real. La práctica
+arma el contenido con una semilla al azar como si fuera el día 1 de una copa con ese código, y la
+muestra al final. El botón **🐞 Reportar un problema o dejar un comentario** (práctica, tablero y
+resultado) guarda en `feedback/<id>`, por REST y sin cuenta (D-104), el texto, un nombre opcional, la versión
+y un contexto en JSON: copa, jugador, pantalla, día, juego, semilla, URL y navegador. Se leen con
+`node tools/firebase/reportes.mjs`; en `?prueba` queda en `localStorage` (`juegos-de-salon:copa:prueba:reportes`).
+
+## Flujo
 
 `intro` (portada: crear, tus copas, tengo un código) → `crear` → `entrar` (invitación: Soy nuevo
 / Ya estoy inscrito) → `tablero` → `jugar` (primero Cómo se juega y el comodín) → `resultado` →
@@ -138,27 +197,15 @@ por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
 como tarjeta grande, el de ayer habilitado mientras dure su gracia, los que vienen deshabilitados),
 la **tabla** y el **gráfico de tu posición día a día**. Al terminar, el **podio**.
 
-## Cuenta: nombre y PIN
+## Protocolo de mensajes
 
-No hay cuentas de la app: una persona es un `pid` de 6 caracteres dentro de una copa, con nombre
-y PIN de 4 dígitos (D-96). El celular entra con acceso anónimo de Firebase Auth; para escribir por
-un jugador, su `uid` tiene que estar "sentado" como ese `pid`, y las reglas solo aceptan el asiento
-si trae el mismo `sha256("copa:código:pid:PIN")` que se guardó al inscribirse, en una rama que
-nadie puede leer.
+No tiene: no hay sala ni mensajes entre celulares. Cada celular escribe su resultado en Firebase bajo reglas que imponen las ventanas y una sola escritura, y el contenido del día sale de la semilla (D-97).
 
-**Con los rankings (D-212).** Si en el celular hay un jugador de los rankings (nombre y PIN para
-toda la app), al inscribirse el nombre viene puesto, y al abrir la copa su jugador queda enlazado
-en `players/<pid>/j`. Con eso: los de la copa que también lo están pasan a ser sus **amigos** en
-los rankings; cada día jugado cuenta para la pestaña **Copa** del ranking de ese juego; y cuando la copa
-termina, el primero que la abre guarda su podio en `torneoPodios/<código>`, del que sale el
-medallero de **Campeones de La Copa** que se ve al final de la portada. El PIN de la copa sigue
-siendo aparte. Las copas del laboratorio no cuentan.
-
-## Datos (Firebase)
+### Datos (Firebase)
 
 ```
-torneos/<código>/meta               nombre, días, calendario, ventanas, admin, joinUntil, final
-torneos/<código>/players/<pid>      { name, at, out?, co?, j? }   co: país (D-209); j: su jugador de los rankings (D-212)
+torneos/<código>/meta               nombre, días, calendario (cal), ventanas, admin, joinUntil, final, idioma (lang), público (aud), zona (tz)
+torneos/<código>/players/<pid>      { name, at, out?, co?, j? }   co: país, al inscribirse o al volver a abrir (D-207, D-209); j: su jugador de los rankings (D-212)
 torneos/<código>/started/<d>/<pid>  hora del servidor al tocar Empezar
 torneos/<código>/results/<d>/<pid>  { s, ms, t, r, at }
 torneos/<código>/wild/<pid>         "3" (el día del comodín, como texto)
@@ -172,48 +219,29 @@ comodín antes de Empezar y fuera de la final, la inscripción antes de la final
 renombre, saque o cambie PINes. El árbol no se llama `copas` porque las reglas no pueden nombrar
 juegos (C-16, `public/panel/adapta.test.mjs`).
 
-## Laboratorio, práctica y reportes
-
-`/labs/` (D-101) ofrece la práctica de cada juego, la copa simulada y la copa real. La práctica
-arma el contenido con una semilla al azar como si fuera el día 1 de una copa con ese código, y la
-muestra al final. El botón **🐞 Reportar un problema o dejar un comentario** (práctica, tablero y
-resultado) guarda en `feedback/<id>`, por REST y sin cuenta (D-104), el texto, un nombre opcional, la versión
-y un contexto en JSON: copa, jugador, pantalla, día, juego, semilla, URL y navegador. Se leen con
-`node tools/firebase/reportes.mjs`; en `?prueba` queda en `localStorage` (`juegos-de-salon:copa:prueba:reportes`).
-
-## Admin
-
-Quien crea la copa también juega. Puede renombrar, sacar (y volver a meter) y ponerle PIN nuevo a
-un jugador, y compartir cuatro mensajes armados con el diálogo del celular (D-99): invitación,
-**recordatorio del día** (sirve cualquier día: antes de empezar, con el día de gracia y con quién
-falta), tabla parcial y resumen final. La **invitación** sigue en Administrar mientras alguien
-nuevo pueda entrar —inscripción abierta y menos de 10 jugadores—, no solo antes de partir; ya
-partida dice "📅 Ya partió: va en el día 3 de 7 y todavía puedes entrar." y, desde el día 3, que
-los días cerrados quedan en 0 (D-176, D-177). El botón "Invitar al grupo" del tablero sigue solo
-antes de partir.
-
-**Terminar la copa antes** (D-161): desde que parte, el admin puede cerrarla en ese momento, por
-ejemplo si el último no va a jugar la final. Antes de confirmar ve quiénes todavía no juegan el día
-de hoy (y el de gracia) y si quedan días que no se van a jugar. No se puede deshacer.
-
-**Tabla final** (D-161): terminada la copa, sola o por el admin, Administrar ofrece la imagen de la
-tabla con las posiciones día a día y una planilla CSV (`planilla.js`) para Excel o Google Sheets,
-con la tabla final, el lugar de cada uno después de cada día y el detalle de cada día.
-
 ## Archivos
+
+Todo bajo `public/cup/`:
 
 | Archivo | Qué hace |
 |---|---|
 | `engine.js` | Calendario, ventanas con zona horaria, puntos, tabla, evolución, medallas, reloj activo |
-| `juegos/*.js` | Motor puro de cada juego, la semilla y las grillas |
-| `juegos/ui-*.js` | La pantalla de cada juego |
+| `games/<carpeta>/engine.js` | Motor puro de cada juego (`connections`, `final`, `number`, `queens`, `tango`, `timeline`, `untangle`, `where`, `word`, `year`, `zip`), con sus datos propios al lado |
+| `games/<carpeta>/ui.js` | La pantalla de cada juego |
+| `games/index.js` · `games/semilla.js` · `games/mazos.js` · `games/audiencia.js` · `games/solo.js` | Lo común a los juegos: el registro, la semilla, los mazos, el público y el modo suelto con su récord |
 | `store-firebase.js` · `store-local.js` | El mismo almacén contra Firebase o contra localStorage (`?prueba`) |
 | `cuenta.js` | Con quién está sentado este celular y el intento a medio jugar |
+| `desglose.js` | Cómo se calculó el puntaje, línea por línea (D-106) |
+| `demo.js` | Las escenas de ejemplo del laboratorio |
+| `reportes.js` | El botón 🐞 y los reportes que esperan reenvío |
 | `planilla.js` | La tabla final como CSV (D-161) |
-| `rules.js` | Textos y la explicación de cada juego |
+| `rules.js` | Textos (`LOCALES` es, en, pt, de) y la explicación de cada juego |
 | `game.js` | Pantallas |
+| `suelto/index.html` | La página de un juego suelto (`/<slug>/`), de la que `og.mjs tarjetas` genera las demás |
 
-## Pruebas
+Gancho de pruebas (C-14): `window.__copa`, en `game.js` (LIG-27).
+
+### Pruebas
 
 ```bash
 node public/cup/engine.test.mjs
@@ -225,9 +253,10 @@ node tools/e2e/cup/torneo.mjs /tmp/copa            # Copa de 3 días, tres jugad
 node tools/e2e/cup/torneo.mjs /tmp/copa --siete    # los siete juegos
 ```
 
-## Pendiente (después de la v1)
+## Excepciones a los cánones
 
-Recordatorios `.ics` (LIG-29), verificación cruzada de puntajes (LIG-30), papelera de copas
-viejas (LIG-31), avisos automáticos (LIG-33) y juegos de reserva (LIG-84). Ya no están
-pendientes: inglés y portugués con contenido propio (LIG-32, hecho en D-170) y las copas en el
-panel del dueño (D-137).
+- **C-5 no aplica:** la copa no es una partida de dos con tres modos (ver “Modos”).
+- **C-10 no aplica como secreto por celular:** el contenido del día es el mismo para todos y sale de
+  la semilla; la protección contra trampas está en las reglas de Firebase (ventanas con la hora del
+  servidor, una sola escritura, el asiento con el hash del PIN, D-96). La verificación cruzada de
+  puntajes sigue pendiente (LIG-30).
