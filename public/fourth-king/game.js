@@ -1,21 +1,24 @@
 /**
- * Cuarto Rey — lógica del juego.
+ * Cuarto Rey — máquina de estados y dibujo (C-2). Las reglas están en engine.js.
  * Pantallas: intro → setup → play → end.
- * El estado completo se guarda en localStorage para poder retomar la partida.
+ * El estado completo se guarda en localStorage para poder retomar la partida (C-6).
  * Todos los textos salen de LOCALES[lang] (rules.js); el idioma se elige en el menú o en la intro.
  */
-import { $, $$, el, pick, shuffle, vibrate, sparkles, keepAwake, confetti } from '../assets/js/ui.js';
+import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../assets/js/ui.js';
 import { getLang, langToggle, applyStatic } from '../assets/js/i18n.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
-import { createSessionStore } from '../assets/js/session.js';
-import { trackStart, trackVisit } from '../assets/js/transport/stats.js';
-import { SUITS, RANKS, MIN_PLAYERS, MAX_PLAYERS, SORBOS, CARD_RULES, LOCALES } from './rules.js';
+import { createSessionStore, createNameStore } from '../assets/js/session.js';
+import { showHandoff, passBlock } from '../assets/js/handoff.js';
+import { trackStart, trackVisit, trackFinish } from '../assets/js/transport/stats.js';
+import { GAME_ID, DEFAULT_CONFIG, RANKS, MIN_PLAYERS, MAX_PLAYERS, SORBOS, CARD_RULES, LOCALES } from './rules.js';
+import * as E from './engine.js';
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
 trackVisit();
 
-const STORAGE_PLAYERS = 'juegos-de-salon:players';
-const store = createSessionStore('cuarto-rey', { legacyKeys: ['juegos-de-salon:cuarto-rey:game'] });
+const store = createSessionStore(GAME_ID, { legacyKeys: ['juegos-de-salon:cuarto-rey:game'] });
+// La última mesa (nombres y géneros). Antes vivía en `juegos-de-salon:players`: se muda sola (C-6).
+const nameStore = createNameStore(GAME_ID, { legacyKeys: ['juegos-de-salon:players'] });
 const GENDERS = { m: '♂', f: '♀', x: '⚧' };
 
 const lang = getLang();
@@ -35,21 +38,13 @@ function save() {
   store.save({ mode: 'local', state });
 }
 function loadSaved() {
-  const data = store.load();
-  if (!data) return null;
-  const saved = data.state || (data.players ? data : null); // formato antiguo: el estado iba en la raíz
-  if (saved && !Array.isArray(saved.history)) saved.history = []; // guardada antes del historial (CR-18)
-  return saved;
+  return E.fromSaved(store.load()); // formato antiguo y partidas sin historial (CR-18), ver engine.js
 }
 function clearSaved() {
   store.clear();
 }
-function loadPlayers() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_PLAYERS) || 'null'); } catch (_) { return null; }
-}
-function savePlayers(players) {
-  try { localStorage.setItem(STORAGE_PLAYERS, JSON.stringify(players)); } catch (_) { /* nada */ }
-}
+const loadPlayers = () => nameStore.list();
+const savePlayers = players => nameStore.setList(players);
 
 /* ------------------------------------------------------------------ */
 /* Navegación                                                          */
@@ -97,7 +92,7 @@ function enterSetup() {
   const remembered = loadPlayers();
   draft = (remembered && remembered.length >= MIN_PLAYERS)
     ? remembered.map(p => ({ ...p }))
-    : Array.from({ length: MIN_PLAYERS }, () => ({ name: '', gender: 'm' }));
+    : Array.from({ length: DEFAULT_CONFIG.players }, () => ({ name: '', gender: DEFAULT_CONFIG.gender }));
   renderPlayersForm();
   showScreen('screen-setup');
 }
@@ -140,23 +135,12 @@ function validateDraft() {
 /* ------------------------------------------------------------------ */
 /* Partida                                                             */
 /* ------------------------------------------------------------------ */
-function buildDeck() {
-  const deck = [];
-  for (const suit of SUITS) for (const rank of RANKS) deck.push({ rank, suit: suit.symbol, color: suit.color });
-  return shuffle(deck);
-}
-
 function startGame(players) {
   savePlayers(players);
-  state = {
-    players, deck: buildDeck(), turn: 0, kings: 0, drawn: 0,
-    sorbos: players.map(() => 0), fondos: players.map(() => 0),
-    history: [],
-    current: null, finished: false, victim: null, startedAt: Date.now(),
-  };
+  state = E.newGame(players);
   save();
   enterPlay();
-  trackStart({ game: 'cuarto-rey', mode: 'local', players: players.length, nombres: players.map(p => p?.name || p) }); // señal de uso (D-44, D-210)
+  trackStart({ game: GAME_ID, mode: 'local', players: players.length, nombres: players.map(p => p?.name || p) }); // señal de uso (D-44, D-210)
 }
 
 function enterPlay() {
@@ -165,8 +149,7 @@ function enterPlay() {
   renderTable();
 }
 
-const n = () => state.players.length;
-const currentPlayer = () => state.players[state.turn];
+const currentPlayer = () => E.currentPlayer(state);
 
 function renderSeats() {
   const seats = $('#seats');
@@ -214,11 +197,8 @@ function renderCardFront(c) {
 function drawCard() {
   if (!state || state.current || state.finished) return;
   if (!state.deck.length) return finishGame(null);
-  const card = state.deck.pop();
-  state.drawn++;
-  state.history.push({ ...card, by: state.turn });
-  state.current = { card, applied: false, data: {} };
-  applyImmediateRule();
+  // Lo automático (sorbos, reyes, la penitencia o la categoría sorteada) lo aplica el motor
+  const card = E.drawCard(state, { penitencias: L.penitencias, categorias: L.categorias });
   save();
   vibrate([20, 40, 30]);
   renderCardFront(card);
@@ -230,42 +210,6 @@ function drawCard() {
   // Secuencia: volteo (0.75 s) → la carta se encoge (0.5 s) → aparecen las instrucciones.
   setTimeout(() => cardEl.classList.add('small'), 800);
   setTimeout(renderResult, 1150);
-}
-
-/** Reglas cuyo efecto es automático (nadie decide nada): se aplican al sacar la carta. */
-function applyImmediateRule() {
-  const { card } = state.current;
-  const rule = CARD_RULES[card.rank];
-  if (rule.kind === 'drink') {
-    const targets = resolveTargets(rule.targets);
-    targets.forEach(i => { state.sorbos[i] += SORBOS; });
-    state.current.data.targets = targets;
-  } else if (rule.kind === 'king') {
-    state.kings++;
-    state.current.data.kingNumber = state.kings;
-    if (state.kings === 4) {
-      state.fondos[state.turn]++;
-      state.victim = state.turn;
-    }
-  } else if (rule.kind === 'penitencia') {
-    state.current.data.penitencia = pick(L.penitencias);
-  } else if (rule.kind === 'minigame' && rule.game === 'cultura') {
-    state.current.data.category = pick(L.categorias);
-  }
-  state.current.applied = true;
-}
-
-function resolveTargets(kind) {
-  const t = state.turn, total = n();
-  switch (kind) {
-    case 'all': return state.players.map((_, i) => i);
-    case 'right': return [(t + 1) % total];
-    case 'left': return [(t - 1 + total) % total];
-    case 'self': return [t];
-    case 'men': { const r = state.players.map((p, i) => (p.gender === 'm' || p.gender === 'x') ? i : -1).filter(i => i >= 0); return r.length ? r : [t]; }
-    case 'women': { const r = state.players.map((p, i) => (p.gender === 'f' || p.gender === 'x') ? i : -1).filter(i => i >= 0); return r.length ? r : [t]; }
-    default: return [t];
-  }
 }
 
 /* ------------------------------------------------------------------ */
@@ -302,33 +246,30 @@ function drinkerChips(indexes) {
 }
 
 function renderDrink(box, rule, texts, data) {
-  const targets = data.targets || resolveTargets(rule.targets);
-  const genderKey = rule.targets === 'men' ? 'm' : rule.targets === 'women' ? 'f' : null;
-  const fallback = genderKey && targets.length === 1 && targets[0] === state.turn
-    && !state.players.some(p => p.gender === genderKey || p.gender === 'x');
+  const targets = data.targets || E.resolveTargets(state, rule.targets);
+  const fallback = E.genderFallback(state, rule.targets, targets);
   box.append(
     el('h2', { class: 'display display--md title' }, texts.title),
-    el('p', { class: 'text' }, fallback ? (genderKey === 'm' ? T.noMen : T.noWomen) : texts.text),
+    el('p', { class: 'text' }, fallback ? (fallback === 'm' ? T.noMen : T.noWomen) : texts.text),
     drinkerChips(targets),
     nextButton({ drinkers: targets, title: T.hoCheers }),
   );
 }
 
 function renderGift(box, texts) {
-  const counts = state.players.map(() => 0);
-  const total = () => counts.reduce((a, b) => a + b, 0);
+  let counts = state.players.map(() => 0);
   const status = el('p', { class: 'text' }, fmt(T.giftLeft, { n: SORBOS }));
   const done = el('button', { class: 'btn', disabled: true, onClick: () => {
-    counts.forEach((c, i) => { state.sorbos[i] += c; });
-    nextTurn({ drinkers: counts.map((c, i) => c ? i : -1).filter(i => i >= 0), title: T.hoGift });
+    nextTurn({ drinkers: E.applyGift(state, counts), title: T.hoGift });
   } }, T.gifted);
   const picker = el('div', { class: 'picker' });
   const buttons = state.players.map((p, i) => {
     const count = el('span', { class: 'count' }, '');
     return el('button', { type: 'button', onClick: () => {
-      if (total() >= SORBOS) { counts[i] = 0; } else { counts[i]++; }
+      const tap = E.giftTap(counts, i);
+      counts = tap.counts;
       buttons.forEach((bb, j) => { bb.classList.toggle('on', counts[j] > 0); bb.querySelector('.count').textContent = counts[j] ? '🍺'.repeat(counts[j]) : ''; });
-      const left = SORBOS - total();
+      const left = tap.left;
       status.textContent = left === 0 ? T.giftDone : left === 1 ? T.giftLeftOne : fmt(T.giftLeft, { n: left });
       done.disabled = left > 0;
       vibrate(10);
@@ -349,13 +290,13 @@ function renderPenitencia(box, data) {
     el('h2', { class: 'display display--md title' }, fmt(T.penitenciaFor, { name: currentPlayer().name })),
     text,
     el('button', { class: 'btn btn--ghost btn--sm', style: 'width:100%', onClick: () => {
-      let p; do { p = pick(L.penitencias); } while (p === data.penitencia && L.penitencias.length > 1);
+      const p = E.pickOther(L.penitencias, data.penitencia);
       data.penitencia = p; save(); SFX.dice();
       text.textContent = p; text.classList.remove('pop'); void text.offsetWidth; text.classList.add('pop');
     } }, T.otherPenitencia),
     el('div', { class: 'actions stack' },
       el('button', { class: 'btn btn--cyan', onClick: () => nextTurn({ drinkers: [], title: T.hoDone, emoji: '👏' }) }, T.done),
-      el('button', { class: 'btn btn--ghost', onClick: () => { state.sorbos[state.turn] += SORBOS; nextTurn({ drinkers: [state.turn], title: T.hoChickened }); } }, fmt(T.chickened, { n: SORBOS })),
+      el('button', { class: 'btn btn--ghost', onClick: () => { E.addSips(state, state.turn); nextTurn({ drinkers: [state.turn], title: T.hoChickened }); } }, fmt(T.chickened, { n: SORBOS })),
     ),
   );
 }
@@ -375,7 +316,7 @@ function renderMinigame(box, rule, data) {
   const picker = el('div', { class: 'picker' });
   picker.append(...state.players.map((p, i) => el('button', { type: 'button', onClick: () => {
     stopTimer();
-    state.sorbos[i] += SORBOS;
+    E.addSips(state, i);
     nextTurn({ drinkers: [i], title: T.hoLost });
   } }, `😵 ${p.name}`)));
   box.append(
@@ -412,7 +353,7 @@ function categoryHelper(data) {
     el('div', { class: 'muted' }, T.suggestedCategory),
     cat,
     el('button', { class: 'btn btn--ghost btn--sm', onClick: () => {
-      let c; do { c = pick(L.categorias); } while (c === data.category);
+      const c = E.pickOther(L.categorias, data.category);
       data.category = c; save(); SFX.dice(); cat.textContent = c; cat.classList.remove('pop'); void cat.offsetWidth; cat.classList.add('pop');
     } }, T.otherCategory),
   );
@@ -421,7 +362,7 @@ function categoryHelper(data) {
 function nuncaHelper() {
   const quote = el('div', { class: 'quote', hidden: true });
   const btn = el('button', { class: 'btn btn--ghost btn--sm', onClick: () => {
-    quote.hidden = false; quote.textContent = pick(L.nuncaNunca); btn.textContent = T.otherIdea; SFX.dice();
+    quote.hidden = false; quote.textContent = E.pickWith(L.nuncaNunca); btn.textContent = T.otherIdea; SFX.dice();
     quote.classList.remove('pop'); void quote.offsetWidth; quote.classList.add('pop');
   } }, T.noIdeas);
   return el('div', { class: 'helper' }, el('div', { class: 'muted' }, fmt(T.nuncaStarts, { name: currentPlayer().name })), quote, btn);
@@ -453,58 +394,38 @@ function renderKing(box, data) {
 }
 
 /**
- * Cierra la carta actual y muestra la transición entre turnos:
- *  1) "¡Salud!" con quiénes toman (avanza solo o al tocar),
- *  2) "Pásale el celular a X" con botón para que el siguiente jugador confirme.
- * El estado avanza de inmediato (por si se cierra el navegador); la mesa se redibuja detrás del overlay.
+ * Cierra la carta actual y muestra la transición entre turnos (C-9): arriba lo que pasó ("¡Salud!"
+ * con quiénes toman) y debajo "Pásale el celular a X" con su botón. Solo el botón avanza: ni un
+ * toque fuera de él ni un temporizador cierran la pantalla antes de que la mesa la lea (D-213).
+ * El estado avanza de inmediato (por si se cierra el navegador); la mesa se redibuja detrás.
  */
 function nextTurn(summary = { drinkers: [], title: T.hoReady }) {
   stopTimer();
-  state.current = null;
-  state.turn = (state.turn + 1) % n();
+  E.nextTurn(state);
   save();
   renderTable();
-  showHandoff(summary);
+  showPass(summary);
 }
 
-function showHandoff({ drinkers = [], title = T.hoCheers, emoji } = {}) {
-  const box = $('#handoff');
-  box.hidden = false; box.className = 'handoff'; box.innerHTML = '';
-  let timer = null;
-
-  const stageDrink = el('div', { class: 'stage pop' },
+function showPass({ drinkers = [], title = T.hoCheers, emoji } = {}) {
+  const pb = passBlock({ label: T.hoPass, name: currentPlayer().name, button: T.hoGiveCard, small: true });
+  const stage = el('div', { class: 'stage pase pop' },
     emoji ? el('div', { class: 'cheers' }, el('span', {}, emoji)) : el('div', { class: 'cheers' }, el('span', { class: 'l' }, '🍺'), el('span', { class: 'r' }, '🍺')),
     el('div', { class: 'title gold' }, title),
     drinkers.length ? drinkerChips(drinkers) : null,
     drinkers.length ? el('div', { class: 'hint' }, fmt(drinkers.length > 1 ? T.hoDrinkMany : T.hoDrinkOne, { n: SORBOS })) : null,
-    el('div', { class: 'hint', style: 'margin-top:10px' }, T.hoTap),
+    pb,
   );
-
-  const stagePass = el('div', { class: 'stage pop' },
-    el('div', { class: 'phone' }, '📱'),
-    el('div', { class: 'hint', style: 'font-size:1.05rem' }, T.hoPass),
-    el('div', { class: 'next-name' }, currentPlayer().name),
-    el('button', { class: 'btn btn--cyan', onClick: e => { e.stopPropagation(); closeHandoff(); } }, T.hoGiveCard),
-  );
-
-  const goPass = () => {
-    if (timer) { clearTimeout(timer); timer = null; }
-    if (box.contains(stagePass)) return;
-    box.innerHTML = ''; box.append(stagePass); vibrate(15); SFX.pass();
-  };
-  const closeHandoff = () => {
-    box.classList.add('leaving');
+  // Al tocar el botón, la carta nueva entra mientras el pase se desvanece
+  stage.setAdvance = next => pb.setAdvance(() => {
     const card = $('#card');
     card.classList.remove('enter'); void card.offsetWidth; card.classList.add('enter');
     SFX.flip();
-    setTimeout(() => { box.hidden = true; box.innerHTML = ''; }, 300);
-  };
-
-  box.append(stageDrink);
-  box.onclick = goPass;
+    next();
+  });
+  showHandoff([stage], null, { tapAdvances: false });
   vibrate(drinkers.length ? [30, 40, 30] : 20);
-  if (drinkers.length) SFX.drink();
-  timer = setTimeout(goPass, drinkers.length ? 2600 : 1800);
+  if (drinkers.length) SFX.drink(); else SFX.pass();
 }
 
 /* ------------------------------------------------------------------ */
@@ -532,22 +453,25 @@ function renderHistory() {
 
 function finishGame(victimIndex) {
   stopTimer();
-  state.finished = true;
-  state.current = null;
+  E.finish(state);
   save();
+  // Cómo terminó, para el panel (C-7, D-210). Acá nadie gana: el cuarto rey es un castigo, así que
+  // va como detalle y no como ganador. Sin efecto en una partida retomada (trackStart no corrió en
+  // esta página) y una sola vez por partida (trackFinish suelta el latido al mandar).
+  trackFinish({ detalle: victimIndex === null
+    ? `se acabó el mazo · ${state.drawn} cartas`
+    : `👑 ${state.players[victimIndex].name} · ${state.drawn} cartas` });
   $('#end-victim').textContent = victimIndex === null ? T.deckOver : state.players[victimIndex].name;
   const ranking = $('#ranking');
   ranking.innerHTML = '';
-  const order = state.players.map((p, i) => ({ ...p, i, sorbos: state.sorbos[i], fondos: state.fondos[i] }))
-    .sort((a, b) => (b.sorbos + b.fondos * 10) - (a.sorbos + a.fondos * 10));
-  order.forEach((p, pos) => {
+  E.ranking(state).forEach((p, pos) => {
     ranking.append(el('li', { class: pos === 0 ? 'top' : '' },
       el('span', { class: 'pos' }, ['🥇', '🥈', '🥉'][pos] || `${pos + 1}.`),
       el('span', {}, p.name, p.fondos ? ' 👑' : ''),
       el('span', { class: 'sorbos' }, fmt(T.sips, { n: p.sorbos }) + (p.fondos ? T.plusChug : '')),
     ));
   });
-  const mins = Math.max(1, Math.round((Date.now() - state.startedAt) / 60000));
+  const mins = E.minutesPlayed(state);
   $('#end-stats').textContent = fmt(T.endStats, { cards: state.drawn, mins });
   renderHistory();
   showScreen('screen-end');
@@ -571,7 +495,7 @@ function init() {
   renderRulesList();
   renderResumeSlot();
   $('#btn-go-setup').addEventListener('click', enterSetup);
-  $('#btn-add-player').addEventListener('click', () => { if (draft.length < MAX_PLAYERS) { draft.push({ name: '', gender: 'm' }); renderPlayersForm(draft.length - 1); setTimeout(() => $$('#players-form input').at(-1)?.focus(), 50); } });
+  $('#btn-add-player').addEventListener('click', () => { if (draft.length < MAX_PLAYERS) { draft.push({ name: '', gender: DEFAULT_CONFIG.gender }); renderPlayersForm(draft.length - 1); setTimeout(() => $$('#players-form input').at(-1)?.focus(), 50); } });
   $('#btn-start').addEventListener('click', () => {
     const { error, players } = validateDraft();
     const err = $('#form-error');
@@ -586,3 +510,11 @@ function init() {
 }
 
 init();
+
+// Gancho de solo lectura para las pruebas automatizadas (C-14): copias, no el estado vivo.
+window.__cuartoRey = {
+  state: () => (state ? structuredClone(state) : null),
+  screen: () => document.querySelector('.screen.active')?.id || null,
+  guardada: () => store.load(),
+  mesa: () => nameStore.list(),
+};

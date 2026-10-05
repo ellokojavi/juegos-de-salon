@@ -71,7 +71,7 @@ Los IDs no se reusan: un requerimiento que cambia conserva su ID y su texto se a
 | CR-15 | La pantalla no se apaga mientras se juega (Wake Lock, donde el navegador lo permita). | ✅ |
 | CR-16 | Vibración al sacar carta y en momentos clave (donde el dispositivo lo permita). | ✅ |
 | CR-18 | Historial de cartas sacadas en la partida: plegado al pie de la pantalla final, con palo, quién la sacó y qué decía. | ✅ v0.27 |
-| CR-19 | Transición entre turnos: tras resolver la carta, pantalla "¡Salud!" con quiénes toman y luego "Pásale el celular a X" con confirmación del siguiente jugador. | ✅ v0.2 |
+| CR-19 | Transición entre turnos: tras resolver la carta, una pantalla con "¡Salud!" y quiénes toman arriba y "Pásale el celular a X" debajo, que solo avanza con la confirmación del siguiente jugador (antes eran dos pantallas, la primera avanzaba sola; una sola desde D-213). | ✅ v0.2 |
 | CR-20 | La carta boca abajo ocupa la mayor parte de la pantalla (fácil de tocar); al descubrirse gira y se encoge para dejar espacio a las instrucciones. | ✅ v0.2 |
 | CR-21 | Todo el contenido del juego (reglas, mini-juegos, penitencias, categorías, ideas de Nunca Nunca) disponible en español e inglés. | ✅ v0.2 |
 | CR-22 | Todo el contenido del juego en portugués (Quarto Rei, Era Uma Vez, Porquinho Bochechudo, Cultura de Boteco, Eu Nunca, prendas y categorías adaptadas). | ✅ v0.22 |

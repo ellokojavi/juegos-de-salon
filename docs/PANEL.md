@@ -147,7 +147,8 @@ Sale del celular, por día y por entorno (`public/assets/js/transport/stats.js`)
   jugadores, y mientras se juega un registro en vivo con juego, modo, cantidad de jugadores,
   país del celular y la hora de la última señal (D-140). Desde D-210 lleva también quién juega
   (`name`: los nombres de la partida, o el último que la persona escribió en la app; si nunca
-  puso uno, nada) y cómo terminó (`fin`: quién ganó, empate o un detalle como "80/100 · 2:30").
+  puso uno, nada) y cómo terminó (`fin`: quién ganó, empate o un detalle como "80/100 · 2:30"; Cuarto Rey, que no
+  tiene ganador, manda solo el detalle: `👑 Javi · 29 cartas`).
 - **Cualquier modo:** contador de zona horaria, idioma del navegador, idioma elegido en el
   juego y hora local.
 - **Cualquier página que se abra** (D-208): `vistas/<página>`; y una vez por pestaña,

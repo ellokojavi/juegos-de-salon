@@ -139,7 +139,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 **Por qué:** Cero configuración de CI; cada push publica. La URL de GitHub Pages (`ellokojavi.github.io/juegos-de-salon/`) quedó después detrás del dominio propio https://juegosdesalon.cl/, y redirige con un 301.
 
 ## D-14 · Transición entre turnos como overlay de dos etapas
-**Fecha:** 2026-09-08 · **Estado:** vigente
+**Fecha:** 2026-09-08 · **Estado:** corregida por D-213
 **Decisión:** Al cerrar una carta, un overlay a pantalla completa muestra (1) "¡Salud!" con los que toman, que avanza solo a los 2,6 s o al tocar, y (2) "Pásale el celular a X" con el botón "¡Dame la carta!". El estado del juego avanza antes de mostrar el overlay y la mesa se redibuja detrás.
 **Por qué:** Separa tres momentos que antes se pisaban: decidir quién toma, tomar, y que el siguiente jugador reciba el celular listo para sacar carta (CR-19). Avanzar el estado primero garantiza que, si se cierra el navegador en la transición, la partida se retoma en el turno correcto.
 
@@ -3321,7 +3321,7 @@ la próxima.
 sin nombres (D-44): ahí solo hay país.
 
 ## D-210 · Las partidas sin red dicen quién jugó y cómo terminó
-**Fecha:** 2026-10-04 · **Estado:** vigente · **Relación:** cambia D-44 para los modos sin red, y D-140
+**Fecha:** 2026-10-04 · **Estado:** corregida por D-213 · **Relación:** cambia D-44 para los modos sin red, y D-140
 **Decisión:** Una partida contra el celular, en un solo celular o en solitario manda, además de
 juego, modo y país, **quién juega** y **cómo terminó**. El nombre no se pide para esto: son los
 nombres que la partida ya tiene (los de un celular pasándose, o el de quien juega contra el
@@ -3395,6 +3395,11 @@ Estado y se pusieron al día solo los comandos de las que siguen siendo procedim
 D-78, D-122, D-132, D-172 y D-181). D-180, que nunca se usó, queda como número vacío, y D-173 pasó
 a su lugar en el orden. Quedan para PR aparte: llevar Cuarto Rey al canon, y los guardianes
 automáticos (`games.test.mjs`, un `documentar.mjs` más estricto y el puerto libre en `cdp.mjs`).
+Al llevar Cuarto Rey al canon, su partida también avisa cómo terminó (`trackFinish`), sin
+ganador: el cuarto rey es un castigo, así que solo va el detalle (`👑 Javi · 29 cartas`). Eso
+corrige lo que D-210 decía de él ("manda los nombres, no el final"). Y su pase ya no es el overlay
+de dos etapas de D-14: el "¡Salud!" y "Pásale el celular a X" van en una sola pantalla de
+`handoff.js`, que solo avanza con el botón (C-9).
 **Actualización 2026-10-05:** los guardianes llegaron en su PR. `public/assets/js/games.test.mjs`
 exige a cada juego de `GAMES` motor, tests, gancho `window.__…` y especificación con la plantilla
 de C-13, o una excepción que cite su decisión; `documentar.mjs` revisa además la numeración, los
