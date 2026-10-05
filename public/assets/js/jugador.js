@@ -14,6 +14,7 @@
  *   records/<tabla>/<periodo>/<jid> { s, ms, k, at, n }: el mejor, y solo si mejora.
  *   torneoPodios/<código>           el podio de una copa terminada, para el medallero.
  */
+import { envOf } from './transport/stats.js';
 import {
   claveNombre, limpiarNombre, esPin, esJid, nuevoJid, hashPinJugador, tablaId, normalizar, esMejor, semana,
   SIEMPRE, TODOTERRENO, todoterreno, vistaTabla, ordenar,
@@ -260,13 +261,13 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
 let unico = null;
 /**
  * El jugador de la página, con el almacén que corresponde: Firebase en el sitio publicado; en
- * localhost y con `?prueba`, el de prueba, para que los guiones no escriban en los rankings de
+ * pruebas (localhost, la red de la casa y Tailscale: `envOf`, D-138) y con `?prueba`, el de prueba, para que los guiones no escriban en los rankings de
  * verdad. `?records=firebase` fuerza Firebase para mirarlo a mano.
  */
 export async function jugador() {
   if (unico) return unico;
   const q = new URLSearchParams(location.search);
-  const local = q.get('records') !== 'firebase' && (q.has('prueba') || /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname));
+  const local = q.get('records') !== 'firebase' && (q.has('prueba') || envOf(location) === 'dev');
   const almacen = local
     ? (await import('./jugador-local.js')).crearAlmacenLocal()
     : (await import('./jugador-firebase.js')).crearAlmacenFirebase();
