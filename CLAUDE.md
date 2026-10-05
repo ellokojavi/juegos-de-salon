@@ -128,6 +128,7 @@ python3 tools/release/readme.py capturas <seccion> [--sin-red]   # rehace las ca
 python3 tools/release/readme.py sellar         # "ya releí el README con estos hechos"
 node tools/e2e/contacto.mjs <seccion> --salida /tmp/contacto      # mirarlas juntas (D-76)
 node tools/release/og.mjs tarjetas | imagenes | revisar           # tarjetas de WhatsApp (D-72)
+node tools/release/iconos.mjs                                    # íconos PNG de la app instalable, desde assets/icon.svg (D-221)
 ```
 
 - **Una captura atrasada es un aviso en un PR común. "Actualiza el README" es una pasada entera**,
