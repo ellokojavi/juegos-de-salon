@@ -208,7 +208,7 @@
 </head>
 <body>
   <main class="app">
-    <div class="topbar" style="justify-content:flex-end"><div class="tools"><div id="lang-slot"></div><span id="sound-slot"></span><a class="icon-btn" id="btn-rankings" href="records/" title="Rankings" aria-label="Rankings">🏆</a><span id="share-slot"></span></div></div>
+    <div class="topbar" style="justify-content:flex-end"><div class="tools"><div id="lang-slot"></div><span id="sound-slot"></span><a class="icon-btn" id="btn-rankings" href="records/" title="Rankings" aria-label="Rankings" hidden>🏆</a><span id="share-slot"></span></div></div>
     <header class="hero">
       <span class="emoji bounce"><span class="emoji-swap" id="hero-emoji" aria-hidden="true">🎲</span></span>
       <h1 class="display display--xl rainbow" data-i18n="appTitle">Juegos de Salón</h1>
@@ -250,7 +250,12 @@
     document.title = `${T.appTitle} 🎲`;
     document.getElementById('lang-slot').append(langToggle());
     // Los rankings (D-212): un botón en la barra, que la portada no tiene espacio para más
-    for (const k of ['title', 'aria-label']) document.getElementById('btn-rankings').setAttribute(k, T.rk.rankings);
+    // Mientras estén en el laboratorio, solo en los celulares que los activaron
+    import('./assets/js/jugador.js').then(({ rankingsVisibles }) => {
+      const b = document.getElementById('btn-rankings');
+      for (const k of ['title', 'aria-label']) b.setAttribute(k, T.rk.rankings);
+      b.hidden = !rankingsVisibles();
+    }).catch(() => {});
     // Compartir la app: la portada del idioma en que se está mirando (D-74).
     document.getElementById('share-slot').append(shareButton({
       title: T.appTitle, text: T.shareText, url: homeUrl(lang), label: T.share,

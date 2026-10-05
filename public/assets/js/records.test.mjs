@@ -7,7 +7,7 @@ import {
   normalizar, esMejor, ordenar, vistaTabla, todoterreno, podioDe, medallero, ultimasCopas, S_MAX, MS_MAX, limpiarNombre,
 } from './records.js';
 import { crearAlmacenLocal } from './jugador-local.js';
-import { crearJugador } from './jugador.js';
+import { crearJugador, rankingsVisibles, activarRankings, RANKINGS_EN_LABS } from './jugador.js';
 
 // El id de un jugador
 let x = 0;
@@ -160,6 +160,20 @@ assert.equal((await cel1.tabla('reinas', 'siempre')).top.length, 2);
 cel3.conocer({ [javi.jid]: 'Javi' });
 t = await cel3.tablaAmigos('reinas', 'siempre');
 assert.deepEqual(t.map(f => [f.jid === otroJavi.jid, f.s]), [[true, 95], [false, 80]]);
+
+// En el laboratorio (D-212): en el sitio publicado, solo en el celular que los activó; en pruebas, siempre
+if (RANKINGS_EN_LABS) {
+  const marca = new Map(), st = { getItem: k => marca.get(k) ?? null, setItem: (k, v) => marca.set(k, v), removeItem: k => marca.delete(k) };
+  globalThis.location = { hostname: 'juegosdesalon.cl', search: '' };
+  assert.equal(rankingsVisibles(st), false);
+  activarRankings(true, st);
+  assert.equal(rankingsVisibles(st), true);
+  activarRankings(false, st);
+  assert.equal(rankingsVisibles(st), false);
+  globalThis.location = { hostname: 'localhost', search: '' };
+  assert.equal(rankingsVisibles(st), true);
+  delete globalThis.location;
+}
 
 // Las reglas repiten la forma de las claves de este módulo
 const reglas = JSON.parse(await readFile(new URL('../../../firebase/database.rules.json', import.meta.url), 'utf8')).rules;
