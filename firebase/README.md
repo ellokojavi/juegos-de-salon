@@ -139,7 +139,7 @@ misma escritura, sentado con ese PIN. Los carga `node tools/firebase/rankings-hi
 
 El dueño (su UID) puede escribir y borrar en todas estas ramas, para moderar.
 
-## Avisos al celular (`push`, `pushCopa`, D-223)
+## Avisos al celular (`push`, `pushCopa`, `pushEnviados`, D-223, D-224)
 
 - `push/<subId>` = `{ endpoint, keys: { p256dh, auth }, lang, tz, uid, at }`: la suscripción Web
   Push de un celular. `subId` son 32 caracteres hexadecimales (los primeros del sha256 del
@@ -151,6 +151,9 @@ El dueño (su UID) puede escribir y borrar en todas estas ramas, para moderar.
   suya (`push/<subId>/uid`, que puede ir en la misma escritura); la borra quien está sentado como
   el jugador ("Silenciar esta copa"). Quien está sentado como el admin borra `pushCopa/<código>`
   entera, y solo entera, al eliminar la copa.
+- `pushEnviados/<código>/<subId>/<clave>` = la hora en que se entregó ese aviso (`dia:3`,
+  `plazo:3`, `final`, `fin`, `insc:<pid>`), para no repetirlo. Nadie la lee ni la escribe: solo
+  `tools/push/avisar.mjs`, con la cuenta de servicio (D-224), que también la limpia.
 - Aquí el dueño no tiene excepción: su UID no lee ni escribe estas ramas.
 
 ## Reportes (`feedback`)
