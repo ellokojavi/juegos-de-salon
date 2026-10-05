@@ -40,6 +40,8 @@ assert.ok(!Object.keys(cambios).some(r => r.includes(jidHeredado('labo'))));
 // El podio de la copa terminada, con los jugadores heredados
 assert.deepEqual(Object.keys(podios).sort(), ['AAAAA', 'BBBBB']);
 assert.equal(Object.values(podios.AAAAA.p).find(x => x.l === 1).j, pancho);
+// Con --con-laboratorio, la del laboratorio también cuenta
+assert.ok(Object.keys(historia({ CCCCC: lab }, {}, ahora, { conLab: true }).cambios).some(r => r.includes(jidHeredado('labo'))));
 // Correrlo de nuevo con lo ya escrito no repite nada
 const base = { jugadores: {}, records: {}, torneoPodios: {} };
 for (const [r, v] of Object.entries(cambios)) {
