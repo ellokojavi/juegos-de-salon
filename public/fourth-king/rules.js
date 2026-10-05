@@ -1,8 +1,10 @@
 /**
- * Cuarto Rey — datos del juego en español, inglés y portugués: mazo, reglas por carta,
+ * Cuarto Rey — datos del juego en español, inglés, portugués y alemán: mazo, reglas por carta,
  * minijuegos, penitencias, categorías y textos de interfaz.
- * Solo datos, sin lógica. Ver docs/games/fourth-king.md.
+ * Solo datos, sin lógica (las reglas están en engine.js). Ver docs/games/fourth-king.md.
  */
+
+export const GAME_ID = 'cuarto-rey';
 
 export const SUITS = [
   { symbol: '♠', color: 'black' },
@@ -15,6 +17,10 @@ export const RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q
 export const MIN_PLAYERS = 4;
 export const MAX_PLAYERS = 6;
 export const SORBOS = 2; // sorbos estándar por regla
+
+// La mesa parte con el mínimo de filas y cada fila nueva con ♂, a la vista y cambiable antes de
+// empezar: es un ajuste, no una jugada (C-8, D-213).
+export const DEFAULT_CONFIG = { players: MIN_PLAYERS, gender: 'm' };
 
 /**
  * Reglas por carta (independientes del idioma). Los textos están en LOCALES.
@@ -127,7 +133,7 @@ const ES = {
     deckOver: 'Se acabó el mazo', sips: '{n} sorbos', plusChug: ' + fondo',
     endStats: '{cards} cartas en {mins} min. Minijuegos y penitencias suman sorbos solo si se marcó al perdedor.',
     hoCheers: '¡Salud!', hoGift: '¡Regalo!', hoDone: '¡Cumplida!', hoChickened: '¡Se arrugó!', hoLost: '¡Perdió!', hoGoOn: '¡Sigan!', hoKings: '¡Van {k} reyes!', hoReady: '¡Listo!',
-    hoDrinkOne: 'Toma {n} sorbos', hoDrinkMany: 'Toman {n} sorbos', hoTap: 'Toca para seguir', hoPass: 'Pásale el celular a', hoGiveCard: '¡Dame la carta!',
+    hoDrinkOne: 'Toma {n} sorbos', hoDrinkMany: 'Toman {n} sorbos', hoPass: 'Pásale el celular a', hoGiveCard: '¡Dame la carta!',
   },
 };
 
@@ -220,7 +226,7 @@ const EN = {
     deckOver: 'The deck ran out', sips: '{n} sips', plusChug: ' + chug',
     endStats: '{cards} cards in {mins} min. Minigames and dares add sips only if the loser was marked.',
     hoCheers: 'Cheers!', hoGift: 'A gift!', hoDone: 'Done!', hoChickened: 'Chickened out!', hoLost: 'Lost!', hoGoOn: 'Keep going!', hoKings: '{k} kings so far!', hoReady: 'Ready!',
-    hoDrinkOne: 'Takes {n} sips', hoDrinkMany: 'Take {n} sips', hoTap: 'Tap to continue', hoPass: 'Pass the phone to', hoGiveCard: 'Give me the card!',
+    hoDrinkOne: 'Takes {n} sips', hoDrinkMany: 'Take {n} sips', hoPass: 'Pass the phone to', hoGiveCard: 'Give me the card!',
   },
 };
 
@@ -313,7 +319,7 @@ const PT = {
     deckOver: 'O baralho acabou', sips: '{n} goles', plusChug: ' + virada',
     endStats: '{cards} cartas em {mins} min. Minijogos e prendas somam goles só se o perdedor foi marcado.',
     hoCheers: 'Saúde!', hoGift: 'Presente!', hoDone: 'Cumprida!', hoChickened: 'Amarelou!', hoLost: 'Perdeu!', hoGoOn: 'Continuem!', hoKings: 'Já são {k} reis!', hoReady: 'Pronto!',
-    hoDrinkOne: 'Toma {n} goles', hoDrinkMany: 'Tomam {n} goles', hoTap: 'Toque para continuar', hoPass: 'Passe o celular para', hoGiveCard: 'Me dá a carta!',
+    hoDrinkOne: 'Toma {n} goles', hoDrinkMany: 'Tomam {n} goles', hoPass: 'Passe o celular para', hoGiveCard: 'Me dá a carta!',
   },
 };
 
@@ -406,7 +412,7 @@ const DE = {
     deckOver: 'Der Stapel ist leer', sips: '{n} Schlucke', plusChug: ' + ex',
     endStats: '{cards} Karten in {mins} Min. Minispiele und Aufgaben zählen nur, wenn der Verlierer markiert wurde.',
     hoCheers: 'Prost!', hoGift: 'Geschenk!', hoDone: 'Geschafft!', hoChickened: 'Feigling!', hoLost: 'Verloren!', hoGoOn: 'Weiter so!', hoKings: 'Schon {k} Könige!', hoReady: 'Fertig!',
-    hoDrinkOne: 'Trink {n} Schlucke', hoDrinkMany: 'Trinkt {n} Schlucke', hoTap: 'Tippen für weiter', hoPass: 'Gib das Handy an', hoGiveCard: 'Her mit der Karte!',
+    hoDrinkOne: 'Trink {n} Schlucke', hoDrinkMany: 'Trinkt {n} Schlucke', hoPass: 'Gib das Handy an', hoGiveCard: 'Her mit der Karte!',
   },
 };
 

@@ -531,6 +531,7 @@ Then open http://localhost:8765 (ES modules have to be served over HTTP). Tests 
 node public/battleship/engine.test.mjs
 node public/bulls-and-cows/engine.test.mjs
 node public/cup/engine.test.mjs
+node public/fourth-king/engine.test.mjs
 node public/hangman/engine.test.mjs
 node public/julep/engine.test.mjs
 node public/liars-dice/engine.test.mjs
@@ -643,7 +644,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   liars-dice/                 Liar's Dice (engine.js + tests, game.js, rules.js)
   battleship/                 Battleship (engine.js + tests, game.js, rules.js, flota.js: the pixel art)
   julep/                      Julep (engine.js + tests, game.js, rules.js)
-  fourth-king/                Fourth King (game.js, rules.js)
+  fourth-king/                Fourth King (engine.js + tests, game.js, rules.js)
   connections/ · queens/ …    The Cup's games played on their own, one page each (generated from cup/suelto/)
   labs/                       The lab: games being tested before they reach the menu (not linked, not indexed); labs/de/ forwards to /de/ (German left the lab, D-197)
   panel/                      Private owner dashboard: now, The Cup, games, traffic and audience, with a page per cup, game and room (Google sign-in; see docs/PANEL.md)
