@@ -41,7 +41,7 @@ The games with their own section below come first; after them, the one-player ga
 
 ## 👑 Fourth King (Cuarto Rey)
 
-The classic drinking card game. The phone is the deck: each player draws a card and the phone says what to do. It names who drinks, runs the minigames (Cuenta Cuentos, Chancho Inflado, Cultura Chupística, Nunca Nunca), suggests dares and counts the kings. The fourth king ends the game: whoever draws it drinks everything left in their glass, and the last screen shows who it was, the sip ranking and, folded at the bottom, every card that came up and who drew it.
+The classic drinking card game. The phone is the deck: each player draws a card and the phone says what to do. It names who drinks, runs the minigames (Cuenta Cuentos, Chancho Inflado, Cultura Chupística, Nunca Nunca), suggests dares and counts the kings. The fourth king ends the game: whoever draws it drinks everything left in their glass, and the last screen shows who it was, the sip ranking and, folded at the bottom, every card that came up and who drew it. After each card, who drinks and "pass the phone to X" share one screen, and only the next player's button moves on.
 
 <!-- generado: capturas:cuarto-rey · written by python3 tools/release/readme.py actualizar -->
 <table>
