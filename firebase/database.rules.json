@@ -694,6 +694,10 @@
           }
         }
       }
+    },
+    "pushEnviados": {
+      ".read": false,
+      ".write": false
     }
   }
 }

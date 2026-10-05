@@ -70,7 +70,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220 |
 | Marketing | `marketing/README.md` | D-178 |
-| App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223 |
+| App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224 |
 
 ---
 
@@ -3658,7 +3658,7 @@ largo se corta bajo el ícono ("Juegos de Sa…"). `instalable.test.mjs` exige q
 con `COMMON` de `i18n.js`, y `tools/e2e/instalable.mjs` revisa el nombre en los cuatro idiomas.
 
 ## D-223 · Los avisos de La Copa se activan con la campana, primero en el laboratorio
-**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** completa D-221
+**Fecha:** 2026-10-05 · **Estado:** vigente, corregida en sus consecuencias por D-224 · **Relación:** completa D-221
 **Decisión:** El PR 2 del plan de avisos ([PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md)): el
 jugador activa los avisos de una copa, el celular se suscribe y la base guarda la suscripción. Los
 avisos de verdad los manda el PR 3.
@@ -3686,6 +3686,44 @@ las hojas sobre el morado oscuro de la app). Mientras no se manden avisos, ofrec
 prometería algo que no llega; en el laboratorio se prueba en iPhones reales, que no se pueden
 automatizar.
 **Consecuencias:** El PR 3 abre los avisos a todos (`AVISOS_EN_LABS = false`) cuando mande el
-primero. Si la base rechaza una suscripción porque quedó a nombre de otra identidad anónima del
+primero (corregida por D-224: se abren cuando el dueño confirme que llegó uno de verdad). Si la base rechaza una suscripción porque quedó a nombre de otra identidad anónima del
 mismo celular, el celular la anula y pide otra, que sí puede guardar. `tools/e2e/cup/avisos.mjs` recorre todo en Chrome con un servicio de avisos falso; la
 prueba en iPhone queda como lista de pasos en PWA-NOTIFICACIONES.md.
+
+## D-224 · Los avisos de La Copa los manda GitHub cada 15 minutos, sin dependencias
+**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** completa D-221 y D-223; corrige las consecuencias de D-223
+**Decisión:** El PR 3 del plan de avisos ([PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md)): el
+workflow `.github/workflows/avisos.yml` corre `tools/push/avisar.mjs` cuatro veces por hora.
+- **Qué toca** lo decide `tools/push/calendario.mjs` con la lógica de la copa (`cup/engine.js`):
+  **se abrió el día** (desde las 9:00, si pidió "Cuando se abre un día" y no lo ha jugado), **se
+  te acaba el plazo** (4 horas antes del cierre, o desde las 20:00 si cierra de noche; solo a quien
+  no lo jugó), **La Gran Final** (con su lugar en la tabla), **terminó la copa** (quién ganó, durante
+  un día) y, solo al admin, **quién se inscribió**. Los textos van en `cup/rules.js`, en los cuatro
+  idiomas, y cada aviso sale en el idioma y la hora de la suscripción.
+- **Nunca de noche**: nada antes de las 8:00 ni desde las 22:00 de quien recibe.
+- **De a uno**: cada vuelta manda a lo más un aviso por copa y celular (el plazo antes que el del
+  día); el siguiente sale en la vuelta que viene. Los del mismo día comparten `tag`, así el nuevo
+  reemplaza al anterior en la bandeja.
+- **Lo mandado se anota** en `pushEnviados/<código>/<subId>/<clave>`, que solo toca la cuenta de
+  servicio: no se repite, y una falla pasajera (429, 5xx) se reintenta en la vuelta siguiente. Una
+  suscripción que el servicio da por muerta (404 o 410) se borra con sus copas, y lo de una copa
+  borrada o terminada hace más de una semana se limpia.
+- **Web Push sin dependencias** (`tools/push/webpush.mjs`, con `node:crypto`): el cifrado
+  `aes128gcm` (RFC 8291) calza byte a byte con el ejemplo del RFC, y la firma VAPID (RFC 8292).
+- **Para probar:** `--simular` dice qué mandaría sin mandar ni anotar; `--prueba <código>` manda
+  un aviso de prueba a cada celular con avisos en esa copa. Los dos están en el botón *Run
+  workflow* de Actions → Avisos.
+- **Necesita dos secretos**: `FIREBASE_ADMIN_JSON` (el de `publicar.yml`, D-218) y `VAPID_PRIVADA`
+  (lo carga `node tools/push/vapid.mjs`, D-223). Sin ellos, avisa y termina en verde.
+- **Siguen en el laboratorio** (`AVISOS_EN_LABS = true`): se abren a todos con un cambio de una
+  línea cuando el dueño confirme, con `--prueba`, que un aviso de verdad llega a su Android y a su
+  iPhone.
+**Por qué:** Lo pidió el dueño ("pasa a fase 3"). GitHub Actions ya tiene la llave de la base y no
+cuesta nada; su atraso de minutos no importa porque cada aviso vale por una ventana de horas, no
+por un minuto. Sin el SDK de Firebase Cloud Messaging ni una librería de Web Push no hay
+dependencias que mantener, como en el resto de `tools/`. Abrir los avisos antes de ver uno de
+verdad en un iPhone prometería algo que quizá no llega.
+**Consecuencias:** Si el repo pasa 60 días sin commits, GitHub apaga los workflows programados.
+Un celular puede recibir dos avisos el mismo día (el del día y el del plazo del anterior). Las
+pruebas (`tools/push/*.test.mjs`) usan relojes inventados y una base falsa: el envío real se
+prueba con `--prueba`.

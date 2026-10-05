@@ -1,6 +1,6 @@
 # App instalable y avisos al celular (PWA + Web Push)
 
-**Estado:** aprobado por el dueño (D-221); los PR 1 (v0.105.0) y 2 (v0.107.0, en el laboratorio, D-223) están hechos · **Fecha:** 2026-10-05 ·
+**Estado:** aprobado por el dueño (D-221); los PR 1 (v0.105.0), 2 (v0.107.0, D-223) y 3 (v0.108.0, D-224) están hechos, en el laboratorio · **Fecha:** 2026-10-05 ·
 **Toca:** RP-11, RP-13, LIG-33, D-99
 
 Es el detalle de D-221, que **corrige a D-99** en lo que dice de los avisos automáticos. El diseño de
@@ -242,7 +242,7 @@ Celular                                   Realtime Database                 GitH
   · evento push → showNotification          endpoint, keys, idioma, zona, uid · token admin (firebase-admin.mjs)
   · notificationclick → abre la URL       pushCopa/<código>/<pid>/<subId>     · lee torneos en curso
                                             (quién quiere avisos de qué)      · decide qué aviso toca
-push.js (en la página)                    pushEnviados/<código>/<día>/<tipo>  · cifra y firma (Web Push, VAPID)
+push.js (en la página)                    pushEnviados/<código>/<subId>/<clave> · cifra y firma (Web Push, VAPID)
   · registra el SW                          (para no repetir)                 · POST al servicio del navegador
   · pide permiso tras un toque                                                · 404/410 → borra la suscripción
   · pushManager.subscribe(VAPID público)
@@ -329,17 +329,25 @@ Lo que no se puede automatizar: un iPhone real, con iOS 16.4 o más (ideal: 17, 
 10. Desde WhatsApp, abre el link de la copa sin pasar a Safari y toca la campana: debe decir
     **Ábrela en Safari**.
 
-### 5. El que manda (`tools/push/avisar.mjs` + `.github/workflows/avisos.yml`)
+### 5. El que manda (`tools/push/avisar.mjs` + `.github/workflows/avisos.yml`) — hecho en el PR 3 (D-224)
 
-- Sin dependencias, como el resto de `tools/firebase/`: Web Push son ~150 líneas con `node:crypto`
-  (cifrado `aes128gcm` del RFC 8291 y firma VAPID ES256 del RFC 8292).
-- Cada corrida: lee las copas en curso, calcula con `engine.js` (el mismo que usa la app, así el
-  "qué día es" no se duplica) qué avisos tocan en la ventana actual, descarta los ya marcados en
-  `pushEnviados` y manda.
-- Si el servicio responde 404 o 410, la suscripción murió: se borra.
-- `node tools/push/avisar.mjs --simular` imprime qué mandaría sin mandar nada (para pruebas y para
-  el panel). `--prueba <subId>` manda un aviso de prueba a un celular.
-- Workflow con `schedule: '*/15 * * * *'` y `workflow_dispatch`. GitHub no garantiza la hora
+- Sin dependencias, como el resto de `tools/firebase/`: `tools/push/webpush.mjs` cifra con
+  `aes128gcm` (RFC 8291; la prueba calza con el ejemplo del RFC byte a byte) y firma con VAPID
+  ES256 (RFC 8292), con `node:crypto`.
+- `tools/push/calendario.mjs` decide qué toca, con `engine.js` (el mismo que usa la app, así el
+  "qué día es" no se duplica): en la hora de quien recibe, nunca antes de las 8:00 ni desde las
+  22:00; el del día desde las 9:00; el del plazo cuando faltan 4 horas o menos, o desde las 20:00
+  si el cierre cae de noche. A lo más uno por copa y celular en cada vuelta.
+- `tools/push/avisar.mjs` lee `pushCopa`, `push` y `pushEnviados`, manda, y anota cada aviso
+  entregado en `pushEnviados/<código>/<subId>/<clave>` (`dia:3`, `plazo:3`, `final`, `fin`,
+  `insc:<pid>`). Una falla pasajera se reintenta en la vuelta siguiente.
+- Si el servicio responde 404 o 410, la suscripción murió: se borra, con sus copas. Lo de una copa
+  borrada o terminada hace más de una semana se limpia.
+- `node tools/push/avisar.mjs --simular` imprime qué mandaría sin mandar nada.
+  `--prueba <código>` manda un aviso de prueba a cada celular con avisos en esa copa. Los dos
+  están en Actions → Avisos → *Run workflow*.
+- Workflow a los minutos 7, 22, 37 y 52 de cada hora, y `workflow_dispatch`. Necesita los secretos
+  `FIREBASE_ADMIN_JSON` y `VAPID_PRIVADA`; sin ellos avisa y termina en verde. GitHub no garantiza la hora
   exacta (se atrasa 5–20 minutos en horas de carga), por eso los avisos se planifican por
   **ventana** ("entre las 9:00 y las 10:00, si no se mandó"), nunca por minuto exacto.
 - Si el repo pasa 60 días sin commits, GitHub apaga los workflows programados. Con el ritmo actual
@@ -368,12 +376,14 @@ responde la pregunta de fondo: si los avisos de verdad traen gente de vuelta.
 |---|---|---|
 | **1. Instalable de verdad** ✅ v0.105.0 | Íconos PNG, manifest completo, `sw.js` mínimo (sin caché, sin push), ícono de Apple, prueba de que todas las páginas los llevan, guion e2e que verifica que el SW se registra y que Chrome deja instalar | Avisos |
 | **2. Suscribirse** ✅ v0.107.0, en el laboratorio | Primero, la prueba en iPhones reales de cómo abre la app instalada (la lista de arriba). Después: `push.js`, la tarjeta y el botón 🔔 de La Copa con sus cuatro estados, la hoja de iPhone, el "escribe tu PIN" de la app instalada, el aviso de confirmación, reglas `push` y `pushCopa`, textos en 4 idiomas y la lista de pasos para probar a mano en iPhone | Mandar nada (se ve la suscripción guardada y llega el aviso de confirmación) |
-| **3. Mandar** | `tools/push/` (webpush, avisar con `--simular`; `vapid.mjs` ya entró en el PR 2), pruebas unitarias del cifrado contra los vectores del RFC 8291 y del calendario de avisos contra `engine.js`, workflow `avisos.yml` | — |
+| **3. Mandar** ✅ v0.108.0, en el laboratorio (D-224) | `tools/push/` (webpush, calendario, avisar con `--simular` y `--prueba`; `vapid.mjs` ya entró en el PR 2), pruebas unitarias del cifrado contra los vectores del RFC 8291 y del calendario de avisos contra `engine.js`, workflow `avisos.yml`. Los avisos se abren a todos cuando el dueño vea llegar uno de prueba | — |
 | **4. Medir** | Fila del panel, `?aviso=` en las señales, `?pwa` en el inicio | — |
 | *(después)* | Modo sin conexión (RP-13), Declarative Web Push para iPhone | — |
 
-El dueño hace una sola cosa a mano: correr `node tools/push/vapid.mjs` (con la CLI de GitHub, carga
-sola la privada como el secreto `VAPID_PRIVADA`) y commitear `public/assets/js/vapid.js`.
+El dueño hace dos cosas a mano: correr `node tools/push/vapid.mjs` (con la CLI de GitHub, carga
+sola la privada como el secreto `VAPID_PRIVADA`) y commitear `public/assets/js/vapid.js`; y,
+con los avisos activos en una copa de prueba, correr Actions → Avisos → *Run workflow* con su
+código en **prueba**, para ver llegar un aviso de verdad antes de abrirlos a todos.
 
 ## Riesgos
 
