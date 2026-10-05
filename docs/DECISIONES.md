@@ -1769,7 +1769,7 @@ podio con gráfico); con esta ningún cambio de lugar queda fuera, y el dueño p
 todos.
 
 ## D-142 · Los minijuegos de La Copa se juegan sueltos, y la portada se filtra
-**Fecha:** 2026-09-25 · **Estado:** vigente; D-149 quita el filtro de cuántos juegan y saca los sueltos de `/copa/`
+**Fecha:** 2026-09-25 · **Estado:** vigente; D-149 quita el filtro de cuántos juegan y saca los sueltos de `/copa/`; D-214 pasa el filtro de la URL a `?type=`, en inglés
 **Decisión:** Tres cambios que van juntos:
 1. **La portada ofrece los minijuegos de La Copa sueltos**, de un jugador: Conexiones, Toque y
    Fama: Palabra, ¿En qué año?, Reinas, Tango y Zip. Viven en `SUELTOS` de `assets/js/games.js`
@@ -1909,7 +1909,7 @@ reglas (`node tools/reglas.mjs publicar`) para que el botón funcione en las cop
 de prueba (almacén local) funciona sin eso.
 
 ## D-149 · La portada se filtra solo por tipo, y los minijuegos sueltos salen de /copa/
-**Fecha:** 2026-09-26 · **Estado:** vigente
+**Fecha:** 2026-09-26 · **Estado:** vigente; D-214 pasa el filtro de la URL a `?type=logic`
 **Decisión:** Dos cambios:
 1. **Se va el filtro de cuántos juegan** (Todos · Solo · Con amigos, D-142). La portada se filtra
    solo por tipo (Palabras, Lógica, Cultura, Cartas/Dados), igual que antes: se prende y se
@@ -3315,3 +3315,15 @@ se crea otro jugador. En localhost y con `?prueba` el almacén es el de prueba
 (`jugador-local.js`, que hace cumplir lo mismo que las reglas), para que los guiones no escriban
 en los rankings de verdad; `?records=firebase` fuerza Firebase. Hay que **publicar las reglas**
 (`node tools/firebase/reglas.mjs publicar`); el acceso anónimo ya está habilitado por D-96.
+
+## D-214 · El filtro de la portada va en inglés en la URL: `?type=logic`
+**Fecha:** 2026-10-04 · **Estado:** vigente; cambia la URL de D-142 y D-149, sigue a D-192
+**Decisión:** El tipo de juego va en la URL como `?type=`, con claves en inglés: `words`, `logic`,
+`trivia` y `tabletop` (Cartas/Dados). Son las mismas claves de `TIPOS` y de `tipos` en
+`games.js`. Un link de antes (`?tipo=mesa`, `?tipo=logica`) sigue filtrando lo mismo
+(`TIPOS_VIEJOS`) y la portada lo reescribe como `?type=`.
+**Por qué:** Lo pidió el dueño: desde D-192 las rutas van en inglés, y `?tipo=mesa` se quedó en
+español. Los links filtrados se comparten, así que son parte de la cara pública como las rutas.
+**Consecuencias:** Los nombres que ve el jugador no cambian. Los tipos no se guardan en Firebase
+ni en el `localStorage`, así que no hay datos que migrar. Quedan en español `?sala=`,
+`?practica=` y `?semilla=`; `?sala=` va en cada link de invitación y se cambia aparte.
