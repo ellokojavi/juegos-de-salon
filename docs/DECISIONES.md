@@ -1769,7 +1769,7 @@ podio con gráfico); con esta ningún cambio de lugar queda fuera, y el dueño p
 todos.
 
 ## D-142 · Los minijuegos de La Copa se juegan sueltos, y la portada se filtra
-**Fecha:** 2026-09-25 · **Estado:** vigente; D-149 quita el filtro de cuántos juegan y saca los sueltos de `/copa/`
+**Fecha:** 2026-09-25 · **Estado:** vigente; D-149 quita el filtro de cuántos juegan y saca los sueltos de `/copa/`; D-214 pasa el filtro de la URL a `?type=`, en inglés
 **Decisión:** Tres cambios que van juntos:
 1. **La portada ofrece los minijuegos de La Copa sueltos**, de un jugador: Conexiones, Toque y
    Fama: Palabra, ¿En qué año?, Reinas, Tango y Zip. Viven en `SUELTOS` de `assets/js/games.js`
@@ -1909,7 +1909,7 @@ reglas (`node tools/reglas.mjs publicar`) para que el botón funcione en las cop
 de prueba (almacén local) funciona sin eso.
 
 ## D-149 · La portada se filtra solo por tipo, y los minijuegos sueltos salen de /copa/
-**Fecha:** 2026-09-26 · **Estado:** vigente
+**Fecha:** 2026-09-26 · **Estado:** vigente; D-214 pasa el filtro de la URL a `?type=logic`
 **Decisión:** Dos cambios:
 1. **Se va el filtro de cuántos juegan** (Todos · Solo · Con amigos, D-142). La portada se filtra
    solo por tipo (Palabras, Lógica, Cultura, Cartas/Dados), igual que antes: se prende y se
