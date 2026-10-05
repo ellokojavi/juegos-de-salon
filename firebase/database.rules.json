@@ -505,6 +505,9 @@
             "j": {
               ".validate": "newData.isString() && newData.val() === root.child('torneos/' + $code + '/players/' + $pid + '/j').val()"
             },
+            "co": {
+              ".validate": "newData.isString() && newData.val() === root.child('torneos/' + $code + '/players/' + $pid + '/co').val()"
+            },
             "$other": {
               ".validate": false
             }
@@ -545,6 +548,10 @@
         "legado": {
           ".write": "auth != null && $jid.matches(/^[a-z0-9]{8}$/) && !newData.exists() && newData.parent().parent().parent().child('jugadorSeats/' + $jid + '/' + auth.uid).exists()",
           ".validate": "newData.isBoolean() && newData.val() == true"
+        },
+        "co": {
+          ".write": "auth != null && $jid.matches(/^[a-z0-9]{8}$/) && !data.exists() && (root.child('jugadorSeats/' + $jid + '/' + auth.uid).exists() || newData.parent().parent().parent().child('jugadorSeats/' + $jid + '/' + auth.uid).exists())",
+          ".validate": "newData.isString() && newData.val().matches(/^[A-Z]{2}$/)"
         },
         "$other": {
           ".validate": false
@@ -587,7 +594,7 @@
             "k"
           ],
           "$jid": {
-            ".write": "auth != null && $t.matches(/^[a-z][a-z0-9-]{0,24}(_[a-z0-9-]{1,16})?$/) && $p.matches(/^(siempre|s[0-9]{4}-[0-9]{2})$/) && $jid.matches(/^[a-z0-9]{8}$/) && newData.exists() && root.child('jugadorSeats/' + $jid + '/' + auth.uid).exists() && (!data.exists() || newData.child('k').val() < data.child('k').val()) && (!$t.endsWith('_victorias') || (newData.child('ms').val() == 0 && newData.child('s').val() == (data.exists() ? data.child('s').val() : 0) + 1))",
+            ".write": "auth != null && $t.matches(/^[a-z][a-z0-9-]{0,24}(_[a-z0-9-]{1,16})?$/) && $p.matches(/^(siempre|s[0-9]{4}-[0-9]{2})$/) && $jid.matches(/^[a-z0-9]{8}$/) && newData.exists() && root.child('jugadorSeats/' + $jid + '/' + auth.uid).exists() && (!data.exists() || newData.child('k').val() < data.child('k').val()) && (!($t.endsWith('_victorias') || $t === 'partidas') || (newData.child('ms').val() == 0 && newData.child('s').val() == (data.exists() ? data.child('s').val() : 0) + 1))",
             ".validate": "newData.hasChildren(['s', 'ms', 'k', 'at', 'n'])",
             "s": {
               ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100000"
@@ -603,6 +610,9 @@
             },
             "n": {
               ".validate": "newData.isString() && newData.val() === root.child('jugadores/' + $jid + '/n').val()"
+            },
+            "co": {
+              ".validate": "newData.isString() && newData.val().matches(/^[A-Z]{2}$/)"
             },
             "$other": {
               ".validate": false
