@@ -191,7 +191,7 @@ Cuando cada dispositivo guarda un secreto (un número, una flota):
 
 ## C-12 · Pruebas
 
-- El motor de cada juego tiene tests que corren con node, sin navegador. GitHub los corre todos en cada PR y en cada fusión a main (D-143): un PR con ❌ no se fusiona.
+- El motor de cada juego tiene tests que corren con node, sin navegador. GitHub los corre todos en cada PR y en cada fusión a main (D-143): un PR con ❌ no se fusiona. `main` exige `pruebas` y `punta-a-punta` (el resumen de los guiones en Chrome), y un PR listo lleva auto-merge: GitHub lo fusiona solo cuando los dos pasan (D-216).
 - **Lo vigila un test, no la memoria** (D-213): `node public/assets/js/games.test.mjs` exige a cada juego de `GAMES` su motor y sus tests (C-2), el gancho `window.__…` (C-14) y la especificación con las secciones de C-13 en orden y el gancho nombrado. Lo que un juego todavía no cumple va en `EXCEPCIONES` de ese test, con la decisión que lo deja pendiente; cuando el juego se pone al día, el test pide borrar la excepción.
 - Antes de publicar se prueba el juego de punta a punta en Chrome headless: partida completa en cada modo, con recarga a mitad de partida y revancha.
 - El modo de dos celulares se prueba con dos instancias del navegador, y al menos una vez contra la URL publicada.
