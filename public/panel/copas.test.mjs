@@ -1,4 +1,4 @@
-// Ejecutar: node public/panel/copas.test.mjs
+// La Copa en el panel: en curso, juegos y participación. Ejecutar: node public/panel/copas.test.mjs
 import assert from 'node:assert/strict';
 import { nuevaMeta, DIA_MS } from '../cup/engine.js';
 import { summarize, groupDays, dayOf } from './aggregate.js';

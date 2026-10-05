@@ -1,5 +1,5 @@
 {
-  "version": "0.98.2",
+  "version": "0.99.3",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -823,6 +823,7 @@
   "tests": [
     "public/assets/js/arrastre.test.mjs",
     "public/assets/js/compartir.test.mjs",
+    "public/assets/js/games.test.mjs",
     "public/assets/js/i18n.test.mjs",
     "public/assets/js/transport/cleanup.test.mjs",
     "public/assets/js/transport/dispose.test.mjs",
