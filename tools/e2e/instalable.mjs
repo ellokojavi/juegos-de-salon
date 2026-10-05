@@ -1,4 +1,4 @@
-// La app instalable (D-220): en cada página con manifest, Chrome registra /sw.js con alcance en la
+// La app instalable (D-221): en cada página con manifest, Chrome registra /sw.js con alcance en la
 // raíz, lee el manifest sin errores y no encuentra nada que impida instalar la app.
 // Con SITIO apuntando a una copia estampada (set-version.py --sitio) prueba también el import map.
 import { launch, sleep } from './cdp.mjs';

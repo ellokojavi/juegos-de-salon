@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Los íconos PNG de la app instalable (D-220), dibujados con Chrome desde public/assets/icon.svg.
+ * Los íconos PNG de la app instalable (D-221), dibujados con Chrome desde public/assets/icon.svg.
  *
  *   node tools/release/iconos.mjs            # rehace public/assets/icons/*.png
  *

@@ -44,7 +44,7 @@ public/<carpeta>/
 - El `<head>` de cada página de la app lleva el manifest, el ícono del iPhone
   (`apple-touch-icon`) y, después de las hojas de estilo, el registro del service worker
   (`import '<…>assets/js/instalable.js'`): así la app se puede instalar desde cualquier juego. Se
-  copian de otro juego; `public/assets/js/instalable.test.mjs` los exige (D-220).
+  copian de otro juego; `public/assets/js/instalable.test.mjs` los exige (D-221).
 - Las páginas en git no llevan import map: lo escribe `set-version.py` solo en la copia que se publica,
   recorriendo todos los módulos del sitio, así que los de un juego nuevo entran solos (C-11, D-192, D-205).
 - Reutilizar siempre los módulos compartidos antes de escribir uno nuevo:
