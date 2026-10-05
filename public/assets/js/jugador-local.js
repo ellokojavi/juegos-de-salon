@@ -60,11 +60,13 @@ export function crearAlmacenLocal({ storage = globalThis.localStorage, uid = nul
     }
     if (rama === 'jugadorKeys') {
       const antes = leerEn(viejo, ruta);
-      return antes == null ? !leerEn(viejo, `jugadores/${a}`) && sentado(nuevo, a) : sentado(viejo, a);
+      const libre = !leerEn(viejo, `jugadores/${a}`) || leerEn(viejo, `jugadores/${a}/legado`) === true;
+      return antes == null ? libre && sentado(nuevo, a) : sentado(viejo, a);
     }
     if (rama === 'jugadorNombres') return leerEn(viejo, ruta) == null && leerEn(nuevo, ruta) === true && sentado(nuevo, b);
     if (rama === 'jugadores') {
       if (p.length === 2) return leerEn(viejo, ruta) == null && sentado(nuevo, a);
+      if (b === 'legado') return leerEn(nuevo, ruta) == null && sentado(nuevo, a);
       if (b === 'juegos') {
         if (!sentado(viejo, a)) return false;
         if (p[4] === 'n') { const antes = leerEn(viejo, ruta) || 0; return leerEn(nuevo, ruta) === antes + 1; }

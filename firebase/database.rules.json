@@ -542,6 +542,10 @@
             }
           }
         },
+        "legado": {
+          ".write": "auth != null && $jid.matches(/^[a-z0-9]{8}$/) && !newData.exists() && newData.parent().parent().parent().child('jugadorSeats/' + $jid + '/' + auth.uid).exists()",
+          ".validate": "newData.isBoolean() && newData.val() == true"
+        },
         "$other": {
           ".validate": false
         }
@@ -560,7 +564,7 @@
     "jugadorKeys": {
       ".write": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
       "$jid": {
-        ".write": "auth != null && $jid.matches(/^[a-z0-9]{8}$/) && newData.exists() && ((!data.exists() && !root.child('jugadores/' + $jid).exists() && newData.parent().parent().child('jugadorSeats/' + $jid + '/' + auth.uid).exists()) || (data.exists() && root.child('jugadorSeats/' + $jid + '/' + auth.uid).exists()))",
+        ".write": "auth != null && $jid.matches(/^[a-z0-9]{8}$/) && newData.exists() && ((!data.exists() && (!root.child('jugadores/' + $jid).exists() || root.child('jugadores/' + $jid + '/legado').val() == true) && newData.parent().parent().child('jugadorSeats/' + $jid + '/' + auth.uid).exists()) || (data.exists() && root.child('jugadorSeats/' + $jid + '/' + auth.uid).exists()))",
         ".validate": "newData.isString() && newData.val().matches(/^[0-9a-f]{64}$/)"
       }
     },

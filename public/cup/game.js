@@ -1859,7 +1859,7 @@ async function enviar(d, fin, envio = null) {
     return;
   }
   cuenta.intento.borrar(S.code, d, S.yo);
-  // El puntaje del día cuenta para el ranking "En La Copa" de ese juego (D-212). No se espera.
+  // El puntaje del día cuenta para el ranking de ese juego, pestaña "Copa" (D-212). No se espera.
   if (leerYo() && !L().meta.lab) jugador().then(J => J.anotar({ juego: juegoDelDia(L().meta, d), variante: 'copa', s: fin.s, ms: fin.ms })).catch(() => {});
   SFX.win(); vibrate([30, 50, 30]);
   // La copa llega por el oyente; si todavía no trae el resultado, se dibuja con el propio
