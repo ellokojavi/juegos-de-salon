@@ -67,6 +67,15 @@ export const VARIANTE_COPA = 'copa';
  */
 export const VARIANTE_VICTORIAS = 'victorias';
 export const esVictorias = t => String(t).endsWith(`_${VARIANTE_VICTORIAS}`);
+/** Cuántas partidas terminó cada jugador, en todos los juegos (D-219): sube de a uno, como las victorias. */
+export const PARTIDAS = 'partidas';
+/** Las tablas que cuentan (victorias, partidas) en vez de guardar un puntaje: las reglas exigen +1. */
+export const esCuenta = t => esVictorias(t) || t === PARTIDAS;
+
+/** El país, como lo guardan La Copa y las salas: dos letras mayúsculas (D-79, D-209). */
+export const esPais = co => typeof co === 'string' && /^[A-Z]{2}$/.test(co);
+/** La bandera de un país (🇨🇱), o '' si no se sabe. */
+export const bandera = co => (esPais(co) ? String.fromCodePoint(...[...co].map(c => 0x1f1e6 + c.charCodeAt(0) - 65)) : '');
 
 export const SIEMPRE = 'siempre';
 export const PERIODO = /^(siempre|s[0-9]{4}-[0-9]{2})$/;
@@ -178,8 +187,8 @@ export function podioDe(filas, jugadores = {}) {
   const p = {};
   for (const f of filas) {
     if (f.lugar > 3) continue;
-    const j = jugadores[f.pid]?.j;
-    p[f.pid] = { n: f.name, l: f.lugar, ...(esJid(j) ? { j } : {}) };
+    const j = jugadores[f.pid]?.j, co = jugadores[f.pid]?.co;
+    p[f.pid] = { n: f.name, l: f.lugar, ...(esJid(j) ? { j } : {}), ...(esPais(co) ? { co } : {}) };
   }
   return p;
 }
@@ -194,7 +203,8 @@ export function medallero(podios) {
   for (const [code, c] of Object.entries(podios || {})) {
     for (const x of Object.values(c?.p || {})) {
       const id = esJid(x.j) ? x.j : `n:${claveNombre(x.n)}`;
-      const f = por.get(id) || { id, jid: esJid(x.j) ? x.j : null, n: x.n, oro: 0, plata: 0, bronce: 0, copas: [] };
+      const f = por.get(id) || { id, jid: esJid(x.j) ? x.j : null, n: x.n, co: null, oro: 0, plata: 0, bronce: 0, copas: [] };
+      if (esPais(x.co)) f.co = x.co;
       if (x.l === 1) f.oro++; else if (x.l === 2) f.plata++; else if (x.l === 3) f.bronce++;
       f.copas.push(code);
       if ((c.end || 0) >= (f.ultima || 0)) { f.n = x.n; f.ultima = c.end || 0; }
@@ -212,7 +222,7 @@ export function medallero(podios) {
 /** Las últimas copas terminadas con su campeón, de la más nueva a la más vieja. */
 export function ultimasCopas(podios, n = 5) {
   return Object.entries(podios || {})
-    .map(([code, c]) => ({ code, name: c.name, end: c.end || 0, de: c.de || 0, campeones: Object.values(c.p || {}).filter(x => x.l === 1).map(x => x.n) }))
+    .map(([code, c]) => ({ code, name: c.name, end: c.end || 0, de: c.de || 0, campeones: Object.values(c.p || {}).filter(x => x.l === 1).map(x => ({ n: x.n, co: esPais(x.co) ? x.co : null })) }))
     .sort((a, b) => b.end - a.end)
     .slice(0, n);
 }
