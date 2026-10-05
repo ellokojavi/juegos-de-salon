@@ -77,6 +77,28 @@
           <li>La Copa ya está en el menú principal (D-175). Acá queda la Copa de 3 días para probar.</li>
         </ul>
       </section>
+
+      <section class="panel seccion" id="labs-rankings">
+        <h2>🏅 Rankings</h2>
+        <p class="muted" style="margin:0">Récords por juego, de la semana y de siempre, con amigos, el Todoterreno y los campeones de La Copa (D-212). Se entra con nombre y PIN, sin cuenta. Por ahora solo se ven en los celulares que los activan acá.</p>
+
+        <div class="paso">
+          <span class="num">Paso 1 · Activarlos en este celular</span>
+          <p id="rk-estado">…</p>
+          <button type="button" class="btn btn--yellow" id="btn-rankings-labs">…</button>
+        </div>
+
+        <div class="paso">
+          <span class="num">Paso 2 · Jugar y entrar</span>
+          <p>Abre un juego desde el menú (Reinas, Zip, Conexiones…), entra con tu nombre y un PIN (abajo, junto al ranking) y termina la partida. Desde los juegos de esta página no cuenta: son de práctica.</p>
+          <a class="btn btn--cyan btn--sm" href="../records/">🏆 Ver los rankings</a>
+        </div>
+
+        <div class="paso">
+          <span class="num">Paso 3 · Con amigos</span>
+          <p>Que un amigo active los rankings en su celular y entre con su nombre. En otro celular, entra con tu mismo nombre y PIN: tienen que salir tus récords. Para que sean "amigos" y para el medallero, jueguen una copa del menú (las de 3 días de acá no cuentan).</p>
+        </div>
+      </section>
     </div>
     <footer class="muted" style="text-align:center;padding-top:24px;font-size:0.85rem">
       <p id="labs-version">Versión activa: …</p>
@@ -88,7 +110,7 @@
     import { soundToggle, initSound, SFX } from '../assets/js/sound.js';
     import { JUEGOS_COPA } from '../cup/rules.js';
     import { gameById } from '../assets/js/games.js';
-    import { versionOf, trackVisit } from '../assets/js/transport/stats.js';
+    import { versionOf, trackVisit, envOf } from '../assets/js/transport/stats.js';
     trackVisit(); // el tráfico del sitio (D-208)
     // La versión activa sale del import map que estampa set-version.py: la que de verdad cargó
     document.getElementById('labs-version').textContent = `Versión activa: v${versionOf(document.getElementById('importmap')?.textContent)}`;
@@ -96,6 +118,18 @@
     initSound();
     document.getElementById('sound-slot').append(soundToggle());
     document.addEventListener('click', e => { if (e.target.closest('a')) SFX.tap(); });
+    // Los rankings en el laboratorio (D-212): se activan por celular
+    const { rankingsVisibles, activarRankings } = await import('../assets/js/jugador.js');
+    const btnRk = document.getElementById('btn-rankings-labs'), estadoRk = document.getElementById('rk-estado');
+    const pintarRk = () => {
+      const on = rankingsVisibles();
+      estadoRk.textContent = envOf(location) === 'dev' ? '✅ En pruebas (localhost, Tailscale) siempre se ven, y usan un almacén de prueba.'
+        : on ? '✅ Activados en este celular.' : 'Todavía no están activados en este celular.';
+      btnRk.textContent = on ? 'Desactivarlos' : '🏅 Activar los rankings';
+      btnRk.className = on ? 'btn btn--ghost btn--sm' : 'btn btn--yellow';
+    };
+    btnRk.addEventListener('click', () => { SFX.tap(); activarRankings(!rankingsVisibles()); pintarRk(); });
+    pintarRk();
     // Las demos (D-110): cada una siembra una copa de ejemplo en el modo de prueba
     const DEMOS = [
       ['nueva', '🛠️', 'Admin: copa recién creada', 'la guía para invitar'],

@@ -59,6 +59,14 @@ un jugador, su `uid` tiene que estar "sentado" como ese `pid`, y las reglas solo
 si trae el mismo `sha256("copa:código:pid:PIN")` que se guardó al inscribirse, en una rama que
 nadie puede leer.
 
+**Con los rankings (D-212).** Si en el celular hay un jugador de los rankings (nombre y PIN para
+toda la app), al inscribirse el nombre viene puesto, y al abrir la copa su jugador queda enlazado
+en `players/<pid>/j`. Con eso: los de la copa que también lo están pasan a ser sus **amigos** en
+los rankings; cada día jugado cuenta para la pestaña **Copa** del ranking de ese juego; y cuando la
+copa termina, el primero que la abre guarda su podio en `torneoPodios/<código>`, del que sale el
+medallero de **Campeones de La Copa** al final de la portada. El PIN de la copa sigue siendo aparte.
+Las copas del laboratorio no cuentan.
+
 ### Admin
 
 Quien crea la copa también juega. Puede renombrar, sacar (y volver a meter) y ponerle PIN nuevo a
@@ -197,7 +205,7 @@ No tiene: no hay sala ni mensajes entre celulares. Cada celular escribe su resul
 
 ```
 torneos/<código>/meta               nombre, días, calendario (cal), ventanas, admin, joinUntil, final, idioma (lang), público (aud), zona (tz)
-torneos/<código>/players/<pid>      { name, at, out?, co? }   co: país, al inscribirse o al volver a abrir (D-207, D-209)
+torneos/<código>/players/<pid>      { name, at, out?, co?, j? }   co: país, al inscribirse o al volver a abrir (D-207, D-209); j: su jugador de los rankings (D-212)
 torneos/<código>/started/<d>/<pid>  hora del servidor al tocar Empezar
 torneos/<código>/results/<d>/<pid>  { s, ms, t, r, at }
 torneos/<código>/wild/<pid>         "3" (el día del comodín, como texto)

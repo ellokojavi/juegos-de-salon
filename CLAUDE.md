@@ -159,6 +159,12 @@ con eso la pantalla entra también a las pruebas de idiomas. Para verlo en un ce
 - **Panel** (`public/panel/`, D-44, D-207): `window.__panel.seed({ rooms, days, torneos, vista })`
   lo dibuja con datos sembrados sin entrar. Ver [docs/PANEL.md](docs/PANEL.md).
 - **Reportes de La Copa** (D-104): `node tools/firebase/reportes.mjs [--dias 3] [--json]`.
+- **Rankings** (D-212): `records.js` (lógica), `jugador.js` (el jugador y su almacén:
+  `jugador-firebase.js`, o `jugador-local.js` en pruebas y con `?prueba`; `?records=firebase` fuerza
+  Firebase) y `ranking.js` + `ranking.css` (pantalla). **En el laboratorio:** solo se ven en los
+  celulares que los activan en `/labs/`; para abrirlos a todos, `RANKINGS_EN_LABS = false`. La
+  historia de La Copa (podios y la pestaña "Copa", con jugadores heredados que cada uno reclama):
+  `node tools/firebase/rankings-historia.mjs [--con-laboratorio] [--escribir]`.
 
 ## Idiomas (C-3, D-197)
 

@@ -66,8 +66,9 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204 |
-| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187 |
+| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212 |
 | Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213 |
+| Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212 |
 | Marketing | `marketing/README.md` | D-178 |
 
 ---
@@ -3349,6 +3350,69 @@ desglose: copas por idioma en La Copa y "En qué idioma" en la ficha de cada jue
 **Por qué:** Lo pidió el dueño: saber en qué idioma se juega cada copa y cada juego. El contador
 del idioma elegido (`applang`, D-46) decía cuánto, pero no de qué partida.
 **Consecuencias:** Lo de antes no tiene idioma y no lleva etiqueta. Reglas nuevas, solo agregan.
+
+## D-212 · Un jugador es un nombre y un PIN para todos los juegos, y sus récords van a rankings
+**Fecha:** 2026-10-04 · **Estado:** vigente · **Relación:** amplía D-96 fuera de La Copa; completa C-7 (lo que sale de quien entra con su jugador)
+**Decisión:** Quien quiere aparecer en los rankings entra con **su nombre y un PIN de 4 dígitos**,
+como en La Copa, pero una vez para toda la app y en cualquier celular. Es opcional y se ofrece
+plegado en la antesala de cada juego suelto (junto al ranking, debajo de "Empezar": antes lo
+empujaba fuera de la pantalla en alemán y portugués, dilema #186), en su resultado y en `/records/`: sin entrar, todo se
+juega igual y nada sale del celular.
+- **Identidad.** Un jugador es un `jid` (8 letras y números) en `jugadores/<jid>` = `{ n, at }`.
+  El PIN nunca se guarda: `jugadorKeys/<jid>` tiene su hash, que nadie lee, y cada celular se
+  sienta en `jugadorSeats/<jid>/<uid>` con el mismo hash, con el acceso anónimo de Firebase. Las
+  reglas solo aceptan el asiento si el hash coincide: el mismo mecanismo de D-96.
+- **Nombres repetidos.** Se permiten. `jugadorNombres/<clave>/<jid>` lista quiénes usan cada
+  nombre (sin mayúsculas, tildes ni espacios de más). Para entrar, el celular prueba el PIN contra
+  cada uno; si ninguno lo acepta y hay otros con ese nombre, pregunta antes de crear uno nuevo.
+  Dos personas con el mismo nombre y el mismo PIN son, por diseño, el mismo jugador. En las tablas
+  no hay tag: la fila propia se marca "tú".
+- **Récords.** `records/<tabla>/<período>/<jid>` = `{ s, ms, k, at, n }`, solo el mejor de cada
+  uno. La tabla es el id del juego (`reinas`), el juego con su variante (`reinas_copa`, los días de
+  una copa) o `todoterreno`. El período es `siempre` o la semana ISO (`s2026-41`, que parte el lunes
+  a medianoche en Chile). `k = (100000 − s) × 10⁸ + ms` ordena por más puntos y menos tiempo: el
+  top es una sola consulta (`orderByChild('k')`, `limitToFirst`). Las reglas recalculan `k`, exigen
+  que el nombre sea el del jugador y que el récord nuevo sea mejor que el guardado.
+- **Lo que se muestra.** La antesala de cada juego tiene su ranking con pestañas Semana, Siempre,
+  Amigos y Copa (dilema #187: "En La Copa" no cabía): las 10 primeras y, si quien mira quedó más abajo, sus vecinos. Se leen 100
+  filas de una vez; más abajo de eso, los vecinos se piden aparte. **Amigos** son los de tus copas
+  que también entraron con su jugador: el jugador de la copa guarda `players/<pid>/j`. El
+  **Todoterreno** suma tu mejor puntaje en cada juego suelto. **Campeones de La Copa**: cuando una
+  copa termina, el primero que la abre guarda su podio en `torneoPodios/<código>` (una vez, con los
+  nombres que la copa tiene) y de ahí sale el medallero (oro, plata, bronce), en la portada de La
+  Copa y en `/records/`. La portada del sitio solo suma un botón 🏆 en la barra: no tiene espacio para más.
+- **Partidas.** Con jugador, cada partida terminada suma uno en `jugadores/<jid>/juegos/<juego>`
+  (`n` y `at`), aunque no sea récord: es su historial y deja servida una racha.
+- **Qué cuenta.** Los juegos sueltos de la portada, jugados como cualquiera los juega: sin el
+  laboratorio y sin una semilla elegida en el link, que dejaría repetir el mismo tablero. Los días
+  de una copa cuentan en la pestaña "Copa", salvo las copas del laboratorio. Toque y Fama solo y Línea
+  Relámpago siguen con su récord local por ahora. Rendirse (0 puntos) cuenta como partida jugada, pero no entra a
+  las tablas: un 0 no es un récord (dilema #185).
+- **Primero en el laboratorio.** Mientras `RANKINGS_EN_LABS` sea `true` (`jugador.js`), las
+  piezas de ranking, la invitación a entrar y el 🏆 de la portada solo aparecen en los celulares
+  que los activaron en `/labs/` (una marca en el `localStorage`) y siempre en pruebas. Así se
+  prueban contra las reglas y el Firebase de verdad, con amigos, antes de abrirlos a todos. Las
+  copas terminadas guardan su podio desde ya.
+- **La historia de La Copa** (`node tools/firebase/rankings-historia.mjs`, que sin `--escribir`
+  solo muestra lo que haría): el podio de cada copa terminada y el mejor día de cada persona en
+  cada juego suelto, en la pestaña "Copa". Quien jugó antes de los rankings queda como **jugador
+  heredado**, uno por nombre, sin PIN (`jugadores/<jid>.legado`, con un jid que sale del nombre:
+  correrlo de nuevo no duplica). La primera vez que alguien entra con ese nombre, la app pregunta
+  si esos puntajes son suyos; si dice que sí, les pone su PIN. El primero que lo reclama se los
+  queda: entre amigos se arregla, y el dueño puede corregirlo en la consola.
+**Por qué:** El dueño pidió rankings de cada juego y de La Copa con una identidad que la gente
+pueda reusar sin crear cuentas, aceptando que los nombres se repitan. Nombre y PIN ya era lo que
+La Copa usaba y entendían sus jugadores. Guardar solo el mejor de cada uno, con su clave de orden,
+deja leer cualquier tabla con una consulta chica y escribir solo cuando alguien mejora.
+**Consecuencias:** El puntaje se calcula en el celular, como en La Copa (D-97): las reglas acotan
+lo absurdo, pero quien edite el JavaScript puede inventar un 100. Sin servidor (RP-10) no se puede
+impedir; el dueño puede borrar o renombrar desde la consola (las reglas le dan escritura en estas
+ramas). Un PIN de 4 dígitos se adivina probando 10.000 veces en línea: separa a amigos, no protege
+contra un atacante, y la pantalla pide no usar el del banco. Olvidar el PIN no tiene arreglo:
+se crea otro jugador. En localhost y con `?prueba` el almacén es el de prueba
+(`jugador-local.js`, que hace cumplir lo mismo que las reglas), para que los guiones no escriban
+en los rankings de verdad; `?records=firebase` fuerza Firebase. Hay que **publicar las reglas**
+(`node tools/firebase/reglas.mjs publicar`); el acceso anónimo ya está habilitado por D-96.
 
 ## D-213 · Una fuente por regla: los cánones dicen la regla de hoy
 **Fecha:** 2026-10-04 · **Estado:** vigente · **Relación:** corrige D-132, D-135 y D-204; completa D-189; sube a los cánones lo que vivía solo en D-56, D-60, D-70, D-77, D-81, D-86, D-92 y D-123

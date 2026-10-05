@@ -367,6 +367,10 @@
               ".write": "auth != null && $code.matches(/^[A-HJ-NP-Z]{5}$/) && $pid.matches(/^[a-z0-9]{6}$/) && !data.exists() && root.child('torneoSeats/' + $code + '/' + $pid + '/' + auth.uid).exists()",
               ".validate": "newData.isString() && newData.val().matches(/^[A-Z]{2}$/)"
             },
+            "j": {
+              ".write": "auth != null && $code.matches(/^[A-HJ-NP-Z]{5}$/) && $pid.matches(/^[a-z0-9]{6}$/) && root.child('torneoSeats/' + $code + '/' + $pid + '/' + auth.uid).exists()",
+              ".validate": "newData.isString() && newData.val().matches(/^[a-z0-9]{8}$/) && root.child('jugadorSeats/' + newData.val() + '/' + auth.uid).exists()"
+            },
             "$other": {
               ".validate": false
             }
@@ -459,6 +463,151 @@
         },
         "$other": {
           ".validate": false
+        }
+      }
+    },
+    "torneoPodios": {
+      ".read": true,
+      ".write": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
+      ".indexOn": [
+        "end"
+      ],
+      "$code": {
+        ".write": "auth != null && $code.matches(/^[A-HJ-NP-Z]{5}$/) && !data.exists() && newData.exists() && root.child('torneos/' + $code + '/meta').exists() && root.child('torneos/' + $code + '/meta/lab').val() != true && (root.child('torneos/' + $code + '/fin').exists() || root.child('torneos/' + $code + '/meta/end').val() < now) && root.child('torneoSeats/' + $code + '/' + newData.child('por').val() + '/' + auth.uid).exists()",
+        ".validate": "newData.hasChildren(['name', 'end', 'de', 'dias', 'por', 'p', 'at'])",
+        "name": {
+          ".validate": "newData.isString() && newData.val() === root.child('torneos/' + $code + '/meta/name').val()"
+        },
+        "end": {
+          ".validate": "newData.isNumber() && newData.val() <= now"
+        },
+        "de": {
+          ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 100"
+        },
+        "dias": {
+          ".validate": "newData.isNumber() && newData.val() === root.child('torneos/' + $code + '/meta/days').val()"
+        },
+        "por": {
+          ".validate": "newData.isString() && newData.val().matches(/^[a-z0-9]{6}$/)"
+        },
+        "at": {
+          ".validate": "newData.isNumber() && newData.val() <= now && newData.val() > now - 60000"
+        },
+        "p": {
+          "$pid": {
+            ".validate": "$pid.matches(/^[a-z0-9]{6}$/) && newData.hasChildren(['n', 'l']) && root.child('torneos/' + $code + '/players/' + $pid).exists()",
+            "n": {
+              ".validate": "newData.isString() && newData.val() === root.child('torneos/' + $code + '/players/' + $pid + '/name').val()"
+            },
+            "l": {
+              ".validate": "newData.isNumber() && (newData.val() == 1 || newData.val() == 2 || newData.val() == 3)"
+            },
+            "j": {
+              ".validate": "newData.isString() && newData.val() === root.child('torneos/' + $code + '/players/' + $pid + '/j').val()"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+    "jugadores": {
+      ".write": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
+      "$jid": {
+        ".read": "$jid.matches(/^[a-z0-9]{8}$/)",
+        ".write": "auth != null && $jid.matches(/^[a-z0-9]{8}$/) && !data.exists() && newData.exists() && newData.parent().parent().child('jugadorSeats/' + $jid + '/' + auth.uid).exists()",
+        ".validate": "newData.hasChildren(['n', 'at'])",
+        "n": {
+          ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 20"
+        },
+        "at": {
+          ".validate": "newData.isNumber() && newData.val() <= now"
+        },
+        "juegos": {
+          "$juego": {
+            ".write": "auth != null && $jid.matches(/^[a-z0-9]{8}$/) && $juego.matches(/^[a-z][a-z0-9-]{0,24}$/) && root.child('jugadorSeats/' + $jid + '/' + auth.uid).exists()",
+            ".validate": "newData.hasChildren(['n', 'at'])",
+            "n": {
+              ".validate": "newData.isNumber() && ((!data.exists() && newData.val() == 1) || newData.val() == data.val() + 1)"
+            },
+            "at": {
+              ".validate": "newData.isNumber() && newData.val() <= now && newData.val() > now - 60000"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        },
+        "legado": {
+          ".write": "auth != null && $jid.matches(/^[a-z0-9]{8}$/) && !newData.exists() && newData.parent().parent().parent().child('jugadorSeats/' + $jid + '/' + auth.uid).exists()",
+          ".validate": "newData.isBoolean() && newData.val() == true"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+    "jugadorNombres": {
+      ".write": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
+      "$clave": {
+        ".read": "$clave.matches(/^[a-z0-9-]{1,24}$/)",
+        "$jid": {
+          ".write": "auth != null && $clave.matches(/^[a-z0-9-]{1,24}$/) && $jid.matches(/^[a-z0-9]{8}$/) && !data.exists() && newData.parent().parent().parent().child('jugadorSeats/' + $jid + '/' + auth.uid).exists()",
+          ".validate": "newData.val() === true"
+        }
+      }
+    },
+    "jugadorKeys": {
+      ".write": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
+      "$jid": {
+        ".write": "auth != null && $jid.matches(/^[a-z0-9]{8}$/) && newData.exists() && ((!data.exists() && (!root.child('jugadores/' + $jid).exists() || root.child('jugadores/' + $jid + '/legado').val() == true) && newData.parent().parent().child('jugadorSeats/' + $jid + '/' + auth.uid).exists()) || (data.exists() && root.child('jugadorSeats/' + $jid + '/' + auth.uid).exists()))",
+        ".validate": "newData.isString() && newData.val().matches(/^[0-9a-f]{64}$/)"
+      }
+    },
+    "jugadorSeats": {
+      ".write": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
+      "$jid": {
+        ".write": "auth != null && $jid.matches(/^[a-z0-9]{8}$/) && root.child('jugadorSeats/' + $jid + '/' + auth.uid).exists()",
+        "$uid": {
+          ".write": "auth != null && $jid.matches(/^[a-z0-9]{8}$/) && $uid === auth.uid",
+          ".validate": "newData.isString() && newData.val() === newData.parent().parent().parent().child('jugadorKeys/' + $jid).val()"
+        }
+      }
+    },
+    "records": {
+      ".write": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
+      "$t": {
+        "$p": {
+          ".read": "$t.matches(/^[a-z][a-z0-9-]{0,24}(_[a-z0-9-]{1,16})?$/) && $p.matches(/^(siempre|s[0-9]{4}-[0-9]{2})$/)",
+          ".indexOn": [
+            "k"
+          ],
+          "$jid": {
+            ".write": "auth != null && $t.matches(/^[a-z][a-z0-9-]{0,24}(_[a-z0-9-]{1,16})?$/) && $p.matches(/^(siempre|s[0-9]{4}-[0-9]{2})$/) && $jid.matches(/^[a-z0-9]{8}$/) && newData.exists() && root.child('jugadorSeats/' + $jid + '/' + auth.uid).exists() && (!data.exists() || newData.child('k').val() < data.child('k').val())",
+            ".validate": "newData.hasChildren(['s', 'ms', 'k', 'at', 'n'])",
+            "s": {
+              ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100000"
+            },
+            "ms": {
+              ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 99999999"
+            },
+            "k": {
+              ".validate": "newData.isNumber() && newData.val() == (100000 - newData.parent().child('s').val()) * 100000000 + newData.parent().child('ms').val()"
+            },
+            "at": {
+              ".validate": "newData.isNumber() && newData.val() <= now && newData.val() > now - 60000"
+            },
+            "n": {
+              ".validate": "newData.isString() && newData.val() === root.child('jugadores/' + $jid + '/n').val()"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
         }
       }
     },

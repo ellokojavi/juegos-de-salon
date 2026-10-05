@@ -119,7 +119,7 @@ export const GAMES = [
 /**
  * Los juegos de La Copa, que también se juegan desde la portada (D-142), de a uno y sin copa: son
  * juegos como los demás (D-198) y abren `<slug>/` (D-149, D-162, D-192), la pantalla de práctica de
- * La Copa con un link que no dice "copa": no guarda nada y no cuenta para ninguna copa. Van aparte
+ * La Copa con un link que no dice "copa": no cuenta para ninguna copa y, si hay jugador, va a los rankings (D-212). Van aparte
  * de GAMES solo por cómo están hechos: no son una carpeta con su `rules.js` (su motor y su pantalla
  * viven en cup/games/), así que el README y las pruebas de idioma de los juegos no los recorren. Su
  * página y su tarjeta social las genera `node tools/release/og.mjs tarjetas` a partir de cup/suelto/index.html.
