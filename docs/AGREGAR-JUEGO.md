@@ -1,34 +1,43 @@
 # Cómo agregar un juego nuevo
 
-> Antes de empezar, leer los [cánones y estándares](CANONES.md): son obligatorios para todos los juegos.
+> Las reglas están en los [cánones](CANONES.md); esta página es solo el orden de los pasos y dónde
+> está cada pieza. Lo que dice un canon no se repite aquí (D-213).
 
-1. **Crear la carpeta** `public/<carpeta>/`, con el nombre del juego en inglés, en minúsculas y con guiones (`public/hangman/`): es su URL (D-192). Con:
-   - `index.html`: incluye `../assets/css/base.css` y su propio `style.css`. Reutiliza las clases `.app`, `.topbar`, `.panel`, `.btn`, `.display`, etc.
-   - `rules.js`: datos del juego (reglas, textos, listas). Sin lógica de UI. Exportar `LOCALES = { es: {...}, en: {...}, pt: {...} }` con todos los textos por idioma, con las mismas claves en los tres.
-   - `game.js`: máquina de estados y render. Importa helpers desde `../assets/js/ui.js`.
-   - `style.css`: solo lo específico del juego.
-2. **Registrarlo** en `public/assets/js/games.js` agregando una entrada con `id`, `emoji`, `name` y `tagline` (objetos `{ es, en, pt }`), `players`, `duration`, `path` (la carpeta, `'hangman/'`), `tipos` (con qué filtros de la portada aparece: `words`, `logic`, `trivia` o `tabletop`, las claves de `TIPOS`, D-214) y `available: true`. El `id` es un dato que guardan las salas y el panel y no cambia nunca; para un juego nuevo puede ser el mismo nombre de la carpeta (D-192). Si tiene modo de dos celulares, también `jugadas`: los tipos de mensaje que son una jugada de una persona (un disparo, un intento), para que el panel no cuente como jugadas las respuestas automáticas ni el chat (D-138). El menú se genera solo.
-3. **Seguir el flujo estándar** de pantallas: `intro` (dinámica y materiales) → `setup` (jugadores) → `play` → `end`. Guardar el estado en `localStorage` con la clave `juegos-de-salon:<id>:game` y reutilizar `juegos-de-salon:players` para los nombres.
-4. **Documentar**: crear `docs/games/<carpeta>.md` con la especificación, agregar requerimientos con prefijo propio en `docs/REQUERIMIENTOS.md` y registrar decisiones nuevas en `docs/DECISIONES.md`.
-5. **Si el juego usa varios celulares**, seguir el patrón de Toque y Fama: estado derivado de una lista de mensajes, interfaz `Transport` (`create`, `join`, `send`, `onMessage`, `onPresence`, `leave`) con implementaciones `local` y `firebase`, y reglas de seguridad en `firebase/database.rules.json` (campo `game` en la sala para separar juegos).
-6. **Sus módulos JS entran solos** al import map de versiones: al publicar, `tools/release/set-version.py` recorre el sitio (D-192, D-205).
-7. **Dejar la señal de uso para el panel** (D-44): al empezar una partida sin red, llamar `trackStart({ game, mode, players })` de `public/assets/js/transport/stats.js` (no al retomar). Las salas de dos celulares las apunta el transporte solo. El panel no hay que tocarlo: el juego nuevo aparece ahí con su emoji y su nombre en cuanto manda la primera señal (C-16). Si el juego estrena un **modo** que no está en `MODES` de `public/assets/js/games.js`, se agrega esa línea y basta. Ver `docs/PANEL.md`.
+1. **La carpeta**: `public/<carpeta>/`, en inglés, con los archivos de C-2 (`index.html`,
+   `style.css`, `rules.js`, `engine.js`, `engine.test.mjs`, `game.js`). Las reglas van en
+   `engine.js`, puras, con sus pruebas en `engine.test.mjs`.
+2. **Los textos** en `LOCALES = { es, en, pt, de }` de `rules.js`: los cuatro idiomas se ofrecen a
+   todos y la paridad los exige (C-3). El alemán respeta el glosario de [ALEMAN.md](ALEMAN.md).
+   Las instrucciones siguen U-18.
+3. **El registro** en `public/assets/js/games.js` (C-2): con eso aparecen el menú y el panel (C-16).
+   Sus `tipos` (`words`, `logic`, `trivia` o `tabletop`, las claves de `TIPOS`) dicen con qué
+   filtros de la portada aparece (D-214).
+   Si estrena un modo, se agrega a `MODES` y basta.
+4. **Los modos** que le tocan según C-5, con el transporte de C-7 (`create`, `join`, `send`,
+   `onMessage`, `onPresence`, `leave`, `dispose`) y, si tiene sala, sus reglas en
+   `firebase/database.rules.json`.
+5. **La memoria**: la partida con `createSessionStore(GAME_ID)` y el nombre con
+   `createNameStore(GAME_ID)`, de `public/assets/js/session.js` (C-6).
+6. **Los módulos compartidos**, nunca uno propio: `handoff.js` para pasar el celular (C-9),
+   `compartir.js` para todo lo que se comparte (C-7), `chat.js` en los modos de varios celulares
+   (C-15), `sound.js` (C-4) y `arrastre.js` si hay arrastre (C-8).
+7. **La señal para el panel** (C-7, D-210): en los modos sin red, `trackStart({ game, mode, players })`
+   al empezar y `trackFinish({ ganador, empate, detalle })` al terminar, de
+   `public/assets/js/transport/stats.js`. Las salas las apunta el transporte.
 7b. **Rankings** (D-212): hoy anotan récords solo los juegos sueltos de La Copa (los que tienen
    `suelto` en `games.js`), y lo hace `public/cup/game.js` sin que el juego haga nada: su página
    sale de `public/cup/suelto/index.html`, que ya carga `ranking.css`. Un juego de salón no anota
    récords; si uno nuevo debería, es una decisión para el dueño, no algo que se agrega de pasada.
-8. **Sumarlo al README**, que es la única parte del proyecto que va en inglés (C-13, D-78): la
-   sección del juego con su prosa, las tomas nuevas en el guion de `tools/e2e/` y sus entradas en
-   `docs/capturas.json`, con el `pie` en inglés. Después, `python3 tools/release/readme.py capturas <seccion>`
-   y `actualizar`. La tabla de juegos y los modos se generan solos desde el `en` de `rules.js`.
-9. **Probar en el celular** desde la URL publicada y actualizar `CHANGELOG.md`.
+8. **Las pruebas de punta a punta** (C-12): las pantallas del juego como entradas en
+   `tools/e2e/caminos.mjs`, su `tools/e2e/<carpeta>/idiomas.mjs` y los guiones de partida en
+   `tools/e2e/<carpeta>/`. `node tools/e2e/mirar.mjs <juego> <pantalla> --ancho 320` para mirar.
+9. **La especificación** en `docs/games/<carpeta>.md`, con la plantilla de C-13 (incluidas las
+   excepciones a los cánones y el gancho `window.__…`), más requerimientos y decisiones.
+10. **El README**, en inglés (C-13): la sección del juego, sus tomas en `docs/capturas.json` y
+    después `python3 tools/release/readme.py capturas <seccion>`, `actualizar` y, ya releído,
+    `sellar`. Las capturas se miran juntas con `node tools/e2e/contacto.mjs <seccion>`. La tarjeta
+    social sale con `node tools/release/og.mjs tarjetas` e `imagenes`.
+11. **La lista de chequeo** del final de los cánones, entera.
 
-Publicar: al fusionar, la entrada de la versión en `CHANGELOG.md`. `publicar.yml` la estampa en lo que publica para que el navegador no mezcle archivos en caché (D-205).
-
-Módulos compartidos: `public/assets/js/handoff.js` (pásale el celular, pantalla tapada), `public/assets/js/transport/` (local y Firebase), `public/assets/js/sound.js`, `public/assets/js/i18n.js`.
-
-Convenciones:
-- Idioma: leer `getLang()` de `public/assets/js/i18n.js`, marcar textos fijos del HTML con `data-i18n="clave"` (o `data-i18n-html`) y llamar `applyStatic(LOCALES[lang].ui)` al iniciar. Incluir `langToggle()` en la intro del juego.
-- Textos en español chileno informal, tuteo, sin groserías fuertes. Inglés, portugués de Brasil y alemán adaptados, no calcados (C-3, D-48). El alemán está en el laboratorio, pero la prueba de paridad lo pide igual, con el glosario de [ALEMAN.md](ALEMAN.md) (D-191).
-- Botones de acción principal con `.btn` (rosado) o `.btn--yellow`; secundarios con `.btn--ghost`.
-- Usar `vibrate()` en momentos clave y `confetti()` en cierres.
+La versión y la entrada del `CHANGELOG.md` no las escribe quien hace el juego: se ponen al
+fusionar, y `publicar.yml` hace el resto (C-11, D-205).
