@@ -231,7 +231,7 @@ Todo bajo `public/cup/`:
 | `games/<carpeta>/ui.js` | La pantalla de cada juego |
 | `games/index.js` · `games/semilla.js` · `games/mazos.js` · `games/audiencia.js` · `games/solo.js` | Lo común a los juegos: el registro, la semilla, los mazos, el público y el modo suelto con su récord |
 | `store-firebase.js` · `store-local.js` | El mismo almacén contra Firebase o contra localStorage (`?prueba`) |
-| `cuenta.js` | Con quién está sentado este celular y el intento a medio jugar |
+| `cuenta.js` | Con quién está sentado este celular, el intento a medio jugar y "Tus copas" (las del celular más las del jugador, `juntarCopas`, D-220) |
 | `desglose.js` | Cómo se calculó el puntaje, línea por línea (D-106) |
 | `demo.js` | Las escenas de ejemplo del laboratorio |
 | `reportes.js` | El botón 🐞 y los reportes que esperan reenvío |
