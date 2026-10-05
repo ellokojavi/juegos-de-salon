@@ -149,6 +149,16 @@ export const CAMINOS = {
       `[...document.querySelectorAll('#players-form input')].forEach((i,k)=>{i.value=['Javi','Cata','Pancho','Fran'][k];i.dispatchEvent(new Event('input',{bubbles:true}))})`,
       `document.getElementById('btn-start').click()`,
     ],
+    // El pase (C-9): "¡Salud!" y "Pásale el celular a X" en una sola pantalla. El peor caso: un As
+    // con seis jugadores de nombre largo, que son seis fichas más el pase. Se deja una partida
+    // guardada con el As arriba del mazo y se retoma.
+    pase: [
+      `(()=>{const n=['Francisca','Maximiliano','Catalina','Sebastián','Valentina','Bartolomé'];const deck=[{rank:'5',suit:'♣',color:'black'},{rank:'A',suit:'♥',color:'red'}];localStorage.setItem('juegos-de-salon:cuarto-rey:session',JSON.stringify({v:1,game:'cuarto-rey',at:Date.now(),mode:'local',state:{players:n.map((name,i)=>({name,gender:'mfx'[i%3]})),deck,turn:0,kings:0,drawn:0,sorbos:n.map(()=>0),fondos:n.map(()=>0),history:[],current:null,finished:false,victim:null,startedAt:Date.now()}}));location.reload()})()`,
+      `document.querySelector('#resume-slot .btn--cyan').click()`,
+      `document.getElementById('card').click()`,
+      `1`,
+      `document.querySelector('#result .actions .btn').click()`,
+    ],
   },
   julepe: {
     intro: [],

@@ -10,7 +10,11 @@
  * `revisar` parte del commit guardado en docs/documentacion.json (o de `--desde`), lista lo que
  * entró a main y comprueba lo que se puede comprobar sin leer prosa:
  *   - cada D-n citado en el repo existe en docs/DECISIONES.md, y ninguno está dos veces;
- *   - cada `*.test.mjs` y `*.test.py` aparece en CLAUDE.md;
+ *   - las decisiones van en orden y sin huecos (un número vacío se anota "(número sin usar)");
+ *   - cada decisión tiene un Estado de los cuatro (D-213), y lo que su Estado cita existe;
+ *   - si una decisión cambia, corrige o reemplaza a otra, el Estado de la otra la nombra;
+ *   - ningún ID de docs/REQUERIMIENTOS.md ni U-n de docs/USABILIDAD.md está dos veces;
+ *   - las rutas entre comillas invertidas de las guías (no de la historia) existen;
  *   - cada guion de tools/e2e/ aparece en tools/e2e/README.md;
  *   - la versión publicada tiene su entrada en CHANGELOG.md.
  * Lo demás (que la prosa diga lo que el código hace) lo lee el agente. Sale con 1 si algo falta.
@@ -30,16 +34,102 @@ export const MEMORIA = join(RAIZ, 'docs/documentacion.json');
 /* Comprobaciones puras (las prueba tools/agents/documentar.test.mjs)         */
 /* ------------------------------------------------------------------ */
 
-/** Los números de decisión que tienen su título "## D-n" en DECISIONES.md, y los repetidos. */
+/**
+ * Los números de decisión que tienen su título "## D-n" en DECISIONES.md, los repetidos, los que
+ * faltan entre D-1 y el más alto, y los que llegan fuera de orden (`[n, el anterior]`).
+ */
 export function decisionesEscritas(decisiones) {
-  const vistos = new Set(), repetidos = new Set();
+  const vistos = new Set(), repetidos = new Set(), desordenados = [];
+  let anterior = 0;
   for (const m of decisiones.matchAll(/^## D-(\d+)\b/gm)) {
     const n = Number(m[1]);
     if (vistos.has(n)) repetidos.add(n);
+    else if (n < anterior) desordenados.push([n, anterior]);
     vistos.add(n);
+    anterior = Math.max(anterior, n);
   }
-  return { escritas: vistos, repetidos: [...repetidos].sort((a, b) => a - b) };
+  const huecos = [];
+  for (let i = 1; i < anterior; i++) if (!vistos.has(i)) huecos.push(i);
+  return { escritas: vistos, repetidos: [...repetidos].sort((a, b) => a - b), huecos, desordenados };
 }
+
+/** Los IDs repetidos de una lista, en el orden en que se repiten. */
+const repetidosDe = ids => [...new Set(ids.filter((id, i) => ids.indexOf(id) !== i))];
+
+/** Los IDs de REQUERIMIENTOS.md (la primera columna, `| RP-01 |`) que están en más de una fila. */
+export const requerimientosRepetidos = texto => repetidosDe([...texto.matchAll(/^\|\s*([A-Z]+-\d+[a-z]?)\s*\|/gm)].map(m => m[1]));
+
+/** Las reglas de USABILIDAD.md (`**U-n · …`) definidas dos veces. */
+export const usabilidadRepetidas = texto => repetidosDe([...texto.matchAll(/\*\*U-(\d+[a-z]?) ·/g)].map(m => `U-${m[1]}`));
+
+/** Cada "## D-n · título" con su Estado y su Relación (null si no los tiene). */
+export function entradas(decisiones) {
+  const partes = decisiones.split(/^(?=## D-\d+\b)/m).filter(p => p.startsWith('## D-'));
+  return partes.map(p => {
+    const [titulo] = p.split('\n');
+    const campo = nombre => { const m = p.match(new RegExp(`\\*\\*${nombre}:\\*\\*[ \\t]*([^\\n]*?)[ \\t]*(?: · \\*\\*|$)`, 'm')); return m ? m[1] : null; };
+    return { n: Number(titulo.match(/D-(\d+)/)[1]), titulo, sinUsar: /\(número sin usar\)/.test(titulo), estado: campo('Estado'), relacion: campo('Relación') };
+  });
+}
+
+/** El Estado, si es uno de los cuatro de D-213: `{ tipo, por }`, con los D-n que lo corrigen o reemplazan. */
+export function leerEstado(estado) {
+  if (estado === 'vigente' || estado === 'derogada') return { tipo: estado, por: [] };
+  const m = (estado || '').match(/^(corregida|reemplazada) por (D-\d+(?:, D-\d+)*)$/);
+  return m ? { tipo: m[1], por: [...m[2].matchAll(/D-(\d+)/g)].map(x => Number(x[1])) } : null;
+}
+
+/**
+ * Las decisiones que una Relación dice que cambia, corrige o reemplaza. Cuenta lo que viene después
+ * del verbo hasta el verbo siguiente o el punto y coma: "corrige D-75 (el alto) y ajusta D-76" es
+ * solo D-75; "D-176 cambia la invitación" no es nada (ahí D-176 es quien cambia).
+ */
+const VERBOS = /\b(cambia|corrige|reemplaza|amplía|ajusta|acota|completa|cierra|deroga|revisa|ordena|quita|saca|sube|es excepción)\b/;
+export function corregidas(relacion) {
+  const n = new Set();
+  for (const clausula of (relacion || '').split(';')) {
+    const trozos = clausula.split(new RegExp(VERBOS.source, 'g'));
+    // split con un grupo deja [antes, verbo, después, verbo, después…]
+    for (let i = 1; i < trozos.length; i += 2) {
+      if (!/^(cambia|corrige|reemplaza)$/.test(trozos[i])) continue;
+      for (const m of trozos[i + 1].matchAll(/\bD-(\d+)\b/g)) n.add(Number(m[1]));
+    }
+  }
+  return [...n];
+}
+
+/** Lo que está mal en los Estados y Relaciones de DECISIONES.md (D-213). */
+export function problemasDeEstado(decisiones) {
+  const todas = entradas(decisiones), problemas = [];
+  const porNumero = new Map(todas.map(e => [e.n, e]));
+  for (const e of todas) {
+    if (e.sinUsar) continue;
+    const estado = leerEstado(e.estado);
+    if (e.estado === null) problemas.push(`D-${e.n} no tiene **Estado:** en docs/DECISIONES.md`);
+    else if (!estado) problemas.push(`D-${e.n} tiene un Estado que no es de los cuatro: "${e.estado}"`);
+    else for (const x of estado.por) if (!porNumero.has(x) || porNumero.get(x).sinUsar) problemas.push(`D-${e.n} está ${estado.tipo} por D-${x}, que no existe`);
+    for (const x of corregidas(e.relacion)) {
+      const otra = porNumero.get(x);
+      if (!otra || otra.sinUsar || x === e.n) continue;
+      const suyo = leerEstado(otra.estado);
+      if (!suyo || !['corregida', 'reemplazada'].includes(suyo.tipo) || !suyo.por.includes(e.n)) {
+        problemas.push(`D-${e.n} cambia, corrige o reemplaza D-${x}, y el Estado de D-${x} no la nombra ("${otra.estado}")`);
+      }
+    }
+  }
+  return problemas;
+}
+
+/**
+ * Las rutas del repo citadas entre comillas invertidas: empiezan por una carpeta del repo y no son
+ * moldes (`<carpeta>`, `*`, `{a,b}`, `…`) ni frases. Sin `:línea`, `#ancla` ni `?consulta`. Los
+ * bloques de código no cuentan: ahí van comandos, no citas.
+ */
+const CARPETAS = /^(public|tools|docs|firebase|marketing|\.github|\.claude)\//;
+export const rutasCitadas = texto => [...new Set([...texto.replace(/```[\s\S]*?```/g, '').matchAll(/`([^`\n]+)`/g)]
+  .map(m => m[1])
+  .filter(r => CARPETAS.test(r) && !/[\s<*{…]/.test(r))
+  .map(r => r.replace(/[?#].*$/, '').replace(/:\d.*$/, '')))];
 
 /** Los D-n citados en un texto. */
 export const decisionesCitadas = texto => new Set([...texto.matchAll(/\bD-(\d+)\b/g)].map(m => Number(m[1])));
@@ -129,9 +219,24 @@ export function comprobar() {
   }
   for (const [n, fs] of [...faltan].sort((a, b) => a[0] - b[0])) problemas.push(`D-${n} se cita (${fs.slice(0, 3).join(', ')}${fs.length > 3 ? '…' : ''}) y no está en docs/DECISIONES.md`);
 
-  // Pruebas que CLAUDE.md no nombra
-  const pruebas = archivos.filter(f => /\.test\.(mjs|py)$/.test(f));
-  for (const f of sinMencionar(pruebas, leer('CLAUDE.md'))) problemas.push(`la prueba ${f} no está en la lista de CLAUDE.md`);
+  // Numeración, Estados y correcciones sin marcar (D-213)
+  const { huecos, desordenados } = decisionesEscritas(leer('docs/DECISIONES.md'));
+  // Un número que falta aquí puede ser el de un PR abierto (CLAUDE.md, D-135): ese no es un hueco
+  const ramas = git('for-each-ref', '--format=%(refname)', 'refs/remotes').split('\n').filter(r => r && !r.endsWith('/HEAD'));
+  const enOtraRama = n => { try { return !!git('grep', '-l', '-E', `^## D-[0]*${n} `, ...ramas, '--', 'docs/DECISIONES.md'); } catch (_) { return false; } };
+  for (const n of huecos.filter(n => !enOtraRama(n))) problemas.push(`D-${n} falta en docs/DECISIONES.md: un número que no se usó se anota "## D-${n} · (número sin usar)"`);
+  for (const [n, antes] of desordenados) problemas.push(`D-${n} está fuera de orden en docs/DECISIONES.md (viene después de D-${antes})`);
+  problemas.push(...problemasDeEstado(leer('docs/DECISIONES.md')));
+
+  // IDs repetidos
+  for (const id of requerimientosRepetidos(leer('docs/REQUERIMIENTOS.md'))) problemas.push(`${id} está en más de una fila de docs/REQUERIMIENTOS.md`);
+  for (const id of usabilidadRepetidas(leer('docs/USABILIDAD.md'))) problemas.push(`${id} está dos veces en docs/USABILIDAD.md`);
+
+  // Rutas que no existen, en las guías de hoy (DECISIONES, CHANGELOG y REQUERIMIENTOS son historia)
+  const guias = archivos.filter(f => /^(CLAUDE\.md|CONTRIBUTING\.md|docs\/(CANONES|AGREGAR-JUEGO|USABILIDAD|PANEL)\.md|docs\/games\/[^/]+\.md|\.claude\/agents\/[^/]+\.md)$/.test(f));
+  for (const f of guias) {
+    for (const r of rutasCitadas(leer(f))) if (!existsSync(join(RAIZ, r))) problemas.push(`${f} cita \`${r}\`, que no existe`);
+  }
 
   // Guiones de punta a punta que su README no nombra
   const guiones = archivos.filter(f => /^tools\/e2e\/.+\.mjs$/.test(f) && !/cdp\.mjs$/.test(f));
@@ -166,7 +271,7 @@ function revisar(desde) {
   if (nuevos.length) {
     console.log('Falta documentar:');
     for (const p of nuevos) console.log(`  ✗ ${p}`);
-  } else console.log('✓ Decisiones, pruebas, guiones y CHANGELOG al día.');
+  } else console.log('✓ Decisiones, IDs, rutas, guiones y CHANGELOG al día.');
   if (viejos.length) {
     console.log('\nYa conocidos (esperan al dueño, en "conocidos" de docs/documentacion.json):');
     for (const p of viejos) console.log(`  · ${p}`);

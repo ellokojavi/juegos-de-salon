@@ -1,6 +1,6 @@
 // Chat de sala en Batalla Naval: dos celulares contra Firebase real (canon C-15, D-138)
-// Uso: SITIO=http://localhost:87xx PUERTO_CDP=94xx node tools/e2e/battleship/chat.mjs <salida>
-// Usa PUERTO_CDP y el siguiente, uno por celular (D-135).
+// Uso: SITIO=http://localhost:87xx node tools/e2e/battleship/chat.mjs <salida>
+// Un Chrome por celular; sus puertos los elige el sistema (D-213), o PUERTO_CDP y el siguiente.
 import { launch, sleep } from '../cdp.mjs';
 const OUT = process.argv[2];
 const SITIO = process.env.SITIO || 'http://localhost:8765';
