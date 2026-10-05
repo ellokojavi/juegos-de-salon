@@ -151,7 +151,7 @@
       .map(g => ({ id: `${g.id}_victorias`, emoji: g.emoji, nombre: pickLang(g.name, lang), victorias: true }));
     const todasJuegos = [...deUno, ...enGrupo];
 
-    const ranuraJuego = el('div', {});
+    const ranuraJuego = el('div', { class: 'rk-seccion' }); // las temáticas de Relámpago y su tabla, con aire entre los dos paneles
     let juegoElegido = null;
     const elegirJuego = id => {
       // Una temática de Relámpago (linea-de-tiempo_rel-historia) se muestra dentro de su ficha
@@ -188,7 +188,7 @@
     const elegirDia = id => {
       const o = deUno.find(x => x.id === id) || deUno[0];
       marcarFichas(fichasDia, o.id);
-      ranuraDia.replaceChildren(bloqueRanking({ juego: `${o.id}_copa`, titulo: conEmoji(o.emoji, fmt(T.titleOf, { game: o.nombre })), pestanas: ['siempre', 'amigos'], alTocar: tap }));
+      ranuraDia.replaceChildren(bloqueRanking({ juego: `${o.id}_copa`, titulo: conEmoji(o.emoji, `${T.cupBestDay}: ${o.nombre}`), pestanas: ['siempre', 'amigos'], alTocar: tap }));
     };
     const deCopa = deUno.filter(o => juegos.some(g => g.id === o.id));
     // (la ficha de Relámpago no tiene copa: sus temáticas no son juegos de La Copa)
