@@ -26,9 +26,13 @@ desde ese número (`cdp.mjs`: el primer Chrome del guion usa `PUERTO_CDP`, el se
 Sin las variables, todo sigue en el 8765 y en los puertos de siempre.
 
 ```bash
-SITIO=http://localhost:8791 PUERTO_CDP=9491 node tools/e2e/hangman/online.mjs /tmp/e2e
-pkill -f "remote-debugging-port=949[1-3]"   # solo los tuyos
+SITIO=http://localhost:8791 PUERTO_CDP=9610 node tools/e2e/hangman/online.mjs /tmp/e2e
+pkill -f "remote-debugging-port=961[0-3]"   # solo los tuyos
 ```
+
+Los puertos de Chrome de las sesiones van de 9600 en adelante, de a diez (9600, 9610…): algunos
+guiones todavía tienen puertos fijos entre 9231 y 9498, y un `pkill` en ese rango puede matar el
+Chrome de otra sesión (D-213).
 
 ## En GitHub (D-193)
 
@@ -39,8 +43,8 @@ algo se rompe del todo. Los `online.mjs`, los `chat.mjs` y los de la lista `TAMB
 `ci.mjs` abren salas de verdad y siguen a mano. Los de `OBSOLETOS` prueban algo que ya no
 existe y esperan que alguien los reescriba.
 
-El check entero tarda lo que su job más lento, así que los guiones largos se reparten en partes
-(`PARTES` en `ci.mjs`, D-204): `cup/torneo.mjs` en `copa`, `laboratorio` y `demos`, y
+El check entero tarda lo que su job más lento, así que un guion que pase de unos 4 minutos se
+reparte en partes (`PARTES` en `ci.mjs`, D-204): `cup/torneo.mjs` en `copa`, `laboratorio` y `demos`, y
 `cup-games/idiomas.mjs` en un job por juego. Cada parte le llega al guion como `--parte <nombre>`;
 sin parte, el guion corre entero (así lo corren `readme.py capturas` y quien lo prueba a mano).
 
@@ -59,7 +63,9 @@ node tools/e2e/ci.mjs cup/torneo.mjs:demos   # solo esa parte
 
 `mirar.mjs` no es una prueba: abre una pantalla suelta para revisarla de a una, sin jugar la
 partida. `node tools/e2e/mirar.mjs ahorcado juego --ancho 320` saca la captura y avisa si hay
-scroll horizontal o botones bajo 44 px (C-8). `--idioma de` (o `en`, `pt`) la abre en ese idioma. Los
+scroll horizontal o botones bajo 44 px (C-8). `--idioma de` (o `en`, `pt`) la abre en ese idioma. El
+panel se mira con datos sembrados: `mirar.mjs panel <toma>`, con `datos`, `ahora`, `torneo`, `juegos`,
+`audiencia`, `trafico`, `copa-ficha`, `copa-dias`, `copa-historia`, `juego-ficha` o `sala-ficha` (D-207). Los
 caminos a cada pantalla están en [`caminos.mjs`](caminos.mjs), que comparte con las pruebas de idiomas.
 
 `contacto.mjs` tampoco: arma una hoja con **todas** las capturas del README de una sección,
@@ -157,10 +163,12 @@ Firebase real, así que necesitan internet y dejan salas de prueba que caducan a
 
 - **Chromes zombis:** si un script falla a medias, su Chrome puede quedar vivo escuchando en su
   puerto, y el siguiente script se conectaría a esa instancia vieja (con código viejo cargado).
-  Antes de repetir: `pkill -f remote-debugging-port`. `cdp.mjs` ya cierra Chrome ante
+  Antes de repetir, matar **solo el tuyo**: `pkill -f "remote-debugging-port=961[0-3]"` (tus
+  puertos, con corchete), nunca `pkill -f remote-debugging-port` a secas, que mata las pruebas de
+  todas las sesiones (ver arriba). `cdp.mjs` ya cierra Chrome ante
   excepciones no capturadas, pero no ante un `kill` del proceso de node.
-- Los puertos están fijos dentro de cada script (rango 93xx a 94xx); si dos scripts corren a la
-  vez deben usar puertos distintos.
+- Los puertos están fijos dentro de cada script (entre 9231 y 9498) salvo que se pase
+  `PUERTO_CDP`; si dos scripts corren a la vez deben usar puertos distintos.
 - En una pestaña oculta el navegador acelera los temporizadores de forma distinta; las esperas
   (`sleep`) están calibradas para headless.
 
