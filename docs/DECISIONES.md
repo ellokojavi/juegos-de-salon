@@ -61,7 +61,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Memoria de partida | C-6 | D-25, D-150 |
 | Interfaz táctil | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213 |
 | Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213 |
-| Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181 |
+| Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226 |
 | Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211 |
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213 |
@@ -2340,7 +2340,7 @@ no la del minijuego; y el 〰️ casi no se veía en la miniatura de WhatsApp ni
 con un filtro (deja de ser el emoji); poner el contorno en la caja del emoji (blanquea el fondo).
 
 ## D-165 · Todo lo que se comparte sigue un mismo estándar, con WhatsApp en mente
-**Fecha:** 2026-10-01 · **Estado:** corregida por D-171 · **Relación:** ordena D-173, D-124, D-126 y D-141
+**Fecha:** 2026-10-01 · **Estado:** corregida por D-171 y D-226 · **Relación:** ordena D-173, D-124, D-126 y D-141
 **Decisión:** Lo que la app comparte sale de un solo módulo, `assets/js/compartir.js`, con tres
 reglas:
 1. **El texto** abre con una cabecera — `{emoji} *{título}* · {contexto}` —, sigue con una idea
@@ -2364,7 +2364,7 @@ Cada cosa que se comparte, y con qué cabecera:
 | Tabla parcial | tablero **y** Administrar | `📊 *La Copa: X* · Tabla de posiciones · día 3 de 7` | la tabla (D-141) |
 | Tabla final | podio, Administrar, exportar | `🏁 *La Copa: X* · Tabla final` | la tabla final con galvanos |
 | Minijuego jugado solo | minijuego suelto, Toque y Fama y Línea de Tiempo solos | `🔢 *Toque y Fama* · Jugando solo` | **nueva**: el resultado |
-| La app | portada | (texto de siempre) | la tarjeta del link |
+| La app | portada | (texto de siempre) | la tarjeta del link (desde D-226, como imagen) |
 
 - **La tabla es una sola**, se comparta desde donde se comparta: el botón del gráfico, "Tabla
   parcial" y "Resumen final" de Administrar, el podio y exportar mandan la misma imagen con el
@@ -3746,3 +3746,34 @@ todos (D-224).
 **Consecuencias:** Cuando `AVISOS_EN_LABS` pase a `false`, la herencia deja de hacer falta y no hace
 nada. `push.test.mjs` y `tools/e2e/cup/avisos.mjs` la prueban (y que un link con `&app=` en una
 pestaña no la active).
+
+## D-226 · Compartir la app lleva su tarjeta como imagen, en el idioma en que se mira
+**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** cambia la regla 3 de D-165 para la app; usa D-72, D-74 y D-171
+**Decisión:** El 📤 de la portada manda **la tarjeta social de la portada** (`assets/og/menu.jpg`,
+`menu-en.jpg`, `menu-pt.jpg`, `menu-de.jpg`, D-72) **como imagen**, la del idioma en que se mira,
+junto con un texto con el estándar de D-165: la cabecera con cuántos juegos hay
+(`🎲 *Juegos de Salón* · 15 juegos para el celular`), una idea por línea (La Copa, en grupo, solo,
+sin cuenta) y el link a la portada de ese idioma al final. Con imagen, el texto no repite lo que
+ella dice (D-171): el nombre, la bajada y "gratis, sin instalar" ya están en la tarjeta.
+- **`compartirApp()`** (`compartir.js`) arma el texto desde `COMMON[lang].shareApp` y baja la
+  tarjeta una sola vez; `shareButton()` (`ui.js`) acepta `imagen` y la manda solo donde el celular
+  comparte archivos (`comparteArchivos()`).
+- **En un computador no se descarga nada:** se copia el texto, como antes. Una invitación que baja
+  un JPEG al tocarla sorprende; el link pegado igual trae su tarjeta.
+- **La tarjeta se baja antes**, en un momento libre de la portada y solo donde se va a mandar: el
+  menú del sistema tiene que abrirse enseguida después del toque, o Safari lo niega.
+- Si no se pudo bajar, se comparte solo el texto, que con su link trae la tarjeta igual.
+**Por qué:** Lo pidió el dueño ("mejora el botón de Share de la portada con imagen y texto,
+aprovechando todo lo que hemos hecho ya", en el idioma elegido). Pegada como texto, la invitación
+a la app dependía de que el chat armara la vista previa del link, que WhatsApp a veces no arma o
+arma tarde; la imagen va siempre. Se reusa la tarjeta, que ya está en los cuatro idiomas, con el
+nombre, la bajada, los emojis de los juegos y el dominio: dibujar otra con `lamina()` sería una
+segunda versión de la misma imagen que envejece aparte.
+**Alternativas descartadas:** una lámina nueva de 1080 con la lista de juegos (otra imagen que
+mantener, y la lista no cabe legible); descargar la imagen en el computador (D-165 lo hace con los
+resultados, que sin imagen no dicen nada; la app sí).
+**Consecuencias:** las invitaciones a una sala o a una copa siguen solo con texto (D-165). Si la
+tarjeta de la portada cambia (`og.mjs imagenes`), cambia también lo que se comparte. La huella de esa
+tarjeta (D-181) mira ahora solo los textos que dibuja (`appTitle` y `appSub`), no todo `COMMON`:
+sumar el texto de compartir la daba por atrasada sin que cambiara un píxel. Lo prueban
+`compartir.test.mjs` y `tools/e2e/compartir-portada.mjs` (los cuatro idiomas, y el computador).
