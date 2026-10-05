@@ -36,10 +36,10 @@ const UA = {
 await b.send('Page.addScriptToEvaluateOnNewDocument', { source: `
   try { localStorage.setItem('juegos-de-salon:vapid-prueba', ${JSON.stringify(publica)}); } catch (_) {}
   (() => {
-    const sub = { endpoint: 'https://fcm.googleapis.com/fcm/send/prueba-e2e', toJSON() { return { endpoint: this.endpoint, expirationTime: null, keys: { p256dh: 'BPRUEBA', auth: 'aPRUEBA' } }; } };
+    const sub = { endpoint: 'https://fcm.googleapis.com/fcm/send/prueba-e2e', async unsubscribe() { sessionStorage.removeItem('e2e:suscrito'); sessionStorage.setItem('e2e:anulada', '1'); return true; }, toJSON() { return { endpoint: this.endpoint, expirationTime: null, keys: { p256dh: 'BPRUEBA', auth: 'aPRUEBA' } }; } };
     const k = 'e2e:suscrito';
     if (window.PushManager) {
-      PushManager.prototype.subscribe = async function (op) { sessionStorage.setItem('e2e:clave', String(op && op.applicationServerKey && op.applicationServerKey.length)); sessionStorage.setItem(k, '1'); return sub; };
+      PushManager.prototype.subscribe = async function (op) { sessionStorage.setItem('e2e:veces', String(Number(sessionStorage.getItem('e2e:veces') || 0) + 1)); sessionStorage.setItem('e2e:clave', String(op && op.applicationServerKey && op.applicationServerKey.length)); sessionStorage.setItem(k, '1'); return sub; };
       PushManager.prototype.getSubscription = async function () { return sessionStorage.getItem(k) ? sub : null; };
     }
     if (/iPhone/.test(navigator.userAgent) && !/standalone/.test(location.search)) { delete window.PushManager; }
@@ -73,6 +73,12 @@ ok(avisosGuardados && /"dia":true/.test(avisosGuardados) && /prueba-e2e/.test(av
 const notis = await ev(`(async()=>{const r=await navigator.serviceWorker.ready;return (await r.getNotifications()).map(n=>n.title+' | '+n.body)})()`);
 ok(notis.some(n => /La Copa/.test(n) && /Listo/.test(n)), `llega el aviso de confirmación (${notis.join(' / ') || 'ninguno'})`);
 await b.shot('campana-activa');
+
+/* ---------- La base rechaza la suscripción (otra identidad del mismo celular): se pide otra ---------- */
+await b.go(`${BASE}?prueba&demo=jugador`, 2000); await preparar();
+await ev(`(()=>{sessionStorage.setItem('e2e:veces','0');const st=__copa.store;const orig=st.guardarAvisos.bind(st);let una=true;st.guardarAvisos=async(...a)=>{if(una){una=false;throw Object.assign(new Error('permiso'),{code:'permiso'})}return orig(...a)};return 1})()`);
+await click('#btn-avisos'); await sleep(1500);
+ok(await estadoCampana() === 'activo' && await ev(`sessionStorage.getItem('e2e:anulada')`) === '1' && Number(await ev(`sessionStorage.getItem('e2e:veces')`)) >= 1, 'si la base rechaza la suscripción, se anula, se pide otra y queda activa');
 
 /* ---------- Los ajustes ---------- */
 await click('#btn-avisos'); await sleep(400);
@@ -123,6 +129,7 @@ await b.go(`${BASE}?prueba&${code}&app=${pid}&standalone`, 2200); await preparar
 ok(await ev('__copa.estado.pantalla') === 'entrar', 'la app instalada, sin asiento, pide entrar');
 const elegido = await ev(`document.querySelector('.chip-btn.on')?.dataset.pid || null`);
 ok(elegido === pid, 'la app instalada abre "Ya estoy inscrito" con su nombre elegido: falta solo el PIN');
+ok(/PIN/.test(await texto('#bienvenida-app')), 'y lo dice: "Eres … en esta copa. Escribe tu PIN para seguir."');
 
 const errores = b.errors.filter(e => !/firebase|gstatic/i.test(e));
 ok(!errores.length, `sin errores en la página${errores.length ? ': ' + errores.join(' | ') : ''}`);
