@@ -1,5 +1,5 @@
 // Ejecutar: node tools/firebase/rankings-historia.test.mjs
-// La historia de La Copa en los rankings (D-212): jugadores heredados, récords de la pestaña "Copa" y podios.
+// La historia de La Copa en los rankings (D-212): jugadores heredados, récords de la pestaña "Copa", podios y las copas de cada jugador (D-220).
 import assert from 'node:assert/strict';
 import { historia, jidHeredado } from './rankings-historia.mjs';
 import { nuevaMeta } from '../../public/cup/engine.js';
@@ -44,6 +44,12 @@ assert.equal(Object.values(podios.AAAAA.p).find(x => x.l === 1).j, pancho);
 assert.equal(cambios[`jugadores/${pancho}`].co, 'CL');
 assert.equal(cambios[`records/reinas_copa/siempre/${pancho}`].co, 'CL');
 assert.equal(Object.values(podios.AAAAA.p).find(x => x.n === 'Cata').co, 'AR');
+// Las copas de cada jugador (D-220): "Pancho" y "pancho " tienen las dos, cada una con su pid
+assert.deepEqual(cambios[`jugadorCopas/${pancho}/AAAAA`], { p: 'p00001', at: 1 });
+assert.equal(cambios[`jugadorCopas/${pancho}/BBBBB`].p, 'q00001');
+// Uno enlazado a su jugador la anota a ese jugador, también si la copa es del laboratorio
+const enlazado = copa(meta({ nombre: 'Piratotes', lab: true }), { s00001: { ...P('Jiri', 5), j: 'jiri0001' } }, {});
+assert.deepEqual(historia({ DDDDD: enlazado }, { jugadores: { jiri0001: { n: 'Jiri' } } }, ahora).cambios, { 'jugadorCopas/jiri0001/DDDDD': { p: 's00001', at: 5 } });
 // Con --con-laboratorio, la del laboratorio también cuenta
 assert.ok(Object.keys(historia({ CCCCC: lab }, {}, ahora, { conLab: true }).cambios).some(r => r.includes(jidHeredado('labo'))));
 // Correrlo de nuevo con lo ya escrito no repite nada

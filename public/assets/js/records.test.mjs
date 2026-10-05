@@ -123,6 +123,19 @@ assert.notEqual(otroJavi.jid, javi.jid);
 const cel4 = mkJugador('uid4');
 assert.equal((await cel4.crear('Javi', '1234')).jid, javi.jid);
 
+// Las copas del jugador (D-220): las anota un celular y las ve otro; nadie más las toca
+await cel1.anotarCopa('ABCDE', 'p1aaaa');
+ahora.t += 1000;
+await cel1.anotarCopa('FGHJK', 'p2bbbb');
+assert.deepEqual((await cel2.copas()).map(c => [c.code, c.p]), [['FGHJK', 'p2bbbb'], ['ABCDE', 'p1aaaa']]);
+assert.deepEqual(await cel3.copas(), [], 'el otro Javi no tiene copas');
+const intruso = crearAlmacenLocal({ storage, uid: 'uid3', now: () => ahora.t });
+await assert.rejects(intruso.update({ [`jugadorCopas/${javi.jid}/LMNPQ`]: { p: 'p3cccc', at: 1 } }), { code: 'permiso' });
+await assert.rejects(cel1.anotarCopa('abcde', 'p1aaaa'), { code: 'permiso' }, 'un código de copa que no es código');
+await cel2.olvidarCopa('ABCDE');
+assert.deepEqual((await cel1.copas()).map(c => c.code), ['FGHJK']);
+assert.deepEqual(await mkJugador('uid9').copas(), [], 'sin jugador, ninguna');
+
 // Los récords: el mejor queda, uno peor no lo pisa, y la semana va aparte
 let r = await cel1.anotar({ juego: 'reinas', s: 80, ms: 60000 });
 assert.ok(r.siempre.nuevo && r.semana.nuevo);
@@ -205,7 +218,10 @@ if (RANKINGS_EN_LABS) {
 
 // Las reglas repiten la forma de las claves de este módulo
 const reglas = JSON.parse(await readFile(new URL('../../../firebase/database.rules.json', import.meta.url), 'utf8')).rules;
-for (const rama of ['jugadores', 'jugadorKeys', 'jugadorSeats', 'jugadorNombres', 'records', 'torneoPodios']) assert.ok(reglas[rama], `falta la rama ${rama} en las reglas`);
+for (const rama of ['jugadores', 'jugadorKeys', 'jugadorSeats', 'jugadorNombres', 'jugadorCopas', 'records', 'torneoPodios']) assert.ok(reglas[rama], `falta la rama ${rama} en las reglas`);
+// Las copas de un jugador solo las leen sus celulares, y solo las anota quien está sentado en la copa (D-220)
+assert.match(reglas.jugadorCopas.$jid['.read'], /jugadorSeats/);
+assert.match(reglas.jugadorCopas.$jid.$code['.write'], /torneoSeats/);
 const textoReglas = JSON.stringify(reglas.records);
 assert.ok(textoReglas.includes(String(S_MAX)) && textoReglas.includes(String(MS_MAX)), 'las reglas de records usan otros topes');
 

@@ -23,7 +23,7 @@ import {
   conCierre, cerradaAntes, anulado, puedeCerrar,
 } from './engine.js';
 import { GAME_ID, LOCALES, juegosCopa, rondasFinal, JUEGOS_COPA as JUEGOS_COPA_ES } from './rules.js';
-import { createCuenta } from './cuenta.js';
+import { createCuenta, juntarCopas } from './cuenta.js';
 import { JUEGOS } from './games/index.js';
 import { audienciaDe } from './games/audiencia.js';
 import { desglose } from './desglose.js';
@@ -183,15 +183,25 @@ function portada() {
   };
   input.addEventListener('keydown', e => { if (e.key === 'Enter') ir(); });
 
-  const mias = cuenta.mias();
+  // "Tus copas": las de este celular de una; las del jugador que entró llegan después (D-220)
+  const mias = el('div', { class: 'panel', id: 'tus-copas' });
+  const pintarMias = lista => {
+    mias.hidden = !lista.length;
+    mias.innerHTML = '';
+    poner(mias,
+      el('p', { class: 'lead', style: 'margin-bottom:8px' }, T.mine),
+      el('div', { class: 'mias' }, lista.map(c => el('a', { class: 'mia', href: urlCopa(c.code) },
+        el('b', {}, c.copa || c.code), el('small', {}, `${c.nombre} · ${c.code}`), el('span', { class: 'go' }, '›')))));
+  };
+  pintarMias(cuenta.mias());
+  if (leerYo()) copasDelJugador().then(delJugador => {
+    if (mias.isConnected && delJugador.length) pintarMias(juntarCopas(cuenta.mias(), delJugador));
+  }).catch(() => {});
   poner(body, 
     // El idioma se elige a mano, como en todos los juegos (C-3)
     el('div', { class: 'center' }, langToggle()),
     el('button', { class: 'btn btn--yellow', id: 'btn-crear', onClick: () => { SFX.tap(); crearCopa(); } }, T.create),
-    mias.length ? el('div', { class: 'panel' },
-      el('p', { class: 'lead', style: 'margin-bottom:8px' }, T.mine),
-      el('div', { class: 'mias' }, mias.map(c => el('a', { class: 'mia', href: urlCopa(c.code) },
-        el('b', {}, c.copa || c.code), el('small', {}, `${c.nombre} · ${c.code}`), el('span', { class: 'go' }, '›'))))) : null,
+    mias,
     el('div', { class: 'panel' },
       el('div', { class: 'field' }, el('label', {}, T.haveCode), input),
       el('button', { class: 'btn btn--cyan btn--sm', style: 'width:100%', onClick: ir }, T.go),
@@ -202,6 +212,24 @@ function portada() {
     // Los campeones de las copas terminadas (D-212): al final, para no empujar lo de crear o entrar
     rankingsVisibles() ? bloqueCampeones() : null,
   );
+}
+
+/**
+ * Las copas del jugador que entró, de cualquier celular (D-220), como las de "Tus copas". Las que
+ * este celular ya conoce no se leen de nuevo; una copa que su admin borró sale de la lista.
+ */
+async function copasDelJugador() {
+  const [J, st] = await Promise.all([jugador(), abrirStore()]);
+  await st.listo();
+  const conocidas = new Set(cuenta.mias().map(c => c.code));
+  const suyas = (await J.copas()).filter(c => !conocidas.has(c.code));
+  return Promise.all(suyas.map(async ({ code, p }) => {
+    try {
+      const Lc = await st.leer(code);
+      if (!Lc?.meta) { J.olvidarCopa(code).catch(() => {}); return null; }
+      return { code, nombre: Lc.players?.[p]?.name || '?', copa: Lc.meta.name, fin: Lc.fin || Lc.meta.end };
+    } catch (_) { return null; }
+  }));
 }
 
 /* ------------------------------------------------------------------ */
@@ -532,7 +560,7 @@ async function abrirCopa(code, { recienCreada = false, pantalla = null } = {}) {
 
 /**
  * La copa y los rankings (D-212). Si en este celular hay un jugador, el de la copa queda
- * enlazado a él; los de la copa que también lo están pasan a ser sus amigos; y cuando la copa
+ * enlazado a él y la copa, en su lista (D-220); los de la copa que también lo están pasan a ser sus amigos; y cuando la copa
  * termina, su podio se guarda una vez para el medallero. Todo es de adorno: nunca frena la copa.
  */
 let podioGuardado = false;
@@ -542,9 +570,11 @@ async function vincularJugador(Lc) {
     const J = await jugador();
     J.conocer(Object.fromEntries(Object.values(Lc.players).filter(p => p?.j).map(p => [p.j, p.name])));
     const yo = leerYo();
-    if (yo && Lc.players[S.yo].j !== yo.jid && S.enlazado !== yo.jid) {
+    if (yo && S.enlazado !== yo.jid) {
       S.enlazado = yo.jid;
-      await store.enlazar(S.code, S.yo, yo.jid);
+      if (Lc.players[S.yo].j !== yo.jid) await store.enlazar(S.code, S.yo, yo.jid);
+      // Y la copa queda en la lista del jugador, para verla desde cualquier celular (D-220)
+      await J.anotarCopa(S.code, S.yo);
     }
     if (!podioGuardado && !Lc.meta.lab && terminada(Lc.meta, ahora()) && activos(Lc).length >= 2) {
       podioGuardado = true;
@@ -585,6 +615,9 @@ function entrar({ mantener = false } = {}) {
     : fmt(T.inviteStarted, { dias: meta.days, d: Math.min(d, meta.days), n: meta.days, inscritos });
   const err = el('div', { class: 'form-error', role: 'alert' });
   const puedeEntrar = inscripcionAbierta(meta, now, L().closed) && jug.length < MAX_JUGADORES;
+  // El jugador de este celular, si la copa ya lo tiene enlazado (D-220)
+  const yoJ = leerYo();
+  const mio = yoJ && Object.keys(players).find(pid => !players[pid].out && players[pid].j === yoJ.jid);
 
   const caja = el('div', { class: 'stack' });
   const nuevo = () => {
@@ -648,6 +681,12 @@ function entrar({ mantener = false } = {}) {
           p.input.focus();
         },
       }, x.name)));
+    // Quien llega desde las copas de su jugador (D-220) ya tiene su nombre elegido: falta el PIN
+    if (mio) {
+      elegido = mio;
+      $$('.chip-btn', nombres).forEach(c => c.classList.toggle('on', c.dataset.pid === mio));
+      b.disabled = false; b.textContent = fmt(T.loginGo, { name: players[mio].name });
+    }
     b.addEventListener('click', async () => {
       SFX.tap();
       if (!elegido) return;
@@ -686,7 +725,7 @@ function entrar({ mantener = false } = {}) {
       : !inscripcionAbierta(meta, now) ? T.errCerrada : L().closed ? T.closedByAdmin : T.errLlena),
     tabs, caja,
   );
-  if (!puedeEntrar || entrarModo === 'inscrito') $('#tab-inscrito').click();
+  if (!puedeEntrar || entrarModo === 'inscrito' || (mio && entrarModo !== 'nuevo')) $('#tab-inscrito').click();
   else $('#tab-nuevo').click();
 }
 

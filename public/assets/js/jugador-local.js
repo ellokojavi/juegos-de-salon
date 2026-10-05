@@ -86,6 +86,13 @@ export function crearAlmacenLocal({ storage = globalThis.localStorage, uid = nul
       return !antes || r.k < antes.k;
     }
     if (rama === 'torneoPodios') return leerEn(viejo, ruta) == null;
+    // La copa de un jugador (D-220): las reglas también piden estar sentado en la copa como `p` y
+    // que la copa lo tenga enlazado, pero la copa vive en otro almacén de prueba (store-local.js)
+    if (rama === 'jugadorCopas') {
+      const x = leerEn(nuevo, ruta);
+      if (!sentado(viejo, a) || !/^[A-HJ-NP-Z]{5}$/.test(b || '') || p.length !== 3) return false;
+      return x === null || (/^[a-z0-9]{6}$/.test(x.p) && typeof x.at === 'number' && Object.keys(x).every(k => k === 'p' || k === 'at'));
+    }
     return false;
   }
 
