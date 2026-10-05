@@ -68,7 +68,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Pruebas | C-12 | D-143, D-193, D-199, D-204 |
 | La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212 |
 | Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213 |
-| Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212 |
+| Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215 |
 | Marketing | `marketing/README.md` | D-178 |
 
 ---
@@ -3482,3 +3482,25 @@ español. Los links filtrados se comparten, así que son parte de la cara públi
 **Consecuencias:** Los nombres que ve el jugador no cambian. Los tipos no se guardan en Firebase
 ni en el `localStorage`, así que no hay datos que migrar. Quedan en español `?sala=`,
 `?practica=` y `?semilla=`; `?sala=` va en cada link de invitación y se cambia aparte.
+
+## D-215 · Victorias por juego de grupo, y récords de Toque y Fama solo y Línea Relámpago
+**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** amplía D-212
+**Decisión:** Los rankings suman dos tipos de tabla, con la misma forma de `records/` (D-212):
+- **Victorias** de los juegos de grupo (los que se juegan en sala: Línea de Tiempo, Toque y Fama,
+  El Ahorcado, Dudo, Batalla Naval y Julepe): `records/<juego>_victorias/<período>/<jid>`, con
+  `s` = cuántas y `ms` = 0. Las reglas exigen que suban de a uno. Al terminar una partida, el
+  celular anota la del jugador abierto: en sala, la de su rol; contra el celular, la del humano;
+  en un solo celular, la del jugador que se llama como el jugador abierto. Un empate no es
+  victoria, y toda partida terminada se cuenta en `jugadores/<jid>/juegos/<juego>`. Jugando solo
+  (el Ahorcado) no hay victorias. La tabla va en la intro de cada juego, debajo de los modos, y en
+  `/records/`. Cuarto Rey no tiene ganador y no tiene tabla.
+- **Récords de jugar solo:** Toque y Fama solo en `toque-y-fama_solo` y Línea Relámpago en una
+  tabla por temática (`linea-de-tiempo_rel-<temática>`), con el mismo 0–100 y el tiempo. El ranking
+  va en la antesala, debajo de Empezar; en el resultado, con jugador, el aviso de los rankings
+  reemplaza al récord del celular. No suman al Todoterreno, que es de los juegos sueltos.
+**Por qué:** Lo pidió el dueño: cada juego con su ranking, y los de grupo, que no tienen puntaje
+comparable, con sus victorias. Usar la misma forma de tabla deja gratis el top, los vecinos, los
+amigos y la semana.
+**Consecuencias:** En un solo celular, alguien puede jugar contra sí mismo con dos nombres y sumar
+victorias: entre amigos se ve, y el dueño puede corregirlo en la consola. Si en un solo celular
+nadie se llama como el jugador abierto, la partida no se anota. Siguen en el laboratorio (D-212).

@@ -61,6 +61,12 @@ export const TABLA = /^[a-z][a-z0-9-]{0,24}(_[a-z0-9-]{1,16})?$/;
 /** La suma de los mejores puntajes en todos los juegos sueltos: el que juega a todo. */
 export const TODOTERRENO = 'todoterreno';
 export const VARIANTE_COPA = 'copa';
+/**
+ * Las victorias de los juegos de grupo van en la misma forma de tabla (`batalla-naval_victorias`),
+ * con `s` = cuántas y `ms` = 0: más es mejor, como un puntaje, y las reglas exigen que suba de a uno.
+ */
+export const VARIANTE_VICTORIAS = 'victorias';
+export const esVictorias = t => String(t).endsWith(`_${VARIANTE_VICTORIAS}`);
 
 export const SIEMPRE = 'siempre';
 export const PERIODO = /^(siempre|s[0-9]{4}-[0-9]{2})$/;

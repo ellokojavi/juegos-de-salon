@@ -8,8 +8,8 @@
  */
 import { el } from './ui.js';
 import { COMMON, getLang } from './i18n.js';
-import { jugador, leerYo } from './jugador.js';
-import { semana, SIEMPRE, tablaId, VARIANTE_COPA, medallero, ultimasCopas, limpiarNombre, esPin } from './records.js';
+import { jugador, leerYo, rankingsVisibles } from './jugador.js';
+import { semana, SIEMPRE, tablaId, VARIANTE_COPA, VARIANTE_VICTORIAS, esVictorias, medallero, ultimasCopas, limpiarNombre, esPin, claveNombre } from './records.js';
 
 const R = () => (COMMON[getLang()] || COMMON.es).rk;
 const fmt = (s, vars = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (vars[k] !== undefined ? vars[k] : `{${k}}`));
@@ -129,7 +129,7 @@ const PESTANAS = {
   copa: { rotulo: T => T.cup, leer: (J, juego) => J.tabla(tablaId(juego, VARIANTE_COPA), SIEMPRE) },
 };
 
-function fila(f, yo) {
+function fila(f, yo, victorias = false) {
   const T = R();
   const mia = yo && f.jid === yo;
   return el('div', { class: 'rk-fila' + (mia ? ' yo' : ''), 'data-jid': f.jid },
@@ -137,7 +137,8 @@ function fila(f, yo) {
     // El "(tú)" va fuera del recorte: un nombre largo se corta, pero se sigue viendo cuál es el propio
     el('span', { class: 'rk-nombre' }, el('span', { class: 'rk-n' }, f.n || '?'), mia ? el('small', {}, `(${T.you})`) : null),
     el('span', { class: 'rk-puntos' }, `${f.s}`),
-    el('small', { class: 'rk-tiempo' }, mmss(f.ms)));
+    // En una tabla de victorias no hay tiempo: el trofeo dice qué se cuenta
+    el('small', { class: 'rk-tiempo' }, victorias ? '🏆' : mmss(f.ms)));
 }
 
 /**
@@ -165,8 +166,8 @@ export function bloqueRanking({ juego, titulo = null, hint = null, pestanas = ['
       const yo = leerYo()?.jid;
       lista.replaceChildren();
       if (!v.top.length) { lista.append(el('p', { class: 'muted rk-centro' }, v.amigos ? T.emptyFriends : T.empty)); return; }
-      lista.append(...v.top.map(f => fila(f, yo)));
-      if (v.vecinos?.length) lista.append(el('div', { class: 'rk-sep', 'aria-hidden': 'true' }, '⋯'), ...v.vecinos.map(f => fila(f, yo)));
+      lista.append(...v.top.map(f => fila(f, yo, esVictorias(juego))));
+      if (v.vecinos?.length) lista.append(el('div', { class: 'rk-sep', 'aria-hidden': 'true' }, '⋯'), ...v.vecinos.map(f => fila(f, yo, esVictorias(juego))));
       if (v.amigos && v.top.length < 2) lista.append(el('p', { class: 'muted rk-centro' }, T.emptyFriends));
     } catch (e) {
       if (mio === turno) lista.replaceChildren(el('p', { class: 'rk-error' }, T.error));
@@ -248,4 +249,45 @@ export function bloqueCampeones({ max = 5, enlace = true, ultimas = 3 } = {}) {
     }
   })();
   return caja;
+}
+
+/* ------------------------------------------------------------------ */
+/* Victorias de los juegos de grupo                                    */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Lo de la intro de un juego de grupo: entrar y el ranking de victorias de ese juego. Mientras los
+ * rankings estén en el laboratorio, nada (un fragmento vacío).
+ */
+export function bloqueVictorias({ juego, nombre, alTocar = () => {} }) {
+  const T = R();
+  return bloqueTabla({ tabla: tablaId(juego, VARIANTE_VICTORIAS), titulo: fmt(T.winsOf, { game: nombre }), hint: T.winsHint, alTocar });
+}
+
+/**
+ * Un ranking y, debajo, entrar con nombre y PIN: lo de la antesala de un modo de un jugador
+ * (Toque y Fama solo, Línea Relámpago) o de un juego de grupo. Vacío mientras los rankings estén
+ * en el laboratorio y este celular no los haya activado.
+ */
+export function bloqueTabla({ tabla, titulo, hint = null, alTocar = () => {}, entrar = true }) {
+  const caja = document.createDocumentFragment();
+  if (!rankingsVisibles()) return caja;
+  caja.append(bloqueRanking({ juego: tabla, titulo, hint, alTocar }), ...(entrar ? [bloqueJugador({ alTocar })] : []));
+  return caja;
+}
+
+/**
+ * Al terminar una partida de un juego de grupo (una vez, no al volver a dibujar el final). El de
+ * este celular es su rol en sala, el humano contra el celular o, en un solo celular, el jugador que
+ * se llama como el jugador abierto. Un empate no es victoria. Nunca lanza ni se espera.
+ */
+export function finDePartida({ juego, modo, rol = null, ganadores = [], nombres = {} }) {
+  try {
+    const yo = leerYo();
+    if (!yo || modo === 'solo' || !rankingsVisibles()) return;
+    const mio = rol || Object.keys(nombres).find(r => claveNombre(nombres[r]) === claveNombre(yo.n));
+    if (!mio) return;
+    const gano = ganadores.length === 1 && ganadores[0] === mio;
+    jugador().then(J => J.anotarVictoria({ juego, gano })).catch(() => {});
+  } catch (_) { /* los rankings nunca frenan una partida */ }
 }

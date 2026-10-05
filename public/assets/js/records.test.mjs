@@ -156,6 +156,20 @@ cel1.salir();
 assert.equal(cel1.yo(), null);
 assert.equal((await cel1.tabla('reinas', 'siempre')).top.length, 2);
 
+// Victorias de los juegos de grupo: suben de a uno, la semana aparte, y una derrota solo cuenta la partida
+r = await cel3.anotarVictoria({ juego: 'dudo', gano: true });
+assert.deepEqual([r.siempre, r.semana], [1, 1]);
+r = await cel3.anotarVictoria({ juego: 'dudo', gano: true });
+assert.deepEqual([r.siempre, r.semana], [2, 2]);
+assert.deepEqual(await cel3.anotarVictoria({ juego: 'dudo', gano: false }), { gano: false });
+assert.equal((await cel3.perfil()).juegos.dudo.n, 3);
+t = await cel3.tabla('dudo_victorias', 'siempre');
+assert.deepEqual(t.top.map(f => [f.jid === otroJavi.jid, f.s, f.ms]), [[true, 2, 0]]);
+// Nadie se suma diez victorias de una: las reglas exigen +1
+const db = crearAlmacenLocal({ storage, uid: 'uid3', now: () => ahora.t });
+await assert.rejects(db.update({ [`records/dudo_victorias/siempre/${otroJavi.jid}`]: { s: 12, ms: 0, k: claveOrden(12, 0), at: { '.sv': 'timestamp' }, n: 'Javi' } }), /permiso/);
+await db.update({ [`records/dudo_victorias/siempre/${otroJavi.jid}`]: { s: 3, ms: 0, k: claveOrden(3, 0), at: { '.sv': 'timestamp' }, n: 'Javi' } });
+
 // Amigos: los que se conocieron en una copa
 cel3.conocer({ [javi.jid]: 'Javi' });
 t = await cel3.tablaAmigos('reinas', 'siempre');

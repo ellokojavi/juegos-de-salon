@@ -28,6 +28,14 @@ En los tableros las pistas van abreviadas (“3F 1T”, en inglés “3B 1C”) 
 | 🧍 Jugar solo | Es el juego 🔢 “Toque y Fama: adivina el número” de La Copa (D-142): 4 cifras distintas (puede empezar con cero), 10 intentos y puntaje de 0 a 100 con reloj de tiempo activo. Sin configuración. Ver “Jugar solo” más abajo. | Sin transporte: `public/cup/games/number/ui.js` montado con `public/cup/games/solo.js` |
 | 📡 Dos celulares | Sala con código de 4 letras y QR (`?sala=CODE`). Cada celular calcula las respuestas contra su propio secreto. | `public/assets/js/transport/firebase.js` (Realtime Database) |
 
+**Rankings (D-215):** con un jugador de los rankings abierto en el celular (nombre y PIN,
+D-212, hoy en el laboratorio), cada partida terminada se cuenta en `jugadores/<jid>/juegos/toque-y-fama`
+y, si ganó, suma una victoria en la tabla `toque-y-fama_victorias` (semana y siempre): en sala, la de su
+rol; contra el celular, la del humano; en un celular, la del jugador que se llama como él. Un
+empate no es victoria. La tabla (semana, siempre y amigos) va en la intro, debajo de los modos
+(`finDePartida` y `bloqueVictorias` de `public/assets/js/ranking.js`), y en `/records/`. Jugar solo tiene su propio
+ranking (ver abajo).
+
 ### Jugar solo (D-142)
 
 Hasta D-142 el modo solo pasaba por el reductor con un bot B que elegía el número, con cifras y cero
@@ -55,12 +63,15 @@ juego 🔢 de La Copa, con sus reglas, su pantalla y su puntaje, pero en el idio
 - **Récord:** el mejor `{ s, ms }` en `juegos-de-salon:toque-y-fama:record-solo` (`crearRecord`):
   más puntos y, a igualdad, menos tiempo. Un 0 no se anota. La clave vieja (`…:record`, por
   intentos) queda sin uso.
+- **Ranking (D-215):** la tabla `toque-y-fama_solo`, con el mismo 0–100 y el tiempo, debajo de
+  Empezar y al pie del resultado. En el resultado, con un jugador de los rankings abierto, el aviso
+  de los rankings (`avisoPartida`) reemplaza al récord del celular. No suma al Todoterreno.
 - **Panel:** `trackStart({ game, mode: 'solo', players: 1 })` al empezar, no al retomar.
 
 ### Pendientes / ideas
 
 - Modo espectador (leer la sala sin rol).
-- Historial de partidas y ranking.
+- Historial de partidas.
 - Transporte sin cuenta (PeerJS / QR) como alternativa.
 
 ## Flujo

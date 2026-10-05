@@ -60,7 +60,9 @@
     import { el, conEmoji } from '../assets/js/ui.js';
     import { getLang, langToggle, applyStatic, pickLang, COMMON } from '../assets/js/i18n.js';
     import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
-    import { SUELTOS } from '../assets/js/games.js';
+    import { SUELTOS, GAMES, gameById } from '../assets/js/games.js';
+    import { DECKS } from '../timeline/decks/index.js';
+    import { LOCALES as LINEA } from '../timeline/rules.js';
     import { trackVisit } from '../assets/js/transport/stats.js';
     import { bloqueJugador, bloqueRanking, bloqueCampeones } from '../assets/js/ranking.js';
     import { jugador, leerYo } from '../assets/js/jugador.js';
@@ -132,6 +134,30 @@
       ranuraJuego.replaceChildren(bloqueRanking({ juego: id, titulo: conEmoji(g.emoji, fmt(T.titleOf, { game: pickLang(g.name, lang) })), pestanas: ['semana', 'siempre', 'amigos', 'copa'], alTocar: tap }));
     }
 
+    /* Otras tablas (D-212): las victorias de los juegos de grupo y los récords de jugar solo */
+    function selector(titulo, opciones, pintar) {
+      const ranura = el('div', {});
+      const fichas = el('div', { class: 'rk-juegos', role: 'group', 'aria-label': titulo }, opciones.map(o => el('button', {
+        type: 'button', 'data-id': o.id, onClick: () => { tap(); elegirOtra(o.id); },
+      }, conEmoji(o.emoji, o.nombre))));
+      const elegirOtra = id => {
+        fichas.querySelectorAll('button').forEach(b => { const on = b.dataset.id === id; b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); });
+        ranura.replaceChildren(pintar(opciones.find(o => o.id === id)));
+      };
+      if (opciones.length) elegirOtra(opciones[0].id);
+      return [el('div', { class: 'panel' }, el('p', { class: 'lead rk-titulo' }, titulo), fichas), ranura];
+    }
+    // Los juegos de grupo salen del registro: los que se juegan con sala (C-16)
+    const deGrupo = GAMES.filter(g => g.available && g.jugadas).map(g => ({ id: g.id, emoji: g.emoji, nombre: pickLang(g.name, lang) }));
+    const victorias = selector(`🏆 ${T.wins}`, deGrupo, o => bloqueRanking({ juego: `${o.id}_victorias`, titulo: conEmoji(o.emoji, fmt(T.winsOf, { game: o.nombre })), hint: T.winsHint, alTocar: tap }));
+    const relampago = (LINEA[lang] || LINEA.es).soloTitle.replace(/^\S+\s+/, '');
+    const tyf = gameById('toque-y-fama');
+    const solos = [
+      ...(tyf ? [{ id: 'toque-y-fama_solo', emoji: tyf.emoji, nombre: pickLang(tyf.name, lang) }] : []),
+      ...DECKS.map(d => ({ id: `linea-de-tiempo_rel-${d.id}`, emoji: d.emoji, nombre: `${relampago}: ${d.name[lang]}` })),
+    ];
+    const deUno = selector(`🧍 ${T.soloRecords}`, solos, o => bloqueRanking({ juego: o.id, titulo: conEmoji(o.emoji, fmt(T.titleOf, { game: o.nombre })), alTocar: tap }));
+
     const campeones = bloqueCampeones({ max: 20, enlace: false, ultimas: 10 });
     campeones.id = 'copa';
 
@@ -141,6 +167,8 @@
       bloqueRanking({ juego: TODOTERRENO, titulo: `🏅 ${T.allRounder}`, hint: T.allRounderHint, alTocar: tap }),
       el('div', { class: 'panel' }, el('p', { class: 'lead rk-titulo' }, T.gamePick), fichas),
       ranuraJuego,
+      ...victorias,
+      ...deUno,
       campeones,
     );
     if (elegido) elegir(elegido);

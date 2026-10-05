@@ -17,7 +17,7 @@
 import { envOf } from './transport/stats.js';
 import {
   claveNombre, limpiarNombre, esPin, esJid, nuevoJid, hashPinJugador, tablaId, normalizar, esMejor, semana,
-  SIEMPRE, TODOTERRENO, todoterreno, vistaTabla, ordenar,
+  SIEMPRE, TODOTERRENO, todoterreno, vistaTabla, ordenar, VARIANTE_VICTORIAS, claveOrden,
 } from './records.js';
 
 /** Lo que entiende Firebase (y el almacén de prueba) como "la hora del servidor" y "sumar uno". */
@@ -239,6 +239,32 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
           } catch (_) { /* el Todoterreno es un adorno: el récord del juego ya quedó */ }
         }
       }
+      return out;
+    },
+
+    /**
+     * Una partida de un juego de grupo terminada (D-212): se cuenta, y si la ganó, suma una
+     * victoria en la tabla de la semana y en la de siempre. Sin jugador, null.
+     */
+    async anotarVictoria({ juego, gano }) {
+      const yo = api.yo();
+      if (!yo) return null;
+      try {
+        await almacen.update({ [`jugadores/${yo.jid}/juegos/${juego}/n`]: MAS_UNO, [`jugadores/${yo.jid}/juegos/${juego}/at`]: HORA });
+      } catch (e) {
+        if (e.code === 'permiso') { escribir(KEY, null); avisar(); throw falla('pin'); }
+        throw e;
+      }
+      if (!gano) return { gano: false };
+      const t = tablaId(juego, VARIANTE_VICTORIAS);
+      const out = { gano: true };
+      const cambios = {};
+      for (const [nombre, p] of [['siempre', SIEMPRE], ['semana', semana(now())]]) {
+        const v = ((await almacen.get(`records/${t}/${p}/${yo.jid}`))?.s || 0) + 1;
+        out[nombre] = v;
+        cambios[`records/${t}/${p}/${yo.jid}`] = { s: v, ms: 0, k: claveOrden(v, 0), at: HORA, n: yo.n };
+      }
+      await almacen.update(cambios);
       return out;
     },
 
