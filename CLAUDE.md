@@ -57,11 +57,10 @@ Puede haber varias sesiones de Claude trabajando en este repo al mismo tiempo:
   Sin trabajo pendiente se ve **una sola** carpeta `juegos-de-salon` (`git worktree list`; si una
   carpeta se borró a mano, `git worktree prune`).
 - **Pruebas en paralelo:** cada sesión sirve su copia en su puerto (`python3 -m http.server 87xx -d public`),
-  corre los guiones con `SITIO=http://localhost:87xx PUERTO_CDP=96x0` y **mata solo su Chrome**
-  (`pkill -f "remote-debugging-port=96[1]0"`, con corchete: sin él, el patrón calza con el propio
-  shell y lo mata). Nunca `pkill -f remote-debugging-port` a secas. Hay guiones con puertos de
-  Chrome fijos entre 9231 y 9498: por eso las sesiones usan 9600 en adelante, de a diez
-  (9600, 9610…). Detalle en [tools/e2e/README.md](tools/e2e/README.md).
+  y corre los guiones con `SITIO=http://localhost:87xx`. Los puertos de Chrome no se eligen: cada
+  Chrome toma uno libre y muere con su guion, también si el guion falla o se corta (`cdp.mjs`,
+  D-213). Si alguno quedara vivo, se busca por su perfil, no por el puerto, y nunca con
+  `pkill -f remote-debugging-port` a secas. Detalle en [tools/e2e/README.md](tools/e2e/README.md).
 
 ## Si trabajas en un fork (D-189)
 
@@ -122,39 +121,13 @@ node tools/release/og.mjs tarjetas | imagenes | revisar           # tarjetas de 
 
 ## Pruebas (C-12)
 
-GitHub corre todos los `*.test.mjs` y `*.test.py` en cada PR (`.github/workflows/pruebas.yml`): un
-test nuevo no se agrega al workflow, pero sí a esta lista (la revisa `documentar.mjs`). Igual se
-corren aquí antes de abrir el PR.
+GitHub corre todos los `*.test.mjs` y `*.test.py` en cada PR (`.github/workflows/pruebas.yml`), así
+que un test nuevo no se agrega a ninguna lista: lo que pruebe algo especial lo dice en su primera
+línea. Igual se corren aquí antes de abrir el PR.
 
 ```bash
-node public/bulls-and-cows/engine.test.mjs
-node public/battleship/engine.test.mjs
-node public/timeline/engine.test.mjs
-node public/hangman/engine.test.mjs
-node public/liars-dice/engine.test.mjs
-node public/julep/engine.test.mjs
-node public/cup/engine.test.mjs               # La Copa: torneo, juegos y almacén de prueba
-node public/cup/games/juegos.test.mjs         # también el tope de las instrucciones (D-184)
-node public/cup/store.test.mjs
-node public/cup/planilla.test.mjs             # la tabla final como CSV (D-161)
-node public/cup/reportes.test.mjs             # un reporte que no sale queda guardado y se reenvía
-node public/assets/js/arrastre.test.mjs
-node public/assets/js/i18n.test.mjs           # paridad es/en/pt/de (C-3, D-191)
-node public/assets/js/compartir.test.mjs      # el estándar de lo que se comparte (D-165)
-node public/assets/js/transport/cleanup.test.mjs
-node public/assets/js/transport/dispose.test.mjs
-node public/assets/js/transport/errors.test.mjs
-node public/assets/js/transport/ratelimit.test.mjs
-node public/assets/js/transport/stats.test.mjs
-node public/panel/aggregate.test.mjs
-node public/panel/adapta.test.mjs             # el panel se entera solo de lo nuevo (C-16)
-node public/panel/copas.test.mjs              # La Copa en el panel: en curso, juegos, participación
-node public/panel/rutas.test.mjs              # las rutas del panel (D-207)
-node tools/agents/documentar.test.mjs         # la memoria y las comprobaciones del agente de documentación
-node tools/agents/marketing.test.mjs          # qué cuenta como marketing atrasado (U-34)
-node tools/release/version.test.mjs           # la versión sale del CHANGELOG (D-205)
-node tools/e2e/cambios.test.mjs               # qué PR se salta las pruebas de punta a punta (D-205)
-python3 tools/release/readme.test.py          # qué cuenta como cambio para las capturas (D-51)
+for f in $(git ls-files '*.test.mjs'); do node "$f" || echo "FALLA $f"; done
+for f in $(git ls-files '*.test.py'); do python3 "$f" || echo "FALLA $f"; done
 ```
 
 **Punta a punta** (D-193, D-199, D-204): `tools/e2e/` juega partidas completas en Chrome headless,

@@ -51,8 +51,9 @@ if (!camino) {
   process.exit(1);
 }
 
-// `--cdp` o PUERTO_CDP cambian el puerto de Chrome: dos sesiones mirando a la vez no se pisan (D-135)
-const b = await launch({ port: Number(flag('cdp', process.env.PUERTO_CDP || '9451')), dir: `${salida}/perfil`, out: salida, width: ancho, height: alto });
+// El puerto de Chrome lo elige el sistema (D-213); `--cdp` o PUERTO_CDP lo fijan, si alguien lo quiere fijo
+if (flag('cdp', '')) process.env.PUERTO_CDP = flag('cdp', '');
+const b = await launch({ port: 9451, dir: `${salida}/perfil`, out: salida, width: ancho, height: alto });
 await b.go(`${base}/${ruta}`, 1500);
 // El idioma se guarda como texto pelado: getLang() compara contra ['es','en','pt'] y un
 // JSON.stringify le dejaba las comillas dentro, así que --idioma no hacía nada.
