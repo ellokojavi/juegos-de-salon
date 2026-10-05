@@ -4,7 +4,7 @@
  * las pruebas con node, los guiones de punta a punta y el sitio servido en localhost, para que
  * nada de eso escriba en los rankings de verdad.
  */
-import { claveOrden, S_MAX, MS_MAX, esVictorias } from './records.js';
+import { claveOrden, S_MAX, MS_MAX, esCuenta } from './records.js';
 
 const DB = 'juegos-de-salon:prueba:records-db';
 const UID = 'juegos-de-salon:prueba:records-uid';
@@ -67,6 +67,7 @@ export function crearAlmacenLocal({ storage = globalThis.localStorage, uid = nul
     if (rama === 'jugadores') {
       if (p.length === 2) return leerEn(viejo, ruta) == null && sentado(nuevo, a);
       if (b === 'legado') return leerEn(nuevo, ruta) == null && sentado(nuevo, a);
+      if (b === 'co') return leerEn(viejo, ruta) == null && sentado(nuevo, a) && /^[A-Z]{2}$/.test(leerEn(nuevo, ruta));
       if (b === 'juegos') {
         if (!sentado(viejo, a)) return false;
         if (p[4] === 'n') { const antes = leerEn(viejo, ruta) || 0; return leerEn(nuevo, ruta) === antes + 1; }
@@ -80,7 +81,8 @@ export function crearAlmacenLocal({ storage = globalThis.localStorage, uid = nul
       if (!sentado(viejo, jid) || !r) return false;
       if (!(r.s >= 0 && r.s <= S_MAX && r.ms >= 0 && r.ms <= MS_MAX && r.k === claveOrden(r.s, r.ms))) return false;
       if (r.n !== leerEn(viejo, `jugadores/${jid}/n`)) return false;
-      if (esVictorias(p[1]) && !(r.s === (antes?.s || 0) + 1 && r.ms === 0)) return false;
+      if (esCuenta(p[1]) && !(r.s === (antes?.s || 0) + 1 && r.ms === 0)) return false;
+      if (r.co !== undefined && !/^[A-Z]{2}$/.test(r.co)) return false;
       return !antes || r.k < antes.k;
     }
     if (rama === 'torneoPodios') return leerEn(viejo, ruta) == null;

@@ -9,7 +9,7 @@
 import { el } from './ui.js';
 import { COMMON, getLang } from './i18n.js';
 import { jugador, leerYo, rankingsVisibles } from './jugador.js';
-import { semana, SIEMPRE, tablaId, VARIANTE_COPA, VARIANTE_VICTORIAS, esVictorias, medallero, ultimasCopas, limpiarNombre, esPin, claveNombre } from './records.js';
+import { semana, SIEMPRE, tablaId, VARIANTE_COPA, VARIANTE_VICTORIAS, esVictorias, medallero, ultimasCopas, limpiarNombre, esPin, claveNombre, bandera, PARTIDAS } from './records.js';
 
 const R = () => (COMMON[getLang()] || COMMON.es).rk;
 const fmt = (s, vars = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (vars[k] !== undefined ? vars[k] : `{${k}}`));
@@ -41,7 +41,7 @@ export function bloqueJugador({ abierto = false, alTocar = () => {} } = {}) {
     caja.replaceChildren();
     if (yo) {
       caja.append(el('div', { class: 'panel rk-yo' },
-        el('span', {}, '🏅 ', ...partirNombre(fmt(T.playingAs, { name: '\u0000' }), yo.n)),
+        el('span', {}, '🏅 ', ...partirNombre(fmt(T.playingAs, { name: '\u0000' }), conBandera(yo.co, yo.n))),
         el('button', { type: 'button', class: 'rk-link', id: 'rk-salir', onClick: async () => { alTocar(); mensaje = ''; (await jugador()).salir(); } }, T.logout)),
       ...(mensaje ? [el('p', { class: 'rk-ok', role: 'status' }, mensaje)] : []));
       return;
@@ -112,6 +112,9 @@ export function bloqueJugador({ abierto = false, alTocar = () => {} } = {}) {
   return caja;
 }
 
+/** La bandera del país junto al nombre (D-219), en todas las tablas: "🇨🇱 Javi". */
+export const conBandera = (co, n) => [bandera(co), n].filter(Boolean).join(' ');
+
 /** "Juegas como {name}" con el nombre en negrita, sin armar la frase a pedazos (C-3). */
 function partirNombre(frase, nombre) {
   const [antes, despues = ''] = frase.split('\u0000');
@@ -135,10 +138,10 @@ function fila(f, yo, victorias = false) {
   return el('div', { class: 'rk-fila' + (mia ? ' yo' : ''), 'data-jid': f.jid },
     el('span', { class: 'rk-puesto' }, f.puesto == null ? '·' : MEDALLA[f.puesto - 1] || `${f.puesto}`),
     // El "(tú)" va fuera del recorte: un nombre largo se corta, pero se sigue viendo cuál es el propio
-    el('span', { class: 'rk-nombre' }, el('span', { class: 'rk-n' }, f.n || '?'), mia ? el('small', {}, `(${T.you})`) : null),
+    el('span', { class: 'rk-nombre' }, el('span', { class: 'rk-n' }, conBandera(f.co, f.n || '?')), mia ? el('small', {}, `(${T.you})`) : null),
     el('span', { class: 'rk-puntos' }, `${f.s}`),
     // En una tabla de victorias no hay tiempo: el trofeo dice qué se cuenta
-    el('small', { class: 'rk-tiempo' }, victorias ? '🏆' : mmss(f.ms)));
+    el('small', { class: 'rk-tiempo' }, victorias === 'partidas' ? '🎲' : victorias ? '🏆' : mmss(f.ms)));
 }
 
 /**
@@ -166,8 +169,8 @@ export function bloqueRanking({ juego, titulo = null, hint = null, pestanas = ['
       const yo = leerYo()?.jid;
       lista.replaceChildren();
       if (!v.top.length) { lista.append(el('p', { class: 'muted rk-centro' }, v.amigos ? T.emptyFriends : T.empty)); return; }
-      lista.append(...v.top.map(f => fila(f, yo, esVictorias(juego))));
-      if (v.vecinos?.length) lista.append(el('div', { class: 'rk-sep', 'aria-hidden': 'true' }, '⋯'), ...v.vecinos.map(f => fila(f, yo, esVictorias(juego))));
+      lista.append(...v.top.map(f => fila(f, yo, juego === PARTIDAS ? 'partidas' : esVictorias(juego))));
+      if (v.vecinos?.length) lista.append(el('div', { class: 'rk-sep', 'aria-hidden': 'true' }, '⋯'), ...v.vecinos.map(f => fila(f, yo, juego === PARTIDAS ? 'partidas' : esVictorias(juego))));
       if (v.amigos && v.top.length < 2) lista.append(el('p', { class: 'muted rk-centro' }, T.emptyFriends));
     } catch (e) {
       if (mio === turno) lista.replaceChildren(el('p', { class: 'rk-error' }, T.error));
@@ -228,7 +231,7 @@ export function bloqueCampeones({ max = 5, enlace = true, ultimas = 3 } = {}) {
     el('p', { class: 'lead rk-titulo' }, `🏅 ${T.champions}`),
     el('p', { class: 'muted rk-hint' }, T.championsHint),
     lista,
-    enlace ? el('a', { class: 'rk-link rk-ver', href: `${URL_RECORDS}#copa` }, T.seeAll) : null);
+    enlace ? el('a', { class: 'rk-link rk-ver', href: `${URL_RECORDS}#copas` }, T.seeAll) : null);
   (async () => {
     try {
       const J = await jugador();
@@ -239,11 +242,11 @@ export function bloqueCampeones({ max = 5, enlace = true, ultimas = 3 } = {}) {
       if (!filas.length) { lista.append(el('p', { class: 'muted rk-centro' }, T.noChampions)); return; }
       lista.append(...filas.map(f => el('div', { class: 'rk-fila' + (yo && f.jid === yo ? ' yo' : '') },
         el('span', { class: 'rk-puesto' }, `${f.puesto}`),
-        el('span', { class: 'rk-nombre' }, f.n),
+        el('span', { class: 'rk-nombre' }, conBandera(f.co, f.n)),
         el('span', { class: 'rk-medallas' }, `🥇${f.oro} 🥈${f.plata} 🥉${f.bronce}`))));
       const ult = ultimasCopas(podios, ultimas);
       if (ult.length) lista.append(el('p', { class: 'lead rk-sub' }, T.lastCups),
-        ...ult.map(c => el('p', { class: 'muted rk-copa' }, `🏆 ${fmt(T.cupChampion, { copa: c.name, names: c.campeones.join(' · ') || '?' })}`)));
+        ...ult.map(c => el('p', { class: 'muted rk-copa' }, `🏆 ${fmt(T.cupChampion, { copa: c.name, names: c.campeones.map(x => conBandera(x.co, x.n)).join(' · ') || '?' })}`)));
     } catch (_) {
       lista.replaceChildren(el('p', { class: 'rk-error' }, T.error));
     }

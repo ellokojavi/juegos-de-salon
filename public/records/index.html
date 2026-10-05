@@ -30,6 +30,15 @@
   <style>
     .rk-pagina { display: grid; gap: 14px; }
     .rk-hero-icon { display: block; font-size: 3.4rem; line-height: 1.1; }
+    .rk-macro { display: flex; gap: 6px; background: rgba(0, 0, 0, 0.3); border-radius: 16px; padding: 5px; }
+    .rk-macro button {
+      flex: 1; border: 0; background: transparent; color: var(--muted); font: 900 1.1rem var(--font-body);
+      padding: 10px; border-radius: 12px; cursor: pointer; min-height: 48px;
+    }
+    .rk-macro button.on { background: var(--yellow); color: #3a1200; }
+    .rk-seccion { display: grid; gap: 14px; }
+    .rk-grupo { margin: 10px 0 6px; font-size: 0.8rem; font-weight: 900; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+    .rk-grupo:first-of-type { margin-top: 0; }
     .rk-juegos { display: flex; flex-wrap: wrap; gap: 6px; }
     .rk-juegos button {
       border: 2px solid var(--glass-border); background: rgba(0, 0, 0, 0.25); color: var(--ink);
@@ -66,7 +75,7 @@
     import { trackVisit } from '../assets/js/transport/stats.js';
     import { bloqueJugador, bloqueRanking, bloqueCampeones } from '../assets/js/ranking.js';
     import { jugador, leerYo } from '../assets/js/jugador.js';
-    import { TODOTERRENO, esPin } from '../assets/js/records.js';
+    import { TODOTERRENO, PARTIDAS, esPin } from '../assets/js/records.js';
 
     trackVisit(); // el tráfico del sitio (D-208)
     initSound();
@@ -112,7 +121,7 @@
         const p = await (await jugador()).perfil();
         const filas = Object.entries(p?.juegos || {}).sort((a, b2) => b2[1].n - a[1].n);
         for (const [id, x] of filas) {
-          const g = juegos.find(j => j.id === id);
+          const g = juegos.find(j => j.id === id) || gameById(id);
           lista.append(el('li', {}, el('span', {}, g ? conEmoji(g.emoji, pickLang(g.name, lang)) : id), el('b', {}, x.n === 1 ? T.playsOne : fmt(T.plays, { n: x.n }))));
         }
       } catch (_) { /* sin red: el cambio de PIN igual se ofrece */ }
@@ -120,60 +129,105 @@
     dibujarPerfil();
     jugador().then(J => J.escuchar(dibujarPerfil)).catch(() => {});
 
-    /* Un juego a la vez: se elige con fichas y queda en la dirección (#reinas) */
-    const desdeHash = () => juegos.find(g => g.id === location.hash.slice(1))?.id;
-    let elegido = desdeHash() || juegos[0]?.id;
-    const ranuraJuego = el('div', {});
-    const fichas = el('div', { class: 'rk-juegos', role: 'group', 'aria-label': T.gamePick }, juegos.map(g => el('button', {
-      type: 'button', 'data-id': g.id, onClick: () => { tap(); elegir(g.id); history.replaceState(null, '', `#${g.id}`); },
-    }, conEmoji(g.emoji, pickLang(g.name, lang)))));
-    function elegir(id) {
-      elegido = id;
-      fichas.querySelectorAll('button').forEach(b => { const on = b.dataset.id === id; b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); });
-      const g = juegos.find(j => j.id === id);
-      ranuraJuego.replaceChildren(bloqueRanking({ juego: id, titulo: conEmoji(g.emoji, fmt(T.titleOf, { game: pickLang(g.name, lang) })), pestanas: ['semana', 'siempre', 'amigos', 'copa'], alTocar: tap }));
-    }
+    /*
+     * La página (D-219): arriba lo que vale para todos los juegos —el Ranking general y las
+     * partidas jugadas—; abajo, un filtro grande entre Juegos y Copas. La elección queda en la
+     * dirección (#juegos/reinas, #copas), así un link lleva a la tabla que se quiere mostrar.
+     */
+    const marcarFichas = (caja, id) => caja.querySelectorAll('button').forEach(b => { const on = b.dataset.id === id; b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); });
+    const ficha = (o, alElegir) => el('button', { type: 'button', 'data-id': o.id, onClick: () => { tap(); alElegir(o.id); } }, conEmoji(o.emoji, o.nombre));
 
-    /* Otras tablas (D-212): las victorias de los juegos de grupo y los récords de jugar solo */
-    function selector(titulo, opciones, pintar) {
-      const ranura = el('div', {});
-      const fichas = el('div', { class: 'rk-juegos', role: 'group', 'aria-label': titulo }, opciones.map(o => el('button', {
-        type: 'button', 'data-id': o.id, onClick: () => { tap(); elegirOtra(o.id); },
-      }, conEmoji(o.emoji, o.nombre))));
-      const elegirOtra = id => {
-        fichas.querySelectorAll('button').forEach(b => { const on = b.dataset.id === id; b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); });
-        ranura.replaceChildren(pintar(opciones.find(o => o.id === id)));
-      };
-      if (opciones.length) elegirOtra(opciones[0].id);
-      return [el('div', { class: 'panel' }, el('p', { class: 'lead rk-titulo' }, titulo), fichas), ranura];
-    }
-    // Los juegos de grupo salen del registro: los que se juegan con sala (C-16)
-    const deGrupo = GAMES.filter(g => g.available && g.jugadas).map(g => ({ id: g.id, emoji: g.emoji, nombre: pickLang(g.name, lang) }));
-    const victorias = selector(`🏆 ${T.wins}`, deGrupo, o => bloqueRanking({ juego: `${o.id}_victorias`, titulo: conEmoji(o.emoji, fmt(T.winsOf, { game: o.nombre })), hint: T.winsHint, alTocar: tap }));
+    // Juegos de a uno: los sueltos (récord de 0 a 100), Toque y Fama solo y Línea Relámpago por temática
     const relampago = (LINEA[lang] || LINEA.es).soloTitle.replace(/^\S+\s+/, '');
     const tyf = gameById('toque-y-fama');
-    const solos = [
+    const deUno = [
+      ...juegos.map(g => ({ id: g.id, emoji: g.emoji, nombre: pickLang(g.name, lang) })),
       ...(tyf ? [{ id: 'toque-y-fama_solo', emoji: tyf.emoji, nombre: pickLang(tyf.name, lang) }] : []),
-      ...DECKS.map(d => ({ id: `linea-de-tiempo_rel-${d.id}`, emoji: d.emoji, nombre: `${relampago}: ${d.name[lang]}` })),
+      // Línea Relámpago es una ficha; sus temáticas se eligen adentro (una tabla por temática)
+      ...(DECKS.length ? [{ id: 'linea-de-tiempo_rel', emoji: '⏳', nombre: relampago, temas: true }] : []),
     ];
-    const deUno = selector(`🧍 ${T.soloRecords}`, solos, o => bloqueRanking({ juego: o.id, titulo: conEmoji(o.emoji, fmt(T.titleOf, { game: o.nombre })), alTocar: tap }));
+    // Juegos de grupo: sus victorias. Salen del registro: los que se juegan con sala (C-16)
+    const enGrupo = GAMES.filter(g => g.available && g.jugadas)
+      .map(g => ({ id: `${g.id}_victorias`, emoji: g.emoji, nombre: pickLang(g.name, lang), victorias: true }));
+    const todasJuegos = [...deUno, ...enGrupo];
 
-    const campeones = bloqueCampeones({ max: 20, enlace: false, ultimas: 10 });
-    campeones.id = 'copa';
+    const ranuraJuego = el('div', {});
+    let juegoElegido = null;
+    const elegirJuego = id => {
+      // Una temática de Relámpago (linea-de-tiempo_rel-historia) se muestra dentro de su ficha
+      const tema = String(id || '').startsWith('linea-de-tiempo_rel-') ? id.slice('linea-de-tiempo_rel-'.length) : null;
+      const o = todasJuegos.find(x => x.id === (tema ? 'linea-de-tiempo_rel' : id)) || todasJuegos[0];
+      marcarFichas(fichasJuegos, o.id);
+      if (o.temas) {
+        const deck = DECKS.find(d => d.id === tema) || DECKS[0];
+        juegoElegido = `linea-de-tiempo_rel-${deck.id}`;
+        const temas = el('div', { class: 'rk-juegos', role: 'group', 'aria-label': relampago },
+          DECKS.map(d => ficha({ id: `linea-de-tiempo_rel-${d.id}`, emoji: d.emoji, nombre: d.name[lang] }, elegirJuego)));
+        marcarFichas(temas, juegoElegido);
+        ranuraJuego.replaceChildren(el('div', { class: 'panel' }, temas), bloqueRanking({
+          juego: juegoElegido, titulo: conEmoji(deck.emoji, fmt(T.titleOf, { game: `${relampago}: ${deck.name[lang]}` })), alTocar: tap,
+        }));
+      } else {
+        juegoElegido = o.id;
+        ranuraJuego.replaceChildren(bloqueRanking({
+          juego: o.id, titulo: conEmoji(o.emoji, fmt(o.victorias ? T.winsOf : T.titleOf, { game: o.nombre })),
+          hint: o.victorias ? T.winsHint : null, alTocar: tap,
+        }));
+      }
+      if (seccion === 'juegos') history.replaceState(null, '', `#juegos/${juegoElegido}`);
+    };
+    const fichasJuegos = el('div', {},
+      el('p', { class: 'rk-grupo' }, T.groupOne), el('div', { class: 'rk-juegos', role: 'group', 'aria-label': T.groupOne }, deUno.map(o => ficha(o, elegirJuego))),
+      el('p', { class: 'rk-grupo' }, T.groupMany), el('div', { class: 'rk-juegos', role: 'group', 'aria-label': T.groupMany }, enGrupo.map(o => ficha(o, elegirJuego))));
+    const seccionJuegos = el('div', { class: 'rk-seccion', id: 'rk-juegos' },
+      el('div', { class: 'panel' }, el('p', { class: 'lead rk-titulo' }, T.gamePick), fichasJuegos),
+      ranuraJuego);
+
+    // Copas: los campeones y el mejor día de copa de cada uno, juego por juego
+    const ranuraDia = el('div', {});
+    const elegirDia = id => {
+      const o = deUno.find(x => x.id === id) || deUno[0];
+      marcarFichas(fichasDia, o.id);
+      ranuraDia.replaceChildren(bloqueRanking({ juego: `${o.id}_copa`, titulo: conEmoji(o.emoji, fmt(T.titleOf, { game: o.nombre })), pestanas: ['siempre', 'amigos'], alTocar: tap }));
+    };
+    const deCopa = deUno.filter(o => juegos.some(g => g.id === o.id));
+    // (la ficha de Relámpago no tiene copa: sus temáticas no son juegos de La Copa)
+    const fichasDia = el('div', { class: 'rk-juegos', role: 'group', 'aria-label': T.cupBestDay }, deCopa.map(o => ficha(o, elegirDia)));
+    const seccionCopas = el('div', { class: 'rk-seccion', id: 'rk-copas' },
+      bloqueCampeones({ max: 20, enlace: false, ultimas: 10 }),
+      el('div', { class: 'panel' }, el('p', { class: 'lead rk-titulo' }, `📅 ${T.cupBestDay}`), el('p', { class: 'muted rk-hint' }, T.cupBestDayHint), fichasDia),
+      ranuraDia);
+    if (deCopa.length) elegirDia(deCopa[0].id);
+
+    // El filtro grande: Juegos o Copas
+    let seccion = 'juegos';
+    const macro = el('div', { class: 'rk-macro', role: 'tablist' },
+      [['juegos', T.tabGames], ['copas', T.tabCups]].map(([id, rotulo]) => el('button', {
+        type: 'button', role: 'tab', 'data-id': id, onClick: () => { tap(); mostrar(id); },
+      }, rotulo)));
+    function mostrar(id) {
+      seccion = id === 'copas' ? 'copas' : 'juegos';
+      macro.querySelectorAll('button').forEach(b => { const on = b.dataset.id === seccion; b.classList.toggle('on', on); b.setAttribute('aria-selected', String(on)); });
+      seccionJuegos.hidden = seccion !== 'juegos';
+      seccionCopas.hidden = seccion !== 'copas';
+      history.replaceState(null, '', seccion === 'copas' ? '#copas' : `#juegos/${juegoElegido || ''}`);
+    }
 
     pagina.append(
       bloqueJugador({ alTocar: tap }),
       perfil,
-      bloqueRanking({ juego: TODOTERRENO, titulo: `🏅 ${T.allRounder}`, hint: T.allRounderHint, alTocar: tap }),
-      el('div', { class: 'panel' }, el('p', { class: 'lead rk-titulo' }, T.gamePick), fichas),
-      ranuraJuego,
-      ...victorias,
-      ...deUno,
-      campeones,
+      bloqueRanking({ juego: TODOTERRENO, titulo: `🏅 ${T.general}`, hint: T.allRounderHint, alTocar: tap }),
+      bloqueRanking({ juego: PARTIDAS, titulo: `🎲 ${T.playsTitle}`, hint: T.playsHint, alTocar: tap }),
+      macro,
+      seccionJuegos,
+      seccionCopas,
     );
-    if (elegido) elegir(elegido);
-    if (location.hash === '#copa') campeones.scrollIntoView();
-    window.__records = { get elegido() { return elegido; } };
+    // Lo que pide la dirección: #copas (también el #copa de antes), #juegos/<tabla> o, de antes, #<juego>
+    const pedido = decodeURIComponent(location.hash.slice(1));
+    const tablaPedida = pedido.startsWith('juegos/') ? pedido.slice(7) : pedido;
+    elegirJuego(todasJuegos.some(o => o.id === tablaPedida) || tablaPedida.startsWith('linea-de-tiempo_rel-') ? tablaPedida : todasJuegos[0]?.id);
+    mostrar(/^copas?$/.test(pedido) ? 'copas' : 'juegos');
+    window.__records = { get seccion() { return seccion; }, get juego() { return juegoElegido; } };
   </script>
 </body>
 </html>

@@ -409,7 +409,7 @@ Spec and design: [docs/games/cup.md](docs/games/cup.md)
   own page keeps your best score and counts your games. Each game's page shows its leaderboard
   (this week, all time, friends and The Cup), with your neighbours when you are below the top ten.
   `/records/` (🏆 on the menu) adds the All-Rounder, the sum of your best score in every game, and
-  The Cup's medal table. Group games keep a table of wins each (D-215) — in a room by your seat, against
+  The Cup's medal table; it opens with the overall ranking and the most games played, then a Games | Cups switch, and every name carries its country's flag (D-219). Group games keep a table of wins each (D-215) — in a room by your seat, against
   the phone as the human, on one phone if you play under your own name — and Bulls and Cows alone and
   Timeline Flash (one per theme) keep their 0–100 records. Two people may share a name; with
   different PINs they are different players.

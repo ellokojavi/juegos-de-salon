@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.103.0 — 2026-10-05
+- **`/records/` más fácil de leer** (D-219): arriba el Ranking general y una tabla nueva, Más
+  partidas jugadas; abajo, un filtro entre 🎮 Juegos y 🏆 Copas. Línea Relámpago es una sola ficha
+  con sus temáticas adentro.
+- **La bandera junto a cada nombre** en todos los rankings, el medallero y las últimas copas.
+
 ## 0.102.2 — 2026-10-05
 - **Lo de después de fusionar se hace solo** (D-218): las reglas de Firebase se publican en cada
   fusión, antes que el sitio; las copias de trabajo ya fusionadas se borran al empezar cada sesión

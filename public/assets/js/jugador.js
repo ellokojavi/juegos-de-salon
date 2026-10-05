@@ -14,10 +14,10 @@
  *   records/<tabla>/<periodo>/<jid> { s, ms, k, at, n }: el mejor, y solo si mejora.
  *   torneoPodios/<código>           el podio de una copa terminada, para el medallero.
  */
-import { envOf } from './transport/stats.js';
+import { envOf, countryOf } from './transport/stats.js';
 import {
   claveNombre, limpiarNombre, esPin, esJid, nuevoJid, hashPinJugador, tablaId, normalizar, esMejor, semana,
-  SIEMPRE, TODOTERRENO, todoterreno, vistaTabla, ordenar, VARIANTE_VICTORIAS, claveOrden,
+  SIEMPRE, TODOTERRENO, todoterreno, vistaTabla, ordenar, VARIANTE_VICTORIAS, claveOrden, PARTIDAS, esPais,
 } from './records.js';
 
 /** Lo que entiende Firebase (y el almacén de prueba) como "la hora del servidor" y "sumar uno". */
@@ -57,7 +57,7 @@ export const LEER = 100;
  * `juegos`: los que suman al Todoterreno (los sueltos de la portada). `storage` y `now` se
  * pueden cambiar en las pruebas.
  */
-export function crearJugador({ almacen, storage = globalThis.localStorage, now = () => Date.now(), juegos = [] } = {}) {
+export function crearJugador({ almacen, storage = globalThis.localStorage, now = () => Date.now(), juegos = [], pais = () => '' } = {}) {
   const leer = (k, def) => { try { return JSON.parse(storage.getItem(k)) ?? def; } catch (_) { return def; } };
   const escribir = (k, v) => { try { if (v === null) storage.removeItem(k); else storage.setItem(k, JSON.stringify(v)); } catch (_) { /* sin memoria */ } };
   const oyentes = new Set();
@@ -78,13 +78,36 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
     escribir(MEJORES, m);
   };
 
-  const quedar = (jid, n) => {
-    escribir(KEY, { jid, n });
+  /**
+   * Este celular queda como `jid`. El país del jugador va junto a su nombre en todas las tablas
+   * (D-219): si el jugador no lo tiene, se le pone el de este celular, una vez.
+   */
+  const quedar = async (jid, n) => {
+    let co = await almacen.get(`jugadores/${jid}/co`).catch(() => null);
+    if (!esPais(co)) {
+      const mio = pais();
+      if (esPais(mio)) { try { await almacen.update({ [`jugadores/${jid}/co`]: mio }); co = mio; } catch (_) { co = null; } }
+    }
+    escribir(KEY, { jid, n, ...(esPais(co) ? { co } : {}) });
     avisar();
     // Lo que ya tenía en el servidor, para que el Todoterreno sume desde ahí (D-212)
     sincronizar().catch(() => {});
-    return { jid, n };
+    return { jid, n, ...(esPais(co) ? { co } : {}) };
   };
+  /** Lo que lleva cada fila de una tabla, además del puntaje: el nombre y el país. */
+  const quien = yo => ({ n: yo.n, ...(esPais(yo.co) ? { co: yo.co } : {}) });
+
+  /** Una partida más en la tabla de partidas (D-219), de la semana y de siempre. Mejor esfuerzo. */
+  async function sumarPartida(yo) {
+    try {
+      const cambios = {};
+      for (const p of [SIEMPRE, semana(now())]) {
+        const v = ((await almacen.get(`records/${PARTIDAS}/${p}/${yo.jid}`))?.s || 0) + 1;
+        cambios[`records/${PARTIDAS}/${p}/${yo.jid}`] = { s: v, ms: 0, k: claveOrden(v, 0), at: HORA, ...quien(yo) };
+      }
+      await almacen.update(cambios);
+    } catch (_) { /* la tabla de partidas es un adorno: la partida ya quedó contada */ }
+  }
 
   async function sincronizar() {
     const yo = api.yo();
@@ -135,7 +158,7 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
         const de = heredado ? { heredado, nombreHeredado: (await almacen.get(`jugadores/${heredado}/n`)) || n } : {};
         return { estado: 'nuevo', otros: candidatos.length - (heredado ? 1 : 0), ...de };
       }
-      quedar(jid, (await almacen.get(`jugadores/${jid}/n`)) || n);
+      await quedar(jid, (await almacen.get(`jugadores/${jid}/n`)) || n);
       return { estado: 'dentro', jid };
     },
 
@@ -150,7 +173,7 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
       const jid = nuevoJid();
       const h = await hashPinJugador(jid, pin);
       await almacen.update({
-        [`jugadores/${jid}`]: { n, at: HORA },
+        [`jugadores/${jid}`]: { n, at: HORA, ...(esPais(pais()) ? { co: pais() } : {}) },
         [`jugadorNombres/${claveNombre(n)}/${jid}`]: true,
         [`jugadorKeys/${jid}`]: h,
         [`jugadorSeats/${jid}/${uid}`]: h,
@@ -210,6 +233,7 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
         if (e.code === 'permiso') { escribir(KEY, null); avisar(); throw falla('pin'); }
         throw e;
       }
+      await sumarPartida(yo);
       const t = tablaId(juego, variante);
       const sem = semana(now());
       const out = {};
@@ -219,7 +243,7 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
         anotarMejor(t, p, antes);
         const nuevo = r.s > 0 && esMejor(r, antes);
         out[nombre] = { nuevo, antes: antes ? { s: antes.s, ms: antes.ms } : null, periodo: p };
-        if (nuevo) cambios[`records/${t}/${p}/${yo.jid}`] = { ...r, at: HORA, n: yo.n };
+        if (nuevo) cambios[`records/${t}/${p}/${yo.jid}`] = { ...r, at: HORA, ...quien(yo) };
       }
       if (Object.keys(cambios).length) {
         await almacen.update(cambios);
@@ -234,7 +258,7 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
           if (!tt) continue;
           try {
             const antes = await almacen.get(`records/${TODOTERRENO}/${p}/${yo.jid}`);
-            if (esMejor(tt, antes)) await almacen.update({ [`records/${TODOTERRENO}/${p}/${yo.jid}`]: { ...tt, at: HORA, n: yo.n } });
+            if (esMejor(tt, antes)) await almacen.update({ [`records/${TODOTERRENO}/${p}/${yo.jid}`]: { ...tt, at: HORA, ...quien(yo) } });
           } catch (_) { /* el Todoterreno es un adorno: el récord del juego ya quedó */ }
         }
       }
@@ -254,6 +278,7 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
         if (e.code === 'permiso') { escribir(KEY, null); avisar(); throw falla('pin'); }
         throw e;
       }
+      await sumarPartida(yo);
       if (!gano) return { gano: false };
       const t = tablaId(juego, VARIANTE_VICTORIAS);
       const out = { gano: true };
@@ -261,7 +286,7 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
       for (const [nombre, p] of [['siempre', SIEMPRE], ['semana', semana(now())]]) {
         const v = ((await almacen.get(`records/${t}/${p}/${yo.jid}`))?.s || 0) + 1;
         out[nombre] = v;
-        cambios[`records/${t}/${p}/${yo.jid}`] = { s: v, ms: 0, k: claveOrden(v, 0), at: HORA, n: yo.n };
+        cambios[`records/${t}/${p}/${yo.jid}`] = { s: v, ms: 0, k: claveOrden(v, 0), at: HORA, ...quien(yo) };
       }
       await almacen.update(cambios);
       return out;
@@ -311,6 +336,13 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
     },
 
     sincronizar,
+
+    /** Quien entró antes de que se guardara el país (D-219) lo completa solo, una vez, sin esperar. */
+    async completarPais() {
+      const yo = api.yo();
+      if (!yo || esPais(yo.co)) return;
+      await quedar(yo.jid, yo.n);
+    },
   };
   return api;
 }
@@ -333,6 +365,8 @@ export async function jugador() {
     ? (await import('./jugador-local.js')).crearAlmacenLocal()
     : (await import('./jugador-firebase.js')).crearAlmacenFirebase();
   const { SUELTOS } = await import('./games.js');
-  unico = crearJugador({ almacen, juegos: SUELTOS.filter(g => !g.labs).map(g => g.id) });
+  const pais = () => { try { return countryOf({ tz: Intl.DateTimeFormat().resolvedOptions().timeZone, lang: navigator.language }); } catch (_) { return ''; } };
+  unico = crearJugador({ almacen, juegos: SUELTOS.filter(g => !g.labs).map(g => g.id), pais });
+  unico.completarPais().catch(() => {});
   return unico;
 }
