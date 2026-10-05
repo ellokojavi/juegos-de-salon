@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.102.0 — 2026-10-05
+- **Los rankings, para todos** (D-217): ya no hace falta activarlos en `/labs/`. El 🏆 de la
+  portada lleva a `/records/`; cada juego muestra su ranking (récords o victorias) y la invitación a
+  entrar con nombre y PIN, y La Copa muestra sus campeones.
+
 ## 0.101.1 — 2026-10-05
 - **Los PR se fusionan solos cuando pasan sus pruebas** (D-216): cada PR listo lleva el auto-merge
   de GitHub, y `main` exige, además de `pruebas`, un check que resume todas las pruebas en Chrome

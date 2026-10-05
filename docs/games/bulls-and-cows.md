@@ -29,7 +29,7 @@ En los tableros las pistas van abreviadas (“3F 1T”, en inglés “3B 1C”) 
 | 📡 Dos celulares | Sala con código de 4 letras y QR (`?sala=CODE`). Cada celular calcula las respuestas contra su propio secreto. | `public/assets/js/transport/firebase.js` (Realtime Database) |
 
 **Rankings (D-215):** con un jugador de los rankings abierto en el celular (nombre y PIN,
-D-212, hoy en el laboratorio), cada partida terminada se cuenta en `jugadores/<jid>/juegos/toque-y-fama`
+D-212, abiertos a todos desde D-217), cada partida terminada se cuenta en `jugadores/<jid>/juegos/toque-y-fama`
 y, si ganó, suma una victoria en la tabla `toque-y-fama_victorias` (semana y siempre): en sala, la de su
 rol; contra el celular, la del humano; en un celular, la del jugador que se llama como él. Un
 empate no es victoria. La tabla (semana, siempre y amigos) va en la intro, debajo de los modos

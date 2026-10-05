@@ -67,7 +67,7 @@ instalado, así que ahí las pintas van por su número y el interruptor ni se of
 | 🤖 Contra el celular | 1 | Duelo contra el aparato, que juega con probabilidad y **solo con sus propios dados**. |
 
 **Rankings (D-215):** con un jugador de los rankings abierto en el celular (nombre y PIN,
-D-212, hoy en el laboratorio), cada partida terminada se cuenta en `jugadores/<jid>/juegos/dudo`
+D-212, abiertos a todos desde D-217), cada partida terminada se cuenta en `jugadores/<jid>/juegos/dudo`
 y, si ganó, suma una victoria en la tabla `dudo_victorias` (semana y siempre): en sala, la de su
 rol; contra el celular, la del humano; en un celular, la del jugador que se llama como él. Un
 empate no es victoria. La tabla (semana, siempre y amigos) va en la intro, debajo de los modos
