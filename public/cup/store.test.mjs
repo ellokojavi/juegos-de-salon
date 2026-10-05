@@ -231,5 +231,38 @@ await test('el país de cada jugador: al crear, al inscribirse y, para los de an
   assert.equal(L.players.bbbbbb.co, 'AR', 'el país se anota una vez y no se pisa');
 });
 
+await test('avisos al celular: solo quien está sentado, y nadie los lee (D-223)', async () => {
+  const sub = { endpoint: 'https://fcm.googleapis.com/fcm/send/x', keys: { p256dh: 'p', auth: 'a' }, lang: 'es', tz: 'UTC' };
+  const SUB = 'a'.repeat(32);
+  await admin.guardarAvisos(CODE, 'aaaaaa', SUB, sub, { dia: true, plazo: false });
+  await rechaza(intruso.guardarAvisos(CODE, 'aaaaaa', SUB, sub), 'permiso');
+  await rechaza(admin.guardarAvisos(CODE, 'aaaaaa', 'no-es-un-id', sub), 'permiso');
+  assert.equal((await admin.leer(CODE))._avisos, undefined, 'la copa no muestra quién quiere avisos');
+  const av = await admin.avisosDe(CODE);
+  assert.deepEqual({ dia: av.aaaaaa[SUB].dia, plazo: av.aaaaaa[SUB].plazo, uid: av.aaaaaa[SUB].sub.uid }, { dia: true, plazo: false, uid: 'u-admin' });
+  await rechaza(intruso.quitarAvisos(CODE, 'aaaaaa', SUB), 'permiso');
+  await admin.quitarAvisos(CODE, 'aaaaaa', SUB);
+  assert.deepEqual((await admin.avisosDe(CODE)).aaaaaa, {});
+  // Las reglas de Firebase dicen lo mismo
+  const { readFile } = await import('node:fs/promises');
+  const reglas = JSON.parse(await readFile(new URL('../../firebase/database.rules.json', import.meta.url), 'utf8')).rules;
+  assert.equal(reglas.push.$subId['.read'], false);
+  assert.match(reglas.push.$subId['.write'], /data\.child\('uid'\)\.val\(\) === auth\.uid/);
+  assert.equal(reglas.pushCopa.$code.$pid.$subId['.read'], false);
+  assert.match(reglas.pushCopa.$code.$pid.$subId['.write'], /torneoSeats/);
+  assert.match(reglas.pushCopa.$code.$pid.$subId['.write'], /push\/' \+ \$subId \+ '\/uid/);
+});
+
+await test('cuenta: los avisos de cada copa y el "Ahora no" quedan en el celular', async () => {
+  const c = createCuenta();
+  assert.equal(c.avisos.leer('KQRST'), null);
+  c.avisos.guardar('KQRST', { subId: 'x', dia: true, plazo: true });
+  assert.deepEqual(c.avisos.leer('KQRST'), { subId: 'x', dia: true, plazo: true });
+  c.avisos.guardar('KQRST', { no: true });
+  assert.deepEqual(c.avisos.leer('KQRST'), { no: true });
+  c.avisos.borrar('KQRST');
+  assert.equal(c.avisos.leer('KQRST'), null);
+});
+
 console.log(`copa/store: ${n} tests OK`);
 process.exit(0);

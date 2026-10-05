@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.107.0 — 2026-10-05
+- **Avisos de La Copa, en el laboratorio** (D-223): una campana en cada copa para activar los
+  avisos al celular, con la oferta después de jugar, el permiso del sistema, un aviso de
+  confirmación y los ajustes. En iPhone, los pasos para agregar la app a inicio. Todavía no se
+  mandan avisos: se activa en `/labs/` para probarlo.
+
 ## 0.106.1 — 2026-10-05
 - **La app instalada se llama Juegos de Salón** (D-222), o Party Games, Jogos de Salão o
   Salonspiele, según el idioma elegido. Antes decía solo "Juegos", y en iPhone tomaba el nombre del

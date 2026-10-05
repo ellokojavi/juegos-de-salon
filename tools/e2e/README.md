@@ -195,3 +195,9 @@ español. Los textos esperados salen de los diccionarios, no están escritos en 
 un celular entra con su jugador y abre una copa en que está sentado; otro celular, que nunca la vio,
 entra con el mismo jugador, la encuentra en la portada y al abrirla tiene su nombre ya elegido.
 Usa el almacén de prueba de la copa y el de los jugadores.
+
+`node tools/e2e/cup/avisos.mjs [salida]` recorre los avisos de La Copa (D-223) con el almacén de
+prueba, una clave VAPID de prueba y un servicio de avisos falso (nada sale del Chrome): la tarjeta y
+"Ahora no", la campana que activa los avisos y el aviso de confirmación, los ajustes y "Silenciar
+esta copa", los avisos bloqueados, y el camino de iPhone (agregar a inicio, dentro de Instagram, y
+la app instalada que abre con el nombre ya elegido). Deja capturas de cada hoja.

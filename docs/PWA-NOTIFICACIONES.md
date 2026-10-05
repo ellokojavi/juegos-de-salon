@@ -1,6 +1,6 @@
 # App instalable y avisos al celular (PWA + Web Push)
 
-**Estado:** aprobado por el dueño (D-221); el PR 1 está hecho (v0.105.0) · **Fecha:** 2026-10-05 ·
+**Estado:** aprobado por el dueño (D-221); los PR 1 (v0.105.0) y 2 (v0.107.0, en el laboratorio, D-223) están hechos · **Fecha:** 2026-10-05 ·
 **Toca:** RP-11, RP-13, LIG-33, D-99
 
 Es el detalle de D-221, que **corrige a D-99** en lo que dice de los avisos automáticos. El diseño de
@@ -239,7 +239,7 @@ bloqueados. Con eso se ve dónde se cae la gente y si el esfuerzo en iPhone vale
 Celular                                   Realtime Database                 GitHub Actions (cada 15 min)
 ───────                                   ─────────────────                 ────────────────────────────
 /sw.js (service worker)                   push/<subId>  (nadie lo lee)      tools/push/avisar.mjs
-  · evento push → showNotification          endpoint, keys, idioma, uid       · token admin (firebase-admin.mjs)
+  · evento push → showNotification          endpoint, keys, idioma, zona, uid · token admin (firebase-admin.mjs)
   · notificationclick → abre la URL       pushCopa/<código>/<pid>/<subId>     · lee torneos en curso
                                             (quién quiere avisos de qué)      · decide qué aviso toca
 push.js (en la página)                    pushEnviados/<código>/<día>/<tipo>  · cifra y firma (Web Push, VAPID)
@@ -257,9 +257,12 @@ push.js (en la página)                    pushEnviados/<código>/<día>/<tipo> 
   celular quede pegado con una versión vieja del sitio (el sitio cambia varias veces por semana y
   `publicar.yml` estampa la versión en cada publicación). El modo sin conexión (RP-13) es un paso
   aparte y opcional, con su propio cuidado.
-- Desde el PR 3, maneja `push` (muestra el aviso con título, texto, ícono, `tag` y URL) y `notificationclick`
-  (enfoca la pestaña de la app si ya está abierta o abre la URL).
-- `pushsubscriptionchange`: cuando el navegador renueva la suscripción, la guarda de nuevo.
+- **Hecho en el PR 2:** maneja `push` (muestra el aviso que llega como JSON `{ title, body, url, tag }`,
+  con el ícono de la app; si no lo entiende, no muestra nada) y `notificationclick` (enfoca la
+  pestaña de la app si ya está abierta, llevándola a la URL, o abre una).
+- No escucha `pushsubscriptionchange`: si el navegador renovó la suscripción, la copa lo nota al
+  abrirse (`revisar()` en `cup/avisos.js`) y la guarda de nuevo con la misma elección; si el
+  permiso se quitó desde los ajustes, la copa deja de contar como activa.
 - Las páginas puente de las rutas viejas no lo registran.
 
 ### 2. Manifest e íconos
@@ -273,35 +276,58 @@ push.js (en la página)                    pushEnviados/<código>/<día>/<tipo> 
   registran el service worker; `public/assets/js/instalable.test.mjs` lo exige. Las puertas por
   idioma, las páginas puente, el panel y el laboratorio no lo llevan, a propósito: no son la app.
 
-### 3. Suscribirse (`public/assets/js/push.js`)
+### 3. Suscribirse (`public/assets/js/push.js`, `public/cup/avisos.js`) — hecho en el PR 2
 
-- La clave pública VAPID va en el código (es pública, como `firebase-config.js`). La privada es un
-  secreto nuevo de GitHub, `VAPID_PRIVADA`, que se genera una sola vez con
-  `node tools/push/vapid.mjs` (sin dependencias: `node:crypto` genera el par P-256).
-- `subId` = hash del `endpoint` (así un mismo celular no se suscribe dos veces).
-- En la copa, al activar avisos se escribe `pushCopa/<código>/<pid>/<subId> = true`. Las reglas
-  piden que ese `uid` esté sentado como ese `pid` (igual que para jugar), así nadie suscribe a otro.
+- La clave pública VAPID vive en `public/assets/js/vapid.js` (es pública, como
+  `firebase-config.js`). La genera el dueño una sola vez con `node tools/push/vapid.mjs`, que la
+  escribe ahí y carga la privada como el secreto `VAPID_PRIVADA` de GitHub sin mostrarla. Mientras
+  `vapid.js` esté vacío, los avisos no se ofrecen en ningún celular. En el sitio local, una clave
+  de prueba guardada en el navegador (`juegos-de-salon:vapid-prueba`) sirve para probar.
+- `push.js` sabe qué camino le toca al celular (`push`, `instalar`, `otra-app` o `no`), pide el
+  permiso, suscribe y manda el aviso de confirmación. `cup/avisos.js` es la pantalla: la campana,
+  la tarjeta y las cuatro hojas.
+- `subId` = los primeros 32 caracteres del sha256 del `endpoint`: un mismo celular queda una vez,
+  y la ruta de la base no lleva la dirección.
+- Al activar se escriben, juntos, `push/<subId>` = `{ endpoint, keys, lang, tz, uid, at }` y
+  `pushCopa/<código>/<pid>/<subId>` = `{ dia, plazo, at }`. El celular recuerda lo suyo en
+  `cuenta.avisos` (y el "Ahora no" de cada copa).
+- **Detrás del laboratorio** (`AVISOS_EN_LABS`, como los rankings en D-212): hasta que el PR 3
+  mande avisos de verdad, ofrecerlos prometería algo que no llega. Se ven en el sitio local y en
+  los celulares que los activan en `/labs/`.
+- En iPhone, antes de mostrar los pasos para agregar a inicio, la dirección pasa a llevar
+  `&app=<pid>`. Si la app instalada abre en esa dirección, la copa parte en "Ya estoy inscrito" con
+  el nombre ya elegido y pide solo el PIN.
 
-### 4. Reglas de Firebase
+### 4. Reglas de Firebase — hecho en el PR 2
 
-```jsonc
-"push": {
-  "$subId": {
-    ".read": false,                              // solo el administrador
-    ".write": "auth != null && (!data.exists() || data.child('uid').val() == auth.uid)",
-    ".validate": "newData.hasChildren(['endpoint','keys','lang','uid','at']) && newData.child('uid').val() == auth.uid && newData.child('endpoint').val().beginsWith('https://')"
-  }
-},
-"pushCopa": {
-  "$code": { "$pid": { "$subId": {
-    ".read": false,
-    ".write": "auth != null && root.child('torneoSeats/' + $code + '/' + $pid + '/' + auth.uid).exists()"
-  } } }
-}
-```
+- `push/<subId>`: nadie la lee (solo el administrador, que manda los avisos). La escribe y la borra
+  solo el celular dueño (`uid`), con la forma validada: `endpoint` https, claves, idioma de la app,
+  zona horaria y hora.
+- `pushCopa/<código>/<pid>/<subId>`: nadie la lee. La escribe quien está sentado como ese jugador,
+  y solo con una suscripción suya. El admin la borra entera al eliminar la copa.
 
 El `endpoint` de una suscripción no identifica a la persona, pero sí permite mandarle avisos: por
 eso nadie lo lee. Las reglas se publican solas con `publicar.yml` (D-218).
+
+### Prueba a mano en iPhone (la corre el dueño)
+
+Lo que no se puede automatizar: un iPhone real, con iOS 16.4 o más (ideal: 17, 18 y 26).
+
+1. En `/labs/` del iPhone, toca **Activar en este celular** (sección 🔔 Avisos de La Copa).
+2. Abre una copa en la que estés inscrito, en **Safari**. Debe aparecer **🔔 Activar avisos**.
+3. Tócalo: sale la hoja **Agrega la app a tu inicio**. Revisa que la dirección termine en `&app=…`.
+4. Sigue los pasos: Compartir (en iOS 26, dentro de ⋯) → **Agregar a inicio**.
+5. Abre **Juegos de Salón** desde el ícono nuevo. Anota **dónde abrió**: ¿en la copa, con tu
+   nombre ya elegido y pidiendo el PIN? ¿O en la portada? (esto define si iOS respeta la dirección
+   o usa la del manifest).
+6. Escribe tu PIN. En el tablero debe salir **🔔 Último paso: activa los avisos**.
+7. Toca **Avisarme**: el iPhone pregunta por las notificaciones; acepta. Debe llegar el aviso de
+   confirmación (con el nombre de la copa y "Listo. Te avisaremos de esta copa…") y la campana pasa
+   a **Avisos activos**.
+8. En la campana: prueba **Probar los avisos** (llega otro aviso) y **Silenciar esta copa**.
+9. Toca un aviso con la app cerrada: debe abrir la copa.
+10. Desde WhatsApp, abre el link de la copa sin pasar a Safari y toca la campana: debe decir
+    **Ábrela en Safari**.
 
 ### 5. El que manda (`tools/push/avisar.mjs` + `.github/workflows/avisos.yml`)
 
@@ -341,13 +367,13 @@ responde la pregunta de fondo: si los avisos de verdad traen gente de vuelta.
 | PR | Qué trae | Se puede probar sin… |
 |---|---|---|
 | **1. Instalable de verdad** ✅ v0.105.0 | Íconos PNG, manifest completo, `sw.js` mínimo (sin caché, sin push), ícono de Apple, prueba de que todas las páginas los llevan, guion e2e que verifica que el SW se registra y que Chrome deja instalar | Avisos |
-| **2. Suscribirse** | Primero, la prueba en iPhones reales de cómo abre la app instalada. Después: `push.js`, la tarjeta y el botón 🔔 de La Copa con sus cuatro estados, la hoja de iPhone, el "escribe tu PIN" de la app instalada, el aviso de confirmación, reglas `push` y `pushCopa`, textos en 4 idiomas y la lista de pasos para probar a mano en iPhone | Mandar nada (se ve la suscripción guardada y llega el aviso de confirmación) |
-| **3. Mandar** | `tools/push/` (vapid, webpush, avisar con `--simular`), pruebas unitarias del cifrado contra los vectores del RFC 8291 y del calendario de avisos contra `engine.js`, workflow `avisos.yml` | — |
+| **2. Suscribirse** ✅ v0.107.0, en el laboratorio | Primero, la prueba en iPhones reales de cómo abre la app instalada (la lista de arriba). Después: `push.js`, la tarjeta y el botón 🔔 de La Copa con sus cuatro estados, la hoja de iPhone, el "escribe tu PIN" de la app instalada, el aviso de confirmación, reglas `push` y `pushCopa`, textos en 4 idiomas y la lista de pasos para probar a mano en iPhone | Mandar nada (se ve la suscripción guardada y llega el aviso de confirmación) |
+| **3. Mandar** | `tools/push/` (webpush, avisar con `--simular`; `vapid.mjs` ya entró en el PR 2), pruebas unitarias del cifrado contra los vectores del RFC 8291 y del calendario de avisos contra `engine.js`, workflow `avisos.yml` | — |
 | **4. Medir** | Fila del panel, `?aviso=` en las señales, `?pwa` en el inicio | — |
 | *(después)* | Modo sin conexión (RP-13), Declarative Web Push para iPhone | — |
 
-El dueño hace una sola cosa a mano: correr `node tools/push/vapid.mjs` y pegar la clave privada como
-secreto `VAPID_PRIVADA` en GitHub.
+El dueño hace una sola cosa a mano: correr `node tools/push/vapid.mjs` (con la CLI de GitHub, carga
+sola la privada como el secreto `VAPID_PRIVADA`) y commitear `public/assets/js/vapid.js`.
 
 ## Riesgos
 

@@ -43,6 +43,7 @@ export function createCuenta({ prueba = false } = {}) {
     },
     olvidar(code) {
       borrar(`${p}sesion:${code}`);
+      borrar(`${p}avisos:${code}`);
       escribir(`${p}mias`, (leer(`${p}mias`) || []).filter(c => c.code !== code));
     },
     /** Las copas en que este celular participa, para ofrecerlas en la portada. */
@@ -53,6 +54,15 @@ export function createCuenta({ prueba = false } = {}) {
       leer: (code, dia, pid) => leer(`${p}intento:${code}:${dia}:${pid}`),
       guardar: (code, dia, pid, datos) => escribir(`${p}intento:${code}:${dia}:${pid}`, datos),
       borrar: (code, dia, pid) => borrar(`${p}intento:${code}:${dia}:${pid}`),
+    },
+    /**
+     * Los avisos de cada copa en este celular (D-223): `{ subId, dia, plazo }` si están activos, o
+     * `{ no: true }` si la persona dijo "Ahora no" (la tarjeta no vuelve a salir en esa copa).
+     */
+    avisos: {
+      leer: code => leer(`${p}avisos:${code}`),
+      guardar: (code, v) => escribir(`${p}avisos:${code}`, v),
+      borrar: code => borrar(`${p}avisos:${code}`),
     },
     /** El último nombre que se usó, para no escribirlo de nuevo en la próxima copa. */
     nombre: {
