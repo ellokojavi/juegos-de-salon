@@ -64,7 +64,11 @@ propio árbol porque duran una semana y las salas mueren a la media hora (D-89).
   el mismo hash. El admin puede cambiar el hash y borrar los asientos (PIN nuevo).
 - Las copas no se borran todavía (LIG-31).
 
-## Publicar las reglas (D-122)
+## Publicar las reglas (D-122, D-218)
+
+Se publican solas en cada fusión a `main`: el job `reglas` de `.github/workflows/publicar.yml`
+corre `reglas.mjs publicar` con el secreto `FIREBASE_ADMIN_JSON` de GitHub, antes de publicar el
+sitio. A mano, para revisar o si falta el secreto:
 
 ```bash
 node tools/firebase/reglas.mjs publicar    # sube database.rules.json y verifica que quedó

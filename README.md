@@ -564,6 +564,7 @@ node public/panel/aggregate.test.mjs
 node public/panel/copas.test.mjs
 node public/panel/rutas.test.mjs
 node tools/agents/documentar.test.mjs
+node tools/agents/limpiar-copias.test.mjs
 node tools/agents/marketing.test.mjs
 node tools/e2e/cambios.test.mjs
 node tools/firebase/rankings-historia.test.mjs
@@ -672,7 +673,7 @@ tools/
   release/                    Publishing: set-version.py (version stamp, at publish time), readme.py + hechos.mjs (this README), og.mjs (social cards and bridge pages)
   firebase/                   reglas.mjs (publish the rules), reportes.mjs (The Cup bug reports), en-curso.mjs (anyone playing?), rankings-historia.mjs (The Cup's history into the leaderboards)
   generators/                 mapa.mjs (the world of Where is it?), flota.py (the Battleship fleet)
-  agents/                     dilemas.mjs (usability dilemmas as issues, D-132), documentar.mjs (the documentation agent, D-172)
+  agents/                     dilemas.mjs (usability dilemmas as issues, D-132), documentar.mjs (the documentation agent, D-172), limpiar-copias.mjs (removes merged worktrees at session start, D-218)
   e2e/                        Full games in headless Chrome, one folder per game; the screenshots come from here
 marketing/                  The promo video and its memory
 .claude/                    The project's agents (usabilidad, documentacion) and skills

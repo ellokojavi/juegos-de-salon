@@ -63,11 +63,11 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213 |
 | Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181 |
 | Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211 |
-| Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216 |
+| Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216 |
 | La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212 |
-| Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213 |
+| Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217 |
 | Marketing | `marketing/README.md` | D-178 |
 
@@ -1553,7 +1553,7 @@ su código al azar, y `torneoAlias/<alias>` = `{ code, hasta }` apunta a ella.
 **Por qué:** el link es la invitación; tiene que poder decirse en voz alta.
 
 ## D-122 · Las reglas de Firebase se publican con un script
-**Fecha:** 2026-09-24 · **Estado:** vigente
+**Fecha:** 2026-09-24 · **Estado:** corregida por D-218
 **Decisión:** `node tools/firebase/reglas.mjs publicar` sube `firebase/database.rules.json` y la vuelve a
 leer para verificar que quedó; `revisar` dice si lo publicado es lo del repo. Usa una **llave de
 cuenta de servicio** que el dueño genera una vez en la consola y guarda fuera del repo
@@ -3229,7 +3229,7 @@ ya pasaba en `dev`. Las capturas no envejecen por el commit que sacó la versió
 cuenta la línea del import map como cambio.
 
 ## D-206 · El worktree de una sesión se borra al fusionar su PR
-**Fecha:** 2026-10-04 · **Estado:** vigente · **Relación:** completa D-135
+**Fecha:** 2026-10-04 · **Estado:** corregida por D-218 · **Relación:** completa D-135
 **Decisión:** La copia de trabajo que D-135 manda crear (`../juegos-de-salon-<tema>`) se borra
 cuando su PR entra a `main`, junto con la rama local: `git worktree remove` y `git branch -d`,
 desde la carpeta principal (y `git worktree prune` si alguna se borró a mano). Los dos se niegan
@@ -3535,3 +3535,29 @@ los rankings antes de abrirlo.
 victorias y los récords de jugar solo (D-215).
 **Consecuencias:** Quien abre un juego ve su ranking y la invitación a entrar con nombre y PIN.
 Las reglas de Firebase no cambian.
+
+## D-218 · Lo de después de fusionar no espera a nadie
+**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** completa D-216; corrige D-122 y D-206 (quién publica las reglas y borra la copia)
+**Decisión:** Con el auto-merge (D-216) un PR se fusiona cuando nadie mira, así que lo que venía
+después pasa a hacerse solo:
+- **Las reglas de Firebase** las publica `publicar.yml` en cada fusión, en un job `reglas` que
+  corre antes del sitio: `reglas.mjs publicar` no sube nada si ya están y verifica lo que sube; si
+  Firebase las rechaza, el sitio no se publica. Usa el secreto `FIREBASE_ADMIN_JSON` (la llave de
+  la cuenta de servicio, que carga el dueño en GitHub); sin él, avisa y se publican a mano.
+- **Las copias de trabajo** las borra `tools/agents/limpiar-copias.mjs` al empezar cada sesión
+  (hook SessionStart de `.claude/settings.json`): las que tienen su rama en `main` por un merge y
+  nada sin commitear. Nombra las fusionadas con cambios pendientes y las que siguen en curso. Nunca
+  toca la carpeta principal, la copia desde donde se corre, las de la app (`.claude/worktrees/`) ni
+  una rama recién creada sin commits propios. GitHub borra la rama remota al fusionar
+  (`delete_branch_on_merge`).
+- **Enterarse de lo que falla:** cada PR lleva, con el auto-merge, el monitor de CI de la app
+  (`auto_fix`), que despierta a la sesión con una prueba en rojo, un conflicto o un comentario.
+  El CI no se sondea.
+**Por qué:** El dueño pidió que la sesión revisara cada 5 minutos si las pruebas habían pasado.
+El entorno de Claude no permite programar revisiones periódicas del CI, y tampoco hacía falta: la
+fusión ya era automática; lo que quedaba colgando era lo de después, y eso se resuelve con
+GitHub Actions, un hook y el aviso de fallas.
+**Consecuencias:** La llave de Firebase vive también como secreto de GitHub: la carga el dueño,
+no Claude (`gh secret set FIREBASE_ADMIN_JSON < ~/.config/juegos-de-salon/firebase-admin.json`).
+Una copia que otra sesión todavía usa después de fusionar se borra al abrir la siguiente sesión;
+lo que quede sin commitear se respeta.
