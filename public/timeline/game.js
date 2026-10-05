@@ -647,7 +647,6 @@ function renderResult(v) {
     el('button', { class: 'btn btn--yellow', onClick: rematch }, T.rematch),
     el('button', { class: 'btn btn--ghost', onClick: e => leaveRoom(e.currentTarget) }, T.changeMode),
     el('a', { class: 'btn btn--ghost', href: '../' }, T.backMenu),
-    bloqueTabla({ tabla: tablaRelampago(partida.tema), titulo: tituloRelampago(partida.tema), alTocar: () => SFX.tap() }),
   );
 }
 
@@ -960,6 +959,7 @@ function terminarSolo(partida, p, { s, t, ms, estado }) {
     el('button', { class: 'btn btn--yellow', id: 'btn-solo-otra', onClick: () => { SFX.tap(); empezarSolo(partida.tema); } }, T.playAgain),
     el('button', { class: 'btn btn--ghost', onClick: () => { SFX.tap(); clearSession(); renderResumeSlot(); showScreen('screen-intro'); } }, T.changeMode),
     el('a', { class: 'btn btn--ghost', href: '../' }, T.backMenu),
+    bloqueTabla({ tabla: tablaRelampago(partida.tema), titulo: tituloRelampago(partida.tema), alTocar: () => SFX.tap() }),
   );
 }
 
