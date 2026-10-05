@@ -3289,6 +3289,11 @@ juega igual y nada sale del celular.
   de una copa cuentan en "En La Copa", salvo las copas del laboratorio. Toque y Fama solo y Línea
   Relámpago siguen con su récord local por ahora. Rendirse (0 puntos) cuenta como partida jugada, pero no entra a
   las tablas: un 0 no es un récord (dilema #185).
+- **Primero en el laboratorio.** Mientras `RANKINGS_EN_LABS` sea `true` (`jugador.js`), las
+  piezas de ranking, la invitación a entrar y el 🏆 de la portada solo aparecen en los celulares
+  que los activaron en `/labs/` (una marca en el `localStorage`) y siempre en pruebas. Así se
+  prueban contra las reglas y el Firebase de verdad, con amigos, antes de abrirlos a todos. Las
+  copas terminadas guardan su podio desde ya.
 **Por qué:** El dueño pidió rankings de cada juego y de La Copa con una identidad que la gente
 pueda reusar sin crear cuentas, aceptando que los nombres se repitan. Nombre y PIN ya era lo que
 La Copa usaba y entendían sus jugadores. Guardar solo el mejor de cada uno, con su clave de orden,

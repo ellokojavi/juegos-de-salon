@@ -30,6 +30,22 @@ const AMIGOS = 'juegos-de-salon:jugador:amigos';
 
 const falla = code => Object.assign(new Error(code), { code });
 
+/**
+ * Los rankings están en el laboratorio (D-212): se ven solo en los celulares que los activaron
+ * desde /labs/, y siempre en pruebas (localhost, la red de la casa, Tailscale). Para abrirlos a
+ * todos, `RANKINGS_EN_LABS = false`. Las copas terminadas guardan su podio igual, para que el
+ * medallero ya tenga historia el día que se abra.
+ */
+export const RANKINGS_EN_LABS = true;
+export const LABS_RANKINGS_KEY = 'juegos-de-salon:labs-rankings';
+export function rankingsVisibles(storage = globalThis.localStorage) {
+  if (!RANKINGS_EN_LABS) return true;
+  try { return envOf(globalThis.location || {}) === 'dev' || storage.getItem(LABS_RANKINGS_KEY) === '1'; } catch (_) { return false; }
+}
+export function activarRankings(si, storage = globalThis.localStorage) {
+  try { if (si) storage.setItem(LABS_RANKINGS_KEY, '1'); else storage.removeItem(LABS_RANKINGS_KEY); } catch (_) { /* sin memoria */ }
+}
+
 /** El jugador guardado en este celular, sin esperar a nada: para dibujar de una. */
 export function leerYo(storage = globalThis.localStorage) {
   try { const y = JSON.parse(storage.getItem(KEY)); return y && esJid(y.jid) ? y : null; } catch (_) { return null; }
