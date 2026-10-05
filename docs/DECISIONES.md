@@ -2,6 +2,77 @@
 
 Registro tipo ADR (Architecture Decision Record). Las decisiones se numeran y no se borran: si una cambia, se agrega una nueva que la reemplaza.
 
+**La regla de hoy está en [CANONES.md](CANONES.md); aquí está la historia, con su porqué** (D-213).
+Cuando una decisión cambia una regla, el mismo PR cambia el canon y marca el Estado de la
+decisión vieja.
+
+- **Estado** es uno de cuatro: `vigente` · `corregida por D-x` (sigue valiendo, salvo lo que
+  cambió la otra) · `reemplazada por D-x` (ya no rige: rige la otra) · `derogada` (ya no rige y
+  nada la reemplaza).
+- **Relación**, aparte en la misma línea, dice qué hace con otras reglas: cambia, corrige, amplía,
+  completa o es excepción a.
+- El número es el orden en que se fusionó, no el de la fecha: puede haber fechas que retroceden.
+
+### Rutas de entonces y de hoy
+
+Las rutas citadas en decisiones anteriores a D-192 son las de entonces; esta tabla dice dónde
+viven hoy. Las rutas viejas de las páginas siguen funcionando como páginas puente.
+
+| Antes | Hoy |
+|---|---|
+| `index.html`, `CNAME`, `en/`, `pt/`, `labs/`, `panel/` | lo mismo dentro de `public/` (D-192) |
+| `assets/` | `public/assets/` |
+| `assets/img/tierra-2004-09…` | `public/assets/img/earth-2004-09…` |
+| `ahorcado/` | `public/hangman/` |
+| `batalla-naval/` | `public/battleship/` |
+| `copa/` | `public/cup/` |
+| `copa/juegos/<juego>.js` y `ui-<juego>.js` | `public/cup/games/<carpeta>/` (`engine.js`, `ui.js`) |
+| `cuarto-rey/` | `public/fourth-king/` |
+| `dudo/` | `public/liars-dice/` |
+| `julepe/` | `public/julep/` |
+| `linea-de-tiempo/` | `public/timeline/` |
+| `toque-y-fama/` | `public/bulls-and-cows/` |
+| `/copa/?practica=<id>`, `/minijuegos/?<id>`, `/minijuegos/<id>/`, `/minigames/<slug>/` | `/<slug>/` en la raíz (D-198): `anio` → `year`, `conexiones` → `connections`, `desenredo` → `untangle`, `donde` → `where`, `letras` → `word`, `reinas` → `queens`, `tango`, `zip` |
+| `minijuegos/index.html` (el molde) | `public/cup/suelto/index.html` |
+| `docs/juegos/<id>.md` | `docs/games/<carpeta>.md` (`toque-y-fama-factibilidad.md` → `bulls-and-cows-factibilidad.md`) |
+| `tools/og.mjs`, `tools/og/`, `tools/readme.py`, `tools/readme.test.py`, `tools/hechos.mjs`, `tools/set-version.py` | `tools/release/` |
+| `tools/reglas.mjs`, `tools/reportes.mjs`, `tools/en-curso.mjs`, `tools/firebase-admin.mjs` | `tools/firebase/` |
+| `tools/dilemas.mjs`, `tools/documentar.mjs`, `tools/documentar.test.mjs`, `tools/marketing.mjs` | `tools/agents/` |
+| `tools/mapa.mjs`, `tools/flota.py` | `tools/generators/` |
+| `tools/e2e/<juego>-<guion>.mjs` | `tools/e2e/<carpeta>/<guion>.mjs` (`linea-de-tiempo-veredicto.mjs` → `timeline/veredicto.mjs`; `copa.mjs` → `cup/torneo.mjs`) |
+| `marketing/video-promo/` | `marketing/promo-video/` |
+| `.claude/skills/video-promo/` | `.claude/skills/promo-video/` |
+| `lab/`, `tools/lab.py`, `tools/diccionario/`, `tools/diag/` | ya no existen (D-67, D-65, D-77) |
+
+## Índice por tema
+
+Dónde está la regla de hoy y qué decisiones la explican. Solo van las vigentes y las corregidas
+que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
+
+| Tema | Regla de hoy (canon) | Decisiones vigentes que la explican |
+|---|---|---|
+| Estructura y rutas | C-2 | D-01, D-02, D-03, D-24, D-192, D-198 |
+| Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184 |
+| Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199 |
+| Sonido y vibración | C-4 | D-17, D-92 |
+| Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213 |
+| Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138 |
+| Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97 |
+| Memoria de partida | C-6 | D-25, D-150 |
+| Interfaz táctil | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213 |
+| Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213 |
+| Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181 |
+| Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211 |
+| Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213 |
+| README y capturas | C-13 | D-51, D-76, D-78, D-213 |
+| Pruebas | C-12 | D-143, D-193, D-199, D-204 |
+| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212 |
+| Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213 |
+| Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212 |
+| Marketing | `marketing/README.md` | D-178 |
+
+---
+
 ## D-01 · Stack: HTML/CSS/JS puro, sin build
 **Fecha:** 2026-09-08 · **Estado:** vigente
 **Decisión:** Sitio estático con módulos ES nativos. Sin bundler, sin framework, sin `package.json`.
@@ -9,51 +80,62 @@ Registro tipo ADR (Architecture Decision Record). Las decisiones se numeran y no
 **Consecuencias:** Hay que servir por HTTP en local (`python3 -m http.server`). Si el proyecto crece mucho (decenas de juegos, estado compartido), se reevalúa.
 
 ## D-02 · Un juego = una carpeta con su propia URL
-**Fecha:** 2026-09-08 · **Estado:** vigente
+**Fecha:** 2026-09-08 · **Estado:** corregida por D-192
 **Decisión:** Cada juego vive en `/<id>/` con su `index.html`, `game.js`, `rules.js` y `style.css`. El menú se genera desde `assets/js/games.js`.
 **Por qué:** URLs compartibles por juego, aislamiento total entre juegos (uno roto no rompe a los demás) y facilidad para agregar juegos (ver [AGREGAR-JUEGO.md](AGREGAR-JUEGO.md)).
 
 ## D-03 · Datos separados de la lógica
+**Fecha:** 2026-09-08 · **Estado:** corregida por D-68
 **Decisión:** Las reglas, textos, penitencias y categorías viven en `rules.js` como datos puros. `game.js` solo contiene la máquina de estados y el render.
 **Por qué:** Permite ajustar reglas y variantes (CR-17) sin tocar lógica, y eventualmente cargar variantes desde JSON.
 
 ## D-04 · Orden de asiento = orden de ingreso, hacia la derecha
+**Fecha:** 2026-09-08 · **Estado:** vigente
 **Decisión:** Los jugadores se anotan en el orden en que están sentados, avanzando hacia la derecha. Así, el “compañero de la derecha” del jugador N es el N+1 y el de la izquierda es el N−1 (circular). El turno también avanza hacia la derecha.
 **Por qué:** Es la convención más natural para pasar el celular por la mesa y permite que la app nombre a las personas (CR-06) en vez de solo decir “el de la derecha”.
 
 ## D-05 · Género para J y Q
+**Fecha:** 2026-09-08 · **Estado:** vigente
 **Decisión:** Al ingresar jugadores se elige ♂ hombre, ♀ mujer o ⚧ otro. J hace tomar a ♂ y ⚧; Q hace tomar a ♀ y ⚧. Si no hay nadie del género que corresponde, toma quien sacó la carta.
 **Por qué:** Las reglas originales usan género. “Otro” toma en ambas para no dejar a nadie fuera de la fiesta (regla de la casa, documentada y fácil de cambiar en `resolveTargets`).
 
 ## D-06 · Fin de partida con el cuarto rey
+**Fecha:** 2026-09-08 · **Estado:** corregida por D-68
 **Decisión:** Al salir el cuarto rey, ese jugador se toma el vaso y la partida termina con pantalla final y opción de “otra ronda” con mazo nuevo y los mismos jugadores.
 **Por qué:** Es la versión más común del juego y evita rondas largas sin tensión después del cuarto rey. Se descartó “seguir hasta agotar el mazo” (queda como variante posible, CR-17).
 
 ## D-07 · Mini-juegos: reglas + ayudas simples, no implementación completa
+**Fecha:** 2026-09-08 · **Estado:** vigente
 **Decisión:** Cuenta Cuentos, Chancho Inflado, Cultura Chupística y Nunca Nunca se juegan de viva voz. La app explica las reglas, indica quién parte y ofrece ayudas: temporizador de 5 s, categoría al azar, idea de “nunca nunca”, y selector de perdedor (suma 2 sorbos).
 **Por qué:** Estos juegos son sociales por naturaleza; llevarlos a pantalla les quita gracia y alarga la versión inicial. Una implementación completa queda como mejora futura.
 
 ## D-08 · Chancho Inflado es “diferido”
+**Fecha:** 2026-09-08 · **Estado:** vigente
 **Decisión:** Quien saca el 6 puede inflar las mejillas en cualquier momento posterior. La app lo explica y deja marcar al perdedor de inmediato o seguir jugando (“Nadie perdió / seguir”).
 **Por qué:** Así se juega habitualmente en Chile; la sorpresa es la gracia.
 
 ## D-09 · Contador de sorbos aproximado
+**Fecha:** 2026-09-08 · **Estado:** vigente
 **Decisión:** La app lleva un ranking de sorbos por jugador solo con fines lúdicos (pantalla final). Cuenta automáticamente las reglas deterministas y suma 2 sorbos al perdedor de mini-juegos o al que se arruga en una penitencia. El cuarto rey se cuenta como “fondo”.
 **Por qué:** Da un cierre entretenido sin obligar a los jugadores a registrar nada durante el juego.
 
 ## D-10 · Persistencia en localStorage
+**Fecha:** 2026-09-08 · **Estado:** corregida por D-25
 **Decisión:** La partida completa (`juegos-de-salon:cuarto-rey:game`) y la lista de jugadores (`juegos-de-salon:players`) se guardan en `localStorage` tras cada acción. Al abrir el juego se ofrece “Continuar”.
 **Por qué:** El celular pasa de mano en mano y se bloquea o cierra fácil. No se usa servidor (privacidad, RP-10).
 
 ## D-11 · Identidad visual
+**Fecha:** 2026-09-08 · **Estado:** vigente
 **Decisión:** Fondo oscuro morado/azul con degradados y luces flotantes; acentos neón (rosado `#ff2e88`, amarillo `#ffd23f`, cian `#2ee6d6`, lima). Titulares en **Bangers** (cómic/fiesta), cuerpo en **Nunito** (redonda, legible). Botones grandes tipo “pill” con sombra sólida y rebote al presionar. Animaciones: volteo 3D de carta, pop de textos, confeti en el cuarto rey y al final.
 **Por qué:** Refleja el ambiente de carrete nocturno pedido en RP-07, mantiene legibilidad con poca luz y respeta `prefers-reduced-motion`.
 
 ## D-12 · El celular reemplaza al mazo físico
+**Fecha:** 2026-09-08 · **Estado:** corregida por D-68
 **Decisión:** No se pide un naipe real: la app baraja 52 cartas y muestra la carta con palo y número.
 **Por qué:** Cumple RP-06 (el celular guía) y evita desincronización entre mazo real y app. Si un grupo quiere usar naipe real, es una variante posible (CR-17).
 
 ## D-13 · Publicación en GitHub Pages desde `main`
+**Fecha:** 2026-09-08 · **Estado:** reemplazada por D-192
 **Decisión:** Repo público `ellokojavi/juegos-de-salon`, Pages sirviendo la raíz de `main`, con `.nojekyll`.
 **Por qué:** Cero configuración de CI; cada push publica. La URL de GitHub Pages (`ellokojavi.github.io/juegos-de-salon/`) quedó después detrás del dominio propio https://juegosdesalon.cl/, y redirige con un 301.
 
@@ -63,10 +145,12 @@ Registro tipo ADR (Architecture Decision Record). Las decisiones se numeran y no
 **Por qué:** Separa tres momentos que antes se pisaban: decidir quién toma, tomar, y que el siguiente jugador reciba el celular listo para sacar carta (CR-19). Avanzar el estado primero garantiza que, si se cierra el navegador en la transición, la partida se retoma en el turno correcto.
 
 ## D-15 · Carta grande que se encoge al descubrirse
+**Fecha:** 2026-09-08 · **Estado:** vigente
 **Decisión:** Boca abajo la carta mide el 80 % del ancho (máx. 340 px) con brillo pulsante; al tocarla gira en 3D (0,75 s), se encoge al 38 % (0,5 s) y recién ahí aparece el panel de instrucciones. El tamaño del pip se define con unidades de contenedor (`cqw`) para que escale con la carta.
 **Por qué:** Un objetivo grande es más fácil de tocar en una mesa con poca luz (CR-20), y encoger la carta deja las instrucciones visibles sin scroll en la mayoría de los celulares.
 
 ## D-16 · Internacionalización simple con diccionarios por idioma
+**Fecha:** 2026-09-08 · **Estado:** vigente
 **Decisión:** Un módulo compartido `assets/js/i18n.js` guarda el idioma en `localStorage` (`juegos-de-salon:lang`, por defecto `es`), entrega un toggle ES/EN y aplica textos estáticos vía atributos `data-i18n`. Cada juego expone `LOCALES = { es, en }` en su `rules.js` con reglas, mini-juegos, listas y textos de interfaz; la lógica del juego solo lee `LOCALES[lang]`. Cambiar de idioma recarga la página.
 **Por qué:** Cumple RP-15 sin librerías ni build. Los datos por idioma viven junto a cada juego, así que agregar un juego o un idioma no toca el resto. Recargar al cambiar es más simple y seguro que re-renderizar todo en caliente, y no afecta la partida guardada.
 **Consecuencias:** Las claves de las listas (penitencias, categorías) no son equivalentes uno a uno entre idiomas: la versión inglesa adapta referencias chilenas a genéricas. Una partida guardada en un idioma se retoma en el idioma activo.
@@ -78,7 +162,7 @@ Registro tipo ADR (Architecture Decision Record). Las decisiones se numeran y no
 **Consecuencias:** El sonido se apaga con el toggle pero no con el modo silencio del celular en todos los navegadores (iOS Safari sí respeta el switch físico para Web Audio en la mayoría de versiones).
 
 ## D-18 · Transporte para juegos con varios celulares
-**Fecha:** 2026-09-08 · **Estado:** vigente (aprobada por el dueño del proyecto)
+**Fecha:** 2026-09-08 · **Estado:** corregida por D-89 · **Relación:** aprobada por el dueño del proyecto
 **Decisión:** Los juegos con dos o más celulares hablan con una interfaz `Transport` (`createRoom`, `joinRoom`, `send`, `onMessage`, `onPresence`, `leave`). La primera implementación remota sería **Firebase Realtime Database** (salas por código de 4 letras, mensajes append-only, expiración a 6 h); se mantiene un transporte `local` para jugar en un solo celular.
 **Por qué:** Desde GitHub Pages no hay servidor; una base en tiempo real gratuita funciona entre redes distintas (4G y Wi‑Fi), da reconexión y estado persistente sin código propio, y sirve para futuros juegos de 4 a 6 celulares. WebRTC (PeerJS o QR) queda como alternativa sin cuenta, limitada por NAT fuera de la misma Wi‑Fi. Detalle y comparación en [juegos/toque-y-fama-factibilidad.md](games/bulls-and-cows-factibilidad.md).
 **Consecuencias:** Proyecto de Firebase `juegos-de-salon` creado el 2026-09-08 (plan Spark, sin Analytics ni Gemini). Reglas publicadas y versionadas en `firebase/database.rules.json`; configuración pública en `assets/js/firebase-config.js`. Ver [firebase/README.md](../firebase/README.md).
@@ -89,27 +173,30 @@ Registro tipo ADR (Architecture Decision Record). Las decisiones se numeran y no
 **Por qué:** El sorteo con nonces públicos propuesto en el estudio era manipulable: quien confirma segundo ve el nonce del otro y puede elegir el suyo. Además, un sorteo asíncrono (SHA-256) impedía reconstruir la partida de forma síncrona al reconectar. Con el derecho a réplica activado, la ventaja de partir es mínima, así que una regla fija es justa, simple y reproducible en ambos celulares.
 
 ## D-20 · Un solo reductor de mensajes para los tres modos
+**Fecha:** 2026-09-08 · **Estado:** corregida por D-129
 **Decisión:** El estado de una partida de Toque y Fama se reconstruye siempre desde una lista de mensajes (`hello`, `commit`, `guess`, `reply`, `reveal`, `rematch`), tanto en un celular (transporte en memoria) como en dos (Firebase). En modo un celular ambos roles son locales; contra el celular, el rol B es un bot con solver por eliminación.
 **Por qué:** Una sola lógica de juego probada en los tres modos; la reconexión es solo “volver a leer los mensajes”; y el mismo esquema sirve para futuros juegos con varios celulares.
 **Consecuencias:** Toda regla de turno vive en `view()` (derivada), nunca en variables sueltas. Los mensajes se procesan en serie para evitar carreras.
 
 ## D-21 · Compromiso del secreto con sal privada
+**Fecha:** 2026-09-08 · **Estado:** vigente
 **Decisión:** Al fijar el secreto se publica `sha256(secreto + sal)` con una sal aleatoria privada de 16 bytes; al final se revela secreto y sal, y cada celular verifica el hash y recalcula todas las respuestas del rival.
 **Por qué:** Con solo 5040 secretos posibles, un hash sin sal se rompe por fuerza bruta en milisegundos. La sal privada lo impide y la revelación final permite detectar respuestas falsas.
 
 ## D-22 · Versionado de archivos con import maps para evitar caché mezclada
-**Fecha:** 2026-09-08 · **Estado:** vigente; desde D-205 se estampa al publicar, en la copia que se sube, no en git
+**Fecha:** 2026-09-08 · **Estado:** corregida por D-205 · **Relación:** desde D-205 se estampa al publicar, en la copia que se sube, no en git
 **Decisión:** Cada página lleva un `<script type="importmap">` que mapea todos los módulos JS del sitio a su ruta con `?v=VERSION`, y las hojas de estilo llevan el mismo sufijo. Se estampa con `python3 tools/set-version.py X.Y.Z` en cada publicación. Además, el menú dibuja la lista de juegos antes de cualquier decoración y las decoraciones van en `try/catch`.
 **Por qué:** GitHub Pages y los navegadores cachean cada archivo por separado (10 minutos en Pages). Tras una publicación, un celular podía recibir el `index.html` nuevo con un `i18n.js` viejo; el código nuevo esperaba datos que el archivo viejo no tenía, fallaba, y el menú quedaba vacío (ocurrió con la v0.4.5). Con el import map, cambiar la versión cambia la URL de todos los módulos, incluidos los importados por otros módulos y los `import()` dinámicos, así que una página nueva siempre trae JS nuevo.
 **Consecuencias:** Hay que correr el script al publicar (queda documentado en el README y en AGREGAR-JUEGO). Los import maps funcionan en Chrome 89+, Safari 16.4+ y Firefox 108+; en navegadores más antiguos los módulos cargan igual, solo sin el sufijo.
 
 ## D-23 · Reglas de Batalla Naval v1
-**Fecha:** 2026-09-08 · **Estado:** vigente (aprobada por el dueño del proyecto)
+**Fecha:** 2026-09-08 · **Estado:** vigente · **Relación:** aprobada por el dueño del proyecto
 **Decisión:** Tablero 10×10, flota clásica de 5 barcos, barcos que pueden tocarse (solo no superponerse), tiro extra al acertar (configurable, por defecto sí), parte el invitado y en la revancha el perdedor, sin réplica.
 **Por qué:** Es la versión más conocida, la más rápida de colocar en un celular y la más dinámica de jugar. El tiro extra es la costumbre chilena. La regla de “sin contacto” y la flota de 10 barcos quedan como variantes futuras porque alargan la colocación y la partida.
 **Consecuencias:** Con tiro extra un turno es una secuencia de disparos; el reductor calcula quién dispara a partir del historial completo, no de un contador de turnos. No hay réplica porque el segundo jugador ya tuvo su secuencia completa cuando el primero termina.
 
 ## D-24 · Transportes compartidos entre juegos
+**Fecha:** 2026-09-08 · **Estado:** vigente
 **Decisión:** `local.js` y `firebase.js` pasan de `toque-y-fama/transport/` a `assets/js/transport/`, parametrizados por `game`. Toque y Fama y Batalla Naval los importan desde ahí.
 **Por qué:** Evita duplicar la lógica de salas, presencia y reconexión; cualquier juego futuro con varios celulares la reutiliza (D-18).
 
@@ -120,17 +207,18 @@ Registro tipo ADR (Architecture Decision Record). Las decisiones se numeran y no
 **Consecuencias:** Queda como canon C-6, obligatorio para los juegos futuros. Cuarto Rey migró a la clave común leyendo la antigua una vez.
 
 ## D-26 · Cánones escritos en el repo
+**Fecha:** 2026-09-09 · **Estado:** vigente
 **Decisión:** `docs/CANONES.md` reúne las reglas de construcción de todos los juegos (C-1 a C-14) con una lista de chequeo final, y `CLAUDE.md` en la raíz apunta a él para que se cargue como contexto al abrir el proyecto.
 **Por qué:** Las convenciones estaban repartidas entre decisiones sueltas y el código de cada juego. Un solo archivo evita que cada juego nuevo redescubra o contradiga lo ya acordado.
 
 ## D-27 · Línea de Tiempo: solitario en vez de IA
-**Fecha:** 2026-09-09 · **Estado:** vigente
+**Fecha:** 2026-09-09 · **Estado:** corregida por D-142
 **Decisión:** El modo individual de Línea de Tiempo es un solitario con puntaje (vaciar la mano en la menor cantidad de intentos, con récord por temática y tamaño de mano), no una partida contra el celular.
 **Por qué:** Toda la información del juego es pública: la máquina conoce los años, así que solo podía ganar o dejarse ganar a propósito. Eso no es un rival, es un número al azar. Un récord personal sí da motivo para volver a jugar.
 **Consecuencias:** El canon C-5 admite que el tercer modo sea "contra el celular" o "jugar solo", según el juego tenga o no información oculta que le dé sentido a una IA.
 
 ## D-28 · Chat de sala solo en varios celulares
-**Fecha:** 2026-09-09 · **Estado:** vigente
+**Fecha:** 2026-09-09 · **Estado:** corregida por D-35
 **Decisión:** Línea de Tiempo estrena un chat de texto en la sala y durante la partida, con el módulo compartido `assets/js/chat.js`. Está disponible únicamente en el modo de varios celulares, no aparece sobre el veredicto de una jugada ni en la pantalla final, y no se guarda en ninguna parte: muere con la partida.
 **Por qué:** En varios celulares el turno ajeno es tiempo muerto y la gracia del juego es discutir si el hito va antes o después. En un celular la conversación ya ocurre en voz alta y en el solitario no hay con quién hablar, así que un chat ahí solo sería ruido. Las pantallas de acierto y error existen para que el jugador lea una explicación corta (C-8b): un chat encima competiría con eso.
 **Cómo:** Los mensajes viajan por el mismo transporte que las jugadas (`{ t: 'chat', text }`), pero el reductor los dibuja y los olvida, y devuelve una marca para **no** volver a dibujar la partida: si el chat viviera dentro de `#screen-play`, cada mensaje recibido borraría lo que el jugador está escribiendo. Por eso el chat tiene su propio contenedor, hermano de `#handoff`, y por eso queda debajo de ese overlay en z-index, que es todo lo que se necesita para que el veredicto lo tape.
@@ -158,7 +246,7 @@ Registro tipo ADR (Architecture Decision Record). Las decisiones se numeran y no
 **Consecuencias:** Cada jugada tiene un tope de 5 minutos (`MAX_MOVE_MS`): una ida al baño no puede decidir un desempate. Si alguien recarga la página a mitad de su turno, el cronómetro de ese turno parte de nuevo; se prefiere eso a guardar relojes en la sesión. El tiempo lo mide y lo declara el propio dispositivo del jugador: no es a prueba de tramposos y no pretende serlo (el canon C-10 es para la información oculta, no para esto). Un empate exacto al milisegundo sigue siendo posible y se muestra como empate.
 
 ## D-32 · Línea de Tiempo: pozo común
-**Fecha:** 2026-09-10 · **Estado:** vigente
+**Fecha:** 2026-09-10 · **Estado:** corregida por D-43
 **Decisión:** La pantalla de configuración ofrece dos formas de repartir: **mano propia** (la de siempre) o **pozo común**, donde hay una sola tira de **6 cartas a la vista de todos** y cada uno juega de ahí. Cuando una carta sale de la tira —porque entró a la línea o porque se falló— entra otra del mazo **por el final**, así el orden de las que ya estaban no cambia. Con pozo común gana quien coloque primero la cantidad de cartas acordada; el selector que decía "Cartas en mano" pasa a decir "Cartas para ganar".
 **Por qué:** Con mano propia cada uno juega su suerte: te puede tocar una mano fácil o una imposible, y nadie más ve lo que tienes. Con el pozo común todos miran las mismas cartas, así que el mérito es de quien elige mejor, y se puede comentar la jugada del otro (que es justo lo que hace el chat).
 **Cómo:** El motor recibe `shared` y `visible`; la tira se deriva igual que todo lo demás, de la semilla más la lista de jugadas, así que los dispositivos llegan a la misma tira sin mensajes extra (canon C-7). Una carta fallada **no** vuelve a la tira: el veredicto acaba de mostrar su año a todo el mundo, así que dejarla sería regalarle el punto al siguiente. El ajuste viaja en la `config` de la sala, de modo que el que se une juega con lo que eligió el anfitrión.
@@ -179,7 +267,7 @@ Registro tipo ADR (Architecture Decision Record). Las decisiones se numeran y no
 **Consecuencias:** Medido con diez partidas seguidas de la misma temática: **cero cartas repetidas entre una partida y la siguiente**, y 70 hitos distintos en 80 repartidos. La memoria es por celular, no por sala: quien crea la partida es el que aporta su historial, que es lo razonable porque es quien más ha jugado.
 
 ## D-35 · El chat sigue vivo en la pantalla final
-**Fecha:** 2026-09-10 · **Estado:** vigente · **Revisa:** D-28
+**Fecha:** 2026-09-10 · **Estado:** vigente · **Relación:** revisa D-28
 **Decisión:** El chat de sala ya no se apaga al terminar la partida: sigue disponible en la pantalla de victoria o derrota, en Línea de Tiempo y en Toque y Fama. Muere con la **sala**, no con la partida; la revancha crea una sala nueva y empieza con el chat en blanco.
 **Por qué:** El final es justo cuando la gente tiene algo que decir: el que ganó quiere celebrarlo y el que perdió quiere reclamar o pedir revancha. Apagar el chat ahí cortaba la conversación en su mejor momento, y obligaba a coordinar la revancha fuera de la app. La razón original para apagarlo (que no compitiera con las pantallas de veredicto, D-28) sigue valiendo para el veredicto de cada jugada, que es un aviso corto que se cierra solo; la pantalla final no tiene apuro.
 **Consecuencias:** La pantalla de resultado deja aire abajo (`body.chat-on`) para que la burbuja no tape los botones de revancha, cambiar modo y volver al menú (C-8). El canon C-15 se corrige: el chat muere con la sala.
@@ -228,7 +316,7 @@ Registro tipo ADR (Architecture Decision Record). Las decisiones se numeran y no
 **Consecuencias:** El tope se revisa antes de la red, así que avisa al instante y no gasta una conexión para después descartarla. Solo cuenta la sala que quedó creada de verdad, no el intento. Módulo `assets/js/transport/ratelimit.js` con tests en `ratelimit.test.mjs`; prueba de punta a punta en `tools/e2e/sala-tope.mjs`, que siembra el historial en vez de abrir 20 salas contra Firebase.
 
 ## D-42 · Un laboratorio con URL propia para probar interfaz
-**Fecha:** 2026-09-11 · **Estado:** ~~derogada por D-67~~
+**Fecha:** 2026-09-11 · **Estado:** derogada · **Relación:** la derogó D-67
 **Decisión:** Los cambios de interfaz que valga la pena mirar antes de decidir se prueban en `/lab/`, una carpeta con su propia URL que **espeja** el menú y los juegos que haga falta. Las páginas del laboratorio importan los módulos reales (`game.js`, `rules.js`, `engine.js`, `assets/js/*`): lo único propio es la presentación, en `lab.css` y en el HTML espejado. En reposo `lab.css` está vacío y el laboratorio se ve idéntico a la app.
 **Por qué:** Un cambio de aspecto no se puede evaluar leyendo un diff ni mirando una captura suelta: hay que jugarlo en un celular de verdad, y ojalá pasárselo a otra persona. Sin un lugar donde hacerlo, la única forma era publicar el cambio en la app y arriesgarse, o dejarlo en local y no probarlo nunca en el aparato donde se juega. El laboratorio da una URL que se manda por WhatsApp sin tocar lo que funciona.
 **Por qué espejar el HTML y no duplicar el juego:** duplicar `game.js` crea un segundo juego que se desincroniza en una semana y vuelve inútil la prueba. Espejando solo el `index.html` y apuntando al módulo real, un arreglo en el juego se ve en el laboratorio sin copiar nada. El costo es que la copia hay que rehacerla si cambia la estructura del `index.html` del juego, que es raro.
@@ -240,7 +328,7 @@ Registro tipo ADR (Architecture Decision Record). Las decisiones se numeran y no
 **Consecuencias:** El laboratorio comparte origen con la app, así que comparte `localStorage` (memoria de partida, idioma, nombre) y las salas de Firebase. Una partida a medias empezada en el laboratorio aparece en el juego publicado. Va con `noindex` y sin `manifest`. Primer uso: las insignias serigrafiadas, descartadas; quedan en los commits `8efd11c` y `d5071c9`.
 
 ## D-43 · Línea de Tiempo: todas las cartas a la vista desde el primer turno
-**Fecha:** 2026-09-11 · **Estado:** vigente
+**Fecha:** 2026-09-11 · **Estado:** corregida por D-52
 **Decisión:** La sección "Cartas" de la configuración pasa de dos opciones a tres: **todas a la vista**, **pozo común** y **mano propia**. Con todas a la vista se despliegan de una vez **el doble de las cartas que hay que colocar para ganar** —6, 10 o 14 según la meta de 3, 5 o 7— y no entra ninguna carta nueva en toda la partida: cada carta que sale, porque entró a la línea o porque se falló, achica la mesa. Es la opción marcada al abrir la configuración, en el lugar que tenía el pozo común.
 **Por qué:** Con el pozo común de 6 cartas que se repone, la dificultad es plana de principio a fin: siempre hay caras nuevas y una carta difícil se puede postergar indefinidamente sin costo, porque va a seguir ahí junto a otras cinco recién llegadas. Con la mesa completa y sin reposición la partida tiene curva: los primeros turnos se eligen las fáciles, y lo que queda al final es exactamente lo que nadie se atrevió a situar, sobre una línea de tiempo que además ya está llena de hitos y deja huecos cada vez más estrechos. El juego se pone más difícil solo, sin ninguna regla extra que explicar.
 **Por qué el doble de la meta y no una cantidad fija:** la mesa tiene que alcanzar para que todos lleguen a la meta si juegan perfecto, y no mucho más. Con el doble justo, dos jugadores que no fallan nunca terminan empatados en la meta y desempata el tiempo (D-31); cada error le quita a alguien una carta que ya no vuelve. Una mesa más grande devolvería la dificultad plana del pozo común; una más chica haría que la partida se decidiera antes de empezar.
@@ -249,7 +337,7 @@ Registro tipo ADR (Architecture Decision Record). Las decisiones se numeran y no
 **Consecuencias:** La mesa se puede vaciar antes de que nadie llegue a la meta, y ahí gana quien colocó más, que ya era el final por mazo agotado del pozo común. En solitario eso significa que se puede terminar sin lograrlo: la pantalla final lo dice con sus propias palabras ("Se acabaron las cartas · Alcanzaste a colocar 1 de las 3 cartas que necesitabas") y **no** se guarda récord, porque si no una partida abandonada a los dos intentos quedaría como la mejor marca. El récord del solitario se guarda con su propia clave (`tema:cartas:mesa`), aparte de la del pozo común y la de mano propia.
 
 ## D-44 · Señales de uso para un panel privado del dueño, sin identificar a nadie
-**Fecha:** 2026-09-11 · **Estado:** vigente
+**Fecha:** 2026-09-11 · **Estado:** corregida por D-79, D-210
 **Decisión:** Los juegos y el transporte dejan constancia de cada partida en `stats/<entorno>/days/<día>` de Firebase: las salas de dos celulares con juego, hora, versión y los nombres de quienes entraron; los modos sin red (un celular, contra el celular, solo) como un **contador** por juego, modo y cantidad de jugadores, sin nombre ni nada más; y de cualquier modo un contador de zona horaria, idioma del navegador y hora local. Una página nueva, `/panel/`, entra con Google y lo muestra; las reglas solo dejan leer `stats/` y listar `rooms/` al UID del dueño. Documentado en [PANEL.md](PANEL.md).
 **Por qué:** Hasta acá no había forma de saber si alguien jugaba, qué juego gustaba ni cuántos se juntaban. La base solo tenía salas vivas que se borran a las 6 horas, nadie podía listarlas (D-39) y los modos sin red no tocaban la red. Un panel con historia pide un registro aparte que la papelera no barra.
 **Por qué señales vagas y no personas:** el objetivo es ver uso, no identificar. Que alguien juegue desde Brasil o se llame "Fausto" no dice quién es. Por eso no se consulta ninguna geolocalización por IP (que además sería un tercero) y "de dónde" se contesta con la zona horaria del celular, que es gruesa y honesta. Los nombres de las salas ya viajan a Firebase para que el rival los vea; el registro no los expone más de lo que estaban, y ahora solo el dueño puede listarlos. De los modos sin red no sale ni un nombre, porque hasta hoy no salía nada, y la promesa de privacidad cambia de "no se envía ningún dato" a "no se envía nada que identifique a alguien" (requerimientos no funcionales).
@@ -268,21 +356,21 @@ Registro tipo ADR (Architecture Decision Record). Las decisiones se numeran y no
 **Consecuencias:** Mientras el snapshot de `stats/<env>/days` no ha llegado, no se filtra nada: se prefiere mostrar de más un instante antes que parpadear en blanco. Cambiar de entorno en el selector vuelve a dejar sin filtrar hasta que llega el snapshot nuevo. Las pruebas de punta a punta siguen abriendo salas reales contra Firebase, y eso no cambia: lo que cambia es que el panel ya no las cuenta como uso.
 
 ## D-46 · Dos idiomas en las señales de uso, no uno
-**Fecha:** 2026-09-11 · **Estado:** vigente
+**Fecha:** 2026-09-11 · **Estado:** corregida por D-47
 **Decisión:** Además del idioma del navegador (`lang`, de `navigator.language`), se registra el idioma **elegido en el juego** (`applang`, de `getLang()`). El panel los muestra en dos secciones vecinas: "Idioma del navegador" e "Idioma elegido para jugar".
 **Por qué:** Son preguntas distintas y la primera no contesta la segunda. `navigator.language` dice de dónde es la persona y con qué configuró su teléfono; el toggle de la app dice en cuál prefiere jugar. Un celular en `es-CL` jugando en inglés, o al revés, es exactamente el dato que decide si vale la pena seguir manteniendo dos idiomas (C-3) y cuál de los dos se lleva el esfuerzo de las traducciones. Con un solo número no se distingue "nadie juega en inglés" de "no hay nadie de habla inglesa".
 **Cómo:** Sale del mismo `fingerprint()` que el resto, con `getLang()` inyectable para poder probarlo. Es un contador más, con el mismo contrato que los otros: sube de a uno y la clave va acotada. El valor es `es` o `en`, no un código de región: el juego solo ofrece esos dos.
 **Consecuencias:** Las reglas tienen que aceptar la clave nueva, y **hay que republicarlas a mano en la consola**. Hasta que eso pase, la escritura se rechaza y no se entera nadie —el registro es mejor esfuerzo y falla callado (D-44)—, así que la sección aparece vacía. Por eso su texto de vacío dice "se empieza a contar desde esta versión" y no "nada todavía": distingue no tener datos de estar roto.
 
 ## D-47 · Español por defecto; inglés y portugués, solo a pedido
-**Fecha:** 2026-09-11 · **Estado:** vigente
+**Fecha:** 2026-09-11 · **Estado:** corregida por D-197
 **Decisión:** Quien entra a juegosdesalon.cl ve la app en español mientras no elija otra cosa. El idioma del navegador (`navigator.language`) no se usa para elegir: sirve como señal de uso (D-46), nunca para decidir qué se muestra. Inglés y portugués son opcionales: se activan solo con el toggle del menú o de la intro de cada juego, y la elección queda en `localStorage` del dispositivo. Con la llegada del portugués, el juego ofrece tres idiomas y no dos, lo que corrige el detalle de D-46.
 **Por qué:** El público es chileno y las mesas son de habla hispana; el humor, las referencias y las cartas están pensados primero en español (C-1). Detectar el idioma del teléfono parece amable pero falla en la mesa: un celular configurado en inglés en manos de alguien que juega en español muestra chistes traducidos que nadie pidió, y en una mesa el que sostiene el teléfono no siempre es el dueño. Un valor fijo y predecible (español) más un toggle a la vista es más simple de explicar y de probar que una heurística.
 **Cómo:** `getLang()` devuelve lo guardado si es un idioma conocido y, si no, `'es'`. Ningún módulo lee `navigator.language` para decidir textos; solo `stats.js` lo registra como contador. Cada `index.html` declara `lang="es"` y el idioma elegido se aplica sobre `document.documentElement.lang` al cargar.
 **Consecuencias:** Agregar un idioma es sumarlo a `LANGS`, al toggle y a los `LOCALES`; no cambia el arranque. Las pruebas de punta a punta parten siempre en español salvo que toquen el toggle. Si algún día se quiere ofrecer el idioma del navegador, será una sugerencia visible y no un cambio silencioso.
 
 ## D-48 · Portugués de Brasil como tercer idioma, en las mismas claves
-**Fecha:** 2026-09-11 · **Estado:** vigente
+**Fecha:** 2026-09-11 · **Estado:** corregida por D-197
 **Decisión:** La app se puede jugar entera en portugués: menú, frases del pie, los cuatro juegos con sus modos, salas, chat, errores de transporte, pantallas de pase y las cartas de los cuatro mazos de Línea de Tiempo. Es portugués **de Brasil**, informal ("você", "celular", "bora jogar", "vira, vira, vira"), y se agrega como un tercer diccionario `pt` con exactamente las mismas claves que `es` y `en`: en `COMMON` de `i18n.js`, en `games.js`, en `FRASES`, en `LOCALES` de cada `rules.js`, en el nombre y la pista de cada mazo y en cada carta. Los nombres de los juegos se traducen, como ya se hacía en inglés: Quarto Rei, Toque e Fama, Batalha Naval, Linha do Tempo; los mini-juegos de Cuarto Rey pasan a Era Uma Vez, Porquinho Bochechudo, Cultura de Boteco y Eu Nunca; los sorbos son "goles", la penitencia es "prenda".
 **Por qué:** Brasil es el vecino más grande y el panel ya mostraba celulares en `pt-BR` (D-44). Se elige la variante brasileña y no la europea porque es la que van a leer casi todos los que toquen el botón, y porque las dos difieren justo en las palabras que la app más usa ("celular" contra "telemóvel", "você" contra "tu"). Un solo diccionario con las mismas claves, y no un idioma "parcial" que caiga al inglés donde falte, porque una pantalla a medias en dos idiomas se ve peor que no ofrecer el idioma: C-3 dice que toda la experiencia va en el idioma elegido.
 **Cómo:** `LANGS = ['es', 'en', 'pt']` y una etiqueta 🇧🇷 PT en el toggle; `yearLabel` de Línea de Tiempo usa "a.C." para español y portugués y "BC" solo para inglés; el test del motor exige `pt` en cada carta y rechaza apóstrofos rectos dentro del texto. `sala-error.mjs` prueba el mensaje de sala caída también en portugués. Las traducciones se adaptan (C-3): las comunas de Santiago son bairros, los equipos chilenos son times brasileiros, y las frases del pie se reescribieron con humor de rolê.
@@ -304,15 +392,15 @@ Registro tipo ADR (Architecture Decision Record). Las decisiones se numeran y no
 **Consecuencias:** Las reglas se **publican a mano** en la consola ([Realtime Database → Rules](https://console.firebase.google.com/u/0/project/juegos-de-salon/database/juegos-de-salon-default-rtdb/rules)), paso que ya se hizo para esta versión. Mientras unas reglas nuevas no estén publicadas, la despedida se escribe igual pero el borrado se rechaza y la sala espera su vencimiento; el panel igual deja de mostrarla viva, porque eso lo decide el cliente. Alguien que sepa el código de una sala puede escribir la despedida de otro rol y, si todos quedan despedidos, borrarla: es el mismo alcance que ya tenía cualquiera que supiera el código (puede leer la sala y escribir mensajes, C-15), y no abre nada nuevo. Una sala que se quedó sin jugadores apuntados no se borra: `deserted` exige que haya alguien adentro, para que la sala recién creada —que existe un instante sin jugadores— no sea borrable por nadie.
 
 ## D-51 · El README se sostiene solo: lo derivable se genera, lo escrito se delata, las capturas se rehacen
-**Fecha:** 2026-09-11 · **Estado:** vigente; desde D-205 `revisar` lo corre el check `pruebas`, no `set-version.py`
-**Decisión:** El README deja de mantenerse a pulso. `tools/hechos.mjs` importa los módulos reales y arma una hoja de hechos (juegos, modos, temáticas con su cuenta de cartas, idiomas, módulos, tests, documentos, capturas). `tools/readme.py` la usa para tres cosas: **generar** lo derivable dentro de marcas `<!-- generado: ... -->`; **delatar** lo que cambió desde el último sello (`docs/hechos.json`) nombrando qué sección de prosa hay que releer, con `sellar` para anotar que se releyó; y **rehacer las capturas** corriendo los guiones de `tools/e2e/` según el catálogo `docs/capturas.json`, que dice de qué guion y de qué toma sale cada imagen. `set-version.py` corre `revisar` antes de estampar, así que un README viejo frena la publicación (C-11, C-13).
+**Fecha:** 2026-09-11 · **Estado:** corregida por D-205 · **Relación:** desde D-205 `revisar` lo corre el check `pruebas`, no `set-version.py`
+**Decisión:** El README deja de mantenerse a pulso. `tools/release/hechos.mjs` importa los módulos reales y arma una hoja de hechos (juegos, modos, temáticas con su cuenta de cartas, idiomas, módulos, tests, documentos, capturas). `tools/release/readme.py` la usa para tres cosas: **generar** lo derivable dentro de marcas `<!-- generado: ... -->`; **delatar** lo que cambió desde el último sello (`docs/hechos.json`) nombrando qué sección de prosa hay que releer, con `sellar` para anotar que se releyó; y **rehacer las capturas** corriendo los guiones de `tools/e2e/` según el catálogo `docs/capturas.json`, que dice de qué guion y de qué toma sale cada imagen. `set-version.py` corre `revisar` antes de estampar, así que un README viejo frena la publicación (C-11, C-13).
 **Por qué:** El README es la cara del proyecto y la única documentación que lee alguien de afuera, y se pudre en silencio. Al escribir esto decía "las cartas de los cuatro mazos" cuando había seis, daba a Cuarto Rey una versión que su propia especificación no reconocía, y sus capturas eran de pantallas que ya habían cambiado. Nada de eso lo avisa un test: son datos repetidos a mano en prosa. Repetidos a mano y sin dueño, cada cambio de la app los deja un poco más falsos.
 **Por qué no generarlo todo:** Porque lo que hace bueno a este README es lo que no se puede derivar: por qué el juego está entretenido, qué se siente al pasar el celular, el chiste de las temáticas. Un README generado entero sería un listado correcto que no lee nadie. Por eso la herramienta se parte en dos: escribe las tablas y deja la prosa en paz, pero no deja que la prosa envejezca callada.
 **Por qué el sello y no la fecha del commit:** Comparar fechas de git (¿el README es más nuevo que el código?) grita con cualquier cambio, hasta el de una coma, y a un soplón que grita por todo no lo mira nadie. El sello compara **hechos**: las claves de los modos, los mazos, los tests. Un texto de ayuda que se corrige no molesta a nadie; un modo nuevo sí, y es el que efectivamente obliga a releer.
 **Por qué las capturas salen de las pruebas y no de la mano:** Los guiones de `tools/e2e/` ya juegan partidas completas en Chrome headless y sacan capturas para revisarlas (C-12). Sacarlas de ahí no cuesta nada, garantiza que la imagen es de una partida de verdad y no de un estado armado, y hace que una pantalla nueva en el README sea una toma nueva en un guion: algo que después se puede repetir. Las que necesitan una sala de Firebase van marcadas y se saltan con `--sin-red`.
 **Consecuencias:** Dentro de las marcas no se edita a mano: lo que se escriba ahí lo pisa `actualizar`. Agregar una pantalla al README son tres pasos (toma en el guion, entrada en el catálogo, `capturas` y `actualizar`). Las capturas se guardan al doble del ancho con que se muestran y con paleta de 256 colores, para que rehacerlas seguido no engorde el repo. Los guiones de e2e calibran sus esperas para una máquina desocupada: con el computador ocupado fallan a medias, y entonces `capturas` deja la imagen vieja en su lugar y lo dice. El estado de cada juego sale de la cabecera de su especificación (`docs/juegos/<id>.md`): si ahí dice una versión vieja, la tabla del README la repite, y ese es el archivo que hay que arreglar.
 
-**Qué no cuenta como cambio:** el estampado de versión. `set-version.py` reescribe los seis `index.html` en cada publicación (C-11), así que medir la edad de una captura contra "la última vez que se tocó la carpeta del juego" dejaba viejas, publicación tras publicación, a las capturas de juegos que nadie había tocado. `git_fecha` se salta los commits —y los cambios sin commitear— cuyo único contenido en esos caminos son las marcas `?v=` y la versión del pie: compara las líneas quitadas contra las puestas con el número de versión borrado, que es lo que distingue un estampado de un módulo nuevo en el import map (la misma línea cambia en los dos casos). Lo prueba `python3 tools/readme.test.py`. Sin esa salvedad el aviso salía siempre y dejaba de querer decir algo, que es la única forma en que este canon se muere.
+**Qué no cuenta como cambio:** el estampado de versión. `set-version.py` reescribe los seis `index.html` en cada publicación (C-11), así que medir la edad de una captura contra "la última vez que se tocó la carpeta del juego" dejaba viejas, publicación tras publicación, a las capturas de juegos que nadie había tocado. `git_fecha` se salta los commits —y los cambios sin commitear— cuyo único contenido en esos caminos son las marcas `?v=` y la versión del pie: compara las líneas quitadas contra las puestas con el número de versión borrado, que es lo que distingue un estampado de un módulo nuevo en el import map (la misma línea cambia en los dos casos). Lo prueba `python3 tools/release/readme.test.py`. Sin esa salvedad el aviso salía siempre y dejaba de querer decir algo, que es la única forma en que este canon se muere.
 
 ## D-52 · El selector de Cartas va en fila, como el toggle de idioma
 **Fecha:** 2026-09-11 · **Estado:** vigente
@@ -323,7 +411,7 @@ Registro tipo ADR (Architecture Decision Record). Las decisiones se numeran y no
 **Consecuencias:** `seg--stack` deja de existir (era el único uso) y con él la regla que ponía el texto a la izquierda. Los scripts de punta a punta que buscaban `.seg--stack` apuntan ahora a `.seg--cards`; los que buscan por texto siguen igual, porque los nombres no cambiaron. Los emojis siguen viéndose en pantalla, así que la sección del README que describe las tres formas sigue siendo cierta tal cual está.
 
 ## D-53 · El ahorcado se juega en cadena: nadie se queda mirando
-**Fecha:** 2026-09-12 · **Estado:** vigente
+**Fecha:** 2026-09-12 · **Estado:** corregida por D-66
 **Decisión:** En El Ahorcado, cada jugador le escribe la palabra **al siguiente** y el último al primero; todos adivinan una palabra y todos ponen una. La alternativa —la app reparte del mazo— queda como la otra opción del selector "La palabra" (`🤝 Cadena` / `🎴 Mazo de la app`), con cadena marcada por defecto. El puntaje son **los errores que le sobraron a quien adivinó**; quien pone una palabra no suma nada.
 **Por qué:** El ahorcado de toda la vida reparte mal los papeles: uno juega y el otro mira cómo juega. Con la cadena el juego es simétrico sin dejar de ser el ahorcado, funciona igual con dos que con seis, y el modo "fiesta" no necesita código propio: es varios celulares con más gente adentro.
 **Por qué el verdugo no suma:** si colgar a la víctima diera puntos, la jugada ganadora sería poner una palabra imposible, que es exactamente lo que arruina al ahorcado. Sin premio, una palabra impenetrable solo le quita puntos al de al lado —y él te escribe la tuya en la misma partida.
@@ -342,7 +430,7 @@ Registro tipo ADR (Architecture Decision Record). Las decisiones se numeran y no
 **Consecuencias:** Las respuestas sí viajan por la sala (el reductor las necesita), así que quien abra la consola puede leerlas: es el mismo trato que Línea de Tiempo hace con los años de las cartas. Se acepta y se anota, porque taparlo costaría cifrar mensajes para atajar a quien ya decidió arruinarse el juego.
 
 ## D-56 · Una letra errada no bloquea la pantalla
-**Fecha:** 2026-09-12 · **Estado:** vigente · **Excepción a C-8b**
+**Fecha:** 2026-09-12 · **Estado:** vigente · **Relación:** excepción a C-8b
 **Decisión:** En El Ahorcado, una letra que no está no abre un aviso que haya que cerrar **en los modos donde el celular no cambia de mano** —varios celulares y contra el celular—: se señala con fondo rojo, sacudida, sonido propio, la tecla tachada y el trazo nuevo del dibujo, y el juego sigue. Lo que sí se queda hasta que el jugador toque es el **veredicto de la ronda**: te colgaron, o la sacaste. En un celular es distinto y no por el error: ahí cada jugada termina con el celular cambiando de mano, así que el resultado de la letra y el “pásale el celular a X” van juntos en una pantalla que espera al jugador (C-9, D-59).
 **Por qué:** El canon C-8b está escrito para el error que interrumpe —colocar mal una carta—, que pasa pocas veces por partida. Acá errar es la jugada normal: en una partida de seis vidas se falla cinco o seis veces, y en varios celulares todos están jugando al mismo tiempo. Un aviso que hay que cerrar seis veces convierte el juego en un trámite y, peor, le come el turno a quien está corriendo contra otros.
 **Consecuencias:** La señal tiene que bastar sin texto, y por eso va por cuatro canales a la vez (color, movimiento, sonido y el dibujo que avanza). El veredicto de ronda mantiene el trato del canon: fondo rojo solo para el que se colgó, tercera persona para los demás.
@@ -360,7 +448,7 @@ Registro tipo ADR (Architecture Decision Record). Las decisiones se numeran y no
 **Consecuencias:** Se deshabilita con un solo error de margen —nadie puede comprarse su propia horca— y la letra comprada se pinta distinta (amarilla) de las adivinadas (cian), para que al final se vea cómo se sacó la palabra. Con cadena la elige el celular de quien puso la palabra, que es el único que la conoce, y viaja en la misma respuesta que una letra normal.
 
 ## D-59 · Los turnos se alternan letra a letra, no palabra por palabra
-**Fecha:** 2026-09-12 · **Estado:** vigente
+**Fecha:** 2026-09-12 · **Estado:** corregida por D-65, D-66
 **Decisión:** En los modos por turnos de El Ahorcado —un celular y contra el celular— cada jugada pasa el turno al **siguiente que sigue vivo**: se prueba una letra y le toca al de al lado. Antes cada jugador terminaba su palabra entera y recién ahí pasaba el turno.
 **Por qué:** Con rondas completas, el que espera es público de la partida del otro durante seis o siete letras seguidas, que es justo lo que este juego venía a arreglar (D-53). Alternando, todos los tableros avanzan a la vez y la carrera se ve: que al de al lado le quede una vida mientras a ti te quedan cuatro es información que llega en el momento en que sirve. Contra el celular cambia todavía más: antes la máquina jugaba su palabra entera después de que tú terminabas la tuya, y lo último de la partida era mirar.
 **Cómo:** El turno sale de la lista de jugadas, no de una variable: `current` es el siguiente vivo después del que hizo la última jugada, y saltea a los que ya terminaron. Una jugada que todavía espera respuesta (cadena) no mueve el turno, así nadie juega encima de una pendiente. ~~Sin turnos —varios celulares— no cambia nada: ahí todos juegan a la vez desde siempre.~~ **D-66 llevó los turnos también a la sala.**
@@ -391,7 +479,7 @@ Registro tipo ADR (Architecture Decision Record). Las decisiones se numeran y no
 **Consecuencias:** Las sugerencias se calculan en el celular de quien escribe y **no viajan**: la palabra sigue siendo secreta (C-10). Salen de la semilla de la partida corrida por la posición del jugador, así que al retomar se ofrecen las mismas y en las pruebas son predecibles. La temática vuelve a tener sentido en los tres modos, de modo que el texto de compartir y el de retomar dejan de prometer algo que no pasaba.
 
 ## D-63 · Una letra confirmada se ve antes de que cambie el turno
-**Fecha:** 2026-09-12 · **Estado:** vigente
+**Fecha:** 2026-09-12 · **Estado:** corregida por D-65
 **Decisión:** Al confirmar una letra, El Ahorcado pasa un cartel breve sobre el área del dibujo —"¡Va!" en cian, "No está" en rosa, "Comprada" en amarillo, con la letra al lado— que aparece y se va solo en un segundo, sin pedir ningún toque. Va en **contra el celular** y en **varios celulares**. Además, contra el celular el tablero propio se retiene 900 ms antes de que el turno pase al celular.
 **Por qué:** Contra el celular la jugada no abría ninguna pantalla y el turno cambiaba en el acto: el tablero saltaba al del celular sin que se alcanzara a ver cómo había ido la letra propia. El celular ya tenía su retención por D-59; el jugador no. Ahora el trato es simétrico: cada uno tira, se ve cómo le fue, y recién ahí le toca al otro.
 **Por qué también en varios celulares:** ahí nada interrumpe a propósito (D-56) y eso sigue igual —el cartel no se toca, no espera y no frena la carrera—, pero el color y la sacudida se pierden si el jugador está mirando la tira de rivales en vez del teclado. Un segundo de cartel lo recupera sin costo.
@@ -402,7 +490,7 @@ Registro tipo ADR (Architecture Decision Record). Las decisiones se numeran y no
 **Consecuencias:** Durante la retención del tablero propio no se puede jugar, pero el título sigue diciendo "¡Te toca, Javi!": hablarle en tercera persona sobre su propio tablero era un parpadeo confuso. El cartel se dispara por jugada nueva, así que al entrar o al retomar una partida a mitad no aparece ninguno.
 
 ## D-64 · El celular adivina con un diccionario de verdad, no con el mazo
-**Fecha:** 2026-09-12 · **Estado:** ~~derogada por D-65~~ · duró unas horas
+**Fecha:** 2026-09-12 · **Estado:** derogada · **Relación:** la derogó D-65; duró unas horas
 **Lo que la derogó:** el modo dejó de ser un duelo. Sin una máquina que adivine, el diccionario
 de cien mil palabras y todo `tools/diccionario/` se fueron con ella. Queda anotada porque lo que
 costó sacar esas listas —y las tres formas en que la extracción salió mal sin avisar— es lo que
@@ -415,7 +503,7 @@ haría falta saber si algún día vuelve a hacer falta un diccionario grande.
 **Consecuencias:** `dictionary(lang)` devuelve el mazo hasta que el grande llega, y `loadDictionary(lang)` lo trae. Los `dict-*.js` entran en `set-version.py` porque el import map también alcanza a los `import()` dinámicos: sin eso quedarían cacheados sin forma de invalidarlos (C-11). `cpuGuess` normaliza una sola vez por diccionario, que con cien mil palabras se nota. `ahorcado/dict.test.mjs` exige que **todas las iniciales** tengan palabras: es lo que atrapó las dos extracciones defectuosas, que ningún chequeo de tamaño habría visto.
 
 ## D-65 · Contra el celular se va; en su lugar queda jugar solo
-**Fecha:** 2026-09-12 · **Estado:** vigente · **Deroga D-64**
+**Fecha:** 2026-09-12 · **Estado:** corregida por D-66 · **Relación:** deroga D-64
 **Decisión:** El tercer modo deja de ser un duelo contra la máquina y pasa a ser **🧍 Jugar solo**: un jugador, una palabra que reparte la app de la temática elegida, y a sacarla. La máquina ya no adivina nada. Se van con ella `cpuGuess` y `matches` del motor, los diccionarios `dict-<idioma>.js` (tres megas) y las herramientas de `tools/diccionario/`.
 **Por qué:** que el celular tratara de adivinar *tu* palabra era una simetría forzada. El ahorcado es alguien que pone una palabra y alguien que la saca; poner al aparato del lado del que adivina no agrega un rival, agrega una animación de un rival. Y salía caro: para que adivinara de verdad hacía falta un diccionario de cien mil palabras por idioma, que es más peso que todo el resto del juego junto.
 **Lo que se gana además:** jugando solo la palabra sale del mazo, así que no hay secreto que comprometer. Este modo no necesita `crypto.subtle` y por lo tanto anda por http, que es justo lo que hacía falta para probarlo desde un celular de la red local sin montar https.
@@ -423,7 +511,7 @@ haría falta saber si algún día vuelve a hacer falta un diccionario grande.
 **Consecuencias:** `hasTurns()` pasa a ser solo el modo de un celular —jugando solo no hay turno que esperar, y en varios celulares nunca lo hubo—, así que `current` puede venir en nulo y el tablero cae al único jugador. La pantalla final tiene una tercera forma: sin ranking, sin "ganó fulano" y con "la palabra era". El cartel de la letra (D-63) se queda, porque este modo tampoco abre ninguna pantalla; la retención del tablero propio se va, porque no hay a quién pasarle el turno.
 
 ## D-66 · En la sala también se juega por turnos
-**Fecha:** 2026-09-12 · **Estado:** vigente · **Corrige D-53 y D-59**
+**Fecha:** 2026-09-12 · **Estado:** vigente · **Relación:** corrige D-53 y D-59
 **Decisión:** En varios celulares se juega **por turnos alternados**, igual que pasándose un celular: una letra cada uno, en el orden en que entraron a la sala. Quien no tiene el turno ve su tablero con el teclado bloqueado y el título dice a quién le toca. La tira de rivales marca en amarillo de quién es el turno.
 **Por qué:** La sala se había diseñado simultánea para que nadie se quedara mirando (D-53). Pero jugando de a dos —que es como se juega la mayoría de las veces— la simultaneidad se come justo lo que hace divertido un duelo: ver la jugada del otro y responder. No hay secuencia que seguir ni contra quién medirse en el momento; son dos solitarios que terminan comparando puntajes. El argumento de "nadie mira" tampoco se sostiene ahí: esperar un turno es un segundo.
 **Lo que cuesta:** con cuatro o más, cada jugador espera a que tiren todos los demás antes de volver a jugar. Es el precio de que haya una secuencia, y se paga con los ojos en la tira de rivales, que ahora sí cuenta algo mientras esperas. Si se vuelve pesado con mesas grandes, la salida sería elegirlo en la sala y no cambiar el reductor.
@@ -432,7 +520,7 @@ haría falta saber si algún día vuelve a hacer falta un diccionario grande.
 **Consecuencias:** `hasTurns()` pasa a ser "todos menos jugando solo". En la sala, `mine` deja de ser siempre verdadero y pasa a ser "es mi turno": el reductor ya descartaba las jugadas fuera de turno, pero ahora el teclado tampoco las deja intentar. El título de la pantalla nombra a quien juega, que en la sala puede no ser el dueño del tablero que estás viendo.
 
 ## D-67 · El laboratorio se va: se sirve el árbol de trabajo
-**Fecha:** 2026-09-12 · **Estado:** vigente · **Deroga D-42**
+**Fecha:** 2026-09-12 · **Estado:** vigente · **Relación:** deroga D-42; derogó solo el laboratorio de interfaz: D-101 (La Copa) y D-191 (idiomas) crearon otros laboratorios, con otro fin
 **Decisión:** Se sacan `lab/` y `tools/lab.py`. Para mirar un cambio de interfaz en un celular de verdad se sirve el árbol de trabajo con `tailscale serve --bg 8765`, que da una URL `https://<equipo>.<tailnet>.ts.net/` alcanzable desde cualquier aparato del tailnet. Para revisar una pantalla suelta sin jugar una partida entera está `tools/e2e/mirar.mjs`.
 **Por qué:** D-42 lo dijo con todas las letras: el laboratorio existía porque «la única forma era publicar el cambio y arriesgarse, o dejarlo en local y no probarlo nunca en el aparato donde se juega». Eso dejó de ser cierto: servir el árbol de trabajo por Tailscale da lo mismo y mejor, porque es **la app entera** y no un espejo, con HTTPS —así que sirven también los modos que necesitan contexto seguro— y sin nada que mantener al día.
 **Lo que costaba:** los espejos son copias del `index.html` de cada juego, y envejecen. Pasó el mismo día que se sacó: al sumarle dos `id` al HTML del resultado, `lab.py revisar` empezó a fallar. Es un aviso útil, pero de un problema que el laboratorio se inventa a sí mismo. En su vida útil nunca se promovió un experimento: `lab.css` estuvo vacío desde el principio y el único que hubo se descartó.
@@ -440,14 +528,14 @@ haría falta saber si algún día vuelve a hacer falta un diccionario grande.
 **Consecuencias:** `stats.js` deja de emitir el entorno `lab` y `envOf()` ya no mira la ruta, solo el host; el panel sigue sabiendo nombrar `lab` para lo que quedó guardado de antes. Se va el paso de "revisar espejos" de la lista de antes de publicar.
 
 ## D-68 · Cuarto Rey no lleva variantes configurables
-**Fecha:** 2026-09-13 · **Estado:** vigente · **Acota D-03, D-06 y D-12**
+**Fecha:** 2026-09-13 · **Estado:** vigente · **Relación:** acota D-03, D-06 y D-12
 **Decisión:** Se saca CR-17 de los requerimientos. Cuarto Rey se juega de una sola forma: dos sorbos por regla, la partida termina con el cuarto rey y el celular reparte. Las tres variantes que se habían dejado anotadas —elegir la cantidad de sorbos, seguir hasta agotar el mazo, usar naipe real— no se van a construir.
 **Por qué:** eran tres cosas distintas metidas en una línea, y ninguna se sostiene sola. Los sorbos configurables no son un número: "toma dos sorbos" está escrito en las cartas, en los overlays y en el ranking, en tres idiomas, así que la variante se paga entera en textos para cambiar un 2 por un 3 en una app donde el vaso lo sirve cada uno. Seguir hasta agotar el mazo revierte D-06, que eligió terminar con el cuarto rey justamente para no dejar rondas largas sin tensión. Y el naipe real revierte D-12: el celular dejaría de repartir y cada turno ganaría una pantalla de "¿qué carta salió?", que es fricción en el único momento en que el juego pide no tener ninguna.
 **Lo que no cambia:** D-03 sigue valiendo por lo que hace hoy —las reglas son datos y por eso el juego existe en tres idiomas sin tocar lógica—, no por la variante que prometía. Si algún día aparece una variante que la mesa pida de verdad, cabe igual; lo que se descarta es construirla por si acaso.
 **Consecuencias:** la especificación deja de listar las variantes entre las ideas futuras. De los pendientes de Cuarto Rey queda cerrado también CR-18, así que el juego no tiene requerimientos abiertos.
 
 ## D-69 · Dudo: cinco dados, ases comodín y calzar, pero sin ronda obligada
-**Fecha:** 2026-09-13 · **Estado:** vigente
+**Fecha:** 2026-09-13 · **Estado:** corregida por D-71
 **Decisión:** El juego nuevo es **Dudo** 🎲 (2 a 6). Se juega con cinco dados por jugador, los ases son comodín, subir es más cantidad o la misma cantidad con pinta mayor —entrar a los ases cuesta la mitad y salir el doble más uno— y se puede **calzar** desde que la apuesta llega a la mitad de los dados de la mesa. **No** hay ronda obligada.
 **Por qué este juego:** el menú tenía cartas, palabras, números y una grilla, y no tenía dados. Y es el juego donde el celular más mejora al original: no reemplaza un mazo como en Cuarto Rey, sino que reparte, **prohíbe la apuesta ilegal** y cuenta al instante, que es exactamente lo que se discute a gritos en la mesa real. Además casi no tiene contenido que traducir —no hay mazo—, así que los tres idiomas cuestan la interfaz y nada más.
 **Por qué calzar con tope:** sin restricción es una apuesta gratis. Con muchos dados tapados, acertar la cantidad exacta es casi imposible, pero fallar cuesta lo mismo que dudar mal, así que el que va perdiendo lo intentaría siempre. Desde la mitad de la mesa la cuenta exacta ya es una decisión.
@@ -455,14 +543,14 @@ haría falta saber si algún día vuelve a hacer falta un diccionario grande.
 **Consecuencias:** el modo de varios celulares no entra en la v0.28 y se muestra "Próximamente", que es lo que C-5 manda para un modo que todavía no existe. El motor ya habla el protocolo de la sala, así que lo que falta es la sala, no el juego.
 
 ## D-70 · Los dados no salen de la semilla
-**Fecha:** 2026-09-13 · **Estado:** vigente · **Excepción a C-7**
+**Fecha:** 2026-09-13 · **Estado:** vigente · **Relación:** excepción a C-7
 **Decisión:** En Dudo, los dados de cada ronda **no** se derivan de la semilla compartida: cada celular tira los suyos con `crypto.getRandomValues` y publica `sha256(dados + sal)`. Al dudar, cada uno manda sus dados y su sal, y todos verifican los hashes anunciados al abrir la ronda (C-10).
 **Por qué:** C-7 dice que todo lo repartible sale de la semilla, y para las cartas de Línea de Tiempo o la palabra del mazo del Ahorcado está bien: son públicas apenas se juegan. Los dados no. **El código de esta app es público**: si los dados salieran de una semilla que todos los celulares conocen, cualquiera podría abrir la consola y calcular los del rival, que es el juego entero. Es el mismo problema que ya tenía la flota de Batalla Naval, y se resuelve igual: el secreto vive en el celular de su dueño.
 **Cómo queda C-7 igual:** el estado se sigue derivando de la lista de mensajes. Lo que cambia es que el mensaje que abre la ronda lleva un hash en vez de los dados, y que la ronda no se puede contar hasta que estén todos los `open`. En un celular y contra el celular los dados van en claro en el mismo mensaje —no hay a quién escondérselos— y por eso el destape es instantáneo: un solo camino en el motor para los tres modos.
 **Consecuencias:** una sala no puede resolver una ronda si alguien se va sin destapar. A diferencia del Ahorcado (D-66), acá **no se saltea el turno de quien se fue**: en el Ahorcado cada uno tiene su tablero y saltarlo solo cambia el orden, pero en Dudo los dados del ausente son parte de la cuenta y descartarlos cambiaría el resultado, además de depender de la presencia, que cada celular ve distinto. Una sala trabada se cancela (D-50). Queda anotado para cuando se construya DU-09.
 
 ## D-71 · Dudo se dice en chileno, y en un duelo no se calza
-**Fecha:** 2026-09-13 · **Estado:** vigente · **Ajusta D-69**
+**Fecha:** 2026-09-13 · **Estado:** vigente · **Relación:** ajusta D-69
 **Decisión:** Tres cambios en Dudo, los tres sobre cómo se juega y cómo se lee la mesa.
 
 **1. Calzar necesita tres jugadores.** Con dos, calzar deja de ser una apuesta: el que calza ve su
@@ -494,8 +582,8 @@ tres y termina en dos. Una partida guardada de antes no trae `chileno` en su con
 retoma con los nombres encendidos, que es el valor por defecto.
 
 ## D-72 · La tarjeta que se ve al compartir un link
-**Fecha:** 2026-09-13 · **Estado:** vigente; desde D-205 `set-version.py` ya no corre `og.mjs tarjetas`: un bloque atrasado lo frena el check `pruebas`
-**Decisión:** Cada página publicada —el menú y los seis juegos— lleva sus propias etiquetas de Open Graph y de Twitter, con su título, su bajada y una imagen propia de 1200×630 en `assets/og/`. Las etiquetas las escribe `node tools/og.mjs tarjetas` desde `assets/js/games.js`, dentro de un bloque `<!-- generado: og -->`, y `set-version.py` lo corre en cada publicación. Las imágenes las dibuja `tools/og/tarjeta.html` —con los estilos y los datos reales— y las fotografía `node tools/og.mjs imagenes`.
+**Fecha:** 2026-09-13 · **Estado:** corregida por D-205 · **Relación:** desde D-205 `set-version.py` ya no corre `og.mjs tarjetas`: un bloque atrasado lo frena el check `pruebas`
+**Decisión:** Cada página publicada —el menú y los seis juegos— lleva sus propias etiquetas de Open Graph y de Twitter, con su título, su bajada y una imagen propia de 1200×630 en `assets/og/`. Las etiquetas las escribe `node tools/release/og.mjs tarjetas` desde `assets/js/games.js`, dentro de un bloque `<!-- generado: og -->`, y `set-version.py` lo corre en cada publicación. Las imágenes las dibuja `tools/og/tarjeta.html` —con los estilos y los datos reales— y las fotografía `node tools/release/og.mjs imagenes`.
 **Por qué por página y no una sola para todo el sitio:** en esta app el link que más se comparte no es la portada, es **la invitación a una sala**: `juegosdesalon.cl/toque-y-fama/?sala=WDDT`, pegado en un WhatsApp. Con una tarjeta única, esa invitación mostraba el nombre del sitio y nada más; ahora muestra de qué juego es la sala, para cuántos y cuánto dura, que es exactamente lo que necesita saber el que la recibe. Antes de esto no había ninguna etiqueta: un link pegado en un chat salía sin imagen y con el título pelado.
 **Por qué generadas y no escritas a mano:** son siete páginas por veinte etiquetas. Escribirlas a mano es copiar el nombre y la bajada de cada juego a un segundo lugar, y ese segundo lugar envejece: `games.js` ya es de donde salen el menú y el README. `revisar` avisa si una página quedó atrás o si falta una imagen.
 **Por qué JPEG y no PNG:** son letras grandes sobre un degradado, y en PNG pesaban 430 KB cada una: 3 MB en el repo por siete imágenes que solo miran los robots de los chats. En JPEG al 82% pesan 130 KB y a este tamaño no se distingue la diferencia. Se convierten con `sips`, la misma herramienta que ya usa `readme.py` para las capturas.
@@ -510,17 +598,10 @@ retoma con los nombres encendidos, que es el valor por defecto.
 **Por qué preguntarle el nombre del idioma al navegador:** `Intl.DisplayNames` nombra cualquier código en español, así que un idioma nuevo en `i18n.js` aparece como "Francés" y no como `fr`, sin una tabla que mantener. Si el navegador no sabe, se muestra el código.
 **Consecuencias:** hay que **publicar las reglas** en la consola de Firebase para que el cambio de validación tenga efecto; hasta entonces un modo nuevo seguiría rechazado. El tope de jugadores dejó de ser un 6 escrito en dos archivos, pero los roles de sala (`A`–`F`) y el patrón `$p` de las reglas siguen topando en seis: un juego de más de seis en dos celulares es otro cambio. Un modo desconocido en la base ahora suma al total del juego: lo que antes se descartaba como basura, si tiene forma de modo, cuenta.
 
-
-## D-173 · La invitación dice quién invita
-**Fecha:** 2026-09-13 · **Estado:** vigente · **Amplía D-72** · Nació como D-73, repetida con la del panel; se renumeró el 2026-10-02 (D-172)
-**Decisión:** Al compartir una sala, el mensaje es **"{nombre} te invita a jugar {juego} en juegosdesalon.cl - Sala: {código}"**. El texto es uno solo para los cuatro juegos con sala y vive en `COMMON` de `assets/js/i18n.js`, no en el `rules.js` de cada uno. Nombra a **quien toca compartir**, no al anfitrión: en una sala de seis cualquiera puede pasar el link, y el que invita es el que lo pasa.
-**Por qué:** el mensaje decía "Únete a mi sala de Línea de Tiempo. Código: WFBN" — sin nombre. Llega por WhatsApp a alguien que muchas veces no conoce la app, y lo primero que hace falta saber es de parte de quién viene. El resto —de qué se trata el juego, para cuántos, cuánto dura— ya no hace falta escribirlo: lo pone la tarjeta que el chat arma solo con el link (D-72), y por eso también se sacó la temática que algunos juegos metían en el texto.
-**Por qué compartido y no por juego:** eran cuatro juegos por tres idiomas, doce frases que decían lo mismo con doce redacciones distintas. La única parte que cambia es el nombre del juego, y ese ya viaja como `{game}`.
-**Al copiar también viaja el mensaje.** Sin diálogo nativo —en un computador, o si el navegador no comparte— el portapapeles se llevaba **solo la URL** y el texto se perdía: quien invitaba tenía que escribir a mano de qué se trataba. Ahora se copia el mensaje y el link, en dos líneas.
-**Y la tarjeta se dibuja adentro de una franja segura:** cada chat recorta la imagen al alto de su ventanita y lo que se come son los lados. Con 1200×630 recortada a 1,5:1 se van 127 px por lado, y ahí quedaba justo la última letra del título —la N de "SALÓN" salía cortada en WhatsApp—. Ahora todo lo que se lee vive dentro del 88% central, y `node tools/og.mjs imagenes` avisa si algo se acerca al borde. El degradado del fondo es lo único que puede perderse.
+> D-173 (antes D-73 duplicada) está más abajo, en su orden.
 
 ## D-74 · El idioma puede venir en el link
-**Fecha:** 2026-09-13 · **Estado:** vigente · **Amplía D-47**
+**Fecha:** 2026-09-13 · **Estado:** corregida por D-197 · **Relación:** amplía D-47
 **Decisión:** Cualquier página de la app acepta `?lang=es|en|pt`. Al cargar, `i18n.js` lo aplica, lo guarda como cualquier elección y **saca el parámetro de la barra de direcciones**, dejando el resto de la URL intacto (el `?sala=` de una invitación sigue ahí). Además hay dos puertas de entrada, `/pt/` y `/en/`, que son dos archivos de veinte líneas: dejan el idioma elegido y mandan a la portada, que es una sola para los tres. Y **la invitación a una sala lleva el idioma pegado**: quien la recibe abre la app en el mismo idioma en que se la mandaron.
 **Por qué no rompe D-47:** ese canon dice que el idioma **no se detecta** del navegador, y sigue siendo así. Acá no se adivina nada: alguien eligió el idioma —para sí mismo con el toggle, o para el que va a recibir el link— y esa elección viaja. Un `?lang=` que no sea uno de los tres se ignora en silencio y la app queda en español.
 **Por qué rutas y no subdominios:** `pt.juegosdesalon.cl` es lo más bonito de leer, pero GitHub Pages sirve **un** dominio por repositorio (el `CNAME`), así que cada subdominio necesitaría otro destino de publicación o un proxy delante. Por una etiqueta de idioma es mucha máquina. Las carpetas cuestan dos archivos y no tocan la infraestructura.
@@ -529,7 +610,7 @@ retoma con los nombres encendidos, que es el valor por defecto.
 **Consecuencias:** las páginas de los juegos no tienen una URL por idioma: adentro el idioma se elige y se guarda, así que no hay tres direcciones que ofrecerle al buscador. El panel es español solo y el parámetro no le hace nada. Prueba de punta a punta en `tools/e2e/idioma-por-url.mjs`.
 
 ## D-75 · La app mide lo que se ve, no lo que la pantalla dice que mide
-**Fecha:** 2026-09-13 · **Estado:** vigente
+**Fecha:** 2026-09-13 · **Estado:** corregida por D-77
 **Decisión:** `.app` pide `calc(100dvh - var(--safe-top) - var(--safe-bottom))` y no `100dvh`. El `body` ya reserva las muescas con su `padding`, así que pedir la pantalla entera adentro de una caja que ya se achicó dejaba la página **más alta que el celular por exactamente el alto de las muescas**: 81 px en un iPhone con muesca (47 arriba, 34 abajo).
 **Cómo se vio:** en Dudo, la barra de apostar se apoya en el borde de abajo (`margin-top: auto`), así que se iba fuera de la pantalla con medio celular vacío más arriba. En los otros juegos el contenido baja desde arriba y esos 81 px de más solo se notaban como un scroll de la nada. Es un error del armazón compartido, no de Dudo: se arregla una vez en `base.css` y vale para los seis juegos, el menú y el panel.
 **Por qué ninguna prueba lo vio:** en Chrome headless `env(safe-area-inset-*)` vale 0, así que la página medía exactamente lo que tenía que medir y todo pasaba. El error solo existe en un celular con muesca, que es justo donde se juega.
@@ -538,7 +619,7 @@ retoma con los nombres encendidos, que es el valor por defecto.
 ---
 
 ## D-76 · Las capturas se sacan con la pantalla quieta
-**Fecha:** 2026-09-13 · **Estado:** vigente
+**Fecha:** 2026-09-13 · **Estado:** corregida por D-77
 **Decisión:** Antes de disparar, `b.shot()` (`tools/e2e/cdp.mjs`) espera a que terminen las
 animaciones finitas que estén corriendo, con un tope de 900 ms; las infinitas —las burbujas del
 fondo, el `wiggle`, el `shimmer`— no se esperan nunca porque no terminan. Además, la lista de
@@ -570,7 +651,7 @@ que en realidad decía "¡Cumplida!"—, que se arreglaron en el guion, no en el
 ---
 
 ## D-77 · La app se arma con el alto chico de la pantalla
-**Fecha:** 2026-09-13 · **Estado:** vigente · **Corrige D-75 (el alto), ajusta D-76**
+**Fecha:** 2026-09-13 · **Estado:** vigente · **Relación:** corrige D-75 (el alto) y ajusta D-76
 **Decisión:** `.app` mide `calc(100svh - muescas)`, no `100dvh`. `svh` es el **alto chico**: el que
 queda cuando el navegador muestra toda su interfaz. El `body` sigue pintando `100dvh` para que el
 fondo llegue al borde. Y `mirar.mjs --muescas` dejó de simular las muescas con variables CSS: ahora
@@ -614,23 +695,23 @@ escribe en inglés. Queda como canon en C-13.
 README no es parte de la app: es la puerta del repositorio, y por ahí entra gente de cualquier
 parte que no lee español. Todo lo demás lo lee quien trabaja en el proyecto.
 **Por qué también los bloques generados:** si la prosa quedaba en inglés y las tablas en español,
-`python3 tools/readme.py actualizar` devolvía la mitad del archivo al español en la primera
+`python3 tools/release/readme.py actualizar` devolvía la mitad del archivo al español en la primera
 publicación. Un README bilingüe por accidente es peor que uno en cualquiera de los dos idiomas.
 **Los títulos llevan los dos nombres:** `## 👑 Fourth King (Cuarto Rey)`. Primero el inglés, que es
 por lo que alguien de afuera busca el juego, y entre paréntesis el nombre de verdad, que es como se
 llama en la app y lo que va a ver en pantalla. La tabla de arriba muestra los tres
 (`Fourth King / Cuarto Rey / Quarto Rei`). El ancla del índice sale del título completo
-(`#-fourth-king-cuarto-rey`) y la arma `titulo_juego()` en `tools/readme.py`, la misma función que
+(`#-fourth-king-cuarto-rey`) y la arma `titulo_juego()` en `tools/release/readme.py`, la misma función que
 dicta cómo se titula la sección: si cambia el título cambia el enlace, y no hay forma de que queden
 apuntando a distinto lado.
-**Consecuencias:** `tools/hechos.mjs` guarda los modos en los dos idiomas, no solo en español, y
+**Consecuencias:** `tools/release/hechos.mjs` guarda los modos en los dos idiomas, no solo en español, y
 `jugadores` viaja como "1 to 6". Al agregar un juego hay un paso más explícito en
 `docs/AGREGAR-JUEGO.md`: la sección del README y el `pie` de las capturas van en inglés.
 
 ---
 
 ## D-79 · El panel anota quién ganó y de qué país se jugó
-**Fecha:** 2026-09-14 · **Estado:** vigente · **Cambia D-44**
+**Fecha:** 2026-09-14 · **Estado:** vigente · **Relación:** cambia D-44
 **Decisión:** El registro de una sala (`stats/<env>/days/<día>/rooms/<CÓDIGO>`) suma dos cosas:
 `co/<rol>`, el país del celular de cada jugador en dos letras, y `end: { winner, name, at }`, quién
 ganó esa partida. Con eso el panel muestra una **bitácora de salas jugadas**: cuándo, quiénes (con
@@ -663,7 +744,7 @@ una sala de la que se sabe menos es una sala que igual pasó.
 ---
 
 ## D-80 · Seis rangos en el panel, y lo que se baja crece con ellos
-**Fecha:** 2026-09-14 · **Estado:** vigente · **Amplía D-79**
+**Fecha:** 2026-09-14 · **Estado:** vigente · **Relación:** amplía D-79
 **Decisión:** El panel ofrece seis rangos —7, 30, 60 y 90 días, 1 año y lo que va del año—, y con
 ellos se filtran **todas** las cifras de la página, incluida la bitácora de salas. La lista de
 rangos vive en `panel/aggregate.js` (`RANGOS`): de ahí salen el selector, el título, la ventana que
@@ -685,7 +766,7 @@ Los datos solo llegan hasta donde llegue el registro: el panel existe desde la v
 el ganador solo hay desde la v0.33.6 (D-79).
 
 ## D-81 · Las cartas de la sala viajan en sobres cerrados
-**Fecha:** 2026-09-14 · **Estado:** vigente · **Amplía D-70**
+**Fecha:** 2026-09-14 · **Estado:** vigente · **Relación:** amplía D-70
 **Decisión:** En la sala de Julepe el reparto no viaja en claro ni sale de una semilla compartida:
 cada celular genera un par de llaves al entrar (RSA-OAEP del propio navegador, `assets/js/sobre.js`)
 y publica la pública junto con su nombre; quien reparte cierra la mano de cada jugador con la llave
@@ -732,7 +813,7 @@ historia que la mesa cuenta después. La pantalla se lo dice con esas palabras (
 obligado!") y el asiento lo marca distinto, para que nadie crea que apretó el botón equivocado.
 
 ## D-84 · El nombre del séptimo juego cambia en cada idioma
-**Fecha:** 2026-09-14 · **Estado:** vigente · **Amplía D-48**
+**Fecha:** 2026-09-14 · **Estado:** vigente · **Relación:** amplía D-48
 **Decisión:** El juego se llama **Julepe** en español, **Julep** en inglés y **Paga o Bolo** en
 portugués de Brasil.
 **Por qué:** el criterio de esta app es que el nombre se reconozca en el idioma en que se juega
@@ -747,7 +828,7 @@ el mismo `id` (`julepe`), que es lo que ya hacen los otros seis. El castigo se s
 julepe dentro del juego en español y en inglés; en portugués es "pagar o bolo".
 
 ## D-85 · Arrastrar la carta a la línea es elegir, nunca colocar
-**Fecha:** 2026-09-18 · **Estado:** vigente · **Amplía C-8 y D-38**
+**Fecha:** 2026-09-18 · **Estado:** corregida por D-86, D-87 · **Relación:** amplía C-8 y D-38
 **Decisión:** En Línea de Tiempo la carta se puede **arrastrar** desde la mano hasta su lugar en la
 línea, y la carta ya puesta se puede **retomar** y llevar a otra ranura, o soltar fuera de la línea
 para devolverla a la mano. Soltar **elige**: deja la carta y el lugar marcados, exactamente como si
@@ -795,7 +876,7 @@ enteran, y quien prefiera tocar sigue tocando.
   de dos dimensiones, que es para lo que la clave del destino es cualquier cosa y no un índice.
 
 ## D-86 · El gesto de arrastrar no se lo puede llevar el navegador
-**Fecha:** 2026-09-18 · **Estado:** vigente · **Corrige D-85**
+**Fecha:** 2026-09-18 · **Estado:** vigente · **Relación:** corrige D-85
 **Decisión:** `overscroll-behavior: none` va en `<html>` **y** en `<body>`, y `touch-action: pan-x`
 va en toda la tira de la mano, no solo en las cartas.
 
@@ -825,7 +906,7 @@ página y se va en desplazamiento vertical.
   (C-11) hay que pedir **la página del juego**, no solo la portada.
 
 ## D-87 · Elegir no reconstruye la línea
-**Fecha:** 2026-09-18 · **Estado:** vigente · **Corrige D-85**
+**Fecha:** 2026-09-18 · **Estado:** vigente · **Relación:** corrige D-85
 **Decisión:** Elegir una carta o un lugar repinta **solo las ranuras**, la mano y el botón. Las filas
 de hitos no se tocan. La línea se reconstruye entera únicamente cuando cambia de verdad: cuando se
 coloca una carta.
@@ -1109,7 +1190,7 @@ un mensaje que lo dice (`errConfig`). El árbol se llama `torneos/` y no `copas/
 pueden nombrar juegos (C-16) y `panel/adapta.test.mjs` lo revisa.
 
 ## D-97 · El contenido del día sale de una semilla pública, y ¿Dudo o le creo? puntúa decisiones
-**Fecha:** 2026-09-23 · **Estado:** vigente
+**Fecha:** 2026-09-23 · **Estado:** corregida por D-102
 **Decisión:** Todo lo de un día (el número, las cartas, la flota, los dados, el orden de las
 palabras) sale de `hash32("código:día:sal")` con el generador de Línea de Tiempo. En ¿Dudo o le
 creo?, cada mano da `100 × P(la elección era cierta)`, calculada con lo que el jugador veía, sin
@@ -1151,7 +1232,7 @@ Conexiones y la final) aparece con `?tres` en la URL o en el modo de prueba.
 portada la haría la opción por defecto de quien quiere algo corto.
 
 ## D-101 · La Copa se prueba en un laboratorio antes de llegar al menú
-**Fecha:** 2026-09-23 · **Estado:** vigente
+**Fecha:** 2026-09-23 · **Estado:** corregida por D-112, D-175
 **Decisión:** La Copa sale del menú como juego jugable: su tarjeta se sigue viendo, apagada y con
 "Próximamente" (`available: false`, `labs: true` en `games.js`), y se juega desde **`/labs/`**,
 una página que no está enlazada desde el menú ni se indexa. El laboratorio ofrece tres pasos:
@@ -1178,7 +1259,7 @@ portada del README la marca `🧪 lab`. Los reportes se leen por ahora en la con
 publicar las reglas de nuevo por el nodo `feedback`.
 
 ## D-102 · La Copa no inventa UX: reusa la de los juegos que ya existen
-**Fecha:** 2026-09-23 · **Estado:** vigente
+**Fecha:** 2026-09-23 · **Estado:** corregida por D-107
 **Decisión:** Después de probarla en el laboratorio, el dueño pidió no reinventar interfaz: lo
 que ya existe en otro juego está probado. Por eso:
 - **⏳ Línea Relámpago** es el modo solo de Línea de Tiempo: una mano de 9 cartas que se juegan
@@ -1209,7 +1290,7 @@ a la luna no cuenta como error: solo cuenta dejar la casilla rompiendo una regla
 errores: todos los que terminan sacan 100 y el tiempo ordena el día.
 
 ## D-103 · Zip por niveles contra el reloj, sesión de prueba en cada juego, y ajustes a Reinas y Tango
-**Fecha:** 2026-09-23 · **Estado:** vigente
+**Fecha:** 2026-09-23 · **Estado:** corregida por D-167
 **Decisión:** Lo que salió de probar la v0.44 en el laboratorio:
 - **Zip** pasa a jugarse **por niveles contra el reloj**: tres minutos de tiempo activo para
   resolver la mayor cantidad de tableros, cada uno igual o más grande que el anterior (4 × 4 → 7 ×
@@ -1246,7 +1327,7 @@ reporte. Que se puedan leer públicamente es el precio de no tener
 servidor; si eso cambia, se cierra la lectura al UID del dueño y se leen desde el panel.
 
 ## D-105 · Cuenta regresiva antes de cada juego con reloj
-**Fecha:** 2026-09-23 · **Estado:** vigente (desde la 0.46, de 3 a 1: con 5 se hacía larga)
+**Fecha:** 2026-09-23 · **Estado:** vigente · **Relación:** desde la 0.46 la cuenta va de 3 a 1: con 5 se hacía larga
 **Decisión:** Al tocar Empezar (el día, la sesión de prueba o la práctica) aparece una capa con
 el nombre del juego y una cuenta de 3 a 1, un número por segundo, con un tic y una vibración
 corta. Después dice **¡A jugar!** y se desvanece sola sobre el tablero. El tablero no se dibuja
@@ -1332,7 +1413,7 @@ lo que se decide no es lo que se publica. Y un reporte escrito es caro de conseg
 una copa creada con días de anticipación se desfasa si los amigos tardan en inscribirse.
 
 ## D-111 · La copa no usa la temática de Brasil
-**Fecha:** 2026-09-23 · **Estado:** vigente
+**Fecha:** 2026-09-23 · **Estado:** corregida por D-187
 **Decisión:** Línea Relámpago, ¿En qué año? y la final eligen sus temáticas entre las de Línea
 de Tiempo **menos Brasil** (`copa/juegos/mazos.js`). Las copas de prueba en curso pueden cambiar
 de temática con esto (el sorteo es sobre una lista más corta).
@@ -1354,7 +1435,7 @@ que no sea brasileño.
 la primera hace que el tablero parezca imposible.
 
 ## D-113 · Todos los minijuegos de 0 a 100, la hora del Pacífico, y "Invitar" solo antes de partir
-**Fecha:** 2026-09-23 · **Estado:** vigente
+**Fecha:** 2026-09-23 · **Estado:** corregida por D-194
 **Decisión:**
 - **Todos los minijuegos puntúan de 0 a 100**: Línea (la parte de cartas bien puestas), el número
   (100 menos 10 por intento extra), ¿En qué año? y la final (el promedio de sus hitos o rondas) y
@@ -1394,7 +1475,7 @@ la primera hace que el tablero parezca imposible.
 **Por qué:** probar una copa de 7 días con amigos no puede tomar 7 días.
 
 ## D-116 · Cada cosa en su momento de la copa
-**Fecha:** 2026-09-24 · **Estado:** vigente; la invitación en Administrar la cambia D-176
+**Fecha:** 2026-09-24 · **Estado:** corregida por D-176 · **Relación:** D-176 cambia la invitación solo en Administrar
 **Decisión:** Una revisión de lo que depende de la etapa de la copa (antes de partir, en juego,
 terminada) y de si la inscripción está cerrada:
 - **Invitación** (en Administrar y en el tablero): solo antes de partir y con la inscripción abierta.
@@ -1438,7 +1519,7 @@ títulos largos parten línea en vez de salirse de la pantalla.
 **Por qué:** un límite que no se ve se descubre cuando ya cortó el texto.
 
 ## D-120 · El calendario con fechas, el día de gracia explícito, y la invitación más simple
-**Fecha:** 2026-09-24 · **Estado:** vigente
+**Fecha:** 2026-09-24 · **Estado:** corregida por D-127
 **Decisión:**
 - **El tablero dice el día de la copa y su fecha** ("Día 2 de 7 · jueves 24 de septiembre"), y la
   tarjeta de hoy también ("Día 2 de 7 · jue 24"), como las tarjetas chicas del calendario.
@@ -1473,7 +1554,7 @@ su código al azar, y `torneoAlias/<alias>` = `{ code, hasta }` apunta a ella.
 
 ## D-122 · Las reglas de Firebase se publican con un script
 **Fecha:** 2026-09-24 · **Estado:** vigente
-**Decisión:** `node tools/reglas.mjs publicar` sube `firebase/database.rules.json` y la vuelve a
+**Decisión:** `node tools/firebase/reglas.mjs publicar` sube `firebase/database.rules.json` y la vuelve a
 leer para verificar que quedó; `revisar` dice si lo publicado es lo del repo. Usa una **llave de
 cuenta de servicio** que el dueño genera una vez en la consola y guarda fuera del repo
 (`~/.config/juegos-de-salon/firebase-admin.json`, carpeta 700, archivo 600; `.gitignore` la
@@ -1495,7 +1576,7 @@ está, cuenta como enviado.
 reintentar), y revisando el caso apareció este riesgo.
 
 ## D-124 · Los mensajes para compartir: título con "La Copa:" y el link en su línea
-**Fecha:** 2026-09-24 · **Estado:** vigente
+**Fecha:** 2026-09-24 · **Estado:** corregida por D-165
 **Decisión:** La tabla parcial se titula **"📊 La Copa: Valdenenas · Tabla de posiciones (día 2)"**
 y cierra con **"⏳ ¡Día 2 en curso! Falta que jueguen: …"**; el resumen final, "🏁 La Copa: … ·
 Terminó". Ya no se escribe "la {copa}", que con nombres propios quedaba "la Valdenenas". El link va
@@ -1515,7 +1596,7 @@ los días que el jugador ya puede ver (no delata lo de hoy).
 **Por qué:** con el resto en gris no se podía seguir la carrera de nadie más que la propia.
 
 ## D-126 · La tabla parcial como imagen, y "(-1J)" para quien lleva menos juegos
-**Fecha:** 2026-09-24 · **Estado:** vigente
+**Fecha:** 2026-09-24 · **Estado:** corregida por D-141
 **Decisión:**
 - Bajo el gráfico de posiciones, **"📤 Compartir como imagen"** dibuja en el celular (canvas, con
   las fuentes de la app) una imagen de 1080 px de ancho: el nombre de la copa, "Tabla de
@@ -1530,7 +1611,7 @@ los días que el jugador ya puede ver (no delata lo de hoy).
 va último puede ser solo el que todavía no juega.
 
 ## D-127 · La invitación promocional
-**Fecha:** 2026-09-25 · **Estado:** vigente
+**Fecha:** 2026-09-25 · **Estado:** corregida por D-176
 **Decisión:** La invitación que comparte el admin (y "Invitar al grupo" del tablero) es un
 mensaje para animar a participar:
 
@@ -1544,6 +1625,7 @@ mensaje para animar a participar:
 **Los minijuegos no se nombran: son sorpresa.** No lleva mensaje personal del admin. Sigue
 ofreciéndose solo antes de que parta la copa y con la inscripción abierta (D-116).
 **Por qué:** pedido del dueño; la invitación es lo primero que ve quien todavía no se decide.
+
 ## D-128 · Conexiones agrupa por significado, no por juegos de palabras
 **Fecha:** 2026-09-25 · **Estado:** vigente
 **Decisión:** Los grupos de Conexiones son lo que las cuatro cosas **son o tienen en común**
@@ -1562,7 +1644,7 @@ que quedar después del momento en que se publica.
 rebuscado; un grupo tiene que poder adivinarse pensando en las cosas, no en las palabras.
 
 ## D-129 · Toque y Fama: jugar solo en vez de contra el celular
-**Fecha:** 2026-09-25 · **Estado:** vigente
+**Fecha:** 2026-09-25 · **Estado:** corregida por D-142
 **Decisión:** El tercer modo de Toque y Fama deja de ser "🤖 Contra el celular" (un duelo contra un
 solver que adivinaba tu número) y pasa a ser **"🧍 Jugar solo"**: el celular elige un número
 secreto y tú lo adivinas en la menor cantidad de intentos, con récord por cantidad de cifras y
@@ -1599,7 +1681,7 @@ no abre. Una leyenda debajo explica los estados.
 **Por qué:** pedido del dueño: que cada uno vea su grilla completa y qué le queda.
 
 ## D-132 · Un agente de usabilidad con ronda diaria y dilemas como issues
-**Fecha:** 2026-09-25 · **Estado:** vigente
+**Fecha:** 2026-09-25 · **Estado:** corregida por D-204, D-213
 **Decisión:** Un subagente (`.claude/agents/usabilidad.md`) revisa solo usabilidad: textos,
 botones, interacciones, navegación y mensajes para compartir, con la guía `docs/USABILIDAD.md`
 (reglas U-n, que crecen con cada decisión del dueño).
@@ -1611,7 +1693,7 @@ botones, interacciones, navegación y mensajes para compartir, con la guía `doc
 - **Qué pregunta:** textos nuevos, puntajes, reglas, funciones, rediseños y todo lo discutible,
   como **issues de GitHub** con la etiqueta `usabilidad` (estados `pendiente` → `resuelto` o
   `archivado`). Se crean, resuelven, archivan y reabren desde la conversación con
-  `node tools/dilemas.mjs`; la decisión se anota en la guía.
+  `node tools/agents/dilemas.mjs`; la decisión se anota en la guía.
 - Los guiones `copa.mjs` y `mirar.mjs` aceptan `SITIO=http://localhost:<puerto>` para probar una
   copia aparte del repo sin chocar con la que está sirviendo el puerto 8765.
 **Por qué:** pedido del dueño: bugs como el reloj de Conexiones o los textos rebuscados se
@@ -1635,8 +1717,8 @@ no: se tocan."), con los colores del tablero de verdad. Y **el tablero pierde lo
 entre zonas**: todas las casillas llevan la misma línea fina y las zonas se distinguen solo por el
 color, como en el juego original. **Lo decidió el dueño sabiendo que los bordes estaban por
 accesibilidad** (C-8, no depender solo del color); el revisor de usabilidad no lo vuelve a marcar.
-Riesgo conocido: dos pares de colores se parecían (naranja #f4b183 con durazno #f8cbad, celeste
-#9dc3e6 con turquesa #b4dfe0). **Actualización 2026-09-28:** molestó y se rehízo la paleta `ZONAS`
+Riesgo conocido: dos pares de colores se parecían (naranja #f4b183 con durazno #f8cbad,
+celeste #9dc3e6 con turquesa #b4dfe0). **Actualización 2026-09-28:** molestó y se rehízo la paleta `ZONAS`
 de ui-reinas.js: entre los ocho colores que usa un tablero de 8 × 8, el par más parecido quedó
 a 17 de ΔE2000 (antes, 7,8), sin rojos que se confundan con el choque.
 **Por qué:** pedido del dueño (trabajado en otra sesión y publicado junto con D-133).
@@ -1663,7 +1745,7 @@ sobre H6 se salía por la derecha. Para el jugador importa que el barco gire cer
 no que gire exactamente sobre la proa. Llevarlo lejos no tendría sentido.
 
 ## D-137 · El panel separa La Copa de los demás juegos, y mide sus minijuegos
-**Fecha:** 2026-09-25 · **Estado:** vigente
+**Fecha:** 2026-09-25 · **Estado:** corregida por D-207 · **Relación:** D-207 reemplaza sus tres vistas; medir La Copa desde `torneos/` sigue
 **Decisión:** El panel del dueño tiene tres vistas: Resumen, La Copa y Juegos (`/panel/#torneo`).
 La Copa se mide con sus propios datos de `torneos/` y no con la señal de uso que manda cada día
 jugado: el calendario de cada copa dice qué minijuego fue, y cada resultado trae puntaje, tiempo
@@ -1729,7 +1811,7 @@ comete: llegar al último número creyendo que basta.
 **Por qué:** pedido del dueño; en Zip, que se vea que hay que cubrir toda la grilla.
 
 ## D-140 · Las partidas sin red se ven en vivo en el panel
-**Fecha:** 2026-09-25 · **Estado:** vigente
+**Fecha:** 2026-09-25 · **Estado:** corregida por D-210
 **Decisión:** Al empezar una partida sin red (un celular, contra el celular, solo), `trackStart`
 deja un registro en `stats/<env>/days/<día>/live/<id>` con juego, modo, cantidad de jugadores,
 versión y país del celular, y le sube `beat` cada minuto mientras la pantalla está a la vista y
@@ -1750,7 +1832,7 @@ modos sin red no sale ninguno, C-7).
 juegos llaman `trackStart` al empezar y no al retomar.
 
 ## D-141 · La imagen de la tabla: gráfico y tabla en el mismo eje
-**Fecha:** 2026-09-25 · **Estado:** vigente
+**Fecha:** 2026-09-25 · **Estado:** corregida por D-153
 **Decisión:** La imagen que sale de "📤 Compartir" (D-126) deja de apilar el gráfico sobre la
 tabla. Ahora van **lado a lado y comparten el eje**: a la izquierda, una columna por cada día que
 ya se ve, sin saltarse ninguno (del D1 al último, hasta los 7 de la copa); a la derecha, la tabla
@@ -1769,7 +1851,7 @@ podio con gráfico); con esta ningún cambio de lugar queda fuera, y el dueño p
 todos.
 
 ## D-142 · Los minijuegos de La Copa se juegan sueltos, y la portada se filtra
-**Fecha:** 2026-09-25 · **Estado:** vigente; D-149 quita el filtro de cuántos juegan y saca los sueltos de `/copa/`; D-214 pasa el filtro de la URL a `?type=`, en inglés
+**Fecha:** 2026-09-25 · **Estado:** corregida por D-149, D-170, D-214 · **Relación:** reemplaza el solitario de D-27 y D-129; D-149 quita el filtro de cuántos juegan y saca los sueltos de `/copa/`
 **Decisión:** Tres cambios que van juntos:
 1. **La portada ofrece los minijuegos de La Copa sueltos**, de un jugador: Conexiones, Toque y
    Fama: Palabra, ¿En qué año?, Reinas, Tango y Zip. Viven en `SUELTOS` de `assets/js/games.js`
@@ -1808,7 +1890,7 @@ Copa y que su nombre en español sea el mismo. El récord viejo de esos dos soli
 uso, y una partida guardada del solitario viejo no se ofrece para retomar.
 
 ## D-143 · Las pruebas sin navegador corren solas en GitHub
-**Fecha:** 2026-09-25 · **Estado:** vigente; las de punta a punta se sumaron en D-193
+**Fecha:** 2026-09-25 · **Estado:** corregida por D-193
 **Decisión:** `.github/workflows/pruebas.yml` corre en cada PR y en cada fusión a main:
 todos los `*.test.mjs` y `*.test.py` del repo (los busca con `git ls-files`, sin lista),
 `tools/readme.py revisar` y `tools/og.mjs revisar`. El PR muestra ✅ o ❌ antes de fusionar.
@@ -1826,7 +1908,7 @@ necesite red o llaves no puede correr ahí: tiene que funcionar sin ellas o qued
 patrón. Los avisos de capturas viejas de `readme.py revisar` no hacen fallar el workflow.
 
 ## D-144 · Los filtros de la portada caben en dos filas
-**Fecha:** 2026-09-25 · **Estado:** vigente; desde D-149 queda solo la fila de tipos
+**Fecha:** 2026-09-25 · **Estado:** corregida por D-149 · **Relación:** desde D-149 queda solo la fila de tipos
 **Decisión:** los filtros de la portada son siempre dos filas: cuántos juegan arriba y los tipos
 abajo, los cuatro en una sola fila. Para que quepan, dos tipos se acortan ("Cultura general" →
 "Cultura", "Cartas y dados" → "Cartas/Dados"; en inglés "Cards/Dice", en portugués "Cultura" y
@@ -1841,7 +1923,7 @@ pantalla. Sin separación, la última ficha y la primera tarjeta se leían como 
 opciones); achicar la letra hasta que quepan con el emoji al lado (a 320 px quedaba ilegible).
 
 ## D-145 · Con el filtro "Solo", el juego abre directo en su modo solo
-**Fecha:** 2026-09-25 · **Estado:** reemplazada por D-149 (ya no hay filtro de cuántos juegan)
+**Fecha:** 2026-09-25 · **Estado:** reemplazada por D-149 · **Relación:** ya no hay filtro de cuántos juegan
 **Decisión:** si la portada está filtrada en "Solo", las tarjetas de los juegos que tienen más de
 un modo llevan `?modo=solo`, y el juego se salta la pantalla de modos: Toque y Fama y Línea de
 Tiempo abren su minijuego solo, El Ahorcado su configuración de solo, y Dudo y Batalla Naval la
@@ -1888,8 +1970,8 @@ Calcular si los que faltan pueden de verdad cambiar un lugar: con los puntos por
 juega mueve también los puntos de los demás, y la regla simple se entiende sin explicarla.
 **Consecuencias:** un jugador que se saltó un día que ya cerró sigue con su "(-1J)", pero no vuelve
 provisoria la tabla: sus puntos de ese día ya no cambian. El número de día del título (imagen y
-mensaje) pasa a ser el último día que muestra la tabla (`ultimoDiaVisto`), no el de hoy (dilema
-#67, decisión del dueño): la marca y el número hablan del mismo día. La línea "⏳ ¡Día N en
+mensaje) pasa a ser el último día que muestra la tabla (`ultimoDiaVisto`), no el de hoy
+(dilema #67, decisión del dueño): la marca y el número hablan del mismo día. La línea "⏳ ¡Día N en
 curso!" del mensaje sigue diciendo el día que corre.
 
 ## D-148 · El admin puede cambiar el nombre de la copa
@@ -1909,7 +1991,7 @@ reglas (`node tools/reglas.mjs publicar`) para que el botón funcione en las cop
 de prueba (almacén local) funciona sin eso.
 
 ## D-149 · La portada se filtra solo por tipo, y los minijuegos sueltos salen de /copa/
-**Fecha:** 2026-09-26 · **Estado:** vigente; D-214 pasa el filtro de la URL a `?type=logic`
+**Fecha:** 2026-09-26 · **Estado:** corregida por D-162, D-198, D-214
 **Decisión:** Dos cambios:
 1. **Se va el filtro de cuántos juegan** (Todos · Solo · Con amigos, D-142). La portada se filtra
    solo por tipo (Palabras, Lógica, Cultura, Cartas/Dados), igual que antes: se prende y se
@@ -1979,7 +2061,7 @@ y en su propio panel.
 `multiplicador` elige entre ×2 y ×1, no multiplica.
 
 ## D-153 · La imagen de la tabla dice qué pasó cada día, y el podio va en galvanos
-**Fecha:** 2026-09-28 · **Estado:** vigente
+**Fecha:** 2026-09-28 · **Estado:** corregida por D-154
 **Decisión:** En la imagen que sale de "📤 Compartir" (D-141), cada punto del gráfico dice qué
 pasó ese día, además del lugar: un círculo lleno con **los puntos del día** (ya multiplicados);
 con **anillo dorado y píldora "×2"** si usó el comodín; con anillo cian en la final, cuya columna
@@ -2017,7 +2099,7 @@ los días y la leyenda.
 dejar el 4:5 fijo y centrar el bloque (el aire se movía, no se iba).
 
 ## D-155 · ¿Dónde queda?: un minijuego de mapa, primero en el laboratorio
-**Fecha:** 2026-09-28 · **Estado:** vigente
+**Fecha:** 2026-09-28 · **Estado:** corregida por D-156, D-174
 **Decisión:** Un minijuego nuevo de La Copa, **📍 ¿Dónde queda?**: cinco ciudades, una por una,
 con su país ("Valparaíso, Chile"), y se toca un mapa del mundo donde se cree que queda cada una.
 Cada ciudad vale hasta 100 puntos y se pierden 4 por cada 100 km de error (a 2.500 km, 0); el
@@ -2052,7 +2134,7 @@ Taiwán (el dueño prefirió la lista de la ONU con sus observadores).
 cambia si cambian los bordes o la proyección.
 
 ## D-156 · ¿Dónde queda? se juega en un globo que gira sin fin, y su portada gira sola
-**Fecha:** 2026-09-28 · **Estado:** vigente (reemplaza el mapa plano de D-155 y la vista inicial del dilema #85)
+**Fecha:** 2026-09-28 · **Estado:** corregida por D-158, D-159 · **Relación:** reemplaza el mapa plano de D-155 y la vista inicial del dilema #85
 **Decisión:** El mapa plano en proyección de Miller se cambia por un **globo**: una proyección
 ortográfica dibujada en un canvas (`copa/juegos/globo.js`). Arrastrar lo gira sin tope en
 longitud (pasados los 180° sigue); pellizcar, el doble toque, la rueda y + / − lo acercan hasta 40
@@ -2113,7 +2195,7 @@ coseno del ángulo con que se mira; el alfiler se achica (hasta un 35 %) y se de
 detrás. En el juego las marcas siguen planas: ahí se miran de frente y tienen que leerse.
 
 ## D-159 · El globo de ¿Dónde queda? es una imagen satelital
-**Fecha:** 2026-09-29 · **Estado:** vigente
+**Fecha:** 2026-09-29 · **Estado:** corregida por D-202
 **Decisión:** El globo muestra la Tierra vista desde el satélite: **Blue Marble Next Generation**
 de la NASA (dominio público), la de septiembre de 2004, con relieve y fondo marino. Se eligió
 septiembre porque es el mes con menos nieve en los dos hemisferios: el Sahara, Arabia, el Atacama
@@ -2141,7 +2223,7 @@ satélite); la imagen de diciembre de la NASA (medio hemisferio norte bajo la ni
 el globo que gira también es satelital.
 
 ## D-160 · El globo satelital se ve nítido al acercarse: teselas
-**Fecha:** 2026-09-29 · **Estado:** vigente
+**Fecha:** 2026-09-29 · **Estado:** corregida por D-201
 **Decisión:** Además de la imagen entera de 4096 px (D-159), la de la NASA de 21600 × 10800 se
 corta en **128 teselas** de 1350 px (16 columnas por 8 filas, 22,5° por lado) en
 `assets/img/tierra-2004-09/`. Cuando el globo se acerca más de lo que da la imagen entera, se bajan
@@ -2184,7 +2266,7 @@ coma y con BOM, para que Excel en español lo abra en columnas y con acentos. Nu
 laboratorio: `final-admin`.
 
 ## D-162 · Cada minijuego suelto tiene su página y su tarjeta social
-**Fecha:** 2026-09-29 · **Estado:** vigente; cambia la alternativa que D-149 había descartado
+**Fecha:** 2026-09-29 · **Estado:** corregida por D-198 · **Relación:** cambia la alternativa que D-149 había descartado
 **Decisión:** Los minijuegos sueltos se abren en `/minijuegos/<id>/` (`/minijuegos/reinas/`), una
 página por minijuego con su propia tarjeta social (título, bajada e imagen de 1200×630 en
 `assets/og/<id>.jpg`). Las páginas no se escriben a mano: `node tools/og.mjs tarjetas` las genera
@@ -2254,7 +2336,7 @@ no la del minijuego; y el 〰️ casi no se veía en la miniatura de WhatsApp ni
 con un filtro (deja de ser el emoji); poner el contorno en la caja del emoji (blanquea el fondo).
 
 ## D-165 · Todo lo que se comparte sigue un mismo estándar, con WhatsApp en mente
-**Fecha:** 2026-10-01 · **Estado:** vigente; ordena D-173, D-124, D-126 y D-141; D-171 cambia lo que dice el texto que va con una imagen
+**Fecha:** 2026-10-01 · **Estado:** corregida por D-171 · **Relación:** ordena D-173, D-124, D-126 y D-141
 **Decisión:** Lo que la app comparte sale de un solo módulo, `assets/js/compartir.js`, con tres
 reglas:
 1. **El texto** abre con una cabecera — `{emoji} *{título}* · {contexto}` —, sigue con una idea
@@ -2315,7 +2397,7 @@ usan `laminaResultado` y una cabecera con el juego. `tools/e2e/cdp.mjs` acepta `
 correr las pruebas fuera de un Mac.
 
 ## D-166 · Reinas: arrastrar desde una casilla vacía pinta X
-**Fecha:** 2026-10-01 · **Estado:** vigente; amplía D-103
+**Fecha:** 2026-10-01 · **Estado:** corregida por D-168 · **Relación:** amplía D-103
 **Decisión:** En Reinas, apoyar el dedo en una casilla **vacía** y llevarlo a otra pinta una X en
 cada casilla vacía por donde pasa, como en el Queens de LinkedIn: descartar una fila o una columna
 deja de ser ocho toques largos. Las reglas del gesto:
@@ -2339,7 +2421,7 @@ y un arrastre accidental borraría deducciones; un modo "lápiz X" con botón: u
 estado que recordar.
 
 ## D-167 · Reinas: el toque cicla reina → X → vacía
-**Fecha:** 2026-10-01 · **Estado:** vigente; cambia el toque de D-103
+**Fecha:** 2026-10-01 · **Estado:** vigente · **Relación:** cambia el toque de D-103
 **Decisión:** Un toque pasa la casilla por un ciclo: **vacía → reina → X → vacía**. El primer
 toque sigue poniendo la reina, como desde D-103; tocarla otra vez la cambia por una X, y una
 tercera vez la deja vacía. El **toque largo** sigue poniendo o sacando la X, como atajo, pero la
@@ -2359,7 +2441,7 @@ primero porque se usa más, pero aquí cambiaría lo que el primer toque hace ho
 cantidad ya las pinta el arrastre. Quitar el toque largo: a quien ya lo aprendió no le estorba.
 
 ## D-168 · Reinas: arrastrar desde una X las borra
-**Fecha:** 2026-10-01 · **Estado:** vigente; amplía D-166
+**Fecha:** 2026-10-01 · **Estado:** vigente · **Relación:** amplía D-166
 **Decisión:** El arrastre hace lo que diga la casilla donde empieza: desde una **vacía** pinta X
 en las vacías por donde pasa (D-166), desde una **X** borra las X por donde pasa, y desde una
 **reina** no hace nada. Las reinas nunca se tocan al arrastrar. Cada X borrada es una jugada de
@@ -2388,8 +2470,9 @@ ayudan, deshacerlas casilla por casilla cuesta más que empezar en limpio.
 
 **Alternativas descartadas:** reiniciar también el reloj: sería un tablero gratis después de
 haberlo mirado entero.
+
 ## D-170 · La Copa y sus minijuegos en inglés y portugués: lo personal en tu idioma, lo del grupo en el de la copa
-**Fecha:** 2026-10-01 · **Estado:** vigente; reemplaza D-98 y cierra LIG-32
+**Fecha:** 2026-10-01 · **Estado:** vigente · **Relación:** reemplaza D-98 y cierra LIG-32
 **Decisión:** La Copa y los minijuegos sueltos pasan a los tres idiomas (C-3). Una regla para
 saber qué idioma manda: **lo personal va en el idioma de quien mira; lo del grupo, en el de la
 copa.**
@@ -2440,7 +2523,7 @@ Las reglas de Firebase aceptan `meta.lang` y no dejan cambiarlo. Una copa nueva 
 portugués necesita las reglas publicadas (`node tools/reglas.mjs publicar`, D-122).
 
 ## D-171 · Con imagen, el texto no repite lo que la imagen dice
-**Fecha:** 2026-10-01 · **Estado:** vigente; cambia la regla 2 de D-165
+**Fecha:** 2026-10-01 · **Estado:** vigente · **Relación:** cambia la regla 2 de D-165
 **Decisión:** Cuando lo que se comparte lleva imagen, el texto ya no la repite. Lleva la
 cabecera (D-165), solo lo que la imagen **no** trae y el link al final:
 
@@ -2477,10 +2560,10 @@ cada juego, `CLAUDE.md`, el README con sus capturas y las tarjetas sociales.
   pendiente, los problemas que ya se le preguntaron al dueño (`conocidos`) y el historial de
   rondas. Cada ronda parte de ahí, así que un día que no corre no deja nada sin revisar, y lo que no
   alcanzó a hacer no se olvida.
-- **Herramienta:** `tools/documentar.mjs` (`revisar`, `anotar`, `historial`) lista lo que entró y
+- **Herramienta:** `tools/agents/documentar.mjs` (`revisar`, `anotar`, `historial`) lista lo que entró y
   comprueba lo que no necesita leer prosa: decisiones citadas que no existen o repetidas, pruebas
   que `CLAUDE.md` no nombra, guiones que `tools/e2e/README.md` no nombra y la versión sin entrada
-  en el CHANGELOG. Su prueba es `tools/documentar.test.mjs`. Cualquier sesión la puede correr.
+  en el CHANGELOG. Su prueba es `tools/agents/documentar.test.mjs`. Cualquier sesión la puede correr.
 - **No es solo la ronda:** como el de usabilidad, revisa cada PR antes de proponer su fusión (lo que
   trae y sus comprobaciones, con `revisar --desde <base>`, que mira la rama; los arreglos, en la
   rama del PR) y se le puede pedir a mano.
@@ -2504,8 +2587,16 @@ las citas que hablaban de la invitación.
 esté prendido, y la documentación no necesita la llave). Que cada sesión deje todo documentado
 al fusionar (ya es la regla, C-13, y aun así se atrasa).
 
+## D-173 · La invitación dice quién invita
+**Fecha:** 2026-09-13 · **Estado:** corregida por D-165 · **Relación:** amplía D-72; nació como D-73, repetida con la del panel; se renumeró el 2026-10-02 (D-172)
+**Decisión:** Al compartir una sala, el mensaje es **"{nombre} te invita a jugar {juego} en juegosdesalon.cl - Sala: {código}"**. El texto es uno solo para los cuatro juegos con sala y vive en `COMMON` de `assets/js/i18n.js`, no en el `rules.js` de cada uno. Nombra a **quien toca compartir**, no al anfitrión: en una sala de seis cualquiera puede pasar el link, y el que invita es el que lo pasa.
+**Por qué:** el mensaje decía "Únete a mi sala de Línea de Tiempo. Código: WFBN" — sin nombre. Llega por WhatsApp a alguien que muchas veces no conoce la app, y lo primero que hace falta saber es de parte de quién viene. El resto —de qué se trata el juego, para cuántos, cuánto dura— ya no hace falta escribirlo: lo pone la tarjeta que el chat arma solo con el link (D-72), y por eso también se sacó la temática que algunos juegos metían en el texto.
+**Por qué compartido y no por juego:** eran cuatro juegos por tres idiomas, doce frases que decían lo mismo con doce redacciones distintas. La única parte que cambia es el nombre del juego, y ese ya viaja como `{game}`.
+**Al copiar también viaja el mensaje.** Sin diálogo nativo —en un computador, o si el navegador no comparte— el portapapeles se llevaba **solo la URL** y el texto se perdía: quien invitaba tenía que escribir a mano de qué se trataba. Ahora se copia el mensaje y el link, en dos líneas.
+**Y la tarjeta se dibuja adentro de una franja segura:** cada chat recorta la imagen al alto de su ventanita y lo que se come son los lados. Con 1200×630 recortada a 1,5:1 se van 127 px por lado, y ahí quedaba justo la última letra del título —la N de "SALÓN" salía cortada en WhatsApp—. Ahora todo lo que se lee vive dentro del 88% central, y `node tools/og.mjs imagenes` avisa si algo se acerca al borde. El degradado del fondo es lo único que puede perderse.
+
 ## D-174 · ¿Dónde queda? se juega suelto desde la portada
-**Fecha:** 2026-10-02 · **Estado:** vigente; cierra lo que D-155 y D-162 dejaron en el laboratorio
+**Fecha:** 2026-10-02 · **Estado:** vigente · **Relación:** cierra lo que D-155 y D-162 dejaron en el laboratorio
 **Decisión:** ¿Dónde queda? deja de llevar `labs: true` en `SUELTOS` (`assets/js/games.js`): su
 tarjeta aparece en la portada como los demás minijuegos sueltos, encendida y sin "Próximamente",
 y abre `/minijuegos/donde/`, que ya existía con su tarjeta social (D-162). Dentro de La Copa no
@@ -2516,7 +2607,7 @@ cambia nada: ya se podía elegir para cualquier día desde D-163.
 rehace. `labs` en `BASE` de `copa/rules.js` no se usa para la portada y queda como estaba.
 
 ## D-175 · La Copa sale del laboratorio y llega al menú
-**Fecha:** 2026-10-02 · **Estado:** vigente; cierra el periodo de laboratorio de D-101
+**Fecha:** 2026-10-02 · **Estado:** vigente · **Relación:** cierra el periodo de laboratorio de D-101
 **Decisión:** La Copa queda activa en el menú principal (`available: true` y sin `labs` en
 `games.js`): su tarjeta abre `/copa/`, sin "Próximamente". El botón "‹ Menú" de La Copa vuelve al
 menú; solo quien llega desde el laboratorio (`?labs`) vuelve a `/labs/`.
@@ -2528,7 +2619,7 @@ menú; solo quien llega desde el laboratorio (`?labs`) vuelve a `/labs/`.
 usabilidad y los arreglos de La Copa en inglés y portugués) y ya se comparte por su link.
 
 ## D-176 · En Administrar, la invitación sigue mientras alguien pueda entrar
-**Fecha:** 2026-10-02 · **Estado:** vigente; cambia la invitación de D-116 solo en Administrar. D-177 corrige el día del aviso: sale desde el día 3, no desde el 2
+**Fecha:** 2026-10-02 · **Estado:** corregida por D-177 · **Relación:** cambia la invitación de D-116 solo en Administrar; D-177 corrige el día del aviso: sale desde el día 3, no desde el 2
 **Decisión:** El mensaje **Invitación** de Administrar ya no desaparece cuando parte la copa: está
 mientras alguien nuevo pueda inscribirse, es decir, con la inscripción abierta (hasta la final o
 hasta que el admin la cierre) y sin llegar al máximo de jugadores. Ya partida, la línea "📅 Parte
@@ -2585,7 +2676,7 @@ temporales que se borran.
 reemplazarlos, el repo crece con cada versión. Si eso molesta, se pasan a Git LFS o a un release.
 
 ## D-179 · Desenredo: el Untangle de Tatham, por niveles como Zip
-**Fecha:** 2026-10-02 · **Estado:** vigente; salió del laboratorio en D-190
+**Fecha:** 2026-10-02 · **Estado:** vigente · **Relación:** salió del laboratorio en D-190
 **Decisión:** Un minijuego nuevo de La Copa, **🧶 Desenredo** (*Untangle*, *Desenrola*), que se
 juega también suelto en `minijuegos/desenredo/`. Nudos unidos por hilos que se cruzan; se arrastran
 los nudos hasta que ningún hilo cruce a otro.
@@ -2616,12 +2707,15 @@ inicial; el dueño prefirió niveles); generar con rectas al azar como Planarity
 de 6 a 10 a 15 nudos y no dan diez niveles parejos); prohibir soltar un nudo encima de otro (el
 cruce por cercanía ya lo resuelve sin un gesto que rebota).
 
+## D-180 · (número sin usar)
+Este número no se usó: se saltó al numerar. Queda vacío para que nadie lo llene ni lo dé por perdido.
+
 ## D-181 · Cada imagen de tarjeta guarda su huella, y una atrasada no se publica
-**Fecha:** 2026-10-02 · **Estado:** vigente · **Amplía D-72** · desde D-205 frena el check `pruebas`, no `set-version.py` (ya no hay `--igual`)
-**Decisión:** `node tools/og.mjs imagenes` anota en `assets/og/huellas.json` la huella de cada
+**Fecha:** 2026-10-02 · **Estado:** corregida por D-205 · **Relación:** amplía D-72; desde D-205 frena el check `pruebas`, no `set-version.py` (ya no hay `--igual`)
+**Decisión:** `node tools/release/og.mjs imagenes` anota en `assets/og/huellas.json` la huella de cada
 imagen que hace: un hash del dibujo (`tools/og/tarjeta.html`) y de lo que la imagen dice (el emoji,
 el nombre, la bajada, los jugadores y la duración del juego en `games.js`, o los textos de la
-portada). `node tools/og.mjs revisar` la compara con la de hoy y da error si una imagen falta o se
+portada). `node tools/release/og.mjs revisar` la compara con la de hoy y da error si una imagen falta o se
 hizo con otro dibujo u otros textos. Lo corren CI (en cada PR) y `set-version.py` antes de
 estampar, que no estampa sin `--igual`. `imagenes` rehace solo las atrasadas; `--todas`, todas.
 **Por qué:** las píldoras desalineadas de jugadores y duración volvieron por tercera vez (0.84.2,
@@ -2635,7 +2729,7 @@ juego. `base.css` no entra en la huella: cambia seguido por cosas que la tarjeta
 internet y Chrome, y llena el diff de bytes); comparar fechas de archivo (git no las conserva).
 
 ## D-182 · Desenredo: los hilos son cuerdas con una curva leve
-**Fecha:** 2026-10-02 · **Estado:** vigente · **Amplía D-179**
+**Fecha:** 2026-10-02 · **Estado:** corregida por D-185 · **Relación:** amplía D-179
 **Decisión:** Los hilos de Desenredo se dibujan como cuerda y no como segmento recto: una curva
 de Bézier leve (se aparta de la recta a lo más un 6 % de su largo, con tope de 34 unidades de
 1000) y tres capas (borde oscuro de 6,5 px, alma de 4 px del color del hilo y hebras cortadas
@@ -2655,7 +2749,7 @@ curvas que se doblan para esquivar a sus vecinas (otro juego, y más difícil sa
 resuelto).
 
 ## D-183 · Desenredo: la cuerda lleva una segunda onda y dos cabos
-**Fecha:** 2026-10-02 · **Estado:** vigente · **Amplía D-182**
+**Fecha:** 2026-10-02 · **Estado:** corregida por D-185 · **Relación:** amplía D-182
 **Decisión:** Sobre la curva leve de cada hilo va una segunda onda, más corta y más baja: de 2 a
 4 vueltas según el largo (una cada ~150 unidades), de alto 1,6 % del largo con tope de 8, con su
 fase propia y apagada en las puntas (envolvente seno), así el hilo sigue naciendo en el centro del
@@ -2667,7 +2761,7 @@ sentía natural.
 hilos largos (34 + 8); los cruces se siguen contando sobre la recta (D-182). El test lo acota.
 
 ## D-184 · Instrucciones concisas: reglas escritas y un tope que lo vigila
-**Fecha:** 2026-10-02 · **Estado:** vigente · **Amplía D-177**
+**Fecha:** 2026-10-02 · **Estado:** vigente · **Relación:** amplía D-177
 **Decisión:** Las instrucciones de cada juego siguen U-18 (`docs/USABILIDAD.md`): la meta primero
 y con verbo (no "Hay nudos unidos por hilos"), a lo más 3 puntos de una idea cada uno, nada de lo
 que el dibujo de ejemplo ya muestra, sin anunciar colores ni mensajes que se ven jugando, y el
@@ -2686,14 +2780,14 @@ nombran. La prueba mide largo y forma, no claridad: eso sigue siendo del agente 
 Palabra, quedan bien); topes distintos por idioma (inglés y portugués quedan a ±10 % del español).
 
 ## D-185 · Desenredo: menos ondulación en la cuerda
-**Fecha:** 2026-10-02 · **Estado:** vigente · **Corrige D-183**
+**Fecha:** 2026-10-02 · **Estado:** vigente · **Relación:** corrige D-183 y la curva de base de D-182
 **Decisión:** La segunda onda baja a menos de la mitad (0,7 % del largo, tope 3,5 de 1000) y se
 alarga (2 a 3 vueltas, una cada ~230 unidades), y la curva de base queda un poco más tensa (4,5 %
 del largo, tope 26). La textura de dos cabos sigue igual.
 **Por qué:** el dueño vio la cuerda de 0.85.3 demasiado ondulada.
 
 ## D-186 · La copa puede ser internacional: sin temas de Chile ni de Brasil
-**Fecha:** 2026-10-03 · **Estado:** reemplazada por D-187 (internacional pasó a ser 🌎 global)
+**Fecha:** 2026-10-03 · **Estado:** reemplazada por D-187 · **Relación:** internacional pasó a ser 🌎 global
 **Decisión:** Al crear una copa se elige **¿Qué temas incluye?**: con temas locales (como hasta
 ahora, y lo que viene marcado) o internacional. Una copa internacional lleva `meta.intl: true` y
 deja fuera lo que se conoce solo en Chile o en Brasil:
@@ -2718,7 +2812,7 @@ inglés, y uno extranjero en español); sacar también Brasil del fútbol (sus M
 todas partes).
 
 ## D-187 · El público de la copa: 🌎 global, 🇨🇱 Chile o 🇧🇷 Brasil
-**Fecha:** 2026-10-03 · **Estado:** vigente · **Reemplaza D-186**
+**Fecha:** 2026-10-03 · **Estado:** vigente · **Relación:** reemplaza D-186
 **Decisión:** "¿Qué temas incluye?" (local o internacional) pasa a ser **¿Para qué público es?**,
 con tres opciones: 🌎 Global, 🇨🇱 Chile y 🇧🇷 Brasil. Se guarda en `meta.aud` (`global`, `cl` o
 `br`). Lo local va marcado con su país: `local: 'cl'` o `'br'` en cartas y grillas, las temáticas
@@ -2783,7 +2877,7 @@ siendo del dueño: necesitan su llave.
 licencia GPL (el dueño eligió MIT).
 
 ## D-190 · Desenredo sale del laboratorio
-**Fecha:** 2026-10-03 · **Estado:** vigente; cierra lo que D-179 dejó en el laboratorio
+**Fecha:** 2026-10-03 · **Estado:** vigente · **Relación:** cierra lo que D-179 dejó en el laboratorio
 **Decisión:** Desenredo deja de llevar `labs: true` en `SUELTOS` (`public/assets/js/games.js`) y en `BASE`
 (`public/cup/rules.js`): su tarjeta aparece en la portada, encendida y sin "Próximamente", y abre
 `/minigames/untangle/`, que ya tenía su tarjeta social. En La Copa sigue en el `POZO` desde D-179:
@@ -2794,7 +2888,7 @@ vueltas de las cuerdas (D-182, D-183, D-185) y de las instrucciones (D-184).
 puede caer en él. La captura del menú en el README se rehace.
 
 ## D-191 · Un idioma nuevo entra por el laboratorio: el alemán
-**Fecha:** 2026-10-03 · **Estado:** vigente
+**Fecha:** 2026-10-03 · **Estado:** corregida por D-195, D-197
 **Decisión:** El alemán (**Salonspiele**) se suma completo —los textos de los ocho juegos, las
 frases, los mazos, las grillas y palabras de La Copa y los nombres de ¿Dónde queda?— pero **solo
 se ofrece en el laboratorio**: en el dispositivo que entra por `/labs/de/` o por un link con
@@ -2830,7 +2924,7 @@ no prueba las salas de verdad); que el alemán faltante cayera al inglés (escon
 traducir: la prueba de paridad no lo vería).
 
 ## D-192 · El sitio en `public/`, las carpetas en inglés y el taller ordenado
-**Fecha:** 2026-10-03 · **Estado:** vigente
+**Fecha:** 2026-10-03 · **Estado:** corregida por D-198, D-205 · **Relación:** reemplaza D-13 y corrige D-02
 **Decisión:** La raíz del repo deja de ser la raíz del sitio. Todo lo que se sirve vive en
 **`public/`** y es lo único que se publica: `.github/workflows/publicar.yml` lo sube a GitHub Pages
 en cada fusión a main (sin los `*.test.mjs`), después de correr `pruebas.yml`; si una prueba falla,
@@ -2870,7 +2964,7 @@ un link viejo pegado en un chat quedaba sin tarjeta y Google veía 404); cambiar
 carpeta `juegos/` para todos (cambiaba las URL sin ganar nada a cambio).
 
 ## D-193 · Las pruebas de punta a punta corren solas en GitHub
-**Fecha:** 2026-10-02 · **Estado:** vigente; completa D-143
+**Fecha:** 2026-10-02 · **Estado:** vigente · **Relación:** completa D-143
 **Decisión:** `.github/workflows/e2e.yml` corre las pruebas de `tools/e2e/` en Chrome en cada PR
 y en cada fusión a main, un job por guion y en paralelo. El PR muestra cuál falló y deja sus
 capturas como artefacto. `tools/e2e/ci.mjs` decide cuáles: todos los guiones menos las
@@ -2919,7 +3013,7 @@ teclado alemán, pero cambia el largo de las palabras y el dueño prefirió quit
 zona por país (Alemania, Austria y Suiza comparten la hora).
 
 ## D-195 · En el laboratorio de un idioma, el menú depende del idioma elegido
-**Fecha:** 2026-10-03 · **Estado:** vigente; ajusta D-191
+**Fecha:** 2026-10-03 · **Estado:** vigente · **Relación:** ajusta D-191
 **Decisión:** En un dispositivo marcado por el laboratorio alemán, "‹ Menú" lleva a `/labs/de/`
 **solo mientras se juega en alemán**. Con otro idioma elegido en el toggle, lleva al menú de
 siempre. En la portada del laboratorio, elegir otro idioma también lleva al menú de siempre en ese
@@ -2929,7 +3023,7 @@ guardaba bien el español, pero "‹ Menú" lo llevaba a la portada del laborato
 en alemán.
 
 ## D-196 · Los filtros de la portada quedan pegados arriba
-**Fecha:** 2026-10-03 · **Estado:** vigente; complementa D-142 y D-149
+**Fecha:** 2026-10-03 · **Estado:** vigente · **Relación:** complementa D-142 y D-149
 **Decisión:** Al bajar por la lista de juegos, la barra de tipos (y la línea "Se ven N de M ·
 Ver todos") se queda pegada arriba, con fondo oscuro desenfocado que tapa también la franja de la
 muesca. Tocar un tipo estando pegada lleva la lista filtrada a su primera tarjeta, justo debajo.
@@ -2937,7 +3031,7 @@ muesca. Tocar un tipo estando pegada lleva la lista filtrada a su primera tarjet
 filtrar a media lista se quedaba mirando el medio de una lista más corta.
 
 ## D-197 · El alemán sale del laboratorio
-**Fecha:** 2026-10-04 · **Estado:** vigente; cierra el paso de D-191 para el alemán
+**Fecha:** 2026-10-04 · **Estado:** vigente · **Relación:** cierra el paso de D-191 para el alemán; corrige D-47, D-48 y D-74
 **Decisión:** El alemán se ofrece a todos, como el inglés y el portugués: `EN_LABS` queda vacío,
 el toggle muestra 🇩🇪 DE en cualquier dispositivo y hay puerta `/de/` con su tarjeta social
 (`menu-de.jpg`, `de_DE`). El link del laboratorio, `/labs/de/`, pasa a ser una página puente hacia
@@ -2958,7 +3052,7 @@ inglés y portugués (ver docs/ALEMAN.md).
 necesitaría de nuevo); dejar `/labs/de/` como estaba (mostraría un laboratorio que ya no es).
 
 ## D-198 · No hay minijuegos: los juegos de La Copa son juegos
-**Fecha:** 2026-10-03 · **Estado:** vigente; complementa D-142, D-149, D-162 y D-192
+**Fecha:** 2026-10-03 · **Estado:** vigente · **Relación:** complementa D-142, D-149, D-162 y D-192
 **Decisión:** La app deja de distinguir entre juegos y minijuegos. Conexiones, Reinas, Tango, Zip,
 Desenredo, ¿Dónde queda?, ¿En qué año? y Toque y Fama: Palabra son juegos como los demás:
 - **Sus direcciones pasan a la raíz**, como las de cualquier juego: `/queens/`, `/tango/`,
@@ -2982,7 +3076,7 @@ están en la portada, con sus filtros y su tarjeta, al lado de los otros; llamar
 parecer menos, y la URL `/minigames/` lo repetía en cada link compartido.
 
 ## D-199 · Todas las pantallas se prueban en todos los idiomas
-**Fecha:** 2026-10-04 · **Estado:** vigente; complementa C-3, C-12, D-193 y D-197
+**Fecha:** 2026-10-04 · **Estado:** vigente · **Relación:** complementa C-3, C-12, D-193 y D-197
 **Decisión:** Las pruebas de punta a punta recorren **todos los idiomas de `LANGS`**, no una lista
 escrita en cada guion:
 - **Cada juego tiene su prueba de idiomas**, `tools/e2e/<carpeta>/idiomas.mjs` (y
@@ -3017,7 +3111,7 @@ a mano en el HTML ni un botón que el alemán saca de la pantalla); mirar las ca
 idioma (no escala: son más de cien tomas).
 
 ## D-200 · ¿Dónde queda?: el globo se gira con dos dedos y la brújula endereza el norte
-**Fecha:** 2026-10-04 · **Estado:** vigente; complementa D-155
+**Fecha:** 2026-10-04 · **Estado:** vigente · **Relación:** complementa D-155
 **Decisión:** Además de arrastrar y pellizcar, dos dedos que giran hacen girar el mapa en torno a
 ellos, como en los mapas del celular. El giro empieza pasados 12° de torsión, para que un pellizco
 no lo tuerza, y al soltar a menos de 6° del norte el mapa queda derecho. Con el mapa girado aparece
@@ -3031,7 +3125,7 @@ polo, o buscando una ciudad en un país largo, uno quiere orientar el mapa a su 
 que todos conocen de los mapas (no reinventar, D-102), y la brújula, la forma conocida de volver.
 
 ## D-201 · Las teselas satelitales se cortan con PIL, no con sips
-**Fecha:** 2026-10-04 · **Estado:** vigente; corrige D-160
+**Fecha:** 2026-10-04 · **Estado:** vigente · **Relación:** corrige D-160
 **Decisión:** `node tools/generators/mapa.mjs satelite` corta las 128 teselas con
 `tools/generators/teselas.py` (PIL, que el repo ya usa en `readme.py`) y no con sips. Las teselas
 se rehicieron: ahora cada `fila-columna.jpg` es de verdad su cuadrado de 22,5°.
@@ -3044,7 +3138,7 @@ eso casi todas las teselas quedaron corridas, aunque solo cerca del polo se nota
 probado, y sus cortes en el borde siguen fallando sin avisar.
 
 ## D-202 · ¿Dónde queda?: el zoom llega a 64 veces
-**Fecha:** 2026-10-04 · **Estado:** vigente; cambia el tope de D-159
+**Fecha:** 2026-10-04 · **Estado:** vigente · **Relación:** cambia el tope de D-159
 **Decisión:** El globo se acerca hasta 64 veces (antes 16): en un celular, unos 600 m por píxel y
 unos 200 km de lado a lado. La respuesta sigue acercando hasta 12.
 **Por qué:** hubo quejas de que el zoom no alcanzaba. El tope de 16 se puso cuando solo estaba la
@@ -3056,7 +3150,7 @@ de la pantalla), pero costas, ríos, lagos y cordilleras se siguen leyendo.
 240 MB en el repo, y las ciudades casi no se ven en ella); un tope de 48 (el dueño eligió 64).
 
 ## D-203 · ¿Dónde queda? se juega a pantalla completa
-**Fecha:** 2026-10-04 · **Estado:** vigente; complementa C-8, D-133, D-159 y D-202
+**Fecha:** 2026-10-04 · **Estado:** vigente · **Relación:** complementa C-8, D-133, D-159 y D-202
 **Decisión:** El globo de ¿Dónde queda? ocupa la ventana entera y todo lo demás flota encima,
 suelto y en La Copa por igual; reemplaza a la vista en caja:
 - **Arriba**, la barra (‹ Menú y 🔊) con el reloj en una píldora al medio; debajo, la ciudad
@@ -3078,7 +3172,7 @@ aplica a lo fijo. La pantalla no se desplaza: lo que no quepa tiene que desplaza
 widget, como las reglas abiertas.
 
 ## D-204 · Publicar más rápido: los guiones largos en partes y la revisión de un PR, acotada
-**Fecha:** 2026-10-04 · **Estado:** vigente; amplía D-132, D-172 y D-193
+**Fecha:** 2026-10-04 · **Estado:** corregida por D-213 · **Relación:** amplía D-132, D-172 y D-193
 **Decisión:** Lo que hace esperar un PR se acorta sin sacar ninguna revisión:
 - **CI en partes.** El check `Punta a punta` tarda lo que su job más lento. `cup/torneo.mjs`
   (9 min) se corre en tres jobs (`--parte copa`, `laboratorio`, `demos`) y `cup-games/idiomas.mjs`
@@ -3101,7 +3195,7 @@ revisión de usabilidad de cada PR jugaba la copa entera aunque el PR fuera de o
 poder correr solas, sin depender del estado que dejó la anterior.
 
 ## D-205 · La versión se estampa al publicar, no en git
-**Fecha:** 2026-10-04 · **Estado:** vigente; reemplaza el estampado a mano de C-11 y amplía D-72, D-181, D-193 y D-204
+**Fecha:** 2026-10-04 · **Estado:** vigente · **Relación:** reemplaza el estampado a mano de C-11; corrige D-22, D-51, D-72, D-181 y D-192; amplía D-193 y D-204
 **Decisión:** Las páginas de `public/` en git ya no llevan versión: ni import map, ni `?v=` en las
 hojas de estilo y las imágenes de las tarjetas, y el pie del menú dice `v0.0.0`.
 - **El número es la primera entrada de `CHANGELOG.md`** (`## X.Y.Z — fecha`), que se escribe al
@@ -3131,7 +3225,7 @@ ya pasaba en `dev`. Las capturas no envejecen por el commit que sacó la versió
 cuenta la línea del import map como cambio.
 
 ## D-206 · El worktree de una sesión se borra al fusionar su PR
-**Fecha:** 2026-10-04 · **Estado:** vigente; completa D-135
+**Fecha:** 2026-10-04 · **Estado:** vigente · **Relación:** completa D-135
 **Decisión:** La copia de trabajo que D-135 manda crear (`../juegos-de-salon-<tema>`) se borra
 cuando su PR entra a `main`, junto con la rama local: `git worktree remove` y `git branch -d`,
 desde la carpeta principal (y `git worktree prune` si alguna se borró a mano). Los dos se niegan
@@ -3145,7 +3239,7 @@ lo que de verdad está abierto. La regla la escribió una sesión del 2026-10-04
 rama que nunca se subió (ese número quedó para el alemán); se rescató al limpiar las carpetas.
 
 ## D-207 · El panel se navega: secciones, fichas y la hora del Pacífico
-**Fecha:** 2026-10-04 · **Estado:** vigente; reemplaza las tres vistas de D-137
+**Fecha:** 2026-10-04 · **Estado:** vigente · **Relación:** reemplaza las tres vistas de D-137
 **Decisión:** El panel deja de ser una página larga con tres pestañas y pasa a navegarse como un
 sitio: cuatro secciones (Ahora, La Copa, Juegos, Audiencia) y una ficha por cada cosa que existe.
 La de una copa tiene la tabla completa, la grilla jugador × día (puntaje, tiempo, puntos, jugando,
@@ -3179,7 +3273,7 @@ app, los reportes en el panel (LIG-44), una sección de salud de los datos y se�
 (cuándo entró el rival, cuándo cerró el admin la inscripción).
 
 ## D-208 · El tráfico del sitio, aunque nadie juegue
-**Fecha:** 2026-10-04 · **Estado:** vigente; completa D-44
+**Fecha:** 2026-10-04 · **Estado:** vigente · **Relación:** completa D-44
 **Decisión:** Cada página que se abre manda una señal, aunque nadie llegue a jugar, y el panel
 la muestra en una sección nueva, **Tráfico** (`#/trafico`). Una **visita** es una pestaña: se
 cuenta una vez, en la página donde empezó, con de dónde llegó (solo el dominio: `google_com`,
@@ -3209,7 +3303,7 @@ de entrada nueva tiene que llamar a `trackVisit()`: `stats.test.mjs` lo exige pa
 la portada y el laboratorio.
 
 ## D-209 · La bandera junto a cada nombre, también para los de antes
-**Fecha:** 2026-10-04 · **Estado:** vigente; completa D-207
+**Fecha:** 2026-10-04 · **Estado:** vigente · **Relación:** completa D-207
 **Decisión:** Todo nombre de jugador que muestra el panel lleva la bandera de su país, si se
 conoce: en las fichas, en "va primero", en quien juega un día anterior, en los retirados y en
 cada evento de la historia de una copa (que ahora empieza siempre por el nombre de quien lo hizo).
@@ -3224,7 +3318,7 @@ la próxima.
 sin nombres (D-44): ahí solo hay país.
 
 ## D-210 · Las partidas sin red dicen quién jugó y cómo terminó
-**Fecha:** 2026-10-04 · **Estado:** vigente; cambia D-44 para los modos sin red
+**Fecha:** 2026-10-04 · **Estado:** vigente · **Relación:** cambia D-44 para los modos sin red, y D-140
 **Decisión:** Una partida contra el celular, en un solo celular o en solitario manda, además de
 juego, modo y país, **quién juega** y **cómo terminó**. El nombre no se pide para esto: son los
 nombres que la partida ya tiene (los de un celular pasándose, o el de quien juega contra el
@@ -3243,7 +3337,7 @@ ganador: manda los nombres, no el final. Reglas nuevas en `stats/<env>/days/<dí
 (`name` y `fin`).
 
 ## D-211 · Cada copa, sala y partida sin red dice en qué idioma se jugó
-**Fecha:** 2026-10-04 · **Estado:** vigente; completa D-46 y D-207
+**Fecha:** 2026-10-04 · **Estado:** vigente · **Relación:** completa D-46 y D-207
 **Decisión:** Cada sala guarda el idioma en que juega cada jugador (`rooms/<código>/l/<rol>`, el
 que eligió en la app, no el del navegador) y cada partida sin red el suyo (`live/<id>/l`). Las
 copas ya lo tenían (`meta.lang`). El panel lo muestra como una etiqueta corta (`ES`, `PT`, o
@@ -3254,7 +3348,7 @@ del idioma elegido (`applang`, D-46) decía cuánto, pero no de qué partida.
 **Consecuencias:** Lo de antes no tiene idioma y no lleva etiqueta. Reglas nuevas, solo agregan.
 
 ## D-212 · Un jugador es un nombre y un PIN para todos los juegos, y sus récords van a rankings
-**Fecha:** 2026-10-04 · **Estado:** vigente; amplía D-96 fuera de La Copa y abre una excepción a C-7
+**Fecha:** 2026-10-04 · **Estado:** vigente · **Relación:** amplía D-96 fuera de La Copa; completa C-7 (lo que sale de quien entra con su jugador)
 **Decisión:** Quien quiere aparecer en los rankings entra con **su nombre y un PIN de 4 dígitos**,
 como en La Copa, pero una vez para toda la app y en cualquier celular. Es opcional y se ofrece
 plegado en la antesala de cada juego suelto (junto al ranking, debajo de "Empezar": antes lo
@@ -3316,8 +3410,54 @@ se crea otro jugador. En localhost y con `?prueba` el almacén es el de prueba
 en los rankings de verdad; `?records=firebase` fuerza Firebase. Hay que **publicar las reglas**
 (`node tools/firebase/reglas.mjs publicar`); el acceso anónimo ya está habilitado por D-96.
 
+## D-213 · Una fuente por regla: los cánones dicen la regla de hoy
+**Fecha:** 2026-10-04 · **Estado:** vigente · **Relación:** corrige D-132 y D-204; completa D-189; sube a los cánones lo que vivía solo en D-56, D-60, D-70, D-77, D-81, D-86, D-92 y D-123
+**Decisión:** Después de una auditoría completa de las reglas del negocio, el dueño resolvió:
+- **Cada regla vive en un solo lugar.** `CANONES.md` dice la regla de hoy; este archivo es la
+  historia, con su porqué. Cuando una decisión cambia una regla, el mismo PR cambia el canon y
+  marca el Estado de la decisión vieja. El Estado es uno de cuatro: `vigente`, `corregida por
+  D-x`, `reemplazada por D-x` o `derogada`. Lo demás (cambia, amplía, completa, excepción a) va
+  aparte, en **Relación**.
+- **`AGREGAR-JUEGO.md` son pasos cortos** que remiten a C-2 y a la lista de chequeo. **`CLAUDE.md`**
+  queda como índice y reglas de sesión.
+- **C-9 y C-8b:** si después viene un pase de celular, el resultado queda hasta tocar el botón.
+  Cerrarse solo vale solo sin pase (sala, jugar solo).
+- **C-8, "nada se preselecciona",** vale para las jugadas que se confirman. Un ajuste puede traer
+  un valor por defecto si se ve y se puede cambiar antes de empezar.
+- **C-5:** un juego de grupo (más de dos) elige si ofrece un celular, varios o los dos; lo que no
+  ofrece no se muestra. Los juegos de dos siguen con los tres modos.
+- **Capturas atrasadas del README:** en un PR común son un aviso. Solo "actualiza el README" exige
+  dejarlas en cero.
+- **Para fusionar:** ✅ en `pruebas` y en `Punta a punta`.
+- **El agente de usabilidad arregla en la rama del mismo PR**, como el de documentación, y no
+  estampa versión en el CHANGELOG.
+- **U-3:** los textos nuevos salen con la mejor propuesta, anotada en el PR, y el dueño corrige
+  después, como con los dilemas sin backlog del 2026-10-03.
+- **C-14:** el gancho de pruebas es un `window.__…` de solo lectura nombrado en la especificación
+  del juego, no necesariamente su id.
+- **Las especificaciones de los juegos siguen una plantilla común:** las secciones de C-13 más
+  "Excepciones a los cánones". Los juegos de La Copa siguen en `cup.md`.
+- **Suben a los cánones** reglas que vivían solo en decisiones: la semilla y sus excepciones (D-70,
+  D-81), las listas vacías en Firebase (D-60), el alto `100svh` y las muescas (D-77),
+  `touch-action` y `overscroll-behavior` en el arrastre (D-86), el turno que se ve sin leer
+  (D-92), la excepción de C-8b (D-56) y el reintento que comprueba (D-123).
+
+**Por qué:** la auditoría encontró cánones que contradecían decisiones nuevas (C-7 decía que de
+los modos sin red no sale ningún nombre, y D-210 lo cambió), una excepción (D-70) a una regla que
+no estaba en los cánones, `AGREGAR-JUEGO.md` con claves viejas, unas veinte decisiones superadas
+sin marcar e IDs repetidos en `REQUERIMIENTOS.md`. Con la misma regla escrita en dos lugares, el
+que se atrasa no avisa: quien lee el canon viejo cree que esa es la regla de hoy.
+**Consecuencias:** quien cambia una regla toca dos cosas en el mismo PR: el canon y el Estado de
+la decisión que deja atrás. Para decidir algo nuevo se lee primero el canon, y aquí solo el porqué.
+Este archivo abre con una tabla de rutas de entonces y de hoy y un índice por tema que lleva de
+cada canon a las decisiones que lo explican. Las decisiones viejas no se reescriben: se marcó su
+Estado y se pusieron al día solo los comandos de las que siguen siendo procedimiento (D-51, D-72,
+D-78, D-122, D-132, D-172 y D-181). D-180, que nunca se usó, queda como número vacío, y D-173 pasó
+a su lugar en el orden. Quedan para PR aparte: llevar Cuarto Rey al canon, y los guardianes
+automáticos (`games.test.mjs`, un `documentar.mjs` más estricto y el puerto libre en `cdp.mjs`).
+
 ## D-214 · El filtro de la portada va en inglés en la URL: `?type=logic`
-**Fecha:** 2026-10-04 · **Estado:** vigente; cambia la URL de D-142 y D-149, sigue a D-192
+**Fecha:** 2026-10-04 · **Estado:** vigente · **Relación:** cambia la URL de D-142 y D-149; sigue a D-192
 **Decisión:** El tipo de juego va en la URL como `?type=`, con claves en inglés: `words`, `logic`,
 `trivia` y `tabletop` (Cartas/Dados). Son las mismas claves de `TIPOS` y de `tipos` en
 `games.js`. Un link de antes (`?tipo=mesa`, `?tipo=logica`) sigue filtrando lo mismo
