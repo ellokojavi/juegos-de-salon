@@ -1853,7 +1853,7 @@ podio con gráfico); con esta ningún cambio de lugar queda fuera, y el dueño p
 todos.
 
 ## D-142 · Los minijuegos de La Copa se juegan sueltos, y la portada se filtra
-**Fecha:** 2026-09-25 · **Estado:** corregida por D-149, D-170 · **Relación:** reemplaza el solitario de D-27 y D-129; D-149 quita el filtro de cuántos juegan y saca los sueltos de `/copa/`
+**Fecha:** 2026-09-25 · **Estado:** corregida por D-149, D-170, D-214 · **Relación:** reemplaza el solitario de D-27 y D-129; D-149 quita el filtro de cuántos juegan y saca los sueltos de `/copa/`
 **Decisión:** Tres cambios que van juntos:
 1. **La portada ofrece los minijuegos de La Copa sueltos**, de un jugador: Conexiones, Toque y
    Fama: Palabra, ¿En qué año?, Reinas, Tango y Zip. Viven en `SUELTOS` de `assets/js/games.js`
@@ -1993,7 +1993,7 @@ reglas (`node tools/reglas.mjs publicar`) para que el botón funcione en las cop
 de prueba (almacén local) funciona sin eso.
 
 ## D-149 · La portada se filtra solo por tipo, y los minijuegos sueltos salen de /copa/
-**Fecha:** 2026-09-26 · **Estado:** corregida por D-162, D-198
+**Fecha:** 2026-09-26 · **Estado:** corregida por D-162, D-198, D-214
 **Decisión:** Dos cambios:
 1. **Se va el filtro de cuántos juegan** (Todos · Solo · Con amigos, D-142). La portada se filtra
    solo por tipo (Palabras, Lógica, Cultura, Cartas/Dados), igual que antes: se prende y se
@@ -3401,3 +3401,15 @@ de C-13, o una excepción que cite su decisión; `documentar.mjs` revisa además
 Estados, las correcciones sin marcar, los IDs repetidos y las rutas citadas en las guías, y ya no
 pide la lista de pruebas en `CLAUDE.md` (GitHub las corre todas); `cdp.mjs` toma un puerto libre
 para cada Chrome y lo cierra con su guion, y `ci.mjs` le pasa SIGTERM antes de SIGKILL.
+
+## D-214 · El filtro de la portada va en inglés en la URL: `?type=logic`
+**Fecha:** 2026-10-04 · **Estado:** vigente · **Relación:** cambia la URL de D-142 y D-149; sigue a D-192
+**Decisión:** El tipo de juego va en la URL como `?type=`, con claves en inglés: `words`, `logic`,
+`trivia` y `tabletop` (Cartas/Dados). Son las mismas claves de `TIPOS` y de `tipos` en
+`games.js`. Un link de antes (`?tipo=mesa`, `?tipo=logica`) sigue filtrando lo mismo
+(`TIPOS_VIEJOS`) y la portada lo reescribe como `?type=`.
+**Por qué:** Lo pidió el dueño: desde D-192 las rutas van en inglés, y `?tipo=mesa` se quedó en
+español. Los links filtrados se comparten, así que son parte de la cara pública como las rutas.
+**Consecuencias:** Los nombres que ve el jugador no cambian. Los tipos no se guardan en Firebase
+ni en el `localStorage`, así que no hay datos que migrar. Quedan en español `?sala=`,
+`?practica=` y `?semilla=`; `?sala=` va en cada link de invitación y se cambia aparte.
