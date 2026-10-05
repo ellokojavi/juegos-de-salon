@@ -3257,7 +3257,8 @@ del idioma elegido (`applang`, D-46) decía cuánto, pero no de qué partida.
 **Fecha:** 2026-10-04 · **Estado:** vigente; amplía D-96 fuera de La Copa y abre una excepción a C-7
 **Decisión:** Quien quiere aparecer en los rankings entra con **su nombre y un PIN de 4 dígitos**,
 como en La Copa, pero una vez para toda la app y en cualquier celular. Es opcional y se ofrece
-plegado en la antesala de cada juego suelto, en su resultado y en `/records/`: sin entrar, todo se
+plegado en la antesala de cada juego suelto (junto al ranking, debajo de "Empezar": antes lo
+empujaba fuera de la pantalla en alemán y portugués, dilema #186), en su resultado y en `/records/`: sin entrar, todo se
 juega igual y nada sale del celular.
 - **Identidad.** Un jugador es un `jid` (8 letras y números) en `jugadores/<jid>` = `{ n, at }`.
   El PIN nunca se guarda: `jugadorKeys/<jid>` tiene su hash, que nadie lee, y cada celular se
