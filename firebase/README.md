@@ -133,6 +133,15 @@ El mismo mecanismo que La Copa, para toda la app:
   celular (D-220). Solo la leen sus celulares. La escribe quien está sentado como el jugador y como
   `p` en la copa, con `players/<p>/j` igual al jugador; la borra quien está sentado como el jugador.
 
+## Avisos al celular (`push`, `pushCopa`, D-223)
+
+- `push/<subId>` = `{ endpoint, keys: { p256dh, auth }, lang, tz, uid, at }`: la suscripción Web
+  Push de un celular. `subId` son 32 caracteres hexadecimales (el sha256 del endpoint). **Nadie la
+  lee**: solo el administrador, que manda los avisos. La escribe y la borra solo su `uid`.
+- `pushCopa/<código>/<pid>/<subId>` = `{ dia, plazo, at }`: qué avisos quiere ese jugador en esa
+  copa. Nadie la lee. La escribe quien está sentado como el jugador, y solo con una suscripción
+  suya (`push/<subId>/uid`). El admin la borra entera al eliminar la copa.
+
 Un **jugador heredado** (`jugadores/<jid>.legado = true`, de la historia de La Copa) no tiene
 PIN: `jugadorKeys/<jid>` se puede crear para él, una vez, y quien lo reclama borra `legado` en la
 misma escritura, sentado con ese PIN. Los carga `node tools/firebase/rankings-historia.mjs --escribir`.

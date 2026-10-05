@@ -30,7 +30,7 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
 ### Pendiente (después de la v1)
 
 Recordatorios `.ics` (LIG-29), verificación cruzada de puntajes (LIG-30), papelera de copas
-viejas (LIG-31), avisos automáticos (LIG-33, en curso: D-221) y juegos de reserva (LIG-84). Ya no están
+viejas (LIG-31), avisos automáticos (LIG-33, en curso: la campana ya está en el laboratorio, D-223) y juegos de reserva (LIG-84). Ya no están
 pendientes: inglés y portugués con contenido propio (LIG-32, hecho en D-170) y las copas en el
 panel del dueño (D-137).
 
