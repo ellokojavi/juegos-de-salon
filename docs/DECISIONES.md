@@ -68,7 +68,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216 |
 | La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212 |
 | Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213 |
-| Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215 |
+| Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217 |
 | Marketing | `marketing/README.md` | D-178 |
 
 ---
@@ -3352,7 +3352,7 @@ del idioma elegido (`applang`, D-46) decía cuánto, pero no de qué partida.
 **Consecuencias:** Lo de antes no tiene idioma y no lleva etiqueta. Reglas nuevas, solo agregan.
 
 ## D-212 · Un jugador es un nombre y un PIN para todos los juegos, y sus récords van a rankings
-**Fecha:** 2026-10-04 · **Estado:** vigente · **Relación:** amplía D-96 fuera de La Copa; completa C-7 (lo que sale de quien entra con su jugador)
+**Fecha:** 2026-10-04 · **Estado:** corregida por D-217 · **Relación:** amplía D-96 fuera de La Copa; completa C-7 (lo que sale de quien entra con su jugador)
 **Decisión:** Quien quiere aparecer en los rankings entra con **su nombre y un PIN de 4 dígitos**,
 como en La Copa, pero una vez para toda la app y en cualquier celular. Es opcional y se ofrece
 plegado en la antesala de cada juego suelto (junto al ranking, debajo de "Empezar": antes lo
@@ -3484,7 +3484,7 @@ ni en el `localStorage`, así que no hay datos que migrar. Quedan en español `?
 `?practica=` y `?semilla=`; `?sala=` va en cada link de invitación y se cambia aparte.
 
 ## D-215 · Victorias por juego de grupo, y récords de Toque y Fama solo y Línea Relámpago
-**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** amplía D-212
+**Fecha:** 2026-10-05 · **Estado:** corregida por D-217 · **Relación:** amplía D-212
 **Decisión:** Los rankings suman dos tipos de tabla, con la misma forma de `records/` (D-212):
 - **Victorias** de los juegos de grupo (los que se juegan en sala: Línea de Tiempo, Toque y Fama,
   El Ahorcado, Dudo, Batalla Naval y Julepe): `records/<juego>_victorias/<período>/<jid>`, con
@@ -3523,3 +3523,15 @@ copia y la rama) sigue siendo de la sesión, en cuanto ve el PR fusionado. Dos P
 que escriben el CHANGELOG chocan en esa línea: el segundo queda en conflicto, GitHub no lo
 fusiona, y su sesión trae `main` y renumera. Los checks exigidos son un ajuste del repositorio
 (Settings → Branches → `main`), no del código.
+
+## D-217 · Los rankings salen del laboratorio
+**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** corrige D-212 y D-215 (dónde se ven)
+**Decisión:** Los rankings se ven para todos, sin pasar por `/labs/`: el 🏆 de la portada,
+`/records/`, la tabla de cada juego, la invitación a entrar y el medallero de La Copa.
+`RANKINGS_EN_LABS` queda en `false` y la sección de Rankings sale de `/labs/`. La puerta
+(`rankingsVisibles`, `activarRankings`) se conserva para probar en el laboratorio lo próximo de
+los rankings antes de abrirlo.
+**Por qué:** Lo pidió el dueño, después de cargar la historia de La Copa (D-212) y sumar las
+victorias y los récords de jugar solo (D-215).
+**Consecuencias:** Quien abre un juego ve su ranking y la invitación a entrar con nombre y PIN.
+Las reglas de Firebase no cambian.
