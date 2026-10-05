@@ -31,12 +31,11 @@ const AMIGOS = 'juegos-de-salon:jugador:amigos';
 const falla = code => Object.assign(new Error(code), { code });
 
 /**
- * Los rankings están en el laboratorio (D-212): se ven solo en los celulares que los activaron
- * desde /labs/, y siempre en pruebas (localhost, la red de la casa, Tailscale). Para abrirlos a
- * todos, `RANKINGS_EN_LABS = false`. Las copas terminadas guardan su podio igual, para que el
- * medallero ya tenga historia el día que se abra.
+ * Los rankings partieron en el laboratorio (D-212) y se abrieron a todos (D-217). La puerta queda
+ * por si algo de los rankings vuelve a probarse antes de abrirse: con `RANKINGS_EN_LABS = true`,
+ * se ven solo en los celulares que los activaron (`activarRankings`) y siempre en pruebas.
  */
-export const RANKINGS_EN_LABS = true;
+export const RANKINGS_EN_LABS = false;
 export const LABS_RANKINGS_KEY = 'juegos-de-salon:labs-rankings';
 export function rankingsVisibles(storage = globalThis.localStorage) {
   if (!RANKINGS_EN_LABS) return true;
