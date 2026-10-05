@@ -22,6 +22,14 @@
         "Capturas de partidas en línea (17: toque-y-fama 4, linea-de-tiempo 5, ahorcado 3, batalla-naval 2, dudo 2, julepe 1): el entorno en la nube no llega a www.gstatic.com ni a *.firebaseio.com (el proxy responde 403). Rehacerlas desde el Mac del dueño (python3 tools/readme.py capturas <sección>) o abrir esos dominios en el entorno.",
         "Imágenes de las tarjetas sociales (node tools/og.mjs imagenes) con las frases viejas del menú: se rehacen en el Mac del dueño (D-177)."
       ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "desde": "d1daeba7c09401393b4a8708ff8e6e97388629cf",
+      "hasta": "72a4603",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/205",
+      "pendientes": [],
+      "nota": "Revisión de un PR (no una ronda: revisadoHasta no se mueve). Avisos de La Copa, PR 3 (D-224): D-223 con Estado de los cuatro; docs/games/cup.md con lo que llega, pushEnviados y las pruebas de tools/push/; PWA-NOTIFICACIONES con lo que el PR 3 hizo distinto del plan."
     }
   ],
   "nota": "Memoria del agente de documentación (D-172). La lee y la escribe tools/documentar.mjs: hasta qué commit de main se revisó, lo que quedó pendiente, los problemas ya conocidos que esperan al dueño y las rondas anteriores."

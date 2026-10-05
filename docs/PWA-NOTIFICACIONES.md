@@ -61,7 +61,8 @@ Lo que **no** se avisa, a propósito:
   sobra y obligaría a un servidor en tiempo real.
 - **Marketing** ("¡vuelve a jugar!", "hay un juego nuevo"): un aviso que no sirve a quien lo recibe
   hace que desactive todos. Si alguna vez se quiere, va con su propia casilla, apagada por defecto.
-- Tope: **máximo 2 avisos por persona al día** por copa. Cada aviso trae un `tag` por copa y día,
+- Tope: **máximo 2 avisos por persona al día** por copa (lo hecho en el PR 3 es distinto: uno por
+  vuelta, ver "Lo que el PR 3 hizo distinto" más abajo). Cada aviso trae un `tag` por copa y día,
   así el siguiente reemplaza al anterior en la bandeja en vez de apilarse.
 
 Con esto el admin sigue teniendo sus mensajes armados para el grupo de WhatsApp (D-99 no se borra
@@ -203,6 +204,23 @@ modo No molestar, por ejemplo), el botón **Probar los avisos** de la hoja sirve
   muestra, y no hacen falta.
 - El ícono es el de la app. En Android además va una silueta blanca para la barra de estado.
 - **Idioma de quien lo recibe**, en los cuatro (C-3); el nombre de la copa va tal cual.
+
+**Lo que el PR 3 hizo distinto de este plan** (D-224; lo que manda `tools/push/calendario.mjs`):
+
+- El de la mañana sale **desde las 9:00**, en la primera vuelta que lo encuentre sin jugar (no solo
+  entre 9:00 y 10:00), y no sale si el jugador ya tocó Empezar ese día. El del plazo dice las horas
+  que quedan, redondeadas hacia arriba ("Te quedan 3 horas…", "Te queda 1 hora…"), no la hora del
+  cierre; si el cierre cae de noche, sale desde las 20:00 (cuando faltan 10 horas o menos).
+- **No hay tope diario**: cada vuelta manda a lo más uno por copa y celular (primero el fin, luego
+  el plazo, la final, el del día y la inscripción), y el siguiente espera la vuelta que viene. Un
+  celular puede recibir el del día y el del plazo del día anterior el mismo día.
+- **No se juntan copas** ("Tienes un día nuevo en 2 copas…"): cada copa manda los suyos.
+- **Sin botones en Android** ni silueta para la barra de estado: `sw.js` muestra título, texto e
+  ícono. Al tocarlo abre el tablero de la copa (`/cup/?<código>`), no el día ni el podio.
+- El de la inscripción le llega al admin solo si él activó avisos en esa copa, y nombra a quienes
+  se inscribieron después de activarlos, durante un día. El de "terminó la copa" vale durante el
+  día siguiente al cierre; después ya no sale.
+- Un aviso que el servicio no entrega en 12 horas se descarta (`TTL`).
 - **Al terminar la copa** se borran sus suscripciones solas. El permiso del celular queda, así que
   la próxima copa ya viene con avisos (principio 7).
 
