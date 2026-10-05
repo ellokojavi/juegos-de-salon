@@ -112,8 +112,11 @@ export function bloqueJugador({ abierto = false, alTocar = () => {} } = {}) {
   return caja;
 }
 
-/** La bandera del país junto al nombre (D-219), en todas las tablas: "🇨🇱 Javi". */
-export const conBandera = (co, n) => [bandera(co), n].filter(Boolean).join(' ');
+/**
+ * La bandera del país junto al nombre (D-219), en todas las tablas: "🇨🇱 Javi". Va pegada al
+ * nombre con un espacio que no parte línea: si el renglón se corta, la bandera no queda sola (U-12).
+ */
+export const conBandera = (co, n) => [bandera(co), n].filter(Boolean).join('\u00a0');
 
 /** "Juegas como {name}" con el nombre en negrita, sin armar la frase a pedazos (C-3). */
 function partirNombre(frase, nombre) {
@@ -242,7 +245,7 @@ export function bloqueCampeones({ max = 5, enlace = true, ultimas = 3 } = {}) {
       if (!filas.length) { lista.append(el('p', { class: 'muted rk-centro' }, T.noChampions)); return; }
       lista.append(...filas.map(f => el('div', { class: 'rk-fila' + (yo && f.jid === yo ? ' yo' : '') },
         el('span', { class: 'rk-puesto' }, `${f.puesto}`),
-        el('span', { class: 'rk-nombre' }, conBandera(f.co, f.n)),
+        el('span', { class: 'rk-nombre' }, el('span', { class: 'rk-n' }, conBandera(f.co, f.n))),
         el('span', { class: 'rk-medallas' }, `🥇${f.oro} 🥈${f.plata} 🥉${f.bronce}`))));
       const ult = ultimasCopas(podios, ultimas);
       if (ult.length) lista.append(el('p', { class: 'lead rk-sub' }, T.lastCups),
