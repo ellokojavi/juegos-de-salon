@@ -414,7 +414,7 @@ Spec and design: [docs/games/cup.md](docs/games/cup.md)
   Timeline Flash (one per theme) keep their 0–100 records. Two people may share a name; with
   different PINs they are different players.
 - **Saved games:** every game stores its state on the device and offers to continue.
-- **Installable:** a PWA manifest to add it to the home screen. The screen stays awake while playing.
+- **Installable:** a PWA manifest, PNG icons for Android and iPhone and a service worker, so the browser offers to install it on the home screen from any game (D-221). The service worker caches nothing yet: there is no offline mode. The screen stays awake while playing.
 
 ### Languages
 
@@ -663,11 +663,11 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   records/                    Leaderboards: the All-Rounder, every game's table and The Cup's medal table (D-212)
   panel/                      Private owner dashboard: now, The Cup, games, traffic and audience, with a page per cup, game and room (Google sign-in; see docs/PANEL.md)
   assets/css/                 Shared styles: base.css (party theme), linea.css (timeline), teclado.css (keypad), ranking.css (leaderboards)
-  assets/js/                  Shared modules: games.js (game registry), i18n.js (ES/EN/PT/DE), labs-idioma.js (a new language in the lab, D-191), ui.js, sound.js, compartir.js (everything shared, D-165), handoff.js, chat.js, session.js, arrastre.js (drag and drop), teclado.js, azar.js and dado3d.js (Random game), frases.js, records.js + jugador.js + ranking.js (players and leaderboards, D-212; jugador-firebase.js and jugador-local.js are their stores), instalable.js (registers the service worker, D-220)
+  assets/js/                  Shared modules: games.js (game registry), i18n.js (ES/EN/PT/DE), labs-idioma.js (a new language in the lab, D-191), ui.js, sound.js, compartir.js (everything shared, D-165), handoff.js, chat.js, session.js, arrastre.js (drag and drop), teclado.js, azar.js and dado3d.js (Random game), frases.js, records.js + jugador.js + ranking.js (players and leaderboards, D-212; jugador-firebase.js and jugador-local.js are their stores), instalable.js (registers the service worker, D-221)
   assets/js/transport/        Transports: local (same phone), firebase (room) and stats (usage signals)
   assets/og/                  The 1200×630 images shown when a link is shared
   manifest.webmanifest        PWA manifest (installable on the home screen); its PNG icons are in assets/icons/
-  sw.js                       Service worker (D-220): for now it makes the app installable and caches nothing; later it receives The Cup's notifications
+  sw.js                       Service worker (D-221): for now it makes the app installable and caches nothing; later it receives The Cup's notifications
   ahorcado/ copa/ …           Bridge pages: the old Spanish URLs, forwarding to the new ones (generated, D-192)
 docs/                       Requirements, decisions, canons, one spec per game (docs/games/) and the README screenshots
 firebase/                   Realtime Database security rules and notes

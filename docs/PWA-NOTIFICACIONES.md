@@ -1,9 +1,9 @@
 # App instalable y avisos al celular (PWA + Web Push)
 
-**Estado:** aprobado por el dueño (D-220); el PR 1 está hecho (v0.104.0) · **Fecha:** 2026-10-05 ·
+**Estado:** aprobado por el dueño (D-221); el PR 1 está hecho (v0.104.0) · **Fecha:** 2026-10-05 ·
 **Toca:** RP-11, RP-13, LIG-33, D-99
 
-Es el detalle de D-220, que **corrige a D-99** en lo que dice de los avisos automáticos. El diseño de
+Es el detalle de D-221, que **corrige a D-99** en lo que dice de los avisos automáticos. El diseño de
 las pantallas está dibujado en un lienzo aparte (privado del dueño), que el dueño aprobó con un
 cambio: las hojas y las tarjetas van sobre el morado oscuro de la app (como la hoja del chat,
 `.chat-panel`), no sobre fondo claro.

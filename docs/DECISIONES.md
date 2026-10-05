@@ -70,7 +70,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219 |
 | Marketing | `marketing/README.md` | D-178 |
-| App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-220 |
+| App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221 |
 
 ---
 
@@ -1215,7 +1215,7 @@ copa a medias.
 **Consecuencias:** LIG-32 queda pendiente: cada idioma necesita su propio contenido.
 
 ## D-99 · Los avisos del grupo los manda el admin, con mensajes armados
-**Fecha:** 2026-09-23 · **Estado:** corregida por D-220
+**Fecha:** 2026-09-23 · **Estado:** corregida por D-221
 **Decisión:** La app no manda WhatsApp ni correos. El admin tiene cuatro mensajes armados que salen
 por el diálogo de compartir del celular: invitación, **recordatorio del día**, tabla parcial y
 resumen final. El recordatorio sirve cualquier día: antes de empezar dice cuándo parte y el primer
@@ -3586,7 +3586,7 @@ heredados, sus récords y los podios (desde las copas), y la tabla de partidas c
 jugador ya había jugado. Reglas nuevas: `jugadores/<jid>/co`, `co` en las filas y en los podios,
 y `partidas` entre las tablas que suben de a uno; las publica `publicar.yml` (D-218).
 
-## D-220 · La app se instala de verdad, y La Copa avisará al celular a quien lo pida
+## D-221 · La app se instala de verdad, y La Copa avisará al celular a quien lo pida
 **Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** corrige D-99, completa RP-11
 **Decisión:** Juegos de Salón pasa a ser una app instalable completa (PWA) y tendrá avisos al
 celular (Web Push) para La Copa, solo para quien los active. El plan, la experiencia del jugador y

@@ -1,5 +1,5 @@
 /**
- * El service worker de la app (D-220). Vive en la raíz para que su alcance sea todo el sitio.
+ * El service worker de la app (D-221). Vive en la raíz para que su alcance sea todo el sitio.
  *
  * Por ahora no toca la red ni guarda nada: sin evento `fetch`, cada página se pide igual que sin
  * él, y ningún celular puede quedar pegado con una versión vieja del sitio. Existe para que la app
