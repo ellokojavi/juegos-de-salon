@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.102.2 — 2026-10-05
+- **Lo de después de fusionar se hace solo** (D-218): las reglas de Firebase se publican en cada
+  fusión, antes que el sitio; las copias de trabajo ya fusionadas se borran al empezar cada sesión
+  de Claude, y GitHub borra la rama. Sin cambios para quien juega.
+
 ## 0.102.1 — 2026-10-05
 - **Rankings: tu partida aparece apenas terminas** en Línea Relámpago y en Toque y Fama solo. La
   tabla del final se leía mientras la partida se guardaba y salía sin ella; ahora se vuelve a leer
