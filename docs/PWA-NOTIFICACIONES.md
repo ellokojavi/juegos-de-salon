@@ -114,10 +114,10 @@ La app detecta en qué está el jugador y le muestra solo el camino que le sirve
  Diálogo del sistema      a tu inicio", 3 pasos       abre este link en Safari"      al diálogo del sistema)
      │                    con dibujos                 · Copiar link
  ✅ Aviso de prueba             │
-    al instante          El jugador abre la app desde el ícono
+    al instante          El jugador abre la app desde el ícono:
+                         parte en la portada (D-226)
                                 │
-                         "Eres Ana en La Copa: Los Primos.
-                          Escribe tu PIN para seguir."
+                         La Copa → código, nombre y PIN
                                 │
                          🔔 Activar avisos → diálogo del sistema → ✅ aviso de prueba
 ```
@@ -134,9 +134,11 @@ tocar:
    el botón en ese iPhone. En iOS 26 Compartir quedó dentro del menú **⋯**, así que el paso cambia
    según la versión).
 2. "Elige **Agregar a inicio**. Si no lo ves, baja en la lista."
-3. "Abre **Juegos** desde el ícono nuevo y toca 🔔 otra vez."
+3. "Abre **Juegos de Salón** desde el ícono nuevo, entra a La Copa con el código **K7Q2X**, tu
+   nombre y tu PIN, y toca **Activar avisos** otra vez." (D-226: la app parte en la portada.)
 
-La hoja tiene un botón **Ya la agregué** que explica el paso 3 y un **Cerrar**. No se puede saber
+La hoja tiene un botón **Ya la agregué** que explica el paso 3 (la app parte en la portada y se
+entra con el código de la copa) y un **Cerrar**. No se puede saber
 desde Safari si la persona la instaló, así que la hoja no vuelve a salir sola.
 
 **El paso delicado de iPhone: la app instalada empieza vacía.** En iPhone la app de la pantalla de
@@ -157,6 +159,9 @@ asiento en la copa. Al abrirla por primera vez no sabe quién es el jugador. La 
   versiones. Es la primera tarea del PR 2, con iOS 17, 18 y 26. Si iOS usa el `start_url`, el plan
   B es que la app instalada abra en "Tus copas" con **Entrar a mi copa** (código, nombre y PIN),
   que ya existe.
+- **Resultado (D-226, la prueba del dueño):** iOS usa el `start_url`, así que vale el plan B: la
+  app instalada abre en la portada, la hoja da el código de la copa, y la campana se ve siempre en
+  la app instalada del iPhone, aunque los avisos sigan en el laboratorio.
 
 **Dentro de WhatsApp, Instagram u otra app**: ahí no se puede agregar a inicio. Se dice
 "Para recibir avisos, abre este link en Safari" con un botón **Copiar link**. En Android no hace

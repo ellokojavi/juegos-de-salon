@@ -134,7 +134,7 @@ Los IDs no se reusan: un requerimiento que cambia conserva su ID y su texto se a
 | LIG-30 | Verificación cruzada: cada celular recalcula los puntajes ajenos desde las jugadas. | ⏳ pendiente |
 | LIG-31 | Papelera: borrar copas una semana después de terminadas. | ⏳ pendiente |
 | LIG-32 | Inglés y portugués, con contenido propio por idioma (D-98, D-170). | ✅ D-170 |
-| LIG-33 | Avisos automáticos por WhatsApp, correo o push (D-99). | ⏳ pendiente: push en curso, en cuatro PR (D-221, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md)); el PR 1 (instalable) entró en v0.105.0, el 2 (suscribirse, D-223) en v0.107.0 y el 3 (mandar, D-224) en v0.108.0, los dos en el laboratorio; la clave VAPID, en v0.108.1 (D-225) |
+| LIG-33 | Avisos automáticos por WhatsApp, correo o push (D-99). | ⏳ pendiente: push en curso, en cuatro PR (D-221, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md)); el PR 1 (instalable) entró en v0.105.0, el 2 (suscribirse, D-223) en v0.107.0 y el 3 (mandar, D-224) en v0.108.0, los dos en el laboratorio; la clave VAPID, en v0.108.1 (D-225), y la campana en la app instalada del iPhone, en v0.108.2 (D-226) |
 | LIG-34 | Calendario elegido por el admin al crear la copa: qué juegos y en qué orden, a partir de una propuesta al azar; la final no cambia (D-163). | ✅ v0.75.0 |
 | LIG-35 | Pantalla de espera antes del día 1: cuándo parte, calendario e inscritos. | ✅ v0.42 |
 | LIG-36 | "Cómo se juega" antes de cada juego y de cada ronda de la final; el intento empieza en Empezar. | ✅ v0.42 |
