@@ -3658,7 +3658,7 @@ largo se corta bajo el ícono ("Juegos de Sa…"). `instalable.test.mjs` exige q
 con `COMMON` de `i18n.js`, y `tools/e2e/instalable.mjs` revisa el nombre en los cuatro idiomas.
 
 ## D-223 · Los avisos de La Copa se activan con la campana, primero en el laboratorio
-**Fecha:** 2026-10-05 · **Estado:** corregida por D-224 · **Relación:** completa D-221
+**Fecha:** 2026-10-05 · **Estado:** corregida por D-224, D-226 · **Relación:** completa D-221
 **Decisión:** El PR 2 del plan de avisos ([PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md)): el
 jugador activa los avisos de una copa, el celular se suscribe y la base guarda la suscripción. Los
 avisos de verdad los manda el PR 3.
@@ -3673,7 +3673,8 @@ avisos de verdad los manda el PR 3.
   línea "Te avisaremos de esta copa" y "Cambiar".
 - **iPhone:** en Safari, la campana abre los tres pasos para agregar la app a inicio; dentro de
   WhatsApp o Instagram, pide abrir el link en Safari. La dirección pasa a llevar `&app=<pid>` (el
-  PIN nunca), y la app instalada abre en "Ya estoy inscrito" con el nombre ya elegido.
+  PIN nunca), y la app instalada abre en "Ya estoy inscrito" con el nombre ya elegido (corregida
+  por D-226: en iPhone la app instalada abre en la portada, y la hoja da el código de la copa).
 - **La base:** `push/<subId>` y `pushCopa/<código>/<pid>/<subId>`, que nadie lee; las escribe solo
   el celular dueño, sentado como el jugador. Ver firebase/README.md.
 - **La clave VAPID** la genera el dueño una vez (`node tools/push/vapid.mjs`): la pública queda en
@@ -3729,7 +3730,7 @@ pruebas (`tools/push/*.test.mjs`) usan relojes inventados y una base falsa: el e
 prueba con `--prueba`.
 
 ## D-225 · La clave VAPID está puesta, y la app instalada del iPhone hereda el laboratorio de avisos
-**Fecha:** 2026-10-05 · **Estado:** corregida por D-226 (la herencia no sirve: iOS abre la app en la portada) · **Relación:** completa D-223 y D-224
+**Fecha:** 2026-10-05 · **Estado:** corregida por D-226 · **Relación:** completa D-223 y D-224
 **Decisión:** El paso previo a la prueba real de los avisos ([PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md)):
 - **La clave VAPID** se generó una vez con `node tools/push/vapid.mjs`: la pública quedó en
   `public/assets/js/vapid.js` y la privada, como el secreto `VAPID_PRIVADA` de GitHub, sin pasar por
@@ -3740,7 +3741,8 @@ prueba con `--prueba`.
   avisos funcionan. Si La Copa abre **en la app instalada** con `&app=<pid>` (la dirección que arma la
   hoja de agregar a inicio, que sale solo si la campana ya se veía en Safari), activa el laboratorio
   de avisos en ese almacenamiento (`heredarLabsDeApp` en `push.js`). En una pestaña no: esa
-  dirección pudo llegar copiada a otro celular.
+  dirección pudo llegar copiada a otro celular. (Corregida por D-226: iOS abre la app instalada en la
+  portada, sin `&app=`, así que la herencia no llegaba; se quitó y la campana se ve siempre ahí.)
 **Por qué:** Lo pidió el dueño, para hacer la prueba real en su iPhone antes de abrir los avisos a
 todos (D-224).
 **Consecuencias:** Cuando `AVISOS_EN_LABS` pase a `false`, la herencia deja de hacer falta y no hace
