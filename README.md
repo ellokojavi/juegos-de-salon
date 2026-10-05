@@ -404,7 +404,7 @@ Spec and design: [docs/games/cup.md](docs/games/cup.md)
   social card. Results of playing a game alone (on its own page, or in Bulls and Cows and
   Timeline) share the same result image, with a "can you beat me?" and the game's link. With no
   share sheet (a computer), the image is downloaded and the text copied.
-- **Leaderboards** (D-212): signing in is optional and needs no account — a name and a 4-digit
+- **Leaderboards** (D-212, in the lab for now: only on phones that turn them on at `/labs/`): signing in is optional and needs no account — a name and a 4-digit
   PIN, the same idea as The Cup, that works on any phone. Signed in, every game played alone on its
   own page keeps your best score and counts your games. Each game's page shows its leaderboard
   (this week, all time, friends and in The Cup), with your neighbours when you are below the top ten.

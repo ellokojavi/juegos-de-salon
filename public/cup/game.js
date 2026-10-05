@@ -29,7 +29,7 @@ import { audienciaDe } from './games/audiencia.js';
 import { desglose } from './desglose.js';
 import { planilla } from './planilla.js';
 import { bloqueJugador, bloqueRanking, avisoPartida, bloqueCampeones } from '../assets/js/ranking.js';
-import { jugador, leerYo } from '../assets/js/jugador.js';
+import { jugador, leerYo, rankingsVisibles } from '../assets/js/jugador.js';
 import { podioDe } from '../assets/js/records.js';
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
@@ -200,7 +200,7 @@ function portada() {
       el('summary', {}, T.howTitle),
       el('ol', { class: 'como' }, T.howItems.map(x => el('li', {}, x)))),
     // Los campeones de las copas terminadas (D-212): al final, para no empujar lo de crear o entrar
-    bloqueCampeones(),
+    rankingsVisibles() ? bloqueCampeones() : null,
   );
 }
 
@@ -2024,7 +2024,7 @@ function practica(id) {
  * cualquiera los juega: sin el laboratorio y sin una semilla elegida, que dejaría repetir el mismo
  * tablero hasta sacarle el máximo.
  */
-const rankea = id => !LABS && !SEMILLA && !!gameById(id)?.suelto;
+const rankea = id => !LABS && !SEMILLA && !!gameById(id)?.suelto && rankingsVisibles();
 
 function jugarPractica(id, semilla) {
   // Suelto, todo va en el idioma de quien juega: no hay con quién jugar lo mismo (D-170)

@@ -238,7 +238,11 @@ en `jugador.js` (`jugador-firebase.js` y `jugador-local.js`, el de prueba); las 
 en `ranking.js` con `public/assets/css/ranking.css`. Se ven en la antesala de cada juego suelto de
 La Copa, en la portada de La Copa (Campeones) y en `/records/` (el 🏆 de la barra de la portada).
 
-En localhost y con `?prueba` se usa el almacén de prueba, para que los guiones no escriban en los
+**Por ahora están en el laboratorio:** solo se ven en los celulares que los activan desde
+`/labs/` (sección Rankings) y siempre en pruebas. Para abrirlos a todos, `RANKINGS_EN_LABS = false`
+en `jugador.js`. Las copas terminadas guardan su podio igual, para que el medallero tenga historia.
+
+En pruebas (localhost, la red de la casa, Tailscale) y con `?prueba` se usa el almacén de prueba, para que los guiones no escriban en los
 rankings de verdad; **`?records=firebase` fuerza Firebase** para mirarlo a mano. Las páginas de los
 juegos sueltos cargan `ranking.css` porque lo carga su molde, `public/cup/suelto/index.html`, del que
 `og.mjs tarjetas` las genera. Las reglas nuevas (`jugadores`, `records`, `torneoPodios`…) se publican
