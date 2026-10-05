@@ -11,7 +11,7 @@
  * Se juega en el modo solo, que es la ⏳ Línea Relámpago de La Copa (D-142): el mismo arrastre
  * de assets/js/arrastre.js, montado por cup/games/timeline/ui.js, y sin pases de por medio.
  *
- * Uso: SITIO=http://localhost:87xx PUERTO_CDP=94xx node tools/e2e/timeline/arrastre.mjs <salida>
+ * Uso: SITIO=http://localhost:87xx node tools/e2e/timeline/arrastre.mjs <salida>
  */
 import { launch, sleep } from '../cdp.mjs';
 
