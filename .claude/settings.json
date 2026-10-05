@@ -3,5 +3,19 @@
     "allow": [
       "Bash(node tools/firebase/reglas.mjs:*)"
     ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && [ -f tools/agents/limpiar-copias.mjs ] && node tools/agents/limpiar-copias.mjs --hook || true",
+            "timeout": 60,
+            "statusMessage": "Revisando copias de trabajo fusionadas…"
+          }
+        ]
+      }
+    ]
   }
 }

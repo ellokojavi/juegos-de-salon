@@ -28,8 +28,33 @@ jobs:
   pruebas:
     uses: ./.github/workflows/pruebas.yml
 
-  publicar:
+  # Las reglas de Firebase se publican solas (D-218), antes que el sitio: el código nuevo puede
+  # necesitarlas. `reglas.mjs publicar` no sube nada si ya están, y las verifica después de subirlas;
+  # si Firebase las rechaza, el sitio no se publica. Necesita el secreto FIREBASE_ADMIN_JSON (la
+  # llave de la cuenta de servicio); sin él, avisa y sigue, y las reglas se publican a mano.
+  reglas:
     needs: pruebas
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Publicar las reglas de Firebase
+        env:
+          LLAVE_JSON: ${{ secrets.FIREBASE_ADMIN_JSON }}
+        run: |
+          if [ -z "$LLAVE_JSON" ]; then
+            echo "::warning::Falta el secreto FIREBASE_ADMIN_JSON: si este cambio tocó las reglas, publícalas a mano (node tools/firebase/reglas.mjs publicar)"
+            exit 0
+          fi
+          umask 077
+          printf '%s' "$LLAVE_JSON" > "$RUNNER_TEMP/llave.json"
+          FIREBASE_LLAVE="$RUNNER_TEMP/llave.json" node tools/firebase/reglas.mjs publicar
+
+  publicar:
+    needs: [pruebas, reglas]
     runs-on: ubuntu-latest
     timeout-minutes: 10
     environment:
