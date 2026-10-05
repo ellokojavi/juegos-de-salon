@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.108.0 — 2026-10-05
+- **Los avisos de La Copa llegan de verdad, en el laboratorio** (D-224): cuando se abre un día,
+  cuando se te acaba el plazo para jugarlo, en La Gran Final (con tu lugar en la tabla) y al
+  terminar la copa; al admin, cuando alguien se inscribe. Nunca de noche, en tu idioma y a tu
+  hora. Los manda GitHub cada 15 minutos; se abren a todos cuando el dueño vea llegar uno.
+
 ## 0.107.0 — 2026-10-05
 - **Avisos de La Copa, en el laboratorio** (D-223): una campana en cada copa para activar los
   avisos al celular, con la oferta después de jugar, el permiso del sistema, un aviso de

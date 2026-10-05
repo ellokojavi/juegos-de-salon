@@ -30,7 +30,7 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
 ### Pendiente (después de la v1)
 
 Recordatorios `.ics` (LIG-29), verificación cruzada de puntajes (LIG-30), papelera de copas
-viejas (LIG-31), avisos automáticos (LIG-33, en curso: la campana ya está en el laboratorio, D-223) y juegos de reserva (LIG-84). Ya no están
+viejas (LIG-31), avisos automáticos (LIG-33, en curso: la campana y el envío ya están en el laboratorio, D-223, D-224) y juegos de reserva (LIG-84). Ya no están
 pendientes: inglés y portugués con contenido propio (LIG-32, hecho en D-170) y las copas en el
 panel del dueño (D-137).
 
@@ -189,11 +189,12 @@ resultado) guarda en `feedback/<id>`, por REST y sin cuenta (D-104), el texto, u
 y un contexto en JSON: copa, jugador, pantalla, día, juego, semilla, URL y navegador. Se leen con
 `node tools/firebase/reportes.mjs`; en `?prueba` queda en `localStorage` (`juegos-de-salon:copa:prueba:reportes`).
 
-### Avisos al celular (D-223, en el laboratorio)
+### Avisos al celular (D-223, D-224, en el laboratorio)
 
-Mientras no se manden avisos de verdad, solo se ven en el sitio local y en los celulares que los
-activan en `/labs/` (`AVISOS_EN_LABS` en `push.js`), y solo si `public/assets/js/vapid.js` tiene la
-clave. El diseño y lo que falta están en [PWA-NOTIFICACIONES.md](../PWA-NOTIFICACIONES.md).
+Hasta que el dueño vea llegar un aviso de verdad en su Android y su iPhone, solo se ven en el sitio
+local y en los celulares que los activan en `/labs/` (`AVISOS_EN_LABS` en `push.js`), y solo si
+`public/assets/js/vapid.js` tiene la clave. El diseño y lo que falta están en
+[PWA-NOTIFICACIONES.md](../PWA-NOTIFICACIONES.md).
 
 - **La campana** va junto a Invitar y Administrar en el tablero, hasta que la copa termina:
   **Activar avisos**, **Avisos activos** (abre los ajustes: los dos avisos, "Probar los avisos" y
@@ -208,6 +209,13 @@ clave. El diseño y lo que falta están en [PWA-NOTIFICACIONES.md](../PWA-NOTIFI
 - **iPhone:** en Safari, la campana abre los pasos para agregar la app a inicio y deja `&app=<pid>`
   en la dirección (nunca el PIN); la app instalada abre en "Ya estoy inscrito" con ese nombre
   elegido. Dentro de WhatsApp o Instagram, pide abrir el link en Safari.
+- **Lo que llega** (D-224): `.github/workflows/avisos.yml` corre `tools/push/avisar.mjs` cada 15
+  minutos, y `tools/push/calendario.mjs` decide con `engine.js` qué toca, en la hora y el idioma
+  del celular y nunca entre las 22:00 y las 8:00: **se abrió el día** (desde las 9:00, si no lo ha
+  jugado ni empezado), **se te acaba el plazo** (4 horas antes del cierre, o desde las 20:00 si
+  cierra de noche), **La Gran Final** (con su lugar en la tabla), **terminó la copa** y, al admin
+  que activó avisos, **quién se inscribió**. A lo más uno por copa y celular en cada vuelta. Los
+  textos son los `avMsg*` de `rules.js`; al tocarlo abre el tablero de la copa.
 
 ## Flujo
 
@@ -234,6 +242,7 @@ torneos/<código>/fin                hora del servidor en que el admin la termin
 torneoKeys/<código>/<pid>           hash del PIN (ilegible)
 torneoSeats/<código>/<pid>/<uid>    el mismo hash: el celular uid puede escribir por pid (ilegible)
 pushCopa/<código>/<pid>/<subId>     { dia, plazo, at }: qué avisos quiere ese celular (ilegible, D-223); la suscripción va en push/<subId>
+pushEnviados/<código>/<subId>/<clave>  hora en que se entregó ese aviso (dia:3, plazo:3, final, fin, insc:<pid>); solo la toca avisar.mjs (D-224)
 ```
 
 Las reglas imponen: escribir una sola vez, las ventanas de cada día con la hora del servidor, el
@@ -258,7 +267,7 @@ Todo bajo `public/cup/`:
 | `demo.js` | Las escenas de ejemplo del laboratorio |
 | `reportes.js` | El botón 🐞 y los reportes que esperan reenvío |
 | `planilla.js` | La tabla final como CSV (D-161) |
-| `rules.js` | Textos (`LOCALES` es, en, pt, de) y la explicación de cada juego |
+| `rules.js` | Textos (`LOCALES` es, en, pt, de, también los de los avisos al celular, `avMsg*`) y la explicación de cada juego |
 | `game.js` | Pantallas |
 | `suelto/index.html` | La página de un juego suelto (`/<slug>/`), de la que `og.mjs tarjetas` genera las demás |
 
@@ -275,6 +284,9 @@ node public/cup/reportes.test.mjs
 node tools/e2e/cup/torneo.mjs /tmp/copa            # Copa de 3 días, tres jugadores
 node tools/e2e/cup/torneo.mjs /tmp/copa --siete    # los siete juegos
 node tools/e2e/cup/avisos.mjs /tmp/avisos          # los avisos al celular, con un servicio falso (D-223)
+node tools/push/calendario.test.mjs                # qué aviso toca y cuándo, con relojes inventados (D-224)
+node tools/push/avisar.test.mjs                    # una vuelta del envío, con una base falsa
+node tools/push/webpush.test.mjs                   # el cifrado y la firma, contra el ejemplo del RFC 8291
 ```
 
 ## Excepciones a los cánones
