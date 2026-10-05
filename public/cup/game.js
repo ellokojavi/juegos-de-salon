@@ -703,7 +703,9 @@ function entrar({ mantener = false } = {}) {
         b.disabled = false;
       }
     });
-    poner(caja, el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.pickName), nombres, p.nodo), err, b);
+    // Con un jugador en este celular hay dos PIN: aquí va el de la copa (D-96, D-220)
+    poner(caja, el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.pickName), nombres, p.nodo,
+      yoJ ? el('small', { class: 'muted' }, T.pinCopaHint) : null), err, b);
   };
 
   const tabs = el('div', { class: 'seg' },
