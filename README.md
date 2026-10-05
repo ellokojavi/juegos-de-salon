@@ -404,6 +404,12 @@ Spec and design: [docs/games/cup.md](docs/games/cup.md)
   social card. Results of playing a game alone (on its own page, or in Bulls and Cows and
   Timeline) share the same result image, with a "can you beat me?" and the game's link. With no
   share sheet (a computer), the image is downloaded and the text copied.
+- **Leaderboards** (D-212, in the lab for now: only on phones that turn them on at `/labs/`): signing in is optional and needs no account — a name and a 4-digit
+  PIN, the same idea as The Cup, that works on any phone. Signed in, every game played alone on its
+  own page keeps your best score and counts your games. Each game's page shows its leaderboard
+  (this week, all time, friends and The Cup), with your neighbours when you are below the top ten.
+  `/records/` (🏆 on the menu) adds the All-Rounder, the sum of your best score in every game, and
+  The Cup's medal table. Two people may share a name; with different PINs they are different players.
 - **Saved games:** every game stores its state on the device and offers to continue.
 - **Installable:** a PWA manifest to add it to the home screen. The screen stays awake while playing.
 
@@ -540,6 +546,7 @@ node public/assets/js/arrastre.test.mjs
 node public/assets/js/compartir.test.mjs
 node public/assets/js/games.test.mjs
 node public/assets/js/i18n.test.mjs
+node public/assets/js/records.test.mjs
 node public/assets/js/transport/cleanup.test.mjs
 node public/assets/js/transport/dispose.test.mjs
 node public/assets/js/transport/errors.test.mjs
@@ -556,6 +563,7 @@ node public/panel/rutas.test.mjs
 node tools/agents/documentar.test.mjs
 node tools/agents/marketing.test.mjs
 node tools/e2e/cambios.test.mjs
+node tools/firebase/rankings-historia.test.mjs
 node tools/release/version.test.mjs
 ```
 <!-- /generado -->
@@ -647,9 +655,10 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   fourth-king/                Fourth King (engine.js + tests, game.js, rules.js)
   connections/ · queens/ …    The Cup's games played on their own, one page each (generated from cup/suelto/)
   labs/                       The lab: games being tested before they reach the menu (not linked, not indexed); labs/de/ forwards to /de/ (German left the lab, D-197)
+  records/                    Leaderboards: the All-Rounder, every game's table and The Cup's medal table (D-212)
   panel/                      Private owner dashboard: now, The Cup, games, traffic and audience, with a page per cup, game and room (Google sign-in; see docs/PANEL.md)
-  assets/css/                 Shared styles: base.css (party theme), linea.css (timeline), teclado.css (keypad)
-  assets/js/                  Shared modules: games.js (game registry), i18n.js (ES/EN/PT/DE), labs-idioma.js (a new language in the lab, D-191), ui.js, sound.js, compartir.js (everything shared, D-165), handoff.js, chat.js, session.js, arrastre.js (drag and drop), teclado.js, azar.js and dado3d.js (Random game), frases.js
+  assets/css/                 Shared styles: base.css (party theme), linea.css (timeline), teclado.css (keypad), ranking.css (leaderboards)
+  assets/js/                  Shared modules: games.js (game registry), i18n.js (ES/EN/PT/DE), labs-idioma.js (a new language in the lab, D-191), ui.js, sound.js, compartir.js (everything shared, D-165), handoff.js, chat.js, session.js, arrastre.js (drag and drop), teclado.js, azar.js and dado3d.js (Random game), frases.js, records.js + jugador.js + ranking.js (players and leaderboards, D-212; jugador-firebase.js and jugador-local.js are their stores)
   assets/js/transport/        Transports: local (same phone), firebase (room) and stats (usage signals)
   assets/og/                  The 1200×630 images shown when a link is shared
   manifest.webmanifest        PWA manifest (installable on the home screen)
@@ -658,7 +667,7 @@ docs/                       Requirements, decisions, canons, one spec per game (
 firebase/                   Realtime Database security rules and notes
 tools/
   release/                    Publishing: set-version.py (version stamp, at publish time), readme.py + hechos.mjs (this README), og.mjs (social cards and bridge pages)
-  firebase/                   reglas.mjs (publish the rules), reportes.mjs (The Cup bug reports), en-curso.mjs (anyone playing?)
+  firebase/                   reglas.mjs (publish the rules), reportes.mjs (The Cup bug reports), en-curso.mjs (anyone playing?), rankings-historia.mjs (The Cup's history into the leaderboards)
   generators/                 mapa.mjs (the world of Where is it?), flota.py (the Battleship fleet)
   agents/                     dilemas.mjs (usability dilemmas as issues, D-132), documentar.mjs (the documentation agent, D-172)
   e2e/                        Full games in headless Chrome, one folder per game; the screenshots come from here

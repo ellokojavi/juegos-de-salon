@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.100.0 — 2026-10-05
+- **Rankings, en el laboratorio** (D-212): con un nombre y un PIN de 4 dígitos, sin cuenta y en
+  cualquier celular, los juegos sueltos guardan tu mejor puntaje y cuentan tus partidas. Cada juego
+  tiene su ranking (semana, siempre, amigos de La Copa y Copa) con tus vecinos si quedaste abajo;
+  `/records/` suma el Todoterreno y el medallero de La Copa. Por ahora solo en los celulares que
+  los activan en `/labs/`. La historia de La Copa ya está cargada: quien jugó antes reclama sus
+  puntajes al entrar con su nombre.
+
 ## 0.99.7 — 2026-10-05
 - **Cuarto Rey: el pase del celular en una sola pantalla** (D-213): lo que pasó ("¡Salud!", quién
   toma) y "Pásale el celular a X" se ven juntos, y solo avanza el botón "¡Dame la carta!": ya no se

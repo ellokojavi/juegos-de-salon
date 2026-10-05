@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#150726">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Rankings 🏆 · Juegos de Salón</title>
+  <meta name="description" content="Los mejores puntajes de cada juego de Juegos de Salón, de la semana y de siempre, y los campeones de La Copa.">
+  <link rel="canonical" href="https://juegosdesalon.cl/records/">
+  <!-- Sin destello de idioma (D-194): si el idioma elegido no es el español, no se pinta hasta tener sus textos -->
+  <script>
+    (function () {
+      try {
+        var u = (new URLSearchParams(location.search).get('lang') || '').toLowerCase();
+        var l = u || localStorage.getItem('juegos-de-salon:lang') || 'es';
+        if (l === 'es') return;
+        var h = document.documentElement, listo = function () { h.classList.remove('i18n-pendiente'); };
+        h.classList.add('i18n-pendiente');
+        document.addEventListener('DOMContentLoaded', listo);
+        setTimeout(listo, 1500);
+      } catch (_) { /* sin almacenamiento: se pinta como siempre */ }
+    })();
+  </script>
+  <link rel="manifest" href="../manifest.webmanifest">
+  <link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="../assets/css/ranking.css">
+  <style>
+    .rk-pagina { display: grid; gap: 14px; }
+    .rk-hero-icon { display: block; font-size: 3.4rem; line-height: 1.1; }
+    .rk-juegos { display: flex; flex-wrap: wrap; gap: 6px; }
+    .rk-juegos button {
+      border: 2px solid var(--glass-border); background: rgba(0, 0, 0, 0.25); color: var(--ink);
+      font: 900 0.95rem var(--font-body); border-radius: 999px; padding: 6px 12px; min-height: 44px; cursor: pointer;
+    }
+    .rk-juegos button.on { border-color: var(--cyan); background: rgba(46, 230, 214, 0.18); }
+    .rk-perfil ul { list-style: none; padding: 0; margin: 6px 0 10px; display: grid; gap: 4px; }
+    .rk-perfil li { display: flex; justify-content: space-between; gap: 8px; }
+    .rk-perfil summary { cursor: pointer; font-weight: 900; min-height: 44px; display: flex; align-items: center; }
+    .rk-pin-nuevo { display: grid; gap: 8px; }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <div class="topbar">
+      <a class="back" href="../" id="btn-menu">‹ Menú</a>
+      <div class="tools"><div id="lang-slot"></div><span id="sound-slot"></span></div>
+    </div>
+    <header class="intro-hero center">
+      <span class="rk-hero-icon" aria-hidden="true">🏆</span>
+      <h1 class="display display--lg rainbow" id="rk-h1">Rankings</h1>
+      <p class="sub muted" id="rk-sub"></p>
+    </header>
+    <div class="rk-pagina" id="rk-pagina"></div>
+  </main>
+
+  <script type="module">
+    import { el, conEmoji } from '../assets/js/ui.js';
+    import { getLang, langToggle, applyStatic, pickLang, COMMON } from '../assets/js/i18n.js';
+    import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
+    import { SUELTOS } from '../assets/js/games.js';
+    import { trackVisit } from '../assets/js/transport/stats.js';
+    import { bloqueJugador, bloqueRanking, bloqueCampeones } from '../assets/js/ranking.js';
+    import { jugador, leerYo } from '../assets/js/jugador.js';
+    import { TODOTERRENO, esPin } from '../assets/js/records.js';
+
+    trackVisit(); // el tráfico del sitio (D-208)
+    initSound();
+    const lang = getLang();
+    document.documentElement.lang = lang;
+    const C = COMMON[lang] || COMMON.es, T = C.rk;
+    applyStatic(C);
+    document.title = `${T.pageTitle} 🏆 · ${C.appTitle}`;
+    document.getElementById('rk-h1').textContent = T.pageTitle;
+    document.getElementById('rk-sub').textContent = T.pageSub;
+    document.getElementById('btn-menu').textContent = `‹ ${C.menu}`;
+    document.getElementById('lang-slot').append(langToggle());
+    document.getElementById('sound-slot').append(soundToggle());
+    const fmt = (s, v = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (v[k] !== undefined ? v[k] : `{${k}}`));
+    const tap = () => SFX.tap();
+
+    const juegos = SUELTOS.filter(g => !g.labs);
+    const pagina = document.getElementById('rk-pagina');
+
+    /* Tu jugador: cuántas veces jugó cada cosa y cambiar el PIN (solo con jugador) */
+    const perfil = el('div', {});
+    async function dibujarPerfil() {
+      perfil.replaceChildren();
+      const yo = leerYo();
+      if (!yo) return;
+      const lista = el('ul', {});
+      const err = el('p', { class: 'rk-error', role: 'alert' });
+      const pin = el('input', { id: 'rk-pin-nuevo', class: 'rk-pin', type: 'password', inputmode: 'numeric', pattern: '[0-9]*', maxlength: '4', autocomplete: 'off', 'aria-label': T.newPin });
+      const b = el('button', { type: 'button', class: 'btn btn--ghost btn--sm', id: 'rk-guardar-pin' }, T.savePin);
+      b.addEventListener('click', async () => {
+        tap(); err.textContent = '';
+        if (!esPin(pin.value)) { err.textContent = T.errPin; return; }
+        b.disabled = true;
+        try { await (await jugador()).cambiarPin(pin.value); pin.value = ''; err.className = 'rk-ok'; err.textContent = T.pinChanged; }
+        catch (_) { err.className = 'rk-error'; err.textContent = T.errNet; }
+        b.disabled = false;
+      });
+      perfil.append(el('details', { class: 'panel rk-perfil' },
+        el('summary', {}, `👤 ${T.myPlayer}`),
+        lista,
+        el('div', { class: 'rk-pin-nuevo' }, el('label', { class: 'rk-campo' }, el('span', {}, T.newPin), pin), b, err)));
+      try {
+        const p = await (await jugador()).perfil();
+        const filas = Object.entries(p?.juegos || {}).sort((a, b2) => b2[1].n - a[1].n);
+        for (const [id, x] of filas) {
+          const g = juegos.find(j => j.id === id);
+          lista.append(el('li', {}, el('span', {}, g ? conEmoji(g.emoji, pickLang(g.name, lang)) : id), el('b', {}, x.n === 1 ? T.playsOne : fmt(T.plays, { n: x.n }))));
+        }
+      } catch (_) { /* sin red: el cambio de PIN igual se ofrece */ }
+    }
+    dibujarPerfil();
+    jugador().then(J => J.escuchar(dibujarPerfil)).catch(() => {});
+
+    /* Un juego a la vez: se elige con fichas y queda en la dirección (#reinas) */
+    const desdeHash = () => juegos.find(g => g.id === location.hash.slice(1))?.id;
+    let elegido = desdeHash() || juegos[0]?.id;
+    const ranuraJuego = el('div', {});
+    const fichas = el('div', { class: 'rk-juegos', role: 'group', 'aria-label': T.gamePick }, juegos.map(g => el('button', {
+      type: 'button', 'data-id': g.id, onClick: () => { tap(); elegir(g.id); history.replaceState(null, '', `#${g.id}`); },
+    }, conEmoji(g.emoji, pickLang(g.name, lang)))));
+    function elegir(id) {
+      elegido = id;
+      fichas.querySelectorAll('button').forEach(b => { const on = b.dataset.id === id; b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); });
+      const g = juegos.find(j => j.id === id);
+      ranuraJuego.replaceChildren(bloqueRanking({ juego: id, titulo: conEmoji(g.emoji, fmt(T.titleOf, { game: pickLang(g.name, lang) })), pestanas: ['semana', 'siempre', 'amigos', 'copa'], alTocar: tap }));
+    }
+
+    const campeones = bloqueCampeones({ max: 20, enlace: false, ultimas: 10 });
+    campeones.id = 'copa';
+
+    pagina.append(
+      bloqueJugador({ alTocar: tap }),
+      perfil,
+      bloqueRanking({ juego: TODOTERRENO, titulo: `🏅 ${T.allRounder}`, hint: T.allRounderHint, alTocar: tap }),
+      el('div', { class: 'panel' }, el('p', { class: 'lead rk-titulo' }, T.gamePick), fichas),
+      ranuraJuego,
+      campeones,
+    );
+    if (elegido) elegir(elegido);
+    if (location.hash === '#copa') campeones.scrollIntoView();
+    window.__records = { get elegido() { return elegido; } };
+  </script>
+</body>
+</html>
