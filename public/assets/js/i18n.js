@@ -114,7 +114,17 @@ export const COMMON = {
     onlySpanish: 'En español',
     code: 'código en GitHub', menu: 'Menú', soon: 'Próximamente', or: 'o',
     share: 'Compartir Juegos de Salón',
-    shareText: 'Juegos tradicionales para jugar con amigos desde el celular. Gratis, sin instalar y sin cuenta.',
+    // Compartir la app (D-226): va con la tarjeta de la portada, que ya dice el nombre, la bajada,
+    // "gratis, sin instalar" y el link. El texto cuenta lo demás, una idea por línea (U-30)
+    shareApp: {
+      context: '{n} juegos para el celular',
+      lines: [
+        '🏆 La Copa: un torneo de una semana entre amigos, con un juego distinto cada día.',
+        '👥 Para jugar en grupo: en un celular o cada uno en el suyo.',
+        '🧩 Para jugar solo: minijuegos de palabras, lógica y cultura.',
+        '🔓 Sin cuenta: tocas el link y juegas.',
+      ],
+    },
     // La invitación a una sala: quién invita, a qué y adónde. Es el texto que más se lee de
     // toda la app, porque llega por WhatsApp a gente que todavía no la conoce.
     // Con la cabecera de todo lo que se comparte (D-165): "🃏 *Julepe* · Sala WFBN"
@@ -185,7 +195,15 @@ export const COMMON = {
     onlySpanish: 'In Spanish',
     code: 'code on GitHub', menu: 'Menu', soon: 'Coming soon', or: 'or',
     share: 'Share Party Games',
-    shareText: 'Traditional games to play with friends from your phone. Free, no install, no account.',
+    shareApp: {
+      context: '{n} games for your phone',
+      lines: [
+        '🏆 The Cup: a week-long tournament among friends, with a different game every day.',
+        '👥 To play in a group: on one phone or each on their own.',
+        '🧩 To play solo: word, logic and trivia minigames.',
+        '🔓 No account: tap the link and play.',
+      ],
+    },
     invite: '{emoji} *{game}* · Room {code}\n\n👋 {name} invites you to play at juegosdesalon.cl.',
     shareResult: '📤 Share my result',
     shareSoloContext: 'Playing solo',
@@ -251,7 +269,15 @@ export const COMMON = {
     onlySpanish: 'Em espanhol',
     code: 'código no GitHub', menu: 'Menu', soon: 'Em breve', or: 'ou',
     share: 'Compartilhar Jogos de Salão',
-    shareText: 'Jogos tradicionais para jogar com amigos pelo celular. De graça, sem instalar e sem conta.',
+    shareApp: {
+      context: '{n} jogos para o celular',
+      lines: [
+        '🏆 A Copa: um torneio de uma semana entre amigos, com um jogo diferente por dia.',
+        '👥 Para jogar em grupo: num celular só ou cada um no seu.',
+        '🧩 Para jogar sozinho: minijogos de palavras, lógica e cultura.',
+        '🔓 Sem conta: é só tocar no link e jogar.',
+      ],
+    },
     invite: '{emoji} *{game}* · Sala {code}\n\n👋 {name} te convida pra jogar em juegosdesalon.cl.',
     shareResult: '📤 Compartilhar resultado',
     shareSoloContext: 'Jogando sozinho',
@@ -317,7 +343,15 @@ export const COMMON = {
     onlySpanish: 'Auf Spanisch',
     code: 'Code auf GitHub', menu: 'Menü', soon: 'Demnächst', or: 'oder',
     share: 'Salonspiele teilen',
-    shareText: 'Klassische Spiele mit Freunden, direkt auf dem Handy. Gratis, ohne Installation und ohne Konto.',
+    shareApp: {
+      context: '{n} Spiele fürs Handy',
+      lines: [
+        '🏆 Der Pokal: ein Turnier unter Freunden, eine Woche lang, mit einem anderen Spiel pro Tag.',
+        '👥 In der Gruppe: auf einem Handy oder jeder auf seinem.',
+        '🧩 Allein: Minispiele mit Wörtern, Logik und Wissen.',
+        '🔓 Ohne Konto: Link antippen und losspielen.',
+      ],
+    },
     invite: '{emoji} *{game}* · Raum {code}\n\n👋 {name} lädt dich zum Spielen auf juegosdesalon.cl ein.',
     shareResult: '📤 Ergebnis teilen',
     shareSoloContext: 'Allein gespielt',

@@ -2,7 +2,8 @@
 // pasa cuando hay menú del sistema, cuando no, y cuando va una imagen.
 // Uso: node public/assets/js/compartir.test.mjs
 import assert from 'node:assert/strict';
-import { cabecera, conLink, compartir, puntajeYTiempo, nombreArchivo, textoResultadoSolo, marcarCompartido } from './compartir.js';
+import { cabecera, conLink, compartir, puntajeYTiempo, nombreArchivo, textoResultadoSolo, marcarCompartido, compartirApp } from './compartir.js';
+import { COMMON, IDIOMAS } from './i18n.js';
 
 let n = 0;
 const caso = async (nombre, fn) => { await fn(); n++; };
@@ -92,6 +93,33 @@ await caso('el link compartido lleva su marca, al final y sin pisar lo que ya tr
   assert.equal(marcarCompartido('https://juegosdesalon.cl/?de=instagram'), 'https://juegosdesalon.cl/?de=instagram', 'una marca puesta a mano se respeta');
   assert.equal(marcarCompartido(''), '');
   assert.equal(marcarCompartido('no es un link'), 'no es un link');
+});
+
+await caso('compartir la app: la tarjeta de la portada y el texto, en el idioma en que se mira (D-226)', async () => {
+  for (const lang of IDIOMAS) {
+    const C = COMMON[lang];
+    const app = compartirApp({ C, lang, juegos: 15 });
+    assert.match(app.src, new RegExp(`/assets/og/${lang === 'es' ? 'menu' : `menu-${lang}`}\\.jpg$`), lang);
+    const [cab, lineas] = app.texto.split('\n\n');
+    assert.equal(cab, cabecera({ emoji: '🎲', titulo: C.appTitle, contexto: C.shareApp.context.replace('{n}', 15) }));
+    assert.ok(cab.includes('15'), `${lang}: dice cuántos juegos hay`);
+    assert.equal(lineas, C.shareApp.lines.join('\n'));
+  }
+  // La tarjeta se baja una vez, como JPEG; si no se pudo, da null y se comparte solo el texto
+  let pedidos = 0;
+  globalThis.fetch = async () => { pedidos++; return { ok: true, blob: async () => new Blob(['x'], { type: 'image/jpeg' }) }; };
+  const app = compartirApp({ C: COMMON.pt, lang: 'pt', juegos: 15 });
+  const f = await app.imagen();
+  assert.equal(await app.imagen(), f);
+  assert.deepEqual([pedidos, f.name, f.type], [1, 'jogos-de-salao.jpg', 'image/jpeg']);
+  globalThis.fetch = async () => ({ ok: false, status: 404 });
+  assert.equal(await compartirApp({ C: COMMON.es, lang: 'es', juegos: 15 }).imagen(), null);
+  const r = navegador();
+  const { titulo, texto } = compartirApp({ C: COMMON.de, lang: 'de', juegos: 15 });
+  assert.equal(await compartir({ titulo, texto, url: 'https://juegosdesalon.cl/de/', imagen: f }), 'shared');
+  assert.deepEqual(r.compartido[0].files, [f]);
+  assert.ok(r.compartido[0].text.startsWith('🎲 *Salonspiele* · 15 Spiele'));
+  assert.ok(r.compartido[0].text.endsWith('🔗 https://juegosdesalon.cl/de/?de=link'));
 });
 
 console.log(`compartir: ${n} casos en verde`);
