@@ -63,6 +63,10 @@ await caso('cada página con manifest lleva el ícono del iPhone y registra el s
     const prefijo = '../'.repeat(nombre.split('/').length - 1) || './';
     assert.ok(html.includes(`<link rel="apple-touch-icon" href="${prefijo === './' ? '' : prefijo}assets/icons/apple-touch-icon.png">`), `${nombre}: falta el apple-touch-icon`);
     assert.ok(html.includes('<meta name="apple-mobile-web-app-title" content="Juegos de Salón">'), `${nombre}: falta el nombre de la app para el iPhone`);
+    // El manifest del idioma se elige mientras se lee la página, justo después del link (D-222)
+    const tras = html.slice(html.indexOf('<link rel="manifest"'), html.indexOf('<link rel="manifest"') + 900);
+    const idiomas = /test\(l\)/.test(tras) && /\/\^\(([a-z|]+)\)\$\//.exec(tras)?.[1];
+    assert.equal(idiomas, IDIOMAS.filter(l => l !== 'es').join('|'), `${nombre}: falta el script que elige el manifest del idioma, o no trae todos los idiomas`);
     const registro = html.indexOf(`<script type="module">import '${prefijo}assets/js/instalable.js';</script>`);
     assert.ok(registro > 0, `${nombre}: falta importar instalable.js con la ruta ${prefijo}`);
     const ultimaHoja = html.lastIndexOf('<link rel="stylesheet"', registro);
