@@ -15,13 +15,8 @@ const leer = rel => readFileSync(ruta(rel), 'utf8');
 
 // Lo que un juego todavía no cumple, por id y por comprobación. Cada motivo cita la decisión que lo
 // deja pendiente. Cuando el juego se pone al día, la excepción sobra y el test lo dice: se borra.
-const EXCEPCIONES = {
-  'cuarto-rey': {
-    motor: 'pendiente: se lleva al canon en el PR de Cuarto Rey (D-213)',
-    'pruebas-del-motor': 'pendiente: se lleva al canon en el PR de Cuarto Rey (D-213)',
-    gancho: 'pendiente: se lleva al canon en el PR de Cuarto Rey (D-213)',
-  },
-};
+// Hoy no hay ninguna: Cuarto Rey, el último, se llevó al canon (D-213).
+const EXCEPCIONES = {};
 
 // La plantilla común de las especificaciones (C-13, D-213), en este orden; puede haber otras entre medio
 const SECCIONES = ['Resumen', 'Reglas', 'Modos', 'Flujo', 'Protocolo de mensajes', 'Archivos', 'Excepciones a los cánones'];

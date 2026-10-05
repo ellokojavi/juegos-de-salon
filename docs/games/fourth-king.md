@@ -54,9 +54,14 @@ Intro ──► Setup jugadores ──► Mesa (turnos) ──► Cuarto Rey ─
 ```
 
 1. **Intro:** explica la preparación (vaso a tope, nadie toma fuera de regla, pasar el celular hacia la derecha), lista desplegable con la regla de cada carta y, si existe, la opción de continuar una partida guardada.
-2. **Setup:** de 4 a 6 filas con nombre (máx. 14 caracteres) y género (♂ ♀ ⚧). Validaciones: todos con nombre, sin repetidos. Recuerda los últimos jugadores.
+2. **Setup:** de 4 a 6 filas con nombre (máx. 14 caracteres) y género (♂ ♀ ⚧, botones de 44 px a cualquier ancho, C-8).
+   Cada fila parte en ♂: es un ajuste a la vista que se cambia antes de empezar, no una jugada (`DEFAULT_CONFIG`, C-8, D-213).
+   Validaciones: todos con nombre, sin repetidos. Recuerda los últimos jugadores.
 3. **Mesa:** muestra a quién le toca, la fila de asientos, el contador de cartas restantes y 4 coronas que se encienden con cada rey. La carta boca abajo ocupa casi todo el ancho; al tocarla gira en 3D, se encoge y debajo aparece el panel con la instrucción y los botones para resolverla.
-4. **Transición entre turnos:** al resolver la carta, overlay "¡Salud!" con los que toman (avanza solo o al tocar) y luego "Pásale el celular a X" con botón "¡Dame la carta!". Al cerrarse, la carta nueva entra con animación.
+4. **Transición entre turnos (C-9):** al resolver la carta, una sola pantalla con lo que pasó arriba ("¡Salud!" y los que
+   toman, o "¡Cumplida!", "¡Van 2 reyes!"…) y debajo "Pásale el celular a X" con el botón "¡Dame la carta!", armada con
+   `showHandoff` y `passBlock` de `handoff.js`. Solo el botón avanza: ni un toque fuera de él ni un temporizador la cierran
+   (D-213). Al tocarlo, la carta nueva entra con animación.
 5. **Final:** nombre del que sacó el cuarto rey, ranking de sorbos, botones de otra ronda / cambiar jugadores / menú
    y, plegado al pie, el historial de las cartas que salieron (CR-18): cada una con su palo, quién la sacó y qué
    decía. Va **después** de los botones, al revés que en los otros juegos, porque acá el ranking tiene hasta seis
@@ -67,7 +72,7 @@ Intro ──► Setup jugadores ──► Mesa (turnos) ──► Cuarto Rey ─
 
 ### Memoria de partida (C-6)
 
-Se guarda con `createSessionStore('cuarto-rey')` (con la clave vieja `juegos-de-salon:cuarto-rey:game` como
+Se guarda con `createSessionStore(GAME_ID)`, con `GAME_ID = 'cuarto-rey'` (con la clave vieja `juegos-de-salon:cuarto-rey:game` como
 `legacyKeys`):
 
 ```json
@@ -86,7 +91,14 @@ Se guarda con `createSessionStore('cuarto-rey')` (con la clave vieja `juegos-de-
 `history` son las cartas que ya salieron, en orden, con el índice de quien la sacó; una partida guardada de antes de la
 v0.27 no la trae y se retoma igual, solo que al final no muestra historial.
 
-Los últimos jugadores se recuerdan aparte, en `juegos-de-salon:players`.
+Los últimos jugadores (nombre y género) se recuerdan aparte con `createNameStore(GAME_ID).list()`, en
+`juegos-de-salon:cuarto-rey:names`. Hasta que se llevó el juego al canon vivían en `juegos-de-salon:players`: la primera
+vez que se abre la mesa, si la clave nueva está vacía y la vieja tiene una lista, se copia a la nueva y la vieja se borra
+(`legacyKeys`, igual que la partida). Nadie pierde su mesa.
+
+### Señal de uso (C-7, D-210)
+`trackStart` con los nombres al empezar (no al retomar) y `trackFinish` al salir el cuarto rey, una sola vez. Acá nadie
+gana —el cuarto rey es un castigo—, así que el final va como `detalle` (`👑 Javi · 37 cartas`) y no como `ganador`.
 
 ### Idiomas
 Todos los textos viven en `rules.js` bajo `LOCALES.es`, `LOCALES.en`, `LOCALES.pt` y `LOCALES.de` (reglas, mensajes de reyes, minijuegos, 24 penitencias, 35 categorías, 16 ideas de Nunca Nunca y la interfaz), con las mismas claves en todos. Nombres en inglés: Fourth King, Story Time, Puffer Pig, Categories, Never Have I Ever, Dare. En portugués de Brasil: Quarto Rei, Era Uma Vez, Porquinho Bochechudo, Cultura de Boteco, Eu Nunca, Prenda; los sorbos son "goles" y el fondo es "vira, vira, vira" (D-48). En alemán (D-191; para todos desde D-197), `LOCALES.de` adapta el juego a un grupo alemán en vez de calcarlo: Der vierte König, Wort für Wort, Hamsterbacken, Kategorien, Ich hab noch nie, Aufgabe; el glosario está en [ALEMAN.md](../ALEMAN.md).
@@ -98,22 +110,23 @@ No tiene: solo un celular.
 ## Archivos
 
 - `public/fourth-king/index.html`: pantallas.
-- `public/fourth-king/rules.js`: palos, rangos, `CARD_RULES`, límites de jugadores y `LOCALES` (es, en, pt, de).
-- `public/fourth-king/game.js`: toda la lógica y el dibujo; manda `trackStart` con los nombres (D-44, D-210).
+- `public/fourth-king/rules.js`: `GAME_ID`, `DEFAULT_CONFIG`, palos, rangos, `CARD_RULES`, límites de jugadores y
+  `LOCALES` (es, en, pt, de).
+- `public/fourth-king/engine.js`: las reglas puras (C-2): el mazo barajado con azar inyectable (`rng(semilla)` en los
+  tests), `drawCard` (saca y aplica lo automático: sorbos, reyes, la penitencia o la categoría sorteada),
+  `resolveTargets` y `genderFallback` (quién toma, D-04, D-05), el regalo del 8, el turno, el cuarto rey y el ranking.
+- `public/fourth-king/engine.test.mjs`: tests del motor (`node public/fourth-king/engine.test.mjs`).
+- `public/fourth-king/game.js`: máquina de estados y dibujo; el pase con `handoff.js`, la mesa con `createNameStore`,
+  `trackStart` y `trackFinish` (D-44, D-210).
 - `public/fourth-king/style.css`: estilos propios (carta, mesa, coronas, final).
 - `public/cuarto-rey/index.html`: página puente generada desde la ruta vieja (D-192); no se edita.
 
-No expone gancho `window.__` para las pruebas (ver "Excepciones a los cánones").
+Gancho de solo lectura para las pruebas (C-14): `window.__cuartoRey`, con `state()` (una copia de la partida),
+`screen()` (la pantalla activa), `guardada()` (lo que hay en la memoria de partida) y `mesa()` (los últimos jugadores).
 
 ## Excepciones a los cánones
 
-Ninguna aceptada. Lo que sigue no cumple el canon y **queda pendiente: se lleva al canon en un PR aparte (D-213)**:
-
-- **Sin motor separado** (C-2): no hay `engine.js` ni `engine.test.mjs`; las reglas y el estado viven en `game.js`.
-- **Pase del celular propio** (C-9): la pantalla "Pásale el celular a X" se dibuja a mano en `#handoff` en vez de
-  usar `handoff.js`, y el "¡Salud!" que va antes avanza solo; C-9 pide que solo el botón avance.
-- **Las cifras en Bangers** (`--font-display`) en vez de `--font-num` (temporizador, esquinas de la carta) (C-1, D-30).
-- **Los botones de género miden menos de 44 px de ancho** (40 px, 36 px en pantallas angostas) (C-8).
-- **Sin gancho `window.__`** para las pruebas automatizadas (C-14).
-- **Los nombres no usan `createNameStore`** (C-6): se recuerdan en `juegos-de-salon:players` con código propio.
-- **No llama `trackFinish`** al terminar (C-7, D-210): el panel ve que la partida empezó, pero no cómo terminó.
+Ninguna. Se llevó al canon en el PR de Cuarto Rey (D-213): motor y tests (C-2, C-12), pase con `handoff.js` (C-9),
+cifras en `--font-num` (C-1, D-30; las esquinas de las cartas también, letras incluidas, para que el mazo se lea
+parejo), botones de género de 44 px (C-8), gancho `window.__cuartoRey` (C-14), mesa recordada con `createNameStore`
+(C-6) y `trackFinish` (C-7, D-210).

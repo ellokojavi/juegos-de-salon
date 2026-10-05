@@ -41,11 +41,36 @@ export function createSessionStore(game, { ttl = TTL, legacyKeys = [] } = {}) {
   };
 }
 
-/** Nombre del jugador recordado entre partidas (`juegos-de-salon:<juego>:name`). */
-export function createNameStore(game) {
+/**
+ * Nombre del jugador recordado entre partidas (`juegos-de-salon:<juego>:name`, texto plano: el
+ * panel lo lee como "quién juega en este celular", D-210).
+ * Un juego de grupo en un celular recuerda además la mesa entera con `list()`/`setList()`, en
+ * `juegos-de-salon:<juego>:names` (JSON). `legacyKeys` son claves viejas de esa lista: si la nueva
+ * está vacía, la primera que tenga una lista se copia a la nueva y se borra (Cuarto Rey guardaba la
+ * suya en `juegos-de-salon:players`).
+ */
+export function createNameStore(game, { legacyKeys = [] } = {}) {
   const key = `${PREFIX}${game}:name`;
+  const listKey = `${PREFIX}${game}:names`;
+  const parse = raw => { try { const v = JSON.parse(raw || 'null'); return Array.isArray(v) ? v : null; } catch (_) { return null; } };
   return {
     get() { try { return localStorage.getItem(key) || ''; } catch (_) { return ''; } },
     set(name) { try { localStorage.setItem(key, name); } catch (_) { /* nada */ } },
+    /** La última mesa, o null si no hay. */
+    list() {
+      try {
+        const actual = parse(localStorage.getItem(listKey));
+        if (actual) return actual;
+        for (const k of legacyKeys) {
+          const vieja = parse(localStorage.getItem(k));
+          if (!vieja) continue;
+          // La vieja se borra solo si la nueva quedó escrita (setItem lanza si no); igual se usa
+          try { localStorage.setItem(listKey, JSON.stringify(vieja)); localStorage.removeItem(k); } catch (_) { /* nada */ }
+          return vieja;
+        }
+        return null;
+      } catch (_) { return null; }
+    },
+    setList(list) { try { localStorage.setItem(listKey, JSON.stringify(list)); } catch (_) { /* nada */ } },
   };
 }
