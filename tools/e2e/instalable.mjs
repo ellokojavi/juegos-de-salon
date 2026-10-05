@@ -2,9 +2,13 @@
 // raíz, lee el manifest sin errores y no encuentra nada que impida instalar la app. Y la app se llama
 // como en el idioma elegido, en el manifest y para el iPhone (D-222).
 // Con SITIO apuntando a una copia estampada (set-version.py --sitio) prueba también el import map.
+import { mkdtempSync } from 'node:fs';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
 import { launch, sleep } from './cdp.mjs';
 const SITIO = process.env.SITIO || 'http://localhost:8765';
-const OUT = process.argv[2];
+// Sin carpeta de salida usa una temporal: así no queda un perfil de Chrome en `undefined/`
+const OUT = process.argv[2] || mkdtempSync(join(tmpdir(), 'instalable-'));
 const mal = msg => { console.log(`✗ ${msg}`); process.exitCode = 1; };
 const b = await launch({ port: 9496, dir: `${OUT}/p`, out: OUT });
 
