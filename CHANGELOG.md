@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.102.1 — 2026-10-05
+- **Rankings: tu partida aparece apenas terminas** en Línea Relámpago y en Toque y Fama solo. La
+  tabla del final se leía mientras la partida se guardaba y salía sin ella; ahora se vuelve a leer
+  cuando queda guardada (en los juegos de La Copa ya era así).
+
 ## 0.102.0 — 2026-10-05
 - **Los rankings, para todos** (D-217): ya no hace falta activarlos en `/labs/`. El 🏆 de la
   portada lleva a `/records/`; cada juego muestra su ranking (récords o victorias) y la invitación a
