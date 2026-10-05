@@ -1,6 +1,6 @@
 # App instalable y avisos al celular (PWA + Web Push)
 
-**Estado:** aprobado por el dueño (D-221); los PR 1 (v0.105.0), 2 (v0.107.0, D-223) y 3 (v0.108.0, D-224) están hechos, en el laboratorio · **Fecha:** 2026-10-05 ·
+**Estado:** aprobado por el dueño (D-221); los PR 1 (v0.105.0), 2 (v0.107.0, D-223) y 3 (v0.108.0, D-224) están hechos, en el laboratorio; la clave VAPID está puesta (D-225) · **Fecha:** 2026-10-05 ·
 **Toca:** RP-11, RP-13, LIG-33, D-99
 
 Es el detalle de D-221, que **corrige a D-99** en lo que dice de los avisos automáticos. El diseño de
@@ -297,10 +297,10 @@ push.js (en la página)                    pushEnviados/<código>/<subId>/<clave
 ### 3. Suscribirse (`public/assets/js/push.js`, `public/cup/avisos.js`) — hecho en el PR 2
 
 - La clave pública VAPID vive en `public/assets/js/vapid.js` (es pública, como
-  `firebase-config.js`). La genera el dueño una sola vez con `node tools/push/vapid.mjs`, que la
-  escribe ahí y carga la privada como el secreto `VAPID_PRIVADA` de GitHub sin mostrarla. Mientras
-  `vapid.js` esté vacío, los avisos no se ofrecen en ningún celular. En el sitio local, una clave
-  de prueba guardada en el navegador (`juegos-de-salon:vapid-prueba`) sirve para probar.
+  `firebase-config.js`). Se generó una sola vez con `node tools/push/vapid.mjs` (D-225), que la
+  escribió ahí y cargó la privada como el secreto `VAPID_PRIVADA` de GitHub sin mostrarla. **No se
+  rehace**: otra clave deja sin avisos a todos los suscritos. La clave de prueba guardada en el
+  navegador (`juegos-de-salon:vapid-prueba`) solo valía mientras `vapid.js` estaba vacío.
 - `push.js` sabe qué camino le toca al celular (`push`, `instalar`, `otra-app` o `no`), pide el
   permiso, suscribe y manda el aviso de confirmación. `cup/avisos.js` es la pantalla: la campana,
   la tarjeta y las cuatro hojas.
@@ -314,7 +314,8 @@ push.js (en la página)                    pushEnviados/<código>/<subId>/<clave
   los celulares que los activan en `/labs/`.
 - En iPhone, antes de mostrar los pasos para agregar a inicio, la dirección pasa a llevar
   `&app=<pid>`. Si la app instalada abre en esa dirección, la copa parte en "Ya estoy inscrito" con
-  el nombre ya elegido y pide solo el PIN.
+  el nombre ya elegido y pide solo el PIN. Mientras los avisos estén en el laboratorio, esa
+  dirección también activa el laboratorio en la app instalada, que no ve el de Safari (D-225).
 
 ### 4. Reglas de Firebase — hecho en el PR 2
 
@@ -338,6 +339,8 @@ Lo que no se puede automatizar: un iPhone real, con iOS 16.4 o más (ideal: 17, 
 5. Abre **Juegos de Salón** desde el ícono nuevo. Anota **dónde abrió**: ¿en la copa, con tu
    nombre ya elegido y pidiendo el PIN? ¿O en la portada? (esto define si iOS respeta la dirección
    o usa la del manifest).
+   Si abrió en la portada, la app no heredó el laboratorio y la campana no saldrá: en la app no
+   hay barra para escribir `/labs/`, ni un botón que lleve ahí. Anótalo: es el hallazgo.
 6. Escribe tu PIN. En el tablero debe salir **🔔 Último paso: activa los avisos**.
 7. Toca **Avisarme**: el iPhone pregunta por las notificaciones; acepta. Debe llegar el aviso de
    confirmación (con el nombre de la copa y "Listo. Te avisaremos de esta copa…") y la campana pasa
@@ -398,9 +401,7 @@ responde la pregunta de fondo: si los avisos de verdad traen gente de vuelta.
 | **4. Medir** | Fila del panel, `?aviso=` en las señales, `?pwa` en el inicio | — |
 | *(después)* | Modo sin conexión (RP-13), Declarative Web Push para iPhone | — |
 
-El dueño hace dos cosas a mano: correr `node tools/push/vapid.mjs` (con la CLI de GitHub, carga
-sola la privada como el secreto `VAPID_PRIVADA`) y commitear `public/assets/js/vapid.js`; y,
-con los avisos activos en una copa de prueba, correr Actions → Avisos → *Run workflow* con su
+La clave VAPID ya está (D-225). Falta que el dueño, con los avisos activos en una copa de prueba, corra Actions → Avisos → *Run workflow* con su
 código en **prueba**, para ver llegar un aviso de verdad antes de abrirlos a todos.
 
 ## Riesgos
