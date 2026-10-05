@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """
+Qué cuenta como cambio para las capturas del README (D-51).
 Ejecutar: python3 tools/release/readme.test.py
 
 Prueba la parte de `tools/release/readme.py` que decide si un cambio cuenta o no: el estampado de

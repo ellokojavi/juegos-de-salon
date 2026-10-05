@@ -17,7 +17,7 @@ const PARTE = process.argv.includes('--parte') ? process.argv[process.argv.index
 if (PARTE && !['copa', 'laboratorio', 'demos'].includes(PARTE)) throw new Error(`--parte ${PARTE}: es copa, laboratorio o demos`);
 const corre = parte => !PARTE || PARTE === parte;
 mkdirSync(OUT, { recursive: true });
-// PUERTO_CDP: otro puerto de control para no chocar con el Chrome de otra sesión que prueba en paralelo (D-135)
+// El puerto de Chrome lo elige cdp.mjs (D-213); PUERTO_CDP lo fija, si se quiere
 const b = await launch({ port: Number(process.env.PUERTO_CDP) || 9377, dir: `${OUT}/perfil`, out: OUT });
 // SITIO permite probar otra copia del repo servida en otro puerto (la ronda de usabilidad, D-132)
 const SITIO = process.env.SITIO || 'http://localhost:8765';
