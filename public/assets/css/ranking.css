@@ -12,7 +12,10 @@
 }
 .rk-ver { display: flex; align-items: center; justify-content: center; margin-top: 4px; }
 
-.rk-invita:not([open]) { padding-top: 6px; padding-bottom: 6px; }   /* plegada, deja ver los botones del final (C-8) */
+/* Compacta, para dejar ver los botones del final (C-8). El margen de arriba es el mismo abierta y
+   cerrada: si cambia, el título salta al desplegarla. */
+.rk-invita { padding-top: 6px; }
+.rk-invita:not([open]) { padding-bottom: 6px; }
 .rk-invita summary { cursor: pointer; font-weight: 900; min-height: 44px; display: flex; align-items: center; }
 .rk-invita[open] summary { margin-bottom: 6px; }
 .rk-hint { margin: 0 0 10px; font-size: 0.92rem; }
