@@ -32,6 +32,13 @@ Flota de 10 barcos, regla de “sin contacto” con agua automática alrededor d
 | 🤖 Contra el celular | La IA coloca al azar y dispara con cacería por paridad + persecución al acertar (ver “IA contra el celular”). | `local` + bot |
 | 📡 Dos celulares | Sala con código y QR (`?sala=CODE`, `game: 'batalla-naval'`). Cada celular responde los disparos contra su propia flota. | `firebase` |
 
+**Rankings (D-215):** con un jugador de los rankings abierto en el celular (nombre y PIN,
+D-212, hoy en el laboratorio), cada partida terminada se cuenta en `jugadores/<jid>/juegos/batalla-naval`
+y, si ganó, suma una victoria en la tabla `batalla-naval_victorias` (semana y siempre): en sala, la de su
+rol; contra el celular, la del humano; en un celular, la del jugador que se llama como él. Un
+empate no es victoria. La tabla (semana, siempre y amigos) va en la intro, debajo de los modos
+(`finDePartida` y `bloqueVictorias` de `public/assets/js/ranking.js`), y en `/records/`.
+
 ### IA “contra el celular”
 
 1. **Cacería:** dispara al azar solo a casillas de paridad (tablero de ajedrez), porque el barco más chico mide 2: garantiza encontrar todo con la mitad de disparos.

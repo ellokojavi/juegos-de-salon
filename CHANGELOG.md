@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.101.0 — 2026-10-05
+- **Cada juego con su ranking, en el laboratorio** (D-215): los juegos de grupo (Línea de Tiempo,
+  Toque y Fama, El Ahorcado, Dudo y Batalla Naval) cuentan las victorias de cada jugador, de la
+  semana y de siempre, con su tabla en la intro. Toque y Fama solo y Línea Relámpago (una tabla por
+  temática) guardan su récord de 0 a 100. `/records/` suma las dos secciones.
+
 ## 0.100.0 — 2026-10-05
 - **Rankings, en el laboratorio** (D-212): con un nombre y un PIN de 4 dígitos, sin cuenta y en
   cualquier celular, los juegos sueltos guardan tu mejor puntaje y cuentan tus partidas. Cada juego

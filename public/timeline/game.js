@@ -17,6 +17,8 @@ import { showHandoff, passBlock } from '../assets/js/handoff.js';
 import { createChat } from '../assets/js/chat.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
 import { trackStart, trackVisit, trackFinish } from '../assets/js/transport/stats.js';
+import { finDePartida, bloqueVictorias, bloqueTabla, avisoPartida } from '../assets/js/ranking.js';
+import { rankingsVisibles, leerYo } from '../assets/js/jugador.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import { crearArrastre } from '../assets/js/arrastre.js';
 import { buildState, correctSlot, randomSeed, yearLabel, timeLabel } from './engine.js';
@@ -593,6 +595,8 @@ function renderResult(v) {
   if (!already && S.mode === 'online') {
     S.transport?.noteWinner?.(winners.length === 1 ? { role: winners[0], name: M.names[winners[0]] } : {});
   }
+  // Los rankings (D-212): la partida del jugador de este celular y, si ganó, su victoria. Una vez.
+  if (!already) finDePartida({ juego: GAME_ID, modo: S.mode, rol: S.mode === 'online' ? S.role : S.mode === 'cpu' ? 'A' : null, ganadores: winners, nombres: M.names });
   // Sin red, cómo terminó, para el panel (D-210)
   if (!already && S.mode !== 'online') trackFinish(winners.length === 1 ? { ganador: M.names[winners[0]] } : { empate: winners.length > 1 });
   const meRole = S.mode === 'online' ? S.role : null;
@@ -874,8 +878,17 @@ function renderSoloSetup() {
       el('p', { class: 'muted' }, T.soloScore)),
   );
   const actions = $('#setup-actions'); actions.innerHTML = '';
-  actions.append(el('button', { class: 'btn btn--yellow', id: 'btn-solo-empezar', onClick: () => { SFX.tap(); empezarSolo(config.theme); } }, T.start));
+  // El ranking de la temática elegida (D-212), debajo de Empezar; cambia con la temática
+  const rk = el('div', { class: 'stack', id: 'solo-rk' });
+  const pintarRk = () => rk.replaceChildren(bloqueTabla({ tabla: tablaRelampago(config.theme), titulo: tituloRelampago(config.theme), alTocar: () => SFX.tap() }));
+  form.addEventListener('click', e => { if (e.target.closest('.theme-card')) pintarRk(); });
+  pintarRk();
+  actions.append(el('button', { class: 'btn btn--yellow', id: 'btn-solo-empezar', onClick: () => { SFX.tap(); empezarSolo(config.theme); } }, T.start), rk);
 }
+
+/** Una tabla por temática en los rankings (D-212): `linea-de-tiempo_rel-historia`. */
+const tablaRelampago = tema => `${GAME_ID}_rel-${tema}`;
+const tituloRelampago = tema => fmt(COMMON[lang].rk.titleOf, { game: `${T.soloTitle.replace(/^\S+\s+/, '')}: ${getDeck(tema).name[lang]}` });
 
 /** Una partida nueva: semilla al azar, fuera las cartas vistas hace poco (D-34). */
 function empezarSolo(tema) {
@@ -922,6 +935,14 @@ function terminarSolo(partida, p, { s, t, ms, estado }) {
   $('#sr-sub').textContent = fmt(T.soloResult, { ok: estado.aciertos, n: estado.marcas.length, t: mmss(ms) });
   $('#sr-record').textContent = celebrar ? T.newRecord : antes ? fmt(T.prevRecord, { tema: deck.name[lang], s: antes.s, t: mmss(antes.ms) }) : '';
   $('#sr-record').hidden = !$('#sr-record').textContent;
+  // Con jugador, el aviso de los rankings reemplaza al récord del celular (D-212)
+  document.getElementById('sr-rk-aviso')?.remove();
+  if (rankingsVisibles() && leerYo()) {
+    $('#sr-record').hidden = true;
+    const aviso = avisoPartida({ juego: GAME_ID, variante: `rel-${partida.tema}`, s, ms });
+    aviso.id = 'sr-rk-aviso';
+    $('#sr-record').after(aviso);
+  }
   $('#sr-tarjeta').textContent = t;
   // La línea como quedó, con los errores en rojo; plegada, para que los botones se vean (C-8)
   const linea = $('#sr-line'); linea.innerHTML = '';
@@ -938,6 +959,8 @@ function terminarSolo(partida, p, { s, t, ms, estado }) {
     el('button', { class: 'btn btn--yellow', id: 'btn-solo-otra', onClick: () => { SFX.tap(); empezarSolo(partida.tema); } }, T.playAgain),
     el('button', { class: 'btn btn--ghost', onClick: () => { SFX.tap(); clearSession(); renderResumeSlot(); showScreen('screen-intro'); } }, T.changeMode),
     el('a', { class: 'btn btn--ghost', href: '../' }, T.backMenu),
+    // En el resultado, solo la tabla: entrar se ofrece en la antesala (C-8, los botones a la vista)
+    bloqueTabla({ tabla: tablaRelampago(partida.tema), titulo: tituloRelampago(partida.tema), alTocar: () => SFX.tap(), entrar: false }),
   );
 }
 
@@ -950,6 +973,8 @@ function init() {
   initSound();
   sparkles(12);
   renderModes();
+  // Las victorias de este juego y entrar con nombre y PIN (D-212); en el laboratorio, solo donde se activaron
+  $('#rk-slot')?.append(bloqueVictorias({ juego: GAME_ID, nombre: T.title, alTocar: () => SFX.tap() }));
   renderResumeSlot();
   montarArrastre();
   const code = new URLSearchParams(location.search).get('sala');
