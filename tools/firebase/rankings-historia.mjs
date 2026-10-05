@@ -20,7 +20,7 @@
 import { createHash } from 'node:crypto';
 import { conCierre, terminada, juegoDelDia, tabla, activos } from '../../public/cup/engine.js';
 import { SUELTOS } from '../../public/assets/js/games.js';
-import { claveNombre, limpiarNombre, normalizar, esMejor, tablaId, VARIANTE_COPA, SIEMPRE, podioDe, esJid } from '../../public/assets/js/records.js';
+import { claveNombre, limpiarNombre, normalizar, esMejor, tablaId, VARIANTE_COPA, SIEMPRE, podioDe, esJid, esPais, PARTIDAS, claveOrden } from '../../public/assets/js/records.js';
 
 const A = 'abcdefghijklmnopqrstuvwxyz0123456789';
 /** El jid de un jugador heredado: sale de su nombre, así correr el guion dos veces no duplica. */
@@ -38,11 +38,14 @@ export function historia(torneos, base = {}, now = Date.now(), { conLab = false 
   const gente = new Map();   // clave → { jid, n, at }
   const mejores = new Map(); // `${juego}|${jid}` → { s, ms, at }
   const podios = {};
-  const persona = (name, at) => {
+  const podiosCo = {};
+  const persona = (name, at, co) => {
     const clave = claveNombre(name);
     const jid = jidHeredado(clave);
-    const p = gente.get(clave) || { jid, clave, n: limpiarNombre(name) || '?', at: at || now, ultima: 0 };
+    const p = gente.get(clave) || { jid, clave, n: limpiarNombre(name) || '?', at: at || now, ultima: 0, co: null };
     if ((at || 0) >= p.ultima) { p.n = limpiarNombre(name) || p.n; p.ultima = at || 0; }
+    // El país (D-219): el de la copa más reciente que lo tenga
+    if (esPais(co) && (!p.co || (at || 0) >= (p.ultimaCo || 0))) { p.co = co; p.ultimaCo = at || 0; }
     p.at = Math.min(p.at, at || now);
     gente.set(clave, p);
     return p;
@@ -54,7 +57,7 @@ export function historia(torneos, base = {}, now = Date.now(), { conLab = false 
     const jidDe = pid => {
       const x = L.players?.[pid];
       if (!x) return null;
-      return esJid(x.j) ? x.j : persona(x.name, x.at).jid;
+      return esJid(x.j) ? x.j : persona(x.name, x.at, x.co).jid;
     };
     for (const [d, rs] of Object.entries(L.results || {})) {
       const juego = juegoDelDia(L.meta, Number(d));
@@ -67,34 +70,55 @@ export function historia(torneos, base = {}, now = Date.now(), { conLab = false 
         if (esMejor(v, mejores.get(k))) mejores.set(k, { ...v, at: r.at || L.meta.end });
       }
     }
-    if (terminada(L.meta, now) && activos(L).length >= 2 && !base.torneoPodios?.[code]) {
+    // Un podio ya guardado sin banderas las recibe ahora (D-219): las de la copa
+    const ya = base.torneoPodios?.[code];
+    if (ya) for (const [pid, x] of Object.entries(ya.p || {})) {
+      const co = L.players?.[pid]?.co;
+      if (!esPais(x.co) && esPais(co)) podiosCo[`torneoPodios/${code}/p/${pid}/co`] = co;
+    }
+    if (terminada(L.meta, now) && activos(L).length >= 2 && !ya) {
       const fin = L.meta.end;
-      const jugadores = Object.fromEntries(Object.keys(L.players || {}).map(pid => [pid, { j: jidDe(pid) }]));
+      const jugadores = Object.fromEntries(Object.keys(L.players || {}).map(pid => [pid, { j: jidDe(pid), co: L.players[pid]?.co }]));
       const p = podioDe(tabla(L, null, fin), jugadores);
       const por = Object.keys(L.players || {})[0];
       if (Object.keys(p).length) podios[code] = { name: L.meta.name, end: Math.min(fin, now), de: activos(L).length, dias: L.meta.days, por, p, at: Math.min(fin, now) };
     }
   }
 
-  const cambios = {};
+  const cambios = { ...podiosCo };
   const nombreDe = new Map();
+  const paisDe = new Map();
   for (const p of gente.values()) {
     const ya = base.jugadores?.[p.jid];
     // Uno que ya alguien tomó (sin `legado`) se respeta tal cual: sus récords se suman con su nombre
-    if (ya && !ya.legado) { nombreDe.set(p.jid, ya.n); continue; }
+    if (ya && !ya.legado) { nombreDe.set(p.jid, ya.n); paisDe.set(p.jid, esPais(ya.co) ? ya.co : null); continue; }
     nombreDe.set(p.jid, p.n);
+    paisDe.set(p.jid, p.co);
     if (!ya) {
-      cambios[`jugadores/${p.jid}`] = { n: p.n, at: p.at, legado: true };
+      cambios[`jugadores/${p.jid}`] = { n: p.n, at: p.at, legado: true, ...(p.co ? { co: p.co } : {}) };
       cambios[`jugadorNombres/${p.clave}/${p.jid}`] = true;
-    }
+    } else if (!esPais(ya.co) && p.co) cambios[`jugadores/${p.jid}/co`] = p.co;
   }
   for (const [k, v] of mejores) {
     const [juego, jid] = k.split('|');
     const t = tablaId(juego, VARIANTE_COPA);
     const n = nombreDe.get(jid) || base.jugadores?.[jid]?.n;
     if (!n) continue;
-    if (!esMejor(v, base.records?.[t]?.[SIEMPRE]?.[jid])) continue;
-    cambios[`records/${t}/${SIEMPRE}/${jid}`] = { s: v.s, ms: v.ms, k: v.k, at: v.at, n };
+    const co = paisDe.get(jid);
+    const antes = base.records?.[t]?.[SIEMPRE]?.[jid];
+    if (!esMejor(v, antes)) {
+      // Ya estaba: si le falta la bandera, se le pone (D-219)
+      if (antes && !esPais(antes.co) && co) cambios[`records/${t}/${SIEMPRE}/${jid}/co`] = co;
+      continue;
+    }
+    cambios[`records/${t}/${SIEMPRE}/${jid}`] = { s: v.s, ms: v.ms, k: v.k, at: v.at, n, ...(co ? { co } : {}) };
+  }
+  // La tabla de partidas (D-219) con lo que cada jugador ya había jugado: la suma de sus juegos
+  for (const [jid, j] of Object.entries(base.jugadores || {})) {
+    const total = Object.values(j?.juegos || {}).reduce((a, x) => a + (Number(x?.n) || 0), 0);
+    const antes = base.records?.[PARTIDAS]?.[SIEMPRE]?.[jid];
+    if (!total || !j?.n || (antes?.s || 0) >= total) continue;
+    cambios[`records/${PARTIDAS}/${SIEMPRE}/${jid}`] = { s: total, ms: 0, k: claveOrden(total, 0), at: now, n: j.n, ...(esPais(j.co) ? { co: j.co } : {}) };
   }
   for (const [code, p] of Object.entries(podios)) cambios[`torneoPodios/${code}`] = p;
   return { cambios, gente: [...gente.values()], podios, mejores };
@@ -114,7 +138,8 @@ if (esPrincipal) {
   const [torneos, jugadores, records, torneoPodios] = await Promise.all(['torneos', 'jugadores', 'records', 'torneoPodios'].map(r => leer(r, t)));
   const { cambios, gente, podios } = historia(torneos, { jugadores: jugadores || {}, records: records || {}, torneoPodios: torneoPodios || {} }, Date.now(), { conLab });
 
-  const recs = Object.keys(cambios).filter(r => r.startsWith('records/'));
+  const recs = Object.keys(cambios).filter(r => /^records\/[^/]+\/[^/]+\/[^/]+$/.test(r));
+  const banderas = Object.keys(cambios).filter(r => r.endsWith('/co')).length;
   const porTabla = {};
   for (const r of recs) { const tt = r.split('/')[1]; (porTabla[tt] ||= []).push(cambios[r]); }
   console.log(`Personas en la historia: ${gente.length} (${gente.map(p => p.n).join(', ')})`);
@@ -124,7 +149,8 @@ if (esPrincipal) {
     const lugar = l => Object.values(p.p).filter(x => x.l === l).map(x => x.n).join(' · ') || '—';
     console.log(`  🏆 ${p.name} (${code}): 🥇 ${lugar(1)} · 🥈 ${lugar(2)} · 🥉 ${lugar(3)}`);
   }
-  console.log(`Récords de la pestaña "Copa" a escribir: ${recs.length}`);
+  console.log(`Banderas que faltaban (D-219): ${banderas}`);
+  console.log(`Filas de récords a escribir: ${recs.length}`);
   for (const [tt, filas] of Object.entries(porTabla).sort()) {
     const top = filas.sort((a, b) => a.k - b.k).slice(0, 3).map(f => `${f.n} ${f.s}`).join(' · ');
     console.log(`  ${tt}: ${filas.length} · ${top}`);
