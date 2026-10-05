@@ -3252,3 +3252,15 @@ desglose: copas por idioma en La Copa y "En qué idioma" en la ficha de cada jue
 **Por qué:** Lo pidió el dueño: saber en qué idioma se juega cada copa y cada juego. El contador
 del idioma elegido (`applang`, D-46) decía cuánto, pero no de qué partida.
 **Consecuencias:** Lo de antes no tiene idioma y no lleva etiqueta. Reglas nuevas, solo agregan.
+
+## D-214 · El filtro de la portada va en inglés en la URL: `?type=logic`
+**Fecha:** 2026-10-04 · **Estado:** vigente; cambia la URL de D-142 y D-149, sigue a D-192
+**Decisión:** El tipo de juego va en la URL como `?type=`, con claves en inglés: `words`, `logic`,
+`trivia` y `tabletop` (Cartas/Dados). Son las mismas claves de `TIPOS` y de `tipos` en
+`games.js`. Un link de antes (`?tipo=mesa`, `?tipo=logica`) sigue filtrando lo mismo
+(`TIPOS_VIEJOS`) y la portada lo reescribe como `?type=`.
+**Por qué:** Lo pidió el dueño: desde D-192 las rutas van en inglés, y `?tipo=mesa` se quedó en
+español. Los links filtrados se comparten, así que son parte de la cara pública como las rutas.
+**Consecuencias:** Los nombres que ve el jugador no cambian. Los tipos no se guardan en Firebase
+ni en el `localStorage`, así que no hay datos que migrar. Quedan en español `?sala=`,
+`?practica=` y `?semilla=`; `?sala=` va en cada link de invitación y se cambia aparte.
