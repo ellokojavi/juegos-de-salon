@@ -959,7 +959,8 @@ function terminarSolo(partida, p, { s, t, ms, estado }) {
     el('button', { class: 'btn btn--yellow', id: 'btn-solo-otra', onClick: () => { SFX.tap(); empezarSolo(partida.tema); } }, T.playAgain),
     el('button', { class: 'btn btn--ghost', onClick: () => { SFX.tap(); clearSession(); renderResumeSlot(); showScreen('screen-intro'); } }, T.changeMode),
     el('a', { class: 'btn btn--ghost', href: '../' }, T.backMenu),
-    bloqueTabla({ tabla: tablaRelampago(partida.tema), titulo: tituloRelampago(partida.tema), alTocar: () => SFX.tap() }),
+    // En el resultado, solo la tabla: entrar se ofrece en la antesala (C-8, los botones a la vista)
+    bloqueTabla({ tabla: tablaRelampago(partida.tema), titulo: tituloRelampago(partida.tema), alTocar: () => SFX.tap(), entrar: false }),
   );
 }
 
