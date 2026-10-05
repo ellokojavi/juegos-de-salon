@@ -1,8 +1,8 @@
 {
   "id": "./",
   "name": "Juegos de Salón",
-  "short_name": "Juegos",
-  "description": "Juegos de salón para jugar con amigos, guiados desde el celular.",
+  "short_name": "Juegos de Salón",
+  "description": "Juegos tradicionales llevados a tu celular para pasar el tiempo solo o con amigos.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
