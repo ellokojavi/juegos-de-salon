@@ -70,7 +70,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220 |
 | Marketing | `marketing/README.md` | D-178 |
-| App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221 |
+| App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222 |
 
 ---
 
@@ -3637,3 +3637,20 @@ el PR 2 lo prueba primero en iPhones reales. Una página nueva de la app copia l
 `<head>` (manifest, ícono del iPhone e `instalable.js`); `instalable.test.mjs` las exige y revisa
 que cada juego del registro tenga su manifest. El modo sin conexión (RP-13) sigue pendiente y
 sería otro paso.
+
+## D-222 · La app instalada se llama como en el idioma del jugador
+**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** completa D-221
+**Decisión:** El ícono de la app instalada dice **Juegos de Salón**, **Party Games**, **Jogos de
+Salão** o **Salonspiele**: el `appTitle` del idioma elegido (C-3), el mismo nombre de la portada.
+- Hay un manifest por idioma: `manifest.webmanifest` (español) y `manifest.<idioma>.webmanifest`,
+  iguales salvo `name`, `short_name`, `description` (el `appSub`) y `lang`. Comparten el `id`: es
+  una sola app.
+- `instalable.js` cambia el `<link rel="manifest">` al del idioma elegido apenas carga la página, y
+  pone el mismo nombre en `apple-mobile-web-app-title`, que es el que usa el iPhone. Sin ese meta,
+  el iPhone proponía el título de la página ("El Ahorcado 🪢 · Juegos de Salón").
+**Por qué:** Lo pidió el dueño: la app instalada decía solo "Juegos" (el `short_name` de antes), y
+en el iPhone el nombre del juego que estaba abierto.
+**Consecuencias:** El nombre se elige al instalar: quien cambia de idioma después conserva el de
+entonces hasta reinstalar (Android puede ofrecer actualizarlo solo). En algunos Android un nombre
+largo se corta bajo el ícono ("Juegos de Sa…"). `instalable.test.mjs` exige que cada manifest calce
+con `COMMON` de `i18n.js`, y `tools/e2e/instalable.mjs` revisa el nombre en los cuatro idiomas.
