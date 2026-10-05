@@ -49,6 +49,7 @@ Los IDs no se reusan: un requerimiento que cambia conserva su ID y su texto se a
 | RP-39 | Cada nombre de jugador que muestra el panel lleva la bandera de su país, si se conoce: fichas, "va primero", retirados e historia de una copa. Quien se inscribió en una copa antes de que se guardara el país lo anota solo al volver a abrirla (D-209). | ✅ v0.99.1 |
 | RP-40 | Las partidas sin red (contra el celular, un celular, solo) mandan al panel quién juega —los nombres que la partida ya tiene o el último que la persona escribió en la app, nunca uno pedido para esto— y cómo terminó: quién ganó, empate o el puntaje jugando solo. El panel las lista en Juegos y en la ficha de cada juego (D-210, que cambia D-44 para estos modos). | ✅ v0.99.2 |
 | RP-41 | Cada copa, sala y partida sin red dice en qué idioma se jugó (el elegido en la app, por jugador en una sala), con una etiqueta en el panel y un desglose por idioma en La Copa y en la ficha de cada juego (D-211). | ✅ v0.99.3 |
+| RP-42 | Rankings con identidad sin cuenta: nombre y PIN de 4 dígitos, opcionales y válidos en cualquier celular. Récord por juego de la semana y de siempre, amigos de La Copa, la pestaña "Copa", Todoterreno y medallero de campeones de La Copa, en la antesala de cada juego, en la portada de La Copa y en `/records/`. Parte en el laboratorio (D-212). | ✅ v0.100.0 (en el laboratorio) |
 
 ## Cuarto Rey (CR)
 

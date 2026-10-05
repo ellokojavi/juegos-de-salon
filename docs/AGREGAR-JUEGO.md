@@ -24,6 +24,10 @@
 7. **La señal para el panel** (C-7, D-210): en los modos sin red, `trackStart({ game, mode, players })`
    al empezar y `trackFinish({ ganador, empate, detalle })` al terminar, de
    `public/assets/js/transport/stats.js`. Las salas las apunta el transporte.
+7b. **Rankings** (D-212): hoy anotan récords solo los juegos sueltos de La Copa (los que tienen
+   `suelto` en `games.js`), y lo hace `public/cup/game.js` sin que el juego haga nada: su página
+   sale de `public/cup/suelto/index.html`, que ya carga `ranking.css`. Un juego de salón no anota
+   récords; si uno nuevo debería, es una decisión para el dueño, no algo que se agrega de pasada.
 8. **Las pruebas de punta a punta** (C-12): las pantallas del juego como entradas en
    `tools/e2e/caminos.mjs`, su `tools/e2e/<carpeta>/idiomas.mjs` y los guiones de partida en
    `tools/e2e/<carpeta>/`. `node tools/e2e/mirar.mjs <juego> <pantalla> --ancho 320` para mirar.

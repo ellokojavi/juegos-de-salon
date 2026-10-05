@@ -186,6 +186,15 @@ export function createFirebaseStore() {
       await escribir({ [`torneos/${code}/players/${pid}/co`]: co });
     },
 
+    /**
+     * El jugador de los rankings detrás de este jugador de la copa (D-212): así sus amigos lo
+     * encuentran y el podio de la copa suma a su medallero. Las reglas piden estar sentado como
+     * los dos.
+     */
+    async enlazar(code, pid, jid) {
+      await escribir({ [`torneos/${code}/players/${pid}/j`]: jid });
+    },
+
     async renombrar(code, pid, name) {
       await escribir({ [`torneos/${code}/players/${pid}/name`]: name });
     },

@@ -18,7 +18,7 @@
     "pt": 100,
     "de": 100
   },
-  "clavesComunes": 23,
+  "clavesComunes": 24,
   "juegos": [
     {
       "id": "copa",
@@ -723,7 +723,12 @@
     "public/assets/js/games.js",
     "public/assets/js/handoff.js",
     "public/assets/js/i18n.js",
+    "public/assets/js/jugador-firebase.js",
+    "public/assets/js/jugador-local.js",
+    "public/assets/js/jugador.js",
     "public/assets/js/labs-idioma.js",
+    "public/assets/js/ranking.js",
+    "public/assets/js/records.js",
     "public/assets/js/session.js",
     "public/assets/js/sobre.js",
     "public/assets/js/sound.js",
@@ -827,6 +832,7 @@
     "public/assets/js/compartir.test.mjs",
     "public/assets/js/games.test.mjs",
     "public/assets/js/i18n.test.mjs",
+    "public/assets/js/records.test.mjs",
     "public/assets/js/transport/cleanup.test.mjs",
     "public/assets/js/transport/dispose.test.mjs",
     "public/assets/js/transport/errors.test.mjs",
@@ -851,6 +857,7 @@
     "tools/agents/documentar.test.mjs",
     "tools/agents/marketing.test.mjs",
     "tools/e2e/cambios.test.mjs",
+    "tools/firebase/rankings-historia.test.mjs",
     "tools/release/version.test.mjs"
   ],
   "e2e": [
