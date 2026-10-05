@@ -479,8 +479,9 @@ How it is put together (canon C-3):
 - In The Cup, the screen follows each player's language, but the words of Connections and Word, the
   messages shared with the group and their link follow the language picked when the cup is created
   (D-170).
-- The owner dashboard is Spanish only (an exception recorded in `docs/PANEL.md`), and so is
-  `manifest.webmanifest`, because there is one manifest for the whole app.
+- The owner dashboard is Spanish only (an exception recorded in `docs/PANEL.md`). The installed
+  app, instead, is named in the player's language: there is one manifest per language, and
+  `instalable.js` picks it, along with the iPhone's `apple-mobile-web-app-title` (D-222).
 
 <!-- generado: capturas:idiomas · written by python3 tools/release/readme.py actualizar -->
 <table>
@@ -666,7 +667,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   assets/js/                  Shared modules: games.js (game registry), i18n.js (ES/EN/PT/DE), labs-idioma.js (a new language in the lab, D-191), ui.js, sound.js, compartir.js (everything shared, D-165), handoff.js, chat.js, session.js, arrastre.js (drag and drop), teclado.js, azar.js and dado3d.js (Random game), frases.js, records.js + jugador.js + ranking.js (players and leaderboards, D-212; jugador-firebase.js and jugador-local.js are their stores), instalable.js (registers the service worker, D-221)
   assets/js/transport/        Transports: local (same phone), firebase (room) and stats (usage signals)
   assets/og/                  The 1200×630 images shown when a link is shared
-  manifest.webmanifest        PWA manifest (installable on the home screen); its PNG icons are in assets/icons/
+  manifest.webmanifest        PWA manifest (installable on the home screen), one per language (manifest.en.webmanifest …) so the app is named in the player's language (D-222); its PNG icons are in assets/icons/
   sw.js                       Service worker (D-221): for now it makes the app installable and caches nothing; later it receives The Cup's notifications
   ahorcado/ copa/ …           Bridge pages: the old Spanish URLs, forwarding to the new ones (generated, D-192)
 docs/                       Requirements, decisions, canons, one spec per game (docs/games/) and the README screenshots
