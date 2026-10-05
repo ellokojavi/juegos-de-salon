@@ -190,3 +190,8 @@ de quien mira (otro, el siguiente de la lista) y que lo que se comparte al grupo
 copa, con su `?lang=`. Después abre cinco juegos sueltos en cada idioma (el teclado de Palabra sin
 Ñ, la grilla de Conexiones del idioma) y recorre la portada y el formulario de crear contra el
 español. Los textos esperados salen de los diccionarios, no están escritos en el guion.
+
+`node tools/e2e/cup/copas-del-jugador.mjs <salida>` prueba que "Tus copas" siga al jugador (D-220):
+un celular entra con su jugador y abre una copa en que está sentado; otro celular, que nunca la vio,
+entra con el mismo jugador, la encuentra en la portada y al abrirla tiene su nombre ya elegido.
+Usa el almacén de prueba de la copa y el de los jugadores.

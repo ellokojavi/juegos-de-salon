@@ -5,8 +5,24 @@
  * El intento no usa `createSessionStore` porque su caducidad de 12 horas no alcanza: un día
  * se puede jugar hasta dos días después de abierto (el día de gracia). Se guarda por copa,
  * día y jugador, y se borra solo cuando la copa termina.
+ *
+ * "Tus copas" junta las que recuerda este celular con las del jugador de los rankings, que viven
+ * en Firebase (`juntarCopas`, D-220).
  */
 const PREFIJO = 'juegos-de-salon:copa:';
+const SEMANA = 7 * 24 * 60 * 60 * 1000;
+
+/** Una copa sigue en "Tus copas" hasta una semana después de terminar. */
+const vigente = (c, now) => !c.fin || now < c.fin + SEMANA;
+
+/**
+ * "Tus copas": las de este celular y, detrás, las del jugador que entró (D-220) que este celular
+ * no conoce, ya con `{ code, nombre, copa, fin }`. Una copa no se repite.
+ */
+export function juntarCopas(mias, delJugador, now = Date.now()) {
+  const ya = new Set(mias.map(c => c.code));
+  return [...mias, ...delJugador.filter(c => c && !ya.has(c.code) && vigente(c, now))];
+}
 
 export function createCuenta({ prueba = false } = {}) {
   // Las copas de prueba no se mezclan con las de verdad, y en ellas cada pestaña es un
@@ -31,8 +47,7 @@ export function createCuenta({ prueba = false } = {}) {
     },
     /** Las copas en que este celular participa, para ofrecerlas en la portada. */
     mias(now = Date.now()) {
-      const semana = 7 * 24 * 60 * 60 * 1000;
-      return (leer(`${p}mias`) || []).filter(c => !c.fin || now < c.fin + semana);
+      return (leer(`${p}mias`) || []).filter(c => vigente(c, now));
     },
     intento: {
       leer: (code, dia, pid) => leer(`${p}intento:${code}:${dia}:${pid}`),
