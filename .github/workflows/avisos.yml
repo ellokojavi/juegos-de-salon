@@ -1,0 +1,64 @@
+# Manda los avisos de La Copa al celular de quien los pidió (D-224): cada 15 minutos corre
+# tools/push/avisar.mjs, que mira qué toca (un día que se abre, un plazo que se cierra, La Gran
+# Final, el cierre, una inscripción) y lo manda por Web Push.
+#
+# Necesita dos secretos de GitHub, que carga el dueño:
+#   FIREBASE_ADMIN_JSON  la llave de la cuenta de servicio (la misma de publicar.yml, D-218)
+#   VAPID_PRIVADA        la clave privada de los avisos (la sube `node tools/push/vapid.mjs`, D-223)
+# Sin alguno de los dos avisa y termina en verde: no hay nada que mandar.
+#
+# GitHub puede atrasar una corrida programada unos minutos: los avisos no dependen del minuto exacto.
+
+name: Avisos
+
+on:
+  schedule:
+    - cron: '7,22,37,52 * * * *'
+  # Para mandar ahora (Actions → Avisos → Run workflow), ver qué mandaría o mandar uno de prueba
+  workflow_dispatch:
+    inputs:
+      simular:
+        description: 'Solo decir qué mandaría, sin mandar ni anotar nada'
+        type: boolean
+        default: false
+      prueba:
+        description: 'Código de una copa (5 letras): manda un aviso de prueba a cada celular con avisos en ella'
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+
+# Una vuelta a la vez: dos juntas podrían mandar el mismo aviso dos veces
+concurrency:
+  group: avisos
+  cancel-in-progress: false
+
+jobs:
+  avisar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Mandar los avisos que tocan
+        env:
+          LLAVE_JSON: ${{ secrets.FIREBASE_ADMIN_JSON }}
+          VAPID_PRIVADA: ${{ secrets.VAPID_PRIVADA }}
+          SIMULAR: ${{ inputs.simular && '--simular' || '' }}
+          PRUEBA: ${{ inputs.prueba }}
+        run: |
+          if [ -z "$LLAVE_JSON" ] || [ -z "$VAPID_PRIVADA" ]; then
+            echo "::warning::Faltan los secretos FIREBASE_ADMIN_JSON o VAPID_PRIVADA: no se mandan avisos (ver tools/push/vapid.mjs)"
+            exit 0
+          fi
+          umask 077
+          printf '%s' "$LLAVE_JSON" > "$RUNNER_TEMP/llave.json"
+          export FIREBASE_LLAVE="$RUNNER_TEMP/llave.json"
+          if [ -n "$PRUEBA" ]; then
+            node tools/push/avisar.mjs $SIMULAR --prueba "$PRUEBA"
+          else
+            node tools/push/avisar.mjs $SIMULAR
+          fi

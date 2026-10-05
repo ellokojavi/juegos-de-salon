@@ -723,6 +723,17 @@ const ES = {
   avTestBody: "Así se verán los avisos de esta copa.",
   avMute: "Silenciar esta copa",
   avMuted: "Esta copa ya no te mandará avisos.",
+  avMsgDay: "{emoji} Día {d}: {juego}. Ya puedes jugar.",
+  avMsgDue: "⏳ Te quedan {h} horas para jugar el día {d}. Si no lo juegas, son 0 puntos.",
+  avMsgDueOne: "⏳ Te queda 1 hora para jugar el día {d}. Si no lo juegas, son 0 puntos.",
+  avMsgFinal: "🏁 Hoy es La Gran Final y vale doble. Vas {pos}, a {pts} puntos de {lider}.",
+  avMsgFinalOne: "🏁 Hoy es La Gran Final y vale doble. Vas {pos}, a 1 punto de {lider}.",
+  avMsgFinalTie: "🏁 Hoy es La Gran Final y vale doble. Vas {pos}, con los mismos puntos que {lider}.",
+  avMsgFinalLead: "🏁 Hoy es La Gran Final y vale doble. Vas {pos}: ¡a defender el primer lugar!",
+  avMsgWin: "🥇 ¡Ganaste la copa!",
+  avMsgEnd: "🥇 Ganó {name}. Quedaste {pos}.",
+  avMsgJoin: "{name} se inscribió en tu copa. Ya son {n} jugadores inscritos.",
+  avMsgJoinMany: "{names} se inscribieron en tu copa. Ya son {n} jugadores inscritos.",
 };
 
 const EN = {
@@ -1410,6 +1421,17 @@ const EN = {
   avTestBody: "This is how notifications for this cup will look.",
   avMute: "Mute this cup",
   avMuted: "This cup won't send you notifications anymore.",
+  avMsgDay: "{emoji} Day {d}: {juego}. You can play now.",
+  avMsgDue: "⏳ You have {h} hours left to play day {d}. If you don't play it, you get 0 points.",
+  avMsgDueOne: "⏳ You have 1 hour left to play day {d}. If you don't play it, you get 0 points.",
+  avMsgFinal: "🏁 Today is The Grand Final, and it's worth double. You're {pos}, {pts} points behind {lider}.",
+  avMsgFinalOne: "🏁 Today is The Grand Final, and it's worth double. You're {pos}, 1 point behind {lider}.",
+  avMsgFinalTie: "🏁 Today is The Grand Final, and it's worth double. You're {pos}, level on points with {lider}.",
+  avMsgFinalLead: "🏁 Today is The Grand Final, and it's worth double. You're {pos}: hold on to first place!",
+  avMsgWin: "🥇 You won the cup!",
+  avMsgEnd: "🥇 {name} won. You finished {pos}.",
+  avMsgJoin: "{name} joined your cup. That makes {n} players.",
+  avMsgJoinMany: "{names} joined your cup. That makes {n} players.",
 };
 
 const PT = {
@@ -2097,6 +2119,17 @@ const PT = {
   avTestBody: "É assim que vão ficar os avisos desta copa.",
   avMute: "Silenciar esta copa",
   avMuted: "Esta copa não vai mais te mandar avisos.",
+  avMsgDay: "{emoji} Dia {d}: {juego}. Já dá para jogar.",
+  avMsgDue: "⏳ Faltam {h} horas para jogar o dia {d}. Se não jogar, são 0 pontos.",
+  avMsgDueOne: "⏳ Falta 1 hora para jogar o dia {d}. Se não jogar, são 0 pontos.",
+  avMsgFinal: "🏁 Hoje é a Grande Final e vale o dobro. Você está em {pos}, a {pts} pontos de {lider}.",
+  avMsgFinalOne: "🏁 Hoje é a Grande Final e vale o dobro. Você está em {pos}, a 1 ponto de {lider}.",
+  avMsgFinalTie: "🏁 Hoje é a Grande Final e vale o dobro. Você está em {pos}, com os mesmos pontos que {lider}.",
+  avMsgFinalLead: "🏁 Hoje é a Grande Final e vale o dobro. Você está em {pos}: segure a liderança!",
+  avMsgWin: "🥇 Você ganhou a copa!",
+  avMsgEnd: "🥇 {name} ganhou. Você ficou em {pos}.",
+  avMsgJoin: "{name} se inscreveu na sua copa. Já são {n} jogadores inscritos.",
+  avMsgJoinMany: "{names} se inscreveram na sua copa. Já são {n} jogadores inscritos.",
 };
 
 const DE = {
@@ -2785,6 +2818,17 @@ const DE = {
   avTestBody: "So sehen die Mitteilungen für diesen Pokal aus.",
   avMute: "Diesen Pokal stummschalten",
   avMuted: "Dieser Pokal schickt dir keine Mitteilungen mehr.",
+  avMsgDay: "{emoji} Tag {d}: {juego}. Du kannst jetzt spielen.",
+  avMsgDue: "⏳ Du hast noch {h} Stunden, um Tag {d} zu spielen. Sonst gibt es 0 Punkte.",
+  avMsgDueOne: "⏳ Du hast noch 1 Stunde, um Tag {d} zu spielen. Sonst gibt es 0 Punkte.",
+  avMsgFinal: "🏁 Heute ist das große Finale, es zählt doppelt. Du bist auf Platz {pos}, {pts} Punkte hinter {lider}.",
+  avMsgFinalOne: "🏁 Heute ist das große Finale, es zählt doppelt. Du bist auf Platz {pos}, 1 Punkt hinter {lider}.",
+  avMsgFinalTie: "🏁 Heute ist das große Finale, es zählt doppelt. Du bist auf Platz {pos}, punktgleich mit {lider}.",
+  avMsgFinalLead: "🏁 Heute ist das große Finale, es zählt doppelt. Du bist auf Platz {pos}: verteidige die Spitze!",
+  avMsgWin: "🥇 Du hast den Pokal gewonnen!",
+  avMsgEnd: "🥇 {name} hat gewonnen. Du bist auf Platz {pos} gelandet.",
+  avMsgJoin: "{name} ist deinem Pokal beigetreten. Ihr seid jetzt {n} Spieler.",
+  avMsgJoinMany: "{names} sind deinem Pokal beigetreten. Ihr seid jetzt {n} Spieler.",
 };
 
 export const LOCALES = { es: ES, en: EN, pt: PT, de: DE };
