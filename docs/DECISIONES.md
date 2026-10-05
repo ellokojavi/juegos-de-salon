@@ -3397,7 +3397,9 @@ a su lugar en el orden. Quedan para PR aparte: llevar Cuarto Rey al canon, y los
 automáticos (`games.test.mjs`, un `documentar.mjs` más estricto y el puerto libre en `cdp.mjs`).
 Al llevar Cuarto Rey al canon, su partida también avisa cómo terminó (`trackFinish`), sin
 ganador: el cuarto rey es un castigo, así que solo va el detalle (`👑 Javi · 29 cartas`). Eso
-corrige lo que D-210 decía de él ("manda los nombres, no el final").
+corrige lo que D-210 decía de él ("manda los nombres, no el final"). Y su pase ya no es el overlay
+de dos etapas de D-14: el "¡Salud!" y "Pásale el celular a X" van en una sola pantalla de
+`handoff.js`, que solo avanza con el botón (C-9).
 **Actualización 2026-10-05:** los guardianes llegaron en su PR. `public/assets/js/games.test.mjs`
 exige a cada juego de `GAMES` motor, tests, gancho `window.__…` y especificación con la plantilla
 de C-13, o una excepción que cite su decisión; `documentar.mjs` revisa además la numeración, los
