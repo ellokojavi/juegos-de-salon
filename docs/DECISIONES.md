@@ -70,6 +70,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219 |
 | Marketing | `marketing/README.md` | D-178 |
+| App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-220 |
 
 ---
 
@@ -1214,7 +1215,7 @@ copa a medias.
 **Consecuencias:** LIG-32 queda pendiente: cada idioma necesita su propio contenido.
 
 ## D-99 · Los avisos del grupo los manda el admin, con mensajes armados
-**Fecha:** 2026-09-23 · **Estado:** vigente
+**Fecha:** 2026-09-23 · **Estado:** corregida por D-220
 **Decisión:** La app no manda WhatsApp ni correos. El admin tiene cuatro mensajes armados que salen
 por el diálogo de compartir del celular: invitación, **recordatorio del día**, tabla parcial y
 resumen final. El recordatorio sirve cualquier día: antes de empezar dice cuándo parte y el primer
@@ -3584,3 +3585,33 @@ separar juegos de copas, y sin saber de dónde es cada uno.
 heredados, sus récords y los podios (desde las copas), y la tabla de partidas con lo que cada
 jugador ya había jugado. Reglas nuevas: `jugadores/<jid>/co`, `co` en las filas y en los podios,
 y `partidas` entre las tablas que suben de a uno; las publica `publicar.yml` (D-218).
+
+## D-220 · La app se instala de verdad, y La Copa avisará al celular a quien lo pida
+**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** corrige D-99, completa RP-11
+**Decisión:** Juegos de Salón pasa a ser una app instalable completa (PWA) y tendrá avisos al
+celular (Web Push) para La Copa, solo para quien los active. El plan, la experiencia del jugador y
+la arquitectura están en [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md). Va en cuatro PR; este
+trae el primero:
+- **Instalable:** íconos PNG de 192, 512 y `maskable`, y el `apple-touch-icon` del iPhone
+  (`public/assets/icons/`, se rehacen con `node tools/release/iconos.mjs`); el manifest con `id`,
+  `scope` y esos íconos; y un service worker en la raíz (`public/sw.js`) que **no toca la red**:
+  sin evento `fetch`, nada se guarda en caché y ningún celular puede quedar con una versión vieja.
+- Cada página de la app (las que llevan el manifest) agrega el `apple-touch-icon` y registra el
+  service worker con `import '<…>assets/js/instalable.js'`, después de sus hojas de estilo: el
+  import map que pone `set-version.py` va antes de la primera, y un módulo antes de él lo dejaría
+  sin efecto.
+- **Los avisos** (PR 2 a 4): Web Push estándar, sin proveedor pago. Los manda un workflow
+  programado de GitHub Actions con la llave de servicio que ya existe (D-218); las suscripciones
+  van a una rama de la base que nadie puede leer. Solo avisos de La Copa: se abrió el día, se te
+  va a pasar el plazo, la final y el cierre. A lo más 2 por copa al día, en la hora del jugador.
+- **Sin recordatorios de calendario por ahora** (LIG-29): el dueño pidió solo avisos al celular.
+**Por qué:** Lo pidió el dueño, para que los jugadores vuelvan. D-99 había descartado los avisos
+automáticos porque "necesitan un servidor y un proveedor pago": Web Push es gratis (lo reparte el
+servicio del propio navegador) y GitHub Actions hace de servidor. El mensaje del admin al grupo
+(D-99) sigue igual: el aviso es personal y el grupo es social.
+**Consecuencias:** En iPhone los avisos llegan solo a la app agregada a la pantalla de inicio, y
+esa app no comparte nada con Safari: la experiencia lo resuelve pidiendo el PIN (D-96) al abrirla, y
+el PR 2 lo prueba primero en iPhones reales. Una página nueva de la app copia las tres líneas del
+`<head>` (manifest, ícono del iPhone e `instalable.js`); `instalable.test.mjs` las exige y revisa
+que cada juego del registro tenga su manifest. El modo sin conexión (RP-13) sigue pendiente y
+sería otro paso.
