@@ -44,8 +44,11 @@ for (const ruta of PAGINAS) {
 for (const lang of IDIOMAS) {
   for (const ruta of ['/', '/hangman/']) {
     await b.go(`${SITIO}${ruta}?lang=${lang}`, 1500);
-    const n = await nombres();
     const esperado = COMMON[lang].appTitle;
+    // instalable.js cambia el manifest al cargar, y Chrome lo vuelve a leer un poco después: se
+    // espera hasta 5 s a que lo tenga (al instalar, la persona toca el botón mucho más tarde)
+    let n = await nombres();
+    for (let i = 0; i < 10 && n.name !== esperado; i++) { await sleep(500); n = await nombres(); }
     console.log(`${lang} ${ruta.padEnd(10)} → ${n.url.split('/').pop()} · ${n.name} / ${n.short} · iPhone: ${n.iphone}`);
     if (n.name !== esperado || n.short !== esperado || n.iphone !== esperado) mal(`${lang} ${ruta}: la app se llamaría "${n.name}" / "${n.short}" / "${n.iphone}", y debe llamarse "${esperado}"`);
   }
