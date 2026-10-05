@@ -249,6 +249,7 @@ cada uno reclama al entrar con su nombre):
 ```bash
 node tools/firebase/rankings-historia.mjs              # qué escribiría, sin tocar nada
 node tools/firebase/rankings-historia.mjs --escribir   # después de publicar las reglas
+node tools/firebase/rankings-historia.mjs --con-laboratorio   # suma las copas creadas desde /labs/ (antes de D-175)
 ```
 
 En pruebas (localhost, la red de la casa, Tailscale) y con `?prueba` se usa el almacén de prueba, para que los guiones no escriban en los

@@ -10,10 +10,12 @@
  *
  *   node tools/firebase/rankings-historia.mjs              # muestra lo que escribiría, sin tocar nada
  *   node tools/firebase/rankings-historia.mjs --escribir   # lo escribe (como administrador)
+ *   … --con-laboratorio                                     # suma las copas creadas desde /labs/
  *
  * Se puede correr de nuevo: el jid de cada nombre sale del nombre, no se duplica nada, un podio
  * guardado no se toca y un récord solo se escribe si mejora el que hay. Las copas del
- * laboratorio no cuentan. Necesita la llave de ~/.config/juegos-de-salon/firebase-admin.json.
+ * laboratorio no cuentan, salvo con `--con-laboratorio`: antes de que La Copa saliera al menú
+ * (D-175) las copas de verdad entre amigos se creaban desde ahí. Necesita la llave de ~/.config/juegos-de-salon/firebase-admin.json.
  */
 import { createHash } from 'node:crypto';
 import { conCierre, terminada, juegoDelDia, tabla, activos } from '../../public/cup/engine.js';
@@ -31,7 +33,7 @@ export function jidHeredado(clave) {
  * Lo que hay que escribir, como un PATCH de varias rutas. `base` es lo que ya está en la base:
  * `{ jugadores, records, torneoPodios }` (puede venir vacío). Puro: se prueba sin red.
  */
-export function historia(torneos, base = {}, now = Date.now()) {
+export function historia(torneos, base = {}, now = Date.now(), { conLab = false } = {}) {
   const sueltos = new Set(SUELTOS.map(g => g.id));
   const gente = new Map();   // clave → { jid, n, at }
   const mejores = new Map(); // `${juego}|${jid}` → { s, ms, at }
@@ -48,7 +50,7 @@ export function historia(torneos, base = {}, now = Date.now()) {
 
   for (const [code, L0] of Object.entries(torneos || {})) {
     const L = conCierre(L0);
-    if (!L?.meta || L.meta.lab) continue;
+    if (!L?.meta || (L.meta.lab && !conLab)) continue;
     const jidDe = pid => {
       const x = L.players?.[pid];
       if (!x) return null;
@@ -107,9 +109,10 @@ if (esPrincipal) {
   const { token, leer } = await import('./firebase-admin.mjs');
   const { firebaseConfig } = await import('../../public/assets/js/firebase-config.js');
   const escribir = process.argv.includes('--escribir');
+  const conLab = process.argv.includes('--con-laboratorio');
   const t = await token();
   const [torneos, jugadores, records, torneoPodios] = await Promise.all(['torneos', 'jugadores', 'records', 'torneoPodios'].map(r => leer(r, t)));
-  const { cambios, gente, podios } = historia(torneos, { jugadores: jugadores || {}, records: records || {}, torneoPodios: torneoPodios || {} });
+  const { cambios, gente, podios } = historia(torneos, { jugadores: jugadores || {}, records: records || {}, torneoPodios: torneoPodios || {} }, Date.now(), { conLab });
 
   const recs = Object.keys(cambios).filter(r => r.startsWith('records/'));
   const porTabla = {};
