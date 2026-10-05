@@ -91,7 +91,7 @@ export function crearAvisos({ T, lang, cuenta, store, copa, redibujar, toast, ta
     const url = copa().url;
     hoja('hoja-otra-app',
       el('h2', {}, T.avOtherTitle),
-      el('p', { class: 'muted' }, T.avOtherLead),
+      el('p', { class: 'muted' }, ...conNegritas(T.avOtherLead)),
       el('p', { class: 'hoja-link' }, url.replace(/^https?:\/\//, '')),
       el('div', { class: 'btn-row' },
         el('button', { class: 'btn btn--yellow', onClick: async () => {
