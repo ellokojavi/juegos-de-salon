@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.104.0 — 2026-10-05
+- **"Tus copas" te sigue a cualquier celular** (D-220): si entras con tu nombre y PIN de jugador,
+  la portada de La Copa muestra también las copas que juegas en otros celulares. Al abrir una, tu
+  nombre ya está elegido y solo falta el PIN de esa copa.
+
 ## 0.103.0 — 2026-10-05
 - **`/records/` más fácil de leer** (D-219): arriba el Ranking general y una tabla nueva, Más
   partidas jugadas; abajo, un filtro entre 🎮 Juegos y 🏆 Copas. Línea Relámpago es una sola ficha
