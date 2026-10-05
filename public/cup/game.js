@@ -708,7 +708,9 @@ function entrar({ mantener = false } = {}) {
       }
     });
     // Con un jugador en este celular hay dos PIN: aquí va el de la copa (D-96, D-220)
-    poner(caja, el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.pickName), nombres, p.nodo,
+    // Desde la app instalada en iPhone (D-223): ya se sabe quién es, falta solo el PIN
+    const desdeApp = appPid && elegido === appPid;
+    poner(caja, el('div', { class: 'panel' }, el('p', { class: 'lead', id: desdeApp ? 'bienvenida-app' : null }, desdeApp ? fmt(T.avAppWelcome, { name: players[appPid].name }) : T.pickName), nombres, p.nodo,
       yoJ ? el('small', { class: 'muted' }, T.pinCopaHint) : null), err, b);
   };
 

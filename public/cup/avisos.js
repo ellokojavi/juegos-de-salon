@@ -12,7 +12,7 @@
 import { el, $ } from '../assets/js/ui.js';
 import {
   avisosVisibles, celular, camino as caminoDe, permiso, pedirPermiso, suscribir, suscripcionActual, subIdDe,
-  paraGuardar, zonaHoraria, avisoDePrueba,
+  paraGuardar, zonaHoraria, avisoDePrueba, anular,
 } from '../assets/js/push.js';
 
 /** "Toca **Compartir**" → nodos con negritas. */
@@ -141,9 +141,18 @@ export function crearAvisos({ T, lang, cuenta, store, copa, redibujar, toast, ta
   /** Suscribe este celular y anota la copa. Lanza si algo falla. */
   async function activar({ dia = true, plazo = true, silencioso = false } = {}) {
     const { code, pid } = copa();
-    const sub = await suscribir();
-    const subId = await subIdDe(sub.endpoint);
-    await store().guardarAvisos(code, pid, subId, paraGuardar(sub, { lang, tz: zonaHoraria() }), { dia, plazo });
+    let sub = await suscribir();
+    let subId = await subIdDe(sub.endpoint);
+    const guardar = () => store().guardarAvisos(code, pid, subId, paraGuardar(sub, { lang, tz: zonaHoraria() }), { dia, plazo });
+    try { await guardar(); } catch (e) {
+      // La suscripción ya está en la base a nombre de otra identidad de este mismo celular (Firebase
+      // le dio un uid anónimo nuevo): las reglas no dejan reescribirla. Se anula y se pide otra.
+      if (e?.code !== 'permiso') throw e;
+      await anular();
+      sub = await suscribir();
+      subId = await subIdDe(sub.endpoint);
+      await guardar();
+    }
     cuenta.avisos.guardar(code, { subId, dia, plazo });
     guardarCelular(subId);
     if (!silencioso) {
