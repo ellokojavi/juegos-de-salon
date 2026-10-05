@@ -51,13 +51,15 @@
       ],
       "estado": "entregado al dueño; sin publicar en YouTube todavía. v6 registrada como pendiente (ver README), sin empezar hasta que el dueño la pida",
       "revision": {
-        "fecha": "2026-10-04",
-        "app": "0.95.0",
+        "fecha": "2026-10-05",
+        "app": "0.102.0",
         "al_dia": false,
         "pendiente": [
           "Falta 🧶 Desenredo, que salió del laboratorio en 0.89.0: no está ni entre los ocho juegos ni en la grilla de ¡Y muchos más!",
           "Las capturas son de la app 0.82.x: Tango todavía sin el candado chico en las casillas dadas (0.87.1), y antes de los textos más cortos de 0.84.0 (D-177)",
-          "Los idiomas dicen tres (🇪🇸 Español · 🇬🇧 English · 🇧🇷 Português, en la escena de modos y en el cierre): desde 0.94.0 (D-197) la portada ofrece también el alemán (DE)"
+          "Los idiomas dicen tres (🇪🇸 Español · 🇬🇧 English · 🇧🇷 Português, en la escena de modos y en el cierre): desde 0.94.0 (D-197) la portada ofrece también el alemán (DE)",
+          "¿Dónde queda? sale en su caja de antes: desde 0.98.0 (D-203) el globo ocupa toda la pantalla y la ciudad, el reloj, + y − y Confirmar flotan encima; y desde 0.97.0 se gira con dos dedos y aparece la brújula (D-200)",
+          "Los rankings no salen: desde 0.102.0 (D-217) la portada tiene el 🏆 que lleva a /records/ y cada juego muestra su ranking (récords o victorias) en la intro y en el resultado"
         ]
       }
     }
