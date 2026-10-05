@@ -97,7 +97,7 @@ modo que el juego piensa tener.
 - En juegos con reductor de mensajes se guarda la lista de mensajes y se retoma reproduciéndola (`createLocalTransport({ seed })`); los datos privados (número secreto, flota) van en `private`, nunca viajan por la red.
 - Al retomar en modo un celular se vuelve a mostrar la pantalla de pase o la pantalla tapada: nadie sabe quién tiene el teléfono.
 - Escribir en `localStorage` puede fallar (modo privado, cuota). Siempre en `try/catch`: si falla, el juego sigue funcionando sin memoria.
-- El nombre del jugador se recuerda entre partidas con `createNameStore(GAME_ID)`.
+- El nombre del jugador se recuerda entre partidas con `createNameStore(GAME_ID)`. Un juego de grupo en un celular recuerda además la mesa entera con su `list()`/`setList()` (`juegos-de-salon:<id>:names`); una clave vieja de esa lista va en `legacyKeys` y se muda sola la primera vez.
 
 ## C-7 · Transporte y multijugador
 
