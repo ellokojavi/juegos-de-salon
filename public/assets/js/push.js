@@ -38,6 +38,18 @@ export function activarAvisos(si, storage = globalThis.localStorage) {
   try { if (si) storage.setItem(LABS_AVISOS_KEY, '1'); else storage.removeItem(LABS_AVISOS_KEY); } catch (_) { /* sin memoria */ }
 }
 
+/**
+ * En iPhone la app de inicio no ve el localStorage de Safari, y con él el "Activar en este celular"
+ * de /labs/. Si abre con `&app=<pid>` (la dirección que arma la hoja de agregar a inicio, solo
+ * cuando la campana ya se veía en Safari), hereda el laboratorio (D-225). Solo en la app instalada:
+ * en una pestaña, esa dirección pudo llegar copiada a otro celular.
+ */
+export function heredarLabsDeApp({ search = globalThis.location?.search || '', instalada, storage = globalThis.localStorage } = {}) {
+  if (!AVISOS_EN_LABS || !instalada || !new URLSearchParams(search).get('app')) return false;
+  activarAvisos(true, storage);
+  return true;
+}
+
 /** Las apps que abren los links con su propio navegador, donde no se puede agregar a inicio. */
 const OTRA_APP = /FBAN|FBAV|FB_IAB|Instagram|WhatsApp|Line\/|Messenger|TikTok|Snapchat|Twitter|LinkedInApp|GSA\//;
 

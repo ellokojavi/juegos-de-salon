@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.108.1 — 2026-10-05
+- **Los avisos de La Copa ya tienen su clave** (D-225): con ella se pueden mandar de verdad, todavía
+  en el laboratorio. En iPhone, la app agregada a inicio desde una copa con los avisos del
+  laboratorio activados ya muestra la campana: antes no la veía, porque no comparte lo guardado en
+  Safari.
+
 ## 0.108.0 — 2026-10-05
 - **Los avisos de La Copa llegan de verdad, en el laboratorio** (D-224): cuando se abre un día,
   cuando se te acaba el plazo para jugarlo, en La Gran Final (con tu lugar en la tabla) y al

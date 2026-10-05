@@ -129,7 +129,7 @@ python3 tools/release/readme.py sellar         # "ya releí el README con estos 
 node tools/e2e/contacto.mjs <seccion> --salida /tmp/contacto      # mirarlas juntas (D-76)
 node tools/release/og.mjs tarjetas | imagenes | revisar           # tarjetas de WhatsApp (D-72)
 node tools/release/iconos.mjs                                    # íconos PNG de la app instalable, desde assets/icon.svg (D-221)
-node tools/push/vapid.mjs                                        # la clave de los avisos (una sola vez, el dueño; D-223)
+node tools/push/vapid.mjs                                        # la clave de los avisos: ya se corrió (D-225), no se rehace
 node tools/push/avisar.mjs --simular | --prueba <código>         # qué avisos mandaría, o uno de prueba a una copa (D-224)
 ```
 

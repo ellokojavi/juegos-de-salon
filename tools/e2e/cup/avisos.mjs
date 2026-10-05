@@ -1,5 +1,5 @@
 // Los avisos de La Copa en Chrome (D-223), con el almacén de prueba (?prueba) y sin red. La clave
-// VAPID es una de prueba (la de git va vacía hasta que el dueño corre tools/push/vapid.mjs), y el
+// VAPID es la de vapid.js (D-225; si estuviera vacía, una de prueba), y el
 // servicio de avisos del navegador se reemplaza por uno falso: ninguna suscripción sale del Chrome.
 // Recorre la campana en sus estados, la tarjeta ("Avisarme" y "Ahora no"), el aviso de prueba, los
 // ajustes, silenciar, y el camino de iPhone: agregar a inicio, otra app, y la app instalada que
@@ -124,9 +124,12 @@ await b.go(`${BASE}?prueba&demo=jugador`, 2000);
 const code = await ev('__copa.estado.code'), pid = await ev('__copa.estado.yo');
 // Un celular nuevo: sin asiento en la copa (la app instalada no ve lo que guardó Safari)
 // En el modo de prueba, la sesión y el uid de cada "celular" viven en sessionStorage
-await ev(`(()=>{sessionStorage.clear();return 1})()`);
+await ev(`(()=>{sessionStorage.clear();localStorage.removeItem('juegos-de-salon:labs-avisos');return 1})()`);
+await b.go(`${BASE}?prueba&${code}&app=${pid}`, 2000);
+ok(!await ev(`localStorage.getItem('juegos-de-salon:labs-avisos')`), 'el link con &app= en una pestaña no activa el laboratorio');
 await b.go(`${BASE}?prueba&${code}&app=${pid}&standalone`, 2200); await preparar();
 ok(await ev('__copa.estado.pantalla') === 'entrar', 'la app instalada, sin asiento, pide entrar');
+ok(await ev(`localStorage.getItem('juegos-de-salon:labs-avisos')`) === '1', 'la app instalada hereda el laboratorio de avisos de Safari (D-225)');
 const elegido = await ev(`document.querySelector('.chip-btn.on')?.dataset.pid || null`);
 ok(elegido === pid, 'la app instalada abre "Ya estoy inscrito" con su nombre elegido: falta solo el PIN');
 ok(/PIN/.test(await texto('#bienvenida-app')), 'y lo dice: "Eres … en esta copa. Escribe tu PIN para seguir."');
