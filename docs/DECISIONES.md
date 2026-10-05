@@ -3658,7 +3658,7 @@ largo se corta bajo el ícono ("Juegos de Sa…"). `instalable.test.mjs` exige q
 con `COMMON` de `i18n.js`, y `tools/e2e/instalable.mjs` revisa el nombre en los cuatro idiomas.
 
 ## D-223 · Los avisos de La Copa se activan con la campana, primero en el laboratorio
-**Fecha:** 2026-10-05 · **Estado:** vigente, corregida en sus consecuencias por D-224 · **Relación:** completa D-221
+**Fecha:** 2026-10-05 · **Estado:** corregida por D-224 · **Relación:** completa D-221
 **Decisión:** El PR 2 del plan de avisos ([PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md)): el
 jugador activa los avisos de una copa, el celular se suscribe y la base guarda la suscripción. Los
 avisos de verdad los manda el PR 3.
