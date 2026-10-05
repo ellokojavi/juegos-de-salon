@@ -456,6 +456,7 @@
       ],
       "chat": false,
       "archivos": [
+        "public/fourth-king/engine.js",
         "public/fourth-king/game.js",
         "public/fourth-king/index.html",
         "public/fourth-king/rules.js",
@@ -793,6 +794,7 @@
     "public/cup/rules.js",
     "public/cup/store-firebase.js",
     "public/cup/store-local.js",
+    "public/fourth-king/engine.js",
     "public/fourth-king/game.js",
     "public/fourth-king/rules.js",
     "public/hangman/decks/animales.js",
@@ -828,6 +830,7 @@
   "tests": [
     "public/assets/js/arrastre.test.mjs",
     "public/assets/js/compartir.test.mjs",
+    "public/assets/js/games.test.mjs",
     "public/assets/js/i18n.test.mjs",
     "public/assets/js/records.test.mjs",
     "public/assets/js/transport/cleanup.test.mjs",
@@ -842,6 +845,7 @@
     "public/cup/planilla.test.mjs",
     "public/cup/reportes.test.mjs",
     "public/cup/store.test.mjs",
+    "public/fourth-king/engine.test.mjs",
     "public/hangman/engine.test.mjs",
     "public/julep/engine.test.mjs",
     "public/liars-dice/engine.test.mjs",

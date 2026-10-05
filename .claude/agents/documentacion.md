@@ -44,8 +44,10 @@ El README va **en inglés** (C-13, D-78); todo lo demás, en español chileno.
 
 1. **Desde dónde:** `node tools/agents/documentar.mjs revisar`. Te muestra lo pendiente, lo que entró a
    `main` desde la última ronda y lo que se comprueba solo (decisiones citadas que no existen o
-   repetidas, pruebas que `CLAUDE.md` no nombra, guiones que `tools/e2e/README.md` no nombra, la
-   versión sin entrada en el CHANGELOG). Después lee el diff de cada PR fusionado
+   repetidas, huecos o desorden en la numeración, Estados fuera de los cuatro, correcciones que la
+   decisión vieja no marca, IDs repetidos en `REQUERIMIENTOS.md` y `USABILIDAD.md`, rutas citadas
+   en las guías que no existen, guiones que `tools/e2e/README.md` no nombra, la versión sin entrada
+   en el CHANGELOG). Después lee el diff de cada PR fusionado
    (`git diff <antes>..<después> --stat` y lo que haga falta). Si no hay nada nuevo ni pendiente,
    termina sin PR.
 2. **Por cada cambio**, que quede contado donde corresponde:
@@ -56,8 +58,9 @@ El README va **en inglés** (C-13, D-78); todo lo demás, en español chileno.
    - **`docs/REQUERIMIENTOS.md`:** el requerimiento que se cumplió está marcado ✅ con su versión.
    - **`docs/games/<carpeta>.md`** del juego que cambió, `docs/CANONES.md` si cambió una regla
      general, `docs/USABILIDAD.md` solo si el dueño resolvió un dilema y falta anotarlo.
-   - **`CLAUDE.md`:** la lista de pruebas tiene todos los `*.test.mjs`, y cada herramienta nueva de
-     `tools/` está explicada. `tools/e2e/README.md` tiene cada guion nuevo.
+   - **`CLAUDE.md`:** cada herramienta nueva de `tools/` está explicada (las pruebas no van en una
+     lista: cada `*.test.mjs` dice en su primera línea qué prueba). `tools/e2e/README.md` tiene
+     cada guion nuevo.
 3. **El README:** `python3 tools/release/readme.py revisar`. Un ERROR dice qué sección releer: reléela
    contra el código, corrige la prosa y después `python3 tools/release/readme.py sellar`. Los bloques
    `<!-- generado: ... -->` no se editan a mano: `python3 tools/release/readme.py actualizar`.

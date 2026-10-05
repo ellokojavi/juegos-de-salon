@@ -1,3 +1,4 @@
+// Qué cuenta como marketing atrasado (U-34). Ejecutar: node tools/agents/marketing.test.mjs
 import assert from 'node:assert/strict';
 import { atrasos } from './marketing.mjs';
 

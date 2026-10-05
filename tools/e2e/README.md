@@ -20,25 +20,26 @@ python3 -m http.server 8765 -d public
 mkdir -p /tmp/e2e && node tools/e2e/battleship/local.mjs /tmp/e2e
 ```
 
-Con otra sesión probando al mismo tiempo (D-135), cada una sirve su copia en su puerto y usa sus
-propios Chrome: **todos** los guiones leen `SITIO`, y `PUERTO_CDP` reparte los puertos de Chrome
-desde ese número (`cdp.mjs`: el primer Chrome del guion usa `PUERTO_CDP`, el segundo el siguiente).
-Sin las variables, todo sigue en el 8765 y en los puertos de siempre.
+Con otra sesión probando al mismo tiempo (D-135), cada una sirve su copia en su puerto y se lo
+pasa a los guiones en `SITIO` (**todos** lo leen; sin él, el 8765). Los puertos de Chrome no se
+eligen: `cdp.mjs` abre cada Chrome con `--remote-debugging-port=0`, el sistema le da uno libre y
+`launch` lo lee del archivo `DevToolsActivePort` del perfil (D-213). Dos sesiones, o dos guiones
+de la misma, corren a la vez sin pisarse. El puerto que de verdad usó cada Chrome queda en `b.port`.
 
 ```bash
-SITIO=http://localhost:8791 PUERTO_CDP=9610 node tools/e2e/hangman/online.mjs /tmp/e2e
-pkill -f "remote-debugging-port=961[0-3]"   # solo los tuyos
+SITIO=http://localhost:8791 node tools/e2e/hangman/online.mjs /tmp/e2e
 ```
 
-Los puertos de Chrome de las sesiones van de 9600 en adelante, de a diez (9600, 9610…): algunos
-guiones todavía tienen puertos fijos entre 9231 y 9498, y un `pkill` en ese rango puede matar el
-Chrome de otra sesión (D-213).
+`PUERTO_CDP` sigue existiendo para quien quiera puertos fijos (para conectarse a mano a un Chrome
+del guion, por ejemplo): el primer Chrome del guion usa `PUERTO_CDP`, el segundo el siguiente, y
+así. Es opcional; sin él no hay nada que coordinar.
 
 ## En GitHub (D-193)
 
 `ci.mjs` corre los guiones que no tocan el Firebase de producción, y GitHub lo usa en cada PR
 (`.github/workflows/e2e.yml`, un job por guion). Un guion falla si sale con error, si imprime
-una línea con ✗ o ❌, o si pasa los 15 minutos. Los que solo imprimen lo que ven igual caen si
+una línea con ✗ o ❌, o si pasa los 15 minutos (ahí `ci.mjs` le manda SIGTERM, para que cierre su
+Chrome, y SIGKILL si a los 5 s sigue vivo). Los que solo imprimen lo que ven igual caen si
 algo se rompe del todo. Los `online.mjs`, los `chat.mjs` y los de la lista `TAMBIEN_FIREBASE` de
 `ci.mjs` abren salas de verdad y siguen a mano. Los de `OBSOLETOS` prueban algo que ya no
 existe y esperan que alguien los reescriba.
@@ -155,20 +156,22 @@ una pantalla que no corresponde al pie, algo tapado por el confeti— (D-76).
 ## Cómo simulan varios celulares
 
 Cada "celular" es una instancia de Chrome con su propio perfil (`dir`) y su propio puerto de
-depuración. Para que no compartan `localStorage`, cada una usa un origen distinto del mismo
+depuración, que elige el sistema. Para que no compartan `localStorage`, cada una usa un origen distinto del mismo
 servidor: `localhost`, `127.0.0.1` y `[::1]`. Los scripts "online" hablan con el proyecto de
 Firebase real, así que necesitan internet y dejan salas de prueba que caducan a la media hora de quedar quietas (D-89).
 
 ## Cuidados
 
-- **Chromes zombis:** si un script falla a medias, su Chrome puede quedar vivo escuchando en su
-  puerto, y el siguiente script se conectaría a esa instancia vieja (con código viejo cargado).
-  Antes de repetir, matar **solo el tuyo**: `pkill -f "remote-debugging-port=961[0-3]"` (tus
-  puertos, con corchete), nunca `pkill -f remote-debugging-port` a secas, que mata las pruebas de
-  todas las sesiones (ver arriba). `cdp.mjs` ya cierra Chrome ante
-  excepciones no capturadas, pero no ante un `kill` del proceso de node.
-- Los puertos están fijos dentro de cada script (entre 9231 y 9498) salvo que se pase
-  `PUERTO_CDP`; si dos scripts corren a la vez deben usar puertos distintos.
+- **Chromes zombis:** cada Chrome muere con su guion, termine como termine: bien, con una
+  excepción, con Ctrl-C o con un `kill` (SIGINT, SIGTERM, SIGHUP; `cdp.mjs`). No hace falta
+  `pkill`. La única salida que se lo salta es un `kill -9` al proceso de node. Si alguna vez queda
+  uno vivo, se busca por **su perfil**, que es la carpeta de salida del guion, y no por el puerto:
+  `pgrep -af "user-data-dir=/tmp/e2e/"` para verlo y `pkill -f "user-data-dir=/tmp/e2[e]/"` para
+  matarlo (con corchete: sin él, el patrón calza con el propio shell). Nunca
+  `pkill -f remote-debugging-port` a secas, que mata las pruebas de todas las sesiones. Un Chrome
+  vivo con el mismo perfil hace que el siguiente no abra: `launch` lo dice en el error.
+- El `port` que cada guion le pasa a `launch` ya no es un puerto: solo lo usa `PUERTO_CDP` para
+  saber qué Chrome es cuál. Un guion que necesite el puerto lo lee de `b.port`.
 - En una pestaña oculta el navegador acelera los temporizadores de forma distinta; las esperas
   (`sleep`) están calibradas para headless.
 

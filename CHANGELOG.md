@@ -8,6 +8,22 @@
   los activan en `/labs/`. La historia de La Copa ya está cargada: quien jugó antes reclama sus
   puntajes al entrar con su nombre.
 
+## 0.99.7 — 2026-10-05
+- **Cuarto Rey: el pase del celular en una sola pantalla** (D-213): lo que pasó ("¡Salud!", quién
+  toma) y "Pásale el celular a X" se ven juntos, y solo avanza el botón "¡Dame la carta!": ya no se
+  cierra solo ni con un toque en cualquier parte.
+- Cuarto Rey: las cifras y las letras de las cartas en la letra de los números, como en los demás
+  juegos, y los botones de género de 44 px. La mesa recordada se conserva.
+- Panel: las partidas de Cuarto Rey dicen cómo terminaron (quién sacó el cuarto rey y con cuántas
+  cartas).
+
+## 0.99.6 — 2026-10-05
+- **Las reglas se revisan solas** (D-213): una prueba exige a cada juego su motor con tests, su
+  gancho de pruebas y su especificación, o una excepción con su decisión; el revisor de la
+  documentación avisa de números de decisión que faltan, estados sin marcar, IDs repetidos y rutas
+  que no existen. Las pruebas en Chrome toman un puerto libre y cierran su navegador al terminar,
+  así que varias sesiones pueden probar a la vez. Sin cambios para quien juega.
+
 ## 0.99.5 — 2026-10-05
 - **Las reglas, en un solo lugar** (D-213): los cánones dicen la regla de hoy y se pusieron al día
   con las decisiones que los habían dejado atrás (la privacidad de las partidas sin red, la semilla

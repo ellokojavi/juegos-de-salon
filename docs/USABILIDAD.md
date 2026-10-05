@@ -42,8 +42,7 @@ nunca se usaron, y no se renumera.
     cada uno" ya dice que son 100).
   - **Tope que vigila una prueba** (`public/cup/games/juegos.test.mjs`), en los cuatro idiomas: a
     lo más 3 puntos y 280 caracteres para "Cómo se juega", y 170 para el puntaje. Además frena un
-    primer punto que describe la pantalla ("Hay…", "There is…", "Há…"); en alemán eso todavía no
-    lo mira. Es un techo, no una meta: la mitad de los juegos queda bajo 210.
+    primer punto que describe la pantalla ("Hay…", "There is…", "Há…", "Es gibt…"). Es un techo, no una meta: la mitad de los juegos queda bajo 210.
 
 ## Pantallas y botones
 

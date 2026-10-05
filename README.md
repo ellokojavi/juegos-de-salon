@@ -41,7 +41,7 @@ The games with their own section below come first; after them, the one-player ga
 
 ## 👑 Fourth King (Cuarto Rey)
 
-The classic drinking card game. The phone is the deck: each player draws a card and the phone says what to do. It names who drinks, runs the minigames (Cuenta Cuentos, Chancho Inflado, Cultura Chupística, Nunca Nunca), suggests dares and counts the kings. The fourth king ends the game: whoever draws it drinks everything left in their glass, and the last screen shows who it was, the sip ranking and, folded at the bottom, every card that came up and who drew it.
+The classic drinking card game. The phone is the deck: each player draws a card and the phone says what to do. It names who drinks, runs the minigames (Cuenta Cuentos, Chancho Inflado, Cultura Chupística, Nunca Nunca), suggests dares and counts the kings. The fourth king ends the game: whoever draws it drinks everything left in their glass, and the last screen shows who it was, the sip ranking and, folded at the bottom, every card that came up and who drew it. After each card, who drinks and "pass the phone to X" share one screen, and only the next player's button moves on.
 
 <!-- generado: capturas:cuarto-rey · written by python3 tools/release/readme.py actualizar -->
 <table>
@@ -537,12 +537,14 @@ Then open http://localhost:8765 (ES modules have to be served over HTTP). Tests 
 node public/battleship/engine.test.mjs
 node public/bulls-and-cows/engine.test.mjs
 node public/cup/engine.test.mjs
+node public/fourth-king/engine.test.mjs
 node public/hangman/engine.test.mjs
 node public/julep/engine.test.mjs
 node public/liars-dice/engine.test.mjs
 node public/timeline/engine.test.mjs
 node public/assets/js/arrastre.test.mjs
 node public/assets/js/compartir.test.mjs
+node public/assets/js/games.test.mjs
 node public/assets/js/i18n.test.mjs
 node public/assets/js/records.test.mjs
 node public/assets/js/transport/cleanup.test.mjs
@@ -650,7 +652,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   liars-dice/                 Liar's Dice (engine.js + tests, game.js, rules.js)
   battleship/                 Battleship (engine.js + tests, game.js, rules.js, flota.js: the pixel art)
   julep/                      Julep (engine.js + tests, game.js, rules.js)
-  fourth-king/                Fourth King (game.js, rules.js)
+  fourth-king/                Fourth King (engine.js + tests, game.js, rules.js)
   connections/ · queens/ …    The Cup's games played on their own, one page each (generated from cup/suelto/)
   labs/                       The lab: games being tested before they reach the menu (not linked, not indexed); labs/de/ forwards to /de/ (German left the lab, D-197)
   records/                    Leaderboards: the All-Rounder, every game's table and The Cup's medal table (D-212)

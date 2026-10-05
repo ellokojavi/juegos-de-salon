@@ -97,7 +97,7 @@ modo que el juego piensa tener.
 - En juegos con reductor de mensajes se guarda la lista de mensajes y se retoma reproduciéndola (`createLocalTransport({ seed })`); los datos privados (número secreto, flota) van en `private`, nunca viajan por la red.
 - Al retomar en modo un celular se vuelve a mostrar la pantalla de pase o la pantalla tapada: nadie sabe quién tiene el teléfono.
 - Escribir en `localStorage` puede fallar (modo privado, cuota). Siempre en `try/catch`: si falla, el juego sigue funcionando sin memoria.
-- El nombre del jugador se recuerda entre partidas con `createNameStore(GAME_ID)`.
+- El nombre del jugador se recuerda entre partidas con `createNameStore(GAME_ID)`. Un juego de grupo en un celular recuerda además la mesa entera con su `list()`/`setList()` (`juegos-de-salon:<id>:names`); una clave vieja de esa lista va en `legacyKeys` y se muda sola la primera vez.
 
 ## C-7 · Transporte y multijugador
 
@@ -192,6 +192,7 @@ Cuando cada dispositivo guarda un secreto (un número, una flota):
 ## C-12 · Pruebas
 
 - El motor de cada juego tiene tests que corren con node, sin navegador. GitHub los corre todos en cada PR y en cada fusión a main (D-143): un PR con ❌ no se fusiona.
+- **Lo vigila un test, no la memoria** (D-213): `node public/assets/js/games.test.mjs` exige a cada juego de `GAMES` su motor y sus tests (C-2), el gancho `window.__…` (C-14) y la especificación con las secciones de C-13 en orden y el gancho nombrado. Lo que un juego todavía no cumple va en `EXCEPCIONES` de ese test, con la decisión que lo deja pendiente; cuando el juego se pone al día, el test pide borrar la excepción.
 - Antes de publicar se prueba el juego de punta a punta en Chrome headless: partida completa en cada modo, con recarga a mitad de partida y revancha.
 - El modo de dos celulares se prueba con dos instancias del navegador, y al menos una vez contra la URL publicada.
 - Un cambio en un módulo compartido obliga a repetir la regresión de **todos** los juegos.
@@ -320,7 +321,7 @@ como un error: se lee como que nadie jugó.
 - [ ] En un celular, el resultado se ve antes del pase, y lo secreto va tapado (C-9).
 - [ ] Los secretos se comprometen y verifican (C-10).
 - [ ] Las fallas de sala se ven en pantalla, en todos los idiomas, y la consola queda limpia (C-14).
-- [ ] Tests del motor en verde y partida completa probada en cada modo, con capturas revisadas (C-12).
+- [ ] Tests del motor y `node public/assets/js/games.test.mjs` en verde, y partida completa probada en cada modo, con capturas revisadas (C-12).
 - [ ] Lo que cambió, descrito en el PR para que quien fusiona escriba la entrada de `CHANGELOG.md` con su versión; publicada y comprobada en la URL pública por `publicar.yml` (C-11, D-205).
 - [ ] Si tiene varios celulares, el chat de sala usa el módulo compartido y muere con la sala (C-15).
 - [ ] Lo que comparte (sala, resultado) sale de `compartir.js`, con la cabecera del estándar, y un resultado va con su imagen (C-7, D-165).
