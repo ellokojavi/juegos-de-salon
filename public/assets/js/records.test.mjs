@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import {
-  nuevoJid, esJid, claveNombre, CLAVE_NOMBRE, hashPinJugador, tablaId, TABLA, PERIODO, semana, claveOrden,
+  nuevoJid, esJid, claveNombre, bandera, esPais, PARTIDAS, esCuenta, CLAVE_NOMBRE, hashPinJugador, tablaId, TABLA, PERIODO, semana, claveOrden,
   normalizar, esMejor, ordenar, vistaTabla, todoterreno, podioDe, medallero, ultimasCopas, S_MAX, MS_MAX, limpiarNombre,
 } from './records.js';
 import { crearAlmacenLocal } from './jugador-local.js';
@@ -22,6 +22,13 @@ assert.equal(claveNombre('Ñandú José'), 'nandu-jose');
 assert.equal(claveNombre('🎉🎉'), 'sin-letras');
 assert.equal(limpiarNombre('  un   nombre  muy largo que no cabe entero  '), 'un nombre muy largo ');
 for (const n of ['Javi', 'María José', 'x.y#z', '🙂', 'ab/cd$[e]']) assert.ok(CLAVE_NOMBRE.test(claveNombre(n)), n);
+
+// Banderas (D-219)
+assert.equal(bandera('CL'), '🇨🇱');
+assert.equal(bandera('cl'), '');
+assert.equal(bandera(null), '');
+assert.ok(esPais('BR') && !esPais('Brasil'));
+assert.ok(esCuenta(PARTIDAS) && esCuenta('dudo_victorias') && !esCuenta('reinas'));
 
 // El hash del PIN depende del jugador: el mismo PIN de dos jugadores no se parece
 const h1 = await hashPinJugador('aaaaaaaa', '1234'), h2 = await hashPinJugador('bbbbbbbb', '1234');
@@ -99,7 +106,7 @@ assert.deepEqual(ultimasCopas({ A: { name: 'a', end: 1, p: { x: { n: 'X', l: 1 }
 const ls = new Map();
 const storage = { getItem: k => (ls.has(k) ? ls.get(k) : null), setItem: (k, v) => ls.set(k, String(v)), removeItem: k => ls.delete(k) };
 const ahora = { t: Date.UTC(2026, 9, 7, 15) };
-const mkJugador = uid => crearJugador({ almacen: crearAlmacenLocal({ storage, uid, now: () => ahora.t }), storage: { ...storage, getItem: k => storage.getItem(`${uid}:${k}`), setItem: (k, val) => storage.setItem(`${uid}:${k}`, val), removeItem: k => storage.removeItem(`${uid}:${k}`) }, now: () => ahora.t, juegos: ['reinas', 'zip'] });
+const mkJugador = uid => crearJugador({ pais: () => (uid === 'uid1' ? 'CL' : ''), almacen: crearAlmacenLocal({ storage, uid, now: () => ahora.t }), storage: { ...storage, getItem: k => storage.getItem(`${uid}:${k}`), setItem: (k, val) => storage.setItem(`${uid}:${k}`, val), removeItem: k => storage.removeItem(`${uid}:${k}`) }, now: () => ahora.t, juegos: ['reinas', 'zip'] });
 
 const cel1 = mkJugador('uid1'), cel2 = mkJugador('uid2'), cel3 = mkJugador('uid3');
 assert.deepEqual(await cel1.entrar('Javi', '1234'), { estado: 'nuevo', otros: 0 });
@@ -169,6 +176,13 @@ assert.deepEqual(t.top.map(f => [f.jid === otroJavi.jid, f.s, f.ms]), [[true, 2,
 const db = crearAlmacenLocal({ storage, uid: 'uid3', now: () => ahora.t });
 await assert.rejects(db.update({ [`records/dudo_victorias/siempre/${otroJavi.jid}`]: { s: 12, ms: 0, k: claveOrden(12, 0), at: { '.sv': 'timestamp' }, n: 'Javi' } }), /permiso/);
 await db.update({ [`records/dudo_victorias/siempre/${otroJavi.jid}`]: { s: 3, ms: 0, k: claveOrden(3, 0), at: { '.sv': 'timestamp' }, n: 'Javi' } });
+
+// El país va con el jugador y en cada fila (D-219); el de otro celular, si el jugador ya lo tiene
+assert.equal((await mkJugador('uid9').entrar('Javi', '4321')).estado, 'dentro');
+assert.equal((await cel3.tabla('reinas', 'siempre')).top.find(f => f.jid === javi.jid).co, 'CL');
+// La tabla de partidas suma cada partida terminada, en cualquier juego
+const partidas = (await cel3.tabla(PARTIDAS, 'siempre')).top;
+assert.ok(partidas.find(f => f.jid === otroJavi.jid).s >= 5, 'otro Javi jugó reinas, zip y dudo');
 
 // Amigos: los que se conocieron en una copa
 cel3.conocer({ [javi.jid]: 'Javi' });

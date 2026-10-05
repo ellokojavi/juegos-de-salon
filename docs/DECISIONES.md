@@ -68,7 +68,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216 |
 | La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212 |
 | Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218 |
-| Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217 |
+| Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219 |
 | Marketing | `marketing/README.md` | D-178 |
 
 ---
@@ -3561,3 +3561,26 @@ GitHub Actions, un hook y el aviso de fallas.
 no Claude (`gh secret set FIREBASE_ADMIN_JSON < ~/.config/juegos-de-salon/firebase-admin.json`).
 Una copia que otra sesión todavía usa después de fusionar se borra al abrir la siguiente sesión;
 lo que quede sin commitear se respeta.
+
+## D-219 · /records/ se ordena: lo general arriba, Juegos o Copas abajo, y la bandera junto a cada nombre
+**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** amplía D-212 y D-215
+**Decisión:** La página de rankings se ordena para leerse de arriba abajo:
+- Arriba, lo que vale para todos los juegos: tu jugador, el **Ranking general** (el Todoterreno)
+  y **Más partidas jugadas**, una tabla nueva (`records/partidas/<período>/<jid>`) que suma una
+  por cada partida terminada con nombre y PIN, en cualquier juego. Como las victorias, sube de a
+  uno y las reglas lo exigen.
+- Debajo, un filtro grande: **🎮 Juegos** (de a uno: los sueltos, Toque y Fama solo y Línea
+  Relámpago, con sus temáticas adentro; en grupo: las victorias) y **🏆 Copas** (los campeones,
+  las últimas copas y el mejor día de copa, juego por juego). La elección queda en la dirección
+  (`#juegos/reinas`, `#copas`); el `#copa` de antes sigue llevando a Copas.
+- **La bandera del país junto a cada nombre**, en todas las tablas, el medallero, las últimas
+  copas y "Juegas como". El jugador guarda su país (`jugadores/<jid>/co`, el de su celular, como
+  La Copa: D-209) y cada fila lo lleva (`co`), así la tabla se dibuja sin leer nada más. Quien ya
+  había entrado lo completa solo al abrir cualquier página. El podio de una copa lleva el país de
+  cada uno (el de la copa).
+**Por qué:** Lo pidió el dueño: la página tenía todo, pero en una sola columna larga, sin
+separar juegos de copas, y sin saber de dónde es cada uno.
+**Consecuencias:** `rankings-historia.mjs` completa lo de antes: la bandera de los jugadores
+heredados, sus récords y los podios (desde las copas), y la tabla de partidas con lo que cada
+jugador ya había jugado. Reglas nuevas: `jugadores/<jid>/co`, `co` en las filas y en los podios,
+y `partidas` entre las tablas que suben de a uno; las publica `publicar.yml` (D-218).
