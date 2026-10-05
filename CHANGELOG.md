@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.106.1 — 2026-10-05
+- **La app instalada se llama Juegos de Salón** (D-222), o Party Games, Jogos de Salão o
+  Salonspiele, según el idioma elegido. Antes decía solo "Juegos", y en iPhone tomaba el nombre del
+  juego que estaba abierto. Quien ya la instaló la ve con el nombre nuevo al reinstalarla.
+
 ## 0.106.0 — 2026-10-05
 - **"Tus copas" te sigue a cualquier celular** (D-220): si entras con tu nombre y PIN de jugador,
   la portada de La Copa muestra también las copas que juegas en otros celulares. Al abrir una, tu
