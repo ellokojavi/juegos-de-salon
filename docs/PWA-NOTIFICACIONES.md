@@ -239,7 +239,7 @@ bloqueados. Con eso se ve dónde se cae la gente y si el esfuerzo en iPhone vale
 Celular                                   Realtime Database                 GitHub Actions (cada 15 min)
 ───────                                   ─────────────────                 ────────────────────────────
 /sw.js (service worker)                   push/<subId>  (nadie lo lee)      tools/push/avisar.mjs
-  · evento push → showNotification          endpoint, keys, idioma, uid       · token admin (firebase-admin.mjs)
+  · evento push → showNotification          endpoint, keys, idioma, zona, uid · token admin (firebase-admin.mjs)
   · notificationclick → abre la URL       pushCopa/<código>/<pid>/<subId>     · lee torneos en curso
                                             (quién quiere avisos de qué)      · decide qué aviso toca
 push.js (en la página)                    pushEnviados/<código>/<día>/<tipo>  · cifra y firma (Web Push, VAPID)
@@ -257,9 +257,12 @@ push.js (en la página)                    pushEnviados/<código>/<día>/<tipo> 
   celular quede pegado con una versión vieja del sitio (el sitio cambia varias veces por semana y
   `publicar.yml` estampa la versión en cada publicación). El modo sin conexión (RP-13) es un paso
   aparte y opcional, con su propio cuidado.
-- Desde el PR 3, maneja `push` (muestra el aviso con título, texto, ícono, `tag` y URL) y `notificationclick`
-  (enfoca la pestaña de la app si ya está abierta o abre la URL).
-- `pushsubscriptionchange`: cuando el navegador renueva la suscripción, la guarda de nuevo.
+- **Hecho en el PR 2:** maneja `push` (muestra el aviso que llega como JSON `{ title, body, url, tag }`,
+  con el ícono de la app; si no lo entiende, no muestra nada) y `notificationclick` (enfoca la
+  pestaña de la app si ya está abierta, llevándola a la URL, o abre una).
+- No escucha `pushsubscriptionchange`: si el navegador renovó la suscripción, la copa lo nota al
+  abrirse (`revisar()` en `cup/avisos.js`) y la guarda de nuevo con la misma elección; si el
+  permiso se quitó desde los ajustes, la copa deja de contar como activa.
 - Las páginas puente de las rutas viejas no lo registran.
 
 ### 2. Manifest e íconos
@@ -318,8 +321,9 @@ Lo que no se puede automatizar: un iPhone real, con iOS 16.4 o más (ideal: 17, 
    nombre ya elegido y pidiendo el PIN? ¿O en la portada? (esto define si iOS respeta la dirección
    o usa la del manifest).
 6. Escribe tu PIN. En el tablero debe salir **🔔 Último paso: activa los avisos**.
-7. Toca **Avisarme**: el iPhone pregunta por las notificaciones; acepta. Debe llegar el aviso
-   **✅ Listo** y la campana pasa a **Avisos activos**.
+7. Toca **Avisarme**: el iPhone pregunta por las notificaciones; acepta. Debe llegar el aviso de
+   confirmación (con el nombre de la copa y "Listo. Te avisaremos de esta copa…") y la campana pasa
+   a **Avisos activos**.
 8. En la campana: prueba **Probar los avisos** (llega otro aviso) y **Silenciar esta copa**.
 9. Toca un aviso con la app cerrada: debe abrir la copa.
 10. Desde WhatsApp, abre el link de la copa sin pasar a Safari y toca la campana: debe decir
@@ -364,7 +368,7 @@ responde la pregunta de fondo: si los avisos de verdad traen gente de vuelta.
 |---|---|---|
 | **1. Instalable de verdad** ✅ v0.105.0 | Íconos PNG, manifest completo, `sw.js` mínimo (sin caché, sin push), ícono de Apple, prueba de que todas las páginas los llevan, guion e2e que verifica que el SW se registra y que Chrome deja instalar | Avisos |
 | **2. Suscribirse** ✅ v0.107.0, en el laboratorio | Primero, la prueba en iPhones reales de cómo abre la app instalada (la lista de arriba). Después: `push.js`, la tarjeta y el botón 🔔 de La Copa con sus cuatro estados, la hoja de iPhone, el "escribe tu PIN" de la app instalada, el aviso de confirmación, reglas `push` y `pushCopa`, textos en 4 idiomas y la lista de pasos para probar a mano en iPhone | Mandar nada (se ve la suscripción guardada y llega el aviso de confirmación) |
-| **3. Mandar** | `tools/push/` (vapid, webpush, avisar con `--simular`), pruebas unitarias del cifrado contra los vectores del RFC 8291 y del calendario de avisos contra `engine.js`, workflow `avisos.yml` | — |
+| **3. Mandar** | `tools/push/` (webpush, avisar con `--simular`; `vapid.mjs` ya entró en el PR 2), pruebas unitarias del cifrado contra los vectores del RFC 8291 y del calendario de avisos contra `engine.js`, workflow `avisos.yml` | — |
 | **4. Medir** | Fila del panel, `?aviso=` en las señales, `?pwa` en el inicio | — |
 | *(después)* | Modo sin conexión (RP-13), Declarative Web Push para iPhone | — |
 

@@ -189,6 +189,26 @@ resultado) guarda en `feedback/<id>`, por REST y sin cuenta (D-104), el texto, u
 y un contexto en JSON: copa, jugador, pantalla, día, juego, semilla, URL y navegador. Se leen con
 `node tools/firebase/reportes.mjs`; en `?prueba` queda en `localStorage` (`juegos-de-salon:copa:prueba:reportes`).
 
+### Avisos al celular (D-223, en el laboratorio)
+
+Mientras no se manden avisos de verdad, solo se ven en el sitio local y en los celulares que los
+activan en `/labs/` (`AVISOS_EN_LABS` en `push.js`), y solo si `public/assets/js/vapid.js` tiene la
+clave. El diseño y lo que falta están en [PWA-NOTIFICACIONES.md](../PWA-NOTIFICACIONES.md).
+
+- **La campana** va junto a Invitar y Administrar en el tablero, hasta que la copa termina:
+  **Activar avisos**, **Avisos activos** (abre los ajustes: los dos avisos, "Probar los avisos" y
+  "Silenciar esta copa") o **Avisos bloqueados** (cómo desbloquearlos). Si el celular no puede
+  recibir avisos, no aparece.
+- **La tarjeta** que los ofrece sale una vez por copa: en el tablero antes de que parta, en el
+  resultado de un día si queda otro, o al abrir la copa desde la app instalada. "Ahora no" la
+  apaga en esa copa.
+- El permiso del sistema se pide solo después de tocar **Avisarme**. Al activar, el celular se manda
+  un aviso de confirmación. Si ya activó avisos en otra copa, la nueva los trae puestos ("Te
+  avisaremos de esta copa", con "Cambiar").
+- **iPhone:** en Safari, la campana abre los pasos para agregar la app a inicio y deja `&app=<pid>`
+  en la dirección (nunca el PIN); la app instalada abre en "Ya estoy inscrito" con ese nombre
+  elegido. Dentro de WhatsApp o Instagram, pide abrir el link en Safari.
+
 ## Flujo
 
 `intro` (portada: crear, tus copas —las de este celular y, con jugador, las suyas de otros
@@ -213,6 +233,7 @@ torneos/<código>/wild/<pid>         "3" (el día del comodín, como texto)
 torneos/<código>/fin                hora del servidor en que el admin la terminó antes (D-161)
 torneoKeys/<código>/<pid>           hash del PIN (ilegible)
 torneoSeats/<código>/<pid>/<uid>    el mismo hash: el celular uid puede escribir por pid (ilegible)
+pushCopa/<código>/<pid>/<subId>     { dia, plazo, at }: qué avisos quiere ese celular (ilegible, D-223); la suscripción va en push/<subId>
 ```
 
 Las reglas imponen: escribir una sola vez, las ventanas de cada día con la hora del servidor, el
@@ -231,7 +252,8 @@ Todo bajo `public/cup/`:
 | `games/<carpeta>/ui.js` | La pantalla de cada juego |
 | `games/index.js` · `games/semilla.js` · `games/mazos.js` · `games/audiencia.js` · `games/solo.js` | Lo común a los juegos: el registro, la semilla, los mazos, el público y el modo suelto con su récord |
 | `store-firebase.js` · `store-local.js` | El mismo almacén contra Firebase o contra localStorage (`?prueba`) |
-| `cuenta.js` | Con quién está sentado este celular, el intento a medio jugar y "Tus copas" (las del celular más las del jugador, `juntarCopas`, D-220) |
+| `cuenta.js` | Con quién está sentado este celular, el intento a medio jugar, los avisos de cada copa (D-223) y "Tus copas" (las del celular más las del jugador, `juntarCopas`, D-220) |
+| `avisos.js` | Los avisos al celular en pantalla: la campana, la tarjeta y sus hojas (D-223; la lógica del navegador está en `assets/js/push.js`) |
 | `desglose.js` | Cómo se calculó el puntaje, línea por línea (D-106) |
 | `demo.js` | Las escenas de ejemplo del laboratorio |
 | `reportes.js` | El botón 🐞 y los reportes que esperan reenvío |
@@ -252,6 +274,7 @@ node public/cup/planilla.test.mjs
 node public/cup/reportes.test.mjs
 node tools/e2e/cup/torneo.mjs /tmp/copa            # Copa de 3 días, tres jugadores
 node tools/e2e/cup/torneo.mjs /tmp/copa --siete    # los siete juegos
+node tools/e2e/cup/avisos.mjs /tmp/avisos          # los avisos al celular, con un servicio falso (D-223)
 ```
 
 ## Excepciones a los cánones
