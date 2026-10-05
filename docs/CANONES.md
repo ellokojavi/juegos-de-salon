@@ -41,6 +41,10 @@ public/<carpeta>/
 - Los juegos de La Copa siguen la misma idea en `public/cup/games/<carpeta>/`: `engine.js`
   (reglas puras), `ui.js` (pantalla) y sus datos propios; lo común a todos queda en `games/`.
 - El juego se registra en `public/assets/js/games.js` con `id`, `emoji`, `name` y `tagline` por idioma, `players`, `duration`, `path` y `available`. Con sala, también `jugadas`: los tipos de mensaje que hace una persona, que es lo que el panel cuenta como jugadas (D-138).
+- El `<head>` de cada página de la app lleva el manifest, el ícono del iPhone
+  (`apple-touch-icon`) y, después de las hojas de estilo, el registro del service worker
+  (`import '<…>assets/js/instalable.js'`): así la app se puede instalar desde cualquier juego. Se
+  copian de otro juego; `public/assets/js/instalable.test.mjs` los exige (D-220).
 - Las páginas en git no llevan import map: lo escribe `set-version.py` solo en la copia que se publica,
   recorriendo todos los módulos del sitio, así que los de un juego nuevo entran solos (C-11, D-192, D-205).
 - Reutilizar siempre los módulos compartidos antes de escribir uno nuevo:
