@@ -3321,7 +3321,7 @@ la próxima.
 sin nombres (D-44): ahí solo hay país.
 
 ## D-210 · Las partidas sin red dicen quién jugó y cómo terminó
-**Fecha:** 2026-10-04 · **Estado:** vigente · **Relación:** cambia D-44 para los modos sin red, y D-140
+**Fecha:** 2026-10-04 · **Estado:** corregida por D-213 · **Relación:** cambia D-44 para los modos sin red, y D-140
 **Decisión:** Una partida contra el celular, en un solo celular o en solitario manda, además de
 juego, modo y país, **quién juega** y **cómo terminó**. El nombre no se pide para esto: son los
 nombres que la partida ya tiene (los de un celular pasándose, o el de quien juega contra el
@@ -3395,6 +3395,9 @@ Estado y se pusieron al día solo los comandos de las que siguen siendo procedim
 D-78, D-122, D-132, D-172 y D-181). D-180, que nunca se usó, queda como número vacío, y D-173 pasó
 a su lugar en el orden. Quedan para PR aparte: llevar Cuarto Rey al canon, y los guardianes
 automáticos (`games.test.mjs`, un `documentar.mjs` más estricto y el puerto libre en `cdp.mjs`).
+Al llevar Cuarto Rey al canon, su partida también avisa cómo terminó (`trackFinish`), sin
+ganador: el cuarto rey es un castigo, así que solo va el detalle (`👑 Javi · 29 cartas`). Eso
+corrige lo que D-210 decía de él ("manda los nombres, no el final").
 **Actualización 2026-10-05:** los guardianes llegaron en su PR. `public/assets/js/games.test.mjs`
 exige a cada juego de `GAMES` motor, tests, gancho `window.__…` y especificación con la plantilla
 de C-13, o una excepción que cite su decisión; `documentar.mjs` revisa además la numeración, los
