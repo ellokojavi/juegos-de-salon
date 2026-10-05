@@ -87,8 +87,8 @@ la regla de abajo no lo convierte en dilema. Salvo lo que una copa esté jugando
   **un PR que nunca fusionas**, con capturas de antes y después y la regla U-n de cada arreglo.
 - En los dos casos, pruebas unitarias en verde (y `node tools/e2e/cup/torneo.mjs` si tocaste La
   Copa) y **sin versión ni entrada de `CHANGELOG.md`**: la pone quien fusiona (D-205). Si otra copia del repo ya ocupa el puerto 8765, sirve la tuya en otro puerto y
-  corre el guion con `SITIO=http://localhost:<puerto> PUERTO_CDP=96x0` (los puertos de Chrome de
-  las sesiones van de 9600 en adelante, de a diez; ver `tools/e2e/README.md`).
+  corre el guion con `SITIO=http://localhost:<puerto>` (los puertos de Chrome se eligen solos; ver
+  `tools/e2e/README.md`).
 - **Dilemas:** un archivo `.md` por dilema (primera línea `# Título`; luego contexto, captura o
   cita, opciones A/B con sus pros y contras y tu recomendación) y `node tools/agents/dilemas.mjs crear
   <archivo>`. Antes, `node tools/agents/dilemas.mjs listar --todos` para no repetir uno que ya existe o

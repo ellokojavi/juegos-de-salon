@@ -1723,11 +1723,14 @@ a 17 de ΔE2000 (antes, 7,8), sin rojos que se confundan con el choque.
 **Por qué:** pedido del dueño (trabajado en otra sesión y publicado junto con D-133).
 
 ## D-135 · Varias sesiones de Claude a la vez: cada una en su copia del repo
-**Fecha:** 2026-09-25 · **Estado:** vigente
+**Fecha:** 2026-09-25 · **Estado:** corregida por D-213
 **Decisión:** Cada sesión trabaja en su propio `git worktree`, con ramas de nombre de tema; la
 versión se asigna al fusionar y los números D-n miran también los PR abiertos. Las pruebas usan
 un puerto propio para el sitio y para Chrome (`SITIO`, `PUERTO_CDP`) y matan solo su Chrome.
 Quedó en CLAUDE.md.
+**Actualización (D-213):** los puertos de Chrome ya no se reparten a mano: `cdp.mjs` deja que el
+sistema elija uno libre y cierra cada Chrome con su guion, también ante Ctrl-C o un `kill`.
+`SITIO` sigue; `PUERTO_CDP` queda opcional, para quien quiera un puerto fijo.
 **Por qué:** tres sesiones compartían la carpeta principal: un commit arrastró trabajo sin
 terminar de otra, una rama se reescribió con el trabajo de otra sesión, y dos decisiones
 distintas quedaron con el número D-129. Se reordenó la cadena de PRs y se renumeró. Además, el
@@ -2560,9 +2563,10 @@ cada juego, `CLAUDE.md`, el README con sus capturas y las tarjetas sociales.
   rondas. Cada ronda parte de ahí, así que un día que no corre no deja nada sin revisar, y lo que no
   alcanzó a hacer no se olvida.
 - **Herramienta:** `tools/agents/documentar.mjs` (`revisar`, `anotar`, `historial`) lista lo que entró y
-  comprueba lo que no necesita leer prosa: decisiones citadas que no existen o repetidas, pruebas
-  que `CLAUDE.md` no nombra, guiones que `tools/e2e/README.md` no nombra y la versión sin entrada
-  en el CHANGELOG. Su prueba es `tools/agents/documentar.test.mjs`. Cualquier sesión la puede correr.
+  comprueba lo que no necesita leer prosa: decisiones citadas que no existen o repetidas, huecos
+  o desorden en la numeración, Estados fuera de los cuatro de D-213 y correcciones sin marcar, IDs
+  repetidos en requerimientos y usabilidad, rutas citadas en las guías que no existen, guiones que
+  `tools/e2e/README.md` no nombra y la versión sin entrada en el CHANGELOG. Su prueba es `tools/agents/documentar.test.mjs`. Cualquier sesión la puede correr.
 - **No es solo la ronda:** como el de usabilidad, revisa cada PR antes de proponer su fusión (lo que
   trae y sus comprobaciones, con `revisar --desde <base>`, que mira la rama; los arreglos, en la
   rama del PR) y se le puede pedir a mano.
@@ -3347,7 +3351,7 @@ del idioma elegido (`applang`, D-46) decía cuánto, pero no de qué partida.
 **Consecuencias:** Lo de antes no tiene idioma y no lleva etiqueta. Reglas nuevas, solo agregan.
 
 ## D-213 · Una fuente por regla: los cánones dicen la regla de hoy
-**Fecha:** 2026-10-04 · **Estado:** vigente · **Relación:** corrige D-132 y D-204; completa D-189; sube a los cánones lo que vivía solo en D-56, D-60, D-70, D-77, D-81, D-86, D-92 y D-123
+**Fecha:** 2026-10-04 · **Estado:** vigente · **Relación:** corrige D-132, D-135 y D-204; completa D-189; sube a los cánones lo que vivía solo en D-56, D-60, D-70, D-77, D-81, D-86, D-92 y D-123
 **Decisión:** Después de una auditoría completa de las reglas del negocio, el dueño resolvió:
 - **Cada regla vive en un solo lugar.** `CANONES.md` dice la regla de hoy; este archivo es la
   historia, con su porqué. Cuando una decisión cambia una regla, el mismo PR cambia el canon y
@@ -3391,6 +3395,12 @@ Estado y se pusieron al día solo los comandos de las que siguen siendo procedim
 D-78, D-122, D-132, D-172 y D-181). D-180, que nunca se usó, queda como número vacío, y D-173 pasó
 a su lugar en el orden. Quedan para PR aparte: llevar Cuarto Rey al canon, y los guardianes
 automáticos (`games.test.mjs`, un `documentar.mjs` más estricto y el puerto libre en `cdp.mjs`).
+**Actualización 2026-10-05:** los guardianes llegaron en su PR. `public/assets/js/games.test.mjs`
+exige a cada juego de `GAMES` motor, tests, gancho `window.__…` y especificación con la plantilla
+de C-13, o una excepción que cite su decisión; `documentar.mjs` revisa además la numeración, los
+Estados, las correcciones sin marcar, los IDs repetidos y las rutas citadas en las guías, y ya no
+pide la lista de pruebas en `CLAUDE.md` (GitHub las corre todas); `cdp.mjs` toma un puerto libre
+para cada Chrome y lo cierra con su guion, y `ci.mjs` le pasa SIGTERM antes de SIGKILL.
 
 ## D-214 · El filtro de la portada va en inglés en la URL: `?type=logic`
 **Fecha:** 2026-10-04 · **Estado:** vigente · **Relación:** cambia la URL de D-142 y D-149; sigue a D-192

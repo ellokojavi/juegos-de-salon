@@ -69,6 +69,10 @@ export const trabajos = () => guiones()
   .sort((a, b) => statSync(join(AQUI, b)).size - statSync(join(AQUI, a)).size)
   .flatMap(g => PARTES[g] ? PARTES[g].map(p => `${g}:${p}`) : [g]);
 
+// Si a ci.mjs lo cortan, se lo pasa a sus guiones, que cierran su Chrome antes de salir
+const vivos = new Set();
+for (const s of ['SIGINT', 'SIGTERM', 'SIGHUP']) process.on(s, () => { for (const p of vivos) p.kill(s); process.exit(128 + { SIGINT: 2, SIGTERM: 15, SIGHUP: 1 }[s]); });
+
 /** Corre un guion o una parte suya (`guion:parte`); resuelve con { ok, motivo, ms, salida }. */
 function correr(guion) {
   const [archivo, parte] = guion.split(':');
@@ -81,11 +85,14 @@ function correr(guion) {
     const anotar = d => { salida += d; process.stdout.write(d); };
     p.stdout.on('data', anotar);
     p.stderr.on('data', anotar);
-    const reloj = setTimeout(() => p.kill('SIGKILL'), TOPE_MS);
+    // Primero SIGTERM, para que el guion alcance a cerrar su Chrome (cdp.mjs); si no sale, SIGKILL
+    let vencido = false, rematar;
+    const reloj = setTimeout(() => { vencido = true; p.kill('SIGTERM'); rematar = setTimeout(() => p.kill('SIGKILL'), 5000); }, TOPE_MS);
+    vivos.add(p);
     p.on('close', (codigo, senal) => {
-      clearTimeout(reloj);
+      clearTimeout(reloj); clearTimeout(rematar); vivos.delete(p);
       const malas = salida.split('\n').filter(l => /✗|❌/.test(l));
-      const motivo = senal ? `no terminó en ${TOPE_MS / 60000} min`
+      const motivo = vencido || senal ? `no terminó en ${TOPE_MS / 60000} min`
         : codigo ? `salió con ${codigo}`
         : malas.length ? `${malas.length} chequeo(s) en rojo` : '';
       ok({ guion, ok: !motivo, motivo, malas, ms: Date.now() - t0 });
