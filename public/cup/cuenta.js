@@ -5,6 +5,9 @@
  * El intento no usa `createSessionStore` porque su caducidad de 12 horas no alcanza: un día
  * se puede jugar hasta dos días después de abierto (el día de gracia). Se guarda por copa,
  * día y jugador, y se borra solo cuando la copa termina.
+ *
+ * "Tus copas" junta las que recuerda este celular con las del jugador de los rankings, que viven
+ * en Firebase (`juntarCopas`, D-220).
  */
 const PREFIJO = 'juegos-de-salon:copa:';
 const SEMANA = 7 * 24 * 60 * 60 * 1000;
