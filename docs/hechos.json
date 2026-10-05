@@ -1,5 +1,5 @@
 {
-  "version": "0.99.3",
+  "version": "0.102.2",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -855,6 +855,7 @@
     "public/panel/rutas.test.mjs",
     "public/timeline/engine.test.mjs",
     "tools/agents/documentar.test.mjs",
+    "tools/agents/limpiar-copias.test.mjs",
     "tools/agents/marketing.test.mjs",
     "tools/e2e/cambios.test.mjs",
     "tools/firebase/rankings-historia.test.mjs",
