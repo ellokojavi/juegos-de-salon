@@ -585,6 +585,25 @@
         }
       }
     },
+    "jugadorCopas": {
+      ".write": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
+      "$jid": {
+        ".read": "auth != null && $jid.matches(/^[a-z0-9]{8}$/) && root.child('jugadorSeats/' + $jid + '/' + auth.uid).exists()",
+        "$code": {
+          ".write": "auth != null && $jid.matches(/^[a-z0-9]{8}$/) && $code.matches(/^[A-HJ-NP-Z]{5}$/) && root.child('jugadorSeats/' + $jid + '/' + auth.uid).exists() && (!newData.exists() || (root.child('torneoSeats/' + $code + '/' + newData.child('p').val() + '/' + auth.uid).exists() && root.child('torneos/' + $code + '/players/' + newData.child('p').val() + '/j').val() === $jid))",
+          ".validate": "newData.hasChildren(['p', 'at'])",
+          "p": {
+            ".validate": "newData.isString() && newData.val().matches(/^[a-z0-9]{6}$/)"
+          },
+          "at": {
+            ".validate": "newData.isNumber() && newData.val() <= now"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      }
+    },
     "records": {
       ".write": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
       "$t": {

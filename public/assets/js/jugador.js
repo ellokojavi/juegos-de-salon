@@ -13,6 +13,8 @@
  *                                   si trae el mismo hash que jugadorKeys (como en La Copa, D-96).
  *   records/<tabla>/<periodo>/<jid> { s, ms, k, at, n }: el mejor, y solo si mejora.
  *   torneoPodios/<código>           el podio de una copa terminada, para el medallero.
+ *   jugadorCopas/<jid>/<código>     { p, at }: las copas en que está, como el jugador `p` de cada
+ *                                   una (D-220). Solo la leen sus celulares.
  */
 import { envOf, countryOf } from './transport/stats.js';
 import {
@@ -333,6 +335,28 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
       if (await almacen.get(`torneoPodios/${code}/end`)) return false;
       await almacen.update({ [`torneoPodios/${code}`]: { ...podio, at: HORA } });
       return true;
+    },
+
+    /**
+     * Las copas de este jugador, de cualquier celular (D-220): `[{ code, p, at }]`, la más reciente
+     * primero. Sin jugador, ninguna.
+     */
+    async copas() {
+      const yo = api.yo();
+      if (!yo) return [];
+      const m = (await almacen.get(`jugadorCopas/${yo.jid}`)) || {};
+      return Object.entries(m).filter(([, x]) => x?.p).map(([code, x]) => ({ code, p: x.p, at: x.at || 0 })).sort((a, b) => b.at - a.at);
+    },
+    /** Anotar que este jugador está en la copa `code` como `pid` (la copa ya lo tiene enlazado). */
+    async anotarCopa(code, pid) {
+      const yo = api.yo();
+      if (!yo) return;
+      await almacen.update({ [`jugadorCopas/${yo.jid}/${code}`]: { p: pid, at: HORA } });
+    },
+    /** Sacar de la lista una copa que ya no existe (la borró su admin). */
+    async olvidarCopa(code) {
+      const yo = api.yo();
+      if (yo) await almacen.update({ [`jugadorCopas/${yo.jid}/${code}`]: null });
     },
 
     sincronizar,

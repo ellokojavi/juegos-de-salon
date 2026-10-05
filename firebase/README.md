@@ -108,7 +108,7 @@ escribe si no existe, si venció (`hasta < now`) o si apunta a la misma copa, y 
 admin de esa copa y con `meta/alias` igual al alias; se borra solo por ese admin. `hasta` es el fin
 de la copa más 7 días.
 
-## Jugadores y rankings (`jugadores`, `jugadorKeys`, `jugadorSeats`, `jugadorNombres`, `records`, `torneoPodios`, D-212)
+## Jugadores y rankings (`jugadores`, `jugadorKeys`, `jugadorSeats`, `jugadorNombres`, `jugadorCopas`, `records`, `torneoPodios`, D-212)
 
 El mismo mecanismo que La Copa, para toda la app:
 
@@ -129,6 +129,9 @@ El mismo mecanismo que La Copa, para toda la app:
   los nombres y `j` que la copa tiene.
 - `torneos/<código>/players/<pid>/j`: el jugador de los rankings detrás del de la copa. Lo escribe
   quien está sentado como los dos.
+- `jugadorCopas/<jid>/<código>` = `{ p, at }`: las copas del jugador, para "Tus copas" en cualquier
+  celular (D-220). Solo la leen sus celulares. La escribe quien está sentado como el jugador y como
+  `p` en la copa, con `players/<p>/j` igual al jugador; la borra quien está sentado como el jugador.
 
 Un **jugador heredado** (`jugadores/<jid>.legado = true`, de la historia de La Copa) no tiene
 PIN: `jugadorKeys/<jid>` se puede crear para él, una vez, y quien lo reclama borra `legado` en la
