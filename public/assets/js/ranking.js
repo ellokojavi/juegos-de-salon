@@ -72,15 +72,31 @@ export function bloqueJugador({ abierto = false, alTocar = () => {} } = {}) {
         const J = await jugador();
         const r = await J.entrar(nombre.value, pin.value);
         if (r.estado === 'dentro') { mensaje = fmt(T.welcome, { name: leerYo()?.n || limpiarNombre(nombre.value) }); dibujar(); return; }
+        ocupado(false);
+        // Puntajes de La Copa de antes de los rankings, a ese nombre y sin dueño: ¿son suyos?
+        if (r.heredado) {
+          const reclamar = async () => {
+            alTocar(); ocupado(true);
+            try { const yo = await (await jugador()).reclamar(r.heredado, pin.value); mensaje = fmt(T.legacyClaimed, { name: yo.n }); dibujar(); }
+            catch (e) { err.textContent = errorDe(e); ocupado(false); }
+          };
+          extra.append(el('p', { class: 'rk-aviso' }, fmt(T.legacyFound, { name: r.nombreHeredado })),
+            el('div', { class: 'rk-botones' },
+              el('button', { type: 'button', class: 'btn btn--yellow btn--sm', id: 'rk-reclamar', onClick: reclamar }, T.legacyMine),
+              el('button', { type: 'button', class: 'btn btn--ghost btn--sm', id: 'rk-no-soy', onClick: () => { alTocar(); extra.replaceChildren(); r.otros ? pedirOtro(r.otros) : crear(); } }, T.legacyNotMe)));
+          return;
+        }
         // Nadie usa ese nombre: se crea de una. Si alguien lo usa con otro PIN, se pregunta.
         if (!r.otros) { await crear(); return; }
-        ocupado(false);
-        extra.append(el('p', { class: 'rk-aviso' }, fmt(T.sameName, { n: r.otros })),
+        pedirOtro(r.otros);
+      } catch (e) { err.textContent = errorDe(e); ocupado(false); }
+    });
+    const pedirOtro = otros => {
+        extra.append(el('p', { class: 'rk-aviso' }, fmt(T.sameName, { n: otros })),
           el('div', { class: 'rk-botones' },
             el('button', { type: 'button', class: 'btn btn--yellow btn--sm', id: 'rk-crear', onClick: () => { alTocar(); crear(); } }, T.create),
             el('button', { type: 'button', class: 'btn btn--ghost btn--sm', onClick: () => { alTocar(); extra.replaceChildren(); pin.value = ''; pin.focus(); } }, T.retry)));
-      } catch (e) { err.textContent = errorDe(e); ocupado(false); }
-    });
+    };
     pin.addEventListener('keydown', e => { if (e.key === 'Enter') b.click(); });
     const det = el('details', { class: 'panel rk-invita', ...(abierto || mensaje ? { open: true } : {}) },
       el('summary', {}, T.joinTitle),

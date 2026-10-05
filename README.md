@@ -407,7 +407,7 @@ Spec and design: [docs/games/cup.md](docs/games/cup.md)
 - **Leaderboards** (D-212, in the lab for now: only on phones that turn them on at `/labs/`): signing in is optional and needs no account — a name and a 4-digit
   PIN, the same idea as The Cup, that works on any phone. Signed in, every game played alone on its
   own page keeps your best score and counts your games. Each game's page shows its leaderboard
-  (this week, all time, friends and in The Cup), with your neighbours when you are below the top ten.
+  (this week, all time, friends and The Cup), with your neighbours when you are below the top ten.
   `/records/` (🏆 on the menu) adds the All-Rounder, the sum of your best score in every game, and
   The Cup's medal table. Two people may share a name; with different PINs they are different players.
 - **Saved games:** every game stores its state on the device and offers to continue.
@@ -561,6 +561,7 @@ node public/panel/rutas.test.mjs
 node tools/agents/documentar.test.mjs
 node tools/agents/marketing.test.mjs
 node tools/e2e/cambios.test.mjs
+node tools/firebase/rankings-historia.test.mjs
 node tools/release/version.test.mjs
 ```
 <!-- /generado -->
@@ -664,7 +665,7 @@ docs/                       Requirements, decisions, canons, one spec per game (
 firebase/                   Realtime Database security rules and notes
 tools/
   release/                    Publishing: set-version.py (version stamp, at publish time), readme.py + hechos.mjs (this README), og.mjs (social cards and bridge pages)
-  firebase/                   reglas.mjs (publish the rules), reportes.mjs (The Cup bug reports), en-curso.mjs (anyone playing?)
+  firebase/                   reglas.mjs (publish the rules), reportes.mjs (The Cup bug reports), en-curso.mjs (anyone playing?), rankings-historia.mjs (The Cup's history into the leaderboards)
   generators/                 mapa.mjs (the world of Where is it?), flota.py (the Battleship fleet)
   agents/                     dilemas.mjs (usability dilemmas as issues, D-132), documentar.mjs (the documentation agent, D-172)
   e2e/                        Full games in headless Chrome, one folder per game; the screenshots come from here

@@ -3276,7 +3276,7 @@ juega igual y nada sale del celular.
   top es una sola consulta (`orderByChild('k')`, `limitToFirst`). Las reglas recalculan `k`, exigen
   que el nombre sea el del jugador y que el récord nuevo sea mejor que el guardado.
 - **Lo que se muestra.** La antesala de cada juego tiene su ranking con pestañas Semana, Siempre,
-  Amigos y En La Copa (dilema #187): las 10 primeras y, si quien mira quedó más abajo, sus vecinos. Se leen 100
+  Amigos y Copa (dilema #187: "En La Copa" no cabía): las 10 primeras y, si quien mira quedó más abajo, sus vecinos. Se leen 100
   filas de una vez; más abajo de eso, los vecinos se piden aparte. **Amigos** son los de tus copas
   que también entraron con su jugador: el jugador de la copa guarda `players/<pid>/j`. El
   **Todoterreno** suma tu mejor puntaje en cada juego suelto. **Campeones de La Copa**: cuando una
@@ -3287,7 +3287,7 @@ juega igual y nada sale del celular.
   (`n` y `at`), aunque no sea récord: es su historial y deja servida una racha.
 - **Qué cuenta.** Los juegos sueltos de la portada, jugados como cualquiera los juega: sin el
   laboratorio y sin una semilla elegida en el link, que dejaría repetir el mismo tablero. Los días
-  de una copa cuentan en "En La Copa", salvo las copas del laboratorio. Toque y Fama solo y Línea
+  de una copa cuentan en la pestaña "Copa", salvo las copas del laboratorio. Toque y Fama solo y Línea
   Relámpago siguen con su récord local por ahora. Rendirse (0 puntos) cuenta como partida jugada, pero no entra a
   las tablas: un 0 no es un récord (dilema #185).
 - **Primero en el laboratorio.** Mientras `RANKINGS_EN_LABS` sea `true` (`jugador.js`), las
@@ -3295,6 +3295,13 @@ juega igual y nada sale del celular.
   que los activaron en `/labs/` (una marca en el `localStorage`) y siempre en pruebas. Así se
   prueban contra las reglas y el Firebase de verdad, con amigos, antes de abrirlos a todos. Las
   copas terminadas guardan su podio desde ya.
+- **La historia de La Copa** (`node tools/firebase/rankings-historia.mjs`, que sin `--escribir`
+  solo muestra lo que haría): el podio de cada copa terminada y el mejor día de cada persona en
+  cada juego suelto, en la pestaña "Copa". Quien jugó antes de los rankings queda como **jugador
+  heredado**, uno por nombre, sin PIN (`jugadores/<jid>.legado`, con un jid que sale del nombre:
+  correrlo de nuevo no duplica). La primera vez que alguien entra con ese nombre, la app pregunta
+  si esos puntajes son suyos; si dice que sí, les pone su PIN. El primero que lo reclama se los
+  queda: entre amigos se arregla, y el dueño puede corregirlo en la consola.
 **Por qué:** El dueño pidió rankings de cada juego y de La Copa con una identidad que la gente
 pueda reusar sin crear cuentas, aceptando que los nombres se repitan. Nombre y PIN ya era lo que
 La Copa usaba y entendían sus jugadores. Guardar solo el mejor de cada uno, con su clave de orden,

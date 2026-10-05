@@ -100,6 +100,7 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
     const clave = claveNombre(nombre);
     const candidatos = Object.keys((await almacen.get(`jugadorNombres/${clave}`)) || {}).filter(esJid);
     const uid = await almacen.listo();
+    let heredado = null;
     for (const jid of candidatos) {
       const h = await hashPinJugador(jid, pin);
       try {
@@ -107,9 +108,11 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
         return { jid, candidatos };
       } catch (e) {
         if (e.code !== 'permiso') throw e;
+        // Un jugador de antes de los rankings (sin PIN): sus puntajes esperan a su dueño
+        if (!heredado && await almacen.get(`jugadores/${jid}/legado`)) heredado = jid;
       }
     }
-    return { jid: null, candidatos };
+    return { jid: null, candidatos, heredado };
   }
 
   const api = {
@@ -127,8 +130,12 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
       const n = limpiarNombre(nombre);
       if (!n) throw falla('nombre');
       if (!esPin(pin)) throw falla('pin-forma');
-      const { jid, candidatos } = await buscar(n, pin);
-      if (!jid) return { estado: 'nuevo', otros: candidatos.length };
+      const { jid, candidatos, heredado } = await buscar(n, pin);
+      // `heredado`: hay puntajes de La Copa a ese nombre, de antes de los rankings, sin dueño
+      if (!jid) {
+        const de = heredado ? { heredado, nombreHeredado: (await almacen.get(`jugadores/${heredado}/n`)) || n } : {};
+        return { estado: 'nuevo', otros: candidatos.length - (heredado ? 1 : 0), ...de };
+      }
       quedar(jid, (await almacen.get(`jugadores/${jid}/n`)) || n);
       return { estado: 'dentro', jid };
     },
@@ -150,6 +157,19 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
         [`jugadorSeats/${jid}/${uid}`]: h,
       });
       return quedar(jid, n);
+    },
+
+    /**
+     * Tomar un jugador heredado (los de La Copa de antes de los rankings, que no tienen PIN): el
+     * primero que entra con ese nombre y dice "son míos" le pone su PIN y se queda con sus puntajes.
+     */
+    async reclamar(jid, pin) {
+      if (!esJid(jid)) throw falla('jid');
+      if (!esPin(pin)) throw falla('pin-forma');
+      const uid = await almacen.listo();
+      const h = await hashPinJugador(jid, pin);
+      await almacen.update({ [`jugadorKeys/${jid}`]: h, [`jugadorSeats/${jid}/${uid}`]: h, [`jugadores/${jid}/legado`]: null });
+      return quedar(jid, (await almacen.get(`jugadores/${jid}/n`)) || '?');
     },
 
     /** Salir en este celular. Los récords quedan; se vuelve a entrar con el mismo nombre y PIN. */

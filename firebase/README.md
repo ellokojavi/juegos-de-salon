@@ -123,6 +123,10 @@ El mismo mecanismo que La Copa, para toda la app:
 - `torneos/<código>/players/<pid>/j`: el jugador de los rankings detrás del de la copa. Lo escribe
   quien está sentado como los dos.
 
+Un **jugador heredado** (`jugadores/<jid>.legado = true`, de la historia de La Copa) no tiene
+PIN: `jugadorKeys/<jid>` se puede crear para él, una vez, y quien lo reclama borra `legado` en la
+misma escritura, sentado con ese PIN. Los carga `node tools/firebase/rankings-historia.mjs --escribir`.
+
 El dueño (su UID) puede escribir y borrar en todas estas ramas, para moderar.
 
 ## Reportes (`feedback`)

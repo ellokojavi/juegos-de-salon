@@ -153,6 +153,7 @@ node public/cup/reportes.test.mjs             # un reporte que no sale queda gua
 node public/assets/js/arrastre.test.mjs
 node public/assets/js/i18n.test.mjs             # paridad es/en/pt/de (C-3, D-191)
 node public/assets/js/compartir.test.mjs        # el estándar de lo que se comparte (D-165)
+node tools/firebase/rankings-historia.test.mjs   # la historia de La Copa en los rankings
 node public/assets/js/records.test.mjs          # rankings: orden, semanas, Todoterreno, medallero y el almacén de prueba (D-212)
 node public/assets/js/transport/cleanup.test.mjs
 node public/assets/js/transport/dispose.test.mjs
@@ -241,6 +242,14 @@ La Copa, en la portada de La Copa (Campeones) y en `/records/` (el 🏆 de la ba
 **Por ahora están en el laboratorio:** solo se ven en los celulares que los activan desde
 `/labs/` (sección Rankings) y siempre en pruebas. Para abrirlos a todos, `RANKINGS_EN_LABS = false`
 en `jugador.js`. Las copas terminadas guardan su podio igual, para que el medallero tenga historia.
+
+La historia de La Copa se carga en los rankings (podios y la pestaña "Copa", con jugadores heredados que
+cada uno reclama al entrar con su nombre):
+
+```bash
+node tools/firebase/rankings-historia.mjs              # qué escribiría, sin tocar nada
+node tools/firebase/rankings-historia.mjs --escribir   # después de publicar las reglas
+```
 
 En pruebas (localhost, la red de la casa, Tailscale) y con `?prueba` se usa el almacén de prueba, para que los guiones no escriban en los
 rankings de verdad; **`?records=firebase` fuerza Firebase** para mirarlo a mano. Las páginas de los
