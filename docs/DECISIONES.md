@@ -66,9 +66,9 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216 |
-| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212 |
+| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220 |
 | Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218 |
-| Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219 |
+| Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220 |
 | Marketing | `marketing/README.md` | D-178 |
 | App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221 |
 
@@ -3585,6 +3585,28 @@ separar juegos de copas, y sin saber de dónde es cada uno.
 heredados, sus récords y los podios (desde las copas), y la tabla de partidas con lo que cada
 jugador ya había jugado. Reglas nuevas: `jugadores/<jid>/co`, `co` en las filas y en los podios,
 y `partidas` entre las tablas que suben de a uno; las publica `publicar.yml` (D-218).
+
+## D-220 · "Tus copas" sigue al jugador, no solo al celular
+**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** amplía D-212 y la cuenta de La Copa (C-6)
+**Decisión:** La lista "Tus copas" de la portada de La Copa suma, a las que recuerda este celular,
+las del jugador que entró con nombre y PIN, de cualquier celular:
+- Cada vez que un celular con jugador abre una copa en que está sentado, además de enlazar al
+  jugador de la copa (`players/<pid>/j`, D-212) anota la copa en `jugadorCopas/<jid>/<código>` =
+  `{ p: pid, at }`. Las reglas piden estar sentado como el jugador y como `p` en la copa, y que la
+  copa tenga a `p` enlazado a ese jugador. Solo la leen los celulares del jugador.
+- La portada dibuja de una las del celular y después agrega las del jugador que no conoce (con el
+  nombre de la copa y el de quien juega, leídos de la copa), con la misma regla: hasta una semana
+  después de terminar. Una copa que su admin borró sale de la lista.
+- Al abrir una de esas copas, este celular todavía no está sentado: la pantalla de entrar parte en
+  "Ya estoy inscrito" con su nombre elegido, y falta solo **el PIN de esa copa**. El PIN del
+  jugador no sienta en la copa: cada copa sigue con el suyo (D-96).
+**Por qué:** El dueño entró con su jugador y no vio una copa que jugaba en otro celular: la lista
+vivía solo en el `localStorage`, y el jugador no sabía en qué copas estaba (la copa sí sabía qué
+jugador tenía).
+**Consecuencias:** Regla nueva, `jugadorCopas`; la publica `publicar.yml` (D-218). Las copas ya
+enlazadas antes de esto entran a la lista la próxima vez que se abren con el jugador, o de una con
+`node tools/firebase/rankings-historia.mjs --escribir`, que las anota a su jugador enlazado o, si
+no lo hay, al heredado de su nombre (también las del laboratorio).
 
 ## D-221 · La app se instala de verdad, y La Copa avisará al celular a quien lo pida
 **Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** corrige D-99, completa RP-11
