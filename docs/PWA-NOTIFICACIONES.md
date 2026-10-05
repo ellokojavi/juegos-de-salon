@@ -1,10 +1,12 @@
-# Propuesta: app instalable y avisos al celular (PWA + Web Push)
+# App instalable y avisos al celular (PWA + Web Push)
 
-**Estado:** propuesta, espera la decisión del dueño · **Fecha:** 2026-10-05 · **Toca:** RP-13, LIG-33,
-D-99
+**Estado:** aprobado por el dueño (D-220); el PR 1 está hecho (v0.104.0) · **Fecha:** 2026-10-05 ·
+**Toca:** RP-11, RP-13, LIG-33, D-99
 
-Si el dueño la aprueba, entra como decisión nueva (D-n, numerada al fusionar) que **reemplaza a
-D-99** en lo que dice de los avisos automáticos, y este documento pasa a ser su detalle.
+Es el detalle de D-220, que **corrige a D-99** en lo que dice de los avisos automáticos. El diseño de
+las pantallas está dibujado en un lienzo aparte (privado del dueño), que el dueño aprobó con un
+cambio: las hojas y las tarjetas van sobre el morado oscuro de la app (como la hoja del chat,
+`.chat-panel`), no sobre fondo claro.
 
 ## En corto
 
@@ -253,21 +255,21 @@ push.js (en la página)                    pushEnviados/<código>/<día>/<tipo> 
   celular quede pegado con una versión vieja del sitio (el sitio cambia varias veces por semana y
   `publicar.yml` estampa la versión en cada publicación). El modo sin conexión (RP-13) es un paso
   aparte y opcional, con su propio cuidado.
-- Maneja `push` (muestra el aviso con título, texto, ícono, `tag` y URL) y `notificationclick`
+- Desde el PR 3, maneja `push` (muestra el aviso con título, texto, ícono, `tag` y URL) y `notificationclick`
   (enfoca la pestaña de la app si ya está abierta o abre la URL).
 - `pushsubscriptionchange`: cuando el navegador renueva la suscripción, la guarda de nuevo.
 - Las páginas puente de las rutas viejas no lo registran.
 
 ### 2. Manifest e íconos
 
-- Agregar íconos PNG de 192 y 512 px (y uno `maskable`), y `apple-touch-icon` de 180 px: el SVG
-  solo no basta para que Android ofrezca instalar ni para el ícono de iPhone. Se generan desde
-  `assets/icon.svg` con Chrome, como ya se hacen las tarjetas (`tools/release/og.mjs`).
-- `"id": "/"`, `"scope": "/"`, `"start_url": "/?pwa"` (la `?pwa` deja medir en el panel cuántos
-  abren desde la app instalada, D-44).
-- Los juegos ya llevan `<link rel="manifest">`; les faltan las entradas por idioma (`/en/`, `/pt/`,
-  `/de/`), el laboratorio y el panel, además de la meta `apple-mobile-web-app-capable` y el ícono de
-  Apple en todas. Una prueba revisa que estén en cada página que no sea puente.
+- **Hecho en el PR 1:** íconos PNG de 192 y 512 px, uno `maskable` y el `apple-touch-icon` de 180
+  px, en `public/assets/icons/`. El SVG solo no basta para que Android ofrezca instalar ni para el
+  ícono de iPhone. Se rehacen desde `assets/icon.svg` con `node tools/release/iconos.mjs`.
+- **Hecho:** el manifest lleva `id`, `scope` y los íconos. Falta, para el PR 4, que `start_url`
+  lleve `?pwa` y así el panel cuente cuántos abren desde la app instalada (D-44).
+- **Hecho:** las 19 páginas de la app (las que ya tenían manifest) llevan el `apple-touch-icon` y
+  registran el service worker; `public/assets/js/instalable.test.mjs` lo exige. Las puertas por
+  idioma, las páginas puente, el panel y el laboratorio no lo llevan, a propósito: no son la app.
 
 ### 3. Suscribirse (`public/assets/js/push.js`)
 
@@ -336,7 +338,7 @@ responde la pregunta de fondo: si los avisos de verdad traen gente de vuelta.
 
 | PR | Qué trae | Se puede probar sin… |
 |---|---|---|
-| **1. Instalable de verdad** | Íconos PNG, manifest completo, `sw.js` mínimo (sin caché, sin push), metas de Apple, prueba de que todas las páginas los llevan, guion e2e que verifica que el SW se registra | Avisos |
+| **1. Instalable de verdad** ✅ v0.104.0 | Íconos PNG, manifest completo, `sw.js` mínimo (sin caché, sin push), ícono de Apple, prueba de que todas las páginas los llevan, guion e2e que verifica que el SW se registra y que Chrome deja instalar | Avisos |
 | **2. Suscribirse** | Primero, la prueba en iPhones reales de cómo abre la app instalada. Después: `push.js`, la tarjeta y el botón 🔔 de La Copa con sus cuatro estados, la hoja de iPhone, el "escribe tu PIN" de la app instalada, el aviso de confirmación, reglas `push` y `pushCopa`, textos en 4 idiomas y la lista de pasos para probar a mano en iPhone | Mandar nada (se ve la suscripción guardada y llega el aviso de confirmación) |
 | **3. Mandar** | `tools/push/` (vapid, webpush, avisar con `--simular`), pruebas unitarias del cifrado contra los vectores del RFC 8291 y del calendario de avisos contra `engine.js`, workflow `avisos.yml` | — |
 | **4. Medir** | Fila del panel, `?aviso=` en las señales, `?pwa` en el inicio | — |

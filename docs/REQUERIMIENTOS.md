@@ -18,7 +18,7 @@ Los IDs no se reusan: un requerimiento que cambia conserva su ID y su texto se a
 | RP-08 | Publicado en una URL pública para probar desde el celular (GitHub Pages, cuenta ellokojavi). | ✅ v0.1 |
 | RP-09 | Documentar requerimientos y decisiones dentro del proyecto. | ✅ v0.1 |
 | RP-10 | Sin dependencias ni paso de build: abrir el repo publicado debe bastar. | ✅ v0.1 |
-| RP-11 | Instalable como “app” en la pantalla de inicio (manifest PWA básico). | ✅ v0.1 (sin service worker / offline) |
+| RP-11 | Instalable como “app” en la pantalla de inicio (manifest PWA básico). | ✅ v0.1; con service worker e íconos PNG desde v0.104.0 (D-220) |
 | RP-12 | Idioma español chileno, informal. | ✅ v0.1 |
 | RP-13 | Funcionar sin conexión (service worker). | ⏳ pendiente |
 | RP-14 | Sonidos en las acciones clave, con botón para silenciar. | ✅ v0.3 |
@@ -134,7 +134,7 @@ Los IDs no se reusan: un requerimiento que cambia conserva su ID y su texto se a
 | LIG-30 | Verificación cruzada: cada celular recalcula los puntajes ajenos desde las jugadas. | ⏳ pendiente |
 | LIG-31 | Papelera: borrar copas una semana después de terminadas. | ⏳ pendiente |
 | LIG-32 | Inglés y portugués, con contenido propio por idioma (D-98, D-170). | ✅ D-170 |
-| LIG-33 | Avisos automáticos por WhatsApp, correo o push (D-99). | ⏳ pendiente |
+| LIG-33 | Avisos automáticos por WhatsApp, correo o push (D-99). | ⏳ pendiente: push en curso, en cuatro PR (D-220, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md)); el PR 1 (instalable) entró en v0.104.0 |
 | LIG-34 | Calendario elegido por el admin al crear la copa: qué juegos y en qué orden, a partir de una propuesta al azar; la final no cambia (D-163). | ✅ v0.75.0 |
 | LIG-35 | Pantalla de espera antes del día 1: cuándo parte, calendario e inscritos. | ✅ v0.42 |
 | LIG-36 | "Cómo se juega" antes de cada juego y de cada ronda de la final; el intento empieza en Empezar. | ✅ v0.42 |

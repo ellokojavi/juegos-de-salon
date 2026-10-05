@@ -1,5 +1,5 @@
 {
-  "version": "0.102.2",
+  "version": "0.104.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -723,6 +723,7 @@
     "public/assets/js/games.js",
     "public/assets/js/handoff.js",
     "public/assets/js/i18n.js",
+    "public/assets/js/instalable.js",
     "public/assets/js/jugador-firebase.js",
     "public/assets/js/jugador-local.js",
     "public/assets/js/jugador.js",
@@ -816,6 +817,7 @@
     "public/panel/copas.js",
     "public/panel/panel.js",
     "public/panel/rutas.js",
+    "public/sw.js",
     "public/timeline/decks/brasil.js",
     "public/timeline/decks/chile.js",
     "public/timeline/decks/futbol.js",
@@ -832,6 +834,7 @@
     "public/assets/js/compartir.test.mjs",
     "public/assets/js/games.test.mjs",
     "public/assets/js/i18n.test.mjs",
+    "public/assets/js/instalable.test.mjs",
     "public/assets/js/records.test.mjs",
     "public/assets/js/transport/cleanup.test.mjs",
     "public/assets/js/transport/dispose.test.mjs",
@@ -889,6 +892,7 @@
     "hangman/online.mjs",
     "idioma-por-url.mjs",
     "idiomas-comun.mjs",
+    "instalable.mjs",
     "julep/idiomas.mjs",
     "julep/local.mjs",
     "julep/online.mjs",
@@ -934,6 +938,10 @@
     {
       "ruta": "docs/PANEL.md",
       "titulo": "Panel del dueño"
+    },
+    {
+      "ruta": "docs/PWA-NOTIFICACIONES.md",
+      "titulo": "App instalable y avisos al celular (PWA + Web Push)"
     },
     {
       "ruta": "docs/REQUERIMIENTOS.md",
