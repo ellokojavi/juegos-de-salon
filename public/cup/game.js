@@ -31,6 +31,7 @@ import { planilla } from './planilla.js';
 import { bloqueJugador, bloqueRanking, avisoPartida, bloqueCampeones } from '../assets/js/ranking.js';
 import { jugador, leerYo, rankingsVisibles } from '../assets/js/jugador.js';
 import { podioDe } from '../assets/js/records.js';
+import { crearAvisos } from './avisos.js';
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
 trackVisit();
@@ -98,6 +99,8 @@ const aliasUrl = busqueda.filter(y => !y.includes('=') && !(CODIGO.test(y.toUppe
 
 const cuenta = createCuenta({ prueba: PRUEBA });
 let store = null;
+// La app instalada en iPhone abre con la copa y el jugador en la dirección, nunca el PIN (D-223)
+const appPid = new URLSearchParams(location.search).get('app') || '';
 
 async function abrirStore() {
   if (store) return store;
@@ -617,7 +620,8 @@ function entrar({ mantener = false } = {}) {
   const puedeEntrar = inscripcionAbierta(meta, now, L().closed) && jug.length < MAX_JUGADORES;
   // El jugador de este celular, si la copa ya lo tiene enlazado (D-220)
   const yoJ = leerYo();
-  const mio = yoJ && Object.keys(players).find(pid => !players[pid].out && players[pid].j === yoJ.jid);
+  const mio = (appPid && players[appPid] && !players[appPid].out ? appPid : null)
+    || (yoJ && Object.keys(players).find(pid => !players[pid].out && players[pid].j === yoJ.jid));
 
   const caja = el('div', { class: 'stack' });
   const nuevo = () => {
@@ -957,7 +961,15 @@ function tablero() {
     el('div', { class: 'btn-row' },
       // Invitar tiene sentido antes de que parta; después, el admin lo tiene en Administrar
       d === 0 && !L().closed ? el('button', { class: 'btn btn--ghost btn--sm', id: 'btn-invitar', onClick: () => { SFX.tap(); invitar(); } }, T.shareInvite) : null,
-      esAdmin() ? el('button', { class: 'btn btn--ghost btn--sm', id: 'btn-admin', onClick: () => { SFX.tap(); admin(); } }, T.adminTab) : null)));
+      esAdmin() ? el('button', { class: 'btn btn--ghost btn--sm', id: 'btn-admin', onClick: () => { SFX.tap(); admin(); } }, T.adminTab) : null,
+      terminada(meta, now) ? null : avisos().boton())));
+  // Los avisos al celular (D-223): al abrir desde la app instalada, o antes de que parta
+  if (!terminada(meta, now)) {
+    avisos().revisar();
+    const oferta = avisos().abiertaDesdeApp() ? avisos().tarjeta({ app: true })
+      : d === 0 ? avisos().tarjeta({ fecha: fechaLarga(meta.win[1].a, meta.tz) }) : null;
+    if (oferta) poner(body, oferta);
+  }
 
   if (terminada(meta, now)) poner(body, podio());
   if (d === 0 && faltaGente(L())) poner(body, el('div', { class: 'panel center' }, el('p', { class: 'lead' }, T.needSecond)));
@@ -1072,6 +1084,16 @@ async function conBoton(ev, fn) {
   const b = ev.currentTarget; b.disabled = true;
   try { await fn(); } catch (e) { toast(errorDe(e)); } finally { b.disabled = false; }
 }
+
+/** Los avisos al celular de la copa abierta (D-223): la campana, la tarjeta y sus hojas. */
+let avisosCopa = null;
+const avisos = () => (avisosCopa ||= crearAvisos({
+  T, lang: LANG, cuenta, fmt, toast,
+  store: () => store,
+  copa: () => ({ code: S.code, pid: S.yo, nombre: L()?.meta?.name || '', url: urlPublica(S.code) }),
+  redibujar: () => { if (S.pantalla === 'resultado' && S.verDia) resultado(S.verDia); else if (S.pantalla === 'tablero') tablero(); },
+  tap: () => SFX.tap(),
+}));
 
 function toast(texto) {
   const t = el('div', { class: 'toast', role: 'status' }, texto);
@@ -1943,6 +1965,7 @@ function resultado(d, { recien = false, det = null } = {}) {
       ? fmt(T.finalPos, { pos: ord(yo.pos), n, pts: yo.pts * x })
       : fmt(T.provisional, { pos: ord(yo.pos), n })),
     explicacion(J, { s: mio.s, ms: mio.ms, det, x, final: esFinal(meta, d) }),
+    d < meta.days && !terminada(meta, now) ? avisos().tarjeta({ dia: d + 1 }) : null,
     el('button', { class: 'btn btn--cyan', id: 'btn-tarjeta', onClick: ev => conBoton(ev, () => compartirResultado(d)) }, T.shareCard),
     el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.dayTable),
       el('div', { class: 'tabla' }, ranking.map(j => el('div', { class: 'fila' + (j.pid === S.yo ? ' yo' : '') },

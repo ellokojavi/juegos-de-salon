@@ -151,6 +151,8 @@ export function createFirebaseStore() {
       const alias = (await withTimeout(get(ref(db, `torneos/${code}/meta/alias`)), OP_MS)).val();
       await escribir({
         [`torneos/${code}`]: null, [`torneoKeys/${code}`]: null, [`torneoSeats/${code}`]: null,
+        // Y quién quería avisos de ella (D-223)
+        [`pushCopa/${code}`]: null,
         // El link propio queda libre de inmediato (D-121)
         ...(alias ? { [`torneoAlias/${alias}`]: null } : {}),
       }, 'permiso');
@@ -201,6 +203,23 @@ export function createFirebaseStore() {
 
     /** Un reporte o comentario (LIG-42). Va por REST, sin cuenta: ver `enviarReporte`. */
     reportar: r => enviarReporte(r),
+
+    /**
+     * Avisos de esta copa para este celular (D-223): la suscripción en `push/<subId>` (nadie la
+     * lee: solo quien manda los avisos) y qué avisos quiere en `pushCopa/<código>/<pid>/<subId>`.
+     * Las reglas piden estar sentado como el jugador, y que la suscripción sea de este celular.
+     */
+    async guardarAvisos(code, pid, subId, sub, { dia = true, plazo = true } = {}) {
+      const uid = await listo();
+      await escribir({
+        [`push/${subId}`]: { ...sub, uid, at: serverTimestamp() },
+        [`pushCopa/${code}/${pid}/${subId}`]: { dia, plazo, at: serverTimestamp() },
+      });
+    },
+
+    async quitarAvisos(code, pid, subId) {
+      await escribir({ [`pushCopa/${code}/${pid}/${subId}`]: null });
+    },
 
     async cambiarPin(code, pid, pinHash) {
       // El PIN nuevo invalida los celulares que ya estaban sentados como ese jugador.

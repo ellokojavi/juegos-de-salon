@@ -70,7 +70,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220 |
 | Marketing | `marketing/README.md` | D-178 |
-| App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222 |
+| App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223 |
 
 ---
 
@@ -3656,3 +3656,35 @@ en el iPhone el nombre del juego que estaba abierto.
 entonces hasta reinstalar (Android puede ofrecer actualizarlo solo). En algunos Android un nombre
 largo se corta bajo el ícono ("Juegos de Sa…"). `instalable.test.mjs` exige que cada manifest calce
 con `COMMON` de `i18n.js`, y `tools/e2e/instalable.mjs` revisa el nombre en los cuatro idiomas.
+
+## D-223 · Los avisos de La Copa se activan con la campana, primero en el laboratorio
+**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** completa D-221
+**Decisión:** El PR 2 del plan de avisos ([PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md)): el
+jugador activa los avisos de una copa, el celular se suscribe y la base guarda la suscripción. Los
+avisos de verdad los manda el PR 3.
+- **La campana** va en la cabecera de la copa, con su estado: **Activar avisos**, **Avisos
+  activos** (abre los ajustes: los dos avisos, "Probar los avisos" y "Silenciar esta copa") o
+  **Avisos bloqueados** (cómo desbloquearlos en ese celular). Si el celular no puede, no aparece.
+- **La tarjeta** que los ofrece sale una vez por copa: antes de que parta, después de jugar un día
+  si queda otro, o al abrir la copa desde la app instalada. "Ahora no" la apaga en esa copa.
+- **El permiso del sistema se pide solo después de tocar "Avisarme"**: su "No" es definitivo.
+  Al activar, el celular se manda un aviso de confirmación, sin pasar por el servidor.
+- **Una vez por celular:** si ya activó avisos en otra copa, la nueva los trae puestos, con la
+  línea "Te avisaremos de esta copa" y "Cambiar".
+- **iPhone:** en Safari, la campana abre los tres pasos para agregar la app a inicio; dentro de
+  WhatsApp o Instagram, pide abrir el link en Safari. La dirección pasa a llevar `&app=<pid>` (el
+  PIN nunca), y la app instalada abre en "Ya estoy inscrito" con el nombre ya elegido.
+- **La base:** `push/<subId>` y `pushCopa/<código>/<pid>/<subId>`, que nadie lee; las escribe solo
+  el celular dueño, sentado como el jugador. Ver firebase/README.md.
+- **La clave VAPID** la genera el dueño una vez (`node tools/push/vapid.mjs`): la pública queda en
+  `public/assets/js/vapid.js` y la privada, como el secreto `VAPID_PRIVADA`. Sin clave, los avisos
+  no se ofrecen. En el sitio local sirve una de prueba guardada en el navegador.
+- **Detrás del laboratorio** (`AVISOS_EN_LABS` en `push.js`), como los rankings (D-212): se ven en
+  el sitio local y en los celulares que los activan en `/labs/`.
+**Por qué:** Lo pidió el dueño, con el diseño que aprobó (la experiencia de PWA-NOTIFICACIONES.md,
+las hojas sobre el morado oscuro de la app). Mientras no se manden avisos, ofrecerlos a todos
+prometería algo que no llega; en el laboratorio se prueba en iPhones reales, que no se pueden
+automatizar.
+**Consecuencias:** El PR 3 abre los avisos a todos (`AVISOS_EN_LABS = false`) cuando mande el
+primero. `tools/e2e/cup/avisos.mjs` recorre todo en Chrome con un servicio de avisos falso; la
+prueba en iPhone queda como lista de pasos en PWA-NOTIFICACIONES.md.
