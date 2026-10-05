@@ -1,17 +1,29 @@
 # Diseño: El Ahorcado 🪢
 
-**Estado:** implementado (v0.26, los tres modos) · **Fecha:** 2026-09-12 · **Ruta:** `/hangman/` · **Jugadores:** 1 a 6 · **Idiomas:** es, en (“Hangman”), pt (“Forca”) y, en el laboratorio, de (“Galgenmännchen”, D-191)
+**Ruta:** `/hangman/` (id `ahorcado`) · **Jugadores:** 1 a 6 · **Desde:** v0.26 (2026-09-12) · **Estado:** publicado (v0.26, los tres modos) · **Idiomas:** es, en (“Hangman”), pt (“Forca”) y de (“Galgenmännchen”, D-191, D-197)
 
-## 1. Resumen
+## Resumen
 
 Quinto juego de la app. El ahorcado de toda la vida, con el arreglo que le falta desde siempre:
 **nadie se queda mirando**. En vez de un verdugo aburrido y un adivinador, cada jugador adivina
 su propia palabra, por turnos de una letra, y al final se comparan. Con dos jugadores es un duelo;
 con seis, una carrera.
 
-Sigue los [cánones](../CANONES.md). Dos excepciones documentadas, ambas en §6.
+Sigue los [cánones](../CANONES.md). Dos excepciones documentadas, ambas en “Excepciones a los cánones”.
 
-## 2. Reglas
+### Decisiones que deja este juego
+
+| | |
+|---|---|
+| D-53 | El ahorcado se juega en cadena: nadie se queda mirando |
+| D-54 | La misma palabra para todos solo cuando juegan a la vez |
+| D-55 | La tira de rivales muestra vidas y avance, nunca letras |
+| D-56 | Una letra errada no bloquea la pantalla (excepción a C-8b) |
+| D-57 | Acentos plegados, Ñ con tecla propia y solo en español |
+| D-58 | Comprar una letra cuesta un error y revela la más rara |
+| D-59 | Los turnos se alternan letra a letra, no palabra por palabra |
+
+## Reglas
 
 | Regla | Decisión |
 |---|---|
@@ -29,7 +41,7 @@ Sigue los [cánones](../CANONES.md). Dos excepciones documentadas, ambas en §6.
 Nadie suma puntos por **poner** una palabra, solo por adivinar. Una palabra imposible no te da
 nada: apenas le quita puntos al de al lado, y él te la devuelve en la misma partida.
 
-## 2a. De dónde sale la palabra (D-53)
+### De dónde sale la palabra (D-53)
 
 La sección **Palabra** de la configuración ofrece dos formas, en un selector de una sola fila con
 el emoji arriba y el nombre completo debajo (D-52). **Cadena viene elegida por defecto**, porque es
@@ -52,18 +64,38 @@ reparte una sola palabra para toda la mesa: es la comparación más justa que ex
 las rondas van en serie, así que ahí reparte una palabra distinta por jugador; si no, el segundo
 jugaría sabiendo la respuesta.
 
-## 2b. Temáticas del mazo
+### Temáticas del mazo
 
 Chile 🇨🇱 · Animales 🐾 · Comida 🍕 · Cine y series 🎬 · Deportes ⚽ · Mezcla 🎲
 
-Cada carta es una entrada con palabra y pista en los cuatro idiomas (el alemán, en el
-laboratorio, D-191), como las cartas de Línea de Tiempo. **No son traducciones**: cada idioma
+Cada carta es una entrada con palabra y pista en los cuatro idiomas (el alemán desde D-191), como las cartas de Línea de Tiempo. **No son traducciones**: cada idioma
 tiene su propia palabra para esa carta, porque una palabra traducida cambia de largo y de
 dificultad. Las cuatro listas tienen el mismo largo y las
 mismas claves, y lo verifica `public/assets/js/i18n.test.mjs` (C-3). Palabras de 4 a 12 letras, sin
 nombres propios salvo en Cine y series.
 
-## 3. Modos
+### Acentos, Ñ y mayúsculas (D-57)
+
+Todo se compara normalizado: mayúsculas, sin tildes y con Ç plegada a C. Tocar la **A** revela
+también las **Á**, y se muestra la palabra con su tilde puesta. La **Ñ tiene tecla propia y solo en
+español**: es una letra distinta, no una N con adorno, y en inglés, portugués y alemán no existe. El
+teclado queda en 27 teclas en español y 26 en los otros tres. En alemán no hay teclas Ä, Ö, Ü ni ß:
+las palabras alemanas del mazo las evitan, y el alfabeto y las frecuencias (`ALPHABETS`, `FREQ` en
+`engine.js`) tienen su propia entrada `de` (D-191).
+
+### Lo que se descartó
+
+- **Modo tramposo** (evil hangman: la app no fija palabra y esquiva quedándose con la familia de
+  candidatas más grande, con el conjunto comprometido por hash para demostrar que hizo trampa dentro
+  de las reglas). Es entretenido y es honesto, pero es un juego distinto adentro de este. Queda
+  anotado para una versión posterior.
+- **Que el verdugo sume puntos** si cuelga a su víctima: premia poner palabras imposibles, que es
+  justo lo que arruina al ahorcado.
+- **Récord de rachas jugando solo**: cuántas palabras seguidas sacaste. Le daría al solitario algo
+  que perseguir, como el récord de Línea de Tiempo. Queda pendiente: hoy cada palabra es una partida
+  suelta.
+
+## Modos
 
 | Modo | Jugadores | Transporte |
 |---|---|---|
@@ -91,36 +123,17 @@ nadie, tampoco hay secreto que comprometer, así que este es el único modo que 
 La pantalla final es distinta: no hay ranking ni "ganó fulano", solo si la sacaste y con cuántas
 vidas, y debajo la palabra que era.
 
-## 4. Estado y protocolo
+## Flujo
 
-Todo el estado se deriva de **la semilla del mazo más la lista de mensajes**.
-
-```jsonc
-{ "t": "hello",  "from": "A", "name": "Javi" }
-{ "t": "start",  "from": "A", "order": ["A","B","C"], "seed": 91238 }
-// Cadena: la palabra que A le puso a B viaja como forma, pista y hash. La palabra no (C-10)
-{ "t": "word",   "from": "A", "to": "B", "shape": ".....", "hint": "Se pela y se come", "hash": "9f2…" }
-{ "t": "guess",  "from": "B", "letter": "A", "n": 0, "ms": 1200 }   // n: qué jugada suya es
-{ "t": "buy",    "from": "B", "n": 1, "ms": 900 }                   // 💡 comprar una letra
-{ "t": "reply",  "from": "A", "to": "B", "n": 0, "letter": "A", "pos": "1,4" }  // solo cadena; "" si no está
-{ "t": "reveal", "from": "A", "to": "B", "word": "PALTA", "salt": "x7…" }
-{ "t": "rematch","from": "A", "code": "KXTR" }
-{ "t": "chat",   "from": "C", "text": "esa la tenía" }      // no es estado
+```
+Intro (modos) → Setup (nombres, vidas, de dónde sale la palabra, temática) → [Lobby: código + QR]
+   → Palabra (solo con cadena: cada uno escribe la del siguiente, con pista) → Juego → Resultado → Revancha
 ```
 
-- `view()` deriva: patrón revelado de cada jugador, letras usadas, errores, compras, tiempo y puntaje.
-- `pos` va como **texto** y no como lista: Firebase no guarda una lista vacía, y la letra que no
-  está es justamente la lista vacía. Lo lee `readPos()` del motor (D-60).
-- `n` numera las jugadas de cada jugador: es lo que aparea cada `guess` con su `reply` y lo que
-  deja descartar repetidas sin depender del orden de llegada.
-- Con mazo no hace falta `reply`: la palabra está en el código y cada aparato calcula lo mismo. Es
-  el mismo trato que Línea de Tiempo con los años: quien abra la consola se arruina el juego solo.
-- Con cadena, al final cada aparato verifica el hash **y** recalcula todas las respuestas que dio el
-  rival, letra por letra. El resultado se muestra: “verificado ✅” o “⚠️ no coincide”.
-- Jugadas fuera de turno, repetidas o con letras ya usadas se descartan en el reductor.
-- `chat` es la excepción: se dibuja y se olvida, sin volver a dibujar la partida.
+Son las pantallas de `index.html`: `screen-intro`, `screen-setup`, `screen-lobby`, `screen-word`,
+`screen-play` y `screen-result`.
 
-## 5. Interfaz
+### Interfaz
 
 - **El dibujo**: horca y monito en SVG, con el neón de la app. La horca (base, poste, viga y soga)
   está desde el principio en trazo apagado; cada error dibuja una parte del monito con
@@ -154,7 +167,7 @@ Todo el estado se deriva de **la semilla del mazo más la lista de mensajes**.
   escucha como una escala; el error es seco y sacude la pantalla; con una sola vida entra un
   latido bajo. Confeti y sonido al ganar (C-1).
 
-## 5b. Lo que apareció al construirlo
+### Lo que apareció al construirlo
 
 - **En un celular, cada letra termina en una pantalla**: el resultado (“¡Va! La O aparece 2 veces”),
   la palabra como quedó, las vidas que sobran y, debajo, el pase al siguiente. No es un aviso de
@@ -174,36 +187,43 @@ Todo el estado se deriva de **la semilla del mazo más la lista de mensajes**.
 - **Al celular no se le pasa el celular:** cuando el que sigue es el bot no hay pantalla de pase, y
   su veredicto habla en tercera persona (“¡Celular la sacó!”), como el de cualquier rival (C-8b).
 
-## 6. Excepciones a los cánones
-
-- **C-8b · Una letra errada no bloquea la pantalla** (D-56). El canon pide que el error se quede en
-  pantalla hasta que el jugador toque. Acá el error es la jugada normal del juego —en una partida
-  hay cinco o seis— y en varios celulares los turnos siguen corriendo: un aviso que hay que cerrar
-  seis veces convierte el juego en un trámite. La señal sí es inconfundible (fondo rojo, sacudida,
-  sonido propio, la tecla tachada y el trazo nuevo), y lo que sí se queda hasta que toquen es el
-  veredicto de la ronda: te colgaron, o la sacaste.
-- **C-10 · Sin hash cuando no hay secreto repartido.** Con mazo la palabra sale de la semilla y la
-  tienen todos los aparatos; con cadena en un celular, la app guarda las dos y no hay a quién
-  engañar. El compromiso con hash corre donde de verdad hay un secreto por aparato: cadena en
-  varios celulares. Jugando solo no hay ninguno, porque la palabra sale del mazo (D-65).
-
-## 7. Acentos, Ñ y mayúsculas (D-57)
-
-Todo se compara normalizado: mayúsculas, sin tildes y con Ç plegada a C. Tocar la **A** revela
-también las **Á**, y se muestra la palabra con su tilde puesta. La **Ñ tiene tecla propia y solo en
-español**: es una letra distinta, no una N con adorno, y en inglés, portugués y alemán no existe. El
-teclado queda en 27 teclas en español y 26 en los otros tres. En alemán no hay teclas Ä, Ö, Ü ni ß:
-las palabras alemanas del mazo las evitan, y el alfabeto y las frecuencias (`ALPHABETS`, `FREQ` en
-`engine.js`) tienen su propia entrada `de` (D-191).
-
-## 8. Memoria de partida (C-6)
+### Memoria de partida (C-6)
 
 Se guarda con `createSessionStore('ahorcado')` después de cada letra, cada compra y cada palabra
 escrita, incluida la palabra a medio escribir. Al retomar en un celular se vuelve a la pantalla de
 pase o a la tapada: nadie sabe quién tenía el teléfono. La intro muestra “⏯ Hay una partida a
 medias” con Continuar y Borrar.
 
-## 9. Archivos
+## Protocolo de mensajes
+
+Todo el estado se deriva de **la semilla del mazo más la lista de mensajes**.
+
+```jsonc
+{ "t": "hello",  "from": "A", "name": "Javi" }
+{ "t": "start",  "from": "A", "order": ["A","B","C"], "seed": 91238 }
+// Cadena: la palabra que A le puso a B viaja como forma, pista y hash. La palabra no (C-10)
+{ "t": "word",   "from": "A", "to": "B", "shape": ".....", "hint": "Se pela y se come", "hash": "9f2…" }
+{ "t": "guess",  "from": "B", "letter": "A", "n": 0, "ms": 1200 }   // n: qué jugada suya es
+{ "t": "buy",    "from": "B", "n": 1, "ms": 900 }                   // 💡 comprar una letra
+{ "t": "reply",  "from": "A", "to": "B", "n": 0, "letter": "A", "pos": "1,4" }  // solo cadena; "" si no está
+{ "t": "reveal", "from": "A", "to": "B", "word": "PALTA", "salt": "x7…" }
+{ "t": "rematch","from": "A", "code": "KXTR" }
+{ "t": "chat",   "from": "C", "text": "esa la tenía" }      // no es estado
+```
+
+- `view()` deriva: patrón revelado de cada jugador, letras usadas, errores, compras, tiempo y puntaje.
+- `pos` va como **texto** y no como lista: Firebase no guarda una lista vacía, y la letra que no
+  está es justamente la lista vacía. Lo lee `readPos()` del motor (D-60).
+- `n` numera las jugadas de cada jugador: es lo que aparea cada `guess` con su `reply` y lo que
+  deja descartar repetidas sin depender del orden de llegada.
+- Con mazo no hace falta `reply`: la palabra está en el código y cada aparato calcula lo mismo. Es
+  el mismo trato que Línea de Tiempo con los años: quien abra la consola se arruina el juego solo.
+- Con cadena, al final cada aparato verifica el hash **y** recalcula todas las respuestas que dio el
+  rival, letra por letra. El resultado se muestra: “verificado ✅” o “⚠️ no coincide”.
+- Jugadas fuera de turno, repetidas o con letras ya usadas se descartan en el reductor.
+- `chat` es la excepción: se dibuja y se olvida, sin volver a dibujar la partida.
+
+## Archivos
 
 ```
 public/hangman/
@@ -218,29 +238,18 @@ public/hangman/
 ```
 
 Registro en `public/assets/js/games.js` (`players: '1–6'`, `duration: '5–12'`); sus módulos entran solos al
-import map (C-11, D-192). Gancho `window.__ahorcado` para las pruebas (C-14) y
+import map de la copia que se publica (C-11, D-205). Gancho `window.__ahorcado` para las pruebas (C-14) y
 `trackStart({ game: 'ahorcado', mode, players })` en los modos sin red (D-44).
 
-## 10. Decisiones que deja este juego
+## Excepciones a los cánones
 
-| | |
-|---|---|
-| D-53 | El ahorcado se juega en cadena: nadie se queda mirando |
-| D-54 | La misma palabra para todos solo cuando juegan a la vez |
-| D-55 | La tira de rivales muestra vidas y avance, nunca letras |
-| D-56 | Una letra errada no bloquea la pantalla (excepción a C-8b) |
-| D-57 | Acentos plegados, Ñ con tecla propia y solo en español |
-| D-58 | Comprar una letra cuesta un error y revela la más rara |
-| D-59 | Los turnos se alternan letra a letra, no palabra por palabra |
-
-## 11. Lo que se descartó
-
-- **Modo tramposo** (evil hangman: la app no fija palabra y esquiva quedándose con la familia de
-  candidatas más grande, con el conjunto comprometido por hash para demostrar que hizo trampa dentro
-  de las reglas). Es entretenido y es honesto, pero es un juego distinto adentro de este. Queda
-  anotado para una versión posterior.
-- **Que el verdugo sume puntos** si cuelga a su víctima: premia poner palabras imposibles, que es
-  justo lo que arruina al ahorcado.
-- **Récord de rachas jugando solo**: cuántas palabras seguidas sacaste. Le daría al solitario algo
-  que perseguir, como el récord de Línea de Tiempo. Queda pendiente: hoy cada palabra es una partida
-  suelta.
+- **C-8b · Una letra errada no bloquea la pantalla** (D-56). El canon pide que el error se quede en
+  pantalla hasta que el jugador toque. Acá el error es la jugada normal del juego —en una partida
+  hay cinco o seis— y en varios celulares los turnos siguen corriendo: un aviso que hay que cerrar
+  seis veces convierte el juego en un trámite. La señal sí es inconfundible (fondo rojo, sacudida,
+  sonido propio, la tecla tachada y el trazo nuevo), y lo que sí se queda hasta que toquen es el
+  veredicto de la ronda: te colgaron, o la sacaste.
+- **C-10 · Sin hash cuando no hay secreto repartido.** Con mazo la palabra sale de la semilla y la
+  tienen todos los aparatos; con cadena en un celular, la app guarda las dos y no hay a quién
+  engañar. El compromiso con hash corre donde de verdad hay un secreto por aparato: cadena en
+  varios celulares. Jugando solo no hay ninguno, porque la palabra sale del mazo (D-65).
