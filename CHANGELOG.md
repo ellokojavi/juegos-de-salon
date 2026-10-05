@@ -1,7 +1,7 @@
 # Changelog
 
 ## 0.104.0 — 2026-10-05
-- **La app se puede instalar de verdad** (D-220): íconos para Android y iPhone, y un service worker
+- **La app se puede instalar de verdad** (D-221): íconos para Android y iPhone, y un service worker
   que todavía no guarda nada. Es el primer paso de los avisos de La Copa al celular, para quien los
   quiera ([PWA-NOTIFICACIONES.md](docs/PWA-NOTIFICACIONES.md)). Nada cambia al jugar.
 

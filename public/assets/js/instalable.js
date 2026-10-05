@@ -1,5 +1,5 @@
 /**
- * Registra el service worker de la raíz (`/sw.js`, D-220). Lo importa cada página que lleva el
+ * Registra el service worker de la raíz (`/sw.js`, D-221). Lo importa cada página que lleva el
  * manifest: con los dos, la app se puede instalar en el celular.
  *
  * Mejor esfuerzo y después de cargar: si el navegador no tiene service workers, o el registro

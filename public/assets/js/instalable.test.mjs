@@ -1,4 +1,4 @@
-// La app instalable (D-220): el manifest con sus íconos PNG, el service worker en la raíz, y cada
+// La app instalable (D-221): el manifest con sus íconos PNG, el service worker en la raíz, y cada
 // página de la app con el ícono del iPhone y el registro del service worker después de sus hojas
 // de estilo (el import map que pone publicar.yml va antes de la primera; un módulo antes de él lo
 // dejaría sin efecto).
