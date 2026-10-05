@@ -3686,5 +3686,6 @@ las hojas sobre el morado oscuro de la app). Mientras no se manden avisos, ofrec
 prometería algo que no llega; en el laboratorio se prueba en iPhones reales, que no se pueden
 automatizar.
 **Consecuencias:** El PR 3 abre los avisos a todos (`AVISOS_EN_LABS = false`) cuando mande el
-primero. `tools/e2e/cup/avisos.mjs` recorre todo en Chrome con un servicio de avisos falso; la
+primero. Si la base rechaza una suscripción porque quedó a nombre de otra identidad anónima del
+mismo celular, el celular la anula y pide otra, que sí puede guardar. `tools/e2e/cup/avisos.mjs` recorre todo en Chrome con un servicio de avisos falso; la
 prueba en iPhone queda como lista de pasos en PWA-NOTIFICACIONES.md.

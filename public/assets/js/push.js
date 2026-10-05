@@ -90,6 +90,15 @@ export async function suscribir({ nav = globalThis.navigator, clave = clavePubli
   return sub.toJSON();
 }
 
+/** Anula la suscripción de este celular (la próxima `suscribir` trae otra, con otro endpoint). */
+export async function anular({ nav = globalThis.navigator } = {}) {
+  try {
+    const reg = await nav.serviceWorker.getRegistration();
+    const sub = await reg?.pushManager?.getSubscription();
+    if (sub) await sub.unsubscribe();
+  } catch (_) { /* no había */ }
+}
+
 /** La suscripción de este celular si ya existe, sin pedir nada. */
 export async function suscripcionActual({ nav = globalThis.navigator } = {}) {
   try {
