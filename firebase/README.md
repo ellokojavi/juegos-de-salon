@@ -116,7 +116,8 @@ El mismo mecanismo que La Copa, para toda la app:
 - `jugadorNombres/<clave>/<jid>` = `true`: quiénes usan ese nombre. Se lee por clave, para entrar.
 - `records/<tabla>/<período>/<jid>` = `{ s, ms, k, at, n }`, con `.indexOn: k`. Se lee sin cuenta.
   Escribe solo el jugador sentado, con `k` recalculado, `n` igual a su nombre y `k` menor que el
-  guardado. La tabla y el período se validan por forma, sin nombrar juegos (C-16).
+  guardado. La tabla y el período se validan por forma, sin nombrar juegos (C-16). Una tabla que
+  termina en `_victorias` (D-215) además exige `ms` = 0 y que `s` suba exactamente de a uno.
 - `torneoPodios/<código>`: el podio de una copa terminada, con `.indexOn: end`. Se lee sin cuenta.
   Lo escribe una vez alguien sentado en esa copa (`por`), con la copa terminada, sin `lab`, y con
   los nombres y `j` que la copa tiene.
