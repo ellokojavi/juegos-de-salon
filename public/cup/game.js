@@ -1965,7 +1965,9 @@ function resultado(d, { recien = false, det = null } = {}) {
       ? fmt(T.finalPos, { pos: ord(yo.pos), n, pts: yo.pts * x })
       : fmt(T.provisional, { pos: ord(yo.pos), n })),
     explicacion(J, { s: mio.s, ms: mio.ms, det, x, final: esFinal(meta, d) }),
-    d < meta.days && !terminada(meta, now) ? avisos().tarjeta({ dia: d + 1 }) : null,
+    // Ofrece avisar del próximo día que todavía no se abre: no siempre es d + 1 (un día viejo, o
+    // jugado con el siguiente ya abierto)
+    diaActual(meta, now) < meta.days && !terminada(meta, now) ? avisos().tarjeta({ dia: diaActual(meta, now) + 1 }) : null,
     el('button', { class: 'btn btn--cyan', id: 'btn-tarjeta', onClick: ev => conBoton(ev, () => compartirResultado(d)) }, T.shareCard),
     el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.dayTable),
       el('div', { class: 'tabla' }, ranking.map(j => el('div', { class: 'fila' + (j.pid === S.yo ? ' yo' : '') },

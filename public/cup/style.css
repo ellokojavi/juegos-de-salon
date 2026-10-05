@@ -554,6 +554,8 @@ input.fecha { width: 100%; min-height: 48px; border-radius: 12px; border: 1px so
 .aviso-oferta .lead { margin: 0 0 4px; font-weight: 900; }
 .aviso-oferta .muted { margin: 0 0 12px; }
 .aviso-auto { text-align: center; margin: 4px 0; }
+/* A 320 px, en español y alemán, los botones lado a lado no caben: bajan a otra línea */
+.aviso-oferta .btn-row, .hoja .btn-row, .btn-row:has(> #btn-avisos) { flex-wrap: wrap; }
 .linkish { appearance: none; border: 0; background: none; color: var(--cyan); font: inherit; font-weight: 800; text-decoration: underline; cursor: pointer; min-height: 44px; padding: 0 6px; }
 .aviso-bloqueado { border-style: dashed; }
 .aviso-activo { color: var(--yellow); border-color: rgba(255, 210, 63, 0.6); }
