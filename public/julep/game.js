@@ -19,6 +19,7 @@ import { failWith } from '../assets/js/transport/errors.js';
 import { createChat } from '../assets/js/chat.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
 import { trackStart, trackVisit, trackFinish } from '../assets/js/transport/stats.js';
+import { finDePartida, bloqueVictorias } from '../assets/js/ranking.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import { haySobres, nuevasLlaves, cierra, abre } from '../assets/js/sobre.js';
 import {
@@ -625,6 +626,8 @@ function renderResult(v) {
   if (!already && S.mode === 'online') {
     S.transport?.noteWinner?.({ role: v.ganadores[0], name: v.ganadores.map(nameOf).join(', ') });
   }
+  // Los rankings (D-212): la partida del jugador de este celular y, si ganó, su victoria. Una vez.
+  if (!already) finDePartida({ juego: GAME_ID, modo: S.mode, rol: S.mode === 'online' ? S.role : S.mode === 'cpu' ? 'A' : null, ganadores: v.ganadores, nombres: M.names });
   // Sin red, cómo terminó, para el panel (D-210)
   if (!already && S.mode !== 'online') trackFinish(v.ganadores.length > 1 ? { empate: true, detalle: v.ganadores.map(nameOf).join(', ') } : { ganador: nameOf(v.ganadores[0]), detalle: `${v.historia.length} manos` });
   const yo = quienMira();
@@ -1037,6 +1040,8 @@ function init() {
   sparkles(12);
   renderRules();
   renderModes();
+  // Las victorias de este juego y entrar con nombre y PIN (D-212); en el laboratorio, solo donde se activaron
+  $('#rk-slot')?.append(bloqueVictorias({ juego: GAME_ID, nombre: T.title, alTocar: () => SFX.tap() }));
   renderResumeSlot();
   const sala = new URLSearchParams(location.search).get('sala');
   if (!sala || !/^[A-Z]{4}$/i.test(sala)) return;

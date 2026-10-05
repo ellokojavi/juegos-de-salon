@@ -15,6 +15,7 @@ import { showHandoff, passBlock, showCover } from '../assets/js/handoff.js';
 import { createChat } from '../assets/js/chat.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
 import { trackStart, trackVisit, trackFinish } from '../assets/js/transport/stats.js';
+import { finDePartida, bloqueVictorias } from '../assets/js/ranking.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import {
   ALPHABETS, LIVES_OPTIONS, MAX_LETTERS, buildState, dealWords, normalize,
@@ -770,6 +771,8 @@ function renderResult(v) {
   if (!already && S.mode === 'online') {
     S.transport?.noteWinner?.(winners.length === 1 ? { role: winners[0], name: M.names[winners[0]] } : {});
   }
+  // Los rankings (D-212): la partida del jugador de este celular y, si ganó, su victoria. Una vez.
+  if (!already) finDePartida({ juego: GAME_ID, modo: S.mode, rol: S.mode === 'online' ? S.role : S.mode === 'cpu' ? 'A' : null, ganadores: winners, nombres: M.names });
   // Sin red, cómo terminó, para el panel (D-210): jugando solo, si salió o no
   if (!already && S.mode !== 'online') {
     trackFinish(winners.length === 1 ? { ganador: M.names[winners[0]] } : winners.length > 1 ? { empate: true } : { detalle: 'se colgaron todos' });
@@ -1032,6 +1035,8 @@ function init() {
   initSound();
   sparkles(12);
   renderModes();
+  // Las victorias de este juego y entrar con nombre y PIN (D-212); en el laboratorio, solo donde se activaron
+  $('#rk-slot')?.append(bloqueVictorias({ juego: GAME_ID, nombre: T.title, alTocar: () => SFX.tap() }));
   renderResumeSlot();
   const code = new URLSearchParams(location.search).get('sala');
   if (code && /^[A-Z]{4}$/i.test(code)) {
