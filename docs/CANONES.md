@@ -42,7 +42,8 @@ public/<carpeta>/
   (reglas puras), `ui.js` (pantalla) y sus datos propios; lo común a todos queda en `games/`.
 - El juego se registra en `public/assets/js/games.js` con `id`, `emoji`, `name` y `tagline` por idioma, `players`, `duration`, `path` y `available`. Con sala, también `jugadas`: los tipos de mensaje que hace una persona, que es lo que el panel cuenta como jugadas (D-138).
 - El `<head>` de cada página de la app lleva el manifest, el ícono y el nombre del iPhone
-  (`apple-touch-icon` y `apple-mobile-web-app-title`) y, después de las hojas de estilo, el
+  (`apple-touch-icon` y `apple-mobile-web-app-title`), el script que elige el manifest del idioma
+  justo después del `<link rel="manifest">`, y, después de las hojas de estilo, el
   registro del service worker (`import '<…>assets/js/instalable.js'`, que además pone el manifest y
   el nombre del idioma elegido): así la app se puede instalar desde cualquier juego, con su nombre.
   Se copian de otro juego; `public/assets/js/instalable.test.mjs` los exige (D-221, D-222).

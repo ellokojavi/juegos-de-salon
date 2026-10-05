@@ -3645,7 +3645,9 @@ Salão** o **Salonspiele**: el `appTitle` del idioma elegido (C-3), el mismo nom
 - Hay un manifest por idioma: `manifest.webmanifest` (español) y `manifest.<idioma>.webmanifest`,
   iguales salvo `name`, `short_name`, `description` (el `appSub`) y `lang`. Comparten el `id`: es
   una sola app.
-- `instalable.js` cambia el `<link rel="manifest">` al del idioma elegido apenas carga la página, y
+- Un script corto, justo después del `<link rel="manifest">` de cada página, lo cambia al del idioma
+  elegido mientras se lee la página: cambiarlo después, desde un módulo, a veces llegaba tarde y
+  Chrome se quedaba con el del español. `instalable.js` lo repite al cargar, y
   pone el mismo nombre en `apple-mobile-web-app-title`, que es el que usa el iPhone. Sin ese meta,
   el iPhone proponía el título de la página ("El Ahorcado 🪢 · Juegos de Salón").
 **Por qué:** Lo pidió el dueño: la app instalada decía solo "Juegos" (el `short_name` de antes), y
