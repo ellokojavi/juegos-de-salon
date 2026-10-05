@@ -128,6 +128,13 @@ Desde v0.9, la sala tiene lobby con la lista de quienes van llegando, reconexió
 revancha que mueve a todos a la sala nueva. La memoria de partida (C-6) cubre todos los modos e
 incluye la temática elegida.
 
+**Rankings (D-215):** con un jugador de los rankings abierto en el celular (nombre y PIN,
+D-212, hoy en el laboratorio), cada partida terminada se cuenta en `jugadores/<jid>/juegos/linea-de-tiempo`
+y, si ganó, suma una victoria en la tabla `linea-de-tiempo_victorias` (semana y siempre): en sala, la de su
+rol; contra el celular, la del humano; en un celular, la del jugador que se llama como él. Un
+empate no es victoria. La tabla (semana, siempre y amigos) va en la intro, debajo de los modos
+(`finDePartida` y `bloqueVictorias` de `public/assets/js/ranking.js`), y en `/records/`.
+
 ### Jugar solo: la ⏳ Línea Relámpago de La Copa (D-142)
 
 Jugar solo es el juego ⏳ Línea Relámpago de La Copa, con las mismas reglas, la misma pantalla y
@@ -149,6 +156,10 @@ intentos, con nombre, forma de repartir y tamaño de mano (D-27, D-32, D-43); es
 - **Récord:** uno por temática, en `juegos-de-salon:linea-de-tiempo:record-relampago`: más puntos y,
   a igual puntaje, menos tiempo (`crearRecord` de `public/cup/games/solo.js`). El récord del solitario
   viejo (`…:record`, por intentos) no se compara y queda sin uso.
+- **Ranking (D-215):** una tabla por temática, `linea-de-tiempo_rel-<temática>`, con el mismo 0–100
+  y el tiempo. Va debajo de Empezar y cambia al elegir otra temática. En el resultado, con un
+  jugador de los rankings abierto, el aviso de los rankings (`avisoPartida`) reemplaza al récord del
+  celular. No suma al Todoterreno.
 - **Semilla:** un código de 5 letras al azar (`codigoAlAzar` de `public/cup/engine.js`) y
   `generar(codigo, 1, { tema, lang, excluir })` de `public/cup/games/timeline/engine.js`. `excluir` deja fuera las
   cartas vistas hace poco (D-34); si con eso no alcanzan diez hitos de años separados, se reparte

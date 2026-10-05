@@ -62,6 +62,13 @@ cosa.
 | 📡 Varios celulares | 2 a 6 | Sala con código de 4 letras, QR y chat. El reparto viaja **cerrado para cada jugador** (D-81) y al cerrar la mano cada celular destapa lo suyo para que todos verifiquen (C-10). |
 | 🤖 Contra el celular | 1 | De uno a cinco rivales del aparato, a elección: declaran, cambian y juegan mirando **solo sus propias cartas**. |
 
+**Rankings (D-215):** con un jugador de los rankings abierto en el celular (nombre y PIN,
+D-212, hoy en el laboratorio), cada partida terminada se cuenta en `jugadores/<jid>/juegos/julepe`
+y, si ganó, suma una victoria en la tabla `julepe_victorias` (semana y siempre): en sala, la de su
+rol; contra el celular, la del humano; en un celular, la del jugador que se llama como él. Un
+empate no es victoria. La tabla (semana, siempre y amigos) va en la intro, debajo de los modos
+(`finDePartida` y `bloqueVictorias` de `public/assets/js/ranking.js`), y en `/records/`.
+
 ### De dónde salen las cartas, y por qué no de la semilla
 
 Es el mismo problema de los dados del Dudo (D-70): el código es público, así que una semilla
