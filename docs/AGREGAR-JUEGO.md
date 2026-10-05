@@ -31,7 +31,8 @@
     después `python3 tools/release/readme.py capturas <seccion>`, `actualizar` y, ya releído,
     `sellar`. Las capturas se miran juntas con `node tools/e2e/contacto.mjs <seccion>`. La tarjeta
     social sale con `node tools/release/og.mjs tarjetas` e `imagenes`.
-11. **La lista de chequeo** del final de los cánones, entera.
+11. **La lista de chequeo** del final de los cánones, entera. La parte que se puede contar la
+    cuenta `node public/assets/js/games.test.mjs`: motor, tests, gancho y especificación (C-12).
 
 La versión y la entrada del `CHANGELOG.md` no las escribe quien hace el juego: se ponen al
 fusionar, y `publicar.yml` hace el resto (C-11, D-205).

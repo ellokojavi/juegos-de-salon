@@ -38,7 +38,8 @@ así. Es opcional; sin él no hay nada que coordinar.
 
 `ci.mjs` corre los guiones que no tocan el Firebase de producción, y GitHub lo usa en cada PR
 (`.github/workflows/e2e.yml`, un job por guion). Un guion falla si sale con error, si imprime
-una línea con ✗ o ❌, o si pasa los 15 minutos. Los que solo imprimen lo que ven igual caen si
+una línea con ✗ o ❌, o si pasa los 15 minutos (ahí `ci.mjs` le manda SIGTERM, para que cierre su
+Chrome, y SIGKILL si a los 5 s sigue vivo). Los que solo imprimen lo que ven igual caen si
 algo se rompe del todo. Los `online.mjs`, los `chat.mjs` y los de la lista `TAMBIEN_FIREBASE` de
 `ci.mjs` abren salas de verdad y siguen a mano. Los de `OBSOLETOS` prueban algo que ya no
 existe y esperan que alguien los reescriba.
