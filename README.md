@@ -380,6 +380,7 @@ The other four are **〰️ Zip**, **☀️ Tango**, **📍 Where is it?** and *
 - **Bug reports need no account** (D-104): the 🐞 form posts straight to `feedback/` and remembers your name on that device; `node tools/firebase/reportes.mjs` reads them back.
 - **Many languages, one rule** (D-170): what is personal follows your language, what belongs to the group follows the cup's. The screen (rules, board, scoring breakdown) follows each player's toggle; the cup's language, chosen when it is created, sets the words of Connections and Bulls and Cows: Word, so everyone plays the same ones, and every message shared with the group, with its link. Word content is written per language, not translated: Connections grids and secret words in English, Portuguese and German, plus country and city names for Where is it?.
 - **Who it's for** (D-186, D-187): when creating a cup, the admin picks its audience: 🌎 Global, 🇨🇱 Chile or 🇧🇷 Brazil. Content that people only know in one of those countries is tagged with it: Timeline's Chile and Brazil themes and a few local cards, the Connections grids with Chilean or Brazilian words, a few Chilean secret words, and Chilean and Brazilian cities that aren't capitals (Rio and São Paulo count as global). A global cup leaves out both countries' topics; a Chilean or Brazilian cup adds its own and leaves out the other's. Cups created before keep their content.
+- **Phone notifications, in the lab for now** (D-223): a 🔔 bell in each cup turns them on. The offer shows up after you play a day, before the cup starts, or when you open the cup from the installed app; the system permission is only asked after a tap, and a confirmation notification arrives at once. On iPhone, the bell first walks you through adding the app to the home screen. Nothing is sent yet: that comes next, from a scheduled GitHub workflow ([docs/PWA-NOTIFICACIONES.md](docs/PWA-NOTIFICACIONES.md)).
 - A 3-day cup exists for testing with `?tres` (D-100), and `?prueba` plays a cup with no Firebase, which is what the lab demos and the end-to-end scripts use.
 
 Spec and design: [docs/games/cup.md](docs/games/cup.md)
@@ -551,6 +552,7 @@ node public/assets/js/compartir.test.mjs
 node public/assets/js/games.test.mjs
 node public/assets/js/i18n.test.mjs
 node public/assets/js/instalable.test.mjs
+node public/assets/js/push.test.mjs
 node public/assets/js/records.test.mjs
 node public/assets/js/transport/cleanup.test.mjs
 node public/assets/js/transport/dispose.test.mjs
@@ -650,7 +652,7 @@ URL, in English. Everything next to it is the workshop.
 public/                     The site (juegosdesalon.cl/): the only folder that gets published
   index.html                  Main menu (generated from assets/js/games.js)
   en/ · pt/ · de/             Language doors: they set the language and send you to the menu
-  cup/                        The Cup: tournament engine, stores (Firebase and local test), desglose.js (score breakdown), planilla.js (final table as CSV), reportes.js (auth-free bug reports), demo.js (lab demos)
+  cup/                        The Cup: tournament engine, avisos.js (the notifications bell and sheets, D-223), stores (Firebase and local test), desglose.js (score breakdown), planilla.js (final table as CSV), reportes.js (auth-free bug reports), demo.js (lab demos)
     games/                    The games: one folder each (engine.js + ui.js + its own word content in each language); solo.js mounts one as the play-alone mode of another game
   timeline/                   Timeline (engine.js + tests, game.js, rules.js, decks/)
   bulls-and-cows/             Bulls and Cows (engine.js + tests, game.js, rules.js)
@@ -664,7 +666,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   records/                    Leaderboards: the All-Rounder, every game's table and The Cup's medal table (D-212)
   panel/                      Private owner dashboard: now, The Cup, games, traffic and audience, with a page per cup, game and room (Google sign-in; see docs/PANEL.md)
   assets/css/                 Shared styles: base.css (party theme), linea.css (timeline), teclado.css (keypad), ranking.css (leaderboards)
-  assets/js/                  Shared modules: games.js (game registry), i18n.js (ES/EN/PT/DE), labs-idioma.js (a new language in the lab, D-191), ui.js, sound.js, compartir.js (everything shared, D-165), handoff.js, chat.js, session.js, arrastre.js (drag and drop), teclado.js, azar.js and dado3d.js (Random game), frases.js, records.js + jugador.js + ranking.js (players and leaderboards, D-212; jugador-firebase.js and jugador-local.js are their stores), instalable.js (registers the service worker, D-221)
+  assets/js/                  Shared modules: games.js (game registry), i18n.js (ES/EN/PT/DE), labs-idioma.js (a new language in the lab, D-191), ui.js, sound.js, compartir.js (everything shared, D-165), handoff.js, chat.js, session.js, arrastre.js (drag and drop), teclado.js, azar.js and dado3d.js (Random game), frases.js, records.js + jugador.js + ranking.js (players and leaderboards, D-212; jugador-firebase.js and jugador-local.js are their stores), instalable.js (registers the service worker, D-221), push.js + vapid.js (phone notifications: subscribing, D-223)
   assets/js/transport/        Transports: local (same phone), firebase (room) and stats (usage signals)
   assets/og/                  The 1200×630 images shown when a link is shared
   manifest.webmanifest        PWA manifest (installable on the home screen), one per language (manifest.en.webmanifest …) so the app is named in the player's language (D-222); its PNG icons are in assets/icons/
@@ -673,6 +675,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
 docs/                       Requirements, decisions, canons, one spec per game (docs/games/) and the README screenshots
 firebase/                   Realtime Database security rules and notes
 tools/
+  push/                       vapid.mjs (the notifications key pair, run once by the owner, D-223)
   release/                    Publishing: set-version.py (version stamp, at publish time), readme.py + hechos.mjs (this README), og.mjs (social cards and bridge pages), iconos.mjs (the app icons, from assets/icon.svg)
   firebase/                   reglas.mjs (publish the rules), reportes.mjs (The Cup bug reports), en-curso.mjs (anyone playing?), rankings-historia.mjs (The Cup's history into the leaderboards, and each player's cups)
   generators/                 mapa.mjs (the world of Where is it?), flota.py (the Battleship fleet)
