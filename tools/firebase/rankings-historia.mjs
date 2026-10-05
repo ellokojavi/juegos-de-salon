@@ -138,7 +138,8 @@ if (esPrincipal) {
   const [torneos, jugadores, records, torneoPodios] = await Promise.all(['torneos', 'jugadores', 'records', 'torneoPodios'].map(r => leer(r, t)));
   const { cambios, gente, podios } = historia(torneos, { jugadores: jugadores || {}, records: records || {}, torneoPodios: torneoPodios || {} }, Date.now(), { conLab });
 
-  const recs = Object.keys(cambios).filter(r => r.startsWith('records/'));
+  const recs = Object.keys(cambios).filter(r => /^records\/[^/]+\/[^/]+\/[^/]+$/.test(r));
+  const banderas = Object.keys(cambios).filter(r => r.endsWith('/co')).length;
   const porTabla = {};
   for (const r of recs) { const tt = r.split('/')[1]; (porTabla[tt] ||= []).push(cambios[r]); }
   console.log(`Personas en la historia: ${gente.length} (${gente.map(p => p.n).join(', ')})`);
@@ -148,7 +149,8 @@ if (esPrincipal) {
     const lugar = l => Object.values(p.p).filter(x => x.l === l).map(x => x.n).join(' · ') || '—';
     console.log(`  🏆 ${p.name} (${code}): 🥇 ${lugar(1)} · 🥈 ${lugar(2)} · 🥉 ${lugar(3)}`);
   }
-  console.log(`Récords de la pestaña "Copa" a escribir: ${recs.length}`);
+  console.log(`Banderas que faltaban (D-219): ${banderas}`);
+  console.log(`Filas de récords a escribir: ${recs.length}`);
   for (const [tt, filas] of Object.entries(porTabla).sort()) {
     const top = filas.sort((a, b) => a.k - b.k).slice(0, 3).map(f => `${f.n} ${f.s}`).join(' · ');
     console.log(`  ${tt}: ${filas.length} · ${top}`);
