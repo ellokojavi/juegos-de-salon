@@ -678,7 +678,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
 docs/                       Requirements, decisions, canons, one spec per game (docs/games/) and the README screenshots
 firebase/                   Realtime Database security rules and notes
 tools/
-  push/                       vapid.mjs (the notifications key pair, run once by the owner, D-223); avisar.mjs sends the La Copa notifications every 15 minutes from avisos.yml, with calendario.mjs (what is due) and webpush.mjs (encryption and VAPID, no dependencies; D-224)
+  push/                       vapid.mjs (the notifications key pair, already run once: the public key is in assets/js/vapid.js, the private one a GitHub secret; D-223, D-225); avisar.mjs sends the La Copa notifications every 15 minutes from avisos.yml, with calendario.mjs (what is due) and webpush.mjs (encryption and VAPID, no dependencies; D-224)
   release/                    Publishing: set-version.py (version stamp, at publish time), readme.py + hechos.mjs (this README), og.mjs (social cards and bridge pages), iconos.mjs (the app icons, from assets/icon.svg)
   firebase/                   reglas.mjs (publish the rules), reportes.mjs (The Cup bug reports), en-curso.mjs (anyone playing?), rankings-historia.mjs (The Cup's history into the leaderboards, and each player's cups)
   generators/                 mapa.mjs (the world of Where is it?), flota.py (the Battleship fleet)

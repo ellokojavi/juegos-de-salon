@@ -197,7 +197,8 @@ entra con el mismo jugador, la encuentra en la portada y al abrirla tiene su nom
 Usa el almacén de prueba de la copa y el de los jugadores.
 
 `node tools/e2e/cup/avisos.mjs [salida]` recorre los avisos de La Copa (D-223) con el almacén de
-prueba, una clave VAPID de prueba y un servicio de avisos falso (nada sale del Chrome): la tarjeta y
+prueba, la clave VAPID de `vapid.js` (D-225) y un servicio de avisos falso (nada sale del Chrome): la tarjeta y
 "Ahora no", la campana que activa los avisos y el aviso de confirmación, los ajustes y "Silenciar
 esta copa", los avisos bloqueados, y el camino de iPhone (agregar a inicio, dentro de Instagram, y
-la app instalada que abre con el nombre ya elegido). Deja capturas de cada hoja.
+la app instalada que abre con el nombre ya elegido y hereda el laboratorio de avisos, D-225, cosa que
+un link con `&app=` en una pestaña no hace). Deja capturas de cada hoja.
