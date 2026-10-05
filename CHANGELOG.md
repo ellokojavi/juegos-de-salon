@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.99.4 — 2026-10-04
+- **El filtro de la portada, en inglés en la URL** (D-214): `?type=logic`, `?type=tabletop`, en vez
+  de `?tipo=logica` o `?tipo=mesa`. Los links viejos siguen filtrando lo mismo.
+
 ## 0.99.3 — 2026-10-04
 - **Panel: en qué idioma se jugó** (D-211): cada copa, sala y partida sin red lleva una etiqueta
   con su idioma (ES, EN, PT, DE; las dos si en una sala cada uno jugó en el suyo), y hay un

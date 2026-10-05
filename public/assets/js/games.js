@@ -23,7 +23,7 @@ export const GAMES = [
     // Un torneo no es una partida: cada día manda su señal con `players: 1` y no pesa en MAX_PLAYERS.
     torneo: true,
     // Tiene de todo: aparece con cualquier tipo que se elija en los filtros de la portada
-    tipos: ['palabras', 'logica', 'cultura'],
+    tipos: ['words', 'logic', 'trivia'],
     path: 'cup/',
     // Salió del laboratorio (D-175): se abre desde el menú. /labs/ sigue para probar (la Copa de 3
     // días, la práctica con semilla y las demos).
@@ -31,7 +31,7 @@ export const GAMES = [
   },
   {
     id: 'linea-de-tiempo',
-    tipos: ['cultura'],
+    tipos: ['trivia'],
     emoji: '⏳',
     name: { es: 'Línea de Tiempo', en: 'Timeline', pt: 'Linha do Tempo', de: 'Zeitstrahl' },
     tagline: { es: 'Ubica los hitos en el orden correcto. Seis temáticas, de la historia al fútbol.', en: 'Put the milestones in the right order. Six themes, from history to soccer.', pt: 'Coloque os marcos na ordem certa. Seis temas, da história ao futebol.', de: 'Bring die Ereignisse in die richtige Reihenfolge. Sechs Themen, von Geschichte bis Fußball.' },
@@ -43,7 +43,7 @@ export const GAMES = [
   },
   {
     id: 'toque-y-fama',
-    tipos: ['logica'],
+    tipos: ['logic'],
     emoji: '🔢',
     name: { es: 'Toque y Fama', en: 'Bulls and Cows', pt: 'Toque e Fama', de: 'Bullen und Kühe' },
     tagline: { es: 'Adivina el número secreto con toques y famas.', en: 'Crack the secret number with bulls and cows.', pt: 'Descubra o número secreto com toques e famas.', de: 'Knack die Geheimzahl mit Bullen und Kühen.' },
@@ -55,7 +55,7 @@ export const GAMES = [
   },
   {
     id: 'ahorcado',
-    tipos: ['palabras'],
+    tipos: ['words'],
     emoji: '🪢',
     name: { es: 'El Ahorcado', en: 'Hangman', pt: 'Forca', de: 'Galgenmännchen' },
     tagline: { es: 'Adivina tu palabra antes de quedarte sin vidas. Acá nadie se queda mirando.', en: 'Crack your word before you run out of lives. Nobody sits this one out.', pt: 'Descubra sua palavra antes de ficar sem vidas. Aqui ninguém fica só olhando.', de: 'Errate dein Wort, bevor dir die Leben ausgehen. Hier schaut keiner nur zu.' },
@@ -67,7 +67,7 @@ export const GAMES = [
   },
   {
     id: 'dudo',
-    tipos: ['mesa'],
+    tipos: ['tabletop'],
     emoji: '🎲',
     name: { es: 'Dudo', en: 'Liar\'s Dice', pt: 'Dado Mentiroso', de: 'Lügenwürfel' },
     tagline: { es: 'Apuesta cuántos dados hay en la mesa y aguanta la cara.', en: 'Bid how many dice are on the table and keep a straight face.', pt: 'Aposte quantos dados tem na mesa sem entregar o jogo.', de: 'Wette, wie viele Würfel auf dem Tisch liegen, und verzieh keine Miene.' },
@@ -79,7 +79,7 @@ export const GAMES = [
   },
   {
     id: 'batalla-naval',
-    tipos: ['logica'],
+    tipos: ['logic'],
     emoji: '⚓',
     name: { es: 'Batalla Naval', en: 'Battleship', pt: 'Batalha Naval', de: 'Schiffe versenken' },
     tagline: { es: 'Hunde la flota del rival antes de que hunda la tuya.', en: 'Sink your rival\'s fleet before they sink yours.', pt: 'Afunde a frota do rival antes que ele afunde a sua.', de: 'Versenk die Flotte deines Gegners, bevor er deine versenkt.' },
@@ -91,7 +91,7 @@ export const GAMES = [
   },
   {
     id: 'julepe',
-    tipos: ['mesa'],
+    tipos: ['tabletop'],
     emoji: '🍹',
     name: { es: 'Julepe', en: 'Julep', pt: 'Paga o Bolo', de: 'Julepe' },
     tagline: { es: 'Dices si vas o te pasas. Si vas y no haces dos bazas, te tomas todo el plato.', en: 'Say if you are in or out. Go in, miss two tricks, and you drink the whole pot.', pt: 'Você diz se entra ou passa. Se entrar e não fizer duas vazas, bebe o bolo inteiro.', de: 'Sag, ob du mitgehst oder passt. Gehst du mit und machst keine zwei Stiche, trinkst du den ganzen Topf.' },
@@ -105,7 +105,7 @@ export const GAMES = [
   },
   {
     id: 'cuarto-rey',
-    tipos: ['mesa'],
+    tipos: ['tabletop'],
     emoji: '👑',
     name: { es: 'Cuarto Rey', en: 'Fourth King', pt: 'Quarto Rei', de: 'Der vierte König' },
     tagline: { es: 'Naipes, sorbos y el temido cuarto rey.', en: 'Cards, sips and the dreaded fourth king.', pt: 'Cartas, goles e o temido quarto rei.', de: 'Karten, Schlucke und der gefürchtete vierte König.' },
@@ -139,7 +139,7 @@ export const SUELTOS = [
     emoji: '🔗',
     name: { es: 'Conexiones', en: 'Connections', pt: 'Conexões', de: 'Verbindungen' },
     tagline: { es: 'Arma cuatro grupos de cuatro palabras que tienen algo en común.', en: 'Sort sixteen words into four groups of four that share something.', pt: 'Monte quatro grupos de quatro palavras que têm algo em comum.', de: 'Sortier sechzehn Wörter in vier Gruppen, die etwas gemeinsam haben.' },
-    tipos: ['palabras', 'cultura'],
+    tipos: ['words', 'trivia'],
     duration: '3–8',
   },
   {
@@ -148,7 +148,7 @@ export const SUELTOS = [
     emoji: '🔤',
     name: { es: 'Toque y Fama: Palabra', en: 'Bulls and Cows: Word', pt: 'Toque e Fama: Palavra', de: 'Bullen und Kühe: Wort' },
     tagline: { es: 'Adivina la palabra secreta de cinco letras con toques y famas.', en: 'Crack the five-letter secret word with bulls and cows.', pt: 'Descubra a palavra secreta de cinco letras com toques e famas.', de: 'Knack das geheime Wort aus fünf Buchstaben mit Bullen und Kühen.' },
-    tipos: ['palabras', 'logica'],
+    tipos: ['words', 'logic'],
     duration: '3–8',
   },
   {
@@ -157,7 +157,7 @@ export const SUELTOS = [
     emoji: '📅',
     name: { es: '¿En qué año?', en: 'What Year?', pt: 'Em que ano?', de: 'Welches Jahr?' },
     tagline: { es: 'Adivina en qué año pasó cada hito. Mientras más cerca, más puntos.', en: 'Guess the year each milestone happened. The closer you get, the more points.', pt: 'Adivinhe em que ano aconteceu cada marco. Quanto mais perto, mais pontos.', de: 'Rate, in welchem Jahr jedes Ereignis war. Je näher, desto mehr Punkte.' },
-    tipos: ['cultura'],
+    tipos: ['trivia'],
     duration: '2–5',
   },
   {
@@ -166,7 +166,7 @@ export const SUELTOS = [
     emoji: '👑',
     name: { es: 'Reinas', en: 'Queens', pt: 'Rainhas', de: 'Damen' },
     tagline: { es: 'Pon una reina en cada fila, columna y zona de color, sin que se toquen.', en: 'Place one queen in every row, column and color zone, with none touching.', pt: 'Coloque uma rainha em cada linha, coluna e zona de cor, sem que se toquem.', de: 'Setz eine Dame in jede Zeile, Spalte und Farbzone, ohne dass sie sich berühren.' },
-    tipos: ['logica'],
+    tipos: ['logic'],
     duration: '2–5',
   },
   {
@@ -175,7 +175,7 @@ export const SUELTOS = [
     emoji: '☀️',
     name: { es: 'Tango', en: 'Tango', pt: 'Tango', de: 'Tango' },
     tagline: { es: 'Llena la grilla con soles y lunas sin poner tres iguales seguidos.', en: 'Fill the grid with suns and moons without ever putting three in a row.', pt: 'Preencha a grade com sóis e luas sem colocar três iguais seguidos.', de: 'Füll das Raster mit Sonnen und Monden, nie drei gleiche nebeneinander.' },
-    tipos: ['logica'],
+    tipos: ['logic'],
     duration: '3–8',
   },
   {
@@ -184,7 +184,7 @@ export const SUELTOS = [
     emoji: '〰️',
     name: { es: 'Zip', en: 'Zip', pt: 'Zip', de: 'Zip' },
     tagline: { es: 'Une los números en orden con un solo trazo que pase por todas las casillas.', en: 'Connect the numbers in order with a single line that fills every square.', pt: 'Ligue os números em ordem com um só traço que passe por todas as casas.', de: 'Verbinde die Zahlen der Reihe nach mit einer Linie durch alle Felder.' },
-    tipos: ['logica'],
+    tipos: ['logic'],
     duration: '3',
   },
   {
@@ -193,7 +193,7 @@ export const SUELTOS = [
     emoji: '🧶',
     name: { es: 'Desenredo', en: 'Untangle', pt: 'Desenrola', de: 'Entwirren' },
     tagline: { es: 'Arrastra los nudos hasta que ningún hilo se cruce.', en: 'Drag the knots until no threads cross.', pt: 'Arraste os nós até que nenhum fio se cruze.', de: 'Zieh die Knoten, bis sich keine Fäden mehr kreuzen.' },
-    tipos: ['logica'],
+    tipos: ['logic'],
     duration: '4',
   },
   {
@@ -202,7 +202,7 @@ export const SUELTOS = [
     emoji: '📍',
     name: { es: '¿Dónde queda?', en: 'Where Is It?', pt: 'Onde fica?', de: 'Wo liegt das?' },
     tagline: { es: 'Ubica cinco ciudades en el globo. Mientras más cerca, más puntos.', en: 'Find five cities on the globe. The closer your pin, the more points.', pt: 'Encontre cinco cidades no globo. Quanto mais perto o alfinete, mais pontos.', de: 'Finde fünf Städte auf dem Globus. Je näher deine Nadel, desto mehr Punkte.' },
-    tipos: ['cultura'],
+    tipos: ['trivia'],
     duration: '2–5',
   },
 ].map(m => ({ ...m, players: '1', path: `${m.slug}/`, available: !m.labs, suelto: true }));
@@ -210,13 +210,17 @@ export const SUELTOS = [
 /**
  * Los tipos de juego con que se filtra la portada (D-142), en el orden en que se ofrecen.
  * Cada juego dice los suyos en `tipos`; uno sin tipos solo se ve sin filtro de tipo.
+ * La clave es la que va en la URL (`?type=logic`), en inglés como las rutas (D-192, D-214).
  */
 export const TIPOS = {
-  palabras: { emoji: '🔤', name: { es: 'Palabras', en: 'Words', pt: 'Palavras', de: 'Wörter' } },
-  logica: { emoji: '🧩', name: { es: 'Lógica', en: 'Logic', pt: 'Lógica', de: 'Logik' } },
-  cultura: { emoji: '🧠', name: { es: 'Cultura', en: 'Trivia', pt: 'Cultura', de: 'Wissen' } },
-  mesa: { emoji: '🎲', name: { es: 'Cartas/Dados', en: 'Cards/Dice', pt: 'Cartas/Dados', de: 'Karten/Würfel' } },
+  words: { emoji: '🔤', name: { es: 'Palabras', en: 'Words', pt: 'Palavras', de: 'Wörter' } },
+  logic: { emoji: '🧩', name: { es: 'Lógica', en: 'Logic', pt: 'Lógica', de: 'Logik' } },
+  trivia: { emoji: '🧠', name: { es: 'Cultura', en: 'Trivia', pt: 'Cultura', de: 'Wissen' } },
+  tabletop: { emoji: '🎲', name: { es: 'Cartas/Dados', en: 'Cards/Dice', pt: 'Cartas/Dados', de: 'Karten/Würfel' } },
 };
+
+/** Los tipos de antes de D-214 (`?tipo=mesa`): un link viejo sigue filtrando lo mismo. */
+export const TIPOS_VIEJOS = { palabras: 'words', logica: 'logic', cultura: 'trivia', mesa: 'tabletop' };
 
 /** Todo lo que ofrece la portada: los juegos de GAMES y, después, los de La Copa. */
 export const PORTADA = [...GAMES, ...SUELTOS.filter(m => !m.labs)];
