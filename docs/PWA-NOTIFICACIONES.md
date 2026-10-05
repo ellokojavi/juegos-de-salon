@@ -1,7 +1,7 @@
 # Propuesta: app instalable y avisos al celular (PWA + Web Push)
 
-**Estado:** propuesta, espera la decisión del dueño · **Fecha:** 2026-10-05 · **Toca:** RP-13, LIG-29,
-LIG-33, D-99
+**Estado:** propuesta, espera la decisión del dueño · **Fecha:** 2026-10-05 · **Toca:** RP-13, LIG-33,
+D-99
 
 Si el dueño la aprueba, entra como decisión nueva (D-n, numerada al fusionar) que **reemplaza a
 D-99** en lo que dice de los avisos automáticos, y este documento pasa a ser su detalle.
@@ -33,10 +33,11 @@ GitHub Actions no hace falta ninguno de los dos.
 | Instalar | El navegador ofrece "Instalar app" si hay manifest + service worker + ícono PNG | A mano: Compartir → "Agregar a inicio". No hay botón automático |
 | Service worker | Obligatorio | Obligatorio hasta iOS 18.3; desde iOS 18.4 existe *Declarative Web Push*, que no lo necesita |
 
-Consecuencia de diseño: en iPhone el aviso **no se puede ofrecer en la pestaña de Safari**. Ahí la
-app muestra cómo agregarla a inicio (con un dibujo del botón Compartir) y recién dentro de la
-app instalada ofrece los avisos. Se detecta con `navigator.standalone` /
-`matchMedia('(display-mode: standalone)')`.
+| Lo que guarda la app | Compartido entre el navegador y la app instalada | **Separado**: la app instalada empieza sin nada de lo que había en Safari |
+
+Consecuencia de diseño: en iPhone los avisos **no se pueden activar en la pestaña de Safari**, y la
+app instalada no sabe quién es el jugador. Los dos problemas se resuelven en la experiencia del
+jugador (abajo). Se detecta con `navigator.standalone` y `matchMedia('(display-mode: standalone)')`.
 
 ## Qué avisos, y por qué esos
 
@@ -46,10 +47,11 @@ perfecto para un aviso: hay una fecha, hay algo pendiente y le importa a la pers
 
 | Aviso | Cuándo | A quién | Ejemplo |
 |---|---|---|---|
-| **Se abrió el día** | 9:00 del día, en la zona de la copa (no a las 00:00) | Inscritos que activaron avisos | "🏆 Copa Los Primos · Día 3: Conexiones. Ya puedes jugar." |
-| **Se te acaba el plazo** | 20:00 del último día en que vale (el de gracia, o el de la final) | Solo a quien **no** ha jugado ese día | "⏳ Te quedan 4 horas para jugar el día 3. Si no, suma 0." |
-| **Terminó la copa** | Al cerrar (o al terminarla el admin, D-161) | Todos los inscritos con avisos | "🥇 Ganó Ana. Mira cómo quedó la tabla." |
-| Alguien se unió *(opcional)* | Al inscribirse alguien | Solo el admin | "Pedro entró a tu copa (5 jugadores)." |
+| **Se abrió el día** | Entre 9:00 y 10:00 del jugador (no a las 00:00) | Inscritos que activaron avisos | "Día 3: Conexiones. Ya puedes jugar." |
+| **Se te acaba el plazo** | Unas 4 horas antes de que cierre el día (el de gracia, o la final) | Solo a quien **no** ha jugado ese día | "⏳ Te quedan 4 horas para jugar el día 3. Si no, suma 0." |
+| **Terminó la copa** | Al cerrar (o al terminarla el admin, D-161) | Todos los inscritos con avisos | "🥇 Ganó Ana. Quedaste 2.°." |
+| **La final** | En la mañana del último día, en vez de "se abrió el día" | Inscritos con avisos | "Hoy es la final y vale doble. Vas 2.°, a 3 puntos de Ana." |
+| Alguien entró | Al inscribirse alguien | Solo el admin | "Pedro entró a tu copa. Ya son 5 jugadores." |
 
 Lo que **no** se avisa, a propósito:
 
@@ -63,20 +65,169 @@ Lo que **no** se avisa, a propósito:
 Con esto el admin sigue teniendo sus mensajes armados para el grupo de WhatsApp (D-99 no se borra
 entero: la pica del grupo sigue ahí). El aviso es personal y la tarjeta compartida es social.
 
-## Cómo lo ve el jugador (U-n)
+## Experiencia del jugador (UX)
 
-- **Nunca se pide permiso al abrir la app.** Se ofrece en el momento en que tiene sentido: al
-  inscribirse en una copa, en la pantalla de "ya jugaste hoy", con un botón
-  **"🔔 Avísame cuando se abra el próximo día"**. Si dice que no, no se vuelve a ofrecer en esa copa.
-- El permiso del navegador es de una sola vez: si el usuario lo bloquea, ya no se puede volver a
-  pedir; solo cambiarlo en los ajustes. Por eso se pregunta primero con un botón propio y el diálogo
-  del sistema sale solo si toca "Sí".
-- En la copa, un interruptor "🔔 Avisos de esta copa" para apagarlos. Cada aviso trae, además,
-  el enlace a la copa (al tocarlo abre `/cup/?CÓDIGO` directo en el día).
-- En iPhone sin instalar: "Para recibir avisos en iPhone, agrega Juegos de Salón a tu pantalla de
-  inicio: toca Compartir y luego *Agregar a inicio*."
-- Textos en los cuatro idiomas (C-3). El aviso va en el idioma **de quien lo recibe**, que se guarda
-  con la suscripción (no el de la copa).
+### Principios
+
+1. **El permiso se pide cuando el jugador ya tiene un motivo**: después de jugar el día o al quedar
+   inscrito en una copa que todavía no parte. Nunca al abrir la app ni en la portada.
+2. **Primero se pregunta con un botón propio y después sale el diálogo del sistema.** El "No" del
+   sistema es definitivo: el sitio ya no puede volver a preguntar, y la persona tiene que ir a los
+   ajustes. Por eso el diálogo del sistema sale solo cuando la persona ya dijo que sí.
+3. **Un "Ahora no" se respeta**: la tarjeta que ofrece los avisos no vuelve en esa copa. El botón
+   🔔 de la copa queda siempre a mano para quien cambie de idea.
+4. **Nunca se ofrece algo que el celular no puede hacer.** Si el navegador no tiene avisos (un
+   iPhone con iOS anterior a 16.4, por ejemplo), el botón no aparece.
+5. **Cada aviso le sirve a quien lo recibe**: dice qué pasa y hasta cuándo, y al tocarlo se abre
+   la copa en el juego del día, listo para empezar.
+6. **Apagar es tan fácil como encender**, desde la copa y, en Android, desde el mismo aviso.
+7. **Se pide una vez por celular y no una vez por copa.** Si el celular ya tiene los avisos
+   permitidos, la copa siguiente los trae encendidos con una línea que lo dice
+   ("🔔 Te avisaremos de esta copa · Cambiar"), sin volver a preguntar.
+
+### Dónde se ofrece
+
+| Momento | Pantalla | Qué ve el jugador |
+|---|---|---|
+| **Acaba de jugar el día** (el mejor momento: ganó o perdió, y ya piensa en mañana) | Resultado del día (`resultado()`), debajo del puntaje | Tarjeta: "🔔 ¿Te avisamos cuando se abra el día 4? Te llega un aviso en la mañana y otro en la tarde si todavía no juegas." · **Avisarme** · *Ahora no* |
+| **Se inscribió y la copa todavía no parte** | Tablero, arriba | "🔔 La copa parte el lunes. ¿Te avisamos ese día?" · **Avisarme** · *Ahora no* |
+| **Creó la copa** (admin) | Tablero recién creada, después de invitar | Lo mismo, y además el admin recibe "Pedro entró a tu copa" |
+| **Siempre** | Tablero, botón chico en la cabecera | 🔔 con su estado (más abajo) |
+
+La tarjeta sale **una sola vez por copa**, en el primero de esos momentos que le toque al jugador.
+
+### El camino según el celular
+
+La app detecta en qué está el jugador y le muestra solo el camino que le sirve:
+
+```
+                          toca "Avisarme"
+                                │
+     ┌──────────────────────────┼─────────────────────────────┬────────────────────────┐
+ Android / computador     iPhone en Safari             iPhone dentro de otra app     iPhone ya instalada
+ (o iPhone con la app     o Chrome, iOS 16.4+          (WhatsApp, Instagram…)        (abierta desde el ícono)
+  ya instalada)                 │                             │                             │
+     │                   Hoja "Agrega la app         "Para recibir avisos,          (= Android: directo
+ Diálogo del sistema      a tu inicio", 3 pasos       abre este link en Safari"      al diálogo del sistema)
+     │                    con dibujos                 · Copiar link
+ ✅ Aviso de prueba             │
+    al instante          El jugador abre la app desde el ícono
+                                │
+                         "Eres Ana en La Copa: Los Primos.
+                          Escribe tu PIN para seguir."
+                                │
+                         🔔 Activar avisos → diálogo del sistema → ✅ aviso de prueba
+```
+
+**Android y computador**: un toque en **Avisarme**, el diálogo del sistema y listo. No hace falta
+instalar nada: Chrome, Edge, Samsung Internet y Firefox reciben avisos con la página cerrada. El
+navegador ofrece "Instalar app" por su cuenta; la app no insiste.
+
+**iPhone en Safari** (y Chrome en iPhone, que también puede agregar a inicio desde iOS 16.4):
+una hoja que se desliza desde abajo con tres pasos, cada uno con el dibujo del botón que hay que
+tocar:
+
+1. "Toca **Compartir**" (con el ícono del cuadrado y la flecha, y una flecha que apunta adonde está
+   el botón en ese iPhone. En iOS 26 Compartir quedó dentro del menú **⋯**, así que el paso cambia
+   según la versión).
+2. "Elige **Agregar a inicio**. Si no lo ves, baja en la lista."
+3. "Abre **Juegos** desde el ícono nuevo y toca 🔔 otra vez."
+
+La hoja tiene un botón **Ya la agregué** que explica el paso 3 y un **Cerrar**. No se puede saber
+desde Safari si la persona la instaló, así que la hoja no vuelve a salir sola.
+
+**El paso delicado de iPhone: la app instalada empieza vacía.** En iPhone la app de la pantalla de
+inicio no comparte nada con Safari: ni el `localStorage`, ni el acceso anónimo de Firebase, ni el
+asiento en la copa. Al abrirla por primera vez no sabe quién es el jugador. La propuesta:
+
+- Antes de mostrar la hoja, la página cambia su propia dirección (sin recargar) a
+  `/cup/?K7Q2X&app=<pid>`. El código de la copa y el `pid` no son secretos: el PIN sí, y no va en
+  el link.
+- La app instalada parte en esa dirección, abre la copa y pide **solo el PIN**: "Eres Ana en La
+  Copa: Los Primos. Escribe tu PIN para seguir." Es el mismo PIN de siempre (D-96), y el mismo
+  camino que usa hoy quien cambia de celular. Si la persona también tiene jugador para los
+  rankings (D-212), se le ofrece entrar con ese PIN.
+- Justo después: **🔔 Activar avisos**. Es un toque nuevo, que es lo que pide iPhone para mostrar
+  el diálogo del sistema.
+- **Hay que probarlo en iPhones reales.** Lo que publican otros proyectos no coincide en si iOS
+  abre la app en la dirección de la página o en el `start_url` del manifest, y puede cambiar entre
+  versiones. Es la primera tarea del PR 2, con iOS 17, 18 y 26. Si iOS usa el `start_url`, el plan
+  B es que la app instalada abra en "Tus copas" con **Entrar a mi copa** (código, nombre y PIN),
+  que ya existe.
+
+**Dentro de WhatsApp, Instagram u otra app**: ahí no se puede agregar a inicio. Se dice
+"Para recibir avisos, abre este link en Safari" con un botón **Copiar link**. En Android no hace
+falta: WhatsApp abre los links en Chrome.
+
+### El botón 🔔 de la copa
+
+| Estado | Se ve | Al tocarlo |
+|---|---|---|
+| Apagado | 🔔 **Activar avisos** | El camino de arriba |
+| Encendido | 🔔 **Avisos activos** | Hoja con dos interruptores: "Cuando se abre un día" y "Si se te va a pasar el plazo", más **Apagar avisos de esta copa** y **Mandar un aviso de prueba** |
+| Bloqueado (la persona dijo "No" al sistema) | 🔕 **Avisos bloqueados** | Cómo desbloquearlos en ese celular: en Android, el candado junto a la dirección → Permisos → Notificaciones; en iPhone, Ajustes → Notificaciones → Juegos |
+| El celular no puede | (no aparece) | — |
+
+Cada vez que se abre la app, revisa en silencio que la suscripción siga viva. Si el permiso se
+quitó desde los ajustes, el botón pasa a "bloqueados"; si el navegador renovó la suscripción, la
+guarda de nuevo.
+
+### La confirmación
+
+Al activar, el celular se manda a sí mismo un aviso al instante, sin pasar por el servidor:
+"✅ Listo. Te avisaremos de La Copa: Los Primos. El próximo aviso llega el martes en la mañana."
+Así la persona ve cómo se verán y sabe que funcionó. Si ese aviso no aparece (el celular en
+modo No molestar, por ejemplo), el **Mandar un aviso de prueba** de la hoja sirve para revisarlo.
+
+### Los avisos
+
+| Aviso | Título | Texto | Al tocarlo |
+|---|---|---|---|
+| Se abrió el día | 🏆 La Copa: Los Primos | "Día 3: Conexiones. Ya puedes jugar." | El día 3, en "Empezar" |
+| Se te va a pasar el plazo | 🏆 La Copa: Los Primos | "⏳ Te quedan 4 horas para jugar el día 3. Si no, suma 0." | El día 3 |
+| La final | 🏆 La Copa: Los Primos | "Hoy es la final y vale doble. Vas 2.°, a 3 puntos de Ana." | La final |
+| Terminó | 🏆 La Copa: Los Primos | "🥇 Ganó Ana. Quedaste 2.°." | El podio |
+| Alguien entró (solo admin) | 🏆 La Copa: Los Primos | "Pedro entró a tu copa. Ya son 5 jugadores." | El tablero |
+
+- **Hora del jugador, no de la copa**: la zona horaria se guarda con la suscripción. El aviso de
+  la mañana llega entre 9:00 y 10:00, y el del plazo unas 4 horas antes del cierre, pero nunca
+  entre las 22:00 y las 8:00 de quien lo recibe. Si el plazo cae de noche para él, el aviso llega a
+  las 20:00 y dice la hora exacta del cierre.
+- **A lo más 2 avisos por copa al día.** Si alguien juega varias copas, los avisos del mismo
+  momento se juntan en uno: "Tienes día nuevo en 2 copas: Los Primos y La Oficina."
+- **No se apilan**: cada aviso lleva una etiqueta por copa y día, así que el del plazo reemplaza
+  al de la mañana en la bandeja.
+- **En Android** el aviso trae dos botones: **Jugar** y **Silenciar esta copa**. iPhone no los
+  muestra, y no hacen falta.
+- El ícono es el de la app. En Android además va una silueta blanca para la barra de estado.
+- **Idioma de quien lo recibe**, en los cuatro (C-3); el nombre de la copa va tal cual.
+- **Al terminar la copa** se borran sus suscripciones solas. El permiso del celular queda, así que
+  la próxima copa ya viene con avisos (principio 7).
+
+### Textos para revisar (U-1, U-3, U-17)
+
+Los botones caben en 320 px: **Avisarme**, **Ahora no**, **Activar avisos**, **Avisos activos**,
+**Ya la agregué**, **Copiar link**, **Jugar**, **Silenciar esta copa**. Los textos largos van arriba
+del botón, en frases completas. Todos se proponen así y el dueño los corrige en el PR (U-3).
+
+### Qué se mide (panel, D-44)
+
+El embudo, separado por Android, iPhone y computador:
+
+> se ofreció → tocó **Avisarme** → (iPhone) vio la hoja → abrió la app instalada → el sistema dio
+> permiso → suscripción guardada
+
+Y después: avisos mandados, avisos tocados (`?aviso=<tipo>`), copas silenciadas y permisos
+bloqueados. Con eso se ve dónde se cae la gente y si el esfuerzo en iPhone vale la pena.
+
+### Cómo se prueba
+
+- **Android y computador**: los guiones de `tools/e2e/` ya manejan Chrome. Chrome puede dar el
+  permiso por su cuenta y recibir un aviso de prueba, así que el camino completo entra a CI.
+- **La hoja de iPhone y los estados del botón**: con `mirar.mjs` imitando un iPhone (el
+  identificador del navegador y el tamaño de pantalla), a 320 px y en los cuatro idiomas (C-8).
+- **iPhone de verdad**: no se puede automatizar. El PR 2 trae una lista de pasos para probar a mano
+  en iOS 17, 18 y 26, y el dueño la corre antes de fusionar.
 
 ## Arquitectura
 
@@ -179,26 +330,28 @@ responde la pregunta de fondo: si los avisos de verdad traen gente de vuelta.
 | Cloudflare Workers con cron | Gratis y más puntual, pero suma una cuenta y un lugar más donde vive código. Si GitHub Actions se queda corto en puntualidad, es el siguiente paso. |
 | OneSignal u otro proveedor | Pone a un tercero entre la app y los jugadores; el panel y la privacidad quedan afuera. |
 | App nativa (Capacitor, TWA en Play Store) | Mucho más costo para el mismo resultado; la TWA podría venir después para estar en Play Store. |
-| Recordatorios `.ics` (LIG-29) | Complemento barato: sirve a quien no quiere avisos o no instala la app en iPhone. Se puede hacer igual, aparte. |
+| Recordatorios `.ics` (LIG-29) | El dueño lo dejó fuera por ahora (2026-10-05): solo avisos al celular, para quien los quiera. |
 
 ## Plan de desarrollo, en PR chicos
 
 | PR | Qué trae | Se puede probar sin… |
 |---|---|---|
 | **1. Instalable de verdad** | Íconos PNG, manifest completo, `sw.js` mínimo (sin caché, sin push), metas de Apple, prueba de que todas las páginas los llevan, guion e2e que verifica que el SW se registra | Avisos |
-| **2. Suscribirse** | `push.js`, botón "🔔 Avísame" en La Copa, guía de "Agregar a inicio" en iPhone, reglas `push` y `pushCopa`, textos en 4 idiomas, la clave VAPID pública | Mandar nada (se ve la suscripción guardada) |
+| **2. Suscribirse** | Primero, la prueba en iPhones reales de cómo abre la app instalada. Después: `push.js`, la tarjeta y el botón 🔔 de La Copa con sus cuatro estados, la hoja de iPhone, el "escribe tu PIN" de la app instalada, el aviso de confirmación, reglas `push` y `pushCopa`, textos en 4 idiomas y la lista de pasos para probar a mano en iPhone | Mandar nada (se ve la suscripción guardada y llega el aviso de confirmación) |
 | **3. Mandar** | `tools/push/` (vapid, webpush, avisar con `--simular`), pruebas unitarias del cifrado contra los vectores del RFC 8291 y del calendario de avisos contra `engine.js`, workflow `avisos.yml` | — |
 | **4. Medir** | Fila del panel, `?aviso=` en las señales, `?pwa` en el inicio | — |
-| *(después)* | Modo sin conexión (RP-13), Declarative Web Push para iPhone, aviso al admin cuando alguien entra | — |
+| *(después)* | Modo sin conexión (RP-13), Declarative Web Push para iPhone | — |
 
 El dueño hace una sola cosa a mano: correr `node tools/push/vapid.mjs` y pegar la clave privada como
 secreto `VAPID_PRIVADA` en GitHub.
 
 ## Riesgos
 
-- **iPhone es el freno**: la mayoría no agrega apps web a inicio. Medir en el panel cuántos se
-  suscriben por plataforma antes de invertir más; el mensaje del admin al grupo sigue cubriendo a
-  todos.
+- **iPhone es el freno**: la mayoría no agrega apps web a inicio, y la app instalada empieza
+  sin saber quién es el jugador. El embudo del panel dice dónde se cae la gente; el mensaje del
+  admin al grupo sigue cubriendo a todos.
+- **iOS cambia de una versión a otra** (dónde está Compartir, cómo abre la app instalada). La hoja
+  de iPhone se revisa con cada versión nueva de iOS.
 - **Un service worker mal hecho deja celulares con la versión vieja.** Por eso el primero no
   cachea nada y el modo sin conexión va aparte.
 - **Avisos de más = avisos apagados.** El tope de 2 al día y "solo si no jugaste" son parte del
@@ -212,4 +365,6 @@ secreto `VAPID_PRIVADA` en GitHub.
 - [Web push para iOS (OneSignal)](https://documentation.onesignal.com/docs/web-push-for-ios)
 - [Los workflows programados de GitHub Actions no son puntuales](https://runhooks.app/blog/github-actions-scheduled-workflows-unreliable/)
 - [Workflows programados de GitHub Actions: límites](https://cronuru.com/guides/github-actions-scheduled-workflows)
+- [iOS: la app de inicio con almacenamiento aparte y su `start_url` (un caso real)](https://github.com/uzayr-iqbal-hamid/hypr-remote/issues/1)
+- [Agregar a inicio en iOS: notas de uso](https://naildrivin5.com/blog/2023/08/24/braindump-of-pwa-on-ios.html)
 - RFC 8030 (Web Push), RFC 8291 (cifrado de mensajes), RFC 8292 (VAPID)
