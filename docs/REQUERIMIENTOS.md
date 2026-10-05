@@ -18,7 +18,7 @@ Los IDs no se reusan: un requerimiento que cambia conserva su ID y su texto se a
 | RP-08 | Publicado en una URL pública para probar desde el celular (GitHub Pages, cuenta ellokojavi). | ✅ v0.1 |
 | RP-09 | Documentar requerimientos y decisiones dentro del proyecto. | ✅ v0.1 |
 | RP-10 | Sin dependencias ni paso de build: abrir el repo publicado debe bastar. | ✅ v0.1 |
-| RP-11 | Instalable como “app” en la pantalla de inicio (manifest PWA básico). | ✅ v0.1; con service worker e íconos PNG desde v0.105.0 (D-221) |
+| RP-11 | Instalable como “app” en la pantalla de inicio (manifest PWA básico). | ✅ v0.1; con service worker e íconos PNG desde v0.105.0 (D-221), y con el nombre en el idioma del jugador desde v0.106.1 (D-222) |
 | RP-12 | Idioma español chileno, informal. | ✅ v0.1 |
 | RP-13 | Funcionar sin conexión (service worker). | ⏳ pendiente |
 | RP-14 | Sonidos en las acciones clave, con botón para silenciar. | ✅ v0.3 |
