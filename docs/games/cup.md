@@ -191,7 +191,8 @@ y un contexto en JSON: copa, jugador, pantalla, día, juego, semilla, URL y nave
 
 ## Flujo
 
-`intro` (portada: crear, tus copas, tengo un código) → `crear` → `entrar` (invitación: Soy nuevo
+`intro` (portada: crear, tus copas —las de este celular y, con jugador, las suyas de otros
+celulares, D-220—, tengo un código) → `crear` → `entrar` (invitación: Soy nuevo
 / Ya estoy inscrito) → `tablero` → `jugar` (primero Cómo se juega y el comodín) → `resultado` →
 `admin`. En el tablero van **tus días** (los pasados con su resultado y deshabilitados, el de hoy
 como tarjeta grande, el de ayer habilitado mientras dure su gracia, los que vienen deshabilitados),

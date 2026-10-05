@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /**
  * Puebla los rankings con la historia de La Copa (D-212): el podio de cada copa terminada (para
- * el medallero) y el mejor día de cada persona en cada juego (la pestaña "Copa").
+ * el medallero), el mejor día de cada persona en cada juego (la pestaña "Copa") y las copas en
+ * que está cada jugador, para su lista de "Tus copas" (D-220).
  *
  * Quien jugó antes de los rankings no tiene jugador ni PIN: queda como **jugador heredado**
  * (`jugadores/<jid>.legado = true`), uno por nombre (sin mayúsculas, tildes ni espacios de más:
@@ -121,6 +122,18 @@ export function historia(torneos, base = {}, now = Date.now(), { conLab = false 
     cambios[`records/${PARTIDAS}/${SIEMPRE}/${jid}`] = { s: total, ms: 0, k: claveOrden(total, 0), at: now, n: j.n, ...(esPais(j.co) ? { co: j.co } : {}) };
   }
   for (const [code, p] of Object.entries(podios)) cambios[`torneoPodios/${code}`] = p;
+  // Las copas de cada jugador (D-220), también las del laboratorio: el enlazado y, si no lo hay,
+  // el heredado de su nombre si existe. Una que ya está anotada no se toca.
+  const existe = jid => !!base.jugadores?.[jid] || [...gente.values()].some(p => p.jid === jid);
+  for (const [code, L] of Object.entries(torneos || {})) {
+    if (!L?.meta) continue;
+    for (const [pid, x] of Object.entries(L.players || {})) {
+      if (!x?.name) continue;
+      const jid = esJid(x.j) ? x.j : jidHeredado(claveNombre(x.name));
+      if (!existe(jid) || base.jugadorCopas?.[jid]?.[code]) continue;
+      cambios[`jugadorCopas/${jid}/${code}`] = { p: pid, at: Number(x.at) || L.meta.createdAt || now };
+    }
+  }
   return { cambios, gente: [...gente.values()], podios, mejores };
 }
 
@@ -135,8 +148,8 @@ if (esPrincipal) {
   const escribir = process.argv.includes('--escribir');
   const conLab = process.argv.includes('--con-laboratorio');
   const t = await token();
-  const [torneos, jugadores, records, torneoPodios] = await Promise.all(['torneos', 'jugadores', 'records', 'torneoPodios'].map(r => leer(r, t)));
-  const { cambios, gente, podios } = historia(torneos, { jugadores: jugadores || {}, records: records || {}, torneoPodios: torneoPodios || {} }, Date.now(), { conLab });
+  const [torneos, jugadores, records, torneoPodios, jugadorCopas] = await Promise.all(['torneos', 'jugadores', 'records', 'torneoPodios', 'jugadorCopas'].map(r => leer(r, t)));
+  const { cambios, gente, podios } = historia(torneos, { jugadores: jugadores || {}, records: records || {}, torneoPodios: torneoPodios || {}, jugadorCopas: jugadorCopas || {} }, Date.now(), { conLab });
 
   const recs = Object.keys(cambios).filter(r => /^records\/[^/]+\/[^/]+\/[^/]+$/.test(r));
   const banderas = Object.keys(cambios).filter(r => r.endsWith('/co')).length;
@@ -150,6 +163,7 @@ if (esPrincipal) {
     console.log(`  🏆 ${p.name} (${code}): 🥇 ${lugar(1)} · 🥈 ${lugar(2)} · 🥉 ${lugar(3)}`);
   }
   console.log(`Banderas que faltaban (D-219): ${banderas}`);
+  console.log(`Copas anotadas a sus jugadores (D-220): ${Object.keys(cambios).filter(r => r.startsWith('jugadorCopas/')).length}`);
   console.log(`Filas de récords a escribir: ${recs.length}`);
   for (const [tt, filas] of Object.entries(porTabla).sort()) {
     const top = filas.sort((a, b) => a.k - b.k).slice(0, 3).map(f => `${f.n} ${f.s}`).join(' · ');
