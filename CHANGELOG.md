@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.99.5 — 2026-10-05
+- **Las reglas, en un solo lugar** (D-213): los cánones dicen la regla de hoy y se pusieron al día
+  con las decisiones que los habían dejado atrás (la privacidad de las partidas sin red, la semilla
+  y sus excepciones, el pase del celular, lo que se preselecciona, los modos de un juego de grupo).
+  Las decisiones tienen un estado cerrado, un índice por tema y una tabla de rutas de entonces y de
+  hoy; los requerimientos ya no repiten IDs y cada juego tiene su especificación con la misma
+  plantilla. Sin cambios para quien juega.
+
 ## 0.99.4 — 2026-10-04
 - **El filtro de la portada, en inglés en la URL** (D-214): `?type=logic`, `?type=tabletop`, en vez
   de `?tipo=logica` o `?tipo=mesa`. Los links viejos siguen filtrando lo mismo.
