@@ -414,7 +414,7 @@ Spec and design: [docs/games/cup.md](docs/games/cup.md)
   Timeline Flash (one per theme) keep their 0–100 records. Two people may share a name; with
   different PINs they are different players.
 - **Saved games:** every game stores its state on the device and offers to continue.
-- **Installable:** a PWA manifest to add it to the home screen. The screen stays awake while playing.
+- **Installable:** a PWA manifest, PNG icons for Android and iPhone and a service worker, so the browser offers to install it on the home screen from any game (D-221). The service worker caches nothing yet: there is no offline mode. The screen stays awake while playing.
 
 ### Languages
 
@@ -549,6 +549,7 @@ node public/assets/js/arrastre.test.mjs
 node public/assets/js/compartir.test.mjs
 node public/assets/js/games.test.mjs
 node public/assets/js/i18n.test.mjs
+node public/assets/js/instalable.test.mjs
 node public/assets/js/records.test.mjs
 node public/assets/js/transport/cleanup.test.mjs
 node public/assets/js/transport/dispose.test.mjs
@@ -662,15 +663,16 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   records/                    Leaderboards: the All-Rounder, every game's table and The Cup's medal table (D-212)
   panel/                      Private owner dashboard: now, The Cup, games, traffic and audience, with a page per cup, game and room (Google sign-in; see docs/PANEL.md)
   assets/css/                 Shared styles: base.css (party theme), linea.css (timeline), teclado.css (keypad), ranking.css (leaderboards)
-  assets/js/                  Shared modules: games.js (game registry), i18n.js (ES/EN/PT/DE), labs-idioma.js (a new language in the lab, D-191), ui.js, sound.js, compartir.js (everything shared, D-165), handoff.js, chat.js, session.js, arrastre.js (drag and drop), teclado.js, azar.js and dado3d.js (Random game), frases.js, records.js + jugador.js + ranking.js (players and leaderboards, D-212; jugador-firebase.js and jugador-local.js are their stores)
+  assets/js/                  Shared modules: games.js (game registry), i18n.js (ES/EN/PT/DE), labs-idioma.js (a new language in the lab, D-191), ui.js, sound.js, compartir.js (everything shared, D-165), handoff.js, chat.js, session.js, arrastre.js (drag and drop), teclado.js, azar.js and dado3d.js (Random game), frases.js, records.js + jugador.js + ranking.js (players and leaderboards, D-212; jugador-firebase.js and jugador-local.js are their stores), instalable.js (registers the service worker, D-221)
   assets/js/transport/        Transports: local (same phone), firebase (room) and stats (usage signals)
   assets/og/                  The 1200×630 images shown when a link is shared
-  manifest.webmanifest        PWA manifest (installable on the home screen)
+  manifest.webmanifest        PWA manifest (installable on the home screen); its PNG icons are in assets/icons/
+  sw.js                       Service worker (D-221): for now it makes the app installable and caches nothing; later it receives The Cup's notifications
   ahorcado/ copa/ …           Bridge pages: the old Spanish URLs, forwarding to the new ones (generated, D-192)
 docs/                       Requirements, decisions, canons, one spec per game (docs/games/) and the README screenshots
 firebase/                   Realtime Database security rules and notes
 tools/
-  release/                    Publishing: set-version.py (version stamp, at publish time), readme.py + hechos.mjs (this README), og.mjs (social cards and bridge pages)
+  release/                    Publishing: set-version.py (version stamp, at publish time), readme.py + hechos.mjs (this README), og.mjs (social cards and bridge pages), iconos.mjs (the app icons, from assets/icon.svg)
   firebase/                   reglas.mjs (publish the rules), reportes.mjs (The Cup bug reports), en-curso.mjs (anyone playing?), rankings-historia.mjs (The Cup's history into the leaderboards)
   generators/                 mapa.mjs (the world of Where is it?), flota.py (the Battleship fleet)
   agents/                     dilemas.mjs (usability dilemmas as issues, D-132), documentar.mjs (the documentation agent, D-172), limpiar-copias.mjs (removes merged worktrees at session start, D-218)
@@ -713,5 +715,6 @@ These documents are in Spanish, like the rest of the project.
 - [Diseño: Línea de Tiempo](docs/games/timeline.md)
 - [Changelog](CHANGELOG.md)
 - [El alemán](docs/ALEMAN.md)
+- [App instalable y avisos al celular (PWA + Web Push)](docs/PWA-NOTIFICACIONES.md)
 - [Guía de usabilidad](docs/USABILIDAD.md)
 <!-- /generado -->
