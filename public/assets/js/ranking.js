@@ -269,10 +269,10 @@ export function bloqueVictorias({ juego, nombre, alTocar = () => {} }) {
  * (Toque y Fama solo, Línea Relámpago) o de un juego de grupo. Vacío mientras los rankings estén
  * en el laboratorio y este celular no los haya activado.
  */
-export function bloqueTabla({ tabla, titulo, hint = null, alTocar = () => {} }) {
+export function bloqueTabla({ tabla, titulo, hint = null, alTocar = () => {}, entrar = true }) {
   const caja = document.createDocumentFragment();
   if (!rankingsVisibles()) return caja;
-  caja.append(bloqueRanking({ juego: tabla, titulo, hint, alTocar }), bloqueJugador({ alTocar }));
+  caja.append(bloqueRanking({ juego: tabla, titulo, hint, alTocar }), ...(entrar ? [bloqueJugador({ alTocar })] : []));
   return caja;
 }
 

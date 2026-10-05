@@ -707,7 +707,8 @@ function soloFin(codigo, p, { s, t, ms, estado }) {
       el('button', { class: 'btn btn--yellow', onClick: () => { SFX.tap(); soloNueva(); } }, T.playAgain),
       el('button', { class: 'btn btn--ghost', onClick: () => { SFX.tap(); clearSession(); location.href = location.pathname; } }, T.changeMode),
       el('a', { class: 'btn btn--ghost', href: '../' }, T.backMenu)),
-    bloqueTabla({ tabla: TABLA_SOLO, titulo: fmt(COMMON[lang].rk.titleOf, { game: T.title }), alTocar: () => SFX.tap() }),
+    // En el resultado, solo la tabla: entrar se ofrece en la antesala (C-8, los botones a la vista)
+    bloqueTabla({ tabla: TABLA_SOLO, titulo: fmt(COMMON[lang].rk.titleOf, { game: T.title }), alTocar: () => SFX.tap(), entrar: false }),
   );
   if (estado.resuelto) { confetti({ count: 220, duration: 3500 }); SFX.win(); vibrate([30, 50, 30]); } else { SFX.timeUp(); vibrate(60); }
 }
