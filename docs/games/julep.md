@@ -63,7 +63,7 @@ cosa.
 | 🤖 Contra el celular | 1 | De uno a cinco rivales del aparato, a elección: declaran, cambian y juegan mirando **solo sus propias cartas**. |
 
 **Rankings (D-215):** con un jugador de los rankings abierto en el celular (nombre y PIN,
-D-212, hoy en el laboratorio), cada partida terminada se cuenta en `jugadores/<jid>/juegos/julepe`
+D-212, abiertos a todos desde D-217), cada partida terminada se cuenta en `jugadores/<jid>/juegos/julepe`
 y, si ganó, suma una victoria en la tabla `julepe_victorias` (semana y siempre): en sala, la de su
 rol; contra el celular, la del humano; en un celular, la del jugador que se llama como él. Un
 empate no es victoria. La tabla (semana, siempre y amigos) va en la intro, debajo de los modos

@@ -124,7 +124,7 @@ La pantalla final es distinta: no hay ranking ni "ganó fulano", solo si la saca
 vidas, y debajo la palabra que era.
 
 **Rankings (D-215):** con un jugador de los rankings abierto en el celular (nombre y PIN,
-D-212, hoy en el laboratorio), cada partida terminada se cuenta en `jugadores/<jid>/juegos/ahorcado`
+D-212, abiertos a todos desde D-217), cada partida terminada se cuenta en `jugadores/<jid>/juegos/ahorcado`
 y, si ganó, suma una victoria en la tabla `ahorcado_victorias` (semana y siempre): en sala, la de su
 rol; contra el celular, la del humano; en un celular, la del jugador que se llama como él. Un
 empate no es victoria. La tabla (semana, siempre y amigos) va en la intro, debajo de los modos
