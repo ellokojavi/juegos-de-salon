@@ -164,7 +164,9 @@ con eso la pantalla entra también a las pruebas de idiomas. Para verlo en un ce
   Firebase) y `ranking.js` + `ranking.css` (pantalla). **En el laboratorio:** solo se ven en los
   celulares que los activan en `/labs/`; para abrirlos a todos, `RANKINGS_EN_LABS = false`. La
   historia de La Copa (podios y la pestaña "Copa", con jugadores heredados que cada uno reclama):
-  `node tools/firebase/rankings-historia.mjs [--con-laboratorio] [--escribir]`.
+  `node tools/firebase/rankings-historia.mjs [--con-laboratorio] [--escribir]`. Los juegos de grupo
+  anotan victorias con `finDePartida` (`ranking.js`) al terminar, y muestran su tabla con
+  `bloqueVictorias` en la intro (D-215).
 
 ## Idiomas (C-3, D-197)
 
