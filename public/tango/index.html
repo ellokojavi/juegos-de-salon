@@ -50,6 +50,16 @@
   <meta name="twitter:image:alt" content="Tango: Llena la grilla con soles y lunas sin poner tres iguales seguidos.">
   <!-- /generado -->
   <link rel="manifest" href="../manifest.webmanifest">
+  <script>
+    // El manifest del idioma elegido, antes de que el navegador lo lea: cambiarlo después no siempre alcanza (D-222)
+    (function () {
+      try {
+        var l = (new URLSearchParams(location.search).get('lang') || localStorage.getItem('juegos-de-salon:lang') || '').toLowerCase();
+        var m = document.querySelector('link[rel="manifest"]');
+        if (m && /^(en|pt|de)$/.test(l)) m.href = m.href.replace(/manifest\.webmanifest$/, 'manifest.' + l + '.webmanifest');
+      } catch (_) { /* queda el del español */ }
+    })();
+  </script>
   <link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="../assets/css/base.css">
   <link rel="stylesheet" href="../assets/css/linea.css">
@@ -57,6 +67,7 @@
   <link rel="stylesheet" href="../cup/style.css">
   <link rel="stylesheet" href="../assets/css/ranking.css">
   <link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-title" content="Juegos de Salón">
   <script type="module">import '../assets/js/instalable.js';</script>
 </head>
 <body data-suelto="tango">

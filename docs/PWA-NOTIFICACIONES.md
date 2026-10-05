@@ -267,7 +267,7 @@ push.js (en la página)                    pushEnviados/<código>/<día>/<tipo> 
 - **Hecho en el PR 1:** íconos PNG de 192 y 512 px, uno `maskable` y el `apple-touch-icon` de 180
   px, en `public/assets/icons/`. El SVG solo no basta para que Android ofrezca instalar ni para el
   ícono de iPhone. Se rehacen desde `assets/icon.svg` con `node tools/release/iconos.mjs`.
-- **Hecho:** el manifest lleva `id`, `scope` y los íconos. Falta, para el PR 4, que `start_url`
+- **Hecho:** el manifest lleva `id`, `scope` y los íconos. Hay uno por idioma, con el nombre de la app en ese idioma, y el iPhone lo toma de `apple-mobile-web-app-title` (D-222). Falta, para el PR 4, que `start_url`
   lleve `?pwa` y así el panel cuente cuántos abren desde la app instalada (D-44).
 - **Hecho:** las 19 páginas de la app (las que ya tenían manifest) llevan el `apple-touch-icon` y
   registran el service worker; `public/assets/js/instalable.test.mjs` lo exige. Las puertas por

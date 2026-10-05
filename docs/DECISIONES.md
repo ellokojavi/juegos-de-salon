@@ -70,7 +70,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220 |
 | Marketing | `marketing/README.md` | D-178 |
-| App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221 |
+| App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222 |
 
 ---
 
@@ -371,7 +371,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 **Consecuencias:** Agregar un idioma es sumarlo a `LANGS`, al toggle y a los `LOCALES`; no cambia el arranque. Las pruebas de punta a punta parten siempre en español salvo que toquen el toggle. Si algún día se quiere ofrecer el idioma del navegador, será una sugerencia visible y no un cambio silencioso.
 
 ## D-48 · Portugués de Brasil como tercer idioma, en las mismas claves
-**Fecha:** 2026-09-11 · **Estado:** corregida por D-197
+**Fecha:** 2026-09-11 · **Estado:** corregida por D-197, D-222
 **Decisión:** La app se puede jugar entera en portugués: menú, frases del pie, los cuatro juegos con sus modos, salas, chat, errores de transporte, pantallas de pase y las cartas de los cuatro mazos de Línea de Tiempo. Es portugués **de Brasil**, informal ("você", "celular", "bora jogar", "vira, vira, vira"), y se agrega como un tercer diccionario `pt` con exactamente las mismas claves que `es` y `en`: en `COMMON` de `i18n.js`, en `games.js`, en `FRASES`, en `LOCALES` de cada `rules.js`, en el nombre y la pista de cada mazo y en cada carta. Los nombres de los juegos se traducen, como ya se hacía en inglés: Quarto Rei, Toque e Fama, Batalha Naval, Linha do Tempo; los mini-juegos de Cuarto Rey pasan a Era Uma Vez, Porquinho Bochechudo, Cultura de Boteco y Eu Nunca; los sorbos son "goles", la penitencia es "prenda".
 **Por qué:** Brasil es el vecino más grande y el panel ya mostraba celulares en `pt-BR` (D-44). Se elige la variante brasileña y no la europea porque es la que van a leer casi todos los que toquen el botón, y porque las dos difieren justo en las palabras que la app más usa ("celular" contra "telemóvel", "você" contra "tu"). Un solo diccionario con las mismas claves, y no un idioma "parcial" que caiga al inglés donde falte, porque una pantalla a medias en dos idiomas se ve peor que no ofrecer el idioma: C-3 dice que toda la experiencia va en el idioma elegido.
 **Cómo:** `LANGS = ['es', 'en', 'pt']` y una etiqueta 🇧🇷 PT en el toggle; `yearLabel` de Línea de Tiempo usa "a.C." para español y portugués y "BC" solo para inglés; el test del motor exige `pt` en cada carta y rechaza apóstrofos rectos dentro del texto. `sala-error.mjs` prueba el mensaje de sala caída también en portugués. Las traducciones se adaptan (C-3): las comunas de Santiago son bairros, los equipos chilenos son times brasileiros, y las frases del pie se reescribieron con humor de rolê.
@@ -3637,3 +3637,22 @@ el PR 2 lo prueba primero en iPhones reales. Una página nueva de la app copia l
 `<head>` (manifest, ícono del iPhone e `instalable.js`); `instalable.test.mjs` las exige y revisa
 que cada juego del registro tenga su manifest. El modo sin conexión (RP-13) sigue pendiente y
 sería otro paso.
+
+## D-222 · La app instalada se llama como en el idioma del jugador
+**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** completa D-221 y corrige D-48 (el manifest ya no es uno solo en español)
+**Decisión:** El ícono de la app instalada dice **Juegos de Salón**, **Party Games**, **Jogos de
+Salão** o **Salonspiele**: el `appTitle` del idioma elegido (C-3), el mismo nombre de la portada.
+- Hay un manifest por idioma: `manifest.webmanifest` (español) y `manifest.<idioma>.webmanifest`,
+  iguales salvo `name`, `short_name`, `description` (el `appSub`) y `lang`. Comparten el `id`: es
+  una sola app.
+- Un script corto, justo después del `<link rel="manifest">` de cada página, lo cambia al del idioma
+  elegido mientras se lee la página: cambiarlo después, desde un módulo, a veces llegaba tarde y
+  Chrome se quedaba con el del español. `instalable.js` lo repite al cargar, y
+  pone el mismo nombre en `apple-mobile-web-app-title`, que es el que usa el iPhone. Sin ese meta,
+  el iPhone proponía el título de la página ("El Ahorcado 🪢 · Juegos de Salón").
+**Por qué:** Lo pidió el dueño: la app instalada decía solo "Juegos" (el `short_name` de antes), y
+en el iPhone el nombre del juego que estaba abierto.
+**Consecuencias:** El nombre se elige al instalar: quien cambia de idioma después conserva el de
+entonces hasta reinstalar (Android puede ofrecer actualizarlo solo). En algunos Android un nombre
+largo se corta bajo el ícono ("Juegos de Sa…"). `instalable.test.mjs` exige que cada manifest calce
+con `COMMON` de `i18n.js`, y `tools/e2e/instalable.mjs` revisa el nombre en los cuatro idiomas.

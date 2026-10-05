@@ -1,14 +1,14 @@
 {
   "id": "./",
-  "name": "Juegos de Salón",
-  "short_name": "Juegos de Salón",
-  "description": "Juegos tradicionales llevados a tu celular para pasar el tiempo solo o con amigos.",
+  "name": "Jogos de Salão",
+  "short_name": "Jogos de Salão",
+  "description": "Jogos tradicionais trazidos pro seu celular, pra passar o tempo sozinho ou com amigos.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "background_color": "#150726",
   "theme_color": "#150726",
-  "lang": "es",
+  "lang": "pt",
   "icons": [
     { "src": "assets/icon.svg", "sizes": "any", "type": "image/svg+xml" },
     { "src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },

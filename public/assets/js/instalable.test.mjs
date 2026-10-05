@@ -7,7 +7,8 @@ import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { join, dirname, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { registrar } from './instalable.js';
+import { registrar, nombrar, manifestDe } from './instalable.js';
+import { COMMON, IDIOMAS } from './i18n.js';
 import { ICONOS } from '../../../tools/release/iconos.mjs';
 import { GAMES, SUELTOS } from './games.js';
 
@@ -61,11 +62,57 @@ await caso('cada página con manifest lleva el ícono del iPhone y registra el s
     const nombre = relative(PUBLIC, p);
     const prefijo = '../'.repeat(nombre.split('/').length - 1) || './';
     assert.ok(html.includes(`<link rel="apple-touch-icon" href="${prefijo === './' ? '' : prefijo}assets/icons/apple-touch-icon.png">`), `${nombre}: falta el apple-touch-icon`);
+    assert.ok(html.includes('<meta name="apple-mobile-web-app-title" content="Juegos de Salón">'), `${nombre}: falta el nombre de la app para el iPhone`);
+    // El manifest del idioma se elige mientras se lee la página, justo después del link (D-222)
+    const tras = html.slice(html.indexOf('<link rel="manifest"'), html.indexOf('<link rel="manifest"') + 900);
+    const idiomas = /test\(l\)/.test(tras) && /\/\^\(([a-z|]+)\)\$\//.exec(tras)?.[1];
+    assert.equal(idiomas, IDIOMAS.filter(l => l !== 'es').join('|'), `${nombre}: falta el script que elige el manifest del idioma, o no trae todos los idiomas`);
     const registro = html.indexOf(`<script type="module">import '${prefijo}assets/js/instalable.js';</script>`);
     assert.ok(registro > 0, `${nombre}: falta importar instalable.js con la ruta ${prefijo}`);
     const ultimaHoja = html.lastIndexOf('<link rel="stylesheet"', registro);
     assert.ok(ultimaHoja < registro && html.indexOf('<link rel="stylesheet"') < registro, `${nombre}: instalable.js va después de las hojas de estilo`);
   }
+});
+
+await caso('un manifest por idioma, con el nombre de la app en ese idioma y todo lo demás igual (D-222)', () => {
+  const es = JSON.parse(readFileSync(join(PUBLIC, 'manifest.webmanifest'), 'utf8'));
+  for (const lang of IDIOMAS) {
+    const m = JSON.parse(readFileSync(join(PUBLIC, manifestDe(lang)), 'utf8'));
+    assert.equal(m.name, COMMON[lang].appTitle, `${manifestDe(lang)}: name`);
+    assert.equal(m.short_name, COMMON[lang].appTitle, `${manifestDe(lang)}: short_name`);
+    assert.equal(m.description, COMMON[lang].appSub, `${manifestDe(lang)}: description`);
+    assert.equal(m.lang, lang);
+    const resto = x => JSON.stringify({ ...x, name: 0, short_name: 0, description: 0, lang: 0 });
+    assert.equal(resto(m), resto(es), `${manifestDe(lang)} difiere del español en algo más que el idioma (el id tiene que ser el mismo: es una sola app)`);
+  }
+});
+
+/** Un documento mínimo: el link del manifest, y el meta del iPhone si la página lo trae. */
+function documento({ conMeta = true } = {}) {
+  const link = { href: 'https://juegosdesalon.cl/manifest.webmanifest' };
+  let meta = conMeta ? { name: 'apple-mobile-web-app-title', content: 'Juegos de Salón' } : null;
+  return {
+    head: { appendChild: el => { meta = el; } },
+    createElement: () => ({}),
+    querySelector: sel => (sel.includes('manifest') ? link : meta),
+    get link() { return link; }, get meta() { return meta; },
+  };
+}
+
+await caso('nombrar: cambia el manifest y el nombre del iPhone al idioma elegido', () => {
+  const raiz = new URL('https://juegosdesalon.cl/');
+  const d = documento();
+  assert.equal(nombrar({ doc: d, lang: 'pt', raiz }), 'Jogos de Salão');
+  assert.equal(d.link.href, 'https://juegosdesalon.cl/manifest.pt.webmanifest');
+  assert.equal(d.meta.content, 'Jogos de Salão');
+  const sinMeta = documento({ conMeta: false });
+  nombrar({ doc: sinMeta, lang: 'de', raiz });
+  assert.equal(sinMeta.meta.content, 'Salonspiele');
+  assert.equal(sinMeta.meta.name, 'apple-mobile-web-app-title');
+  const es = documento();
+  nombrar({ doc: es, lang: 'es', raiz });
+  assert.equal(es.link.href, 'https://juegosdesalon.cl/manifest.webmanifest');
+  assert.equal(nombrar({ doc: { querySelector: () => null }, lang: 'en', raiz }), null);
 });
 
 await caso('registrar: usa sw.js de la raíz con alcance en la raíz', async () => {
