@@ -86,7 +86,7 @@ await caso('la clave de vapid.mjs: 65 bytes que un navegador acepta (P-256 sin c
   assert.notEqual(parVapid().publica, publica, 'cada par es nuevo');
 });
 
-await caso('vapid.js: la pública vacía en git, y vapid.mjs solo cambia esa línea', () => {
+await caso('vapid.js: una línea con la pública, y vapid.mjs solo cambia esa línea', () => {
   const texto = readFileSync(new URL('./vapid.js', import.meta.url), 'utf8');
   assert.match(texto, /export const VAPID_PUBLICA = '[A-Za-z0-9_-]*';/);
   const otro = conClave(texto, 'ABC_-1');
