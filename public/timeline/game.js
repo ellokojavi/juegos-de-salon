@@ -935,11 +935,13 @@ function terminarSolo(partida, p, { s, t, ms, estado }) {
   $('#sr-sub').textContent = fmt(T.soloResult, { ok: estado.aciertos, n: estado.marcas.length, t: mmss(ms) });
   $('#sr-record').textContent = celebrar ? T.newRecord : antes ? fmt(T.prevRecord, { tema: deck.name[lang], s: antes.s, t: mmss(antes.ms) }) : '';
   $('#sr-record').hidden = !$('#sr-record').textContent;
+  // La tabla del final se arma antes del aviso: al guardar la partida, el aviso la recarga
+  const tablaFin = bloqueTabla({ tabla: tablaRelampago(partida.tema), titulo: tituloRelampago(partida.tema), alTocar: () => SFX.tap(), entrar: false });
   // Con jugador, el aviso de los rankings reemplaza al récord del celular (D-212)
   document.getElementById('sr-rk-aviso')?.remove();
   if (rankingsVisibles() && leerYo()) {
     $('#sr-record').hidden = true;
-    const aviso = avisoPartida({ juego: GAME_ID, variante: `rel-${partida.tema}`, s, ms });
+    const aviso = avisoPartida({ juego: GAME_ID, variante: `rel-${partida.tema}`, s, ms, alAnotar: () => tablaFin.recargar() });
     aviso.id = 'sr-rk-aviso';
     $('#sr-record').after(aviso);
   }
@@ -960,7 +962,7 @@ function terminarSolo(partida, p, { s, t, ms, estado }) {
     el('button', { class: 'btn btn--ghost', onClick: () => { SFX.tap(); clearSession(); renderResumeSlot(); showScreen('screen-intro'); } }, T.changeMode),
     el('a', { class: 'btn btn--ghost', href: '../' }, T.backMenu),
     // En el resultado, solo la tabla: entrar se ofrece en la antesala (C-8, los botones a la vista)
-    bloqueTabla({ tabla: tablaRelampago(partida.tema), titulo: tituloRelampago(partida.tema), alTocar: () => SFX.tap(), entrar: false }),
+    tablaFin,
   );
 }
 

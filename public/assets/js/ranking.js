@@ -271,8 +271,12 @@ export function bloqueVictorias({ juego, nombre, alTocar = () => {} }) {
  */
 export function bloqueTabla({ tabla, titulo, hint = null, alTocar = () => {}, entrar = true }) {
   const caja = document.createDocumentFragment();
+  // `recargar()`: para después de anotar la partida, que se guarda mientras la tabla ya se está leyendo
+  caja.recargar = () => {};
   if (!rankingsVisibles()) return caja;
-  caja.append(bloqueRanking({ juego: tabla, titulo, hint, alTocar }), ...(entrar ? [bloqueJugador({ alTocar })] : []));
+  const rk = bloqueRanking({ juego: tabla, titulo, hint, alTocar });
+  caja.recargar = () => rk.recargar();
+  caja.append(rk, ...(entrar ? [bloqueJugador({ alTocar })] : []));
   return caja;
 }
 
