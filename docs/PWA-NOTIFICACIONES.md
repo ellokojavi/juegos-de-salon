@@ -49,11 +49,11 @@ perfecto para un aviso: hay una fecha, hay algo pendiente y le importa a la pers
 
 | Aviso | Cuándo | A quién | Ejemplo |
 |---|---|---|---|
-| **Se abrió el día** | Entre 9:00 y 10:00 del jugador (no a las 00:00) | Inscritos que activaron avisos | "Día 3: Conexiones. Ya puedes jugar." |
-| **Se te acaba el plazo** | Unas 4 horas antes de que cierre el día (el de gracia, o la final) | Solo a quien **no** ha jugado ese día | "⏳ Te quedan 4 horas para jugar el día 3. Si no, suma 0." |
+| **Se abrió el día** | Entre 9:00 y 10:00 del jugador (no a las 00:00) | Inscritos que activaron avisos | "🔗 Día 3: Conexiones. Ya puedes jugar." |
+| **Se te acaba el plazo** | Unas 4 horas antes de que cierre el día (el de gracia, o la final) | Solo a quien **no** ha jugado ese día | "⏳ Te quedan 4 horas para jugar el día 3. Si no lo juegas, son 0 puntos." |
 | **Terminó la copa** | Al cerrar (o al terminarla el admin, D-161) | Todos los inscritos con avisos | "🥇 Ganó Ana. Quedaste 2.°." |
-| **La final** | En la mañana del último día, en vez de "se abrió el día" | Inscritos con avisos | "Hoy es la final y vale doble. Vas 2.°, a 3 puntos de Ana." |
-| Alguien entró | Al inscribirse alguien | Solo el admin | "Pedro entró a tu copa. Ya son 5 jugadores." |
+| **La Gran Final** | En la mañana del último día, en vez de "se abrió el día" | Inscritos con avisos | "🏁 Hoy es La Gran Final y vale doble. Vas 2.°, a 3 puntos de Ana." |
+| Alguien se inscribió | Al inscribirse alguien | Solo el admin | "Pedro se inscribió en tu copa. Ya son 5 jugadores inscritos." |
 
 Lo que **no** se avisa, a propósito:
 
@@ -91,9 +91,9 @@ entero: la pica del grupo sigue ahí). El aviso es personal y la tarjeta compart
 
 | Momento | Pantalla | Qué ve el jugador |
 |---|---|---|
-| **Acaba de jugar el día** (el mejor momento: ganó o perdió, y ya piensa en mañana) | Resultado del día (`resultado()`), debajo del puntaje | Tarjeta: "🔔 ¿Te avisamos cuando se abra el día 4? Te llega un aviso en la mañana y otro en la tarde si todavía no juegas." · **Avisarme** · *Ahora no* |
+| **Acaba de jugar el día** (el mejor momento: ganó o perdió, y ya piensa en mañana) | Resultado del día (`resultado()`), debajo del puntaje | Tarjeta: "🔔 ¿Te avisamos cuando se abra el día 4? Te llega un aviso en la mañana y otro antes del cierre si todavía no juegas." · **Avisarme** · *Ahora no* |
 | **Se inscribió y la copa todavía no parte** | Tablero, arriba | "🔔 La copa parte el lunes. ¿Te avisamos ese día?" · **Avisarme** · *Ahora no* |
-| **Creó la copa** (admin) | Tablero recién creada, después de invitar | Lo mismo, y además el admin recibe "Pedro entró a tu copa" |
+| **Creó la copa** (admin) | Tablero recién creada, después de invitar | Lo mismo, y además el admin recibe "Pedro se inscribió en tu copa" |
 | **Siempre** | Tablero, botón chico en la cabecera | 🔔 con su estado (más abajo) |
 
 La tarjeta sale **una sola vez por copa**, en el primero de esos momentos que le toque al jugador.
@@ -166,7 +166,7 @@ falta: WhatsApp abre los links en Chrome.
 | Estado | Se ve | Al tocarlo |
 |---|---|---|
 | Apagado | 🔔 **Activar avisos** | El camino de arriba |
-| Encendido | 🔔 **Avisos activos** | Hoja con dos interruptores: "Cuando se abre un día" y "Si se te va a pasar el plazo", más **Apagar avisos de esta copa** y **Mandar un aviso de prueba** |
+| Encendido | 🔔 **Avisos activos** | Hoja con dos interruptores: "Cuando se abre un día" y "Antes del cierre, si no has jugado", más **Silenciar esta copa** y **Probar los avisos** |
 | Bloqueado (la persona dijo "No" al sistema) | 🔕 **Avisos bloqueados** | Cómo desbloquearlos en ese celular: en Android, el candado junto a la dirección → Permisos → Notificaciones; en iPhone, Ajustes → Notificaciones → Juegos |
 | El celular no puede | (no aparece) | — |
 
@@ -179,24 +179,24 @@ guarda de nuevo.
 Al activar, el celular se manda a sí mismo un aviso al instante, sin pasar por el servidor:
 "✅ Listo. Te avisaremos de La Copa: Los Primos. El próximo aviso llega el martes en la mañana."
 Así la persona ve cómo se verán y sabe que funcionó. Si ese aviso no aparece (el celular en
-modo No molestar, por ejemplo), el **Mandar un aviso de prueba** de la hoja sirve para revisarlo.
+modo No molestar, por ejemplo), el botón **Probar los avisos** de la hoja sirve para revisarlo.
 
 ### Los avisos
 
 | Aviso | Título | Texto | Al tocarlo |
 |---|---|---|---|
-| Se abrió el día | 🏆 La Copa: Los Primos | "Día 3: Conexiones. Ya puedes jugar." | El día 3, en "Empezar" |
-| Se te va a pasar el plazo | 🏆 La Copa: Los Primos | "⏳ Te quedan 4 horas para jugar el día 3. Si no, suma 0." | El día 3 |
-| La final | 🏆 La Copa: Los Primos | "Hoy es la final y vale doble. Vas 2.°, a 3 puntos de Ana." | La final |
-| Terminó | 🏆 La Copa: Los Primos | "🥇 Ganó Ana. Quedaste 2.°." | El podio |
-| Alguien entró (solo admin) | 🏆 La Copa: Los Primos | "Pedro entró a tu copa. Ya son 5 jugadores." | El tablero |
+| Se abrió el día | 🏆 La Copa: Los Primos | "🔗 Día 3: Conexiones. Ya puedes jugar." (el emoji del juego, como el recordatorio) | El día 3, en "Empezar" |
+| Se te acaba el plazo | 🏆 La Copa: Los Primos | "⏳ Te quedan 4 horas para jugar el día 3. Si no lo juegas, son 0 puntos." | El día 3 |
+| La Gran Final | 🏆 La Copa: Los Primos | "🏁 Hoy es La Gran Final y vale doble. Vas 2.°, a 3 puntos de Ana." | La Gran Final |
+| Terminó | 🏆 La Copa: Los Primos | "🥇 Ganó Ana. Quedaste 2.°." (a quien ganó: "🥇 ¡Ganaste la copa!") | El podio |
+| Alguien se inscribió (solo admin) | 🏆 La Copa: Los Primos | "Pedro se inscribió en tu copa. Ya son 5 jugadores inscritos." | El tablero |
 
 - **Hora del jugador, no de la copa**: la zona horaria se guarda con la suscripción. El aviso de
   la mañana llega entre 9:00 y 10:00, y el del plazo unas 4 horas antes del cierre, pero nunca
   entre las 22:00 y las 8:00 de quien lo recibe. Si el plazo cae de noche para él, el aviso llega a
   las 20:00 y dice la hora exacta del cierre.
 - **A lo más 2 avisos por copa al día.** Si alguien juega varias copas, los avisos del mismo
-  momento se juntan en uno: "Tienes día nuevo en 2 copas: Los Primos y La Oficina."
+  momento se juntan en uno: "Tienes un día nuevo en 2 copas: Los Primos y La Oficina."
 - **No se apilan**: cada aviso lleva una etiqueta por copa y día, así que el del plazo reemplaza
   al de la mañana en la bandeja.
 - **En Android** el aviso trae dos botones: **Jugar** y **Silenciar esta copa**. iPhone no los
@@ -208,9 +208,11 @@ modo No molestar, por ejemplo), el **Mandar un aviso de prueba** de la hoja sirv
 
 ### Textos para revisar (U-1, U-3, U-17)
 
-Los botones caben en 320 px: **Avisarme**, **Ahora no**, **Activar avisos**, **Avisos activos**,
-**Ya la agregué**, **Copiar link**, **Jugar**, **Silenciar esta copa**. Los textos largos van arriba
-del botón, en frases completas. Todos se proponen así y el dueño los corrige en el PR (U-3).
+Los botones caben en 320 px (U-17, unos 18 caracteres): **Avisarme**, **Ahora no**, **Activar avisos**,
+**Avisos activos**, **Avisos bloqueados**, **Ya la agregué**, **Cerrar**, **Copiar link**, **Jugar**,
+**Silenciar esta copa** y **Probar los avisos**. Apagar los avisos de una copa se dice siempre
+"silenciar", en la hoja y en el aviso (U-5). Los textos largos van arriba del botón, en frases
+completas. Todos se proponen así y el dueño los corrige en el PR (U-3).
 
 ### Qué se mide (panel, D-44)
 
