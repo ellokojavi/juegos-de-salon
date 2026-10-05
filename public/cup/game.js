@@ -2012,10 +2012,11 @@ function practica(id) {
     mod.ensayo && LABS ? el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-ensayo', onClick: () => { SFX.tap(); ensayoPractica(id, semilla); } }, `🧪 ${T.tryFirst}`) : null,
     // Suelto no hace falta decir que no cuenta para una copa: no hay copa a la vista
     LABS ? el('p', { class: 'muted center' }, T.practiceHint) : null,
-    // Entrar es opcional y se ofrece antes de jugar (D-212): sin jugador se juega igual
-    rankea(id) ? bloqueJugador({ alTocar: () => SFX.tap() }) : null,
     el('button', { class: 'btn btn--yellow', id: 'btn-empezar', onClick: () => { SFX.tap(); jugarPractica(id, semilla); } }, `${J.emoji} ${T.start}`),
     volverDePractica(),
+    // Entrar es opcional (D-212) y va pegado al ranking: antes de Empezar lo dejaba fuera de la
+    // pantalla en alemán y portugués (C-8, dilema #186). El resultado lo vuelve a ofrecer.
+    rankea(id) ? bloqueJugador({ alTocar: () => SFX.tap() }) : null,
     rankea(id) ? bloqueRanking({ juego: id, titulo: fmt(RK.titleOf, { game: J.nombre }), pestanas: ['semana', 'siempre', 'amigos', 'copa'], alTocar: () => SFX.tap() }) : null));
 }
 
