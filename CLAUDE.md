@@ -55,7 +55,10 @@ Puede haber varias sesiones de Claude trabajando en este repo al mismo tiempo:
   ```
   Si alguno se niega, hay trabajo que no está en `main`: se mira antes de forzar (`--force`, `-D`).
   Sin trabajo pendiente se ve **una sola** carpeta `juegos-de-salon` (`git worktree list`; si una
-  carpeta se borró a mano, `git worktree prune`).
+  carpeta se borró a mano, `git worktree prune`). Con el auto-merge, el PR puede fusionarse cuando
+  nadie mira: **al empezar cada sesión**, un hook (`.claude/settings.json`) corre
+  `node tools/agents/limpiar-copias.mjs`, que borra las copias cuya rama ya entró a `main` por un
+  merge y nombra las que tienen cambios sin commitear (D-218). GitHub borra la rama remota al fusionar.
 - **Pruebas en paralelo:** cada sesión sirve su copia en su puerto (`python3 -m http.server 87xx -d public`),
   y corre los guiones con `SITIO=http://localhost:87xx`. Los puertos de Chrome no se eligen: cada
   Chrome toma uno libre y muere con su guion, también si el guion falla o se corta (`cdp.mjs`,
@@ -87,11 +90,13 @@ llave del dueño) y no fusiona. Todo lo demás de esta guía vale igual.
    gh pr merge <n> --auto --merge
    ```
    GitHub lo fusiona solo cuando `pruebas` y `punta-a-punta` pasan; si fallan o hay conflicto,
-   no fusiona y hay que arreglarlo. La app no avisa cuando el CI pasa, solo cuando falla: lo que
-   va **después** de fusionar (publicar las reglas, borrar la copia y la rama) se hace en cuanto
-   el PR aparezca fusionado (`gh pr view <n> --json state`), y se le dice al dueño que queda
-   pendiente hasta entonces. Un PR que no está listo (un borrador, uno que espera una decisión
-   del dueño) no lleva auto-merge.
+   no fusiona y hay que arreglarlo. Un PR que no está listo (un borrador, uno que espera una
+   decisión del dueño) no lleva auto-merge.
+5. **Monitor de CI** (D-218): junto con el auto-merge se activa el monitor del PR en la app
+   (`set_monitor` con `auto_fix` y `address_comments`), que despierta a la sesión cuando una prueba
+   falla, hay un conflicto o llega un comentario: lo único que necesita a alguien. Nunca se sondea
+   el CI. Lo de después de fusionar ya no espera a nadie: las reglas de Firebase las publica
+   `publicar.yml` y la copia la borra el hook de inicio de sesión.
 
 ## Al fusionar y publicar (C-11, D-205)
 
@@ -102,13 +107,15 @@ llave del dueño) y no fusiona. Todo lo demás de esta guía vale igual.
   python3 tools/release/set-version.py --version             # la versión de hoy, la del CHANGELOG
   python3 tools/release/set-version.py --sitio /tmp/sitio    # estampa una copia, como al publicar
   ```
-- Si el PR tocó `firebase/database.rules.json`, se publican las reglas (D-122; necesita la llave
-  en `~/.config/juegos-de-salon/firebase-admin.json`, fuera del repo):
+- Las reglas de Firebase las publica `publicar.yml` en cada fusión, antes que el sitio (D-218):
+  no sube nada si ya están, y si Firebase las rechaza el sitio no se publica. Necesita el secreto
+  `FIREBASE_ADMIN_JSON` en GitHub (la llave de la cuenta de servicio, que carga el dueño); sin él,
+  avisa y se publican a mano, como antes (D-122; la llave en `~/.config/juegos-de-salon/firebase-admin.json`):
   ```bash
   node tools/firebase/reglas.mjs publicar     # sube las reglas y verifica que quedaron
   node tools/firebase/reglas.mjs revisar      # ¿lo publicado es lo del repo?
   ```
-- La copia y la rama se borran (arriba).
+- La copia y la rama se borran solas (arriba, D-218); si se quiere ya, `node tools/agents/limpiar-copias.mjs`.
 
 ## README, capturas y tarjetas sociales (C-13, D-51, D-181)
 
