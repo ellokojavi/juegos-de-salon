@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.99.6 — 2026-10-05
+- **Las reglas se revisan solas** (D-213): una prueba exige a cada juego su motor con tests, su
+  gancho de pruebas y su especificación, o una excepción con su decisión; el revisor de la
+  documentación avisa de números de decisión que faltan, estados sin marcar, IDs repetidos y rutas
+  que no existen. Las pruebas en Chrome toman un puerto libre y cierran su navegador al terminar,
+  así que varias sesiones pueden probar a la vez. Sin cambios para quien juega.
+
 ## 0.99.5 — 2026-10-05
 - **Las reglas, en un solo lugar** (D-213): los cánones dicen la regla de hoy y se pusieron al día
   con las decisiones que los habían dejado atrás (la privacidad de las partidas sin red, la semilla

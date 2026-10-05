@@ -537,6 +537,7 @@ node public/liars-dice/engine.test.mjs
 node public/timeline/engine.test.mjs
 node public/assets/js/arrastre.test.mjs
 node public/assets/js/compartir.test.mjs
+node public/assets/js/games.test.mjs
 node public/assets/js/i18n.test.mjs
 node public/assets/js/transport/cleanup.test.mjs
 node public/assets/js/transport/dispose.test.mjs

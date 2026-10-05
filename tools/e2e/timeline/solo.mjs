@@ -10,7 +10,7 @@
  *   6. una partida guardada del solitario viejo (con `messages`) no se ofrece
  *   7. inglés y portugués
  *
- * Uso: SITIO=http://localhost:87xx PUERTO_CDP=94xx node tools/e2e/timeline/solo.mjs <salida>
+ * Uso: SITIO=http://localhost:87xx node tools/e2e/timeline/solo.mjs <salida>
  */
 import { launch, sleep } from '../cdp.mjs';
 import { LANGS } from '../../../public/assets/js/i18n.js';

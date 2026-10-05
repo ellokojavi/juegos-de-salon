@@ -71,7 +71,7 @@ const MEDIR = `(()=>{
  * Recorre `juego` (su id) en todos los idiomas.
  * @param {object} op
  * @param {object[]} op.dicts   los diccionarios del juego ({ es, en, pt, de }); COMMON se suma solo
- * @param {number}   op.port    el puerto de Chrome (PUERTO_CDP lo cambia: D-135)
+ * @param {number}   op.port    el nombre del Chrome; el puerto real lo elige cdp.mjs (D-213)
  * @param {string[]} [op.pantallas]  cuáles; por omisión, todas las de su camino
  * @param {string[]} [op.permitidos] trozos en español que sí pueden verse (contenido, no interfaz)
  * @param {string}   [op.consulta] lo que va después de la carpeta ('?prueba' en La Copa)
