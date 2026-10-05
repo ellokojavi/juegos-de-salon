@@ -474,8 +474,8 @@
         "de": "Verbindungen"
       },
       "tipos": [
-        "palabras",
-        "cultura"
+        "words",
+        "trivia"
       ],
       "duracion": "3–8",
       "labs": false,
@@ -491,8 +491,8 @@
         "de": "Bullen und Kühe: Wort"
       },
       "tipos": [
-        "palabras",
-        "logica"
+        "words",
+        "logic"
       ],
       "duracion": "3–8",
       "labs": false,
@@ -508,7 +508,7 @@
         "de": "Welches Jahr?"
       },
       "tipos": [
-        "cultura"
+        "trivia"
       ],
       "duracion": "2–5",
       "labs": false,
@@ -524,7 +524,7 @@
         "de": "Damen"
       },
       "tipos": [
-        "logica"
+        "logic"
       ],
       "duracion": "2–5",
       "labs": false,
@@ -540,7 +540,7 @@
         "de": "Tango"
       },
       "tipos": [
-        "logica"
+        "logic"
       ],
       "duracion": "3–8",
       "labs": false,
@@ -556,7 +556,7 @@
         "de": "Zip"
       },
       "tipos": [
-        "logica"
+        "logic"
       ],
       "duracion": "3",
       "labs": false,
@@ -572,7 +572,7 @@
         "de": "Entwirren"
       },
       "tipos": [
-        "logica"
+        "logic"
       ],
       "duracion": "4",
       "labs": false,
@@ -588,7 +588,7 @@
         "de": "Wo liegt das?"
       },
       "tipos": [
-        "cultura"
+        "trivia"
       ],
       "duracion": "2–5",
       "labs": false,

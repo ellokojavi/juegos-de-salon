@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.99.6 — 2026-10-05
+- **Las reglas se revisan solas** (D-213): una prueba exige a cada juego su motor con tests, su
+  gancho de pruebas y su especificación, o una excepción con su decisión; el revisor de la
+  documentación avisa de números de decisión que faltan, estados sin marcar, IDs repetidos y rutas
+  que no existen. Las pruebas en Chrome toman un puerto libre y cierran su navegador al terminar,
+  así que varias sesiones pueden probar a la vez. Sin cambios para quien juega.
+
+## 0.99.5 — 2026-10-05
+- **Las reglas, en un solo lugar** (D-213): los cánones dicen la regla de hoy y se pusieron al día
+  con las decisiones que los habían dejado atrás (la privacidad de las partidas sin red, la semilla
+  y sus excepciones, el pase del celular, lo que se preselecciona, los modos de un juego de grupo).
+  Las decisiones tienen un estado cerrado, un índice por tema y una tabla de rutas de entonces y de
+  hoy; los requerimientos ya no repiten IDs y cada juego tiene su especificación con la misma
+  plantilla. Sin cambios para quien juega.
+
+## 0.99.4 — 2026-10-04
+- **El filtro de la portada, en inglés en la URL** (D-214): `?type=logic`, `?type=tabletop`, en vez
+  de `?tipo=logica` o `?tipo=mesa`. Los links viejos siguen filtrando lo mismo.
+
 ## 0.99.3 — 2026-10-04
 - **Panel: en qué idioma se jugó** (D-211): cada copa, sala y partida sin red lleva una etiqueta
   con su idioma (ES, EN, PT, DE; las dos si en una sala cada uno jugó en el suyo), y hay un
