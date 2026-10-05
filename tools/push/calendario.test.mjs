@@ -93,6 +93,16 @@ await caso('La Gran Final: con su lugar en la tabla, aunque haya apagado los del
   assert.deepEqual(de(out, S1)[0].claves, ['final']);
 });
 
+await caso('La Gran Final empatado en puntos con el 1.º (perdió el desempate): sin "a 0 puntos"', () => {
+  const copa = copaBase();
+  copa.players.cccccc = { name: 'Caro', at: 3 };
+  const r = (a, b, c) => ({ aaaaaa: { s: a, ms: 1000 }, bbbbbb: { s: b, ms: 1000 }, cccccc: { s: c, ms: 1000 } });
+  copa.results[1] = r(90, 50, 10);
+  copa.results[2] = r(10, 50, 90);
+  const out = avisosDeCopa({ code: 'KQRST', copa, quiere: quiere({ dia: false, plazo: false, at: 0 }), subs, now: enDia(7, 10) });
+  assert.equal(de(out, S2)[0].aviso.body, '🏁 Hoje é a Grande Final e vale o dobro. Você está em 3º, com os mesmos pontos que Ana.');
+});
+
 await caso('terminó la copa: quién ganó, durante un día', () => {
   const copa = copaBase();
   for (let d = 1; d <= 7; d++) copa.results[d] = { aaaaaa: { s: 90, ms: 1000 }, bbbbbb: { s: 50, ms: 1000 } };

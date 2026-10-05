@@ -86,8 +86,11 @@ export function avisosDeCopa({ code, copa, quiere = {}, subs = {}, enviados = {}
               const mia = filas.find(f => f.pid === pid);
               if (mia) {
                 const lider = filas[0];
+                const pts = lider.total - mia.total;
+                // Con desempate, el 2.º puede tener los mismos puntos que el 1.º (U-6: "1 punto")
+                const msg = pts === 0 ? T.avMsgFinalTie : pts === 1 ? T.avMsgFinalOne : T.avMsgFinal;
                 const body = mia.lugar === 1 ? fmt(T.avMsgFinalLead, { pos: ord(1) })
-                  : fmt(T.avMsgFinal, { pos: ord(mia.lugar), pts: lider.total - mia.total, lider: lider.name });
+                  : fmt(msg, { pos: ord(mia.lugar), pts, lider: lider.name });
                 candidatos.push({ tipo: 'final', claves: ['final'], body, tag: `copa-${code}-d${d}` });
               }
             }
