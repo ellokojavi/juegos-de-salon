@@ -46,7 +46,7 @@ assert.equal(sinLang('?pirata&lang=pt'), '?pirata');
 assert.equal(sinLang('?K7Q2X&prueba&lang=en'), '?K7Q2X&prueba');
 assert.equal(sinLang('?lang=pt&sala=WFBN'), '?sala=WFBN');
 assert.equal(sinLang('?lang=pt'), '');
-assert.equal(sinLang('?jugadores=solo&tipo=logica&LANG=en'), '?jugadores=solo&tipo=logica');
+assert.equal(sinLang('?type=logic&LANG=en'), '?type=logic');
 same('COMMON', COMMON);
 same('FRASES', FRASES);
 for (const lang of IDIOMAS) assert.equal(FRASES[lang].length, 100, `FRASES.${lang}: deben ser 100 frases`);
