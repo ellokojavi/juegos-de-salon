@@ -10,6 +10,8 @@
    todos y la paridad los exige (C-3). El alemán respeta el glosario de [ALEMAN.md](ALEMAN.md).
    Las instrucciones siguen U-18.
 3. **El registro** en `public/assets/js/games.js` (C-2): con eso aparecen el menú y el panel (C-16).
+   Sus `tipos` (`words`, `logic`, `trivia` o `tabletop`, las claves de `TIPOS`) dicen con qué
+   filtros de la portada aparece (D-214).
    Si estrena un modo, se agrega a `MODES` y basta.
 4. **Los modos** que le tocan según C-5, con el transporte de C-7 (`create`, `join`, `send`,
    `onMessage`, `onPresence`, `leave`, `dispose`) y, si tiene sala, sus reglas en
