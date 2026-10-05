@@ -28,26 +28,19 @@ export function clavePublica({ storage = globalThis.localStorage, loc = globalTh
   try { return envOf(loc || {}) === 'dev' ? storage.getItem(VAPID_PRUEBA_KEY) || '' : ''; } catch (_) { return ''; }
 }
 
-export function avisosVisibles({ storage = globalThis.localStorage, loc = globalThis.location, clave = clavePublica({ storage, loc }) } = {}) {
+/**
+ * La app de inicio del iPhone abre en la portada (el `start_url`, no la dirección de Safari) y no ve
+ * el localStorage de Safari: ahí el "Activar en este celular" de /labs/ no llega nunca, y es el
+ * único lugar donde el iPhone recibe avisos. Por eso en ella se ven sin el laboratorio (D-226).
+ */
+export function avisosVisibles({ storage = globalThis.localStorage, loc = globalThis.location, clave = clavePublica({ storage, loc }), cel = celular() } = {}) {
   if (!clave) return false;
-  if (!AVISOS_EN_LABS) return true;
+  if (!AVISOS_EN_LABS || (cel.ios && cel.instalada)) return true;
   try { return envOf(loc || {}) === 'dev' || storage.getItem(LABS_AVISOS_KEY) === '1'; } catch (_) { return false; }
 }
 
 export function activarAvisos(si, storage = globalThis.localStorage) {
   try { if (si) storage.setItem(LABS_AVISOS_KEY, '1'); else storage.removeItem(LABS_AVISOS_KEY); } catch (_) { /* sin memoria */ }
-}
-
-/**
- * En iPhone la app de inicio no ve el localStorage de Safari, y con él el "Activar en este celular"
- * de /labs/. Si abre con `&app=<pid>` (la dirección que arma la hoja de agregar a inicio, solo
- * cuando la campana ya se veía en Safari), hereda el laboratorio (D-225). Solo en la app instalada:
- * en una pestaña, esa dirección pudo llegar copiada a otro celular.
- */
-export function heredarLabsDeApp({ search = globalThis.location?.search || '', instalada, storage = globalThis.localStorage } = {}) {
-  if (!AVISOS_EN_LABS || !instalada || !new URLSearchParams(search).get('app')) return false;
-  activarAvisos(true, storage);
-  return true;
 }
 
 /** Las apps que abren los links con su propio navegador, donde no se puede agregar a inicio. */

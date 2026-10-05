@@ -32,7 +32,6 @@ import { bloqueJugador, bloqueRanking, avisoPartida, bloqueCampeones } from '../
 import { jugador, leerYo, rankingsVisibles } from '../assets/js/jugador.js';
 import { podioDe } from '../assets/js/records.js';
 import { crearAvisos } from './avisos.js';
-import { heredarLabsDeApp, celular } from '../assets/js/push.js';
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
 trackVisit();
@@ -102,8 +101,6 @@ const cuenta = createCuenta({ prueba: PRUEBA });
 let store = null;
 // La app instalada en iPhone abre con la copa y el jugador en la dirección, nunca el PIN (D-223)
 const appPid = new URLSearchParams(location.search).get('app') || '';
-// y, mientras los avisos estén en el laboratorio, trae el "Activar en este celular" de Safari (D-225)
-heredarLabsDeApp({ instalada: celular().instalada });
 
 async function abrirStore() {
   if (store) return store;

@@ -189,7 +189,7 @@ resultado) guarda en `feedback/<id>`, por REST y sin cuenta (D-104), el texto, u
 y un contexto en JSON: copa, jugador, pantalla, día, juego, semilla, URL y navegador. Se leen con
 `node tools/firebase/reportes.mjs`; en `?prueba` queda en `localStorage` (`juegos-de-salon:copa:prueba:reportes`).
 
-### Avisos al celular (D-223, D-224, D-225, en el laboratorio)
+### Avisos al celular (D-223, D-224, D-225, D-226, en el laboratorio)
 
 Hasta que el dueño vea llegar un aviso de verdad en su Android y su iPhone, solo se ven en el sitio
 local y en los celulares que los activan en `/labs/` (`AVISOS_EN_LABS` en `push.js`), y solo si
@@ -208,8 +208,9 @@ local y en los celulares que los activan en `/labs/` (`AVISOS_EN_LABS` en `push.
   avisaremos de esta copa", con "Cambiar").
 - **iPhone:** en Safari, la campana abre los pasos para agregar la app a inicio y deja `&app=<pid>`
   en la dirección (nunca el PIN); la app instalada abre en "Ya estoy inscrito" con ese nombre
-  elegido y, mientras los avisos estén en el laboratorio, lo activa ahí (D-225: la app instalada no
-  ve el `/labs/` de Safari). Dentro de WhatsApp o Instagram, pide abrir el link en Safari.
+  elegido, si iOS la respetara. No la respeta: la app instalada abre en la portada, así que los
+  pasos dan el código de la copa, y ahí la campana sale aunque los avisos sigan en el laboratorio
+  (D-226). Dentro de WhatsApp o Instagram, pide abrir el link en Safari.
 - **Lo que llega** (D-224): `.github/workflows/avisos.yml` corre `tools/push/avisar.mjs` cada 15
   minutos, y `tools/push/calendario.mjs` decide con `engine.js` qué toca, en la hora y el idioma
   del celular y nunca entre las 22:00 y las 8:00: **se abrió el día** (desde las 9:00, si no lo ha

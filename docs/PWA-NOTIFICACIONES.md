@@ -1,6 +1,6 @@
 # App instalable y avisos al celular (PWA + Web Push)
 
-**Estado:** aprobado por el dueño (D-221); los PR 1 (v0.105.0), 2 (v0.107.0, D-223) y 3 (v0.108.0, D-224) están hechos, en el laboratorio; la clave VAPID está puesta (D-225) · **Fecha:** 2026-10-05 ·
+**Estado:** aprobado por el dueño (D-221); los PR 1 (v0.105.0), 2 (v0.107.0, D-223) y 3 (v0.108.0, D-224) están hechos, en el laboratorio; la clave VAPID está puesta (D-225); en iPhone la app instalada abre en la portada (D-226) · **Fecha:** 2026-10-05 ·
 **Toca:** RP-11, RP-13, LIG-33, D-99
 
 Es el detalle de D-221, que **corrige a D-99** en lo que dice de los avisos automáticos. El diseño de
@@ -314,8 +314,10 @@ push.js (en la página)                    pushEnviados/<código>/<subId>/<clave
   los celulares que los activan en `/labs/`.
 - En iPhone, antes de mostrar los pasos para agregar a inicio, la dirección pasa a llevar
   `&app=<pid>`. Si la app instalada abre en esa dirección, la copa parte en "Ya estoy inscrito" con
-  el nombre ya elegido y pide solo el PIN. Mientras los avisos estén en el laboratorio, esa
-  dirección también activa el laboratorio en la app instalada, que no ve el de Safari (D-225).
+  el nombre ya elegido y pide solo el PIN. **Pero iOS no la respeta** (D-226, la prueba del dueño
+  el 2026-10-05): la app instalada abre en la portada, el `start_url`. Por eso los pasos de la hoja
+  dan el código de la copa, y la campana se ve siempre en la app instalada del iPhone, aunque los
+  avisos sigan en el laboratorio (que la app no ve).
 
 ### 4. Reglas de Firebase — hecho en el PR 2
 
@@ -336,12 +338,10 @@ Lo que no se puede automatizar: un iPhone real, con iOS 16.4 o más (ideal: 17, 
 2. Abre una copa en la que estés inscrito, en **Safari**. Debe aparecer **🔔 Activar avisos**.
 3. Tócalo: sale la hoja **Agrega la app a tu inicio**. Revisa que la dirección termine en `&app=…`.
 4. Sigue los pasos: Compartir (en iOS 26, dentro de ⋯) → **Agregar a inicio**.
-5. Abre **Juegos de Salón** desde el ícono nuevo. Anota **dónde abrió**: ¿en la copa, con tu
-   nombre ya elegido y pidiendo el PIN? ¿O en la portada? (esto define si iOS respeta la dirección
-   o usa la del manifest).
-   Si abrió en la portada, la app no heredó el laboratorio y la campana no saldrá: en la app no
-   hay barra para escribir `/labs/`, ni un botón que lleve ahí. Anótalo: es el hallazgo.
-6. Escribe tu PIN. En el tablero debe salir **🔔 Último paso: activa los avisos**.
+5. Abre **Juegos de Salón** desde el ícono nuevo. Abre en la **portada** (D-226: iOS usa el
+   `start_url`). Entra a La Copa con **Tengo un código**: el código de la copa, tu nombre y tu PIN.
+6. En el tablero debe salir **🔔 Último paso: activa los avisos** (en la app instalada del iPhone
+   sale aunque haya abierto en la portada, D-226), y la campana arriba.
 7. Toca **Avisarme**: el iPhone pregunta por las notificaciones; acepta. Debe llegar el aviso de
    confirmación (con el nombre de la copa y "Listo. Te avisaremos de esta copa…") y la campana pasa
    a **Avisos activos**.
