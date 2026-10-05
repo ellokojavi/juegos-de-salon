@@ -1,4 +1,4 @@
-// Tests de los juegos de La Copa: node public/cup/games/juegos.test.mjs
+// Tests de los juegos de La Copa, también el tope de las instrucciones (D-184): node public/cup/games/juegos.test.mjs
 import assert from 'node:assert/strict';
 import { hash32, azar } from './semilla.js';
 import * as numero from './number/engine.js';
@@ -604,6 +604,7 @@ test('todos los juegos puntúan de 0 a 100 (D-113)', () => {
 });
 
 const { LOCALES: TEXTOS } = await import('../rules.js');
+const { IDIOMAS } = await import('../../assets/js/i18n.js');
 const { LOCALES } = await import('./word/palabras.js');
 const { DECKS: TODOS } = await import('../../timeline/decks/index.js');
 const AUD = await import('./audiencia.js');
@@ -647,14 +648,14 @@ test('el público de la copa decide qué contenido local entra (D-186, D-187)', 
   assert.ok(!codigos.some(c => Object.values(temasDeLaCopa(c)).includes('brasil')));
 });
 
-test('las instrucciones de cada juego son concisas, en los tres idiomas (U-18, D-184)', () => {
-  for (const lang of ['es', 'en', 'pt', 'de']) for (const [id, J] of Object.entries(TEXTOS[lang].juegos)) {
+test('las instrucciones de cada juego son concisas, en todos los idiomas (U-18, D-184)', () => {
+  for (const lang of IDIOMAS) for (const [id, J] of Object.entries(TEXTOS[lang].juegos)) {
     assert.ok(J.como.length <= 3, `${lang} ${id}: ${J.como.length} puntos en "Cómo se juega" (máximo 3)`);
     const largo = J.como.join(' ').length;
     assert.ok(largo <= 280, `${lang} ${id}: "Cómo se juega" tiene ${largo} caracteres (máximo 280)`);
     assert.ok(J.puntaje.length <= 170, `${lang} ${id}: el puntaje tiene ${J.puntaje.length} caracteres (máximo 170)`);
     // La meta, no la descripción de lo que se ve
-    assert.ok(!/^(Hay|There (is|are)|Há) /.test(J.como[0]), `${lang} ${id}: el primer punto describe la pantalla en vez de decir qué hacer`);
+    assert.ok(!/^(Hay|There (is|are)|Há|Es gibt) /.test(J.como[0]), `${lang} ${id}: el primer punto describe la pantalla en vez de decir qué hacer`);
   }
 });
 

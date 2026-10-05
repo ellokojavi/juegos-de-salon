@@ -1,6 +1,6 @@
 import { launch, sleep } from '../cdp.mjs';
 const OUT = process.argv[2];
-// SITIO y PUERTO_CDP: otro servidor y otro Chrome, para no chocar con otra sesión que prueba en paralelo (D-135)
+// SITIO: otro servidor, para no chocar con otra sesión que prueba en paralelo (D-135); el puerto de Chrome lo elige cdp.mjs (D-213)
 const SITIO = process.env.SITIO || 'http://localhost:8765';
 const b = await launch({ port: Number(process.env.PUERTO_CDP) || 9380, dir: `${OUT}/profile`, out: OUT });
 await b.go(`${SITIO}/`); await b.evaluate(`localStorage.clear(); 1`); await b.go(`${SITIO}/`); await b.shot('00-menu');

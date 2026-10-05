@@ -1,4 +1,4 @@
-// Ejecutar: node public/panel/rutas.test.mjs
+// Las rutas del panel: secciones y fichas en el # de la URL (D-207). Ejecutar: node public/panel/rutas.test.mjs
 import assert from 'node:assert/strict';
 import { SECCIONES, leerRuta, rutaA, seccionDe } from './rutas.js';
 
