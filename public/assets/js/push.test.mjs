@@ -4,7 +4,8 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { webcrypto } from 'node:crypto';
-import { celular, camino, avisosVisibles, activarAvisos, bytesDeClave, subIdDe, paraGuardar, permiso, clavePublica, LABS_AVISOS_KEY, VAPID_PRUEBA_KEY } from './push.js';
+import { celular, camino, avisosVisibles, activarAvisos, heredarLabsDeApp, bytesDeClave, subIdDe, paraGuardar, permiso, clavePublica, LABS_AVISOS_KEY, VAPID_PRUEBA_KEY } from './push.js';
+import { VAPID_PUBLICA } from './vapid.js';
 import { parVapid, conClave } from '../../../tools/push/vapid.mjs';
 
 let n = 0;
@@ -50,11 +51,28 @@ await caso('puerta del laboratorio: sin clave nunca; con clave en dev o con /lab
   assert.equal(avisosVisibles({ storage: s, loc: prod, clave: 'x' }), false);
 });
 
-await caso('la clave de prueba vale solo en el sitio local', () => {
+await caso('la app instalada que abre con &app= hereda el laboratorio de Safari (D-225)', () => {
+  const mem = () => { const m = new Map(); return { getItem: k => m.get(k) ?? null, setItem: (k, v) => m.set(k, v), removeItem: k => m.delete(k) }; };
+  const prod = { hostname: 'juegosdesalon.cl' };
+  const s = mem();
+  assert.equal(heredarLabsDeApp({ search: '?K7Q2X&app=ab12cd', instalada: false, storage: s }), false, 'en una pestaña, no: el link pudo llegar copiado');
+  assert.equal(heredarLabsDeApp({ search: '?K7Q2X', instalada: true, storage: s }), false, 'sin &app=, no');
+  assert.equal(avisosVisibles({ storage: s, loc: prod, clave: 'x' }), false);
+  assert.equal(heredarLabsDeApp({ search: '?K7Q2X&app=ab12cd', instalada: true, storage: s }), true);
+  assert.equal(avisosVisibles({ storage: s, loc: prod, clave: 'x' }), true, 'la campana se ve en la app instalada');
+});
+
+await caso('la clave de vapid.js manda; sin ella, la de prueba vale solo en el sitio local', () => {
   const m = new Map([[VAPID_PRUEBA_KEY, 'BPRUEBA']]);
   const storage = { getItem: k => m.get(k) ?? null };
-  assert.equal(clavePublica({ storage, loc: { hostname: 'localhost' } }), 'BPRUEBA');
-  assert.equal(clavePublica({ storage, loc: { hostname: 'juegosdesalon.cl' } }), '');
+  if (VAPID_PUBLICA) {
+    assert.equal(bytesDeClave(VAPID_PUBLICA).length, 65, 'vapid.js trae una pública P-256 sin comprimir');
+    assert.equal(clavePublica({ storage, loc: { hostname: 'localhost' } }), VAPID_PUBLICA);
+    assert.equal(clavePublica({ storage, loc: { hostname: 'juegosdesalon.cl' } }), VAPID_PUBLICA);
+  } else {
+    assert.equal(clavePublica({ storage, loc: { hostname: 'localhost' } }), 'BPRUEBA');
+    assert.equal(clavePublica({ storage, loc: { hostname: 'juegosdesalon.cl' } }), '');
+  }
 });
 
 await caso('la clave de vapid.mjs: 65 bytes que un navegador acepta (P-256 sin comprimir)', async () => {
@@ -68,7 +86,7 @@ await caso('la clave de vapid.mjs: 65 bytes que un navegador acepta (P-256 sin c
   assert.notEqual(parVapid().publica, publica, 'cada par es nuevo');
 });
 
-await caso('vapid.js: la pública vacía en git, y vapid.mjs solo cambia esa línea', () => {
+await caso('vapid.js: una línea con la pública, y vapid.mjs solo cambia esa línea', () => {
   const texto = readFileSync(new URL('./vapid.js', import.meta.url), 'utf8');
   assert.match(texto, /export const VAPID_PUBLICA = '[A-Za-z0-9_-]*';/);
   const otro = conClave(texto, 'ABC_-1');

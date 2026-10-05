@@ -70,7 +70,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220 |
 | Marketing | `marketing/README.md` | D-178 |
-| App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224 |
+| App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225 |
 
 ---
 
@@ -3727,3 +3727,22 @@ verdad en un iPhone prometería algo que quizá no llega.
 Un celular puede recibir dos avisos el mismo día (el del día y el del plazo del anterior). Las
 pruebas (`tools/push/*.test.mjs`) usan relojes inventados y una base falsa: el envío real se
 prueba con `--prueba`.
+
+## D-225 · La clave VAPID está puesta, y la app instalada del iPhone hereda el laboratorio de avisos
+**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** completa D-223 y D-224
+**Decisión:** El paso previo a la prueba real de los avisos ([PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md)):
+- **La clave VAPID** se generó una vez con `node tools/push/vapid.mjs`: la pública quedó en
+  `public/assets/js/vapid.js` y la privada, como el secreto `VAPID_PRIVADA` de GitHub, sin pasar por
+  ningún archivo ni pantalla. No se rehace (`--forzar`): cambiarla deja sin avisos a todos los
+  suscritos. Con la clave en el repo, la de prueba del navegador ya no se usa, ni en el sitio local.
+- **La app instalada del iPhone hereda el laboratorio:** no comparte el `localStorage` de Safari, así
+  que el "Activar en este celular" de `/labs/` no llegaba y la campana no aparecía justo donde los
+  avisos funcionan. Si La Copa abre **en la app instalada** con `&app=<pid>` (la dirección que arma la
+  hoja de agregar a inicio, que sale solo si la campana ya se veía en Safari), activa el laboratorio
+  de avisos en ese almacenamiento (`heredarLabsDeApp` en `push.js`). En una pestaña no: esa
+  dirección pudo llegar copiada a otro celular.
+**Por qué:** Lo pidió el dueño, para hacer la prueba real en su iPhone antes de abrir los avisos a
+todos (D-224).
+**Consecuencias:** Cuando `AVISOS_EN_LABS` pase a `false`, la herencia deja de hacer falta y no hace
+nada. `push.test.mjs` y `tools/e2e/cup/avisos.mjs` la prueban (y que un link con `&app=` en una
+pestaña no la active).
