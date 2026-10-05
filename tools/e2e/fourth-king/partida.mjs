@@ -28,6 +28,7 @@ console.log('game sound btn:', await ev(`document.querySelector('.sound-toggle')
 await toma('02-intro');
 await jugar(['Javi', 'Cata', 'Pancho', 'Fran'], '04-mesa');
 
+let pasePrueba = false;
 for (let i = 0; i < 60; i++) {
   const active = await ev(`document.querySelector('.screen.active').id`);
   if (active !== 'screen-play') break;
@@ -46,18 +47,27 @@ for (let i = 0; i < 60; i++) {
   if (ok !== 'ok') { console.log('FAIL at', kind, ok); break; }
   await sleep(200);
   if ((await ev(`document.getElementById('handoff').hidden`)) === false) {
-    // El pase tiene dos tiempos: primero "¡Salud!" con quiénes toman, después "pásale el celular a X"
+    // El pase es una sola pantalla (C-9): arriba "¡Salud!" con quiénes toman, debajo "pásale el
+    // celular a X" con su botón. Solo el botón avanza: ni un toque fuera de él ni el tiempo (D-213).
     // Solo sirve el "¡Salud!" con gente tomando: el mismo bloque .cheers también dice
     // "¡Cumplida!" sin fichas, y esa toma no ilustra el pie de la captura ("¡Salud!").
     if (await ev(`document.querySelectorAll('#handoff .drinkers .chip').length > 1`)) await toma('07-salud');
-    await ev(`document.getElementById('handoff').click(); 1`); await sleep(150);
     await toma('08-pasale');
-    await ev(`document.querySelector('#handoff .btn')?.click(); 1`); await sleep(350);
+    if (!pasePrueba) {
+      pasePrueba = true;
+      await ev(`document.getElementById('handoff').click(); 1`); await sleep(3200);
+      const sigue = await ev(`!document.getElementById('handoff').hidden && !!document.querySelector('#handoff .next-name')`);
+      console.log(sigue ? '✓ el pase sigue en pantalla tras un toque fuera del botón y 3 s' : '✗ el pase se cerró sin tocar el botón (C-9)');
+    }
+    await ev(`document.querySelector('#handoff .btn')?.click(); 1`); await sleep(450);
   }
 }
 await sleep(600);
 const final = await ev(`document.querySelector('.screen.active').id`);
 if (final === 'screen-end') {
+  const cr = await ev(`JSON.stringify({ fin: __cuartoRey.state().finished, reyes: __cuartoRey.state().kings, pantalla: __cuartoRey.screen() })`);
+  console.log('gancho __cuartoRey:', cr);
+  if (!/"fin":true/.test(cr) || !/"reyes":4/.test(cr)) console.log('✗ el gancho no ve la partida terminada en el cuarto rey');
   await sleep(4200); // el confeti dura 4 s y taparía el ranking y la lista entera
   await toma('10-final');
   // El historial (CR-18) va plegado: se abre para la captura y para contar si anotó todas las cartas.
@@ -70,6 +80,16 @@ if (final === 'screen-end') {
   await toma('13-historial');
 }
 console.log('final screen:', final, '| capturas:', [...sacadas].sort().join(' '));
+
+// ---- la mesa recordada se muda de juegos-de-salon:players a createNameStore (C-6) ----
+await b.go(`${SITIO}/fourth-king/`);
+await ev(`localStorage.clear(); localStorage.setItem('juegos-de-salon:players', JSON.stringify([{name:'Ana',gender:'f'},{name:'Beto',gender:'m'},{name:'Cami',gender:'x'},{name:'Dani',gender:'f'},{name:'Eli',gender:'m'}])); 1`);
+await b.go(`${SITIO}/fourth-king/`);
+await ev(`document.getElementById('btn-go-setup').click(); 1`); await sleep(300);
+const mudada = await ev(`JSON.stringify({ filas: [...document.querySelectorAll('#players-form input')].map(i=>i.value), generos: [...document.querySelectorAll('#players-form .gender .on')].map(x=>x.dataset.g).join(''), nueva: JSON.parse(localStorage.getItem('juegos-de-salon:cuarto-rey:names')||'[]').length, vieja: localStorage.getItem('juegos-de-salon:players') })`);
+console.log('mesa mudada:', mudada);
+console.log(mudada === JSON.stringify({ filas: ['Ana', 'Beto', 'Cami', 'Dani', 'Eli'], generos: 'fmxfm', nueva: 5, vieja: null })
+  ? '✓ la mesa vieja se mudó a juegos-de-salon:cuarto-rey:names' : '✗ la mesa vieja no se mudó entera');
 
 // ---- inglés: el toggle del menú manda en todas las pantallas (C-3) ----
 await b.go(`${SITIO}/`); await ev(`localStorage.removeItem('juegos-de-salon:cuarto-rey:session'); 1`);

@@ -139,7 +139,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 **Por qué:** Cero configuración de CI; cada push publica. La URL de GitHub Pages (`ellokojavi.github.io/juegos-de-salon/`) quedó después detrás del dominio propio https://juegosdesalon.cl/, y redirige con un 301.
 
 ## D-14 · Transición entre turnos como overlay de dos etapas
-**Fecha:** 2026-09-08 · **Estado:** vigente
+**Fecha:** 2026-09-08 · **Estado:** corregida por D-213
 **Decisión:** Al cerrar una carta, un overlay a pantalla completa muestra (1) "¡Salud!" con los que toman, que avanza solo a los 2,6 s o al tocar, y (2) "Pásale el celular a X" con el botón "¡Dame la carta!". El estado del juego avanza antes de mostrar el overlay y la mesa se redibuja detrás.
 **Por qué:** Separa tres momentos que antes se pisaban: decidir quién toma, tomar, y que el siguiente jugador reciba el celular listo para sacar carta (CR-19). Avanzar el estado primero garantiza que, si se cierra el navegador en la transición, la partida se retoma en el turno correcto.
 
