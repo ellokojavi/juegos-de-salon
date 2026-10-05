@@ -76,10 +76,22 @@ llave del dueño) y no fusiona. Todo lo demás de esta guía vale igual.
    los documentos. Los dos arreglan en la rama del mismo PR (D-213).
 2. **¿Hay alguien jugando?** `node tools/firebase/en-curso.mjs` (sale con 3 si hay salas en vivo
    o copas en curso; necesita la llave del dueño).
-3. **No se fusiona sin ✅ en GitHub en `pruebas` y en `Punta a punta`** (D-143,
-   D-193, D-213), aunque ya hayan pasado aquí. `Punta a punta` es un workflow con un job por
-   guion: vale que ninguno esté en rojo. En un PR que solo trae documentación no corre ningún
-   guion, y basta con que el job `lista` salga en verde.
+3. **No se fusiona sin ✅ en GitHub en `pruebas` y en `punta-a-punta`** (D-143,
+   D-193, D-213, D-216), aunque ya hayan pasado aquí. `main` exige los dos: `punta-a-punta` es el
+   job que resume el workflow `Punta a punta` (un job por guion) y sale en rojo si alguno falla.
+   En un PR que solo trae documentación no corre ningún guion y sale en verde igual.
+4. **Auto-merge por defecto** (D-216, pedido del dueño): cuando el PR está listo para fusionarse
+   —los agentes terminaron y sus arreglos están subidos, y la entrada del `CHANGELOG.md` ya está
+   en la rama—, se activa el auto-merge de GitHub en vez de esperar el ✅ a mano:
+   ```bash
+   gh pr merge <n> --auto --merge
+   ```
+   GitHub lo fusiona solo cuando `pruebas` y `punta-a-punta` pasan; si fallan o hay conflicto,
+   no fusiona y hay que arreglarlo. La app no avisa cuando el CI pasa, solo cuando falla: lo que
+   va **después** de fusionar (publicar las reglas, borrar la copia y la rama) se hace en cuanto
+   el PR aparezca fusionado (`gh pr view <n> --json state`), y se le dice al dueño que queda
+   pendiente hasta entonces. Un PR que no está listo (un borrador, uno que espera una decisión
+   del dueño) no lleva auto-merge.
 
 ## Al fusionar y publicar (C-11, D-205)
 
