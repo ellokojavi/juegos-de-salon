@@ -339,8 +339,8 @@ Lo que no se puede automatizar: un iPhone real, con iOS 16.4 o más (ideal: 17, 
 5. Abre **Juegos de Salón** desde el ícono nuevo. Anota **dónde abrió**: ¿en la copa, con tu
    nombre ya elegido y pidiendo el PIN? ¿O en la portada? (esto define si iOS respeta la dirección
    o usa la del manifest).
-   Si abrió en la portada, la app no heredó el laboratorio: actívalo en `/labs/` dentro de la app
-   instalada y entra a la copa con "Entrar a mi copa".
+   Si abrió en la portada, la app no heredó el laboratorio y la campana no saldrá: en la app no
+   hay barra para escribir `/labs/`, ni un botón que lleve ahí. Anótalo: es el hallazgo.
 6. Escribe tu PIN. En el tablero debe salir **🔔 Último paso: activa los avisos**.
 7. Toca **Avisarme**: el iPhone pregunta por las notificaciones; acepta. Debe llegar el aviso de
    confirmación (con el nombre de la copa y "Listo. Te avisaremos de esta copa…") y la campana pasa
