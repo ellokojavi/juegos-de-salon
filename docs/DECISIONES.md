@@ -63,9 +63,9 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213 |
 | Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181 |
 | Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211 |
-| Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213 |
+| Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213 |
-| Pruebas | C-12 | D-143, D-193, D-199, D-204 |
+| Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216 |
 | La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212 |
 | Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215 |
@@ -1893,7 +1893,7 @@ Copa y que su nombre en español sea el mismo. El récord viejo de esos dos soli
 uso, y una partida guardada del solitario viejo no se ofrece para retomar.
 
 ## D-143 · Las pruebas sin navegador corren solas en GitHub
-**Fecha:** 2026-09-25 · **Estado:** corregida por D-193
+**Fecha:** 2026-09-25 · **Estado:** corregida por D-193, D-216
 **Decisión:** `.github/workflows/pruebas.yml` corre en cada PR y en cada fusión a main:
 todos los `*.test.mjs` y `*.test.py` del repo (los busca con `git ls-files`, sin lista),
 `tools/readme.py revisar` y `tools/og.mjs revisar`. El PR muestra ✅ o ❌ antes de fusionar.
@@ -2968,7 +2968,7 @@ un link viejo pegado en un chat quedaba sin tarjeta y Google veía 404); cambiar
 carpeta `juegos/` para todos (cambiaba las URL sin ganar nada a cambio).
 
 ## D-193 · Las pruebas de punta a punta corren solas en GitHub
-**Fecha:** 2026-10-02 · **Estado:** vigente · **Relación:** completa D-143
+**Fecha:** 2026-10-02 · **Estado:** corregida por D-216 · **Relación:** completa D-143
 **Decisión:** `.github/workflows/e2e.yml` corre las pruebas de `tools/e2e/` en Chrome en cada PR
 y en cada fusión a main, un job por guion y en paralelo. El PR muestra cuál falló y deja sus
 capturas como artefacto. `tools/e2e/ci.mjs` decide cuáles: todos los guiones menos las
@@ -3504,3 +3504,22 @@ amigos y la semana.
 **Consecuencias:** En un solo celular, alguien puede jugar contra sí mismo con dos nombres y sumar
 victorias: entre amigos se ve, y el dueño puede corregirlo en la consola. Si en un solo celular
 nadie se llama como el jugador abierto, la partida no se anota. Siguen en el laboratorio (D-212).
+
+## D-216 · Auto-merge por defecto, con la punta a punta exigida en `main`
+**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** corrige D-143 y D-193 (qué exige `main`)
+**Decisión:** Todo PR listo para fusionarse lleva el auto-merge de GitHub
+(`gh pr merge <n> --auto --merge`): se fusiona solo cuando pasan sus pruebas. Para que eso
+signifique "todas", `main` exige dos checks: `pruebas`, como antes, y `punta-a-punta`, un job
+nuevo de `.github/workflows/e2e.yml` que espera a todos los guiones y sale en rojo si alguno
+falla (en un PR solo de documentación, en verde). Se activa cuando el PR está listo: los agentes
+de usabilidad y documentación terminaron, sus arreglos están subidos y el CHANGELOG ya tiene la
+entrada de la versión.
+**Por qué:** El dueño pidió una fusión y esperó una hora: las pruebas habían pasado, pero la app
+solo despierta a la sesión cuando el CI falla, no cuando pasa. Con el auto-merge, la fusión no
+depende de que alguien esté mirando. Sin `punta-a-punta` exigido, el auto-merge habría fusionado
+apenas pasara `pruebas`, sin esperar a Chrome.
+**Consecuencias:** Lo que va después de fusionar (publicar las reglas de Firebase, borrar la
+copia y la rama) sigue siendo de la sesión, en cuanto ve el PR fusionado. Dos PR con auto-merge
+que escriben el CHANGELOG chocan en esa línea: el segundo queda en conflicto, GitHub no lo
+fusiona, y su sesión trae `main` y renumera. Los checks exigidos son un ajuste del repositorio
+(Settings → Branches → `main`), no del código.

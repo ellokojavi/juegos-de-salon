@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.101.1 — 2026-10-05
+- **Los PR se fusionan solos cuando pasan sus pruebas** (D-216): cada PR listo lleva el auto-merge
+  de GitHub, y `main` exige, además de `pruebas`, un check que resume todas las pruebas en Chrome
+  (`punta-a-punta`). Sin cambios para quien juega.
+
 ## 0.101.0 — 2026-10-05
 - **Cada juego con su ranking, en el laboratorio** (D-215): los juegos de grupo (Línea de Tiempo,
   Toque y Fama, El Ahorcado, Dudo y Batalla Naval) cuentan las victorias de cada jugador, de la

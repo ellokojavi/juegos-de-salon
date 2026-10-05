@@ -94,6 +94,19 @@ jobs:
           path: ${{ runner.temp }}/e2e
           retention-days: 7
 
+  # Un solo check que resume todos los guiones (D-216): es el que `main` exige junto a `pruebas`,
+  # así el auto-merge de un PR espera a que pasen todos. Sin guiones (un PR que solo trae
+  # documentación), basta con que `lista` salga en verde.
+  punta-a-punta:
+    needs: [lista, e2e]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "lista: ${{ needs.lista.result }} · guiones: ${{ needs.e2e.result }}"
+          [ "${{ needs.lista.result }}" = success ] || exit 1
+          case "${{ needs.e2e.result }}" in success|skipped) ;; *) exit 1 ;; esac
+
   # En main nadie mira el check: si sale en rojo, abre un issue (o comenta el que ya está abierto)
   # con los guiones que fallaron y el link a la corrida, donde están sus capturas (D-205). No frena
   # la publicación, que corre aparte en publicar.yml.
