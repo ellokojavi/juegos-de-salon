@@ -664,6 +664,36 @@
           ".validate": false
         }
       }
+    },
+    "push": {
+      "$subId": {
+        ".read": false,
+        ".write": "auth != null && $subId.matches(/^[0-9a-f]{32}$/) && (!data.exists() || data.child('uid').val() === auth.uid) && (!newData.exists() || newData.child('uid').val() === auth.uid)",
+        ".validate": "newData.hasChildren(['endpoint', 'keys', 'lang', 'tz', 'uid', 'at']) && newData.child('endpoint').isString() && newData.child('endpoint').val().beginsWith('https://') && newData.child('endpoint').val().length <= 1000 && newData.child('keys/p256dh').isString() && newData.child('keys/p256dh').val().length <= 200 && newData.child('keys/auth').isString() && newData.child('keys/auth').val().length <= 100 && newData.child('lang').isString() && newData.child('lang').val().matches(/^(es|en|pt|de)$/) && newData.child('tz').isString() && newData.child('tz').val().length <= 64 && newData.child('at').isNumber() && newData.child('at').val() <= now",
+        "keys": {
+          "$otra": {
+            ".validate": "$otra === 'p256dh' || $otra === 'auth'"
+          }
+        },
+        "$otro": {
+          ".validate": "$otro === 'endpoint' || $otro === 'keys' || $otro === 'lang' || $otro === 'tz' || $otro === 'uid' || $otro === 'at'"
+        }
+      }
+    },
+    "pushCopa": {
+      "$code": {
+        ".write": "auth != null && $code.matches(/^[A-HJ-NP-Z]{5}$/) && !newData.exists() && root.child('torneoSeats/' + $code + '/' + root.child('torneos/' + $code + '/meta/admin').val() + '/' + auth.uid).exists()",
+        "$pid": {
+          "$subId": {
+            ".read": false,
+            ".write": "auth != null && $code.matches(/^[A-HJ-NP-Z]{5}$/) && $pid.matches(/^[a-z0-9]{6}$/) && $subId.matches(/^[0-9a-f]{32}$/) && root.child('torneoSeats/' + $code + '/' + $pid + '/' + auth.uid).exists() && (!newData.exists() || newData.parent().parent().parent().parent().child('push/' + $subId + '/uid').val() === auth.uid)",
+            ".validate": "newData.hasChildren(['dia', 'plazo', 'at']) && newData.child('dia').isBoolean() && newData.child('plazo').isBoolean() && newData.child('at').isNumber() && newData.child('at').val() <= now",
+            "$otro": {
+              ".validate": "$otro === 'dia' || $otro === 'plazo' || $otro === 'at'"
+            }
+          }
+        }
+      }
     }
   }
 }

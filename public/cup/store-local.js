@@ -63,7 +63,7 @@ export function createLocalStore({ uid = null } = {}) {
   const esAdmin = L => sentado(L, L.meta.admin);
   const publica = L => {
     if (!L) return null;
-    const { _keys, _seats, ...resto } = L;
+    const { _keys, _seats, _avisos, ...resto } = L;
     return JSON.parse(JSON.stringify(resto));
   };
 
@@ -259,6 +259,29 @@ export function createLocalStore({ uid = null } = {}) {
         localStorage.setItem(k, JSON.stringify(lista));
       } catch (_) { /* nada */ }
     },
+
+    /** Como en Firebase (D-223): solo quien está sentado como el jugador. Nadie más lo lee. */
+    async guardarAvisos(code, pid, subId, sub, { dia = true, plazo = true } = {}) {
+      return cambiar(db => {
+        const L = copa(db, code);
+        if (!sentado(L, pid)) throw falla('permiso');
+        if (!/^[0-9a-f]{32}$/.test(subId) || !/^https:\/\//.test(sub?.endpoint || '')) throw falla('permiso');
+        L._avisos ||= {};
+        L._avisos[pid] ||= {};
+        L._avisos[pid][subId] = { dia: !!dia, plazo: !!plazo, at: now(), sub: { ...sub, uid: yo } };
+      });
+    },
+
+    async quitarAvisos(code, pid, subId) {
+      return cambiar(db => {
+        const L = copa(db, code);
+        if (!sentado(L, pid)) throw falla('permiso');
+        delete L._avisos?.[pid]?.[subId];
+      });
+    },
+
+    /** Solo en pruebas: lo que vería quien manda los avisos. */
+    async avisosDe(code) { return JSON.parse(JSON.stringify(leerTodo()[code]?._avisos || {})); },
 
     async cambiarPin(code, pid, pinHash) {
       return cambiar(db => {
