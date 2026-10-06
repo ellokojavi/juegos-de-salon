@@ -4069,7 +4069,8 @@ deja el dado encima hasta 4 s.
 **Fecha:** 2026-10-06 · **Estado:** corregida por D-241 · **Relación:** completa D-142 y D-149; respeta D-144; D-241 cambia dónde va la ficha ⭐ Favoritos
 **Decisión:** cada tarjeta de la portada lleva una ☆ en la esquina de arriba. Al tocarla, el juego
 queda marcado como favorito (⭐ amarilla) y no se abre; al tocarla otra vez, se desmarca.
-- **El filtro** es una ficha "⭐ Favoritos" en su propia línea, arriba de los tipos. Aparece
+- **El filtro** es una ficha "⭐ Favoritos" en su propia línea, arriba de los tipos (corregida
+  por D-241: va primera en la fila de los tipos cuando cabe, y en su línea solo cuando no). Aparece
   recién con el primer favorito, así que a quien no usa la ⭐ no le cambia nada.
 - **Funciona como un tipo más:** se elige uno o el otro, la cuenta dice "Se ven n de m" con "Ver
   todos" y va en la URL (`?type=favorites`). Un link así, en un celular sin favoritos, muestra
@@ -4088,13 +4089,14 @@ siempre los mismos dos o tres. Los tipos agrupan por género, no por gusto.
 **Alternativas descartadas:**
 - **Una quinta ficha en la fila de tipos:** cinco fichas no caben en una fila ni a 375 px, en
   ningún idioma, y desde D-149 los tipos van en una sola fila (D-144).
-- **La ficha con la ⭐ sola, sin el nombre:** tampoco cabía a 320 px.
+- **La ficha con la ⭐ sola, sin el nombre:** tampoco cabía a 320 px. (D-241 retoma las dos: la ficha entra
+  primera en la fila cuando cabe, con su nombre o con la ⭐ sola y menos aire, y se mide en la página.)
 - **Ordenar los favoritos primero, sin filtro:** el pedido era un filtro, y reordenar movería las
   tarjetas de lugar cada vez que alguien marca una.
 - **Guardarlos con el jugador (D-212), para que lo sigan entre celulares:** queda para después.
   El `localStorage` alcanza, y no obliga a tener nombre y PIN.
 **Consecuencias:** con un favorito marcado, los filtros ocupan una línea más, también cuando van
-pegados arriba (D-196). `tools/e2e/favoritos.mjs` lo prueba de punta a punta. Su chequeo a 320 px
+pegados arriba (D-196; desde D-241, solo donde la ficha no cabe en la fila de los tipos). `tools/e2e/favoritos.mjs` lo prueba de punta a punta. Su chequeo a 320 px
 encontró que la portada ya se corría de lado en alemán en el Chrome de Linux, que no sabe partir
 "Galgenmännchen": la columna de `.games` crecía hasta la palabra entera. Ahora la columna no pasa
 del ancho de la pantalla (`minmax(0, 1fr)`) y el nombre se parte aunque falte el diccionario.
