@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.127.3 — 2026-10-06
+- **¿Dónde queda?: el reloj ya no tapa "‹ Laboratorio"** (D-203): en la prueba del laboratorio, la
+  píldora con 🧪 y el reloj va en la barra, entre volver y 🔊, sin pisarlos. En los celulares más
+  angostos queda solo el 🧪, o solo el reloj. En los demás juegos de La Copa, el reloj ya no se
+  parte en dos líneas.
+
 ## 0.127.2 — 2026-10-06
 - **Cuarto Rey: la mesa en inglés del README, con cuatro jugadores**: la captura salía con un quinto
   "undefined ♂", porque el guion llenaba todas las filas de la mesa recordada aunque trajera menos
