@@ -3899,7 +3899,13 @@ decide dentro de la vuelta de `avisar.mjs` (lo mandado, en `pushEnviadosDia`); a
 `uadadios` (sin guion: las reglas de las señales piden solo letras). Quedó distinto del diseño: no se juntan con los de La Copa en un solo aviso (cada uno
 lleva su tope de 2 al día), y el de la semana dice solo cuántos días jugó, sin puesto ni "donde más
 mejoraste". Además, el globo del ícono (`setAppBadge`) y "Agregar al calendario" (un `.ics` con un
-evento diario). Detalle en "Lo que el PR 4 hizo" de [UNO-AL-DIA.md](UNO-AL-DIA.md).
+evento diario). Detalle en "Lo que el PR 4 hizo" de [UNO-AL-DIA.md](UNO-AL-DIA.md). El PR 5
+(v0.119.0) suma el panel: los 10 juegos cuentan el de hoy con un modo propio (`uno-al-dia`,
+`MODO_UNO_AL_DIA` en games.js) y `#/juegos` trae el bloque "📅 Uno al día" (partidas de todos y, de
+quienes entraron con jugador, la vuelta al día siguiente y a los 7 días, las rachas por tramo y las
+invitaciones aceptadas), para lo que las reglas dejan al dueño leer `unoAlDia/` e `invitados/`
+enteros. Uno al día sigue en el laboratorio: abrirlo a todos lo decide el dueño. Detalle en "Lo que
+el PR 5 hizo" de [UNO-AL-DIA.md](UNO-AL-DIA.md) y en [PANEL.md](PANEL.md).
 
 ## D-231 · El selector de idioma lleva las banderas siempre
 **Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** corrige la nota de `base.css` de D-191 (en un celular angosto se escondía la bandera)
