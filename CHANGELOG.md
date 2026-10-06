@@ -1,10 +1,15 @@
 # Changelog
 
-## 0.112.0 — 2026-10-05
+## 0.113.0 — 2026-10-05
 - **Un globo en la portada invita a agregar la app a inicio, en el laboratorio** (D-232): con un
   toque en **Agregar** salen los pasos de tu celular (Safari o Chrome, en iPhone o Android); en
   Android, si Chrome lo ofrece, su propio botón de instalar. La ✕ lo cierra para siempre. Se
   activa en `/labs/` para probarlo.
+
+## 0.112.0 — 2026-10-05
+- **Los avisos se miden en el panel** (D-233): cuántos celulares los tienen, cuántos avisos se
+  mandan y se tocan por tipo, cuántos abren la app instalada y a qué hora pasó la última vuelta,
+  para notar si GitHub dejó de mandarlos. Para el jugador no cambia nada.
 
 ## 0.111.1 — 2026-10-05
 - **El selector de idioma lleva las banderas también en el celular** (D-231): antes, en una

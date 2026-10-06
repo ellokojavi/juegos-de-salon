@@ -29,6 +29,7 @@ import {
   ROOM_TTL, liveRooms, connections, summarize, top, tzLabel, ago, dayOf, codesOfDays, splitByEnv, liveLocal, roomLog,
   paginate, flagOf, whenLabel, horaLabel, fechaLabel, diaPanel, ZONA_PANEL, ZONA_NOMBRE, RANGOS, RANGO_POR_DEFECTO, rangeOf,
   groupDays, localLog, paisesDeSalas, paisesDelRango, salaDe, mediana, idiomasDeSalas, idiomasDelRango, trafico, origenesAgrupados, origenLabel, dayLabel,
+  avisosDelRango, AVISO_TIPOS, vueltaAtrasada,
 } from './aggregate.js';
 import { SECCIONES, leerRuta, rutaA, seccionDe } from './rutas.js';
 
@@ -42,8 +43,8 @@ const ENV_DEFECTO = ENVS[0];
 
 const S = {
   user: null, env: ENV_DEFECTO, range: RANGO_POR_DEFECTO, ruta: leerRuta(location.hash),
-  rooms: {}, days: {}, daysLoaded: false, torneos: {}, torneosLoaded: false,
-  unsubRooms: null, unsubDays: null, unsubTorneos: null, tick: null,
+  rooms: {}, days: {}, daysLoaded: false, torneos: {}, torneosLoaded: false, push: null,
+  unsubRooms: null, unsubDays: null, unsubTorneos: null, unsubPush: null, tick: null,
   // Desde qué día está bajado `days`: un rango más largo obliga a pedir de nuevo, uno más corto no
   desdeDia: null,
   // Lo que se eligió dentro de una vista. No va en la URL: es de esta visita, no del lugar.
@@ -119,6 +120,7 @@ function stopListening() {
   if (S.unsubRooms) { S.unsubRooms(); S.unsubRooms = null; }
   if (S.unsubDays) { S.unsubDays(); S.unsubDays = null; }
   if (S.unsubTorneos) { S.unsubTorneos(); S.unsubTorneos = null; }
+  if (S.unsubPush) { S.unsubPush(); S.unsubPush = null; }
   if (S.tick) { clearInterval(S.tick); S.tick = null; }
 }
 
@@ -138,6 +140,8 @@ function listen() {
   // Las copas se bajan enteras: son pocas y cada una es chica. Cada resultado llega como delta,
   // así que "jugando ahora" y la tabla se mueven solos.
   S.unsubTorneos = onValue(ref(db, 'torneos'), snap => { S.torneos = snap.val() || {}; S.torneosLoaded = true; render(); }, denied);
+  // Lo que deja avisar.mjs en cada vuelta: la hora y las suscripciones vivas (D-233)
+  S.unsubPush = onValue(ref(db, `stats/${S.env}/push`), snap => { S.push = snap.val() || {}; render(); }, denied);
   S.tick = setInterval(render, 30000); // "hace 3 min" se actualiza solo
 }
 
@@ -526,6 +530,7 @@ function vistaCopa(now) {
       tile(part === null ? '—' : `${part}%`, 'participación', { info: 'jugados de los que se podían jugar, en días cerrados' }),
       tile(rc.abandonos, 'juegos sin terminar'),
     ),
+    bloqueAvisos(rango, now),
     porIdioma('Copas por idioma', 'El idioma que eligió quien creó la copa: en ese idioma la juegan todos.', todas.reduce((m, c) => ({ ...m, [c.lang]: (m[c.lang] || 0) + 1 }), {})),
     bloque('Copas', 'De la más nueva a la más vieja. Toca una para ver su tabla, cada día y su historia.',
       filtros(ESTADOS.map(([v, l]) => [v, `${l} · ${todas.filter(c => es(c, v)).length}`]), S.filtroCopas, v => { S.filtroCopas = v; render(); }, 'Qué copas mostrar'),
@@ -543,6 +548,45 @@ function vistaCopa(now) {
     bloque({ dia: 'Juegos por día', semana: 'Juegos por semana', mes: 'Juegos por mes' }[rango.grano], `Días UTC.${rango.grano === 'semana' ? ' La fecha es el lunes de cada semana.' : ''}`,
       lista(periodosM.map(d => bar(d.label, [seg(C_TORNEO, d.total)], maxMD)), 'Nada todavía.', 'bars')),
   ];
+}
+
+const AVISO_LABEL = {
+  dia: '📅 Se abrió el día', plazo: '⏳ Se acaba el plazo', final: '🏁 La Gran Final', fin: '🥇 Terminó la copa',
+  insc: '✍️ Alguien se inscribió (al admin)', copas: '🎲 Días de varias copas', prueba: '🧪 De prueba',
+};
+const PWA_LABEL = { android: 'Android', ios: 'iPhone / iPad', otro: 'Otro (computador)' };
+
+/**
+ * Los avisos al celular (D-233): si los manda el workflow, cuántos llegan, cuántos se tocan y
+ * cuántos abren la app instalada. Mandados y vueltas son del sitio publicado; los tocados, del
+ * entorno elegido.
+ */
+function bloqueAvisos(rango, now) {
+  const a = avisosDelRango(S.days, { from: rango.from, to: rango.to });
+  const p = S.push || {};
+  const atrasada = S.push !== null && vueltaAtrasada(p.vuelta, now);
+  const tipos = [...AVISO_TIPOS, ...Object.keys({ ...a.mandados, ...a.tocados }).filter(k => !AVISO_TIPOS.includes(k))]
+    .filter(k => a.mandados[k] || a.tocados[k]);
+  const maxT = Math.max(0, ...tipos.map(k => Math.max(a.mandados[k] || 0, a.tocados[k] || 0)));
+  const pwa = Object.entries(a.pwa).sort((x, y) => y[1] - x[1]);
+  const maxP = Math.max(0, ...pwa.map(([, v]) => v));
+  return bloque('🔔 Avisos al celular',
+    'Los manda GitHub cada 15 minutos. Mandados: los que el servicio del celular aceptó. Tocados: los que abrieron la app desde el aviso. En las barras, rosado, tocados; celeste, mandados sin tocar. Días UTC.',
+    el('div', { class: 'tiles' },
+      tile(p.vivas ?? '—', 'celulares con avisos', { info: 'suscripciones vivas en la última vuelta' }),
+      tile(a.totalMandados, 'avisos mandados'),
+      tile(porcentaje(a.totalTocados, a.totalMandados), `tocados · ${n(a.totalTocados)}`),
+      tile(a.totalPwa, 'aperturas de la app instalada'),
+      tile(p.vuelta ? horaLabel(p.vuelta) : '—', `última vuelta${p.vuelta ? ` · ${ago(p.vuelta, now)}` : ''}${atrasada ? ' · ¿se apagó el workflow?' : ''}`, { hot: atrasada, info: atrasada ? 'GitHub apaga los workflows programados tras 60 días sin commits' : '' }),
+    ),
+    el('div', { class: 'grid2' },
+      el('div', {}, el('h3', { class: 'small' }, 'Por tipo'),
+        lista(tipos.map(k => bar(AVISO_LABEL[k] || k, [seg(C_TORNEO, a.tocados[k] || 0), seg(C_TOTAL, Math.max(0, (a.mandados[k] || 0) - (a.tocados[k] || 0)))], maxT, {
+          cifra: a.mandados[k] || 0,
+          detail: `${n(a.mandados[k] || 0)} mandados · ${n(a.tocados[k] || 0)} tocados`,
+        })), 'Ningún aviso en este rango.', 'bars')),
+      el('div', {}, el('h3', { class: 'small' }, 'App instalada'),
+        lista(pwa.map(([k, v]) => bar(PWA_LABEL[k] || k, [seg(C_IDIOMA, v)], maxP)), 'Nadie la abrió desde el ícono en este rango.', 'bars'))));
 }
 
 /** Una casilla de la grilla jugador × día de una copa. */
@@ -1062,9 +1106,9 @@ $('#buscar').addEventListener('submit', e => { e.preventDefault(); buscar($('#bu
 // `vista` es una ruta (`/torneo/OFICI`) o, como antes, el nombre de una vista (`torneo`).
 window.__panel = {
   get state() { return S; },
-  seed({ rooms = {}, days = {}, torneos = {}, daysLoaded = true, vista }) {
+  seed({ rooms = {}, days = {}, torneos = {}, push = null, daysLoaded = true, vista }) {
     stopListening();
-    S.rooms = rooms; S.days = days; S.daysLoaded = daysLoaded; S.torneos = torneos; S.torneosLoaded = true;
+    S.rooms = rooms; S.days = days; S.daysLoaded = daysLoaded; S.torneos = torneos; S.torneosLoaded = true; S.push = push;
     S.desdeDia = rangeOf(S.range).from;
     showScreen('screen-panel');
     if (vista) {

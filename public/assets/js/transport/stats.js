@@ -447,6 +447,40 @@ export function canalDe(search = '') {
   return clave(q.get('de') || q.get('utm_source') || '', 20);
 }
 
+/**
+ * El aviso de La Copa que abrió esta página (`?aviso=dia`, D-233): lo pone avisar.mjs en la
+ * dirección de cada aviso, así el panel cuenta cuántos se tocan, por tipo. Vacío si no viene de uno.
+ */
+export const TIPOS_AVISO = ['dia', 'plazo', 'final', 'fin', 'insc', 'copas', 'prueba'];
+export function avisoDe(search = '') {
+  let q;
+  try { q = new URLSearchParams(String(search || '')); } catch (_) { return ''; }
+  const t = clave(q.get('aviso'), 12);
+  return TIPOS_AVISO.includes(t) ? t : '';
+}
+
+/**
+ * Si la abrió la app instalada (el `start_url` de los manifests es `./?pwa`, D-233), en qué
+ * sistema: `android`, `ios` u `otro`. Vacío si no.
+ */
+export function pwaDe(search = '', ua = '') {
+  let q;
+  try { q = new URLSearchParams(String(search || '')); } catch (_) { return ''; }
+  if (!q.has('pwa')) return '';
+  return /Android/i.test(ua) ? 'android' : /iPhone|iPad|iPod|Macintosh/i.test(ua) ? 'ios' : 'otro';
+}
+
+/** La búsqueda sin `pwa` ni `aviso`: contadas una vez, salen de la dirección para que recargar o volver no las sume de nuevo. */
+export function sinMarcas(search = '') {
+  let q;
+  try { q = new URLSearchParams(String(search || '')); } catch (_) { return String(search || ''); }
+  if (!q.has('pwa') && !q.has('aviso')) return String(search || '');
+  q.delete('pwa'); q.delete('aviso');
+  // Sin '=' de más: `?K7Q2X` sigue siendo `?K7Q2X`, no `?K7Q2X=`
+  const s = [...q].map(([k, v]) => (v === '' ? encodeURIComponent(k) : `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)).join('&');
+  return s ? `?${s}` : '';
+}
+
 /** Qué aparato es, a grandes rasgos. Un iPad moderno dice ser Mac: se le nota por la pantalla táctil. */
 export function dispositivoDe({ ua = '', platform = '', touch = 0 } = {}) {
   if (/iPad|Tablet/i.test(ua) || (/Mac/.test(platform) && touch > 1)) return 'tableta';
@@ -458,8 +492,11 @@ export function dispositivoDe({ ua = '', platform = '', touch = 0 } = {}) {
  * Los contadores que suben al abrir una página. `primera` dice si es la primera página de la
  * visita: solo esa cuenta la entrada, el origen, el canal, si vuelve, el aparato y el país.
  */
-export function visitChanges(fp, { pagina, primera, origen, canal, vuelve, disp }) {
+export function visitChanges(fp, { pagina, primera, origen, canal, vuelve, disp, aviso, pwa }) {
   const c = { [`vistas/${pagina}`]: INC };
+  // Un aviso tocado o la app instalada abren una página, sea o no la primera de la visita (D-233)
+  if (aviso) c[`aviso/${aviso}`] = INC;
+  if (pwa) c[`pwa/${pwa}`] = INC;
   if (!primera) return c;
   c[`entradas/${pagina}`] = INC;
   c[`ref/${origen || 'directo'}`] = INC;
@@ -481,13 +518,16 @@ const sacar = (st, k) => { try { st?.removeItem(k); } catch (_) { /* nada */ } }
  */
 export function noteVisit(api, fp, {
   loc = globalThis.location, doc = globalThis.document, nav = globalThis.navigator,
-  sesion = globalThis.sessionStorage, local = globalThis.localStorage, now = Date.now(),
+  sesion = globalThis.sessionStorage, local = globalThis.localStorage, now = Date.now(), hist = globalThis.history,
 } = {}) {
   const pagina = paginaDe(loc?.pathname);
   if (pagina === 'panel') return Promise.resolve();
   const entrada = leer(sesion, VISITA_KEY);
   const primera = !entrada;
-  let datos = { pagina, primera };
+  let datos = { pagina, primera, aviso: avisoDe(loc?.search), pwa: pwaDe(loc?.search, nav?.userAgent) };
+  if (datos.aviso || datos.pwa) {
+    try { hist?.replaceState(hist.state, '', `${loc.pathname}${sinMarcas(loc.search)}${loc.hash || ''}`); } catch (_) { /* queda la dirección */ }
+  }
   if (primera) {
     // Una página puente o de idioma redirige en el acto y se lleva el origen: lo deja guardado
     const puente = leer(sesion, REF_KEY);
