@@ -1,6 +1,6 @@
 # Uno al día
 
-**Estado:** aprobada por el dueño (D-230); en el laboratorio: el PR 1, el núcleo (v0.115.0), el PR 2, los juegos de grupo (v0.116.0), el PR 3, jugador, rankings, comodines e invitaciones (v0.117.0), el PR 4, los avisos y recordatorios (v0.118.0), y el PR 5, el panel (v0.119.0) · **Fecha:** 2026-10-05 ·
+**Estado:** **para todos desde v0.121.0** (el n.° 1 es el 6 de octubre de 2026); construido en 7 PR (ver "Lo que el PR N hizo") · **Fecha:** 2026-10-05 ·
 **Toca:** RP-44, D-188 y D-237 (Juego al azar), D-212 y D-217 (rankings), D-221 a D-229 (avisos), D-97 (semillas)
 
 Una modalidad nueva en la portada, al lado de **Juego al azar**: cada día la app sorprende con un
@@ -555,6 +555,15 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   los textos y la del botón pisaba a la del título (lo vio el dueño). `uno-al-dia.test.mjs` ahora
   revisa que los textos de Uno al día no repitan una clave.
 
+### Sale del laboratorio (v0.121.0)
+
+- `UNO_AL_DIA_EN_LABS = false`: el botón de la portada, `/today/` y todo lo demás se ven para
+  todos. En `/labs/` queda solo probar la otra forma del acceso (la tarjeta junto a La Copa).
+- **El n.° 1 pasó al 6 de octubre de 2026**, el día en que se abrió (decisión del dueño):
+  `LANZAMIENTO` en uno-al-dia.js. El mazo es el mismo corrido un día (el 6 es Desenredo) y los de
+  grupo siguen saliendo desde el mazo del 13. Desde ahora queda fijo: moverlo cambia el juego de
+  días ya jugados.
+
 ## Lo que decidió el dueño (2026-10-05)
 
 1. **El mismo desafío para todos, y el dado rueda igual**, cada vez, con la experiencia de Juego al
@@ -580,6 +589,7 @@ celular saca la palabra, la flota o los dados de la semilla del día.
     Corregida por la 15.
 15. **El recordatorio es el aviso diario de la app, programado a la hora elegida, no un calendario**
     (2026-10-06): se sacó "⏰ Agregar recordatorio" (el `.ics`). Corrige la 14, que ya no hace falta.
+16. **Abrirlo a todos** (2026-10-06), con el n.° 1 el día que se abre.
 
 ## Textos para revisar (U-1, U-3, U-17)
 
