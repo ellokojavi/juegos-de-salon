@@ -1,5 +1,5 @@
 /**
- * El globo de la portada que invita a agregar Juegos de Salón a la pantalla de inicio (D-229), y la
+ * El globo de la portada que invita a agregar Juegos de Salón a la pantalla de inicio (D-230), y la
  * hoja con los pasos de cada celular. Los textos van en `COMMON[lang].ins` (i18n.js).
  *
  * - Sale solo en un celular (iPhone o Android) que todavía no abre la app instalada.

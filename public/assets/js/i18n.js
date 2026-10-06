@@ -137,7 +137,7 @@ export const COMMON = {
     shareCopied: '¡Copiado! Pégalo en el chat.',
     shareDownloaded: 'La imagen se descargó y el texto quedó copiado.',
     // Los rankings y el jugador (D-212): nombre y PIN, como en La Copa, pero para todos los juegos
-    // El globo de la portada para agregar la app a inicio (D-229)
+    // El globo de la portada para agregar la app a inicio (D-230)
     ins: {
       title: "Juegos de Salón como app",
       sub: "Agrégala a tu pantalla de inicio y ábrela en un toque.",
@@ -239,7 +239,7 @@ export const COMMON = {
     shareSoloImage: '🤔 Can you beat me?',
     shareCopied: 'Copied! Paste it in the chat.',
     shareDownloaded: 'The image was downloaded and the text was copied.',
-    // El globo de la portada para agregar la app a inicio (D-229)
+    // El globo de la portada para agregar la app a inicio (D-230)
     ins: {
       title: "Party Games as an app",
       sub: "Add it to your home screen and open it with one tap.",
@@ -341,7 +341,7 @@ export const COMMON = {
     shareSoloImage: '🤔 Consegue me vencer?',
     shareCopied: 'Copiado! Cole no chat.',
     shareDownloaded: 'A imagem foi baixada e o texto foi copiado.',
-    // El globo de la portada para agregar la app a inicio (D-229)
+    // El globo de la portada para agregar la app a inicio (D-230)
     ins: {
       title: "Jogos de Salão como app",
       sub: "Adicione à sua tela de início e abra com um toque.",
@@ -443,7 +443,7 @@ export const COMMON = {
     shareSoloImage: '🤔 Schlägst du mich?',
     shareCopied: 'Kopiert! Füg es im Chat ein.',
     shareDownloaded: 'Das Bild wurde gespeichert und der Text kopiert.',
-    // El globo de la portada para agregar la app a inicio (D-229)
+    // El globo de la portada para agregar la app a inicio (D-230)
     ins: {
       title: "Salonspiele als App",
       sub: "Leg sie auf deinen Home-Bildschirm und öffne sie mit einem Tipp.",

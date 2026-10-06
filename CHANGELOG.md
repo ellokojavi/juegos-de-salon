@@ -1,10 +1,16 @@
 # Changelog
 
-## 0.111.0 — 2026-10-05
-- **Un globo en la portada invita a agregar la app a inicio, en el laboratorio** (D-229): con un
+## 0.112.0 — 2026-10-05
+- **Un globo en la portada invita a agregar la app a inicio, en el laboratorio** (D-230): con un
   toque en **Agregar** salen los pasos de tu celular (Safari o Chrome, en iPhone o Android); en
   Android, si Chrome lo ofrece, su propio botón de instalar. La ✕ lo cierra para siempre. Se
   activa en `/labs/` para probarlo.
+
+## 0.111.0 — 2026-10-05
+- **Avisos más justos** (D-229): a lo más 2 por copa al día, y si se vencen dos días a la vez,
+  van en un aviso. Al tocarlo abre el día que avisa, listo para jugar, y en Android trae los botones
+  **Jugar** y **Silenciar esta copa**. Si tienes días nuevos en varias copas, llega uno solo. Si la
+  copa termina empatada arriba, el aviso nombra a todos los que ganaron.
 
 ## 0.110.0 — 2026-10-05
 - **Avisos de La Copa para todos** (D-228): la 🔔 de cada copa ya no está solo en el laboratorio.

@@ -108,7 +108,7 @@ node tools/e2e/contacto.mjs cuarto-rey --salida /tmp/contacto
 | `memoria-de-partida.mjs` | Guardar y retomar en los tres juegos (canon C-6) |
 | `versionado.mjs` | Que todos los módulos carguen con `?v=` del import map. Desde D-205 `public/` no lo lleva: correrlo contra una copia estampada (`set-version.py --sitio /tmp/sitio`, servida y pasada en `SITIO`) |
 | `instalable.mjs` | La app instalable (D-221): en la portada, un juego, La Copa, un juego suelto y `/records/`, Chrome registra `/sw.js` con alcance `/`, lee el manifest sin errores y deja instalar. En los cuatro idiomas, en la portada y en un juego, revisa que la app se llame con el `appTitle` del idioma, en el manifest y en el `apple-mobile-web-app-title` (D-222). Contra una copia estampada (`SITIO`) prueba además que el import map no se rompa |
-| `instalar.mjs` | El globo de la portada que invita a agregar la app a inicio (D-229): con el celular de cada uno (Safari y Chrome en iPhone, Chrome y Samsung en Android, WhatsApp), revisa los pasos de la hoja, el diálogo propio de Chrome, que la ✕ y "Ya la agregué" lo apaguen para siempre, que no salga en el computador ni en la app instalada, y que quepa a 320 px en los cuatro idiomas |
+| `instalar.mjs` | El globo de la portada que invita a agregar la app a inicio (D-230): con el celular de cada uno (Safari y Chrome en iPhone, Chrome y Samsung en Android, WhatsApp), revisa los pasos de la hoja, el diálogo propio de Chrome, que la ✕ y "Ya la agregué" lo apaguen para siempre, que no salga en el computador ni en la app instalada, y que quepa a 320 px en los cuatro idiomas |
 | `compartir-sala.mjs` | Botón de compartir: diálogo nativo si existe, copiar si no |
 | `compartir-portada.mjs` | El 📤 de la portada (D-226), en los cuatro idiomas: la tarjeta social del idioma como imagen, el texto con su cabecera y el link a la portada de ese idioma; en un computador, solo el texto copiado y nada descargado |
 | `enlace-invitacion.mjs` | Quien llega por un enlace solo puede unirse a esa sala, en los cuatro juegos con sala |
@@ -203,4 +203,7 @@ prueba, la clave VAPID de `vapid.js` (D-225) y un servicio de avisos falso (nada
 "Ahora no", la campana que activa los avisos y el aviso de confirmación, los ajustes y "Silenciar
 esta copa", los avisos bloqueados, y el camino de iPhone (agregar a inicio, dentro de Instagram, y
 los pasos que dan el código de la copa, porque iOS abre la app en la portada, D-227, y la app
-instalada que abre con el nombre ya elegido si la dirección lleva `&app=`). Deja capturas de cada hoja.
+instalada que abre con el nombre ya elegido si la dirección lleva `&app=`). También lo que abre un
+aviso (D-229): `&dia=<d>` parte en ese día listo para empezar (o en el tablero, si no se puede
+jugar) y `&silenciar` silencia la copa. Los botones del aviso en Android se prueban a mano: Chrome
+headless no los muestra. Deja capturas de cada hoja.
