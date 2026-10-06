@@ -1,5 +1,5 @@
 {
-  "version": "0.116.0",
+  "version": "0.117.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -746,6 +746,7 @@
     "public/assets/js/transport/ratelimit.js",
     "public/assets/js/transport/stats.js",
     "public/assets/js/ui.js",
+    "public/assets/js/uno-al-dia-red.js",
     "public/assets/js/uno-al-dia-ui.js",
     "public/assets/js/uno-al-dia.js",
     "public/assets/js/vapid.js",
@@ -851,6 +852,7 @@
     "public/assets/js/transport/errors.test.mjs",
     "public/assets/js/transport/ratelimit.test.mjs",
     "public/assets/js/transport/stats.test.mjs",
+    "public/assets/js/uno-al-dia-jugador.test.mjs",
     "public/assets/js/uno-al-dia.test.mjs",
     "public/battleship/engine.test.mjs",
     "public/bulls-and-cows/engine.test.mjs",
@@ -935,6 +937,7 @@
     "timeline/solo.mjs",
     "timeline/veredicto.mjs",
     "uno-al-dia-grupo.mjs",
+    "uno-al-dia-jugador.mjs",
     "uno-al-dia.mjs",
     "versionado.mjs"
   ],

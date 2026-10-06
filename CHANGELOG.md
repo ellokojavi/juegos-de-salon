@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.117.0 — 2026-10-06
+- **Uno al día con rankings, comodines e invitaciones, en el laboratorio** (D-230): entrando con
+  tu nombre y PIN, tu Uno al día pasa de un celular a otro y entra a los rankings de hoy, de la
+  semana y de rachas. Cada 7 días seguidos ganas un comodín 🧊, que salva tu racha si un día no
+  juegas. Puedes invitar a un amigo: le llega "Sara te desafía" con tu racha, juega el mismo desafío,
+  ven quién ganó y tú ganas un comodín.
+
 ## 0.116.0 — 2026-10-06
 - **Uno al día suma El Ahorcado, Batalla Naval y Dudo, en el laboratorio** (D-230): desde el 12 de
   octubre el dado también puede caer en ellos. Abren directo, sin elegir modo: El Ahorcado con una
