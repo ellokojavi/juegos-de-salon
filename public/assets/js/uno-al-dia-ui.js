@@ -213,6 +213,12 @@ async function conRed({ lang, fecha, dia, primera, hoyLinea, red, alTocar }) {
     const R = await import('./uno-al-dia-red.js');
     const { rankingsVisibles } = await import('./jugador.js');
     if (primera) await R.subirHoy({ fecha, dia });
+    // Los avisos (D-230): su último día y su racha; el globo del ícono; y la oferta, la segunda vez
+    const Av = await import('./uno-al-dia-avisos.js');
+    Av.globo();
+    Av.refrescar({ lang }).catch(() => {});
+    const of = Av.oferta({ lang, alTocar, primera });
+    if (of) red.append(of);
     // El duelo con quien invitó
     const inv = R.invitador();
     if (inv) {
