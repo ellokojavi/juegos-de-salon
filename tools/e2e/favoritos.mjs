@@ -76,7 +76,10 @@ for (const lang of ['es', 'en', 'pt', 'de']) {
     const fav = document.querySelector('.ficha-fav').getBoundingClientRect();
     const tops = new Set(bs.map(x => Math.round(x.getBoundingClientRect().top)));
     const fila = document.querySelector('.filtros .tipos').getBoundingClientRect();
-    return { n: bs.length, filas: tops.size, sale: bs.some(x => x.getBoundingClientRect().right > fila.right + 1), favArriba: fav.bottom <= fila.top && fav.height >= 44, ancho: document.documentElement.scrollWidth };
+    return { n: bs.length, filas: tops.size, sale: bs.some(x => x.getBoundingClientRect().right > fila.right + 1), favArriba: fav.bottom <= fila.top && fav.height >= 44, ancho: document.documentElement.scrollWidth,
+      // Si algo se sale de la pantalla, cuál: las fuentes de Linux no miden como las del Mac
+      fuera: [...document.querySelectorAll('body *')].filter(x => x.getBoundingClientRect().right > innerWidth + 0.5 && !x.closest('[hidden]'))
+        .map(x => (x.id ? '#' + x.id : x.className ? '.' + String(x.className).split(' ')[0] : x.tagName) + ':' + Math.round(x.getBoundingClientRect().right)).slice(0, 6) };
   })())`).then(JSON.parse);
   ver(f.n === 4 && f.filas === 1 && !f.sale && f.favArriba && f.ancho <= 320, `${lang} a 320 px: ⭐ Favoritos arriba y los ${f.n} tipos en una fila, sin salirse (${JSON.stringify(f)})`);
   await c.evaluate(`scrollTo(0, 0); 1`);
