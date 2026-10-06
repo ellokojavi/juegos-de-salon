@@ -563,7 +563,7 @@ const AVISO_LABEL = {
   dia: '📅 Se abrió el día', plazo: '⏳ Se acaba el plazo', final: '🏁 La Gran Final', fin: '🥇 Terminó la copa',
   insc: '✍️ Alguien se inscribió (al admin)', copas: '🎲 Días de varias copas', prueba: '🧪 De prueba',
   // Uno al día (D-230)
-  'uad-dia': '📅 Uno al día: el de hoy', 'uad-racha': '🔥 Uno al día: la racha', 'uad-semana': '📊 Uno al día: la semana', 'uad-adios': '👋 Uno al día: el último',
+  uaddia: '📅 Uno al día: el de hoy', uadracha: '🔥 Uno al día: la racha', uadsemana: '📊 Uno al día: la semana', uadadios: '👋 Uno al día: el último',
 };
 const PWA_LABEL = { android: 'Android', ios: 'iPhone / iPad', otro: 'Otro (computador)' };
 
@@ -742,7 +742,7 @@ function vistaJuegos() {
 /**
  * Uno al día (D-230): las partidas del modo `uno-al-dia` (de todos), y de quienes entraron con
  * jugador, cuántos jugaron, cuántos volvieron al día siguiente y a la semana, sus rachas y las
- * invitaciones aceptadas. Los avisos van en el bloque de avisos de La Copa, como `uad-*`.
+ * invitaciones aceptadas. Los avisos van en el bloque de avisos al celular, como `uad<tipo>`.
  */
 function bloqueUnoAlDia(rango) {
   const u = unoAlDiaDelRango({ days: S.days, ...S.uad }, { from: rango.from, to: rango.to, hoy: dayOf(Date.now()) });
