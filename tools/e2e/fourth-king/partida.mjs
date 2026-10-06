@@ -9,11 +9,23 @@ const SITIO = process.env.SITIO || 'http://localhost:8765';
 const sacadas = new Set();
 const toma = async nombre => { if (!sacadas.has(nombre)) { sacadas.add(nombre); await b.shot(nombre); } };
 
+const GENEROS = ['m', 'f', 'm', 'f']; // Javi, Cata, Pancho, Fran
 const jugar = async (nombres, tomaMesa) => {
   await ev(`document.getElementById('btn-go-setup').click(); 1`); await sleep(300);
   await toma('03-jugadores');
+  // La mesa recordada puede traer más filas que nombres (la mudanza de abajo deja cinco): se
+  // quitan las que sobran antes de llenar, para que ninguna entre vacía o como "undefined".
+  await ev(`(()=>{const n=${nombres.length};const filas=()=>document.querySelectorAll('#players-form .player-row');while(filas().length>n){const d=[...filas()].at(-1).querySelector('.del');if(d.disabled)break;d.click();}while(filas().length<n&&!document.getElementById('btn-add-player').disabled)document.getElementById('btn-add-player').click();return 1})()`);
   await ev(`(()=>{const n=${JSON.stringify(nombres)};[...document.querySelectorAll('#players-form input')].forEach((inp,i)=>{inp.value=n[i];inp.dispatchEvent(new Event('input',{bubbles:true}));});return 1})()`);
+  // El género también se fija: la mesa recordada (la mudanza) trae otros, y la captura en inglés
+  // saldría con "Javi ♀" y "Pancho ⚧".
+  await ev(`(()=>{const g=${JSON.stringify(GENEROS)};[...document.querySelectorAll('#players-form .player-row')].forEach((f,i)=>f.querySelector('.gender button[data-g="'+g[i%g.length]+'"]').click());return 1})()`);
   await ev(`document.getElementById('btn-start').click(); 1`); await sleep(500);
+  const mesa = await ev(`JSON.stringify(__cuartoRey.state().players.map(p=>p.name))`);
+  const generos = await ev(`__cuartoRey.state().players.map(p=>p.gender).join('')`);
+  const esperados = nombres.map((_, i) => GENEROS[i % GENEROS.length]).join('');
+  console.log(generos === esperados ? `✓ los géneros son los del guion (${generos})` : `✗ los géneros no son los del guion: ${generos}, se esperaba ${esperados}`);
+  console.log(mesa === JSON.stringify(nombres) ? `✓ la mesa son los ${nombres.length} nombres del guion` : `✗ la mesa no son los nombres del guion: ${mesa}`);
   await toma(tomaMesa);
 };
 

@@ -10,6 +10,10 @@
 .intro-hero .icon.emoji-claro { filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff) drop-shadow(0 0 18px rgba(255, 210, 63, 0.6)); }
 .intro-hero .globo-portada { position: relative; display: block; width: 150px; height: 150px; margin: 0 auto; }
 .globo-portada canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+/* El globo aparece cuando llega la imagen satelital, sin pasar antes por el mapa dibujado */
+.globo-aparece { animation: globo-aparece 0.3s ease-out; }
+@keyframes globo-aparece { from { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .globo-aparece { animation: none; } }
 .intro-hero h1, .intro-hero h2 { margin: 4px 0 6px; overflow-wrap: anywhere; }
 
 /* Formularios */

@@ -66,8 +66,8 @@ public/<carpeta>/
 - **El selector de idioma es uno solo, `langToggle()`, y se ve igual en toda la app** (D-231).
   Ninguna pantalla arma el suyo. Su estándar:
   - Una píldora de vidrio (`--glass`) con un botón por idioma de `LANGS`, en el orden de `LANGS`.
-  - **Cada botón lleva la bandera y el código en mayúsculas, siempre** (🇨🇱 ES, 🇬🇧 EN, 🇧🇷 PT, 🇩🇪 DE).
-    La bandera es la del país de la app en ese idioma (`BANDERAS` en `i18n.js`), en emoji, nunca
+  - **Cada botón lleva la bandera y el código en mayúsculas, siempre** (🇪🇸 ES, 🇬🇧 EN, 🇧🇷 PT, 🇩🇪 DE).
+    La bandera identifica el idioma, no el país de quien juega: el español va con 🇪🇸 (D-244). Salen de `BANDERAS` en `i18n.js`, en emoji, nunca
     en SVG: en Windows se ve como dos letras y se acepta (D-231). Nunca se esconde:
     en una pantalla ancha va al lado del código, y en un celular angosto (≤ 440 px), arriba, para
     que el toggle no crezca.

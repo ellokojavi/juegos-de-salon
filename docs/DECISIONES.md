@@ -53,7 +53,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 |---|---|---|
 | Estructura y rutas | C-2 | D-01, D-02, D-03, D-24, D-192, D-198 |
 | Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184 |
-| Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231 |
+| Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
 | Portada: filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241 |
@@ -2201,7 +2201,7 @@ coseno del ángulo con que se mira; el alfiler se achica (hasta un 35 %) y se de
 detrás. En el juego las marcas siguen planas: ahí se miran de frente y tienen que leerse.
 
 ## D-159 · El globo de ¿Dónde queda? es una imagen satelital
-**Fecha:** 2026-09-29 · **Estado:** corregida por D-202
+**Fecha:** 2026-09-29 · **Estado:** corregida por D-202, D-245
 **Decisión:** El globo muestra la Tierra vista desde el satélite: **Blue Marble Next Generation**
 de la NASA (dominio público), la de septiembre de 2004, con relieve y fondo marino. Se eligió
 septiembre porque es el mes con menos nieve en los dos hemisferios: el Sahara, Arabia, el Atacama
@@ -2214,9 +2214,9 @@ la Antártica como hielo. Sin nombres ni fronteras (D-158).
   4096 px (1,6 MB) que la reemplaza al bajar, si el celular la acepta. El nombre lleva el mes de
   la imagen, porque `set-version.py` no estampa imágenes. Las rehace
   `node tools/mapa.mjs satelite` (necesita internet y `sips`, de macOS).
-- **Sin WebGL, o mientras no llega ninguna imagen,** el globo se dibuja como antes, con el mapa
-  vectorial verde. El mapa vectorial (`mapa.js`) queda también para las pruebas: cada ciudad cae
-  en su país y sobre tierra.
+- **Sin WebGL, o si ninguna imagen llega,** el globo se dibuja como antes, con el mapa vectorial
+  verde. Mientras baja la primera, el globo espera vacío (D-245). El mapa vectorial (`mapa.js`)
+  queda también para las pruebas: cada ciudad cae en su país y sobre tierra.
 - **El zoom máximo baja de 40 a 16 veces** (unos 2 km por píxel en un celular): más allá la
   imagen de 4096 px ya no tiene detalle. Sigue sobrando precisión para el puntaje (un punto cada
   25 km). La respuesta acerca hasta 12 veces.
@@ -3922,7 +3922,7 @@ las visitas que entraron por ahí. En v0.120.1 (dilema #230, decisión 14), con 
 **Sale del laboratorio en v0.121.0** (decisión del dueño, 2026-10-06; decisión 16 de [UNO-AL-DIA.md](UNO-AL-DIA.md)): `UNO_AL_DIA_EN_LABS = false`, así que el botón de la portada, `/today/`, los rankings y los avisos son para todos, y en `/labs/` queda solo probar la otra forma del acceso (la tarjeta junto a La Copa). **El n.° 1 pasó al 6 de octubre de 2026**, el día en que se abrió (`LANZAMIENTO`): el mazo es el mismo corrido un día, así que El Ahorcado, Batalla Naval y Dudo entran desde el mazo del 13 de octubre, no del 12. Desde ahí `LANZAMIENTO` queda fijo: moverlo cambiaría el juego de días ya jugados.
 
 ## D-231 · El selector de idioma lleva las banderas siempre
-**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** corrige la nota de `base.css` de D-191 (en un celular angosto se escondía la bandera)
+**Fecha:** 2026-10-05 · **Estado:** corregida por D-244 · **Relación:** corrige la nota de `base.css` de D-191 (en un celular angosto se escondía la bandera)
 **Decisión:** Pedido del dueño: todos los selectores de idioma llevan sus banderas, y queda un
 estándar de diseño para el widget (C-3). En un celular de hasta 440 px, con cuatro idiomas, el
 toggle escondía las banderas para no empujar el sonido y compartir fuera de la barra de arriba:
@@ -3935,7 +3935,7 @@ así, en el celular, que es donde más se juega, nunca se veían.
 **Por qué:** La bandera se reconoce antes que el código, sobre todo para quien no lee español.
 Apilarla mantiene el ancho y los 44 px de alto (C-8), así que la barra no cambia.
 **Consecuencias:** Las banderas son emoji, no imágenes SVG, por decisión del dueño: en Windows se
-ven como dos letras (CL, GB…) y se acepta, porque la app se juega en celulares. Hay un solo toggle en la app: el estándar queda en C-3.
+ven como dos letras (ES, GB…; CL hasta D-244) y se acepta, porque la app se juega en celulares. Hay un solo toggle en la app: el estándar queda en C-3.
 
 ## D-232 · Un globo en la portada invita a agregar la app a inicio (primero en el laboratorio; para todos desde v0.121.0)
 **Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** completa D-221; reusa la hoja de pasos de D-223
@@ -4193,6 +4193,31 @@ color, y del resto de la portada.
 **Consecuencias:** el degradé usa ids fijos (`icono-compartir-caja`, `icono-compartir-flecha`):
 el botón va una sola vez por página. Si algún día va dos veces, cada copia necesita ids propios.
 
+
+## D-244 · El español va con la bandera de España
+**Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** corrige D-231 (la bandera del español)
+**Decisión:** Pedido del dueño, para estandarizar: en el selector de idioma, ES lleva 🇪🇸 en vez
+de 🇨🇱 (`BANDERAS` en `i18n.js`). La bandera identifica el idioma, no el país de quien juega.
+**Por qué:** 🇨🇱 hacía ver el español como el idioma de un país, al lado de 🇬🇧 EN y 🇩🇪 DE, que se
+leen como idiomas. Para quien llega de afuera, 🇪🇸 dice "español" sin pensarlo.
+**Consecuencias:** Solo cambia el selector. Las banderas de Chile que son contenido (la temática
+Chile, el público 🇨🇱 de La Copa, la bandera del país junto al nombre en los rankings) siguen igual.
+El portugués sigue con 🇧🇷: es el de Brasil (D-48).
+
+## D-245 · El globo de ¿Dónde queda? espera a la imagen satelital
+**Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** corrige D-159 (qué se ve mientras baja la imagen)
+**Decisión:** Con WebGL, mientras la imagen satelital no llega, el globo no se dibuja (ni el de la
+portada ni el del juego): queda el fondo. Al llegar la de 2048 px aparece con un fundido de 0,3 s
+(sin fundido con movimiento reducido, C-8). El mapa vectorial queda para cuando no hay WebGL,
+cuando las dos imágenes fallan o cuando ninguna llegó a los 4 s (`esperando()` de `satelite()` en
+`globo.js`); ahí la imagen lo reemplaza al llegar, como antes.
+**Por qué:** lo pidió el dueño: al cargar la página se veía el globo dibujado, verde y azul, una
+fracción de segundo antes de pasar al satelital, y se notaba como un salto.
+**Alternativas descartadas:** dibujar solo el mar mientras tanto (sigue siendo un globo distinto
+que cambia); precargar la imagen en el HTML (acorta la espera, pero no la quita).
+**Consecuencias:** con una red lenta el globo tarda hasta 4 s en aparecer; las marcas y los
+toques funcionan igual, porque no dependen del dibujo. El tope existe porque una red que cuelga el
+pedido sin fallarlo dejaba el globo vacío mientras corre el reloj.
 
 ## D-246 · Generala: el juego de dados, con los dados en claro y la servida que gana
 **Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** excepción a C-7 (la semilla) y C-10 (los secretos)
