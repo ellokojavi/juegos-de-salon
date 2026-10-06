@@ -56,7 +56,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213 |
-| Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235 |
+| Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237 |
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97 |
 | Memoria de partida | C-6 | D-25, D-150 |
@@ -2841,7 +2841,7 @@ brasileño puede jugar en español).
 
 
 ## D-188 · Juego al azar: un dado que rueda sobre el menú
-**Fecha:** 2026-10-03 · **Estado:** vigente · **Relación:** el paso al juego, en D-235
+**Fecha:** 2026-10-03 · **Estado:** vigente · **Relación:** el paso al juego, en D-237
 **Decisión:** El menú tiene un botón **🎲 Juego al azar** bajo la bajada. Al tocarlo, un dado
 blanco de cantos redondos, con un juego en cada cara, entra rodando sobre la misma portada,
 rebota tres veces y cae con el elegido adelante; abajo dice "¡Te tocó! <juego>" y a los 1,3 s se
@@ -3988,7 +3988,7 @@ que esconde la terminada y que al prenderlo aparece con su etiqueta. Una copa de
 antes de tiempo se marca al llegar a su `fin` planeado: el celular guarda `meta.end`.
 
 ## D-235 · Del dado al juego, con fundido y sin corte
-**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** completa D-188
+**Fecha:** 2026-10-05 · **Estado:** reemplazada por D-237 · **Relación:** completa D-188
 **Decisión:** Cuando el dado de Juego al azar abre el juego (a los 1,3 s de caer, o al tocar), ya
 no corta de golpe a la otra página:
 - **Al irse** (0,42 s), el dado se achica y se desvanece con su nombre, y la capa oscura toma el
@@ -4023,3 +4023,30 @@ campo "PIN nuevo" sin explicación. Se separa:
 de cuenta.
 **Consecuencias:** "Salir" pasa a estar a un toque más, dentro del nombre. Cambiar el PIN se puede
 desde cualquier página que muestre "Juegas como", no solo desde Records.
+
+## D-237 · Del dado al juego sin pantalla vacía: el juego abre con el mismo dado encima
+**Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** reemplaza a D-235; completa D-188 y D-230
+**Decisión:** El dado de Juego al azar (y el de Uno al día) no se borra antes de abrir el juego:
+- **Al irse**, el menú guarda la escena del dado en `sessionStorage` (`azar-llega`: una foto del
+  lienzo leída en el mismo momento en que se dibuja, el emoji y, si ya cayó, "¡Te tocó!" con el
+  nombre) y navega de inmediato. El navegador sigue mostrando el dado hasta que la página del juego
+  pinta.
+- **Al llegar**, `assets/js/llegada.js` (lo trae `instalable.js`, en el `<head>` de cada página)
+  pone encima la misma escena, quieta (`.azar-capa.velo` en `base.css`, donde ahora vive toda la
+  capa del dado). El cambio de página no se ve.
+- La escena **espera a que el juego dibuje su pantalla** (una `.screen.active` que no sea
+  `#screen-espera`, la de "cargando"), con un tope de 4 s, y recién ahí se desvanece en 0,45 s
+  mientras el dado se achica. Debajo ya está el juego, entero.
+- El juego se sigue pidiendo (`prefetch`) mientras el dado rueda.
+**Por qué:** lo pidió el dueño: con D-235 quedaba un momento de pantalla vacía entre el dado y el
+juego, porque el dado se desvanecía antes de navegar y el juego aparecía desde cero mientras
+cargaba. Se probaron y descartaron:
+- **Las *view transitions* entre páginas:** el dado de WebGL no salía en la imagen que el navegador
+  guarda de la página vieja, y la nueva se capturaba antes de que el juego dibujara con su JS.
+  Además, Firefox no las tiene.
+- **El *prerender* del juego:** la escena tendría que aparecer encima de una página ya pintada, y
+  se vería un destello.
+**Consecuencias:** sin pantalla vacía en ningún navegador, aunque la red sea lenta: mientras carga,
+se ve el dado. Abrir el juego ya no suma los 0,42 s de D-235. Si `sessionStorage` no está
+disponible, el juego abre como antes de D-235. Una página de juego nueva que no use `.screen.active`
+deja el dado encima hasta 4 s.
