@@ -14,6 +14,8 @@
  * - anota cada aviso entregado en `pushEnviados/<código>/<subId>/<clave>`, para no repetirlo;
  * - borra las suscripciones que el servicio dio por muertas (404 o 410) y sus copas;
  * - limpia lo de las copas que terminaron hace más de una semana o que ya no existen;
+ * - manda también los de Uno al día (`pushDia`, uno-al-dia.mjs, D-230) y los anota en
+ *   `pushEnviadosDia/<subId>/<clave>`;
  * - suma lo entregado por día y tipo en `stats/prod/days/<día>/mandados/<tipo>` y deja en
  *   `stats/prod/push` la hora de la vuelta y cuántas suscripciones siguen vivas (D-233): el panel
  *   los muestra, y si la hora se atrasa, GitHub dejó de correr el workflow.
@@ -24,6 +26,7 @@
 import { firebaseConfig } from '../../public/assets/js/firebase-config.js';
 import { VAPID_PUBLICA } from '../../public/assets/js/vapid.js';
 import { avisosDeCopa, avisosDePrueba, juntar } from './calendario.mjs';
+import { avisosUnoAlDia, viejos } from './uno-al-dia.mjs';
 import { mandar } from './webpush.mjs';
 
 const SEMANA = 7 * 24 * 3600e3;
@@ -73,9 +76,30 @@ export async function vuelta({ db, envio, now = Date.now(), simular = false, pru
       log(`  ✗ ${r.estado} ${r.texto || ''}`);
     }
   }
+  // Uno al día (D-230): no van con la prueba de una copa
+  if (!prueba) {
+    const [quiereDia, enviadosDia] = await Promise.all([db.leer('pushDia'), db.leer('pushEnviadosDia')]);
+    for (const p of avisosUnoAlDia({ quiere: quiereDia || {}, subs: subs || {}, enviados: enviadosDia || {}, now })) {
+      resumen.avisos++;
+      log(`${simular ? '· mandaría' : '→'} uno-al-día ${p.subId.slice(0, 8)} [${p.clave}] ${p.aviso.body}`);
+      if (simular) continue;
+      let r;
+      try { r = await envio(subs[p.subId], p.aviso); } catch (e) { r = { estado: 0, texto: String(e?.message || e) }; }
+      if (r.estado >= 200 && r.estado < 300) {
+        resumen.entregados++;
+        porTipo[`uad${p.tipo}`] = (porTipo[`uad${p.tipo}`] || 0) + 1;
+        cambios[`pushEnviadosDia/${p.subId}/${p.clave}`] = now;
+        if (p.borrar) { cambios[`pushDia/${p.subId}`] = null; cambios[`pushEnviadosDia/${p.subId}`] = null; }
+      } else if (r.muerta) { resumen.muertas++; muertas.add(p.subId); } else { resumen.fallas++; log(`  ✗ ${r.estado} ${r.texto || ''}`); }
+    }
+    for (const ruta of viejos(enviadosDia || {}, now)) if (!(ruta in cambios)) cambios[ruta] = null;
+    // Lo de Uno al día de una suscripción que ya no existe
+    for (const subId of Object.keys(quiereDia || {})) if (!subs?.[subId]) cambios[`pushDia/${subId}`] = null;
+  }
   // Una suscripción muerta se borra, con todas las copas que la usaban
   for (const subId of muertas) {
     cambios[`push/${subId}`] = null;
+    cambios[`pushDia/${subId}`] = null;
     for (const [code, quiere] of Object.entries(quiereTodo || {})) {
       for (const [pid, porSub] of Object.entries(quiere || {})) if (porSub?.[subId]) cambios[`pushCopa/${code}/${pid}/${subId}`] = null;
     }

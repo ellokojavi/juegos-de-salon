@@ -1,8 +1,15 @@
 # Changelog
 
-## 0.117.1 — 2026-10-06
+## 0.118.1 — 2026-10-06
 - **Del dado al juego, sin pantalla vacía** (D-237): en Juego al azar y Uno al día, el dado queda
   en pantalla mientras el juego carga y se desvanece recién cuando el juego está listo debajo.
+
+## 0.118.0 — 2026-10-06
+- **Avisos de Uno al día, en el laboratorio** (D-230): la segunda vez que juegas, puedes pedir un
+  aviso diario a la hora que elijas (9:00, 13:00 o 19:00). Te avisa que el de hoy ya está, a las
+  21:00 si tu racha está por cortarse, y los lunes cómo te fue la semana. Nunca de noche, a lo más
+  dos al día, y se calman solos si dejas de jugar. En la app instalada, el ícono muestra un 1
+  mientras falta el de hoy. Sin avisos, puedes agregarlo a tu calendario.
 
 ## 0.117.0 — 2026-10-06
 - **Uno al día con rankings, comodines e invitaciones, en el laboratorio** (D-230): entrando con

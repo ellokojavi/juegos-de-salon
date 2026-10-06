@@ -3892,7 +3892,14 @@ convierten texto en número para compararlo con la hora del servidor) ni la mejo
 el celular: un tramposo podría inflar su racha o anotar otro día. Se acepta mientras esté en el
 laboratorio; si molesta, el workflow de los avisos puede recalcular las rachas desde la historia.
 Al entrar, los días viejos del celular suben solo a la historia, sin sus rankings.
-Detalle en "Lo que el PR 3 hizo" de [UNO-AL-DIA.md](UNO-AL-DIA.md).
+Detalle en "Lo que el PR 3 hizo" de [UNO-AL-DIA.md](UNO-AL-DIA.md). El PR 4 (v0.118.0) suma los avisos: cada celular
+guarda lo que pidió y su último día y racha en `pushDia/<subId>`, y `tools/push/uno-al-dia.mjs` los
+decide dentro de la vuelta de `avisar.mjs` (lo mandado, en `pushEnviadosDia`); abren
+`today/?aviso=uad<tipo>` y se cuentan en el panel como `uaddia`, `uadracha`, `uadsemana` y
+`uadadios` (sin guion: las reglas de las señales piden solo letras). Quedó distinto del diseño: no se juntan con los de La Copa en un solo aviso (cada uno
+lleva su tope de 2 al día), y el de la semana dice solo cuántos días jugó, sin puesto ni "donde más
+mejoraste". Además, el globo del ícono (`setAppBadge`) y "Agregar al calendario" (un `.ics` con un
+evento diario). Detalle en "Lo que el PR 4 hizo" de [UNO-AL-DIA.md](UNO-AL-DIA.md).
 
 ## D-231 · El selector de idioma lleva las banderas siempre
 **Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** corrige la nota de `base.css` de D-191 (en un celular angosto se escondía la bandera)

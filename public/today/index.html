@@ -244,6 +244,10 @@
           pagina.append(tarjetaInvitar({ lang, alTocar: tap }));
         }
 
+        /* Los avisos y el calendario (D-230) */
+        const Av = await import('../assets/js/uno-al-dia-avisos.js');
+        pagina.append(Av.bloque({ lang, alTocar: tap, redibujar: aviso => dibujar({ avisos: aviso ? [aviso] : [] }) }));
+
         /* El ranking de Uno al día y entrar con nombre y PIN (mientras los rankings se vean) */
         const { rankingsVisibles, leerYo } = await import('../assets/js/jugador.js');
         if (rankingsVisibles()) {
@@ -262,6 +266,7 @@
         return nuevos.map(x => fmt(libres-- > 0 ? T.aceptado : T.aceptadoSin, { n: x.n || T.unAmigo }));
       };
       await dibujar();
+      import('../assets/js/uno-al-dia-avisos.js').then(Av => { Av.globo(); Av.refrescar({ lang }).catch(() => {}); }).catch(() => {});
       sincronizar().then(avisos => dibujar({ avisos })).catch(() => {});
       // Entrar con el jugador desde esta página trae lo suyo
       import('../assets/js/jugador.js').then(async ({ jugador }) => (await jugador()).escuchar(yo => { if (yo) sincronizar().then(avisos => dibujar({ avisos })).catch(() => {}); })).catch(() => {});

@@ -396,4 +396,8 @@ assert.equal(dispositivoDe({ ua: 'Mozilla/5.0 (Macintosh)', platform: 'MacIntel'
   assert.ok(reglas.push, 'las reglas tienen stats/<env>/push');
 }
 
+// Los avisos de Uno al día se cuentan aparte, con `uad` pegado (D-230)
+assert.equal(avisoDe('?aviso=uaddia'), 'uaddia');
+assert.equal(avisoDe('?aviso=uad-dia'), '', 'con guion, no: las reglas piden solo letras');
+
 console.log('stats.test.mjs: todo en verde');
