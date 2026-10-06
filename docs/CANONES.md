@@ -331,7 +331,6 @@ como un error: se lee como que nadie jugó.
   modo, jugadores, zona horaria, idioma ni hora) necesita su línea en las reglas, su sección en
   el panel y publicar las reglas en la consola (ver [PANEL.md](PANEL.md)).
 
-
 ## C-17 · La portada
 
 La portada (`public/index.html`) es la lista de juegos y las maneras de elegir uno. Sus reglas
@@ -339,11 +338,12 @@ salieron de varias decisiones que se fueron corrigiendo; aquí está lo vigente,
 de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
 
 - **Qué se ofrece y en qué orden.** Las tarjetas salen de `PORTADA` en `games.js`: primero los
-  juegos de `GAMES` (La Copa, la primera) y después los minijuegos sueltos de La Copa (`SUELTOS`),
-  sin lista propia en la página (D-142, D-149). Un juego que no está disponible se ve, con
-  "Próximamente" al lado del nombre, pero no se abre, ni con el teclado (C-5). La tarjeta dice
-  jugadores y duración, y si el juego no está en el idioma elegido lo dice antes de abrirlo
-  ("🇪🇸 Solo en español", `idiomas` en `games.js`, D-98). Un minijuego con `labs: true` no
+  juegos de `GAMES` (La Copa, la primera) y después los juegos de La Copa sueltos (`SUELTOS`,
+  aparte solo por cómo están hechos, D-198), sin lista propia en la página (D-142, D-149). Un
+  juego que no está disponible se ve, con "Próximamente" al lado del nombre, pero no se abre, ni
+  con el teclado (`available` en `games.js`, C-2; D-142). La tarjeta dice jugadores y duración,
+  y si el juego no está en el idioma elegido lo dice antes de abrirlo ("🇪🇸 En español",
+  `idiomas` en `games.js`; hoy ninguno lo declara, D-170). Uno de `SUELTOS` con `labs: true` no
   sale en la portada, aunque su link ya se comparta.
 - **Arriba de la lista, los accesos que eligen por ti.** 🎲 Juego al azar sale de las tarjetas
   que se ven y se pueden abrir, nunca de La Copa (D-188), y abre el juego con el dado encima
@@ -367,17 +367,18 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
   muesca: las tarjetas no se ven pasar detrás de la hora (U-12).
 - **Los tipos van en una sola fila**, a cualquier ancho desde 320 px y en los cuatro idiomas:
   bajo 520 px el emoji sube arriba del nombre, y bajo 300 px de caja las fichas se aprietan para
-  no quedar pegadas al borde (D-144, D-149, U-11). Nada más entra a esa fila: lo que
-  no cabe va en su propia línea, y solo cuando hace falta, como ⭐ Favoritos, que va arriba de
-  los tipos (D-238).
+  no quedar pegadas al borde (D-144, D-149, U-11). Nada más entra a esa fila: lo que no cabe
+  va en su propia línea, y solo cuando hace falta, como ⭐ Favoritos, que va arriba de los
+  tipos (D-238).
 - **Nada se sale de la pantalla a 320 px**, tampoco donde el navegador no sabe partir una palabra
   larga ("Galgenmännchen" en el Chrome de Linux): la columna de tarjetas no crece más que la
   pantalla (`minmax(0, 1fr)`, D-238).
 - **Dentro de una tarjeta no hay nada tocable**: la tarjeta es un link entero. Lo que se toca
   sin abrir el juego, como la ⭐, va al lado del link, encima de la tarjeta (`.game-slot`), con
   44 px de toque y sin tapar texto (C-8, D-238).
-- **La barra de arriba** lleva el idioma (C-3), el sonido (C-4), 🏆 rankings (D-212, abiertos a todos desde D-217) y 📤, que
-  comparte la app con su tarjeta social en el idioma en que se mira (`compartirApp`, D-226, U-33).
+- **La barra de arriba** lleva el idioma (C-3), el sonido (C-4), 🏆 rankings (D-212, abiertos
+  a todos desde D-217) y 📤, que comparte la app con su tarjeta social en el idioma en que se
+  mira (`compartirApp`, D-226, U-33).
   El globo que invita a agregar la app a inicio sale abajo, solo en los celulares donde se puede
   agregar (no en el computador ni en la app ya instalada), y la ✕ lo apaga para siempre en ese
   navegador (D-232).

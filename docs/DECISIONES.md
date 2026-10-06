@@ -4100,7 +4100,7 @@ encontró que la portada ya se corría de lado en alemán en el Chrome de Linux,
 del ancho de la pantalla (`minmax(0, 1fr)`) y el nombre se parte aunque falte el diccionario.
 
 ## D-240 · La portada tiene su canon: C-17
-**Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** junta lo vigente de D-142, D-144, D-149, D-188, D-196, D-214, D-226, D-232 y D-238
+**Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** junta lo vigente de D-142, D-144, D-149, D-170, D-188, D-196, D-198, D-214, D-217, D-226, D-232 y D-238
 **Decisión:** las reglas de la portada pasan a un canon, C-17 en [CANONES.md](CANONES.md): qué
 se ofrece y en qué orden, los accesos de arriba, los filtros (tipo y ⭐ Favoritos), la URL, la
 barra pegada, la fila de tipos, el ancho de 320 px, que dentro de una tarjeta no haya nada
