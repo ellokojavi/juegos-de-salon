@@ -32,6 +32,8 @@ import { bloqueJugador, bloqueRanking, avisoPartida, bloqueCampeones } from '../
 import { jugador, leerYo, rankingsVisibles } from '../assets/js/jugador.js';
 import { podioDe } from '../assets/js/records.js';
 import { crearAvisos } from './avisos.js';
+import { unoAlDiaVisible, fechaLocal, juegoDel, semillaDel, anotar as anotarUnoAlDia, leer as leerUnoAlDia } from '../assets/js/uno-al-dia.js';
+import { tarjetaResultado, rutaHoy } from '../assets/js/uno-al-dia-ui.js';
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
 trackVisit();
@@ -69,11 +71,16 @@ const TRES = PRUEBA || LABS || busqueda.includes('tres');
 // social. /cup/?practica=<id>&labs queda para el laboratorio.
 const SUELTO = document.body.hasAttribute('data-suelto');
 const PRACTICA = SUELTO
-  ? document.body.dataset.suelto || busqueda.find(x => !x.includes('=') && x !== 'prueba' && x !== 'labs') || ''
+  ? document.body.dataset.suelto || busqueda.find(x => !x.includes('=') && !['prueba', 'labs', 'hoy'].includes(x)) || ''
   : new URLSearchParams(location.search).get('practica');
 /** La raíz del sitio, desde donde esté la página (las de cada juego van un nivel más abajo). */
 const RAIZ = new URL('../', import.meta.url).href;
 const SEMILLA = (new URLSearchParams(location.search).get('semilla') || '').toUpperCase();
+/**
+ * Uno al día (D-230): `?hoy` juega el desafío de hoy, el mismo para todos. La fecha y el juego los
+ * calcula la página (no vienen en el link), así un link viejo abre el de hoy.
+ */
+const HOY = SUELTO && busqueda.includes('hoy') && unoAlDiaVisible();
 /**
  * Dónde vive un juego suelto: su página, o la genérica si no tiene. Desde el laboratorio
  * también se juega ahí (D-164), con `?labs` y su semilla: así el link que se copia de la barra
@@ -2092,11 +2099,17 @@ function practica(id) {
   if (!J || !mod) { if (SUELTO) location.replace(RAIZ); else portada(); return; }
   if (!LABS) document.title = `${J.nombre} ${J.emoji} · ${(COMMON[LANG] || COMMON.es).appTitle}`;
   if (SUELTO) $('#chip-juego').replaceChildren(...conEmoji(J.emoji, J.nombre));
-  const semilla = esCodigo(SEMILLA) ? SEMILLA : codigoAlAzar();
+  if (HOY) {
+    // Si hoy toca otro juego (un link de ayer, o pasó la medianoche), se va al de hoy
+    const fecha = fechaLocal(), deHoy = juegoDel(fecha);
+    if (deHoy !== id) { location.replace(RAIZ + rutaHoy(deHoy)); return; }
+    S.hoy = { fecha, ya: !!leerUnoAlDia().dias[fecha] };
+  }
+  const semilla = HOY ? semillaDel(S.hoy.fecha) : esCodigo(SEMILLA) ? SEMILLA : codigoAlAzar();
   const zipSeg = new URLSearchParams(location.search).get('zipSeg');
   // Suelto, la semilla no va a la vista (D-142): el link queda en /queens/. Desde el
   // laboratorio sí, para poder repetir la partida.
-  if (SUELTO && LABS) history.replaceState(null, '', paginaSuelta(id, { semilla, zipSeg }));
+  if (SUELTO && LABS && !HOY) history.replaceState(null, '', paginaSuelta(id, { semilla, zipSeg }));
   else if (!SUELTO) history.replaceState(null, '', `${location.pathname}?practica=${id}&semilla=${semilla}${PRUEBA ? '&prueba' : ''}${LABS ? '&labs' : ''}${zipSeg ? `&zipSeg=${zipSeg}` : ''}`);
   S.juego = { d: 1, id, practica: true, semilla };
   mostrar('jugar');
@@ -2109,6 +2122,8 @@ function practica(id) {
       // En el laboratorio no se rotula "Práctica en el laboratorio": el chip y el botón de volver ya lo dicen
       el('h2', { class: 'display display--lg' }, J.nombre),
       el('div', { style: 'margin-top:6px' }, langToggle())),
+    // Uno al día: una línea arriba, y nada más; cómo se juega es lo del juego (U-18)
+    HOY ? el('p', { class: 'aviso uad-intro', id: 'uad-intro' }, S.hoy.ya ? UAD().introRepite : UAD().intro) : null,
     el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.howToPlay), dibujo(id), el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
       el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, puntajeTexto(J, false))),
     // La misma antesala que un día de la copa (D-109): la sesión de prueba se elige antes de jugar
@@ -2128,7 +2143,9 @@ function practica(id) {
  * cualquiera los juega: sin el laboratorio y sin una semilla elegida, que dejaría repetir el mismo
  * tablero hasta sacarle el máximo.
  */
-const rankea = id => !LABS && !SEMILLA && !!gameById(id)?.suelto && rankingsVisibles();
+const rankea = id => !LABS && !SEMILLA && !(HOY && S.hoy?.ya) && !!gameById(id)?.suelto && rankingsVisibles();
+/** Los textos de Uno al día, en el idioma de quien juega. */
+const UAD = () => (COMMON[LANG] || COMMON.es).uad;
 
 function jugarPractica(id, semilla) {
   // Suelto, todo va en el idioma de quien juega: no hay con quién jugar lo mismo (D-170)
@@ -2212,8 +2229,11 @@ function resultadoEnsayo(id, r, volver) {
 
 function resultadoPractica(id, semilla, r) {
   const J = JUEGOS_COPA[id];
-  // Los rankings (D-212): se anota si hay jugador; si entra recién aquí, esta partida igual cuenta
-  const cuentaRk = rankea(id);
+  // Uno al día: el primer intento queda como el resultado de hoy; los demás son práctica
+  const hoy = HOY ? anotarUnoAlDia(S.hoy.fecha, { j: id, s: r.s, ms: r.ms }) : null;
+  // Los rankings (D-212): se anota si hay jugador; si entra recién aquí, esta partida igual cuenta.
+  // De Uno al día, solo el primer intento: después el tablero ya se conoce (D-230)
+  const cuentaRk = rankea(id) && (!hoy || hoy.primera);
   const ranking = cuentaRk ? bloqueRanking({ juego: id, titulo: fmt(RK.titleOf, { game: J.nombre }), pestanas: ['semana', 'siempre', 'amigos'], alTocar: () => SFX.tap() }) : null;
   const aviso = el('div', {});
   let anotada = false;
@@ -2240,13 +2260,15 @@ function resultadoPractica(id, semilla, r) {
       el('p', { class: 'muted', style: 'margin:0' }, T.yourScore),
       el('div', { class: 'score-big' }, r.resumen || String(r.s)),
       ...bajoElPuntaje(r.t, r.ms)),
+    // Uno al día: la racha, compartir sin decir el juego, jugar otro o ver todo (D-230)
+    hoy ? tarjetaResultado({ lang: LANG, fecha: S.hoy.fecha, primera: hoy.primera, dia: hoy.dia, raiz: RAIZ, alTocar: () => SFX.tap(), mmss }) : null,
     aviso,
     explicacion(J, { s: r.s, ms: r.ms, det: r.det, copa: false }),
-    LABS ? el('p', { class: 'muted center' }, fmt(T.practiceSeed, { semilla })) : null,
+    LABS && !hoy ? el('p', { class: 'muted center' }, fmt(T.practiceSeed, { semilla })) : null,
     // Suelto se comparte como cualquier juego jugado solo, con su página (D-162, D-165)
-    !LABS && gameById(id)?.suelto ? botonResultadoSolo({ C: COMMON[LANG] || COMMON.es, emoji: J.emoji, juego: J.nombre, puntaje: r.resumen || String(r.s), tiempo: mmss(r.ms), tarjeta: r.t, url: withLang(`${SITIO}${gameById(id).path}`, LANG), alTocar: () => SFX.tap() }) : null,
-    el('a', { class: 'btn btn--yellow', id: 'btn-otra', href: otra }, T.practiceAgain),
-    LABS ? el('a', { class: 'btn btn--cyan btn--sm', id: 'btn-repetir', href: `${otra}&semilla=${semilla}` }, T.practiceSame) : null,
+    !LABS && !hoy && gameById(id)?.suelto ? botonResultadoSolo({ C: COMMON[LANG] || COMMON.es, emoji: J.emoji, juego: J.nombre, puntaje: r.resumen || String(r.s), tiempo: mmss(r.ms), tarjeta: r.t, url: withLang(`${SITIO}${gameById(id).path}`, LANG), alTocar: () => SFX.tap() }) : null,
+    hoy ? null : el('a', { class: 'btn btn--yellow', id: 'btn-otra', href: otra }, T.practiceAgain),
+    LABS && !hoy ? el('a', { class: 'btn btn--cyan btn--sm', id: 'btn-repetir', href: `${otra}&semilla=${semilla}` }, T.practiceSame) : null,
     botonReporte({ juego: id, semilla, puntaje: r.s, resumen: r.resumen }),
     volverDePractica(),
     ranking);

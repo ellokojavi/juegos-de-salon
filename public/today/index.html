@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#150726">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Uno al día 📅 · Juegos de Salón</title>
+  <meta name="description" content="Cada día un juego sorpresa, el mismo desafío para todos: tu racha, tu calendario y cómo te va en cada juego.">
+  <link rel="canonical" href="https://juegosdesalon.cl/today/">
+  <!-- Sin destello de idioma (D-194): si el idioma elegido no es el español, no se pinta hasta tener sus textos -->
+  <script>
+    (function () {
+      try {
+        var u = (new URLSearchParams(location.search).get('lang') || '').toLowerCase();
+        var l = u || localStorage.getItem('juegos-de-salon:lang') || 'es';
+        if (l === 'es') return;
+        var h = document.documentElement, listo = function () { h.classList.remove('i18n-pendiente'); };
+        h.classList.add('i18n-pendiente');
+        document.addEventListener('DOMContentLoaded', listo);
+        setTimeout(listo, 1500);
+      } catch (_) { /* sin almacenamiento: se pinta como siempre */ }
+    })();
+  </script>
+  <link rel="manifest" href="../manifest.webmanifest">
+  <script>
+    // El manifest del idioma elegido, antes de que el navegador lo lea: cambiarlo después no siempre alcanza (D-222)
+    (function () {
+      try {
+        var l = (new URLSearchParams(location.search).get('lang') || localStorage.getItem('juegos-de-salon:lang') || '').toLowerCase();
+        var m = document.querySelector('link[rel="manifest"]');
+        if (m && /^(en|pt|de)$/.test(l)) m.href = m.href.replace(/manifest\.webmanifest$/, 'manifest.' + l + '.webmanifest');
+      } catch (_) { /* queda el del español */ }
+    })();
+  </script>
+  <link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <style>
+    .uad-pagina { display: grid; gap: 14px; }
+    .uad-hero-icon { display: block; font-size: 3.4rem; line-height: 1.1; }
+    .uad-hoy { display: grid; gap: 10px; text-align: center; }
+    .uad-hoy h2, .uad-bloque h2 { margin: 0; font: 400 1.5rem var(--font-display); letter-spacing: 0.05em; color: var(--yellow); }
+    .uad-hoy p { margin: 0; }
+    .uad-proximo { color: var(--muted); font-weight: 700; font-variant-numeric: tabular-nums; }
+    .uad-trio { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .uad-trio div { display: grid; text-align: center; padding: 10px 4px; border-radius: 16px; background: rgba(0, 0, 0, 0.25); border: 1px solid var(--glass-border); }
+    .uad-trio b { font: 400 1.9rem/1 var(--font-display); letter-spacing: 0.03em; }
+    .uad-trio small { color: var(--muted); font-weight: 800; font-size: 0.78rem; }
+    .uad-bloque { display: grid; gap: 10px; }
+    .uad-cal-cab { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .uad-cal-cab b { font-weight: 900; }
+    .uad-cal-cab button { min-width: 44px; min-height: 44px; border-radius: 12px; border: 1px solid var(--glass-border); background: rgba(0, 0, 0, 0.25); color: var(--ink); font: 900 1.1rem var(--font-body); cursor: pointer; }
+    .uad-cal-cab button:disabled { opacity: 0.3; cursor: default; }
+    .uad-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+    .uad-cal span { aspect-ratio: 1; min-width: 0; border-radius: 8px; display: grid; place-items: center; font-size: 0.8rem; font-weight: 800; color: var(--muted); background: rgba(255, 255, 255, 0.05); }
+    .uad-cal .sem { background: none; aspect-ratio: auto; font-size: 0.72rem; text-transform: uppercase; }
+    .uad-cal .vacio { background: none; }
+    .uad-cal .l1 { background: rgba(255, 46, 136, 0.28); color: var(--ink); font-size: 1.05rem; }
+    .uad-cal .l2 { background: rgba(255, 46, 136, 0.5); color: var(--ink); font-size: 1.05rem; }
+    .uad-cal .l3 { background: rgba(255, 46, 136, 0.8); color: var(--ink); font-size: 1.05rem; }
+    .uad-cal .hoy { outline: 2px solid var(--yellow); outline-offset: -2px; }
+    .uad-juegos { display: grid; gap: 6px; }
+    .uad-fila { display: grid; grid-template-columns: minmax(0, 1fr) 64px 44px; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 12px; background: rgba(0, 0, 0, 0.2); }
+    .uad-fila .nom { font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .uad-fila .nums { display: block; color: var(--muted); font-size: 0.78rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+    .uad-fila svg { width: 64px; height: 22px; display: block; }
+    .uad-fila .flecha { text-align: right; font-weight: 900; font-size: 0.85rem; font-variant-numeric: tabular-nums; }
+    .uad-fila .sube { color: var(--lime); }
+    .uad-fila .baja { color: var(--orange); }
+    .uad-dice { margin: 0; color: var(--muted); }
+  </style>
+  <link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-title" content="Juegos de Salón">
+  <script type="module">import '../assets/js/instalable.js';</script>
+</head>
+<body>
+  <main class="app">
+    <div class="topbar">
+      <a class="back" href="../" id="btn-menu">‹ Menú</a>
+      <div class="tools"><div id="lang-slot"></div><span id="sound-slot"></span></div>
+    </div>
+    <header class="intro-hero center">
+      <span class="uad-hero-icon" aria-hidden="true">📅</span>
+      <h1 class="display display--lg rainbow" id="uad-h1">Uno al día</h1>
+      <p class="sub muted" id="uad-sub"></p>
+    </header>
+    <div class="uad-pagina" id="uad-pagina"></div>
+  </main>
+
+  <script type="module">
+    import { el, conEmoji } from '../assets/js/ui.js';
+    import { getLang, langToggle, applyStatic, COMMON } from '../assets/js/i18n.js';
+    import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
+    import { trackVisit } from '../assets/js/transport/stats.js';
+    import { juegosCopa } from '../cup/rules.js';
+    import { mmss } from '../cup/engine.js';
+    import { estado, porJuego, juegoDia, faltaParaManana, unoAlDiaVisible, LANZAMIENTO } from '../assets/js/uno-al-dia.js';
+    import { fmt, tirarHoy, compartirHoy, jugarOtro } from '../assets/js/uno-al-dia-ui.js';
+
+    trackVisit(); // el tráfico del sitio (D-208)
+    initSound();
+    const lang = getLang();
+    document.documentElement.lang = lang;
+    const C = COMMON[lang] || COMMON.es, T = C.uad;
+    const JC = juegosCopa(lang);
+    applyStatic(C);
+    document.title = `${T.nombre} 📅 · ${C.appTitle}`;
+    document.getElementById('uad-h1').textContent = T.nombre;
+    document.getElementById('uad-sub').textContent = T.sub;
+    document.getElementById('btn-menu').textContent = `‹ ${C.menu}`;
+    document.getElementById('lang-slot').append(langToggle());
+    document.getElementById('sound-slot').append(soundToggle());
+    const tap = () => SFX.tap();
+    const pagina = document.getElementById('uad-pagina');
+    const nombre = id => conEmoji(juegoDia(id)?.emoji || JC[id]?.emoji || '🎲', JC[id]?.nombre || id);
+
+    /** "7 h 12 min" o "12 min". */
+    const falta = ms => {
+      const m = Math.max(1, Math.ceil(ms / 60000)), h = Math.floor(m / 60);
+      return h ? fmt(T.horas, { h, m: m % 60 }) : fmt(T.minutos, { m });
+    };
+
+    // Mientras está en el laboratorio, la página lo dice y no muestra nada más (D-230)
+    if (!unoAlDiaVisible()) {
+      pagina.append(el('div', { class: 'panel center' }, el('p', { style: 'margin:0' }, T.enLabs)));
+    } else {
+      const e = estado();
+
+      /* Hoy: el juego de hoy y su resultado, o el dado si falta */
+      const hoy = el('section', { class: 'panel uad-hoy', id: 'uad-hoy' }, el('h2', {}, T.hoyTitulo));
+      if (!e.dia) {
+        hoy.append(el('p', {}, T.hoyFalta),
+          el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-uad-jugar', onClick: () => { tap(); tirarHoy({ lang, raiz: '../' }); } }, `📅 ${T.jugar}`));
+      } else {
+        const proximo = el('p', { class: 'uad-proximo', id: 'uad-proximo' });
+        const tic = () => { proximo.textContent = fmt(T.proximo, { t: falta(faltaParaManana()) }); };
+        tic(); setInterval(tic, 30000);
+        hoy.append(el('p', {}, fmt(T.hoyListo, { juego: JC[e.dia.j]?.nombre || e.dia.j, s: e.dia.s })), proximo,
+          el('div', { class: 'uad-acciones' },
+            compartirHoy({ lang, fecha: e.hoy, dia: e.dia, alTocar: tap, mmss }),
+            el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-uad-otro', onClick: () => { tap(); jugarOtro({ lang, raiz: '../' }); } }, T.jugarOtro)));
+      }
+      pagina.append(hoy);
+
+      /* La racha */
+      pagina.append(el('div', { class: 'uad-trio', id: 'uad-trio' },
+        el('div', {}, el('b', {}, `🔥 ${e.racha}`), el('small', {}, T.rachaLabel)),
+        el('div', {}, el('b', {}, String(e.mejor)), el('small', {}, T.mejorLabel)),
+        el('div', {}, el('b', {}, String(e.jugados)), el('small', {}, T.jugadosLabel))));
+      if (!e.racha && e.mejor) pagina.append(el('p', { class: 'center uad-dice' }, fmt(T.rachaCortada, { n: e.mejor })));
+
+      if (!e.jugados) {
+        pagina.append(el('p', { class: 'center uad-dice', id: 'uad-vacio' }, T.vacio));
+      } else {
+        /* El calendario del mes, con el emoji del juego en los días jugados */
+        const cal = el('div', { class: 'uad-cal', id: 'uad-cal' });
+        const titulo = el('b', {});
+        const antes = el('button', { type: 'button', 'aria-label': T.mesAnterior }, '‹');
+        const despues = el('button', { type: 'button', 'aria-label': T.mesSiguiente }, '›');
+        const primero = [LANZAMIENTO, ...Object.keys(e.dias)].sort()[0].slice(0, 7);
+        let mes = e.hoy.slice(0, 7);
+        const dibujar = () => {
+          const [y, m] = mes.split('-').map(Number);
+          const t = new Intl.DateTimeFormat(lang, { month: 'long', year: 'numeric' }).format(new Date(y, m - 1, 1));
+          titulo.textContent = t.charAt(0).toLocaleUpperCase(lang) + t.slice(1);
+          antes.disabled = mes <= primero; despues.disabled = mes >= e.hoy.slice(0, 7);
+          cal.replaceChildren();
+          // Los días de la semana, desde el lunes (el 5 de enero de 2026 fue lunes)
+          const sem = new Intl.DateTimeFormat(lang, { weekday: 'narrow' });
+          for (let i = 0; i < 7; i++) cal.append(el('span', { class: 'sem', 'aria-hidden': 'true' }, sem.format(new Date(2026, 0, 5 + i))));
+          const d1 = new Date(y, m - 1, 1), hueco = (d1.getDay() + 6) % 7;
+          for (let i = 0; i < hueco; i++) cal.append(el('span', { class: 'vacio' }));
+          const largo = new Date(y, m, 0).getDate();
+          for (let d = 1; d <= largo; d++) {
+            const f = `${mes}-${String(d).padStart(2, '0')}`, x = e.dias[f];
+            const nivel = !x ? '' : x.s >= 80 ? 'l3' : x.s >= 50 ? 'l2' : 'l1';
+            cal.append(el('span', {
+              class: [nivel, f === e.hoy ? 'hoy' : ''].filter(Boolean).join(' ') || null,
+              title: x ? `${JC[x.j]?.nombre || x.j}: ${fmt(T.puntos, { s: x.s })}` : null,
+            }, x ? (juegoDia(x.j)?.emoji || '•') : String(d)));
+          }
+        };
+        const mover = n => { const [y, m] = mes.split('-').map(Number); const d = new Date(y, m - 1 + n, 1); mes = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`; dibujar(); };
+        antes.addEventListener('click', () => { tap(); mover(-1); });
+        despues.addEventListener('click', () => { tap(); mover(1); });
+        dibujar();
+        pagina.append(el('section', { class: 'panel uad-bloque' }, el('h2', {}, T.calendario), el('div', { class: 'uad-cal-cab' }, antes, titulo, despues), cal));
+
+        /* Por juego: cuántas veces, promedio, mejor, los últimos 8 y si va mejorando */
+        const juegos = porJuego(e.dias);
+        const linea = xs => {
+          const W = 64, H = 22, paso = xs.length > 1 ? (W - 4) / (xs.length - 1) : 0;
+          const pts = xs.map((s, i) => `${(2 + i * paso).toFixed(1)},${(H - 2 - (s / 100) * (H - 4)).toFixed(1)}`);
+          const ult = pts.at(-1).split(',');
+          const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+          svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('aria-hidden', 'true');
+          svg.innerHTML = `<polyline fill="none" stroke="var(--cyan)" stroke-width="1.8" stroke-linejoin="round" points="${pts.join(' ')}"/><circle cx="${ult[0]}" cy="${ult[1]}" r="2.4" fill="var(--yellow)"/>`;
+          return svg;
+        };
+        const filas = juegos.map(g => el('div', { class: 'uad-fila', 'data-id': g.id },
+          el('div', {}, el('span', { class: 'nom' }, nombre(g.id)),
+            el('span', { class: 'nums' }, `${g.n} ${T.veces} · ${T.promedio} ${g.promedio} · ${T.mejor} ${g.mejor}`)),
+          linea(g.ultimos),
+          el('span', { class: `flecha ${g.tendencia > 0 ? 'sube' : g.tendencia < 0 ? 'baja' : ''}` },
+            g.tendencia === null ? '' : g.tendencia > 0 ? `▲ ${g.tendencia}` : g.tendencia < 0 ? `▼ ${-g.tendencia}` : '=')));
+        // Lo que dicen las flechas, en palabras: el que más mejoró o, si ninguno, el que más bajó
+        const conT = juegos.filter(g => g.tendencia);
+        const sube = conT.filter(g => g.tendencia > 0).sort((a, b) => b.tendencia - a.tendencia)[0];
+        const baja = conT.filter(g => g.tendencia < 0).sort((a, b) => a.tendencia - b.tendencia)[0];
+        const dice = sube || baja;
+        pagina.append(el('section', { class: 'panel uad-bloque', id: 'uad-por-juego' }, el('h2', {}, T.porJuego),
+          el('div', { class: 'uad-juegos' }, filas),
+          dice ? el('p', { class: 'uad-dice', id: 'uad-tendencia' }, fmt(sube ? T.mejorando : T.bajando, { juego: JC[dice.id]?.nombre || dice.id, a: dice.ultimos3, b: dice.antes })) : null));
+      }
+    }
+  </script>
+</body>
+</html>
