@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.114.2 — 2026-10-06
+- **Cambiar el PIN va en "Juegas como"** (D-236): al tocar tu nombre se despliegan Cambiar el PIN,
+  con una línea que explica para qué sirve, y Salir. En Rankings queda solo **Tus partidas**, con
+  cuántas veces jugaste cada juego.
+
 ## 0.114.1 — 2026-10-06
 - **Del dado al juego, sin corte** (D-235): en Juego al azar, el dado se desvanece en el fondo
   de la app y el juego aparece con un fundido, en vez de cambiar de golpe.
