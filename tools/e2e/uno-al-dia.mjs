@@ -105,16 +105,17 @@ ok(await esperar(`location.pathname === '/today/'`, 12), 'tocarlo abre /today/ (
 
 /* ---------- /today/ ---------- */
 await esperar(`!!document.getElementById('uad-hoy')`);
-ok(/Desenredo/.test(await texto('#uad-hoy')) && /El próximo sale en 1[12]\sh/.test(await texto('#uad-hoy')), `hoy: el juego, el puntaje y cuánto falta (${(await texto('#uad-hoy')).replace(/\n/g, ' / ')})`);
+ok(/🧶 Desenredo: \d+ puntos/.test(await texto('#uad-hoy')) && /Próximo juego en 1[12]\sh/.test(await texto('#uad-hoy')), `hoy: el juego, el puntaje y cuánto falta (${(await texto('#uad-hoy')).replace(/\n/g, ' / ')})`);
 ok(/🔥 1/.test(await texto('#uad-trio')), 'la racha');
 ok(await ev(`[...document.querySelectorAll('.uad-bloque h2')].some(h => h.textContent === 'Calendario')`), 'el calendario del mes se titula "Calendario"');
 ok(await ev(`document.querySelectorAll('#uad-cal span.hoy').length`) === 1 && /🧶/.test(await texto('#uad-cal span.hoy')), 'el calendario marca hoy con el emoji del juego');
+ok(/^\d+$/.test(await texto('#uad-cal span.hoy .cal-pts')), `y el puntaje de 0 a 100 en una píldora (${await texto('#uad-cal span.hoy .cal-pts')})`);
 ok(await ev(`!!document.querySelector('#uad-por-juego [data-id="desenredo"]')`), 'y Desenredo en "Por juego"');
 
 // Con historia: una racha larga, días de otros meses y una tendencia
 await ev(`(()=>{const d=JSON.parse(localStorage.getItem('${KEY}'));
   const f=n=>{const x=new Date(2026,9,6-n);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')};
-  const reinas=[50,55,60,62,65,80,85,90];
+  const reinas=[50,55,60,62,65,80,85,100];
   for(let n=1;n<=8;n++)d.dias[f(n)]={j:'reinas',s:reinas[8-n],ms:60000,at:1,n:1};
   for(let n=12;n<=14;n++)d.dias[f(n)]={j:'anio',s:40,ms:1,at:1,n:1};
   localStorage.setItem('${KEY}',JSON.stringify(d));return 1})()`);
@@ -153,6 +154,10 @@ for (const lang of IDIOMAS) {
   ok(await sinDesborde(), `${lang}: /today/ no se sale a lo ancho`);
   ok(!/undefined|NaN|\{\w+\}/.test(await ev('document.body.innerText')), `${lang}: /today/ sin textos a medio armar`);
   await b.shot(`today-320-${lang}`);
+  // El calendario, con un 100 (ayer): cada píldora se lee entera dentro de su día
+  const cal = await ev(`JSON.stringify((()=>{document.getElementById('uad-cal').scrollIntoView({block:'center'});const p=[...document.querySelectorAll('#uad-cal .cal-pts')];return {n:p.length,cien:p.some(x=>x.textContent==='100'),dentro:p.every(x=>{const a=x.getBoundingClientRect(),c=x.parentElement.getBoundingClientRect();return a.left>=c.left&&a.right<=c.right&&x.scrollWidth<=x.clientWidth+1})}})())`).then(JSON.parse);
+  ok(cal.n >= 2 && cal.cien && cal.dentro, `${lang}: a 320 px, el puntaje del calendario (también un 100) cabe en su día (${JSON.stringify(cal)})`);
+  await b.shot(`today-320-${lang}-calendario`);
 }
 
 await b.close?.();
