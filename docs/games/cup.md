@@ -142,8 +142,10 @@ por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
 - **¿Dónde queda?** saca sus ciudades de `games/where/ciudades.js` (las 195 capitales, ciudades famosas y de
   segunda línea, 529 en total, con nivel y código ISO; D-157) y su mapa de `games/where/mapa.js`, que genera `node tools/generators/mapa.mjs generar`; `revisar`
   comprueba que cada ciudad cae dentro de su país. La vista del globo (ortográfica) y su inversa
-  están en el motor, `games/where/engine.js`; `games/where/globo.js` lo dibuja en un canvas, recortando cada país en el
-  borde, y la distancia se mide sobre la esfera. La antesala muestra el globo girando solo
+  están en el motor, `games/where/engine.js`; `games/where/globo.js` lo dibuja en un canvas con la imagen satelital
+  (Blue Marble de la NASA, con WebGL; D-159), y la distancia se mide sobre la esfera. Mientras la
+  imagen baja el globo no se dibuja y aparece con un fundido al llegar (D-245); sin WebGL, o si la
+  imagen no llega, se dibuja con el mapa vectorial, recortando cada país en el borde. La antesala muestra el globo girando solo
   (`portada()` de `games/where/ui.js`).
 
 - **🧶 Desenredo** (D-179; fuera del laboratorio desde D-190) es el Untangle de Simon Tatham: nudos unidos por
