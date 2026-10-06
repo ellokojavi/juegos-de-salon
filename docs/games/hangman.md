@@ -140,8 +140,8 @@ línea de Uno al día y un solo botón, **Jugar el de hoy**, que abre directo �
 como semilla del mazo), así que es la misma para todos los que juegan en el mismo idioma. Al
 terminar se anota el puntaje del día, **las vidas que quedan llevadas a 100** (0 si lo colgaron;
 `puntajeAhorcado` en `uno-al-dia.js`), y la tarjeta de Uno al día va arriba de los botones del
-resultado. El primer intento cuenta; los siguientes son práctica. La revancha es una partida
-cualquiera. Si hoy toca otro juego, la página se va al de hoy. Se prueba con
+resultado. El primer intento cuenta; los siguientes son práctica. No hay revancha (#226): la
+tarjeta ya ofrece 🎲 Jugar otro y Repetir el de hoy. Si hoy toca otro juego, la página se va al de hoy. Se prueba con
 `tools/e2e/uno-al-dia-grupo.mjs`.
 
 ## Flujo
