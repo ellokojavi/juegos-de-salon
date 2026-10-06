@@ -343,36 +343,44 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
   sin lista propia en la página (D-142, D-149). Un juego que no está disponible se ve, con
   "Próximamente" al lado del nombre, pero no se abre, ni con el teclado (C-5). La tarjeta dice
   jugadores y duración, y si el juego no está en el idioma elegido lo dice antes de abrirlo
-  (`idiomas` en `games.js`).
+  ("🇪🇸 Solo en español", `idiomas` en `games.js`, D-98). Un minijuego con `labs: true` no
+  sale en la portada, aunque su link ya se comparta.
 - **Arriba de la lista, los accesos que eligen por ti.** 🎲 Juego al azar sale de las tarjetas
   que se ven y se pueden abrir, nunca de La Copa (D-188), y abre el juego con el dado encima
   (D-237). Dónde va el acceso a Uno al día lo dice [UNO-AL-DIA.md](UNO-AL-DIA.md) (D-230).
-- **Se filtra por tipo, y por nada más que elija el jugador.** Un tipo a la vez (`TIPOS`), que
+- **Se filtra por tipo o por favoritos, y por nada más.** Un tipo a la vez (`TIPOS`), que
   se prende y se apaga con un toque. Solo hay fichas de tipos que tienen algún juego que se
   puede abrir, así la lista nunca queda vacía. Cuántos juegan no se filtra: cada juego lo
   pregunta adentro (D-149). Con un filtro puesto, la línea de abajo dice "Se ven n de m" y
   ofrece "Ver todos" (D-149; #71, resuelto en [USABILIDAD.md](USABILIDAD.md)).
 - **⭐ Favoritos es un filtro más**, excluyente con los tipos, y aparece solo con algún favorito
   marcado. Los favoritos son de ese navegador (`localStorage`, por id de juego), sin cuenta
-  (`favoritos.js`, D-238). La Copa no se marca.
+  (`favoritos.js`, D-238). La Copa no se marca, ni un juego que no está disponible. Desmarcar
+  uno estando en ⭐ Favoritos no lo saca de la vista (se puede volver a marcar), salvo que ya no
+  quede ninguno: ahí se ven todos.
 - **El filtro va en la URL, en inglés** (`?type=logic`, `?type=favorites`): volver desde un juego
   lo deja como estaba y un link filtrado se puede compartir. Un link viejo (`?tipo=`) se reescribe
   y uno que no aplica (`?jugadores=`, o `?type=favorites` sin favoritos) muestra todos sin avisar
   (D-149, D-214, D-238).
 - **Los filtros se quedan pegados arriba** al bajar por la lista, y tocar uno estando pegados
-  lleva a la primera tarjeta filtrada (D-196).
+  lleva a la primera tarjeta filtrada (D-196). Pegados, su fondo sube hasta tapar la franja de la
+  muesca: las tarjetas no se ven pasar detrás de la hora (U-12).
 - **Los tipos van en una sola fila**, a cualquier ancho desde 320 px y en los cuatro idiomas:
-  bajo 520 px el emoji sube arriba del nombre (D-144, D-149). Nada más entra a esa fila: lo que
-  no cabe va en su propia línea, y solo cuando hace falta, como ⭐ Favoritos (D-238).
+  bajo 520 px el emoji sube arriba del nombre, y bajo 300 px de caja las fichas se aprietan para
+  no quedar pegadas al borde (D-144, D-149, U-11). Nada más entra a esa fila: lo que
+  no cabe va en su propia línea, y solo cuando hace falta, como ⭐ Favoritos, que va arriba de
+  los tipos (D-238).
 - **Nada se sale de la pantalla a 320 px**, tampoco donde el navegador no sabe partir una palabra
   larga ("Galgenmännchen" en el Chrome de Linux): la columna de tarjetas no crece más que la
   pantalla (`minmax(0, 1fr)`, D-238).
 - **Dentro de una tarjeta no hay nada tocable**: la tarjeta es un link entero. Lo que se toca
   sin abrir el juego, como la ⭐, va al lado del link, encima de la tarjeta (`.game-slot`), con
   44 px de toque y sin tapar texto (C-8, D-238).
-- **La barra de arriba** lleva el idioma (C-3), el sonido (C-4), 🏆 rankings (D-212) y 📤, que
-  comparte la app con su tarjeta social en el idioma en que se mira (`compartirApp`, D-226). El
-  globo que invita a agregar la app a inicio sale abajo, y la ✕ lo apaga para siempre (D-232).
+- **La barra de arriba** lleva el idioma (C-3), el sonido (C-4), 🏆 rankings (D-212, abiertos a todos desde D-217) y 📤, que
+  comparte la app con su tarjeta social en el idioma en que se mira (`compartirApp`, D-226, U-33).
+  El globo que invita a agregar la app a inicio sale abajo, solo en los celulares donde se puede
+  agregar (no en el computador ni en la app ya instalada), y la ✕ lo apaga para siempre en ese
+  navegador (D-232).
 - **Se prueba entera en Chrome:** `tools/e2e/favoritos.mjs` (filtros, favoritos y 320 px en los
   cuatro idiomas), `compartir-portada.mjs`, `instalar.mjs`, `uno-al-dia.mjs` e
   `idioma-por-url.mjs`. `window.__portada` dice el filtro, las tarjetas que se ven y los
