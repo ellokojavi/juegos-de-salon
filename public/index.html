@@ -181,7 +181,7 @@
     .footer-msg { min-height: 3.2em; font-size: 1rem; line-height: 1.5; color: var(--ink); opacity: 0.9; transition: opacity 0.5s ease, transform 0.5s ease; font-weight: 700; }
     .footer-msg.out { opacity: 0; transform: translateY(6px); }
     /* Juego al azar (D-188): el botón bajo la bajada y el dado que rueda sobre la portada */
-    .azar-slot { display: flex; justify-content: center; margin-top: 16px; }
+    .azar-slot { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; margin-top: 16px; }
     .btn-azar {
       display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 8px 22px 8px 16px; cursor: pointer;
       font: 400 1.35rem var(--font-display); letter-spacing: 0.06em; color: #3a1200;
@@ -191,29 +191,43 @@
     .btn-azar:active { transform: translateY(3px); box-shadow: 0 1px 0 #c99a00, 0 4px 12px rgba(255, 210, 63, 0.3); }
     .btn-azar-dado { font-size: 1.5rem; display: inline-block; transition: transform 0.4s; }
     .btn-azar:hover .btn-azar-dado { transform: rotate(-25deg); }
-    body.azar-abierto { overflow: hidden; }
-    .azar-capa {
-      position: fixed; inset: 0; z-index: 100; display: grid; place-content: center; justify-items: center; gap: calc(min(38vw, 150px) * 0.55 + 20px);
-      background: radial-gradient(circle at 50% 45%, rgba(40, 12, 70, 0.9), rgba(10, 3, 20, 0.97));
-      animation: fadeIn 0.3s ease-out both; cursor: pointer;
-      outline: none;
+    /* Uno al día (D-230): una ficha de dos líneas al lado del dado, con su estado abajo */
+    .btn-uad {
+      position: relative; display: inline-grid; justify-items: center; gap: 0; min-height: 48px; padding: 5px 20px; cursor: pointer;
+      color: #fff; background: linear-gradient(180deg, #ff5fa5, var(--pink)); border: 0; border-radius: 999px;
+      box-shadow: 0 4px 0 #a3104f, 0 8px 22px rgba(255, 46, 136, 0.3); transition: transform 0.1s, box-shadow 0.1s;
     }
-    .azar-escena { --lado: min(38vw, 150px); width: var(--lado); height: var(--lado); position: relative; }
-    .azar-salto { position: absolute; inset: 0; will-change: transform; }
-    /* El lienzo mide el doble que el dado: así cabe entero cuando gira de esquina */
-    .azar-lienzo { position: absolute; width: 200%; height: 200%; left: -50%; top: -50%; }
-    .azar-sin-3d { position: absolute; inset: 0; display: grid; place-items: center; font-size: calc(var(--lado) * 0.8); animation: pop 0.4s ease-out both; }
-    .azar-sombra {
-      position: absolute; left: 8%; right: 8%; bottom: calc(var(--lado) * -0.42); height: 18%; border-radius: 50%;
-      background: radial-gradient(ellipse, rgba(0, 0, 0, 0.75), transparent 70%); opacity: 0;
+    .btn-uad:active { transform: translateY(3px); box-shadow: 0 1px 0 #a3104f, 0 4px 12px rgba(255, 46, 136, 0.3); }
+    .btn-uad.hecho { color: #05302b; background: linear-gradient(180deg, #7ff5ea, var(--cyan)); box-shadow: 0 4px 0 #149a8f, 0 8px 22px rgba(46, 230, 214, 0.25); }
+    .btn-uad-titulo { display: inline-flex; gap: 8px; align-items: center; font: 400 1.25rem/1.1 var(--font-display); letter-spacing: 0.06em; }
+    .btn-uad-estado { font: 800 0.8rem/1.2 var(--font-body); opacity: 0.95; }
+    .btn-uad-punto {
+      position: absolute; top: -2px; right: -2px; width: 12px; height: 12px; border-radius: 50%;
+      background: var(--lime); box-shadow: 0 0 0 2px var(--bg2), 0 0 10px var(--lime); animation: uadPulso 1.6s ease-in-out infinite;
     }
-    .azar-capa.listo .azar-escena { animation: azarLatido 0.7s cubic-bezier(0.3, 0, 0.3, 1); }
-    @keyframes azarLatido { 45% { transform: scale(1.07); } }
-    .azar-nombre { min-height: 4.6em; text-align: center; display: grid; gap: 4px; padding: 0 16px; }
-    .azar-nombre small { color: var(--muted); font-weight: 800; font-size: 1rem; }
-    .azar-nombre b { font: 400 clamp(2rem, 9vw, 2.8rem) var(--font-display); letter-spacing: 0.04em; color: var(--yellow); line-height: 1.05; }
-    .azar-capa.listo .azar-nombre > * { animation: pop 0.4s ease-out both; }
-    .azar-capa.listo .azar-nombre b { animation-delay: 0.08s; }
+    @keyframes uadPulso { 50% { transform: scale(1.3); } }
+    /* A) Al lado del dado: los dos botones se achican para caber en una fila, también a 320 px */
+    .azar-slot.con-uad { flex-wrap: nowrap; gap: 8px; }
+    .azar-slot.con-uad .btn-azar { flex: 0 1 auto; min-width: 0; gap: 6px; padding: 6px 14px 6px 10px; font-size: clamp(0.95rem, 4.2vw, 1.2rem); white-space: nowrap; }
+    .azar-slot.con-uad .btn-azar-dado { font-size: 1.2rem; }
+    .azar-slot.con-uad .btn-uad { flex: 0 1 auto; min-width: 0; padding: 5px 14px; }
+    .azar-slot.con-uad .btn-uad-titulo { gap: 5px; font-size: clamp(0.95rem, 4.2vw, 1.15rem); white-space: nowrap; }
+    .azar-slot.con-uad .btn-uad-estado { font-size: 0.72rem; white-space: nowrap; }
+    /* B) Una fila de dos tarjetas altas: La Copa y Uno al día, media fila cada una */
+    .fila-alta { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 10px; }
+    .game-card.alta { position: relative; grid-template-columns: 1fr; grid-template-areas: "emoji" "texto" "meta"; row-gap: 8px; align-content: start; justify-items: start; text-align: left; padding: 14px 12px; font: inherit; cursor: pointer; }
+    .game-card.alta .emoji { width: 52px; height: 52px; font-size: 2.1rem; border-radius: 15px; }
+    .game-card.alta .texto { align-self: start; }
+    .game-card.alta h2 { font-size: clamp(1.15rem, 5.4vw, 1.45rem); line-height: 1.05; }
+    .game-card.alta .tag { font-size: 0.82rem; line-height: 1.3; margin: 4px 0 0; }
+    .game-card.alta .go { display: none; }
+    .game-card.alta .meta span { font-size: 0.72rem; padding: 3px 7px; }
+    .uad-card { border-color: rgba(255, 46, 136, 0.6); background: linear-gradient(160deg, rgba(255, 95, 165, 0.42), rgba(138, 77, 255, 0.38)); box-shadow: 0 0 22px rgba(255, 46, 136, 0.22); color: var(--ink); }
+    .uad-card.hecho { border-color: rgba(46, 230, 214, 0.6); background: linear-gradient(160deg, rgba(46, 230, 214, 0.32), rgba(138, 77, 255, 0.3)); }
+    .uad-card .tag { color: rgba(255, 255, 255, 0.88); }
+    .uad-card .meta .uad-card-estado { background: rgba(0, 0, 0, 0.32); white-space: normal; }
+    .uad-card .btn-uad-punto { top: 10px; right: 10px; }
+    @media (prefers-reduced-motion: reduce) { .btn-uad-punto { animation: none; } }
   </style>
   <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
   <meta name="apple-mobile-web-app-title" content="Juegos de Salón">
@@ -312,6 +326,24 @@
     document.getElementById('azar-slot').append(botonAzar({
       lang, candidatos: () => tarjetas.filter(t => !t.card.hidden).map(t => t.g),
     }));
+    // Uno al día (D-230): al lado, el juego de hoy, el mismo para todos. Por ahora, en el laboratorio
+    // Dos formas a prueba, para que el dueño elija (`?uad=tarjeta`): al lado del dado, o una tarjeta
+    // de media fila junto a La Copa
+    import('./assets/js/uno-al-dia.js').then(async ({ unoAlDiaVisible }) => {
+      if (!unoAlDiaVisible()) return;
+      const { botonUnoAlDia, tarjetaUnoAlDia } = await import('./assets/js/uno-al-dia-ui.js');
+      const copa = tarjetas.find(t => t.g.torneo)?.card;
+      if (new URLSearchParams(location.search).get('uad') === 'tarjeta' && copa) {
+        const fila = el('div', { class: 'fila-alta' });
+        copa.replaceWith(fila);
+        copa.classList.add('alta');
+        fila.append(copa, tarjetaUnoAlDia({ lang, alTocar: () => SFX.tap() }));
+      } else {
+        const slot = document.getElementById('azar-slot');
+        slot.classList.add('con-uad');
+        slot.append(botonUnoAlDia({ lang, alTocar: () => SFX.tap() }));
+      }
+    }).catch(() => {});
 
     // Filtro por tipo (D-142, D-149): la lista ya es larga. Va en la URL (?type=logic, en inglés
     // como las rutas: D-214), así volver desde un juego lo deja como estaba y un link filtrado se

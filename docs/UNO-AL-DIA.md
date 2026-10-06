@@ -1,6 +1,6 @@
 # Uno al día
 
-**Estado:** aprobada por el dueño, con dos agregados y un cambio (D-230) · **Fecha:** 2026-10-05 ·
+**Estado:** aprobada por el dueño (D-230); el PR 1, el núcleo, está hecho, en el laboratorio (v0.114.0) · **Fecha:** 2026-10-05 ·
 **Toca:** RP-44, D-188 (Juego al azar), D-212 y D-217 (rankings), D-221 a D-229 (avisos), D-97 (semillas)
 
 Una modalidad nueva en la portada, al lado de **Juego al azar**: cada día la app sorprende con un
@@ -360,11 +360,37 @@ el celular al terminar, así que el aviso sabe si ya jugó aunque no tenga jugad
 | **4. Avisos y recordatorios** | Los tres avisos, la hoja de la hora, el globo del ícono, el calendario | Sí, como los de La Copa |
 | **5. Panel y salida** | Las cifras del panel; se abre a todos | No |
 
-Cada juego tiene que aceptar una **fecha** además de una semilla (`/queens/?dia=2026-10-05`) y
+Cada juego tiene que saber que es el de hoy (`/queens/?hoy`, ver "Lo que el PR 1 hizo") y
 avisar al terminar. Los siete solitarios ya aceptan `?semilla=` (D-142), así que para ellos el cambio
 es chico y se hace una sola vez en `cup/game.js`. El Ahorcado, Batalla Naval y Dudo tienen cada
 uno su motor, y por eso van en su propio PR: el modo para uno abre directo, sin elegir modo, y el
 celular saca la palabra, la flota o los dados de la semilla del día.
+
+### Lo que el PR 1 hizo (v0.114.0)
+
+- **El link no lleva la fecha:** es `?hoy` (`/untangle/?hoy`, o `/cup/suelto/?linea&hoy` para
+  Línea Relámpago y el número, que no tienen página propia). La página calcula la fecha del jugador,
+  el juego y la semilla, así un link viejo abre el de hoy y nadie elige el tablero. Si el link es de
+  otro juego, la página se va al de hoy.
+- **El mazo con 7 juegos:** "ningún juego antes de 7 días" con justo 7 juegos dejaba el mismo orden
+  todas las semanas. Con menos de 9 juegos la espera es de dos días menos que los que hay (con 7,
+  cinco días); con 10 o más, 7 días, como dice arriba. El día n.° 1 es el 5 de octubre de 2026
+  (`LANZAMIENTO` en `uno-al-dia.js`); se puede mover mientras esté en el laboratorio.
+- **La semilla** es un código de copa de 5 letras sacado de la fecha (`semillaDel`), así los juegos
+  no cambian: generan con ella como en cualquier copa. Las palabras van en el idioma de quien juega,
+  como en el juego suelto: el desafío es el mismo para los que juegan en el mismo idioma.
+- **La tarjeta del resultado** va justo bajo el puntaje: la racha, "Vuelve mañana para el día N", lo
+  que cuenta de hoy (o que fue práctica), **Compartir mi resultado**, **🎲 Jugar otro**, **📅 Ver tu
+  Uno al día** y **Repetir el de hoy**. Reemplaza al "Jugar otra vez" y al compartir del juego suelto.
+- **Sin comodines, sin ranking del día y sin invitar todavía:** necesitan el jugador en Firebase
+  (PR 3). El primer intento del día sí va al ranking normal del juego, si hay jugador; los demás no.
+- **`/today/`**: hoy (el dado si falta, o el resultado con el reloj al próximo, compartir y jugar
+  otro), la racha, la mejor racha, los días jugados, el calendario del mes (con el emoji del juego en
+  cada día jugado, y los meses anteriores) y una fila por juego con su línea de los últimos 8 y la
+  flecha, más la frase del que más mejoró o, si ninguno, del que más bajó.
+- El CSS del dado pasó de la portada a `base.css`, para tirarlo desde cualquier página.
+- Se prueba con `uno-al-dia.test.mjs` (el mazo, la semilla, la racha, lo anotado) y
+  `tools/e2e/uno-al-dia.mjs` (de la portada a `/today/`, a 320 px y en los cuatro idiomas).
 
 ## Lo que decidió el dueño (2026-10-05)
 
