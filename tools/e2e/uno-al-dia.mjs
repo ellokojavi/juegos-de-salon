@@ -34,12 +34,14 @@ await b.send('Page.addScriptToEvaluateOnNewDocument', { source: `(()=>{const D=D
 await b.go(`${SITIO}/`, 600);
 await ev(`(()=>{localStorage.clear();localStorage.setItem('juegos-de-salon:instalar:no','1');return 1})()`);
 await b.go(`${SITIO}/`, 1500);
-ok(await esperar(`!!document.getElementById('btn-uno-al-dia')`), 'la portada tiene el botón de Uno al día, al lado de Juego al azar');
-ok(await ev(`document.getElementById('btn-uno-al-dia').parentElement.querySelector('.btn-azar') !== null`), 'va en la misma fila que Juego al azar');
-ok((await texto('#btn-uno-al-dia')).replace(/\s+/g, ' ').trim() === '📅 Uno al día', `dice solo "📅 Uno al día", sin racha todavía (${await texto('#btn-uno-al-dia')})`);
-ok((await texto('.azar-slot .btn-azar')).replace(/\s+/g, ' ').trim() === '🎲 Al azar', `y el de al lado, "🎲 Al azar" (${await texto('.azar-slot .btn-azar')})`);
+ok(await esperar(`!!document.getElementById('btn-uno-al-dia')`), 'la portada tiene la tarjeta de Uno al día');
+ok(await ev(`document.getElementById('btn-uno-al-dia').parentElement.querySelector('.game-card.torneo') !== null`), 'va en la misma fila que La Copa, mitad y mitad (D-239)');
+ok(/Jugar el de hoy/.test(await texto('#btn-uno-al-dia .uad-card-estado')), `dice "Jugar el de hoy", sin racha todavía (${await texto('#btn-uno-al-dia .uad-card-estado')})`);
+ok((await texto('.azar-slot .btn-azar')).replace(/\s+/g, ' ').trim() === '🎲 Juego al azar', `y el dado sigue diciendo "🎲 Juego al azar" (${await texto('.azar-slot .btn-azar')})`);
+ok(await ev(`(()=>{const s=[...document.querySelectorAll('.game-card.torneo .meta > span')];return s.length===2&&s[0].getBoundingClientRect().top===s[1].getBoundingClientRect().top})()`), 'jugadores y duración de La Copa, en una línea');
 ok(/abrir el juego de hoy/.test(await ev(`document.getElementById('btn-uno-al-dia').getAttribute('aria-label')`)), 'lo que hace va en aria-label');
 ok(await ev(`!!document.querySelector('#btn-uno-al-dia .btn-uad-punto')`), 'y un punto brilla: hoy no se ha jugado');
+ok(await sinDesborde(), 'la portada no se sale de lado');
 await b.shot('portada');
 
 /* ---------- El dado ---------- */
@@ -123,18 +125,18 @@ await ev(`document.querySelector('#uad-cal').previousElementSibling.firstElement
 ok(/septiembre/i.test(await texto('.uad-cal-cab')) && /👑/.test(await texto('#uad-cal')), 'el mes anterior muestra los días de septiembre');
 await b.shot('today');
 
-/* ---------- La otra forma, a prueba desde /labs/: una tarjeta junto a La Copa ---------- */
+/* ---------- La forma de antes, a prueba desde /labs/: el botón al lado del dado ---------- */
 await b.go(`${SITIO}/labs/`, 1500);
-ok(await esperar(`!!document.querySelector('#uad-formas [data-forma="tarjeta"]')`), 'el laboratorio deja elegir dónde va en la portada');
-ok(await ev(`document.querySelector('#uad-formas [data-forma="boton"]').getAttribute('aria-pressed')`) === 'true', 'por defecto, al lado del dado');
-await click('#uad-formas [data-forma="tarjeta"]');
+ok(await esperar(`!!document.querySelector('#uad-formas [data-forma="boton"]')`), 'el laboratorio deja elegir dónde va en la portada');
+ok(await ev(`document.querySelector('#uad-formas [data-forma="tarjeta"]').getAttribute('aria-pressed')`) === 'true', 'por defecto, junto a La Copa');
+await click('#uad-formas [data-forma="boton"]');
 await b.go(`${SITIO}/`, 1500);
 await esperar(`!!document.getElementById('btn-uno-al-dia')`);
-ok(await ev(`!!document.querySelector('.fila-alta .game-card.torneo') && document.getElementById('btn-uno-al-dia').classList.contains('uad-card')`), 'con "Junto a La Copa", es una tarjeta de media fila al lado de La Copa');
-ok(await ev(`!document.querySelector('.azar-slot #btn-uno-al-dia')`) && await sinDesborde(), 'y ya no va al lado del dado');
-await b.shot('portada-tarjeta');
+ok(await ev(`!!document.querySelector('.azar-slot #btn-uno-al-dia') && !document.querySelector('.fila-alta')`), 'con "Al lado del dado", es un botón en la fila de Juego al azar');
+ok((await texto('.azar-slot .btn-azar')).replace(/\s+/g, ' ').trim() === '🎲 Al azar' && await sinDesborde(), 'y el dado se acorta a "🎲 Al azar"');
+await b.shot('portada-boton');
 await b.go(`${SITIO}/labs/`, 1200);
-await click('#uad-formas [data-forma="boton"]');
+await click('#uad-formas [data-forma="tarjeta"]');
 
 /* ---------- 320 px y los cuatro idiomas ---------- */
 await b.send('Emulation.setDeviceMetricsOverride', { width: 320, height: 640, deviceScaleFactor: 2, mobile: true });
@@ -142,9 +144,11 @@ for (const lang of IDIOMAS) {
   const U = COMMON[lang].uad;
   await b.go(`${SITIO}/?lang=${lang}`, 1500);
   await esperar(`!!document.getElementById('btn-uno-al-dia')`);
-  const r = await ev(`JSON.stringify((()=>{const e=document.getElementById('btn-uno-al-dia').getBoundingClientRect();return [e.left,e.right,e.height]})())`).then(JSON.parse);
-  ok(r[0] >= 0 && r[1] <= 320 && r[2] < 70 && await sinDesborde(), `${lang}: el botón de la portada cabe a 320 px (${r.map(Math.round)})`);
-  ok((await texto('#btn-uno-al-dia')).includes(U.nombre), `${lang}: se llama "${U.nombre}"`);
+  const r = await ev(`JSON.stringify((()=>{const e=document.getElementById('btn-uno-al-dia').getBoundingClientRect();return [e.left,e.right]})())`).then(JSON.parse);
+  ok(r[0] >= 0 && r[1] <= 320 && await sinDesborde(), `${lang}: la tarjeta de la portada cabe a 320 px (${r.map(Math.round)})`);
+  const m = await ev(`JSON.stringify((()=>{const c=document.querySelector('.game-card.torneo').getBoundingClientRect(),s=[...document.querySelectorAll('.game-card.torneo .meta > span')].map(x=>x.getBoundingClientRect());return [s.length,s[0].top===s[1].top,Math.max(...s.map(x=>x.right))<=c.right]})())`).then(JSON.parse);
+  ok(m[0] === 2 && m[1] && m[2], `${lang}: en La Copa, jugadores y duración en una línea y adentro (${m})`);
+  ok((await ev(`document.querySelector('#btn-uno-al-dia h2').textContent`)).includes(U.nombre), `${lang}: se llama "${U.nombre}"`);
   await b.go(`${SITIO}/today/?lang=${lang}`, 1500);
   ok(await sinDesborde(), `${lang}: /today/ no se sale a lo ancho`);
   ok(!/undefined|NaN|\{\w+\}/.test(await ev('document.body.innerText')), `${lang}: /today/ sin textos a medio armar`);
