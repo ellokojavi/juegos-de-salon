@@ -75,7 +75,7 @@ export function crearAvisos({ T, lang, cuenta, store, copa, redibujar, toast, ta
       el('span', { class: 'hoja-num' }, String(n)),
       el('div', {}, el('p', {}, ...conNegritas(texto)), nota ? el('small', { class: 'muted' }, nota) : null),
       el('span', { class: 'hoja-icono', 'aria-hidden': 'true' }, icono));
-    const despues = el('p', { class: 'muted', hidden: true }, fmt(T.avInstalledNext, { code: copa().code }));
+    const despues = el('p', { class: 'muted', hidden: true }, T.avInstalledNext);
     hoja('hoja-instalar',
       el('h2', {}, T.avInstallTitle),
       el('p', { class: 'muted' }, T.avInstallLead),
