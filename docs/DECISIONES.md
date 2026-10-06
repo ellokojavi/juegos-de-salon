@@ -2201,7 +2201,7 @@ coseno del ángulo con que se mira; el alfiler se achica (hasta un 35 %) y se de
 detrás. En el juego las marcas siguen planas: ahí se miran de frente y tienen que leerse.
 
 ## D-159 · El globo de ¿Dónde queda? es una imagen satelital
-**Fecha:** 2026-09-29 · **Estado:** corregida por D-202, D-244
+**Fecha:** 2026-09-29 · **Estado:** corregida por D-202, D-245
 **Decisión:** El globo muestra la Tierra vista desde el satélite: **Blue Marble Next Generation**
 de la NASA (dominio público), la de septiembre de 2004, con relieve y fondo marino. Se eligió
 septiembre porque es el mes con menos nieve en los dos hemisferios: el Sahara, Arabia, el Atacama
@@ -2215,8 +2215,8 @@ la Antártica como hielo. Sin nombres ni fronteras (D-158).
   la imagen, porque `set-version.py` no estampa imágenes. Las rehace
   `node tools/mapa.mjs satelite` (necesita internet y `sips`, de macOS).
 - **Sin WebGL, o si ninguna imagen llega,** el globo se dibuja como antes, con el mapa vectorial
-  verde. Mientras baja la primera, el globo espera vacío (D-244). El mapa vectorial (`mapa.js`) queda también para las pruebas: cada ciudad cae
-  en su país y sobre tierra.
+  verde. Mientras baja la primera, el globo espera vacío (D-245). El mapa vectorial (`mapa.js`)
+  queda también para las pruebas: cada ciudad cae en su país y sobre tierra.
 - **El zoom máximo baja de 40 a 16 veces** (unos 2 km por píxel en un celular): más allá la
   imagen de 4096 px ya no tiene detalle. Sigue sobrando precisión para el puntaje (un punto cada
   25 km). La respuesta acerca hasta 12 veces.
@@ -4193,7 +4193,7 @@ color, y del resto de la portada.
 **Consecuencias:** el degradé usa ids fijos (`icono-compartir-caja`, `icono-compartir-flecha`):
 el botón va una sola vez por página. Si algún día va dos veces, cada copia necesita ids propios.
 
-## D-244 · El globo de ¿Dónde queda? espera a la imagen satelital
+## D-245 · El globo de ¿Dónde queda? espera a la imagen satelital
 **Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** corrige D-159 (qué se ve mientras baja la imagen)
 **Decisión:** Con WebGL, mientras la imagen satelital no llega, el globo no se dibuja (ni el de la
 portada ni el del juego): queda el fondo. Al llegar la de 2048 px aparece con un fundido de 0,3 s
