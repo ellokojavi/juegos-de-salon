@@ -636,6 +636,7 @@
       }
     },
     "unoAlDia": {
+      ".read": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
       ".write": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
       "$jid": {
         ".read": "$jid.matches(/^[a-z0-9]{8}$/)",
@@ -665,6 +666,7 @@
       }
     },
     "invitados": {
+      ".read": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
       ".write": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
       "$jid": {
         ".read": "auth != null && $jid.matches(/^[a-z0-9]{8}$/) && root.child('jugadorSeats/' + $jid + '/' + auth.uid).exists()",
