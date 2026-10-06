@@ -178,7 +178,7 @@ con eso la pantalla entra también a las pruebas de idiomas. Para verlo en un ce
   **Antes de trabajar en el video se lee `marketing/promo-video/README.md` entero** (el skill
   `promo-video` lo carga) y al terminar se anota la vuelta ahí y en `marketing/registro.json`.
   `node tools/agents/marketing.mjs revisar` dice qué asset quedó atrás (U-34).
-- **Panel** (`public/panel/`, D-44, D-207): `window.__panel.seed({ rooms, days, torneos, vista })`
+- **Panel** (`public/panel/`, D-44, D-207): `window.__panel.seed({ rooms, days, torneos, push, vista })`
   lo dibuja con datos sembrados sin entrar. Ver [docs/PANEL.md](docs/PANEL.md).
 - **Reportes de La Copa** (D-104): `node tools/firebase/reportes.mjs [--dias 3] [--json]`.
 - **Rankings** (D-212): `records.js` (lógica), `jugador.js` (el jugador y su almacén:
