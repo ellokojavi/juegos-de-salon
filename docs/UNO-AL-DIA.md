@@ -300,9 +300,9 @@ imagen es la lámina de resultado de siempre (`laminaResultado`, con la misma ca
 el tiempo y "mejor que el 64 %" si hoy jugaron 20 o más), y el texto sigue U-30 y no repite lo que
 la imagen ya dice (D-171): la cabecera, la racha, que la imagen no trae, y el link.
 
-**Ni la cabecera ni la imagen dicen qué juego tocó hoy** (decisión del dueño, #215): quien lee la
+**Ni el texto ni la imagen dicen qué juego tocó hoy** (decisión del dueño, #215): quien lee la
 tarjeta en el grupo casi siempre todavía no juega, y el juego se descubre en el dado, como con el
-aviso (decisión 3). La imagen va sin el nombre ni el emoji del juego, y el puntaje se lee como
+aviso (decisión 3 del dueño, abajo). La imagen va sin el nombre ni el emoji del juego, y el puntaje se lee como
 "87 puntos". Es una excepción a U-31, que pide nombrar el juego en un resultado.
 
 ```
