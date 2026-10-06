@@ -3,8 +3,8 @@
 ## 0.126.2 — 2026-10-06
 - **Cuarto Rey: la mesa en inglés del README, con cuatro jugadores**: la captura salía con un quinto
   "undefined ♂", porque el guion llenaba todas las filas de la mesa recordada aunque trajera menos
-  nombres. Ahora quita las filas que sobran, comprueba que la mesa sean sus nombres, y las capturas
-  de Cuarto Rey están rehechas.
+  nombres. Ahora quita las filas que sobran, fija el género de cada jugador (antes heredaba los de
+  otra prueba), comprueba que la mesa sea la del guion, y las capturas de Cuarto Rey están rehechas.
 
 ## 0.126.1 — 2026-10-06
 - **Uno al día, más claro en tu página** (D-230): el calendario muestra en cada día jugado el puntaje
