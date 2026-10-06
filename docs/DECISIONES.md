@@ -53,7 +53,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 |---|---|---|
 | Estructura y rutas | C-2 | D-01, D-02, D-03, D-24, D-192, D-198 |
 | Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184 |
-| Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231 |
+| Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213 |
 | Portada: filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241 |
@@ -3922,7 +3922,7 @@ las visitas que entraron por ahí. En v0.120.1 (dilema #230, decisión 14), con 
 **Sale del laboratorio en v0.121.0** (decisión del dueño, 2026-10-06; decisión 16 de [UNO-AL-DIA.md](UNO-AL-DIA.md)): `UNO_AL_DIA_EN_LABS = false`, así que el botón de la portada, `/today/`, los rankings y los avisos son para todos, y en `/labs/` queda solo probar la otra forma del acceso (la tarjeta junto a La Copa). **El n.° 1 pasó al 6 de octubre de 2026**, el día en que se abrió (`LANZAMIENTO`): el mazo es el mismo corrido un día, así que El Ahorcado, Batalla Naval y Dudo entran desde el mazo del 13 de octubre, no del 12. Desde ahí `LANZAMIENTO` queda fijo: moverlo cambiaría el juego de días ya jugados.
 
 ## D-231 · El selector de idioma lleva las banderas siempre
-**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** corrige la nota de `base.css` de D-191 (en un celular angosto se escondía la bandera)
+**Fecha:** 2026-10-05 · **Estado:** corregida por D-244 · **Relación:** corrige la nota de `base.css` de D-191 (en un celular angosto se escondía la bandera)
 **Decisión:** Pedido del dueño: todos los selectores de idioma llevan sus banderas, y queda un
 estándar de diseño para el widget (C-3). En un celular de hasta 440 px, con cuatro idiomas, el
 toggle escondía las banderas para no empujar el sonido y compartir fuera de la barra de arriba:
@@ -3935,7 +3935,7 @@ así, en el celular, que es donde más se juega, nunca se veían.
 **Por qué:** La bandera se reconoce antes que el código, sobre todo para quien no lee español.
 Apilarla mantiene el ancho y los 44 px de alto (C-8), así que la barra no cambia.
 **Consecuencias:** Las banderas son emoji, no imágenes SVG, por decisión del dueño: en Windows se
-ven como dos letras (CL, GB…) y se acepta, porque la app se juega en celulares. Hay un solo toggle en la app: el estándar queda en C-3.
+ven como dos letras (ES, GB…; CL hasta D-244) y se acepta, porque la app se juega en celulares. Hay un solo toggle en la app: el estándar queda en C-3.
 
 ## D-232 · Un globo en la portada invita a agregar la app a inicio (primero en el laboratorio; para todos desde v0.121.0)
 **Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** completa D-221; reusa la hoja de pasos de D-223
@@ -4192,6 +4192,17 @@ color, y del resto de la portada.
   celeste y rosado de la portada.
 **Consecuencias:** el degradé usa ids fijos (`icono-compartir-caja`, `icono-compartir-flecha`):
 el botón va una sola vez por página. Si algún día va dos veces, cada copia necesita ids propios.
+
+
+## D-244 · El español va con la bandera de España
+**Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** corrige D-231 (la bandera del español)
+**Decisión:** Pedido del dueño, para estandarizar: en el selector de idioma, ES lleva 🇪🇸 en vez
+de 🇨🇱 (`BANDERAS` en `i18n.js`). La bandera identifica el idioma, no el país de quien juega.
+**Por qué:** 🇨🇱 hacía ver el español como el idioma de un país, al lado de 🇬🇧 EN y 🇩🇪 DE, que se
+leen como idiomas. Para quien llega de afuera, 🇪🇸 dice "español" sin pensarlo.
+**Consecuencias:** Solo cambia el selector. Las banderas de Chile que son contenido (la temática
+Chile, el público 🇨🇱 de La Copa, la bandera del país junto al nombre en los rankings) siguen igual.
+El portugués sigue con 🇧🇷: es el de Brasil (D-48).
 
 ## D-245 · El globo de ¿Dónde queda? espera a la imagen satelital
 **Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** corrige D-159 (qué se ve mientras baja la imagen)
