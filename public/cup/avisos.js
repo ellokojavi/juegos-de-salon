@@ -7,7 +7,8 @@
  * - El permiso se pide solo después de un toque en "Avisarme" (el "No" del sistema es definitivo).
  * - La tarjeta sale una vez por copa; "Ahora no" la apaga en esa copa. La campana queda siempre.
  * - Si el celular ya tiene avisos en otra copa, la copa nueva los trae puestos, con "Cambiar".
- * - Nada se ofrece si el celular no puede (camino 'no') o fuera del laboratorio (AVISOS_EN_LABS).
+ * - Nada se ofrece si el celular no puede (camino 'no'), sin clave VAPID o, si se vuelven a cerrar, fuera
+ *   del laboratorio (AVISOS_EN_LABS, D-228).
  */
 import { el, $ } from '../assets/js/ui.js';
 import {
