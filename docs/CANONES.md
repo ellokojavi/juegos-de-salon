@@ -63,7 +63,8 @@ public/<carpeta>/
   Ninguna pantalla arma el suyo. Su estándar:
   - Una píldora de vidrio (`--glass`) con un botón por idioma de `LANGS`, en el orden de `LANGS`.
   - **Cada botón lleva la bandera y el código en mayúsculas, siempre** (🇨🇱 ES, 🇬🇧 EN, 🇧🇷 PT, 🇩🇪 DE).
-    La bandera es la del país de la app en ese idioma (`BANDERAS` en `i18n.js`). Nunca se esconde:
+    La bandera es la del país de la app en ese idioma (`BANDERAS` en `i18n.js`), en emoji, nunca
+    en SVG: en Windows se ve como dos letras y se acepta (D-231). Nunca se esconde:
     en una pantalla ancha va al lado del código, y en un celular angosto (≤ 440 px), arriba, para
     que el toggle no crezca.
   - El elegido, en amarillo (`--yellow`, texto `#3a1200`) y apenas más grande; los otros, en `--muted`.
