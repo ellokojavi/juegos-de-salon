@@ -105,7 +105,7 @@ lanzamiento: **Uno al día n.° 1, n.° 2…**, para compartir.
 - **Mientras no lo haya jugado, el dado rueda cada vez** que toca la tarjeta, el aviso o un link, y
   siempre cae en el mismo juego (decisión del dueño: la misma experiencia de Juego al azar).
 - Si ya jugó, la tarjeta queda cian, **✅ Listo · 🔥 2**, y al tocarla abre su página de Uno al día (sus
-  números, el ranking del día y cuánto falta para el próximo: "El próximo sale en 7 h 12 min.").
+  números, el ranking del día y cuánto falta para el próximo: "Próximo juego en 7 h 12 min.").
 
 ### Quiere jugar más
 
@@ -129,7 +129,7 @@ lanzamiento: **Uno al día n.° 1, n.° 2…**, para compartir.
 - El lunes, el **resumen de la semana**: días jugados, puntos totales, el juego en que más mejoró
   y su puesto en la semana.
 - En su página, un **calendario** del mes: cada día pintado según cómo le fue, con el emoji del
-  juego, y 🧊 en los días que salvó un comodín.
+  juego y el puntaje de 0 a 100 en una píldora, y 🧊 en los días que salvó un comodín.
 
 ## Invitar a un amigo
 
@@ -211,10 +211,10 @@ link.
 
 | Dónde | Qué dice |
 |---|---|
-| La tarjeta **Invita a un amigo**, en el resultado | "🧊 Si tu amigo termina su primer Uno al día, ganas un comodín." |
+| La tarjeta **Invita a un amigo**, en el resultado | "🧊 Si tu amigo termina su primer Uno al día, ganas un comodín, que salva tu racha el día que no juegues." |
 | La tarjeta de la racha, cuando no tiene comodines y la racha es de 3 días o más | "🧊 No tienes comodines. Invita a un amigo y gana uno." con el botón **Invitar** |
-| Su página, en el bloque de la racha y en el de invitar | "🧊 Comodines: 0 de 2. Ganas uno cada 7 días seguidos y cada vez que un amigo que invitaste termina su primer Uno al día." |
-| La primera vez que gana un comodín por racha | "🧊 Ganaste un comodín por 7 días seguidos. También ganas uno cuando un amigo que invitaste termina su primer Uno al día." |
+| Su página, en el bloque de la racha y en el de invitar | "🧊 Un comodín salva tu racha el día que no juegas. Tienes 0 de 2: ganas uno cada 7 días seguidos y cada vez que un amigo que invitaste termina su primer Uno al día." |
+| La primera vez que gana un comodín por racha | "🧊 Ganaste un comodín por 7 días seguidos: si un día no juegas, salva tu racha. También ganas uno cuando un amigo que invitaste termina su primer Uno al día." |
 
 - **Con 2 comodines no se promete nada:** el tope es 2 y un comodín de más se perdería, así que
   mientras tenga 2 la línea del comodín se esconde y la tarjeta queda solo con el dato.
@@ -233,9 +233,9 @@ acumulado:
 
 | Bloque | Qué muestra |
 |---|---|
-| **Hoy** | El juego de hoy y su resultado, o **Jugar** si falta; el reloj al próximo |
+| **Hoy** | El juego de hoy con su emoji y su resultado ("Hoy jugaste 👑 Reinas: 87 puntos."), o **Jugar** si falta; el reloj al próximo ("Próximo juego en 7 h 12 min.") |
 | **Racha** | 🔥 actual, mejor racha y comodines 🧊 |
-| **Calendario** | El mes, con un cuadro por día; se va a meses anteriores |
+| **Calendario** | El mes, con un cuadro por día: en los jugados, el emoji del juego y el puntaje en una píldora; se va a meses anteriores |
 | **Por juego** | Una fila por juego: veces jugado, promedio, mejor y una línea con los últimos 8. La flecha dice si va mejorando: el promedio de los últimos 3 contra los 5 de antes (▲ +12) |
 | **Rankings** | Pestañas: **Hoy** (el desafío de hoy) · **Semana** (suma de puntos) · **Rachas** (mejor racha) · **Amigos** (los de sus copas, que `jugador.js` ya conoce, y los que invitó o lo invitaron) |
 | **Invitar** | Cuántos aceptaron sus desafíos, y **Invitar** |
@@ -623,7 +623,7 @@ textos los propone el agente de usabilidad y el dueño los corrige en el PR.
 | **¿Otro más?** | **🎲 Jugar otro** | Verbo y objeto (U-17); el dado dice que es al azar |
 | **Agregar a mi calendario** / **Al calendario** | **Agregar al calendario**, botón chico (desde el PR 6, **⏰ Agregar recordatorio**) | "Al calendario" no tiene verbo (U-17) |
 | "📅 Uno al día · el mismo desafío para todos hoy" | "📅 Uno al día: hoy todos juegan el mismo desafío." | Frase completa (U-1) |
-| "El próximo, en 7 h 12 min" | "El próximo sale en 7 h 12 min." | Frase completa (U-1) |
+| "El próximo, en 7 h 12 min" | "El próximo sale en 7 h 12 min." (desde v0.125.1, "Próximo juego en 7 h 12 min.") | Frase completa (U-1); después, que diga que lo que viene es un juego |
 | "Sara jugó los últimos 33 días seguidos" | "Sara lleva una racha de 33 días" | Con un comodín, "jugó 33 días seguidos" puede ser falso; y "racha" es el término (U-5) |
 | "y lleva 5 días mejorando en Reinas" | "va mejorando en Reinas" | La app mide la flecha (últimos 3 contra 5), no días seguidos mejorando |
 | "Hoy sacó 87 en Reinas" | "hoy sacó 87" | La tarjeta del amigo se lee antes del dado: no adelanta el juego |
@@ -632,6 +632,7 @@ textos los propone el agente de usabilidad y el dueño los corrige en el PR.
 | Dos versiones del mensaje de invitar | Una, con cabecera y 🔗 (U-30), solo texto (U-33) | La invitación no lleva imagen dibujada: la pone el link |
 | "Sara te desafía 🔥" | "🔥 Sara te desafía" | Emoji al inicio (U-2) |
 | "Si juega su primer Uno al día, ganas un comodín 🧊." (y "juega su primer día") | "🧊 Si tu amigo termina su primer Uno al día, ganas un comodín." | Quién juega queda claro, el comodín llega al terminar, emoji al inicio (U-2) y una sola forma en los cuatro lugares (U-5) |
+| "🧊 Comodines: 0 de 2. Ganas uno cada…" (v0.125.1) | "🧊 Un comodín salva tu racha el día que no juegas. Tienes 0 de 2: ganas uno cada…" | Primero para qué sirve y después cómo se gana: que den ganas de ganarlos (pedido del dueño) |
 | "Sin comodines. Invita a un amigo y gana uno 🧊." | "🧊 No tienes comodines. Invita a un amigo y gana uno." | Frase completa (U-1), emoji al inicio (U-2) |
 | "…ganar un comodín por cada amigo que juegue." | "…ganas un comodín cuando un amigo que invitaste termina su primer Uno al día." | Con el tope de 2, "por cada amigo" promete de más |
 | "🧊 Pedro aceptó tu desafío: ganaste un comodín." siempre | Sin nombre si el amigo no tiene jugador; sin comodín si ya tenía 2 | No promete lo que se pierde |
