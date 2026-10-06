@@ -4,7 +4,13 @@
  */
 
 .rk-jugador { display: grid; gap: 6px; }
-.rk-yo { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding: 6px 14px; }
+/* "Juegas como Javi": al tocarlo se despliegan cambiar el PIN y Salir (lo de la cuenta) */
+.rk-yo { padding: 6px 14px; }
+.rk-yo summary { font-weight: 400; font-size: 1rem; min-height: 44px; gap: 10px; }
+.rk-yo[open] summary { margin-bottom: 6px; }
+.rk-cuenta { display: grid; gap: 8px; padding-bottom: 6px; }
+.rk-cuenta .rk-campo { margin-bottom: 0; }
+.rk-cuenta .rk-link { justify-self: center; }
 .rk-yo b { color: var(--cyan); }
 .rk-link {
   background: none; border: 0; color: var(--muted); font: 700 0.9rem var(--font-body); text-decoration: underline;
