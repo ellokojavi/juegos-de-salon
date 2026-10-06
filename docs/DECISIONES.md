@@ -4144,14 +4144,14 @@ siempre que quepa. `acomodarFav` (portada) prueba tres formas, de la más comple
 deja la primera con la que la fila no se desborda:
 1. **En la fila, con su nombre**, como las otras fichas.
 2. **En la fila, con la ⭐ sola** (44 px, el nombre en el `aria-label`) y un poco menos de aire
-   entre las fichas y dentro de ellas (`.tipos.apretada`: 4 px).
+   entre las fichas y dentro de ellas (`.tipos.apretada`: 4 px entre fichas, 3 px adentro).
 3. **En su línea, arriba de los tipos**, como en D-238.
 Se vuelve a medir al marcar o desmarcar el primer favorito, cuando cambia el ancho (girar el
 celular) y cuando cargan las fuentes.
 **Por qué:** lo pidió el dueño: la línea de más empujaba los juegos hacia abajo. Medido: con la ⭐
-sola y menos aire, la fila cabe desde unos 360 px en los cuatro idiomas (a 360 px en alemán sí, en
-español no) y a 375 px sobran unos 20 px. A 320 px solo cabe en inglés. Los celulares de hoy miden
-de 360 a 430 px, así que casi siempre cabe.
+sola y menos aire, la fila cabe desde 360 px en los cuatro idiomas, y desde 430 px va con su
+nombre (en inglés, desde 375). A 320 px solo cabe en inglés. Los celulares de hoy miden de 360 a
+430 px, así que casi siempre cabe.
 **Alternativas descartadas:**
 - **La ⭐ siempre en la fila:** a 320 px y en algunos idiomas a 360 px, la fila se sale de la
   pantalla (C-8).
