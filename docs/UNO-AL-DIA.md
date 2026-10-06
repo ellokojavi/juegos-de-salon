@@ -43,7 +43,7 @@ el contenido del día:
 |---|---|---|---|
 | ⏳ Línea Relámpago, 🔢 Toque y Fama: adivina el número, 🔗 Conexiones, 🔤 Toque y Fama: Palabra, 📅 ¿En qué año?, 👑 Reinas, 🧶 Desenredo | Su pantalla suelta (D-142) | Todo el contenido, como un día de La Copa | El de La Copa, el mismo de siempre |
 | 🪢 El Ahorcado | 🎴 Mazo del celular, con 1 jugador | La palabra (ya sale de la semilla del mazo) | Las vidas que quedan, llevadas a 100, y el tiempo desempata |
-| 🚢 Batalla Naval | 🤖 Contra el celular | La flota del celular | Menos disparos para hundirla, más puntos. Si te hunden antes, cuentan los barcos que hundiste |
+| ⚓ Batalla Naval | 🤖 Contra el celular | La flota del celular | Menos disparos para hundirla, más puntos. Si te hunden antes, cuentan las casillas de barco que acertaste |
 | 🎲 Dudo | 🤖 Contra el celular | Los dados de cada ronda | Ganar vale 60, y cada dado que te queda suma; perder suma por las rondas que aguantaste |
 
 - **Cuarto Rey no entra:** es un juego de mesa para 4 a 6 personas y no tiene modo para uno (su
@@ -51,8 +51,8 @@ el contenido del día:
   entra con su modo contra el celular.
 - Zip, Tango y ¿Dónde queda? entran al salir del laboratorio.
 - En Dudo y Batalla Naval el rival responde a lo que haces, así que lo común es el punto de partida
-  (los dados, la flota) y no la partida entera. Igual se pueden comparar, y el ranking del día lo dice:
-  "Todos parten con los mismos dados".
+  (los dados, la flota) y no la partida entera. Igual se pueden comparar, y lo dicen la intro (desde el PR 2)
+  y el ranking del día: "Todos parten con los mismos dados."
 - **🎲 Jugar otro** (abajo) ofrece cualquier juego de la portada, también Cuarto Rey.
 
 **La rotación:** son 10 juegos, así que no cabe uno por día de la semana. Funciona como un mazo: se
@@ -327,6 +327,11 @@ Sobre lo que ya hay en D-212 (`records/<tabla>/<periodo>/<jid>`), con lo mínimo
 | Sin jugador | `localStorage` (`juegos-de-salon:uno-al-dia`) | Al entrar con jugador, lo del celular se sube al historial una vez. |
 | "Mejor que el 64 %" | Se cuenta con el ranking del día ya leído (`LEER = 100`) | Solo con 20 jugadores o más. Con más de 100 la app no sabe el total, y un porcentaje (o un "de 230") sería inventado: quien está entre los 100 leídos ve su puesto ("14.° de hoy") y el resto, solo su puntaje. Lo mismo vale para el puesto del resumen de la semana. |
 
+El PR 3 lo construyó distinto en varias filas (ver "Lo que el PR 3 hizo"): la historia y el período
+del día van por número de día (`unoAlDia/<jid>/<n>`, `d<n>`), las reglas no revisan la fecha contra
+la hora del servidor ni la mejor racha contra la historia, los comodines no se guardan en
+`jugadores/<jid>` (salen de recorrer la historia) y al entrar se sube solo el día de hoy.
+
 El **primer intento** de Uno al día **también** va al ranking normal del juego y al Todoterreno:
 es el mismo juego, con un tablero que nadie conocía. Los intentos repetidos son práctica y no van a
 ningún ranking, porque el tablero ya es conocido: es la misma regla de D-212, que deja fuera la
@@ -411,7 +416,7 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   desde el mazo siguiente, que empieza el 12 (el primero de grupo sale el 13, Dudo). Con 10 juegos la
   espera es de 7 días, como decía el diseño. El link es el de su página: `/hangman/?hoy`,
   `/battleship/?hoy`, `/liars-dice/?hoy`. El dado y `/today/` los nombran con su nombre y emoji
-  de `games.js` (Batalla Naval es ⚓, no 🚢 como decía la tabla de arriba).
+  de `games.js` (Batalla Naval es ⚓; el diseño decía 🚢).
 - **Abren directo el modo para uno**, sin elegir modo: la intro de siempre lleva la línea de Uno al
   día y, en lugar de los modos, un solo botón **Jugar el de hoy**. El Ahorcado juega solo con el
   mazo del celular; Batalla Naval y Dudo, contra el celular (Dudo, un rival). Los ajustes son los de
@@ -426,7 +431,7 @@ celular saca la palabra, la flota o los dados de la semilla del día.
 - **Los puntajes**, funciones puras en `uno-al-dia.js` con su prueba: El Ahorcado, las vidas que
   quedan llevadas a 100 (0 si lo colgaron; el tiempo que se anota es el del juego). Batalla Naval,
   ganando, 100 con 17 disparos y bajando parejo hasta 40 con 100; perdiendo, 6 por casilla
-  acertada **hasta 39**: con 6 por casilla, 7 aciertos ya pasaban de 40, el mínimo al ganar, así que
+  acertada **hasta 39** (el diseño decía los barcos hundidos): con 6 por casilla, 7 aciertos ya pasaban de 40, el mínimo al ganar, así que
   se topó para que perder valga siempre menos. Dudo, ganando, 60 más 8 por dado que queda;
   perdiendo, 10 por ronda aguantada (todas menos la última) hasta 50.
 - **La tarjeta del resultado** va arriba de los botones del juego, que siguen ahí (a diferencia de
@@ -460,9 +465,9 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   igual sin jugador. Cada 7 días jugados seguidos se gana uno; un día sin jugar gasta uno o corta la
   racha; tope 2. Los días salvados van con 🧊 en el calendario, y la tarjeta del resultado dice
   cuándo se usó o se ganó uno.
-- **Entrar con el jugador** sube el de hoy (si se jugó antes de entrar) y trae la historia de
-  otros celulares. Los días viejos del celular no se suben: las reglas aceptan solo escrituras
-  frescas, así que quedan en el celular y se juntan al mostrar.
+- **Entrar con el jugador** sube el de hoy (si se jugó antes de entrar), con sus rankings, y los
+  días viejos del celular solo a la historia (sus rankings del día y de la semana ya pasaron): así la
+  racha sigue en otro celular. También trae la historia de otros celulares.
 - **Invitar:** el link es `today/?inv=<jid>` si quien invita tiene jugador (sin jugador, `today/`
   y la tarjeta le ofrece entrar para ganar el comodín). El amigo ve "🔥 Sara te desafía" con su dato
   de hoy y, al terminar su primer Uno al día, su celular escribe `invitados/<jid>/<uid>` (una vez por
