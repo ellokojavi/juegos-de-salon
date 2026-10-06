@@ -1,6 +1,6 @@
 // Los favoritos de la portada (D-238): la ⭐ de cada tarjeta marca sin abrir el juego, la ficha
 // "⭐ Favoritos" aparece con el primero y deja ver solo esos, se recuerdan al recargar, el dado
-// y las fichas caben a 320 px en los cuatro idiomas: Favoritos en su línea y los tipos en otra.
+// y Favoritos va en la fila de tipos donde cabe y en su línea donde no, en los cuatro idiomas.
 // Uso: node tools/e2e/favoritos.mjs /tmp/favoritos
 import { launch, sleep } from './cdp.mjs';
 const SITIO = process.env.SITIO || 'http://localhost:8765';
@@ -9,7 +9,7 @@ let mal = 0;
 const ver = (ok, que) => { console.log(`${ok ? '✓' : '✗'} ${que}`); if (!ok) mal++; };
 const b = await launch({ dir: `${OUT}/p`, out: OUT });
 const leer = () => b.evaluate(`JSON.stringify({
-  ficha: !document.querySelector('.filtros .favs').hidden,
+  ficha: !document.querySelector('.ficha-fav').hidden,
   on: document.querySelector('.ficha-fav').getAttribute('aria-pressed'),
   filtro: __portada.filtro.tipo, visibles: __portada.visibles, favoritos: __portada.favoritos,
   cuenta: document.getElementById('filtros-cuenta').hidden ? '' : document.getElementById('filtros-cuenta').textContent,
@@ -66,27 +66,38 @@ e = await leer();
 ver(!e.filtro && e.visibles.length > 10 && e.cuenta === '', '?type=favorites sin favoritos muestra todos');
 b.close();
 
-// A 320 px, con Favoritos, los cuatro tipos siguen en una fila y nada se sale, en cada idioma
-for (const lang of ['es', 'en', 'pt', 'de']) {
-  const c = await launch({ dir: `${OUT}/p320${lang}`, out: OUT, width: 320, height: 700 });
+// Dónde va ⭐ Favoritos (D-241), en cada idioma: a 390 px y en un computador (la portada no pasa
+// del ancho de un celular), primera en la fila de tipos; a 320 px, donde quepa (el inglés cabe en
+// la fila; los otros tres, en su línea). Siempre los tipos van en una fila y nada se sale.
+const ANCHOS = [[320, 'donde quepa'], [390, 'fila'], [900, 'fila']];
+const a320 = [];
+for (const [ancho, espera] of ANCHOS) for (const lang of ['es', 'en', 'pt', 'de']) {
+  const c = await launch({ dir: `${OUT}/p${ancho}${lang}`, out: OUT, width: ancho, height: 700 });
   await c.go(`${SITIO}/?lang=${lang}`, 1500);
   await c.evaluate(`localStorage.setItem('juegos-de-salon:favoritos', '["ahorcado","tango"]'); 1`);
   await c.go(`${SITIO}/?lang=${lang}&type=favorites`, 1500);
-  const f = await c.evaluate(`JSON.stringify((() => { const bs = [...document.querySelectorAll('.filtros .tipos button')];
-    const fav = document.querySelector('.ficha-fav').getBoundingClientRect();
+  const f = await c.evaluate(`JSON.stringify((() => { const tipos = document.querySelector('.filtros .tipos');
+    const bs = [...tipos.querySelectorAll('button')].filter(x => !x.hidden);
+    const fav = document.querySelector('.ficha-fav'), rf = fav.getBoundingClientRect(), fila = tipos.getBoundingClientRect();
     const tops = new Set(bs.map(x => Math.round(x.getBoundingClientRect().top)));
-    const fila = document.querySelector('.filtros .tipos').getBoundingClientRect();
-    return { n: bs.length, filas: tops.size, sale: bs.some(x => x.getBoundingClientRect().right > fila.right + 1), favArriba: fav.bottom <= fila.top && fav.height >= 44, ancho: document.documentElement.scrollWidth,
-      // Si algo se sale de la pantalla, cuál (contra 320 y no innerWidth: en un celular emulado, la
-      // pantalla se ensancha con lo que se sale). Los brillos del fondo no cuentan: su caja los recorta
-      fuera: [...document.querySelectorAll('body *')].filter(x => x.getBoundingClientRect().right > 320.5 && !x.closest('[hidden], .bg-sparkles'))
+    const enFila = fav.parentNode === tipos, nombre = getComputedStyle(fav.lastChild).display !== 'none';
+    return { forma: enFila ? (nombre ? 'fila con nombre' : 'fila') : 'linea', primera: !enFila || bs[0] === fav,
+      arriba: enFila || rf.bottom <= fila.top, toque: rf.height >= 44 && rf.width >= 44,
+      filas: tops.size, sale: bs.some(x => x.getBoundingClientRect().right > fila.right + 1), ancho: document.documentElement.scrollWidth,
+      // Si algo se sale de la pantalla, cuál (contra el ancho pedido y no innerWidth: en un celular
+      // emulado, la pantalla se ensancha con lo que se sale). Los brillos del fondo no cuentan
+      fuera: [...document.querySelectorAll('body *')].filter(x => x.getBoundingClientRect().right > ${ancho} + 0.5 && !x.closest('[hidden], .bg-sparkles'))
         .map(x => (x.id ? '#' + x.id : x.className ? '.' + String(x.className).split(' ')[0] : x.tagName) + ' «' + x.textContent.trim().slice(0, 24) + '» en ' + (x.parentElement.className || x.parentElement.tagName) + ':' + Math.round(x.getBoundingClientRect().right)
           + ' fuente ' + getComputedStyle(x).fontFamily.slice(0, 30)).slice(0, 6) };
   })())`).then(JSON.parse);
-  ver(f.n === 4 && f.filas === 1 && !f.sale && f.favArriba && f.ancho <= 320, `${lang} a 320 px: ⭐ Favoritos arriba y los ${f.n} tipos en una fila, sin salirse (${JSON.stringify(f)})`);
+  const forma = espera === 'fila' ? f.forma.startsWith('fila') : true;
+  if (ancho === 320) a320.push(f.forma);
+  ver(forma && f.primera && f.arriba && f.toque && f.filas === 1 && !f.sale && f.ancho <= ancho,
+    `${lang} a ${ancho} px: ⭐ Favoritos en ${espera}, los tipos en una fila y nada se sale (${JSON.stringify(f)})`);
   await c.evaluate(`scrollTo(0, 0); 1`);
-  await c.shot(`portada-320-${lang}`);
-  ver(!c.errors.length, `${lang}: sin errores en la consola ${JSON.stringify(c.errors)}`);
+  await c.shot(`portada-${ancho}-${lang}`);
+  ver(!c.errors.length, `${lang} a ${ancho} px: sin errores en la consola ${JSON.stringify(c.errors)}`);
   c.close();
 }
+ver(a320.includes('linea'), `a 320 px, donde no cabe en la fila, va en su línea (${a320.join(', ')})`);
 if (mal) process.exit(1);
