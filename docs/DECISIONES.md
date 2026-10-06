@@ -3917,7 +3917,7 @@ a `stats/<env>/days/<día>/uad/<evento>` (`EVENTOS_UAD` y `trackUnoAlDia` en `st
 quién; una regla nueva en `database.rules.json` acepta solo subir de a uno), y el bloque "📅 Uno al
 día" del panel lo muestra en "Qué se hace" y "Avisos y recordatorio", con las vistas de `/today/` y
 las visitas que entraron por ahí. En v0.120.1 (dilema #230, decisión 14), con los avisos activos
-`/today/` ya no ofrece "⏰ Agregar recordatorio": repetiría el aviso.
+`/today/` ya no ofrece "⏰ Agregar recordatorio": repetiría el aviso. El mismo día (v0.120.2) el dueño lo dejó más simple: **el recordatorio es el aviso diario de la app**, programado a la hora elegida, y el del calendario (el `.ics`) se sacó entero; la señal `recordatorio` también.
 
 ## D-231 · El selector de idioma lleva las banderas siempre
 **Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** corrige la nota de `base.css` de D-191 (en un celular angosto se escondía la bandera)

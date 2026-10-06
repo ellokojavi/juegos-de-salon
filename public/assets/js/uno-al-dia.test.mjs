@@ -216,4 +216,17 @@ assert.equal(puntajeDudo({ gano: false, dados: 0, rondas: 3 }), 30, 'perdiendo, 
 assert.equal(puntajeDudo({ gano: false, dados: 0, rondas: 12 }), 50, 'hasta 50');
 for (let r = 0; r < 20; r++) assert.ok(puntajeDudo({ gano: false, dados: 0, rondas: r }) < puntajeDudo({ gano: true, dados: 1, rondas: r }), 'perder vale menos que ganar');
 
+// Los textos de Uno al día no repiten una clave: en un objeto, la segunda pisa a la primera sin aviso
+// (pasó con `calendario`: el título del calendario del mes salía como el botón de otra cosa)
+{
+  const { readFile } = await import('node:fs/promises');
+  const fuente = await readFile(new URL('./i18n.js', import.meta.url), 'utf8');
+  for (const bloque of fuente.split('\n    uad: {').slice(1)) {
+    const cuerpo = bloque.slice(0, bloque.indexOf('\n    },'));
+    const claves = [...cuerpo.matchAll(/^      ([A-Za-zÀ-ÿ0-9_]+):/gm)].map(m => m[1]);
+    const repetidas = claves.filter((k, n) => claves.indexOf(k) !== n);
+    assert.deepEqual(repetidas, [], `textos de Uno al día con claves repetidas: ${repetidas}`);
+  }
+}
+
 console.log('uno-al-dia: ok');

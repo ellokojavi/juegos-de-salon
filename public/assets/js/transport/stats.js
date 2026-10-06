@@ -558,9 +558,9 @@ export function notePlayed(api, fp, { sesion = globalThis.sessionStorage, now = 
  * Lo que se hace en Uno al día (D-230), para el panel: cuántas veces por día se tocó el botón, rodó
  * el dado, se terminó el de hoy (o se repitió), se compartió, se tiró por otro juego, se invitó, se
  * abrió una invitación o se aceptó, y cómo les fue a los avisos (ofrecidos, hora elegida, activados,
- * "Ahora no", silenciados) y al recordatorio del calendario. Solo cuenta: no dice quién.
+ * "Ahora no", silenciados). Solo cuenta: no dice quién.
  */
-export const EVENTOS_UAD = ['boton', 'dado', 'jugado', 'repite', 'compartir', 'otro', 'invitar', 'invitacion', 'aceptada', 'oferta', 'hora', 'activos', 'ahorano', 'silencio', 'recordatorio'];
+export const EVENTOS_UAD = ['boton', 'dado', 'jugado', 'repite', 'compartir', 'otro', 'invitar', 'invitacion', 'aceptada', 'oferta', 'hora', 'activos', 'ahorano', 'silencio'];
 export function trackUnoAlDia(evento) {
   try {
     if (!EVENTOS_UAD.includes(evento)) return Promise.resolve();

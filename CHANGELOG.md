@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.120.2 — 2026-10-06
+- **Uno al día: el recordatorio es el aviso de la app** (D-230): se saca "Agregar recordatorio" al
+  calendario del celular; el recordatorio de cada día es el aviso diario, a la hora que elegiste. El
+  calendario de tu página vuelve a llamarse "Calendario". En el laboratorio.
+
 ## 0.120.1 — 2026-10-06
 - **Uno al día sin el recordatorio de más** (D-230): con los avisos activos, `/today/` ya no ofrece
   agregar un recordatorio al calendario, que repetía el aviso. En el laboratorio.
