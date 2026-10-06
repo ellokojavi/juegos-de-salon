@@ -61,7 +61,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Memoria de partida | C-6 | D-25, D-150 |
 | Interfaz táctil | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213 |
 | Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213 |
-| Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181 |
+| Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226 |
 | Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211 |
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213 |
@@ -70,7 +70,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220 |
 | Marketing | `marketing/README.md` | D-178 |
-| App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-226 |
+| App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227 |
 
 ---
 
@@ -2340,7 +2340,7 @@ no la del minijuego; y el 〰️ casi no se veía en la miniatura de WhatsApp ni
 con un filtro (deja de ser el emoji); poner el contorno en la caja del emoji (blanquea el fondo).
 
 ## D-165 · Todo lo que se comparte sigue un mismo estándar, con WhatsApp en mente
-**Fecha:** 2026-10-01 · **Estado:** corregida por D-171 · **Relación:** ordena D-173, D-124, D-126 y D-141
+**Fecha:** 2026-10-01 · **Estado:** corregida por D-171, D-226 · **Relación:** ordena D-173, D-124, D-126 y D-141
 **Decisión:** Lo que la app comparte sale de un solo módulo, `assets/js/compartir.js`, con tres
 reglas:
 1. **El texto** abre con una cabecera — `{emoji} *{título}* · {contexto}` —, sigue con una idea
@@ -2364,7 +2364,7 @@ Cada cosa que se comparte, y con qué cabecera:
 | Tabla parcial | tablero **y** Administrar | `📊 *La Copa: X* · Tabla de posiciones · día 3 de 7` | la tabla (D-141) |
 | Tabla final | podio, Administrar, exportar | `🏁 *La Copa: X* · Tabla final` | la tabla final con galvanos |
 | Minijuego jugado solo | minijuego suelto, Toque y Fama y Línea de Tiempo solos | `🔢 *Toque y Fama* · Jugando solo` | **nueva**: el resultado |
-| La app | portada | (texto de siempre) | la tarjeta del link |
+| La app | portada | `🎲 *Juegos de Salón* · 15 juegos para el celular` (desde D-226) | la tarjeta de la portada, como imagen (D-226) |
 
 - **La tabla es una sola**, se comparta desde donde se comparta: el botón del gráfico, "Tabla
   parcial" y "Resumen final" de Administrar, el podio y exportar mandan la misma imagen con el
@@ -2716,7 +2716,7 @@ cruce por cercanía ya lo resuelve sin un gesto que rebota).
 Este número no se usó: se saltó al numerar. Queda vacío para que nadie lo llene ni lo dé por perdido.
 
 ## D-181 · Cada imagen de tarjeta guarda su huella, y una atrasada no se publica
-**Fecha:** 2026-10-02 · **Estado:** corregida por D-205 · **Relación:** amplía D-72; desde D-205 frena el check `pruebas`, no `set-version.py` (ya no hay `--igual`)
+**Fecha:** 2026-10-02 · **Estado:** corregida por D-205, D-226 · **Relación:** amplía D-72; desde D-205 frena el check `pruebas`, no `set-version.py` (ya no hay `--igual`); desde D-226, de los textos de la portada solo cuentan los que la tarjeta dibuja (`appTitle` y `appSub`)
 **Decisión:** `node tools/release/og.mjs imagenes` anota en `assets/og/huellas.json` la huella de cada
 imagen que hace: un hash del dibujo (`tools/og/tarjeta.html`) y de lo que la imagen dice (el emoji,
 el nombre, la bajada, los jugadores y la duración del juego en `games.js`, o los textos de la
@@ -3658,7 +3658,7 @@ largo se corta bajo el ícono ("Juegos de Sa…"). `instalable.test.mjs` exige q
 con `COMMON` de `i18n.js`, y `tools/e2e/instalable.mjs` revisa el nombre en los cuatro idiomas.
 
 ## D-223 · Los avisos de La Copa se activan con la campana, primero en el laboratorio
-**Fecha:** 2026-10-05 · **Estado:** corregida por D-224, D-226 · **Relación:** completa D-221
+**Fecha:** 2026-10-05 · **Estado:** corregida por D-224, D-227 · **Relación:** completa D-221
 **Decisión:** El PR 2 del plan de avisos ([PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md)): el
 jugador activa los avisos de una copa, el celular se suscribe y la base guarda la suscripción. Los
 avisos de verdad los manda el PR 3.
@@ -3674,7 +3674,7 @@ avisos de verdad los manda el PR 3.
 - **iPhone:** en Safari, la campana abre los tres pasos para agregar la app a inicio; dentro de
   WhatsApp o Instagram, pide abrir el link en Safari. La dirección pasa a llevar `&app=<pid>` (el
   PIN nunca), y la app instalada abre en "Ya estoy inscrito" con el nombre ya elegido (corregida
-  por D-226: en iPhone la app instalada abre en la portada, y la hoja da el código de la copa).
+  por D-227: en iPhone la app instalada abre en la portada, y la hoja da el código de la copa).
 - **La base:** `push/<subId>` y `pushCopa/<código>/<pid>/<subId>`, que nadie lee; las escribe solo
   el celular dueño, sentado como el jugador. Ver firebase/README.md.
 - **La clave VAPID** la genera el dueño una vez (`node tools/push/vapid.mjs`): la pública queda en
@@ -3730,7 +3730,7 @@ pruebas (`tools/push/*.test.mjs`) usan relojes inventados y una base falsa: el e
 prueba con `--prueba`.
 
 ## D-225 · La clave VAPID está puesta, y la app instalada del iPhone hereda el laboratorio de avisos
-**Fecha:** 2026-10-05 · **Estado:** corregida por D-226 · **Relación:** completa D-223 y D-224
+**Fecha:** 2026-10-05 · **Estado:** corregida por D-227 · **Relación:** completa D-223 y D-224
 **Decisión:** El paso previo a la prueba real de los avisos ([PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md)):
 - **La clave VAPID** se generó una vez con `node tools/push/vapid.mjs`: la pública quedó en
   `public/assets/js/vapid.js` y la privada, como el secreto `VAPID_PRIVADA` de GitHub, sin pasar por
@@ -3741,7 +3741,7 @@ prueba con `--prueba`.
   avisos funcionan. Si La Copa abre **en la app instalada** con `&app=<pid>` (la dirección que arma la
   hoja de agregar a inicio, que sale solo si la campana ya se veía en Safari), activa el laboratorio
   de avisos en ese almacenamiento (`heredarLabsDeApp` en `push.js`). En una pestaña no: esa
-  dirección pudo llegar copiada a otro celular. (Corregida por D-226: iOS abre la app instalada en la
+  dirección pudo llegar copiada a otro celular. (Corregida por D-227: iOS abre la app instalada en la
   portada, sin `&app=`, así que la herencia no llegaba; se quitó y la campana se ve siempre ahí.)
 **Por qué:** Lo pidió el dueño, para hacer la prueba real en su iPhone antes de abrir los avisos a
 todos (D-224).
@@ -3749,7 +3749,38 @@ todos (D-224).
 nada. `push.test.mjs` y `tools/e2e/cup/avisos.mjs` la prueban (y que un link con `&app=` en una
 pestaña no la active).
 
-## D-226 · En la app instalada del iPhone, los avisos se ven sin el laboratorio
+## D-226 · Compartir la app lleva su tarjeta como imagen, en el idioma en que se mira
+**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** cambia la regla 3 de D-165 para la app y la huella de la tarjeta de la portada de D-181; usa D-72, D-74 y D-171
+**Decisión:** El 📤 de la portada manda **la tarjeta social de la portada** (`assets/og/menu.jpg`,
+`menu-en.jpg`, `menu-pt.jpg`, `menu-de.jpg`, D-72) **como imagen**, la del idioma en que se mira,
+junto con un texto con el estándar de D-165: la cabecera con cuántos juegos hay
+(`🎲 *Juegos de Salón* · 15 juegos para el celular`), una idea por línea (La Copa, en grupo, solo,
+sin cuenta) y el link a la portada de ese idioma al final. Con imagen, el texto no repite lo que
+ella dice (D-171): el nombre, la bajada y "gratis, sin instalar" ya están en la tarjeta.
+- **`compartirApp()`** (`compartir.js`) arma el texto desde `COMMON[lang].shareApp` y baja la
+  tarjeta una sola vez; `shareButton()` (`ui.js`) acepta `imagen` y la manda solo donde el celular
+  comparte archivos (`comparteArchivos()`).
+- **En un computador no se descarga nada:** se copia el texto, como antes. Una invitación que baja
+  un JPEG al tocarla sorprende; el link pegado igual trae su tarjeta.
+- **La tarjeta se baja antes**, en un momento libre de la portada y solo donde se va a mandar: el
+  menú del sistema tiene que abrirse enseguida después del toque, o Safari lo niega.
+- Si no se pudo bajar, se comparte solo el texto, que con su link trae la tarjeta igual.
+**Por qué:** Lo pidió el dueño ("mejora el botón de Share de la portada con imagen y texto,
+aprovechando todo lo que hemos hecho ya", en el idioma elegido). Pegada como texto, la invitación
+a la app dependía de que el chat armara la vista previa del link, que WhatsApp a veces no arma o
+arma tarde; la imagen va siempre. Se reusa la tarjeta, que ya está en los cuatro idiomas, con el
+nombre, la bajada, los emojis de los juegos y el dominio: dibujar otra con `lamina()` sería una
+segunda versión de la misma imagen que envejece aparte.
+**Alternativas descartadas:** una lámina nueva de 1080 con la lista de juegos (otra imagen que
+mantener, y la lista no cabe legible); descargar la imagen en el computador (D-165 lo hace con los
+resultados, que sin imagen no dicen nada; la app sí).
+**Consecuencias:** las invitaciones a una sala o a una copa siguen solo con texto (D-165). Si la
+tarjeta de la portada cambia (`og.mjs imagenes`), cambia también lo que se comparte. La huella de esa
+tarjeta (D-181) mira ahora solo los textos que dibuja (`appTitle` y `appSub`), no todo `COMMON`:
+sumar el texto de compartir la daba por atrasada sin que cambiara un píxel. Lo prueban
+`compartir.test.mjs` y `tools/e2e/compartir-portada.mjs` (los cuatro idiomas, y el computador).
+
+## D-227 · En la app instalada del iPhone, los avisos se ven sin el laboratorio
 **Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** corrige D-225 (la herencia del laboratorio) y D-223 (la app instalada abre en la copa)
 **Decisión:** En la prueba a mano del dueño (iPhone, Safari), la app agregada a inicio **abrió en la
 portada**: iOS usa el `start_url` del manifest, no la dirección que había en Safari. Así, `&app=<pid>`

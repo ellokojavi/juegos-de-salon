@@ -11,8 +11,10 @@
  *   de quien la llama. `laminaResultado()` es el resultado de un juego, igual para todos.
  * - **Con imagen, el texto no repite lo que ella dice** (D-171): lleva la cabecera, lo que la
  *   imagen no trae (quién falta, las medallas, el reto) y el link.
- * - **Una invitación** (a una sala, a una copa, a la app) va sin imagen dibujada: el link ya trae
- *   su tarjeta social (D-72), que es la imagen que WhatsApp muestra.
+ * - **Una invitación** (a una sala, a una copa) va sin imagen dibujada: el link ya trae su tarjeta
+ *   social (D-72), que es la imagen que WhatsApp muestra.
+ * - **La app** (el 📤 de la portada, D-226) va con esa misma tarjeta social, la de su idioma, como
+ *   imagen: pegada al texto, el link ya no la muestra. El texto cuenta lo que ella no dice.
  *
  * Donde no se puede compartir un archivo (un computador), la imagen se descarga y el texto queda
  * copiado, listo para pegarlo junto a ella. No importa nada: lo usa `ui.js`.
@@ -82,6 +84,33 @@ export async function compartir({ titulo, texto, url, imagen = null }) {
     try { prompt('URL', completo); } catch (__) { /* nada */ }
     return 'failed';
   }
+}
+
+/** ¿El navegador manda archivos al menú del sistema? En un celular sí; en un computador casi nunca. */
+export function comparteArchivos() {
+  try { return typeof File === 'function' && !!navigator.canShare?.({ files: [new File([''], 'x.jpg', { type: 'image/jpeg' })] }); }
+  catch (_) { return false; }
+}
+
+/**
+ * Compartir la app desde la portada (D-226): la tarjeta social de la portada en el idioma en que
+ * se mira (`assets/og/menu*.jpg`, D-72, D-74) y un texto que dice lo que la tarjeta no dice —la
+ * cabecera con cuántos juegos hay y una idea por línea—. `C` son los textos comunes del idioma.
+ * `imagen()` baja la tarjeta una sola vez; si no se pudo, da `null` y se comparte solo el texto.
+ */
+export function compartirApp({ C, lang, juegos }) {
+  const archivo = lang === 'es' ? 'menu' : `menu-${lang}`;
+  const src = new URL(`../og/${archivo}.jpg`, import.meta.url).href;
+  let pedido = null;
+  const imagen = () => (pedido ||= fetch(src)
+    .then(r => (r.ok ? r.blob() : Promise.reject(new Error(String(r.status)))))
+    .then(b => new File([b], nombreArchivo(C.appTitle).replace(/\.png$/, '.jpg'), { type: 'image/jpeg' }))
+    .catch(() => { pedido = null; return null; }));
+  const texto = [
+    cabecera({ emoji: '🎲', titulo: C.appTitle, contexto: C.shareApp.context.replace('{n}', juegos) }),
+    C.shareApp.lines.join('\n'),
+  ].join('\n\n');
+  return { titulo: C.appTitle, texto, imagen, src };
 }
 
 /** Lo de antes (`ui.js`): un link con su texto. Devuelve 'shared', 'copied' o 'failed'. */

@@ -51,7 +51,7 @@ await caso('puerta del laboratorio: sin clave nunca; con clave en dev o con /lab
   assert.equal(avisosVisibles({ storage: s, loc: prod, clave: 'x' }), false);
 });
 
-await caso('la app instalada del iPhone ve los avisos sin el laboratorio (D-226)', () => {
+await caso('la app instalada del iPhone ve los avisos sin el laboratorio (D-227)', () => {
   const s = { getItem: () => null };
   const prod = { hostname: 'juegosdesalon.cl' };
   const ver = cel => avisosVisibles({ storage: s, loc: prod, clave: 'x', cel });

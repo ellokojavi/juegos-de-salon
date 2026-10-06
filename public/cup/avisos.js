@@ -64,7 +64,7 @@ export function crearAvisos({ T, lang, cuenta, store, copa, redibujar, toast, ta
   const botonCerrar = (texto = T.avClose) => el('button', { class: 'btn btn--ghost', onClick: () => { tap(); cerrar(); } }, texto);
 
   function hojaInstalar() {
-    // La app instalada empieza sin nada de Safari. iOS la abre en la portada (el start_url, D-226), así
+    // La app instalada empieza sin nada de Safari. iOS la abre en la portada (el start_url, D-227), así
     // que los pasos dan el código; la dirección igual lleva la copa y el jugador (no el PIN), por si otra versión la respeta
     try {
       const u = new URL(location.href);

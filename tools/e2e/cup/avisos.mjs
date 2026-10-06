@@ -106,7 +106,7 @@ await b.go(`${BASE}?prueba&demo=jugador`, 2000); await preparar();
 ok(await estadoCampana() === 'apagado', 'iPhone en Safari: la campana se ofrece');
 await click('#btn-avisos'); await sleep(400);
 ok(await hoja() === 'hoja-instalar', 'el toque abre los pasos para agregar a inicio');
-ok((await texto('.hoja')).includes(await ev('__copa.estado.code')), 'los pasos dan el código de la copa: iOS abre la app en la portada (D-226)');
+ok((await texto('.hoja')).includes(await ev('__copa.estado.code')), 'los pasos dan el código de la copa: iOS abre la app en la portada (D-227)');
 ok(/[?&]app=[a-z0-9]{6}/.test(await ev('location.search')), 'la dirección lleva al jugador para la app instalada (sin el PIN)');
 await b.shot('hoja-instalar');
 await click('#btn-ya-agregue'); await sleep(300);

@@ -1,10 +1,15 @@
 # Changelog
 
-## 0.108.2 — 2026-10-05
-- **La campana de avisos aparece en la app del iPhone** (D-226): el iPhone abre la app agregada a
+## 0.109.1 — 2026-10-05
+- **La campana de avisos aparece en la app del iPhone** (D-227): el iPhone abre la app agregada a
   inicio en la portada, sin lo que se activó en Safari, así que la campana no salía. Ahora sale
   siempre en esa app, y los pasos para agregarla dicen cómo volver a la copa: con su código, tu
   nombre y tu PIN.
+
+## 0.109.0 — 2026-10-05
+- **Compartir la app manda imagen y texto** (D-226): el 📤 de la portada manda la tarjeta de Juegos
+  de Salón y un mensaje con cuántos juegos hay, La Copa, para jugar en grupo o solo, y el link.
+  Los dos en el idioma en que se mira la app. En un computador se copia el texto, como antes.
 
 ## 0.108.1 — 2026-10-05
 - **Los avisos de La Copa ya tienen su clave** (D-225): con ella se pueden mandar de verdad, todavía

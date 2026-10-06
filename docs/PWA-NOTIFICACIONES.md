@@ -1,6 +1,6 @@
 # App instalable y avisos al celular (PWA + Web Push)
 
-**Estado:** aprobado por el dueño (D-221); los PR 1 (v0.105.0), 2 (v0.107.0, D-223) y 3 (v0.108.0, D-224) están hechos, en el laboratorio; la clave VAPID está puesta (D-225); en iPhone la app instalada abre en la portada (D-226) · **Fecha:** 2026-10-05 ·
+**Estado:** aprobado por el dueño (D-221); los PR 1 (v0.105.0), 2 (v0.107.0, D-223) y 3 (v0.108.0, D-224) están hechos, en el laboratorio; la clave VAPID está puesta (D-225); en iPhone la app instalada abre en la portada (D-227) · **Fecha:** 2026-10-05 ·
 **Toca:** RP-11, RP-13, LIG-33, D-99
 
 Es el detalle de D-221, que **corrige a D-99** en lo que dice de los avisos automáticos. El diseño de
@@ -115,7 +115,7 @@ La app detecta en qué está el jugador y le muestra solo el camino que le sirve
      │                    con dibujos                 · Copiar link
  ✅ Aviso de prueba             │
     al instante          El jugador abre la app desde el ícono:
-                         parte en la portada (D-226)
+                         parte en la portada (D-227)
                                 │
                          La Copa → código, nombre y PIN
                                 │
@@ -135,7 +135,7 @@ tocar:
    según la versión).
 2. "Elige **Agregar a inicio**. Si no lo ves, baja en la lista."
 3. "Abre **Juegos de Salón** desde el ícono nuevo, entra a La Copa con el código **K7Q2X**, tu
-   nombre y tu PIN, y toca **Activar avisos** otra vez." (D-226: la app parte en la portada.)
+   nombre y tu PIN, y toca **Activar avisos** otra vez." (D-227: la app parte en la portada.)
 
 La hoja tiene un botón **Ya la agregué** que explica el paso 3 (la app parte en la portada y se
 entra con el código de la copa) y un **Cerrar**. No se puede saber
@@ -159,7 +159,7 @@ asiento en la copa. Al abrirla por primera vez no sabe quién es el jugador. La 
   versiones. Es la primera tarea del PR 2, con iOS 17, 18 y 26. Si iOS usa el `start_url`, el plan
   B es que la app instalada abra en "Tus copas" con **Entrar a mi copa** (código, nombre y PIN),
   que ya existe.
-- **Resultado (D-226, la prueba del dueño):** iOS usa el `start_url`, así que vale el plan B: la
+- **Resultado (D-227, la prueba del dueño):** iOS usa el `start_url`, así que vale el plan B: la
   app instalada abre en la portada, la hoja da el código de la copa, y la campana se ve siempre en
   la app instalada del iPhone, aunque los avisos sigan en el laboratorio.
 
@@ -319,7 +319,7 @@ push.js (en la página)                    pushEnviados/<código>/<subId>/<clave
   los celulares que los activan en `/labs/`.
 - En iPhone, antes de mostrar los pasos para agregar a inicio, la dirección pasa a llevar
   `&app=<pid>`. Si la app instalada abre en esa dirección, la copa parte en "Ya estoy inscrito" con
-  el nombre ya elegido y pide solo el PIN. **Pero iOS no la respeta** (D-226, la prueba del dueño
+  el nombre ya elegido y pide solo el PIN. **Pero iOS no la respeta** (D-227, la prueba del dueño
   el 2026-10-05): la app instalada abre en la portada, el `start_url`. Por eso los pasos de la hoja
   dan el código de la copa, y la campana se ve siempre en la app instalada del iPhone, aunque los
   avisos sigan en el laboratorio (que la app no ve).
@@ -343,10 +343,10 @@ Lo que no se puede automatizar: un iPhone real, con iOS 16.4 o más (ideal: 17, 
 2. Abre una copa en la que estés inscrito, en **Safari**. Debe aparecer **🔔 Activar avisos**.
 3. Tócalo: sale la hoja **Agrega la app a tu inicio**. Revisa que la dirección termine en `&app=…`.
 4. Sigue los pasos: Compartir (en iOS 26, dentro de ⋯) → **Agregar a inicio**.
-5. Abre **Juegos de Salón** desde el ícono nuevo. Abre en la **portada** (D-226: iOS usa el
+5. Abre **Juegos de Salón** desde el ícono nuevo. Abre en la **portada** (D-227: iOS usa el
    `start_url`). Entra a La Copa con **Tengo un código**: el código de la copa, tu nombre y tu PIN.
 6. En el tablero debe salir **🔔 Último paso: activa los avisos** (en la app instalada del iPhone
-   sale aunque haya abierto en la portada, D-226), y la campana arriba.
+   sale aunque haya abierto en la portada, D-227), y la campana arriba.
 7. Toca **Avisarme**: el iPhone pregunta por las notificaciones; acepta. Debe llegar el aviso de
    confirmación (con el nombre de la copa y "Listo. Te avisaremos de esta copa…") y la campana pasa
    a **Avisos activos**.

@@ -389,19 +389,21 @@ Spec and design: [docs/games/cup.md](docs/games/cup.md)
 
 ## What every game shares
 
-- **Languages:** Spanish (default), English and Brazilian Portuguese. The menu toggle saves the choice on the device, and the browser language is never used to guess (D-47, D-48). See [Languages](#languages).
+- **Languages:** Spanish (default), English, Brazilian Portuguese and German. The menu toggle saves the choice on the device, and the browser language is never used to guess (D-47, D-48). See [Languages](#languages).
 - **Sound:** effects synthesized with Web Audio, no audio files. A 🔊/🔇 button on every screen.
-- **Sharing the app:** a 📤 button next to the language and sound ones on the menu. It opens the
-  phone's own share sheet — and where there is none, copies the text and the link — with the front
-  door of the language you are reading in: `/`, `/pt/` or `/en/`, each with its own social card
-  (D-74).
+- **Sharing the app:** a 📤 button next to the language and sound ones on the menu. On a phone it
+  opens the share sheet with the menu's social card **as an image** and a short text — a header with
+  how many games there are, one line each for The Cup, playing in a group, playing alone and needing
+  no account — ending with the link to the front door of the language you are reading in: `/`,
+  `/en/`, `/pt/` or `/de/`, card included (D-74, D-226). On a computer it just copies the text and
+  the link; nothing is downloaded.
 - **One standard for everything that gets shared** (D-165), built for WhatsApp, in
   `public/assets/js/compartir.js`. Every message opens with a header — `{emoji} *{title}* · {context}`,
   like "🏆 *La Copa: Valdenenas* · Día 3 de 7" or "🃏 *Julepe* · Sala WFBN" —, says one thing
   per line, and ends with the link on its own line. A result or a table always goes out as an
   **image plus its text**, from whichever button: the image carries the same header on top and
   the same link at the bottom, so forwarded on its own it still says which cup, which day or
-  which game it is. **The text never repeats the image** (D-171): it carries the header, only what the image cannot say (who is still missing, the medals, the dare) and the link. Invitations (a room, a cup, the app) go as text only: the link brings its own
+  which game it is. **The text never repeats the image** (D-171): it carries the header, only what the image cannot say (who is still missing, the medals, the dare) and the link. Invitations to a room or a cup go as text only: the link brings its own
   social card. Results of playing a game alone (on its own page, or in Bulls and Cows and
   Timeline) share the same result image, with a "can you beat me?" and the game's link. With no
   share sheet (a computer), the image is downloaded and the text copied.
