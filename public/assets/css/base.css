@@ -27,6 +27,12 @@
   --font-body: 'Nunito', system-ui, -apple-system, sans-serif;
   /* Cifras que el jugador lee o compara: en Bangers el 1 y el 7 son casi el mismo trazo */
   --font-num: 'Nunito', system-ui, -apple-system, sans-serif;
+  /* El fondo de la app, sobre --bg1: también lo toma la capa del dado al irse (D-235) */
+  --fondo:
+    radial-gradient(1200px 600px at 10% -10%, rgba(255, 46, 136, 0.35), transparent 60%),
+    radial-gradient(900px 500px at 110% 10%, rgba(46, 230, 214, 0.22), transparent 60%),
+    radial-gradient(800px 600px at 50% 120%, rgba(138, 77, 255, 0.35), transparent 60%),
+    linear-gradient(160deg, var(--bg1), var(--bg2) 55%, var(--bg3));
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
@@ -43,11 +49,7 @@ body {
   font-family: var(--font-body);
   color: var(--ink);
   background: var(--bg1);
-  background-image:
-    radial-gradient(1200px 600px at 10% -10%, rgba(255, 46, 136, 0.35), transparent 60%),
-    radial-gradient(900px 500px at 110% 10%, rgba(46, 230, 214, 0.22), transparent 60%),
-    radial-gradient(800px 600px at 50% 120%, rgba(138, 77, 255, 0.35), transparent 60%),
-    linear-gradient(160deg, var(--bg1), var(--bg2) 55%, var(--bg3));
+  background-image: var(--fondo);
   background-attachment: fixed;
   -webkit-tap-highlight-color: transparent;
   -webkit-font-smoothing: antialiased;
@@ -255,6 +257,9 @@ details.panel summary::-webkit-details-marker { display: none; }
 .handoff.leaving { animation: fadeOut 0.3s ease-in both; pointer-events: none; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+/* Llegada desde Juego al azar (D-235): el dado se fue fundiéndose en este mismo fondo, y el juego
+   aparece encima con un fundido. `backwards`: al terminar no deja nada puesto (llegada.js) */
+.azar-llega body > * { animation: fadeIn 0.45s ease-out backwards; }
 .handoff .stage { width: 100%; max-width: 480px; display: grid; gap: 14px; justify-items: center; }
 .handoff .stage.pop { animation: pop 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
 .cheers { font-size: 5.5rem; line-height: 1; display: flex; gap: 0; }
@@ -490,6 +495,14 @@ body.azar-abierto { overflow: hidden; }
 .azar-nombre b { font: 400 clamp(2rem, 9vw, 2.8rem) var(--font-display); letter-spacing: 0.04em; color: var(--yellow); line-height: 1.05; }
 .azar-capa.listo .azar-nombre > * { animation: pop 0.4s ease-out both; }
 .azar-capa.listo .azar-nombre b { animation-delay: 0.08s; }
+/* Al irse (D-235): el dado se aleja y la capa toma el fondo de la app, el mismo sobre el que
+   aparece el juego. El ::before queda bajo el dado y sobre el velo de la capa */
+.azar-capa::before { content: ''; position: fixed; inset: 0; z-index: -1; background: var(--bg1) fixed; background-image: var(--fondo); opacity: 0; transition: opacity 0.4s ease-in; }
+.azar-capa.saliendo::before { opacity: 1; }
+.azar-escena, .azar-nombre, .azar-lienzo { transition: opacity 0.3s ease-in, transform 0.4s cubic-bezier(0.5, 0, 0.9, 0.6); }
+.azar-capa.saliendo .azar-escena, .azar-capa.saliendo .azar-nombre { opacity: 0; }
+.azar-capa.saliendo .azar-lienzo { transform: scale(0.75); }
+.azar-capa.saliendo .azar-nombre { transform: translateY(10px); }
 
 /* Uno al día (D-230): la tarjeta bajo el resultado */
 .uad-tarjeta { display: grid; gap: 8px; text-align: center; border-color: rgba(255, 122, 26, 0.5); background: linear-gradient(160deg, rgba(255, 122, 26, 0.16), rgba(255, 46, 136, 0.12)); }
