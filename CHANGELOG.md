@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.128.0 — 2026-10-06
+- **📝 Generala, un juego nuevo** (D-246): cinco dados, hasta tres tiros por turno guardando los
+  que sirven, y una planilla de once casillas que la app suma sola: muestra lo que valdría cada una
+  con los dados de ahora y no deja anotar dos veces en el mismo lugar. Escalera, full y póker valen
+  cinco más servidos, y la generala servida gana al tiro (se puede apagar). Se juega en un celular
+  (2 a 6), en varios celulares con sala y chat, o solo, con récord y ranking. En portugués se llama
+  General.
+- **Uno al día suma Generala desde el 23 de octubre** (D-247): ese día todos tiran los mismos
+  dados; lo que cambia es qué guarda cada uno.
+
 ## 0.126.1 — 2026-10-06
 - **Uno al día, más claro en tu página** (D-230): el calendario muestra en cada día jugado el puntaje
   de 0 a 100 en una píldora, como en La Copa; "Hoy jugaste" lleva el emoji del juego (👑 Reinas: 87
