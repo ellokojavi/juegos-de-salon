@@ -148,15 +148,16 @@
       .filtros .tipos button { padding: 6px 3px; }
     }
     /* "⭐ Favoritos" (D-238, D-241) sale solo con algún favorito marcado. Va primera en la fila de
-       los tipos si cabe con su nombre; si no, con la ⭐ sola y menos aire entre las fichas; y si
-       tampoco (a 360 px en español, a 320 px en casi todos), en su propia línea arriba. Lo decide `acomodarFav`, que mide. */
+       los tipos si cabe con su nombre; si no, con la ⭐ sola y menos aire entre las fichas y dentro
+       de ellas (3 px, como a 320 px sin favoritos: con 4, a 360 px en español faltaba 1 px); y si
+       tampoco (a 320 px, salvo en inglés), en su propia línea arriba. Lo decide `acomodarFav`, que mide. */
     .filtros .ficha-fav[hidden] { display: none !important; }
     .filtros .tipos .ficha-fav { flex: 0 0 auto; }
     .filtros .tipos .ficha-fav.sola { min-width: 44px; padding-inline: 4px; }
     .filtros .tipos .ficha-fav.sola .ficha-emoji { font-size: 1.3rem; }
     .filtros .tipos .ficha-fav.sola span:last-child { display: none; }
     .filtros .tipos.apretada { gap: 4px; }
-    .filtros .tipos.apretada button { padding-inline: 4px; }
+    .filtros .tipos.apretada button { padding-inline: 3px; }
     .filtros .favs { display: flex; justify-content: center; }
     .filtros .favs[hidden] { display: none; }
     .filtros .ficha-fav {
