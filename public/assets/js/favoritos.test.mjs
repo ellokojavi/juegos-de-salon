@@ -1,3 +1,5 @@
+// Los favoritos de la portada (D-238): qué se guarda en localStorage, marcar y desmarcar, y que un
+// almacén roto o con basura no rompa la portada.
 import assert from 'node:assert/strict';
 import { favoritos, alternarFavorito, CLAVE } from './favoritos.js';
 
