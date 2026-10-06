@@ -126,7 +126,7 @@
         b.textContent = on ? 'Desactivar en este celular' : 'Activar en este celular';
         // Fuera del laboratorio sale para todos: aquí queda solo volver a mostrarlo
         b.hidden = !INSTALAR_EN_LABS;
-        est.textContent = !on ? '' : descartado() ? 'Activo, pero lo cerraste con la ✕: vuelve a mostrarlo para verlo en la portada.' : 'Activo: abre la portada y espera unos segundos.';
+        est.textContent = !INSTALAR_EN_LABS ? (descartado() ? 'Ya está para todos. Lo cerraste con la ✕ en este celular: vuelve a mostrarlo para verlo en la portada.' : 'Ya está para todos: abre la portada en el celular y espera unos segundos.') : !on ? '' : descartado() ? 'Activo, pero lo cerraste con la ✕: vuelve a mostrarlo para verlo en la portada.' : 'Activo: abre la portada y espera unos segundos.';
         otra.hidden = !on || !descartado();
       };
       b.addEventListener('click', () => { SFX.tap(); activarInstalar(!instalarEnLabs()); pintar(); });
