@@ -566,6 +566,16 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   grupo siguen saliendo desde el mazo del 13. Desde ahora queda fijo: moverlo cambia el juego de
   días ya jugados.
 
+### Después de abrirlo (v0.125.1)
+
+- **El calendario** muestra en cada día jugado el emoji del juego y, en una píldora como la de La
+  Copa, el puntaje de 0 a 100 (pedido del dueño).
+- **"Hoy jugaste 👑 Reinas: 87 puntos."**, con el emoji del juego, y **"Próximo juego en 7 h 12 min."**
+  en vez de "El próximo sale en…".
+- **Los comodines dicen para qué sirven** antes que cómo se ganan: "🧊 Un comodín salva tu racha el
+  día que no juegas. Tienes 1 de 2: …", y lo mismo en la tarjeta de invitar y al ganar uno (el dueño:
+  que se entienda y den ganas de ganarlos).
+
 ## Lo que decidió el dueño (2026-10-05)
 
 1. **El mismo desafío para todos, y el dado rueda igual**, cada vez, con la experiencia de Juego al
