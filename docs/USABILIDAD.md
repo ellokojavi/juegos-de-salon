@@ -86,7 +86,8 @@ nunca se usaron, y no se renumera.
   desde cualquier botón; una invitación, solo con texto (la imagen la pone la tarjeta del link).
   La app, desde la portada, va con esa tarjeta como imagen, la de su idioma (D-226).
 - **U-31 · Completo:** el resultado dice copa, día, juego, jugador y puntaje; la tabla dice quién
-  falta y marca "(-1J)" a quien lleva menos juegos.
+  falta y marca "(-1J)" a quien lleva menos juegos. Excepción: el resultado de Uno al día no
+  nombra el juego de hoy (#215).
 - **U-32 · Sin spoilers:** lo que se comparte no revela respuestas ni los juegos que vienen.
 
 ## Marketing
