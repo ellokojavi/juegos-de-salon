@@ -3,7 +3,7 @@
   "name": "Party Games",
   "short_name": "Party Games",
   "description": "Traditional games brought to your phone, to pass the time alone or with friends.",
-  "start_url": "./",
+  "start_url": "./?pwa",
   "scope": "./",
   "display": "standalone",
   "background_color": "#150726",
