@@ -6,6 +6,11 @@
   Android, si Chrome lo ofrece, su propio botón de instalar. La ✕ lo cierra para siempre. Se
   activa en `/labs/` para probarlo.
 
+## 0.111.1 — 2026-10-05
+- **El selector de idioma lleva las banderas también en el celular** (D-231): antes, en una
+  pantalla angosta quedaban solo ES EN PT DE. Ahora la bandera va arriba de cada código, sin
+  que el selector crezca, y en una pantalla ancha va al lado, como siempre.
+
 ## 0.111.0 — 2026-10-05
 - **Avisos más justos** (D-229): a lo más 2 por copa al día, y si se vencen dos días a la vez,
   van en un aviso. Al tocarlo abre el día que avisa, listo para jugar, y en Android trae los botones
