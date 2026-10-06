@@ -326,6 +326,11 @@ Sobre lo que ya hay en D-212 (`records/<tabla>/<periodo>/<jid>`), con lo mínimo
 | Sin jugador | `localStorage` (`juegos-de-salon:uno-al-dia`) | Al entrar con jugador, lo del celular se sube al historial una vez. |
 | "Mejor que el 64 %" | Se cuenta con el ranking del día ya leído (`LEER = 100`) | Solo con 20 jugadores o más. Con más de 100 la app no sabe el total, y un porcentaje (o un "de 230") sería inventado: quien está entre los 100 leídos ve su puesto ("14.° de hoy") y el resto, solo su puntaje. Lo mismo vale para el puesto del resumen de la semana. |
 
+El PR 3 lo construyó distinto en varias filas (ver "Lo que el PR 3 hizo"): la historia y el período
+del día van por número de día (`unoAlDia/<jid>/<n>`, `d<n>`), las reglas no revisan la fecha contra
+la hora del servidor ni la mejor racha contra la historia, los comodines no se guardan en
+`jugadores/<jid>` (salen de recorrer la historia) y al entrar se sube solo el día de hoy.
+
 El **primer intento** de Uno al día **también** va al ranking normal del juego y al Todoterreno:
 es el mismo juego, con un tablero que nadie conocía. Los intentos repetidos son práctica y no van a
 ningún ranking, porque el tablero ya es conocido: es la misma regla de D-212, que deja fuera la
