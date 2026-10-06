@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.112.0 — 2026-10-05
+- **Los avisos se miden en el panel** (D-233): cuántos celulares los tienen, cuántos avisos se
+  mandan y se tocan por tipo, cuántos abren la app instalada y a qué hora pasó la última vuelta,
+  para notar si GitHub dejó de mandarlos. Para el jugador no cambia nada.
+
 ## 0.111.1 — 2026-10-05
 - **El selector de idioma lleva las banderas también en el celular** (D-231): antes, en una
   pantalla angosta quedaban solo ES EN PT DE. Ahora la bandera va arriba de cada código, sin

@@ -100,7 +100,10 @@ const SEMBRAR_PANEL = vista => `(async()=>{const DIA=86400000,ahora=Date.now(),h
       days[hoy].live={k3p9aaaaaa:{game:'dudo',mode:'cpu',n:1,co:'CL',l:'es',name:'Javi',v:'0.93.0',at:ahora-15*60000,beat:ahora-60000},q8w7aaaaaa:{game:'dudo',mode:'local',n:4,co:'AR',name:'Fran, Leo, Ana, Bia',v:'0.92.1',at:ahora-5*3600000,beat:ahora-4*3600000,fin:{at:ahora-4*3600000,g:'Leo',d:'9 rondas'}},t1t2aaaaaa:{game:'toque-y-fama',mode:'solo',n:1,co:'MX',l:'en',name:'Nico',v:'0.99.0',at:ahora-3*3600000,beat:ahora-3*3600000+120000,fin:{at:ahora-3*3600000+150000,d:'80/100 · 6 intentos · 2:30'}},s0s0aaaaaa:{game:'ahorcado',mode:'solo',n:1,co:'PE',v:'0.90.0',at:ahora-2*DIA,beat:ahora-2*DIA+300000}};
       // Los días de copa también mandan su señal: el panel no los cuenta entre las partidas de los juegos
       days[hoy].local.copa={copa:{1:9}};
-      window.__panel.seed({rooms,days,torneos,vista:'${vista}'});})()`;
+      // Los avisos al celular (D-233): mandados por avisar.mjs, tocados y aperturas de la app instalada
+      for(let k=0;k<7;k++){const d=hoy-k;Object.assign(days[d],{mandados:{dia:6,plazo:3,...(k===0?{final:4}:{})},aviso:{dia:3,plazo:2},pwa:{android:2,ios:k%2}});}
+      const push={vuelta:ahora-9*60000,vivas:7,torneos:2};
+      window.__panel.seed({rooms,days,torneos,push,vista:'${vista}'});})()`;
 
 export const CAMINOS = {
   /** La Copa con el almacén de prueba (`?prueba`): la portada y el formulario para crear una. */
