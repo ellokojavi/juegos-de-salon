@@ -3,7 +3,7 @@
 // y los puntajes de los juegos de grupo (El Ahorcado, Batalla Naval, Dudo).
 import assert from 'node:assert/strict';
 import {
-  JUEGOS_DIA, LANZAMIENTO, SIN_REPETIR, DESDE_GRUPO, DESDE_GENERALA, GRUPO, azarDel, puntajeAhorcado, puntajeNaval, puntajeDudo, CASILLAS_FLOTA, crearCalendario, juegoDel, semillaDel, numeroDel, sumarDias, diasEntre,
+  JUEGOS_DIA, LANZAMIENTO, SIN_REPETIR, DESDE_GRUPO, GRUPO, azarDel, puntajeAhorcado, puntajeNaval, puntajeDudo, CASILLAS_FLOTA, crearCalendario, juegoDel, semillaDel, numeroDel, sumarDias, diasEntre,
   fechaLocal, faltaParaManana, racha, mejorRacha, recorrer, numDia, fechaDeNum, semanaDe, juntar, COMODINES_MAX, porJuego, anotar, leer, estado, rutaDel, unoAlDiaVisible, activarUnoAlDia, UNO_AL_DIA_EN_LABS, formaAcceso, elegirForma, KEY,
 } from './uno-al-dia.js';
 import { JUEGOS } from '../../cup/games/index.js';
@@ -30,7 +30,7 @@ for (const j of JUEGOS_DIA) {
   if (GRUPO.includes(j.id)) assert.ok(GAMES.find(g => g.id === j.id)?.available, `${j.id}: no está en games.js`);
   else assert.ok(JUEGOS[j.id]?.generar, `${j.id}: no está en cup/games`);
 }
-assert.equal(JUEGOS_DIA.length, 11, 'son 11 juegos: 7 solitarios y 4 de grupo');
+assert.equal(JUEGOS_DIA.length, 10, 'son 10 juegos: 7 solitarios y 3 de grupo');
 assert.ok(JUEGOS_DIA.every(j => j.desde >= LANZAMIENTO), 'ningún juego entra antes del lanzamiento');
 const dias = fechas(LANZAMIENTO, 400);
 for (const f of dias.slice(0, 30)) {
@@ -43,8 +43,8 @@ assert.equal(semillaDel('2026-10-05'), semillaDel('2026-10-05'), 'la misma fecha
 assert.notEqual(semillaDel('2026-10-05'), semillaDel('2026-10-06'));
 
 // El mazo: cada juego una vez antes de repetir, y ninguno vuelve antes de tiempo. Cada mazo tiene
-// los juegos que ya habían entrado al barajarlo: el primero, los 7 solitarios; el segundo, los 10, y
-// desde el tercero, los 11 con Generala. Con 10 o más, la espera es de 7 días.
+// los juegos que ya habían entrado al barajarlo: el primero, los 7 solitarios; desde el segundo, los
+// 10, y con 10 la espera es de 7 días.
 const salidos = dias.map(juegoDel);
 const mazos = [];
 for (let k = 0; k < salidos.length;) {
@@ -54,8 +54,7 @@ for (let k = 0; k < salidos.length;) {
   if (mazo.length === n) assert.equal(new Set(mazo).size, n, `el mazo que empieza el ${dias[k]} repite un juego`);
   k += n;
 }
-assert.deepEqual(mazos.slice(0, 4).map(m => m.n), [7, 10, 11, 11], 'el primer mazo trae 7 juegos, el segundo 10 y los siguientes, 11');
-assert.equal(dias[mazos[2].k], DESDE_GENERALA, 'Generala entra justo cuando empieza el tercer mazo');
+assert.deepEqual(mazos.slice(0, 3).map(m => m.n), [7, 10, 10], 'el primer mazo trae 7 juegos y los siguientes, 10');
 assert.equal(mazos[1].espera, 7, 'con 10 juegos, ninguno vuelve antes de 7 días');
 for (const { k, n, espera } of mazos) {
   for (let i = k; i < Math.min(k + n, salidos.length); i++) {
@@ -63,16 +62,12 @@ for (const { k, n, espera } of mazos) {
     assert.ok(!antes.includes(salidos[i]), `${dias[i]}: ${salidos[i]} volvió antes de ${espera} días`);
   }
 }
-for (const id of GRUPO) assert.ok(salidos.slice(0, 7 + 10 + 11).includes(id), `${id} no salió en los tres primeros mazos`);
+for (const id of GRUPO) assert.ok(salidos.slice(0, 7 + 10).includes(id), `${id} no salió en el segundo mazo`);
 // Los días antes de que entraran los de grupo no cambian: son los del mazo de 7
 const solo7 = crearCalendario(JUEGOS_DIA.filter(j => !GRUPO.includes(j.id)));
 const viejos = fechas(LANZAMIENTO, diasEntre(LANZAMIENTO, DESDE_GRUPO));
 assert.ok(viejos.length >= 1, 'los de grupo entran después del lanzamiento');
 assert.deepEqual(viejos.map(juegoDel), viejos.map(f => solo7.juegoDel(f)), 'sumar los de grupo cambió días ya jugados');
-// Sumar Generala no cambia ningún día antes de que entre (D-247)
-const sin = crearCalendario(JUEGOS_DIA.filter(j => j.id !== 'generala'));
-const antesDeGenerala = fechas(LANZAMIENTO, diasEntre(LANZAMIENTO, DESDE_GENERALA));
-assert.deepEqual(antesDeGenerala.map(juegoDel), antesDeGenerala.map(f => sin.juegoDel(f)), 'sumar Generala cambió días de antes de que entrara');
 assert.equal(juegoDel(LANZAMIENTO), 'desenredo', 'el día n.° 1 sigue siendo Desenredo');
 assert.equal(juegoDel(sumarDias(LANZAMIENTO, -1)), null, 'antes del lanzamiento no hay juego');
 // Los mazos no salen siempre en el mismo orden

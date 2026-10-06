@@ -87,7 +87,9 @@ export const GAMES = [
     duration: '15–30',
     jugadas: ['roll', 'score'],
     path: 'generala/',
-    available: true,
+    // En la portada como "Próximamente" (D-248): el juego está entero en /generala/, pero se
+    // anuncia antes de abrirse. Al abrirlo, entra también a Uno al día (D-247).
+    available: false,
   },
   {
     id: 'batalla-naval',

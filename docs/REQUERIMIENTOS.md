@@ -104,16 +104,18 @@ Los IDs no se reusan: un requerimiento que cambia conserva su ID y su texto se a
 
 | ID | Requerimiento | Estado |
 |---|---|---|
-| GE-01 | Cinco dados y hasta tres tiros por turno; entre tiro y tiro se guardan los que se tocan. | ✅ v0.128.0 |
-| GE-02 | Planilla de 11 casillas (Unos a Seises, Escalera, Full, Póker, Generala y Doble generala); se anota en una libre aunque valga 0, y la app calcula los puntos (servidos, cinco más). | ✅ v0.128.0 |
-| GE-03 | La generala servida gana la partida al tiro con dos jugadores o más, como ajuste encendido por defecto (D-246). | ✅ v0.128.0 |
-| GE-04 | Modo un celular, de 2 a 6, con lo anotado y el pase al siguiente (C-9). | ✅ v0.128.0 |
-| GE-05 | Modo varios celulares con sala, chat, revancha y los dados de quien juega a la vista de todos (D-246). | ✅ v0.128.0 |
-| GE-06 | Jugar solo con récord del celular y tabla de rankings `generala_solo` (D-212). | ✅ v0.128.0 |
-| GE-07 | Memoria de partida en todos los modos, con los dados guardados a medio turno (C-6). | ✅ v0.128.0 |
-| GE-08 | Textos en español, inglés, portugués ("General") y alemán (C-3). | ✅ v0.128.0 |
-| GE-09 | Uno al día desde el 23 de octubre de 2026, con los dados de la semilla del día (D-247). | ✅ v0.128.0 |
-| GE-10 | Victorias en los rankings (`generala_victorias`, D-215). | ✅ v0.128.0 |
+| GE-01 | Cinco dados y hasta tres tiros por turno; entre tiro y tiro se guardan los que se tocan. | ✅ |
+| GE-02 | Planilla de 11 casillas (Unos a Seises, Escalera, Full, Póker, Generala y Doble generala); se anota en una libre aunque valga 0, y la app calcula los puntos (servidos, cinco más). | ✅ |
+| GE-03 | La generala servida gana la partida al tiro con dos jugadores o más, como ajuste encendido por defecto (D-246). | ✅ |
+| GE-04 | Modo un celular, de 2 a 6, con lo anotado y el pase al siguiente (C-9). | ✅ |
+| GE-05 | Modo varios celulares con sala, chat, revancha y los dados de quien juega a la vista de todos (D-246). | ✅ |
+| GE-06 | Jugar solo con récord del celular y tabla de rankings `generala_solo` (D-212). | ✅ |
+| GE-07 | Memoria de partida en todos los modos, con los dados guardados a medio turno (C-6). | ✅ |
+| GE-08 | Textos en español, inglés, portugués ("General") y alemán (C-3). | ✅ |
+| GE-09 | Uno al día, con los dados de la semilla del día (D-247). Listo en `/generala/?hoy`; entra al mazo al salir de próximamente (D-248). | ⏳ pendiente |
+| GE-11 | En la portada, como "Próximamente" mientras no se abre (D-248). | ✅ v0.128.0 |
+| GE-12 | Abrir Generala desde la portada (`available: true`) y sumarla al mazo de Uno al día. | ⏳ pendiente |
+| GE-10 | Victorias en los rankings (`generala_victorias`, D-215). | ✅ |
 
 ## La Copa (LIG) — ver [docs/games/cup.md](games/cup.md)
 

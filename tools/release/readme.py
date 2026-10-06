@@ -94,7 +94,9 @@ def bloque_juegos(H, C):
         modos = ' · '.join(sin_emoji(m['en']) for m in j['modos']) or 'One phone'
         # Un juego con available:false sigue andando en su URL, pero no está en el menú: decirlo
         # acá y no solo la versión, o el README sugiere que se puede jugar desde la portada (D-88).
-        estado = '🧪 lab' if j.get('labs') else '⏸ paused' if not j['disponible'] else (j['estado'] or '-')
+        # Fuera del menú: "paused" si alguna vez se publicó (tiene versión), "coming soon" si todavía no (D-248)
+        estado = ('🧪 lab' if j.get('labs') else ('⏸ paused' if j['estado'] else '🔜 coming soon') if not j['disponible']
+                  else (j['estado'] or '-'))
         filas.append(f"| {j['emoji']} [{nombres}]({ancla(titulo_juego(j))}) | {j['jugadores']} "
                      f"| {modos} | {estado} |")
     # Los juegos de La Copa sueltos (D-142): uno solo, en su página, sin copa. El link va a
