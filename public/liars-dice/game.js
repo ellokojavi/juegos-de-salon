@@ -883,6 +883,7 @@ function introDeHoy() {
   $('#modes').replaceChildren(
     introHoy(HOY, { lang, extra: COMMON[lang].uad.mismosDados }),
     el('button', { class: 'btn btn--yellow', id: 'btn-uad-jugar', onClick: () => {
+      SFX.tap();
       startMatch('cpu', { A: nameStore.get() || fmt(T.playerPlaceholder, { n: 1 }), B: T.cpuName }, { ...DEFAULT_CONFIG, players: ['A', 'B'] }, HOY);
     } }, COMMON[lang].uad.jugar));
 }

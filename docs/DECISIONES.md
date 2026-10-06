@@ -3864,8 +3864,9 @@ se corta y el de la semana) los activa el jugador y elige la hora. El detalle es
 **Por qué:** El dueño quiere audiencia que vuelva cada día y que use más juegos. La Copa ya
 demostró que "un juego por día" engancha, pero necesita un grupo y dura una semana. Uno al día
 no tiene ni lo uno ni lo otro.
-**Consecuencias:** Un período nuevo en los rankings (`dAAAA-MM-DD`), un historial por jugador con
-reglas de "una vez por fecha", y cada juego solitario acepta `?hoy` (la página calcula la fecha, el
+**Consecuencias:** Un período nuevo en los rankings (el diseño decía `dAAAA-MM-DD`; el PR 3 lo
+hizo `d<n>`, el número del día desde 1970, como `d20731`), un historial por jugador con
+reglas de "una vez por día", y cada juego solitario acepta `?hoy` (la página calcula la fecha, el
 juego y la semilla, así que el link no lleva la fecha ni deja elegir el tablero; el diseño decía
 `?dia=`, y el PR 1 lo cambió). Los avisos de "vuelve a jugar"
 siguen fuera (D-221): estos solo salen si el jugador los pidió, y se calman solos si no los usa.
@@ -3875,7 +3876,30 @@ Con menos de 9 juegos en el mazo, la espera para repetir uno es de dos días men
 (con los 7 del PR 1, cinco días), porque 7 días con 7 juegos repetía el mismo orden cada semana.
 El acceso va en la misma fila que Juego al azar, a su derecha (el dueño, 2026-10-05); la tarjeta
 junto a La Copa queda como alternativa en `/labs/` y con `?uad=tarjeta`. El PR 1 (el núcleo, los 7
-solitarios, todo en el celular) llegó en v0.115.0.
+solitarios, todo en el celular) llegó en v0.115.0. El PR 2 (v0.116.0) sumó El Ahorcado, Batalla
+Naval y Dudo desde el mazo del 12 de octubre (con 10 juegos, la espera vuelve a ser de 7 días):
+`?hoy` abre directo su modo para uno, y la palabra, la flota del celular y los dados de cada ronda
+salen de la semilla del día (`azarDel`). Son partidas locales, así que no adelantan secretos: en una
+sala se sigue tirando con el azar del navegador (D-70, C-10). Perdiendo en Batalla Naval cuentan las
+casillas acertadas, no los barcos hundidos como decía el diseño, topadas en 39 para que perder
+valga siempre menos que ganar. El PR 3 (v0.117.0) suma el jugador: la
+historia en `unoAlDia/<jid>/<n>`, los rankings `uno-al-dia/d<n>`, `uno-al-dia/s<semana>` y
+`uno-al-dia-racha/siempre`, los comodines (no se guardan: salen de recorrer la historia, uno cada 7
+días seguidos, tope 2) y las invitaciones (`today/?inv=<jid>`, `invitados/<jid>/<uid>`, un comodín
+para quien invitó). Las reglas exigen que el puntaje del día sea el de la historia y que la semana
+sume cada día una sola vez, pero **no pueden revisar** que el número del día sea el de hoy (no
+convierten texto en número para compararlo con la hora del servidor) ni la mejor racha, que calcula
+el celular: un tramposo podría inflar su racha o anotar otro día. Se acepta mientras esté en el
+laboratorio; si molesta, el workflow de los avisos puede recalcular las rachas desde la historia.
+Al entrar, los días viejos del celular suben solo a la historia, sin sus rankings.
+Detalle en "Lo que el PR 3 hizo" de [UNO-AL-DIA.md](UNO-AL-DIA.md). El PR 4 (v0.118.0) suma los avisos: cada celular
+guarda lo que pidió y su último día y racha en `pushDia/<subId>`, y `tools/push/uno-al-dia.mjs` los
+decide dentro de la vuelta de `avisar.mjs` (lo mandado, en `pushEnviadosDia`); abren
+`today/?aviso=uad<tipo>` y se cuentan en el panel como `uaddia`, `uadracha`, `uadsemana` y
+`uadadios` (sin guion: las reglas de las señales piden solo letras). Quedó distinto del diseño: no se juntan con los de La Copa en un solo aviso (cada uno
+lleva su tope de 2 al día), y el de la semana dice solo cuántos días jugó, sin puesto ni "donde más
+mejoraste". Además, el globo del ícono (`setAppBadge`) y "Agregar al calendario" (un `.ics` con un
+evento diario). Detalle en "Lo que el PR 4 hizo" de [UNO-AL-DIA.md](UNO-AL-DIA.md).
 
 ## D-231 · El selector de idioma lleva las banderas siempre
 **Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** corrige la nota de `base.css` de D-191 (en un celular angosto se escondía la bandera)

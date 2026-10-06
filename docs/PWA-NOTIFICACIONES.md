@@ -63,7 +63,8 @@ Lo que **no** se avisa, a propósito:
   hace que desactive todos. Si alguna vez se quiere, va con su propia casilla, apagada por defecto.
 - **Los de Uno al día** (D-230, en el laboratorio desde v0.118.0; los decide `tools/push/uno-al-dia.mjs`) no son de este tipo: el jugador los activa a
   propósito, elige la hora, tienen sus propias casillas y se calman solos si no los usa. Respetan
-  el mismo tope de 2 al día y la misma noche sin avisos; el detalle está en
+  la misma noche sin avisos y un tope de 2 al día propio, que no se suma al de las copas; el
+  detalle está en
   [UNO-AL-DIA.md](UNO-AL-DIA.md).
 - Tope: **máximo 2 avisos por persona al día** por copa (D-229; además, uno por vuelta, ver "Lo
   que el PR 3 hizo distinto" más abajo). Cada aviso trae un `tag` por copa y día,

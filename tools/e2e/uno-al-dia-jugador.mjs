@@ -58,6 +58,7 @@ ok(await esperar(`!!JSON.parse(localStorage.getItem('${DB}')||'{}').unoAlDia?.['
 let d = await db();
 ok(d.records?.['uno-al-dia']?.[`d${N}`]?.[sara]?.s === d.unoAlDia[sara][N].s, 'y al ranking del día, con el puntaje de la historia');
 ok(d.records?.['uno-al-dia-racha']?.siempre?.[sara]?.s === 1, 'y a la tabla de rachas');
+ok(await esperar(`/^🧊 Si tu amigo termina/.test(document.getElementById('uad-inv-linea')?.textContent||'') && /Sara/.test(document.querySelector('#uad-tarjeta .rk-lista')?.innerText||'')`), 'y bajo el resultado, invitar ya no le pide entrar y el ranking la muestra');
 await b.shot('sara-resultado');
 
 /* ---------- /today/ con jugador: ranking e invitar ---------- */
@@ -77,6 +78,15 @@ ok(inv.includes(`today/?inv=${sara}`), `el mensaje lleva su link (${inv.replace(
 ok(/Te desafío/.test(inv) && /¿Te atreves\?/.test(inv) && /primer Uno al día/.test(inv), 'en primera persona, con su dato');
 ok(!/comodín/.test(inv), 'y sin decir nada del comodín');
 await b.shot('sara-today');
+// En otro idioma el link ya trae `?lang=`: el invitador tiene que ir como un parámetro más
+await ev(`localStorage.setItem('juegos-de-salon:lang','de'); 1`);
+await b.go(`${SITIO}/today/`, 1800);
+await esperar(`!!document.getElementById('btn-uad-invitar')`);
+await click('#btn-uad-invitar');
+await esperar(`window.__compartido.length > 0`, 20);
+const linkDe = (await ev(`window.__compartido[0]?.text || ''`)).match(/🔗 (\S+)/)?.[1] || '';
+ok(new URL(linkDe || 'about:blank').searchParams.get('inv') === sara && new URL(linkDe || 'about:blank').searchParams.get('lang') === 'de', `en alemán, el link lleva idioma e invitador (${linkDe})`);
+await ev(`localStorage.setItem('juegos-de-salon:lang','es'); 1`);
 
 /* ---------- Pedro abre la invitación en otro celular ---------- */
 await cambiarA('pedro', 'sara');

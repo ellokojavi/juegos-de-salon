@@ -130,7 +130,7 @@ node tools/e2e/contacto.mjs <seccion> --salida /tmp/contacto      # mirarlas jun
 node tools/release/og.mjs tarjetas | imagenes | revisar           # tarjetas de WhatsApp (D-72)
 node tools/release/iconos.mjs                                    # íconos PNG de la app instalable, desde assets/icon.svg (D-221)
 node tools/push/vapid.mjs                                        # la clave de los avisos: ya se corrió (D-225), no se rehace
-node tools/push/avisar.mjs --simular | --prueba <código>         # qué avisos mandaría, o uno de prueba a una copa (D-224)
+node tools/push/avisar.mjs --simular | --prueba <código>         # qué avisos mandaría (copas y Uno al día), o uno de prueba a una copa (D-224, D-230)
 ```
 
 - **Una captura atrasada es un aviso en un PR común. "Actualiza el README" es una pasada entera**,
@@ -189,7 +189,9 @@ con eso la pantalla entra también a las pruebas de idiomas. Para verlo en un ce
 con jugadores heredados que cada uno reclama):
   `node tools/firebase/rankings-historia.mjs [--con-laboratorio] [--escribir]`. Los juegos de grupo
   anotan victorias con `finDePartida` (`ranking.js`) al terminar, y muestran su tabla con
-  `bloqueVictorias` en la intro (D-215).
+  `bloqueVictorias` en la intro (D-215). Uno al día (D-230) anota con `anotarDia` de `jugador.js` en
+  `unoAlDia/<jid>/<n>` y en las tablas `uno-al-dia` (período del día `d<n>` y semana) y
+  `uno-al-dia-racha`; su red (invitaciones, el dato de quien invita) está en `uno-al-dia-red.js`.
 
 ## Idiomas (C-3, D-197)
 

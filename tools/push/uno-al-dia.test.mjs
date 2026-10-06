@@ -17,7 +17,7 @@ let r = correr(base, en('2026-10-07', 9));
 assert.equal(r.length, 1);
 assert.equal(r[0].clave, `dia:${N}`);
 assert.equal(r[0].aviso.body, `📅 Uno al día n.° ${numeroDel('2026-10-07')} ya está. 🔥 Racha: 5 días.`);
-assert.match(r[0].aviso.url, /today\/\?aviso=uad-dia$/, 'el panel lo cuenta aparte de los de La Copa');
+assert.match(r[0].aviso.url, /today\/\?aviso=uaddia$/, 'el panel lo cuenta aparte de los de La Copa');
 assert.deepEqual(correr(base, en('2026-10-07', 10), { [`dia:${N}`]: en('2026-10-07', 9) }), [], 'no se repite');
 assert.deepEqual(correr({ ...base, u: N }, en('2026-10-07', 10)), [], 'si ya jugó hoy, nada');
 assert.deepEqual(correr({ ...base, d: false }, en('2026-10-07', 10)), [], 'si apagó el diario, nada');
@@ -28,6 +28,8 @@ r = correr(base, en('2026-10-07', 21), { [`dia:${N}`]: en('2026-10-07', 9) });
 assert.equal(r[0].clave, `racha:${N}`);
 assert.equal(r[0].aviso.body, '🔥 Tu racha de 5 días se corta a medianoche. Te quedan 3 horas.');
 assert.equal(correr({ ...base, k: 1 }, en('2026-10-07', 21), { [`dia:${N}`]: 1 })[0].aviso.body, '🧊 Si no juegas hoy, gastas un comodín para salvar tu racha de 5 días. Te quedan 3 horas.');
+assert.equal(correr({ ...base, u: N - 2, k: 1 }, en('2026-10-07', 21), { [`dia:${N}`]: 1 })[0].aviso.body, '🔥 Tu racha de 5 días se corta a medianoche. Te quedan 3 horas.', 'si el comodín ya se gastó ayer, no queda otro: la racha se corta');
+assert.equal(correr({ ...base, c: 1 }, en('2026-10-07', 9))[0].aviso.body, `📅 Uno al día n.° ${numeroDel('2026-10-07')} ya está.`, 'con racha de 1, sin "Racha: 1 días" (U-6)');
 assert.deepEqual(correr({ ...base, c: 1 }, en('2026-10-07', 21), { [`dia:${N}`]: en('2026-10-07', 9) }), [], 'con racha de 1 no vale la pena');
 assert.deepEqual(correr(base, en('2026-10-07', 22)), [], 'de noche nunca');
 // A lo más 2 al día
@@ -52,6 +54,7 @@ r = cal(30);
 assert.equal(r[0].clave, 'adios');
 assert.equal(r[0].borrar, true);
 assert.match(r[0].aviso.body, /mejor racha fue de 5 días/);
+assert.equal(correr({ ...base, u: N - 30, c: 1, m: 1 }, en('2026-10-07', 10))[0].aviso.body, '📅 Uno al día te espera cuando quieras.', 'con una mejor racha de 1, sin "fue de 1 días" (U-6)');
 
 // En el idioma de quien recibe
 assert.match(correr(base, Date.parse('2026-10-07T07:10:00Z'), {}, sub('Europe/Berlin', 'de'))[0].aviso.body, /^📅 Spiel des Tages Nr\./);
