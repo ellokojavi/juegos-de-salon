@@ -1,5 +1,5 @@
 {
-  "version": "0.125.1",
+  "version": "0.128.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -333,6 +333,54 @@
         "public/liars-dice/index.html",
         "public/liars-dice/rules.js",
         "public/liars-dice/style.css"
+      ]
+    },
+    {
+      "id": "generala",
+      "emoji": "📝",
+      "nombre": {
+        "es": "Generala",
+        "en": "Generala",
+        "pt": "General",
+        "de": "Generala"
+      },
+      "jugadores": "1 to 6",
+      "duracion": "15–30",
+      "disponible": false,
+      "labs": false,
+      "estado": null,
+      "modos": [
+        {
+          "clave": "modeLocal",
+          "es": "📱 Un celular",
+          "en": "📱 One phone"
+        },
+        {
+          "clave": "modeOnline",
+          "es": "📡 Varios celulares",
+          "en": "📡 Several phones"
+        },
+        {
+          "clave": "modeSolo",
+          "es": "🧍 Jugar solo",
+          "en": "🧍 Play solo"
+        }
+      ],
+      "variantes": [],
+      "pantallas": [
+        "intro",
+        "setup",
+        "lobby",
+        "play",
+        "result"
+      ],
+      "chat": true,
+      "archivos": [
+        "public/generala/engine.js",
+        "public/generala/game.js",
+        "public/generala/index.html",
+        "public/generala/rules.js",
+        "public/generala/style.css"
       ]
     },
     {
@@ -809,6 +857,9 @@
     "public/fourth-king/engine.js",
     "public/fourth-king/game.js",
     "public/fourth-king/rules.js",
+    "public/generala/engine.js",
+    "public/generala/game.js",
+    "public/generala/rules.js",
     "public/hangman/decks/animales.js",
     "public/hangman/decks/chile.js",
     "public/hangman/decks/cine.js",
@@ -866,6 +917,7 @@
     "public/cup/reportes.test.mjs",
     "public/cup/store.test.mjs",
     "public/fourth-king/engine.test.mjs",
+    "public/generala/engine.test.mjs",
     "public/hangman/engine.test.mjs",
     "public/julep/engine.test.mjs",
     "public/liars-dice/engine.test.mjs",
@@ -912,6 +964,9 @@
     "favoritos.mjs",
     "fourth-king/idiomas.mjs",
     "fourth-king/partida.mjs",
+    "generala/idiomas.mjs",
+    "generala/local.mjs",
+    "generala/online.mjs",
     "hangman/idiomas.mjs",
     "hangman/local.mjs",
     "hangman/online.mjs",
@@ -1006,6 +1061,10 @@
       "titulo": "Especificación: Cuarto Rey"
     },
     {
+      "ruta": "docs/games/generala.md",
+      "titulo": "Diseño: Generala"
+    },
+    {
       "ruta": "docs/games/hangman.md",
       "titulo": "Diseño: El Ahorcado"
     },
@@ -1040,6 +1099,7 @@
     "toque-y-fama": 9,
     "ahorcado": 9,
     "dudo": 9,
+    "generala": 8,
     "batalla-naval": 7,
     "julepe": 10,
     "cuarto-rey": 12

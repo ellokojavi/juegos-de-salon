@@ -91,6 +91,16 @@
       "red": true,
       "que": "sala de tres celulares"
     },
+    "generala-local": {
+      "archivo": "generala/local.mjs",
+      "red": false,
+      "que": "jugar solo, tres en un celular y la generala servida"
+    },
+    "generala-online": {
+      "archivo": "generala/online.mjs",
+      "red": true,
+      "que": "sala de dos celulares"
+    },
     "ahorcado-online": {
       "archivo": "hangman/online.mjs",
       "red": true,
@@ -441,6 +451,62 @@
       "pie": "Who won and how it went",
       "guion": "dudo-local",
       "toma": "06-resultado"
+    },
+    {
+      "seccion": "generala",
+      "imagen": "docs/screenshots/generala/01-intro.png",
+      "pie": "Game modes",
+      "guion": "generala-local",
+      "toma": "01-intro"
+    },
+    {
+      "seccion": "generala",
+      "imagen": "docs/screenshots/generala/04-configuracion.png",
+      "pie": "Who plays and whether a rolled generala wins",
+      "guion": "generala-local",
+      "toma": "04-configuracion"
+    },
+    {
+      "seccion": "generala",
+      "imagen": "docs/screenshots/generala/02-mesa.png",
+      "pie": "Keep dice and pick a box",
+      "guion": "generala-local",
+      "toma": "02-mesa"
+    },
+    {
+      "seccion": "generala",
+      "imagen": "docs/screenshots/generala/05-pase.png",
+      "pie": "What was scored, then pass the phone",
+      "guion": "generala-local",
+      "toma": "05-pase"
+    },
+    {
+      "seccion": "generala",
+      "imagen": "docs/screenshots/generala/online-02-mirando.png",
+      "pie": "Several phones: watching who rolls",
+      "guion": "generala-online",
+      "toma": "online-02-mirando"
+    },
+    {
+      "seccion": "generala",
+      "imagen": "docs/screenshots/generala/07-servida.png",
+      "pie": "Generala on the first roll wins",
+      "guion": "generala-local",
+      "toma": "07-servida"
+    },
+    {
+      "seccion": "generala",
+      "imagen": "docs/screenshots/generala/06-final.png",
+      "pie": "Standings and every score card",
+      "guion": "generala-local",
+      "toma": "06-final"
+    },
+    {
+      "seccion": "generala",
+      "imagen": "docs/screenshots/generala/03-final-solo.png",
+      "pie": "Solo score and record",
+      "guion": "generala-local",
+      "toma": "03-final-solo"
     },
     {
       "seccion": "idiomas",
