@@ -563,7 +563,7 @@ const AVISO_LABEL = {
   dia: '📅 Se abrió el día', plazo: '⏳ Se acaba el plazo', final: '🏁 La Gran Final', fin: '🥇 Terminó la copa',
   insc: '✍️ Alguien se inscribió (al admin)', copas: '🎲 Días de varias copas', prueba: '🧪 De prueba',
   // Uno al día (D-230)
-  uaddia: '📅 Uno al día: el de hoy', uadracha: '🔥 Uno al día: la racha', uadsemana: '📊 Uno al día: la semana', uadadios: '👋 Uno al día: el último',
+  uaddia: '📅 Uno al día: salió el de hoy', uadracha: '🔥 Uno al día: se corta la racha', uadsemana: '📊 Uno al día: su semana', uadadios: '👋 Uno al día: 30 días sin jugar',
 };
 const PWA_LABEL = { android: 'Android', ios: 'iPhone / iPad', otro: 'Otro (computador)' };
 
@@ -751,13 +751,13 @@ function bloqueUnoAlDia(rango) {
   const juegos = Object.entries(u.porJuego).sort((a, b) => b[1] - a[1]);
   const maxJ = Math.max(0, ...juegos.map(([, v]) => v));
   const maxR = Math.max(0, ...u.tramos.map(([, v]) => v));
-  const pct = p => (p === null ? '—' : `${p} %`);
+  const pct = p => (p === null ? '—' : `${p}%`);
   const de = base => (base ? ` · de ${n(base)} días` : '');
   return bloque('📅 Uno al día',
-    'Las partidas son de todos (cada una se cuenta al empezar). Jugadores, vuelta, rachas e invitaciones, solo de quienes entraron con su nombre y PIN. "Volvió al día siguiente": de los días jugados cuyo día siguiente ya pasó, en cuántos jugó también el siguiente. Días UTC.',
+    'Las partidas son de todos y cada una se cuenta al empezar. Las demás cifras son solo de quienes entraron con su nombre y PIN. "Volvió al día siguiente" mira los días jugados cuyo día siguiente ya pasó y cuenta en cuántos jugó también el siguiente; "a los 7 días", lo mismo con el séptimo. Las rachas cuentan a cada jugador por su mejor racha, desde siempre. Días UTC.',
     el('div', { class: 'tiles' },
       tile(u.partidas, 'partidas de Uno al día'),
-      tile(u.jugadores, 'jugadores con jugador'),
+      tile(u.jugadores, 'jugadores con nombre y PIN'),
       tile(pct(u.d1), `volvió al día siguiente${de(u.base.d1)}`),
       tile(pct(u.d7), `volvió a los 7 días${de(u.base.d7)}`),
       tile(u.aceptadas, 'invitaciones aceptadas'),
@@ -767,8 +767,8 @@ function bloqueUnoAlDia(rango) {
         lista(periodos.map(d => bar(d.label, [seg(C_TORNEO, d.total)], maxD)), 'Nadie jugó Uno al día en este rango.', 'bars')),
       el('div', {}, el('h3', { class: 'small' }, 'Por juego'),
         lista(juegos.map(([id, v]) => bar(gameLabel(id), [seg(C_TORNEO, v)], maxJ)), 'Nada todavía.', 'bars'))),
-    el('div', { style: 'margin-top:16px' }, el('h3', { class: 'small' }, 'Mejores rachas'),
-      lista(u.tramos.map(([label, v]) => bar(`🔥 ${label}`, [seg(C_SIN_RED, v)], maxR)), 'Nadie con racha todavía.', 'bars')));
+    el('div', { style: 'margin-top:16px' }, el('h3', { class: 'small' }, 'Jugadores por su mejor racha, desde siempre'),
+      lista(u.tramos.map(([label, v]) => bar(`🔥 ${label} ${label === '1' ? 'día' : 'días'}`, [seg(C_SIN_RED, v)], maxR)), 'Nadie con racha todavía.', 'bars')));
 }
 
 /** Las partidas sin red de todos los juegos (sin La Copa): ahí están quienes juegan solos (D-210). */
