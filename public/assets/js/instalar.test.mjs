@@ -1,4 +1,4 @@
-// El globo de agregar a inicio (D-230): qué pasos le tocan a cada celular, la ✕ que lo apaga para
+// El globo de agregar a inicio (D-232): qué pasos le tocan a cada celular, la ✕ que lo apaga para
 // siempre y la puerta del laboratorio.
 // Uso: node public/assets/js/instalar.test.mjs
 import assert from 'node:assert/strict';

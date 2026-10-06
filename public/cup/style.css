@@ -549,7 +549,7 @@ input.fecha { width: 100%; min-height: 48px; border-radius: 12px; border: 1px so
 
 /* --- Avisos al celular (D-223): la oferta, la campana y sus hojas ---
    La hoja de abajo (.hoja) es de todo el sitio y vive en base.css: la usa también el globo de
-   agregar a inicio de la portada (D-230). Aquí, lo propio de los avisos. */
+   agregar a inicio de la portada (D-232). Aquí, lo propio de los avisos. */
 .aviso-oferta { border: 2px solid rgba(255, 210, 63, 0.55); }
 .aviso-oferta .lead { margin: 0 0 4px; font-weight: 900; }
 .aviso-oferta .muted { margin: 0 0 12px; }
