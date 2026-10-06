@@ -88,8 +88,9 @@
 .dado-btn { display: grid; justify-items: center; gap: 3px; padding: 0; border: 0; background: none; cursor: pointer; color: var(--ink); min-height: 44px; }
 .dado-btn:disabled { cursor: default; }
 .dado-btn .die { width: min(54px, 15vw); height: min(54px, 15vw); }
-.dado-btn .die i { width: 20%; height: 20%; }
-.dado-btn .tag { font-weight: 900; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--lime); visibility: hidden; }
+/* Las pintas se miden contra su celda de la grilla (un tercio del dado), no contra el dado entero */
+.dado-btn .die i { width: 70%; height: 70%; }
+.dado-btn .tag { font-weight: 900; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.02em; white-space: nowrap; -webkit-hyphens: manual; hyphens: manual; color: var(--lime); visibility: hidden; }
 .dado-btn.kept .die { box-shadow: 0 0 0 3px var(--lime), 0 3px 0 rgba(0,0,0,0.35); transform: translateY(-3px); }
 .dado-btn.kept .tag { visibility: visible; }
 /* Antes del primer tiro: el lugar de cada dado, en hueco */
@@ -106,9 +107,10 @@
 .planilla .titulo { display: flex; justify-content: space-between; align-items: baseline; font-weight: 900; font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin: 0 4px 6px; }
 .planilla .titulo b { font: 900 1.05rem var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); letter-spacing: 0; }
 .casillas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
-.col { display: grid; gap: 6px; align-content: start; }
+.col { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; align-content: start; }
 .casilla { display: flex; align-items: center; justify-content: space-between; gap: 6px; min-height: 44px; padding: 6px 10px; border-radius: 12px; border: 2px solid transparent; background: rgba(0,0,0,0.25); color: var(--ink); font: 800 0.86rem var(--font-body); text-align: left; cursor: pointer; }
-.casilla .nom { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Un nombre largo (Doppel-Generala, Four of a kind) parte línea en vez de empujar la columna (U-12) */
+.casilla .nom { min-width: 0; line-height: 1.15; overflow-wrap: break-word; }
 .casilla .val { font: 900 1rem var(--font-num); font-variant-numeric: tabular-nums; flex: 0 0 auto; }
 /* Libre: lo que valdría con estos dados, en gris; ocupada: lo anotado, en blanco */
 .casilla.libre .val { color: var(--muted); }
