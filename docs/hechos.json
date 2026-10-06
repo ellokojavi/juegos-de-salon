@@ -1,5 +1,5 @@
 {
-  "version": "0.115.1",
+  "version": "0.116.1",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -934,6 +934,7 @@
     "timeline/pozo.mjs",
     "timeline/solo.mjs",
     "timeline/veredicto.mjs",
+    "uno-al-dia-grupo.mjs",
     "uno-al-dia.mjs",
     "versionado.mjs"
   ],
