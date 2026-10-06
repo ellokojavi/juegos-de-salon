@@ -30,7 +30,7 @@ Las pantallas están dibujadas en un lienzo aparte (privado del dueño).
    entra a los rankings.
 7. **Los avisos los pide el jugador** y elige la hora: el recordatorio del día, el aviso de que la racha
    se corta y el resumen de la semana. Para quien no quiere avisos hay otras formas de acordarse:
-   la portada, el ícono con un globo, el calendario y la tarjeta para compartir.
+   la portada, el ícono con un globo, la tarjeta para compartir y el link fijo.
 8. Todo **sin servidor nuevo**: lo que ya hay de semillas, rankings, `push.js`, `sw.js` y el
    workflow de avisos de GitHub (D-224).
 
@@ -348,7 +348,7 @@ escribe el celular al terminar, así que el aviso sabe si ya jugó aunque no ten
 - **Retención**: de los que jugaron por primera vez un día, cuántos volvieron al día siguiente, a los 7 y a los 30 días. Es la
   cifra que dice si funciona.
 - **Rachas**: cuántos tienen 1, 2 a 6, 7 a 29, y 30 o más.
-- **De dónde llegan**: botón de la portada, aviso (`?aviso=uaddia`, y `uadracha`, `uadsemana`, `uadadios`), calendario (`?de=cal`), link
+- **De dónde llegan**: botón de la portada, aviso (`?aviso=uaddia`, y `uadracha`, `uadsemana`, `uadadios`), link
   compartido (`?de=compartir`) e invitación (`?inv=`).
 - **Invitaciones**: cuántas se mandan, cuántos amigos abren el link, cuántos terminan su primer
   Uno al día y cuántos vuelven al día siguiente. Cuántos jugadores nuevos trae cada invitación es
@@ -366,7 +366,7 @@ escribe el celular al terminar, así que el aviso sabe si ya jugó aunque no ten
 | **1. El núcleo** | Botón, rotación y semilla, dado, línea en la intro, tarjeta del resultado, racha y calendario en el celular, compartir, `/today/` con lo local. Los 7 juegos solitarios | Sí (`UNO_AL_DIA_EN_LABS`) |
 | **2. Los demás juegos** | El Ahorcado, Batalla Naval y Dudo con la semilla del día y su puntaje de 0 a 100 | Sí |
 | **3. Con jugador e invitaciones** | Historial en Firebase, ranking del día, de la semana y de rachas, comodines, amigos, **invitar a un amigo**, reglas | Sí |
-| **4. Avisos y recordatorios** | Los tres avisos, la hoja de la hora, el globo del ícono, el calendario | Sí, como los de La Copa |
+| **4. Avisos y recordatorios** | Los tres avisos, la hoja de la hora, el globo del ícono, el recordatorio en el calendario (sacado en v0.120.2, decisión 15) | Sí, como los de La Copa |
 | **5. Panel y salida** | Las cifras del panel; se abre a todos | No |
 
 Cada juego tiene que saber que es el de hoy (`/queens/?hoy`, ver "Lo que el PR 1 hizo") y
@@ -577,6 +577,7 @@ celular saca la palabra, la flota o los dados de la semilla del día.
 13. **Que se pueda alterar la mejor racha no importa por ahora**; sí que el panel mida el tráfico y
     la actividad de Uno al día.
 14. **Con los avisos activos no se ofrece el recordatorio del calendario** (#230): repetiría el aviso.
+    Corregida por la 15.
 15. **El recordatorio es el aviso diario de la app, programado a la hora elegida, no un calendario**
     (2026-10-06): se sacó "⏰ Agregar recordatorio" (el `.ics`). Corrige la 14, que ya no hace falta.
 
@@ -584,8 +585,8 @@ celular saca la palabra, la flota o los dados de la semilla del día.
 
 Botones (caben en 320 px, unos 18 caracteres): **Uno al día**, **Jugar el de hoy**, **Compartir**,
 **🎲 Jugar otro**, **Invitar**, **Entrar**, **Ahora no**, **Mañana · 9:00**, **Almuerzo · 13:00**,
-**Tarde · 19:00**, **Silenciar**, **Probar los avisos** ("⏰ Agregar recordatorio" se sacó, decisión 15) (pasa de 18,
-así que va en botón chico, como lo secundario de U-17). El botón de la portada va en una línea,
+**Tarde · 19:00**, **Silenciar** y **Probar los avisos** ("⏰ Agregar recordatorio", que pasaba de
+18 e iba en botón chico, se sacó: decisión 15). El botón de la portada va en una línea,
 **📅 Uno al día**, con la racha en una píldora (**🔥 6**) y, al lado, **🎲 Al azar** (decisión del
 dueño: etiquetas cortas). Mientras falta jugar el de hoy brilla un punto; jugado, se pone cian con ✅.
 Lo que hace cada estado va en su `aria-label`. "Racha", "comodín" y "Silenciar" se dicen siempre así (U-5). Los

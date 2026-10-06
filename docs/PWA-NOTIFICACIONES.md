@@ -440,7 +440,7 @@ fondo: si los avisos de verdad traen gente de vuelta.
 | Cloudflare Workers con cron | Gratis y más puntual, pero suma una cuenta y un lugar más donde vive código. Si GitHub Actions se queda corto en puntualidad, es el siguiente paso. |
 | OneSignal u otro proveedor | Pone a un tercero entre la app y los jugadores; el panel y la privacidad quedan afuera. |
 | App nativa (Capacitor, TWA en Play Store) | Mucho más costo para el mismo resultado; la TWA podría venir después para estar en Play Store. |
-| Recordatorios `.ics` (LIG-29) | El dueño lo dejó fuera por ahora (2026-10-05): solo avisos al celular, para quien los quiera. |
+| Recordatorios `.ics` (LIG-29) | El dueño lo dejó fuera por ahora (2026-10-05): solo avisos al celular, para quien los quiera. Uno al día tuvo uno ("⏰ Agregar recordatorio", v0.118.0) y se sacó en v0.120.2: el recordatorio es el aviso diario (D-230). |
 
 ## Plan de desarrollo, en PR chicos
 
