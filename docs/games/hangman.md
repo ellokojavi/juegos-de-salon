@@ -131,6 +131,19 @@ empate no es victoria. La tabla (semana, siempre y amigos) va en la intro, debaj
 (`finDePartida` y `bloqueVictorias` de `public/assets/js/ranking.js`), y en `/records/`. Jugando
 solo no se anota nada: no hay rival a quien ganarle.
 
+### Uno al día (`/hangman/?hoy`, D-230)
+
+Cuando El Ahorcado es el juego de Uno al día, `/hangman/?hoy` no ofrece modos: la intro lleva la
+línea de Uno al día y un solo botón, **Jugar el de hoy**, que abre directo 🧍 Jugar solo con el
+🎴 mazo del celular (Mezcla, 6 vidas y comprar letras, lo de siempre) y el nombre que se recuerda
+(o "Jugador 1"). La palabra sale de la semilla del día (`semillaDel` → `azarDel(semilla, 'ahorcado')`
+como semilla del mazo), así que es la misma para todos los que juegan en el mismo idioma. Al
+terminar se anota el puntaje del día, **las vidas que quedan llevadas a 100** (0 si lo colgaron;
+`puntajeAhorcado` en `uno-al-dia.js`), y la tarjeta de Uno al día va arriba de los botones del
+resultado. El primer intento cuenta; los siguientes son práctica. La revancha es una partida
+cualquiera. Si hoy toca otro juego, la página se va al de hoy. Se prueba con
+`tools/e2e/uno-al-dia-grupo.mjs`.
+
 ## Flujo
 
 ```
