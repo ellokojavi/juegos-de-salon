@@ -3871,7 +3871,7 @@ reglas de "una vez por día", y cada juego solitario acepta `?hoy` (la página c
 juego y la semilla, así que el link no lleva la fecha ni deja elegir el tablero; el diseño decía
 `?dia=`, y el PR 1 lo cambió). Los avisos de "vuelve a jugar"
 siguen fuera (D-221): estos solo salen si el jugador los pidió, y se calman solos si no los usa.
-Es un diseño aprobado que se construye en cinco PR, los cuatro primeros detrás del
+Es un diseño aprobado que se planeó en cinco PR y se construyó en ocho, los siete primeros detrás del
 laboratorio (`UNO_AL_DIA_EN_LABS`), según "Por partes" de [UNO-AL-DIA.md](UNO-AL-DIA.md).
 Con menos de 9 juegos en el mazo, la espera para repetir uno es de dos días menos que los que hay
 (con los 7 del PR 1, cinco días), porque 7 días con 7 juegos repetía el mismo orden cada semana.
@@ -3890,8 +3890,8 @@ días seguidos, tope 2) y las invitaciones (`today/?inv=<jid>`, `invitados/<jid>
 para quien invitó). Las reglas exigen que el puntaje del día sea el de la historia y que la semana
 sume cada día una sola vez, pero **no pueden revisar** que el número del día sea el de hoy (no
 convierten texto en número para compararlo con la hora del servidor) ni la mejor racha, que calcula
-el celular: un tramposo podría inflar su racha o anotar otro día. Se acepta mientras esté en el
-laboratorio; si molesta, el workflow de los avisos puede recalcular las rachas desde la historia.
+el celular: un tramposo podría inflar su racha o anotar otro día. Se aceptó en el
+laboratorio (y el PR 6 lo dejó así); si molesta, el workflow de los avisos puede recalcular las rachas desde la historia.
 Al entrar, los días viejos del celular suben solo a la historia, sin sus rankings.
 Detalle en "Lo que el PR 3 hizo" de [UNO-AL-DIA.md](UNO-AL-DIA.md). El PR 4 (v0.118.0) suma los avisos: cada celular
 guarda lo que pidió y su último día y racha en `pushDia/<subId>`, y `tools/push/uno-al-dia.mjs` los
@@ -3905,7 +3905,7 @@ evento diario). Detalle en "Lo que el PR 4 hizo" de [UNO-AL-DIA.md](UNO-AL-DIA.m
 `MODO_UNO_AL_DIA` en games.js) y `#/juegos` trae el bloque "📅 Uno al día" (partidas de todos y, de
 quienes entraron con jugador, la vuelta al día siguiente y a los 7 días, las rachas por tramo y las
 invitaciones aceptadas), para lo que las reglas dejan al dueño leer `unoAlDia/` e `invitados/`
-enteros. Uno al día sigue en el laboratorio: abrirlo a todos lo decide el dueño. Detalle en "Lo que
+enteros. Uno al día siguió en el laboratorio hasta v0.121.0 (abajo). Detalle en "Lo que
 el PR 5 hizo" de [UNO-AL-DIA.md](UNO-AL-DIA.md) y en [PANEL.md](PANEL.md). El PR 6 (v0.120.0) trae
 lo que el dueño decidió el 2026-10-06 (decisiones 11 a 13 de [UNO-AL-DIA.md](UNO-AL-DIA.md)): El
 Ahorcado, Batalla Naval y Dudo jugados con `?hoy` ya no muestran la revancha (dilema #226), porque
@@ -3919,6 +3919,7 @@ quién; una regla nueva en `database.rules.json` acepta solo subir de a uno), y 
 día" del panel lo muestra en "Qué se hace" y "Avisos y recordatorio" (desde v0.120.2, "Avisos"), con las vistas de `/today/` y
 las visitas que entraron por ahí. En v0.120.1 (dilema #230, decisión 14), con los avisos activos
 `/today/` ya no ofrece "⏰ Agregar recordatorio": repetiría el aviso. El mismo día (v0.120.2) el dueño lo dejó más simple: **el recordatorio es el aviso diario de la app**, programado a la hora elegida, y el del calendario (el `.ics`) se sacó entero; la señal `recordatorio` también.
+**Sale del laboratorio en v0.121.0** (decisión del dueño, 2026-10-06; decisión 16 de [UNO-AL-DIA.md](UNO-AL-DIA.md)): `UNO_AL_DIA_EN_LABS = false`, así que el botón de la portada, `/today/`, los rankings y los avisos son para todos, y en `/labs/` queda solo probar la otra forma del acceso (la tarjeta junto a La Copa). **El n.° 1 pasó al 6 de octubre de 2026**, el día en que se abrió (`LANZAMIENTO`): el mazo es el mismo corrido un día, así que El Ahorcado, Batalla Naval y Dudo entran desde el mazo del 13 de octubre, no del 12. Desde ahí `LANZAMIENTO` queda fijo: moverlo cambiaría el juego de días ya jugados.
 
 ## D-231 · El selector de idioma lleva las banderas siempre
 **Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** corrige la nota de `base.css` de D-191 (en un celular angosto se escondía la bandera)
@@ -3936,7 +3937,7 @@ Apilarla mantiene el ancho y los 44 px de alto (C-8), así que la barra no cambi
 **Consecuencias:** Las banderas son emoji, no imágenes SVG, por decisión del dueño: en Windows se
 ven como dos letras (CL, GB…) y se acepta, porque la app se juega en celulares. Hay un solo toggle en la app: el estándar queda en C-3.
 
-## D-232 · Un globo en la portada invita a agregar la app a inicio, primero en el laboratorio
+## D-232 · Un globo en la portada invita a agregar la app a inicio (primero en el laboratorio; para todos desde v0.121.0)
 **Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** completa D-221; reusa la hoja de pasos de D-223
 **Decisión:** La portada muestra, a los 2,5 segundos, un globo abajo con el ícono de la app,
 **"Juegos de Salón como app"**, una línea y el botón **Agregar**, que abre los pasos de ese
@@ -3963,7 +3964,7 @@ vuelva. La app instalada (D-221) es la que recibe los avisos en iPhone y se abre
 de cada navegador cambian con sus versiones: si un paso deja de calzar, se corrige en
 `COMMON[lang].ins` (i18n.js). Lo prueban `instalar.test.mjs` y `tools/e2e/instalar.mjs` (cada
 celular, la ✕, el diálogo de Chrome y los cuatro idiomas a 320 px); en iPhones y Android reales se
-prueba a mano desde `/labs/`.
+prueba a mano desde `/labs/`. **Sale del laboratorio en v0.121.0** (decisión del dueño, 2026-10-06): `INSTALAR_EN_LABS = false`, así que el globo sale en la portada de todos los celulares donde se puede agregar la app; en `/labs/` queda solo el botón para volver a mostrarlo después de cerrarlo con la ✕.
 
 ## D-233 · Los avisos se miden en el panel: mandados, tocados, la app instalada y la última vuelta
 **Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** completa D-224 y D-228; el PR 4 de [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md); señales como D-44 y D-208

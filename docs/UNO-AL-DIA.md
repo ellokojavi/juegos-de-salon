@@ -1,6 +1,6 @@
 # Uno al día
 
-**Estado:** aprobada por el dueño (D-230); en el laboratorio: el PR 1, el núcleo (v0.115.0), el PR 2, los juegos de grupo (v0.116.0), el PR 3, jugador, rankings, comodines e invitaciones (v0.117.0), el PR 4, los avisos y recordatorios (v0.118.0), y el PR 5, el panel (v0.119.0) · **Fecha:** 2026-10-05 ·
+**Estado:** **para todos desde v0.121.0** (el n.° 1 es el 6 de octubre de 2026); construido en 7 PR y abierto en el octavo (ver "Lo que el PR N hizo") · **Fecha:** 2026-10-05 ·
 **Toca:** RP-44, D-188 y D-237 (Juego al azar), D-212 y D-217 (rankings), D-221 a D-229 (avisos), D-97 (semillas)
 
 Una modalidad nueva en la portada, al lado de **Juego al azar**: cada día la app sorprende con un
@@ -367,7 +367,7 @@ escribe el celular al terminar, así que el aviso sabe si ya jugó aunque no ten
 | **2. Los demás juegos** | El Ahorcado, Batalla Naval y Dudo con la semilla del día y su puntaje de 0 a 100 | Sí |
 | **3. Con jugador e invitaciones** | Historial en Firebase, ranking del día, de la semana y de rachas, comodines, amigos, **invitar a un amigo**, reglas | Sí |
 | **4. Avisos y recordatorios** | Los tres avisos, la hoja de la hora, el globo del ícono, el recordatorio en el calendario (sacado en v0.120.2, decisión 15) | Sí, como los de La Copa |
-| **5. Panel y salida** | Las cifras del panel; se abre a todos | No |
+| **5. Panel y salida** | Las cifras del panel; se abre a todos | Sí: el panel llegó en el laboratorio y la salida quedó para el PR 8 (v0.121.0), después de los PR 6 y 7 con lo que decidió el dueño |
 
 Cada juego tiene que saber que es el de hoy (`/queens/?hoy`, ver "Lo que el PR 1 hizo") y
 avisar al terminar. Los siete solitarios ya aceptan `?semilla=` (D-142), así que para ellos el cambio
@@ -383,8 +383,9 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   otro juego, la página se va al de hoy.
 - **El mazo con 7 juegos:** "ningún juego antes de 7 días" con justo 7 juegos dejaba el mismo orden
   todas las semanas. Con menos de 9 juegos la espera es de dos días menos que los que hay (con 7,
-  cinco días; con 8, seis); con 9 o más, 7 días, como dice arriba (`SIN_REPETIR`). El día n.° 1 es el 5 de octubre de 2026
-  (`LANZAMIENTO` en `uno-al-dia.js`); se puede mover mientras esté en el laboratorio.
+  cinco días; con 8, seis); con 9 o más, 7 días, como dice arriba (`SIN_REPETIR`). El día n.° 1 era el 5 de octubre de 2026
+  (`LANZAMIENTO` en `uno-al-dia.js`), que se podía mover mientras estuviera en el laboratorio; al
+  salir pasó al 6 de octubre y quedó fijo (ver "Lo que el PR 8 hizo").
 - **La semilla** es un código de copa de 5 letras sacado de la fecha (`semillaDel`), así los juegos
   no cambian: generan con ella como en cualquier copa. Las palabras van en el idioma de quien juega,
   como en el juego suelto: el desafío es el mismo para los que juegan en el mismo idioma.
@@ -460,8 +461,8 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   escritura). Se ven en `/today/` y bajo el resultado: **Hoy · Semana · Rachas · Amigos**.
 - **Lo que las reglas no pueden revisar:** no convierten texto en número, así que no comparan el
   número del período con la hora del servidor, y la mejor racha la calcula el celular. Un tramposo
-  podría inflar su racha o anotar un día que no es el suyo. Mientras esté en el laboratorio se
-  acepta; si molesta, el workflow de los avisos puede recalcular las rachas desde la historia.
+  podría inflar su racha o anotar un día que no es el suyo. Se aceptó en el laboratorio, y al
+  abrirlo el dueño decidió que no importa por ahora (decisión 13); si molesta, el workflow de los avisos puede recalcular las rachas desde la historia.
 - **Los comodines** no se guardan: salen de recorrer la historia (`recorrer` en uno-al-dia.js),
   igual sin jugador. Cada 7 días jugados seguidos se gana uno; un día sin jugar gasta uno o corta la
   racha; tope 2. Los días salvados van con 🧊 en el calendario, y la tarjeta del resultado dice
@@ -526,9 +527,8 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   `invitados/` enteros.
 - **Lo que no se mide todavía:** el embudo de la oferta de avisos (se ofreció → eligió hora →
   permiso) y los silenciados; y la vuelta de quienes juegan sin jugador, que solo está en su celular.
-- **Uno al día sigue en el laboratorio**: abrirlo a todos es decisión del dueño, después de
-  probarlo. Para abrirlo basta `UNO_AL_DIA_EN_LABS = false` en `uno-al-dia.js` (y sacar el número
-  del lanzamiento a la fecha de salida, si se quiere que el n.° 1 sea ese día).
+- **Uno al día siguió en el laboratorio** hasta que el dueño decidió abrirlo, en el PR 8 (v0.121.0):
+  `UNO_AL_DIA_EN_LABS = false` y el n.° 1 corrido al día de la salida.
 
 ### Lo que el PR 6 hizo (v0.120.0)
 
@@ -555,6 +555,15 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   los textos y la del botón pisaba a la del título (lo vio el dueño). `uno-al-dia.test.mjs` ahora
   revisa que los textos de Uno al día no repitan una clave.
 
+### Lo que el PR 8 hizo (v0.121.0): sale del laboratorio
+
+- `UNO_AL_DIA_EN_LABS = false`: el botón de la portada, `/today/` y todo lo demás se ven para
+  todos. En `/labs/` queda solo probar la otra forma del acceso (la tarjeta junto a La Copa).
+- **El n.° 1 pasó al 6 de octubre de 2026**, el día en que se abrió (decisión del dueño):
+  `LANZAMIENTO` en uno-al-dia.js. El mazo es el mismo corrido un día (el 6 es Desenredo) y los de
+  grupo siguen saliendo desde el mazo del 13. Desde ahora queda fijo: moverlo cambia el juego de
+  días ya jugados.
+
 ## Lo que decidió el dueño (2026-10-05)
 
 1. **El mismo desafío para todos, y el dado rueda igual**, cada vez, con la experiencia de Juego al
@@ -580,6 +589,7 @@ celular saca la palabra, la flota o los dados de la semilla del día.
     Corregida por la 15.
 15. **El recordatorio es el aviso diario de la app, programado a la hora elegida, no un calendario**
     (2026-10-06): se sacó "⏰ Agregar recordatorio" (el `.ics`). Corrige la 14, que ya no hace falta.
+16. **Abrirlo a todos** (2026-10-06), con el n.° 1 el día que se abre.
 
 ## Textos para revisar (U-1, U-3, U-17)
 
