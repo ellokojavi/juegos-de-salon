@@ -571,7 +571,7 @@ function bloqueAvisos(rango, now) {
   const pwa = Object.entries(a.pwa).sort((x, y) => y[1] - x[1]);
   const maxP = Math.max(0, ...pwa.map(([, v]) => v));
   return bloque('🔔 Avisos al celular',
-    'Los manda GitHub cada 15 minutos (D-224). Mandados: los que el servicio del celular aceptó. Tocados: los que abrieron la app desde el aviso. Días UTC.',
+    'Los manda GitHub cada 15 minutos. Mandados: los que el servicio del celular aceptó. Tocados: los que abrieron la app desde el aviso. En las barras, rosado, tocados; celeste, mandados sin tocar. Días UTC.',
     el('div', { class: 'tiles' },
       tile(p.vivas ?? '—', 'celulares con avisos', { info: 'suscripciones vivas en la última vuelta' }),
       tile(a.totalMandados, 'avisos mandados'),
