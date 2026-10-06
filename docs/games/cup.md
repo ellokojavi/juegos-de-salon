@@ -221,7 +221,8 @@ Abiertos a todos desde D-228: se ven en cualquier celular que pueda recibirlos, 
   por copa en un día (D-229). Los textos son los `avMsg*` de `rules.js`. Al tocarlo abre ese día
   (`&dia=<d>`) o, el del cierre, el podio; en Android trae **Jugar** y **Silenciar esta copa**
   (`&silenciar`). Los días nuevos de varias copas van juntos en un aviso, y un empate arriba nombra
-  a todos los que ganaron (D-229).
+  a todos los que ganaron (D-229). Cada dirección lleva `&aviso=<tipo>`, que la página cuenta al
+  abrirse y saca de la dirección; el panel muestra mandados y tocados por tipo (D-233).
 
 ## Flujo
 
