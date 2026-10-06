@@ -80,7 +80,7 @@
 
       <section class="panel seccion" id="seccion-instalar">
         <h2>📲 Agregar a inicio</h2>
-        <p class="muted" style="margin:0">El globo de la portada que invita a agregar la app a la pantalla de inicio, con los pasos de Safari y Chrome en iPhone y en Android (D-230). Sale en el celular, no en el computador, y se va para siempre con la ✕.</p>
+        <p class="muted" style="margin:0">El globo de la portada que invita a agregar la app a la pantalla de inicio, con los pasos de Safari y Chrome en iPhone y en Android (D-232). Sale en el celular, no en el computador, y se va para siempre con la ✕.</p>
         <p id="instalar-estado" class="muted" style="margin:0"></p>
         <button class="btn btn--yellow" id="btn-labs-instalar" type="button">Activar en este celular</button>
         <button class="btn btn--ghost" id="btn-instalar-otra-vez" type="button">Volver a mostrar el globo</button>
@@ -102,7 +102,7 @@
     // La versión activa sale del import map que estampa set-version.py: la que de verdad cargó
     document.getElementById('labs-version').textContent = `Versión activa: v${versionOf(document.getElementById('importmap')?.textContent)}`;
     sparkles();
-    // El globo de agregar a inicio, solo en los celulares que lo activan aquí (D-230)
+    // El globo de agregar a inicio, solo en los celulares que lo activan aquí (D-232)
     import('../assets/js/instalar.js').then(({ instalarEnLabs, activarInstalar, descartado, descartar }) => {
       const b = document.getElementById('btn-labs-instalar'), otra = document.getElementById('btn-instalar-otra-vez');
       const est = document.getElementById('instalar-estado');

@@ -403,7 +403,7 @@ html:lang(de) body { -webkit-hyphens: auto; hyphens: auto; overflow-wrap: break-
 /* Mientras los textos del idioma elegido no están puestos, no se pinta nada (D-194) */
 html.i18n-pendiente body { visibility: hidden; }
 
-/* --- La hoja de abajo (D-223, D-230): pasos y avisos sobre el morado oscuro de la hoja del chat
+/* --- La hoja de abajo (D-223, D-232): pasos y avisos sobre el morado oscuro de la hoja del chat
    (.chat-panel). Sobre el fondo de la app, un blanco encandila (lo pidió el dueño al ver el
    diseño). La usan los avisos de La Copa y el globo de agregar a inicio de la portada. */
 .hoja-capa { position: fixed; inset: 0; z-index: 60; display: grid; align-items: end; }
@@ -429,7 +429,7 @@ html.i18n-pendiente body { visibility: hidden; }
    entero en vez de partir la palabra ("YA LA / AGREGUÉ", "BE-SCHEID"; U-17) */
 .hoja .btn-row .btn { flex: 1 0 auto; width: auto; max-width: 100%; -webkit-hyphens: manual; hyphens: manual; }
 
-/* --- El globo de agregar a inicio (D-230): flota sobre el pie de la portada, con el ícono de la
+/* --- El globo de agregar a inicio (D-232): flota sobre el pie de la portada, con el ícono de la
    app, y se va con la ✕ para siempre. El borde dorado es el de La Copa: invita, no avisa. */
 .globo-instalar {
   position: fixed; z-index: 50; left: 12px; right: 12px; bottom: calc(12px + var(--safe-bottom));
