@@ -5,7 +5,8 @@
   azar. El dado rueda y cae en el juego de hoy, el mismo desafío para todos. Al terminar ves tu
   racha y puedes compartir el resultado sin decir qué juego tocó, o tirar el dado por otro juego. En
   `/today/` están tu racha, un calendario del mes y cómo te va en cada juego. Por ahora entran los 7
-  juegos de La Copa que se juegan solos, y todo se guarda en el celular. Se activa en `/labs/`.
+  juegos de La Copa que se juegan solos, y todo se guarda en el celular. Se activa en `/labs/`,
+  donde también se puede probar con una tarjeta junto a La Copa en vez del botón.
 
 ## 0.113.0 — 2026-10-05
 - **Un globo en la portada invita a agregar la app a inicio, en el laboratorio** (D-232): con un

@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict';
 import {
   JUEGOS_DIA, LANZAMIENTO, SIN_REPETIR, crearCalendario, juegoDel, semillaDel, numeroDel, sumarDias, diasEntre,
-  fechaLocal, faltaParaManana, racha, mejorRacha, porJuego, anotar, leer, estado, rutaDel, unoAlDiaVisible, activarUnoAlDia, KEY,
+  fechaLocal, faltaParaManana, racha, mejorRacha, porJuego, anotar, leer, estado, rutaDel, unoAlDiaVisible, activarUnoAlDia, formaAcceso, elegirForma, KEY,
 } from './uno-al-dia.js';
 import { JUEGOS } from '../../cup/games/index.js';
 import { esCodigo } from '../../cup/engine.js';
@@ -115,5 +115,15 @@ activarUnoAlDia(true, lab);
 assert.equal(unoAlDiaVisible({ storage: lab, loc: { hostname: 'juegosdesalon.cl', search: '' } }), true);
 activarUnoAlDia(false, lab);
 assert.equal(unoAlDiaVisible({ storage: lab, loc: { hostname: 'localhost', search: '' } }), true, 'en el sitio local siempre');
+
+// Dónde va en la portada: al lado del dado, salvo que se pruebe la tarjeta desde /labs/ o con ?uad=
+const fm = almacen(), sinQ = { search: '' };
+assert.equal(formaAcceso({ storage: fm, loc: sinQ }), 'boton');
+elegirForma('tarjeta', fm);
+assert.equal(formaAcceso({ storage: fm, loc: sinQ }), 'tarjeta');
+assert.equal(formaAcceso({ storage: fm, loc: { search: '?uad=boton' } }), 'boton', 'el link manda');
+elegirForma('boton', fm);
+assert.equal(formaAcceso({ storage: fm, loc: { search: '?uad=tarjeta' } }), 'tarjeta');
+assert.equal(formaAcceso({ storage: fm, loc: sinQ }), 'boton');
 
 console.log('uno-al-dia: ok');
