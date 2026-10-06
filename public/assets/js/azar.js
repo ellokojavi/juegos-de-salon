@@ -6,7 +6,8 @@
  * en cualquier parte mientras rueda lo abre de inmediato. La Copa no entra: es una semana con
  * amigos, no una partida para sacar al azar.
  *
- * Al irse, el dado se aleja y se funde en el fondo de la app, y el juego aparece con un fundido.
+ * Al irse no hay pantalla vacía: el juego abre mostrando el mismo dado, y el dado se desvanece
+ * recién cuando el juego está dibujado (llegada.js, D-237).
  *
  * Con "reducir movimiento" el dado no rueda: aparece quieto en la cara elegida. Sin WebGL
  * aparece el emoji del elegido, grande, en vez del dado.
@@ -16,9 +17,6 @@ import { crearDado } from './dado3d.js';
 import { pickLang } from './i18n.js';
 import { SFX } from './sound.js';
 import { LLEGA } from './llegada.js';
-
-/** Lo que dura la salida: el dado se aleja y la capa toma el fondo de la app (`.saliendo`). */
-const SALIDA = 420;
 
 export const TEXTOS = {
   // `corto`: el nombre cuando va en la misma fila que Uno al día (D-230)
@@ -71,14 +69,16 @@ export function tirar(pool, { lang, base = '', T, elegido = pool[azar(pool.lengt
   // El juego se va pidiendo mientras rueda, para que al irse no quede esperando
   document.head.append(el('link', { rel: 'prefetch', href: destino }));
 
-  // Al irse, el dado se aleja y la capa se funde en el fondo de la app; el juego aparece después
-  // con un fundido (llegada.js). Así no hay corte entre el dado y el juego
-  let ido = false;
+  // Al irse, el dado queda en pantalla: el navegador muestra esta página hasta que la del juego
+  // pinta, y esa abre con el mismo dado encima (una foto del lienzo y el nombre, en sessionStorage).
+  // El dado se desvanece recién cuando el juego está dibujado (llegada.js): nunca hay pantalla vacía
+  let ido = false, revelado = false, foto = () => null;
   const ir = () => {
     if (ido) return; ido = true;
-    try { sessionStorage.setItem(LLEGA, '1'); } catch { /* sin almacenamiento, llega sin fundido */ }
-    capa.classList.add('saliendo');
-    setTimeout(() => { location.href = destino; }, quieto ? 0 : SALIDA);
+    const escena = { emoji: elegido.emoji, img: foto() };
+    if (revelado) Object.assign(escena, { chico: T.tocó, nombre: pickLang(elegido.name, lang) });
+    try { sessionStorage.setItem(LLEGA, JSON.stringify(escena)); } catch { /* sin espacio, el juego abre como siempre */ }
+    location.href = destino;
   };
   capa.addEventListener('click', ir);
   capa.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); ir(); } });
@@ -93,13 +93,18 @@ export function tirar(pool, { lang, base = '', T, elegido = pool[azar(pool.lengt
   const revelar = () => {
     SFX.reveal();
     capa.classList.add('listo');
+    revelado = true;
     nombre.replaceChildren(el('small', {}, T.tocó), el('b', {}, pickLang(elegido.name, lang)));
     setTimeout(ir, quieto ? 1100 : 1300);
   };
 
   // Termina un poco ladeado, mostrando el canto de arriba y el de la derecha, para que se vea que es un cubo
   const FX = 18, FY = -20;
-  const dado = crearDado(lienzo, caras.map(g => g.emoji));
+  const creado = crearDado(lienzo, caras.map(g => g.emoji));
+  // La foto para la página del juego: el lienzo se lee en el mismo momento en que se dibuja
+  let pose = [FX, FY];
+  const dado = creado && { dibujar: (x, y) => { pose = [x, y]; creado.dibujar(x, y); } };
+  if (dado) foto = () => { try { creado.dibujar(...pose); return lienzo.toDataURL('image/png'); } catch { return null; } };
   if (!dado) {
     lienzo.replaceWith(el('div', { class: 'azar-sin-3d' }, elegido.emoji));
     revelar();
