@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.116.0 — 2026-10-06
+- **Uno al día suma El Ahorcado, Batalla Naval y Dudo, en el laboratorio** (D-230): desde el 12 de
+  octubre el dado también puede caer en ellos. Abren directo, sin elegir modo: El Ahorcado con una
+  palabra del mazo, Batalla Naval y Dudo contra el celular. La palabra, la flota del celular y los
+  dados son los mismos para todos ese día. El puntaje va de 0 a 100: en El Ahorcado, por las vidas
+  que te quedan; en Batalla Naval, por los disparos que usaste o los barcos que tocaste; en Dudo,
+  por los dados que te quedan o las rondas que aguantaste.
+
 ## 0.115.0 — 2026-10-06
 - **Uno al día, en el laboratorio** (D-230): un botón nuevo en la portada, al lado de Juego al
   azar. El dado rueda y cae en el juego de hoy, el mismo desafío para todos. Al terminar ves tu
