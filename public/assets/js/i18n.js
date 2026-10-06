@@ -207,6 +207,9 @@ export const COMMON = {
       yo: { racha: 'llevo una racha de {n} días', puesto: 'estoy en el {p} % mejor {tabla}', hoy: 'hoy saqué {s}, mejor que el {p} %', mejora: 'voy mejorando en {juego}', constancia: 'ya jugué {n} días de Uno al día', constancia1: 'ya jugué mi primer Uno al día' },
       el: { racha: 'lleva una racha de {n} días', puesto: 'está en el {p} % mejor {tabla}', hoy: 'hoy sacó {s}, mejor que el {p} %', mejora: 'va mejorando en {juego}', constancia: 'ya jugó {n} días de Uno al día', constancia1: 'ya jugó su primer Uno al día' },
       tablas: { semana: 'de la semana', rachas: 'de las rachas' },
+      // Lo común en los juegos donde el rival responde a lo que haces (Dudo, Batalla Naval)
+      mismosDados: 'Todos parten con los mismos dados.',
+      mismaFlota: 'Todos se enfrentan a la misma flota del celular.',
     },
     ins: {
       title: "Juegos de Salón como app",
@@ -380,6 +383,8 @@ export const COMMON = {
       yo: { racha: "I'm on a {n}-day streak", puesto: "I'm in the top {p}% {tabla}", hoy: 'I scored {s} today, better than {p}%', mejora: "I'm getting better at {juego}", constancia: "I've played {n} days of One a Day", constancia1: "I've played my first One a Day" },
       el: { racha: 'is on a {n}-day streak', puesto: 'is in the top {p}% {tabla}', hoy: 'scored {s} today, better than {p}%', mejora: 'is getting better at {juego}', constancia: 'has played {n} days of One a Day', constancia1: 'has played their first One a Day' },
       tablas: { semana: 'of the week', rachas: 'for streaks' },
+      mismosDados: 'Everyone starts with the same dice.',
+      mismaFlota: 'Everyone faces the same phone fleet.',
     },
     ins: {
       title: "Party Games as an app",
@@ -553,6 +558,8 @@ export const COMMON = {
       yo: { racha: 'estou com uma sequência de {n} dias', puesto: 'estou entre os {p} % melhores {tabla}', hoy: 'hoje fiz {s}, melhor que {p} %', mejora: 'estou melhorando em {juego}', constancia: 'já joguei {n} dias de Um por dia', constancia1: 'já joguei meu primeiro Um por dia' },
       el: { racha: 'está com uma sequência de {n} dias', puesto: 'está entre os {p} % melhores {tabla}', hoy: 'hoje fez {s}, melhor que {p} %', mejora: 'está melhorando em {juego}', constancia: 'já jogou {n} dias de Um por dia', constancia1: 'já jogou o primeiro Um por dia' },
       tablas: { semana: 'da semana', rachas: 'em sequências' },
+      mismosDados: 'Todos começam com os mesmos dados.',
+      mismaFlota: 'Todos enfrentam a mesma frota do celular.',
     },
     ins: {
       title: "Jogos de Salão como app",
@@ -726,6 +733,8 @@ export const COMMON = {
       yo: { racha: 'ich habe eine Serie von {n} Tagen', puesto: 'ich bin unter den besten {p} % {tabla}', hoy: 'ich habe heute {s} geholt, besser als {p} %', mejora: 'ich werde besser bei {juego}', constancia: 'ich habe schon {n} Tage gespielt', constancia1: 'ich habe mein erstes Spiel des Tages gespielt' },
       el: { racha: 'hat eine Serie von {n} Tagen', puesto: 'ist unter den besten {p} % {tabla}', hoy: 'hat heute {s} geholt, besser als {p} %', mejora: 'wird besser bei {juego}', constancia: 'hat schon {n} Tage gespielt', constancia1: 'hat das erste Spiel des Tages gespielt' },
       tablas: { semana: 'der Woche', rachas: 'bei den Serien' },
+      mismosDados: 'Alle starten mit denselben Würfeln.',
+      mismaFlota: 'Alle treten gegen dieselbe Flotte des Handys an.',
     },
     ins: {
       title: "Salonspiele als App",
