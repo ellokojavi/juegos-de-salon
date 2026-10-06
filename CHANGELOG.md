@@ -1,7 +1,7 @@
 # Changelog
 
 ## 0.109.2 — 2026-10-05
-- **El selector de idioma lleva las banderas también en el celular** (D-230): antes, en una
+- **El selector de idioma lleva las banderas también en el celular** (D-231): antes, en una
   pantalla angosta quedaban solo ES EN PT DE. Ahora la bandera va arriba de cada código, sin
   que el selector crezca, y en una pantalla ancha va al lado, como siempre.
 

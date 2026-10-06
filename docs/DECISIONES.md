@@ -53,7 +53,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 |---|---|---|
 | Estructura y rutas | C-2 | D-01, D-02, D-03, D-24, D-192, D-198 |
 | Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184 |
-| Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-230 |
+| Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213 |
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138 |
@@ -2893,7 +2893,7 @@ vueltas de las cuerdas (D-182, D-183, D-185) y de las instrucciones (D-184).
 puede caer en él. La captura del menú en el README se rehace.
 
 ## D-191 · Un idioma nuevo entra por el laboratorio: el alemán
-**Fecha:** 2026-10-03 · **Estado:** corregida por D-195, D-197
+**Fecha:** 2026-10-03 · **Estado:** corregida por D-195, D-197, D-231
 **Decisión:** El alemán (**Salonspiele**) se suma completo —los textos de los ocho juegos, las
 frases, los mazos, las grillas y palabras de La Copa y los nombres de ¿Dónde queda?— pero **solo
 se ofrece en el laboratorio**: en el dispositivo que entra por `/labs/de/` o por un link con
@@ -3801,7 +3801,7 @@ dentro de la app instalada.
 Son pocos y es justo lo que se quiere probar. `push.test.mjs` y `tools/e2e/cup/avisos.mjs` lo
 prueban.
 
-## D-230 · El selector de idioma lleva las banderas siempre
+## D-231 · El selector de idioma lleva las banderas siempre
 **Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** corrige la nota de `base.css` de D-191 (en un celular angosto se escondía la bandera)
 **Decisión:** Pedido del dueño: todos los selectores de idioma llevan sus banderas, y queda un
 estándar de diseño para el widget (C-3). En un celular de hasta 440 px, con cuatro idiomas, el
