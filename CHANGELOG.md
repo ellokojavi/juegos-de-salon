@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.122.0 — 2026-10-06
+- **La Copa y Uno al día, mitad y mitad** (D-239): en la portada, Uno al día pasa a una tarjeta al
+  lado de La Copa, con el emoji a la izquierda del título. Los títulos de las dos van en color,
+  dorado y celeste, para distinguirlas de los juegos, y en La Copa jugadores y días caben en una
+  línea. El dado vuelve a decir **Juego al azar**.
+
 ## 0.121.0 — 2026-10-06
 - **Uno al día, para todos** (D-230): en la portada, al lado de **🎲 Al azar**, está **📅 Uno al
   día**: cada día un juego sorpresa, el mismo desafío para todos. Lleva tu racha, con comodines 🧊,
