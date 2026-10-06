@@ -338,16 +338,22 @@ salieron de varias decisiones que se fueron corrigiendo; aquí está lo vigente,
 de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
 
 - **Qué se ofrece y en qué orden.** Las tarjetas salen de `PORTADA` en `games.js`: primero los
-  juegos de `GAMES` (La Copa, la primera) y después los juegos de La Copa sueltos (`SUELTOS`,
+  juegos de `GAMES` (La Copa, la primera, en media fila junto a Uno al día) y después los juegos de La Copa sueltos (`SUELTOS`,
   aparte solo por cómo están hechos, D-198), sin lista propia en la página (D-142, D-149). Un
   juego que no está disponible se ve, con "Próximamente" al lado del nombre, pero no se abre, ni
   con el teclado (`available` en `games.js`, C-2; D-142). La tarjeta dice jugadores y duración,
   y si el juego no está en el idioma elegido lo dice antes de abrirlo ("🇪🇸 En español",
   `idiomas` en `games.js`; hoy ninguno lo declara, D-170). Uno de `SUELTOS` con `labs: true` no
   sale en la portada, aunque su link ya se comparta.
-- **Arriba de la lista, los accesos que eligen por ti.** 🎲 Juego al azar sale de las tarjetas
-  que se ven y se pueden abrir, nunca de La Copa (D-188), y abre el juego con el dado encima
-  (D-237). Dónde va el acceso a Uno al día lo dice [UNO-AL-DIA.md](UNO-AL-DIA.md) (D-230).
+- **Arriba de la lista, los accesos que eligen por ti.** 🎲 Juego al azar, bajo la bajada, sale
+  de las tarjetas que se ven y se pueden abrir, nunca de La Copa (D-188), y abre el juego con el
+  dado encima (D-237). Uno al día es una tarjeta de media fila al lado de La Copa: los dos pesan
+  más que un juego (D-230, D-239; el detalle, en [UNO-AL-DIA.md](UNO-AL-DIA.md)).
+- **Las dos tarjetas de media fila** (`.fila-alta`, `.game-card.alta`) llevan el emoji de 40 px
+  a la izquierda del título, la bajada y las píldoras de ancho entero, y el título en color: La
+  Copa en dorado, Uno al día en celeste; los juegos van en blanco. Para que jugadores y duración
+  quepan en una línea, la píldora dice "👥 2–10" y "jugadores" queda solo para el lector de
+  pantalla (`.unidad`); la tarjeta ancha de un juego sí lo muestra (D-239).
 - **Se filtra por tipo o por favoritos, y por nada más.** Un tipo a la vez (`TIPOS`), que
   se prende y se apaga con un toque. Solo hay fichas de tipos que tienen algún juego que se
   puede abrir, así la lista nunca queda vacía. Cuántos juegan no se filtra: cada juego lo
