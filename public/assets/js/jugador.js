@@ -15,11 +15,17 @@
  *   torneoPodios/<código>           el podio de una copa terminada, para el medallero.
  *   jugadorCopas/<jid>/<código>     { p, at }: las copas en que está, como el jugador `p` de cada
  *                                   una (D-220). Solo la leen sus celulares.
+ *   unoAlDia/<jid>/<n>              { j, s, ms, at, w? }: el primer intento de Uno al día del día `n`
+ *                                   (días desde 1970, D-230). Se escribe una vez; `w` marca que ya
+ *                                   se sumó a la semana. La lee cualquiera (la racha de quien invita).
+ *   invitados/<jid>/<uid>           { d, at, j? }: el celular `uid` terminó su primer Uno al día el
+ *                                   día `d` con una invitación de `jid` (D-230): le da un comodín.
  */
 import { envOf, countryOf } from './transport/stats.js';
 import {
   claveNombre, limpiarNombre, esPin, esJid, nuevoJid, hashPinJugador, tablaId, normalizar, esMejor, semana,
   SIEMPRE, TODOTERRENO, todoterreno, vistaTabla, ordenar, VARIANTE_VICTORIAS, claveOrden, PARTIDAS, esPais,
+  UNO_AL_DIA, UAD_RACHA, periodoDia, MS_MAX,
 } from './records.js';
 
 /** Lo que entiende Firebase (y el almacén de prueba) como "la hora del servidor" y "sumar uno". */
@@ -326,6 +332,80 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
         return r ? { jid, ...r } : null;
       }))).filter(Boolean);
       return ordenar(filas);
+    },
+
+    /* -------------------------- Uno al día (D-230) -------------------------- */
+
+    /**
+     * Anota el primer intento de Uno al día del día `n` (número desde 1970): la historia, el ranking
+     * del día, la suma de la semana `semanaP` y, si mejoró, la mejor racha `mejor`. Cada paso es
+     * aparte y de mejor esfuerzo: si la historia ya estaba (otro celular), sigue con lo demás.
+     * Sin jugador, null.
+     */
+    async anotarDia({ n, j, s, ms, semanaP, mejor = 0 }) {
+      const yo = api.yo();
+      const r = normalizar({ s, ms });
+      if (!yo || !r || !Number.isInteger(n) || n < 10000 || n > 99999) return null;
+      const out = { historia: false, dia: false, semana: false, racha: false };
+      const h = `unoAlDia/${yo.jid}/${n}`;
+      try { await almacen.update({ [h]: { j, s: r.s, ms: r.ms, at: HORA } }); out.historia = true; } catch (e) {
+        if (e.code === 'permiso' && !(await almacen.get(h).catch(() => null))) { escribir(KEY, null); avisar(); throw falla('pin'); }
+      }
+      const hist = await almacen.get(h).catch(() => null);
+      if (!hist) return out;
+      const fila = x => ({ ...x, k: claveOrden(x.s, x.ms), at: HORA, ...quien(yo) });
+      try {
+        const p = periodoDia(n);
+        if (!(await almacen.get(`records/${UNO_AL_DIA}/${p}/${yo.jid}`))) {
+          await almacen.update({ [`records/${UNO_AL_DIA}/${p}/${yo.jid}`]: fila({ s: hist.s, ms: hist.ms }) }); out.dia = true;
+        }
+      } catch (_) { /* el ranking del día es aparte: la historia ya quedó */ }
+      try {
+        if (hist.s > 0 && !hist.w && semanaP) {
+          const antes = await almacen.get(`records/${UNO_AL_DIA}/${semanaP}/${yo.jid}`);
+          const suma = { s: (antes?.s || 0) + hist.s, ms: Math.min(MS_MAX, (antes?.ms || 0) + hist.ms) };
+          await almacen.update({ [`${h}/w`]: true, [`records/${UNO_AL_DIA}/${semanaP}/${yo.jid}`]: { ...fila(suma), u: String(n) } });
+          out.semana = true;
+        }
+      } catch (_) { /* la semana es aparte */ }
+      try {
+        const antes = await almacen.get(`records/${UAD_RACHA}/${SIEMPRE}/${yo.jid}`);
+        if (mejor > 0 && (!antes || mejor > antes.s)) {
+          await almacen.update({ [`records/${UAD_RACHA}/${SIEMPRE}/${yo.jid}`]: fila({ s: mejor, ms: 0 }) }); out.racha = true;
+        }
+      } catch (_) { /* la tabla de rachas es aparte */ }
+      return out;
+    },
+
+    /** La historia de Uno al día de un jugador (el propio, si no se dice): `{ n: { j, s, ms } }`. */
+    async historialDia(jid = api.yo()?.jid) {
+      return jid ? ((await almacen.get(`unoAlDia/${jid}`)) || {}) : {};
+    },
+
+    /** Lo público de un jugador, para la tarjeta de quien invita: `{ n, co }`, o null. */
+    async publico(jid) {
+      if (!esJid(jid)) return null;
+      const n = await almacen.get(`jugadores/${jid}/n`).catch(() => null);
+      return n ? { n, co: await almacen.get(`jugadores/${jid}/co`).catch(() => null) } : null;
+    },
+
+    /** Quienes aceptaron mis desafíos: `[{ d, j? }]`. Solo los lee el propio jugador. */
+    async invitados() {
+      const yo = api.yo();
+      if (!yo) return [];
+      return Object.values((await almacen.get(`invitados/${yo.jid}`).catch(() => null)) || {}).filter(x => Number.isInteger(x?.d));
+    },
+
+    /**
+     * Este celular terminó su primer Uno al día con una invitación de `jid` (el día `n`): le da un
+     * comodín a quien invitó. Una vez por celular; no vale invitarse a sí mismo.
+     */
+    async aceptarInvitacion(jid, n) {
+      if (!esJid(jid) || !Number.isInteger(n) || n < 20000 || n > 99999) return false;
+      const yo = api.yo();
+      if (yo?.jid === jid) return false;
+      const uid = await almacen.listo();
+      try { await almacen.update({ [`invitados/${jid}/${uid}`]: { d: n, at: HORA, ...(yo ? { j: yo.jid } : {}) } }); return true; } catch (_) { return false; }
     },
 
     /** Los podios de las copas terminadas: `{ código: { name, end, de, p } }`. */
