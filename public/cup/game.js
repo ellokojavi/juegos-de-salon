@@ -2244,7 +2244,8 @@ function resultadoPractica(id, semilla, r) {
   };
   if (cuentaRk) {
     // Plegado: los botones del final tienen que verse sin desplazar (C-8)
-    if (leerYo()) anotar(); else aviso.append(bloqueJugador({ alTocar: () => SFX.tap() }));
+    // En Uno al día, entrar ya lo ofrece su tarjeta (con la racha): no se ofrece dos veces
+    if (leerYo()) anotar(); else if (!hoy) aviso.append(bloqueJugador({ alTocar: () => SFX.tap() }));
     jugador().then(Jg => { const off = Jg.escuchar(() => { if (S.pantalla !== 'resultado') { off(); return; } anotar(); }); }).catch(() => {});
   }
   trackFinish({ detalle: `${r.s}/100${r.ms ? ` · ${mmss(r.ms)}` : ''}` });   // cómo salió, para el panel (D-210)

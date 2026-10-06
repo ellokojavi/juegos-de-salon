@@ -3864,8 +3864,9 @@ se corta y el de la semana) los activa el jugador y elige la hora. El detalle es
 **Por qué:** El dueño quiere audiencia que vuelva cada día y que use más juegos. La Copa ya
 demostró que "un juego por día" engancha, pero necesita un grupo y dura una semana. Uno al día
 no tiene ni lo uno ni lo otro.
-**Consecuencias:** Un período nuevo en los rankings (`dAAAA-MM-DD`), un historial por jugador con
-reglas de "una vez por fecha", y cada juego solitario acepta `?hoy` (la página calcula la fecha, el
+**Consecuencias:** Un período nuevo en los rankings (el diseño decía `dAAAA-MM-DD`; el PR 3 lo
+hizo `d<n>`, el número del día desde 1970, como `d20731`), un historial por jugador con
+reglas de "una vez por día", y cada juego solitario acepta `?hoy` (la página calcula la fecha, el
 juego y la semilla, así que el link no lleva la fecha ni deja elegir el tablero; el diseño decía
 `?dia=`, y el PR 1 lo cambió). Los avisos de "vuelve a jugar"
 siguen fuera (D-221): estos solo salen si el jugador los pidió, y se calman solos si no los usa.
@@ -3881,7 +3882,17 @@ Naval y Dudo desde el mazo del 12 de octubre (con 10 juegos, la espera vuelve a 
 salen de la semilla del día (`azarDel`). Son partidas locales, así que no adelantan secretos: en una
 sala se sigue tirando con el azar del navegador (D-70, C-10). Perdiendo en Batalla Naval cuentan las
 casillas acertadas, no los barcos hundidos como decía el diseño, topadas en 39 para que perder
-valga siempre menos que ganar.
+valga siempre menos que ganar. El PR 3 (v0.117.0) suma el jugador: la
+historia en `unoAlDia/<jid>/<n>`, los rankings `uno-al-dia/d<n>`, `uno-al-dia/s<semana>` y
+`uno-al-dia-racha/siempre`, los comodines (no se guardan: salen de recorrer la historia, uno cada 7
+días seguidos, tope 2) y las invitaciones (`today/?inv=<jid>`, `invitados/<jid>/<uid>`, un comodín
+para quien invitó). Las reglas exigen que el puntaje del día sea el de la historia y que la semana
+sume cada día una sola vez, pero **no pueden revisar** que el número del día sea el de hoy (no
+convierten texto en número para compararlo con la hora del servidor) ni la mejor racha, que calcula
+el celular: un tramposo podría inflar su racha o anotar otro día. Se acepta mientras esté en el
+laboratorio; si molesta, el workflow de los avisos puede recalcular las rachas desde la historia.
+Al entrar, los días viejos del celular suben solo a la historia, sin sus rankings.
+Detalle en "Lo que el PR 3 hizo" de [UNO-AL-DIA.md](UNO-AL-DIA.md).
 
 ## D-231 · El selector de idioma lleva las banderas siempre
 **Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** corrige la nota de `base.css` de D-191 (en un celular angosto se escondía la bandera)
