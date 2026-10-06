@@ -254,7 +254,8 @@ propia casilla, apagados hasta que el jugador diga que sí.
 - **Al terminar Uno al día por segunda vez**, en la tarjeta del resultado:
   "🔔 ¿Te avisamos cada día para jugar? Elige la hora." con tres botones de hora (la pregunta no
   dice "mañana", que chocaría con el botón **Mañana · 9:00**): **Mañana · 9:00**,
-  **Almuerzo · 13:00**, **Tarde · 19:00** (y "otra hora" en su página). Después, **Ahora no**.
+  **Almuerzo · 13:00**, **Tarde · 19:00**. Después, **Ahora no**. (El diseño sumaba "otra hora" en su página; el PR 4
+  dejó las mismas tres horas en la hoja de la campana.)
 - **Siempre**, desde la campana de su página.
 - El camino según el celular es el de La Copa (`push.js`): directo en Android y en la app instalada,
   la hoja de "Agrega la app a tu inicio" en Safari del iPhone y "Ábrela en Safari" dentro de
@@ -269,14 +270,14 @@ propia casilla, apagados hasta que el jugador diga que sí.
 |---|---|---|
 | **Tu juego de hoy** | A la hora elegida, si no ha jugado | "📅 Uno al día n.° 13 ya está. 🔥 Racha: 6 días." (sin racha, solo la primera frase) |
 | **Se corta la racha** | 21:00 del jugador, si no ha jugado y tiene racha de 2 o más | Sin comodines: "🔥 Tu racha de 6 días se corta a medianoche. Te quedan 3 horas." Con comodines no se corta, así que no se dice que se corta: "🧊 Si no juegas hoy, gastas un comodín para salvar tu racha de 6 días. Te quedan 3 horas." |
-| **Tu semana** | Lunes, a la hora elegida (casilla aparte, encendida por defecto) | "📊 Tu semana: jugaste 6 de 7 días y quedaste 14.° de 230. Donde más mejoraste: Reinas." (sin "Semana 40": el número de la semana no lo lleva nadie en la cabeza. El puesto, solo con jugador.) |
+| **Tu semana** | Lunes, a la hora elegida (casilla aparte, encendida por defecto) | "📊 Tu semana: jugaste 6 de 7 días y quedaste 14.° de 230. Donde más mejoraste: Reinas." (sin "Semana 40": el número de la semana no lo lleva nadie en la cabeza. El puesto, solo con jugador.) El PR 4 dice solo cuántos días jugó: "📊 Tu semana: jugaste 6 de 7 días." |
 
 - **El aviso no dice qué juego toca**: la sorpresa queda para el dado, y la curiosidad es un motivo
   más para tocarlo.
-- **A lo más 2 al día**, y de noche nunca (22:00 a 8:00), como los de La Copa. Si el mismo celular
-  tiene un día de copa pendiente, va primero el de la copa y Uno al día se suma en una línea:
-  "…y tu Uno al día también te espera".
-- **Se calman solos:** si en 14 días no toca ningún aviso ni juega, el diario pasa a día por medio. Si
+- **A lo más 2 al día**, y de noche nunca (22:00 a 8:00), como los de La Copa. El diseño juntaba
+  los dos cuando el celular tenía un día de copa pendiente ("…y tu Uno al día también te espera");
+  el PR 4 no los junta: cada uno lleva su propio tope de 2.
+- **Se calman solos:** si pasan 14 días sin jugar, el diario pasa a día por medio. Si
   pasan 30 días sin jugar, llega uno último ("🔥 Tu mejor racha fue de 14 días. Uno al día te
   espera cuando quieras.") y se apagan. Así no terminan bloqueando también los de La Copa.
 - La hoja de la campana: tres interruptores (el diario, el de la racha y el de la semana), la
@@ -331,10 +332,11 @@ es el mismo juego, con un tablero que nadie conocía. Los intentos repetidos son
 ningún ranking, porque el tablero ya es conocido: es la misma regla de D-212, que deja fuera la
 semilla elegida en el link. Todos los intentos se cuentan en `partidas` (D-219).
 
-**Avisos:** `pushDia/<subId>` = `{ hora, racha, semana, ultimo, at }`, al lado de `push/<subId>`
-(que ya trae idioma y zona horaria) y nadie lo lee. `ultimo` (la última fecha jugada) lo escribe
-el celular al terminar, así que el aviso sabe si ya jugó aunque no tenga jugador.
-`tools/push/calendario.mjs` suma los tres avisos nuevos a su vuelta de cada 15 minutos.
+**Avisos:** `pushDia/<subId>` = `{ h, d, r, w, u, c, k, m, sp, sn, at }`, al lado de `push/<subId>`
+(que ya trae idioma y zona horaria), y nadie lo lee. El último día jugado (`u`) y la racha los
+escribe el celular al terminar, así que el aviso sabe si ya jugó aunque no tenga jugador.
+`tools/push/uno-al-dia.mjs` decide los avisos dentro de la vuelta de `avisar.mjs`, cada 15 minutos
+(detalle en "Lo que el PR 4 hizo").
 
 ## Qué se mide (panel, D-44)
 
@@ -348,7 +350,10 @@ el celular al terminar, así que el aviso sabe si ya jugó aunque no tenga jugad
   Uno al día y cuántos vuelven al día siguiente. Cuántos jugadores nuevos trae cada invitación es
   la cifra del crecimiento.
 - **Tráfico a otros juegos**: cuántos tocan **🎲 Jugar otro** y qué juegan.
-- **Avisos**: se ofrecieron → eligió hora → permiso → avisos tocados, y cuántos se silencian.
+- **Avisos**: se ofrecieron → eligió hora → permiso → avisos tocados, y cuántos se silencian. Desde
+  el PR 4, el bloque "🔔 Avisos al celular" del panel cuenta los mandados de cada tipo (`uad-dia`,
+  `uad-racha`, `uad-semana`, `uad-adios`); el embudo de la oferta y los silenciados no se miden
+  todavía.
 
 ## Por partes
 
@@ -491,6 +496,18 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   aviso del día también lo pone (`sw.js`).
 - **Agregar al calendario**: un `.ics` armado en el celular, con un evento diario a la hora elegida
   (o 9:00) y el link `today/?de=cal`.
+- **Las reglas de la vuelta:** nunca de 22:00 a 8:00 del celular, a lo más 2 al día por celular
+  (contados en `pushEnviadosDia`, aparte de los de La Copa); el de la racha sale desde las 21:00 si
+  la racha es de 2 o más y no ha jugado, y va primero; el de la semana, los lunes desde su hora si
+  jugó la semana anterior; el del día, desde su hora si no ha jugado, día por medio después de 14
+  días sin jugar. A los 30 días sin jugar llega el de despedida (`adios`, con su mejor racha) y se
+  borran `pushDia/<subId>` y lo mandado. Si la suscripción muere o desaparece, `pushDia` se borra
+  con ella. Los avisos no van con `--prueba <código>` (esa es la de una copa).
+- **En el panel:** cada aviso abre `today/?aviso=uad-<tipo>` (`uad-dia`, `uad-racha`, `uad-semana`,
+  `uad-adios`), para que no se junte con el `dia` de La Copa, y `avisar.mjs` suma los entregados en
+  `mandados/uad-<tipo>`: salen como filas propias en el bloque "🔔 Avisos al celular" (D-233). Los
+  tocados todavía no: la página no cuenta un `aviso` que no esté en `TIPOS_AVISO` (`stats.js`), y
+  las reglas de `aviso/<tipo>` no aceptan el guion.
 - Se prueba con `tools/push/uno-al-dia.test.mjs`, el caso nuevo de `avisar.test.mjs`,
   `uno-al-dia-avisos.test.mjs` y `tools/e2e/uno-al-dia-avisos.mjs` (con un servicio de avisos falso).
 
