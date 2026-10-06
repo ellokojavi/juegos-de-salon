@@ -51,13 +51,11 @@
       ],
       "estado": "entregado al dueño; sin publicar en YouTube todavía. v6 registrada como pendiente (ver README), sin empezar hasta que el dueño la pida",
       "revision": {
-        "fecha": "2026-10-04",
-        "app": "0.95.0",
+        "fecha": "2026-10-06",
+        "app": "0.121.0",
         "al_dia": false,
         "pendiente": [
-          "Falta 🧶 Desenredo, que salió del laboratorio en 0.89.0: no está ni entre los ocho juegos ni en la grilla de ¡Y muchos más!",
-          "Las capturas son de la app 0.82.x: Tango todavía sin el candado chico en las casillas dadas (0.87.1), y antes de los textos más cortos de 0.84.0 (D-177)",
-          "Los idiomas dicen tres (🇪🇸 Español · 🇬🇧 English · 🇧🇷 Português, en la escena de modos y en el cierre): desde 0.94.0 (D-197) la portada ofrece también el alemán (DE)"
+          "No muestra 📅 Uno al día ni el globo de agregar a inicio, que salen en la portada para todos desde el PR #234 (dilema #235)"
         ]
       }
     }
