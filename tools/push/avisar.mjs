@@ -10,6 +10,7 @@
  * Entra a la base como administrador (la llave de la cuenta de servicio, D-122) y lee quién quiere
  * avisos (`pushCopa`), las suscripciones (`push`) y lo ya mandado (`pushEnviados`). Qué toca lo
  * decide calendario.mjs; cómo se manda, webpush.mjs. Después:
+ * - junta en un aviso los días nuevos de varias copas para un mismo celular (D-229);
  * - anota cada aviso entregado en `pushEnviados/<código>/<subId>/<clave>`, para no repetirlo;
  * - borra las suscripciones que el servicio dio por muertas (404 o 410) y sus copas;
  * - limpia lo de las copas que terminaron hace más de una semana o que ya no existen.
@@ -19,7 +20,7 @@
  */
 import { firebaseConfig } from '../../public/assets/js/firebase-config.js';
 import { VAPID_PUBLICA } from '../../public/assets/js/vapid.js';
-import { avisosDeCopa, avisosDePrueba } from './calendario.mjs';
+import { avisosDeCopa, avisosDePrueba, juntar } from './calendario.mjs';
 import { mandar } from './webpush.mjs';
 
 const SEMANA = 7 * 24 * 3600e3;
@@ -33,6 +34,7 @@ export async function vuelta({ db, envio, now = Date.now(), simular = false, pru
   const resumen = { copas: 0, avisos: 0, entregados: 0, muertas: 0, fallas: 0, limpiadas: 0 };
   const cambios = {};
   const muertas = new Set();
+  const todos = [], nombres = {};
   for (const [code, quiere] of Object.entries(quiereTodo || {})) {
     if (prueba && code !== prueba) continue;
     const copa = await db.leer(`torneos/${code}`);
@@ -44,23 +46,24 @@ export async function vuelta({ db, envio, now = Date.now(), simular = false, pru
       continue;
     }
     resumen.copas++;
-    const pendientes = prueba ? avisosDePrueba({ code, copa, quiere, subs: subs || {} }) : avisosDeCopa({ code, copa, quiere, subs: subs || {}, enviados: enviadosTodo?.[code] || {}, now });
-    for (const p of pendientes) {
-      resumen.avisos++;
-      log(`${simular ? '· mandaría' : '→'} ${code} ${p.pid} ${p.subId.slice(0, 8)} [${p.claves.join(',')}] ${p.aviso.body}`);
-      if (simular) continue;
-      let r;
-      try { r = await envio(subs[p.subId], p.aviso); } catch (e) { r = { estado: 0, texto: String(e?.message || e) }; }
-      if (r.estado >= 200 && r.estado < 300) {
-        resumen.entregados++;
-        for (const c of p.claves) cambios[`pushEnviados/${code}/${p.subId}/${c}`] = now;
-      } else if (r.muerta) {
-        resumen.muertas++;
-        muertas.add(p.subId);
-      } else {
-        resumen.fallas++;
-        log(`  ✗ ${r.estado} ${r.texto || ''}`);
-      }
+    nombres[code] = copa.meta.name;
+    todos.push(...(prueba ? avisosDePrueba({ code, copa, quiere, subs: subs || {} }) : avisosDeCopa({ code, copa, quiere, subs: subs || {}, enviados: enviadosTodo?.[code] || {}, now })));
+  }
+  for (const p of juntar(todos, subs || {}, nombres)) {
+    resumen.avisos++;
+    log(`${simular ? '· mandaría' : '→'} ${p.code} ${p.pid} ${p.subId.slice(0, 8)} [${p.claves.join(',')}] ${p.aviso.body}`);
+    if (simular) continue;
+    let r;
+    try { r = await envio(subs[p.subId], p.aviso); } catch (e) { r = { estado: 0, texto: String(e?.message || e) }; }
+    if (r.estado >= 200 && r.estado < 300) {
+      resumen.entregados++;
+      for (const { code, claves } of p.porCopa) for (const c of claves) cambios[`pushEnviados/${code}/${p.subId}/${c}`] = now;
+    } else if (r.muerta) {
+      resumen.muertas++;
+      muertas.add(p.subId);
+    } else {
+      resumen.fallas++;
+      log(`  ✗ ${r.estado} ${r.texto || ''}`);
     }
   }
   // Una suscripción muerta se borra, con todas las copas que la usaban
