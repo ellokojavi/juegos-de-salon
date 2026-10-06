@@ -51,6 +51,7 @@ Los IDs no se reusan: un requerimiento que cambia conserva su ID y su texto se a
 | RP-41 | Cada copa, sala y partida sin red dice en qué idioma se jugó (el elegido en la app, por jugador en una sala), con una etiqueta en el panel y un desglose por idioma en La Copa y en la ficha de cada juego (D-211). | ✅ v0.99.3 |
 | RP-42 | Rankings con identidad sin cuenta: nombre y PIN de 4 dígitos, opcionales y válidos en cualquier celular. Récord por juego de la semana y de siempre, amigos de La Copa, la pestaña "Copa", Todoterreno y medallero de campeones de La Copa, en la antesala de cada juego, en la portada de La Copa y en `/records/`. Parte en el laboratorio (D-212). | ✅ v0.100.0 (en el laboratorio); para todos desde v0.102.0 |
 | RP-43 | Cada juego tiene su ranking: los de grupo, sus victorias (semana, siempre y amigos) en su intro; Toque y Fama solo y Línea Relámpago (por temática), su récord de 0 a 100 en su antesala. Todo también en `/records/` (D-215). | ✅ v0.101.0 (en el laboratorio); para todos desde v0.102.0 |
+| RP-44 | **Uno al día**: un juego por día, el mismo desafío para todos, que sale de la fecha y cambia a la medianoche de cada jugador, con el dado de Juego al azar. Racha con comodines, calendario y progreso por juego, en el celular y, con jugador, en Firebase; ranking del día, de la semana y de rachas; invitar a un amigo; avisos que pide el jugador a la hora que elige. Diseño en [UNO-AL-DIA.md](UNO-AL-DIA.md) (D-230). | ⏳ pendiente (diseño aprobado) |
 
 ## Cuarto Rey (CR)
 
@@ -134,7 +135,7 @@ Los IDs no se reusan: un requerimiento que cambia conserva su ID y su texto se a
 | LIG-30 | Verificación cruzada: cada celular recalcula los puntajes ajenos desde las jugadas. | ⏳ pendiente |
 | LIG-31 | Papelera: borrar copas una semana después de terminadas. | ⏳ pendiente |
 | LIG-32 | Inglés y portugués, con contenido propio por idioma (D-98, D-170). | ✅ D-170 |
-| LIG-33 | Avisos automáticos por WhatsApp, correo o push (D-99). | ⏳ pendiente: push en curso, en cuatro PR (D-221, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md)); el PR 1 (instalable) entró en v0.105.0, el 2 (suscribirse, D-223) en v0.107.0 y el 3 (mandar, D-224) en v0.108.0, los dos en el laboratorio; la clave VAPID, en v0.108.1 (D-225), y la campana en la app instalada del iPhone, en v0.109.1 (D-227) |
+| LIG-33 | Avisos automáticos por WhatsApp, correo o push (D-99). | ✅ v0.110.0: avisos al celular (push), abiertos a todos (D-228). Plan en [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) (D-221): instalable en v0.105.0, suscribirse en v0.107.0 (D-223), mandar en v0.108.0 (D-224), la clave en v0.108.1 (D-225) y la campana en la app del iPhone en v0.109.1 (D-227). Falta medir (PR 4); WhatsApp y correo, no |
 | LIG-34 | Calendario elegido por el admin al crear la copa: qué juegos y en qué orden, a partir de una propuesta al azar; la final no cambia (D-163). | ✅ v0.75.0 |
 | LIG-35 | Pantalla de espera antes del día 1: cuándo parte, calendario e inscritos. | ✅ v0.42 |
 | LIG-36 | "Cómo se juega" antes de cada juego y de cada ronda de la final; el intento empieza en Empezar. | ✅ v0.42 |

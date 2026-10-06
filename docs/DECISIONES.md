@@ -56,6 +56,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213 |
+| Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230 |
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97 |
 | Memoria de partida | C-6 | D-25, D-150 |
@@ -68,9 +69,9 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216 |
 | La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220 |
 | Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218 |
-| Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220 |
+| Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230 |
 | Marketing | `marketing/README.md` | D-178 |
-| App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227 |
+| App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230 |
 
 ---
 
@@ -3609,7 +3610,7 @@ enlazadas antes de esto entran a la lista la próxima vez que se abren con el ju
 no lo hay, al heredado de su nombre (también las del laboratorio).
 
 ## D-221 · La app se instala de verdad, y La Copa avisará al celular a quien lo pida
-**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** corrige D-99, completa RP-11
+**Fecha:** 2026-10-05 · **Estado:** corregida por D-230 · **Relación:** corrige D-99, completa RP-11
 **Decisión:** Juegos de Salón pasa a ser una app instalable completa (PWA) y tendrá avisos al
 celular (Web Push) para La Copa, solo para quien los active. El plan, la experiencia del jugador y
 la arquitectura están en [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md). Va en cuatro PR; este
@@ -3692,7 +3693,7 @@ mismo celular, el celular la anula y pide otra, que sí puede guardar. `tools/e2
 prueba en iPhone queda como lista de pasos en PWA-NOTIFICACIONES.md.
 
 ## D-224 · Los avisos de La Copa los manda GitHub cada 15 minutos, sin dependencias
-**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** completa D-221 y D-223; corrige las consecuencias de D-223
+**Fecha:** 2026-10-05 · **Estado:** corregida por D-228, D-229 · **Relación:** completa D-221 y D-223; corrige las consecuencias de D-223
 **Decisión:** El PR 3 del plan de avisos ([PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md)): el
 workflow `.github/workflows/avisos.yml` corre `tools/push/avisar.mjs` cuatro veces por hora.
 - **Qué toca** lo decide `tools/push/calendario.mjs` con la lógica de la copa (`cup/engine.js`):
@@ -3718,7 +3719,7 @@ workflow `.github/workflows/avisos.yml` corre `tools/push/avisar.mjs` cuatro vec
   (lo carga `node tools/push/vapid.mjs`, D-223). Sin ellos, avisa y termina en verde.
 - **Siguen en el laboratorio** (`AVISOS_EN_LABS = true`): se abren a todos con un cambio de una
   línea cuando el dueño confirme, con `--prueba`, que un aviso de verdad llega a su Android y a su
-  iPhone.
+  iPhone. (Corregida por D-228: llegó a los dos y se abrieron.)
 **Por qué:** Lo pidió el dueño ("pasa a fase 3"). GitHub Actions ya tiene la llave de la base y no
 cuesta nada; su atraso de minutos no importa porque cada aviso vale por una ventana de horas, no
 por un minuto. Sin el SDK de Firebase Cloud Messaging ni una librería de Web Push no hay
@@ -3801,8 +3802,52 @@ dentro de la app instalada.
 Son pocos y es justo lo que se quiere probar. `push.test.mjs` y `tools/e2e/cup/avisos.mjs` lo
 prueban.
 
+## D-228 · Los avisos de La Copa se abren a todos
+**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** corrige las consecuencias de D-224; cierra la etapa de laboratorio de D-223
+**Decisión:** `AVISOS_EN_LABS = false` en `push.js`: la campana de avisos sale en todas las copas,
+en cualquier celular que pueda recibirlos, sin activarla antes en `/labs/`. Se quita la sección
+"🔔 Avisos de La Copa" del laboratorio. La puerta queda en el código: `true` los vuelve a cerrar,
+y entonces valen otra vez `/labs/` (con `activarAvisos`) y la app instalada del iPhone (D-227).
+**Por qué:** El dueño hizo la prueba real el 2026-10-05: con la clave puesta (D-225), *Run
+workflow* con **prueba** en su copa mandó "Así se verán los avisos de esta copa." y llegó a su
+Android (Chrome, sin instalar) y a su iPhone (la app agregada a inicio, D-227). Era la condición
+de D-224 para abrirlos.
+**Consecuencias:** Desde ahora cualquier inscrito puede pedir avisos, y el workflow `avisos.yml`
+los manda cada 15 minutos sin que nadie mire. Lo que falta medir (cuántos los activan, cuántos se
+tocan) es el PR 4 de [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md). `tools/e2e/cup/avisos.mjs` no
+cambia: en el sitio local los avisos ya se veían sin el laboratorio.
+
+## D-229 · Los avisos: tope de 2 al día, empates en plural, el día exacto, botones y copas juntas
+**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** corrige D-224 (sin tope, un ganador, abría el tablero, sin botones ni copas juntas)
+**Decisión:** Lo que D-224 dejó afuera del plan de [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md),
+en `tools/push/calendario.mjs`, `avisar.mjs`, `public/sw.js` y la copa:
+- **Tope:** a lo más **2 avisos por copa y celular en un día** de quien recibe (`TOPE`). Cuenta
+  entregas, no claves: el aviso de dos inscritos es uno. Si se vencen dos plazos a la vez (la final
+  y el día anterior, la noche del último día), van en un aviso: "Te quedan 4 horas para jugar los
+  días 6 y 7. Si no los juegas, son 0 puntos."
+- **Empate en el primer lugar** (mismos puntos, días ganados y final, como la tabla): "🥇 Ganaron
+  Ana y Beto. Quedaste 3.º"; a quien empató arriba, "🥇 ¡Ganaste la copa junto con Beto!".
+  Las listas de nombres van con `Intl.ListFormat` en el idioma de quien recibe ("Ana y Beto",
+  "Ana e Beto"), también en el de la inscripción.
+- **El día exacto:** el del día, el plazo y la final abren la copa con `&dia=<d>`, y la copa parte
+  en ese día, listo para empezar, si todavía se puede jugar; si no, el tablero. El del cierre abre
+  el tablero, que ya muestra el podio.
+- **Botones en Android:** esos avisos traen **Jugar** (el día) y **Silenciar esta copa**, que abre
+  la copa con `&silenciar`: la silencia como el botón de los ajustes y lo dice. El service worker no
+  escribe en la base: lo hace la copa, con el jugador ya sentado. iPhone no muestra botones.
+- **Copas juntas:** si a un celular le toca el día nuevo de varias copas en la misma vuelta, va un
+  solo aviso ("🎲 Tienes un día nuevo en 2 copas: Los Primos y La Oficina.") que abre la portada
+  de La Copa, y se anota en cada copa. Plazos, final y cierre siguen siendo de cada copa.
+**Por qué:** El dueño lo pidió después de ver llegar los avisos a su Android y su iPhone ("ejecuta
+las 3 pendientes"). El tope y los plazos juntos evitan el aviso de más que hace que alguien los
+apague; el día exacto y los botones ahorran toques; el empate no deja a un ganador afuera.
+**Consecuencias:** `calendario.test.mjs` y `avisar.test.mjs` prueban el tope, los plazos juntos, el
+empate y las copas juntas; `tools/e2e/cup/avisos.mjs`, `&dia=` y `&silenciar`. Los botones se
+prueban a mano en Android: Chrome headless no los muestra. Si con el tope se pierde un plazo (dos
+avisos ya ese día), el del día siguiente o el de gracia lo cubren.
+
 ## D-230 · Uno al día: un juego por día, el mismo para todos, con racha y avisos que pide el jugador
-**Fecha:** 2026-10-05 · **Estado:** vigente (aprobada por el dueño, falta construirla) · **Relación:** amplía D-188 (Juego al azar), D-212 (rankings) y D-221 (avisos: suma avisos que el jugador pide a propósito)
+**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** amplía D-188 (el dado de Juego al azar abre el juego del día) y D-212 (un período nuevo, el del día, y la tabla de rachas); corrige D-221 (los avisos ya no son solo de La Copa: suma los que el jugador pide para Uno al día); completa RP-44
 **Decisión:** Una modalidad nueva en la portada, junto a Juego al azar. Cada día, a la medianoche
 del jugador, sale un juego con su contenido, el mismo para todos, a partir de la fecha
 (`uno-al-dia:<fecha>`, como las semillas de La Copa, D-97). Entran todos los juegos que tienen modo
@@ -3820,3 +3865,5 @@ no tiene ni lo uno ni lo otro.
 **Consecuencias:** Un período nuevo en los rankings (`dAAAA-MM-DD`), un historial por jugador con
 reglas de "una vez por fecha", y cada juego solitario acepta `?dia=`. Los avisos de "vuelve a jugar"
 siguen fuera (D-221): estos solo salen si el jugador los pidió, y se calman solos si no los usa.
+Es un diseño aprobado que falta construir: va en cinco PR, los cuatro primeros detrás del
+laboratorio (`UNO_AL_DIA_EN_LABS`), según "Por partes" de [UNO-AL-DIA.md](UNO-AL-DIA.md).

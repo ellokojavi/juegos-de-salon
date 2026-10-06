@@ -202,4 +202,7 @@ prueba, la clave VAPID de `vapid.js` (D-225) y un servicio de avisos falso (nada
 "Ahora no", la campana que activa los avisos y el aviso de confirmación, los ajustes y "Silenciar
 esta copa", los avisos bloqueados, y el camino de iPhone (agregar a inicio, dentro de Instagram, y
 los pasos que dan el código de la copa, porque iOS abre la app en la portada, D-227, y la app
-instalada que abre con el nombre ya elegido si la dirección lleva `&app=`). Deja capturas de cada hoja.
+instalada que abre con el nombre ya elegido si la dirección lleva `&app=`). También lo que abre un
+aviso (D-229): `&dia=<d>` parte en ese día listo para empezar (o en el tablero, si no se puede
+jugar) y `&silenciar` silencia la copa. Los botones del aviso en Android se prueban a mano: Chrome
+headless no los muestra. Deja capturas de cada hoja.
