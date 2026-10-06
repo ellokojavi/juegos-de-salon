@@ -460,9 +460,9 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   igual sin jugador. Cada 7 días jugados seguidos se gana uno; un día sin jugar gasta uno o corta la
   racha; tope 2. Los días salvados van con 🧊 en el calendario, y la tarjeta del resultado dice
   cuándo se usó o se ganó uno.
-- **Entrar con el jugador** sube el de hoy (si se jugó antes de entrar) y trae la historia de
-  otros celulares. Los días viejos del celular no se suben: las reglas aceptan solo escrituras
-  frescas, así que quedan en el celular y se juntan al mostrar.
+- **Entrar con el jugador** sube el de hoy (si se jugó antes de entrar), con sus rankings, y los
+  días viejos del celular solo a la historia (sus rankings del día y de la semana ya pasaron): así la
+  racha sigue en otro celular. También trae la historia de otros celulares.
 - **Invitar:** el link es `today/?inv=<jid>` si quien invita tiene jugador (sin jugador, `today/`
   y la tarjeta le ofrece entrar para ganar el comodín). El amigo ve "🔥 Sara te desafía" con su dato
   de hoy y, al terminar su primer Uno al día, su celular escribe `invitados/<jid>/<uid>` (una vez por

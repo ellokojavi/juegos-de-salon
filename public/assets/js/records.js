@@ -80,8 +80,8 @@ export const bandera = co => (esPais(co) ? String.fromCodePoint(...[...co].map(c
 export const SIEMPRE = 'siempre';
 /**
  * Los períodos: siempre, una semana (`s2026-41`) o, para Uno al día (D-230), un día: `d` y el
- * número del día desde el 1 de enero de 1970 (`d20731`, el 5 de octubre de 2026). Va como número y
- * no como fecha porque las reglas lo comparan con la hora del servidor.
+ * número del día desde el 1 de enero de 1970 (`d20731`, el 5 de octubre de 2026): así la clave del
+ * ranking del día es la misma que la de la historia (`unoAlDia/<jid>/<n>`), que las reglas cruzan.
  */
 export const PERIODO = /^(siempre|s[0-9]{4}-[0-9]{2}|d[0-9]{5})$/;
 /** Las tablas de Uno al día (D-230): el puntaje del día y la suma de la semana, y la mejor racha. */
