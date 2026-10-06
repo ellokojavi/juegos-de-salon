@@ -26,7 +26,7 @@ const BN_FALLA = rol => `(()=>{const S=window.__bn.session(),L=S.layouts['${rol 
 /* --- La Copa: "Tus copas" sembrada en el almacén de prueba, y la portada con `?prueba` (D-234) --- */
 const MIAS_SEMBRAR = `const D=864e5, ahora=Date.now(); sessionStorage.setItem('juegos-de-salon:copa:prueba:mias', JSON.stringify([
   {code:'FGHIJ',nombre:'Javiera',copa:'Los primos de Valparaíso, edición invierno',fin:ahora-2*D},
-  {code:'ABCDE',nombre:'Javiera',copa:'Copa de la oficina',fin:ahora + 3 * D},
+  {code:'ABCDE',nombre:'Javiera',copa:'Piratotes 1983',fin:ahora + 3 * D},
   {code:'KLMNO',nombre:'Javi',copa:'Copa del finde',fin:ahora-5*D}])); location.href='/cup/?prueba'`;
 
 /* --- Tango: empezar y llenar el tablero con el motor de verdad (ver su entrada) --- */
