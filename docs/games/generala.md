@@ -1,8 +1,8 @@
 # Diseño: Generala 📝
 
-**Ruta:** `/generala/` (id `generala`) · **Jugadores:** 1 a 6 · **Estado:** listo para publicar ·
+**Ruta:** `/generala/` (id `generala`) · **Jugadores:** 1 a 6 · **Estado:** en la portada como "Próximamente" (D-248) ·
 **Idiomas:** es, en ("Generala"), pt ("General", como se le dice en Brasil) y de ("Generala") ·
-**Decisiones:** D-246 (el juego), D-247 (Uno al día)
+**Decisiones:** D-246 (el juego), D-247 (Uno al día), D-248 (próximamente)
 
 ## Resumen
 
@@ -16,8 +16,11 @@ dados de ahora, no deja anotar dos veces en el mismo lugar ni tirar una cuarta v
 planilla de todos.
 
 Es el primer juego de grupo de la app que se puede jugar **sin coincidir**: cada uno llena su propia
-planilla y nadie depende de la jugada del otro. Por eso entra a Uno al día, donde todos tiran los
-mismos dados (D-247).
+planilla y nadie depende de la jugada del otro. Por eso está listo para Uno al día, donde todos
+tiran los mismos dados (D-247).
+
+**Por ahora se anuncia:** la portada lo muestra como "Próximamente", sin abrirlo, igual que
+Julepe; la página `/generala/` funciona entera para quien tenga el link (D-248).
 
 ## Reglas
 
@@ -86,8 +89,9 @@ solitarios de La Copa (D-97).
 
 Puntaje del día (`puntajeDia` de `engine.js`): un tercio del total, hasta 100 (300 puntos ya es una
 partida excelente; el máximo es 360). El primer intento cuenta; los siguientes son práctica. No hay
-"Otra partida": la tarjeta de Uno al día ofrece jugar otro o repetir el de hoy. Entra el 23 de
-octubre de 2026, el primer día del tercer mazo, para no cambiar los días del segundo (D-247).
+"Otra partida": la tarjeta de Uno al día ofrece jugar otro o repetir el de hoy. **Todavía no está en el mazo:**
+entra cuando Generala salga de próximamente, el primer día de un mazo que no haya empezado (D-247,
+D-248).
 
 ## Flujo
 

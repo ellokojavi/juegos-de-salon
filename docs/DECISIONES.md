@@ -4226,7 +4226,7 @@ planilla), y reusa los dados de Dudo.
 `generala_victorias` (D-215). Ver [docs/games/generala.md](games/generala.md).
 
 ## D-247 · Generala en Uno al día, desde el tercer mazo y con los dados de la semilla
-**Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** amplía D-230
+**Fecha:** 2026-10-06 · **Estado:** corregida por D-248 · **Relación:** amplía D-230
 **Decisión:** Generala entra al mazo de Uno al día el **23 de octubre de 2026**, el primer día del
 tercer mazo. Con `?hoy` abre jugar solo y **sus dados salen de la semilla del día**:
 `azarDel(semilla, 'generala:<turno>:<tiro>')`, consumido en orden de posición, así quien guarda lo
@@ -4241,3 +4241,18 @@ de La Copa (D-97). Un tercio del total, porque 300 ya es una partida excelente y
 puntaje por el total crudo (Uno al día compara de 0 a 100 entre juegos).
 **Consecuencias:** desde el tercer mazo hay 11 juegos. Si el PR se fusionara después del 23, hay que
 mover `DESDE_GENERALA` al primer día del mazo siguiente.
+
+## D-248 · Generala se anuncia como "Próximamente" antes de abrirse
+**Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** corrige D-247 (cuándo entra a Uno al día)
+**Decisión:** Generala se publica con `available: false`: la portada la muestra como las de Julepe,
+con "Próximamente" junto al nombre, sin abrirla, fuera del dado de Juego al azar y de los favoritos
+(C-17). La página `/generala/` funciona entera para quien tenga el link. **No entra todavía al mazo
+de Uno al día**: `JUEGOS_DIA` queda como estaba, y al abrirla se suma con un `desde` que sea el
+primer día de un mazo que no haya empezado (D-247). En la tabla del README, un juego fuera del menú
+que nunca se publicó dice "🔜 coming soon" y no "⏸ paused", que es para el que se sacó (Julepe).
+**Por qué:** lo pidió el dueño, para anunciar el juego antes de abrirlo (la imagen para compartir en
+alemán dice "bald auf juegosdesalon.cl"). Sumarlo a Uno al día con la fecha fija del 23 de octubre
+habría puesto en el mazo un juego que la portada todavía no ofrece.
+**Consecuencias:** abrirlo es cambiar `available` a `true` en `games.js`, sumarlo a `JUEGOS_DIA` y
+`GRUPO` con su fecha, y marcar GE-09 y GE-12 en REQUERIMIENTOS. El `?hoy` de `/generala/` ya está
+hecho y probado en `engine.test.mjs`.

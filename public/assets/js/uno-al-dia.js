@@ -25,13 +25,6 @@ export const LANZAMIENTO = '2026-10-06';
 export const DESDE_GRUPO = '2026-10-07';
 
 /**
- * El día en que entra Generala (D-247): el primero del tercer mazo. Un juego entra recién cuando se
- * baraja el mazo siguiente, así que con esta fecha el segundo mazo (del 13 al 22) no cambia aunque
- * el PR se fusione a mitad de camino.
- */
-export const DESDE_GENERALA = '2026-10-23';
-
-/**
  * Los juegos que pueden salir y la fecha desde la que entran. Los solitarios van con su id de La
  * Copa (`cup/games/`); los de grupo, con el de la portada (`games.js`), que es el de su página.
  * Un juego nuevo se agrega con una fecha de hoy en adelante, nunca del pasado: si no, cambiaría
@@ -48,10 +41,9 @@ export const JUEGOS_DIA = [
   { id: 'ahorcado', emoji: '🪢', desde: DESDE_GRUPO },
   { id: 'batalla-naval', emoji: '⚓', desde: DESDE_GRUPO },
   { id: 'dudo', emoji: '🎲', desde: DESDE_GRUPO },
-  { id: 'generala', emoji: '📝', desde: DESDE_GENERALA },
 ];
 /** Los de grupo: tienen su propio motor y su modo para uno (contra el celular o con su mazo). */
-export const GRUPO = ['ahorcado', 'batalla-naval', 'dudo', 'generala'];
+export const GRUPO = ['ahorcado', 'batalla-naval', 'dudo'];
 export const juegoDia = id => JUEGOS_DIA.find(j => j.id === id) || null;
 
 /**
