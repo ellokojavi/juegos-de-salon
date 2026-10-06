@@ -1,5 +1,5 @@
 {
-  "version": "0.121.0",
+  "version": "0.122.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -18,7 +18,7 @@
     "pt": 100,
     "de": 100
   },
-  "clavesComunes": 26,
+  "clavesComunes": 28,
   "juegos": [
     {
       "id": "copa",
@@ -719,6 +719,7 @@
     "public/assets/js/chat.js",
     "public/assets/js/compartir.js",
     "public/assets/js/dado3d.js",
+    "public/assets/js/favoritos.js",
     "public/assets/js/firebase-config.js",
     "public/assets/js/frases.js",
     "public/assets/js/games.js",
@@ -842,6 +843,7 @@
   "tests": [
     "public/assets/js/arrastre.test.mjs",
     "public/assets/js/compartir.test.mjs",
+    "public/assets/js/favoritos.test.mjs",
     "public/assets/js/games.test.mjs",
     "public/assets/js/i18n.test.mjs",
     "public/assets/js/instalable.test.mjs",
@@ -907,6 +909,7 @@
     "cup/idiomas.mjs",
     "cup/torneo.mjs",
     "enlace-invitacion.mjs",
+    "favoritos.mjs",
     "fourth-king/idiomas.mjs",
     "fourth-king/partida.mjs",
     "hangman/idiomas.mjs",

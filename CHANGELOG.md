@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.122.0 — 2026-10-06
+- **Juegos favoritos** (D-238): cada juego de la portada tiene una ☆ en la esquina. Al tocarla,
+  queda entre tus favoritos, y arriba de los tipos aparece **⭐ Favoritos**, que deja ver solo esos.
+  Se guardan en tu celular, sin cuenta. Lo pidió un amigo (#233).
+
 ## 0.121.0 — 2026-10-06
 - **Uno al día, para todos** (D-230): en la portada, al lado de **🎲 Al azar**, está **📅 Uno al
   día**: cada día un juego sorpresa, el mismo desafío para todos. Lleva tu racha, con comodines 🧊,
