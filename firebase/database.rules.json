@@ -271,9 +271,40 @@
                 ".validate": "newData.isNumber() && ((!data.exists() && newData.val() == 1) || newData.val() == data.val() + 1)"
               }
             },
+            "aviso": {
+              "$tipo": {
+                ".write": "$env.matches(/^[a-z]{2,10}$/) && $day.matches(/^[0-9]{5}$/) && $tipo.matches(/^[a-z]{1,12}$/)",
+                ".validate": "newData.isNumber() && ((!data.exists() && newData.val() == 1) || newData.val() == data.val() + 1)"
+              }
+            },
+            "pwa": {
+              "$so": {
+                ".write": "$env.matches(/^[a-z]{2,10}$/) && $day.matches(/^[0-9]{5}$/) && $so.matches(/^[a-z]{1,12}$/)",
+                ".validate": "newData.isNumber() && ((!data.exists() && newData.val() == 1) || newData.val() == data.val() + 1)"
+              }
+            },
+            "mandados": {
+              "$tipo": {
+                ".validate": "$tipo.matches(/^[a-z]{1,12}$/) && newData.isNumber() && newData.val() >= 0"
+              }
+            },
             "$other": {
               ".validate": false
             }
+          }
+        },
+        "push": {
+          "vuelta": {
+            ".validate": "newData.isNumber()"
+          },
+          "vivas": {
+            ".validate": "newData.isNumber() && newData.val() >= 0"
+          },
+          "torneos": {
+            ".validate": "newData.isNumber() && newData.val() >= 0"
+          },
+          "$other": {
+            ".validate": false
           }
         },
         "$other": {
