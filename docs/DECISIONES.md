@@ -2340,7 +2340,7 @@ no la del minijuego; y el 〰️ casi no se veía en la miniatura de WhatsApp ni
 con un filtro (deja de ser el emoji); poner el contorno en la caja del emoji (blanquea el fondo).
 
 ## D-165 · Todo lo que se comparte sigue un mismo estándar, con WhatsApp en mente
-**Fecha:** 2026-10-01 · **Estado:** corregida por D-171 y D-226 · **Relación:** ordena D-173, D-124, D-126 y D-141
+**Fecha:** 2026-10-01 · **Estado:** corregida por D-171, D-226 · **Relación:** ordena D-173, D-124, D-126 y D-141
 **Decisión:** Lo que la app comparte sale de un solo módulo, `assets/js/compartir.js`, con tres
 reglas:
 1. **El texto** abre con una cabecera — `{emoji} *{título}* · {contexto}` —, sigue con una idea
@@ -2364,7 +2364,7 @@ Cada cosa que se comparte, y con qué cabecera:
 | Tabla parcial | tablero **y** Administrar | `📊 *La Copa: X* · Tabla de posiciones · día 3 de 7` | la tabla (D-141) |
 | Tabla final | podio, Administrar, exportar | `🏁 *La Copa: X* · Tabla final` | la tabla final con galvanos |
 | Minijuego jugado solo | minijuego suelto, Toque y Fama y Línea de Tiempo solos | `🔢 *Toque y Fama* · Jugando solo` | **nueva**: el resultado |
-| La app | portada | (texto de siempre) | la tarjeta del link (desde D-226, como imagen) |
+| La app | portada | `🎲 *Juegos de Salón* · 15 juegos para el celular` (desde D-226) | la tarjeta de la portada, como imagen (D-226) |
 
 - **La tabla es una sola**, se comparta desde donde se comparta: el botón del gráfico, "Tabla
   parcial" y "Resumen final" de Administrar, el podio y exportar mandan la misma imagen con el
@@ -2716,7 +2716,7 @@ cruce por cercanía ya lo resuelve sin un gesto que rebota).
 Este número no se usó: se saltó al numerar. Queda vacío para que nadie lo llene ni lo dé por perdido.
 
 ## D-181 · Cada imagen de tarjeta guarda su huella, y una atrasada no se publica
-**Fecha:** 2026-10-02 · **Estado:** corregida por D-205 · **Relación:** amplía D-72; desde D-205 frena el check `pruebas`, no `set-version.py` (ya no hay `--igual`)
+**Fecha:** 2026-10-02 · **Estado:** corregida por D-205, D-226 · **Relación:** amplía D-72; desde D-205 frena el check `pruebas`, no `set-version.py` (ya no hay `--igual`); desde D-226, de los textos de la portada solo cuentan los que la tarjeta dibuja (`appTitle` y `appSub`)
 **Decisión:** `node tools/release/og.mjs imagenes` anota en `assets/og/huellas.json` la huella de cada
 imagen que hace: un hash del dibujo (`tools/og/tarjeta.html`) y de lo que la imagen dice (el emoji,
 el nombre, la bajada, los jugadores y la duración del juego en `games.js`, o los textos de la
@@ -3748,7 +3748,7 @@ nada. `push.test.mjs` y `tools/e2e/cup/avisos.mjs` la prueban (y que un link con
 pestaña no la active).
 
 ## D-226 · Compartir la app lleva su tarjeta como imagen, en el idioma en que se mira
-**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** cambia la regla 3 de D-165 para la app; usa D-72, D-74 y D-171
+**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** cambia la regla 3 de D-165 para la app y la huella de la tarjeta de la portada de D-181; usa D-72, D-74 y D-171
 **Decisión:** El 📤 de la portada manda **la tarjeta social de la portada** (`assets/og/menu.jpg`,
 `menu-en.jpg`, `menu-pt.jpg`, `menu-de.jpg`, D-72) **como imagen**, la del idioma en que se mira,
 junto con un texto con el estándar de D-165: la cabecera con cuántos juegos hay
