@@ -70,7 +70,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220 |
 | Marketing | `marketing/README.md` | D-178 |
-| App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225 |
+| App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227 |
 
 ---
 
@@ -3658,7 +3658,7 @@ largo se corta bajo el ícono ("Juegos de Sa…"). `instalable.test.mjs` exige q
 con `COMMON` de `i18n.js`, y `tools/e2e/instalable.mjs` revisa el nombre en los cuatro idiomas.
 
 ## D-223 · Los avisos de La Copa se activan con la campana, primero en el laboratorio
-**Fecha:** 2026-10-05 · **Estado:** corregida por D-224 · **Relación:** completa D-221
+**Fecha:** 2026-10-05 · **Estado:** corregida por D-224, D-227 · **Relación:** completa D-221
 **Decisión:** El PR 2 del plan de avisos ([PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md)): el
 jugador activa los avisos de una copa, el celular se suscribe y la base guarda la suscripción. Los
 avisos de verdad los manda el PR 3.
@@ -3673,7 +3673,8 @@ avisos de verdad los manda el PR 3.
   línea "Te avisaremos de esta copa" y "Cambiar".
 - **iPhone:** en Safari, la campana abre los tres pasos para agregar la app a inicio; dentro de
   WhatsApp o Instagram, pide abrir el link en Safari. La dirección pasa a llevar `&app=<pid>` (el
-  PIN nunca), y la app instalada abre en "Ya estoy inscrito" con el nombre ya elegido.
+  PIN nunca), y la app instalada abre en "Ya estoy inscrito" con el nombre ya elegido (corregida
+  por D-227: en iPhone la app instalada abre en la portada, y la hoja da el código de la copa).
 - **La base:** `push/<subId>` y `pushCopa/<código>/<pid>/<subId>`, que nadie lee; las escribe solo
   el celular dueño, sentado como el jugador. Ver firebase/README.md.
 - **La clave VAPID** la genera el dueño una vez (`node tools/push/vapid.mjs`): la pública queda en
@@ -3729,7 +3730,7 @@ pruebas (`tools/push/*.test.mjs`) usan relojes inventados y una base falsa: el e
 prueba con `--prueba`.
 
 ## D-225 · La clave VAPID está puesta, y la app instalada del iPhone hereda el laboratorio de avisos
-**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** completa D-223 y D-224
+**Fecha:** 2026-10-05 · **Estado:** corregida por D-227 · **Relación:** completa D-223 y D-224
 **Decisión:** El paso previo a la prueba real de los avisos ([PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md)):
 - **La clave VAPID** se generó una vez con `node tools/push/vapid.mjs`: la pública quedó en
   `public/assets/js/vapid.js` y la privada, como el secreto `VAPID_PRIVADA` de GitHub, sin pasar por
@@ -3740,7 +3741,8 @@ prueba con `--prueba`.
   avisos funcionan. Si La Copa abre **en la app instalada** con `&app=<pid>` (la dirección que arma la
   hoja de agregar a inicio, que sale solo si la campana ya se veía en Safari), activa el laboratorio
   de avisos en ese almacenamiento (`heredarLabsDeApp` en `push.js`). En una pestaña no: esa
-  dirección pudo llegar copiada a otro celular.
+  dirección pudo llegar copiada a otro celular. (Corregida por D-227: iOS abre la app instalada en la
+  portada, sin `&app=`, así que la herencia no llegaba; se quitó y la campana se ve siempre ahí.)
 **Por qué:** Lo pidió el dueño, para hacer la prueba real en su iPhone antes de abrir los avisos a
 todos (D-224).
 **Consecuencias:** Cuando `AVISOS_EN_LABS` pase a `false`, la herencia deja de hacer falta y no hace
@@ -3777,3 +3779,24 @@ tarjeta de la portada cambia (`og.mjs imagenes`), cambia también lo que se comp
 tarjeta (D-181) mira ahora solo los textos que dibuja (`appTitle` y `appSub`), no todo `COMMON`:
 sumar el texto de compartir la daba por atrasada sin que cambiara un píxel. Lo prueban
 `compartir.test.mjs` y `tools/e2e/compartir-portada.mjs` (los cuatro idiomas, y el computador).
+
+## D-227 · En la app instalada del iPhone, los avisos se ven sin el laboratorio
+**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** corrige D-225 (la herencia del laboratorio) y D-223 (la app instalada abre en la copa)
+**Decisión:** En la prueba a mano del dueño (iPhone, Safari), la app agregada a inicio **abrió en la
+portada**: iOS usa el `start_url` del manifest, no la dirección que había en Safari. Así, `&app=<pid>`
+nunca llega, la herencia de D-225 no hace nada y la campana no salía en el único lugar donde el
+iPhone recibe avisos.
+- **La campana se ve siempre en la app instalada del iPhone** (`avisosVisibles` en `push.js`, con
+  la clave puesta), aunque `AVISOS_EN_LABS` siga en `true`: ahí no hay barra de direcciones para
+  llegar a `/labs/`, y la app no ve lo que se activó en Safari. Se quita `heredarLabsDeApp`.
+  La tarjeta "Último paso: activa los avisos" sale también ahí, aunque la dirección no traiga `&app=`.
+- **Los pasos de la hoja "Agrega la app a tu inicio" dan el código de la copa**: el paso 3 y "Ya
+  la agregué" dicen que la app parte en la portada y que se entra a La Copa con ese código, el
+  nombre y el PIN de la copa.
+- La dirección sigue llevando `&app=<pid>`: si alguna versión de iOS la respetara, la copa abre con
+  el nombre ya elegido (D-223).
+**Por qué:** Lo vio el dueño en su iPhone; la prueba real de los avisos (D-224) necesita la campana
+dentro de la app instalada.
+**Consecuencias:** Quien instala la app en un iPhone ve los avisos antes de que se abran a todos.
+Son pocos y es justo lo que se quiere probar. `push.test.mjs` y `tools/e2e/cup/avisos.mjs` lo
+prueban.

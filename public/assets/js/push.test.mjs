@@ -4,7 +4,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { webcrypto } from 'node:crypto';
-import { celular, camino, avisosVisibles, activarAvisos, heredarLabsDeApp, bytesDeClave, subIdDe, paraGuardar, permiso, clavePublica, LABS_AVISOS_KEY, VAPID_PRUEBA_KEY } from './push.js';
+import { celular, camino, avisosVisibles, activarAvisos, bytesDeClave, subIdDe, paraGuardar, permiso, clavePublica, LABS_AVISOS_KEY, VAPID_PRUEBA_KEY } from './push.js';
 import { VAPID_PUBLICA } from './vapid.js';
 import { parVapid, conClave } from '../../../tools/push/vapid.mjs';
 
@@ -51,15 +51,14 @@ await caso('puerta del laboratorio: sin clave nunca; con clave en dev o con /lab
   assert.equal(avisosVisibles({ storage: s, loc: prod, clave: 'x' }), false);
 });
 
-await caso('la app instalada que abre con &app= hereda el laboratorio de Safari (D-225)', () => {
-  const mem = () => { const m = new Map(); return { getItem: k => m.get(k) ?? null, setItem: (k, v) => m.set(k, v), removeItem: k => m.delete(k) }; };
+await caso('la app instalada del iPhone ve los avisos sin el laboratorio (D-227)', () => {
+  const s = { getItem: () => null };
   const prod = { hostname: 'juegosdesalon.cl' };
-  const s = mem();
-  assert.equal(heredarLabsDeApp({ search: '?K7Q2X&app=ab12cd', instalada: false, storage: s }), false, 'en una pestaña, no: el link pudo llegar copiado');
-  assert.equal(heredarLabsDeApp({ search: '?K7Q2X', instalada: true, storage: s }), false, 'sin &app=, no');
-  assert.equal(avisosVisibles({ storage: s, loc: prod, clave: 'x' }), false);
-  assert.equal(heredarLabsDeApp({ search: '?K7Q2X&app=ab12cd', instalada: true, storage: s }), true);
-  assert.equal(avisosVisibles({ storage: s, loc: prod, clave: 'x' }), true, 'la campana se ve en la app instalada');
+  const ver = cel => avisosVisibles({ storage: s, loc: prod, clave: 'x', cel });
+  assert.equal(ver({ ios: true, instalada: true }), true, 'abre en la portada y no ve /labs/ de Safari');
+  assert.equal(ver({ ios: true, instalada: false }), false, 'en Safari, solo con el laboratorio');
+  assert.equal(ver({ ios: false, instalada: true }), false, 'en Android la app instalada comparte el laboratorio con Chrome');
+  assert.equal(avisosVisibles({ storage: s, loc: prod, clave: '', cel: { ios: true, instalada: true } }), false, 'sin clave, nunca');
 });
 
 await caso('la clave de vapid.js manda; sin ella, la de prueba vale solo en el sitio local', () => {
