@@ -231,7 +231,7 @@ modo No molestar, por ejemplo), el botón **Probar los avisos** de la hoja sirve
   (abre la copa con `&silenciar`, que la silencia y lo dice). iPhone no los muestra. Sin silueta
   para la barra de estado: `sw.js` usa el ícono de la app.
 - **Empate en el primer lugar (D-229)**: "🥇 Ganaron Ana y Beto. Quedaste 3.º"; a quien empató
-  arriba, "🥇 ¡Ganaste la copa, empatado con Beto!".
+  arriba, "🥇 ¡Ganaste la copa junto con Beto!".
 - El de la inscripción le llega al admin solo si él activó avisos en esa copa, y nombra a quienes
   se inscribieron después de activarlos, durante un día. El de "terminó la copa" vale durante el
   día siguiente al cierre; después ya no sale.
