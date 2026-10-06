@@ -202,9 +202,9 @@ export function activarUnoAlDia(si, storage = globalThis.localStorage) {
 }
 
 /**
- * Dónde va el acceso en la portada. Lo elegido es al lado de Juego al azar (`'boton'`); la otra
- * forma, una tarjeta de media fila junto a La Copa (`'tarjeta'`), se puede probar desde `/labs/`
- * en un celular, o con `?uad=tarjeta`. `?uad=no` no lo pone.
+ * Dónde va el acceso en la portada. Lo elegido es una tarjeta de media fila junto a La Copa
+ * (`'tarjeta'`, D-239); la de antes, al lado de Juego al azar (`'boton'`), se puede probar desde
+ * `/labs/` en un celular, o con `?uad=boton`. `?uad=no` no lo pone.
  */
 export const LABS_FORMA_KEY = 'juegos-de-salon:labs-uno-al-dia-forma';
 export function formaAcceso({ storage = globalThis.localStorage, loc = globalThis.location } = {}) {
@@ -212,11 +212,11 @@ export function formaAcceso({ storage = globalThis.localStorage, loc = globalThi
     const q = new URLSearchParams(loc?.search || '').get('uad');
     // `?uad=no` lo esconde (para mirar la portada sin él)
     if (q === 'tarjeta' || q === 'boton' || q === 'no') return q;
-    return storage.getItem(LABS_FORMA_KEY) === 'tarjeta' ? 'tarjeta' : 'boton';
-  } catch (_) { return 'boton'; }
+    return storage.getItem(LABS_FORMA_KEY) === 'boton' ? 'boton' : 'tarjeta';
+  } catch (_) { return 'tarjeta'; }
 }
 export function elegirForma(forma, storage = globalThis.localStorage) {
-  try { if (forma === 'tarjeta') storage.setItem(LABS_FORMA_KEY, 'tarjeta'); else storage.removeItem(LABS_FORMA_KEY); } catch (_) { /* sin memoria */ }
+  try { if (forma === 'boton') storage.setItem(LABS_FORMA_KEY, 'boton'); else storage.removeItem(LABS_FORMA_KEY); } catch (_) { /* sin memoria */ }
 }
 
 /* ------------------------------------------------------------------ */

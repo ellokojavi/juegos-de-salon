@@ -181,15 +181,15 @@ if (UNO_AL_DIA_EN_LABS) {
 }
 assert.equal(unoAlDiaVisible({ storage: lab, loc: { hostname: 'localhost', search: '' } }), true, 'en el sitio local siempre');
 
-// Dónde va en la portada: al lado del dado, salvo que se pruebe la tarjeta desde /labs/ o con ?uad=
+// Dónde va en la portada: junto a La Copa (D-239), salvo que se pruebe el botón desde /labs/ o con ?uad=
 const fm = almacen(), sinQ = { search: '' };
-assert.equal(formaAcceso({ storage: fm, loc: sinQ }), 'boton');
-elegirForma('tarjeta', fm);
 assert.equal(formaAcceso({ storage: fm, loc: sinQ }), 'tarjeta');
-assert.equal(formaAcceso({ storage: fm, loc: { search: '?uad=boton' } }), 'boton', 'el link manda');
 elegirForma('boton', fm);
-assert.equal(formaAcceso({ storage: fm, loc: { search: '?uad=tarjeta' } }), 'tarjeta');
 assert.equal(formaAcceso({ storage: fm, loc: sinQ }), 'boton');
+assert.equal(formaAcceso({ storage: fm, loc: { search: '?uad=tarjeta' } }), 'tarjeta', 'el link manda');
+elegirForma('tarjeta', fm);
+assert.equal(formaAcceso({ storage: fm, loc: { search: '?uad=boton' } }), 'boton');
+assert.equal(formaAcceso({ storage: fm, loc: sinQ }), 'tarjeta');
 assert.equal(formaAcceso({ storage: fm, loc: { search: '?uad=no' } }), 'no', 'las capturas del README lo esconden');
 
 // El azar del día: el mismo en todos los celulares, distinto para cada cosa que reparte
