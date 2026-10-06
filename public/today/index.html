@@ -36,6 +36,7 @@
   </script>
   <link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="../assets/css/ranking.css">
   <style>
     .uad-pagina { display: grid; gap: 14px; }
     .uad-hero-icon { display: block; font-size: 3.4rem; line-height: 1.1; }
@@ -43,7 +44,8 @@
     .uad-hoy h2, .uad-bloque h2 { margin: 0; font: 400 1.5rem var(--font-display); letter-spacing: 0.05em; color: var(--yellow); }
     .uad-hoy p { margin: 0; }
     .uad-proximo { color: var(--muted); font-weight: 700; font-variant-numeric: tabular-nums; }
-    .uad-trio { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .uad-trio { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    @media (max-width: 400px) { .uad-trio { grid-template-columns: repeat(2, 1fr); } }
     .uad-trio div { display: grid; text-align: center; padding: 10px 4px; border-radius: 16px; background: rgba(0, 0, 0, 0.25); border: 1px solid var(--glass-border); }
     .uad-trio b { font: 400 1.9rem/1 var(--font-display); letter-spacing: 0.03em; }
     .uad-trio small { color: var(--muted); font-weight: 800; font-size: 0.78rem; }
@@ -69,6 +71,11 @@
     .uad-fila .sube { color: var(--lime); }
     .uad-fila .baja { color: var(--orange); }
     .uad-dice { margin: 0; color: var(--muted); }
+    .uad-cal .salvado { background: rgba(46, 230, 214, 0.3); color: var(--ink); font-size: 1.05rem; }
+    .uad-desafio { display: grid; gap: 10px; text-align: center; border-color: rgba(255, 46, 136, 0.6); background: linear-gradient(160deg, rgba(255, 95, 165, 0.3), rgba(138, 77, 255, 0.28)); }
+    .uad-desafio h2 { margin: 0; font: 400 1.6rem var(--font-display); letter-spacing: 0.05em; color: var(--yellow); }
+    .uad-desafio p { margin: 0; }
+    .uad-aviso { margin: 0; text-align: center; font-weight: 800; }
   </style>
   <link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
   <meta name="apple-mobile-web-app-title" content="Juegos de Salón">
@@ -95,8 +102,9 @@
     import { trackVisit } from '../assets/js/transport/stats.js';
     import { juegosCopa } from '../cup/rules.js';
     import { mmss } from '../cup/engine.js';
-    import { estado, porJuego, juegoDia, faltaParaManana, unoAlDiaVisible, LANZAMIENTO } from '../assets/js/uno-al-dia.js';
-    import { fmt, tirarHoy, compartirHoy, jugarOtro } from '../assets/js/uno-al-dia-ui.js';
+    import { estado, porJuego, juegoDia, faltaParaManana, unoAlDiaVisible, LANZAMIENTO, COMODINES_MAX } from '../assets/js/uno-al-dia.js';
+    import { fmt, tirarHoy, compartirHoy, jugarOtro, tarjetaInvitar, tarjetaDesafio } from '../assets/js/uno-al-dia-ui.js';
+    import { UNO_AL_DIA } from '../assets/js/records.js';
 
     trackVisit(); // el tráfico del sitio (D-208)
     initSound();
@@ -115,104 +123,144 @@
     const pagina = document.getElementById('uad-pagina');
     const nombre = id => conEmoji(juegoDia(id)?.emoji || JC[id]?.emoji || '🎲', JC[id]?.nombre || id);
 
-    /** "7 h 12 min" o "12 min". */
+    /** "7 h 12 min" o "12 min", con espacios que no se cortan entre el número y la unidad. */
     const falta = ms => {
       const m = Math.max(1, Math.ceil(ms / 60000)), h = Math.floor(m / 60);
-      return h ? fmt(T.horas, { h, m: m % 60 }) : fmt(T.minutos, { m });
+      return (h ? fmt(T.horas, { h, m: m % 60 }) : fmt(T.minutos, { m })).replace(/(\d) /g, '$1\u00a0');
     };
 
     // Mientras está en el laboratorio, la página lo dice y no muestra nada más (D-230)
     if (!unoAlDiaVisible()) {
       pagina.append(el('div', { class: 'panel center' }, el('p', { style: 'margin:0' }, T.enLabs)));
     } else {
-      const e = estado();
+      // Un link de invitación (`?inv=<jid>`): se recuerda quién invitó, para el duelo y su comodín
+      const inv = new URLSearchParams(location.search).get('inv');
+      const red = import('../assets/js/uno-al-dia-red.js');
+      const desafio = inv ? red.then(R => R.recordarInvitacion(inv)) : Promise.resolve(null);
+      let reloj = null;
 
-      /* Hoy: el juego de hoy y su resultado, o el dado si falta */
-      const hoy = el('section', { class: 'panel uad-hoy', id: 'uad-hoy' }, el('h2', {}, T.hoyTitulo));
-      if (!e.dia) {
-        hoy.append(el('p', {}, T.hoyFalta),
-          el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-uad-jugar', onClick: () => { tap(); tirarHoy({ lang, raiz: '../' }); } }, `📅 ${T.jugar}`));
-      } else {
-        const proximo = el('p', { class: 'uad-proximo', id: 'uad-proximo' });
-        const tic = () => { proximo.textContent = fmt(T.proximo, { t: falta(faltaParaManana()) }); };
-        tic(); setInterval(tic, 30000);
-        hoy.append(el('p', {}, fmt(T.hoyListo, { juego: JC[e.dia.j]?.nombre || e.dia.j, s: e.dia.s })), proximo,
-          el('div', { class: 'uad-acciones' },
-            compartirHoy({ lang, fecha: e.hoy, dia: e.dia, alTocar: tap, mmss }),
-            el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-uad-otro', onClick: () => { tap(); jugarOtro({ lang, raiz: '../' }); } }, T.jugarOtro)));
-      }
-      pagina.append(hoy);
+      /** Todo lo de la página, con lo que haya en el celular; se vuelve a dibujar al llegar lo de Firebase. */
+      const dibujar = async ({ avisos = [] } = {}) => {
+        clearInterval(reloj);
+        pagina.replaceChildren();
+        const e = estado();
+        for (const a of avisos) pagina.append(el('p', { class: 'uad-aviso', 'data-aviso': 'aceptado' }, a));
 
-      /* La racha */
-      pagina.append(el('div', { class: 'uad-trio', id: 'uad-trio' },
-        el('div', {}, el('b', {}, `🔥 ${e.racha}`), el('small', {}, T.rachaLabel)),
-        el('div', {}, el('b', {}, String(e.mejor)), el('small', {}, T.mejorLabel)),
-        el('div', {}, el('b', {}, String(e.jugados)), el('small', {}, T.jugadosLabel))));
-      if (!e.racha && e.mejor) pagina.append(el('p', { class: 'center uad-dice' }, fmt(T.rachaCortada, { n: e.mejor })));
+        /* Hoy: el juego de hoy y su resultado; si falta, el dado (o el desafío de quien invitó) */
+        const hoy = el('section', { class: 'panel uad-hoy', id: 'uad-hoy' }, el('h2', {}, T.hoyTitulo));
+        const quien = await desafio;
+        if (!e.dia && quien) {
+          pagina.append(await tarjetaDesafio({ lang, raiz: '../', inv: quien, alTocar: tap }));
+        } else if (!e.dia) {
+          hoy.append(el('p', {}, T.hoyFalta),
+            el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-uad-jugar', onClick: () => { tap(); tirarHoy({ lang, raiz: '../' }); } }, `📅 ${T.jugar}`));
+          pagina.append(hoy);
+        } else {
+          const proximo = el('p', { class: 'uad-proximo', id: 'uad-proximo' });
+          const tic = () => { proximo.textContent = fmt(T.proximo, { t: falta(faltaParaManana()) }); };
+          tic(); reloj = setInterval(tic, 30000);
+          hoy.append(el('p', {}, fmt(T.hoyListo, { juego: JC[e.dia.j]?.nombre || e.dia.j, s: e.dia.s })), proximo,
+            el('div', { class: 'uad-acciones' },
+              compartirHoy({ lang, fecha: e.hoy, dia: e.dia, alTocar: tap, mmss }),
+              el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-uad-otro', onClick: () => { tap(); jugarOtro({ lang, raiz: '../' }); } }, T.jugarOtro)));
+          pagina.append(hoy);
+        }
 
-      if (!e.jugados) {
-        pagina.append(el('p', { class: 'center uad-dice', id: 'uad-vacio' }, T.vacio));
-      } else {
-        /* El calendario del mes, con el emoji del juego en los días jugados */
-        const cal = el('div', { class: 'uad-cal', id: 'uad-cal' });
-        const titulo = el('b', {});
-        const antes = el('button', { type: 'button', 'aria-label': T.mesAnterior }, '‹');
-        const despues = el('button', { type: 'button', 'aria-label': T.mesSiguiente }, '›');
-        const primero = [LANZAMIENTO, ...Object.keys(e.dias)].sort()[0].slice(0, 7);
-        let mes = e.hoy.slice(0, 7);
-        const dibujar = () => {
-          const [y, m] = mes.split('-').map(Number);
-          const t = new Intl.DateTimeFormat(lang, { month: 'long', year: 'numeric' }).format(new Date(y, m - 1, 1));
-          titulo.textContent = t.charAt(0).toLocaleUpperCase(lang) + t.slice(1);
-          antes.disabled = mes <= primero; despues.disabled = mes >= e.hoy.slice(0, 7);
-          cal.replaceChildren();
-          // Los días de la semana, desde el lunes (el 5 de enero de 2026 fue lunes)
-          const sem = new Intl.DateTimeFormat(lang, { weekday: 'narrow' });
-          for (let i = 0; i < 7; i++) cal.append(el('span', { class: 'sem', 'aria-hidden': 'true' }, sem.format(new Date(2026, 0, 5 + i))));
-          const d1 = new Date(y, m - 1, 1), hueco = (d1.getDay() + 6) % 7;
-          for (let i = 0; i < hueco; i++) cal.append(el('span', { class: 'vacio' }));
-          const largo = new Date(y, m, 0).getDate();
-          for (let d = 1; d <= largo; d++) {
-            const f = `${mes}-${String(d).padStart(2, '0')}`, x = e.dias[f];
-            const nivel = !x ? '' : x.s >= 80 ? 'l3' : x.s >= 50 ? 'l2' : 'l1';
-            cal.append(el('span', {
-              class: [nivel, f === e.hoy ? 'hoy' : ''].filter(Boolean).join(' ') || null,
-              title: x ? `${JC[x.j]?.nombre || x.j}: ${fmt(T.puntos, { s: x.s })}` : null,
-            }, x ? (juegoDia(x.j)?.emoji || '•') : String(d)));
-          }
-        };
-        const mover = n => { const [y, m] = mes.split('-').map(Number); const d = new Date(y, m - 1 + n, 1); mes = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`; dibujar(); };
-        antes.addEventListener('click', () => { tap(); mover(-1); });
-        despues.addEventListener('click', () => { tap(); mover(1); });
-        dibujar();
-        pagina.append(el('section', { class: 'panel uad-bloque' }, el('h2', {}, T.calendario), el('div', { class: 'uad-cal-cab' }, antes, titulo, despues), cal));
+        /* La racha y los comodines */
+        pagina.append(el('div', { class: 'uad-trio', id: 'uad-trio' },
+          el('div', {}, el('b', {}, `🔥 ${e.racha}`), el('small', {}, T.rachaLabel)),
+          el('div', {}, el('b', {}, String(e.mejor)), el('small', {}, T.mejorLabel)),
+          el('div', { id: 'uad-comodines' }, el('b', {}, `🧊 ${e.comodines}`), el('small', {}, T.comodinesLabel)),
+          el('div', {}, el('b', {}, String(e.jugados)), el('small', {}, T.jugadosLabel))));
+        if (!e.racha && e.mejor) pagina.append(el('p', { class: 'center uad-dice' }, fmt(T.rachaCortada, { n: e.mejor })));
+        if (e.jugados) pagina.append(el('p', { class: 'center uad-dice', id: 'uad-comodines-texto' }, fmt(T.comodinesTexto, { n: e.comodines })));
 
-        /* Por juego: cuántas veces, promedio, mejor, los últimos 8 y si va mejorando */
-        const juegos = porJuego(e.dias);
-        const linea = xs => {
-          const W = 64, H = 22, paso = xs.length > 1 ? (W - 4) / (xs.length - 1) : 0;
-          const pts = xs.map((s, i) => `${(2 + i * paso).toFixed(1)},${(H - 2 - (s / 100) * (H - 4)).toFixed(1)}`);
-          const ult = pts.at(-1).split(',');
-          const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-          svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('aria-hidden', 'true');
-          svg.innerHTML = `<polyline fill="none" stroke="var(--cyan)" stroke-width="1.8" stroke-linejoin="round" points="${pts.join(' ')}"/><circle cx="${ult[0]}" cy="${ult[1]}" r="2.4" fill="var(--yellow)"/>`;
-          return svg;
-        };
-        const filas = juegos.map(g => el('div', { class: 'uad-fila', 'data-id': g.id },
-          el('div', {}, el('span', { class: 'nom' }, nombre(g.id)),
-            el('span', { class: 'nums' }, `${g.n} ${T.veces} · ${T.promedio} ${g.promedio} · ${T.mejor} ${g.mejor}`)),
-          linea(g.ultimos),
-          el('span', { class: `flecha ${g.tendencia > 0 ? 'sube' : g.tendencia < 0 ? 'baja' : ''}` },
-            g.tendencia === null ? '' : g.tendencia > 0 ? `▲ ${g.tendencia}` : g.tendencia < 0 ? `▼ ${-g.tendencia}` : '=')));
-        // Lo que dicen las flechas, en palabras: el que más mejoró o, si ninguno, el que más bajó
-        const conT = juegos.filter(g => g.tendencia);
-        const sube = conT.filter(g => g.tendencia > 0).sort((a, b) => b.tendencia - a.tendencia)[0];
-        const baja = conT.filter(g => g.tendencia < 0).sort((a, b) => a.tendencia - b.tendencia)[0];
-        const dice = sube || baja;
-        pagina.append(el('section', { class: 'panel uad-bloque', id: 'uad-por-juego' }, el('h2', {}, T.porJuego),
-          el('div', { class: 'uad-juegos' }, filas),
-          dice ? el('p', { class: 'uad-dice', id: 'uad-tendencia' }, fmt(sube ? T.mejorando : T.bajando, { juego: JC[dice.id]?.nombre || dice.id, a: dice.ultimos3, b: dice.antes })) : null));
-      }
+        if (!e.jugados) {
+          pagina.append(el('p', { class: 'center uad-dice', id: 'uad-vacio' }, T.vacio));
+        } else {
+          /* El calendario del mes, con el emoji del juego en los días jugados y 🧊 en los salvados */
+          const cal = el('div', { class: 'uad-cal', id: 'uad-cal' });
+          const titulo = el('b', {});
+          const antes = el('button', { type: 'button', 'aria-label': T.mesAnterior }, '‹');
+          const despues = el('button', { type: 'button', 'aria-label': T.mesSiguiente }, '›');
+          const primero = [LANZAMIENTO, ...Object.keys(e.dias)].sort()[0].slice(0, 7);
+          let mes = e.hoy.slice(0, 7);
+          const pintarMes = () => {
+            const [y, m] = mes.split('-').map(Number);
+            const t = new Intl.DateTimeFormat(lang, { month: 'long', year: 'numeric' }).format(new Date(y, m - 1, 1));
+            titulo.textContent = t.charAt(0).toLocaleUpperCase(lang) + t.slice(1);
+            antes.disabled = mes <= primero; despues.disabled = mes >= e.hoy.slice(0, 7);
+            cal.replaceChildren();
+            // Los días de la semana, desde el lunes (el 5 de enero de 2026 fue lunes)
+            const sem = new Intl.DateTimeFormat(lang, { weekday: 'narrow' });
+            for (let i = 0; i < 7; i++) cal.append(el('span', { class: 'sem', 'aria-hidden': 'true' }, sem.format(new Date(2026, 0, 5 + i))));
+            const d1 = new Date(y, m - 1, 1), hueco = (d1.getDay() + 6) % 7;
+            for (let i = 0; i < hueco; i++) cal.append(el('span', { class: 'vacio' }));
+            const largo = new Date(y, m, 0).getDate();
+            for (let d = 1; d <= largo; d++) {
+              const f = `${mes}-${String(d).padStart(2, '0')}`, x = e.dias[f], salvado = e.salvados.includes(f);
+              const nivel = salvado ? 'salvado' : !x ? '' : x.s >= 80 ? 'l3' : x.s >= 50 ? 'l2' : 'l1';
+              cal.append(el('span', {
+                class: [nivel, f === e.hoy ? 'hoy' : ''].filter(Boolean).join(' ') || null,
+                title: x ? `${JC[x.j]?.nombre || x.j}: ${fmt(T.puntos, { s: x.s })}` : null,
+              }, salvado ? '🧊' : x ? (juegoDia(x.j)?.emoji || '•') : String(d)));
+            }
+          };
+          const mover = n => { const [y, m] = mes.split('-').map(Number); const d = new Date(y, m - 1 + n, 1); mes = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`; pintarMes(); };
+          antes.addEventListener('click', () => { tap(); mover(-1); });
+          despues.addEventListener('click', () => { tap(); mover(1); });
+          pintarMes();
+          pagina.append(el('section', { class: 'panel uad-bloque' }, el('h2', {}, T.calendario), el('div', { class: 'uad-cal-cab' }, antes, titulo, despues), cal));
+
+          /* Por juego: cuántas veces, promedio, mejor, los últimos 8 y si va mejorando */
+          const juegos = porJuego(e.dias);
+          const linea = xs => {
+            const W = 64, H = 22, paso = xs.length > 1 ? (W - 4) / (xs.length - 1) : 0;
+            const pts = xs.map((s, i) => `${(2 + i * paso).toFixed(1)},${(H - 2 - (s / 100) * (H - 4)).toFixed(1)}`);
+            const ult = pts.at(-1).split(',');
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('aria-hidden', 'true');
+            svg.innerHTML = `<polyline fill="none" stroke="var(--cyan)" stroke-width="1.8" stroke-linejoin="round" points="${pts.join(' ')}"/><circle cx="${ult[0]}" cy="${ult[1]}" r="2.4" fill="var(--yellow)"/>`;
+            return svg;
+          };
+          const filas = juegos.map(g => el('div', { class: 'uad-fila', 'data-id': g.id },
+            el('div', {}, el('span', { class: 'nom' }, nombre(g.id)),
+              el('span', { class: 'nums' }, `${g.n} ${T.veces} · ${T.promedio} ${g.promedio} · ${T.mejor} ${g.mejor}`)),
+            linea(g.ultimos),
+            el('span', { class: `flecha ${g.tendencia > 0 ? 'sube' : g.tendencia < 0 ? 'baja' : ''}` },
+              g.tendencia === null ? '' : g.tendencia > 0 ? `▲ ${g.tendencia}` : g.tendencia < 0 ? `▼ ${-g.tendencia}` : '=')));
+          // Lo que dicen las flechas, en palabras: el que más mejoró o, si ninguno, el que más bajó
+          const conT = juegos.filter(g => g.tendencia);
+          const sube = conT.filter(g => g.tendencia > 0).sort((a, b) => b.tendencia - a.tendencia)[0];
+          const baja = conT.filter(g => g.tendencia < 0).sort((a, b) => a.tendencia - b.tendencia)[0];
+          const dice = sube || baja;
+          pagina.append(el('section', { class: 'panel uad-bloque', id: 'uad-por-juego' }, el('h2', {}, T.porJuego),
+            el('div', { class: 'uad-juegos' }, filas),
+            dice ? el('p', { class: 'uad-dice', id: 'uad-tendencia' }, fmt(sube ? T.mejorando : T.bajando, { juego: JC[dice.id]?.nombre || dice.id, a: dice.ultimos3, b: dice.antes })) : null));
+
+          pagina.append(tarjetaInvitar({ lang, alTocar: tap }));
+        }
+
+        /* El ranking de Uno al día y entrar con nombre y PIN (mientras los rankings se vean) */
+        const { rankingsVisibles, leerYo } = await import('../assets/js/jugador.js');
+        if (rankingsVisibles()) {
+          const { bloqueRanking, bloqueJugador } = await import('../assets/js/ranking.js');
+          pagina.append(bloqueRanking({ juego: UNO_AL_DIA, titulo: T.rankingTitulo, pestanas: ['hoy', 'semanaDia', 'rachas', 'amigosSemana'], alTocar: tap }));
+          if (!leerYo()) pagina.append(el('p', { class: 'center uad-dice' }, T.guardaRacha), bloqueJugador({ alTocar: tap }));
+        }
+      };
+
+      /** Lo de Firebase (con jugador): la historia de otros celulares, los comodines por invitar y los desafíos aceptados. */
+      const sincronizar = async () => {
+        const R = await red;
+        const { nuevos } = await R.sincronizar();
+        const cap = estado().comodines >= COMODINES_MAX;
+        return nuevos.map(x => fmt(cap ? T.aceptadoSin : T.aceptado, { n: x.n || T.unAmigo }));
+      };
+      await dibujar();
+      sincronizar().then(avisos => dibujar({ avisos })).catch(() => {});
+      // Entrar con el jugador desde esta página trae lo suyo
+      import('../assets/js/jugador.js').then(async ({ jugador }) => (await jugador()).escuchar(yo => { if (yo) sincronizar().then(avisos => dibujar({ avisos })).catch(() => {}); })).catch(() => {});
     }
   </script>
 </body>

@@ -7,8 +7,9 @@ import { el } from './ui.js';
 import { COMMON, SITIO, withLang } from './i18n.js';
 import { SUELTOS, PORTADA } from './games.js';
 import { tirar, TEXTOS as AZAR } from './azar.js';
-import { botonCompartir, cabecera, laminaResultado, nombreArchivo } from './compartir.js';
-import { JUEGOS_DIA, estado, rutaDel, numeroDel, racha, leer } from './uno-al-dia.js';
+import { botonCompartir, cabecera, laminaResultado, nombreArchivo, compartir } from './compartir.js';
+import { JUEGOS_DIA, estado, rutaDel, numeroDel, sumarDias, COMODINES_MAX } from './uno-al-dia.js';
+import { UNO_AL_DIA } from './records.js';
 
 export const fmt = (s, o = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (o[k] ?? ''));
 const textos = lang => (COMMON[lang] || COMMON.es);
@@ -106,7 +107,7 @@ export function compartirHoy({ lang, fecha, dia, alTocar, mmss }) {
     avisos: { copied: C.shareCopied, downloaded: C.shareDownloaded },
     armar: async () => ({
       titulo, url,
-      texto: [cabecera(cab), textoRacha(racha(leer().dias, fecha), lang)].join('\n'),
+      texto: [cabecera(cab), textoRacha(estado().racha, lang)].join('\n'),
       imagen: await laminaResultado({ cab, url, puntaje: fmt(C.uad.puntos, { s: dia.s }), detalle: dia.ms ? `⏱ ${mmss(dia.ms)}` : '', pie: C.shareSoloImage, archivo: nombreArchivo('uno-al-dia', String(numeroDel(fecha))) }),
     }),
   });
@@ -119,14 +120,136 @@ export function compartirHoy({ lang, fecha, dia, alTocar, mmss }) {
  */
 export function tarjetaResultado({ lang, fecha, primera, dia, raiz = '', alTocar, mmss }) {
   const T = textos(lang).uad;
-  const n = racha(leer().dias, fecha);
-  return el('div', { class: 'panel uad-tarjeta', id: 'uad-tarjeta' },
+  const e = estado();
+  const n = e.racha;
+  const hoyLinea = el('p', { style: 'margin:0', id: 'uad-hoy-puntos' }, primera ? fmt(T.hoyPuntos, { s: dia.s }) : fmt(T.practica, { s: dia.s }));
+  // Lo que depende de la red (el porcentaje, el duelo, entrar, invitar, el ranking) llega después
+  const comodin = lineaComodin(e, fecha, lang);
+  const red = el('div', { class: 'uad-red', id: 'uad-red' });
+  const tarjeta = el('div', { class: 'panel uad-tarjeta', id: 'uad-tarjeta' },
     el('p', { class: 'uad-racha' }, textoRacha(n, lang)),
     el('p', { class: 'muted', style: 'margin:0' }, fmt(T.vuelve, { n: n + 1 })),
-    el('p', { style: 'margin:0' }, primera ? fmt(T.hoyPuntos, { s: dia.s }) : fmt(T.practica, { s: dia.s })),
+    hoyLinea,
+    comodin,
     el('div', { class: 'uad-acciones' },
       compartirHoy({ lang, fecha, dia, alTocar, mmss }),
       el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-uad-otro', onClick: () => { alTocar?.(); jugarOtro({ lang, raiz }); } }, T.jugarOtro)),
     el('a', { class: 'btn btn--ghost btn--sm', id: 'btn-uad-todo', href: `${raiz}today/` }, T.verTodo),
-    el('a', { class: 'link-btn', id: 'btn-uad-repetir', href: `${raiz}${rutaHoy(dia.j)}` }, T.repetir));
+    el('a', { class: 'link-btn', id: 'btn-uad-repetir', href: `${raiz}${rutaHoy(dia.j)}` }, T.repetir),
+    red);
+  conRed({ lang, fecha, dia, primera, hoyLinea, red, alTocar });
+  return tarjeta;
+}
+
+/**
+ * La línea de los comodines bajo la racha: si ayer salvó uno, si hoy ganó uno, o (con 3 días o más
+ * y sin comodines) que invitando se gana uno. Nada si no hay nada que decir.
+ */
+function lineaComodin(e, fecha, lang) {
+  const T = textos(lang).uad;
+  if (e.salvados.includes(sumarDias(fecha, -1))) return el('p', { class: 'uad-comodin', id: 'uad-comodin' }, fmt(T.comodinUsado, { n: e.racha }));
+  if (e.ganados.includes(fecha) && e.ganados.length === 1) return el('p', { class: 'uad-comodin', id: 'uad-comodin' }, T.comodinGanado);
+  if (e.ganados.includes(fecha)) return el('p', { class: 'uad-comodin', id: 'uad-comodin' }, T.comodinGanado.split('. ')[0] + '.');
+  if (e.racha >= 3 && !e.comodines) return el('p', { class: 'uad-comodin', id: 'uad-comodin' }, T.sinComodines);
+  return null;
+}
+
+/** Arma la frase de los datos: "Llevo una racha de 33 días y estoy en el 10 % mejor de la semana". */
+export function frase(datos, { lang, nombre = null }) {
+  const T = textos(lang).uad, de = nombre ? T.el : T.yo;
+  const partes = datos.map(d => fmt(de[d.k === 'constancia' && d.n === 1 ? 'constancia1' : d.k], {
+    n: d.n, p: d.p, s: d.s, tabla: T.tablas[d.tabla] || '',
+    juego: d.id ? nombreJuego(d.id, lang) : '',
+  }));
+  const junto = partes.join(` ${T.y} `);
+  return nombre ? `${nombre} ${junto}` : junto.charAt(0).toLocaleUpperCase(lang) + junto.slice(1);
+}
+/** El nombre de un juego del mazo en un idioma (se llenan al cargar las reglas, `nombres()`). */
+let NOMBRES = null;
+const nombreJuego = (id, lang) => NOMBRES?.[lang]?.[id] || id;
+async function nombres() {
+  if (NOMBRES) return NOMBRES;
+  const pool = await caras();
+  NOMBRES = {};
+  for (const g of pool) for (const [l, n] of Object.entries(g.name)) (NOMBRES[l] ||= {})[g.id] = n;
+  return NOMBRES;
+}
+
+/**
+ * La tarjeta "👋 Invita a un amigo": qué se gana (un comodín, si tiene jugador y menos de 2; si no
+ * tiene, que entrando lo gana) y el botón, que manda un texto en primera persona con su dato.
+ */
+export function tarjetaInvitar({ lang, alTocar }) {
+  const T = textos(lang).uad;
+  const linea = el('p', { class: 'muted', style: 'margin:0', id: 'uad-inv-linea' });
+  const b = el('button', { type: 'button', class: 'btn btn--cyan', id: 'btn-uad-invitar' }, T.invitar);
+  b.addEventListener('click', async () => {
+    alTocar?.();
+    b.disabled = true;
+    try {
+      const red = await import('./uno-al-dia-red.js');
+      await nombres();
+      const [datos, url] = await Promise.all([red.misDatos(), red.linkInvitar(withLang(URL_HOY, lang))]);
+      const texto = [cabecera({ emoji: '📅', titulo: T.nombre, contexto: T.invCab }), `🔥 ${frase(datos, { lang })}. ${T.atreves}`].join('\n');
+      await compartir({ titulo: T.nombre, texto, url });
+    } catch (_) { /* sin compartir no hay nada que avisar */ } finally { b.disabled = false; }
+  });
+  import('./uno-al-dia-red.js').then(async red => {
+    const con = await red.tengoJugador();
+    const e = estado();
+    linea.textContent = !con ? T.invEntrar : e.comodines < COMODINES_MAX ? T.invComodin : '';
+    linea.hidden = !linea.textContent;
+  }).catch(() => { linea.hidden = true; });
+  return el('div', { class: 'panel uad-invitar', id: 'uad-invitar' }, el('p', { class: 'lead', style: 'margin:0' }, T.invTitulo), linea, b);
+}
+
+/**
+ * Lo de la tarjeta del resultado que usa la red: sube el de hoy, dice el porcentaje, el duelo con
+ * quien invitó, ofrece entrar (sin jugador), invitar y el ranking de Uno al día.
+ */
+async function conRed({ lang, fecha, dia, primera, hoyLinea, red, alTocar }) {
+  const T = textos(lang).uad;
+  try {
+    const R = await import('./uno-al-dia-red.js');
+    const { rankingsVisibles } = await import('./jugador.js');
+    if (primera) await R.subirHoy({ fecha, dia });
+    // El duelo con quien invitó
+    const inv = R.invitador();
+    if (inv) {
+      const q = await R.quienInvita(inv);
+      if (q) {
+        const suyo = q.dias[fecha];
+        red.append(el('p', { class: 'uad-duelo', id: 'uad-duelo' }, suyo ? fmt(T.duelo, { a: dia.s, n: q.n, b: suyo.s }) : fmt(T.dueloPend, { n: q.n })));
+      }
+    }
+    if (primera) {
+      const p = await R.porcentajeHoy(fecha, dia.s);
+      if (p != null) hoyLinea.textContent = fmt(T.pct, { s: dia.s, p });
+    }
+    if (!rankingsVisibles()) return;
+    const { bloqueJugador, bloqueRanking } = await import('./ranking.js');
+    if (!(await R.tengoJugador())) {
+      const entrar = el('div', { class: 'uad-entrar', id: 'uad-entrar' }, el('p', { class: 'muted', style: 'margin:0' }, T.guardaRacha), bloqueJugador({ alTocar }));
+      red.append(entrar);
+      // Si entra recién aquí, el de hoy igual sube
+      (await import('./jugador.js')).jugador().then(J => { const off = J.escuchar(yo => { if (!yo) return; off(); entrar.remove(); R.sincronizar().catch(() => {}); }); }).catch(() => {});
+    }
+    red.append(tarjetaInvitar({ lang, alTocar }),
+      bloqueRanking({ juego: UNO_AL_DIA, titulo: T.rankingTitulo, pestanas: ['hoy', 'semanaDia', 'rachas', 'amigosSemana'], alTocar }));
+  } catch (_) { /* sin red, la tarjeta queda con lo del celular */ }
+}
+
+/**
+ * La tarjeta del amigo invitado, antes del dado (en /today/?inv=…): "🔥 Sara te desafía" con su dato
+ * de hoy, en tercera persona. Si no se puede leer quién invitó, la bienvenida general.
+ */
+export async function tarjetaDesafio({ lang, raiz = '', inv, alTocar }) {
+  const T = textos(lang).uad;
+  const R = await import('./uno-al-dia-red.js');
+  await nombres().catch(() => null);
+  const q = await R.quienInvita(inv).catch(() => null);
+  const jugar = el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-uad-desafio', onClick: () => { alTocar?.(); tirarHoy({ lang, raiz }); } }, `📅 ${T.jugar}`);
+  return q
+    ? el('section', { class: 'panel uad-desafio', id: 'uad-desafio' }, el('h2', {}, fmt(T.desafia, { n: q.n })), el('p', {}, `${frase(q.datos, { lang, nombre: q.n })}. ${T.atreves}`), jugar)
+    : el('section', { class: 'panel uad-desafio', id: 'uad-desafio' }, el('h2', {}, T.invGeneral), el('p', {}, T.invGeneralSub), jugar);
 }

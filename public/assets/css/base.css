@@ -508,3 +508,8 @@ body.azar-abierto { overflow: hidden; }
 .uad-tarjeta { display: grid; gap: 8px; text-align: center; border-color: rgba(255, 122, 26, 0.5); background: linear-gradient(160deg, rgba(255, 122, 26, 0.16), rgba(255, 46, 136, 0.12)); }
 .uad-racha { margin: 0; font: 400 1.7rem/1.1 var(--font-display); letter-spacing: 0.04em; color: var(--yellow); }
 .uad-acciones { display: grid; gap: 10px; margin-top: 4px; }
+.uad-red { display: grid; gap: 10px; }
+.uad-red:empty { display: none; }
+.uad-duelo { margin: 4px 0 0; font: 400 1.35rem/1.15 var(--font-display); letter-spacing: 0.04em; color: var(--yellow); }
+.uad-comodin { margin: 0; font-weight: 800; color: var(--cyan); }
+.uad-invitar { display: grid; gap: 8px; text-align: center; }

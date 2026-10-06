@@ -78,7 +78,17 @@ export const esPais = co => typeof co === 'string' && /^[A-Z]{2}$/.test(co);
 export const bandera = co => (esPais(co) ? String.fromCodePoint(...[...co].map(c => 0x1f1e6 + c.charCodeAt(0) - 65)) : '');
 
 export const SIEMPRE = 'siempre';
-export const PERIODO = /^(siempre|s[0-9]{4}-[0-9]{2})$/;
+/**
+ * Los períodos: siempre, una semana (`s2026-41`) o, para Uno al día (D-230), un día: `d` y el
+ * número del día desde el 1 de enero de 1970 (`d20731`, el 5 de octubre de 2026). Va como número y
+ * no como fecha porque las reglas lo comparan con la hora del servidor.
+ */
+export const PERIODO = /^(siempre|s[0-9]{4}-[0-9]{2}|d[0-9]{5})$/;
+/** Las tablas de Uno al día (D-230): el puntaje del día y la suma de la semana, y la mejor racha. */
+export const UNO_AL_DIA = 'uno-al-dia';
+export const UAD_RACHA = 'uno-al-dia-racha';
+/** El período de un día de Uno al día, por su número. */
+export const periodoDia = n => `d${n}`;
 /** Las semanas parten el lunes a medianoche en Chile, donde vive la app. */
 export const ZONA_SEMANA = 'America/Santiago';
 

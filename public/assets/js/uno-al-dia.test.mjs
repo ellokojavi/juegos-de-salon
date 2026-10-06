@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict';
 import {
   JUEGOS_DIA, LANZAMIENTO, SIN_REPETIR, crearCalendario, juegoDel, semillaDel, numeroDel, sumarDias, diasEntre,
-  fechaLocal, faltaParaManana, racha, mejorRacha, porJuego, anotar, leer, estado, rutaDel, unoAlDiaVisible, activarUnoAlDia, formaAcceso, elegirForma, KEY,
+  fechaLocal, faltaParaManana, racha, mejorRacha, recorrer, numDia, fechaDeNum, semanaDe, juntar, COMODINES_MAX, porJuego, anotar, leer, estado, rutaDel, unoAlDiaVisible, activarUnoAlDia, formaAcceso, elegirForma, KEY,
 } from './uno-al-dia.js';
 import { JUEGOS } from '../../cup/games/index.js';
 import { esCodigo } from '../../cup/engine.js';
@@ -64,6 +64,38 @@ assert.equal(racha(d, '2026-10-04'), 3, 'hoy todavía no juega: la de ayer sigue
 assert.equal(racha(d, '2026-10-07'), 0, 'dos días sin jugar: se cortó');
 assert.equal(mejorRacha(d), 3);
 assert.equal(mejorRacha({}), 0);
+
+// Los comodines (D-230): uno cada 7 días jugados seguidos, hasta 2; un día sin jugar gasta uno
+const seguidos = (desde, n) => Object.fromEntries(fechas(desde, n).map(f => [f, { j: 'reinas', s: 50 }]));
+let rc = recorrer(seguidos('2026-10-01', 7), '2026-10-07');
+assert.deepEqual([rc.racha, rc.comodines, rc.ganados], [7, 1, ['2026-10-07']], 'a los 7 días, un comodín');
+rc = recorrer(seguidos('2026-10-01', 7), '2026-10-09');
+assert.deepEqual([rc.racha, rc.comodines, rc.salvados], [7, 0, ['2026-10-08']], 'el 8 no jugó: gastó el comodín y la racha sigue (hoy, el 9, todavía no cuenta)');
+rc = recorrer(seguidos('2026-10-01', 7), '2026-10-10');
+assert.deepEqual([rc.racha, rc.mejor], [0, 7], 'dos días sin jugar y un solo comodín: se cortó');
+rc = recorrer({ ...seguidos('2026-10-01', 7), ...seguidos('2026-10-09', 3) }, '2026-10-11');
+assert.deepEqual([rc.racha, rc.salvados], [10, ['2026-10-08']], 'el día salvado no suma, pero la racha sigue');
+rc = recorrer(seguidos('2026-09-01', 30), '2026-09-30');
+assert.equal(rc.comodines, COMODINES_MAX, 'nunca más de 2');
+rc = recorrer({ '2026-10-01': { j: 'x', s: 1 } }, '2026-10-03', { regalos: ['2026-10-01'] });
+assert.deepEqual([rc.racha, rc.comodines, rc.salvados], [1, 0, ['2026-10-02']], 'un comodín por invitar salva un día');
+rc = recorrer({}, '2026-10-03', { regalos: ['2026-10-01', '2026-10-02', '2026-10-02'] });
+assert.equal(rc.comodines, 2, 'los regalos también respetan el tope');
+assert.deepEqual(recorrer({}, '2026-10-05'), { racha: 0, comodines: 0, mejor: 0, salvados: [], ganados: [] });
+
+// Los números de día y la semana de una fecha
+assert.equal(numDia('2026-10-05'), 20731);
+assert.equal(fechaDeNum(20731), '2026-10-05');
+assert.equal(semanaDe('2026-10-05'), 's2026-41');
+assert.equal(semanaDe('2026-10-04'), 's2026-40', 'el domingo es de la semana anterior');
+
+// Juntar lo de Firebase con lo del celular: lo del celular manda
+const sj = almacen();
+anotar('2026-10-05', { j: 'reinas', s: 90, ms: 1 }, { storage: sj });
+juntar({ dias: { '2026-10-05': { j: 'reinas', s: 10 }, '2026-10-04': { j: 'anio', s: 70, ms: 2 } }, regalos: ['2026-10-03'] }, { storage: sj });
+assert.equal(leer(sj).dias['2026-10-05'].s, 90);
+assert.equal(leer(sj).dias['2026-10-04'].s, 70);
+assert.deepEqual(leer(sj).regalos, ['2026-10-03']);
 
 // Por juego: la tendencia compara los últimos 3 con los 5 de antes
 const hist = Object.fromEntries([60, 70, 70, 80, 90, 95].map((s, i) => [sumarDias('2026-10-01', i), { j: 'reinas', s }]));

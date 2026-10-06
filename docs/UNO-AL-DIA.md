@@ -1,6 +1,6 @@
 # Uno al día
 
-**Estado:** aprobada por el dueño (D-230); el PR 1, el núcleo, está hecho, en el laboratorio (v0.115.0) · **Fecha:** 2026-10-05 ·
+**Estado:** aprobada por el dueño (D-230); PR 3 (jugador, rankings, comodines e invitaciones) en v0.116.0; el PR 1, el núcleo, está hecho, en el laboratorio (v0.115.0) · **Fecha:** 2026-10-05 ·
 **Toca:** RP-44, D-188 (Juego al azar), D-212 y D-217 (rankings), D-221 a D-229 (avisos), D-97 (semillas)
 
 Una modalidad nueva en la portada, al lado de **Juego al azar**: cada día la app sorprende con un
@@ -397,6 +397,39 @@ celular saca la palabra, la flota o los dados de la semilla del día.
 - El CSS del dado pasó de la portada a `base.css`, para tirarlo desde cualquier página.
 - Se prueba con `uno-al-dia.test.mjs` (el mazo, la semilla, la racha, lo anotado) y
   `tools/e2e/uno-al-dia.mjs` (de la portada a `/today/`, a 320 px y en los cuatro idiomas).
+
+### Lo que el PR 3 hizo (v0.116.0)
+
+- **La historia en Firebase** va por número de día y no por fecha: `unoAlDia/<jid>/<n>` =
+  `{ j, s, ms, at, w? }`, con `n` los días desde 1970 (`numDia`, 20731 es el 5 de octubre de 2026).
+  Se escribe una vez y la lee cualquiera (la tarjeta de quien invita necesita su racha). `w` marca que
+  ese día ya se sumó a la semana.
+- **Los rankings** usan las tablas de siempre (`records`, D-212): `uno-al-dia/d<n>` (el día: el
+  período nuevo `d` + número), `uno-al-dia/s2026-41` (la suma de la semana de la fecha del jugador) y
+  `uno-al-dia-racha/siempre` (la mejor racha). Las reglas exigen que el puntaje del día sea el de la
+  historia, y que la semana sume un día de la historia (`u`) que no se había sumado (`w`, en la misma
+  escritura). Se ven en `/today/` y bajo el resultado: **Hoy · Semana · Rachas · Amigos**.
+- **Lo que las reglas no pueden revisar:** no convierten texto en número, así que no comparan el
+  número del período con la hora del servidor, y la mejor racha la calcula el celular. Un tramposo
+  podría inflar su racha o anotar un día que no es el suyo. Mientras esté en el laboratorio se
+  acepta; si molesta, el workflow de los avisos puede recalcular las rachas desde la historia.
+- **Los comodines** no se guardan: salen de recorrer la historia (`recorrer` en uno-al-dia.js),
+  igual sin jugador. Cada 7 días jugados seguidos se gana uno; un día sin jugar gasta uno o corta la
+  racha; tope 2. Los días salvados van con 🧊 en el calendario, y la tarjeta del resultado dice
+  cuándo se usó o se ganó uno.
+- **Entrar con el jugador** sube el de hoy (si se jugó antes de entrar) y trae la historia de
+  otros celulares. Los días viejos del celular no se suben: las reglas aceptan solo escrituras
+  frescas, así que quedan en el celular y se juntan al mostrar.
+- **Invitar:** el link es `today/?inv=<jid>` si quien invita tiene jugador (sin jugador, `today/`
+  y la tarjeta le ofrece entrar para ganar el comodín). El amigo ve "🔥 Sara te desafía" con su dato
+  de hoy y, al terminar su primer Uno al día, su celular escribe `invitados/<jid>/<uid>` (una vez por
+  celular; no vale invitarse a sí mismo) y queda Sara en sus Amigos; desde ese día ve el duelo.
+  Quien invitó suma el comodín al abrir `/today/` y lee una sola vez "🧊 Pedro aceptó tu desafío:
+  ganaste un comodín." (o "Un amigo", si el amigo no tiene jugador).
+- **El dato de quien invita** sale de `datosDe` (uno-al-dia-red.js), con las reglas de la tabla de
+  arriba. Para quien recién empieza: "Ya jugué mi primer Uno al día".
+- Se prueba con `uno-al-dia-jugador.test.mjs` (contra el almacén de prueba, que repite las reglas) y
+  `tools/e2e/uno-al-dia-jugador.mjs` (Sara juega y entra, invita; Pedro acepta en otro celular).
 
 ## Lo que decidió el dueño (2026-10-05)
 
