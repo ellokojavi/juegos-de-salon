@@ -83,7 +83,31 @@ export function crearAlmacenLocal({ storage = globalThis.localStorage, uid = nul
       if (r.n !== leerEn(viejo, `jugadores/${jid}/n`)) return false;
       if (esCuenta(p[1]) && !(r.s === (antes?.s || 0) + 1 && r.ms === 0)) return false;
       if (r.co !== undefined && !/^[A-Z]{2}$/.test(r.co)) return false;
+      // Uno al día (D-230): el puntaje del día es el de la historia de ese día; la semana suma un
+      // día de la historia (`u`) que todavía no se sumó (`w` se marca en la misma escritura)
+      if (p[1] === 'uno-al-dia') {
+        if (p[2].startsWith('d')) { if (r.s !== leerEn(nuevo, `unoAlDia/${jid}/${p[2].slice(1)}/s`)) return false; }
+        else {
+          const h = `unoAlDia/${jid}/${r.u}`;
+          if (!/^[0-9]{5}$/.test(r.u || '') || leerEn(nuevo, `${h}/w`) !== true || leerEn(viejo, `${h}/w`) != null) return false;
+          if (r.s !== (antes?.s || 0) + leerEn(nuevo, `${h}/s`)) return false;
+        }
+      }
       return !antes || r.k < antes.k;
+    }
+    // La historia de Uno al día: un día se escribe una vez; después solo se le pone `w`
+    if (rama === 'unoAlDia') {
+      if (!sentado(viejo, a) || !/^[0-9]{5}$/.test(b || '')) return false;
+      if (p.length === 4 && c === 'w') return leerEn(viejo, ruta) == null && leerEn(nuevo, ruta) === true;
+      const x = leerEn(nuevo, ruta);
+      return p.length === 3 && leerEn(viejo, ruta) == null && !!x && typeof x.j === 'string' && x.s >= 0 && x.s <= 100 && x.ms >= 0 && typeof x.at === 'number'
+        && Object.keys(x).every(k => ['j', 's', 'ms', 'at', 'w'].includes(k));
+    }
+    // Quién aceptó una invitación (D-230): cada celular una vez, y nadie se invita a sí mismo
+    if (rama === 'invitados') {
+      const x = leerEn(nuevo, ruta);
+      return p.length === 3 && b === u && leerEn(viejo, ruta) == null && !!x && !sentado(viejo, a) && typeof x.d === 'number'
+        && (x.j === undefined || (/^[a-z0-9]{8}$/.test(x.j) && x.j !== a)) && Object.keys(x).every(k => ['d', 'at', 'j'].includes(k));
     }
     if (rama === 'torneoPodios') return leerEn(viejo, ruta) == null;
     // La copa de un jugador (D-220): las reglas también piden estar sentado en la copa como `p` y

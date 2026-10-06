@@ -16,6 +16,7 @@
 import { hash32 } from '../../cup/games/semilla.js';
 import { rng as mulberry } from '../../timeline/engine.js';
 import { envOf } from './transport/stats.js';
+import { semana } from './records.js';
 
 /** El día n.° 1. Mientras esté en el laboratorio se puede mover; al salir queda fijo. */
 export const LANZAMIENTO = '2026-10-05';
@@ -69,6 +70,15 @@ const utc = f => { const [y, m, d] = f.split('-').map(Number); return Date.UTC(y
 export const diasEntre = (a, b) => Math.round((utc(b) - utc(a)) / 86400000);
 /** `fecha` más `n` días. */
 export const sumarDias = (f, n) => new Date(utc(f) + n * 86400000).toISOString().slice(0, 10);
+
+/**
+ * El número de un día desde el 1 de enero de 1970 (`2026-10-05` → 20731). Así se guarda en Firebase:
+ * las reglas lo comparan con la hora del servidor para que nadie anote un día que no es el suyo.
+ */
+export const numDia = f => Math.round(utc(f) / 86400000);
+export const fechaDeNum = n => new Date(n * 86400000).toISOString().slice(0, 10);
+/** La semana de una fecha, como período de los rankings (`s2026-41`), sin depender de la zona. */
+export const semanaDe = f => semana(utc(f) + 43200000, 'UTC');
 
 /** El número que se comparte: el día del lanzamiento es el n.° 1. */
 export const numeroDel = fecha => diasEntre(LANZAMIENTO, fecha) + 1;
@@ -236,27 +246,49 @@ export function anotar(fecha, { j, s, ms }, { storage = globalThis.localStorage,
   return { primera: !antes, dia };
 }
 
+/** Los comodines que se pueden tener a la vez. */
+export const COMODINES_MAX = 2;
+/** Cada cuántos días jugados seguidos se gana un comodín. */
+export const COMODIN_CADA = 7;
+
 /**
- * La racha que lleva hoy: los días seguidos jugados hasta hoy. Si hoy todavía no juega, la de
- * ayer sigue viva (se corta recién a medianoche).
+ * La racha con sus comodines, recorriendo los días desde el primero jugado hasta hoy (D-230):
+ *
+ * - Cada día jugado suma uno a la racha; cada 7 días jugados de la misma racha se gana un comodín.
+ * - Un día sin jugar gasta un comodín si hay (la racha sigue, sin sumar ese día) o la corta.
+ * - Hoy sin jugar todavía no cuenta: la racha se corta recién a medianoche.
+ * - `regalos` son las fechas en que se ganó un comodín por invitar (un amigo terminó su primer
+ *   Uno al día); también respetan el tope de 2.
+ *
+ * Devuelve `{ racha, comodines, mejor, salvados, ganados }`: `salvados` son las fechas que salvó un
+ * comodín, y `ganados` las fechas en que se ganó uno por racha.
  */
-export function racha(dias, hoy) {
-  let f = dias[hoy] ? hoy : sumarDias(hoy, -1), n = 0;
-  while (dias[f]) { n++; f = sumarDias(f, -1); }
-  return n;
+export function recorrer(dias, hoy, { regalos = [] } = {}) {
+  const fechas = Object.keys(dias).filter(f => FECHA.test(f) && f <= hoy).sort();
+  const porRegalo = {};
+  for (const f of regalos) if (FECHA.test(f) && f <= hoy) porRegalo[f] = (porRegalo[f] || 0) + 1;
+  const desde = [fechas[0], ...Object.keys(porRegalo)].filter(Boolean).sort()[0];
+  const out = { racha: 0, comodines: 0, mejor: 0, salvados: [], ganados: [] };
+  if (!desde) return out;
+  let seguidos = 0;
+  for (let f = desde; f <= hoy; f = sumarDias(f, 1)) {
+    if (porRegalo[f]) out.comodines = Math.min(COMODINES_MAX, out.comodines + porRegalo[f]);
+    if (dias[f]) {
+      out.racha++; seguidos++;
+      if (seguidos % COMODIN_CADA === 0 && out.comodines < COMODINES_MAX) { out.comodines++; out.ganados.push(f); }
+    } else if (f !== hoy) {
+      if (out.racha > 0 && out.comodines > 0) { out.comodines--; out.salvados.push(f); }
+      else { out.racha = 0; seguidos = 0; }
+    }
+    out.mejor = Math.max(out.mejor, out.racha);
+  }
+  return out;
 }
 
-/** La racha más larga de todas. */
-export function mejorRacha(dias) {
-  const fechas = Object.keys(dias).filter(f => FECHA.test(f)).sort();
-  let mejor = 0, n = 0, prev = null;
-  for (const f of fechas) {
-    n = prev && diasEntre(prev, f) === 1 ? n + 1 : 1;
-    mejor = Math.max(mejor, n);
-    prev = f;
-  }
-  return mejor;
-}
+/** La racha que lleva hoy (con sus comodines). */
+export const racha = (dias, hoy, extra) => recorrer(dias, hoy, extra).racha;
+/** La racha más larga de todas (con sus comodines). */
+export const mejorRacha = (dias, hoy = [...Object.keys(dias)].sort().at(-1) || LANZAMIENTO, extra) => recorrer(dias, hoy, extra).mejor;
 
 const promedio = xs => (xs.length ? Math.round(xs.reduce((a, b) => a + b, 0) / xs.length) : 0);
 
@@ -285,11 +317,26 @@ export function porJuego(dias) {
 /** Todo lo que muestra la pantalla, de una vez. */
 export function estado({ storage = globalThis.localStorage, ahora = Date.now() } = {}) {
   const hoy = fechaLocal(ahora);
-  const { dias } = leer(storage);
+  const d = leer(storage);
+  const r = recorrer(d.dias, hoy, { regalos: d.regalos || [] });
   return {
-    hoy, numero: numeroDel(hoy), juego: juegoDel(hoy), dia: dias[hoy] || null,
-    racha: racha(dias, hoy), mejor: mejorRacha(dias), jugados: Object.keys(dias).length, dias,
+    hoy, numero: numeroDel(hoy), juego: juegoDel(hoy), dia: d.dias[hoy] || null,
+    racha: r.racha, mejor: r.mejor, comodines: r.comodines, salvados: r.salvados, ganados: r.ganados,
+    jugados: Object.keys(d.dias).length, dias: d.dias,
   };
+}
+
+/**
+ * Junta lo que viene de Firebase (el historial del jugador, de cualquier celular, y los comodines
+ * por invitar) con lo del celular. Lo del celular manda en un día que está en los dos: es el mismo
+ * primer intento. Devuelve lo que quedó.
+ */
+export function juntar({ dias = {}, regalos = null } = {}, { storage = globalThis.localStorage } = {}) {
+  const d = leer(storage);
+  for (const [f, x] of Object.entries(dias)) if (FECHA.test(f) && !d.dias[f] && x?.j) d.dias[f] = { j: x.j, s: x.s || 0, ms: x.ms || 0, at: x.at || 0, n: 1 };
+  if (regalos) d.regalos = [...new Set(regalos.filter(f => FECHA.test(f)))].sort();
+  try { storage.setItem(KEY, JSON.stringify(d)); } catch (_) { /* sin memoria */ }
+  return d;
 }
 
 /**
