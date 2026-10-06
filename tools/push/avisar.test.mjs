@@ -136,7 +136,7 @@ await caso('Uno al día: manda el de hoy, lo anota y borra lo de una suscripció
   const c = Object.assign({}, ...db.cambios);
   assert.equal(c[`pushEnviadosDia/${S1}/dia:${n}`], t);
   assert.equal(c[`pushDia/${'c'.repeat(32)}`], null);
-  assert.equal(c[`stats/prod/days/${Math.floor(t / 864e5)}/mandados/uad-dia`]?.['.sv']?.increment, 1);
+  assert.equal(c[`stats/prod/days/${Math.floor(t / 864e5)}/mandados/uaddia`]?.['.sv']?.increment, 1);
 });
 
 console.log(`avisar: ${n} casos en verde`);
