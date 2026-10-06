@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.113.1 — 2026-10-06
+- **Cambiar el PIN va en "Juegas como"** (D-236): al tocar tu nombre se despliegan Cambiar el PIN,
+  con una línea que explica para qué sirve, y Salir. En Rankings queda solo **Tus partidas**, con
+  cuántas veces jugaste cada juego.
+
 ## 0.113.0 — 2026-10-05
 - **Un globo en la portada invita a agregar la app a inicio, en el laboratorio** (D-232): con un
   toque en **Agregar** salen los pasos de tu celular (Safari o Chrome, en iPhone o Android); en
