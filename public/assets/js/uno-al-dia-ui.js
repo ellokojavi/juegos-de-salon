@@ -230,14 +230,26 @@ async function conRed({ lang, fecha, dia, primera, hoyLinea, red, alTocar }) {
     }
     if (!rankingsVisibles()) return;
     const { bloqueJugador, bloqueRanking } = await import('./ranking.js');
+    let invitar = tarjetaInvitar({ lang, alTocar });
+    const ranking = bloqueRanking({ juego: UNO_AL_DIA, titulo: T.rankingTitulo, pestanas: ['hoy', 'semanaDia', 'rachas', 'amigosSemana'], alTocar });
     if (!(await R.tengoJugador())) {
       const entrar = el('div', { class: 'uad-entrar', id: 'uad-entrar' }, el('p', { class: 'muted', style: 'margin:0' }, T.guardaRacha), bloqueJugador({ alTocar }));
       red.append(entrar);
-      // Si entra recién aquí, el de hoy igual sube
-      (await import('./jugador.js')).jugador().then(J => { const off = J.escuchar(yo => { if (!yo) return; off(); entrar.remove(); R.sincronizar().catch(() => {}); }); }).catch(() => {});
+      // Si entra recién aquí, el de hoy igual sube; después, invitar ya no le pide entrar y el
+      // ranking lo muestra
+      (await import('./jugador.js')).jugador().then(J => {
+        const off = J.escuchar(yo => {
+          if (!yo) return;
+          off(); entrar.remove();
+          R.sincronizar().catch(() => {}).then(() => {
+            const nueva = tarjetaInvitar({ lang, alTocar });
+            invitar.replaceWith(nueva); invitar = nueva;
+            ranking.recargar?.();
+          });
+        });
+      }).catch(() => {});
     }
-    red.append(tarjetaInvitar({ lang, alTocar }),
-      bloqueRanking({ juego: UNO_AL_DIA, titulo: T.rankingTitulo, pestanas: ['hoy', 'semanaDia', 'rachas', 'amigosSemana'], alTocar }));
+    red.append(invitar, ranking);
   } catch (_) { /* sin red, la tarjeta queda con lo del celular */ }
 }
 
