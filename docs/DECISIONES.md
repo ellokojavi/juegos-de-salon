@@ -69,7 +69,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216 |
 | La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234 |
 | Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218 |
-| Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230 |
+| Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236 |
 | Marketing | `marketing/README.md` | D-178 |
 | App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
 
@@ -3565,7 +3565,7 @@ Una copia que otra sesión todavía usa después de fusionar se borra al abrir l
 lo que quede sin commitear se respeta.
 
 ## D-219 · /records/ se ordena: lo general arriba, Juegos o Copas abajo, y la bandera junto a cada nombre
-**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** amplía D-212 y D-215
+**Fecha:** 2026-10-05 · **Estado:** corregida por D-236 · **Relación:** amplía D-212 y D-215
 **Decisión:** La página de rankings se ordena para leerse de arriba abajo:
 - Arriba, lo que vale para todos los juegos: tu jugador, el **Ranking general** (el Todoterreno)
   y **Más partidas jugadas**, una tabla nueva (`records/partidas/<período>/<jid>`) que suma una
@@ -3969,3 +3969,20 @@ Se descartaron las *view transitions* entre documentos: Firefox no las tiene y h
 apagarlas a mano en cada otra navegación del sitio.
 **Consecuencias:** abrir el juego tarda 0,42 s más. Si `sessionStorage` no está disponible, el
 juego aparece sin fundido.
+
+## D-236 · Cambiar el PIN va en "Juegas como", no en los rankings
+**Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** corrige "tu jugador" de D-219; amplía D-212
+**Decisión:** El panel plegado "👤 Tu jugador" de `/records/` mezclaba las partidas de cada juego con un
+campo "PIN nuevo" sin explicación. Se separa:
+- **En Records queda "👤 Tus partidas"**, abierta, con una fila por juego. Sin jugador o sin
+  partidas no sale.
+- **Lo de la cuenta va en "Juegas como 🇨🇱 Javi"** (`bloqueJugador`, el mismo en Records, La Copa
+  y los juegos): al tocarlo se despliegan una línea que dice para qué sirve el PIN y que cambiarlo
+  saca a los otros celulares, el campo "PIN nuevo", el botón **Cambiar el PIN** y **Salir**.
+- `jugador()` guarda la promesa y no el jugador: dos piezas que lo pedían mientras cargaba
+  recibían jugadores distintos, y lo que una escuchaba (entrar, salir) no le llegaba a la otra.
+  Con el cambio de arriba, "Salir" dejó de redibujar "Juegas como" en Records.
+**Por qué:** El dueño lo encontró confuso: Records es una vista de récords, no de administración
+de cuenta.
+**Consecuencias:** "Salir" pasa a estar a un toque más, dentro del nombre. Cambiar el PIN se puede
+desde cualquier página que muestre "Juegas como", no solo desde Records.
