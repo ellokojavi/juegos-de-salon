@@ -3875,7 +3875,14 @@ Con menos de 9 juegos en el mazo, la espera para repetir uno es de dos días men
 (con los 7 del PR 1, cinco días), porque 7 días con 7 juegos repetía el mismo orden cada semana.
 El acceso va en la misma fila que Juego al azar, a su derecha (el dueño, 2026-10-05); la tarjeta
 junto a La Copa queda como alternativa en `/labs/` y con `?uad=tarjeta`. El PR 1 (el núcleo, los 7
-solitarios, todo en el celular) llegó en v0.115.0.
+solitarios, todo en el celular) llegó en v0.115.0. El PR 4 (v0.118.0) suma los avisos: cada celular
+guarda lo que pidió y su último día y racha en `pushDia/<subId>`, y `tools/push/uno-al-dia.mjs` los
+decide dentro de la vuelta de `avisar.mjs` (lo mandado, en `pushEnviadosDia`); abren
+`today/?aviso=uad-<tipo>` y se cuentan en el panel como `uad-dia`, `uad-racha`, `uad-semana` y
+`uad-adios`. Quedó distinto del diseño: no se juntan con los de La Copa en un solo aviso (cada uno
+lleva su tope de 2 al día), y el de la semana dice solo cuántos días jugó, sin puesto ni "donde más
+mejoraste". Además, el globo del ícono (`setAppBadge`) y "Agregar al calendario" (un `.ics` con un
+evento diario). Detalle en "Lo que el PR 4 hizo" de [UNO-AL-DIA.md](UNO-AL-DIA.md).
 
 ## D-231 · El selector de idioma lleva las banderas siempre
 **Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** corrige la nota de `base.css` de D-191 (en un celular angosto se escondía la bandera)
