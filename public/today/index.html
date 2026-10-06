@@ -244,9 +244,10 @@
           pagina.append(tarjetaInvitar({ lang, alTocar: tap }));
         }
 
-        /* Los avisos y el calendario (D-230) */
+        /* Los avisos: el recordatorio de cada día, a la hora que elige (D-230) */
         const Av = await import('../assets/js/uno-al-dia-avisos.js');
-        pagina.append(Av.bloque({ lang, alTocar: tap, redibujar: aviso => dibujar({ avisos: aviso ? [aviso] : [] }) }));
+        const campana = Av.bloque({ lang, alTocar: tap, redibujar: aviso => dibujar({ avisos: aviso ? [aviso] : [] }) });
+        if (campana) pagina.append(campana);
 
         /* El ranking de Uno al día y entrar con nombre y PIN (mientras los rankings se vean) */
         const { rankingsVisibles, leerYo } = await import('../assets/js/jugador.js');
