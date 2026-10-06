@@ -566,6 +566,7 @@ node public/assets/js/transport/dispose.test.mjs
 node public/assets/js/transport/errors.test.mjs
 node public/assets/js/transport/ratelimit.test.mjs
 node public/assets/js/transport/stats.test.mjs
+node public/assets/js/uno-al-dia-avisos.test.mjs
 node public/assets/js/uno-al-dia-jugador.test.mjs
 node public/assets/js/uno-al-dia.test.mjs
 node public/cup/games/juegos.test.mjs
@@ -583,6 +584,7 @@ node tools/e2e/cambios.test.mjs
 node tools/firebase/rankings-historia.test.mjs
 node tools/push/avisar.test.mjs
 node tools/push/calendario.test.mjs
+node tools/push/uno-al-dia.test.mjs
 node tools/push/webpush.test.mjs
 node tools/release/version.test.mjs
 ```
@@ -679,7 +681,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   today/                      One a Day: today's game, your streak, a calendar and how you do in each game (in the lab, D-230)
   panel/                      Private owner dashboard: now, The Cup, games, traffic and audience, with a page per cup, game and room (Google sign-in; see docs/PANEL.md)
   assets/css/                 Shared styles: base.css (party theme), linea.css (timeline), teclado.css (keypad), ranking.css (leaderboards)
-  assets/js/                  Shared modules: games.js (game registry), i18n.js (ES/EN/PT/DE), labs-idioma.js (a new language in the lab, D-191), ui.js, sound.js, compartir.js (everything shared, D-165), handoff.js, chat.js, session.js, arrastre.js (drag and drop), teclado.js, azar.js, dado3d.js and llegada.js (Random game: the die, and the fade into the game, D-235), frases.js, records.js + jugador.js + ranking.js (players and leaderboards, D-212; jugador-firebase.js and jugador-local.js are their stores), instalable.js (registers the service worker, D-221), instalar.js (the home-page bubble that invites to add the app to the home screen, D-232), push.js + vapid.js (phone notifications: subscribing, D-223), uno-al-dia.js + uno-al-dia-ui.js + uno-al-dia-red.js (One a Day: a daily game, the same for everyone, with a streak, freezes, leaderboards and invitations; in the lab, D-230)
+  assets/js/                  Shared modules: games.js (game registry), i18n.js (ES/EN/PT/DE), labs-idioma.js (a new language in the lab, D-191), ui.js, sound.js, compartir.js (everything shared, D-165), handoff.js, chat.js, session.js, arrastre.js (drag and drop), teclado.js, azar.js, dado3d.js and llegada.js (Random game: the die, and the fade into the game, D-235), frases.js, records.js + jugador.js + ranking.js (players and leaderboards, D-212; jugador-firebase.js and jugador-local.js are their stores), instalable.js (registers the service worker, D-221), instalar.js (the home-page bubble that invites to add the app to the home screen, D-232), push.js + vapid.js (phone notifications: subscribing, D-223), uno-al-dia.js + uno-al-dia-ui.js + uno-al-dia-red.js + uno-al-dia-avisos.js (One a Day: a daily game, the same for everyone, with a streak, freezes, leaderboards, invitations and reminders; in the lab, D-230)
   assets/js/transport/        Transports: local (same phone), firebase (room) and stats (usage signals)
   assets/og/                  The 1200×630 images shown when a link is shared
   manifest.webmanifest        PWA manifest (installable on the home screen), one per language (manifest.en.webmanifest …) so the app is named in the player's language (D-222); its PNG icons are in assets/icons/

@@ -564,11 +564,4 @@ input.fecha { width: 100%; min-height: 48px; border-radius: 12px; border: 1px so
 .linkish { appearance: none; border: 0; background: none; color: var(--cyan); font: inherit; font-weight: 800; text-decoration: underline; cursor: pointer; min-height: 44px; padding: 0 6px; }
 .aviso-bloqueado { border-style: dashed; }
 .aviso-activo { color: var(--yellow); border-color: rgba(255, 210, 63, 0.6); }
-.hoja-switch { display: flex; justify-content: space-between; align-items: center; gap: 14px; min-height: 56px; padding-bottom: 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.12); cursor: pointer; }
-.hoja-switch span { display: flex; flex-direction: column; gap: 2px; }
-.hoja-switch input { appearance: none; flex: none; width: 52px; height: 32px; border-radius: 999px; background: rgba(255, 255, 255, 0.2); position: relative; cursor: pointer; transition: background 0.15s; margin: 0; }
-.hoja-switch input::after { content: ''; position: absolute; left: 3px; top: 3px; width: 26px; height: 26px; border-radius: 999px; background: #fff; transition: transform 0.15s; }
-.hoja-switch input:checked { background: var(--pink); }
-.hoja-switch input:checked::after { transform: translateX(20px); }
-.hoja-switch input:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
 .btn--peligro { color: #ff8fbd; background: rgba(255, 46, 136, 0.16); border-color: transparent; }

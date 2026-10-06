@@ -130,7 +130,7 @@ node tools/e2e/contacto.mjs <seccion> --salida /tmp/contacto      # mirarlas jun
 node tools/release/og.mjs tarjetas | imagenes | revisar           # tarjetas de WhatsApp (D-72)
 node tools/release/iconos.mjs                                    # íconos PNG de la app instalable, desde assets/icon.svg (D-221)
 node tools/push/vapid.mjs                                        # la clave de los avisos: ya se corrió (D-225), no se rehace
-node tools/push/avisar.mjs --simular | --prueba <código>         # qué avisos mandaría, o uno de prueba a una copa (D-224)
+node tools/push/avisar.mjs --simular | --prueba <código>         # qué avisos mandaría (copas y Uno al día), o uno de prueba a una copa (D-224, D-230)
 ```
 
 - **Una captura atrasada es un aviso en un PR común. "Actualiza el README" es una pasada entera**,
