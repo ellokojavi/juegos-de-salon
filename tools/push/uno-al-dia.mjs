@@ -60,12 +60,17 @@ export function avisosUnoAlDia({ quiere = {}, subs = {}, enviados = {}, now }) {
     const uno = (tipo, clave, body, extra = {}) => { if (!env[clave]) out.push({ subId, tipo, clave, aviso: { title: T.avTitulo, body, url: url(tipo), tag: `uad-${tipo}` }, ...extra }); return !env[clave]; };
 
     // Se calman solos: a los 30 días sin jugar, uno último, y se borran
-    if (sinJugar >= ADIOS_DIAS) { uno('adios', 'adios', fmt(T.avAdios, { m: Math.max(q.m || 0, q.c || 0) }), { borrar: true }); continue; }
+    if (sinJugar >= ADIOS_DIAS) {
+      const m = Math.max(q.m || 0, q.c || 0);   // con una mejor racha de 1, "fue de 1 días" no se dice (U-6)
+      uno('adios', 'adios', m >= 2 ? fmt(T.avAdios, { m }) : T.avAdiosSin, { borrar: true }); continue;
+    }
     const c = rachaViva(q, hoyN);
     // El de la racha, en la noche: es el que más importa, va primero
     if (q.r !== false && !jugoHoy && c >= 2 && hora >= RACHA_HORA) {
       const quedan = 24 - hora;   // a las 21:xx, "te quedan 3 horas", redondeado hacia arriba como los de La Copa
-      if (uno('racha', `racha:${hoyN}`, fmt(q.k ? T.avRachaCom : T.avRacha, { c, h: quedan }))) continue;
+      // Los comodines que le quedan: si ayer no jugó, uno ya se gastó para llegar a hoy
+      const quedanComodines = (q.k || 0) - Math.max(0, hoyN - q.u - 1);
+      if (uno('racha', `racha:${hoyN}`, fmt(quedanComodines > 0 ? T.avRachaCom : T.avRacha, { c, h: quedan }))) continue;
     }
     // La semana, los lunes: solo si jugó algún día la semana anterior
     const lunes = new Date(`${hoy}T12:00:00Z`).getUTCDay() === 1;
@@ -75,7 +80,8 @@ export function avisosUnoAlDia({ quiere = {}, subs = {}, enviados = {}, now }) {
     }
     // El de hoy: desde su hora, si no ha jugado; con 14 días sin jugar, día por medio
     if (q.d !== false && !jugoHoy && hora >= (q.h ?? 9) && !(sinJugar >= CALMA_DIAS && hoyN % 2)) {
-      uno('dia', `dia:${hoyN}`, c ? fmt(T.avDia, { n: numeroDel(hoy), c }) : fmt(T.avDiaSin, { n: numeroDel(hoy) }));
+      // La racha, solo de 2 o más, como el aviso de la racha: "Racha: 1 días" no se dice (U-6)
+      uno('dia', `dia:${hoyN}`, c >= 2 ? fmt(T.avDia, { n: numeroDel(hoy), c }) : fmt(T.avDiaSin, { n: numeroDel(hoy) }));
     }
   }
   return out;
