@@ -95,11 +95,14 @@ const codeAviso = await ev('__copa.estado.code');
 const hoyDemo = await ev(`(()=>{const m=__copa.estado.copa.meta;return Object.keys(m.win).map(Number).find(k=>Date.now()>=m.win[k].a&&Date.now()<m.win[k].b&&!(__copa.estado.copa.results?.[k]?.[__copa.estado.yo]))||0})()`).catch(() => 0);
 await b.go(`${BASE}?prueba&${codeAviso}&dia=${hoyDemo}`, 2000); await preparar();
 ok(hoyDemo && await ev('__copa.estado.pantalla') === 'jugar', `el aviso del día ${hoyDemo} abre ese día, listo para empezar`);
+await b.shot('aviso-dia');
+ok(!/[?&](dia|silenciar)\b/.test(await ev('location.search')), 'la dirección ya no lleva el día del aviso: recargar no lo repite');
 await b.go(`${BASE}?prueba&${codeAviso}&dia=99`, 2000); await preparar();
 ok(await ev('__copa.estado.pantalla') === 'tablero', 'un día que no se puede jugar abre el tablero');
 await click('#btn-avisos'); await sleep(1500);
 ok(await estadoCampana() === 'activo', 'se vuelven a activar');
 await b.go(`${BASE}?prueba&${codeAviso}&silenciar`, 2000); await preparar(); await sleep(600);
+await b.shot('aviso-silenciar');
 ok(await estadoCampana() === 'apagado' && await ev('__copa.estado.pantalla') === 'tablero', 'el botón "Silenciar esta copa" del aviso la silencia');
 
 /* ---------- Bloqueados ---------- */

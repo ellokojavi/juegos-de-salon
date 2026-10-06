@@ -543,8 +543,13 @@ async function abrirCopa(code, { recienCreada = false, pantalla = null } = {}) {
       primera = false;
       // Si la copa tiene link propio, la dirección lo muestra aunque se haya entrado por el código
       // (la lista de tus copas, un link viejo): así lo que se copie de la barra es el link bonito (D-121)
-      if (L.meta.alias && !new URLSearchParams(location.search).has('demo')) {
+      const q = new URLSearchParams(location.search);
+      if (L.meta.alias && !q.has('demo')) {
         history.replaceState(null, '', `${location.pathname}?${L.meta.alias}${PRUEBA ? '&prueba' : ''}`);
+      } else if (q.has('dia') || q.has('silenciar')) {
+        // Lo que pidió el aviso se hace una vez: recargar no vuelve a silenciar ni a abrir el día (D-229)
+        q.delete('dia'); q.delete('silenciar');
+        history.replaceState(null, '', `${location.pathname}?${q.toString().replace(/=(?=&|$)/g, '')}`);
       }
       const pid = cuenta.quien(code);
       if (pid && L.players?.[pid]) {
