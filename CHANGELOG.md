@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.112.0 — 2026-10-05
+- **Los avisos se miden en el panel** (D-233): cuántos celulares los tienen, cuántos avisos se
+  mandan y se tocan por tipo, cuántos abren la app instalada y a qué hora pasó la última vuelta,
+  para notar si GitHub dejó de mandarlos. Para el jugador no cambia nada.
+
 ## 0.111.0 — 2026-10-05
 - **Avisos más justos** (D-229): a lo más 2 por copa al día, y si se vencen dos días a la vez,
   van en un aviso. Al tocarlo abre el día que avisa, listo para jugar, y en Android trae los botones

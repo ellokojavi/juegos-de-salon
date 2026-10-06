@@ -3,7 +3,7 @@
   "name": "Salonspiele",
   "short_name": "Salonspiele",
   "description": "Klassische Spiele auf deinem Handy, für allein oder mit Freunden.",
-  "start_url": "./",
+  "start_url": "./?pwa",
   "scope": "./",
   "display": "standalone",
   "background_color": "#150726",
