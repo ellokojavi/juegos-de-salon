@@ -145,3 +145,7 @@ Las respuestas a dilemas (issues con la etiqueta `usabilidad`) se anotan aquí:
 - ~~**El 🐞 del laboratorio alemán puede achicar el nombre del juego en la barra**~~ (#159): ya no
   aplica: el alemán salió del laboratorio (D-197) y ya no muestra 🐞. Vuelve a valer para el
   próximo idioma que entre al laboratorio (D-191).
+- **Uno al día: compartir sin el juego de hoy** (#215, D-230): ni el texto ni la imagen del
+  resultado nombran el juego que tocó ("📅 *Uno al día n.° 12*" y "87 puntos"), porque quien lo lee
+  en el grupo casi siempre todavía no juega y el juego se descubre en el dado, como con el aviso.
+  Es una excepción a U-31.
