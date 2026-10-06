@@ -14,7 +14,9 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
   práctica con semilla y las demos (D-101).
 - **URL:** `/cup/` (portada) · `/cup/?K7Q2X` (una copa) · `/cup/?labs` (copa real con la Copa
   de 3 días, D-100; `?tres` sigue funcionando) · `?prueba` (almacén local y reloj adelantable, sin
-  Firebase) · `/cup/?practica=<id>&labs&semilla=K7Q2X` (un juego suelto del laboratorio,
+  Firebase) · `/cup/?K7Q2X&dia=3` (abre el día 3 listo para empezar, si se puede jugar; lo usan
+  los avisos, D-229) · `/cup/?K7Q2X&silenciar` (silencia los avisos de esa copa: el botón del aviso
+  en Android) · `/cup/?practica=<id>&labs&semilla=K7Q2X` (un juego suelto del laboratorio,
   repetible; los que tienen página se van a `/<slug>/?labs&semilla=K7Q2X`, D-164). Desde la portada el juego suelto es `/<slug>/` (D-142, D-149, D-162, D-198): la misma
   pantalla, sin "copa" en el link, que vuelve al menú, sin sesión de prueba ni semilla a la vista, y
   con su señal de uso. `/cup/?practica=<id>` sin `&labs` lleva ahí.
@@ -215,8 +217,11 @@ Abiertos a todos desde D-228: se ven en cualquier celular que pueda recibirlos, 
   del celular y nunca entre las 22:00 y las 8:00: **se abrió el día** (desde las 9:00, si no lo ha
   jugado ni empezado), **se te acaba el plazo** (4 horas antes del cierre, o desde las 20:00 si
   cierra de noche), **La Gran Final** (con su lugar en la tabla), **terminó la copa** y, al admin
-  que activó avisos, **quién se inscribió**. A lo más uno por copa y celular en cada vuelta. Los
-  textos son los `avMsg*` de `rules.js`; al tocarlo abre el tablero de la copa.
+  que activó avisos, **quién se inscribió**. A lo más uno por copa y celular en cada vuelta, y dos
+  por copa en un día (D-229). Los textos son los `avMsg*` de `rules.js`. Al tocarlo abre ese día
+  (`&dia=<d>`) o, el del cierre, el podio; en Android trae **Jugar** y **Silenciar esta copa**
+  (`&silenciar`). Los días nuevos de varias copas van juntos en un aviso, y un empate arriba nombra
+  a todos los que ganaron (D-229).
 
 ## Flujo
 
@@ -263,7 +268,7 @@ Todo bajo `public/cup/`:
 | `games/index.js` · `games/semilla.js` · `games/mazos.js` · `games/audiencia.js` · `games/solo.js` | Lo común a los juegos: el registro, la semilla, los mazos, el público y el modo suelto con su récord |
 | `store-firebase.js` · `store-local.js` | El mismo almacén contra Firebase o contra localStorage (`?prueba`) |
 | `cuenta.js` | Con quién está sentado este celular, el intento a medio jugar, los avisos de cada copa (D-223) y "Tus copas" (las del celular más las del jugador, `juntarCopas`, D-220) |
-| `avisos.js` | Los avisos al celular en pantalla: la campana, la tarjeta y sus hojas (D-223; la lógica del navegador está en `assets/js/push.js`). El estilo de la hoja de abajo (`.hoja`) es de todo el sitio y vive en `assets/css/base.css` (D-229); `style.css` guarda solo lo propio de los avisos |
+| `avisos.js` | Los avisos al celular en pantalla: la campana, la tarjeta y sus hojas (D-223; la lógica del navegador está en `assets/js/push.js`). El estilo de la hoja de abajo (`.hoja`) es de todo el sitio y vive en `assets/css/base.css` (D-230); `style.css` guarda solo lo propio de los avisos |
 | `desglose.js` | Cómo se calculó el puntaje, línea por línea (D-106) |
 | `demo.js` | Las escenas de ejemplo del laboratorio |
 | `reportes.js` | El botón 🐞 y los reportes que esperan reenvío |
