@@ -31,12 +31,16 @@ function crear(tag, clase, texto) {
 }
 
 /** La misma escena con que se fue el menú: el dado quieto y, si ya había caído, su nombre. */
-function montar({ img, emoji, chico, nombre }) {
+function montar({ img, emoji, chico, nombre, alto, sombra: som }) {
   const salto = crear('div', 'azar-salto');
+  // Si se tocó mientras rodaba, el dado sigue en el aire, donde quedó
+  if (alto && alto !== 'none') salto.style.transform = alto;
   if (img) { const foto = crear('img', 'azar-lienzo'); foto.src = img; foto.alt = ''; salto.append(foto); }
   else salto.append(crear('div', 'azar-sin-3d', emoji));
   const escena = crear('div', 'azar-escena');
-  escena.append(crear('div', 'azar-sombra'), salto);
+  const sombra = crear('div', 'azar-sombra');
+  if (Array.isArray(som)) { if (som[0] !== 'none') sombra.style.transform = som[0]; sombra.style.opacity = som[1]; }
+  escena.append(sombra, salto);
   const rotulo = crear('div', 'azar-nombre');
   if (nombre) rotulo.append(crear('small', '', chico), crear('b', '', nombre));
   const capa = crear('div', 'azar-capa velo');
