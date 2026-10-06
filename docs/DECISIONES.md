@@ -3881,5 +3881,5 @@ así, en el celular, que es donde más se juega, nunca se veían.
 - Cada botón dice su idioma en su idioma (`aria-label`, `title`, `lang`): la bandera es decorativa.
 **Por qué:** La bandera se reconoce antes que el código, sobre todo para quien no lee español.
 Apilarla mantiene el ancho y los 44 px de alto (C-8), así que la barra no cambia.
-**Consecuencias:** En Windows, los emoji de bandera se ven como dos letras (CL, GB…); se acepta,
-porque la app se juega en celulares. Hay un solo toggle en la app: el estándar queda en C-3.
+**Consecuencias:** Las banderas son emoji, no imágenes SVG, por decisión del dueño: en Windows se
+ven como dos letras (CL, GB…) y se acepta, porque la app se juega en celulares. Hay un solo toggle en la app: el estándar queda en C-3.
