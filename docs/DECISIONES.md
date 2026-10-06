@@ -53,7 +53,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 |---|---|---|
 | Estructura y rutas | C-2 | D-01, D-02, D-03, D-24, D-192, D-198 |
 | Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184 |
-| Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199 |
+| Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-230 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213 |
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138 |
@@ -3800,3 +3800,19 @@ dentro de la app instalada.
 **Consecuencias:** Quien instala la app en un iPhone ve los avisos antes de que se abran a todos.
 Son pocos y es justo lo que se quiere probar. `push.test.mjs` y `tools/e2e/cup/avisos.mjs` lo
 prueban.
+
+## D-230 · El selector de idioma lleva las banderas siempre
+**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** corrige la nota de `base.css` de D-191 (en un celular angosto se escondía la bandera)
+**Decisión:** Pedido del dueño: todos los selectores de idioma llevan sus banderas, y queda un
+estándar de diseño para el widget (C-3). En un celular de hasta 440 px, con cuatro idiomas, el
+toggle escondía las banderas para no empujar el sonido y compartir fuera de la barra de arriba:
+así, en el celular, que es donde más se juega, nunca se veían.
+- La bandera ya no se esconde: en una pantalla angosta sube **encima** del código, y el toggle
+  queda del ancho que tenía con el código solo (unos 180 px). En una pantalla ancha va al lado.
+- Las banderas y los nombres de cada idioma salen de `BANDERAS` y `NOMBRES_IDIOMA` en `i18n.js`,
+  y la prueba de paridad exige uno por idioma de `IDIOMAS`.
+- Cada botón dice su idioma en su idioma (`aria-label`, `title`, `lang`): la bandera es decorativa.
+**Por qué:** La bandera se reconoce antes que el código, sobre todo para quien no lee español.
+Apilarla mantiene el ancho y los 44 px de alto (C-8), así que la barra no cambia.
+**Consecuencias:** En Windows, los emoji de bandera se ven como dos letras (CL, GB…); se acepta,
+porque la app se juega en celulares. Hay un solo toggle en la app: el estándar queda en C-3.
