@@ -964,7 +964,7 @@ export function pickLang(obj, lang = getLang()) {
  * los dos: la prueba de paridad lo exige. Es la bandera del país de la app en ese idioma
  * (el español es el de Chile, el portugués el de Brasil, D-191, D-194).
  */
-export const BANDERAS = { es: '🇨🇱', en: '🇬🇧', pt: '🇧🇷', de: '🇩🇪' };
+export const BANDERAS = { es: '🇪🇸', en: '🇬🇧', pt: '🇧🇷', de: '🇩🇪' };
 export const NOMBRES_IDIOMA = { es: 'Español', en: 'English', pt: 'Português', de: 'Deutsch' };
 
 /**
