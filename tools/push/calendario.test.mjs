@@ -176,8 +176,8 @@ await caso('empate en el primer lugar (D-229): ganaron los dos, en plural', () =
   const s3 = { ...subs, [S3]: { lang: 'en', tz: TZ } };
   const q = { ...quiere(), cccccc: { [S3]: { dia: true, plazo: true, at: 0 } } };
   const out = avisosDeCopa({ code: 'KQRST', copa, quiere: q, subs: s3, now: meta.end + 10 * HORA });
-  assert.equal(de(out, S1)[0].aviso.body, '🥇 ¡Ganaste la copa, empatado con Beto!');
-  assert.equal(de(out, S2)[0].aviso.body, '🥇 Você ganhou a copa, empatado com Ana!');
+  assert.equal(de(out, S1)[0].aviso.body, '🥇 ¡Ganaste la copa junto con Beto!');
+  assert.equal(de(out, S2)[0].aviso.body, '🥇 Você ganhou a copa junto com Ana!');
   assert.equal(de(out, S3)[0].aviso.body, '🥇 Ana and Beto won. You finished #3.');
   assert.equal(de(out, S1)[0].aviso.acciones, undefined, 'el del cierre no trae botones: abre el podio');
 });

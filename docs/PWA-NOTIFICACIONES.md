@@ -61,8 +61,8 @@ Lo que **no** se avisa, a propósito:
   sobra y obligaría a un servidor en tiempo real.
 - **Marketing** ("¡vuelve a jugar!", "hay un juego nuevo"): un aviso que no sirve a quien lo recibe
   hace que desactive todos. Si alguna vez se quiere, va con su propia casilla, apagada por defecto.
-- Tope: **máximo 2 avisos por persona al día** por copa (lo hecho en el PR 3 es distinto: uno por
-  vuelta, ver "Lo que el PR 3 hizo distinto" más abajo). Cada aviso trae un `tag` por copa y día,
+- Tope: **máximo 2 avisos por persona al día** por copa (D-229; además, uno por vuelta, ver "Lo
+  que el PR 3 hizo distinto" más abajo). Cada aviso trae un `tag` por copa y día,
   así el siguiente reemplaza al anterior en la bandeja en vez de apilarse.
 
 Con esto el admin sigue teniendo sus mensajes armados para el grupo de WhatsApp (D-99 no se borra
@@ -194,14 +194,14 @@ modo No molestar, por ejemplo), el botón **Probar los avisos** de la hoja sirve
 | Se abrió el día | 🏆 La Copa: Los Primos | "🔗 Día 3: Conexiones. Ya puedes jugar." (el emoji del juego, como el recordatorio) | El día 3, en "Empezar" |
 | Se te acaba el plazo | 🏆 La Copa: Los Primos | "⏳ Te quedan 4 horas para jugar el día 3. Si no lo juegas, son 0 puntos." | El día 3 |
 | La Gran Final | 🏆 La Copa: Los Primos | "🏁 Hoy es La Gran Final y vale doble. Vas 2.°, a 3 puntos de Ana." | La Gran Final |
-| Terminó | 🏆 La Copa: Los Primos | "🥇 Ganó Ana. Quedaste 2.°." (a quien ganó: "🥇 ¡Ganaste la copa!") | El podio |
+| Terminó | 🏆 La Copa: Los Primos | "🥇 Ganó Ana. Quedaste 2.°." (a quien ganó: "🥇 ¡Ganaste la copa!"; con empate arriba, "🥇 Ganaron Ana y Beto…", D-229) | El podio |
 | Alguien se inscribió (solo admin) | 🏆 La Copa: Los Primos | "Pedro se inscribió en tu copa. Ya son 5 jugadores inscritos." | El tablero |
 
 - **Hora del jugador, no de la copa**: la zona horaria se guarda con la suscripción. El aviso de
   la mañana llega entre 9:00 y 10:00, y el del plazo unas 4 horas antes del cierre, pero nunca
   entre las 22:00 y las 8:00 de quien lo recibe. Si el plazo cae de noche para él, el aviso llega a
   las 20:00 y dice la hora exacta del cierre.
-- **A lo más 2 avisos por copa al día.** Si alguien juega varias copas, los avisos del mismo
+- **A lo más 2 avisos por copa al día.** Si alguien juega varias copas, los días nuevos del mismo
   momento se juntan en uno: "Tienes un día nuevo en 2 copas: Los Primos y La Oficina."
 - **No se apilan**: cada aviso lleva una etiqueta por copa y día, así que el del plazo reemplaza
   al de la mañana en la bandeja.
@@ -293,6 +293,9 @@ push.js (en la página)                    pushEnviados/<código>/<subId>/<clave
 - **Hecho en el PR 2:** maneja `push` (muestra el aviso que llega como JSON `{ title, body, url, tag }`,
   con el ícono de la app; si no lo entiende, no muestra nada) y `notificationclick` (enfoca la
   pestaña de la app si ya está abierta, llevándola a la URL, o abre una).
+- **D-229:** el JSON puede traer `acciones` (`[{ action, title, url }]`, a lo más dos): Android las
+  muestra como botones (**Jugar** y **Silenciar esta copa**) y, al tocar una, abre su `url` en vez
+  de la del aviso. El SW no escribe en la base: silenciar lo hace la copa al abrirse con `&silenciar`.
 - No escucha `pushsubscriptionchange`: si el navegador renovó la suscripción, la copa lo nota al
   abrirse (`revisar()` en `cup/avisos.js`) y la guarda de nuevo con la misma elección; si el
   permiso se quitó desde los ajustes, la copa deja de contar como activa.
@@ -373,10 +376,14 @@ Lo que no se puede automatizar: un iPhone real, con iOS 16.4 o más (ideal: 17, 
 - `tools/push/calendario.mjs` decide qué toca, con `engine.js` (el mismo que usa la app, así el
   "qué día es" no se duplica): en la hora de quien recibe, nunca antes de las 8:00 ni desde las
   22:00; el del día desde las 9:00; el del plazo cuando faltan 4 horas o menos, o desde las 20:00
-  si el cierre cae de noche. A lo más uno por copa y celular en cada vuelta.
+  si el cierre cae de noche. A lo más uno por copa y celular en cada vuelta y dos por copa en el
+  día de quien recibe (`TOPE`, D-229); dos plazos que se vencen a la vez van en uno, y el del día,
+  el plazo y la final llevan `&dia=<d>` y los botones de Android (`acciones`).
 - `tools/push/avisar.mjs` lee `pushCopa`, `push` y `pushEnviados`, manda, y anota cada aviso
   entregado en `pushEnviados/<código>/<subId>/<clave>` (`dia:3`, `plazo:3`, `final`, `fin`,
-  `insc:<pid>`). Una falla pasajera se reintenta en la vuelta siguiente.
+  `insc:<pid>`). Una falla pasajera se reintenta en la vuelta siguiente. Antes de mandar, junta
+  en un aviso los días nuevos de varias copas para un mismo celular (`juntar` de `calendario.mjs`,
+  D-229) y lo anota en cada copa.
 - Si el servicio responde 404 o 410, la suscripción murió: se borra, con sus copas. Lo de una copa
   borrada o terminada hace más de una semana se limpia.
 - `node tools/push/avisar.mjs --simular` imprime qué mandaría sin mandar nada.
