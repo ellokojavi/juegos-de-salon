@@ -9,7 +9,8 @@
 import { el } from './ui.js';
 import { COMMON, getLang } from './i18n.js';
 import { jugador, leerYo, rankingsVisibles } from './jugador.js';
-import { semana, SIEMPRE, tablaId, VARIANTE_COPA, VARIANTE_VICTORIAS, esVictorias, medallero, ultimasCopas, limpiarNombre, esPin, claveNombre, bandera, PARTIDAS } from './records.js';
+import { semana, SIEMPRE, tablaId, VARIANTE_COPA, VARIANTE_VICTORIAS, esVictorias, medallero, ultimasCopas, limpiarNombre, esPin, claveNombre, bandera, PARTIDAS, UAD_RACHA, periodoDia } from './records.js';
+import { fechaLocal, numDia, semanaDe } from './uno-al-dia.js';
 
 const R = () => (COMMON[getLang()] || COMMON.es).rk;
 const fmt = (s, vars = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (vars[k] !== undefined ? vars[k] : `{${k}}`));
@@ -133,6 +134,12 @@ const PESTANAS = {
   siempre: { rotulo: T => T.always, leer: (J, juego) => J.tabla(juego, SIEMPRE) },
   amigos: { rotulo: T => T.friends, leer: async (J, juego) => ({ top: await J.tablaAmigos(juego, SIEMPRE), amigos: true }) },
   copa: { rotulo: T => T.cup, leer: (J, juego) => J.tabla(tablaId(juego, VARIANTE_COPA), SIEMPRE) },
+  // Uno al día (D-230): el desafío de hoy, la suma de la semana (de la fecha del jugador), la mejor
+  // racha y los amigos en la semana
+  hoy: { rotulo: T => T.today, leer: (J, juego) => J.tabla(juego, periodoDia(numDia(fechaLocal()))) },
+  semanaDia: { rotulo: T => T.week, leer: (J, juego) => J.tabla(juego, semanaDe(fechaLocal())) },
+  rachas: { rotulo: T => T.streaks, tabla: UAD_RACHA, leer: J => J.tabla(UAD_RACHA, SIEMPRE) },
+  amigosSemana: { rotulo: T => T.friends, leer: async (J, juego) => ({ top: await J.tablaAmigos(juego, semanaDe(fechaLocal())), amigos: true }) },
 };
 
 function fila(f, yo, victorias = false) {
@@ -144,7 +151,7 @@ function fila(f, yo, victorias = false) {
     el('span', { class: 'rk-nombre' }, el('span', { class: 'rk-n' }, conBandera(f.co, f.n || '?')), mia ? el('small', {}, `(${T.you})`) : null),
     el('span', { class: 'rk-puntos' }, `${f.s}`),
     // En una tabla de victorias no hay tiempo: el trofeo dice qué se cuenta
-    el('small', { class: 'rk-tiempo' }, victorias === 'partidas' ? '🎲' : victorias ? '🏆' : mmss(f.ms)));
+    el('small', { class: 'rk-tiempo' }, victorias === 'partidas' ? '🎲' : victorias === 'racha' ? '🔥' : victorias ? '🏆' : mmss(f.ms)));
 }
 
 /**
@@ -172,8 +179,10 @@ export function bloqueRanking({ juego, titulo = null, hint = null, pestanas = ['
       const yo = leerYo()?.jid;
       lista.replaceChildren();
       if (!v.top.length) { lista.append(el('p', { class: 'muted rk-centro' }, v.amigos ? T.emptyFriends : T.empty)); return; }
-      lista.append(...v.top.map(f => fila(f, yo, juego === PARTIDAS ? 'partidas' : esVictorias(juego))));
-      if (v.vecinos?.length) lista.append(el('div', { class: 'rk-sep', 'aria-hidden': 'true' }, '⋯'), ...v.vecinos.map(f => fila(f, yo, juego === PARTIDAS ? 'partidas' : esVictorias(juego))));
+      const t = PESTANAS[actual].tabla || juego;
+      const tipo = t === PARTIDAS ? 'partidas' : t === UAD_RACHA ? 'racha' : esVictorias(t);
+      lista.append(...v.top.map(f => fila(f, yo, tipo)));
+      if (v.vecinos?.length) lista.append(el('div', { class: 'rk-sep', 'aria-hidden': 'true' }, '⋯'), ...v.vecinos.map(f => fila(f, yo, tipo)));
       if (v.amigos && v.top.length < 2) lista.append(el('p', { class: 'muted rk-centro' }, T.emptyFriends));
     } catch (e) {
       if (mio === turno) lista.replaceChildren(el('p', { class: 'rk-error' }, T.error));

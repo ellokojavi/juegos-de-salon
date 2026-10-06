@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.116.0 — 2026-10-06
+- **Uno al día con rankings, comodines e invitaciones, en el laboratorio** (D-230): entrando con
+  tu nombre y PIN, tu Uno al día pasa de un celular a otro y entra a los rankings de hoy, de la
+  semana y de rachas. Cada 7 días seguidos ganas un comodín 🧊, que salva tu racha si un día no
+  juegas. Puedes invitar a un amigo: le llega "Sara te desafía" con tu racha, juega el mismo desafío,
+  ven quién ganó y tú ganas un comodín.
+
 ## 0.115.0 — 2026-10-06
 - **Uno al día, en el laboratorio** (D-230): un botón nuevo en la portada, al lado de Juego al
   azar. El dado rueda y cae en el juego de hoy, el mismo desafío para todos. Al terminar ves tu
