@@ -13,7 +13,7 @@
  *   imagen no trae (quién falta, las medallas, el reto) y el link.
  * - **Una invitación** (a una sala, a una copa) va sin imagen dibujada: el link ya trae su tarjeta
  *   social (D-72), que es la imagen que WhatsApp muestra.
- * - **La app** (el 📤 de la portada, D-226) va con esa misma tarjeta social, la de su idioma, como
+ * - **La app** (el botón de compartir de la portada, D-226, D-242) va con esa misma tarjeta social, la de su idioma, como
  *   imagen: pegada al texto, el link ya no la muestra. El texto cuenta lo que ella no dice.
  *
  * Donde no se puede compartir un archivo (un computador), la imagen se descarga y el texto queda
