@@ -56,7 +56,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213 |
-| Portada: filtros y favoritos | C-5 | D-142, D-149, D-196, D-214, D-238 |
+| Portada: filtros y favoritos | — (sin canon: lo dicen las decisiones) | D-142, D-144, D-149, D-196, D-214, D-238 |
 | Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237 |
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97 |
@@ -4086,7 +4086,7 @@ queda marcado como favorito (⭐ amarilla) y no se abre; al tocarla otra vez, se
 siempre los mismos dos o tres. Los tipos agrupan por género, no por gusto.
 **Alternativas descartadas:**
 - **Una quinta ficha en la fila de tipos:** cinco fichas no caben en una fila ni a 375 px, en
-  ningún idioma, y D-144 pide que los tipos vayan en una sola fila.
+  ningún idioma, y desde D-149 los tipos van en una sola fila (D-144).
 - **La ficha con la ⭐ sola, sin el nombre:** tampoco cabía a 320 px.
 - **Ordenar los favoritos primero, sin filtro:** el pedido era un filtro, y reordenar movería las
   tarjetas de lugar cada vez que alguien marca una.
