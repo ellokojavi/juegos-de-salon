@@ -331,6 +331,53 @@ como un error: se lee como que nadie jugó.
   modo, jugadores, zona horaria, idioma ni hora) necesita su línea en las reglas, su sección en
   el panel y publicar las reglas en la consola (ver [PANEL.md](PANEL.md)).
 
+
+## C-17 · La portada
+
+La portada (`public/index.html`) es la lista de juegos y las maneras de elegir uno. Sus reglas
+salieron de varias decisiones que se fueron corrigiendo; aquí está lo vigente, y cada punto dice
+de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
+
+- **Qué se ofrece y en qué orden.** Las tarjetas salen de `PORTADA` en `games.js`: primero los
+  juegos de `GAMES` (La Copa, la primera) y después los minijuegos sueltos de La Copa (`SUELTOS`),
+  sin lista propia en la página (D-142, D-149). Un juego que no está disponible se ve, con
+  "Próximamente" al lado del nombre, pero no se abre, ni con el teclado (C-5). La tarjeta dice
+  jugadores y duración, y si el juego no está en el idioma elegido lo dice antes de abrirlo
+  (`idiomas` en `games.js`).
+- **Arriba de la lista, los accesos que eligen por ti.** 🎲 Juego al azar sale de las tarjetas
+  que se ven y se pueden abrir, nunca de La Copa (D-188), y abre el juego con el dado encima
+  (D-237). Dónde va el acceso a Uno al día lo dice [UNO-AL-DIA.md](UNO-AL-DIA.md) (D-230).
+- **Se filtra por tipo, y por nada más que elija el jugador.** Un tipo a la vez (`TIPOS`), que
+  se prende y se apaga con un toque. Solo hay fichas de tipos que tienen algún juego que se
+  puede abrir, así la lista nunca queda vacía. Cuántos juegan no se filtra: cada juego lo
+  pregunta adentro (D-149). Con un filtro puesto, la línea de abajo dice "Se ven n de m" y
+  ofrece "Ver todos" (D-149; #71, resuelto en [USABILIDAD.md](USABILIDAD.md)).
+- **⭐ Favoritos es un filtro más**, excluyente con los tipos, y aparece solo con algún favorito
+  marcado. Los favoritos son de ese navegador (`localStorage`, por id de juego), sin cuenta
+  (`favoritos.js`, D-238). La Copa no se marca.
+- **El filtro va en la URL, en inglés** (`?type=logic`, `?type=favorites`): volver desde un juego
+  lo deja como estaba y un link filtrado se puede compartir. Un link viejo (`?tipo=`) se reescribe
+  y uno que no aplica (`?jugadores=`, o `?type=favorites` sin favoritos) muestra todos sin avisar
+  (D-149, D-214, D-238).
+- **Los filtros se quedan pegados arriba** al bajar por la lista, y tocar uno estando pegados
+  lleva a la primera tarjeta filtrada (D-196).
+- **Los tipos van en una sola fila**, a cualquier ancho desde 320 px y en los cuatro idiomas:
+  bajo 520 px el emoji sube arriba del nombre (D-144, D-149). Nada más entra a esa fila: lo que
+  no cabe va en su propia línea, y solo cuando hace falta, como ⭐ Favoritos (D-238).
+- **Nada se sale de la pantalla a 320 px**, tampoco donde el navegador no sabe partir una palabra
+  larga ("Galgenmännchen" en el Chrome de Linux): la columna de tarjetas no crece más que la
+  pantalla (`minmax(0, 1fr)`, D-238).
+- **Dentro de una tarjeta no hay nada tocable**: la tarjeta es un link entero. Lo que se toca
+  sin abrir el juego, como la ⭐, va al lado del link, encima de la tarjeta (`.game-slot`), con
+  44 px de toque y sin tapar texto (C-8, D-238).
+- **La barra de arriba** lleva el idioma (C-3), el sonido (C-4), 🏆 rankings (D-212) y 📤, que
+  comparte la app con su tarjeta social en el idioma en que se mira (`compartirApp`, D-226). El
+  globo que invita a agregar la app a inicio sale abajo, y la ✕ lo apaga para siempre (D-232).
+- **Se prueba entera en Chrome:** `tools/e2e/favoritos.mjs` (filtros, favoritos y 320 px en los
+  cuatro idiomas), `compartir-portada.mjs`, `instalar.mjs`, `uno-al-dia.mjs` e
+  `idioma-por-url.mjs`. `window.__portada` dice el filtro, las tarjetas que se ven y los
+  favoritos. Un cambio que se ve rehace la captura `docs/screenshots/menu.png` (C-13).
+
 ---
 
 ## Lista de chequeo antes de dar por listo un juego
@@ -348,7 +395,7 @@ como un error: se lee como que nadie jugó.
 - [ ] Lo que cambió, descrito en el PR para que quien fusiona escriba la entrada de `CHANGELOG.md` con su versión; publicada y comprobada en la URL pública por `publicar.yml` (C-11, D-205).
 - [ ] Si tiene varios celulares, el chat de sala usa el módulo compartido y muere con la sala (C-15).
 - [ ] Lo que comparte (sala, resultado) sale de `compartir.js`, con la cabecera del estándar, y un resultado va con su imagen (C-7, D-165).
-- [ ] Registro en el menú, README, especificación, requerimientos y decisiones (C-2, C-13).
+- [ ] Registro en el menú, README, especificación, requerimientos y decisiones (C-2, C-13). En la portada, con su tipo, entra al dado y a los favoritos y cabe a 320 px (C-17).
 - [ ] Las excepciones a los cánones están escritas en su especificación (C-13).
 - [ ] El panel lo muestra sin haberlo tocado: `node public/panel/adapta.test.mjs` en verde y una mirada a `node tools/e2e/mirar.mjs panel datos` (C-16).
 - [ ] Capturas del README rehechas y miradas, y `python3 tools/release/readme.py revisar` en verde (C-13).
