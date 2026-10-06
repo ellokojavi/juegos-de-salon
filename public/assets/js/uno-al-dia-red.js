@@ -71,8 +71,14 @@ export async function sincronizar() {
   const dias = Object.fromEntries(Object.entries(hist).filter(([k]) => /^[0-9]{5}$/.test(k)).map(([k, x]) => [fechaDeNum(Number(k)), x]));
   juntar({ dias, regalos: invitados.map(x => fechaDeNum(x.d)) });
   // Lo de hoy jugado en este celular antes de entrar con el jugador
-  const hoy = fechaLocal(), mio = leer().dias[hoy];
+  const hoy = fechaLocal(), locales = leer().dias, mio = locales[hoy];
   if (mio && !dias[hoy]) await j.anotarDia({ n: numDia(hoy), j: mio.j, s: mio.s, ms: mio.ms, semanaP: semanaDe(hoy), mejor: estado().mejor }).catch(() => null);
+  // Los días viejos de este celular que Firebase no tiene van a la historia (no a los rankings de su
+  // día ni de su semana, que ya pasaron): así la racha sigue en otro celular
+  for (const [f, x] of Object.entries(locales)) {
+    if (f === hoy || dias[f] || !x?.j) continue;
+    await j.anotarDia({ n: numDia(f), j: x.j, s: x.s, ms: x.ms, soloHistoria: true }).catch(() => null);
+  }
   // Los que aceptaron y tienen jugador quedan en Amigos
   const conNombre = await Promise.all(invitados.map(async x => ({ ...x, n: x.j ? (await j.publico(x.j).catch(() => null))?.n || null : null })));
   j.conocer(Object.fromEntries(conNombre.filter(x => x.j && x.n).map(x => [x.j, x.n])));
@@ -157,7 +163,8 @@ export async function misDatos() {
 export async function linkInvitar(base) {
   const j = await J().catch(() => null);
   const yo = j?.yo();
-  return yo ? `${base}?inv=${yo.jid}` : base;
+  // La base puede traer ya `?lang=de`: el invitador va como un parámetro más
+  return yo ? `${base}${base.includes('?') ? '&' : '?'}inv=${yo.jid}` : base;
 }
 export const tengoJugador = async () => !!(await J().catch(() => null))?.yo();
 

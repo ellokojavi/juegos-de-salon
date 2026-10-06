@@ -342,7 +342,7 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
      * aparte y de mejor esfuerzo: si la historia ya estaba (otro celular), sigue con lo demás.
      * Sin jugador, null.
      */
-    async anotarDia({ n, j, s, ms, semanaP, mejor = 0 }) {
+    async anotarDia({ n, j, s, ms, semanaP, mejor = 0, soloHistoria = false }) {
       const yo = api.yo();
       const r = normalizar({ s, ms });
       if (!yo || !r || !Number.isInteger(n) || n < 10000 || n > 99999) return null;
@@ -352,7 +352,8 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
         if (e.code === 'permiso' && !(await almacen.get(h).catch(() => null))) { escribir(KEY, null); avisar(); throw falla('pin'); }
       }
       const hist = await almacen.get(h).catch(() => null);
-      if (!hist) return out;
+      // Un día viejo de este celular, subido al entrar: va a la historia, no a los rankings
+      if (!hist || soloHistoria) return out;
       const fila = x => ({ ...x, k: claveOrden(x.s, x.ms), at: HORA, ...quien(yo) });
       try {
         const p = periodoDia(n);
