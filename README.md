@@ -415,7 +415,8 @@ Spec and design: [docs/games/cup.md](docs/games/cup.md)
   The Cup's medal table; it opens with the overall ranking and the most games played, then a Games | Cups switch, and every name carries its country's flag (D-219). Group games keep a table of wins each (D-215) — in a room by your seat, against
   the phone as the human, on one phone if you play under your own name — and Bulls and Cows alone and
   Timeline Flash (one per theme) keep their 0–100 records. Two people may share a name; with
-  different PINs they are different players.
+  different PINs they are different players. Tapping **Playing as** on any page that shows it opens **Change PIN**, with a line on what the PIN
+  is for, and **Sign out**; `/records/` lists **Your games**, how many times you played each one (D-236).
 - **Saved games:** every game stores its state on the device and offers to continue.
 - **Installable:** a PWA manifest, PNG icons for Android and iPhone and a service worker, so the browser offers to install it on the home screen from any game (D-221). The service worker caches nothing yet: there is no offline mode. The screen stays awake while playing.
 
