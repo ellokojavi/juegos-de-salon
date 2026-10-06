@@ -1,6 +1,6 @@
 # Uno al día
 
-**Estado:** aprobada por el dueño (D-230); el PR 1, el núcleo, está hecho, en el laboratorio (v0.114.0) · **Fecha:** 2026-10-05 ·
+**Estado:** aprobada por el dueño (D-230); el PR 1, el núcleo, está hecho, en el laboratorio (v0.115.0) · **Fecha:** 2026-10-05 ·
 **Toca:** RP-44, D-188 (Juego al azar), D-212 y D-217 (rankings), D-221 a D-229 (avisos), D-97 (semillas)
 
 Una modalidad nueva en la portada, al lado de **Juego al azar**: cada día la app sorprende con un
@@ -366,7 +366,7 @@ es chico y se hace una sola vez en `cup/game.js`. El Ahorcado, Batalla Naval y D
 uno su motor, y por eso van en su propio PR: el modo para uno abre directo, sin elegir modo, y el
 celular saca la palabra, la flota o los dados de la semilla del día.
 
-### Lo que el PR 1 hizo (v0.114.0)
+### Lo que el PR 1 hizo (v0.115.0)
 
 - **El link no lleva la fecha:** es `?hoy` (`/untangle/?hoy`, o `/cup/suelto/?linea&hoy` para
   Línea Relámpago y el número, que no tienen página propia). La página calcula la fecha del jugador,
