@@ -80,7 +80,7 @@ export function crearAvisos({ T, lang, cuenta, store, copa, redibujar, toast, ta
       el('h2', {}, T.avInstallTitle),
       el('p', { class: 'muted' }, T.avInstallLead),
       paso(1, T.avStep1, '⬆️', T.avStep1b),
-      paso(2, T.avStep2, '➕'),
+      paso(2, T.avStep2, '+'),
       paso(3, fmt(T.avStep3, { code: copa().code }), '🎲'),
       despues,
       el('div', { class: 'btn-row' },

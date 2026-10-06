@@ -61,8 +61,8 @@ export function pasosDe({ nav = globalThis.navigator, win = globalThis.window } 
 
 /** Los pasos de cada celular: [texto, ícono, nota?] con las claves de `T.ins`. */
 const PASOS = {
-  'ios-safari': [['iosShare', '⬆️', 'iosShareNote'], ['iosAdd', '➕'], ['iosConfirm', '✅']],
-  'ios-chrome': [['chromeIosShare', '⬆️'], ['iosAdd', '➕'], ['iosConfirm', '✅']],
+  'ios-safari': [['iosShare', '⬆️', 'iosShareNote'], ['iosAdd', '+'], ['iosConfirm', '✅']],
+  'ios-chrome': [['chromeIosShare', '⬆️'], ['iosAdd', '+'], ['iosConfirm', '✅']],
   android: [['androidMenu', '⋮'], ['androidAdd', '📲'], ['androidConfirm', '✅']],
   samsung: [['samsungMenu', '☰'], ['samsungAdd', '📲'], ['samsungConfirm', '✅']],
 };
@@ -119,7 +119,6 @@ export function globoInstalar({ T, url: enlace = '.', tap = () => {}, espera = 2
     } }, t.done);
     hoja('hoja-agregar',
       el('h2', { id: 'hoja-agregar-titulo' }, t.sheetTitle),
-      el('p', { class: 'muted' }, t.sheetLead),
       ...PASOS[pasos].map((p, i) => paso(i + 1, p)),
       despues,
       el('div', { class: 'btn-row' }, ya, botonCerrar()));

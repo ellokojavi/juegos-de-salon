@@ -422,9 +422,12 @@ html.i18n-pendiente body { visibility: hidden; }
 .hoja-paso { display: grid; grid-template-columns: 32px 1fr 44px; gap: 12px; align-items: center; }
 .hoja-paso small { display: block; margin-top: 2px; }
 .hoja-num { width: 32px; height: 32px; border-radius: 999px; background: var(--pink); color: #fff; font-weight: 900; display: grid; place-items: center; }
-.hoja-icono { width: 44px; height: 44px; border-radius: 12px; background: rgba(255, 255, 255, 0.1); display: grid; place-items: center; font-size: 1.3rem; }
+.hoja-icono { width: 44px; height: 44px; border-radius: 12px; background: rgba(255, 255, 255, 0.1); display: grid; place-items: center; font-size: 1.3rem; color: #fff; font-weight: 900; }
 .hoja-link, .hoja-caja { background: rgba(255, 255, 255, 0.08); border-radius: 14px; padding: 12px 14px; overflow-wrap: anywhere; }
 .hoja .btn-row { flex-wrap: wrap; }
+/* Cada botón mide lo que su texto en una línea: si los dos no caben lado a lado, el segundo baja
+   entero en vez de partir la palabra ("YA LA / AGREGUÉ", "BE-SCHEID"; U-17) */
+.hoja .btn-row .btn { flex: 1 0 auto; width: auto; max-width: 100%; -webkit-hyphens: manual; hyphens: manual; }
 
 /* --- El globo de agregar a inicio (D-229): flota sobre el pie de la portada, con el ícono de la
    app, y se va con la ✕ para siempre. El borde dorado es el de La Copa: invita, no avisa. */
