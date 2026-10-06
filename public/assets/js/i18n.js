@@ -961,10 +961,10 @@ export function pickLang(obj, lang = getLang()) {
 
 /**
  * La bandera y el nombre propio de cada idioma, para el toggle (D-231). Un idioma nuevo trae
- * los dos: la prueba de paridad lo exige. Es la bandera del país de la app en ese idioma
- * (el español es el de Chile, el portugués el de Brasil, D-191, D-194).
+ * los dos: la prueba de paridad lo exige. La bandera identifica el idioma, no el país de quien
+ * juega: el español va con 🇪🇸 (D-244); el portugués, con 🇧🇷, porque es el de Brasil (D-191, D-194).
  */
-export const BANDERAS = { es: '🇨🇱', en: '🇬🇧', pt: '🇧🇷', de: '🇩🇪' };
+export const BANDERAS = { es: '🇪🇸', en: '🇬🇧', pt: '🇧🇷', de: '🇩🇪' };
 export const NOMBRES_IDIOMA = { es: 'Español', en: 'English', pt: 'Português', de: 'Deutsch' };
 
 /**
