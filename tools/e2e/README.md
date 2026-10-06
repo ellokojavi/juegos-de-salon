@@ -78,7 +78,7 @@ node tools/e2e/contacto.mjs cuarto-rey --salida /tmp/contacto
 
 | Script | Qué prueba |
 |---|---|
-| `fourth-king/partida.mjs` | Botón de sonido, mazo completo hasta el cuarto rey y el menú en inglés |
+| `fourth-king/partida.mjs` | Botón de sonido, mazo completo hasta el cuarto rey y el menú en inglés; que la mesa sean justo los nombres del guion, aunque la mesa recordada traiga más filas |
 | `bulls-and-cows/local.mjs` | Un celular y jugar solo (dos veces, para ver el récord), hasta el resultado |
 | `bulls-and-cows/online.mjs` | Dos celulares contra Firebase real: unión por URL, recarga a mitad, revancha |
 | `battleship/local.mjs` | Colocación, batalla en un celular y contra el celular |
