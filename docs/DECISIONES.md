@@ -3802,11 +3802,14 @@ Son pocos y es justo lo que se quiere probar. `push.test.mjs` y `tools/e2e/cup/a
 prueban.
 
 ## D-230 · Uno al día: un juego por día, el mismo para todos, con racha y avisos que pide el jugador
-**Fecha:** 2026-10-05 · **Estado:** propuesta, espera al dueño · **Relación:** amplía D-188 (Juego al azar), D-212 (rankings) y D-221 (avisos: suma avisos que el jugador pide a propósito)
+**Fecha:** 2026-10-05 · **Estado:** vigente (aprobada por el dueño, falta construirla) · **Relación:** amplía D-188 (Juego al azar), D-212 (rankings) y D-221 (avisos: suma avisos que el jugador pide a propósito)
 **Decisión:** Una modalidad nueva en la portada, junto a Juego al azar. Cada día, a la medianoche
-del jugador, sale un juego solitario con su contenido, el mismo para todos, a partir de la fecha
-(`uno-al-dia:<fecha>`, como las semillas de La Copa, D-97). El dado de D-188 lo revela la primera
-vez del día. Se lleva la racha, el calendario y los puntajes en el celular y, con jugador, en
+del jugador, sale un juego con su contenido, el mismo para todos, a partir de la fecha
+(`uno-al-dia:<fecha>`, como las semillas de La Copa, D-97). Entran todos los juegos que tienen modo
+para uno: los solitarios, El Ahorcado con el mazo del celular, y Batalla Naval y Dudo contra el
+celular. El dado de D-188 rueda cada vez que se abre el juego de hoy, aunque siempre caiga en el
+mismo. Después de jugar se puede invitar a un amigo con un dato verdadero de quien invita (su
+racha, su puesto), y el amigo juega el mismo desafío. Se lleva la racha, el calendario y los puntajes en el celular y, con jugador, en
 Firebase, con ranking del día, de la semana y de rachas. Los avisos (el del día, el de la racha que
 se corta y el de la semana) los activa el jugador y elige la hora. El detalle está en
 [UNO-AL-DIA.md](UNO-AL-DIA.md).
