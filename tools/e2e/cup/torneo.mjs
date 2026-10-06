@@ -742,6 +742,16 @@ if (corre('laboratorio')) {
       ok(!c1.startsWith('undefined') && c1 !== c2, '¿Dónde queda?: la portada es un globo que gira');
       await b.shot('donde-portada');
       ok(await ev(`document.getElementById('btn-menu').getBoundingClientRect().height`) < 50, 'práctica: "‹ Laboratorio" va en una sola línea junto a un título largo (U-12)');
+      // A pantalla completa, la píldora del reloj (con 🧪 en la prueba) va entre "‹ Laboratorio" y
+      // el sonido sin pisarlos: centrada en la ventana se montaba sobre el botón (C-8)
+      await click('#btn-ensayo'); await esperarCuenta(); await sleep(300);
+      const barra = await ev(`(()=>{const R=s=>document.querySelector(s).getBoundingClientRect(),a=R('#btn-menu'),h=R('#jugar-head'),t=R('.topbar .tools'),j=document.getElementById('jugar-head');
+        return JSON.stringify({a:a.right|0,h:[h.left|0,h.right|0],t:t.left|0,cabe:j.scrollWidth<=j.clientWidth,chip:!!j.querySelector('.chip')?.offsetWidth})})()`).then(JSON.parse);
+      ok(barra.h[0] >= barra.a && barra.h[1] <= barra.t && barra.cabe && barra.chip, `¿Dónde queda?: el reloj de la prueba cabe entre volver y el sonido (${barra.a} | ${barra.h} | ${barra.t})`);
+      await b.shot('donde-barra-prueba');
+      await b.go(`${BASE}?practica=${id}&prueba&labs`, 1200); await preparar();
+      for (let w = 0; w < 30 && !await ev(`!!document.getElementById('btn-empezar')`); w++) await sleep(200);
+      await preparar();
     }
     if (id === 'linea') {
       // La prueba desde el laboratorio: la misma que antes de un día (D-109), y vuelve a la antesala
