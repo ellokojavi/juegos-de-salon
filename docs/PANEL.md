@@ -53,6 +53,23 @@ etiqueta "laboratorio" donde corresponde, y con un filtro para verlas solas.
 el nombre y el emoji de la sección salen de ahí (C-16). Por lo mismo la sección se llama `torneo`
 en la URL y no `copa`, que es el id del juego.
 
+## Uno al día (D-230)
+
+En `#/juegos`, el bloque **📅 Uno al día**:
+- **Partidas de Uno al día**, de todos: las del modo `uno-al-dia` (`MODO_UNO_AL_DIA` en games.js),
+  que cada juego manda al empezar el de hoy. Por día y por juego. En "Partidas por juego" aparece
+  también como un modo más (📅).
+- De quienes entraron con su nombre y PIN (lee `unoAlDia/` e `invitados/`, que solo deja leer al
+  dueño, y la tabla `records/uno-al-dia-racha/siempre`): **jugadores**, **volvió al día siguiente**
+  y **volvió a los 7 días** (de los días jugados cuyo siguiente, o séptimo, ya pasó, en cuántos
+  volvió), las **mejores rachas** por tramo (1, 2 a 6, 7 a 29, 30 o más) y las **invitaciones
+  aceptadas**. Las cuentas son `unoAlDiaDelRango` en aggregate.js.
+- Los avisos de Uno al día salen en el bloque de avisos al celular (abajo) como `uaddia`,
+  `uadracha`, `uadsemana` y `uadadios`.
+
+Con `window.__panel.seed({ …, uad: { historia, invitados, rachas } })` se dibuja con datos sembrados
+(`node tools/e2e/mirar.mjs panel juegos` ya los trae).
+
 ## Los avisos al celular (D-233)
 
 En `#/torneo`, debajo de las cifras de las copas, el bloque **🔔 Avisos al celular**:
