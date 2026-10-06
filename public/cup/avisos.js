@@ -7,7 +7,8 @@
  * - El permiso se pide solo después de un toque en "Avisarme" (el "No" del sistema es definitivo).
  * - La tarjeta sale una vez por copa; "Ahora no" la apaga en esa copa. La campana queda siempre.
  * - Si el celular ya tiene avisos en otra copa, la copa nueva los trae puestos, con "Cambiar".
- * - Nada se ofrece si el celular no puede (camino 'no') o fuera del laboratorio (AVISOS_EN_LABS).
+ * - Nada se ofrece si el celular no puede (camino 'no'), sin clave VAPID o, si se vuelven a cerrar, fuera
+ *   del laboratorio (AVISOS_EN_LABS, D-228).
  */
 import { el, $ } from '../assets/js/ui.js';
 import {
@@ -241,7 +242,7 @@ export function crearAvisos({ T, lang, cuenta, store, copa, redibujar, toast, ta
     if (await subIdDe(actual.endpoint) !== g.subId) { try { await activar({ dia: g.dia, plazo: g.plazo, silencioso: true }); } catch (_) { /* la próxima vez */ } }
   }
 
-  return { disponible, boton, tarjeta, revisar, camino, cerrar, abiertaDesdeApp: () => cel.instalada && (cel.ios || !!new URLSearchParams(location.search).get('app')) };
+  return { disponible, boton, tarjeta, revisar, camino, cerrar, silenciar, abiertaDesdeApp: () => cel.instalada && (cel.ios || !!new URLSearchParams(location.search).get('app')) };
 }
 
 /** Para las pruebas: qué hoja está abierta. */

@@ -1,6 +1,6 @@
 # App instalable y avisos al celular (PWA + Web Push)
 
-**Estado:** aprobado por el dueño (D-221); los PR 1 (v0.105.0), 2 (v0.107.0, D-223) y 3 (v0.108.0, D-224) están hechos, en el laboratorio; la clave VAPID está puesta (D-225); en iPhone la app instalada abre en la portada (D-227) · **Fecha:** 2026-10-05 ·
+**Estado:** aprobado por el dueño (D-221); los PR 1 (v0.105.0), 2 (v0.107.0, D-223) y 3 (v0.108.0, D-224) están hechos; la clave VAPID está puesta (D-225); en iPhone la app instalada abre en la portada (D-227); **abiertos a todos desde v0.110.0** (D-228), después de que el aviso de prueba llegó al Android y al iPhone del dueño · **Fecha:** 2026-10-05 ·
 **Toca:** RP-11, RP-13, LIG-33, D-99
 
 Es el detalle de D-221, que **corrige a D-99** en lo que dice de los avisos automáticos. El diseño de
@@ -61,8 +61,8 @@ Lo que **no** se avisa, a propósito:
   sobra y obligaría a un servidor en tiempo real.
 - **Marketing** ("¡vuelve a jugar!", "hay un juego nuevo"): un aviso que no sirve a quien lo recibe
   hace que desactive todos. Si alguna vez se quiere, va con su propia casilla, apagada por defecto.
-- Tope: **máximo 2 avisos por persona al día** por copa (lo hecho en el PR 3 es distinto: uno por
-  vuelta, ver "Lo que el PR 3 hizo distinto" más abajo). Cada aviso trae un `tag` por copa y día,
+- Tope: **máximo 2 avisos por persona al día** por copa (D-229; además, uno por vuelta, ver "Lo
+  que el PR 3 hizo distinto" más abajo). Cada aviso trae un `tag` por copa y día,
   así el siguiente reemplaza al anterior en la bandeja en vez de apilarse.
 
 Con esto el admin sigue teniendo sus mensajes armados para el grupo de WhatsApp (D-99 no se borra
@@ -161,7 +161,7 @@ asiento en la copa. Al abrirla por primera vez no sabe quién es el jugador. La 
   que ya existe.
 - **Resultado (D-227, la prueba del dueño):** iOS usa el `start_url`, así que vale el plan B: la
   app instalada abre en la portada, la hoja da el código de la copa, y la campana se ve siempre en
-  la app instalada del iPhone, aunque los avisos sigan en el laboratorio.
+  la app instalada del iPhone, aunque los avisos se vuelvan a cerrar en el laboratorio.
 
 **Dentro de WhatsApp, Instagram u otra app**: ahí no se puede agregar a inicio. Se dice
 "Para recibir avisos, abre este link en Safari" con un botón **Copiar link**. En Android no hace
@@ -194,14 +194,14 @@ modo No molestar, por ejemplo), el botón **Probar los avisos** de la hoja sirve
 | Se abrió el día | 🏆 La Copa: Los Primos | "🔗 Día 3: Conexiones. Ya puedes jugar." (el emoji del juego, como el recordatorio) | El día 3, en "Empezar" |
 | Se te acaba el plazo | 🏆 La Copa: Los Primos | "⏳ Te quedan 4 horas para jugar el día 3. Si no lo juegas, son 0 puntos." | El día 3 |
 | La Gran Final | 🏆 La Copa: Los Primos | "🏁 Hoy es La Gran Final y vale doble. Vas 2.°, a 3 puntos de Ana." | La Gran Final |
-| Terminó | 🏆 La Copa: Los Primos | "🥇 Ganó Ana. Quedaste 2.°." (a quien ganó: "🥇 ¡Ganaste la copa!") | El podio |
+| Terminó | 🏆 La Copa: Los Primos | "🥇 Ganó Ana. Quedaste 2.°." (a quien ganó: "🥇 ¡Ganaste la copa!"; con empate arriba, "🥇 Ganaron Ana y Beto…", D-229) | El podio |
 | Alguien se inscribió (solo admin) | 🏆 La Copa: Los Primos | "Pedro se inscribió en tu copa. Ya son 5 jugadores inscritos." | El tablero |
 
 - **Hora del jugador, no de la copa**: la zona horaria se guarda con la suscripción. El aviso de
   la mañana llega entre 9:00 y 10:00, y el del plazo unas 4 horas antes del cierre, pero nunca
   entre las 22:00 y las 8:00 de quien lo recibe. Si el plazo cae de noche para él, el aviso llega a
   las 20:00 y dice la hora exacta del cierre.
-- **A lo más 2 avisos por copa al día.** Si alguien juega varias copas, los avisos del mismo
+- **A lo más 2 avisos por copa al día.** Si alguien juega varias copas, los días nuevos del mismo
   momento se juntan en uno: "Tienes un día nuevo en 2 copas: Los Primos y La Oficina."
 - **No se apilan**: cada aviso lleva una etiqueta por copa y día, así que el del plazo reemplaza
   al de la mañana en la bandeja.
@@ -216,12 +216,22 @@ modo No molestar, por ejemplo), el botón **Probar los avisos** de la hoja sirve
   entre 9:00 y 10:00), y no sale si el jugador ya tocó Empezar ese día. El del plazo dice las horas
   que quedan, redondeadas hacia arriba ("Te quedan 3 horas…", "Te queda 1 hora…"), no la hora del
   cierre; si el cierre cae de noche, sale desde las 20:00 (cuando faltan 10 horas o menos).
-- **No hay tope diario**: cada vuelta manda a lo más uno por copa y celular (primero el fin, luego
-  el plazo, la final, el del día y la inscripción), y el siguiente espera la vuelta que viene. Un
-  celular puede recibir el del día y el del plazo del día anterior el mismo día.
-- **No se juntan copas** ("Tienes un día nuevo en 2 copas…"): cada copa manda los suyos.
-- **Sin botones en Android** ni silueta para la barra de estado: `sw.js` muestra título, texto e
-  ícono. Al tocarlo abre el tablero de la copa (`/cup/?<código>`), no el día ni el podio.
+- Cada vuelta manda a lo más uno por copa y celular (primero el fin, luego el plazo, la final, el
+  del día y la inscripción), y el siguiente espera la vuelta que viene. **Tope (D-229): a lo más 2
+  por copa y celular en un día** de quien recibe; una entrega es un aviso, aunque anote varias
+  claves. Si se vencen dos plazos a la vez (la final y el día anterior), van en un aviso: "Te
+  quedan 4 horas para jugar los días 6 y 7…".
+- **Se juntan copas (D-229)**: los días nuevos de varias copas para un mismo celular, en la misma
+  vuelta, van en uno ("🎲 Tienes un día nuevo en 2 copas: Los Primos y La Oficina."), que abre la
+  portada de La Copa. Lo demás (plazos, final, fin) sigue siendo de cada copa.
+- **Al tocarlo abre el día (D-229)**: el del día, el del plazo y el de la final llevan `&dia=<d>`,
+  y la copa parte en ese día, listo para empezar, si todavía se puede jugar (si no, el tablero).
+  El de "terminó la copa" abre el tablero, que ya es el podio.
+- **Botones en Android (D-229)**: esos mismos traen **Jugar** (el día) y **Silenciar esta copa**
+  (abre la copa con `&silenciar`, que la silencia y lo dice). iPhone no los muestra. Sin silueta
+  para la barra de estado: `sw.js` usa el ícono de la app.
+- **Empate en el primer lugar (D-229)**: "🥇 Ganaron Ana y Beto. Quedaste 3.º"; a quien empató
+  arriba, "🥇 ¡Ganaste la copa junto con Beto!".
 - El de la inscripción le llega al admin solo si él activó avisos en esa copa, y nombra a quienes
   se inscribieron después de activarlos, durante un día. El de "terminó la copa" vale durante el
   día siguiente al cierre; después ya no sale.
@@ -283,6 +293,9 @@ push.js (en la página)                    pushEnviados/<código>/<subId>/<clave
 - **Hecho en el PR 2:** maneja `push` (muestra el aviso que llega como JSON `{ title, body, url, tag }`,
   con el ícono de la app; si no lo entiende, no muestra nada) y `notificationclick` (enfoca la
   pestaña de la app si ya está abierta, llevándola a la URL, o abre una).
+- **D-229:** el JSON puede traer `acciones` (`[{ action, title, url }]`, a lo más dos): Android las
+  muestra como botones (**Jugar** y **Silenciar esta copa**) y, al tocar una, abre su `url` en vez
+  de la del aviso. El SW no escribe en la base: silenciar lo hace la copa al abrirse con `&silenciar`.
 - No escucha `pushsubscriptionchange`: si el navegador renovó la suscripción, la copa lo nota al
   abrirse (`revisar()` en `cup/avisos.js`) y la guarda de nuevo con la misma elección; si el
   permiso se quitó desde los ajustes, la copa deja de contar como activa.
@@ -314,15 +327,15 @@ push.js (en la página)                    pushEnviados/<código>/<subId>/<clave
 - Al activar se escriben, juntos, `push/<subId>` = `{ endpoint, keys, lang, tz, uid, at }` y
   `pushCopa/<código>/<pid>/<subId>` = `{ dia, plazo, at }`. El celular recuerda lo suyo en
   `cuenta.avisos` (y el "Ahora no" de cada copa).
-- **Detrás del laboratorio** (`AVISOS_EN_LABS`, como los rankings en D-212): hasta que el PR 3
-  mande avisos de verdad, ofrecerlos prometería algo que no llega. Se ven en el sitio local y en
-  los celulares que los activan en `/labs/`.
+- **Detrás del laboratorio** (`AVISOS_EN_LABS`, como los rankings en D-212) hasta que llegó el
+  primer aviso de verdad: se veían en el sitio local y en los celulares que los activaban en
+  `/labs/`. **Abiertos a todos desde D-228** (`AVISOS_EN_LABS = false`).
 - En iPhone, antes de mostrar los pasos para agregar a inicio, la dirección pasa a llevar
   `&app=<pid>`. Si la app instalada abre en esa dirección, la copa parte en "Ya estoy inscrito" con
   el nombre ya elegido y pide solo el PIN. **Pero iOS no la respeta** (D-227, la prueba del dueño
   el 2026-10-05): la app instalada abre en la portada, el `start_url`. Por eso los pasos de la hoja
   dan el código de la copa, y la campana se ve siempre en la app instalada del iPhone, aunque los
-  avisos sigan en el laboratorio (que la app no ve).
+  avisos se vuelvan a cerrar en el laboratorio (que la app no ve).
 
 ### 4. Reglas de Firebase — hecho en el PR 2
 
@@ -339,7 +352,8 @@ eso nadie lo lee. Las reglas se publican solas con `publicar.yml` (D-218).
 
 Lo que no se puede automatizar: un iPhone real, con iOS 16.4 o más (ideal: 17, 18 y 26).
 
-1. En `/labs/` del iPhone, toca **Activar en este celular** (sección 🔔 Avisos de La Copa).
+1. Desde D-228 no hace falta activar nada. Si los avisos volvieran al laboratorio
+   (`AVISOS_EN_LABS = true`), primero hay que activarlos en `/labs/` del iPhone.
 2. Abre una copa en la que estés inscrito, en **Safari**. Debe aparecer **🔔 Activar avisos**.
 3. Tócalo: sale la hoja **Agrega la app a tu inicio**. Revisa que la dirección termine en `&app=…`.
 4. Sigue los pasos: Compartir (en iOS 26, dentro de ⋯) → **Agregar a inicio**.
@@ -363,10 +377,14 @@ Lo que no se puede automatizar: un iPhone real, con iOS 16.4 o más (ideal: 17, 
 - `tools/push/calendario.mjs` decide qué toca, con `engine.js` (el mismo que usa la app, así el
   "qué día es" no se duplica): en la hora de quien recibe, nunca antes de las 8:00 ni desde las
   22:00; el del día desde las 9:00; el del plazo cuando faltan 4 horas o menos, o desde las 20:00
-  si el cierre cae de noche. A lo más uno por copa y celular en cada vuelta.
+  si el cierre cae de noche. A lo más uno por copa y celular en cada vuelta y dos por copa en el
+  día de quien recibe (`TOPE`, D-229); dos plazos que se vencen a la vez van en uno, y el del día,
+  el plazo y la final llevan `&dia=<d>` y los botones de Android (`acciones`).
 - `tools/push/avisar.mjs` lee `pushCopa`, `push` y `pushEnviados`, manda, y anota cada aviso
   entregado en `pushEnviados/<código>/<subId>/<clave>` (`dia:3`, `plazo:3`, `final`, `fin`,
-  `insc:<pid>`). Una falla pasajera se reintenta en la vuelta siguiente.
+  `insc:<pid>`). Una falla pasajera se reintenta en la vuelta siguiente. Antes de mandar, junta
+  en un aviso los días nuevos de varias copas para un mismo celular (`juntar` de `calendario.mjs`,
+  D-229) y lo anota en cada copa.
 - Si el servicio responde 404 o 410, la suscripción murió: se borra, con sus copas. Lo de una copa
   borrada o terminada hace más de una semana se limpia.
 - `node tools/push/avisar.mjs --simular` imprime qué mandaría sin mandar nada.
@@ -402,12 +420,12 @@ responde la pregunta de fondo: si los avisos de verdad traen gente de vuelta.
 |---|---|---|
 | **1. Instalable de verdad** ✅ v0.105.0 | Íconos PNG, manifest completo, `sw.js` mínimo (sin caché, sin push), ícono de Apple, prueba de que todas las páginas los llevan, guion e2e que verifica que el SW se registra y que Chrome deja instalar | Avisos |
 | **2. Suscribirse** ✅ v0.107.0, en el laboratorio | Primero, la prueba en iPhones reales de cómo abre la app instalada (la lista de arriba). Después: `push.js`, la tarjeta y el botón 🔔 de La Copa con sus cuatro estados, la hoja de iPhone, el "escribe tu PIN" de la app instalada, el aviso de confirmación, reglas `push` y `pushCopa`, textos en 4 idiomas y la lista de pasos para probar a mano en iPhone | Mandar nada (se ve la suscripción guardada y llega el aviso de confirmación) |
-| **3. Mandar** ✅ v0.108.0, en el laboratorio (D-224) | `tools/push/` (webpush, calendario, avisar con `--simular` y `--prueba`; `vapid.mjs` ya entró en el PR 2), pruebas unitarias del cifrado contra los vectores del RFC 8291 y del calendario de avisos contra `engine.js`, workflow `avisos.yml`. Los avisos se abren a todos cuando el dueño vea llegar uno de prueba | — |
+| **3. Mandar** ✅ v0.108.0 (D-224), abierto a todos en v0.110.0 (D-228) | `tools/push/` (webpush, calendario, avisar con `--simular` y `--prueba`; `vapid.mjs` ya entró en el PR 2), pruebas unitarias del cifrado contra los vectores del RFC 8291 y del calendario de avisos contra `engine.js`, workflow `avisos.yml`. Los avisos se abren a todos cuando el dueño vea llegar uno de prueba | — |
 | **4. Medir** | Fila del panel, `?aviso=` en las señales, `?pwa` en el inicio | — |
 | *(después)* | Modo sin conexión (RP-13), Declarative Web Push para iPhone | — |
 
-La clave VAPID ya está (D-225). Falta que el dueño, con los avisos activos en una copa de prueba, corra Actions → Avisos → *Run workflow* con su
-código en **prueba**, para ver llegar un aviso de verdad antes de abrirlos a todos.
+La clave VAPID ya está (D-225). El 2026-10-05 el dueño corrió *Run workflow* con **prueba** en su
+copa y el aviso llegó a su Android y a su iPhone; con eso se abrieron a todos (D-228).
 
 ## Riesgos
 
