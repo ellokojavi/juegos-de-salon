@@ -161,6 +161,8 @@ const ES = {
   mineDay: 'Día {d} de {n}',
   mineBefore: 'Parte el {fecha}',
   mineOver: 'Terminó',
+  mineShowOver: 'Mostrar copas terminadas ({n})',
+  mineNone: 'Ninguna en curso.',
 
   // Crear
   createTitle: 'Nueva copa',
@@ -874,6 +876,8 @@ const EN = {
   mineDay: 'Day {d} of {n}',
   mineBefore: 'Starts {fecha}',
   mineOver: 'Finished',
+  mineShowOver: 'Show finished cups ({n})',
+  mineNone: 'None in progress.',
 
   // Crear
   createTitle: 'New cup',
@@ -1577,6 +1581,8 @@ const PT = {
   mineDay: 'Dia {d} de {n}',
   mineBefore: 'Começa {fecha}',
   mineOver: 'Terminou',
+  mineShowOver: 'Mostrar copas encerradas ({n})',
+  mineNone: 'Nenhuma em andamento.',
 
   // Crear
   createTitle: 'Nova copa',
@@ -2280,6 +2286,8 @@ const DE = {
   mineDay: 'Tag {d} von {n}',
   mineBefore: 'Startet am {fecha}',
   mineOver: 'Vorbei',
+  mineShowOver: 'Beendete Pokale anzeigen ({n})',
+  mineNone: 'Gerade läuft keiner.',
 
   // Crear
   createTitle: 'Neuer Pokal',

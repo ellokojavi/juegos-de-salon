@@ -190,15 +190,28 @@ function portada() {
   };
   input.addEventListener('keydown', e => { if (e.key === 'Enter') ir(); });
 
-  // "Tus copas": las de este celular de una; las del jugador que entró llegan después (D-220)
+  // "Tus copas": las de este celular de una; las del jugador que entró llegan después (D-220).
+  // Las terminadas llevan su etiqueta y se esconden tras un interruptor que parte apagado (D-233)
   const mias = el('div', { class: 'panel', id: 'tus-copas' });
+  let verTerminadas = false;
   const pintarMias = lista => {
     mias.hidden = !lista.length;
     mias.innerHTML = '';
+    const ahora = Date.now();
+    const terminada = c => !!c.fin && ahora >= c.fin;
+    const nTerminadas = lista.filter(terminada).length;
+    const visibles = verTerminadas ? lista : lista.filter(c => !terminada(c));
+    const interruptor = el('input', { type: 'checkbox', role: 'switch', id: 'ver-terminadas' });
+    interruptor.checked = verTerminadas;
+    interruptor.addEventListener('change', () => { SFX.tap(); verTerminadas = interruptor.checked; pintarMias(lista); });
     poner(mias,
       el('p', { class: 'lead', style: 'margin-bottom:8px' }, T.mine),
-      el('div', { class: 'mias' }, lista.map(c => el('a', { class: 'mia', href: urlCopa(c.code) },
-        el('b', {}, c.copa || c.code), el('small', {}, `${c.nombre} · ${c.code}`), el('span', { class: 'go' }, '›')))));
+      visibles.length ? null : el('p', { class: 'muted mias-vacia' }, T.mineNone),
+      el('div', { class: 'mias' }, visibles.map(c => el('a', { class: 'mia' + (terminada(c) ? ' terminada' : ''), href: urlCopa(c.code) },
+        el('b', {}, c.copa || c.code, terminada(c) ? el('span', { class: 'etiqueta-fin' }, T.mineOver) : null),
+        el('small', {}, `${c.nombre} · ${c.code}`), el('span', { class: 'go' }, '›')))),
+      nTerminadas ? el('label', { class: 'hoja-switch mias-switch', for: 'ver-terminadas' },
+        el('span', {}, fmt(T.mineShowOver, { n: nTerminadas })), interruptor) : null);
   };
   pintarMias(cuenta.mias());
   if (leerYo()) copasDelJugador().then(delJugador => {
