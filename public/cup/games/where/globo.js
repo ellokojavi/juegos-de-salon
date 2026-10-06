@@ -247,16 +247,19 @@ export function ajustar(canvas) {
  * La Tierra vista desde el satélite (Blue Marble de la NASA, septiembre de 2004), pegada al globo
  * con WebGL: cada píxel del disco se invierte a latitud y longitud y se lee de la imagen. La chica
  * llega primero; la nítida la reemplaza cuando termina de bajar. Con WebGL el globo espera a la
- * imagen en vez de mostrar el mapa vectorial por un instante; sin WebGL, o si ninguna imagen llega,
- * se dibuja como antes, con el mapa vectorial.
+ * imagen en vez de mostrar el mapa vectorial por un instante; sin WebGL, o si ninguna imagen llega
+ * (fallan o tardan más de 4 s), se dibuja como antes, con el mapa vectorial.
  */
 const IMAGENES = [2048, 4096].map(w => ({ w, url: new URL(`../../../assets/img/earth-2004-09-${w}.jpg`, import.meta.url).href }));
-let cargadas = null, fallidas = 0;
+let cargadas = null, fallidas = 0, vencida = false;
+/** Tope de la espera: con una red que cuelga el pedido sin fallar, el globo no queda vacío para siempre. */
+const ESPERA_MAX = 4000;
 const avisos = new Set();
 /** Las imágenes que ya llegaron, de la más nítida a la más chica. Pide bajarlas la primera vez. */
 function imagenes() {
   if (!cargadas) {
     cargadas = [];
+    setTimeout(() => { vencida = true; for (const f of avisos) f(); }, ESPERA_MAX);
     for (const { w, url } of IMAGENES) {
       const img = new Image();
       img.decoding = 'async';
@@ -419,7 +422,7 @@ export function satelite(canvas, alLlegar) {
 
   return {
     lista: () => subida > 0,
-    esperando: () => !subida && imagenes().length + fallidas < IMAGENES.length,
+    esperando: () => !subida && !vencida && imagenes().length + fallidas < IMAGENES.length,
     dibujar(V, w, h) {
       if (!canvas.isConnected) { avisos.delete(aviso); return; }
       const dpr = Math.min(3, window.devicePixelRatio || 1);
