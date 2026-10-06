@@ -61,6 +61,10 @@ Lo que **no** se avisa, a propósito:
   sobra y obligaría a un servidor en tiempo real.
 - **Marketing** ("¡vuelve a jugar!", "hay un juego nuevo"): un aviso que no sirve a quien lo recibe
   hace que desactive todos. Si alguna vez se quiere, va con su propia casilla, apagada por defecto.
+- **Los de Uno al día** (D-230, por construir) no son de este tipo: el jugador los activa a
+  propósito, elige la hora, tienen sus propias casillas y se calman solos si no los usa. Respetan
+  el mismo tope de 2 al día y la misma noche sin avisos; el detalle está en
+  [UNO-AL-DIA.md](UNO-AL-DIA.md).
 - Tope: **máximo 2 avisos por persona al día** por copa (D-229; además, uno por vuelta, ver "Lo
   que el PR 3 hizo distinto" más abajo). Cada aviso trae un `tag` por copa y día,
   así el siguiente reemplaza al anterior en la bandeja en vez de apilarse.
