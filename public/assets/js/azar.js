@@ -75,7 +75,10 @@ export function tirar(pool, { lang, base = '', T, elegido = pool[azar(pool.lengt
   let ido = false, revelado = false, foto = () => null;
   const ir = () => {
     if (ido) return; ido = true;
-    const escena = { emoji: elegido.emoji, img: foto() };
+    // Si todavía rueda, se queda quieto donde va: la página del juego lo pone en ese mismo lugar
+    for (const a of [...salto.getAnimations(), ...sombra.getAnimations()]) a.pause();
+    const { transform: alto } = getComputedStyle(salto), som = getComputedStyle(sombra);
+    const escena = { emoji: elegido.emoji, img: foto(), alto, sombra: [som.transform, som.opacity] };
     if (revelado) Object.assign(escena, { chico: T.tocó, nombre: pickLang(elegido.name, lang) });
     try { sessionStorage.setItem(LLEGA, JSON.stringify(escena)); } catch { /* sin espacio, el juego abre como siempre */ }
     location.href = destino;
@@ -135,7 +138,7 @@ export function tirar(pool, { lang, base = '', T, elegido = pool[azar(pool.lengt
   const GIRO = DUR * 0.97, t0 = performance.now();
   const frena = t => 1 - (1 - t) ** 3.2;
   const girar = ahora => {
-    if (!capa.isConnected) return;
+    if (!capa.isConnected || ido) return;
     const t = Math.min(1, (ahora - t0) / GIRO), e = frena(t);
     // Le faltan vx y vy grados por girar, que se van acabando: al final queda en (FX, FY)
     dado.dibujar(FX + vx * (1 - e), FY + vy * (1 - e));

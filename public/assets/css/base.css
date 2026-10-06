@@ -494,7 +494,8 @@ body.azar-abierto { overflow: hidden; }
 .azar-capa.listo .azar-nombre > * { animation: pop 0.4s ease-out both; }
 .azar-capa.listo .azar-nombre b { animation-delay: 0.08s; }
 /* Al llegar al juego, la misma escena, quieta (`.velo`): se desvanece cuando el juego está dibujado */
-.azar-capa.velo { animation: none; cursor: default; pointer-events: none; transition: opacity 0.45s ease-in-out; }
+/* `visible`: en inglés, portugués o alemán el body espera oculto sus textos (D-194), y el dado no */
+.azar-capa.velo { animation: none; cursor: default; pointer-events: none; transition: opacity 0.45s ease-in-out; visibility: visible; }
 .azar-capa.velo .azar-sombra { opacity: 0.6; }
 .azar-capa.velo .azar-sin-3d { animation: none; }
 .azar-capa.velo .azar-escena { transition: transform 0.45s ease-in; }
