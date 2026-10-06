@@ -7,7 +7,7 @@
  */
 import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../assets/js/ui.js';
 import { botonInvitar } from '../assets/js/compartir.js';
-import { gameById } from '../assets/js/games.js';
+import { gameById, MODO_UNO_AL_DIA } from '../assets/js/games.js';
 import { getLang, langToggle, applyStatic, COMMON, withLang } from '../assets/js/i18n.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { failWith } from '../assets/js/transport/errors.js';
@@ -891,7 +891,7 @@ function startLocalMode(mode, names, config, hoy = null) {
   S.hoy = hoy;   // la revancha es una partida cualquiera: no lleva `hoy`
   document.getElementById('uad-tarjeta')?.remove();   // la de la partida anterior, si la hubo
   keepAwake();
-  trackStart({ game: GAME_ID, mode, players: config.players.length, nombres: config.players.map(r => names?.[r]) }); // señal de uso (D-44, D-210)
+  trackStart({ game: GAME_ID, mode: hoy ? MODO_UNO_AL_DIA : mode, players: config.players.length, nombres: config.players.map(r => names?.[r]) }); // señal de uso (D-44, D-210)
 }
 
 function renderModes() {

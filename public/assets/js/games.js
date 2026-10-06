@@ -278,9 +278,13 @@ export const MODES = {
   local: { icon: '📱', label: 'un celular' },
   cpu: { icon: '🤖', label: 'contra el celular' },
   solo: { icon: '🧍', label: 'solo' },
+  // Uno al día (D-230): el juego de hoy, el mismo para todos, en su modo para uno
+  'uno-al-dia': { icon: '📅', label: 'Uno al día' },
   // El día jugado de un torneo: el panel lo mide en su propia vista, con los datos del torneo
   copa: { icon: '🏆', label: 'día de La Copa', torneo: true },
 };
+/** El modo de las partidas de Uno al día (D-230): lo usan los juegos al contarlas y el panel al leerlas. */
+export const MODO_UNO_AL_DIA = 'uno-al-dia';
 
 /** Todos los modos conocidos, en orden. */
 export const MODE_IDS = Object.keys(MODES);
