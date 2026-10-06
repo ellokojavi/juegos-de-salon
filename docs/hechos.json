@@ -1,5 +1,5 @@
 {
-  "version": "0.109.0",
+  "version": "0.111.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -957,6 +957,10 @@
     {
       "ruta": "docs/REQUERIMIENTOS.md",
       "titulo": "Requerimientos"
+    },
+    {
+      "ruta": "docs/UNO-AL-DIA.md",
+      "titulo": "Uno al día"
     },
     {
       "ruta": "docs/USABILIDAD.md",
