@@ -3905,7 +3905,18 @@ evento diario). Detalle en "Lo que el PR 4 hizo" de [UNO-AL-DIA.md](UNO-AL-DIA.m
 quienes entraron con jugador, la vuelta al día siguiente y a los 7 días, las rachas por tramo y las
 invitaciones aceptadas), para lo que las reglas dejan al dueño leer `unoAlDia/` e `invitados/`
 enteros. Uno al día sigue en el laboratorio: abrirlo a todos lo decide el dueño. Detalle en "Lo que
-el PR 5 hizo" de [UNO-AL-DIA.md](UNO-AL-DIA.md) y en [PANEL.md](PANEL.md).
+el PR 5 hizo" de [UNO-AL-DIA.md](UNO-AL-DIA.md) y en [PANEL.md](PANEL.md). El PR 6 (v0.120.0) trae
+lo que el dueño decidió el 2026-10-06 (decisiones 11 a 13 de [UNO-AL-DIA.md](UNO-AL-DIA.md)): El
+Ahorcado, Batalla Naval y Dudo jugados con `?hoy` ya no muestran la revancha (dilema #226), porque
+la tarjeta ofrece 🎲 Jugar otro y Repetir el de hoy; bajo el resultado de los solitarios queda solo
+el ranking de Uno al día (el del juego no se muestra, aunque el primer intento igual entra a él);
+"Agregar al calendario" pasa a **⏰ Agregar recordatorio**, con una línea que dice que es un
+recordatorio en el calendario del celular, porque se confundía con el calendario de `/today/`. Que
+un tramposo pueda inflar su mejor racha no importa por ahora; sí medir el uso: cada acción suma uno
+a `stats/<env>/days/<día>/uad/<evento>` (`EVENTOS_UAD` y `trackUnoAlDia` en `stats.js`, sin decir
+quién; una regla nueva en `database.rules.json` acepta solo subir de a uno), y el bloque "📅 Uno al
+día" del panel lo muestra en "Qué se hace" y "Avisos y recordatorio", con las vistas de `/today/` y
+las visitas que entraron por ahí.
 
 ## D-231 · El selector de idioma lleva las banderas siempre
 **Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** corrige la nota de `base.css` de D-191 (en un celular angosto se escondía la bandera)

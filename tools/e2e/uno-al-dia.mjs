@@ -70,6 +70,7 @@ ok(await jugar(), 'al terminar, el resultado trae la tarjeta de Uno al día');
 const tarjeta = await texto('#uad-tarjeta');
 ok(/Racha: 1 día/.test(tarjeta) && /día 2/.test(tarjeta) && /Hoy: \d+ puntos/.test(tarjeta), `la tarjeta: racha, vuelve mañana y el puntaje (${tarjeta.replace(/\n/g, ' / ')})`);
 ok(!await ev(`!!document.getElementById('btn-otra')`) && !await ev(`!!document.getElementById('btn-compartir-resultado')`), 'sin "Jugar otra vez" ni el compartir de siempre');
+ok(!await ev(`!!document.querySelector('.rk-ranking[data-tabla="desenredo"]')`), 'ni el ranking del juego: el que se ve es el de Uno al día');
 let m = await memoria();
 ok(m.dias[HOY]?.j === 'desenredo' && m.dias[HOY].n === 1, `queda anotado en el celular (${JSON.stringify(m.dias[HOY])})`);
 await b.shot('resultado');

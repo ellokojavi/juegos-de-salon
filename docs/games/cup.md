@@ -22,6 +22,7 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
   con su señal de uso. `/cup/?practica=<id>` sin `&labs` lleva ahí. `/<slug>/?hoy` (o
   `/cup/suelto/?<id>&hoy` para los que no tienen página) es el juego de Uno al día, con la semilla
   de la fecha del jugador; si hoy toca otro juego, se va a ese (D-230, [UNO-AL-DIA.md](../UNO-AL-DIA.md)).
+  Bajo su resultado no va el ranking del juego, solo el de Uno al día (el primer intento igual entra al del juego).
 - **Jugadores:** de 2 a 10 por copa (`MIN_JUGADORES` y `MAX_JUGADORES` en `engine.js`, D-118). Con
   el administrador solo, la copa no parte y el tablero pide "al menos un jugador más". **Público:** 🌎 global, 🇨🇱 Chile o 🇧🇷 Brasil, que se elige al crear la copa (D-187, `meta.aud`; las copas `intl` de D-186 se leen como global). Decide qué contenido local entra (`public/cup/games/audiencia.js`).
   **Idioma:** español, inglés, portugués (D-170) y alemán (D-191, para todos desde D-197). La

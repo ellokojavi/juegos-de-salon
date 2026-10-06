@@ -17,6 +17,7 @@ import {
   paraGuardar, zonaHoraria, avisoDePrueba, anular,
 } from './push.js';
 import { estado, leer, recorrer, numDia, semanaDe, fechaLocal } from './uno-al-dia.js';
+import { trackUnoAlDia } from './transport/stats.js';
 
 const KEY = 'juegos-de-salon:uno-al-dia:avisos';
 export const HORAS = [9, 13, 19];
@@ -70,6 +71,7 @@ async function activar({ h = 9, d = true, r = true, w = true, lang, silencioso =
   }
   guardarAvisos({ subId, h, d, r, w });
   if (!silencioso) {
+    trackUnoAlDia('activos');
     try { await avisoDePrueba({ titulo: textos(lang).avTitulo, texto: fmt(textos(lang).avListo, { h }), url: new URL('../../today/', import.meta.url).href }); } catch (_) { /* el aviso de prueba es un adorno */ }
   }
 }
@@ -173,6 +175,7 @@ export async function pedir({ h = 9, lang, alTocar }) {
 
 /** Silenciar: los tres avisos se apagan de un toque. */
 export async function silenciar() {
+  trackUnoAlDia('silencio');
   const g = leerAvisos();
   if (g.subId) { try { await (await J()).quitarAvisosDia(g.subId); } catch (_) { /* queda anotado en el celular igual */ } }
   guardarAvisos({ no: true });
@@ -213,14 +216,16 @@ async function hojaAjustes({ lang, alTocar, alCambiar }) {
 export function oferta({ lang, alTocar, primera }) {
   if (!primera || !disponible() || estadoAvisos() !== 'apagado' || leerAvisos().no) return null;
   if (estado().jugados !== 2) return null;
+  trackUnoAlDia('oferta');
   const T = textos(lang);
   const caja = el('div', { class: 'panel uad-oferta', id: 'uad-oferta' },
     el('p', { class: 'lead', style: 'margin:0' }, T.avPregunta),
     botonesHora({ lang, alElegir: async h => {
+      trackUnoAlDia('hora');
       try { if (await pedir({ h, lang, alTocar })) caja.replaceChildren(el('p', { class: 'uad-comodin', style: 'margin:0' }, fmt(T.avListo, { h }))); }
       catch (_) { caja.querySelector('.rk-error')?.remove(); caja.append(el('p', { class: 'rk-error' }, T.avError)); }
     } }),
-    el('button', { class: 'link-btn', id: 'btn-uad-ahora-no', onClick: () => { alTocar?.(); guardarAvisos({ no: true }); caja.remove(); } }, T.avAhoraNo));
+    el('button', { class: 'link-btn', id: 'btn-uad-ahora-no', onClick: () => { alTocar?.(); trackUnoAlDia('ahorano'); guardarAvisos({ no: true }); caja.remove(); } }, T.avAhoraNo));
   return caja;
 }
 
@@ -236,13 +241,15 @@ export function bloque({ lang, alTocar, redibujar }) {
     const g = leerAvisos();
     if (e === 'apagado') {
       caja.append(el('p', { class: 'lead', style: 'margin:0' }, T.avPregunta),
-        botonesHora({ lang, alElegir: async h => { try { if (await pedir({ h, lang, alTocar })) redibujar?.(fmt(T.avListo, { h })); } catch (_) { redibujar?.(T.avError); } } }));
+        botonesHora({ lang, alElegir: async h => { trackUnoAlDia('hora'); try { if (await pedir({ h, lang, alTocar })) redibujar?.(fmt(T.avListo, { h })); } catch (_) { redibujar?.(T.avError); } } }));
     } else if (e === 'activo') {
       caja.append(el('button', { class: 'btn btn--ghost', id: 'btn-uad-avisos', 'data-estado': 'activo', onClick: () => { alTocar?.(); hojaAjustes({ lang, alTocar, alCambiar: m => redibujar?.(m) }); } }, `${T.avActivos} · ${g.h ?? 9}:00`));
     } else {
       caja.append(el('button', { class: 'btn btn--ghost', id: 'btn-uad-avisos', 'data-estado': 'bloqueado', onClick: () => hojaBloqueados({ lang, alTocar }) }, T.avBloqueados));
     }
   }
+  // Un recordatorio en el calendario del celular (no el calendario de esta página, que muestra lo jugado)
+  caja.append(el('p', { class: 'muted', style: 'margin:0' }, T.calNota));
   caja.append(el('button', { class: 'btn btn--ghost btn--sm', id: 'btn-uad-calendario', onClick: () => { alTocar?.(); bajarCalendario({ lang, h: leerAvisos().h ?? 9 }); } }, T.calendario));
   return caja;
 }
@@ -261,6 +268,7 @@ export function ics({ lang, h = 9, hoy = fechaLocal(), url = 'https://juegosdesa
     'RRULE:FREQ=DAILY', `SUMMARY:${T.calEvento}`, `DESCRIPTION:${url}`, `URL:${url}`, 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
 }
 function bajarCalendario({ lang, h }) {
+  trackUnoAlDia('recordatorio');
   const url = new URL('../../today/?de=cal', import.meta.url).href.replace(/^http:\/\/[^/]+/, 'https://juegosdesalon.cl');
   const blob = new Blob([ics({ lang, h, url })], { type: 'text/calendar' });
   const a = el('a', { href: URL.createObjectURL(blob), download: 'uno-al-dia.ics' });

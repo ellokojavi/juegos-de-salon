@@ -634,8 +634,17 @@ export function unoAlDiaDelRango({ days = {}, historia = {}, invitados = {}, rac
     const i = TRAMOS_RACHA.findIndex(([, a, b]) => s >= a && s <= b);
     if (i >= 0) tramos[i][1]++;
   }
+  // Lo que se hace en Uno al día (`uad/<evento>`, de todos): botón, dado, jugar, compartir, invitar, avisos…
+  const eventos = {};
+  let vistas = 0, entradas = 0;
+  for (let d = from; d <= to; d++) {
+    const b = (days || {})[String(d)] || {};
+    for (const [k, v] of Object.entries(b.uad || {})) add(eventos, k, Number(v) || 0);
+    // El tráfico de /today/: páginas vistas y visitas que entraron por ahí (un link compartido, un aviso, una invitación)
+    vistas += Number(b.vistas?.today) || 0; entradas += Number(b.entradas?.today) || 0;
+  }
   let aceptadas = 0;
   for (const porUid of Object.values(invitados || {})) for (const x of Object.values(porUid || {})) if (x?.d >= from && x.d <= to) aceptadas++;
   const pct = ([a, b]) => (b ? Math.round((a / b) * 100) : null);
-  return { partidas, porDia, porJuego, jugadores: jugadores.size, d1: pct(vuelta.d1), d7: pct(vuelta.d7), base: { d1: vuelta.d1[1], d7: vuelta.d7[1] }, tramos, aceptadas };
+  return { partidas, porDia, porJuego, jugadores: jugadores.size, d1: pct(vuelta.d1), d7: pct(vuelta.d7), base: { d1: vuelta.d1[1], d7: vuelta.d7[1] }, tramos, aceptadas, eventos, vistas, entradas };
 }

@@ -10,6 +10,7 @@ import { tirar, TEXTOS as AZAR } from './azar.js';
 import { botonCompartir, cabecera, laminaResultado, nombreArchivo, compartir } from './compartir.js';
 import { JUEGOS_DIA, estado, rutaDel, numeroDel, sumarDias, COMODINES_MAX, leer, anotar, unoAlDiaVisible, fechaLocal, juegoDel, semillaDel } from './uno-al-dia.js';
 import { UNO_AL_DIA } from './records.js';
+import { trackUnoAlDia } from './transport/stats.js';
 
 export const fmt = (s, o = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (o[k] ?? ''));
 const textos = lang => (COMMON[lang] || COMMON.es);
@@ -41,6 +42,7 @@ async function caras() {
 export async function tirarHoy({ lang, raiz = '' }) {
   const e = estado();
   if (!e.juego) return;
+  trackUnoAlDia('dado');
   const pool = await caras();
   const T = textos(lang).uad;
   tirar(pool, {
@@ -57,7 +59,7 @@ function estadoAcceso(lang, raiz, alTocar) {
   const linea2 = hecho
     ? `✅ ${T.listo}${e.racha ? ` · 🔥 ${e.racha}` : ''}`
     : `${e.racha ? `🔥 ${e.racha} · ` : ''}${T.jugar}`;
-  const abrir = () => { alTocar?.(); if (hecho) location.href = `${raiz}today/`; else tirarHoy({ lang, raiz }); };
+  const abrir = () => { alTocar?.(); trackUnoAlDia('boton'); if (hecho) location.href = `${raiz}today/`; else tirarHoy({ lang, raiz }); };
   // El estado completo para un lector de pantalla: "Uno al día: abrir el juego de hoy. 🔥 Racha: 6 días"
   const aria = [hecho ? T.ariaListo : T.aria, e.racha ? textoRacha(e.racha, lang).replace('🔥 ', '') : ''].filter(Boolean).join('. ');
   return { T, hecho, linea2, abrir, aria, racha: e.racha };
@@ -91,6 +93,7 @@ export function tarjetaUnoAlDia({ lang, raiz = '', alTocar }) {
 
 /** Tira el dado de Juego al azar con los juegos de la portada: "🎲 Jugar otro". */
 export function jugarOtro({ lang, raiz }) {
+  trackUnoAlDia('otro');
   const pool = PORTADA.filter(g => g.available && !g.torneo);
   tirar(pool, { lang, base: raiz, T: AZAR[lang] || AZAR.es });
 }
@@ -105,7 +108,7 @@ export function compartirHoy({ lang, fecha, dia, alTocar, mmss }) {
   const cab = { emoji: '📅', titulo };
   const url = withLang(URL_HOY, lang);
   return botonCompartir({
-    rotulo: C.shareResult, id: 'btn-compartir-uad', alTocar,
+    rotulo: C.shareResult, id: 'btn-compartir-uad', alTocar: () => { alTocar?.(); trackUnoAlDia('compartir'); },
     avisos: { copied: C.shareCopied, downloaded: C.shareDownloaded },
     armar: async () => ({
       titulo, url,
@@ -121,6 +124,7 @@ export function compartirHoy({ lang, fecha, dia, alTocar, mmss }) {
  * fue el resultado del día o una práctica; `dia` es lo anotado para hoy.
  */
 export function tarjetaResultado({ lang, fecha, primera, dia, raiz = '', alTocar, mmss }) {
+  trackUnoAlDia(primera ? 'jugado' : 'repite');
   const T = textos(lang).uad;
   const e = estado();
   const n = e.racha;
@@ -186,6 +190,7 @@ export function tarjetaInvitar({ lang, alTocar }) {
   const linea = el('p', { class: 'muted', style: 'margin:0', id: 'uad-inv-linea' });
   const b = el('button', { type: 'button', class: 'btn btn--cyan', id: 'btn-uad-invitar' }, T.invitar);
   b.addEventListener('click', async () => {
+    trackUnoAlDia('invitar');
     alTocar?.();
     b.disabled = true;
     try {

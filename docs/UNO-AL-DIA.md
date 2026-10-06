@@ -238,7 +238,7 @@ acumulado:
 | **Por juego** | Una fila por juego: veces jugado, promedio, mejor y una línea con los últimos 8. La flecha dice si va mejorando: el promedio de los últimos 3 contra los 5 de antes (▲ +12) |
 | **Rankings** | Pestañas: **Hoy** (el desafío de hoy) · **Semana** (suma de puntos) · **Rachas** (mejor racha) · **Amigos** (los de sus copas, que `jugador.js` ya conoce, y los que invitó o lo invitaron) |
 | **Invitar** | Cuántos aceptaron sus desafíos, y **Invitar** |
-| **Avisos** | La campana con su estado y la hora elegida, y **Agregar al calendario** (botón chico) |
+| **Avisos** | La campana con su estado y la hora elegida, y **⏰ Agregar recordatorio** (botón chico, un recordatorio en el calendario del celular) |
 
 **"Mejoró o no"** se dice en palabras además de la flecha: "En Reinas vas mejorando: tus últimas 3
 promedian 82, antes 70." Así se entiende sin leer gráficos.
@@ -292,7 +292,7 @@ Para quien no quiere avisos, o tiene un iPhone sin la app instalada:
 |---|---|
 | **El botón de la portada** | Su estado se ve al entrar: el punto que brilla mientras falta jugar, 🔥 6, y cian con ✅ cuando ya jugó. |
 | **El globo en el ícono** | En la app instalada (Android, y iPhone con avisos permitidos), un **1** en el ícono si hoy no ha jugado (`navigator.setAppBadge`). Lo pone la página al abrir y lo quita al terminar; el service worker lo pone con el aviso del día. |
-| **Agregar al calendario** | Un evento que se repite cada día a la hora que elige, con el link a `/today/`. Sale de un `.ics` armado en el celular, sin servidor ni permisos, y sirve en cualquier celular. |
+| **⏰ Agregar recordatorio** | Un evento en el calendario del celular que se repite cada día a la hora que elige, con el link a `/today/`. Sale de un `.ics` armado en el celular, sin servidor ni permisos, y sirve en cualquier celular. |
 | **La tarjeta para compartir** | Al estilo Wordle, sin adelantar la respuesta: el grupo de WhatsApp le recuerda a cada uno que juegue. |
 | **El link fijo** | `juegosdesalon.cl/today/` siempre abre el de hoy: se guarda en favoritos o se fija en un grupo. |
 
@@ -501,7 +501,7 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   caminos de cada celular son los de La Copa (`push.js`), con sus hojas y un paso 3 propio.
 - **El globo del ícono**: la página pone un 1 mientras falta jugar hoy y lo quita al terminar; el
   aviso del día también lo pone (`sw.js`).
-- **Agregar al calendario**: un `.ics` armado en el celular, con un evento diario a la hora elegida
+- **Agregar recordatorio** (antes "Agregar al calendario", ver el PR 6): un `.ics` armado en el celular, con un evento diario a la hora elegida
   (o 9:00) y el link `today/?de=cal`.
 - **Las reglas de la vuelta:** nunca de 22:00 a 8:00 del celular, a lo más 2 al día por celular
   (contados en `pushEnviadosDia`, aparte de los de La Copa); el de la racha sale desde las 21:00 si
@@ -531,6 +531,21 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   probarlo. Para abrirlo basta `UNO_AL_DIA_EN_LABS = false` en `uno-al-dia.js` (y sacar el número
   del lanzamiento a la fecha de salida, si se quiere que el n.° 1 sea ese día).
 
+### Lo que el PR 6 hizo (v0.120.0)
+
+- **Sin revancha** en El Ahorcado, Batalla Naval y Dudo jugados como Uno al día (#226).
+- **Un solo ranking bajo el resultado** de los solitarios: el de Uno al día. El del juego no se
+  muestra, aunque el primer intento igual entra a él.
+- **"⏰ Agregar recordatorio"** en vez de "📆 Agregar al calendario", que se confundía con el
+  calendario de la página (el que muestra lo jugado), con una línea arriba: "Sin avisos: agrega un
+  recordatorio diario al calendario de tu celular."
+- **La actividad, en el panel**: cada acción suma uno a `stats/<entorno>/days/<día>/uad/<evento>`
+  (`EVENTOS_UAD` y `trackUnoAlDia` en stats.js; no dice quién): tocar el botón, rodar el dado,
+  terminar el de hoy o repetirlo, compartir, jugar otro, tocar Invitar, abrir una invitación,
+  aceptarla, y de los avisos: ofrecidos, hora elegida, activados, "Ahora no", silenciados y el
+  recordatorio. El bloque "📅 Uno al día" los muestra en "Qué se hace" y "Avisos y recordatorio", con
+  el tráfico de `/today/` (páginas vistas y visitas que entraron por ahí).
+
 ## Lo que decidió el dueño (2026-10-05)
 
 1. **El mismo desafío para todos, y el dado rueda igual**, cada vez, con la experiencia de Juego al
@@ -546,12 +561,18 @@ celular saca la palabra, la flota o los dados de la semilla del día.
 9. **Un comodín para quien invita** cuando el invitado termina su primer Uno al día, con el mismo
    tope de 2, **y se anuncia** para que el jugador lo sepa.
 10. **La tarjeta para compartir no nombra el juego de hoy** (#215), ni en el texto ni en la imagen.
+11. **Sin revancha en los juegos de grupo** jugados como Uno al día (#226, 2026-10-06): la tarjeta ya
+    ofrece jugar otro o repetir el de hoy.
+12. **Un solo ranking bajo el resultado**, el de Uno al día: el del juego no se muestra (el primer
+    intento igual entra a él).
+13. **Que se pueda alterar la mejor racha no importa por ahora**; sí que el panel mida el tráfico y
+    la actividad de Uno al día.
 
 ## Textos para revisar (U-1, U-3, U-17)
 
 Botones (caben en 320 px, unos 18 caracteres): **Uno al día**, **Jugar el de hoy**, **Compartir**,
 **🎲 Jugar otro**, **Invitar**, **Entrar**, **Ahora no**, **Mañana · 9:00**, **Almuerzo · 13:00**,
-**Tarde · 19:00**, **Silenciar**, **Probar los avisos** y **Agregar al calendario** (pasa de 18,
+**Tarde · 19:00**, **Silenciar**, **Probar los avisos** y **⏰ Agregar recordatorio** (pasa de 18,
 así que va en botón chico, como lo secundario de U-17). El botón de la portada va en una línea,
 **📅 Uno al día**, con la racha en una píldora (**🔥 6**) y, al lado, **🎲 Al azar** (decisión del
 dueño: etiquetas cortas). Mientras falta jugar el de hoy brilla un punto; jugado, se pone cian con ✅.
@@ -564,7 +585,7 @@ textos los propone el agente de usabilidad y el dueño los corrige en el PR.
 |---|---|---|
 | **Juega el de hoy** (portada) y **Jugar el de hoy** (amigo) | **Jugar el de hoy** en los dos | Una acción, una palabra (U-5), y en infinitivo como los demás botones |
 | **¿Otro más?** | **🎲 Jugar otro** | Verbo y objeto (U-17); el dado dice que es al azar |
-| **Agregar a mi calendario** / **Al calendario** | **Agregar al calendario**, botón chico | "Al calendario" no tiene verbo (U-17) |
+| **Agregar a mi calendario** / **Al calendario** | **Agregar al calendario**, botón chico (desde el PR 6, **⏰ Agregar recordatorio**) | "Al calendario" no tiene verbo (U-17) |
 | "📅 Uno al día · el mismo desafío para todos hoy" | "📅 Uno al día: hoy todos juegan el mismo desafío." | Frase completa (U-1) |
 | "El próximo, en 7 h 12 min" | "El próximo sale en 7 h 12 min." | Frase completa (U-1) |
 | "Sara jugó los últimos 33 días seguidos" | "Sara lleva una racha de 33 días" | Con un comodín, "jugó 33 días seguidos" puede ser falso; y "racha" es el término (U-5) |
