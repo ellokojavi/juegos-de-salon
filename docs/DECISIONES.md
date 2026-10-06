@@ -56,7 +56,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213 |
-| Portada: filtros y favoritos | — (sin canon: lo dicen las decisiones) | D-142, D-144, D-149, D-196, D-214, D-238 |
+| Portada: filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240 |
 | Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239 |
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97 |
@@ -4121,3 +4121,16 @@ izquierda ganó porque ahorra alto sin achicar el texto.
 **Consecuencias:** `formaAcceso()` devuelve `'tarjeta'` por defecto; el laboratorio guarda
 `'boton'` si alguien elige la otra. `tools/e2e/uno-al-dia.mjs` mira la fila, las píldoras en una
 línea a 320 px en los cuatro idiomas y la forma de `/labs/`.
+
+## D-240 · La portada tiene su canon: C-17
+**Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** junta lo vigente de D-142, D-144, D-149, D-170, D-188, D-196, D-198, D-214, D-217, D-226, D-232, D-238 y D-239
+**Decisión:** las reglas de la portada pasan a un canon, C-17 en [CANONES.md](CANONES.md): qué
+se ofrece y en qué orden, los accesos de arriba, los filtros (tipo y ⭐ Favoritos), la URL, la
+barra pegada, la fila de tipos, el ancho de 320 px, que dentro de una tarjeta no haya nada
+tocable, la barra de arriba y cómo se prueba. No cambia nada de la app. De Uno al día, C-17 dice
+dónde va y cómo es su tarjeta (D-239); el resto sigue en [UNO-AL-DIA.md](UNO-AL-DIA.md).
+**Por qué:** lo pidió el dueño. Hasta ahora la portada solo existía en decisiones que se
+corregían unas a otras: para saber cómo funcionaba había que leer seis y descartar lo que ya no
+valía. En D-238 eso hizo que se citara D-144 como vigente cuando D-149 ya lo había corregido.
+**Consecuencias:** un PR que cambia la portada edita C-17 en el mismo PR (como cualquier canon), y
+la lista de chequeo de un juego nuevo pide que entre bien a la portada.
