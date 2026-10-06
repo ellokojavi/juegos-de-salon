@@ -55,10 +55,8 @@
       font: 900 0.95rem var(--font-body); border-radius: 999px; padding: 6px 12px; min-height: 44px; cursor: pointer;
     }
     .rk-juegos button.on { border-color: var(--cyan); background: rgba(46, 230, 214, 0.18); }
-    .rk-perfil ul { list-style: none; padding: 0; margin: 6px 0 10px; display: grid; gap: 4px; }
+    .rk-perfil ul { list-style: none; padding: 0; margin: 6px 0 0; display: grid; gap: 4px; }
     .rk-perfil li { display: flex; justify-content: space-between; gap: 8px; }
-    .rk-perfil summary { cursor: pointer; font-weight: 900; min-height: 44px; display: flex; align-items: center; }
-    .rk-pin-nuevo { display: grid; gap: 8px; }
   </style>
   <link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
   <meta name="apple-mobile-web-app-title" content="Juegos de Salón">
@@ -88,7 +86,7 @@
     import { trackVisit } from '../assets/js/transport/stats.js';
     import { bloqueJugador, bloqueRanking, bloqueCampeones } from '../assets/js/ranking.js';
     import { jugador, leerYo } from '../assets/js/jugador.js';
-    import { TODOTERRENO, PARTIDAS, esPin } from '../assets/js/records.js';
+    import { TODOTERRENO, PARTIDAS } from '../assets/js/records.js';
 
     trackVisit(); // el tráfico del sitio (D-208)
     initSound();
@@ -108,36 +106,22 @@
     const juegos = SUELTOS.filter(g => !g.labs);
     const pagina = document.getElementById('rk-pagina');
 
-    /* Tu jugador: cuántas veces jugó cada cosa y cambiar el PIN (solo con jugador) */
+    /* Tus partidas: cuántas veces jugó cada cosa (solo con jugador). Cambiar el PIN va en "Juegas como". */
     const perfil = el('div', {});
     async function dibujarPerfil() {
       perfil.replaceChildren();
-      const yo = leerYo();
-      if (!yo) return;
-      const lista = el('ul', {});
-      const err = el('p', { class: 'rk-error', role: 'alert' });
-      const pin = el('input', { id: 'rk-pin-nuevo', class: 'rk-pin', type: 'password', inputmode: 'numeric', pattern: '[0-9]*', maxlength: '4', autocomplete: 'off', 'aria-label': T.newPin });
-      const b = el('button', { type: 'button', class: 'btn btn--ghost btn--sm', id: 'rk-guardar-pin' }, T.savePin);
-      b.addEventListener('click', async () => {
-        tap(); err.textContent = '';
-        if (!esPin(pin.value)) { err.textContent = T.errPin; return; }
-        b.disabled = true;
-        try { await (await jugador()).cambiarPin(pin.value); pin.value = ''; err.className = 'rk-ok'; err.textContent = T.pinChanged; }
-        catch (_) { err.className = 'rk-error'; err.textContent = T.errNet; }
-        b.disabled = false;
-      });
-      perfil.append(el('details', { class: 'panel rk-perfil' },
-        el('summary', {}, `👤 ${T.myPlayer}`),
-        lista,
-        el('div', { class: 'rk-pin-nuevo' }, el('label', { class: 'rk-campo' }, el('span', {}, T.newPin), pin), b, err)));
+      if (!leerYo()) return;
       try {
         const p = await (await jugador()).perfil();
         const filas = Object.entries(p?.juegos || {}).sort((a, b2) => b2[1].n - a[1].n);
+        if (!filas.length) return;
+        const lista = el('ul', {});
         for (const [id, x] of filas) {
           const g = juegos.find(j => j.id === id) || gameById(id);
           lista.append(el('li', {}, el('span', {}, g ? conEmoji(g.emoji, pickLang(g.name, lang)) : id), el('b', {}, x.n === 1 ? T.playsOne : fmt(T.plays, { n: x.n }))));
         }
-      } catch (_) { /* sin red: el cambio de PIN igual se ofrece */ }
+        perfil.replaceChildren(el('section', { class: 'panel rk-perfil' }, el('p', { class: 'lead rk-titulo' }, `👤 ${T.myPlays}`), lista));
+      } catch (_) { /* sin red: no hay qué mostrar */ }
     }
     dibujarPerfil();
     jugador().then(J => J.escuchar(dibujarPerfil)).catch(() => {});
