@@ -70,7 +70,7 @@ ok(pestanas === 'Hoy · Semana · Rachas · Amigos', `pestañas: ${pestanas}`);
 await ev(`document.querySelector('.rk-ranking[data-tabla="uno-al-dia"] [data-p="rachas"]').click(); 1`);
 ok(await esperar(`/🔥/.test(document.querySelector('.rk-ranking[data-tabla="uno-al-dia"] .rk-lista')?.innerText||'')`), 'Rachas muestra la racha con 🔥');
 ok(/comodín/.test(await texto('#uad-invitar')), `invitar dice qué se gana (${(await texto('#uad-invitar')).replace(/\n/g, ' / ')})`);
-ok(/Comodines: 0 de 2/.test(await texto('#uad-comodines-texto')), 'y los comodines se explican');
+ok(/salva tu racha el día que no juegas/.test(await texto('#uad-comodines-texto')) && /Tienes 0 de 2/.test(await texto('#uad-comodines-texto')), 'y los comodines dicen para qué sirven y cuántos tiene');
 await click('#btn-uad-invitar');
 await esperar(`window.__compartido.length > 0`, 20);
 const inv = await ev(`window.__compartido[0]?.text || ''`);
