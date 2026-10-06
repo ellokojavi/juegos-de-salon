@@ -1,4 +1,4 @@
-// El 📤 de la portada (D-226): en cada idioma, con un celular que comparte archivos va la tarjeta
+// El botón de compartir de la portada (D-226, D-242): en cada idioma, con un celular que comparte archivos va la tarjeta
 // social de ese idioma junto al texto; en un computador, solo el texto copiado y nada descargado.
 // Uso: node tools/e2e/compartir-portada.mjs /tmp/compartir-portada
 import { launch, sleep } from './cdp.mjs';
@@ -26,7 +26,7 @@ for (const [lang, e] of Object.entries(ESPERADO)) {
   // La foto se baja al tocar, si no se bajó antes; el toque espera a tenerla
   await b.evaluate(`document.querySelector('#share-slot button').click(); 1`); await sleep(1200);
   const m = await b.evaluate(`JSON.stringify(window.__menu || null)`).then(JSON.parse);
-  ver(m, `${lang}: el 📤 abre el menú del sistema`);
+  ver(m, `${lang}: el botón de compartir abre el menú del sistema`);
   if (!m) continue;
   ver(m.files.length === 1 && m.files[0].name === e.archivo && m.files[0].type === 'image/jpeg' && m.files[0].size > 50000, `${lang}: va la tarjeta como imagen (${JSON.stringify(m.files[0])})`);
   const fotos = await b.evaluate(`JSON.stringify(performance.getEntriesByType('resource').filter(e => /assets\\/og\\//.test(e.name)).map(e => e.name.split('/').pop()))`).then(JSON.parse);
