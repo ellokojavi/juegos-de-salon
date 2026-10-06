@@ -161,7 +161,7 @@ asiento en la copa. Al abrirla por primera vez no sabe quién es el jugador. La 
   que ya existe.
 - **Resultado (D-227, la prueba del dueño):** iOS usa el `start_url`, así que vale el plan B: la
   app instalada abre en la portada, la hoja da el código de la copa, y la campana se ve siempre en
-  la app instalada del iPhone, aunque los avisos sigan en el laboratorio.
+  la app instalada del iPhone, aunque los avisos se vuelvan a cerrar en el laboratorio.
 
 **Dentro de WhatsApp, Instagram u otra app**: ahí no se puede agregar a inicio. Se dice
 "Para recibir avisos, abre este link en Safari" con un botón **Copiar link**. En Android no hace
@@ -322,7 +322,7 @@ push.js (en la página)                    pushEnviados/<código>/<subId>/<clave
   el nombre ya elegido y pide solo el PIN. **Pero iOS no la respeta** (D-227, la prueba del dueño
   el 2026-10-05): la app instalada abre en la portada, el `start_url`. Por eso los pasos de la hoja
   dan el código de la copa, y la campana se ve siempre en la app instalada del iPhone, aunque los
-  avisos sigan en el laboratorio (que la app no ve).
+  avisos se vuelvan a cerrar en el laboratorio (que la app no ve).
 
 ### 4. Reglas de Firebase — hecho en el PR 2
 
