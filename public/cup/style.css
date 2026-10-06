@@ -166,7 +166,7 @@ ol.como li { line-height: 1.45; }
 /* Jugar */
 .jugar-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 8px; min-height: 1.5em; }
 .jugar-titulo { font-weight: 900; }
-.cron { font: 900 1rem var(--font-num); font-variant-numeric: tabular-nums; color: var(--muted); }
+.cron { font: 900 1rem var(--font-num); font-variant-numeric: tabular-nums; color: var(--muted); white-space: nowrap; }
 
 /* Resultado */
 .result-hero { text-align: center; }
@@ -349,7 +349,7 @@ body.pantalla-completa .topbar { position: fixed; z-index: 3; margin: 0;
   top: calc(var(--safe-top) + 12px); left: calc(16px + env(safe-area-inset-left, 0px)); right: calc(16px + env(safe-area-inset-right, 0px)); }
 body.pantalla-completa .topbar .back, body.pantalla-completa .topbar .tools > * { box-shadow: 0 4px 14px rgba(0,0,0,0.35); }
 body.pantalla-completa .topbar .back { background: rgba(21,7,38,0.75); }
-body.pantalla-completa .topbar .chip { display: none; }
+body.pantalla-completa .topbar .tools .chip { display: none; }
 body.pantalla-completa #screen-jugar.active { animation: none; position: fixed; inset: 0; z-index: 2; pointer-events: none; gap: 8px;
   padding: calc(var(--safe-top) + 12px + 44px + 10px) calc(16px + env(safe-area-inset-right, 0px)) calc(var(--safe-bottom) + 16px) calc(16px + env(safe-area-inset-left, 0px)); }
 body.pantalla-completa #jugar-body, body.pantalla-completa .donde-juego { display: contents; }
@@ -359,14 +359,18 @@ body.pantalla-completa .donde-arriba { order: 1; pointer-events: auto; }
 body.pantalla-completa #jugar-reglas { order: 2; pointer-events: none; }
 body.pantalla-completa #jugar-reglas .reglas { pointer-events: auto; }
 body.pantalla-completa .donde-abajo { order: 3; margin-top: auto; }
-/* El reloj, una píldora en medio de la barra; el nombre del juego ya lo dice la ciudad */
-body.pantalla-completa #jugar-head { position: fixed; z-index: 4; top: calc(var(--safe-top) + 12px); left: 50%; transform: translateX(-50%);
-  width: auto; min-height: 44px; margin: 0; padding: 0 14px; gap: 8px; border-radius: 999px; pointer-events: auto;
+/* El reloj, una píldora en medio de la barra (game.js la mete ahí, entre volver y el sonido: así
+   nunca los pisa); el nombre del juego ya lo dice la ciudad. Si no cabe, .justo deja la píldora
+   de prueba en 🧪 y .sin-chip la saca (ajustarCabeza) */
+body.pantalla-completa #jugar-head { flex: 0 1 auto; min-width: 0; overflow: hidden; white-space: nowrap;
+  width: auto; min-height: 44px; margin: 0 auto; padding: 0 12px; gap: 8px; border-radius: 999px; pointer-events: auto;
   background: rgba(21,7,38,0.75); border: 1px solid var(--glass-border); box-shadow: 0 4px 14px rgba(0,0,0,0.35); }
 body.pantalla-completa #jugar-head:empty { display: none; }
 body.pantalla-completa #jugar-head .jugar-titulo { display: none; }
 body.pantalla-completa #jugar-head .chip { margin: 0; }
-body.pantalla-completa #jugar-head .cron { color: var(--ink); }
+body.pantalla-completa #jugar-head .cron { flex: none; color: var(--ink); }
+#jugar-head.justo .chip { padding-inline: 8px; }
+#jugar-head.justo .chip-txt, #jugar-head.sin-chip .chip { display: none; }
 /* Las reglas, un widget plegado bajo la ciudad: cerrado es una píldora a la izquierda; abierto,
    una tarjeta del ancho de la ciudad que se desplaza por dentro y no tapa la acción */
 body.pantalla-completa #jugar-reglas .reglas { width: fit-content; max-width: 100%; margin: 0; background: rgba(21,7,38,0.85); box-shadow: 0 4px 14px rgba(0,0,0,0.35); }
