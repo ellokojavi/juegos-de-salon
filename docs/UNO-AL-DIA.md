@@ -323,8 +323,10 @@ Sobre lo que ya hay en D-212 (`records/<tabla>/<periodo>/<jid>`), con lo mínimo
 | Sin jugador | `localStorage` (`juegos-de-salon:uno-al-dia`) | Al entrar con jugador, lo del celular se sube al historial una vez. |
 | "Mejor que el 64 %" | Se cuenta con el ranking del día ya leído (`LEER = 100`) | Solo con 20 jugadores o más. Con más de 100 la app no sabe el total, y un porcentaje (o un "de 230") sería inventado: quien está entre los 100 leídos ve su puesto ("14.° de hoy") y el resto, solo su puntaje. Lo mismo vale para el puesto del resumen de la semana. |
 
-El puntaje de Uno al día **también** va al ranking normal del juego y al Todoterreno: es el mismo
-juego. Las partidas se cuentan en `partidas` (D-219).
+El **primer intento** de Uno al día **también** va al ranking normal del juego y al Todoterreno:
+es el mismo juego, con un tablero que nadie conocía. Los intentos repetidos son práctica y no van a
+ningún ranking, porque el tablero ya es conocido: es la misma regla de D-212, que deja fuera la
+semilla elegida en el link. Todos los intentos se cuentan en `partidas` (D-219).
 
 **Avisos:** `pushDia/<subId>` = `{ hora, racha, semana, ultimo, at }`, al lado de `push/<subId>`
 (que ya trae idioma y zona horaria) y nadie lo lee. `ultimo` (la última fecha jugada) lo escribe
