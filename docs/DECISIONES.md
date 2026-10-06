@@ -3177,6 +3177,11 @@ pantalla, y en un celular en la mitad. Un mapa es mejor mientras más grande se 
 entrada de la pantalla se apaga en este modo) ni con `align-self: center`, que Chrome también
 aplica a lo fijo. La pantalla no se desplaza: lo que no quepa tiene que desplazarse dentro de su
 widget, como las reglas abiertas.
+**Actualización 2026-10-06 (PR #248):** la píldora del reloj ya no se centra en la ventana: en la
+prueba del laboratorio, con "🧪 Prueba", se montaba sobre "‹ Laboratorio" (C-8). `pantallaCompleta`
+de `cup/game.js` mete `#jugar-head` dentro de la barra, entre volver y el sonido, y al salir lo
+devuelve a la pantalla de jugar. Si no cabe, `ajustarCabeza` deja la píldora de prueba en 🧪
+(`.justo`) y, si ni así, la saca (`.sin-chip`); el reloj no se parte (`nowrap`).
 
 ## D-204 · Publicar más rápido: los guiones largos en partes y la revisión de un PR, acotada
 **Fecha:** 2026-10-04 · **Estado:** corregida por D-213 · **Relación:** amplía D-132, D-172 y D-193
