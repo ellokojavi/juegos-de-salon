@@ -6,6 +6,8 @@
  * en cualquier parte mientras rueda lo abre de inmediato. La Copa no entra: es una semana con
  * amigos, no una partida para sacar al azar.
  *
+ * Al irse, el dado se aleja y se funde en el fondo de la app, y el juego aparece con un fundido.
+ *
  * Con "reducir movimiento" el dado no rueda: aparece quieto en la cara elegida. Sin WebGL
  * aparece el emoji del elegido, grande, en vez del dado.
  */
@@ -13,6 +15,10 @@ import { el } from './ui.js';
 import { crearDado } from './dado3d.js';
 import { pickLang } from './i18n.js';
 import { SFX } from './sound.js';
+import { LLEGA } from './llegada.js';
+
+/** Lo que dura la salida: el dado se aleja y la capa toma el fondo de la app (`.saliendo`). */
+const SALIDA = 420;
 
 export const TEXTOS = {
   es: { boton: 'Juego al azar', tocó: '¡Te tocó!', aria: 'Abrir un juego al azar' },
@@ -58,13 +64,27 @@ function tirar(pool, { lang, base, T }) {
   // El foco entra al diálogo: con teclado, Enter o espacio también lo abren de inmediato
   capa.focus({ preventScroll: true });
 
+  // El juego se va pidiendo mientras rueda, para que al irse no quede esperando
+  document.head.append(el('link', { rel: 'prefetch', href: destino }));
+
+  // Al irse, el dado se aleja y la capa se funde en el fondo de la app; el juego aparece después
+  // con un fundido (llegada.js). Así no hay corte entre el dado y el juego
   let ido = false;
-  const ir = () => { if (ido) return; ido = true; location.href = destino; };
+  const ir = () => {
+    if (ido) return; ido = true;
+    try { sessionStorage.setItem(LLEGA, '1'); } catch { /* sin almacenamiento, llega sin fundido */ }
+    capa.classList.add('saliendo');
+    setTimeout(() => { location.href = destino; }, quieto ? 0 : SALIDA);
+  };
   capa.addEventListener('click', ir);
   capa.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); ir(); } });
   // Volver con "atrás" desde el juego restaura la página tal como quedó (bfcache): sin esto, el
   // dado seguía encima del menú y ya no se podía tocar nada
-  addEventListener('pageshow', e => { if (e.persisted) { capa.remove(); document.body.classList.remove('azar-abierto'); } }, { once: true });
+  addEventListener('pageshow', e => {
+    if (!e.persisted) return;
+    capa.remove(); document.body.classList.remove('azar-abierto');
+    try { sessionStorage.removeItem(LLEGA); } catch { /* nada que limpiar */ }
+  }, { once: true });
 
   const revelar = () => {
     SFX.reveal();
