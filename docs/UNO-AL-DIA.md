@@ -585,7 +585,7 @@ textos los propone el agente de usabilidad y el dueño los corrige en el PR.
 |---|---|---|
 | **Juega el de hoy** (portada) y **Jugar el de hoy** (amigo) | **Jugar el de hoy** en los dos | Una acción, una palabra (U-5), y en infinitivo como los demás botones |
 | **¿Otro más?** | **🎲 Jugar otro** | Verbo y objeto (U-17); el dado dice que es al azar |
-| **Agregar a mi calendario** / **Al calendario** | **Agregar al calendario**, botón chico | "Al calendario" no tiene verbo (U-17) |
+| **Agregar a mi calendario** / **Al calendario** | **Agregar al calendario**, botón chico (desde el PR 6, **⏰ Agregar recordatorio**) | "Al calendario" no tiene verbo (U-17) |
 | "📅 Uno al día · el mismo desafío para todos hoy" | "📅 Uno al día: hoy todos juegan el mismo desafío." | Frase completa (U-1) |
 | "El próximo, en 7 h 12 min" | "El próximo sale en 7 h 12 min." | Frase completa (U-1) |
 | "Sara jugó los últimos 33 días seguidos" | "Sara lleva una racha de 33 días" | Con un comodín, "jugó 33 días seguidos" puede ser falso; y "racha" es el término (U-5) |
