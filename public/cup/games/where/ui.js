@@ -84,6 +84,7 @@ function crearGlobo({ T, alTocar, alGirar, zona }) {
     medir();
     const vista = V();
     sat?.dibujar(vista, w, h);
+    if (esperar(sat, canvas, w, h, fondo)) return;
     globo.dibujar(canvas.getContext('2d'), w, h, vista, { marcas, satelital: !!sat?.lista() });
   };
   const redibujar = () => { if (!pedido) { pedido = true; requestAnimationFrame(pintar); } };
@@ -238,6 +239,19 @@ function crearGlobo({ T, alTocar, alGirar, zona }) {
 }
 
 /**
+ * Mientras baja la imagen satelital el globo queda vacío, en vez de mostrar el mapa vectorial por
+ * un instante; al llegar aparece con un fundido. Devuelve si hay que esperar.
+ */
+function esperar(sat, canvas, w, h, fondo) {
+  if (sat?.esperando()) { canvas.getContext('2d').clearRect(0, 0, w, h); canvas.dataset.esperando = ''; return true; }
+  if ('esperando' in canvas.dataset) {
+    delete canvas.dataset.esperando;
+    for (const c of [fondo, canvas]) c.classList.add('globo-aparece');
+  }
+  return false;
+}
+
+/**
  * La portada: el globo chico girando solo, con el alfiler en Brasil y la estrella en Valparaíso,
  * como el afiche de "Próximamente". Con movimiento reducido (C-8) queda quieto.
  */
@@ -263,7 +277,7 @@ export function portada() {
         const lon = quieto ? -60 : -60 + ((ahora - t0) / 1000) * 8;
         const vista = globo.vista({ centro: [-12, envolver(lon)], r: Math.min(w, h) / 2 - 8, cx: w / 2, cy: h / 2 });
         sat?.dibujar(vista, w, h);
-        globo.dibujar(canvas.getContext('2d'), w, h, vista, { marcas, liviano: true, escala: 0.7, perspectiva: true, satelital: !!sat?.lista() });
+        if (!esperar(sat, canvas, w, h, fondo)) globo.dibujar(canvas.getContext('2d'), w, h, vista, { marcas, liviano: true, escala: 0.7, perspectiva: true, satelital: !!sat?.lista() });
       }
     }
     if (!quieto) requestAnimationFrame(cuadro);
