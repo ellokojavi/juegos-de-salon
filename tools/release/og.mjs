@@ -101,11 +101,16 @@ const leerHuellas = () => { try { return JSON.parse(readFileSync(HUELLAS, 'utf8'
  * a games.js no cambia ninguna imagen, así que tampoco puede dejarlas atrasadas.
  */
 const enTarjetas = o => (o && typeof o === 'object' ? Object.fromEntries(LANGS.filter(l => l in o).map(l => [l, o[l]])) : o);
+/**
+ * De `COMMON`, solo lo que la tarjeta de la portada dibuja (`og/tarjeta.html`): un texto nuevo de la
+ * app (el de compartirla, D-226) no la deja atrasada.
+ */
+const textosTarjeta = lang => Object.fromEntries(['appTitle', 'appSub'].map(k => [k, COMMON[lang][k]]));
 function huella(p) {
   const juego = p.juego && [...GAMES, ...SUELTOS].find(g => g.id === p.juego);
   const dato = juego
     ? { emoji: juego.emoji, name: enTarjetas(juego.name), tagline: enTarjetas(juego.tagline), players: juego.players, duration: juego.duration, durationUnit: enTarjetas(juego.durationUnit) }
-    : { lang: p.lang, textos: COMMON[p.lang], juegos: disponibles.map(g => [g.id, g.emoji]) };
+    : { lang: p.lang, textos: textosTarjeta(p.lang), juegos: disponibles.map(g => [g.id, g.emoji]) };
   return createHash('sha256').update(readFileSync(join(RAIZ, 'tools/release/og/tarjeta.html'), 'utf8')).update(JSON.stringify(dato)).digest('hex').slice(0, 16);
 }
 /** ¿La imagen falta, o se hizo con otro dibujo u otros textos? */

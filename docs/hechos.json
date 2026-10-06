@@ -1,5 +1,5 @@
 {
-  "version": "0.108.0",
+  "version": "0.109.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -887,6 +887,7 @@
     "cambios.test.mjs",
     "caminos.mjs",
     "ci.mjs",
+    "compartir-portada.mjs",
     "compartir-sala.mjs",
     "contacto.mjs",
     "cup-games/idiomas.mjs",
