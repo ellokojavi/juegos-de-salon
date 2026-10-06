@@ -3916,7 +3916,8 @@ un tramposo pueda inflar su mejor racha no importa por ahora; sí medir el uso: 
 a `stats/<env>/days/<día>/uad/<evento>` (`EVENTOS_UAD` y `trackUnoAlDia` en `stats.js`, sin decir
 quién; una regla nueva en `database.rules.json` acepta solo subir de a uno), y el bloque "📅 Uno al
 día" del panel lo muestra en "Qué se hace" y "Avisos y recordatorio", con las vistas de `/today/` y
-las visitas que entraron por ahí.
+las visitas que entraron por ahí. En v0.120.1 (dilema #230, decisión 14), con los avisos activos
+`/today/` ya no ofrece "⏰ Agregar recordatorio": repetiría el aviso.
 
 ## D-231 · El selector de idioma lleva las banderas siempre
 **Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** corrige la nota de `base.css` de D-191 (en un celular angosto se escondía la bandera)

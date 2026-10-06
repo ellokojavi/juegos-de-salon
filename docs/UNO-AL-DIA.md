@@ -292,7 +292,7 @@ Para quien no quiere avisos, o tiene un iPhone sin la app instalada:
 |---|---|
 | **El botón de la portada** | Su estado se ve al entrar: el punto que brilla mientras falta jugar, 🔥 6, y cian con ✅ cuando ya jugó. |
 | **El globo en el ícono** | En la app instalada (Android, y iPhone con avisos permitidos), un **1** en el ícono si hoy no ha jugado (`navigator.setAppBadge`). Lo pone la página al abrir y lo quita al terminar; el service worker lo pone con el aviso del día. |
-| **⏰ Agregar recordatorio** | Un evento en el calendario del celular que se repite cada día a la hora que elige, con el link a `/today/`. Sale de un `.ics` armado en el celular, sin servidor ni permisos, y sirve en cualquier celular. |
+| **⏰ Agregar recordatorio** | Un evento en el calendario del celular que se repite cada día a la hora que elige, con el link a `/today/`. Sale de un `.ics` armado en el celular, sin servidor ni permisos, y sirve en cualquier celular. Con los avisos activos no sale: repetiría el aviso (decisión 14). |
 | **La tarjeta para compartir** | Al estilo Wordle, sin adelantar la respuesta: el grupo de WhatsApp le recuerda a cada uno que juegue. |
 | **El link fijo** | `juegosdesalon.cl/today/` siempre abre el de hoy: se guarda en favoritos o se fija en un grupo. |
 
@@ -567,6 +567,7 @@ celular saca la palabra, la flota o los dados de la semilla del día.
     intento igual entra a él).
 13. **Que se pueda alterar la mejor racha no importa por ahora**; sí que el panel mida el tráfico y
     la actividad de Uno al día.
+14. **Con los avisos activos no se ofrece el recordatorio del calendario** (#230): repetiría el aviso.
 
 ## Textos para revisar (U-1, U-3, U-17)
 
