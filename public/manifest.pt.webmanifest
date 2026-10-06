@@ -3,7 +3,7 @@
   "name": "Jogos de Salão",
   "short_name": "Jogos de Salão",
   "description": "Jogos tradicionais trazidos pro seu celular, pra passar o tempo sozinho ou com amigos.",
-  "start_url": "./",
+  "start_url": "./?pwa",
   "scope": "./",
   "display": "standalone",
   "background_color": "#150726",
