@@ -415,19 +415,27 @@ export function pickLang(obj, lang = getLang()) {
 }
 
 /**
- * Toggle ES / EN / PT. `onChange(lang)` se llama tras guardar el idioma nuevo.
- * Por defecto recarga la página para que todo se re-renderice con el idioma elegido.
+ * La bandera y el nombre propio de cada idioma, para el toggle (D-230). Un idioma nuevo trae
+ * los dos: la prueba de paridad lo exige. Es la bandera del país de la app en ese idioma
+ * (el español es el de Chile, el portugués el de Brasil, D-191, D-194).
+ */
+export const BANDERAS = { es: '🇨🇱', en: '🇬🇧', pt: '🇧🇷', de: '🇩🇪' };
+export const NOMBRES_IDIOMA = { es: 'Español', en: 'English', pt: 'Português', de: 'Deutsch' };
+
+/**
+ * El selector de idioma, el único de la app (D-230): cada botón lleva su bandera y su código,
+ * siempre, también en un celular angosto (base.css). `onChange(lang)` se llama tras guardar el
+ * idioma nuevo; por defecto recarga la página para que todo se re-renderice con el elegido.
  */
 export function langToggle(onChange = () => location.reload()) {
   const current = getLang();
   const wrap = el('div', { class: 'lang-toggle', role: 'group', 'aria-label': 'Idioma / Language / Idioma / Sprache' });
-  // La bandera va aparte: con cuatro idiomas en un celular angosto se esconde (base.css)
-  const flags = { es: '🇨🇱', en: '🇬🇧', pt: '🇧🇷', de: '🇩🇪' };
   for (const lang of LANGS) {
     wrap.append(el('button', {
       type: 'button', class: lang === current ? 'on' : '', 'aria-pressed': lang === current ? 'true' : 'false',
+      lang, title: NOMBRES_IDIOMA[lang], 'aria-label': NOMBRES_IDIOMA[lang],
       onClick: () => { if (lang === getLang()) return; setLang(lang); onChange(lang); },
-    }, el('span', { class: 'flag' }, flags[lang] + ' '), lang.toUpperCase()));
+    }, el('span', { class: 'flag', 'aria-hidden': 'true' }, BANDERAS[lang]), el('span', { class: 'code' }, lang.toUpperCase())));
   }
   return wrap;
 }
