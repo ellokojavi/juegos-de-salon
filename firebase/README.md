@@ -221,6 +221,10 @@ stats/prod/days/20342/
   lang/es-CL: 12                      idioma del navegador
   applang/en: 4                       idioma elegido en el juego (D-46)
   hour/21: 5                           hora local del celular
+  aviso/dia: 3                         avisos de La Copa tocados, por tipo (D-233)
+  pwa/android: 2                       aperturas desde la app instalada (?pwa), por sistema
+  mandados/plazo: 4                    avisos entregados, por tipo: solo los escribe avisar.mjs
+stats/prod/push: { vuelta, vivas, torneos }   la última vuelta de avisar.mjs y cuántas suscripciones siguen vivas
 ```
 
 - `rooms/<CÓDIGO>` se crea una sola vez; cada `players/<rol>` también. Nada se edita ni se borra.
@@ -237,6 +241,10 @@ stats/prod/days/20342/
   la señal en el servidor, la partida ni se entera y el dato no existe nunca más.
 - Lo que **sí** obliga a tocar las reglas: una categoría de señal nueva (cualquier cosa que no
   sea `rooms`, `local`, `origin`, `lang`, `applang` o `hour`), porque `$other` las rechaza.
+- Los avisos (D-233): `aviso/<tipo>` y `pwa/<sistema>` los suben los celulares, en uno; la clave
+  se valida por forma (`^[a-z]{1,12}$`), y la lista de tipos vive en `stats.js` (`TIPOS_AVISO`).
+  `mandados/<tipo>` y `stats/<env>/push` no los escribe ningún celular: solo `avisar.mjs`, con la
+  cuenta de servicio, que no pasa por las reglas.
 
 Módulo y tests: [`public/assets/js/transport/stats.js`](../public/assets/js/transport/stats.js) ·
 `node public/assets/js/transport/stats.test.mjs` · `node public/panel/adapta.test.mjs` (compara la forma de

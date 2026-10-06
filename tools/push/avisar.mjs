@@ -13,7 +13,10 @@
  * - junta en un aviso los días nuevos de varias copas para un mismo celular (D-229);
  * - anota cada aviso entregado en `pushEnviados/<código>/<subId>/<clave>`, para no repetirlo;
  * - borra las suscripciones que el servicio dio por muertas (404 o 410) y sus copas;
- * - limpia lo de las copas que terminaron hace más de una semana o que ya no existen.
+ * - limpia lo de las copas que terminaron hace más de una semana o que ya no existen;
+ * - suma lo entregado por día y tipo en `stats/prod/days/<día>/mandados/<tipo>` y deja en
+ *   `stats/prod/push` la hora de la vuelta y cuántas suscripciones siguen vivas (D-233): el panel
+ *   los muestra, y si la hora se atrasa, GitHub dejó de correr el workflow.
  *
  * La clave privada VAPID viene de $VAPID_PRIVADA (el secreto de GitHub); la pública, de vapid.js.
  * Sin alguna de las dos no hay nada que mandar, y sale sin error.
@@ -24,6 +27,9 @@ import { avisosDeCopa, avisosDePrueba, juntar } from './calendario.mjs';
 import { mandar } from './webpush.mjs';
 
 const SEMANA = 7 * 24 * 3600e3;
+const DIA = 24 * 3600e3;
+/** Las señales de los avisos van con las del sitio publicado (D-44): `stats/prod`. */
+export const ENV_STATS = 'prod';
 
 /**
  * Una vuelta completa, con la base y el envío inyectables (las pruebas no tocan la red).
@@ -34,7 +40,7 @@ export async function vuelta({ db, envio, now = Date.now(), simular = false, pru
   const resumen = { copas: 0, avisos: 0, entregados: 0, muertas: 0, fallas: 0, limpiadas: 0 };
   const cambios = {};
   const muertas = new Set();
-  const todos = [], nombres = {};
+  const todos = [], nombres = {}, porTipo = {};
   for (const [code, quiere] of Object.entries(quiereTodo || {})) {
     if (prueba && code !== prueba) continue;
     const copa = await db.leer(`torneos/${code}`);
@@ -57,6 +63,7 @@ export async function vuelta({ db, envio, now = Date.now(), simular = false, pru
     try { r = await envio(subs[p.subId], p.aviso); } catch (e) { r = { estado: 0, texto: String(e?.message || e) }; }
     if (r.estado >= 200 && r.estado < 300) {
       resumen.entregados++;
+      porTipo[p.tipo] = (porTipo[p.tipo] || 0) + 1;
       for (const { code, claves } of p.porCopa) for (const c of claves) cambios[`pushEnviados/${code}/${p.subId}/${c}`] = now;
     } else if (r.muerta) {
       resumen.muertas++;
@@ -73,7 +80,13 @@ export async function vuelta({ db, envio, now = Date.now(), simular = false, pru
       for (const [pid, porSub] of Object.entries(quiere || {})) if (porSub?.[subId]) cambios[`pushCopa/${code}/${pid}/${subId}`] = null;
     }
   }
-  if (!simular && Object.keys(cambios).length) await db.cambiar(cambios);
+  // Lo que mira el panel (D-233): lo entregado hoy por tipo, la hora de esta vuelta y las suscripciones vivas
+  const dia = Math.floor(now / DIA);
+  for (const [tipo, k] of Object.entries(porTipo)) cambios[`stats/${ENV_STATS}/days/${dia}/mandados/${tipo}`] = { '.sv': { increment: k } };
+  cambios[`stats/${ENV_STATS}/push/vuelta`] = now;
+  cambios[`stats/${ENV_STATS}/push/vivas`] = Object.keys(subs || {}).filter(s => !muertas.has(s)).length;
+  cambios[`stats/${ENV_STATS}/push/torneos`] = resumen.copas;
+  if (!simular) await db.cambiar(cambios);
   return resumen;
 }
 

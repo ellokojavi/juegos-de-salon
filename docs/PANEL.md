@@ -53,6 +53,22 @@ etiqueta "laboratorio" donde corresponde, y con un filtro para verlas solas.
 el nombre y el emoji de la sección salen de ahí (C-16). Por lo mismo la sección se llama `torneo`
 en la URL y no `copa`, que es el id del juego.
 
+## Los avisos al celular (D-233)
+
+En `#/torneo`, debajo de las cifras de las copas, el bloque **🔔 Avisos al celular**:
+
+- **Celulares con avisos:** las suscripciones vivas en la última vuelta de `tools/push/avisar.mjs`
+  (`stats/prod/push/vivas`). Los celulares no se pueden leer uno por uno: `push/` no lo lee nadie.
+- **Mandados y tocados, por tipo:** `mandados/<tipo>` lo suma `avisar.mjs` (los que el servicio del
+  celular aceptó); `aviso/<tipo>`, la página que abrió el aviso (`&aviso=<tipo>` en su dirección).
+  El porcentaje es tocados sobre mandados en el rango. Los mandados son siempre del sitio publicado.
+- **Aperturas de la app instalada:** `pwa/<sistema>`, del `start_url` `./?pwa` de los manifests.
+- **Última vuelta:** la hora de `stats/prod/push/vuelta`. Si pasó más de una hora sale en rojo:
+  GitHub pudo apagar el workflow programado (lo hace tras 60 días sin commits) o le faltan los
+  secretos.
+
+Con `window.__panel.seed({ …, push: { vuelta, vivas, torneos } })` se dibuja con datos sembrados.
+
 ## La Copa en el panel (D-137)
 
 No usa señales aparte: lee `torneos/` tal como lo guarda la copa (el dueño ya podía leerlo en las
@@ -243,10 +259,10 @@ public/assets/js/transport/
   dispose.test.mjs    node public/assets/js/transport/dispose.test.mjs
 ```
 
-`window.__panel.seed({ rooms, days, torneos, vista })` dibuja el panel con datos sembrados sin
+`window.__panel.seed({ rooms, days, torneos, push, vista })` dibuja el panel con datos sembrados sin
 entrar (gancho de solo lectura, C-14): sirve para probar la página sin cuenta ni base. `vista` es
-una ruta (`/torneo/OFICI`). `node tools/e2e/mirar.mjs panel <toma>` lo siembra con copas armadas
-con el motor de verdad y abre esa vista. Las tomas: `ahora`, `torneo`, `copa-ficha`, `copa-dias`,
+una ruta (`/torneo/OFICI`) y `push`, la última vuelta de los avisos (D-233). `node tools/e2e/mirar.mjs panel <toma>`
+lo siembra con copas armadas con el motor de verdad, una semana de avisos mandados y tocados, y abre esa vista. Las tomas: `ahora`, `torneo`, `copa-ficha`, `copa-dias`,
 `copa-historia`, `juegos`, `juego-ficha`, `sala-ficha`, `trafico`, `audiencia` y `datos`.
 
 ## Cuando entra un juego, un modo o un idioma nuevo
