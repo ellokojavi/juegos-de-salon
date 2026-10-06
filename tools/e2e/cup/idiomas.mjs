@@ -8,7 +8,7 @@
 import { launch, sleep } from '../cdp.mjs';
 import { revisarIdiomas } from '../idiomas-comun.mjs';
 import { mkdirSync } from 'node:fs';
-import { LANGS } from '../../../public/assets/js/i18n.js';
+import { LANGS, COMMON } from '../../../public/assets/js/i18n.js';
 import { SUELTOS } from '../../../public/assets/js/games.js';
 import { LOCALES } from '../../../public/cup/rules.js';
 
@@ -80,7 +80,7 @@ for (const id of ['letras', 'conexiones', 'anio', 'reinas', 'donde']) for (const
   await b.go(`${SITIO}/${SUELTO[id].slug}/?prueba&lang=${lang}`, 2000);
   const t = await texto();
   ok(tiene(t, SUELTO[id].name[lang]), `${id} (${lang}): la antesala está traducida (${SUELTO[id].name[lang]})`);
-  ok(!/🇪🇸/.test(t), `${id} (${lang}): sin la píldora de "solo en español"`);
+  ok(!t.includes(`🇪🇸 ${COMMON[lang].onlySpanish}`), `${id} (${lang}): sin la píldora de "solo en español"`);
   await revisar(`${lang}-suelto-${id}-antesala`);
   await ev(`document.getElementById('btn-empezar').click(); 1`); await sleep(4800);
   if (id === 'letras') ok(!(await ev(`[...document.querySelectorAll('.keypad button')].some(x=>x.textContent==='Ñ')`)), `letras (${lang}): el teclado no tiene Ñ`);
