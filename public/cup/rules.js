@@ -736,7 +736,7 @@ const ES = {
   avMsgJoinMany: "{names} se inscribieron en tu copa. Ya son {n} jugadores inscritos.",
   avMsgDueMany: "⏳ Te quedan {h} horas para jugar los días {dias}. Si no los juegas, son 0 puntos.",
   avMsgDueManyOne: "⏳ Te queda 1 hora para jugar los días {dias}. Si no los juegas, son 0 puntos.",
-  avMsgWinTie: "🥇 ¡Ganaste la copa, empatado con {names}!",
+  avMsgWinTie: "🥇 ¡Ganaste la copa junto con {names}!",
   avMsgEndMany: "🥇 Ganaron {names}. Quedaste {pos}.",
   avMsgDayMany: "🎲 Tienes un día nuevo en {n} copas: {copas}.",
 };
@@ -2142,7 +2142,7 @@ const PT = {
   avMsgJoinMany: "{names} se inscreveram na sua copa. Já são {n} jogadores inscritos.",
   avMsgDueMany: "⏳ Faltam {h} horas para jogar os dias {dias}. Se não jogar, são 0 pontos.",
   avMsgDueManyOne: "⏳ Falta 1 hora para jogar os dias {dias}. Se não jogar, são 0 pontos.",
-  avMsgWinTie: "🥇 Você ganhou a copa, empatado com {names}!",
+  avMsgWinTie: "🥇 Você ganhou a copa junto com {names}!",
   avMsgEndMany: "🥇 {names} ganharam. Você ficou em {pos}.",
   avMsgDayMany: "🎲 Você tem um dia novo em {n} copas: {copas}.",
 };
