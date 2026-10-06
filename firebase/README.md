@@ -166,11 +166,15 @@ El dueño (su UID) puede escribir y borrar en todas estas ramas, para moderar.
 - `pushEnviados/<código>/<subId>/<clave>` = la hora en que se entregó ese aviso (`dia:3`,
   `plazo:3`, `final`, `fin`, `insc:<pid>`), para no repetirlo. Nadie la lee ni la escribe: solo
   `tools/push/avisar.mjs`, con la cuenta de servicio (D-224), que también la limpia.
+- `pushDia/<subId>` = `{ h, d, r, w, u, c, k, m, sp, sn, at }`: lo que pidió ese celular de los avisos
+  de Uno al día (la hora `h`, de 0 a 23, y si quiere el diario, el de la racha y el de la semana) y,
+  para el texto, su último día jugado `u`, su racha, comodines (0 a 2) y mejor racha, y la semana de
+  ese día con cuántos días jugó (D-230). Nadie lo lee; lo escribe el celular cuya identidad
+  (`auth.uid`) es la de `push/<subId>/uid`, que puede ir en la misma escritura. Cualquier otro campo
+  se rechaza.
+- `pushEnviadosDia/<subId>/<clave>` = hora de entrega (`dia:<n>`, `racha:<n>`, `semana:<s>`, `adios`):
+  los escribe y limpia solo `tools/push/avisar.mjs`, con la cuenta de servicio.
 - Aquí el dueño no tiene excepción: su UID no lee ni escribe estas ramas.
-
-- `pushDia/<subId>`: lo que pidió ese celular de los avisos de Uno al día (hora, cuáles) y su último
-  día y racha, para el texto (D-230). Nadie lo lee; lo escribe el celular dueño de `push/<subId>`.
-  `pushEnviadosDia` lo escribe solo el administrador (avisar.mjs).
 
 ## Reportes (`feedback`)
 
