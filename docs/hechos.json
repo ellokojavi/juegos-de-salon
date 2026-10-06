@@ -1,5 +1,5 @@
 {
-  "version": "0.109.0",
+  "version": "0.110.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -18,7 +18,7 @@
     "pt": 100,
     "de": 100
   },
-  "clavesComunes": 24,
+  "clavesComunes": 25,
   "juegos": [
     {
       "id": "copa",
@@ -725,6 +725,7 @@
     "public/assets/js/handoff.js",
     "public/assets/js/i18n.js",
     "public/assets/js/instalable.js",
+    "public/assets/js/instalar.js",
     "public/assets/js/jugador-firebase.js",
     "public/assets/js/jugador-local.js",
     "public/assets/js/jugador.js",
@@ -839,6 +840,7 @@
     "public/assets/js/games.test.mjs",
     "public/assets/js/i18n.test.mjs",
     "public/assets/js/instalable.test.mjs",
+    "public/assets/js/instalar.test.mjs",
     "public/assets/js/push.test.mjs",
     "public/assets/js/records.test.mjs",
     "public/assets/js/transport/cleanup.test.mjs",
@@ -904,6 +906,7 @@
     "idioma-por-url.mjs",
     "idiomas-comun.mjs",
     "instalable.mjs",
+    "instalar.mjs",
     "julep/idiomas.mjs",
     "julep/local.mjs",
     "julep/online.mjs",

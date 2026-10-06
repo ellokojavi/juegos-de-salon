@@ -402,3 +402,61 @@ html:lang(de) body { -webkit-hyphens: auto; hyphens: auto; overflow-wrap: break-
 
 /* Mientras los textos del idioma elegido no están puestos, no se pinta nada (D-194) */
 html.i18n-pendiente body { visibility: hidden; }
+
+/* --- La hoja de abajo (D-223, D-229): pasos y avisos sobre el morado oscuro de la hoja del chat
+   (.chat-panel). Sobre el fondo de la app, un blanco encandila (lo pidió el dueño al ver el
+   diseño). La usan los avisos de La Copa y el globo de agregar a inicio de la portada. */
+.hoja-capa { position: fixed; inset: 0; z-index: 60; display: grid; align-items: end; }
+.hoja-fondo { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.55); animation: fadeIn 0.2s both; }
+.hoja {
+  position: relative; width: 100%; max-width: 560px; margin: 0 auto; box-sizing: border-box;
+  max-height: 88dvh; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;
+  padding: 10px 20px calc(22px + var(--safe-bottom));
+  border-radius: 22px 22px 0 0; border: 2px solid var(--glass-border); border-bottom: 0;
+  background: linear-gradient(180deg, rgba(42, 10, 74, 0.985), rgba(21, 7, 38, 0.99));
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6); animation: slideUp 0.25s ease-out both;
+}
+.hoja-asa { align-self: center; width: 44px; height: 5px; border-radius: 999px; background: rgba(255, 255, 255, 0.3); }
+.hoja h2 { font-family: var(--font-display); font-weight: 400; font-size: 1.7rem; letter-spacing: 0.04em; color: var(--yellow); margin: 0; }
+.hoja p { margin: 0; line-height: 1.45; }
+.hoja-paso { display: grid; grid-template-columns: 32px 1fr 44px; gap: 12px; align-items: center; }
+.hoja-paso small { display: block; margin-top: 2px; }
+.hoja-num { width: 32px; height: 32px; border-radius: 999px; background: var(--pink); color: #fff; font-weight: 900; display: grid; place-items: center; }
+.hoja-icono { width: 44px; height: 44px; border-radius: 12px; background: rgba(255, 255, 255, 0.1); display: grid; place-items: center; font-size: 1.3rem; }
+.hoja-link, .hoja-caja { background: rgba(255, 255, 255, 0.08); border-radius: 14px; padding: 12px 14px; overflow-wrap: anywhere; }
+.hoja .btn-row { flex-wrap: wrap; }
+
+/* --- El globo de agregar a inicio (D-229): flota sobre el pie de la portada, con el ícono de la
+   app, y se va con la ✕ para siempre. El borde dorado es el de La Copa: invita, no avisa. */
+.globo-instalar {
+  position: fixed; z-index: 50; left: 12px; right: 12px; bottom: calc(12px + var(--safe-bottom));
+  max-width: 520px; margin: 0 auto; box-sizing: border-box;
+  display: grid; grid-template-columns: 48px 1fr; align-items: center; gap: 10px 12px;
+  padding: 12px; border-radius: 20px;
+  border: 2px solid rgba(255, 210, 63, 0.55);
+  background: linear-gradient(135deg, #3a0e62, #1a082e);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55), 0 0 24px rgba(255, 210, 63, 0.18);
+  animation: globoSube 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+  transition: transform 0.25s, opacity 0.25s;
+}
+.globo-instalar.fuera { transform: translateY(24px); opacity: 0; }
+.globo-icono { width: 48px; height: 48px; border-radius: 12px; display: block; }
+.globo-texto { display: flex; flex-direction: column; gap: 2px; min-width: 0; line-height: 1.3; padding-right: 30px; }
+.globo-texto b { font-weight: 900; }
+.globo-texto span { color: var(--muted); font-size: 0.88rem; font-weight: 700; }
+.globo-agregar { white-space: nowrap; grid-column: 1 / -1; }
+.globo-cerrar {
+  position: absolute; top: 2px; right: 2px; width: 44px; height: 44px; border: 0; border-radius: 999px;
+  background: none; color: var(--muted); font: 900 1rem var(--font-body); cursor: pointer;
+}
+.globo-cerrar:active { transform: scale(0.9); }
+/* En un celular el botón va en su propia fila, de borde a borde; con espacio, al lado del texto */
+@media (min-width: 480px) {
+  .globo-instalar { grid-template-columns: 48px 1fr auto; padding-right: 48px; }
+  .globo-texto { padding-right: 0; }
+  .globo-agregar { grid-column: auto; }
+}
+@keyframes globoSube { from { transform: translateY(110%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .globo-instalar { animation: fadeIn 0.2s both; } }
+/* Mientras está, el pie de la página sube sobre él: al final de la lista no tapa nada */
+body:has(> .globo-instalar) main.app { padding-bottom: 170px; }
