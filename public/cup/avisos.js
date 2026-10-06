@@ -241,7 +241,7 @@ export function crearAvisos({ T, lang, cuenta, store, copa, redibujar, toast, ta
     if (await subIdDe(actual.endpoint) !== g.subId) { try { await activar({ dia: g.dia, plazo: g.plazo, silencioso: true }); } catch (_) { /* la próxima vez */ } }
   }
 
-  return { disponible, boton, tarjeta, revisar, camino, cerrar, abiertaDesdeApp: () => cel.instalada && (cel.ios || !!new URLSearchParams(location.search).get('app')) };
+  return { disponible, boton, tarjeta, revisar, camino, cerrar, silenciar, abiertaDesdeApp: () => cel.instalada && (cel.ios || !!new URLSearchParams(location.search).get('app')) };
 }
 
 /** Para las pruebas: qué hoja está abierta. */
