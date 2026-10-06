@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.126.0 — 2026-10-06
+- **El botón de compartir, a color** (D-243): la caja va celeste y la flecha rosada, con la sombra
+  de los botones de la página, en vez del blanco que se veía apagado al lado de 🔊 y 🏆.
+
 ## 0.125.0 — 2026-10-06
 - **El botón de compartir, con el ícono de siempre** (D-242): arriba a la derecha de la portada, el
   📤 pasa a ser la flecha que sale de una caja, la de compartir del celular, y se ve igual en todos.
