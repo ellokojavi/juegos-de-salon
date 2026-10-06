@@ -23,6 +23,12 @@ const BN_FALLA = rol => `(()=>{const S=window.__bn.session(),L=S.layouts['${rol 
   for(const [id,p] of Object.entries(L)) for(let i=0;i<T[id];i++) o.add((p.dir==='h'?p.r:p.r+i)+','+(p.dir==='h'?p.c+i:p.c));
   for(let r=0;r<10;r++) for(let c=0;c<10;c++) if(!o.has(r+','+c)) return S.transport.send({t:'shot',from:'${rol}',cell:'ABCDEFGHIJ'[c]+(r+1)});})()`;
 
+/* --- La Copa: "Tus copas" sembrada en el almacén de prueba, y la portada con `?prueba` (D-234) --- */
+const MIAS_SEMBRAR = `const D=864e5, ahora=Date.now(); sessionStorage.setItem('juegos-de-salon:copa:prueba:mias', JSON.stringify([
+  {code:'FGHIJ',nombre:'Javiera',copa:'Los primos de Valparaíso, edición invierno',fin:ahora-2*D},
+  {code:'ABCDE',nombre:'Javiera',copa:'Copa de la oficina',fin:ahora + 3 * D},
+  {code:'KLMNO',nombre:'Javi',copa:'Copa del finde',fin:ahora-5*D}])); location.href='/cup/?prueba'`;
+
 /* --- Tango: empezar y llenar el tablero con el motor de verdad (ver su entrada) --- */
 const TAN_EMPEZAR = `document.getElementById('btn-empezar').click()`;
 const TAN_LLENAR = choque => `(async()=>{const {JUEGOS}=await import('/cup/games/index.js');const p=JUEGOS.tango.generar(__copa.estado.juego.semilla,1);
@@ -107,6 +113,11 @@ export const CAMINOS = {
   copa: {
     intro: [],
     crear: [`document.getElementById('btn-crear').click()`],
+    // "Tus copas" con una en curso y dos terminadas: el interruptor apagado y prendido (D-234)
+    mias: [MIAS_SEMBRAR, `1`],
+    'mias-terminadas': [MIAS_SEMBRAR, `1`, `document.getElementById('ver-terminadas').click()`],
+    // Todas terminadas: "No tienes copas en curso." sobre el interruptor
+    'mias-ninguna': [MIAS_SEMBRAR.replace('ahora + 3 * D', 'ahora - 1 * D'), `1`],
   },
   dudo: {
     intro: [],
