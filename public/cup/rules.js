@@ -2076,7 +2076,7 @@ const PT = {
 
   // Avisos no celular (D-223)
   avOfferDay: "🔔 Quer um aviso quando abrir o dia {d}?",
-  avOfferStart: "🔔 A copa começa em {fecha}. Quer um aviso nesse dia?",
+  avOfferStart: "🔔 A copa começa {fecha}. Quer um aviso nesse dia?",
   avOfferApp: "🔔 Último passo: ative os avisos.",
   avAppWelcome: "Você é {name} nesta copa. Digite seu PIN para continuar.",
   avOfferSub: "Você recebe um aviso de manhã, e outro antes do fechamento se ainda não tiver jogado.",
