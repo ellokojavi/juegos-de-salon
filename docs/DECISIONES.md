@@ -3810,7 +3810,7 @@ en `tools/push/calendario.mjs`, `avisar.mjs`, `public/sw.js` y la copa:
   y el día anterior, la noche del último día), van en un aviso: "Te quedan 4 horas para jugar los
   días 6 y 7. Si no los juegas, son 0 puntos."
 - **Empate en el primer lugar** (mismos puntos, días ganados y final, como la tabla): "🥇 Ganaron
-  Ana y Beto. Quedaste 3.º"; a quien empató arriba, "🥇 ¡Ganaste la copa, empatado con Beto!".
+  Ana y Beto. Quedaste 3.º"; a quien empató arriba, "🥇 ¡Ganaste la copa junto con Beto!".
   Las listas de nombres van con `Intl.ListFormat` en el idioma de quien recibe ("Ana y Beto",
   "Ana e Beto"), también en el de la inscripción.
 - **El día exacto:** el del día, el plazo y la final abren la copa con `&dia=<d>`, y la copa parte
