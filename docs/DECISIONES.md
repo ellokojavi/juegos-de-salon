@@ -70,7 +70,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220 |
 | Marketing | `marketing/README.md` | D-178 |
-| App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229 |
+| App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-233 |
 
 ---
 
@@ -3844,3 +3844,24 @@ apague; el día exacto y los botones ahorran toques; el empate no deja a un gana
 empate y las copas juntas; `tools/e2e/cup/avisos.mjs`, `&dia=` y `&silenciar`. Los botones se
 prueban a mano en Android: Chrome headless no los muestra. Si con el tope se pierde un plazo (dos
 avisos ya ese día), el del día siguiente o el de gracia lo cubren.
+
+## D-233 · Los avisos se miden en el panel: mandados, tocados, la app instalada y la última vuelta
+**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** completa D-224 y D-228; el PR 4 de [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md); señales como D-44 y D-208
+**Decisión:** El panel (`#/torneo`) suma el bloque "🔔 Avisos al celular". Lo que lo alimenta:
+- **Tocados:** la dirección de cada aviso lleva `&aviso=<tipo>` (`dia`, `plazo`, `final`, `fin`,
+  `insc`, `copas`, `prueba`). La página lo cuenta al abrirse en `stats/<env>/days/<día>/aviso/<tipo>`,
+  sea o no la primera de la visita, y lo saca de la dirección: recargar o volver no lo suma de nuevo.
+- **La app instalada:** el `start_url` de los cuatro manifests pasa a `./?pwa` (el `id` no cambia:
+  sigue siendo la misma app). Se cuenta en `pwa/<sistema>` (`android`, `ios`, `otro`) y sale de la
+  dirección igual.
+- **Mandados:** `avisar.mjs` suma los entregados de cada vuelta por día y tipo en
+  `stats/prod/days/<día>/mandados/<tipo>` (`pushEnviados` se limpia a la semana) y deja en
+  `stats/prod/push` la hora de la vuelta, las suscripciones vivas y las copas con avisos. `--prueba`
+  suma en `mandados/prueba`; `--simular` no escribe nada.
+- **Reglas:** `aviso` y `pwa` aceptan solo subir en uno, con la clave validada por forma (C-16); `mandados` y
+  `push` no los escribe ningún celular (la cuenta de servicio no pasa por las reglas).
+**Por qué:** Lo pidió el dueño (la fase 4 del plan): saber si los avisos traen gente de vuelta y
+notar a tiempo si GitHub apagó el workflow programado, que no avisa.
+**Consecuencias:** Las señales nuevas son contadores, como el tráfico (D-208): no identifican a nadie.
+El embudo de la campana (se ofreció → Avisarme → permiso) no se mide todavía. Una suscripción que
+deja de existir sin que el servicio lo diga sigue contando como viva hasta que un envío falle.

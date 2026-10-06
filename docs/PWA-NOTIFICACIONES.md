@@ -1,6 +1,6 @@
 # App instalable y avisos al celular (PWA + Web Push)
 
-**Estado:** aprobado por el dueño (D-221); los PR 1 (v0.105.0), 2 (v0.107.0, D-223) y 3 (v0.108.0, D-224) están hechos; la clave VAPID está puesta (D-225); en iPhone la app instalada abre en la portada (D-227); **abiertos a todos desde v0.110.0** (D-228), después de que el aviso de prueba llegó al Android y al iPhone del dueño · **Fecha:** 2026-10-05 ·
+**Estado:** aprobado por el dueño (D-221); los PR 1 (v0.105.0), 2 (v0.107.0, D-223) y 3 (v0.108.0, D-224) están hechos; la clave VAPID está puesta (D-225); en iPhone la app instalada abre en la portada (D-227); **abiertos a todos desde v0.110.0** (D-228), después de que el aviso de prueba llegó al Android y al iPhone del dueño; se miden en el panel desde v0.112.0 (D-233) · **Fecha:** 2026-10-05 ·
 **Toca:** RP-11, RP-13, LIG-33, D-99
 
 Es el detalle de D-221, que **corrige a D-99** en lo que dice de los avisos automáticos. El diseño de
@@ -399,9 +399,21 @@ Lo que no se puede automatizar: un iPhone real, con iOS 16.4 o más (ideal: 17, 
 
 ### 6. Panel del dueño
 
-Una fila nueva: suscripciones vivas, avisos mandados por tipo y cuántos se tocaron (el
-`notificationclick` abre la URL con `?aviso=<tipo>` y se cuenta como cualquier señal, D-44). Eso
-responde la pregunta de fondo: si los avisos de verdad traen gente de vuelta.
+**Hecho en el PR 4 (D-233)**, en la sección La Copa del panel (`#/torneo`), el bloque "🔔 Avisos al
+celular": celulares con avisos (suscripciones vivas), avisos mandados y tocados por tipo, aperturas
+de la app instalada por sistema y la hora de la última vuelta del workflow, en rojo si pasó más de
+una hora (GitHub apaga los workflows programados tras 60 días sin commits). Responde la pregunta de
+fondo: si los avisos de verdad traen gente de vuelta.
+
+- **Tocados:** cada aviso abre su dirección con `&aviso=<tipo>` (`dia`, `plazo`, `final`, `fin`,
+  `insc`, `copas`, `prueba`); la página lo cuenta en `stats/<env>/days/<día>/aviso/<tipo>` y lo
+  saca de la dirección, para que recargar no lo sume otra vez.
+- **App instalada:** el `start_url` de los manifests es `./?pwa`; se cuenta en `pwa/<sistema>`
+  (`android`, `ios`, `otro`) y también sale de la dirección.
+- **Mandados:** `avisar.mjs` suma los entregados por día y tipo en `mandados/<tipo>` (con
+  `pushEnviados`, que se limpia cada semana, no se podía ver la historia) y deja en
+  `stats/prod/push` la hora de la vuelta, las suscripciones vivas y las copas con avisos.
+- El embudo de activación de la campana (se ofreció → Avisarme → permiso) no se mide todavía.
 
 ## Alternativas que se descartaron
 
@@ -421,7 +433,7 @@ responde la pregunta de fondo: si los avisos de verdad traen gente de vuelta.
 | **1. Instalable de verdad** ✅ v0.105.0 | Íconos PNG, manifest completo, `sw.js` mínimo (sin caché, sin push), ícono de Apple, prueba de que todas las páginas los llevan, guion e2e que verifica que el SW se registra y que Chrome deja instalar | Avisos |
 | **2. Suscribirse** ✅ v0.107.0, en el laboratorio | Primero, la prueba en iPhones reales de cómo abre la app instalada (la lista de arriba). Después: `push.js`, la tarjeta y el botón 🔔 de La Copa con sus cuatro estados, la hoja de iPhone, el "escribe tu PIN" de la app instalada, el aviso de confirmación, reglas `push` y `pushCopa`, textos en 4 idiomas y la lista de pasos para probar a mano en iPhone | Mandar nada (se ve la suscripción guardada y llega el aviso de confirmación) |
 | **3. Mandar** ✅ v0.108.0 (D-224), abierto a todos en v0.110.0 (D-228) | `tools/push/` (webpush, calendario, avisar con `--simular` y `--prueba`; `vapid.mjs` ya entró en el PR 2), pruebas unitarias del cifrado contra los vectores del RFC 8291 y del calendario de avisos contra `engine.js`, workflow `avisos.yml`. Los avisos se abren a todos cuando el dueño vea llegar uno de prueba | — |
-| **4. Medir** | Fila del panel, `?aviso=` en las señales, `?pwa` en el inicio | — |
+| **4. Medir** ✅ v0.112.0 (D-233) | Fila del panel, `?aviso=` en las señales, `?pwa` en el inicio, mandados por día y tipo | — |
 | *(después)* | Modo sin conexión (RP-13), Declarative Web Push para iPhone | — |
 
 La clave VAPID ya está (D-225). El 2026-10-05 el dueño corrió *Run workflow* con **prueba** en su
