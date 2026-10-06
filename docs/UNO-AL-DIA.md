@@ -111,8 +111,8 @@ lanzamiento: **Uno al día n.° 1, n.° 2…**, para compartir.
 
 ### Se le olvida un día
 
-- **Comodines** 🧊 (como en Duolingo): cada 7 días seguidos se gana uno, y se pueden tener hasta
-  2. Si un día no juega, se gasta uno solo y la racha sigue. Al volver, el jugador lee: "🧊 Usaste un
+- **Comodines** 🧊 (como en Duolingo): se gana uno cada 7 días seguidos y otro cada vez que un
+  amigo invitado juega su primer día, y se pueden tener hasta 2. Si un día no juega, se gasta uno solo y la racha sigue. Al volver, el jugador lee: "🧊 Usaste un
   comodín ayer. Tu racha sigue: 🔥 9."
 - Sin comodines, la racha vuelve a cero, pero la **mejor racha** queda: "Tu mejor racha: 14
   días. ¿La superas?"
@@ -129,6 +129,7 @@ lanzamiento: **Uno al día n.° 1, n.° 2…**, para compartir.
 Después de jugar, debajo de **Compartir**, una tarjeta propia:
 
 > **👋 Invita a un amigo**
+> Si juega su primer Uno al día, ganas un comodín 🧊.
 > "Llevo 33 días seguidos y estoy en el 10 % mejor de Uno al día. ¿Te atreves?"
 > **Invitar**
 
@@ -173,9 +174,32 @@ así: "Sara todavía no juega el de hoy". Desde ahí parte su propia racha, y Sa
   que el amigo vea quién lo desafía.
 - Si el amigo entra con su jugador, se anota `invitados/<jid de Sara>/<jid del amigo>`, y los dos
   quedan como amigos en el ranking de **Amigos** (hoy son solo los de las copas).
-- **Propuesta (decide el dueño):** cuando un invitado termina su primer Uno al día, quien invitó
-  gana un comodín 🧊, con el mismo tope de 2. Así invitar le sirve a quien invita, y le llega:
-  "🧊 Pedro aceptó tu desafío: ganaste un comodín."
+
+### El comodín por invitar (decisión del dueño)
+
+Cuando un invitado termina su **primer** Uno al día, quien lo invitó gana un comodín 🧊, con el
+mismo tope de 2. Al que invita le llega en la app (y en un aviso, si tiene avisos):
+"🧊 Pedro aceptó tu desafío: ganaste un comodín."
+
+**Se dice, para que el jugador lo sepa** (pedido del dueño). Se anuncia en cuatro lugares, siempre
+en una línea y nunca en el mensaje que recibe el amigo, porque ahí parecería que se le invita por
+interés:
+
+| Dónde | Qué dice |
+|---|---|
+| La tarjeta **Invita a un amigo**, en el resultado | "Si juega su primer Uno al día, ganas un comodín 🧊." |
+| La tarjeta de la racha, cuando no tiene comodines y la racha es de 3 días o más | "Sin comodines. Invita a un amigo y gana uno 🧊." con el botón **Invitar** |
+| Su página, en el bloque de la racha y en el de invitar | "🧊 Comodines: 0 de 2. Ganas uno cada 7 días seguidos o cuando un amigo que invitaste juega su primer día." |
+| La primera vez que gana un comodín por racha | "🧊 Ganaste un comodín por 7 días seguidos. También ganas uno cuando un amigo que invitaste juega su primer día." |
+
+- **Con 2 comodines no se promete nada:** el tope es 2 y un comodín de más se perdería, así que
+  mientras tenga 2 la línea del comodín se esconde y la tarjeta queda solo con el dato.
+- **Necesita jugador a quien invita** (el link lleva su jid). Sin jugador, la tarjeta dice: "Entra
+  con tu nombre y PIN para ganar un comodín por cada amigo que juegue." y ofrece **Entrar**.
+- **Uno por celular invitado:** al terminar su primer día, el celular del amigo escribe
+  `invitados/<jid de quien invita>/<uid del amigo>` = `{ fecha, j? }`, una sola vez (las reglas no
+  dejan reescribirlo, ni que alguien se invite a sí mismo). El comodín se suma al leer esa lista,
+  así que no hace falta que los dos estén conectados a la vez.
 
 ## Su página: 📅 Uno al día
 
@@ -319,7 +343,8 @@ celular saca la palabra, la flota o los dados de la semilla del día.
 7. **Entran todos los juegos con modo para uno** (agregado del dueño).
 8. **Invitar a un amigo** después de jugar, con un dato de quien invita (agregado del dueño).
 
-Queda por decidir: **¿un comodín para quien invita** cuando el invitado juega su primer día?
+9. **Un comodín para quien invita** cuando el invitado termina su primer Uno al día, con el mismo
+   tope de 2, **y se anuncia** para que el jugador lo sepa.
 
 ## Textos para revisar (U-1, U-3, U-17)
 
