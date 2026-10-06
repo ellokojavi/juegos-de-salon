@@ -22,7 +22,7 @@ viven en un solo lugar** (D-213), y este archivo dice dónde.
 
 | Qué | Dónde | Cuándo se lee |
 |---|---|---|
-| Cómo se construye un juego (C-n) | [docs/CANONES.md](docs/CANONES.md), con su lista de chequeo al final | Antes de construir o modificar un juego, y al terminar |
+| Cómo se construye un juego (C-n) | [docs/CANONES.md](docs/CANONES.md), con su lista de chequeo al final | Antes de construir o modificar un juego o la portada (C-17), y al terminar |
 | Textos, botones, compartir (U-n) | [docs/USABILIDAD.md](docs/USABILIDAD.md): U-1, U-8 y **U-18** antes de escribir instrucciones | Antes de escribir algo que el jugador lee |
 | Por qué es así (D-n) | [docs/DECISIONES.md](docs/DECISIONES.md), con un índice por tema arriba | Antes de cambiar algo que parece raro |
 | Un juego nuevo, paso a paso | [docs/AGREGAR-JUEGO.md](docs/AGREGAR-JUEGO.md) | Al empezar uno |

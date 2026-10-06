@@ -12,8 +12,9 @@ Las pantallas están dibujadas en un lienzo aparte (privado del dueño).
 
 ## En corto
 
-1. **Un botón nuevo en la portada**: 📅 **Uno al día**, junto a 🎲 **Juego al azar**. Muestra la
-   racha (🔥 6) y si ya se jugó hoy.
+1. **Un acceso nuevo en la portada**: 📅 **Uno al día**, en una tarjeta de media fila junto a La
+   Copa (D-239; en el diseño era un botón junto a 🎲 **Juego al azar**). Muestra la racha (🔥 6) y
+   si ya se jugó hoy.
 2. **El juego de hoy es el mismo para todos**, con el mismo contenido: sale de la fecha, como el
    contenido de un día de La Copa sale del código y del día (D-97). Así hay ranking del día y algo
    que compartir ("hoy me fue mejor que a ti").
@@ -96,14 +97,14 @@ lanzamiento: **Uno al día n.° 1, n.° 2…**, para compartir.
 
 ### Día 2 en adelante: vuelve
 
-- **Por su cuenta:** abre la app y el botón dice **📅 Uno al día 🔥 1**, con el punto que brilla
-  (el botón va en una línea, ver "Lo que el PR 1 hizo").
+- **Por su cuenta:** abre la app y la tarjeta de Uno al día dice **🔥 1 · Jugar el de hoy**, con el
+  punto que brilla (D-239, ver "Lo que el PR 1 hizo").
 - **Con un aviso** a la hora que eligió: "📅 Uno al día n.° 13 ya está. 🔥 Racha: 1 día." (el de la tabla de
   avisos) Al tocarlo
   rueda el dado.
-- **Mientras no lo haya jugado, el dado rueda cada vez** que toca el botón, el aviso o un link, y
+- **Mientras no lo haya jugado, el dado rueda cada vez** que toca la tarjeta, el aviso o un link, y
   siempre cae en el mismo juego (decisión del dueño: la misma experiencia de Juego al azar).
-- Si ya jugó, el botón queda cian, **✅ Uno al día 🔥 2**, y al tocarlo abre su página de Uno al día (sus
+- Si ya jugó, la tarjeta queda cian, **✅ Listo · 🔥 2**, y al tocarla abre su página de Uno al día (sus
   números, el ranking del día y cuánto falta para el próximo: "El próximo sale en 7 h 12 min.").
 
 ### Quiere jugar más
@@ -290,7 +291,7 @@ Para quien no quiere avisos, o tiene un iPhone sin la app instalada:
 
 | Forma | Cómo funciona |
 |---|---|
-| **El botón de la portada** | Su estado se ve al entrar: el punto que brilla mientras falta jugar, 🔥 6, y cian con ✅ cuando ya jugó. |
+| **La tarjeta de la portada** | Su estado se ve al entrar: el punto que brilla mientras falta jugar, 🔥 6, y cian con ✅ cuando ya jugó (D-239). |
 | **El globo en el ícono** | En la app instalada (Android, y iPhone con avisos permitidos), un **1** en el ícono si hoy no ha jugado (`navigator.setAppBadge`). Lo pone la página al abrir y lo quita al terminar; el service worker lo pone con el aviso del día. |
 | **La tarjeta para compartir** | Al estilo Wordle, sin adelantar la respuesta: el grupo de WhatsApp le recuerda a cada uno que juegue. |
 | **El link fijo** | `juegosdesalon.cl/today/` siempre abre el de hoy: se guarda en favoritos o se fija en un grupo. |
@@ -398,12 +399,12 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   otro), la racha, la mejor racha, los días jugados, el calendario del mes (con el emoji del juego en
   cada día jugado, y los meses anteriores) y una fila por juego con su línea de los últimos 8 y la
   flecha, más la frase del que más mejoró o, si ninguno, del que más bajó.
-- **Dónde va en la portada** (decisión del dueño, 2026-10-05): en la misma fila que Juego al azar,
-  a su derecha, sin una línea extra. Los dos llevan etiqueta corta (**🎲 Al azar** y **📅 Uno al
-  día 🔥 6**; en inglés *Random*, en portugués *Aleatório*, en alemán *Zufall*) para caber, también
-  a 320 px y en alemán. Sin Uno al día, el dado sigue diciendo **Juego al azar**. La otra forma que se probó, una tarjeta de media fila al lado de La Copa (las dos como
-  accesos de más jerarquía que los juegos), queda para probarla desde `/labs/` ("Junto a La Copa")
-  o con `?uad=tarjeta`.
+- **Dónde va en la portada** (D-239, decisión del dueño, 2026-10-06): en una tarjeta de media fila
+  junto a La Copa, mitad y mitad, con el emoji a la izquierda del título y el título en celeste (el
+  de La Copa, en dorado). Abajo, una píldora con el estado: **🔥 6 · Jugar el de hoy** (sin racha, solo
+  **Jugar el de hoy**), o **✅ Listo · 🔥 6** ya jugado. La forma de antes, un botón en la misma fila que Juego al azar (**🎲 Al azar** y
+  **📅 Uno al día 🔥 6**), queda para probarla desde `/labs/` ("Al lado del dado") o con
+  `?uad=boton`.
 - El CSS del dado pasó de la portada a `base.css`, para tirarlo desde cualquier página.
   El paso del dado al juego es el de Juego al azar (D-237): el juego abre con el mismo dado encima
   y el dado se desvanece cuando el juego está dibujado (`llegada.js`).
@@ -558,7 +559,8 @@ celular saca la palabra, la flota o los dados de la semilla del día.
 ### Lo que el PR 8 hizo (v0.121.0): sale del laboratorio
 
 - `UNO_AL_DIA_EN_LABS = false`: el botón de la portada, `/today/` y todo lo demás se ven para
-  todos. En `/labs/` queda solo probar la otra forma del acceso (la tarjeta junto a La Copa).
+  todos. En `/labs/` queda solo probar la otra forma del acceso (la tarjeta junto a La Copa, que pasó a
+  ser la de todos en D-239; desde entonces en `/labs/` se prueba el botón al lado del dado).
 - **El n.° 1 pasó al 6 de octubre de 2026**, el día en que se abrió (decisión del dueño):
   `LANZAMIENTO` en uno-al-dia.js. El mazo es el mismo corrido un día (el 6 es Desenredo) y los de
   grupo siguen saliendo desde el mazo del 13. Desde ahora queda fijo: moverlo cambia el juego de
@@ -596,9 +598,10 @@ celular saca la palabra, la flota o los dados de la semilla del día.
 Botones (caben en 320 px, unos 18 caracteres): **Uno al día**, **Jugar el de hoy**, **Compartir**,
 **🎲 Jugar otro**, **Invitar**, **Entrar**, **Ahora no**, **Mañana · 9:00**, **Almuerzo · 13:00**,
 **Tarde · 19:00**, **Silenciar** y **Probar los avisos** ("⏰ Agregar recordatorio", que pasaba de
-18 e iba en botón chico, se sacó: decisión 15). El botón de la portada va en una línea,
-**📅 Uno al día**, con la racha en una píldora (**🔥 6**) y, al lado, **🎲 Al azar** (decisión del
-dueño: etiquetas cortas). Mientras falta jugar el de hoy brilla un punto; jugado, se pone cian con ✅.
+18 e iba en botón chico, se sacó: decisión 15). En la portada va una tarjeta al lado de La Copa
+(D-239), con su estado en una píldora: **🔥 6 · Jugar el de hoy** o **✅ Listo · 🔥 6**. Mientras falta
+jugar el de hoy brilla un punto; jugada, la tarjeta se pone cian. En `/labs/` se prueba la forma de
+antes, un botón en una línea, **📅 Uno al día 🔥 6**, al lado de **🎲 Al azar**.
 Lo que hace cada estado va en su `aria-label`. "Racha", "comodín" y "Silenciar" se dicen siempre así (U-5). Los
 textos los propone el agente de usabilidad y el dueño los corrige en el PR.
 
