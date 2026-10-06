@@ -59,7 +59,7 @@ public/<carpeta>/
 - Todo texto visible vive en `LOCALES.es`, `LOCALES.en`, `LOCALES.pt` y `LOCALES.de` de `rules.js`. Ninguna cadena literal en `game.js`.
 - Los textos fijos del HTML se marcan con `data-i18n="clave"` (o `data-i18n-html`) y se aplican con `applyStatic(T)`.
 - El idioma se lee con `getLang()` y el toggle `langToggle()` va en la intro de cada juego.
-- **El selector de idioma es uno solo, `langToggle()`, y se ve igual en toda la app** (D-230).
+- **El selector de idioma es uno solo, `langToggle()`, y se ve igual en toda la app** (D-231).
   Ninguna pantalla arma el suyo. Su estándar:
   - Una píldora de vidrio (`--glass`) con un botón por idioma de `LANGS`, en el orden de `LANGS`.
   - **Cada botón lleva la bandera y el código en mayúsculas, siempre** (🇨🇱 ES, 🇬🇧 EN, 🇧🇷 PT, 🇩🇪 DE).
