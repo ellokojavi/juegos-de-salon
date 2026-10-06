@@ -36,13 +36,16 @@ export function botonAzar({ candidatos, lang, base = '' }) {
   }, el('span', { class: 'btn-azar-dado', 'aria-hidden': 'true' }, '🎲'), el('span', {}, T.boton));
 }
 
-function tirar(pool, { lang, base, T }) {
+/**
+ * Tira el dado sobre la página y abre lo que salió. Uno al día (D-230) lo usa con el juego ya
+ * elegido (`elegido`, que cae siempre igual) y su propio `destino`; `T.tocó` es lo que va sobre el
+ * nombre, y `T.boton` el nombre del diálogo.
+ */
+export function tirar(pool, { lang, base = '', T, elegido = pool[azar(pool.length)], destino = base + elegido.path }) {
   if (document.querySelector('.azar-capa')) return;
-  const elegido = pool[azar(pool.length)];
   // Las otras cinco caras: juegos distintos del elegido, repetidos solo si no alcanzan
-  const otros = barajar(pool.filter(g => g !== elegido));
+  const otros = barajar(pool.filter(g => g.id !== elegido.id));
   const caras = [elegido, ...Array.from({ length: 5 }, (_, i) => otros.length ? otros[i % otros.length] : elegido)];
-  const destino = base + elegido.path;
   const quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // El dado se dibuja en WebGL (dado3d.js); la cara 0, la de adelante, es la del elegido

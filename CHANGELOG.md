@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.114.0 — 2026-10-05
+- **Uno al día, en el laboratorio** (D-230): un botón nuevo en la portada, al lado de Juego al
+  azar. El dado rueda y cae en el juego de hoy, el mismo desafío para todos. Al terminar ves tu
+  racha y puedes compartir el resultado sin decir qué juego tocó, o tirar el dado por otro juego. En
+  `/today/` están tu racha, un calendario del mes y cómo te va en cada juego. Por ahora entran los 7
+  juegos de La Copa que se juegan solos, y todo se guarda en el celular. Se activa en `/labs/`.
+
 ## 0.113.0 — 2026-10-05
 - **Un globo en la portada invita a agregar la app a inicio, en el laboratorio** (D-232): con un
   toque en **Agregar** salen los pasos de tu celular (Safari o Chrome, en iPhone o Android); en

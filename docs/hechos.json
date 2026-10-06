@@ -18,7 +18,7 @@
     "pt": 100,
     "de": 100
   },
-  "clavesComunes": 25,
+  "clavesComunes": 26,
   "juegos": [
     {
       "id": "copa",
@@ -745,6 +745,8 @@
     "public/assets/js/transport/ratelimit.js",
     "public/assets/js/transport/stats.js",
     "public/assets/js/ui.js",
+    "public/assets/js/uno-al-dia-ui.js",
+    "public/assets/js/uno-al-dia.js",
     "public/assets/js/vapid.js",
     "public/battleship/engine.js",
     "public/battleship/flota.js",
@@ -848,6 +850,7 @@
     "public/assets/js/transport/errors.test.mjs",
     "public/assets/js/transport/ratelimit.test.mjs",
     "public/assets/js/transport/stats.test.mjs",
+    "public/assets/js/uno-al-dia.test.mjs",
     "public/battleship/engine.test.mjs",
     "public/bulls-and-cows/engine.test.mjs",
     "public/cup/engine.test.mjs",
@@ -930,6 +933,7 @@
     "timeline/pozo.mjs",
     "timeline/solo.mjs",
     "timeline/veredicto.mjs",
+    "uno-al-dia.mjs",
     "versionado.mjs"
   ],
   "documentos": [
