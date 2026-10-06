@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.125.1 — 2026-10-06
+- **Uno al día, más claro en tu página** (D-230): el calendario muestra en cada día jugado el puntaje
+  de 0 a 100 en una píldora, como en La Copa; "Hoy jugaste" lleva el emoji del juego (👑 Reinas: 87
+  puntos); dice "Próximo juego en 7 h"; y los comodines explican para qué sirven: salvan tu racha el
+  día que no juegas.
+
 ## 0.125.0 — 2026-10-06
 - **El botón de compartir, con el ícono de siempre** (D-242): arriba a la derecha de la portada, el
   📤 pasa a ser la flecha que sale de una caja, la de compartir del celular, y se ve igual en todos.
