@@ -2,7 +2,7 @@
 // la línea de la intro, la tarjeta del resultado (racha, compartir sin decir el juego, jugar otro),
 // el segundo intento como práctica, el botón "Listo" y la página /today/ con su racha, su
 // calendario y cómo le va en cada juego, a 320 px y en los cuatro idiomas. El reloj de la página se
-// fija en el 5 de octubre de 2026 a mediodía, el día n.° 1, cuando toca Desenredo. En el sitio local
+// fija en el 6 de octubre de 2026 a mediodía, el día n.° 1, cuando toca Desenredo. En el sitio local
 // Uno al día sale sin pasar por /labs/.
 import { mkdtempSync } from 'node:fs';
 import { join } from 'node:path';
@@ -14,7 +14,7 @@ import { juegoDel, KEY } from '../../public/assets/js/uno-al-dia.js';
 const SITIO = process.env.SITIO || 'http://localhost:8765';
 const OUT = process.argv[2] || mkdtempSync(join(tmpdir(), 'uno-al-dia-'));
 const ok = (cond, msg) => { console.log(`${cond ? '✓' : '✗'} ${msg}`); if (!cond) process.exitCode = 1; };
-const HOY = '2026-10-05';
+const HOY = '2026-10-06';
 if (juegoDel(HOY) !== 'desenredo') { console.log(`✗ el ${HOY} ya no toca Desenredo (toca ${juegoDel(HOY)}): cambia la fecha del guion`); process.exit(1); }
 
 const b = await launch({ port: 9512, dir: `${OUT}/p`, out: OUT });
@@ -25,8 +25,8 @@ const memoria = () => ev(`JSON.parse(localStorage.getItem('${KEY}')||'{"dias":{}
 const esperar = async (cond, tope = 40) => { for (let i = 0; i < tope && !await ev(cond); i++) await sleep(250); return ev(cond); };
 const sinDesborde = () => ev(`document.documentElement.scrollWidth <= innerWidth + 1`);
 
-// El reloj de todas las páginas: el 5 de octubre de 2026 a las 12:00, y corre desde ahí
-await b.send('Page.addScriptToEvaluateOnNewDocument', { source: `(()=>{const D=Date,dif=new D(2026,9,5,12,0,0).getTime()-D.now();
+// El reloj de todas las páginas: el 6 de octubre de 2026 a las 12:00, y corre desde ahí
+await b.send('Page.addScriptToEvaluateOnNewDocument', { source: `(()=>{const D=Date,dif=new D(2026,9,6,12,0,0).getTime()-D.now();
   class F extends D{constructor(...a){a.length?super(...a):super(D.now()+dif)} static now(){return D.now()+dif}}
   window.Date=F;window.__compartido=[];navigator.share=async d=>{window.__compartido.push(d)};navigator.canShare=()=>true;})()` });
 
@@ -111,7 +111,7 @@ ok(await ev(`!!document.querySelector('#uad-por-juego [data-id="desenredo"]')`),
 
 // Con historia: una racha larga, días de otros meses y una tendencia
 await ev(`(()=>{const d=JSON.parse(localStorage.getItem('${KEY}'));
-  const f=n=>{const x=new Date(2026,9,5-n);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')};
+  const f=n=>{const x=new Date(2026,9,6-n);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')};
   const reinas=[50,55,60,62,65,80,85,90];
   for(let n=1;n<=8;n++)d.dias[f(n)]={j:'reinas',s:reinas[8-n],ms:60000,at:1,n:1};
   for(let n=12;n<=14;n++)d.dias[f(n)]={j:'anio',s:40,ms:1,at:1,n:1};

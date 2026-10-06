@@ -14,7 +14,7 @@
 import { el } from './ui.js';
 import { envOf } from './transport/stats.js';
 
-export const INSTALAR_EN_LABS = true;
+export const INSTALAR_EN_LABS = false;
 export const LABS_INSTALAR_KEY = 'juegos-de-salon:labs-instalar';
 /** La marca de "no mostrar más": la ✕, "Ya la agregué" o la app ya instalada. */
 export const INSTALAR_NO_KEY = 'juegos-de-salon:instalar:no';

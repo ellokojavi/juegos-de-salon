@@ -2,7 +2,7 @@
 // escribe en Firebase): Sara juega el de hoy, entra con nombre y PIN y su día sube a la historia y a
 // los rankings (del día, de la semana y de rachas); invita a un amigo y el texto lleva su link; Pedro,
 // en "otro celular", abre la invitación, ve "🔥 Sara te desafía", juega el mismo desafío, ve el duelo
-// y le da a Sara un comodín, que ella ve al volver. El reloj se fija en el 5 de octubre de 2026, el
+// y le da a Sara un comodín, que ella ve al volver. El reloj se fija en el 6 de octubre de 2026, el
 // día n.° 1, cuando toca Desenredo.
 import { mkdtempSync } from 'node:fs';
 import { join } from 'node:path';
@@ -13,7 +13,7 @@ import { juegoDel, numDia } from '../../public/assets/js/uno-al-dia.js';
 const SITIO = process.env.SITIO || 'http://localhost:8765';
 const OUT = process.argv[2] || mkdtempSync(join(tmpdir(), 'uno-al-dia-jugador-'));
 const ok = (cond, msg) => { console.log(`${cond ? '✓' : '✗'} ${msg}`); if (!cond) process.exitCode = 1; };
-const HOY = '2026-10-05', N = numDia(HOY), DB = 'juegos-de-salon:prueba:records-db';
+const HOY = '2026-10-06', N = numDia(HOY), DB = 'juegos-de-salon:prueba:records-db';
 if (juegoDel(HOY) !== 'desenredo') { console.log(`✗ el ${HOY} ya no toca Desenredo: cambia la fecha del guion`); process.exit(1); }
 
 const b = await launch({ port: 9521, dir: `${OUT}/p`, out: OUT });
@@ -23,7 +23,7 @@ const texto = sel => ev(`document.querySelector(${JSON.stringify(sel)})?.innerTe
 const esperar = async (cond, tope = 40) => { for (let i = 0; i < tope && !await ev(cond); i++) await sleep(250); return ev(cond); };
 const db = () => ev(`JSON.parse(localStorage.getItem('${DB}')||'{}')`);
 
-await b.send('Page.addScriptToEvaluateOnNewDocument', { source: `(()=>{const D=Date,dif=new D(2026,9,5,12,0,0).getTime()-D.now();
+await b.send('Page.addScriptToEvaluateOnNewDocument', { source: `(()=>{const D=Date,dif=new D(2026,9,6,12,0,0).getTime()-D.now();
   class F extends D{constructor(...a){a.length?super(...a):super(D.now()+dif)} static now(){return D.now()+dif}}
   window.Date=F;window.__compartido=[];navigator.share=async d=>{window.__compartido.push(d)};navigator.canShare=()=>true;})()` });
 

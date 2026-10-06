@@ -156,3 +156,6 @@ Las respuestas a dilemas (issues con la etiqueta `usabilidad`) se anotan aquí:
 - **Uno al día: sin recordatorio con los avisos activos** (#230, D-230): con los avisos activos, `/today/`
   no muestra "⏰ Agregar recordatorio" ni su línea, que repetirían el aviso. Reemplazado el mismo día
   por el dueño: el recordatorio es el aviso diario, y el del calendario se sacó.
+- **El video promocional suma Uno al día** (#235, D-230): la v6 lleva un plano de 📅 Uno al día (el
+  botón, el dado y la tarjeta con la racha) y cierra con "agrégala a tu inicio" (D-232). Anotado en
+  "Pendiente: versión 6" de `marketing/promo-video/README.md`; la v6 se empieza cuando el dueño la pida.

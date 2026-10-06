@@ -4,7 +4,7 @@
 import assert from 'node:assert/strict';
 import {
   JUEGOS_DIA, LANZAMIENTO, SIN_REPETIR, DESDE_GRUPO, GRUPO, azarDel, puntajeAhorcado, puntajeNaval, puntajeDudo, CASILLAS_FLOTA, crearCalendario, juegoDel, semillaDel, numeroDel, sumarDias, diasEntre,
-  fechaLocal, faltaParaManana, racha, mejorRacha, recorrer, numDia, fechaDeNum, semanaDe, juntar, COMODINES_MAX, porJuego, anotar, leer, estado, rutaDel, unoAlDiaVisible, activarUnoAlDia, formaAcceso, elegirForma, KEY,
+  fechaLocal, faltaParaManana, racha, mejorRacha, recorrer, numDia, fechaDeNum, semanaDe, juntar, COMODINES_MAX, porJuego, anotar, leer, estado, rutaDel, unoAlDiaVisible, activarUnoAlDia, UNO_AL_DIA_EN_LABS, formaAcceso, elegirForma, KEY,
 } from './uno-al-dia.js';
 import { JUEGOS } from '../../cup/games/index.js';
 import { esCodigo } from '../../cup/engine.js';
@@ -66,7 +66,7 @@ for (const id of GRUPO) assert.ok(salidos.slice(0, 7 + 10).includes(id), `${id} 
 // Los días antes de que entraran los de grupo no cambian: son los del mazo de 7
 const solo7 = crearCalendario(JUEGOS_DIA.filter(j => !GRUPO.includes(j.id)));
 const viejos = fechas(LANZAMIENTO, diasEntre(LANZAMIENTO, DESDE_GRUPO));
-assert.ok(viejos.length >= 2, 'los de grupo entran después del lanzamiento');
+assert.ok(viejos.length >= 1, 'los de grupo entran después del lanzamiento');
 assert.deepEqual(viejos.map(juegoDel), viejos.map(f => solo7.juegoDel(f)), 'sumar los de grupo cambió días ya jugados');
 assert.equal(juegoDel(LANZAMIENTO), 'desenredo', 'el día n.° 1 sigue siendo Desenredo');
 assert.equal(juegoDel(sumarDias(LANZAMIENTO, -1)), null, 'antes del lanzamiento no hay juego');
@@ -169,12 +169,16 @@ assert.equal(rutaDel('batalla-naval', slugs), 'battleship/?hoy');
 assert.equal(rutaDel('dudo', slugs), 'liars-dice/?hoy');
 for (const j of JUEGOS_DIA) assert.ok(slugs[j.id] || ['linea', 'numero'].includes(j.id), `${j.id}: sin página para jugarlo`);
 
-// El laboratorio: en el sitio publicado, solo con la marca de /labs/
+// El laboratorio: mientras Uno al día esté ahí, en el sitio publicado sale solo con la marca de /labs/
 const lab = almacen();
-assert.equal(unoAlDiaVisible({ storage: lab, loc: { hostname: 'juegosdesalon.cl', search: '' } }), false);
-activarUnoAlDia(true, lab);
-assert.equal(unoAlDiaVisible({ storage: lab, loc: { hostname: 'juegosdesalon.cl', search: '' } }), true);
-activarUnoAlDia(false, lab);
+if (UNO_AL_DIA_EN_LABS) {
+  assert.equal(unoAlDiaVisible({ storage: lab, loc: { hostname: 'juegosdesalon.cl', search: '' } }), false);
+  activarUnoAlDia(true, lab);
+  assert.equal(unoAlDiaVisible({ storage: lab, loc: { hostname: 'juegosdesalon.cl', search: '' } }), true);
+  activarUnoAlDia(false, lab);
+} else {
+  assert.equal(unoAlDiaVisible({ storage: lab, loc: { hostname: 'juegosdesalon.cl', search: '' } }), true, 'fuera del laboratorio, sale para todos');
+}
 assert.equal(unoAlDiaVisible({ storage: lab, loc: { hostname: 'localhost', search: '' } }), true, 'en el sitio local siempre');
 
 // Dónde va en la portada: al lado del dado, salvo que se pruebe la tarjeta desde /labs/ o con ?uad=

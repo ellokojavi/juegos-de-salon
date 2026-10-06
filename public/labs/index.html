@@ -82,7 +82,7 @@
 
       <section class="panel seccion" id="seccion-uno-al-dia">
         <h2>📅 Uno al día</h2>
-        <p class="muted" style="margin:0">Cada día un juego sorpresa, el mismo desafío para todos, con racha y calendario (D-230). Al activarlo, sale un botón al lado de Juego al azar en la portada; abajo se puede probar la otra forma, una tarjeta junto a La Copa. Por ahora se guarda solo en este celular.</p>
+        <p class="muted" style="margin:0">Cada día un juego sorpresa, el mismo desafío para todos, con racha y calendario (D-230). Ya está en la portada para todos, al lado de Juego al azar; aquí se puede probar la otra forma, una tarjeta junto a La Copa.</p>
         <p id="uad-estado" class="muted" style="margin:0"></p>
         <button class="btn btn--yellow" id="btn-labs-uad" type="button">Activar en este celular</button>
         <p id="uad-forma-titulo" class="muted" style="margin:0"><b>Dónde va en la portada:</b></p>
@@ -118,13 +118,15 @@
     document.getElementById('labs-version').textContent = `Versión activa: v${versionOf(document.getElementById('importmap')?.textContent)}`;
     sparkles();
     // El globo de agregar a inicio, solo en los celulares que lo activan aquí (D-232)
-    import('../assets/js/instalar.js').then(({ instalarEnLabs, activarInstalar, descartado, descartar }) => {
+    import('../assets/js/instalar.js').then(({ instalarEnLabs, activarInstalar, descartado, descartar, INSTALAR_EN_LABS }) => {
       const b = document.getElementById('btn-labs-instalar'), otra = document.getElementById('btn-instalar-otra-vez');
       const est = document.getElementById('instalar-estado');
       const pintar = () => {
         const on = instalarEnLabs();
         b.textContent = on ? 'Desactivar en este celular' : 'Activar en este celular';
-        est.textContent = !on ? '' : descartado() ? 'Activo, pero lo cerraste con la ✕: vuelve a mostrarlo para verlo en la portada.' : 'Activo: abre la portada y espera unos segundos.';
+        // Fuera del laboratorio sale para todos: aquí queda solo volver a mostrarlo
+        b.hidden = !INSTALAR_EN_LABS;
+        est.textContent = !INSTALAR_EN_LABS ? (descartado() ? 'Ya está para todos. Lo cerraste con la ✕ en este celular: vuelve a mostrarlo para verlo en la portada.' : 'Ya está para todos: abre la portada en el celular y espera unos segundos.') : !on ? '' : descartado() ? 'Activo, pero lo cerraste con la ✕: vuelve a mostrarlo para verlo en la portada.' : 'Activo: abre la portada y espera unos segundos.';
         otra.hidden = !on || !descartado();
       };
       b.addEventListener('click', () => { SFX.tap(); activarInstalar(!instalarEnLabs()); pintar(); });
@@ -132,13 +134,15 @@
       pintar();
     });
     // Uno al día, solo en los celulares que lo activan aquí (D-230)
-    import('../assets/js/uno-al-dia.js').then(({ unoAlDiaVisible, activarUnoAlDia, formaAcceso, elegirForma }) => {
+    import('../assets/js/uno-al-dia.js').then(({ unoAlDiaVisible, activarUnoAlDia, formaAcceso, elegirForma, UNO_AL_DIA_EN_LABS }) => {
       const b = document.getElementById('btn-labs-uad'), ver = document.getElementById('btn-labs-uad-ver');
       const est = document.getElementById('uad-estado'), formas = document.getElementById('uad-formas');
       const pintar = () => {
         const on = unoAlDiaVisible();
         b.textContent = on ? 'Desactivar en este celular' : 'Activar en este celular';
-        est.textContent = on ? 'Activo: abre la portada y toca 📅 Uno al día.' : '';
+        // Fuera del laboratorio (D-230) se ve para todos: aquí queda solo probar la otra forma (la bajada ya lo dice)
+        b.hidden = !UNO_AL_DIA_EN_LABS;
+        est.textContent = !UNO_AL_DIA_EN_LABS ? '' : on ? 'Activo: abre la portada y toca 📅 Uno al día.' : '';
         ver.hidden = !on;
         formas.hidden = document.getElementById('uad-forma-titulo').hidden = !on;
         // La forma elegida va en amarillo; la otra, apagada

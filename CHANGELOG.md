@@ -5,6 +5,16 @@
   queda entre tus favoritos, y arriba de los tipos aparece **⭐ Favoritos**, que deja ver solo esos.
   Se guardan en tu celular, sin cuenta. Lo pidió un amigo (#233).
 
+## 0.121.0 — 2026-10-06
+- **Uno al día, para todos** (D-230): en la portada, al lado de **🎲 Al azar**, está **📅 Uno al
+  día**: cada día un juego sorpresa, el mismo desafío para todos. Lleva tu racha, con comodines 🧊,
+  un calendario y cómo te va en cada juego; con tu nombre y PIN entras a los rankings de hoy, de la
+  semana y de rachas, e invitas a amigos a superarte. Si quieres, te avisa cada día a la hora que
+  elijas. Hoy es el **Uno al día n.° 1**.
+- **El globo para agregar la app a inicio, para todos** (D-232): en el celular, la portada invita a
+  agregar Juegos de Salón a la pantalla de inicio, con los pasos de tu celular. La ✕ lo cierra para
+  siempre.
+
 ## 0.120.2 — 2026-10-06
 - **Uno al día: el recordatorio es el aviso de la app** (D-230): se saca "Agregar recordatorio" al
   calendario del celular; el recordatorio de cada día es el aviso diario, a la hora que elegiste. El
