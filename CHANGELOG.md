@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.114.0 — 2026-10-06
+- **"Tus copas" separa las terminadas** (D-234): en la portada de La Copa, las copas que ya
+  terminaron llevan la etiqueta **Terminó** y no se ven de entrada. Para verlas, se prende
+  **Mostrar copas terminadas**, al pie de la lista.
+
 ## 0.113.0 — 2026-10-05
 - **Un globo en la portada invita a agregar la app a inicio, en el laboratorio** (D-232): con un
   toque en **Agregar** salen los pasos de tu celular (Safari o Chrome, en iPhone o Android); en
