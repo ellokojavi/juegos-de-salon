@@ -56,7 +56,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213 |
-| Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230 |
+| Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235 |
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97 |
 | Memoria de partida | C-6 | D-25, D-150 |
@@ -2841,7 +2841,7 @@ brasileño puede jugar en español).
 
 
 ## D-188 · Juego al azar: un dado que rueda sobre el menú
-**Fecha:** 2026-10-03 · **Estado:** vigente
+**Fecha:** 2026-10-03 · **Estado:** vigente · **Relación:** el paso al juego, en D-235
 **Decisión:** El menú tiene un botón **🎲 Juego al azar** bajo la bajada. Al tocarlo, un dado
 blanco de cantos redondos, con un juego en cada cara, entra rodando sobre la misma portada,
 rebota tres veces y cae con el elegido adelante; abajo dice "¡Te tocó! <juego>" y a los 1,3 s se
@@ -3949,6 +3949,26 @@ distinguía cuáles quedaban por jugar.
 **Consecuencias:** `tools/e2e/cup/copas-del-jugador.mjs` prueba que el interruptor parte apagado,
 que esconde la terminada y que al prenderlo aparece con su etiqueta. Una copa del celular cerrada
 antes de tiempo se marca al llegar a su `fin` planeado: el celular guarda `meta.end`.
+
+## D-235 · Del dado al juego, con fundido y sin corte
+**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** completa D-188
+**Decisión:** Cuando el dado de Juego al azar abre el juego (a los 1,3 s de caer, o al tocar), ya
+no corta de golpe a la otra página:
+- **Al irse** (0,42 s), el dado se achica y se desvanece con su nombre, y la capa oscura toma el
+  fondo de la app (`--fondo` en `base.css`, el mismo del `body`).
+- **Al llegar**, el juego aparece con un fundido de 0,45 s sobre ese mismo fondo. El dado deja la
+  marca `azar-llega` en `sessionStorage`; `assets/js/llegada.js`, que trae `instalable.js` (lo
+  cargan todas las páginas en el `<head>`), la borra y pone `.azar-llega` en `<html>` antes de que
+  el juego dibuje. La clase se quita poco después de cargar: lo que el juego dibuje luego aparece
+  como siempre. Entrar a un juego por su tarjeta no cambia.
+- El juego se pide (`<link rel="prefetch">`) mientras el dado rueda, para que no quede esperando.
+- Con "reducir movimiento" se va al juego sin la salida, como antes.
+**Por qué:** lo pidió el dueño: el paso del dado al juego era brusco. La capa del dado es casi
+negra y el juego trae un fondo más claro, así que el corte se notaba aunque cargara rápido.
+Se descartaron las *view transitions* entre documentos: Firefox no las tiene y habría que
+apagarlas a mano en cada otra navegación del sitio.
+**Consecuencias:** abrir el juego tarda 0,42 s más. Si `sessionStorage` no está disponible, el
+juego aparece sin fundido.
 
 ## D-236 · Cambiar el PIN va en "Juegas como", no en los rankings
 **Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** corrige "tu jugador" de D-219; amplía D-212

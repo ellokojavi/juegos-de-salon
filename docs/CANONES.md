@@ -45,7 +45,8 @@ public/<carpeta>/
   (`apple-touch-icon` y `apple-mobile-web-app-title`), el script que elige el manifest del idioma
   justo después del `<link rel="manifest">`, y, después de las hojas de estilo, el
   registro del service worker (`import '<…>assets/js/instalable.js'`, que además pone el manifest y
-  el nombre del idioma elegido): así la app se puede instalar desde cualquier juego, con su nombre.
+  el nombre del idioma elegido, y trae `llegada.js`, el fundido con que aparece el juego que abre
+  el dado de Juego al azar, D-235): así la app se puede instalar desde cualquier juego, con su nombre.
   Se copian de otro juego; `public/assets/js/instalable.test.mjs` los exige (D-221, D-222).
 - Las páginas en git no llevan import map: lo escribe `set-version.py` solo en la copia que se publica,
   recorriendo todos los módulos del sitio, así que los de un juego nuevo entran solos (C-11, D-192, D-205).
