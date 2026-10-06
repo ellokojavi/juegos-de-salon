@@ -153,3 +153,6 @@ Las respuestas a dilemas (issues con la etiqueta `usabilidad`) se anotan aquí:
 - **Uno al día: sin revancha en los juegos de grupo** (#226, D-230): jugados como Uno al día, El
   Ahorcado, Batalla Naval y Dudo no muestran su botón de revancha; la tarjeta ya ofrece 🎲 Jugar
   otro y Repetir el de hoy. Bajo el resultado de los solitarios queda solo el ranking de Uno al día.
+- **Uno al día: sin recordatorio con los avisos activos** (#230, D-230): con los avisos activos, `/today/`
+  no muestra "⏰ Agregar recordatorio" ni su línea, que repetirían el aviso. Sale con los avisos
+  apagados, bloqueados o en un celular que no los tiene.

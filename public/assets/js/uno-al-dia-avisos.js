@@ -248,7 +248,9 @@ export function bloque({ lang, alTocar, redibujar }) {
       caja.append(el('button', { class: 'btn btn--ghost', id: 'btn-uad-avisos', 'data-estado': 'bloqueado', onClick: () => hojaBloqueados({ lang, alTocar }) }, T.avBloqueados));
     }
   }
-  // Un recordatorio en el calendario del celular (no el calendario de esta página, que muestra lo jugado)
+  // Un recordatorio en el calendario del celular (no el calendario de esta página, que muestra lo jugado).
+  // Con los avisos activos no va: repetiría el aviso (#230)
+  if (disponible() && estadoAvisos() === 'activo') return caja;
   caja.append(el('p', { class: 'muted', style: 'margin:0' }, T.calNota));
   caja.append(el('button', { class: 'btn btn--ghost btn--sm', id: 'btn-uad-calendario', onClick: () => { alTocar?.(); bajarCalendario({ lang, h: leerAvisos().h ?? 9 }); } }, T.calendario));
   return caja;
