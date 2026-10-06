@@ -518,6 +518,9 @@ event. A game's page has its modes, how long its rooms last, its rooms and its o
 room's page has its players, winner and duration. Every number opens the list that adds up to it,
 every player's name carries the flag of their country, and each view lives in the URL, so Back and
 a saved link return to it. Times are Pacific time, the same clock La Copa uses for its days.
+La Copa's section also measures the phone notifications (D-233): phones subscribed, notifications
+sent and tapped by type, opens from the installed app, and when the scheduled workflow last ran,
+in red if it stopped.
 
 One range selector drives the whole page: 7, 30, 60 or 90 days, one year, or the year so far. Test
 rooms run in the development environment, so they are out by default; test cups show up with the
@@ -681,7 +684,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
 docs/                       Requirements, decisions, canons, one spec per game (docs/games/) and the README screenshots
 firebase/                   Realtime Database security rules and notes
 tools/
-  push/                       vapid.mjs (the notifications key pair, already run once: the public key is in assets/js/vapid.js, the private one a GitHub secret; D-223, D-225); avisar.mjs sends the La Copa notifications every 15 minutes from avisos.yml, with calendario.mjs (what is due: at most 2 a day per cup, overlapping deadlines in one, the new days of several cups together; D-229) and webpush.mjs (encryption and VAPID, no dependencies; D-224)
+  push/                       vapid.mjs (the notifications key pair, already run once: the public key is in assets/js/vapid.js, the private one a GitHub secret; D-223, D-225); avisar.mjs sends the La Copa notifications every 15 minutes from avisos.yml and leaves what it sent for the dashboard (D-233), with calendario.mjs (what is due: at most 2 a day per cup, overlapping deadlines in one, the new days of several cups together; D-229) and webpush.mjs (encryption and VAPID, no dependencies; D-224)
   release/                    Publishing: set-version.py (version stamp, at publish time), readme.py + hechos.mjs (this README), og.mjs (social cards and bridge pages), iconos.mjs (the app icons, from assets/icon.svg)
   firebase/                   reglas.mjs (publish the rules), reportes.mjs (The Cup bug reports), en-curso.mjs (anyone playing?), rankings-historia.mjs (The Cup's history into the leaderboards, and each player's cups)
   generators/                 mapa.mjs (the world of Where is it?), flota.py (the Battleship fleet)

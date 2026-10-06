@@ -1,7 +1,7 @@
 // Ejecutar: node public/panel/aggregate.test.mjs
 import assert from 'node:assert/strict';
 import { MODE_IDS } from '../assets/js/games.js';
-import { DAY, roomLog, paginate, flagOf, whenLabel, RANGOS, rangeOf, groupDays, periodLabel, ROOM_TTL, liveRooms, esJugada, connections, summarize, top, tzLabel, ago, dayLabel, codesOfDays, splitByEnv, liveLocal, VIVA_SIN_RED_MS, ZONA_PANEL, horaLabel, fechaLabel, diaPanel, localLog, paisesDeSalas, paisesDelRango, salaDe, mediana, trafico, origenLabel, origenesAgrupados, idiomasDeSalas, idiomasDelRango } from './aggregate.js';
+import { DAY, roomLog, paginate, flagOf, whenLabel, RANGOS, rangeOf, groupDays, periodLabel, ROOM_TTL, liveRooms, esJugada, connections, summarize, top, tzLabel, ago, dayLabel, codesOfDays, splitByEnv, liveLocal, VIVA_SIN_RED_MS, ZONA_PANEL, horaLabel, fechaLabel, diaPanel, localLog, paisesDeSalas, paisesDelRango, salaDe, mediana, trafico, origenLabel, origenesAgrupados, idiomasDeSalas, idiomasDelRango, avisosDelRango, vueltaAtrasada } from './aggregate.js';
 import { ZONA as ZONA_COPA } from '../cup/engine.js';
 
 const now = 20342 * DAY + 15 * 60 * 60 * 1000; // día 20342, 15:00 UTC
@@ -401,6 +401,21 @@ assert.equal(origenLabel('elmostrador_cl'), 'elmostrador.cl', 'un sitio que no s
   assert.deepEqual(idiomasDelRango(days, { from: d, to: d, incluye: g => g === 'ahorcado' }), {});
   const vivas = liveRooms({ ABCD: { createdAt: d * DAY, game: 'dudo', players: { A: { name: 'Javi' }, B: { name: 'Ana' } } } }, d * DAY + 1000, {}, idiomasDeSalas(days, d * DAY + 1000));
   assert.deepEqual(vivas[0].players.map(p => p.lang), ['es', 'pt']);
+}
+
+{
+  // Los avisos al celular (D-233): mandados, tocados y aperturas de la app instalada, en el rango
+  const days = { 100: { mandados: { dia: 3, plazo: 1 }, aviso: { dia: 2 }, pwa: { android: 1 } }, 101: { mandados: { dia: 2 }, aviso: { plazo: 1 }, pwa: { ios: 2 } }, 102: { mandados: { fin: 9 } } };
+  const a = avisosDelRango(days, { from: 100, to: 101 });
+  assert.deepEqual(a.mandados, { dia: 5, plazo: 1 });
+  assert.deepEqual(a.tocados, { dia: 2, plazo: 1 });
+  assert.deepEqual(a.pwa, { android: 1, ios: 2 });
+  assert.deepEqual([a.totalMandados, a.totalTocados, a.totalPwa], [6, 3, 3]);
+  assert.equal(avisosDelRango({}, { from: 1, to: 3 }).totalMandados, 0);
+  const t = 1e12;
+  assert.equal(vueltaAtrasada(t - 20 * 60e3, t), false, 'hace 20 min: al día');
+  assert.equal(vueltaAtrasada(t - 2 * 3600e3, t), true, 'hace 2 horas: ¿se apagó?');
+  assert.equal(vueltaAtrasada(undefined, t), true, 'nunca corrió');
 }
 
 console.log('aggregate.test.mjs: todo en verde');
