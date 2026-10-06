@@ -6,28 +6,32 @@
  * sería otro paso, con su propio cuidado.
  *
  * Muestra los avisos de La Copa (D-223) y, al tocarlos, abre la copa en el día que toca: enfoca
- * la pestaña de la app si ya está abierta, o abre una.
+ * la pestaña de la app si ya está abierta, o abre una. En Android, los botones del aviso (D-229)
+ * abren su propia dirección: Jugar, el día; Silenciar esta copa, la copa con `&silenciar`.
  */
 self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
 
-/** Un aviso llega como JSON: `{ title, body, url, tag }`. Lo que no se entiende no se muestra. */
+/** Un aviso llega como JSON: `{ title, body, url, tag, acciones? }`. Lo que no se entiende no se muestra. */
 self.addEventListener('push', e => {
   let a = null;
   try { a = e.data ? e.data.json() : null; } catch (_) { a = null; }
   if (!a || !a.title) return;
+  const acciones = Array.isArray(a.acciones) ? a.acciones.filter(x => x && x.action && x.title).slice(0, 2) : [];
   e.waitUntil(self.registration.showNotification(a.title, {
     body: a.body || '',
     icon: 'assets/icons/icon-192.png',
     tag: a.tag || undefined,
     renotify: !!a.tag,
-    data: { url: a.url || './' },
+    actions: acciones.map(({ action, title }) => ({ action, title })),
+    data: { url: a.url || './', acciones: Object.fromEntries(acciones.map(x => [x.action, x.url || a.url || './'])) },
   }));
 });
 
 self.addEventListener('notificationclick', e => {
   e.notification.close();
-  const url = new URL(e.notification.data?.url || './', self.registration.scope).href;
+  const datos = e.notification.data || {};
+  const url = new URL((e.action && datos.acciones?.[e.action]) || datos.url || './', self.registration.scope).href;
   e.waitUntil((async () => {
     const abiertas = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
     const misma = abiertas.find(c => c.url === url) || abiertas.find(c => new URL(c.url).origin === self.location.origin);
