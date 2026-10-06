@@ -272,7 +272,7 @@ In Spanish the faces are called the way they are called at a Chilean table (**as
 
 - **📱 One phone:** two to six players. The phone is passed around and each player sees their dice behind a handoff screen (C-9).
 - **🤖 Versus the phone:** a duel. The phone bets on probability and **only looks at its own dice**: the decision comes from how many unknown dice are left and how likely they are to cover the bid, not from peeking at yours.
-- **📶 Several phones:** a room with a 4-letter code, a QR and chat, two to six players. Each phone rolls **its own** dice and publishes only the hash. On a call it reveals them and everyone verifies that nobody swapped them (C-10). This is why the dice are not derived from the shared seed like everything else this app deals: the code is public, and with a shared seed anyone could compute the rival's dice from the console (D-70).
+- **📡 Several phones:** a room with a 4-letter code, a QR and chat, two to six players. Each phone rolls **its own** dice and publishes only the hash. On a call it reveals them and everyone verifies that nobody swapped them (C-10). This is why the dice are not derived from the shared seed like everything else this app deals: the code is public, and with a shared seed anyone could compute the rival's dice from the console (D-70).
 
 Spec and design: [docs/games/liars-dice.md](docs/games/liars-dice.md)
 
@@ -302,7 +302,7 @@ The dice game of every Latin American after-dinner table. On your turn you roll 
 The phone does what the table does badly: it adds up, it shows what every free box would be worth with the dice you have now, and it will not let you score twice in the same box or roll a fourth time. Nothing comes preselected: you tap a box and the button says what it does ("Score 30 in Full house").
 
 - **📱 One phone:** two to six players. Before each handoff you see what the last player scored, with their dice (C-9).
-- **📶 Several phones:** a room with a 4-letter code, a QR and chat, two to six players. Each player rolls on their own phone and everyone watches the dice and the card of whoever is playing. There is nothing hidden in this game, so the dice travel in the clear; they are not derived from the shared seed either, because with the public code that would let anyone compute their next rolls (D-246).
+- **📡 Several phones:** a room with a 4-letter code, a QR and chat, two to six players. Each player rolls on their own phone and everyone watches the dice and the card of whoever is playing. There is nothing hidden in this game, so the dice travel in the clear; they are not derived from the shared seed either, because with the public code that would let anyone compute their next rolls (D-246).
 - **🧍 Play solo:** eleven turns for your best score, with a record on the phone and, signed in, the `generala_solo` leaderboard.
 
 It is the first group game that also works **without playing at the same time**: everyone fills their own card. From 23 October 2026 it joins **One a Day**, where every roll comes from the day's seed, so whoever keeps the same dice gets the same dice (D-247). In Portuguese it is called General, as in Brazil; Kniffel and Yahtzee are trademarks and a slightly different game.

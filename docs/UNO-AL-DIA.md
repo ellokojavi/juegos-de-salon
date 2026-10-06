@@ -59,7 +59,7 @@ el contenido del día:
 
 **La rotación:** son 10 juegos (11 con Generala, desde el tercer mazo), así que no cabe uno por día de la semana. Funciona como un mazo: se
 barajan todos con la semilla `uno-al-dia:ciclo:<n>` y salen de a uno por día, sin repetir, hasta
-que se acaba el mazo (10 días). Al barajar el mazo siguiente, ningún juego puede salir antes de 7
+que se acaba el mazo (10 días; 11 desde el tercer mazo, el 23 de octubre). Al barajar el mazo siguiente, ningún juego puede salir antes de 7
 días desde la última vez. Cada juego lleva la fecha desde la que entra a Uno al día. Así un juego
 nuevo se suma en el mazo siguiente y los días ya pasados no cambian. El contenido del día sale de
 `uno-al-dia:2026-10-05`, convertida en un código de copa de 5 letras (ver "Lo que el PR 1 hizo"). Es una semilla distinta de las
@@ -576,6 +576,21 @@ celular saca la palabra, la flota o los dados de la semilla del día.
 - **Los comodines dicen para qué sirven** antes que cómo se ganan: "🧊 Un comodín salva tu racha el
   día que no juegas. Tienes 1 de 2: …", y lo mismo en la tarjeta de invitar y al ganar uno (el dueño:
   que se entienda y den ganas de ganarlos).
+
+### Generala entra al mazo (v0.128.0)
+
+- **📝 Generala** (D-246) entra con `desde: '2026-10-23'` (`DESDE_GENERALA`), el primer día del
+  tercer mazo: el primero (del 6 al 12) y el segundo (del 13 al 22) no cambian aunque el PR se
+  fusione a mitad de camino, y lo prueba `uno-al-dia.test.mjs`. Desde ahí el mazo tiene 11 juegos.
+- **`/generala/?hoy`** abre 🧍 Jugar solo, sin elegir modo, con el botón **Jugar el de hoy** y la
+  línea "Los dados salen iguales para todos: lo que cambia es qué guardas." No tiene rival, así que
+  ahí sí el desafío entero es el mismo para todos, no solo el punto de partida.
+- **Los dados salen de la semilla del día** (D-247): `azarDel(semilla, 'generala:<turno>:<tiro>')`,
+  consumido en orden de posición, así quien guarda lo mismo recibe lo mismo. Fuera de Uno al día,
+  cada celular tira con su azar (D-246).
+- **El puntaje** es `puntajeDia` de `public/generala/engine.js` (no de `uno-al-dia.js`, como los
+  otros tres de grupo): un tercio del total, hasta 100. Sin revancha, como los otros (#226).
+- Se prueba con `uno-al-dia.test.mjs` y `engine.test.mjs`.
 
 ## Lo que decidió el dueño (2026-10-05)
 
