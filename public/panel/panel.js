@@ -771,7 +771,7 @@ function bloqueUnoAlDia(rango) {
         lista(juegos.map(([id, v]) => bar(gameLabel(id), [seg(C_TORNEO, v)], maxJ)), 'Nada todavía.', 'bars'))),
     el('div', { class: 'grid2', style: 'margin-top:16px' },
       el('div', {}, el('h3', { class: 'small' }, 'Qué se hace'), actividad(USO_UAD)),
-      el('div', {}, el('h3', { class: 'small' }, 'Avisos y recordatorio'), actividad(AVISOS_UAD))),
+      el('div', {}, el('h3', { class: 'small' }, 'Avisos'), actividad(AVISOS_UAD))),
     el('div', { style: 'margin-top:16px' }, el('h3', { class: 'small' }, 'Jugadores por su mejor racha, desde siempre'),
       lista(u.tramos.map(([label, v]) => bar(`🔥 ${label} ${label === '1' ? 'día' : 'días'}`, [seg(C_SIN_RED, v)], maxR)), 'Nadie con racha todavía.', 'bars')));
 
@@ -790,7 +790,7 @@ const USO_UAD = {
 };
 const AVISOS_UAD = {
   oferta: '🔔 Se ofrecieron los avisos', hora: '🕘 Eligieron una hora', activos: '✅ Quedaron activos',
-  ahorano: '🙅 "Ahora no"', silencio: '🔕 Los silenciaron', recordatorio: '⏰ Bajaron el recordatorio',
+  ahorano: '🙅 "Ahora no"', silencio: '🔕 Los silenciaron',
 };
 
 /** Las partidas sin red de todos los juegos (sin La Copa): ahí están quienes juegan solos (D-210). */
