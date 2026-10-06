@@ -117,7 +117,8 @@ lanzamiento: **Uno al día n.° 1, n.° 2…**, para compartir.
 ### Se le olvida un día
 
 - **Comodines** 🧊 (como en Duolingo): se gana uno cada 7 días seguidos y otro cada vez que un
-  amigo invitado juega su primer día, y se pueden tener hasta 2. Si un día no juega, se gasta uno solo y la racha sigue. Al volver, el jugador lee: "🧊 Usaste un
+  amigo que invitó termina su primer Uno al día, y se pueden tener hasta 2. Si un día no juega,
+  se gasta uno solo y la racha sigue. Al volver, el jugador lee: "🧊 Usaste un
   comodín ayer y tu racha sigue: 9 días."
 - Sin comodines, la racha vuelve a cero, pero la **mejor racha** queda: "Tu mejor racha: 14
   días. ¿La superas?"
@@ -134,46 +135,59 @@ lanzamiento: **Uno al día n.° 1, n.° 2…**, para compartir.
 Después de jugar, debajo de **Compartir**, una tarjeta propia:
 
 > **👋 Invita a un amigo**
-> Si juega su primer Uno al día, ganas un comodín 🧊.
-> "Llevo 33 días seguidos y estoy en el 10 % mejor de Uno al día. ¿Te atreves?"
+> 🧊 Si tu amigo termina su primer Uno al día, ganas un comodín.
+> "Llevo una racha de 33 días y estoy en el 10 % mejor de la semana. ¿Te atreves?"
 > **Invitar**
 
-**El dato de quien invita** se elige solo, entre los que son verdad para esa persona, en este
-orden: el primero que se cumpla, y a lo más dos juntos.
+**El dato de quien invita** se elige solo, entre los que son verdad para esa persona: se toman
+los dos primeros que se cumplan, en este orden, y se unen con "y". Cada dato se escribe en
+primera persona (el mensaje que manda quien invita) y en tercera (la tarjeta que ve el amigo), y
+ninguno empieza con "y", para que se lea bien solo o en segundo lugar.
 
-| Dato | Se usa si… | Cómo se lee (en el link, en tercera persona) |
-|---|---|---|
-| Racha | 7 días o más | "Sara jugó los últimos 33 días seguidos" |
-| Puesto | Está en el 25 % mejor de la semana o de las rachas, y en esa tabla hay 20 jugadores o más | "y está en el 10 % mejor de Uno al día" |
-| Hoy | Le fue mejor que a la mitad | "Hoy sacó 87 en Reinas, mejor que el 64 %" |
-| Mejora | Su tendencia sube en algún juego | "y lleva 5 días mejorando en Reinas" |
-| Constancia | Ninguno de los de arriba | "Ya jugó 12 días de Uno al día" |
+| Dato | Se usa si… | Primera persona | Tercera persona |
+|---|---|---|---|
+| Racha | 7 días o más | "Llevo una racha de 33 días" | "Sara lleva una racha de 33 días" |
+| Puesto | Está en el 25 % mejor de la semana o de las rachas, y en esa tabla hay 20 jugadores o más | "estoy en el 10 % mejor de la semana" (o "…de las rachas") | "está en el 10 % mejor de la semana" |
+| Hoy | Le fue mejor que a la mitad, y hoy jugaron 20 o más | "hoy saqué 87, mejor que el 64 %" | "hoy sacó 87, mejor que el 64 %" |
+| Mejora | Su flecha sube en algún juego (la de su página) | "voy mejorando en Reinas" | "va mejorando en Reinas" |
+| Constancia | Ninguno de los de arriba | "Ya jugué 12 días de Uno al día" | "Ya jugó 12 días de Uno al día" |
 
-Los porcentajes se redondean hacia el lado de quien invita, pero nunca dicen algo falso: un "10 %
-mejor" sale de una tabla real. Con menos de 20 jugadores no se habla de porcentajes.
+- **"Racha" y no "días seguidos":** un día salvado por un comodín no se jugó, así que "jugó los
+  últimos 33 días seguidos" podría ser falso; "una racha de 33 días" es siempre verdad.
+- **"Hoy" no dice el juego:** la tarjeta del amigo se lee antes del dado, y la sorpresa es del dado.
+- **"Mejora" usa la misma flecha de su página** (los últimos 3 contra los 5 de antes), no "5 días
+  mejorando", que la app no mide.
+- **Los porcentajes nunca dicen algo falso:** se redondean hacia arriba al escalón siguiente (10,
+  15, 20, 25 %), así que quien está en el 12 % lee "en el 15 % mejor". Con menos de 20 jugadores
+  en la tabla no se habla de porcentajes.
 
-**Quien invita** toca **Invitar** y se abre el diálogo de compartir del celular (como compartir la
-app, D-226), con el texto en primera persona, porque lo manda él, y la imagen de una tarjeta de
-desafío (su nombre, 🔥 33 y el dato):
+**Quien invita** toca **Invitar** y se abre el diálogo de compartir del celular, solo con texto y
+en primera persona, porque lo manda él. Como toda invitación, va sin imagen dibujada: la imagen la
+pone la tarjeta social del link (U-33, D-72), la de Uno al día, que es fija y se lee igual para
+cualquiera. El texto sigue el formato de U-30 (cabecera, una idea por línea y el link al final):
 
 ```
-📅 Llevo 33 días seguidos en Uno al día y estoy en el 10 % mejor. ¿Te atreves?
-juegosdesalon.cl/today/?inv=k7q2x9ab
+📅 *Uno al día* · Te desafío
+🔥 Llevo una racha de 33 días y estoy en el 10 % mejor de la semana. ¿Te atreves?
+
+🔗 juegosdesalon.cl/today/?inv=k7q2x9ab
 ```
 
 **El amigo** abre el link y ve, antes del dado, una tarjeta en tercera persona:
 
-> **Sara te desafía** 🔥
-> Sara jugó los últimos 33 días seguidos y está en el 10 % mejor de Uno al día. ¿Te atreves?
+> **🔥 Sara te desafía**
+> Sara lleva una racha de 33 días y está en el 10 % mejor de la semana. ¿Te atreves?
 > **Jugar el de hoy**
 
 Toca, rueda el dado y juega **el mismo desafío que Sara**. Al terminar, además de su resultado,
 ve el duelo: "**Tú 87 · Sara 92**. Mañana hay otro." Si Sara todavía no juega el de hoy, se dice
-así: "Sara todavía no juega el de hoy". Desde ahí parte su propia racha, y Sara queda entre sus **Amigos** del ranking.
+así: "Sara todavía no juega el de hoy." Desde ahí parte su propia racha, y Sara queda entre sus **Amigos** del ranking.
 
 **Lo que se necesita:**
 - `?inv=` lleva el `jid` de quien invita, que es público (es lo que guardan los rankings, D-212).
   El link no lleva ni el nombre ni el PIN: la página lee el nombre y los datos públicos de ese jid.
+  Por eso la tarjeta del amigo dice el dato de hoy, no el del día en que se mandó el link: si la
+  racha se cortó, se elige otro dato verdadero.
 - **Sin jugador también se invita:** el texto lleva el dato, pero el link va sin `?inv=` y el
   amigo ve la bienvenida general ("Te invitaron a Uno al día"). Al invitar se ofrece entrar para
   que el amigo vea quién lo desafía.
@@ -184,23 +198,28 @@ así: "Sara todavía no juega el de hoy". Desde ahí parte su propia racha, y Sa
 
 Cuando un invitado termina su **primer** Uno al día, quien lo invitó gana un comodín 🧊, con el
 mismo tope de 2. Al que invita le llega en la app (y en un aviso, si tiene avisos):
-"🧊 Pedro aceptó tu desafío: ganaste un comodín."
+"🧊 Pedro aceptó tu desafío: ganaste un comodín." Si el amigo no tiene jugador, no hay nombre:
+"🧊 Un amigo aceptó tu desafío: ganaste un comodín." Si ya tenía 2, no se promete lo que se
+pierde: "👋 Pedro aceptó tu desafío." y nada más.
 
 **Se dice, para que el jugador lo sepa** (pedido del dueño). Se anuncia en cuatro lugares, siempre
-en una línea y nunca en el mensaje que recibe el amigo, porque ahí parecería que se le invita por
-interés:
+en una línea, con 🧊 al inicio (U-2), y nunca en el mensaje que recibe el amigo, porque ahí
+parecería que se le invita por interés. La condición se dice siempre igual, "un amigo que
+invitaste termina su primer Uno al día" (U-5): "juega" prometería el comodín a quien solo abre el
+link.
 
 | Dónde | Qué dice |
 |---|---|
-| La tarjeta **Invita a un amigo**, en el resultado | "Si juega su primer Uno al día, ganas un comodín 🧊." |
-| La tarjeta de la racha, cuando no tiene comodines y la racha es de 3 días o más | "Sin comodines. Invita a un amigo y gana uno 🧊." con el botón **Invitar** |
-| Su página, en el bloque de la racha y en el de invitar | "🧊 Comodines: 0 de 2. Ganas uno cada 7 días seguidos o cuando un amigo que invitaste juega su primer día." |
-| La primera vez que gana un comodín por racha | "🧊 Ganaste un comodín por 7 días seguidos. También ganas uno cuando un amigo que invitaste juega su primer día." |
+| La tarjeta **Invita a un amigo**, en el resultado | "🧊 Si tu amigo termina su primer Uno al día, ganas un comodín." |
+| La tarjeta de la racha, cuando no tiene comodines y la racha es de 3 días o más | "🧊 No tienes comodines. Invita a un amigo y gana uno." con el botón **Invitar** |
+| Su página, en el bloque de la racha y en el de invitar | "🧊 Comodines: 0 de 2. Ganas uno cada 7 días seguidos y cada vez que un amigo que invitaste termina su primer Uno al día." |
+| La primera vez que gana un comodín por racha | "🧊 Ganaste un comodín por 7 días seguidos. También ganas uno cuando un amigo que invitaste termina su primer Uno al día." |
 
 - **Con 2 comodines no se promete nada:** el tope es 2 y un comodín de más se perdería, así que
   mientras tenga 2 la línea del comodín se esconde y la tarjeta queda solo con el dato.
-- **Necesita jugador a quien invita** (el link lleva su jid). Sin jugador, la tarjeta dice: "Entra
-  con tu nombre y PIN para ganar un comodín por cada amigo que juegue." y ofrece **Entrar**.
+- **Necesita jugador a quien invita** (el link lleva su jid). Sin jugador, la tarjeta dice: "🧊 Entra
+  con tu nombre y un PIN, y ganas un comodín cuando un amigo que invitaste termina su primer Uno al
+  día." y ofrece **Entrar**. (No dice "por cada amigo": con el tope de 2, no sería verdad.)
 - **Uno por celular invitado:** al terminar su primer día, el celular del amigo escribe
   `invitados/<jid de quien invita>/<uid del amigo>` = `{ fecha, j? }`, una sola vez (las reglas no
   dejan reescribirlo, ni que alguien se invite a sí mismo). El comodín se suma al leer esa lista,
@@ -219,7 +238,7 @@ acumulado:
 | **Por juego** | Una fila por juego: veces jugado, promedio, mejor y una línea con los últimos 8. La flecha dice si va mejorando: el promedio de los últimos 3 contra los 5 de antes (▲ +12) |
 | **Rankings** | Pestañas: **Hoy** (el desafío de hoy) · **Semana** (suma de puntos) · **Rachas** (mejor racha) · **Amigos** (los de sus copas, que `jugador.js` ya conoce, y los que invitó o lo invitaron) |
 | **Invitar** | Cuántos aceptaron sus desafíos, y **Invitar** |
-| **Avisos** | La campana con su estado y la hora elegida, y **Agregar a mi calendario** |
+| **Avisos** | La campana con su estado y la hora elegida, y **Agregar al calendario** (botón chico) |
 
 **"Mejoró o no"** se dice en palabras además de la flecha: "En Reinas vas mejorando: tus últimas 3
 promedian 82, antes 70." Así se entiende sin leer gráficos.
@@ -233,7 +252,8 @@ propia casilla, apagados hasta que el jugador diga que sí.
 ### Cuándo se ofrecen
 
 - **Al terminar Uno al día por segunda vez**, en la tarjeta del resultado:
-  "🔔 ¿Te avisamos mañana? Elige la hora." con tres botones de hora: **Mañana · 9:00**,
+  "🔔 ¿Te avisamos cada día para jugar? Elige la hora." con tres botones de hora (la pregunta no
+  dice "mañana", que chocaría con el botón **Mañana · 9:00**): **Mañana · 9:00**,
   **Almuerzo · 13:00**, **Tarde · 19:00** (y "otra hora" en su página). Después, **Ahora no**.
 - **Siempre**, desde la campana de su página.
 - El camino según el celular es el de La Copa (`push.js`): directo en Android y en la app instalada,
@@ -247,9 +267,9 @@ propia casilla, apagados hasta que el jugador diga que sí.
 
 | Aviso | Cuándo | Texto (propuesta) |
 |---|---|---|
-| **Tu juego de hoy** | A la hora elegida, si no ha jugado | "📅 Uno al día n.° 13 ya está. 🔥 Racha: 6 días." |
-| **Se corta la racha** | 21:00 del jugador, si no ha jugado y tiene racha de 2 o más | "🔥 Tu racha de 6 días se corta a medianoche. Te quedan 3 horas." (con comodín: "…Tienes un comodín 🧊, pero mejor no gastarlo.") |
-| **Tu semana** | Lunes, a la hora elegida (casilla aparte, encendida por defecto) | "📊 Semana 40: jugaste 6 de 7 días y quedaste 14.° de 230. Lo mejor: Reinas." |
+| **Tu juego de hoy** | A la hora elegida, si no ha jugado | "📅 Uno al día n.° 13 ya está. 🔥 Racha: 6 días." (sin racha, solo la primera frase) |
+| **Se corta la racha** | 21:00 del jugador, si no ha jugado y tiene racha de 2 o más | Sin comodines: "🔥 Tu racha de 6 días se corta a medianoche. Te quedan 3 horas." Con comodines no se corta, así que no se dice que se corta: "🧊 Si no juegas hoy, gastas un comodín para salvar tu racha de 6 días. Te quedan 3 horas." |
+| **Tu semana** | Lunes, a la hora elegida (casilla aparte, encendida por defecto) | "📊 Tu semana: jugaste 6 de 7 días y quedaste 14.° de 230. Donde más mejoraste: Reinas." (sin "Semana 40": el número de la semana no lo lleva nadie en la cabeza. El puesto, solo con jugador.) |
 
 - **El aviso no dice qué juego toca**: la sorpresa queda para el dado, y la curiosidad es un motivo
   más para tocarlo.
@@ -257,10 +277,11 @@ propia casilla, apagados hasta que el jugador diga que sí.
   tiene un día de copa pendiente, va primero el de la copa y Uno al día se suma en una línea:
   "…y tu Uno al día también te espera".
 - **Se calman solos:** si en 14 días no toca ningún aviso ni juega, el diario pasa a día por medio. Si
-  pasan 30 días sin jugar, llega uno último ("Tu mejor racha fue de 14 días. Cuando quieras,
-  aquí está.") y se apagan. Así no terminan bloqueando también los de La Copa.
+  pasan 30 días sin jugar, llega uno último ("🔥 Tu mejor racha fue de 14 días. Uno al día te
+  espera cuando quieras.") y se apagan. Así no terminan bloqueando también los de La Copa.
 - La hoja de la campana: tres interruptores (el diario, el de la racha y el de la semana), la
-  hora, **Probar los avisos** y **Silenciar**.
+  hora, **Probar los avisos** (el mismo botón de La Copa) y **Silenciar**, que apaga los tres de
+  un toque (como "Silenciar esta copa" en La Copa).
 
 ## Sin avisos: lo que el jugador va a buscar
 
@@ -268,19 +289,24 @@ Para quien no quiere avisos, o tiene un iPhone sin la app instalada:
 
 | Forma | Cómo funciona |
 |---|---|
-| **El botón de la portada** | Su estado se ve al entrar: el punto que brilla, 🔥 6 y "Juega el de hoy" o "✅ Listo". |
+| **El botón de la portada** | Su estado se ve al entrar: el punto que brilla, 🔥 6 y "Jugar el de hoy" o "✅ Listo". |
 | **El globo en el ícono** | En la app instalada (Android, y iPhone con avisos permitidos), un **1** en el ícono si hoy no ha jugado (`navigator.setAppBadge`). Lo pone la página al abrir y lo quita al terminar; el service worker lo pone con el aviso del día. |
-| **Agregar a mi calendario** | Un evento que se repite cada día a la hora que elige, con el link a `/today/`. Sale de un `.ics` armado en el celular, sin servidor ni permisos, y sirve en cualquier celular. |
+| **Agregar al calendario** | Un evento que se repite cada día a la hora que elige, con el link a `/today/`. Sale de un `.ics` armado en el celular, sin servidor ni permisos, y sirve en cualquier celular. |
 | **La tarjeta para compartir** | Al estilo Wordle, sin adelantar la respuesta: el grupo de WhatsApp le recuerda a cada uno que juegue. |
 | **El link fijo** | `juegosdesalon.cl/today/` siempre abre el de hoy: se guarda en favoritos o se fija en un grupo. |
 
-La tarjeta para compartir (texto, y la imagen como la de compartir la app, D-226):
+La tarjeta para compartir es un resultado, así que va con imagen y texto juntos (U-33): la
+imagen es la lámina de resultado de siempre (`laminaResultado`, con la misma cabecera, el puntaje,
+el tiempo y "mejor que el 64 %" si hoy jugaron 20 o más), y el texto sigue U-30 y no repite lo que
+la imagen ya dice (D-171): la cabecera, la racha, que la imagen no trae, y el link.
+Si la cabecera y la imagen nombran el juego de hoy está en el dilema #215 (la recomendación es
+que no, como el aviso).
 
 ```
-📅 Uno al día n.° 12 · 👑 Reinas
-87 puntos · 1:42 · mejor que el 64 %
-🔥 6 días seguidos
-juegosdesalon.cl/today/
+📅 *Uno al día n.° 12* · 👑 Reinas
+🔥 Racha: 6 días
+
+🔗 juegosdesalon.cl/today/
 ```
 
 ## Rankings y datos
@@ -295,7 +321,7 @@ Sobre lo que ya hay en D-212 (`records/<tabla>/<periodo>/<jid>`), con lo mínimo
 | **Mejor racha** | `records/uno-al-dia-racha/siempre/<jid>` | Solo sube. Las reglas exigen que no pase los días del historial. |
 | La racha de hoy y los comodines | El celular, y `jugadores/<jid>/unoAlDia` = `{ racha, comodines, ultimo }` | Se recalcula del historial, que es la fuente. |
 | Sin jugador | `localStorage` (`juegos-de-salon:uno-al-dia`) | Al entrar con jugador, lo del celular se sube al historial una vez. |
-| "Mejor que el 64 %" | Se cuenta con el ranking del día ya leído (`LEER = 100`) | Con más de 100 jugadores es una aproximación, y se dice "de los primeros 100". |
+| "Mejor que el 64 %" | Se cuenta con el ranking del día ya leído (`LEER = 100`) | Solo con 20 jugadores o más. Con más de 100 la app no sabe el total, y un porcentaje (o un "de 230") sería inventado: quien está entre los 100 leídos ve su puesto ("14.° de hoy") y el resto, solo su puntaje. Lo mismo vale para el puesto del resumen de la semana. |
 
 El puntaje de Uno al día **también** va al ranking normal del juego y al Todoterreno: es el mismo
 juego. Las partidas se cuentan en `partidas` (D-219).
@@ -347,15 +373,44 @@ celular saca la palabra, la flota o los dados de la semilla del día.
 6. **El resumen de la semana viene encendido** al activar los avisos, con su interruptor.
 7. **Entran todos los juegos con modo para uno** (agregado del dueño).
 8. **Invitar a un amigo** después de jugar, con un dato de quien invita (agregado del dueño).
-
 9. **Un comodín para quien invita** cuando el invitado termina su primer Uno al día, con el mismo
    tope de 2, **y se anuncia** para que el jugador lo sepa.
 
 ## Textos para revisar (U-1, U-3, U-17)
 
-Botones (caben en 320 px): **Uno al día**, **Juega el de hoy**, **Listo**, **Compartir**,
-**¿Otro más?**, **Invitar**, **Jugar el de hoy**, **Entrar**, **Ahora no**, **Mañana · 9:00**, **Almuerzo · 13:00**,
-**Tarde · 19:00**, **Silenciar**, **Probar los avisos**, **Agregar a mi calendario** (este pasa de
-18 caracteres: en 320 px va solo en su línea, o se acorta a **Al calendario**). "Racha" y
-"comodín" se dicen siempre así (U-5). Los textos los propone el agente de usabilidad y el dueño
-los corrige en el PR.
+Botones (caben en 320 px, unos 18 caracteres): **Uno al día**, **Jugar el de hoy**, **Compartir**,
+**🎲 Jugar otro**, **Invitar**, **Entrar**, **Ahora no**, **Mañana · 9:00**, **Almuerzo · 13:00**,
+**Tarde · 19:00**, **Silenciar**, **Probar los avisos** y **Agregar al calendario** (pasa de 18,
+así que va en botón chico, como lo secundario de U-17). El botón de la portada es una ficha de dos
+líneas: arriba **📅 Uno al día** y abajo su estado (**🔥 1 · Jugar el de hoy** o **✅ Listo · 🔥 2**),
+que no es un botón aparte. "Racha", "comodín" y "Silenciar" se dicen siempre así (U-5). Los
+textos los propone el agente de usabilidad y el dueño los corrige en el PR.
+
+**Lo que cambió en la revisión de usabilidad** (U-3: el dueño los corrige si no le gustan):
+
+| Antes | Ahora | Por qué |
+|---|---|---|
+| **Juega el de hoy** (portada) y **Jugar el de hoy** (amigo) | **Jugar el de hoy** en los dos | Una acción, una palabra (U-5), y en infinitivo como los demás botones |
+| **¿Otro más?** | **🎲 Jugar otro** | Verbo y objeto (U-17); el dado dice que es al azar |
+| **Agregar a mi calendario** / **Al calendario** | **Agregar al calendario**, botón chico | "Al calendario" no tiene verbo (U-17) |
+| "📅 Uno al día · el mismo desafío para todos hoy" | "📅 Uno al día: hoy todos juegan el mismo desafío." | Frase completa (U-1) |
+| "El próximo, en 7 h 12 min" | "El próximo sale en 7 h 12 min." | Frase completa (U-1) |
+| "Sara jugó los últimos 33 días seguidos" | "Sara lleva una racha de 33 días" | Con un comodín, "jugó 33 días seguidos" puede ser falso; y "racha" es el término (U-5) |
+| "y lleva 5 días mejorando en Reinas" | "va mejorando en Reinas" | La app mide la flecha (últimos 3 contra 5), no días seguidos mejorando |
+| "Hoy sacó 87 en Reinas" | "hoy sacó 87" | La tarjeta del amigo se lee antes del dado: no adelanta el juego |
+| "está en el 10 % mejor de Uno al día" | "…de la semana" o "…de las rachas" | Dice de qué tabla sale el porcentaje |
+| Porcentajes "redondeados hacia el lado de quien invita" | Redondeados hacia arriba al escalón siguiente | Redondear a favor puede decir algo falso (12 % no es "10 % mejor") |
+| Dos versiones del mensaje de invitar | Una, con cabecera y 🔗 (U-30), solo texto (U-33) | La invitación no lleva imagen dibujada: la pone el link |
+| "Sara te desafía 🔥" | "🔥 Sara te desafía" | Emoji al inicio (U-2) |
+| "Si juega su primer Uno al día, ganas un comodín 🧊." (y "juega su primer día") | "🧊 Si tu amigo termina su primer Uno al día, ganas un comodín." | Quién juega queda claro, el comodín llega al terminar, emoji al inicio (U-2) y una sola forma en los cuatro lugares (U-5) |
+| "Sin comodines. Invita a un amigo y gana uno 🧊." | "🧊 No tienes comodines. Invita a un amigo y gana uno." | Frase completa (U-1), emoji al inicio (U-2) |
+| "…ganar un comodín por cada amigo que juegue." | "…ganas un comodín cuando un amigo que invitaste termina su primer Uno al día." | Con el tope de 2, "por cada amigo" promete de más |
+| "🧊 Pedro aceptó tu desafío: ganaste un comodín." siempre | Sin nombre si el amigo no tiene jugador; sin comodín si ya tenía 2 | No promete lo que se pierde |
+| "🔔 ¿Te avisamos mañana?" con el botón **Mañana · 9:00** | "🔔 ¿Te avisamos cada día para jugar?" | "Mañana" se leía a la vez como el día de mañana y como la hora de la mañana; y el aviso es diario |
+| "📅 Tu juego de hoy ya está." | "📅 Uno al día n.° 13 ya está." | Un aviso, un texto |
+| "Se corta a medianoche… Tienes un comodín 🧊, pero mejor no gastarlo." | "🧊 Si no juegas hoy, gastas un comodín para salvar tu racha de 6 días." | Con comodín la racha no se corta: el texto decía algo falso |
+| "📊 Semana 40: … Lo mejor: Reinas." | "📊 Tu semana: … Donde más mejoraste: Reinas." | Nadie sabe qué semana es la 40 (U-1), y "lo mejor" no decía qué |
+| "Cuando quieras, aquí está." | "🔥 Tu mejor racha fue de 14 días. Uno al día te espera cuando quieras." | "Aquí está" no decía qué |
+| "Mismos dados de partida para todos" | "Todos parten con los mismos dados." | Frase completa (U-1) |
+| "…mejor que el 64 %" con cualquier cantidad de jugadores | Solo con 20 o más, y sin porcentaje con más de 100 | Con 1 jugador, "mejor que el 0 %"; con más de 100 el total no se conoce |
+| Tarjeta para compartir con todo en el texto, sin 🔗 | Cabecera de U-30, racha y 🔗; el puntaje va en la imagen | U-30, U-33 y D-171 |
