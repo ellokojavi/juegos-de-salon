@@ -151,7 +151,7 @@ El dueño (su UID) puede escribir y borrar en todas estas ramas, para moderar.
   puntaje del día tiene que ser el de su historia, y la semana suma un día de la historia (`u`) que
   todavía no tenía `w`. Detalle y límites en [docs/UNO-AL-DIA.md](../docs/UNO-AL-DIA.md).
 
-## Avisos al celular (`push`, `pushCopa`, `pushEnviados`, D-223, D-224)
+## Avisos al celular (`push`, `pushCopa`, `pushEnviados`, `pushDia`, `pushEnviadosDia`, D-223, D-224, D-230)
 
 - `push/<subId>` = `{ endpoint, keys: { p256dh, auth }, lang, tz, uid, at }`: la suscripción Web
   Push de un celular. `subId` son 32 caracteres hexadecimales (los primeros del sha256 del
@@ -167,6 +167,10 @@ El dueño (su UID) puede escribir y borrar en todas estas ramas, para moderar.
   `plazo:3`, `final`, `fin`, `insc:<pid>`), para no repetirlo. Nadie la lee ni la escribe: solo
   `tools/push/avisar.mjs`, con la cuenta de servicio (D-224), que también la limpia.
 - Aquí el dueño no tiene excepción: su UID no lee ni escribe estas ramas.
+
+- `pushDia/<subId>`: lo que pidió ese celular de los avisos de Uno al día (hora, cuáles) y su último
+  día y racha, para el texto (D-230). Nadie lo lee; lo escribe el celular dueño de `push/<subId>`.
+  `pushEnviadosDia` lo escribe solo el administrador (avisar.mjs).
 
 ## Reportes (`feedback`)
 
