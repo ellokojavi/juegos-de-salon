@@ -87,6 +87,22 @@ empezar la ronda. Si uno no calza, la pantalla lo dice: **"⚠️ no coincide"**
 el celular no hay a quién esconderle nada: los dados van en claro en la lista de mensajes, tapados
 por la pantalla del pase.
 
+### Uno al día: los dados sí salen de la semilla (`/liars-dice/?hoy`, D-230)
+
+Cuando Dudo es el juego de Uno al día, `/liars-dice/?hoy` no ofrece modos: la intro lleva la línea
+de Uno al día, "Todos parten con los mismos dados.", y un solo botón, **Jugar el de hoy**, que abre
+directo 🤖 Contra el celular, un rival, con los ajustes de siempre y el nombre que se recuerda (o
+"Jugador 1"). Ahí **los dados de cada ronda salen de la semilla del día**, la ronda y el rol
+(`azarDel(semilla, 'dudo:<ronda>:<rol>')`), y no de `rollDice`: contra el celular la partida es
+local y no hay a quién esconderle la semilla, así que lo de arriba (que en una sala se podrían
+calcular los dados del rival) no aplica. En la sala y en un celular se sigue tirando con
+`rollDice`. El celular apuesta como siempre: lo común es el punto de partida.
+
+Puntaje del día (`puntajeDudo` en `uno-al-dia.js`): ganar vale 60 y cada dado que te queda suma 8
+(100 sin perder ninguno); perdiendo, 10 por ronda aguantada (todas menos la que te dejó sin dados),
+hasta 50. La tarjeta de Uno al día va arriba de los botones del resultado; el primer intento cuenta
+y los siguientes son práctica. Se prueba con `tools/e2e/uno-al-dia-grupo.mjs`.
+
 ### Cómo juega el celular
 
 El celular decide con **sus propios dados y nada más**: cuántos dados desconocidos quedan y qué

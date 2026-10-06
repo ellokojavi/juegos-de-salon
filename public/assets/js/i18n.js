@@ -180,6 +180,9 @@ export const COMMON = {
       bajando: 'En {juego} bajaste un poco: tus últimas 3 promedian {a} y las de antes, {b}.',
       vacio: 'Todavía no juegas ningún Uno al día. El primero te espera.',
       enLabs: 'Uno al día todavía se está probando en el laboratorio.',
+      // Lo común en los juegos donde el rival responde a lo que haces (Dudo, Batalla Naval)
+      mismosDados: 'Todos parten con los mismos dados.',
+      mismaFlota: 'Todos se enfrentan a la misma flota del celular.',
     },
     ins: {
       title: "Juegos de Salón como app",
@@ -326,6 +329,8 @@ export const COMMON = {
       bajando: 'You dipped a little at {juego}: your last 3 average {a}, the ones before, {b}.',
       vacio: "You haven't played any One a Day yet. The first one is waiting.",
       enLabs: 'One a Day is still being tested in the lab.',
+      mismosDados: 'Everyone starts with the same dice.',
+      mismaFlota: 'Everyone faces the same phone fleet.',
     },
     ins: {
       title: "Party Games as an app",
@@ -472,6 +477,8 @@ export const COMMON = {
       bajando: 'Em {juego} você caiu um pouco: suas últimas 3 têm média {a} e as de antes, {b}.',
       vacio: 'Você ainda não jogou nenhum Um por dia. O primeiro está esperando.',
       enLabs: 'O Um por dia ainda está em teste no laboratório.',
+      mismosDados: 'Todos começam com os mesmos dados.',
+      mismaFlota: 'Todos enfrentam a mesma frota do celular.',
     },
     ins: {
       title: "Jogos de Salão como app",
@@ -618,6 +625,8 @@ export const COMMON = {
       bajando: 'Bei {juego} bist du etwas schwächer: Deine letzten 3 liegen im Schnitt bei {a}, die davor bei {b}.',
       vacio: 'Du hast noch kein Spiel des Tages gespielt. Das erste wartet.',
       enLabs: 'Das Spiel des Tages wird noch im Labor getestet.',
+      mismosDados: 'Alle starten mit denselben Würfeln.',
+      mismaFlota: 'Alle treten gegen dieselbe Flotte des Handys an.',
     },
     ins: {
       title: "Salonspiele als App",

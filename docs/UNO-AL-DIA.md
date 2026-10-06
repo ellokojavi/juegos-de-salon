@@ -1,6 +1,6 @@
 # Uno al día
 
-**Estado:** aprobada por el dueño (D-230); el PR 1, el núcleo, está hecho, en el laboratorio (v0.115.0) · **Fecha:** 2026-10-05 ·
+**Estado:** aprobada por el dueño (D-230); el PR 1, el núcleo, y el PR 2, los juegos de grupo, están hechos, en el laboratorio (v0.115.0 y v0.116.0) · **Fecha:** 2026-10-05 ·
 **Toca:** RP-44, D-188 (Juego al azar), D-212 y D-217 (rankings), D-221 a D-229 (avisos), D-97 (semillas)
 
 Una modalidad nueva en la portada, al lado de **Juego al azar**: cada día la app sorprende con un
@@ -43,7 +43,7 @@ el contenido del día:
 |---|---|---|---|
 | ⏳ Línea Relámpago, 🔢 Toque y Fama: adivina el número, 🔗 Conexiones, 🔤 Toque y Fama: Palabra, 📅 ¿En qué año?, 👑 Reinas, 🧶 Desenredo | Su pantalla suelta (D-142) | Todo el contenido, como un día de La Copa | El de La Copa, el mismo de siempre |
 | 🪢 El Ahorcado | 🎴 Mazo del celular, con 1 jugador | La palabra (ya sale de la semilla del mazo) | Las vidas que quedan, llevadas a 100, y el tiempo desempata |
-| 🚢 Batalla Naval | 🤖 Contra el celular | La flota del celular | Menos disparos para hundirla, más puntos. Si te hunden antes, cuentan los barcos que hundiste |
+| ⚓ Batalla Naval | 🤖 Contra el celular | La flota del celular | Menos disparos para hundirla, más puntos. Si te hunden antes, cuentan las casillas de barco que acertaste |
 | 🎲 Dudo | 🤖 Contra el celular | Los dados de cada ronda | Ganar vale 60, y cada dado que te queda suma; perder suma por las rondas que aguantaste |
 
 - **Cuarto Rey no entra:** es un juego de mesa para 4 a 6 personas y no tiene modo para uno (su
@@ -51,8 +51,8 @@ el contenido del día:
   entra con su modo contra el celular.
 - Zip, Tango y ¿Dónde queda? entran al salir del laboratorio.
 - En Dudo y Batalla Naval el rival responde a lo que haces, así que lo común es el punto de partida
-  (los dados, la flota) y no la partida entera. Igual se pueden comparar, y el ranking del día lo dice:
-  "Todos parten con los mismos dados".
+  (los dados, la flota) y no la partida entera. Igual se pueden comparar, y lo dicen la intro (desde el PR 2)
+  y el ranking del día: "Todos parten con los mismos dados."
 - **🎲 Jugar otro** (abajo) ofrece cualquier juego de la portada, también Cuarto Rey.
 
 **La rotación:** son 10 juegos, así que no cabe uno por día de la semana. Funciona como un mazo: se
@@ -397,6 +397,44 @@ celular saca la palabra, la flota o los dados de la semilla del día.
 - El CSS del dado pasó de la portada a `base.css`, para tirarlo desde cualquier página.
 - Se prueba con `uno-al-dia.test.mjs` (el mazo, la semilla, la racha, lo anotado) y
   `tools/e2e/uno-al-dia.mjs` (de la portada a `/today/`, a 320 px y en los cuatro idiomas).
+
+### Lo que el PR 2 hizo (v0.116.0)
+
+- **Entran El Ahorcado, Batalla Naval y Dudo** al mazo, con el id de la portada (`ahorcado`,
+  `batalla-naval`, `dudo`) y `desde: '2026-10-07'` (`DESDE_GRUPO`). Los días anteriores no
+  cambian: el primer mazo, del 5 al 11 de octubre, sigue con los 7 solitarios, y los 10 se barajan
+  desde el mazo siguiente, que empieza el 12 (el primero de grupo sale el 13, Dudo). Con 10 juegos la
+  espera es de 7 días, como decía el diseño. El link es el de su página: `/hangman/?hoy`,
+  `/battleship/?hoy`, `/liars-dice/?hoy`. El dado y `/today/` los nombran con su nombre y emoji
+  de `games.js` (Batalla Naval es ⚓; el diseño decía 🚢).
+- **Abren directo el modo para uno**, sin elegir modo: la intro de siempre lleva la línea de Uno al
+  día y, en lugar de los modos, un solo botón **Jugar el de hoy**. El Ahorcado juega solo con el
+  mazo del celular; Batalla Naval y Dudo, contra el celular (Dudo, un rival). Los ajustes son los de
+  siempre y el nombre, el que se recuerda o "Jugador 1": no se pide nada. En Batalla Naval el
+  jugador igual coloca su flota (con **Al azar** a mano).
+- **Lo común sale de la semilla del día** con `azarDel(semilla, que)`: la palabra del Ahorcado (la
+  semilla del mazo), la flota del celular en Batalla Naval y los dados de cada ronda de Dudo (por
+  ronda y rol). Son partidas locales, así que la semilla no adelanta secretos (D-70 y C-10 hablan de
+  la sala, donde se sigue tirando con el azar del navegador). En los dos con rival, la intro agrega
+  "Todos parten con los mismos dados." o "Todos se enfrentan a la misma flota del celular." (se
+  cambió "con la misma flota" por "se enfrentan a": la flota es la del celular, no la de cada uno).
+- **Los puntajes**, funciones puras en `uno-al-dia.js` con su prueba: El Ahorcado, las vidas que
+  quedan llevadas a 100 (0 si lo colgaron; el tiempo que se anota es el del juego). Batalla Naval,
+  ganando, 100 con 17 disparos y bajando parejo hasta 40 con 100; perdiendo, 6 por casilla
+  acertada **hasta 39** (el diseño decía los barcos hundidos): con 6 por casilla, 7 aciertos ya pasaban de 40, el mínimo al ganar, así que
+  se topó para que perder valga siempre menos. Dudo, ganando, 60 más 8 por dado que queda;
+  perdiendo, 10 por ronda aguantada (todas menos la última) hasta 50.
+- **La tarjeta del resultado** va arriba de los botones del juego, que siguen ahí (a diferencia de
+  los solitarios, donde la tarjeta reemplaza "Jugar otra vez"): el resultado de cada juego tiene su
+  propia forma. La revancha del juego es una partida cualquiera, sin tarjeta; para repetir el
+  desafío está **Repetir el de hoy**. El primer intento cuenta; los siguientes son práctica.
+- La lógica común de los tres está en `uno-al-dia-ui.js`: `modoHoy` (la fecha, la semilla, si ya
+  jugó y el salto al juego de hoy), `introHoy`, `terminarHoy` y `ponerTarjeta`.
+- **Sin rankings del día** todavía (PR 3), y estos tres no anotan en el ranking normal jugando solo
+  o contra el celular más que lo de siempre (las victorias contra el celular, D-215).
+- Se prueba con `uno-al-dia.test.mjs` (el mazo con 10 juegos, los días anteriores sin cambios, las
+  fórmulas, la flota con semilla) y `tools/e2e/uno-al-dia-grupo.mjs` (cada juego jugado hasta el
+  resultado con el reloj en un día en que le toca).
 
 ## Lo que decidió el dueño (2026-10-05)
 
