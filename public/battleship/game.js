@@ -17,6 +17,8 @@ import { finDePartida, bloqueVictorias } from '../assets/js/ranking.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import { UMBRAL } from '../assets/js/arrastre.js';
 import { createChat } from '../assets/js/chat.js';
+import { modoHoy, introHoy, terminarHoy, ponerTarjeta } from '../assets/js/uno-al-dia-ui.js';
+import { azarDel, puntajeNaval } from '../assets/js/uno-al-dia.js';
 import { N, COLS, FLEET, SHIP_SIZE, cellName, parseCell, isCell, cellsOf, isValidPlacement, isValidLayout, randomLayout, rotateNear, occupancy, layoutKey, shoot, allSunk, Hunter, nextShooter, sha256, randomNonce, verifyPlayer } from './engine.js';
 import { GAME_ID, DEFAULT_CONFIG, LOCALES } from './rules.js';
 import { FONDO_AGUA, barcoEn, barcoEntero, trozoDe } from './flota.js';
@@ -31,6 +33,8 @@ const other = r => (r === 'A' ? 'B' : 'A');
 const store = createSessionStore(GAME_ID, { legacyKeys: ['juegos-de-salon:bn:session'] });
 const names_ = createNameStore(GAME_ID);
 const SHIP_EMOJI = '🚢';
+/** Uno al día (D-230): con `?hoy`, contra el celular y con la flota del celular del día. */
+const HOY = modoHoy(GAME_ID);
 
 let S = null;   // sesión
 let M = null;   // partida
@@ -161,7 +165,9 @@ async function act() {
   }
   if (S.bot) {
     const b = S.bot.role;
-    if (v.phase === 'placing' && !S.layouts[b]) await setLayout(b, randomLayout());
+    // En Uno al día la flota del celular sale de la semilla del día: la misma para todos. Es local,
+    // así que nadie la puede leer de una sala (C-10); el compromiso con hash sigue igual.
+    if (v.phase === 'placing' && !S.layouts[b]) await setLayout(b, randomLayout(N, S.hoy ? azarDel(S.hoy.semilla, 'flota') : Math.random));
     if (v.phase === 'play' && v.shooter === b && !v.pending && !S.cpuTimer) {
       S.cpuTimer = setTimeout(() => { S.cpuTimer = null; S.transport.send({ t: 'shot', from: b, cell: S.bot.hunter.next() }); }, 1300);
     }
@@ -778,6 +784,12 @@ function renderResult(v) {
   }
   if (!already) { if (!meRole || meRole === v.winner) { confetti({ count: 220, duration: 3500 }); SFX.win(); } else SFX.siren(); }
   renderResultActions();
+  // Uno al día: la tarjeta va arriba de los botones; el resultado del juego queda como siempre
+  if (S.hoy) {
+    const mios = repliesBy('A');
+    const s = puntajeNaval({ gano: v.winner === 'A', disparos: mios.length, aciertos: mios.filter(x => x.result !== 'agua').length });
+    ponerTarjeta(terminarHoy(S.hoy, { s, ms: Date.now() - S.hoy.inicio, lang, alTocar: () => SFX.tap() }), $('#result-actions'));
+  }
 }
 
 function renderResultActions() {
@@ -863,11 +875,15 @@ function renderResumeSlot() {
 /* ------------------------------------------------------------------ */
 /* Modos y arranque                                                    */
 /* ------------------------------------------------------------------ */
-function startLocalMode(mode, names, config) {
+function startLocalMode(mode, names, config, hoy = null) {
   clearSession();
   const transport = createLocalTransport();
   const bot = mode === 'cpu' ? { role: 'B', hunter: new Hunter() } : null;
   startSession({ mode, transport, roles: ['A', 'B'], config, names, bot });
+  // La revancha es una partida cualquiera: no lleva `hoy`
+  S.hoy = hoy;
+  document.getElementById('uad-tarjeta')?.remove();   // la de la partida anterior, si la hubo
+  if (hoy && !hoy.anotado) hoy.inicio = Date.now();
   keepAwake();
   trackStart({ game: GAME_ID, mode, players: mode === 'cpu' ? 1 : 2, nombres: mode === 'cpu' ? [names.A] : Object.values(names || {}) }); // señal de uso (D-44, D-210)
 }
@@ -923,6 +939,20 @@ function renderSetup(mode, prefillCode = '') {
   }
 }
 
+/**
+ * Uno al día (D-230): la intro con su línea y un solo botón, que abre directo el duelo contra el
+ * celular con los ajustes de siempre y el nombre que se recuerda. Lo común es la flota del
+ * celular; el jugador coloca la suya, y el celular dispara como siempre.
+ */
+function introDeHoy() {
+  $('#modes').replaceChildren(
+    introHoy(HOY, { lang, extra: COMMON[lang].uad.mismaFlota }),
+    el('button', { class: 'btn btn--yellow', id: 'btn-uad-jugar', onClick: () => {
+      SFX.tap();
+      startLocalMode('cpu', { A: names_.get() || T.p1, B: T.cpuName }, { ...DEFAULT_CONFIG }, HOY);
+    } }, COMMON[lang].uad.jugar));
+}
+
 function init() {
   document.documentElement.lang = lang;
   document.title = T.docTitle;
@@ -949,6 +979,8 @@ function init() {
     if (trabaja) return;
     S.placing.deselect();
   });
+  if (HOY?.fuera) return;   // se va al juego de hoy
+  if (HOY) return introDeHoy();
   renderModes();
   // Las victorias de este juego y entrar con nombre y PIN (D-212); en el laboratorio, solo donde se activaron
   $('#rk-slot')?.append(bloqueVictorias({ juego: GAME_ID, nombre: T.title, alTocar: () => SFX.tap() }));
