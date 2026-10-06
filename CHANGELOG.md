@@ -1,8 +1,13 @@
 # Changelog
 
-## 0.118.1 — 2026-10-06
+## 0.119.1 — 2026-10-06
 - **Del dado al juego, sin pantalla vacía** (D-237): en Juego al azar y Uno al día, el dado queda
   en pantalla mientras el juego carga y se desvanece recién cuando el juego está listo debajo.
+
+## 0.119.0 — 2026-10-06
+- **Uno al día en el panel del dueño** (D-230): cuántas partidas de Uno al día se juegan y de qué
+  juego, cuántos vuelven al día siguiente y a la semana, sus rachas y las invitaciones aceptadas.
+  Para el jugador no cambia nada; Uno al día sigue en el laboratorio.
 
 ## 0.118.0 — 2026-10-06
 - **Avisos de Uno al día, en el laboratorio** (D-230): la segunda vez que juegas, puedes pedir un

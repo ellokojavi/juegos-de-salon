@@ -1,6 +1,6 @@
 # Uno al día
 
-**Estado:** aprobada por el dueño (D-230); en el laboratorio: el PR 1, el núcleo (v0.115.0), el PR 2, los juegos de grupo (v0.116.0), el PR 3, jugador, rankings, comodines e invitaciones (v0.117.0), y el PR 4, los avisos y recordatorios (v0.118.0) · **Fecha:** 2026-10-05 ·
+**Estado:** aprobada por el dueño (D-230); en el laboratorio: el PR 1, el núcleo (v0.115.0), el PR 2, los juegos de grupo (v0.116.0), el PR 3, jugador, rankings, comodines e invitaciones (v0.117.0), el PR 4, los avisos y recordatorios (v0.118.0), y el PR 5, el panel (v0.119.0) · **Fecha:** 2026-10-05 ·
 **Toca:** RP-44, D-188 y D-237 (Juego al azar), D-212 y D-217 (rankings), D-221 a D-229 (avisos), D-97 (semillas)
 
 Una modalidad nueva en la portada, al lado de **Juego al azar**: cada día la app sorprende con un
@@ -517,6 +517,19 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   y `mandados/<tipo>` piden solo letras.
 - Se prueba con `tools/push/uno-al-dia.test.mjs`, el caso nuevo de `avisar.test.mjs`,
   `uno-al-dia-avisos.test.mjs` y `tools/e2e/uno-al-dia-avisos.mjs` (con un servicio de avisos falso).
+
+### Lo que el PR 5 hizo (v0.119.0)
+
+- **El panel** (`#/juegos`, bloque "📅 Uno al día", docs/PANEL.md): las partidas de Uno al día de
+  todos (un modo nuevo, `uno-al-dia`, que mandan los 10 juegos al empezar el de hoy) y, de quienes
+  entraron con jugador, cuántos jugaron, cuántos volvieron al día siguiente y a los 7 días, sus
+  rachas por tramo y las invitaciones aceptadas. Las reglas dejan al dueño leer `unoAlDia/` e
+  `invitados/` enteros.
+- **Lo que no se mide todavía:** el embudo de la oferta de avisos (se ofreció → eligió hora →
+  permiso) y los silenciados; y la vuelta de quienes juegan sin jugador, que solo está en su celular.
+- **Uno al día sigue en el laboratorio**: abrirlo a todos es decisión del dueño, después de
+  probarlo. Para abrirlo basta `UNO_AL_DIA_EN_LABS = false` en `uno-al-dia.js` (y sacar el número
+  del lanzamiento a la fecha de salida, si se quiere que el n.° 1 sea ese día).
 
 ## Lo que decidió el dueño (2026-10-05)
 
