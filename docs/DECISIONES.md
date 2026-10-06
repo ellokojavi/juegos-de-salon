@@ -56,6 +56,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213 |
+| Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230 |
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97 |
 | Memoria de partida | C-6 | D-25, D-150 |
@@ -68,9 +69,9 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216 |
 | La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-233 |
 | Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218 |
-| Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220 |
+| Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230 |
 | Marketing | `marketing/README.md` | D-178 |
-| App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229 |
+| App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230 |
 
 ---
 
@@ -3609,7 +3610,7 @@ enlazadas antes de esto entran a la lista la próxima vez que se abren con el ju
 no lo hay, al heredado de su nombre (también las del laboratorio).
 
 ## D-221 · La app se instala de verdad, y La Copa avisará al celular a quien lo pida
-**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** corrige D-99, completa RP-11
+**Fecha:** 2026-10-05 · **Estado:** corregida por D-230 · **Relación:** corrige D-99, completa RP-11
 **Decisión:** Juegos de Salón pasa a ser una app instalable completa (PWA) y tendrá avisos al
 celular (Web Push) para La Copa, solo para quien los active. El plan, la experiencia del jugador y
 la arquitectura están en [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md). Va en cuatro PR; este
@@ -3844,6 +3845,28 @@ apague; el día exacto y los botones ahorran toques; el empate no deja a un gana
 empate y las copas juntas; `tools/e2e/cup/avisos.mjs`, `&dia=` y `&silenciar`. Los botones se
 prueban a mano en Android: Chrome headless no los muestra. Si con el tope se pierde un plazo (dos
 avisos ya ese día), el del día siguiente o el de gracia lo cubren.
+
+## D-230 · Uno al día: un juego por día, el mismo para todos, con racha y avisos que pide el jugador
+**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** amplía D-188 (el dado de Juego al azar abre el juego del día) y D-212 (un período nuevo, el del día, y la tabla de rachas); corrige D-221 (los avisos ya no son solo de La Copa: suma los que el jugador pide para Uno al día); completa RP-44
+**Decisión:** Una modalidad nueva en la portada, junto a Juego al azar. Cada día, a la medianoche
+del jugador, sale un juego con su contenido, el mismo para todos, a partir de la fecha
+(`uno-al-dia:<fecha>`, como las semillas de La Copa, D-97). Entran todos los juegos que tienen modo
+para uno: los solitarios, El Ahorcado con el mazo del celular, y Batalla Naval y Dudo contra el
+celular. El dado de D-188 rueda cada vez que se abre el juego de hoy, aunque siempre caiga en el
+mismo. Después de jugar se puede invitar a un amigo con un dato verdadero de quien invita (su
+racha, su puesto), y el amigo juega el mismo desafío. Cuando el invitado termina su primer día, quien
+invitó gana un comodín de racha, y eso se anuncia en la tarjeta de invitar. Se lleva la racha, el calendario y los puntajes en el celular y, con jugador, en
+Firebase, con ranking del día, de la semana y de rachas. Los avisos (el del día, el de la racha que
+se corta y el de la semana) los activa el jugador y elige la hora. El detalle está en
+[UNO-AL-DIA.md](UNO-AL-DIA.md).
+**Por qué:** El dueño quiere audiencia que vuelva cada día y que use más juegos. La Copa ya
+demostró que "un juego por día" engancha, pero necesita un grupo y dura una semana. Uno al día
+no tiene ni lo uno ni lo otro.
+**Consecuencias:** Un período nuevo en los rankings (`dAAAA-MM-DD`), un historial por jugador con
+reglas de "una vez por fecha", y cada juego solitario acepta `?dia=`. Los avisos de "vuelve a jugar"
+siguen fuera (D-221): estos solo salen si el jugador los pidió, y se calman solos si no los usa.
+Es un diseño aprobado que falta construir: va en cinco PR, los cuatro primeros detrás del
+laboratorio (`UNO_AL_DIA_EN_LABS`), según "Por partes" de [UNO-AL-DIA.md](UNO-AL-DIA.md).
 
 ## D-233 · "Tus copas" marca las terminadas y las esconde tras un interruptor
 **Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** amplía D-220
