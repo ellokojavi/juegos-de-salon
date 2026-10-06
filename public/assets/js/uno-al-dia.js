@@ -187,8 +187,9 @@ export function puntajeDudo({ gano, dados, rondas }) {
 /* ------------------------------------------------------------------ */
 
 /**
- * Mientras se prueba, Uno al día se ve en el sitio local y en los celulares que lo activan en
- * `/labs/` (como los avisos y los rankings, D-212, D-223).
+ * La puerta del laboratorio (D-230). Uno al día salió en v0.121.0 (`false`: se ve para todos); si
+ * algo vuelve a probarse antes de abrirse, con `true` se ve solo en el sitio local y en los celulares
+ * que lo activan en `/labs/`, como los avisos y los rankings (D-212, D-223).
  */
 export const UNO_AL_DIA_EN_LABS = false;
 export const LABS_UNO_AL_DIA_KEY = 'juegos-de-salon:labs-uno-al-dia';
@@ -209,7 +210,7 @@ export const LABS_FORMA_KEY = 'juegos-de-salon:labs-uno-al-dia-forma';
 export function formaAcceso({ storage = globalThis.localStorage, loc = globalThis.location } = {}) {
   try {
     const q = new URLSearchParams(loc?.search || '').get('uad');
-    // `?uad=no` lo esconde: las capturas del README se sacan en el sitio local, donde se ve sin /labs/
+    // `?uad=no` lo esconde (para mirar la portada sin él)
     if (q === 'tarjeta' || q === 'boton' || q === 'no') return q;
     return storage.getItem(LABS_FORMA_KEY) === 'tarjeta' ? 'tarjeta' : 'boton';
   } catch (_) { return 'boton'; }
