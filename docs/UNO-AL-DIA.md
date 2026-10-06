@@ -1,6 +1,6 @@
 # Uno al día
 
-**Estado:** aprobada por el dueño (D-230); PR 3 (jugador, rankings, comodines e invitaciones) en v0.116.0; el PR 1, el núcleo, está hecho, en el laboratorio (v0.115.0) · **Fecha:** 2026-10-05 ·
+**Estado:** aprobada por el dueño (D-230); en el laboratorio: el PR 1, el núcleo (v0.115.0), el PR 2, los juegos de grupo (v0.116.0), y el PR 3, jugador, rankings, comodines e invitaciones (v0.117.0) · **Fecha:** 2026-10-05 ·
 **Toca:** RP-44, D-188 (Juego al azar), D-212 y D-217 (rankings), D-221 a D-229 (avisos), D-97 (semillas)
 
 Una modalidad nueva en la portada, al lado de **Juego al azar**: cada día la app sorprende con un
@@ -398,7 +398,45 @@ celular saca la palabra, la flota o los dados de la semilla del día.
 - Se prueba con `uno-al-dia.test.mjs` (el mazo, la semilla, la racha, lo anotado) y
   `tools/e2e/uno-al-dia.mjs` (de la portada a `/today/`, a 320 px y en los cuatro idiomas).
 
-### Lo que el PR 3 hizo (v0.116.0)
+### Lo que el PR 2 hizo (v0.116.0)
+
+- **Entran El Ahorcado, Batalla Naval y Dudo** al mazo, con el id de la portada (`ahorcado`,
+  `batalla-naval`, `dudo`) y `desde: '2026-10-07'` (`DESDE_GRUPO`). Los días anteriores no
+  cambian: el primer mazo, del 5 al 11 de octubre, sigue con los 7 solitarios, y los 10 se barajan
+  desde el mazo siguiente, que empieza el 12 (el primero de grupo sale el 13, Dudo). Con 10 juegos la
+  espera es de 7 días, como decía el diseño. El link es el de su página: `/hangman/?hoy`,
+  `/battleship/?hoy`, `/liars-dice/?hoy`. El dado y `/today/` los nombran con su nombre y emoji
+  de `games.js` (Batalla Naval es ⚓, no 🚢 como decía la tabla de arriba).
+- **Abren directo el modo para uno**, sin elegir modo: la intro de siempre lleva la línea de Uno al
+  día y, en lugar de los modos, un solo botón **Jugar el de hoy**. El Ahorcado juega solo con el
+  mazo del celular; Batalla Naval y Dudo, contra el celular (Dudo, un rival). Los ajustes son los de
+  siempre y el nombre, el que se recuerda o "Jugador 1": no se pide nada. En Batalla Naval el
+  jugador igual coloca su flota (con **Al azar** a mano).
+- **Lo común sale de la semilla del día** con `azarDel(semilla, que)`: la palabra del Ahorcado (la
+  semilla del mazo), la flota del celular en Batalla Naval y los dados de cada ronda de Dudo (por
+  ronda y rol). Son partidas locales, así que la semilla no adelanta secretos (D-70 y C-10 hablan de
+  la sala, donde se sigue tirando con el azar del navegador). En los dos con rival, la intro agrega
+  "Todos parten con los mismos dados." o "Todos se enfrentan a la misma flota del celular." (se
+  cambió "con la misma flota" por "se enfrentan a": la flota es la del celular, no la de cada uno).
+- **Los puntajes**, funciones puras en `uno-al-dia.js` con su prueba: El Ahorcado, las vidas que
+  quedan llevadas a 100 (0 si lo colgaron; el tiempo que se anota es el del juego). Batalla Naval,
+  ganando, 100 con 17 disparos y bajando parejo hasta 40 con 100; perdiendo, 6 por casilla
+  acertada **hasta 39**: con 6 por casilla, 7 aciertos ya pasaban de 40, el mínimo al ganar, así que
+  se topó para que perder valga siempre menos. Dudo, ganando, 60 más 8 por dado que queda;
+  perdiendo, 10 por ronda aguantada (todas menos la última) hasta 50.
+- **La tarjeta del resultado** va arriba de los botones del juego, que siguen ahí (a diferencia de
+  los solitarios, donde la tarjeta reemplaza "Jugar otra vez"): el resultado de cada juego tiene su
+  propia forma. La revancha del juego es una partida cualquiera, sin tarjeta; para repetir el
+  desafío está **Repetir el de hoy**. El primer intento cuenta; los siguientes son práctica.
+- La lógica común de los tres está en `uno-al-dia-ui.js`: `modoHoy` (la fecha, la semilla, si ya
+  jugó y el salto al juego de hoy), `introHoy`, `terminarHoy` y `ponerTarjeta`.
+- **Sin rankings del día** todavía (PR 3), y estos tres no anotan en el ranking normal jugando solo
+  o contra el celular más que lo de siempre (las victorias contra el celular, D-215).
+- Se prueba con `uno-al-dia.test.mjs` (el mazo con 10 juegos, los días anteriores sin cambios, las
+  fórmulas, la flota con semilla) y `tools/e2e/uno-al-dia-grupo.mjs` (cada juego jugado hasta el
+  resultado con el reloj en un día en que le toca).
+
+### Lo que el PR 3 hizo (v0.117.0)
 
 - **La historia en Firebase** va por número de día y no por fecha: `unoAlDia/<jid>/<n>` =
   `{ j, s, ms, at, w? }`, con `n` los días desde 1970 (`numDia`, 20731 es el 5 de octubre de 2026).

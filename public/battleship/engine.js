@@ -71,17 +71,20 @@ export function isValidLayout(layout, n = N) {
   return FLEET.every(f => layout[f.id] && ['h', 'v'].includes(layout[f.id].dir) && isValidPlacement(layout, f.id, layout[f.id], n));
 }
 
-/** Flota al azar (los barcos pueden tocarse; solo no se superponen). */
-export function randomLayout(n = N) {
+/**
+ * Flota al azar (los barcos pueden tocarse; solo no se superponen). `rand` es el azar: el del
+ * navegador, o uno con semilla para la flota del celular en Uno al día (D-230), la misma para todos.
+ */
+export function randomLayout(n = N, rand = Math.random) {
   const layout = {};
   for (const f of FLEET) {
     for (let tries = 0; tries < 500; tries++) {
-      const dir = Math.random() < 0.5 ? 'h' : 'v';
-      const r = Math.floor(Math.random() * (dir === 'v' ? n - f.size + 1 : n));
-      const c = Math.floor(Math.random() * (dir === 'h' ? n - f.size + 1 : n));
+      const dir = rand() < 0.5 ? 'h' : 'v';
+      const r = Math.floor(rand() * (dir === 'v' ? n - f.size + 1 : n));
+      const c = Math.floor(rand() * (dir === 'h' ? n - f.size + 1 : n));
       if (isValidPlacement(layout, f.id, { r, c, dir }, n)) { layout[f.id] = { r, c, dir }; break; }
     }
-    if (!layout[f.id]) return randomLayout(n); // muy improbable; reintentar desde cero
+    if (!layout[f.id]) return randomLayout(n, rand); // muy improbable; reintentar desde cero
   }
   return layout;
 }

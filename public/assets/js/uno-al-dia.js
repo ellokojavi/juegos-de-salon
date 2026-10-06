@@ -21,8 +21,12 @@ import { semana } from './records.js';
 /** El día n.° 1. Mientras esté en el laboratorio se puede mover; al salir queda fijo. */
 export const LANZAMIENTO = '2026-10-05';
 
+/** El día en que entran El Ahorcado, Batalla Naval y Dudo (PR 2 de Uno al día). */
+export const DESDE_GRUPO = '2026-10-07';
+
 /**
- * Los juegos que pueden salir, con el id de La Copa (`cup/games/`) y la fecha desde la que entran.
+ * Los juegos que pueden salir y la fecha desde la que entran. Los solitarios van con su id de La
+ * Copa (`cup/games/`); los de grupo, con el de la portada (`games.js`), que es el de su página.
  * Un juego nuevo se agrega con una fecha de hoy en adelante, nunca del pasado: si no, cambiaría
  * el juego de días que alguien ya jugó.
  */
@@ -34,7 +38,12 @@ export const JUEGOS_DIA = [
   { id: 'anio', emoji: '📅', desde: LANZAMIENTO },
   { id: 'reinas', emoji: '👑', desde: LANZAMIENTO },
   { id: 'desenredo', emoji: '🧶', desde: LANZAMIENTO },
+  { id: 'ahorcado', emoji: '🪢', desde: DESDE_GRUPO },
+  { id: 'batalla-naval', emoji: '⚓', desde: DESDE_GRUPO },
+  { id: 'dudo', emoji: '🎲', desde: DESDE_GRUPO },
 ];
+/** Los de grupo: tienen su propio motor y su modo para uno (contra el celular o con su mazo). */
+export const GRUPO = ['ahorcado', 'batalla-naval', 'dudo'];
 export const juegoDia = id => JUEGOS_DIA.find(j => j.id === id) || null;
 
 /**
@@ -126,7 +135,7 @@ export function crearCalendario(juegos = JUEGOS_DIA, lanzamiento = LANZAMIENTO) 
 }
 
 const CAL = crearCalendario();
-/** El id (de La Copa) del juego de esa fecha. */
+/** El id del juego de esa fecha (de La Copa, o de la portada si es de grupo). */
 export const juegoDel = fecha => CAL.juegoDel(fecha);
 
 /** Las letras de un código de copa (`cup/engine.js`: sin I ni O). */
@@ -135,6 +144,42 @@ const LETRAS = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
 export function semillaDel(fecha) {
   const r = mulberry(hash32(`uno-al-dia:${fecha}`));
   return Array.from({ length: 5 }, () => LETRAS[Math.floor(r() * LETRAS.length)]).join('');
+}
+
+/**
+ * Un azar que sale de la semilla del día, para lo que reparte un juego de grupo contra el celular
+ * (la flota, los dados de una ronda). `que` lo separa: cada cosa tiene su propia tira de números.
+ * Solo para partidas locales: en una sala, la semilla es pública y adelantaría secretos (C-10).
+ */
+export const azarDel = (semilla, que) => mulberry(hash32(`${semilla}:${que}`));
+
+/* ------------------------------------------------------------------ */
+/* Los puntajes de los juegos de grupo (0 a 100)                       */
+/* ------------------------------------------------------------------ */
+
+const entre = (x, a, b) => Math.max(a, Math.min(b, x));
+
+/** El Ahorcado: las vidas que quedan llevadas a 100; colgado, 0. El tiempo desempata aparte. */
+export function puntajeAhorcado({ vidas, total }) {
+  return total > 0 ? Math.round(100 * entre(vidas, 0, total) / total) : 0;
+}
+
+/** Las casillas de la flota: con menos disparos no se puede hundir. */
+export const CASILLAS_FLOTA = 17;
+/**
+ * Batalla Naval: ganando, 100 con 17 disparos (sin fallar ninguno) y bajando parejo hasta 40 con
+ * los 100 disparos del tablero. Perdiendo, 6 por casilla de barco acertada, hasta 39: siempre
+ * menos que ganar.
+ */
+export function puntajeNaval({ gano, disparos, aciertos }) {
+  if (gano) return entre(Math.round(100 - (disparos - CASILLAS_FLOTA) * 60 / (100 - CASILLAS_FLOTA)), 40, 100);
+  return entre(6 * aciertos, 0, 39);
+}
+
+/** Dudo: ganar vale 60 y cada dado que te queda suma 8; perdiendo, 10 por ronda aguantada, hasta 50. */
+export function puntajeDudo({ gano, dados, rondas }) {
+  if (gano) return entre(60 + 8 * dados, 60, 100);
+  return entre(10 * rondas, 0, 50);
 }
 
 /* ------------------------------------------------------------------ */
@@ -295,8 +340,8 @@ export function juntar({ dias = {}, regalos = null } = {}, { storage = globalThi
 }
 
 /**
- * Dónde se juega el de hoy, desde la raíz del sitio: la página del juego suelto (`queens/?hoy`)
- * o, si no tiene (Línea Relámpago, el número), la genérica (`cup/suelto/?linea&hoy`).
- * `slugs` es `{ id: carpeta }` de los sueltos (games.js).
+ * Dónde se juega el de hoy, desde la raíz del sitio: la página del juego (`queens/?hoy`,
+ * `hangman/?hoy`) o, si no tiene (Línea Relámpago, el número), la genérica (`cup/suelto/?linea&hoy`).
+ * `slugs` es `{ id: carpeta }` de los sueltos y de los juegos de la portada (games.js).
  */
 export const rutaDel = (id, slugs) => (slugs[id] ? `${slugs[id]}/?hoy` : `cup/suelto/?${id}&hoy`);

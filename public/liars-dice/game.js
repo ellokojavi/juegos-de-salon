@@ -18,6 +18,8 @@ import { createLocalTransport } from '../assets/js/transport/local.js';
 import { trackStart, trackVisit, trackFinish } from '../assets/js/transport/stats.js';
 import { finDePartida, bloqueVictorias } from '../assets/js/ranking.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
+import { modoHoy, introHoy, terminarHoy, ponerTarjeta } from '../assets/js/uno-al-dia-ui.js';
+import { azarDel, puntajeDudo } from '../assets/js/uno-al-dia.js';
 import {
   PINTAS, MIN_PLAYERS, MAX_PLAYERS, MIN_CALZAR, buildState, botMove, minBid, bidOk,
   readDice, rollDice, writeDice, countPinta, sha256, randomSalt, verifyOpen,
@@ -36,6 +38,18 @@ const ROLES = ['A', 'B', 'C', 'D', 'E', 'F'];
 const CPU_MS = 1100;
 const store = createSessionStore(GAME_ID);
 const nameStore = createNameStore(GAME_ID);
+/** Uno al día (D-230): con `?hoy`, contra el celular y con los dados del día. */
+const HOY = modoHoy(GAME_ID);
+
+/**
+ * Los dados de un jugador en una ronda de Uno al día: salen de la semilla del día, la ronda y el
+ * rol, así todos parten con los mismos. Solo contra el celular, que es local: en una sala la
+ * semilla adelantaría los dados del rival (D-70, C-10), y ahí se sigue tirando con `rollDice`.
+ */
+function dadosDelDia(semilla, ronda, rol, n) {
+  const r = azarDel(semilla, `dudo:${ronda}:${rol}`);
+  return Array.from({ length: n }, () => 1 + Math.floor(r() * 6));
+}
 
 let S = null;   // sesión: modo, transporte, roles de este celular, quién tiene el aparato
 let M = null;   // partida: config, nombres y la lista de jugadas
@@ -157,7 +171,7 @@ async function act() {
     const mios = v.waiting.filter(r => S.roles.includes(r) && !S.rolled.has(`${v.round}:${r}`));
     for (const r of mios) {
       S.rolled.add(`${v.round}:${r}`);
-      const dados = rollDice(v.st[r].dice);
+      const dados = S.hoy ? dadosDelDia(S.hoy.semilla, v.round, r, v.st[r].dice) : rollDice(v.st[r].dice);
       if (S.mode === 'online') {
         // Los dados no viajan: se compromete el hash y se guardan acá hasta el destape (C-10)
         const salt = randomSalt();
@@ -500,6 +514,13 @@ function renderResult(v) {
 
   const acciones = $('#result-actions');
   acciones.innerHTML = '';
+  // Uno al día: la tarjeta va arriba de los botones; el resultado del juego queda como siempre.
+  // Perdiendo, cuentan las rondas que aguantó: todas menos la que lo dejó sin dados.
+  if (S.hoy) {
+    const gano = v.winner === 'A';
+    const s = puntajeDudo({ gano, dados: v.st.A.dice, rondas: gano ? v.history.length : v.history.length - 1 });
+    ponerTarjeta(terminarHoy(S.hoy, { s, ms: Date.now() - S.hoy.inicio, lang, alTocar: () => SFX.tap() }), acciones);
+  }
   acciones.append(
     el('button', {
       class: 'btn btn--yellow',
@@ -622,11 +643,15 @@ async function rematchOnline() {
 /* ------------------------------------------------------------------ */
 /* Arranque de una partida                                             */
 /* ------------------------------------------------------------------ */
-function startMatch(mode, names, config) {
+function startMatch(mode, names, config, hoy = null) {
   store.clear();
   const players = config.players;
   const transport = createLocalTransport();
   startSession({ mode, transport, roles: players.slice(), config, names });
+  // La revancha es una partida cualquiera: no lleva `hoy`
+  S.hoy = hoy;
+  document.getElementById('uad-tarjeta')?.remove();   // la de la partida anterior, si la hubo
+  if (hoy && !hoy.anotado) hoy.inicio = Date.now();
   S.uiRole = mode === 'cpu' ? 'A' : null;
   S.shownRound = 0;
   S.shownWin = false;
@@ -849,6 +874,19 @@ function renderSetupOnline(codigoInvitado = '') {
 /* ------------------------------------------------------------------ */
 /* Arranque                                                            */
 /* ------------------------------------------------------------------ */
+/**
+ * Uno al día (D-230): la intro con su línea y un solo botón, que abre directo el duelo contra el
+ * celular (un rival) con los ajustes de siempre y el nombre que se recuerda. Lo común son los
+ * dados; el celular apuesta como siempre.
+ */
+function introDeHoy() {
+  $('#modes').replaceChildren(
+    introHoy(HOY, { lang, extra: COMMON[lang].uad.mismosDados }),
+    el('button', { class: 'btn btn--yellow', id: 'btn-uad-jugar', onClick: () => {
+      startMatch('cpu', { A: nameStore.get() || fmt(T.playerPlaceholder, { n: 1 }), B: T.cpuName }, { ...DEFAULT_CONFIG, players: ['A', 'B'] }, HOY);
+    } }, COMMON[lang].uad.jugar));
+}
+
 function init() {
   document.documentElement.lang = lang;
   document.title = T.docTitle;
@@ -859,6 +897,8 @@ function init() {
   document.addEventListener('click', e => { if (e.target.closest('.btn, .mode, .pinta, .step, .lang-toggle button')) SFX.tap(); });
   sparkles(12);
   renderRules();
+  if (HOY?.fuera) return;   // se va al juego de hoy
+  if (HOY) return introDeHoy();
   renderModes();
   // Las victorias de este juego y entrar con nombre y PIN (D-212); en el laboratorio, solo donde se activaron
   $('#rk-slot')?.append(bloqueVictorias({ juego: GAME_ID, nombre: T.title, alTocar: () => SFX.tap() }));
