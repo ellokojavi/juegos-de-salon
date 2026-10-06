@@ -472,8 +472,13 @@ let unico = null;
  * pruebas (localhost, la red de la casa y Tailscale: `envOf`, D-138) y con `?prueba`, el de prueba, para que los guiones no escriban en los rankings de
  * verdad. `?records=firebase` fuerza Firebase para mirarlo a mano.
  */
-export async function jugador() {
-  if (unico) return unico;
+export function jugador() {
+  // La promesa, no el jugador: dos piezas que lo piden mientras carga reciben el mismo, y lo que
+  // una escucha (entrar, salir) le llega a la otra. Con dos, "Salir" no redibujaba nada.
+  return unico ||= crear().catch(e => { unico = null; throw e; });
+}
+
+async function crear() {
   const q = new URLSearchParams(location.search);
   const local = q.get('records') !== 'firebase' && (q.has('prueba') || envOf(location) === 'dev');
   const almacen = local
@@ -481,7 +486,7 @@ export async function jugador() {
     : (await import('./jugador-firebase.js')).crearAlmacenFirebase();
   const { SUELTOS } = await import('./games.js');
   const pais = () => { try { return countryOf({ tz: Intl.DateTimeFormat().resolvedOptions().timeZone, lang: navigator.language }); } catch (_) { return ''; } };
-  unico = crearJugador({ almacen, juegos: SUELTOS.filter(g => !g.labs).map(g => g.id), pais });
-  unico.completarPais().catch(() => {});
-  return unico;
+  const J = crearJugador({ almacen, juegos: SUELTOS.filter(g => !g.labs).map(g => g.id), pais });
+  J.completarPais().catch(() => {});
+  return J;
 }

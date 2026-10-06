@@ -1,13 +1,15 @@
 // Ejecutar: node public/assets/js/uno-al-dia.test.mjs
-// Uno al día (D-230): el mazo de juegos, la semilla del día, la racha y lo que se anota en el celular.
+// Uno al día (D-230): el mazo de juegos, la semilla del día, la racha, lo que se anota en el celular
+// y los puntajes de los juegos de grupo (El Ahorcado, Batalla Naval, Dudo).
 import assert from 'node:assert/strict';
 import {
-  JUEGOS_DIA, LANZAMIENTO, SIN_REPETIR, crearCalendario, juegoDel, semillaDel, numeroDel, sumarDias, diasEntre,
+  JUEGOS_DIA, LANZAMIENTO, SIN_REPETIR, DESDE_GRUPO, GRUPO, azarDel, puntajeAhorcado, puntajeNaval, puntajeDudo, CASILLAS_FLOTA, crearCalendario, juegoDel, semillaDel, numeroDel, sumarDias, diasEntre,
   fechaLocal, faltaParaManana, racha, mejorRacha, recorrer, numDia, fechaDeNum, semanaDe, juntar, COMODINES_MAX, porJuego, anotar, leer, estado, rutaDel, unoAlDiaVisible, activarUnoAlDia, formaAcceso, elegirForma, KEY,
 } from './uno-al-dia.js';
 import { JUEGOS } from '../../cup/games/index.js';
 import { esCodigo } from '../../cup/engine.js';
-import { SUELTOS } from './games.js';
+import { GAMES, SUELTOS } from './games.js';
+import { randomLayout, isValidLayout } from '../../battleship/engine.js';
 
 const almacen = () => { const m = new Map(); return { getItem: k => (m.has(k) ? m.get(k) : null), setItem: (k, v) => m.set(k, String(v)), removeItem: k => m.delete(k) }; };
 const fechas = (desde, n) => Array.from({ length: n }, (_, i) => sumarDias(desde, i));
@@ -22,40 +24,64 @@ assert.match(fechaLocal(), /^\d{4}-\d{2}-\d{2}$/);
 assert.equal(fechaLocal(new Date(2026, 9, 5, 23, 59).getTime()), '2026-10-05', 'la fecha es la del reloj del jugador');
 assert.equal(faltaParaManana(new Date(2026, 9, 5, 23, 0).getTime()), 3600000, 'a las 23:00 falta una hora');
 
-// Cada juego del mazo existe en La Copa y se puede generar con la semilla del día
-for (const j of JUEGOS_DIA) assert.ok(JUEGOS[j.id]?.generar, `${j.id}: no está en cup/games`);
+// Cada solitario del mazo existe en La Copa y se puede generar con la semilla del día; cada juego
+// de grupo está en la portada
+for (const j of JUEGOS_DIA) {
+  if (GRUPO.includes(j.id)) assert.ok(GAMES.find(g => g.id === j.id)?.available, `${j.id}: no está en games.js`);
+  else assert.ok(JUEGOS[j.id]?.generar, `${j.id}: no está en cup/games`);
+}
+assert.equal(JUEGOS_DIA.length, 10, 'son 10 juegos: 7 solitarios y 3 de grupo');
+assert.ok(JUEGOS_DIA.every(j => j.desde >= LANZAMIENTO), 'ningún juego entra antes del lanzamiento');
 const dias = fechas(LANZAMIENTO, 400);
 for (const f of dias.slice(0, 30)) {
   const s = semillaDel(f);
   assert.ok(esCodigo(s), `${f}: la semilla ${s} no es un código de copa`);
+  if (GRUPO.includes(juegoDel(f))) continue;
   assert.ok(JUEGOS[juegoDel(f)].generar(s, 1, { lang: 'es' }), `${f}: ${juegoDel(f)} no genera con ${s}`);
 }
 assert.equal(semillaDel('2026-10-05'), semillaDel('2026-10-05'), 'la misma fecha, la misma semilla');
 assert.notEqual(semillaDel('2026-10-05'), semillaDel('2026-10-06'));
 
-// El mazo: cada juego una vez antes de repetir, y ninguno vuelve antes de tiempo
-const N = JUEGOS_DIA.length, espera = Math.min(SIN_REPETIR, N - 2);
+// El mazo: cada juego una vez antes de repetir, y ninguno vuelve antes de tiempo. Cada mazo tiene
+// los juegos que ya habían entrado al barajarlo: el primero, los 7 solitarios; desde el segundo, los
+// 10, y con 10 la espera es de 7 días.
 const salidos = dias.map(juegoDel);
-for (let k = 0; k + N <= salidos.length; k += N) {
-  assert.equal(new Set(salidos.slice(k, k + N)).size, N, `el mazo ${k / N} repite un juego`);
+const mazos = [];
+for (let k = 0; k < salidos.length;) {
+  const n = JUEGOS_DIA.filter(j => j.desde <= dias[k]).length;
+  mazos.push({ k, n, espera: Math.min(SIN_REPETIR, n - 2) });
+  const mazo = salidos.slice(k, k + n);
+  if (mazo.length === n) assert.equal(new Set(mazo).size, n, `el mazo que empieza el ${dias[k]} repite un juego`);
+  k += n;
 }
-for (let i = 0; i < salidos.length; i++) {
-  const antes = salidos.slice(Math.max(0, i - espera + 1), i);
-  assert.ok(!antes.includes(salidos[i]), `${dias[i]}: ${salidos[i]} volvió antes de ${espera} días`);
+assert.deepEqual(mazos.slice(0, 3).map(m => m.n), [7, 10, 10], 'el primer mazo trae 7 juegos y los siguientes, 10');
+assert.equal(mazos[1].espera, 7, 'con 10 juegos, ninguno vuelve antes de 7 días');
+for (const { k, n, espera } of mazos) {
+  for (let i = k; i < Math.min(k + n, salidos.length); i++) {
+    const antes = salidos.slice(Math.max(0, i - espera + 1), i);
+    assert.ok(!antes.includes(salidos[i]), `${dias[i]}: ${salidos[i]} volvió antes de ${espera} días`);
+  }
 }
+for (const id of GRUPO) assert.ok(salidos.slice(0, 7 + 10).includes(id), `${id} no salió en el segundo mazo`);
+// Los días antes de que entraran los de grupo no cambian: son los del mazo de 7
+const solo7 = crearCalendario(JUEGOS_DIA.filter(j => !GRUPO.includes(j.id)));
+const viejos = fechas(LANZAMIENTO, diasEntre(LANZAMIENTO, DESDE_GRUPO));
+assert.ok(viejos.length >= 2, 'los de grupo entran después del lanzamiento');
+assert.deepEqual(viejos.map(juegoDel), viejos.map(f => solo7.juegoDel(f)), 'sumar los de grupo cambió días ya jugados');
+assert.equal(juegoDel(LANZAMIENTO), 'desenredo', 'el día n.° 1 sigue siendo Desenredo');
 assert.equal(juegoDel(sumarDias(LANZAMIENTO, -1)), null, 'antes del lanzamiento no hay juego');
 // Los mazos no salen siempre en el mismo orden
-assert.notDeepEqual(salidos.slice(0, N), salidos.slice(N, 2 * N), 'el segundo mazo repite el orden del primero');
+assert.notDeepEqual(salidos.slice(mazos[1].k, mazos[2].k), salidos.slice(mazos[2].k, mazos[3].k), 'el tercer mazo repite el orden del segundo');
 // Otra instancia da lo mismo (no depende del orden de las consultas)
 const otro = crearCalendario();
 assert.equal(otro.juegoDel(dias[300]), juegoDel(dias[300]));
 
 // Un juego nuevo entra en el mazo siguiente y no cambia los días que ya pasaron
 const nuevo = sumarDias(LANZAMIENTO, 40);
-const conNuevo = crearCalendario([...JUEGOS_DIA, { id: 'ahorcado', emoji: '🪢', desde: nuevo }]);
+const conNuevo = crearCalendario([...JUEGOS_DIA, { id: 'nuevo', emoji: '🆕', desde: nuevo }]);
 const pasados = fechas(LANZAMIENTO, 40);
 assert.deepEqual(pasados.map(f => conNuevo.juegoDel(f)), pasados.map(juegoDel), 'el juego nuevo cambió días pasados');
-assert.ok(fechas(nuevo, 2 * (N + 1)).some(f => conNuevo.juegoDel(f) === 'ahorcado'), 'el juego nuevo no salió en los mazos siguientes');
+assert.ok(fechas(nuevo, 2 * (JUEGOS_DIA.length + 1)).some(f => conNuevo.juegoDel(f) === 'nuevo'), 'el juego nuevo no salió en los mazos siguientes');
 
 // La racha
 const d = { '2026-10-01': {}, '2026-10-02': {}, '2026-10-03': {}, '2026-10-05': {} };
@@ -134,10 +160,13 @@ e = estado({ storage: st2, ahora });
 assert.equal(e.racha, 2);
 assert.equal(e.dia.s, 90);
 
-// Dónde se juega
-const slugs = Object.fromEntries(SUELTOS.map(g => [g.id, g.slug]));
+// Dónde se juega (las carpetas, como las arma uno-al-dia-ui.js)
+const slugs = Object.fromEntries([...GAMES.filter(g => !g.torneo).map(g => [g.id, g.path.replace(/\/$/, '')]), ...SUELTOS.map(g => [g.id, g.slug])]);
 assert.equal(rutaDel('reinas', slugs), 'queens/?hoy');
 assert.equal(rutaDel('linea', slugs), 'cup/suelto/?linea&hoy');
+assert.equal(rutaDel('ahorcado', slugs), 'hangman/?hoy');
+assert.equal(rutaDel('batalla-naval', slugs), 'battleship/?hoy');
+assert.equal(rutaDel('dudo', slugs), 'liars-dice/?hoy');
 for (const j of JUEGOS_DIA) assert.ok(slugs[j.id] || ['linea', 'numero'].includes(j.id), `${j.id}: sin página para jugarlo`);
 
 // El laboratorio: en el sitio publicado, solo con la marca de /labs/
@@ -158,5 +187,33 @@ elegirForma('boton', fm);
 assert.equal(formaAcceso({ storage: fm, loc: { search: '?uad=tarjeta' } }), 'tarjeta');
 assert.equal(formaAcceso({ storage: fm, loc: sinQ }), 'boton');
 assert.equal(formaAcceso({ storage: fm, loc: { search: '?uad=no' } }), 'no', 'las capturas del README lo esconden');
+
+// El azar del día: el mismo en todos los celulares, distinto para cada cosa que reparte
+const tira = (r, n = 5) => Array.from({ length: n }, () => r());
+assert.deepEqual(tira(azarDel('ABCDE', 'flota')), tira(azarDel('ABCDE', 'flota')));
+assert.notDeepEqual(tira(azarDel('ABCDE', 'flota')), tira(azarDel('ABCDE', 'dudo:0:A')));
+// La flota del celular de Batalla Naval: válida, y la misma con la misma semilla
+const flota = randomLayout(10, azarDel(semillaDel(DESDE_GRUPO), 'flota'));
+assert.ok(isValidLayout(flota), 'la flota del día es válida');
+assert.deepEqual(randomLayout(10, azarDel(semillaDel(DESDE_GRUPO), 'flota')), flota, 'la flota del día es la misma para todos');
+assert.notDeepEqual(randomLayout(10, azarDel(semillaDel(sumarDias(DESDE_GRUPO, 1)), 'flota')), flota, 'cada día, otra flota');
+
+// Los puntajes de los juegos de grupo, de 0 a 100
+assert.equal(puntajeAhorcado({ vidas: 6, total: 6 }), 100, 'sin errores, 100');
+assert.equal(puntajeAhorcado({ vidas: 3, total: 6 }), 50);
+assert.equal(puntajeAhorcado({ vidas: 1, total: 6 }), 17);
+assert.equal(puntajeAhorcado({ vidas: 0, total: 6 }), 0, 'colgado, 0');
+assert.equal(puntajeNaval({ gano: true, disparos: CASILLAS_FLOTA, aciertos: 17 }), 100, 'hundirla sin fallar, 100');
+assert.equal(puntajeNaval({ gano: true, disparos: 100, aciertos: 17 }), 40, 'con todo el tablero, el mínimo al ganar');
+assert.ok(puntajeNaval({ gano: true, disparos: 50, aciertos: 17 }) > puntajeNaval({ gano: true, disparos: 60, aciertos: 17 }), 'menos disparos, más puntos');
+assert.equal(puntajeNaval({ gano: true, disparos: 50, aciertos: 17 }), 76);
+assert.equal(puntajeNaval({ gano: false, disparos: 40, aciertos: 5 }), 30, 'perdiendo, 6 por casilla acertada');
+assert.equal(puntajeNaval({ gano: false, disparos: 0, aciertos: 0 }), 0);
+for (let a = 0; a <= 16; a++) assert.ok(puntajeNaval({ gano: false, disparos: 99, aciertos: a }) < 40, `perder con ${a} aciertos vale menos que ganar`);
+assert.equal(puntajeDudo({ gano: true, dados: 5, rondas: 6 }), 100, 'ganar sin perder un dado, 100');
+assert.equal(puntajeDudo({ gano: true, dados: 1, rondas: 9 }), 68, 'ganar con un dado, 68');
+assert.equal(puntajeDudo({ gano: false, dados: 0, rondas: 3 }), 30, 'perdiendo, 10 por ronda aguantada');
+assert.equal(puntajeDudo({ gano: false, dados: 0, rondas: 12 }), 50, 'hasta 50');
+for (let r = 0; r < 20; r++) assert.ok(puntajeDudo({ gano: false, dados: 0, rondas: r }) < puntajeDudo({ gano: true, dados: 1, rondas: r }), 'perder vale menos que ganar');
 
 console.log('uno-al-dia: ok');

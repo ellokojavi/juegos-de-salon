@@ -1,11 +1,19 @@
 # Changelog
 
-## 0.116.0 — 2026-10-06
+## 0.117.0 — 2026-10-06
 - **Uno al día con rankings, comodines e invitaciones, en el laboratorio** (D-230): entrando con
   tu nombre y PIN, tu Uno al día pasa de un celular a otro y entra a los rankings de hoy, de la
   semana y de rachas. Cada 7 días seguidos ganas un comodín 🧊, que salva tu racha si un día no
   juegas. Puedes invitar a un amigo: le llega "Sara te desafía" con tu racha, juega el mismo desafío,
   ven quién ganó y tú ganas un comodín.
+
+## 0.116.0 — 2026-10-06
+- **Uno al día suma El Ahorcado, Batalla Naval y Dudo, en el laboratorio** (D-230): desde el 12 de
+  octubre el dado también puede caer en ellos. Abren directo, sin elegir modo: El Ahorcado con una
+  palabra del mazo, Batalla Naval y Dudo contra el celular. La palabra, la flota del celular y los
+  dados son los mismos para todos ese día. El puntaje va de 0 a 100: en El Ahorcado, por las vidas
+  que te quedan; en Batalla Naval, por los disparos que usaste o los barcos que tocaste; en Dudo,
+  por los dados que te quedan o las rondas que aguantaste.
 
 ## 0.115.0 — 2026-10-06
 - **Uno al día, en el laboratorio** (D-230): un botón nuevo en la portada, al lado de Juego al
@@ -14,6 +22,11 @@
   `/today/` están tu racha, un calendario del mes y cómo te va en cada juego. Por ahora entran los 7
   juegos de La Copa que se juegan solos, y todo se guarda en el celular. Se activa en `/labs/`,
   donde también se puede probar con una tarjeta junto a La Copa en vez del botón.
+
+## 0.114.2 — 2026-10-06
+- **Cambiar el PIN va en "Juegas como"** (D-236): al tocar tu nombre se despliegan Cambiar el PIN,
+  con una línea que explica para qué sirve, y Salir. En Rankings queda solo **Tus partidas**, con
+  cuántas veces jugaste cada juego.
 
 ## 0.114.1 — 2026-10-06
 - **Del dado al juego, sin corte** (D-235): en Juego al azar, el dado se desvanece en el fondo

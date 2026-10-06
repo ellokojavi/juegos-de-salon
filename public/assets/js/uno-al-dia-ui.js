@@ -5,15 +5,16 @@
  */
 import { el } from './ui.js';
 import { COMMON, SITIO, withLang } from './i18n.js';
-import { SUELTOS, PORTADA } from './games.js';
+import { GAMES, SUELTOS, PORTADA, gameById } from './games.js';
 import { tirar, TEXTOS as AZAR } from './azar.js';
 import { botonCompartir, cabecera, laminaResultado, nombreArchivo, compartir } from './compartir.js';
-import { JUEGOS_DIA, estado, rutaDel, numeroDel, sumarDias, COMODINES_MAX } from './uno-al-dia.js';
+import { JUEGOS_DIA, estado, rutaDel, numeroDel, sumarDias, COMODINES_MAX, leer, anotar, unoAlDiaVisible, fechaLocal, juegoDel, semillaDel } from './uno-al-dia.js';
 import { UNO_AL_DIA } from './records.js';
 
 export const fmt = (s, o = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (o[k] ?? ''));
 const textos = lang => (COMMON[lang] || COMMON.es);
-const SLUGS = Object.fromEntries(SUELTOS.map(g => [g.id, g.slug]));
+/** La carpeta de cada juego: los de la portada (`hangman`) y los sueltos de La Copa (`queens`). */
+const SLUGS = Object.fromEntries([...GAMES.filter(g => !g.torneo).map(g => [g.id, g.path.replace(/\/$/, '')]), ...SUELTOS.map(g => [g.id, g.slug])]);
 /** Dónde se juega hoy, desde la raíz del sitio. */
 export const rutaHoy = id => rutaDel(id, SLUGS);
 /** El link de Uno al día que se comparte. */
@@ -23,13 +24,14 @@ export const URL_HOY = `${SITIO}today/`;
 export const textoRacha = (n, lang) => (n === 1 ? textos(lang).uad.racha1 : fmt(textos(lang).uad.racha, { n }));
 
 /**
- * Los juegos del dado, con su nombre en cada idioma. El nombre está en las reglas de La Copa, que
- * pesan: se cargan recién al tirar, no al dibujar la portada.
+ * Los juegos del dado, con su nombre en cada idioma. El de un juego de grupo está en `games.js`;
+ * el de un solitario, en las reglas de La Copa, que pesan: se cargan recién al tirar, no al
+ * dibujar la portada.
  */
 async function caras() {
   const { juegosCopa, LOCALES } = await import('../../cup/rules.js');
   const por = Object.fromEntries(Object.keys(LOCALES).map(l => [l, juegosCopa(l)]));
-  return JUEGOS_DIA.map(j => ({ id: j.id, emoji: j.emoji, name: Object.fromEntries(Object.keys(por).map(l => [l, por[l][j.id].nombre])) }));
+  return JUEGOS_DIA.map(j => ({ id: j.id, emoji: j.emoji, name: gameById(j.id)?.name || Object.fromEntries(Object.keys(por).map(l => [l, por[l][j.id].nombre])) }));
 }
 
 /**
@@ -258,4 +260,50 @@ export async function tarjetaDesafio({ lang, raiz = '', inv, alTocar }) {
   return q
     ? el('section', { class: 'panel uad-desafio', id: 'uad-desafio' }, el('h2', {}, fmt(T.desafia, { n: q.n })), el('p', {}, `${frase(q.datos, { lang, nombre: q.n })}. ${T.atreves}`), jugar)
     : el('section', { class: 'panel uad-desafio', id: 'uad-desafio' }, el('h2', {}, T.invGeneral), el('p', {}, T.invGeneralSub), jugar);
+}
+
+/* ------------------------------------------------------------------ */
+/* Los juegos de grupo jugados como Uno al día                         */
+/* ------------------------------------------------------------------ */
+
+/** "1:05", como el reloj de La Copa. */
+const mmss = ms => { const t = Math.round((ms || 0) / 1000); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`; };
+
+/**
+ * El modo `?hoy` de un juego de grupo (El Ahorcado, Batalla Naval, Dudo), como el de los
+ * solitarios en `cup/game.js`: sin `?hoy` o fuera del laboratorio, null. Si hoy toca otro juego (un
+ * link de ayer, o pasó la medianoche), se va al de hoy y devuelve `{ fuera: true }`. Si no, la
+ * fecha del jugador, la semilla del día y si ya lo jugó (entonces esta partida es práctica).
+ */
+export function modoHoy(id, { raiz = '../', loc = globalThis.location } = {}) {
+  if (!new URLSearchParams(loc.search).has('hoy') || !unoAlDiaVisible()) return null;
+  const fecha = fechaLocal(), deHoy = juegoDel(fecha);
+  if (deHoy !== id) { loc.replace(raiz + rutaHoy(deHoy)); return { fuera: true }; }
+  return { id, fecha, semilla: semillaDel(fecha), ya: !!leer().dias[fecha], inicio: 0 };
+}
+
+/**
+ * La línea de la intro: "📅 Uno al día: hoy todos juegan el mismo desafío." (o que es práctica),
+ * y si el rival responde a lo que haces, qué es lo común (`extra`: "Todos parten con los mismos dados.").
+ */
+export function introHoy(hoy, { lang, extra = '' }) {
+  const T = textos(lang).uad;
+  return el('p', { class: 'aviso uad-intro', id: 'uad-intro' }, [hoy.ya ? T.introRepite : T.intro, extra].filter(Boolean).join(' '));
+}
+
+/**
+ * Al terminar la partida de hoy: la anota (el primer intento del día queda; los demás son
+ * práctica) y devuelve la tarjeta del resultado, que el juego pone arriba de sus botones. Una sola
+ * vez por partida: `hoy.anotado` la guarda para los redibujos de la misma pantalla.
+ */
+export function terminarHoy(hoy, { s, ms, lang, alTocar }) {
+  if (!hoy.anotado) hoy.anotado = anotar(hoy.fecha, { j: hoy.id, s, ms });
+  const { primera, dia } = hoy.anotado;
+  return tarjetaResultado({ lang, fecha: hoy.fecha, primera, dia, raiz: '../', alTocar, mmss });
+}
+
+/** Pone la tarjeta justo antes de `antes` (los botones del resultado), sin duplicarla. */
+export function ponerTarjeta(tarjeta, antes) {
+  document.getElementById('uad-tarjeta')?.remove();
+  antes.before(tarjeta);
 }
