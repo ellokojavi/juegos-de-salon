@@ -1,5 +1,5 @@
 {
-  "version": "0.113.0",
+  "version": "0.113.1",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -730,6 +730,7 @@
     "public/assets/js/jugador-local.js",
     "public/assets/js/jugador.js",
     "public/assets/js/labs-idioma.js",
+    "public/assets/js/llegada.js",
     "public/assets/js/push.js",
     "public/assets/js/ranking.js",
     "public/assets/js/records.js",

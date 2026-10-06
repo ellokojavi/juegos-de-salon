@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.113.1 — 2026-10-05
+- **Del dado al juego, sin corte** (D-235): en Juego al azar, el dado se desvanece en el fondo
+  de la app y el juego aparece con un fundido, en vez de cambiar de golpe.
+
 ## 0.113.0 — 2026-10-05
 - **Un globo en la portada invita a agregar la app a inicio, en el laboratorio** (D-232): con un
   toque en **Agregar** salen los pasos de tu celular (Safari o Chrome, en iPhone o Android); en
