@@ -566,7 +566,7 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   grupo siguen saliendo desde el mazo del 13. Desde ahora queda fijo: moverlo cambia el juego de
   días ya jugados.
 
-### Después de abrirlo (v0.125.1)
+### Después de abrirlo (v0.126.1)
 
 - **El calendario** muestra en cada día jugado el emoji del juego y, en una píldora como la de La
   Copa, el puntaje de 0 a 100 (pedido del dueño).
@@ -623,7 +623,7 @@ textos los propone el agente de usabilidad y el dueño los corrige en el PR.
 | **¿Otro más?** | **🎲 Jugar otro** | Verbo y objeto (U-17); el dado dice que es al azar |
 | **Agregar a mi calendario** / **Al calendario** | **Agregar al calendario**, botón chico (desde el PR 6, **⏰ Agregar recordatorio**) | "Al calendario" no tiene verbo (U-17) |
 | "📅 Uno al día · el mismo desafío para todos hoy" | "📅 Uno al día: hoy todos juegan el mismo desafío." | Frase completa (U-1) |
-| "El próximo, en 7 h 12 min" | "El próximo sale en 7 h 12 min." (desde v0.125.1, "Próximo juego en 7 h 12 min.") | Frase completa (U-1); después, que diga que lo que viene es un juego |
+| "El próximo, en 7 h 12 min" | "El próximo sale en 7 h 12 min." (desde v0.126.1, "Próximo juego en 7 h 12 min.") | Frase completa (U-1); después, que diga que lo que viene es un juego |
 | "Sara jugó los últimos 33 días seguidos" | "Sara lleva una racha de 33 días" | Con un comodín, "jugó 33 días seguidos" puede ser falso; y "racha" es el término (U-5) |
 | "y lleva 5 días mejorando en Reinas" | "va mejorando en Reinas" | La app mide la flecha (últimos 3 contra 5), no días seguidos mejorando |
 | "Hoy sacó 87 en Reinas" | "hoy sacó 87" | La tarjeta del amigo se lee antes del dado: no adelanta el juego |
@@ -632,7 +632,7 @@ textos los propone el agente de usabilidad y el dueño los corrige en el PR.
 | Dos versiones del mensaje de invitar | Una, con cabecera y 🔗 (U-30), solo texto (U-33) | La invitación no lleva imagen dibujada: la pone el link |
 | "Sara te desafía 🔥" | "🔥 Sara te desafía" | Emoji al inicio (U-2) |
 | "Si juega su primer Uno al día, ganas un comodín 🧊." (y "juega su primer día") | "🧊 Si tu amigo termina su primer Uno al día, ganas un comodín." | Quién juega queda claro, el comodín llega al terminar, emoji al inicio (U-2) y una sola forma en los cuatro lugares (U-5) |
-| "🧊 Comodines: 0 de 2. Ganas uno cada…" (v0.125.1) | "🧊 Un comodín salva tu racha el día que no juegas. Tienes 0 de 2: ganas uno cada…" | Primero para qué sirve y después cómo se gana: que den ganas de ganarlos (pedido del dueño) |
+| "🧊 Comodines: 0 de 2. Ganas uno cada…" (v0.126.1) | "🧊 Un comodín salva tu racha el día que no juegas. Tienes 0 de 2: ganas uno cada…" | Primero para qué sirve y después cómo se gana: que den ganas de ganarlos (pedido del dueño) |
 | "Sin comodines. Invita a un amigo y gana uno 🧊." | "🧊 No tienes comodines. Invita a un amigo y gana uno." | Frase completa (U-1), emoji al inicio (U-2) |
 | "…ganar un comodín por cada amigo que juegue." | "…ganas un comodín cuando un amigo que invitaste termina su primer Uno al día." | Con el tope de 2, "por cada amigo" promete de más |
 | "🧊 Pedro aceptó tu desafío: ganaste un comodín." siempre | Sin nombre si el amigo no tiene jugador; sin comodín si ya tenía 2 | No promete lo que se pierde |
