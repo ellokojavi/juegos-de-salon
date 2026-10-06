@@ -1,6 +1,7 @@
 // "Tus copas" sigue al jugador, no al celular (D-220): con el almacén de prueba (`?prueba`),
 // un celular entra con su jugador y abre una copa en que está sentado; otro celular, que nunca la
-// vio, entra con el mismo jugador y la encuentra en la portada, con su nombre ya elegido.
+// vio, entra con el mismo jugador y la encuentra en la portada, con su nombre ya elegido. Al
+// final, las copas terminadas: con su etiqueta y escondidas hasta prender el interruptor (D-234).
 //
 // Uso: python3 -m http.server 8765 -d public (en otra terminal) y node tools/e2e/cup/copas-del-jugador.mjs <carpeta-salida>
 import { launch, sleep } from '../cdp.mjs';
@@ -62,6 +63,20 @@ try {
   await ev(`(()=>{ const i = document.querySelector('#entrar-body input.pin'); i.value = '4321'; document.getElementById('btn-sentarse').click(); return 1 })()`);
   await sleep(1200);
   ok(await ev(`__copa.estado.pantalla`) === 'tablero', 'con el PIN de la copa queda sentado');
+
+  // Las terminadas llevan su etiqueta y se esconden tras un interruptor que parte apagado (D-234)
+  await ev(`(()=>{ const D = 864e5, ahora = Date.now(); sessionStorage.setItem('juegos-de-salon:copa:prueba:mias', JSON.stringify([
+    { code: '${CODE}', nombre: 'Jiri', copa: 'Piratotes 1983', fin: ahora + 3 * D },
+    { code: 'VWXYZ', nombre: 'Jiri', copa: 'Copa vieja', fin: ahora - 2 * D }])); return 1 })()`);
+  await b.go(`${BASE}?prueba`, 1200);
+  const nombres = () => ev(`JSON.stringify([...document.querySelectorAll('#tus-copas a.mia')].map(a => [a.querySelector('b').firstChild.textContent, a.classList.contains('terminada')]))`).then(JSON.parse);
+  ok(await ev(`document.getElementById('ver-terminadas')?.checked === false`), '"Mostrar copas terminadas" parte apagado');
+  ok(JSON.stringify(await nombres()) === JSON.stringify([['Piratotes 1983', false]]), 'apagado, solo la copa en curso');
+  await ev(`document.getElementById('ver-terminadas').click(); 1`);
+  await sleep(200);
+  ok(JSON.stringify(await nombres()) === JSON.stringify([['Piratotes 1983', false], ['Copa vieja', true]]), 'prendido, la terminada aparece');
+  ok(await ev(`document.querySelector('#tus-copas a.mia.terminada .etiqueta-fin')?.textContent`) === 'Terminó', 'con la etiqueta "Terminó"');
+  await b.shot('portada-terminadas');
 } finally {
   b.close();
 }
