@@ -4,7 +4,7 @@ import {
   envOf, versionOf, tzKey, langKey, fingerprint, startChanges, roomRecord, dayPath,
   noteStart, noteRoom, notePlayer, noteEnd, endRecord, countryOf, regionOfLang, restApi,
   liveId, liveRecord, startLive, esEnVivo, LATIDO_MS, QUIETO_MS,
-  paginaDe, origenDe, canalDe, dispositivoDe, visitChanges, noteVisit, notePlayed, VISITA_KEY, VINO_KEY, REF_KEY,
+  paginaDe, origenDe, canalDe, dispositivoDe, avisoDe, pwaDe, sinMarcas, visitChanges, noteVisit, notePlayed, VISITA_KEY, VINO_KEY, REF_KEY,
   nombreDelCelular, nombresDe, finRecord,
 } from './stats.js';
 import { readFileSync } from 'node:fs';
@@ -306,6 +306,13 @@ assert.equal(dispositivoDe({ ua: 'Mozilla/5.0 (Macintosh)', platform: 'MacIntel'
   assert.deepEqual(api.calls.at(-1).changes['retorno/vuelve'], INC);
   assert.deepEqual(api.calls.at(-1).changes['via/link'], INC);
   assert.deepEqual(api.calls.at(-1).changes['ref/directo'], INC);
+  // Un aviso tocado y la app instalada se cuentan aunque no sea la primera página de la visita (D-233)
+  const hist = { state: null, url: '', replaceState(_s, _t, u) { this.url = u; } };
+  await noteVisit(api, { env: 'prod' }, { ...ctx('/cup/'), loc: { pathname: '/cup/', search: '?oficina&dia=3&aviso=dia', hostname: 'juegosdesalon.cl' }, hist });
+  assert.deepEqual(api.calls.at(-1).changes['aviso/dia'], INC);
+  assert.equal(hist.url, '/cup/?oficina&dia=3', 'contado, sale de la dirección');
+  await noteVisit(api, { env: 'prod' }, { ...ctx('/cup/'), loc: { pathname: '/cup/', search: '?pwa', hostname: 'juegosdesalon.cl' } });
+  assert.deepEqual(api.calls.at(-1).changes['pwa/android'], INC);
   // El panel no es tráfico
   const antes = api.calls.length;
   await noteVisit(api, { env: 'prod' }, ctx('/panel/'));
@@ -370,6 +377,23 @@ assert.equal(dispositivoDe({ ua: 'Mozilla/5.0 (Macintosh)', platform: 'MacIntel'
   assert.equal(liveRecord({ v: '1', app: 'de' }, { game: 'dudo', mode: 'cpu', players: 1 }).l, 'de');
   const reglas = JSON.parse(readFileSync(new URL('../../../../firebase/database.rules.json', import.meta.url), 'utf8')).rules.stats.$env.days.$day;
   assert.ok(reglas.rooms.$code.l?.$p && reglas.live.$id.l, 'las reglas aceptan el idioma');
+}
+
+{
+  // D-233: qué aviso abrió la página y si la abrió la app instalada
+  assert.equal(avisoDe('?pirata&dia=3&aviso=plazo'), 'plazo');
+  assert.equal(avisoDe('?aviso=otro'), '', 'solo los tipos que manda avisar.mjs');
+  assert.equal(avisoDe(''), '');
+  assert.equal(pwaDe('?pwa', 'Mozilla/5.0 (Linux; Android 14)'), 'android');
+  assert.equal(pwaDe('?pwa', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_1 like Mac OS X)'), 'ios');
+  assert.equal(pwaDe('?pwa', 'Mozilla/5.0 (Windows NT 10.0)'), 'otro');
+  assert.equal(pwaDe('?K7Q2X', 'Android'), '');
+  assert.equal(sinMarcas('?pirata&dia=3&aviso=dia'), '?pirata&dia=3');
+  assert.equal(sinMarcas('?pwa'), '');
+  assert.equal(sinMarcas('?K7Q2X&lang=pt'), '?K7Q2X&lang=pt', 'sin marcas, queda igual');
+  const reglas = JSON.parse(readFileSync(new URL('../../../../firebase/database.rules.json', import.meta.url), 'utf8')).rules.stats.$env;
+  for (const k of ['aviso', 'pwa', 'mandados']) assert.ok(reglas.days.$day[k], `las reglas tienen ${k}`);
+  assert.ok(reglas.push, 'las reglas tienen stats/<env>/push');
 }
 
 console.log('stats.test.mjs: todo en verde');

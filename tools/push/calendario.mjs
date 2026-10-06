@@ -165,10 +165,11 @@ export function avisosDeCopa({ code, copa, quiere = {}, subs = {}, enviados = {}
       if (!candidatos.length) continue;
       candidatos.sort((a, b) => PRIORIDAD.indexOf(a.tipo) - PRIORIDAD.indexOf(b.tipo));
       const c = candidatos[0];
-      const aviso = { title: titulo, body: c.body, url, tag: c.tag };
+      // `&aviso=<tipo>`: la página lo cuenta al abrirse, y el panel ve cuántos se tocan (D-233)
+      const aviso = { title: titulo, body: c.body, url: `${url}&aviso=${c.tipo}`, tag: c.tag };
       if (c.dia) {
         // Abre ese día de la copa, y en Android trae los botones (D-229)
-        aviso.url = `${url}&dia=${c.dia}`;
+        aviso.url = `${url}&dia=${c.dia}&aviso=${c.tipo}`;
         aviso.acciones = [
           { action: 'jugar', title: T.play, url: aviso.url },
           { action: 'silenciar', title: T.avMute, url: `${url}&silenciar` },
@@ -200,7 +201,7 @@ export function juntar(pendientes, subs = {}, nombres = {}) {
       subId, pid: ps.map(p => p.pid).join(','), code: ps.map(p => p.code).join(','), tipo: 'dia',
       claves: ps.flatMap(p => p.claves),
       porCopa: ps.map(p => ({ code: p.code, claves: p.claves })),
-      aviso: { title: T.chip, body: fmt(T.avMsgDayMany, { n: ps.length, copas }), url: `${SITIO}cup/`, tag: 'copas-dia' },
+      aviso: { title: T.chip, body: fmt(T.avMsgDayMany, { n: ps.length, copas }), url: `${SITIO}cup/?aviso=copas`, tag: 'copas-dia' },
     });
   }
   return out;
@@ -218,7 +219,7 @@ export function avisosDePrueba({ code, copa, quiere = {}, subs = {} }) {
       const sub = subs[subId];
       if (!sub) continue;
       const T = LOCALES[sub.lang] || LOCALES.es;
-      out.push({ subId, pid, code, tipo: 'prueba', claves: [], aviso: { title: `🏆 ${fmt(T.shareHead, { copa: copa.meta.name })}`, body: T.avTestBody, url: `${SITIO}cup/?${copa.meta.alias || code}`, tag: `copa-${code}-prueba` } });
+      out.push({ subId, pid, code, tipo: 'prueba', claves: [], aviso: { title: `🏆 ${fmt(T.shareHead, { copa: copa.meta.name })}`, body: T.avTestBody, url: `${SITIO}cup/?${copa.meta.alias || code}&aviso=prueba`, tag: `copa-${code}-prueba` } });
     }
   }
   return out;

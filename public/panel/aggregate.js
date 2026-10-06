@@ -569,3 +569,26 @@ export function origenesAgrupados(ref) {
   for (const [k, v] of Object.entries(ref || {})) add(out, origenLabel(k), v);
   return out;
 }
+
+/**
+ * Los avisos de La Copa en el rango (D-233): los que mandó avisar.mjs (`mandados/<tipo>`), los que
+ * se tocaron (`aviso/<tipo>`, la página que abrió el aviso) y las aperturas desde la app instalada
+ * (`pwa/<sistema>`). Por tipo, y el total de cada uno.
+ */
+export const AVISO_TIPOS = ['dia', 'plazo', 'final', 'fin', 'insc', 'copas', 'prueba'];
+export function avisosDelRango(days, { from, to }) {
+  const mandados = {}, tocados = {}, pwa = {};
+  for (let d = from; d <= to; d++) {
+    const b = (days || {})[String(d)] || {};
+    for (const [k, v] of Object.entries(b.mandados || {})) add(mandados, k, Number(v) || 0);
+    for (const [k, v] of Object.entries(b.aviso || {})) add(tocados, k, Number(v) || 0);
+    for (const [k, v] of Object.entries(b.pwa || {})) add(pwa, k, Number(v) || 0);
+  }
+  const suma = o => Object.values(o).reduce((a, v) => a + v, 0);
+  return { mandados, tocados, pwa, totalMandados: suma(mandados), totalTocados: suma(tocados), totalPwa: suma(pwa) };
+}
+
+/** El workflow corre cada 15 minutos (D-224, con atrasos de GitHub): más de una hora sin vuelta es para mirar. */
+export const VUELTA_ATRASADA_MS = 60 * 60 * 1000;
+export const vueltaAtrasada = (vuelta, now = Date.now()) => !vuelta || now - vuelta > VUELTA_ATRASADA_MS;
+

@@ -53,6 +53,22 @@ etiqueta "laboratorio" donde corresponde, y con un filtro para verlas solas.
 el nombre y el emoji de la sección salen de ahí (C-16). Por lo mismo la sección se llama `torneo`
 en la URL y no `copa`, que es el id del juego.
 
+## Los avisos al celular (D-233)
+
+En `#/torneo`, debajo de las cifras de las copas, el bloque **🔔 Avisos al celular**:
+
+- **Celulares con avisos:** las suscripciones vivas en la última vuelta de `tools/push/avisar.mjs`
+  (`stats/prod/push/vivas`). Los celulares no se pueden leer uno por uno: `push/` no lo lee nadie.
+- **Mandados y tocados, por tipo:** `mandados/<tipo>` lo suma `avisar.mjs` (los que el servicio del
+  celular aceptó); `aviso/<tipo>`, la página que abrió el aviso (`&aviso=<tipo>` en su dirección).
+  El porcentaje es tocados sobre mandados en el rango. Los mandados son siempre del sitio publicado.
+- **Aperturas de la app instalada:** `pwa/<sistema>`, del `start_url` `./?pwa` de los manifests.
+- **Última vuelta:** la hora de `stats/prod/push/vuelta`. Si pasó más de una hora sale en rojo:
+  GitHub pudo apagar el workflow programado (lo hace tras 60 días sin commits) o le faltan los
+  secretos.
+
+Con `window.__panel.seed({ …, push: { vuelta, vivas, torneos } })` se dibuja con datos sembrados.
+
 ## La Copa en el panel (D-137)
 
 No usa señales aparte: lee `torneos/` tal como lo guarda la copa (el dueño ya podía leerlo en las
