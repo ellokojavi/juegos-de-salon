@@ -36,7 +36,9 @@ await ev(`(()=>{localStorage.clear();localStorage.setItem('juegos-de-salon:insta
 await b.go(`${SITIO}/`, 1500);
 ok(await esperar(`!!document.getElementById('btn-uno-al-dia')`), 'la portada tiene el botón de Uno al día, al lado de Juego al azar');
 ok(await ev(`document.getElementById('btn-uno-al-dia').parentElement.querySelector('.btn-azar') !== null`), 'va en la misma fila que Juego al azar');
-ok(/Uno al día/.test(await texto('#btn-uno-al-dia')) && /Jugar el de hoy/.test(await texto('#btn-uno-al-dia')), `dice "Uno al día" y "Jugar el de hoy" (${(await texto('#btn-uno-al-dia')).replace(/\n/g, ' / ')})`);
+ok((await texto('#btn-uno-al-dia')).replace(/\s+/g, ' ').trim() === '📅 Uno al día', `dice solo "📅 Uno al día", sin racha todavía (${await texto('#btn-uno-al-dia')})`);
+ok((await texto('.azar-slot .btn-azar')).replace(/\s+/g, ' ').trim() === '🎲 Al azar', `y el de al lado, "🎲 Al azar" (${await texto('.azar-slot .btn-azar')})`);
+ok(/abrir el juego de hoy/.test(await ev(`document.getElementById('btn-uno-al-dia').getAttribute('aria-label')`)), 'lo que hace va en aria-label');
 ok(await ev(`!!document.querySelector('#btn-uno-al-dia .btn-uad-punto')`), 'y un punto brilla: hoy no se ha jugado');
 await b.shot('portada');
 
@@ -92,7 +94,8 @@ ok(/práctica/.test(await texto('#uad-intro')), 'la intro de un segundo intento 
 /* ---------- La portada después de jugar ---------- */
 await b.go(`${SITIO}/`, 1500);
 await esperar(`!!document.getElementById('btn-uno-al-dia')`);
-ok(/Listo/.test(await texto('#btn-uno-al-dia')) && /🔥 1/.test(await texto('#btn-uno-al-dia')), `el botón dice "Listo" con la racha (${(await texto('#btn-uno-al-dia')).replace(/\n/g, ' / ')})`);
+ok(await ev(`document.getElementById('btn-uno-al-dia').classList.contains('hecho')`) && /✅/.test(await texto('#btn-uno-al-dia')) && /🔥 1/.test(await texto('#btn-uno-al-dia')), `el botón queda cian, con ✅ y la racha (${(await texto('#btn-uno-al-dia')).replace(/\n/g, ' ')})`);
+ok(/Racha: 1 día/.test(await ev(`document.getElementById('btn-uno-al-dia').getAttribute('aria-label')`)), 'y la racha también en aria-label');
 ok(!await ev(`!!document.querySelector('#btn-uno-al-dia .btn-uad-punto')`), 'y ya no brilla el punto');
 await click('#btn-uno-al-dia');
 ok(await esperar(`location.pathname === '/today/'`, 12), 'tocarlo abre /today/ (sin dado)');

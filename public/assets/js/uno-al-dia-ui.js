@@ -46,12 +46,7 @@ export async function tirarHoy({ lang, raiz = '' }) {
   });
 }
 
-/**
- * El botón de la portada, al lado de Juego al azar: una ficha de dos líneas, arriba "📅 Uno al
- * día" y abajo su estado (🔥 racha y "Jugar el de hoy", o "✅ Listo"). Mientras no juegue el de
- * hoy, un punto brilla. Si ya jugó, abre su página en vez del dado.
- */
-/** Lo que dice el acceso según el día: si ya jugó, y la segunda línea ("🔥 1 · Jugar el de hoy" o "✅ Listo · 🔥 1"). */
+/** Lo que dice el acceso según el día: si ya jugó, su racha y, para la tarjeta, la segunda línea ("🔥 1 · Jugar el de hoy" o "✅ Listo · 🔥 1"). */
 function estadoAcceso(lang, raiz, alTocar) {
   const T = textos(lang).uad;
   const e = estado();
@@ -60,14 +55,21 @@ function estadoAcceso(lang, raiz, alTocar) {
     ? `✅ ${T.listo}${e.racha ? ` · 🔥 ${e.racha}` : ''}`
     : `${e.racha ? `🔥 ${e.racha} · ` : ''}${T.jugar}`;
   const abrir = () => { alTocar?.(); if (hecho) location.href = `${raiz}today/`; else tirarHoy({ lang, raiz }); };
-  return { T, hecho, linea2, abrir, aria: hecho ? T.ariaListo : T.aria };
+  // El estado completo para un lector de pantalla: "Uno al día: abrir el juego de hoy. 🔥 Racha: 6 días"
+  const aria = [hecho ? T.ariaListo : T.aria, e.racha ? textoRacha(e.racha, lang).replace('🔥 ', '') : ''].filter(Boolean).join('. ');
+  return { T, hecho, linea2, abrir, aria, racha: e.racha };
 }
 
+/**
+ * El botón de la portada, a la derecha de "Al azar": una sola línea, "📅 Uno al día", con la racha
+ * en una píldora (🔥 6). Mientras no juegue el de hoy, un punto brilla; jugado, se pone cian con ✅.
+ * Lo que dice cada estado completo va en `aria-label` (decisión del dueño: etiquetas cortas).
+ */
 export function botonUnoAlDia({ lang, raiz = '', alTocar }) {
-  const { T, hecho, linea2, abrir, aria } = estadoAcceso(lang, raiz, alTocar);
+  const { T, hecho, abrir, aria, racha } = estadoAcceso(lang, raiz, alTocar);
   return el('button', { type: 'button', class: 'btn-uad' + (hecho ? ' hecho' : ''), id: 'btn-uno-al-dia', 'aria-label': aria, onClick: abrir },
-    el('span', { class: 'btn-uad-titulo' }, el('span', { 'aria-hidden': 'true' }, '📅'), el('span', {}, T.nombre)),
-    el('span', { class: 'btn-uad-estado' }, linea2),
+    el('span', { class: 'btn-uad-titulo' }, el('span', { 'aria-hidden': 'true' }, hecho ? '✅' : '📅'), el('span', {}, T.nombre)),
+    racha ? el('span', { class: 'btn-uad-racha', 'aria-hidden': 'true' }, `🔥 ${racha}`) : null,
     hecho ? null : el('span', { class: 'btn-uad-punto', 'aria-hidden': 'true' }));
 }
 
