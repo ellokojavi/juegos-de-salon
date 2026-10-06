@@ -125,5 +125,6 @@ assert.equal(formaAcceso({ storage: fm, loc: { search: '?uad=boton' } }), 'boton
 elegirForma('boton', fm);
 assert.equal(formaAcceso({ storage: fm, loc: { search: '?uad=tarjeta' } }), 'tarjeta');
 assert.equal(formaAcceso({ storage: fm, loc: sinQ }), 'boton');
+assert.equal(formaAcceso({ storage: fm, loc: { search: '?uad=no' } }), 'no', 'las capturas del README lo esconden');
 
 console.log('uno-al-dia: ok');
