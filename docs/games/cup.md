@@ -14,7 +14,9 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
   práctica con semilla y las demos (D-101).
 - **URL:** `/cup/` (portada) · `/cup/?K7Q2X` (una copa) · `/cup/?labs` (copa real con la Copa
   de 3 días, D-100; `?tres` sigue funcionando) · `?prueba` (almacén local y reloj adelantable, sin
-  Firebase) · `/cup/?practica=<id>&labs&semilla=K7Q2X` (un juego suelto del laboratorio,
+  Firebase) · `/cup/?K7Q2X&dia=3` (abre el día 3 listo para empezar, si se puede jugar; lo usan
+  los avisos, D-229) · `/cup/?K7Q2X&silenciar` (silencia los avisos de esa copa: el botón del aviso
+  en Android) · `/cup/?practica=<id>&labs&semilla=K7Q2X` (un juego suelto del laboratorio,
   repetible; los que tienen página se van a `/<slug>/?labs&semilla=K7Q2X`, D-164). Desde la portada el juego suelto es `/<slug>/` (D-142, D-149, D-162, D-198): la misma
   pantalla, sin "copa" en el link, que vuelve al menú, sin sesión de prueba ni semilla a la vista, y
   con su señal de uso. `/cup/?practica=<id>` sin `&labs` lleva ahí.
@@ -215,8 +217,11 @@ Abiertos a todos desde D-228: se ven en cualquier celular que pueda recibirlos, 
   del celular y nunca entre las 22:00 y las 8:00: **se abrió el día** (desde las 9:00, si no lo ha
   jugado ni empezado), **se te acaba el plazo** (4 horas antes del cierre, o desde las 20:00 si
   cierra de noche), **La Gran Final** (con su lugar en la tabla), **terminó la copa** y, al admin
-  que activó avisos, **quién se inscribió**. A lo más uno por copa y celular en cada vuelta. Los
-  textos son los `avMsg*` de `rules.js`; al tocarlo abre el tablero de la copa.
+  que activó avisos, **quién se inscribió**. A lo más uno por copa y celular en cada vuelta, y dos
+  por copa en un día (D-229). Los textos son los `avMsg*` de `rules.js`. Al tocarlo abre ese día
+  (`&dia=<d>`) o, el del cierre, el podio; en Android trae **Jugar** y **Silenciar esta copa**
+  (`&silenciar`). Los días nuevos de varias copas van juntos en un aviso, y un empate arriba nombra
+  a todos los que ganaron (D-229).
 
 ## Flujo
 

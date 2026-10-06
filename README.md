@@ -675,12 +675,12 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   assets/js/transport/        Transports: local (same phone), firebase (room) and stats (usage signals)
   assets/og/                  The 1200×630 images shown when a link is shared
   manifest.webmanifest        PWA manifest (installable on the home screen), one per language (manifest.en.webmanifest …) so the app is named in the player's language (D-222); its PNG icons are in assets/icons/
-  sw.js                       Service worker (D-221): it makes the app installable, caches nothing, and shows The Cup's notifications (D-223)
+  sw.js                       Service worker (D-221): it makes the app installable, caches nothing, and shows The Cup's notifications (D-223), with Play and Mute buttons on Android (D-229)
   ahorcado/ copa/ …           Bridge pages: the old Spanish URLs, forwarding to the new ones (generated, D-192)
 docs/                       Requirements, decisions, canons, one spec per game (docs/games/) and the README screenshots
 firebase/                   Realtime Database security rules and notes
 tools/
-  push/                       vapid.mjs (the notifications key pair, already run once: the public key is in assets/js/vapid.js, the private one a GitHub secret; D-223, D-225); avisar.mjs sends the La Copa notifications every 15 minutes from avisos.yml, with calendario.mjs (what is due) and webpush.mjs (encryption and VAPID, no dependencies; D-224)
+  push/                       vapid.mjs (the notifications key pair, already run once: the public key is in assets/js/vapid.js, the private one a GitHub secret; D-223, D-225); avisar.mjs sends the La Copa notifications every 15 minutes from avisos.yml, with calendario.mjs (what is due: at most 2 a day per cup, overlapping deadlines in one, the new days of several cups together; D-229) and webpush.mjs (encryption and VAPID, no dependencies; D-224)
   release/                    Publishing: set-version.py (version stamp, at publish time), readme.py + hechos.mjs (this README), og.mjs (social cards and bridge pages), iconos.mjs (the app icons, from assets/icon.svg)
   firebase/                   reglas.mjs (publish the rules), reportes.mjs (The Cup bug reports), en-curso.mjs (anyone playing?), rankings-historia.mjs (The Cup's history into the leaderboards, and each player's cups)
   generators/                 mapa.mjs (the world of Where is it?), flota.py (the Battleship fleet)
