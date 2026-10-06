@@ -1,7 +1,7 @@
 # Changelog
 
 ## 0.126.2 — 2026-10-06
-- **¿Dónde queda?, sin el globo dibujado al cargar** (D-244): el globo espera a la imagen satelital
+- **¿Dónde queda?, sin el globo dibujado al cargar** (D-245): el globo espera a la imagen satelital
   y aparece con un fundido, en vez de mostrarse dibujado por un instante.
 
 ## 0.126.1 — 2026-10-06
