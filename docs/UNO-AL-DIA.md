@@ -1,7 +1,7 @@
 # Uno al día
 
 **Estado:** aprobada por el dueño (D-230); en el laboratorio: el PR 1, el núcleo (v0.115.0), el PR 2, los juegos de grupo (v0.116.0), el PR 3, jugador, rankings, comodines e invitaciones (v0.117.0), el PR 4, los avisos y recordatorios (v0.118.0), y el PR 5, el panel (v0.119.0) · **Fecha:** 2026-10-05 ·
-**Toca:** RP-44, D-188 (Juego al azar), D-212 y D-217 (rankings), D-221 a D-229 (avisos), D-97 (semillas)
+**Toca:** RP-44, D-188 y D-237 (Juego al azar), D-212 y D-217 (rankings), D-221 a D-229 (avisos), D-97 (semillas)
 
 Una modalidad nueva en la portada, al lado de **Juego al azar**: cada día la app sorprende con un
 juego, el mismo desafío para todos, y lleva la cuenta de cuántos días seguidos juega cada uno, cómo
@@ -405,6 +405,8 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   accesos de más jerarquía que los juegos), queda para probarla desde `/labs/` ("Junto a La Copa")
   o con `?uad=tarjeta`.
 - El CSS del dado pasó de la portada a `base.css`, para tirarlo desde cualquier página.
+  El paso del dado al juego es el de Juego al azar (D-237): el juego abre con el mismo dado encima
+  y el dado se desvanece cuando el juego está dibujado (`llegada.js`).
 - Se prueba con `uno-al-dia.test.mjs` (el mazo, la semilla, la racha, lo anotado) y
   `tools/e2e/uno-al-dia.mjs` (de la portada a `/today/`, a 320 px y en los cuatro idiomas).
 

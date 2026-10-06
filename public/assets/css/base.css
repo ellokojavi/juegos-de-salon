@@ -257,9 +257,6 @@ details.panel summary::-webkit-details-marker { display: none; }
 .handoff.leaving { animation: fadeOut 0.3s ease-in both; pointer-events: none; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
-/* Llegada desde Juego al azar (D-235): el dado se fue fundiéndose en este mismo fondo, y el juego
-   aparece encima con un fundido. `backwards`: al terminar no deja nada puesto (llegada.js) */
-.azar-llega body > * { animation: fadeIn 0.45s ease-out backwards; }
 .handoff .stage { width: 100%; max-width: 480px; display: grid; gap: 14px; justify-items: center; }
 .handoff .stage.pop { animation: pop 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
 .cheers { font-size: 5.5rem; line-height: 1; display: flex; gap: 0; }
@@ -471,7 +468,8 @@ html.i18n-pendiente body { visibility: hidden; }
 /* Mientras está, el pie de la página sube sobre él: al final de la lista no tapa nada */
 body:has(> .globo-instalar) main.app { padding-bottom: 170px; }
 
-/* El dado de Juego al azar (D-188), que también tira Uno al día (D-230) desde cualquier página */
+/* --- El dado de Juego al azar (D-188), que también tira Uno al día (D-230) desde cualquier página.
+   La página del juego repite la capa al llegar (llegada.js, D-237), así el cambio no se ve --- */
 body.azar-abierto { overflow: hidden; }
 .azar-capa {
   position: fixed; inset: 0; z-index: 100; display: grid; place-content: center; justify-items: center; gap: calc(min(38vw, 150px) * 0.55 + 20px);
@@ -495,14 +493,14 @@ body.azar-abierto { overflow: hidden; }
 .azar-nombre b { font: 400 clamp(2rem, 9vw, 2.8rem) var(--font-display); letter-spacing: 0.04em; color: var(--yellow); line-height: 1.05; }
 .azar-capa.listo .azar-nombre > * { animation: pop 0.4s ease-out both; }
 .azar-capa.listo .azar-nombre b { animation-delay: 0.08s; }
-/* Al irse (D-235): el dado se aleja y la capa toma el fondo de la app, el mismo sobre el que
-   aparece el juego. El ::before queda bajo el dado y sobre el velo de la capa */
-.azar-capa::before { content: ''; position: fixed; inset: 0; z-index: -1; background: var(--bg1) fixed; background-image: var(--fondo); opacity: 0; transition: opacity 0.4s ease-in; }
-.azar-capa.saliendo::before { opacity: 1; }
-.azar-escena, .azar-nombre, .azar-lienzo { transition: opacity 0.3s ease-in, transform 0.4s cubic-bezier(0.5, 0, 0.9, 0.6); }
-.azar-capa.saliendo .azar-escena, .azar-capa.saliendo .azar-nombre { opacity: 0; }
-.azar-capa.saliendo .azar-lienzo { transform: scale(0.75); }
-.azar-capa.saliendo .azar-nombre { transform: translateY(10px); }
+/* Al llegar al juego, la misma escena, quieta (`.velo`): se desvanece cuando el juego está dibujado */
+/* `visible`: en inglés, portugués o alemán el body espera oculto sus textos (D-194), y el dado no */
+.azar-capa.velo { animation: none; cursor: default; pointer-events: none; transition: opacity 0.45s ease-in-out; visibility: visible; }
+.azar-capa.velo .azar-sombra { opacity: 0.6; }
+.azar-capa.velo .azar-sin-3d { animation: none; }
+.azar-capa.velo .azar-escena { transition: transform 0.45s ease-in; }
+.azar-capa.velo.saliendo { opacity: 0; }
+.azar-capa.velo.saliendo .azar-escena { transform: scale(0.85); }
 
 /* Uno al día (D-230): la tarjeta bajo el resultado */
 .uad-tarjeta { display: grid; gap: 8px; text-align: center; border-color: rgba(255, 122, 26, 0.5); background: linear-gradient(160deg, rgba(255, 122, 26, 0.16), rgba(255, 46, 136, 0.12)); }
