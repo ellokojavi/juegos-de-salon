@@ -487,7 +487,7 @@ The whole experience is translated: the menu and its footer lines, every game wi
 How it is put together (canon C-3):
 
 - `public/assets/js/i18n.js` keeps the language in `localStorage` (`juegos-de-salon:lang`), draws the
-  🇨🇱 ES · 🇬🇧 EN · 🇧🇷 PT · 🇩🇪 DE toggle and holds the shared text (`COMMON`): the menu and what goes out
+  🇪🇸 ES · 🇬🇧 EN · 🇧🇷 PT · 🇩🇪 DE toggle and holds the shared text (`COMMON`): the menu and what goes out
   when somebody shares the app, plus the strings every game repeats word for word — the room
   invitation (D-173, D-165), the "or" between creating a room and joining one, and the shared
   result of playing a game alone.
