@@ -1,7 +1,7 @@
 # Uno al día
 
 **Estado:** aprobada por el dueño, con dos agregados y un cambio (D-230) · **Fecha:** 2026-10-05 ·
-**Toca:** D-188 (Juego al azar), D-212 y D-217 (rankings), D-221 a D-229 (avisos), D-97 (semillas)
+**Toca:** RP-44, D-188 (Juego al azar), D-212 y D-217 (rankings), D-221 a D-229 (avisos), D-97 (semillas)
 
 Una modalidad nueva en la portada, al lado de **Juego al azar**: cada día la app sorprende con un
 juego, el mismo desafío para todos, y lleva la cuenta de cuántos días seguidos juega cada uno, cómo
@@ -22,8 +22,8 @@ Las pantallas están dibujadas en un lienzo aparte (privado del dueño).
 4. **La sorpresa es el dado** de Juego al azar (D-188), con la misma experiencia: **cada vez** que
    se abre el juego de hoy, el dado rueda y cae en él. Aunque el resultado sea el mismo para todos,
    el jugador siente que le tocó.
-5. **Invitar a un amigo** después de jugar, con un dato llamativo de quien invita ("Sara jugó los
-   últimos 33 días seguidos y está en el 10 % mejor. ¿Te atreves?"). El amigo abre su propio Uno al
+5. **Invitar a un amigo** después de jugar, con un dato llamativo de quien invita ("Sara lleva una
+   racha de 33 días y está en el 10 % mejor de la semana. ¿Te atreves?"). El amigo abre su propio Uno al
    día y se comparan.
 6. **Se lleva la cuenta en el celular, sin cuenta ni red**: racha, calendario, puntajes. Con
    jugador (nombre y PIN, D-212) la cuenta se guarda en Firebase, pasa de un celular a otro y
@@ -52,8 +52,8 @@ el contenido del día:
 - Zip, Tango y ¿Dónde queda? entran al salir del laboratorio.
 - En Dudo y Batalla Naval el rival responde a lo que haces, así que lo común es el punto de partida
   (los dados, la flota) y no la partida entera. Igual se pueden comparar, y el ranking del día lo dice:
-  "Mismos dados de partida para todos".
-- **¿Otro más?** (abajo) ofrece cualquier juego de la portada, también Cuarto Rey.
+  "Todos parten con los mismos dados".
+- **🎲 Jugar otro** (abajo) ofrece cualquier juego de la portada, también Cuarto Rey.
 
 **La rotación:** son 10 juegos, así que no cabe uno por día de la semana. Funciona como un mazo: se
 barajan todos con la semilla `uno-al-dia:ciclo:<n>` y salen de a uno por día, sin repetir, hasta
@@ -76,34 +76,39 @@ lanzamiento: **Uno al día n.° 1, n.° 2…**, para compartir.
 2. Lo toca: el dado rueda y cae en 👑 **Reinas**. Abajo: "Uno al día n.° 12 · ¡Hoy te toca Reinas!".
    Las caras del dado son los juegos que pueden salir, como en Juego al azar, y tocar en cualquier
    parte lo abre de inmediato.
-3. Se abre el juego en su intro de siempre, con una línea arriba: "📅 Uno al día · el mismo
-   desafío para todos hoy". Cómo se juega y el puntaje son los del juego (U-18), no se repiten.
+3. Se abre el juego en su intro de siempre, con una línea arriba: "📅 Uno al día: hoy todos
+   juegan el mismo desafío.". Cómo se juega y el puntaje son los del juego (U-18), no se repiten.
 4. Juega. Al terminar, el resultado de siempre y debajo una tarjeta nueva:
 
    > **🔥 Racha: 1 día** · Vuelve mañana para el día 2.
    > Hoy: 87 puntos · mejor que el 64 % de los que jugaron.
-   > **Compartir** · **¿Otro más?**
+   >
+   > (El porcentaje sale solo si hoy jugaron 20 o más; con menos, la línea dice solo "Hoy: 87
+   > puntos".)
+   > **Compartir** · **🎲 Jugar otro**
    >
    > **👋 Invita a un amigo** (abajo, en "Invitar a un amigo")
 
-5. Si no tiene jugador: "Guarda tu racha en cualquier celular: entra con tu nombre y un PIN"
+5. Si no tiene jugador: "Guarda tu racha en cualquier celular: entra con tu nombre y un PIN."
    (**Entrar**, el mismo de los rankings). Si dice que no, la racha queda igual en el celular.
 6. Si es la segunda vez que termina Uno al día (el día 2, no el 1, para no pedirlo antes de que
    le guste), se le ofrecen los avisos (más abajo).
 
 ### Día 2 en adelante: vuelve
 
-- **Por su cuenta:** abre la app y el botón dice **🔥 1 · Juega el de hoy**.
-- **Con un aviso** a la hora que eligió: "📅 Tu juego de hoy ya está. 🔥 Racha: 1 día." Al tocarlo
+- **Por su cuenta:** abre la app y el botón dice **🔥 1 · Jugar el de hoy** (el mismo verbo del
+  botón que ve el amigo invitado, U-5).
+- **Con un aviso** a la hora que eligió: "📅 Uno al día n.° 13 ya está. 🔥 Racha: 1 día." (el de la tabla de
+  avisos) Al tocarlo
   rueda el dado.
 - **Mientras no lo haya jugado, el dado rueda cada vez** que toca el botón, el aviso o un link, y
   siempre cae en el mismo juego (decisión del dueño: la misma experiencia de Juego al azar).
 - Si ya jugó, el botón dice **✅ Listo · 🔥 2** y al tocarlo abre su página de Uno al día (sus
-  números, el ranking del día y cuánto falta para el próximo: "El próximo, en 7 h 12 min").
+  números, el ranking del día y cuánto falta para el próximo: "El próximo sale en 7 h 12 min.").
 
 ### Quiere jugar más
 
-- Después de Uno al día, **¿Otro más?** tira el dado de Juego al azar (cualquier juego de la
+- Después de Uno al día, **🎲 Jugar otro** tira el dado de Juego al azar (cualquier juego de la
   portada, también los de grupo). No cuenta para la racha, pero sí para "Juegos esta semana" y
   para los rankings normales de ese juego.
 - **Repetir el desafío de hoy** se puede, como práctica: el ranking del día toma solo el
@@ -113,7 +118,7 @@ lanzamiento: **Uno al día n.° 1, n.° 2…**, para compartir.
 
 - **Comodines** 🧊 (como en Duolingo): se gana uno cada 7 días seguidos y otro cada vez que un
   amigo invitado juega su primer día, y se pueden tener hasta 2. Si un día no juega, se gasta uno solo y la racha sigue. Al volver, el jugador lee: "🧊 Usaste un
-  comodín ayer. Tu racha sigue: 🔥 9."
+  comodín ayer y tu racha sigue: 9 días."
 - Sin comodines, la racha vuelve a cero, pero la **mejor racha** queda: "Tu mejor racha: 14
   días. ¿La superas?"
 
@@ -311,7 +316,7 @@ el celular al terminar, así que el aviso sabe si ya jugó aunque no tenga jugad
 - **Invitaciones**: cuántas se mandan, cuántos amigos abren el link, cuántos terminan su primer
   Uno al día y cuántos vuelven al día siguiente. Cuántos jugadores nuevos trae cada invitación es
   la cifra del crecimiento.
-- **Tráfico a otros juegos**: cuántos tocan **¿Otro más?** y qué juegan.
+- **Tráfico a otros juegos**: cuántos tocan **🎲 Jugar otro** y qué juegan.
 - **Avisos**: se ofrecieron → eligió hora → permiso → avisos tocados, y cuántos se silencian.
 
 ## Por partes

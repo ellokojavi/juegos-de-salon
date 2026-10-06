@@ -78,13 +78,6 @@
         </ul>
       </section>
 
-      <section class="panel seccion" id="seccion-avisos">
-        <h2>🔔 Avisos de La Copa</h2>
-        <p class="muted" style="margin:0">Los avisos al celular todavía no se mandan (D-223). Actívalos en este celular para probar la campana, la tarjeta y el permiso en tus copas: en Android, en iPhone con la app instalada y en el computador.</p>
-        <p id="avisos-estado" class="muted" style="margin:0"></p>
-        <button class="btn btn--yellow" id="btn-labs-avisos" type="button">Activar en este celular</button>
-      </section>
-
     </div>
     <footer class="muted" style="text-align:center;padding-top:24px;font-size:0.85rem">
       <p id="labs-version">Versión activa: …</p>
@@ -101,19 +94,6 @@
     // La versión activa sale del import map que estampa set-version.py: la que de verdad cargó
     document.getElementById('labs-version').textContent = `Versión activa: v${versionOf(document.getElementById('importmap')?.textContent)}`;
     sparkles();
-    // Los avisos al celular, solo en los celulares que los activan aquí (D-223)
-    import('../assets/js/push.js').then(({ avisosVisibles, activarAvisos, clavePublica }) => {
-      const b = document.getElementById('btn-labs-avisos'), est = document.getElementById('avisos-estado');
-      const pintar = () => {
-        const on = avisosVisibles();
-        b.textContent = on ? 'Desactivar en este celular' : 'Activar en este celular';
-        const clave = clavePublica();
-        est.textContent = !clave ? 'Falta la clave de los avisos: el dueño corre una vez node tools/push/vapid.mjs.' : on ? 'Activos en este celular: abre una copa y busca la campana.' : '';
-        b.disabled = !clave;
-      };
-      b.addEventListener('click', () => { SFX.tap(); activarAvisos(!avisosVisibles()); pintar(); });
-      pintar();
-    });
     initSound();
     document.getElementById('sound-slot').append(soundToggle());
     document.addEventListener('click', e => { if (e.target.closest('a')) SFX.tap(); });
