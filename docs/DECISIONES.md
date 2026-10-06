@@ -3565,7 +3565,7 @@ Una copia que otra sesión todavía usa después de fusionar se borra al abrir l
 lo que quede sin commitear se respeta.
 
 ## D-219 · /records/ se ordena: lo general arriba, Juegos o Copas abajo, y la bandera junto a cada nombre
-**Fecha:** 2026-10-05 · **Estado:** vigente; "tu jugador" corregido por D-236 · **Relación:** amplía D-212 y D-215
+**Fecha:** 2026-10-05 · **Estado:** corregida por D-236 · **Relación:** amplía D-212 y D-215
 **Decisión:** La página de rankings se ordena para leerse de arriba abajo:
 - Arriba, lo que vale para todos los juegos: tu jugador, el **Ranking general** (el Todoterreno)
   y **Más partidas jugadas**, una tabla nueva (`records/partidas/<período>/<jid>`) que suma una
