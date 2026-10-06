@@ -1,7 +1,7 @@
 # Changelog
 
 ## 0.112.0 — 2026-10-05
-- **Un globo en la portada invita a agregar la app a inicio, en el laboratorio** (D-230): con un
+- **Un globo en la portada invita a agregar la app a inicio, en el laboratorio** (D-232): con un
   toque en **Agregar** salen los pasos de tu celular (Safari o Chrome, en iPhone o Android); en
   Android, si Chrome lo ofrece, su propio botón de instalar. La ✕ lo cierra para siempre. Se
   activa en `/labs/` para probarlo.

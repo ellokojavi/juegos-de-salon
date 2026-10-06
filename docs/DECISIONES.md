@@ -70,7 +70,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220 |
 | Marketing | `marketing/README.md` | D-178 |
-| App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230 |
+| App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-232 |
 
 ---
 
@@ -3845,7 +3845,7 @@ empate y las copas juntas; `tools/e2e/cup/avisos.mjs`, `&dia=` y `&silenciar`. L
 prueban a mano en Android: Chrome headless no los muestra. Si con el tope se pierde un plazo (dos
 avisos ya ese día), el del día siguiente o el de gracia lo cubren.
 
-## D-230 · Un globo en la portada invita a agregar la app a inicio, primero en el laboratorio
+## D-232 · Un globo en la portada invita a agregar la app a inicio, primero en el laboratorio
 **Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** completa D-221; reusa la hoja de pasos de D-223
 **Decisión:** La portada muestra, a los 2,5 segundos, un globo abajo con el ícono de la app,
 **"Juegos de Salón como app"**, una línea y el botón **Agregar**, que abre los pasos de ese
