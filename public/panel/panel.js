@@ -577,7 +577,7 @@ function bloqueAvisos(rango, now) {
       tile(a.totalMandados, 'avisos mandados'),
       tile(porcentaje(a.totalTocados, a.totalMandados), `tocados · ${n(a.totalTocados)}`),
       tile(a.totalPwa, 'aperturas de la app instalada'),
-      tile(p.vuelta ? horaLabel(p.vuelta) : '—', `última vuelta${p.vuelta ? ` · ${ago(p.vuelta, now)}` : ''}${atrasada ? ' · ¿se apagó el workflow?' : ''}`, { hot: atrasada, info: 'GitHub apaga los workflows programados tras 60 días sin commits' }),
+      tile(p.vuelta ? horaLabel(p.vuelta) : '—', `última vuelta${p.vuelta ? ` · ${ago(p.vuelta, now)}` : ''}${atrasada ? ' · ¿se apagó el workflow?' : ''}`, { hot: atrasada, info: atrasada ? 'GitHub apaga los workflows programados tras 60 días sin commits' : '' }),
     ),
     el('div', { class: 'grid2' },
       el('div', {}, el('h3', { class: 'small' }, 'Por tipo'),
