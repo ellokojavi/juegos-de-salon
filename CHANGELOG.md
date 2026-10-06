@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.114.3 — 2026-10-06
+- **Del dado al juego, sin pantalla vacía** (D-237): en Juego al azar y Uno al día, el dado queda
+  en pantalla mientras el juego carga y se desvanece recién cuando el juego está listo debajo.
+
 ## 0.115.0 — 2026-10-06
 - **Uno al día, en el laboratorio** (D-230): un botón nuevo en la portada, al lado de Juego al
   azar. El dado rueda y cae en el juego de hoy, el mismo desafío para todos. Al terminar ves tu
