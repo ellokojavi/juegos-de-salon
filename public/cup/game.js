@@ -15,7 +15,7 @@ import { applyStatic, COMMON, SITIO, LANGS, getLang, langToggle, withLang } from
 import { compartir as compartirAlChat, cabecera, lamina, laminaResultado, aArchivo, nombreArchivo, puntajeYTiempo, botonResultadoSolo, MARCO } from '../assets/js/compartir.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { trackStart, versionOf, countryOf, trackVisit, trackFinish } from '../assets/js/transport/stats.js';
-import { gameById } from '../assets/js/games.js';
+import { gameById, MODO_UNO_AL_DIA } from '../assets/js/games.js';
 import {
   POZO, calendarioAlAzar, calendario, MAX_JUGADORES, COPA_MAX, aliasLimpio, esAlias, CODIGO, esCodigo, codigoAlAzar, pidAlAzar, limpiarNombre, claveNombre, esPin, hashPin,
   fechaEn, sumarDias, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta, estadoDia, comodinDe, moverInicio, sinEmpezar, pasarDia, MAX_DIAS_INICIO, faltaGente,
@@ -2154,7 +2154,7 @@ function jugarPractica(id, semilla) {
   const seg = Number(new URLSearchParams(location.search).get('zipSeg'));
   if (PRUEBA && (id === 'zip' || id === 'desenredo') && seg > 0) p.tiempo = seg * 1000;
   // Señal de uso para el panel (D-44): el suelto se cuenta como su propio juego; el laboratorio no
-  if (!LABS && !PRUEBA) trackStart({ game: id, mode: 'solo', players: 1 });
+  if (!LABS && !PRUEBA) trackStart({ game: id, mode: HOY ? MODO_UNO_AL_DIA : 'solo', players: 1 });
   jugarSinPuntaje(id, p, r => resultadoPractica(id, semilla, r));
 }
 
