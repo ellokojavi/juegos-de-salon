@@ -306,8 +306,8 @@ button.md-fila { cursor: pointer; }
 .letras-juego .entry .box { width: clamp(44px, 14vw, 58px); font-family: var(--font-body); }
 .board li .val.letras { display: flex; gap: 3px; letter-spacing: 0; }
 .letra { display: inline-grid; place-items: center; width: 1.6em; height: 1.6em; border-radius: 6px; font: 900 0.95rem var(--font-body); background: rgba(255,255,255,0.1); }
-.letra.f { background: var(--yellow); color: #3a1200; }
-.letra.t { background: var(--cyan); color: #03302c; }
+.letra.f { background: var(--lime); color: #1d3a00; }
+.letra.t { background: var(--yellow); color: #3a1200; }
 .anio-era { max-width: 260px; width: 100%; margin: 0 auto; }
 .anio-era button { white-space: nowrap; }
 

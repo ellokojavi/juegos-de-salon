@@ -150,3 +150,6 @@ Las respuestas a dilemas (issues con la etiqueta `usabilidad`) se anotan aquí:
   resultado nombran el juego que tocó ("📅 *Uno al día n.° 12*" y "87 puntos"), porque quien lo lee
   en el grupo casi siempre todavía no juega y el juego se descubre en el dado, como con el aviso.
   Es una excepción a U-31.
+- **La fama es verde y el toque amarillo** (#196, opción B): como en Wordle, en todos los Toque y
+  Fama (las letras de Palabra, las pistas de Número y del juego de sala) y en la tarjeta de Palabra
+  (🟩 fama, 🟨 toque, ⬛ no está), que así habla igual que la de Número (🟢, 🟡, ⚪).
