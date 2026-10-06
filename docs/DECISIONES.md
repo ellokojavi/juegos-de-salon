@@ -3865,10 +3865,17 @@ se corta y el de la semana) los activa el jugador y elige la hora. El detalle es
 demostró que "un juego por día" engancha, pero necesita un grupo y dura una semana. Uno al día
 no tiene ni lo uno ni lo otro.
 **Consecuencias:** Un período nuevo en los rankings (`dAAAA-MM-DD`), un historial por jugador con
-reglas de "una vez por fecha", y cada juego solitario acepta `?dia=`. Los avisos de "vuelve a jugar"
+reglas de "una vez por fecha", y cada juego solitario acepta `?hoy` (la página calcula la fecha, el
+juego y la semilla, así que el link no lleva la fecha ni deja elegir el tablero; el diseño decía
+`?dia=`, y el PR 1 lo cambió). Los avisos de "vuelve a jugar"
 siguen fuera (D-221): estos solo salen si el jugador los pidió, y se calman solos si no los usa.
 Es un diseño aprobado que falta construir: va en cinco PR, los cuatro primeros detrás del
 laboratorio (`UNO_AL_DIA_EN_LABS`), según "Por partes" de [UNO-AL-DIA.md](UNO-AL-DIA.md).
+Con menos de 9 juegos en el mazo, la espera para repetir uno es de dos días menos que los que hay
+(con los 7 del PR 1, cinco días), porque 7 días con 7 juegos repetía el mismo orden cada semana.
+El acceso va en la misma fila que Juego al azar, a su derecha (el dueño, 2026-10-05); la tarjeta
+junto a La Copa queda como alternativa en `/labs/` y con `?uad=tarjeta`. El PR 1 (el núcleo, los 7
+solitarios, todo en el celular) llegó en v0.115.0.
 
 ## D-231 · El selector de idioma lleva las banderas siempre
 **Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** corrige la nota de `base.css` de D-191 (en un celular angosto se escondía la bandera)

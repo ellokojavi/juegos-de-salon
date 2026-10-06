@@ -60,7 +60,7 @@ barajan todos con la semilla `uno-al-dia:ciclo:<n>` y salen de a uno por día, s
 que se acaba el mazo (10 días). Al barajar el mazo siguiente, ningún juego puede salir antes de 7
 días desde la última vez. Cada juego lleva la fecha desde la que entra a Uno al día. Así un juego
 nuevo se suma en el mazo siguiente y los días ya pasados no cambian. El contenido del día sale de
-`uno-al-dia:2026-10-05`, con el `azar()` de `cup/games/semilla.js`. Es una semilla distinta de las
+`uno-al-dia:2026-10-05`, convertida en un código de copa de 5 letras (ver "Lo que el PR 1 hizo"). Es una semilla distinta de las
 de cualquier copa, así que no adelanta nada de una copa en curso.
 
 **Cuándo cambia el día:** a la medianoche **del jugador**, como Wordle. Un jugador en Madrid juega
@@ -374,7 +374,7 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   otro juego, la página se va al de hoy.
 - **El mazo con 7 juegos:** "ningún juego antes de 7 días" con justo 7 juegos dejaba el mismo orden
   todas las semanas. Con menos de 9 juegos la espera es de dos días menos que los que hay (con 7,
-  cinco días); con 10 o más, 7 días, como dice arriba. El día n.° 1 es el 5 de octubre de 2026
+  cinco días; con 8, seis); con 9 o más, 7 días, como dice arriba (`SIN_REPETIR`). El día n.° 1 es el 5 de octubre de 2026
   (`LANZAMIENTO` en `uno-al-dia.js`); se puede mover mientras esté en el laboratorio.
 - **La semilla** es un código de copa de 5 letras sacado de la fecha (`semillaDel`), así los juegos
   no cambian: generan con ella como en cualquier copa. Las palabras van en el idioma de quien juega,
