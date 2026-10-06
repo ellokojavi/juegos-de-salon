@@ -1,6 +1,7 @@
 /**
  * Los avisos de Uno al día en la pantalla (D-230): la oferta con la hora, la campana de /today/ y sus
- * hojas, el globo del ícono y "Agregar al calendario". La lógica del navegador es la de La Copa
+ * hojas y el globo del ícono. El recordatorio de cada día es el aviso diario, a la hora que elige
+ * el jugador (D-230): no hay recordatorio en el calendario. La lógica del navegador es la de La Copa
  * (push.js); lo que decide cuándo llega cada aviso, tools/push/uno-al-dia.mjs.
  *
  * Reglas de la experiencia (las de D-221, docs/PWA-NOTIFICACIONES.md):
@@ -16,7 +17,7 @@ import {
   avisosVisibles, celular, camino as caminoDe, permiso, pedirPermiso, suscribir, suscripcionActual, subIdDe,
   paraGuardar, zonaHoraria, avisoDePrueba, anular,
 } from './push.js';
-import { estado, leer, recorrer, numDia, semanaDe, fechaLocal } from './uno-al-dia.js';
+import { estado, leer, recorrer, numDia, semanaDe } from './uno-al-dia.js';
 import { trackUnoAlDia } from './transport/stats.js';
 
 const KEY = 'juegos-de-salon:uno-al-dia:avisos';
@@ -230,13 +231,14 @@ export function oferta({ lang, alTocar, primera }) {
 }
 
 /**
- * La campana de /today/, con su estado, y "Agregar al calendario" (para quien no quiere avisos, o
- * tiene un iPhone sin la app instalada). `redibujar(aviso?)` vuelve a pintar la página.
+ * La campana de /today/, con su estado: las horas (apagados), la hora y la hoja (activos) o cómo
+ * desbloquearlos. Null si el celular no puede recibir avisos. `redibujar(aviso?)` vuelve a pintar la página.
  */
 export function bloque({ lang, alTocar, redibujar }) {
+  if (!disponible()) return null;
   const T = textos(lang);
   const caja = el('section', { class: 'panel uad-avisos', id: 'uad-avisos' });
-  if (disponible()) {
+  {
     const e = estadoAvisos();
     const g = leerAvisos();
     if (e === 'apagado') {
@@ -248,33 +250,6 @@ export function bloque({ lang, alTocar, redibujar }) {
       caja.append(el('button', { class: 'btn btn--ghost', id: 'btn-uad-avisos', 'data-estado': 'bloqueado', onClick: () => hojaBloqueados({ lang, alTocar }) }, T.avBloqueados));
     }
   }
-  // Un recordatorio en el calendario del celular (no el calendario de esta página, que muestra lo jugado).
-  // Con los avisos activos no va: repetiría el aviso (#230)
-  if (disponible() && estadoAvisos() === 'activo') return caja;
-  caja.append(el('p', { class: 'muted', style: 'margin:0' }, T.calNota));
-  caja.append(el('button', { class: 'btn btn--ghost btn--sm', id: 'btn-uad-calendario', onClick: () => { alTocar?.(); bajarCalendario({ lang, h: leerAvisos().h ?? 9 }); } }, T.calendario));
   return caja;
-}
-
-/**
- * "Agregar al calendario": un evento que se repite cada día a la hora elegida, con el link a
- * /today/. Se arma en el celular (un .ics) y el sistema lo ofrece al calendario.
- */
-export function ics({ lang, h = 9, hoy = fechaLocal(), url = 'https://juegosdesalon.cl/today/' }) {
-  const T = textos(lang);
-  const f = hoy.replace(/-/g, ''), hh = String(h).padStart(2, '0');
-  const fin = String(h).padStart(2, '0') + '15';
-  const sello = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d+/, '');
-  return ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Juegos de Salon//Uno al dia//ES', 'CALSCALE:GREGORIAN', 'BEGIN:VEVENT',
-    `UID:uno-al-dia-${f}-${hh}@juegosdesalon.cl`, `DTSTAMP:${sello}`, `DTSTART:${f}T${hh}0000`, `DTEND:${f}T${fin}00`,
-    'RRULE:FREQ=DAILY', `SUMMARY:${T.calEvento}`, `DESCRIPTION:${url}`, `URL:${url}`, 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
-}
-function bajarCalendario({ lang, h }) {
-  trackUnoAlDia('recordatorio');
-  const url = new URL('../../today/?de=cal', import.meta.url).href.replace(/^http:\/\/[^/]+/, 'https://juegosdesalon.cl');
-  const blob = new Blob([ics({ lang, h, url })], { type: 'text/calendar' });
-  const a = el('a', { href: URL.createObjectURL(blob), download: 'uno-al-dia.ics' });
-  document.body.append(a); a.click(); a.remove();
-  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
 }
 

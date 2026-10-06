@@ -68,7 +68,6 @@ ok(q?.c === 2 && q.sp === 's2026-41' && q.sn === 1, 'y su racha y su semana (el 
 /* ---------- La campana de /today/ ---------- */
 await b.go(`${SITIO}/today/`, 2000);
 ok(await esperar(`document.getElementById('btn-uad-avisos')?.dataset.estado === 'activo'`), '/today/: la campana dice que están activos');
-ok(!await ev(`!!document.getElementById('btn-uad-calendario')`) && !/calendario de tu celular/.test(await texto('#uad-avisos')), 'con los avisos activos no se ofrece el recordatorio del calendario (#230)');
 ok(/13:00/.test(await texto('#btn-uad-avisos')), `con la hora (${await texto('#btn-uad-avisos')})`);
 await click('#btn-uad-avisos');
 ok(await esperar(`!!document.getElementById('hoja-uad-ajustes')`), 'tocarla abre la hoja de los avisos');
@@ -83,7 +82,7 @@ await click('#btn-uad-silenciar');
 ok(await esperar(`!Object.keys(JSON.parse(localStorage.getItem('${DB}')).pushDia||{}).length`), 'Silenciar los apaga en la base');
 ok(await esperar(`/no te llegan más avisos/.test(document.body.innerText)`), 'y lo dice');
 ok(await ev(`!!document.querySelector('#uad-avisos .uad-horas')`), 'y la campana vuelve a ofrecer la hora');
-ok(/Agregar recordatorio/i.test(await texto('#btn-uad-calendario')) && /calendario de tu celular/.test(await texto('#uad-avisos')), '"⏰ Agregar recordatorio" está a mano, con la línea que dice para qué es');
+ok(!await ev(`!!document.getElementById('btn-uad-calendario')`) && !/calendario/i.test(await texto('#uad-avisos')), 'el recordatorio es el aviso diario: no hay recordatorio en el calendario');
 
 /* ---------- Bloqueados ---------- */
 await permiso('denied');
