@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.124.0 — 2026-10-06
+- **⭐ Favoritos, en la misma fila que los tipos** (D-241): la ficha va primera, junto a Palabras,
+  Lógica, Cultura y Cartas/Dados, así los filtros ocupan una línea menos. En los celulares más
+  angostos, donde no cabe, sigue arriba de los tipos.
+
 ## 0.123.0 — 2026-10-06
 - **La Copa y Uno al día, mitad y mitad** (D-239): en la portada, Uno al día pasa a una tarjeta al
   lado de La Copa, con el emoji a la izquierda del título. Los títulos de las dos van en color,

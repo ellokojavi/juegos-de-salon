@@ -56,7 +56,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213 |
-| Portada: filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240 |
+| Portada: filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241 |
 | Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239 |
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97 |
@@ -4066,10 +4066,11 @@ disponible, el juego abre como antes de D-235. Una página de juego nueva que no
 deja el dado encima hasta 4 s.
 
 ## D-238 · Juegos favoritos en la portada, con su propio filtro
-**Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** completa D-142 y D-149; respeta D-144
+**Fecha:** 2026-10-06 · **Estado:** corregida por D-241 · **Relación:** completa D-142 y D-149; respeta D-144; D-241 cambia dónde va la ficha ⭐ Favoritos
 **Decisión:** cada tarjeta de la portada lleva una ☆ en la esquina de arriba. Al tocarla, el juego
 queda marcado como favorito (⭐ amarilla) y no se abre; al tocarla otra vez, se desmarca.
-- **El filtro** es una ficha "⭐ Favoritos" en su propia línea, arriba de los tipos. Aparece
+- **El filtro** es una ficha "⭐ Favoritos" en su propia línea, arriba de los tipos (corregida
+  por D-241: va primera en la fila de los tipos cuando cabe, y en su línea solo cuando no). Aparece
   recién con el primer favorito, así que a quien no usa la ⭐ no le cambia nada.
 - **Funciona como un tipo más:** se elige uno o el otro, la cuenta dice "Se ven n de m" con "Ver
   todos" y va en la URL (`?type=favorites`). Un link así, en un celular sin favoritos, muestra
@@ -4088,13 +4089,14 @@ siempre los mismos dos o tres. Los tipos agrupan por género, no por gusto.
 **Alternativas descartadas:**
 - **Una quinta ficha en la fila de tipos:** cinco fichas no caben en una fila ni a 375 px, en
   ningún idioma, y desde D-149 los tipos van en una sola fila (D-144).
-- **La ficha con la ⭐ sola, sin el nombre:** tampoco cabía a 320 px.
+- **La ficha con la ⭐ sola, sin el nombre:** tampoco cabía a 320 px. (D-241 retoma las dos: la ficha entra
+  primera en la fila cuando cabe, con su nombre o con la ⭐ sola y menos aire, y se mide en la página.)
 - **Ordenar los favoritos primero, sin filtro:** el pedido era un filtro, y reordenar movería las
   tarjetas de lugar cada vez que alguien marca una.
 - **Guardarlos con el jugador (D-212), para que lo sigan entre celulares:** queda para después.
   El `localStorage` alcanza, y no obliga a tener nombre y PIN.
 **Consecuencias:** con un favorito marcado, los filtros ocupan una línea más, también cuando van
-pegados arriba (D-196). `tools/e2e/favoritos.mjs` lo prueba de punta a punta. Su chequeo a 320 px
+pegados arriba (D-196; desde D-241, solo donde la ficha no cabe en la fila de los tipos). `tools/e2e/favoritos.mjs` lo prueba de punta a punta. Su chequeo a 320 px
 encontró que la portada ya se corría de lado en alemán en el Chrome de Linux, que no sabe partir
 "Galgenmännchen": la columna de `.games` crecía hasta la palabra entera. Ahora la columna no pasa
 del ancho de la pantalla (`minmax(0, 1fr)`) y el nombre se parte aunque falte el diccionario.
@@ -4134,3 +4136,29 @@ corregían unas a otras: para saber cómo funcionaba había que leer seis y desc
 valía. En D-238 eso hizo que se citara D-144 como vigente cuando D-149 ya lo había corregido.
 **Consecuencias:** un PR que cambia la portada edita C-17 en el mismo PR (como cualquier canon), y
 la lista de chequeo de un juego nuevo pide que entre bien a la portada.
+
+## D-241 · ⭐ Favoritos entra en la fila de los tipos cuando cabe
+**Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** corrige D-238 (dónde va la ficha); respeta D-144
+**Decisión:** La ficha ⭐ Favoritos va primera en la fila de los tipos y ya no en una línea propia,
+siempre que quepa. `acomodarFav` (portada) prueba tres formas, de la más completa a la más corta, y
+deja la primera con la que la fila no se desborda:
+1. **En la fila, con su nombre**, como las otras fichas.
+2. **En la fila, con la ⭐ sola** (44 px, el nombre en el `aria-label`) y un poco menos de aire
+   entre las fichas y dentro de ellas (`.tipos.apretada`: 4 px entre fichas, 3 px adentro).
+3. **En su línea, arriba de los tipos**, como en D-238.
+Se vuelve a medir al marcar o desmarcar el primer favorito, cuando cambia el ancho (girar el
+celular) y cuando cargan las fuentes.
+**Por qué:** lo pidió el dueño: la línea de más empujaba los juegos hacia abajo. Medido: con la ⭐
+sola y menos aire, la fila cabe desde 360 px en los cuatro idiomas, y desde 430 px va con su
+nombre (en inglés, desde 375). A 320 px solo cabe en inglés. Los celulares de hoy miden de 360 a
+430 px, así que casi siempre cabe.
+**Alternativas descartadas:**
+- **La ⭐ siempre en la fila:** a 320 px y en algunos idiomas a 360 px, la fila se sale de la
+  pantalla (C-8).
+- **Fijar un ancho desde el que entra:** el largo de los tipos cambia con el idioma y con las fuentes
+  de cada celular (en el Chrome de Linux, otras medidas). Medir en el momento no se equivoca.
+- **La ⭐ al lado de Juego al azar:** cabía siempre, pero no quedaba pegada arriba con los filtros
+  al bajar (D-196) y juntaba un botón que hace algo con uno que filtra.
+**Consecuencias:** `tools/e2e/favoritos.mjs` mira dónde va a 320, 390 y 900 px en los cuatro
+idiomas, que la fila de tipos siga en una línea y que nada se salga.
+
