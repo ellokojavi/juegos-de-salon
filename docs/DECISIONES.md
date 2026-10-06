@@ -70,7 +70,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220 |
 | Marketing | `marketing/README.md` | D-178 |
-| App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227 |
+| App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-229 |
 
 ---
 
@@ -3800,3 +3800,32 @@ dentro de la app instalada.
 **Consecuencias:** Quien instala la app en un iPhone ve los avisos antes de que se abran a todos.
 Son pocos y es justo lo que se quiere probar. `push.test.mjs` y `tools/e2e/cup/avisos.mjs` lo
 prueban.
+
+## D-229 · Un globo en la portada invita a agregar la app a inicio, primero en el laboratorio
+**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** completa D-221; reusa la hoja de pasos de D-223
+**Decisión:** La portada muestra, a los 2,5 segundos, un globo abajo con el ícono de la app,
+**"Juegos de Salón como app"**, una línea y el botón **Agregar**, que abre los pasos de ese
+celular en la hoja de abajo de los avisos (D-223).
+- **Los pasos dependen del celular** (`pasosDe` en `assets/js/instalar.js`): Safari y Chrome en
+  iPhone (Compartir → Agregar a inicio → Agregar), Chrome en Android (menú ⋮ → Agregar a la
+  pantalla principal o Instalar app → Instalar) y Samsung Internet (menú ☰). Dentro de WhatsApp,
+  Instagram u otra app no se puede agregar: la hoja pide abrir el link de la portada en Safari o en
+  Chrome, con un botón para copiarlo. En el computador, en Firefox o Edge del iPhone y en la app ya
+  instalada, el globo no sale.
+- **En Android, si Chrome ofrece su propio diálogo de instalar** (`beforeinstallprompt`), "Agregar"
+  abre ese diálogo en vez de los pasos.
+- **La ✕ lo apaga para siempre** en ese navegador (`juegos-de-salon:instalar:no`), igual que
+  "Ya la agregué" o instalar la app desde el diálogo de Chrome.
+- **La hoja de abajo pasa a `base.css`**: la usan los avisos de La Copa y el globo, con el mismo
+  diseño. Los pasos del iPhone dicen lo mismo que los de los avisos (U-5).
+- **Detrás del laboratorio** (`INSTALAR_EN_LABS`), como los avisos (D-223): se ve en el sitio local
+  y en los celulares que lo activan en `/labs/`, donde también se puede volver a mostrar después
+  de cerrarlo.
+**Por qué:** Lo pidió el dueño: que la portada promocione agregar la app, con un llamado simple y
+después instrucciones claras para Safari y Chrome en iPhone y Android, que se pueda cerrar y no
+vuelva. La app instalada (D-221) es la que recibe los avisos en iPhone y se abre de un toque.
+**Consecuencias:** Para abrirlo a todos basta `INSTALAR_EN_LABS = false`. Los nombres de los menús
+de cada navegador cambian con sus versiones: si un paso deja de calzar, se corrige en
+`COMMON[lang].ins` (i18n.js). Lo prueban `instalar.test.mjs` y `tools/e2e/instalar.mjs` (cada
+celular, la ✕, el diálogo de Chrome y los cuatro idiomas a 320 px); en iPhones y Android reales se
+prueba a mano desde `/labs/`.

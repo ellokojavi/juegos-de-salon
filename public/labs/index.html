@@ -85,6 +85,14 @@
         <button class="btn btn--yellow" id="btn-labs-avisos" type="button">Activar en este celular</button>
       </section>
 
+      <section class="panel seccion" id="seccion-instalar">
+        <h2>📲 Agregar a inicio</h2>
+        <p class="muted" style="margin:0">El globo de la portada que invita a agregar la app a la pantalla de inicio, con los pasos de Safari y Chrome en iPhone y en Android (D-229). Sale en el celular, no en el computador, y se va para siempre con la ✕.</p>
+        <p id="instalar-estado" class="muted" style="margin:0"></p>
+        <button class="btn btn--yellow" id="btn-labs-instalar" type="button">Activar en este celular</button>
+        <button class="btn btn--ghost" id="btn-instalar-otra-vez" type="button">Volver a mostrar el globo</button>
+      </section>
+
     </div>
     <footer class="muted" style="text-align:center;padding-top:24px;font-size:0.85rem">
       <p id="labs-version">Versión activa: …</p>
@@ -112,6 +120,20 @@
         b.disabled = !clave;
       };
       b.addEventListener('click', () => { SFX.tap(); activarAvisos(!avisosVisibles()); pintar(); });
+      pintar();
+    });
+    // El globo de agregar a inicio, solo en los celulares que lo activan aquí (D-229)
+    import('../assets/js/instalar.js').then(({ instalarEnLabs, activarInstalar, descartado, descartar }) => {
+      const b = document.getElementById('btn-labs-instalar'), otra = document.getElementById('btn-instalar-otra-vez');
+      const est = document.getElementById('instalar-estado');
+      const pintar = () => {
+        const on = instalarEnLabs();
+        b.textContent = on ? 'Desactivar en este celular' : 'Activar en este celular';
+        est.textContent = !on ? '' : descartado() ? 'Activo, pero lo cerraste con la ✕: vuelve a mostrarlo para verlo en la portada.' : 'Activo: abre la portada y espera unos segundos.';
+        otra.hidden = !on || !descartado();
+      };
+      b.addEventListener('click', () => { SFX.tap(); activarInstalar(!instalarEnLabs()); pintar(); });
+      otra.addEventListener('click', () => { SFX.tap(); descartar(false); pintar(); });
       pintar();
     });
     initSound();
