@@ -123,4 +123,20 @@ await caso('--simular no escribe nada, ni las señales', async () => {
   assert.equal(db.cambios.length, 0);
 });
 
+await caso('Uno al día: manda el de hoy, lo anota y borra lo de una suscripción que ya no existe', async () => {
+  const db = base();
+  const { numDia } = await import('../../public/assets/js/uno-al-dia.js');
+  const t = Date.parse('2026-10-07T13:10:00Z');   // 10:10 en Santiago
+  const n = numDia('2026-10-07');
+  db.datos.pushDia = { [S1]: { h: 9, d: true, r: true, w: true, u: n - 1, c: 3, k: 0, m: 3, at: 0 }, ['c'.repeat(32)]: { h: 9, at: 0 } };
+  db.datos.pushEnviadosDia = {};
+  const mandados = [];
+  await vuelta({ db, now: t, log: () => {}, envio: async (sub, aviso) => { mandados.push(aviso.body); return { estado: 201 }; } });
+  assert.ok(mandados.some(b => /Uno al día n\.° \d+ ya está\. 🔥 Racha: 3 días\./.test(b)), mandados.join(' | '));
+  const c = Object.assign({}, ...db.cambios);
+  assert.equal(c[`pushEnviadosDia/${S1}/dia:${n}`], t);
+  assert.equal(c[`pushDia/${'c'.repeat(32)}`], null);
+  assert.equal(c[`stats/prod/days/${Math.floor(t / 864e5)}/mandados/uaddia`]?.['.sv']?.increment, 1);
+});
+
 console.log(`avisar: ${n} casos en verde`);

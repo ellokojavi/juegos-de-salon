@@ -339,6 +339,7 @@
     // puede probar desde /labs/
     import('./assets/js/uno-al-dia.js').then(async ({ unoAlDiaVisible, formaAcceso }) => {
       if (!unoAlDiaVisible() || formaAcceso() === 'no') return;
+      import('./assets/js/uno-al-dia-avisos.js').then(Av => Av.globo()).catch(() => {});
       const { botonUnoAlDia, tarjetaUnoAlDia } = await import('./assets/js/uno-al-dia-ui.js');
       const copa = tarjetas.find(t => t.g.torneo)?.card;
       if (formaAcceso() === 'tarjeta' && copa) {

@@ -61,9 +61,10 @@ Lo que **no** se avisa, a propósito:
   sobra y obligaría a un servidor en tiempo real.
 - **Marketing** ("¡vuelve a jugar!", "hay un juego nuevo"): un aviso que no sirve a quien lo recibe
   hace que desactive todos. Si alguna vez se quiere, va con su propia casilla, apagada por defecto.
-- **Los de Uno al día** (D-230, por construir) no son de este tipo: el jugador los activa a
+- **Los de Uno al día** (D-230, en el laboratorio desde v0.118.0; los decide `tools/push/uno-al-dia.mjs`) no son de este tipo: el jugador los activa a
   propósito, elige la hora, tienen sus propias casillas y se calman solos si no los usa. Respetan
-  el mismo tope de 2 al día y la misma noche sin avisos; el detalle está en
+  la misma noche sin avisos y un tope de 2 al día propio, que no se suma al de las copas; el
+  detalle está en
   [UNO-AL-DIA.md](UNO-AL-DIA.md).
 - Tope: **máximo 2 avisos por persona al día** por copa (D-229; además, uno por vuelta, ver "Lo
   que el PR 3 hizo distinto" más abajo). Cada aviso trae un `tag` por copa y día,
@@ -392,6 +393,9 @@ Lo que no se puede automatizar: un iPhone real, con iOS 16.4 o más (ideal: 17, 
   si el cierre cae de noche. A lo más uno por copa y celular en cada vuelta y dos por copa en el
   día de quien recibe (`TOPE`, D-229); dos plazos que se vencen a la vez van en uno, y el del día,
   el plazo y la final llevan `&dia=<d>` y los botones de Android (`acciones`).
+- `tools/push/uno-al-dia.mjs` decide los de Uno al día (D-230) con `pushDia` (lo que pidió cada
+  celular y su último día y racha); avisar.mjs los manda en la misma vuelta y los anota en
+  `pushEnviadosDia`.
 - `tools/push/avisar.mjs` lee `pushCopa`, `push` y `pushEnviados`, manda, y anota cada aviso
   entregado en `pushEnviados/<código>/<subId>/<clave>` (`dia:3`, `plazo:3`, `final`, `fin`,
   `insc:<pid>`). Una falla pasajera se reintenta en la vuelta siguiente. Antes de mandar, junta
