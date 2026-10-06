@@ -124,7 +124,9 @@ La app detecta en qué está el jugador y le muestra solo el camino que le sirve
 
 **Android y computador**: un toque en **Avisarme**, el diálogo del sistema y listo. No hace falta
 instalar nada: Chrome, Edge, Samsung Internet y Firefox reciben avisos con la página cerrada. El
-navegador ofrece "Instalar app" por su cuenta; la app no insiste.
+navegador ofrece "Instalar app" por su cuenta; la campana no insiste. Fuera de La Copa, el globo de
+la portada (D-229, en el laboratorio) sí invita a agregar la app: en Android abre el diálogo de
+instalar de Chrome si lo ofrece, y si no, los mismos pasos.
 
 **iPhone en Safari** (y Chrome en iPhone, que también puede agregar a inicio desde iOS 16.4):
 una hoja que se desliza desde abajo con tres pasos, cada uno con el dibujo del botón que hay que
@@ -298,6 +300,12 @@ push.js (en la página)                    pushEnviados/<código>/<subId>/<clave
 - **Hecho:** las 19 páginas de la app (las que ya tenían manifest) llevan el `apple-touch-icon` y
   registran el service worker; `public/assets/js/instalable.test.mjs` lo exige. Las puertas por
   idioma, las páginas puente, el panel y el laboratorio no lo llevan, a propósito: no son la app.
+- **El globo de la portada** (D-229, `public/assets/js/instalar.js`, en el laboratorio con
+  `INSTALAR_EN_LABS`): invita a agregar la app a inicio y abre los pasos del celular de cada uno
+  (Safari o Chrome en iPhone, Chrome o Samsung Internet en Android; dentro de WhatsApp, abrir el
+  link en el navegador) en la misma hoja de abajo que los avisos, que por eso vive en `base.css`.
+  Los pasos del iPhone dicen lo mismo que los de la campana. Lo prueban `instalar.test.mjs` y
+  `tools/e2e/instalar.mjs`.
 
 ### 3. Suscribirse (`public/assets/js/push.js`, `public/cup/avisos.js`) — hecho en el PR 2
 
