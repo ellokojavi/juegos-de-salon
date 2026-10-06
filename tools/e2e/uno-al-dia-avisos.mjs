@@ -98,13 +98,15 @@ await b.go(`${SITIO}/today/`, 1800);
 await esperar(`!!document.querySelector('#uad-avisos .uad-horas')`);
 await click('#uad-avisos [data-h="9"]');
 ok(await esperar(`!!document.getElementById('hoja-uad-instalar')`), 'iPhone en Safari: tocar una hora muestra los pasos para agregar la app');
-ok(/Uno al día/.test(await texto('#hoja-uad-instalar')) && /Activar avisos/.test(await texto('#hoja-uad-instalar')), 'y el paso 3 lleva a Uno al día y a la campana');
+ok(/Uno al día/.test(await texto('#hoja-uad-instalar')) && /elige la hora otra vez/.test(await texto('#hoja-uad-instalar')), 'y el paso 3 lleva a Uno al día y a elegir la hora (el botón "Activar avisos" no existe aquí)');
 await b.shot('hoja-instalar');
 await como(UA.whatsapp);
 await b.go(`${SITIO}/today/`, 1800);
 await esperar(`!!document.querySelector('#uad-avisos .uad-horas')`);
 await click('#uad-avisos [data-h="9"]');
 ok(await esperar(`!!document.getElementById('hoja-uad-otra-app')`), 'dentro de WhatsApp: pide abrir el link en Safari');
+ok(/elige la hora otra vez/.test(await texto('#hoja-uad-otra-app')) && !/Activar avisos/.test(await texto('#hoja-uad-otra-app')), 'y dice que ahí se elige la hora otra vez');
+await b.shot('hoja-otra-app');
 
 await b.close?.();
 console.log(`Capturas en ${OUT}`);
