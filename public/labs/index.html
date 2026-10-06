@@ -140,9 +140,9 @@
       const pintar = () => {
         const on = unoAlDiaVisible();
         b.textContent = on ? 'Desactivar en este celular' : 'Activar en este celular';
-        // Fuera del laboratorio (D-230) se ve para todos: aquí queda solo probar la otra forma
+        // Fuera del laboratorio (D-230) se ve para todos: aquí queda solo probar la otra forma (la bajada ya lo dice)
         b.hidden = !UNO_AL_DIA_EN_LABS;
-        est.textContent = !UNO_AL_DIA_EN_LABS ? 'Ya está para todos. Aquí puedes probar la otra forma del botón de la portada.' : on ? 'Activo: abre la portada y toca 📅 Uno al día.' : '';
+        est.textContent = !UNO_AL_DIA_EN_LABS ? '' : on ? 'Activo: abre la portada y toca 📅 Uno al día.' : '';
         ver.hidden = !on;
         formas.hidden = document.getElementById('uad-forma-titulo').hidden = !on;
         // La forma elegida va en amarillo; la otra, apagada
