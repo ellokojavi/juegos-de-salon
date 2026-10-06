@@ -82,7 +82,7 @@ await click('#btn-uad-silenciar');
 ok(await esperar(`!Object.keys(JSON.parse(localStorage.getItem('${DB}')).pushDia||{}).length`), 'Silenciar los apaga en la base');
 ok(await esperar(`/no te llegan más avisos/.test(document.body.innerText)`), 'y lo dice');
 ok(await ev(`!!document.querySelector('#uad-avisos .uad-horas')`), 'y la campana vuelve a ofrecer la hora');
-ok(await ev(`!!document.getElementById('btn-uad-calendario')`), '"Agregar al calendario" está a mano');
+ok(/Agregar recordatorio/i.test(await texto('#btn-uad-calendario')) && /calendario de tu celular/.test(await texto('#uad-avisos')), '"⏰ Agregar recordatorio" está a mano, con la línea que dice para qué es');
 
 /* ---------- Bloqueados ---------- */
 await permiso('denied');

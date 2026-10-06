@@ -554,6 +554,21 @@ export function notePlayed(api, fp, { sesion = globalThis.sessionStorage, now = 
   return quiet(() => api.patch(dayPath(fp.env, dayOf(now)), { [`juegan/${clave(entrada)}`]: INC }));
 }
 
+/**
+ * Lo que se hace en Uno al día (D-230), para el panel: cuántas veces por día se tocó el botón, rodó
+ * el dado, se terminó el de hoy (o se repitió), se compartió, se tiró por otro juego, se invitó, se
+ * abrió una invitación o se aceptó, y cómo les fue a los avisos (ofrecidos, hora elegida, activados,
+ * "Ahora no", silenciados) y al recordatorio del calendario. Solo cuenta: no dice quién.
+ */
+export const EVENTOS_UAD = ['boton', 'dado', 'jugado', 'repite', 'compartir', 'otro', 'invitar', 'invitacion', 'aceptada', 'oferta', 'hora', 'activos', 'ahorano', 'silencio', 'recordatorio'];
+export function trackUnoAlDia(evento) {
+  try {
+    if (!EVENTOS_UAD.includes(evento)) return Promise.resolve();
+    const s = stats();
+    return quiet(() => s.api.patch(dayPath(s.fp.env, dayOf(Date.now())), { [`uad/${evento}`]: INC }));
+  } catch (_) { return Promise.resolve(); }
+}
+
 /** Atajo para las páginas: `trackVisit()` al cargar. Nunca lanza ni se espera. */
 export function trackVisit() {
   try { const s = stats(); return noteVisit(s.api, s.fp); } catch (_) { return Promise.resolve(); }
