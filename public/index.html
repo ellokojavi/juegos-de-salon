@@ -206,14 +206,14 @@
       background: var(--lime); box-shadow: 0 0 0 2px var(--bg2), 0 0 10px var(--lime); animation: uadPulso 1.6s ease-in-out infinite;
     }
     @keyframes uadPulso { 50% { transform: scale(1.3); } }
-    /* A) Al lado del dado: los dos botones se achican para caber en una fila, también a 320 px */
+    /* Al lado del dado (lo elegido): los dos botones se achican para caber en una fila, también a 320 px */
     .azar-slot.con-uad { flex-wrap: nowrap; gap: 8px; }
     .azar-slot.con-uad .btn-azar { flex: 0 1 auto; min-width: 0; gap: 6px; padding: 6px 14px 6px 10px; font-size: clamp(0.95rem, 4.2vw, 1.2rem); white-space: nowrap; }
     .azar-slot.con-uad .btn-azar-dado { font-size: 1.2rem; }
     .azar-slot.con-uad .btn-uad { flex: 0 1 auto; min-width: 0; padding: 5px 14px; }
     .azar-slot.con-uad .btn-uad-titulo { gap: 5px; font-size: clamp(0.95rem, 4.2vw, 1.15rem); white-space: nowrap; }
     .azar-slot.con-uad .btn-uad-estado { font-size: 0.72rem; white-space: nowrap; }
-    /* B) Una fila de dos tarjetas altas: La Copa y Uno al día, media fila cada una */
+    /* La otra forma, a prueba en /labs/: una fila de dos tarjetas altas, La Copa y Uno al día */
     .fila-alta { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 10px; }
     .game-card.alta { position: relative; grid-template-columns: 1fr; grid-template-areas: "emoji" "texto" "meta"; row-gap: 8px; align-content: start; justify-items: start; text-align: left; padding: 14px 12px; font: inherit; cursor: pointer; }
     .game-card.alta .emoji { width: 52px; height: 52px; font-size: 2.1rem; border-radius: 15px; }
@@ -327,13 +327,13 @@
       lang, candidatos: () => tarjetas.filter(t => !t.card.hidden).map(t => t.g),
     }));
     // Uno al día (D-230): al lado, el juego de hoy, el mismo para todos. Por ahora, en el laboratorio
-    // Dos formas a prueba, para que el dueño elija (`?uad=tarjeta`): al lado del dado, o una tarjeta
-    // de media fila junto a La Copa
-    import('./assets/js/uno-al-dia.js').then(async ({ unoAlDiaVisible }) => {
+    // Va al lado del dado (lo que eligió el dueño); la tarjeta de media fila junto a La Copa se
+    // puede probar desde /labs/
+    import('./assets/js/uno-al-dia.js').then(async ({ unoAlDiaVisible, formaAcceso }) => {
       if (!unoAlDiaVisible()) return;
       const { botonUnoAlDia, tarjetaUnoAlDia } = await import('./assets/js/uno-al-dia-ui.js');
       const copa = tarjetas.find(t => t.g.torneo)?.card;
-      if (new URLSearchParams(location.search).get('uad') === 'tarjeta' && copa) {
+      if (formaAcceso() === 'tarjeta' && copa) {
         const fila = el('div', { class: 'fila-alta' });
         copa.replaceWith(fila);
         copa.classList.add('alta');

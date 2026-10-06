@@ -118,6 +118,19 @@ await ev(`document.querySelector('#uad-cal').previousElementSibling.firstElement
 ok(/septiembre/i.test(await texto('.uad-cal-cab')) && /👑/.test(await texto('#uad-cal')), 'el mes anterior muestra los días de septiembre');
 await b.shot('today');
 
+/* ---------- La otra forma, a prueba desde /labs/: una tarjeta junto a La Copa ---------- */
+await b.go(`${SITIO}/labs/`, 1500);
+ok(await esperar(`!!document.querySelector('#uad-formas [data-forma="tarjeta"]')`), 'el laboratorio deja elegir dónde va en la portada');
+ok(await ev(`document.querySelector('#uad-formas [data-forma="boton"]').getAttribute('aria-pressed')`) === 'true', 'por defecto, al lado del dado');
+await click('#uad-formas [data-forma="tarjeta"]');
+await b.go(`${SITIO}/`, 1500);
+await esperar(`!!document.getElementById('btn-uno-al-dia')`);
+ok(await ev(`!!document.querySelector('.fila-alta .game-card.torneo') && document.getElementById('btn-uno-al-dia').classList.contains('uad-card')`), 'con "Junto a La Copa", es una tarjeta de media fila al lado de La Copa');
+ok(await ev(`!document.querySelector('.azar-slot #btn-uno-al-dia')`) && await sinDesborde(), 'y ya no va al lado del dado');
+await b.shot('portada-tarjeta');
+await b.go(`${SITIO}/labs/`, 1200);
+await click('#uad-formas [data-forma="boton"]');
+
 /* ---------- 320 px y los cuatro idiomas ---------- */
 await b.send('Emulation.setDeviceMetricsOverride', { width: 320, height: 640, deviceScaleFactor: 2, mobile: true });
 for (const lang of IDIOMAS) {
