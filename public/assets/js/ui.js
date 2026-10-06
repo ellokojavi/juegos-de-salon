@@ -2,7 +2,7 @@
  * Utilidades de interfaz compartidas: partículas de fondo, confeti, vibración,
  * wake lock (que no se apague la pantalla) y helpers de DOM.
  */
-import { canShare, shareLink, EMOJI_OSCUROS } from './compartir.js';
+import { canShare, shareLink, compartir, comparteArchivos, EMOJI_OSCUROS } from './compartir.js';
 
 export const $ = (sel, root = document) => root.querySelector(sel);
 export const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
@@ -119,13 +119,16 @@ export { canShare, shareLink };
 /**
  * Botón redondo de la barra de arriba para compartir un link (📤). Donde hay diálogo nativo
  * abre el del sistema; donde no, copia y lo avisa cambiando el ícono por un ✅ dos segundos,
- * que se entiende sin traducir y no mueve nada de lugar en la barra.
+ * que se entiende sin traducir y no mueve nada de lugar en la barra. Con `imagen` (una función
+ * que da el archivo, o `null`), donde el celular manda archivos va la imagen junto al texto
+ * (D-226); en un computador no se descarga nada: se copia el texto, como siempre.
  */
-export function shareButton({ title, text, url, label }) {
+export function shareButton({ title, text, url, label, imagen }) {
   const btn = el('button', { type: 'button', class: 'icon-btn', title: label, 'aria-label': label }, '📤');
   btn.addEventListener('click', async () => {
     if (btn.textContent === '✅') return;
-    const r = await shareLink({ title, text, url });
+    const archivo = imagen && comparteArchivos() ? await imagen() : null;
+    const r = archivo ? await compartir({ titulo: title, texto: text, url, imagen: archivo }) : await shareLink({ title, text, url });
     if (r !== 'copied') return;
     btn.textContent = '✅';
     setTimeout(() => { btn.textContent = '📤'; }, 2000);

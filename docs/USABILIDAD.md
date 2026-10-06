@@ -84,6 +84,7 @@ nunca se usaron, y no se renumera.
 - **U-33 · La imagen dice lo mismo que el texto:** arriba la misma cabecera (título y contexto),
   abajo el mismo link. Un resultado o una tabla se comparten siempre con imagen y texto juntos,
   desde cualquier botón; una invitación, solo con texto (la imagen la pone la tarjeta del link).
+  La app, desde la portada, va con esa tarjeta como imagen, la de su idioma (D-226).
 - **U-31 · Completo:** el resultado dice copa, día, juego, jugador y puntaje; la tabla dice quién
   falta y marca "(-1J)" a quien lleva menos juegos.
 - **U-32 · Sin spoilers:** lo que se comparte no revela respuestas ni los juegos que vienen.

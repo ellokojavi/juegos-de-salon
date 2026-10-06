@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.109.0 — 2026-10-05
+- **Compartir la app manda imagen y texto** (D-226): el 📤 de la portada manda la tarjeta de Juegos
+  de Salón y un mensaje con cuántos juegos hay, La Copa, para jugar en grupo o solo, y el link.
+  Los dos en el idioma en que se mira la app. En un computador se copia el texto, como antes.
+
 ## 0.108.1 — 2026-10-05
 - **Los avisos de La Copa ya tienen su clave** (D-225): con ella se pueden mandar de verdad, todavía
   en el laboratorio. En iPhone, la app agregada a inicio desde una copa con los avisos del
