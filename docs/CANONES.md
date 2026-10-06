@@ -386,7 +386,8 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
 - **La barra de arriba** lleva el idioma (C-3), el sonido (C-4), 🏆 rankings (D-212, abiertos
   a todos desde D-217) y compartir, que comparte la app con su tarjeta social en el idioma en que se
   mira (`compartirApp`, D-226, U-33). Su ícono es el de compartir de los sistemas operativos, una
-  caja abierta con una flecha hacia arriba, en SVG y del color del texto, no un emoji (D-242).
+  caja abierta con una flecha hacia arriba, en SVG y no un emoji (D-242), con la caja celeste,
+  la flecha rosada y la sombra de abajo de los botones de la página (D-243).
   El globo que invita a agregar la app a inicio sale abajo, solo en los celulares donde se puede
   agregar (no en el computador ni en la app ya instalada), y la ✕ lo apaga para siempre en ese
   navegador (D-232).
