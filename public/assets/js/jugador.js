@@ -408,6 +408,17 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
       try { await almacen.update({ [`invitados/${jid}/${uid}`]: { d: n, at: HORA, ...(yo ? { j: yo.jid } : {}) } }); return true; } catch (_) { return false; }
     },
 
+    /**
+     * Los avisos de Uno al día de este celular (D-230): la suscripción (`push/<subId>`, la misma de
+     * La Copa) y lo que pidió (`pushDia/<subId>`: hora, cuáles, y su racha para el texto). No hace
+     * falta jugador: va con la identidad anónima de este celular.
+     */
+    async guardarAvisosDia(subId, sub, datos) {
+      const uid = await almacen.listo();
+      await almacen.update({ [`push/${subId}`]: { ...sub, uid, at: HORA }, [`pushDia/${subId}`]: { ...datos, at: HORA } });
+    },
+    async quitarAvisosDia(subId) { await almacen.update({ [`pushDia/${subId}`]: null }); },
+
     /** Los podios de las copas terminadas: `{ código: { name, end, de, p } }`. */
     podios: (n = 200) => almacen.podios(n),
     /** Guardar el podio de una copa terminada, una sola vez. Lo hace cualquiera que la abra. */
