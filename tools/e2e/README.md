@@ -109,6 +109,7 @@ node tools/e2e/contacto.mjs cuarto-rey --salida /tmp/contacto
 | `versionado.mjs` | Que todos los módulos carguen con `?v=` del import map. Desde D-205 `public/` no lo lleva: correrlo contra una copia estampada (`set-version.py --sitio /tmp/sitio`, servida y pasada en `SITIO`) |
 | `instalable.mjs` | La app instalable (D-221): en la portada, un juego, La Copa, un juego suelto y `/records/`, Chrome registra `/sw.js` con alcance `/`, lee el manifest sin errores y deja instalar. En los cuatro idiomas, en la portada y en un juego, revisa que la app se llame con el `appTitle` del idioma, en el manifest y en el `apple-mobile-web-app-title` (D-222). Contra una copia estampada (`SITIO`) prueba además que el import map no se rompa |
 | `compartir-sala.mjs` | Botón de compartir: diálogo nativo si existe, copiar si no |
+| `compartir-portada.mjs` | El 📤 de la portada (D-226), en los cuatro idiomas: la tarjeta social del idioma como imagen, el texto con su cabecera y el link a la portada de ese idioma; en un computador, solo el texto copiado y nada descargado |
 | `enlace-invitacion.mjs` | Quien llega por un enlace solo puede unirse a esa sala, en los cuatro juegos con sala |
 | `sala-error.mjs` | Sin llegar a Firebase: el mensaje de cada juego con sala, Toque y Fama en cada idioma y los demás repartidos entre ellos |
 | `idioma-por-url.mjs` | El idioma que viene en el link, en cada idioma: `?lang=`, las puertas (`/en/`, `/pt/`, `/de/`), el puente `/labs/de/` y las invitaciones a sala y a copa |
@@ -200,5 +201,5 @@ Usa el almacén de prueba de la copa y el de los jugadores.
 prueba, la clave VAPID de `vapid.js` (D-225) y un servicio de avisos falso (nada sale del Chrome): la tarjeta y
 "Ahora no", la campana que activa los avisos y el aviso de confirmación, los ajustes y "Silenciar
 esta copa", los avisos bloqueados, y el camino de iPhone (agregar a inicio, dentro de Instagram, y
-los pasos que dan el código de la copa, porque iOS abre la app en la portada, D-226, y la app
+los pasos que dan el código de la copa, porque iOS abre la app en la portada, D-227, y la app
 instalada que abre con el nombre ya elegido si la dirección lleva `&app=`). Deja capturas de cada hoja.

@@ -31,7 +31,7 @@ export function clavePublica({ storage = globalThis.localStorage, loc = globalTh
 /**
  * La app de inicio del iPhone abre en la portada (el `start_url`, no la dirección de Safari) y no ve
  * el localStorage de Safari: ahí el "Activar en este celular" de /labs/ no llega nunca, y es el
- * único lugar donde el iPhone recibe avisos. Por eso en ella se ven sin el laboratorio (D-226).
+ * único lugar donde el iPhone recibe avisos. Por eso en ella se ven sin el laboratorio (D-227).
  */
 export function avisosVisibles({ storage = globalThis.localStorage, loc = globalThis.location, clave = clavePublica({ storage, loc }), cel = celular() } = {}) {
   if (!clave) return false;
