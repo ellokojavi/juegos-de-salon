@@ -139,6 +139,18 @@ misma escritura, sentado con ese PIN. Los carga `node tools/firebase/rankings-hi
 
 El dueño (su UID) puede escribir y borrar en todas estas ramas, para moderar.
 
+## Uno al día (`unoAlDia`, `invitados`, D-230)
+
+- `unoAlDia/<jid>/<n>` = `{ j, s, ms, at, w? }`: el primer intento de Uno al día del día `n` (días
+  desde 1970). Lo escribe una vez quien está sentado como ese jugador; `w` (la marca de que ya se
+  sumó a la semana) se agrega una vez. La lee cualquiera.
+- `invitados/<jid>/<uid>` = `{ d, at, j? }`: el celular `uid` terminó su primer Uno al día con una
+  invitación de `jid`. Lo escribe ese celular, una vez, y no si está sentado como `jid`. Solo lo lee
+  el jugador `jid`.
+- En `records`, el período puede ser también un día (`d20731`). Para la tabla `uno-al-dia`, el
+  puntaje del día tiene que ser el de su historia, y la semana suma un día de la historia (`u`) que
+  todavía no tenía `w`. Detalle y límites en [docs/UNO-AL-DIA.md](../docs/UNO-AL-DIA.md).
+
 ## Avisos al celular (`push`, `pushCopa`, `pushEnviados`, D-223, D-224)
 
 - `push/<subId>` = `{ endpoint, keys: { p256dh, auth }, lang, tz, uid, at }`: la suscripción Web

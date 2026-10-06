@@ -189,7 +189,9 @@ con eso la pantalla entra también a las pruebas de idiomas. Para verlo en un ce
 con jugadores heredados que cada uno reclama):
   `node tools/firebase/rankings-historia.mjs [--con-laboratorio] [--escribir]`. Los juegos de grupo
   anotan victorias con `finDePartida` (`ranking.js`) al terminar, y muestran su tabla con
-  `bloqueVictorias` en la intro (D-215).
+  `bloqueVictorias` en la intro (D-215). Uno al día (D-230) anota con `anotarDia` de `jugador.js` en
+  `unoAlDia/<jid>/<n>` y en las tablas `uno-al-dia` (período del día `d<n>` y semana) y
+  `uno-al-dia-racha`; su red (invitaciones, el dato de quien invita) está en `uno-al-dia-red.js`.
 
 ## Idiomas (C-3, D-197)
 
