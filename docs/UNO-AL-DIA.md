@@ -96,14 +96,14 @@ lanzamiento: **Uno al día n.° 1, n.° 2…**, para compartir.
 
 ### Día 2 en adelante: vuelve
 
-- **Por su cuenta:** abre la app y el botón dice **🔥 1 · Jugar el de hoy** (el mismo verbo del
-  botón que ve el amigo invitado, U-5).
+- **Por su cuenta:** abre la app y el botón dice **📅 Uno al día 🔥 1**, con el punto que brilla
+  (el botón va en una línea, ver "Lo que el PR 1 hizo").
 - **Con un aviso** a la hora que eligió: "📅 Uno al día n.° 13 ya está. 🔥 Racha: 1 día." (el de la tabla de
   avisos) Al tocarlo
   rueda el dado.
 - **Mientras no lo haya jugado, el dado rueda cada vez** que toca el botón, el aviso o un link, y
   siempre cae en el mismo juego (decisión del dueño: la misma experiencia de Juego al azar).
-- Si ya jugó, el botón dice **✅ Listo · 🔥 2** y al tocarlo abre su página de Uno al día (sus
+- Si ya jugó, el botón queda cian, **✅ Uno al día 🔥 2**, y al tocarlo abre su página de Uno al día (sus
   números, el ranking del día y cuánto falta para el próximo: "El próximo sale en 7 h 12 min.").
 
 ### Quiere jugar más
@@ -289,7 +289,7 @@ Para quien no quiere avisos, o tiene un iPhone sin la app instalada:
 
 | Forma | Cómo funciona |
 |---|---|
-| **El botón de la portada** | Su estado se ve al entrar: el punto que brilla, 🔥 6 y "Jugar el de hoy" o "✅ Listo". |
+| **El botón de la portada** | Su estado se ve al entrar: el punto que brilla mientras falta jugar, 🔥 6, y cian con ✅ cuando ya jugó. |
 | **El globo en el ícono** | En la app instalada (Android, y iPhone con avisos permitidos), un **1** en el ícono si hoy no ha jugado (`navigator.setAppBadge`). Lo pone la página al abrir y lo quita al terminar; el service worker lo pone con el aviso del día. |
 | **Agregar al calendario** | Un evento que se repite cada día a la hora que elige, con el link a `/today/`. Sale de un `.ics` armado en el celular, sin servidor ni permisos, y sirve en cualquier celular. |
 | **La tarjeta para compartir** | Al estilo Wordle, sin adelantar la respuesta: el grupo de WhatsApp le recuerda a cada uno que juegue. |
@@ -389,8 +389,9 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   cada día jugado, y los meses anteriores) y una fila por juego con su línea de los últimos 8 y la
   flecha, más la frase del que más mejoró o, si ninguno, del que más bajó.
 - **Dónde va en la portada** (decisión del dueño, 2026-10-05): en la misma fila que Juego al azar,
-  a su derecha, sin una línea extra; los dos botones se achican para caber, también a 320 px y en
-  alemán. La otra forma que se probó, una tarjeta de media fila al lado de La Copa (las dos como
+  a su derecha, sin una línea extra. Los dos llevan etiqueta corta (**🎲 Al azar** y **📅 Uno al
+  día 🔥 6**; en inglés *Random*, en portugués *Aleatório*, en alemán *Zufall*) para caber, también
+  a 320 px y en alemán. Sin Uno al día, el dado sigue diciendo **Juego al azar**. La otra forma que se probó, una tarjeta de media fila al lado de La Copa (las dos como
   accesos de más jerarquía que los juegos), queda para probarla desde `/labs/` ("Junto a La Copa")
   o con `?uad=tarjeta`.
 - El CSS del dado pasó de la portada a `base.css`, para tirarlo desde cualquier página.
@@ -418,9 +419,10 @@ celular saca la palabra, la flota o los dados de la semilla del día.
 Botones (caben en 320 px, unos 18 caracteres): **Uno al día**, **Jugar el de hoy**, **Compartir**,
 **🎲 Jugar otro**, **Invitar**, **Entrar**, **Ahora no**, **Mañana · 9:00**, **Almuerzo · 13:00**,
 **Tarde · 19:00**, **Silenciar**, **Probar los avisos** y **Agregar al calendario** (pasa de 18,
-así que va en botón chico, como lo secundario de U-17). El botón de la portada es una ficha de dos
-líneas: arriba **📅 Uno al día** y abajo su estado (**🔥 1 · Jugar el de hoy** o **✅ Listo · 🔥 2**),
-que no es un botón aparte. "Racha", "comodín" y "Silenciar" se dicen siempre así (U-5). Los
+así que va en botón chico, como lo secundario de U-17). El botón de la portada va en una línea,
+**📅 Uno al día**, con la racha en una píldora (**🔥 6**) y, al lado, **🎲 Al azar** (decisión del
+dueño: etiquetas cortas). Mientras falta jugar el de hoy brilla un punto; jugado, se pone cian con ✅.
+Lo que hace cada estado va en su `aria-label`. "Racha", "comodín" y "Silenciar" se dicen siempre así (U-5). Los
 textos los propone el agente de usabilidad y el dueño los corrige en el PR.
 
 **Lo que cambió en la revisión de usabilidad** (U-3: el dueño los corrige si no le gustan):

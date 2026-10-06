@@ -21,10 +21,11 @@ import { LLEGA } from './llegada.js';
 const SALIDA = 420;
 
 export const TEXTOS = {
-  es: { boton: 'Juego al azar', tocó: '¡Te tocó!', aria: 'Abrir un juego al azar' },
-  en: { boton: 'Random game', tocó: 'You got…', aria: 'Open a random game' },
-  pt: { boton: 'Jogo aleatório', tocó: 'Você tirou…', aria: 'Abrir um jogo aleatório' },
-  de: { boton: 'Zufallsspiel', tocó: 'Gewürfelt:', aria: 'Ein zufälliges Spiel öffnen' },
+  // `corto`: el nombre cuando va en la misma fila que Uno al día (D-230)
+  es: { boton: 'Juego al azar', corto: 'Al azar', tocó: '¡Te tocó!', aria: 'Abrir un juego al azar' },
+  en: { boton: 'Random game', corto: 'Random', tocó: 'You got…', aria: 'Open a random game' },
+  pt: { boton: 'Jogo aleatório', corto: 'Aleatório', tocó: 'Você tirou…', aria: 'Abrir um jogo aleatório' },
+  de: { boton: 'Zufallsspiel', corto: 'Zufall', tocó: 'Gewürfelt:', aria: 'Ein zufälliges Spiel öffnen' },
 };
 
 const azar = n => Math.floor(Math.random() * n);
