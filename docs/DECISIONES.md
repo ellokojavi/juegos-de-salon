@@ -53,7 +53,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 |---|---|---|
 | Estructura y rutas | C-2 | D-01, D-02, D-03, D-24, D-192, D-198 |
 | Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184 |
-| Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199 |
+| Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213 |
 | Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230 |
@@ -2894,7 +2894,7 @@ vueltas de las cuerdas (D-182, D-183, D-185) y de las instrucciones (D-184).
 puede caer en él. La captura del menú en el README se rehace.
 
 ## D-191 · Un idioma nuevo entra por el laboratorio: el alemán
-**Fecha:** 2026-10-03 · **Estado:** corregida por D-195, D-197
+**Fecha:** 2026-10-03 · **Estado:** corregida por D-195, D-197, D-231
 **Decisión:** El alemán (**Salonspiele**) se suma completo —los textos de los ocho juegos, las
 frases, los mazos, las grillas y palabras de La Copa y los nombres de ¿Dónde queda?— pero **solo
 se ofrece en el laboratorio**: en el dispositivo que entra por `/labs/de/` o por un link con
@@ -3855,7 +3855,9 @@ para uno: los solitarios, El Ahorcado con el mazo del celular, y Batalla Naval y
 celular. El dado de D-188 rueda cada vez que se abre el juego de hoy, aunque siempre caiga en el
 mismo. Después de jugar se puede invitar a un amigo con un dato verdadero de quien invita (su
 racha, su puesto), y el amigo juega el mismo desafío. Cuando el invitado termina su primer día, quien
-invitó gana un comodín de racha, y eso se anuncia en la tarjeta de invitar. Se lleva la racha, el calendario y los puntajes en el celular y, con jugador, en
+invitó gana un comodín de racha, y eso se anuncia en la tarjeta de invitar. La tarjeta para compartir el
+resultado no nombra el juego de hoy, ni en el texto ni en la imagen (dilema #215, excepción a
+U-31). Se lleva la racha, el calendario y los puntajes en el celular y, con jugador, en
 Firebase, con ranking del día, de la semana y de rachas. Los avisos (el del día, el de la racha que
 se corta y el de la semana) los activa el jugador y elige la hora. El detalle está en
 [UNO-AL-DIA.md](UNO-AL-DIA.md).
@@ -3867,6 +3869,22 @@ reglas de "una vez por fecha", y cada juego solitario acepta `?dia=`. Los avisos
 siguen fuera (D-221): estos solo salen si el jugador los pidió, y se calman solos si no los usa.
 Es un diseño aprobado que falta construir: va en cinco PR, los cuatro primeros detrás del
 laboratorio (`UNO_AL_DIA_EN_LABS`), según "Por partes" de [UNO-AL-DIA.md](UNO-AL-DIA.md).
+
+## D-231 · El selector de idioma lleva las banderas siempre
+**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** corrige la nota de `base.css` de D-191 (en un celular angosto se escondía la bandera)
+**Decisión:** Pedido del dueño: todos los selectores de idioma llevan sus banderas, y queda un
+estándar de diseño para el widget (C-3). En un celular de hasta 440 px, con cuatro idiomas, el
+toggle escondía las banderas para no empujar el sonido y compartir fuera de la barra de arriba:
+así, en el celular, que es donde más se juega, nunca se veían.
+- La bandera ya no se esconde: en una pantalla angosta sube **encima** del código, y el toggle
+  queda del ancho que tenía con el código solo (unos 180 px). En una pantalla ancha va al lado.
+- Las banderas y los nombres de cada idioma salen de `BANDERAS` y `NOMBRES_IDIOMA` en `i18n.js`,
+  y la prueba de paridad exige uno por idioma de `IDIOMAS`.
+- Cada botón dice su idioma en su idioma (`aria-label`, `title`, `lang`): la bandera es decorativa.
+**Por qué:** La bandera se reconoce antes que el código, sobre todo para quien no lee español.
+Apilarla mantiene el ancho y los 44 px de alto (C-8), así que la barra no cambia.
+**Consecuencias:** Las banderas son emoji, no imágenes SVG, por decisión del dueño: en Windows se
+ven como dos letras (CL, GB…) y se acepta, porque la app se juega en celulares. Hay un solo toggle en la app: el estándar queda en C-3.
 
 ## D-233 · Los avisos se miden en el panel: mandados, tocados, la app instalada y la última vuelta
 **Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** completa D-224 y D-228; el PR 4 de [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md); señales como D-44 y D-208
