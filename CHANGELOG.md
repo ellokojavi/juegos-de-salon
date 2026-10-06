@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.128.0 — 2026-10-06
+- **📝 Generala, próximamente** (D-246, D-248): la portada anuncia el juego de dados, todavía sin
+  abrirlo. Ya está hecho entero: cinco dados, hasta tres tiros por turno guardando los que sirven, y
+  una planilla de once casillas que la app suma sola. Se va a jugar en un celular (2 a 6), en varios
+  celulares con sala y chat, o solo, con récord y ranking; en portugués se llama General. Al abrirse
+  entra a Uno al día, con los mismos dados para todos (D-247).
+
 ## 0.127.3 — 2026-10-06
 - **¿Dónde queda?: el reloj ya no tapa "‹ Laboratorio"** (D-203): en la prueba del laboratorio, la
   píldora con 🧪 y el reloj va en la barra, entre volver y 🔊, sin pisarlos. En los celulares más

@@ -1,0 +1,145 @@
+/* Generala — estilos propios. Lo compartido vive en assets/css/base.css. */
+
+.screen { display: none; flex-direction: column; flex: 1; }
+.screen.active { display: flex; animation: slideUp 0.3s ease-out both; }
+
+/* ---------- Intro ---------- */
+.intro-hero { text-align: center; padding: 6px 0 8px; }
+.intro-hero .icon { font-size: 4.2rem; display: block; animation: bounce 2.4s ease-in-out infinite; filter: drop-shadow(0 0 18px rgba(255, 210, 63, 0.6)); }
+.rules-list { margin: 10px 0 0; padding-left: 20px; display: grid; gap: 7px; }
+.rules-list li { color: var(--muted); font-weight: 700; line-height: 1.35; }
+.rules-list li b { color: var(--ink); }
+
+.modes { display: grid; gap: 10px; }
+.mode { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px; text-align: left; background: var(--glass); border: 2px solid var(--glass-border); border-radius: var(--radius); padding: 14px 16px; color: var(--ink); cursor: pointer; font-family: var(--font-body); transition: transform 0.1s; }
+.mode:active { transform: scale(0.98); }
+.mode:disabled { opacity: 0.55; cursor: not-allowed; }
+.mode b { font-family: var(--font-display); font-size: 1.4rem; letter-spacing: 0.04em; text-transform: uppercase; display: block; }
+.mode small { color: var(--muted); font-weight: 700; }
+.mode .go { font-family: var(--font-display); font-size: 2rem; color: var(--yellow); }
+.mode .soon { font-weight: 900; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); border: 1px solid var(--glass-border); border-radius: 999px; padding: 4px 8px; white-space: nowrap; }
+
+/* ---------- Configuración ---------- */
+#screen-setup > h2 { margin-bottom: 6px; }
+.setup-hint { color: var(--muted); font-weight: 700; text-align: center; margin: 0 0 12px; font-size: 0.9rem; }
+.player-row { display: grid; grid-template-columns: 28px 1fr auto; gap: 8px; align-items: center; background: rgba(0,0,0,0.25); border-radius: 14px; padding: 6px 10px; margin-bottom: 6px; }
+.player-row .num { font-family: var(--font-display); font-size: 1.2rem; color: var(--yellow); text-align: center; }
+.player-row input { background: transparent; border: 0; padding: 10px 0; color: var(--ink); font: 800 1rem var(--font-body); width: 100%; }
+.player-row .del { border: 0; background: transparent; color: var(--muted); font-size: 1.2rem; width: 32px; height: 36px; cursor: pointer; }
+.player-row.cpu .cpu-name { font-weight: 900; color: var(--cyan); padding: 10px 0; }
+.form-error { color: var(--yellow); font-weight: 800; text-align: center; min-height: 1.4em; margin: 6px 0; }
+.toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; background: rgba(0,0,0,0.25); border-radius: 14px; padding: 10px 14px; margin-top: 8px; }
+.toggle-row .txt b { display: block; font-size: 0.95rem; }
+.toggle-row .txt small { color: var(--muted); font-weight: 700; font-size: 0.76rem; line-height: 1.25; display: block; }
+.switch { flex: 0 0 auto; width: 58px; height: 34px; border-radius: 999px; border: 2px solid var(--glass-border); background: rgba(0,0,0,0.4); position: relative; cursor: pointer; padding: 0; }
+.switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: var(--muted); transition: transform 0.15s, background 0.15s; }
+.switch.on { background: rgba(255, 210, 63, 0.3); border-color: var(--yellow); }
+.switch.on::after { transform: translateX(24px); background: var(--yellow); }
+
+/* ---------- Sala (varios celulares) ---------- */
+#screen-lobby > h2 { margin-bottom: 12px; }
+.field { display: grid; gap: 6px; margin-bottom: 12px; }
+.field input { width: 100%; font: 900 1.1rem var(--font-body); color: var(--ink); background: rgba(0,0,0,0.3); border: 2px solid transparent; border-radius: 14px; padding: 12px 14px; outline: none; }
+.field input:focus { border-color: var(--cyan); }
+.field input::placeholder { color: rgba(255,255,255,0.35); }
+.field input.code { text-transform: uppercase; letter-spacing: 0.4em; text-align: center; font-family: var(--font-display); font-size: 2rem; }
+.or { text-align: center; color: var(--muted); font-weight: 900; margin: 6px 0; }
+.code-big { font-family: var(--font-display); font-size: clamp(3rem, 20vw, 5rem); letter-spacing: 0.25em; text-align: center; color: var(--yellow); text-shadow: 0 5px 0 rgba(0,0,0,0.4), 0 0 30px rgba(255, 210, 63, 0.6); margin: 2px 0; padding-left: 0.25em; }
+.qr { display: grid; place-items: center; margin: 8px auto; background: #fff; border-radius: 16px; padding: 8px; width: fit-content; }
+.qr svg { display: block; width: min(46vw, 190px); height: auto; }
+.lobby-players { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 10px 0; }
+.lobby-players .p { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; background: rgba(0,0,0,0.28); font-weight: 800; font-size: 0.9rem; animation: pop 0.3s cubic-bezier(0.2,0.9,0.3,1.4) both; }
+.lobby-players .p.me { background: var(--cyan); color: #03302c; }
+.lobby-players .p.off { opacity: 0.45; }
+.waiting { text-align: center; color: var(--muted); font-weight: 800; }
+.waiting::after { content: '…'; animation: dots 1.2s steps(4) infinite; }
+@keyframes dots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } }
+
+/* ---------- El dado ---------- */
+.die {
+  display: grid; grid-template: repeat(3, 1fr) / repeat(3, 1fr); gap: 1px;
+  width: 46px; height: 46px; padding: 6px; border-radius: 11px;
+  background: var(--card); box-shadow: 0 3px 0 rgba(0,0,0,0.35), 0 4px 10px rgba(0,0,0,0.35);
+}
+.die i { display: block; align-self: center; justify-self: center; width: 8px; height: 8px; border-radius: 50%; background: var(--card-ink); }
+.die--sm { width: 30px; height: 30px; padding: 4px; border-radius: 8px; }
+.die--sm i { width: 5px; height: 5px; }
+.die.off { opacity: 0.35; }
+.die.on { box-shadow: 0 0 0 2px var(--lime), 0 3px 0 rgba(0,0,0,0.35); }
+
+.dice-row { display: flex; flex-wrap: wrap; gap: 7px; justify-content: center; }
+
+/* ---------- Partida ---------- */
+/* Quién va ganando: una píldora por jugador con su total; la del turno, encendida (D-92) */
+.marcador { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 4px; }
+.marcador .p { display: grid; justify-items: center; min-width: 64px; padding: 5px 10px; border-radius: 12px; background: rgba(0,0,0,0.25); }
+.marcador .p .n { font-weight: 900; font-size: 0.76rem; max-width: 9ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.marcador .p .t { font: 900 1rem var(--font-num); font-variant-numeric: tabular-nums; color: var(--muted); }
+.marcador .p.turn { box-shadow: 0 0 0 2px var(--yellow), 0 0 14px rgba(255, 210, 63, 0.45); }
+.marcador .p.turn .n, .marcador .p.turn .t { color: var(--yellow); }
+
+.status { text-align: center; margin: 2px 0 6px; }
+.status .who { font-family: var(--font-display); font-size: clamp(1.4rem, 6.5vw, 2rem); letter-spacing: 0.04em; text-shadow: 0 4px 0 rgba(0,0,0,0.35), 0 0 24px rgba(46, 230, 214, 0.5); }
+.status .sub { color: var(--muted); font-weight: 800; font-size: 0.85rem; min-height: 1.2em; }
+
+/* Los cinco dados: se tocan para guardarlos */
+.mesa { background: rgba(0,0,0,0.25); border-radius: 18px; padding: 12px 8px 8px; display: grid; gap: 6px; justify-items: center; }
+.mesa .dados { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; width: 100%; max-width: 340px; }
+.dado-btn { display: grid; justify-items: center; gap: 3px; padding: 0; border: 0; background: none; cursor: pointer; color: var(--ink); min-height: 44px; }
+.dado-btn:disabled { cursor: default; }
+.dado-btn .die { width: min(54px, 15vw); height: min(54px, 15vw); }
+/* Las pintas se miden contra su celda de la grilla (un tercio del dado), no contra el dado entero */
+.dado-btn .die i { width: 70%; height: 70%; }
+.dado-btn .tag { font-weight: 900; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.02em; white-space: nowrap; -webkit-hyphens: manual; hyphens: manual; color: var(--lime); visibility: hidden; }
+.dado-btn.kept .die { box-shadow: 0 0 0 3px var(--lime), 0 3px 0 rgba(0,0,0,0.35); transform: translateY(-3px); }
+.dado-btn.kept .tag { visibility: visible; }
+/* Antes del primer tiro: el lugar de cada dado, en hueco */
+.die.vacio { background: none; box-shadow: none; border: 2px dashed rgba(255,255,255,0.25); }
+.die.rueda { animation: rueda 0.45s ease-out both; }
+@keyframes rueda { 0% { transform: rotate(-30deg) scale(0.7); opacity: 0.3; } 70% { transform: rotate(8deg) scale(1.06); } 100% { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .die.rueda { animation: none; } }
+.mesa .hint { color: var(--muted); font-weight: 800; font-size: 0.8rem; text-align: center; min-height: 1.2em; }
+
+.actions-bar { padding-top: 10px; display: grid; gap: 8px; }
+
+/* La planilla: los números a la izquierda y los juegos a la derecha */
+.planilla { margin-top: 10px; padding-bottom: 10px; }
+.planilla .titulo { display: flex; justify-content: space-between; align-items: baseline; font-weight: 900; font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin: 0 4px 6px; }
+.planilla .titulo b { font: 900 1.05rem var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); letter-spacing: 0; }
+.casillas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.col { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; align-content: start; }
+.casilla { display: flex; align-items: center; justify-content: space-between; gap: 6px; min-height: 44px; padding: 6px 10px; border-radius: 12px; border: 2px solid transparent; background: rgba(0,0,0,0.25); color: var(--ink); font: 800 0.86rem var(--font-body); text-align: left; cursor: pointer; }
+/* Un nombre largo (Doppel-Generala, Four of a kind) parte línea en vez de empujar la columna (U-12) */
+.casilla .nom { min-width: 0; line-height: 1.15; overflow-wrap: break-word; }
+.casilla .val { font: 900 1rem var(--font-num); font-variant-numeric: tabular-nums; flex: 0 0 auto; }
+/* Libre: lo que valdría con estos dados, en gris; ocupada: lo anotado, en blanco */
+.casilla.libre .val { color: var(--muted); }
+.casilla.libre.vale .val { color: var(--lime); }
+.casilla.usada { cursor: default; background: rgba(255,255,255,0.06); }
+.casilla.usada .nom { color: var(--muted); }
+.casilla.tachada .val { color: var(--pink); }
+.casilla.on { border-color: var(--cyan); background: rgba(46,230,214,0.18); }
+.casilla:disabled { cursor: default; }
+
+/* ---------- Se pasa el celular ---------- */
+.handoff .anoto { font-family: var(--font-display); font-size: clamp(1.5rem, 7vw, 2.2rem); color: var(--cyan); letter-spacing: 0.03em; }
+.handoff .servida { font-family: var(--font-display); font-size: clamp(2rem, 10vw, 3rem); color: var(--yellow); letter-spacing: 0.03em; text-shadow: 0 4px 0 rgba(0,0,0,0.35); }
+
+/* ---------- Final ---------- */
+.result-hero { text-align: center; padding: 2px 0 6px; }
+.result-hero .trophy { font-size: 4.2rem; display: block; animation: pop 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
+.podio { display: grid; gap: 6px; }
+.podio .fila { display: grid; grid-template-columns: 28px 1fr auto; gap: 8px; align-items: center; background: rgba(0,0,0,0.25); border-radius: 12px; padding: 8px 12px; font-weight: 900; }
+.podio .fila .pos { font: 900 1rem var(--font-num); color: var(--muted); text-align: center; }
+.podio .fila .pts { font: 900 1.2rem var(--font-num); font-variant-numeric: tabular-nums; }
+.podio .fila.gana { box-shadow: 0 0 0 2px var(--yellow); }
+.podio .fila.gana .pts { color: var(--yellow); }
+.replay { margin-top: 10px; padding: 12px 16px; }
+.replay summary { font-size: 1rem; }
+/* La tabla de todas las planillas: una columna por jugador, sin desbordar (C-8) */
+.tabla-wrap { margin-top: 8px; }
+.tabla { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 0.78rem; }
+.tabla th, .tabla td { padding: 5px 2px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.08); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tabla th:first-child, .tabla td:first-child { text-align: left; width: 34%; color: var(--muted); font-weight: 800; }
+.tabla td { font: 900 0.86rem var(--font-num); font-variant-numeric: tabular-nums; }
+.tabla tr.suma td { color: var(--yellow); border-bottom: 0; font-size: 1rem; }

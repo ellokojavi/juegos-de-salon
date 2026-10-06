@@ -55,11 +55,11 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184 |
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244 |
 | Sonido y vibración | C-4 | D-17, D-92 |
-| Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213 |
+| Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
 | Portada: filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241 |
-| Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239 |
+| Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247 |
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138 |
-| Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97 |
+| Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246 |
 | Memoria de partida | C-6 | D-25, D-150 |
 | Interfaz táctil | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213 |
 | Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213 |
@@ -4223,3 +4223,66 @@ que cambia); precargar la imagen en el HTML (acorta la espera, pero no la quita)
 **Consecuencias:** con una red lenta el globo tarda hasta 4 s en aparecer; las marcas y los
 toques funcionan igual, porque no dependen del dibujo. El tope existe porque una red que cuelga el
 pedido sin fallarlo dejaba el globo vacío mientras corre el reloj.
+
+## D-246 · Generala: el juego de dados, con los dados en claro y la servida que gana
+**Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** excepción a C-7 (la semilla) y C-10 (los secretos)
+**Decisión:** Generala entra como juego de salón (`/generala/`, id `generala`, 📝), con la versión
+latinoamericana de la planilla: Unos a Seises por la suma de la cara, Escalera 20, Full 30, Póker 40
+(cinco más servidos), Generala 50 y Doble generala 100 (solo con la generala anotada con sus 50).
+Once casillas, once turnos, gana quien suma más. La escalera acepta el as arriba (3-4-5-6-1).
+**La generala servida gana la partida al tiro** con dos jugadores o más, como ajuste encendido por
+defecto. Tres modos: un celular (2 a 6), varios celulares (2 a 6) y jugar solo con récord y tabla
+`generala_solo`. En portugués se llama General; en alemán, Generala. **Los dados viajan en claro**:
+quien tiene el turno los tira en su celular y los manda en `roll`, sin hash y sin semilla.
+**Por qué:** lo pidió el dueño después de la investigación de candidatos (Impostor, Stop, Generala,
+Dominós, Rebaño): es el que sirve en todos los modos, también sin coincidir (cada uno llena su
+planilla), y reusa los dados de Dudo.
+- **Los dados en claro:** en la mesa todos ven el cubilete, así que no hay nada que esconder (C-10).
+  Sacarlos de la semilla compartida (C-7) sería peor: el código es público y con la semilla se
+  pueden calcular los próximos tiros y elegir qué guardar sabiendo lo que viene. Que alguien se mande
+  cinco seises modificando su página es como cargar un dado: se acepta entre amigos.
+- **La servida que gana:** es la regla que más se juega en Chile y Argentina, y el momento que la
+  mesa recuerda. Va como ajuste porque hay mesas que la juegan como 50 y nada más.
+- **Sin rival de máquina:** no hay información oculta ni jugada contra otro; un rival que tira sus
+  dados no agrega nada (C-5, D-27). Jugar solo con récord sí.
+**Alternativas descartadas:**
+- **Kniffel o Yahtzee:** son marcas (Schmidt, Hasbro) y otro juego (bono de 63, chance, otras
+  casillas). El alemán usa el nombre Generala con casillas alemanas (Straße, Full House, Viererpasch).
+- **Comprometer los dados con hash, como en Dudo (D-70):** no esconde nada que no se vea, y quien
+  tira sigue eligiendo su azar.
+- **Anotar un juego que no salió por su valor ("escalera de mentira"):** es una regla de casa poco
+  común; se tacha.
+**Consecuencias:** el emoji 📝 (la planilla) es propio porque 🎲 ya es Dudo. Las victorias van en
+`generala_victorias` (D-215). Ver [docs/games/generala.md](games/generala.md).
+
+## D-247 · Generala en Uno al día, desde el tercer mazo y con los dados de la semilla
+**Fecha:** 2026-10-06 · **Estado:** corregida por D-248 · **Relación:** amplía D-230
+**Decisión:** Generala entra al mazo de Uno al día el **23 de octubre de 2026**, el primer día del
+tercer mazo. Con `?hoy` abre jugar solo y **sus dados salen de la semilla del día**:
+`azarDel(semilla, 'generala:<turno>:<tiro>')`, consumido en orden de posición, así quien guarda lo
+mismo que otro recibe lo mismo. El puntaje del día es un tercio del total, hasta 100
+(`puntajeDia` de `engine.js`).
+**Por qué:** un juego entra al mazo recién cuando se baraja el siguiente. Con una fecha anterior, el
+segundo mazo (del 13 al 22) cambiaría según el día en que se fusione el PR, y ese mazo ya se puede
+estar jugando. Con el 23, ningún día cambia aunque se fusione tarde (lo prueba
+`uno-al-dia.test.mjs`). La semilla en jugar solo no adelanta nada a un rival, como en los solitarios
+de La Copa (D-97). Un tercio del total, porque 300 ya es una partida excelente y el máximo es 360.
+**Alternativas descartadas:** dados al azar en Uno al día (no sería el mismo desafío para todos);
+puntaje por el total crudo (Uno al día compara de 0 a 100 entre juegos).
+**Consecuencias:** desde el tercer mazo hay 11 juegos. Si el PR se fusionara después del 23, hay que
+mover `DESDE_GENERALA` al primer día del mazo siguiente.
+
+## D-248 · Generala se anuncia como "Próximamente" antes de abrirse
+**Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** corrige D-247 (cuándo entra a Uno al día)
+**Decisión:** Generala se publica con `available: false`: la portada la muestra como las de Julepe,
+con "Próximamente" junto al nombre, sin abrirla, fuera del dado de Juego al azar y de los favoritos
+(C-17). La página `/generala/` funciona entera para quien tenga el link. **No entra todavía al mazo
+de Uno al día**: `JUEGOS_DIA` queda como estaba, y al abrirla se suma con un `desde` que sea el
+primer día de un mazo que no haya empezado (D-247). En la tabla del README, un juego fuera del menú
+que nunca se publicó dice "🔜 coming soon" y no "⏸ paused", que es para el que se sacó (Julepe).
+**Por qué:** lo pidió el dueño, para anunciar el juego antes de abrirlo (la imagen para compartir en
+alemán dice "bald auf juegosdesalon.cl"). Sumarlo a Uno al día con la fecha fija del 23 de octubre
+habría puesto en el mazo un juego que la portada todavía no ofrece.
+**Consecuencias:** abrirlo es cambiar `available` a `true` en `games.js`, sumarlo a `JUEGOS_DIA` y
+`GRUPO` con su fecha, y marcar GE-09 y GE-12 en REQUERIMIENTOS. El `?hoy` de `/generala/` ya está
+hecho y probado en `engine.test.mjs`.

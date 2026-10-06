@@ -151,6 +151,7 @@ Austria y Suiza, **con ß** (los suizos no la escriben, pero la leen sin problem
 | Toque y Fama | Bulls and Cows | Bullen und Kühe |
 | El Ahorcado | Hangman | Galgenmännchen |
 | Dudo | Liar's Dice | Lügenwürfel |
+| Generala | Generala | Generala (no Kniffel ni Yahtzee, que son marcas: D-246) |
 | Batalla Naval | Battleship | Schiffe versenken |
 | Julepe | Julep | Julepe |
 | Cuarto Rey | Fourth King | Der vierte König |
@@ -179,6 +180,7 @@ Austria y Suiza, **con ß** (los suizos no la escriben, pero la leen sin problem
 | juego | Spiel |
 | a. C. | v. Chr. |
 | Dudo: dudar · calzar · as | Zweifeln! · Genau! (Punktlandung) · Ass |
+| Generala: escalera · full · póker · servida · planilla · guardar · anotar · tachar | Straße · Full House · Viererpasch · im ersten Wurf · Block · behalten · eintragen · streichen |
 | Toque y Fama: toque · fama | Kuh · Bulle |
 | Batalla Naval: agua · tocado · hundido | Wasser · Treffer · versenkt |
 | Cuarto Rey: penitencia · ¡tomar! · Yo nunca nunca | Aufgabe · Trink! · Ich hab noch nie |

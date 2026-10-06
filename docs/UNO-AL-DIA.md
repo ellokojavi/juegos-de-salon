@@ -46,6 +46,7 @@ el contenido del día:
 | 🪢 El Ahorcado | 🎴 Mazo del celular, con 1 jugador | La palabra (ya sale de la semilla del mazo) | Las vidas que quedan, llevadas a 100, y el tiempo desempata |
 | ⚓ Batalla Naval | 🤖 Contra el celular | La flota del celular | Menos disparos para hundirla, más puntos. Si te hunden antes, cuentan las casillas de barco que acertaste |
 | 🎲 Dudo | 🤖 Contra el celular | Los dados de cada ronda | Ganar vale 60, y cada dado que te queda suma; perder suma por las rondas que aguantaste |
+| 📝 Generala (cuando salga de próximamente, D-247, D-248) | 🧍 Jugar solo | Los dados de cada tiro: quien guarda lo mismo recibe lo mismo | Un tercio del total, hasta 100 |
 
 - **Cuarto Rey no entra:** es un juego de mesa para 4 a 6 personas y no tiene modo para uno (su
   documento lo explica). **Julepe** tampoco, porque hoy no se ofrece en la portada; si vuelve,
@@ -575,6 +576,22 @@ celular saca la palabra, la flota o los dados de la semilla del día.
 - **Los comodines dicen para qué sirven** antes que cómo se ganan: "🧊 Un comodín salva tu racha el
   día que no juegas. Tienes 1 de 2: …", y lo mismo en la tarjeta de invitar y al ganar uno (el dueño:
   que se entienda y den ganas de ganarlos).
+
+### Generala, lista para entrar al mazo (v0.128.0)
+
+- **📝 Generala** (D-246) se anuncia en la portada como "Próximamente" (D-248) y **todavía no está
+  en `JUEGOS_DIA`**. Al abrirla, entra con un `desde` que sea el primer día de un mazo que no
+  haya empezado, para no cambiar días ya jugados (D-247), y su prueba en `uno-al-dia.test.mjs`.
+  Lo de abajo ya está hecho en `/generala/`.
+- **`/generala/?hoy`** abre 🧍 Jugar solo, sin elegir modo, con el botón **Jugar el de hoy** y la
+  línea "Los dados salen iguales para todos: lo que cambia es qué guardas." No tiene rival, así que
+  ahí sí el desafío entero es el mismo para todos, no solo el punto de partida.
+- **Los dados salen de la semilla del día** (D-247): `azarDel(semilla, 'generala:<turno>:<tiro>')`,
+  consumido en orden de posición, así quien guarda lo mismo recibe lo mismo. Fuera de Uno al día,
+  cada celular tira con su azar (D-246).
+- **El puntaje** es `puntajeDia` de `public/generala/engine.js` (no de `uno-al-dia.js`, como los
+  otros tres de grupo): un tercio del total, hasta 100. Sin revancha, como los otros (#226).
+- Se prueba con `uno-al-dia.test.mjs` y `engine.test.mjs`.
 
 ## Lo que decidió el dueño (2026-10-05)
 
