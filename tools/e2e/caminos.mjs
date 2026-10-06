@@ -153,6 +153,45 @@ export const CAMINOS = {
       `[...document.querySelectorAll('#actions .btn')].find(b=>/Dudo|Liar|Duvido|Zweifeln/i.test(b.textContent))?.click()`,
     ],
   },
+  generala: {
+    intro: [],
+    configuracion: [`document.querySelector('[data-mode=local]').click()`],
+    // Jugando solo se llega a la mesa sin pase: un tiro, dos dados guardados y una casilla elegida
+    juego: [
+      `document.querySelector('[data-mode=solo]').click()`,
+      `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
+      `document.getElementById('btn-empezar').click()`,
+      `document.getElementById('btn-tirar').click()`,
+      `(()=>{const d=document.querySelectorAll('.dado-btn');d[0].click();d[3].click()})()`,
+      `document.querySelector('.casilla.libre.vale')?.click() || document.querySelector('.casilla.libre').click()`,
+    ],
+    // En un celular: lo que anotó uno y el pase al siguiente (C-9)
+    pase: [
+      `document.querySelector('[data-mode=local]').click()`,
+      `(()=>{const n=['Javi','Cata'];[...document.querySelectorAll('#setup-form input')].forEach((i,k)=>{i.value=n[k];i.dispatchEvent(new Event('input',{bubbles:true}))})})()`,
+      `document.getElementById('btn-empezar').click()`,
+      `document.querySelector('#handoff .btn').click()`,
+      `document.getElementById('btn-tirar').click()`,
+      `document.querySelector('.casilla.libre').click()`,
+      `document.getElementById('btn-anotar').click()`,
+    ],
+    // La generala servida, con dados puestos a mano: gana al tiro
+    servida: [
+      `document.querySelector('[data-mode=local]').click()`,
+      `(()=>{const n=['Javi','Cata'];[...document.querySelectorAll('#setup-form input')].forEach((i,k)=>{i.value=n[k];i.dispatchEvent(new Event('input',{bubbles:true}))})})()`,
+      `document.getElementById('btn-empezar').click()`,
+      `document.querySelector('#handoff .btn').click()`,
+      `__generala.session().transport.send({t:'roll',from:'A',d:'44444',k:'00000'})`,
+    ],
+    // El final de jugar solo: once turnos anotados en la primera casilla libre
+    final: [
+      `document.querySelector('[data-mode=solo]').click()`,
+      `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
+      `document.getElementById('btn-empezar').click()`,
+      `(async()=>{const w=ms=>new Promise(r=>setTimeout(r,ms));for(let t=0;t<11;t++){document.getElementById('btn-tirar').click();await w(60);document.querySelector('.casilla.libre').click();await w(30);document.getElementById('btn-anotar').click();await w(60);}})()`,
+      1, 1, 1, 1, 1,
+    ],
+  },
   'cuarto-rey': {
     intro: [],
     jugadores: [`document.getElementById('btn-go-setup').click()`],

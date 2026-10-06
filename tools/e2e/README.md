@@ -90,6 +90,8 @@ node tools/e2e/contacto.mjs cuarto-rey --salida /tmp/contacto
 | `hangman/online.mjs` | Tres celulares contra Firebase real: cadena, reconexión a mitad y revancha |
 | `liars-dice/local.mjs` | Duelo contra el celular y partida de tres en un celular, con retomar a mitad |
 | `liars-dice/online.mjs` | Tres celulares contra Firebase real: sala, destape verificado, recarga a mitad y revancha |
+| `generala/local.mjs` | Jugar solo entero, tres en un celular con recarga a mitad y la generala servida: nada elegido de antemano (C-8), los guardados no cambian y se anota lo que la planilla prometía |
+| `generala/online.mjs` | Dos celulares contra Firebase real: los dados de quien juega a la vista del otro, recarga a mitad, partida entera y revancha |
 | `julep/local.mjs` | Mesa de tres contra el celular y partida en un celular, con retomar a mitad |
 | `julep/online.mjs` | Tres celulares contra Firebase real: reparto cerrado, sello de cartas verificadas, recarga a mitad y chat |
 | `timeline/local.mjs` | Un celular con tres jugadores, con retomar a mitad |
@@ -125,6 +127,7 @@ node tools/e2e/contacto.mjs cuarto-rey --salida /tmp/contacto
 | `bulls-and-cows/idiomas.mjs` | Toque y Fama en todos los idiomas: cada pantalla de `caminos.mjs` contra el español (D-199) |
 | `timeline/idiomas.mjs` | Línea de Tiempo en todos los idiomas: cada pantalla de `caminos.mjs` contra el español (D-199) |
 | `liars-dice/idiomas.mjs` | Dudo en todos los idiomas: cada pantalla de `caminos.mjs` contra el español (D-199) |
+| `generala/idiomas.mjs` | Generala en todos los idiomas: cada pantalla de `caminos.mjs` contra el español (D-199) |
 | `julep/idiomas.mjs` | Julepe en todos los idiomas: cada pantalla de `caminos.mjs` contra el español (D-199) |
 | `fourth-king/idiomas.mjs` | Cuarto Rey en todos los idiomas: cada pantalla de `caminos.mjs` contra el español (D-199) |
 | `cup-games/idiomas.mjs` | Los juegos sueltos de La Copa en todos los idiomas: cada pantalla de `caminos.mjs` contra el español (D-199) |
@@ -132,7 +135,7 @@ node tools/e2e/contacto.mjs cuarto-rey --salida /tmp/contacto
 ## Todos los idiomas (D-199)
 
 Cada juego tiene su `<carpeta>/idiomas.mjs` (`hangman/`, `battleship/`, `bulls-and-cows/`,
-`timeline/`, `liars-dice/`, `julep/`, `fourth-king/`, y `cup-games/` para los juegos de La Copa
+`timeline/`, `liars-dice/`, `generala/`, `julep/`, `fourth-king/`, y `cup-games/` para los juegos de La Copa
 que se juegan sueltos). Recorren cada pantalla de [`caminos.mjs`](caminos.mjs) en cada idioma de
 `LANGS` —un idioma nuevo entra solo— y la comparan con la misma pantalla en español:
 

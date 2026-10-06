@@ -24,6 +24,7 @@ The games with their own section below come first; after them, the one-player ga
 | 🔢 [Bulls and Cows / Toque y Fama / Toque e Fama](#-bulls-and-cows-toque-y-fama) | 1 to 2 | One phone · Two phones · Play alone | v0.4 |
 | 🪢 [Hangman / El Ahorcado / Forca](#-hangman-el-ahorcado) | 1 to 6 | One phone · Several phones · Play alone | v0.26 |
 | 🎲 [Liar's Dice / Dudo / Dado Mentiroso](#-liars-dice-dudo) | 1 to 6 | One phone · Several phones · Versus the phone | v0.32 |
+| 📝 [Generala / General](#-generala) | 1 to 6 | One phone · Several phones · Play solo | - |
 | ⚓ [Battleship / Batalla Naval / Batalha Naval](#-battleship-batalla-naval) | 1 to 2 | One phone · Two phones · Versus the phone | v0.6 |
 | 🍹 [Julep / Julepe / Paga o Bolo](#-julep-julepe) | 1 to 6 | One phone · Several phones · Versus the phone | ⏸ paused |
 | 👑 [Fourth King / Cuarto Rey / Quarto Rei](#-fourth-king-cuarto-rey) | 4 to 6 | One phone | v0.27 |
@@ -277,6 +278,39 @@ Spec and design: [docs/games/liars-dice.md](docs/games/liars-dice.md)
 
 ---
 
+## 📝 Generala
+
+<!-- generado: capturas:generala · written by python3 tools/release/readme.py actualizar -->
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/generala/01-intro.png" width="180" alt="Game modes"><br><sub>Game modes</sub></td>
+    <td align="center"><img src="docs/screenshots/generala/04-configuracion.png" width="180" alt="Who plays and whether a rolled generala wins"><br><sub>Who plays and whether a rolled generala wins</sub></td>
+    <td align="center"><img src="docs/screenshots/generala/02-mesa.png" width="180" alt="Keep dice and pick a box"><br><sub>Keep dice and pick a box</sub></td>
+    <td align="center"><img src="docs/screenshots/generala/05-pase.png" width="180" alt="What was scored, then pass the phone"><br><sub>What was scored, then pass the phone</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/generala/online-02-mirando.png" width="180" alt="Several phones: watching who rolls"><br><sub>Several phones: watching who rolls</sub></td>
+    <td align="center"><img src="docs/screenshots/generala/07-servida.png" width="180" alt="Generala on the first roll wins"><br><sub>Generala on the first roll wins</sub></td>
+    <td align="center"><img src="docs/screenshots/generala/06-final.png" width="180" alt="Standings and every score card"><br><sub>Standings and every score card</sub></td>
+    <td align="center"><img src="docs/screenshots/generala/03-final-solo.png" width="180" alt="Solo score and record"><br><sub>Solo score and record</sub></td>
+  </tr>
+</table>
+<!-- /generado -->
+
+The dice game of every Latin American after-dinner table. On your turn you roll five dice **up to three times**, tapping the ones you want to keep between rolls, and then you score the result in a free box of your card, or cross one out with a 0. There are eleven boxes, so there are eleven turns, and the highest total wins: ones to sixes add up their face, a straight is worth 20, a full house 30, four of a kind 40 (five more if they come on the first roll), a generala 50 and a double generala 100. A **generala on the first roll wins the game on the spot**; that rule ships on and can be turned off before starting.
+
+The phone does what the table does badly: it adds up, it shows what every free box would be worth with the dice you have now, and it will not let you score twice in the same box or roll a fourth time. Nothing comes preselected: you tap a box and the button says what it does ("Score 30 in Full house").
+
+- **📱 One phone:** two to six players. Before each handoff you see what the last player scored, with their dice (C-9).
+- **📶 Several phones:** a room with a 4-letter code, a QR and chat, two to six players. Each player rolls on their own phone and everyone watches the dice and the card of whoever is playing. There is nothing hidden in this game, so the dice travel in the clear; they are not derived from the shared seed either, because with the public code that would let anyone compute their next rolls (D-246).
+- **🧍 Play solo:** eleven turns for your best score, with a record on the phone and, signed in, the `generala_solo` leaderboard.
+
+It is the first group game that also works **without playing at the same time**: everyone fills their own card. From 23 October 2026 it joins **One a Day**, where every roll comes from the day's seed, so whoever keeps the same dice gets the same dice (D-247). In Portuguese it is called General, as in Brazil; Kniffel and Yahtzee are trademarks and a slightly different game.
+
+Spec and design: [docs/games/generala.md](docs/games/generala.md)
+
+---
+
 ## 🍹 Julep (Julepe)
 
 <!-- generado: capturas:julepe · written by python3 tools/release/readme.py actualizar -->
@@ -419,7 +453,7 @@ Spec and design: [docs/games/cup.md](docs/games/cup.md)
   Timeline Flash (one per theme) keep their 0–100 records. Two people may share a name; with
   different PINs they are different players. Tapping **Playing as** on any page that shows it opens **Change PIN**, with a line on what the PIN
   is for, and **Sign out**; `/records/` lists **Your games**, how many times you played each one (D-236).
-- **One a Day** (D-230, open to everyone since v0.121.0; One a Day #1 was 6 October 2026): every day, at the player's own midnight, a new game and its content come out of the date, the same for everyone, and the Random game die rolls onto it. The deck holds every game that can be played alone — the seven solo games, Hangman with the phone's deck, and Battleship and Liar's Dice against the phone — and none repeats within a week; each scores 0–100. [`/today/`](https://juegosdesalon.cl/today/) keeps your streak (a 🧊 freeze for every 7 days in a row, up to 2), a calendar and how you do in each game. Signed in, you get the day's, the week's and the streaks leaderboards, and you can invite a friend to the same challenge: when they finish their first day, you earn a freeze. The shared result never names the game, so it does not spoil it. If you ask for them, notifications remind you every day at the hour you pick, warn you when your streak is about to break and sum up your week ([docs/UNO-AL-DIA.md](docs/UNO-AL-DIA.md)).
+- **One a Day** (D-230, open to everyone since v0.121.0; One a Day #1 was 6 October 2026): every day, at the player's own midnight, a new game and its content come out of the date, the same for everyone, and the Random game die rolls onto it. The deck holds every game that can be played alone — the seven solo games, Hangman with the phone's deck, Battleship and Liar's Dice against the phone, and Generala solo from 23 October — and none repeats within a week; each scores 0–100. [`/today/`](https://juegosdesalon.cl/today/) keeps your streak (a 🧊 freeze for every 7 days in a row, up to 2), a calendar and how you do in each game. Signed in, you get the day's, the week's and the streaks leaderboards, and you can invite a friend to the same challenge: when they finish their first day, you earn a freeze. The shared result never names the game, so it does not spoil it. If you ask for them, notifications remind you every day at the hour you pick, warn you when your streak is about to break and sum up your week ([docs/UNO-AL-DIA.md](docs/UNO-AL-DIA.md)).
 - **Saved games:** every game stores its state on the device and offers to continue.
 - **Installable:** a PWA manifest, PNG icons for Android and iPhone and a service worker, so the browser offers to install it on the home screen from any game (D-221). On a phone, a bubble on the menu invites you to add it to the home screen and shows the steps for that phone's browser (Safari or Chrome on iPhone, Chrome or Samsung Internet on Android); its ✕ hides it for good (D-232). The service worker caches nothing yet: there is no offline mode. The screen stays awake while playing.
 
@@ -436,6 +470,7 @@ The whole experience is translated: the menu and its footer lines, every game wi
 | Toque y Fama | Bulls and Cows | Toque e Fama | Bullen und Kühe |
 | El Ahorcado | Hangman | Forca | Galgenmännchen |
 | Dudo | Liar's Dice | Dado Mentiroso | Lügenwürfel |
+| Generala | Generala | General | Generala |
 | Batalla Naval | Battleship | Batalha Naval | Schiffe versenken |
 | Julepe | Julep | Paga o Bolo | Julepe |
 | Cuarto Rey | Fourth King | Quarto Rei | Der vierte König |
@@ -552,6 +587,7 @@ node public/battleship/engine.test.mjs
 node public/bulls-and-cows/engine.test.mjs
 node public/cup/engine.test.mjs
 node public/fourth-king/engine.test.mjs
+node public/generala/engine.test.mjs
 node public/hangman/engine.test.mjs
 node public/julep/engine.test.mjs
 node public/liars-dice/engine.test.mjs
@@ -676,6 +712,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   bulls-and-cows/             Bulls and Cows (engine.js + tests, game.js, rules.js)
   hangman/                    Hangman (engine.js + tests, game.js, rules.js, decks/)
   liars-dice/                 Liar's Dice (engine.js + tests, game.js, rules.js)
+  generala/                   Generala (engine.js + tests, game.js, rules.js)
   battleship/                 Battleship (engine.js + tests, game.js, rules.js, flota.js: the pixel art)
   julep/                      Julep (engine.js + tests, game.js, rules.js)
   fourth-king/                Fourth King (engine.js + tests, game.js, rules.js)
@@ -732,6 +769,7 @@ These documents are in Spanish, like the rest of the project.
 - [Especificación: Toque y Fama](docs/games/bulls-and-cows.md)
 - [La Copa](docs/games/cup.md)
 - [Especificación: Cuarto Rey](docs/games/fourth-king.md)
+- [Diseño: Generala](docs/games/generala.md)
 - [Diseño: El Ahorcado](docs/games/hangman.md)
 - [Diseño: Julepe](docs/games/julep.md)
 - [Diseño: Dudo](docs/games/liars-dice.md)
