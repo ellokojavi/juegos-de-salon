@@ -384,8 +384,9 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
   sin abrir el juego, como la ⭐, va al lado del link, encima de la tarjeta (`.game-slot`), con
   44 px de toque y sin tapar texto (C-8, D-238).
 - **La barra de arriba** lleva el idioma (C-3), el sonido (C-4), 🏆 rankings (D-212, abiertos
-  a todos desde D-217) y 📤, que comparte la app con su tarjeta social en el idioma en que se
-  mira (`compartirApp`, D-226, U-33).
+  a todos desde D-217) y compartir, que comparte la app con su tarjeta social en el idioma en que se
+  mira (`compartirApp`, D-226, U-33). Su ícono es el de compartir de los sistemas operativos, una
+  caja abierta con una flecha hacia arriba, en SVG y del color del texto, no un emoji (D-242).
   El globo que invita a agregar la app a inicio sale abajo, solo en los celulares donde se puede
   agregar (no en el computador ni en la app ya instalada), y la ✕ lo apaga para siempre en ese
   navegador (D-232).
