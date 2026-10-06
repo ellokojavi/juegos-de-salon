@@ -64,6 +64,8 @@ En `#/juegos`, el bloque **📅 Uno al día**:
   y **volvió a los 7 días** (de los días jugados cuyo siguiente, o séptimo, ya pasó, en cuántos
   volvió), los **jugadores por su mejor racha, desde siempre** (1 día, 2 a 6, 7 a 29, 30 o más) y las **invitaciones
   aceptadas**. Las cuentas son `unoAlDiaDelRango` en aggregate.js.
+- **Qué se hace** y **Avisos y recordatorio**: las señales `uad/<evento>` de todos (`EVENTOS_UAD`
+  en stats.js), y el tráfico de `/today/` (páginas vistas y visitas que entraron por ahí).
 - Los avisos de Uno al día salen en el bloque de avisos al celular (en `#/torneo`, abajo) como `uaddia`,
   `uadracha`, `uadsemana` y `uadadios`.
 
