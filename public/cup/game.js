@@ -191,7 +191,7 @@ function portada() {
   input.addEventListener('keydown', e => { if (e.key === 'Enter') ir(); });
 
   // "Tus copas": las de este celular de una; las del jugador que entró llegan después (D-220).
-  // Las terminadas llevan su etiqueta y se esconden tras un interruptor que parte apagado (D-233)
+  // Las terminadas llevan su etiqueta y se esconden tras un interruptor que parte apagado (D-234)
   const mias = el('div', { class: 'panel', id: 'tus-copas' });
   let verTerminadas = false;
   const pintarMias = lista => {
@@ -200,10 +200,11 @@ function portada() {
     const ahora = Date.now();
     const terminada = c => !!c.fin && ahora >= c.fin;
     const nTerminadas = lista.filter(terminada).length;
-    const visibles = verTerminadas ? lista : lista.filter(c => !terminada(c));
+    // Prendido, las terminadas van al pie, junto al interruptor: las en curso no se mueven
+    const visibles = [...lista.filter(c => !terminada(c)), ...(verTerminadas ? lista.filter(terminada) : [])];
     const interruptor = el('input', { type: 'checkbox', role: 'switch', id: 'ver-terminadas' });
     interruptor.checked = verTerminadas;
-    interruptor.addEventListener('change', () => { SFX.tap(); verTerminadas = interruptor.checked; pintarMias(lista); });
+    interruptor.addEventListener('change', () => { SFX.tap(); verTerminadas = interruptor.checked; pintarMias(lista); document.getElementById('ver-terminadas')?.focus(); });
     poner(mias,
       el('p', { class: 'lead', style: 'margin-bottom:8px' }, T.mine),
       visibles.length ? null : el('p', { class: 'muted mias-vacia' }, T.mineNone),
