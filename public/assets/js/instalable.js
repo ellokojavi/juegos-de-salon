@@ -6,10 +6,12 @@
  *   (`manifest.<idioma>.webmanifest`; el español es `manifest.webmanifest`), y el iPhone de
  *   `apple-mobile-web-app-title`, que si no está usa el título de la página ("El Ahorcado 🪢 · …").
  * - Registra el service worker de la raíz (`/sw.js`).
+ * - Trae `llegada.js`: el juego que abre el dado del menú aparece con un fundido (D-235).
  *
  * Mejor esfuerzo: si el navegador no tiene service workers, o algo falla, la página sigue igual.
  */
 import { COMMON, getLang } from './i18n.js';
+import './llegada.js'; // el fundido al llegar desde Juego al azar (D-235)
 
 export const RAIZ = new URL('../../', import.meta.url);
 
