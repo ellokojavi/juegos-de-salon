@@ -157,7 +157,8 @@ export async function misDatos() {
 export async function linkInvitar(base) {
   const j = await J().catch(() => null);
   const yo = j?.yo();
-  return yo ? `${base}?inv=${yo.jid}` : base;
+  // La base puede traer ya `?lang=de`: el invitador va como un parámetro más
+  return yo ? `${base}${base.includes('?') ? '&' : '?'}inv=${yo.jid}` : base;
 }
 export const tengoJugador = async () => !!(await J().catch(() => null))?.yo();
 
