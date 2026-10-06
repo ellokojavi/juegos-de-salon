@@ -3855,7 +3855,9 @@ para uno: los solitarios, El Ahorcado con el mazo del celular, y Batalla Naval y
 celular. El dado de D-188 rueda cada vez que se abre el juego de hoy, aunque siempre caiga en el
 mismo. Después de jugar se puede invitar a un amigo con un dato verdadero de quien invita (su
 racha, su puesto), y el amigo juega el mismo desafío. Cuando el invitado termina su primer día, quien
-invitó gana un comodín de racha, y eso se anuncia en la tarjeta de invitar. Se lleva la racha, el calendario y los puntajes en el celular y, con jugador, en
+invitó gana un comodín de racha, y eso se anuncia en la tarjeta de invitar. La tarjeta para compartir el
+resultado no nombra el juego de hoy, ni en el texto ni en la imagen (dilema #215, excepción a
+U-31). Se lleva la racha, el calendario y los puntajes en el celular y, con jugador, en
 Firebase, con ranking del día, de la semana y de rachas. Los avisos (el del día, el de la racha que
 se corta y el de la semana) los activa el jugador y elige la hora. El detalle está en
 [UNO-AL-DIA.md](UNO-AL-DIA.md).
