@@ -53,7 +53,8 @@ export function avisosUnoAlDia({ quiere = {}, subs = {}, enviados = {}, now }) {
     if (Object.values(env).filter(t => typeof t === 'number' && fechaLocal(t, tz) === hoy).length >= TOPE_DIA) continue;
     const lang = COMMON[sub.lang] ? sub.lang : 'es';
     const T = COMMON[lang].uad;
-    const url = tipo => `${SITIO}today/?aviso=${tipo}${lang === 'es' ? '' : `&lang=${lang}`}`;
+    // `uad-<tipo>`: el panel cuenta los tocados aparte de los de La Copa, que también tienen `dia` (D-233)
+    const url = tipo => `${SITIO}today/?aviso=uad-${tipo}${lang === 'es' ? '' : `&lang=${lang}`}`;
     const jugoHoy = q.u === hoyN;
     const sinJugar = Number.isInteger(q.u) ? hoyN - q.u : 0;
     const uno = (tipo, clave, body, extra = {}) => { if (!env[clave]) out.push({ subId, tipo, clave, aviso: { title: T.avTitulo, body, url: url(tipo), tag: `uad-${tipo}` }, ...extra }); return !env[clave]; };
