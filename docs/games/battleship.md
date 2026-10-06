@@ -46,6 +46,22 @@ empate no es victoria. La tabla (semana, siempre y amigos) va en la intro, debaj
 3. Al hundir vuelve a cacería. Cuando solo quedan barcos grandes, ajusta la paridad al tamaño mínimo restante.
 Promedio esperado: 45 a 55 disparos para hundir la flota (un humano promedio ronda 60).
 
+### Uno al día (`/battleship/?hoy`, D-230)
+
+Cuando Batalla Naval es el juego de Uno al día, `/battleship/?hoy` no ofrece modos: la intro lleva
+la línea de Uno al día, "Todos se enfrentan a la misma flota del celular.", y un solo botón,
+**Jugar el de hoy**, que abre directo 🤖 Contra el celular con los ajustes de siempre y el nombre
+que se recuerda (o "Jugador 1"). El jugador coloca su flota como siempre. **La flota del celular
+sale de la semilla del día** (`randomLayout(N, azarDel(semilla, 'flota'))`; `randomLayout` acepta
+el azar desde D-230): la misma para todos. Es una partida local, así que la semilla no adelanta
+nada a nadie (C-10 es para la sala), y el compromiso con hash sigue igual. El celular dispara como
+siempre, con su azar: lo común es el punto de partida, no la partida entera.
+
+Puntaje del día (`puntajeNaval` en `uno-al-dia.js`): ganando, 100 con 17 disparos y bajando parejo
+hasta 40 con los 100 del tablero; perdiendo, 6 por casilla de barco acertada, hasta 39 (siempre
+menos que ganar). La tarjeta de Uno al día va arriba de los botones del resultado; el primer
+intento cuenta y los siguientes son práctica. Se prueba con `tools/e2e/uno-al-dia-grupo.mjs`.
+
 ## Flujo
 
 ```
