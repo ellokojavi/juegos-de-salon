@@ -117,21 +117,28 @@ export function confetti({ duration = 2500, count = 160 } = {}) {
 export { canShare, shareLink };
 
 /**
- * Botón redondo de la barra de arriba para compartir un link (📤). Donde hay diálogo nativo
+ * El ícono de compartir de los sistemas operativos (una caja abierta con una flecha hacia arriba),
+ * dibujado en SVG con el color del texto: un emoji se ve distinto en cada celular (D-242).
+ */
+const ICONO_COMPARTIR = '<svg class="icon-share" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M8 7l4-4 4 4"/><path d="M8 10H6a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1h-2"/></svg>';
+
+/**
+ * Botón redondo de la barra de arriba para compartir un link. Donde hay diálogo nativo
  * abre el del sistema; donde no, copia y lo avisa cambiando el ícono por un ✅ dos segundos,
  * que se entiende sin traducir y no mueve nada de lugar en la barra. Con `imagen` (una función
  * que da el archivo, o `null`), donde el celular manda archivos va la imagen junto al texto
  * (D-226); en un computador no se descarga nada: se copia el texto, como siempre.
  */
 export function shareButton({ title, text, url, label, imagen }) {
-  const btn = el('button', { type: 'button', class: 'icon-btn', title: label, 'aria-label': label }, '📤');
+  const btn = el('button', { type: 'button', class: 'icon-btn', title: label, 'aria-label': label });
+  btn.innerHTML = ICONO_COMPARTIR;
   btn.addEventListener('click', async () => {
     if (btn.textContent === '✅') return;
     const archivo = imagen && comparteArchivos() ? await imagen() : null;
     const r = archivo ? await compartir({ titulo: title, texto: text, url, imagen: archivo }) : await shareLink({ title, text, url });
     if (r !== 'copied') return;
     btn.textContent = '✅';
-    setTimeout(() => { btn.textContent = '📤'; }, 2000);
+    setTimeout(() => { btn.innerHTML = ICONO_COMPARTIR; }, 2000);
   });
   return btn;
 }
