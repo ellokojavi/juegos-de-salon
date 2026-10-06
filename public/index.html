@@ -246,6 +246,7 @@
   <script type="module">
     import { PORTADA, TIPOS, TIPOS_VIEJOS, rangoJugadores } from './assets/js/games.js';
     import { sparkles, el, shareButton, con } from './assets/js/ui.js';
+    import { compartirApp, comparteArchivos } from './assets/js/compartir.js';
     import { getLang, langToggle, applyStatic, pickLang, COMMON, homeUrl } from './assets/js/i18n.js';
     import { FRASES } from './assets/js/frases.js';
     import { SFX, soundToggle, initSound } from './assets/js/sound.js';
@@ -269,10 +270,15 @@
       for (const k of ['title', 'aria-label']) b.setAttribute(k, T.rk.rankings);
       b.hidden = !rankingsVisibles();
     }).catch(() => {});
-    // Compartir la app: la portada del idioma en que se está mirando (D-74).
+    // Compartir la app: la portada del idioma en que se está mirando (D-74), con su tarjeta social
+    // como imagen y un texto que dice lo que ella no (D-226)
+    const app = compartirApp({ C: T, lang, juegos: PORTADA.filter(g => g.available).length });
     document.getElementById('share-slot').append(shareButton({
-      title: T.appTitle, text: T.shareText, url: homeUrl(lang), label: T.share,
+      title: app.titulo, text: app.texto, url: homeUrl(lang), label: T.share, imagen: app.imagen,
     }));
+    // La imagen se baja antes, y solo donde se va a mandar: al tocar, el menú del sistema tiene que
+    // abrirse enseguida (Safari lo niega si el toque quedó atrás)
+    if (comparteArchivos()) (window.requestIdleCallback || (f => setTimeout(f, 1500)))(() => app.imagen());
 
     // 1) Lo importante primero: la lista de juegos, con los de La Copa al final (D-142).
     const list = document.getElementById('games');
