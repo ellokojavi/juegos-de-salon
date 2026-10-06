@@ -728,5 +728,6 @@ These documents are in Spanish, like the rest of the project.
 - [Changelog](CHANGELOG.md)
 - [El alemán](docs/ALEMAN.md)
 - [App instalable y avisos al celular (PWA + Web Push)](docs/PWA-NOTIFICACIONES.md)
+- [Uno al día](docs/UNO-AL-DIA.md)
 - [Guía de usabilidad](docs/USABILIDAD.md)
 <!-- /generado -->
