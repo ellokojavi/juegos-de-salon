@@ -94,6 +94,7 @@
     import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
     import { trackVisit } from '../assets/js/transport/stats.js';
     import { juegosCopa } from '../cup/rules.js';
+    import { gameById } from '../assets/js/games.js';
     import { mmss } from '../cup/engine.js';
     import { estado, porJuego, juegoDia, faltaParaManana, unoAlDiaVisible, LANZAMIENTO } from '../assets/js/uno-al-dia.js';
     import { fmt, tirarHoy, compartirHoy, jugarOtro } from '../assets/js/uno-al-dia-ui.js';
@@ -113,7 +114,9 @@
     document.getElementById('sound-slot').append(soundToggle());
     const tap = () => SFX.tap();
     const pagina = document.getElementById('uad-pagina');
-    const nombre = id => conEmoji(juegoDia(id)?.emoji || JC[id]?.emoji || '🎲', JC[id]?.nombre || id);
+    // El nombre de un solitario está en las reglas de La Copa; el de un juego de grupo, en games.js
+    const nombreDe = id => JC[id]?.nombre || gameById(id)?.name?.[lang] || id;
+    const nombre = id => conEmoji(juegoDia(id)?.emoji || JC[id]?.emoji || '🎲', nombreDe(id));
 
     /** "7 h 12 min" o "12 min". */
     const falta = ms => {
@@ -136,7 +139,7 @@
         const proximo = el('p', { class: 'uad-proximo', id: 'uad-proximo' });
         const tic = () => { proximo.textContent = fmt(T.proximo, { t: falta(faltaParaManana()) }); };
         tic(); setInterval(tic, 30000);
-        hoy.append(el('p', {}, fmt(T.hoyListo, { juego: JC[e.dia.j]?.nombre || e.dia.j, s: e.dia.s })), proximo,
+        hoy.append(el('p', {}, fmt(T.hoyListo, { juego: nombreDe(e.dia.j), s: e.dia.s })), proximo,
           el('div', { class: 'uad-acciones' },
             compartirHoy({ lang, fecha: e.hoy, dia: e.dia, alTocar: tap, mmss }),
             el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-uad-otro', onClick: () => { tap(); jugarOtro({ lang, raiz: '../' }); } }, T.jugarOtro)));
@@ -177,7 +180,7 @@
             const nivel = !x ? '' : x.s >= 80 ? 'l3' : x.s >= 50 ? 'l2' : 'l1';
             cal.append(el('span', {
               class: [nivel, f === e.hoy ? 'hoy' : ''].filter(Boolean).join(' ') || null,
-              title: x ? `${JC[x.j]?.nombre || x.j}: ${fmt(T.puntos, { s: x.s })}` : null,
+              title: x ? `${nombreDe(x.j)}: ${fmt(T.puntos, { s: x.s })}` : null,
             }, x ? (juegoDia(x.j)?.emoji || '•') : String(d)));
           }
         };
@@ -211,7 +214,7 @@
         const dice = sube || baja;
         pagina.append(el('section', { class: 'panel uad-bloque', id: 'uad-por-juego' }, el('h2', {}, T.porJuego),
           el('div', { class: 'uad-juegos' }, filas),
-          dice ? el('p', { class: 'uad-dice', id: 'uad-tendencia' }, fmt(sube ? T.mejorando : T.bajando, { juego: JC[dice.id]?.nombre || dice.id, a: dice.ultimos3, b: dice.antes })) : null));
+          dice ? el('p', { class: 'uad-dice', id: 'uad-tendencia' }, fmt(sube ? T.mejorando : T.bajando, { juego: nombreDe(dice.id), a: dice.ultimos3, b: dice.antes })) : null));
       }
     }
   </script>

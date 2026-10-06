@@ -17,6 +17,8 @@ import { createLocalTransport } from '../assets/js/transport/local.js';
 import { trackStart, trackVisit, trackFinish } from '../assets/js/transport/stats.js';
 import { finDePartida, bloqueVictorias } from '../assets/js/ranking.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
+import { modoHoy, introHoy, terminarHoy, ponerTarjeta } from '../assets/js/uno-al-dia-ui.js';
+import { azarDel, puntajeAhorcado } from '../assets/js/uno-al-dia.js';
 import {
   ALPHABETS, LIVES_OPTIONS, MAX_LETTERS, buildState, dealWords, normalize,
   positionsOf, randomNonce, randomSeed, rarest, readPos, sha256, shapeOf, shuffleSeeded, verifySetter, wordProblem,
@@ -39,6 +41,8 @@ const SUGGEST_N = 6;
 const FLASH_MS = 2000;
 const store = createSessionStore(GAME_ID);
 const nameStore = createNameStore(GAME_ID);
+/** Uno al día (D-230): con `?hoy`, la palabra del día con el mazo del celular, sin elegir modo. */
+const HOY = modoHoy(GAME_ID);
 
 /** De dónde sale la palabra, en el orden en que se muestra en la configuración (D-53). */
 const SOURCES = [
@@ -822,6 +826,8 @@ function renderResult(v) {
   if (!already) { if (festejo) { confetti({ count: 220, duration: 3500 }); SFX.win(); } else SFX.timeUp(); }
 
   const box = $('#result-actions'); box.innerHTML = '';
+  // Uno al día: la tarjeta va arriba de los botones; el resultado del juego queda como siempre
+  if (S.hoy && soloYo) ponerTarjeta(terminarHoy(S.hoy, { s: puntajeAhorcado({ vidas: mia.solved ? mia.score : 0, total: M.config.lives }), ms: mia.ms, lang, alTocar: () => SFX.tap() }), box);
   if (S.mode === 'online' && !S.switching) {
     const proposed = ROLES.filter(r => r !== S.role).map(r => M.rematch[r]).find(c => typeof c === 'string');
     if (proposed && proposed !== S.code) { S.switching = true; joinOnline(proposed, M.names[S.role]).catch(e => { console.error(e); S.switching = false; }); }
@@ -878,10 +884,12 @@ async function joinOnline(code, name, previousRole = null, secrets = {}) {
 /* ------------------------------------------------------------------ */
 /* Modos y arranque                                                    */
 /* ------------------------------------------------------------------ */
-function startLocalMode(mode, names, config) {
+function startLocalMode(mode, names, config, hoy = null) {
   clearSession();
   const transport = createLocalTransport();
   startSession({ mode, transport, roles: config.players, config, names });
+  S.hoy = hoy;   // la revancha es una partida cualquiera: no lleva `hoy`
+  document.getElementById('uad-tarjeta')?.remove();   // la de la partida anterior, si la hubo
   keepAwake();
   trackStart({ game: GAME_ID, mode, players: config.players.length, nombres: config.players.map(r => names?.[r]) }); // señal de uso (D-44, D-210)
 }
@@ -1026,6 +1034,22 @@ function renderSetup(mode, prefillCode = '') {
   } }, T.start));
 }
 
+/**
+ * Uno al día (D-230): la intro con su línea y un solo botón, que abre directo el modo para uno con
+ * el mazo del celular. La palabra sale de la semilla del día (el mazo ya reparte con semilla), con
+ * la temática, las vidas y la compra de letras de siempre; el nombre es el que se recuerda.
+ */
+function introDeHoy() {
+  const seed = Math.floor(azarDel(HOY.semilla, GAME_ID)() * 2 ** 32);
+  const nombre = nameStore.get() || fmt(T.playerPlaceholder, { n: 1 });
+  $('#modes').replaceChildren(
+    introHoy(HOY, { lang }),
+    el('button', { class: 'btn btn--yellow', id: 'btn-uad-jugar', onClick: () => {
+      SFX.tap();
+      startLocalMode('solo', { A: nombre }, { ...DEFAULT_CONFIG, source: 'deck', seed, players: ['A'] }, HOY);
+    } }, COMMON[lang].uad.jugar));
+}
+
 function init() {
   document.documentElement.lang = lang;
   document.title = T.docTitle;
@@ -1034,6 +1058,8 @@ function init() {
   $('#sound-slot').append(soundToggle());
   initSound();
   sparkles(12);
+  if (HOY?.fuera) return;   // se va al juego de hoy
+  if (HOY) return introDeHoy();
   renderModes();
   // Las victorias de este juego y entrar con nombre y PIN (D-212); en el laboratorio, solo donde se activaron
   $('#rk-slot')?.append(bloqueVictorias({ juego: GAME_ID, nombre: T.title, alTocar: () => SFX.tap() }));
