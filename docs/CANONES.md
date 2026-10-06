@@ -59,6 +59,19 @@ public/<carpeta>/
 - Todo texto visible vive en `LOCALES.es`, `LOCALES.en`, `LOCALES.pt` y `LOCALES.de` de `rules.js`. Ninguna cadena literal en `game.js`.
 - Los textos fijos del HTML se marcan con `data-i18n="clave"` (o `data-i18n-html`) y se aplican con `applyStatic(T)`.
 - El idioma se lee con `getLang()` y el toggle `langToggle()` va en la intro de cada juego.
+- **El selector de idioma es uno solo, `langToggle()`, y se ve igual en toda la app** (D-231).
+  Ninguna pantalla arma el suyo. Su estándar:
+  - Una píldora de vidrio (`--glass`) con un botón por idioma de `LANGS`, en el orden de `LANGS`.
+  - **Cada botón lleva la bandera y el código en mayúsculas, siempre** (🇨🇱 ES, 🇬🇧 EN, 🇧🇷 PT, 🇩🇪 DE).
+    La bandera es la del país de la app en ese idioma (`BANDERAS` en `i18n.js`), en emoji, nunca
+    en SVG: en Windows se ve como dos letras y se acepta (D-231). Nunca se esconde:
+    en una pantalla ancha va al lado del código, y en un celular angosto (≤ 440 px), arriba, para
+    que el toggle no crezca.
+  - El elegido, en amarillo (`--yellow`, texto `#3a1200`) y apenas más grande; los otros, en `--muted`.
+  - Cada botón mide al menos 44 px de alto (C-8), dice su idioma en su propio idioma a quien
+    no ve la bandera (`NOMBRES_IDIOMA`, como `aria-label` y `title`), y la bandera es decorativa
+    (`aria-hidden`).
+  - Un idioma nuevo trae su bandera y su nombre: la prueba de paridad lo exige.
 - Las traducciones se adaptan, no se calcan: los chistes y las referencias locales se reemplazan por equivalentes. El portugués es el de Brasil, informal ("você", "celular", "rolê"), y los nombres de los juegos se traducen (Quarto Rei, Toque e Fama, Batalha Naval, Linha do Tempo) igual que en inglés (D-48).
 - **En La Copa, lo personal va en tu idioma y lo del grupo en el de la copa** (D-170): la pantalla
   sigue el toggle de quien mira, pero las palabras de Conexiones y Palabra, los mensajes que se
