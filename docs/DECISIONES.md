@@ -3876,8 +3876,13 @@ Con menos de 9 juegos en el mazo, la espera para repetir uno es de dos días men
 (con los 7 del PR 1, cinco días), porque 7 días con 7 juegos repetía el mismo orden cada semana.
 El acceso va en la misma fila que Juego al azar, a su derecha (el dueño, 2026-10-05); la tarjeta
 junto a La Copa queda como alternativa en `/labs/` y con `?uad=tarjeta`. El PR 1 (el núcleo, los 7
-solitarios, todo en el celular) llegó en v0.115.0. El PR 2 (El Ahorcado, Batalla Naval y Dudo, con la
-semilla del día y su puntaje de 0 a 100) llegó en v0.116.0. El PR 3 (v0.117.0) suma el jugador: la
+solitarios, todo en el celular) llegó en v0.115.0. El PR 2 (v0.116.0) sumó El Ahorcado, Batalla
+Naval y Dudo desde el mazo del 12 de octubre (con 10 juegos, la espera vuelve a ser de 7 días):
+`?hoy` abre directo su modo para uno, y la palabra, la flota del celular y los dados de cada ronda
+salen de la semilla del día (`azarDel`). Son partidas locales, así que no adelantan secretos: en una
+sala se sigue tirando con el azar del navegador (D-70, C-10). Perdiendo en Batalla Naval cuentan las
+casillas acertadas, no los barcos hundidos como decía el diseño, topadas en 39 para que perder
+valga siempre menos que ganar. El PR 3 (v0.117.0) suma el jugador: la
 historia en `unoAlDia/<jid>/<n>`, los rankings `uno-al-dia/d<n>`, `uno-al-dia/s<semana>` y
 `uno-al-dia-racha/siempre`, los comodines (no se guardan: salen de recorrer la historia, uno cada 7
 días seguidos, tope 2) y las invitaciones (`today/?inv=<jid>`, `invitados/<jid>/<uid>`, un comodín
@@ -3886,7 +3891,7 @@ sume cada día una sola vez, pero **no pueden revisar** que el número del día 
 convierten texto en número para compararlo con la hora del servidor) ni la mejor racha, que calcula
 el celular: un tramposo podría inflar su racha o anotar otro día. Se acepta mientras esté en el
 laboratorio; si molesta, el workflow de los avisos puede recalcular las rachas desde la historia.
-Los días viejos del celular no se suben al entrar: quedan en el celular y se juntan al mostrar.
+Al entrar, los días viejos del celular suben solo a la historia, sin sus rankings.
 Detalle en "Lo que el PR 3 hizo" de [UNO-AL-DIA.md](UNO-AL-DIA.md).
 
 ## D-231 · El selector de idioma lleva las banderas siempre
