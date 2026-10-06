@@ -4,7 +4,7 @@
 // se ve como "undefined" en pantalla, así que esto se revisa antes de publicar.
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { LANGS, IDIOMAS, EN_LABS, COMMON, sinLang } from './i18n.js';
+import { LANGS, IDIOMAS, EN_LABS, COMMON, sinLang, BANDERAS, NOMBRES_IDIOMA } from './i18n.js';
 import { GAMES, SUELTOS, TIPOS } from './games.js';
 import { JUEGOS_COPA, juegosCopa } from '../../cup/rules.js';
 import { FRASES } from './frases.js';
@@ -41,6 +41,11 @@ function same(name, dict) {
 assert.deepEqual(LANGS, ['es', 'en', 'pt', 'de']);
 assert.deepEqual(IDIOMAS, ['es', 'en', 'pt', 'de']);
 assert.deepEqual(EN_LABS, []);
+// Cada idioma trae su bandera y su nombre para el toggle (D-230, C-3): sin ellos el botón sale vacío
+for (const l of IDIOMAS) {
+  assert.match(BANDERAS[l] || '', /^\p{Regional_Indicator}{2}$/u, `falta la bandera de ${l} en BANDERAS`);
+  assert.ok(NOMBRES_IDIOMA[l], `falta el nombre de ${l} en NOMBRES_IDIOMA`);
+}
 // El idioma del link se saca sin tocar lo demás: un parámetro suelto no gana un "=" (D-170)
 assert.equal(sinLang('?pirata&lang=pt'), '?pirata');
 assert.equal(sinLang('?K7Q2X&prueba&lang=en'), '?K7Q2X&prueba');

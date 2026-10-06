@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.109.2 — 2026-10-05
+- **El selector de idioma lleva las banderas también en el celular** (D-230): antes, en una
+  pantalla angosta quedaban solo ES EN PT DE. Ahora la bandera va arriba de cada código, sin
+  que el selector crezca, y en una pantalla ancha va al lado, como siempre.
+
 ## 0.109.1 — 2026-10-05
 - **La campana de avisos aparece en la app del iPhone** (D-227): el iPhone abre la app agregada a
   inicio en la portada, sin lo que se activó en Safari, así que la campana no salía. Ahora sale
