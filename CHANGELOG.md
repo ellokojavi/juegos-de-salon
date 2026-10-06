@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.125.0 — 2026-10-06
+- **El botón de compartir, con el ícono de siempre** (D-242): arriba a la derecha de la portada, el
+  📤 pasa a ser la flecha que sale de una caja, la de compartir del celular, y se ve igual en todos.
+
 ## 0.124.0 — 2026-10-06
 - **⭐ Favoritos, en la misma fila que los tipos** (D-241): la ficha va primera, junto a Palabras,
   Lógica, Cultura y Cartas/Dados, así los filtros ocupan una línea menos. En los celulares más

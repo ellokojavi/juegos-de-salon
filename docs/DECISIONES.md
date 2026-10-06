@@ -63,7 +63,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Memoria de partida | C-6 | D-25, D-150 |
 | Interfaz táctil | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213 |
 | Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213 |
-| Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226 |
+| Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242 |
 | Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211 |
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213 |
@@ -4161,4 +4161,20 @@ nombre (en inglés, desde 375). A 320 px solo cabe en inglés. Los celulares de 
   al bajar (D-196) y juntaba un botón que hace algo con uno que filtra.
 **Consecuencias:** `tools/e2e/favoritos.mjs` mira dónde va a 320, 390 y 900 px en los cuatro
 idiomas, que la fila de tipos siga en una línea y que nada se salga.
+
+## D-242 · El botón de compartir de la portada usa el ícono de los sistemas operativos
+**Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** completa D-226 (el botón que comparte la app)
+**Decisión:** El botón redondo de compartir de la barra de arriba (`shareButton` en
+`public/assets/js/ui.js`, que hoy usa solo la portada) deja el emoji 📤 y muestra el ícono de
+compartir de los sistemas operativos: una caja abierta con una flecha hacia arriba, dibujada en SVG
+con `currentColor`. Al copiar, el ✅ de dos segundos sigue igual.
+**Por qué:** lo pidió el dueño. El 📤 se dibuja distinto en cada celular y en Android parece una
+bandeja de salida, no "compartir"; la flecha que sale de la caja es la que la gente ya reconoce.
+**Alternativas descartadas:**
+- **Los tres puntos unidos de Android:** en un iPhone no se lee como compartir, y la flecha sí se
+  entiende en los dos.
+- **Cambiar también el 📤 de los botones con texto** ("📤 Compartir link"): ahí el texto ya dice la
+  acción y el emoji al inicio sigue U-2; el pedido era el botón redondo, que no tiene texto.
+**Consecuencias:** el 📤 queda en los botones con texto de los juegos y de La Copa.
+`tools/e2e/compartir-portada.mjs` sigue mirando que el botón diga ✅ al copiar.
 
