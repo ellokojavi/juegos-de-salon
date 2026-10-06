@@ -567,6 +567,7 @@ celular saca la palabra, la flota o los dados de la semilla del día.
     intento igual entra a él).
 13. **Que se pueda alterar la mejor racha no importa por ahora**; sí que el panel mida el tráfico y
     la actividad de Uno al día.
+14. **Con los avisos activos no se ofrece el recordatorio del calendario** (#230): repetiría el aviso.
 
 ## Textos para revisar (U-1, U-3, U-17)
 

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.120.1 — 2026-10-06
+- **Uno al día sin el recordatorio de más** (D-230): con los avisos activos, `/today/` ya no ofrece
+  agregar un recordatorio al calendario, que repetía el aviso. En el laboratorio.
+
 ## 0.120.0 — 2026-10-06
 - **Uno al día, más simple al terminar, en el laboratorio** (D-230): en El Ahorcado, Batalla Naval y
   Dudo ya no sale la revancha (la tarjeta ofrece jugar otro o repetir el de hoy), y bajo el resultado
