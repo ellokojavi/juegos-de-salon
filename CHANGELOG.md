@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.127.0 — 2026-10-06
+- **El español, con la bandera de España** (D-244): en el selector de idioma, ES lleva 🇪🇸 en vez
+  de 🇨🇱, para que las cuatro banderas digan el idioma. La temática Chile y las copas para Chile no cambian.
+
 ## 0.126.1 — 2026-10-06
 - **Uno al día, más claro en tu página** (D-230): el calendario muestra en cada día jugado el puntaje
   de 0 a 100 en una píldora, como en La Copa; "Hoy jugaste" lleva el emoji del juego (👑 Reinas: 87
