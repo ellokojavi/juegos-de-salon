@@ -151,7 +151,7 @@ El dueño (su UID) puede escribir y borrar en todas estas ramas, para moderar.
   puntaje del día tiene que ser el de su historia, y la semana suma un día de la historia (`u`) que
   todavía no tenía `w`. Detalle y límites en [docs/UNO-AL-DIA.md](../docs/UNO-AL-DIA.md).
 
-## Avisos al celular (`push`, `pushCopa`, `pushEnviados`, D-223, D-224)
+## Avisos al celular (`push`, `pushCopa`, `pushEnviados`, `pushDia`, `pushEnviadosDia`, D-223, D-224, D-230)
 
 - `push/<subId>` = `{ endpoint, keys: { p256dh, auth }, lang, tz, uid, at }`: la suscripción Web
   Push de un celular. `subId` son 32 caracteres hexadecimales (los primeros del sha256 del
@@ -166,6 +166,14 @@ El dueño (su UID) puede escribir y borrar en todas estas ramas, para moderar.
 - `pushEnviados/<código>/<subId>/<clave>` = la hora en que se entregó ese aviso (`dia:3`,
   `plazo:3`, `final`, `fin`, `insc:<pid>`), para no repetirlo. Nadie la lee ni la escribe: solo
   `tools/push/avisar.mjs`, con la cuenta de servicio (D-224), que también la limpia.
+- `pushDia/<subId>` = `{ h, d, r, w, u, c, k, m, sp, sn, at }`: lo que pidió ese celular de los avisos
+  de Uno al día (la hora `h`, de 0 a 23, y si quiere el diario, el de la racha y el de la semana) y,
+  para el texto, su último día jugado `u`, su racha, comodines (0 a 2) y mejor racha, y la semana de
+  ese día con cuántos días jugó (D-230). Nadie lo lee; lo escribe el celular cuya identidad
+  (`auth.uid`) es la de `push/<subId>/uid`, que puede ir en la misma escritura. Cualquier otro campo
+  se rechaza.
+- `pushEnviadosDia/<subId>/<clave>` = hora de entrega (`dia:<n>`, `racha:<n>`, `semana:<s>`, `adios`):
+  los escribe y limpia solo `tools/push/avisar.mjs`, con la cuenta de servicio.
 - Aquí el dueño no tiene excepción: su UID no lee ni escribe estas ramas.
 
 ## Reportes (`feedback`)
