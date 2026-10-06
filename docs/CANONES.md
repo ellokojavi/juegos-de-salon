@@ -144,6 +144,7 @@ modo que el juego piensa tener.
 - Si una lista puede crecer sin límite, el botón de confirmar va flotando (`position: sticky; bottom: 0`) con un degradado detrás, nunca al final del contenido.
 - Los bloques largos (repaso de la partida, reglas) van colapsados por defecto.
 - Sin scroll horizontal. Las grillas y tablas se adaptan al ancho.
+- **Entre un bloque y el siguiente hay aire**: un panel (también uno desplegable) nunca toca la fila de botones de abajo, o se leen como una sola cosa. La fila de acciones del final lleva `margin-top: 14px`. Lo revisan las pruebas de idiomas en cada pantalla de `caminos.mjs`, con los desplegables cerrados y abiertos.
 - Las etiquetas de una grilla (letras, números) van **dentro** de la misma grilla CSS, como una fila y una columna más; nunca en un contenedor aparte que se alinea "a ojo", porque cada navegador lo estira distinto (pasó en Safari con Batalla Naval).
 - Se respeta `prefers-reduced-motion`.
 - Un toque fuera de un elemento seleccionado lo deselecciona.

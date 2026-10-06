@@ -68,6 +68,8 @@ scroll horizontal o botones bajo 44 px (C-8). `--idioma de` (o `en`, `pt`) la ab
 panel se mira con datos sembrados: `mirar.mjs panel <toma>`, con `datos`, `ahora`, `torneo`, `juegos`,
 `audiencia`, `trafico`, `copa-ficha`, `copa-dias`, `copa-historia`, `juego-ficha` o `sala-ficha` (D-207). Los
 caminos a cada pantalla están en [`caminos.mjs`](caminos.mjs), que comparte con las pruebas de idiomas.
+Esas pruebas, en español, revisan además que ningún bloque quede pegado al de abajo (C-8): un panel
+sobre una fila de botones sin aire, con los desplegables cerrados y abiertos.
 
 `contacto.mjs` tampoco: arma una hoja con **todas** las capturas del README de una sección,
 al tamaño en que el README las muestra, para mirarlas juntas antes de publicar (D-76).
