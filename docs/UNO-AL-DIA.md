@@ -1,6 +1,6 @@
 # Uno al día
 
-**Estado:** aprobada por el dueño (D-230); en el laboratorio: el PR 1, el núcleo (v0.115.0), el PR 2, los juegos de grupo (v0.116.0), y el PR 3, jugador, rankings, comodines e invitaciones (v0.117.0) · **Fecha:** 2026-10-05 ·
+**Estado:** aprobada por el dueño (D-230); en el laboratorio: el PR 1, el núcleo (v0.115.0), el PR 2, los juegos de grupo (v0.116.0), el PR 3, jugador, rankings, comodines e invitaciones (v0.117.0), y el PR 4, los avisos y recordatorios (v0.118.0) · **Fecha:** 2026-10-05 ·
 **Toca:** RP-44, D-188 (Juego al azar), D-212 y D-217 (rankings), D-221 a D-229 (avisos), D-97 (semillas)
 
 Una modalidad nueva en la portada, al lado de **Juego al azar**: cada día la app sorprende con un
@@ -468,6 +468,31 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   arriba. Para quien recién empieza: "Ya jugué mi primer Uno al día".
 - Se prueba con `uno-al-dia-jugador.test.mjs` (contra el almacén de prueba, que repite las reglas) y
   `tools/e2e/uno-al-dia-jugador.mjs` (Sara juega y entra, invita; Pedro acepta en otro celular).
+
+### Lo que el PR 4 hizo (v0.118.0)
+
+- **Lo que pide cada celular** va en `pushDia/<subId>` = `{ h, d, r, w, u, c, k, m, sp, sn, at }`: la
+  hora del diario (9, 13 o 19), cuáles quiere (diario, racha, semana) y, para escribir el aviso, su
+  último día jugado (`u`, número de día), su racha y comodines de ese día, su mejor racha y cuántos
+  días jugó esa semana. Lo escribe el celular dueño de la suscripción (`push/<subId>`, la misma de La
+  Copa) al activarlos y después de cada Uno al día; nadie lo lee. No hace falta jugador.
+- **Quién decide** es `tools/push/uno-al-dia.mjs` (puro, con prueba), dentro de la vuelta de
+  `avisar.mjs` cada 15 minutos. Lo mandado va a `pushEnviadosDia/<subId>/<clave>` y se limpia a la
+  semana. La racha del aviso es la que sigue viva hoy: la del último día si fue ayer, o anteayer con
+  un comodín.
+- **Lo que quedó distinto del diseño:** no se juntan con los de La Copa en un aviso ("…y tu Uno al
+  día también te espera"): cada uno respeta su tope. La semana dice solo cuántos días jugó (el puesto
+  y "donde más mejoraste" piden leer los rankings en cada vuelta).
+- **En la pantalla** (`uno-al-dia-avisos.js`): la oferta sale en la tarjeta del resultado la
+  segunda vez que termina, con las tres horas y **Ahora no**; la campana de `/today/` muestra la
+  hora y abre la hoja (los tres interruptores, la hora, **Probar los avisos** y **Silenciar**). Los
+  caminos de cada celular son los de La Copa (`push.js`), con sus hojas y un paso 3 propio.
+- **El globo del ícono**: la página pone un 1 mientras falta jugar hoy y lo quita al terminar; el
+  aviso del día también lo pone (`sw.js`).
+- **Agregar al calendario**: un `.ics` armado en el celular, con un evento diario a la hora elegida
+  (o 9:00) y el link `today/?de=cal`.
+- Se prueba con `tools/push/uno-al-dia.test.mjs`, el caso nuevo de `avisar.test.mjs`,
+  `uno-al-dia-avisos.test.mjs` y `tools/e2e/uno-al-dia-avisos.mjs` (con un servicio de avisos falso).
 
 ## Lo que decidió el dueño (2026-10-05)
 
