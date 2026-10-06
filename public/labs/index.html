@@ -10,6 +10,8 @@
   <link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="../assets/css/base.css">
   <style>
+    .uad-formas { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .uad-formas .btn { font-size: 1rem; padding: 10px 8px; }
     .hero { text-align: center; padding: 6px 0 4px; }
     .hero .icon { font-size: 3.6rem; display: block; }
     .hero h1 { margin: 4px 0; }
@@ -78,6 +80,19 @@
         </ul>
       </section>
 
+      <section class="panel seccion" id="seccion-uno-al-dia">
+        <h2>📅 Uno al día</h2>
+        <p class="muted" style="margin:0">Cada día un juego sorpresa, el mismo desafío para todos, con racha y calendario (D-230). Al activarlo, sale un botón al lado de Juego al azar en la portada; abajo se puede probar la otra forma, una tarjeta junto a La Copa. Por ahora se guarda solo en este celular.</p>
+        <p id="uad-estado" class="muted" style="margin:0"></p>
+        <button class="btn btn--yellow" id="btn-labs-uad" type="button">Activar en este celular</button>
+        <p id="uad-forma-titulo" class="muted" style="margin:0"><b>Dónde va en la portada:</b></p>
+        <div class="uad-formas" id="uad-formas" role="group" aria-labelledby="uad-forma-titulo">
+          <button class="btn btn--sm" type="button" data-forma="boton">Al lado del dado</button>
+          <button class="btn btn--sm" type="button" data-forma="tarjeta">Junto a La Copa</button>
+        </div>
+        <a class="btn btn--ghost" id="btn-labs-uad-ver" href="../today/">📅 Ver Uno al día</a>
+      </section>
+
       <section class="panel seccion" id="seccion-instalar">
         <h2>📲 Agregar a inicio</h2>
         <p class="muted" style="margin:0">El globo de la portada que invita a agregar la app a la pantalla de inicio, con los pasos de Safari y Chrome en iPhone y en Android (D-232). Sale en el celular, no en el computador, y se va para siempre con la ✕.</p>
@@ -114,6 +129,27 @@
       };
       b.addEventListener('click', () => { SFX.tap(); activarInstalar(!instalarEnLabs()); pintar(); });
       otra.addEventListener('click', () => { SFX.tap(); descartar(false); pintar(); });
+      pintar();
+    });
+    // Uno al día, solo en los celulares que lo activan aquí (D-230)
+    import('../assets/js/uno-al-dia.js').then(({ unoAlDiaVisible, activarUnoAlDia, formaAcceso, elegirForma }) => {
+      const b = document.getElementById('btn-labs-uad'), ver = document.getElementById('btn-labs-uad-ver');
+      const est = document.getElementById('uad-estado'), formas = document.getElementById('uad-formas');
+      const pintar = () => {
+        const on = unoAlDiaVisible();
+        b.textContent = on ? 'Desactivar en este celular' : 'Activar en este celular';
+        est.textContent = on ? 'Activo: abre la portada y toca 📅 Uno al día.' : '';
+        ver.hidden = !on;
+        formas.hidden = document.getElementById('uad-forma-titulo').hidden = !on;
+        // La forma elegida va en amarillo; la otra, apagada
+        for (const x of formas.querySelectorAll('button')) {
+          const sel = x.dataset.forma === formaAcceso();
+          x.className = `btn btn--sm ${sel ? 'btn--yellow' : 'btn--ghost'}`;
+          x.setAttribute('aria-pressed', String(sel));
+        }
+      };
+      for (const x of formas.querySelectorAll('button')) x.addEventListener('click', () => { SFX.tap(); elegirForma(x.dataset.forma); pintar(); });
+      b.addEventListener('click', () => { SFX.tap(); activarUnoAlDia(!unoAlDiaVisible()); pintar(); });
       pintar();
     });
     initSound();

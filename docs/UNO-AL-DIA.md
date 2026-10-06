@@ -1,6 +1,6 @@
 # Uno al día
 
-**Estado:** aprobada por el dueño, con dos agregados y un cambio (D-230) · **Fecha:** 2026-10-05 ·
+**Estado:** aprobada por el dueño (D-230); el PR 1, el núcleo, está hecho, en el laboratorio (v0.115.0) · **Fecha:** 2026-10-05 ·
 **Toca:** RP-44, D-188 (Juego al azar), D-212 y D-217 (rankings), D-221 a D-229 (avisos), D-97 (semillas)
 
 Una modalidad nueva en la portada, al lado de **Juego al azar**: cada día la app sorprende con un
@@ -60,7 +60,7 @@ barajan todos con la semilla `uno-al-dia:ciclo:<n>` y salen de a uno por día, s
 que se acaba el mazo (10 días). Al barajar el mazo siguiente, ningún juego puede salir antes de 7
 días desde la última vez. Cada juego lleva la fecha desde la que entra a Uno al día. Así un juego
 nuevo se suma en el mazo siguiente y los días ya pasados no cambian. El contenido del día sale de
-`uno-al-dia:2026-10-05`, con el `azar()` de `cup/games/semilla.js`. Es una semilla distinta de las
+`uno-al-dia:2026-10-05`, convertida en un código de copa de 5 letras (ver "Lo que el PR 1 hizo"). Es una semilla distinta de las
 de cualquier copa, así que no adelanta nada de una copa en curso.
 
 **Cuándo cambia el día:** a la medianoche **del jugador**, como Wordle. Un jugador en Madrid juega
@@ -96,14 +96,14 @@ lanzamiento: **Uno al día n.° 1, n.° 2…**, para compartir.
 
 ### Día 2 en adelante: vuelve
 
-- **Por su cuenta:** abre la app y el botón dice **🔥 1 · Jugar el de hoy** (el mismo verbo del
-  botón que ve el amigo invitado, U-5).
+- **Por su cuenta:** abre la app y el botón dice **📅 Uno al día 🔥 1**, con el punto que brilla
+  (el botón va en una línea, ver "Lo que el PR 1 hizo").
 - **Con un aviso** a la hora que eligió: "📅 Uno al día n.° 13 ya está. 🔥 Racha: 1 día." (el de la tabla de
   avisos) Al tocarlo
   rueda el dado.
 - **Mientras no lo haya jugado, el dado rueda cada vez** que toca el botón, el aviso o un link, y
   siempre cae en el mismo juego (decisión del dueño: la misma experiencia de Juego al azar).
-- Si ya jugó, el botón dice **✅ Listo · 🔥 2** y al tocarlo abre su página de Uno al día (sus
+- Si ya jugó, el botón queda cian, **✅ Uno al día 🔥 2**, y al tocarlo abre su página de Uno al día (sus
   números, el ranking del día y cuánto falta para el próximo: "El próximo sale en 7 h 12 min.").
 
 ### Quiere jugar más
@@ -289,7 +289,7 @@ Para quien no quiere avisos, o tiene un iPhone sin la app instalada:
 
 | Forma | Cómo funciona |
 |---|---|
-| **El botón de la portada** | Su estado se ve al entrar: el punto que brilla, 🔥 6 y "Jugar el de hoy" o "✅ Listo". |
+| **El botón de la portada** | Su estado se ve al entrar: el punto que brilla mientras falta jugar, 🔥 6, y cian con ✅ cuando ya jugó. |
 | **El globo en el ícono** | En la app instalada (Android, y iPhone con avisos permitidos), un **1** en el ícono si hoy no ha jugado (`navigator.setAppBadge`). Lo pone la página al abrir y lo quita al terminar; el service worker lo pone con el aviso del día. |
 | **Agregar al calendario** | Un evento que se repite cada día a la hora que elige, con el link a `/today/`. Sale de un `.ics` armado en el celular, sin servidor ni permisos, y sirve en cualquier celular. |
 | **La tarjeta para compartir** | Al estilo Wordle, sin adelantar la respuesta: el grupo de WhatsApp le recuerda a cada uno que juegue. |
@@ -360,11 +360,43 @@ el celular al terminar, así que el aviso sabe si ya jugó aunque no tenga jugad
 | **4. Avisos y recordatorios** | Los tres avisos, la hoja de la hora, el globo del ícono, el calendario | Sí, como los de La Copa |
 | **5. Panel y salida** | Las cifras del panel; se abre a todos | No |
 
-Cada juego tiene que aceptar una **fecha** además de una semilla (`/queens/?dia=2026-10-05`) y
+Cada juego tiene que saber que es el de hoy (`/queens/?hoy`, ver "Lo que el PR 1 hizo") y
 avisar al terminar. Los siete solitarios ya aceptan `?semilla=` (D-142), así que para ellos el cambio
 es chico y se hace una sola vez en `cup/game.js`. El Ahorcado, Batalla Naval y Dudo tienen cada
 uno su motor, y por eso van en su propio PR: el modo para uno abre directo, sin elegir modo, y el
 celular saca la palabra, la flota o los dados de la semilla del día.
+
+### Lo que el PR 1 hizo (v0.115.0)
+
+- **El link no lleva la fecha:** es `?hoy` (`/untangle/?hoy`, o `/cup/suelto/?linea&hoy` para
+  Línea Relámpago y el número, que no tienen página propia). La página calcula la fecha del jugador,
+  el juego y la semilla, así un link viejo abre el de hoy y nadie elige el tablero. Si el link es de
+  otro juego, la página se va al de hoy.
+- **El mazo con 7 juegos:** "ningún juego antes de 7 días" con justo 7 juegos dejaba el mismo orden
+  todas las semanas. Con menos de 9 juegos la espera es de dos días menos que los que hay (con 7,
+  cinco días; con 8, seis); con 9 o más, 7 días, como dice arriba (`SIN_REPETIR`). El día n.° 1 es el 5 de octubre de 2026
+  (`LANZAMIENTO` en `uno-al-dia.js`); se puede mover mientras esté en el laboratorio.
+- **La semilla** es un código de copa de 5 letras sacado de la fecha (`semillaDel`), así los juegos
+  no cambian: generan con ella como en cualquier copa. Las palabras van en el idioma de quien juega,
+  como en el juego suelto: el desafío es el mismo para los que juegan en el mismo idioma.
+- **La tarjeta del resultado** va justo bajo el puntaje: la racha, "Vuelve mañana para el día N", lo
+  que cuenta de hoy (o que fue práctica), **Compartir mi resultado**, **🎲 Jugar otro**, **📅 Ver tu
+  Uno al día** y **Repetir el de hoy**. Reemplaza al "Jugar otra vez" y al compartir del juego suelto.
+- **Sin comodines, sin ranking del día y sin invitar todavía:** necesitan el jugador en Firebase
+  (PR 3). El primer intento del día sí va al ranking normal del juego, si hay jugador; los demás no.
+- **`/today/`**: hoy (el dado si falta, o el resultado con el reloj al próximo, compartir y jugar
+  otro), la racha, la mejor racha, los días jugados, el calendario del mes (con el emoji del juego en
+  cada día jugado, y los meses anteriores) y una fila por juego con su línea de los últimos 8 y la
+  flecha, más la frase del que más mejoró o, si ninguno, del que más bajó.
+- **Dónde va en la portada** (decisión del dueño, 2026-10-05): en la misma fila que Juego al azar,
+  a su derecha, sin una línea extra. Los dos llevan etiqueta corta (**🎲 Al azar** y **📅 Uno al
+  día 🔥 6**; en inglés *Random*, en portugués *Aleatório*, en alemán *Zufall*) para caber, también
+  a 320 px y en alemán. Sin Uno al día, el dado sigue diciendo **Juego al azar**. La otra forma que se probó, una tarjeta de media fila al lado de La Copa (las dos como
+  accesos de más jerarquía que los juegos), queda para probarla desde `/labs/` ("Junto a La Copa")
+  o con `?uad=tarjeta`.
+- El CSS del dado pasó de la portada a `base.css`, para tirarlo desde cualquier página.
+- Se prueba con `uno-al-dia.test.mjs` (el mazo, la semilla, la racha, lo anotado) y
+  `tools/e2e/uno-al-dia.mjs` (de la portada a `/today/`, a 320 px y en los cuatro idiomas).
 
 ## Lo que decidió el dueño (2026-10-05)
 
@@ -387,9 +419,10 @@ celular saca la palabra, la flota o los dados de la semilla del día.
 Botones (caben en 320 px, unos 18 caracteres): **Uno al día**, **Jugar el de hoy**, **Compartir**,
 **🎲 Jugar otro**, **Invitar**, **Entrar**, **Ahora no**, **Mañana · 9:00**, **Almuerzo · 13:00**,
 **Tarde · 19:00**, **Silenciar**, **Probar los avisos** y **Agregar al calendario** (pasa de 18,
-así que va en botón chico, como lo secundario de U-17). El botón de la portada es una ficha de dos
-líneas: arriba **📅 Uno al día** y abajo su estado (**🔥 1 · Jugar el de hoy** o **✅ Listo · 🔥 2**),
-que no es un botón aparte. "Racha", "comodín" y "Silenciar" se dicen siempre así (U-5). Los
+así que va en botón chico, como lo secundario de U-17). El botón de la portada va en una línea,
+**📅 Uno al día**, con la racha en una píldora (**🔥 6**) y, al lado, **🎲 Al azar** (decisión del
+dueño: etiquetas cortas). Mientras falta jugar el de hoy brilla un punto; jugado, se pone cian con ✅.
+Lo que hace cada estado va en su `aria-label`. "Racha", "comodín" y "Silenciar" se dicen siempre así (U-5). Los
 textos los propone el agente de usabilidad y el dueño los corrige en el PR.
 
 **Lo que cambió en la revisión de usabilidad** (U-3: el dueño los corrige si no le gustan):

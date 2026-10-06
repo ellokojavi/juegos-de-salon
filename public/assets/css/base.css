@@ -470,3 +470,41 @@ html.i18n-pendiente body { visibility: hidden; }
 @media (prefers-reduced-motion: reduce) { .globo-instalar { animation: fadeIn 0.2s both; } }
 /* Mientras está, el pie de la página sube sobre él: al final de la lista no tapa nada */
 body:has(> .globo-instalar) main.app { padding-bottom: 170px; }
+
+/* El dado de Juego al azar (D-188), que también tira Uno al día (D-230) desde cualquier página */
+body.azar-abierto { overflow: hidden; }
+.azar-capa {
+  position: fixed; inset: 0; z-index: 100; display: grid; place-content: center; justify-items: center; gap: calc(min(38vw, 150px) * 0.55 + 20px);
+  background: radial-gradient(circle at 50% 45%, rgba(40, 12, 70, 0.9), rgba(10, 3, 20, 0.97));
+  animation: fadeIn 0.3s ease-out both; cursor: pointer;
+  outline: none;
+}
+.azar-escena { --lado: min(38vw, 150px); width: var(--lado); height: var(--lado); position: relative; }
+.azar-salto { position: absolute; inset: 0; will-change: transform; }
+/* El lienzo mide el doble que el dado: así cabe entero cuando gira de esquina */
+.azar-lienzo { position: absolute; width: 200%; height: 200%; left: -50%; top: -50%; }
+.azar-sin-3d { position: absolute; inset: 0; display: grid; place-items: center; font-size: calc(var(--lado) * 0.8); animation: pop 0.4s ease-out both; }
+.azar-sombra {
+  position: absolute; left: 8%; right: 8%; bottom: calc(var(--lado) * -0.42); height: 18%; border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(0, 0, 0, 0.75), transparent 70%); opacity: 0;
+}
+.azar-capa.listo .azar-escena { animation: azarLatido 0.7s cubic-bezier(0.3, 0, 0.3, 1); }
+@keyframes azarLatido { 45% { transform: scale(1.07); } }
+.azar-nombre { min-height: 4.6em; text-align: center; display: grid; gap: 4px; padding: 0 16px; }
+.azar-nombre small { color: var(--muted); font-weight: 800; font-size: 1rem; }
+.azar-nombre b { font: 400 clamp(2rem, 9vw, 2.8rem) var(--font-display); letter-spacing: 0.04em; color: var(--yellow); line-height: 1.05; }
+.azar-capa.listo .azar-nombre > * { animation: pop 0.4s ease-out both; }
+.azar-capa.listo .azar-nombre b { animation-delay: 0.08s; }
+/* Al irse (D-235): el dado se aleja y la capa toma el fondo de la app, el mismo sobre el que
+   aparece el juego. El ::before queda bajo el dado y sobre el velo de la capa */
+.azar-capa::before { content: ''; position: fixed; inset: 0; z-index: -1; background: var(--bg1) fixed; background-image: var(--fondo); opacity: 0; transition: opacity 0.4s ease-in; }
+.azar-capa.saliendo::before { opacity: 1; }
+.azar-escena, .azar-nombre, .azar-lienzo { transition: opacity 0.3s ease-in, transform 0.4s cubic-bezier(0.5, 0, 0.9, 0.6); }
+.azar-capa.saliendo .azar-escena, .azar-capa.saliendo .azar-nombre { opacity: 0; }
+.azar-capa.saliendo .azar-lienzo { transform: scale(0.75); }
+.azar-capa.saliendo .azar-nombre { transform: translateY(10px); }
+
+/* Uno al día (D-230): la tarjeta bajo el resultado */
+.uad-tarjeta { display: grid; gap: 8px; text-align: center; border-color: rgba(255, 122, 26, 0.5); background: linear-gradient(160deg, rgba(255, 122, 26, 0.16), rgba(255, 46, 136, 0.12)); }
+.uad-racha { margin: 0; font: 400 1.7rem/1.1 var(--font-display); letter-spacing: 0.04em; color: var(--yellow); }
+.uad-acciones { display: grid; gap: 10px; margin-top: 4px; }
