@@ -147,9 +147,16 @@
       .filtros .tipos { gap: 4px; }
       .filtros .tipos button { padding: 6px 3px; }
     }
-    /* "⭐ Favoritos" (D-238) va en su propia línea, arriba de los tipos: cinco fichas no caben en
-       una fila ni a 375 px. Sale solo con algún favorito marcado, así que a quien no usa la ⭐ no
-       le baja la lista. */
+    /* "⭐ Favoritos" (D-238, D-241) sale solo con algún favorito marcado. Va primera en la fila de
+       los tipos si cabe con su nombre; si no, con la ⭐ sola y menos aire entre las fichas; y si
+       tampoco (a 360 px en español, a 320 px en casi todos), en su propia línea arriba. Lo decide `acomodarFav`, que mide. */
+    .filtros .ficha-fav[hidden] { display: none !important; }
+    .filtros .tipos .ficha-fav { flex: 0 0 auto; }
+    .filtros .tipos .ficha-fav.sola { min-width: 44px; padding-inline: 4px; }
+    .filtros .tipos .ficha-fav.sola .ficha-emoji { font-size: 1.3rem; }
+    .filtros .tipos .ficha-fav.sola span:last-child { display: none; }
+    .filtros .tipos.apretada { gap: 4px; }
+    .filtros .tipos.apretada button { padding-inline: 4px; }
     .filtros .favs { display: flex; justify-content: center; }
     .filtros .favs[hidden] { display: none; }
     .filtros .ficha-fav {
@@ -439,7 +446,7 @@
       const tipos = el('div', { class: 'tipos', role: 'group', 'aria-label': T.filters });
       const cuenta = document.getElementById('filtros-cuenta');
       const botones = [];
-      const fav = el('button', { type: 'button', class: 'ficha-fav', 'data-tipo': FAV, onClick: () => { filtro.tipo = filtro.tipo === FAV ? null : FAV; aplicar(); } }, el('span', { class: 'ficha-emoji', 'aria-hidden': 'true' }, '⭐'), el('span', {}, T.favorites));
+      const fav = el('button', { type: 'button', class: 'ficha-fav', 'data-tipo': FAV, 'aria-label': T.favorites, title: T.favorites, onClick: () => { filtro.tipo = filtro.tipo === FAV ? null : FAV; aplicar(); } }, el('span', { class: 'ficha-emoji', 'aria-hidden': 'true' }, '⭐'), el('span', {}, T.favorites));
       const favs = el('div', { class: 'favs' }, fav);
       botones.push(fav);
       // Solo los tipos que tiene algún juego que se puede abrir: así la lista nunca queda vacía
@@ -450,6 +457,22 @@
       }
       caja.append(favs, tipos);
       const limpiar = () => { filtro.tipo = null; aplicar(); };
+      // Dónde va ⭐ Favoritos (D-241): se prueba de la forma más completa a la más corta y queda la
+      // primera que cabe sin que la fila se desborde. Se mide en vez de fijar un ancho: el largo de
+      // los tipos cambia con el idioma y con las fuentes de cada celular.
+      const acomodarFav = () => {
+        const hay = hayFavoritos();
+        fav.hidden = !hay;
+        const formas = hay ? [['fila', false], ['fila', true], ['linea', false]] : [['linea', false]];
+        for (const [donde, sola] of formas) {
+          if (donde === 'fila') { if (fav.parentNode !== tipos) tipos.prepend(fav); }
+          else if (fav.parentNode !== favs) favs.append(fav);
+          fav.classList.toggle('sola', sola);
+          tipos.classList.toggle('apretada', sola);
+          if (donde === 'linea' || tipos.scrollWidth <= tipos.clientWidth + 0.5) break;
+        }
+        favs.hidden = !hay || fav.parentNode !== favs;
+      };
       const aplicar = (primera = false) => {
         for (const b of botones) {
           const on = b.dataset.tipo === filtro.tipo;
@@ -463,7 +486,7 @@
           t.card.hidden = t.caja.hidden = !ve;
           if (ve) n++;
         }
-        favs.hidden = !hayFavoritos();
+        acomodarFav();
         const filtrado = !!filtro.tipo;
         cuenta.hidden = !filtrado || n === 0;
         cuenta.replaceChildren(el('span', {}, T.shown.replace('{n}', n).replace('{total}', tarjetas.length)),
@@ -480,8 +503,12 @@
       // de la vista (se puede volver a marcar), salvo que ya no quede ninguno: ahí se ven todos
       document.addEventListener('favoritos', () => {
         if (filtro.tipo === FAV && !hayFavoritos()) { filtro.tipo = null; aplicar(); }
-        else favs.hidden = !hayFavoritos();
+        else acomodarFav();
       });
+      // Al girar el celular o cuando terminan de cargar las fuentes, puede que ahora quepa (o no)
+      let anchoVisto = 0;
+      new ResizeObserver(() => { const w = Math.round(caja.clientWidth); if (w !== anchoVisto) { anchoVisto = w; acomodarFav(); } }).observe(caja);
+      document.fonts?.ready.then(acomodarFav);
       // Pegados arriba (ver .filtros-barra): la marca invisible de su lugar de siempre dice si se
       // pasó de largo. Al cambiar de tipo estando pegados, la lista vuelve a empezar justo debajo.
       const barra = document.getElementById('filtros-barra');
