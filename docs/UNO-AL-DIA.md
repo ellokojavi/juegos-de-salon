@@ -299,11 +299,14 @@ La tarjeta para compartir es un resultado, así que va con imagen y texto juntos
 imagen es la lámina de resultado de siempre (`laminaResultado`, con la misma cabecera, el puntaje,
 el tiempo y "mejor que el 64 %" si hoy jugaron 20 o más), y el texto sigue U-30 y no repite lo que
 la imagen ya dice (D-171): la cabecera, la racha, que la imagen no trae, y el link.
-Si la cabecera y la imagen nombran el juego de hoy está en el dilema #215 (la recomendación es
-que no, como el aviso).
+
+**Ni la cabecera ni la imagen dicen qué juego tocó hoy** (decisión del dueño, #215): quien lee la
+tarjeta en el grupo casi siempre todavía no juega, y el juego se descubre en el dado, como con el
+aviso (decisión 3). La imagen va sin el nombre ni el emoji del juego, y el puntaje se lee como
+"87 puntos". Es una excepción a U-31, que pide nombrar el juego en un resultado.
 
 ```
-📅 *Uno al día n.° 12* · 👑 Reinas
+📅 *Uno al día n.° 12*
 🔥 Racha: 6 días
 
 🔗 juegosdesalon.cl/today/
@@ -377,6 +380,7 @@ celular saca la palabra, la flota o los dados de la semilla del día.
 8. **Invitar a un amigo** después de jugar, con un dato de quien invita (agregado del dueño).
 9. **Un comodín para quien invita** cuando el invitado termina su primer Uno al día, con el mismo
    tope de 2, **y se anuncia** para que el jugador lo sepa.
+10. **La tarjeta para compartir no nombra el juego de hoy** (#215), ni en el texto ni en la imagen.
 
 ## Textos para revisar (U-1, U-3, U-17)
 
