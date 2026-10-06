@@ -192,7 +192,7 @@
     .btn-azar:active { transform: translateY(3px); box-shadow: 0 1px 0 #c99a00, 0 4px 12px rgba(255, 210, 63, 0.3); }
     .btn-azar-dado { font-size: 1.5rem; display: inline-block; transition: transform 0.4s; }
     .btn-azar:hover .btn-azar-dado { transform: rotate(-25deg); }
-    /* Uno al día (D-230): a la derecha de "Al azar", en una línea, con la racha en una píldora */
+    /* Uno al día como botón, a la derecha de "Al azar" (la forma de antes, en /labs/): en una línea, con la racha en una píldora */
     .btn-uad {
       position: relative; display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 8px 18px; cursor: pointer;
       color: #fff; background: linear-gradient(180deg, #ff5fa5, var(--pink)); border: 0; border-radius: 999px;
@@ -222,13 +222,15 @@
       .azar-slot.con-uad .btn-uad-titulo { font-size: 0.95rem; gap: 4px; }
       .azar-slot.con-uad .btn-uad-racha { padding: 3px 5px; font-size: 0.72rem; }
     }
-    /* La otra forma, a prueba en /labs/: una fila de dos tarjetas altas, La Copa y Uno al día */
+    /* Una fila de dos tarjetas altas, La Copa y Uno al día (D-239) */
     .fila-alta { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 10px; }
-    .game-card.alta { position: relative; grid-template-columns: 1fr; grid-template-areas: "emoji" "texto" "meta"; row-gap: 8px; align-content: start; justify-items: start; text-align: left; padding: 14px 12px; font: inherit; cursor: pointer; }
-    .game-card.alta .emoji { width: 52px; height: 52px; font-size: 2.1rem; border-radius: 15px; }
-    .game-card.alta .texto { align-self: start; }
-    .game-card.alta h2 { font-size: clamp(1.15rem, 5.4vw, 1.45rem); line-height: 1.05; }
-    .game-card.alta .tag { font-size: 0.82rem; line-height: 1.3; margin: 4px 0 0; }
+    /* El emoji va a la izquierda del título, y la bajada y las píldoras de borde a borde: la fila
+       queda casi 90 px más baja que con el emoji arriba (D-239) */
+    .game-card.alta { position: relative; grid-template-columns: auto 1fr; grid-template-areas: "emoji h2" "tag tag" "meta meta"; column-gap: 8px; row-gap: 8px; align-items: center; align-content: start; justify-items: start; text-align: left; padding: 14px 12px; font: inherit; cursor: pointer; }
+    .game-card.alta .emoji { width: 40px; height: 40px; font-size: 1.6rem; border-radius: 12px; }
+    .game-card.alta .texto { display: contents; }
+    .game-card.alta h2 { grid-area: h2; font-size: clamp(1.05rem, 5vw, 1.35rem); line-height: 1.05; }
+    .game-card.alta .tag { grid-area: tag; font-size: 0.82rem; line-height: 1.3; margin: 0; }
     .game-card.alta .go { display: none; }
     /* Jugadores y duración, en una sola línea: "👥 2–10 jugadores" no cabía al lado de "⏱ 7 días"
        en media fila, así que la palabra se esconde a la vista (el lector de pantalla la lee) */
@@ -347,9 +349,8 @@
     document.getElementById('azar-slot').append(botonAzar({
       lang, candidatos: () => tarjetas.filter(t => !t.card.hidden).map(t => t.g),
     }));
-    // Uno al día (D-230): al lado, el juego de hoy, el mismo para todos. Por ahora, en el laboratorio
-    // Va al lado del dado (lo que eligió el dueño); la tarjeta de media fila junto a La Copa se
-    // puede probar desde /labs/
+    // Uno al día (D-230): el juego de hoy, el mismo para todos. Va en una tarjeta de media fila junto
+    // a La Copa (D-239, lo que eligió el dueño); el botón al lado del dado se puede probar desde /labs/
     import('./assets/js/uno-al-dia.js').then(async ({ unoAlDiaVisible, formaAcceso }) => {
       if (!unoAlDiaVisible() || formaAcceso() === 'no') return;
       import('./assets/js/uno-al-dia-avisos.js').then(Av => Av.globo()).catch(() => {});

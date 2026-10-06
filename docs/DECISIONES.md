@@ -56,7 +56,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213 |
-| Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237 |
+| Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239 |
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97 |
 | Memoria de partida | C-6 | D-25, D-150 |
@@ -3847,7 +3847,7 @@ prueban a mano en Android: Chrome headless no los muestra. Si con el tope se pie
 avisos ya ese día), el del día siguiente o el de gracia lo cubren.
 
 ## D-230 · Uno al día: un juego por día, el mismo para todos, con racha y avisos que pide el jugador
-**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** amplía D-188 (el dado de Juego al azar abre el juego del día) y D-212 (un período nuevo, el del día, y la tabla de rachas); corrige D-221 (los avisos ya no son solo de La Copa: suma los que el jugador pide para Uno al día); completa RP-44
+**Fecha:** 2026-10-05 · **Estado:** corregida por D-239 · **Relación:** amplía D-188 (el dado de Juego al azar abre el juego del día) y D-212 (un período nuevo, el del día, y la tabla de rachas); corrige D-221 (los avisos ya no son solo de La Copa: suma los que el jugador pide para Uno al día); completa RP-44
 **Decisión:** Una modalidad nueva en la portada, junto a Juego al azar. Cada día, a la medianoche
 del jugador, sale un juego con su contenido, el mismo para todos, a partir de la fecha
 (`uno-al-dia:<fecha>`, como las semillas de La Copa, D-97). Entran todos los juegos que tienen modo
@@ -3874,8 +3874,8 @@ Es un diseño aprobado que se planeó en cinco PR y se construyó en ocho, los s
 laboratorio (`UNO_AL_DIA_EN_LABS`), según "Por partes" de [UNO-AL-DIA.md](UNO-AL-DIA.md).
 Con menos de 9 juegos en el mazo, la espera para repetir uno es de dos días menos que los que hay
 (con los 7 del PR 1, cinco días), porque 7 días con 7 juegos repetía el mismo orden cada semana.
-El acceso va en la misma fila que Juego al azar, a su derecha (el dueño, 2026-10-05); la tarjeta
-junto a La Copa queda como alternativa en `/labs/` y con `?uad=tarjeta`. El PR 1 (el núcleo, los 7
+El acceso iba en la misma fila que Juego al azar, a su derecha (el dueño, 2026-10-05); desde D-239
+va en una tarjeta junto a La Copa, y el botón queda como alternativa en `/labs/` y con `?uad=boton`. El PR 1 (el núcleo, los 7
 solitarios, todo en el celular) llegó en v0.115.0. El PR 2 (v0.116.0) sumó El Ahorcado, Batalla
 Naval y Dudo desde el mazo del 12 de octubre (con 10 juegos, la espera vuelve a ser de 7 días):
 `?hoy` abre directo su modo para uno, y la palabra, la flota del celular y los dados de cada ronda
@@ -4063,3 +4063,26 @@ cargaba. Se probaron y descartaron:
 se ve el dado. Abrir el juego ya no suma los 0,42 s de D-235. Si `sessionStorage` no está
 disponible, el juego abre como antes de D-235. Una página de juego nueva que no use `.screen.active`
 deja el dado encima hasta 4 s.
+
+## D-239 · La Copa y Uno al día, mitad y mitad en la portada
+**Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** corrige D-230 (dónde va el acceso a Uno al día)
+**Decisión:** En la portada, Uno al día deja de ser un botón al lado de Juego al azar y pasa a una
+tarjeta de media fila junto a La Copa: los dos son accesos de más jerarquía que los juegos, en una
+fila de dos tarjetas (`.fila-alta`, `.game-card.alta`).
+- **El emoji va a la izquierda del título**, en 40 px; la bajada y las píldoras ocupan todo el
+  ancho. Cada tarjeta mide unos 160 px de alto, casi 90 menos que con el emoji arriba.
+- **Jugadores y duración, en una línea**: en media fila, "👥 2–10 jugadores" no cabía al lado de
+  "⏱ 7 días" (179 px pedidos en 138, a 375 px). La tarjeta alta muestra "👥 2–10": la palabra
+  queda escondida a la vista (`.unidad`), pero el lector de pantalla la sigue leyendo. La tarjeta
+  ancha de los juegos la sigue mostrando.
+- **Los títulos van en color**, para distinguirlos de los juegos, que van en blanco: La Copa en un
+  degradé dorado (el de su borde) y Uno al día en uno celeste (el de su tarjeta ya jugada). El de
+  La Copa se ve así también en su tarjeta ancha.
+- Con la tarjeta, el dado vuelve a decir **🎲 Juego al azar**. El botón al lado del dado, con
+  "🎲 Al azar", queda para probarlo desde `/labs/` ("Al lado del dado") o con `?uad=boton`.
+**Por qué:** lo eligió el dueño mirando las dos formas en un celular: la tarjeta le da a Uno al día
+el mismo peso que a La Copa. Se probó con el emoji arriba, como los juegos, y el emoji a la
+izquierda ganó porque ahorra alto sin achicar el texto.
+**Consecuencias:** `formaAcceso()` devuelve `'tarjeta'` por defecto; el laboratorio guarda
+`'boton'` si alguien elige la otra. `tools/e2e/uno-al-dia.mjs` mira la fila, las píldoras en una
+línea a 320 px en los cuatro idiomas y la forma de `/labs/`.
