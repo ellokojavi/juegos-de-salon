@@ -29,7 +29,7 @@ import {
   ROOM_TTL, liveRooms, connections, summarize, top, tzLabel, ago, dayOf, codesOfDays, splitByEnv, liveLocal, roomLog,
   paginate, flagOf, whenLabel, horaLabel, fechaLabel, diaPanel, ZONA_PANEL, ZONA_NOMBRE, RANGOS, RANGO_POR_DEFECTO, rangeOf,
   groupDays, localLog, paisesDeSalas, paisesDelRango, salaDe, mediana, idiomasDeSalas, idiomasDelRango, trafico, origenesAgrupados, origenLabel, dayLabel,
-  avisosDelRango, AVISO_TIPOS, vueltaAtrasada,
+  avisosDelRango, AVISO_TIPOS, vueltaAtrasada, unoAlDiaDelRango,
 } from './aggregate.js';
 import { SECCIONES, leerRuta, rutaA, seccionDe } from './rutas.js';
 
@@ -44,7 +44,9 @@ const ENV_DEFECTO = ENVS[0];
 const S = {
   user: null, env: ENV_DEFECTO, range: RANGO_POR_DEFECTO, ruta: leerRuta(location.hash),
   rooms: {}, days: {}, daysLoaded: false, torneos: {}, torneosLoaded: false, push: null,
-  unsubRooms: null, unsubDays: null, unsubTorneos: null, unsubPush: null, tick: null,
+  // Uno al día (D-230): la historia de quienes entraron con jugador, las invitaciones y las rachas
+  uad: { historia: {}, invitados: {}, rachas: {} },
+  unsubRooms: null, unsubDays: null, unsubTorneos: null, unsubPush: null, unsubUad: [], tick: null,
   // Desde qué día está bajado `days`: un rango más largo obliga a pedir de nuevo, uno más corto no
   desdeDia: null,
   // Lo que se eligió dentro de una vista. No va en la URL: es de esta visita, no del lugar.
@@ -121,6 +123,8 @@ function stopListening() {
   if (S.unsubDays) { S.unsubDays(); S.unsubDays = null; }
   if (S.unsubTorneos) { S.unsubTorneos(); S.unsubTorneos = null; }
   if (S.unsubPush) { S.unsubPush(); S.unsubPush = null; }
+  for (const f of S.unsubUad) f();
+  S.unsubUad = [];
   if (S.tick) { clearInterval(S.tick); S.tick = null; }
 }
 
@@ -142,6 +146,11 @@ function listen() {
   S.unsubTorneos = onValue(ref(db, 'torneos'), snap => { S.torneos = snap.val() || {}; S.torneosLoaded = true; render(); }, denied);
   // Lo que deja avisar.mjs en cada vuelta: la hora y las suscripciones vivas (D-233)
   S.unsubPush = onValue(ref(db, `stats/${S.env}/push`), snap => { S.push = snap.val() || {}; render(); }, denied);
+  // Uno al día (D-230): son de todos los entornos (la historia vive fuera de stats/). Sin permiso
+  // (reglas viejas), queda vacío y el resto del panel sigue
+  for (const [clave, ruta] of [['historia', 'unoAlDia'], ['invitados', 'invitados'], ['rachas', 'records/uno-al-dia-racha/siempre']]) {
+    S.unsubUad.push(onValue(ref(db, ruta), snap => { S.uad = { ...S.uad, [clave]: snap.val() || {} }; render(); }, () => {}));
+  }
   S.tick = setInterval(render, 30000); // "hace 3 min" se actualiza solo
 }
 
@@ -553,6 +562,8 @@ function vistaCopa(now) {
 const AVISO_LABEL = {
   dia: '📅 Se abrió el día', plazo: '⏳ Se acaba el plazo', final: '🏁 La Gran Final', fin: '🥇 Terminó la copa',
   insc: '✍️ Alguien se inscribió (al admin)', copas: '🎲 Días de varias copas', prueba: '🧪 De prueba',
+  // Uno al día (D-230)
+  uaddia: '📅 Uno al día: salió el de hoy', uadracha: '🔥 Uno al día: se corta la racha', uadsemana: '📊 Uno al día: su semana', uadadios: '👋 Uno al día: 30 días sin jugar',
 };
 const PWA_LABEL = { android: 'Android', ios: 'iPhone / iPad', otro: 'Otro (computador)' };
 
@@ -722,9 +733,42 @@ function vistaJuegos() {
       lista(games.map(([id, g]) => bar(gameLabel(id), MODOS.map(m => segModo(m, g[m] || 0)), maxGame,
         { note: MODOS.filter(m => g[m]).map(m => `${modeIcon(m)}${n(g[m])}`).join(' '), href: ir('juego', [id]) })), 'Nada todavía.', 'bars')),
     graficosJuego(s, rango),
+    bloqueUnoAlDia(rango),
     sinRedRecientes(rango),
     bitacora(rango),
   ];
+}
+
+/**
+ * Uno al día (D-230): las partidas del modo `uno-al-dia` (de todos), y de quienes entraron con
+ * jugador, cuántos jugaron, cuántos volvieron al día siguiente y a la semana, sus rachas y las
+ * invitaciones aceptadas. Los avisos van en el bloque de avisos al celular, como `uad<tipo>`.
+ */
+function bloqueUnoAlDia(rango) {
+  const u = unoAlDiaDelRango({ days: S.days, ...S.uad }, { from: rango.from, to: rango.to, hoy: dayOf(Date.now()) });
+  const periodos = groupDays(u.porDia, rango.grano);
+  const maxD = Math.max(0, ...periodos.map(d => d.total));
+  const juegos = Object.entries(u.porJuego).sort((a, b) => b[1] - a[1]);
+  const maxJ = Math.max(0, ...juegos.map(([, v]) => v));
+  const maxR = Math.max(0, ...u.tramos.map(([, v]) => v));
+  const pct = p => (p === null ? '—' : `${p}%`);
+  const de = base => (base ? ` · de ${n(base)} días` : '');
+  return bloque('📅 Uno al día',
+    'Las partidas son de todos y cada una se cuenta al empezar. Las demás cifras son solo de quienes entraron con su nombre y PIN. "Volvió al día siguiente" mira los días jugados cuyo día siguiente ya pasó y cuenta en cuántos jugó también el siguiente; "a los 7 días", lo mismo con el séptimo. Las rachas cuentan a cada jugador por su mejor racha, desde siempre. Días UTC.',
+    el('div', { class: 'tiles' },
+      tile(u.partidas, 'partidas de Uno al día'),
+      tile(u.jugadores, 'jugadores con nombre y PIN'),
+      tile(pct(u.d1), `volvió al día siguiente${de(u.base.d1)}`),
+      tile(pct(u.d7), `volvió a los 7 días${de(u.base.d7)}`),
+      tile(u.aceptadas, 'invitaciones aceptadas'),
+    ),
+    el('div', { class: 'grid2' },
+      el('div', {}, el('h3', { class: 'small' }, { dia: 'Por día', semana: 'Por semana', mes: 'Por mes' }[rango.grano]),
+        lista(periodos.map(d => bar(d.label, [seg(C_TORNEO, d.total)], maxD)), 'Nadie jugó Uno al día en este rango.', 'bars')),
+      el('div', {}, el('h3', { class: 'small' }, 'Por juego'),
+        lista(juegos.map(([id, v]) => bar(gameLabel(id), [seg(C_TORNEO, v)], maxJ)), 'Nada todavía.', 'bars'))),
+    el('div', { style: 'margin-top:16px' }, el('h3', { class: 'small' }, 'Jugadores por su mejor racha, desde siempre'),
+      lista(u.tramos.map(([label, v]) => bar(`🔥 ${label} ${label === '1' ? 'día' : 'días'}`, [seg(C_SIN_RED, v)], maxR)), 'Nadie con racha todavía.', 'bars')));
 }
 
 /** Las partidas sin red de todos los juegos (sin La Copa): ahí están quienes juegan solos (D-210). */
@@ -1106,9 +1150,10 @@ $('#buscar').addEventListener('submit', e => { e.preventDefault(); buscar($('#bu
 // `vista` es una ruta (`/torneo/OFICI`) o, como antes, el nombre de una vista (`torneo`).
 window.__panel = {
   get state() { return S; },
-  seed({ rooms = {}, days = {}, torneos = {}, push = null, daysLoaded = true, vista }) {
+  seed({ rooms = {}, days = {}, torneos = {}, push = null, uad = null, daysLoaded = true, vista }) {
     stopListening();
     S.rooms = rooms; S.days = days; S.daysLoaded = daysLoaded; S.torneos = torneos; S.torneosLoaded = true; S.push = push;
+    if (uad) S.uad = { historia: {}, invitados: {}, rachas: {}, ...uad };
     S.desdeDia = rangeOf(S.range).from;
     showScreen('screen-panel');
     if (vista) {

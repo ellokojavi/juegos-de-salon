@@ -109,7 +109,11 @@ const SEMBRAR_PANEL = vista => `(async()=>{const DIA=86400000,ahora=Date.now(),h
       // Los avisos al celular (D-233): mandados por avisar.mjs, tocados y aperturas de la app instalada
       for(let k=0;k<7;k++){const d=hoy-k;Object.assign(days[d],{mandados:{dia:6,plazo:3,...(k===0?{final:4}:{})},aviso:{dia:3,plazo:2},pwa:{android:2,ios:k%2}});}
       const push={vuelta:ahora-9*60000,vivas:7,torneos:2};
-      window.__panel.seed({rooms,days,torneos,push,vista:'${vista}'});})()`;
+      // Uno al día (D-230): partidas del modo uno-al-dia y la historia de tres jugadores, con rachas e invitaciones
+      const uad={historia:{},invitados:{sara0001:{u1:{d:hoy-2},u2:{d:hoy-1}}},rachas:{sara0001:{s:9},pedro001:{s:3},ana00001:{s:1},leo00001:{s:31}}};
+      for(let k=0;k<10;k++){const b=(days[hoy-k] ||= {});b.local ||= {};const g=['reinas','conexiones','dudo','anio'][k%4];((b.local[g] ||= {})['uno-al-dia'] ||= {})[1]=3+(k%3);}
+      for(const [jid,nd] of [['sara0001',9],['pedro001',4],['ana00001',2]])for(let k=0;k<nd;k++)(uad.historia[jid] ||= {})[hoy-k]={j:'reinas',s:60+k};
+      window.__panel.seed({rooms,days,torneos,push,uad,vista:'${vista}'});})()`;
 
 export const CAMINOS = {
   /** La Copa con el almacén de prueba (`?prueba`): la portada y el formulario para crear una. */
