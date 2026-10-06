@@ -524,3 +524,4 @@ body.azar-abierto { overflow: hidden; }
 .uad-horas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
 .uad-horas .btn { min-width: 0; font-size: 0.9rem; padding: 10px 4px; line-height: 1.15; }
 .uad-oferta, .uad-avisos { display: grid; gap: 10px; text-align: center; }
+.uad-hora { display: grid; gap: 8px; margin-bottom: 8px; }
