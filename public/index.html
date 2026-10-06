@@ -330,7 +330,7 @@
     // Va al lado del dado (lo que eligió el dueño); la tarjeta de media fila junto a La Copa se
     // puede probar desde /labs/
     import('./assets/js/uno-al-dia.js').then(async ({ unoAlDiaVisible, formaAcceso }) => {
-      if (!unoAlDiaVisible()) return;
+      if (!unoAlDiaVisible() || formaAcceso() === 'no') return;
       const { botonUnoAlDia, tarjetaUnoAlDia } = await import('./assets/js/uno-al-dia-ui.js');
       const copa = tarjetas.find(t => t.g.torneo)?.card;
       if (formaAcceso() === 'tarjeta' && copa) {

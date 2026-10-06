@@ -148,13 +148,14 @@ export function activarUnoAlDia(si, storage = globalThis.localStorage) {
 /**
  * Dónde va el acceso en la portada. Lo elegido es al lado de Juego al azar (`'boton'`); la otra
  * forma, una tarjeta de media fila junto a La Copa (`'tarjeta'`), se puede probar desde `/labs/`
- * en un celular, o con `?uad=tarjeta`.
+ * en un celular, o con `?uad=tarjeta`. `?uad=no` no lo pone.
  */
 export const LABS_FORMA_KEY = 'juegos-de-salon:labs-uno-al-dia-forma';
 export function formaAcceso({ storage = globalThis.localStorage, loc = globalThis.location } = {}) {
   try {
     const q = new URLSearchParams(loc?.search || '').get('uad');
-    if (q === 'tarjeta' || q === 'boton') return q;
+    // `?uad=no` lo esconde: las capturas del README se sacan en el sitio local, donde se ve sin /labs/
+    if (q === 'tarjeta' || q === 'boton' || q === 'no') return q;
     return storage.getItem(LABS_FORMA_KEY) === 'tarjeta' ? 'tarjeta' : 'boton';
   } catch (_) { return 'boton'; }
 }

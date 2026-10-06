@@ -3,7 +3,8 @@ const SITIO = process.env.SITIO || 'http://localhost:8765';
 const OUT = process.argv[2];
 const b = await launch({ port: Number(process.env.PUERTO_CDP) || 9354, dir: `${OUT}/p`, out: OUT });
 const urls = async () => b.evaluate(`performance.getEntriesByType('resource').map(r=>r.name.replace(location.origin,'')).filter(u=>/\\.(js|css)/.test(u))`);
-await b.go(`${SITIO}/`); await b.evaluate(`localStorage.clear(); 1`); await b.go(`${SITIO}/`);
+// `?uad=no`: Uno al día está en el laboratorio, que el sitio local muestra sin /labs/ (D-230)
+await b.go(`${SITIO}/`); await b.evaluate(`localStorage.clear(); 1`); await b.go(`${SITIO}/?uad=no`);
 console.log('menú → tarjetas:', await b.evaluate(`document.querySelectorAll('.game-card').length`), '| recursos:', JSON.stringify(await urls()));
 await b.shot('menu');
 await b.go(`${SITIO}/fourth-king/`);
