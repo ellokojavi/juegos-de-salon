@@ -150,6 +150,8 @@ El dueño (su UID) puede escribir y borrar en todas estas ramas, para moderar.
 - En `records`, el período puede ser también un día (`d20731`). Para la tabla `uno-al-dia`, el
   puntaje del día tiene que ser el de su historia, y la semana suma un día de la historia (`u`) que
   todavía no tenía `w`. Detalle y límites en [docs/UNO-AL-DIA.md](../docs/UNO-AL-DIA.md).
+- El dueño lee `unoAlDia/` e `invitados/` enteros, para el bloque de Uno al día del panel, y
+  puede escribir y borrar en las dos, para moderar.
 
 ## Avisos al celular (`push`, `pushCopa`, `pushEnviados`, `pushDia`, `pushEnviadosDia`, D-223, D-224, D-230)
 

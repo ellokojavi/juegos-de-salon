@@ -419,3 +419,19 @@ assert.equal(origenLabel('elmostrador_cl'), 'elmostrador.cl', 'un sitio que no s
 }
 
 console.log('aggregate.test.mjs: todo en verde');
+
+// Uno al día en el panel (D-230): partidas del modo uno-al-dia, vuelta al día siguiente, rachas e invitaciones
+{
+  const { unoAlDiaDelRango } = await import('./aggregate.js');
+  const days = { 100: { local: { reinas: { 'uno-al-dia': { 1: 3 }, solo: { 1: 9 } } } }, 101: { local: { dudo: { 'uno-al-dia': { 1: 2 } } } } };
+  const historia = { a: { 100: { j: 'reinas', s: 1 }, 101: { j: 'dudo', s: 2 } }, b: { 100: { j: 'reinas', s: 3 } }, c: { 50: { j: 'x', s: 1 } } };
+  const r = unoAlDiaDelRango({ days, historia, invitados: { a: { u1: { d: 100 }, u2: { d: 90 } } }, rachas: { a: { s: 2 }, b: { s: 1 }, z: { s: 31 } } }, { from: 100, to: 101, hoy: 103 });
+  assert.equal(r.partidas, 5, 'solo las del modo uno-al-dia');
+  assert.deepEqual(r.porJuego, { reinas: 3, dudo: 2 });
+  assert.deepEqual(r.porDia, [{ day: 100, total: 3 }, { day: 101, total: 2 }], 'una fila por día, como groupDays las pide');
+  assert.equal(r.jugadores, 2);
+  assert.equal(r.d1, 33, 'de 3 días con día siguiente ya pasado (a:100, a:101, b:100), volvió 1');
+  assert.equal(r.d7, null, 'todavía no pasan 7 días');
+  assert.deepEqual(r.tramos, [['1', 1], ['2 a 6', 1], ['7 a 29', 0], ['30 o más', 1]]);
+  assert.equal(r.aceptadas, 1, 'solo las del rango');
+}

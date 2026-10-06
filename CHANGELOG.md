@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.119.0 — 2026-10-06
+- **Uno al día en el panel del dueño** (D-230): cuántas partidas de Uno al día se juegan y de qué
+  juego, cuántos vuelven al día siguiente y a la semana, sus rachas y las invitaciones aceptadas.
+  Para el jugador no cambia nada; Uno al día sigue en el laboratorio.
+
 ## 0.118.0 — 2026-10-06
 - **Avisos de Uno al día, en el laboratorio** (D-230): la segunda vez que juegas, puedes pedir un
   aviso diario a la hora que elijas (9:00, 13:00 o 19:00). Te avisa que el de hoy ya está, a las
