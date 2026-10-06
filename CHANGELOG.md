@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.122.0 — 2026-10-06
+- **Juegos favoritos** (D-238): cada juego de la portada tiene una ☆ en la esquina. Al tocarla,
+  queda entre tus favoritos, y arriba de los tipos aparece **⭐ Favoritos**, que deja ver solo esos.
+  Se guardan en tu celular, sin cuenta. Lo pidió un amigo (#233).
+
 ## 0.120.2 — 2026-10-06
 - **Uno al día: el recordatorio es el aviso de la app** (D-230): se saca "Agregar recordatorio" al
   calendario del celular; el recordatorio de cada día es el aviso diario, a la hora que elegiste. El

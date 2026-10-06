@@ -56,6 +56,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213 |
+| Portada: filtros y favoritos | C-5 | D-142, D-149, D-196, D-214, D-238 |
 | Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237 |
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97 |
@@ -4062,3 +4063,34 @@ cargaba. Se probaron y descartaron:
 se ve el dado. Abrir el juego ya no suma los 0,42 s de D-235. Si `sessionStorage` no está
 disponible, el juego abre como antes de D-235. Una página de juego nueva que no use `.screen.active`
 deja el dado encima hasta 4 s.
+
+## D-238 · Juegos favoritos en la portada, con su propio filtro
+**Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** completa D-142 y D-149; respeta D-144
+**Decisión:** cada tarjeta de la portada lleva una ☆ en la esquina de arriba. Al tocarla, el juego
+queda marcado como favorito (⭐ amarilla) y no se abre; al tocarla otra vez, se desmarca.
+- **El filtro** es una ficha "⭐ Favoritos" en su propia línea, arriba de los tipos. Aparece
+  recién con el primer favorito, así que a quien no usa la ⭐ no le cambia nada.
+- **Funciona como un tipo más:** se elige uno o el otro, la cuenta dice "Se ven n de m" con "Ver
+  todos" y va en la URL (`?type=favorites`). Un link así, en un celular sin favoritos, muestra
+  todos sin avisar nada. El dado de Juego al azar (D-188) sale de las tarjetas que se ven, así
+  que con Favoritos elegido sortea entre los favoritos.
+- **Desmarcar estando en Favoritos** no saca la tarjeta de la vista: se puede volver a marcar.
+  Si ya no queda ningún favorito, se ven todos y la ficha se va.
+- **Dónde se guardan:** en el `localStorage` del navegador (`juegos-de-salon:favoritos`), por id
+  de juego. Sin cuenta ni Firebase, en `public/assets/js/favoritos.js`.
+- **Dónde va la ⭐:** al lado de la tarjeta y no adentro (`.game-slot`), porque un botón dentro de
+  un link no se puede tocar sin abrir el juego. Cae sobre la columna de la ›, con 44 px de toque
+  (C-8), y no tapa el texto.
+- **La Copa no lleva ⭐:** es una semana con amigos, no una partida que se elige.
+**Por qué:** lo pidió un amigo (#233). La portada ofrece 15 juegos y quien vuelve juega casi
+siempre los mismos dos o tres. Los tipos agrupan por género, no por gusto.
+**Alternativas descartadas:**
+- **Una quinta ficha en la fila de tipos:** cinco fichas no caben en una fila ni a 375 px, en
+  ningún idioma, y D-144 pide que los tipos vayan en una sola fila.
+- **La ficha con la ⭐ sola, sin el nombre:** tampoco cabía a 320 px.
+- **Ordenar los favoritos primero, sin filtro:** el pedido era un filtro, y reordenar movería las
+  tarjetas de lugar cada vez que alguien marca una.
+- **Guardarlos con el jugador (D-212), para que lo sigan entre celulares:** queda para después.
+  El `localStorage` alcanza, y no obliga a tener nombre y PIN.
+**Consecuencias:** con un favorito marcado, los filtros ocupan una línea más, también cuando van
+pegados arriba (D-196). `tools/e2e/favoritos.mjs` lo prueba de punta a punta.
