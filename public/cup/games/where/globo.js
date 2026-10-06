@@ -246,20 +246,25 @@ export function ajustar(canvas) {
 /**
  * La Tierra vista desde el satélite (Blue Marble de la NASA, septiembre de 2004), pegada al globo
  * con WebGL: cada píxel del disco se invierte a latitud y longitud y se lee de la imagen. La chica
- * llega primero; la nítida la reemplaza cuando termina de bajar. Sin WebGL, o mientras no llega
- * ninguna, el globo se dibuja como antes, con el mapa vectorial.
+ * llega primero; la nítida la reemplaza cuando termina de bajar. Con WebGL el globo espera a la
+ * imagen en vez de mostrar el mapa vectorial por un instante; sin WebGL, o si ninguna imagen llega
+ * (fallan o tardan más de 4 s), se dibuja como antes, con el mapa vectorial.
  */
 const IMAGENES = [2048, 4096].map(w => ({ w, url: new URL(`../../../assets/img/earth-2004-09-${w}.jpg`, import.meta.url).href }));
-let cargadas = null;
+let cargadas = null, fallidas = 0, vencida = false;
+/** Tope de la espera: con una red que cuelga el pedido sin fallar, el globo no queda vacío para siempre. */
+const ESPERA_MAX = 4000;
 const avisos = new Set();
 /** Las imágenes que ya llegaron, de la más nítida a la más chica. Pide bajarlas la primera vez. */
 function imagenes() {
   if (!cargadas) {
     cargadas = [];
+    setTimeout(() => { vencida = true; for (const f of avisos) f(); }, ESPERA_MAX);
     for (const { w, url } of IMAGENES) {
       const img = new Image();
       img.decoding = 'async';
       img.onload = () => { cargadas.push({ w, img }); cargadas.sort((a, b) => b.w - a.w); for (const f of avisos) f(); };
+      img.onerror = () => { fallidas++; for (const f of avisos) f(); };
       img.src = url;
     }
   }
@@ -336,8 +341,9 @@ function visibles(V, w, h) {
 }
 
 /**
- * Prepara un canvas con WebGL para dibujar la Tierra. Devuelve `{ dibujar(V, w, h), lista() }`, o
- * `null` si el navegador no tiene WebGL. `alLlegar` se llama cuando una imagen nueva está lista.
+ * Prepara un canvas con WebGL para dibujar la Tierra. Devuelve `{ dibujar(V, w, h), lista(), esperando() }`,
+ * o `null` si el navegador no tiene WebGL. `esperando()` es verdad mientras la imagen puede llegar
+ * todavía: ahí el globo no se dibuja. `alLlegar` se llama cuando una imagen nueva está lista, o falla.
  */
 export function satelite(canvas, alLlegar) {
   let gl = null;
@@ -416,6 +422,7 @@ export function satelite(canvas, alLlegar) {
 
   return {
     lista: () => subida > 0,
+    esperando: () => !subida && !vencida && imagenes().length + fallidas < IMAGENES.length,
     dibujar(V, w, h) {
       if (!canvas.isConnected) { avisos.delete(aviso); return; }
       const dpr = Math.min(3, window.devicePixelRatio || 1);

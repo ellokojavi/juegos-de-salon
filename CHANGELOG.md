@@ -1,10 +1,14 @@
 # Changelog
 
-## 0.127.1 — 2026-10-06
+## 0.127.2 — 2026-10-06
 - **Cuarto Rey: la mesa en inglés del README, con cuatro jugadores**: la captura salía con un quinto
   "undefined ♂", porque el guion llenaba todas las filas de la mesa recordada aunque trajera menos
   nombres. Ahora quita las filas que sobran, fija el género de cada jugador (antes heredaba los de
   otra prueba), comprueba que la mesa sea la del guion, y las capturas de Cuarto Rey están rehechas.
+
+## 0.127.1 — 2026-10-06
+- **¿Dónde queda?, sin el globo dibujado al cargar** (D-245): el globo espera a la imagen satelital
+  y aparece con un fundido, en vez de mostrarse dibujado por un instante.
 
 ## 0.127.0 — 2026-10-06
 - **El español, con la bandera de España** (D-244): en el selector de idioma, ES lleva 🇪🇸 en vez

@@ -2201,7 +2201,7 @@ coseno del ángulo con que se mira; el alfiler se achica (hasta un 35 %) y se de
 detrás. En el juego las marcas siguen planas: ahí se miran de frente y tienen que leerse.
 
 ## D-159 · El globo de ¿Dónde queda? es una imagen satelital
-**Fecha:** 2026-09-29 · **Estado:** corregida por D-202
+**Fecha:** 2026-09-29 · **Estado:** corregida por D-202, D-245
 **Decisión:** El globo muestra la Tierra vista desde el satélite: **Blue Marble Next Generation**
 de la NASA (dominio público), la de septiembre de 2004, con relieve y fondo marino. Se eligió
 septiembre porque es el mes con menos nieve en los dos hemisferios: el Sahara, Arabia, el Atacama
@@ -2214,9 +2214,9 @@ la Antártica como hielo. Sin nombres ni fronteras (D-158).
   4096 px (1,6 MB) que la reemplaza al bajar, si el celular la acepta. El nombre lleva el mes de
   la imagen, porque `set-version.py` no estampa imágenes. Las rehace
   `node tools/mapa.mjs satelite` (necesita internet y `sips`, de macOS).
-- **Sin WebGL, o mientras no llega ninguna imagen,** el globo se dibuja como antes, con el mapa
-  vectorial verde. El mapa vectorial (`mapa.js`) queda también para las pruebas: cada ciudad cae
-  en su país y sobre tierra.
+- **Sin WebGL, o si ninguna imagen llega,** el globo se dibuja como antes, con el mapa vectorial
+  verde. Mientras baja la primera, el globo espera vacío (D-245). El mapa vectorial (`mapa.js`)
+  queda también para las pruebas: cada ciudad cae en su país y sobre tierra.
 - **El zoom máximo baja de 40 a 16 veces** (unos 2 km por píxel en un celular): más allá la
   imagen de 4096 px ya no tiene detalle. Sigue sobrando precisión para el puntaje (un punto cada
   25 km). La respuesta acerca hasta 12 veces.
@@ -4203,3 +4203,18 @@ leen como idiomas. Para quien llega de afuera, 🇪🇸 dice "español" sin pens
 **Consecuencias:** Solo cambia el selector. Las banderas de Chile que son contenido (la temática
 Chile, el público 🇨🇱 de La Copa, la bandera del país junto al nombre en los rankings) siguen igual.
 El portugués sigue con 🇧🇷: es el de Brasil (D-48).
+
+## D-245 · El globo de ¿Dónde queda? espera a la imagen satelital
+**Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** corrige D-159 (qué se ve mientras baja la imagen)
+**Decisión:** Con WebGL, mientras la imagen satelital no llega, el globo no se dibuja (ni el de la
+portada ni el del juego): queda el fondo. Al llegar la de 2048 px aparece con un fundido de 0,3 s
+(sin fundido con movimiento reducido, C-8). El mapa vectorial queda para cuando no hay WebGL,
+cuando las dos imágenes fallan o cuando ninguna llegó a los 4 s (`esperando()` de `satelite()` en
+`globo.js`); ahí la imagen lo reemplaza al llegar, como antes.
+**Por qué:** lo pidió el dueño: al cargar la página se veía el globo dibujado, verde y azul, una
+fracción de segundo antes de pasar al satelital, y se notaba como un salto.
+**Alternativas descartadas:** dibujar solo el mar mientras tanto (sigue siendo un globo distinto
+que cambia); precargar la imagen en el HTML (acorta la espera, pero no la quita).
+**Consecuencias:** con una red lenta el globo tarda hasta 4 s en aparecer; las marcas y los
+toques funcionan igual, porque no dependen del dibujo. El tope existe porque una red que cuelga el
+pedido sin fallarlo dejaba el globo vacío mientras corre el reloj.
