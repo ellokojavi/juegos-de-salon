@@ -2234,7 +2234,8 @@ function resultadoPractica(id, semilla, r) {
   // Los rankings (D-212): se anota si hay jugador; si entra recién aquí, esta partida igual cuenta.
   // De Uno al día, solo el primer intento: después el tablero ya se conoce (D-230)
   const cuentaRk = rankea(id) && (!hoy || hoy.primera);
-  const ranking = cuentaRk ? bloqueRanking({ juego: id, titulo: fmt(RK.titleOf, { game: J.nombre }), pestanas: ['semana', 'siempre', 'amigos'], alTocar: () => SFX.tap() }) : null;
+  // En Uno al día, el ranking que se ve es el de Uno al día (su tarjeta): el del juego no se muestra
+  const ranking = cuentaRk && !hoy ? bloqueRanking({ juego: id, titulo: fmt(RK.titleOf, { game: J.nombre }), pestanas: ['semana', 'siempre', 'amigos'], alTocar: () => SFX.tap() }) : null;
   const aviso = el('div', {});
   let anotada = false;
   const anotar = () => {
