@@ -207,28 +207,30 @@ details.panel summary::-webkit-details-marker { display: none; }
 /* Confeti (canvas) */
 #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; }
 
-/* --- Toggle de idioma --- */
+/* --- Toggle de idioma (D-231): bandera y código en cada botón, siempre --- */
 .lang-toggle {
   display: inline-flex; gap: 4px; padding: 4px; border-radius: 999px;
   background: var(--glass); border: 1px solid var(--glass-border);
 }
 .lang-toggle button {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
   border: 0; cursor: pointer; border-radius: 999px; padding: 7px 12px;
   min-height: 44px; /* C-8: un dedo cabe, como en todos los botones */
-  font: 900 0.9rem var(--font-body); color: var(--muted); background: transparent;
+  font: 900 0.9rem var(--font-body); line-height: 1; color: var(--muted); background: transparent;
   transition: background 0.15s, color 0.15s, transform 0.1s;
 }
+.lang-toggle .flag { font-size: 1.1em; }
 .lang-toggle button.on { background: var(--yellow); color: #3a1200; transform: scale(1.04); }
 .lang-toggle button:active { transform: scale(0.96); }
 /*
- * Con cuatro idiomas (el alemán en el laboratorio, D-191) el toggle mide unos 280 px y, en la
- * barra de arriba de la portada, empujaba el sonido y compartir fuera de la pantalla. En un
- * celular angosto se aprieta y deja solo el código (ES EN PT DE); si igual no cabe, los botones
- * redondos bajan a una segunda línea antes que salirse.
+ * Con cuatro idiomas el toggle en línea mide unos 290 px y, en la barra de arriba de la portada,
+ * empuja el sonido y compartir fuera de la pantalla. En un celular angosto la bandera no se
+ * esconde (antes sí, D-231): sube encima del código, y el toggle queda del ancho que tenía con
+ * el código solo. Si igual no cabe, los botones redondos bajan a una segunda línea antes que salirse.
  */
 @media (max-width: 440px) {
-  .lang-toggle:has(> :nth-child(4)) button { padding: 7px 10px; }
-  .lang-toggle:has(> :nth-child(4)) .flag { display: none; }
+  .lang-toggle:has(> :nth-child(4)) button { flex-direction: column; gap: 2px; padding: 4px 9px; font-size: 0.72rem; }
+  .lang-toggle:has(> :nth-child(4)) .flag { font-size: 1.25rem; }
 }
 .topbar .tools:has(> #lang-slot) { flex-wrap: wrap; justify-content: flex-end; }
 
@@ -402,3 +404,64 @@ html:lang(de) body { -webkit-hyphens: auto; hyphens: auto; overflow-wrap: break-
 
 /* Mientras los textos del idioma elegido no están puestos, no se pinta nada (D-194) */
 html.i18n-pendiente body { visibility: hidden; }
+
+/* --- La hoja de abajo (D-223, D-232): pasos y avisos sobre el morado oscuro de la hoja del chat
+   (.chat-panel). Sobre el fondo de la app, un blanco encandila (lo pidió el dueño al ver el
+   diseño). La usan los avisos de La Copa y el globo de agregar a inicio de la portada. */
+.hoja-capa { position: fixed; inset: 0; z-index: 60; display: grid; align-items: end; }
+.hoja-fondo { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.55); animation: fadeIn 0.2s both; }
+.hoja {
+  position: relative; width: 100%; max-width: 560px; margin: 0 auto; box-sizing: border-box;
+  max-height: 88dvh; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;
+  padding: 10px 20px calc(22px + var(--safe-bottom));
+  border-radius: 22px 22px 0 0; border: 2px solid var(--glass-border); border-bottom: 0;
+  background: linear-gradient(180deg, rgba(42, 10, 74, 0.985), rgba(21, 7, 38, 0.99));
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6); animation: slideUp 0.25s ease-out both;
+}
+.hoja-asa { align-self: center; width: 44px; height: 5px; border-radius: 999px; background: rgba(255, 255, 255, 0.3); }
+.hoja h2 { font-family: var(--font-display); font-weight: 400; font-size: 1.7rem; letter-spacing: 0.04em; color: var(--yellow); margin: 0; }
+.hoja p { margin: 0; line-height: 1.45; }
+.hoja-paso { display: grid; grid-template-columns: 32px 1fr 44px; gap: 12px; align-items: center; }
+.hoja-paso small { display: block; margin-top: 2px; }
+.hoja-num { width: 32px; height: 32px; border-radius: 999px; background: var(--pink); color: #fff; font-weight: 900; display: grid; place-items: center; }
+.hoja-icono { width: 44px; height: 44px; border-radius: 12px; background: rgba(255, 255, 255, 0.1); display: grid; place-items: center; font-size: 1.3rem; color: #fff; font-weight: 900; }
+.hoja-link, .hoja-caja { background: rgba(255, 255, 255, 0.08); border-radius: 14px; padding: 12px 14px; overflow-wrap: anywhere; }
+.hoja .btn-row { flex-wrap: wrap; }
+/* Cada botón mide lo que su texto en una línea: si los dos no caben lado a lado, el segundo baja
+   entero en vez de partir la palabra ("YA LA / AGREGUÉ", "BE-SCHEID"; U-17) */
+.hoja .btn-row .btn { flex: 1 0 auto; width: auto; max-width: 100%; -webkit-hyphens: manual; hyphens: manual; }
+
+/* --- El globo de agregar a inicio (D-232): flota sobre el pie de la portada, con el ícono de la
+   app, y se va con la ✕ para siempre. El borde dorado es el de La Copa: invita, no avisa. */
+.globo-instalar {
+  position: fixed; z-index: 50; left: 12px; right: 12px; bottom: calc(12px + var(--safe-bottom));
+  max-width: 520px; margin: 0 auto; box-sizing: border-box;
+  display: grid; grid-template-columns: 48px 1fr; align-items: center; gap: 10px 12px;
+  padding: 12px; border-radius: 20px;
+  border: 2px solid rgba(255, 210, 63, 0.55);
+  background: linear-gradient(135deg, #3a0e62, #1a082e);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55), 0 0 24px rgba(255, 210, 63, 0.18);
+  animation: globoSube 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+  transition: transform 0.25s, opacity 0.25s;
+}
+.globo-instalar.fuera { transform: translateY(24px); opacity: 0; }
+.globo-icono { width: 48px; height: 48px; border-radius: 12px; display: block; }
+.globo-texto { display: flex; flex-direction: column; gap: 2px; min-width: 0; line-height: 1.3; padding-right: 30px; }
+.globo-texto b { font-weight: 900; }
+.globo-texto span { color: var(--muted); font-size: 0.88rem; font-weight: 700; }
+.globo-agregar { white-space: nowrap; grid-column: 1 / -1; }
+.globo-cerrar {
+  position: absolute; top: 2px; right: 2px; width: 44px; height: 44px; border: 0; border-radius: 999px;
+  background: none; color: var(--muted); font: 900 1rem var(--font-body); cursor: pointer;
+}
+.globo-cerrar:active { transform: scale(0.9); }
+/* En un celular el botón va en su propia fila, de borde a borde; con espacio, al lado del texto */
+@media (min-width: 480px) {
+  .globo-instalar { grid-template-columns: 48px 1fr auto; padding-right: 48px; }
+  .globo-texto { padding-right: 0; }
+  .globo-agregar { grid-column: auto; }
+}
+@keyframes globoSube { from { transform: translateY(110%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .globo-instalar { animation: fadeIn 0.2s both; } }
+/* Mientras está, el pie de la página sube sobre él: al final de la lista no tapa nada */
+body:has(> .globo-instalar) main.app { padding-bottom: 170px; }

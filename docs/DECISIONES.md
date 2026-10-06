@@ -53,7 +53,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 |---|---|---|
 | Estructura y rutas | C-2 | D-01, D-02, D-03, D-24, D-192, D-198 |
 | Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184 |
-| Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199 |
+| Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213 |
 | Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230 |
@@ -71,7 +71,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230 |
 | Marketing | `marketing/README.md` | D-178 |
-| App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230 |
+| App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
 
 ---
 
@@ -2894,7 +2894,7 @@ vueltas de las cuerdas (D-182, D-183, D-185) y de las instrucciones (D-184).
 puede caer en él. La captura del menú en el README se rehace.
 
 ## D-191 · Un idioma nuevo entra por el laboratorio: el alemán
-**Fecha:** 2026-10-03 · **Estado:** corregida por D-195, D-197
+**Fecha:** 2026-10-03 · **Estado:** corregida por D-195, D-197, D-231
 **Decisión:** El alemán (**Salonspiele**) se suma completo —los textos de los ocho juegos, las
 frases, los mazos, las grillas y palabras de La Copa y los nombres de ¿Dónde queda?— pero **solo
 se ofrece en el laboratorio**: en el dispositivo que entra por `/labs/de/` o por un link con
@@ -3855,7 +3855,9 @@ para uno: los solitarios, El Ahorcado con el mazo del celular, y Batalla Naval y
 celular. El dado de D-188 rueda cada vez que se abre el juego de hoy, aunque siempre caiga en el
 mismo. Después de jugar se puede invitar a un amigo con un dato verdadero de quien invita (su
 racha, su puesto), y el amigo juega el mismo desafío. Cuando el invitado termina su primer día, quien
-invitó gana un comodín de racha, y eso se anuncia en la tarjeta de invitar. Se lleva la racha, el calendario y los puntajes en el celular y, con jugador, en
+invitó gana un comodín de racha, y eso se anuncia en la tarjeta de invitar. La tarjeta para compartir el
+resultado no nombra el juego de hoy, ni en el texto ni en la imagen (dilema #215, excepción a
+U-31). Se lleva la racha, el calendario y los puntajes en el celular y, con jugador, en
 Firebase, con ranking del día, de la semana y de rachas. Los avisos (el del día, el de la racha que
 se corta y el de la semana) los activa el jugador y elige la hora. El detalle está en
 [UNO-AL-DIA.md](UNO-AL-DIA.md).
@@ -3867,6 +3869,72 @@ reglas de "una vez por fecha", y cada juego solitario acepta `?dia=`. Los avisos
 siguen fuera (D-221): estos solo salen si el jugador los pidió, y se calman solos si no los usa.
 Es un diseño aprobado que falta construir: va en cinco PR, los cuatro primeros detrás del
 laboratorio (`UNO_AL_DIA_EN_LABS`), según "Por partes" de [UNO-AL-DIA.md](UNO-AL-DIA.md).
+
+## D-231 · El selector de idioma lleva las banderas siempre
+**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** corrige la nota de `base.css` de D-191 (en un celular angosto se escondía la bandera)
+**Decisión:** Pedido del dueño: todos los selectores de idioma llevan sus banderas, y queda un
+estándar de diseño para el widget (C-3). En un celular de hasta 440 px, con cuatro idiomas, el
+toggle escondía las banderas para no empujar el sonido y compartir fuera de la barra de arriba:
+así, en el celular, que es donde más se juega, nunca se veían.
+- La bandera ya no se esconde: en una pantalla angosta sube **encima** del código, y el toggle
+  queda del ancho que tenía con el código solo (unos 180 px). En una pantalla ancha va al lado.
+- Las banderas y los nombres de cada idioma salen de `BANDERAS` y `NOMBRES_IDIOMA` en `i18n.js`,
+  y la prueba de paridad exige uno por idioma de `IDIOMAS`.
+- Cada botón dice su idioma en su idioma (`aria-label`, `title`, `lang`): la bandera es decorativa.
+**Por qué:** La bandera se reconoce antes que el código, sobre todo para quien no lee español.
+Apilarla mantiene el ancho y los 44 px de alto (C-8), así que la barra no cambia.
+**Consecuencias:** Las banderas son emoji, no imágenes SVG, por decisión del dueño: en Windows se
+ven como dos letras (CL, GB…) y se acepta, porque la app se juega en celulares. Hay un solo toggle en la app: el estándar queda en C-3.
+
+## D-232 · Un globo en la portada invita a agregar la app a inicio, primero en el laboratorio
+**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** completa D-221; reusa la hoja de pasos de D-223
+**Decisión:** La portada muestra, a los 2,5 segundos, un globo abajo con el ícono de la app,
+**"Juegos de Salón como app"**, una línea y el botón **Agregar**, que abre los pasos de ese
+celular en la hoja de abajo de los avisos (D-223).
+- **Los pasos dependen del celular** (`pasosDe` en `assets/js/instalar.js`): Safari y Chrome en
+  iPhone (Compartir → Agregar a inicio → Agregar), Chrome en Android (menú ⋮ → Agregar a la
+  pantalla principal o Instalar app → Instalar) y Samsung Internet (menú ☰). Dentro de WhatsApp,
+  Instagram u otra app no se puede agregar: la hoja pide abrir el link de la portada en Safari o en
+  Chrome, con un botón para copiarlo. En el computador, en Firefox o Edge del iPhone y en la app ya
+  instalada, el globo no sale.
+- **En Android, si Chrome ofrece su propio diálogo de instalar** (`beforeinstallprompt`), "Agregar"
+  abre ese diálogo en vez de los pasos.
+- **La ✕ lo apaga para siempre** en ese navegador (`juegos-de-salon:instalar:no`), igual que
+  "Ya la agregué" o instalar la app desde el diálogo de Chrome.
+- **La hoja de abajo pasa a `base.css`**: la usan los avisos de La Copa y el globo, con el mismo
+  diseño. Los pasos del iPhone dicen lo mismo que los de los avisos (U-5).
+- **Detrás del laboratorio** (`INSTALAR_EN_LABS`), como los avisos (D-223): se ve en el sitio local
+  y en los celulares que lo activan en `/labs/`, donde también se puede volver a mostrar después
+  de cerrarlo.
+**Por qué:** Lo pidió el dueño: que la portada promocione agregar la app, con un llamado simple y
+después instrucciones claras para Safari y Chrome en iPhone y Android, que se pueda cerrar y no
+vuelva. La app instalada (D-221) es la que recibe los avisos en iPhone y se abre de un toque.
+**Consecuencias:** Para abrirlo a todos basta `INSTALAR_EN_LABS = false`. Los nombres de los menús
+de cada navegador cambian con sus versiones: si un paso deja de calzar, se corrige en
+`COMMON[lang].ins` (i18n.js). Lo prueban `instalar.test.mjs` y `tools/e2e/instalar.mjs` (cada
+celular, la ✕, el diálogo de Chrome y los cuatro idiomas a 320 px); en iPhones y Android reales se
+prueba a mano desde `/labs/`.
+
+## D-233 · Los avisos se miden en el panel: mandados, tocados, la app instalada y la última vuelta
+**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** completa D-224 y D-228; el PR 4 de [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md); señales como D-44 y D-208
+**Decisión:** El panel (`#/torneo`) suma el bloque "🔔 Avisos al celular". Lo que lo alimenta:
+- **Tocados:** la dirección de cada aviso lleva `&aviso=<tipo>` (`dia`, `plazo`, `final`, `fin`,
+  `insc`, `copas`, `prueba`). La página lo cuenta al abrirse en `stats/<env>/days/<día>/aviso/<tipo>`,
+  sea o no la primera de la visita, y lo saca de la dirección: recargar o volver no lo suma de nuevo.
+- **La app instalada:** el `start_url` de los cuatro manifests pasa a `./?pwa` (el `id` no cambia:
+  sigue siendo la misma app). Se cuenta en `pwa/<sistema>` (`android`, `ios`, `otro`) y sale de la
+  dirección igual.
+- **Mandados:** `avisar.mjs` suma los entregados de cada vuelta por día y tipo en
+  `stats/prod/days/<día>/mandados/<tipo>` (`pushEnviados` se limpia a la semana) y deja en
+  `stats/prod/push` la hora de la vuelta, las suscripciones vivas y las copas con avisos. `--prueba`
+  suma en `mandados/prueba`; `--simular` no escribe nada.
+- **Reglas:** `aviso` y `pwa` aceptan solo subir en uno, con la clave validada por forma (C-16); `mandados` y
+  `push` no los escribe ningún celular (la cuenta de servicio no pasa por las reglas).
+**Por qué:** Lo pidió el dueño (la fase 4 del plan): saber si los avisos traen gente de vuelta y
+notar a tiempo si GitHub apagó el workflow programado, que no avisa.
+**Consecuencias:** Las señales nuevas son contadores, como el tráfico (D-208): no identifican a nadie.
+El embudo de la campana (se ofreció → Avisarme → permiso) no se mide todavía. Una suscripción que
+deja de existir sin que el servicio lo diga sigue contando como viva hasta que un envío falle.
 
 ## D-234 · "Tus copas" marca las terminadas y las esconde tras un interruptor
 **Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** amplía D-220

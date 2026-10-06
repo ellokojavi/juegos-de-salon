@@ -36,7 +36,7 @@ await caso('se abrió el día: desde las 9 de quien recibe, con el juego, una ve
   assert.deepEqual(ana.claves, ['dia:2']);
   assert.equal(ana.aviso.title, '🏆 La Copa: Los Primos');
   assert.match(ana.aviso.body, /^🔢 Día 2: .+\. Ya puedes jugar\.$/);
-  assert.equal(ana.aviso.url, 'https://juegosdesalon.cl/cup/?KQRST&dia=2', 'abre ese día (D-229)');
+  assert.equal(ana.aviso.url, 'https://juegosdesalon.cl/cup/?KQRST&dia=2&aviso=dia', 'abre ese día (D-229)');
   assert.deepEqual(ana.aviso.acciones.map(a => [a.action, a.title, a.url]), [['jugar', 'Jugar', ana.aviso.url], ['silenciar', 'Silenciar esta copa', 'https://juegosdesalon.cl/cup/?KQRST&silenciar']]);
   assert.equal(ana.aviso.tag, 'copa-KQRST-d2');
   assert.match(de(out, S2)[0].aviso.body, /^🔢 Dia 2: .+\. Já dá para jogar\.$/, 'en el idioma de cada suscripción');
@@ -165,7 +165,7 @@ await caso('la final y el día anterior se vencen a la vez: un solo aviso con lo
   assert.equal(out.length, 1);
   assert.deepEqual(out[0].claves, ['plazo:6', 'plazo:7']);
   assert.equal(out[0].aviso.body, '⏳ Te quedan 4 horas para jugar los días 6 y 7. Si no los juegas, son 0 puntos.');
-  assert.equal(out[0].aviso.url, 'https://juegosdesalon.cl/cup/?KQRST&dia=6', 'abre el más viejo: el que se pierde primero');
+  assert.equal(out[0].aviso.url, 'https://juegosdesalon.cl/cup/?KQRST&dia=6&aviso=plazo', 'abre el más viejo: el que se pierde primero');
 });
 
 await caso('empate en el primer lugar (D-229): ganaron los dos, en plural', () => {
@@ -180,6 +180,7 @@ await caso('empate en el primer lugar (D-229): ganaron los dos, en plural', () =
   assert.equal(de(out, S2)[0].aviso.body, '🥇 Você ganhou a copa junto com Ana!');
   assert.equal(de(out, S3)[0].aviso.body, '🥇 Ana and Beto won. You finished #3.');
   assert.equal(de(out, S1)[0].aviso.acciones, undefined, 'el del cierre no trae botones: abre el podio');
+  assert.equal(de(out, S1)[0].aviso.url, 'https://juegosdesalon.cl/cup/?KQRST&aviso=fin', 'con su tipo, para contar los tocados (D-233)');
 });
 
 await caso('días nuevos de varias copas para un celular: un solo aviso (D-229)', () => {
@@ -193,12 +194,12 @@ await caso('días nuevos de varias copas para un celular: un solo aviso (D-229)'
   const junto = ana.find(x => x.tipo === 'dia');
   assert.equal(junto.aviso.title, '🏆 La Copa');
   assert.equal(junto.aviso.body, '🎲 Tienes un día nuevo en 2 copas: Los Primos y La Oficina.');
-  assert.equal(junto.aviso.url, 'https://juegosdesalon.cl/cup/');
+  assert.equal(junto.aviso.url, 'https://juegosdesalon.cl/cup/?aviso=copas');
   assert.deepEqual(junto.porCopa, [{ code: 'KQRST', claves: ['dia:2'] }, { code: 'MNPQR', claves: ['dia:2'] }]);
   assert.deepEqual(ana.find(x => x.tipo === 'plazo').porCopa, [{ code: 'WXYZA', claves: ['plazo:1'] }]);
   assert.equal(de(out, S2)[0].aviso.body, '🎲 Você tem um dia novo em 2 copas: Los Primos e La Oficina.');
   const solo = juntar(a, subs, {});
-  assert.equal(de(solo, S1)[0].aviso.url, 'https://juegosdesalon.cl/cup/?KQRST&dia=2', 'una sola copa: queda igual');
+  assert.equal(de(solo, S1)[0].aviso.url, 'https://juegosdesalon.cl/cup/?KQRST&dia=2&aviso=dia', 'una sola copa: queda igual');
 });
 
 await caso('el aviso de prueba: a cada celular de la copa, en su idioma, a cualquier hora', () => {
@@ -207,6 +208,7 @@ await caso('el aviso de prueba: a cada celular de la copa, en su idioma, a cualq
   assert.equal(de(out, S1)[0].aviso.body, 'Así se verán los avisos de esta copa.');
   assert.equal(de(out, S2)[0].aviso.body, 'É assim que vão ficar os avisos desta copa.');
   assert.deepEqual(de(out, S1)[0].claves, []);
+  assert.equal(de(out, S1)[0].aviso.url, 'https://juegosdesalon.cl/cup/?KQRST&aviso=prueba');
 });
 
 console.log(`calendario: ${n} casos en verde`);

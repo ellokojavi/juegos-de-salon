@@ -66,7 +66,7 @@ node tools/e2e/ci.mjs cup/torneo.mjs:demos   # solo esa parte
 partida. `node tools/e2e/mirar.mjs ahorcado juego --ancho 320` saca la captura y avisa si hay
 scroll horizontal o botones bajo 44 px (C-8). `--idioma de` (o `en`, `pt`) la abre en ese idioma. El
 panel se mira con datos sembrados: `mirar.mjs panel <toma>`, con `datos`, `ahora`, `torneo`, `juegos`,
-`audiencia`, `trafico`, `copa-ficha`, `copa-dias`, `copa-historia`, `juego-ficha` o `sala-ficha` (D-207). Los
+`audiencia`, `trafico`, `copa-ficha`, `copa-dias`, `copa-historia`, `juego-ficha` o `sala-ficha` (D-207); `torneo` trae también una semana de avisos sembrados (D-233). Los
 caminos a cada pantalla están en [`caminos.mjs`](caminos.mjs), que comparte con las pruebas de idiomas.
 
 `contacto.mjs` tampoco: arma una hoja con **todas** las capturas del README de una sección,
@@ -108,6 +108,7 @@ node tools/e2e/contacto.mjs cuarto-rey --salida /tmp/contacto
 | `memoria-de-partida.mjs` | Guardar y retomar en los tres juegos (canon C-6) |
 | `versionado.mjs` | Que todos los módulos carguen con `?v=` del import map. Desde D-205 `public/` no lo lleva: correrlo contra una copia estampada (`set-version.py --sitio /tmp/sitio`, servida y pasada en `SITIO`) |
 | `instalable.mjs` | La app instalable (D-221): en la portada, un juego, La Copa, un juego suelto y `/records/`, Chrome registra `/sw.js` con alcance `/`, lee el manifest sin errores y deja instalar. En los cuatro idiomas, en la portada y en un juego, revisa que la app se llame con el `appTitle` del idioma, en el manifest y en el `apple-mobile-web-app-title` (D-222). Contra una copia estampada (`SITIO`) prueba además que el import map no se rompa |
+| `instalar.mjs` | El globo de la portada que invita a agregar la app a inicio (D-232): con el celular de cada uno (Safari y Chrome en iPhone, Chrome y Samsung en Android, WhatsApp), revisa los pasos de la hoja, el diálogo propio de Chrome, que la ✕ y "Ya la agregué" lo apaguen para siempre, que no salga en el computador ni en la app instalada, y que quepa a 320 px en los cuatro idiomas |
 | `compartir-sala.mjs` | Botón de compartir: diálogo nativo si existe, copiar si no |
 | `compartir-portada.mjs` | El 📤 de la portada (D-226), en los cuatro idiomas: la tarjeta social del idioma como imagen, el texto con su cabecera y el link a la portada de ese idioma; en un computador, solo el texto copiado y nada descargado |
 | `enlace-invitacion.mjs` | Quien llega por un enlace solo puede unirse a esa sala, en los cuatro juegos con sala |

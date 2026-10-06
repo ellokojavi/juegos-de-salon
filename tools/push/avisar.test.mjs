@@ -44,6 +44,12 @@ await caso('manda lo que toca y anota lo entregado', async () => {
   const c = db.cambios[0];
   assert.equal(c[`pushEnviados/KQRST/${S1}/dia:2`], now);
   assert.equal(c[`pushEnviados/KQRST/${S2}/dia:2`], now);
+  // Lo que mira el panel (D-233)
+  const dia = Math.floor(now / (24 * HORA));
+  assert.deepEqual(c[`stats/prod/days/${dia}/mandados/dia`], { '.sv': { increment: 2 } });
+  assert.equal(c['stats/prod/push/vuelta'], now);
+  assert.equal(c['stats/prod/push/vivas'], 2);
+  assert.equal(c['stats/prod/push/torneos'], 1);
 });
 
 await caso('días nuevos de dos copas para un celular: un aviso, anotado en las dos (D-229)', async () => {
@@ -100,12 +106,20 @@ await caso('lo ya mandado no se repite en la vuelta siguiente', async () => {
   assert.equal(r.avisos, 0);
 });
 
-await caso('--prueba: solo esa copa, a cada celular, sin anotar ni limpiar', async () => {
+await caso('--prueba: solo esa copa, a cada celular, sin anotar ni limpiar (salvo las señales)', async () => {
   const db = base();
   const mandados = [];
   const r = await vuelta({ db, now: meta.win[2].a + 3 * HORA, prueba: 'KQRST', log: () => {}, envio: async (sub, aviso) => { mandados.push(aviso.body); return { estado: 201 }; } });
   assert.deepEqual([r.avisos, r.entregados, r.limpiadas], [2, 2, 0]);
   assert.deepEqual(mandados, ['Así se verán los avisos de esta copa.', 'Así se verán los avisos de esta copa.']);
+  // Solo las señales del panel (D-233): nada en pushEnviados ni limpiezas
+  assert.deepEqual(Object.keys(db.cambios[0]).filter(k => !k.startsWith('stats/')), []);
+  assert.deepEqual(Object.values(db.cambios[0]).find(v => v?.['.sv']), { '.sv': { increment: 2 } });
+});
+
+await caso('--simular no escribe nada, ni las señales', async () => {
+  const db = base();
+  await vuelta({ db, now, simular: true, log: () => {}, envio: async () => ({ estado: 201 }) });
   assert.equal(db.cambios.length, 0);
 });
 

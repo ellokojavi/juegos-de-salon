@@ -221,7 +221,8 @@ Abiertos a todos desde D-228: se ven en cualquier celular que pueda recibirlos, 
   por copa en un día (D-229). Los textos son los `avMsg*` de `rules.js`. Al tocarlo abre ese día
   (`&dia=<d>`) o, el del cierre, el podio; en Android trae **Jugar** y **Silenciar esta copa**
   (`&silenciar`). Los días nuevos de varias copas van juntos en un aviso, y un empate arriba nombra
-  a todos los que ganaron (D-229).
+  a todos los que ganaron (D-229). Cada dirección lleva `&aviso=<tipo>`, que la página cuenta al
+  abrirse y saca de la dirección; el panel muestra mandados y tocados por tipo (D-233).
 
 ## Flujo
 
@@ -269,7 +270,7 @@ Todo bajo `public/cup/`:
 | `games/index.js` · `games/semilla.js` · `games/mazos.js` · `games/audiencia.js` · `games/solo.js` | Lo común a los juegos: el registro, la semilla, los mazos, el público y el modo suelto con su récord |
 | `store-firebase.js` · `store-local.js` | El mismo almacén contra Firebase o contra localStorage (`?prueba`) |
 | `cuenta.js` | Con quién está sentado este celular, el intento a medio jugar, los avisos de cada copa (D-223) y "Tus copas" (las del celular más las del jugador, `juntarCopas`, D-220) |
-| `avisos.js` | Los avisos al celular en pantalla: la campana, la tarjeta y sus hojas (D-223; la lógica del navegador está en `assets/js/push.js`) |
+| `avisos.js` | Los avisos al celular en pantalla: la campana, la tarjeta y sus hojas (D-223; la lógica del navegador está en `assets/js/push.js`). El estilo de la hoja de abajo (`.hoja`) es de todo el sitio y vive en `assets/css/base.css` (D-232); `style.css` guarda solo lo propio de los avisos |
 | `desglose.js` | Cómo se calculó el puntaje, línea por línea (D-106) |
 | `demo.js` | Las escenas de ejemplo del laboratorio |
 | `reportes.js` | El botón 🐞 y los reportes que esperan reenvío |
