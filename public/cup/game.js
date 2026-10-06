@@ -144,7 +144,25 @@ function mostrar(id) {
  */
 function pantallaCompleta(si) {
   document.body.classList.toggle('pantalla-completa', !!si);
+  // El reloj va dentro de la barra, entre volver y el sonido: centrado en la ventana se montaba
+  // sobre "‹ Laboratorio" (C-8). Fuera de la pantalla completa vuelve a la cabeza de jugar.
+  const head = $('#jugar-head'), barra = $('.topbar');
+  if (si) barra.insertBefore(head, $('.tools', barra));
+  else if (head.parentNode === barra) $('#screen-jugar').prepend(head);
+  ajustarCabeza();
 }
+
+/** Si el reloj no cabe en la barra, la píldora de prueba queda en 🧪 y, si ni así, se va. */
+function ajustarCabeza() {
+  const head = $('#jugar-head');
+  head.classList.remove('justo', 'sin-chip');
+  if (!document.body.classList.contains('pantalla-completa')) return;
+  for (const c of ['justo', 'sin-chip']) {
+    if (head.scrollWidth <= head.clientWidth) return;
+    head.classList.add(c);
+  }
+}
+addEventListener('resize', ajustarCabeza);
 
 function errorDe(e) {
   const code = e?.code || e?.message;
@@ -2158,6 +2176,12 @@ function jugarPractica(id, semilla) {
   jugarSinPuntaje(id, p, r => resultadoPractica(id, semilla, r));
 }
 
+/** "🧪 Prueba", con la palabra aparte: en la barra de la pantalla completa puede quedar solo el 🧪. */
+const chipPrueba = () => {
+  const [ico, ...txt] = T.trialChip.split(' ');
+  return el('span', { class: 'chip chip--gold', title: T.trialChip }, ico, el('span', { class: 'chip-txt' }, ` ${txt.join(' ')}`));
+};
+
 /**
  * Juega un juego sin que cuente: la práctica del laboratorio y la sesión de prueba antes de
  * un día de la copa (D-103). Nada se guarda ni se envía; el reloj corre igual, para que se vea.
@@ -2169,7 +2193,7 @@ async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false } = {}) {
   const head = $('#jugar-head');
   head.innerHTML = '';
   const cron = el('span', { class: 'cron' }, fmt(T.timer, { t: '0:00' }));
-  poner(head, el('span', { class: 'jugar-titulo' }, conEmoji(J.emoji, J.nombre)), ensayo ? el('span', { class: 'chip chip--gold' }, T.trialChip) : null, cron);
+  poner(head, el('span', { class: 'jugar-titulo' }, conEmoji(J.emoji, J.nombre)), ensayo ? chipPrueba() : null, cron);
   clearInterval(S.reloj);
   S.reloj = setInterval(() => { if (S.pantalla === 'jugar') cron.textContent = fmt(T.timer, { t: mmss(reloj.leer(rel, Date.now())) }); }, 1000);
   S.visibilidad && document.removeEventListener('visibilitychange', S.visibilidad);
