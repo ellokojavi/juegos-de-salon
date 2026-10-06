@@ -1,5 +1,5 @@
 {
-  "version": "0.117.1",
+  "version": "0.118.1",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -746,6 +746,7 @@
     "public/assets/js/transport/ratelimit.js",
     "public/assets/js/transport/stats.js",
     "public/assets/js/ui.js",
+    "public/assets/js/uno-al-dia-avisos.js",
     "public/assets/js/uno-al-dia-red.js",
     "public/assets/js/uno-al-dia-ui.js",
     "public/assets/js/uno-al-dia.js",
@@ -852,6 +853,7 @@
     "public/assets/js/transport/errors.test.mjs",
     "public/assets/js/transport/ratelimit.test.mjs",
     "public/assets/js/transport/stats.test.mjs",
+    "public/assets/js/uno-al-dia-avisos.test.mjs",
     "public/assets/js/uno-al-dia-jugador.test.mjs",
     "public/assets/js/uno-al-dia.test.mjs",
     "public/battleship/engine.test.mjs",
@@ -877,6 +879,7 @@
     "tools/firebase/rankings-historia.test.mjs",
     "tools/push/avisar.test.mjs",
     "tools/push/calendario.test.mjs",
+    "tools/push/uno-al-dia.test.mjs",
     "tools/push/webpush.test.mjs",
     "tools/release/version.test.mjs"
   ],
@@ -936,6 +939,7 @@
     "timeline/pozo.mjs",
     "timeline/solo.mjs",
     "timeline/veredicto.mjs",
+    "uno-al-dia-avisos.mjs",
     "uno-al-dia-grupo.mjs",
     "uno-al-dia-jugador.mjs",
     "uno-al-dia.mjs",
