@@ -1,8 +1,15 @@
 # Changelog
 
-## 0.116.1 — 2026-10-06
+## 0.117.1 — 2026-10-06
 - **Del dado al juego, sin pantalla vacía** (D-237): en Juego al azar y Uno al día, el dado queda
   en pantalla mientras el juego carga y se desvanece recién cuando el juego está listo debajo.
+
+## 0.117.0 — 2026-10-06
+- **Uno al día con rankings, comodines e invitaciones, en el laboratorio** (D-230): entrando con
+  tu nombre y PIN, tu Uno al día pasa de un celular a otro y entra a los rankings de hoy, de la
+  semana y de rachas. Cada 7 días seguidos ganas un comodín 🧊, que salva tu racha si un día no
+  juegas. Puedes invitar a un amigo: le llega "Sara te desafía" con tu racha, juega el mismo desafío,
+  ven quién ganó y tú ganas un comodín.
 
 ## 0.116.0 — 2026-10-06
 - **Uno al día suma El Ahorcado, Batalla Naval y Dudo, en el laboratorio** (D-230): desde el 12 de
