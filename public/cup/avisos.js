@@ -64,7 +64,8 @@ export function crearAvisos({ T, lang, cuenta, store, copa, redibujar, toast, ta
   const botonCerrar = (texto = T.avClose) => el('button', { class: 'btn btn--ghost', onClick: () => { tap(); cerrar(); } }, texto);
 
   function hojaInstalar() {
-    // La app instalada empieza sin nada de Safari: la dirección le lleva la copa y el jugador (no el PIN)
+    // La app instalada empieza sin nada de Safari. iOS la abre en la portada (el start_url, D-227), así
+    // que los pasos dan el código; la dirección igual lleva la copa y el jugador (no el PIN), por si otra versión la respeta
     try {
       const u = new URL(location.href);
       u.searchParams.set('app', copa().pid);
@@ -80,7 +81,7 @@ export function crearAvisos({ T, lang, cuenta, store, copa, redibujar, toast, ta
       el('p', { class: 'muted' }, T.avInstallLead),
       paso(1, T.avStep1, '⬆️', T.avStep1b),
       paso(2, T.avStep2, '➕'),
-      paso(3, T.avStep3, '🎲'),
+      paso(3, fmt(T.avStep3, { code: copa().code }), '🎲'),
       despues,
       el('div', { class: 'btn-row' },
         el('button', { class: 'btn btn--yellow', id: 'btn-ya-agregue', onClick: () => { tap(); despues.hidden = false; } }, T.avInstalled),
@@ -240,7 +241,7 @@ export function crearAvisos({ T, lang, cuenta, store, copa, redibujar, toast, ta
     if (await subIdDe(actual.endpoint) !== g.subId) { try { await activar({ dia: g.dia, plazo: g.plazo, silencioso: true }); } catch (_) { /* la próxima vez */ } }
   }
 
-  return { disponible, boton, tarjeta, revisar, camino, cerrar, abiertaDesdeApp: () => cel.instalada && !!new URLSearchParams(location.search).get('app') };
+  return { disponible, boton, tarjeta, revisar, camino, cerrar, abiertaDesdeApp: () => cel.instalada && (cel.ios || !!new URLSearchParams(location.search).get('app')) };
 }
 
 /** Para las pruebas: qué hoja está abierta. */
