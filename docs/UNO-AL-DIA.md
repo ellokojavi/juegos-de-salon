@@ -46,6 +46,7 @@ el contenido del día:
 | 🪢 El Ahorcado | 🎴 Mazo del celular, con 1 jugador | La palabra (ya sale de la semilla del mazo) | Las vidas que quedan, llevadas a 100, y el tiempo desempata |
 | ⚓ Batalla Naval | 🤖 Contra el celular | La flota del celular | Menos disparos para hundirla, más puntos. Si te hunden antes, cuentan las casillas de barco que acertaste |
 | 🎲 Dudo | 🤖 Contra el celular | Los dados de cada ronda | Ganar vale 60, y cada dado que te queda suma; perder suma por las rondas que aguantaste |
+| 📝 Generala (desde el 23 de octubre, D-247) | 🧍 Jugar solo | Los dados de cada tiro: quien guarda lo mismo recibe lo mismo | Un tercio del total, hasta 100 |
 
 - **Cuarto Rey no entra:** es un juego de mesa para 4 a 6 personas y no tiene modo para uno (su
   documento lo explica). **Julepe** tampoco, porque hoy no se ofrece en la portada; si vuelve,
@@ -56,7 +57,7 @@ el contenido del día:
   y el ranking del día: "Todos parten con los mismos dados."
 - **🎲 Jugar otro** (abajo) ofrece cualquier juego de la portada, también Cuarto Rey.
 
-**La rotación:** son 10 juegos, así que no cabe uno por día de la semana. Funciona como un mazo: se
+**La rotación:** son 10 juegos (11 con Generala, desde el tercer mazo), así que no cabe uno por día de la semana. Funciona como un mazo: se
 barajan todos con la semilla `uno-al-dia:ciclo:<n>` y salen de a uno por día, sin repetir, hasta
 que se acaba el mazo (10 días). Al barajar el mazo siguiente, ningún juego puede salir antes de 7
 días desde la última vez. Cada juego lleva la fecha desde la que entra a Uno al día. Así un juego
