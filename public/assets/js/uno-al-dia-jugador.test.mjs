@@ -41,6 +41,12 @@ assert.equal(r.semana, true);
 assert.equal((await db.get(`records/${UNO_AL_DIA}/${sem}/${sara.jid}`)).s, 127);
 assert.equal(Object.keys(await cel1.historialDia()).length, 2);
 
+// Un día viejo de este celular, al entrar: solo a la historia, sin rankings
+r = await cel1.anotarDia({ n: n - 3, j: 'zip', s: 70, ms: 1, soloHistoria: true });
+assert.deepEqual(r, { historia: true, dia: false, semana: false, racha: false });
+assert.equal((await db.get(`unoAlDia/${sara.jid}/${n - 3}`)).s, 70);
+assert.equal(await db.get(`records/${UNO_AL_DIA}/${periodoDia(n - 3)}/${sara.jid}`), null);
+
 // Las reglas: nadie anota un día con otro puntaje que el de su historia, ni suma un día dos veces
 const intento = async cambios => { try { await crearAlmacenLocal({ storage, uid: 'uid1', now: () => ahora.t }).update(cambios); return true; } catch (_) { return false; } };
 const fila = (s, extra = {}) => ({ s, ms: 0, k: (100000 - s) * 100000000, at: ahora.t, n: 'Sara', ...extra });
