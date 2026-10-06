@@ -3800,3 +3800,19 @@ dentro de la app instalada.
 **Consecuencias:** Quien instala la app en un iPhone ve los avisos antes de que se abran a todos.
 Son pocos y es justo lo que se quiere probar. `push.test.mjs` y `tools/e2e/cup/avisos.mjs` lo
 prueban.
+
+## D-230 · Uno al día: un juego por día, el mismo para todos, con racha y avisos que pide el jugador
+**Fecha:** 2026-10-05 · **Estado:** propuesta, espera al dueño · **Relación:** amplía D-188 (Juego al azar), D-212 (rankings) y D-221 (avisos: suma avisos que el jugador pide a propósito)
+**Decisión:** Una modalidad nueva en la portada, junto a Juego al azar. Cada día, a la medianoche
+del jugador, sale un juego solitario con su contenido, el mismo para todos, a partir de la fecha
+(`uno-al-dia:<fecha>`, como las semillas de La Copa, D-97). El dado de D-188 lo revela la primera
+vez del día. Se lleva la racha, el calendario y los puntajes en el celular y, con jugador, en
+Firebase, con ranking del día, de la semana y de rachas. Los avisos (el del día, el de la racha que
+se corta y el de la semana) los activa el jugador y elige la hora. El detalle está en
+[UNO-AL-DIA.md](UNO-AL-DIA.md).
+**Por qué:** El dueño quiere audiencia que vuelva cada día y que use más juegos. La Copa ya
+demostró que "un juego por día" engancha, pero necesita un grupo y dura una semana. Uno al día
+no tiene ni lo uno ni lo otro.
+**Consecuencias:** Un período nuevo en los rankings (`dAAAA-MM-DD`), un historial por jugador con
+reglas de "una vez por fecha", y cada juego solitario acepta `?dia=`. Los avisos de "vuelve a jugar"
+siguen fuera (D-221): estos solo salen si el jugador los pidió, y se calman solos si no los usa.
