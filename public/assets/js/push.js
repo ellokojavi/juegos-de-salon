@@ -12,10 +12,11 @@ import { VAPID_PUBLICA } from './vapid.js';
 import { envOf } from './transport/stats.js';
 
 /**
- * Mientras no se manden avisos de verdad (PR 3), ofrecerlos prometería algo que no llega: se ven
- * solo en los celulares que los activaron en /labs/ y en el sitio local (como los rankings, D-212).
+ * La puerta del laboratorio. Mientras los avisos no llegaban de verdad se veían solo en los
+ * celulares que los activaban en /labs/ y en el sitio local (D-223). Desde que el dueño vio llegar
+ * uno a su Android y a su iPhone, se ven en todos (D-228); `true` vuelve a cerrarlos.
  */
-export const AVISOS_EN_LABS = true;
+export const AVISOS_EN_LABS = false;
 export const LABS_AVISOS_KEY = 'juegos-de-salon:labs-avisos';
 
 /**
