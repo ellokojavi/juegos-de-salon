@@ -4094,4 +4094,7 @@ siempre los mismos dos o tres. Los tipos agrupan por género, no por gusto.
 - **Guardarlos con el jugador (D-212), para que lo sigan entre celulares:** queda para después.
   El `localStorage` alcanza, y no obliga a tener nombre y PIN.
 **Consecuencias:** con un favorito marcado, los filtros ocupan una línea más, también cuando van
-pegados arriba (D-196). `tools/e2e/favoritos.mjs` lo prueba de punta a punta.
+pegados arriba (D-196). `tools/e2e/favoritos.mjs` lo prueba de punta a punta. Su chequeo a 320 px
+encontró que la portada ya se corría de lado en alemán en el Chrome de Linux, que no sabe partir
+"Galgenmännchen": la columna de `.games` crecía hasta la palabra entera. Ahora la columna no pasa
+del ancho de la pantalla (`minmax(0, 1fr)`) y el nombre se parte aunque falte el diccionario.

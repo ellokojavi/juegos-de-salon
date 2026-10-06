@@ -72,7 +72,12 @@
     .emoji-swap { display: inline-block; transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.3); }
     .emoji-swap.out { opacity: 0; transform: scale(0.3) rotate(-40deg); }
     .hero .sub { color: var(--muted); font-weight: 700; margin-top: 10px; }
-    .games { display: grid; gap: 14px; margin-top: 10px; container-type: inline-size; }
+    /* Una columna que no crece más que la pantalla: sin el minmax(0, …), una palabra larga que el
+       navegador no sabe partir ("Galgenmännchen" en el Chrome de Linux, sin diccionario de alemán)
+       ensanchaba todas las tarjetas y la portada se corría de lado (D-238) */
+    .games { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; margin-top: 10px; container-type: inline-size; }
+    .game-slot > .game-card, .game-card .texto { min-width: 0; }
+    .game-card h2 > span:first-child { min-width: 0; overflow-wrap: anywhere; }
     .game-card {
       display: grid; grid-template-columns: 64px 1fr auto; column-gap: 14px; align-items: center;
       grid-template-areas: "emoji texto ir" "emoji meta ir";
