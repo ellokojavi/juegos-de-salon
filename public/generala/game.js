@@ -405,6 +405,7 @@ function renderResult(v) {
     el('span', {}, nameOf(r)),
     el('span', { class: 'pts' }, v.st[r].total))));
   $('#result-tabla').replaceChildren(tablaPlanillas(v));
+  $('#result-cards summary').textContent = T.cardsTitle;
 
   const acciones = $('#result-actions');
   acciones.innerHTML = '';
@@ -452,6 +453,8 @@ function renderResultSolo(v, already) {
         : S.recordAntes ? el('p', { class: 'muted center', style: 'font-weight:900' }, fmt(T.prevRecord, { s: S.recordAntes.s })) : '');
   }
   $('#result-tabla').replaceChildren(tablaPlanillas(v));
+  // Jugando solo hay una planilla, la tuya (U-6)
+  $('#result-cards summary').textContent = `📋 ${T.yourCard}`;
 
   const acciones = $('#result-actions');
   acciones.innerHTML = '';
