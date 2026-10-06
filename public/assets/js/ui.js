@@ -118,9 +118,16 @@ export { canShare, shareLink };
 
 /**
  * El ícono de compartir de los sistemas operativos (una caja abierta con una flecha hacia arriba),
- * dibujado en SVG con el color del texto: un emoji se ve distinto en cada celular (D-242).
+ * dibujado en SVG: un emoji se ve distinto en cada celular (D-242). Va en los colores de la página,
+ * la caja celeste y la flecha rosada, con la sombra de abajo de los botones (D-243).
  */
-const ICONO_COMPARTIR = '<svg class="icon-share" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M8 7l4-4 4 4"/><path d="M8 10H6a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1h-2"/></svg>';
+const CAJA = 'M10.5 12.5H8a2 2 0 0 0-2 2V25a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V14.5a2 2 0 0 0-2-2h-2.5';
+const FLECHA = 'M16 4.5v14M11 9.5l5-5 5 5';
+const ICONO_COMPARTIR = `<svg class="icon-share" viewBox="0 0 32 32" width="26" height="26" fill="none" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+<defs><linearGradient id="icono-compartir-caja" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7ff5ea"/><stop offset="1" stop-color="#2ee6d6"/></linearGradient>
+<linearGradient id="icono-compartir-flecha" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff7fb8"/><stop offset="1" stop-color="#ff2e88"/></linearGradient></defs>
+<path d="${CAJA}" transform="translate(0 1.6)" stroke="#149a8f"/><path d="${CAJA}" stroke="url(#icono-compartir-caja)"/>
+<path d="${FLECHA}" transform="translate(0 1.6)" stroke="#a3104f"/><path d="${FLECHA}" stroke="url(#icono-compartir-flecha)"/></svg>`;
 
 /**
  * Botón redondo de la barra de arriba para compartir un link. Donde hay diálogo nativo
