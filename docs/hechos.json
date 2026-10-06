@@ -962,6 +962,10 @@
       "titulo": "Requerimientos"
     },
     {
+      "ruta": "docs/UNO-AL-DIA.md",
+      "titulo": "Uno al día"
+    },
+    {
       "ruta": "docs/USABILIDAD.md",
       "titulo": "Guía de usabilidad"
     },
