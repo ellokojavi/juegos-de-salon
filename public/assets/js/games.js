@@ -78,6 +78,18 @@ export const GAMES = [
     available: true,
   },
   {
+    id: 'generala',
+    tipos: ['tabletop'],
+    emoji: '📝',
+    name: { es: 'Generala', en: 'Generala', pt: 'General', de: 'Generala' },
+    tagline: { es: 'Tira cinco dados hasta tres veces y llena tu planilla. Escalera, full, póker… ¡y generala!', en: 'Roll five dice up to three times and fill your score card. Straight, full house… and generala!', pt: 'Jogue cinco dados até três vezes e preencha sua cartela. Sequência, full, quadra… e general!', de: 'Wirf fünf Würfel bis zu dreimal und füll deinen Block. Straße, Full House … und Generala!' },
+    players: '1–6',
+    duration: '15–30',
+    jugadas: ['roll', 'score'],
+    path: 'generala/',
+    available: true,
+  },
+  {
     id: 'batalla-naval',
     tipos: ['logic'],
     emoji: '⚓',
