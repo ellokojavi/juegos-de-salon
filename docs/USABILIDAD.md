@@ -150,3 +150,6 @@ Las respuestas a dilemas (issues con la etiqueta `usabilidad`) se anotan aquí:
   resultado nombran el juego que tocó ("📅 *Uno al día n.° 12*" y "87 puntos"), porque quien lo lee
   en el grupo casi siempre todavía no juega y el juego se descubre en el dado, como con el aviso.
   Es una excepción a U-31.
+- **Uno al día: sin revancha en los juegos de grupo** (#226, D-230): jugados como Uno al día, El
+  Ahorcado, Batalla Naval y Dudo no muestran su botón de revancha; la tarjeta ya ofrece 🎲 Jugar
+  otro y Repetir el de hoy. Bajo el resultado de los solitarios queda solo el ranking de Uno al día.

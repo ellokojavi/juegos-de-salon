@@ -12,6 +12,7 @@ import {
   estado, leer, juntar, numDia, fechaDeNum, semanaDe, recorrer, porJuego, fechaLocal, KEY,
 } from './uno-al-dia.js';
 import { UNO_AL_DIA, UAD_RACHA, periodoDia, SIEMPRE, esJid } from './records.js';
+import { trackUnoAlDia } from './transport/stats.js';
 
 /** Quién invitó a este celular (el `jid` del link), si alguien. */
 export const INV_KEY = 'juegos-de-salon:uno-al-dia:inv';
@@ -32,6 +33,8 @@ export async function recordarInvitacion(jid) {
   if (!esJid(jid)) return null;
   const j = await J().catch(() => null);
   if (j?.yo()?.jid === jid) return null;
+  // Se cuenta una vez por celular y por quien invita, aunque se vuelva a abrir el link
+  if (leerLs(INV_KEY) !== jid) trackUnoAlDia('invitacion');
   ponerLs(INV_KEY, jid);
   return jid;
 }
@@ -52,6 +55,7 @@ export async function subirHoy({ fecha, dia }) {
   // El primero de este celular: solo hay un día jugado, el de hoy
   if (inv && e.jugados === 1 && e.dias[fecha]) {
     out.invitacion = await j.aceptarInvitacion(inv, n).catch(() => false);
+    if (out.invitacion) trackUnoAlDia('aceptada');
     const quien = await j.publico(inv).catch(() => null);
     if (quien) j.conocer({ [inv]: quien.n });
   }

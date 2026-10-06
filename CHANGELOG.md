@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.120.0 — 2026-10-06
+- **Uno al día, más simple al terminar, en el laboratorio** (D-230): en El Ahorcado, Batalla Naval y
+  Dudo ya no sale la revancha (la tarjeta ofrece jugar otro o repetir el de hoy), y bajo el resultado
+  queda un solo ranking, el de Uno al día. "Agregar al calendario" pasa a **⏰ Agregar recordatorio**,
+  con una línea que dice para qué sirve. El panel del dueño mide qué se hace en Uno al día.
+
 ## 0.119.1 — 2026-10-06
 - **Del dado al juego, sin pantalla vacía** (D-237): en Juego al azar y Uno al día, el dado queda
   en pantalla mientras el juego carga y se desvanece recién cuando el juego está listo debajo.
