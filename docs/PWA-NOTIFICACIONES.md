@@ -216,12 +216,22 @@ modo No molestar, por ejemplo), el botón **Probar los avisos** de la hoja sirve
   entre 9:00 y 10:00), y no sale si el jugador ya tocó Empezar ese día. El del plazo dice las horas
   que quedan, redondeadas hacia arriba ("Te quedan 3 horas…", "Te queda 1 hora…"), no la hora del
   cierre; si el cierre cae de noche, sale desde las 20:00 (cuando faltan 10 horas o menos).
-- **No hay tope diario**: cada vuelta manda a lo más uno por copa y celular (primero el fin, luego
-  el plazo, la final, el del día y la inscripción), y el siguiente espera la vuelta que viene. Un
-  celular puede recibir el del día y el del plazo del día anterior el mismo día.
-- **No se juntan copas** ("Tienes un día nuevo en 2 copas…"): cada copa manda los suyos.
-- **Sin botones en Android** ni silueta para la barra de estado: `sw.js` muestra título, texto e
-  ícono. Al tocarlo abre el tablero de la copa (`/cup/?<código>`), no el día ni el podio.
+- Cada vuelta manda a lo más uno por copa y celular (primero el fin, luego el plazo, la final, el
+  del día y la inscripción), y el siguiente espera la vuelta que viene. **Tope (D-229): a lo más 2
+  por copa y celular en un día** de quien recibe; una entrega es un aviso, aunque anote varias
+  claves. Si se vencen dos plazos a la vez (la final y el día anterior), van en un aviso: "Te
+  quedan 4 horas para jugar los días 6 y 7…".
+- **Se juntan copas (D-229)**: los días nuevos de varias copas para un mismo celular, en la misma
+  vuelta, van en uno ("🎲 Tienes un día nuevo en 2 copas: Los Primos y La Oficina."), que abre la
+  portada de La Copa. Lo demás (plazos, final, fin) sigue siendo de cada copa.
+- **Al tocarlo abre el día (D-229)**: el del día, el del plazo y el de la final llevan `&dia=<d>`,
+  y la copa parte en ese día, listo para empezar, si todavía se puede jugar (si no, el tablero).
+  El de "terminó la copa" abre el tablero, que ya es el podio.
+- **Botones en Android (D-229)**: esos mismos traen **Jugar** (el día) y **Silenciar esta copa**
+  (abre la copa con `&silenciar`, que la silencia y lo dice). iPhone no los muestra. Sin silueta
+  para la barra de estado: `sw.js` usa el ícono de la app.
+- **Empate en el primer lugar (D-229)**: "🥇 Ganaron Ana y Beto. Quedaste 3.º"; a quien empató
+  arriba, "🥇 ¡Ganaste la copa, empatado con Beto!".
 - El de la inscripción le llega al admin solo si él activó avisos en esa copa, y nombra a quienes
   se inscribieron después de activarlos, durante un día. El de "terminó la copa" vale durante el
   día siguiente al cierre; después ya no sale.

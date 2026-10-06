@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.111.0 — 2026-10-05
+- **Avisos más justos** (D-229): a lo más 2 por copa al día, y si se vencen dos días a la vez,
+  van en un aviso. Al tocarlo abre el día que avisa, listo para jugar, y en Android trae los botones
+  **Jugar** y **Silenciar esta copa**. Si tienes días nuevos en varias copas, llega uno solo. Si la
+  copa termina empatada arriba, el aviso nombra a todos los que ganaron.
+
 ## 0.109.1 — 2026-10-05
 - **La campana de avisos aparece en la app del iPhone** (D-227): el iPhone abre la app agregada a
   inicio en la portada, sin lo que se activó en Safari, así que la campana no salía. Ahora sale

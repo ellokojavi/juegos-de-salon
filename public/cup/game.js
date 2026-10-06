@@ -101,6 +101,10 @@ const cuenta = createCuenta({ prueba: PRUEBA });
 let store = null;
 // La app instalada en iPhone abre con la copa y el jugador en la dirección, nunca el PIN (D-223)
 const appPid = new URLSearchParams(location.search).get('app') || '';
+// Un aviso abre la copa en su día (`&dia=3`), o la silencia (`&silenciar`, el botón del aviso en
+// Android, D-229). Se leen al cargar: el link propio de la copa reemplaza la dirección.
+const diaAviso = Number(new URLSearchParams(location.search).get('dia')) || 0;
+const silenciarAviso = new URLSearchParams(location.search).has('silenciar');
 
 async function abrirStore() {
   if (store) return store;
@@ -548,7 +552,7 @@ async function abrirCopa(code, { recienCreada = false, pantalla = null } = {}) {
         vincularJugador(L);
         cuenta.recordar(code, pid, { nombre: L.players[pid].name, copa: L.meta.name, fin: L.meta.end });
         // Recién creada, el admin parte en Administrar, con la guía de la primera vez (D-110)
-        if (recienCreada) { S.bienvenida = true; admin(); } else if (pantalla === 'admin') admin(); else tablero();
+        if (recienCreada) { S.bienvenida = true; admin(); } else if (pantalla === 'admin') admin(); else desdeAviso();
       } else entrar();
       return;
     }
@@ -934,6 +938,18 @@ function grafico(now) {
       SFX.tap(); const b = ev2.currentTarget; b.disabled = true;
       try { await compartirTabla(); } catch (e) { toast(errorDe(e)); } finally { b.disabled = false; }
     } }, `📤 ${T.shareImage}`));
+}
+
+/**
+ * El tablero, o lo que pidió el aviso que abrió la copa (D-229): silenciarla, o el día que avisaba,
+ * listo para empezar, si todavía se puede jugar. Si no, el tablero de siempre.
+ */
+function desdeAviso() {
+  const Lc = L();
+  if (silenciarAviso) { tablero(); avisos().silenciar(); return; }
+  const est = diaAviso >= 1 && diaAviso <= Lc.meta.days && !anulado(Lc.meta, diaAviso) ? estadoDia(Lc, diaAviso, S.yo, ahora()) : null;
+  if ((est === 'hoy' || est === 'gracia') && !faltaGente(Lc)) antesDeJugar(diaAviso);
+  else tablero();
 }
 
 function tablero() {

@@ -216,8 +216,11 @@ local y en los celulares que los activan en `/labs/` (`AVISOS_EN_LABS` en `push.
   del celular y nunca entre las 22:00 y las 8:00: **se abrió el día** (desde las 9:00, si no lo ha
   jugado ni empezado), **se te acaba el plazo** (4 horas antes del cierre, o desde las 20:00 si
   cierra de noche), **La Gran Final** (con su lugar en la tabla), **terminó la copa** y, al admin
-  que activó avisos, **quién se inscribió**. A lo más uno por copa y celular en cada vuelta. Los
-  textos son los `avMsg*` de `rules.js`; al tocarlo abre el tablero de la copa.
+  que activó avisos, **quién se inscribió**. A lo más uno por copa y celular en cada vuelta, y dos
+  por copa en un día (D-229). Los textos son los `avMsg*` de `rules.js`. Al tocarlo abre ese día
+  (`&dia=<d>`) o, el del cierre, el podio; en Android trae **Jugar** y **Silenciar esta copa**
+  (`&silenciar`). Los días nuevos de varias copas van juntos en un aviso, y un empate arriba nombra
+  a todos los que ganaron (D-229).
 
 ## Flujo
 
