@@ -66,7 +66,7 @@ function estadoAcceso(lang, raiz, alTocar) {
 }
 
 /**
- * El botón de la portada, a la derecha de "Al azar": una sola línea, "📅 Uno al día", con la racha
+ * El botón al lado de "Al azar" (la forma de antes, que se prueba desde /labs/): una sola línea, "📅 Uno al día", con la racha
  * en una píldora (🔥 6). Mientras no juegue el de hoy, un punto brilla; jugado, se pone cian con ✅.
  * Lo que dice cada estado completo va en `aria-label` (decisión del dueño: etiquetas cortas).
  */
@@ -79,8 +79,8 @@ export function botonUnoAlDia({ lang, raiz = '', alTocar }) {
 }
 
 /**
- * La otra forma de ponerlo en la portada, que se prueba desde /labs/: una tarjeta de media fila al
- * lado de La Copa, como acceso de más jerarquía que los juegos. Misma lógica que el botón.
+ * Cómo va en la portada (D-239): una tarjeta de media fila al lado de La Copa, como acceso de más
+ * jerarquía que los juegos. Misma lógica que el botón.
  */
 export function tarjetaUnoAlDia({ lang, raiz = '', alTocar }) {
   const { T, hecho, linea2, abrir, aria } = estadoAcceso(lang, raiz, alTocar);
