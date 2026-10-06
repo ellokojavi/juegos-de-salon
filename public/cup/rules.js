@@ -70,7 +70,7 @@ const ES = {
       nombre: 'Toque y Fama: Palabra', habilidad: 'deducir',
       como: [
         'Adivina en 8 intentos una palabra secreta de 5 letras distintas.',
-        'Escribe 5 letras distintas, aunque no formen una palabra, y toca Probar. Cada letra se pinta amarilla si está en su lugar (fama) y celeste si está en otro lugar (toque).',
+        'Escribe 5 letras distintas, aunque no formen una palabra, y toca Probar. Cada letra se pinta verde si está en su lugar (fama) y amarilla si está en otro lugar (toque).',
       ],
       puntaje: 'Cada letra que encuentras en su lugar suma 10 puntos una sola vez. Sacar la palabra suma 50 más, menos 5 por cada intento después del primero.',
       desempate: 'Si empatas, gana quien tardó menos.',
@@ -786,7 +786,7 @@ const EN = {
       nombre: 'Bulls and Cows: Word', habilidad: 'deduction',
       como: [
         'Guess a secret word with 5 different letters in 8 guesses.',
-        'Type 5 different letters, even if they don\'t make a word, and tap Guess. Each letter turns yellow if it\'s in the right spot (bull) and blue if it\'s in the wrong spot (cow).',
+        'Type 5 different letters, even if they don\'t make a word, and tap Guess. Each letter turns green if it\'s in the right spot (bull) and yellow if it\'s in the wrong spot (cow).',
       ],
       puntaje: 'Each letter you find in its spot adds 10 points, only once. Cracking the word adds 50 more, minus 5 for each guess after the first.',
       desempate: 'On a tie, the faster player wins.',
@@ -1491,7 +1491,7 @@ const PT = {
       nombre: 'Toque e Fama: Palavra', habilidad: 'dedução',
       como: [
         'Adivinhe em 8 tentativas uma palavra secreta de 5 letras diferentes.',
-        'Escreva 5 letras diferentes, mesmo que não formem uma palavra, e toque em Tentar. Cada letra fica amarela se está no lugar certo (fama) e azul se está em outro lugar (toque).',
+        'Escreva 5 letras diferentes, mesmo que não formem uma palavra, e toque em Tentar. Cada letra fica verde se está no lugar certo (fama) e amarela se está em outro lugar (toque).',
       ],
       puntaje: 'Cada letra que você encontra no lugar certo soma 10 pontos, uma vez só. Descobrir a palavra soma mais 50, menos 5 por cada tentativa depois da primeira.',
       desempate: 'Se empatar, ganha quem levou menos tempo.',
@@ -2196,7 +2196,7 @@ const DE = {
       nombre: 'Bullen und Kühe: Wort', habilidad: 'Kombinieren',
       como: [
         'Errate in 8 Versuchen ein geheimes Wort aus 5 verschiedenen Buchstaben. Ä, Ö und Ü schreibst du als A, O und U.',
-        'Gib 5 verschiedene Buchstaben ein, auch ohne Sinn, und tippe auf Raten. Gelb heißt: richtig platziert (Bulle). Hellblau: im Wort, aber woanders (Kuh).',
+        'Gib 5 verschiedene Buchstaben ein, auch ohne Sinn, und tippe auf Raten. Grün heißt: richtig platziert (Bulle). Gelb: im Wort, aber woanders (Kuh).',
       ],
       puntaje: 'Jeder Buchstabe, den du an seiner Stelle findest, bringt einmalig 10 Punkte. Das Wort zu knacken bringt 50 dazu, minus 5 für jeden Versuch nach dem ersten.',
       desempate: 'Bei Gleichstand gewinnt, wer schneller war.',

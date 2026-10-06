@@ -538,7 +538,7 @@ test('letras: palabras válidas, pistas por letra y puntaje', () => {
   assert.equal(letras.puntaje(lejos), 20);
   assert.equal(letras.puntaje(letras.estado({ ...p, secreto: 'MANGO' }, ['MANGO'])), 100);
   assert.ok(letras.puntaje({ encontradas: 5, resuelto: true, usados: 8 }) > letras.puntaje({ encontradas: 5, resuelto: false, usados: 8 }));
-  assert.equal(letras.tarjeta(e).split('\n')[1], '🟨🟨🟨🟨🟨');
+  assert.equal(letras.tarjeta(e).split('\n')[1], '🟩🟩🟩🟩🟩');
 });
 
 test('final: cinco rondas, promedio de 0 a 100', () => {
