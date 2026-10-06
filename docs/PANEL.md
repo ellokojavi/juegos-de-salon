@@ -259,10 +259,10 @@ public/assets/js/transport/
   dispose.test.mjs    node public/assets/js/transport/dispose.test.mjs
 ```
 
-`window.__panel.seed({ rooms, days, torneos, vista })` dibuja el panel con datos sembrados sin
+`window.__panel.seed({ rooms, days, torneos, push, vista })` dibuja el panel con datos sembrados sin
 entrar (gancho de solo lectura, C-14): sirve para probar la página sin cuenta ni base. `vista` es
-una ruta (`/torneo/OFICI`). `node tools/e2e/mirar.mjs panel <toma>` lo siembra con copas armadas
-con el motor de verdad y abre esa vista. Las tomas: `ahora`, `torneo`, `copa-ficha`, `copa-dias`,
+una ruta (`/torneo/OFICI`) y `push`, la última vuelta de los avisos (D-233). `node tools/e2e/mirar.mjs panel <toma>`
+lo siembra con copas armadas con el motor de verdad, una semana de avisos mandados y tocados, y abre esa vista. Las tomas: `ahora`, `torneo`, `copa-ficha`, `copa-dias`,
 `copa-historia`, `juegos`, `juego-ficha`, `sala-ficha`, `trafico`, `audiencia` y `datos`.
 
 ## Cuando entra un juego, un modo o un idioma nuevo
