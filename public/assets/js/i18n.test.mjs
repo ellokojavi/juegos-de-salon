@@ -41,7 +41,7 @@ function same(name, dict) {
 assert.deepEqual(LANGS, ['es', 'en', 'pt', 'de']);
 assert.deepEqual(IDIOMAS, ['es', 'en', 'pt', 'de']);
 assert.deepEqual(EN_LABS, []);
-// Cada idioma trae su bandera y su nombre para el toggle (D-230, C-3): sin ellos el botón sale vacío
+// Cada idioma trae su bandera y su nombre para el toggle (D-231, C-3): sin ellos el botón sale vacío
 for (const l of IDIOMAS) {
   assert.match(BANDERAS[l] || '', /^\p{Regional_Indicator}{2}$/u, `falta la bandera de ${l} en BANDERAS`);
   assert.ok(NOMBRES_IDIOMA[l], `falta el nombre de ${l} en NOMBRES_IDIOMA`);

@@ -207,7 +207,7 @@ details.panel summary::-webkit-details-marker { display: none; }
 /* Confeti (canvas) */
 #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; }
 
-/* --- Toggle de idioma (D-230): bandera y código en cada botón, siempre --- */
+/* --- Toggle de idioma (D-231): bandera y código en cada botón, siempre --- */
 .lang-toggle {
   display: inline-flex; gap: 4px; padding: 4px; border-radius: 999px;
   background: var(--glass); border: 1px solid var(--glass-border);
@@ -225,7 +225,7 @@ details.panel summary::-webkit-details-marker { display: none; }
 /*
  * Con cuatro idiomas el toggle en línea mide unos 290 px y, en la barra de arriba de la portada,
  * empuja el sonido y compartir fuera de la pantalla. En un celular angosto la bandera no se
- * esconde (antes sí, D-230): sube encima del código, y el toggle queda del ancho que tenía con
+ * esconde (antes sí, D-231): sube encima del código, y el toggle queda del ancho que tenía con
  * el código solo. Si igual no cabe, los botones redondos bajan a una segunda línea antes que salirse.
  */
 @media (max-width: 440px) {

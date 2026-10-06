@@ -415,7 +415,7 @@ export function pickLang(obj, lang = getLang()) {
 }
 
 /**
- * La bandera y el nombre propio de cada idioma, para el toggle (D-230). Un idioma nuevo trae
+ * La bandera y el nombre propio de cada idioma, para el toggle (D-231). Un idioma nuevo trae
  * los dos: la prueba de paridad lo exige. Es la bandera del país de la app en ese idioma
  * (el español es el de Chile, el portugués el de Brasil, D-191, D-194).
  */
@@ -423,7 +423,7 @@ export const BANDERAS = { es: '🇨🇱', en: '🇬🇧', pt: '🇧🇷', de: '�
 export const NOMBRES_IDIOMA = { es: 'Español', en: 'English', pt: 'Português', de: 'Deutsch' };
 
 /**
- * El selector de idioma, el único de la app (D-230): cada botón lleva su bandera y su código,
+ * El selector de idioma, el único de la app (D-231): cada botón lleva su bandera y su código,
  * siempre, también en un celular angosto (base.css). `onChange(lang)` se llama tras guardar el
  * idioma nuevo; por defecto recarga la página para que todo se re-renderice con el elegido.
  */
