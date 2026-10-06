@@ -199,7 +199,7 @@ export const COMMON = {
       context: '{n} games for your phone',
       lines: [
         '🏆 The Cup: a week-long tournament among friends, with a different game every day.',
-        '👥 To play in a group: on one phone or each on their own.',
+        '👥 To play in a group: on one phone or each on their own phone.',
         '🧩 To play solo: word, logic and trivia minigames.',
         '🔓 No account: tap the link and play.',
       ],
