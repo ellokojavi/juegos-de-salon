@@ -51,6 +51,8 @@ public/<carpeta>/
   recorriendo todos los módulos del sitio, así que los de un juego nuevo entran solos (C-11, D-192, D-205).
 - Reutilizar siempre los módulos compartidos antes de escribir uno nuevo:
   `public/assets/js/ui.js` (DOM, confeti, vibración, wake lock), `i18n.js`, `sound.js`, `session.js`, `handoff.js`, `transport/`.
+  Lo mismo con los estilos de `base.css`: una hoja que sube desde abajo con pasos o ajustes es la
+  `.hoja` (con `.hoja-capa`, `.hoja-paso`…), la de los avisos de La Copa y del globo de la portada (D-232).
 
 ## C-3 · Idiomas
 
