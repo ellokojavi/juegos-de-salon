@@ -226,7 +226,7 @@ Abiertos a todos desde D-228: se ven en cualquier celular que pueda recibirlos, 
 ## Flujo
 
 `intro` (portada: crear, tus copas —las de este celular y, con jugador, las suyas de otros
-celulares, D-220; las terminadas con su etiqueta y escondidas tras "Mostrar copas terminadas", D-233—,
+celulares, D-220; las terminadas con su etiqueta y escondidas tras "Mostrar copas terminadas", D-234—,
 tengo un código) → `crear` → `entrar` (invitación: Soy nuevo
 / Ya estoy inscrito) → `tablero` → `jugar` (primero Cómo se juega y el comodín) → `resultado` →
 `admin`. En el tablero van **tus días** (los pasados con su resultado y deshabilitados, el de hoy

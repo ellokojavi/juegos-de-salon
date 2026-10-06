@@ -67,7 +67,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216 |
-| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-233 |
+| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234 |
 | Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230 |
 | Marketing | `marketing/README.md` | D-178 |
@@ -3868,13 +3868,13 @@ siguen fuera (D-221): estos solo salen si el jugador los pidió, y se calman sol
 Es un diseño aprobado que falta construir: va en cinco PR, los cuatro primeros detrás del
 laboratorio (`UNO_AL_DIA_EN_LABS`), según "Por partes" de [UNO-AL-DIA.md](UNO-AL-DIA.md).
 
-## D-233 · "Tus copas" marca las terminadas y las esconde tras un interruptor
+## D-234 · "Tus copas" marca las terminadas y las esconde tras un interruptor
 **Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** amplía D-220
 **Decisión:** En la lista "Tus copas" de la portada de La Copa, una copa cuyo `fin` ya pasó lleva
 la etiqueta **Terminó** (el texto `mineOver`, que no se usaba) y un fondo más apagado. Las
 terminadas no se ven de entrada: si hay alguna, al pie de la lista va el interruptor **Mostrar
 copas terminadas (n)**, que parte apagado cada vez que se abre la portada (no se recuerda). Si
-todas terminaron, la lista dice "Ninguna en curso." sobre el interruptor. Siguen en la lista hasta
+todas terminaron, la lista dice "No tienes copas en curso." sobre el interruptor. Siguen en la lista hasta
 una semana después de terminar, como antes.
 **Por qué:** El dueño, con su jugador, veía las copas terminadas igual que las en curso y no
 distinguía cuáles quedaban por jugar.

@@ -1,7 +1,7 @@
 # Changelog
 
 ## 0.112.0 — 2026-10-06
-- **"Tus copas" separa las terminadas** (D-233): en la portada de La Copa, las copas que ya
+- **"Tus copas" separa las terminadas** (D-234): en la portada de La Copa, las copas que ya
   terminaron llevan la etiqueta **Terminó** y no se ven de entrada. Para verlas, se prende
   **Mostrar copas terminadas**, al pie de la lista.
 
