@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.112.0 — 2026-10-06
+- **"Tus copas" separa las terminadas** (D-233): en la portada de La Copa, las copas que ya
+  terminaron llevan la etiqueta **Terminó** y no se ven de entrada. Para verlas, se prende
+  **Mostrar copas terminadas**, al pie de la lista.
+
 ## 0.111.0 — 2026-10-05
 - **Avisos más justos** (D-229): a lo más 2 por copa al día, y si se vencen dos días a la vez,
   van en un aviso. Al tocarlo abre el día que avisa, listo para jugar, y en Android trae los botones
