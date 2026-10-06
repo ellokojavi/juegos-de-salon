@@ -156,7 +156,7 @@ const PESTANAS = {
   hoy: { rotulo: T => T.today, leer: (J, juego) => J.tabla(juego, periodoDia(numDia(fechaLocal()))) },
   semanaDia: { rotulo: T => T.week, leer: (J, juego) => J.tabla(juego, semanaDe(fechaLocal())) },
   rachas: { rotulo: T => T.streaks, tabla: UAD_RACHA, leer: J => J.tabla(UAD_RACHA, SIEMPRE) },
-  amigosSemana: { rotulo: T => T.friends, leer: async (J, juego) => ({ top: await J.tablaAmigos(juego, semanaDe(fechaLocal())), amigos: true }) },
+  amigosSemana: { rotulo: T => T.friends, vacio: T => T.emptyFriendsToday, leer: async (J, juego) => ({ top: await J.tablaAmigos(juego, semanaDe(fechaLocal())), amigos: true }) },
 };
 
 function fila(f, yo, victorias = false) {
@@ -195,12 +195,13 @@ export function bloqueRanking({ juego, titulo = null, hint = null, pestanas = ['
       if (mio !== turno) return;
       const yo = leerYo()?.jid;
       lista.replaceChildren();
-      if (!v.top.length) { lista.append(el('p', { class: 'muted rk-centro' }, v.amigos ? T.emptyFriends : T.empty)); return; }
+      const sinAmigos = PESTANAS[actual].vacio?.(T) || T.emptyFriends;
+      if (!v.top.length) { lista.append(el('p', { class: 'muted rk-centro' }, v.amigos ? sinAmigos : T.empty)); return; }
       const t = PESTANAS[actual].tabla || juego;
       const tipo = t === PARTIDAS ? 'partidas' : t === UAD_RACHA ? 'racha' : esVictorias(t);
       lista.append(...v.top.map(f => fila(f, yo, tipo)));
       if (v.vecinos?.length) lista.append(el('div', { class: 'rk-sep', 'aria-hidden': 'true' }, '⋯'), ...v.vecinos.map(f => fila(f, yo, tipo)));
-      if (v.amigos && v.top.length < 2) lista.append(el('p', { class: 'muted rk-centro' }, T.emptyFriends));
+      if (v.amigos && v.top.length < 2) lista.append(el('p', { class: 'muted rk-centro' }, sinAmigos));
     } catch (e) {
       if (mio === turno) lista.replaceChildren(el('p', { class: 'rk-error' }, T.error));
     }

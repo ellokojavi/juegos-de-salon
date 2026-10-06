@@ -128,9 +128,9 @@ async function hojaInstalar({ lang, alTocar }) {
     el('button', { class: 'btn btn--ghost', onClick: () => { alTocar?.(); cerrar(); } }, C.avClose));
 }
 async function hojaOtraApp({ lang, alTocar }) {
-  const C = await textosCopa(lang);
+  const C = await textosCopa(lang), T = textos(lang);
   const url = location.href.split('#')[0];
-  hoja('hoja-uad-otra-app', el('h2', {}, C.avOtherTitle), el('p', { class: 'muted' }, ...conNegritas(C.avOtherLead)),
+  hoja('hoja-uad-otra-app', el('h2', {}, C.avOtherTitle), el('p', { class: 'muted' }, ...conNegritas(T.avOtraApp)),
     el('p', { class: 'hoja-link' }, url.replace(/^https?:\/\//, '')),
     el('div', { class: 'btn-row' },
       el('button', { class: 'btn btn--yellow', onClick: async () => { alTocar?.(); try { await navigator.clipboard.writeText(url); } catch (_) { /* queda a la vista */ } } }, C.avCopy),
@@ -189,7 +189,7 @@ async function hojaAjustes({ lang, alTocar, alCambiar }) {
   };
   const d = sw('uad-av-dia', T.avDiario, T.avDiarioSub, g.d), r = sw('uad-av-racha', T.avRachaSw, T.avRachaSub, g.r), w = sw('uad-av-semana', T.avSemanaSw, T.avSemanaSub, g.w);
   let h = g.h ?? 9;
-  const horas = el('div', {});
+  const horas = el('div', { class: 'uad-hora' });
   const pintarHoras = () => horas.replaceChildren(el('p', { class: 'muted', style: 'margin:0' }, T.avHora), botonesHora({ lang, elegida: h, alElegir: x => { alTocar?.(); h = x; pintarHoras(); guardar(); } }));
   pintarHoras();
   async function guardar() {
@@ -218,7 +218,7 @@ export function oferta({ lang, alTocar, primera }) {
     el('p', { class: 'lead', style: 'margin:0' }, T.avPregunta),
     botonesHora({ lang, alElegir: async h => {
       try { if (await pedir({ h, lang, alTocar })) caja.replaceChildren(el('p', { class: 'uad-comodin', style: 'margin:0' }, fmt(T.avListo, { h }))); }
-      catch (_) { caja.append(el('p', { class: 'rk-error' }, T.avError)); }
+      catch (_) { caja.querySelector('.rk-error')?.remove(); caja.append(el('p', { class: 'rk-error' }, T.avError)); }
     } }),
     el('button', { class: 'link-btn', id: 'btn-uad-ahora-no', onClick: () => { alTocar?.(); guardarAvisos({ no: true }); caja.remove(); } }, T.avAhoraNo));
   return caja;
