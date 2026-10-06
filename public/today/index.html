@@ -228,7 +228,7 @@
           };
           const filas = juegos.map(g => el('div', { class: 'uad-fila', 'data-id': g.id },
             el('div', {}, el('span', { class: 'nom' }, nombre(g.id)),
-              el('span', { class: 'nums' }, `${g.n} ${T.veces} · ${T.promedio} ${g.promedio} · ${T.mejor} ${g.mejor}`)),
+              el('span', { class: 'nums' }, `${g.n} ${g.n === 1 ? T.vez : T.veces} · ${T.promedio} ${g.promedio} · ${T.mejor} ${g.mejor}`)),
             linea(g.ultimos),
             el('span', { class: `flecha ${g.tendencia > 0 ? 'sube' : g.tendencia < 0 ? 'baja' : ''}` },
               g.tendencia === null ? '' : g.tendencia > 0 ? `▲ ${g.tendencia}` : g.tendencia < 0 ? `▼ ${-g.tendencia}` : '=')));
@@ -256,9 +256,10 @@
       /** Lo de Firebase (con jugador): la historia de otros celulares, los comodines por invitar y los desafíos aceptados. */
       const sincronizar = async () => {
         const R = await red;
+        // Los comodines que había antes: cada aceptado da uno mientras quede lugar bajo el tope
+        let libres = COMODINES_MAX - estado().comodines;
         const { nuevos } = await R.sincronizar();
-        const cap = estado().comodines >= COMODINES_MAX;
-        return nuevos.map(x => fmt(cap ? T.aceptadoSin : T.aceptado, { n: x.n || T.unAmigo }));
+        return nuevos.map(x => fmt(libres-- > 0 ? T.aceptado : T.aceptadoSin, { n: x.n || T.unAmigo }));
       };
       await dibujar();
       sincronizar().then(avisos => dibujar({ avisos })).catch(() => {});
