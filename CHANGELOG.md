@@ -1,9 +1,14 @@
 # Changelog
 
-## 0.113.1 — 2026-10-06
+## 0.114.1 — 2026-10-06
 - **Cambiar el PIN va en "Juegas como"** (D-236): al tocar tu nombre se despliegan Cambiar el PIN,
   con una línea que explica para qué sirve, y Salir. En Rankings queda solo **Tus partidas**, con
   cuántas veces jugaste cada juego.
+
+## 0.114.0 — 2026-10-06
+- **"Tus copas" separa las terminadas** (D-234): en la portada de La Copa, las copas que ya
+  terminaron llevan la etiqueta **Terminó** y no se ven de entrada. Para verlas, se prende
+  **Mostrar copas terminadas**, al pie de la lista.
 
 ## 0.113.0 — 2026-10-05
 - **Un globo en la portada invita a agregar la app a inicio, en el laboratorio** (D-232): con un
