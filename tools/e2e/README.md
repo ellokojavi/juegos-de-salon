@@ -201,5 +201,5 @@ Usa el almacén de prueba de la copa y el de los jugadores.
 prueba, la clave VAPID de `vapid.js` (D-225) y un servicio de avisos falso (nada sale del Chrome): la tarjeta y
 "Ahora no", la campana que activa los avisos y el aviso de confirmación, los ajustes y "Silenciar
 esta copa", los avisos bloqueados, y el camino de iPhone (agregar a inicio, dentro de Instagram, y
-la app instalada que abre con el nombre ya elegido y hereda el laboratorio de avisos, D-225, cosa que
-un link con `&app=` en una pestaña no hace). Deja capturas de cada hoja.
+los pasos que dan el código de la copa, porque iOS abre la app en la portada, D-227, y la app
+instalada que abre con el nombre ya elegido si la dirección lleva `&app=`). Deja capturas de cada hoja.
