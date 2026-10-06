@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.123.0 — 2026-10-06
+- **La Copa y Uno al día, mitad y mitad** (D-239): en la portada, Uno al día pasa a una tarjeta al
+  lado de La Copa, con el emoji a la izquierda del título. Los títulos de las dos van en color,
+  dorado y celeste, para distinguirlas de los juegos, y en La Copa jugadores y días caben en una
+  línea. El dado vuelve a decir **Juego al azar**.
+
 ## 0.122.0 — 2026-10-06
 - **Juegos favoritos** (D-238): cada juego de la portada tiene una ☆ en la esquina. Al tocarla,
   queda entre tus favoritos, y arriba de los tipos aparece **⭐ Favoritos**, que deja ver solo esos.
