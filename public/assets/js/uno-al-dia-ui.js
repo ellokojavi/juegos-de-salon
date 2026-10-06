@@ -72,8 +72,8 @@ export function botonUnoAlDia({ lang, raiz = '', alTocar }) {
 }
 
 /**
- * La otra forma de ponerlo en la portada (a prueba, la elige el dueño): una tarjeta de media fila
- * al lado de La Copa, como acceso de más jerarquía que los juegos. Misma lógica que el botón.
+ * La otra forma de ponerlo en la portada, que se prueba desde /labs/: una tarjeta de media fila al
+ * lado de La Copa, como acceso de más jerarquía que los juegos. Misma lógica que el botón.
  */
 export function tarjetaUnoAlDia({ lang, raiz = '', alTocar }) {
   const { T, hecho, linea2, abrir, aria } = estadoAcceso(lang, raiz, alTocar);

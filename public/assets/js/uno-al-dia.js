@@ -145,6 +145,23 @@ export function activarUnoAlDia(si, storage = globalThis.localStorage) {
   try { if (si) storage.setItem(LABS_UNO_AL_DIA_KEY, '1'); else storage.removeItem(LABS_UNO_AL_DIA_KEY); } catch (_) { /* sin memoria */ }
 }
 
+/**
+ * Dónde va el acceso en la portada. Lo elegido es al lado de Juego al azar (`'boton'`); la otra
+ * forma, una tarjeta de media fila junto a La Copa (`'tarjeta'`), se puede probar desde `/labs/`
+ * en un celular, o con `?uad=tarjeta`.
+ */
+export const LABS_FORMA_KEY = 'juegos-de-salon:labs-uno-al-dia-forma';
+export function formaAcceso({ storage = globalThis.localStorage, loc = globalThis.location } = {}) {
+  try {
+    const q = new URLSearchParams(loc?.search || '').get('uad');
+    if (q === 'tarjeta' || q === 'boton') return q;
+    return storage.getItem(LABS_FORMA_KEY) === 'tarjeta' ? 'tarjeta' : 'boton';
+  } catch (_) { return 'boton'; }
+}
+export function elegirForma(forma, storage = globalThis.localStorage) {
+  try { if (forma === 'tarjeta') storage.setItem(LABS_FORMA_KEY, 'tarjeta'); else storage.removeItem(LABS_FORMA_KEY); } catch (_) { /* sin memoria */ }
+}
+
 /* ------------------------------------------------------------------ */
 /* La memoria del celular                                              */
 /* ------------------------------------------------------------------ */
