@@ -12,7 +12,9 @@
  *     español, que es como se delata un texto escrito a mano fuera de los diccionarios;
  *   - el idioma no rompe la pantalla (C-8): un texto más largo —el alemán lo es— no puede
  *     traer scroll horizontal, botones bajo 44 px ni botones que se salgan por abajo que el
- *     español no tenga.
+ *     español no tenga;
+ *   - ningún bloque (panel, botón, fila de botones) queda pegado al de abajo: sin aire entre los
+ *     dos se leen como uno solo. Se mira con los desplegables cerrados y abiertos.
  *
  * Lo que ya está mal en español lo cuentan los guiones del juego; aquí solo se mira lo que
  * cambia con el idioma. Cada toma queda como captura: `<pantalla>-<idioma>.png`.
@@ -64,7 +66,22 @@ const MEDIR = `(()=>{
       .filter(x => visible(x) && x.getBoundingClientRect().height < 43.5).map(nombre))],
     fuera: [...new Set([...document.querySelectorAll('.screen.active .btn, .confirm .btn')]
       .filter(x => visible(x) && x.getBoundingClientRect().bottom > innerHeight + 1).map(nombre))],
+    pegados: pegados(),
   };
+  // Dos bloques uno sobre otro, que se tocan: "La línea quedó así" sobre "Compartir" sin aire
+  function pegados() {
+    const bloques = [...document.querySelectorAll('.screen.active, .confirm')]
+      .flatMap(r => [...r.querySelectorAll('.panel, .btn, details, .stack')]).filter(visible);
+    const hay = new Set();
+    for (const a of bloques) for (const b of bloques) {
+      if (a === b || a.contains(b) || b.contains(a)) continue;
+      const A = a.getBoundingClientRect(), B = b.getBoundingClientRect();
+      if (Math.min(A.right, B.right) - Math.max(A.left, B.left) < 20) continue;
+      const aire = B.top - A.bottom;
+      if (aire > -1 && aire < 4) hay.add(nombre(a) + ' / ' + nombre(b));
+    }
+    return [...hay];
+  }
 })()`;
 
 /**
@@ -113,6 +130,14 @@ export async function revisarIdiomas(juego, { dicts = [], port, pantallas, permi
       await sleep(500);
       const m = await b.evaluate(MEDIR);
       await b.shot(`${toma}-${lang}`);
+      if (lang === 'es') {
+        await b.evaluate(`document.querySelectorAll('.screen.active details').forEach(d => d.open = true); 1`);
+        await sleep(200);
+        const abiertos = (await b.evaluate(MEDIR)).pegados;
+        await b.evaluate(`document.querySelectorAll('.screen.active details').forEach(d => d.open = false); 1`);
+        const pegados = [...new Set([...m.pegados, ...abiertos])];
+        ok(!pegados.length, `${toma}: ningún bloque pegado al de abajo${pegados.length ? ': ' + pegados.slice(0, 2).join(' · ') : ''}`);
+      }
       const nuevos = b.errors.slice(antes);
       ok(!nuevos.length, `${toma} · ${lang}: sin errores en la consola${nuevos.length ? ': ' + nuevos[0].slice(0, 160) : ''}`);
       ok(m.lang === lang, `${toma} · ${lang}: la página está en ${lang}${m.lang === lang ? '' : ` (dice ${m.lang})`}`);

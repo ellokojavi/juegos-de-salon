@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.111.1 — 2026-10-06
+- **Línea de Tiempo: aire bajo "La línea quedó así"**: al terminar una partida solo, el desplegable
+  ya no queda pegado al botón de compartir. Las pruebas revisan ahora que no haya bloques pegados
+  en ninguna pantalla de ningún juego.
+
 ## 0.111.0 — 2026-10-05
 - **Avisos más justos** (D-229): a lo más 2 por copa al día, y si se vencen dos días a la vez,
   van en un aviso. Al tocarlo abre el día que avisa, listo para jugar, y en Android trae los botones
