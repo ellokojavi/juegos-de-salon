@@ -778,14 +778,14 @@ function bloqueUnoAlDia(rango) {
   function actividad(rotulos) {
     const filas = Object.entries(rotulos).map(([k, label]) => [label, u.eventos[k] || 0]);
     const max = Math.max(0, ...filas.map(([, v]) => v));
-    return lista(filas.filter(([, v]) => v).map(([label, v]) => bar(label, [seg(C_IDIOMA, v)], max)), 'Nada en este rango.', 'bars');
+    return lista(filas.filter(([, v]) => v).map(([label, v]) => bar(label, [seg(C_IDIOMA, v)], max)), 'Nada en este rango.', 'bars bars--rotulo-largo');
   }
 }
 
 /** Qué cuenta cada señal de Uno al día (`uad/<evento>`, EVENTOS_UAD en stats.js), en el orden en que pasa. */
 const USO_UAD = {
   boton: '📅 Tocaron el botón', dado: '🎲 Rodó el dado del día', jugado: '✅ Terminaron el de hoy', repite: '🔁 Lo repitieron',
-  compartir: '📤 Compartieron el resultado', otro: '🎲 Tiraron por otro juego', invitar: '👋 Tocaron Invitar',
+  compartir: '📤 Lo compartieron', otro: '🎲 Tiraron por otro juego', invitar: '👋 Tocaron Invitar',
   invitacion: '✉️ Abrieron una invitación', aceptada: '🧊 Aceptaron (comodín para quien invitó)',
 };
 const AVISOS_UAD = {

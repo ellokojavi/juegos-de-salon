@@ -39,6 +39,8 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0
 .bars { display: flex; flex-direction: column; gap: 8px; }
 .bar { display: grid; grid-template-columns: minmax(90px, 32%) 1fr auto; align-items: center; gap: 10px; font-size: 0.95rem; }
 .bar .label { font-weight: 800; overflow: hidden; overflow-wrap: anywhere; display: flex; flex-direction: column; line-height: 1.15; }
+/* Rótulos que son frases ("Qué se hace" en Uno al día): más ancho, para no cortar una palabra a 320 px */
+.bars--rotulo-largo .bar { grid-template-columns: 46% 1fr auto; }
 .bar .label small { color: var(--muted); font-size: 0.72rem; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .bar .track { height: 18px; border-radius: 999px; background: rgba(255, 255, 255, 0.08); overflow: hidden; display: flex; }
 /* El color de cada segmento lo pone panel.js, repartido por el orden de los modos (C-16):
