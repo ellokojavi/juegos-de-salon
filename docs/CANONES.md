@@ -130,7 +130,9 @@ modo que el juego piensa tener.
   semilla compartida que va en la lista de mensajes, así cada celular llega al mismo reparto sin
   mandarlo. La excepción es lo oculto que nadie debe poder calcular con el código, que es público: los
   dados de Dudo van comprometidos con hash y sal (D-70) y las manos de Julepe en sobres cerrados
-  (D-81). Ver C-10.
+  (D-81). Ver C-10. Y lo que se tira a la vista de todos no se reparte: los dados de Generala los
+  tira el celular de quien juega y viajan en claro, porque con la semilla se podrían calcular los
+  próximos tiros (D-246).
 - Todos los modos usan la misma lógica: cambia el transporte, no el juego.
   `public/assets/js/transport/local.js` (mismo dispositivo, también para la IA) y `firebase.js` (sala remota).
 - Interfaz del transporte: `create`, `join`, `send`, `onMessage`, `onPresence`, `leave`, `dispose`.
