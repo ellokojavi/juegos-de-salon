@@ -1,10 +1,15 @@
 # Changelog
 
-## 0.110.0 — 2026-10-05
+## 0.111.0 — 2026-10-05
 - **Un globo en la portada invita a agregar la app a inicio, en el laboratorio** (D-229): con un
   toque en **Agregar** salen los pasos de tu celular (Safari o Chrome, en iPhone o Android); en
   Android, si Chrome lo ofrece, su propio botón de instalar. La ✕ lo cierra para siempre. Se
   activa en `/labs/` para probarlo.
+
+## 0.110.0 — 2026-10-05
+- **Avisos de La Copa para todos** (D-228): la 🔔 de cada copa ya no está solo en el laboratorio.
+  Quien la activa recibe en el celular cuándo se abre un día, cuándo se le acaba el plazo para
+  jugarlo, La Gran Final y quién ganó. En iPhone, con la app agregada a inicio.
 
 ## 0.109.1 — 2026-10-05
 - **La campana de avisos aparece en la app del iPhone** (D-227): el iPhone abre la app agregada a

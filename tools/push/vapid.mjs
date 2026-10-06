@@ -54,5 +54,5 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     console.log(`La privada quedó en ${RESPALDO}. Cárgala con:\n  gh secret set VAPID_PRIVADA < "${RESPALDO}"`);
   }
   writeFileSync(ARCHIVO, conClave(actual, publica));
-  console.log(`✓ La pública quedó en public/assets/js/vapid.js. Commitea ese archivo: con él, los avisos se ofrecen en /labs/.`);
+  console.log(`✓ La pública quedó en public/assets/js/vapid.js. Commitea ese archivo: con él, los avisos se ofrecen en las copas.`);
 }
