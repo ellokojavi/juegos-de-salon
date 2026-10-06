@@ -451,7 +451,8 @@ export function canalDe(search = '') {
  * El aviso de La Copa que abrió esta página (`?aviso=dia`, D-233): lo pone avisar.mjs en la
  * dirección de cada aviso, así el panel cuenta cuántos se tocan, por tipo. Vacío si no viene de uno.
  */
-export const TIPOS_AVISO = ['dia', 'plazo', 'final', 'fin', 'insc', 'copas', 'prueba'];
+// Los de Uno al día (D-230) van con `uad` pegado, sin guion: las reglas piden solo letras
+export const TIPOS_AVISO = ['dia', 'plazo', 'final', 'fin', 'insc', 'copas', 'prueba', 'uaddia', 'uadracha', 'uadsemana', 'uadadios'];
 export function avisoDe(search = '') {
   let q;
   try { q = new URLSearchParams(String(search || '')); } catch (_) { return ''; }

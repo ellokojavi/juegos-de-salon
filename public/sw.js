@@ -18,6 +18,8 @@ self.addEventListener('push', e => {
   try { a = e.data ? e.data.json() : null; } catch (_) { a = null; }
   if (!a || !a.title) return;
   const acciones = Array.isArray(a.acciones) ? a.acciones.filter(x => x && x.action && x.title).slice(0, 2) : [];
+  // El aviso de Uno al día pone el globo del ícono (un 1: falta jugar el de hoy, D-230)
+  if (String(a.tag || '').startsWith('uad-dia') && self.navigator?.setAppBadge) self.navigator.setAppBadge(1).catch(() => {});
   e.waitUntil(self.registration.showNotification(a.title, {
     body: a.body || '',
     icon: 'assets/icons/icon-192.png',
