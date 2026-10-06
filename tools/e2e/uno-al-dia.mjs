@@ -105,10 +105,11 @@ ok(await esperar(`location.pathname === '/today/'`, 12), 'tocarlo abre /today/ (
 
 /* ---------- /today/ ---------- */
 await esperar(`!!document.getElementById('uad-hoy')`);
-ok(/Desenredo/.test(await texto('#uad-hoy')) && /El próximo sale en 1[12]\sh/.test(await texto('#uad-hoy')), `hoy: el juego, el puntaje y cuánto falta (${(await texto('#uad-hoy')).replace(/\n/g, ' / ')})`);
+ok(/🧶 Desenredo: \d+ puntos/.test(await texto('#uad-hoy')) && /Próximo juego en 1[12]\sh/.test(await texto('#uad-hoy')), `hoy: el juego, el puntaje y cuánto falta (${(await texto('#uad-hoy')).replace(/\n/g, ' / ')})`);
 ok(/🔥 1/.test(await texto('#uad-trio')), 'la racha');
 ok(await ev(`[...document.querySelectorAll('.uad-bloque h2')].some(h => h.textContent === 'Calendario')`), 'el calendario del mes se titula "Calendario"');
 ok(await ev(`document.querySelectorAll('#uad-cal span.hoy').length`) === 1 && /🧶/.test(await texto('#uad-cal span.hoy')), 'el calendario marca hoy con el emoji del juego');
+ok(/^\d+$/.test(await texto('#uad-cal span.hoy .cal-pts')), `y el puntaje de 0 a 100 en una píldora (${await texto('#uad-cal span.hoy .cal-pts')})`);
 ok(await ev(`!!document.querySelector('#uad-por-juego [data-id="desenredo"]')`), 'y Desenredo en "Por juego"');
 
 // Con historia: una racha larga, días de otros meses y una tendencia
