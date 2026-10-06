@@ -52,7 +52,7 @@ public/<carpeta>/
 - Reutilizar siempre los módulos compartidos antes de escribir uno nuevo:
   `public/assets/js/ui.js` (DOM, confeti, vibración, wake lock), `i18n.js`, `sound.js`, `session.js`, `handoff.js`, `transport/`.
   Lo mismo con los estilos de `base.css`: una hoja que sube desde abajo con pasos o ajustes es la
-  `.hoja` (con `.hoja-capa`, `.hoja-paso`…), la de los avisos de La Copa y del globo de la portada (D-229).
+  `.hoja` (con `.hoja-capa`, `.hoja-paso`…), la de los avisos de La Copa y del globo de la portada (D-230).
 
 ## C-3 · Idiomas
 

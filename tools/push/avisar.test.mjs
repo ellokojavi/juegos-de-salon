@@ -46,6 +46,19 @@ await caso('manda lo que toca y anota lo entregado', async () => {
   assert.equal(c[`pushEnviados/KQRST/${S2}/dia:2`], now);
 });
 
+await caso('días nuevos de dos copas para un celular: un aviso, anotado en las dos (D-229)', async () => {
+  const db = base();
+  db.datos.torneos.MNPQR = { meta: { ...meta, name: 'La Oficina' }, players: { cccccc: { name: 'Ana', at: 1 } } };
+  db.datos.pushCopa.MNPQR = { cccccc: { [S1]: { dia: true, plazo: true, at: 0 } } };
+  const mandados = [];
+  const r = await vuelta({ db, now, log: () => {}, envio: async (sub, aviso) => { mandados.push([sub.endpoint, aviso.body]); return { estado: 201 }; } });
+  assert.equal(r.avisos, 2, 'Ana, uno con las dos copas; Beto, el suyo');
+  assert.ok(mandados.some(([e, b]) => /fcm/.test(e) && b === '🎲 Tienes un día nuevo en 2 copas: Los Primos y La Oficina.'));
+  const c = db.cambios[0];
+  assert.equal(c[`pushEnviados/KQRST/${S1}/dia:2`], now);
+  assert.equal(c[`pushEnviados/MNPQR/${S1}/dia:2`], now);
+});
+
 await caso('limpia las copas que terminaron hace más de una semana o que ya no existen', async () => {
   const db = base();
   const r = await vuelta({ db, now, log: () => {}, envio: async () => ({ estado: 201 }) });

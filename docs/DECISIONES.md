@@ -70,7 +70,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220 |
 | Marketing | `marketing/README.md` | D-178 |
-| App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229 |
+| App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230 |
 
 ---
 
@@ -3692,7 +3692,7 @@ mismo celular, el celular la anula y pide otra, que sí puede guardar. `tools/e2
 prueba en iPhone queda como lista de pasos en PWA-NOTIFICACIONES.md.
 
 ## D-224 · Los avisos de La Copa los manda GitHub cada 15 minutos, sin dependencias
-**Fecha:** 2026-10-05 · **Estado:** corregida por D-228 · **Relación:** completa D-221 y D-223; corrige las consecuencias de D-223
+**Fecha:** 2026-10-05 · **Estado:** corregida por D-228, D-229 · **Relación:** completa D-221 y D-223; corrige las consecuencias de D-223
 **Decisión:** El PR 3 del plan de avisos ([PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md)): el
 workflow `.github/workflows/avisos.yml` corre `tools/push/avisar.mjs` cuatro veces por hora.
 - **Qué toca** lo decide `tools/push/calendario.mjs` con la lógica de la copa (`cup/engine.js`):
@@ -3816,7 +3816,36 @@ los manda cada 15 minutos sin que nadie mire. Lo que falta medir (cuántos los a
 tocan) es el PR 4 de [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md). `tools/e2e/cup/avisos.mjs` no
 cambia: en el sitio local los avisos ya se veían sin el laboratorio.
 
-## D-229 · Un globo en la portada invita a agregar la app a inicio, primero en el laboratorio
+## D-229 · Los avisos: tope de 2 al día, empates en plural, el día exacto, botones y copas juntas
+**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** corrige D-224 (sin tope, un ganador, abría el tablero, sin botones ni copas juntas)
+**Decisión:** Lo que D-224 dejó afuera del plan de [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md),
+en `tools/push/calendario.mjs`, `avisar.mjs`, `public/sw.js` y la copa:
+- **Tope:** a lo más **2 avisos por copa y celular en un día** de quien recibe (`TOPE`). Cuenta
+  entregas, no claves: el aviso de dos inscritos es uno. Si se vencen dos plazos a la vez (la final
+  y el día anterior, la noche del último día), van en un aviso: "Te quedan 4 horas para jugar los
+  días 6 y 7. Si no los juegas, son 0 puntos."
+- **Empate en el primer lugar** (mismos puntos, días ganados y final, como la tabla): "🥇 Ganaron
+  Ana y Beto. Quedaste 3.º"; a quien empató arriba, "🥇 ¡Ganaste la copa junto con Beto!".
+  Las listas de nombres van con `Intl.ListFormat` en el idioma de quien recibe ("Ana y Beto",
+  "Ana e Beto"), también en el de la inscripción.
+- **El día exacto:** el del día, el plazo y la final abren la copa con `&dia=<d>`, y la copa parte
+  en ese día, listo para empezar, si todavía se puede jugar; si no, el tablero. El del cierre abre
+  el tablero, que ya muestra el podio.
+- **Botones en Android:** esos avisos traen **Jugar** (el día) y **Silenciar esta copa**, que abre
+  la copa con `&silenciar`: la silencia como el botón de los ajustes y lo dice. El service worker no
+  escribe en la base: lo hace la copa, con el jugador ya sentado. iPhone no muestra botones.
+- **Copas juntas:** si a un celular le toca el día nuevo de varias copas en la misma vuelta, va un
+  solo aviso ("🎲 Tienes un día nuevo en 2 copas: Los Primos y La Oficina.") que abre la portada
+  de La Copa, y se anota en cada copa. Plazos, final y cierre siguen siendo de cada copa.
+**Por qué:** El dueño lo pidió después de ver llegar los avisos a su Android y su iPhone ("ejecuta
+las 3 pendientes"). El tope y los plazos juntos evitan el aviso de más que hace que alguien los
+apague; el día exacto y los botones ahorran toques; el empate no deja a un ganador afuera.
+**Consecuencias:** `calendario.test.mjs` y `avisar.test.mjs` prueban el tope, los plazos juntos, el
+empate y las copas juntas; `tools/e2e/cup/avisos.mjs`, `&dia=` y `&silenciar`. Los botones se
+prueban a mano en Android: Chrome headless no los muestra. Si con el tope se pierde un plazo (dos
+avisos ya ese día), el del día siguiente o el de gracia lo cubren.
+
+## D-230 · Un globo en la portada invita a agregar la app a inicio, primero en el laboratorio
 **Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** completa D-221; reusa la hoja de pasos de D-223
 **Decisión:** La portada muestra, a los 2,5 segundos, un globo abajo con el ícono de la app,
 **"Juegos de Salón como app"**, una línea y el botón **Agregar**, que abre los pasos de ese
