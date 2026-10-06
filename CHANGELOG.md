@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.114.1 — 2026-10-06
+- **Del dado al juego, sin corte** (D-235): en Juego al azar, el dado se desvanece en el fondo
+  de la app y el juego aparece con un fundido, en vez de cambiar de golpe.
+
 ## 0.114.0 — 2026-10-06
 - **"Tus copas" separa las terminadas** (D-234): en la portada de La Copa, las copas que ya
   terminaron llevan la etiqueta **Terminó** y no se ven de entrada. Para verlas, se prende

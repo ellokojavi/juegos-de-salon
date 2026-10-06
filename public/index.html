@@ -214,6 +214,14 @@
     .azar-nombre b { font: 400 clamp(2rem, 9vw, 2.8rem) var(--font-display); letter-spacing: 0.04em; color: var(--yellow); line-height: 1.05; }
     .azar-capa.listo .azar-nombre > * { animation: pop 0.4s ease-out both; }
     .azar-capa.listo .azar-nombre b { animation-delay: 0.08s; }
+    /* Al irse (D-235): el dado se aleja y la capa toma el fondo de la app, el mismo sobre el que
+       aparece el juego. El ::before queda bajo el dado y sobre el velo de la capa */
+    .azar-capa::before { content: ''; position: fixed; inset: 0; z-index: -1; background: var(--bg1) fixed; background-image: var(--fondo); opacity: 0; transition: opacity 0.4s ease-in; }
+    .azar-capa.saliendo::before { opacity: 1; }
+    .azar-escena, .azar-nombre, .azar-lienzo { transition: opacity 0.3s ease-in, transform 0.4s cubic-bezier(0.5, 0, 0.9, 0.6); }
+    .azar-capa.saliendo .azar-escena, .azar-capa.saliendo .azar-nombre { opacity: 0; }
+    .azar-capa.saliendo .azar-lienzo { transform: scale(0.75); }
+    .azar-capa.saliendo .azar-nombre { transform: translateY(10px); }
   </style>
   <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
   <meta name="apple-mobile-web-app-title" content="Juegos de Salón">
