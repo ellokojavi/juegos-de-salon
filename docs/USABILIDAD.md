@@ -86,7 +86,8 @@ nunca se usaron, y no se renumera.
   desde cualquier botón; una invitación, solo con texto (la imagen la pone la tarjeta del link).
   La app, desde la portada, va con esa tarjeta como imagen, la de su idioma (D-226).
 - **U-31 · Completo:** el resultado dice copa, día, juego, jugador y puntaje; la tabla dice quién
-  falta y marca "(-1J)" a quien lleva menos juegos.
+  falta y marca "(-1J)" a quien lleva menos juegos. Excepción: el resultado de Uno al día no
+  nombra el juego de hoy (#215).
 - **U-32 · Sin spoilers:** lo que se comparte no revela respuestas ni los juegos que vienen.
 
 ## Marketing
@@ -145,3 +146,7 @@ Las respuestas a dilemas (issues con la etiqueta `usabilidad`) se anotan aquí:
 - ~~**El 🐞 del laboratorio alemán puede achicar el nombre del juego en la barra**~~ (#159): ya no
   aplica: el alemán salió del laboratorio (D-197) y ya no muestra 🐞. Vuelve a valer para el
   próximo idioma que entre al laboratorio (D-191).
+- **Uno al día: compartir sin el juego de hoy** (#215, D-230): ni el texto ni la imagen del
+  resultado nombran el juego que tocó ("📅 *Uno al día n.° 12*" y "87 puntos"), porque quien lo lee
+  en el grupo casi siempre todavía no juega y el juego se descubre en el dado, como con el aviso.
+  Es una excepción a U-31.
