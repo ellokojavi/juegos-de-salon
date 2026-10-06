@@ -191,16 +191,16 @@
     .btn-azar:active { transform: translateY(3px); box-shadow: 0 1px 0 #c99a00, 0 4px 12px rgba(255, 210, 63, 0.3); }
     .btn-azar-dado { font-size: 1.5rem; display: inline-block; transition: transform 0.4s; }
     .btn-azar:hover .btn-azar-dado { transform: rotate(-25deg); }
-    /* Uno al día (D-230): una ficha de dos líneas al lado del dado, con su estado abajo */
+    /* Uno al día (D-230): a la derecha de "Al azar", en una línea, con la racha en una píldora */
     .btn-uad {
-      position: relative; display: inline-grid; justify-items: center; gap: 0; min-height: 48px; padding: 5px 20px; cursor: pointer;
+      position: relative; display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 8px 18px; cursor: pointer;
       color: #fff; background: linear-gradient(180deg, #ff5fa5, var(--pink)); border: 0; border-radius: 999px;
       box-shadow: 0 4px 0 #a3104f, 0 8px 22px rgba(255, 46, 136, 0.3); transition: transform 0.1s, box-shadow 0.1s;
     }
     .btn-uad:active { transform: translateY(3px); box-shadow: 0 1px 0 #a3104f, 0 4px 12px rgba(255, 46, 136, 0.3); }
     .btn-uad.hecho { color: #05302b; background: linear-gradient(180deg, #7ff5ea, var(--cyan)); box-shadow: 0 4px 0 #149a8f, 0 8px 22px rgba(46, 230, 214, 0.25); }
     .btn-uad-titulo { display: inline-flex; gap: 8px; align-items: center; font: 400 1.25rem/1.1 var(--font-display); letter-spacing: 0.06em; }
-    .btn-uad-estado { font: 800 0.8rem/1.2 var(--font-body); opacity: 0.95; }
+    .btn-uad-racha { font: 900 0.8rem/1 var(--font-body); padding: 4px 7px; border-radius: 999px; background: rgba(0, 0, 0, 0.22); white-space: nowrap; }
     .btn-uad-punto {
       position: absolute; top: -2px; right: -2px; width: 12px; height: 12px; border-radius: 50%;
       background: var(--lime); box-shadow: 0 0 0 2px var(--bg2), 0 0 10px var(--lime); animation: uadPulso 1.6s ease-in-out infinite;
@@ -208,11 +208,19 @@
     @keyframes uadPulso { 50% { transform: scale(1.3); } }
     /* Al lado del dado (lo elegido): los dos botones se achican para caber en una fila, también a 320 px */
     .azar-slot.con-uad { flex-wrap: nowrap; gap: 8px; }
-    .azar-slot.con-uad .btn-azar { flex: 0 1 auto; min-width: 0; gap: 6px; padding: 6px 14px 6px 10px; font-size: clamp(0.95rem, 4.2vw, 1.2rem); white-space: nowrap; }
-    .azar-slot.con-uad .btn-azar-dado { font-size: 1.2rem; }
-    .azar-slot.con-uad .btn-uad { flex: 0 1 auto; min-width: 0; padding: 5px 14px; }
-    .azar-slot.con-uad .btn-uad-titulo { gap: 5px; font-size: clamp(0.95rem, 4.2vw, 1.15rem); white-space: nowrap; }
-    .azar-slot.con-uad .btn-uad-estado { font-size: 0.72rem; white-space: nowrap; }
+    .azar-slot.con-uad .btn-azar { flex: 0 1 auto; min-width: 0; gap: 6px; padding: 8px 16px 8px 12px; font-size: clamp(1.05rem, 4.8vw, 1.3rem); white-space: nowrap; }
+    .azar-slot.con-uad .btn-azar-dado { font-size: 1.3rem; }
+    .azar-slot.con-uad .btn-uad { flex: 0 1 auto; min-width: 0; gap: 6px; padding: 8px 14px 8px 12px; }
+    .azar-slot.con-uad .btn-uad-titulo { gap: 6px; font-size: clamp(1.05rem, 4.8vw, 1.3rem); white-space: nowrap; }
+    /* En 340 px o menos ("Spiel des Tages" con la racha), todo un poco más apretado */
+    @media (max-width: 340px) {
+      .azar-slot.con-uad { gap: 6px; }
+      .azar-slot.con-uad .btn-azar { padding: 8px 12px 8px 9px; font-size: 0.95rem; gap: 4px; }
+      .azar-slot.con-uad .btn-azar-dado { font-size: 1.1rem; }
+      .azar-slot.con-uad .btn-uad { padding: 8px 9px; gap: 4px; }
+      .azar-slot.con-uad .btn-uad-titulo { font-size: 0.95rem; gap: 4px; }
+      .azar-slot.con-uad .btn-uad-racha { padding: 3px 5px; font-size: 0.72rem; }
+    }
     /* La otra forma, a prueba en /labs/: una fila de dos tarjetas altas, La Copa y Uno al día */
     .fila-alta { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 10px; }
     .game-card.alta { position: relative; grid-template-columns: 1fr; grid-template-areas: "emoji" "texto" "meta"; row-gap: 8px; align-content: start; justify-items: start; text-align: left; padding: 14px 12px; font: inherit; cursor: pointer; }
@@ -264,7 +272,7 @@
     import { getLang, langToggle, applyStatic, pickLang, COMMON, homeUrl } from './assets/js/i18n.js';
     import { FRASES } from './assets/js/frases.js';
     import { SFX, soundToggle, initSound } from './assets/js/sound.js';
-    import { botonAzar } from './assets/js/azar.js';
+    import { botonAzar, TEXTOS as AZAR } from './assets/js/azar.js';
     import { trackVisit } from './assets/js/transport/stats.js';
     trackVisit(); // el tráfico del sitio (D-208)
     sparkles();
@@ -341,6 +349,9 @@
       } else {
         const slot = document.getElementById('azar-slot');
         slot.classList.add('con-uad');
+        // En la misma fila, los dos con etiqueta corta: "Al azar" y "Uno al día" (decisión del dueño)
+        const azar = slot.querySelector('.btn-azar span:last-child');
+        if (azar) azar.textContent = (AZAR[lang] || AZAR.es).corto;
         slot.append(botonUnoAlDia({ lang, alTocar: () => SFX.tap() }));
       }
     }).catch(() => {});
