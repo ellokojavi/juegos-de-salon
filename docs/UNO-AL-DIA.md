@@ -344,15 +344,15 @@ escribe el celular al terminar, así que el aviso sabe si ya jugó aunque no ten
 - **Retención**: de los que jugaron por primera vez un día, cuántos volvieron al día siguiente, a los 7 y a los 30 días. Es la
   cifra que dice si funciona.
 - **Rachas**: cuántos tienen 1, 2 a 6, 7 a 29, y 30 o más.
-- **De dónde llegan**: botón de la portada, aviso (`?aviso=uad-dia`, y `uad-racha`, `uad-semana`, `uad-adios`), calendario (`?de=cal`), link
+- **De dónde llegan**: botón de la portada, aviso (`?aviso=uaddia`, y `uadracha`, `uadsemana`, `uadadios`), calendario (`?de=cal`), link
   compartido (`?de=compartir`) e invitación (`?inv=`).
 - **Invitaciones**: cuántas se mandan, cuántos amigos abren el link, cuántos terminan su primer
   Uno al día y cuántos vuelven al día siguiente. Cuántos jugadores nuevos trae cada invitación es
   la cifra del crecimiento.
 - **Tráfico a otros juegos**: cuántos tocan **🎲 Jugar otro** y qué juegan.
 - **Avisos**: se ofrecieron → eligió hora → permiso → avisos tocados, y cuántos se silencian. Desde
-  el PR 4, el bloque "🔔 Avisos al celular" del panel cuenta los mandados de cada tipo (`uad-dia`,
-  `uad-racha`, `uad-semana`, `uad-adios`); el embudo de la oferta y los silenciados no se miden
+  el PR 4, el bloque "🔔 Avisos al celular" del panel cuenta los mandados de cada tipo (`uaddia`,
+  `uadracha`, `uadsemana`, `uadadios`); el embudo de la oferta y los silenciados no se miden
   todavía.
 
 ## Por partes
@@ -503,11 +503,11 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   días sin jugar. A los 30 días sin jugar llega el de despedida (`adios`, con su mejor racha) y se
   borran `pushDia/<subId>` y lo mandado. Si la suscripción muere o desaparece, `pushDia` se borra
   con ella. Los avisos no van con `--prueba <código>` (esa es la de una copa).
-- **En el panel:** cada aviso abre `today/?aviso=uad-<tipo>` (`uad-dia`, `uad-racha`, `uad-semana`,
-  `uad-adios`), para que no se junte con el `dia` de La Copa, y `avisar.mjs` suma los entregados en
-  `mandados/uad-<tipo>`: salen como filas propias en el bloque "🔔 Avisos al celular" (D-233). Los
-  tocados todavía no: la página no cuenta un `aviso` que no esté en `TIPOS_AVISO` (`stats.js`), y
-  las reglas de `aviso/<tipo>` no aceptan el guion.
+- **En el panel:** cada aviso abre `today/?aviso=uad<tipo>` (`uaddia`, `uadracha`, `uadsemana`,
+  `uadadios`), para que no se junte con el `dia` de La Copa, y `avisar.mjs` suma los entregados en
+  `mandados/uad<tipo>`: salen como filas propias en el bloque "🔔 Avisos al celular" (D-233), con sus
+  tocados (`TIPOS_AVISO` en `stats.js` los conoce). Sin guion, porque las reglas de `aviso/<tipo>`
+  y `mandados/<tipo>` piden solo letras.
 - Se prueba con `tools/push/uno-al-dia.test.mjs`, el caso nuevo de `avisar.test.mjs`,
   `uno-al-dia-avisos.test.mjs` y `tools/e2e/uno-al-dia-avisos.mjs` (con un servicio de avisos falso).
 

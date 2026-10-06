@@ -87,7 +87,7 @@ export async function vuelta({ db, envio, now = Date.now(), simular = false, pru
       try { r = await envio(subs[p.subId], p.aviso); } catch (e) { r = { estado: 0, texto: String(e?.message || e) }; }
       if (r.estado >= 200 && r.estado < 300) {
         resumen.entregados++;
-        porTipo[`uad-${p.tipo}`] = (porTipo[`uad-${p.tipo}`] || 0) + 1;
+        porTipo[`uad${p.tipo}`] = (porTipo[`uad${p.tipo}`] || 0) + 1;
         cambios[`pushEnviadosDia/${p.subId}/${p.clave}`] = now;
         if (p.borrar) { cambios[`pushDia/${p.subId}`] = null; cambios[`pushEnviadosDia/${p.subId}`] = null; }
       } else if (r.muerta) { resumen.muertas++; muertas.add(p.subId); } else { resumen.fallas++; log(`  ✗ ${r.estado} ${r.texto || ''}`); }

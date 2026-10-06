@@ -62,8 +62,8 @@ En `#/torneo`, debajo de las cifras de las copas, el bloque **🔔 Avisos al cel
 - **Mandados y tocados, por tipo:** `mandados/<tipo>` lo suma `avisar.mjs` (los que el servicio del
   celular aceptó); `aviso/<tipo>`, la página que abrió el aviso (`&aviso=<tipo>` en su dirección).
   El porcentaje es tocados sobre mandados en el rango. Los mandados son siempre del sitio publicado.
-  Los tipos que no son de La Copa salen después, con su nombre: los de Uno al día son `uad-dia`,
-  `uad-racha`, `uad-semana` y `uad-adios` (D-230); de esos, por ahora solo se cuentan los mandados.
+  Los tipos que no son de La Copa salen después, con su nombre: los de Uno al día son `uaddia`,
+  `uadracha`, `uadsemana` y `uadadios` (D-230).
 - **Aperturas de la app instalada:** `pwa/<sistema>`, del `start_url` `./?pwa` de los manifests.
 - **Última vuelta:** la hora de `stats/prod/push/vuelta`. Si pasó más de una hora sale en rojo:
   GitHub pudo apagar el workflow programado (lo hace tras 60 días sin commits) o le faltan los
