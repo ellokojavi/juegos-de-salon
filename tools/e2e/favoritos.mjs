@@ -77,8 +77,9 @@ for (const lang of ['es', 'en', 'pt', 'de']) {
     const tops = new Set(bs.map(x => Math.round(x.getBoundingClientRect().top)));
     const fila = document.querySelector('.filtros .tipos').getBoundingClientRect();
     return { n: bs.length, filas: tops.size, sale: bs.some(x => x.getBoundingClientRect().right > fila.right + 1), favArriba: fav.bottom <= fila.top && fav.height >= 44, ancho: document.documentElement.scrollWidth,
-      // Si algo se sale de la pantalla, cuál: las fuentes de Linux no miden como las del Mac
-      fuera: [...document.querySelectorAll('body *')].filter(x => x.getBoundingClientRect().right > innerWidth + 0.5 && !x.closest('[hidden]'))
+      // Si algo se sale de la pantalla, cuál (contra 320 y no innerWidth: en un celular emulado, la
+      // pantalla se ensancha con lo que se sale). Los brillos del fondo no cuentan: su caja los recorta
+      fuera: [...document.querySelectorAll('body *')].filter(x => x.getBoundingClientRect().right > 320.5 && !x.closest('[hidden], .bg-sparkles'))
         .map(x => (x.id ? '#' + x.id : x.className ? '.' + String(x.className).split(' ')[0] : x.tagName) + ' «' + x.textContent.trim().slice(0, 24) + '» en ' + (x.parentElement.className || x.parentElement.tagName) + ':' + Math.round(x.getBoundingClientRect().right)
           + ' fuente ' + getComputedStyle(x).fontFamily.slice(0, 30)).slice(0, 6) };
   })())`).then(JSON.parse);
