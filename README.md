@@ -554,6 +554,7 @@ node public/assets/js/compartir.test.mjs
 node public/assets/js/games.test.mjs
 node public/assets/js/i18n.test.mjs
 node public/assets/js/instalable.test.mjs
+node public/assets/js/instalar.test.mjs
 node public/assets/js/push.test.mjs
 node public/assets/js/records.test.mjs
 node public/assets/js/transport/cleanup.test.mjs
@@ -671,7 +672,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   records/                    Leaderboards: the All-Rounder, every game's table and The Cup's medal table (D-212)
   panel/                      Private owner dashboard: now, The Cup, games, traffic and audience, with a page per cup, game and room (Google sign-in; see docs/PANEL.md)
   assets/css/                 Shared styles: base.css (party theme), linea.css (timeline), teclado.css (keypad), ranking.css (leaderboards)
-  assets/js/                  Shared modules: games.js (game registry), i18n.js (ES/EN/PT/DE), labs-idioma.js (a new language in the lab, D-191), ui.js, sound.js, compartir.js (everything shared, D-165), handoff.js, chat.js, session.js, arrastre.js (drag and drop), teclado.js, azar.js and dado3d.js (Random game), frases.js, records.js + jugador.js + ranking.js (players and leaderboards, D-212; jugador-firebase.js and jugador-local.js are their stores), instalable.js (registers the service worker, D-221), push.js + vapid.js (phone notifications: subscribing, D-223)
+  assets/js/                  Shared modules: games.js (game registry), i18n.js (ES/EN/PT/DE), labs-idioma.js (a new language in the lab, D-191), ui.js, sound.js, compartir.js (everything shared, D-165), handoff.js, chat.js, session.js, arrastre.js (drag and drop), teclado.js, azar.js and dado3d.js (Random game), frases.js, records.js + jugador.js + ranking.js (players and leaderboards, D-212; jugador-firebase.js and jugador-local.js are their stores), instalable.js (registers the service worker, D-221), instalar.js (the home-page bubble that invites to add the app to the home screen, D-229), push.js + vapid.js (phone notifications: subscribing, D-223)
   assets/js/transport/        Transports: local (same phone), firebase (room) and stats (usage signals)
   assets/og/                  The 1200×630 images shown when a link is shared
   manifest.webmanifest        PWA manifest (installable on the home screen), one per language (manifest.en.webmanifest …) so the app is named in the player's language (D-222); its PNG icons are in assets/icons/

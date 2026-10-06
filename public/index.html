@@ -280,6 +280,10 @@
     // abrirse enseguida (Safari lo niega si el toque quedó atrás)
     if (comparteArchivos()) (window.requestIdleCallback || (f => setTimeout(f, 1500)))(() => app.imagen());
 
+    // El globo que invita a agregar la app a inicio (D-229): sale un rato después, en un celular
+    // que todavía no la abre instalada, hasta que lo cierran. Por ahora, en el laboratorio
+    import('./assets/js/instalar.js').then(({ globoInstalar }) => globoInstalar({ T, url: homeUrl(lang), tap: () => SFX.tap() })).catch(() => {});
+
     // 1) Lo importante primero: la lista de juegos, con los de La Copa al final (D-142).
     const list = document.getElementById('games');
     const tarjetas = PORTADA.map((g, i) => {
