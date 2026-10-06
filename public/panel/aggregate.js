@@ -9,7 +9,7 @@
  * origen, idioma y hora.
  */
 import { deserted } from '../assets/js/transport/dispose.js';
-import { MODE_IDS, isLocalMode, MAX_PLAYERS, gameById } from '../assets/js/games.js';
+import { MODE_IDS, isLocalMode, MAX_PLAYERS, gameById, MODO_UNO_AL_DIA } from '../assets/js/games.js';
 import { LATIDO_MS } from '../assets/js/transport/stats.js';
 
 export const DAY = 24 * 60 * 60 * 1000;
@@ -592,3 +592,50 @@ export function avisosDelRango(days, { from, to }) {
 export const VUELTA_ATRASADA_MS = 60 * 60 * 1000;
 export const vueltaAtrasada = (vuelta, now = Date.now()) => !vuelta || now - vuelta > VUELTA_ATRASADA_MS;
 
+
+/**
+ * Uno al día en el rango (D-230). `days` son las señales (`stats/<env>/days`): las partidas del modo
+ * de Uno al día (`MODO_UNO_AL_DIA`), de todos (con o sin jugador). `historia` es `unoAlDia/` (solo los que entraron con
+ * jugador: `{ jid: { n: { j, s } } }`, con `n` el día desde 1970, el mismo número que los días UTC de
+ * las señales); `invitados` es `invitados/` (`{ jid: { uid: { d } } }`); `rachas`, las filas de la
+ * tabla de mejores rachas (`records/uno-al-dia-racha/siempre`).
+ *
+ * Devuelve las partidas (total y por día, y por juego), los jugadores con jugador que jugaron, la
+ * vuelta al día siguiente y a los 7 días (de quienes jugaron un día del rango cuyo día siguiente, o
+ * séptimo, ya pasó), las rachas por tramo y las invitaciones aceptadas.
+ */
+export const TRAMOS_RACHA = [['1', 1, 1], ['2 a 6', 2, 6], ['7 a 29', 7, 29], ['30 o más', 30, Infinity]];
+export function unoAlDiaDelRango({ days = {}, historia = {}, invitados = {}, rachas = {} } = {}, { from, to, hoy = to }) {
+  const porDia = [], porJuego = {};
+  let partidas = 0;
+  for (let d = from; d <= to; d++) {
+    const fila = { day: d, total: 0 };
+    for (const [game, modos] of Object.entries((days || {})[String(d)]?.local || {})) {
+      const k = Object.values(modos?.[MODO_UNO_AL_DIA] || {}).reduce((a, v) => a + (Number(v) || 0), 0);
+      if (!k) continue;
+      partidas += k; fila.total += k; add(porJuego, game, k);
+    }
+    porDia.push(fila);
+  }
+  const jugadores = new Set();
+  const vuelta = { d1: [0, 0], d7: [0, 0] };
+  for (const [jid, h] of Object.entries(historia || {})) {
+    const nums = new Set(Object.keys(h || {}).map(Number).filter(Number.isInteger));
+    for (const n of nums) {
+      if (n < from || n > to) continue;
+      jugadores.add(jid);
+      if (n + 1 < hoy) { vuelta.d1[1]++; if (nums.has(n + 1)) vuelta.d1[0]++; }
+      if (n + 7 < hoy) { vuelta.d7[1]++; if (nums.has(n + 7)) vuelta.d7[0]++; }
+    }
+  }
+  const tramos = TRAMOS_RACHA.map(([label]) => [label, 0]);
+  for (const f of Object.values(rachas || {})) {
+    const s = Number(f?.s) || 0;
+    const i = TRAMOS_RACHA.findIndex(([, a, b]) => s >= a && s <= b);
+    if (i >= 0) tramos[i][1]++;
+  }
+  let aceptadas = 0;
+  for (const porUid of Object.values(invitados || {})) for (const x of Object.values(porUid || {})) if (x?.d >= from && x.d <= to) aceptadas++;
+  const pct = ([a, b]) => (b ? Math.round((a / b) * 100) : null);
+  return { partidas, porDia, porJuego, jugadores: jugadores.size, d1: pct(vuelta.d1), d7: pct(vuelta.d7), base: { d1: vuelta.d1[1], d7: vuelta.d7[1] }, tramos, aceptadas };
+}
