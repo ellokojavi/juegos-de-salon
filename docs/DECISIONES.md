@@ -4197,11 +4197,13 @@ el botón va una sola vez por página. Si algún día va dos veces, cada copia n
 **Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** corrige D-159 (qué se ve mientras baja la imagen)
 **Decisión:** Con WebGL, mientras la imagen satelital no llega, el globo no se dibuja (ni el de la
 portada ni el del juego): queda el fondo. Al llegar la de 2048 px aparece con un fundido de 0,3 s
-(sin fundido con movimiento reducido, C-8). El mapa vectorial queda para cuando no hay WebGL o
-cuando las dos imágenes fallan (`esperando()` de `satelite()` en `globo.js`).
+(sin fundido con movimiento reducido, C-8). El mapa vectorial queda para cuando no hay WebGL,
+cuando las dos imágenes fallan o cuando ninguna llegó a los 4 s (`esperando()` de `satelite()` en
+`globo.js`); ahí la imagen lo reemplaza al llegar, como antes.
 **Por qué:** lo pidió el dueño: al cargar la página se veía el globo dibujado, verde y azul, una
 fracción de segundo antes de pasar al satelital, y se notaba como un salto.
 **Alternativas descartadas:** dibujar solo el mar mientras tanto (sigue siendo un globo distinto
 que cambia); precargar la imagen en el HTML (acorta la espera, pero no la quita).
-**Consecuencias:** con una red muy lenta el globo tarda en aparecer; las marcas y los toques
-funcionan igual, porque no dependen del dibujo.
+**Consecuencias:** con una red lenta el globo tarda hasta 4 s en aparecer; las marcas y los
+toques funcionan igual, porque no dependen del dibujo. El tope existe porque una red que cuelga el
+pedido sin fallarlo dejaba el globo vacío mientras corre el reloj.
