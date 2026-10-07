@@ -385,8 +385,10 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
 - **Dentro de una tarjeta no hay nada tocable**: la tarjeta es un link entero. Lo que se toca
   sin abrir el juego, como la ⭐, va al lado del link, encima de la tarjeta (`.game-slot`), con
   44 px de toque y sin tapar texto (C-8, D-238).
-- **La barra de arriba** lleva el idioma (C-3), el sonido (C-4), 🏆 rankings (D-212, abiertos
-  a todos desde D-217) y compartir, que comparte la app con su tarjeta social en el idioma en que se
+- **La barra de arriba** va en dos bloques: el idioma (C-3) a la izquierda y, a la derecha, las
+  acciones: el sonido (C-4), 🏆 rankings (D-212, abiertos a todos desde D-217) y compartir. En un
+  celular angosto, si no caben juntos (a 320 px con cuatro idiomas), las acciones bajan a una
+  segunda línea y siguen a la derecha (v0.128.1). Compartir comparte la app con su tarjeta social en el idioma en que se
   mira (`compartirApp`, D-226, U-33). Su ícono es el de compartir de los sistemas operativos, una
   caja abierta con una flecha hacia arriba, en SVG y no un emoji (D-242), con la caja celeste,
   la flecha rosada y la sombra de abajo de los botones de la página (D-243).
