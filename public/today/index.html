@@ -55,8 +55,10 @@
     .uad-cal-cab button { min-width: 44px; min-height: 44px; border-radius: 12px; border: 1px solid var(--glass-border); background: rgba(0, 0, 0, 0.25); color: var(--ink); font: 900 1.1rem var(--font-body); cursor: pointer; }
     .uad-cal-cab button:disabled { opacity: 0.3; cursor: default; }
     .uad-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
-    .uad-cal span { aspect-ratio: 1; min-width: 0; border-radius: 8px; display: grid; place-items: center; font-size: 0.8rem; font-weight: 800; color: var(--muted); background: rgba(255, 255, 255, 0.05); }
-    .uad-cal .sem { background: none; aspect-ratio: auto; font-size: 0.72rem; text-transform: uppercase; }
+    .uad-cal > span { min-height: 46px; min-width: 0; border-radius: 8px; display: grid; place-items: center; align-content: center; gap: 2px; padding: 3px 0; font-size: 0.8rem; font-weight: 800; color: var(--muted); background: rgba(255, 255, 255, 0.05); }
+    .uad-cal .cal-emoji { font-size: 1.05rem; line-height: 1; }
+    .uad-cal .cal-pts { font: 900 0.68rem/1 var(--font-body); padding: 2px 5px; border-radius: 999px; background: rgba(0, 0, 0, 0.35); color: var(--ink); font-variant-numeric: tabular-nums; }
+    .uad-cal .sem { background: none; min-height: 0; font-size: 0.72rem; text-transform: uppercase; }
     .uad-cal .vacio { background: none; }
     .uad-cal .l1 { background: rgba(255, 46, 136, 0.28); color: var(--ink); font-size: 1.05rem; }
     .uad-cal .l2 { background: rgba(255, 46, 136, 0.5); color: var(--ink); font-size: 1.05rem; }
@@ -162,12 +164,17 @@
           const proximo = el('p', { class: 'uad-proximo', id: 'uad-proximo' });
           const tic = () => { proximo.textContent = fmt(T.proximo, { t: falta(faltaParaManana()) }); };
           tic(); reloj = setInterval(tic, 30000);
-          hoy.append(el('p', {}, fmt(T.hoyListo, { juego: nombreDe(e.dia.j), s: e.dia.s })), proximo,
+          hoy.append(el('p', {}, fmt(T.hoyListo, { juego: `${juegoDia(e.dia.j)?.emoji || JC[e.dia.j]?.emoji || '🎲'} ${nombreDe(e.dia.j)}`, s: e.dia.s })), proximo,
             el('div', { class: 'uad-acciones' },
               compartirHoy({ lang, fecha: e.hoy, dia: e.dia, alTocar: tap, mmss }),
               el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-uad-otro', onClick: () => { tap(); jugarOtro({ lang, raiz: '../' }); } }, T.jugarOtro)));
           pagina.append(hoy);
         }
+
+        /* Entrar, antes de la racha que guarda (D-249): sin jugador, vive solo en este celular */
+        const { rankingsVisibles, leerYo } = await import('../assets/js/jugador.js');
+        const { bloqueRanking, bloqueJugador } = rankingsVisibles() ? await import('../assets/js/ranking.js') : {};
+        if (bloqueJugador && !leerYo()) pagina.append(bloqueJugador({ destacado: true, leyenda: T.guardaRacha, alTocar: tap }));
 
         /* La racha y los comodines */
         pagina.append(el('div', { class: 'uad-trio', id: 'uad-trio' },
@@ -206,7 +213,10 @@
               cal.append(el('span', {
                 class: [nivel, f === e.hoy ? 'hoy' : ''].filter(Boolean).join(' ') || null,
                 title: x ? `${nombreDe(x.j)}: ${fmt(T.puntos, { s: x.s })}` : null,
-              }, salvado ? '🧊' : x ? (juegoDia(x.j)?.emoji || '•') : String(d)));
+              }, salvado ? '🧊' : x
+                // El juego y, en una píldora como la de La Copa, el puntaje de 0 a 100
+                ? [el('span', { class: 'cal-emoji', 'aria-hidden': 'true' }, juegoDia(x.j)?.emoji || '•'), el('small', { class: 'cal-pts' }, String(x.s))]
+                : String(d)));
             }
           };
           const mover = n => { const [y, m] = mes.split('-').map(Number); const d = new Date(y, m - 1 + n, 1); mes = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`; pintarMes(); };
@@ -244,17 +254,13 @@
           pagina.append(tarjetaInvitar({ lang, alTocar: tap }));
         }
 
-        /* Los avisos y el calendario (D-230) */
+        /* Los avisos: el recordatorio de cada día, a la hora que elige (D-230) */
         const Av = await import('../assets/js/uno-al-dia-avisos.js');
-        pagina.append(Av.bloque({ lang, alTocar: tap, redibujar: aviso => dibujar({ avisos: aviso ? [aviso] : [] }) }));
+        const campana = Av.bloque({ lang, alTocar: tap, redibujar: aviso => dibujar({ avisos: aviso ? [aviso] : [] }) });
+        if (campana) pagina.append(campana);
 
         /* El ranking de Uno al día y entrar con nombre y PIN (mientras los rankings se vean) */
-        const { rankingsVisibles, leerYo } = await import('../assets/js/jugador.js');
-        if (rankingsVisibles()) {
-          const { bloqueRanking, bloqueJugador } = await import('../assets/js/ranking.js');
-          pagina.append(bloqueRanking({ juego: UNO_AL_DIA, titulo: T.rankingTitulo, pestanas: ['hoy', 'semanaDia', 'rachas', 'amigosSemana'], alTocar: tap }));
-          if (!leerYo()) pagina.append(el('p', { class: 'center uad-dice' }, T.guardaRacha), bloqueJugador({ alTocar: tap }));
-        }
+        if (bloqueRanking) pagina.append(bloqueRanking({ juego: UNO_AL_DIA, titulo: T.rankingTitulo, pestanas: ['hoy', 'semanaDia', 'rachas', 'amigosSemana'], alTocar: tap }));
       };
 
       /** Lo de Firebase (con jugador): la historia de otros celulares, los comodines por invitar y los desafíos aceptados. */

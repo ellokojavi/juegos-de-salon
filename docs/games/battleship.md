@@ -60,7 +60,8 @@ siempre, con su azar: lo común es el punto de partida, no la partida entera.
 Puntaje del día (`puntajeNaval` en `uno-al-dia.js`): ganando, 100 con 17 disparos y bajando parejo
 hasta 40 con los 100 del tablero; perdiendo, 6 por casilla de barco acertada, hasta 39 (siempre
 menos que ganar). La tarjeta de Uno al día va arriba de los botones del resultado; el primer
-intento cuenta y los siguientes son práctica. Se prueba con `tools/e2e/uno-al-dia-grupo.mjs`.
+intento cuenta y los siguientes son práctica. No hay revancha (#226): la tarjeta ya ofrece 🎲 Jugar
+otro y Repetir el de hoy. Se prueba con `tools/e2e/uno-al-dia-grupo.mjs`.
 
 ## Flujo
 

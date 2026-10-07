@@ -62,7 +62,8 @@ const MEDIR = `(()=>{
     scroll: document.documentElement.scrollWidth > innerWidth,
     chicos: [...new Set([...document.querySelectorAll('.screen.active button, .confirm button')]
       .filter(x => visible(x) && x.getBoundingClientRect().height < 43.5).map(nombre))],
-    fuera: [...new Set([...document.querySelectorAll('.screen.active .btn, .confirm .btn')]
+    // Lo que solo se ve como botón (aria-hidden, como el "Entrar" de la tarjeta de D-249) no cuenta
+    fuera: [...new Set([...document.querySelectorAll('.screen.active .btn:not([aria-hidden="true"]), .confirm .btn')]
       .filter(x => visible(x) && x.getBoundingClientRect().bottom > innerHeight + 1).map(nombre))],
   };
 })()`;

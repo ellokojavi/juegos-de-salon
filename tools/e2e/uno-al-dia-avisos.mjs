@@ -3,7 +3,7 @@
 // guarda lo que pidió (pushDia); la campana de /today/ muestra la hora, cambia los interruptores y la
 // hora, y silencia; un iPhone sin la app instalada ve los pasos para agregarla, dentro de WhatsApp se
 // pide abrir en Safari, y con los avisos bloqueados se explica cómo desbloquearlos. El reloj se fija
-// en el 5 de octubre de 2026, el día n.° 1, cuando toca Desenredo.
+// en el 6 de octubre de 2026, el día n.° 1, cuando toca Desenredo.
 import { mkdtempSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
@@ -14,7 +14,7 @@ const SITIO = process.env.SITIO || 'http://localhost:8765';
 const OUT = process.argv[2] || mkdtempSync(join(tmpdir(), 'uno-al-dia-avisos-'));
 const ok = (cond, msg) => { console.log(`${cond ? '✓' : '✗'} ${msg}`); if (!cond) process.exitCode = 1; };
 const DB = 'juegos-de-salon:prueba:records-db';
-if (juegoDel('2026-10-05') !== 'desenredo') { console.log('✗ el 2026-10-05 ya no toca Desenredo: cambia la fecha del guion'); process.exit(1); }
+if (juegoDel('2026-10-06') !== 'desenredo') { console.log('✗ el 2026-10-06 ya no toca Desenredo: cambia la fecha del guion'); process.exit(1); }
 
 const b = await launch({ port: 9523, dir: `${OUT}/p`, out: OUT });
 const ev = x => b.evaluate(x);
@@ -31,7 +31,7 @@ const UA = {
 const como = ua => b.send('Emulation.setUserAgentOverride', { userAgent: ua });
 
 // El reloj, el servicio de avisos falso (como en cup/avisos.mjs) y, en un iPhone en Safari, sin avisos
-await b.send('Page.addScriptToEvaluateOnNewDocument', { source: `(()=>{const D=Date,dif=new D(2026,9,5,12,0,0).getTime()-D.now();
+await b.send('Page.addScriptToEvaluateOnNewDocument', { source: `(()=>{const D=Date,dif=new D(2026,9,6,12,0,0).getTime()-D.now();
   class F extends D{constructor(...a){a.length?super(...a):super(D.now()+dif)} static now(){return D.now()+dif}}
   window.Date=F;
   const sub = { endpoint: 'https://fcm.googleapis.com/fcm/send/prueba-uad', async unsubscribe() { sessionStorage.removeItem('e2e:suscrito'); return true; }, toJSON() { return { endpoint: this.endpoint, expirationTime: null, keys: { p256dh: 'BPRUEBA', auth: 'aPRUEBA' } }; } };
@@ -48,7 +48,7 @@ await como(UA.android);
 await permiso('granted');
 await b.go(`${SITIO}/`, 600);
 await ev(`(()=>{localStorage.clear();localStorage.setItem('juegos-de-salon:instalar:no','1');
-  localStorage.setItem('juegos-de-salon:uno-al-dia', JSON.stringify({dias:{'2026-10-04':{j:'reinas',s:70,ms:1,at:1,n:1}}}));return 1})()`);
+  localStorage.setItem('juegos-de-salon:uno-al-dia', JSON.stringify({dias:{'2026-10-05':{j:'reinas',s:70,ms:1,at:1,n:1}}}));return 1})()`);
 await b.go(`${SITIO}/untangle/?hoy&prueba&zipSeg=3`, 1200);
 await esperar(`!!document.getElementById('btn-empezar')`);
 await click('#btn-empezar');
@@ -63,7 +63,7 @@ await click('#uad-oferta [data-h="13"]');
 ok(await esperar(`/Te avisaremos cada día a las 13:00/.test(document.getElementById('uad-oferta')?.innerText||'')`, 30), 'elegir 13:00 los activa y lo dice');
 let q = await pushDia();
 ok(q?.h === 13 && q.d && q.r && q.w && q.sub, `guarda la suscripción y lo que pidió (${JSON.stringify(q)})`);
-ok(q?.c === 2 && q.sp === 's2026-41' && q.sn === 1, 'y su racha y su semana (el 4, domingo, es de la semana anterior), para el texto del aviso');
+ok(q?.c === 2 && q.sp === 's2026-41' && q.sn === 2, 'y su racha y su semana (el 5 y el 6, los dos de la misma semana), para el texto del aviso');
 
 /* ---------- La campana de /today/ ---------- */
 await b.go(`${SITIO}/today/`, 2000);
@@ -82,7 +82,7 @@ await click('#btn-uad-silenciar');
 ok(await esperar(`!Object.keys(JSON.parse(localStorage.getItem('${DB}')).pushDia||{}).length`), 'Silenciar los apaga en la base');
 ok(await esperar(`/no te llegan más avisos/.test(document.body.innerText)`), 'y lo dice');
 ok(await ev(`!!document.querySelector('#uad-avisos .uad-horas')`), 'y la campana vuelve a ofrecer la hora');
-ok(await ev(`!!document.getElementById('btn-uad-calendario')`), '"Agregar al calendario" está a mano');
+ok(!await ev(`!!document.getElementById('btn-uad-calendario')`) && !/calendario/i.test(await texto('#uad-avisos')), 'el recordatorio es el aviso diario: no hay recordatorio en el calendario');
 
 /* ---------- Bloqueados ---------- */
 await permiso('denied');
