@@ -15,7 +15,7 @@ El celular hace lo que en la mesa real se hace mal: baraja, **no deja tirar una 
 corresponde** —asistir, montar y fallar son tres reglas que en una mesa con sorbos se discuten
 toda la noche—, lleva la cuenta del plato y se acuerda de quién le debe sorbos a quién.
 
-**Estado:** fuera del menú por ahora, mientras se reescriben las reglas (D-88): en `games.js` va con `available: false`. El juego sigue entero en `/julep/`.
+**Estado:** en la portada como "Próximamente", al final de la lista y sin abrirse, mientras se reescriben las reglas (D-88, D-142): en `games.js` va con `available: false`. El juego sigue entero en `/julep/`.
 
 ## Reglas
 

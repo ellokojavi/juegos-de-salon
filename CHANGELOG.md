@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.128.2 — 2026-10-06
+- **Portada: lo que viene, al final**: Generala y Julepe, que todavía dicen "Próximamente", van al
+  final de la lista, con y sin filtro, y ya no quedan entre los juegos que se pueden abrir.
+
 ## 0.128.1 — 2026-10-06
 - **Portada: el idioma a un lado, las acciones al otro**: en la barra de arriba, el selector de
   idioma va a la izquierda y el sonido, los rankings y compartir a la derecha, en dos bloques. En
