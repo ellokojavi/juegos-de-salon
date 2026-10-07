@@ -3364,7 +3364,7 @@ del idioma elegido (`applang`, D-46) decía cuánto, pero no de qué partida.
 **Decisión:** Quien quiere aparecer en los rankings entra con **su nombre y un PIN de 4 dígitos**,
 como en La Copa, pero una vez para toda la app y en cualquier celular. Es opcional y se ofrece
 plegado en la antesala de cada juego suelto (junto al ranking, debajo de "Empezar": antes lo
-empujaba fuera de la pantalla en alemán y portugués, dilema #186; desde D-249 va arriba, bajo el título, como tarjeta destacada), en su resultado y en `/records/`: sin entrar, todo se
+empujaba fuera de la pantalla en alemán y portugués, dilema #186; desde D-249 va justo bajo Empezar y Volver al menú, como tarjeta destacada), en su resultado y en `/records/`: sin entrar, todo se
 juega igual y nada sale del celular.
 - **Identidad.** Un jugador es un `jid` (8 letras y números) en `jugadores/<jid>` = `{ n, at }`.
   El PIN nunca se guarda: `jugadorKeys/<jid>` tiene su hash, que nadie lee, y cada celular se
@@ -4291,15 +4291,16 @@ hecho y probado en `engine.test.mjs`.
 **Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** corrige D-212 (dónde va entrar en la antesala; dilema #186)
 **Decisión:** sin jugador, la invitación a entrar con nombre y PIN es una tarjeta con borde cian y
 un botón "Entrar" a la vista (`bloqueJugador({ destacado: true })`), plegada en una sola fila. Va:
-en la antesala de cada juego suelto, **bajo el título y antes de "Cómo se juega"**; en el
+en la antesala de cada juego suelto, **justo bajo "Empezar" y "Volver al menú"** (arriba de las reglas, o
+entre los dos, bajaba esos botones fuera de la pantalla en alemán en ¿Dónde queda? y ¿En qué año?, C-8); en el
 resultado, bajo el puntaje (como antes, ahora destacada); en la tarjeta del resultado de Uno al día,
 **antes de los botones** y sin esperar a lo demás de la red; y en `/today/`, bajo "Hoy" y antes de
 la racha. En Uno al día la tarjeta lleva debajo del título "Guarda tu racha en cualquier celular…".
-Con jugador, en la antesala sale arriba "🏅 Juegas como Mica", y el ranking sigue al final.
+Con jugador, ahí sale "🏅 Juegas como Mica", y el ranking sigue al final.
 **Por qué:** lo pidió el dueño. Mica jugó varios días sin entrar y no aparecía en ningún ranking: la
 invitación quedaba al final de la antesala, bajo las reglas, y en Uno al día bajo todo lo demás, donde
-nadie la veía. De 28 jugadores, 25 eran heredados de La Copa sin reclamar. Una fila con un botón baja
-"Empezar" unos 70 px, que ya quedaba bajo la línea de flotación en la antesala por las reglas.
-**Consecuencias:** quien aparezca en una pantalla nueva con ranking usa `destacado: true` arriba; el
+nadie la veía. De 28 jugadores, 25 eran heredados de La Copa sin reclamar. Pegada a Empezar la ve
+todo el que va a jugar, también en las antesalas largas, sin bajar el botón principal.
+**Consecuencias:** quien aparezca en una pantalla nueva con ranking usa `destacado: true` junto a su botón principal; el
 bloque sin destacar queda para `/records/` y el pie de los rankings.
 
