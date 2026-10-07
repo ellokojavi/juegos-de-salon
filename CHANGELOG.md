@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.128.1 — 2026-10-06
+- **Portada: el idioma a un lado, las acciones al otro**: en la barra de arriba, el selector de
+  idioma va a la izquierda y el sonido, los rankings y compartir a la derecha, en dos bloques. En
+  un celular angosto, si no caben juntos, las acciones bajan a una segunda línea.
+
 ## 0.128.0 — 2026-10-06
 - **📝 Generala, próximamente** (D-246, D-248): la portada anuncia el juego de dados, todavía sin
   abrirlo. Ya está hecho entero: cinco dados, hasta tres tiros por turno guardando los que sirven, y
