@@ -236,8 +236,12 @@ export const TIPOS = {
 /** Los tipos de antes de D-214 (`?tipo=mesa`): un link viejo sigue filtrando lo mismo. */
 export const TIPOS_VIEJOS = { palabras: 'words', logica: 'logic', cultura: 'trivia', mesa: 'tabletop' };
 
-/** Todo lo que ofrece la portada: los juegos de GAMES y, después, los de La Copa. */
-export const PORTADA = [...GAMES, ...SUELTOS.filter(m => !m.labs)];
+/**
+ * Todo lo que ofrece la portada: los juegos de GAMES y, después, los de La Copa. Los que vienen
+ * "Próximamente" van al final, con y sin filtro: no se abren y no deben tapar a los que sí.
+ */
+const OFRECIDOS = [...GAMES, ...SUELTOS.filter(m => !m.labs)];
+export const PORTADA = [...OFRECIDOS.filter(g => g.available), ...OFRECIDOS.filter(g => !g.available)];
 
 /** Cuántos juegan como mínimo y como máximo ("1–6" → [1, 6]; "1" → [1, 1]). */
 export function rangoJugadores(players) {
