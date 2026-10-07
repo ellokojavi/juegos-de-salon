@@ -2140,6 +2140,9 @@ function practica(id) {
       // En el laboratorio no se rotula "Práctica en el laboratorio": el chip y el botón de volver ya lo dicen
       el('h2', { class: 'display display--lg' }, J.nombre),
       el('div', { style: 'margin-top:6px' }, langToggle())),
+    // Entrar va arriba, antes de las reglas (D-249): sin jugador, la partida no queda en ningún
+    // ranking, y al final de la antesala nadie la veía. Plegada es una fila: Empezar baja poco (C-8)
+    rankea(id) ? bloqueJugador({ destacado: true, alTocar: () => SFX.tap() }) : null,
     // Uno al día: una línea arriba, y nada más; cómo se juega es lo del juego (U-18)
     HOY ? el('p', { class: 'aviso uad-intro', id: 'uad-intro' }, S.hoy.ya ? UAD().introRepite : UAD().intro) : null,
     el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.howToPlay), dibujo(id), el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
@@ -2150,9 +2153,6 @@ function practica(id) {
     LABS ? el('p', { class: 'muted center' }, T.practiceHint) : null,
     el('button', { class: 'btn btn--yellow', id: 'btn-empezar', onClick: () => { SFX.tap(); jugarPractica(id, semilla); } }, `${J.emoji} ${T.start}`),
     volverDePractica(),
-    // Entrar es opcional (D-212) y va pegado al ranking: antes de Empezar lo dejaba fuera de la
-    // pantalla en alemán y portugués (C-8, dilema #186). El resultado lo vuelve a ofrecer.
-    rankea(id) ? bloqueJugador({ alTocar: () => SFX.tap() }) : null,
     rankea(id) ? bloqueRanking({ juego: id, titulo: fmt(RK.titleOf, { game: J.nombre }), pestanas: ['semana', 'siempre', 'amigos', 'copa'], alTocar: () => SFX.tap() }) : null));
 }
 
@@ -2270,7 +2270,7 @@ function resultadoPractica(id, semilla, r) {
   if (cuentaRk) {
     // Plegado: los botones del final tienen que verse sin desplazar (C-8)
     // En Uno al día, entrar ya lo ofrece su tarjeta (con la racha): no se ofrece dos veces
-    if (leerYo()) anotar(); else if (!hoy) aviso.append(bloqueJugador({ alTocar: () => SFX.tap() }));
+    if (leerYo()) anotar(); else if (!hoy) aviso.append(bloqueJugador({ destacado: true, alTocar: () => SFX.tap() }));
     jugador().then(Jg => { const off = Jg.escuchar(() => { if (S.pantalla !== 'resultado') { off(); return; } anotar(); }); }).catch(() => {});
   }
   trackFinish({ detalle: `${r.s}/100${r.ms ? ` · ${mmss(r.ms)}` : ''}` });   // cómo salió, para el panel (D-210)

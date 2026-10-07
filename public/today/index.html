@@ -171,6 +171,11 @@
           pagina.append(hoy);
         }
 
+        /* Entrar, antes de la racha que guarda (D-249): sin jugador, vive solo en este celular */
+        const { rankingsVisibles, leerYo } = await import('../assets/js/jugador.js');
+        const { bloqueRanking, bloqueJugador } = rankingsVisibles() ? await import('../assets/js/ranking.js') : {};
+        if (bloqueJugador && !leerYo()) pagina.append(bloqueJugador({ destacado: true, leyenda: T.guardaRacha, alTocar: tap }));
+
         /* La racha y los comodines */
         pagina.append(el('div', { class: 'uad-trio', id: 'uad-trio' },
           el('div', {}, el('b', {}, `🔥 ${e.racha}`), el('small', {}, T.rachaLabel)),
@@ -255,12 +260,7 @@
         if (campana) pagina.append(campana);
 
         /* El ranking de Uno al día y entrar con nombre y PIN (mientras los rankings se vean) */
-        const { rankingsVisibles, leerYo } = await import('../assets/js/jugador.js');
-        if (rankingsVisibles()) {
-          const { bloqueRanking, bloqueJugador } = await import('../assets/js/ranking.js');
-          pagina.append(bloqueRanking({ juego: UNO_AL_DIA, titulo: T.rankingTitulo, pestanas: ['hoy', 'semanaDia', 'rachas', 'amigosSemana'], alTocar: tap }));
-          if (!leerYo()) pagina.append(el('p', { class: 'center uad-dice' }, T.guardaRacha), bloqueJugador({ alTocar: tap }));
-        }
+        if (bloqueRanking) pagina.append(bloqueRanking({ juego: UNO_AL_DIA, titulo: T.rankingTitulo, pestanas: ['hoy', 'semanaDia', 'rachas', 'amigosSemana'], alTocar: tap }));
       };
 
       /** Lo de Firebase (con jugador): la historia de otros celulares, los comodines por invitar y los desafíos aceptados. */

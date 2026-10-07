@@ -70,7 +70,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216 |
 | La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234 |
 | Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218 |
-| Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236 |
+| Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249 |
 | Marketing | `marketing/README.md` | D-178 |
 | App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
 
@@ -4286,3 +4286,20 @@ habría puesto en el mazo un juego que la portada todavía no ofrece.
 **Consecuencias:** abrirlo es cambiar `available` a `true` en `games.js`, sumarlo a `JUEGOS_DIA` y
 `GRUPO` con su fecha, y marcar GE-09 y GE-12 en REQUERIMIENTOS. El `?hoy` de `/generala/` ya está
 hecho y probado en `engine.test.mjs`.
+
+## D-249 · La invitación a entrar va arriba, como una tarjeta con su botón
+**Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** corrige D-212 (dónde va entrar en la antesala; dilema #186)
+**Decisión:** sin jugador, la invitación a entrar con nombre y PIN es una tarjeta con borde cian y
+un botón "Entrar" a la vista (`bloqueJugador({ destacado: true })`), plegada en una sola fila. Va:
+en la antesala de cada juego suelto, **bajo el título y antes de "Cómo se juega"**; en el
+resultado, bajo el puntaje (como antes, ahora destacada); en la tarjeta del resultado de Uno al día,
+**antes de los botones** y sin esperar a lo demás de la red; y en `/today/`, bajo "Hoy" y antes de
+la racha. En Uno al día la tarjeta lleva debajo del título "Guarda tu racha en cualquier celular…".
+Con jugador, en la antesala sale arriba "🏅 Juegas como Mica", y el ranking sigue al final.
+**Por qué:** lo pidió el dueño. Mica jugó varios días sin entrar y no aparecía en ningún ranking: la
+invitación quedaba al final de la antesala, bajo las reglas, y en Uno al día bajo todo lo demás, donde
+nadie la veía. De 28 jugadores, 25 eran heredados de La Copa sin reclamar. Una fila con un botón baja
+"Empezar" unos 70 px, que ya quedaba bajo la línea de flotación en la antesala por las reglas.
+**Consecuencias:** quien aparezca en una pantalla nueva con ranking usa `destacado: true` arriba; el
+bloque sin destacar queda para `/records/` y el pie de los rankings.
+
