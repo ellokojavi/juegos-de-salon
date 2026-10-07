@@ -2140,9 +2140,6 @@ function practica(id) {
       // En el laboratorio no se rotula "Práctica en el laboratorio": el chip y el botón de volver ya lo dicen
       el('h2', { class: 'display display--lg' }, J.nombre),
       el('div', { style: 'margin-top:6px' }, langToggle())),
-    // Entrar va arriba, antes de las reglas (D-249): sin jugador, la partida no queda en ningún
-    // ranking, y al final de la antesala nadie la veía. Plegada es una fila: Empezar baja poco (C-8)
-    rankea(id) ? bloqueJugador({ destacado: true, alTocar: () => SFX.tap() }) : null,
     // Uno al día: una línea arriba, y nada más; cómo se juega es lo del juego (U-18)
     HOY ? el('p', { class: 'aviso uad-intro', id: 'uad-intro' }, S.hoy.ya ? UAD().introRepite : UAD().intro) : null,
     el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.howToPlay), dibujo(id), el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
@@ -2153,6 +2150,9 @@ function practica(id) {
     LABS ? el('p', { class: 'muted center' }, T.practiceHint) : null,
     el('button', { class: 'btn btn--yellow', id: 'btn-empezar', onClick: () => { SFX.tap(); jugarPractica(id, semilla); } }, `${J.emoji} ${T.start}`),
     volverDePractica(),
+    // Entrar, pegado a Empezar y a Volver (D-249): sin jugador, la partida no queda en ningún
+    // ranking. Arriba de las reglas, o entre los dos, bajaba los botones en alemán (C-8)
+    rankea(id) ? bloqueJugador({ destacado: true, alTocar: () => SFX.tap() }) : null,
     rankea(id) ? bloqueRanking({ juego: id, titulo: fmt(RK.titleOf, { game: J.nombre }), pestanas: ['semana', 'siempre', 'amigos', 'copa'], alTocar: () => SFX.tap() }) : null));
 }
 
