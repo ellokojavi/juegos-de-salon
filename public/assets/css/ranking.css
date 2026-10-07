@@ -25,6 +25,15 @@ details.panel.rk-yo[open] summary { margin-bottom: 6px; }
 .rk-invita:not([open]) { padding-bottom: 6px; }
 .rk-invita summary { cursor: pointer; font-weight: 900; min-height: 44px; display: flex; align-items: center; }
 .rk-invita[open] summary { margin-bottom: 6px; }
+/* Destacada (D-249): arriba, antes de jugar, con un botón a la vista. Plegada, una sola fila. */
+.rk-invita--destacada { border: 2px solid var(--cyan); }
+details.panel.rk-invita--destacada summary { gap: 12px; }
+/* Plegada, el botón hace de flecha; abierta vuelve la flecha para cerrarla */
+details.panel.rk-invita--destacada:not([open]) summary::after { content: none; }
+.rk-invita-txt { display: grid; gap: 2px; line-height: 1.25; }
+.rk-invita-txt small { font-weight: 600; color: var(--muted); font-size: 0.85rem; }
+.rk-invita-btn { flex: none; pointer-events: none; }
+.rk-invita--destacada[open] .rk-invita-btn { display: none; }
 .rk-hint { margin: 0 0 10px; font-size: 0.92rem; }
 .rk-campo { display: grid; gap: 4px; margin-bottom: 10px; }
 .rk-campo span { font-weight: 900; font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
