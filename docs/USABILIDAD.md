@@ -160,6 +160,6 @@ Las respuestas a dilemas (issues con la etiqueta `usabilidad`) se anotan aquí:
   botón, el dado y la tarjeta con la racha) y cierra con "agrégala a tu inicio" (D-232). Anotado en
   "Pendiente: versión 6" de `marketing/promo-video/README.md`; la v6 se empieza cuando el dueño la pida.
 - **Entrar va antes de "Empezar"** (#186, D-249): en la antesala de cada juego suelto, la invitación
-  a entrar con nombre y PIN va bajo el título y antes de las reglas, plegada en una fila con su botón
+  a entrar con nombre y PIN va justo bajo "Empezar" y "Volver al menú", plegada en una fila con su botón
   "Entrar" a la vista, porque el ingreso se ofrece antes de jugar. Lo mismo bajo el puntaje y, en
   Uno al día, antes de los botones del resultado y de la racha en `/today/`.
