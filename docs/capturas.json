@@ -743,7 +743,7 @@
       "public/assets/js/chat.js"
     ],
     "portada": [
-      "index.html",
+      "public/index.html",
       "public/assets/js/games.js",
       "public/assets/js/frases.js"
     ],
