@@ -2150,9 +2150,9 @@ function practica(id) {
     LABS ? el('p', { class: 'muted center' }, T.practiceHint) : null,
     el('button', { class: 'btn btn--yellow', id: 'btn-empezar', onClick: () => { SFX.tap(); jugarPractica(id, semilla); } }, `${J.emoji} ${T.start}`),
     volverDePractica(),
-    // Entrar es opcional (D-212) y va pegado al ranking: antes de Empezar lo dejaba fuera de la
-    // pantalla en alemán y portugués (C-8, dilema #186). El resultado lo vuelve a ofrecer.
-    rankea(id) ? bloqueJugador({ alTocar: () => SFX.tap() }) : null,
+    // Entrar, pegado a Empezar y a Volver (D-249): sin jugador, la partida no queda en ningún
+    // ranking. Arriba de las reglas, o entre los dos, bajaba los botones en alemán (C-8)
+    rankea(id) ? bloqueJugador({ destacado: true, alTocar: () => SFX.tap() }) : null,
     rankea(id) ? bloqueRanking({ juego: id, titulo: fmt(RK.titleOf, { game: J.nombre }), pestanas: ['semana', 'siempre', 'amigos', 'copa'], alTocar: () => SFX.tap() }) : null));
 }
 
@@ -2270,7 +2270,7 @@ function resultadoPractica(id, semilla, r) {
   if (cuentaRk) {
     // Plegado: los botones del final tienen que verse sin desplazar (C-8)
     // En Uno al día, entrar ya lo ofrece su tarjeta (con la racha): no se ofrece dos veces
-    if (leerYo()) anotar(); else if (!hoy) aviso.append(bloqueJugador({ alTocar: () => SFX.tap() }));
+    if (leerYo()) anotar(); else if (!hoy) aviso.append(bloqueJugador({ destacado: true, alTocar: () => SFX.tap() }));
     jugador().then(Jg => { const off = Jg.escuchar(() => { if (S.pantalla !== 'resultado') { off(); return; } anotar(); }); }).catch(() => {});
   }
   trackFinish({ detalle: `${r.s}/100${r.ms ? ` · ${mmss(r.ms)}` : ''}` });   // cómo salió, para el panel (D-210)
