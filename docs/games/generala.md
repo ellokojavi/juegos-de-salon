@@ -19,8 +19,8 @@ Es el primer juego de grupo de la app que se puede jugar **sin coincidir**: cada
 planilla y nadie depende de la jugada del otro. Por eso está listo para Uno al día, donde todos
 tiran los mismos dados (D-247).
 
-**Por ahora se anuncia:** la portada lo muestra como "Próximamente", sin abrirlo, igual que
-Julepe; la página `/generala/` funciona entera para quien tenga el link (D-248).
+**Por ahora se anuncia:** la portada lo muestra como "Próximamente", al final de la lista y sin
+abrirlo, igual que Julepe (C-17); la página `/generala/` funciona entera para quien tenga el link (D-248).
 
 ## Reglas
 

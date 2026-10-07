@@ -343,7 +343,8 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
   juegos de `GAMES` (La Copa, la primera, en media fila junto a Uno al día) y después los juegos de La Copa sueltos (`SUELTOS`,
   aparte solo por cómo están hechos, D-198), sin lista propia en la página (D-142, D-149). Un
   juego que no está disponible se ve, con "Próximamente" al lado del nombre, pero no se abre, ni
-  con el teclado (`available` en `games.js`, C-2; D-142). La tarjeta dice jugadores y duración,
+  con el teclado (`available` en `games.js`, C-2; D-142), y va al final de la lista, con y sin
+  filtro (v0.128.2). La tarjeta dice jugadores y duración,
   y si el juego no está en el idioma elegido lo dice antes de abrirlo ("🇪🇸 En español",
   `idiomas` en `games.js`; hoy ninguno lo declara, D-170). Uno de `SUELTOS` con `labs: true` no
   sale en la portada, aunque su link ya se comparta.
