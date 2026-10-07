@@ -18,7 +18,7 @@ está en [bulls-and-cows-factibilidad.md](bulls-and-cows-factibilidad.md).
 
 ### Vocabulario en pantalla
 
-En los tableros las pistas van abreviadas (“3F 1T”, en inglés “3B 1C”) para caber en una línea; en la pantalla grande de respuesta y en las instrucciones se usan las palabras completas. Siempre se habla de “número secreto” (en inglés, “secret number”), nunca de “secreto” a secas.
+En los tableros las pistas van abreviadas (“3F 1T”, en inglés “3B 1C”) para caber en una línea; en la pantalla grande de respuesta y en las instrucciones se usan las palabras completas. Las famas van en verde y los toques en amarillo, como en Wordle, y "nada" en gris: los mismos colores en el tablero, en la respuesta grande, en 🔤 Palabra y en la tarjeta para compartir (🟢 🟡 ⚪; #196, `assets/css/teclado.css`). Siempre se habla de “número secreto” (en inglés, “secret number”), nunca de “secreto” a secas.
 
 ## Modos
 
