@@ -1,7 +1,7 @@
 /**
  * 🔤 Toque y Fama: Palabra — pantalla. La misma de 🔢 (ui-numero.js): teclado compartido con
  * notas, tablero y pistas de Toque y Fama. Lo único propio es que cada letra del intento se
- * pinta con el color de su pista (amarilla la fama, celeste el toque), como en Wordle.
+ * pinta con el color de su pista (verde la fama, amarilla el toque), como en Wordle.
  *
  * Las jugadas son `{ i: intentos, n: letras tachadas }`.
  */

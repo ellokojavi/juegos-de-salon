@@ -163,3 +163,6 @@ Las respuestas a dilemas (issues con la etiqueta `usabilidad`) se anotan aquí:
   a entrar con nombre y PIN va justo bajo "Empezar" y "Volver al menú", plegada en una fila con su botón
   "Entrar" a la vista, porque el ingreso se ofrece antes de jugar. Lo mismo bajo el puntaje y, en
   Uno al día, antes de los botones del resultado y de la racha en `/today/`.
+- **La fama es verde y el toque amarillo** (#196, opción B): como en Wordle, en todos los Toque y
+  Fama (las letras de Palabra, las pistas de Número y del juego de sala) y en la tarjeta de Palabra
+  (🟩 fama, 🟨 toque, ⬛ no está), que así habla igual que la de Número (🟢, 🟡, ⚪).

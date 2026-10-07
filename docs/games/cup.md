@@ -177,6 +177,8 @@ por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
   inglés, 143 en portugués y 162 en alemán). El teclado es QWERTY con Ñ en español; en inglés y
   portugués deja un hueco donde iría la Ñ, y en alemán es QWERTZ con el mismo hueco, así la tercera
   fila empieza en su letra (`alfabeto(lang)` en `games/word/engine.js`, D-170, D-191).
+  Cada letra se pinta verde si está en su lugar (fama) y amarilla si está en otro (toque), como en
+  Wordle; la tarjeta usa 🟩 y 🟨 (#196).
 - **¿En qué año?** tiene un margen que crece con la antigüedad: `max(8, (2026 − año) / 4)` años.
 - Las copas creadas antes de D-102 con el Solitario o Dudo en el calendario juegan Reinas y Toque y
   Fama: Palabra en esos días.
