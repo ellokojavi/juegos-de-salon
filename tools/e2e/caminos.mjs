@@ -111,7 +111,7 @@ const SEMBRAR_PANEL = vista => `(async()=>{const DIA=86400000,ahora=Date.now(),h
       const push={vuelta:ahora-9*60000,vivas:7,torneos:2};
       // Uno al día (D-230): partidas del modo uno-al-dia y la historia de tres jugadores, con rachas e invitaciones
       const uad={historia:{},invitados:{sara0001:{u1:{d:hoy-2},u2:{d:hoy-1}}},rachas:{sara0001:{s:9},pedro001:{s:3},ana00001:{s:1},leo00001:{s:31}}};
-      for(let k=0;k<10;k++){const b=(days[hoy-k] ||= {});b.local ||= {};const g=['reinas','conexiones','dudo','anio'][k%4];((b.local[g] ||= {})['uno-al-dia'] ||= {})[1]=3+(k%3);}
+      for(let k=0;k<10;k++){const b=(days[hoy-k] ||= {});b.uad={boton:9+k,dado:8+k,jugado:7,repite:2,compartir:3,otro:4,invitar:2,invitacion:1,aceptada:k%2,oferta:2,hora:1,activos:1,ahorano:1,silencio:k%3?0:1};b.vistas={...(b.vistas||{}),today:12+k};b.entradas={...(b.entradas||{}),today:3};b.local ||= {};const g=['reinas','conexiones','dudo','anio'][k%4];((b.local[g] ||= {})['uno-al-dia'] ||= {})[1]=3+(k%3);}
       for(const [jid,nd] of [['sara0001',9],['pedro001',4],['ana00001',2]])for(let k=0;k<nd;k++)(uad.historia[jid] ||= {})[hoy-k]={j:'reinas',s:60+k};
       window.__panel.seed({rooms,days,torneos,push,uad,vista:'${vista}'});})()`;
 
@@ -151,6 +151,45 @@ export const CAMINOS = {
       `document.querySelector('#actions .btn--yellow').click()`,
       `1`,   // el celular se demora en cantar su apuesta: un paso de espera
       `[...document.querySelectorAll('#actions .btn')].find(b=>/Dudo|Liar|Duvido|Zweifeln/i.test(b.textContent))?.click()`,
+    ],
+  },
+  generala: {
+    intro: [],
+    configuracion: [`document.querySelector('[data-mode=local]').click()`],
+    // Jugando solo se llega a la mesa sin pase: un tiro, dos dados guardados y una casilla elegida
+    juego: [
+      `document.querySelector('[data-mode=solo]').click()`,
+      `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
+      `document.getElementById('btn-empezar').click()`,
+      `document.getElementById('btn-tirar').click()`,
+      `(()=>{const d=document.querySelectorAll('.dado-btn');d[0].click();d[3].click()})()`,
+      `document.querySelector('.casilla.libre.vale')?.click() || document.querySelector('.casilla.libre').click()`,
+    ],
+    // En un celular: lo que anotó uno y el pase al siguiente (C-9)
+    pase: [
+      `document.querySelector('[data-mode=local]').click()`,
+      `(()=>{const n=['Javi','Cata'];[...document.querySelectorAll('#setup-form input')].forEach((i,k)=>{i.value=n[k];i.dispatchEvent(new Event('input',{bubbles:true}))})})()`,
+      `document.getElementById('btn-empezar').click()`,
+      `document.querySelector('#handoff .btn').click()`,
+      `document.getElementById('btn-tirar').click()`,
+      `document.querySelector('.casilla.libre').click()`,
+      `document.getElementById('btn-anotar').click()`,
+    ],
+    // La generala servida, con dados puestos a mano: gana al tiro
+    servida: [
+      `document.querySelector('[data-mode=local]').click()`,
+      `(()=>{const n=['Javi','Cata'];[...document.querySelectorAll('#setup-form input')].forEach((i,k)=>{i.value=n[k];i.dispatchEvent(new Event('input',{bubbles:true}))})})()`,
+      `document.getElementById('btn-empezar').click()`,
+      `document.querySelector('#handoff .btn').click()`,
+      `__generala.session().transport.send({t:'roll',from:'A',d:'44444',k:'00000'})`,
+    ],
+    // El final de jugar solo: once turnos anotados en la primera casilla libre
+    final: [
+      `document.querySelector('[data-mode=solo]').click()`,
+      `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
+      `document.getElementById('btn-empezar').click()`,
+      `(async()=>{const w=ms=>new Promise(r=>setTimeout(r,ms));for(let t=0;t<11;t++){document.getElementById('btn-tirar').click();await w(60);document.querySelector('.casilla.libre').click();await w(30);document.getElementById('btn-anotar').click();await w(60);}})()`,
+      1, 1, 1, 1, 1,
     ],
   },
   'cuarto-rey': {

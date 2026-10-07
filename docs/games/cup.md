@@ -22,6 +22,7 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
   con su señal de uso. `/cup/?practica=<id>` sin `&labs` lleva ahí. `/<slug>/?hoy` (o
   `/cup/suelto/?<id>&hoy` para los que no tienen página) es el juego de Uno al día, con la semilla
   de la fecha del jugador; si hoy toca otro juego, se va a ese (D-230, [UNO-AL-DIA.md](../UNO-AL-DIA.md)).
+  Bajo su resultado no va el ranking del juego, solo el de Uno al día (el primer intento igual entra al del juego).
 - **Jugadores:** de 2 a 10 por copa (`MIN_JUGADORES` y `MAX_JUGADORES` en `engine.js`, D-118). Con
   el administrador solo, la copa no parte y el tablero pide "al menos un jugador más". **Público:** 🌎 global, 🇨🇱 Chile o 🇧🇷 Brasil, que se elige al crear la copa (D-187, `meta.aud`; las copas `intl` de D-186 se leen como global). Decide qué contenido local entra (`public/cup/games/audiencia.js`).
   **Idioma:** español, inglés, portugués (D-170) y alemán (D-191, para todos desde D-197). La
@@ -141,8 +142,10 @@ por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
 - **¿Dónde queda?** saca sus ciudades de `games/where/ciudades.js` (las 195 capitales, ciudades famosas y de
   segunda línea, 529 en total, con nivel y código ISO; D-157) y su mapa de `games/where/mapa.js`, que genera `node tools/generators/mapa.mjs generar`; `revisar`
   comprueba que cada ciudad cae dentro de su país. La vista del globo (ortográfica) y su inversa
-  están en el motor, `games/where/engine.js`; `games/where/globo.js` lo dibuja en un canvas, recortando cada país en el
-  borde, y la distancia se mide sobre la esfera. La antesala muestra el globo girando solo
+  están en el motor, `games/where/engine.js`; `games/where/globo.js` lo dibuja en un canvas con la imagen satelital
+  (Blue Marble de la NASA, con WebGL; D-159), y la distancia se mide sobre la esfera. Mientras la
+  imagen baja el globo no se dibuja y aparece con un fundido al llegar (D-245); sin WebGL, o si la
+  imagen no llega, se dibuja con el mapa vectorial, recortando cada país en el borde. La antesala muestra el globo girando solo
   (`portada()` de `games/where/ui.js`).
 
 - **🧶 Desenredo** (D-179; fuera del laboratorio desde D-190) es el Untangle de Simon Tatham: nudos unidos por

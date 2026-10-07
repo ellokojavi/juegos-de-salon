@@ -61,7 +61,7 @@ Lo que **no** se avisa, a propósito:
   sobra y obligaría a un servidor en tiempo real.
 - **Marketing** ("¡vuelve a jugar!", "hay un juego nuevo"): un aviso que no sirve a quien lo recibe
   hace que desactive todos. Si alguna vez se quiere, va con su propia casilla, apagada por defecto.
-- **Los de Uno al día** (D-230, en el laboratorio desde v0.118.0; los decide `tools/push/uno-al-dia.mjs`) no son de este tipo: el jugador los activa a
+- **Los de Uno al día** (D-230, desde v0.118.0 en el laboratorio y para todos desde v0.121.0; los decide `tools/push/uno-al-dia.mjs`) no son de este tipo: el jugador los activa a
   propósito, elige la hora, tienen sus propias casillas y se calman solos si no los usa. Respetan
   la misma noche sin avisos y un tope de 2 al día propio, que no se suma al de las copas; el
   detalle está en
@@ -130,7 +130,7 @@ La app detecta en qué está el jugador y le muestra solo el camino que le sirve
 **Android y computador**: un toque en **Avisarme**, el diálogo del sistema y listo. No hace falta
 instalar nada: Chrome, Edge, Samsung Internet y Firefox reciben avisos con la página cerrada. El
 navegador ofrece "Instalar app" por su cuenta; la campana no insiste. Fuera de La Copa, el globo de
-la portada (D-232, en el laboratorio) sí invita a agregar la app: en Android abre el diálogo de
+la portada (D-232, para todos desde v0.121.0) sí invita a agregar la app: en Android abre el diálogo de
 instalar de Chrome si lo ofrece, y si no, los mismos pasos.
 
 **iPhone en Safari** (y Chrome en iPhone, que también puede agregar a inicio desde iOS 16.4):
@@ -318,8 +318,8 @@ push.js (en la página)                    pushEnviados/<código>/<subId>/<clave
 - **Hecho:** las 19 páginas de la app (las que ya tenían manifest) llevan el `apple-touch-icon` y
   registran el service worker; `public/assets/js/instalable.test.mjs` lo exige. Las puertas por
   idioma, las páginas puente, el panel y el laboratorio no lo llevan, a propósito: no son la app.
-- **El globo de la portada** (D-232, `public/assets/js/instalar.js`, en el laboratorio con
-  `INSTALAR_EN_LABS`): invita a agregar la app a inicio y abre los pasos del celular de cada uno
+- **El globo de la portada** (D-232, `public/assets/js/instalar.js`; estuvo en el laboratorio con
+  `INSTALAR_EN_LABS` y es para todos desde v0.121.0): invita a agregar la app a inicio y abre los pasos del celular de cada uno
   (Safari o Chrome en iPhone, Chrome o Samsung Internet en Android; dentro de WhatsApp, abrir el
   link en el navegador) en la misma hoja de abajo que los avisos, que por eso vive en `base.css`.
   Los pasos del iPhone dicen lo mismo que los de la campana. Lo prueban `instalar.test.mjs` y
@@ -440,7 +440,7 @@ fondo: si los avisos de verdad traen gente de vuelta.
 | Cloudflare Workers con cron | Gratis y más puntual, pero suma una cuenta y un lugar más donde vive código. Si GitHub Actions se queda corto en puntualidad, es el siguiente paso. |
 | OneSignal u otro proveedor | Pone a un tercero entre la app y los jugadores; el panel y la privacidad quedan afuera. |
 | App nativa (Capacitor, TWA en Play Store) | Mucho más costo para el mismo resultado; la TWA podría venir después para estar en Play Store. |
-| Recordatorios `.ics` (LIG-29) | El dueño lo dejó fuera por ahora (2026-10-05): solo avisos al celular, para quien los quiera. |
+| Recordatorios `.ics` (LIG-29) | El dueño lo dejó fuera por ahora (2026-10-05): solo avisos al celular, para quien los quiera. Uno al día tuvo uno ("⏰ Agregar recordatorio", v0.118.0) y se sacó en v0.120.2: el recordatorio es el aviso diario (D-230). |
 
 ## Plan de desarrollo, en PR chicos
 

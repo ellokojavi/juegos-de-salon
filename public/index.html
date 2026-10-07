@@ -72,7 +72,12 @@
     .emoji-swap { display: inline-block; transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.3); }
     .emoji-swap.out { opacity: 0; transform: scale(0.3) rotate(-40deg); }
     .hero .sub { color: var(--muted); font-weight: 700; margin-top: 10px; }
-    .games { display: grid; gap: 14px; margin-top: 10px; container-type: inline-size; }
+    /* Una columna que no crece más que la pantalla: sin el minmax(0, …), una palabra larga que el
+       navegador no sabe partir ("Galgenmännchen" en el Chrome de Linux, sin diccionario de alemán)
+       ensanchaba todas las tarjetas y la portada se corría de lado (D-238) */
+    .games { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; margin-top: 10px; container-type: inline-size; }
+    .game-slot > .game-card, .game-card .texto { min-width: 0; }
+    .game-card h2 > span:first-child { min-width: 0; overflow-wrap: anywhere; }
     .game-card {
       display: grid; grid-template-columns: 64px 1fr auto; column-gap: 14px; align-items: center;
       grid-template-areas: "emoji texto ir" "emoji meta ir";
@@ -92,6 +97,8 @@
     .game-card .tag { color: var(--muted); font-size: 0.95rem; margin: 2px 0 6px; }
     .game-card .meta { grid-area: meta; align-self: start; display: flex; flex-wrap: wrap; gap: 6px; }
     .game-card .meta span { font-size: 0.78rem; font-weight: 800; padding: 3px 9px; border-radius: 999px; background: rgba(0,0,0,0.25); white-space: nowrap; }
+    /* La palabra "jugadores" va en su propio span: sin el `> span` le tocaba el fondo de la píldora de La Copa (.torneo) */
+    .game-card .meta span > span.unidad { padding: 0; background: none; font: inherit; border-radius: 0; }
     .game-card .go { grid-area: ir; font-family: var(--font-display); font-size: 2rem; color: var(--yellow); }
     /* En una tarjeta angosta (un celular de 360 px, o uno más ancho con la letra agrandada) las
        píldoras no caben al lado del emoji: jugadores y duración se partían en dos líneas. Ahí
@@ -140,7 +147,25 @@
       .filtros .tipos { gap: 4px; }
       .filtros .tipos button { padding: 6px 3px; }
     }
-    .filtros .tipos button.on { background: var(--cyan); border-color: transparent; color: #03302c; }
+    /* "⭐ Favoritos" (D-238, D-241) sale solo con algún favorito marcado. Va primera en la fila de
+       los tipos si cabe con su nombre; si no, con la ⭐ sola y menos aire entre las fichas y dentro
+       de ellas (3 px, como a 320 px sin favoritos: con 4, a 360 px en español faltaba 1 px); y si
+       tampoco (a 320 px, salvo en inglés), en su propia línea arriba. Lo decide `acomodarFav`, que mide. */
+    .filtros .ficha-fav[hidden] { display: none !important; }
+    .filtros .tipos .ficha-fav { flex: 0 0 auto; }
+    .filtros .tipos .ficha-fav.sola { min-width: 44px; padding-inline: 4px; }
+    .filtros .tipos .ficha-fav.sola .ficha-emoji { font-size: 1.3rem; }
+    .filtros .tipos .ficha-fav.sola span:last-child { display: none; }
+    .filtros .tipos.apretada { gap: 4px; }
+    .filtros .tipos.apretada button { padding-inline: 3px; }
+    .filtros .favs { display: flex; justify-content: center; }
+    .filtros .favs[hidden] { display: none; }
+    .filtros .ficha-fav {
+      display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 6px 16px; cursor: pointer; white-space: nowrap;
+      font: 900 0.9rem var(--font-body); border-radius: 999px; background: var(--glass); border: 1px solid var(--glass-border); color: var(--ink);
+      transition: background 0.15s, color 0.15s, transform 0.1s;
+    }
+    .filtros .tipos button.on, .filtros .ficha-fav.on { background: var(--cyan); border-color: transparent; color: #03302c; }
     .filtros button:active { transform: scale(0.96); }
     .filtros-cuenta { display: flex; flex-wrap: wrap; gap: 4px 10px; justify-content: center; align-items: center; color: var(--muted); font-weight: 700; font-size: 0.9rem; margin: 0; min-height: 44px; }
     .filtros-cuenta[hidden] { display: none; }
@@ -163,7 +188,20 @@
     }
     .filtros-barra.pegada::before { opacity: 1; }
     .link-btn { background: none; border: 0; color: var(--yellow); font: 900 0.9rem var(--font-body); text-decoration: underline; cursor: pointer; min-height: 44px; padding: 0 6px; }
-    .game-card[hidden] { display: none; }
+    .game-card[hidden], .game-slot[hidden] { display: none !important; }
+    /* La ⭐ de favorito (D-238): en la esquina de arriba de la tarjeta, encima y no adentro (un
+       botón no puede ir dentro del link). Cae sobre la columna de la ›, así que no tapa el texto:
+       44 px de toque (C-8) contra los 46 que hay entre el borde y el texto. */
+    .game-slot { position: relative; display: grid; }
+    .fav {
+      position: absolute; top: 0; right: 0; width: 44px; height: 44px; display: grid; place-items: center;
+      background: none; border: 0; padding: 0; cursor: pointer; font-size: 1.35rem; line-height: 1;
+      color: rgba(255, 255, 255, 0.45); animation: slideUp 0.4s ease-out both;
+    }
+    .fav.on { color: var(--yellow); text-shadow: 0 0 10px rgba(255, 210, 63, 0.55); }
+    .fav.salta { animation: favSalta 0.35s ease-out; }
+    @keyframes favSalta { 40% { transform: scale(1.45); } }
+    .fav:active { transform: scale(0.88); }
     /* La Copa es otra cosa que una partida: una semana con amigos. Su tarjeta lo dice con un
        degradé que se mueve despacio (dorado, rosa, morado) y un borde dorado, para invitar a armar
        una. Con "reducir movimiento" el degradé queda quieto. */
@@ -191,7 +229,7 @@
     .btn-azar:active { transform: translateY(3px); box-shadow: 0 1px 0 #c99a00, 0 4px 12px rgba(255, 210, 63, 0.3); }
     .btn-azar-dado { font-size: 1.5rem; display: inline-block; transition: transform 0.4s; }
     .btn-azar:hover .btn-azar-dado { transform: rotate(-25deg); }
-    /* Uno al día (D-230): a la derecha de "Al azar", en una línea, con la racha en una píldora */
+    /* Uno al día como botón, a la derecha de "Al azar" (la forma de antes, en /labs/): en una línea, con la racha en una píldora */
     .btn-uad {
       position: relative; display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 8px 18px; cursor: pointer;
       color: #fff; background: linear-gradient(180deg, #ff5fa5, var(--pink)); border: 0; border-radius: 999px;
@@ -221,21 +259,42 @@
       .azar-slot.con-uad .btn-uad-titulo { font-size: 0.95rem; gap: 4px; }
       .azar-slot.con-uad .btn-uad-racha { padding: 3px 5px; font-size: 0.72rem; }
     }
-    /* La otra forma, a prueba en /labs/: una fila de dos tarjetas altas, La Copa y Uno al día */
+    /* Una fila de dos tarjetas altas, La Copa y Uno al día (D-239) */
     .fila-alta { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 10px; }
-    .game-card.alta { position: relative; grid-template-columns: 1fr; grid-template-areas: "emoji" "texto" "meta"; row-gap: 8px; align-content: start; justify-items: start; text-align: left; padding: 14px 12px; font: inherit; cursor: pointer; }
-    .game-card.alta .emoji { width: 52px; height: 52px; font-size: 2.1rem; border-radius: 15px; }
-    .game-card.alta .texto { align-self: start; }
-    .game-card.alta h2 { font-size: clamp(1.15rem, 5.4vw, 1.45rem); line-height: 1.05; }
-    .game-card.alta .tag { font-size: 0.82rem; line-height: 1.3; margin: 4px 0 0; }
+    /* El emoji va a la izquierda del título, y la bajada y las píldoras de borde a borde: la fila
+       queda casi 90 px más baja que con el emoji arriba (D-239) */
+    .game-card.alta { position: relative; grid-template-columns: auto 1fr; grid-template-areas: "emoji h2" "tag tag" "meta meta"; column-gap: 8px; row-gap: 8px; align-items: center; align-content: start; justify-items: start; text-align: left; padding: 14px 12px; font: inherit; cursor: pointer; }
+    .game-card.alta .emoji { width: 40px; height: 40px; font-size: 1.6rem; border-radius: 12px; }
+    .game-card.alta .texto { display: contents; }
+    .game-card.alta h2 { grid-area: h2; font-size: clamp(1.05rem, 5vw, 1.35rem); line-height: 1.05; }
+    .game-card.alta .tag { grid-area: tag; font-size: 0.82rem; line-height: 1.3; margin: 0; }
     .game-card.alta .go { display: none; }
+    /* Jugadores y duración, en una sola línea: "👥 2–10 jugadores" no cabía al lado de "⏱ 7 días"
+       en media fila, así que la palabra se esconde a la vista (el lector de pantalla la lee) */
+    .game-card.alta .meta { flex-wrap: nowrap; gap: 5px; }
     .game-card.alta .meta span { font-size: 0.72rem; padding: 3px 7px; }
+    .game-card.alta .meta span .unidad { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; padding: 0; }
+    @media (max-width: 340px) { .game-card.alta .meta { gap: 4px; } .game-card.alta .meta span { padding: 3px 5px; font-size: 0.68rem; } }
+    /* La Copa y Uno al día no son un juego más: el título va en color, dorado y celeste */
+    .game-card.torneo h2 > span:first-child, .uad-card h2 > span:first-child {
+      background: linear-gradient(180deg, #fff3b0, var(--yellow) 55%, var(--orange)); -webkit-background-clip: text; background-clip: text; color: transparent;
+      filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.35));
+    }
+    .uad-card h2 > span:first-child { background-image: linear-gradient(180deg, #d9fffb, var(--cyan) 60%, #19b8ab); }
     .uad-card { border-color: rgba(255, 46, 136, 0.6); background: linear-gradient(160deg, rgba(255, 95, 165, 0.42), rgba(138, 77, 255, 0.38)); box-shadow: 0 0 22px rgba(255, 46, 136, 0.22); color: var(--ink); }
     .uad-card.hecho { border-color: rgba(46, 230, 214, 0.6); background: linear-gradient(160deg, rgba(46, 230, 214, 0.32), rgba(138, 77, 255, 0.3)); }
     .uad-card .tag { color: rgba(255, 255, 255, 0.88); }
     .uad-card .meta .uad-card-estado { background: rgba(0, 0, 0, 0.32); white-space: normal; }
     .uad-card .btn-uad-punto { top: 10px; right: 10px; }
+    /* El punto no se monta sobre el título: "Spiel des Tages" llega hasta el borde (U-12) */
+    .uad-card:not(.hecho) h2 { padding-right: 14px; }
     @media (prefers-reduced-motion: reduce) { .btn-uad-punto { animation: none; } }
+    /* La barra de arriba en dos bloques: el idioma a la izquierda y las acciones (sonido, rankings,
+       compartir) a la derecha. Si en un celular angosto no caben juntos, las acciones bajan a otra
+       línea y siguen a la derecha. Con 6 px de aire caben en una sola línea desde 375 px (un
+       iPhone común): con los 10 y 8 de la barra de los juegos se pasaban por 1 px (C-8). */
+    .portada-barra { flex-wrap: wrap; gap: 6px; }
+    .portada-barra .tools { margin-left: auto; gap: 6px; }
   </style>
   <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
   <meta name="apple-mobile-web-app-title" content="Juegos de Salón">
@@ -243,7 +302,7 @@
 </head>
 <body>
   <main class="app">
-    <div class="topbar" style="justify-content:flex-end"><div class="tools"><div id="lang-slot"></div><span id="sound-slot"></span><a class="icon-btn" id="btn-rankings" href="records/" title="Rankings" aria-label="Rankings" hidden>🏆</a><span id="share-slot"></span></div></div>
+    <div class="topbar portada-barra"><div id="lang-slot"></div><div class="tools"><span id="sound-slot"></span><a class="icon-btn" id="btn-rankings" href="records/" title="Rankings" aria-label="Rankings" hidden>🏆</a><span id="share-slot"></span></div></div>
     <header class="hero">
       <span class="emoji bounce"><span class="emoji-swap" id="hero-emoji" aria-hidden="true">🎲</span></span>
       <h1 class="display display--xl rainbow" data-i18n="appTitle">Juegos de Salón</h1>
@@ -273,12 +332,13 @@
     import { FRASES } from './assets/js/frases.js';
     import { SFX, soundToggle, initSound } from './assets/js/sound.js';
     import { botonAzar, TEXTOS as AZAR } from './assets/js/azar.js';
+    import { favoritos, alternarFavorito } from './assets/js/favoritos.js';
     import { trackVisit } from './assets/js/transport/stats.js';
     trackVisit(); // el tráfico del sitio (D-208)
     sparkles();
     initSound();
     document.getElementById('sound-slot').append(soundToggle());
-    document.addEventListener('click', e => { if (e.target.closest('.game-card, .lang-toggle button, .filtros button, .link-btn')) SFX.tap(); });
+    document.addEventListener('click', e => { if (e.target.closest('.game-card, .fav, .lang-toggle button, .filtros button, .link-btn')) SFX.tap(); });
     const lang = getLang();
     document.documentElement.lang = lang;
     const T = COMMON[lang];
@@ -308,6 +368,20 @@
 
     // 1) Lo importante primero: la lista de juegos, con los de La Copa al final (D-142).
     const list = document.getElementById('games');
+    const marcados = new Set(favoritos());
+    const botonFavorito = (g, card) => {
+      const b = el('button', { type: 'button', class: 'fav', 'data-id': g.id, style: card.getAttribute('style'),
+        'aria-label': T.favorite.replace('{juego}', pickLang(g.name, lang)), title: T.favorite.replace('{juego}', pickLang(g.name, lang)) });
+      const pintar = () => { const on = marcados.has(g.id); b.textContent = on ? '★' : '☆'; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); };
+      b.addEventListener('click', () => {
+        if (alternarFavorito(g.id)) marcados.add(g.id); else marcados.delete(g.id);
+        pintar();
+        if (b.classList.contains('on')) { b.classList.remove('salta'); void b.offsetWidth; b.classList.add('salta'); }
+        document.dispatchEvent(new CustomEvent('favoritos'));
+      });
+      pintar();
+      return b;
+    };
     const tarjetas = PORTADA.map((g, i) => {
       const [, max] = rangoJugadores(g.players);
       // Un juego que no está disponible se ve, pero no se abre: sin href, ni con el teclado (C-5)
@@ -319,24 +393,28 @@
           el('div', { class: 'tag' }, pickLang(g.tagline, lang)),
         ),
         el('div', { class: 'meta' },
-          g.players && el('span', {}, `👥 ${g.players} ${max === 1 ? T.player : T.players}`),
+          // La palabra va aparte: la tarjeta alta la esconde a la vista para que quepa en una línea
+          g.players && el('span', {}, `👥 ${g.players}`, el('span', { class: 'unidad' }, ` ${max === 1 ? T.player : T.players}`)),
           g.duration && el('span', {}, `⏱ ${g.duration} ${g.durationUnit ? pickLang(g.durationUnit, lang) : T.minutes}`),
           // Lo que por ahora se juega solo en español lo dice antes de abrirlo (D-98)
           g.available && g.idiomas && !g.idiomas.includes(lang) && el('span', { class: 'idioma' }, `🇪🇸 ${T.onlySpanish}`),
         ),
         el('div', { class: 'go' }, '›'),
       );
-      list.append(card);
-      return { g, card };
+      // La ⭐ de favorito (D-238) va al lado de la tarjeta y no adentro: un botón dentro de un link
+      // no se puede tocar sin abrir el juego. La Copa no lleva: es una semana con amigos, no una partida
+      if (!g.available || g.torneo) { list.append(card); return { g, card, caja: card }; }
+      const caja = el('div', { class: 'game-slot' }, card, botonFavorito(g, card));
+      list.append(caja);
+      return { g, card, caja };
     });
 
     // Juego al azar (D-188): sale de las tarjetas que se ven, así respeta el filtro de tipo
     document.getElementById('azar-slot').append(botonAzar({
       lang, candidatos: () => tarjetas.filter(t => !t.card.hidden).map(t => t.g),
     }));
-    // Uno al día (D-230): al lado, el juego de hoy, el mismo para todos. Por ahora, en el laboratorio
-    // Va al lado del dado (lo que eligió el dueño); la tarjeta de media fila junto a La Copa se
-    // puede probar desde /labs/
+    // Uno al día (D-230): el juego de hoy, el mismo para todos. Va en una tarjeta de media fila junto
+    // a La Copa (D-239, lo que eligió el dueño); el botón al lado del dado se puede probar desde /labs/
     import('./assets/js/uno-al-dia.js').then(async ({ unoAlDiaVisible, formaAcceso }) => {
       if (!unoAlDiaVisible() || formaAcceso() === 'no') return;
       import('./assets/js/uno-al-dia-avisos.js').then(Av => Av.globo()).catch(() => {});
@@ -360,24 +438,48 @@
     // Filtro por tipo (D-142, D-149): la lista ya es larga. Va en la URL (?type=logic, en inglés
     // como las rutas: D-214), así volver desde un juego lo deja como estaba y un link filtrado se
     // puede compartir. Cuántos juegan no se filtra: cada juego pregunta su modo adentro.
+    // "⭐ Favoritos" (D-238) es una ficha más, al principio, y solo con algún favorito marcado:
+    // ?type=favorites en un celular sin favoritos muestra todos, sin ruido.
     try {
       const q = new URLSearchParams(location.search);
       const pedido = q.get('type') || TIPOS_VIEJOS[q.get('tipo')];
-      const filtro = { tipo: TIPOS[pedido] ? pedido : null };
-      const caben = ({ g }) => !filtro.tipo || (g.tipos || []).includes(filtro.tipo);
+      const FAV = 'favorites';
+      const hayFavoritos = () => tarjetas.some(t => t.caja !== t.card && marcados.has(t.g.id));
+      const filtro = { tipo: TIPOS[pedido] || (pedido === FAV && hayFavoritos()) ? pedido : null };
+      const caben = ({ g, card, caja }) => !filtro.tipo
+        || (filtro.tipo === FAV ? caja !== card && marcados.has(g.id) : (g.tipos || []).includes(filtro.tipo));
       const caja = document.getElementById('filtros');
       caja.setAttribute('aria-label', T.filters);
       const tipos = el('div', { class: 'tipos', role: 'group', 'aria-label': T.filters });
       const cuenta = document.getElementById('filtros-cuenta');
       const botones = [];
+      const fav = el('button', { type: 'button', class: 'ficha-fav', 'data-tipo': FAV, 'aria-label': T.favorites, title: T.favorites, onClick: () => { filtro.tipo = filtro.tipo === FAV ? null : FAV; aplicar(); } }, el('span', { class: 'ficha-emoji', 'aria-hidden': 'true' }, '⭐'), el('span', {}, T.favorites));
+      const favs = el('div', { class: 'favs' }, fav);
+      botones.push(fav);
       // Solo los tipos que tiene algún juego que se puede abrir: así la lista nunca queda vacía
       for (const [id, t] of Object.entries(TIPOS)) {
         if (!PORTADA.some(g => g.available && (g.tipos || []).includes(id))) continue;
         const b = el('button', { type: 'button', 'data-tipo': id, onClick: () => { filtro.tipo = filtro.tipo === id ? null : id; aplicar(); } }, el('span', { class: 'ficha-emoji', 'aria-hidden': 'true' }, t.emoji), el('span', {}, pickLang(t.name, lang)));
         tipos.append(b); botones.push(b);
       }
-      caja.append(tipos);
+      caja.append(favs, tipos);
       const limpiar = () => { filtro.tipo = null; aplicar(); };
+      // Dónde va ⭐ Favoritos (D-241): se prueba de la forma más completa a la más corta y queda la
+      // primera que cabe sin que la fila se desborde. Se mide en vez de fijar un ancho: el largo de
+      // los tipos cambia con el idioma y con las fuentes de cada celular.
+      const acomodarFav = () => {
+        const hay = hayFavoritos();
+        fav.hidden = !hay;
+        const formas = hay ? [['fila', false], ['fila', true], ['linea', false]] : [['linea', false]];
+        for (const [donde, sola] of formas) {
+          if (donde === 'fila') { if (fav.parentNode !== tipos) tipos.prepend(fav); }
+          else if (fav.parentNode !== favs) favs.append(fav);
+          fav.classList.toggle('sola', sola);
+          tipos.classList.toggle('apretada', sola);
+          if (donde === 'linea' || tipos.scrollWidth <= tipos.clientWidth + 0.5) break;
+        }
+        favs.hidden = !hay || fav.parentNode !== favs;
+      };
       const aplicar = (primera = false) => {
         for (const b of botones) {
           const on = b.dataset.tipo === filtro.tipo;
@@ -387,10 +489,11 @@
         for (const t of tarjetas) {
           const ve = caben(t);
           // Las que vuelven a aparecer entran escalonadas desde arriba, no con el retraso de su lugar original
-          if (!primera && ve && t.card.hidden) t.card.style.animationDelay = `${n * 40}ms`;
-          t.card.hidden = !ve;
+          if (!primera && ve && t.card.hidden) for (const x of [t.card, t.caja.querySelector('.fav')]) if (x) x.style.animationDelay = `${n * 40}ms`;
+          t.card.hidden = t.caja.hidden = !ve;
           if (ve) n++;
         }
+        acomodarFav();
         const filtrado = !!filtro.tipo;
         cuenta.hidden = !filtrado || n === 0;
         cuenta.replaceChildren(el('span', {}, T.shown.replace('{n}', n).replace('{total}', tarjetas.length)),
@@ -403,6 +506,16 @@
         history.replaceState(history.state, '', url.pathname + url.search + url.hash);
       };
       aplicar(true);
+      // Marcar el primero hace aparecer la ficha; desmarcar estando en Favoritos no saca la tarjeta
+      // de la vista (se puede volver a marcar), salvo que ya no quede ninguno: ahí se ven todos
+      document.addEventListener('favoritos', () => {
+        if (filtro.tipo === FAV && !hayFavoritos()) { filtro.tipo = null; aplicar(); }
+        else acomodarFav();
+      });
+      // Al girar el celular o cuando terminan de cargar las fuentes, puede que ahora quepa (o no)
+      let anchoVisto = 0;
+      new ResizeObserver(() => { const w = Math.round(caja.clientWidth); if (w !== anchoVisto) { anchoVisto = w; acomodarFav(); } }).observe(caja);
+      document.fonts?.ready.then(acomodarFav);
       // Pegados arriba (ver .filtros-barra): la marca invisible de su lugar de siempre dice si se
       // pasó de largo. Al cambiar de tipo estando pegados, la lista vuelve a empezar justo debajo.
       const barra = document.getElementById('filtros-barra');
@@ -413,7 +526,7 @@
         const tope = parseFloat(getComputedStyle(barra).top) || 0;
         window.scrollTo({ top: marca.getBoundingClientRect().top + window.scrollY - tope });
       });
-      window.__portada = { get filtro() { return { ...filtro }; }, get visibles() { return tarjetas.filter(t => !t.card.hidden).map(t => t.g.id); } };
+      window.__portada = { get filtro() { return { ...filtro }; }, get visibles() { return tarjetas.filter(t => !t.card.hidden).map(t => t.g.id); }, get favoritos() { return [...marcados]; } };
     } catch (e) { console.warn('filtros del menú:', e); }
 
     // 2) Decoraciones: si algo falla aquí, el menú sigue funcionando.

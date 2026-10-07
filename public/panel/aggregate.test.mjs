@@ -434,4 +434,7 @@ console.log('aggregate.test.mjs: todo en verde');
   assert.equal(r.d7, null, 'todavía no pasan 7 días');
   assert.deepEqual(r.tramos, [['1', 1], ['2 a 6', 1], ['7 a 29', 0], ['30 o más', 1]]);
   assert.equal(r.aceptadas, 1, 'solo las del rango');
+  const e = unoAlDiaDelRango({ days: { 100: { uad: { boton: 4, dado: 3 }, vistas: { today: 6, inicio: 50 }, entradas: { today: 2 } }, 101: { uad: { boton: 1 } }, 99: { uad: { boton: 9 } } } }, { from: 100, to: 101 });
+  assert.deepEqual([e.vistas, e.entradas], [6, 2], 'el tráfico de /today/');
+  assert.deepEqual(e.eventos, { boton: 5, dado: 3 }, 'la actividad del rango, de todos');
 }

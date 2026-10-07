@@ -53,23 +53,24 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 |---|---|---|
 | Estructura y rutas | C-2 | D-01, D-02, D-03, D-24, D-192, D-198 |
 | Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184 |
-| Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231 |
+| Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244 |
 | Sonido y vibración | C-4 | D-17, D-92 |
-| Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213 |
-| Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237 |
+| Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
+| Portada: filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241 |
+| Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247 |
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138 |
-| Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97 |
+| Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246 |
 | Memoria de partida | C-6 | D-25, D-150 |
 | Interfaz táctil | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213 |
 | Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213 |
-| Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226 |
+| Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243 |
 | Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211 |
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216 |
 | La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234 |
 | Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218 |
-| Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236 |
+| Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249 |
 | Marketing | `marketing/README.md` | D-178 |
 | App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
 
@@ -2200,7 +2201,7 @@ coseno del ángulo con que se mira; el alfiler se achica (hasta un 35 %) y se de
 detrás. En el juego las marcas siguen planas: ahí se miran de frente y tienen que leerse.
 
 ## D-159 · El globo de ¿Dónde queda? es una imagen satelital
-**Fecha:** 2026-09-29 · **Estado:** corregida por D-202
+**Fecha:** 2026-09-29 · **Estado:** corregida por D-202, D-245
 **Decisión:** El globo muestra la Tierra vista desde el satélite: **Blue Marble Next Generation**
 de la NASA (dominio público), la de septiembre de 2004, con relieve y fondo marino. Se eligió
 septiembre porque es el mes con menos nieve en los dos hemisferios: el Sahara, Arabia, el Atacama
@@ -2213,9 +2214,9 @@ la Antártica como hielo. Sin nombres ni fronteras (D-158).
   4096 px (1,6 MB) que la reemplaza al bajar, si el celular la acepta. El nombre lleva el mes de
   la imagen, porque `set-version.py` no estampa imágenes. Las rehace
   `node tools/mapa.mjs satelite` (necesita internet y `sips`, de macOS).
-- **Sin WebGL, o mientras no llega ninguna imagen,** el globo se dibuja como antes, con el mapa
-  vectorial verde. El mapa vectorial (`mapa.js`) queda también para las pruebas: cada ciudad cae
-  en su país y sobre tierra.
+- **Sin WebGL, o si ninguna imagen llega,** el globo se dibuja como antes, con el mapa vectorial
+  verde. Mientras baja la primera, el globo espera vacío (D-245). El mapa vectorial (`mapa.js`)
+  queda también para las pruebas: cada ciudad cae en su país y sobre tierra.
 - **El zoom máximo baja de 40 a 16 veces** (unos 2 km por píxel en un celular): más allá la
   imagen de 4096 px ya no tiene detalle. Sigue sobrando precisión para el puntaje (un punto cada
   25 km). La respuesta acerca hasta 12 veces.
@@ -3176,6 +3177,11 @@ pantalla, y en un celular en la mitad. Un mapa es mejor mientras más grande se 
 entrada de la pantalla se apaga en este modo) ni con `align-self: center`, que Chrome también
 aplica a lo fijo. La pantalla no se desplaza: lo que no quepa tiene que desplazarse dentro de su
 widget, como las reglas abiertas.
+**Actualización 2026-10-06 (PR #248):** la píldora del reloj ya no se centra en la ventana: en la
+prueba del laboratorio, con "🧪 Prueba", se montaba sobre "‹ Laboratorio" (C-8). `pantallaCompleta`
+de `cup/game.js` mete `#jugar-head` dentro de la barra, entre volver y el sonido, y al salir lo
+devuelve a la pantalla de jugar. Si no cabe, `ajustarCabeza` deja la píldora de prueba en 🧪
+(`.justo`) y, si ni así, la saca (`.sin-chip`); el reloj no se parte (`nowrap`).
 
 ## D-204 · Publicar más rápido: los guiones largos en partes y la revisión de un PR, acotada
 **Fecha:** 2026-10-04 · **Estado:** corregida por D-213 · **Relación:** amplía D-132, D-172 y D-193
@@ -3354,11 +3360,11 @@ del idioma elegido (`applang`, D-46) decía cuánto, pero no de qué partida.
 **Consecuencias:** Lo de antes no tiene idioma y no lleva etiqueta. Reglas nuevas, solo agregan.
 
 ## D-212 · Un jugador es un nombre y un PIN para todos los juegos, y sus récords van a rankings
-**Fecha:** 2026-10-04 · **Estado:** corregida por D-217 · **Relación:** amplía D-96 fuera de La Copa; completa C-7 (lo que sale de quien entra con su jugador)
+**Fecha:** 2026-10-04 · **Estado:** corregida por D-217, D-249 · **Relación:** amplía D-96 fuera de La Copa; completa C-7 (lo que sale de quien entra con su jugador)
 **Decisión:** Quien quiere aparecer en los rankings entra con **su nombre y un PIN de 4 dígitos**,
 como en La Copa, pero una vez para toda la app y en cualquier celular. Es opcional y se ofrece
 plegado en la antesala de cada juego suelto (junto al ranking, debajo de "Empezar": antes lo
-empujaba fuera de la pantalla en alemán y portugués, dilema #186), en su resultado y en `/records/`: sin entrar, todo se
+empujaba fuera de la pantalla en alemán y portugués, dilema #186; desde D-249 va justo bajo Empezar y Volver al menú, como tarjeta destacada), en su resultado y en `/records/`: sin entrar, todo se
 juega igual y nada sale del celular.
 - **Identidad.** Un jugador es un `jid` (8 letras y números) en `jugadores/<jid>` = `{ n, at }`.
   El PIN nunca se guarda: `jugadorKeys/<jid>` tiene su hash, que nadie lee, y cada celular se
@@ -3847,7 +3853,7 @@ prueban a mano en Android: Chrome headless no los muestra. Si con el tope se pie
 avisos ya ese día), el del día siguiente o el de gracia lo cubren.
 
 ## D-230 · Uno al día: un juego por día, el mismo para todos, con racha y avisos que pide el jugador
-**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** amplía D-188 (el dado de Juego al azar abre el juego del día) y D-212 (un período nuevo, el del día, y la tabla de rachas); corrige D-221 (los avisos ya no son solo de La Copa: suma los que el jugador pide para Uno al día); completa RP-44
+**Fecha:** 2026-10-05 · **Estado:** corregida por D-239 · **Relación:** amplía D-188 (el dado de Juego al azar abre el juego del día) y D-212 (un período nuevo, el del día, y la tabla de rachas); corrige D-221 (los avisos ya no son solo de La Copa: suma los que el jugador pide para Uno al día); completa RP-44
 **Decisión:** Una modalidad nueva en la portada, junto a Juego al azar. Cada día, a la medianoche
 del jugador, sale un juego con su contenido, el mismo para todos, a partir de la fecha
 (`uno-al-dia:<fecha>`, como las semillas de La Copa, D-97). Entran todos los juegos que tienen modo
@@ -3870,12 +3876,12 @@ reglas de "una vez por día", y cada juego solitario acepta `?hoy` (la página c
 juego y la semilla, así que el link no lleva la fecha ni deja elegir el tablero; el diseño decía
 `?dia=`, y el PR 1 lo cambió). Los avisos de "vuelve a jugar"
 siguen fuera (D-221): estos solo salen si el jugador los pidió, y se calman solos si no los usa.
-Es un diseño aprobado que se construye en cinco PR, los cuatro primeros detrás del
+Es un diseño aprobado que se planeó en cinco PR y se construyó en ocho, los siete primeros detrás del
 laboratorio (`UNO_AL_DIA_EN_LABS`), según "Por partes" de [UNO-AL-DIA.md](UNO-AL-DIA.md).
 Con menos de 9 juegos en el mazo, la espera para repetir uno es de dos días menos que los que hay
 (con los 7 del PR 1, cinco días), porque 7 días con 7 juegos repetía el mismo orden cada semana.
-El acceso va en la misma fila que Juego al azar, a su derecha (el dueño, 2026-10-05); la tarjeta
-junto a La Copa queda como alternativa en `/labs/` y con `?uad=tarjeta`. El PR 1 (el núcleo, los 7
+El acceso iba en la misma fila que Juego al azar, a su derecha (el dueño, 2026-10-05); desde D-239
+va en una tarjeta junto a La Copa, y el botón queda como alternativa en `/labs/` y con `?uad=boton`. El PR 1 (el núcleo, los 7
 solitarios, todo en el celular) llegó en v0.115.0. El PR 2 (v0.116.0) sumó El Ahorcado, Batalla
 Naval y Dudo desde el mazo del 12 de octubre (con 10 juegos, la espera vuelve a ser de 7 días):
 `?hoy` abre directo su modo para uno, y la palabra, la flota del celular y los dados de cada ronda
@@ -3889,8 +3895,8 @@ días seguidos, tope 2) y las invitaciones (`today/?inv=<jid>`, `invitados/<jid>
 para quien invitó). Las reglas exigen que el puntaje del día sea el de la historia y que la semana
 sume cada día una sola vez, pero **no pueden revisar** que el número del día sea el de hoy (no
 convierten texto en número para compararlo con la hora del servidor) ni la mejor racha, que calcula
-el celular: un tramposo podría inflar su racha o anotar otro día. Se acepta mientras esté en el
-laboratorio; si molesta, el workflow de los avisos puede recalcular las rachas desde la historia.
+el celular: un tramposo podría inflar su racha o anotar otro día. Se aceptó en el
+laboratorio (y el PR 6 lo dejó así); si molesta, el workflow de los avisos puede recalcular las rachas desde la historia.
 Al entrar, los días viejos del celular suben solo a la historia, sin sus rankings.
 Detalle en "Lo que el PR 3 hizo" de [UNO-AL-DIA.md](UNO-AL-DIA.md). El PR 4 (v0.118.0) suma los avisos: cada celular
 guarda lo que pidió y su último día y racha en `pushDia/<subId>`, y `tools/push/uno-al-dia.mjs` los
@@ -3904,11 +3910,24 @@ evento diario). Detalle en "Lo que el PR 4 hizo" de [UNO-AL-DIA.md](UNO-AL-DIA.m
 `MODO_UNO_AL_DIA` en games.js) y `#/juegos` trae el bloque "📅 Uno al día" (partidas de todos y, de
 quienes entraron con jugador, la vuelta al día siguiente y a los 7 días, las rachas por tramo y las
 invitaciones aceptadas), para lo que las reglas dejan al dueño leer `unoAlDia/` e `invitados/`
-enteros. Uno al día sigue en el laboratorio: abrirlo a todos lo decide el dueño. Detalle en "Lo que
-el PR 5 hizo" de [UNO-AL-DIA.md](UNO-AL-DIA.md) y en [PANEL.md](PANEL.md).
+enteros. Uno al día siguió en el laboratorio hasta v0.121.0 (abajo). Detalle en "Lo que
+el PR 5 hizo" de [UNO-AL-DIA.md](UNO-AL-DIA.md) y en [PANEL.md](PANEL.md). El PR 6 (v0.120.0) trae
+lo que el dueño decidió el 2026-10-06 (decisiones 11 a 13 de [UNO-AL-DIA.md](UNO-AL-DIA.md)): El
+Ahorcado, Batalla Naval y Dudo jugados con `?hoy` ya no muestran la revancha (dilema #226), porque
+la tarjeta ofrece 🎲 Jugar otro y Repetir el de hoy; bajo el resultado de los solitarios queda solo
+el ranking de Uno al día (el del juego no se muestra, aunque el primer intento igual entra a él);
+"Agregar al calendario" pasa a **⏰ Agregar recordatorio**, con una línea que dice que es un
+recordatorio en el calendario del celular, porque se confundía con el calendario de `/today/`. Que
+un tramposo pueda inflar su mejor racha no importa por ahora; sí medir el uso: cada acción suma uno
+a `stats/<env>/days/<día>/uad/<evento>` (`EVENTOS_UAD` y `trackUnoAlDia` en `stats.js`, sin decir
+quién; una regla nueva en `database.rules.json` acepta solo subir de a uno), y el bloque "📅 Uno al
+día" del panel lo muestra en "Qué se hace" y "Avisos y recordatorio" (desde v0.120.2, "Avisos"), con las vistas de `/today/` y
+las visitas que entraron por ahí. En v0.120.1 (dilema #230, decisión 14), con los avisos activos
+`/today/` ya no ofrece "⏰ Agregar recordatorio": repetiría el aviso. El mismo día (v0.120.2) el dueño lo dejó más simple: **el recordatorio es el aviso diario de la app**, programado a la hora elegida, y el del calendario (el `.ics`) se sacó entero; la señal `recordatorio` también.
+**Sale del laboratorio en v0.121.0** (decisión del dueño, 2026-10-06; decisión 16 de [UNO-AL-DIA.md](UNO-AL-DIA.md)): `UNO_AL_DIA_EN_LABS = false`, así que el botón de la portada, `/today/`, los rankings y los avisos son para todos, y en `/labs/` queda solo probar la otra forma del acceso (la tarjeta junto a La Copa). **El n.° 1 pasó al 6 de octubre de 2026**, el día en que se abrió (`LANZAMIENTO`): el mazo es el mismo corrido un día, así que El Ahorcado, Batalla Naval y Dudo entran desde el mazo del 13 de octubre, no del 12. Desde ahí `LANZAMIENTO` queda fijo: moverlo cambiaría el juego de días ya jugados.
 
 ## D-231 · El selector de idioma lleva las banderas siempre
-**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** corrige la nota de `base.css` de D-191 (en un celular angosto se escondía la bandera)
+**Fecha:** 2026-10-05 · **Estado:** corregida por D-244 · **Relación:** corrige la nota de `base.css` de D-191 (en un celular angosto se escondía la bandera)
 **Decisión:** Pedido del dueño: todos los selectores de idioma llevan sus banderas, y queda un
 estándar de diseño para el widget (C-3). En un celular de hasta 440 px, con cuatro idiomas, el
 toggle escondía las banderas para no empujar el sonido y compartir fuera de la barra de arriba:
@@ -3921,9 +3940,9 @@ así, en el celular, que es donde más se juega, nunca se veían.
 **Por qué:** La bandera se reconoce antes que el código, sobre todo para quien no lee español.
 Apilarla mantiene el ancho y los 44 px de alto (C-8), así que la barra no cambia.
 **Consecuencias:** Las banderas son emoji, no imágenes SVG, por decisión del dueño: en Windows se
-ven como dos letras (CL, GB…) y se acepta, porque la app se juega en celulares. Hay un solo toggle en la app: el estándar queda en C-3.
+ven como dos letras (ES, GB…; CL hasta D-244) y se acepta, porque la app se juega en celulares. Hay un solo toggle en la app: el estándar queda en C-3.
 
-## D-232 · Un globo en la portada invita a agregar la app a inicio, primero en el laboratorio
+## D-232 · Un globo en la portada invita a agregar la app a inicio (primero en el laboratorio; para todos desde v0.121.0)
 **Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** completa D-221; reusa la hoja de pasos de D-223
 **Decisión:** La portada muestra, a los 2,5 segundos, un globo abajo con el ícono de la app,
 **"Juegos de Salón como app"**, una línea y el botón **Agregar**, que abre los pasos de ese
@@ -3950,7 +3969,7 @@ vuelva. La app instalada (D-221) es la que recibe los avisos en iPhone y se abre
 de cada navegador cambian con sus versiones: si un paso deja de calzar, se corrige en
 `COMMON[lang].ins` (i18n.js). Lo prueban `instalar.test.mjs` y `tools/e2e/instalar.mjs` (cada
 celular, la ✕, el diálogo de Chrome y los cuatro idiomas a 320 px); en iPhones y Android reales se
-prueba a mano desde `/labs/`.
+prueba a mano desde `/labs/`. **Sale del laboratorio en v0.121.0** (decisión del dueño, 2026-10-06): `INSTALAR_EN_LABS = false`, así que el globo sale en la portada de todos los celulares donde se puede agregar la app; en `/labs/` queda solo el botón para volver a mostrarlo después de cerrarlo con la ✕.
 
 ## D-233 · Los avisos se miden en el panel: mandados, tocados, la app instalada y la última vuelta
 **Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** completa D-224 y D-228; el PR 4 de [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md); señales como D-44 y D-208
@@ -4050,3 +4069,238 @@ cargaba. Se probaron y descartaron:
 se ve el dado. Abrir el juego ya no suma los 0,42 s de D-235. Si `sessionStorage` no está
 disponible, el juego abre como antes de D-235. Una página de juego nueva que no use `.screen.active`
 deja el dado encima hasta 4 s.
+
+## D-238 · Juegos favoritos en la portada, con su propio filtro
+**Fecha:** 2026-10-06 · **Estado:** corregida por D-241 · **Relación:** completa D-142 y D-149; respeta D-144; D-241 cambia dónde va la ficha ⭐ Favoritos
+**Decisión:** cada tarjeta de la portada lleva una ☆ en la esquina de arriba. Al tocarla, el juego
+queda marcado como favorito (⭐ amarilla) y no se abre; al tocarla otra vez, se desmarca.
+- **El filtro** es una ficha "⭐ Favoritos" en su propia línea, arriba de los tipos (corregida
+  por D-241: va primera en la fila de los tipos cuando cabe, y en su línea solo cuando no). Aparece
+  recién con el primer favorito, así que a quien no usa la ⭐ no le cambia nada.
+- **Funciona como un tipo más:** se elige uno o el otro, la cuenta dice "Se ven n de m" con "Ver
+  todos" y va en la URL (`?type=favorites`). Un link así, en un celular sin favoritos, muestra
+  todos sin avisar nada. El dado de Juego al azar (D-188) sale de las tarjetas que se ven, así
+  que con Favoritos elegido sortea entre los favoritos.
+- **Desmarcar estando en Favoritos** no saca la tarjeta de la vista: se puede volver a marcar.
+  Si ya no queda ningún favorito, se ven todos y la ficha se va.
+- **Dónde se guardan:** en el `localStorage` del navegador (`juegos-de-salon:favoritos`), por id
+  de juego. Sin cuenta ni Firebase, en `public/assets/js/favoritos.js`.
+- **Dónde va la ⭐:** al lado de la tarjeta y no adentro (`.game-slot`), porque un botón dentro de
+  un link no se puede tocar sin abrir el juego. Cae sobre la columna de la ›, con 44 px de toque
+  (C-8), y no tapa el texto.
+- **La Copa no lleva ⭐:** es una semana con amigos, no una partida que se elige.
+**Por qué:** lo pidió un amigo (#233). La portada ofrece 15 juegos y quien vuelve juega casi
+siempre los mismos dos o tres. Los tipos agrupan por género, no por gusto.
+**Alternativas descartadas:**
+- **Una quinta ficha en la fila de tipos:** cinco fichas no caben en una fila ni a 375 px, en
+  ningún idioma, y desde D-149 los tipos van en una sola fila (D-144).
+- **La ficha con la ⭐ sola, sin el nombre:** tampoco cabía a 320 px. (D-241 retoma las dos: la ficha entra
+  primera en la fila cuando cabe, con su nombre o con la ⭐ sola y menos aire, y se mide en la página.)
+- **Ordenar los favoritos primero, sin filtro:** el pedido era un filtro, y reordenar movería las
+  tarjetas de lugar cada vez que alguien marca una.
+- **Guardarlos con el jugador (D-212), para que lo sigan entre celulares:** queda para después.
+  El `localStorage` alcanza, y no obliga a tener nombre y PIN.
+**Consecuencias:** con un favorito marcado, los filtros ocupan una línea más, también cuando van
+pegados arriba (D-196; desde D-241, solo donde la ficha no cabe en la fila de los tipos). `tools/e2e/favoritos.mjs` lo prueba de punta a punta. Su chequeo a 320 px
+encontró que la portada ya se corría de lado en alemán en el Chrome de Linux, que no sabe partir
+"Galgenmännchen": la columna de `.games` crecía hasta la palabra entera. Ahora la columna no pasa
+del ancho de la pantalla (`minmax(0, 1fr)`) y el nombre se parte aunque falte el diccionario.
+
+## D-239 · La Copa y Uno al día, mitad y mitad en la portada
+**Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** corrige D-230 (dónde va el acceso a Uno al día)
+**Decisión:** En la portada, Uno al día deja de ser un botón al lado de Juego al azar y pasa a una
+tarjeta de media fila junto a La Copa: los dos son accesos de más jerarquía que los juegos, en una
+fila de dos tarjetas (`.fila-alta`, `.game-card.alta`).
+- **El emoji va a la izquierda del título**, en 40 px; la bajada y las píldoras ocupan todo el
+  ancho. Cada tarjeta mide unos 160 px de alto, casi 90 menos que con el emoji arriba.
+- **Jugadores y duración, en una línea**: en media fila, "👥 2–10 jugadores" no cabía al lado de
+  "⏱ 7 días" (179 px pedidos en 138, a 375 px). La tarjeta alta muestra "👥 2–10": la palabra
+  queda escondida a la vista (`.unidad`), pero el lector de pantalla la sigue leyendo. La tarjeta
+  ancha de los juegos la sigue mostrando.
+- **Los títulos van en color**, para distinguirlos de los juegos, que van en blanco: La Copa en un
+  degradé dorado (el de su borde) y Uno al día en uno celeste (el de su tarjeta ya jugada). El de
+  La Copa se ve así también en su tarjeta ancha.
+- Con la tarjeta, el dado vuelve a decir **🎲 Juego al azar**. El botón al lado del dado, con
+  "🎲 Al azar", queda para probarlo desde `/labs/` ("Al lado del dado") o con `?uad=boton`.
+**Por qué:** lo eligió el dueño mirando las dos formas en un celular: la tarjeta le da a Uno al día
+el mismo peso que a La Copa. Se probó con el emoji arriba, como los juegos, y el emoji a la
+izquierda ganó porque ahorra alto sin achicar el texto.
+**Consecuencias:** `formaAcceso()` devuelve `'tarjeta'` por defecto; el laboratorio guarda
+`'boton'` si alguien elige la otra. `tools/e2e/uno-al-dia.mjs` mira la fila, las píldoras en una
+línea a 320 px en los cuatro idiomas y la forma de `/labs/`.
+
+## D-240 · La portada tiene su canon: C-17
+**Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** junta lo vigente de D-142, D-144, D-149, D-170, D-188, D-196, D-198, D-214, D-217, D-226, D-232, D-238 y D-239
+**Decisión:** las reglas de la portada pasan a un canon, C-17 en [CANONES.md](CANONES.md): qué
+se ofrece y en qué orden, los accesos de arriba, los filtros (tipo y ⭐ Favoritos), la URL, la
+barra pegada, la fila de tipos, el ancho de 320 px, que dentro de una tarjeta no haya nada
+tocable, la barra de arriba y cómo se prueba. No cambia nada de la app. De Uno al día, C-17 dice
+dónde va y cómo es su tarjeta (D-239); el resto sigue en [UNO-AL-DIA.md](UNO-AL-DIA.md).
+**Por qué:** lo pidió el dueño. Hasta ahora la portada solo existía en decisiones que se
+corregían unas a otras: para saber cómo funcionaba había que leer seis y descartar lo que ya no
+valía. En D-238 eso hizo que se citara D-144 como vigente cuando D-149 ya lo había corregido.
+**Consecuencias:** un PR que cambia la portada edita C-17 en el mismo PR (como cualquier canon), y
+la lista de chequeo de un juego nuevo pide que entre bien a la portada.
+
+## D-241 · ⭐ Favoritos entra en la fila de los tipos cuando cabe
+**Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** corrige D-238 (dónde va la ficha); respeta D-144
+**Decisión:** La ficha ⭐ Favoritos va primera en la fila de los tipos y ya no en una línea propia,
+siempre que quepa. `acomodarFav` (portada) prueba tres formas, de la más completa a la más corta, y
+deja la primera con la que la fila no se desborda:
+1. **En la fila, con su nombre**, como las otras fichas.
+2. **En la fila, con la ⭐ sola** (44 px, el nombre en el `aria-label`) y un poco menos de aire
+   entre las fichas y dentro de ellas (`.tipos.apretada`: 4 px entre fichas, 3 px adentro).
+3. **En su línea, arriba de los tipos**, como en D-238.
+Se vuelve a medir al marcar o desmarcar el primer favorito, cuando cambia el ancho (girar el
+celular) y cuando cargan las fuentes.
+**Por qué:** lo pidió el dueño: la línea de más empujaba los juegos hacia abajo. Medido: con la ⭐
+sola y menos aire, la fila cabe desde 360 px en los cuatro idiomas, y desde 430 px va con su
+nombre (en inglés, desde 375). A 320 px solo cabe en inglés. Los celulares de hoy miden de 360 a
+430 px, así que casi siempre cabe.
+**Alternativas descartadas:**
+- **La ⭐ siempre en la fila:** a 320 px y en algunos idiomas a 360 px, la fila se sale de la
+  pantalla (C-8).
+- **Fijar un ancho desde el que entra:** el largo de los tipos cambia con el idioma y con las fuentes
+  de cada celular (en el Chrome de Linux, otras medidas). Medir en el momento no se equivoca.
+- **La ⭐ al lado de Juego al azar:** cabía siempre, pero no quedaba pegada arriba con los filtros
+  al bajar (D-196) y juntaba un botón que hace algo con uno que filtra.
+**Consecuencias:** `tools/e2e/favoritos.mjs` mira dónde va a 320, 390 y 900 px en los cuatro
+idiomas, que la fila de tipos siga en una línea y que nada se salga.
+
+## D-242 · El botón de compartir de la portada usa el ícono de los sistemas operativos
+**Fecha:** 2026-10-06 · **Estado:** corregida por D-243 · **Relación:** completa D-226 (el botón que comparte la app); D-243 le da color
+**Decisión:** El botón redondo de compartir de la barra de arriba (`shareButton` en
+`public/assets/js/ui.js`, que hoy usa solo la portada) deja el emoji 📤 y muestra el ícono de
+compartir de los sistemas operativos: una caja abierta con una flecha hacia arriba, dibujada en SVG
+con `currentColor`. Al copiar, el ✅ de dos segundos sigue igual.
+**Por qué:** lo pidió el dueño. El 📤 se dibuja distinto en cada celular y en Android parece una
+bandeja de salida, no "compartir"; la flecha que sale de la caja es la que la gente ya reconoce.
+**Alternativas descartadas:**
+- **Los tres puntos unidos de Android:** en un iPhone no se lee como compartir, y la flecha sí se
+  entiende en los dos.
+- **Cambiar también el 📤 de los botones con texto** ("📤 Compartir link"): ahí el texto ya dice la
+  acción y el emoji al inicio sigue U-2; el pedido era el botón redondo, que no tiene texto.
+**Consecuencias:** el 📤 queda en los botones con texto de los juegos y de La Copa.
+`tools/e2e/compartir-portada.mjs` sigue mirando que el botón diga ✅ al copiar.
+
+## D-243 · El ícono de compartir va en los colores de la página
+**Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** corrige D-242 (el color del ícono)
+**Decisión:** El ícono de compartir de la portada (D-242) deja el blanco del texto: la caja va en
+celeste (`--cyan`) y la flecha en rosado (`--pink`), cada una con un degradé de claro a su color y,
+debajo, una copia más oscura corrida 1,6 px, como la sombra de abajo de los botones de la página
+(`.btn--cyan`, `.btn--pink`). Mide 26 px dentro del botón de 44.
+**Por qué:** lo pidió el dueño: en blanco se veía monocromático al lado de 🔊 y 🏆, que son emojis a
+color, y del resto de la portada.
+**Alternativas descartadas:**
+- **Con un borde oscuro alrededor:** se veía pesado y más chico a 26 px.
+- **La flecha amarilla:** se confundía con el 🏆 de al lado; la rosada lo separa y repite el par
+  celeste y rosado de la portada.
+**Consecuencias:** el degradé usa ids fijos (`icono-compartir-caja`, `icono-compartir-flecha`):
+el botón va una sola vez por página. Si algún día va dos veces, cada copia necesita ids propios.
+
+
+## D-244 · El español va con la bandera de España
+**Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** corrige D-231 (la bandera del español)
+**Decisión:** Pedido del dueño, para estandarizar: en el selector de idioma, ES lleva 🇪🇸 en vez
+de 🇨🇱 (`BANDERAS` en `i18n.js`). La bandera identifica el idioma, no el país de quien juega.
+**Por qué:** 🇨🇱 hacía ver el español como el idioma de un país, al lado de 🇬🇧 EN y 🇩🇪 DE, que se
+leen como idiomas. Para quien llega de afuera, 🇪🇸 dice "español" sin pensarlo.
+**Consecuencias:** Solo cambia el selector. Las banderas de Chile que son contenido (la temática
+Chile, el público 🇨🇱 de La Copa, la bandera del país junto al nombre en los rankings) siguen igual.
+El portugués sigue con 🇧🇷: es el de Brasil (D-48).
+
+## D-245 · El globo de ¿Dónde queda? espera a la imagen satelital
+**Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** corrige D-159 (qué se ve mientras baja la imagen)
+**Decisión:** Con WebGL, mientras la imagen satelital no llega, el globo no se dibuja (ni el de la
+portada ni el del juego): queda el fondo. Al llegar la de 2048 px aparece con un fundido de 0,3 s
+(sin fundido con movimiento reducido, C-8). El mapa vectorial queda para cuando no hay WebGL,
+cuando las dos imágenes fallan o cuando ninguna llegó a los 4 s (`esperando()` de `satelite()` en
+`globo.js`); ahí la imagen lo reemplaza al llegar, como antes.
+**Por qué:** lo pidió el dueño: al cargar la página se veía el globo dibujado, verde y azul, una
+fracción de segundo antes de pasar al satelital, y se notaba como un salto.
+**Alternativas descartadas:** dibujar solo el mar mientras tanto (sigue siendo un globo distinto
+que cambia); precargar la imagen en el HTML (acorta la espera, pero no la quita).
+**Consecuencias:** con una red lenta el globo tarda hasta 4 s en aparecer; las marcas y los
+toques funcionan igual, porque no dependen del dibujo. El tope existe porque una red que cuelga el
+pedido sin fallarlo dejaba el globo vacío mientras corre el reloj.
+
+## D-246 · Generala: el juego de dados, con los dados en claro y la servida que gana
+**Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** excepción a C-7 (la semilla) y C-10 (los secretos)
+**Decisión:** Generala entra como juego de salón (`/generala/`, id `generala`, 📝), con la versión
+latinoamericana de la planilla: Unos a Seises por la suma de la cara, Escalera 20, Full 30, Póker 40
+(cinco más servidos), Generala 50 y Doble generala 100 (solo con la generala anotada con sus 50).
+Once casillas, once turnos, gana quien suma más. La escalera acepta el as arriba (3-4-5-6-1).
+**La generala servida gana la partida al tiro** con dos jugadores o más, como ajuste encendido por
+defecto. Tres modos: un celular (2 a 6), varios celulares (2 a 6) y jugar solo con récord y tabla
+`generala_solo`. En portugués se llama General; en alemán, Generala. **Los dados viajan en claro**:
+quien tiene el turno los tira en su celular y los manda en `roll`, sin hash y sin semilla.
+**Por qué:** lo pidió el dueño después de la investigación de candidatos (Impostor, Stop, Generala,
+Dominós, Rebaño): es el que sirve en todos los modos, también sin coincidir (cada uno llena su
+planilla), y reusa los dados de Dudo.
+- **Los dados en claro:** en la mesa todos ven el cubilete, así que no hay nada que esconder (C-10).
+  Sacarlos de la semilla compartida (C-7) sería peor: el código es público y con la semilla se
+  pueden calcular los próximos tiros y elegir qué guardar sabiendo lo que viene. Que alguien se mande
+  cinco seises modificando su página es como cargar un dado: se acepta entre amigos.
+- **La servida que gana:** es la regla que más se juega en Chile y Argentina, y el momento que la
+  mesa recuerda. Va como ajuste porque hay mesas que la juegan como 50 y nada más.
+- **Sin rival de máquina:** no hay información oculta ni jugada contra otro; un rival que tira sus
+  dados no agrega nada (C-5, D-27). Jugar solo con récord sí.
+**Alternativas descartadas:**
+- **Kniffel o Yahtzee:** son marcas (Schmidt, Hasbro) y otro juego (bono de 63, chance, otras
+  casillas). El alemán usa el nombre Generala con casillas alemanas (Straße, Full House, Viererpasch).
+- **Comprometer los dados con hash, como en Dudo (D-70):** no esconde nada que no se vea, y quien
+  tira sigue eligiendo su azar.
+- **Anotar un juego que no salió por su valor ("escalera de mentira"):** es una regla de casa poco
+  común; se tacha.
+**Consecuencias:** el emoji 📝 (la planilla) es propio porque 🎲 ya es Dudo. Las victorias van en
+`generala_victorias` (D-215). Ver [docs/games/generala.md](games/generala.md).
+
+## D-247 · Generala en Uno al día, desde el tercer mazo y con los dados de la semilla
+**Fecha:** 2026-10-06 · **Estado:** corregida por D-248 · **Relación:** amplía D-230
+**Decisión:** Generala entra al mazo de Uno al día el **23 de octubre de 2026**, el primer día del
+tercer mazo. Con `?hoy` abre jugar solo y **sus dados salen de la semilla del día**:
+`azarDel(semilla, 'generala:<turno>:<tiro>')`, consumido en orden de posición, así quien guarda lo
+mismo que otro recibe lo mismo. El puntaje del día es un tercio del total, hasta 100
+(`puntajeDia` de `engine.js`).
+**Por qué:** un juego entra al mazo recién cuando se baraja el siguiente. Con una fecha anterior, el
+segundo mazo (del 13 al 22) cambiaría según el día en que se fusione el PR, y ese mazo ya se puede
+estar jugando. Con el 23, ningún día cambia aunque se fusione tarde (lo prueba
+`uno-al-dia.test.mjs`). La semilla en jugar solo no adelanta nada a un rival, como en los solitarios
+de La Copa (D-97). Un tercio del total, porque 300 ya es una partida excelente y el máximo es 360.
+**Alternativas descartadas:** dados al azar en Uno al día (no sería el mismo desafío para todos);
+puntaje por el total crudo (Uno al día compara de 0 a 100 entre juegos).
+**Consecuencias:** desde el tercer mazo hay 11 juegos. Si el PR se fusionara después del 23, hay que
+mover `DESDE_GENERALA` al primer día del mazo siguiente.
+
+## D-248 · Generala se anuncia como "Próximamente" antes de abrirse
+**Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** corrige D-247 (cuándo entra a Uno al día)
+**Decisión:** Generala se publica con `available: false`: la portada la muestra como las de Julepe,
+con "Próximamente" junto al nombre, sin abrirla, fuera del dado de Juego al azar y de los favoritos
+(C-17). La página `/generala/` funciona entera para quien tenga el link. **No entra todavía al mazo
+de Uno al día**: `JUEGOS_DIA` queda como estaba, y al abrirla se suma con un `desde` que sea el
+primer día de un mazo que no haya empezado (D-247). En la tabla del README, un juego fuera del menú
+que nunca se publicó dice "🔜 coming soon" y no "⏸ paused", que es para el que se sacó (Julepe).
+**Por qué:** lo pidió el dueño, para anunciar el juego antes de abrirlo (la imagen para compartir en
+alemán dice "bald auf juegosdesalon.cl"). Sumarlo a Uno al día con la fecha fija del 23 de octubre
+habría puesto en el mazo un juego que la portada todavía no ofrece.
+**Consecuencias:** abrirlo es cambiar `available` a `true` en `games.js`, sumarlo a `JUEGOS_DIA` y
+`GRUPO` con su fecha, y marcar GE-09 y GE-12 en REQUERIMIENTOS. El `?hoy` de `/generala/` ya está
+hecho y probado en `engine.test.mjs`.
+
+## D-249 · La invitación a entrar va arriba, como una tarjeta con su botón
+**Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** corrige D-212 (dónde va entrar en la antesala; dilema #186)
+**Decisión:** sin jugador, la invitación a entrar con nombre y PIN es una tarjeta con borde cian y
+un botón "Entrar" a la vista (`bloqueJugador({ destacado: true })`), plegada en una sola fila. Va:
+en la antesala de cada juego suelto, **justo bajo "Empezar" y "Volver al menú"** (arriba de las reglas, o
+entre los dos, bajaba esos botones fuera de la pantalla en alemán en ¿Dónde queda? y ¿En qué año?, C-8); en el
+resultado, bajo el puntaje (como antes, ahora destacada); en la tarjeta del resultado de Uno al día,
+**antes de los botones** y sin esperar a lo demás de la red; y en `/today/`, bajo "Hoy" y antes de
+la racha. En Uno al día la tarjeta lleva debajo del título "Guarda tu racha en cualquier celular…".
+Con jugador, ahí sale "🏅 Juegas como Mica", y el ranking sigue al final.
+**Por qué:** lo pidió el dueño. Mica jugó varios días sin entrar y no aparecía en ningún ranking: la
+invitación quedaba al final de la antesala, bajo las reglas, y en Uno al día bajo todo lo demás, donde
+nadie la veía. De 28 jugadores, 25 eran heredados de La Copa sin reclamar. Pegada a Empezar la ve
+todo el que va a jugar, también en las antesalas largas, sin bajar el botón principal.
+**Consecuencias:** quien aparezca en una pantalla nueva con ranking usa `destacado: true` junto a su botón principal; el
+bloque sin destacar queda para `/records/` y el pie de los rankings.
+

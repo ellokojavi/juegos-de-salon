@@ -117,21 +117,35 @@ export function confetti({ duration = 2500, count = 160 } = {}) {
 export { canShare, shareLink };
 
 /**
- * Botón redondo de la barra de arriba para compartir un link (📤). Donde hay diálogo nativo
+ * El ícono de compartir de los sistemas operativos (una caja abierta con una flecha hacia arriba),
+ * dibujado en SVG: un emoji se ve distinto en cada celular (D-242). Va en los colores de la página,
+ * la caja celeste y la flecha rosada, con la sombra de abajo de los botones (D-243).
+ */
+const CAJA = 'M10.5 12.5H8a2 2 0 0 0-2 2V25a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V14.5a2 2 0 0 0-2-2h-2.5';
+const FLECHA = 'M16 4.5v14M11 9.5l5-5 5 5';
+const ICONO_COMPARTIR = `<svg class="icon-share" viewBox="0 0 32 32" width="26" height="26" fill="none" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+<defs><linearGradient id="icono-compartir-caja" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7ff5ea"/><stop offset="1" stop-color="#2ee6d6"/></linearGradient>
+<linearGradient id="icono-compartir-flecha" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff7fb8"/><stop offset="1" stop-color="#ff2e88"/></linearGradient></defs>
+<path d="${CAJA}" transform="translate(0 1.6)" stroke="#149a8f"/><path d="${CAJA}" stroke="url(#icono-compartir-caja)"/>
+<path d="${FLECHA}" transform="translate(0 1.6)" stroke="#a3104f"/><path d="${FLECHA}" stroke="url(#icono-compartir-flecha)"/></svg>`;
+
+/**
+ * Botón redondo de la barra de arriba para compartir un link. Donde hay diálogo nativo
  * abre el del sistema; donde no, copia y lo avisa cambiando el ícono por un ✅ dos segundos,
  * que se entiende sin traducir y no mueve nada de lugar en la barra. Con `imagen` (una función
  * que da el archivo, o `null`), donde el celular manda archivos va la imagen junto al texto
  * (D-226); en un computador no se descarga nada: se copia el texto, como siempre.
  */
 export function shareButton({ title, text, url, label, imagen }) {
-  const btn = el('button', { type: 'button', class: 'icon-btn', title: label, 'aria-label': label }, '📤');
+  const btn = el('button', { type: 'button', class: 'icon-btn', title: label, 'aria-label': label });
+  btn.innerHTML = ICONO_COMPARTIR;
   btn.addEventListener('click', async () => {
     if (btn.textContent === '✅') return;
     const archivo = imagen && comparteArchivos() ? await imagen() : null;
     const r = archivo ? await compartir({ titulo: title, texto: text, url, imagen: archivo }) : await shareLink({ title, text, url });
     if (r !== 'copied') return;
     btn.textContent = '✅';
-    setTimeout(() => { btn.textContent = '📤'; }, 2000);
+    setTimeout(() => { btn.innerHTML = ICONO_COMPARTIR; }, 2000);
   });
   return btn;
 }

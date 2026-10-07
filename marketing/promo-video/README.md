@@ -37,6 +37,12 @@ revisión de usabilidad (U-34, `node tools/agents/marketing.mjs revisar`):
     (dos toques)" se siga viendo bien.
   - 🏆 La Copa: si el podio que se muestra tiene empate en puntos, ahora sale la línea "⚖️ Empate
     en … puntos" (0.90.2).
+- **Sumar 📅 Uno al día** (D-230, para todos desde el PR #234; dueño, 2026-10-06, dilema #235): un
+  plano corto con la tarjeta de la portada junto a La Copa (D-239; antes, un botón al lado del dado), el dado que cae en el juego de
+  hoy y la tarjeta del resultado con la racha 🔥 y el n.° del día. Es la razón para volver cada día.
+  La tarjeta no nombra el juego de hoy (dilema #215): se graba tal como sale, sin sumarle el nombre.
+- **Cerrar con "agrégala a tu inicio"** (D-232, el globo de la portada, para todos desde el PR #234): la
+  app se puede tener como ícono en el celular.
 - Al terminar: la vuelta en [Historia](#historia), `registro.json` (versión, fecha, `app`) y
   `node tools/agents/marketing.mjs anotar video-promo --al-dia`.
 

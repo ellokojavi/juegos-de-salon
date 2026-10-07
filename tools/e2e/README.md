@@ -78,7 +78,7 @@ node tools/e2e/contacto.mjs cuarto-rey --salida /tmp/contacto
 
 | Script | Qué prueba |
 |---|---|
-| `fourth-king/partida.mjs` | Botón de sonido, mazo completo hasta el cuarto rey y el menú en inglés |
+| `fourth-king/partida.mjs` | Botón de sonido, mazo completo hasta el cuarto rey y el menú en inglés; que la mesa sean justo los nombres del guion, aunque la mesa recordada traiga más filas |
 | `bulls-and-cows/local.mjs` | Un celular y jugar solo (dos veces, para ver el récord), hasta el resultado |
 | `bulls-and-cows/online.mjs` | Dos celulares contra Firebase real: unión por URL, recarga a mitad, revancha |
 | `battleship/local.mjs` | Colocación, batalla en un celular y contra el celular |
@@ -90,6 +90,8 @@ node tools/e2e/contacto.mjs cuarto-rey --salida /tmp/contacto
 | `hangman/online.mjs` | Tres celulares contra Firebase real: cadena, reconexión a mitad y revancha |
 | `liars-dice/local.mjs` | Duelo contra el celular y partida de tres en un celular, con retomar a mitad |
 | `liars-dice/online.mjs` | Tres celulares contra Firebase real: sala, destape verificado, recarga a mitad y revancha |
+| `generala/local.mjs` | Jugar solo entero, tres en un celular con recarga a mitad y la generala servida: nada elegido de antemano (C-8), los guardados no cambian y se anota lo que la planilla prometía |
+| `generala/online.mjs` | Dos celulares contra Firebase real: los dados de quien juega a la vista del otro, recarga a mitad, partida entera y revancha |
 | `julep/local.mjs` | Mesa de tres contra el celular y partida en un celular, con retomar a mitad |
 | `julep/online.mjs` | Tres celulares contra Firebase real: reparto cerrado, sello de cartas verificadas, recarga a mitad y chat |
 | `timeline/local.mjs` | Un celular con tres jugadores, con retomar a mitad |
@@ -109,12 +111,13 @@ node tools/e2e/contacto.mjs cuarto-rey --salida /tmp/contacto
 | `versionado.mjs` | Que todos los módulos carguen con `?v=` del import map. Desde D-205 `public/` no lo lleva: correrlo contra una copia estampada (`set-version.py --sitio /tmp/sitio`, servida y pasada en `SITIO`) |
 | `instalable.mjs` | La app instalable (D-221): en la portada, un juego, La Copa, un juego suelto y `/records/`, Chrome registra `/sw.js` con alcance `/`, lee el manifest sin errores y deja instalar. En los cuatro idiomas, en la portada y en un juego, revisa que la app se llame con el `appTitle` del idioma, en el manifest y en el `apple-mobile-web-app-title` (D-222). Contra una copia estampada (`SITIO`) prueba además que el import map no se rompa |
 | `instalar.mjs` | El globo de la portada que invita a agregar la app a inicio (D-232): con el celular de cada uno (Safari y Chrome en iPhone, Chrome y Samsung en Android, WhatsApp), revisa los pasos de la hoja, el diálogo propio de Chrome, que la ✕ y "Ya la agregué" lo apaguen para siempre, que no salga en el computador ni en la app instalada, y que quepa a 320 px en los cuatro idiomas |
-| `uno-al-dia.mjs` | Uno al día (D-230): con el reloj fijo en el día n.° 1, el botón de la portada, el dado que cae en el juego de hoy, la línea de la intro, un link de otro juego que se va al de hoy, la tarjeta del resultado (racha, compartir sin decir el juego, con imagen), el segundo intento como práctica, el botón "Listo" y `/today/` con su racha, su calendario y la tendencia de cada juego, a 320 px y en los cuatro idiomas |
-| `uno-al-dia-jugador.mjs` | Uno al día con jugador (D-230), con el almacén de prueba: Sara juega el de hoy, entra y su día sube a la historia y a los rankings (del día y de rachas); `/today/` muestra el ranking con sus cuatro pestañas; invitar manda su link en primera persona; Pedro, en otro "celular", ve "🔥 Sara te desafía", juega, ve el duelo y le da un comodín a Sara, que lo ve una vez al volver |
-| `uno-al-dia-avisos.mjs` | Los avisos de Uno al día (D-230), con un servicio de avisos falso: la oferta con las tres horas la segunda vez que se termina, elegir una suscribe y guarda `pushDia`, la campana de `/today/` (hora, interruptores, Silenciar), los avisos bloqueados, y los caminos de iPhone en Safari y dentro de WhatsApp |
-| `uno-al-dia-grupo.mjs` | Uno al día con El Ahorcado, Batalla Naval y Dudo (D-230): con el reloj fijo en un día en que toca cada uno, que `?hoy` abra directo el modo para uno, la línea de la intro, que la palabra, la flota del celular y los dados salgan de la semilla del día, el puntaje de su fórmula, la tarjeta arriba de los botones del juego, el segundo intento como práctica, un link de otro juego que se va al de hoy, `/today/` y el dado que nombra a los de grupo |
+| `uno-al-dia.mjs` | Uno al día (D-230): con el reloj fijo en el día n.° 1, la tarjeta de la portada junto a La Copa (D-239: las píldoras de las dos en una línea, el dado que vuelve a decir "Juego al azar" y el botón al lado del dado desde `/labs/`), el dado que cae en el juego de hoy, la línea de la intro, un link de otro juego que se va al de hoy, la tarjeta del resultado (racha, compartir sin decir el juego, con imagen), sin el ranking del juego, el segundo intento como práctica, el botón "Listo" y `/today/` con su racha ("Hoy jugaste" con el emoji del juego y "Próximo juego en…"), su calendario (el emoji y el puntaje en una píldora) y la tendencia de cada juego, a 320 px y en los cuatro idiomas |
+| `uno-al-dia-jugador.mjs` | Uno al día con jugador (D-230), con el almacén de prueba: Sara juega el de hoy, entra y su día sube a la historia y a los rankings (del día y de rachas); `/today/` muestra el ranking con sus cuatro pestañas y los comodines dicen para qué sirven; invitar manda su link en primera persona; Pedro, en otro "celular", ve "🔥 Sara te desafía", juega, ve el duelo y le da un comodín a Sara, que lo ve una vez al volver |
+| `uno-al-dia-avisos.mjs` | Los avisos de Uno al día (D-230), con un servicio de avisos falso: la oferta con las tres horas la segunda vez que se termina, elegir una suscribe y guarda `pushDia`, la campana de `/today/` (hora, interruptores, Silenciar), que no haya recordatorio en el calendario (el recordatorio es el aviso diario, decisión 15 de D-230), los avisos bloqueados, y los caminos de iPhone en Safari y dentro de WhatsApp |
+| `uno-al-dia-grupo.mjs` | Uno al día con El Ahorcado, Batalla Naval y Dudo (D-230): con el reloj fijo en un día en que toca cada uno, que `?hoy` abra directo el modo para uno, la línea de la intro, que la palabra, la flota del celular y los dados salgan de la semilla del día, el puntaje de su fórmula, la tarjeta arriba de los botones del juego, sin revancha (#226), el segundo intento como práctica, un link de otro juego que se va al de hoy, `/today/` y el dado que nombra a los de grupo |
 | `compartir-sala.mjs` | Botón de compartir: diálogo nativo si existe, copiar si no |
-| `compartir-portada.mjs` | El 📤 de la portada (D-226), en los cuatro idiomas: la tarjeta social del idioma como imagen, el texto con su cabecera y el link a la portada de ese idioma; en un computador, solo el texto copiado y nada descargado |
+| `favoritos.mjs` | Los favoritos de la portada (D-238, D-241): la ⭐ se toca con el dedo y marca sin abrir el juego, la ficha ⭐ Favoritos sale con el primero y deja ver solo esos (y va en la URL), desmarcar ahí no saca la tarjeta de la vista, se recuerdan al recargar, `?type=favorites` sin favoritos muestra todos, y dónde va ⭐ Favoritos (D-241): primera en la fila de tipos a 390 px y en un computador, y a 320 px donde quepa (en su línea si no), siempre con los tipos en una fila y sin salirse, en los cuatro idiomas |
+| `compartir-portada.mjs` | El botón de compartir de la portada (D-226, D-242), en los cuatro idiomas: la tarjeta social del idioma como imagen, el texto con su cabecera y el link a la portada de ese idioma; en un computador, solo el texto copiado y nada descargado |
 | `enlace-invitacion.mjs` | Quien llega por un enlace solo puede unirse a esa sala, en los cuatro juegos con sala |
 | `sala-error.mjs` | Sin llegar a Firebase: el mensaje de cada juego con sala, Toque y Fama en cada idioma y los demás repartidos entre ellos |
 | `idioma-por-url.mjs` | El idioma que viene en el link, en cada idioma: `?lang=`, las puertas (`/en/`, `/pt/`, `/de/`), el puente `/labs/de/` y las invitaciones a sala y a copa |
@@ -124,6 +127,7 @@ node tools/e2e/contacto.mjs cuarto-rey --salida /tmp/contacto
 | `bulls-and-cows/idiomas.mjs` | Toque y Fama en todos los idiomas: cada pantalla de `caminos.mjs` contra el español (D-199) |
 | `timeline/idiomas.mjs` | Línea de Tiempo en todos los idiomas: cada pantalla de `caminos.mjs` contra el español (D-199) |
 | `liars-dice/idiomas.mjs` | Dudo en todos los idiomas: cada pantalla de `caminos.mjs` contra el español (D-199) |
+| `generala/idiomas.mjs` | Generala en todos los idiomas: cada pantalla de `caminos.mjs` contra el español (D-199) |
 | `julep/idiomas.mjs` | Julepe en todos los idiomas: cada pantalla de `caminos.mjs` contra el español (D-199) |
 | `fourth-king/idiomas.mjs` | Cuarto Rey en todos los idiomas: cada pantalla de `caminos.mjs` contra el español (D-199) |
 | `cup-games/idiomas.mjs` | Los juegos sueltos de La Copa en todos los idiomas: cada pantalla de `caminos.mjs` contra el español (D-199) |
@@ -131,7 +135,7 @@ node tools/e2e/contacto.mjs cuarto-rey --salida /tmp/contacto
 ## Todos los idiomas (D-199)
 
 Cada juego tiene su `<carpeta>/idiomas.mjs` (`hangman/`, `battleship/`, `bulls-and-cows/`,
-`timeline/`, `liars-dice/`, `julep/`, `fourth-king/`, y `cup-games/` para los juegos de La Copa
+`timeline/`, `liars-dice/`, `generala/`, `julep/`, `fourth-king/`, y `cup-games/` para los juegos de La Copa
 que se juegan sueltos). Recorren cada pantalla de [`caminos.mjs`](caminos.mjs) en cada idioma de
 `LANGS` —un idioma nuevo entra solo— y la comparan con la misma pantalla en español:
 

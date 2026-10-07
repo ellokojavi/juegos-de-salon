@@ -150,6 +150,19 @@ Las respuestas a dilemas (issues con la etiqueta `usabilidad`) se anotan aquí:
   resultado nombran el juego que tocó ("📅 *Uno al día n.° 12*" y "87 puntos"), porque quien lo lee
   en el grupo casi siempre todavía no juega y el juego se descubre en el dado, como con el aviso.
   Es una excepción a U-31.
+- **Uno al día: sin revancha en los juegos de grupo** (#226, D-230): jugados como Uno al día, El
+  Ahorcado, Batalla Naval y Dudo no muestran su botón de revancha; la tarjeta ya ofrece 🎲 Jugar
+  otro y Repetir el de hoy. Bajo el resultado de los solitarios queda solo el ranking de Uno al día.
+- **Uno al día: sin recordatorio con los avisos activos** (#230, D-230): con los avisos activos, `/today/`
+  no muestra "⏰ Agregar recordatorio" ni su línea, que repetirían el aviso. Reemplazado el mismo día
+  por el dueño: el recordatorio es el aviso diario, y el del calendario se sacó.
+- **El video promocional suma Uno al día** (#235, D-230): la v6 lleva un plano de 📅 Uno al día (el
+  botón, el dado y la tarjeta con la racha) y cierra con "agrégala a tu inicio" (D-232). Anotado en
+  "Pendiente: versión 6" de `marketing/promo-video/README.md`; la v6 se empieza cuando el dueño la pida.
+- **Entrar va antes de "Empezar"** (#186, D-249): en la antesala de cada juego suelto, la invitación
+  a entrar con nombre y PIN va justo bajo "Empezar" y "Volver al menú", plegada en una fila con su botón
+  "Entrar" a la vista, porque el ingreso se ofrece antes de jugar. Lo mismo bajo el puntaje y, en
+  Uno al día, antes de los botones del resultado y de la racha en `/today/`.
 - **La fama es verde y el toque amarillo** (#196, opción B): como en Wordle, en todos los Toque y
   Fama (las letras de Palabra, las pistas de Número y del juego de sala) y en la tarjeta de Palabra
   (🟩 fama, 🟨 toque, ⬛ no está), que así habla igual que la de Número (🟢, 🟡, ⚪).

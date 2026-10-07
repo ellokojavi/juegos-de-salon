@@ -288,6 +288,12 @@
                 ".validate": "$tipo.matches(/^[a-z]{1,12}$/) && newData.isNumber() && newData.val() >= 0"
               }
             },
+            "uad": {
+              "$ev": {
+                ".write": "$env.matches(/^[a-z]{2,10}$/) && $day.matches(/^[0-9]{5}$/) && $ev.matches(/^[a-z]{1,16}$/)",
+                ".validate": "newData.isNumber() && ((!data.exists() && newData.val() == 1) || newData.val() == data.val() + 1)"
+              }
+            },
             "$other": {
               ".validate": false
             }

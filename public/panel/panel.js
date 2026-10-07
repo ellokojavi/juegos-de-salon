@@ -761,15 +761,37 @@ function bloqueUnoAlDia(rango) {
       tile(pct(u.d1), `volvió al día siguiente${de(u.base.d1)}`),
       tile(pct(u.d7), `volvió a los 7 días${de(u.base.d7)}`),
       tile(u.aceptadas, 'invitaciones aceptadas'),
+      tile(u.vistas, 'vistas de /today/'),
+      tile(u.entradas, 'visitas que entraron por /today/', { info: 'un link compartido, un aviso o una invitación' }),
     ),
     el('div', { class: 'grid2' },
       el('div', {}, el('h3', { class: 'small' }, { dia: 'Por día', semana: 'Por semana', mes: 'Por mes' }[rango.grano]),
         lista(periodos.map(d => bar(d.label, [seg(C_TORNEO, d.total)], maxD)), 'Nadie jugó Uno al día en este rango.', 'bars')),
       el('div', {}, el('h3', { class: 'small' }, 'Por juego'),
         lista(juegos.map(([id, v]) => bar(gameLabel(id), [seg(C_TORNEO, v)], maxJ)), 'Nada todavía.', 'bars'))),
+    el('div', { class: 'grid2', style: 'margin-top:16px' },
+      el('div', {}, el('h3', { class: 'small' }, 'Qué se hace'), actividad(USO_UAD)),
+      el('div', {}, el('h3', { class: 'small' }, 'Avisos'), actividad(AVISOS_UAD))),
     el('div', { style: 'margin-top:16px' }, el('h3', { class: 'small' }, 'Jugadores por su mejor racha, desde siempre'),
       lista(u.tramos.map(([label, v]) => bar(`🔥 ${label} ${label === '1' ? 'día' : 'días'}`, [seg(C_SIN_RED, v)], maxR)), 'Nadie con racha todavía.', 'bars')));
+
+  function actividad(rotulos) {
+    const filas = Object.entries(rotulos).map(([k, label]) => [label, u.eventos[k] || 0]);
+    const max = Math.max(0, ...filas.map(([, v]) => v));
+    return lista(filas.filter(([, v]) => v).map(([label, v]) => bar(label, [seg(C_IDIOMA, v)], max)), 'Nada en este rango.', 'bars bars--rotulo-largo');
+  }
 }
+
+/** Qué cuenta cada señal de Uno al día (`uad/<evento>`, EVENTOS_UAD en stats.js), en el orden en que pasa. */
+const USO_UAD = {
+  boton: '📅 Tocaron el botón', dado: '🎲 Rodó el dado del día', jugado: '✅ Terminaron el de hoy', repite: '🔁 Lo repitieron',
+  compartir: '📤 Lo compartieron', otro: '🎲 Tiraron por otro juego', invitar: '👋 Tocaron Invitar',
+  invitacion: '✉️ Abrieron una invitación', aceptada: '🧊 Aceptaron (comodín para quien invitó)',
+};
+const AVISOS_UAD = {
+  oferta: '🔔 Se ofrecieron los avisos', hora: '🕘 Eligieron una hora', activos: '✅ Quedaron activos',
+  ahorano: '🙅 "Ahora no"', silencio: '🔕 Los silenciaron',
+};
 
 /** Las partidas sin red de todos los juegos (sin La Copa): ahí están quienes juegan solos (D-210). */
 function sinRedRecientes(rango) {

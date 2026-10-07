@@ -1,6 +1,6 @@
 # Uno al día
 
-**Estado:** aprobada por el dueño (D-230); en el laboratorio: el PR 1, el núcleo (v0.115.0), el PR 2, los juegos de grupo (v0.116.0), el PR 3, jugador, rankings, comodines e invitaciones (v0.117.0), el PR 4, los avisos y recordatorios (v0.118.0), y el PR 5, el panel (v0.119.0) · **Fecha:** 2026-10-05 ·
+**Estado:** **para todos desde v0.121.0** (el n.° 1 es el 6 de octubre de 2026); construido en 7 PR y abierto en el octavo (ver "Lo que el PR N hizo") · **Fecha:** 2026-10-05 ·
 **Toca:** RP-44, D-188 y D-237 (Juego al azar), D-212 y D-217 (rankings), D-221 a D-229 (avisos), D-97 (semillas)
 
 Una modalidad nueva en la portada, al lado de **Juego al azar**: cada día la app sorprende con un
@@ -12,8 +12,9 @@ Las pantallas están dibujadas en un lienzo aparte (privado del dueño).
 
 ## En corto
 
-1. **Un botón nuevo en la portada**: 📅 **Uno al día**, junto a 🎲 **Juego al azar**. Muestra la
-   racha (🔥 6) y si ya se jugó hoy.
+1. **Un acceso nuevo en la portada**: 📅 **Uno al día**, en una tarjeta de media fila junto a La
+   Copa (D-239; en el diseño era un botón junto a 🎲 **Juego al azar**). Muestra la racha (🔥 6) y
+   si ya se jugó hoy.
 2. **El juego de hoy es el mismo para todos**, con el mismo contenido: sale de la fecha, como el
    contenido de un día de La Copa sale del código y del día (D-97). Así hay ranking del día y algo
    que compartir ("hoy me fue mejor que a ti").
@@ -30,7 +31,7 @@ Las pantallas están dibujadas en un lienzo aparte (privado del dueño).
    entra a los rankings.
 7. **Los avisos los pide el jugador** y elige la hora: el recordatorio del día, el aviso de que la racha
    se corta y el resumen de la semana. Para quien no quiere avisos hay otras formas de acordarse:
-   la portada, el ícono con un globo, el calendario y la tarjeta para compartir.
+   la portada, el ícono con un globo, la tarjeta para compartir y el link fijo.
 8. Todo **sin servidor nuevo**: lo que ya hay de semillas, rankings, `push.js`, `sw.js` y el
    workflow de avisos de GitHub (D-224).
 
@@ -45,6 +46,7 @@ el contenido del día:
 | 🪢 El Ahorcado | 🎴 Mazo del celular, con 1 jugador | La palabra (ya sale de la semilla del mazo) | Las vidas que quedan, llevadas a 100, y el tiempo desempata |
 | ⚓ Batalla Naval | 🤖 Contra el celular | La flota del celular | Menos disparos para hundirla, más puntos. Si te hunden antes, cuentan las casillas de barco que acertaste |
 | 🎲 Dudo | 🤖 Contra el celular | Los dados de cada ronda | Ganar vale 60, y cada dado que te queda suma; perder suma por las rondas que aguantaste |
+| 📝 Generala (cuando salga de próximamente, D-247, D-248) | 🧍 Jugar solo | Los dados de cada tiro: quien guarda lo mismo recibe lo mismo | Un tercio del total, hasta 100 |
 
 - **Cuarto Rey no entra:** es un juego de mesa para 4 a 6 personas y no tiene modo para uno (su
   documento lo explica). **Julepe** tampoco, porque hoy no se ofrece en la portada; si vuelve,
@@ -85,26 +87,29 @@ lanzamiento: **Uno al día n.° 1, n.° 2…**, para compartir.
    >
    > (El porcentaje sale solo si hoy jugaron 20 o más; con menos, la línea dice solo "Hoy: 87
    > puntos".)
+   > (Sin jugador: la tarjeta **🏅 Aparece en el ranking** con su botón **Entrar**, paso 5.)
    > **Compartir** · **🎲 Jugar otro**
    >
    > **👋 Invita a un amigo** (abajo, en "Invitar a un amigo")
 
-5. Si no tiene jugador: "Guarda tu racha en cualquier celular: entra con tu nombre y un PIN."
-   (**Entrar**, el mismo de los rankings). Si dice que no, la racha queda igual en el celular.
+5. Si no tiene jugador, **antes de los botones** de la tarjeta y sin esperar a lo demás de la red,
+   la invitación destacada de los rankings con la línea "Guarda tu racha en cualquier celular."
+   y su botón **Entrar** (D-249). En `/today/` va bajo "Hoy" y antes
+   de la racha. Si no entra, la racha queda igual en el celular.
 6. Si es la segunda vez que termina Uno al día (el día 2, no el 1, para no pedirlo antes de que
    le guste), se le ofrecen los avisos (más abajo).
 
 ### Día 2 en adelante: vuelve
 
-- **Por su cuenta:** abre la app y el botón dice **📅 Uno al día 🔥 1**, con el punto que brilla
-  (el botón va en una línea, ver "Lo que el PR 1 hizo").
+- **Por su cuenta:** abre la app y la tarjeta de Uno al día dice **🔥 1 · Jugar el de hoy**, con el
+  punto que brilla (D-239, ver "Lo que el PR 1 hizo").
 - **Con un aviso** a la hora que eligió: "📅 Uno al día n.° 13 ya está. 🔥 Racha: 1 día." (el de la tabla de
   avisos) Al tocarlo
   rueda el dado.
-- **Mientras no lo haya jugado, el dado rueda cada vez** que toca el botón, el aviso o un link, y
+- **Mientras no lo haya jugado, el dado rueda cada vez** que toca la tarjeta, el aviso o un link, y
   siempre cae en el mismo juego (decisión del dueño: la misma experiencia de Juego al azar).
-- Si ya jugó, el botón queda cian, **✅ Uno al día 🔥 2**, y al tocarlo abre su página de Uno al día (sus
-  números, el ranking del día y cuánto falta para el próximo: "El próximo sale en 7 h 12 min.").
+- Si ya jugó, la tarjeta queda cian, **✅ Listo · 🔥 2**, y al tocarla abre su página de Uno al día (sus
+  números, el ranking del día y cuánto falta para el próximo: "Próximo juego en 7 h 12 min.").
 
 ### Quiere jugar más
 
@@ -128,7 +133,7 @@ lanzamiento: **Uno al día n.° 1, n.° 2…**, para compartir.
 - El lunes, el **resumen de la semana**: días jugados, puntos totales, el juego en que más mejoró
   y su puesto en la semana.
 - En su página, un **calendario** del mes: cada día pintado según cómo le fue, con el emoji del
-  juego, y 🧊 en los días que salvó un comodín.
+  juego y el puntaje de 0 a 100 en una píldora, y 🧊 en los días que salvó un comodín.
 
 ## Invitar a un amigo
 
@@ -210,10 +215,10 @@ link.
 
 | Dónde | Qué dice |
 |---|---|
-| La tarjeta **Invita a un amigo**, en el resultado | "🧊 Si tu amigo termina su primer Uno al día, ganas un comodín." |
+| La tarjeta **Invita a un amigo**, en el resultado | "🧊 Si tu amigo termina su primer Uno al día, ganas un comodín, que salva tu racha el día que no juegues." |
 | La tarjeta de la racha, cuando no tiene comodines y la racha es de 3 días o más | "🧊 No tienes comodines. Invita a un amigo y gana uno." con el botón **Invitar** |
-| Su página, en el bloque de la racha y en el de invitar | "🧊 Comodines: 0 de 2. Ganas uno cada 7 días seguidos y cada vez que un amigo que invitaste termina su primer Uno al día." |
-| La primera vez que gana un comodín por racha | "🧊 Ganaste un comodín por 7 días seguidos. También ganas uno cuando un amigo que invitaste termina su primer Uno al día." |
+| Su página, en el bloque de la racha y en el de invitar | "🧊 Un comodín salva tu racha el día que no juegas. Tienes 0 de 2: ganas uno cada 7 días seguidos y cada vez que un amigo que invitaste termina su primer Uno al día." |
+| La primera vez que gana un comodín por racha | "🧊 Ganaste un comodín por 7 días seguidos: si un día no juegas, salva tu racha. También ganas uno cuando un amigo que invitaste termina su primer Uno al día." |
 
 - **Con 2 comodines no se promete nada:** el tope es 2 y un comodín de más se perdería, así que
   mientras tenga 2 la línea del comodín se esconde y la tarjeta queda solo con el dato.
@@ -232,13 +237,13 @@ acumulado:
 
 | Bloque | Qué muestra |
 |---|---|
-| **Hoy** | El juego de hoy y su resultado, o **Jugar** si falta; el reloj al próximo |
+| **Hoy** | El juego de hoy con su emoji y su resultado ("Hoy jugaste 👑 Reinas: 87 puntos."), o **Jugar** si falta; el reloj al próximo ("Próximo juego en 7 h 12 min.") |
 | **Racha** | 🔥 actual, mejor racha y comodines 🧊 |
-| **Calendario** | El mes, con un cuadro por día; se va a meses anteriores |
+| **Calendario** | El mes, con un cuadro por día: en los jugados, el emoji del juego y el puntaje en una píldora; se va a meses anteriores |
 | **Por juego** | Una fila por juego: veces jugado, promedio, mejor y una línea con los últimos 8. La flecha dice si va mejorando: el promedio de los últimos 3 contra los 5 de antes (▲ +12) |
 | **Rankings** | Pestañas: **Hoy** (el desafío de hoy) · **Semana** (suma de puntos) · **Rachas** (mejor racha) · **Amigos** (los de sus copas, que `jugador.js` ya conoce, y los que invitó o lo invitaron) |
 | **Invitar** | Cuántos aceptaron sus desafíos, y **Invitar** |
-| **Avisos** | La campana con su estado y la hora elegida, y **Agregar al calendario** (botón chico) |
+| **Avisos** | La campana con su estado y la hora elegida: el recordatorio de cada día es el aviso diario (decisión 15) |
 
 **"Mejoró o no"** se dice en palabras además de la flecha: "En Reinas vas mejorando: tus últimas 3
 promedian 82, antes 70." Así se entiende sin leer gráficos.
@@ -290,9 +295,8 @@ Para quien no quiere avisos, o tiene un iPhone sin la app instalada:
 
 | Forma | Cómo funciona |
 |---|---|
-| **El botón de la portada** | Su estado se ve al entrar: el punto que brilla mientras falta jugar, 🔥 6, y cian con ✅ cuando ya jugó. |
+| **La tarjeta de la portada** | Su estado se ve al entrar: el punto que brilla mientras falta jugar, 🔥 6, y cian con ✅ cuando ya jugó (D-239). |
 | **El globo en el ícono** | En la app instalada (Android, y iPhone con avisos permitidos), un **1** en el ícono si hoy no ha jugado (`navigator.setAppBadge`). Lo pone la página al abrir y lo quita al terminar; el service worker lo pone con el aviso del día. |
-| **Agregar al calendario** | Un evento que se repite cada día a la hora que elige, con el link a `/today/`. Sale de un `.ics` armado en el celular, sin servidor ni permisos, y sirve en cualquier celular. |
 | **La tarjeta para compartir** | Al estilo Wordle, sin adelantar la respuesta: el grupo de WhatsApp le recuerda a cada uno que juegue. |
 | **El link fijo** | `juegosdesalon.cl/today/` siempre abre el de hoy: se guarda en favoritos o se fija en un grupo. |
 
@@ -349,7 +353,7 @@ escribe el celular al terminar, así que el aviso sabe si ya jugó aunque no ten
 - **Retención**: de los que jugaron por primera vez un día, cuántos volvieron al día siguiente, a los 7 y a los 30 días. Es la
   cifra que dice si funciona.
 - **Rachas**: cuántos tienen 1, 2 a 6, 7 a 29, y 30 o más.
-- **De dónde llegan**: botón de la portada, aviso (`?aviso=uaddia`, y `uadracha`, `uadsemana`, `uadadios`), calendario (`?de=cal`), link
+- **De dónde llegan**: botón de la portada, aviso (`?aviso=uaddia`, y `uadracha`, `uadsemana`, `uadadios`), link
   compartido (`?de=compartir`) e invitación (`?inv=`).
 - **Invitaciones**: cuántas se mandan, cuántos amigos abren el link, cuántos terminan su primer
   Uno al día y cuántos vuelven al día siguiente. Cuántos jugadores nuevos trae cada invitación es
@@ -367,8 +371,8 @@ escribe el celular al terminar, así que el aviso sabe si ya jugó aunque no ten
 | **1. El núcleo** | Botón, rotación y semilla, dado, línea en la intro, tarjeta del resultado, racha y calendario en el celular, compartir, `/today/` con lo local. Los 7 juegos solitarios | Sí (`UNO_AL_DIA_EN_LABS`) |
 | **2. Los demás juegos** | El Ahorcado, Batalla Naval y Dudo con la semilla del día y su puntaje de 0 a 100 | Sí |
 | **3. Con jugador e invitaciones** | Historial en Firebase, ranking del día, de la semana y de rachas, comodines, amigos, **invitar a un amigo**, reglas | Sí |
-| **4. Avisos y recordatorios** | Los tres avisos, la hoja de la hora, el globo del ícono, el calendario | Sí, como los de La Copa |
-| **5. Panel y salida** | Las cifras del panel; se abre a todos | No |
+| **4. Avisos y recordatorios** | Los tres avisos, la hoja de la hora, el globo del ícono, el recordatorio en el calendario (sacado en v0.120.2, decisión 15) | Sí, como los de La Copa |
+| **5. Panel y salida** | Las cifras del panel; se abre a todos | Sí: el panel llegó en el laboratorio y la salida quedó para el PR 8 (v0.121.0), después de los PR 6 y 7 con lo que decidió el dueño |
 
 Cada juego tiene que saber que es el de hoy (`/queens/?hoy`, ver "Lo que el PR 1 hizo") y
 avisar al terminar. Los siete solitarios ya aceptan `?semilla=` (D-142), así que para ellos el cambio
@@ -384,8 +388,9 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   otro juego, la página se va al de hoy.
 - **El mazo con 7 juegos:** "ningún juego antes de 7 días" con justo 7 juegos dejaba el mismo orden
   todas las semanas. Con menos de 9 juegos la espera es de dos días menos que los que hay (con 7,
-  cinco días; con 8, seis); con 9 o más, 7 días, como dice arriba (`SIN_REPETIR`). El día n.° 1 es el 5 de octubre de 2026
-  (`LANZAMIENTO` en `uno-al-dia.js`); se puede mover mientras esté en el laboratorio.
+  cinco días; con 8, seis); con 9 o más, 7 días, como dice arriba (`SIN_REPETIR`). El día n.° 1 era el 5 de octubre de 2026
+  (`LANZAMIENTO` en `uno-al-dia.js`), que se podía mover mientras estuviera en el laboratorio; al
+  salir pasó al 6 de octubre y quedó fijo (ver "Lo que el PR 8 hizo").
 - **La semilla** es un código de copa de 5 letras sacado de la fecha (`semillaDel`), así los juegos
   no cambian: generan con ella como en cualquier copa. Las palabras van en el idioma de quien juega,
   como en el juego suelto: el desafío es el mismo para los que juegan en el mismo idioma.
@@ -398,12 +403,12 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   otro), la racha, la mejor racha, los días jugados, el calendario del mes (con el emoji del juego en
   cada día jugado, y los meses anteriores) y una fila por juego con su línea de los últimos 8 y la
   flecha, más la frase del que más mejoró o, si ninguno, del que más bajó.
-- **Dónde va en la portada** (decisión del dueño, 2026-10-05): en la misma fila que Juego al azar,
-  a su derecha, sin una línea extra. Los dos llevan etiqueta corta (**🎲 Al azar** y **📅 Uno al
-  día 🔥 6**; en inglés *Random*, en portugués *Aleatório*, en alemán *Zufall*) para caber, también
-  a 320 px y en alemán. Sin Uno al día, el dado sigue diciendo **Juego al azar**. La otra forma que se probó, una tarjeta de media fila al lado de La Copa (las dos como
-  accesos de más jerarquía que los juegos), queda para probarla desde `/labs/` ("Junto a La Copa")
-  o con `?uad=tarjeta`.
+- **Dónde va en la portada** (D-239, decisión del dueño, 2026-10-06): en una tarjeta de media fila
+  junto a La Copa, mitad y mitad, con el emoji a la izquierda del título y el título en celeste (el
+  de La Copa, en dorado). Abajo, una píldora con el estado: **🔥 6 · Jugar el de hoy** (sin racha, solo
+  **Jugar el de hoy**), o **✅ Listo · 🔥 6** ya jugado. La forma de antes, un botón en la misma fila que Juego al azar (**🎲 Al azar** y
+  **📅 Uno al día 🔥 6**), queda para probarla desde `/labs/` ("Al lado del dado") o con
+  `?uad=boton`.
 - El CSS del dado pasó de la portada a `base.css`, para tirarlo desde cualquier página.
   El paso del dado al juego es el de Juego al azar (D-237): el juego abre con el mismo dado encima
   y el dado se desvanece cuando el juego está dibujado (`llegada.js`).
@@ -461,8 +466,8 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   escritura). Se ven en `/today/` y bajo el resultado: **Hoy · Semana · Rachas · Amigos**.
 - **Lo que las reglas no pueden revisar:** no convierten texto en número, así que no comparan el
   número del período con la hora del servidor, y la mejor racha la calcula el celular. Un tramposo
-  podría inflar su racha o anotar un día que no es el suyo. Mientras esté en el laboratorio se
-  acepta; si molesta, el workflow de los avisos puede recalcular las rachas desde la historia.
+  podría inflar su racha o anotar un día que no es el suyo. Se aceptó en el laboratorio, y al
+  abrirlo el dueño decidió que no importa por ahora (decisión 13); si molesta, el workflow de los avisos puede recalcular las rachas desde la historia.
 - **Los comodines** no se guardan: salen de recorrer la historia (`recorrer` en uno-al-dia.js),
   igual sin jugador. Cada 7 días jugados seguidos se gana uno; un día sin jugar gasta uno o corta la
   racha; tope 2. Los días salvados van con 🧊 en el calendario, y la tarjeta del resultado dice
@@ -501,7 +506,7 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   caminos de cada celular son los de La Copa (`push.js`), con sus hojas y un paso 3 propio.
 - **El globo del ícono**: la página pone un 1 mientras falta jugar hoy y lo quita al terminar; el
   aviso del día también lo pone (`sw.js`).
-- **Agregar al calendario**: un `.ics` armado en el celular, con un evento diario a la hora elegida
+- **(Sacado en v0.120.2, decisión 15)** Agregar recordatorio (antes "Agregar al calendario"): un `.ics` armado en el celular, con un evento diario a la hora elegida
   (o 9:00) y el link `today/?de=cal`.
 - **Las reglas de la vuelta:** nunca de 22:00 a 8:00 del celular, a lo más 2 al día por celular
   (contados en `pushEnviadosDia`, aparte de los de La Copa); el de la racha sale desde las 21:00 si
@@ -527,9 +532,69 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   `invitados/` enteros.
 - **Lo que no se mide todavía:** el embudo de la oferta de avisos (se ofreció → eligió hora →
   permiso) y los silenciados; y la vuelta de quienes juegan sin jugador, que solo está en su celular.
-- **Uno al día sigue en el laboratorio**: abrirlo a todos es decisión del dueño, después de
-  probarlo. Para abrirlo basta `UNO_AL_DIA_EN_LABS = false` en `uno-al-dia.js` (y sacar el número
-  del lanzamiento a la fecha de salida, si se quiere que el n.° 1 sea ese día).
+- **Uno al día siguió en el laboratorio** hasta que el dueño decidió abrirlo, en el PR 8 (v0.121.0):
+  `UNO_AL_DIA_EN_LABS = false` y el n.° 1 corrido al día de la salida.
+
+### Lo que el PR 6 hizo (v0.120.0)
+
+- **Sin revancha** en El Ahorcado, Batalla Naval y Dudo jugados como Uno al día (#226).
+- **Un solo ranking bajo el resultado** de los solitarios: el de Uno al día. El del juego no se
+  muestra, aunque el primer intento igual entra a él.
+- **"⏰ Agregar recordatorio"** en vez de "📆 Agregar al calendario", que se confundía con el
+  calendario de la página (el que muestra lo jugado), con una línea arriba: "Sin avisos: agrega un
+  recordatorio diario al calendario de tu celular."
+- **La actividad, en el panel**: cada acción suma uno a `stats/<entorno>/days/<día>/uad/<evento>`
+  (`EVENTOS_UAD` y `trackUnoAlDia` en stats.js; no dice quién): tocar el botón, rodar el dado,
+  terminar el de hoy o repetirlo, compartir, jugar otro, tocar Invitar, abrir una invitación,
+  aceptarla, y de los avisos: ofrecidos, hora elegida, activados, "Ahora no", silenciados y el
+  recordatorio. El bloque "📅 Uno al día" los muestra en "Qué se hace" y "Avisos y recordatorio", con
+  el tráfico de `/today/` (páginas vistas y visitas que entraron por ahí).
+
+### Lo que el PR 7 hizo (v0.120.2)
+
+- **Sin recordatorio en el calendario** (decisión 15): el recordatorio de cada día es el aviso
+  diario, que manda la app a la hora elegida. Se sacaron el botón, su línea, el `.ics` y la señal
+  `recordatorio`. En la hoja de los avisos, el diario se llama **Recordatorio diario**. Si el
+  celular no puede recibir avisos, `/today/` no muestra la campana.
+- **El título del calendario del mes** volvió a ser "Calendario": había dos claves `calendario` en
+  los textos y la del botón pisaba a la del título (lo vio el dueño). `uno-al-dia.test.mjs` ahora
+  revisa que los textos de Uno al día no repitan una clave.
+
+### Lo que el PR 8 hizo (v0.121.0): sale del laboratorio
+
+- `UNO_AL_DIA_EN_LABS = false`: el botón de la portada, `/today/` y todo lo demás se ven para
+  todos. En `/labs/` queda solo probar la otra forma del acceso (la tarjeta junto a La Copa, que pasó a
+  ser la de todos en D-239; desde entonces en `/labs/` se prueba el botón al lado del dado).
+- **El n.° 1 pasó al 6 de octubre de 2026**, el día en que se abrió (decisión del dueño):
+  `LANZAMIENTO` en uno-al-dia.js. El mazo es el mismo corrido un día (el 6 es Desenredo) y los de
+  grupo siguen saliendo desde el mazo del 13. Desde ahora queda fijo: moverlo cambia el juego de
+  días ya jugados.
+
+### Después de abrirlo (v0.126.1)
+
+- **El calendario** muestra en cada día jugado el emoji del juego y, en una píldora como la de La
+  Copa, el puntaje de 0 a 100 (pedido del dueño).
+- **"Hoy jugaste 👑 Reinas: 87 puntos."**, con el emoji del juego, y **"Próximo juego en 7 h 12 min."**
+  en vez de "El próximo sale en…".
+- **Los comodines dicen para qué sirven** antes que cómo se ganan: "🧊 Un comodín salva tu racha el
+  día que no juegas. Tienes 1 de 2: …", y lo mismo en la tarjeta de invitar y al ganar uno (el dueño:
+  que se entienda y den ganas de ganarlos).
+
+### Generala, lista para entrar al mazo (v0.128.0)
+
+- **📝 Generala** (D-246) se anuncia en la portada como "Próximamente" (D-248) y **todavía no está
+  en `JUEGOS_DIA`**. Al abrirla, entra con un `desde` que sea el primer día de un mazo que no
+  haya empezado, para no cambiar días ya jugados (D-247), y su prueba en `uno-al-dia.test.mjs`.
+  Lo de abajo ya está hecho en `/generala/`.
+- **`/generala/?hoy`** abre 🧍 Jugar solo, sin elegir modo, con el botón **Jugar el de hoy** y la
+  línea "Los dados salen iguales para todos: lo que cambia es qué guardas." No tiene rival, así que
+  ahí sí el desafío entero es el mismo para todos, no solo el punto de partida.
+- **Los dados salen de la semilla del día** (D-247): `azarDel(semilla, 'generala:<turno>:<tiro>')`,
+  consumido en orden de posición, así quien guarda lo mismo recibe lo mismo. Fuera de Uno al día,
+  cada celular tira con su azar (D-246).
+- **El puntaje** es `puntajeDia` de `public/generala/engine.js` (no de `uno-al-dia.js`, como los
+  otros tres de grupo): un tercio del total, hasta 100. Sin revancha, como los otros (#226).
+- Se prueba con `uno-al-dia.test.mjs` y `engine.test.mjs`.
 
 ## Lo que decidió el dueño (2026-10-05)
 
@@ -546,15 +611,27 @@ celular saca la palabra, la flota o los dados de la semilla del día.
 9. **Un comodín para quien invita** cuando el invitado termina su primer Uno al día, con el mismo
    tope de 2, **y se anuncia** para que el jugador lo sepa.
 10. **La tarjeta para compartir no nombra el juego de hoy** (#215), ni en el texto ni en la imagen.
+11. **Sin revancha en los juegos de grupo** jugados como Uno al día (#226, 2026-10-06): la tarjeta ya
+    ofrece jugar otro o repetir el de hoy.
+12. **Un solo ranking bajo el resultado**, el de Uno al día: el del juego no se muestra (el primer
+    intento igual entra a él).
+13. **Que se pueda alterar la mejor racha no importa por ahora**; sí que el panel mida el tráfico y
+    la actividad de Uno al día.
+14. **Con los avisos activos no se ofrece el recordatorio del calendario** (#230): repetiría el aviso.
+    Corregida por la 15.
+15. **El recordatorio es el aviso diario de la app, programado a la hora elegida, no un calendario**
+    (2026-10-06): se sacó "⏰ Agregar recordatorio" (el `.ics`). Corrige la 14, que ya no hace falta.
+16. **Abrirlo a todos** (2026-10-06), con el n.° 1 el día que se abre.
 
 ## Textos para revisar (U-1, U-3, U-17)
 
 Botones (caben en 320 px, unos 18 caracteres): **Uno al día**, **Jugar el de hoy**, **Compartir**,
 **🎲 Jugar otro**, **Invitar**, **Entrar**, **Ahora no**, **Mañana · 9:00**, **Almuerzo · 13:00**,
-**Tarde · 19:00**, **Silenciar**, **Probar los avisos** y **Agregar al calendario** (pasa de 18,
-así que va en botón chico, como lo secundario de U-17). El botón de la portada va en una línea,
-**📅 Uno al día**, con la racha en una píldora (**🔥 6**) y, al lado, **🎲 Al azar** (decisión del
-dueño: etiquetas cortas). Mientras falta jugar el de hoy brilla un punto; jugado, se pone cian con ✅.
+**Tarde · 19:00**, **Silenciar** y **Probar los avisos** ("⏰ Agregar recordatorio", que pasaba de
+18 e iba en botón chico, se sacó: decisión 15). En la portada va una tarjeta al lado de La Copa
+(D-239), con su estado en una píldora: **🔥 6 · Jugar el de hoy** o **✅ Listo · 🔥 6**. Mientras falta
+jugar el de hoy brilla un punto; jugada, la tarjeta se pone cian. En `/labs/` se prueba la forma de
+antes, un botón en una línea, **📅 Uno al día 🔥 6**, al lado de **🎲 Al azar**.
 Lo que hace cada estado va en su `aria-label`. "Racha", "comodín" y "Silenciar" se dicen siempre así (U-5). Los
 textos los propone el agente de usabilidad y el dueño los corrige en el PR.
 
@@ -564,9 +641,9 @@ textos los propone el agente de usabilidad y el dueño los corrige en el PR.
 |---|---|---|
 | **Juega el de hoy** (portada) y **Jugar el de hoy** (amigo) | **Jugar el de hoy** en los dos | Una acción, una palabra (U-5), y en infinitivo como los demás botones |
 | **¿Otro más?** | **🎲 Jugar otro** | Verbo y objeto (U-17); el dado dice que es al azar |
-| **Agregar a mi calendario** / **Al calendario** | **Agregar al calendario**, botón chico | "Al calendario" no tiene verbo (U-17) |
+| **Agregar a mi calendario** / **Al calendario** | **Agregar al calendario**, botón chico (desde el PR 6, **⏰ Agregar recordatorio**) | "Al calendario" no tiene verbo (U-17) |
 | "📅 Uno al día · el mismo desafío para todos hoy" | "📅 Uno al día: hoy todos juegan el mismo desafío." | Frase completa (U-1) |
-| "El próximo, en 7 h 12 min" | "El próximo sale en 7 h 12 min." | Frase completa (U-1) |
+| "El próximo, en 7 h 12 min" | "El próximo sale en 7 h 12 min." (desde v0.126.1, "Próximo juego en 7 h 12 min.") | Frase completa (U-1); después, que diga que lo que viene es un juego |
 | "Sara jugó los últimos 33 días seguidos" | "Sara lleva una racha de 33 días" | Con un comodín, "jugó 33 días seguidos" puede ser falso; y "racha" es el término (U-5) |
 | "y lleva 5 días mejorando en Reinas" | "va mejorando en Reinas" | La app mide la flecha (últimos 3 contra 5), no días seguidos mejorando |
 | "Hoy sacó 87 en Reinas" | "hoy sacó 87" | La tarjeta del amigo se lee antes del dado: no adelanta el juego |
@@ -575,6 +652,7 @@ textos los propone el agente de usabilidad y el dueño los corrige en el PR.
 | Dos versiones del mensaje de invitar | Una, con cabecera y 🔗 (U-30), solo texto (U-33) | La invitación no lleva imagen dibujada: la pone el link |
 | "Sara te desafía 🔥" | "🔥 Sara te desafía" | Emoji al inicio (U-2) |
 | "Si juega su primer Uno al día, ganas un comodín 🧊." (y "juega su primer día") | "🧊 Si tu amigo termina su primer Uno al día, ganas un comodín." | Quién juega queda claro, el comodín llega al terminar, emoji al inicio (U-2) y una sola forma en los cuatro lugares (U-5) |
+| "🧊 Comodines: 0 de 2. Ganas uno cada…" (v0.126.1) | "🧊 Un comodín salva tu racha el día que no juegas. Tienes 0 de 2: ganas uno cada…" | Primero para qué sirve y después cómo se gana: que den ganas de ganarlos (pedido del dueño) |
 | "Sin comodines. Invita a un amigo y gana uno 🧊." | "🧊 No tienes comodines. Invita a un amigo y gana uno." | Frase completa (U-1), emoji al inicio (U-2) |
 | "…ganar un comodín por cada amigo que juegue." | "…ganas un comodín cuando un amigo que invitaste termina su primer Uno al día." | Con el tope de 2, "por cada amigo" promete de más |
 | "🧊 Pedro aceptó tu desafío: ganaste un comodín." siempre | Sin nombre si el amigo no tiene jugador; sin comodín si ya tenía 2 | No promete lo que se pierde |

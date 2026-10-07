@@ -66,8 +66,8 @@ public/<carpeta>/
 - **El selector de idioma es uno solo, `langToggle()`, y se ve igual en toda la app** (D-231).
   Ninguna pantalla arma el suyo. Su estándar:
   - Una píldora de vidrio (`--glass`) con un botón por idioma de `LANGS`, en el orden de `LANGS`.
-  - **Cada botón lleva la bandera y el código en mayúsculas, siempre** (🇨🇱 ES, 🇬🇧 EN, 🇧🇷 PT, 🇩🇪 DE).
-    La bandera es la del país de la app en ese idioma (`BANDERAS` en `i18n.js`), en emoji, nunca
+  - **Cada botón lleva la bandera y el código en mayúsculas, siempre** (🇪🇸 ES, 🇬🇧 EN, 🇧🇷 PT, 🇩🇪 DE).
+    La bandera identifica el idioma, no el país de quien juega: el español va con 🇪🇸 (D-244). Salen de `BANDERAS` en `i18n.js`, en emoji, nunca
     en SVG: en Windows se ve como dos letras y se acepta (D-231). Nunca se esconde:
     en una pantalla ancha va al lado del código, y en un celular angosto (≤ 440 px), arriba, para
     que el toggle no crezca.
@@ -130,7 +130,9 @@ modo que el juego piensa tener.
   semilla compartida que va en la lista de mensajes, así cada celular llega al mismo reparto sin
   mandarlo. La excepción es lo oculto que nadie debe poder calcular con el código, que es público: los
   dados de Dudo van comprometidos con hash y sal (D-70) y las manos de Julepe en sobres cerrados
-  (D-81). Ver C-10.
+  (D-81). Ver C-10. Y lo que se tira a la vista de todos no se reparte: los dados de Generala los
+  tira el celular de quien juega y viajan en claro, porque con la semilla se podrían calcular los
+  próximos tiros (D-246).
 - Todos los modos usan la misma lógica: cambia el transporte, no el juego.
   `public/assets/js/transport/local.js` (mismo dispositivo, también para la IA) y `firebase.js` (sala remota).
 - Interfaz del transporte: `create`, `join`, `send`, `onMessage`, `onPresence`, `leave`, `dispose`.
@@ -331,6 +333,74 @@ como un error: se lee como que nadie jugó.
   modo, jugadores, zona horaria, idioma ni hora) necesita su línea en las reglas, su sección en
   el panel y publicar las reglas en la consola (ver [PANEL.md](PANEL.md)).
 
+## C-17 · La portada
+
+La portada (`public/index.html`) es la lista de juegos y las maneras de elegir uno. Sus reglas
+salieron de varias decisiones que se fueron corrigiendo; aquí está lo vigente, y cada punto dice
+de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
+
+- **Qué se ofrece y en qué orden.** Las tarjetas salen de `PORTADA` en `games.js`: primero los
+  juegos de `GAMES` (La Copa, la primera, en media fila junto a Uno al día) y después los juegos de La Copa sueltos (`SUELTOS`,
+  aparte solo por cómo están hechos, D-198), sin lista propia en la página (D-142, D-149). Un
+  juego que no está disponible se ve, con "Próximamente" al lado del nombre, pero no se abre, ni
+  con el teclado (`available` en `games.js`, C-2; D-142), y va al final de la lista, con y sin
+  filtro (v0.128.2). La tarjeta dice jugadores y duración,
+  y si el juego no está en el idioma elegido lo dice antes de abrirlo ("🇪🇸 En español",
+  `idiomas` en `games.js`; hoy ninguno lo declara, D-170). Uno de `SUELTOS` con `labs: true` no
+  sale en la portada, aunque su link ya se comparta.
+- **Arriba de la lista, los accesos que eligen por ti.** 🎲 Juego al azar, bajo la bajada, sale
+  de las tarjetas que se ven y se pueden abrir, nunca de La Copa (D-188), y abre el juego con el
+  dado encima (D-237). Uno al día es una tarjeta de media fila al lado de La Copa: los dos pesan
+  más que un juego (D-230, D-239; el detalle, en [UNO-AL-DIA.md](UNO-AL-DIA.md)).
+- **Las dos tarjetas de media fila** (`.fila-alta`, `.game-card.alta`) llevan el emoji de 40 px
+  a la izquierda del título, la bajada y las píldoras de ancho entero, y el título en color: La
+  Copa en dorado, Uno al día en celeste; los juegos van en blanco. Para que jugadores y duración
+  quepan en una línea, la píldora dice "👥 2–10" y "jugadores" queda solo para el lector de
+  pantalla (`.unidad`); la tarjeta ancha de un juego sí lo muestra (D-239).
+- **Se filtra por tipo o por favoritos, y por nada más.** Un tipo a la vez (`TIPOS`), que
+  se prende y se apaga con un toque. Solo hay fichas de tipos que tienen algún juego que se
+  puede abrir, así la lista nunca queda vacía. Cuántos juegan no se filtra: cada juego lo
+  pregunta adentro (D-149). Con un filtro puesto, la línea de abajo dice "Se ven n de m" y
+  ofrece "Ver todos" (D-149; #71, resuelto en [USABILIDAD.md](USABILIDAD.md)).
+- **⭐ Favoritos es un filtro más**, excluyente con los tipos, y aparece solo con algún favorito
+  marcado. Los favoritos son de ese navegador (`localStorage`, por id de juego), sin cuenta
+  (`favoritos.js`, D-238). La Copa no se marca, ni un juego que no está disponible. Desmarcar
+  uno estando en ⭐ Favoritos no lo saca de la vista (se puede volver a marcar), salvo que ya no
+  quede ninguno: ahí se ven todos.
+- **El filtro va en la URL, en inglés** (`?type=logic`, `?type=favorites`): volver desde un juego
+  lo deja como estaba y un link filtrado se puede compartir. Un link viejo (`?tipo=`) se reescribe
+  y uno que no aplica (`?jugadores=`, o `?type=favorites` sin favoritos) muestra todos sin avisar
+  (D-149, D-214, D-238).
+- **Los filtros se quedan pegados arriba** al bajar por la lista, y tocar uno estando pegados
+  lleva a la primera tarjeta filtrada (D-196). Pegados, su fondo sube hasta tapar la franja de la
+  muesca: las tarjetas no se ven pasar detrás de la hora (U-12).
+- **Los tipos van en una sola fila**, a cualquier ancho desde 320 px y en los cuatro idiomas:
+  bajo 520 px el emoji sube arriba del nombre, y bajo 300 px de caja las fichas se aprietan para
+  no quedar pegadas al borde (D-144, D-149, U-11). Lo que se suma a la fila entra solo si cabe,
+  y eso se mide en la página, no se supone: ⭐ Favoritos va primera, con su nombre o con la ⭐
+  sola y menos aire entre las fichas, y si ni así cabe (a 320 px, casi siempre) va en su propia
+  línea arriba de los tipos (D-238, D-241).
+- **Nada se sale de la pantalla a 320 px**, tampoco donde el navegador no sabe partir una palabra
+  larga ("Galgenmännchen" en el Chrome de Linux): la columna de tarjetas no crece más que la
+  pantalla (`minmax(0, 1fr)`, D-238).
+- **Dentro de una tarjeta no hay nada tocable**: la tarjeta es un link entero. Lo que se toca
+  sin abrir el juego, como la ⭐, va al lado del link, encima de la tarjeta (`.game-slot`), con
+  44 px de toque y sin tapar texto (C-8, D-238).
+- **La barra de arriba** va en dos bloques: el idioma (C-3) a la izquierda y, a la derecha, las
+  acciones: el sonido (C-4), 🏆 rankings (D-212, abiertos a todos desde D-217) y compartir. Con
+  6 px de aire entre botones caben en una línea desde 375 px; más angosto (320 px), las acciones
+  bajan a una segunda línea y siguen a la derecha (v0.128.1). Compartir comparte la app con su tarjeta social en el idioma en que se
+  mira (`compartirApp`, D-226, U-33). Su ícono es el de compartir de los sistemas operativos, una
+  caja abierta con una flecha hacia arriba, en SVG y no un emoji (D-242), con la caja celeste,
+  la flecha rosada y la sombra de abajo de los botones de la página (D-243).
+  El globo que invita a agregar la app a inicio sale abajo, solo en los celulares donde se puede
+  agregar (no en el computador ni en la app ya instalada), y la ✕ lo apaga para siempre en ese
+  navegador (D-232).
+- **Se prueba entera en Chrome:** `tools/e2e/favoritos.mjs` (filtros, favoritos y 320 px en los
+  cuatro idiomas), `compartir-portada.mjs`, `instalar.mjs`, `uno-al-dia.mjs` e
+  `idioma-por-url.mjs`. `window.__portada` dice el filtro, las tarjetas que se ven y los
+  favoritos. Un cambio que se ve rehace la captura `docs/screenshots/menu.png` (C-13).
+
 ---
 
 ## Lista de chequeo antes de dar por listo un juego
@@ -348,7 +418,7 @@ como un error: se lee como que nadie jugó.
 - [ ] Lo que cambió, descrito en el PR para que quien fusiona escriba la entrada de `CHANGELOG.md` con su versión; publicada y comprobada en la URL pública por `publicar.yml` (C-11, D-205).
 - [ ] Si tiene varios celulares, el chat de sala usa el módulo compartido y muere con la sala (C-15).
 - [ ] Lo que comparte (sala, resultado) sale de `compartir.js`, con la cabecera del estándar, y un resultado va con su imagen (C-7, D-165).
-- [ ] Registro en el menú, README, especificación, requerimientos y decisiones (C-2, C-13).
+- [ ] Registro en el menú, README, especificación, requerimientos y decisiones (C-2, C-13). En la portada, con su tipo, entra al dado y a los favoritos y cabe a 320 px (C-17).
 - [ ] Las excepciones a los cánones están escritas en su especificación (C-13).
 - [ ] El panel lo muestra sin haberlo tocado: `node public/panel/adapta.test.mjs` en verde y una mirada a `node tools/e2e/mirar.mjs panel datos` (C-16).
 - [ ] Capturas del README rehechas y miradas, y `python3 tools/release/readme.py revisar` en verde (C-13).

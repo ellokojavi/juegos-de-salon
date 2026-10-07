@@ -18,8 +18,8 @@ import { rng as mulberry } from '../../timeline/engine.js';
 import { envOf } from './transport/stats.js';
 import { semana } from './records.js';
 
-/** El día n.° 1. Mientras esté en el laboratorio se puede mover; al salir queda fijo. */
-export const LANZAMIENTO = '2026-10-05';
+/** El día n.° 1: el día en que Uno al día salió del laboratorio (D-230). Queda fijo: moverlo cambia el juego de días ya jugados. */
+export const LANZAMIENTO = '2026-10-06';
 
 /** El día en que entran El Ahorcado, Batalla Naval y Dudo (PR 2 de Uno al día). */
 export const DESDE_GRUPO = '2026-10-07';
@@ -187,10 +187,11 @@ export function puntajeDudo({ gano, dados, rondas }) {
 /* ------------------------------------------------------------------ */
 
 /**
- * Mientras se prueba, Uno al día se ve en el sitio local y en los celulares que lo activan en
- * `/labs/` (como los avisos y los rankings, D-212, D-223).
+ * La puerta del laboratorio (D-230). Uno al día salió en v0.121.0 (`false`: se ve para todos); si
+ * algo vuelve a probarse antes de abrirse, con `true` se ve solo en el sitio local y en los celulares
+ * que lo activan en `/labs/`, como los avisos y los rankings (D-212, D-223).
  */
-export const UNO_AL_DIA_EN_LABS = true;
+export const UNO_AL_DIA_EN_LABS = false;
 export const LABS_UNO_AL_DIA_KEY = 'juegos-de-salon:labs-uno-al-dia';
 export function unoAlDiaVisible({ storage = globalThis.localStorage, loc = globalThis.location } = {}) {
   if (!UNO_AL_DIA_EN_LABS) return true;
@@ -201,21 +202,21 @@ export function activarUnoAlDia(si, storage = globalThis.localStorage) {
 }
 
 /**
- * Dónde va el acceso en la portada. Lo elegido es al lado de Juego al azar (`'boton'`); la otra
- * forma, una tarjeta de media fila junto a La Copa (`'tarjeta'`), se puede probar desde `/labs/`
- * en un celular, o con `?uad=tarjeta`. `?uad=no` no lo pone.
+ * Dónde va el acceso en la portada. Lo elegido es una tarjeta de media fila junto a La Copa
+ * (`'tarjeta'`, D-239); la de antes, al lado de Juego al azar (`'boton'`), se puede probar desde
+ * `/labs/` en un celular, o con `?uad=boton`. `?uad=no` no lo pone.
  */
 export const LABS_FORMA_KEY = 'juegos-de-salon:labs-uno-al-dia-forma';
 export function formaAcceso({ storage = globalThis.localStorage, loc = globalThis.location } = {}) {
   try {
     const q = new URLSearchParams(loc?.search || '').get('uad');
-    // `?uad=no` lo esconde: las capturas del README se sacan en el sitio local, donde se ve sin /labs/
+    // `?uad=no` lo esconde (para mirar la portada sin él)
     if (q === 'tarjeta' || q === 'boton' || q === 'no') return q;
-    return storage.getItem(LABS_FORMA_KEY) === 'tarjeta' ? 'tarjeta' : 'boton';
-  } catch (_) { return 'boton'; }
+    return storage.getItem(LABS_FORMA_KEY) === 'boton' ? 'boton' : 'tarjeta';
+  } catch (_) { return 'tarjeta'; }
 }
 export function elegirForma(forma, storage = globalThis.localStorage) {
-  try { if (forma === 'tarjeta') storage.setItem(LABS_FORMA_KEY, 'tarjeta'); else storage.removeItem(LABS_FORMA_KEY); } catch (_) { /* sin memoria */ }
+  try { if (forma === 'boton') storage.setItem(LABS_FORMA_KEY, 'boton'); else storage.removeItem(LABS_FORMA_KEY); } catch (_) { /* sin memoria */ }
 }
 
 /* ------------------------------------------------------------------ */

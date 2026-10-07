@@ -144,7 +144,25 @@ function mostrar(id) {
  */
 function pantallaCompleta(si) {
   document.body.classList.toggle('pantalla-completa', !!si);
+  // El reloj va dentro de la barra, entre volver y el sonido: centrado en la ventana se montaba
+  // sobre "‹ Laboratorio" (C-8). Fuera de la pantalla completa vuelve a la cabeza de jugar.
+  const head = $('#jugar-head'), barra = $('.topbar');
+  if (si) barra.insertBefore(head, $('.tools', barra));
+  else if (head.parentNode === barra) $('#screen-jugar').prepend(head);
+  ajustarCabeza();
 }
+
+/** Si el reloj no cabe en la barra, la píldora de prueba queda en 🧪 y, si ni así, se va. */
+function ajustarCabeza() {
+  const head = $('#jugar-head');
+  head.classList.remove('justo', 'sin-chip');
+  if (!document.body.classList.contains('pantalla-completa')) return;
+  for (const c of ['justo', 'sin-chip']) {
+    if (head.scrollWidth <= head.clientWidth) return;
+    head.classList.add(c);
+  }
+}
+addEventListener('resize', ajustarCabeza);
 
 function errorDe(e) {
   const code = e?.code || e?.message;
@@ -2132,9 +2150,9 @@ function practica(id) {
     LABS ? el('p', { class: 'muted center' }, T.practiceHint) : null,
     el('button', { class: 'btn btn--yellow', id: 'btn-empezar', onClick: () => { SFX.tap(); jugarPractica(id, semilla); } }, `${J.emoji} ${T.start}`),
     volverDePractica(),
-    // Entrar es opcional (D-212) y va pegado al ranking: antes de Empezar lo dejaba fuera de la
-    // pantalla en alemán y portugués (C-8, dilema #186). El resultado lo vuelve a ofrecer.
-    rankea(id) ? bloqueJugador({ alTocar: () => SFX.tap() }) : null,
+    // Entrar, pegado a Empezar y a Volver (D-249): sin jugador, la partida no queda en ningún
+    // ranking. Arriba de las reglas, o entre los dos, bajaba los botones en alemán (C-8)
+    rankea(id) ? bloqueJugador({ destacado: true, alTocar: () => SFX.tap() }) : null,
     rankea(id) ? bloqueRanking({ juego: id, titulo: fmt(RK.titleOf, { game: J.nombre }), pestanas: ['semana', 'siempre', 'amigos', 'copa'], alTocar: () => SFX.tap() }) : null));
 }
 
@@ -2158,6 +2176,12 @@ function jugarPractica(id, semilla) {
   jugarSinPuntaje(id, p, r => resultadoPractica(id, semilla, r));
 }
 
+/** "🧪 Prueba", con la palabra aparte: en la barra de la pantalla completa puede quedar solo el 🧪. */
+const chipPrueba = () => {
+  const [ico, ...txt] = T.trialChip.split(' ');
+  return el('span', { class: 'chip chip--gold', title: T.trialChip }, ico, el('span', { class: 'chip-txt' }, ` ${txt.join(' ')}`));
+};
+
 /**
  * Juega un juego sin que cuente: la práctica del laboratorio y la sesión de prueba antes de
  * un día de la copa (D-103). Nada se guarda ni se envía; el reloj corre igual, para que se vea.
@@ -2169,7 +2193,7 @@ async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false } = {}) {
   const head = $('#jugar-head');
   head.innerHTML = '';
   const cron = el('span', { class: 'cron' }, fmt(T.timer, { t: '0:00' }));
-  poner(head, el('span', { class: 'jugar-titulo' }, conEmoji(J.emoji, J.nombre)), ensayo ? el('span', { class: 'chip chip--gold' }, T.trialChip) : null, cron);
+  poner(head, el('span', { class: 'jugar-titulo' }, conEmoji(J.emoji, J.nombre)), ensayo ? chipPrueba() : null, cron);
   clearInterval(S.reloj);
   S.reloj = setInterval(() => { if (S.pantalla === 'jugar') cron.textContent = fmt(T.timer, { t: mmss(reloj.leer(rel, Date.now())) }); }, 1000);
   S.visibilidad && document.removeEventListener('visibilitychange', S.visibilidad);
@@ -2234,7 +2258,8 @@ function resultadoPractica(id, semilla, r) {
   // Los rankings (D-212): se anota si hay jugador; si entra recién aquí, esta partida igual cuenta.
   // De Uno al día, solo el primer intento: después el tablero ya se conoce (D-230)
   const cuentaRk = rankea(id) && (!hoy || hoy.primera);
-  const ranking = cuentaRk ? bloqueRanking({ juego: id, titulo: fmt(RK.titleOf, { game: J.nombre }), pestanas: ['semana', 'siempre', 'amigos'], alTocar: () => SFX.tap() }) : null;
+  // En Uno al día, el ranking que se ve es el de Uno al día (su tarjeta): el del juego no se muestra
+  const ranking = cuentaRk && !hoy ? bloqueRanking({ juego: id, titulo: fmt(RK.titleOf, { game: J.nombre }), pestanas: ['semana', 'siempre', 'amigos'], alTocar: () => SFX.tap() }) : null;
   const aviso = el('div', {});
   let anotada = false;
   const anotar = () => {
@@ -2245,7 +2270,7 @@ function resultadoPractica(id, semilla, r) {
   if (cuentaRk) {
     // Plegado: los botones del final tienen que verse sin desplazar (C-8)
     // En Uno al día, entrar ya lo ofrece su tarjeta (con la racha): no se ofrece dos veces
-    if (leerYo()) anotar(); else if (!hoy) aviso.append(bloqueJugador({ alTocar: () => SFX.tap() }));
+    if (leerYo()) anotar(); else if (!hoy) aviso.append(bloqueJugador({ destacado: true, alTocar: () => SFX.tap() }));
     jugador().then(Jg => { const off = Jg.escuchar(() => { if (S.pantalla !== 'resultado') { off(); return; } anotar(); }); }).catch(() => {});
   }
   trackFinish({ detalle: `${r.s}/100${r.ms ? ` · ${mmss(r.ms)}` : ''}` });   // cómo salió, para el panel (D-210)
