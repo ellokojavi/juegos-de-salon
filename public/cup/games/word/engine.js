@@ -52,5 +52,5 @@ export const PUNTOS_FAMA = 10;
 export const bono = usados => 50 - 5 * (usados - 1);
 export const puntaje = e => PUNTOS_FAMA * (e.encontradas || 0) + (e.resuelto ? bono(e.usados) : 0);
 
-/** Una fila por intento: 🟨 fama, 🟦 toque, ⬛ no está. Los colores de las pistas de Toque y Fama. */
-export const tarjeta = e => e.filas.map(f => f.marcas.map(m => (m === 'f' ? '🟨' : m === 't' ? '🟦' : '⬛')).join('')).join('\n');
+/** Una fila por intento: 🟩 fama, 🟨 toque, ⬛ no está. Los colores de las pistas de Toque y Fama (#196). */
+export const tarjeta = e => e.filas.map(f => f.marcas.map(m => (m === 'f' ? '🟩' : m === 't' ? '🟨' : '⬛')).join('')).join('\n');
