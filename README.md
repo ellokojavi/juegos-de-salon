@@ -397,7 +397,7 @@ It borrows what makes daily puzzles work (Wordle, Connections): same challenge f
 | 2 | 🔢 Bulls and Cows: guess the number, with the Bulls and Cows keypad and notes | deduction |
 | 3 | 🔗 Connections: 16 words, 4 groups, with red herrings | association |
 | 4 | 👑 Queens: one per row, column and color region, never touching; a tap cycles queen → X → empty, dragging fills X (or erases them, starting on an X), and 🧹 Clear all starts over; scored by solve time, mistakes are free, and you can give up (D-166 to D-169) | logic |
-| 5 | 🔤 Bulls and Cows: Word: a 5-letter word, each letter colored by its clue; every letter you pin down scores, so getting close counts | deduction |
+| 5 | 🔤 Bulls and Cows: Word: a 5-letter word, each letter colored by its clue (green for a bull, yellow for a cow, like Wordle); every letter you pin down scores, so getting close counts | deduction |
 | 6 | 📅 What year was it?: closer is better, older gets more slack | estimation |
 | 7 | 🏁 The Grand Final: five short rounds, one of each, worth double | everything |
 
