@@ -291,9 +291,10 @@
     @media (prefers-reduced-motion: reduce) { .btn-uad-punto { animation: none; } }
     /* La barra de arriba en dos bloques: el idioma a la izquierda y las acciones (sonido, rankings,
        compartir) a la derecha. Si en un celular angosto no caben juntos, las acciones bajan a otra
-       línea y siguen a la derecha. */
-    .portada-barra { flex-wrap: wrap; }
-    .portada-barra .tools { margin-left: auto; }
+       línea y siguen a la derecha. Con 6 px de aire caben en una sola línea desde 375 px (un
+       iPhone común): con los 10 y 8 de la barra de los juegos se pasaban por 1 px (C-8). */
+    .portada-barra { flex-wrap: wrap; gap: 6px; }
+    .portada-barra .tools { margin-left: auto; gap: 6px; }
   </style>
   <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
   <meta name="apple-mobile-web-app-title" content="Juegos de Salón">
