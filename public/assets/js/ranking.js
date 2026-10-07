@@ -122,7 +122,7 @@ export function bloqueJugador({ abierto = false, destacado = false, leyenda = ''
     pin.addEventListener('keydown', e => { if (e.key === 'Enter') b.click(); });
     const det = el('details', { class: destacado ? 'panel rk-invita rk-invita--destacada' : 'panel rk-invita', ...(abierto || mensaje ? { open: true } : {}) },
       destacado
-        ? el('summary', {}, el('span', { class: 'rk-invita-txt' }, el('b', {}, T.joinTitle), leyenda ? el('small', {}, leyenda) : null),
+        ? el('summary', {}, el('span', { class: 'rk-invita-txt' }, el('b', {}, T.joinCard), leyenda ? el('small', {}, leyenda) : null),
           el('span', { class: 'btn btn--cyan btn--sm rk-invita-btn', 'aria-hidden': 'true' }, T.join))
         : el('summary', {}, T.joinTitle),
       el('p', { class: 'muted rk-hint' }, T.joinHint),
