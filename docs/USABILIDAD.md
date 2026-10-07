@@ -166,3 +166,6 @@ Las respuestas a dilemas (issues con la etiqueta `usabilidad`) se anotan aquí:
 - **La fama es verde y el toque amarillo** (#196, opción B): como en Wordle, en todos los Toque y
   Fama (las letras de Palabra, las pistas de Número y del juego de sala) y en la tarjeta de Palabra
   (🟩 fama, 🟨 toque, ⬛ no está), que así habla igual que la de Número (🟢, 🟡, ⚪).
+- **Portada bajo 375 px: las acciones bajan a una segunda línea** (#250, opción A): entre 320 y 374
+  px el idioma queda arriba a la izquierda y sonido, rankings y compartir bajan a la derecha. Se
+  acepta la escalera antes que achicar los botones de idioma bajo 44 px (C-8) o volver atrás D-231.
