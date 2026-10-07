@@ -225,10 +225,11 @@ details.panel summary::-webkit-details-marker { display: none; }
 .lang-toggle button.on { background: var(--yellow); color: #3a1200; transform: scale(1.04); }
 .lang-toggle button:active { transform: scale(0.96); }
 /*
- * Con cuatro idiomas el toggle en línea mide unos 290 px y, en la barra de arriba de la portada,
- * empuja el sonido y compartir fuera de la pantalla. En un celular angosto la bandera no se
- * esconde (antes sí, D-231): sube encima del código, y el toggle queda del ancho que tenía con
- * el código solo. Si igual no cabe, los botones redondos bajan a una segunda línea antes que salirse.
+ * Con cuatro idiomas el toggle en línea mide unos 290 px y, en una barra de arriba que lo lleva
+ * junto al sonido (Rankings, Uno al día), empuja los botones redondos fuera de la pantalla. En un
+ * celular angosto la bandera no se esconde (antes sí, D-231): sube encima del código, y el toggle
+ * queda del ancho que tenía con el código solo. Si igual no cabe, los botones redondos bajan a una
+ * segunda línea antes que salirse. La portada lo lleva en su propio bloque (.portada-barra, C-17).
  */
 @media (max-width: 440px) {
   .lang-toggle:has(> :nth-child(4)) button { flex-direction: column; gap: 2px; padding: 4px 9px; font-size: 0.72rem; }
