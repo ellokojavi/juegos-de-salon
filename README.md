@@ -446,7 +446,7 @@ Spec and design: [docs/games/cup.md](docs/games/cup.md)
   Timeline) share the same result image, with a "can you beat me?" and the game's link. With no
   share sheet (a computer), the image is downloaded and the text copied.
 - **Leaderboards** (D-212, open to everyone since D-217): signing in is optional and needs no account — a name and a 4-digit
-  PIN, the same idea as The Cup, that works on any phone. Signed in, every game played alone on its
+  PIN, the same idea as The Cup, that works on any phone. Until you do, a card with a **Sign in** button sits under each game's title, under your score when you finish and, in One a Day, above the result's buttons (D-249). Signed in, every game played alone on its
   own page keeps your best score and counts your games. Each game's page shows its leaderboard
   (this week, all time, friends and The Cup), with your neighbours when you are below the top ten.
   `/records/` (🏆 on the menu) adds the All-Rounder, the sum of your best score in every game, and
