@@ -88,7 +88,7 @@ const revision = await b.evaluate(`(()=>{
       try { return [...hoja.cssRules].some(r => (r.selectorText || '').includes('.app') && (r.style?.minHeight || '').includes('svh')); }
       catch { return false; }
     }),
-    fueraAbajo: [...new Set([...document.querySelectorAll('.screen.active .btn, .confirm .btn')]
+    fueraAbajo: [...new Set([...document.querySelectorAll('.screen.active .btn:not([aria-hidden="true"]), .confirm .btn')]
       .filter(x => x.offsetParent !== null && x.getBoundingClientRect().bottom > innerHeight)
       .map(x => (x.textContent || x.className).trim().slice(0, 18)))],
   });

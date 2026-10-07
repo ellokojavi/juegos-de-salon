@@ -70,7 +70,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216 |
 | La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234 |
 | Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218 |
-| Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236 |
+| Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249 |
 | Marketing | `marketing/README.md` | D-178 |
 | App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
 
@@ -3360,11 +3360,11 @@ del idioma elegido (`applang`, D-46) decía cuánto, pero no de qué partida.
 **Consecuencias:** Lo de antes no tiene idioma y no lleva etiqueta. Reglas nuevas, solo agregan.
 
 ## D-212 · Un jugador es un nombre y un PIN para todos los juegos, y sus récords van a rankings
-**Fecha:** 2026-10-04 · **Estado:** corregida por D-217 · **Relación:** amplía D-96 fuera de La Copa; completa C-7 (lo que sale de quien entra con su jugador)
+**Fecha:** 2026-10-04 · **Estado:** corregida por D-217, D-249 · **Relación:** amplía D-96 fuera de La Copa; completa C-7 (lo que sale de quien entra con su jugador)
 **Decisión:** Quien quiere aparecer en los rankings entra con **su nombre y un PIN de 4 dígitos**,
 como en La Copa, pero una vez para toda la app y en cualquier celular. Es opcional y se ofrece
 plegado en la antesala de cada juego suelto (junto al ranking, debajo de "Empezar": antes lo
-empujaba fuera de la pantalla en alemán y portugués, dilema #186), en su resultado y en `/records/`: sin entrar, todo se
+empujaba fuera de la pantalla en alemán y portugués, dilema #186; desde D-249 va justo bajo Empezar y Volver al menú, como tarjeta destacada), en su resultado y en `/records/`: sin entrar, todo se
 juega igual y nada sale del celular.
 - **Identidad.** Un jugador es un `jid` (8 letras y números) en `jugadores/<jid>` = `{ n, at }`.
   El PIN nunca se guarda: `jugadorKeys/<jid>` tiene su hash, que nadie lee, y cada celular se
@@ -4286,3 +4286,21 @@ habría puesto en el mazo un juego que la portada todavía no ofrece.
 **Consecuencias:** abrirlo es cambiar `available` a `true` en `games.js`, sumarlo a `JUEGOS_DIA` y
 `GRUPO` con su fecha, y marcar GE-09 y GE-12 en REQUERIMIENTOS. El `?hoy` de `/generala/` ya está
 hecho y probado en `engine.test.mjs`.
+
+## D-249 · La invitación a entrar va arriba, como una tarjeta con su botón
+**Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** corrige D-212 (dónde va entrar en la antesala; dilema #186)
+**Decisión:** sin jugador, la invitación a entrar con nombre y PIN es una tarjeta con borde cian y
+un botón "Entrar" a la vista (`bloqueJugador({ destacado: true })`), plegada en una sola fila. Va:
+en la antesala de cada juego suelto, **justo bajo "Empezar" y "Volver al menú"** (arriba de las reglas, o
+entre los dos, bajaba esos botones fuera de la pantalla en alemán en ¿Dónde queda? y ¿En qué año?, C-8); en el
+resultado, bajo el puntaje (como antes, ahora destacada); en la tarjeta del resultado de Uno al día,
+**antes de los botones** y sin esperar a lo demás de la red; y en `/today/`, bajo "Hoy" y antes de
+la racha. En Uno al día la tarjeta lleva debajo del título "Guarda tu racha en cualquier celular…".
+Con jugador, ahí sale "🏅 Juegas como Mica", y el ranking sigue al final.
+**Por qué:** lo pidió el dueño. Mica jugó varios días sin entrar y no aparecía en ningún ranking: la
+invitación quedaba al final de la antesala, bajo las reglas, y en Uno al día bajo todo lo demás, donde
+nadie la veía. De 28 jugadores, 25 eran heredados de La Copa sin reclamar. Pegada a Empezar la ve
+todo el que va a jugar, también en las antesalas largas, sin bajar el botón principal.
+**Consecuencias:** quien aparezca en una pantalla nueva con ranking usa `destacado: true` junto a su botón principal; el
+bloque sin destacar queda para `/records/` y el pie de los rankings.
+

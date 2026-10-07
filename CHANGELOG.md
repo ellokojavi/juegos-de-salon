@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.129.0 — 2026-10-06
+- **Entrar, arriba y a la vista** (D-249): sin nombre y PIN tus partidas no quedan en ningún
+  ranking, y la invitación quedaba al final, bajo las reglas. Ahora es una tarjeta con su botón
+  "Entrar" justo bajo "Empezar" y "Volver al menú" en cada juego, bajo el puntaje al terminar y, en Uno al día, antes de los
+  botones del resultado y antes de la racha en su página.
+
 ## 0.128.2 — 2026-10-06
 - **Portada: lo que viene, al final**: Generala y Julepe, que todavía dicen "Próximamente", van al
   final de la lista, con y sin filtro, y ya no quedan entre los juegos que se pueden abrir.
