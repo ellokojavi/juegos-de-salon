@@ -289,6 +289,12 @@
     /* El punto no se monta sobre el título: "Spiel des Tages" llega hasta el borde (U-12) */
     .uad-card:not(.hecho) h2 { padding-right: 14px; }
     @media (prefers-reduced-motion: reduce) { .btn-uad-punto { animation: none; } }
+    /* La barra de arriba en dos bloques: el idioma a la izquierda y las acciones (sonido, rankings,
+       compartir) a la derecha. Si en un celular angosto no caben juntos, las acciones bajan a otra
+       línea y siguen a la derecha. Con 6 px de aire caben en una sola línea desde 375 px (un
+       iPhone común): con los 10 y 8 de la barra de los juegos se pasaban por 1 px (C-8). */
+    .portada-barra { flex-wrap: wrap; gap: 6px; }
+    .portada-barra .tools { margin-left: auto; gap: 6px; }
   </style>
   <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
   <meta name="apple-mobile-web-app-title" content="Juegos de Salón">
@@ -296,7 +302,7 @@
 </head>
 <body>
   <main class="app">
-    <div class="topbar" style="justify-content:flex-end"><div class="tools"><div id="lang-slot"></div><span id="sound-slot"></span><a class="icon-btn" id="btn-rankings" href="records/" title="Rankings" aria-label="Rankings" hidden>🏆</a><span id="share-slot"></span></div></div>
+    <div class="topbar portada-barra"><div id="lang-slot"></div><div class="tools"><span id="sound-slot"></span><a class="icon-btn" id="btn-rankings" href="records/" title="Rankings" aria-label="Rankings" hidden>🏆</a><span id="share-slot"></span></div></div>
     <header class="hero">
       <span class="emoji bounce"><span class="emoji-swap" id="hero-emoji" aria-hidden="true">🎲</span></span>
       <h1 class="display display--xl rainbow" data-i18n="appTitle">Juegos de Salón</h1>
