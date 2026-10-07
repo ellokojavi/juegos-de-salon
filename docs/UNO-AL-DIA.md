@@ -87,14 +87,14 @@ lanzamiento: **Uno al día n.° 1, n.° 2…**, para compartir.
    >
    > (El porcentaje sale solo si hoy jugaron 20 o más; con menos, la línea dice solo "Hoy: 87
    > puntos".)
-   > (Sin jugador: la tarjeta **🏅 Entra para aparecer en el ranking** con su botón **Entrar**, paso 5.)
+   > (Sin jugador: la tarjeta **🏅 Aparece en el ranking** con su botón **Entrar**, paso 5.)
    > **Compartir** · **🎲 Jugar otro**
    >
    > **👋 Invita a un amigo** (abajo, en "Invitar a un amigo")
 
 5. Si no tiene jugador, **antes de los botones** de la tarjeta y sin esperar a lo demás de la red,
-   la invitación destacada de los rankings con la línea "Guarda tu racha en cualquier celular:
-   entra con tu nombre y un PIN." y su botón **Entrar** (D-249). En `/today/` va bajo "Hoy" y antes
+   la invitación destacada de los rankings con la línea "Guarda tu racha en cualquier celular."
+   y su botón **Entrar** (D-249). En `/today/` va bajo "Hoy" y antes
    de la racha. Si no entra, la racha queda igual en el celular.
 6. Si es la segunda vez que termina Uno al día (el día 2, no el 1, para no pedirlo antes de que
    le guste), se le ofrecen los avisos (más abajo).
