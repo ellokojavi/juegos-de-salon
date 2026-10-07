@@ -132,18 +132,21 @@ export function tarjetaResultado({ lang, fecha, primera, dia, raiz = '', alTocar
   // Lo que depende de la red (el porcentaje, el duelo, entrar, invitar, el ranking) llega después
   const comodin = lineaComodin(e, fecha, lang);
   const red = el('div', { class: 'uad-red', id: 'uad-red' });
+  // Entrar va antes de los botones (D-249): sin jugador, la racha vive solo en este celular
+  const arriba = el('div', { class: 'uad-arriba' });
   const tarjeta = el('div', { class: 'panel uad-tarjeta', id: 'uad-tarjeta' },
     el('p', { class: 'uad-racha' }, textoRacha(n, lang)),
     el('p', { class: 'muted', style: 'margin:0' }, fmt(T.vuelve, { n: n + 1 })),
     hoyLinea,
     comodin,
+    arriba,
     el('div', { class: 'uad-acciones' },
       compartirHoy({ lang, fecha, dia, alTocar, mmss }),
       el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-uad-otro', onClick: () => { alTocar?.(); jugarOtro({ lang, raiz }); } }, T.jugarOtro)),
     el('a', { class: 'btn btn--ghost btn--sm', id: 'btn-uad-todo', href: `${raiz}today/` }, T.verTodo),
     el('a', { class: 'link-btn', id: 'btn-uad-repetir', href: `${raiz}${rutaHoy(dia.j)}` }, T.repetir),
     red);
-  conRed({ lang, fecha, dia, primera, hoyLinea, red, alTocar });
+  conRed({ lang, fecha, dia, primera, hoyLinea, red, arriba, alTocar });
   return tarjeta;
 }
 
@@ -214,11 +217,33 @@ export function tarjetaInvitar({ lang, alTocar }) {
  * Lo de la tarjeta del resultado que usa la red: sube el de hoy, dice el porcentaje, el duelo con
  * quien invitó, ofrece entrar (sin jugador), invitar y el ranking de Uno al día.
  */
-async function conRed({ lang, fecha, dia, primera, hoyLinea, red, alTocar }) {
+async function conRed({ lang, fecha, dia, primera, hoyLinea, red, arriba, alTocar }) {
   const T = textos(lang).uad;
   try {
     const R = await import('./uno-al-dia-red.js');
     const { rankingsVisibles } = await import('./jugador.js');
+    // Entrar, lo primero: lo de abajo espera a la red, y la invitación no tiene por qué esperar
+    const conRanking = rankingsVisibles();
+    const { bloqueJugador, bloqueRanking } = conRanking ? await import('./ranking.js') : {};
+    let invitar = conRanking ? tarjetaInvitar({ lang, alTocar }) : null;
+    const ranking = conRanking ? bloqueRanking({ juego: UNO_AL_DIA, titulo: T.rankingTitulo, pestanas: ['hoy', 'semanaDia', 'rachas', 'amigosSemana'], alTocar }) : null;
+    if (conRanking && !(await R.tengoJugador())) {
+      const entrar = el('div', { class: 'uad-entrar', id: 'uad-entrar' }, bloqueJugador({ destacado: true, leyenda: T.guardaRacha, alTocar }));
+      arriba.append(entrar);
+      // Si entra recién aquí, el de hoy igual sube; después, invitar ya no le pide entrar y el
+      // ranking lo muestra
+      (await import('./jugador.js')).jugador().then(J => {
+        const off = J.escuchar(yo => {
+          if (!yo) return;
+          off(); entrar.remove();
+          R.sincronizar().catch(() => {}).then(() => {
+            const nueva = tarjetaInvitar({ lang, alTocar });
+            invitar.replaceWith(nueva); invitar = nueva;
+            ranking.recargar?.();
+          });
+        });
+      }).catch(() => {});
+    }
     if (primera) await R.subirHoy({ fecha, dia });
     // Los avisos (D-230): su último día y su racha; el globo del ícono; y la oferta, la segunda vez
     const Av = await import('./uno-al-dia-avisos.js');
@@ -239,28 +264,7 @@ async function conRed({ lang, fecha, dia, primera, hoyLinea, red, alTocar }) {
       const p = await R.porcentajeHoy(fecha, dia.s);
       if (p != null) hoyLinea.textContent = fmt(T.pct, { s: dia.s, p });
     }
-    if (!rankingsVisibles()) return;
-    const { bloqueJugador, bloqueRanking } = await import('./ranking.js');
-    let invitar = tarjetaInvitar({ lang, alTocar });
-    const ranking = bloqueRanking({ juego: UNO_AL_DIA, titulo: T.rankingTitulo, pestanas: ['hoy', 'semanaDia', 'rachas', 'amigosSemana'], alTocar });
-    if (!(await R.tengoJugador())) {
-      const entrar = el('div', { class: 'uad-entrar', id: 'uad-entrar' }, el('p', { class: 'muted', style: 'margin:0' }, T.guardaRacha), bloqueJugador({ alTocar }));
-      red.append(entrar);
-      // Si entra recién aquí, el de hoy igual sube; después, invitar ya no le pide entrar y el
-      // ranking lo muestra
-      (await import('./jugador.js')).jugador().then(J => {
-        const off = J.escuchar(yo => {
-          if (!yo) return;
-          off(); entrar.remove();
-          R.sincronizar().catch(() => {}).then(() => {
-            const nueva = tarjetaInvitar({ lang, alTocar });
-            invitar.replaceWith(nueva); invitar = nueva;
-            ranking.recargar?.();
-          });
-        });
-      }).catch(() => {});
-    }
-    red.append(invitar, ranking);
+    if (conRanking) red.append(invitar, ranking);
   } catch (_) { /* sin red, la tarjeta queda con lo del celular */ }
 }
 
