@@ -1,6 +1,7 @@
 /**
  * Los avisos de Uno al día en la pantalla (D-230): la oferta con la hora, la campana de /today/ y sus
- * hojas, el globo del ícono y "Agregar al calendario". La lógica del navegador es la de La Copa
+ * hojas y el globo del ícono. El recordatorio de cada día es el aviso diario, a la hora que elige
+ * el jugador (D-230): no hay recordatorio en el calendario. La lógica del navegador es la de La Copa
  * (push.js); lo que decide cuándo llega cada aviso, tools/push/uno-al-dia.mjs.
  *
  * Reglas de la experiencia (las de D-221, docs/PWA-NOTIFICACIONES.md):
@@ -16,7 +17,8 @@ import {
   avisosVisibles, celular, camino as caminoDe, permiso, pedirPermiso, suscribir, suscripcionActual, subIdDe,
   paraGuardar, zonaHoraria, avisoDePrueba, anular,
 } from './push.js';
-import { estado, leer, recorrer, numDia, semanaDe, fechaLocal } from './uno-al-dia.js';
+import { estado, leer, recorrer, numDia, semanaDe } from './uno-al-dia.js';
+import { trackUnoAlDia } from './transport/stats.js';
 
 const KEY = 'juegos-de-salon:uno-al-dia:avisos';
 export const HORAS = [9, 13, 19];
@@ -70,6 +72,7 @@ async function activar({ h = 9, d = true, r = true, w = true, lang, silencioso =
   }
   guardarAvisos({ subId, h, d, r, w });
   if (!silencioso) {
+    trackUnoAlDia('activos');
     try { await avisoDePrueba({ titulo: textos(lang).avTitulo, texto: fmt(textos(lang).avListo, { h }), url: new URL('../../today/', import.meta.url).href }); } catch (_) { /* el aviso de prueba es un adorno */ }
   }
 }
@@ -173,6 +176,7 @@ export async function pedir({ h = 9, lang, alTocar }) {
 
 /** Silenciar: los tres avisos se apagan de un toque. */
 export async function silenciar() {
+  trackUnoAlDia('silencio');
   const g = leerAvisos();
   if (g.subId) { try { await (await J()).quitarAvisosDia(g.subId); } catch (_) { /* queda anotado en el celular igual */ } }
   guardarAvisos({ no: true });
@@ -213,58 +217,39 @@ async function hojaAjustes({ lang, alTocar, alCambiar }) {
 export function oferta({ lang, alTocar, primera }) {
   if (!primera || !disponible() || estadoAvisos() !== 'apagado' || leerAvisos().no) return null;
   if (estado().jugados !== 2) return null;
+  trackUnoAlDia('oferta');
   const T = textos(lang);
   const caja = el('div', { class: 'panel uad-oferta', id: 'uad-oferta' },
     el('p', { class: 'lead', style: 'margin:0' }, T.avPregunta),
     botonesHora({ lang, alElegir: async h => {
+      trackUnoAlDia('hora');
       try { if (await pedir({ h, lang, alTocar })) caja.replaceChildren(el('p', { class: 'uad-comodin', style: 'margin:0' }, fmt(T.avListo, { h }))); }
       catch (_) { caja.querySelector('.rk-error')?.remove(); caja.append(el('p', { class: 'rk-error' }, T.avError)); }
     } }),
-    el('button', { class: 'link-btn', id: 'btn-uad-ahora-no', onClick: () => { alTocar?.(); guardarAvisos({ no: true }); caja.remove(); } }, T.avAhoraNo));
+    el('button', { class: 'link-btn', id: 'btn-uad-ahora-no', onClick: () => { alTocar?.(); trackUnoAlDia('ahorano'); guardarAvisos({ no: true }); caja.remove(); } }, T.avAhoraNo));
   return caja;
 }
 
 /**
- * La campana de /today/, con su estado, y "Agregar al calendario" (para quien no quiere avisos, o
- * tiene un iPhone sin la app instalada). `redibujar(aviso?)` vuelve a pintar la página.
+ * La campana de /today/, con su estado: las horas (apagados), la hora y la hoja (activos) o cómo
+ * desbloquearlos. Null si el celular no puede recibir avisos. `redibujar(aviso?)` vuelve a pintar la página.
  */
 export function bloque({ lang, alTocar, redibujar }) {
+  if (!disponible()) return null;
   const T = textos(lang);
   const caja = el('section', { class: 'panel uad-avisos', id: 'uad-avisos' });
-  if (disponible()) {
+  {
     const e = estadoAvisos();
     const g = leerAvisos();
     if (e === 'apagado') {
       caja.append(el('p', { class: 'lead', style: 'margin:0' }, T.avPregunta),
-        botonesHora({ lang, alElegir: async h => { try { if (await pedir({ h, lang, alTocar })) redibujar?.(fmt(T.avListo, { h })); } catch (_) { redibujar?.(T.avError); } } }));
+        botonesHora({ lang, alElegir: async h => { trackUnoAlDia('hora'); try { if (await pedir({ h, lang, alTocar })) redibujar?.(fmt(T.avListo, { h })); } catch (_) { redibujar?.(T.avError); } } }));
     } else if (e === 'activo') {
       caja.append(el('button', { class: 'btn btn--ghost', id: 'btn-uad-avisos', 'data-estado': 'activo', onClick: () => { alTocar?.(); hojaAjustes({ lang, alTocar, alCambiar: m => redibujar?.(m) }); } }, `${T.avActivos} · ${g.h ?? 9}:00`));
     } else {
       caja.append(el('button', { class: 'btn btn--ghost', id: 'btn-uad-avisos', 'data-estado': 'bloqueado', onClick: () => hojaBloqueados({ lang, alTocar }) }, T.avBloqueados));
     }
   }
-  caja.append(el('button', { class: 'btn btn--ghost btn--sm', id: 'btn-uad-calendario', onClick: () => { alTocar?.(); bajarCalendario({ lang, h: leerAvisos().h ?? 9 }); } }, T.calendario));
   return caja;
-}
-
-/**
- * "Agregar al calendario": un evento que se repite cada día a la hora elegida, con el link a
- * /today/. Se arma en el celular (un .ics) y el sistema lo ofrece al calendario.
- */
-export function ics({ lang, h = 9, hoy = fechaLocal(), url = 'https://juegosdesalon.cl/today/' }) {
-  const T = textos(lang);
-  const f = hoy.replace(/-/g, ''), hh = String(h).padStart(2, '0');
-  const fin = String(h).padStart(2, '0') + '15';
-  const sello = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d+/, '');
-  return ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Juegos de Salon//Uno al dia//ES', 'CALSCALE:GREGORIAN', 'BEGIN:VEVENT',
-    `UID:uno-al-dia-${f}-${hh}@juegosdesalon.cl`, `DTSTAMP:${sello}`, `DTSTART:${f}T${hh}0000`, `DTEND:${f}T${fin}00`,
-    'RRULE:FREQ=DAILY', `SUMMARY:${T.calEvento}`, `DESCRIPTION:${url}`, `URL:${url}`, 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
-}
-function bajarCalendario({ lang, h }) {
-  const url = new URL('../../today/?de=cal', import.meta.url).href.replace(/^http:\/\/[^/]+/, 'https://juegosdesalon.cl');
-  const blob = new Blob([ics({ lang, h, url })], { type: 'text/calendar' });
-  const a = el('a', { href: URL.createObjectURL(blob), download: 'uno-al-dia.ics' });
-  document.body.append(a); a.click(); a.remove();
-  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
 }
 

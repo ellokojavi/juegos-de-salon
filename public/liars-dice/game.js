@@ -522,7 +522,8 @@ function renderResult(v) {
     ponerTarjeta(terminarHoy(S.hoy, { s, ms: Date.now() - S.hoy.inicio, lang, alTocar: () => SFX.tap() }), acciones);
   }
   acciones.append(
-    el('button', {
+    // En Uno al día no hay revancha: la tarjeta ya ofrece jugar otro o repetir el de hoy (#226)
+    S.hoy ? null : el('button', {
       class: 'btn btn--yellow',
       onClick: e => {
         if (S.mode !== 'online') return startMatch(S.mode, M.names, M.config);

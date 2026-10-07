@@ -54,6 +54,7 @@ async function intro(id, carpeta, extra) {
 async function final(id, fecha, esperado) {
   ok(await esperar(`!!document.getElementById('uad-tarjeta')`, 60), `${id}: al terminar, la tarjeta de Uno al día`);
   ok(await ev(`document.getElementById('uad-tarjeta').nextElementSibling?.id === 'result-actions'`), `${id}: va justo arriba de los botones del juego`);
+  ok(!await ev(`[...document.querySelectorAll('#result-actions .btn--yellow')].length`), `${id}: sin botón de revancha (#226): la tarjeta ya ofrece jugar otro o repetir el de hoy`);
   ok(await ev(`document.querySelectorAll('#result-actions .btn').length > 0`), `${id}: y los botones del juego siguen ahí`);
   const m = await memoria();
   const d = m.dias[fecha];
@@ -106,10 +107,6 @@ ok(await esperar(`location.pathname === '/liars-dice/'`), 'y un solitario tambi�
   ok(await esperar(`/práctica/.test(document.getElementById('uad-tarjeta')?.innerText||'')`), 'ahorcado: el segundo intento dice que fue práctica');
   const m = await memoria();
   ok(m.dias[f].n === 2 && m.dias[f].s === puntajeAhorcado({ vidas: cfg.lives - 2, total: cfg.lives }), 'ahorcado: y el resultado del día queda el del primero');
-  // La revancha es una partida cualquiera: sin tarjeta
-  await ev(`document.querySelector('#result-actions .btn--yellow').click(); 1`);
-  await sleep(800);
-  ok(!await ev(`!!document.getElementById('uad-tarjeta')`), 'ahorcado: la revancha es una partida cualquiera, sin tarjeta');
 }
 
 /* ---------- Batalla Naval ---------- */

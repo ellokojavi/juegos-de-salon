@@ -225,10 +225,11 @@ details.panel summary::-webkit-details-marker { display: none; }
 .lang-toggle button.on { background: var(--yellow); color: #3a1200; transform: scale(1.04); }
 .lang-toggle button:active { transform: scale(0.96); }
 /*
- * Con cuatro idiomas el toggle en línea mide unos 290 px y, en la barra de arriba de la portada,
- * empuja el sonido y compartir fuera de la pantalla. En un celular angosto la bandera no se
- * esconde (antes sí, D-231): sube encima del código, y el toggle queda del ancho que tenía con
- * el código solo. Si igual no cabe, los botones redondos bajan a una segunda línea antes que salirse.
+ * Con cuatro idiomas el toggle en línea mide unos 290 px y, en una barra de arriba que lo lleva
+ * junto al sonido (Rankings, Uno al día), empuja los botones redondos fuera de la pantalla. En un
+ * celular angosto la bandera no se esconde (antes sí, D-231): sube encima del código, y el toggle
+ * queda del ancho que tenía con el código solo. Si igual no cabe, los botones redondos bajan a una
+ * segunda línea antes que salirse. La portada lo lleva en su propio bloque (.portada-barra, C-17).
  */
 @media (max-width: 440px) {
   .lang-toggle:has(> :nth-child(4)) button { flex-direction: column; gap: 2px; padding: 4px 9px; font-size: 0.72rem; }
@@ -507,7 +508,8 @@ body.azar-abierto { overflow: hidden; }
 .uad-racha { margin: 0; font: 400 1.7rem/1.1 var(--font-display); letter-spacing: 0.04em; color: var(--yellow); }
 .uad-acciones { display: grid; gap: 10px; margin-top: 4px; }
 .uad-red { display: grid; gap: 10px; }
-.uad-red:empty { display: none; }
+.uad-red:empty, .uad-arriba:empty { display: none; }
+.uad-arriba { text-align: left; }
 .uad-duelo { margin: 4px 0 0; font: 400 1.35rem/1.15 var(--font-display); letter-spacing: 0.04em; color: var(--yellow); }
 .uad-comodin { margin: 0; font-weight: 800; color: var(--cyan); }
 .uad-invitar { display: grid; gap: 8px; text-align: center; }

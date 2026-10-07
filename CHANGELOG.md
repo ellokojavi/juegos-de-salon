@@ -1,5 +1,102 @@
 # Changelog
 
+## 0.129.0 — 2026-10-06
+- **Entrar, arriba y a la vista** (D-249): sin nombre y PIN tus partidas no quedan en ningún
+  ranking, y la invitación quedaba al final, bajo las reglas. Ahora es una tarjeta con su botón
+  "Entrar" justo bajo "Empezar" y "Volver al menú" en cada juego, bajo el puntaje al terminar y, en Uno al día, antes de los
+  botones del resultado y antes de la racha en su página.
+
+## 0.128.2 — 2026-10-06
+- **Portada: lo que viene, al final**: Generala y Julepe, que todavía dicen "Próximamente", van al
+  final de la lista, con y sin filtro, y ya no quedan entre los juegos que se pueden abrir.
+
+## 0.128.1 — 2026-10-06
+- **Portada: el idioma a un lado, las acciones al otro**: en la barra de arriba, el selector de
+  idioma va a la izquierda y el sonido, los rankings y compartir a la derecha, en dos bloques. En
+  un celular angosto, si no caben juntos, las acciones bajan a una segunda línea.
+
+## 0.128.0 — 2026-10-06
+- **📝 Generala, próximamente** (D-246, D-248): la portada anuncia el juego de dados, todavía sin
+  abrirlo. Ya está hecho entero: cinco dados, hasta tres tiros por turno guardando los que sirven, y
+  una planilla de once casillas que la app suma sola. Se va a jugar en un celular (2 a 6), en varios
+  celulares con sala y chat, o solo, con récord y ranking; en portugués se llama General. Al abrirse
+  entra a Uno al día, con los mismos dados para todos (D-247).
+
+## 0.127.3 — 2026-10-06
+- **¿Dónde queda?: el reloj ya no tapa "‹ Laboratorio"** (D-203): en la prueba del laboratorio, la
+  píldora con 🧪 y el reloj va en la barra, entre volver y 🔊, sin pisarlos. En los celulares más
+  angostos queda solo el 🧪, o solo el reloj. En los demás juegos de La Copa, el reloj ya no se
+  parte en dos líneas.
+
+## 0.127.2 — 2026-10-06
+- **Cuarto Rey: la mesa en inglés del README, con cuatro jugadores**: la captura salía con un quinto
+  "undefined ♂", porque el guion llenaba todas las filas de la mesa recordada aunque trajera menos
+  nombres. Ahora quita las filas que sobran, fija el género de cada jugador (antes heredaba los de
+  otra prueba), comprueba que la mesa sea la del guion, y las capturas de Cuarto Rey están rehechas.
+
+## 0.127.1 — 2026-10-06
+- **¿Dónde queda?, sin el globo dibujado al cargar** (D-245): el globo espera a la imagen satelital
+  y aparece con un fundido, en vez de mostrarse dibujado por un instante.
+
+## 0.127.0 — 2026-10-06
+- **El español, con la bandera de España** (D-244): en el selector de idioma, ES lleva 🇪🇸 en vez
+  de 🇨🇱, para que las cuatro banderas digan el idioma. La temática Chile y las copas para Chile no cambian.
+
+## 0.126.1 — 2026-10-06
+- **Uno al día, más claro en tu página** (D-230): el calendario muestra en cada día jugado el puntaje
+  de 0 a 100 en una píldora, como en La Copa; "Hoy jugaste" lleva el emoji del juego (👑 Reinas: 87
+  puntos); dice "Próximo juego en 7 h"; y los comodines explican para qué sirven: salvan tu racha el
+  día que no juegas.
+
+## 0.126.0 — 2026-10-06
+- **El botón de compartir, a color** (D-243): la caja va celeste y la flecha rosada, con la sombra
+  de los botones de la página, en vez del blanco que se veía apagado al lado de 🔊 y 🏆.
+
+## 0.125.0 — 2026-10-06
+- **El botón de compartir, con el ícono de siempre** (D-242): arriba a la derecha de la portada, el
+  📤 pasa a ser la flecha que sale de una caja, la de compartir del celular, y se ve igual en todos.
+
+## 0.124.0 — 2026-10-06
+- **⭐ Favoritos, en la misma fila que los tipos** (D-241): la ficha va primera, junto a Palabras,
+  Lógica, Cultura y Cartas/Dados, así los filtros ocupan una línea menos. En los celulares más
+  angostos, donde no cabe, sigue arriba de los tipos.
+
+## 0.123.0 — 2026-10-06
+- **La Copa y Uno al día, mitad y mitad** (D-239): en la portada, Uno al día pasa a una tarjeta al
+  lado de La Copa, con el emoji a la izquierda del título. Los títulos de las dos van en color,
+  dorado y celeste, para distinguirlas de los juegos, y en La Copa jugadores y días caben en una
+  línea. El dado vuelve a decir **Juego al azar**.
+
+## 0.122.0 — 2026-10-06
+- **Juegos favoritos** (D-238): cada juego de la portada tiene una ☆ en la esquina. Al tocarla,
+  queda entre tus favoritos, y arriba de los tipos aparece **⭐ Favoritos**, que deja ver solo esos.
+  Se guardan en tu celular, sin cuenta. Lo pidió un amigo (#233).
+
+## 0.121.0 — 2026-10-06
+- **Uno al día, para todos** (D-230): en la portada, al lado de **🎲 Al azar**, está **📅 Uno al
+  día**: cada día un juego sorpresa, el mismo desafío para todos. Lleva tu racha, con comodines 🧊,
+  un calendario y cómo te va en cada juego; con tu nombre y PIN entras a los rankings de hoy, de la
+  semana y de rachas, e invitas a amigos a superarte. Si quieres, te avisa cada día a la hora que
+  elijas. Hoy es el **Uno al día n.° 1**.
+- **El globo para agregar la app a inicio, para todos** (D-232): en el celular, la portada invita a
+  agregar Juegos de Salón a la pantalla de inicio, con los pasos de tu celular. La ✕ lo cierra para
+  siempre.
+
+## 0.120.2 — 2026-10-06
+- **Uno al día: el recordatorio es el aviso de la app** (D-230): se saca "Agregar recordatorio" al
+  calendario del celular; el recordatorio de cada día es el aviso diario, a la hora que elegiste. El
+  calendario de tu página vuelve a llamarse "Calendario". En el laboratorio.
+
+## 0.120.1 — 2026-10-06
+- **Uno al día sin el recordatorio de más** (D-230): con los avisos activos, `/today/` ya no ofrece
+  agregar un recordatorio al calendario, que repetía el aviso. En el laboratorio.
+
+## 0.120.0 — 2026-10-06
+- **Uno al día, más simple al terminar, en el laboratorio** (D-230): en El Ahorcado, Batalla Naval y
+  Dudo ya no sale la revancha (la tarjeta ofrece jugar otro o repetir el de hoy), y bajo el resultado
+  queda un solo ranking, el de Uno al día. "Agregar al calendario" pasa a **⏰ Agregar recordatorio**,
+  con una línea que dice para qué sirve. El panel del dueño mide qué se hace en Uno al día.
+
 ## 0.119.1 — 2026-10-06
 - **Del dado al juego, sin pantalla vacía** (D-237): en Juego al azar y Uno al día, el dado queda
   en pantalla mientras el juego carga y se desvanece recién cuando el juego está listo debajo.

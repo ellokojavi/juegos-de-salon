@@ -33,8 +33,12 @@ const errorDe = e => (e?.code === 'pin' ? R().loggedOut : R().errNet);
 /**
  * El bloque del jugador. Sin jugador: una invitación plegada con nombre y PIN. Con jugador:
  * "Juegas como Javi", que al tocarlo despliega cambiar el PIN y Salir. Se redibuja solo al entrar o salir, en esta y en las demás piezas.
+ *
+ * `destacado`: la invitación va arriba, antes de jugar, como una tarjeta con borde y un botón
+ * "Entrar" a la vista (D-249): plegada sigue siendo una sola fila, para no bajar Empezar (C-8).
+ * `leyenda`: una línea bajo el título de la tarjeta (en Uno al día, que guarda la racha).
  */
-export function bloqueJugador({ abierto = false, alTocar = () => {} } = {}) {
+export function bloqueJugador({ abierto = false, destacado = false, leyenda = '', alTocar = () => {} } = {}) {
   const caja = el('div', { class: 'rk-jugador' });
   let mensaje = '';
   const dibujar = () => {
@@ -116,8 +120,11 @@ export function bloqueJugador({ abierto = false, alTocar = () => {} } = {}) {
             el('button', { type: 'button', class: 'btn btn--ghost btn--sm', onClick: () => { alTocar(); extra.replaceChildren(); pin.value = ''; pin.focus(); } }, T.retry)));
     };
     pin.addEventListener('keydown', e => { if (e.key === 'Enter') b.click(); });
-    const det = el('details', { class: 'panel rk-invita', ...(abierto || mensaje ? { open: true } : {}) },
-      el('summary', {}, T.joinTitle),
+    const det = el('details', { class: destacado ? 'panel rk-invita rk-invita--destacada' : 'panel rk-invita', ...(abierto || mensaje ? { open: true } : {}) },
+      destacado
+        ? el('summary', {}, el('span', { class: 'rk-invita-txt' }, el('b', {}, T.joinCard), leyenda ? el('small', {}, leyenda) : null),
+          el('span', { class: 'btn btn--cyan btn--sm rk-invita-btn', 'aria-hidden': 'true' }, T.join))
+        : el('summary', {}, T.joinTitle),
       el('p', { class: 'muted rk-hint' }, T.joinHint),
       el('label', { class: 'rk-campo' }, el('span', {}, T.nameLabel), nombre),
       el('label', { class: 'rk-campo' }, el('span', {}, T.pinLabel), pin),
