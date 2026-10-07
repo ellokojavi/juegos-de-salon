@@ -305,7 +305,7 @@ The phone does what the table does badly: it adds up, it shows what every free b
 - **📡 Several phones:** a room with a 4-letter code, a QR and chat, two to six players. Each player rolls on their own phone and everyone watches the dice and the card of whoever is playing. There is nothing hidden in this game, so the dice travel in the clear; they are not derived from the shared seed either, because with the public code that would let anyone compute their next rolls (D-246).
 - **🧍 Play solo:** eleven turns for your best score, with a record on the phone and, signed in, the `generala_solo` leaderboard.
 
-**Coming soon:** the home page announces it without opening it yet (D-248); the page works in full for anyone with the link. It is the first group game that also works **without playing at the same time**: everyone fills their own card. When it opens it joins **One a Day**, where every roll comes from the day's seed, so whoever keeps the same dice gets the same dice (D-247). In Portuguese it is called General, as in Brazil; Kniffel and Yahtzee are trademarks and a slightly different game.
+**Coming soon:** the home page announces it at the end of the list, without opening it yet (D-248); the page works in full for anyone with the link. It is the first group game that also works **without playing at the same time**: everyone fills their own card. When it opens it joins **One a Day**, where every roll comes from the day's seed, so whoever keeps the same dice gets the same dice (D-247). In Portuguese it is called General, as in Brazil; Kniffel and Yahtzee are trademarks and a slightly different game.
 
 Spec and design: [docs/games/generala.md](docs/games/generala.md)
 
@@ -337,8 +337,9 @@ Spec and design: [docs/games/generala.md](docs/games/generala.md)
 <!-- /generado -->
 
 > **Paused for now.** Several rounds of rewriting the rules text still did not make the game land
-> — not even for the person writing them. It is off the main menu while the rules get reworked
-> into something a new player can actually follow (D-88). The game itself is untouched and still
+> — not even for the person writing them. The home page shows it as "Coming soon", at the end of the
+> list, without opening it, while the rules get reworked into something a new player can actually
+> follow (D-88, D-142). The game itself is untouched and still
 > works at [`/julep/`](https://juegosdesalon.cl/julep/).
 
 A trick-taking game from the Tute family, played for sips. There is a **pot** of sips on the table. You look at your five cards and, taking turns from the dealer's right, say whether you are **in** or **out**. Going in means committing to win **two of the five tricks**: make it and you are safe, and you get to hand out two sips per trick among the others; fall short and you **drink the whole pot**. That is a **julep**. The pot carries over to the next hand once for every player who got juleped, so two juleps in the same hand double it before anyone notices.
