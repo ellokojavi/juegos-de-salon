@@ -83,15 +83,7 @@
     border: 4px solid rgba(255,255,255,0.9); pointer-events: none; }
   #cphone .screen img { height: auto; object-fit: initial; }
   .emoji { font-family: 'Noto Color Emoji', 'Apple Color Emoji', sans-serif; }
-  .more-chip { display: inline-flex; align-items: center; gap: 16px; padding: 16px 34px; border-radius: 999px; margin: 12px;
-    background: rgba(255,255,255,0.12); border: 3px solid rgba(255,255,255,0.28); font-weight: 900; font-size: 50px; white-space: nowrap; }
   .wide .phone { transform-origin: center; }
-  .mini { position: relative; margin: 0 auto; padding: 10px; border-radius: 34px; background: #0d0718; box-sizing: content-box;
-    box-shadow: 0 0 0 3px rgba(255,255,255,0.16), 0 24px 50px rgba(0,0,0,0.5); }
-  .mscreen { position: relative; width: 100%; height: 100%; border-radius: 26px; overflow: hidden; background: var(--bg1); }
-  .mscreen img { position: absolute; left: 0; top: 0; width: 100%; }
-  .wide .mlabel { margin-left: -45px; margin-right: -45px; }
-  .mlabel { margin-top: 18px; font-weight: 900; font-size: 34px; line-height: 1.15; }
 </style>
 </head>
 <body>
@@ -122,25 +114,6 @@
     <div class="phone" id="phone"><div class="screen" id="screen"></div></div>
   </div>
 
-  <!-- 3b. Y muchos más -->
-  <div class="layer" id="s7">
-    <div class="abs center disp glow-y" id="x0" style="top:110px;font-size:130px;color:var(--yellow)">¡Y MUCHOS MÁS!</div>
-    <div class="layer" id="x1"></div>
-    <div class="abs center" id="x2" style="top:262px;font-size:44px;font-weight:900;color:rgba(255,255,255,0.85)">…y siempre van llegando nuevos</div>
-  </div>
-
-  <!-- 4. Modos -->
-  <div class="layer" id="s4">
-    <div class="abs center disp glow-y" id="m0" style="top:250px;font-size:140px;color:var(--yellow)">JUEGA COMO<br>QUIERAS</div>
-    <div class="card" id="m1" style="top:640px"><div class="ico emoji">📱</div><div><b style="color:var(--cyan)">EN UN CELULAR</b><span>que pasa de mano en mano</span></div></div>
-    <div class="card" id="m2" style="top:910px"><div class="ico emoji">📲</div><div><b style="color:var(--pink)">EN VARIOS</b><span>cada uno en el suyo, con un link</span></div></div>
-    <div class="card" id="m3" style="top:1180px"><div class="ico emoji">🤖</div><div><b style="color:var(--lime)">CONTRA EL CELULAR</b><span>o jugando solo</span></div></div>
-    <div class="abs center" id="m5" style="top:1450px;font-size:48px;font-weight:900">Y en <span style="color:var(--yellow)">tres idiomas</span>: tú eliges</div>
-    <div class="abs center" id="m4" style="top:1545px">
-      <span class="chip">🇪🇸&nbsp;Español</span>&nbsp;&nbsp;<span class="chip">🇬🇧&nbsp;English</span>&nbsp;&nbsp;<span class="chip">🇧🇷&nbsp;Português</span>
-    </div>
-  </div>
-
   <!-- 5. La Copa -->
   <div class="layer" id="s5">
     <div class="abs center" id="c0" style="top:120px;font-size:64px;font-weight:900;line-height:1.2;padding:0 70px">¿Te atreves a desafiar<br>a tus amigos <span style="color:var(--yellow)">por una semana?</span></div>
@@ -156,8 +129,8 @@
     <div class="abs center disp glow-c" id="e1" style="top:620px;font-size:165px;color:var(--cyan)">¡JUNTOS SE<br>JUEGA MEJOR!</div>
     <div class="abs center" id="e2" style="top:1040px;font-size:46px;font-weight:900;color:rgba(255,255,255,0.9)">Gratis · Sin descargar nada · Sin cuentas</div>
     <div class="abs center" id="e3" style="top:1230px"><span class="url">juegosdesalon.cl</span></div>
-    <div class="abs center" id="e4" style="top:1520px;font-size:42px;font-weight:700;color:rgba(255,255,255,0.7)">Abre el link y empieza a jugar</div>
-    <div class="abs center" id="e5" style="top:1640px;font-size:40px;font-weight:900;color:rgba(255,255,255,0.92)">🇪🇸 Español · 🇬🇧 English · 🇧🇷 Português</div>
+    <div class="abs center" id="e4" style="top:1520px;font-size:46px;font-weight:900;color:rgba(255,255,255,0.9)">📲 Agrégala a tu inicio</div>
+    <div class="abs center" id="e5" style="top:1640px;font-size:48px;font-weight:900;color:rgba(255,255,255,0.92)">En 4 idiomas: 🇪🇸 🇬🇧 🇧🇷 🇩🇪</div>
   </div>
 
   <div class="layer" id="fade" style="background:#000;pointer-events:none"></div>
@@ -182,36 +155,29 @@ if (WIDE) {
     l3: { top: '750px', fontSize: '50px' },
     glow: { left: '990px', top: '0px', width: '900px', height: '1080px' },
     phone: { left: '1160px', top: '-66px' },
-    x0: { top: '40px', fontSize: '120px' }, x2: { top: '185px' },
-    m0: { top: '45px', fontSize: '110px' },
-    m1: { top: '220px', left: '380px', right: '380px', height: '170px' }, m2: { top: '410px', left: '380px', right: '380px', height: '170px' },
-    m3: { top: '600px', left: '380px', right: '380px', height: '170px' }, m5: { top: '810px', fontSize: '46px' }, m4: { top: '890px' },
     c0: { top: '150px', fontSize: '50px', ...COL, padding: '0' }, c1: { top: '340px', fontSize: '180px', ...COL }, c2: { top: '610px', ...COL, padding: '0' },
     cphone: { left: '1160px' },
     e0: { top: '40px', fontSize: '150px' }, e1: { top: '230px', fontSize: '135px' }, e2: { top: '530px' }, e3: { top: '630px' },
     e4: { top: '850px' }, e5: { top: '925px' },
   };
   for (const id in L) css($(id), L[id]);
-  $('m0').innerHTML = 'JUEGA COMO QUIERAS';
-  document.querySelectorAll('#s4 .card .ico').forEach(e => css(e, { fontSize: '90px', width: '140px' }));
 }
 
 /* ---------- Línea de tiempo. La canción va a 130 BPM y cada corte cae en un golpe. ---------- */
 const BEAT = 60 / 130;
 const FPS = 30;
 const GAMES = [
-  { emoji: '⏳', name: 'LÍNEA DE TIEMPO', line: '¿Qué pasó primero?',                 chip: '1–6 jugadores', img: 'linea',  color: [255, 210, 63], beats: 5 },
-  { emoji: '🔢', name: 'TOQUE Y FAMA',    line: 'Adivina el número secreto',          chip: '1–2 jugadores', img: 'toque',  color: [46, 230, 214], beats: 5 },
-  { emoji: '🎲', name: 'DUDO',            line: 'Apuesta y aguanta la cara',          chip: '1–6 jugadores', img: 'dudo',   color: [255, 122, 26], beats: 5 },
+  { emoji: '⏳', name: 'LÍNEA DE TIEMPO', line: '¿Qué pasó primero?',                 chip: '1–6 jugadores', img: 'linea',  color: [255, 210, 63], beats: 6 },
+  { emoji: '🎲', name: 'DUDO',            line: 'Apuesta y aguanta la cara',          chip: '1–6 jugadores', img: 'dudo',   color: [255, 122, 26], beats: 6 },
   { emoji: '📍', name: '¿DÓNDE QUEDA?',   line: 'Encuentra la ciudad en el globo',     chip: '2–5 min',       img: 'donde',  color: [46, 160, 255], beats: 6 },
-  { emoji: '⚓', name: 'BATALLA NAVAL',   line: 'Hunde la flota rival',                chip: '1–2 jugadores', img: 'naval',  color: [46, 160, 255], beats: 5 },
-  { emoji: '👑', name: 'REINAS',          line: 'Una por fila, columna y color',       chip: '2–5 min',       img: 'reinas', color: [255, 46, 136], beats: 6 },
-  { emoji: '☀️', name: 'TANGO',           line: 'Soles y lunas, nunca tres seguidos',  chip: '3–8 min',       img: 'tango',  color: [255, 210, 63], beats: 5 },
-  { emoji: '〰️', name: 'ZIP',             line: 'Un solo trazo por todo el tablero',   chip: '3 min',         img: 'zip',    color: [255, 122, 26], beats: 7 },
+  { emoji: '〰️', name: 'ZIP',             line: 'Un solo trazo por todo el tablero',   chip: '3 min',         img: 'zip',    color: [157, 255, 58], beats: 6 },
+  // Uno al día (D-230): la portada, el dado que cae en el juego de hoy, las dos últimas reinas y la racha.
+  // `guion`: [segundo, cuadro] de plays.hoy; los cuadros con toque llevan el dedo.
+  { emoji: '📅', name: 'UNO AL DÍA',      line: 'Un juego sorpresa cada día,<br>el mismo para todos', chip: '🔥 Arma tu racha', img: 'hoy', color: [46, 230, 214], beats: 14,
+    guion: [[0.95, 1], [1.2, 2], [1.45, 3], [1.7, 4], [1.95, 5], [2.3, 6], [2.85, 7], [3.35, 8], [4.0, 9]] },
 ];
-const MORE = [['👑', 'Cuarto Rey', 'rey'], ['🔗', 'Conexiones', 'conexiones'], ['🪢', 'El Ahorcado', 'ahorcado'], ['📅', '¿En qué año?', 'anio'], ['🔤', 'Toque y Fama: Palabra', 'letras']];
-// Escenas en golpes: gancho 7 · logo 7 · juegos 44 · más 14 · modos 8 · La Copa 16 · cierre 9 = 105 (la canción con 4 compases repetidos, ver README)
-const S = {}; { let b = 0; for (const [k, n] of [['hook', 7], ['logo', 7], ['games', GAMES.reduce((s, g) => s + g.beats, 0)], ['more', 14], ['modes', 8], ['copa', 16], ['cta', 9]]) { S[k] = [b * BEAT, (b + n) * BEAT]; b += n; } }
+// Escenas en golpes: gancho 6 · logo 6 · juegos 24 + Uno al día 14 · La Copa 16 · cierre 10 = 76 (35,1 s; la canción alcanza sola, ver README)
+const S = {}; { let b = 0; for (const [k, n] of [['hook', 6], ['logo', 6], ['games', GAMES.reduce((s, g) => s + g.beats, 0)], ['copa', 16], ['cta', 10]]) { S[k] = [b * BEAT, (b + n) * BEAT]; b += n; } }
 const DURATION = S.cta[1];
 const G0 = S.games[0], G1 = S.games[1];
 { let t = G0; for (const g of GAMES) { g.len = g.beats * BEAT; g.t0 = t; t += g.len; } }
@@ -264,7 +230,7 @@ const titles = GAMES.map(g => {
   w.innerHTML = `<div class="abs center emoji" style="top:${T.emoji}px;font-size:150px;${T.col}">${g.emoji}</div>
     <div class="abs center disp shadow" style="top:${T.name}px;font-size:${fs}px;color:rgb(${g.color});${T.col}">${g.name}</div>
     <div class="abs center" style="top:${T.line}px;font-size:52px;font-weight:900;${T.col}">${g.line}</div>
-    <div class="abs center" style="top:${T.chip}px;${T.col}"><span class="chip" style="font-size:32px;padding:10px 26px">${g.chip}</span></div>`;
+    <div class="abs center" style="top:${T.chip + (WIDE && g.line.includes('<br>') ? 62 : 0)}px;${T.col}"><span class="chip" style="font-size:32px;padding:10px 26px">${g.chip}</span></div>`;
   $('titles').appendChild(w); return w;
 });
 
@@ -307,6 +273,7 @@ function playAt(P, lt) {
   P.frames.forEach((img, i) => { img.style.display = i === k ? '' : 'none'; });
   P.touch.style.opacity = 0; P.ripple.style.opacity = 0;
   for (const x of P.taps) {
+    if (x.quiet) continue;
     const t0 = x.at - (x.path ? x.lead : 0.14), t1 = x.at + 0.12;
     if (lt < t0 - 0.08 || lt > t1 + 0.1) continue;
     const pin = easeOut(prog(lt, t0 - 0.08, t0)), pout = 1 - prog(lt, t1, t1 + 0.1);
@@ -326,25 +293,11 @@ const shots = GAMES.map(g => {
   if (!play) { const img = document.createElement('img'); img.src = `shots/${g.img}.png`; $('screen').appendChild(img); return img; }
   const w = document.createElement('div'); w.className = 'play';
   g.P = makePlayer(w, play, SC, OX);
-  schedule(g.P, 0.6, Math.min(g.len - 0.75, G1 - 0.65 - g.t0));
+  if (g.guion) g.P.taps = g.guion.map(([at, k]) => { const x = g.P.raw.find(r => r.k === k); return x ? { ...x, at } : { k, at, quiet: true, lead: 0 }; });
+  else schedule(g.P, 0.6, Math.min(g.len - 0.75, G1 - 0.65 - g.t0));
   $('screen').appendChild(w); return w;
 });
 
-/* «Y muchos más»: una grilla de celulares chicos, cada uno jugando el suyo en bucle */
-const MT = WIDE ? { sw: 230, cols: [0, 1, 2, 3, 4].map(i => [W / 2 + (i - 2) * 350, 300]) }
-  : { sw: 250, cols: [[200, 370], [540, 370], [880, 370], [370, 1120], [710, 1120]] };
-const tiles = MORE.map(([emoji, name, id], i) => {
-  const sh = Math.round(MT.sw * 844 / 390), [cx, top] = MT.cols[i];
-  const t = document.createElement('div'); t.className = 'abs';
-  css(t, { left: cx - MT.sw / 2 - 10 + 'px', top: top + 'px', width: MT.sw + 20 + 'px', textAlign: 'center' });
-  t.innerHTML = `<div class="mini" style="width:${MT.sw}px;height:${sh}px"><div class="mscreen"></div></div>
-    <div class="mlabel"><span class="emoji">${emoji}</span> ${name}</div>`;
-  $('x1').appendChild(t);
-  const P = makePlayer(t.querySelector('.mscreen'), PLAYS[id], MT.sw / 390, 0, 34);
-  schedule(P, 0.45, 2.35);
-  return { el: t, P, delay: 0.35 + i * 0.22 };
-});
-const LOOP = 3.4;
 const confetti = [];
 { const r = rng(42); const cols = ['#ff2e88', '#ffd23f', '#2ee6d6', '#9dff3a', '#8a4dff', '#ff7a1a'];
   for (let i = 0; i < 90; i++) {
@@ -413,7 +366,7 @@ function render(t) {
   css($('s3'), { opacity: s3, display: s3 > 0 ? '' : 'none' });
   if (s3 > 0) {
     const g = GAMES[gi];
-    const sp = 2 / g.len;                     // las entradas corren en unidades de 2 s
+    const sp = 2 / Math.min(g.len, 6 * BEAT); // las entradas corren en unidades de 2 s (Uno al día, más largo, entra igual de rápido)
     const lt = (t - g.t0) * sp;
     const prev = GAMES[Math.max(0, gi - 1)].color, cur = g.color, cm = easeOut(clamp(lt / 0.5));
     const col = prev.map((v, k) => Math.round(lerp(v, cur[k], gi === 0 ? 1 : cm)));
@@ -451,45 +404,6 @@ function render(t) {
       css(ch, { opacity: clamp(pc) * o, transform: `translateY(${(1 - pc) * 60}px)` });
     });
   }
-
-  /* 3b. Y muchos más */
-  { const [A, B] = S.more, u = t - A;
-    const v = win(t, A, B, 0.15, 0.3);
-    css($('s7'), { opacity: v, display: v > 0 ? '' : 'none' });
-    if (v > 0) {
-      const p0 = back(prog(u, 0, 0.4));
-      css($('x0'), { opacity: clamp(p0 * 2), transform: `scale(${lerp(2.2, 1, p0)}) rotate(-2deg)` });
-      tiles.forEach((T, i) => {
-        const p = back(prog(u, T.delay, T.delay + 0.45));
-        css(T.el, { opacity: clamp(p * 2), transform: `translateY(${(1 - p) * 120}px) scale(${0.6 + 0.4 * p}) rotate(${(i % 2 ? 1 : -1) * 1.5}deg)` });
-        const lt = u - T.delay - 0.5;
-        playAt(T.P, lt < 0 ? -1 : lt % LOOP);
-      });
-      const p2 = easeOut(prog(u, 0.35, 0.8));
-      css($('x2'), { opacity: p2, transform: `translateY(${(1 - p2) * 30}px)` });
-    } }
-
-  /* 4. Modos */
-  { const [A, B] = S.modes, u = t - A;
-    const v = win(t, A, B, 0.2, 0.3);
-    css($('s4'), { opacity: v, display: v > 0 ? '' : 'none' });
-    if (v > 0) {
-      const p0 = back(prog(u, 0.02, 0.42));
-      css($('m0'), { transform: `scale(${p0}) rotate(-2deg)` });
-      ['m1', 'm2', 'm3'].forEach((id, i) => {
-        const a = 0.4 + i * BEAT * 0.9, p = back(prog(u, a, a + 0.4));
-        css($(id), { opacity: clamp(p * 2), transform: `translateX(${(1 - p) * (i % 2 ? 1500 : -1500)}px) rotate(${(i - 1) * 1.2}deg)` });
-        css($(id).firstChild, { transform: `scale(${1 + 0.12 * beat(t) * (u > a + 0.4 ? 1 : 0)})` });
-      });
-      const p4 = easeOut(prog(u, 1.75, 2.1));
-      css($('m5'), { opacity: p4, transform: `scale(${lerp(0.7, 1, back(prog(u, 1.75, 2.1)))})` });
-      const p5 = easeOut(prog(u, 1.95, 2.35));
-      css($('m4'), { opacity: p5, transform: `translateY(${(1 - p5) * 50}px)` });
-      [...$('m4').querySelectorAll('.chip')].forEach((c, i) => {
-        const a = 2.3 + i * BEAT * 0.6, on = Math.exp(-Math.max(0, u - a) * 5) * (u >= a ? 1 : 0);
-        css(c, { transform: `scale(${1 + on * 0.18})`, borderColor: on > 0.05 ? `rgba(255,210,63,${0.25 + on * 0.75})` : '' });
-      });
-    } }
 
   /* 5. La Copa */
   { const [A, B] = S.copa, u = t - A;
