@@ -18,7 +18,10 @@ El video y su memoria viven en `marketing/promo-video/` (D-178).
    `construir.sh` para el final. Sirve el sitio en un puerto propio si hay otras sesiones (D-135).
 3. **Entrega los dos mp4** al dueño y di qué revisaste y qué no (por ejemplo, la música no se
    puede escuchar desde acá).
-4. **Al cerrar la vuelta, anótala** antes de abrir el PR:
+4. **Para subirlo a YouTube** (el canal del dueño, @eljotairi) se sigue "Para YouTube" del README:
+   archivos de menos de 10 MB, Claude in Chrome, todo lleno y en *Unlisted*, y **"Save" lo aprieta el
+   dueño**. Lo subido se anota en "Lo subido".
+5. **Al cerrar la vuelta, anótala** antes de abrir el PR:
    - una entrada nueva en "Historia" del README, con lo que pidió el dueño (en sus palabras cuando
      importa) y lo que se hizo;
    - "Hoy", "Lo que el dueño quiere", "El guion" y "Trampas conocidas" al día;

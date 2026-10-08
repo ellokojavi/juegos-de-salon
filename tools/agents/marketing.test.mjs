@@ -15,6 +15,9 @@ assert.deepEqual(atrasos(asset, { portada: ['tango', 'letras', 'desenredo'], ver
 ]);
 
 // Un parche no envejece el asset.
+// Un asset que muestra una selección no echa de menos los juegos nuevos, pero sí avisa si uno ya no está
+assert.deepEqual(atrasos({ juegos: ['zip', 'reinas'], seleccion: true }, { portada: ['zip', 'reinas', 'desenredo'], version: '0.1.0' }), []);
+assert.deepEqual(atrasos({ juegos: ['zip', 'viejo'], seleccion: true }, { portada: ['zip'], version: '0.1.0' }), ['salen juegos que ya no están en la portada: viejo']);
 assert.deepEqual(atrasos({ app: '0.88.0' }, { portada: [], version: '0.88.4' }), []);
 
 console.log('marketing: ok');
