@@ -213,6 +213,7 @@ Los IDs no se reusan: un requerimiento que cambia conserva su ID y su texto se a
 | LIG-90 | 📍 ¿Dónde queda? se juega suelto desde la portada, en `/minigames/where/`, sin "Próximamente" (D-174). | ✅ v0.82.0 |
 | LIG-91 | En Administrar, la invitación sigue mientras alguien nuevo pueda entrar (inscripción abierta y cupo) y, ya partida, dice en qué día va (D-176). | ✅ v0.83.1 |
 | LIG-92 | Quien entra tarde lee que los días cerrados quedan en 0 desde el día 3 (el día 1 sigue en su gracia el día 2); con la copa llena lee que está llena; la sesión de prueba avisa que es más corta y no cuenta (D-177). | ✅ v0.84.0 |
+| LIG-93 | Zip tiene diez niveles, de 4 × 4 a 7 × 7: con los diez son 100 puntos y la partida termina ahí, sin esperar el reloj; entre quienes los resuelven todos gana quien terminó antes (D-250). | ✅ v0.130.0 |
 
 ## Requerimientos no funcionales
 
