@@ -17,7 +17,7 @@
           "formato": "16:9",
           "ancho": 1920,
           "alto": 1080,
-          "segundos": 35.1,
+          "segundos": 39.2,
           "uso": "YouTube"
         },
         {
@@ -25,7 +25,7 @@
           "formato": "9:16",
           "ancho": 1080,
           "alto": 1920,
-          "segundos": 35.1,
+          "segundos": 39.2,
           "uso": "Shorts, Reels, estados de WhatsApp"
         }
       ],
@@ -51,9 +51,22 @@
         "gancho",
         "logo",
         "cuatro juegos",
+        "y muchos más juegos",
         "uno al día (reinas)",
         "la copa",
         "cierre"
+      ],
+      "grilla_mas": [
+        "toque-y-fama",
+        "letras",
+        "ahorcado",
+        "batalla-naval",
+        "cuarto-rey",
+        "conexiones",
+        "anio",
+        "reinas",
+        "tango",
+        "desenredo"
       ]
     }
   ]
