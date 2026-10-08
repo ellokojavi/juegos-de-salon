@@ -5,104 +5,83 @@ hecho, cómo se rehace y todo lo que pasó en cada versión. **Se lee entero ant
 video** (D-178), y al terminar cada vuelta se anota en [Historia](#historia) y en
 [`../registro.json`](../registro.json).
 
-## Hoy: versión 5 (2026-10-02)
+## Hoy: versión 6 (2026-10-08)
 
 | | |
 |---|---|
-| Archivos | [`salida/promo-youtube-16x9.mp4`](output/promo-youtube-16x9.mp4) (1920×1080, YouTube) · [`salida/promo-vertical.mp4`](output/promo-vertical.mp4) (1080×1920, Shorts, Reels, estados de WhatsApp) |
-| Duración | 48,5 s, H.264 + AAC 256 kb/s, 30 cuadros por segundo |
-| Idioma | Español (dice que la app también está en inglés y portugués) |
-| Música | [`musica/cancion.mp3`](music/cancion.mp3), la que puso el dueño (ver [La canción](#la-canción)) |
-| App que muestra | 0.82.x (las capturas de la v5 son de antes de los textos cortos de 0.84.0) |
+| Archivos | [`output/promo-youtube-16x9.mp4`](output/promo-youtube-16x9.mp4) (1920×1080, YouTube) · [`output/promo-vertical.mp4`](output/promo-vertical.mp4) (1080×1920, Shorts, Reels, estados de WhatsApp) |
+| Duración | 39,2 s (85 golpes), H.264 + AAC 256 kb/s, 30 cuadros por segundo |
+| Idioma | Español (el cierre dice "En 4 idiomas" con las cuatro banderas) |
+| Música | [`music/cancion.mp3`](music/cancion.mp3), la que puso el dueño (ver [La canción](#la-canción)) |
+| App que muestra | 0.129.1 |
 
-En `salida/` vive **solo la última versión**: al publicar una nueva, se reemplazan los dos mp4.
+En `output/` vive **solo la última versión**: al publicar una nueva, se reemplazan los dos mp4.
 Las anteriores quedan en la historia de git. Ojo: GitHub Pages publica el repo entero, así que
 los mp4 también quedan en `juegosdesalon.cl/marketing/promo-video/output/…`.
 
-## Pendiente: versión 6
-
-Registrada el 2026-10-03 a pedido del dueño: **no empezarla hasta que él la pida.** Sale de la
-revisión de usabilidad (U-34, `node tools/agents/marketing.mjs revisar`):
-
-- **Sumar 🧶 Desenredo**, que salió del laboratorio en 0.89.0. Hoy no está ni entre los ocho
-  juegos ni en la grilla de "¡Y muchos más!". Decidir con el dueño si entra a la escena de juegos
-  (y cuál sale, o cuántos golpes más dura) o a la grilla.
-- **Cuatro idiomas, no tres:** desde 0.94.0 (D-197) la portada ofrece también el alemán. La escena
-  de modos ("Y en tres idiomas") y el cierre muestran 🇪🇸 🇬🇧 🇧🇷: sumar 🇩🇪 y ajustar el texto.
-- **Recapturar todo con la app de hoy** (0.90.5 o la que haya). Las capturas de la v5 son de la
-  0.82.x, así que se ven atrás:
-  - Textos más cortos en todos los juegos (0.84.0, D-177).
-  - ☀️ Tango: candado chico en las casillas dadas (0.87.1), el sol dado más intenso (0.90.3), y el
-    choque que se marca al tocar otra casilla (0.90.3). Revisar que la jugada de "sol, sol, luna
-    (dos toques)" se siga viendo bien.
-  - 🏆 La Copa: si el podio que se muestra tiene empate en puntos, ahora sale la línea "⚖️ Empate
-    en … puntos" (0.90.2).
-- **Sumar 📅 Uno al día** (D-230, para todos desde el PR #234; dueño, 2026-10-06, dilema #235): un
-  plano corto con la tarjeta de la portada junto a La Copa (D-239; antes, un botón al lado del dado), el dado que cae en el juego de
-  hoy y la tarjeta del resultado con la racha 🔥 y el n.° del día. Es la razón para volver cada día.
-  La tarjeta no nombra el juego de hoy (dilema #215): se graba tal como sale, sin sumarle el nombre.
-- **Cerrar con "agrégala a tu inicio"** (D-232, el globo de la portada, para todos desde el PR #234): la
-  app se puede tener como ícono en el celular.
-- Al terminar: la vuelta en [Historia](#historia), `registro.json` (versión, fecha, `app`) y
-  `node tools/agents/marketing.mjs anotar video-promo --al-dia`.
+**Muestra una selección de juegos, no todos** (`"seleccion": true` en `registro.json`): un juego
+nuevo en la portada no deja atrás al video; `node tools/agents/marketing.mjs revisar` solo avisa si
+uno de los que salen ya no está, o si la app cambió de versión.
 
 ## Lo que el dueño quiere
 
 Lo que fue pidiendo en cada vuelta, para no tener que volver a preguntarlo:
 
+- **Corto y poco denso: unos 35 segundos** (v6; quedó en 39,2 s al sumar la grilla que pidió
+  después). Pocos juegos en la pasada principal, cada uno con su tiempo; sin la escena de modos.
+- **El orden: unos juegos, "¡Y muchos más juegos!", 📅 Uno al día y al final 🏆 La Copa** (v6).
+- **"¡Y muchos más juegos!" con un recuadro animado de cada otro juego que existe** (v4, v5, v6):
+  todos los de la portada que no salen en la pasada principal, cada uno jugando en bucle.
+- **Uno al día y La Copa con su propio color** (v6): Uno al día en verde azulado, La Copa en dorado,
+  para que se lean como algo aparte de los juegos sueltos.
+- **Lo que se mueve en la app se mueve igual en el video** (v6): el dado de "Juego al azar" a todo el
+  cuadro (no a saltos) y el globo de ¿Dónde queda? girando, acercándose y moviéndose al confirmar.
 - **Pantallas de verdad, jugándose.** Nada de maquetas ni capturas quietas en lo que se ve más
   de un segundo: cada juego se juega en la app real y se ve el dedo tocando (v3).
-- **Poca densidad.** Mejor menos juegos con más tiempo cada uno que todos de pasada (v4). Lo que
-  sale de la pasada principal va en la grilla de "¡Y muchos más!", con su nombre y su jugada
-  en bucle, el tiempo suficiente para encontrar uno por su nombre (v5).
 - **Todos los juegos se nombran como juegos.** Nunca "minijuegos" (v2).
 - **La Copa es un desafío, no un "próximamente":** "¿Te atreves a desafiar a tus amigos por una
-  semana?". Escena larga para leerla con calma, con 🏆 junto al título (v2, v4, v5).
+  semana?", con 🏆 junto al título (v2, v4, v5).
 - **Eslogan general, no de noche:** "¡JUNTOS SE JUEGA MEJOR!" reemplazó a "¡ARMA LA NOCHE!" (v3).
-- **Decir que hay tres idiomas** aunque el video sea en español: "Y en tres idiomas: tú eliges"
-  en la escena de modos y las tres banderas en el cierre (v3).
+- **Decir los idiomas** aunque el video sea en español: desde la v6, "En 4 idiomas" y las cuatro
+  banderas en el cierre (en la v3 a v5 eran tres, en la escena de modos).
 - **Su canción**, cortada al largo del video, con fundido de entrada y de salida de 1 s (v4, v5).
 - **Dos formatos:** 16:9 para YouTube y vertical para Shorts y redes, con el mismo contenido
   (v4).
 - Le gustó el estilo desde la v1: neón, Bangers + Nunito, emojis, un celular flotando.
 
-## El guion de la v5
+## El guion de la v6
 
 La canción va a 130 BPM: un golpe dura 0,4615 s y cada corte cae en un golpe.
 
 | Escena | Golpes | Segundos | Qué pasa |
 |---|---|---|---|
-| Gancho | 7 | 0 – 3,2 | "JUNTA A TUS AMIGOS · SACA EL CELULAR · ¡Y A JUGAR!", con emojis girando |
-| Logo | 7 | 3,2 – 6,5 | 🎲 cae, "JUEGOS DE SALÓN", "Los juegos de toda la vida, en tu celular" |
-| Juegos | 44 | 6,5 – 26,8 | Ocho juegos jugados en un celular (tabla de abajo) |
-| ¡Y muchos más! | 14 | 26,8 – 33,2 | Grilla de cinco celulares chicos, cada uno jugando en bucle |
-| Modos | 8 | 33,2 – 36,9 | "JUEGA COMO QUIERAS": en un celular, en varios, contra el celular; "Y en tres idiomas: tú eliges" 🇪🇸 🇬🇧 🇧🇷 |
-| La Copa | 16 | 36,9 – 44,3 | "¿Te atreves a desafiar a tus amigos por una semana?", "🏆 LA COPA", el celular baja por podio, calendario, tabla y gráfico |
-| Cierre | 9 | 44,3 – 48,5 | "¡JUNTOS SE JUEGA MEJOR!", "Gratis · Sin descargar nada · Sin cuentas", **juegosdesalon.cl**, banderas |
+| Gancho | 6 | 0 – 2,8 | "JUNTA A TUS AMIGOS · SACA EL CELULAR · ¡Y A JUGAR!", con emojis girando |
+| Logo | 6 | 2,8 – 5,5 | 🎲 cae, "JUEGOS DE SALÓN", "Los juegos de toda la vida, en tu celular" |
+| Juegos | 23 | 5,5 – 16,2 | Cuatro juegos jugados en un celular (tabla de abajo) |
+| ¡Y muchos más juegos! | 10 | 16,2 – 20,8 | Diez celulares chicos, cada uno jugando el suyo en bucle: 🔢 Toque y Fama, 🔤 Toque y Fama: Palabra, 🪢 El Ahorcado, ⚓ Batalla Naval, 👑 Cuarto Rey, 🔗 Conexiones, 📅 ¿En qué año?, 👑 Reinas, ☀️ Tango y 🧶 Desenredo. En vertical van en filas de 4, 3 y 3; en horizontal, en dos de 5 |
+| 📅 Uno al día | 16 | 20,8 – 28,2 | Fondo verde azulado. "Un juego sorpresa cada día, el mismo para todos" · "🔥 Arma tu racha". El dedo toca la tarjeta de la portada, el dado rueda (a todo el cuadro) y cae en 👑 Reinas, pone las dos últimas reinas y sale 100/100 con "Racha: 11 días" |
+| La Copa | 14 | 28,2 – 34,6 | Fondo dorado. "¿Te atreves a desafiar a tus amigos por una semana?", "🏆 LA COPA", el celular baja por podio, calendario, tabla y gráfico |
+| Cierre | 10 | 34,6 – 39,2 | "¡JUNTOS SE JUEGA MEJOR!", "Gratis · Sin descargar nada · Sin cuentas", **juegosdesalon.cl**, "📲 Agrégala a tu inicio" (D-232), "En 4 idiomas: 🇪🇸 🇬🇧 🇧🇷 🇩🇪" |
 
-Los juegos, en orden, con lo que pasa en pantalla (cada uno con su semilla, ver `jugar.mjs`):
+Los juegos, en orden (cada uno con su semilla, ver `jugar.mjs`):
 
 | Juego | Golpes | La jugada |
 |---|---|---|
 | ⏳ Línea de Tiempo | 5 | Solo: elige una carta, la pone y sale "¡Correcto!" |
-| 🔢 Toque y Fama | 5 | Solo: ya hay un intento; escribe 4-5-1-7 y prueba |
 | 🎲 Dudo | 5 | Contra el celular: pinta, sube a 2, apuesta, el celular canta, Javi duda y se destapa |
-| 📍 ¿Dónde queda? | 6 | Santiago, Chile: arrastra el globo de Europa a Sudamérica (14 capturas del giro), marca y confirma: 98 puntos |
-| ⚓ Batalla Naval | 5 | Contra el celular: apunta, ¡fuego!, ¡tocado!, y otra vez |
-| 👑 Reinas | 6 | Cinco reinas puestas; arrastra una fila de X y pone las tres que faltan: "¡Resolviste las reinas!" |
-| ☀️ Tango | 5 | Faltan tres casillas: sol, sol, luna (dos toques): "¡Resolviste el tango!" |
-| 〰️ Zip | 7 | Un solo trazo del 1 al 5 por las 16 casillas; queda en verde |
+| 📍 ¿Dónde queda? | 8 | Santiago, Chile: el dedo gira el globo hasta Sudamérica, lo acerca con +, marca Santiago y confirma; el mapa vuela hasta Chile: a 0 km, 100 puntos |
+| 〰️ Zip | 5 | Un solo trazo del 1 al 5 por las 16 casillas; queda en verde |
 
-La grilla de "¡Y muchos más!": 👑 Cuarto Rey (saca el As: "¡Todos toman!"), 🔗 Conexiones
-(arma los pintores españoles), 🪢 El Ahorcado, 📅 ¿En qué año? (1985, 100 puntos) y
-🔤 Toque y Fama: Palabra. En vertical van en dos filas; en horizontal, en una.
+Uno al día (`UAD`) tiene su propia escena y su propio celular. Él y ¿Dónde queda? llevan un
+`guion` a mano ([segundo, cuadro], con el cuadro como `'tN'` = el toque N, o un índice negativo
+desde el final), porque su tiempo no se reparte parejo: el dado y el mapa necesitan su rato.
 
 ## Cómo está hecho
 
 - **`promo.html`** es el video: una página donde todo lo que se ve es función del tiempo
   (`window.render(t)`), así que cada render sale idéntico. Abierta en un navegador se reproduce
   sola; con `?wide` es la versión 16:9 (el celular a la derecha y los textos a la izquierda, el
-  mismo guion). Las escenas se definen en golpes (`S`, `GAMES`, `MORE`).
+  mismo guion). Las escenas se definen en golpes (`S` y `GAMES`).
 - **Las jugadas son capturas reales:** `jugar.mjs` abre cada juego en Chrome, lo juega con el
   mouse y saca una captura por jugada, anotando dónde fue el toque (y el recorrido, si arrastró).
   `promo.html` las pasa una tras otra y dibuja un círculo donde va el dedo, con una onda al
@@ -111,30 +90,44 @@ La grilla de "¡Y muchos más!": 👑 Cuarto Rey (saca el As: "¡Todos toman!"),
   `jugar.mjs` reemplaza `Math.random` y `crypto.getRandomValues` por uno con semilla. Así cada
   corrida reparte lo mismo y los toques caen donde deben. Las soluciones de Reinas, Tango y Zip
   salen de `generar(semilla, 1)` de cada motor (`public/cup/games/*.js`).
+- **Lo que se mueve después de un toque** (el dado, el acercamiento y el vuelo del mapa) se graba
+  cuadro a cuadro: un toque con `tras: ms` saca capturas seguidas y anota en cada una cuándo pasó
+  (`tras`, en segundos de la página), y `promo.html` las muestra a ese ritmo. Con `lento: f` la
+  página corre más lenta mientras tanto (`performance.now`, `setTimeout` y `requestAnimationFrame`
+  por un reloj propio, y las animaciones CSS por CDP): así el dado sale a unos 30 cuadros por
+  segundo aunque cada captura tarde 100 ms.
+- **El globo de ¿Dónde queda?** se gira con `globo.girarA` paso a paso (el paso `globo` de
+  `jugar.mjs`), con el dedo dibujando el mismo arrastre.
+- **Uno al día** (`hoy` en `jugar.mjs`) fija el reloj de la página en el 29 de octubre de 2026 (un
+  día de Reinas, el n.° 24) y siembra en el celular diez días seguidos jugados antes: así la
+  racha sale en 11. La solución de las reinas sale del motor (`generar(semilla, d)` de
+  `public/cup/games/queens/engine.js`, con la semilla y el día de la partida).
 - **La Copa** es la demo `podio` del laboratorio, capturada entera de arriba abajo (`copa.mjs`).
 - **`render.mjs`** dibuja cuadro a cuadro con Playwright y se los pasa a ffmpeg (sin audio).
 - **`construir.sh`** hace todo: capturas, `preparar.py` (achica y escribe `plays/plays.js`),
-  los dos renders, la música y los mp4 de `salida/`.
+  los dos renders, la música y los mp4 de `output/`.
 
 ## Rehacerlo
 
 ```bash
 python3 -m http.server 8765 -d public         # en otra terminal
-marketing/promo-video/construir.sh            # unos 30 min: capturas, dos renders y la música
+marketing/promo-video/construir.sh            # unos 15 min: capturas, dos renders y la música
 ```
 
 Necesita Playwright (`npm i -g playwright`, o `PLAYWRIGHT=<ruta a index.mjs>`), ffmpeg y Pillow
-(`pip install pillow`). En la nube: `SITIO=http://localhost:<puerto>` si el 8765 está ocupado
+(`pip install pillow`). En el Mac del dueño Playwright está en
+`/opt/homebrew/lib/node_modules/playwright/index.mjs` y su Chrome no coincide con la versión:
+`CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"` usa el instalado. En la nube: `SITIO=http://localhost:<puerto>` si el 8765 está ocupado
 por otra sesión (D-135). Las capturas (`plays/`) no van al repo: se rehacen.
 
 Para trabajar por partes:
 
 ```bash
-node jugar.mjs reinas tango        # vuelve a jugar solo esos (deja los demás en plays/)
+node jugar.mjs hoy donde           # vuelve a jugar solo esos (deja los demás en plays/)
 python3 preparar.py                # siempre después de capturar
-python3 hoja.py reinas tango       # hoja.png: las capturas con el toque marcado, para revisarlas
-node render.mjs --fotos fotos --tiempos 19.9,21.0,22.6          # cuadros sueltos, para mirar
-node render.mjs --wide --fotos fotos --tiempos 28.6,40.0
+python3 hoja.py hoy donde          # hoja.png: las capturas con el toque marcado, para revisarlas
+node render.mjs --fotos fotos --tiempos 9.5,17.4,19.6          # cuadros sueltos, para mirar
+node render.mjs --wide --fotos fotos --tiempos 18.5,34.0
 open promo.html                    # o ?wide: se reproduce en el navegador, sin música
 ```
 
@@ -143,19 +136,19 @@ en medio de cada jugada) y la hoja de las capturas. Rehacerlas no es revisarlas 
 
 ## La canción
 
-`musica/cancion.mp3` (47,1 s) la subió el dueño. Lo que se sabe de ella:
+`music/cancion.mp3` (47,1 s) la subió el dueño. Lo que se sabe de ella:
 
 - **130 BPM**; un compás = 1,846 s. Tiene **2,975 s de silencio al principio**: el video parte
   ahí, en su primer golpe. La música termina a los 44,07 s del archivo.
 - Partes: introducción hasta 10,36 s (compás 4), entra fuerte; un respiro cerca de 16,4–17,7 s;
   un tramo más tranquilo cerca de 23,5–32,4 s; fuerte otra vez hasta el final.
-- Sola alcanza 41,1 s. Para los 48,5 s de la v5 se **repiten los compases 4 a 8**: después del
-  respiro (17,744 s) vuelve al 10,36 s, que suena como una segunda entrada. El empalme queda en el
-  segundo 14,8 del video; si el dueño lo nota, se busca otro punto.
+- Sola alcanza 41,1 s: los 39,2 s de la v6 caben sin repetir nada y terminan en el tramo fuerte.
+  (Para los 48,5 s de la v5 se repetían los compases 4 a 8: después del respiro, 17,744 s, volvía
+  al 10,36 s.)
 - Fundido de entrada y de salida de 1 s (pedido en v5).
 
 Si el video cambia de largo, se ajustan los golpes de las escenas para que sumen lo que alcanza
-la música (89 golpes sola, 105 con la repetición) y la cuenta de `construir.sh`.
+la música (89 golpes sola) y la cuenta de `construir.sh` (hoy 85).
 
 ## Trampas conocidas
 
@@ -165,28 +158,128 @@ la música (89 golpes sola, 105 con la repetición) y la cuenta de `construir.sh
 - **Algunos juegos sortean con `crypto`**, no con `Math.random`: sin fijarlo, Línea de Tiempo
   daba "¡Te equivocaste!" y El Ahorcado cambiaba de palabra.
 - **Los toques dependen de la app.** Si cambia un texto o un tamaño, un botón se mueve; `jugar.mjs`
-  busca casi todo por su texto o su `data-i`, pero ¿Dónde queda? toca una coordenada del globo
-  (`DONDE`, por defecto 217,546: Santiago). Se revisa con `hoja.py` después de cada captura.
+  busca casi todo por su texto o su `data-i`. ¿Dónde queda? toca Santiago donde el globo lo dibuja
+  (`canvas.mapa-globo`.globo.aPantalla; `DONDE=x,y` lo fija a mano). Se revisa con `hoja.py`
+  después de cada captura.
+- **El globo satelital de ¿Dónde queda? no gira en las capturas** al arrastrarlo con el mouse de
+  Playwright (todas las capturas del arrastre salían iguales): por eso lo gira `girarA`.
 - **Cuarto Rey responde a la posición real del mouse**, no a `.click()`; los arrastres de Reinas
   y Zip necesitan eventos de puntero de verdad: por eso `jugar.mjs` usa el mouse de Playwright.
 - **El "null" de Toque y Fama: Palabra** (un error de la app en `public/cup/games/word/ui.js`: un
   `append` nativo recibe `null`) se borra de la pantalla al capturar. Cuando se arregle en la app,
   sobra ese paso de `jugar.mjs`.
+- **Los guiones a mano dependen de las capturas:** si `jugar.mjs` cambia los toques de `hoy` o de
+  `donde`, se revisan los `guion` de `promo.html` (los toques van por número, `'t0'`, `'t1'`…).
+- **Son ~280 capturas.** Con más, Chrome puede no alcanzar a decodificarlas (ver la primera trampa):
+  `render.mjs` avisa cuáles no cargaron. El dado son unas 100.
 - **El servidor local se cae** en sesiones largas: `construir.sh` avisa si `SITIO` no responde.
 - La Copa del video es la demo del laboratorio (`?prueba&labs&demo=podio`): no toca Firebase.
 
 ## Para YouTube
 
-Lo que se propuso al dueño (v4):
+El video se sube al canal del dueño, **El Javi ([@eljotairi](https://www.youtube.com/@eljotairi))**,
+desde YouTube Studio: <https://studio.youtube.com/channel/UCWZM2kDKkiLRUlX9okHH9jg/content>. Studio
+está en inglés. Ahí ya estaban "Juegos de Salón" y "Juegos de Salón - Promo v2" (2026-10-02, v4/v5).
 
-- **Título (16:9):** "Juegos de Salón: juegos para jugar con amigos en el celular, gratis".
-- **Título (Short):** "¿Aburridos? Saca el celular y a jugar 🎲 #shorts".
-- **Descripción:** la promesa y el link primero ("Junta a tus amigos, saca el celular y a jugar…
-  gratis, sin descargar nada y sin crear cuentas. ▶ https://juegosdesalon.cl"), después los
-  juegos por grupo, los modos, La Copa y los tres idiomas, y al final hashtags
-  (#juegosdesalon #juegosconamigos #juegosdemesa).
-- Cuarto Rey es de tomar: para evitar la restricción de edad, en la descripción va como "naipes,
-  retos y el temido rey".
+### Cómo se sube (Claude, con Claude in Chrome)
+
+1. **Archivos de menos de 10 MB, en H.264 y con un cuadro clave cada 2 s:** la herramienta de
+   Chrome (`file_upload`) no sube más de 10 MB por llamada y los mp4 de `output/` pesan ~20 MB. Se
+   recodifican en el scratchpad (no van al repo); a la vista quedan iguales (SSIM 0,994) y pesan
+   9,5–10 MB. Si alguno pasa de 10 MB, `-crf 26`:
+   ```bash
+   ffmpeg -i output/promo-youtube-16x9.mp4 -c:v libx264 -preset slow -crf 25 -g 60 -keyint_min 60 -sc_threshold 0 -profile:v high -pix_fmt yuv420p -c:a aac -b:a 160k -movflags +faststart <scratchpad>/promo-youtube-16x9.mp4
+   ```
+   **No en H.265:** la v6 se subió primero en H.265 (`libx265`, cuadro clave cada 8,3 s) y en
+   YouTube el video empezaba en el segundo cuadro clave, en medio de Dudo. Se perdían los primeros
+   8 s (gancho, logo y Línea de Tiempo).
+   La herramienta solo sube archivos que la sesión puede leer: el scratchpad sí; la copia de
+   trabajo del repo, no siempre (se copia antes al scratchpad).
+2. **Una pestaña nueva por video**, en
+   `https://studio.youtube.com/channel/UCWZM2kDKkiLRUlX9okHH9jg/videos/upload?d=ud`: abre el diálogo
+   de subida directo. El `<input type=file name=Filedata>` se encuentra con `find` y se le pasa el
+   archivo con `file_upload` (nunca se hace clic en "Select files": abre el selector del sistema).
+   Al subir, queda **guardado como privado**: todavía no lo ve nadie.
+3. **Details:** el título y la descripción son cuadros editables: clic, `cmd+a` y escribir. Al
+   escribir un `#hashtag` sale una lista de sugerencias; se cierra con un clic fuera.
+   - **Audience:** "No, it's not made for kids" (obligatorio).
+   - **Show advanced settings → Tags:** se escriben separados por coma, terminando en coma.
+   - **Video language:** Spanish (Latin America). **Category:** Gaming.
+   - Las listas de idioma y categoría **no toman el clic por referencia**: se abre la lista, se
+     lleva la opción a la vista (`scroll_to`), se saca una captura y se hace clic en la coordenada.
+     Después se confirma el valor (con `find`), porque una lista que se mueve puede dejar otra
+     opción (una vez quedó "Sports").
+4. **Next** hasta **Visibility** (Video elements: nada; Initial check: debe decir "No issues
+   found"). Un clic de más en el mismo lugar del botón Next aprieta **Save**: en Visibility se
+   avanza mirando una captura.
+5. **Visibility: Unlisted** primero, para que el dueño lo mire en YouTube. **"Save" lo aprieta el
+   dueño** (o Claude, solo con su sí explícito en el chat). Hacerlo público es otro paso, también
+   del dueño.
+6. El vertical (≤ 60 s) YouTube lo toma solo como **Short** (el enlace sale `youtube.com/shorts/…`).
+   Ofrece un "Related video" para enlazar el Short con el video largo: se agrega cuando el largo ya
+   esté visible.
+
+### Los textos de la v6
+
+**16:9 · título:** Juegos de Salón: juegos para jugar con amigos en el celular, gratis
+
+**16:9 · descripción:**
+
+```
+Junta a tus amigos, saca el celular y a jugar: los juegos de toda la vida, gratis, sin descargar nada y sin crear cuentas.
+▶ https://juegosdesalon.cl
+
+🎲 Para jugar en grupo: Dudo, Batalla Naval, El Ahorcado, Línea de Tiempo, Toque y Fama, y naipes, retos y el temido rey.
+🧩 Para jugar solo: Reinas, Tango, Zip, Desenredo, Conexiones, ¿En qué año?, ¿Dónde queda? y Toque y Fama: Palabra.
+
+📅 Uno al día: un juego sorpresa cada día, el mismo para todos. Arma tu racha.
+🏆 La Copa: desafía a tus amigos por una semana, con un juego distinto cada día. Quien suma más puntos, gana.
+
+📱 En un celular que pasa de mano en mano, en varios con un link, o contra el celular.
+📲 Agrégala a tu inicio y úsala como una app.
+🌎 En español, inglés, portugués y alemán.
+
+#juegosdesalon #juegosconamigos #juegosdemesa
+```
+
+**Short · título:** ¿Aburridos? Saca el celular y a jugar 🎲 #shorts
+
+**Short · descripción:**
+
+```
+Junta a tus amigos, saca el celular y a jugar: los juegos de toda la vida, gratis, sin descargar nada y sin crear cuentas.
+▶ https://juegosdesalon.cl
+
+📅 Uno al día: un juego sorpresa cada día, el mismo para todos.
+🏆 La Copa: desafía a tus amigos por una semana.
+🌎 En español, inglés, portugués y alemán.
+
+#juegosdesalon #juegosconamigos #juegosdemesa
+```
+
+**Tags (los dos):** juegos de salón, juegos con amigos, juegos en el celular, juegos de mesa, juegos
+para fiestas, juegos gratis, uno al día, la copa, dudo, batalla naval, reinas, juegosdesalon.cl
+
+- **Cuarto Rey es de tomar:** para evitar la restricción de edad, en la descripción va como
+  "naipes, retos y el temido rey", sin nombrarlo.
+- Al cambiar los juegos o lo que muestra el video, se revisan las listas de la descripción.
+
+### Lo subido
+
+| Versión | Formato | Enlace | Estado |
+|---|---|---|---|
+| v6 | 16:9 | <https://youtu.be/fQ4uFaPX_4g> | 2026-10-08: no listado (H.264, miniatura del logo) |
+| v6 | Short | <https://youtube.com/shorts/RYAvj2MTRPQ> | 2026-10-08: no listado (H.264, miniatura vertical del logo) |
+| v6, 1.ª subida | 16:9 y Short | `_HwYxd0buog`, `e4dMm0npWOM` | Privados: en H.265 empezaban en Dudo. Borrarlos lo hace el dueño (Claude no borra videos: es permanente) |
+
+- **Miniaturas:** `output/miniatura-youtube.jpg` (1280×720) y `output/miniatura-short.jpg`
+  (720×1280), sacadas de la escena del logo (`render.mjs --fotos … --tiempos 4.6`). Sin miniatura
+  propia, YouTube elige un cuadro del medio (en la v6, Uno al día). Se suben en *Details →
+  Thumbnail* con `file_upload` sobre el input `#file-loader`.
+- **"Reuse details"** (en *Details*) copia título, descripción, etiquetas, idioma y categoría de
+  otro video del canal; la audiencia ("not made for kids") hay que marcarla igual.
+- **Antes de "Save" se espera que termine la revisión** de normas ("Checks complete. No issues
+  found."); si no, YouTube avisa que puede limitar el video.
 
 ## Historia
 
@@ -225,7 +318,7 @@ Su canción a 130 BPM con los cortes en golpe; diez juegos con más tiempo; esce
 juegos!" con tres nombres; el globo gira (capturas del arrastre); Reinas con X y reinas; La Copa
 de 4 a 5,1 s. Se eligió hacer **los dos formatos** (16:9 con diseño propio y vertical).
 
-### v5 · 2026-10-02 · 48,5 s, vertical y 16:9 (la de hoy)
+### v5 · 2026-10-02 · 48,5 s, vertical y 16:9
 > Fundido de entrada y de salida de 1 s; sacar Cuarto Rey y Conexiones de la pasada y llevarlos a
 > "muchos más"; en "muchos más", títulos e imágenes animadas de cada juego en grilla, más larga,
 > "para que el espectador pueda encontrar alguno por su título"; ¿Dónde queda? después de Dudo;
@@ -237,8 +330,32 @@ y los dos fundidos. Al registrarlo en el repo se fijó también el azar de `cryp
 `jugar.mjs`: las capturas que se rehagan desde ahora pueden mostrar otras palabras que las de la
 v5 (en la v5 El Ahorcado adivina "PISCO").
 
+### v6 · 2026-10-08 · 39,2 s, vertical y 16:9 (la de hoy)
+> "Rehace el vídeo promocional con todo lo nuevo, pero reduce el contenido a 35 segundos. No lo
+> hagas muy denso en contenido. Elige un subconjunto de juegos a mostrar, luego Uno al Día y luego
+> La Copa."
+
+Seis escenas en 76 golpes: gancho y logo más cortos, cuatro juegos (Línea de Tiempo, Dudo,
+¿Dónde queda? con el globo satelital y Zip), 📅 Uno al día (la tarjeta de la portada, el dado, las
+reinas y la racha), La Copa igual que en la v5, y un cierre con "📲 Agrégala a tu inicio" y "En 4
+idiomas". Salen la grilla de "¡Y muchos más!" y la escena de modos; la canción ya no repite
+compases. Todo recapturado con la app 0.129.1 (textos cortos, Tango y Toque y Fama ya no salen).
+Se arregló `construir.sh`, que todavía buscaba `musica/` y `salida/` (las carpetas son `music/` y
+`output/` desde D-192), y `marketing.mjs revisar` aprendió `"seleccion": true`.
+
+Segunda vuelta, el mismo día:
+> "Tanto Uno al Día como La Copa deben tener un tratamiento visual distinto (otros colores, por
+> ejemplo). El dado de juego al azar debe aparecer en full framerate (se ve cortado). El juego Donde
+> Queda debe tener animaciones cuando se usa el mapa. Agrega una parte que indique 'y muchos más
+> juegos!' con recuadros animados de cada otro juego que existe."
+
+Uno al día pasó a su propia escena con fondo verde azulado, y La Copa lleva fondo dorado. El dado
+se graba en cámara lenta (`lento`, `tras`) y sale a ~30 cuadros por segundo; ¿Dónde queda? gira el
+globo con el dedo, lo acerca y el mapa vuela a Chile al confirmar. Volvió "¡Y muchos más juegos!"
+con los diez juegos restantes (suma 🧶 Desenredo, que no estaba en la v5). Quedó en 39,2 s.
+
 ## Ideas que quedaron en el aire
 
 - Una miniatura de 1280×720 para YouTube (un cuadro de "¡JUNTOS SE JUEGA MEJOR!" o del podio).
-- Versiones en inglés y portugués del video: los textos están todos en `promo.html` y la app ya
+- Versiones en inglés, portugués y alemán del video: los textos están todos en `promo.html` y la app ya
   se captura en cualquier idioma (`juegos-de-salon:lang` en `jugar.mjs`).

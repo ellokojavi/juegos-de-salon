@@ -12,12 +12,32 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 // Pasos: string = JS silencioso; { tap: 'expr que devuelve el elemento' } = toque visible + captura;
 // { drag: [expr, dx, dy] } = arrastre visible + captura; { wait: ms }; { snap: true } = captura sin toque.
-const DONDE = (process.env.DONDE || '217,546').split(',').map(Number);
+const DONDE = (process.env.DONDE || '').split(',').map(Number);
 const BOTON = t => `[...document.querySelectorAll('button')].find(b=>b.textContent.trim()===${JSON.stringify(t)})`;
 const TANGO = [1,1,2,1,2,2,2,1,2,1,1,2,2,2,1,2,1,1,1,1,2,1,2,2,2,2,1,2,1,1,1,2,1,2,2,1];
 const TAN = i => `document.querySelector('.tan[data-i="${i}"]')`;
 const REJ = i => `document.querySelector('.rej[data-i="${i}"]')`;
+// Uno al día (D-230): el reloj en un día de Reinas, con diez días seguidos jugados antes (la racha)
+const HOY_FECHA = [2026, 9, 29, 12];
+const HOY_RACHA = (() => { const d = {}, js = ['letras', 'ahorcado', 'linea', 'conexiones', 'batalla-naval', 'anio', 'numero', 'reinas', 'desenredo', 'linea'];
+  for (let n = 1; n <= 10; n++) { const f = new Date(Date.UTC(2026, 9, 29 - n)).toISOString().slice(0, 10); d[f] = { j: js[n - 1], s: 60 + n * 3, ms: 90000, at: 1, n: 1 }; }
+  return JSON.stringify({ dias: d }); })();
+const REINA = k => `(()=>{const r=window.__sol;return document.querySelector('.rej[data-i="'+(${k}*8+r[${k}])+'"]')})()`;
 const PLAYS = {
+  hoy: { url: '/', reloj: HOY_FECHA, memoria: { 'juegos-de-salon:uno-al-dia': HOY_RACHA }, steps: [
+    { wait: 600 }, { snap: true },
+    // El dado, a todo el cuadro: la página corre a un cuarto de velocidad y cada captura anota su
+    // momento (`tras`), así promo.html lo pasa a la velocidad de verdad
+    { tap: `document.getElementById('btn-uno-al-dia')`, lento: 0.25, tras: 3300, after: 300 },
+    `new Promise(r=>{const f=()=>/queens/.test(location.pathname)?r():setTimeout(f,200);f()})`, { wait: 1500 },
+    `document.getElementById('btn-empezar').click()`, { wait: 4500 },
+    // la solución del día, del mismo motor; seis reinas fuera de cámara y las dos últimas en cámara
+    `import('/cup/games/queens/engine.js').then(m=>{const j=__copa.estado.juego;window.__sol=m.generar(j.semilla,j.d).sol})`, { wait: 300 },
+    `(()=>{for(let k=0;k<6;k++)document.querySelector('.rej[data-i="'+(k*8+window.__sol[k])+'"]').click()})()`, { wait: 600 }, { snap: true },
+    { tap: REINA(6), after: 400 },
+    { tap: REINA(7), after: 1400 },
+    { tap: `document.getElementById('btn-fin')`, after: 1500 },
+  ] },
   linea: { url: '/timeline/', steps: [
     `[...document.querySelectorAll('.mode')].find(m=>/solo/i.test(m.textContent)).click()`,
     `document.getElementById('btn-solo-empezar').click()`, { wait: 1500 }, { snap: true },
@@ -115,11 +135,18 @@ const PLAYS = {
     ...'CLAVO'.split('').map(c => ({ tap: BOTON(c), after: 160 })),
     { tap: `[...document.querySelectorAll('button')].find(b=>/Probar/i.test(b.textContent))`, after: 1000 },
   ] },
+  desenredo: { url: '/untangle/?semilla=WNDRN', steps: [
+    `document.getElementById('btn-empezar').click()`, { wait: 4500 }, { snap: true },
+    { drag: [`document.querySelector('.des-nudos circle[data-v="0"]')`, 90, 70], mids: 6, after: 300 },
+    { drag: [`document.querySelector('.des-nudos circle[data-v="3"]')`, -80, 60], mids: 6, after: 600 },
+  ] },
   donde: { url: '/where/?semilla=WNDRN', steps: [
     `document.getElementById('btn-empezar').click()`, { wait: 5000 }, { snap: true },
-    { drag: [`document.querySelector('canvas')`, 120, -20], mids: 14, after: 400 },
-    { tap: `document.querySelector('canvas')`, at: DONDE, after: 600 },
-    { tap: `[...document.querySelectorAll('.btn')].find(b=>/Confirmar/i.test(b.textContent))`, after: 1500 },
+    // Santiago donde el globo lo dibuja (DONDE=x,y lo fija a mano)
+    { globo: [-30, -66], pasos: 16, after: 300 },
+    { tap: `[...document.querySelectorAll('button')].find(b=>b.textContent.trim()==='+')`, lento: 0.3, tras: 700, after: 200 },
+    { tap: `document.querySelector('canvas.mapa-globo')`, aqui: process.env.DONDE ? null : `document.querySelector('canvas.mapa-globo').globo.aPantalla(-33.45,-70.67)`, at: process.env.DONDE ? DONDE : null, after: 600 },
+    { tap: `[...document.querySelectorAll('.btn')].find(b=>/Confirmar/i.test(b.textContent))`, lento: 0.3, tras: 1500, after: 300 },
   ] },
 };
 
@@ -144,8 +171,20 @@ for (const id of pedidos) {
     crypto.randomUUID = () => '10000000-1000-4000-8000-100000000000'.replace(/[018]/g, c => (c ^ (r() & (15 >> (c / 4)))).toString(16));
   }, PLAYS[id].seed || 12345);
   page.on('pageerror', e => console.log(id, 'ERROR', e.message));
+  await page.addInitScript(() => {
+    const rn = performance.now.bind(performance), rst = window.setTimeout.bind(window), rraf = window.requestAnimationFrame.bind(window);
+    let f = 1, base = rn(), virt = base;
+    const now = () => virt + (rn() - base) * f;
+    performance.now = now;
+    window.setTimeout = (fn, ms = 0, ...a) => rst(fn, ms / f, ...a);
+    window.requestAnimationFrame = cb => rraf(() => cb(now()));
+    window.__vel = n => { virt = now(); base = rn(); f = n; };
+  });
+  if (PLAYS[id].reloj) await page.addInitScript(f => { const D = Date, dif = new D(...f).getTime() - D.now();
+    class F extends D { constructor(...a) { a.length ? super(...a) : super(D.now() + dif); } static now() { return D.now() + dif; } } window.Date = F; }, PLAYS[id].reloj);
   await page.goto(B + '/');
-  await page.evaluate(() => { localStorage.clear(); localStorage.setItem('juegos-de-salon:lang', 'es'); });
+  await page.evaluate(m => { localStorage.clear(); localStorage.setItem('juegos-de-salon:lang', 'es'); localStorage.setItem('juegos-de-salon:instalar:no', '1');
+    for (const k in m) localStorage.setItem(k, m[k]); }, PLAYS[id].memoria || {});
   await page.goto(B + PLAYS[id].url); await sleep(1500);
   const frames = [];
   const snap = async tap => { const f = `${id}-${frames.length}.png`; await page.screenshot({ path: path.join(OUT, f) }); frames.push({ img: f, tap }); };
@@ -154,6 +193,24 @@ for (const id of pedidos) {
     if (typeof s === 'string') { await page.evaluate(s).catch(e => console.log(id, 'paso', e.message)); await sleep(350); continue; }
     if (s.wait) { await sleep(s.wait); continue; }
     if (s.snap) { await snap(null); continue; }
+    if (s.globo) {
+      // Un arrastre que gira el globo: el mouse de Playwright no lo gira en las capturas, así que el
+      // globo va a mano (girarA) paso a paso y el dedo dibuja el mismo recorrido
+      const c = await page.$('canvas.mapa-globo'), bb = await c.boundingBox();
+      const x0 = bb.x + bb.width / 2, y0 = bb.y + bb.height * 0.55, R = Math.min(bb.width, bb.height) / 2;
+      const [la0, lo0] = await page.evaluate(() => document.querySelector('canvas.mapa-globo').globo.vista().centro);
+      const [la1, lo1] = s.globo, n = s.pasos || 12, RAD = Math.PI / 180;
+      const dx = (lo0 - lo1) * RAD * R, dy = (la1 - la0) * RAD * R;
+      for (let k = 1; k <= n; k++) {
+        const e = 1 - (1 - k / n) ** 2;
+        await page.evaluate(([a, b]) => document.querySelector('canvas.mapa-globo').globo.girarA(a, b), [la0 + (la1 - la0) * e, lo0 + (lo1 - lo0) * e]);
+        await sleep(160);
+        if (k < n) await snap(null);
+      }
+      await sleep(s.after ?? 400);
+      await snap({ x: x0, y: y0, dx, dy, mids: n - 1 });
+      continue;
+    }
     if (s.trazo) {
       // Un trazo por varias casillas: el dedo pasa por el centro de cada una, con una captura por casilla
       const pts = [];
@@ -175,7 +232,7 @@ for (const id of pedidos) {
     if (!el) { console.log(id, 'no encontré', expr.slice(0, 80)); continue; }
     await el.evaluate(e => e.scrollIntoView({ block: 'nearest' }));
     const bb = await el.boundingBox();
-    const [x, y] = s.at || [bb.x + bb.width / 2, bb.y + bb.height / 2];
+    const [x, y] = s.at || (s.aqui && await page.evaluate(s.aqui)) || [bb.x + bb.width / 2, bb.y + bb.height / 2];
     if (s.drag) {
       let [, dx, dy] = s.drag;
       if (typeof dx === 'string') { const b2 = await (await page.evaluateHandle(dx)).asElement().boundingBox(); dx = b2.x + b2.width / 2 - x; dy = b2.y + b2.height / 2 - y; }
@@ -188,7 +245,29 @@ for (const id of pedidos) {
       await page.mouse.up();
       await sleep(s.after ?? 500); await snap({ x, y, dx, dy, mids: s.mids ? n - 1 : 0 });
     } else {
+      const reloj = () => page.evaluate(() => performance.now());
+      let cdp = null;
+      if (s.lento) {
+        cdp = await page.context().newCDPSession(page);
+        await cdp.send('Animation.enable'); await cdp.send('Animation.setPlaybackRate', { playbackRate: s.lento });
+        await page.evaluate(f => window.__vel(f), s.lento);
+      }
+      const t0 = s.tras ? await reloj() : 0;
       await page.mouse.click(x, y);
+      if (s.tras) {
+        // Lo que pasa después del toque, cuadro a cuadro: `tras` es cuándo, en segundos de la página
+        await snap({ x, y });
+        for (;;) {
+          const a = await reloj() - t0;
+          if (a > s.tras) break;
+          const f = `${id}-${frames.length}.png`;
+          await page.screenshot({ path: path.join(OUT, f) });
+          frames.push({ img: f, tap: null, tras: +((a + (await reloj() - t0)) / 2000).toFixed(3) });
+        }
+        if (cdp) { await page.evaluate(() => window.__vel(1)).catch(() => {}); await cdp.send('Animation.setPlaybackRate', { playbackRate: 1 }).catch(() => {}); }
+        await sleep(s.after ?? 500);
+        continue;
+      }
       await sleep(s.after ?? 500);
       if (s.luego) { await page.evaluate(s.luego); await sleep(700); }
       await snap({ x, y });

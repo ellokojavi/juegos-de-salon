@@ -26,7 +26,9 @@ export function atrasos(asset, { portada, version, nombre = id => id }) {
   const muestra = new Set([...(asset.juegos || []), ...(asset.grilla_mas || [])]);
   const hoy = new Set(portada);
   const avisos = [];
-  const faltan = portada.filter(id => !muestra.has(id) && id !== 'copa');
+  // `seleccion`: el asset muestra a propósito solo algunos juegos (el video desde la v6), así que
+  // uno nuevo de la portada no lo deja atrás
+  const faltan = asset.seleccion ? [] : portada.filter(id => !muestra.has(id) && id !== 'copa');
   if (faltan.length) avisos.push(`juegos de la portada que no salen: ${faltan.map(nombre).join(', ')}`);
   const sobran = [...muestra].filter(id => !hoy.has(id));
   if (sobran.length) avisos.push(`salen juegos que ya no están en la portada: ${sobran.map(nombre).join(', ')}`);
