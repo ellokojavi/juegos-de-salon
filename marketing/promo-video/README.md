@@ -177,16 +177,94 @@ la música (89 golpes sola) y la cuenta de `construir.sh` (hoy 85).
 
 ## Para YouTube
 
-Lo que se propuso al dueño (v4):
+El video se sube al canal del dueño, **El Javi ([@eljotairi](https://www.youtube.com/@eljotairi))**,
+desde YouTube Studio: <https://studio.youtube.com/channel/UCWZM2kDKkiLRUlX9okHH9jg/content>. Studio
+está en inglés. Ahí ya estaban "Juegos de Salón" y "Juegos de Salón - Promo v2" (2026-10-02, v4/v5).
 
-- **Título (16:9):** "Juegos de Salón: juegos para jugar con amigos en el celular, gratis".
-- **Título (Short):** "¿Aburridos? Saca el celular y a jugar 🎲 #shorts".
-- **Descripción:** la promesa y el link primero ("Junta a tus amigos, saca el celular y a jugar…
-  gratis, sin descargar nada y sin crear cuentas. ▶ https://juegosdesalon.cl"), después los
-  juegos por grupo, los modos, La Copa y los tres idiomas, y al final hashtags
-  (#juegosdesalon #juegosconamigos #juegosdemesa).
-- Cuarto Rey es de tomar: para evitar la restricción de edad, en la descripción va como "naipes,
-  retos y el temido rey".
+### Cómo se sube (Claude, con Claude in Chrome)
+
+1. **Archivos de menos de 10 MB:** la herramienta de Chrome (`file_upload`) no sube más de 10 MB
+   por llamada y los mp4 de `output/` pesan ~20 MB. Se recodifican en H.265 (YouTube lo acepta y
+   recodifica igual); a la vista quedan iguales (SSIM 0,995) y pesan 8–9 MB:
+   ```bash
+   ffmpeg -i output/promo-youtube-16x9.mp4 -c:v libx265 -crf 24 -preset slow -tag:v hvc1 -pix_fmt yuv420p -c:a copy -movflags +faststart <scratchpad>/promo-youtube-16x9.mp4
+   ```
+   (lo mismo con `promo-vertical.mp4`; si alguno pasa de 10 MB, `-crf 25`). No van al repo.
+2. **Una pestaña nueva por video**, en
+   `https://studio.youtube.com/channel/UCWZM2kDKkiLRUlX9okHH9jg/videos/upload?d=ud`: abre el diálogo
+   de subida directo. El `<input type=file name=Filedata>` se encuentra con `find` y se le pasa el
+   archivo con `file_upload` (nunca se hace clic en "Select files": abre el selector del sistema).
+   Al subir, queda **guardado como privado**: todavía no lo ve nadie.
+3. **Details:** el título y la descripción son cuadros editables: clic, `cmd+a` y escribir. Al
+   escribir un `#hashtag` sale una lista de sugerencias; se cierra con un clic fuera.
+   - **Audience:** "No, it's not made for kids" (obligatorio).
+   - **Show advanced settings → Tags:** se escriben separados por coma, terminando en coma.
+   - **Video language:** Spanish (Latin America). **Category:** Gaming.
+   - Las listas de idioma y categoría **no toman el clic por referencia**: se abre la lista, se
+     lleva la opción a la vista (`scroll_to`), se saca una captura y se hace clic en la coordenada.
+     Después se confirma el valor (con `find`), porque una lista que se mueve puede dejar otra
+     opción (una vez quedó "Sports").
+4. **Next** hasta **Visibility** (Video elements: nada; Initial check: debe decir "No issues
+   found"). Un clic de más en el mismo lugar del botón Next aprieta **Save**: en Visibility se
+   avanza mirando una captura.
+5. **Visibility: Unlisted** primero, para que el dueño lo mire en YouTube. **"Save" lo aprieta el
+   dueño** (o Claude, solo con su sí explícito en el chat). Hacerlo público es otro paso, también
+   del dueño.
+6. El vertical (≤ 60 s) YouTube lo toma solo como **Short** (el enlace sale `youtube.com/shorts/…`).
+   Ofrece un "Related video" para enlazar el Short con el video largo: se agrega cuando el largo ya
+   esté visible.
+
+### Los textos de la v6
+
+**16:9 · título:** Juegos de Salón: juegos para jugar con amigos en el celular, gratis
+
+**16:9 · descripción:**
+
+```
+Junta a tus amigos, saca el celular y a jugar: los juegos de toda la vida, gratis, sin descargar nada y sin crear cuentas.
+▶ https://juegosdesalon.cl
+
+🎲 Para jugar en grupo: Dudo, Batalla Naval, El Ahorcado, Línea de Tiempo, Toque y Fama, y naipes, retos y el temido rey.
+🧩 Para jugar solo: Reinas, Tango, Zip, Desenredo, Conexiones, ¿En qué año?, ¿Dónde queda? y Toque y Fama: Palabra.
+
+📅 Uno al día: un juego sorpresa cada día, el mismo para todos. Arma tu racha.
+🏆 La Copa: desafía a tus amigos por una semana, con un juego distinto cada día. Quien suma más puntos, gana.
+
+📱 En un celular que pasa de mano en mano, en varios con un link, o contra el celular.
+📲 Agrégala a tu inicio y úsala como una app.
+🌎 En español, inglés, portugués y alemán.
+
+#juegosdesalon #juegosconamigos #juegosdemesa
+```
+
+**Short · título:** ¿Aburridos? Saca el celular y a jugar 🎲 #shorts
+
+**Short · descripción:**
+
+```
+Junta a tus amigos, saca el celular y a jugar: los juegos de toda la vida, gratis, sin descargar nada y sin crear cuentas.
+▶ https://juegosdesalon.cl
+
+📅 Uno al día: un juego sorpresa cada día, el mismo para todos.
+🏆 La Copa: desafía a tus amigos por una semana.
+🌎 En español, inglés, portugués y alemán.
+
+#juegosdesalon #juegosconamigos #juegosdemesa
+```
+
+**Tags (los dos):** juegos de salón, juegos con amigos, juegos en el celular, juegos de mesa, juegos
+para fiestas, juegos gratis, uno al día, la copa, dudo, batalla naval, reinas, juegosdesalon.cl
+
+- **Cuarto Rey es de tomar:** para evitar la restricción de edad, en la descripción va como
+  "naipes, retos y el temido rey", sin nombrarlo.
+- Al cambiar los juegos o lo que muestra el video, se revisan las listas de la descripción.
+
+### Lo subido
+
+| Versión | Formato | Enlace | Estado |
+|---|---|---|---|
+| v6 | 16:9 | <https://youtu.be/_HwYxd0buog> | 2026-10-08: subido, todo lleno, Unlisted elegido; falta que el dueño apriete Save |
+| v6 | Short | <https://youtube.com/shorts/e4dMm0npWOM> | 2026-10-08: ídem |
 
 ## Historia
 
