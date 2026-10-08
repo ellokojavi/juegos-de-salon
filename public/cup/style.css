@@ -173,6 +173,8 @@ ol.como li { line-height: 1.45; }
 .result-hero .trophy { font-size: 4rem; display: inline-block; }
 .score-big { font: 900 clamp(2.6rem, 14vw, 3.6rem)/1.1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35); }
 pre.tarjeta { font: 1.2rem/1.35 var(--font-body); text-align: center; white-space: pre-wrap; margin: 0; background: rgba(0,0,0,0.25); border-radius: 14px; padding: 10px; overflow-wrap: anywhere; }
+/* A 320 px, los 10 cuadros de Zip (o una fila de 11 emojis) cabían con uno solo en la segunda línea (U-12) */
+@media (max-width: 360px) { pre.tarjeta { font-size: 1.05rem; } }
 
 /* Admin */
 .admin-jugadores { display: grid; gap: 8px; }
@@ -460,6 +462,8 @@ body.pantalla-completa #jugar-reglas .reglas[open] > summary { position: sticky;
 
 /* v0.45 (D-103): Zip por niveles, acciones de Tango y la sesión de prueba */
 .zip-cabeza { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-weight: 900; }
+/* En una sola línea a 320 px en los cuatro idiomas: partida, "Nível 10 de 10" se veía en dos */
+.zip-cabeza > span { white-space: nowrap; }
 .zip-nivel { color: var(--yellow); }
 .zip-hechos { color: var(--muted); font-size: 0.9rem; }
 .zip-reloj { font: 900 1.15rem var(--font-num); font-variant-numeric: tabular-nums; }
