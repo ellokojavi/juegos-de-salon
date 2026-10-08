@@ -183,13 +183,18 @@ está en inglés. Ahí ya estaban "Juegos de Salón" y "Juegos de Salón - Promo
 
 ### Cómo se sube (Claude, con Claude in Chrome)
 
-1. **Archivos de menos de 10 MB:** la herramienta de Chrome (`file_upload`) no sube más de 10 MB
-   por llamada y los mp4 de `output/` pesan ~20 MB. Se recodifican en H.265 (YouTube lo acepta y
-   recodifica igual); a la vista quedan iguales (SSIM 0,995) y pesan 8–9 MB:
+1. **Archivos de menos de 10 MB, en H.264 y con un cuadro clave cada 2 s:** la herramienta de
+   Chrome (`file_upload`) no sube más de 10 MB por llamada y los mp4 de `output/` pesan ~20 MB. Se
+   recodifican en el scratchpad (no van al repo); a la vista quedan iguales (SSIM 0,994) y pesan
+   9,5–10 MB. Si alguno pasa de 10 MB, `-crf 26`:
    ```bash
-   ffmpeg -i output/promo-youtube-16x9.mp4 -c:v libx265 -crf 24 -preset slow -tag:v hvc1 -pix_fmt yuv420p -c:a copy -movflags +faststart <scratchpad>/promo-youtube-16x9.mp4
+   ffmpeg -i output/promo-youtube-16x9.mp4 -c:v libx264 -preset slow -crf 25 -g 60 -keyint_min 60 -sc_threshold 0 -profile:v high -pix_fmt yuv420p -c:a aac -b:a 160k -movflags +faststart <scratchpad>/promo-youtube-16x9.mp4
    ```
-   (lo mismo con `promo-vertical.mp4`; si alguno pasa de 10 MB, `-crf 25`). No van al repo.
+   **No en H.265:** la v6 se subió primero en H.265 (`libx265`, cuadro clave cada 8,3 s) y en
+   YouTube el video empezaba en el segundo cuadro clave, en medio de Dudo. Se perdían los primeros
+   8 s (gancho, logo y Línea de Tiempo).
+   La herramienta solo sube archivos que la sesión puede leer: el scratchpad sí; la copia de
+   trabajo del repo, no siempre (se copia antes al scratchpad).
 2. **Una pestaña nueva por video**, en
    `https://studio.youtube.com/channel/UCWZM2kDKkiLRUlX9okHH9jg/videos/upload?d=ud`: abre el diálogo
    de subida directo. El `<input type=file name=Filedata>` se encuentra con `find` y se le pasa el
