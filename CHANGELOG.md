@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.129.1 — 2026-10-07
+- **Toque y Fama: la fama es verde y el toque amarillo**, como en Wordle (#196): en las letras de
+  🔤 Palabra, en las pistas de 🔢 Número y del juego de sala, y en la tarjeta de Palabra
+  (🟩 fama, 🟨 toque, ⬛ no está). Antes la fama era amarilla, que en Wordle quiere decir "en otro lugar".
+
 ## 0.129.0 — 2026-10-06
 - **Entrar, arriba y a la vista** (D-249): sin nombre y PIN tus partidas no quedan en ningún
   ranking, y la invitación quedaba al final, bajo las reglas. Ahora es una tarjeta con su botón
