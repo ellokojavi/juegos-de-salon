@@ -10,7 +10,7 @@ video** (D-178), y al terminar cada vuelta se anota en [Historia](#historia) y e
 | | |
 |---|---|
 | Archivos | [`output/promo-youtube-16x9.mp4`](output/promo-youtube-16x9.mp4) (1920×1080, YouTube) · [`output/promo-vertical.mp4`](output/promo-vertical.mp4) (1080×1920, Shorts, Reels, estados de WhatsApp) |
-| Duración | 35,1 s (76 golpes), H.264 + AAC 256 kb/s, 30 cuadros por segundo |
+| Duración | 39,2 s (85 golpes), H.264 + AAC 256 kb/s, 30 cuadros por segundo |
 | Idioma | Español (el cierre dice "En 4 idiomas" con las cuatro banderas) |
 | Música | [`music/cancion.mp3`](music/cancion.mp3), la que puso el dueño (ver [La canción](#la-canción)) |
 | App que muestra | 0.129.1 |
@@ -27,9 +27,15 @@ uno de los que salen ya no está, o si la app cambió de versión.
 
 Lo que fue pidiendo en cada vuelta, para no tener que volver a preguntarlo:
 
-- **Corto y poco denso: 35 segundos** (v6). Pocos juegos, cada uno con su tiempo; ni la grilla de
-  "¡Y muchos más!" ni la escena de modos de la v5.
-- **El orden: unos juegos, después 📅 Uno al día y al final 🏆 La Copa** (v6).
+- **Corto y poco denso: unos 35 segundos** (v6; quedó en 39,2 s al sumar la grilla que pidió
+  después). Pocos juegos en la pasada principal, cada uno con su tiempo; sin la escena de modos.
+- **El orden: unos juegos, "¡Y muchos más juegos!", 📅 Uno al día y al final 🏆 La Copa** (v6).
+- **"¡Y muchos más juegos!" con un recuadro animado de cada otro juego que existe** (v4, v5, v6):
+  todos los de la portada que no salen en la pasada principal, cada uno jugando en bucle.
+- **Uno al día y La Copa con su propio color** (v6): Uno al día en verde azulado, La Copa en dorado,
+  para que se lean como algo aparte de los juegos sueltos.
+- **Lo que se mueve en la app se mueve igual en el video** (v6): el dado de "Juego al azar" a todo el
+  cuadro (no a saltos) y el globo de ¿Dónde queda? girando, acercándose y moviéndose al confirmar.
 - **Pantallas de verdad, jugándose.** Nada de maquetas ni capturas quietas en lo que se ve más
   de un segundo: cada juego se juega en la app real y se ve el dedo tocando (v3).
 - **Todos los juegos se nombran como juegos.** Nunca "minijuegos" (v2).
@@ -51,22 +57,24 @@ La canción va a 130 BPM: un golpe dura 0,4615 s y cada corte cae en un golpe.
 |---|---|---|---|
 | Gancho | 6 | 0 – 2,8 | "JUNTA A TUS AMIGOS · SACA EL CELULAR · ¡Y A JUGAR!", con emojis girando |
 | Logo | 6 | 2,8 – 5,5 | 🎲 cae, "JUEGOS DE SALÓN", "Los juegos de toda la vida, en tu celular" |
-| Juegos | 24 | 5,5 – 16,6 | Cuatro juegos de 6 golpes, jugados en un celular (tabla de abajo) |
-| 📅 Uno al día | 14 | 16,6 – 23,1 | "Un juego sorpresa cada día, el mismo para todos" · "🔥 Arma tu racha". El dedo toca la tarjeta de la portada, el dado cae en 👑 Reinas, pone las dos últimas reinas y sale 100/100 con "Racha: 11 días" |
-| La Copa | 16 | 23,1 – 30,5 | "¿Te atreves a desafiar a tus amigos por una semana?", "🏆 LA COPA", el celular baja por podio, calendario, tabla y gráfico |
-| Cierre | 10 | 30,5 – 35,1 | "¡JUNTOS SE JUEGA MEJOR!", "Gratis · Sin descargar nada · Sin cuentas", **juegosdesalon.cl**, "📲 Agrégala a tu inicio" (D-232), "En 4 idiomas: 🇪🇸 🇬🇧 🇧🇷 🇩🇪" |
+| Juegos | 23 | 5,5 – 16,2 | Cuatro juegos jugados en un celular (tabla de abajo) |
+| ¡Y muchos más juegos! | 10 | 16,2 – 20,8 | Diez celulares chicos, cada uno jugando el suyo en bucle: 🔢 Toque y Fama, 🔤 Toque y Fama: Palabra, 🪢 El Ahorcado, ⚓ Batalla Naval, 👑 Cuarto Rey, 🔗 Conexiones, 📅 ¿En qué año?, 👑 Reinas, ☀️ Tango y 🧶 Desenredo. En vertical van en filas de 4, 3 y 3; en horizontal, en dos de 5 |
+| 📅 Uno al día | 16 | 20,8 – 28,2 | Fondo verde azulado. "Un juego sorpresa cada día, el mismo para todos" · "🔥 Arma tu racha". El dedo toca la tarjeta de la portada, el dado rueda (a todo el cuadro) y cae en 👑 Reinas, pone las dos últimas reinas y sale 100/100 con "Racha: 11 días" |
+| La Copa | 14 | 28,2 – 34,6 | Fondo dorado. "¿Te atreves a desafiar a tus amigos por una semana?", "🏆 LA COPA", el celular baja por podio, calendario, tabla y gráfico |
+| Cierre | 10 | 34,6 – 39,2 | "¡JUNTOS SE JUEGA MEJOR!", "Gratis · Sin descargar nada · Sin cuentas", **juegosdesalon.cl**, "📲 Agrégala a tu inicio" (D-232), "En 4 idiomas: 🇪🇸 🇬🇧 🇧🇷 🇩🇪" |
 
 Los juegos, en orden (cada uno con su semilla, ver `jugar.mjs`):
 
 | Juego | Golpes | La jugada |
 |---|---|---|
-| ⏳ Línea de Tiempo | 6 | Solo: elige una carta, la pone y sale "¡Correcto!" |
-| 🎲 Dudo | 6 | Contra el celular: pinta, sube a 2, apuesta, el celular canta, Javi duda y se destapa |
-| 📍 ¿Dónde queda? | 6 | Santiago, Chile, en el globo satelital: lo marca (a 0 km) y confirma: 100 puntos |
-| 〰️ Zip | 6 | Un solo trazo del 1 al 5 por las 16 casillas; queda en verde |
+| ⏳ Línea de Tiempo | 5 | Solo: elige una carta, la pone y sale "¡Correcto!" |
+| 🎲 Dudo | 5 | Contra el celular: pinta, sube a 2, apuesta, el celular canta, Javi duda y se destapa |
+| 📍 ¿Dónde queda? | 8 | Santiago, Chile: el dedo gira el globo hasta Sudamérica, lo acerca con +, marca Santiago y confirma; el mapa vuela hasta Chile: a 0 km, 100 puntos |
+| 〰️ Zip | 5 | Un solo trazo del 1 al 5 por las 16 casillas; queda en verde |
 
-Uno al día es un "juego" más de `GAMES` en `promo.html` (el mismo celular), con `beats: 14` y un
-`guion` de cuadros propio: los del dado no llevan toque y `schedule` no los mostraría.
+Uno al día (`UAD`) tiene su propia escena y su propio celular. Él y ¿Dónde queda? llevan un
+`guion` a mano ([segundo, cuadro], con el cuadro como `'tN'` = el toque N, o un índice negativo
+desde el final), porque su tiempo no se reparte parejo: el dado y el mapa necesitan su rato.
 
 ## Cómo está hecho
 
@@ -82,6 +90,14 @@ Uno al día es un "juego" más de `GAMES` en `promo.html` (el mismo celular), co
   `jugar.mjs` reemplaza `Math.random` y `crypto.getRandomValues` por uno con semilla. Así cada
   corrida reparte lo mismo y los toques caen donde deben. Las soluciones de Reinas, Tango y Zip
   salen de `generar(semilla, 1)` de cada motor (`public/cup/games/*.js`).
+- **Lo que se mueve después de un toque** (el dado, el acercamiento y el vuelo del mapa) se graba
+  cuadro a cuadro: un toque con `tras: ms` saca capturas seguidas y anota en cada una cuándo pasó
+  (`tras`, en segundos de la página), y `promo.html` las muestra a ese ritmo. Con `lento: f` la
+  página corre más lenta mientras tanto (`performance.now`, `setTimeout` y `requestAnimationFrame`
+  por un reloj propio, y las animaciones CSS por CDP): así el dado sale a unos 30 cuadros por
+  segundo aunque cada captura tarde 100 ms.
+- **El globo de ¿Dónde queda?** se gira con `globo.girarA` paso a paso (el paso `globo` de
+  `jugar.mjs`), con el dedo dibujando el mismo arrastre.
 - **Uno al día** (`hoy` en `jugar.mjs`) fija el reloj de la página en el 29 de octubre de 2026 (un
   día de Reinas, el n.° 24) y siembra en el celular diez días seguidos jugados antes: así la
   racha sale en 11. La solución de las reinas sale del motor (`generar(semilla, d)` de
@@ -126,13 +142,13 @@ en medio de cada jugada) y la hoja de las capturas. Rehacerlas no es revisarlas 
   ahí, en su primer golpe. La música termina a los 44,07 s del archivo.
 - Partes: introducción hasta 10,36 s (compás 4), entra fuerte; un respiro cerca de 16,4–17,7 s;
   un tramo más tranquilo cerca de 23,5–32,4 s; fuerte otra vez hasta el final.
-- Sola alcanza 41,1 s: los 35,1 s de la v6 caben sin repetir nada y terminan en el tramo fuerte.
+- Sola alcanza 41,1 s: los 39,2 s de la v6 caben sin repetir nada y terminan en el tramo fuerte.
   (Para los 48,5 s de la v5 se repetían los compases 4 a 8: después del respiro, 17,744 s, volvía
   al 10,36 s.)
 - Fundido de entrada y de salida de 1 s (pedido en v5).
 
 Si el video cambia de largo, se ajustan los golpes de las escenas para que sumen lo que alcanza
-la música (89 golpes sola) y la cuenta de `construir.sh` (hoy 76).
+la música (89 golpes sola) y la cuenta de `construir.sh` (hoy 85).
 
 ## Trampas conocidas
 
@@ -146,16 +162,16 @@ la música (89 golpes sola) y la cuenta de `construir.sh` (hoy 76).
   (`canvas.mapa-globo`.globo.aPantalla; `DONDE=x,y` lo fija a mano). Se revisa con `hoja.py`
   después de cada captura.
 - **El globo satelital de ¿Dónde queda? no gira en las capturas** al arrastrarlo con el mouse de
-  Playwright (en la v6 todas las capturas del arrastre salían iguales): por eso la jugada ya no
-  arrastra; el globo parte mostrando Sudamérica.
+  Playwright (todas las capturas del arrastre salían iguales): por eso lo gira `girarA`.
 - **Cuarto Rey responde a la posición real del mouse**, no a `.click()`; los arrastres de Reinas
   y Zip necesitan eventos de puntero de verdad: por eso `jugar.mjs` usa el mouse de Playwright.
 - **El "null" de Toque y Fama: Palabra** (un error de la app en `public/cup/games/word/ui.js`: un
   `append` nativo recibe `null`) se borra de la pantalla al capturar. Cuando se arregle en la app,
   sobra ese paso de `jugar.mjs`.
-- **Los cuadros del dado de Uno al día no llevan toque**: `schedule` solo pasa por los cuadros con
-  toque, así que esa escena lleva su `guion` de cuadros a mano. Si `jugar.mjs` cambia cuántas
-  capturas saca `hoy`, hay que revisar los números del `guion` en `promo.html`.
+- **Los guiones a mano dependen de las capturas:** si `jugar.mjs` cambia los toques de `hoy` o de
+  `donde`, se revisan los `guion` de `promo.html` (los toques van por número, `'t0'`, `'t1'`…).
+- **Son ~280 capturas.** Con más, Chrome puede no alcanzar a decodificarlas (ver la primera trampa):
+  `render.mjs` avisa cuáles no cargaron. El dado son unas 100.
 - **El servidor local se cae** en sesiones largas: `construir.sh` avisa si `SITIO` no responde.
 - La Copa del video es la demo del laboratorio (`?prueba&labs&demo=podio`): no toca Firebase.
 
@@ -221,7 +237,7 @@ y los dos fundidos. Al registrarlo en el repo se fijó también el azar de `cryp
 `jugar.mjs`: las capturas que se rehagan desde ahora pueden mostrar otras palabras que las de la
 v5 (en la v5 El Ahorcado adivina "PISCO").
 
-### v6 · 2026-10-08 · 35,1 s, vertical y 16:9 (la de hoy)
+### v6 · 2026-10-08 · 39,2 s, vertical y 16:9 (la de hoy)
 > "Rehace el vídeo promocional con todo lo nuevo, pero reduce el contenido a 35 segundos. No lo
 > hagas muy denso en contenido. Elige un subconjunto de juegos a mostrar, luego Uno al Día y luego
 > La Copa."
@@ -233,6 +249,17 @@ idiomas". Salen la grilla de "¡Y muchos más!" y la escena de modos; la canció
 compases. Todo recapturado con la app 0.129.1 (textos cortos, Tango y Toque y Fama ya no salen).
 Se arregló `construir.sh`, que todavía buscaba `musica/` y `salida/` (las carpetas son `music/` y
 `output/` desde D-192), y `marketing.mjs revisar` aprendió `"seleccion": true`.
+
+Segunda vuelta, el mismo día:
+> "Tanto Uno al Día como La Copa deben tener un tratamiento visual distinto (otros colores, por
+> ejemplo). El dado de juego al azar debe aparecer en full framerate (se ve cortado). El juego Donde
+> Queda debe tener animaciones cuando se usa el mapa. Agrega una parte que indique 'y muchos más
+> juegos!' con recuadros animados de cada otro juego que existe."
+
+Uno al día pasó a su propia escena con fondo verde azulado, y La Copa lleva fondo dorado. El dado
+se graba en cámara lenta (`lento`, `tras`) y sale a ~30 cuadros por segundo; ¿Dónde queda? gira el
+globo con el dedo, lo acerca y el mapa vuela a Chile al confirmar. Volvió "¡Y muchos más juegos!"
+con los diez juegos restantes (suma 🧶 Desenredo, que no estaba en la v5). Quedó en 39,2 s.
 
 ## Ideas que quedaron en el aire
 

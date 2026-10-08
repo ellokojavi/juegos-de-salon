@@ -84,11 +84,22 @@
   #cphone .screen img { height: auto; object-fit: initial; }
   .emoji { font-family: 'Noto Color Emoji', 'Apple Color Emoji', sans-serif; }
   .wide .phone { transform-origin: center; }
+  .mini { position: relative; margin: 0 auto; padding: 8px; border-radius: 28px; background: #0d0718; box-sizing: content-box;
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.16), 0 20px 44px rgba(0,0,0,0.5); }
+  .mscreen { position: relative; width: 100%; height: 100%; border-radius: 22px; overflow: hidden; background: var(--bg1); }
+  .mscreen img { position: absolute; left: 0; top: 0; width: 100%; }
+  .mlabel { margin: 14px -30px 0; font-weight: 900; font-size: 30px; line-height: 1.15; }
+  .wide .mlabel { margin: 12px -85px 0; font-size: 28px; white-space: nowrap; }
+  /* Uno al día y La Copa tienen su propio fondo, para que se lean como algo aparte de los juegos */
+  #tinte-uad { background: radial-gradient(circle at 18% 12%, rgba(46,230,214,0.5), transparent 55%), radial-gradient(circle at 85% 82%, rgba(157,255,58,0.32), transparent 55%), linear-gradient(160deg, #031f26, #05343c 55%, #0a2a3f); }
+  #tinte-copa { background: radial-gradient(circle at 50% 8%, rgba(255,210,63,0.5), transparent 55%), radial-gradient(circle at 12% 88%, rgba(255,122,26,0.42), transparent 55%), linear-gradient(160deg, #2a1300, #4d2400 55%, #3d0b14); }
 </style>
 </head>
 <body>
 <div id="stage">
   <div class="layer" id="bg"></div>
+  <div class="layer" id="tinte-uad" style="opacity:0"></div>
+  <div class="layer" id="tinte-copa" style="opacity:0"></div>
   <div class="layer" id="dots"></div>
 
   <!-- 1. Gancho -->
@@ -112,6 +123,18 @@
     <div class="abs" id="glow" style="left:90px;top:640px;width:900px;height:1100px;border-radius:50%;filter:blur(110px)"></div>
     <div id="titles"></div>
     <div class="phone" id="phone"><div class="screen" id="screen"></div></div>
+  </div>
+
+  <!-- 3b. Y muchos más juegos -->
+  <div class="layer" id="s7">
+    <div class="abs center disp glow-y" id="x0" style="top:60px;font-size:128px;color:var(--yellow)">¡Y MUCHOS MÁS<br>JUEGOS!</div>
+    <div class="layer" id="x1"></div>
+  </div>
+
+  <!-- 4. Uno al día -->
+  <div class="layer" id="s8">
+    <div id="utitulo"></div>
+    <div class="phone" id="uphone"><div class="screen" id="uscreen"></div></div>
   </div>
 
   <!-- 5. La Copa -->
@@ -149,6 +172,7 @@ css($('stage'), { width: W + 'px', height: H + 'px' });
 const COL = { left: '40px', right: '980px' };
 if (WIDE) {
   document.body.classList.add('wide');
+  $('x0').innerHTML = '¡Y MUCHOS MÁS JUEGOS!';
   const L = {
     h1: { top: '110px', fontSize: '130px' }, h2: { top: '410px', fontSize: '130px' }, h3: { top: '720px', fontSize: '160px' },
     die: { top: '40px', fontSize: '190px' }, l1: { top: '270px', fontSize: '200px' }, l2: { top: '470px', fontSize: '200px' },
@@ -156,7 +180,8 @@ if (WIDE) {
     glow: { left: '990px', top: '0px', width: '900px', height: '1080px' },
     phone: { left: '1160px', top: '-66px' },
     c0: { top: '150px', fontSize: '50px', ...COL, padding: '0' }, c1: { top: '340px', fontSize: '180px', ...COL }, c2: { top: '610px', ...COL, padding: '0' },
-    cphone: { left: '1160px' },
+    cphone: { left: '1160px' }, uphone: { left: '1160px', top: '-66px' },
+    x0: { top: '30px', fontSize: '110px' },
     e0: { top: '40px', fontSize: '150px' }, e1: { top: '230px', fontSize: '135px' }, e2: { top: '530px' }, e3: { top: '630px' },
     e4: { top: '850px' }, e5: { top: '925px' },
   };
@@ -167,17 +192,22 @@ if (WIDE) {
 const BEAT = 60 / 130;
 const FPS = 30;
 const GAMES = [
-  { emoji: '⏳', name: 'LÍNEA DE TIEMPO', line: '¿Qué pasó primero?',                 chip: '1–6 jugadores', img: 'linea',  color: [255, 210, 63], beats: 6 },
-  { emoji: '🎲', name: 'DUDO',            line: 'Apuesta y aguanta la cara',          chip: '1–6 jugadores', img: 'dudo',   color: [255, 122, 26], beats: 6 },
-  { emoji: '📍', name: '¿DÓNDE QUEDA?',   line: 'Encuentra la ciudad en el globo',     chip: '2–5 min',       img: 'donde',  color: [46, 160, 255], beats: 6 },
-  { emoji: '〰️', name: 'ZIP',             line: 'Un solo trazo por todo el tablero',   chip: '3 min',         img: 'zip',    color: [157, 255, 58], beats: 6 },
-  // Uno al día (D-230): la portada, el dado que cae en el juego de hoy, las dos últimas reinas y la racha.
-  // `guion`: [segundo, cuadro] de plays.hoy; los cuadros con toque llevan el dedo.
-  { emoji: '📅', name: 'UNO AL DÍA',      line: 'Un juego sorpresa cada día,<br>el mismo para todos', chip: '🔥 Arma tu racha', img: 'hoy', color: [46, 230, 214], beats: 14,
-    guion: [[0.95, 1], [1.2, 2], [1.45, 3], [1.7, 4], [1.95, 5], [2.3, 6], [2.85, 7], [3.35, 8], [4.0, 9]] },
+  { emoji: '⏳', name: 'LÍNEA DE TIEMPO', line: '¿Qué pasó primero?',                 chip: '1–6 jugadores', img: 'linea',  color: [255, 210, 63], beats: 5 },
+  { emoji: '🎲', name: 'DUDO',            line: 'Apuesta y aguanta la cara',          chip: '1–6 jugadores', img: 'dudo',   color: [255, 122, 26], beats: 5 },
+  // gira el globo con el dedo, lo acerca con +, marca Santiago y confirma: el mapa se mueve solo
+  { emoji: '📍', name: '¿DÓNDE QUEDA?',   line: 'Encuentra la ciudad en el globo',     chip: '2–5 min',       img: 'donde',  color: [46, 160, 255], beats: 8,
+    guion: [[1.2, 't0'], [1.55, 't1'], [2.35, 't2'], [2.7, 't3']] },
+  { emoji: '〰️', name: 'ZIP',             line: 'Un solo trazo por todo el tablero',   chip: '3 min',         img: 'zip',    color: [157, 255, 58], beats: 5 },
 ];
-// Escenas en golpes: gancho 6 · logo 6 · juegos 24 + Uno al día 14 · La Copa 16 · cierre 10 = 76 (35,1 s; la canción alcanza sola, ver README)
-const S = {}; { let b = 0; for (const [k, n] of [['hook', 6], ['logo', 6], ['games', GAMES.reduce((s, g) => s + g.beats, 0)], ['copa', 16], ['cta', 10]]) { S[k] = [b * BEAT, (b + n) * BEAT]; b += n; } }
+/** Uno al día (D-230): la tarjeta de la portada, el dado (a todo el cuadro), las dos últimas reinas y la racha. */
+const UAD = { emoji: '📅', name: 'UNO AL DÍA', line: 'Un juego sorpresa cada día,<br>el mismo para todos', chip: '🔥 Arma tu racha', img: 'hoy', color: [46, 230, 214],
+  guion: [[0.85, 't0'], [3.9, -4], [4.3, 't1'], [4.7, 't2'], [5.15, 't3']] };
+/** «¡Y muchos más juegos!»: todos los demás de la portada, cada uno jugando en bucle. */
+const MORE = [['🔢', 'Toque y Fama', 'toque'], ['🔤', 'Toque y Fama: Palabra', 'letras'], ['🪢', 'El Ahorcado', 'ahorcado'], ['⚓', 'Batalla Naval', 'naval'],
+  ['👑', 'Cuarto Rey', 'rey'], ['🔗', 'Conexiones', 'conexiones'], ['📅', '¿En qué año?', 'anio'],
+  ['👑', 'Reinas', 'reinas'], ['☀️', 'Tango', 'tango'], ['🧶', 'Desenredo', 'desenredo']];
+// Escenas en golpes: gancho 6 · logo 6 · juegos 23 · más 10 · Uno al día 16 · La Copa 14 · cierre 10 = 85 (39,2 s; la canción alcanza sola, ver README)
+const S = {}; { let b = 0; for (const [k, n] of [['hook', 6], ['logo', 6], ['games', GAMES.reduce((s, g) => s + g.beats, 0)], ['more', 10], ['uad', 16], ['copa', 14], ['cta', 10]]) { S[k] = [b * BEAT, (b + n) * BEAT]; b += n; } }
 const DURATION = S.cta[1];
 const G0 = S.games[0], G1 = S.games[1];
 { let t = G0; for (const g of GAMES) { g.len = g.beats * BEAT; g.t0 = t; t += g.len; } }
@@ -224,15 +254,28 @@ const hookEmojis = ['🃏', '🎲', '🪢', '⚓', '👑', '⏳'].map(e => {
 });
 
 const T = WIDE ? { emoji: 150, name: 360, line: 540, chip: 660, col: 'left:40px;right:980px' } : { emoji: 70, name: 250, line: 410, chip: 1830, col: '' };
-const titles = GAMES.map(g => {
+const titulo = g => {
   const w = document.createElement('div'); w.className = 'layer';
   const fs = g.name.length > 18 ? 92 : g.name.length > 13 ? 128 : 150;
   w.innerHTML = `<div class="abs center emoji" style="top:${T.emoji}px;font-size:150px;${T.col}">${g.emoji}</div>
     <div class="abs center disp shadow" style="top:${T.name}px;font-size:${fs}px;color:rgb(${g.color});${T.col}">${g.name}</div>
     <div class="abs center" style="top:${T.line}px;font-size:52px;font-weight:900;${T.col}">${g.line}</div>
     <div class="abs center" style="top:${T.chip + (WIDE && g.line.includes('<br>') ? 62 : 0)}px;${T.col}"><span class="chip" style="font-size:32px;padding:10px 26px">${g.chip}</span></div>`;
-  $('titles').appendChild(w); return w;
-});
+  return w;
+};
+const titles = GAMES.map(g => { const w = titulo(g); $('titles').appendChild(w); return w; });
+const utitulo = titulo(UAD); $('utitulo').appendChild(utitulo);
+/** Las entradas del título: emoji, nombre, línea y chip (lt en unidades de 2 s; o: cuánto se ve). */
+function animarTitulo(w, lt, t, o = 1) {
+  const [em, nm, ln, ch] = w.children;
+  css(em, { opacity: o, transform: `scale(${back(prog(lt, 0.05, 0.45))}) rotate(${Math.sin(t * 3) * 8}deg)` });
+  const pn = back(prog(lt, 0.12, 0.5));
+  css(nm, { opacity: clamp(pn * 2) * o, transform: `translateY(${(1 - pn) * 80}px) scale(${1 + 0.03 * beat(t)})` });
+  const pl = easeOut(prog(lt, 0.3, 0.7));
+  css(ln, { opacity: pl * o, transform: `translateY(${(1 - pl) * 30}px)` });
+  const pc = back(prog(lt, 0.45, 0.85));
+  css(ch, { opacity: clamp(pc) * o, transform: `translateY(${(1 - pc) * 60}px)` });
+}
 
 /* Los juegos se juegan de verdad: una captura real por jugada (jugar.mjs), con un círculo donde fue el
    dedo. Las capturas son de 390×844 px css; `sc` y `ox` las llevan a una pantalla. */
@@ -245,8 +288,18 @@ function makePlayer(box, play, sc, ox, touchSize = 74) {
     X: x.tap.x * sc - ox, Y: x.tap.y * sc,
     path: x.tap.path ? x.tap.path.map(([dx, dy]) => [dx * sc, dy * sc]) : (x.tap.dx || x.tap.dy) ? [[0, 0], [x.tap.dx * sc, x.tap.dy * sc]] : null,
     mids: x.tap.mids || 0 }));
+  P.tras = play.map(f => f.tras ?? null);
   P.raw.forEach(x => { x.lead = x.path ? (x.path.length > 2 ? 1.3 : x.mids ? 0.75 : 0.42) : 0; });
   return P;
+}
+/** Un guion a mano: [segundo, cuadro], con el cuadro como 'tN' (el toque N), índice, o negativo desde el final. */
+function guionar(P, guion) {
+  const toques = P.raw.map(x => x.k), n = P.frames.length;
+  P.taps = guion.map(([at, q]) => {
+    const k = typeof q === 'string' ? toques[+q.slice(1)] : q < 0 ? n + q : q;
+    const x = P.raw.find(r => r.k === k);
+    return x ? { ...x, at } : { k, at, quiet: true, lead: 0 };
+  });
 }
 /** Reparte las jugadas entre a y b (segundos); un arrastre necesita su tiempo antes de llegar. */
 function schedule(P, a, b) {
@@ -263,8 +316,10 @@ const along = (path, m) => {
 };
 /** Una jugada: el dedo baja, (arrastra,) sube; la pantalla responde justo después. */
 function playAt(P, lt) {
-  let k = 0;
-  P.taps.forEach(x => { if (lt >= x.at + 0.05) k = x.k; });
+  let k = 0, at0 = 0;
+  P.taps.forEach(x => { if (lt >= x.at + 0.05) { k = x.k; at0 = x.at; } });
+  // Lo que pasó después del toque (el dado, el mapa que se mueve), al ritmo en que pasó
+  while (P.tras[k + 1] != null && lt >= at0 + P.tras[k + 1]) k++;
   // Mientras dura un arrastre pasan sus capturas intermedias (el globo girando, el trazo creciendo)
   for (const x of P.taps) if (x.mids && lt >= x.at - x.lead && lt < x.at + 0.05) {
     const j = Math.min(x.mids, Math.floor(prog(lt, x.at - x.lead, x.at) * (x.mids + 1)));
@@ -293,11 +348,29 @@ const shots = GAMES.map(g => {
   if (!play) { const img = document.createElement('img'); img.src = `shots/${g.img}.png`; $('screen').appendChild(img); return img; }
   const w = document.createElement('div'); w.className = 'play';
   g.P = makePlayer(w, play, SC, OX);
-  if (g.guion) g.P.taps = g.guion.map(([at, k]) => { const x = g.P.raw.find(r => r.k === k); return x ? { ...x, at } : { k, at, quiet: true, lead: 0 }; });
+  if (g.guion) guionar(g.P, g.guion);
   else schedule(g.P, 0.6, Math.min(g.len - 0.75, G1 - 0.65 - g.t0));
   $('screen').appendChild(w); return w;
 });
 
+const uplay = document.createElement('div'); uplay.className = 'play'; $('uscreen').appendChild(uplay);
+UAD.P = makePlayer(uplay, PLAYS[UAD.img], SC, OX); guionar(UAD.P, UAD.guion);
+
+/* «¡Y muchos más juegos!»: una grilla de celulares chicos, cada uno jugando el suyo en bucle */
+const MT = WIDE ? { sw: 160, cols: MORE.map((_, i) => [W / 2 + (i % 5 - 2) * 330, i < 5 ? 170 : 600]) }
+  : { sw: 196, cols: MORE.map((_, i) => { const r = i < 4 ? 0 : i < 7 ? 1 : 2, c = r ? (i - (r === 1 ? 4 : 7)) : i, n = r ? 3 : 4; return [W / 2 + (c - (n - 1) / 2) * (n === 4 ? 250 : 300), 330 + r * 520]; }) };
+const tiles = MORE.map(([emoji, name, id], i) => {
+  const sh = Math.round(MT.sw * 844 / 390), [cx, top] = MT.cols[i];
+  const t = document.createElement('div'); t.className = 'abs';
+  css(t, { left: cx - MT.sw / 2 - 8 + 'px', top: top + 'px', width: MT.sw + 16 + 'px', textAlign: 'center' });
+  t.innerHTML = `<div class="mini" style="width:${MT.sw}px;height:${sh}px"><div class="mscreen"></div></div>
+    <div class="mlabel"><span class="emoji">${emoji}</span> ${name}</div>`;
+  $('x1').appendChild(t);
+  const P = makePlayer(t.querySelector('.mscreen'), PLAYS[id], MT.sw / 390, 0, 30);
+  schedule(P, 0.4, 2.3);
+  return { el: t, P, delay: 0.3 + i * 0.12 };
+});
+const LOOP = 3.2;
 const confetti = [];
 { const r = rng(42); const cols = ['#ff2e88', '#ffd23f', '#2ee6d6', '#9dff3a', '#8a4dff', '#ff7a1a'];
   for (let i = 0; i < 90; i++) {
@@ -323,6 +396,10 @@ function render(t) {
     const y = ((d.y - t * d.sp) % (H + 80) + H + 80) % (H + 80) - 40;
     css(d.el, { transform: `translate(${d.x + Math.sin(t * 0.8 + d.sway) * d.amp}px,${y}px)` });
   });
+
+  // Los fondos propios de Uno al día y de La Copa
+  css($('tinte-uad'), { opacity: win(t, S.uad[0] - 0.1, S.uad[1] + 0.15, 0.35, 0.35) });
+  css($('tinte-copa'), { opacity: win(t, S.copa[0] - 0.1, S.cta[0] + 0.15, 0.35, 0.35) });
 
   /* 1. Gancho */
   { const [A, B] = S.hook, u = t - A;
@@ -393,17 +470,39 @@ function render(t) {
     titles.forEach((w, i) => {
       if (i !== gi) { w.style.display = 'none'; return; }
       w.style.display = '';
-      const [em, nm, ln, ch] = w.children;
-      const o = 1 - easeIn(prog(lt, 1.75, 2)) * (gi < GAMES.length - 1 ? 1 : 0);
-      css(em, { opacity: o, transform: `scale(${back(prog(lt, 0.05, 0.45))}) rotate(${Math.sin(t * 3) * 8}deg)` });
-      const pn = back(prog(lt, 0.12, 0.5));
-      css(nm, { opacity: clamp(pn * 2) * o, transform: `translateY(${(1 - pn) * 80}px) scale(${1 + 0.03 * beat(t)})` });
-      const pl = easeOut(prog(lt, 0.3, 0.7));
-      css(ln, { opacity: pl * o, transform: `translateY(${(1 - pl) * 30}px)` });
-      const pc = back(prog(lt, 0.45, 0.85));
-      css(ch, { opacity: clamp(pc) * o, transform: `translateY(${(1 - pc) * 60}px)` });
+      const fin = (GAMES[i].t0 + GAMES[i].len - t) * sp;   // lo que le queda, en las mismas unidades
+      animarTitulo(w, lt, t, gi < GAMES.length - 1 ? 1 - easeIn(prog(2 - fin, 1.75, 2)) : 1);
     });
   }
+
+  /* 3b. Y muchos más juegos */
+  { const [A, B] = S.more, u = t - A;
+    const v = win(t, A, B, 0.15, 0.3);
+    css($('s7'), { opacity: v, display: v > 0 ? '' : 'none' });
+    if (v > 0) {
+      const p0 = back(prog(u, 0, 0.4));
+      css($('x0'), { opacity: clamp(p0 * 2), transform: `scale(${lerp(2.2, 1, p0) * (1 + 0.03 * beat(t))}) rotate(-2deg)` });
+      tiles.forEach((T, i) => {
+        const p = back(prog(u, T.delay, T.delay + 0.45));
+        css(T.el, { opacity: clamp(p * 2), transform: `translateY(${(1 - p) * 120}px) scale(${0.6 + 0.4 * p}) rotate(${(i % 2 ? 1 : -1) * 1.5}deg)` });
+        const lt = u - T.delay - 0.4;
+        playAt(T.P, lt < 0 ? -1 : lt % LOOP);
+      });
+    } }
+
+  /* 4. Uno al día */
+  { const [A, B] = S.uad, u = t - A;
+    const v = win(t, A, B, 0.2, 0.3);
+    css($('s8'), { opacity: v, display: v > 0 ? '' : 'none' });
+    if (v > 0) {
+      animarTitulo(utitulo, u * 2 / (6 * BEAT), t);
+      const enter = back(prog(u, 0, 0.6)), leave = easeIn(prog(t, B - 0.4, B));
+      css($('uphone'), {
+        transform: `perspective(2400px) translateY(${lerp(1400, 0, enter) + Math.sin(t * 1.6) * 12 + leave * 1400}px) rotateY(-6deg) scale(${PS})`,
+        boxShadow: '0 0 0 3px rgba(255,255,255,0.14), 0 40px 90px rgba(0,0,0,0.6), 0 0 110px rgba(46,230,214,0.6)',
+      });
+      playAt(UAD.P, u);
+    } }
 
   /* 5. La Copa */
   { const [A, B] = S.copa, u = t - A;
