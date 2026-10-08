@@ -96,7 +96,10 @@ nunca se usaron, y no se renumera.
   venga) y las tarjetas sociales enseñan los juegos que hay, con sus nombres, emojis, textos y
   pantallas actuales. Un juego nuevo que no sale, uno que ya no está, un nombre o un texto viejo o
   una pantalla que cambió se anotan como pendiente del asset (`node tools/agents/marketing.mjs anotar`).
-  Rehacerlo lo decide el dueño: el revisor anota, no rehace.
+  Rehacerlo lo decide el dueño: el revisor anota, no rehace. Un asset que muestra a propósito
+  solo algunos juegos (`"seleccion": true` en `marketing/registro.json`; el video desde la v6, que
+  el dueño pidió corto y con pocos juegos) no queda atrás porque falte uno nuevo, pero sí si sale
+  uno que ya no está o una pantalla que cambió.
 
 ## Resuelto con el dueño
 
