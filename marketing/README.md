@@ -6,7 +6,7 @@ rehacerse (D-178).
 
 | Asset | Versión | Archivos | Memoria |
 |---|---|---|---|
-| Video promocional | 6 · 2026-10-08 · 35,1 s | [16:9 para YouTube](promo-video/output/promo-youtube-16x9.mp4) · [vertical](promo-video/output/promo-vertical.mp4) | [promo-video/README.md](promo-video/README.md) |
+| Video promocional | 6 · 2026-10-08 · 39,2 s | [16:9 para YouTube](promo-video/output/promo-youtube-16x9.mp4) · [vertical](promo-video/output/promo-vertical.mp4) | [promo-video/README.md](promo-video/README.md) |
 
 [`registro.json`](registro.json) es la misma lista para leer con código: versión, fecha,
 archivos, formatos, duración y estado de cada asset.
