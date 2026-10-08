@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.130.0 — 2026-10-08
+- **〰️ Zip: diez niveles y listo** (D-250): ya no hay niveles sin fin. Son diez, de 4 × 4 a 7 × 7,
+  y quien los resuelve todos termina ahí con 100 puntos, sin esperar el reloj; entre ellos gana
+  quien terminó antes. Antes, seguir resolviendo después del décimo hacía perder el desempate. El
+  encabezado dice "Nivel 3 de 10" y va en una sola línea también en portugués, igual que en Desenredo.
+
 ## 0.129.1 — 2026-10-07
 - **Toque y Fama: la fama es verde y el toque amarillo**, como en Wordle (#196): en las letras de
   🔤 Palabra, en las pistas de 🔢 Número y del juego de sala, y en la tarjeta de Palabra
