@@ -133,7 +133,7 @@ por su agarre ⠿) y un juego de la mano, hasta el día que reemplaza; tocando s
 (las demos) se usa el de siempre, `CALENDARIOS`: Línea, Toque y Fama, Conexiones, Reinas, Palabra,
 Año y la final; o Línea, Conexiones y la final en la de 3 días (D-163).
 
-Los tres juegos más nuevos del pozo son **〰️ Zip** (un solo trazo por todas las casillas, pasando por los números en orden; por niveles, tres minutos para resolver diez, que con los diez dan 100 y terminan antes, D-250) y **☀️ Tango**
+Los tres juegos más nuevos del pozo son **〰️ Zip** (un solo trazo por todas las casillas, pasando por los números en orden; por niveles: diez, de 4 × 4 a 7 × 7, en tres minutos; con los diez son 100 y la partida termina ahí, y entre quienes los resuelven todos gana quien terminó antes, D-250) y **☀️ Tango**
 (soles y lunas, mitad y mitad por línea, nunca tres seguidos, con marcas = y ×), y **📍 ¿Dónde
 queda?** (cinco ciudades con su país, un alfiler en un globo sin nombres que se gira sin fin y,
 con dos dedos, también en torno a la pantalla, con una brújula que endereza el norte; 100 puntos

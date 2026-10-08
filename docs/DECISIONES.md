@@ -1293,7 +1293,7 @@ a la luna no cuenta como error: solo cuenta dejar la casilla rompiendo una regla
 errores: todos los que terminan sacan 100 y el tiempo ordena el día.
 
 ## D-103 · Zip por niveles contra el reloj, sesión de prueba en cada juego, y ajustes a Reinas y Tango
-**Fecha:** 2026-09-23 · **Estado:** corregida por D-167 y D-250 (Zip tiene diez niveles)
+**Fecha:** 2026-09-23 · **Estado:** corregida por D-167, D-250
 **Decisión:** Lo que salió de probar la v0.44 en el laboratorio:
 - **Zip** pasa a jugarse **por niveles contra el reloj**: tres minutos de tiempo activo para
   resolver la mayor cantidad de tableros, cada uno igual o más grande que el anterior (4 × 4 → 7 ×
