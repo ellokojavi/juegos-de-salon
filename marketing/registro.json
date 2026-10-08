@@ -43,8 +43,10 @@
       "revision": {
         "fecha": "2026-10-08",
         "app": "0.129.1",
-        "al_dia": true,
-        "pendiente": []
+        "al_dia": false,
+        "pendiente": [
+          "Zip (escena de los cuatro juegos, ~14-16 s): el encabezado del video dice 'Nivel 1 · 4 × 4'; desde 0.130.0 (D-250) dice 'Nivel 1 de 10' (diez niveles fijos). Se corrige en la próxima vuelta, no amerita rehacer la v6."
+        ]
       },
       "seleccion": true,
       "escenas": [
