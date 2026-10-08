@@ -37,7 +37,7 @@
       "fecha": "2026-10-08",
       "desde": "120897ba0b5948f888dde870349419bac3859113",
       "hasta": "f07acbfd765edb4c68bc2b5133e5882f250e07b6",
-      "pr": null,
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/257",
       "pendientes": [
         "Capturas que necesitan red (salas en línea: toque-y-fama 4, batalla-naval 2, linea-de-tiempo 5, dudo 2, generala 1, ahorcado 2, julepe 1); el entorno no llega a gstatic/Firebase"
       ]
