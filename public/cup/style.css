@@ -460,6 +460,8 @@ body.pantalla-completa #jugar-reglas .reglas[open] > summary { position: sticky;
 
 /* v0.45 (D-103): Zip por niveles, acciones de Tango y la sesión de prueba */
 .zip-cabeza { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-weight: 900; }
+/* En una sola línea a 320 px en los cuatro idiomas: partida, "Nível 10 de 10" se veía en dos */
+.zip-cabeza > span { white-space: nowrap; }
 .zip-nivel { color: var(--yellow); }
 .zip-hechos { color: var(--muted); font-size: 0.9rem; }
 .zip-reloj { font: 900 1.15rem var(--font-num); font-variant-numeric: tabular-nums; }
