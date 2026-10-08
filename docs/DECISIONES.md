@@ -68,7 +68,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216 |
-| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234 |
+| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250 |
 | Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249 |
 | Marketing | `marketing/README.md` | D-178 |
@@ -1293,7 +1293,7 @@ a la luna no cuenta como error: solo cuenta dejar la casilla rompiendo una regla
 errores: todos los que terminan sacan 100 y el tiempo ordena el día.
 
 ## D-103 · Zip por niveles contra el reloj, sesión de prueba en cada juego, y ajustes a Reinas y Tango
-**Fecha:** 2026-09-23 · **Estado:** corregida por D-167
+**Fecha:** 2026-09-23 · **Estado:** corregida por D-167 y D-250 (Zip tiene diez niveles)
 **Decisión:** Lo que salió de probar la v0.44 en el laboratorio:
 - **Zip** pasa a jugarse **por niveles contra el reloj**: tres minutos de tiempo activo para
   resolver la mayor cantidad de tableros, cada uno igual o más grande que el anterior (4 × 4 → 7 ×
@@ -4304,3 +4304,20 @@ todo el que va a jugar, también en las antesalas largas, sin bajar el botón pr
 **Consecuencias:** quien aparezca en una pantalla nueva con ranking usa `destacado: true` junto a su botón principal; el
 bloque sin destacar queda para `/records/` y el pie de los rankings.
 
+## D-250 · Zip tiene diez niveles: con los diez son 100 puntos y se termina antes
+**Fecha:** 2026-10-08 · **Estado:** vigente · **Relación:** corrige D-103 (Zip sin fin); iguala Zip a Desenredo (D-179)
+**Decisión:** Zip deja de repetir el 7 × 7 sin fin: son **diez niveles** (`TAMANOS`, de 4 × 4 a
+7 × 7) y quien los resuelve todos termina ahí, con **100 puntos**, sin esperar el reloj. Entre quienes
+los resuelven todos, gana quien terminó antes; quien no alcanza suma 10 por nivel y, si empata en
+niveles, gana quien resolvió su último nivel antes. El encabezado dice "Nivel 3 de 10" (el tamaño ya se ve en la grilla, y con él no cabía a 320 px) y el
+final, "¡Resolviste los 10 niveles!". Es el formato que Desenredo ya tenía.
+**Por qué:** lo pidió el dueño ("completarlos todos te da 100; si no, o si más de uno los completa,
+entra el tiempo"). Además arregla un desempate al revés: con niveles sin fin, el puntaje topaba en
+100 con diez, pero el desempate era la hora del **último** nivel resuelto, así que quien seguía
+resolviendo el 11 a los 2:50 perdía contra quien había hecho diez a los 2:40 y no alcanzó otro.
+**Alternativas descartadas:** sumar puntos por el tiempo que sobra (90 por los diez y hasta 10 por
+rapidez): el tiempo ya decide el empate, y "10 por nivel" se explica en una línea, igual que en
+Desenredo.
+**Consecuencias:** `finPartida` de Zip termina también con `hechos >= NIVELES`, y la pantalla
+retoma una partida terminada con los diez mostrando el último resuelto. El puntaje (`10 × hechos`)
+y el dato de desempate (`ultimo`) no cambian de forma, así que las copas en curso siguen valiendo.

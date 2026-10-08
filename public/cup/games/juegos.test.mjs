@@ -407,6 +407,12 @@ test('zip: solución única, trazo y niveles', () => {
   assert.equal(zip.puntaje({ hechos: 4 }), 40);
   assert.equal(zip.puntaje({ hechos: 14 }), 100);
   assert.equal(zip.TIEMPO_MS, 180000);
+  // Diez niveles (D-250): con los diez se termina antes del reloj, con 100
+  assert.equal(zip.NIVELES, 10);
+  assert.equal(zip.puntaje({ hechos: zip.NIVELES }), 100);
+  assert.ok(zip.finPartida({ hechos: zip.NIVELES, usado: 95000 }));
+  assert.ok(!zip.finPartida({ hechos: 9, usado: 95000 }));
+  assert.ok(zip.finPartida({ hechos: 3, usado: 60000 }, 60000));
 });
 
 test('desenredo: siempre tiene solución, empieza enredado y los niveles crecen (D-179)', () => {
