@@ -5,9 +5,9 @@
  * (D-85): la grilla sobrevive a los redibujos, las casillas no. **Borrar todo** deja solo el 1,
  * con el mismo segundo toque de confirmación que en Tango.
  *
- * Por niveles contra el reloj (D-103): tres minutos de tiempo activo (se pausa con la pantalla
- * oculta) para resolver la mayor cantidad de tableros. Las jugadas son la partida entera:
- * `{ hechos, trazo, usado, ultimo }`.
+ * Por niveles contra el reloj (D-103, D-250): tres minutos de tiempo activo (se pausa con la
+ * pantalla oculta) para resolver diez tableros; con los diez, se termina antes. Las jugadas son
+ * la partida entera: `{ hechos, trazo, usado, ultimo }`.
  */
 import * as motor from './engine.js';
 
@@ -93,8 +93,8 @@ export function montar(raiz, ctx) {
 
   let celdas = [], linea = null;
 
-  const armar = () => {
-    p = motor.nivel(codigo, dia, J.hechos);
+  const armar = (k = J.hechos) => {
+    p = motor.nivel(codigo, dia, k);
     const { n } = p;
     grilla.innerHTML = '';
     grilla.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
@@ -112,13 +112,13 @@ export function montar(raiz, ctx) {
     grilla.append(svg);
     if (!motor.valido(p, J.trazo)) J.trazo = [];
     // El nivel siguiente se prepara mientras se juega este: un 7 × 7 tarda en generarse
-    setTimeout(() => { try { motor.nivel(codigo, dia, J.hechos + 1); } catch (_) { /* nada */ } }, 50);
+    setTimeout(() => { try { if (k + 1 < motor.NIVELES) motor.nivel(codigo, dia, k + 1); } catch (_) { /* nada */ } }, 50);
   };
 
   const pintarCabeza = () => {
     const quedan = Math.max(0, tiempo - usado());
     cabeza.replaceChildren(...[
-      terminado ? null : el('span', { class: 'zip-nivel' }, fmt(T.zipLevel, { k: J.hechos + 1, n: p ? p.n : '' })),
+      terminado ? null : el('span', { class: 'zip-nivel' }, fmt(T.zipLevel, { k: J.hechos + 1, total: motor.NIVELES })),
       el('span', { class: 'zip-hechos' }, fmt(T.zipDone, { n: J.hechos })),
       terminado ? null : el('span', { class: 'zip-reloj' + (quedan < 30000 ? ' poco' : '') }, `⏳ ${Math.floor(quedan / 60000)}:${String(Math.floor((quedan % 60000) / 1000)).padStart(2, '0')}`),
     ].filter(Boolean));
@@ -128,7 +128,7 @@ export function montar(raiz, ctx) {
     clearInterval(reloj);
     // Si el tiempo se acabó con un nivel a medias, se muestra cómo se resolvía (D-109). Si justo
     // se había resuelto (la grilla ya está en verde), no hay nada que mostrar.
-    const aMedias = !grilla.classList.contains('fin') && p?.sol;
+    const aMedias = J.hechos < motor.NIVELES && !grilla.classList.contains('fin') && p?.sol;
     J.usado = Math.min(tiempo, usado()); desde = null;
     guardar();
     aviso.innerHTML = '';
@@ -143,10 +143,12 @@ export function montar(raiz, ctx) {
     // regresiva, que ya no dice nada, desaparece
     ctx.pararReloj?.({ ...J });
     terminado = true;
-    SFX.timeUp();
-    aviso.append(el('div', { class: 'aviso bien' }, J.hechos === 1 ? T.zipTimeOne : fmt(T.zipTime, { n: J.hechos })),
+    // Con los diez, la victoria ya sonó al resolver el último
+    const todos = J.hechos >= motor.NIVELES;
+    if (!todos) SFX.timeUp();
+    aviso.append(...[el('div', { class: 'aviso bien' }, todos ? T.zipAll : J.hechos === 1 ? T.zipTimeOne : fmt(T.zipTime, { n: J.hechos })),
       aMedias ? el('p', { class: 'muted center', id: 'zip-solucion', style: 'margin:0' }, fmt(T.zipSolution, { k: J.hechos + 1 })) : null,
-      el('button', { class: 'btn btn--yellow', id: 'btn-fin', onClick: () => { SFX.tap(); ctx.terminar({ ...J }); } }, ctx.textoFin || T.seeResults));
+      el('button', { class: 'btn btn--yellow', id: 'btn-fin', onClick: () => { SFX.tap(); ctx.terminar({ ...J }); } }, ctx.textoFin || T.seeResults)].filter(Boolean));
     pintarCabeza();
   };
 
@@ -161,12 +163,13 @@ export function montar(raiz, ctx) {
     return e;
   };
 
-  /** Nivel resuelto: se anota, se celebra un momento y aparece el siguiente. */
+  /** Nivel resuelto: se anota, se celebra un momento y aparece el siguiente (o se termina). */
   const resuelto = () => {
     J.hechos++; J.ultimo = usado(); J.trazo = [];
     SFX.win(); vibrate([30, 50, 30]);
     grilla.classList.add('fin');
     guardar();
+    if (J.hechos >= motor.NIVELES) { terminar(); return; }
     setTimeout(() => { if (usado() >= tiempo) return; grilla.classList.remove('fin'); armar(); pintar(); pintarCabeza(); }, 450);
   };
 
@@ -220,7 +223,11 @@ export function montar(raiz, ctx) {
   };
   document.addEventListener('visibilitychange', alCambiar);
 
-  if (J.usado >= tiempo) { armar(); pintar(); terminar(); return; }
+  if (motor.finPartida({ ...J, usado: usado() }, tiempo)) {
+    // Retomar una partida ya terminada. Con los diez resueltos, el último queda a la vista resuelto
+    if (J.hechos >= motor.NIVELES) { armar(motor.NIVELES - 1); J.trazo = p.sol.slice(); pintar(); J.trazo = []; grilla.classList.add('fin'); } else { armar(); pintar(); }
+    terminar(); return;
+  }
   armar(); pintar(); pintarCabeza();
   reloj = setInterval(() => {
     if (!raiz.isConnected) { clearInterval(reloj); document.removeEventListener('visibilitychange', alCambiar); return; }
@@ -231,6 +238,7 @@ export function montar(raiz, ctx) {
 
 /**
  * El puntaje son los niveles resueltos; el desempate, el tiempo en que se resolvió el último
- * (no los tres minutos, que todos gastan).
+ * (no los tres minutos, que gastan todos los que no terminan). Con los diez, es cuánto se tardó
+ * en terminar (D-250).
  */
 export const resultado = j => ({ s: motor.puntaje(j), t: motor.tarjeta(j), resumen: `${motor.puntaje(j)}/100`, ms: Math.round(j.ultimo || motor.TIEMPO_MS) });
