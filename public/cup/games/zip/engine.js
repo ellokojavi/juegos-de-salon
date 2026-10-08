@@ -4,8 +4,8 @@
  * única: el generador suma números sobre un camino al azar hasta que el resolvedor encuentra
  * uno solo.
  *
- * Se juega por niveles contra el reloj (D-103): tres minutos para resolver la mayor cantidad de
- * tableros, cada uno igual o más grande que el anterior. Todos ven los mismos niveles.
+ * Se juega por niveles contra el reloj (D-103, D-250): tres minutos para resolver diez tableros,
+ * cada uno igual o más grande que el anterior. Todos ven los mismos niveles.
  */
 import { azar } from '../semilla.js';
 
@@ -145,8 +145,9 @@ export function estado(p, trazo) {
 /* ------------------------------------------------------------------ */
 
 export const TIEMPO_MS = 3 * 60 * 1000;
-/** El tamaño de cada nivel: empiezan chicos y crecen. Pasado el último, se repite el 7 × 7. */
+/** El tamaño de cada nivel: diez niveles que empiezan chicos y crecen (D-250). */
 export const TAMANOS = [4, 4, 5, 5, 5, 6, 6, 6, 6, 7];
+export const NIVELES = TAMANOS.length;
 export const tamanoDe = k => TAMANOS[Math.min(k, TAMANOS.length - 1)];
 
 /** El nivel `k` (desde 0) de ese día: el mismo para todos. Se guarda el último armado: el siguiente se prepara antes de llegar. */
@@ -163,12 +164,13 @@ export function nivel(codigo, dia, k) {
  * El puntaje son los niveles resueltos; el desempate, cuánto se tardó en llegar al último.
  */
 export const partidaNueva = () => ({ hechos: 0, trazo: [], usado: 0, ultimo: 0 });
-export const finPartida = j => j.usado >= TIEMPO_MS;
+/** Se acaba con el tiempo, o antes si se resolvieron los diez (D-250). */
+export const finPartida = (j, tiempo = TIEMPO_MS) => j.usado >= tiempo || j.hechos >= NIVELES;
 
 /**
- * El puntaje de Zip son los niveles resueltos en los tres minutos.
+ * De 0 a 100 (D-113): 10 por nivel resuelto, así que los diez dan 100. Entre quienes empatan
+ * —también entre los que los resolvieron todos— gana quien llegó antes al último (D-250).
  */
-/** De 0 a 100 (D-113): 10 por nivel resuelto, hasta 100. */
 export const PUNTOS_NIVEL = 10;
 export const puntaje = j => Math.min(100, PUNTOS_NIVEL * (j.hechos || 0));
 export const tarjeta = j => `〰️ ${'🟩'.repeat(j.hechos || 0)}${j.hechos ? '' : '⬛'}`;
