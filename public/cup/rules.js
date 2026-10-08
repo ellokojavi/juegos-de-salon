@@ -91,7 +91,7 @@ const ES = {
         'Arrastra el dedo desde el 1. Para corregir, retrocede por el mismo camino.',
         'Tienes 3 minutos para resolver 10 niveles, que van creciendo.',
       ],
-      puntaje: 'Cada nivel resuelto vale 10 puntos: con los 10, tienes 100.',
+      puntaje: 'Cada nivel resuelto vale 10 puntos.',
       desempate: 'Si empatas, gana quien resolvió su último nivel antes.',
     },
     desenredo: {
@@ -808,7 +808,7 @@ const EN = {
         'Drag your finger from the 1. To fix a mistake, go back along the same path.',
         'You have 3 minutes to solve 10 levels that keep growing.',
       ],
-      puntaje: 'Each level you solve is worth 10 points: all 10 give you 100.',
+      puntaje: 'Each level you solve is worth 10 points.',
       desempate: 'On a tie, whoever solved their last level sooner wins.',
     },
     desenredo: {
@@ -1514,7 +1514,7 @@ const PT = {
         'Arraste o dedo a partir do 1. Para corrigir, volte pelo mesmo caminho.',
         'Você tem 3 minutos para resolver 10 níveis, que vão crescendo.',
       ],
-      puntaje: 'Cada nível resolvido vale 10 pontos: com os 10, você tem 100.',
+      puntaje: 'Cada nível resolvido vale 10 pontos.',
       desempate: 'Se empatar, ganha quem resolveu o último nível antes.',
     },
     desenredo: {
@@ -2220,7 +2220,7 @@ const DE = {
         'Zieh den Finger von der 1 aus. Zum Korrigieren geh denselben Weg zurück.',
         'Du hast 3 Minuten für 10 Level, die immer größer werden.',
       ],
-      puntaje: 'Jedes gelöste Level bringt 10 Punkte: Alle 10 ergeben 100.',
+      puntaje: 'Jedes gelöste Level bringt 10 Punkte.',
       desempate: 'Bei Gleichstand gewinnt, wer sein letztes Level früher gelöst hat.',
     },
     desenredo: {
