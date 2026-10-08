@@ -206,6 +206,11 @@ un celular entra con su jugador y abre una copa en que está sentado; otro celul
 entra con el mismo jugador, la encuentra en la portada y al abrirla tiene su nombre ya elegido.
 Usa el almacén de prueba de la copa y el de los jugadores.
 
+`node tools/e2e/cup/zip-diez.mjs <salida>` juega los diez niveles de Zip en la práctica, con la
+semilla fija, y revisa que la partida termine ahí, antes del reloj (D-250): el aviso "¡Resolviste
+los 10 niveles!" sin texto de más, sin cuenta regresiva ni solución a la vista, el reloj de arriba
+quieto y 100 puntos en el resultado.
+
 `node tools/e2e/cup/avisos.mjs [salida]` recorre los avisos de La Copa (D-223) con el almacén de
 prueba, la clave VAPID de `vapid.js` (D-225) y un servicio de avisos falso (nada sale del Chrome): la tarjeta y
 "Ahora no", la campana que activa los avisos y el aviso de confirmación, los ajustes y "Silenciar
