@@ -106,6 +106,11 @@ function renderAccion(e) {
       el('button', { class: 'btn marca-criminal', id: 'btn-criminal', onClick: ev => { ev.stopPropagation(); intentar(1); } }, `🔪 ${n} es criminal`)));
   } else if (mensaje) {
     box.append(el('p', { class: `msg ${mensaje.tipo}` }, mensaje.texto));
+  } else if (!P.marcas.length) {
+    // Al empezar, la pista de partida queda a la vista junto a la grilla: la lista está más abajo
+    const n = caso.nombres[caso.inicio];
+    box.append(el('p', { class: 'msg' }, `${n} es ${caso.v[caso.inicio] ? 'criminal' : 'inocente'} y dice: «${caso.pistas[caso.inicio].texto}»`),
+      el('p', { class: 'msg-sub' }, 'Toca a alguien para marcarlo.'));
   } else {
     box.append(el('p', { class: 'msg' }, 'Toca a alguien para marcarlo.'));
   }
@@ -114,7 +119,7 @@ function renderAccion(e) {
 function renderPistas(e) {
   // La más nueva arriba: el orden en que se fueron sabiendo, al revés
   const orden = [caso.inicio, ...P.marcas].reverse();
-  $('#pistas').replaceChildren(el('h2', {}, `💬 Pistas (${orden.length})`), ...orden.map(i => el('button', {
+  $('#pistas').replaceChildren(el('h2', {}, `💬 Pistas (${orden.length})`), el('p', { class: 'ayuda' }, 'Toca una pista para tacharla.'), ...orden.map(i => el('button', {
     class: 'pista' + (nuevas.includes(i) ? ' nueva' : '') + (P.tachadas.includes(i) ? ' tachada' : ''),
     'data-de': i, title: 'Toca para tacharla cuando ya la usaste',
     onClick: ev => {
@@ -157,7 +162,7 @@ function intentar(valor) {
     mensaje = { tipo: 'error', texto: `${n} no es ${valor ? 'criminal' : 'inocente'}. Revisa las pistas.` };
     SFX.letterMiss(); vibrate([40, 40, 40]);
     const card = document.querySelector(`.persona[data-i="${i}"]`);
-    card?.classList.remove('sacude'); void card?.offsetWidth; card?.classList.add('sacude');
+    card?.classList.remove('sacude'); void card?.offsetWidth; card?.classList.add('sacude', 'equivoco');
     guardar();
     renderMarcador(); renderAccion(estado(caso, P.marcas));
     return;
@@ -165,7 +170,7 @@ function intentar(valor) {
     P.marcas.push(i);
     nuevas = [i];
     elegida = null;
-    mensaje = { tipo: 'ok', texto: `¡Bien! ${n} es ${valor ? 'criminal' : 'inocente'}, y dio su pista.` };
+    mensaje = { tipo: 'ok', texto: `¡Bien! ${n} es ${valor ? 'criminal' : 'inocente'} y dice: «${caso.pistas[i].texto}»` };
     SFX.letterHit(); vibrate(25);
     if (estado(caso, P.marcas).terminado) { parar(); P.done = true; }
   }
@@ -194,7 +199,8 @@ function renderFin() {
       class: 'btn btn--cyan', id: 'btn-compartir',
       onClick: async e => {
         SFX.tap();
-        const texto = [cabecera({ emoji: '🔍', titulo: 'El caso', contexto: nombreCaso }), `Resuelto ${textoErrores(P.errores.length)} en ${mmss(P.ms)}.`, tarjeta(), '¿Lo resuelves con menos errores?'].join('\n\n');
+        const reto = P.errores.length ? '🎯 ¿Lo resuelves con menos errores?' : '🎯 ¿Lo resuelves más rápido?';
+        const texto = [cabecera({ emoji: '🔍', titulo: 'El caso', contexto: nombreCaso }), `✅ Resuelto ${textoErrores(P.errores.length)} en ${mmss(P.ms)}.`, tarjeta(), reto].join('\n\n');
         const r = await compartir({ titulo: 'El caso', texto, url });
         if (r === 'copied') { e.target.textContent = '✅ Copiado'; setTimeout(() => { e.target.textContent = '📤 Compartir el resultado'; }, 2500); }
       },

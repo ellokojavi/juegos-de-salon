@@ -23,7 +23,7 @@
   font-family: var(--font-body); cursor: pointer; position: relative; min-width: 0;
 }
 .persona .emo { font-size: 1.45rem; line-height: 1.1; }
-.persona .nom { font-weight: 900; font-size: 0.82rem; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.persona .nom { font-weight: 900; font-size: clamp(0.7rem, 3.5vw, 0.82rem); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .persona .ofi { font-weight: 700; font-size: 0.62rem; color: var(--muted); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .persona .dice { position: absolute; top: 3px; right: 4px; font-size: 0.7rem; }
 .persona.inocente { background: rgba(157, 255, 58, 0.28); border-color: rgba(157, 255, 58, 0.75); }
@@ -42,6 +42,8 @@
 .accion .msg.ok { color: var(--lime); }
 .accion .msg.error { color: var(--pink); }
 .accion .msg.falta { color: var(--yellow); }
+.accion .msg-sub { text-align: center; font-weight: 800; color: var(--muted); margin: 0; }
+.pistas .ayuda { font-size: 0.8rem; font-weight: 700; color: var(--muted); margin: -4px 4px 0; }
 
 /* Las pistas: la más nueva arriba; tocar una la tacha (para llevar la cuenta) */
 .pistas { display: grid; gap: 6px; margin-top: 6px; padding-bottom: 20px; }
