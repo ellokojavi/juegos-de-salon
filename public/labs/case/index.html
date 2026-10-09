@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#150726">
+  <!-- El laboratorio no se anuncia: no está en el menú ni en los buscadores (D-101) -->
+  <meta name="robots" content="noindex, nofollow">
+  <title>El caso 🔍 · Laboratorio</title>
+  <link rel="icon" href="../../assets/icon.svg" type="image/svg+xml">
+  <script src="../../assets/js/vigia.js"></script>
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app" id="app">
+    <div class="topbar">
+      <a class="back" href="../">‹ Laboratorio</a>
+      <div class="tools"><span class="chip">🔍 El caso</span><span id="sound-slot"></span></div>
+    </div>
+
+    <header class="caso-cabeza">
+      <h1 class="display display--lg rainbow">El caso</h1>
+      <p class="muted" id="caso-nombre"></p>
+      <p class="meta-fuera">Descubre quién es criminal y quién es inocente, sin adivinar.</p>
+    </header>
+
+    <details class="panel reglas" id="reglas">
+      <summary>🔍 ¿Cómo se juega?</summary>
+      <ol class="rules-list">
+        <li>Toca a alguien y márcalo cuando estés seguro. Cada persona que marcas bien suma su pista.</li>
+        <li>Las pistas siempre dicen la verdad. Los <b>vecinos</b> son los 8 de alrededor, también en diagonal. <b>Arriba de</b> alguien es toda su columna hacia arriba, no solo el de al lado; igual abajo, a la izquierda y a la derecha.</li>
+        <li>Nunca hay que adivinar: si todavía no se puede saber, no te deja marcar.</li>
+      </ol>
+      <p class="muted puntaje">Gana quien se equivoca menos; el tiempo desempata.</p>
+    </details>
+
+    <div class="marcador" id="marcador"></div>
+    <div class="grilla" id="grilla" aria-label="Los sospechosos"></div>
+    <div class="accion" id="accion" aria-live="polite"></div>
+    <section class="fin" id="fin" hidden></section>
+    <section class="pistas" id="pistas"></section>
+  </main>
+  <script type="module">import './game.js';</script>
+</body>
+</html>
