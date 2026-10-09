@@ -6,6 +6,10 @@ const urls = async () => b.evaluate(`performance.getEntriesByType('resource').ma
 await b.go(`${SITIO}/`); await b.evaluate(`localStorage.clear(); 1`); await b.go(`${SITIO}/`);
 console.log('menú → tarjetas:', await b.evaluate(`document.querySelectorAll('.game-card').length`), '| recursos:', JSON.stringify(await urls()));
 await b.shot('menu');
+// La hoja de compartir (D-253), para el README
+await b.evaluate(`document.querySelector('#share-slot button').click(); 1`); await sleep(700);
+await b.shot('compartir');
+await b.evaluate(`document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' })); 1`);
 await b.go(`${SITIO}/fourth-king/`);
 console.log('cuarto-rey → reglas listadas:', await b.evaluate(`document.querySelectorAll('#rules-list li').length`), '| recursos:', JSON.stringify(await urls()));
 await b.go(`${SITIO}/bulls-and-cows/`);
