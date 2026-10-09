@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.134.1 — 2026-10-09
+- **🏅 Rankings con medalla**: el botón de rankings de la portada, la página de rankings y el ranking
+  de Uno al día pasan del 🏆 a la 🏅, para no confundirlos con La Copa, que sigue con su 🏆.
+
 ## 0.134.0 — 2026-10-09
 - **🧶 Desenredo: Reiniciar nivel**: un botón bajo el tablero devuelve los nudos a donde partió el
   nivel, para empezarlo de nuevo cuando el enredo se complicó. Como Borrar todo en Zip y Reinas,
