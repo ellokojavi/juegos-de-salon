@@ -394,11 +394,11 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
 - **La barra de arriba** va en dos bloques: el idioma (C-3) a la izquierda y, a la derecha, las
   acciones: el sonido (C-4), 🏆 rankings (D-212, abiertos a todos desde D-217) y compartir. Con
   6 px de aire entre botones caben en una línea desde 375 px; más angosto (320 px), las acciones
-  bajan a una segunda línea y siguen a la derecha (v0.128.1). Compartir abre una hoja (la de
-  D-223 y D-232) con el video promocional, que se carga recién al tocarlo, y dos opciones: **Invitar a
+  bajan a una segunda línea y siguen a la derecha (v0.128.1). En un idioma que tiene video
+  promocional (hoy, solo español), compartir abre una hoja (la de D-223 y D-232) con el video, que se carga recién al tocarlo, y dos opciones: **Invitar a
   jugar**, que comparte la app con su tarjeta social en el idioma en que se mira (`compartirApp`,
   D-226, U-33), y **Compartir el video**, un texto con el link del video en YouTube (`compartir-portada.js`,
-  D-253). Su ícono es el de compartir de los sistemas operativos, una
+  D-253). En los demás idiomas comparte directo la app con su tarjeta, sin hoja (D-254). Su ícono es el de compartir de los sistemas operativos, una
   caja abierta con una flecha hacia arriba, en SVG y no un emoji (D-242), con la caja celeste,
   la flecha rosada y la sombra de abajo de los botones de la página (D-243).
   El globo que invita a agregar la app a inicio sale abajo, solo en los celulares donde se puede

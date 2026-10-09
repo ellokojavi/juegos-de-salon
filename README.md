@@ -429,18 +429,20 @@ Spec and design: [docs/games/cup.md](docs/games/cup.md)
 - **Sharing the app:** a share button at the top right of the menu, next to sound and 🏆 rankings
   (the language toggle sits on the left, in a block of its own), drawn with
   the system share icon (a box with an arrow pointing up, D-242) in the page's colors: a cyan
-  box and a pink arrow, each with the drop shadow of the page's buttons (D-243). It opens a sheet
-  with the promo video and two options (D-253). The video shows as its thumbnail with "▶ Watch the
+  box and a pink arrow, each with the drop shadow of the page's buttons (D-243). In Spanish, the
+  language of the promo video, it opens a sheet with the video and two options (D-253); in English,
+  Portuguese and German it shares the app's message straight away, as before, until there is a
+  video in that language (D-254). The video shows as its thumbnail with "▶ Watch the
   video" and only loads from `youtube-nocookie.com` when tapped, so opening the sheet downloads
   nothing from YouTube. **Invite to play** is the app's own message: on a phone it opens the share
   sheet with the menu's social card **as an image** and a short text — a header with how many games
   there are, one line each for The Cup, playing in a group, playing alone and needing no account —
   ending with the link to the front door of the language you are reading in: `/`, `/en/`, `/pt/` or
   `/de/`, card included (D-74, D-226). **Share the video** sends a short text ending with the
-  video's YouTube link, and the chat builds the preview from its thumbnail; in English, Portuguese
-  and German the text says the video is in Spanish. On a computer either option just copies the
-  text and the link; nothing is downloaded. Which video is shown is `TRAILER` in
-  `public/assets/js/compartir-portada.js`, changed whenever a new version goes up on YouTube.
+  video's YouTube link, and the chat builds the preview from its thumbnail. On a computer either
+  option just copies the text and the link; nothing is downloaded. Which video is shown, per
+  language, is `TRAILERS` in `public/assets/js/compartir-portada.js`, changed whenever a new
+  version goes up on YouTube; a video in another language is one more entry there.
 - **One standard for everything that gets shared** (D-165), built for WhatsApp, in
   `public/assets/js/compartir.js`. Every message opens with a header — `{emoji} *{title}* · {context}`,
   like "🏆 *La Copa: Valdenenas* · Día 3 de 7" or "🃏 *Julepe* · Sala WFBN" —, says one thing
@@ -735,7 +737,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   today/                      One a Day: today's game, your streak, a calendar and how you do in each game (D-230)
   panel/                      Private owner dashboard: now, The Cup, games, traffic, audience and health, with a page per cup, game and room (Google sign-in; see docs/PANEL.md)
   assets/css/                 Shared styles: base.css (party theme), linea.css (timeline), teclado.css (keypad), ranking.css (leaderboards)
-  assets/js/                  Shared modules: games.js (game registry), i18n.js (ES/EN/PT/DE), labs-idioma.js (a new language in the lab, D-191), ui.js, sound.js, compartir.js (everything shared, D-165), compartir-portada.js (the home-page share sheet, with the promo video, D-253), handoff.js, chat.js, session.js, arrastre.js (drag and drop), teclado.js, azar.js, dado3d.js and llegada.js (Random game: the die, which stays on screen until the game is drawn, D-237), frases.js, records.js + jugador.js + ranking.js (players and leaderboards, D-212; jugador-firebase.js and jugador-local.js are their stores), instalable.js (registers the service worker, D-221), instalar.js (the home-page bubble that invites to add the app to the home screen, D-232), favoritos.js (the home-page favorites, kept in the browser, D-238), push.js + vapid.js (phone notifications: subscribing, D-223), uno-al-dia.js + uno-al-dia-ui.js + uno-al-dia-red.js + uno-al-dia-avisos.js (One a Day: a daily game, the same for everyone, with a streak, freezes, leaderboards, invitations and reminders; D-230), and vigia.js, a classic script (not a module) that every page loads first to report load failures, errors and start-up time to the dashboard (D-251)
+  assets/js/                  Shared modules: games.js (game registry), i18n.js (ES/EN/PT/DE), labs-idioma.js (a new language in the lab, D-191), ui.js, sound.js, compartir.js (everything shared, D-165), compartir-portada.js (the home-page share sheet, with the promo video, in the languages that have one, D-253, D-254), handoff.js, chat.js, session.js, arrastre.js (drag and drop), teclado.js, azar.js, dado3d.js and llegada.js (Random game: the die, which stays on screen until the game is drawn, D-237), frases.js, records.js + jugador.js + ranking.js (players and leaderboards, D-212; jugador-firebase.js and jugador-local.js are their stores), instalable.js (registers the service worker, D-221), instalar.js (the home-page bubble that invites to add the app to the home screen, D-232), favoritos.js (the home-page favorites, kept in the browser, D-238), push.js + vapid.js (phone notifications: subscribing, D-223), uno-al-dia.js + uno-al-dia-ui.js + uno-al-dia-red.js + uno-al-dia-avisos.js (One a Day: a daily game, the same for everyone, with a streak, freezes, leaderboards, invitations and reminders; D-230), and vigia.js, a classic script (not a module) that every page loads first to report load failures, errors and start-up time to the dashboard (D-251)
   assets/js/transport/        Transports: local (same phone), firebase (room) and stats (usage signals)
   assets/og/                  The 1200×630 images shown when a link is shared
   manifest.webmanifest        PWA manifest (installable on the home screen), one per language (manifest.en.webmanifest …) so the app is named in the player's language (D-222); its PNG icons are in assets/icons/

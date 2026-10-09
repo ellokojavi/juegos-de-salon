@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.133.1 — 2026-10-09
+- **La hoja con el video, solo en español** (D-254): el video promocional está en español, así que
+  en inglés, portugués y alemán el botón de compartir vuelve a compartir directo, como antes.
+
 ## 0.133.0 — 2026-10-09
 - **Compartir, desde la portada, muestra el video** (D-253): el botón de compartir abre una hoja con el video
   promocional, que se reproduce ahí mismo al tocarlo, y dos opciones: **Invitar a jugar**, el
