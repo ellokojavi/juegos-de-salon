@@ -327,7 +327,8 @@
 
   <script type="module">
     import { PORTADA, TIPOS, TIPOS_VIEJOS, rangoJugadores } from './assets/js/games.js';
-    import { sparkles, el, shareButton, con } from './assets/js/ui.js';
+    import { sparkles, el, con, ICONO_COMPARTIR } from './assets/js/ui.js';
+    import { botonCompartirPortada } from './assets/js/compartir-portada.js';
     import { compartirApp, comparteArchivos } from './assets/js/compartir.js';
     import { getLang, langToggle, applyStatic, pickLang, COMMON, homeUrl } from './assets/js/i18n.js';
     import { FRASES } from './assets/js/frases.js';
@@ -353,12 +354,14 @@
       for (const k of ['title', 'aria-label']) b.setAttribute(k, T.rk.rankings);
       b.hidden = !rankingsVisibles();
     }).catch(() => {});
-    // Compartir la app: la portada del idioma en que se está mirando (D-74), con su tarjeta social
-    // como imagen y un texto que dice lo que ella no (D-226)
+    // Compartir la app: el botón abre una hoja con el video promocional y dos maneras de
+    // compartir (compartir-portada.js): invitar a jugar, con la tarjeta social del idioma en que se
+    // está mirando (D-74, D-226), o mandar el video
     const app = compartirApp({ C: T, lang, juegos: PORTADA.filter(g => g.available).length });
-    document.getElementById('share-slot').append(shareButton({
-      title: app.titulo, text: app.texto, url: homeUrl(lang), label: T.share, imagen: app.imagen,
-    }));
+    document.getElementById('share-slot').append(botonCompartirPortada({ C: T, app, url: homeUrl(lang), icono: ICONO_COMPARTIR, tap: () => SFX.tap() }));
+    // La imagen se baja antes, y solo donde se va a mandar: al tocar "Invitar a jugar", el menú del
+    // sistema tiene que abrirse enseguida (Safari lo niega si el toque quedó atrás)
+    if (comparteArchivos()) (window.requestIdleCallback || (f => setTimeout(f, 1500)))(() => app.imagen());
     // La imagen se baja antes, y solo donde se va a mandar: al tocar, el menú del sistema tiene que
     // abrirse enseguida (Safari lo niega si el toque quedó atrás)
     if (comparteArchivos()) (window.requestIdleCallback || (f => setTimeout(f, 1500)))(() => app.imagen());
