@@ -169,6 +169,10 @@ Las respuestas a dilemas (issues con la etiqueta `usabilidad`) se anotan aquí:
 - **La fama es verde y el toque amarillo** (#196, opción B): como en Wordle, en todos los Toque y
   Fama (las letras de Palabra, las pistas de Número y del juego de sala) y en la tarjeta de Palabra
   (🟩 fama, 🟨 toque, ⬛ no está), que así habla igual que la de Número (🟢, 🟡, ⚪).
+- **La final muestra las rondas de cada uno** (#259, opción A): en la tabla del día de 🏁 La Gran
+  Final, bajo el puntaje y el tiempo de cada jugador, su tarjeta de cinco rondas, para comparar
+  ronda a ronda. Solo en la final: en los otros días las tarjetas de varias líneas alargarían
+  mucho la tabla (opción B, por si se echa de menos). A 320 px la línea se corta entre ronda y ronda.
 - **Portada bajo 375 px: las acciones bajan a una segunda línea** (#250, opción A): entre 320 y 374
   px el idioma queda arriba a la izquierda y sonido, rankings y compartir bajan a la derecha. Se
   acepta la escalera antes que achicar los botones de idioma bajo 44 px (C-8) o volver atrás D-231.

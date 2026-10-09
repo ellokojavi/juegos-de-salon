@@ -1,12 +1,17 @@
 # Changelog
 
-## 0.131.0 — 2026-10-09
+## 0.132.0 — 2026-10-09
 - **🩺 Salud, una sección nueva del panel** (D-251): cuántas cargas no arrancaron, cuántas tuvieron
   errores, cuáles son esos errores (en qué página, en qué navegador, en qué versión y desde cuándo) y
   cuánto tarda cada página en poder jugar. Lo anota el vigía (`vigia.js`), un script chico que cada
   página carga antes que todo lo demás, así que avisa también cuando lo que falla son los módulos. Sin
   IP, sin dirección completa y del navegador solo su familia y versión. Un punto rosado en la
   navegación avisa si hoy o ayer alguna página no arrancó.
+
+## 0.131.0 — 2026-10-09
+- **🏁 La Gran Final: las rondas de todos** (#259): en la tabla del día de la final, bajo el
+  puntaje y el tiempo de cada jugador va su tarjeta de cinco rondas (⏳75 🔢85 👑100 🔤60 📅90),
+  para comparar en qué ronda ganó o perdió cada uno. La pidió un jugador por 🐞.
 
 ## 0.130.0 — 2026-10-08
 - **〰️ Zip: diez niveles y listo** (D-250): ya no hay niveles sin fin. Son diez, de 4 × 4 a 7 × 7,
