@@ -63,7 +63,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Memoria de partida | C-6 | D-25, D-150 |
 | Interfaz táctil | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213 |
 | Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213 |
-| Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243, D-253 |
+| Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243, D-253, D-254 |
 | Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251 |
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213 |
@@ -4392,7 +4392,7 @@ nombrarlas, como antes (se quedaban semanas).
 <rama>`. Una sesión de la app que vuelve a una copia ya fusionada la encuentra borrada.
 
 ## D-253 · Compartir, desde la portada, abre una hoja con el video
-**Fecha:** 2026-10-09 · **Estado:** vigente · **Relación:** completa D-226; usa la hoja de D-223 y D-232
+**Fecha:** 2026-10-09 · **Estado:** corregida por D-254 · **Relación:** completa D-226; usa la hoja de D-223 y D-232
 **Decisión:** El botón de compartir de la portada ya no abre directo el menú del sistema: abre una
 hoja con el video promocional en 16:9 y dos opciones.
 - **El video** se ve primero como su miniatura con "▶ Ver el video"; al tocarlo se embebe desde
@@ -4414,4 +4414,17 @@ sitio (GitHub Pages no está hecho para servir video; YouTube ya lo sirve en la 
 pantalla).
 **Consecuencias:** el link del video lleva a YouTube y no al sitio, así que esas visitas no se
 marcan con `de=link` (D-208); se ven en las estadísticas de YouTube.
+
+## D-254 · La hoja con el video, solo en el idioma del video
+**Fecha:** 2026-10-09 · **Estado:** vigente · **Relación:** corrige D-253
+**Decisión:** La hoja de compartir de la portada (D-253) sale solo en un idioma que tiene video
+promocional: hoy, español. En inglés, portugués y alemán, el botón comparte directo el mensaje de la
+app con su tarjeta, como antes (D-226). Los videos van por idioma en `TRAILERS`
+(`public/assets/js/compartir-portada.js`): un video en otro idioma se suma como una entrada más, con
+su miniatura, y la hoja aparece sola en ese idioma. Los textos de la hoja en inglés, portugués y
+alemán quedan listos para ese momento, sin el aviso "en español".
+**Por qué:** lo pidió el dueño al probarla: la hoja y el video están en español, y en otro idioma
+basta el compartir de siempre hasta que haya versiones del video en otros idiomas.
+**Alternativas descartadas:** mostrar el video en español con el aviso en los otros idiomas (lo de
+D-253; no le sirve a quien no habla español).
 
