@@ -84,7 +84,9 @@ nunca se usaron, y no se renumera.
 - **U-33 · La imagen dice lo mismo que el texto:** arriba la misma cabecera (título y contexto),
   abajo el mismo link. Un resultado o una tabla se comparten siempre con imagen y texto juntos,
   desde cualquier botón; una invitación, solo con texto (la imagen la pone la tarjeta del link).
-  La app, desde la portada, va con esa tarjeta como imagen, la de su idioma (D-226).
+  La app, desde la portada ("Invitar a jugar"), va con esa tarjeta como imagen, la de su idioma
+  (D-226); el video de la portada, solo con texto: la vista previa la arma el chat con la miniatura
+  de YouTube (D-253).
 - **U-31 · Completo:** el resultado dice copa, día, juego, jugador y puntaje; la tabla dice quién
   falta y marca "(-1J)" a quien lleva menos juegos. Excepción: el resultado de Uno al día no
   nombra el juego de hoy (#215).
