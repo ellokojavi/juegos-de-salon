@@ -107,7 +107,8 @@ export function pistasVerdaderas(caso, v, r, quien) {
     }
     if (c >= 2) out.push({ t: 'ge', a: g.ids, k: c - 1, texto: `Hay al menos ${plural(c - 1, 'criminal', 'criminales')} ${g.en}.` });
     if (c <= n - 2 && c >= 1) out.push({ t: 'le', a: g.ids, k: c + 1, texto: `Hay a lo más ${plural(c + 1, 'criminal', 'criminales')} ${g.en}.` });
-    if (n >= 3) out.push({ t: c % 2 ? 'impar' : 'par', a: g.ids, texto: `Hay un número ${c % 2 ? 'impar' : 'par'} de criminales ${g.en}.` });
+    // Con 0 sería verdad pero se lee como trampa (#272): ahí ya está "No hay criminales"
+    if (n >= 3 && c > 0) out.push({ t: c % 2 ? 'impar' : 'par', a: g.ids, texto: `Hay un número ${c % 2 ? 'impar' : 'par'} de criminales ${g.en}.` });
   }
   // Comparaciones entre dos grupos del mismo tipo (dos filas, dos columnas, dos oficios, los vecinos de dos personas)
   for (let k = 0; k < 60; k++) {
