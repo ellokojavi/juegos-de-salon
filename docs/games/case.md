@@ -26,13 +26,14 @@ Uno al día. Si entra, va a `cup/games/` con los cuatro idiomas (C-3) y esta pá
 - **Puntaje:** los errores; el tiempo (solo con la página a la vista) desempata.
 - **Las pistas** hablan de grupos (una fila, una columna, un oficio, el borde, las esquinas, los
   vecinos de alguien, quienes están arriba, abajo, a la izquierda o a la derecha de alguien) y dicen
-  cuántos criminales o inocentes hay, al menos o a lo más, si son par o impar, o comparan dos grupos.
+  cuántos criminales o inocentes hay, al menos o a lo más, si son par o impar (nunca con cero: ahí se dice "No hay criminales", #272), o comparan dos grupos.
   De respaldo, una pista dice directamente qué es otra persona (cerca de un 5 % de las pistas).
 
 ## Modos
 
 Uno solo, para uno. Sin `?c=` es **el caso del día**, el mismo para todos ese día (la semilla es la
-fecha del jugador); con `?c=CODIGO`, ese caso, y "🔍 Otro caso" abre uno con un código al azar. El
+fecha del jugador). El link que se comparte lleva la fecha (`?dia=AAAA-MM-DD`), así quien lo abre
+al día siguiente juega el mismo caso (#273); con `?c=CODIGO`, ese caso, y "🔍 Otro caso" abre uno con un código al azar. El
 resultado se comparte con `compartir.js`: la cabecera, los errores y el tiempo, y una grilla de 🟩
 con 🟥 donde hubo error (C-7).
 
@@ -43,7 +44,7 @@ Caso del día (o ?c=) → marcar de a uno → ¡Caso resuelto! → Compartir · 
 ```
 
 La partida se guarda por caso en el celular (C-6): marcas, errores, tiempo y pistas tachadas (tocar
-una pista la tacha, para llevar la cuenta). Tocar a alguien ya marcado lleva a su pista.
+una pista la tacha, para llevar la cuenta). Tocar a alguien ya marcado muestra su pista bajo la grilla (#271).
 
 ## Protocolo de mensajes
 
