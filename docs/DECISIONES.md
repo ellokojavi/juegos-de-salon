@@ -63,7 +63,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Memoria de partida | C-6 | D-25, D-150 |
 | Interfaz táctil | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213 |
 | Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213 |
-| Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243 |
+| Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243, D-253 |
 | Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251 |
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213 |
@@ -4390,4 +4390,26 @@ con su PR fusionado hace días y una creada para un dilema que ya estaba resuelt
 nombrarlas, como antes (se quedaban semanas).
 **Consecuencias:** una rama abandonada se retoma con `git worktree add ../juegos-de-salon-<tema>
 <rama>`. Una sesión de la app que vuelve a una copia ya fusionada la encuentra borrada.
+
+## D-253 · Compartir, desde la portada, abre una hoja con el video
+**Fecha:** 2026-10-09 · **Estado:** propuesta, espera la aprobación del dueño · **Relación:** completa D-226; usa la hoja de D-223 y D-232
+**Decisión:** El botón de compartir de la portada ya no abre directo el menú del sistema: abre una
+hoja con el video promocional en 16:9 y dos opciones.
+- **El video** se ve primero como su miniatura con "▶ Ver el video"; al tocarlo se embebe desde
+  `youtube-nocookie.com` (sin cookies hasta reproducir). Abrir la hoja no baja nada de YouTube.
+- **Invitar a jugar** es lo de antes (D-226): el texto de la app y, en un celular, la tarjeta social
+  del idioma, que se baja de antemano para que el menú se abra al tiro.
+- **Compartir el video** manda un texto corto con el link de YouTube al final (U-30). El chat arma
+  la vista previa con la miniatura del video. En inglés, portugués y alemán, el texto avisa que el
+  video está en español.
+- El video que se muestra es `TRAILER` en `public/assets/js/compartir-portada.js`: al subir una
+  versión nueva al canal, se cambia ahí (lo dice "Para YouTube" en la memoria del video).
+**Por qué:** lo pidió el dueño: que compartir muestre el trailer y deje mandar o la invitación o el
+video como pieza publicitaria.
+**Alternativas descartadas:** mandar el mp4 como archivo (son ~10 MB que el celular tendría que
+bajar antes de abrir el menú, y Safari niega el menú si el toque quedó atrás); alojar el video en el
+sitio (GitHub Pages no está hecho para servir video; YouTube ya lo sirve en la calidad de cada
+pantalla).
+**Consecuencias:** el link del video lleva a YouTube y no al sitio, así que esas visitas no se
+marcan con `de=link` (D-208); se ven en las estadísticas de YouTube.
 

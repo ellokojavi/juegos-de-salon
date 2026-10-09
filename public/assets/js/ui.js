@@ -123,7 +123,7 @@ export { canShare, shareLink };
  */
 const CAJA = 'M10.5 12.5H8a2 2 0 0 0-2 2V25a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V14.5a2 2 0 0 0-2-2h-2.5';
 const FLECHA = 'M16 4.5v14M11 9.5l5-5 5 5';
-const ICONO_COMPARTIR = `<svg class="icon-share" viewBox="0 0 32 32" width="26" height="26" fill="none" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+export const ICONO_COMPARTIR = `<svg class="icon-share" viewBox="0 0 32 32" width="26" height="26" fill="none" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 <defs><linearGradient id="icono-compartir-caja" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7ff5ea"/><stop offset="1" stop-color="#2ee6d6"/></linearGradient>
 <linearGradient id="icono-compartir-flecha" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff7fb8"/><stop offset="1" stop-color="#ff2e88"/></linearGradient></defs>
 <path d="${CAJA}" transform="translate(0 1.6)" stroke="#149a8f"/><path d="${CAJA}" stroke="url(#icono-compartir-caja)"/>

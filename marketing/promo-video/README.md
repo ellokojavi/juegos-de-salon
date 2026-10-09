@@ -272,6 +272,9 @@ para fiestas, juegos gratis, uno al día, la copa, dudo, batalla naval, reinas, 
 | v6 | Short | <https://youtube.com/shorts/RYAvj2MTRPQ> | 2026-10-08: no listado (H.264, miniatura vertical del logo) |
 | v6, 1.ª subida | 16:9 y Short | `_HwYxd0buog`, `e4dMm0npWOM` | Privados: en H.265 empezaban en Dudo. Borrarlos lo hace el dueño (Claude no borra videos: es permanente) |
 
+- **La portada muestra el último video** (D-253): al subir una versión nueva, se cambia `TRAILER`
+  en `public/assets/js/compartir-portada.js` (el id del 16:9) y su miniatura,
+  `public/assets/img/trailer.jpg` (la de `output/miniatura-youtube.jpg`).
 - **Miniaturas:** `output/miniatura-youtube.jpg` (1280×720) y `output/miniatura-short.jpg`
   (720×1280), sacadas de la escena del logo (`render.mjs --fotos … --tiempos 4.6`). Sin miniatura
   propia, YouTube elige un cuadro del medio (en la v6, Uno al día). Se suben en *Details →
