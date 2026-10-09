@@ -569,8 +569,12 @@ export function trackUnoAlDia(evento) {
   } catch (_) { return Promise.resolve(); }
 }
 
-/** Atajo para las páginas: `trackVisit()` al cargar. Nunca lanza ni se espera. */
+/**
+ * Atajo para las páginas: `trackVisit()` al cargar. Nunca lanza ni se espera. Le avisa además al
+ * vigía (`vigia.js`, D-251) que la página arrancó: si llegó hasta acá, sus módulos cargaron y corrieron.
+ */
 export function trackVisit() {
+  try { globalThis.__vigia?.listo?.(); } catch (_) { /* sin vigía, nada */ }
   try { const s = stats(); return noteVisit(s.api, s.fp); } catch (_) { return Promise.resolve(); }
 }
 
