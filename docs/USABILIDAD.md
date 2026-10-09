@@ -107,6 +107,10 @@ nunca se usaron, y no se renumera.
 
 Las respuestas a dilemas (issues con la etiqueta `usabilidad`) se anotan aquí:
 
+- **El caso (laboratorio, D-256):** tocar a alguien ya marcado muestra su pista bajo la grilla
+  (#271); "número par de criminales" no sale cuando son cero, porque ahí ya está "No hay
+  criminales" (#272); el link del caso del día lleva su fecha (`?dia=`), así un amigo que lo abre al
+  día siguiente juega el mismo (#273). Las tres con la recomendación del agente, en el PR #270.
 - **Reinas sin bordes gruesos entre zonas** (D-134): decisión del dueño, sabiendo lo de C-8. No
   marcarlo.
 - **Textos del dibujo de Reinas:** "Así: una reina por fila, por columna y por color." y "Así no:
