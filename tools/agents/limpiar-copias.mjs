@@ -11,7 +11,7 @@
  *   más de tres días. Antes de borrarlas, su rama se sube a GitHub: el trabajo no se pierde y se
  *   retoma con `git worktree add ../juegos-de-salon-<tema> <rama>`.
  *
- *   node tools/agents/limpiar-copias.mjs           # borra las fusionadas y cuenta qué quedó
+ *   node tools/agents/limpiar-copias.mjs           # borra las fusionadas, vacías y abandonadas, y cuenta qué quedó
  *   node tools/agents/limpiar-copias.mjs --ver     # solo dice qué borraría
  *   node tools/agents/limpiar-copias.mjs --hook    # igual que sin nada, en una línea (para la sesión)
  *
