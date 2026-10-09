@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.133.0 — 2026-10-09
+- **Compartir, desde la portada, muestra el video** (D-253): el botón de compartir abre una hoja con el video
+  promocional, que se reproduce ahí mismo al tocarlo, y dos opciones: **Invitar a jugar**, el
+  mensaje de siempre con la tarjeta de la portada, o **Compartir el video**, un mensaje con el link
+  del video en YouTube para mandarlo por WhatsApp u otra app.
+
 ## 0.132.1 — 2026-10-09
 - **Ninguna copia de trabajo queda sin uso** (D-252): al empezar cada sesión de Claude se borran,
   además de las fusionadas, las copias vacías y las abandonadas (sin PR y quietas más de tres días,

@@ -131,6 +131,13 @@
       "toma": "menu"
     },
     {
+      "seccion": "portada",
+      "imagen": "docs/screenshots/compartir.png",
+      "pie": "Share sheet with the promo video",
+      "guion": "versionado",
+      "toma": "compartir"
+    },
+    {
       "seccion": "cuarto-rey",
       "imagen": "docs/screenshots/fourth-king/02-intro.png",
       "pie": "Intro and rules",
@@ -745,7 +752,9 @@
     "portada": [
       "public/index.html",
       "public/assets/js/games.js",
-      "public/assets/js/frases.js"
+      "public/assets/js/frases.js",
+      "public/assets/js/compartir-portada.js",
+      "public/assets/img/trailer.jpg"
     ],
     "cuarto-rey": [
       "public/fourth-king/"
