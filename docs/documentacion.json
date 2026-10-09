@@ -1,6 +1,8 @@
 {
-  "revisadoHasta": "120897ba0b5948f888dde870349419bac3859113",
-  "pendientes": [],
+  "revisadoHasta": "7a36e573c092cb47cebf7f5ae2e6a26747e94b51",
+  "pendientes": [
+    "Capturas del README más viejas que el código (aviso, no error): portada 1, cuarto-rey 10, toque-y-fama 4, batalla-naval 7, linea-de-tiempo 11, dudo 9, generala 8, idiomas 2, ahorcado 9, julepe 10. Esta ronda no las rehizo (sin Chrome ni red a Firebase/gstatic); rehacerlas con python3 tools/release/readme.py capturas <sección> y mirarlas en la hoja de contacto (D-76)."
+  ],
   "conocidos": [],
   "rondas": [
     {
@@ -30,6 +32,15 @@
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/205",
       "pendientes": [],
       "nota": "Revisión de un PR (no una ronda: revisadoHasta no se mueve). Avisos de La Copa, PR 3 (D-224): D-223 con Estado de los cuatro; docs/games/cup.md con lo que llega, pushEnviados y las pruebas de tools/push/; PWA-NOTIFICACIONES con lo que el PR 3 hizo distinto del plan."
+    },
+    {
+      "fecha": "2026-10-09",
+      "desde": "120897ba0b5948f888dde870349419bac3859113",
+      "hasta": "7a36e573c092cb47cebf7f5ae2e6a26747e94b51",
+      "pr": null,
+      "pendientes": [
+        "Capturas del README más viejas que el código (aviso, no error): portada 1, cuarto-rey 10, toque-y-fama 4, batalla-naval 7, linea-de-tiempo 11, dudo 9, generala 8, idiomas 2, ahorcado 9, julepe 10. Esta ronda no las rehizo (sin Chrome ni red a Firebase/gstatic); rehacerlas con python3 tools/release/readme.py capturas <sección> y mirarlas en la hoja de contacto (D-76)."
+      ]
     }
   ],
   "nota": "Memoria del agente de documentación (D-172). La lee y la escribe tools/documentar.mjs: hasta qué commit de main se revisó, lo que quedó pendiente, los problemas ya conocidos que esperan al dueño y las rondas anteriores."
