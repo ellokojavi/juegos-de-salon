@@ -115,7 +115,9 @@ en cualquier punto (`public/cup/demo.js`).
 
 Al tocar Empezar, una **cuenta de 3 a 1** y "¡A jugar!" (D-105): recién ahí aparece el tablero y
 parte el reloj. Al terminar, el resultado explica **cómo se calculó el puntaje** línea por línea
-(`public/cup/desglose.js`, D-106).
+(`public/cup/desglose.js`, D-106), y abajo va la tabla del día. En la de 🏁 La Gran Final, cada
+jugador lleva además su tarjeta de cinco rondas (⏳75 🔢85 👑100 🔤60 📅90), para comparar ronda a
+ronda (#259); en la demo `podio` o `llena` se ve con datos.
 
 Antes de Empezar cada día se puede jugar una **sesión de prueba** (D-103): la misma mecánica con
 otro contenido (código derivado con `codigoEnsayo`, otra temática, una grilla fuera del sorteo,
