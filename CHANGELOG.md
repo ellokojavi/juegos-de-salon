@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.131.0 — 2026-10-09
+- **🏁 La Gran Final: las rondas de todos** (#259): en la tabla del día de la final, bajo el
+  puntaje y el tiempo de cada jugador va su tarjeta de cinco rondas (⏳75 🔢85 👑100 🔤60 📅90),
+  para comparar en qué ronda ganó o perdió cada uno. La pidió un jugador por 🐞.
+
 ## 0.130.0 — 2026-10-08
 - **〰️ Zip: diez niveles y listo** (D-250): ya no hay niveles sin fin. Son diez, de 4 × 4 a 7 × 7,
   y quien los resuelve todos termina ahí con 100 puntos, sin esperar el reloj; entre ellos gana
