@@ -70,6 +70,47 @@
         "tango",
         "desenredo"
       ]
+    },
+    {
+      "id": "tutorial-compartir",
+      "tipo": "video",
+      "titulo": "Tutorial: cómo compartir Juegos de Salón (iOS)",
+      "carpeta": "marketing/share-tutorial/",
+      "memoria": "marketing/share-tutorial/README.md",
+      "version": 1,
+      "fecha": "2026-10-09",
+      "idioma": "es",
+      "app": "0.134.1",
+      "archivos": [
+        {
+          "ruta": "marketing/share-tutorial/output/compartir-vertical.mp4",
+          "formato": "9:16",
+          "ancho": 1080,
+          "alto": 1920,
+          "segundos": 6.0,
+          "uso": "estados de WhatsApp, Reels, Shorts"
+        },
+        {
+          "ruta": "marketing/share-tutorial/output/compartir-16x9.mp4",
+          "formato": "16:9",
+          "ancho": 1920,
+          "alto": 1080,
+          "segundos": 6.0,
+          "uso": "YouTube, presentaciones"
+        }
+      ],
+      "fuente": "marketing/share-tutorial/tutorial.html",
+      "construir": "marketing/share-tutorial/construir.sh",
+      "musica": null,
+      "juegos": [],
+      "seleccion": true,
+      "estado": "entregado al dueño",
+      "revision": {
+        "fecha": "2026-10-09",
+        "app": "0.134.1",
+        "al_dia": true,
+        "pendiente": []
+      }
     }
   ]
 }
