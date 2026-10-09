@@ -158,7 +158,9 @@ por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
   después reparte los nudos en un círculo en desorden: siempre tiene solución, pero no una sola.
   Todo en enteros sobre 1000 × 1000; un hilo que pasa a menos de 24 unidades de un nudo ajeno
   cuenta como cruce, lo que además cierra la trampa de amontonar los nudos. Los hilos se dibujan como cuerdas con una curva leve y una segunda onda de torsión, sutil (D-182, D-183, D-185), pero
-  los cruces se cuentan sobre la recta. Su habilidad es
+  los cruces se cuentan sobre la recta. **🔄 Reiniciar nivel**, bajo el tablero, devuelve los nudos a
+  donde partió el nivel: como Borrar todo en Zip y Reinas, el primer toque lo arma, el segundo lo hace
+  y el reloj sigue; está apagado mientras no se haya movido nada. Su habilidad es
   `espacial`, propia, para que el sorteo del calendario la pueda separar de Reinas, Zip y Tango.
 
 - **Línea y Año** usan temáticas distintas dentro de la misma copa (`temasDeLaCopa`), para que no
