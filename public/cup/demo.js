@@ -36,7 +36,12 @@ const PUNTAJE = {
   desenredo: k => { const s = 10 * Math.round(9 * k); return { s, r: `${s}/100` }; },
   tango: k => { const s = Math.max(10, Math.round(100 * k)); return { s, r: `${s}/100` }; },
   anio: k => { const s = Math.round(100 * k); return { s, r: `${s}/100` }; },
-  final: k => { const s = Math.round(100 * k); return { s, r: `${s}/100` }; },
+  // La final trae su tarjeta de cinco rondas (⏳75 🔢85 …), que la tabla del día muestra (#259)
+  final: k => {
+    const rondas = [0.1, -0.2, 0.3, -0.1, -0.1].map(o => Math.max(0, Math.min(100, 5 * Math.round(20 * (k + o)))));
+    const s = Math.round(rondas.reduce((a, b) => a + b, 0) / 5);
+    return { s, r: `${s}/100`, t: ['⏳', '🔢', '👑', '🔤', '📅'].map((e, i) => `${e}${rondas[i]}`).join(' ') };
+  },
 };
 
 /** Un azar fijo por jugador y día, para que la demo se vea igual cada vez. */
@@ -89,7 +94,7 @@ export function sembrar(nombre, { now, uid }) {
       const r = PUNTAJE[cal[d - 1]](k);
       const at = Math.min(now - 3600000, meta.win[d].a + 3600000 * (8 + 10 * azar(j.pid, -d)));
       (L.started[d] ||= {})[j.pid] = at - 120000;
-      (L.results[d] ||= {})[j.pid] = { s: r.s, ms: Math.round(40000 + 200000 * azar(j.pid, d + 9)), t: '', r: r.r, at };
+      (L.results[d] ||= {})[j.pid] = { s: r.s, ms: Math.round(40000 + 200000 * azar(j.pid, d + 9)), t: r.t || '', r: r.r, at };
     }
   }
   if (e.jugaron >= 3) L.wild.panc03 = '2';
