@@ -43,7 +43,10 @@ for (const [lang, e] of Object.entries(ESPERADO)) {
   ver(link === `🔗 https://juegosdesalon.cl/${lang === 'es' ? '' : `${lang}/`}?de=link`, `${lang}: el link a la portada del idioma, solo en la última línea (${link})`);
   console.log(m.text.replace(/^/gm, '    '));
 }
-// Un computador: sin menú, el texto queda copiado, el botón dice ✅ y no se baja ninguna imagen
+// Un computador: sin menú, el texto queda copiado, el botón dice ✅ y no se baja ninguna imagen.
+// Chrome headless sí tiene navigator.canShare: se lo quita antes de que cargue la página, o la
+// portada baja la tarjeta por adelantado y la cuenta de imágenes sale mal
+await b.send('Page.addScriptToEvaluateOnNewDocument', { source: 'navigator.canShare = undefined; navigator.share = undefined;' });
 await b.go(`${SITIO}/?lang=en`, 1500);
 await b.evaluate(`(() => { navigator.canShare = undefined; navigator.share = undefined; window.__copiado = null;
   navigator.clipboard.writeText = async t => { window.__copiado = t; };
