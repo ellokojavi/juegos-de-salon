@@ -113,6 +113,12 @@ const SEMBRAR_PANEL = vista => `(async()=>{const DIA=86400000,ahora=Date.now(),h
       const uad={historia:{},invitados:{sara0001:{u1:{d:hoy-2},u2:{d:hoy-1}}},rachas:{sara0001:{s:9},pedro001:{s:3},ana00001:{s:1},leo00001:{s:31}}};
       for(let k=0;k<10;k++){const b=(days[hoy-k] ||= {});b.uad={boton:9+k,dado:8+k,jugado:7,repite:2,compartir:3,otro:4,invitar:2,invitacion:1,aceptada:k%2,oferta:2,hora:1,activos:1,ahorano:1,silencio:k%3?0:1};b.vistas={...(b.vistas||{}),today:12+k};b.entradas={...(b.entradas||{}),today:3};b.local ||= {};const g=['reinas','conexiones','dudo','anio'][k%4];((b.local[g] ||= {})['uno-al-dia'] ||= {})[1]=3+(k%3);}
       for(const [jid,nd] of [['sara0001',9],['pedro001',4],['ana00001',2]])for(let k=0;k<nd;k++)(uad.historia[jid] ||= {})[hoy-k]={j:'reinas',s:60+k};
+      // Salud (D-251): fallas por tipo, errores con su detalle (uno de una versión vieja) y lo que tardó cada página
+      for(let k=0;k<7;k++){const b=days[hoy-k];b.vistas={...(b.vistas||{}),where:8};b.falla={alguna:{cup:2+k%3,hangman:1,...(k===1?{where:3}:{})},js:{cup:1+k%2,hangman:1},promesa:{cup:1},...(k===1?{arranque:{where:2},recurso:{where:3}}:{})};b.listo={inicio:{s1:30,s3:12,s6:3},cup:{s1:10,s3:6,s6:2,s10:1},hangman:{s1:4,s3:2},where:{s3:2,s6:3,s10:2,mas:1}};}
+      const errDe=(k,m,f,p,b,v,n)=>({n,d:{k,m,f,p,b,v,at:ahora}});
+      days[hoy].err={a1:errDe('js',"TypeError: Cannot read properties of undefined (reading 'dia')",'/cup/game.js:1840','cup','chrome129','0.130.0',4),a2:errDe('js',"TypeError: undefined is not an object (evaluating 'c.dia')",'/cup/game.js:1840','cup','ios16','0.130.0',2),b1:errDe('promesa','PERMISSION_DENIED: Permission denied','/cup/store.js:212','cup','safari17','0.130.0',1),c1:errDe('js','ReferenceError: palabras is not defined','/hangman/game.js:88','hangman','samsung25','0.130.0',1)};
+      days[hoy-1].err={d1:errDe('recurso','módulo que no cargó (el de la página)','/where/','where','instagram','0.129.0',3),e1:errDe('js',"SyntaxError: Unexpected token '.'",'/cup/games/where/ui.js:12','where','ios13','0.129.0',2)};
+      days[hoy-3].err={f1:errDe('js','RangeError: Maximum call stack size exceeded','/zip/x.js:5','zip','chrome128','0.128.0',6)};
       window.__panel.seed({rooms,days,torneos,push,uad,vista:'${vista}'});})()`;
 
 export const CAMINOS = {
@@ -362,7 +368,7 @@ export const CAMINOS = {
    */
   panel: {
     ...Object.fromEntries([['datos', '/audiencia'], ['ahora', '/ahora'], ['resumen', '/ahora'], ['torneo', '/torneo'], ['juegos', '/juegos'], ['audiencia', '/audiencia'],
-      ['copa-ficha', '/torneo/OFICI'], ['juego-ficha', '/juego/dudo'], ['sala-ficha', '/sala/CPSV'], ['trafico', '/trafico']].map(([toma, vista]) => [toma, [SEMBRAR_PANEL(vista)]])),
+      ['copa-ficha', '/torneo/OFICI'], ['juego-ficha', '/juego/dudo'], ['sala-ficha', '/sala/CPSV'], ['trafico', '/trafico'], ['salud', '/salud']].map(([toma, vista]) => [toma, [SEMBRAR_PANEL(vista)]])),
     // Las otras dos pestañas de la ficha de una copa (D-207)
     'copa-dias': [SEMBRAR_PANEL('/torneo/OFICI'), `[...document.querySelectorAll('.subtabs button')][1].click()`],
     'copa-historia': [SEMBRAR_PANEL('/torneo/OFICI'), `[...document.querySelectorAll('.subtabs button')][2].click()`],
