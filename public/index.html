@@ -362,6 +362,9 @@
     // La imagen se baja antes, y solo donde se va a mandar: al tocar "Invitar a jugar", el menú del
     // sistema tiene que abrirse enseguida (Safari lo niega si el toque quedó atrás)
     if (comparteArchivos()) (window.requestIdleCallback || (f => setTimeout(f, 1500)))(() => app.imagen());
+    // La imagen se baja antes, y solo donde se va a mandar: al tocar, el menú del sistema tiene que
+    // abrirse enseguida (Safari lo niega si el toque quedó atrás)
+    if (comparteArchivos()) (window.requestIdleCallback || (f => setTimeout(f, 1500)))(() => app.imagen());
 
     // El globo que invita a agregar la app a inicio (D-232): sale un rato después, en un celular
     // que todavía no la abre instalada, hasta que lo cierran. Por ahora, en el laboratorio
