@@ -56,7 +56,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
-| Portada: filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241 |
+| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255 |
 | Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247 |
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246 |
@@ -4427,4 +4427,21 @@ alemán quedan listos para ese momento, sin el aviso "en español".
 basta el compartir de siempre hasta que haya versiones del video en otros idiomas.
 **Alternativas descartadas:** mostrar el video en español con el aviso en los otros idiomas (lo de
 D-253; no le sirve a quien no habla español).
+
+## D-255 · La portada, de lo más jugado a lo menos
+**Fecha:** 2026-10-09 · **Estado:** vigente · **Relación:** cambia el orden de D-142 y D-149 (primero `GAMES`, después `SUELTOS`)
+**Decisión:** Los juegos disponibles de la portada van ordenados por cuántas partidas se jugaron,
+de más a menos, con los de `GAMES` y los de La Copa sueltos mezclados. El orden es una lista fija,
+`POPULARIDAD` en `games.js`; los que vienen "Próximamente" siguen al final. La primera vuelta
+cuenta las partidas de producción del 11 de septiembre al 9 de octubre de 2026 (todo lo que
+guarda `stats/prod/days`): las de cada modo sin red, una por sala de dos celulares, las de cada
+día de las copas (`torneos/<código>/results`) y las de Uno al día. La Copa va primera (209 días
+de copa jugados); después Toque y Fama (87), Línea de Tiempo (84, con el día "Línea" de las
+copas), Reinas (73), Tango (57), Ahorcado (54), Batalla Naval (47), ¿Dónde queda? (38), Letras
+(33), Zip (30), Conexiones (29), Año (21), Dudo (15), Desenredo (12) y Cuarto Rey (2).
+**Por qué:** lo pidió el dueño: que lo que más se juega quede arriba.
+**Alternativas descartadas:** ordenar en vivo con los datos de Firebase (la portada tendría que
+leer la base antes de dibujarse, y el orden cambiaría solo de un día a otro).
+**Consecuencias:** el orden no se actualiza solo: se rehace la cuenta y la lista cuando el dueño
+lo pide. Un juego nuevo que no está en la lista va después de los que sí.
 

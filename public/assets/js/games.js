@@ -237,10 +237,19 @@ export const TIPOS = {
 export const TIPOS_VIEJOS = { palabras: 'words', logica: 'logic', cultura: 'trivia', mesa: 'tabletop' };
 
 /**
- * Todo lo que ofrece la portada: los juegos de GAMES y, después, los de La Copa. Los que vienen
+ * El orden de la portada (D-255): de lo más jugado a lo menos, contando las partidas de todos los
+ * modos, las de las copas y las de Uno al día (del 11 de septiembre al 9 de octubre de 2026).
+ * Se rehace a mano cuando el dueño lo pide. Un juego que no está en la lista va después de los
+ * que sí, en el orden de GAMES y SUELTOS.
+ */
+export const POPULARIDAD = ['copa', 'toque-y-fama', 'linea-de-tiempo', 'reinas', 'tango', 'ahorcado', 'batalla-naval', 'donde', 'letras', 'zip', 'conexiones', 'anio', 'dudo', 'desenredo', 'julepe', 'cuarto-rey', 'generala'];
+const puesto = id => { const i = POPULARIDAD.indexOf(id); return i < 0 ? POPULARIDAD.length : i; };
+
+/**
+ * Todo lo que ofrece la portada, de lo más jugado a lo menos (D-255). Los que vienen
  * "Próximamente" van al final, con y sin filtro: no se abren y no deben tapar a los que sí.
  */
-const OFRECIDOS = [...GAMES, ...SUELTOS.filter(m => !m.labs)];
+const OFRECIDOS = [...GAMES, ...SUELTOS.filter(m => !m.labs)].sort((a, b) => puesto(a.id) - puesto(b.id));
 export const PORTADA = [...OFRECIDOS.filter(g => g.available), ...OFRECIDOS.filter(g => !g.available)];
 
 /** Cuántos juegan como mínimo y como máximo ("1–6" → [1, 6]; "1" → [1, 1]). */

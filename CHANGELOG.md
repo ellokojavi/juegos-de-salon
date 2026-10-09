@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.135.0 — 2026-10-09
+- **La portada, de lo más jugado a lo menos** (D-255): después de La Copa vienen Toque y Fama,
+  Línea de Tiempo, Reinas y Tango, y así hasta los que menos se juegan; los que vienen
+  "Próximamente" siguen al final.
+
 ## 0.134.1 — 2026-10-09
 - **🏅 Rankings con medalla**: el botón de rankings de la portada, la página de rankings y el ranking
   de Uno al día pasan del 🏆 a la 🏅, para no confundirlos con La Copa, que sigue con su 🏆.
