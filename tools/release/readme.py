@@ -163,8 +163,8 @@ def bloque_capturas(H, C, seccion):
         return ''
     w = ancho(C, seccion)
     if seccion == 'portada':
-        c = tomas[0]
-        return f'<p align="center"><img src="{c["imagen"]}" width="{w}" alt="{c["pie"]}"></p>\n'
+        # El menú y, a su lado, lo que abre el botón de compartir (D-253)
+        return '<p align="center">' + '&nbsp;&nbsp;'.join(f'<img src="{c["imagen"]}" width="{w}" alt="{c["pie"]}">' for c in tomas) + '</p>\n'
     filas = []
     for i in range(0, len(tomas), 4):
         celdas = [f'<td align="center"><img src="{c["imagen"]}" width="{w}" alt="{c["pie"]}">'
