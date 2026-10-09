@@ -131,6 +131,10 @@ export const CAMINOS = {
     'mias-terminadas': [MIAS_SEMBRAR, `1`, `document.getElementById('ver-terminadas').click()`],
     // Todas terminadas: "No tienes copas en curso." sobre el interruptor
     'mias-ninguna': [MIAS_SEMBRAR.replace('ahora + 3 * D', 'ahora - 1 * D'), `1`],
+    // La tabla del día de La Gran Final, con la tarjeta de cinco rondas de cada uno (#259)
+    'final-tabla': [`location.href='/cup/?prueba&demo=llena'`, `1`, `1`,
+      `[...document.querySelectorAll('.md-fila')].pop().click()`,
+      `document.querySelector('.screen.active .fila')?.scrollIntoView({ block: 'start' })`],
   },
   dudo: {
     intro: [],
