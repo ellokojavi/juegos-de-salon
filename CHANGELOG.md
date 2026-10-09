@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.134.0 — 2026-10-09
+- **🧶 Desenredo: Reiniciar nivel**: un botón bajo el tablero devuelve los nudos a donde partió el
+  nivel, para empezarlo de nuevo cuando el enredo se complicó. Como Borrar todo en Zip y Reinas,
+  el primer toque lo arma y el segundo lo hace, y el reloj sigue corriendo.
+
 ## 0.133.2 — 2026-10-09
 - **La copa global, dicha sin nombrar países**: el aviso de la invitación pasa a "🌎 Copa global:
   solo temas que se conocen en todo el mundo", en vez de nombrar a Chile y Brasil.
