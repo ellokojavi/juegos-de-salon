@@ -11,6 +11,9 @@
  * Por niveles contra el reloj, como Zip (D-103, D-179): diez niveles y cuatro minutos de tiempo
  * activo (se pausa con la pantalla oculta). Las jugadas son la partida entera:
  * `{ hechos, pos, usado, ultimo }`.
+ *
+ * "Reiniciar nivel" devuelve los nudos a donde partió el nivel; como Borrar todo en Zip y Reinas,
+ * el primer toque lo arma y el segundo lo hace, y el reloj sigue.
  */
 import * as motor from './engine.js';
 
@@ -18,6 +21,8 @@ const NS = 'http://www.w3.org/2000/svg';
 /** El radio con que se dibuja un nudo y el radio en que se lo puede tomar, en píxeles de pantalla. */
 const RADIO_PX = 11;
 const TOMAR_PX = 24;
+/** Cuánto dura armado "Reiniciar nivel" esperando el segundo toque, como Borrar todo en Zip. */
+const CONFIRMAR_MS = 3000;
 
 /**
  * Un hilo dibujado como cuerda (D-182): un borde oscuro, el alma del color del hilo y encima las
@@ -87,8 +92,37 @@ export function montar(raiz, ctx) {
   const capaHilos = svgEl('g', { class: 'des-hilos' });
   const capaNudos = svgEl('g', { class: 'des-nudos' });
   tablero.append(capaHilos, capaNudos);
+  let armado = false, armadoTimer = null;
+  const desarmar = () => { armado = false; clearTimeout(armadoTimer); };
+  const reiniciar = el('button', {
+    type: 'button', class: 'btn btn--ghost btn--sm', id: 'btn-reiniciar',
+    onClick: () => {
+      if (quieto() || vilo) return;
+      if (armado) {
+        desarmar();
+        J.pos = null; guardar();
+        SFX.splash(); vibrate([20, 30, 20]);
+        // Mientras los nudos vuelven no se pueden tomar
+        cambiando = true;
+        llevarA(p.inicio, () => { cambiando = false; pintar(); });
+        return;
+      }
+      armado = true; SFX.tap(); vibrate(15);
+      clearTimeout(armadoTimer);
+      armadoTimer = setTimeout(() => { armado = false; if (raiz.isConnected) pintarReiniciar(); }, CONFIRMAR_MS);
+      pintarReiniciar();
+    },
+  });
+  const acciones = el('div', { class: 'btn-row zip-acciones' }, reiniciar);
+  /** Sin nada movido desde que partió el nivel, no hay qué reiniciar. */
+  const pintarReiniciar = () => {
+    reiniciar.disabled = !p || quieto() || pos.every((q, v) => q[0] === p.inicio[v][0] && q[1] === p.inicio[v][1]);
+    if (reiniciar.disabled) desarmar();
+    reiniciar.classList.toggle('armado', armado);
+    reiniciar.textContent = armado ? T.desResetSure : `🔄 ${T.desReset}`;
+  };
   // El aviso del final va debajo del tablero: si fuera arriba, al aparecer lo correría bajo el dedo
-  caja.append(cabeza, el('p', { class: 'muted center', style: 'margin:0' }, T.desHint), tablero, estado, aviso);
+  caja.append(cabeza, el('p', { class: 'muted center', style: 'margin:0' }, T.desHint), tablero, estado, acciones, aviso);
   raiz.append(caja);
 
   let hilos = [], circulos = [];
@@ -140,6 +174,7 @@ export function montar(raiz, ctx) {
     });
     // El nudo en vilo va encima de todos
     if (v0 !== undefined && capaNudos.lastChild !== circulos[v0]) capaNudos.append(circulos[v0]);
+    if (!vilo) pintarReiniciar();
     if (!terminado && !tablero.classList.contains('fin')) {
       estado.textContent = total === 0 ? T.desNone : total === 1 ? T.desLeftOne : fmt(T.desLeft, { n: total });
       estado.classList.toggle('ok', total === 0);
@@ -155,6 +190,7 @@ export function montar(raiz, ctx) {
     J.usado = Math.min(tiempo, usado()); desde = null;
     guardar();
     terminado = true;
+    desarmar(); acciones.hidden = true;
     ctx.pararReloj?.({ ...J });
     aviso.innerHTML = '';
     estado.textContent = '';
@@ -171,16 +207,17 @@ export function montar(raiz, ctx) {
   };
 
   /** Lleva los nudos a otras posiciones, de a poco salvo que se pida menos movimiento. */
-  const llevarA = destino => {
+  const llevarA = (destino, listo) => {
     const origen = pos.map(q => q.slice());
     const quieto = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    if (quieto) { pos = destino.map(q => q.slice()); pintar(); return; }
+    if (quieto) { pos = destino.map(q => q.slice()); pintar(); listo?.(); return; }
     const t0 = performance.now(), DUR = 700;
     const paso = ahora => {
       const t = Math.min(1, (ahora - t0) / DUR), e = 1 - (1 - t) ** 3;
       pos = origen.map((q, v) => [q[0] + (destino[v][0] - q[0]) * e, q[1] + (destino[v][1] - q[1]) * e]);
       pintar();
       if (t < 1 && raiz.isConnected) requestAnimationFrame(paso);
+      else if (t >= 1) listo?.();
     };
     requestAnimationFrame(paso);
   };
@@ -210,6 +247,8 @@ export function montar(raiz, ctx) {
 
   tablero.addEventListener('pointerdown', ev => {
     if (vilo || quieto()) return;
+    // Tocar el tablero deja "Reiniciar nivel" sin armar: el segundo toque tiene que ser seguido
+    if (armado) desarmar();
     const [x, y] = punto(ev), alcance = TOMAR_PX * escala();
     // El nudo más cercano dentro del alcance: los que se dibujan juntos se pueden tomar igual
     let v = null, mejor = alcance;

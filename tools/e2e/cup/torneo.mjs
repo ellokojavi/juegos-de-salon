@@ -824,6 +824,13 @@ if (corre('laboratorio')) {
       const despues = await ev(`(()=>{const c=document.querySelector('.des-tablero circle[data-v="0"]');return JSON.stringify([c.cx.baseVal.value,c.cy.baseVal.value])})()`).then(JSON.parse);
       ok(despues[1] > antes[1] + 50 && Math.abs(despues[0] - antes[0]) < 2, `Desenredo: arrastrar desde al lado del nudo lo mueve (${antes} → ${despues})`);
       ok(/cruce/.test(await ev(`document.querySelector('.des-estado').textContent`)), 'Desenredo: bajo el tablero se cuentan los cruces');
+      // Reiniciar nivel: con un nudo movido se prende, el primer toque lo arma y el segundo devuelve los nudos
+      ok(await ev(`!document.getElementById('btn-reiniciar').disabled`), 'Desenredo: con un nudo movido, Reiniciar nivel se prende');
+      await ev(`document.getElementById('btn-reiniciar').click()`);
+      ok(/Toca de nuevo/.test(await ev(`document.getElementById('btn-reiniciar').textContent`)), 'Desenredo: el primer toque de Reiniciar nivel solo lo arma');
+      await ev(`document.getElementById('btn-reiniciar').click()`); await sleep(1100);
+      const vuelto = await ev(`(()=>{const c=document.querySelector('.des-tablero circle[data-v="0"]');return JSON.stringify([c.cx.baseVal.value,c.cy.baseVal.value])})()`).then(JSON.parse);
+      ok(Math.abs(vuelto[0] - antes[0]) < 1 && Math.abs(vuelto[1] - antes[1]) < 1 && await ev(`document.getElementById('btn-reiniciar').disabled`), `Desenredo: el segundo toque devuelve los nudos al inicio (${vuelto}) y el botón se apaga`);
       await revisarPantalla('desenredo-tablero');
     }
     if (id === 'tango') await b.shot('tango-tablero');
