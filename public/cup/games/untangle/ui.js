@@ -248,7 +248,7 @@ export function montar(raiz, ctx) {
   tablero.addEventListener('pointerdown', ev => {
     if (vilo || quieto()) return;
     // Tocar el tablero deja "Reiniciar nivel" sin armar: el segundo toque tiene que ser seguido
-    if (armado) desarmar();
+    if (armado) { desarmar(); pintarReiniciar(); }
     const [x, y] = punto(ev), alcance = TOMAR_PX * escala();
     // El nudo más cercano dentro del alcance: los que se dibujan juntos se pueden tomar igual
     let v = null, mejor = alcance;
