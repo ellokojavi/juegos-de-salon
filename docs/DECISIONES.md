@@ -4392,7 +4392,7 @@ nombrarlas, como antes (se quedaban semanas).
 <rama>`. Una sesión de la app que vuelve a una copia ya fusionada la encuentra borrada.
 
 ## D-253 · Compartir, desde la portada, abre una hoja con el video
-**Fecha:** 2026-10-09 · **Estado:** propuesta, espera la aprobación del dueño · **Relación:** completa D-226; usa la hoja de D-223 y D-232
+**Fecha:** 2026-10-09 · **Estado:** vigente · **Relación:** completa D-226; usa la hoja de D-223 y D-232
 **Decisión:** El botón de compartir de la portada ya no abre directo el menú del sistema: abre una
 hoja con el video promocional en 16:9 y dos opciones.
 - **El video** se ve primero como su miniatura con "▶ Ver el video"; al tocarlo se embebe desde
@@ -4405,7 +4405,9 @@ hoja con el video promocional en 16:9 y dos opciones.
 - El video que se muestra es `TRAILER` en `public/assets/js/compartir-portada.js`: al subir una
   versión nueva al canal, se cambia ahí (lo dice "Para YouTube" en la memoria del video).
 **Por qué:** lo pidió el dueño: que compartir muestre el trailer y deje mandar o la invitación o el
-video como pieza publicitaria.
+video como pieza publicitaria. Vio la propuesta (capturas en el PR #263) y aprobó las tres
+decisiones: compartir el link y no el archivo, el video en un solo lugar del código, y que esas
+visitas se cuenten en YouTube.
 **Alternativas descartadas:** mandar el mp4 como archivo (son ~10 MB que el celular tendría que
 bajar antes de abrir el menú, y Safari niega el menú si el toque quedó atrás); alojar el video en el
 sitio (GitHub Pages no está hecho para servir video; YouTube ya lo sirve en la calidad de cada
