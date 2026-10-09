@@ -1146,9 +1146,9 @@ function vistaSalud(now) {
       bloque('Navegador de los errores', 'Familia y versión mayor, nunca el navegador entero. En iPhone y iPad todos son Safari por dentro: va la versión de iOS.',
         lista(navs.map(([k, v]) => bar(navegadorLabel(k), [seg('var(--yellow)', v)], maxN)), 'Ningún error en este rango.', 'bars')),
     ),
-    bloque('Cuánto tarda en poder jugar', `Desde que se pidió la página hasta que sus módulos corrieron, en las cargas que estuvieron a la vista todo el rato. ${TRAMOS.map(([, l]) => l).join(' · ')}, de verde a morado.`,
+    bloque('Cuánto tarda en poder jugar', `Desde que se pidió la página hasta que sus módulos corrieron, en las cargas que estuvieron a la vista todo el rato. De verde a morado: ${TRAMOS.map(([, l]) => l).join(' · ')}.`,
       lista(lentas.map(([k, p]) => bar(paginaLabel(k), TRAMOS.map(([tr, l]) => ({ ...seg(C_TRAMO[tr], p.listo[tr] || 0), title: l })), p.medidas, {
-        note: porcentaje(p.lentas, p.medidas), detail: `${porcentaje(p.lentas, p.medidas)} tardaron 6 s o más · ${n(p.medidas)} cargas medidas`,
+        note: porcentaje(p.lentas, p.medidas), detail: `${n(p.lentas)} de ${n(p.medidas)} cargas medidas tardaron 6 s o más`,
       })), 'Nada todavía.', 'bars')),
   ];
 }
