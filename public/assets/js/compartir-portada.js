@@ -9,13 +9,20 @@
  *
  * El video no se carga hasta que lo tocan: antes es su miniatura con ▶, así abrir la hoja no baja
  * nada de YouTube. Se embebe desde youtube-nocookie.com, que no deja cookies hasta reproducir.
- * `TRAILER` es la última versión subida al canal (marketing/promo-video/README.md, "Lo subido"):
- * al subir una nueva, se cambia aquí.
+ * `TRAILERS` tiene, por idioma, la última versión subida al canal (marketing/promo-video/README.md,
+ * "Lo subido"): al subir una nueva, se cambia aquí. El video está en español, así que la hoja sale
+ * solo en español; en un idioma sin video, el botón comparte directo, como antes (D-253, D-254).
+ * Una versión en otro idioma se agrega como una entrada más.
  */
 import { el } from './ui.js';
 import { compartir, comparteArchivos, cabecera, conLink } from './compartir.js';
 
-export const TRAILER = { youtube: 'fQ4uFaPX_4g', poster: new URL('../img/trailer.jpg', import.meta.url).href };
+export const TRAILERS = {
+  es: { youtube: 'fQ4uFaPX_4g', poster: new URL('../img/trailer.jpg', import.meta.url).href },
+};
+export const TRAILER = TRAILERS.es;
+/** El video del idioma, o null si ese idioma todavía no tiene. */
+export const trailerDe = lang => TRAILERS[lang] || null;
 export const urlTrailer = id => `https://youtu.be/${id}`;
 const embebido = id => `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&playsinline=1&modestbranding=1`;
 

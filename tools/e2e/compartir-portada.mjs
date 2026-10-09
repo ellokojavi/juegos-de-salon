@@ -1,5 +1,5 @@
-// El botón de compartir de la portada (D-226, D-242): abre una hoja con el video y dos opciones. En cada idioma,
-// "Invitar a jugar" manda, con un celular que comparte archivos, la tarjeta social de ese idioma junto al texto, y
+// El botón de compartir de la portada (D-226, D-242): en español abre una hoja con el video y dos opciones (D-253);
+// en los idiomas sin video comparte directo, como antes (D-254). En cada idioma, la invitación manda, con un celular que comparte archivos, la tarjeta social de ese idioma junto al texto, y
 // "Compartir el video" manda el texto del video con su link de YouTube; en un computador, solo el texto copiado y
 // nada descargado. El video no se baja hasta que lo tocan.
 // Uso: node tools/e2e/compartir-portada.mjs /tmp/compartir-portada
@@ -26,14 +26,20 @@ for (const [lang, e] of Object.entries(ESPERADO)) {
   await b.go(`${SITIO}/?lang=${lang}`, 1500);
   await b.evaluate(CELULAR);
   // La foto se baja al tocar, si no se bajó antes; el toque espera a tenerla
-  await b.evaluate(`document.querySelector('#share-slot button').click(); 1`); await sleep(500);
-  ver(await b.evaluate(`!!document.querySelector('#hoja-compartir .hoja-video-play img') && !document.querySelector('#hoja-compartir iframe')`), `${lang}: el botón abre la hoja, con la miniatura del video y sin cargarlo`);
-  await b.evaluate(`document.getElementById('btn-compartir-video').click(); 1`); await sleep(600);
-  const v = await b.evaluate(`JSON.stringify(window.__menu || null)`).then(JSON.parse);
-  ver(v && v.text.startsWith('🎬 ') && /^🔗 https:\/\/youtu\.be\/[\w-]+$/.test(v.text.trim().split('\n').pop()) && !v.files.length, `${lang}: "Compartir el video" manda su texto con el link de YouTube al final (${v?.text?.split('\n').pop()})`);
-  await b.evaluate(`window.__menu = null; document.getElementById('btn-invitar-portada').click(); 1`); await sleep(1200);
+  await b.evaluate(`document.querySelector('#share-slot button').click(); 1`); await sleep(lang === 'es' ? 500 : 1200);
+  if (lang === 'es') {
+    // En español, la hoja con el video (D-253)
+    ver(await b.evaluate(`!!document.querySelector('#hoja-compartir .hoja-video-play img') && !document.querySelector('#hoja-compartir iframe')`), `${lang}: el botón abre la hoja, con la miniatura del video y sin cargarlo`);
+    await b.evaluate(`document.getElementById('btn-compartir-video').click(); 1`); await sleep(600);
+    const v = await b.evaluate(`JSON.stringify(window.__menu || null)`).then(JSON.parse);
+    ver(v && v.text.startsWith('🎬 ') && /^🔗 https:\/\/youtu\.be\/[\w-]+$/.test(v.text.trim().split('\n').pop()) && !v.files.length, `${lang}: "Compartir el video" manda su texto con el link de YouTube al final (${v?.text?.split('\n').pop()})`);
+    await b.evaluate(`window.__menu = null; document.getElementById('btn-invitar-portada').click(); 1`); await sleep(1200);
+  } else {
+    // En un idioma sin video, el botón comparte directo, como antes (D-254)
+    ver(await b.evaluate(`!document.getElementById('hoja-compartir')`), `${lang}: sin video en su idioma, no hay hoja`);
+  }
   const m = await b.evaluate(`JSON.stringify(window.__menu || null)`).then(JSON.parse);
-  ver(m, `${lang}: "Invitar a jugar" abre el menú del sistema`);
+  ver(m, `${lang}: ${lang === 'es' ? '"Invitar a jugar"' : 'el botón'} abre el menú del sistema`);
   if (!m) continue;
   ver(m.files.length === 1 && m.files[0].name === e.archivo && m.files[0].type === 'image/jpeg' && m.files[0].size > 50000, `${lang}: va la tarjeta como imagen (${JSON.stringify(m.files[0])})`);
   const fotos = await b.evaluate(`JSON.stringify(performance.getEntriesByType('resource').filter(e => /assets\\/og\\//.test(e.name)).map(e => e.name.split('/').pop()))`).then(JSON.parse);
@@ -47,7 +53,7 @@ for (const [lang, e] of Object.entries(ESPERADO)) {
 // Chrome headless sí tiene navigator.canShare: se lo quita antes de que cargue la página, o la
 // portada baja la tarjeta por adelantado y la cuenta de imágenes sale mal
 await b.send('Page.addScriptToEvaluateOnNewDocument', { source: 'navigator.canShare = undefined; navigator.share = undefined;' });
-await b.go(`${SITIO}/?lang=en`, 1500);
+await b.go(`${SITIO}/?lang=es`, 1500);
 await b.evaluate(`(() => { navigator.canShare = undefined; navigator.share = undefined; window.__copiado = null;
   navigator.clipboard.writeText = async t => { window.__copiado = t; };
   window.__descargas = 0; const c = HTMLAnchorElement.prototype.click; HTMLAnchorElement.prototype.click = function () { if (this.download) window.__descargas++; else c.call(this); };
@@ -55,7 +61,7 @@ await b.evaluate(`(() => { navigator.canShare = undefined; navigator.share = und
 await b.evaluate(`(() => { const x = document.querySelector('#share-slot button'); x.focus(); x.click(); return 1; })()`); await sleep(400);
 await b.evaluate(`document.getElementById('btn-invitar-portada').click(); 1`); await sleep(600);
 const pc = await b.evaluate(`JSON.stringify({ copiado: window.__copiado, descargas: window.__descargas, boton: document.querySelector('#btn-invitar-portada b').textContent, fotos: performance.getEntriesByType('resource').filter(e => /assets\\/og\\//.test(e.name)).length })`).then(JSON.parse);
-ver(pc.copiado?.startsWith('🎲 *Party Games*') && pc.boton === '✅ Copied', `computador: el texto queda copiado y la opción dice ✅ Copied (${pc.boton})`);
+ver(pc.copiado?.startsWith('🎲 *Juegos de Salón*') && pc.boton === '✅ Copiado', `computador: el texto queda copiado y la opción dice ✅ Copiado (${pc.boton})`);
 await b.evaluate(`document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' })); 1`); await sleep(200);
 ver(await b.evaluate(`!document.getElementById('hoja-compartir') && document.activeElement?.id === 'btn-compartir-portada'`), 'Escape cierra la hoja y el foco vuelve al botón');
 ver(pc.descargas === 0 && pc.fotos === 0, 'computador: no se baja ni se descarga ninguna imagen');
