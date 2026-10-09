@@ -392,7 +392,7 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
   sin abrir el juego, como la ⭐, va al lado del link, encima de la tarjeta (`.game-slot`), con
   44 px de toque y sin tapar texto (C-8, D-238).
 - **La barra de arriba** va en dos bloques: el idioma (C-3) a la izquierda y, a la derecha, las
-  acciones: el sonido (C-4), 🏆 rankings (D-212, abiertos a todos desde D-217) y compartir. Con
+  acciones: el sonido (C-4), 🏅 rankings (D-212, abiertos a todos desde D-217; medalla y no copa, para no confundirlo con La Copa) y compartir. Con
   6 px de aire entre botones caben en una línea desde 375 px; más angosto (320 px), las acciones
   bajan a una segunda línea y siguen a la derecha (v0.128.1). En un idioma que tiene video
   promocional (hoy, solo español), compartir abre una hoja (la de D-223 y D-232) con el video, que se carga recién al tocarlo, y dos opciones: **Invitar a
