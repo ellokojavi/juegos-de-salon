@@ -128,7 +128,7 @@ export const COMMON = {
     },
     // La hoja del botón de compartir de la portada: el video y las dos maneras de compartir
     shareSheet: {
-      title: 'Comparte Juegos de Salón',
+      title: 'Compartir Juegos de Salón',
       play: 'Ver el video',
       videoTitle: 'Video de Juegos de Salón',
       invite: '💬 Invitar a jugar',
