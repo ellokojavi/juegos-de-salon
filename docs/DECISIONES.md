@@ -69,7 +69,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | README y capturas | C-13 | D-51, D-76, D-78, D-213 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216 |
 | La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250 |
-| Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218 |
+| Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249 |
 | Marketing | `marketing/README.md` | D-178 |
 | App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
@@ -3545,7 +3545,7 @@ victorias y los récords de jugar solo (D-215).
 Las reglas de Firebase no cambian.
 
 ## D-218 · Lo de después de fusionar no espera a nadie
-**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** completa D-216; corrige D-122 y D-206 (quién publica las reglas y borra la copia)
+**Fecha:** 2026-10-05 · **Estado:** corregida por D-252 · **Relación:** completa D-216; corrige D-122 y D-206 (quién publica las reglas y borra la copia)
 **Decisión:** Con el auto-merge (D-216) un PR se fusiona cuando nadie mira, así que lo que venía
 después pasa a hacerse solo:
 - **Las reglas de Firebase** las publica `publicar.yml` en cada fusión, en un job `reglas` que
@@ -4371,4 +4371,23 @@ quien juega y sale de una sola resta.
 **Consecuencias:** las reglas tienen tres categorías nuevas (`falla`, `listo`, `err`), que publica
 `publicar.yml` al fusionar. Un juego nuevo lleva la línea del vigía en su `index.html`: lo exige
 `vigia.test.mjs`. `window.__vigia.fallas` dice lo que se mandó en esa carga, para las pruebas (C-14).
+
+## D-252 · Ninguna copia de trabajo queda sin uso
+**Fecha:** 2026-10-09 · **Estado:** vigente · **Relación:** corrige D-218 (qué copias borra el hook); completa D-135 y D-206
+**Decisión:** Una copia de trabajo (worktree) vive mientras tiene trabajo en curso o un PR abierto.
+La sesión que la crea la borra apenas sabe que no va a dar PR, y al terminar deja solo las copias
+con PR abierto. `tools/agents/limpiar-copias.mjs`, que corre al empezar cada sesión, barre además:
+- las **fusionadas**, como antes, ahora también las de la app (`.claude/worktrees/`);
+- las **vacías**: sin commits propios ni cambios, creadas hace más de un día;
+- las **abandonadas**: con commits fuera de `main`, sin PR abierto y sin moverse hace más de tres
+  días. Antes de borrarlas sube su rama a GitHub (`origin/<rama>`); si no puede subirla, la deja.
+Nunca toca la carpeta principal, la copia desde donde se corre, una con cambios sin commitear ni una
+con PR abierto. Sin `gh` no sabe qué PR están abiertos y no da nada por abandonado.
+**Por qué:** lo pidió el dueño. El hook de D-218 solo borraba las fusionadas, y se acumulaban: una
+copia del 4 de octubre con trabajo que nunca llegó a PR (`tyf-puntaje-deduccion`), dos de la app
+con su PR fusionado hace días y una creada para un dilema que ya estaba resuelto.
+**Alternativas descartadas:** borrar las abandonadas sin subirlas (se pierde trabajo); solo
+nombrarlas, como antes (se quedaban semanas).
+**Consecuencias:** una rama abandonada se retoma con `git worktree add ../juegos-de-salon-<tema>
+<rama>`. Una sesión de la app que vuelve a una copia ya fusionada la encuentra borrada.
 
