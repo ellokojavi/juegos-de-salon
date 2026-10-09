@@ -120,6 +120,7 @@ ol.como li { line-height: 1.45; }
 .fila .quien { min-width: 0; }
 .fila .quien b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .fila .quien small { display: block; }
+.fila .quien .rondas { margin-top: 2px; font-variant-numeric: tabular-nums; } /* angosta, se corta entre ronda y ronda */
 /* El nombre se corta con "…" antes que la píldora ×2 */
 .fila .quien .con-x2 { display: flex; align-items: center; min-width: 0; }
 .fila .quien .con-x2 b { min-width: 0; }
