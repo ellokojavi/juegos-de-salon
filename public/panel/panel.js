@@ -29,7 +29,7 @@ import {
   ROOM_TTL, liveRooms, connections, summarize, top, tzLabel, ago, dayOf, codesOfDays, splitByEnv, liveLocal, roomLog,
   paginate, flagOf, whenLabel, horaLabel, fechaLabel, diaPanel, ZONA_PANEL, ZONA_NOMBRE, RANGOS, RANGO_POR_DEFECTO, rangeOf,
   groupDays, localLog, paisesDeSalas, paisesDelRango, salaDe, mediana, idiomasDeSalas, idiomasDelRango, trafico, origenesAgrupados, origenLabel, dayLabel,
-  avisosDelRango, AVISO_TIPOS, vueltaAtrasada, unoAlDiaDelRango,
+  avisosDelRango, AVISO_TIPOS, vueltaAtrasada, unoAlDiaDelRango, salud, TRAMOS, navegadorLabel,
 } from './aggregate.js';
 import { SECCIONES, leerRuta, rutaA, seccionDe } from './rutas.js';
 
@@ -50,7 +50,7 @@ const S = {
   // Desde qué día está bajado `days`: un rango más largo obliga a pedir de nuevo, uno más corto no
   desdeDia: null,
   // Lo que se eligió dentro de una vista. No va en la URL: es de esta visita, no del lugar.
-  logPage: 1, logSolas: false, filtroAhora: 'todo', filtroCopas: 'todas', fichaTab: 'tabla', sinRedTodas: false,
+  logPage: 1, logSolas: false, filtroAhora: 'todo', filtroCopas: 'todas', fichaTab: 'tabla', sinRedTodas: false, erroresTodos: false,
 };
 if (S.ruta.r && RANGOS.some(r => r.id === S.ruta.r)) S.range = S.ruta.r;
 if (S.ruta.e) S.env = S.ruta.e;
@@ -1055,6 +1055,105 @@ function vistaAudiencia(now) {
 }
 
 /* ------------------------------------------------------------------ */
+/* Salud: lo que le falla a quien juega (D-251)                        */
+/* ------------------------------------------------------------------ */
+const TIPO_FALLA = {
+  arranque: ['⛔', 'No arrancó', 'a los 20 s la página no había cargado sus módulos'],
+  recurso: ['📦', 'No cargó un archivo', 'un script o una hoja de estilos no llegó'],
+  js: ['💥', 'Error', 'un error sin atrapar'],
+  promesa: ['⚠️', 'Promesa rechazada', 'una promesa rechazada sin atrapar'],
+};
+const C_TRAMO = { s1: 'var(--lime)', s3: 'var(--cyan)', s6: 'var(--yellow)', s10: 'var(--pink)', mas: 'var(--purple)' };
+const listaDe = (obj, label, max = 4) => {
+  const pares = top(obj, 50);
+  const vistos = pares.slice(0, max).map(([k, v]) => `${label(k)}${pares.length > 1 ? ` (${n(v)})` : ''}`);
+  return vistos.join(', ') + (pares.length > max ? ` y ${pares.length - max} más` : '');
+};
+
+/** Un error, juntado por qué es: dónde, en qué páginas, en qué navegadores y versiones, y cuándo. */
+function filaError(g) {
+  const [ico, nombre] = TIPO_FALLA[g.k] || ['·', g.k];
+  const dias = g.primero === g.ultimo ? dayLabel(g.ultimo) : `${dayLabel(g.primero)} a ${dayLabel(g.ultimo)}`;
+  const versiones = Object.keys(g.versiones).sort().join(', ');
+  return el('div', { class: `err-row${g.viejo ? ' err-row--viejo' : ''}` },
+    el('div', { class: 'err-ico', title: nombre, role: 'img', 'aria-label': nombre }, ico),
+    el('div', { class: 'err-cuerpo' },
+      el('p', { class: 'err-msg' }, g.m),
+      g.f ? el('p', { class: 'err-lugar' }, el('code', {}, g.f)) : null,
+      el('div', { class: 'err-meta' },
+        el('span', { class: 'q' }, listaDe(g.paginas, paginaLabel)),
+        el('span', { class: 'q' }, listaDe(g.navegadores, navegadorLabel)),
+        versiones ? el('span', { class: 'q' }, `v${versiones}`) : null,
+        el('span', { class: 'q' }, dias),
+        g.viejo ? el('span', { class: 'q q--ok', title: 'La versión más nueva del rango no lo tuvo' }, `no aparece después de la v${g.ultimaVersion}`) : null)),
+    el('div', { class: 'err-n', title: 'Cargas que lo vieron' }, n(g.n)));
+}
+
+/** Un porcentaje que no esconde lo poco: 2 de 674 es 0,3 %, no 0 %. */
+const pctFino = (a, b) => (!b ? '—' : a && a / b < 0.01 ? `${((a / b) * 100).toLocaleString('es-CL', { maximumFractionDigits: 1, minimumFractionDigits: 1 })}%` : porcentaje(a, b));
+
+function vistaSalud(now) {
+  const rango = rangeOf(S.range);
+  const s = salud(S.days, { from: rango.from, to: rango.to });
+  const hoy = salud(S.days, { from: dayOf(now), to: dayOf(now) });
+  const nota = 'Lo que le falla a quien abre el sitio: páginas que no arrancaron, errores y cuánto tarda en poder jugar. Lo anota cada celular, una vez por carga y tipo, sin IP ni dirección completa (D-251). Una carga es una página abierta: las que arrancaron son las vistas de Tráfico. Días UTC.';
+  if (s.desde === null) {
+    return [...titulo(`🩺 Salud · ${tituloRango()}`, nota),
+      el('p', { class: 'empty' }, S.daysLoaded ? 'Todavía no hay nada anotado en este rango: se empezó a anotar con D-251.' : 'Cargando…')];
+  }
+  const t = s.total;
+  const periodos = groupDays(s.porDia, rango.grano);
+  const maxD = Math.max(0, ...periodos.map(d => d.alguna));
+  const paginas = Object.entries(s.paginas).filter(([, p]) => p.alguna).sort((a, b) => (b[1].alguna / (b[1].cargas || 1)) - (a[1].alguna / (a[1].cargas || 1)) || b[1].cargas - a[1].cargas);
+  const lentas = Object.entries(s.paginas).filter(([, p]) => p.medidas).sort((a, b) => b[1].lentas / b[1].medidas - a[1].lentas / a[1].medidas || b[1].medidas - a[1].medidas);
+  const tiposTotal = ['arranque', 'recurso', 'js', 'promesa'].map(k => [k, t[k]]);
+  const maxTipo = Math.max(0, ...tiposTotal.map(([, v]) => v));
+  const navegadores = {};
+  for (const g of s.errores) for (const [b, v] of Object.entries(g.navegadores)) navegadores[b] = (navegadores[b] || 0) + v;
+  const navs = top(navegadores, 10);
+  const maxN = Math.max(0, ...navs.map(([, v]) => v));
+  const VISIBLES = 30;
+  const errores = S.erroresTodos ? s.errores : s.errores.slice(0, VISIBLES);
+
+  return [
+    ...titulo(`🩺 Salud · ${tituloRango()}`, nota),
+    s.desde > rango.from ? el('p', { class: 'muted small' }, `Se anota desde el ${dayLabel(s.desde)}: antes de eso no hay datos.`) : null,
+    el('div', { class: 'tiles' },
+      tile(pctFino(t.arranque, t.cargas), `no arrancaron · ${n(t.arranque)} de ${n(t.cargas)} cargas`, { hot: t.arranque > 0, info: TIPO_FALLA.arranque[2] }),
+      tile(pctFino(t.alguna, t.cargas), `cargas con alguna falla · ${n(t.alguna)}`, { hot: t.alguna > 0 }),
+      tile(pctFino(t.lentas, t.medidas), 'tardaron 6 s o más en arrancar', { info: `de ${n(t.medidas)} cargas medidas, las que estuvieron a la vista todo el rato` }),
+      tile(s.errores.length, 'errores distintos'),
+      tile(hoy.total.alguna, 'cargas con fallas hoy (día UTC)', { hot: hoy.total.arranque > 0 }),
+    ),
+    el('div', { class: 'grid2' },
+      bloque({ dia: 'Cargas con fallas por día', semana: 'Cargas con fallas por semana', mes: 'Cargas con fallas por mes' }[rango.grano],
+        `En rosado, las que no arrancaron.${rango.grano === 'semana' ? ' La fecha es el lunes de cada semana.' : ''}`,
+        lista(periodos.map(d => bar(d.label, [seg(C_TORNEO, d.arranque), seg('var(--yellow)', Math.max(0, d.alguna - d.arranque))], maxD, {
+          cifra: d.alguna, detail: d.cargas ? `${porcentaje(d.alguna, d.cargas)} de ${n(d.cargas)} cargas` : '',
+        })), 'Nada todavía.', 'bars')),
+      bloque('Qué falló', 'Cargas que tuvieron cada cosa. Una carga puede tener más de una.',
+        lista(tiposTotal.map(([k, v]) => bar(`${TIPO_FALLA[k][0]} ${TIPO_FALLA[k][1]}`, [seg(k === 'arranque' ? C_TORNEO : 'var(--yellow)', v)], maxTipo, { detail: TIPO_FALLA[k][2] })), 'Nada todavía.', 'bars')),
+    ),
+    bloque('Errores', `Juntados por qué error son: el mismo en otra línea o con otro número es uno solo. La cifra es cuántas cargas lo vieron. En gris, los que la versión más nueva del rango (v${s.versionActual}) ya no tuvo.`,
+      lista(errores.map(filaError), 'Ningún error en este rango.', 'errs'),
+      s.errores.length > VISIBLES ? el('button', { class: 'btn btn--ghost btn--sm', style: 'margin-top:10px', onClick: () => { S.erroresTodos = !S.erroresTodos; render(); } },
+        S.erroresTodos ? 'Ver menos' : `Ver los ${n(s.errores.length)}`) : null),
+    el('div', { class: 'grid2' },
+      bloque('Páginas con fallas', 'De las cargas de cada página, cuántas tuvieron alguna falla.',
+        lista(paginas.map(([k, p]) => bar(paginaLabel(k), [seg(C_TORNEO, p.arranque), seg('var(--yellow)', Math.max(0, p.alguna - p.arranque))], Math.max(1, p.cargas), {
+          cifra: p.alguna, note: pctFino(p.alguna, p.cargas), detail: `de ${n(p.cargas)} cargas${p.arranque ? ` · ${n(p.arranque)} no arrancaron` : ''}`,
+        })), 'Ninguna página con fallas en este rango.', 'bars')),
+      bloque('Navegador de los errores', 'Familia y versión mayor, nunca el navegador entero. En iPhone y iPad todos son Safari por dentro: va la versión de iOS.',
+        lista(navs.map(([k, v]) => bar(navegadorLabel(k), [seg('var(--yellow)', v)], maxN)), 'Ningún error en este rango.', 'bars')),
+    ),
+    bloque('Cuánto tarda en poder jugar', `Desde que se pidió la página hasta que sus módulos corrieron, en las cargas que estuvieron a la vista todo el rato. De verde a morado: ${TRAMOS.map(([, l]) => l).join(' · ')}.`,
+      lista(lentas.map(([k, p]) => bar(paginaLabel(k), TRAMOS.map(([tr, l]) => ({ ...seg(C_TRAMO[tr], p.listo[tr] || 0), title: l })), p.medidas, {
+        note: porcentaje(p.lentas, p.medidas), detail: `${n(p.lentas)} de ${n(p.medidas)} cargas medidas tardaron 6 s o más`,
+      })), 'Nada todavía.', 'bars')),
+  ];
+}
+
+/* ------------------------------------------------------------------ */
 /* Navegación                                                          */
 /* ------------------------------------------------------------------ */
 /** Ícono y nombre de cada sección. El de La Copa sale del registro de juegos (C-16). */
@@ -1064,17 +1163,21 @@ const SECCION = {
   juegos: ['🎲', 'Juegos'],
   trafico: ['📈', 'Tráfico'],
   audiencia: ['🌎', 'Audiencia'],
+  salud: ['🩺', 'Salud'],
 };
 
 function renderNav(now) {
   const actual = seccionDe(S.ruta);
   // Un punto verde en Ahora cuando hay algo en juego: se ve desde cualquier sección
   const algo = liveLocal(S.days, now).length > 0 || copasEnCurso(S.torneos, now).some(c => c.jugando.length) || salasVivas(now).propias.some(r => r.active);
+  // Un punto rojo en Salud si hoy o ayer alguna página no arrancó (D-251)
+  const noArranca = salud(S.days, { from: dayOf(now) - 1, to: dayOf(now) }).total.arranque > 0;
   $('#nav').replaceChildren(...SECCIONES.map(sec => {
     const [ico, nombre] = SECCION[sec] || ['·', sec];
     return enlace(sec, [], { 'aria-current': sec === actual ? 'page' : null },
       el('span', { class: 'ico', 'aria-hidden': 'true' }, ico), el('span', { class: 'nombre' }, nombre),
-      sec === 'ahora' && algo ? el('span', { class: 'vivo', title: 'Hay algo en juego' }) : null);
+      sec === 'ahora' && algo ? el('span', { class: 'vivo', title: 'Hay algo en juego' }) : null,
+      sec === 'salud' && noArranca ? el('span', { class: 'vivo vivo--alerta', title: 'Hoy o ayer una página no arrancó' }) : null);
   }));
 }
 
@@ -1089,6 +1192,7 @@ function render() {
   else if (sec === 'juegos') nodos = vistaJuegos();
   else if (sec === 'audiencia') nodos = vistaAudiencia(now);
   else if (sec === 'trafico') nodos = vistaTrafico(now);
+  else if (sec === 'salud') nodos = vistaSalud(now);
   else nodos = vistaAhora(now);
   $('#vista').replaceChildren(...nodos.flat().filter(Boolean));
   renderNav(now);
@@ -1104,7 +1208,7 @@ function alCambiarRuta() {
   if ((S.ruta.e || ENV_DEFECTO) !== S.env) cambiarEntorno(S.ruta.e || ENV_DEFECTO, false);
   const otra = antes.sec !== S.ruta.sec || antes.args.join('/') !== S.ruta.args.join('/');
   if (otra) {
-    S.logPage = 1; S.sinRedTodas = false;
+    S.logPage = 1; S.sinRedTodas = false; S.erroresTodos = false;
     if (S.ruta.args[0] !== antes.args[0]) S.fichaTab = 'tabla';
   }
   $('#buscar-msg').hidden = true;
