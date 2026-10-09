@@ -41,11 +41,12 @@
       ],
       "estado": "en YouTube (@eljotairi), no listado: 16:9 https://youtu.be/fQ4uFaPX_4g y Short https://youtube.com/shorts/RYAvj2MTRPQ",
       "revision": {
-        "fecha": "2026-10-08",
-        "app": "0.129.1",
+        "fecha": "2026-10-09",
+        "app": "0.135.0",
         "al_dia": false,
         "pendiente": [
-          "Zip (escena de los cuatro juegos, ~14-16 s): el encabezado del video dice 'Nivel 1 · 4 × 4'; desde 0.130.0 (D-250) dice 'Nivel 1 de 10' (diez niveles fijos). Se corrige en la próxima vuelta, no amerita rehacer la v6."
+          "Zip (escena de los cuatro juegos, ~14-16 s): el encabezado del video dice 'Nivel 1 · 4 × 4'; desde 0.130.0 (D-250) dice 'Nivel 1 de 10' (diez niveles fijos). Se corrige en la próxima vuelta, no amerita rehacer la v6.",
+          "Uno al día (~21 s, el dedo toca la tarjeta de la portada): bajo la fila de La Copa y Uno al día se ve Línea de Tiempo; desde D-255 la portada va por popularidad y ahí va Toque y Fama. Menor: se corrige en la próxima vuelta."
         ]
       },
       "seleccion": true,

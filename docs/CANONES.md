@@ -344,9 +344,10 @@ La portada (`public/index.html`) es la lista de juegos y las maneras de elegir u
 salieron de varias decisiones que se fueron corrigiendo; aquí está lo vigente, y cada punto dice
 de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
 
-- **Qué se ofrece y en qué orden.** Las tarjetas salen de `PORTADA` en `games.js`: primero los
-  juegos de `GAMES` (La Copa, la primera, en media fila junto a Uno al día) y después los juegos de La Copa sueltos (`SUELTOS`,
-  aparte solo por cómo están hechos, D-198), sin lista propia en la página (D-142, D-149). Un
+- **Qué se ofrece y en qué orden.** Las tarjetas salen de `PORTADA` en `games.js`: los juegos
+  de `GAMES` y los juegos de La Copa sueltos (`SUELTOS`, aparte solo por cómo están hechos, D-198)
+  van mezclados, de lo más jugado a lo menos, según la lista `POPULARIDAD` (D-255), sin lista
+  propia en la página (D-142, D-149). La Copa va primera, en media fila junto a Uno al día. Un
   juego que no está disponible se ve, con "Próximamente" al lado del nombre, pero no se abre, ni
   con el teclado (`available` en `games.js`, C-2; D-142), y va al final de la lista, con y sin
   filtro (v0.128.2). La tarjeta dice jugadores y duración,

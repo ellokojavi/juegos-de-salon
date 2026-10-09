@@ -14,6 +14,8 @@
 3. **El registro** en `public/assets/js/games.js` (C-2): con eso aparecen el menú y el panel (C-16).
    Sus `tipos` (`words`, `logic`, `trivia` o `tabletop`, las claves de `TIPOS`) dicen con qué
    filtros de la portada aparece (D-214); lo demás que la portada le pide está en C-17.
+   Su `id` va también en `POPULARIDAD`, el orden de la portada (D-255): sin partidas que contar,
+   al final de los disponibles; si no está en la lista, igual queda al final.
    Si estrena un modo, se agrega a `MODES` y basta.
 4. **Los modos** que le tocan según C-5, con el transporte de C-7 (`create`, `join`, `send`,
    `onMessage`, `onPresence`, `leave`, `dispose`) y, si tiene sala, sus reglas en
