@@ -43,7 +43,8 @@ public/<carpeta>/
 - El juego se registra en `public/assets/js/games.js` con `id`, `emoji`, `name` y `tagline` por idioma, `players`, `duration`, `path` y `available`. Con sala, también `jugadas`: los tipos de mensaje que hace una persona, que es lo que el panel cuenta como jugadas (D-138).
 - El `<head>` de cada página de la app lleva el manifest, el ícono y el nombre del iPhone
   (`apple-touch-icon` y `apple-mobile-web-app-title`), el script que elige el manifest del idioma
-  justo después del `<link rel="manifest">`, y, después de las hojas de estilo, el
+  justo después del `<link rel="manifest">`, el vigía (`vigia.js`) antes de las hojas de estilo
+  (C-7, D-251), y, después de las hojas de estilo, el
   registro del service worker (`import '<…>assets/js/instalable.js'`, que además pone el manifest y
   el nombre del idioma elegido, y trae `llegada.js`, que repite encima el dado de Juego al azar hasta
   que el juego está dibujado: una `.screen.active` que no sea `#screen-espera`, D-237): así la app se
@@ -210,7 +211,7 @@ Cuando cada dispositivo guarda un secreto (un número, una flota):
 ## C-11 · Publicación y versionado
 
 - La versión de una publicación es la primera entrada de `CHANGELOG.md` (`## X.Y.Z — fecha`), que se escribe al fusionar. Las páginas en git no la llevan (D-205).
-- Al publicar, `publicar.yml` corre `set-version.py --sitio _site`: estampa `?v=X.Y.Z-<commit>` en los import maps, las hojas de estilo y las imágenes de las tarjetas, y la versión en el pie del menú, solo en la copia que se sube. Así el navegador no mezcla archivos viejos y nuevos, y dos PR abiertos no chocan.
+- Al publicar, `publicar.yml` corre `set-version.py --sitio _site`: estampa `?v=X.Y.Z-<commit>` en los import maps, las hojas de estilo, los scripts clásicos (el vigía, D-251) y las imágenes de las tarjetas, y la versión en el pie del menú, solo en la copia que se sube. Así el navegador no mezcla archivos viejos y nuevos, y dos PR abiertos no chocan.
 - Que el README (C-13) y las tarjetas (D-181) no hayan quedado atrás lo frena el check `pruebas` de cada PR, y se vuelve a revisar antes de publicar.
 - Los módulos nuevos entran solos: el script recorre `**/*.js` del sitio y estampa toda página que cargue módulos (D-192).
 - Se publica solo `public/`, con `.github/workflows/publicar.yml`, en cada fusión a main y solo si las pruebas pasan (D-192).
@@ -424,6 +425,7 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
 - [ ] Lo que comparte (sala, resultado) sale de `compartir.js`, con la cabecera del estándar, y un resultado va con su imagen (C-7, D-165).
 - [ ] Registro en el menú, README, especificación, requerimientos y decisiones (C-2, C-13). En la portada, con su tipo, entra al dado y a los favoritos y cabe a 320 px (C-17).
 - [ ] Las excepciones a los cánones están escritas en su especificación (C-13).
+- [ ] Su `index.html` lleva el vigía antes de las hojas de estilo y llama `trackVisit()` al cargar: `node public/assets/js/vigia.test.mjs` en verde (C-7, D-251).
 - [ ] El panel lo muestra sin haberlo tocado: `node public/panel/adapta.test.mjs` en verde y una mirada a `node tools/e2e/mirar.mjs panel datos` (C-16).
 - [ ] Capturas del README rehechas y miradas, y `python3 tools/release/readme.py revisar` en verde (C-13).
 - [ ] `node tools/agents/documentar.mjs revisar --desde origin/main` sin ✗ nuevos: decisiones, pruebas, guiones y CHANGELOG al día (D-172).
