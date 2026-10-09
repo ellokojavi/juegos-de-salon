@@ -7,7 +7,7 @@ The menu can be filtered by kind of game (words, logic, trivia, cards and dice);
 **Play:** https://juegosdesalon.cl/
 
 <!-- generado: capturas:portada · written by python3 tools/release/readme.py actualizar -->
-<p align="center"><img src="docs/screenshots/menu.png" width="220" alt="Main menu"></p>
+<p align="center"><img src="docs/screenshots/menu.png" width="220" alt="Main menu">&nbsp;&nbsp;<img src="docs/screenshots/compartir.png" width="220" alt="Share sheet with the promo video"></p>
 <!-- /generado -->
 
 > The app is Chilean and it is built in Spanish. This README is in English so anyone can read it. The rest of the documentation, linked at the end, is in Spanish, and the screenshots show the app in Spanish, which is its default language.
