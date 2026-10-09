@@ -4438,7 +4438,8 @@ guarda `stats/prod/days`): las de cada modo sin red, una por sala de dos celular
 día de las copas (`torneos/<código>/results`) y las de Uno al día. La Copa va primera (209 días
 de copa jugados); después Toque y Fama (87), Línea de Tiempo (84, con el día "Línea" de las
 copas), Reinas (73), Tango (57), Ahorcado (54), Batalla Naval (47), ¿Dónde queda? (38), Letras
-(33), Zip (30), Conexiones (29), Año (21), Dudo (15), Desenredo (12) y Cuarto Rey (2).
+(33), Zip (30), Conexiones (29), Año (21), Dudo (15), Desenredo (12) y Cuarto Rey (2). Julepe (4) y
+Generala (1) también están en la lista, aunque hoy van al final por "Próximamente".
 **Por qué:** lo pidió el dueño: que lo que más se juega quede arriba.
 **Alternativas descartadas:** ordenar en vivo con los datos de Firebase (la portada tendría que
 leer la base antes de dibujarse, y el orden cambiaría solo de un día a otro).
