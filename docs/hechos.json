@@ -1,5 +1,5 @@
 {
-  "version": "0.132.0",
+  "version": "0.133.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -18,7 +18,7 @@
     "pt": 100,
     "de": 100
   },
-  "clavesComunes": 28,
+  "clavesComunes": 29,
   "juegos": [
     {
       "id": "copa",
@@ -765,6 +765,7 @@
     "public/assets/js/arrastre.js",
     "public/assets/js/azar.js",
     "public/assets/js/chat.js",
+    "public/assets/js/compartir-portada.js",
     "public/assets/js/compartir.js",
     "public/assets/js/dado3d.js",
     "public/assets/js/favoritos.js",
@@ -940,6 +941,7 @@
     "tools/release/version.test.mjs"
   ],
   "e2e": [
+    "_hoja_tmp.mjs",
     "battleship/alineacion.mjs",
     "battleship/chat.mjs",
     "battleship/colocacion.mjs",
