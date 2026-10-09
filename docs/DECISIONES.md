@@ -64,7 +64,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Interfaz táctil | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213 |
 | Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213 |
 | Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243 |
-| Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211 |
+| Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251 |
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216 |
@@ -4321,3 +4321,54 @@ Desenredo.
 **Consecuencias:** `finPartida` de Zip termina también con `hechos >= NIVELES`, y la pantalla
 retoma una partida terminada con los diez mostrando el último resuelto. El puntaje (`10 × hechos`)
 y el dato de desempate (`ultimo`) no cambian de forma, así que las copas en curso siguen valiendo.
+
+## D-251 · El vigía: lo que le falla a quien juega, en la sección Salud del panel
+**Fecha:** 2026-10-09 · **Estado:** vigente · **Relación:** amplía D-44 y D-208 (una categoría de señal nueva); amplía D-207 (una sección más)
+**Decisión:** Cada página que carga módulos (todas menos el panel y las puente) lleva en el `<head>`,
+antes de las hojas de estilo, `public/assets/js/vigia.js`: un script clásico que anota por día y
+entorno las cargas con fallas por tipo y página (`falla/<tipo>/<página>`: `arranque`, `recurso`,
+`js`, `promesa` y `alguna`), cada error con su detalle (`err/<firma>`: tipo, mensaje, archivo y
+línea, página, navegador y versión) y cuánto tardó cada página en arrancar (`listo/<página>/<tramo>`).
+"Arrancó" lo avisa `trackVisit`; a los 20 s sin aviso, y con la pestaña a la vista todo el rato, la
+carga cuenta como que no arrancó. El panel lo muestra en **🩺 Salud** (`#/salud`), con un punto
+rosado en la navegación si hoy o ayer una página no arrancó.
+**Por qué:** el sitio no tiene servidor ni build: un módulo que no llega, una sintaxis que un Safari
+viejo no lee o un import roto dejan la página en blanco, y hasta hoy la única forma de saberlo era
+que alguien lo contara por 🐞. Las señales de uso tampoco lo veían: una página que no arrancó no
+manda ni su vista.
+**Cómo se diseñó, y qué cambió al criticarlo:**
+- *Primero, escuchar errores desde stats.js.* No sirve para el caso que más importa: si los módulos no
+  cargan, stats.js tampoco. Por eso el vigía es un script clásico sin imports, escrito sin `?.`, `??`,
+  `let` ni flechas, y repite la dirección de la base, el entorno y el día (una prueba exige que digan
+  lo mismo que firebase-config.js, stats.js y cleanup.js).
+- *Un script más bloquea la página.* Va antes de las hojas de estilo, que bloquean igual: se pide en
+  paralelo con ellas y pesa unos 4 kB, así que no suma un viaje. `set-version.py` le pone `?v=` como a
+  las hojas, porque el import map no alcanza a los scripts clásicos.
+- *Contar cargas de nuevo duplicaba el tráfico.* Las cargas que arrancaron ya son `vistas/<página>`
+  (D-208); el vigía solo suma las que no arrancaron, y el panel junta las dos. Salud no repite
+  ninguna cifra de Tráfico: muestra tasas de falla sobre esas cargas.
+- *Un error en un bucle inundaría la base.* Cada error se manda una vez por carga, como mucho diez
+  por carga, y nada después de `pagehide` (lo que se corta al cerrar no es una falla). Se ignora lo
+  que no es de la app: extensiones, "Script error." sin archivo, `ResizeObserver loop` y los fetch
+  cancelados (`AbortError`).
+- *El detalle y la cuenta en un mismo envío se perdían.* Las reglas dejan escribir el detalle una sola
+  vez y un PATCH de varias rutas es atómico: el segundo celular con el mismo error se llevaba su
+  cuenta en el rechazo. Van en dos envíos.
+- *La firma por mensaje exacto partía un error en cien.* Los números del mensaje y la línea no
+  separan; Chrome antepone "Uncaught" y Safari no, así que se quita. Sí separan la página y la familia
+  del navegador, para que el panel diga dónde falla; el panel vuelve a juntar por tipo, mensaje y archivo.
+- *Privacidad (D-44).* Ni IP, ni dirección completa: se cortan `?` y `#`, donde van los códigos de sala
+  y de copa, también dentro del mensaje. Del navegador, solo familia y versión mayor (`chrome129`,
+  `ios16`, `instagram`): en iOS todos son Safari por dentro y lo que importa es la versión del sistema.
+  El mensaje se acota a 160 caracteres y solo lo lee el dueño.
+- *Un error viejo no es una alarma.* Si la versión más nueva del rango (de los errores, las salas y
+  las partidas sin red) no lo tuvo, sale en gris con "no se ve desde la X".
+**Alternativas descartadas:** un servicio de errores de terceros (Sentry y parecidos): manda la IP y
+el navegador entero a otro, y es una dependencia más para un sitio sin build. Un registro por error
+con su hora, en vez de cuentas por día: crece sin tope y no responde mejor la pregunta ("¿qué falla,
+dónde y cuánto?"). Medir LCP u otras métricas web: "cuánto tardó en poder jugar" es lo que siente
+quien juega y sale de una sola resta.
+**Consecuencias:** las reglas tienen tres categorías nuevas (`falla`, `listo`, `err`), que publica
+`publicar.yml` al fusionar. Un juego nuevo lleva la línea del vigía en su `index.html`: lo exige
+`vigia.test.mjs`. `window.__vigia.fallas` dice lo que se mandó en esa carga, para las pruebas (C-14).
+
