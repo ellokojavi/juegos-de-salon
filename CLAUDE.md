@@ -59,6 +59,13 @@ Puede haber varias sesiones de Claude trabajando en este repo al mismo tiempo:
   nadie mira: **al empezar cada sesión**, un hook (`.claude/settings.json`) corre
   `node tools/agents/limpiar-copias.mjs`, que borra las copias cuya rama ya entró a `main` por un
   merge y nombra las que tienen cambios sin commitear (D-218). GitHub borra la rama remota al fusionar.
+- **Ninguna copia queda sin uso** (D-252, pedido del dueño): la sesión que crea una copia la borra
+  apenas sabe que no va a dar PR (el trabajo ya estaba hecho, se descartó o se juntó con otro), sin
+  esperar al hook, y al terminar su trabajo solo quedan las copias con PR abierto. El hook barre
+  lo que se escape, también las copias que crea la app de Claude (en .claude/worktrees): las **vacías** (sin commits
+  propios, de más de un día) y las **abandonadas** (commits fuera de `main`, sin PR abierto y
+  quietas más de tres días), que antes de borrarse suben su rama a GitHub para no perder nada.
+  Nunca toca una copia con cambios sin commitear.
 - **Pruebas en paralelo:** cada sesión sirve su copia en su puerto (`python3 -m http.server 87xx -d public`),
   y corre los guiones con `SITIO=http://localhost:87xx`. Los puertos de Chrome no se eligen: cada
   Chrome toma uno libre y muere con su guion, también si el guion falla o se corta (`cdp.mjs`,
@@ -115,7 +122,7 @@ llave del dueño) y no fusiona. Todo lo demás de esta guía vale igual.
   node tools/firebase/reglas.mjs publicar     # sube las reglas y verifica que quedaron
   node tools/firebase/reglas.mjs revisar      # ¿lo publicado es lo del repo?
   ```
-- La copia y la rama se borran solas (arriba, D-218); si se quiere ya, `node tools/agents/limpiar-copias.mjs`.
+- La copia y la rama se borran solas (arriba, D-218, D-252); si se quiere ya, `node tools/agents/limpiar-copias.mjs`.
 
 ## README, capturas y tarjetas sociales (C-13, D-51, D-181)
 
