@@ -426,7 +426,7 @@ Spec and design: [docs/games/cup.md](docs/games/cup.md)
 
 - **Languages:** Spanish (default), English, Brazilian Portuguese and German. The menu toggle saves the choice on the device, and the browser language is never used to guess (D-47, D-48). See [Languages](#languages).
 - **Sound:** effects synthesized with Web Audio, no audio files. A 🔊/🔇 button on every screen.
-- **Sharing the app:** a share button at the top right of the menu, next to sound and 🏆 rankings
+- **Sharing the app:** a share button at the top right of the menu, next to sound and 🏅 rankings
   (the language toggle sits on the left, in a block of its own), drawn with
   the system share icon (a box with an arrow pointing up, D-242) in the page's colors: a cyan
   box and a pink arrow, each with the drop shadow of the page's buttons (D-243). In Spanish, the
