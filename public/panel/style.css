@@ -155,6 +155,8 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0
     border-top: 1px solid var(--glass-border); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
   }
   .nav-panel a { flex: 1; flex-direction: column; gap: 2px; padding: 6px 4px; font-size: 0.72rem; max-width: 140px; }
+  /* Seis secciones en 320 px (D-251): cada nombre en una línea */
+  .nav-panel .nombre { white-space: nowrap; }
   .nav-panel .vivo { position: absolute; top: 6px; right: calc(50% - 18px); margin: 0; }
   #screen-panel { padding-bottom: calc(76px + var(--safe-bottom)); }
 }

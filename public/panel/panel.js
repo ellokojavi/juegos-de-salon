@@ -1085,7 +1085,7 @@ function filaError(g) {
         el('span', { class: 'q' }, listaDe(g.navegadores, navegadorLabel)),
         versiones ? el('span', { class: 'q' }, `v${versiones}`) : null,
         el('span', { class: 'q' }, dias),
-        g.viejo ? el('span', { class: 'q q--ok', title: 'La versión más nueva del rango no lo tuvo' }, `no se ve desde la ${g.ultimaVersion}`) : null)),
+        g.viejo ? el('span', { class: 'q q--ok', title: 'La versión más nueva del rango no lo tuvo' }, `no aparece después de la v${g.ultimaVersion}`) : null)),
     el('div', { class: 'err-n', title: 'Cargas que lo vieron' }, n(g.n)));
 }
 
@@ -1132,9 +1132,9 @@ function vistaSalud(now) {
           cifra: d.alguna, detail: d.cargas ? `${porcentaje(d.alguna, d.cargas)} de ${n(d.cargas)} cargas` : '',
         })), 'Nada todavía.', 'bars')),
       bloque('Qué falló', 'Cargas que tuvieron cada cosa. Una carga puede tener más de una.',
-        lista(tiposTotal.map(([k, v]) => bar(`${TIPO_FALLA[k][0]} ${TIPO_FALLA[k][1]}`, [seg(k === 'arranque' ? C_TORNEO : 'var(--yellow)', v)], maxTipo, { sub: TIPO_FALLA[k][2] })), 'Nada todavía.', 'bars')),
+        lista(tiposTotal.map(([k, v]) => bar(`${TIPO_FALLA[k][0]} ${TIPO_FALLA[k][1]}`, [seg(k === 'arranque' ? C_TORNEO : 'var(--yellow)', v)], maxTipo, { detail: TIPO_FALLA[k][2] })), 'Nada todavía.', 'bars')),
     ),
-    bloque('Errores', `Juntados por qué error son: el mismo en otra línea o con otro número es uno solo. La cifra es cuántas cargas lo vieron. En gris, los que la versión más nueva del rango (${s.versionActual}) ya no tuvo.`,
+    bloque('Errores', `Juntados por qué error son: el mismo en otra línea o con otro número es uno solo. La cifra es cuántas cargas lo vieron. En gris, los que la versión más nueva del rango (v${s.versionActual}) ya no tuvo.`,
       lista(errores.map(filaError), 'Ningún error en este rango.', 'errs'),
       s.errores.length > VISIBLES ? el('button', { class: 'btn btn--ghost btn--sm', style: 'margin-top:10px', onClick: () => { S.erroresTodos = !S.erroresTodos; render(); } },
         S.erroresTodos ? 'Ver menos' : `Ver los ${n(s.errores.length)}`) : null),
