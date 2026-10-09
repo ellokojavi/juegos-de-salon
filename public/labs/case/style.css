@@ -62,3 +62,4 @@
 .btn.marca-inocente { background: linear-gradient(180deg, #c6ff8a, var(--lime)); color: #173a00; box-shadow: 0 4px 0 #4f8f13; }
 .btn.marca-criminal { background: linear-gradient(180deg, #ff8fbf, #ff3d8b); color: #3a0018; box-shadow: 0 4px 0 #a3134f; }
 .accion .btn-row .btn { font-size: 1rem; padding-left: 6px; padding-right: 6px; }
+.accion .msg.pista { color: var(--ink); text-align: left; }

@@ -18,7 +18,9 @@ const GAME_ID = 'caso';
 const LETRAS = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
 const params = new URLSearchParams(location.search);
 const codigo = (params.get('c') || '').toUpperCase().replace(/[^A-Z]/g, '').slice(0, 8);
-const hoy = fechaLocal();
+// `?dia=AAAA-MM-DD`: el caso de ese día, para que el link compartido abra el mismo caso al día siguiente (#273)
+const diaLink = /^\d{4}-\d{2}-\d{2}$/.test(params.get('dia') || '') ? params.get('dia') : null;
+const hoy = diaLink || fechaLocal();
 const semilla = codigo || semillaDelDia(hoy);
 const caso = generar(semilla);
 const CLAVE = `juegos-de-salon:${GAME_ID}:${semilla}`;
@@ -31,7 +33,7 @@ const nombreCaso = codigo ? `Caso ${codigo}` : `Caso del ${fechaBonita(hoy)}`;
 function cargar() {
   try {
     const g = JSON.parse(localStorage.getItem(CLAVE));
-    if (g && Array.isArray(g.marcas)) return { marcas: g.marcas, errores: g.errores || [], ms: g.ms || 0, tachadas: g.tachadas || [], done: !!g.done, empezo: !!g.empezo };
+    if (g && Array.isArray(g.marcas)) return { marcas: g.marcas, errores: g.errores || [], ms: g.ms || 0, tachadas: g.tachadas || [], done: !!g.done, empezo: !!g.empezo, reportado: !!g.reportado };
   } catch (_) { /* sin memoria, de cero */ }
   return { marcas: [], errores: [], ms: 0, tachadas: [], done: false, empezo: false };
 }
@@ -137,9 +139,11 @@ function tocar(i, sabe) {
   if (P.done) return;
   correr();
   if (sabe) {
-    // Tocar a alguien que ya se sabe lleva a su pista
-    const p = document.querySelector(`.pista[data-de="${i}"]`);
-    if (p) { p.scrollIntoView({ behavior: 'smooth', block: 'center' }); p.classList.add('nueva'); setTimeout(() => p.classList.remove('nueva'), 1200); }
+    // Tocar a alguien que ya se sabe muestra su pista bajo la grilla, sin bajar hasta la lista (#271)
+    elegida = null;
+    mensaje = { tipo: 'pista', texto: `${caso.nombres[i]} es ${caso.v[i] ? 'criminal' : 'inocente'} y dice: «${caso.pistas[i].texto}»` };
+    SFX.tap();
+    render();
     return;
   }
   elegida = elegida === i ? null : i;
@@ -189,7 +193,7 @@ let celebrado = false;
 function renderFin() {
   const box = $('#fin');
   box.hidden = false;
-  const url = codigo ? `${location.origin}${location.pathname}?c=${codigo}` : `${location.origin}${location.pathname}`;
+  const url = `${location.origin}${location.pathname}${codigo ? `?c=${codigo}` : `?dia=${hoy}`}`;
   box.replaceChildren(
     el('div', { class: 'trofeo' }, P.errores.length ? '🔍' : '🏆'),
     el('h2', { class: 'display display--lg' }, '¡Caso resuelto!'),
@@ -206,7 +210,7 @@ function renderFin() {
       },
     }, '📤 Compartir el resultado'),
     el('a', { class: 'btn btn--yellow', id: 'btn-otro', href: `?c=${Array.from({ length: 5 }, () => LETRAS[Math.floor(Math.random() * LETRAS.length)]).join('')}` }, '🔍 Otro caso'),
-    codigo ? el('a', { class: 'btn btn--ghost', href: location.pathname }, '📅 El caso del día') : null,
+    codigo || (diaLink && diaLink !== fechaLocal()) ? el('a', { class: 'btn btn--ghost', href: location.pathname }, '📅 El caso de hoy') : null,
     el('a', { class: 'btn btn--ghost', href: '../' }, '‹ Volver al laboratorio'),
   );
   if (!celebrado) {
