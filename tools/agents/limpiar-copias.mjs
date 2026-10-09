@@ -94,7 +94,9 @@ function main() {
   const dias = c => {
     const commit = propios(c.rama) ? 1000 * Number(intenta(() => git(raiz, 'log', '-1', '--format=%ct', c.rama)) || 0) : 0;
     const head = intenta(() => statSync(resolve(git(c.ruta, 'rev-parse', '--absolute-git-dir'), 'HEAD')));
-    const creada = head ? Math.max(head.mtimeMs, head.birthtimeMs || 0) : Date.now();
+    // Solo mtime: git escribe HEAD al crear la copia, y la fecha de creación (birthtime) no se
+    // puede retroceder en Linux, así que la prueba no podría envejecer una copia
+    const creada = head ? head.mtimeMs : Date.now();
     return (Date.now() - Math.max(commit, creada)) / 864e5;
   };
   // LIMPIAR_PRS_ABIERTOS="rama1,rama2" reemplaza a gh (en la prueba)
