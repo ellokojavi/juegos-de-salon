@@ -25,7 +25,9 @@
    (C-15), `sound.js` (C-4) y `arrastre.js` si hay arrastre (C-8).
 7. **La señal para el panel** (C-7, D-210): en los modos sin red, `trackStart({ game, mode, players })`
    al empezar y `trackFinish({ ganador, empate, detalle })` al terminar, de
-   `public/assets/js/transport/stats.js`. Las salas las apunta el transporte.
+   `public/assets/js/transport/stats.js`. Las salas las apunta el transporte. Y en su `index.html`,
+   antes de las hojas de estilo, `<script src="../assets/js/vigia.js"></script>`, con `trackVisit()` al
+   cargar: así el panel ve si la página no arranca o tira errores (D-251).
 7b. **Rankings** (D-212): hoy anotan récords solo los juegos sueltos de La Copa (los que tienen
    `suelto` en `games.js`), y lo hace `public/cup/game.js` sin que el juego haga nada: su página
    sale de `public/cup/suelto/index.html`, que ya carga `ranking.css`. Un juego de salón no anota

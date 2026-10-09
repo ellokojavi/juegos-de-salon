@@ -1,7 +1,7 @@
 // Ejecutar: node public/panel/aggregate.test.mjs
 import assert from 'node:assert/strict';
 import { MODE_IDS } from '../assets/js/games.js';
-import { DAY, roomLog, paginate, flagOf, whenLabel, RANGOS, rangeOf, groupDays, periodLabel, ROOM_TTL, liveRooms, esJugada, connections, summarize, top, tzLabel, ago, dayLabel, codesOfDays, splitByEnv, liveLocal, VIVA_SIN_RED_MS, ZONA_PANEL, horaLabel, fechaLabel, diaPanel, localLog, paisesDeSalas, paisesDelRango, salaDe, mediana, trafico, origenLabel, origenesAgrupados, idiomasDeSalas, idiomasDelRango, avisosDelRango, vueltaAtrasada } from './aggregate.js';
+import { DAY, roomLog, paginate, flagOf, whenLabel, RANGOS, rangeOf, groupDays, periodLabel, ROOM_TTL, liveRooms, esJugada, connections, summarize, top, tzLabel, ago, dayLabel, codesOfDays, splitByEnv, liveLocal, VIVA_SIN_RED_MS, ZONA_PANEL, horaLabel, fechaLabel, diaPanel, localLog, paisesDeSalas, paisesDelRango, salaDe, mediana, trafico, origenLabel, origenesAgrupados, idiomasDeSalas, idiomasDelRango, avisosDelRango, vueltaAtrasada, salud, compararVersion, navegadorLabel } from './aggregate.js';
 import { ZONA as ZONA_COPA } from '../cup/engine.js';
 
 const now = 20342 * DAY + 15 * 60 * 60 * 1000; // día 20342, 15:00 UTC
@@ -437,4 +437,50 @@ console.log('aggregate.test.mjs: todo en verde');
   const e = unoAlDiaDelRango({ days: { 100: { uad: { boton: 4, dado: 3 }, vistas: { today: 6, inicio: 50 }, entradas: { today: 2 } }, 101: { uad: { boton: 1 } }, 99: { uad: { boton: 9 } } } }, { from: 100, to: 101 });
   assert.deepEqual([e.vistas, e.entradas], [6, 2], 'el tráfico de /today/');
   assert.deepEqual(e.eventos, { boton: 5, dado: 3 }, 'la actividad del rango, de todos');
+}
+
+// Salud (D-251): las cargas son las vistas más las que no arrancaron, y los errores se juntan por qué son
+{
+  assert.ok(compararVersion('0.128.1', '0.99.2') > 0, 'por número, no por texto');
+  assert.equal(compararVersion('1.2.3', '1.2.3'), 0);
+  assert.equal(navegadorLabel('ios16'), 'iPhone o iPad · iOS 16');
+  assert.equal(navegadorLabel('chrome129'), 'Chrome 129');
+  assert.equal(navegadorLabel('instagram'), 'Instagram (dentro de la app)');
+  assert.equal(navegadorLabel('raro9'), 'raro9', 'lo que no se conoce sale tal cual (C-16)');
+  const err = (k, m, f, p, b, v, n) => ({ n, d: { k, m, f, p, b, v, at: 1 } });
+  const days = {
+    100: {
+      vistas: { hangman: 90, inicio: 10 },
+      falla: { alguna: { hangman: 6 }, arranque: { hangman: 2 }, js: { hangman: 4 } },
+      listo: { hangman: { s1: 50, s3: 30, s10: 5, mas: 3 }, inicio: { s1: 10 } },
+      err: {
+        a1: err('js', 'índice 3 fuera', '/hangman/game.js:10', 'hangman', 'chrome129', '0.127.0', 3),
+        a2: err('js', 'índice 4 fuera', '/hangman/game.js:12', 'hangman', 'ios16', '0.127.0', 1),
+      },
+      rooms: { ABCD: { v: '0.128.0' } },
+    },
+    101: {
+      vistas: { hangman: 10 },
+      err: { b1: err('promesa', 'PERMISSION_DENIED', '/cup/store.js:4', 'cup', 'safari17', '0.128.0', 5), c1: { n: 2 } },
+    },
+    99: { falla: { alguna: { hangman: 100 } } },
+  };
+  const s = salud(days, { from: 100, to: 101 });
+  assert.equal(s.total.cargas, 112, 'vistas (110) más las que no arrancaron (2)');
+  assert.equal(s.total.vistas, 110);
+  assert.equal(s.total.alguna, 6, 'solo las del rango');
+  assert.equal(s.paginas.hangman.cargas, 102);
+  assert.equal(s.paginas.hangman.arranque, 2);
+  assert.deepEqual([s.total.medidas, s.total.lentas], [98, 8], 'lentas: 6 s o más');
+  assert.equal(s.porDia[0].cargas, 102);
+  assert.equal(s.desde, 100);
+  assert.equal(s.versionActual, '0.128.0', 'la más nueva del rango, también de las salas');
+  assert.equal(s.errores.length, 3, 'mismo error con otro número y otra línea es uno solo');
+  const [primero, segundo, tercero] = s.errores;
+  assert.equal(primero.k, 'promesa'); assert.equal(primero.n, 5); assert.equal(primero.viejo, false);
+  assert.equal(segundo.n, 4); assert.deepEqual(segundo.navegadores, { chrome129: 3, ios16: 1 });
+  assert.equal(segundo.viejo, true, 'no se vio en la versión de hoy');
+  assert.equal(tercero.m, '(sin detalle)', 'una cuenta sin detalle igual se muestra');
+  const v = salud({}, { from: 1, to: 3 });
+  assert.equal(v.desde, null); assert.equal(v.total.cargas, 0); assert.deepEqual(v.errores, []);
 }

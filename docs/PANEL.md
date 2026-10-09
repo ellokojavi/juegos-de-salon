@@ -12,7 +12,7 @@ los datos son las reglas de Firebase, que solo dejan leer al UID del dueño.
 
 ## Secciones y fichas (D-207)
 
-El panel se navega como un sitio: cuatro secciones fijas y una ficha por cada cosa que existe.
+El panel se navega como un sitio: seis secciones fijas y una ficha por cada cosa que existe.
 A la izquierda en el computador; abajo, como barra, en el celular. Todo queda en el `#` de la
 URL (`public/panel/rutas.js`), así que Atrás, una recarga o un enlace guardado vuelven al mismo
 lugar; el rango y el entorno van detrás solo si no son los de siempre (`#/torneo?r=30d&e=dev`).
@@ -28,6 +28,7 @@ Los enlaces de antes (`#torneo`, `#resumen`, `#juegos`) siguen sirviendo.
 | `#/sala/<CÓDIGO>[/<día>]` | **Ficha de sala.** Juego, creada, terminó, cuánto duró, quién ganó, versión y jugadores con su país; si sigue viva, jugadas, chat (solo cuántos) y quién está conectado. Los códigos se reciclan: con el día se pide una en particular. |
 | `#/trafico` | **Tráfico del sitio** (D-208): visitas, páginas vistas, cuántas llegan a jugar, visitas por día, de dónde llegan (por sitio, con sus dominios), por qué link (`de=link` de lo compartido, `utm_source`), páginas con sus entradas y cuántas juegan, aparato, primera vez o vuelve y país. |
 | `#/audiencia` | Cifras del rango, La Copa contra los otros juegos, de dónde (zona horaria), el país de los jugadores de salas, idiomas, hora y cuota. |
+| `#/salud` | **Lo que le falla a quien juega** (D-251): cargas que no arrancaron, cargas con fallas por día y por tipo, los errores juntados por qué son (página, navegador, versión, días), páginas con fallas, navegador de los errores y cuánto tarda cada página en poder jugar. |
 
 Arriba, además del entorno y el rango, un **buscador**: un código de cinco letras o un link propio
 abre la ficha de esa copa; uno de cuatro, la de esa sala. No se busca por nombre de jugador:
@@ -52,6 +53,36 @@ etiqueta "laboratorio" donde corresponde, y con un filtro para verlas solas.
 **Qué es torneo y qué es juego** lo dice el registro (`torneo: true` en `games.js`), no el panel:
 el nombre y el emoji de la sección salen de ahí (C-16). Por lo mismo la sección se llama `torneo`
 en la URL y no `copa`, que es el id del juego.
+
+## Salud (D-251)
+
+Lo anota `public/assets/js/vigia.js`, un script clásico que cada página con módulos carga en el
+`<head>`, antes de las hojas de estilo (no el panel ni las páginas puente). Por ser clásico y no
+importar nada, sigue andando cuando lo que falla son los módulos, que es lo que deja una página en
+blanco. En `stats/<env>/days/<día>`:
+
+| Clave | Qué cuenta |
+|---|---|
+| `falla/<tipo>/<página>` | Cargas de esa página donde pasó eso, una vez por carga y tipo: `arranque` (a los 20 s no había arrancado), `recurso` (un script o una hoja de estilos no llegó), `js` (error sin atrapar), `promesa` (promesa rechazada sin atrapar) y `alguna` (cualquiera: cuántas cargas tuvieron un problema). |
+| `err/<firma>/n` | Cuántas cargas vieron ese error. La firma junta tipo, mensaje sin números, archivo sin línea, página y familia del navegador. |
+| `err/<firma>/d` | `{ k, p, m, f, b, v, at }`: tipo, página, mensaje, archivo:línea, navegador, versión y hora. Lo deja el primero que lo ve. |
+| `listo/<página>/<tramo>` | Cuánto tardó en arrancar: `s1` (menos de 1 s), `s3`, `s6`, `s10`, `mas`. Solo cargas a la vista todo el rato. |
+
+- **Arrancar** es que los módulos de la página cargaron y corrieron: lo avisa `trackVisit` con
+  `__vigia.listo()`. Si arranca después de los 20 s ya contó como que no arrancó, y su tiempo no se anota.
+- **Las cargas no se cuentan dos veces.** Las que arrancaron son las `vistas/<página>` del tráfico;
+  las que no, nunca llegaron ahí. Cargas = vistas + no arrancaron. Salud solo muestra tasas sobre eso.
+- **Un error viejo sale en gris** con "no se ve desde la X" cuando la versión más nueva del rango
+  (de los errores, las salas y las partidas sin red) no lo tuvo.
+- **Un punto rosado en 🩺 Salud** dice que hoy o ayer (días UTC) alguna página no arrancó.
+- **Qué no se anota:** extensiones del navegador, "Script error." sin archivo, `ResizeObserver loop`,
+  fetch cancelados, lo que pasa después de cerrar la pestaña, imágenes y audio que no cargaron, ni
+  más de diez errores por carga. Las direcciones van sin `?` ni `#` (ahí van los códigos de sala y
+  de copa) y del navegador solo su familia y versión mayor.
+- **Para las pruebas:** `window.__vigia.fallas` lista lo que se mandó en esa carga.
+
+Con `node tools/e2e/mirar.mjs panel salud` se ve con datos sembrados (errores de dos versiones,
+una página que no arrancó y tiempos por página).
 
 ## Uno al día (D-230)
 
@@ -192,6 +223,8 @@ Sale del celular, por día y por entorno (`public/assets/js/transport/stats.js`)
   `entradas/<página>`, `ref/<dominio>` (solo el dominio, nunca la dirección), `via/<marca>`,
   `retorno/<nueva|vuelve>`, `disp/<aparato>` y `pais/<país>`. Si esa visita empieza algo,
   `juegan/<página de entrada>`. El panel no se cuenta.
+- **Lo que falla al cargar o al jugar** (D-251, ver *Salud*): `falla/`, `err/` y `listo/`, que manda
+  `vigia.js` y no `stats.js`.
 
 No sale nunca: dirección IP (no hay servidor que la vea y no se consulta a nadie), los
 secretos de las partidas ni el chat. En los modos sin red sale el nombre que la persona ya
@@ -273,6 +306,9 @@ public/panel/
   rutas.test.mjs      node public/panel/rutas.test.mjs
   copas.test.mjs      node public/panel/copas.test.mjs
   adapta.test.mjs     node public/panel/adapta.test.mjs — que el panel se entere solo (C-16)
+public/assets/js/
+  vigia.js            El vigía (D-251): lo que falla en cada página. Script clásico, sin imports
+  vigia.test.mjs      node public/assets/js/vigia.test.mjs
 public/assets/js/transport/
   stats.js            Registro desde los juegos y el transporte, por REST
   stats.test.mjs      node public/assets/js/transport/stats.test.mjs
@@ -284,7 +320,7 @@ public/assets/js/transport/
 entrar (gancho de solo lectura, C-14): sirve para probar la página sin cuenta ni base. `vista` es
 una ruta (`/torneo/OFICI`) y `push`, la última vuelta de los avisos (D-233). `node tools/e2e/mirar.mjs panel <toma>`
 lo siembra con copas armadas con el motor de verdad, una semana de avisos mandados y tocados, y abre esa vista. Las tomas: `ahora`, `torneo`, `copa-ficha`, `copa-dias`,
-`copa-historia`, `juegos`, `juego-ficha`, `sala-ficha`, `trafico`, `audiencia` y `datos`.
+`copa-historia`, `juegos`, `juego-ficha`, `sala-ficha`, `trafico`, `audiencia`, `salud` y `datos`.
 
 ## Cuando entra un juego, un modo o un idioma nuevo
 
