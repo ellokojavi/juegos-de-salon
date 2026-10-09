@@ -941,7 +941,6 @@
     "tools/release/version.test.mjs"
   ],
   "e2e": [
-    "_hoja_tmp.mjs",
     "battleship/alineacion.mjs",
     "battleship/chat.mjs",
     "battleship/colocacion.mjs",
