@@ -27,7 +27,7 @@ Uno al día. Si entra, va a `cup/games/` con los cuatro idiomas (C-3) y esta pá
 - **Las pistas** hablan de grupos (una fila, una columna, un oficio, el borde, las esquinas, los
   vecinos de alguien, quienes están arriba, abajo, a la izquierda o a la derecha de alguien) y dicen
   cuántos criminales o inocentes hay, al menos o a lo más, si son par o impar, o comparan dos grupos.
-  De respaldo, una pista dice directamente qué es otra persona (un 4 % de las pistas).
+  De respaldo, una pista dice directamente qué es otra persona (cerca de un 5 % de las pistas).
 
 ## Modos
 
@@ -48,7 +48,7 @@ una pista la tacha, para llevar la cuenta). Tocar a alguien ya marcado lleva a s
 ## Protocolo de mensajes
 
 No tiene: es de un jugador y sin red. Lo guardado está en `juegos-de-salon:caso:<semilla>` como
-`{ marcas, errores, ms, tachadas, done }`. Al empezar y al terminar manda la señal de uso del panel
+`{ marcas, errores, ms, tachadas, done, empezo, reportado }`. Con la primera marca y al resolverlo manda la señal de uso del panel
 con el juego `caso` (D-44, D-210), que el panel muestra con su clave cruda (C-16).
 
 ## Archivos
