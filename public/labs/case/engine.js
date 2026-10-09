@@ -57,24 +57,28 @@ export const vecinos = i => todas.filter(j => j !== i && Math.abs(fila(j) - fila
 /* ------------------------------------------------------------------ */
 
 /**
- * Los grupos de los que hablan las pistas. Cada uno: `ids` (las celdas) y `en` (cómo se dice:
- * "en la fila 2", "entre los vecinos de Ana"). `quien` es el que habla, si el grupo es suyo.
+ * Los grupos de los que hablan las pistas. Cada uno: `ids` (las celdas), `en` (cómo se dice en
+ * "Hay 2 criminales …": "en la fila 2", "entre los vecinos de Ana") y `todos` (el sujeto de "… son
+ * criminales": "Todos los de la fila 2"). `de` es la persona de la que se habla, si el grupo es
+ * suyo; cuando la pista la dice esa misma persona (`quien`), habla en primera persona: "entre mis
+ * vecinos", "a mi izquierda".
  */
-function grupos(caso) {
+function grupos(caso, quien) {
   const { nombres, oficios, oficioDe } = caso;
   const gs = [];
-  for (let f = 0; f < FILAS; f++) gs.push({ ids: todas.filter(i => fila(i) === f), en: `en la fila ${f + 1}` });
-  for (let c = 0; c < COLS; c++) gs.push({ ids: todas.filter(i => col(i) === c), en: `en la columna ${LETRAS_COL[c]}` });
-  for (const o of oficios) gs.push({ ids: todas.filter(i => oficioDe[i] === o.id), en: `entre los ${o.varios}` });
-  gs.push({ ids: todas.filter(i => fila(i) === 0 || fila(i) === FILAS - 1 || col(i) === 0 || col(i) === COLS - 1), en: 'en el borde' });
-  gs.push({ ids: [0, COLS - 1, N - COLS, N - 1], en: 'en las esquinas' });
+  for (let f = 0; f < FILAS; f++) gs.push({ ids: todas.filter(i => fila(i) === f), en: `en la fila ${f + 1}`, todos: `Todos los de la fila ${f + 1}` });
+  for (let c = 0; c < COLS; c++) gs.push({ ids: todas.filter(i => col(i) === c), en: `en la columna ${LETRAS_COL[c]}`, todos: `Todos los de la columna ${LETRAS_COL[c]}` });
+  for (const o of oficios) gs.push({ ids: todas.filter(i => oficioDe[i] === o.id), en: `entre los ${o.varios}`, todos: `Todos los ${o.varios}` });
+  gs.push({ ids: todas.filter(i => fila(i) === 0 || fila(i) === FILAS - 1 || col(i) === 0 || col(i) === COLS - 1), en: 'en el borde', todos: 'Todos los del borde' });
+  gs.push({ ids: [0, COLS - 1, N - COLS, N - 1], en: 'en las esquinas', todos: 'Todos los de las esquinas' });
   for (const i of todas) {
-    const n = nombres[i];
-    gs.push({ ids: vecinos(i), en: `entre los vecinos de ${n}`, de: i });
-    gs.push({ ids: todas.filter(j => col(j) === col(i) && fila(j) < fila(i)), en: `arriba de ${n}`, de: i });
-    gs.push({ ids: todas.filter(j => col(j) === col(i) && fila(j) > fila(i)), en: `abajo de ${n}`, de: i });
-    gs.push({ ids: todas.filter(j => fila(j) === fila(i) && col(j) < col(i)), en: `a la izquierda de ${n}`, de: i });
-    gs.push({ ids: todas.filter(j => fila(j) === fila(i) && col(j) > col(i)), en: `a la derecha de ${n}`, de: i });
+    const yo = i === quien, n = nombres[i];
+    const de = yo ? 'de mí' : `de ${n}`;
+    gs.push({ ids: vecinos(i), en: yo ? 'entre mis vecinos' : `entre los vecinos de ${n}`, todos: yo ? 'Todos mis vecinos' : `Todos los vecinos de ${n}`, de: i });
+    gs.push({ ids: todas.filter(j => col(j) === col(i) && fila(j) < fila(i)), en: `arriba ${de}`, todos: `Todos los que están arriba ${de}`, de: i });
+    gs.push({ ids: todas.filter(j => col(j) === col(i) && fila(j) > fila(i)), en: `abajo ${de}`, todos: `Todos los que están abajo ${de}`, de: i });
+    gs.push({ ids: todas.filter(j => fila(j) === fila(i) && col(j) < col(i)), en: yo ? 'a mi izquierda' : `a la izquierda de ${n}`, todos: yo ? 'Todos los que están a mi izquierda' : `Todos los que están a la izquierda de ${n}`, de: i });
+    gs.push({ ids: todas.filter(j => fila(j) === fila(i) && col(j) > col(i)), en: yo ? 'a mi derecha' : `a la derecha de ${n}`, todos: yo ? 'Todos los que están a mi derecha' : `Todos los que están a la derecha de ${n}`, de: i });
   }
   return gs.filter(g => g.ids.length >= 2);
 }
@@ -83,19 +87,20 @@ const cuenta = (ids, v) => ids.reduce((s, i) => s + (v[i] === 1 ? 1 : 0), 0);
 const plural = (k, uno, varios) => (k === 1 ? `un ${uno}` : `${k} ${varios}`);
 
 /**
- * Las pistas posibles que son verdad con la solución `v` (1 criminal, 0 inocente). Cada pista es
+ * Las pistas posibles que son verdad con la solución `v` (1 criminal, 0 inocente), dichas por
+ * `quien` (si se sabe: habla de sí en primera persona). Cada pista es
  * `{ t, a, b?, k?, texto }`: `t` dice qué compara y el solver la entiende sin mirar el texto.
  *   eq   en `a` hay exactamente `k` criminales        ge / le   al menos / a lo más `k`
  *   gt   hay más criminales en `a` que en `b`          igual     la misma cantidad en `a` y en `b`
  *   par / impar   la cantidad de criminales en `a`     es        `a` es una persona y `k` lo que es
  */
-export function pistasVerdaderas(caso, v, r) {
-  const gs = grupos(caso);
+export function pistasVerdaderas(caso, v, r, quien) {
+  const gs = grupos(caso, quien);
   const out = [];
   for (const g of gs) {
     const c = cuenta(g.ids, v), n = g.ids.length, inoc = n - c;
     if (c === 0) out.push({ t: 'eq', a: g.ids, k: 0, texto: `No hay criminales ${g.en}.` });
-    else if (inoc === 0) out.push({ t: 'eq', a: g.ids, k: n, texto: `${g.en[0].toUpperCase()}${g.en.slice(1)}, todos son criminales.` });
+    else if (inoc === 0) out.push({ t: 'eq', a: g.ids, k: n, texto: `${g.todos} son criminales.` });
     else {
       out.push({ t: 'eq', a: g.ids, k: c, texto: `Hay exactamente ${plural(c, 'criminal', 'criminales')} ${g.en}.` });
       out.push({ t: 'eq', a: g.ids, k: c, texto: `Hay exactamente ${plural(inoc, 'inocente', 'inocentes')} ${g.en}.` });
@@ -232,7 +237,7 @@ function repartir(caso, r) {
   const x = new Array(N).fill(-1);
   const dadas = [];
   const darPista = (i, necesita) => {
-    const candidatas = barajar(pistasVerdaderas(caso, v, r), r).slice(0, 14);
+    const candidatas = barajar(pistasVerdaderas(caso, v, r, i), r).slice(0, 14);
     let mejor = null, mejorNota = -Infinity;
     for (const p of candidatas) {
       // Una pista sobre uno mismo no aporta: se sabe lo que es quien habla
