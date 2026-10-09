@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.134.0 — 2026-10-09
+- **🧶 Desenredo: Reiniciar nivel**: un botón bajo el tablero devuelve los nudos a donde partió el
+  nivel, para empezarlo de nuevo cuando el enredo se complicó. Como Borrar todo en Zip y Reinas,
+  el primer toque lo arma y el segundo lo hace, y el reloj sigue corriendo.
+
 ## 0.133.1 — 2026-10-09
 - **La hoja con el video, solo en español** (D-254): el video promocional está en español, así que
   en inglés, portugués y alemán el botón de compartir vuelve a compartir directo, como antes.
