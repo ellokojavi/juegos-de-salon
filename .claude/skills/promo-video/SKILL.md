@@ -20,7 +20,8 @@ El video y su memoria viven en `marketing/promo-video/` (D-178).
    puede escuchar desde acá).
 4. **Para subirlo a YouTube** (el canal del dueño, @eljotairi) se sigue "Para YouTube" del README:
    archivos de menos de 10 MB, Claude in Chrome, todo lleno y en *Unlisted*, y **"Save" lo aprieta el
-   dueño**. Lo subido se anota en "Lo subido".
+   dueño**. Lo subido se anota en "Lo subido", y el 16:9 nuevo pasa a la portada: su id en `TRAILER`
+   (`public/assets/js/compartir-portada.js`) y su miniatura en `public/assets/img/trailer.jpg` (D-253).
 5. **Al cerrar la vuelta, anótala** antes de abrir el PR:
    - una entrada nueva en "Historia" del README, con lo que pidió el dueño (en sus palabras cuando
      importa) y lo que se hizo;
