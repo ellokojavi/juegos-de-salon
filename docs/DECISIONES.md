@@ -4446,3 +4446,21 @@ leer la base antes de dibujarse, y el orden cambiaría solo de un día a otro).
 **Consecuencias:** el orden no se actualiza solo: se rehace la cuenta y la lista cuando el dueño
 lo pide. Un juego nuevo que no está en la lista va después de los que sí.
 
+## D-256 · El caso: un prototipo de misterio en el laboratorio, solo en español
+**Fecha:** 2026-10-09 · **Estado:** vigente · **Relación:** excepción a C-3 (idiomas) y C-2 (estructura)
+**Decisión:** Se prueba en `/labs/case/` un juego de deducción al estilo de *Clues by Sam*: veinte
+sospechosos, pistas que siempre dicen la verdad, y nunca hay que adivinar. Solo en español y fuera de
+`games.js`, para mostrárselo a amigos. Hay un caso del día (la semilla es la fecha) y casos con código
+(`?c=`). Marcar a alguien que todavía no se puede deducir no se acepta ni cuenta como error, y no dice
+si estaba bien. El puntaje son los errores; el tiempo desempata.
+**Por qué:** lo pidió el dueño, después de la lista de candidatos de misterio y acertijos: es el que
+más se parece a lo que ya funciona (un puzzle que sale de una semilla, como Reinas o Tango), cuesta
+poco en idiomas (las pistas salen de plantillas) y no compite con nada de la app. Probarlo primero
+con amigos dice si engancha antes de pagar los cuatro idiomas y La Copa.
+**Alternativas descartadas:** hacerlo de una vez juego de La Copa (obliga a los cuatro idiomas y a
+su puntaje de 0 a 100 antes de saber si gusta); contar como error el intento antes de tiempo (castiga
+probar, y el original tampoco deja adivinar).
+**Consecuencias:** no está en el menú ni en el README como juego; el laboratorio lo ofrece en su
+propia sección. Si entra, pasa a `cup/games/` con su id y esta página se va. Ver
+[docs/games/case.md](games/case.md).
+
