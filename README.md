@@ -604,6 +604,7 @@ node public/fourth-king/engine.test.mjs
 node public/generala/engine.test.mjs
 node public/hangman/engine.test.mjs
 node public/julep/engine.test.mjs
+node public/labs/case/engine.test.mjs
 node public/liars-dice/engine.test.mjs
 node public/timeline/engine.test.mjs
 node public/assets/js/arrastre.test.mjs
@@ -733,6 +734,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   fourth-king/                Fourth King (engine.js + tests, game.js, rules.js)
   connections/ · queens/ …    The Cup's games played on their own, one page each (generated from cup/suelto/)
   labs/                       The lab: games being tested before they reach the menu (not linked, not indexed); labs/de/ forwards to /de/ (German left the lab, D-197)
+    case/                     The Case: a mystery prototype in the style of Clues by Sam, Spanish only, for friends to try (D-256)
   records/                    Leaderboards: the All-Rounder, every game's table and The Cup's medal table (D-212)
   today/                      One a Day: today's game, your streak, a calendar and how you do in each game (D-230)
   panel/                      Private owner dashboard: now, The Cup, games, traffic, audience and health, with a page per cup, game and room (Google sign-in; see docs/PANEL.md)
@@ -782,6 +784,7 @@ These documents are in Spanish, like the rest of the project.
 - [Diseño: Batalla Naval](docs/games/battleship.md)
 - [Toque y Fama: estudio de factibilidad y propuesta de mecánica](docs/games/bulls-and-cows-factibilidad.md)
 - [Especificación: Toque y Fama](docs/games/bulls-and-cows.md)
+- [Prototipo: El caso](docs/games/case.md)
 - [La Copa](docs/games/cup.md)
 - [Especificación: Cuarto Rey](docs/games/fourth-king.md)
 - [Diseño: Generala](docs/games/generala.md)

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.136.0 — 2026-10-09
+- **🔍 El caso, en el laboratorio** (D-256): un prototipo de misterio para probar con amigos, solo en
+  español. Veinte sospechosos y pistas que siempre dicen la verdad: descubre quién es criminal sin
+  adivinar. Hay un caso nuevo cada día, el mismo para todos, y el resultado se comparte. Está en
+  `/labs/case/`.
+
 ## 0.135.0 — 2026-10-09
 - **La portada, de lo más jugado a lo menos** (D-255): después de La Copa vienen Toque y Fama,
   Línea de Tiempo, Reinas y Tango, y así hasta los que menos se juegan; los que vienen
