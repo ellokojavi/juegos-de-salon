@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#150726">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>Rankings 🏆 · Juegos de Salón</title>
+  <title>Rankings 🏅 · Juegos de Salón</title>
   <meta name="description" content="Los mejores puntajes de cada juego de Juegos de Salón, de la semana y de siempre, y los campeones de La Copa.">
   <link rel="canonical" href="https://juegosdesalon.cl/records/">
   <!-- Sin destello de idioma (D-194): si el idioma elegido no es el español, no se pinta hasta tener sus textos -->
@@ -70,7 +70,7 @@
       <div class="tools"><div id="lang-slot"></div><span id="sound-slot"></span></div>
     </div>
     <header class="intro-hero center">
-      <span class="rk-hero-icon" aria-hidden="true">🏆</span>
+      <span class="rk-hero-icon" aria-hidden="true">🏅</span>
       <h1 class="display display--lg rainbow" id="rk-h1">Rankings</h1>
       <p class="sub muted" id="rk-sub"></p>
     </header>
@@ -95,7 +95,7 @@
     document.documentElement.lang = lang;
     const C = COMMON[lang] || COMMON.es, T = C.rk;
     applyStatic(C);
-    document.title = `${T.pageTitle} 🏆 · ${C.appTitle}`;
+    document.title = `${T.pageTitle} 🏅 · ${C.appTitle}`;
     document.getElementById('rk-h1').textContent = T.pageTitle;
     document.getElementById('rk-sub').textContent = T.pageSub;
     document.getElementById('btn-menu').textContent = `‹ ${C.menu}`;
