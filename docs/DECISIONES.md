@@ -3545,7 +3545,7 @@ victorias y los récords de jugar solo (D-215).
 Las reglas de Firebase no cambian.
 
 ## D-218 · Lo de después de fusionar no espera a nadie
-**Fecha:** 2026-10-05 · **Estado:** vigente, corregida por D-252 en qué copias se borran · **Relación:** completa D-216; corrige D-122 y D-206 (quién publica las reglas y borra la copia)
+**Fecha:** 2026-10-05 · **Estado:** corregida por D-252 · **Relación:** completa D-216; corrige D-122 y D-206 (quién publica las reglas y borra la copia)
 **Decisión:** Con el auto-merge (D-216) un PR se fusiona cuando nadie mira, así que lo que venía
 después pasa a hacerse solo:
 - **Las reglas de Firebase** las publica `publicar.yml` en cada fusión, en un job `reglas` que

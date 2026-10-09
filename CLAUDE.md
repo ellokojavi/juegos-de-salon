@@ -62,7 +62,7 @@ Puede haber varias sesiones de Claude trabajando en este repo al mismo tiempo:
 - **Ninguna copia queda sin uso** (D-252, pedido del dueño): la sesión que crea una copia la borra
   apenas sabe que no va a dar PR (el trabajo ya estaba hecho, se descartó o se juntó con otro), sin
   esperar al hook, y al terminar su trabajo solo quedan las copias con PR abierto. El hook barre
-  lo que se escape, también las de la app (`.claude/worktrees/`): las **vacías** (sin commits
+  lo que se escape, también las copias que crea la app de Claude (en .claude/worktrees): las **vacías** (sin commits
   propios, de más de un día) y las **abandonadas** (commits fuera de `main`, sin PR abierto y
   quietas más de tres días), que antes de borrarse suben su rama a GitHub para no perder nada.
   Nunca toca una copia con cambios sin commitear.
