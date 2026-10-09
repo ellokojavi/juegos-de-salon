@@ -429,18 +429,20 @@ Spec and design: [docs/games/cup.md](docs/games/cup.md)
 - **Sharing the app:** a share button at the top right of the menu, next to sound and 🏆 rankings
   (the language toggle sits on the left, in a block of its own), drawn with
   the system share icon (a box with an arrow pointing up, D-242) in the page's colors: a cyan
-  box and a pink arrow, each with the drop shadow of the page's buttons (D-243). It opens a sheet
-  with the promo video and two options (D-253). The video shows as its thumbnail with "▶ Watch the
+  box and a pink arrow, each with the drop shadow of the page's buttons (D-243). In Spanish, the
+  language of the promo video, it opens a sheet with the video and two options (D-253); in English,
+  Portuguese and German it shares the app's message straight away, as before, until there is a
+  video in that language (D-254). The video shows as its thumbnail with "▶ Watch the
   video" and only loads from `youtube-nocookie.com` when tapped, so opening the sheet downloads
   nothing from YouTube. **Invite to play** is the app's own message: on a phone it opens the share
   sheet with the menu's social card **as an image** and a short text — a header with how many games
   there are, one line each for The Cup, playing in a group, playing alone and needing no account —
   ending with the link to the front door of the language you are reading in: `/`, `/en/`, `/pt/` or
   `/de/`, card included (D-74, D-226). **Share the video** sends a short text ending with the
-  video's YouTube link, and the chat builds the preview from its thumbnail; in English, Portuguese
-  and German the text says the video is in Spanish. On a computer either option just copies the
-  text and the link; nothing is downloaded. Which video is shown is `TRAILER` in
-  `public/assets/js/compartir-portada.js`, changed whenever a new version goes up on YouTube.
+  video's YouTube link, and the chat builds the preview from its thumbnail. On a computer either
+  option just copies the text and the link; nothing is downloaded. Which video is shown, per
+  language, is `TRAILERS` in `public/assets/js/compartir-portada.js`, changed whenever a new
+  version goes up on YouTube; a video in another language is one more entry there.
 - **One standard for everything that gets shared** (D-165), built for WhatsApp, in
   `public/assets/js/compartir.js`. Every message opens with a header — `{emoji} *{title}* · {context}`,
   like "🏆 *La Copa: Valdenenas* · Día 3 de 7" or "🃏 *Julepe* · Sala WFBN" —, says one thing
