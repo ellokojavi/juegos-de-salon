@@ -1,5 +1,5 @@
 {
-  "version": "0.130.0",
+  "version": "0.131.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -800,6 +800,7 @@
     "public/assets/js/uno-al-dia-ui.js",
     "public/assets/js/uno-al-dia.js",
     "public/assets/js/vapid.js",
+    "public/assets/js/vigia.js",
     "public/battleship/engine.js",
     "public/battleship/flota.js",
     "public/battleship/game.js",
@@ -909,6 +910,7 @@
     "public/assets/js/uno-al-dia-avisos.test.mjs",
     "public/assets/js/uno-al-dia-jugador.test.mjs",
     "public/assets/js/uno-al-dia.test.mjs",
+    "public/assets/js/vigia.test.mjs",
     "public/battleship/engine.test.mjs",
     "public/bulls-and-cows/engine.test.mjs",
     "public/cup/engine.test.mjs",

@@ -8,7 +8,7 @@ cincuenta `index.html` que antes se reestampaban en cada uno.
 - Escribe un <script type="importmap"> en cada página que carga módulos, que mapea TODOS los módulos
   JS del sitio (**/*.js, D-192) a la misma ruta con ?v=CLAVE. Los import maps se aplican también a
   los imports anidados (un módulo que importa a otro) y a los import() dinámicos.
-- Agrega ?v=CLAVE a las hojas de estilo y a las imágenes de las tarjetas sociales (og:image,
+- Agrega ?v=CLAVE a las hojas de estilo, a los scripts clásicos del sitio (`vigia.js`, D-251) y a las imágenes de las tarjetas sociales (og:image,
   twitter:image), para que un cambio de dibujo no se quede pegado en la caché de WhatsApp (D-72).
 - Pone el número de versión en el pie del menú.
 
@@ -63,6 +63,8 @@ def estampar(sitio, numero, clave):
                     sys.exit(f'{path}: carga módulos y no tiene hoja de estilos antes de la cual poner el import map')
                 html = html.replace('  <link rel="stylesheet"', '  ' + block + '\n  <link rel="stylesheet"', 1)
             html = re.sub(r'(<link rel="stylesheet" href="[^"?]+)(\?v=[^"]*)?"', lambda m: f'{m.group(1)}?v={clave}"', html)
+            # Los scripts clásicos del sitio (el vigía, D-251): el import map no los alcanza
+            html = re.sub(r'(<script src="(?![a-z]+:|//)[^"?]+\.js)(\?v=[^"]*)?"', lambda m: f'{m.group(1)}?v={clave}"', html)
             html = re.sub(r'v\d+\.\d+\.\d+ ·', f'v{numero} ·', html)
             paginas += 1
         if html != original:
