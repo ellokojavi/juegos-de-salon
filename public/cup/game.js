@@ -2041,7 +2041,7 @@ function resultado(d, { recien = false, det = null } = {}) {
           ? el('div', { class: 'con-x2' }, el('b', {}, j.name), el('span', { class: `${claseX2(esFinal(meta, d))} md-x2` }, T.x2))
           : el('b', {}, j.name), el('small', { class: 'muted' }, `${Lc.results[d][j.pid].r || Lc.results[d][j.pid].s} · ⏱ ${mmss(Lc.results[d][j.pid].ms)}`),
           // En la final, las cinco rondas de cada uno (⏳75 🔢85 …), para comparar ronda a ronda (#259)
-          id === 'final' && Lc.results[d][j.pid].t ? el('small', { class: 'rondas' }, Lc.results[d][j.pid].t) : null),
+          id === 'final' && Lc.results[d][j.pid].t ? el('small', { class: 'muted rondas' }, Lc.results[d][j.pid].t) : null),
         el('span', { class: 'total' }, `+${pos[j.pid].pts * multiplicador(Lc, d, j.pid)}`))))),
     el('button', { class: 'btn btn--yellow', id: 'btn-volver', onClick: () => { SFX.tap(); S.verDia = null; tablero(); } }, T.toBoard),
     botonReporte({ juego: id, dia: d }),
