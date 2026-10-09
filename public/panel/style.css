@@ -256,3 +256,20 @@ a.bar--link .label { text-decoration: underline; text-decoration-color: rgba(255
 
 /* El idioma en que se jugó (D-211): una etiqueta corta, como la de laboratorio */
 .idioma { display: inline-block; padding: 1px 7px; border-radius: 6px; font-size: 0.68rem; font-weight: 900; letter-spacing: 0.06em; vertical-align: middle; background: rgba(157, 255, 58, 0.14); color: var(--lime); white-space: nowrap; }
+
+/* Salud (D-251): los errores, juntados por qué son */
+.nav-panel .vivo--alerta { background: var(--pink); box-shadow: 0 0 6px var(--pink); }
+.errs { display: flex; flex-direction: column; gap: 6px; }
+.err-row {
+  display: grid; grid-template-columns: 28px 1fr auto; gap: 10px; align-items: start; padding: 10px 12px;
+  border-radius: 14px; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--glass-border);
+}
+.err-row--viejo { opacity: 0.55; }
+.err-ico { font-size: 1.2rem; line-height: 1.3; text-align: center; }
+.err-cuerpo { min-width: 0; }
+.err-msg { margin: 0; font-weight: 800; font-size: 0.92rem; overflow-wrap: anywhere; }
+.err-lugar { margin: 4px 0 0; font-size: 0.8rem; overflow-wrap: anywhere; }
+.err-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.err-meta .q { font-weight: 800; font-size: 0.78rem; color: var(--muted); background: rgba(255, 255, 255, 0.06); border-radius: 999px; padding: 2px 9px; }
+.err-meta .q--ok { color: var(--lime); }
+.err-n { font-family: var(--font-display); font-size: 1.2rem; white-space: nowrap; }

@@ -10,13 +10,14 @@
  *   #/sala/ABCD                  la ficha de una sala; #/sala/ABCD/20342 si es la de ese día
  *   #/trafico                    visitas al sitio, de dónde llegan y cuántas terminan jugando (D-208)
  *   #/audiencia                  de dónde, idiomas y hora
+ *   #/salud                      lo que le falla a quien juega: no arrancó, errores, lentitud (D-251)
  *
  * El rango y el entorno van detrás, solo si no son los de siempre: `#/torneo?r=30d&e=dev`.
  * Puro y sin DOM, para probarlo con node (`node public/panel/rutas.test.mjs`).
  */
 
 /** Las secciones, en el orden de la navegación. La primera es la que abre el panel. */
-export const SECCIONES = ['ahora', 'torneo', 'juegos', 'trafico', 'audiencia'];
+export const SECCIONES = ['ahora', 'torneo', 'juegos', 'trafico', 'audiencia', 'salud'];
 
 /** A qué sección pertenece cada ficha: es la que queda marcada en la navegación. */
 const FICHAS = { juego: 'juegos', sala: 'juegos' };
