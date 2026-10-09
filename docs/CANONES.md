@@ -43,7 +43,8 @@ public/<carpeta>/
 - El juego se registra en `public/assets/js/games.js` con `id`, `emoji`, `name` y `tagline` por idioma, `players`, `duration`, `path` y `available`. Con sala, también `jugadas`: los tipos de mensaje que hace una persona, que es lo que el panel cuenta como jugadas (D-138).
 - El `<head>` de cada página de la app lleva el manifest, el ícono y el nombre del iPhone
   (`apple-touch-icon` y `apple-mobile-web-app-title`), el script que elige el manifest del idioma
-  justo después del `<link rel="manifest">`, y, después de las hojas de estilo, el
+  justo después del `<link rel="manifest">`, el vigía (`vigia.js`) antes de las hojas de estilo
+  (C-7, D-251), y, después de las hojas de estilo, el
   registro del service worker (`import '<…>assets/js/instalable.js'`, que además pone el manifest y
   el nombre del idioma elegido, y trae `llegada.js`, que repite encima el dado de Juego al azar hasta
   que el juego está dibujado: una `.screen.active` que no sea `#screen-espera`, D-237): así la app se
@@ -142,6 +143,10 @@ modo que el juego piensa tener.
 - **Antes de tocar la sala se espera la conexión.** Crear o entrar espera a `.info/connected` (8 s) y corre con tope (12 s), y el tope de salas por celular se revisa antes de la red (`errors.js`, `ratelimit.js`). Sin eso, quedarse sin señal se ve como un botón pegado para siempre.
 - **Un celular no puede abrir salas sin parar:** 20 por hora y 80 por día (D-41). El tope está sobre el uso legítimo más intenso, no sobre el promedio, porque la revancha abre sala nueva. Si `localStorage` falla, se deja crear: bloquear a un jugador legítimo es peor que dejar pasar a un abusivo.
 - **Cada partida deja una señal de uso para el panel del dueño** (`public/assets/js/transport/stats.js`, D-44). El transporte apunta las salas solo; los modos sin red llaman `trackStart({ game, mode, players })` al empezar (no al retomar) y `trackFinish({ ganador, empate, detalle })` al terminar. Es un `fetch` por REST, sin SDK, mejor esfuerzo: nunca se espera ni se muestra. Un modo sin red manda quién juega —los nombres que la partida ya tiene (`nombres` en `trackStart`) o, si no hay, el último que la persona escribió en la app (`nombreDelCelular`)— y cómo terminó, una sola vez (D-210), además del idioma elegido en la app (D-211). Nunca sale un secreto, el chat ni una IP. Quien **entra a propósito** con su nombre y PIN para los rankings (D-212) manda además su mejor puntaje y sus partidas a su jugador; sin entrar, nada de eso. De una **sala** quedan además el país del celular y quién ganó, que es lo que el panel muestra como bitácora (D-79). Una partida sin red se ve en vivo en el panel porque `trackStart` le arranca un latido (D-140): el juego no tiene que hacer nada más.
+- **Cada página que carga módulos lleva el vigía** (`<script src="…/assets/js/vigia.js"></script>`
+  en el `<head>`, antes de las hojas de estilo; no en el panel ni en las puente, D-251): anota lo que
+  falla al cargar o al jugar para la sección Salud del panel. "Arrancó" lo avisa `trackVisit`, así que
+  la página lo llama al cargar, como ya hacía. Lo comprueba `public/assets/js/vigia.test.mjs`.
 - **Irse a propósito cierra la sala.** `leave()` suelta los oyentes y deja la sala esperando; `dispose()` es la despedida: escribe `left` en el rol y borra la sala si con eso no queda nadie adentro (`public/assets/js/transport/dispose.js`, D-50). Lo llaman el botón de cancelar o salir de la sala del lobby, el de cambiar de modo al final y el cambio a la sala de la revancha. **Cerrar la pestaña o quedarse sin señal no es irse:** eso solo apaga `online`, porque esa partida se puede retomar (C-6), así que nada de esto cuelga de `pagehide`. Nunca lanza, lleva tope corto y, si falla, la sala queda marcada y la borra la papelera.
 - **Las salas vencidas se borran solas.** Al crear o entrar a una sala, el celular la apunta en la papelera (`cleanup/days/<día>`) y de vez en cuando barre los días pendientes borrando lo vencido (`public/assets/js/transport/cleanup.js`, D-39). Nada de esto se le muestra al jugador ni puede voltear una partida: si falla, barre el celular siguiente.
 - Con más de dos jugadores, el reparto de roles es una carrera: se escribe el rol con un identificador de dispositivo y se relee para confirmar quién lo obtuvo. Nunca se asume que el primer rol libre que se leyó sigue libre.
@@ -206,7 +211,7 @@ Cuando cada dispositivo guarda un secreto (un número, una flota):
 ## C-11 · Publicación y versionado
 
 - La versión de una publicación es la primera entrada de `CHANGELOG.md` (`## X.Y.Z — fecha`), que se escribe al fusionar. Las páginas en git no la llevan (D-205).
-- Al publicar, `publicar.yml` corre `set-version.py --sitio _site`: estampa `?v=X.Y.Z-<commit>` en los import maps, las hojas de estilo y las imágenes de las tarjetas, y la versión en el pie del menú, solo en la copia que se sube. Así el navegador no mezcla archivos viejos y nuevos, y dos PR abiertos no chocan.
+- Al publicar, `publicar.yml` corre `set-version.py --sitio _site`: estampa `?v=X.Y.Z-<commit>` en los import maps, las hojas de estilo, los scripts clásicos (el vigía, D-251) y las imágenes de las tarjetas, y la versión en el pie del menú, solo en la copia que se sube. Así el navegador no mezcla archivos viejos y nuevos, y dos PR abiertos no chocan.
 - Que el README (C-13) y las tarjetas (D-181) no hayan quedado atrás lo frena el check `pruebas` de cada PR, y se vuelve a revisar antes de publicar.
 - Los módulos nuevos entran solos: el script recorre `**/*.js` del sitio y estampa toda página que cargue módulos (D-192).
 - Se publica solo `public/`, con `.github/workflows/publicar.yml`, en cada fusión a main y solo si las pruebas pasan (D-192).
@@ -420,6 +425,7 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
 - [ ] Lo que comparte (sala, resultado) sale de `compartir.js`, con la cabecera del estándar, y un resultado va con su imagen (C-7, D-165).
 - [ ] Registro en el menú, README, especificación, requerimientos y decisiones (C-2, C-13). En la portada, con su tipo, entra al dado y a los favoritos y cabe a 320 px (C-17).
 - [ ] Las excepciones a los cánones están escritas en su especificación (C-13).
+- [ ] Su `index.html` lleva el vigía antes de las hojas de estilo y llama `trackVisit()` al cargar: `node public/assets/js/vigia.test.mjs` en verde (C-7, D-251).
 - [ ] El panel lo muestra sin haberlo tocado: `node public/panel/adapta.test.mjs` en verde y una mirada a `node tools/e2e/mirar.mjs panel datos` (C-16).
 - [ ] Capturas del README rehechas y miradas, y `python3 tools/release/readme.py revisar` en verde (C-13).
 - [ ] `node tools/agents/documentar.mjs revisar --desde origin/main` sin ✗ nuevos: decisiones, pruebas, guiones y CHANGELOG al día (D-172).

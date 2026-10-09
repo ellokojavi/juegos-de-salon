@@ -648,3 +648,92 @@ export function unoAlDiaDelRango({ days = {}, historia = {}, invitados = {}, rac
   const pct = ([a, b]) => (b ? Math.round((a / b) * 100) : null);
   return { partidas, porDia, porJuego, jugadores: jugadores.size, d1: pct(vuelta.d1), d7: pct(vuelta.d7), base: { d1: vuelta.d1[1], d7: vuelta.d7[1] }, tramos, aceptadas, eventos, vistas, entradas };
 }
+
+/* ------------------------------------------------------------------ */
+/* Salud: lo que le falla a quien juega (D-251)                        */
+/* ------------------------------------------------------------------ */
+/**
+ * Lo que anota el vigía (`public/assets/js/vigia.js`): cargas con fallas por tipo y página
+ * (`falla/<tipo>/<página>`), los errores con su detalle (`err/<firma>`) y cuánto tardó cada página
+ * en arrancar (`listo/<página>/<tramo>`).
+ *
+ * Las cargas no se cuentan dos veces: el tráfico ya cuenta cada página que arrancó
+ * (`vistas/<página>`, D-208), y una que no arrancó nunca llegó a contarse ahí. Las cargas de una
+ * página son las dos cosas juntas.
+ */
+export const TIPOS_FALLA = ['arranque', 'recurso', 'js', 'promesa'];
+export const TRAMOS = [['s1', 'menos de 1 s'], ['s3', '1 a 3 s'], ['s6', '3 a 6 s'], ['s10', '6 a 10 s'], ['mas', '10 s o más']];
+/** Desde qué tramo una carga es lenta: 6 s o más hasta poder jugar. */
+export const TRAMOS_LENTOS = ['s10', 'mas'];
+
+/** `0.128.1` contra `0.99.2`, por número y no por texto. */
+export function compararVersion(a, b) {
+  const pa = String(a || '0').split('.').map(Number), pb = String(b || '0').split('.').map(Number);
+  for (let i = 0; i < 3; i++) if ((pa[i] || 0) !== (pb[i] || 0)) return (pa[i] || 0) - (pb[i] || 0);
+  return 0;
+}
+
+export function salud(days, { from, to }) {
+  const vacio = () => ({ cargas: 0, vistas: 0, alguna: 0, arranque: 0, recurso: 0, js: 0, promesa: 0, listo: {}, medidas: 0, lentas: 0 });
+  const total = vacio(), paginas = {}, porDia = [], errores = new Map();
+  const pagina = k => (paginas[k] ||= vacio());
+  let desde = null, versionActual = '0';
+  const verVersion = v => { if (v && v !== '0' && compararVersion(v, versionActual) > 0) versionActual = v; };
+  for (let d = from; d <= to; d++) {
+    const b = (days || {})[String(d)] || {};
+    const fila = { day: d, cargas: 0, alguna: 0, arranque: 0, recurso: 0, js: 0, promesa: 0 };
+    for (const [k, v] of Object.entries(b.vistas || {})) { const x = Number(v) || 0; pagina(k).vistas += x; pagina(k).cargas += x; fila.cargas += x; }
+    for (const [tipo, porPagina] of Object.entries(b.falla || {})) {
+      for (const [k, v] of Object.entries(porPagina || {})) {
+        const x = Number(v) || 0, p = pagina(k);
+        p[tipo] = (p[tipo] || 0) + x;
+        fila[tipo] = (fila[tipo] || 0) + x;
+        // Una carga que no arrancó no está en las vistas: se suma a las cargas
+        if (tipo === 'arranque') { p.cargas += x; fila.cargas += x; }
+      }
+    }
+    for (const [k, tramos] of Object.entries(b.listo || {})) {
+      for (const [t, v] of Object.entries(tramos || {})) {
+        const x = Number(v) || 0, p = pagina(k);
+        add(p.listo, t, x); add(total.listo, t, x);
+        p.medidas += x; total.medidas += x;
+        if (TRAMOS_LENTOS.includes(t)) { p.lentas += x; total.lentas += x; }
+      }
+    }
+    for (const [id, e] of Object.entries(b.err || {})) {
+      const det = e?.d || {};
+      const n = Number(e?.n) || 0;
+      // Se juntan por qué error es; la página y el navegador, que también separan la firma, se listan
+      const clave = [det.k || '?', String(det.m || '').replace(/\d+/g, '#'), String(det.f || '').replace(/:\d+$/, '')].join('|');
+      let g = errores.get(clave);
+      if (!g) {
+        g = { id, k: det.k || '?', m: det.m || '(sin detalle)', f: det.f || '', n: 0, paginas: {}, navegadores: {}, versiones: {}, primero: d, ultimo: d, ultimaVersion: '0' };
+        errores.set(clave, g);
+      }
+      g.n += n; g.ultimo = d;
+      if (det.p) add(g.paginas, det.p, n);
+      if (det.b) add(g.navegadores, det.b, n);
+      if (det.v) { add(g.versiones, det.v, n); if (compararVersion(det.v, g.ultimaVersion) > 0) g.ultimaVersion = det.v; }
+      verVersion(det.v);
+    }
+    // La versión que corre hoy, también de las salas y las partidas sin red del rango
+    for (const r of Object.values(b.rooms || {})) verVersion(r?.v);
+    for (const r of Object.values(b.live || {})) verVersion(r?.v);
+    for (const t of ['cargas', 'alguna', 'arranque', 'recurso', 'js', 'promesa']) total[t] += fila[t];
+    if (desde === null && (b.falla || b.listo || b.err)) desde = d;
+    porDia.push(fila);
+  }
+  total.vistas = total.cargas - total.arranque;
+  const lista = [...errores.values()].sort((a, b) => b.n - a.n || b.ultimo - a.ultimo);
+  // Un error que no se ve en la versión de hoy probablemente ya se arregló: se dice, no se esconde
+  for (const g of lista) g.viejo = versionActual !== '0' && g.ultimaVersion !== '0' && compararVersion(g.ultimaVersion, versionActual) < 0;
+  return { total, paginas, porDia, errores: lista, desde, versionActual };
+}
+
+/** `ios16` → iPhone o iPad (iOS 16); `chrome129` → Chrome 129. Lo que no se conoce sale tal cual. */
+const NAVEGADORES = { ios: 'iPhone o iPad · iOS', chrome: 'Chrome', safari: 'Safari', firefox: 'Firefox', edge: 'Edge', samsung: 'Samsung Internet', instagram: 'Instagram (dentro de la app)', facebook: 'Facebook (dentro de la app)', otro: 'Otro navegador' };
+export function navegadorLabel(k) {
+  const m = /^([a-z]+)(\d*)$/.exec(String(k || ''));
+  if (!m || !NAVEGADORES[m[1]]) return String(k || '?');
+  return `${NAVEGADORES[m[1]]}${m[2] ? ` ${m[2]}` : ''}`;
+}

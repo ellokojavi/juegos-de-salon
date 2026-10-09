@@ -550,8 +550,8 @@ log at the bottom of the dashboard shows. Live rooms show **plays and chat messa
 only what a person did counts as a play (a shot, a guess, a bid), never the automatic answers, and
 of the chat only the number of messages is shown, never what they say (D-138).
 
-It is navigated like a small site (D-207): five sections, **Now**, **La Copa**, **Games**,
-**Traffic** and **Audience**, and a page for each thing that exists. Traffic counts visits even when
+It is navigated like a small site (D-207): six sections, **Now**, **La Copa**, **Games**,
+**Traffic**, **Audience** and **Health**, and a page for each thing that exists. Traffic counts visits even when
 nobody plays: pages viewed, where visitors come from (the domain only), which shared link brought
 them, first-time or returning, device, country, and how many visits end up playing (D-208). A cup's page has its full standings, a grid of
 every player and day (score, time, points, left unfinished, wildcard) and its history, event by
@@ -562,6 +562,10 @@ a saved link return to it. Times are Pacific time, the same clock La Copa uses f
 La Copa's section also measures the phone notifications (D-233): phones subscribed, notifications
 sent and tapped by type, opens from the installed app, and when the scheduled workflow last ran,
 in red if it stopped.
+Health (D-251) shows what goes wrong for players: page loads that never started, uncaught errors
+grouped by what they are (page, browser family, version, days seen), and how long each page takes
+until it can be played. A tiny classic script, `public/assets/js/vigia.js`, loads before everything
+else on every page, so it still reports when the app's own modules fail to load.
 
 One range selector drives the whole page: 7, 30, 60 or 90 days, one year, or the year so far. Test
 rooms run in the development environment, so they are out by default; test cups show up with the
@@ -611,6 +615,7 @@ node public/assets/js/transport/stats.test.mjs
 node public/assets/js/uno-al-dia-avisos.test.mjs
 node public/assets/js/uno-al-dia-jugador.test.mjs
 node public/assets/js/uno-al-dia.test.mjs
+node public/assets/js/vigia.test.mjs
 node public/cup/games/juegos.test.mjs
 node public/cup/planilla.test.mjs
 node public/cup/reportes.test.mjs
@@ -722,9 +727,9 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   labs/                       The lab: games being tested before they reach the menu (not linked, not indexed); labs/de/ forwards to /de/ (German left the lab, D-197)
   records/                    Leaderboards: the All-Rounder, every game's table and The Cup's medal table (D-212)
   today/                      One a Day: today's game, your streak, a calendar and how you do in each game (D-230)
-  panel/                      Private owner dashboard: now, The Cup, games, traffic and audience, with a page per cup, game and room (Google sign-in; see docs/PANEL.md)
+  panel/                      Private owner dashboard: now, The Cup, games, traffic, audience and health, with a page per cup, game and room (Google sign-in; see docs/PANEL.md)
   assets/css/                 Shared styles: base.css (party theme), linea.css (timeline), teclado.css (keypad), ranking.css (leaderboards)
-  assets/js/                  Shared modules: games.js (game registry), i18n.js (ES/EN/PT/DE), labs-idioma.js (a new language in the lab, D-191), ui.js, sound.js, compartir.js (everything shared, D-165), handoff.js, chat.js, session.js, arrastre.js (drag and drop), teclado.js, azar.js, dado3d.js and llegada.js (Random game: the die, which stays on screen until the game is drawn, D-237), frases.js, records.js + jugador.js + ranking.js (players and leaderboards, D-212; jugador-firebase.js and jugador-local.js are their stores), instalable.js (registers the service worker, D-221), instalar.js (the home-page bubble that invites to add the app to the home screen, D-232), favoritos.js (the home-page favorites, kept in the browser, D-238), push.js + vapid.js (phone notifications: subscribing, D-223), uno-al-dia.js + uno-al-dia-ui.js + uno-al-dia-red.js + uno-al-dia-avisos.js (One a Day: a daily game, the same for everyone, with a streak, freezes, leaderboards, invitations and reminders; D-230)
+  assets/js/                  Shared modules: games.js (game registry), i18n.js (ES/EN/PT/DE), labs-idioma.js (a new language in the lab, D-191), ui.js, sound.js, compartir.js (everything shared, D-165), handoff.js, chat.js, session.js, arrastre.js (drag and drop), teclado.js, azar.js, dado3d.js and llegada.js (Random game: the die, which stays on screen until the game is drawn, D-237), frases.js, records.js + jugador.js + ranking.js (players and leaderboards, D-212; jugador-firebase.js and jugador-local.js are their stores), instalable.js (registers the service worker, D-221), instalar.js (the home-page bubble that invites to add the app to the home screen, D-232), favoritos.js (the home-page favorites, kept in the browser, D-238), push.js + vapid.js (phone notifications: subscribing, D-223), uno-al-dia.js + uno-al-dia-ui.js + uno-al-dia-red.js + uno-al-dia-avisos.js (One a Day: a daily game, the same for everyone, with a streak, freezes, leaderboards, invitations and reminders; D-230), and vigia.js, a classic script (not a module) that every page loads first to report load failures, errors and start-up time to the dashboard (D-251)
   assets/js/transport/        Transports: local (same phone), firebase (room) and stats (usage signals)
   assets/og/                  The 1200×630 images shown when a link is shared
   manifest.webmanifest        PWA manifest (installable on the home screen), one per language (manifest.en.webmanifest …) so the app is named in the player's language (D-222); its PNG icons are in assets/icons/

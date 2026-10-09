@@ -247,6 +247,9 @@ stats/prod/days/20342/
   uad/dado: 9                          lo que se hace en Uno al día, por evento (D-230)
   pwa/android: 2                       aperturas desde la app instalada (?pwa), por sistema
   mandados/plazo: 4                    avisos entregados, por tipo: solo los escribe avisar.mjs
+  falla/js/cup: 3                      cargas con fallas, por tipo y página: las anota vigia.js (D-251)
+  err/a1b2c3/n: 2                      cuántas cargas vieron ese error; err/<firma>/d, su detalle
+  listo/cup/s3: 6                      cuánto tardó la página en arrancar, por tramo
 stats/prod/push: { vuelta, vivas, torneos }   la última vuelta de avisar.mjs y cuántas suscripciones siguen vivas
 ```
 
@@ -271,6 +274,12 @@ stats/prod/push: { vuelta, vivas, torneos }   la última vuelta de avisar.mjs y 
 - Uno al día (D-230): `uad/<evento>` lo suben los celulares (`trackUnoAlDia` en `stats.js`): el
   evento se valida por forma (`^[a-z]{1,16}$`) y el valor solo puede nacer en 1 o subir exactamente
   en uno. La lista de eventos vive en `stats.js` (`EVENTOS_UAD`); no dice quién.
+
+- Salud (D-251): `falla/<tipo>/<página>`, `listo/<página>/<tramo>` y `err/<firma>/n` los sube
+  `public/assets/js/vigia.js`, en uno; tipo, página, tramo y firma se validan por forma. El detalle,
+  `err/<firma>/d` (`{ k, p, m, f, b, v, at }`), se escribe **una sola vez** (`!data.exists()`), con el
+  mensaje acotado a 160 caracteres y la hora dentro de un minuto de la del servidor; por eso la cuenta
+  y el detalle van en dos envíos: en un PATCH atómico, el rechazo del detalle se llevaría la cuenta.
 
 Módulo y tests: [`public/assets/js/transport/stats.js`](../public/assets/js/transport/stats.js) ·
 `node public/assets/js/transport/stats.test.mjs` · `node public/panel/adapta.test.mjs` (compara la forma de

@@ -294,6 +294,61 @@
                 ".validate": "newData.isNumber() && ((!data.exists() && newData.val() == 1) || newData.val() == data.val() + 1)"
               }
             },
+            "falla": {
+              "$tipo": {
+                "$pagina": {
+                  ".write": "$env.matches(/^[a-z]{2,10}$/) && $day.matches(/^[0-9]{5}$/) && $tipo.matches(/^[a-z]{1,12}$/) && $pagina.matches(/^[a-z0-9-]{1,40}$/)",
+                  ".validate": "newData.isNumber() && ((!data.exists() && newData.val() == 1) || newData.val() == data.val() + 1)"
+                }
+              }
+            },
+            "listo": {
+              "$pagina": {
+                "$tramo": {
+                  ".write": "$env.matches(/^[a-z]{2,10}$/) && $day.matches(/^[0-9]{5}$/) && $pagina.matches(/^[a-z0-9-]{1,40}$/) && $tramo.matches(/^[a-z0-9]{1,6}$/)",
+                  ".validate": "newData.isNumber() && ((!data.exists() && newData.val() == 1) || newData.val() == data.val() + 1)"
+                }
+              }
+            },
+            "err": {
+              "$firma": {
+                "n": {
+                  ".write": "$env.matches(/^[a-z]{2,10}$/) && $day.matches(/^[0-9]{5}$/) && $firma.matches(/^[a-z0-9]{1,12}$/)",
+                  ".validate": "newData.isNumber() && ((!data.exists() && newData.val() == 1) || newData.val() == data.val() + 1)"
+                },
+                "d": {
+                  ".write": "$env.matches(/^[a-z]{2,10}$/) && $day.matches(/^[0-9]{5}$/) && $firma.matches(/^[a-z0-9]{1,12}$/) && !data.exists()",
+                  ".validate": "newData.hasChildren(['k', 'p', 'm', 'b', 'v', 'at'])",
+                  "k": {
+                    ".validate": "newData.isString() && newData.val().matches(/^[a-z]{1,12}$/)"
+                  },
+                  "p": {
+                    ".validate": "newData.isString() && newData.val().matches(/^[a-z0-9-]{1,40}$/)"
+                  },
+                  "m": {
+                    ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 160"
+                  },
+                  "f": {
+                    ".validate": "newData.isString() && newData.val().length <= 120"
+                  },
+                  "b": {
+                    ".validate": "newData.isString() && newData.val().matches(/^[a-z]{2,10}[0-9]{0,3}$/)"
+                  },
+                  "v": {
+                    ".validate": "newData.isString() && newData.val().length <= 16"
+                  },
+                  "at": {
+                    ".validate": "newData.isNumber() && newData.val() <= now + 60000 && newData.val() > now - 60000"
+                  },
+                  "$other": {
+                    ".validate": false
+                  }
+                },
+                "$other": {
+                  ".validate": false
+                }
+              }
+            },
             "$other": {
               ".validate": false
             }
