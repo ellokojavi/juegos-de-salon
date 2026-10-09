@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.131.1 — 2026-10-09
+- **Ninguna copia de trabajo queda sin uso** (D-252): al empezar cada sesión de Claude se borran,
+  además de las fusionadas, las copias vacías y las abandonadas (sin PR y quietas más de tres días,
+  con su rama guardada antes en GitHub), también las de la app. Sin cambios para quien juega.
+
 ## 0.131.0 — 2026-10-09
 - **🏁 La Gran Final: las rondas de todos** (#259): en la tabla del día de la final, bajo el
   puntaje y el tiempo de cada jugador va su tarjeta de cinco rondas (⏳75 🔢85 👑100 🔤60 📅90),
