@@ -5,6 +5,10 @@
   nivel, para empezarlo de nuevo cuando el enredo se complicó. Como Borrar todo en Zip y Reinas,
   el primer toque lo arma y el segundo lo hace, y el reloj sigue corriendo.
 
+## 0.133.2 — 2026-10-09
+- **La copa global, dicha sin nombrar países**: el aviso de la invitación pasa a "🌎 Copa global:
+  solo temas que se conocen en todo el mundo", en vez de nombrar a Chile y Brasil.
+
 ## 0.133.1 — 2026-10-09
 - **La hoja con el video, solo en español** (D-254): el video promocional está en español, así que
   en inglés, portugués y alemán el botón de compartir vuelve a compartir directo, como antes.
