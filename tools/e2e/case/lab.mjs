@@ -1,5 +1,5 @@
 // El caso (prototipo del laboratorio, D-256) de punta a punta: el laboratorio lo ofrece, marcar
-// antes de tiempo no se acepta ni cuenta como error, un error se cuenta, el caso se resuelve
+// antes de tiempo no se acepta y cuenta como error (D-261), un error se cuenta, el caso se resuelve
 // entero sin adivinar y al recargar sigue donde estaba (C-6). Imprime ✗ si algo falla.
 import { launch, sleep } from '../cdp.mjs';
 const OUT = process.argv[2];
@@ -33,20 +33,23 @@ await b.shot('01b-pista-iluminada');
 await ev(`document.querySelector('.marcador').click(); 1`); await sleep(200);
 ok(await ev(`!document.getElementById('grilla').classList.contains('enfoque')`), 'un toque fuera la apaga');
 
-// Alguien que todavía no se puede saber: no se acepta y no es error
+// Alguien que todavía no se puede saber: no se acepta y cuenta como error (D-261)
+let esperados = 0;
 const nose = await ev(`(async()=>{const {deducibles}=await import('/labs/case/engine.js');const e=__caso.estado();const d=deducibles(e.pistas,e.x);return [...Array(20).keys()].find(i=>e.x[i]===-1&&!(i in d))})()`);
 if (nose !== undefined && nose !== null) {
   await ev(`document.querySelector('.persona[data-i="${nose}"]').click(); 1`); await sleep(150);
   await ev(`document.getElementById('btn-criminal').click(); 1`); await sleep(200);
-  ok(/todavía no se puede saber/.test(await ev(`document.querySelector('.accion .msg').textContent`)), 'antes de tiempo: "todavía no se puede saber"');
-  ok(await ev(`__caso.partida().errores.length`) === 0, 'y no cuenta como error');
+  ok(/todavía no se puede saber/i.test(await ev(`document.querySelector('.accion .msg').textContent`)), 'antes de tiempo: "todavía no se puede saber"');
+  esperados = 1;
+  ok(await ev(`__caso.partida().errores.length`) === 1, 'y cuenta como error (D-261)');
 }
 
 // Un error a propósito: el contrario de lo que se deduce
 const [i0, v0] = await ev(`(async()=>{const {deducibles}=await import('/labs/case/engine.js');const e=__caso.estado();const d=deducibles(e.pistas,e.x);const k=Object.keys(d)[0];return [Number(k),d[k]]})()`);
 await ev(`document.querySelector('.persona[data-i="${i0}"]').click(); 1`); await sleep(150);
 await ev(`document.getElementById('${v0 ? 'btn-inocente' : 'btn-criminal'}').click(); 1`); await sleep(200);
-ok(await ev(`__caso.partida().errores.length`) === 1, 'marcar mal cuenta un error');
+ok(await ev(`__caso.partida().errores.length`) === esperados + 1, 'marcar mal cuenta un error');
+esperados++;
 await b.shot('02-error');
 await ev(`document.getElementById('${v0 ? 'btn-criminal' : 'btn-inocente'}').click(); 1`); await sleep(200);
 ok(await ev(`__caso.partida().marcas.length`) === 1, 'y después se puede marcar bien');
@@ -66,7 +69,7 @@ for (let g = 0; g < 40 && !(await ev(`__caso.estado().terminado`)); g++) {
 }
 await sleep(600);
 ok(await ev(`!document.getElementById('fin').hidden`), 'el caso se resuelve sin adivinar');
-ok(/con 1 error/i.test(await ev(`document.querySelector('#fin .resumen').textContent`)), `el final dice los errores: ${await ev(`document.querySelector('#fin .resumen').textContent`)}`);
+ok(new RegExp(esperados === 1 ? 'con 1 error' : `con ${esperados} errores`, 'i').test(await ev(`document.querySelector('#fin .resumen').textContent`)), `el final dice los errores: ${await ev(`document.querySelector('#fin .resumen').textContent`)}`);
 await sleep(3000);
 await ev(`document.getElementById('fin').scrollIntoView(); 1`); await sleep(300);
 await b.shot('03-final');

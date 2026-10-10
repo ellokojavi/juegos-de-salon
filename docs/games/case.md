@@ -33,15 +33,18 @@ pozo (RP-50).
 - **Marcar:** se toca a alguien y se elige "😇 es inocente" o "🔪 es criminal".
   - Si se podía deducir y está bien, queda marcado y su pista se suma a la lista.
   - Si se podía deducir y está mal, es un error: se cuenta y se marca con ✕ en la grilla.
-  - Si todavía no se puede deducir con las pistas que hay, no se acepta, **no** cuenta como error
-    y no dice si estaba bien ("Con las pistas que hay, todavía no se puede saber qué es Ana."). Así
-    probar las dos opciones no sirve para adivinar.
+  - Si todavía no se puede deducir con las pistas que hay, no se acepta, **cuenta como error**
+    (D-261) y no dice si estaba bien ("Todavía no se puede saber qué es Ana: cuenta como error.").
+    Así no se puede tantear persona por persona hasta dar con la que se deduce.
 - **Vecinos** son los 8 de alrededor, también en diagonal. Las filas van del 1 al 5 y las columnas
   de la A a la D, escritas en la grilla.
 - **Puntaje:** los errores; el tiempo (solo con la página a la vista) desempata.
 - **Las pistas** hablan de grupos (una fila, una columna, un oficio, el borde, las esquinas, los
   vecinos de alguien, quienes están arriba, abajo, a la izquierda o a la derecha de alguien) y dicen
   cuántos criminales o inocentes hay, al menos o a lo más, si son par o impar (nunca con cero: ahí se dice "No hay criminales", #272), o comparan dos grupos.
+  También hay pistas de dos personas: "Exactamente uno de Ana y Beto es criminal" (D-259), los
+  **condicionales** ("Si Óscar es criminal, Rodrigo es inocente") y las **parejas** ("Ana y Beto son
+  los dos inocentes o los dos criminales"), que solas no destapan a nadie (D-260).
   De respaldo, una pista dice directamente qué es otra persona (cerca de un 5 % de las pistas).
 
 ## Modos
@@ -87,24 +90,26 @@ cada pista la tacha, para llevar la cuenta). Tocar a alguien ya marcado muestra 
 
 ## Protocolo de mensajes
 
-No tiene: es de un jugador y sin red. Lo guardado está en `juegos-de-salon:caso:<semilla>` como
-`{ marcas, errores, ms, tachadas, done, empezo, reportado }`. Con la primera marca y al resolverlo manda la señal de uso del panel
+No tiene: es de un jugador y sin red. Lo guardado está en `juegos-de-salon:caso:v2:<semilla>` (D-259) como
+`{ marcas, errores, ms, tachadas, done, empezo, reportado }`; `errores` lleva la celda de cada error,
+también los de marcar antes de tiempo, y se repite si alguien se equivoca dos veces con la misma persona (D-261). Con la primera marca y al resolverlo manda la señal de uso del panel
 con el juego `caso` (D-44, D-210), que el panel muestra con su clave cruda (C-16).
 
 ## Archivos
 
 ```
 public/labs/case/index.html · style.css · game.js (pantalla)
-public/labs/case/engine.js · engine.test.mjs (generador, solver y pistas, sin DOM)
+public/labs/case/engine.js · engine.test.mjs (adapta al español el motor de La Copa, sin DOM)
 tools/e2e/case/lab.mjs   el laboratorio lo ofrece, la pista que ilumina, marcar antes de tiempo, un error, recargar y resolverlo entero
 ```
 
-**El generador** (`generar(semilla)`): elige nombres (uno por letra de la A a la T, en orden
-alfabético por la grilla), cinco oficios de cuatro personas, de 7 a 10 criminales y con quién se
-parte. Después simula al jugador: cada vez que alguien se puede deducir, lo marca y le reparte una
-pista elegida entre 14 verdaderas al azar, prefiriendo las que destapan a una o dos personas (para
-que el caso dure). Si en algún momento nadie más se puede deducir, cambia la última pista por una
-que destrabe; si no hay, prueba con otra solución. Un caso sale en unos 10 ms.
+**El generador** es el de La Copa (`public/cup/games/case/engine.js`, D-259): `generar(semilla)` del
+prototipo llama a `deSemilla` y le pone a cada pista su frase en español (`texto` con las plantillas
+de `casoTexto`). Elige nombres (uno por letra de la A a la T, en orden alfabético por la grilla),
+cinco oficios de cuatro personas, de 7 a 10 criminales y con quién se parte; después simula al
+jugador y le reparte a cada persona deducida una pista elegida para que haya que combinarlas
+(`notaPista`, D-259). De cada semilla arma cuatro casos y se queda con el que más hace pensar
+(`dificultad`, D-260); tarda unos 300 ms. El detalle está en [cup.md](cup.md).
 
 **El solver** busca con vuelta atrás y poda por rangos (cuántos criminales caben todavía en cada
 grupo). Una persona se puede deducir si vale lo mismo en todas las soluciones que cumplen las
@@ -118,6 +123,6 @@ Gancho de pruebas (C-14): `window.__caso` (`caso`, `partida`, `estado`).
   mensaje de error se va solo a los 4 s, por pedido del dueño. El error no se pierde: la carta queda
   marcada con ✕ y se suma a la cuenta de errores. El temporizador solo cierra su propio mensaje.
 
-- **C-3 (cuatro idiomas):** solo español, porque es un prototipo para amigos (D-256). Las pistas
-  salen de plantillas, así que traducirlo es traducir unas 20 frases.
+- **C-3 (cuatro idiomas):** solo español, porque es un prototipo para amigos (D-256). El juego en
+  los cuatro idiomas es el de La Copa, en `/case/` (D-257).
 - **C-2 (estructura):** vive en `/labs/case/` y no en `games.js`: no es un juego del menú.
