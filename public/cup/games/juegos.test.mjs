@@ -586,12 +586,14 @@ test('final: cinco rondas, promedio de 0 a 100', () => {
     desenredo: { hechos: 4, ultimo: 151000 },
     anio: anio.estado(pa, pa.hitos.map(h => h.year + 3)),
     final: { reinas: { fin: true, errores: 0 } },
+    caso: { fin: true, errores: 1, ayudas: 2 },
   };
   for (const [id, e] of Object.entries(casos)) {
     const l = desglose(id, e, { T, fmt, mmss });
     assert.ok(l.length && l.every(x => typeof x === 'string' && x.length > 10 && !x.includes('{') && !x.includes('undefined')), id);
   }
   assert.match(desglose('tango', casos.tango, { T, fmt, mmss }).join(' '), /se restan 20 .*1 pista, que resta 15/);
+  assert.match(desglose('caso', casos.caso, { T, fmt, mmss }).join(' '), /1 error, que resta 10.*2 ayudas.*se restan 30/);
   assert.match(desglose('zip', casos.zip, { T, fmt, mmss }).join(' '), /3 niveles.*30 puntos.*2:05/);
   assert.deepEqual(desglose('reinas', { fin: false, errores: 0 }, { T, fmt, mmss }), [T.bdNotSolved]);
   n++;
@@ -713,6 +715,26 @@ test('el caso: se resuelve sin adivinar, las pistas son verdad y se dicen en los
   assert.equal(caso.puntaje({ fin: true, errores: 3 }), 70);
   assert.equal(caso.puntaje({ fin: true, errores: 12 }), 10);
   assert.equal(caso.tarjeta({ conError: new Set([0]) }).split('\n')[0], '🟥🟩🟩🟩');
+  // La ayuda (D-263): resta 15, señala a alguien que ya se puede deducir y nombra pistas que alcanzan
+  assert.equal(caso.puntaje({ fin: true, errores: 1, ayudas: 2 }), 60);
+  assert.equal(caso.tarjeta({ conError: new Set([0]), conAyuda: new Set([0, 1]) }).split('\n')[0], '🟥🟨🟩🟩');
+  for (const c of ['AYU01', 'AYU02', 'AYU03']) {
+    const q = caso.generar(c, 2), jugadas = [];
+    for (let vuelta = 0; vuelta < caso.N; vuelta++) {
+      if (caso.estado(q, jugadas).fin) break;
+      const a = caso.ayuda(q, jugadas);
+      assert.equal(caso.intento(q, jugadas, a.i, q.v[a.i]), 'ok', `${c}: la ayuda señala a alguien que todavía no se puede deducir`);
+      const x = caso.estado(q, jugadas).x.slice(); x[a.i] = 1 - q.v[a.i];
+      if (a.quienes.length) assert.equal(caso.resolver(a.quienes.map(i => q.pistas[i]), x), null, `${c}: las pistas que nombra no alcanzan`);
+      jugadas.push({ ayuda: a.i }, { i: a.i, v: q.v[a.i] });
+    }
+    const e = caso.estado(q, jugadas);
+    assert.ok(e.fin && e.errores === 0 && e.ayudas === e.marcas.length, `${c}: la ayuda resuelve el caso entero`);
+    assert.equal(caso.puntaje(e), 10, 'todo con ayuda: el mínimo');
+    // Las comparaciones no hablan de dos grupos que comparten a alguien (D-263)
+    for (const pista of q.pistas) if (pista.b) assert.ok(!pista.a.some(i => pista.b.includes(i)), `${c}: ${pista.t} entre grupos que se cruzan`);
+  }
+  assert.equal(caso.lista(['Ana', 'Beto', 'Isabel'], LOCALES_COPA.es.casoTexto), 'Ana, Beto e Isabel');
   // En portugués, "criminoso" concuerda con quien es (U-3): "Ana é criminosa", "Beto é criminoso"
   const directa = { ...p, nombres: ['Ana', 'Beto', ...p.nombres.slice(2)], pistas: [{ t: 'es', a: [0], k: 1 }, { t: 'es', a: [1], k: 1 }] };
   assert.equal(caso.texto(directa, 0, LOCALES_COPA.pt.casoTexto), 'Ana é criminosa.');

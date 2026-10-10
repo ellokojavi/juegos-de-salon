@@ -5,6 +5,7 @@
  *
  * Las jugadas son los intentos de marcar que cuentan: `{ i, v }` (acierto o error). Un intento de
  * antes de tiempo se guarda como `{ i, v, falta: 1 }`: cuenta como error y no dice si estaba bien (D-261).
+ * Una ayuda se guarda como `{ ayuda: i }` (D-263): resta 15 y dice a quién mirar y qué pistas juntar.
  *
  * `portada()` es la portada animada de la antesala: cartas de espaldas que se dan vuelta solas
  * mientras una lupa las recorre.
@@ -77,6 +78,8 @@ export function montar(raiz, ctx) {
   let foco = null;      // la pista tocada: ilumina a las personas de las que habla
   let mensaje = null;   // { tipo, texto, de? } de la última marca
   let nueva = null;     // la pista que acaba de aparecer, para que entre animada
+  let guia = null;      // la ayuda pedida, { i, quienes }: sus pistas se destacan hasta marcar a i
+  let armado = false, armadoTimer = null;   // la ayuda pide un segundo toque, como en Tango
 
   const nombre = i => p.nombres[i];
   const oficioDe = i => motor.oficio(p.oficioDe[i]);
@@ -141,7 +144,8 @@ export function montar(raiz, ctx) {
       carta.setAttribute('aria-pressed', String(elegida === i));
     });
     dibujarAccion(e);
-    pie.replaceChildren(...(e.errores ? [el('p', { class: 'muted center', style: 'margin:0' }, fmt(T.casoErrores, { e: e.errores }))] : []));
+    if (guia && e.x[guia.i] !== -1) guia = null;
+    dibujarPie(e);
     dibujarPistas(e);
   };
 
@@ -184,6 +188,42 @@ export function montar(raiz, ctx) {
     }
   };
 
+  /** La cuenta de errores y ayudas, y el botón 💡 de la ayuda. */
+  const dibujarPie = e => {
+    const cuenta = e.ayudas ? fmt(T.casoCuenta, { e: e.errores, a: e.ayudas }) : e.errores ? fmt(T.casoErrores, { e: e.errores }) : null;
+    // Si la ayuda de ahora ya se pagó (se cerró el mensaje, o se recargó), se vuelve a ver gratis
+    const a = e.fin ? null : motor.ayuda(p, jugadas);
+    const pagada = a && e.conAyuda.has(a.i);
+    pie.replaceChildren(
+      cuenta ? el('p', { class: 'muted center', style: 'margin:0' }, cuenta) : '',
+      a ? el('button', {
+        type: 'button', id: 'btn-ayuda', class: 'btn btn--ghost btn--sm' + (armado ? ' armado' : ''),
+        onClick: ev => { ev.stopPropagation(); pedirAyuda(pagada); },
+      }, pagada ? `💡 ${T.casoAyudaVer}` : armado ? fmt(T.casoAyudaSure, { n: motor.COSTO_AYUDA }) : `💡 ${fmt(T.casoAyuda, { n: motor.COSTO_AYUDA })}`) : '');
+  };
+
+  const pedirAyuda = pagada => {
+    if (!pagada && !armado) {
+      armado = true; SFX.tap(); vibrate(15);
+      clearTimeout(armadoTimer);
+      armadoTimer = setTimeout(() => { armado = false; if (raiz.isConnected) dibujarPie(motor.estado(p, jugadas)); }, 3000);
+      dibujarPie(motor.estado(p, jugadas));
+      return;
+    }
+    armado = false; clearTimeout(armadoTimer);
+    const a = motor.ayuda(p, jugadas);
+    if (!a) return;
+    if (!pagada) { jugadas.push({ ayuda: a.i }); ctx.guardar(jugadas); }
+    guia = a; elegida = a.i; foco = null;
+    const q = motor.lista(a.quienes.map(nombre), L);
+    const clave = !a.quienes.length ? 'casoMiraVarias' : a.quienes.length === 1 ? 'casoMiraUna' : 'casoMira';
+    mensaje = { tipo: 'ayuda', texto: fmt(T[clave], { x: nombre(a.i), q }) };
+    SFX.reveal(); vibrate(20);
+    dibujar();
+    // Las pistas que hay que juntar se destacan: que se vean aunque estén más abajo
+    pistas.querySelector('.cs-pista.guia')?.scrollIntoView?.({ block: 'nearest', behavior: QUIETO() ? 'auto' : 'smooth' });
+  };
+
   const dibujarPistas = e => {
     // La más nueva arriba, destacada; las demás en el orden en que se fueron sabiendo, al revés
     const orden = [p.inicio, ...e.marcas].reverse();
@@ -191,7 +231,7 @@ export function montar(raiz, ctx) {
     pistas.replaceChildren(
       el('h3', {}, `💬 ${fmt(T.casoPistas, { n: orden.length })}`),
       ...orden.map((i, k) => el('div', {
-        class: 'cs-pista' + (k === 0 ? ' ultima' : '') + (nueva === i ? ' entra' : '') + (tachadas.has(i) ? ' tachada' : '') + (foco === i ? ' activa' : ''),
+        class: 'cs-pista' + (k === 0 ? ' ultima' : '') + (nueva === i ? ' entra' : '') + (tachadas.has(i) ? ' tachada' : '') + (foco === i ? ' activa' : '') + (guia?.quienes.includes(i) ? ' guia' : ''),
         'data-de': i,
       },
       el('button', { type: 'button', class: 'texto', onClick: ev => { ev.stopPropagation(); enfocar(i); } },
