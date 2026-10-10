@@ -30,7 +30,8 @@ export function atrasos(asset, { portada, version, nombre = id => id }) {
   // uno nuevo de la portada no lo deja atrás
   const faltan = asset.seleccion ? [] : portada.filter(id => !muestra.has(id) && id !== 'copa');
   if (faltan.length) avisos.push(`juegos de la portada que no salen: ${faltan.map(nombre).join(', ')}`);
-  const sobran = [...muestra].filter(id => !hoy.has(id));
+  // `laboratorio`: juegos que todavía no están en la portada a propósito (el teaser de El caso, D-265)
+  const sobran = [...muestra].filter(id => !hoy.has(id) && !(asset.laboratorio || []).includes(id));
   if (sobran.length) avisos.push(`salen juegos que ya no están en la portada: ${sobran.map(nombre).join(', ')}`);
   if (asset.app && version && menor(asset.app, version)) avisos.push(`muestra la app ${asset.app}; hoy es ${version}`);
   return avisos;
