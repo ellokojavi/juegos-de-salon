@@ -663,7 +663,7 @@ const ES = {
       par: 'Hay un número par de criminales {g}.', impar: 'Hay un número impar de criminales {g}.',
       gt: 'Hay más criminales {g} que {h}.', igual: 'Hay tantos criminales {g} como {h}.',
       esC: '{x} es criminal.', esCF: '{x} es criminal.', esI: '{x} es inocente.',
-      unoDeDos: 'Exactamente uno de {x} y {y} es criminal.',
+      unoDeDos: 'Exactamente uno de {x} y {y} es criminal.', unaDeDos: 'Exactamente una de {x} y {y} es criminal.',
     },
     oficios: {
       chef: { uno: 'chef', varios: 'chefs', en: 'chefs' }, guardia: { uno: 'guardia', varios: 'guardias', en: 'guardias' },
@@ -1430,7 +1430,7 @@ const EN = {
       par: 'There is an even number of criminals {g}.', impar: 'There is an odd number of criminals {g}.',
       gt: 'There are more criminals {g} than {h}.', igual: 'There are as many criminals {g} as {h}.',
       esC: '{x} is a criminal.', esCF: '{x} is a criminal.', esI: '{x} is innocent.',
-      unoDeDos: 'Exactly one of {x} and {y} is a criminal.',
+      unoDeDos: 'Exactly one of {x} and {y} is a criminal.', unaDeDos: 'Exactly one of {x} and {y} is a criminal.',
     },
     oficios: {
       chef: { uno: 'chef', varios: 'chefs', en: 'chefs' }, guardia: { uno: 'guard', varios: 'guards', en: 'guards' },
@@ -2194,7 +2194,7 @@ const PT = {
       par: 'Há um número par de criminosos {g}.', impar: 'Há um número ímpar de criminosos {g}.',
       gt: 'Há mais criminosos {g} do que {h}.', igual: 'Há tantos criminosos {g} quanto {h}.',
       esC: '{x} é criminoso.', esCF: '{x} é criminosa.', esI: '{x} é inocente.',
-      unoDeDos: 'Exatamente uma pessoa entre {x} e {y} é do crime.',
+      unoDeDos: 'Exatamente um de {x} e {y} é criminoso.', unaDeDos: 'Exatamente uma de {x} e {y} é criminosa.',
     },
     oficios: {
       chef: { uno: 'chef', varios: 'chefs', en: 'chefs' }, guardia: { uno: 'guarda', varios: 'guardas', en: 'guardas' },
@@ -2958,7 +2958,7 @@ const DE = {
       par: 'Die Zahl der Kriminellen {g} ist gerade.', impar: 'Die Zahl der Kriminellen {g} ist ungerade.',
       gt: 'Es gibt mehr Kriminelle {g} als {h}.', igual: 'Es gibt gleich viele Kriminelle {g} wie {h}.',
       esC: '{x} ist kriminell.', esCF: '{x} ist kriminell.', esI: '{x} ist unschuldig.',
-      unoDeDos: 'Genau eine Person von {x} und {y} ist kriminell.',
+      unoDeDos: 'Von {x} und {y} ist genau eine Person kriminell.', unaDeDos: 'Von {x} und {y} ist genau eine Person kriminell.',
     },
     oficios: {
       chef: { uno: 'Koch', varios: 'Köche', en: 'Köchen' }, guardia: { uno: 'Wache', varios: 'Wachen', en: 'Wachen' },
