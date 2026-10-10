@@ -68,7 +68,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216 |
-| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263 |
+| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264 |
 | Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249 |
 | Marketing | `marketing/README.md` | D-178 |
@@ -4447,7 +4447,7 @@ leer la base antes de dibujarse, y el orden cambiaría solo de un día a otro).
 lo pide. Un juego nuevo que no está en la lista va después de los que sí.
 
 ## D-256 · El caso: un prototipo de misterio en el laboratorio, solo en español
-**Fecha:** 2026-10-09 · **Estado:** corregida por D-261 · **Relación:** excepción a C-3 (idiomas) y C-2 (estructura); ampliada por D-257 (la versión de La Copa)
+**Fecha:** 2026-10-09 · **Estado:** corregida por D-261, D-264 · **Relación:** excepción a C-3 (idiomas) y C-2 (estructura); ampliada por D-257 (la versión de La Copa)
 **Decisión:** Se prueba en `/labs/case/` un juego de deducción al estilo de *Clues by Sam*: veinte
 sospechosos, pistas que siempre dicen la verdad, y nunca hay que adivinar. Solo en español y fuera de
 `games.js`, para mostrárselo a amigos. Hay un caso del día (la semilla es la fecha) y casos con código
@@ -4506,7 +4506,7 @@ pantalla vacía); que cada juego arranque su propio reloj (el reloj es de la cá
 parte. Retomar una partida no cambia: el tablero vuelve de una y el reloj sigue donde estaba.
 
 ## D-259 · El caso, menos lineal: pistas que hay que combinar
-**Fecha:** 2026-10-10 · **Estado:** corregida por D-263 · **Relación:** amplía D-257
+**Fecha:** 2026-10-10 · **Estado:** corregida por D-263, D-264 · **Relación:** amplía D-257
 **Decisión:** El generador de El caso elige las pistas para que haya que pensar más. Cada pista
 candidata recibe una nota (`notaPista`): vale más la que destapa a alguien **solo combinada con las
 pistas que ya se saben**, menos la que lo dice todo sola, y los tipos que piden razonar (más que,
@@ -4594,4 +4594,16 @@ pistas, medido en 40 casos) y la ayuda evita quedarse atascado sin regalarle nad
 **Consecuencias:** `juegos.test.mjs` prueba que la ayuda siempre señala a alguien deducible, que
 las pistas que nombra alcanzan y que no quedan comparaciones con grupos cruzados;
 `tools/e2e/case/lab.mjs`, el botón en el prototipo.
+
+## D-264 · El caso: tocar una pista ilumina solo a quien nombra
+**Fecha:** 2026-10-10 · **Estado:** vigente · **Relación:** corrige D-256 (lo que ilumina una pista) y D-259 (en una comparación, los dos colores
+de la grilla quedan para quienes nombra, no para los dos grupos)
+**Decisión:** Tocar una pista (La Copa y el prototipo) ya no ilumina a todo el grupo del que habla,
+sino solo a las personas que nombra por su nombre: "Todos los que están a la izquierda de Omar son
+criminales" ilumina a Omar; "Si Ana es criminal, Beto es inocente", a Ana y a Beto; "En la fila 2
+hay tres criminales", a nadie. Quien la dice sigue en celeste. Lo calcula `sujetos()` del motor.
+**Por qué:** lo pidió el dueño: ver a quiénes abarca el grupo es parte de pensar el caso, y la
+grilla lo estaba haciendo por el jugador.
+**Consecuencias:** `tools/e2e/case/lab.mjs` prueba que se ilumine exactamente a quienes nombra;
+`juegos.test.mjs`, `sujetos()`.
 

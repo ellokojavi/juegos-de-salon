@@ -735,6 +735,12 @@ test('el caso: se resuelve sin adivinar, las pistas son verdad y se dicen en los
     for (const pista of q.pistas) if (pista.b) assert.ok(!pista.a.some(i => pista.b.includes(i)), `${c}: ${pista.t} entre grupos que se cruzan`);
   }
   assert.equal(caso.lista(['Ana', 'Beto', 'Isabel'], LOCALES_COPA.es.casoTexto), 'Ana, Beto e Isabel');
+  // Tocar una pista ilumina solo a quienes nombra (D-264), no al grupo
+  assert.deepEqual(caso.sujetos({ t: 'eq', a: [0, 1, 2], k: 3, g: { tipo: 'izq', de: 3 } }), { a: [3], b: [] });
+  assert.deepEqual(caso.sujetos({ t: 'eq', a: [0, 1, 2, 3], k: 1, g: { tipo: 'fila', n: 1 } }), { a: [], b: [] });
+  assert.deepEqual(caso.sujetos({ t: 'gt', a: [1], b: [2], g: { tipo: 'vecinos', de: 5 }, h: { tipo: 'col', c: 'A' } }), { a: [5], b: [] });
+  assert.deepEqual(caso.sujetos({ t: 'si', a: [4, 9], k: 1, j: 0, g: { tipo: 'si', de: 4, otro: 9 } }), { a: [4, 9], b: [] });
+  assert.deepEqual(caso.sujetos({ t: 'es', a: [7], k: 1 }), { a: [7], b: [] });
   // En portugués, "criminoso" concuerda con quien es (U-3): "Ana é criminosa", "Beto é criminoso"
   const directa = { ...p, nombres: ['Ana', 'Beto', ...p.nombres.slice(2)], pistas: [{ t: 'es', a: [0], k: 1 }, { t: 'es', a: [1], k: 1 }] };
   assert.equal(caso.texto(directa, 0, LOCALES_COPA.pt.casoTexto), 'Ana é criminosa.');
