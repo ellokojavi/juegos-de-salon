@@ -121,3 +121,5 @@
 /* El sello que cae al marcar empieza grande y, en una carta del borde, ensanchaba la página un momento (C-8) */
 body { overflow-x: clip; }
 .accion .msg.se-va { opacity: 0; transition: opacity 0.35s; }
+.fin .comentario { text-align: left; margin-top: 12px; }
+.fin .comentario h2 { margin: 0; }
