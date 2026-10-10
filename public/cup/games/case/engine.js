@@ -32,6 +32,16 @@ const NOMBRES = [
   ['Seba', 'Sofía', 'Simón', 'Sara'], ['Tere', 'Tomás', 'Tati', 'Tito'],
 ];
 
+/**
+ * Los nombres de mujer: en portugués "criminoso" concuerda con quien es ("Ana é criminosa"). Los
+ * que sirven para los dos (Dani, Fran, Isi) se leen como en Chile: Dani es él; Fran e Isi, ellas.
+ */
+const FEMENINOS = new Set(['Ana', 'Antonia', 'Bárbara', 'Belén', 'Cata', 'Coni', 'Daniela', 'Dominga', 'Ema', 'Elisa',
+  'Fran', 'Fernanda', 'Flo', 'Gaby', 'Gloria', 'Helena', 'Hilda', 'Isi', 'Isabel', 'Josefa', 'Julia', 'Kari', 'Karen',
+  'Lucía', 'Laura', 'Maca', 'Marta', 'Nati', 'Nora', 'Olga', 'Olivia', 'Pía', 'Paula', 'Quena', 'Queti', 'Rocío',
+  'Rosa', 'Sofía', 'Sara', 'Tere', 'Tati']);
+export const femenino = nombre => FEMENINOS.has(nombre);
+
 /** Los oficios: el emoji y el id. Cómo se dicen está en `casoOficios` de rules.js, por idioma. */
 export const OFICIOS = [
   { id: 'chef', emoji: '🧑‍🍳' }, { id: 'guardia', emoji: '💂' }, { id: 'artista', emoji: '🎨' },
@@ -135,7 +145,10 @@ function grupoTexto(g, caso, quien, L, todos = false) {
 export function texto(caso, i, L) {
   const p = caso.pistas[i];
   const F = L.frases;
-  if (p.t === 'es') return fmt(p.k ? F.esC : F.esI, { x: caso.nombres[p.a[0]] });
+  if (p.t === 'es') {
+    const x = caso.nombres[p.a[0]];
+    return fmt(p.k ? (femenino(x) ? F.esCF : F.esC) : F.esI, { x });
+  }
   const g = grupoTexto(p.g, caso, i, L);
   const n = p.a.length;
   switch (p.t) {

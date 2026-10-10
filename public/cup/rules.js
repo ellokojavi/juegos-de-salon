@@ -628,8 +628,8 @@ const ES = {
     'Las marcas se encadenan: si A = B y ya sabes A, ya sabes B. Con ≠, es el contrario.',
   ],
   // 🔍 El caso
-  casoEsInocente: '😇 {x} es inocente', casoEsCriminal: '🔪 {x} es criminal',
-  casoInocente: 'inocente', casoCriminal: 'criminal',
+  casoEsInocente: '😇 {x} es inocente', casoEsCriminal: '🔪 {x} es criminal', casoEsCriminalF: '🔪 {x} es criminal',
+  casoInocente: 'inocente', casoCriminal: 'criminal', casoCriminalF: 'criminal',
   casoFalta: 'Con las pistas que hay, todavía no se puede saber qué es {x}.',
   casoError: '{x} no es {v}. Revisa las pistas.',
   casoBien: '¡Bien! {x} es {v} y dice: «{p}»', casoDice: '{x} es {v} y dice: «{p}»',
@@ -641,6 +641,7 @@ const ES = {
   casoExUno: 'Cada uno es inocente o criminal.', casoExDos: 'Lo que dice alguien siempre es verdad.',
   bdCasoMistakes: 'Tuviste {n} errores, a 10 puntos cada uno: se restan {pts} puntos.',
   bdCasoMistakesOne: 'Tuviste 1 error, que resta 10 puntos.', bdCasoNoMistakes: 'No te equivocaste nunca, así que no se resta nada.',
+  bdCasoFloor: 'Si resuelves el caso, el puntaje nunca baja de 10.',
   casoTexto: {
     grupo: {
       fila: 'en la fila {n}', col: 'en la columna {c}', oficio: 'entre los {oen}', borde: 'en el borde', esquinas: 'en las esquinas',
@@ -661,7 +662,7 @@ const ES = {
       le1: 'Hay a lo más un criminal {g}.', leN: 'Hay a lo más {n} criminales {g}.',
       par: 'Hay un número par de criminales {g}.', impar: 'Hay un número impar de criminales {g}.',
       gt: 'Hay más criminales {g} que {h}.', igual: 'Hay tantos criminales {g} como {h}.',
-      esC: '{x} es criminal.', esI: '{x} es inocente.',
+      esC: '{x} es criminal.', esCF: '{x} es criminal.', esI: '{x} es inocente.',
     },
     oficios: {
       chef: { uno: 'chef', varios: 'chefs', en: 'chefs' }, guardia: { uno: 'guardia', varios: 'guardias', en: 'guardias' },
@@ -1393,8 +1394,8 @@ const EN = {
     'Signs chain together: if A = B and you know A, you know B. With ≠, it\'s the opposite.',
   ],
   // 🔍 The Case
-  casoEsInocente: '😇 {x} is innocent', casoEsCriminal: '🔪 {x} is a criminal',
-  casoInocente: 'innocent', casoCriminal: 'a criminal',
+  casoEsInocente: '😇 {x} is innocent', casoEsCriminal: '🔪 {x} is a criminal', casoEsCriminalF: '🔪 {x} is a criminal',
+  casoInocente: 'innocent', casoCriminal: 'a criminal', casoCriminalF: 'a criminal',
   casoFalta: 'With the clues so far, there\'s no way to know what {x} is yet.',
   casoError: '{x} is not {v}. Check the clues.',
   casoBien: 'Nice! {x} is {v} and says: “{p}”', casoDice: '{x} is {v} and says: “{p}”',
@@ -1406,6 +1407,7 @@ const EN = {
   casoExUno: 'Each one is innocent or a criminal.', casoExDos: 'What someone says is always true.',
   bdCasoMistakes: 'You made {n} mistakes, at 10 points each: {pts} points off.',
   bdCasoMistakesOne: 'You made 1 mistake, which takes off 10 points.', bdCasoNoMistakes: 'You never made a mistake, so nothing is taken off.',
+  bdCasoFloor: 'If you solve the case, your score never goes below 10.',
   casoTexto: {
     grupo: {
       fila: 'in row {n}', col: 'in column {c}', oficio: 'among the {oen}', borde: 'on the edge', esquinas: 'in the corners',
@@ -1426,7 +1428,7 @@ const EN = {
       le1: 'There is at most one criminal {g}.', leN: 'There are at most {n} criminals {g}.',
       par: 'There is an even number of criminals {g}.', impar: 'There is an odd number of criminals {g}.',
       gt: 'There are more criminals {g} than {h}.', igual: 'There are as many criminals {g} as {h}.',
-      esC: '{x} is a criminal.', esI: '{x} is innocent.',
+      esC: '{x} is a criminal.', esCF: '{x} is a criminal.', esI: '{x} is innocent.',
     },
     oficios: {
       chef: { uno: 'chef', varios: 'chefs', en: 'chefs' }, guardia: { uno: 'guard', varios: 'guards', en: 'guards' },
@@ -2155,19 +2157,20 @@ const PT = {
     'As marcas se encadeiam: se A = B e você já sabe A, já sabe B. Com ≠, é o contrário.',
   ],
   // 🔍 O Caso
-  casoEsInocente: '😇 {x} é inocente', casoEsCriminal: '🔪 {x} é criminoso',
-  casoInocente: 'inocente', casoCriminal: 'criminoso',
-  casoFalta: 'Com as pistas que tem, ainda não dá para saber o que {x} é.',
+  casoEsInocente: '😇 {x} é inocente', casoEsCriminal: '🔪 {x} é criminoso', casoEsCriminalF: '🔪 {x} é criminosa',
+  casoInocente: 'inocente', casoCriminal: 'criminoso', casoCriminalF: 'criminosa',
+  casoFalta: 'Com as pistas que você tem, ainda não dá para saber o que {x} é.',
   casoError: '{x} não é {v}. Revise as pistas.',
   casoBien: 'Boa! {x} é {v} e diz: “{p}”', casoDice: '{x} é {v} e diz: “{p}”',
   casoToca: 'Toque em alguém para marcar.',
-  casoVer: '👁 Ver quem ela cita', casoOcultar: '👁 Voltar a ver todos',
-  casoPistas: 'Pistas ({n})', casoAyuda: 'Toque numa pista para ver quem ela cita. Com ✓ você risca quando já usou.',
+  casoVer: '👁 Ver quem a pista cita', casoOcultar: '👁 Voltar a ver todos',
+  casoPistas: 'Pistas ({n})', casoAyuda: 'Toque numa pista para ver quem ela cita. Com ✓ você risca a pista que já usou.',
   casoUltima: 'Última', casoTachar: 'Riscar a pista', casoDestachar: 'Desriscar a pista',
   casoOk: 'Caso resolvido!', casoErrores: 'Erros: {e}', casoSospechosos: 'Os suspeitos',
   casoExUno: 'Cada um é inocente ou criminoso.', casoExDos: 'O que alguém diz é sempre verdade.',
-  bdCasoMistakes: 'Você teve {n} erros, a 10 pontos cada: tira {pts} pontos.',
+  bdCasoMistakes: 'Você teve {n} erros, a 10 pontos cada: saem {pts} pontos.',
   bdCasoMistakesOne: 'Você teve 1 erro, que tira 10 pontos.', bdCasoNoMistakes: 'Você nunca errou, então não tira nada.',
+  bdCasoFloor: 'Se você resolver o caso, a pontuação nunca fica abaixo de 10.',
   casoTexto: {
     grupo: {
       fila: 'na linha {n}', col: 'na coluna {c}', oficio: 'entre os {oen}', borde: 'na borda', esquinas: 'nos cantos',
@@ -2175,10 +2178,10 @@ const PT = {
       abajo: 'abaixo de {x}', abajoYo: 'abaixo de mim', izq: 'à esquerda de {x}', izqYo: 'à minha esquerda', der: 'à direita de {x}', derYo: 'à minha direita',
     },
     todos: {
-      fila: 'Todos na linha {n}', col: 'Todos na coluna {c}', oficio: 'Todos os {o}', borde: 'Todos na borda', esquinas: 'Todos nos cantos',
-      vecinos: 'Todos os vizinhos de {x}', vecinosYo: 'Todos os meus vizinhos', arriba: 'Todos acima de {x}', arribaYo: 'Todos acima de mim',
-      abajo: 'Todos abaixo de {x}', abajoYo: 'Todos abaixo de mim', izq: 'Todos à esquerda de {x}', izqYo: 'Todos à minha esquerda',
-      der: 'Todos à direita de {x}', derYo: 'Todos à minha direita',
+      fila: 'Todos os que estão na linha {n}', col: 'Todos os que estão na coluna {c}', oficio: 'Todos os {o}', borde: 'Todos os que estão na borda', esquinas: 'Todos os que estão nos cantos',
+      vecinos: 'Todos os vizinhos de {x}', vecinosYo: 'Todos os meus vizinhos', arriba: 'Todos os que estão acima de {x}', arribaYo: 'Todos os que estão acima de mim',
+      abajo: 'Todos os que estão abaixo de {x}', abajoYo: 'Todos os que estão abaixo de mim', izq: 'Todos os que estão à esquerda de {x}', izqYo: 'Todos os que estão à minha esquerda',
+      der: 'Todos os que estão à direita de {x}', derYo: 'Todos os que estão à minha direita',
     },
     frases: {
       cero: 'Não há criminosos {g}.', todos: '{T} são criminosos.',
@@ -2188,7 +2191,7 @@ const PT = {
       le1: 'Há no máximo um criminoso {g}.', leN: 'Há no máximo {n} criminosos {g}.',
       par: 'Há um número par de criminosos {g}.', impar: 'Há um número ímpar de criminosos {g}.',
       gt: 'Há mais criminosos {g} do que {h}.', igual: 'Há tantos criminosos {g} quanto {h}.',
-      esC: '{x} é criminoso.', esI: '{x} é inocente.',
+      esC: '{x} é criminoso.', esCF: '{x} é criminosa.', esI: '{x} é inocente.',
     },
     oficios: {
       chef: { uno: 'chef', varios: 'chefs', en: 'chefs' }, guardia: { uno: 'guarda', varios: 'guardas', en: 'guardas' },
@@ -2917,19 +2920,20 @@ const DE = {
     'Die Zeichen hängen zusammen: Ist A = B und du kennst A, kennst du auch B. Bei ≠ ist es das Gegenteil.',
   ],
   // 🔍 Der Fall
-  casoEsInocente: '😇 {x} ist unschuldig', casoEsCriminal: '🔪 {x} ist kriminell',
-  casoInocente: 'unschuldig', casoCriminal: 'kriminell',
+  casoEsInocente: '😇 {x} ist unschuldig', casoEsCriminal: '🔪 {x} ist kriminell', casoEsCriminalF: '🔪 {x} ist kriminell',
+  casoInocente: 'unschuldig', casoCriminal: 'kriminell', casoCriminalF: 'kriminell',
   casoFalta: 'Mit den Hinweisen bisher lässt sich noch nicht sagen, was {x} ist.',
   casoError: '{x} ist nicht {v}. Schau dir die Hinweise nochmal an.',
   casoBien: 'Gut! {x} ist {v} und sagt: „{p}“', casoDice: '{x} ist {v} und sagt: „{p}“',
   casoToca: 'Tippe jemanden an, um ihn zu markieren.',
-  casoVer: '👁 Zeigen, wen er nennt', casoOcultar: '👁 Wieder alle zeigen',
+  casoVer: '👁 Zeigen, wen der Hinweis nennt', casoOcultar: '👁 Wieder alle zeigen',
   casoPistas: 'Hinweise ({n})', casoAyuda: 'Tippe einen Hinweis an, um zu sehen, wen er nennt. Mit ✓ streichst du ihn, wenn du ihn benutzt hast.',
   casoUltima: 'Neu', casoTachar: 'Hinweis streichen', casoDestachar: 'Hinweis wieder aufnehmen',
   casoOk: 'Fall gelöst!', casoErrores: 'Fehler: {e}', casoSospechosos: 'Die Verdächtigen',
   casoExUno: 'Jeder ist unschuldig oder kriminell.', casoExDos: 'Was jemand sagt, stimmt immer.',
-  bdCasoMistakes: 'Du hattest {n} Fehler, je 10 Punkte: {pts} Punkte weniger.',
+  bdCasoMistakes: 'Du hattest {n} Fehler, je 10 Punkte: Das kostet {pts} Punkte.',
   bdCasoMistakesOne: 'Du hattest 1 Fehler, der 10 Punkte kostet.', bdCasoNoMistakes: 'Du hast dich nie geirrt, also wird nichts abgezogen.',
+  bdCasoFloor: 'Wenn du den Fall löst, fällt das Ergebnis nie unter 10.',
   casoTexto: {
     grupo: {
       fila: 'in Reihe {n}', col: 'in Spalte {c}', oficio: 'unter den {oen}', borde: 'am Rand', esquinas: 'in den Ecken',
@@ -2950,7 +2954,7 @@ const DE = {
       le1: 'Es gibt höchstens einen Kriminellen {g}.', leN: 'Es gibt höchstens {n} Kriminelle {g}.',
       par: 'Die Zahl der Kriminellen {g} ist gerade.', impar: 'Die Zahl der Kriminellen {g} ist ungerade.',
       gt: 'Es gibt mehr Kriminelle {g} als {h}.', igual: 'Es gibt gleich viele Kriminelle {g} wie {h}.',
-      esC: '{x} ist kriminell.', esI: '{x} ist unschuldig.',
+      esC: '{x} ist kriminell.', esCF: '{x} ist kriminell.', esI: '{x} ist unschuldig.',
     },
     oficios: {
       chef: { uno: 'Koch', varios: 'Köche', en: 'Köchen' }, guardia: { uno: 'Wache', varios: 'Wachen', en: 'Wachen' },

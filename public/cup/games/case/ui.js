@@ -61,7 +61,9 @@ export function montar(raiz, ctx) {
 
   const nombre = i => p.nombres[i];
   const oficioDe = i => motor.oficio(p.oficioDe[i]);
-  const valor = i => (p.v[i] ? T.casoCriminal : T.casoInocente);
+  // "criminosa" en portugués: el valor concuerda con quien es (en los otros idiomas, las dos claves dicen lo mismo)
+  const criminal = i => (motor.femenino(nombre(i)) ? T.casoCriminalF : T.casoCriminal);
+  const valor = i => (p.v[i] ? criminal(i) : T.casoInocente);
   const frase = i => motor.texto(p, i, L);
   const dice = i => fmt(T.casoDice, { x: nombre(i), v: valor(i), p: frase(i) });
 
@@ -139,7 +141,7 @@ export function montar(raiz, ctx) {
       // El botón dice sobre quién actúa (C-8): "😇 Ana es inocente"
       accion.append(el('div', { class: 'btn-row' },
         el('button', { type: 'button', class: 'btn cs-inocente', id: 'btn-inocente', onClick: ev => { ev.stopPropagation(); intentar(0); } }, fmt(T.casoEsInocente, { x: nombre(elegida) })),
-        el('button', { type: 'button', class: 'btn cs-criminal', id: 'btn-criminal', onClick: ev => { ev.stopPropagation(); intentar(1); } }, fmt(T.casoEsCriminal, { x: nombre(elegida) }))));
+        el('button', { type: 'button', class: 'btn cs-criminal', id: 'btn-criminal', onClick: ev => { ev.stopPropagation(); intentar(1); } }, fmt(motor.femenino(nombre(elegida)) ? T.casoEsCriminalF : T.casoEsCriminal, { x: nombre(elegida) }))));
     } else if (mensaje) {
       accion.append(msg(mensaje));
     } else {
@@ -208,7 +210,7 @@ export function montar(raiz, ctx) {
     const i = elegida;
     if (i === null) return;
     const r = motor.intento(p, jugadas, i, v);
-    const vars = { x: nombre(i), v: v ? T.casoCriminal : T.casoInocente };
+    const vars = { x: nombre(i), v: v ? criminal(i) : T.casoInocente };
     if (r === 'falta') {
       mensaje = { tipo: 'falta', texto: fmt(T.casoFalta, vars) };
       SFX.error(); vibrate([20, 30, 20]);
