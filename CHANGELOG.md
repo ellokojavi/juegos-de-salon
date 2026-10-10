@@ -8,6 +8,12 @@
   mismo motor), la prueba de La Copa es un caso completo y lo dice, y en una comparación cada lado se
   ilumina con su color, en la grilla y en la frase.
 
+## 0.139.0 — 2026-10-10
+- **La cuenta del 3, 2, 1 ya no es tiempo de juego** (D-258): en todos los juegos de La Copa, el
+  reloj parte cuando el "¡A jugar!" se fue de la pantalla y el tablero está a la vista; en El caso,
+  además, cuando las cartas terminaron de darse vuelta.
+- **🔍 El caso:** las letras y los números de la grilla, más grandes.
+
 ## 0.138.3 — 2026-10-09
 - **🔍 El caso, más cuidado al empezar** (D-257): en la antesala, el título lleva la lupa y los
   colores que se mueven, como en el prototipo; y las cartas se dan vuelta recién cuando se fue el
