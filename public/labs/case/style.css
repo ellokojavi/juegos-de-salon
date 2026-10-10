@@ -27,8 +27,8 @@
 .persona.tapada .giro { transform: rotateY(180deg); }
 
 .persona .emo { font-size: 1.5rem; line-height: 1.1; }
-.persona .nom { font-weight: 900; font-size: clamp(0.8rem, 3.9vw, 0.95rem); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.persona .ofi { font-weight: 700; font-size: 0.66rem; color: var(--muted); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.persona .nom { font-weight: 900; font-size: clamp(0.74rem, 3.8vw, 0.95rem); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.persona .ofi { font-weight: 700; font-size: 0.64rem; color: var(--muted); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .persona .dice { position: absolute; top: 3px; right: 4px; font-size: 0.7rem; display: none; }
 .persona.marcada .dice { display: block; }
 
