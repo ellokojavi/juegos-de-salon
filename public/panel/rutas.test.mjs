@@ -1,6 +1,6 @@
 // Las rutas del panel: secciones y fichas en el # de la URL (D-207). Ejecutar: node public/panel/rutas.test.mjs
 import assert from 'node:assert/strict';
-import { SECCIONES, leerRuta, rutaA, seccionDe } from './rutas.js';
+import { SECCIONES, leerRuta, rutaA, rutaEnIngles, seccionDe } from './rutas.js';
 
 const sin = { r: null, e: null };
 assert.equal(SECCIONES[0], 'ahora', 'el panel abre en lo que está pasando');
@@ -33,6 +33,13 @@ assert.equal(rutaA('torneo', [], { r: '30d', e: 'prod', ...def }), '#/cup?r=30d'
 assert.equal(rutaA('juego', ['ahorcado'], def), '#/game/hangman');
 assert.equal(rutaA('sala', ['ABCD', '20342'], def), '#/room/ABCD/20342');
 assert.deepEqual(leerRuta(rutaA('juego', ['linea-de-tiempo'], { r: '90d', e: 'dev', ...def })), { sec: 'juego', args: ['linea-de-tiempo'], r: '90d', e: 'dev' });
+
+// Una dirección de antes queda en inglés, con su rango y su entorno
+assert.equal(rutaEnIngles('#/torneo/OFICI?r=30d'), '#/cup/OFICI?r=30d');
+assert.equal(rutaEnIngles('#/juego/ahorcado'), '#/game/hangman');
+assert.equal(rutaEnIngles('#torneo'), '#/cup');
+assert.equal(rutaEnIngles('#/cup/OFICI'), '#/cup/OFICI');
+assert.equal(rutaEnIngles(''), '');
 
 // La navegación marca la sección de la ficha
 assert.equal(seccionDe(leerRuta('#/game/liars-dice')), 'juegos');
