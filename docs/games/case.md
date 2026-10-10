@@ -57,7 +57,7 @@ Caso del día (o ?c=) → marcar de a uno → ¡Caso resuelto! → Compartir · 
   ilumina en amarillo a las personas de las que habla, en celeste a quien la dice, y apaga a los
   demás. Tocarla otra vez o tocar fuera lo apaga. Para tachar una pista está el ✓ a su derecha.
 - **Bajo la grilla**, si no hay nada elegido, queda la última pista sabida (al empezar, la de
-  partida) con "👁 ver a quiénes", para iluminarla sin bajar a la lista.
+  partida) con "👁 Ver a quiénes nombra" (o "👁 Volver a ver a todos" si ya está iluminada), para iluminarla sin bajar a la lista. El reloj parte cuando termina la vuelta de las cartas, o con el primer toque.
 - **La última pista** va arriba de la lista, con borde amarillo, la etiqueta "Última" y letra más
   grande, y entra animada.
 - **"¿Cómo se juega?"** va al final; el link junto a la bajada lo abre. La lupa 🔍 se mece junto al
