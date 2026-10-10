@@ -366,7 +366,8 @@ eso nadie lo lee. Las reglas se publican solas con `publicar.yml` (D-218).
 Lo que no se puede automatizar: un iPhone real, con iOS 16.4 o más (ideal: 17, 18 y 26).
 
 1. Desde D-228 no hace falta activar nada. Si los avisos volvieran al laboratorio
-   (`AVISOS_EN_LABS = true`), primero hay que activarlos en `/labs/` del iPhone.
+   (`AVISOS_EN_LABS = true`), habría que devolverle a `/labs/` el botón para activarlos (ya no
+   lo tiene, D-262) y activarlos ahí en el iPhone.
 2. Abre una copa en la que estés inscrito, en **Safari**. Debe aparecer **🔔 Activar avisos**.
 3. Tócalo: sale la hoja **Agrega la app a tu inicio**. Revisa que la dirección termine en `&app=…`.
 4. Sigue los pasos: Compartir (en iOS 26, dentro de ⋯) → **Agregar a inicio**.
