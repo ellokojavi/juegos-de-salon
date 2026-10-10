@@ -3,7 +3,8 @@
 ## 0.140.1 — 2026-10-10
 - **🔍 El caso, sin repetir:** al acertar, el mensaje dice solo "¡Bien! Tati es inocente."; su pista
   entra destacada arriba de la lista, sin repetirse debajo de la grilla. Se va la explicación de cómo
-  tocar las pistas y tacharlas: se entiende sola.
+  tocar las pistas y tacharlas: se entiende sola. Los mensajes de acierto y de error se van solos (el
+  acierto a los 2,5 s, el error a los 4 s).
 
 ## 0.140.0 — 2026-10-10
 - **🔍 El caso, más difícil** (D-259): las pistas se eligen para que haya que combinarlas, con más

@@ -143,6 +143,17 @@ export function montar(raiz, ctx) {
   };
 
   /** Un mensaje con pista se toca para iluminar a quiénes nombra. */
+  /**
+   * El acierto, el error y el "todavía no se puede saber" se van solos (pedido del dueño, excepción a
+   * C-8b): el acierto a los 2,5 s y los otros dos a los 4 s, que hay que leerlos. El error igual queda
+   * marcado con ✕ en la carta y en la cuenta. El temporizador solo cierra su propio mensaje.
+   */
+  const caducar = (m, ms) => setTimeout(() => {
+    if (mensaje !== m || !raiz.isConnected) return;
+    accion.querySelector('.cs-msg')?.classList.add('se-va');
+    setTimeout(() => { if (mensaje !== m) return; mensaje = null; dibujarAccion(motor.estado(p, jugadas)); }, QUIETO() ? 0 : 350);
+  }, ms);
+
   const msg = m => el('button', {
     type: 'button', class: `cs-msg ${m.tipo}${m.de !== undefined && foco === m.de ? ' activa' : ''}`,
     onClick: ev => { ev.stopPropagation(); if (m.de !== undefined) enfocar(m.de); },
@@ -231,6 +242,7 @@ export function montar(raiz, ctx) {
     const vars = { x: nombre(i), v: v ? criminal(i) : T.casoInocente };
     if (r === 'falta') {
       mensaje = { tipo: 'falta', texto: fmt(T.casoFalta, vars) };
+      caducar(mensaje, 4000);
       SFX.error(); vibrate([20, 30, 20]);
       dibujar(); sellar(i, '❔', 'duda');
       return;
@@ -239,6 +251,7 @@ export function montar(raiz, ctx) {
     ctx.guardar(jugadas);
     if (r === 'error') {
       mensaje = { tipo: 'error', texto: fmt(T.casoError, vars) };
+      caducar(mensaje, 4000);
       SFX.letterMiss(); vibrate([40, 40, 40]);
       dibujar(); sellar(i, '❌', 'fallo');
       return;
@@ -246,6 +259,7 @@ export function montar(raiz, ctx) {
     elegida = null; foco = null; nueva = i;
     // Solo el acierto: su pista entra destacada arriba de la lista, sin repetirse aquí
     mensaje = { tipo: 'ok', texto: fmt(T.casoBien, vars) };
+    caducar(mensaje, 2500);
     const e = motor.estado(p, jugadas);
     if (e.fin) { SFX.win(); vibrate([30, 50, 30]); } else { SFX.letterHit(); vibrate(25); }
     dibujar(); sellar(i, v ? '🔪' : '😇', 'acierto');
