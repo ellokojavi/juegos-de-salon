@@ -144,6 +144,19 @@ export function pistasVerdaderas(caso, v, r) {
 }
 
 /** La pista más directa, de respaldo: lo que es otra persona. */
+/**
+ * A quiénes nombra una pista por su nombre (D-264): "a la izquierda de Omar" nombra a Omar, no a los
+ * que están a su izquierda; "Ana es criminal", a Ana; "en la fila 2", a nadie. `a` sale del primer
+ * grupo y `b` del segundo, como los colores de la frase. Tocar la pista ilumina solo a estos: a
+ * quiénes abarca el grupo lo piensa el jugador.
+ */
+export function sujetos(p) {
+  if (!p) return { a: [], b: [] };
+  if (p.t === 'es') return { a: p.a.slice(), b: [] };
+  const de = g => [g?.de, g?.otro].filter(i => i !== undefined);
+  return { a: de(p.g), b: de(p.h) };
+}
+
 export const pistaDirecta = (caso, v, j) => ({ t: 'es', a: [j], k: v[j] });
 
 /* ------------------------------------------------------------------ */

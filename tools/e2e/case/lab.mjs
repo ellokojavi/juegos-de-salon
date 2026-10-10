@@ -25,10 +25,10 @@ await ev(`document.getElementById('ir-reglas').click(); 1`); await sleep(900);
 ok(await ev(`document.getElementById('reglas').open && !location.hash && scrollY > 0`), '"¿Cómo se juega?" abre las reglas y baja hasta ellas');
 await ev(`document.getElementById('reglas').open = false; scrollTo(0, 0); 1`); await sleep(200);
 
-// Tocar la pista ilumina en la grilla a las personas de las que habla, y la sacada de las otras
+// Tocar la pista ilumina solo a quienes nombra por su nombre (D-264), no al grupo entero, y a quien la dice
 await ev(`document.querySelector('#pistas .pista .texto').click(); 1`); await sleep(300);
-const foco = await ev(`JSON.stringify({ foco: document.querySelectorAll('.persona.foco').length, habla: document.querySelectorAll('.persona.habla').length, enfoque: document.getElementById('grilla').classList.contains('enfoque') })`).then(JSON.parse);
-ok(foco.enfoque && foco.foco >= 1 && foco.habla === 1, `tocar la pista ilumina a quiénes nombra (${foco.foco}) y a quien la dice`);
+const foco = await ev(`JSON.stringify({ esperados: new Set(Object.values(__caso.sujetos(__caso.caso().pistas[__caso.caso().inicio])).flat()).size, foco: document.querySelectorAll('.persona.foco').length, habla: document.querySelectorAll('.persona.habla').length, enfoque: document.getElementById('grilla').classList.contains('enfoque') })`).then(JSON.parse);
+ok(foco.enfoque && foco.foco === foco.esperados && foco.habla === 1, `tocar la pista ilumina solo a quienes nombra (${foco.foco} de ${foco.esperados}) y a quien la dice`);
 await b.shot('01b-pista-iluminada');
 await ev(`document.querySelector('.marcador').click(); 1`); await sleep(200);
 ok(await ev(`!document.getElementById('grilla').classList.contains('enfoque')`), 'un toque fuera la apaga');

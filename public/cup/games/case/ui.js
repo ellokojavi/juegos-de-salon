@@ -1,7 +1,7 @@
 /**
  * 🔍 El caso — pantalla en La Copa (D-257). La misma experiencia del prototipo del laboratorio
  * (D-256): las cartas se dan vuelta al empezar, la elegida se acerca, al marcar cae un sello y
- * tocar una pista ilumina a las personas de las que habla.
+ * tocar una pista ilumina a quienes nombra por su nombre (D-264).
  *
  * Las jugadas son los intentos de marcar que cuentan: `{ i, v }` (acierto o error). Un intento de
  * antes de tiempo se guarda como `{ i, v, falta: 1 }`: cuenta como error y no dice si estaba bien (D-261).
@@ -75,7 +75,7 @@ export function montar(raiz, ctx) {
   const L = T.casoTexto;
   let jugadas = Array.isArray(ctx.jugadas) ? ctx.jugadas.slice() : [];
   let elegida = null;   // la persona tocada
-  let foco = null;      // la pista tocada: ilumina a las personas de las que habla
+  let foco = null;      // la pista tocada: ilumina a quienes nombra por su nombre (D-264)
   let mensaje = null;   // { tipo, texto, de? } de la última marca
   let nueva = null;     // la pista que acaba de aparecer, para que entre animada
   let guia = null;      // la ayuda pedida, { i, quienes }: sus pistas se destacan hasta marcar a i
@@ -125,7 +125,8 @@ export function montar(raiz, ctx) {
     // Terminado el caso, el tiempo se detiene aquí y no al tocar el botón (D-130)
     if (e.fin) ctx.pararReloj?.(e);
     const pf = foco !== null ? p.pistas[foco] : null;
-    const enFoco = new Set(pf ? pf.a : []), enFocoB = new Set(pf?.b || []);
+    // Solo a quienes nombra ("a la izquierda de Omar": Omar), no a todo el grupo (D-264)
+    const suj = motor.sujetos(pf), enFoco = new Set(suj.a), enFocoB = new Set(suj.b);
     grilla.classList.toggle('enfoque', !!pf);
     cartas.forEach((carta, i) => {
       const sabe = e.x[i] !== -1, t = carta.classList;
