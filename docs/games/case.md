@@ -46,17 +46,22 @@ Caso del día (o ?c=) → marcar de a uno → ¡Caso resuelto! → Compartir · 
 **Cómo se ve** (0.137.0):
 
 - **Al empezar**, las cartas parten de espaldas (🔍) y se dan vuelta en ola, en diagonal desde A1.
-  Solo la primera vez que se abre un caso sin marcas, y nunca con `prefers-reduced-motion`.
+  Pasa cada vez que se abre un caso sin marcas (también al recargarlo antes de marcar a nadie).
+- **Con `prefers-reduced-motion`** no hay vuelta inicial, sello, ola ni lupa animada: solo cambian
+  los colores.
 - **La elegida** se acerca con un zoom suave (`scale(1.09)`) y borde celeste.
 - **Al marcar**, cae un sello sobre la carta: 😇 o 🔪 con la carta que gira y un destello verde o
   rosado si acertó; ❌ con destello rojo y sacudida si no; ❔ con destello amarillo si todavía no se
   podía saber. Al resolver el caso pasa una ola por la grilla.
 - **Tocar una pista** (en la lista, en el mensaje bajo la grilla o tocando a alguien ya marcado)
   ilumina en amarillo a las personas de las que habla, en celeste a quien la dice, y apaga a los
-  demás. Un toque fuera lo apaga. Para tachar una pista está el ✓ a su derecha.
+  demás. Tocarla otra vez o tocar fuera lo apaga. Para tachar una pista está el ✓ a su derecha.
+- **Bajo la grilla**, si no hay nada elegido, queda la última pista sabida (al empezar, la de
+  partida) con "👁 ver a quiénes", para iluminarla sin bajar a la lista.
 - **La última pista** va arriba de la lista, con borde amarillo, la etiqueta "Última" y letra más
   grande, y entra animada.
-- **"¿Cómo se juega?"** va al final; el link junto a la bajada lo abre.
+- **"¿Cómo se juega?"** va al final; el link junto a la bajada lo abre. La lupa 🔍 se mece junto al
+  título.
 
 La partida se guarda por caso en el celular (C-6): marcas, errores, tiempo y pistas tachadas (el ✓ de
 cada pista la tacha, para llevar la cuenta). Tocar a alguien ya marcado muestra su pista bajo la grilla (#271).
