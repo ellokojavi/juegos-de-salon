@@ -16,15 +16,20 @@
   <main class="app" id="app">
     <div class="topbar">
       <a class="back" href="../">‹ Laboratorio</a>
-      <div class="tools"><span class="chip">🔍 El caso</span><span id="sound-slot"></span></div>
+      <div class="tools"><span class="chip">🔍 Caso</span><span id="sound-slot"></span></div>
     </div>
 
     <header class="caso-cabeza">
-      <h1 class="display display--lg rainbow">El caso</h1>
+      <h1 class="titulo"><span class="lupa" aria-hidden="true">🔍</span><span class="display display--lg rainbow">El caso</span></h1>
       <p class="muted" id="caso-nombre"></p>
-      <p class="meta-fuera">Descubre quién es criminal y quién es inocente, sin adivinar.</p>
+      <p class="meta-fuera">Descubre quién es criminal y quién es inocente, sin adivinar. <a href="#reglas" id="ir-reglas">¿Cómo se juega?</a></p>
     </header>
 
+    <div class="marcador" id="marcador"></div>
+    <div class="grilla" id="grilla" aria-label="Los sospechosos"></div>
+    <div class="accion" id="accion" aria-live="polite"></div>
+    <section class="fin" id="fin" hidden></section>
+    <section class="pistas" id="pistas"></section>
     <details class="panel reglas" id="reglas">
       <summary>🔍 ¿Cómo se juega?</summary>
       <ol class="rules-list">
@@ -34,12 +39,6 @@
       </ol>
       <p class="muted puntaje">Gana quien se equivoca menos; el tiempo desempata.</p>
     </details>
-
-    <div class="marcador" id="marcador"></div>
-    <div class="grilla" id="grilla" aria-label="Los sospechosos"></div>
-    <div class="accion" id="accion" aria-live="polite"></div>
-    <section class="fin" id="fin" hidden></section>
-    <section class="pistas" id="pistas"></section>
   </main>
   <script type="module">import './game.js';</script>
 </body>
