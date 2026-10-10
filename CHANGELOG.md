@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.138.2 — 2026-10-09
+- **🔍 El caso:** el link "¿Cómo se juega?" de arriba abre las reglas y baja hasta ellas con un
+  scroll suave, en vez del salto del ancla (sin animación si el celular pide reducir movimiento).
+
 ## 0.138.1 — 2026-10-09
 - **🔍 El caso, con toda la experiencia en el laboratorio** (D-257): el botón de El caso en `/labs/`
   abre el juego de La Copa, con su portada animada, la prueba, el 3, 2, 1, el juego y el resultado
