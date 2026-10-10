@@ -16,8 +16,16 @@ await ev(`localStorage.clear(); 1`);
 await b.go(`${SITIO}/labs/case/?c=PRUEBA`);
 ok(await ev(`document.getElementById('caso-nombre').textContent`) === 'Caso PRUEBA', 'con ?c= es ese caso');
 ok(await ev(`document.querySelectorAll('.persona').length`) === 20, 'veinte sospechosos');
-ok(await ev(`document.querySelectorAll('.pista').length`) === 1, 'se parte con una pista');
+ok(await ev(`document.querySelectorAll('#pistas .pista').length`) === 1, 'se parte con una pista');
 await b.shot('01-inicio');
+
+// Tocar la pista ilumina en la grilla a las personas de las que habla, y la sacada de las otras
+await ev(`document.querySelector('#pistas .pista .texto').click(); 1`); await sleep(300);
+const foco = await ev(`JSON.stringify({ foco: document.querySelectorAll('.persona.foco').length, habla: document.querySelectorAll('.persona.habla').length, enfoque: document.getElementById('grilla').classList.contains('enfoque') })`).then(JSON.parse);
+ok(foco.enfoque && foco.foco >= 1 && foco.habla === 1, `tocar la pista ilumina a quiénes nombra (${foco.foco}) y a quien la dice`);
+await b.shot('01b-pista-iluminada');
+await ev(`document.querySelector('.marcador').click(); 1`); await sleep(200);
+ok(await ev(`!document.getElementById('grilla').classList.contains('enfoque')`), 'un toque fuera la apaga');
 
 // Alguien que todavía no se puede saber: no se acepta y no es error
 const nose = await ev(`(async()=>{const {deducibles}=await import('/labs/case/engine.js');const e=__caso.estado();const d=deducibles(e.pistas,e.x);return [...Array(20).keys()].find(i=>e.x[i]===-1&&!(i in d))})()`);
