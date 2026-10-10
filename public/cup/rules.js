@@ -2193,7 +2193,7 @@ const PT = {
   casoAyuda: 'Ajuda (−{n} pontos)', casoAyudaSure: 'Toque de novo para usar a ajuda (−{n})', casoAyudaVer: 'Ver a ajuda',
   casoMira: 'Olhe para {x}: junte o que dizem {q}.', casoMiraUna: 'Olhe para {x}: veja o que diz {q}.',
   casoMiraVarias: 'Olhe para {x}: é preciso juntar várias pistas.', casoCuenta: 'Erros: {e} · Ajudas: {a}',
-  bdCasoAyudas: 'Você pediu {n} ajudas, a 15 pontos cada: tiram {pts} pontos.', bdCasoAyudasOne: 'Você pediu 1 ajuda, que tira 15 pontos.',
+  bdCasoAyudas: 'Você pediu {n} ajudas, a 15 pontos cada: saem {pts} pontos.', bdCasoAyudasOne: 'Você pediu 1 ajuda, que tira 15 pontos.',
   casoTexto: {
     grupo: {
       fila: 'na linha {n}', col: 'na coluna {c}', oficio: 'entre os {oen}', borde: 'na borda', esquinas: 'nos cantos',
@@ -2965,7 +2965,7 @@ const DE = {
   casoAyuda: 'Tipp (−{n} Punkte)', casoAyudaSure: 'Tippe nochmal für den Tipp (−{n})', casoAyudaVer: 'Tipp ansehen',
   casoMira: 'Schau dir {x} an: Kombiniere, was {q} sagen.', casoMiraUna: 'Schau dir {x} an: Lies, was {q} sagt.',
   casoMiraVarias: 'Schau dir {x} an: Du musst mehrere Hinweise kombinieren.', casoCuenta: 'Fehler: {e} · Tipps: {a}',
-  bdCasoAyudas: 'Du hast {n} Tipps genommen, je 15 Punkte: Es werden {pts} Punkte abgezogen.', bdCasoAyudasOne: 'Du hast 1 Tipp genommen, der 15 Punkte kostet.',
+  bdCasoAyudas: 'Du hast {n} Tipps genommen, je 15 Punkte: Das kostet {pts} Punkte.', bdCasoAyudasOne: 'Du hast 1 Tipp genommen, der 15 Punkte kostet.',
   casoTexto: {
     grupo: {
       fila: 'in Reihe {n}', col: 'in Spalte {c}', oficio: 'unter den {oen}', borde: 'am Rand', esquinas: 'in den Ecken',
