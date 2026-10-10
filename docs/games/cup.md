@@ -17,7 +17,7 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
   Firebase) · `/cup/?K7Q2X&day=3` (abre el día 3 listo para empezar, si se puede jugar; lo usan
   los avisos, D-229) · `/cup/?K7Q2X&mute` (silencia los avisos de esa copa: el botón del aviso
   en Android) · `/cup/?practice=<juego>&labs&seed=K7Q2X` (un juego suelto con la semilla a la vista,
-  repetible; los que tienen página se van a `/<slug>/?labs&seed=K7Q2X`, D-164). Desde la portada el juego suelto es `/<slug>/` (D-142, D-149, D-162, D-198): la misma
+  repetible; los que tienen página se van a `/<slug>/?labs&seed=K7Q2X`, D-164). Desde la portada el juego suelto es `/<slug>/` (D-142, D-149, D-162, D-198; uno del laboratorio, `/labs/<slug>/`, D-267): la misma
   pantalla, sin "copa" en el link, que vuelve al menú, sin sesión de prueba ni semilla a la vista, y
   con su señal de uso. `/cup/?practice=<juego>` sin `&labs` lleva ahí. `/<slug>/?today` (o
   `/cup/suelto/?<juego>&today` para los que no tienen página) es el juego de Uno al día, con la semilla
@@ -166,8 +166,8 @@ por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
   y el reloj sigue; está apagado mientras no se haya movido nada. Su habilidad es
   `espacial`, propia, para que el sorteo del calendario la pueda separar de Reinas, Zip y Tango.
 
-- **🔍 El caso** (D-257, en el laboratorio): un misterio de deducción al estilo de *Clues by Sam*, el
-  mismo del prototipo de `/labs/case/` (D-256). Veinte sospechosos en una grilla de 4 × 5, inocentes
+- **🔍 El caso** (D-257, en el laboratorio; su página propia es [case.md](case.md)): un misterio de
+  deducción al estilo de *Clues by Sam*. Veinte sospechosos en una grilla de 4 × 5, inocentes
   o criminales; cada uno que se marca bien da su pista, y las pistas siempre dicen la verdad. Nunca
   hay que adivinar: el motor (`games/case/engine.js`) simula al jugador y arma las pistas para que en
   todo momento alguien más se pueda deducir. Marcar antes de tiempo no se acepta y cuenta como error
@@ -180,8 +180,10 @@ por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
   mueven (`titulo()`, un gancho opcional de `games/index.js` que la antesala y la práctica usan si
   el juego lo trae; los demás muestran su nombre como siempre). Las cartas del tablero se dan vuelta
   recién cuando la cuenta del 3, 2, 1 se fue del documento, no mientras la tapa. Se juega suelto en
-  `/case/` (el botón 🔍 de `/labs/` abre `/case/?labs`; el prototipo queda de segundo botón; desde D-262
-  es lo único del laboratorio), pero **todavía no está en `POZO`**: una copa no lo elige hasta que salga
+  `/labs/case/` (D-267: los juegos del laboratorio viven en `/labs/<slug>/` y `/case/` es puente; el
+  botón 🔍 de `/labs/` lleva ahí, y desde D-262 es lo único del laboratorio), con `diario: true`: sin
+  semilla es el caso del día, sigue al recargar y su final ofrece otro caso, el de hoy y el comentario
+  (el detalle, en [case.md](case.md)). **Todavía no está en `POZO`**: una copa no lo elige hasta que salga
   del laboratorio. Los mensajes de acierto y de error se van solos (2,5 s y 4 s, excepción a C-8b anotada en
   [case.md](case.md)). Suma condicionales y parejas, y de cada semilla se queda con el más difícil de cuatro casos
   (`dificultad`, D-260). Su habilidad es `deducir`, la misma de Toque y Fama, para que el sorteo del
@@ -226,9 +228,12 @@ además **sueltos**, de un jugador y sin copa, desde la portada (`/<slug>/`, D-1
 ### Laboratorio, práctica y reportes
 
 `/labs/` (D-101) ofrecía la práctica de cada juego, las demos y la copa real; desde D-262 tiene
-solo El caso. La práctica (`?practice=<juego>&labs`, que sigue funcionando) arma el contenido con una semilla al azar como si fuera el día 1 de una copa con ese código, y la
-muestra al final. El botón **🐞 Reportar un problema o dejar un comentario** (práctica, tablero y
-resultado) guarda en `feedback/<id>`, por REST y sin cuenta (D-104), el texto, un nombre opcional, la versión
+solo El caso, que vive en `/labs/case/` (D-267). La práctica (`?practice=<juego>&labs`, que sigue funcionando) arma el contenido con una semilla al azar como si fuera el día 1 de una copa con ese código, y la
+muestra al final (salvo en un juego `diario`, cuya semilla va en el link de compartir). Un juego
+jugado desde el laboratorio (`?labs` o `/labs/<slug>/`) termina con el formulario
+**"¿Qué te pareció?"** abierto (`formularioComentario` de `labs-idioma.js`, D-265, D-267) en vez
+del botón 🐞. El botón **🐞 Reportar un problema o dejar un comentario** (práctica, tablero y
+resultado de la copa) guarda en `feedback/<id>`, por REST y sin cuenta (D-104), el texto, un nombre opcional, la versión
 y un contexto en JSON: copa, jugador, pantalla, día, juego, semilla, URL y navegador. Se leen con
 `node tools/firebase/reportes.mjs`; en `?test` queda en `localStorage` (`juegos-de-salon:copa:prueba:reportes`).
 
