@@ -14,7 +14,7 @@ const ev = expr => b.evaluate(expr);
 const SEMILLA = 'KQRST';
 
 try {
-  await b.go(`${SITIO}/cup/?practica=zip&prueba&labs&semilla=${SEMILLA}`, 1200);
+  await b.go(`${SITIO}/cup/?practice=zip&test&labs&seed=${SEMILLA}`, 1200);
   for (let w = 0; w < 30 && !await ev(`!!document.getElementById('btn-empezar')`); w++) await sleep(200);
   await ev(`document.getElementById('btn-empezar').click(); 1`);
   for (let w = 0; w < 80 && !await ev(`!!document.querySelector('.zip-grid .zc')`); w++) await sleep(100);

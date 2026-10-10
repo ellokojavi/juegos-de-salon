@@ -56,7 +56,7 @@ pozo (RP-50).
 ## Modos
 
 Uno solo, para uno. Sin `?c=` es **el caso del día**, el mismo para todos ese día (la semilla es la
-fecha del jugador). El link que se comparte lleva la fecha (`?dia=AAAA-MM-DD`), así quien lo abre
+fecha del jugador). El link que se comparte lleva la fecha (`?day=AAAA-MM-DD`), así quien lo abre
 al día siguiente juega el mismo caso (#273); con `?c=CODIGO`, ese caso, y "🔍 Otro caso" abre uno con un código al azar. El
 resultado se comparte con `compartir.js`: la cabecera, los errores, las ayudas y el tiempo, y una grilla de 🟩
 con 🟥 donde hubo error y 🟨 donde se pidió ayuda (C-7).

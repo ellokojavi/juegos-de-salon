@@ -30,7 +30,7 @@ Flota de 10 barcos, regla de “sin contacto” con agua automática alrededor d
 |---|---|---|
 | 📱 Un celular | Cada jugador coloca su flota con la pantalla tapada. En cada turno se ve solo el tablero de disparos del jugador activo (su flota queda oculta tras una ficha “ver mi flota”, igual que el número secreto en Toque y Fama). Al fallar, pantalla de resultado + “Pásale el celular a X”. | `local` |
 | 🤖 Contra el celular | La IA coloca al azar y dispara con cacería por paridad + persecución al acertar (ver “IA contra el celular”). | `local` + bot |
-| 📡 Dos celulares | Sala con código y QR (`?sala=CODE`, `game: 'batalla-naval'`). Cada celular responde los disparos contra su propia flota. | `firebase` |
+| 📡 Dos celulares | Sala con código y QR (`?room=CODE`, `game: 'batalla-naval'`). Cada celular responde los disparos contra su propia flota. | `firebase` |
 
 **Rankings (D-215):** con un jugador de los rankings abierto en el celular (nombre y PIN,
 D-212, abiertos a todos desde D-217), cada partida terminada se cuenta en `jugadores/<jid>/juegos/batalla-naval`
@@ -46,9 +46,9 @@ empate no es victoria. La tabla (semana, siempre y amigos) va en la intro, debaj
 3. Al hundir vuelve a cacería. Cuando solo quedan barcos grandes, ajusta la paridad al tamaño mínimo restante.
 Promedio esperado: 45 a 55 disparos para hundir la flota (un humano promedio ronda 60).
 
-### Uno al día (`/battleship/?hoy`, D-230)
+### Uno al día (`/battleship/?today`, D-230)
 
-Cuando Batalla Naval es el juego de Uno al día, `/battleship/?hoy` no ofrece modos: la intro lleva
+Cuando Batalla Naval es el juego de Uno al día, `/battleship/?today` no ofrece modos: la intro lleva
 la línea de Uno al día, "Todos se enfrentan a la misma flota del celular.", y un solo botón,
 **Jugar el de hoy**, que abre directo 🤖 Contra el celular con los ajustes de siempre y el nombre
 que se recuerda (o "Jugador 1"). El jugador coloca su flota como siempre. **La flota del celular

@@ -231,11 +231,11 @@ modo No molestar, por ejemplo), el botón **Probar los avisos** de la hoja sirve
 - **Se juntan copas (D-229)**: los días nuevos de varias copas para un mismo celular, en la misma
   vuelta, van en uno ("🎲 Tienes un día nuevo en 2 copas: Los Primos y La Oficina."), que abre la
   portada de La Copa. Lo demás (plazos, final, fin) sigue siendo de cada copa.
-- **Al tocarlo abre el día (D-229)**: el del día, el del plazo y el de la final llevan `&dia=<d>`,
+- **Al tocarlo abre el día (D-229)**: el del día, el del plazo y el de la final llevan `&day=<d>`,
   y la copa parte en ese día, listo para empezar, si todavía se puede jugar (si no, el tablero).
   El de "terminó la copa" abre el tablero, que ya es el podio.
 - **Botones en Android (D-229)**: esos mismos traen **Jugar** (el día) y **Silenciar esta copa**
-  (abre la copa con `&silenciar`, que la silencia y lo dice). iPhone no los muestra. Sin silueta
+  (abre la copa con `&mute`, que la silencia y lo dice). iPhone no los muestra. Sin silueta
   para la barra de estado: `sw.js` usa el ícono de la app.
 - **Empate en el primer lugar (D-229)**: "🥇 Ganaron Ana y Beto. Quedaste 3.º"; a quien empató
   arriba, "🥇 ¡Ganaste la copa junto con Beto!".
@@ -261,7 +261,7 @@ El embudo, separado por Android, iPhone y computador:
 > se ofreció → tocó **Avisarme** → (iPhone) vio la hoja → abrió la app instalada → el sistema dio
 > permiso → suscripción guardada
 
-Y después: avisos mandados, avisos tocados (`?aviso=<tipo>`), copas silenciadas y permisos
+Y después: avisos mandados, avisos tocados (`?notif=<tipo>`), copas silenciadas y permisos
 bloqueados. Con eso se ve dónde se cae la gente y si el esfuerzo en iPhone vale la pena.
 
 ### Cómo se prueba
@@ -302,7 +302,7 @@ push.js (en la página)                    pushEnviados/<código>/<subId>/<clave
   pestaña de la app si ya está abierta, llevándola a la URL, o abre una).
 - **D-229:** el JSON puede traer `acciones` (`[{ action, title, url }]`, a lo más dos): Android las
   muestra como botones (**Jugar** y **Silenciar esta copa**) y, al tocar una, abre su `url` en vez
-  de la del aviso. El SW no escribe en la base: silenciar lo hace la copa al abrirse con `&silenciar`.
+  de la del aviso. El SW no escribe en la base: silenciar lo hace la copa al abrirse con `&mute`.
 - No escucha `pushsubscriptionchange`: si el navegador renovó la suscripción, la copa lo nota al
   abrirse (`revisar()` en `cup/avisos.js`) y la guarda de nuevo con la misma elección; si el
   permiso se quitó desde los ajustes, la copa deja de contar como activa.
@@ -393,7 +393,7 @@ Lo que no se puede automatizar: un iPhone real, con iOS 16.4 o más (ideal: 17, 
   22:00; el del día desde las 9:00; el del plazo cuando faltan 4 horas o menos, o desde las 20:00
   si el cierre cae de noche. A lo más uno por copa y celular en cada vuelta y dos por copa en el
   día de quien recibe (`TOPE`, D-229); dos plazos que se vencen a la vez van en uno, y el del día,
-  el plazo y la final llevan `&dia=<d>` y los botones de Android (`acciones`).
+  el plazo y la final llevan `&day=<d>` y los botones de Android (`acciones`).
 - `tools/push/uno-al-dia.mjs` decide los de Uno al día (D-230) con `pushDia` (lo que pidió cada
   celular y su último día y racha); avisar.mjs los manda en la misma vuelta y los anota en
   `pushEnviadosDia`.
@@ -416,14 +416,14 @@ Lo que no se puede automatizar: un iPhone real, con iOS 16.4 o más (ideal: 17, 
 
 ### 6. Panel del dueño
 
-**Hecho en el PR 4 (D-233)**, en la sección La Copa del panel (`#/torneo`), el bloque "🔔 Avisos al
+**Hecho en el PR 4 (D-233)**, en la sección La Copa del panel (`#/cup`), el bloque "🔔 Avisos al
 celular": celulares con avisos (suscripciones vivas), avisos mandados y tocados por tipo, aperturas
 de la app instalada por sistema y la hora de la última vuelta del workflow, en rojo si pasó más de
 una hora (GitHub apaga los workflows programados tras 60 días sin commits). Responde la pregunta de
 fondo: si los avisos de verdad traen gente de vuelta.
 
-- **Tocados:** cada aviso abre su dirección con `&aviso=<tipo>` (`dia`, `plazo`, `final`, `fin`,
-  `insc`, `copas`, `prueba`); la página lo cuenta en `stats/<env>/days/<día>/aviso/<tipo>` y lo
+- **Tocados:** cada aviso abre su dirección con `&notif=<tipo>`, en inglés desde D-266 (`day`, `deadline`, `final`, `end`,
+  `signup`, `cups`, `test`; antes `&aviso=dia`, `plazo`, `final`, `fin`, `insc`, `copas`, `prueba`, que se leen igual); la página lo cuenta en `stats/<env>/days/<día>/aviso/<tipo>`, con el tipo de antes, y lo
   saca de la dirección, para que recargar no lo sume otra vez.
 - **App instalada:** el `start_url` de los manifests es `./?pwa`; se cuenta en `pwa/<sistema>`
   (`android`, `ios`, `otro`) y también sale de la dirección.
@@ -450,7 +450,7 @@ fondo: si los avisos de verdad traen gente de vuelta.
 | **1. Instalable de verdad** ✅ v0.105.0 | Íconos PNG, manifest completo, `sw.js` mínimo (sin caché, sin push), ícono de Apple, prueba de que todas las páginas los llevan, guion e2e que verifica que el SW se registra y que Chrome deja instalar | Avisos |
 | **2. Suscribirse** ✅ v0.107.0, en el laboratorio | Primero, la prueba en iPhones reales de cómo abre la app instalada (la lista de arriba). Después: `push.js`, la tarjeta y el botón 🔔 de La Copa con sus cuatro estados, la hoja de iPhone, el "escribe tu PIN" de la app instalada, el aviso de confirmación, reglas `push` y `pushCopa`, textos en 4 idiomas y la lista de pasos para probar a mano en iPhone | Mandar nada (se ve la suscripción guardada y llega el aviso de confirmación) |
 | **3. Mandar** ✅ v0.108.0 (D-224), abierto a todos en v0.110.0 (D-228) | `tools/push/` (webpush, calendario, avisar con `--simular` y `--prueba`; `vapid.mjs` ya entró en el PR 2), pruebas unitarias del cifrado contra los vectores del RFC 8291 y del calendario de avisos contra `engine.js`, workflow `avisos.yml`. Los avisos se abren a todos cuando el dueño vea llegar uno de prueba | — |
-| **4. Medir** ✅ v0.112.0 (D-233) | Fila del panel, `?aviso=` en las señales, `?pwa` en el inicio, mandados por día y tipo | — |
+| **4. Medir** ✅ v0.112.0 (D-233) | Fila del panel, `?notif=` en las señales, `?pwa` en el inicio, mandados por día y tipo | — |
 | *(después)* | Modo sin conexión (RP-13), Declarative Web Push para iPhone | — |
 
 La clave VAPID ya está (D-225). El 2026-10-05 el dueño corrió *Run workflow* con **prueba** en su

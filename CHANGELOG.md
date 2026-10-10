@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.143.0 — 2026-10-10
+- **🔗 Los links, en inglés** (C-18, D-266): además de las carpetas, los parámetros y sus valores.
+  Una sala es `?room=ABCD`, una partida repetible `?seed=K7Q2X`, el modo de prueba `?test`, Uno al
+  día `?today`, y los avisos abren `&day=3`, `&mute` y `&notif=deadline`. Los links de antes
+  (`?sala=`, `?semilla=`, `?prueba`, `?hoy`…) siguen funcionando y quedan en inglés en la barra al
+  abrirse. El panel también: `#/cup/OFICI`, `#/game/hangman`, `#/room/ABCD`.
+
 ## 0.142.1 — 2026-10-10
 - **🔍 El caso, más para pensar** (D-264): tocar una pista ilumina solo a quien nombra ("a la
   izquierda de Omar": Omar), no a todo el grupo.

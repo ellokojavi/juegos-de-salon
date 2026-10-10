@@ -17,7 +17,7 @@ let r = correr(base, en('2026-10-07', 9));
 assert.equal(r.length, 1);
 assert.equal(r[0].clave, `dia:${N}`);
 assert.equal(r[0].aviso.body, `📅 Uno al día n.° ${numeroDel('2026-10-07')} ya está. 🔥 Racha: 5 días.`);
-assert.match(r[0].aviso.url, /today\/\?aviso=uaddia$/, 'el panel lo cuenta aparte de los de La Copa');
+assert.match(r[0].aviso.url, /today\/\?notif=dailyday$/, 'el panel lo cuenta aparte de los de La Copa');
 assert.deepEqual(correr(base, en('2026-10-07', 10), { [`dia:${N}`]: en('2026-10-07', 9) }), [], 'no se repite');
 assert.deepEqual(correr({ ...base, u: N }, en('2026-10-07', 10)), [], 'si ya jugó hoy, nada');
 assert.deepEqual(correr({ ...base, d: false }, en('2026-10-07', 10)), [], 'si apagó el diario, nada');

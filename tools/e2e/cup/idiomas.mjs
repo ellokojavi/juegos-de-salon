@@ -1,5 +1,5 @@
 // La Copa en cada idioma que se ofrece fuera del español (D-170, D-199): lo personal en el idioma
-// de quien mira, lo del grupo en el de la copa. Crea una copa con el almacén de prueba (`?prueba`)
+// de quien mira, lo del grupo en el de la copa. Crea una copa con el almacén de prueba (`?test`)
 // en cada idioma, revisa que guarde el idioma de sus palabras, que la invitación avise si las
 // palabras van en otro idioma y que lo que se comparte salga en el de la copa; después abre los
 // juegos sueltos. Los textos esperados salen de los diccionarios: un idioma nuevo entra solo.
@@ -35,9 +35,9 @@ const tiene = (texto, buscado) => texto.toLowerCase().includes(buscado.toLowerCa
 for (const [i, lang] of OTROS.entries()) {
   const T = LOCALES[lang];
   // Una copa nueva, creada con la pantalla en `lang`: sus palabras parten en ese idioma
-  await b.go(`${SITIO}/cup/?prueba&lang=${lang}`);
+  await b.go(`${SITIO}/cup/?test&lang=${lang}`);
   await ev(`sessionStorage.clear(); 1`);
-  await b.go(`${SITIO}/cup/?prueba`);
+  await b.go(`${SITIO}/cup/?test`);
   // Con varios Chrome a la vez (o el primero de un runner) la portada tarda más que la espera fija
   for (let k = 0; k < 40 && !(await ev(`!!document.getElementById('btn-crear')?.offsetParent && document.documentElement.lang === '${lang}'`)); k++) await sleep(250);
   ok(await ev(`document.documentElement.lang`) === lang, `${lang}: la página queda en el idioma pedido por el link`);
@@ -60,7 +60,7 @@ for (const [i, lang] of OTROS.entries()) {
   // Quien mira lo hace en otro idioma: el siguiente de la lista
   const otro = OTROS[(i + 1) % OTROS.length];
   await ev(`localStorage.setItem('juegos-de-salon:lang','${otro}'); 1`);
-  await b.go(`${SITIO}/cup/?prueba&${meta ? (await ev('__copa.estado.code')) : ''}`, 2500);
+  await b.go(`${SITIO}/cup/?test&${meta ? (await ev('__copa.estado.code')) : ''}`, 2500);
   await preparar();
   const enOtro = await texto();
   ok(tiene(enOtro, LOCALES[otro].tableTitle) || tiene(enOtro, LOCALES[otro].calendarTitle), `${lang}: la pantalla sigue el idioma de quien mira (${otro})`);
@@ -77,7 +77,7 @@ for (const [i, lang] of OTROS.entries()) {
 // recorre cup-games/idiomas.mjs; aquí, lo que depende del contenido de cada idioma.
 const SUELTO = Object.fromEntries(SUELTOS.map(m => [m.id, m]));
 for (const id of ['letras', 'conexiones', 'anio', 'reinas', 'donde']) for (const lang of OTROS) {
-  await b.go(`${SITIO}/${SUELTO[id].slug}/?prueba&lang=${lang}`, 2000);
+  await b.go(`${SITIO}/${SUELTO[id].slug}/?test&lang=${lang}`, 2000);
   const t = await texto();
   ok(tiene(t, SUELTO[id].name[lang]), `${id} (${lang}): la antesala está traducida (${SUELTO[id].name[lang]})`);
   ok(!t.includes(`🇪🇸 ${COMMON[lang].onlySpanish}`), `${id} (${lang}): sin la píldora de "solo en español"`);
@@ -90,7 +90,7 @@ for (const id of ['letras', 'conexiones', 'anio', 'reinas', 'donde']) for (const
 
 // Las pantallas de caminos.mjs en todos los idiomas, contra el español (D-199)
 b.close();
-await revisarIdiomas('copa', { dicts: [LOCALES], port: 9379, consulta: '?prueba', salida: `${OUT}/pantallas` });
+await revisarIdiomas('copa', { dicts: [LOCALES], port: 9379, consulta: '?test', salida: `${OUT}/pantallas` });
 
 ok(!b.errors.length, `sin errores en la consola${b.errors.length ? ': ' + b.errors.join(' | ') : ''}`);
 process.exit();

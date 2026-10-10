@@ -17,8 +17,9 @@
  *   imagen: pegada al texto, el link ya no la muestra. El texto cuenta lo que ella no dice.
  *
  * Donde no se puede compartir un archivo (un computador), la imagen se descarga y el texto queda
- * copiado, listo para pegarlo junto a ella. No importa nada: lo usa `ui.js`.
+ * copiado, listo para pegarlo junto a ella. Solo importa `parametros.js`: lo usa `ui.js`.
  */
+import { tiene } from './parametros.js';
 
 /**
  * Emojis que se dibujan casi negros (〰️, el de Zip): sobre el fondo morado no se ven, así que en
@@ -40,18 +41,18 @@ export const canShare = () => typeof navigator !== 'undefined' && typeof navigat
 export const cabecera = ({ emoji, titulo, contexto }) => `${emoji} *${titulo}*${contexto ? ` · ${contexto}` : ''}`;
 
 /**
- * Un link del sitio que sale compartido lleva `de=link` (D-208). WhatsApp y casi todas las apps
+ * Un link del sitio que sale compartido lleva `from=link` (D-208; `de=link` antes de D-266). WhatsApp y casi todas las apps
  * de chat no dicen de dónde viene quien toca un link, así que sin la marca esas visitas se ven
  * como "directo". Va al final de la búsqueda, donde ningún juego lo confunde con un código de
  * copa o de sala (los que se leen sin `=`). Todo lo que se comparte acá es un link del sitio
  * (sale de `SITIO`); uno que no es una dirección web, o que ya trae la marca, queda igual.
  */
-export const MARCA_COMPARTIDO = 'de=link';
+export const MARCA_COMPARTIDO = 'from=link';
 export function marcarCompartido(url) {
   if (!url) return url;
   let u;
   try { u = new URL(url); } catch (_) { return url; }
-  if (!/^https?:$/.test(u.protocol) || u.searchParams.has('de')) return url;
+  if (!/^https?:$/.test(u.protocol) || tiene('from', u.searchParams)) return url;
   const [base, hash = ''] = String(url).split('#');
   return `${base}${base.includes('?') ? '&' : '?'}${MARCA_COMPARTIDO}${hash ? `#${hash}` : ''}`;
 }

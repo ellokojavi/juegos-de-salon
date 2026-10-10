@@ -45,8 +45,8 @@ console.log('sala:', code, '| pantalla de A:', await pantalla(A));
 for (const [rol, dev] of [['B', B], ['C', C]]) {
   const host = hosts[rol === 'B' ? 1 : 2];
   // Entra por el enlace de invitación, que es como llega de verdad (RP-18)
-  await dev.go(`${host}/liars-dice/?sala=${code}`); await dev.evaluate(`localStorage.clear(); 1`);
-  await dev.go(`${host}/liars-dice/?sala=${code}`); await sleep(1200);
+  await dev.go(`${host}/liars-dice/?room=${code}`); await dev.evaluate(`localStorage.clear(); 1`);
+  await dev.go(`${host}/liars-dice/?room=${code}`); await sleep(1200);
   await setName(dev, NOMBRE[rol]);
   await dev.evaluate(`[...document.querySelectorAll('#setup-actions .btn')].find(x=>/Unirse|Join|Entrar/i.test(x.textContent)).click(); 1`);
   await sleep(4500);
@@ -80,7 +80,7 @@ while (vueltas++ < 80) {
   // A mitad de partida, un celular recarga: tiene que volver a su sala con los dados que tenía
   if (!reconectado && v.round >= 3 && v.phase === 'bid') {
     reconectado = true;
-    await B.go(`${hosts[1]}/liars-dice/?sala=${code}`); await sleep(4500);
+    await B.go(`${hosts[1]}/liars-dice/?room=${code}`); await sleep(4500);
     const vuelto = await estado(B);
     console.log('B recargó a mitad →', await pantalla(B), '· ronda', vuelto.round, '· sus dados:',
       await B.evaluate(`(()=>{const s=window.__dudo.session();const v=window.__dudo.view();return (s.secrets[v.round]?.dice||[]).join(',')||'(los tira de nuevo)'})()`));

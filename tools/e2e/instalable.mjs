@@ -13,7 +13,7 @@ const mal = msg => { console.log(`✗ ${msg}`); process.exitCode = 1; };
 const b = await launch({ port: 9496, dir: `${OUT}/p`, out: OUT });
 
 import { COMMON, IDIOMAS } from '../../public/assets/js/i18n.js';
-const PAGINAS = ['/', '/hangman/', '/cup/', '/cup/suelto/?practica=conexiones', '/records/'];
+const PAGINAS = ['/', '/hangman/', '/cup/', '/cup/suelto/?practice=connections', '/records/'];
 
 /** El nombre con que se instalaría la app: el del manifest que Chrome leyó y el del iPhone. */
 const nombres = async () => {

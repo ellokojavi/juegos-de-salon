@@ -3,10 +3,10 @@
  *
  * Una copa es un torneo de 3 o 7 días: cada día un juego igual para todos que se juega
  * una vez (ver docs/games/cup.md). Las reglas del torneo viven en engine.js; los datos en
- * el almacén (Firebase, o el de prueba con `?prueba`); cada juego se dibuja con su
+ * el almacén (Firebase, o el de prueba con `?test`); cada juego se dibuja con su
  * módulo de juegos/ui-*.js.
  *
- * URL: /cup/ (portada) · /cup/?K7Q2X (una copa) · /cup/?K7Q2X&prueba (sin Firebase).
+ * URL: /cup/ (portada) · /cup/?K7Q2X (una copa) · /cup/?K7Q2X&test (sin Firebase).
  * La misma pantalla sirve los juegos sueltos de la portada en /queens/ (D-149, D-162, D-198).
  */
 import { crearArrastre } from '../assets/js/arrastre.js';
@@ -15,7 +15,8 @@ import { applyStatic, COMMON, SITIO, LANGS, getLang, langToggle, withLang } from
 import { compartir as compartirAlChat, cabecera, lamina, laminaResultado, aArchivo, nombreArchivo, puntajeYTiempo, botonResultadoSolo, MARCO } from '../assets/js/compartir.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { trackStart, versionOf, countryOf, trackVisit, trackFinish } from '../assets/js/transport/stats.js';
-import { gameById, MODO_UNO_AL_DIA } from '../assets/js/games.js';
+import { gameById, MODO_UNO_AL_DIA, slugDe, idDeSlug } from '../assets/js/games.js';
+import { param, tiene, nombres, BANDERAS, ALIAS as PARAMS_ANTES } from '../assets/js/parametros.js';
 import {
   POZO, calendarioAlAzar, calendario, MAX_JUGADORES, COPA_MAX, aliasLimpio, esAlias, CODIGO, esCodigo, codigoAlAzar, pidAlAzar, limpiarNombre, claveNombre, esPin, hashPin,
   fechaEn, sumarDias, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta, estadoDia, comodinDe, moverInicio, sinEmpezar, pasarDia, MAX_DIAS_INICIO, faltaGente,
@@ -59,47 +60,56 @@ const fmt = (s, vars = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (vars[k]
 /* Arranque                                                            */
 /* ------------------------------------------------------------------ */
 
+// Los parámetros van en inglés (C-18, D-266); los de antes (`?prueba`, `?semilla=`) se leen igual
 const busqueda = location.search.slice(1).split('&').filter(Boolean);
-const PRUEBA = busqueda.includes('prueba');
+const PRUEBA = tiene('test');
 // ?labs: se llegó desde el laboratorio, con la semilla a la vista y el botón para volver (D-101).
-// La Copa de 3 días (D-100) se ofrece solo con ?tres o en el modo de prueba (D-262).
+// La Copa de 3 días (D-100) se ofrece solo con ?three o en el modo de prueba (D-262).
 const LABS = busqueda.includes('labs');
-const TRES = PRUEBA || busqueda.includes('tres');
+const TRES = PRUEBA || tiene('three');
+/** Las banderas de la URL, en inglés y como eran antes: ninguna es un juego ni el link de una copa. */
+const BANDERAS_URL = ['labs', ...Object.entries(BANDERAS).flat()];
 // Los juegos sueltos de la portada viven en /<slug>/ (D-149, D-162, D-192, D-198): la misma
 // pantalla, pero fuera de una copa el link no dice "copa". Cada uno tiene su página, que dice cuál
 // es en `<body data-suelto="reinas">`, para que el link compartido traiga su propia tarjeta
-// social. /cup/?practica=<id>&labs queda para el laboratorio.
+// social. /cup/?practice=<juego>&labs queda para el laboratorio. En la URL, el juego va con su
+// nombre en inglés (`queens`, D-266); el id de antes (`reinas`) se entiende igual.
 const SUELTO = document.body.hasAttribute('data-suelto');
 const PRACTICA = SUELTO
-  ? document.body.dataset.suelto || busqueda.find(x => !x.includes('=') && !['prueba', 'labs', 'hoy'].includes(x)) || ''
-  : new URLSearchParams(location.search).get('practica');
+  ? document.body.dataset.suelto || idDeSlug(busqueda.find(x => !x.includes('=') && !BANDERAS_URL.includes(x)) || '')
+  : (p => p && idDeSlug(p))(param('practice'));
 /** La raíz del sitio, desde donde esté la página (las de cada juego van un nivel más abajo). */
 const RAIZ = new URL('../', import.meta.url).href;
-const SEMILLA = (new URLSearchParams(location.search).get('semilla') || '').toUpperCase();
+const SEMILLA = (param('seed') || '').toUpperCase();
 /**
- * Uno al día (D-230): `?hoy` juega el desafío de hoy, el mismo para todos. La fecha y el juego los
+ * Uno al día (D-230): `?today` juega el desafío de hoy, el mismo para todos. La fecha y el juego los
  * calcula la página (no vienen en el link), así un link viejo abre el de hoy.
  */
-const HOY = SUELTO && busqueda.includes('hoy');
+const HOY = SUELTO && tiene('today');
 /**
  * Dónde vive un juego suelto: su página, o la genérica si no tiene. Desde el laboratorio
  * también se juega ahí (D-164), con `?labs` y su semilla: así el link que se copia de la barra
  * trae la tarjeta del juego y no la de La Copa.
  */
 const paginaSuelta = (id, { semilla, zipSeg } = {}) => {
-  const q = [LABS && 'labs', PRUEBA && 'prueba', semilla && `semilla=${semilla}`, zipSeg && `zipSeg=${zipSeg}`].filter(Boolean).join('&');
-  return gameById(id)?.suelto ? `${RAIZ}${gameById(id).path}${q ? `?${q}` : ''}` : `${RAIZ}cup/suelto/?${[id, q].filter(Boolean).join('&')}`;
+  const q = [LABS && 'labs', PRUEBA && 'test', semilla && `seed=${semilla}`, zipSeg && `timer=${zipSeg}`].filter(Boolean).join('&');
+  return gameById(id)?.suelto ? `${RAIZ}${gameById(id).path}${q ? `?${q}` : ''}` : `${RAIZ}cup/suelto/?${[slugDe(id), q].filter(Boolean).join('&')}`;
 };
-const semillaUrl = { semilla: SEMILLA, zipSeg: new URLSearchParams(location.search).get('zipSeg') };
+const semillaUrl = { semilla: SEMILLA, zipSeg: param('timer') };
 // Un link viejo (/cup/?practica=reinas, o /cup/suelto/?reinas) se va a su lugar nuevo. Los del
 // laboratorio que no tienen página (Línea Relámpago, el número, la final) siguen en /cup/.
 if (!SUELTO && PRACTICA && (!LABS || gameById(PRACTICA)?.suelto)) location.replace(paginaSuelta(PRACTICA, semillaUrl));
 if (SUELTO && !document.body.dataset.suelto && gameById(PRACTICA)?.suelto) location.replace(paginaSuelta(PRACTICA, semillaUrl));
-// Las demos (D-110): solo en el modo de prueba, con el almacén local
-const DEMO = PRUEBA ? new URLSearchParams(location.search).get('demo') : null;
+// En la genérica, el juego queda con su nombre en inglés: `?linea&hoy` → `?timeline-flash&today` (D-266)
+if (SUELTO && !document.body.dataset.suelto && PRACTICA) {
+  const q = location.search.slice(1).split('&').map(x => (!x.includes('=') && idDeSlug(x) === PRACTICA ? slugDe(PRACTICA) : x)).join('&');
+  if (`?${q}` !== location.search) history.replaceState(history.state, '', `${location.pathname}?${q}${location.hash}`);
+}
+// Las demos (D-110): solo en el modo de prueba, con el almacén local. La escena va en inglés (`&demo=podium`)
+const DEMO = PRUEBA ? param('demo') : null;
 const codigoUrl = (busqueda.find(x => CODIGO.test(x.toUpperCase()) && x.length === 5) || new URLSearchParams(location.search).get('c') || '').toUpperCase();
-/** Palabras de la URL que no pueden ser el link de una copa. */
-const RESERVADAS = ['prueba', 'labs', 'tres', 'practica', 'demo', 'semilla', 'copa'];
+/** Palabras de la URL que no pueden ser el link de una copa: las banderas y los parámetros, en inglés y como eran antes. */
+const RESERVADAS = [...BANDERAS_URL, ...Object.entries(PARAMS_ANTES).flat(), 'demo', 'copa', 'cup'];
 // Un link propio: la palabra de la URL que no es un código ni un parámetro (D-121)
 const aliasUrl = busqueda.filter(y => !y.includes('=') && !(CODIGO.test(y.toUpperCase()) && y.length === 5))
   .map(y => aliasLimpio(decodeURIComponent(y))).find(a => esAlias(a) && !RESERVADAS.includes(a)) || '';
@@ -108,10 +118,10 @@ const cuenta = createCuenta({ prueba: PRUEBA });
 let store = null;
 // La app instalada en iPhone abre con la copa y el jugador en la dirección, nunca el PIN (D-223)
 const appPid = new URLSearchParams(location.search).get('app') || '';
-// Un aviso abre la copa en su día (`&dia=3`), o la silencia (`&silenciar`, el botón del aviso en
+// Un aviso abre la copa en su día (`&day=3`), o la silencia (`&mute`, el botón del aviso en
 // Android, D-229). Se leen al cargar: el link propio de la copa reemplaza la dirección.
-const diaAviso = Number(new URLSearchParams(location.search).get('dia')) || 0;
-const silenciarAviso = new URLSearchParams(location.search).has('silenciar');
+const diaAviso = Number(param('day')) || 0;
+const silenciarAviso = tiene('mute');
 
 async function abrirStore() {
   if (store) return store;
@@ -127,7 +137,7 @@ const S = { code: null, L: null, yo: null, pantalla: null, off: null, juego: nul
 // El link de una copa: su nombre propio si lo tiene (?pirata), si no su código. Sin &labs: la
 // copa ya sabe por dentro si es del laboratorio (D-121)
 const enlace = code => (S.code === code && S.L?.meta?.alias) || code;
-const urlCopa = code => `${location.origin}${location.pathname}?${enlace(code)}${PRUEBA ? '&prueba' : ''}`;
+const urlCopa = code => `${location.origin}${location.pathname}?${enlace(code)}${PRUEBA ? '&test' : ''}`;
 const urlPublica = code => (PRUEBA ? urlCopa(code) : `https://juegosdesalon.cl/cup/?${enlace(code)}`);
 
 function mostrar(id) {
@@ -211,7 +221,7 @@ function portada() {
   const ir = () => {
     const c = input.value.trim().toUpperCase();
     if (!esCodigo(c)) { avisoError(err, T.errCodigo); return; }
-    location.search = `?${c}${PRUEBA ? '&prueba' : ''}${LABS ? '&labs' : ''}`;
+    location.search = `?${c}${PRUEBA ? '&test' : ''}${LABS ? '&labs' : ''}`;
   };
   input.addEventListener('keydown', e => { if (e.key === 'Enter') ir(); });
 
@@ -447,7 +457,7 @@ function crearCopa() {
   body.innerHTML = '';
   const err = el('div', { class: 'form-error', role: 'alert' });
   const nombre = campo(T.fCopa, { placeholder: T.fCopaPh, maxlength: String(COPA_MAX) }, { contador: true });
-  // La Copa de 3 días es solo para probar con amigos (D-100): se ofrece con ?tres en la URL
+  // La Copa de 3 días es solo para probar con amigos (D-100): se ofrece con ?three en la URL
   // o en el modo de prueba, nunca en la portada.
   const juegos = elegirJuegos();
   const modo = opciones([
@@ -525,7 +535,7 @@ function crearCopa() {
       await st.crear(code, meta, { pid, name: quien, at: now, pinHash: await hashPin(code, pid, pin1.input.value), co: miPais() });
       cuenta.nombre.set(quien);
       cuenta.recordar(code, pid, { nombre: quien, copa: n, fin: meta.end });
-      history.replaceState(null, '', `${location.pathname}?${alias || code}${PRUEBA ? '&prueba' : ''}`);
+      history.replaceState(null, '', `${location.pathname}?${alias || code}${PRUEBA ? '&test' : ''}`);
       await abrirCopa(code, { recienCreada: true });
     } catch (e) {
       avisoError(err, errorDe(e));
@@ -557,7 +567,7 @@ function espera(texto, { error = false, reintentar = null } = {}) {
   body.innerHTML = '';
   poner(body, el('div', { class: error ? 'form-error' : 'waiting' }, texto));
   if (reintentar) poner(body, el('button', { class: 'btn btn--cyan', onClick: reintentar }, T.retry));
-  if (error) poner(body, el('a', { class: 'btn btn--ghost btn--sm', href: location.pathname + (PRUEBA ? '?prueba' : '') }, T.menu));
+  if (error) poner(body, el('a', { class: 'btn btn--ghost btn--sm', href: location.pathname + (PRUEBA ? '?test' : '') }, T.menu));
 }
 
 async function abrirCopa(code, { recienCreada = false, pantalla = null } = {}) {
@@ -584,10 +594,10 @@ async function abrirCopa(code, { recienCreada = false, pantalla = null } = {}) {
       // (la lista de tus copas, un link viejo): así lo que se copie de la barra es el link bonito (D-121)
       const q = new URLSearchParams(location.search);
       if (L.meta.alias && !q.has('demo')) {
-        history.replaceState(null, '', `${location.pathname}?${L.meta.alias}${PRUEBA ? '&prueba' : ''}`);
-      } else if (q.has('dia') || q.has('silenciar')) {
+        history.replaceState(null, '', `${location.pathname}?${L.meta.alias}${PRUEBA ? '&test' : ''}`);
+      } else if (tiene('day', q) || tiene('mute', q)) {
         // Lo que pidió el aviso se hace una vez: recargar no vuelve a silenciar ni a abrir el día (D-229)
-        q.delete('dia'); q.delete('silenciar');
+        for (const k of [...nombres('day'), ...nombres('mute')]) q.delete(k);
         history.replaceState(null, '', `${location.pathname}?${q.toString().replace(/=(?=&|$)/g, '')}`);
       }
       const pid = cuenta.quien(code);
@@ -1732,7 +1742,7 @@ function admin({ forzar = false } = {}) {
         cuenta.olvidar(S.code);
         if (S.off) { S.off(); S.off = null; }
         S.code = null; S.yo = null; S.L = null;
-        history.replaceState(null, '', `${location.pathname}${PRUEBA ? '?prueba' : LABS ? '?labs' : ''}`);
+        history.replaceState(null, '', `${location.pathname}${PRUEBA ? '?test' : LABS ? '?labs' : ''}`);
         SFX.splash();
         eliminada(nombre);
       } catch (e) { S.eliminando = false; b.disabled = false; avisoError(errBorrar, errorDe(e)); }
@@ -1790,7 +1800,7 @@ function antesDeJugar(d) {
     empezar.disabled = true;
     try {
       await store.empezar(S.code, d, S.yo);
-      // Una copa de ?prueba es de mentira (vive en este navegador): no suma en las estadísticas.
+      // Una copa de ?test es de mentira (vive en este navegador): no suma en las estadísticas.
       // Las del laboratorio sí: hoy son las copas reales con amigos (D-101).
       if (!PRUEBA) trackStart({ game: GAME_ID, mode: GAME_ID, players: 1 });
       jugar(d);
@@ -2131,9 +2141,9 @@ function explicacion(J, { s, ms, det, x = 1, final = false, copa = true }) {
 /* ------------------------------------------------------------------ */
 
 /**
- * `/cup/?practica=<id>` juega un juego suelto con contenido al azar, para probar su
+ * `/cup/?practice=<juego>` juega un juego suelto con contenido al azar, para probar su
  * mecánica antes de armar una copa. La semilla se muestra al final y va en la URL
- * (`&semilla=K7Q2X`): con ella se repite exactamente la misma partida para reportar un error.
+ * (`&seed=K7Q2X`): con ella se repite exactamente la misma partida para reportar un error.
  */
 /**
  * Desde la portada (D-142) la práctica es el juego suelto: vuelve al menú, no ofrece la sesión
@@ -2157,11 +2167,11 @@ function practica(id) {
   }
   const semilla = HOY ? semillaDel(S.hoy.fecha) : esCodigo(SEMILLA) ? SEMILLA : codigoAlAzar();
   precalentar(id, () => JUEGOS[id].generar(semilla, 1, { lang: LANG }), () => JUEGOS[id].ensayo?.(semilla, 1, { lang: LANG }));
-  const zipSeg = new URLSearchParams(location.search).get('zipSeg');
+  const zipSeg = param('timer');
   // Suelto, la semilla no va a la vista (D-142): el link queda en /queens/. Desde el
   // laboratorio sí, para poder repetir la partida.
   if (SUELTO && LABS && !HOY) history.replaceState(null, '', paginaSuelta(id, { semilla, zipSeg }));
-  else if (!SUELTO) history.replaceState(null, '', `${location.pathname}?practica=${id}&semilla=${semilla}${PRUEBA ? '&prueba' : ''}${LABS ? '&labs' : ''}${zipSeg ? `&zipSeg=${zipSeg}` : ''}`);
+  else if (!SUELTO) history.replaceState(null, '', `${location.pathname}?practice=${slugDe(id)}&seed=${semilla}${PRUEBA ? '&test' : ''}${LABS ? '&labs' : ''}${zipSeg ? `&timer=${zipSeg}` : ''}`);
   S.juego = { d: 1, id, practica: true, semilla };
   mostrar('jugar');
   $('#jugar-head').innerHTML = '';
@@ -2201,8 +2211,8 @@ const UAD = () => (COMMON[LANG] || COMMON.es).uad;
 function jugarPractica(id, semilla) {
   // Suelto, todo va en el idioma de quien juega: no hay con quién jugar lo mismo (D-170)
   const p = JUEGOS[id].generar(semilla, 1, { lang: LANG });
-  // Solo en el modo de prueba: `&zipSeg=8` acorta el reloj de Zip y de Desenredo para los guiones de punta a punta
-  const seg = Number(new URLSearchParams(location.search).get('zipSeg'));
+  // Solo en el modo de prueba: `&timer=8` acorta el reloj de Zip y de Desenredo para los guiones de punta a punta
+  const seg = Number(param('timer'));
   if (PRUEBA && (id === 'zip' || id === 'desenredo') && seg > 0) p.tiempo = seg * 1000;
   // Señal de uso para el panel (D-44): el suelto se cuenta como su propio juego; el laboratorio no
   if (!LABS && !PRUEBA) trackStart({ game: id, mode: HOY ? MODO_UNO_AL_DIA : 'solo', players: 1 });
@@ -2310,7 +2320,7 @@ function resultadoPractica(id, semilla, r) {
   trackFinish({ detalle: `${r.s}/100${r.ms ? ` · ${mmss(r.ms)}` : ''}` });   // cómo salió, para el panel (D-210)
   mostrar('resultado');
   SFX.win();
-  const otra = SUELTO ? paginaSuelta(id) : `${location.pathname}?practica=${id}${PRUEBA ? '&prueba' : ''}${LABS ? '&labs' : ''}`;
+  const otra = SUELTO ? paginaSuelta(id) : `${location.pathname}?practice=${slugDe(id)}${PRUEBA ? '&test' : ''}${LABS ? '&labs' : ''}`;
   const body = $('#resultado-body');
   body.innerHTML = '';
   poner(body,
@@ -2328,7 +2338,7 @@ function resultadoPractica(id, semilla, r) {
     // Suelto se comparte como cualquier juego jugado solo, con su página (D-162, D-165)
     !LABS && !hoy && gameById(id)?.suelto ? botonResultadoSolo({ C: COMMON[LANG] || COMMON.es, emoji: J.emoji, juego: J.nombre, puntaje: r.resumen || String(r.s), tiempo: mmss(r.ms), tarjeta: r.t, url: withLang(`${SITIO}${gameById(id).path}`, LANG), alTocar: () => SFX.tap() }) : null,
     hoy ? null : el('a', { class: 'btn btn--yellow', id: 'btn-otra', href: otra }, T.practiceAgain),
-    LABS && !hoy ? el('a', { class: 'btn btn--cyan btn--sm', id: 'btn-repetir', href: `${otra}&semilla=${semilla}` }, T.practiceSame) : null,
+    LABS && !hoy ? el('a', { class: 'btn btn--cyan btn--sm', id: 'btn-repetir', href: `${otra}${otra.includes('?') ? '&' : '?'}seed=${semilla}` }, T.practiceSame) : null,
     botonReporte({ juego: id, semilla, puntaje: r.s, resumen: r.resumen }),
     volverDePractica(),
     ranking);
@@ -2487,7 +2497,7 @@ async function demo(nombre) {
   const e = sembrar(nombre, { now: st.now(), uid: st.uid });
   if (!e) { portada(); return; }
   if (e.pid) cuenta.recordar(e.code, e.pid, { nombre: e.nombre, copa: e.meta.name, fin: e.meta.end });
-  history.replaceState(null, '', `${location.pathname}?prueba&${e.code}`);
+  history.replaceState(null, '', `${location.pathname}?test&${e.code}`);
   await abrirCopa(e.code, { recienCreada: e.recien, pantalla: e.pantalla });
 }
 

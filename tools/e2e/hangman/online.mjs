@@ -68,7 +68,7 @@ await A.shot('01-lobby-A');
 // B y C entran por el enlace
 for (const [i, k] of [[1, 'B'], [2, 'C']]) {
   const d = devs[k];
-  await d.go(`${hosts[i]}/hangman/?sala=${code}`, 2200);
+  await d.go(`${hosts[i]}/hangman/?room=${code}`, 2200);
   await setName(d, NOMBRE[k]);
   await clickText(d, '#setup-actions .btn', 'Unirse|Join'); await sleep(4500);
   console.log(`${k} entró → pantalla:`, await d.active(), '| rol:', await d.evaluate(`window.__ahorcado.session().role`));
@@ -125,7 +125,7 @@ while (guard++ < 60) {
     recargado = true;
     await A.shot('05-mid-A');
     // C se cae y vuelve a mitad de partida
-    await C.go(`${hosts[2]}/hangman/?sala=${code}`, 6000);
+    await C.go(`${hosts[2]}/hangman/?room=${code}`, 6000);
     console.log('C tras recargar:', await C.active(), '| rol:', await C.evaluate(`window.__ahorcado.session()?.role`), '|', JSON.stringify((await v(C)).st?.C));
     await C.shot('05-reconnect-C');
   }

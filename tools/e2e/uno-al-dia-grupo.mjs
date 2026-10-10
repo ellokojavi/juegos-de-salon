@@ -1,5 +1,5 @@
 // Uno al día (D-230) con los juegos de grupo, de punta a punta: El Ahorcado, Batalla Naval y Dudo
-// con `?hoy`. Para cada uno se fija el reloj en un día en que le toca, y se comprueba que abra
+// con `?today`. Para cada uno se fija el reloj en un día en que le toca, y se comprueba que abra
 // directo el modo para uno (sin elegir modo), que la intro lleve la línea de Uno al día, que lo
 // común salga de la semilla del día (la palabra, la flota del celular, los dados), que al terminar
 // se anote el puntaje de 0 a 100 de su fórmula y que la tarjeta vaya arriba de los botones del
@@ -43,7 +43,7 @@ const reloj = f => ev(`localStorage.setItem('__reloj','${f}'); 1`);
 /** Lo común de la intro de los tres: sin modos, la línea de Uno al día y un solo botón. */
 async function intro(id, carpeta, extra) {
   await esperar(`!!document.getElementById('btn-uad-jugar')`);
-  ok(await ev(`location.pathname`) === `/${carpeta}/`, `${id}: abre /${carpeta}/?hoy`);
+  ok(await ev(`location.pathname`) === `/${carpeta}/`, `${id}: abre /${carpeta}/?today`);
   ok(!await ev(`!!document.querySelector('#modes .mode')`), `${id}: no pide elegir modo`);
   const linea = await texto('#uad-intro');
   ok(linea.includes(U.intro) && (!extra || linea.includes(extra)), `${id}: la intro lleva la línea de Uno al día ("${linea}")`);
@@ -67,16 +67,16 @@ async function final(id, fecha, esperado) {
 
 /* ---------- Un link de otro juego lleva al de hoy ---------- */
 await reloj(DIAS.dudo);
-await b.go(`${SITIO}/hangman/?hoy`, 1500);
-ok(await esperar(`location.pathname === '/liars-dice/'`), `el ${DIAS.dudo} toca Dudo: /hangman/?hoy se va a /liars-dice/?hoy`);
-await b.go(`${SITIO}/queens/?hoy`, 1500);
+await b.go(`${SITIO}/hangman/?today`, 1500);
+ok(await esperar(`location.pathname === '/liars-dice/'`), `el ${DIAS.dudo} toca Dudo: /hangman/?today se va a /liars-dice/?today`);
+await b.go(`${SITIO}/queens/?today`, 1500);
 ok(await esperar(`location.pathname === '/liars-dice/'`), 'y un solitario también se va al de hoy');
 
 /* ---------- El Ahorcado ---------- */
 {
   const f = DIAS.ahorcado;
   await reloj(f);
-  await b.go(`${SITIO}/hangman/?hoy`, 1500);
+  await b.go(`${SITIO}/hangman/?today`, 1500);
   await intro('ahorcado', 'hangman');
   await b.shot('ahorcado-intro');
   const jugar = async errores => {
@@ -99,7 +99,7 @@ ok(await esperar(`location.pathname === '/liars-dice/'`), 'y un solitario tambi�
   ok(cfg.source === 'deck' && cfg.players?.length === 1, `ahorcado: con el mazo del celular y 1 jugador (${cfg.source}, ${cfg.players})`);
   await final('ahorcado', f, puntajeAhorcado({ vidas: cfg.lives - 2, total: cfg.lives }));
   // El segundo intento: la misma palabra (sale de la semilla del día) y es práctica
-  await b.go(`${SITIO}/hangman/?hoy`, 1500);
+  await b.go(`${SITIO}/hangman/?today`, 1500);
   await esperar(`!!document.getElementById('btn-uad-jugar')`);
   ok(/práctica/.test(await texto('#uad-intro')), 'ahorcado: la intro de un segundo intento avisa que es práctica');
   const otra = await jugar(0);
@@ -113,7 +113,7 @@ ok(await esperar(`location.pathname === '/liars-dice/'`), 'y un solitario tambi�
 {
   const f = DIAS['batalla-naval'];
   await reloj(f);
-  await b.go(`${SITIO}/battleship/?hoy`, 1500);
+  await b.go(`${SITIO}/battleship/?today`, 1500);
   await intro('batalla-naval', 'battleship', U.mismaFlota);
   await click('#btn-uad-jugar');
   await esperar(`document.querySelector('.screen.active')?.id === 'screen-place'`);
@@ -150,7 +150,7 @@ ok(await esperar(`location.pathname === '/liars-dice/'`), 'y un solitario tambi�
 {
   const f = DIAS.dudo;
   await reloj(f);
-  await b.go(`${SITIO}/liars-dice/?hoy`, 1500);
+  await b.go(`${SITIO}/liars-dice/?today`, 1500);
   await intro('dudo', 'liars-dice', U.mismosDados);
   await b.shot('dudo-intro');
   await click('#btn-uad-jugar');
@@ -190,7 +190,7 @@ ok(await esperar(`location.pathname === '/liars-dice/'`), 'y un solitario tambi�
   await esperar(`!!document.getElementById('btn-uno-al-dia')`);
   await click('#btn-uno-al-dia');
   ok(await esperar(`/Hoy te toca/.test(document.querySelector('.azar-nombre')?.innerText||'')`, 16) && /El Ahorcado/.test(await texto('.azar-nombre')), `el dado cae en El Ahorcado (${(await texto('.azar-nombre')).replace(/\n/g, ' ')})`);
-  ok(await esperar(`location.pathname === '/hangman/' && location.search === '?hoy'`, 20), 'y abre /hangman/?hoy');
+  ok(await esperar(`location.pathname === '/hangman/' && location.search === '?today'`, 20), 'y abre /hangman/?today');
 }
 
 const errores = b.errors || [];

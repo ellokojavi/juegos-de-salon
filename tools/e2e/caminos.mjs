@@ -23,11 +23,11 @@ const BN_FALLA = rol => `(()=>{const S=window.__bn.session(),L=S.layouts['${rol 
   for(const [id,p] of Object.entries(L)) for(let i=0;i<T[id];i++) o.add((p.dir==='h'?p.r:p.r+i)+','+(p.dir==='h'?p.c+i:p.c));
   for(let r=0;r<10;r++) for(let c=0;c<10;c++) if(!o.has(r+','+c)) return S.transport.send({t:'shot',from:'${rol}',cell:'ABCDEFGHIJ'[c]+(r+1)});})()`;
 
-/* --- La Copa: "Tus copas" sembrada en el almacén de prueba, y la portada con `?prueba` (D-234) --- */
+/* --- La Copa: "Tus copas" sembrada en el almacén de prueba, y la portada con `?test` (D-234) --- */
 const MIAS_SEMBRAR = `const D=864e5, ahora=Date.now(); sessionStorage.setItem('juegos-de-salon:copa:prueba:mias', JSON.stringify([
   {code:'FGHIJ',nombre:'Javiera',copa:'Los primos de Valparaíso, edición invierno',fin:ahora-2*D},
   {code:'ABCDE',nombre:'Javiera',copa:'Piratotes 1983',fin:ahora + 3 * D},
-  {code:'KLMNO',nombre:'Javi',copa:'Copa del finde',fin:ahora-5*D}])); location.href='/cup/?prueba'`;
+  {code:'KLMNO',nombre:'Javi',copa:'Copa del finde',fin:ahora-5*D}])); location.href='/cup/?test'`;
 
 /* --- Tango: empezar y llenar el tablero con el motor de verdad (ver su entrada) --- */
 const TAN_EMPEZAR = `document.getElementById('btn-empezar').click()`;
@@ -122,7 +122,7 @@ const SEMBRAR_PANEL = vista => `(async()=>{const DIA=86400000,ahora=Date.now(),h
       window.__panel.seed({rooms,days,torneos,push,uad,vista:'${vista}'});})()`;
 
 export const CAMINOS = {
-  /** La Copa con el almacén de prueba (`?prueba`): la portada y el formulario para crear una. */
+  /** La Copa con el almacén de prueba (`?test`): la portada y el formulario para crear una. */
   copa: {
     intro: [],
     crear: [`document.getElementById('btn-crear').click()`],
@@ -132,7 +132,7 @@ export const CAMINOS = {
     // Todas terminadas: "No tienes copas en curso." sobre el interruptor
     'mias-ninguna': [MIAS_SEMBRAR.replace('ahora + 3 * D', 'ahora - 1 * D'), `1`],
     // La tabla del día de La Gran Final, con la tarjeta de cinco rondas de cada uno (#259)
-    'final-tabla': [`location.href='/cup/?prueba&demo=llena'`, `1`, `1`,
+    'final-tabla': [`location.href='/cup/?test&demo=full'`, `1`, `1`,
       `[...document.querySelectorAll('.md-fila')].pop().click()`,
       `document.querySelector('.screen.active .fila')?.scrollIntoView({ block: 'start' })`],
   },
@@ -367,11 +367,11 @@ export const CAMINOS = {
    * Cada toma abre una sección o una ficha por su ruta (D-207); `datos` es la de audiencia.
    */
   panel: {
-    ...Object.fromEntries([['datos', '/audiencia'], ['ahora', '/ahora'], ['resumen', '/ahora'], ['torneo', '/torneo'], ['juegos', '/juegos'], ['audiencia', '/audiencia'],
-      ['copa-ficha', '/torneo/OFICI'], ['juego-ficha', '/juego/dudo'], ['sala-ficha', '/sala/CPSV'], ['trafico', '/trafico'], ['salud', '/salud']].map(([toma, vista]) => [toma, [SEMBRAR_PANEL(vista)]])),
+    ...Object.fromEntries([['datos', '/audience'], ['ahora', '/now'], ['resumen', '/now'], ['torneo', '/cup'], ['juegos', '/games'], ['audiencia', '/audience'],
+      ['copa-ficha', '/cup/OFICI'], ['juego-ficha', '/game/liars-dice'], ['sala-ficha', '/room/CPSV'], ['trafico', '/traffic'], ['salud', '/health']].map(([toma, vista]) => [toma, [SEMBRAR_PANEL(vista)]])),
     // Las otras dos pestañas de la ficha de una copa (D-207)
-    'copa-dias': [SEMBRAR_PANEL('/torneo/OFICI'), `[...document.querySelectorAll('.subtabs button')][1].click()`],
-    'copa-historia': [SEMBRAR_PANEL('/torneo/OFICI'), `[...document.querySelectorAll('.subtabs button')][2].click()`],
+    'copa-dias': [SEMBRAR_PANEL('/cup/OFICI'), `[...document.querySelectorAll('.subtabs button')][1].click()`],
+    'copa-historia': [SEMBRAR_PANEL('/cup/OFICI'), `[...document.querySelectorAll('.subtabs button')][2].click()`],
   },
 };
 

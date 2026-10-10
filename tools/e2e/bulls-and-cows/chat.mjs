@@ -39,7 +39,7 @@ await A.evaluate(`document.querySelectorAll('#setup-actions .btn')[0].click(); 1
 const code = await A.evaluate(`document.querySelector('.code-big')?.textContent`);
 console.log('sala:', code, '| chat en la sala de espera:', JSON.stringify(await chat(A)));
 await A.shot('tyf-chat-01-lobby');
-await B.go(`${hosts[1]}/bulls-and-cows/?sala=${code}`, 2000);
+await B.go(`${hosts[1]}/bulls-and-cows/?room=${code}`, 2000);
 await B.evaluate(`(()=>{document.querySelector('#setup-form input').value='Cata';return 1})()`);
 await B.evaluate(`[...document.querySelectorAll('#setup-actions .btn')].find(b=>/Unirse|Join/.test(b.textContent)).click(); 1`); await sleep(4500);
 console.log('B entró:', await B.active(), '| rol:', await B.evaluate(`__tyf.session().role`));

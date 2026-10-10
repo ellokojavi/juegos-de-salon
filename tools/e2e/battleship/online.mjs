@@ -22,7 +22,7 @@ await A.evaluate(`(()=>{document.querySelector('#setup-form input').value='Javi'
 await clickText(A, '#setup-actions .btn', 'Crear'); await sleep(4000);
 const code = await A.evaluate(`document.querySelector('.code-big')?.textContent`);
 console.log('sala:', code, '| A:', await A.active()); await A.shot('21-lobby');
-await B.go(`${SITIO_B}/battleship/?sala=${code}`, 1500);
+await B.go(`${SITIO_B}/battleship/?room=${code}`, 1500);
 await B.evaluate(`(()=>{document.querySelector('#setup-form input').value='Cata';return 1})()`);
 await clickText(B, '#setup-actions .btn', 'Unirse'); await sleep(4000);
 console.log('tras unirse → A:', await A.active(), 'B:', await B.active());
@@ -38,7 +38,7 @@ console.log('B agua:', await fireAt(B, await missCell(A, 'A'))); await sleep(300
 console.log('turno →', (await bv(A)).shooter);
 console.log('A agua:', await fireAt(A, await missCell(B, 'B'))); await sleep(3000);
 // reconexión de B a mitad de partida
-await B.go(`${SITIO_B}/battleship/?sala=${code}`, 6000);
+await B.go(`${SITIO_B}/battleship/?room=${code}`, 6000);
 console.log('B tras recargar:', await B.active(), JSON.stringify(await bv(B)), '| flota guardada:', await B.evaluate(`!!__bn.session()?.layouts?.B`));
 await B.shot('24-reloaded-B');
 let guard = 0;

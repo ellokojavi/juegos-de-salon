@@ -48,12 +48,12 @@ export function setLang(lang) {
 
 /**
  * El idioma también puede venir en el link: `juegosdesalon.cl/?lang=pt`, o pegado a la
- * invitación de una sala, `/liars-dice/?sala=WFBN&lang=pt`. Quien comparte elige el idioma con el que
+ * invitación de una sala, `/liars-dice/?room=WFBN&lang=pt`. Quien comparte elige el idioma con el que
  * va a llegar el que recibe, que es lo mismo que hace el toggle pero para otra persona: sigue
  * sin detectarse nada del navegador (D-47, D-74).
  *
  * Se aplica al cargar cualquier página, se guarda como cualquier elección, y el parámetro se
- * saca de la barra de direcciones: lo que circula es la URL de siempre y el `?sala=` queda
+ * saca de la barra de direcciones: lo que circula es la URL de siempre y el `?room=` queda
  * intacto.
  */
 /**

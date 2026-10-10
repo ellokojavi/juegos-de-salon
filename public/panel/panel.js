@@ -975,7 +975,7 @@ function vistaTrafico(now) {
     el('div', { class: 'grid2' },
       bloque('De dónde llegan', 'El sitio desde el que tocaron el link. WhatsApp y casi todas las apps de chat no lo dicen: esas visitas caen en "Directo o sin dato", junto con quien escribió la dirección o la tenía guardada.',
         lista(origenes.map(([k, v]) => bar(k, [seg(C_TOTAL, v)], maxO, { sub: dominiosDe(k) })), 'Nada todavía.', 'bars')),
-      bloque('Por qué link', 'Lo que la app comparte lleva su marca (?de=link): así se sabe cuántas visitas llegaron por una invitación aunque el chat no lo diga. También cuenta utm_source o ?de= si se los pones a mano a un link.',
+      bloque('Por qué link', 'Lo que la app comparte lleva su marca (?from=link): así se sabe cuántas visitas llegaron por una invitación aunque el chat no lo diga. También cuenta utm_source o ?from= si se los pones a mano a un link.',
         lista(canales.map(([k, v]) => bar(canalLabel(k), [seg(C_TORNEO, v)], maxC)), 'Ninguna visita con marca en este rango.', 'bars'),
         t.visitas ? el('p', { class: 'muted small', style: 'margin-top:8px' }, `Sin marca: ${n(Math.max(0, t.visitas - canales.reduce((k, [, v]) => k + v, 0)))} visitas.`) : null),
     ),

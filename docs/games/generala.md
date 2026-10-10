@@ -78,9 +78,9 @@ azar y lo publica.
 Lo que eso no evita es que alguien modifique su página para mandarse cinco seises. Es lo mismo que
 cargar un dado en la mesa: se aceptó, como en un juego entre amigos (D-246).
 
-### Uno al día: los dados sí salen de la semilla (`/generala/?hoy`, D-247)
+### Uno al día: los dados sí salen de la semilla (`/generala/?today`, D-247)
 
-Cuando Generala es el juego de Uno al día, `/generala/?hoy` no ofrece modos: la intro lleva la línea
+Cuando Generala es el juego de Uno al día, `/generala/?today` no ofrece modos: la intro lleva la línea
 de Uno al día y "Los dados salen iguales para todos: lo que cambia es qué guardas.", y un solo
 botón, **Jugar el de hoy**, que abre 🧍 Jugar solo con el nombre que se recuerda. Cada tiro sale de
 `azarDel(semilla, 'generala:<turno>:<tiro>')`, consumido en orden de posición: quien guarda lo mismo

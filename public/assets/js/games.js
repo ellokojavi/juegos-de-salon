@@ -292,6 +292,19 @@ const BY_ID = Object.fromEntries([...GAMES, ...SUELTOS].map(g => [g.id, g]));
 export const gameById = id => BY_ID[id] || null;
 
 /**
+ * Cómo se nombra un juego en una URL (C-18, D-266): en inglés, como su carpeta (`reinas` →
+ * `queens`). Los de La Copa que no tienen página propia llevan el suyo. El id no cambia (lo
+ * guardan las salas, el panel y el celular): solo lo que se ve en la dirección.
+ */
+export const SLUGS_SIN_PAGINA = { linea: 'timeline-flash', numero: 'number' };
+const SLUG_DE = { ...Object.fromEntries([...GAMES, ...SUELTOS].map(g => [g.id, String(g.path || '').replace(/\/$/, '') || g.id])), ...SLUGS_SIN_PAGINA };
+const ID_DE = Object.fromEntries(Object.entries(SLUG_DE).map(([id, slug]) => [slug, id]));
+/** El nombre en la URL de un juego; un id que no está en la lista queda igual. */
+export const slugDe = id => (Object.hasOwn(SLUG_DE, id) ? SLUG_DE[id] : id);
+/** El id de un juego desde su nombre en la URL, o desde su id (los links de antes de D-266). */
+export const idDeSlug = s => (Object.hasOwn(SLUG_DE, s) ? s : Object.hasOwn(ID_DE, s) ? ID_DE[s] : s);
+
+/**
  * Cómo se nombra un juego fuera del menú (el panel, por ejemplo).
  * Un id que no está en la lista se devuelve tal cual: puede ser un juego recién publicado,
  * uno que se fue, o una versión vieja de la app que todavía manda señales. En los tres casos

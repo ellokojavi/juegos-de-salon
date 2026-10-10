@@ -86,7 +86,7 @@ desde el final), porque su tiempo no se reparte parejo: el dado y el mapa necesi
   mouse y saca una captura por jugada, anotando dónde fue el toque (y el recorrido, si arrastró).
   `promo.html` las pasa una tras otra y dibuja un círculo donde va el dedo, con una onda al
   tocar. Los arrastres llevan capturas intermedias (`mids`), así el globo gira y el trazo crece.
-- **El azar está fijo:** cada juego entra con una `?semilla=` (los sueltos usan `WNDRN`) y
+- **El azar está fijo:** cada juego entra con una `?seed=` (los sueltos usan `WNDRN`) y
   `jugar.mjs` reemplaza `Math.random` y `crypto.getRandomValues` por uno con semilla. Así cada
   corrida reparte lo mismo y los toques caen donde deben. Las soluciones de Reinas, Tango y Zip
   salen de `generar(semilla, 1)` de cada motor (`public/cup/games/*.js`).
@@ -173,7 +173,7 @@ la música (89 golpes sola) y la cuenta de `construir.sh` (hoy 85).
 - **Son ~280 capturas.** Con más, Chrome puede no alcanzar a decodificarlas (ver la primera trampa):
   `render.mjs` avisa cuáles no cargaron. El dado son unas 100.
 - **El servidor local se cae** en sesiones largas: `construir.sh` avisa si `SITIO` no responde.
-- La Copa del video es la demo del laboratorio (`?prueba&labs&demo=podio`): no toca Firebase.
+- La Copa del video es la demo del laboratorio (`?test&labs&demo=podium`): no toca Firebase.
 
 ## Para YouTube
 

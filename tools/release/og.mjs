@@ -147,7 +147,7 @@ function paginaSuelta(p, bloqueOg) {
  * Las carpetas pasaron al inglés (D-192): /ahorcado/ es /hangman/. Pero los links viejos siguen
  * circulando —las invitaciones a una sala por WhatsApp, el link propio de una copa
  * (/copa/?pirata), los marcadores—, así que cada ruta vieja queda como una página puente que manda
- * a la nueva con lo mismo detrás (?sala=…, ?pirata, &lang=…, #…). Lleva la tarjeta de la página
+ * a la nueva con lo mismo detrás (?room=…, ?pirata, &lang=…, #…). Lleva la tarjeta de la página
  * nueva: un robot de chat no corre JavaScript y lee lo que encuentra en la vieja.
  *
  * La ruta vieja sale del id, que era la carpeta (/<id>/ y /minijuegos/<id>/): un juego nuevo con su

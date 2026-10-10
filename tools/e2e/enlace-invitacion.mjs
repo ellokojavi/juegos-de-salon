@@ -22,7 +22,7 @@ const pantalla = () => b.evaluate(`(()=>{
 for (const juego of JUEGOS) {
   await b.go(`${BASE}/${juego}/`, 1200); await b.evaluate(`localStorage.clear(); 1`);
   // con enlace: solo unirse
-  await b.go(`${BASE}/${juego}/?sala=${CODE}`, 1800);
+  await b.go(`${BASE}/${juego}/?room=${CODE}`, 1800);
   const invitado = await pantalla();
   console.log(`${juego} con enlace →`, JSON.stringify(invitado));
   if (invitado.crear) console.log('  ⚠️ todavía ofrece crear sala');

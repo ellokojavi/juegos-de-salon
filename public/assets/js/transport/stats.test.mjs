@@ -250,9 +250,10 @@ assert.equal(origenDe('https://l.instagram.com/?u=https%3A%2F%2Fjuegosdesalon.cl
 assert.equal(origenDe('https://lm.facebook.com/l.php?u=x', 'x'), 'facebook_com');
 assert.equal(origenDe('android-app://com.google.android.gm/', 'x'), 'com_google_android_gm');
 assert.equal(origenDe('no es una url', 'x'), 'directo');
-assert.equal(canalDe('?oficina&de=link'), 'link');
+assert.equal(canalDe('?oficina&from=link'), 'link');
+assert.equal(canalDe('?oficina&de=link'), 'link', 'la marca de antes de D-266 cuenta igual');
 assert.equal(canalDe('?utm_source=Instagram&utm_medium=bio'), 'instagram');
-assert.equal(canalDe('?de=<script>'), 'script', 'lo raro se limpia');
+assert.equal(canalDe('?from=<script>'), 'script', 'lo raro se limpia');
 assert.equal(canalDe(''), '');
 assert.equal(dispositivoDe({ ua: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) Mobile' }), 'celular');
 assert.equal(dispositivoDe({ ua: 'Mozilla/5.0 (Linux; Android 14) Mobile' }), 'celular');
@@ -302,15 +303,19 @@ assert.equal(dispositivoDe({ ua: 'Mozilla/5.0 (Macintosh)', platform: 'MacIntel'
   assert.deepEqual(api.calls.slice(2).map(c => c.changes), [{ 'juegan/liars-dice': INC }], 'una visita juega una vez');
   // Otra pestaña otro día: vuelve
   sesion.m.clear();
-  await noteVisit(api, { env: 'prod' }, { ...ctx('/cup/'), loc: { pathname: '/cup/', search: '?oficina&de=link', hostname: 'juegosdesalon.cl' } });
+  await noteVisit(api, { env: 'prod' }, { ...ctx('/cup/'), loc: { pathname: '/cup/', search: '?oficina&from=link', hostname: 'juegosdesalon.cl' } });
   assert.deepEqual(api.calls.at(-1).changes['retorno/vuelve'], INC);
   assert.deepEqual(api.calls.at(-1).changes['via/link'], INC);
   assert.deepEqual(api.calls.at(-1).changes['ref/directo'], INC);
   // Un aviso tocado y la app instalada se cuentan aunque no sea la primera página de la visita (D-233)
   const hist = { state: null, url: '', replaceState(_s, _t, u) { this.url = u; } };
-  await noteVisit(api, { env: 'prod' }, { ...ctx('/cup/'), loc: { pathname: '/cup/', search: '?oficina&dia=3&aviso=dia', hostname: 'juegosdesalon.cl' }, hist });
-  assert.deepEqual(api.calls.at(-1).changes['aviso/dia'], INC);
-  assert.equal(hist.url, '/cup/?oficina&dia=3', 'contado, sale de la dirección');
+  await noteVisit(api, { env: 'prod' }, { ...ctx('/cup/'), loc: { pathname: '/cup/', search: '?oficina&day=3&notif=day', hostname: 'juegosdesalon.cl' }, hist });
+  assert.deepEqual(api.calls.at(-1).changes['aviso/dia'], INC, 'en el panel, con su clave de siempre');
+  assert.equal(hist.url, '/cup/?oficina&day=3', 'contado, sale de la dirección');
+  // Un aviso de antes de D-266 (`&aviso=plazo`) se cuenta igual
+  await noteVisit(api, { env: 'prod' }, { ...ctx('/cup/'), loc: { pathname: '/cup/', search: '?oficina&dia=3&aviso=plazo', hostname: 'juegosdesalon.cl' }, hist });
+  assert.deepEqual(api.calls.at(-1).changes['aviso/plazo'], INC);
+  assert.equal(hist.url, '/cup/?oficina&dia=3', 'y también sale de la dirección');
   await noteVisit(api, { env: 'prod' }, { ...ctx('/cup/'), loc: { pathname: '/cup/', search: '?pwa', hostname: 'juegosdesalon.cl' } });
   assert.deepEqual(api.calls.at(-1).changes['pwa/android'], INC);
   // El panel no es tráfico
@@ -381,13 +386,17 @@ assert.equal(dispositivoDe({ ua: 'Mozilla/5.0 (Macintosh)', platform: 'MacIntel'
 
 {
   // D-233: qué aviso abrió la página y si la abrió la app instalada
-  assert.equal(avisoDe('?pirata&dia=3&aviso=plazo'), 'plazo');
-  assert.equal(avisoDe('?aviso=otro'), '', 'solo los tipos que manda avisar.mjs');
+  assert.equal(avisoDe('?pirata&day=3&notif=deadline'), 'plazo', 'en inglés en la URL, con la clave de siempre en el panel (D-266)');
+  assert.equal(avisoDe('?pirata&dia=3&aviso=plazo'), 'plazo', 'un aviso de antes de D-266');
+  assert.equal(avisoDe('?notif=final'), 'final');
+  assert.equal(avisoDe('?notif=otro'), '', 'solo los tipos que manda avisar.mjs');
+  assert.equal(avisoDe('?aviso=otro'), '');
   assert.equal(avisoDe(''), '');
   assert.equal(pwaDe('?pwa', 'Mozilla/5.0 (Linux; Android 14)'), 'android');
   assert.equal(pwaDe('?pwa', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_1 like Mac OS X)'), 'ios');
   assert.equal(pwaDe('?pwa', 'Mozilla/5.0 (Windows NT 10.0)'), 'otro');
   assert.equal(pwaDe('?K7Q2X', 'Android'), '');
+  assert.equal(sinMarcas('?pirata&day=3&notif=day'), '?pirata&day=3');
   assert.equal(sinMarcas('?pirata&dia=3&aviso=dia'), '?pirata&dia=3');
   assert.equal(sinMarcas('?pwa'), '');
   assert.equal(sinMarcas('?K7Q2X&lang=pt'), '?K7Q2X&lang=pt', 'sin marcas, queda igual');
@@ -397,6 +406,8 @@ assert.equal(dispositivoDe({ ua: 'Mozilla/5.0 (Macintosh)', platform: 'MacIntel'
 }
 
 // Los avisos de Uno al día se cuentan aparte, con `uad` pegado (D-230)
+assert.equal(avisoDe('?notif=dailyday'), 'uaddia');
+assert.equal(avisoDe('?notif=dailybye'), 'uadadios');
 assert.equal(avisoDe('?aviso=uaddia'), 'uaddia');
 assert.equal(avisoDe('?aviso=uad-dia'), '', 'con guion, no: las reglas piden solo letras');
 

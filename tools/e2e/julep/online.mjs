@@ -59,8 +59,8 @@ console.log('sala:', code, '| pantalla de A:', await pantalla(A));
 for (const [rol, dev] of [['B', B], ['C', C]]) {
   const host = hosts[rol === 'B' ? 1 : 2];
   // Entra por el enlace de invitación, que es como llega de verdad
-  await dev.go(`${host}/julep/?sala=${code}`); await dev.evaluate(`localStorage.clear(); 1`);
-  await dev.go(`${host}/julep/?sala=${code}`); await sleep(1200);
+  await dev.go(`${host}/julep/?room=${code}`); await dev.evaluate(`localStorage.clear(); 1`);
+  await dev.go(`${host}/julep/?room=${code}`); await sleep(1200);
   await setName(dev, NOMBRE[rol]);
   await dev.evaluate(`[...document.querySelectorAll('#setup-actions .btn')].find(x=>/Unirse|Join|Entrar/i.test(x.textContent)).click(); 1`);
   await sleep(4500);
@@ -111,7 +111,7 @@ while (vueltas++ < 500) {
   const vb = await vista(B);
   if (!reconectado && vb.mano === 1 && vb.phase === 'baza') {
     reconectado = true;
-    await B.go(`${hosts[1]}/julep/?sala=${code}`); await sleep(9000);   // entrar a la sala tiene tope de 12 s
+    await B.go(`${hosts[1]}/julep/?room=${code}`); await sleep(9000);   // entrar a la sala tiene tope de 12 s
     const ahora = await vista(B);
     console.log('B recargó →', await pantalla(B), '· mano', ahora.mano, '· sus cartas:', (ahora.mias || []).join(' ') || '⚠️ perdió su mano');
     // Si no volvió a la mesa, lo primero que hay que saber es si la partida quedó guardada
