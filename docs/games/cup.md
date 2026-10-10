@@ -169,8 +169,8 @@ por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
   mismo del prototipo de `/labs/case/` (D-256). Veinte sospechosos en una grilla de 4 × 5, inocentes
   o criminales; cada uno que se marca bien da su pista, y las pistas siempre dicen la verdad. Nunca
   hay que adivinar: el motor (`games/case/engine.js`) simula al jugador y arma las pistas para que en
-  todo momento alguien más se pueda deducir, y marcar antes de tiempo no se acepta ni cuenta (no se
-  guarda como jugada). **100 puntos con el caso resuelto, menos 10 por error, hasta 10**; sin
+  todo momento alguien más se pueda deducir. Marcar antes de tiempo no se acepta y cuenta como error
+  (se guarda como jugada `{ i, v, falta }`, D-261), sin decir si estaba bien. **100 puntos con el caso resuelto, menos 10 por error, hasta 10**; sin
   resolver, 0. Las pistas son datos (`{ t, a, b, k, g, h }`) y la frase la arma `texto()` en el
   idioma de quien juega, con las plantillas de `casoTexto` en `rules.js`: el caso es el mismo en los
   cuatro idiomas. La antesala muestra cartas de espaldas que se dan vuelta solas mientras una lupa
@@ -181,7 +181,8 @@ por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
   `/case/` (el botón 🔍 de `/labs/` abre `/case/?labs`; el prototipo queda de segundo botón) y en la
   práctica del laboratorio, pero **todavía no está en `POZO`**: una copa no lo elige hasta que salga
   del laboratorio. Los mensajes de acierto y de error se van solos (2,5 s y 4 s, excepción a C-8b anotada en
-  [case.md](case.md)). Su habilidad es `deducir`, la misma de Toque y Fama, para que el sorteo del
+  [case.md](case.md)). Suma condicionales y parejas, y de cada semilla se queda con el más difícil de cuatro casos
+  (`dificultad`, D-260). Su habilidad es `deducir`, la misma de Toque y Fama, para que el sorteo del
   calendario no los ponga en días seguidos.
   **Las pistas se eligen para que haya que combinarlas** (D-259): `notaPista` premia la que destapa
   a alguien solo junto con las que ya se saben, castiga la que lo dice todo sola y prefiere las
