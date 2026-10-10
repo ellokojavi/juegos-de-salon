@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.144.0 — 2026-10-10
+- **🔍 El caso, en un solo lugar** (D-267): `juegosdesalon.cl/labs/case/` es el juego completo, en
+  los cuatro idiomas, y el prototipo se va. Sin elegir nada es el caso del día, el mismo para todos;
+  al recargar sigue donde ibas; al terminar se comparte el mismo caso, se juega otro o el de hoy, y
+  se deja un comentario. `/case/` lleva ahí.
+
 ## 0.143.0 — 2026-10-10
 - **🔗 Los links, en inglés** (C-18, D-266): además de las carpetas, los parámetros y sus valores.
   Una sala es `?room=ABCD`, una partida repetible `?seed=K7Q2X`, el modo de prueba `?test`, Uno al

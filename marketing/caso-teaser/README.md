@@ -58,6 +58,11 @@ node marketing/caso-teaser/render.mjs --fotos /tmp/fotos --tiempos 0.4,1.25,2.4,
 
 ## Trampas conocidas
 
+- **La v1 muestra el prototipo, que se borró (D-267):** `/labs/case/` es ahora el juego de La Copa y
+  `capturar.mjs` busca la pantalla del prototipo (`.persona`, `__caso`), así que no sirve tal cual.
+  Para una v2: pasar por la antesala (`#btn-empezar`) y la cuenta, y usar `.cs-persona`,
+  `#btn-inocente`/`#btn-criminal` y `.cs-pista`, como `tools/e2e/case/lab.mjs`.
+
 - **Playwright sin su Chrome:** si `navegador.mjs` dice que falta el ejecutable, se le pasa uno con
   `CHROME=` (por ejemplo el `chrome-headless-shell` de `~/Library/Caches/ms-playwright/`) y
   `PLAYWRIGHT=$(npm root -g)/playwright/index.mjs`.

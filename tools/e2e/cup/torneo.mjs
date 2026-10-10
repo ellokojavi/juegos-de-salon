@@ -631,7 +631,7 @@ if (corre('laboratorio')) {
   await b.go(`${SITIO}/labs/`, 1500);
   // En el laboratorio queda solo lo que no ha salido: El caso (D-262)
   ok(await ev(`[...document.querySelectorAll('section.seccion')].map(x => x.id).join()`) === 'seccion-caso'
-    && await ev(`document.getElementById('btn-caso').getAttribute('href')`) === '../case/?labs', 'el laboratorio ofrece solo El caso, que abre su página');
+    && await ev(`document.getElementById('btn-caso').getAttribute('href')`) === 'case/', 'el laboratorio ofrece solo El caso, que abre /labs/case/ (D-267)');
   await b.shot('10-labs');
   // Un link de antes de D-266, con los parámetros en español: llega igual, y en inglés
   await b.go(`${BASE}?practica=tango&prueba&labs&semilla=KQRST`, 1500); await preparar();
