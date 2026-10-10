@@ -353,6 +353,8 @@ body.pantalla-completa .topbar { position: fixed; z-index: 3; margin: 0;
 body.pantalla-completa .topbar .back, body.pantalla-completa .topbar .tools > * { box-shadow: 0 4px 14px rgba(0,0,0,0.35); }
 body.pantalla-completa .topbar .back { background: rgba(21,7,38,0.75); }
 body.pantalla-completa .topbar .tools .chip { display: none; }
+/* El chip de un juego del laboratorio, junto a "‹ Laboratorio": bajo 400 px, solo el emoji (U-12) */
+@media (max-width: 400px) { .topbar .chip-txt--lab { display: none; } }
 body.pantalla-completa #screen-jugar.active { animation: none; position: fixed; inset: 0; z-index: 2; pointer-events: none; gap: 8px;
   padding: calc(var(--safe-top) + 12px + 44px + 10px) calc(16px + env(safe-area-inset-right, 0px)) calc(var(--safe-bottom) + 16px) calc(16px + env(safe-area-inset-left, 0px)); }
 body.pantalla-completa #jugar-body, body.pantalla-completa .donde-juego { display: contents; }

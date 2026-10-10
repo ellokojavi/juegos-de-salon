@@ -68,7 +68,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216 |
-| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264 |
+| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268 |
 | Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249 |
 | Marketing | `marketing/README.md` | D-178 |
@@ -4447,7 +4447,7 @@ leer la base antes de dibujarse, y el orden cambiaría solo de un día a otro).
 lo pide. Un juego nuevo que no está en la lista va después de los que sí.
 
 ## D-256 · El caso: un prototipo de misterio en el laboratorio, solo en español
-**Fecha:** 2026-10-09 · **Estado:** corregida por D-261, D-264 · **Relación:** excepción a C-3 (idiomas) y C-2 (estructura); ampliada por D-257 (la versión de La Copa)
+**Fecha:** 2026-10-09 · **Estado:** reemplazada por D-261, D-264, D-267 · **Relación:** excepción a C-3 (idiomas) y C-2 (estructura); ampliada por D-257 (la versión de La Copa); D-261 y D-264 corrigieron partes de sus reglas, y D-267 borró el prototipo
 **Decisión:** Se prueba en `/labs/case/` un juego de deducción al estilo de *Clues by Sam*: veinte
 sospechosos, pistas que siempre dicen la verdad, y nunca hay que adivinar. Solo en español y fuera de
 `games.js`, para mostrárselo a amigos. Hay un caso del día (la semilla es la fecha) y casos con código
@@ -4465,7 +4465,7 @@ propia sección. Si entra, pasa a `cup/games/` con su id y esta página se va. V
 [docs/games/case.md](games/case.md).
 
 ## D-257 · El caso como juego de La Copa, en el laboratorio y en los cuatro idiomas
-**Fecha:** 2026-10-09 · **Estado:** vigente · **Relación:** amplía D-256
+**Fecha:** 2026-10-09 · **Estado:** corregida por D-267 · **Relación:** amplía D-256
 **Decisión:** El caso pasa a ser un juego de La Copa (`public/cup/games/case/`, id `caso`, 🔍): se
 juega suelto en `/case/` (con `labs: true` en `SUELTOS`, así que tiene página y tarjeta pero no sale
 en la portada) y en la práctica del laboratorio, pero **no entra a `POZO`** hasta que el dueño lo
@@ -4608,7 +4608,7 @@ grilla lo estaba haciendo por el jugador.
 `juegos.test.mjs`, `sujetos()`.
 
 ## D-265 · El caso del laboratorio termina con un formulario para comentar
-**Fecha:** 2026-10-10 · **Estado:** vigente · **Relación:** amplía D-256; reusa el formulario de D-191 y el envío de D-104
+**Fecha:** 2026-10-10 · **Estado:** corregida por D-267 · **Relación:** amplía D-256; reusa el formulario de D-191 y el envío de D-104
 **Decisión:** El final del prototipo de El caso (`/labs/case/`) suma, debajo de los botones, el
 formulario "🐞 ¿Qué te pareció?", abierto en la página y no detrás de un botón. Es el mismo de los
 comentarios del laboratorio del alemán, que pasa a ser `formularioComentario()` en `labs-idioma.js`
@@ -4665,3 +4665,34 @@ juegos, y además busca en `public/` y `tools/push/` una URL armada con un nombr
 nombres de las variables del código siguen en español: la regla es sobre lo que se ve en la URL.
 Las páginas puente no cambian (pasan la búsqueda tal cual y la página nueva la traduce), ni el
 `?juego=` de `tools/release/og/tarjeta.html`, que es una herramienta y no una página del sitio.
+
+## D-267 · El caso se prueba en un solo lugar: /labs/case/, con el juego completo
+**Fecha:** 2026-10-10 · **Estado:** vigente · **Relación:** reemplaza el prototipo de D-256; corrige D-257 (dónde vive), D-265 (el comentario va en la pantalla de La Copa)
+**Decisión:** El caso tiene una sola versión para probar: `https://juegosdesalon.cl/labs/case/`, la
+pantalla de La Copa (portada, prueba, 3, 2, 1, juego, ayuda, resultado con su desglose, en los
+cuatro idiomas). El prototipo de `/labs/case/` se borra y lo que solo él tenía pasa al juego:
+- **El caso del día:** sin semilla en el link se juega el del día, el mismo para todos
+  (`semillaDel(fecha)`), y el link queda limpio; la antesala lo dice.
+- **Sigue donde iba al recargar:** las jugadas y el tiempo por caso, en el celular, sin repetir la cuenta.
+- **El final:** compartir lleva la semilla (quien lo recibe juega el mismo caso, también al día
+  siguiente), "🔍 Otro caso" abre uno al azar, "📅 El caso de hoy" vuelve al del día y el formulario
+  "¿Qué te pareció?" va abierto al final de todo juego que se juega desde el laboratorio.
+Lo activa `diario: true` en `games.js`. Los juegos del laboratorio viven en `/labs/<slug>/`
+(`games.js` arma el `path`) y `/<slug>/` queda como página puente hasta que salgan (`og.mjs`).
+**Por qué:** lo pidió el dueño: "No quiero dos versiones de prueba para testear el juego, el caso."
+Con dos, los amigos probaban cosas distintas y lo que se arreglaba en una no se veía en la otra.
+**Consecuencias:** `tools/e2e/case/lab.mjs` prueba la página nueva entera. Al salir del
+laboratorio se saca `labs: true` y la página pasa a `/case/`; `diario` puede quedarse.
+
+## D-268 · En el laboratorio, el link al comentario va al final de cada vista
+**Fecha:** 2026-10-10 · **Estado:** vigente · **Relación:** amplía D-265 y D-267
+**Decisión:** Un juego que se juega desde el laboratorio (hoy El caso, en `/labs/case/`) termina
+cada vista con "💬 Dejar un comentario": la antesala (con la portada), la prueba y el juego. Abre
+el formulario de comentarios en una capa (`abrirComentario` de `labs-idioma.js`) con el juego, la
+semilla y la vista. Durante la cuenta del 3, 2, 1 no está. En el resultado el formulario va abierto
+y es lo último de la pantalla, debajo de "Volver al laboratorio".
+**Por qué:** lo pidió el dueño: que quien prueba pueda comentar en cualquier momento, sin esperar
+a terminar, pero sin estorbar la cuenta.
+**Consecuencias:** `tools/e2e/case/lab.mjs` prueba que esté al final de la antesala y del juego, que
+no esté en la cuenta, que abra y cierre la capa, y que el formulario sea lo último del resultado.
+

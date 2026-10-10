@@ -646,6 +646,9 @@ const ES = {
   casoAyuda: 'Ayuda (−{n} puntos)', casoAyudaSure: 'Toca de nuevo para usar la ayuda (−{n})', casoAyudaVer: 'Ver la ayuda',
   casoMira: 'Mira a {x}: junta lo que dicen {q}.', casoMiraUna: 'Mira a {x}: fíjate en lo que dice {q}.',
   casoMiraVarias: 'Mira a {x}: hay que juntar varias pistas.', casoCuenta: 'Errores: {e} · Ayudas: {a}',
+  casoDelDia: "El caso de hoy es el mismo para todos. Mañana hay otro.", casoOtro: "🔍 Otro caso", casoDeHoy: "El caso de hoy",
+  // El comentario al final de un juego del laboratorio (D-265, D-267)
+  comentario: { abrir: "💬 Dejar un comentario", cancelar: "Cancelar", cerrar: "Cerrar", titulo: "¿Qué te pareció?", lead: "Cuéntanos qué te costó, qué te gustó o qué cambiarías. También si algo falló o no se entendía.", ph: "Por ejemplo: me trabé con una pista; la ayuda me sirvió.", nombre: "Tu nombre (opcional)", enviar: "Enviar comentario", enviando: "Enviando…", vacio: "Escribe algo primero.", gracias: "¡Gracias! 🙌 Tu comentario llegó.", guardado: "Ahora no hay internet: tu comentario quedó en el celular y se envía solo después.", error: "No se pudo enviar. Prueba de nuevo en un rato.", contexto: "Lo que se envía junto" },
   bdCasoAyudas: 'Pediste {n} ayudas, a 15 puntos cada una: se restan {pts} puntos.', bdCasoAyudasOne: 'Pediste 1 ayuda, que resta 15 puntos.',
   casoTexto: {
     grupo: {
@@ -1421,6 +1424,9 @@ const EN = {
   casoAyuda: 'Hint (−{n} points)', casoAyudaSure: 'Tap again to use the hint (−{n})', casoAyudaVer: 'See the hint',
   casoMira: 'Look at {x}: put together what {q} say.', casoMiraUna: 'Look at {x}: check what {q} says.',
   casoMiraVarias: 'Look at {x}: you need to put several clues together.', casoCuenta: 'Mistakes: {e} · Hints: {a}',
+  casoDelDia: "Today's case is the same for everyone. A new one tomorrow.", casoOtro: "🔍 Another case", casoDeHoy: "Today's case",
+  // El comentario al final de un juego del laboratorio (D-265, D-267)
+  comentario: { abrir: "💬 Leave a comment", cancelar: "Cancel", cerrar: "Close", titulo: "What did you think?", lead: "Tell us what was hard, what you liked or what you'd change. Also if something broke or didn't make sense.", ph: "For example: I got stuck on a clue; the hint helped.", nombre: "Your name (optional)", enviar: "Send comment", enviando: "Sending…", vacio: "Write something first.", gracias: "Thanks! 🙌 Your comment arrived.", guardado: "No internet right now: your comment is saved on your phone and will be sent later.", error: "Couldn't send it. Try again in a bit.", contexto: "What gets sent with it" },
   bdCasoAyudas: 'You asked for {n} hints, at 15 points each: {pts} points off.', bdCasoAyudasOne: 'You asked for 1 hint, which takes off 15 points.',
   casoTexto: {
     grupo: {
@@ -2193,6 +2199,9 @@ const PT = {
   casoAyuda: 'Ajuda (−{n} pontos)', casoAyudaSure: 'Toque de novo para usar a ajuda (−{n})', casoAyudaVer: 'Ver a ajuda',
   casoMira: 'Olhe para {x}: junte o que dizem {q}.', casoMiraUna: 'Olhe para {x}: veja o que diz {q}.',
   casoMiraVarias: 'Olhe para {x}: é preciso juntar várias pistas.', casoCuenta: 'Erros: {e} · Ajudas: {a}',
+  casoDelDia: "O caso de hoje é o mesmo para todos. Amanhã tem outro.", casoOtro: "🔍 Outro caso", casoDeHoy: "O caso de hoje",
+  // El comentario al final de un juego del laboratorio (D-265, D-267)
+  comentario: { abrir: "💬 Deixar um comentário", cancelar: "Cancelar", cerrar: "Fechar", titulo: "O que você achou?", lead: "Conte o que foi difícil, do que gostou ou o que mudaria. Também se algo falhou ou não deu para entender.", ph: "Por exemplo: travei numa pista; a ajuda me serviu.", nombre: "Seu nome (opcional)", enviar: "Enviar comentário", enviando: "Enviando…", vacio: "Escreva algo primeiro.", gracias: "Obrigado! 🙌 Seu comentário chegou.", guardado: "Sem internet agora: seu comentário ficou no celular e será enviado depois.", error: "Não deu para enviar. Tente de novo daqui a pouco.", contexto: "O que vai junto" },
   bdCasoAyudas: 'Você pediu {n} ajudas, a 15 pontos cada: saem {pts} pontos.', bdCasoAyudasOne: 'Você pediu 1 ajuda, que tira 15 pontos.',
   casoTexto: {
     grupo: {
@@ -2965,6 +2974,9 @@ const DE = {
   casoAyuda: 'Tipp (−{n} Punkte)', casoAyudaSure: 'Tippe nochmal für den Tipp (−{n})', casoAyudaVer: 'Tipp ansehen',
   casoMira: 'Schau dir {x} an: Kombiniere, was {q} sagen.', casoMiraUna: 'Schau dir {x} an: Lies, was {q} sagt.',
   casoMiraVarias: 'Schau dir {x} an: Du musst mehrere Hinweise kombinieren.', casoCuenta: 'Fehler: {e} · Tipps: {a}',
+  casoDelDia: "Der Fall von heute ist für alle gleich. Morgen gibt es einen neuen.", casoOtro: "🔍 Neuer Fall", casoDeHoy: "Der Fall von heute",
+  // El comentario al final de un juego del laboratorio (D-265, D-267)
+  comentario: { abrir: "💬 Kommentar schreiben", cancelar: "Abbrechen", cerrar: "Schließen", titulo: "Wie fandest du es?", lead: "Erzähl uns, was schwer war, was dir gefallen hat oder was du ändern würdest. Auch, wenn etwas nicht ging oder unklar war.", ph: "Zum Beispiel: Bei einem Hinweis kam ich nicht weiter; der Tipp hat geholfen.", nombre: "Dein Name (optional)", enviar: "Kommentar senden", enviando: "Wird gesendet …", vacio: "Schreib erst etwas rein.", gracias: "Danke! 🙌 Dein Kommentar ist angekommen.", guardado: "Gerade kein Netz: Dein Kommentar ist auf dem Handy gespeichert und wird später automatisch gesendet.", error: "Das hat nicht geklappt. Versuch es gleich nochmal.", contexto: "Das wird mitgeschickt" },
   bdCasoAyudas: 'Du hast {n} Tipps genommen, je 15 Punkte: Das kostet {pts} Punkte.', bdCasoAyudasOne: 'Du hast 1 Tipp genommen, der 15 Punkte kostet.',
   casoTexto: {
     grupo: {
