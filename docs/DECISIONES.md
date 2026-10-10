@@ -4607,6 +4607,18 @@ grilla lo estaba haciendo por el jugador.
 **Consecuencias:** `tools/e2e/case/lab.mjs` prueba que se ilumine exactamente a quienes nombra;
 `juegos.test.mjs`, `sujetos()`.
 
+## D-265 · El caso del laboratorio termina con un formulario para comentar
+**Fecha:** 2026-10-10 · **Estado:** vigente · **Relación:** amplía D-256; reusa el formulario de D-191 y el envío de D-104
+**Decisión:** El final del prototipo de El caso (`/labs/case/`) suma, debajo de los botones, el
+formulario "🐞 ¿Qué te pareció?", abierto en la página y no detrás de un botón. Es el mismo de los
+comentarios del laboratorio del alemán, que pasa a ser `formularioComentario()` en `labs-idioma.js`
+(la capa del 🐞 lo usa igual), y manda a `feedback/` el texto, el nombre opcional y el caso con sus
+errores, ayudas y tiempo.
+**Por qué:** lo pidió el dueño, para que los amigos que lo prueban comenten. Recién terminado es
+cuando más se acuerdan de dónde se trabaron.
+**Consecuencias:** se lee con `node tools/firebase/reportes.mjs`. `tools/e2e/case/lab.mjs` lo
+prueba con el envío interceptado, sin escribir en Firebase.
+
 ## D-266 · Las URL, en inglés: carpetas, parámetros y sus valores
 **Fecha:** 2026-10-10 · **Estado:** vigente · **Relación:** sigue a D-192 (las carpetas) y D-214 (`?type=`); corrige D-29, D-100, D-110, D-142, D-164, D-207, D-208, D-229, D-230, D-233 y D-239 (el nombre de sus parámetros)
 **Decisión:** Todo lo que se ve en una dirección va en inglés: las carpetas (ya desde D-192), los

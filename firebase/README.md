@@ -180,7 +180,8 @@ El dueño (su UID) puede escribir y borrar en todas estas ramas, para moderar.
 
 ## Reportes (`feedback`)
 
-El botón 🐞 de La Copa (D-101, D-104) escribe en `feedback/<id>` **por REST y sin cuenta**:
+El botón 🐞 de La Copa (D-101, D-104), el del laboratorio de un idioma (D-191) y el "¿Qué te
+pareció?" del final de El caso del laboratorio (D-265) escriben en `feedback/<id>` **por REST y sin cuenta**:
 `texto` (hasta 1000 caracteres), `nombre` opcional, `contexto` (JSON, hasta 500), `v` y `at` del
 servidor. Se escribe una sola vez y **se lee sin cuenta**: `node tools/firebase/reportes.mjs` los muestra
 (`--dias 3` para los recientes). No llevan PIN ni datos de la cuenta.
