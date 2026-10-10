@@ -1802,7 +1802,7 @@ function antesDeJugar(d) {
       el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, puntajeTexto(J))),
     el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.wildTitle), comodin),
     JUEGOS[id].ensayo ? [el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-ensayo', onClick: () => { SFX.tap(); ensayo(d); } }, `🧪 ${T.tryFirst}`),
-      el('p', { class: 'muted center', id: 'nota-ensayo', style: 'margin:0' }, T.trialNote)] : null,
+      el('p', { class: 'muted center', id: 'nota-ensayo', style: 'margin:0' }, notaPrueba(id))] : null,
     el('p', { class: 'muted center' }, T.startWarn), err, empezar,
     el('button', { class: 'btn btn--ghost btn--sm', onClick: () => { SFX.tap(); tablero(); } }, T.toBoard)));
 }
@@ -1830,6 +1830,9 @@ const avisoPalabras = meta => (palabrasDe(meta) === LANG ? null
 /** Lo de arriba de la antesala: la portada animada del juego si la tiene (el globo de ¿Dónde queda?), si no su emoji. */
 const heroe = (id, J) => JUEGOS[id]?.portada?.() ?? el('span', { class: con('icon', J.emoji) }, J.emoji);
 
+/** Lo que dice la antesala de la prueba: en El caso no es más corta, es un caso completo. */
+const notaPrueba = id => (JUEGOS[id]?.pruebaCompleta ? T.trialNoteFull : T.trialNote);
+
 /** El nombre del juego en la antesala: el suyo si lo trae (El caso: la lupa y los colores, D-257), si no el de siempre. */
 const tituloAntesala = (id, J) => JUEGOS[id]?.titulo?.({ el, J }) ?? el('h2', { class: 'display display--lg' }, J.nombre);
 
@@ -1852,7 +1855,7 @@ function panelReglas(id, { copa = true, prueba = false } = {}) {
   poner(caja, el('details', { class: 'panel reglas', id: 'reglas' },
     el('summary', {}, `📖 ${fmt(T.rulesOf, { juego: J.nombre })}`),
     // En la sesión de prueba de un día, que es más corta y no cuenta
-    prueba ? el('p', { class: 'muted', id: 'nota-ensayo' }, T.trialNote) : null,
+    prueba ? el('p', { class: 'muted', id: 'nota-ensayo' }, notaPrueba(id)) : null,
     dibujo(id),
     el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
     id === 'final' ? [el('p', { class: 'lead' }, T.finalRounds),
