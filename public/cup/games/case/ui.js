@@ -4,7 +4,7 @@
  * tocar una pista ilumina a las personas de las que habla.
  *
  * Las jugadas son los intentos de marcar que cuentan: `{ i, v }` (acierto o error). Un intento de
- * antes de tiempo no se guarda: no cuenta y no dice si estaba bien.
+ * antes de tiempo se guarda como `{ i, v, falta: 1 }`: cuenta como error y no dice si estaba bien (D-261).
  *
  * `portada()` es la portada animada de la antesala: cartas de espaldas que se dan vuelta solas
  * mientras una lupa las recorre.
