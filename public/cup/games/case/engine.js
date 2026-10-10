@@ -327,7 +327,8 @@ function repartir(caso, r) {
     for (const p of candidatas) {
       // Una pista sobre uno mismo no aporta: se sabe lo que es quien habla
       if (p.a.length === 1 && p.a[0] === i) continue;
-      if (p.g?.tipo === 'dos' && (p.g.de === i || p.g.otro === i)) continue;
+      // "Exactamente uno de Ana y Beto" con Ana ya sabida es decir lo que es Beto: una pista directa disfrazada
+      if (p.g?.tipo === 'dos' && (x[p.g.de] !== -1 || x[p.g.otro] !== -1 || p.g.de === i || p.g.otro === i)) continue;
       const d = deducibles([...dadas, p], x);
       if (!d) continue;
       const nota = notaPista(p, d, x, necesita) + r() * 0.5;
@@ -359,6 +360,7 @@ function repartir(caso, r) {
       let mejor = null, mejorComb = 0;
       for (const p of barajar(pistasVerdaderas(caso, v, r), r).slice(0, 40)) {
         if (p.a.length === 1 && p.a[0] === ultima) continue;
+        if (p.g?.tipo === 'dos' && (x[p.g.de] !== -1 || x[p.g.otro] !== -1)) continue;
         const lista = dadas.slice(); lista[idx] = p;
         const ks = Object.keys(deducibles(lista, x) || {}).map(Number);
         if (!ks.length) continue;
