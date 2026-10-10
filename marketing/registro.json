@@ -71,6 +71,44 @@
         "tango",
         "desenredo"
       ]
+    },
+    {
+      "id": "caso-teaser",
+      "tipo": "video",
+      "titulo": "Teaser de El caso (invitación a probarlo)",
+      "carpeta": "marketing/caso-teaser/",
+      "memoria": "marketing/caso-teaser/README.md",
+      "version": 1,
+      "fecha": "2026-10-10",
+      "idioma": "es",
+      "app": "0.142.2",
+      "archivos": [
+        {
+          "ruta": "marketing/caso-teaser/output/el-caso-6s.mp4",
+          "formato": "9:16",
+          "ancho": 1080,
+          "alto": 1920,
+          "segundos": 6.0,
+          "uso": "WhatsApp, estados, redes"
+        },
+        {
+          "ruta": "marketing/caso-teaser/output/el-caso-6s.gif",
+          "formato": "9:16",
+          "ancho": 540,
+          "alto": 960,
+          "segundos": 6.0,
+          "uso": "GIF para WhatsApp"
+        }
+      ],
+      "fuente": "marketing/caso-teaser/teaser.html",
+      "construir": "marketing/caso-teaser/construir.sh",
+      "juegos": [
+        "caso"
+      ],
+      "seleccion": true,
+      "laboratorio": [
+        "caso"
+      ]
     }
   ]
 }
