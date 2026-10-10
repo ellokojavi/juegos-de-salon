@@ -178,8 +178,8 @@ por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
   mueven (`titulo()`, un gancho opcional de `games/index.js` que la antesala y la práctica usan si
   el juego lo trae; los demás muestran su nombre como siempre). Las cartas del tablero se dan vuelta
   recién cuando la cuenta del 3, 2, 1 se fue del documento, no mientras la tapa. Se juega suelto en
-  `/case/` (el botón 🔍 de `/labs/` abre `/case/?labs`; el prototipo queda de segundo botón) y en la
-  práctica del laboratorio, pero **todavía no está en `POZO`**: una copa no lo elige hasta que salga
+  `/case/` (el botón 🔍 de `/labs/` abre `/case/?labs`; el prototipo queda de segundo botón; desde D-262
+  es lo único del laboratorio), pero **todavía no está en `POZO`**: una copa no lo elige hasta que salga
   del laboratorio. Los mensajes de acierto y de error se van solos (2,5 s y 4 s, excepción a C-8b anotada en
   [case.md](case.md)). Suma condicionales y parejas, y de cada semilla se queda con el más difícil de cuatro casos
   (`dificultad`, D-260). Su habilidad es `deducir`, la misma de Toque y Fama, para que el sorteo del
