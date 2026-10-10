@@ -241,6 +241,9 @@ export function montar(raiz, ctx) {
     const r = motor.intento(p, jugadas, i, v);
     const vars = { x: nombre(i), v: v ? criminal(i) : T.casoInocente };
     if (r === 'falta') {
+      // Cuenta como error (D-261), pero no dice si lo que se marcó estaba bien
+      jugadas.push({ i, v, falta: 1 });
+      ctx.guardar(jugadas);
       mensaje = { tipo: 'falta', texto: fmt(T.casoFalta, vars) };
       caducar(mensaje, 4000);
       SFX.error(); vibrate([20, 30, 20]);
