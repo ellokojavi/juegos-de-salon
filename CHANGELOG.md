@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.138.1 — 2026-10-09
+- **🔍 El caso, con toda la experiencia en el laboratorio** (D-257): el botón de El caso en `/labs/`
+  abre el juego de La Copa, con su portada animada, la prueba, el 3, 2, 1, el juego y el resultado
+  con su desglose. El caso del día del prototipo queda como segundo botón.
+
 ## 0.138.0 — 2026-10-09
 - **🔍 El caso, listo como juego de La Copa** (D-257), por ahora en el laboratorio: en español,
   inglés, portugués y alemán, con su portada animada en la antesala (cartas que se dan vuelta solas y
