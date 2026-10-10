@@ -60,5 +60,15 @@ export function rutaA(sec, args = [], { r = null, e = null, rDefecto = null, eDe
   return `#${camino}${q.toString() ? `?${q}` : ''}`;
 }
 
+/**
+ * Una dirección de antes, en inglés (`#/torneo/OFICI?r=30d` → `#/cup/OFICI?r=30d`), con el rango y
+ * el entorno tal como vienen: el panel la deja así en la barra al abrir (C-18, D-266). Vacía si no hay `#`.
+ */
+export function rutaEnIngles(hash = '') {
+  if (!String(hash).replace(/^#/, '')) return '';
+  const { sec, args, r, e } = leerRuta(hash);
+  return rutaA(sec, args, { r, e });
+}
+
 /** La sección que la navegación marca para una ruta: la ficha de un juego es parte de Juegos. */
 export const seccionDe = ruta => FICHAS[ruta.sec] || ruta.sec;
