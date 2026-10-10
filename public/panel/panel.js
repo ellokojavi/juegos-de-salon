@@ -31,7 +31,7 @@ import {
   groupDays, localLog, paisesDeSalas, paisesDelRango, salaDe, mediana, idiomasDeSalas, idiomasDelRango, trafico, origenesAgrupados, origenLabel, dayLabel,
   avisosDelRango, AVISO_TIPOS, vueltaAtrasada, unoAlDiaDelRango, salud, TRAMOS, navegadorLabel,
 } from './aggregate.js';
-import { SECCIONES, leerRuta, rutaA, seccionDe } from './rutas.js';
+import { SECCIONES, leerRuta, rutaA, rutaEnIngles, seccionDe } from './rutas.js';
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -1201,6 +1201,7 @@ function render() {
 
 /** La URL cambió (un enlace, Atrás, una dirección pegada): se dibuja esa vista desde arriba. */
 function alCambiarRuta() {
+  enIngles();
   const antes = S.ruta;
   S.ruta = leerRuta(location.hash);
   if (S.ruta.r && S.ruta.r !== S.range && RANGOS.some(r => r.id === S.ruta.r)) cambiarRango(S.ruta.r, false);
@@ -1215,6 +1216,13 @@ function alCambiarRuta() {
   render();
   if (otra) window.scrollTo(0, 0);
 }
+
+/** Una dirección de antes (`#/torneo/OFICI`) queda escrita en inglés, sin sumar un paso (C-18, D-266). */
+function enIngles() {
+  const nueva = rutaEnIngles(location.hash);
+  if (nueva && nueva !== location.hash) try { history.replaceState(history.state, '', nueva); } catch (_) { /* queda como venía */ }
+}
+enIngles();
 
 /** Deja la URL al día con el rango y el entorno, sin sumar un paso al historial. */
 function anotarEnUrl() {
