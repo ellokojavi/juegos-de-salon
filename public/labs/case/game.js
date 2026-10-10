@@ -118,7 +118,7 @@ function renderMarcador() {
   $('#marcador').replaceChildren(
     el('span', {}, '✅ ', el('b', {}, `${P.marcas.length + 1}/${N}`)),
     el('span', {}, '✕ ', el('b', { id: 'errores' }, P.errores.length), P.errores.length === 1 ? ' error' : ' errores'),
-    P.ayudas.length ? el('span', {}, '💡 ', el('b', {}, P.ayudas.length), P.ayudas.length === 1 ? ' ayuda' : ' ayudas') : null,
+    P.ayudas.length ? el('span', {}, '💡 ', el('b', {}, P.ayudas.length), P.ayudas.length === 1 ? ' ayuda' : ' ayudas') : '',
     el('span', {}, '⏱ ', el('b', { id: 'reloj' }, mmss(tiempo()))),
   );
 }
