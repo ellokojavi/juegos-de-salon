@@ -676,7 +676,6 @@ input.fecha { width: 100%; min-height: 48px; border-radius: 12px; border: 1px so
 /* Las pistas: la última arriba y destacada; tocar una ilumina a quiénes nombra */
 .cs-pistas { display: grid; gap: 7px; }
 .cs-pistas h3 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 4px 4px 0; }
-.cs-pistas .ayuda { font-size: 0.8rem; font-weight: 700; color: var(--muted); margin: -4px 4px 0; }
 .cs-pista { display: grid; grid-template-columns: 1fr 44px; align-items: stretch; border-radius: 12px; background: rgba(0,0,0,0.25); border: 2px solid transparent; overflow: hidden; }
 .cs-pista .texto { text-align: left; padding: 10px 12px; border: 0; background: none; color: var(--ink); font: 700 1rem/1.4 var(--font-body); cursor: pointer; }
 .cs-pista .de { font-weight: 900; color: var(--cyan); }
@@ -694,3 +693,6 @@ input.fecha { width: 100%; min-height: 48px; border-radius: 12px; border: 1px so
   .cs-persona, .cs-persona .giro { transition: none; }
   .cs-persona.fallo, .cs-persona .giro, .cs-persona .frente, .cs-pista.entra { animation: none !important; }
 }
+/* El sello que cae al marcar empieza grande y, en una carta del borde, ensanchaba la página un
+   momento: la grilla lo recorta en el borde de la pantalla, no en el suyo (C-8) */
+.cs-juego { overflow-x: clip; margin-left: -16px; margin-right: -16px; padding-left: 16px; padding-right: 16px; }
