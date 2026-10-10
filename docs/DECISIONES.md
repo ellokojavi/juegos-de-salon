@@ -68,7 +68,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216 |
-| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259 |
+| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260 |
 | Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249 |
 | Marketing | `marketing/README.md` | D-178 |
@@ -4528,4 +4528,21 @@ tienen la misma dificultad; lo guardado en el prototipo pasa a `juegos-de-salon:
 prueba de La Copa no es más fácil**: es un caso completo, y la antesala lo dice (`trialNoteFull`, con
 `pruebaCompleta` en el registro). En una comparación, los dos grupos se iluminan en dos colores, amarillo
 y rosado, y la frase los pinta igual (#282). "Tantos como" no sale con cero y cero.
+
+## D-260 · El caso: condicionales, parejas y el más difícil de varios candidatos
+**Fecha:** 2026-10-10 · **Estado:** vigente · **Relación:** amplía D-259
+**Decisión:** El caso suma dos tipos de pista que solas no destapan a nadie y piden otro razonamiento:
+**condicionales** ("Si Óscar es criminal, Rodrigo es inocente", con sus cuatro combinaciones) y
+**parejas** ("Ana y Beto son los dos inocentes o los dos criminales"). Nunca nombran a quien habla ni a
+alguien que ya se sabe. El generador arma **4 casos por semilla y se queda con el que más hace pensar**
+(`dificultad`: jugado de punta a punta, suma por cada deducción que pide combinar pistas y resta por
+cada paso con varias personas deducibles a la vez). Al repartir, prefiere pistas que todavía no
+destapan a nadie, y si un paso destapa a muchos o todo sale de una sola pista, cambia la pista del
+último que habló.
+**Por qué:** el dueño lo sentía monótono aun después de D-259. Medido en 40 casos: las deducciones que
+piden combinar pistas pasan de 51 % a 55 %, las personas deducibles por paso bajan de 1,66 a 1,50 y
+una de cada siete pistas es condicional o pareja.
+**Consecuencias:** un caso tarda unos 300 ms en armarse (antes 50 ms); en un celular puede llegar a un
+segundo, y se arma mientras se va el "¡A jugar!". `juegos.test.mjs` exige al menos 45 % de
+deducciones combinadas. El caso de una semilla cambia (El caso todavía no está en `POZO`).
 
