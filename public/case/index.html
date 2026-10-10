@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#150726">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>El caso 🔍 · Juegos de Salón</title>
+  <!-- Generada por node tools/release/og.mjs tarjetas a partir de public/cup/suelto/index.html: no se edita a mano (D-162). -->
+  <!--
+    Sin destello de idioma (D-194): el HTML trae los textos en español y los módulos los cambian
+    al cargar. Si el idioma elegido es otro, la página no se pinta hasta que estén puestos: los
+    módulos corren antes de DOMContentLoaded. El tope de 1,5 s la muestra igual si algo falla.
+  -->
+  <script>
+    (function () {
+      try {
+        var u = (new URLSearchParams(location.search).get('lang') || '').toLowerCase();
+        var l = u || localStorage.getItem('juegos-de-salon:lang') || 'es';
+        if (l === 'es') return;
+        var h = document.documentElement, listo = function () { h.classList.remove('i18n-pendiente'); };
+        h.classList.add('i18n-pendiente');
+        document.addEventListener('DOMContentLoaded', listo);
+        setTimeout(listo, 1500);
+      } catch (_) { /* sin almacenamiento: se pinta como siempre */ }
+    })();
+  </script>
+  <!-- generado: og · lo reescribe node tools/release/og.mjs tarjetas -->
+  <meta name="description" content="Descubre quién es criminal entre 20 sospechosos. Las pistas nunca mienten. Un jugador, 5–10 min. Gratis, sin instalar y sin cuenta.">
+  <link rel="canonical" href="https://juegosdesalon.cl/case/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Juegos de Salón">
+  <meta property="og:url" content="https://juegosdesalon.cl/case/">
+  <meta property="og:title" content="El caso 🔍 · Juegos de Salón">
+  <meta property="og:description" content="Descubre quién es criminal entre 20 sospechosos. Las pistas nunca mienten. Un jugador, 5–10 min. Gratis, sin instalar y sin cuenta.">
+  <meta property="og:image" content="https://juegosdesalon.cl/assets/og/caso.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="El caso: Descubre quién es criminal entre 20 sospechosos. Las pistas nunca mienten.">
+  <meta property="og:locale" content="es_CL">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta property="og:locale:alternate" content="pt_BR">
+  <meta property="og:locale:alternate" content="de_DE">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="El caso 🔍 · Juegos de Salón">
+  <meta name="twitter:description" content="Descubre quién es criminal entre 20 sospechosos. Las pistas nunca mienten. Un jugador, 5–10 min. Gratis, sin instalar y sin cuenta.">
+  <meta name="twitter:image" content="https://juegosdesalon.cl/assets/og/caso.jpg">
+  <meta name="twitter:image:alt" content="El caso: Descubre quién es criminal entre 20 sospechosos. Las pistas nunca mienten.">
+  <!-- /generado -->
+  <link rel="manifest" href="../manifest.webmanifest">
+  <script>
+    // El manifest del idioma elegido, antes de que el navegador lo lea: cambiarlo después no siempre alcanza (D-222)
+    (function () {
+      try {
+        var l = (new URLSearchParams(location.search).get('lang') || localStorage.getItem('juegos-de-salon:lang') || '').toLowerCase();
+        var m = document.querySelector('link[rel="manifest"]');
+        if (m && /^(en|pt|de)$/.test(l)) m.href = m.href.replace(/manifest\.webmanifest$/, 'manifest.' + l + '.webmanifest');
+      } catch (_) { /* queda el del español */ }
+    })();
+  </script>
+  <link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+  <script src="../assets/js/vigia.js"></script>
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="../assets/css/linea.css">
+  <link rel="stylesheet" href="../assets/css/teclado.css">
+  <link rel="stylesheet" href="../cup/style.css">
+  <link rel="stylesheet" href="../assets/css/ranking.css">
+  <link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-title" content="Juegos de Salón">
+  <script type="module">import '../assets/js/instalable.js';</script>
+</head>
+<body data-suelto="caso">
+  <main class="app" id="app">
+    <div class="topbar">
+      <a class="back" href="../" id="btn-menu" data-i18n="menu">‹ Menú</a>
+      <div class="tools"><span class="chip" id="chip-juego"></span><span id="sound-slot"></span></div>
+    </div>
+
+    <!-- JUGAR -->
+    <section class="screen" id="screen-jugar">
+      <div class="jugar-head" id="jugar-head"></div>
+      <div id="jugar-body"></div>
+      <div id="jugar-reglas"></div>
+    </section>
+
+    <!-- RESULTADO -->
+    <section class="screen" id="screen-resultado">
+      <div class="stack" id="resultado-body"></div>
+    </section>
+
+    <!-- REPORTAR UN PROBLEMA O COMENTAR: el botón 🐞 del resultado lo abre aquí -->
+    <section class="screen" id="screen-reporte">
+      <div class="stack" id="reporte-body"></div>
+    </section>
+
+    <!-- CARGANDO O ERROR -->
+    <section class="screen" id="screen-espera">
+      <div class="stack center" id="espera-body"></div>
+    </section>
+  </main>
+
+  <div class="handoff" id="handoff" hidden></div>
+  <div class="cover" id="cover" hidden></div>
+  <script type="module">import '../cup/game.js';</script>
+</body>
+</html>

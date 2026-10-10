@@ -163,6 +163,18 @@ por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
   y el reloj sigue; está apagado mientras no se haya movido nada. Su habilidad es
   `espacial`, propia, para que el sorteo del calendario la pueda separar de Reinas, Zip y Tango.
 
+- **🔍 El caso** (D-257, en el laboratorio): un misterio de deducción al estilo de *Clues by Sam*, el
+  mismo del prototipo de `/labs/case/` (D-256). Veinte sospechosos en una grilla de 4 × 5, inocentes
+  o criminales; cada uno que se marca bien da su pista, y las pistas siempre dicen la verdad. Nunca
+  hay que adivinar: el motor (`games/case/engine.js`) simula al jugador y arma las pistas para que en
+  todo momento alguien más se pueda deducir, y marcar antes de tiempo no se acepta ni cuenta (no se
+  guarda como jugada). **100 puntos con el caso resuelto, menos 10 por error, hasta 10**; sin
+  resolver, 0. Las pistas son datos (`{ t, a, b, k, g, h }`) y la frase la arma `texto()` en el
+  idioma de quien juega, con las plantillas de `casoTexto` en `rules.js`: el caso es el mismo en los
+  cuatro idiomas. La antesala muestra cartas de espaldas que se dan vuelta solas mientras una lupa
+  las recorre (`portada()` de `games/case/ui.js`). Se juega suelto en `/case/` y en la práctica del
+  laboratorio, pero **todavía no está en `POZO`**: una copa no lo elige hasta que salga del
+  laboratorio. Su habilidad es `deducir`, la misma de Toque y Fama, para que el sorteo del calendario no los ponga en días seguidos.
 - **Línea y Año** usan temáticas distintas dentro de la misma copa (`temasDeLaCopa`), para que no
   sean dos días de lo mismo.
 - **Reinas, Zip y Tango** tienen solución única garantizada. Reinas ajusta las zonas de a una
@@ -276,7 +288,7 @@ Todo bajo `public/cup/`:
 | Archivo | Qué hace |
 |---|---|
 | `engine.js` | Calendario, ventanas con zona horaria, puntos, tabla, evolución, medallas, reloj activo |
-| `games/<carpeta>/engine.js` | Motor puro de cada juego (`connections`, `final`, `number`, `queens`, `tango`, `timeline`, `untangle`, `where`, `word`, `year`, `zip`), con sus datos propios al lado |
+| `games/<carpeta>/engine.js` | Motor puro de cada juego (`case`, `connections`, `final`, `number`, `queens`, `tango`, `timeline`, `untangle`, `where`, `word`, `year`, `zip`), con sus datos propios al lado |
 | `games/<carpeta>/ui.js` | La pantalla de cada juego |
 | `games/index.js` · `games/semilla.js` · `games/mazos.js` · `games/audiencia.js` · `games/solo.js` | Lo común a los juegos: el registro, la semilla, los mazos, el público y el modo suelto con su récord |
 | `store-firebase.js` · `store-local.js` | El mismo almacén contra Firebase o contra localStorage (`?prueba`) |
