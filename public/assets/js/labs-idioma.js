@@ -93,10 +93,13 @@ function contexto(idioma) {
 /** El formulario de comentarios, para un botón propio (la portada del laboratorio lo tiene). */
 export const abrirFeedback = () => abrir(TEXTOS[LABS_IDIOMA] || TEXTOS.de, LABS_IDIOMA || 'de');
 
-function abrir(T, idioma) {
+function abrir(T, idioma) { abrirComentario({ T, contexto: contexto(idioma) }); }
+
+/** El formulario de comentarios en una capa sobre la página: el 🐞 del laboratorio y el link al final de cada vista de un juego del laboratorio (D-268). */
+export function abrirComentario({ T, contexto: ctx }) {
   if (document.querySelector('.labs-capa')) return;
   let capa = null;
-  const caja = formularioComentario({ T, contexto: contexto(idioma), alCerrar: () => capa.remove() });
+  const caja = formularioComentario({ T, contexto: ctx, alCerrar: () => capa.remove() });
   caja.classList.add('labs-caja');
   caja.setAttribute('role', 'dialog');
   caja.setAttribute('aria-modal', 'true');

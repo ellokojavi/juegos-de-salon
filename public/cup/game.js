@@ -35,7 +35,7 @@ import { podioDe } from '../assets/js/records.js';
 import { crearAvisos } from './avisos.js';
 import { fechaLocal, juegoDel, semillaDel, anotar as anotarUnoAlDia, leer as leerUnoAlDia } from '../assets/js/uno-al-dia.js';
 import { tarjetaResultado, rutaHoy } from '../assets/js/uno-al-dia-ui.js';
-import { formularioComentario } from '../assets/js/labs-idioma.js';
+import { formularioComentario, abrirComentario } from '../assets/js/labs-idioma.js';
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
 trackVisit();
@@ -2206,6 +2206,7 @@ function practica(id) {
     // ranking. Arriba de las reglas, o entre los dos, bajaba los botones en alemán (C-8)
     rankea(id) ? bloqueJugador({ destacado: true, alTocar: () => SFX.tap() }) : null,
     rankea(id) ? bloqueRanking({ juego: id, titulo: fmt(RK.titleOf, { game: J.nombre }), pestanas: ['semana', 'siempre', 'amigos', 'copa'], alTocar: () => SFX.tap() }) : null));
+  pieComentario({ juego: id, semilla, pantalla: 'antesala' });
 }
 
 /**
@@ -2229,6 +2230,26 @@ function jugarPractica(id, semilla) {
   // Un juego `diario` sigue donde iba al recargar (D-267): las jugadas y el tiempo, por caso
   const guardado = gameById(id)?.diario && !HOY ? partidaGuardada(id, semilla) : null;
   jugarSinPuntaje(id, p, r => resultadoPractica(id, semilla, r), guardado ? { guardado } : {});
+}
+
+/**
+ * El link al formulario de comentarios, al final de cada vista de un juego del laboratorio (D-268):
+ * la antesala, la prueba y el juego; en el resultado el formulario ya va abierto al final. Durante la
+ * cuenta del 3, 2, 1 no está (`pieComentario(null)`). Vive al final de la pantalla, debajo de las reglas.
+ */
+function pieComentario(extra) {
+  const pantalla = $('#screen-jugar');
+  let pie = document.getElementById('comentario-pie');
+  if (!pie) { pie = el('div', { id: 'comentario-pie', class: 'center', style: 'padding:14px 0 6px' }); pantalla.append(pie); }
+  pie.replaceChildren();
+  if (!LABS || !extra) return;
+  pie.append(el('button', {
+    class: 'link-btn reporte-btn', id: 'btn-comentario', type: 'button',
+    onClick: () => {
+      SFX.tap();
+      abrirComentario({ T: T.comentario, contexto: { ...extra, url: location.pathname + location.search, pantallaTam: `${innerWidth}×${innerHeight}`, navegador: navigator.userAgent.slice(0, 160) } });
+    },
+  }, T.comentario.abrir));
 }
 
 /**
@@ -2260,6 +2281,7 @@ async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false, guardado = n
   const J = JUEGOS_COPA[id], mod = JUEGOS[id];
   // Una partida a medias sigue sin la cuenta ni la entrada: el tablero ya se conoce (D-267)
   const sigue = !!guardado?.jugadas;
+  pieComentario(null);   // durante la cuenta, nada más que la cuenta
   const espera = sigue ? 0 : await cuentaRegresiva(J);
   // Como en la copa: el reloj parte con la pantalla de juego a la vista, no con la cuenta
   let rel = { ...reloj.nuevo(Date.now() + espera + (sigue ? 0 : mod.entrada?.() || 0)), ms: guardado?.ms || 0 };
@@ -2294,6 +2316,7 @@ async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false, guardado = n
       alTerminar({ ...r, ms: r.ms ?? Math.round(reloj.leer(rel, Date.now())), det: desglose(id, estado, { T, fmt, mmss, copa: false, lang: LANG }) });
     },
   });
+  pieComentario(S.juego?.practica ? { juego: id, semilla: S.juego.semilla, pantalla: ensayo ? 'prueba' : 'juego' } : null);
 }
 
 /** La sesión de prueba de un día: otro contenido, la misma mecánica, y de vuelta a Empezar. */
@@ -2376,13 +2399,14 @@ function resultadoPractica(id, semilla, r) {
     hoy ? null : el('a', { class: 'btn btn--yellow', id: 'btn-otra', href: otra }, diario ? T.casoOtro : T.practiceAgain),
     deHoy ? el('a', { class: 'btn btn--ghost btn--sm', id: 'btn-de-hoy', href: paginaSuelta(id) }, `📅 ${T.casoDeHoy}`) : null,
     LABS && !hoy && !diario ? el('a', { class: 'btn btn--cyan btn--sm', id: 'btn-repetir', href: `${otra}${otra.includes('?') ? '&' : '?'}seed=${semilla}` }, T.practiceSame) : null,
-    // En el laboratorio, el comentario va abierto al final, para quienes lo prueban (D-265, D-267)
+    LABS ? null : botonReporte({ juego: id, semilla, puntaje: r.s, resumen: r.resumen }),
+    volverDePractica(),
+    ranking,
+    // En el laboratorio, el comentario va abierto y al final de todo (D-265, D-268)
     LABS ? formularioComentario({ T: T.comentario, contexto: {
       juego: id, semilla, puntaje: r.s, resumen: r.resumen, tiempo: mmss(r.ms), url: location.pathname + location.search,
       pantallaTam: `${innerWidth}×${innerHeight}`, navegador: navigator.userAgent.slice(0, 160),
-    } }) : botonReporte({ juego: id, semilla, puntaje: r.s, resumen: r.resumen }),
-    volverDePractica(),
-    ranking);
+    } }) : null);
 }
 
 /* ------------------------------------------------------------------ */
