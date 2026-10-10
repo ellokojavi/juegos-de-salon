@@ -109,6 +109,12 @@ export function pistasVerdaderas(caso, v, r) {
     // Con 0 sería verdad pero se lee como trampa (#272): ahí ya está "No hay criminales"
     if (n >= 3 && c > 0) out.push({ t: c % 2 ? 'impar' : 'par', a, g });
   }
+  // "Exactamente uno de Ana y Beto es criminal": dos personas cualquiera, una de cada lado (D-259)
+  for (let k = 0; k < 24; k++) {
+    const i = Math.floor(r() * N), j = Math.floor(r() * N);
+    if (i === j || v[i] === v[j]) continue;
+    out.push({ t: 'eq', a: [i, j], k: 1, g: { tipo: 'dos', de: i, otro: j } });
+  }
   // Comparaciones entre dos grupos del mismo tipo (dos filas, dos columnas, dos oficios, los vecinos de dos personas)
   for (let k = 0; k < 60; k++) {
     const x = gs[Math.floor(r() * gs.length)], y = gs[Math.floor(r() * gs.length)];
@@ -149,6 +155,7 @@ export function texto(caso, i, L) {
     const x = caso.nombres[p.a[0]];
     return fmt(p.k ? (femenino(x) ? F.esCF : F.esC) : F.esI, { x });
   }
+  if (p.g.tipo === 'dos') return fmt(F.unoDeDos, { x: caso.nombres[p.g.de], y: caso.nombres[p.g.otro] });
   const g = grupoTexto(p.g, caso, i, L);
   const n = p.a.length;
   switch (p.t) {
@@ -274,6 +281,36 @@ function armarCaso(r) {
   return { nombres, oficios, oficioDe, v, inicio: Math.floor(r() * N), pistas: new Array(N).fill(null) };
 }
 
+/** Las personas que se deducen con una sola de las pistas (cada una por separado). */
+function solas(pistas, x) {
+  const out = new Set();
+  for (const q of pistas) for (const k of Object.keys(deducibles([q], x) || {})) out.add(Number(k));
+  return out;
+}
+
+/**
+ * Qué tan buena es una pista para el caso (D-259). Lo que hace difícil a El caso no es que haya
+ * pocas pistas, sino que **una sola no alcance**: se prefiere la pista que destapa a alguien solo
+ * combinada con las que ya se saben, y se castiga la que lo dice todo sola ("No hay criminales en
+ * la fila 2" con dos personas). `d` es lo que se deduce con todas las pistas más esta.
+ */
+function notaPista(p, d, x, necesita) {
+  const nuevas = Object.keys(d).map(Number);
+  const sola = deducibles([p], x) || {};
+  const combinadas = nuevas.filter(k => !(k in sola)).length;
+  const directas = nuevas.length - combinadas;
+  // Los tipos que piden pensar más valen más que "hay exactamente N"
+  const tipo = { gt: 5, igual: 5, par: 4, impar: 4, ge: 3, le: 3, eq: p.g?.tipo === 'dos' ? 4 : p.a.length >= 6 ? 0 : p.a.length >= 4 ? -3 : -9, es: -8 }[p.t] ?? 0;
+  if (necesita) {
+    // Hay que destrabar: que salga alguien, mejor si es combinando pistas, y de a poco
+    if (!nuevas.length) return -100;
+    return 12 + 10 * Math.min(combinadas, 2) - 8 * directas - 2 * Math.max(0, nuevas.length - 2) + tipo;
+  }
+  // No hace falta destrabar: una pista que todavía no destapa a nadie también sirve (se guarda para
+  // después), y una que destapa sola a alguien es la más fácil de todas
+  return 2 + 5 * Math.min(combinadas, 2) - 7 * directas - Math.max(0, nuevas.length - 2) + tipo;
+}
+
 /**
  * Reparte una pista a cada persona en el orden en que el jugador las iría destapando. Elige, entre
  * unas cuantas pistas verdaderas al azar, una que destape pocas personas a la vez (una o dos, para
@@ -284,18 +321,16 @@ function repartir(caso, r) {
   const x = new Array(N).fill(-1);
   const dadas = [];
   const darPista = (i, necesita) => {
-    // Cuando hay que destrabar se miran más: una pista directa es el último recurso
-    const candidatas = barajar(pistasVerdaderas(caso, v, r), r).slice(0, necesita ? 40 : 14);
+    // Se miran muchas: la que se elige tiene que hacer pensar (D-259)
+    const candidatas = barajar(pistasVerdaderas(caso, v, r), r).slice(0, necesita ? 60 : 36);
     let mejor = null, mejorNota = -Infinity;
     for (const p of candidatas) {
       // Una pista sobre uno mismo no aporta: se sabe lo que es quien habla
       if (p.a.length === 1 && p.a[0] === i) continue;
+      if (p.g?.tipo === 'dos' && (p.g.de === i || p.g.otro === i)) continue;
       const d = deducibles([...dadas, p], x);
       if (!d) continue;
-      const nuevas = Object.keys(d).length;
-      const nota = necesita
-        ? (nuevas === 0 ? -100 : nuevas <= 2 ? 10 - nuevas : 5 - nuevas)
-        : (nuevas <= 2 ? 3 : 1 - nuevas) + r();
+      const nota = notaPista(p, d, x, necesita) + r() * 0.5;
       if (nota > mejorNota) { mejor = p; mejorNota = nota; }
     }
     if (necesita && (!mejor || mejorNota <= -100)) {
@@ -315,8 +350,27 @@ function repartir(caso, r) {
   let pendientes = [];
   for (let vuelta = 0; vuelta < N * 2; vuelta++) {
     if (x.every(y => y !== -1)) return true;
-    const d = deducibles(dadas, x);
-    const nuevas = Object.keys(d || {}).map(Number);
+    let d = deducibles(dadas, x);
+    let nuevas = Object.keys(d || {}).map(Number);
+    // Más difícil (D-259): si todo lo que ahora se deduce sale de una sola pista, se busca otra
+    // pista para el último que habló, una que destape a alguien solo combinándola con las demás
+    if (nuevas.length && pendientes.length && nuevas.every(k => solas(dadas, x).has(k))) {
+      const ultima = pendientes.at(-1), idx = dadas.indexOf(caso.pistas[ultima]);
+      let mejor = null, mejorComb = 0;
+      for (const p of barajar(pistasVerdaderas(caso, v, r), r).slice(0, 40)) {
+        if (p.a.length === 1 && p.a[0] === ultima) continue;
+        const lista = dadas.slice(); lista[idx] = p;
+        const ks = Object.keys(deducibles(lista, x) || {}).map(Number);
+        if (!ks.length) continue;
+        const sol = solas(lista, x);
+        const comb = ks.filter(k => !sol.has(k)).length;
+        if (comb > mejorComb && ks.length - comb <= 1) { mejor = p; mejorComb = comb; }
+      }
+      if (mejor) {
+        dadas[idx] = mejor; caso.pistas[ultima] = mejor;
+        d = deducibles(dadas, x); nuevas = Object.keys(d || {}).map(Number);
+      }
+    }
     if (!nuevas.length) {
       // Trabado: la última pista que se dio se cambia por una que destrabe
       const ultima = pendientes.at(-1) ?? caso.inicio;

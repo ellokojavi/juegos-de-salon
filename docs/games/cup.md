@@ -178,7 +178,8 @@ por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
   recién cuando la cuenta del 3, 2, 1 se fue del documento, no mientras la tapa. Se juega suelto en
   `/case/` (el botón 🔍 de `/labs/` abre `/case/?labs`; el prototipo queda de segundo botón) y en la
   práctica del laboratorio, pero **todavía no está en `POZO`**: una copa no lo elige hasta que salga
-  del laboratorio. Su habilidad es `deducir`, la misma de Toque y Fama, para que el sorteo del
+  del laboratorio. Las pistas se eligen para que
+  haya que combinarlas, no para que cada una destape a alguien sola (`notaPista`, D-259). Su habilidad es `deducir`, la misma de Toque y Fama, para que el sorteo del
   calendario no los ponga en días seguidos.
 - **Línea y Año** usan temáticas distintas dentro de la misma copa (`temasDeLaCopa`), para que no
   sean dos días de lo mismo.
