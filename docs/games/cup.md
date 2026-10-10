@@ -172,7 +172,8 @@ por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
   resolver, 0. Las pistas son datos (`{ t, a, b, k, g, h }`) y la frase la arma `texto()` en el
   idioma de quien juega, con las plantillas de `casoTexto` en `rules.js`: el caso es el mismo en los
   cuatro idiomas. La antesala muestra cartas de espaldas que se dan vuelta solas mientras una lupa
-  las recorre (`portada()` de `games/case/ui.js`). Se juega suelto en `/case/` y en la práctica del
+  las recorre (`portada()` de `games/case/ui.js`). Se juega suelto en `/case/` (el botón 🔍 de
+  `/labs/` abre `/case/?labs`; el prototipo queda de segundo botón) y en la práctica del
   laboratorio, pero **todavía no está en `POZO`**: una copa no lo elige hasta que salga del
   laboratorio. Su habilidad es `deducir`, la misma de Toque y Fama, para que el sorteo del calendario no los ponga en días seguidos.
 - **Línea y Año** usan temáticas distintas dentro de la misma copa (`temasDeLaCopa`), para que no

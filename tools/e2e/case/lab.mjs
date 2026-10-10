@@ -10,7 +10,8 @@ let fallas = 0;
 const ok = (cond, msg) => { console.log(`${cond ? '✓' : '✗'} ${msg}`); if (!cond) fallas++; };
 
 await b.go(`${SITIO}/labs/`);
-ok(await ev(`!!document.querySelector('#btn-caso[href="case/"]')`), 'el laboratorio ofrece El caso');
+ok(await ev(`!!document.querySelector('#btn-caso[href="../case/?labs"]')`), 'el laboratorio ofrece El caso con la experiencia completa (portada, prueba, 3, 2, 1)');
+ok(await ev(`!!document.querySelector('#btn-caso-dia[href="case/"]')`), 'y el caso del día del prototipo');
 await b.go(`${SITIO}/labs/case/?c=PRUEBA`);
 await ev(`localStorage.clear(); 1`);
 await b.go(`${SITIO}/labs/case/?c=PRUEBA`);
