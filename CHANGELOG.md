@@ -6,6 +6,13 @@
   una lupa que las recorre), la sesión de prueba y el desglose del puntaje: 100 con el caso resuelto,
   menos 10 por error. Se juega en `/case/`; una copa todavía no lo puede elegir.
 
+## 0.137.0 — 2026-10-09
+- **🔍 El caso, más vivo** (D-256): las cartas se dan vuelta al empezar para descubrir a los
+  sospechosos; la elegida se acerca con un zoom suave; al marcar cae un sello (😇, 🔪 o ❌) con un
+  destello verde, rosado o rojo; y al resolver el caso pasa una ola por la grilla. **Tocar una pista
+  ilumina en la grilla a las personas de las que habla**, y la última pista va arriba y destacada,
+  con letra más grande. Las reglas pasan al final, y la lupa acompaña al título.
+
 ## 0.136.0 — 2026-10-09
 - **🔍 El caso, en el laboratorio** (D-256): un prototipo de misterio para probar con amigos, solo en
   español. Veinte sospechosos y pistas que siempre dicen la verdad: descubre quién es criminal sin
