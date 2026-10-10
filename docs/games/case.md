@@ -43,8 +43,28 @@ con 🟥 donde hubo error (C-7).
 Caso del día (o ?c=) → marcar de a uno → ¡Caso resuelto! → Compartir · Otro caso · El caso del día
 ```
 
-La partida se guarda por caso en el celular (C-6): marcas, errores, tiempo y pistas tachadas (tocar
-una pista la tacha, para llevar la cuenta). Tocar a alguien ya marcado muestra su pista bajo la grilla (#271).
+**Cómo se ve** (0.137.0):
+
+- **Al empezar**, las cartas parten de espaldas (🔍) y se dan vuelta en ola, en diagonal desde A1.
+  Pasa cada vez que se abre un caso sin marcas (también al recargarlo antes de marcar a nadie).
+- **Con `prefers-reduced-motion`** no hay vuelta inicial, sello, ola ni lupa animada: solo cambian
+  los colores.
+- **La elegida** se acerca con un zoom suave (`scale(1.09)`) y borde celeste.
+- **Al marcar**, cae un sello sobre la carta: 😇 o 🔪 con la carta que gira y un destello verde o
+  rosado si acertó; ❌ con destello rojo y sacudida si no; ❔ con destello amarillo si todavía no se
+  podía saber. Al resolver el caso pasa una ola por la grilla.
+- **Tocar una pista** (en la lista, en el mensaje bajo la grilla o tocando a alguien ya marcado)
+  ilumina en amarillo a las personas de las que habla, en celeste a quien la dice, y apaga a los
+  demás. Tocarla otra vez o tocar fuera lo apaga. Para tachar una pista está el ✓ a su derecha.
+- **Bajo la grilla**, si no hay nada elegido, queda la última pista sabida (al empezar, la de
+  partida) con "👁 Ver a quiénes nombra" (o "👁 Volver a ver a todos" si ya está iluminada), para iluminarla sin bajar a la lista. El reloj parte cuando termina la vuelta de las cartas, o con el primer toque.
+- **La última pista** va arriba de la lista, con borde amarillo, la etiqueta "Última" y letra más
+  grande, y entra animada.
+- **"¿Cómo se juega?"** va al final; el link junto a la bajada lo abre. La lupa 🔍 se mece junto al
+  título.
+
+La partida se guarda por caso en el celular (C-6): marcas, errores, tiempo y pistas tachadas (el ✓ de
+cada pista la tacha, para llevar la cuenta). Tocar a alguien ya marcado muestra su pista bajo la grilla (#271).
 
 ## Protocolo de mensajes
 
@@ -57,7 +77,7 @@ con el juego `caso` (D-44, D-210), que el panel muestra con su clave cruda (C-16
 ```
 public/labs/case/index.html · style.css · game.js (pantalla)
 public/labs/case/engine.js · engine.test.mjs (generador, solver y pistas, sin DOM)
-tools/e2e/case/lab.mjs   el laboratorio lo ofrece, marcar antes de tiempo, un error, recargar y resolverlo entero
+tools/e2e/case/lab.mjs   el laboratorio lo ofrece, la pista que ilumina, marcar antes de tiempo, un error, recargar y resolverlo entero
 ```
 
 **El generador** (`generar(semilla)`): elige nombres (uno por letra de la A a la T, en orden
