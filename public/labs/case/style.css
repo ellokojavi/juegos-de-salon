@@ -70,7 +70,7 @@
 .accion { min-height: 58px; margin: 12px 0 4px; display: grid; gap: 6px; }
 .accion .btn-row .btn { min-height: 48px; font-size: 1rem; padding-left: 6px; padding-right: 6px; }
 .accion .msg { width: 100%; text-align: center; font: 800 0.98rem/1.35 var(--font-body); color: var(--ink); margin: 0; padding: 9px 12px; border-radius: 12px; border: 2px solid transparent; background: rgba(0,0,0,0.25); cursor: default; }
-.accion .msg.ok { color: var(--lime); border-color: rgba(157, 255, 58, 0.45); cursor: pointer; }
+.accion .msg.ok { color: var(--lime); border-color: rgba(157, 255, 58, 0.45); }
 .accion .msg.error { color: var(--pink); border-color: rgba(255, 61, 139, 0.45); }
 .accion .msg.falta { color: var(--yellow); }
 .accion .msg.dato { text-align: left; border-color: rgba(255, 210, 63, 0.55); cursor: pointer; }
@@ -84,7 +84,6 @@
 /* ---------- Las pistas: la última arriba y destacada; tocar una ilumina a quiénes nombra ---------- */
 .pistas { display: grid; gap: 7px; margin-top: 8px; padding-bottom: 14px; }
 .pistas h2 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 0 4px; }
-.pistas .ayuda { font-size: 0.8rem; font-weight: 700; color: var(--muted); margin: -4px 4px 0; }
 .pista { display: grid; grid-template-columns: 1fr 44px; align-items: stretch; border-radius: 12px; background: rgba(0,0,0,0.25); border: 2px solid transparent; overflow: hidden; }
 .pista .texto { text-align: left; padding: 10px 12px; border: 0; background: none; color: var(--ink); font: 700 1rem/1.4 var(--font-body); cursor: pointer; }
 .pista .de { font-weight: 900; color: var(--cyan); }
@@ -115,3 +114,6 @@
   .caso-cabeza .lupa, .persona.fallo, .persona .giro, .persona .frente, .pista.entra, .fin .trofeo { animation: none !important; }
   .persona, .persona .giro { transition: none; }
 }
+/* El sello que cae al marcar empieza grande y, en una carta del borde, ensanchaba la página un momento (C-8) */
+body { overflow-x: clip; }
+.accion .msg.se-va { opacity: 0; transition: opacity 0.35s; }

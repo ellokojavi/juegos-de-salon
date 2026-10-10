@@ -664,11 +664,12 @@ input.fecha { width: 100%; min-height: 48px; border-radius: 12px; border: 1px so
 .cs-accion .btn-row .btn { min-height: 48px; font-size: 1rem; padding-left: 6px; padding-right: 6px; }
 .btn.cs-inocente { background: linear-gradient(180deg, #c6ff8a, var(--lime)); color: #173a00; box-shadow: 0 4px 0 #4f8f13; }
 .btn.cs-criminal { background: linear-gradient(180deg, #ff8fbf, #ff3d8b); color: #3a0018; box-shadow: 0 4px 0 #a3134f; }
-.cs-msg { display: grid; gap: 4px; width: 100%; text-align: center; font: 800 0.98rem/1.35 var(--font-body); color: var(--ink); margin: 0; padding: 9px 12px; border-radius: 12px; border: 2px solid transparent; background: rgba(0,0,0,0.25); cursor: default; }
-.cs-msg.ok { color: var(--lime); border-color: rgba(157, 255, 58, 0.45); cursor: pointer; }
+.cs-msg { display: grid; gap: 4px; align-content: center; width: 100%; text-align: center; font: 800 0.98rem/1.35 var(--font-body); color: var(--ink); margin: 0; padding: 9px 12px; border-radius: 12px; border: 2px solid transparent; background: rgba(0,0,0,0.25); cursor: default; }
+.cs-msg.ok { color: var(--lime); border-color: rgba(157, 255, 58, 0.45); }
 .cs-msg.error { color: var(--pink); border-color: rgba(255, 61, 139, 0.45); }
 .cs-msg.falta { color: var(--yellow); }
 .cs-msg.dato { text-align: left; border-color: rgba(255, 210, 63, 0.55); cursor: pointer; }
+.cs-msg.se-va { opacity: 0; transition: opacity 0.35s; }
 .cs-msg.activa { box-shadow: 0 0 0 2px var(--yellow); }
 .cs-msg .ver { color: var(--cyan); font-weight: 900; font-size: 0.85rem; }
 .cs-sub { text-align: center; font-weight: 800; color: var(--muted); margin: 0; }
@@ -676,7 +677,6 @@ input.fecha { width: 100%; min-height: 48px; border-radius: 12px; border: 1px so
 /* Las pistas: la última arriba y destacada; tocar una ilumina a quiénes nombra */
 .cs-pistas { display: grid; gap: 7px; }
 .cs-pistas h3 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 4px 4px 0; }
-.cs-pistas .ayuda { font-size: 0.8rem; font-weight: 700; color: var(--muted); margin: -4px 4px 0; }
 .cs-pista { display: grid; grid-template-columns: 1fr 44px; align-items: stretch; border-radius: 12px; background: rgba(0,0,0,0.25); border: 2px solid transparent; overflow: hidden; }
 .cs-pista .texto { text-align: left; padding: 10px 12px; border: 0; background: none; color: var(--ink); font: 700 1rem/1.4 var(--font-body); cursor: pointer; }
 .cs-pista .de { font-weight: 900; color: var(--cyan); }
@@ -694,3 +694,6 @@ input.fecha { width: 100%; min-height: 48px; border-radius: 12px; border: 1px so
   .cs-persona, .cs-persona .giro { transition: none; }
   .cs-persona.fallo, .cs-persona .giro, .cs-persona .frente, .cs-pista.entra { animation: none !important; }
 }
+/* El sello que cae al marcar empieza grande y, en una carta del borde, ensanchaba la página un
+   momento: la grilla lo recorta en el borde de la pantalla, no en el suyo (C-8) */
+.cs-juego { overflow-x: clip; margin-left: -16px; margin-right: -16px; padding-left: 16px; padding-right: 16px; }
