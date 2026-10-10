@@ -36,7 +36,7 @@ The games with their own section below come first; after them, the one-player ga
 | 〰️ [Zip](https://juegosdesalon.cl/zip/) | 1 | Play alone | Also in The Cup |
 | 🧶 [Untangle / Desenredo / Desenrola](https://juegosdesalon.cl/untangle/) | 1 | Play alone | Also in The Cup |
 | 📍 [Where Is It? / ¿Dónde queda? / Onde fica?](https://juegosdesalon.cl/where/) | 1 | Play alone | Also in The Cup |
-| 🔍 [The Case / El caso / O Caso](https://juegosdesalon.cl/case/) | 1 | Play alone | 🧪 lab |
+| 🔍 [The Case / El caso / O Caso](https://juegosdesalon.cl/labs/case/) | 1 | Play alone | 🧪 lab |
 <!-- /generado -->
 
 ---
@@ -606,7 +606,6 @@ node public/fourth-king/engine.test.mjs
 node public/generala/engine.test.mjs
 node public/hangman/engine.test.mjs
 node public/julep/engine.test.mjs
-node public/labs/case/engine.test.mjs
 node public/liars-dice/engine.test.mjs
 node public/timeline/engine.test.mjs
 node public/assets/js/arrastre.test.mjs

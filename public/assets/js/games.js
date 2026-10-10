@@ -220,7 +220,9 @@ export const SUELTOS = [
     duration: '2–5',
   },
   {
-    // En el laboratorio (D-257): tiene página y tarjeta, pero no sale en la portada
+    // En el laboratorio (D-257): tiene página y tarjeta, pero no sale en la portada. Su página es
+    // /labs/case/ (D-267); `diario`: sin semilla en el link se juega el caso del día, el mismo para
+    // todos, y al recargar sigue donde iba
     id: 'caso',
     slug: 'case',
     emoji: '🔍',
@@ -229,8 +231,10 @@ export const SUELTOS = [
     tipos: ['logic'],
     duration: '5–10',
     labs: true,
+    diario: true,
   },
-].map(m => ({ ...m, players: '1', path: `${m.slug}/`, available: !m.labs, suelto: true }));
+  // Los del laboratorio viven en /labs/<slug>/ (D-267): al salir pasan a /<slug>/
+].map(m => ({ ...m, players: '1', path: `${m.labs ? 'labs/' : ''}${m.slug}/`, available: !m.labs, suelto: true }));
 
 /**
  * Los tipos de juego con que se filtra la portada (D-142), en el orden en que se ofrecen.
@@ -297,7 +301,7 @@ export const gameById = id => BY_ID[id] || null;
  * guardan las salas, el panel y el celular): solo lo que se ve en la dirección.
  */
 export const SLUGS_SIN_PAGINA = { linea: 'timeline-flash', numero: 'number' };
-const SLUG_DE = { ...Object.fromEntries([...GAMES, ...SUELTOS].map(g => [g.id, String(g.path || '').replace(/\/$/, '') || g.id])), ...SLUGS_SIN_PAGINA };
+const SLUG_DE = { ...Object.fromEntries([...GAMES, ...SUELTOS].map(g => [g.id, g.slug || String(g.path || '').replace(/\/$/, '') || g.id])), ...SLUGS_SIN_PAGINA };
 const ID_DE = Object.fromEntries(Object.entries(SLUG_DE).map(([id, slug]) => [slug, id]));
 /** El nombre en la URL de un juego; un id que no está en la lista queda igual. */
 export const slugDe = id => (Object.hasOwn(SLUG_DE, id) ? SLUG_DE[id] : id);
