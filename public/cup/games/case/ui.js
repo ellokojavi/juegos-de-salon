@@ -60,6 +60,9 @@ export function titulo({ el, J }) {
     el('span', { class: 'display display--lg rainbow' }, J.nombre));
 }
 
+/** Lo que tardan las cartas en darse vuelta al empezar (la última parte a los 480 ms y gira en 500): el reloj parte después. */
+export const entrada = () => (QUIETO() ? 0 : 60 + 7 * 60 + 550);
+
 export function montar(raiz, ctx) {
   const { p, T, el, SFX, vibrate } = ctx;
   const L = T.casoTexto;
