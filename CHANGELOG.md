@@ -2,8 +2,8 @@
 
 ## 0.140.0 — 2026-10-10
 - **🔍 El caso, más difícil** (D-259): las pistas se eligen para que haya que combinarlas, con más
-  comparaciones ("hay más criminales arriba de Ana que en la fila 4"), pares e impares, y una nueva:
-  "Exactamente uno de Ana y Beto es criminal". Sigue sin haber que adivinar nunca.
+  comparaciones ("hay más criminales arriba de Ana que entre los vecinos de Beto"), pares e
+  impares, y una nueva: "Exactamente uno de Ana y Beto es criminal". Sigue sin haber que adivinar nunca.
 
 ## 0.138.3 — 2026-10-09
 - **🔍 El caso, más cuidado al empezar** (D-257): en la antesala, el título lleva la lupa y los
