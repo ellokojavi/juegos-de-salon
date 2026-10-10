@@ -46,7 +46,7 @@ const temaLibre = (codigo, aud = null) => {
   return decksDe({ aud }).map(d => d.id).find(id => !usados.includes(id));
 };
 
-const juego = (motor, ui, ensayo) => ({ generar: motor.generar, montar: ui.montar, resultado: ui.resultado, ejemplo: ui.ejemplo, portada: ui.portada, pantallaCompleta: !!ui.pantallaCompleta, ensayo });
+const juego = (motor, ui, ensayo) => ({ generar: motor.generar, montar: ui.montar, resultado: ui.resultado, ejemplo: ui.ejemplo, portada: ui.portada, titulo: ui.titulo, pantallaCompleta: !!ui.pantallaCompleta, ensayo });
 
 /**
  * `generar(código, día, opciones)` y `ensayo(código, día, opciones)` reciben el idioma (D-170):

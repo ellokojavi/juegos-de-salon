@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.138.3 — 2026-10-09
+- **🔍 El caso, más cuidado al empezar** (D-257): en la antesala, el título lleva la lupa y los
+  colores que se mueven, como en el prototipo; y las cartas se dan vuelta recién cuando se fue el
+  "3, 2, 1, ¡A jugar!", no mientras la cuenta las tapa.
+
 ## 0.138.2 — 2026-10-09
 - **🔍 El caso:** el link "¿Cómo se juega?" de arriba abre las reglas y baja hasta ellas con un
   scroll suave, en vez del salto del ancla (sin animación si el celular pide reducir movimiento).
