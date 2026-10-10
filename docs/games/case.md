@@ -74,7 +74,8 @@ Caso del día (o ?c=) → marcar de a uno → ¡Caso resuelto! → Compartir · 
 - **Bajo la grilla**, si no hay nada elegido, solo "Toca a alguien para marcarlo."; al acertar,
   "¡Bien! Tati es inocente." La pista no se repite ahí: entra destacada arriba de la lista, que va
   justo abajo. Tocar a alguien ya marcado sí muestra su pista bajo la grilla, con "👁 Ver a quiénes
-  nombra". Sin texto de ayuda sobre tocar o tachar pistas: se entiende solo. El reloj parte cuando
+  nombra". Sin texto de ayuda sobre tocar o tachar pistas: se entiende solo. El acierto se va solo a
+  los 2,5 s, y el error y el "todavía no se puede saber" a los 4 s (ver Excepciones). El reloj parte cuando
   termina la vuelta de las cartas, o con el primer toque.
 - **La última pista** va arriba de la lista, con borde amarillo, la etiqueta "Última" y letra más
   grande, y entra animada.
@@ -112,6 +113,10 @@ pistas que hay.
 Gancho de pruebas (C-14): `window.__caso` (`caso`, `partida`, `estado`).
 
 ## Excepciones a los cánones
+
+- **C-8b (un error se queda hasta que el jugador toca):** en El caso, de La Copa y del prototipo, el
+  mensaje de error se va solo a los 4 s, por pedido del dueño. El error no se pierde: la carta queda
+  marcada con ✕ y se suma a la cuenta de errores. El temporizador solo cierra su propio mensaje.
 
 - **C-3 (cuatro idiomas):** solo español, porque es un prototipo para amigos (D-256). Las pistas
   salen de plantillas, así que traducirlo es traducir unas 20 frases.
