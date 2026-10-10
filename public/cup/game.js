@@ -1796,7 +1796,7 @@ function antesDeJugar(d) {
   poner(body, el('div', { class: 'stack' },
     el('div', { class: 'intro-hero' }, heroe(id, J),
       el('p', { class: 'muted', style: 'margin:0' }, fmt(T.dayOf, { d, n: meta.days })),
-      el('h2', { class: 'display display--lg' }, J.nombre)),
+      tituloAntesala(id, J)),
     CON_PALABRAS.includes(id) ? avisoPalabras(meta) : null,
     el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.howToPlay), dibujo(id), el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
       el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, puntajeTexto(J))),
@@ -1829,6 +1829,9 @@ const avisoPalabras = meta => (palabrasDe(meta) === LANG ? null
 
 /** Lo de arriba de la antesala: la portada animada del juego si la tiene (el globo de ¿Dónde queda?), si no su emoji. */
 const heroe = (id, J) => JUEGOS[id]?.portada?.() ?? el('span', { class: con('icon', J.emoji) }, J.emoji);
+
+/** El nombre del juego en la antesala: el suyo si lo trae (El caso: la lupa y los colores, D-257), si no el de siempre. */
+const tituloAntesala = (id, J) => JUEGOS[id]?.titulo?.({ el, J }) ?? el('h2', { class: 'display display--lg' }, J.nombre);
 
 /** El dibujo que explica el juego antes del texto, si lo tiene (Reinas, Tango y Zip). */
 const dibujo = id => JUEGOS[id]?.ejemplo?.({ el, T }) ?? null;
@@ -2140,7 +2143,7 @@ function practica(id) {
   poner(body, el('div', { class: 'stack' },
     el('div', { class: 'intro-hero' }, heroe(id, J),
       // En el laboratorio no se rotula "Práctica en el laboratorio": el chip y el botón de volver ya lo dicen
-      el('h2', { class: 'display display--lg' }, J.nombre),
+      tituloAntesala(id, J),
       el('div', { style: 'margin-top:6px' }, langToggle())),
     // Uno al día: una línea arriba, y nada más; cómo se juega es lo del juego (U-18)
     HOY ? el('p', { class: 'aviso uad-intro', id: 'uad-intro' }, S.hoy.ya ? UAD().introRepite : UAD().intro) : null,

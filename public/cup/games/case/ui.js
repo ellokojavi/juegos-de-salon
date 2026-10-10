@@ -50,6 +50,16 @@ export function portada() {
   return caja;
 }
 
+/**
+ * El nombre en la antesala, como en el prototipo: la lupa al lado y el título con los colores que
+ * se mueven (`.rainbow`). La lupa va fuera del degradado: dentro, el emoji saldría transparente.
+ */
+export function titulo({ el, J }) {
+  return el('h2', { class: 'cs-titulo' },
+    el('span', { class: 'cs-lupa', 'aria-hidden': 'true' }, '🔍'),
+    el('span', { class: 'display display--lg rainbow' }, J.nombre));
+}
+
 export function montar(raiz, ctx) {
   const { p, T, el, SFX, vibrate } = ctx;
   const L = T.casoTexto;
@@ -238,12 +248,23 @@ export function montar(raiz, ctx) {
   });
 
   dibujar();
-  // "Girar para descubrir": la primera vez, las cartas parten de espaldas y se dan vuelta en ola
+  // "Girar para descubrir": la primera vez, las cartas parten de espaldas y se dan vuelta en ola,
+  // pero recién cuando se fue la cuenta del 3, 2, 1: si no, la ola pasa tapada por el "¡A jugar!"
   if (!jugadas.length && !QUIETO()) {
     cartas.forEach(c => c.classList.add('tapada'));
-    void grilla.offsetWidth;
-    cartas.forEach((c, i) => setTimeout(() => { c.classList.remove('tapada'); if (i % 4 === 0) SFX.tap(); },
-      120 + (motor.fila(i) + motor.col(i)) * 60));
+    const ola = () => {
+      if (!raiz.isConnected) return;
+      void grilla.offsetWidth;
+      cartas.forEach((c, i) => setTimeout(() => { c.classList.remove('tapada'); if (i % 4 === 0) SFX.tap(); },
+        60 + (motor.fila(i) + motor.col(i)) * 60));
+    };
+    const cuenta = () => document.getElementById('cuenta');
+    if (!cuenta()) ola();
+    else {
+      // La cuenta se saca del documento al terminar de desvanecerse: ahí parte la ola
+      const vigia = new MutationObserver(() => { if (!cuenta()) { vigia.disconnect(); ola(); } });
+      vigia.observe(document.body, { childList: true });
+    }
   }
 }
 
