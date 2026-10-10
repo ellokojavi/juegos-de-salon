@@ -173,11 +173,13 @@ por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
   idioma de quien juega, con las plantillas de `casoTexto` en `rules.js`: el caso es el mismo en los
   cuatro idiomas. La antesala muestra cartas de espaldas que se dan vuelta solas mientras una lupa
   las recorre (`portada()` de `games/case/ui.js`), y el título lleva la lupa y los colores que se
-  mueven (`titulo()`, que la antesala usa si el juego lo trae). Las cartas del tablero se dan vuelta
-  recién cuando la cuenta del 3, 2, 1 se fue del documento, no mientras la tapa. Se juega suelto en `/case/` (el botón 🔍 de
-  `/labs/` abre `/case/?labs`; el prototipo queda de segundo botón) y en la práctica del
-  laboratorio, pero **todavía no está en `POZO`**: una copa no lo elige hasta que salga del
-  laboratorio. Su habilidad es `deducir`, la misma de Toque y Fama, para que el sorteo del calendario no los ponga en días seguidos.
+  mueven (`titulo()`, un gancho opcional de `games/index.js` que la antesala y la práctica usan si
+  el juego lo trae; los demás muestran su nombre como siempre). Las cartas del tablero se dan vuelta
+  recién cuando la cuenta del 3, 2, 1 se fue del documento, no mientras la tapa. Se juega suelto en
+  `/case/` (el botón 🔍 de `/labs/` abre `/case/?labs`; el prototipo queda de segundo botón) y en la
+  práctica del laboratorio, pero **todavía no está en `POZO`**: una copa no lo elige hasta que salga
+  del laboratorio. Su habilidad es `deducir`, la misma de Toque y Fama, para que el sorteo del
+  calendario no los ponga en días seguidos.
 - **Línea y Año** usan temáticas distintas dentro de la misma copa (`temasDeLaCopa`), para que no
   sean dos días de lo mismo.
 - **Reinas, Zip y Tango** tienen solución única garantizada. Reinas ajusta las zonas de a una
