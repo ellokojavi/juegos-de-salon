@@ -636,7 +636,12 @@ input.fecha { width: 100%; min-height: 48px; border-radius: 12px; border: 1px so
 .cs-persona.equivoco .frente::after { content: '✕'; position: absolute; top: 2px; left: 6px; font-size: 0.72rem; color: var(--yellow); font-weight: 900; }
 .cs-persona.elegida { transform: scale(1.09); z-index: 2; }
 .cs-persona.elegida .frente { border-color: var(--cyan); box-shadow: 0 0 0 2px var(--cyan), 0 8px 22px rgba(0, 0, 0, 0.45), 0 0 18px rgba(46, 230, 214, 0.5); }
-.cs-grilla.enfoque .cs-persona:not(.foco):not(.habla):not(.elegida) { opacity: 0.32; }
+.cs-grilla.enfoque .cs-persona:not(.foco):not(.foco-b):not(.foco-ab):not(.habla):not(.elegida) { opacity: 0.32; }
+/* El segundo grupo de una comparación, en rosado; quien está en los dos, con los dos colores (#282) */
+.cs-persona.foco-b .frente { box-shadow: 0 0 0 3px #ff8fbf, 0 0 14px rgba(255, 61, 139, 0.5); }
+.cs-persona.foco-ab .frente { box-shadow: 0 0 0 3px var(--yellow), 0 0 0 6px #ff8fbf; }
+.cs-ga { color: var(--yellow); font-weight: 900; }
+.cs-gb { color: #ff8fbf; font-weight: 900; }
 .cs-persona.foco .frente { box-shadow: 0 0 0 3px var(--yellow), 0 0 14px rgba(255, 210, 63, 0.55); }
 .cs-persona.habla .frente { box-shadow: 0 0 0 3px var(--cyan), 0 0 14px rgba(46, 230, 214, 0.55); }
 .cs-persona.habla.foco .frente { box-shadow: 0 0 0 3px var(--yellow), 0 0 0 6px var(--cyan); }

@@ -23,7 +23,8 @@ const diaLink = /^\d{4}-\d{2}-\d{2}$/.test(params.get('dia') || '') ? params.get
 const hoy = diaLink || fechaLocal();
 const semilla = codigo || semillaDelDia(hoy);
 const caso = generar(semilla);
-const CLAVE = `juegos-de-salon:${GAME_ID}:${semilla}`;
+// v2: desde D-259 el prototipo usa el motor de La Copa y el caso de una semilla cambió; lo guardado antes es de otro caso
+const CLAVE = `juegos-de-salon:${GAME_ID}:v2:${semilla}`;
 
 const mmss = ms => { const t = Math.round((ms || 0) / 1000); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`; };
 const fechaBonita = f => new Date(`${f}T12:00:00`).toLocaleDateString('es-CL', { day: 'numeric', month: 'long' });

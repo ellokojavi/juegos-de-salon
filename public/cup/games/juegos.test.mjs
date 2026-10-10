@@ -682,6 +682,23 @@ test('el caso: se resuelve sin adivinar, las pistas son verdad y se dicen en los
     directas += p.pistas.filter(x => x.t === 'es').length; total += p.pistas.length;
   }
   assert.ok(directas / total < 0.1, `demasiadas pistas directas: ${directas} de ${total}`);
+  // Que no sea lineal (D-259): una buena parte de lo que se deduce pide combinar pistas, y la
+  // mayoría de las pistas no son "hay exactamente N"
+  let simples = 0, combinadas = 0, eqs = 0, todas = 0;
+  for (const c of CODIGOS) {
+    const p = caso.generar(c, 5);
+    eqs += p.pistas.filter(x => x.t === 'eq' && x.g?.tipo !== 'dos').length; todas += p.pistas.length;
+    const jugadas = [];
+    for (let vuelta = 0; vuelta < caso.N; vuelta++) {
+      const e = caso.estado(p, jugadas);
+      if (e.fin) break;
+      const d = caso.deducibles(e.pistas, e.x);
+      const solas = new Set(e.pistas.flatMap(q => Object.keys(caso.deducibles([q], e.x) || {}).map(Number)));
+      for (const [i, v] of Object.entries(d)) { solas.has(Number(i)) ? simples++ : combinadas++; jugadas.push({ i: Number(i), v }); }
+    }
+  }
+  assert.ok(combinadas / (simples + combinadas) >= 0.25, `muy lineal: solo ${combinadas} de ${simples + combinadas} deducciones combinan pistas`);
+  assert.ok(eqs / todas <= 0.35, `demasiadas pistas de "hay exactamente N": ${eqs} de ${todas}`);
   // Un error resta 10, con mínimo 10; sin resolver, 0
   const p = caso.generar('KQRST', 1);
   const mal = { i: [...Array(caso.N).keys()].find(i => i !== p.inicio), v: 0 };

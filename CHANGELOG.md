@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.140.0 — 2026-10-10
+- **🔍 El caso, más difícil** (D-259): las pistas se eligen para que haya que combinarlas, con más
+  comparaciones ("hay más criminales arriba de Ana que entre los vecinos de Beto"), pares e
+  impares, y una nueva: "Exactamente uno de Ana y Beto es criminal". Sigue sin haber que adivinar nunca.
+- **🔍 El caso:** el prototipo del laboratorio tiene la misma dificultad que el juego de La Copa (usa el
+  mismo motor), la prueba de La Copa es un caso completo y lo dice, y en una comparación cada lado se
+  ilumina con su color, en la grilla y en la frase.
+
 ## 0.139.0 — 2026-10-10
 - **La cuenta del 3, 2, 1 ya no es tiempo de juego** (D-258): en todos los juegos de La Copa, el
   reloj parte cuando el "¡A jugar!" se fue de la pantalla y el tablero está a la vista; en El caso,

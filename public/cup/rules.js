@@ -577,6 +577,7 @@ const ES = {
   tryFirst: 'Probar primero (no cuenta)',
   trialChip: '🧪 Prueba',
   trialNote: 'La prueba es más corta que el juego de verdad y no cuenta para la copa.',
+  trialNoteFull: 'La prueba es un caso completo, igual de difícil, pero no cuenta para la copa.',
   trialEnd: 'Terminar la prueba',
   trialDoneTitle: 'Así se juega',
   trialDone: 'En la prueba sacaste {resumen}. No cuenta para la copa, y el juego de verdad tiene otro contenido.',
@@ -663,6 +664,7 @@ const ES = {
       par: 'Hay un número par de criminales {g}.', impar: 'Hay un número impar de criminales {g}.',
       gt: 'Hay más criminales {g} que {h}.', igual: 'Hay tantos criminales {g} como {h}.',
       esC: '{x} es criminal.', esCF: '{x} es criminal.', esI: '{x} es inocente.',
+      unoDeDos: 'Exactamente uno de {x} y {y} es criminal.', unaDeDos: 'Exactamente una de {x} y {y} es criminal.',
     },
     oficios: {
       chef: { uno: 'chef', varios: 'chefs', en: 'chefs' }, guardia: { uno: 'guardia', varios: 'guardias', en: 'guardias' },
@@ -1343,6 +1345,7 @@ const EN = {
   tryFirst: 'Try it first (doesn\'t count)',
   trialChip: '🧪 Trial',
   trialNote: 'The trial is shorter than the real game and doesn\'t count for the cup.',
+  trialNoteFull: 'The trial is a full case, just as hard, but it doesn\'t count for the cup.',
   trialEnd: 'End the trial',
   trialDoneTitle: 'That\'s how it\'s played',
   trialDone: 'In the trial you got {resumen}. It doesn\'t count for the cup, and the real game has different content.',
@@ -1429,6 +1432,7 @@ const EN = {
       par: 'There is an even number of criminals {g}.', impar: 'There is an odd number of criminals {g}.',
       gt: 'There are more criminals {g} than {h}.', igual: 'There are as many criminals {g} as {h}.',
       esC: '{x} is a criminal.', esCF: '{x} is a criminal.', esI: '{x} is innocent.',
+      unoDeDos: 'Exactly one of {x} and {y} is a criminal.', unaDeDos: 'Exactly one of {x} and {y} is a criminal.',
     },
     oficios: {
       chef: { uno: 'chef', varios: 'chefs', en: 'chefs' }, guardia: { uno: 'guard', varios: 'guards', en: 'guards' },
@@ -2106,6 +2110,7 @@ const PT = {
   tryFirst: 'Testar antes (não conta)',
   trialChip: '🧪 Teste',
   trialNote: 'O teste é mais curto que o jogo de verdade e não conta para a copa.',
+  trialNoteFull: 'O teste é um caso completo, igual de difícil, mas não conta para a copa.',
   trialEnd: 'Terminar o teste',
   trialDoneTitle: 'É assim que se joga',
   trialDone: 'No teste você fez {resumen}. Não conta para a copa, e o jogo de verdade tem outro conteúdo.',
@@ -2192,6 +2197,7 @@ const PT = {
       par: 'Há um número par de criminosos {g}.', impar: 'Há um número ímpar de criminosos {g}.',
       gt: 'Há mais criminosos {g} do que {h}.', igual: 'Há tantos criminosos {g} quanto {h}.',
       esC: '{x} é criminoso.', esCF: '{x} é criminosa.', esI: '{x} é inocente.',
+      unoDeDos: 'Exatamente um de {x} e {y} é criminoso.', unaDeDos: 'Exatamente uma de {x} e {y} é criminosa.',
     },
     oficios: {
       chef: { uno: 'chef', varios: 'chefs', en: 'chefs' }, guardia: { uno: 'guarda', varios: 'guardas', en: 'guardas' },
@@ -2869,6 +2875,7 @@ const DE = {
   tryFirst: 'Erst üben (zählt nicht)',
   trialChip: '🧪 Probe',
   trialNote: 'Die Probe ist kürzer als das echte Spiel und zählt nicht für den Pokal.',
+  trialNoteFull: 'Die Probe ist ein ganzer Fall, genauso schwer, zählt aber nicht für den Pokal.',
   trialEnd: 'Probe beenden',
   trialDoneTitle: 'So wird gespielt',
   trialDone: 'In der Probe hast du {resumen} erreicht. Sie zählt nicht für den Pokal, und das echte Spiel hat andere Inhalte.',
@@ -2955,6 +2962,7 @@ const DE = {
       par: 'Die Zahl der Kriminellen {g} ist gerade.', impar: 'Die Zahl der Kriminellen {g} ist ungerade.',
       gt: 'Es gibt mehr Kriminelle {g} als {h}.', igual: 'Es gibt gleich viele Kriminelle {g} wie {h}.',
       esC: '{x} ist kriminell.', esCF: '{x} ist kriminell.', esI: '{x} ist unschuldig.',
+      unoDeDos: 'Von {x} und {y} ist genau eine Person kriminell.', unaDeDos: 'Von {x} und {y} ist genau eine Person kriminell.',
     },
     oficios: {
       chef: { uno: 'Koch', varios: 'Köche', en: 'Köchen' }, guardia: { uno: 'Wache', varios: 'Wachen', en: 'Wachen' },

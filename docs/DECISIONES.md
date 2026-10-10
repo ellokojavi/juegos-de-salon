@@ -68,7 +68,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216 |
-| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-258 |
+| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259 |
 | Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249 |
 | Marketing | `marketing/README.md` | D-178 |
@@ -4504,4 +4504,28 @@ se contaban aunque todavía no se podía jugar.
 pantalla vacía); que cada juego arranque su propio reloj (el reloj es de la cáscara, D-130).
 **Consecuencias:** como `reloj.leer` no cuenta tiempo negativo, el reloj marca 0:00 hasta que
 parte. Retomar una partida no cambia: el tablero vuelve de una y el reloj sigue donde estaba.
+
+## D-259 · El caso, menos lineal: pistas que hay que combinar
+**Fecha:** 2026-10-10 · **Estado:** vigente · **Relación:** amplía D-257
+**Decisión:** El generador de El caso elige las pistas para que haya que pensar más. Cada pista
+candidata recibe una nota (`notaPista`): vale más la que destapa a alguien **solo combinada con las
+pistas que ya se saben**, menos la que lo dice todo sola, y los tipos que piden razonar (más que,
+tantos como, par o impar, al menos, a lo más) valen más que "hay exactamente N" en grupos chicos.
+Si en un paso todo lo que se deduce sale de una sola pista, se busca otra pista para el último que
+habló que obligue a combinar. Se suma un tipo nuevo: "Exactamente uno de Ana y Beto es criminal".
+Se miran más candidatas (36, y 60 para destrabar), y cada caso sale en unos 65 ms.
+**Por qué:** lo pidió el dueño: el caso era muy lineal, con deducciones simples. Medido en 40 casos,
+el 88 % de las deducciones salía de una sola pista y el 65 % de las pistas eran "hay exactamente N".
+Ahora, cerca de un tercio de las deducciones pide combinar pistas y "hay exactamente N" baja a
+menos de un cuarto. Sigue sin haber que adivinar nunca.
+**Alternativas descartadas:** dar menos pistas (el juego dejaría de garantizar que nunca hay que
+adivinar); esconder lo que es quien habla (rompe la regla de que lo marcado se sabe).
+**Consecuencias:** `juegos.test.mjs` frena un caso muy lineal (menos de 25 % de deducciones
+combinadas) o con demasiadas pistas de "hay exactamente N" (más de 35 %). Las copas ya jugadas no
+cambian (El caso todavía no está en `POZO`); el caso de una semilla dada sí cambia. **El prototipo de
+`/labs/case/` usa el mismo motor** (su `engine.js` solo adapta el de La Copa al español), así que los dos
+tienen la misma dificultad; lo guardado en el prototipo pasa a `juegos-de-salon:caso:v2:<semilla>`. **La
+prueba de La Copa no es más fácil**: es un caso completo, y la antesala lo dice (`trialNoteFull`, con
+`pruebaCompleta` en el registro). En una comparación, los dos grupos se iluminan en dos colores, amarillo
+y rosado, y la frase los pinta igual (#282). "Tantos como" no sale con cero y cero.
 
