@@ -4505,6 +4505,10 @@ menos de un cuarto. Sigue sin haber que adivinar nunca.
 adivinar); esconder lo que es quien habla (rompe la regla de que lo marcado se sabe).
 **Consecuencias:** `juegos.test.mjs` frena un caso muy lineal (menos de 25 % de deducciones
 combinadas) o con demasiadas pistas de "hay exactamente N" (más de 35 %). Las copas ya jugadas no
-cambian (El caso todavía no está en `POZO`); el caso de una semilla dada sí cambia. El prototipo de
-`/labs/case/` sigue con su generador de antes.
+cambian (El caso todavía no está en `POZO`); el caso de una semilla dada sí cambia. **El prototipo de
+`/labs/case/` usa el mismo motor** (su `engine.js` solo adapta el de La Copa al español), así que los dos
+tienen la misma dificultad; lo guardado en el prototipo pasa a `juegos-de-salon:caso:v2:<semilla>`. **La
+prueba de La Copa no es más fácil**: es un caso completo, y la antesala lo dice (`trialNoteFull`, con
+`pruebaCompleta` en el registro). En una comparación, los dos grupos se iluminan en dos colores, amarillo
+y rosado, y la frase los pinta igual (#282). "Tantos como" no sale con cero y cero.
 

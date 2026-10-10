@@ -121,7 +121,8 @@ export function pistasVerdaderas(caso, v, r) {
     if (x === y || (x.de === undefined) !== (y.de === undefined)) continue;
     const cx = cuenta(x.ids, v), cy = cuenta(y.ids, v);
     if (cx > cy) out.push({ t: 'gt', a: x.ids, b: y.ids, g: sinIds(x), h: sinIds(y) });
-    else if (cx === cy) out.push({ t: 'igual', a: x.ids, b: y.ids, g: sinIds(x), h: sinIds(y) });
+    // "Tantos como" con cero y cero no dice nada que valga la pena pensar (#281)
+    else if (cx === cy && cx > 0) out.push({ t: 'igual', a: x.ids, b: y.ids, g: sinIds(x), h: sinIds(y) });
   }
   return out;
 }
@@ -148,32 +149,51 @@ function grupoTexto(g, caso, quien, L, todos = false) {
  * La frase de la pista de la persona `i`, con las plantillas `L` del idioma (`casoTexto` de
  * rules.js). Quien habla de sí mismo habla en primera persona: "entre mis vecinos", "a mi izquierda".
  */
-export function texto(caso, i, L) {
+/**
+ * Las marcas que `texto(…, { marcas: true })` pone alrededor de cada grupo, para que la pantalla
+ * los pinte del mismo color con que los ilumina en la grilla (#282): el primero (`a`) y, en una
+ * comparación, el segundo (`b`).
+ */
+export const MARCA = { a: ['\u0001', '\u0002'], b: ['\u0003', '\u0004'] };
+/** Parte un texto con marcas en trozos `[texto, 'a' | 'b' | '']`. */
+export function trozos(t) {
+  const out = [];
+  const re = /\u0001([^\u0002]*)\u0002|\u0003([^\u0004]*)\u0004|[^\u0001\u0003]+/g;
+  let m;
+  while ((m = re.exec(t))) out.push(m[1] !== undefined ? [m[1], 'a'] : m[2] !== undefined ? [m[2], 'b'] : [m[0], '']);
+  return out;
+}
+
+export function texto(caso, i, L, { marcas = false } = {}) {
+  return textoPlano(caso, i, L, marcas ? (t, l) => MARCA[l][0] + t + MARCA[l][1] : t => t);
+}
+
+function textoPlano(caso, i, L, m) {
   const p = caso.pistas[i];
   const F = L.frases;
   if (p.t === 'es') {
     const x = caso.nombres[p.a[0]];
-    return fmt(p.k ? (femenino(x) ? F.esCF : F.esC) : F.esI, { x });
+    return fmt(p.k ? (femenino(x) ? F.esCF : F.esC) : F.esI, { x: m(x, 'a') });
   }
   if (p.g.tipo === 'dos') {
     // Con dos mujeres concuerda en femenino: "Exactamente una de Ana y Cata"
     const x = caso.nombres[p.g.de], y = caso.nombres[p.g.otro];
-    return fmt(femenino(x) && femenino(y) ? F.unaDeDos : F.unoDeDos, { x, y });
+    return fmt(femenino(x) && femenino(y) ? F.unaDeDos : F.unoDeDos, { x: m(x, 'a'), y: m(y, 'a') });
   }
-  const g = grupoTexto(p.g, caso, i, L);
+  const g = m(grupoTexto(p.g, caso, i, L), 'a');
   const n = p.a.length;
   switch (p.t) {
     case 'eq':
       if (p.k === 0) return fmt(F.cero, { g });
-      if (p.k === n) return fmt(F.todos, { T: grupoTexto(p.g, caso, i, L, true) });
+      if (p.k === n) return fmt(F.todos, { T: m(grupoTexto(p.g, caso, i, L, true), 'a') });
       if (p.inoc) return fmt(n - p.k === 1 ? F.in1 : F.inN, { n: n - p.k, g });
       return fmt(p.k === 1 ? F.eq1 : F.eqN, { n: p.k, g });
     case 'ge': return fmt(p.k === 1 ? F.ge1 : F.geN, { n: p.k, g });
     case 'le': return fmt(p.k === 1 ? F.le1 : F.leN, { n: p.k, g });
     case 'par': return fmt(F.par, { g });
     case 'impar': return fmt(F.impar, { g });
-    case 'gt': return fmt(F.gt, { g, h: grupoTexto(p.h, caso, i, L) });
-    case 'igual': return fmt(F.igual, { g, h: grupoTexto(p.h, caso, i, L) });
+    case 'gt': return fmt(F.gt, { g, h: m(grupoTexto(p.h, caso, i, L), 'b') });
+    case 'igual': return fmt(F.igual, { g, h: m(grupoTexto(p.h, caso, i, L), 'b') });
     default: return '';
   }
 }
