@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.142.2 — 2026-10-10
+- **🔍 El caso (laboratorio): "¿Qué te pareció?"** (D-265): al terminar el caso del día, un
+  formulario para dejar un comentario, con el caso adjunto.
+
 ## 0.142.1 — 2026-10-10
 - **🔍 El caso, más para pensar** (D-264): tocar una pista ilumina solo a quien nombra ("a la
   izquierda de Omar": Omar), no a todo el grupo.

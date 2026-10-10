@@ -95,30 +95,45 @@ export const abrirFeedback = () => abrir(TEXTOS[LABS_IDIOMA] || TEXTOS.de, LABS_
 
 function abrir(T, idioma) {
   if (document.querySelector('.labs-capa')) return;
-  const ctx = contexto(idioma);
+  let capa = null;
+  const caja = formularioComentario({ T, contexto: contexto(idioma), alCerrar: () => capa.remove() });
+  caja.classList.add('labs-caja');
+  caja.setAttribute('role', 'dialog');
+  caja.setAttribute('aria-modal', 'true');
+  capa = el('div', { class: 'labs-capa' }, caja);
+  capa.addEventListener('click', e => { if (e.target === capa) capa.remove(); });
+  document.body.append(capa);
+  caja.querySelector('textarea').focus();
+}
+
+/**
+ * El formulario de comentarios, para ponerlo donde se quiera: en la capa del 🐞 o al final de un
+ * juego del laboratorio (El caso, D-265). `T` trae sus textos (`titulo`, `lead`, `ph`, `nombre`,
+ * `enviar`, `enviando`, `vacio`, `gracias`, `guardado`, `error`, `contexto` y, si se puede cerrar,
+ * `cancelar` y `cerrar`); `contexto` va adjunto a la vista de quien escribe. Sin `alCerrar` no tiene
+ * botón para cerrar: queda en la página, y después de enviar dice gracias en el mismo lugar.
+ */
+export function formularioComentario({ T, contexto: ctx, alCerrar = null }) {
   let nombreGuardado = '';
   try { nombreGuardado = localStorage.getItem(NOMBRE) || ''; } catch (_) { /* nada */ }
   const err = el('div', { class: 'labs-error', role: 'alert' });
   const texto = el('textarea', { class: 'labs-texto', maxlength: '1000', rows: '5', placeholder: T.ph, 'aria-label': T.titulo });
   const nombre = el('input', { class: 'labs-nombre', maxlength: '40', autocomplete: 'name', placeholder: T.nombre, 'aria-label': T.nombre, value: nombreGuardado });
-  const enviar = el('button', { type: 'button', class: 'btn btn--yellow' }, T.enviar);
-  const cancelar = el('button', { type: 'button', class: 'btn btn--ghost btn--sm' }, T.cancelar);
-  const caja = el('div', { class: 'labs-caja panel stack', role: 'dialog', 'aria-modal': 'true', 'aria-label': T.titulo },
+  const enviar = el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-enviar-comentario' }, T.enviar);
+  const cancelar = alCerrar ? el('button', { type: 'button', class: 'btn btn--ghost btn--sm', onClick: alCerrar }, T.cancelar) : null;
+  const caja = el('div', { class: 'panel stack comentario', 'aria-label': T.titulo },
     el('h2', { class: 'display display--sm' }, `🐞 ${T.titulo}`),
     el('p', { class: 'muted', style: 'margin:0' }, T.lead),
     texto, nombre, err, enviar, cancelar,
     el('details', {}, el('summary', { class: 'muted' }, T.contexto), el('pre', { class: 'labs-contexto' }, JSON.stringify(ctx, null, 1))));
-  const capa = el('div', { class: 'labs-capa' }, caja);
-  const cerrar = () => capa.remove();
-  capa.addEventListener('click', e => { if (e.target === capa) cerrar(); });
-  cancelar.addEventListener('click', cerrar);
   enviar.addEventListener('click', async () => {
     const t = texto.value.trim();
     if (!t) { err.textContent = T.vacio; return; }
     const n = nombre.value.trim().slice(0, 40);
     try { if (n) localStorage.setItem(NOMBRE, n); } catch (_) { /* nada */ }
     enviar.disabled = true; enviar.textContent = T.enviando;
-    const fin = msg => { caja.replaceChildren(el('p', { class: 'labs-aviso' }, msg), el('button', { type: 'button', class: 'btn btn--yellow', onClick: cerrar }, T.cerrar)); };
+    const fin = msg => caja.replaceChildren(el('p', { class: 'labs-aviso', role: 'status' }, msg),
+      alCerrar ? el('button', { type: 'button', class: 'btn btn--yellow', onClick: alCerrar }, T.cerrar) : '');
     try {
       await enviarReporte({
         texto: t.slice(0, 1000), nombre: n, contexto: JSON.stringify(ctx).slice(0, 500),
@@ -131,6 +146,5 @@ function abrir(T, idioma) {
       enviar.disabled = false; enviar.textContent = T.enviar;
     }
   });
-  document.body.append(capa);
-  texto.focus();
+  return caja;
 }
