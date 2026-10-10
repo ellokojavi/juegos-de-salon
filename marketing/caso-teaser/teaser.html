@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>El caso — teaser</title>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg1: #150726; --bg2: #2a0a4a; --bg3: #0b1e3f;
+    --pink: #ff2e88; --yellow: #ffd23f; --cyan: #2ee6d6; --lime: #9dff3a; --orange: #ff7a1a;
+    --display: 'Bangers', Impact, sans-serif; --body: 'Nunito', system-ui, sans-serif;
+  }
+  html, body { margin: 0; background: #000; overflow: hidden; }
+  #stage { position: relative; width: 1080px; height: 1920px; overflow: hidden; font-family: var(--body); color: #fff;
+    background: linear-gradient(160deg, var(--bg1), var(--bg2) 55%, var(--bg3)); }
+  body.preview { display: grid; place-items: center; height: 100vh; }
+  .abs { position: absolute; }
+  .center { left: 0; right: 0; text-align: center; }
+  .disp { font-family: var(--display); letter-spacing: 0.04em; line-height: 0.95; }
+  .blob { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.4; }
+  .rainbow { background: linear-gradient(90deg, var(--yellow), var(--orange), var(--pink), #8a4dff, var(--cyan), var(--lime), var(--yellow));
+    background-size: 300% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+  /* El iPhone: la pantalla es de 390×844 puntos, dibujada al 1,34359 (524×1134) */
+  .phone { position: absolute; width: 560px; height: 1170px; left: 260px; top: 500px; transform-origin: top center; border-radius: 78px; background: #0d0718;
+    padding: 18px; box-sizing: border-box; box-shadow: 0 0 0 3px rgba(255,255,255,0.14), 0 40px 90px rgba(0,0,0,0.6), 0 0 110px rgba(255,46,136,0.35); }
+  .screen { position: relative; width: 524px; height: 1134px; border-radius: 60px; overflow: hidden; background: var(--bg1); }
+  .pt { position: absolute; left: 0; top: 0; width: 390px; height: 844px; transform-origin: 0 0; transform: scale(1.34359); }
+  .pt img.cap { position: absolute; left: 0; top: 0; width: 390px; height: 844px; opacity: 0; }
+  /* La franja de la hora tapa la línea que la captura deja cortada arriba, bajo la isla */
+  .barra { position: absolute; left: 0; top: 0; width: 390px; height: 40px; z-index: 20;
+    background: linear-gradient(90deg, rgb(82,24,69), rgb(65,45,85));
+    -webkit-mask-image: linear-gradient(180deg, #000 80%, transparent); mask-image: linear-gradient(180deg, #000 80%, transparent); }
+  .island { position: absolute; top: 11px; left: 50%; width: 120px; height: 34px; margin-left: -60px; background: #000; border-radius: 20px; z-index: 30; }
+  .touch { position: absolute; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%; z-index: 40;
+    background: rgba(255,255,255,0.55); border: 2px solid rgba(255,255,255,0.95); box-shadow: 0 0 10px rgba(0,0,0,0.4); }
+  .ripple { position: absolute; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%; z-index: 40; border: 2px solid #fff; opacity: 0; }
+
+  .cap-txt { font-weight: 900; font-size: 58px; text-shadow: 0 4px 0 rgba(0,0,0,0.35); }
+  .chip { display: inline-block; padding: 14px 34px; border-radius: 999px; font-weight: 900; font-size: 46px;
+    background: rgba(255,255,255,0.1); border: 3px solid rgba(255,122,26,0.7); color: #fff; }
+  .url { display: inline-block; padding: 26px 50px; border-radius: 999px; background: linear-gradient(180deg, var(--yellow), var(--orange)); color: #3a1200;
+    font-family: var(--display); font-size: 74px; letter-spacing: 0.03em; box-shadow: 0 12px 0 #9a4a00, 0 0 70px rgba(255,210,63,0.5); }
+  #cierre { inset: 0; display: grid; align-content: center; justify-items: center; gap: 46px; text-align: center; opacity: 0; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="blob" style="background:#ff2e88;width:900px;height:900px;left:-300px;top:-250px"></div>
+  <div class="blob" style="background:#2ee6d6;width:800px;height:800px;left:600px;top:300px"></div>
+  <div class="blob" style="background:#8a4dff;width:1000px;height:1000px;left:0;top:1300px"></div>
+
+  <div class="abs center" id="cabeza" style="top:80px">
+    <div class="disp" style="font-size:190px;display:inline-flex;align-items:center;gap:22px"><span>🔍</span><span class="rainbow" id="titulo">EL CASO</span></div>
+  </div>
+  <div class="abs center cap-txt" id="frase1" style="top:300px">¿Quién es criminal?</div>
+  <div class="abs center cap-txt" id="frase2" style="top:300px;opacity:0">Deduce sin adivinar</div>
+  <div class="abs center cap-txt" id="frase3" style="top:300px;opacity:0;color:var(--yellow)">Las pistas nunca mienten</div>
+
+  <div class="phone" id="phone"><div class="screen"><div class="island"></div>
+    <div class="pt">
+      <img class="cap" id="c1" src="capturas/1-inicio.png">
+      <img class="cap" id="c2" src="capturas/2-elegida.png">
+      <img class="cap" id="c3" src="capturas/3-sello.png">
+      <img class="cap" id="c4" src="capturas/4-bien.png">
+      <img class="cap" id="c5" src="capturas/5-pista.png">
+      <div class="barra"></div>
+      <div class="ripple" id="ripple"></div>
+      <div class="touch" id="touch"></div>
+    </div>
+  </div></div>
+
+  <div class="abs" id="cierre">
+    <div class="disp" style="font-size:230px;display:inline-flex;align-items:center;gap:24px"><span>🔍</span><span class="rainbow" id="titulo2">EL CASO</span></div>
+    <div class="chip">🧪 Nuevo · En prueba</div>
+    <div class="cap-txt" style="font-size:66px;line-height:1.25;padding:0 70px">Resuélvelo y cuéntanos<br>qué te parece 💬</div>
+    <div class="url">juegosdesalon.cl/labs/case</div>
+  </div>
+</div>
+<script src="capturas/puntos.js"></script>
+<script>
+  window.FPS = 30; window.DURATION = 6;
+  const $ = id => document.getElementById(id);
+  const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+  const ease = x => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+  const out = x => 1 - Math.pow(1 - x, 3);
+  const fase = (t, a, b) => clamp((t - a) / (b - a));
+  const back = x => { const c = 1.7; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+  const P = window.PUNTOS;
+  // El dedo: [segundo, punto] y los toques
+  const RUTA = [[0.7, [330, 940]], [1.15, P.persona], [1.75, P.persona], [2.15, P.boton], [2.55, P.boton], [2.95, P.pista], [3.7, P.pista], [3.95, [330, 940]]];
+  const TOQUES = [1.25, 2.25, 3.05];
+  const CAPS = [[0, 'c1'], [1.3, 'c2'], [2.3, 'c3'], [2.55, 'c4'], [3.1, 'c5']];
+  function dedo(t) {
+    let k = RUTA.findIndex(([s]) => s > t);
+    if (k <= 0) return k === 0 ? RUTA[0][1] : RUTA.at(-1)[1];
+    const [s0, a] = RUTA[k - 1], [s1, b] = RUTA[k], x = ease((t - s0) / (s1 - s0));
+    return [a[0] + (b[0] - a[0]) * x, a[1] + (b[1] - a[1]) * x];
+  }
+  window.render = t => {
+    // El arcoíris de los títulos corre, como en la app
+    for (const id of ['titulo', 'titulo2']) $(id).style.backgroundPosition = `${(t * 60) % 300}% 0`;
+    // La cabeza entra con un salto
+    const h = back(fase(t, 0, 0.45));
+    $('cabeza').style.transform = `scale(${0.4 + 0.6 * h})`; $('cabeza').style.opacity = clamp(t / 0.2);
+    // Las frases se turnan
+    const frase = (id, a, b) => { const o = Math.min(fase(t, a, a + 0.2), 1 - fase(t, b - 0.2, b)); $(id).style.opacity = o; $(id).style.transform = `translateY(${(1 - out(fase(t, a, a + 0.25))) * 30}px)`; };
+    frase('frase1', 0.15, 1.35); frase('frase2', 1.35, 2.6); frase('frase3', 2.6, 3.95);
+    // El celular sube, y al final baja para dejar el cierre
+    const sube = out(fase(t, 0.05, 0.75)), baja = ease(fase(t, 3.85, 4.3));
+    $('phone').style.transform = `translateY(${(1 - sube) * 1300 + baja * 1500}px) scale(1.15)`;
+    // La pantalla de cada momento
+    let actual = 'c1'; for (const [s, id] of CAPS) if (t >= s) actual = id;
+    for (const [, id] of CAPS) $(id).style.opacity = id === actual ? 1 : 0;
+    // El dedo y su onda al tocar
+    const [x, y] = dedo(t), visible = t > 0.65 && t < 3.95;
+    const apretado = TOQUES.some(s => t >= s - 0.06 && t < s + 0.1);
+    Object.assign($('touch').style, { left: `${x}px`, top: `${y}px`, opacity: visible ? 1 : 0, transform: `scale(${apretado ? 0.8 : 1})` });
+    const toque = TOQUES.findLast(s => t >= s);
+    const r = toque === undefined ? 1 : fase(t, toque, toque + 0.45);
+    Object.assign($('ripple').style, { left: `${x}px`, top: `${y}px`, opacity: r < 1 ? 1 - r : 0, transform: `scale(${1 + 1.6 * r})` });
+    // El cierre: el título, "en prueba", la invitación y la dirección
+    const c = fase(t, 4.0, 4.35);
+    $('cierre').style.opacity = c;
+    $('cabeza').style.opacity = Math.min(clamp(t / 0.2), 1 - fase(t, 3.85, 4.0));
+    [...$('cierre').children].forEach((n, i) => { const k = back(fase(t, 4.0 + i * 0.12, 4.4 + i * 0.12)); n.style.transform = `scale(${0.6 + 0.4 * k})`; n.style.opacity = clamp(k * 1.5); });
+  };
+  if (!location.search.includes('render')) {
+    document.body.classList.add('preview');
+    const t0 = performance.now(); const loop = () => { window.render(((performance.now() - t0) / 1000) % window.DURATION); requestAnimationFrame(loop); }; loop();
+  } else window.render(0);
+</script>
+</body>
+</html>

@@ -21,3 +21,10 @@ assert.deepEqual(atrasos({ juegos: ['zip', 'viejo'], seleccion: true }, { portad
 assert.deepEqual(atrasos({ app: '0.88.0' }, { portada: [], version: '0.88.4' }), []);
 
 console.log('marketing: ok');
+
+// Un juego del laboratorio que sale a propósito no se marca como "ya no está en la portada"
+{
+  const av = atrasos({ juegos: ['caso'], laboratorio: ['caso'], seleccion: true }, { portada: ['ahorcado'], version: null });
+  assert.deepEqual(av, [], 'laboratorio: no debería avisar');
+  console.log('marketing: un juego del laboratorio no avisa');
+}
