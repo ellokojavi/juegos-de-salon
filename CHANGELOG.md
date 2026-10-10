@@ -4,6 +4,11 @@
 - **🎬 Marketing: teaser de El caso** (`marketing/caso-teaser/`): 6 s en vertical y un GIF para
   WhatsApp, que invitan a probar el juego del laboratorio y a dejar un comentario.
 
+## 0.142.2 — 2026-10-10
+- **🔍 El caso (laboratorio): "¿Qué te pareció?"** (D-265): al terminar el caso del día, un
+  formulario para dejar un comentario, con el caso adjunto.
+- **🔍 El caso (laboratorio):** el marcador ya no muestra "null" cuando no se ha pedido ayuda.
+
 ## 0.142.1 — 2026-10-10
 - **🔍 El caso, más para pensar** (D-264): tocar una pista ilumina solo a quien nombra ("a la
   izquierda de Omar": Omar), no a todo el grupo.
