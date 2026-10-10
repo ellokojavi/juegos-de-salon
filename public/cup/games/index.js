@@ -2,6 +2,8 @@
  * Registro de los juegos de La Copa. Cada uno: `generar(código, día)` (motor puro, igual
  * en todos los celulares), `montar(raíz, ctx)` (su pantalla) y `resultado(estado)` →
  * { s: puntaje, t: tarjeta, resumen }.
+ * Opcionales: `ejemplo` (el dibujo de cómo se juega), `portada` (lo de arriba de la antesala),
+ * `titulo` (el nombre en la antesala) y `pantallaCompleta`.
  *
  * Agregar un juego: su motor y su pantalla en esta carpeta, su texto en JUEGOS_COPA de
  * rules.js y una entrada acá. Para que se pueda elegir en una copa, sumarlo a POZO (engine.js).
