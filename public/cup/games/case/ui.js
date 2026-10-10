@@ -60,6 +60,9 @@ export function titulo({ el, J }) {
     el('span', { class: 'display display--lg rainbow' }, J.nombre));
 }
 
+/** Armar un caso tarda (D-260): la antesala lo deja listo mientras se lee, para que "Empezar" no se trabe. */
+export const caro = true;
+
 /** La prueba es un caso completo, igual de difícil que el de verdad: la antesala lo dice. */
 export const pruebaCompleta = true;
 
