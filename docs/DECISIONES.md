@@ -68,7 +68,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216 |
-| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260 |
+| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261 |
 | Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249 |
 | Marketing | `marketing/README.md` | D-178 |
@@ -4447,7 +4447,7 @@ leer la base antes de dibujarse, y el orden cambiaría solo de un día a otro).
 lo pide. Un juego nuevo que no está en la lista va después de los que sí.
 
 ## D-256 · El caso: un prototipo de misterio en el laboratorio, solo en español
-**Fecha:** 2026-10-09 · **Estado:** vigente · **Relación:** excepción a C-3 (idiomas) y C-2 (estructura); ampliada por D-257 (la versión de La Copa)
+**Fecha:** 2026-10-09 · **Estado:** corregida por D-261 · **Relación:** excepción a C-3 (idiomas) y C-2 (estructura); ampliada por D-257 (la versión de La Copa)
 **Decisión:** Se prueba en `/labs/case/` un juego de deducción al estilo de *Clues by Sam*: veinte
 sospechosos, pistas que siempre dicen la verdad, y nunca hay que adivinar. Solo en español y fuera de
 `games.js`, para mostrárselo a amigos. Hay un caso del día (la semilla es la fecha) y casos con código
@@ -4545,4 +4545,16 @@ una de cada siete pistas es condicional o pareja.
 **Consecuencias:** un caso tarda unos 300 ms en armarse (antes 50 ms); en un celular puede llegar a un
 segundo, y se arma mientras se va el "¡A jugar!". `juegos.test.mjs` exige al menos 45 % de
 deducciones combinadas. El caso de una semilla cambia (El caso todavía no está en `POZO`).
+
+## D-261 · El caso: marcar antes de tiempo cuenta como error
+**Fecha:** 2026-10-10 · **Estado:** vigente · **Relación:** corrige D-256 (el intento antes de tiempo)
+**Decisión:** En El caso (La Copa y el prototipo), marcar a alguien que todavía no se puede deducir
+no se acepta y **cuenta como error** (resta 10, como equivocarse), sin decir si lo marcado estaba
+bien. Se guarda como jugada `{ i, v, falta }` y la carta queda con ✕. El mensaje dice "Todavía no se
+puede saber qué es Ana: cuenta como error.", y la regla de "Cómo se juega" lo explica.
+**Por qué:** lo eligió el dueño: con D-256 el intento no costaba nada, y se podía tantear persona
+por persona hasta dar con la que se deduce, sin pensar. Era lo que más hacía monótono el juego.
+**Alternativas descartadas:** medio error (5 puntos), y dejarlo gratis.
+**Consecuencias:** el puntaje premia estar seguro antes de marcar. `tools/e2e/case/lab.mjs` lo
+prueba.
 
