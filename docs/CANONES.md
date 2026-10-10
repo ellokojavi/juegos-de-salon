@@ -40,6 +40,8 @@ public/<carpeta>/
   página puente (la genera `node tools/release/og.mjs tarjetas`).
 - Los juegos de La Copa siguen la misma idea en `public/cup/games/<carpeta>/`: `engine.js`
   (reglas puras), `ui.js` (pantalla) y sus datos propios; lo común a todos queda en `games/`.
+  Uno suelto que todavía está en el laboratorio (`labs: true` en `SUELTOS`) tiene su página en
+  `/labs/<slug>/`, y `/<slug>/` es página puente hasta que salga (D-267).
 - El juego se registra en `public/assets/js/games.js` con `id`, `emoji`, `name` y `tagline` por idioma, `players`, `duration`, `path` y `available`. Con sala, también `jugadas`: los tipos de mensaje que hace una persona, que es lo que el panel cuenta como jugadas (D-138).
 - El `<head>` de cada página de la app lleva el manifest, el ícono y el nombre del iPhone
   (`apple-touch-icon` y `apple-mobile-web-app-title`), el script que elige el manifest del idioma

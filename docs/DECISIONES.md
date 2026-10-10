@@ -4447,7 +4447,7 @@ leer la base antes de dibujarse, y el orden cambiaría solo de un día a otro).
 lo pide. Un juego nuevo que no está en la lista va después de los que sí.
 
 ## D-256 · El caso: un prototipo de misterio en el laboratorio, solo en español
-**Fecha:** 2026-10-09 · **Estado:** reemplazada por D-267 · **Relación:** excepción a C-3 (idiomas) y C-2 (estructura); ampliada por D-257 (la versión de La Copa)
+**Fecha:** 2026-10-09 · **Estado:** reemplazada por D-261, D-264, D-267 · **Relación:** excepción a C-3 (idiomas) y C-2 (estructura); ampliada por D-257 (la versión de La Copa); D-261 y D-264 corrigieron partes de sus reglas, y D-267 borró el prototipo
 **Decisión:** Se prueba en `/labs/case/` un juego de deducción al estilo de *Clues by Sam*: veinte
 sospechosos, pistas que siempre dicen la verdad, y nunca hay que adivinar. Solo en español y fuera de
 `games.js`, para mostrárselo a amigos. Hay un caso del día (la semilla es la fecha) y casos con código
