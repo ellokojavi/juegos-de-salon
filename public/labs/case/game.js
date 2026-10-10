@@ -84,15 +84,20 @@ function armarGrilla() {
   }
 }
 
-/** "Girar para descubrir": al abrir, las cartas parten de espaldas y se dan vuelta en ola. */
+/**
+ * "Girar para descubrir": al abrir, las cartas parten de espaldas y se dan vuelta en ola.
+ * Devuelve cuánto dura (ms), para que el reloj parta cuando ya se ven todas (U-20).
+ */
 function descubrir() {
-  if (QUIETO) return;
+  if (QUIETO) return 0;
   cartas.forEach(c => c.classList.add('tapada'));
   void $('#grilla').offsetWidth;
+  const paso = i => 250 + (Math.floor(i / COLS) + (i % COLS)) * 90;
   cartas.forEach((c, i) => setTimeout(() => {
     c.classList.remove('tapada');
     if (i % 4 === 0) SFX.tap();
-  }, 250 + (Math.floor(i / COLS) + (i % COLS)) * 90));
+  }, paso(i)));
+  return paso(N - 1) + 550;   // la última carta empieza a girar, más lo que dura el giro
 }
 
 function render() {
@@ -301,7 +306,7 @@ function renderFin() {
     SFX.win(); confetti({ count: 200, duration: 3000 });
     // Una ola por la grilla resuelta
     if (!QUIETO) cartas.forEach((c, i) => setTimeout(() => c.classList.add('ola'), (Math.floor(i / COLS) + (i % COLS)) * 70));
-    setTimeout(() => box.scrollIntoView({ behavior: 'smooth', block: 'start' }), 300);
+    setTimeout(() => box.scrollIntoView({ behavior: QUIETO ? 'auto' : 'smooth', block: 'start' }), 300);
   }
 }
 
@@ -319,10 +324,11 @@ document.addEventListener('click', e => {
 });
 // "¿Cómo se juega?" arriba abre las reglas, que están al final
 $('#ir-reglas').addEventListener('click', () => { $('#reglas').open = true; });
-correr();
 armarGrilla();
 render();
-if (!P.marcas.length && !P.done) descubrir();
+// El reloj parte cuando las cartas ya se dieron vuelta (U-20); tocar a alguien antes lo hace partir igual
+const intro = !P.marcas.length && !P.done ? descubrir() : 0;
+if (intro) setTimeout(correr, intro); else correr();
 setInterval(() => { const r = document.getElementById('reloj'); if (r && !P.done) r.textContent = mmss(tiempo()); }, 1000);
 
 // Ventana al estado para las pruebas (C-14)
