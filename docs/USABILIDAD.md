@@ -67,8 +67,9 @@ nunca se usaron, y no se renumera.
 
 ## Interacciones
 
-- **U-20 · El reloj corre solo mientras se juega:** parte con la cuenta regresiva, se pausa con la
-  pantalla oculta y se detiene al terminar el tablero (D-105, D-130).
+- **U-20 · El reloj corre solo mientras se juega:** parte con la pantalla de juego a la vista (después
+  de la cuenta regresiva y de la entrada del juego, si la tiene), se pausa con la pantalla oculta y se
+  detiene al terminar el tablero (D-105, D-130, D-258).
 - **U-21 · Nada cambia a mitad de un día:** contenido, grilla o reglas nuevas entran para los días
   que todavía no empiezan (D-128).
 - **U-22 · Un reintento nunca traba:** si algo llegó aunque el celular mostró error, el segundo
