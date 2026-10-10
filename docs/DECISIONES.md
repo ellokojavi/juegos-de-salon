@@ -4506,7 +4506,7 @@ pantalla vacía); que cada juego arranque su propio reloj (el reloj es de la cá
 parte. Retomar una partida no cambia: el tablero vuelve de una y el reloj sigue donde estaba.
 
 ## D-259 · El caso, menos lineal: pistas que hay que combinar
-**Fecha:** 2026-10-10 · **Estado:** corregida por D-263 · **Relación:** amplía D-257
+**Fecha:** 2026-10-10 · **Estado:** corregida por D-263, D-264 · **Relación:** amplía D-257
 **Decisión:** El generador de El caso elige las pistas para que haya que pensar más. Cada pista
 candidata recibe una nota (`notaPista`): vale más la que destapa a alguien **solo combinada con las
 pistas que ya se saben**, menos la que lo dice todo sola, y los tipos que piden razonar (más que,
@@ -4596,7 +4596,8 @@ las pistas que nombra alcanzan y que no quedan comparaciones con grupos cruzados
 `tools/e2e/case/lab.mjs`, el botón en el prototipo.
 
 ## D-264 · El caso: tocar una pista ilumina solo a quien nombra
-**Fecha:** 2026-10-10 · **Estado:** vigente · **Relación:** corrige D-256 (lo que ilumina una pista)
+**Fecha:** 2026-10-10 · **Estado:** vigente · **Relación:** corrige D-256 (lo que ilumina una pista) y D-259 (en una comparación, los dos colores
+de la grilla quedan para quienes nombra, no para los dos grupos)
 **Decisión:** Tocar una pista (La Copa y el prototipo) ya no ilumina a todo el grupo del que habla,
 sino solo a las personas que nombra por su nombre: "Todos los que están a la izquierda de Omar son
 criminales" ilumina a Omar; "Si Ana es criminal, Beto es inocente", a Ana y a Beto; "En la fila 2
