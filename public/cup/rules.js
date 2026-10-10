@@ -116,7 +116,7 @@ const ES = {
       desempate: 'Si empatas, gana quien tardó menos.',
     },
     caso: {
-      nombre: 'El caso', habilidad: 'deducción',
+      nombre: 'El caso', habilidad: 'deducir',
       como: [
         'Descubre quién es criminal y quién es inocente entre los 20 sospechosos.',
         'Cada persona que marcas bien suma su pista, y las pistas siempre dicen la verdad.',
@@ -2416,7 +2416,7 @@ const DE = {
       desempate: 'Bei Gleichstand gewinnt, wer schneller war.',
     },
     caso: {
-      nombre: 'Der Fall', habilidad: 'Deduktion',
+      nombre: 'Der Fall', habilidad: 'Kombinieren',
       como: [
         'Finde heraus, wer von den 20 Verdächtigen kriminell ist und wer unschuldig.',
         'Jede Person, die du richtig markierst, gibt ihren Hinweis, und Hinweise sagen immer die Wahrheit.',
