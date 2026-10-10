@@ -323,7 +323,15 @@ document.addEventListener('click', e => {
   if ((elegida !== null || foco !== null) && !e.target.closest('.persona, .accion, .pista')) { elegida = null; foco = null; render(); }
 });
 // "¿Cómo se juega?" arriba abre las reglas, que están al final
-$('#ir-reglas').addEventListener('click', () => { $('#reglas').open = true; });
+$('#ir-reglas').addEventListener('click', ev => {
+  // Abre las reglas y baja hasta ellas con un scroll suave (sin el salto del ancla, ni con movimiento reducido)
+  ev.preventDefault();
+  const reglas = $('#reglas');
+  reglas.open = true;
+  SFX.tap();
+  reglas.scrollIntoView({ behavior: QUIETO ? 'auto' : 'smooth', block: 'start' });
+  reglas.querySelector('summary')?.focus({ preventScroll: true });
+});
 armarGrilla();
 render();
 // El reloj parte cuando las cartas ya se dieron vuelta (U-20); tocar a alguien antes lo hace partir igual
