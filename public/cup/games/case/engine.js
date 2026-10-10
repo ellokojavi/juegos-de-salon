@@ -190,7 +190,8 @@ function textoPlano(caso, i, L, m) {
     const xi = p.a[0], yi = p.a[1], x = caso.nombres[xi], y = caso.nombres[yi];
     // "criminal" concuerda con el nombre (criminoso o criminosa en portugués)
     const cx = femenino(x) ? F.crimF : F.crim, cy = femenino(y) ? F.crimF : F.crim;
-    if (p.t === 'mismo') return fmt(F.mismo, { x: m(x, 'a'), y: m(y, 'a') });
+    // Con dos mujeres concuerda en femenino: "las dos inocentes o las dos criminales"
+    if (p.t === 'mismo') return fmt(femenino(x) && femenino(y) ? F.mismoF : F.mismo, { x: m(x, 'a'), y: m(y, 'a') });
     return fmt(F[`si${p.k}${p.j}`], { x: m(x, 'a'), y: m(y, 'b'), cx, cy });
   }
   if (p.g.tipo === 'dos') {
