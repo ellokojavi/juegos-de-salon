@@ -40,7 +40,7 @@ pueda ir y volver sin perderse, y que los mensajes para compartir se lean bien e
 1. **Reportes 🐞 nuevos:** `node tools/firebase/reportes.mjs --dias 2`.
 2. **Pantallas en tamaño de teléfono (390 × 844):** corre `node tools/e2e/cup/torneo.mjs <salida>` (juega
    una copa entera, todas las prácticas y las demos, y deja capturas) y mira las capturas. Las
-   demos (`/cup/?prueba&demo=<escena>`) muestran cada momento de la copa.
+   demos (`/cup/?test&demo=<escena>`) muestran cada momento de la copa.
 3. **Textos** de `public/cup/rules.js` y de las pantallas: claridad, ortografía, concordancia, un mismo
    término para un mismo concepto (U-1 a U-7).
 4. **Mensajes para compartir** tal como salen (el guion los imprime: invitación, recordatorio,

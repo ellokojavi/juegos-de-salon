@@ -92,7 +92,7 @@ const PLAYS = {
     { tap: `document.getElementById('card')`, after: 1400 },
     { tap: `[...document.querySelectorAll('#result .btn')].at(-1)`, after: 500, luego: `(()=>{const h=document.getElementById('handoff');if(!h.hidden&&/Sigan/i.test(h.innerText))h.click()})()` },
   ] },
-  reinas: { url: '/queens/?semilla=WNDRN', steps: [
+  reinas: { url: '/queens/?seed=WNDRN', steps: [
     `document.getElementById('btn-empezar').click()`, { wait: 4500 },
     // cinco reinas ya puestas (solución de WNDRN: 7,0,5,2,4,1,6,3); en cámara: X por la fila 6 y las tres últimas
     ...[7, 0, 5, 2, 4].map((c, r) => `document.querySelector('.rej[data-i="${r * 8 + c}"]').click()`), { wait: 600 }, { snap: true },
@@ -101,7 +101,7 @@ const PLAYS = {
     { tap: REJ(6 * 8 + 6), after: 350 },
     { tap: REJ(7 * 8 + 3), after: 1200 },
   ] },
-  tango: { url: '/tango/?semilla=WNDRN', steps: [
+  tango: { url: '/tango/?seed=WNDRN', steps: [
     `document.getElementById('btn-empezar').click()`, { wait: 4500 },
     // todo resuelto menos tres casillas (solución de WNDRN); en cámara: sol, sol y luna (dos toques)
     `(()=>{const S=${JSON.stringify(TANGO)};for(let i=0;i<36;i++){if([30,34,35].includes(i))continue;const b=document.querySelector('.tan[data-i="'+i+'"]');if(!b||b.disabled)continue;for(let k=0;k<S[i];k++)document.querySelector('.tan[data-i="'+i+'"]').click();}})()`,
@@ -111,22 +111,22 @@ const PLAYS = {
     { tap: TAN(34), after: 250 },
     { tap: TAN(34), after: 1200 },
   ] },
-  zip: { url: '/zip/?semilla=WNDRN', steps: [
+  zip: { url: '/zip/?seed=WNDRN', steps: [
     `document.getElementById('btn-empezar').click()`, { wait: 4500 }, { snap: true },
     // el nivel 1 de un solo trazo, del 1 al 5 pasando por todas
     { trazo: [6, 7, 3, 2, 1, 0, 4, 5, 9, 8, 12, 13, 14, 10, 11, 15], after: 60 },
   ] },
-  conexiones: { url: '/connections/?semilla=WNDRN', steps: [
+  conexiones: { url: '/connections/?seed=WNDRN', steps: [
     `document.getElementById('btn-empezar').click()`, { wait: 4500 }, { snap: true },
     ...['PICASSO', 'DALÍ', 'MIRÓ', 'VELÁZQUEZ'].map(w => ({ tap: BOTON(w), after: 200 })),
     { tap: `document.getElementById('btn-confirmar')`, after: 1200 },
   ] },
-  anio: { url: '/year/?semilla=WNDRN', steps: [
+  anio: { url: '/year/?seed=WNDRN', steps: [
     `document.getElementById('btn-empezar').click()`, { wait: 4500 }, { snap: true },
     ...'1985'.split('').map(d => ({ tap: BOTON(d), after: 180 })),
     { tap: `[...document.querySelectorAll('button')].find(b=>/^OK$/i.test(b.textContent.trim()))`, after: 1200 },
   ] },
-  letras: { url: '/word/?semilla=WNDRN', steps: [
+  letras: { url: '/word/?seed=WNDRN', steps: [
     `document.getElementById('btn-empezar').click()`, { wait: 4500 },
     // El "null" suelto bajo los intentos es un error de la app (ui-letras.js); no va en el video
     `(()=>{const f=()=>document.querySelectorAll('.letras-juego, .stack').forEach(n=>[...n.childNodes].forEach(c=>{if(c.nodeType===3&&c.textContent==='null')c.remove()}));f();new MutationObserver(f).observe(document.body,{childList:true,subtree:true})})()`,
@@ -135,12 +135,12 @@ const PLAYS = {
     ...'CLAVO'.split('').map(c => ({ tap: BOTON(c), after: 160 })),
     { tap: `[...document.querySelectorAll('button')].find(b=>/Probar/i.test(b.textContent))`, after: 1000 },
   ] },
-  desenredo: { url: '/untangle/?semilla=WNDRN', steps: [
+  desenredo: { url: '/untangle/?seed=WNDRN', steps: [
     `document.getElementById('btn-empezar').click()`, { wait: 4500 }, { snap: true },
     { drag: [`document.querySelector('.des-nudos circle[data-v="0"]')`, 90, 70], mids: 6, after: 300 },
     { drag: [`document.querySelector('.des-nudos circle[data-v="3"]')`, -80, 60], mids: 6, after: 600 },
   ] },
-  donde: { url: '/where/?semilla=WNDRN', steps: [
+  donde: { url: '/where/?seed=WNDRN', steps: [
     `document.getElementById('btn-empezar').click()`, { wait: 5000 }, { snap: true },
     // Santiago donde el globo lo dibuja (DONDE=x,y lo fija a mano)
     { globo: [-30, -66], pasos: 16, after: 300 },

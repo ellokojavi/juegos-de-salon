@@ -5,7 +5,8 @@
  */
 import { el } from './ui.js';
 import { COMMON, SITIO, withLang } from './i18n.js';
-import { GAMES, SUELTOS, PORTADA, gameById } from './games.js';
+import { GAMES, SUELTOS, PORTADA, gameById, SLUGS_SIN_PAGINA } from './games.js';
+import { tiene } from './parametros.js';
 import { tirar, TEXTOS as AZAR } from './azar.js';
 import { botonCompartir, cabecera, laminaResultado, nombreArchivo, compartir } from './compartir.js';
 import { JUEGOS_DIA, estado, rutaDel, numeroDel, sumarDias, COMODINES_MAX, leer, anotar, fechaLocal, juegoDel, semillaDel } from './uno-al-dia.js';
@@ -17,7 +18,7 @@ const textos = lang => (COMMON[lang] || COMMON.es);
 /** La carpeta de cada juego: los de la portada (`hangman`) y los sueltos de La Copa (`queens`). */
 const SLUGS = Object.fromEntries([...GAMES.filter(g => !g.torneo).map(g => [g.id, g.path.replace(/\/$/, '')]), ...SUELTOS.map(g => [g.id, g.slug])]);
 /** Dónde se juega hoy, desde la raíz del sitio. */
-export const rutaHoy = id => rutaDel(id, SLUGS);
+export const rutaHoy = id => rutaDel(id, SLUGS, SLUGS_SIN_PAGINA);
 /** El link de Uno al día que se comparte. */
 export const URL_HOY = `${SITIO}today/`;
 
@@ -291,13 +292,13 @@ export async function tarjetaDesafio({ lang, raiz = '', inv, alTocar }) {
 const mmss = ms => { const t = Math.round((ms || 0) / 1000); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`; };
 
 /**
- * El modo `?hoy` de un juego de grupo (El Ahorcado, Batalla Naval, Dudo), como el de los
- * solitarios en `cup/game.js`: sin `?hoy` o fuera del laboratorio, null. Si hoy toca otro juego (un
+ * El modo `?today` (o `?hoy`, el de antes de D-266) de un juego de grupo (El Ahorcado, Batalla Naval, Dudo), como el de los
+ * solitarios en `cup/game.js`: sin `?today` o fuera del laboratorio, null. Si hoy toca otro juego (un
  * link de ayer, o pasó la medianoche), se va al de hoy y devuelve `{ fuera: true }`. Si no, la
  * fecha del jugador, la semilla del día y si ya lo jugó (entonces esta partida es práctica).
  */
 export function modoHoy(id, { raiz = '../', loc = globalThis.location } = {}) {
-  if (!new URLSearchParams(loc.search).has('hoy')) return null;
+  if (!tiene('today', loc.search)) return null;
   const fecha = fechaLocal(), deHoy = juegoDel(fecha);
   if (deHoy !== id) { loc.replace(raiz + rutaHoy(deHoy)); return { fuera: true }; }
   return { id, fecha, semilla: semillaDel(fecha), ya: !!leer().dias[fecha], inicio: 0 };

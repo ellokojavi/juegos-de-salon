@@ -9,6 +9,7 @@ import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../assets/js/
 import { botonInvitar } from '../assets/js/compartir.js';
 import { gameById, MODO_UNO_AL_DIA } from '../assets/js/games.js';
 import { getLang, langToggle, applyStatic, COMMON, withLang } from '../assets/js/i18n.js';
+import { param } from '../assets/js/parametros.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { failWith } from '../assets/js/transport/errors.js';
 import { showHandoff, passBlock, showCover } from '../assets/js/handoff.js';
@@ -41,7 +42,7 @@ const SUGGEST_N = 6;
 const FLASH_MS = 2000;
 const store = createSessionStore(GAME_ID);
 const nameStore = createNameStore(GAME_ID);
-/** Uno al día (D-230): con `?hoy`, la palabra del día con el mazo del celular, sin elegir modo. */
+/** Uno al día (D-230): con `?today`, la palabra del día con el mazo del celular, sin elegir modo. */
 const HOY = modoHoy(GAME_ID);
 
 /** De dónde sale la palabra, en el orden en que se muestra en la configuración (D-53). */
@@ -349,7 +350,7 @@ function renderLobby() {
   showScreen('screen-lobby');
   const box = $('#lobby-box'); box.innerHTML = '';
   // Con el idioma pegado: quien reciba la invitación abre la app como quien la mandó (D-74)
-  const url = withLang(`${location.origin}${location.pathname}?sala=${S.code}`);
+  const url = withLang(`${location.origin}${location.pathname}?room=${S.code}`);
   const joined = ROLES.filter(r => M.names[r]);
   box.append(
     el('div', { class: 'muted', style: 'font-weight:800' }, T.lobbyCode),
@@ -864,7 +865,7 @@ const freshConfig = config => ({ ...config, seed: randomSeed() });
 /* ---------- Varios celulares ---------- */
 async function startOnline(transport, code, role, name, config, secrets = {}) {
   startSession({ mode: 'online', transport, roles: [role], config, names: { [role]: name }, code, role, secrets });
-  history.replaceState(null, '', `${location.pathname}?sala=${code}`);
+  history.replaceState(null, '', `${location.pathname}?room=${code}`);
   keepAwake();
   saveSession();
   render();
@@ -1065,7 +1066,7 @@ function init() {
   // Las victorias de este juego y entrar con nombre y PIN (D-212); en el laboratorio, solo donde se activaron
   $('#rk-slot')?.append(bloqueVictorias({ juego: GAME_ID, nombre: T.title, alTocar: () => SFX.tap() }));
   renderResumeSlot();
-  const code = new URLSearchParams(location.search).get('sala');
+  const code = param('room');
   if (code && /^[A-Z]{4}$/i.test(code)) {
     const saved = loadSession();
     if (saved && saved.mode === 'online' && saved.code === code.toUpperCase() && !saved.done) {
