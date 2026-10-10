@@ -102,7 +102,7 @@ desde el final), porque su tiempo no se reparte parejo: el dado y el mapa necesi
   día de Reinas, el n.° 24) y siembra en el celular diez días seguidos jugados antes: así la
   racha sale en 11. La solución de las reinas sale del motor (`generar(semilla, d)` de
   `public/cup/games/queens/engine.js`, con la semilla y el día de la partida).
-- **La Copa** es la demo `podio` del laboratorio, capturada entera de arriba abajo (`copa.mjs`).
+- **La Copa** es la demo `podium` del laboratorio, capturada entera de arriba abajo (`copa.mjs`).
 - **`render.mjs`** dibuja cuadro a cuadro con Playwright y se los pasa a ffmpeg (sin audio).
 - **`construir.sh`** hace todo: capturas, `preparar.py` (achica y escribe `plays/plays.js`),
   los dos renders, la música y los mp4 de `output/`.

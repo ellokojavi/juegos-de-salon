@@ -117,7 +117,7 @@ Los IDs no se reusan: un requerimiento que cambia conserva su ID y su texto se a
 | GE-06 | Jugar solo con récord del celular y tabla de rankings `generala_solo` (D-212). | ✅ |
 | GE-07 | Memoria de partida en todos los modos, con los dados guardados a medio turno (C-6). | ✅ |
 | GE-08 | Textos en español, inglés, portugués ("General") y alemán (C-3). | ✅ |
-| GE-09 | Uno al día, con los dados de la semilla del día (D-247). Listo en `/generala/?hoy`; entra al mazo al salir de próximamente (D-248). | ⏳ pendiente |
+| GE-09 | Uno al día, con los dados de la semilla del día (D-247). Listo en `/generala/?today`; entra al mazo al salir de próximamente (D-248). | ⏳ pendiente |
 | GE-11 | En la portada, como "Próximamente" mientras no se abre (D-248). | ✅ v0.128.0 |
 | GE-12 | Abrir Generala desde la portada (`available: true`) y sumarla al mazo de Uno al día. | ⏳ pendiente |
 | GE-10 | Victorias en los rankings (`generala_victorias`, D-215). | ✅ |
