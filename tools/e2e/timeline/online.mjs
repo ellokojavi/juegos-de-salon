@@ -34,7 +34,7 @@ await A.shot('01-lobby-A');
 // B y C se unen por el enlace
 for (const [i, k] of [[1, 'B'], [2, 'C']]) {
   const d = devs[k];
-  await d.go(`${hosts[i]}/timeline/?sala=${code}`, 2000);
+  await d.go(`${hosts[i]}/timeline/?room=${code}`, 2000);
   await setName(d, k === 'B' ? 'Cata' : 'Nico');
   await clickText(d, '#setup-actions .btn', 'Unirse'); await sleep(4500);
   console.log(`${k} entró → pantalla:`, await d.active(), '| rol:', await d.evaluate(`window.__ldt.session().role`));
@@ -62,7 +62,7 @@ while (guard++ < 24) {
     await A.shot('04-mid-A'); await B.shot('04-mid-B');
     console.log('título de la mano en B:', await B.evaluate(`document.getElementById('hand-title').textContent`));
     // reconexión de C a mitad de partida
-    await C.go(`${hosts[2]}/timeline/?sala=${code}`, 6000);
+    await C.go(`${hosts[2]}/timeline/?room=${code}`, 6000);
     console.log('C tras recargar:', await C.active(), JSON.stringify(await v(C)), '| rol:', await C.evaluate(`window.__ldt.session()?.role`));
     await C.shot('04-reconnect-C');
   }

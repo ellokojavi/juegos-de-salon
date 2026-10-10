@@ -46,7 +46,7 @@ for (const [lang, e] of Object.entries(ESPERADO)) {
   ver(fotos.length === 1 && fotos[0] === e.foto, `${lang}: la tarjeta es la de su idioma (${fotos.join(', ')})`);
   ver(m.text.startsWith(e.cab) && /\d+/.test(m.text.split('\n')[0]), `${lang}: el texto abre con la cabecera y cuántos juegos hay`);
   const link = m.text.trim().split('\n').pop();
-  ver(link === `🔗 https://juegosdesalon.cl/${lang === 'es' ? '' : `${lang}/`}?de=link`, `${lang}: el link a la portada del idioma, solo en la última línea (${link})`);
+  ver(link === `🔗 https://juegosdesalon.cl/${lang === 'es' ? '' : `${lang}/`}?from=link`, `${lang}: el link a la portada del idioma, solo en la última línea (${link})`);
   console.log(m.text.replace(/^/gm, '    '));
 }
 // Un computador: sin menú, el texto queda copiado, el botón dice ✅ y no se baja ninguna imagen.

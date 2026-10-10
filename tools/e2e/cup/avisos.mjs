@@ -1,4 +1,4 @@
-// Los avisos de La Copa en Chrome (D-223), con el almacén de prueba (?prueba) y sin red. La clave
+// Los avisos de La Copa en Chrome (D-223), con el almacén de prueba (?test) y sin red. La clave
 // VAPID es la de vapid.js (D-225; si estuviera vacía, una de prueba), y el
 // servicio de avisos del navegador se reemplaza por uno falso: ninguna suscripción sale del Chrome.
 // Recorre la campana en sus estados, la tarjeta ("Avisarme" y "Ahora no"), el aviso de prueba, los
@@ -52,18 +52,18 @@ const preparar = () => ev(`(()=>{const st=document.createElement('style');st.tex
 
 /* ---------- Android: antes de que parta, la tarjeta y "Ahora no" ---------- */
 await como(UA.android);
-await b.go(`${BASE}?prueba&demo=espera`, 2000); await preparar();
+await b.go(`${BASE}?test&demo=waiting`, 2000); await preparar();
 ok(await estadoCampana() === 'apagado', 'antes de partir: la campana dice "Activar avisos"');
 ok(/parte el/i.test(await texto('#aviso-oferta')), 'antes de partir: la tarjeta ofrece avisar el día que parte');
 const codeEspera = await ev('__copa.estado.code');
 await click('#btn-ahora-no'); await sleep(400);
 ok(!await ev(`!!document.getElementById('aviso-oferta')`), '"Ahora no" saca la tarjeta');
-await b.go(`${BASE}?prueba&${codeEspera}`, 1800); await preparar();
+await b.go(`${BASE}?test&${codeEspera}`, 1800); await preparar();
 ok(!await ev(`!!document.getElementById('aviso-oferta')`) && await estadoCampana() === 'apagado', 'la tarjeta no vuelve en esa copa, la campana sigue');
 
 /* ---------- Android: activar desde la campana ---------- */
 await permitir();
-await b.go(`${BASE}?prueba&demo=jugador`, 2000); await preparar();
+await b.go(`${BASE}?test&demo=player`, 2000); await preparar();
 ok(await estadoCampana() === 'apagado', 'día 4: la campana parte apagada');
 await click('#btn-avisos'); await sleep(1500);
 ok(await estadoCampana() === 'activo', 'con el permiso dado, un toque activa los avisos');
@@ -75,7 +75,7 @@ ok(notis.some(n => /La Copa/.test(n) && /Listo/.test(n)), `llega el aviso de con
 await b.shot('campana-activa');
 
 /* ---------- La base rechaza la suscripción (otra identidad del mismo celular): se pide otra ---------- */
-await b.go(`${BASE}?prueba&demo=jugador`, 2000); await preparar();
+await b.go(`${BASE}?test&demo=player`, 2000); await preparar();
 await ev(`(()=>{sessionStorage.setItem('e2e:veces','0');const st=__copa.store;const orig=st.guardarAvisos.bind(st);let una=true;st.guardarAvisos=async(...a)=>{if(una){una=false;throw Object.assign(new Error('permiso'),{code:'permiso'})}return orig(...a)};return 1})()`);
 await click('#btn-avisos'); await sleep(1500);
 ok(await estadoCampana() === 'activo' && await ev(`sessionStorage.getItem('e2e:anulada')`) === '1' && Number(await ev(`sessionStorage.getItem('e2e:veces')`)) >= 1, 'si la base rechaza la suscripción, se anula, se pide otra y queda activa');
@@ -93,22 +93,23 @@ ok(await hoja() === null && await estadoCampana() === 'apagado', '"Silenciar est
 /* ---------- Lo que abre un aviso (D-229): el día, o silenciar desde el botón de Android ---------- */
 const codeAviso = await ev('__copa.estado.code');
 const hoyDemo = await ev(`(()=>{const m=__copa.estado.copa.meta;return Object.keys(m.win).map(Number).find(k=>Date.now()>=m.win[k].a&&Date.now()<m.win[k].b&&!(__copa.estado.copa.results?.[k]?.[__copa.estado.yo]))||0})()`).catch(() => 0);
-await b.go(`${BASE}?prueba&${codeAviso}&dia=${hoyDemo}`, 2000); await preparar();
+await b.go(`${BASE}?test&${codeAviso}&day=${hoyDemo}`, 2000); await preparar();
 ok(hoyDemo && await ev('__copa.estado.pantalla') === 'jugar', `el aviso del día ${hoyDemo} abre ese día, listo para empezar`);
 await b.shot('aviso-dia');
-ok(!/[?&](dia|silenciar)\b/.test(await ev('location.search')), 'la dirección ya no lleva el día del aviso: recargar no lo repite');
-await b.go(`${BASE}?prueba&${codeAviso}&dia=99`, 2000); await preparar();
+ok(!/[?&](day|mute|dia|silenciar)\b/.test(await ev('location.search')), 'la dirección ya no lleva el día del aviso: recargar no lo repite');
+// Con el nombre de antes de D-266 (`&dia=`): un aviso viejo se lee igual
+await b.go(`${BASE}?test&${codeAviso}&dia=99`, 2000); await preparar();
 ok(await ev('__copa.estado.pantalla') === 'tablero', 'un día que no se puede jugar abre el tablero');
 await click('#btn-avisos'); await sleep(1500);
 ok(await estadoCampana() === 'activo', 'se vuelven a activar');
-await b.go(`${BASE}?prueba&${codeAviso}&silenciar`, 2000); await preparar(); await sleep(600);
+await b.go(`${BASE}?test&${codeAviso}&mute`, 2000); await preparar(); await sleep(600);
 await b.shot('aviso-silenciar');
 ok(await estadoCampana() === 'apagado' && await ev('__copa.estado.pantalla') === 'tablero', 'el botón "Silenciar esta copa" del aviso la silencia');
 
 /* ---------- Bloqueados ---------- */
 await b.send('Browser.resetPermissions');
 await b.send('Browser.setPermission', { origin: SITIO, permission: { name: 'notifications' }, setting: 'denied' });
-await b.go(`${BASE}?prueba&demo=jugador`, 2000); await preparar();
+await b.go(`${BASE}?test&demo=player`, 2000); await preparar();
 ok(await estadoCampana() === 'bloqueado', 'con el permiso negado, la campana dice "Avisos bloqueados"');
 await click('#btn-avisos'); await sleep(400);
 ok(await hoja() === 'hoja-bloqueados' && /Permisos/.test(await texto('.hoja')), 'y explica cómo desbloquearlos en Android');
@@ -117,7 +118,7 @@ await b.send('Browser.resetPermissions');
 
 /* ---------- iPhone en Safari: agregar a inicio ---------- */
 await como(UA.iphone);
-await b.go(`${BASE}?prueba&demo=jugador`, 2000); await preparar();
+await b.go(`${BASE}?test&demo=player`, 2000); await preparar();
 ok(await estadoCampana() === 'apagado', 'iPhone en Safari: la campana se ofrece');
 await click('#btn-avisos'); await sleep(400);
 ok(await hoja() === 'hoja-instalar', 'el toque abre los pasos para agregar a inicio');
@@ -129,19 +130,19 @@ ok(/PIN/.test(await texto('.hoja')), '"Ya la agregué" dice que la app pedirá e
 
 /* ---------- iPhone dentro de Instagram ---------- */
 await como(UA.instagram);
-await b.go(`${BASE}?prueba&demo=jugador`, 2000); await preparar();
+await b.go(`${BASE}?test&demo=player`, 2000); await preparar();
 await click('#btn-avisos'); await sleep(400);
 ok(await hoja() === 'hoja-otra-app' && /Safari/.test(await texto('.hoja')), 'dentro de otra app: pide abrir en Safari');
 await b.shot('hoja-otra-app');
 
 /* ---------- La app instalada: abre con el nombre elegido y ofrece los avisos ---------- */
 await como(UA.iphone);
-await b.go(`${BASE}?prueba&demo=jugador`, 2000);
+await b.go(`${BASE}?test&demo=player`, 2000);
 const code = await ev('__copa.estado.code'), pid = await ev('__copa.estado.yo');
 // Un celular nuevo: sin asiento en la copa (la app instalada no ve lo que guardó Safari)
 // En el modo de prueba, la sesión y el uid de cada "celular" viven en sessionStorage
 await ev(`(()=>{sessionStorage.clear();return 1})()`);
-await b.go(`${BASE}?prueba&${code}&app=${pid}&standalone`, 2200); await preparar();
+await b.go(`${BASE}?test&${code}&app=${pid}&standalone`, 2200); await preparar();
 ok(await ev('__copa.estado.pantalla') === 'entrar', 'la app instalada, sin asiento, pide entrar');
 const elegido = await ev(`document.querySelector('.chip-btn.on')?.dataset.pid || null`);
 ok(elegido === pid, 'la app instalada abre "Ya estoy inscrito" con su nombre elegido: falta solo el PIN');

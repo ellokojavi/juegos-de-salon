@@ -12,6 +12,7 @@ import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../assets/js/
 import { botonInvitar, botonResultadoSolo } from '../assets/js/compartir.js';
 import { gameById } from '../assets/js/games.js';
 import { getLang, langToggle, applyStatic, COMMON, withLang, SITIO } from '../assets/js/i18n.js';
+import { param } from '../assets/js/parametros.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { failWith } from '../assets/js/transport/errors.js';
 import { score, isValid, sha256, randomNonce, verifyPlayer } from './engine.js';
@@ -352,7 +353,7 @@ function renderLobby() {
   const box = $('#lobby-box');
   box.innerHTML = '';
   // Con el idioma pegado: quien reciba la invitación abre la app como quien la mandó (D-74)
-  const url = withLang(`${location.origin}${location.pathname}?sala=${S.code}`);
+  const url = withLang(`${location.origin}${location.pathname}?room=${S.code}`);
   const joined = M.names.A && M.names.B;
   box.append(
     el('div', { class: 'muted', style: 'font-weight:800' }, T.lobbyCode),
@@ -592,7 +593,7 @@ function startLocalMode(mode, names, config) {
 
 async function startOnline(transport, code, role, name, config) {
   startSession({ mode: 'online', transport, roles: [role], config, names: { [role]: name }, code, role });
-  history.replaceState(null, '', `${location.pathname}?sala=${code}`);
+  history.replaceState(null, '', `${location.pathname}?room=${code}`);
   keepAwake();
   saveSession();
   render();
@@ -813,7 +814,7 @@ function init() {
   // Las victorias de este juego y entrar con nombre y PIN (D-212); en el laboratorio, solo donde se activaron
   $('#rk-slot')?.append(bloqueVictorias({ juego: GAME_ID, nombre: T.title, alTocar: () => SFX.tap() }));
   renderResumeSlot();
-  const code = new URLSearchParams(location.search).get('sala');
+  const code = param('room');
   if (code && /^[A-Z]{4}$/i.test(code)) {
     const saved = loadSession();
     if (saved && saved.code === code.toUpperCase() && !saved.done) { joinOnline(saved.code, saved.name, saved.role, saved.secret, saved.notes).catch(() => { clearSession(); renderSetup('online', code.toUpperCase()); }); }

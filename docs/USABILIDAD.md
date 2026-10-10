@@ -116,7 +116,7 @@ Las respuestas a dilemas (issues con la etiqueta `usabilidad`) se anotan aquí:
   ("junto a Omar": Omar, en el color de su grupo; "en la columna A": nadie); la frase sigue igual.
 - **El caso (laboratorio, D-256):** tocar a alguien ya marcado muestra su pista bajo la grilla
   (#271); "número par de criminales" no sale cuando son cero, porque ahí ya está "No hay
-  criminales" (#272); el link del caso del día lleva su fecha (`?dia=`), así un amigo que lo abre al
+  criminales" (#272); el link del caso del día lleva su fecha (`?day=`), así un amigo que lo abre al
   día siguiente juega el mismo (#273). Las tres con la recomendación del agente, en el PR #270.
 - **Reinas sin bordes gruesos entre zonas** (D-134): decisión del dueño, sabiendo lo de C-8. No
   marcarlo.

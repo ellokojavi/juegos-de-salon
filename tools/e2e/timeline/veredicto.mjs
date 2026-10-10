@@ -26,7 +26,7 @@ await A.evaluate(`document.querySelectorAll('.mode')[1].click(); 1`); await slee
 await A.evaluate(`(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}));return 1})()`);
 await A.evaluate(`[...document.querySelectorAll('#setup-actions .btn')].find(x=>/Crear|Create/.test(x.textContent)).click(); 1`); await sleep(5000);
 const code = await A.evaluate(`document.querySelector('.code-big')?.textContent`);
-await B.go(`${hosts[1]}/timeline/?sala=${code}`, 2000);
+await B.go(`${hosts[1]}/timeline/?room=${code}`, 2000);
 await B.evaluate(`(()=>{const i=document.querySelector('#setup-form input');i.value='Cata';i.dispatchEvent(new Event('input',{bubbles:true}));return 1})()`);
 await B.evaluate(`[...document.querySelectorAll('#setup-actions .btn')].find(x=>/Unirse|Join/.test(x.textContent)).click(); 1`); await sleep(5000);
 await A.evaluate(`[...document.querySelectorAll('#lobby-box .btn')].find(x=>/Empezar|Start/.test(x.textContent))?.click(); 1`); await sleep(4000);
