@@ -288,7 +288,7 @@ Todo bajo `public/cup/`:
 | Archivo | Qué hace |
 |---|---|
 | `engine.js` | Calendario, ventanas con zona horaria, puntos, tabla, evolución, medallas, reloj activo |
-| `games/<carpeta>/engine.js` | Motor puro de cada juego (`connections`, `final`, `number`, `queens`, `tango`, `timeline`, `untangle`, `where`, `word`, `year`, `zip`), con sus datos propios al lado |
+| `games/<carpeta>/engine.js` | Motor puro de cada juego (`case`, `connections`, `final`, `number`, `queens`, `tango`, `timeline`, `untangle`, `where`, `word`, `year`, `zip`), con sus datos propios al lado |
 | `games/<carpeta>/ui.js` | La pantalla de cada juego |
 | `games/index.js` · `games/semilla.js` · `games/mazos.js` · `games/audiencia.js` · `games/solo.js` | Lo común a los juegos: el registro, la semilla, los mazos, el público y el modo suelto con su récord |
 | `store-firebase.js` · `store-local.js` | El mismo almacén contra Firebase o contra localStorage (`?prueba`) |
