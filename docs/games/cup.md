@@ -12,15 +12,15 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
 
 - **Estado:** en el menú desde v0.83.0 (D-175). `/labs/` ya no tiene nada de La Copa salvo El caso,
   que todavía no entra al pozo (D-262).
-- **URL:** `/cup/` (portada) · `/cup/?K7Q2X` (una copa) · `/cup/?tres` (ofrece la Copa de 3 días,
-  D-100, D-262) · `?prueba` (almacén local y reloj adelantable, sin
-  Firebase) · `/cup/?K7Q2X&dia=3` (abre el día 3 listo para empezar, si se puede jugar; lo usan
-  los avisos, D-229) · `/cup/?K7Q2X&silenciar` (silencia los avisos de esa copa: el botón del aviso
-  en Android) · `/cup/?practica=<id>&labs&semilla=K7Q2X` (un juego suelto con la semilla a la vista,
-  repetible; los que tienen página se van a `/<slug>/?labs&semilla=K7Q2X`, D-164). Desde la portada el juego suelto es `/<slug>/` (D-142, D-149, D-162, D-198): la misma
+- **URL:** `/cup/` (portada) · `/cup/?K7Q2X` (una copa) · `/cup/?three` (ofrece la Copa de 3 días,
+  D-100, D-262) · `?test` (almacén local y reloj adelantable, sin
+  Firebase) · `/cup/?K7Q2X&day=3` (abre el día 3 listo para empezar, si se puede jugar; lo usan
+  los avisos, D-229) · `/cup/?K7Q2X&mute` (silencia los avisos de esa copa: el botón del aviso
+  en Android) · `/cup/?practice=<juego>&labs&seed=K7Q2X` (un juego suelto con la semilla a la vista,
+  repetible; los que tienen página se van a `/<slug>/?labs&seed=K7Q2X`, D-164). Desde la portada el juego suelto es `/<slug>/` (D-142, D-149, D-162, D-198): la misma
   pantalla, sin "copa" en el link, que vuelve al menú, sin sesión de prueba ni semilla a la vista, y
-  con su señal de uso. `/cup/?practica=<id>` sin `&labs` lleva ahí. `/<slug>/?hoy` (o
-  `/cup/suelto/?<id>&hoy` para los que no tienen página) es el juego de Uno al día, con la semilla
+  con su señal de uso. `/cup/?practice=<juego>` sin `&labs` lleva ahí. `/<slug>/?today` (o
+  `/cup/suelto/?<juego>&today` para los que no tienen página) es el juego de Uno al día, con la semilla
   de la fecha del jugador; si hoy toca otro juego, se va a ese (D-230, [UNO-AL-DIA.md](../UNO-AL-DIA.md)).
   Bajo su resultado no va el ranking del juego, solo el de Uno al día (el primer intento igual entra al del juego).
 - **Jugadores:** de 2 a 10 por copa (`MIN_JUGADORES` y `MAX_JUGADORES` en `engine.js`, D-118). Con
@@ -110,8 +110,9 @@ Todos los juegos puntúan **de 0 a 100** (D-113). Igual lo que decide la copa es
 
 Recién creada, la copa abre en **Administrar** con una guía para invitar (D-110). Ahí el admin
 comparte los mensajes, **cierra o reabre la inscripción** y **mueve el inicio a hoy o mañana**
-mientras nadie haya jugado. `?prueba&demo=<escena>` abre una copa de ejemplo en cualquier
-punto (`public/cup/demo.js`); el laboratorio ya no las ofrece, pero las usan las pruebas y las capturas (D-262).
+mientras nadie haya jugado. `?test&demo=<escena>` abre una copa de ejemplo en cualquier
+punto (`public/cup/demo.js`: `new`, `guest`, `waiting`, `not-started`, `player`, `admin`, `final`,
+`final-admin`, `podium`, `full`; los nombres en español de antes de D-266 se leen igual); el laboratorio ya no las ofrece, pero las usan las pruebas y las capturas (D-262).
 
 Al tocar Empezar, una **cuenta de 3 a 1** y "¡A jugar!" (D-105): recién ahí aparece el tablero, y
 el reloj parte cuando el "¡A jugar!" ya se fue y terminó la entrada del juego, si la tiene (las
@@ -119,7 +120,7 @@ cartas de El caso, con `entrada()` en su registro): la cuenta no es tiempo de ju
 terminar, el resultado explica **cómo se calculó el puntaje** línea por línea
 (`public/cup/desglose.js`, D-106), y abajo va la tabla del día. En la de 🏁 La Gran Final, cada
 jugador lleva además su tarjeta de cinco rondas (⏳75 🔢85 👑100 🔤60 📅90), para comparar ronda a
-ronda (#259); en la demo `podio` o `llena` se ve con datos.
+ronda (#259); en la demo `podium` o `full` se ve con datos.
 
 Antes de Empezar cada día se puede jugar una **sesión de prueba** (D-103): la misma mecánica con
 otro contenido (código derivado con `codigoEnsayo`, otra temática, una grilla fuera del sorteo,
@@ -225,11 +226,11 @@ además **sueltos**, de un jugador y sin copa, desde la portada (`/<slug>/`, D-1
 ### Laboratorio, práctica y reportes
 
 `/labs/` (D-101) ofrecía la práctica de cada juego, las demos y la copa real; desde D-262 tiene
-solo El caso. La práctica (`?practica=<id>&labs`, que sigue funcionando) arma el contenido con una semilla al azar como si fuera el día 1 de una copa con ese código, y la
+solo El caso. La práctica (`?practice=<juego>&labs`, que sigue funcionando) arma el contenido con una semilla al azar como si fuera el día 1 de una copa con ese código, y la
 muestra al final. El botón **🐞 Reportar un problema o dejar un comentario** (práctica, tablero y
 resultado) guarda en `feedback/<id>`, por REST y sin cuenta (D-104), el texto, un nombre opcional, la versión
 y un contexto en JSON: copa, jugador, pantalla, día, juego, semilla, URL y navegador. Se leen con
-`node tools/firebase/reportes.mjs`; en `?prueba` queda en `localStorage` (`juegos-de-salon:copa:prueba:reportes`).
+`node tools/firebase/reportes.mjs`; en `?test` queda en `localStorage` (`juegos-de-salon:copa:prueba:reportes`).
 
 ### Avisos al celular (D-223, D-224, D-225, D-227, D-228)
 
@@ -259,9 +260,9 @@ Abiertos a todos desde D-228: se ven en cualquier celular que pueda recibirlos, 
   cierra de noche), **La Gran Final** (con su lugar en la tabla), **terminó la copa** y, al admin
   que activó avisos, **quién se inscribió**. A lo más uno por copa y celular en cada vuelta, y dos
   por copa en un día (D-229). Los textos son los `avMsg*` de `rules.js`. Al tocarlo abre ese día
-  (`&dia=<d>`) o, el del cierre, el podio; en Android trae **Jugar** y **Silenciar esta copa**
-  (`&silenciar`). Los días nuevos de varias copas van juntos en un aviso, y un empate arriba nombra
-  a todos los que ganaron (D-229). Cada dirección lleva `&aviso=<tipo>`, que la página cuenta al
+  (`&day=<d>`) o, el del cierre, el podio; en Android trae **Jugar** y **Silenciar esta copa**
+  (`&mute`). Los días nuevos de varias copas van juntos en un aviso, y un empate arriba nombra
+  a todos los que ganaron (D-229). Cada dirección lleva `&notif=<tipo>` (en inglés, D-266: `day`, `deadline`, `end`…), que la página cuenta al
   abrirse y saca de la dirección; el panel muestra mandados y tocados por tipo (D-233).
 
 ## Flujo
@@ -308,11 +309,11 @@ Todo bajo `public/cup/`:
 | `games/<carpeta>/engine.js` | Motor puro de cada juego (`case`, `connections`, `final`, `number`, `queens`, `tango`, `timeline`, `untangle`, `where`, `word`, `year`, `zip`), con sus datos propios al lado |
 | `games/<carpeta>/ui.js` | La pantalla de cada juego |
 | `games/index.js` · `games/semilla.js` · `games/mazos.js` · `games/audiencia.js` · `games/solo.js` | Lo común a los juegos: el registro, la semilla, los mazos, el público y el modo suelto con su récord |
-| `store-firebase.js` · `store-local.js` | El mismo almacén contra Firebase o contra localStorage (`?prueba`) |
+| `store-firebase.js` · `store-local.js` | El mismo almacén contra Firebase o contra localStorage (`?test`) |
 | `cuenta.js` | Con quién está sentado este celular, el intento a medio jugar, los avisos de cada copa (D-223) y "Tus copas" (las del celular más las del jugador, `juntarCopas`, D-220) |
 | `avisos.js` | Los avisos al celular en pantalla: la campana, la tarjeta y sus hojas (D-223; la lógica del navegador está en `assets/js/push.js`). El estilo de la hoja de abajo (`.hoja`) es de todo el sitio y vive en `assets/css/base.css` (D-232); `style.css` guarda solo lo propio de los avisos |
 | `desglose.js` | Cómo se calculó el puntaje, línea por línea (D-106) |
-| `demo.js` | Las escenas de ejemplo de `?prueba&demo=`, para las pruebas y las capturas |
+| `demo.js` | Las escenas de ejemplo de `?test&demo=`, para las pruebas y las capturas |
 | `reportes.js` | El botón 🐞 y los reportes que esperan reenvío |
 | `planilla.js` | La tabla final como CSV (D-161) |
 | `rules.js` | Textos (`LOCALES` es, en, pt, de, también los de los avisos al celular, `avMsg*`) y la explicación de cada juego |

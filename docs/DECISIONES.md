@@ -51,7 +51,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 
 | Tema | Regla de hoy (canon) | Decisiones vigentes que la explican |
 |---|---|---|
-| Estructura y rutas | C-2 | D-01, D-02, D-03, D-24, D-192, D-198, D-256 |
+| Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266 |
 | Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184 |
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256 |
 | Sonido y vibración | C-4 | D-17, D-92 |
@@ -229,7 +229,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 **Consecuencias:** Queda como canon C-15 para los demás juegos con salas; en v0.11 se enciende también en Toque y Fama, donde la espera del número secreto del rival es el rato más muerto de todos. En el celular, el teclado no achica la ventana: el panel se levanta con `visualViewport` y el campo usa 16 px exactos para que iOS no haga zoom. Se agregan límites (120 caracteres, un mensaje cada 1,2 s) y las reglas de Firebase validan el largo del texto. La sala se lee con solo saber el código de cuatro letras: el chat **no es privado** y así se documenta.
 
 ## D-29 · El enlace de sala solo deja unirse
-**Fecha:** 2026-09-09 · **Estado:** vigente
+**Fecha:** 2026-09-09 · **Estado:** corregida por D-266
 **Decisión:** Al abrir un enlace `?sala=CÓDIGO`, la pantalla de datos se titula "¡Invitado a jugar!" y muestra únicamente el bloque para unirse a esa sala: sin botón de "Crear sala", con el código fijo y de solo lectura, y sin los ajustes de la partida. Vale para los tres juegos con salas.
 **Por qué:** Quien recibe una invitación veía la misma pantalla que quien empieza de cero, con "Crear sala" arriba y el código abajo. Tocar el botón de arriba abre una sala **distinta**, y los dos quedan esperándose en salas separadas sin entender por qué. Los ajustes (dígitos, temática, cartas en mano, reglas de disparo) tenían el mismo problema al revés: se podían tocar y no hacían nada, porque la configuración es la del anfitrión.
 **Consecuencias:** Queda en el canon C-7. La pantalla del invitado dice de quién es la sala y que la partida la configura quien invitó. Prueba: `tools/e2e/enlace-invitacion.mjs`.
@@ -1228,7 +1228,7 @@ compartir ya llega a WhatsApp y el grupo es donde se juega la pica. La tarjeta e
 **Consecuencias:** LIG-33 (avisos automáticos) queda para después.
 
 ## D-100 · La Copa de 3 días es solo para probar
-**Fecha:** 2026-09-23 · **Estado:** vigente
+**Fecha:** 2026-09-23 · **Estado:** corregida por D-266
 **Decisión:** La portada y el formulario ofrecen solo la Copa de 7 días. La de 3 días (Línea,
 Conexiones y la final) aparece con `?tres` en la URL o en el modo de prueba.
 **Por qué:** el dueño la quiere para probar con amigos, no como producto. Promocionarla en la
@@ -1392,7 +1392,7 @@ acertado ninguna.
 lo que se decide no es lo que se publica. Y un reporte escrito es caro de conseguir: no se pierde.
 
 ## D-110 · El admin de una copa nueva, la inscripción, el inicio movible y las demos del laboratorio
-**Fecha:** 2026-09-23 · **Estado:** corregida por D-262
+**Fecha:** 2026-09-23 · **Estado:** corregida por D-262, D-266
 **Decisión:**
 - **Recién creada, la copa abre en Administrar**, con una guía de la primera vez (se ve mientras
   el admin siga solo y la copa no haya partido): compartir la invitación, esperar a que se
@@ -1857,7 +1857,7 @@ podio con gráfico); con esta ningún cambio de lugar queda fuera, y el dueño p
 todos.
 
 ## D-142 · Los minijuegos de La Copa se juegan sueltos, y la portada se filtra
-**Fecha:** 2026-09-25 · **Estado:** corregida por D-149, D-170, D-214, D-255 · **Relación:** reemplaza el solitario de D-27 y D-129; D-149 quita el filtro de cuántos juegan y saca los sueltos de `/copa/`
+**Fecha:** 2026-09-25 · **Estado:** corregida por D-149, D-170, D-214, D-255, D-266 · **Relación:** reemplaza el solitario de D-27 y D-129; D-149 quita el filtro de cuántos juegan y saca los sueltos de `/copa/`
 **Decisión:** Tres cambios que van juntos:
 1. **La portada ofrece los minijuegos de La Copa sueltos**, de un jugador: Conexiones, Toque y
    Fama: Palabra, ¿En qué año?, Reinas, Tango y Zip. Viven en `SUELTOS` de `assets/js/games.js`
@@ -2323,7 +2323,7 @@ las reglas de Firebase tampoco (aceptan cualquier texto de hasta 100 caracteres)
 final dejó de decir "una de cada minijuego de la copa". `CALENDARIOS` queda para las demos.
 
 ## D-164 · El 〰️ de Zip lleva contorno claro, y el laboratorio juega en las páginas de cada minijuego
-**Fecha:** 2026-09-30 · **Estado:** vigente
+**Fecha:** 2026-09-30 · **Estado:** corregida por D-266
 **Decisión:** Dos cambios:
 1. **Emojis oscuros con contorno claro.** El 〰️ de Zip se dibuja casi negro y sobre el fondo
    morado no se veía. Sigue siendo el mismo emoji, con un contorno blanco (`.emoji-claro` en
@@ -3251,7 +3251,7 @@ lo que de verdad está abierto. La regla la escribió una sesión del 2026-10-04
 rama que nunca se subió (ese número quedó para el alemán); se rescató al limpiar las carpetas.
 
 ## D-207 · El panel se navega: secciones, fichas y la hora del Pacífico
-**Fecha:** 2026-10-04 · **Estado:** vigente · **Relación:** reemplaza las tres vistas de D-137
+**Fecha:** 2026-10-04 · **Estado:** corregida por D-266 · **Relación:** reemplaza las tres vistas de D-137
 **Decisión:** El panel deja de ser una página larga con tres pestañas y pasa a navegarse como un
 sitio: cuatro secciones (Ahora, La Copa, Juegos, Audiencia) y una ficha por cada cosa que existe.
 La de una copa tiene la tabla completa, la grilla jugador × día (puntaje, tiempo, puntos, jugando,
@@ -3285,7 +3285,7 @@ app, los reportes en el panel (LIG-44), una sección de salud de los datos y se�
 (cuándo entró el rival, cuándo cerró el admin la inscripción).
 
 ## D-208 · El tráfico del sitio, aunque nadie juegue
-**Fecha:** 2026-10-04 · **Estado:** vigente · **Relación:** completa D-44
+**Fecha:** 2026-10-04 · **Estado:** corregida por D-266 · **Relación:** completa D-44
 **Decisión:** Cada página que se abre manda una señal, aunque nadie llegue a jugar, y el panel
 la muestra en una sección nueva, **Tráfico** (`#/trafico`). Una **visita** es una pestaña: se
 cuenta una vez, en la página donde empezó, con de dónde llegó (solo el dominio: `google_com`,
@@ -3824,7 +3824,7 @@ tocan) es el PR 4 de [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md). `tools/e2e/
 cambia: en el sitio local los avisos ya se veían sin el laboratorio.
 
 ## D-229 · Los avisos: tope de 2 al día, empates en plural, el día exacto, botones y copas juntas
-**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** corrige D-224 (sin tope, un ganador, abría el tablero, sin botones ni copas juntas)
+**Fecha:** 2026-10-05 · **Estado:** corregida por D-266 · **Relación:** corrige D-224 (sin tope, un ganador, abría el tablero, sin botones ni copas juntas)
 **Decisión:** Lo que D-224 dejó afuera del plan de [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md),
 en `tools/push/calendario.mjs`, `avisar.mjs`, `public/sw.js` y la copa:
 - **Tope:** a lo más **2 avisos por copa y celular en un día** de quien recibe (`TOPE`). Cuenta
@@ -3853,7 +3853,7 @@ prueban a mano en Android: Chrome headless no los muestra. Si con el tope se pie
 avisos ya ese día), el del día siguiente o el de gracia lo cubren.
 
 ## D-230 · Uno al día: un juego por día, el mismo para todos, con racha y avisos que pide el jugador
-**Fecha:** 2026-10-05 · **Estado:** corregida por D-239, D-262 · **Relación:** amplía D-188 (el dado de Juego al azar abre el juego del día) y D-212 (un período nuevo, el del día, y la tabla de rachas); corrige D-221 (los avisos ya no son solo de La Copa: suma los que el jugador pide para Uno al día); completa RP-44
+**Fecha:** 2026-10-05 · **Estado:** corregida por D-239, D-262, D-266 · **Relación:** amplía D-188 (el dado de Juego al azar abre el juego del día) y D-212 (un período nuevo, el del día, y la tabla de rachas); corrige D-221 (los avisos ya no son solo de La Copa: suma los que el jugador pide para Uno al día); completa RP-44
 **Decisión:** Una modalidad nueva en la portada, junto a Juego al azar. Cada día, a la medianoche
 del jugador, sale un juego con su contenido, el mismo para todos, a partir de la fecha
 (`uno-al-dia:<fecha>`, como las semillas de La Copa, D-97). Entran todos los juegos que tienen modo
@@ -3972,7 +3972,7 @@ celular, la ✕, el diálogo de Chrome y los cuatro idiomas a 320 px); en iPhone
 prueba a mano desde `/labs/`. **Sale del laboratorio en v0.121.0** (decisión del dueño, 2026-10-06): `INSTALAR_EN_LABS = false`, así que el globo sale en la portada de todos los celulares donde se puede agregar la app; en `/labs/` queda solo el botón para volver a mostrarlo después de cerrarlo con la ✕.
 
 ## D-233 · Los avisos se miden en el panel: mandados, tocados, la app instalada y la última vuelta
-**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** completa D-224 y D-228; el PR 4 de [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md); señales como D-44 y D-208
+**Fecha:** 2026-10-05 · **Estado:** corregida por D-266 · **Relación:** completa D-224 y D-228; el PR 4 de [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md); señales como D-44 y D-208
 **Decisión:** El panel (`#/torneo`) suma el bloque "🔔 Avisos al celular". Lo que lo alimenta:
 - **Tocados:** la dirección de cada aviso lleva `&aviso=<tipo>` (`dia`, `plazo`, `final`, `fin`,
   `insc`, `copas`, `prueba`). La página lo cuenta al abrirse en `stats/<env>/days/<día>/aviso/<tipo>`,
@@ -4107,7 +4107,7 @@ encontró que la portada ya se corría de lado en alemán en el Chrome de Linux,
 del ancho de la pantalla (`minmax(0, 1fr)`) y el nombre se parte aunque falte el diccionario.
 
 ## D-239 · La Copa y Uno al día, mitad y mitad en la portada
-**Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** corrige D-230 (dónde va el acceso a Uno al día)
+**Fecha:** 2026-10-06 · **Estado:** corregida por D-266 · **Relación:** corrige D-230 (dónde va el acceso a Uno al día)
 **Decisión:** En la portada, Uno al día deja de ser un botón al lado de Juego al azar y pasa a una
 tarjeta de media fila junto a La Copa: los dos son accesos de más jerarquía que los juegos, en una
 fila de dos tarjetas (`.fila-alta`, `.game-card.alta`).
@@ -4607,3 +4607,49 @@ grilla lo estaba haciendo por el jugador.
 **Consecuencias:** `tools/e2e/case/lab.mjs` prueba que se ilumine exactamente a quienes nombra;
 `juegos.test.mjs`, `sujetos()`.
 
+## D-266 · Las URL, en inglés: carpetas, parámetros y sus valores
+**Fecha:** 2026-10-10 · **Estado:** vigente · **Relación:** sigue a D-192 (las carpetas) y D-214 (`?type=`); corrige D-29, D-100, D-110, D-142, D-164, D-207, D-208, D-229, D-230, D-233 y D-239 (el nombre de sus parámetros)
+**Decisión:** Todo lo que se ve en una dirección va en inglés: las carpetas (ya desde D-192), los
+nombres de los parámetros y sus valores en palabras (C-18). Lo que la app escribe o genera (las
+invitaciones, los links que se comparten, los avisos al celular, los de Uno al día, lo que deja en
+la barra) usa siempre el nombre nuevo; los de antes se siguen leyendo, porque ya circulan por
+WhatsApp, y al abrir la página `trackVisit()` los reescribe en inglés en la barra.
+
+| Antes | Ahora | Qué es |
+|---|---|---|
+| `?sala=ABCD` | `?room=ABCD` | la invitación a una sala |
+| `?semilla=K7Q2X` | `?seed=K7Q2X` | el contenido de una partida suelta |
+| `/cup/?practica=reinas` | `/cup/?practice=queens` | un juego suelto desde el laboratorio |
+| `?prueba` | `?test` | el almacén local, para los guiones |
+| `?tres` | `?three` | ofrece La Copa de 3 días |
+| `?hoy` | `?today` | Uno al día |
+| `&dia=3` (La Copa), `?dia=AAAA-MM-DD` (El caso) | `&day=3`, `?day=AAAA-MM-DD` | el día que abre un aviso, el caso de esa fecha |
+| `&silenciar` | `&mute` | el botón del aviso que silencia la copa |
+| `&aviso=plazo` | `&notif=deadline` | qué aviso abrió la página |
+| `?de=link` | `?from=link` | la marca de lo compartido |
+| `&zipSeg=8` | `&timer=8` | solo en prueba: el reloj de Zip y Desenredo |
+| `?uad=boton` · `tarjeta` · `no` | `?daily=button` · `card` · `off` | dónde va Uno al día en la portada |
+| `&demo=nueva`, `invitado`, `espera`, `sin-jugar`, `jugador`, `podio`, `llena` | `&demo=new`, `guest`, `waiting`, `not-started`, `player`, `podium`, `full` | las escenas de prueba de La Copa |
+| `&aviso=dia`, `plazo`, `fin`, `insc`, `copas`, `prueba`, `uaddia`, `uadracha`, `uadsemana`, `uadadios` | `&notif=day`, `deadline`, `end`, `signup`, `cups`, `test`, `dailyday`, `dailystreak`, `dailyweek`, `dailybye` | los tipos de aviso |
+| `/cup/suelto/?linea&hoy`, `?practica=<id>` | `/cup/suelto/?timeline-flash&today`, `?practice=<carpeta>` | el juego, con el nombre de su carpeta; los que no tienen página: `timeline-flash`, `number` |
+| `#/ahora`, `#/torneo/OFICI`, `#/juegos`, `#/juego/ahorcado`, `#/sala/ABCD`, `#/trafico`, `#/audiencia`, `#/salud` | `#/now`, `#/cup/OFICI`, `#/games`, `#/game/hangman`, `#/room/ABCD`, `#/traffic`, `#/audience`, `#/health` | las direcciones del panel |
+
+Siguen igual los que ya estaban en inglés o no son palabras: `lang`, `type`, `labs`, `c`, `inv`,
+`app`, `pwa`, `records=firebase`, `utm_source`, los del panel `r` y `e`, el código de una copa
+(`?K7Q2X`) y su link propio (`?pirata`, que lo elige quien la crea).
+**Cómo:** `public/assets/js/parametros.js` tiene la tabla y lo usa todo el sitio: `param('room')` lee
+`?room=` o `?sala=`, `tiene('test')` lee `?test` o `?prueba`, los valores salen siempre en inglés, y
+`enIngles()` reescribe una búsqueda vieja sin tocar lo demás (las palabras sueltas de La Copa solo
+cambian si son una bandera). El juego en la URL sale de `slugDe()` / `idDeSlug()` en `games.js`; el
+id del juego no cambia (lo guardan las salas, el panel y el celular). Las claves que cuenta el panel
+tampoco: `notif=deadline` se cuenta en `aviso/plazo`, como siempre (`AVISO_CLAVE`), así las cifras
+no se cortan. Las palabras nuevas quedan reservadas para el link propio de una copa (ninguna copa
+usaba una).
+**Por qué:** lo pidió el dueño ("you are still creating labels in Spanish for URLs and variables"):
+el sitio ya tenía las carpetas en inglés, pero `/case/?labs&semilla=LBWDC` seguía mezclando idiomas.
+Con una tabla de alias no se rompe ningún link que ya circula.
+**Consecuencias:** `node public/assets/js/parametros.test.mjs` prueba los alias, la reescritura y los
+juegos, y además busca en `public/` y `tools/push/` una URL armada con un nombre de antes. Los
+nombres de las variables del código siguen en español: la regla es sobre lo que se ve en la URL.
+Las páginas puente no cambian (pasan la búsqueda tal cual y la página nueva la traduce), ni el
+`?juego=` de `tools/release/og/tarjeta.html`, que es una herramienta y no una página del sitio.

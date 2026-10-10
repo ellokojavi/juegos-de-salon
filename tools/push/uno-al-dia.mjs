@@ -20,6 +20,7 @@
 import { COMMON } from '../../public/assets/js/i18n.js';
 import { numeroDel, fechaDeNum, numDia, semanaDe, sumarDias } from '../../public/assets/js/uno-al-dia.js';
 import { fechaLocal, horaLocal, DESDE, HASTA, SITIO } from './calendario.mjs';
+import { VALORES } from '../../public/assets/js/parametros.js';
 
 export const RACHA_HORA = 21;
 export const TOPE_DIA = 2;
@@ -55,7 +56,7 @@ export function avisosUnoAlDia({ quiere = {}, subs = {}, enviados = {}, now }) {
     const T = COMMON[lang].uad;
     // `uad<tipo>`: el panel cuenta los tocados aparte de los de La Copa, que también tienen `dia` (D-233);
     // sin guion, porque las reglas de `aviso/` y `mandados/` piden solo letras
-    const url = tipo => `${SITIO}today/?aviso=uad${tipo}${lang === 'es' ? '' : `&lang=${lang}`}`;
+    const url = tipo => `${SITIO}today/?notif=${VALORES.notif[`uad${tipo}`]}${lang === 'es' ? '' : `&lang=${lang}`}`;
     const jugoHoy = q.u === hoyN;
     const sinJugar = Number.isInteger(q.u) ? hoyN - q.u : 0;
     const uno = (tipo, clave, body, extra = {}) => { if (!env[clave]) out.push({ subId, tipo, clave, aviso: { title: T.avTitulo, body, url: url(tipo), tag: `uad-${tipo}` }, ...extra }); return !env[clave]; };

@@ -87,9 +87,9 @@ empezar la ronda. Si uno no calza, la pantalla lo dice: **"⚠️ no coincide"**
 el celular no hay a quién esconderle nada: los dados van en claro en la lista de mensajes, tapados
 por la pantalla del pase.
 
-### Uno al día: los dados sí salen de la semilla (`/liars-dice/?hoy`, D-230)
+### Uno al día: los dados sí salen de la semilla (`/liars-dice/?today`, D-230)
 
-Cuando Dudo es el juego de Uno al día, `/liars-dice/?hoy` no ofrece modos: la intro lleva la línea
+Cuando Dudo es el juego de Uno al día, `/liars-dice/?today` no ofrece modos: la intro lleva la línea
 de Uno al día, "Todos parten con los mismos dados.", y un solo botón, **Jugar el de hoy**, que abre
 directo 🤖 Contra el celular, un rival, con los ajustes de siempre y el nombre que se recuerda (o
 "Jugador 1"). Ahí **los dados de cada ronda salen de la semilla del día**, la ronda y el rol

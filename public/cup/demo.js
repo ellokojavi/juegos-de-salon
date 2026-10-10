@@ -1,7 +1,7 @@
 /**
  * Demos (D-110): una copa de ejemplo, ya en marcha, para mirar y tocar cada vista de La Copa
  * —del jugador y del admin— como en producción, sin armar una copa ni esperar días. Las usan las
- * pruebas de punta a punta y las capturas del README; el laboratorio ya no las ofrece (D-262). Solo en el modo de prueba (`?prueba&demo=<escena>`): siembra la copa en el almacén local,
+ * pruebas de punta a punta y las capturas del README; el laboratorio ya no las ofrece (D-262). Solo en el modo de prueba (`?test&demo=<escena>`): siembra la copa en el almacén local,
  * con una copa nueva cada vez, y deja la sesión del jugador que corresponde a la escena.
  */
 import { nuevaMeta, fechaEn, sumarDias, codigoAlAzar, ZONA, CALENDARIOS } from './engine.js';
@@ -50,20 +50,22 @@ const azar = (pid, d) => { let h = 7; for (const c of `${pid}:${d}`) h = (h * 31
 /**
  * Las escenas. `inicio` es cuántos días atrás partió (negativo: parte en el futuro); `jugaron`,
  * cuántos días completos hay jugados; `yo`, quién mira (null: alguien que abre la invitación).
+ * El nombre es el de la URL (`&demo=podium`), en inglés (D-266); los de antes (`podio`) los traduce
+ * `parametros.js`.
  */
 export const ESCENAS = {
-  nueva: { inicio: -1, jugadores: 1, jugaron: 0, yo: 'cata01', pantalla: 'admin', recien: true },
-  invitado: { inicio: -1, jugadores: 3, jugaron: 0, yo: null, pantalla: 'entrar' },
-  espera: { inicio: -1, jugadores: 4, jugaron: 0, yo: 'javi02', pantalla: 'tablero' },
-  'sin-jugar': { inicio: 1, jugadores: 4, jugaron: 0, yo: 'cata01', pantalla: 'admin' },
-  jugador: { inicio: 3, jugadores: 5, jugaron: 3, yo: 'javi02', pantalla: 'tablero' },
+  new: { inicio: -1, jugadores: 1, jugaron: 0, yo: 'cata01', pantalla: 'admin', recien: true },
+  guest: { inicio: -1, jugadores: 3, jugaron: 0, yo: null, pantalla: 'entrar' },
+  waiting: { inicio: -1, jugadores: 4, jugaron: 0, yo: 'javi02', pantalla: 'tablero' },
+  'not-started': { inicio: 1, jugadores: 4, jugaron: 0, yo: 'cata01', pantalla: 'admin' },
+  player: { inicio: 3, jugadores: 5, jugaron: 3, yo: 'javi02', pantalla: 'tablero' },
   admin: { inicio: 3, jugadores: 5, jugaron: 3, yo: 'cata01', pantalla: 'admin' },
   final: { inicio: 6, jugadores: 5, jugaron: 6, yo: 'javi02', pantalla: 'tablero' },
   // El último día, con gente que todavía no juega la final: el admin puede terminarla antes (D-161)
   'final-admin': { inicio: 6, jugadores: 5, jugaron: 6, yo: 'cata01', pantalla: 'admin' },
-  podio: { inicio: 7, jugadores: 5, jugaron: 7, yo: 'javi02', pantalla: 'tablero' },
+  podium: { inicio: 7, jugadores: 5, jugaron: 7, yo: 'javi02', pantalla: 'tablero' },
   // La máxima densidad del gráfico y de la imagen que se comparte (D-141): 7 días, 10 jugadores
-  llena: { inicio: 7, jugadores: 10, jugaron: 7, yo: 'javi02', pantalla: 'tablero', faltas: true },
+  full: { inicio: 7, jugadores: 10, jugaron: 7, yo: 'javi02', pantalla: 'tablero', faltas: true },
 };
 
 /**

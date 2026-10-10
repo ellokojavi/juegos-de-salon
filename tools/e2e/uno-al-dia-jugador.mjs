@@ -29,7 +29,7 @@ await b.send('Page.addScriptToEvaluateOnNewDocument', { source: `(()=>{const D=D
 
 /** Juega el de hoy hasta el resultado (el reloj de Desenredo, acortado, se acaba). */
 const jugar = async (extra = '') => {
-  await b.go(`${SITIO}/untangle/?hoy&prueba&zipSeg=3${extra}`, 1200);
+  await b.go(`${SITIO}/untangle/?today&test&timer=3${extra}`, 1200);
   await esperar(`!!document.getElementById('btn-empezar')`);
   await click('#btn-empezar');
   await esperar(`!!document.getElementById('btn-fin')`, 80);
