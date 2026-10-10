@@ -1,5 +1,5 @@
 {
-  "version": "0.138.0",
+  "version": "0.139.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -964,6 +964,7 @@
     "tools/release/version.test.mjs"
   ],
   "e2e": [
+    "_tmp_reloj.mjs",
     "battleship/alineacion.mjs",
     "battleship/chat.mjs",
     "battleship/colocacion.mjs",
