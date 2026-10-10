@@ -4464,3 +4464,27 @@ probar, y el original tampoco deja adivinar).
 propia sección. Si entra, pasa a `cup/games/` con su id y esta página se va. Ver
 [docs/games/case.md](games/case.md).
 
+## D-257 · El caso como juego de La Copa, en el laboratorio y en los cuatro idiomas
+**Fecha:** 2026-10-09 · **Estado:** vigente · **Relación:** amplía D-256
+**Decisión:** El caso pasa a ser un juego de La Copa (`public/cup/games/case/`, id `caso`, 🔍): se
+juega suelto en `/case/` (con `labs: true` en `SUELTOS`, así que tiene página y tarjeta pero no sale
+en la portada) y en la práctica del laboratorio, pero **no entra a `POZO`** hasta que el dueño lo
+saque del laboratorio: una copa todavía no lo puede elegir. Puntúa 100 con el caso resuelto, menos
+10 por error, con mínimo 10, y 0 sin resolver; el tiempo desempata. Las pistas dejan de ser frases y
+pasan a ser datos (`{ t, a, b, k, g, h }`); la frase la arma `texto()` en el idioma de quien juega
+con las plantillas de `casoTexto` (es, en, pt, de), y quien habla de sí mismo lo hace en primera
+persona. La antesala tiene una portada animada: cartas que se dan vuelta solas y una lupa que las
+recorre. La pantalla repite la del prototipo (cartas que giran al empezar, zoom a la elegida,
+sellos al marcar, la pista que ilumina a quiénes nombra).
+**Por qué:** lo pidió el dueño mientras prueba el prototipo con amigos: tenerlo listo como juego de
+La Copa para sumarlo apenas lo apruebe. Dejarlo fuera de `POZO` permite probarlo de punta a punta
+(antesala, prueba, juego, desglose) sin que caiga en una copa de verdad.
+**Alternativas descartadas:** traducir las frases ya armadas (no se puede: cada idioma arma la
+oración distinto y en alemán el oficio cambia de caso); un puntaje por tiempo como Reinas (aquí lo
+difícil es no equivocarse, no ir rápido).
+**Consecuencias:** los nombres de los sospechosos son los mismos en todos los idiomas. Los oficios
+van en singular masculino en la carta en alemán y portugués (Koch, criminoso) y conviene que alguien
+que los hable los revise. El prototipo de `/labs/case/` sigue con su propio motor en español; cuando
+El caso salga del laboratorio, esa página se va o pasa a usar este motor. Ver
+[docs/games/cup.md](games/cup.md).
+
