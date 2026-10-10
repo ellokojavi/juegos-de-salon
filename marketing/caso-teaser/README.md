@@ -73,3 +73,7 @@ node marketing/caso-teaser/render.mjs --fotos /tmp/fotos --tiempos 0.4,1.25,2.4,
 Tres momentos del juego de verdad (elegir, marcar con su sello, tocar la pista) y un cierre que
 invita a probarlo y a comentar. Se suma un GIF de muestra a 540 px. El mensaje de WhatsApp quedó
 en la conversación con el dueño.
+
+Revisión de usabilidad (mismo día): arriba del celular la captura dejaba cortada la línea "Descubre
+quién es criminal…" y la isla tapaba "¿Cómo se juega?". Una franja del color de la página, donde va
+la hora en un iPhone (`.barra`, 40 pt), la tapa; la pantalla empieza en el marcador (U-34: texto cortado y superpuesto).
