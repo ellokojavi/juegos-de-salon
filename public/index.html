@@ -420,9 +420,9 @@
       lang, candidatos: () => tarjetas.filter(t => !t.card.hidden).map(t => t.g),
     }));
     // Uno al día (D-230): el juego de hoy, el mismo para todos. Va en una tarjeta de media fila junto
-    // a La Copa (D-239, lo que eligió el dueño); el botón al lado del dado se puede probar desde /labs/
-    import('./assets/js/uno-al-dia.js').then(async ({ unoAlDiaVisible, formaAcceso }) => {
-      if (!unoAlDiaVisible() || formaAcceso() === 'no') return;
+    // a La Copa (D-239, lo que eligió el dueño); ?uad=boton lo pone al lado del dado, como antes
+    import('./assets/js/uno-al-dia.js').then(async ({ formaAcceso }) => {
+      if (formaAcceso() === 'no') return;
       import('./assets/js/uno-al-dia-avisos.js').then(Av => Av.globo()).catch(() => {});
       const { botonUnoAlDia, tarjetaUnoAlDia } = await import('./assets/js/uno-al-dia-ui.js');
       const copa = tarjetas.find(t => t.g.torneo)?.card;
