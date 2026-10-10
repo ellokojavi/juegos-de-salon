@@ -5,6 +5,8 @@
   los cuatro idiomas, y el prototipo se va. Sin elegir nada es el caso del día, el mismo para todos;
   al recargar sigue donde ibas; al terminar se comparte el mismo caso, se juega otro o el de hoy, y
   se deja un comentario. `/case/` lleva ahí.
+- **🔍 El caso: "💬 Dejar un comentario"** (D-268): al final de la portada, de la prueba y del juego
+  (no durante la cuenta); en el resultado, el formulario abierto, al final de todo.
 
 ## 0.143.0 — 2026-10-10
 - **🔗 Los links, en inglés** (C-18, D-266): además de las carpetas, los parámetros y sus valores.

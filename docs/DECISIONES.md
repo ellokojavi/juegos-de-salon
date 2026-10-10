@@ -68,7 +68,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216 |
-| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267 |
+| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268 |
 | Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249 |
 | Marketing | `marketing/README.md` | D-178 |
@@ -4683,4 +4683,16 @@ Lo activa `diario: true` en `games.js`. Los juegos del laboratorio viven en `/la
 Con dos, los amigos probaban cosas distintas y lo que se arreglaba en una no se veía en la otra.
 **Consecuencias:** `tools/e2e/case/lab.mjs` prueba la página nueva entera. Al salir del
 laboratorio se saca `labs: true` y la página pasa a `/case/`; `diario` puede quedarse.
+
+## D-268 · En el laboratorio, el link al comentario va al final de cada vista
+**Fecha:** 2026-10-10 · **Estado:** vigente · **Relación:** amplía D-265 y D-267
+**Decisión:** Un juego que se juega desde el laboratorio (hoy El caso, en `/labs/case/`) termina
+cada vista con "💬 Dejar un comentario": la antesala (con la portada), la prueba y el juego. Abre
+el formulario de comentarios en una capa (`abrirComentario` de `labs-idioma.js`) con el juego, la
+semilla y la vista. Durante la cuenta del 3, 2, 1 no está. En el resultado el formulario va abierto
+y es lo último de la pantalla, debajo de "Volver al laboratorio".
+**Por qué:** lo pidió el dueño: que quien prueba pueda comentar en cualquier momento, sin esperar
+a terminar, pero sin estorbar la cuenta.
+**Consecuencias:** `tools/e2e/case/lab.mjs` prueba que esté al final de la antesala y del juego, que
+no esté en la cuenta, que abra y cierre la capa, y que el formulario sea lo último del resultado.
 

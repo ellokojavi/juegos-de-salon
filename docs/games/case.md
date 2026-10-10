@@ -67,6 +67,10 @@ juego que se juega desde el laboratorio, en vez del botón 🐞 de La Copa. Mand
 texto, un nombre opcional y el contexto (juego, semilla, puntaje, tiempo, URL, tamaño de pantalla y
 navegador); se lee con `node tools/firebase/reportes.mjs`, y sin red queda en el celular y se
 reenvía (D-104, D-109).
+Antes de terminar también se puede comentar: la antesala, la prueba y el juego terminan con
+**"💬 Dejar un comentario"**, que abre el mismo formulario en una capa con la vista en el contexto
+(`abrirComentario`, D-268). Durante la cuenta del 3, 2, 1 no está, y en el resultado el formulario
+abierto es lo último de la pantalla, debajo de "Volver al laboratorio".
 
 El resultado se comparte con `compartir.js` (C-7): la cabecera, el puntaje, el tiempo y una grilla
 de 🟩 con 🟥 donde hubo error y 🟨 donde se pidió ayuda.
@@ -75,7 +79,8 @@ de 🟩 con 🟥 donde hubo error y 🟨 donde se pidió ayuda.
 
 ```
 /labs/case/ (caso del día) o ?seed= → antesala (prueba opcional) → 3, 2, 1 → marcar de a uno
-  → resultado con desglose → Compartir · 🔍 Otro caso · 📅 El caso de hoy · ¿Qué te pareció?
+  → resultado con desglose → Compartir · 🔍 Otro caso · 📅 El caso de hoy · Volver · ¿Qué te pareció?
+  ("💬 Dejar un comentario" al final de la antesala, la prueba y el juego; no en la cuenta)
 ```
 
 **Cómo se ve** (`public/cup/games/case/ui.js`):
