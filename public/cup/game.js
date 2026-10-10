@@ -35,6 +35,7 @@ import { podioDe } from '../assets/js/records.js';
 import { crearAvisos } from './avisos.js';
 import { fechaLocal, juegoDel, semillaDel, anotar as anotarUnoAlDia, leer as leerUnoAlDia } from '../assets/js/uno-al-dia.js';
 import { tarjetaResultado, rutaHoy } from '../assets/js/uno-al-dia-ui.js';
+import { formularioComentario, abrirComentario } from '../assets/js/labs-idioma.js';
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
 trackVisit();
@@ -65,7 +66,8 @@ const busqueda = location.search.slice(1).split('&').filter(Boolean);
 const PRUEBA = tiene('test');
 // ?labs: se llegó desde el laboratorio, con la semilla a la vista y el botón para volver (D-101).
 // La Copa de 3 días (D-100) se ofrece solo con ?three o en el modo de prueba (D-262).
-const LABS = busqueda.includes('labs');
+// La página de un juego del laboratorio (/labs/case/, D-267) es del laboratorio sin que el link lo diga
+const LABS = busqueda.includes('labs') || location.pathname.includes('/labs/');
 const TRES = PRUEBA || tiene('three');
 /** Las banderas de la URL, en inglés y como eran antes: ninguna es un juego ni el link de una copa. */
 const BANDERAS_URL = ['labs', ...Object.entries(BANDERAS).flat()];
@@ -92,7 +94,7 @@ const HOY = SUELTO && tiene('today');
  * trae la tarjeta del juego y no la de La Copa.
  */
 const paginaSuelta = (id, { semilla, zipSeg } = {}) => {
-  const q = [LABS && 'labs', PRUEBA && 'test', semilla && `seed=${semilla}`, zipSeg && `timer=${zipSeg}`].filter(Boolean).join('&');
+  const q = [LABS && !gameById(id)?.labs && 'labs', PRUEBA && 'test', semilla && `seed=${semilla}`, zipSeg && `timer=${zipSeg}`].filter(Boolean).join('&');
   return gameById(id)?.suelto ? `${RAIZ}${gameById(id).path}${q ? `?${q}` : ''}` : `${RAIZ}cup/suelto/?${[slugDe(id), q].filter(Boolean).join('&')}`;
 };
 const semillaUrl = { semilla: SEMILLA, zipSeg: param('timer') };
@@ -2157,20 +2159,25 @@ const volverDePractica = () => (LABS
 function practica(id) {
   const J = JUEGOS_COPA[id], mod = JUEGOS[id];
   if (!J || !mod) { if (SUELTO) location.replace(RAIZ); else portada(); return; }
-  if (!LABS) document.title = `${J.nombre} ${J.emoji} · ${(COMMON[LANG] || COMMON.es).appTitle}`;
-  if (SUELTO) $('#chip-juego').replaceChildren(...conEmoji(J.emoji, J.nombre));
+  // La página propia de un juego (también la del laboratorio, /labs/case/) lleva su nombre en la pestaña
+  if (!LABS || SUELTO) document.title = `${J.nombre} ${J.emoji} · ${(COMMON[LANG] || COMMON.es).appTitle}`;
+  // En el laboratorio, "‹ Laboratorio" es largo: bajo 400 px el chip queda solo con el emoji (U-12)
+  if (SUELTO) $('#chip-juego').replaceChildren(el('span', { class: con('', J.emoji) }, J.emoji), el('span', { class: LABS ? 'chip-txt chip-txt--lab' : 'chip-txt' }, ` ${J.nombre}`));
   if (HOY) {
     // Si hoy toca otro juego (un link de ayer, o pasó la medianoche), se va al de hoy
     const fecha = fechaLocal(), deHoy = juegoDel(fecha);
     if (deHoy !== id) { location.replace(RAIZ + rutaHoy(deHoy)); return; }
     S.hoy = { fecha, ya: !!leerUnoAlDia().dias[fecha] };
   }
-  const semilla = HOY ? semillaDel(S.hoy.fecha) : esCodigo(SEMILLA) ? SEMILLA : codigoAlAzar();
+  // Un juego `diario` (El caso, D-267), sin semilla en el link, es el del día: el mismo para todos
+  const delDia = !HOY && !esCodigo(SEMILLA) && !!gameById(id)?.diario;
+  const semilla = HOY ? semillaDel(S.hoy.fecha) : esCodigo(SEMILLA) ? SEMILLA : delDia ? semillaDel(fechaLocal()) : codigoAlAzar();
   precalentar(id, () => JUEGOS[id].generar(semilla, 1, { lang: LANG }), () => JUEGOS[id].ensayo?.(semilla, 1, { lang: LANG }));
   const zipSeg = param('timer');
   // Suelto, la semilla no va a la vista (D-142): el link queda en /queens/. Desde el
   // laboratorio sí, para poder repetir la partida.
-  if (SUELTO && LABS && !HOY) history.replaceState(null, '', paginaSuelta(id, { semilla, zipSeg }));
+  // El del día no: el link queda limpio y mañana abre el de mañana
+  if (SUELTO && LABS && !HOY && !delDia) history.replaceState(null, '', paginaSuelta(id, { semilla, zipSeg }));
   else if (!SUELTO) history.replaceState(null, '', `${location.pathname}?practice=${slugDe(id)}&seed=${semilla}${PRUEBA ? '&test' : ''}${LABS ? '&labs' : ''}${zipSeg ? `&timer=${zipSeg}` : ''}`);
   S.juego = { d: 1, id, practica: true, semilla };
   mostrar('jugar');
@@ -2185,18 +2192,21 @@ function practica(id) {
       el('div', { style: 'margin-top:6px' }, langToggle())),
     // Uno al día: una línea arriba, y nada más; cómo se juega es lo del juego (U-18)
     HOY ? el('p', { class: 'aviso uad-intro', id: 'uad-intro' }, S.hoy.ya ? UAD().introRepite : UAD().intro) : null,
+    delDia ? el('p', { class: 'aviso uad-intro', id: 'diario-intro' }, `📅 ${T.casoDelDia}`) : null,
     el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.howToPlay), dibujo(id), el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
       el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, puntajeTexto(J, false))),
     // La misma antesala que un día de la copa (D-109): la sesión de prueba se elige antes de jugar
     mod.ensayo && LABS ? el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-ensayo', onClick: () => { SFX.tap(); ensayoPractica(id, semilla); } }, `🧪 ${T.tryFirst}`) : null,
     // Suelto no hace falta decir que no cuenta para una copa: no hay copa a la vista
-    LABS ? el('p', { class: 'muted center' }, T.practiceHint) : null,
+    // Un juego `diario` (El caso, D-267) no: lo abre un amigo que no sabe de copas, y arriba ya dice qué caso es (U-8)
+    LABS && !gameById(id)?.diario ? el('p', { class: 'muted center' }, T.practiceHint) : null,
     el('button', { class: 'btn btn--yellow', id: 'btn-empezar', onClick: () => { SFX.tap(); jugarPractica(id, semilla); } }, `${J.emoji} ${T.start}`),
     volverDePractica(),
     // Entrar, pegado a Empezar y a Volver (D-249): sin jugador, la partida no queda en ningún
     // ranking. Arriba de las reglas, o entre los dos, bajaba los botones en alemán (C-8)
     rankea(id) ? bloqueJugador({ destacado: true, alTocar: () => SFX.tap() }) : null,
     rankea(id) ? bloqueRanking({ juego: id, titulo: fmt(RK.titleOf, { game: J.nombre }), pestanas: ['semana', 'siempre', 'amigos', 'copa'], alTocar: () => SFX.tap() }) : null));
+  pieComentario({ juego: id, semilla, pantalla: 'antesala' });
 }
 
 /**
@@ -2215,8 +2225,50 @@ function jugarPractica(id, semilla) {
   const seg = Number(param('timer'));
   if (PRUEBA && (id === 'zip' || id === 'desenredo') && seg > 0) p.tiempo = seg * 1000;
   // Señal de uso para el panel (D-44): el suelto se cuenta como su propio juego; el laboratorio no
-  if (!LABS && !PRUEBA) trackStart({ game: id, mode: HOY ? MODO_UNO_AL_DIA : 'solo', players: 1 });
-  jugarSinPuntaje(id, p, r => resultadoPractica(id, semilla, r));
+  // El caso cuenta también desde el laboratorio: es lo que se quiere medir (D-267)
+  if ((!LABS || gameById(id)?.diario) && !PRUEBA) trackStart({ game: id, mode: HOY ? MODO_UNO_AL_DIA : 'solo', players: 1 });
+  // Un juego `diario` sigue donde iba al recargar (D-267): las jugadas y el tiempo, por caso
+  const guardado = gameById(id)?.diario && !HOY ? partidaGuardada(id, semilla) : null;
+  jugarSinPuntaje(id, p, r => resultadoPractica(id, semilla, r), guardado ? { guardado } : {});
+}
+
+/**
+ * El link al formulario de comentarios, al final de cada vista de un juego del laboratorio (D-268):
+ * la antesala, la prueba y el juego; en el resultado el formulario ya va abierto al final. Durante la
+ * cuenta del 3, 2, 1 no está (`pieComentario(null)`). Vive al final de la pantalla, debajo de las reglas.
+ */
+function pieComentario(extra) {
+  const pantalla = $('#screen-jugar');
+  let pie = document.getElementById('comentario-pie');
+  if (!pie) { pie = el('div', { id: 'comentario-pie', class: 'center', style: 'padding:14px 0 6px' }); pantalla.append(pie); }
+  pie.replaceChildren();
+  // Solo en la página de un juego del laboratorio (/labs/case/); la práctica de /cup/?labs tiene su 🐞
+  if (!LABS || !extra || !gameById(extra.juego)?.labs) return;
+  pie.append(el('button', {
+    class: 'link-btn reporte-btn', id: 'btn-comentario', type: 'button',
+    onClick: () => {
+      SFX.tap();
+      abrirComentario({ T: T.comentario, enviar: enviarComentario(), contexto: { ...extra, url: location.pathname + location.search, pantallaTam: `${innerWidth}×${innerHeight}`, navegador: navigator.userAgent.slice(0, 160) } });
+    },
+  }, T.comentario.abrir));
+}
+
+/** En el modo de prueba, el comentario queda en el almacén local, como los reportes; si no, va a Firebase. */
+const enviarComentario = () => (PRUEBA ? async r => (await abrirStore()).reportar(r) : undefined);
+
+/**
+ * La partida de un juego `diario` en este celular (D-267): `{ jugadas, ms }` por juego y semilla, para
+ * seguir donde iba al recargar. Si el almacenamiento está bloqueado, se juega igual sin guardar.
+ */
+function partidaGuardada(id, semilla) {
+  const clave = `juegos-de-salon:diario:${id}:${semilla}`;
+  let previa = null;
+  try { previa = JSON.parse(localStorage.getItem(clave) || 'null'); } catch (_) { /* de cero */ }
+  return {
+    jugadas: Array.isArray(previa?.jugadas) && previa.jugadas.length ? previa.jugadas : undefined,
+    ms: Number(previa?.ms) || 0,
+    guardar(jugadas, ms) { try { localStorage.setItem(clave, JSON.stringify({ jugadas, ms })); } catch (_) { /* sin memoria */ } },
+  };
 }
 
 /** "🧪 Prueba", con la palabra aparte: en la barra de la pantalla completa puede quedar solo el 🧪. */
@@ -2229,11 +2281,14 @@ const chipPrueba = () => {
  * Juega un juego sin que cuente: la práctica del laboratorio y la sesión de prueba antes de
  * un día de la copa (D-103). Nada se guarda ni se envía; el reloj corre igual, para que se vea.
  */
-async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false } = {}) {
+async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false, guardado = null } = {}) {
   const J = JUEGOS_COPA[id], mod = JUEGOS[id];
-  const espera = await cuentaRegresiva(J);
+  // Una partida a medias sigue sin la cuenta ni la entrada: el tablero ya se conoce (D-267)
+  const sigue = !!guardado?.jugadas;
+  pieComentario(null);   // durante la cuenta, nada más que la cuenta
+  const espera = sigue ? 0 : await cuentaRegresiva(J);
   // Como en la copa: el reloj parte con la pantalla de juego a la vista, no con la cuenta
-  let rel = reloj.nuevo(Date.now() + espera + (mod.entrada?.() || 0));
+  let rel = { ...reloj.nuevo(Date.now() + espera + (sigue ? 0 : mod.entrada?.() || 0)), ms: guardado?.ms || 0 };
   const head = $('#jugar-head');
   head.innerHTML = '';
   const cron = el('span', { class: 'cron' }, fmt(T.timer, { t: '0:00' }));
@@ -2249,9 +2304,10 @@ async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false } = {}) {
   panelReglas(id, { copa: false, prueba: ensayo && !S.juego?.practica });
   pantallaCompleta(mod.pantallaCompleta);
   mod.montar(body, {
-    p, jugadas: undefined, T, fmt, el, SFX, vibrate, lang: LANG,
+    p, jugadas: guardado?.jugadas, T, fmt, el, SFX, vibrate, lang: LANG,
     textoFin: ensayo ? T.trialEnd : undefined,
-    guardar() { /* no se guarda: no cuenta */ },
+    // No cuenta para nada; solo un juego `diario` lo guarda en el celular, para seguir al recargar
+    guardar(jugadas) { guardado?.guardar(jugadas, Math.round(reloj.leer(rel, Date.now()))); },
     tiempo: () => Math.round(reloj.leer(rel, Date.now())),
     pararReloj() {
       if (!detenido) { rel = reloj.pausar(rel, Date.now()); detenido = true; }
@@ -2264,6 +2320,7 @@ async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false } = {}) {
       alTerminar({ ...r, ms: r.ms ?? Math.round(reloj.leer(rel, Date.now())), det: desglose(id, estado, { T, fmt, mmss, copa: false, lang: LANG }) });
     },
   });
+  pieComentario(S.juego?.practica ? { juego: id, semilla: S.juego.semilla, pantalla: ensayo ? 'prueba' : 'juego' } : null);
 }
 
 /** La sesión de prueba de un día: otro contenido, la misma mecánica, y de vuelta a Empezar. */
@@ -2320,7 +2377,12 @@ function resultadoPractica(id, semilla, r) {
   trackFinish({ detalle: `${r.s}/100${r.ms ? ` · ${mmss(r.ms)}` : ''}` });   // cómo salió, para el panel (D-210)
   mostrar('resultado');
   SFX.win();
-  const otra = SUELTO ? paginaSuelta(id) : `${location.pathname}?practice=${slugDe(id)}${PRUEBA ? '&test' : ''}${LABS ? '&labs' : ''}`;
+  // Un juego `diario` (D-267): "otra" es otro caso al azar, y si no era el de hoy, se ofrece el de hoy
+  const diario = !!gameById(id)?.diario && !hoy;
+  const otra = diario ? paginaSuelta(id, { semilla: codigoAlAzar() })
+    : SUELTO ? paginaSuelta(id) : `${location.pathname}?practice=${slugDe(id)}${PRUEBA ? '&test' : ''}${LABS ? '&labs' : ''}`;
+  const deHoy = diario && semilla !== semillaDel(fechaLocal());
+  const enLab = LABS && !!gameById(id)?.labs;
   const body = $('#resultado-body');
   body.innerHTML = '';
   poner(body,
@@ -2334,14 +2396,22 @@ function resultadoPractica(id, semilla, r) {
     hoy ? tarjetaResultado({ lang: LANG, fecha: S.hoy.fecha, primera: hoy.primera, dia: hoy.dia, raiz: RAIZ, alTocar: () => SFX.tap(), mmss }) : null,
     aviso,
     explicacion(J, { s: r.s, ms: r.ms, det: r.det, copa: false }),
-    LABS && !hoy ? el('p', { class: 'muted center' }, fmt(T.practiceSeed, { semilla })) : null,
+    // El de un juego `diario` no: su semilla ya va en el link de compartir y en el comentario
+    LABS && !hoy && !diario ? el('p', { class: 'muted center' }, fmt(T.practiceSeed, { semilla })) : null,
     // Suelto se comparte como cualquier juego jugado solo, con su página (D-162, D-165)
-    !LABS && !hoy && gameById(id)?.suelto ? botonResultadoSolo({ C: COMMON[LANG] || COMMON.es, emoji: J.emoji, juego: J.nombre, puntaje: r.resumen || String(r.s), tiempo: mmss(r.ms), tarjeta: r.t, url: withLang(`${SITIO}${gameById(id).path}`, LANG), alTocar: () => SFX.tap() }) : null,
-    hoy ? null : el('a', { class: 'btn btn--yellow', id: 'btn-otra', href: otra }, T.practiceAgain),
-    LABS && !hoy ? el('a', { class: 'btn btn--cyan btn--sm', id: 'btn-repetir', href: `${otra}${otra.includes('?') ? '&' : '?'}seed=${semilla}` }, T.practiceSame) : null,
-    botonReporte({ juego: id, semilla, puntaje: r.s, resumen: r.resumen }),
+    // El de un juego `diario` lleva su semilla: quien lo recibe juega el mismo caso, también mañana
+    (!LABS || diario) && !hoy && gameById(id)?.suelto ? botonResultadoSolo({ C: COMMON[LANG] || COMMON.es, emoji: J.emoji, juego: J.nombre, puntaje: r.resumen || String(r.s), tiempo: mmss(r.ms), tarjeta: r.t, url: withLang(`${SITIO}${gameById(id).path}${diario ? `?seed=${semilla}` : ''}`, LANG), alTocar: () => SFX.tap() }) : null,
+    hoy ? null : el('a', { class: 'btn btn--yellow', id: 'btn-otra', href: otra }, diario ? T.casoOtro : T.practiceAgain),
+    deHoy ? el('a', { class: 'btn btn--ghost btn--sm', id: 'btn-de-hoy', href: paginaSuelta(id) }, `📅 ${T.casoDeHoy}`) : null,
+    LABS && !hoy && !diario ? el('a', { class: 'btn btn--cyan btn--sm', id: 'btn-repetir', href: `${otra}${otra.includes('?') ? '&' : '?'}seed=${semilla}` }, T.practiceSame) : null,
+    enLab ? null : botonReporte({ juego: id, semilla, puntaje: r.s, resumen: r.resumen }),
     volverDePractica(),
-    ranking);
+    ranking,
+    // En la página de un juego del laboratorio, el comentario va abierto y al final de todo (D-265, D-268)
+    enLab ? formularioComentario({ T: T.comentario, enviar: enviarComentario(), contexto: {
+      juego: id, semilla, puntaje: r.s, resumen: r.resumen, tiempo: mmss(r.ms), url: location.pathname + location.search,
+      pantallaTam: `${innerWidth}×${innerHeight}`, navegador: navigator.userAgent.slice(0, 160),
+    } }) : null);
 }
 
 /* ------------------------------------------------------------------ */

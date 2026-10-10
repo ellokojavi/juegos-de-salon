@@ -1,5 +1,5 @@
 {
-  "version": "0.143.0",
+  "version": "0.144.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -660,7 +660,7 @@
       ],
       "duracion": "5–10",
       "labs": true,
-      "path": "case/"
+      "path": "labs/case/"
     }
   ],
   "tematicas": [
@@ -895,8 +895,6 @@
     "public/julep/engine.js",
     "public/julep/game.js",
     "public/julep/rules.js",
-    "public/labs/case/engine.js",
-    "public/labs/case/game.js",
     "public/liars-dice/engine.js",
     "public/liars-dice/game.js",
     "public/liars-dice/rules.js",
@@ -947,7 +945,6 @@
     "public/generala/engine.test.mjs",
     "public/hangman/engine.test.mjs",
     "public/julep/engine.test.mjs",
-    "public/labs/case/engine.test.mjs",
     "public/liars-dice/engine.test.mjs",
     "public/panel/adapta.test.mjs",
     "public/panel/aggregate.test.mjs",
@@ -1084,7 +1081,7 @@
     },
     {
       "ruta": "docs/games/case.md",
-      "titulo": "Prototipo: El caso"
+      "titulo": "El caso"
     },
     {
       "ruta": "docs/games/cup.md",
