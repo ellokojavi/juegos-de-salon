@@ -1,65 +1,116 @@
 /* El caso (laboratorio, D-256). Lo compartido vive en assets/css/base.css. */
 
+/* ---------- Cabeza ---------- */
 .caso-cabeza { text-align: center; margin: 2px 0 6px; }
-.caso-cabeza h1 { margin: 0; }
+.caso-cabeza .titulo { display: inline-flex; align-items: center; gap: 8px; margin: 0; }
+/* La lupa va fuera del degradado: dentro, el emoji saldría transparente */
+.caso-cabeza .lupa { font-size: 2.1rem; line-height: 1; display: inline-block; transform-origin: 70% 70%; animation: lupa 3.2s ease-in-out infinite; filter: drop-shadow(0 0 12px rgba(255, 210, 63, 0.45)); }
+@keyframes lupa { 0%, 100% { transform: rotate(-8deg) translateX(0); } 50% { transform: rotate(10deg) translateX(3px); } }
 .caso-cabeza p { margin: 2px 0 0; font-weight: 800; }
-.reglas { padding: 10px 14px; margin-bottom: 8px; }
 .caso-cabeza .meta-fuera { color: var(--ink); font-weight: 800; font-size: 0.92rem; margin: 4px 0 0; }
-.reglas .rules-list { margin-top: 8px; }
-.rules-list { margin: 4px 0 0; padding-left: 20px; display: grid; gap: 6px; }
-.rules-list li { color: var(--muted); font-weight: 700; line-height: 1.35; }
-.rules-list li b { color: var(--ink); }
-.reglas .puntaje { margin: 6px 0 0; font-size: 0.85rem; }
+.caso-cabeza .meta-fuera a { color: var(--cyan); white-space: nowrap; }
 
 .marcador { display: flex; justify-content: center; gap: 14px; font-weight: 900; font-size: 0.9rem; color: var(--muted); margin: 2px 0 6px; }
 .marcador b { font-family: var(--font-num); font-variant-numeric: tabular-nums; color: var(--ink); }
 
-/* La grilla: las letras y los números van dentro de la misma grilla (C-8) */
-.grilla { display: grid; grid-template-columns: 14px repeat(4, minmax(0, 1fr)); gap: 5px; }
+/* ---------- La grilla: las letras y los números van dentro de la misma grilla (C-8) ---------- */
+.grilla { display: grid; grid-template-columns: 14px repeat(4, minmax(0, 1fr)); gap: 6px; }
 .grilla .etq { display: grid; place-items: center; font: 900 0.72rem var(--font-num); color: var(--muted); }
-.persona {
-  display: grid; justify-items: center; align-content: center; gap: 1px; min-height: 74px; padding: 5px 2px;
-  border-radius: 12px; border: 2px solid transparent; background: var(--glass); color: var(--ink);
-  font-family: var(--font-body); cursor: pointer; position: relative; min-width: 0;
-}
-.persona .emo { font-size: 1.45rem; line-height: 1.1; }
-.persona .nom { font-weight: 900; font-size: clamp(0.7rem, 3.5vw, 0.82rem); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.persona .ofi { font-weight: 700; font-size: 0.62rem; color: var(--muted); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.persona .dice { position: absolute; top: 3px; right: 4px; font-size: 0.7rem; }
-.persona.inocente { background: rgba(157, 255, 58, 0.28); border-color: rgba(157, 255, 58, 0.75); }
-.persona.criminal { background: rgba(255, 61, 139, 0.32); border-color: rgba(255, 61, 139, 0.8); }
+
+/* Cada persona es una carta con dos caras: el dorso (🔍) y el frente (quién es) */
+.persona { position: relative; display: grid; padding: 0; border: 0; background: none; color: var(--ink); font-family: var(--font-body); cursor: pointer; min-width: 0; perspective: 700px; transition: transform 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.3), opacity 0.2s; -webkit-tap-highlight-color: transparent; }
+.persona .giro { display: grid; transform-style: preserve-3d; transition: transform 0.55s cubic-bezier(0.3, 0.9, 0.3, 1.05); }
+.persona .cara { grid-area: 1 / 1; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 12px; border: 2px solid transparent; min-height: 80px; }
+.persona .frente { display: grid; justify-items: center; align-content: center; gap: 1px; padding: 5px 2px; background: var(--glass); transition: background 0.3s, border-color 0.3s, box-shadow 0.2s; }
+.persona .dorso { display: grid; place-items: center; font-size: 1.6rem; transform: rotateY(180deg); border-color: rgba(255, 210, 63, 0.45);
+  background: repeating-linear-gradient(45deg, rgba(255, 210, 63, 0.16) 0 6px, rgba(255, 210, 63, 0.05) 6px 12px), #2a1450; }
+.persona.tapada .giro { transform: rotateY(180deg); }
+
+.persona .emo { font-size: 1.5rem; line-height: 1.1; }
+.persona .nom { font-weight: 900; font-size: clamp(0.8rem, 3.9vw, 0.95rem); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.persona .ofi { font-weight: 700; font-size: 0.66rem; color: var(--muted); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.persona .dice { position: absolute; top: 3px; right: 4px; font-size: 0.7rem; display: none; }
+.persona.marcada .dice { display: block; }
+
+.persona.inocente .frente { background: rgba(157, 255, 58, 0.28); border-color: rgba(157, 255, 58, 0.75); }
+.persona.criminal .frente { background: rgba(255, 61, 139, 0.32); border-color: rgba(255, 61, 139, 0.8); }
 .persona.inocente .ofi, .persona.criminal .ofi { color: var(--ink); opacity: 0.8; }
-.persona.elegida { border-color: var(--cyan); box-shadow: 0 0 0 2px var(--cyan), 0 0 14px rgba(46, 230, 214, 0.45); }
-.persona.marcada { cursor: default; }
-.persona.equivoco::after { content: '✕'; position: absolute; top: 2px; left: 5px; font-size: 0.7rem; color: var(--yellow); font-weight: 900; }
-.persona.sacude { animation: shake 0.4s; }
+.persona.marcada { cursor: pointer; }
+.persona.equivoco .frente::after { content: '✕'; position: absolute; top: 2px; left: 6px; font-size: 0.72rem; color: var(--yellow); font-weight: 900; }
 
-/* Lo que se hace con la persona elegida, y el mensaje de la última marca */
-.accion { min-height: 58px; margin: 10px 0 4px; display: grid; gap: 6px; }
-.accion .quien { text-align: center; font-weight: 900; margin: 0; }
-.accion .btn-row .btn { min-height: 48px; }
-.accion .msg { text-align: center; font-weight: 800; margin: 0; padding: 8px 10px; border-radius: 12px; background: rgba(0,0,0,0.25); }
-.accion .msg.ok { color: var(--lime); }
-.accion .msg.error { color: var(--pink); }
+/* La elegida: un zoom suave hacia adelante */
+.persona.elegida { transform: scale(1.09); z-index: 2; }
+.persona.elegida .frente { border-color: var(--cyan); box-shadow: 0 0 0 2px var(--cyan), 0 8px 22px rgba(0, 0, 0, 0.45), 0 0 18px rgba(46, 230, 214, 0.5); }
+
+/* Una pista tocada ilumina a quiénes nombra; los demás se apagan */
+.grilla.enfoque .persona:not(.foco):not(.habla):not(.elegida) { opacity: 0.32; }
+.persona.foco .frente { box-shadow: 0 0 0 3px var(--yellow), 0 0 14px rgba(255, 210, 63, 0.55); }
+.persona.habla .frente { box-shadow: 0 0 0 3px var(--cyan), 0 0 14px rgba(46, 230, 214, 0.55); }
+.persona.habla.foco .frente { box-shadow: 0 0 0 3px var(--yellow), 0 0 0 6px var(--cyan); }
+
+/* El sello que cae al marcar: verde o rosado si acertó, rojo y sacudida si no */
+.persona .sello { position: absolute; inset: 0; display: grid; place-items: center; font-size: 2.6rem; pointer-events: none; z-index: 3; animation: sello 0.85s cubic-bezier(0.2, 0.9, 0.3, 1.2) both; }
+@keyframes sello { 0% { transform: scale(2.4) rotate(-14deg); opacity: 0; } 35% { transform: scale(0.9) rotate(4deg); opacity: 1; } 55% { transform: scale(1.05); opacity: 1; } 100% { transform: scale(1); opacity: 0; } }
+.persona.acierto .giro { animation: voltea 0.6s ease-out; }
+@keyframes voltea { 0% { transform: rotateY(0); } 50% { transform: rotateY(90deg); } 100% { transform: rotateY(0); } }
+.persona.acierto.inocente .frente { animation: brilla-verde 0.9s ease-out; }
+.persona.acierto.criminal .frente { animation: brilla-rosa 0.9s ease-out; }
+@keyframes brilla-verde { 0%, 40% { box-shadow: 0 0 0 0 rgba(157, 255, 58, 0.9); } 100% { box-shadow: 0 0 0 14px rgba(157, 255, 58, 0); } }
+@keyframes brilla-rosa { 0%, 40% { box-shadow: 0 0 0 0 rgba(255, 61, 139, 0.9); } 100% { box-shadow: 0 0 0 14px rgba(255, 61, 139, 0); } }
+.persona.fallo { animation: shake 0.45s; }
+.persona.fallo .frente { animation: destello-rojo 0.8s ease-out; }
+@keyframes destello-rojo { 0%, 30% { background: rgba(255, 40, 60, 0.75); border-color: #ff2840; } 100% { background: var(--glass); } }
+.persona.duda .frente { animation: destello-duda 0.7s ease-out; }
+@keyframes destello-duda { 0%, 30% { border-color: var(--yellow); background: rgba(255, 210, 63, 0.25); } 100% { } }
+/* Al resolver el caso, una ola por la grilla */
+.persona.ola .giro { animation: ola 0.6s ease-in-out; }
+@keyframes ola { 0%, 100% { transform: translateY(0); } 40% { transform: translateY(-8px) scale(1.05); } }
+
+/* ---------- Lo que se hace con la elegida, y el mensaje de la última marca ---------- */
+.accion { min-height: 58px; margin: 12px 0 4px; display: grid; gap: 6px; }
+.accion .btn-row .btn { min-height: 48px; font-size: 1rem; padding-left: 6px; padding-right: 6px; }
+.accion .msg { width: 100%; text-align: center; font: 800 0.98rem/1.35 var(--font-body); color: var(--ink); margin: 0; padding: 9px 12px; border-radius: 12px; border: 2px solid transparent; background: rgba(0,0,0,0.25); cursor: default; }
+.accion .msg.ok { color: var(--lime); border-color: rgba(157, 255, 58, 0.45); cursor: pointer; }
+.accion .msg.error { color: var(--pink); border-color: rgba(255, 61, 139, 0.45); }
 .accion .msg.falta { color: var(--yellow); }
+.accion .msg.dato { text-align: left; border-color: rgba(255, 210, 63, 0.55); cursor: pointer; }
+.accion .msg.activa { box-shadow: 0 0 0 2px var(--yellow); }
+.accion .msg .ver { color: var(--cyan); font-weight: 900; font-size: 0.85rem; white-space: nowrap; }
 .accion .msg-sub { text-align: center; font-weight: 800; color: var(--muted); margin: 0; }
-.pistas .ayuda { font-size: 0.8rem; font-weight: 700; color: var(--muted); margin: -4px 4px 0; }
+.btn.marca-inocente { background: linear-gradient(180deg, #c6ff8a, var(--lime)); color: #173a00; box-shadow: 0 4px 0 #4f8f13; }
+.btn.marca-criminal { background: linear-gradient(180deg, #ff8fbf, #ff3d8b); color: #3a0018; box-shadow: 0 4px 0 #a3134f; }
 
-/* Las pistas: la más nueva arriba; tocar una la tacha (para llevar la cuenta) */
-.pistas { display: grid; gap: 6px; margin-top: 6px; padding-bottom: 20px; }
+/* ---------- Las pistas: la última arriba y destacada; tocar una ilumina a quiénes nombra ---------- */
+.pistas { display: grid; gap: 7px; margin-top: 8px; padding-bottom: 14px; }
 .pistas h2 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 0 4px; }
-.pista { display: grid; grid-template-columns: auto 1fr; gap: 8px; align-items: start; text-align: left; padding: 9px 12px; border-radius: 12px; border: 0; background: rgba(0,0,0,0.25); color: var(--ink); font: 700 0.9rem/1.35 var(--font-body); cursor: pointer; }
-.pista .de { font-weight: 900; color: var(--cyan); white-space: nowrap; }
-.pista.nueva { box-shadow: 0 0 0 2px var(--yellow); }
-.pista.tachada { opacity: 0.4; text-decoration: line-through; }
+.pistas .ayuda { font-size: 0.8rem; font-weight: 700; color: var(--muted); margin: -4px 4px 0; }
+.pista { display: grid; grid-template-columns: 1fr 44px; align-items: stretch; border-radius: 12px; background: rgba(0,0,0,0.25); border: 2px solid transparent; overflow: hidden; }
+.pista .texto { text-align: left; padding: 10px 12px; border: 0; background: none; color: var(--ink); font: 700 1rem/1.4 var(--font-body); cursor: pointer; }
+.pista .de { font-weight: 900; color: var(--cyan); }
+.pista .tachar { border: 0; border-left: 1px solid var(--glass-border); background: none; color: var(--muted); font: 900 1.1rem var(--font-body); cursor: pointer; }
+.pista.ultima { border-color: var(--yellow); background: rgba(255, 210, 63, 0.12); }
+.pista.ultima .texto { font-size: 1.06rem; }
+.pista .nueva-tag { display: inline-block; font: 900 0.68rem var(--font-body); text-transform: uppercase; letter-spacing: 0.08em; color: #3a1200; background: var(--yellow); border-radius: 999px; padding: 2px 7px; margin-right: 6px; vertical-align: 2px; }
+.pista.entra { animation: entra 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.2) both; }
+@keyframes entra { 0% { transform: translateY(-10px) scale(0.97); opacity: 0; } 100% { transform: none; opacity: 1; } }
+.pista.activa { box-shadow: 0 0 0 2px var(--cyan); }
+.pista.tachada .texto { opacity: 0.4; text-decoration: line-through; }
+.pista.tachada .tachar { color: var(--lime); }
 
+/* ---------- El final ---------- */
 .fin { text-align: center; display: grid; gap: 8px; margin-top: 10px; }
 .fin .trofeo { font-size: 3.6rem; animation: pop 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
 .fin .resumen { font-weight: 900; font-size: 1.05rem; margin: 0; }
 .fin .tarjeta { font-size: 1.2rem; line-height: 1.15; letter-spacing: 2px; }
-@media (prefers-reduced-motion: reduce) { .persona.sacude, .fin .trofeo { animation: none; } }
-/* Los dos botones de marcar, con el color de lo que marcan */
-.btn.marca-inocente { background: linear-gradient(180deg, #c6ff8a, var(--lime)); color: #173a00; box-shadow: 0 4px 0 #4f8f13; }
-.btn.marca-criminal { background: linear-gradient(180deg, #ff8fbf, #ff3d8b); color: #3a0018; box-shadow: 0 4px 0 #a3134f; }
-.accion .btn-row .btn { font-size: 1rem; padding-left: 6px; padding-right: 6px; }
-.accion .msg.pista { color: var(--ink); text-align: left; }
+
+/* ---------- Cómo se juega, al final ---------- */
+.reglas { padding: 10px 14px; margin: 4px 0 20px; scroll-margin-top: 12px; }
+.rules-list { margin: 8px 0 0; padding-left: 20px; display: grid; gap: 6px; }
+.rules-list li { color: var(--muted); font-weight: 700; line-height: 1.35; }
+.rules-list li b { color: var(--ink); }
+.reglas .puntaje { margin: 6px 0 0; font-size: 0.85rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .caso-cabeza .lupa, .persona.fallo, .persona .giro, .persona .frente, .pista.entra, .fin .trofeo { animation: none !important; }
+  .persona, .persona .giro { transition: none; }
+}
