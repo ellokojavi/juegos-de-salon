@@ -66,7 +66,8 @@ El formulario de comentarios es `formularioComentario()` de `labs-idioma.js` y v
 juego que se juega desde el laboratorio, en vez del botón 🐞 de La Copa. Manda a `feedback/` el
 texto, un nombre opcional y el contexto (juego, semilla, puntaje, tiempo, URL, tamaño de pantalla y
 navegador); se lee con `node tools/firebase/reportes.mjs`, y sin red queda en el celular y se
-reenvía (D-104, D-109).
+reenvía (D-104, D-109). En el modo de prueba (`?test`) queda en el almacén local, como los reportes de
+La Copa. La práctica de los otros juegos desde `/cup/?labs` sigue con su 🐞.
 Antes de terminar también se puede comentar: la antesala, la prueba y el juego terminan con
 **"💬 Dejar un comentario"**, que abre el mismo formulario en una capa con la vista en el contexto
 (`abrirComentario`, D-268). Durante la cuenta del 3, 2, 1 no está, y en el resultado el formulario

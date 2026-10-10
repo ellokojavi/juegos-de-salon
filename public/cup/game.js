@@ -2242,15 +2242,19 @@ function pieComentario(extra) {
   let pie = document.getElementById('comentario-pie');
   if (!pie) { pie = el('div', { id: 'comentario-pie', class: 'center', style: 'padding:14px 0 6px' }); pantalla.append(pie); }
   pie.replaceChildren();
-  if (!LABS || !extra) return;
+  // Solo en la página de un juego del laboratorio (/labs/case/); la práctica de /cup/?labs tiene su 🐞
+  if (!LABS || !extra || !gameById(extra.juego)?.labs) return;
   pie.append(el('button', {
     class: 'link-btn reporte-btn', id: 'btn-comentario', type: 'button',
     onClick: () => {
       SFX.tap();
-      abrirComentario({ T: T.comentario, contexto: { ...extra, url: location.pathname + location.search, pantallaTam: `${innerWidth}×${innerHeight}`, navegador: navigator.userAgent.slice(0, 160) } });
+      abrirComentario({ T: T.comentario, enviar: enviarComentario(), contexto: { ...extra, url: location.pathname + location.search, pantallaTam: `${innerWidth}×${innerHeight}`, navegador: navigator.userAgent.slice(0, 160) } });
     },
   }, T.comentario.abrir));
 }
+
+/** En el modo de prueba, el comentario queda en el almacén local, como los reportes; si no, va a Firebase. */
+const enviarComentario = () => (PRUEBA ? async r => (await abrirStore()).reportar(r) : undefined);
 
 /**
  * La partida de un juego `diario` en este celular (D-267): `{ jugadas, ms }` por juego y semilla, para
@@ -2378,6 +2382,7 @@ function resultadoPractica(id, semilla, r) {
   const otra = diario ? paginaSuelta(id, { semilla: codigoAlAzar() })
     : SUELTO ? paginaSuelta(id) : `${location.pathname}?practice=${slugDe(id)}${PRUEBA ? '&test' : ''}${LABS ? '&labs' : ''}`;
   const deHoy = diario && semilla !== semillaDel(fechaLocal());
+  const enLab = LABS && !!gameById(id)?.labs;
   const body = $('#resultado-body');
   body.innerHTML = '';
   poner(body,
@@ -2399,11 +2404,11 @@ function resultadoPractica(id, semilla, r) {
     hoy ? null : el('a', { class: 'btn btn--yellow', id: 'btn-otra', href: otra }, diario ? T.casoOtro : T.practiceAgain),
     deHoy ? el('a', { class: 'btn btn--ghost btn--sm', id: 'btn-de-hoy', href: paginaSuelta(id) }, `📅 ${T.casoDeHoy}`) : null,
     LABS && !hoy && !diario ? el('a', { class: 'btn btn--cyan btn--sm', id: 'btn-repetir', href: `${otra}${otra.includes('?') ? '&' : '?'}seed=${semilla}` }, T.practiceSame) : null,
-    LABS ? null : botonReporte({ juego: id, semilla, puntaje: r.s, resumen: r.resumen }),
+    enLab ? null : botonReporte({ juego: id, semilla, puntaje: r.s, resumen: r.resumen }),
     volverDePractica(),
     ranking,
-    // En el laboratorio, el comentario va abierto y al final de todo (D-265, D-268)
-    LABS ? formularioComentario({ T: T.comentario, contexto: {
+    // En la página de un juego del laboratorio, el comentario va abierto y al final de todo (D-265, D-268)
+    enLab ? formularioComentario({ T: T.comentario, enviar: enviarComentario(), contexto: {
       juego: id, semilla, puntaje: r.s, resumen: r.resumen, tiempo: mmss(r.ms), url: location.pathname + location.search,
       pantallaTam: `${innerWidth}×${innerHeight}`, navegador: navigator.userAgent.slice(0, 160),
     } }) : null);

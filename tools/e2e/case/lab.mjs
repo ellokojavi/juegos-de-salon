@@ -2,7 +2,7 @@
 // /case/ lleva ahí; sin semilla es el caso del día (el link queda limpio); se juega con la pantalla
 // de La Copa (D-257), marcar antes de tiempo cuenta como error (D-261), al recargar sigue donde iba,
 // se resuelve entero sin adivinar y el final ofrece compartir el mismo caso, otro caso, el de hoy y
-// el comentario (D-265), con el envío interceptado. Imprime ✗ si algo falla.
+// el comentario (D-265), que en el modo de prueba queda en el celular. Imprime ✗ si algo falla.
 import { launch, sleep } from '../cdp.mjs';
 const OUT = process.argv[2] || '/tmp/caso-lab';
 const b = await launch({ port: 9392, dir: `${OUT}/p`, out: OUT, width: 375, height: 812 });
@@ -94,8 +94,10 @@ ok(await ev(`(()=>{const k=[...document.getElementById('resultado-body').childre
 await ev(`window.__enviados = []; window.fetch = async (u, o) => { window.__enviados.push({ u: String(u), o }); return { ok: true }; }; document.getElementById('btn-enviar-comentario').click(); 1`); await sleep(200);
 ok(/Escribe algo/.test(await ev(`document.querySelector('.comentario .labs-error').textContent`)), 'vacío no se envía');
 await ev(`document.querySelector('.comentario textarea').value = 'Me trabé con una pista'; document.getElementById('btn-enviar-comentario').click(); 1`); await sleep(400);
-const enviado = await ev(`JSON.stringify(window.__enviados.map(x => ({ u: x.u, b: JSON.parse(x.o.body) })))`).then(JSON.parse);
-ok(enviado.length === 1 && enviado[0].u.endsWith('/feedback.json') && /"juego":"caso"/.test(enviado[0].b.contexto) && enviado[0].b.contexto.includes(SEMILLA), `el comentario va a feedback/ con el caso (${enviado[0]?.b.contexto?.slice(0, 80)})`);
+// En el modo de prueba queda en el almacén local, como los reportes de La Copa, y no sale nada a la red
+const guardados = await ev(`JSON.parse(localStorage.getItem('juegos-de-salon:copa:prueba:reportes') || '[]')`);
+ok(guardados.length === 1 && guardados[0].texto === 'Me trabé con una pista' && /"juego":"caso"/.test(guardados[0].contexto) && guardados[0].contexto.includes(SEMILLA), `el comentario se guarda con el caso (${guardados[0]?.contexto?.slice(0, 80)})`);
+ok(!await ev(`window.__enviados.some(x => x.u.includes('feedback'))`), 'y en el modo de prueba no va a Firebase');
 ok(/Gracias/.test(await ev(`document.querySelector('.comentario').textContent`)), 'y da las gracias en el mismo lugar');
 await b.shot('03-final');
 ok(!b.errors.length, `sin errores en la página ${JSON.stringify(b.errors)}`);
