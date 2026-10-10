@@ -384,7 +384,7 @@ Spec and design: [docs/games/julep.md](docs/games/julep.md)
 </table>
 <!-- /generado -->
 
-**On the menu since D-175**, after a stint in the lab (D-101). The lab at [`/labs/`](https://juegosdesalon.cl/labs/) stays for testing: practice each game on its own, simulate a whole cup on one computer, or run a real 3-day cup with close friends. A 🐞 button sends bug reports and comments with their context, no login needed.
+**On the menu since D-175**, after a stint in the lab (D-101). The 3-day cup, for testing with close friends, is offered with `?tres` in the link. A 🐞 button sends bug reports and comments with their context, no login needed.
 
 Not a game but a **tournament that lasts a week**. Someone creates a cup and shares the link with the group; everyone joins with their name and a 4-digit PIN, from any phone or computer. Every day a different game opens, **the same one for everybody**, and it can be played **once**. Your score only matters against the others: the day hands out points by position (10, 8, 6, 5, 4, 3, 2, 1), so every day weighs the same (and every game scores 0 to 100 anyway, D-113) and one crushing day does not decide the cup (D-94). The final day is worth double, everyone gets one ×2 wildcard, and whoever has the most points on day 7 lifts the cup.
 
@@ -417,7 +417,7 @@ The other four are **〰️ Zip**, **☀️ Tango**, **📍 Where is it?** and *
 - **Many languages, one rule** (D-170): what is personal follows your language, what belongs to the group follows the cup's. The screen (rules, board, scoring breakdown) follows each player's toggle; the cup's language, chosen when it is created, sets the words of Connections and Bulls and Cows: Word, so everyone plays the same ones, and every message shared with the group, with its link. Word content is written per language, not translated: Connections grids and secret words in English, Portuguese and German, plus country and city names for Where is it?.
 - **Who it's for** (D-186, D-187): when creating a cup, the admin picks its audience: 🌎 Global, 🇨🇱 Chile or 🇧🇷 Brazil. Content that people only know in one of those countries is tagged with it: Timeline's Chile and Brazil themes and a few local cards, the Connections grids with Chilean or Brazilian words, a few Chilean secret words, and Chilean and Brazilian cities that aren't capitals (Rio and São Paulo count as global). A global cup leaves out both countries' topics; a Chilean or Brazilian cup adds its own and leaves out the other's. Cups created before keep their content.
 - **Phone notifications** (D-223, D-224, open to everyone since D-228): a 🔔 bell in each cup turns them on. The offer shows up after you play a day, before the cup starts, or when you open the cup from the installed app; the system permission is only asked after a tap, and a confirmation notification arrives at once. On iPhone, the bell first walks you through adding the app to the home screen. A scheduled GitHub workflow checks every 15 minutes and tells you when a day opens, when your time to play it is running out, about The Grand Final and who won ([docs/PWA-NOTIFICACIONES.md](docs/PWA-NOTIFICACIONES.md)).
-- A 3-day cup exists for testing with `?tres` (D-100), and `?prueba` plays a cup with no Firebase, which is what the lab demos and the end-to-end scripts use.
+- A 3-day cup exists for testing with `?tres` (D-100), and `?prueba` plays a cup with no Firebase, which is what the demos (`?prueba&demo=<scene>`, no longer linked from the lab since D-262), the README screenshots and the end-to-end scripts use.
 
 Spec and design: [docs/games/cup.md](docs/games/cup.md)
 
@@ -528,7 +528,7 @@ How it is put together (canon C-3):
 - **A new language starts in the lab** (D-191): listed in `EN_LABS`, it is only offered on a device
   that came in through `/labs/<lang>/`, where every "‹ Menu" leads back to the lab and a 🐞 button
   sends comments, so native speakers can review the draft before everyone sees it. **German** went
-  through it and is now offered to everyone (D-197); the old `/labs/de/` link forwards to `/de/`.
+  through it and is now offered to everyone (D-197).
   Its glossary is in [docs/ALEMAN.md](docs/ALEMAN.md).
 - In The Cup, the screen follows each player's language, but the words of Connections and Word, the
   messages shared with the group and their link follow the language picked when the cup is created
@@ -735,7 +735,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   julep/                      Julep (engine.js + tests, game.js, rules.js)
   fourth-king/                Fourth King (engine.js + tests, game.js, rules.js)
   connections/ · queens/ …    The Cup's games played on their own, one page each (generated from cup/suelto/)
-  labs/                       The lab: games being tested before they reach the menu (not linked, not indexed); labs/de/ forwards to /de/ (German left the lab, D-197)
+  labs/                       The lab: games being tested before they reach the menu (not linked, not indexed); today only El caso (D-262)
     case/                     The Case: a mystery prototype in the style of Clues by Sam, Spanish only, for friends to try (D-256)
   records/                    Leaderboards: the All-Rounder, every game's table and The Cup's medal table (D-212)
   today/                      One a Day: today's game, your streak, a calendar and how you do in each game (D-230)

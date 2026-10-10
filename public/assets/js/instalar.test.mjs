@@ -2,7 +2,7 @@
 // siempre y la puerta del laboratorio.
 // Uso: node public/assets/js/instalar.test.mjs
 import assert from 'node:assert/strict';
-import { pasosDe, instalarEnLabs, activarInstalar, descartado, descartar, INSTALAR_EN_LABS, LABS_INSTALAR_KEY, INSTALAR_NO_KEY } from './instalar.js';
+import { pasosDe, descartado, descartar, INSTALAR_NO_KEY } from './instalar.js';
 
 const UA = {
   iphone: 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.1 Mobile/15E148 Safari/604.1',
@@ -48,19 +48,4 @@ const roto = { getItem() { throw new Error('sin almacenamiento'); }, setItem() {
 assert.equal(descartado(roto), false);
 assert.doesNotThrow(() => descartar(true, roto));
 
-// La puerta del laboratorio, como la de los avisos (D-223)
-const prod = { hostname: 'juegosdesalon.cl' };
-const l = almacen();
-if (INSTALAR_EN_LABS) {
-  assert.equal(instalarEnLabs({ storage: l, loc: prod }), false, 'en producción, sin activarlo en /labs/, no sale');
-  assert.equal(instalarEnLabs({ storage: l, loc: { hostname: 'localhost' } }), true, 'en el sitio local sale siempre');
-  activarInstalar(true, l);
-  assert.equal(l.getItem(LABS_INSTALAR_KEY), '1');
-  assert.equal(instalarEnLabs({ storage: l, loc: prod }), true, 'activado en /labs/, sale');
-  activarInstalar(false, l);
-  assert.equal(instalarEnLabs({ storage: l, loc: prod }), false);
-} else {
-  assert.equal(instalarEnLabs({ storage: l, loc: prod }), true, 'fuera del laboratorio, sale para todos');
-}
-
-console.log('instalar: los pasos de cada celular, la ✕ para siempre y la puerta del laboratorio');
+console.log('instalar: los pasos de cada celular y la ✕ para siempre');

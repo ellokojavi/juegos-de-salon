@@ -241,7 +241,7 @@ assert.equal(dayPath('prod', 20342), 'stats/prod/days/20342');
 // --- Tráfico del sitio (D-208) ---------------------------------------------
 assert.equal(paginaDe('/'), 'inicio');
 assert.equal(paginaDe('/hangman/'), 'hangman');
-assert.equal(paginaDe('/labs/de/'), 'labs', 'la página es su primera carpeta');
+assert.equal(paginaDe('/labs/case/'), 'labs', 'la página es su primera carpeta');
 assert.equal(paginaDe('/index.html'), 'inicio');
 assert.equal(origenDe('', 'juegosdesalon.cl'), 'directo');
 assert.equal(origenDe('https://juegosdesalon.cl/hangman/', 'juegosdesalon.cl'), 'directo', 'pasar de una página a otra no es un origen');

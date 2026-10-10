@@ -4,7 +4,7 @@
 // común salga de la semilla del día (la palabra, la flota del celular, los dados), que al terminar
 // se anote el puntaje de 0 a 100 de su fórmula y que la tarjeta vaya arriba de los botones del
 // juego. También, que un link de otro juego lleve al de hoy, que el segundo intento sea práctica y
-// que /today/ nombre el juego. En el sitio local Uno al día sale sin pasar por /labs/.
+// que /today/ nombre el juego.
 import { mkdtempSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
