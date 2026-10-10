@@ -139,7 +139,7 @@ modo que el juego piensa tener.
 - Interfaz del transporte: `create`, `join`, `send`, `onMessage`, `onPresence`, `leave`, `dispose`.
 - **Campos reservados del transporte:** `from`, `at` (marca de tiempo) e `id`. Un juego que necesite enviar una posición o una cantidad usa otro nombre, o el transporte se lo pisará sin avisar.
 - **Firebase no guarda una lista vacía:** el campo simplemente no queda. Una lista que puede ir vacía viaja como texto (`"1,4,8"`, o `""`) y el motor la lee aceptando la cadena, la lista cruda del transporte local y el campo ausente (D-60).
-- Salas: código de 4 letras mayúsculas sin I ni O, QR con `?sala=CÓDIGO`, campo `game` para separar juegos, caducidad de media hora sin jugadas y de 6 horas en total (D-89). Roles de A a F (hasta seis jugadores).
+- Salas: código de 4 letras mayúsculas sin I ni O, QR con `?room=CÓDIGO`, campo `game` para separar juegos, caducidad de media hora sin jugadas y de 6 horas en total (D-89). Roles de A a F (hasta seis jugadores).
 - **Antes de tocar la sala se espera la conexión.** Crear o entrar espera a `.info/connected` (8 s) y corre con tope (12 s), y el tope de salas por celular se revisa antes de la red (`errors.js`, `ratelimit.js`). Sin eso, quedarse sin señal se ve como un botón pegado para siempre.
 - **Un celular no puede abrir salas sin parar:** 20 por hora y 80 por día (D-41). El tope está sobre el uso legítimo más intenso, no sobre el promedio, porque la revancha abre sala nueva. Si `localStorage` falla, se deja crear: bloquear a un jugador legítimo es peor que dejar pasar a un abusivo.
 - **Cada partida deja una señal de uso para el panel del dueño** (`public/assets/js/transport/stats.js`, D-44). El transporte apunta las salas solo; los modos sin red llaman `trackStart({ game, mode, players })` al empezar (no al retomar) y `trackFinish({ ganador, empate, detalle })` al terminar. Es un `fetch` por REST, sin SDK, mejor esfuerzo: nunca se espera ni se muestra. Un modo sin red manda quién juega —los nombres que la partida ya tiene (`nombres` en `trackStart`) o, si no hay, el último que la persona escribió en la app (`nombreDelCelular`)— y cómo terminó, una sola vez (D-210), además del idioma elegido en la app (D-211). Nunca sale un secreto, el chat ni una IP. Quien **entra a propósito** con su nombre y PIN para los rankings (D-212) manda además su mejor puntaje y sus partidas a su jugador; sin entrar, nada de eso. De una **sala** quedan además el país del celular y quién ganó, que es lo que el panel muestra como bitácora (D-79). Una partida sin red se ve en vivo en el panel porque `trackStart` le arranca un latido (D-140): el juego no tiene que hacer nada más.
@@ -151,7 +151,7 @@ modo que el juego piensa tener.
 - **Las salas vencidas se borran solas.** Al crear o entrar a una sala, el celular la apunta en la papelera (`cleanup/days/<día>`) y de vez en cuando barre los días pendientes borrando lo vencido (`public/assets/js/transport/cleanup.js`, D-39). Nada de esto se le muestra al jugador ni puede voltear una partida: si falla, barre el celular siguiente.
 - Con más de dos jugadores, el reparto de roles es una carrera: se escribe el rol con un identificador de dispositivo y se relee para confirmar quién lo obtuvo. Nunca se asume que el primer rol libre que se leyó sigue libre.
 - Cuando hay más de dos jugadores, uno es anfitrión (rol A) y abre la partida cuando están todos.
-- Quien abre un enlace de sala (`?sala=CÓDIGO`) llega a una pantalla que **solo** deja unirse a esa sala: título propio de invitación, nada de botón para crear otra, el código va fijo y de solo lectura, y los ajustes de la partida no se muestran porque los fija el anfitrión. Ofrecer las dos cosas confunde a quien fue invitado.
+- Quien abre un enlace de sala (`?room=CÓDIGO`) llega a una pantalla que **solo** deja unirse a esa sala: título propio de invitación, nada de botón para crear otra, el código va fijo y de solo lectura, y los ajustes de la partida no se muestran porque los fija el anfitrión. Ofrecer las dos cosas confunde a quien fue invitado.
 - El enlace de la sala se comparte con el diálogo nativo del sistema (`botonInvitar` en `public/assets/js/compartir.js`); copiar al portapapeles es solo el respaldo cuando el navegador no tiene ese diálogo. El diálogo del celular ya incluye copiar, así que no se pierde nada.
 - **Todo lo que se comparte** pasa por `public/assets/js/compartir.js` y sigue su estándar (D-165, U-30, U-33): cabecera `{emoji} *{título}* · {contexto}`, una idea por línea y el link solo al final; si va imagen, lleva arriba la misma cabecera y abajo el mismo link (`lamina`, `laminaResultado`), y se manda junto con su texto. Las invitaciones van solo con texto; la app, desde la portada, con su tarjeta social del idioma como imagen (`compartirApp`, D-226). Un juego nuevo no arma su propio mensaje ni su propio botón.
 - Se muestra cuando el rival se desconecta y se retoma solo cuando vuelve.
@@ -410,6 +410,30 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
   `idioma-por-url.mjs`. `window.__portada` dice el filtro, las tarjetas que se ven y los
   favoritos. Un cambio que se ve rehace la captura `docs/screenshots/menu.png` (C-13).
 
+## C-18 · Las URL, en inglés
+
+Todo lo que se ve en una dirección va en inglés: las carpetas (`/hangman/`, C-2, D-192), los
+nombres de los parámetros (`?room=`, `?seed=`, `?test`) y sus valores en palabras (`?type=logic`,
+`&demo=podium`, `&notif=deadline`, `?practice=queens`), también en el `#` del panel (`#/cup/OFICI`).
+Los nombres de antes se siguen leyendo como alias: un link que ya circula no se rompe (D-214, D-266).
+
+- **Se lee y se escribe con `parametros.js`.** `param('room')` lee el nombre nuevo o el de antes y
+  devuelve el valor en inglés; `tiene('test')` hace lo mismo con una bandera. Un parámetro nuevo
+  se agrega ahí, en inglés, y uno que cambia de nombre deja el viejo en `ALIAS`, `BANDERAS` o
+  `VALORES`. Nada lee `location.search` a mano con un nombre en español.
+- **Lo que la app genera va siempre con el nombre nuevo:** invitaciones, links compartidos, avisos al
+  celular (`tools/push/`), lo que deja en la barra con `history.replaceState`. Al abrir una página,
+  `trackVisit()` reescribe en inglés una dirección vieja (`normalizarUrl`).
+- **El juego en la URL va con el nombre de su carpeta** (`slugDe` / `idDeSlug` en `games.js`): el id
+  (`reinas`) no cambia, porque lo guardan las salas, el panel y el celular, pero no se ve.
+- **Una clave que se guarda no cambia por esto:** el panel sigue contando `aviso/plazo` aunque la URL
+  diga `notif=deadline` (`AVISO_CLAVE`).
+- **Lo que no es palabra queda como es:** códigos (`?K7Q2X`, `?c=`), el link propio de una copa
+  (`?pirata`, que elige quien la crea; las palabras de las banderas están reservadas) y los nombres
+  de las variables del código, que siguen en español.
+- **Lo frena una prueba:** `node public/assets/js/parametros.test.mjs` busca en `public/` y en
+  `tools/push/` una URL armada con un nombre de antes.
+
 ---
 
 ## Lista de chequeo antes de dar por listo un juego
@@ -429,6 +453,7 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
 - [ ] Lo que comparte (sala, resultado) sale de `compartir.js`, con la cabecera del estándar, y un resultado va con su imagen (C-7, D-165).
 - [ ] Registro en el menú, README, especificación, requerimientos y decisiones (C-2, C-13). En la portada, con su tipo, entra al dado y a los favoritos y cabe a 320 px (C-17).
 - [ ] Las excepciones a los cánones están escritas en su especificación (C-13).
+- [ ] Sus URL van en inglés: carpeta, parámetros y valores, leídos con `parametros.js`, con los nombres de antes como alias (C-18).
 - [ ] Su `index.html` lleva el vigía antes de las hojas de estilo y llama `trackVisit()` al cargar: `node public/assets/js/vigia.test.mjs` en verde (C-7, D-251).
 - [ ] El panel lo muestra sin haberlo tocado: `node public/panel/adapta.test.mjs` en verde y una mirada a `node tools/e2e/mirar.mjs panel datos` (C-16).
 - [ ] Capturas del README rehechas y miradas, y `python3 tools/release/readme.py revisar` en verde (C-13).

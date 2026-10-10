@@ -131,9 +131,9 @@ empate no es victoria. La tabla (semana, siempre y amigos) va en la intro, debaj
 (`finDePartida` y `bloqueVictorias` de `public/assets/js/ranking.js`), y en `/records/`. Jugando
 solo no se anota nada: no hay rival a quien ganarle.
 
-### Uno al día (`/hangman/?hoy`, D-230)
+### Uno al día (`/hangman/?today`, D-230)
 
-Cuando El Ahorcado es el juego de Uno al día, `/hangman/?hoy` no ofrece modos: la intro lleva la
+Cuando El Ahorcado es el juego de Uno al día, `/hangman/?today` no ofrece modos: la intro lleva la
 línea de Uno al día y un solo botón, **Jugar el de hoy**, que abre directo 🧍 Jugar solo con el
 🎴 mazo del celular (Mezcla, 6 vidas y comprar letras, lo de siempre) y el nombre que se recuerda
 (o "Jugador 1"). La palabra sale de la semilla del día (`semillaDel` → `azarDel(semilla, 'ahorcado')`

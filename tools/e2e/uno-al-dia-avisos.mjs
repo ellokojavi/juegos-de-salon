@@ -49,7 +49,7 @@ await permiso('granted');
 await b.go(`${SITIO}/`, 600);
 await ev(`(()=>{localStorage.clear();localStorage.setItem('juegos-de-salon:instalar:no','1');
   localStorage.setItem('juegos-de-salon:uno-al-dia', JSON.stringify({dias:{'2026-10-05':{j:'reinas',s:70,ms:1,at:1,n:1}}}));return 1})()`);
-await b.go(`${SITIO}/untangle/?hoy&prueba&zipSeg=3`, 1200);
+await b.go(`${SITIO}/untangle/?today&test&timer=3`, 1200);
 await esperar(`!!document.getElementById('btn-empezar')`);
 await click('#btn-empezar');
 await esperar(`!!document.getElementById('btn-fin')`, 80);

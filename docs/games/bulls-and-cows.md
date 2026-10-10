@@ -26,7 +26,7 @@ En los tableros las pistas van abreviadas (“3F 1T”, en inglés “3B 1C”) 
 |---|---|---|
 | 📱 Un celular, dos jugadores | Cada uno ingresa su secreto con la pantalla tapada; tras cada intento aparece, en una sola pantalla, la respuesta (toques y famas) y debajo “Pásale el celular a X”. | `public/assets/js/transport/local.js` (memoria) |
 | 🧍 Jugar solo | Es el juego 🔢 “Toque y Fama: adivina el número” de La Copa (D-142): 4 cifras distintas (puede empezar con cero), 10 intentos y puntaje de 0 a 100 con reloj de tiempo activo. Sin configuración. Ver “Jugar solo” más abajo. | Sin transporte: `public/cup/games/number/ui.js` montado con `public/cup/games/solo.js` |
-| 📡 Dos celulares | Sala con código de 4 letras y QR (`?sala=CODE`). Cada celular calcula las respuestas contra su propio secreto. | `public/assets/js/transport/firebase.js` (Realtime Database) |
+| 📡 Dos celulares | Sala con código de 4 letras y QR (`?room=CODE`). Cada celular calcula las respuestas contra su propio secreto. | `public/assets/js/transport/firebase.js` (Realtime Database) |
 
 **Rankings (D-215):** con un jugador de los rankings abierto en el celular (nombre y PIN,
 D-212, abiertos a todos desde D-217), cada partida terminada se cuenta en `jugadores/<jid>/juegos/toque-y-fama`
@@ -120,7 +120,7 @@ El estado (`view()`) se deriva de la lista de mensajes: fase (`lobby`, `secret`,
 - Sala: `rooms/<CODE>` con `createdAt`, `game`, `config`, `players/{A,B}` (nombre, online) y `messages/<pushId>` (append-only).
 - Creación en dos pasos (sala, luego jugador) por las reglas de seguridad; salas válidas mientras se juegue (media hora quieta y vencen; seis horas de tope).
 - El lobby tiene botón para cancelar la sala: quien se va a propósito se despide y la sala se borra si no queda nadie (D-50).
-- Reconexión: el secreto y el rol se guardan en `localStorage` (`juegos-de-salon:tyf:session`); al abrir `?sala=CODE` o “Continuar” se retoma.
+- Reconexión: el secreto y el rol se guardan en `localStorage` (`juegos-de-salon:tyf:session`); al abrir `?room=CODE` o “Continuar” se retoma.
 - Revancha: quien la propone crea una sala nueva (queda como A) y avisa con `rematch`; el otro se une como B.
 - Presencia con `onDisconnect`; si el rival se desconecta, se avisa en pantalla.
 

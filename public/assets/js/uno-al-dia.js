@@ -16,6 +16,7 @@
 import { hash32 } from '../../cup/games/semilla.js';
 import { rng as mulberry } from '../../timeline/engine.js';
 import { semana } from './records.js';
+import { param } from './parametros.js';
 
 /** El día n.° 1: el día en que Uno al día salió del laboratorio (D-230). Queda fijo: moverlo cambia el juego de días ya jugados. */
 export const LANZAMIENTO = '2026-10-06';
@@ -182,15 +183,15 @@ export function puntajeDudo({ gano, dados, rondas }) {
 }
 
 /**
- * Dónde va el acceso en la portada: una tarjeta de media fila junto a La Copa (`'tarjeta'`, D-239).
- * `?uad=boton` lo pone al lado de Juego al azar, como antes, y `?uad=no` no lo pone (para las
- * capturas del README).
+ * Dónde va el acceso en la portada: una tarjeta de media fila junto a La Copa (`'card'`, D-239).
+ * `?daily=button` lo pone al lado de Juego al azar, como antes, y `?daily=off` no lo pone (para las
+ * capturas del README). Los links de antes (`?uad=boton`, `?uad=no`) valen igual (D-266).
  */
 export function formaAcceso({ loc = globalThis.location } = {}) {
   try {
-    const q = new URLSearchParams(loc?.search || '').get('uad');
-    return q === 'boton' || q === 'no' ? q : 'tarjeta';
-  } catch (_) { return 'tarjeta'; }
+    const q = param('daily', loc?.search || '');
+    return q === 'button' || q === 'off' ? q : 'card';
+  } catch (_) { return 'card'; }
 }
 
 /* ------------------------------------------------------------------ */
@@ -315,8 +316,9 @@ export function juntar({ dias = {}, regalos = null } = {}, { storage = globalThi
 }
 
 /**
- * Dónde se juega el de hoy, desde la raíz del sitio: la página del juego (`queens/?hoy`,
- * `hangman/?hoy`) o, si no tiene (Línea Relámpago, el número), la genérica (`cup/suelto/?linea&hoy`).
- * `slugs` es `{ id: carpeta }` de los sueltos y de los juegos de la portada (games.js).
+ * Dónde se juega el de hoy, desde la raíz del sitio: la página del juego (`queens/?today`,
+ * `hangman/?today`) o, si no tiene (Línea Relámpago, el número), la genérica
+ * (`cup/suelto/?timeline-flash&today`). `slugs` es `{ id: carpeta }` de los sueltos y de los juegos
+ * de la portada, y `sinPagina`, el nombre en la URL de los que no tienen (games.js, D-266).
  */
-export const rutaDel = (id, slugs) => (slugs[id] ? `${slugs[id]}/?hoy` : `cup/suelto/?${id}&hoy`);
+export const rutaDel = (id, slugs, sinPagina = {}) => (slugs[id] ? `${slugs[id]}/?today` : `cup/suelto/?${sinPagina[id] || id}&today`);

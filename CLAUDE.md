@@ -15,8 +15,11 @@ viven en un solo lugar** (D-213), y este archivo dice dónde.
   `public/copa/`, `public/minijuegos/…`, `public/minigames/…`) son páginas puente generadas: no se editan.
 - **El taller**, al lado: `docs/`, `firebase/`, `marketing/` y `tools/` por función (`release/`,
   `firebase/`, `generators/`, `agents/`, `e2e/<juego>/`).
-- Las carpetas nuevas van en inglés. La documentación, los mensajes y los nombres de archivo de las
-  herramientas siguen en español. El README va en inglés (C-13, D-78).
+- Las carpetas nuevas van en inglés, y **todo lo que se ve en una URL también**: nombres de los
+  parámetros y sus valores (`?room=`, `?seed=`, `?test`, `&demo=podium`), leídos con
+  `public/assets/js/parametros.js`, que guarda los nombres de antes como alias (C-18, D-266). Los
+  nombres de las variables del código, la documentación, los mensajes y los nombres de archivo de
+  las herramientas siguen en español. El README va en inglés (C-13, D-78).
 
 ## Dónde está cada regla (D-213)
 
@@ -189,7 +192,7 @@ con eso la pantalla entra también a las pruebas de idiomas. Para verlo en un ce
   lo dibuja con datos sembrados sin entrar. Ver [docs/PANEL.md](docs/PANEL.md).
 - **Reportes de La Copa** (D-104): `node tools/firebase/reportes.mjs [--dias 3] [--json]`.
 - **Rankings** (D-212): `records.js` (lógica), `jugador.js` (el jugador y su almacén:
-  `jugador-firebase.js`, o `jugador-local.js` en pruebas y con `?prueba`; `?records=firebase` fuerza
+  `jugador-firebase.js`, o `jugador-local.js` en pruebas y con `?test`; `?records=firebase` fuerza
   Firebase) y `ranking.js` + `ranking.css` (pantalla). Abiertos a todos desde D-217 (la puerta del
   laboratorio, `RANKINGS_EN_LABS`, queda en `false`). La
   historia de La Copa (podios, la pestaña "Copa" y las copas de cada jugador para "Tus copas", D-220,

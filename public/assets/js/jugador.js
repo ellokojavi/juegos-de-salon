@@ -22,6 +22,7 @@
  *                                   día `d` con una invitación de `jid` (D-230): le da un comodín.
  */
 import { envOf, countryOf } from './transport/stats.js';
+import { tiene } from './parametros.js';
 import {
   claveNombre, limpiarNombre, esPin, esJid, nuevoJid, hashPinJugador, tablaId, normalizar, esMejor, semana,
   SIEMPRE, TODOTERRENO, todoterreno, vistaTabla, ordenar, VARIANTE_VICTORIAS, claveOrden, PARTIDAS, esPais,
@@ -470,7 +471,7 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
 let unico = null;
 /**
  * El jugador de la página, con el almacén que corresponde: Firebase en el sitio publicado; en
- * pruebas (localhost, la red de la casa y Tailscale: `envOf`, D-138) y con `?prueba`, el de prueba, para que los guiones no escriban en los rankings de
+ * pruebas (localhost, la red de la casa y Tailscale: `envOf`, D-138) y con `?test`, el de prueba, para que los guiones no escriban en los rankings de
  * verdad. `?records=firebase` fuerza Firebase para mirarlo a mano.
  */
 export function jugador() {
@@ -481,7 +482,7 @@ export function jugador() {
 
 async function crear() {
   const q = new URLSearchParams(location.search);
-  const local = q.get('records') !== 'firebase' && (q.has('prueba') || envOf(location) === 'dev');
+  const local = q.get('records') !== 'firebase' && (tiene('test', q) || envOf(location) === 'dev');
   const almacen = local
     ? (await import('./jugador-local.js')).crearAlmacenLocal()
     : (await import('./jugador-firebase.js')).crearAlmacenFirebase();

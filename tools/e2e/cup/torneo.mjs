@@ -1,5 +1,5 @@
 // La Copa de punta a punta (LIG-27): una Copa de 7 días con tres jugadores en un solo Chrome,
-// con el almacén de prueba (`?prueba`) y el reloj adelantado día por día. Cada "celular" es
+// con el almacén de prueba (`?test`) y el reloj adelantado día por día. Cada "celular" es
 // la misma pestaña con el sessionStorage limpio: la cuenta de prueba vive ahí.
 //
 // Uso: python3 -m http.server 8765 (en otra terminal) y node tools/e2e/cup/torneo.mjs <carpeta-salida>
@@ -10,6 +10,7 @@
 import { launch, sleep } from '../cdp.mjs';
 import { mkdirSync } from 'node:fs';
 import { POZO } from '../../../public/cup/engine.js';
+import { slugDe } from '../../../public/assets/js/games.js';
 
 const OUT = process.argv[2] || '/tmp/copa';
 const SIETE = !process.argv.includes('--tres');
@@ -60,7 +61,7 @@ async function revisarPantalla(nombre) {
 
 async function comoJugador(code) {
   await ev('sessionStorage.clear(); 1');
-  await b.go(`${BASE}?${code}&prueba`, 1200);
+  await b.go(`${BASE}?${code}&test`, 1200);
   await preparar();
 }
 
@@ -225,7 +226,7 @@ const jugarTango = async nivel => {
   await sleep(150);
 };
 
-/** Zip por niveles: resuelve los dos primeros y espera a que se acabe el reloj (acortado con &zipSeg). */
+/** Zip por niveles: resuelve los dos primeros y espera a que se acabe el reloj (acortado con &timer). */
 const jugarZip = async () => {
   const { codigo, dia } = await ev('JSON.stringify(window.__jugando.p)').then(JSON.parse);
   for (let k = 0; k < 2; k++) {
@@ -342,9 +343,9 @@ async function jugarDia(d, nivel, { capturar = false, comodin = false } = {}) {
 
 /* ---------- La copa ---------- */
 if (corre('copa')) {
-  await b.go(`${BASE}?prueba`, 1200);
+  await b.go(`${BASE}?test`, 1200);
   await ev('localStorage.clear(); sessionStorage.clear(); 1');
-  await b.go(`${BASE}?prueba`, 1200);
+  await b.go(`${BASE}?test`, 1200);
   await preparar();
   await revisarPantalla('portada');
   await click('#btn-crear'); await sleep(900); // con varias sesiones probando a la vez, la máquina anda lenta
@@ -453,7 +454,7 @@ if (corre('copa')) {
   }
   await revisarPantalla('crear');
   await click('#btn-crear-go'); await sleep(900);
-  ok(/\?oficina&prueba$/.test(await ev('location.search')), 'la copa creada queda en ?oficina');
+  ok(/\?oficina&test$/.test(await ev('location.search')), 'la copa creada queda en ?oficina');
   const CODE = await ev('__copa.estado.code');
   ok(/^[A-HJ-NP-Z]{5}$/.test(CODE), `copa creada con código ${CODE}`);
   ok(await ev('__copa.estado.copa.meta.aud') === 'cl', 'la copa guarda su público (Chile)');
@@ -512,11 +513,11 @@ if (corre('copa')) {
   ok(/no es el de Javi/.test(await ev(`document.querySelector('#entrar-body .form-error').textContent`)), 'un PIN equivocado se rechaza');
   // Abrir por el link propio lleva a la misma copa
   await ev('sessionStorage.clear(); 1');
-  await b.go(`${BASE}?oficina&prueba`, 1200); await preparar();
+  await b.go(`${BASE}?oficina&test`, 1200); await preparar();
   ok(await ev('__copa.estado.code') === CODE, 'el link ?oficina abre la copa');
   await ev('sessionStorage.clear(); 1');
-  await b.go(`${BASE}?${CODE}&prueba`, 1200); await preparar();
-  ok(/\?oficina&prueba$/.test(await ev('location.search')), 'entrando por el código, la barra muestra el link propio');
+  await b.go(`${BASE}?${CODE}&test`, 1200); await preparar();
+  ok(/\?oficina&test$/.test(await ev('location.search')), 'entrando por el código, la barra muestra el link propio');
   // Inscribirse con un nombre y PIN que ya existen cuenta como entrar (D-120)
   await comoJugador(CODE);
   ok(/7 días · Parte el .* · 3 jugadores inscritos/.test(await ev(`document.querySelector('#entrar-body .lead').textContent`)) || /3 días · Parte el .* · 3 jugadores inscritos/.test(await ev(`document.querySelector('#entrar-body .lead').textContent`)), 'la invitación dice días, cuándo parte y cuántos se inscribieron');
@@ -588,7 +589,7 @@ if (corre('copa')) {
 
   // Una hora después de la medianoche del último día: la copa terminó
   await sentarse(CODE, 'Cata', '1111');
-  await b.go(`${BASE}?${CODE}&prueba`, 1200); await preparar();
+  await b.go(`${BASE}?${CODE}&test`, 1200); await preparar();
   ok(await ev(`!!document.querySelector('.podio')`), 'al terminar se ve el podio');
   await sleep(3000); // que termine el confeti
   await revisarPantalla('podio');
@@ -632,13 +633,14 @@ if (corre('laboratorio')) {
   ok(await ev(`[...document.querySelectorAll('section.seccion')].map(x => x.id).join()`) === 'seccion-caso'
     && await ev(`document.getElementById('btn-caso').getAttribute('href')`) === '../case/?labs', 'el laboratorio ofrece solo El caso, que abre su página');
   await b.shot('10-labs');
+  // Un link de antes de D-266, con los parámetros en español: llega igual, y en inglés
   await b.go(`${BASE}?practica=tango&prueba&labs&semilla=KQRST`, 1500); await preparar();
-  ok(await ev(`location.pathname + location.search`) === '/tango/?labs&prueba&semilla=KQRST', 'laboratorio: el link viejo va a la página del juego con su semilla');
+  ok(await ev(`location.pathname + location.search`) === '/tango/?labs&test&seed=KQRST', 'laboratorio: el link viejo va a la página del juego con su semilla, en inglés');
   ok(!!await ev(`document.getElementById('btn-ensayo')`) && await ev(`document.getElementById('btn-menu').href`) === `${SITIO}/labs/`, 'laboratorio: en la página del juego sigue la sesión de prueba y se vuelve al laboratorio');
   // Arrastrar desde una casilla vacía pinta X en las vacías (D-166) y desde una X las borra (D-168),
   // con mouse y con el dedo, sin
   // estorbar al toque (reina) ni al toque largo (X)
-  await b.go(`${BASE}?practica=reinas&prueba&labs`, 1200); await preparar();
+  await b.go(`${BASE}?practice=queens&test&labs`, 1200); await preparar();
   await click('#btn-empezar'); await sleep(300); await esperarCuenta();
   {
     const N = await ev(`Math.round(Math.sqrt(document.querySelectorAll('.rej').length))`);
@@ -690,7 +692,7 @@ if (corre('laboratorio')) {
     ok((await clases())[N] === 'R', 'Reinas: después de borrar todo se sigue jugando');
   }
   // Rendirse en Reinas: dos toques, la solución a la vista y 0 puntos (D-110)
-  await b.go(`${BASE}?practica=reinas&prueba&labs`, 1200); await preparar();
+  await b.go(`${BASE}?practice=queens&test&labs`, 1200); await preparar();
   await click('#btn-empezar'); await sleep(300); await esperarCuenta();
   // Con la confirmación negada no pasa nada; aceptada, se rinde
   await ev('window.confirm = () => false; 1');
@@ -704,7 +706,7 @@ if (corre('laboratorio')) {
   // Desde la portada (D-142) la práctica es el juego suelto: sin prueba ni semilla, y vuelve al menú.
   // Vive en /<slug>/ (D-149, D-162, D-199): un link viejo a /cup/?practica= sin &labs se va para allá.
   await b.go(`${BASE}?practica=conexiones&prueba`, 1500); await preparar();
-  ok(await ev(`location.pathname + location.search`) === '/connections/?prueba', 'juego suelto: el link viejo de la copa lleva a /connections/');
+  ok(await ev(`location.pathname + location.search`) === '/connections/?test', 'juego suelto: el link viejo de la copa lleva a /connections/');
   ok(!await ev(`document.getElementById('btn-ensayo')`) && await ev(`document.getElementById('btn-menu').href`) === `${SITIO}/`
     && await ev(`[...document.querySelectorAll('#jugar-body a')].some(a => a.href === '${SITIO}/')`), 'juego suelto: sin prueba y de vuelta al menú');
   // Su página trae su propia tarjeta social: un link compartido muestra el juego, no La Copa (D-162)
@@ -714,9 +716,9 @@ if (corre('laboratorio')) {
   // El 🐞 del resultado abre el formulario y vuelve al resultado (la página suelta necesita su pantalla)
   // Los links de antes (/minigames/?reinas, /minigames/queens/) se van a la página propia
   await b.go(`${SITIO}/minigames/?reinas&prueba`, 1500); await preparar();
-  ok(await ev(`location.pathname + location.search`) === '/queens/?prueba', 'juego suelto: /minigames/?reinas lleva a /queens/');
-  await b.go(`${SITIO}/minigames/queens/?prueba`, 1500); await preparar();
-  ok(await ev(`location.pathname + location.search`) === '/queens/?prueba', 'juego suelto: /minigames/queens/ lleva a /queens/');
+  ok(await ev(`location.pathname + location.search`) === '/queens/?test', 'juego suelto: /minigames/?reinas lleva a /queens/');
+  await b.go(`${SITIO}/minigames/queens/?test`, 1500); await preparar();
+  ok(await ev(`location.pathname + location.search`) === '/queens/?test', 'juego suelto: /minigames/queens/ lleva a /queens/');
   await click('#btn-empezar'); await sleep(300); await esperarCuenta();
   await click('#btn-rendirse'); await sleep(300); await click('#btn-fin'); await sleep(800);
   await click('#btn-reporte'); await sleep(300);
@@ -726,7 +728,7 @@ if (corre('laboratorio')) {
   for (const id of ['linea', 'numero', 'conexiones', 'reinas', 'letras', 'zip', 'desenredo', 'tango', 'anio', 'donde', 'final']) {
     // Zip con semilla fija: el chequeo del aviso busca un trazo que llegue al final sin cubrir todo.
     // Desenredo con reloj corto también: dos niveles resueltos y el tiempo se acaba en el tercero
-  await b.go(`${BASE}?practica=${id}&prueba&labs${id === 'zip' ? '&zipSeg=12&semilla=KQRST' : id === 'desenredo' ? '&zipSeg=25&semilla=KQRST' : ''}`, 1200); await preparar();
+  await b.go(`${BASE}?practice=${slugDe(id)}&test&labs${id === 'zip' ? '&timer=12&seed=KQRST' : id === 'desenredo' ? '&timer=25&seed=KQRST' : ''}`, 1200); await preparar();
     // La primera vez que se abre un juego sus módulos llegan sin caché (con --parte laboratorio,
     // nadie lo jugó antes en la copa): se espera a la antesala en vez de un tiempo fijo.
     for (let w = 0; w < 30 && !await ev(`!!document.getElementById('btn-ensayo')`); w++) await sleep(200);
@@ -746,7 +748,7 @@ if (corre('laboratorio')) {
         return JSON.stringify({a:a.right|0,h:[h.left|0,h.right|0],t:t.left|0,cabe:j.scrollWidth<=j.clientWidth,chip:!!j.querySelector('.chip')?.offsetWidth})})()`).then(JSON.parse);
       ok(barra.h[0] >= barra.a && barra.h[1] <= barra.t && barra.cabe && barra.chip, `¿Dónde queda?: el reloj de la prueba cabe entre volver y el sonido (${barra.a} | ${barra.h} | ${barra.t})`);
       await b.shot('donde-barra-prueba');
-      await b.go(`${BASE}?practica=${id}&prueba&labs`, 1200); await preparar();
+      await b.go(`${BASE}?practice=${slugDe(id)}&test&labs`, 1200); await preparar();
       for (let w = 0; w < 30 && !await ev(`!!document.getElementById('btn-empezar')`); w++) await sleep(200);
       await preparar();
     }
@@ -918,20 +920,20 @@ if (corre('laboratorio')) {
 
 /* ---------- Las demos (D-110): copas sembradas en el modo de prueba, para las pruebas y las capturas (D-262) ---------- */
 if (corre('demos')) {
-  const DEMOS = { nueva: 'admin', invitado: 'entrar', espera: 'tablero', 'sin-jugar': 'admin', jugador: 'tablero', admin: 'admin', final: 'tablero', 'final-admin': 'admin', podio: 'tablero', llena: 'tablero' };
+  const DEMOS = { new: 'admin', guest: 'entrar', waiting: 'tablero', 'not-started': 'admin', player: 'tablero', admin: 'admin', final: 'tablero', 'final-admin': 'admin', podium: 'tablero', full: 'tablero' };
   for (const [demo, pant] of Object.entries(DEMOS)) {
-    await b.go(`${BASE}?prueba&demo=${demo}`, 1500); await preparar();
+    await b.go(`${BASE}?test&demo=${demo}`, 1500); await preparar();
     ok(await pantalla() === pant, `demo ${demo}: abre en ${pant}`);
     await revisarPantalla(`demo-${demo}`);
     await b.shot(`demo-${demo}`);
   }
-  await b.go(`${BASE}?prueba&demo=sin-jugar`, 1500); await preparar();
+  await b.go(`${BASE}?test&demo=not-started`, 1500); await preparar();
   ok(/nadie ha jugado/i.test(await ev(`document.getElementById('admin-inicio')?.innerText || ''`)), 'demo sin-jugar: el admin ve que partió sin nadie y puede moverla');
-  await b.go(`${BASE}?prueba&demo=jugador`, 1500); await preparar();
+  await b.go(`${BASE}?test&demo=player`, 1500); await preparar();
   ok(!!await ev(`document.querySelector('[data-dia="4"]')`), 'demo jugador: el día 4 se puede jugar');
   ok(await ev(`[...document.querySelectorAll('.tabla .fila')].every(f=>f.querySelectorAll('.pd').length===7) && !!document.querySelector('.tabla .pd.pendiente') && !!document.querySelector('.tabla .pd.abierto') && !!document.querySelector('.tabla-leyenda')`), 'la tabla muestra los 7 días de cada jugador, con estados y leyenda (D-131)');
   // Eliminar la copa (D-117): dos confirmaciones, la segunda escribiendo el nombre
-  await b.go(`${BASE}?prueba&demo=admin`, 1500); await preparar();
+  await b.go(`${BASE}?test&demo=admin`, 1500); await preparar();
   const codeBorrar = await ev('__copa.estado.code');
   await revisarPantalla('admin-eliminar');
   await ev(`window.prompt = () => 'otro nombre'; 1`);
@@ -943,16 +945,16 @@ if (corre('demos')) {
   await b.shot('copa-eliminada');
 
   // Cada mensaje solo cuando tiene sentido (D-116)
-  await b.go(`${BASE}?prueba&demo=admin`, 1500); await preparar();
+  await b.go(`${BASE}?test&demo=admin`, 1500); await preparar();
   ok(!!await ev(`document.getElementById('msg-invitar')`) && !!await ev(`document.getElementById('msg-tabla')`) && !await ev(`document.getElementById('msg-final')`), 'día 4: con invitación (D-176) y la tabla parcial, sin resumen final');
   await ev(`window.__msgs = []; navigator.share = d => { window.__msgs.push(d.text); return Promise.resolve(); }; 1`);
   await click('#msg-invitar'); await sleep(400);
   ok(/día \d+ de \d+/.test(await ev(`(window.__msgs || []).join(' ')`) || '') && !/Parte el/.test(await ev(`(window.__msgs || []).join(' ')`) || ''), 'la invitación ya partida dice en qué día va (D-176)');
-  await b.go(`${BASE}?prueba&demo=nueva`, 1500); await preparar();
+  await b.go(`${BASE}?test&demo=new`, 1500); await preparar();
   ok(!!await ev(`document.getElementById('lab-falta-gente')`) && !await ev(`document.getElementById('btn-pasar-dia')`), 'con el admin solo no se puede pasar de día (D-118)');
   ok(!!await ev(`document.getElementById('msg-invitar')`) && !await ev(`document.getElementById('msg-tabla')`), 'antes de partir: con invitación y sin tabla');
   // Copa de prueba: el admin la pasa al día siguiente (D-115)
-  await b.go(`${BASE}?prueba&demo=admin`, 1500); await preparar();
+  await b.go(`${BASE}?test&demo=admin`, 1500); await preparar();
   const inicioLab = await ev('__copa.estado.copa.meta.start');
   await click('#btn-pasar-dia'); await sleep(400);
   ok(await ev('__copa.estado.copa.meta.start') !== inicioLab && /día 6/i.test(await ev(`document.getElementById('btn-pasar-dia')?.textContent || ''`)), 'copa de prueba: el admin la pasa al día 5 y el botón ofrece el 6');
@@ -960,7 +962,7 @@ if (corre('demos')) {
   await b.shot('admin-lab');
 
   // Terminar la copa antes (D-161): el día de la final, con gente sin jugar; después, exportar
-  await b.go(`${BASE}?prueba&demo=final-admin`, 1500); await preparar();
+  await b.go(`${BASE}?test&demo=final-admin`, 1500); await preparar();
   const avisoFin = await ev(`document.getElementById('admin-terminar')?.innerText || ''`);
   ok(/Falta que juegue(n)? el día 7: .*Cata/.test(avisoFin) && !/no se juegan/.test(avisoFin), 'terminar antes: el admin ve quién no ha jugado la final');
   ok(!await ev(`document.getElementById('admin-exportar')`), 'mientras se juega no hay exportar');
@@ -994,7 +996,7 @@ if (corre('demos')) {
       const meta=E.nuevaMeta({nombre:'Copa do Brasil',dias:7,inicio:E.sumarDias(E.fechaEn(now,E.ZONA),1),tz:E.ZONA,admin:'zzz111',creada:now,lab:true,aud:'br'});
       await st.crear(c,meta,{pid:'zzz111',name:'Ana',at:now,pinHash:'x'});return c})()`);
     await ev('sessionStorage.clear(); 1');
-    await b.go(`${BASE}?${code}&prueba`, 1500);
+    await b.go(`${BASE}?${code}&test`, 1500);
     ok(await ev(`document.getElementById('aviso-aud')?.dataset.aud`) === 'br' && /Brasil/.test(await ev(`document.getElementById('aviso-aud').textContent`)), 'copa para Brasil: la invitación lo dice');
     ok(await ev(`(async()=>{const {JUEGOS}=await import('/cup/games/index.js');return [1,2,3,4,5,6,7].every(d=>JUEGOS.linea.generar('${code}',d,{aud:'br'}).tema!=='chile')})()`), 'copa para Brasil: Línea Relámpago no usa la temática Chile');
     await b.shot('invitacion-brasil');

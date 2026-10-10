@@ -1,4 +1,4 @@
-// "Tus copas" sigue al jugador, no al celular (D-220): con el almacén de prueba (`?prueba`),
+// "Tus copas" sigue al jugador, no al celular (D-220): con el almacén de prueba (`?test`),
 // un celular entra con su jugador y abre una copa en que está sentado; otro celular, que nunca la
 // vio, entra con el mismo jugador y la encuentra en la portada, con su nombre ya elegido. Al
 // final, las copas terminadas: con su etiqueta y escondidas hasta prender el interruptor (D-234).
@@ -17,9 +17,9 @@ const ev = expr => b.evaluate(expr);
 const CODE = 'PQRST';
 
 try {
-  await b.go(`${BASE}?prueba`, 1200);
+  await b.go(`${BASE}?test`, 1200);
   await ev(`localStorage.clear(); sessionStorage.clear(); 1`);
-  await b.go(`${BASE}?prueba`, 1200);
+  await b.go(`${BASE}?test`, 1200);
 
   // Celular 1: el jugador Jiri y una copa en que está sentado como "Jiri"
   await ev(`(async()=>{
@@ -35,7 +35,7 @@ try {
     sessionStorage.setItem('juegos-de-salon:copa:prueba:sesion:${CODE}', JSON.stringify({ pid: 'jiri01' }));
     return 1;
   })()`);
-  await b.go(`${BASE}?${CODE}&prueba`, 1500);
+  await b.go(`${BASE}?${CODE}&test`, 1500);
   ok(await ev(`__copa.estado.pantalla`) === 'tablero', 'celular 1: entra a la copa como Jiri');
   await sleep(500);
   const anotada = await ev(`(async()=>{ const { jugador } = await import('/assets/js/jugador.js'); return JSON.stringify(await (await jugador()).copas()); })()`).then(JSON.parse);
@@ -43,11 +43,11 @@ try {
 
   // Celular 2: otro celular (sin la cuenta de la copa ni el jugador), el mismo almacén de prueba
   await ev(`(()=>{ sessionStorage.clear(); for (const k of ['juegos-de-salon:jugador', 'juegos-de-salon:prueba:records-uid']) localStorage.removeItem(k); return 1 })()`);
-  await b.go(`${BASE}?prueba`, 1200);
+  await b.go(`${BASE}?test`, 1200);
   ok(await ev(`document.getElementById('tus-copas').hidden`), 'celular 2, sin jugador: "Tus copas" no aparece');
   const entro = await ev(`(async()=>{ const { jugador } = await import('/assets/js/jugador.js'); return (await (await jugador()).entrar('Jiri', '1234')).estado; })()`);
   ok(entro === 'dentro', 'celular 2: entra con el mismo jugador');
-  await b.go(`${BASE}?prueba`, 1500);
+  await b.go(`${BASE}?test`, 1500);
   await b.quieto();
   const lista = await ev(`(()=>{ const x = document.getElementById('tus-copas'); return x.hidden ? '' : x.innerText })()`);
   ok(/Piratotes 1983/.test(lista) && lista.includes(CODE), `"Tus copas" trae la copa del jugador: ${JSON.stringify(lista)}`);
@@ -68,7 +68,7 @@ try {
   await ev(`(()=>{ const D = 864e5, ahora = Date.now(); sessionStorage.setItem('juegos-de-salon:copa:prueba:mias', JSON.stringify([
     { code: '${CODE}', nombre: 'Jiri', copa: 'Piratotes 1983', fin: ahora + 3 * D },
     { code: 'VWXYZ', nombre: 'Jiri', copa: 'Copa vieja', fin: ahora - 2 * D }])); return 1 })()`);
-  await b.go(`${BASE}?prueba`, 1200);
+  await b.go(`${BASE}?test`, 1200);
   const nombres = () => ev(`JSON.stringify([...document.querySelectorAll('#tus-copas a.mia')].map(a => [a.querySelector('b').firstChild.textContent, a.classList.contains('terminada')]))`).then(JSON.parse);
   ok(await ev(`document.getElementById('ver-terminadas')?.checked === false`), '"Mostrar copas terminadas" parte apagado');
   ok(JSON.stringify(await nombres()) === JSON.stringify([['Piratotes 1983', false]]), 'apagado, solo la copa en curso');

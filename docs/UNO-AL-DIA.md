@@ -353,8 +353,8 @@ escribe el celular al terminar, así que el aviso sabe si ya jugó aunque no ten
 - **Retención**: de los que jugaron por primera vez un día, cuántos volvieron al día siguiente, a los 7 y a los 30 días. Es la
   cifra que dice si funciona.
 - **Rachas**: cuántos tienen 1, 2 a 6, 7 a 29, y 30 o más.
-- **De dónde llegan**: botón de la portada, aviso (`?aviso=uaddia`, y `uadracha`, `uadsemana`, `uadadios`), link
-  compartido (`?de=compartir`) e invitación (`?inv=`).
+- **De dónde llegan**: botón de la portada, aviso (`?notif=dailyday`, y `dailystreak`, `dailyweek`, `dailybye`, que el panel cuenta como `uaddia`, `uadracha`, `uadsemana` y `uadadios`), link
+  compartido (`?from=link`) e invitación (`?inv=`).
 - **Invitaciones**: cuántas se mandan, cuántos amigos abren el link, cuántos terminan su primer
   Uno al día y cuántos vuelven al día siguiente. Cuántos jugadores nuevos trae cada invitación es
   la cifra del crecimiento.
@@ -374,15 +374,15 @@ escribe el celular al terminar, así que el aviso sabe si ya jugó aunque no ten
 | **4. Avisos y recordatorios** | Los tres avisos, la hoja de la hora, el globo del ícono, el recordatorio en el calendario (sacado en v0.120.2, decisión 15) | Sí, como los de La Copa |
 | **5. Panel y salida** | Las cifras del panel; se abre a todos | Sí: el panel llegó en el laboratorio y la salida quedó para el PR 8 (v0.121.0), después de los PR 6 y 7 con lo que decidió el dueño |
 
-Cada juego tiene que saber que es el de hoy (`/queens/?hoy`, ver "Lo que el PR 1 hizo") y
-avisar al terminar. Los siete solitarios ya aceptan `?semilla=` (D-142), así que para ellos el cambio
+Cada juego tiene que saber que es el de hoy (`/queens/?today`, ver "Lo que el PR 1 hizo") y
+avisar al terminar. Los siete solitarios ya aceptan `?seed=` (D-142), así que para ellos el cambio
 es chico y se hace una sola vez en `cup/game.js`. El Ahorcado, Batalla Naval y Dudo tienen cada
 uno su motor, y por eso van en su propio PR: el modo para uno abre directo, sin elegir modo, y el
 celular saca la palabra, la flota o los dados de la semilla del día.
 
 ### Lo que el PR 1 hizo (v0.115.0)
 
-- **El link no lleva la fecha:** es `?hoy` (`/untangle/?hoy`, o `/cup/suelto/?linea&hoy` para
+- **El link no lleva la fecha:** es `?today` (`/untangle/?today`, o `/cup/suelto/?timeline-flash&today` para
   Línea Relámpago y el número, que no tienen página propia). La página calcula la fecha del jugador,
   el juego y la semilla, así un link viejo abre el de hoy y nadie elige el tablero. Si el link es de
   otro juego, la página se va al de hoy.
@@ -407,7 +407,7 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   junto a La Copa, mitad y mitad, con el emoji a la izquierda del título y el título en celeste (el
   de La Copa, en dorado). Abajo, una píldora con el estado: **🔥 6 · Jugar el de hoy** (sin racha, solo
   **Jugar el de hoy**), o **✅ Listo · 🔥 6** ya jugado. La forma de antes, un botón en la misma fila que Juego al azar (**🎲 Al azar** y
-  **📅 Uno al día 🔥 6**), queda para probarla con `?uad=boton` (el laboratorio la ofreció
+  **📅 Uno al día 🔥 6**), queda para probarla con `?daily=button` (el laboratorio la ofreció
   hasta D-262).
 - El CSS del dado pasó de la portada a `base.css`, para tirarlo desde cualquier página.
   El paso del dado al juego es el de Juego al azar (D-237): el juego abre con el mismo dado encima
@@ -421,8 +421,8 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   `batalla-naval`, `dudo`) y `desde: '2026-10-07'` (`DESDE_GRUPO`). Los días anteriores no
   cambian: el primer mazo, del 5 al 11 de octubre, sigue con los 7 solitarios, y los 10 se barajan
   desde el mazo siguiente, que empieza el 12 (el primero de grupo sale el 13, Dudo). Con 10 juegos la
-  espera es de 7 días, como decía el diseño. El link es el de su página: `/hangman/?hoy`,
-  `/battleship/?hoy`, `/liars-dice/?hoy`. El dado y `/today/` los nombran con su nombre y emoji
+  espera es de 7 días, como decía el diseño. El link es el de su página: `/hangman/?today`,
+  `/battleship/?today`, `/liars-dice/?today`. El dado y `/today/` los nombran con su nombre y emoji
   de `games.js` (Batalla Naval es ⚓; el diseño decía 🚢).
 - **Abren directo el modo para uno**, sin elegir modo: la intro de siempre lleva la línea de Uno al
   día y, en lugar de los modos, un solo botón **Jugar el de hoy**. El Ahorcado juega solo con el
@@ -515,8 +515,8 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   días sin jugar. A los 30 días sin jugar llega el de despedida (`adios`, con su mejor racha) y se
   borran `pushDia/<subId>` y lo mandado. Si la suscripción muere o desaparece, `pushDia` se borra
   con ella. Los avisos no van con `--prueba <código>` (esa es la de una copa).
-- **En el panel:** cada aviso abre `today/?aviso=uad<tipo>` (`uaddia`, `uadracha`, `uadsemana`,
-  `uadadios`), para que no se junte con el `dia` de La Copa, y `avisar.mjs` suma los entregados en
+- **En el panel:** cada aviso abre `today/?notif=daily<tipo>` (`dailyday`, `dailystreak`, `dailyweek`,
+  `dailybye`, D-266; el panel los cuenta como `uaddia`, `uadracha`, `uadsemana` y `uadadios`), para que no se junte con el `dia` de La Copa, y `avisar.mjs` suma los entregados en
   `mandados/uad<tipo>`: salen como filas propias en el bloque "🔔 Avisos al celular" (D-233), con sus
   tocados (`TIPOS_AVISO` en `stats.js` los conoce). Sin guion, porque las reglas de `aviso/<tipo>`
   y `mandados/<tipo>` piden solo letras.
@@ -525,7 +525,7 @@ celular saca la palabra, la flota o los dados de la semilla del día.
 
 ### Lo que el PR 5 hizo (v0.119.0)
 
-- **El panel** (`#/juegos`, bloque "📅 Uno al día", docs/PANEL.md): las partidas de Uno al día de
+- **El panel** (`#/games`, bloque "📅 Uno al día", docs/PANEL.md): las partidas de Uno al día de
   todos (un modo nuevo, `uno-al-dia`, que mandan los 10 juegos al empezar el de hoy) y, de quienes
   entraron con jugador, cuántos jugaron, cuántos volvieron al día siguiente y a los 7 días, sus
   rachas por tramo y las invitaciones aceptadas. Las reglas dejan al dueño leer `unoAlDia/` e
@@ -565,7 +565,7 @@ celular saca la palabra, la flota o los dados de la semilla del día.
 - `UNO_AL_DIA_EN_LABS = false`: el botón de la portada, `/today/` y todo lo demás se ven para
   todos. En `/labs/` quedó solo probar la otra forma del acceso (la tarjeta junto a La Copa, que pasó a
   ser la de todos en D-239; después, el botón al lado del dado). D-262 sacó la sección y la puerta
-  `UNO_AL_DIA_EN_LABS`: la forma de antes se ve con `?uad=boton`.
+  `UNO_AL_DIA_EN_LABS`: la forma de antes se ve con `?daily=button`.
 - **El n.° 1 pasó al 6 de octubre de 2026**, el día en que se abrió (decisión del dueño):
   `LANZAMIENTO` en uno-al-dia.js. El mazo es el mismo corrido un día (el 6 es Desenredo) y los de
   grupo siguen saliendo desde el mazo del 13. Desde ahora queda fijo: moverlo cambia el juego de
@@ -587,7 +587,7 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   en `JUEGOS_DIA`**. Al abrirla, entra con un `desde` que sea el primer día de un mazo que no
   haya empezado, para no cambiar días ya jugados (D-247), y su prueba en `uno-al-dia.test.mjs`.
   Lo de abajo ya está hecho en `/generala/`.
-- **`/generala/?hoy`** abre 🧍 Jugar solo, sin elegir modo, con el botón **Jugar el de hoy** y la
+- **`/generala/?today`** abre 🧍 Jugar solo, sin elegir modo, con el botón **Jugar el de hoy** y la
   línea "Los dados salen iguales para todos: lo que cambia es qué guardas." No tiene rival, así que
   ahí sí el desafío entero es el mismo para todos, no solo el punto de partida.
 - **Los dados salen de la semilla del día** (D-247): `azarDel(semilla, 'generala:<turno>:<tiro>')`,
@@ -631,7 +631,7 @@ Botones (caben en 320 px, unos 18 caracteres): **Uno al día**, **Jugar el de ho
 **Tarde · 19:00**, **Silenciar** y **Probar los avisos** ("⏰ Agregar recordatorio", que pasaba de
 18 e iba en botón chico, se sacó: decisión 15). En la portada va una tarjeta al lado de La Copa
 (D-239), con su estado en una píldora: **🔥 6 · Jugar el de hoy** o **✅ Listo · 🔥 6**. Mientras falta
-jugar el de hoy brilla un punto; jugada, la tarjeta se pone cian. Con `?uad=boton` se ve la forma de
+jugar el de hoy brilla un punto; jugada, la tarjeta se pone cian. Con `?daily=button` se ve la forma de
 antes, un botón en una línea, **📅 Uno al día 🔥 6**, al lado de **🎲 Al azar**.
 Lo que hace cada estado va en su `aria-label`. "Racha", "comodín" y "Silenciar" se dicen siempre así (U-5). Los
 textos los propone el agente de usabilidad y el dueño los corrige en el PR.

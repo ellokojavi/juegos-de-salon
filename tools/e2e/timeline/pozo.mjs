@@ -73,8 +73,8 @@ await b.evaluate(`(()=>{const i=document.querySelector('#setup-form input');i.va
 await b.evaluate(`(()=>{const x=[...document.querySelectorAll('.seg button')].find(e=>/Pozo|Shared/.test(e.textContent));x.click();return 1})()`); await sleep(200);
 await b.evaluate(`[...document.querySelectorAll('#setup-actions .btn')].find(x=>/Crear|Create/.test(x.textContent)).click(); 1`); await sleep(5000);
 const code = await b.evaluate(`document.querySelector('.code-big')?.textContent`);
-await B.go(`${guestBase}/timeline/?sala=${code}`, 2000); await B.evaluate(`localStorage.clear(); 1`);
-await B.go(`${guestBase}/timeline/?sala=${code}`, 2000);
+await B.go(`${guestBase}/timeline/?room=${code}`, 2000); await B.evaluate(`localStorage.clear(); 1`);
+await B.go(`${guestBase}/timeline/?room=${code}`, 2000);
 await B.evaluate(`(()=>{const i=document.querySelector('#setup-form input');i.value='Cata';i.dispatchEvent(new Event('input',{bubbles:true}));return 1})()`);
 await B.evaluate(`[...document.querySelectorAll('#setup-actions .btn')].find(x=>/Unirse|Join/.test(x.textContent)).click(); 1`); await sleep(5000);
 await b.evaluate(`[...document.querySelectorAll('#lobby-box .btn')].find(x=>/Empezar|Start/.test(x.textContent))?.click(); 1`); await sleep(4000);

@@ -48,7 +48,7 @@ await clickText(A, '#setup-actions .btn', 'Crear'); await sleep(4500);
 const code = await A.evaluate(`document.querySelector('.code-big')?.textContent`);
 console.log('sala:', code, '| chat en la sala de espera:', JSON.stringify(await chat(A)), '| tapa:', JSON.stringify(await tapa(A)));
 await A.shot('bn-chat-01-lobby');
-await B.go(`${hosts[1]}/battleship/?sala=${code}`, 1800);
+await B.go(`${hosts[1]}/battleship/?room=${code}`, 1800);
 await B.evaluate(`(()=>{document.querySelector('#setup-form input').value='Cata';return 1})()`);
 await clickText(B, '#setup-actions .btn', 'Unirse'); await sleep(4500);
 console.log('B entró:', await B.active());
@@ -80,7 +80,7 @@ await A.shot('bn-chat-03-batalla');
 await close(B);
 
 // --- recarga: el chat vuelve desde la sala, sin globito ---
-await A.go(`${hosts[0]}/battleship/?sala=${code}`, 6000);
+await A.go(`${hosts[0]}/battleship/?room=${code}`, 6000);
 const cR = await chat(A);
 console.log('A tras recargar → mensajes:', cR.mensajes.length, '(debe ser 2) | no leídos:', cR.noLeidos, '(debe ser 0)');
 

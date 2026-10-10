@@ -384,7 +384,7 @@ Spec and design: [docs/games/julep.md](docs/games/julep.md)
 </table>
 <!-- /generado -->
 
-**On the menu since D-175**, after a stint in the lab (D-101). The 3-day cup, for testing with close friends, is offered with `?tres` in the link. A 🐞 button sends bug reports and comments with their context, no login needed.
+**On the menu since D-175**, after a stint in the lab (D-101). The 3-day cup, for testing with close friends, is offered with `?three` in the link. A 🐞 button sends bug reports and comments with their context, no login needed.
 
 Not a game but a **tournament that lasts a week**. Someone creates a cup and shares the link with the group; everyone joins with their name and a 4-digit PIN, from any phone or computer. Every day a different game opens, **the same one for everybody**, and it can be played **once**. Your score only matters against the others: the day hands out points by position (10, 8, 6, 5, 4, 3, 2, 1), so every day weighs the same (and every game scores 0 to 100 anyway, D-113) and one crushing day does not decide the cup (D-94). The final day is worth double, everyone gets one ×2 wildcard, and whoever has the most points on day 7 lifts the cup.
 
@@ -417,7 +417,7 @@ The other four are **〰️ Zip**, **☀️ Tango**, **📍 Where is it?** and *
 - **Many languages, one rule** (D-170): what is personal follows your language, what belongs to the group follows the cup's. The screen (rules, board, scoring breakdown) follows each player's toggle; the cup's language, chosen when it is created, sets the words of Connections and Bulls and Cows: Word, so everyone plays the same ones, and every message shared with the group, with its link. Word content is written per language, not translated: Connections grids and secret words in English, Portuguese and German, plus country and city names for Where is it?.
 - **Who it's for** (D-186, D-187): when creating a cup, the admin picks its audience: 🌎 Global, 🇨🇱 Chile or 🇧🇷 Brazil. Content that people only know in one of those countries is tagged with it: Timeline's Chile and Brazil themes and a few local cards, the Connections grids with Chilean or Brazilian words, a few Chilean secret words, and Chilean and Brazilian cities that aren't capitals (Rio and São Paulo count as global). A global cup leaves out both countries' topics; a Chilean or Brazilian cup adds its own and leaves out the other's. Cups created before keep their content.
 - **Phone notifications** (D-223, D-224, open to everyone since D-228): a 🔔 bell in each cup turns them on. The offer shows up after you play a day, before the cup starts, or when you open the cup from the installed app; the system permission is only asked after a tap, and a confirmation notification arrives at once. On iPhone, the bell first walks you through adding the app to the home screen. A scheduled GitHub workflow checks every 15 minutes and tells you when a day opens, when your time to play it is running out, about The Grand Final and who won ([docs/PWA-NOTIFICACIONES.md](docs/PWA-NOTIFICACIONES.md)).
-- A 3-day cup exists for testing with `?tres` (D-100), and `?prueba` plays a cup with no Firebase, which is what the demos (`?prueba&demo=<scene>`, no longer linked from the lab since D-262), the README screenshots and the end-to-end scripts use.
+- A 3-day cup exists for testing with `?three` (D-100), and `?test` plays a cup with no Firebase, which is what the demos (`?test&demo=<scene>`, no longer linked from the lab since D-262), the README screenshots and the end-to-end scripts use.
 
 Spec and design: [docs/games/cup.md](docs/games/cup.md)
 
@@ -616,6 +616,7 @@ node public/assets/js/games.test.mjs
 node public/assets/js/i18n.test.mjs
 node public/assets/js/instalable.test.mjs
 node public/assets/js/instalar.test.mjs
+node public/assets/js/parametros.test.mjs
 node public/assets/js/push.test.mjs
 node public/assets/js/records.test.mjs
 node public/assets/js/transport/cleanup.test.mjs
@@ -718,7 +719,9 @@ To add a screen to this README: take the shot in the e2e script, add the entry t
 ## Layout
 
 The repo root is not the web root (D-192). `public/` is the site, exactly as it is served: folder =
-URL, in English. Everything next to it is the workshop.
+URL, in English. Query parameters and their values are in English too (`?room=`, `?seed=`, `?test`,
+`&demo=podium`; C-18, D-266): `parametros.js` reads them, and still understands the old Spanish
+names (`?sala=`, `?semilla=`) of the links already shared on WhatsApp. Everything next to it is the workshop.
 
 ```
 public/                     The site (juegosdesalon.cl/): the only folder that gets published
@@ -741,7 +744,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   today/                      One a Day: today's game, your streak, a calendar and how you do in each game (D-230)
   panel/                      Private owner dashboard: now, The Cup, games, traffic, audience and health, with a page per cup, game and room (Google sign-in; see docs/PANEL.md)
   assets/css/                 Shared styles: base.css (party theme), linea.css (timeline), teclado.css (keypad), ranking.css (leaderboards)
-  assets/js/                  Shared modules: games.js (game registry), i18n.js (ES/EN/PT/DE), labs-idioma.js (a new language in the lab, D-191), ui.js, sound.js, compartir.js (everything shared, D-165), compartir-portada.js (the home-page share sheet, with the promo video, in the languages that have one, D-253, D-254), handoff.js, chat.js, session.js, arrastre.js (drag and drop), teclado.js, azar.js, dado3d.js and llegada.js (Random game: the die, which stays on screen until the game is drawn, D-237), frases.js, records.js + jugador.js + ranking.js (players and leaderboards, D-212; jugador-firebase.js and jugador-local.js are their stores), instalable.js (registers the service worker, D-221), instalar.js (the home-page bubble that invites to add the app to the home screen, D-232), favoritos.js (the home-page favorites, kept in the browser, D-238), push.js + vapid.js (phone notifications: subscribing, D-223), uno-al-dia.js + uno-al-dia-ui.js + uno-al-dia-red.js + uno-al-dia-avisos.js (One a Day: a daily game, the same for everyone, with a streak, freezes, leaderboards, invitations and reminders; D-230), and vigia.js, a classic script (not a module) that every page loads first to report load failures, errors and start-up time to the dashboard (D-251)
+  assets/js/                  Shared modules: games.js (game registry), i18n.js (ES/EN/PT/DE), labs-idioma.js (a new language in the lab, D-191), ui.js, sound.js, compartir.js (everything shared, D-165), parametros.js (the URL parameters, in English, with the old Spanish names as aliases, D-266), compartir-portada.js (the home-page share sheet, with the promo video, in the languages that have one, D-253, D-254), handoff.js, chat.js, session.js, arrastre.js (drag and drop), teclado.js, azar.js, dado3d.js and llegada.js (Random game: the die, which stays on screen until the game is drawn, D-237), frases.js, records.js + jugador.js + ranking.js (players and leaderboards, D-212; jugador-firebase.js and jugador-local.js are their stores), instalable.js (registers the service worker, D-221), instalar.js (the home-page bubble that invites to add the app to the home screen, D-232), favoritos.js (the home-page favorites, kept in the browser, D-238), push.js + vapid.js (phone notifications: subscribing, D-223), uno-al-dia.js + uno-al-dia-ui.js + uno-al-dia-red.js + uno-al-dia-avisos.js (One a Day: a daily game, the same for everyone, with a streak, freezes, leaderboards, invitations and reminders; D-230), and vigia.js, a classic script (not a module) that every page loads first to report load failures, errors and start-up time to the dashboard (D-251)
   assets/js/transport/        Transports: local (same phone), firebase (room) and stats (usage signals)
   assets/og/                  The 1200×630 images shown when a link is shared
   manifest.webmanifest        PWA manifest (installable on the home screen), one per language (manifest.en.webmanifest …) so the app is named in the player's language (D-222); its PNG icons are in assets/icons/

@@ -10,6 +10,7 @@ import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
 import { compartir, cabecera } from '../../assets/js/compartir.js';
 import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/stats.js';
 import { fechaLocal } from '../../assets/js/uno-al-dia.js';
+import { param } from '../../assets/js/parametros.js';
 import { formularioComentario } from '../../assets/js/labs-idioma.js';
 import { N, COLS, FILAS, LETRAS_COL, coord, generar, estado, marcar, semillaDelDia, ayuda, lista, sujetos } from './engine.js';
 
@@ -19,8 +20,8 @@ const GAME_ID = 'caso';
 const LETRAS = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
 const params = new URLSearchParams(location.search);
 const codigo = (params.get('c') || '').toUpperCase().replace(/[^A-Z]/g, '').slice(0, 8);
-// `?dia=AAAA-MM-DD`: el caso de ese día, para que el link compartido abra el mismo caso al día siguiente (#273)
-const diaLink = /^\d{4}-\d{2}-\d{2}$/.test(params.get('dia') || '') ? params.get('dia') : null;
+// `?day=AAAA-MM-DD` (o `?dia=`, antes de D-266): el caso de ese día, para que el link compartido abra el mismo caso al día siguiente (#273)
+const diaLink = /^\d{4}-\d{2}-\d{2}$/.test(param('day', params) || '') ? param('day', params) : null;
 const hoy = diaLink || fechaLocal();
 const semilla = codigo || semillaDelDia(hoy);
 const caso = generar(semilla);
@@ -353,7 +354,7 @@ let celebrado = false;
 function renderFin() {
   const box = $('#fin');
   box.hidden = false;
-  const url = `${location.origin}${location.pathname}${codigo ? `?c=${codigo}` : `?dia=${hoy}`}`;
+  const url = `${location.origin}${location.pathname}${codigo ? `?c=${codigo}` : `?day=${hoy}`}`;
   box.replaceChildren(
     el('div', { class: 'trofeo' }, P.errores.length ? '🔍' : '🏆'),
     el('h2', { class: 'display display--lg' }, '¡Caso resuelto!'),

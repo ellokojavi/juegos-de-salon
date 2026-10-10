@@ -8,7 +8,7 @@ import {
 } from './uno-al-dia.js';
 import { JUEGOS } from '../../cup/games/index.js';
 import { esCodigo } from '../../cup/engine.js';
-import { GAMES, SUELTOS } from './games.js';
+import { GAMES, SUELTOS, SLUGS_SIN_PAGINA } from './games.js';
 import { randomLayout, isValidLayout } from '../../battleship/engine.js';
 
 const almacen = () => { const m = new Map(); return { getItem: k => (m.has(k) ? m.get(k) : null), setItem: (k, v) => m.set(k, String(v)), removeItem: k => m.delete(k) }; };
@@ -162,19 +162,22 @@ assert.equal(e.dia.s, 90);
 
 // Dónde se juega (las carpetas, como las arma uno-al-dia-ui.js)
 const slugs = Object.fromEntries([...GAMES.filter(g => !g.torneo).map(g => [g.id, g.path.replace(/\/$/, '')]), ...SUELTOS.map(g => [g.id, g.slug])]);
-assert.equal(rutaDel('reinas', slugs), 'queens/?hoy');
-assert.equal(rutaDel('linea', slugs), 'cup/suelto/?linea&hoy');
-assert.equal(rutaDel('ahorcado', slugs), 'hangman/?hoy');
-assert.equal(rutaDel('batalla-naval', slugs), 'battleship/?hoy');
-assert.equal(rutaDel('dudo', slugs), 'liars-dice/?hoy');
+assert.equal(rutaDel('reinas', slugs), 'queens/?today');
+assert.equal(rutaDel('linea', slugs, SLUGS_SIN_PAGINA), 'cup/suelto/?timeline-flash&today', 'en inglés también el juego (D-266)');
+assert.equal(rutaDel('numero', slugs, SLUGS_SIN_PAGINA), 'cup/suelto/?number&today');
+assert.equal(rutaDel('ahorcado', slugs), 'hangman/?today');
+assert.equal(rutaDel('batalla-naval', slugs), 'battleship/?today');
+assert.equal(rutaDel('dudo', slugs), 'liars-dice/?today');
 for (const j of JUEGOS_DIA) assert.ok(slugs[j.id] || ['linea', 'numero'].includes(j.id), `${j.id}: sin página para jugarlo`);
 
-// Dónde va en la portada: junto a La Copa (D-239), salvo que el link pida otra cosa con ?uad=
+// Dónde va en la portada: junto a La Copa (D-239), salvo que el link pida otra cosa con ?daily=
 const sinQ = { search: '' };
-assert.equal(formaAcceso({ loc: sinQ }), 'tarjeta');
-assert.equal(formaAcceso({ loc: { search: '?uad=boton' } }), 'boton');
-assert.equal(formaAcceso({ loc: { search: '?uad=otra' } }), 'tarjeta');
-assert.equal(formaAcceso({ loc: { search: '?uad=no' } }), 'no', 'las capturas del README lo esconden');
+assert.equal(formaAcceso({ loc: sinQ }), 'card');
+assert.equal(formaAcceso({ loc: { search: '?daily=button' } }), 'button');
+assert.equal(formaAcceso({ loc: { search: '?daily=otra' } }), 'card');
+assert.equal(formaAcceso({ loc: { search: '?daily=off' } }), 'off', 'las capturas del README lo esconden');
+assert.equal(formaAcceso({ loc: { search: '?uad=boton' } }), 'button', 'los links de antes de D-266 valen igual');
+assert.equal(formaAcceso({ loc: { search: '?uad=no' } }), 'off');
 
 // El azar del día: el mismo en todos los celulares, distinto para cada cosa que reparte
 const tira = (r, n = 5) => Array.from({ length: n }, () => r());

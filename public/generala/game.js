@@ -10,6 +10,7 @@ import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../assets/js/
 import { botonInvitar } from '../assets/js/compartir.js';
 import { gameById, MODO_UNO_AL_DIA } from '../assets/js/games.js';
 import { getLang, langToggle, applyStatic, COMMON, withLang } from '../assets/js/i18n.js';
+import { param } from '../assets/js/parametros.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { showHandoff, passBlock } from '../assets/js/handoff.js';
 import { failWith } from '../assets/js/transport/errors.js';
@@ -43,7 +44,7 @@ const nameStore = createNameStore(GAME_ID);
 const record = crearRecord(`juegos-de-salon:${GAME_ID}:record-solo`);
 /** La tabla de jugar solo en los rankings (D-212): `generala_solo`. */
 const TABLA_SOLO = `${GAME_ID}_solo`;
-/** Uno al día (D-230): con `?hoy`, jugar solo con los dados del día. */
+/** Uno al día (D-230): con `?today`, jugar solo con los dados del día. */
 const HOY = modoHoy(GAME_ID);
 
 let S = null;   // sesión: modo, transporte, roles de este celular, quién tiene el aparato, lo elegido
@@ -480,7 +481,7 @@ function renderLobby() {
   if (chat) chat.show();
   const box = $('#lobby-box'); box.innerHTML = '';
   // Con el idioma pegado: quien reciba la invitación abre la app como quien la mandó (D-74)
-  const url = withLang(`${location.origin}${location.pathname}?sala=${S.code}`);
+  const url = withLang(`${location.origin}${location.pathname}?room=${S.code}`);
   const entraron = ROLES.filter(r => M.names[r]);
   box.append(
     el('div', { class: 'muted', style: 'font-weight:800' }, T.lobbyCode),
@@ -531,7 +532,7 @@ async function leaveRoom(btn) {
 
 async function startOnline(transport, code, role, name, config) {
   startSession({ mode: 'online', transport, roles: [role], config, names: { [role]: name }, code, role });
-  history.replaceState(null, '', `${location.pathname}?sala=${code}`);
+  history.replaceState(null, '', `${location.pathname}?room=${code}`);
   keepAwake();
   saveSession();
   render();
@@ -818,7 +819,7 @@ function init() {
   // Las victorias de este juego y entrar con nombre y PIN (D-212, D-215)
   $('#rk-slot')?.append(bloqueVictorias({ juego: GAME_ID, nombre: T.title, alTocar: () => SFX.tap() }));
   renderResumeSlot();
-  const sala = new URLSearchParams(location.search).get('sala');
+  const sala = param('room');
   if (!sala || !/^[A-Z]{4}$/i.test(sala)) return;
   const code = sala.toUpperCase();
   const guardada = store.load();
