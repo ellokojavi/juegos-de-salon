@@ -3,6 +3,12 @@
 **Ruta:** `/labs/case/` (laboratorio, sin entrada en `games.js`) · **Jugadores:** 1 · **Estado:**
 prototipo para probar con amigos (D-256) · **Idiomas:** solo español, por ahora
 
+> **Ya existe la versión de La Copa** (D-257): `public/cup/games/case/`, id `caso`, en los cuatro
+> idiomas, con su propio motor (las pistas como datos, la frase armada en cada idioma). Se juega
+> suelta en `/case/` y en la práctica del laboratorio, pero todavía no está en `POZO`. Está descrita
+> en [cup.md](cup.md). Esta página documenta el prototipo de `/labs/case/`, que sigue con su motor
+> en español hasta que El caso salga del laboratorio: entonces se va o pasa a usar el de La Copa.
+
 ## Resumen
 
 Un misterio de deducción al estilo de *Clues by Sam*: veinte sospechosos en una grilla de 4 por 5,
@@ -11,7 +17,8 @@ bien da su pista. Las pistas siempre dicen la verdad y **nunca hay que adivinar*
 hay al menos una persona más que se puede deducir con lo que ya se sabe.
 
 Es para mostrárselo a amigos y ver si engancha antes de decidir si entra como juego de La Copa y de
-Uno al día. Si entra, va a `cup/games/` con los cuatro idiomas (C-3) y esta página se va.
+Uno al día. Ya está listo como juego de La Copa (D-257, arriba); falta que el dueño lo sume al
+pozo (RP-50).
 
 ## Reglas
 

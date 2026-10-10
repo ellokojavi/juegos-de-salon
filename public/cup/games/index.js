@@ -17,6 +17,7 @@ import * as anio from './year/engine.js';
 import * as final from './final/engine.js';
 import * as donde from './where/engine.js';
 import * as desenredo from './untangle/engine.js';
+import * as caso from './case/engine.js';
 import * as uiLinea from './timeline/ui.js';
 import * as uiNumero from './number/ui.js';
 import * as uiConexiones from './connections/ui.js';
@@ -28,6 +29,7 @@ import * as uiAnio from './year/ui.js';
 import * as uiFinal from './final/ui.js';
 import * as uiDonde from './where/ui.js';
 import * as uiDesenredo from './untangle/ui.js';
+import * as uiCaso from './case/ui.js';
 
 import { temasDeLaCopa, decksDe } from './mazos.js';
 import { LETRAS } from '../engine.js';
@@ -68,5 +70,7 @@ export const JUEGOS = {
   anio: juego(anio, uiAnio, (c, d, o = {}) => anio.generar(codigoEnsayo(c), d, { n: 2, tema: temaLibre(c, o.aud), sal: 'ensayo', lang: o.lang, aud: o.aud })),
   // Dos ciudades que no son las del día: la prueba no puede adelantar ninguna
   donde: juego(donde, uiDonde, (c, d, o = {}) => donde.generar(codigoEnsayo(c), d, { niveles: [1, 2], sal: 'ensayo', aud: o.aud, sin: donde.generar(c, d, { aud: o.aud }).ciudades })),
+  // En el laboratorio (D-257): se juega suelto y en la práctica, pero no está en POZO, así que una copa todavía no lo elige
+  caso: juego(caso, uiCaso, (c, d) => caso.generar(codigoEnsayo(c), d, { sal: 'ensayo' })),
   final: juego(final, uiFinal, (c, d, o) => final.generar(codigoEnsayo(c), d, o)),
 };

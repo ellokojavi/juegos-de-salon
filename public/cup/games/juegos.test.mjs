@@ -13,6 +13,8 @@ import { PALABRAS, PALABRAS_EN, PALABRAS_PT, PALABRAS_DE } from './word/palabras
 import * as conexiones from './connections/engine.js';
 import * as final from './final/engine.js';
 import * as donde from './where/engine.js';
+import * as caso from './case/engine.js';
+import { LOCALES as LOCALES_COPA } from '../rules.js';
 import { CIUDADES } from './where/ciudades.js';
 import { MAPA } from './where/mapa.js';
 import { GRILLAS } from './connections/grillas.js';
@@ -652,6 +654,48 @@ test('el público de la copa decide qué contenido local entra (D-186, D-187)', 
   assert.equal(audienciaDe({ aud: 'xx' }), null);
   assert.ok(codigos.some(c => Object.values(temasDeLaCopa(c)).includes('chile')));
   assert.ok(!codigos.some(c => Object.values(temasDeLaCopa(c)).includes('brasil')));
+});
+
+test('el caso: se resuelve sin adivinar, las pistas son verdad y se dicen en los cuatro idiomas (D-257)', () => {
+  let directas = 0, total = 0;
+  for (const c of CODIGOS) {
+    const p = caso.generar(c, 3);
+    assert.deepEqual(caso.generar(c, 3).v, p.v, `${c}: el mismo caso para todos`);
+    assert.ok(caso.resolver(p.pistas, p.v.slice()), `${c}: alguna pista es falsa`);
+    // Se resuelve marcando siempre lo que se puede deducir, y nunca hay que adivinar
+    const jugadas = [];
+    for (let vuelta = 0; vuelta < caso.N; vuelta++) {
+      const e = caso.estado(p, jugadas);
+      if (e.fin) break;
+      const d = caso.deducibles(e.pistas, e.x);
+      assert.ok(Object.keys(d).length, `${c}: el caso se traba`);
+      for (const [i, v] of Object.entries(d)) { assert.equal(caso.intento(p, jugadas, Number(i), v), 'ok'); jugadas.push({ i: Number(i), v }); }
+    }
+    const e = caso.estado(p, jugadas);
+    assert.ok(e.fin && e.errores === 0 && caso.puntaje(e) === 100, `${c}: resuelto sin errores vale 100`);
+    for (const lang of Object.keys(LOCALES_COPA)) {
+      for (let i = 0; i < caso.N; i++) {
+        const t = caso.texto(p, i, LOCALES_COPA[lang].casoTexto);
+        assert.ok(t && !/undefined|\{|\}|NaN/.test(t), `${c} ${lang}: la pista de ${i} sale mal: "${t}"`);
+      }
+    }
+    directas += p.pistas.filter(x => x.t === 'es').length; total += p.pistas.length;
+  }
+  assert.ok(directas / total < 0.1, `demasiadas pistas directas: ${directas} de ${total}`);
+  // Un error resta 10, con mínimo 10; sin resolver, 0
+  const p = caso.generar('KQRST', 1);
+  const mal = { i: [...Array(caso.N).keys()].find(i => i !== p.inicio), v: 0 };
+  mal.v = 1 - p.v[mal.i];
+  const e1 = caso.estado(p, [mal]);
+  assert.equal(e1.errores, 1);
+  assert.equal(caso.puntaje(e1), 0, 'sin resolver vale 0');
+  assert.equal(caso.puntaje({ fin: true, errores: 3 }), 70);
+  assert.equal(caso.puntaje({ fin: true, errores: 12 }), 10);
+  assert.equal(caso.tarjeta({ conError: new Set([0]) }).split('\n')[0], '🟥🟩🟩🟩');
+  // En portugués, "criminoso" concuerda con quien es (U-3): "Ana é criminosa", "Beto é criminoso"
+  const directa = { ...p, nombres: ['Ana', 'Beto', ...p.nombres.slice(2)], pistas: [{ t: 'es', a: [0], k: 1 }, { t: 'es', a: [1], k: 1 }] };
+  assert.equal(caso.texto(directa, 0, LOCALES_COPA.pt.casoTexto), 'Ana é criminosa.');
+  assert.equal(caso.texto(directa, 1, LOCALES_COPA.pt.casoTexto), 'Beto é criminoso.');
 });
 
 test('las instrucciones de cada juego son concisas, en todos los idiomas (U-18, D-184)', () => {

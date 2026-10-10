@@ -219,6 +219,17 @@ export const SUELTOS = [
     tipos: ['trivia'],
     duration: '2–5',
   },
+  {
+    // En el laboratorio (D-257): tiene página y tarjeta, pero no sale en la portada
+    id: 'caso',
+    slug: 'case',
+    emoji: '🔍',
+    name: { es: 'El caso', en: 'The Case', pt: 'O Caso', de: 'Der Fall' },
+    tagline: { es: 'Descubre quién es criminal entre 20 sospechosos. Las pistas nunca mienten.', en: 'Find out who the criminals are among 20 suspects. The clues never lie.', pt: 'Descubra quem é criminoso entre 20 suspeitos. As pistas nunca mentem.', de: 'Finde heraus, wer von 20 Verdächtigen kriminell ist. Die Hinweise lügen nie.' },
+    tipos: ['logic'],
+    duration: '5–10',
+    labs: true,
+  },
 ].map(m => ({ ...m, players: '1', path: `${m.slug}/`, available: !m.labs, suelto: true }));
 
 /**
