@@ -19,6 +19,8 @@ export const N = COLS * FILAS;
 export const LETRAS_COL = ['A', 'B', 'C', 'D'];
 /** Cuánto resta cada error, y el mínimo con el caso resuelto. */
 export const COSTO_ERROR = 10;
+/** Lo que resta pedir ayuda (D-263), como la pista de Tango. */
+export const COSTO_AYUDA = 15;
 export const MINIMO = 10;
 
 /** Los nombres van en orden alfabético por la grilla, como en el original: uno por letra. */
@@ -130,6 +132,9 @@ export function pistasVerdaderas(caso, v, r) {
   for (let k = 0; k < 60; k++) {
     const x = gs[Math.floor(r() * gs.length)], y = gs[Math.floor(r() * gs.length)];
     if (x === y || (x.de === undefined) !== (y.de === undefined)) continue;
+    // Dos grupos que comparten a alguien (la columna C y la fila 3) piden notar que esa persona
+    // cuenta en los dos lados y se cancela: más confuso que difícil (D-263)
+    if (x.ids.some(i => y.ids.includes(i))) continue;
     const cx = cuenta(x.ids, v), cy = cuenta(y.ids, v);
     if (cx > cy) out.push({ t: 'gt', a: x.ids, b: y.ids, g: sinIds(x), h: sinIds(y) });
     // "Tantos como" con cero y cero no dice nada que valga la pena pensar (#281)
@@ -508,9 +513,11 @@ function repartir(caso, r) {
 export function estado(p, jugadas = []) {
   const x = new Array(N).fill(-1);
   x[p.inicio] = p.v[p.inicio];
-  const marcas = [], conError = new Set();
-  let errores = 0;
+  const marcas = [], conError = new Set(), conAyuda = new Set();
+  let errores = 0, ayudas = 0;
   for (const j of jugadas) {
+    // Una ayuda (D-263): `{ ayuda: i }`, la persona que señaló
+    if (j && j.ayuda !== undefined) { ayudas++; conAyuda.add(j.ayuda); continue; }
     if (!j || x[j.i] !== -1) continue;
     // Marcar a alguien que todavía no se podía deducir también es un error (D-261): no se tantea
     if (j.falta) { errores++; conError.add(j.i); continue; }
@@ -519,7 +526,38 @@ export function estado(p, jugadas = []) {
   }
   const conocidas = todas.filter(i => x[i] !== -1);
   const pistas = conocidas.map(i => p.pistas[i]).filter(Boolean);
-  return { x, marcas, errores, conError, conocidas, pistas, fin: conocidas.length === N };
+  return { x, marcas, errores, ayudas, conError, conAyuda, conocidas, pistas, fin: conocidas.length === N };
+}
+
+/**
+ * La ayuda (D-263): a quién mirar y qué pistas juntar para deducirlo. Entre las personas que ya se
+ * pueden deducir, elige la que pide menos pistas, y devuelve `{ i, quienes }`: `quienes` son las
+ * personas cuyas pistas alcanzan juntas (las menos posibles, hasta tres; vacío si hacen falta más).
+ * `null` si no queda nadie por deducir.
+ */
+export function ayuda(p, jugadas = []) {
+  const { x, conocidas } = estado(p, jugadas);
+  const d = deducibles(conocidas.map(i => p.pistas[i]).filter(Boolean), x);
+  const ks = Object.keys(d || {}).map(Number);
+  if (!ks.length) return null;
+  const hablan = conocidas.filter(i => p.pistas[i]);
+  // ¿Con las pistas de `qs` (y lo que ya se sabe) se deduce `k`?
+  const alcanza = (k, qs) => { const prueba = x.slice(); prueba[k] = 1 - p.v[k]; return !resolver(qs.map(q => p.pistas[q]), prueba); };
+  const combos = function* (n, desde = 0, va = []) {
+    if (va.length === n) { yield va; return; }
+    for (let a = desde; a < hablan.length; a++) yield* combos(n, a + 1, [...va, hablan[a]]);
+  };
+  for (let n = 1; n <= 3; n++) {
+    for (const k of ks) for (const qs of combos(n)) if (alcanza(k, qs)) return { i: k, quienes: qs };
+  }
+  return { i: ks[0], quienes: [] };
+}
+
+/** "Ana", "Ana y Beto", "Ana, Beto y Cata", con la "y" (o la "e" antes de i) de cada idioma. */
+export function lista(nombres, L) {
+  if (nombres.length < 2) return nombres.join('');
+  const ultimo = nombres.at(-1);
+  return `${nombres.slice(0, -1).join(', ')} ${conjuncion(L.frases, ultimo)} ${ultimo}`;
 }
 
 /**
@@ -537,8 +575,14 @@ export function intento(p, jugadas, i, v) {
   return v === p.v[i] ? 'ok' : 'error';
 }
 
-/** El puntaje: 100 con el caso resuelto, menos 10 por error, hasta 10. Sin resolver, 0. */
-export const puntaje = e => (e.fin ? Math.max(MINIMO, 100 - COSTO_ERROR * e.errores) : 0);
+/** El puntaje: 100 con el caso resuelto, menos 10 por error y 15 por ayuda, hasta 10. Sin resolver, 0. */
+export const puntaje = e => (e.fin ? Math.max(MINIMO, 100 - COSTO_ERROR * e.errores - COSTO_AYUDA * (e.ayudas || 0)) : 0);
 
-/** La tarjeta para compartir: una fila de cuadrados por fila de la grilla; rojo donde hubo error. */
-export const tarjeta = e => Array.from({ length: FILAS }, (_, f) => Array.from({ length: COLS }, (_, c) => (e.conError.has(f * COLS + c) ? '🟥' : '🟩')).join('')).join('\n');
+/**
+ * La tarjeta para compartir: una fila de cuadrados por fila de la grilla; rojo donde hubo error y
+ * amarillo donde se pidió ayuda.
+ */
+export const tarjeta = e => Array.from({ length: FILAS }, (_, f) => Array.from({ length: COLS }, (_, c) => {
+  const i = f * COLS + c;
+  return e.conError.has(i) ? '🟥' : e.conAyuda?.has(i) ? '🟨' : '🟩';
+}).join('')).join('\n');
