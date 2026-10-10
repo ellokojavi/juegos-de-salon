@@ -195,7 +195,6 @@ export const COMMON = {
       mejorando: 'En {juego} vas mejorando: tus últimas 3 promedian {a} y las de antes, {b}.',
       bajando: 'En {juego} bajaste un poco: tus últimas 3 promedian {a} y las de antes, {b}.',
       vacio: 'Todavía no juegas ningún Uno al día. El primero te espera.',
-      enLabs: 'Uno al día todavía se está probando en el laboratorio.',
       // Con jugador e invitaciones (PR 3)
       pct: 'Hoy: {s} puntos · mejor que el {p} % de los que jugaron.',
       comodinUsado: '🧊 Usaste un comodín ayer y tu racha sigue: {n} días.',
@@ -421,7 +420,6 @@ export const COMMON = {
       mejorando: "You're improving at {juego}: your last 3 average {a}, the ones before, {b}.",
       bajando: 'You dipped a little at {juego}: your last 3 average {a}, the ones before, {b}.',
       vacio: "You haven't played any One a Day yet. The first one is waiting.",
-      enLabs: 'One a Day is still being tested in the lab.',
       // With a player and invitations (PR 3)
       pct: 'Today: {s} points · better than {p}% of those who played.',
       comodinUsado: '🧊 You used a freeze yesterday and your streak goes on: {n} days.',
@@ -646,7 +644,6 @@ export const COMMON = {
       mejorando: 'Em {juego} você está melhorando: suas últimas 3 têm média {a} e as de antes, {b}.',
       bajando: 'Em {juego} você caiu um pouco: suas últimas 3 têm média {a} e as de antes, {b}.',
       vacio: 'Você ainda não jogou nenhum Um por dia. O primeiro está esperando.',
-      enLabs: 'O Um por dia ainda está em teste no laboratório.',
       // Com jogador e convites (PR 3)
       pct: 'Hoje: {s} pontos · melhor que {p} % de quem jogou.',
       comodinUsado: '🧊 Você usou um coringa ontem e sua sequência continua: {n} dias.',
@@ -871,7 +868,6 @@ export const COMMON = {
       mejorando: 'Bei {juego} wirst du besser: Deine letzten 3 liegen im Schnitt bei {a}, die davor bei {b}.',
       bajando: 'Bei {juego} bist du etwas schwächer: Deine letzten 3 liegen im Schnitt bei {a}, die davor bei {b}.',
       vacio: 'Du hast noch kein Spiel des Tages gespielt. Das erste wartet.',
-      enLabs: 'Das Spiel des Tages wird noch im Labor getestet.',
       // Mit Spieler und Einladungen (PR 3)
       pct: 'Heute: {s} Punkte · besser als {p} % derer, die gespielt haben.',
       comodinUsado: '🧊 Du hast gestern einen Joker eingesetzt, deine Serie läuft weiter: {n} Tage.',

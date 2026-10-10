@@ -32,7 +32,7 @@ import { bloqueJugador, bloqueRanking, avisoPartida, bloqueCampeones } from '../
 import { jugador, leerYo, rankingsVisibles } from '../assets/js/jugador.js';
 import { podioDe } from '../assets/js/records.js';
 import { crearAvisos } from './avisos.js';
-import { unoAlDiaVisible, fechaLocal, juegoDel, semillaDel, anotar as anotarUnoAlDia, leer as leerUnoAlDia } from '../assets/js/uno-al-dia.js';
+import { fechaLocal, juegoDel, semillaDel, anotar as anotarUnoAlDia, leer as leerUnoAlDia } from '../assets/js/uno-al-dia.js';
 import { tarjetaResultado, rutaHoy } from '../assets/js/uno-al-dia-ui.js';
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
@@ -61,10 +61,10 @@ const fmt = (s, vars = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (vars[k]
 
 const busqueda = location.search.slice(1).split('&').filter(Boolean);
 const PRUEBA = busqueda.includes('prueba');
-// La Copa vive en el laboratorio (D-101): desde /labs/ se llega con ?labs, que ofrece también
-// la Copa de 3 días (D-100). ?tres se mantiene por los links que ya circulan.
+// ?labs: se llegó desde el laboratorio, con la semilla a la vista y el botón para volver (D-101).
+// La Copa de 3 días (D-100) se ofrece solo con ?tres o en el modo de prueba (D-262).
 const LABS = busqueda.includes('labs');
-const TRES = PRUEBA || LABS || busqueda.includes('tres');
+const TRES = PRUEBA || busqueda.includes('tres');
 // Los juegos sueltos de la portada viven en /<slug>/ (D-149, D-162, D-192, D-198): la misma
 // pantalla, pero fuera de una copa el link no dice "copa". Cada uno tiene su página, que dice cuál
 // es en `<body data-suelto="reinas">`, para que el link compartido traiga su propia tarjeta
@@ -80,7 +80,7 @@ const SEMILLA = (new URLSearchParams(location.search).get('semilla') || '').toUp
  * Uno al día (D-230): `?hoy` juega el desafío de hoy, el mismo para todos. La fecha y el juego los
  * calcula la página (no vienen en el link), así un link viejo abre el de hoy.
  */
-const HOY = SUELTO && busqueda.includes('hoy') && unoAlDiaVisible();
+const HOY = SUELTO && busqueda.includes('hoy');
 /**
  * Dónde vive un juego suelto: su página, o la genérica si no tiene. Desde el laboratorio
  * también se juega ahí (D-164), con `?labs` y su semilla: así el link que se copia de la barra
@@ -95,7 +95,7 @@ const semillaUrl = { semilla: SEMILLA, zipSeg: new URLSearchParams(location.sear
 // laboratorio que no tienen página (Línea Relámpago, el número, la final) siguen en /cup/.
 if (!SUELTO && PRACTICA && (!LABS || gameById(PRACTICA)?.suelto)) location.replace(paginaSuelta(PRACTICA, semillaUrl));
 if (SUELTO && !document.body.dataset.suelto && gameById(PRACTICA)?.suelto) location.replace(paginaSuelta(PRACTICA, semillaUrl));
-// Las demos del laboratorio (D-110): solo en el modo de prueba, con el almacén local
+// Las demos (D-110): solo en el modo de prueba, con el almacén local
 const DEMO = PRUEBA ? new URLSearchParams(location.search).get('demo') : null;
 const codigoUrl = (busqueda.find(x => CODIGO.test(x.toUpperCase()) && x.length === 5) || new URLSearchParams(location.search).get('c') || '').toUpperCase();
 /** Palabras de la URL que no pueden ser el link de una copa. */
@@ -2478,7 +2478,7 @@ async function abrirPorAlias(a) {
   } catch (e) { espera(errorDe(e), { error: true, reintentar: () => location.reload() }); }
 }
 
-/** Una demo del laboratorio: siembra la escena, deja la sesión de quien mira y la abre. */
+/** Una demo: siembra la escena, deja la sesión de quien mira y la abre. */
 async function demo(nombre) {
   const st = await abrirStore();
   await st.listo();

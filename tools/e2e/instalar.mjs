@@ -1,7 +1,7 @@
 // El globo de la portada que invita a agregar la app a inicio (D-232), en Chrome con el celular de
 // cada uno: los pasos de Safari y Chrome en iPhone, de Chrome y Samsung en Android, el diálogo
 // propio de Chrome, "abre el link en Safari" dentro de otra app, la ✕ que lo apaga para siempre, y
-// que a 320 px quepa en los cuatro idiomas. En el sitio local sale sin pasar por /labs/.
+// que a 320 px quepa en los cuatro idiomas.
 import { mkdtempSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';

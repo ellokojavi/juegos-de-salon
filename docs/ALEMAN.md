@@ -2,8 +2,8 @@
 
 Juegos de Salón en alemán (**Salonspiele**). **Salió del laboratorio** (D-197): se ofrece a
 todos en el toggle, con su puerta `https://juegosdesalon.cl/de/` y su tarjeta social, como el
-inglés y el portugués. El link del laboratorio, `/labs/de/`, quedó como página puente hacia `/de/`
-para quienes lo revisaron.
+inglés y el portugués. El link del laboratorio, `/labs/de/`, fue una página puente hacia `/de/`
+hasta D-262, que la sacó.
 
 Lo de abajo cuenta cómo se hizo y cómo pasó por el laboratorio (D-191), que queda para el próximo
 idioma. El **glosario** sigue vigente: toda traducción al alemán lo respeta.
@@ -16,7 +16,7 @@ idioma. El **glosario** sigue vigente: toda traducción al alemán lo respeta.
 | La marca del dispositivo: `juegos-de-salon:labs-idioma` = `de` | la pone `/labs/de/` o `?lang=de` |
 | Pestañas 🧪 (vuelve al laboratorio) y 🐞 (comentario) en todas las páginas | `public/assets/js/labs-idioma.js` |
 | Mientras se juega en alemán, los links al menú (`../`) y a `/labs/` llevan a `/labs/de/` (D-195) | el mismo módulo (un link con `data-labs-libre` pasa) |
-| Portada del laboratorio, en alemán, con todos los juegos | `public/labs/de/index.html` |
+| Portada del laboratorio, en alemán, con todos los juegos | `public/labs/de/index.html` (borrada en D-262: el próximo idioma tendrá la suya) |
 | Salir: "Labor verlassen" saca la marca y deja la app en inglés | la misma portada |
 
 Las pruebas de paridad (`node public/assets/js/i18n.test.mjs`) recorren `IDIOMAS`, así que el alemán
@@ -58,7 +58,7 @@ las pantallas de `tools/e2e/mirar.mjs` a 320 px, y después con los textos alema
   palabras de La Copa, y los nombres de ¿Dónde queda?.
 - **Firebase**: una copa con palabras en alemán guarda `lang: "de"`, que las reglas no dejaban
   escribir. Se publican después de fusionar con `node tools/firebase/reglas.mjs publicar` (D-122).
-- `mirar.mjs --idioma de` funciona: pone la marca del laboratorio igual que `/labs/de/`.
+- `mirar.mjs --idioma de` funciona: pone la marca del laboratorio igual que lo hacía `/labs/de/`.
 
 ## Decidido con el dueño (D-194)
 

@@ -10,13 +10,13 @@ quien suma más al cierre. Es la primera modalidad de la app que no es una parti
 serie de partidas en el tiempo (un macro-juego). El diseño completo, con la revisión y el plan
 de construcción, se discutió en el documento *La Copa — requisitos del torneo de varios días*.
 
-- **Estado:** en el menú desde v0.83.0 (D-175). **`/labs/`** sigue para probar: la Copa de 3 días, la
-  práctica con semilla y las demos (D-101).
-- **URL:** `/cup/` (portada) · `/cup/?K7Q2X` (una copa) · `/cup/?labs` (copa real con la Copa
-  de 3 días, D-100; `?tres` sigue funcionando) · `?prueba` (almacén local y reloj adelantable, sin
+- **Estado:** en el menú desde v0.83.0 (D-175). `/labs/` ya no tiene nada de La Copa salvo El caso,
+  que todavía no entra al pozo (D-262).
+- **URL:** `/cup/` (portada) · `/cup/?K7Q2X` (una copa) · `/cup/?tres` (ofrece la Copa de 3 días,
+  D-100, D-262) · `?prueba` (almacén local y reloj adelantable, sin
   Firebase) · `/cup/?K7Q2X&dia=3` (abre el día 3 listo para empezar, si se puede jugar; lo usan
   los avisos, D-229) · `/cup/?K7Q2X&silenciar` (silencia los avisos de esa copa: el botón del aviso
-  en Android) · `/cup/?practica=<id>&labs&semilla=K7Q2X` (un juego suelto del laboratorio,
+  en Android) · `/cup/?practica=<id>&labs&semilla=K7Q2X` (un juego suelto con la semilla a la vista,
   repetible; los que tienen página se van a `/<slug>/?labs&semilla=K7Q2X`, D-164). Desde la portada el juego suelto es `/<slug>/` (D-142, D-149, D-162, D-198): la misma
   pantalla, sin "copa" en el link, que vuelve al menú, sin sesión de prueba ni semilla a la vista, y
   con su señal de uso. `/cup/?practica=<id>` sin `&labs` lleva ahí. `/<slug>/?hoy` (o
@@ -110,8 +110,8 @@ Todos los juegos puntúan **de 0 a 100** (D-113). Igual lo que decide la copa es
 
 Recién creada, la copa abre en **Administrar** con una guía para invitar (D-110). Ahí el admin
 comparte los mensajes, **cierra o reabre la inscripción** y **mueve el inicio a hoy o mañana**
-mientras nadie haya jugado. En el laboratorio, `?prueba&demo=<escena>` abre una copa de ejemplo
-en cualquier punto (`public/cup/demo.js`).
+mientras nadie haya jugado. `?prueba&demo=<escena>` abre una copa de ejemplo en cualquier
+punto (`public/cup/demo.js`); el laboratorio ya no las ofrece, pero las usan las pruebas y las capturas (D-262).
 
 Al tocar Empezar, una **cuenta de 3 a 1** y "¡A jugar!" (D-105): recién ahí aparece el tablero, y
 el reloj parte cuando el "¡A jugar!" ya se fue y terminó la entrada del juego, si la tiene (las
@@ -223,8 +223,8 @@ además **sueltos**, de un jugador y sin copa, desde la portada (`/<slug>/`, D-1
 
 ### Laboratorio, práctica y reportes
 
-`/labs/` (D-101) ofrece la práctica de cada juego, la copa simulada y la copa real. La práctica
-arma el contenido con una semilla al azar como si fuera el día 1 de una copa con ese código, y la
+`/labs/` (D-101) ofrecía la práctica de cada juego, las demos y la copa real; desde D-262 tiene
+solo El caso. La práctica (`?practica=<id>&labs`, que sigue funcionando) arma el contenido con una semilla al azar como si fuera el día 1 de una copa con ese código, y la
 muestra al final. El botón **🐞 Reportar un problema o dejar un comentario** (práctica, tablero y
 resultado) guarda en `feedback/<id>`, por REST y sin cuenta (D-104), el texto, un nombre opcional, la versión
 y un contexto en JSON: copa, jugador, pantalla, día, juego, semilla, URL y navegador. Se leen con
@@ -311,7 +311,7 @@ Todo bajo `public/cup/`:
 | `cuenta.js` | Con quién está sentado este celular, el intento a medio jugar, los avisos de cada copa (D-223) y "Tus copas" (las del celular más las del jugador, `juntarCopas`, D-220) |
 | `avisos.js` | Los avisos al celular en pantalla: la campana, la tarjeta y sus hojas (D-223; la lógica del navegador está en `assets/js/push.js`). El estilo de la hoja de abajo (`.hoja`) es de todo el sitio y vive en `assets/css/base.css` (D-232); `style.css` guarda solo lo propio de los avisos |
 | `desglose.js` | Cómo se calculó el puntaje, línea por línea (D-106) |
-| `demo.js` | Las escenas de ejemplo del laboratorio |
+| `demo.js` | Las escenas de ejemplo de `?prueba&demo=`, para las pruebas y las capturas |
 | `reportes.js` | El botón 🐞 y los reportes que esperan reenvío |
 | `planilla.js` | La tabla final como CSV (D-161) |
 | `rules.js` | Textos (`LOCALES` es, en, pt, de, también los de los avisos al celular, `avMsg*`) y la explicación de cada juego |
