@@ -107,6 +107,8 @@ nunca se usaron, y no se renumera.
 
 Las respuestas a dilemas (issues con la etiqueta `usabilidad`) se anotan aquí:
 
+- **El caso, comparaciones en dos colores** (#282, D-259): en "Hay más criminales A que B", A se
+  ilumina en amarillo y B en rosado, en la grilla y en la frase; quien está en los dos lleva los dos.
 - **El caso (laboratorio, D-256):** tocar a alguien ya marcado muestra su pista bajo la grilla
   (#271); "número par de criminales" no sale cuando son cero, porque ahí ya está "No hay
   criminales" (#272); el link del caso del día lleva su fecha (`?dia=`), así un amigo que lo abre al
