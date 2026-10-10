@@ -7,7 +7,7 @@
  *
  * Muestra los avisos de La Copa (D-223) y, al tocarlos, abre la copa en el día que toca: enfoca
  * la pestaña de la app si ya está abierta, o abre una. En Android, los botones del aviso (D-229)
- * abren su propia dirección: Jugar, el día; Silenciar esta copa, la copa con `&silenciar`.
+ * abren su propia dirección: Jugar, el día; Silenciar esta copa, la copa con `&mute`.
  */
 self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));

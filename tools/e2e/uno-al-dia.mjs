@@ -49,17 +49,17 @@ ok(await esperar(`!!document.querySelector('.azar-capa')`, 12), 'tocarlo tira el
 ok(await esperar(`/Hoy te toca/.test(document.querySelector('.azar-nombre')?.innerText||'')`, 16), `el dado dice el número y el juego (${(await texto('.azar-nombre')).replace(/\n/g, ' ')})`);
 ok(/n\.° 1/.test(await texto('.azar-nombre')) && /Desenredo/.test(await texto('.azar-nombre')), 'Uno al día n.° 1, Desenredo');
 await b.shot('dado');
-ok(await esperar(`location.pathname === '/untangle/' && location.search === '?hoy'`, 20), `y abre el juego de hoy (${await ev('location.pathname + location.search')})`);
+ok(await esperar(`location.pathname === '/untangle/' && location.search === '?today'`, 20), `y abre el juego de hoy (${await ev('location.pathname + location.search')})`);
 ok(await esperar(`!!document.getElementById('uad-intro')`), 'la intro lleva la línea de Uno al día');
 ok(/hoy todos juegan el mismo desafío/.test(await texto('#uad-intro')), `"${await texto('#uad-intro')}"`);
 
 /* ---------- Un link de otro juego lleva al de hoy ---------- */
-await b.go(`${SITIO}/queens/?hoy`, 1500);
+await b.go(`${SITIO}/queens/?today`, 1500);
 ok(await esperar(`location.pathname === '/untangle/'`), 'un link de Uno al día de otro juego se va al de hoy');
 
 /* ---------- Jugar el de hoy (el reloj de Desenredo, acortado, se acaba) ---------- */
 const jugar = async () => {
-  await b.go(`${SITIO}/untangle/?hoy&prueba&zipSeg=3`, 1200);
+  await b.go(`${SITIO}/untangle/?today&test&timer=3`, 1200);
   await esperar(`!!document.getElementById('btn-empezar')`);
   ok(await ev(`__copa.estado.juego?.semilla`) === await ev(`(async()=>{const m=await import('/assets/js/uno-al-dia.js');return m.semillaDel('${HOY}')})()`), 'el contenido sale de la semilla del día');
   await click('#btn-empezar');
@@ -90,7 +90,7 @@ await jugar();
 ok(/práctica/.test(await texto('#uad-tarjeta')), 'el segundo intento dice que fue práctica');
 m = await memoria();
 ok(m.dias[HOY].n === 2 && m.dias[HOY].s === s1, 'y el resultado del día queda el del primero');
-await b.go(`${SITIO}/untangle/?hoy`, 1200);
+await b.go(`${SITIO}/untangle/?today`, 1200);
 ok(/práctica/.test(await texto('#uad-intro')), 'la intro de un segundo intento avisa que es práctica');
 
 /* ---------- La portada después de jugar ---------- */
@@ -126,8 +126,8 @@ await ev(`document.querySelector('#uad-cal').previousElementSibling.firstElement
 ok(/septiembre/i.test(await texto('.uad-cal-cab')) && /👑/.test(await texto('#uad-cal')), 'el mes anterior muestra los días de septiembre');
 await b.shot('today');
 
-/* ---------- La forma de antes, con ?uad=boton: el botón al lado del dado ---------- */
-await b.go(`${SITIO}/?uad=boton`, 1500);
+/* ---------- La forma de antes, con ?daily=button: el botón al lado del dado ---------- */
+await b.go(`${SITIO}/?daily=button`, 1500);
 await esperar(`!!document.getElementById('btn-uno-al-dia')`);
 ok(await ev(`!!document.querySelector('.azar-slot #btn-uno-al-dia') && !document.querySelector('.fila-alta')`), 'con "Al lado del dado", es un botón en la fila de Juego al azar');
 ok((await texto('.azar-slot .btn-azar')).replace(/\s+/g, ' ').trim() === '🎲 Al azar' && await sinDesborde(), 'y el dado se acorta a "🎲 Al azar"');

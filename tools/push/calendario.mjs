@@ -18,12 +18,16 @@
  *
  * D-229: a lo más TOPE avisos por copa y celular en un mismo día de quien recibe; si se vencen dos
  * plazos a la vez, van en un solo aviso. Un empate en el primer lugar nombra a todos los que ganaron.
- * El del día, el plazo y la final abren ese día de la copa (`&dia=<d>`), y en Android traen los
+ * El del día, el plazo y la final abren ese día de la copa (`&day=<d>`), y en Android traen los
  * botones Jugar y Silenciar esta copa (`acciones`). Los días nuevos de varias copas a la vez se
  * juntan en un aviso (`juntar`, lo usa avisar.mjs).
  */
 import { conCierre, diaActual, esFinal, anulado, tabla, juegoDelDia, terminada } from '../../public/cup/engine.js';
 import { LOCALES, juegosCopa } from '../../public/cup/rules.js';
+import { VALORES } from '../../public/assets/js/parametros.js';
+
+/** El aviso en la URL, en inglés (`notif=deadline`, D-266); el panel lo cuenta con su tipo de siempre. */
+const notif = tipo => `notif=${VALORES.notif[tipo] || tipo}`;
 
 export const SITIO = 'https://juegosdesalon.cl/';
 export const DESDE = 8, HASTA = 22, MANANA = 9, NOCHE = 20;
@@ -165,14 +169,14 @@ export function avisosDeCopa({ code, copa, quiere = {}, subs = {}, enviados = {}
       if (!candidatos.length) continue;
       candidatos.sort((a, b) => PRIORIDAD.indexOf(a.tipo) - PRIORIDAD.indexOf(b.tipo));
       const c = candidatos[0];
-      // `&aviso=<tipo>`: la página lo cuenta al abrirse, y el panel ve cuántos se tocan (D-233)
-      const aviso = { title: titulo, body: c.body, url: `${url}&aviso=${c.tipo}`, tag: c.tag };
+      // `&notif=<tipo>`: la página lo cuenta al abrirse, y el panel ve cuántos se tocan (D-233)
+      const aviso = { title: titulo, body: c.body, url: `${url}&${notif(c.tipo)}`, tag: c.tag };
       if (c.dia) {
         // Abre ese día de la copa, y en Android trae los botones (D-229)
-        aviso.url = `${url}&dia=${c.dia}&aviso=${c.tipo}`;
+        aviso.url = `${url}&day=${c.dia}&${notif(c.tipo)}`;
         aviso.acciones = [
           { action: 'jugar', title: T.play, url: aviso.url },
-          { action: 'silenciar', title: T.avMute, url: `${url}&silenciar` },
+          { action: 'silenciar', title: T.avMute, url: `${url}&mute` },
         ];
       }
       out.push({ subId, pid, code, tipo: c.tipo, claves: c.claves, aviso });
@@ -201,7 +205,7 @@ export function juntar(pendientes, subs = {}, nombres = {}) {
       subId, pid: ps.map(p => p.pid).join(','), code: ps.map(p => p.code).join(','), tipo: 'dia',
       claves: ps.flatMap(p => p.claves),
       porCopa: ps.map(p => ({ code: p.code, claves: p.claves })),
-      aviso: { title: T.chip, body: fmt(T.avMsgDayMany, { n: ps.length, copas }), url: `${SITIO}cup/?aviso=copas`, tag: 'copas-dia' },
+      aviso: { title: T.chip, body: fmt(T.avMsgDayMany, { n: ps.length, copas }), url: `${SITIO}cup/?${notif('copas')}`, tag: 'copas-dia' },
     });
   }
   return out;
@@ -219,7 +223,7 @@ export function avisosDePrueba({ code, copa, quiere = {}, subs = {} }) {
       const sub = subs[subId];
       if (!sub) continue;
       const T = LOCALES[sub.lang] || LOCALES.es;
-      out.push({ subId, pid, code, tipo: 'prueba', claves: [], aviso: { title: `🏆 ${fmt(T.shareHead, { copa: copa.meta.name })}`, body: T.avTestBody, url: `${SITIO}cup/?${copa.meta.alias || code}&aviso=prueba`, tag: `copa-${code}-prueba` } });
+      out.push({ subId, pid, code, tipo: 'prueba', claves: [], aviso: { title: `🏆 ${fmt(T.shareHead, { copa: copa.meta.name })}`, body: T.avTestBody, url: `${SITIO}cup/?${copa.meta.alias || code}&${notif('prueba')}`, tag: `copa-${code}-prueba` } });
     }
   }
   return out;

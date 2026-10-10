@@ -75,7 +75,7 @@ const MEDIR = `(()=>{
  * @param {number}   op.port    el nombre del Chrome; el puerto real lo elige cdp.mjs (D-213)
  * @param {string[]} [op.pantallas]  cuáles; por omisión, todas las de su camino
  * @param {string[]} [op.permitidos] trozos en español que sí pueden verse (contenido, no interfaz)
- * @param {string}   [op.consulta] lo que va después de la carpeta ('?prueba' en La Copa)
+ * @param {string}   [op.consulta] lo que va después de la carpeta ('?test' en La Copa)
  * @param {string}   [op.salida]  dónde dejar las capturas; por omisión, la carpeta del guion
  * @returns {Promise<number>} cuántos chequeos quedaron en rojo
  */

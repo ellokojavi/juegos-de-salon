@@ -11,6 +11,7 @@ import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../assets/js/
 import { botonInvitar, botonResultadoSolo } from '../assets/js/compartir.js';
 import { gameById } from '../assets/js/games.js';
 import { getLang, langToggle, applyStatic, COMMON, withLang, SITIO } from '../assets/js/i18n.js';
+import { param } from '../assets/js/parametros.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { failWith } from '../assets/js/transport/errors.js';
 import { showHandoff, passBlock } from '../assets/js/handoff.js';
@@ -253,7 +254,7 @@ function renderLobby() {
   showScreen('screen-lobby');
   const box = $('#lobby-box'); box.innerHTML = '';
   // Con el idioma pegado: quien reciba la invitación abre la app como quien la mandó (D-74)
-  const url = withLang(`${location.origin}${location.pathname}?sala=${S.code}`);
+  const url = withLang(`${location.origin}${location.pathname}?room=${S.code}`);
   const joined = ROLES.filter(r => M.names[r]);
   const host = 'A';
   box.append(
@@ -673,7 +674,7 @@ async function rematch() {
 /* ---------- Varios celulares ---------- */
 async function startOnline(transport, code, role, name, config) {
   startSession({ mode: 'online', transport, roles: [role], config, names: { [role]: name }, code, role });
-  history.replaceState(null, '', `${location.pathname}?sala=${code}`);
+  history.replaceState(null, '', `${location.pathname}?room=${code}`);
   keepAwake();
   saveSession();
   render();
@@ -979,7 +980,7 @@ function init() {
   $('#rk-slot')?.append(bloqueVictorias({ juego: GAME_ID, nombre: T.title, alTocar: () => SFX.tap() }));
   renderResumeSlot();
   montarArrastre();
-  const code = new URLSearchParams(location.search).get('sala');
+  const code = param('room');
   if (code && /^[A-Z]{4}$/i.test(code)) {
     const saved = loadSession();
     if (saved && saved.mode === 'online' && saved.code === code.toUpperCase() && !saved.done) joinOnline(saved.code, saved.name, saved.role).catch(() => { clearSession(); renderSetup('online', code.toUpperCase()); });

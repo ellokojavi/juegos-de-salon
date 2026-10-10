@@ -15,20 +15,20 @@ los datos son las reglas de Firebase, que solo dejan leer al UID del dueño.
 El panel se navega como un sitio: seis secciones fijas y una ficha por cada cosa que existe.
 A la izquierda en el computador; abajo, como barra, en el celular. Todo queda en el `#` de la
 URL (`public/panel/rutas.js`), así que Atrás, una recarga o un enlace guardado vuelven al mismo
-lugar; el rango y el entorno van detrás solo si no son los de siempre (`#/torneo?r=30d&e=dev`).
+lugar; el rango y el entorno van detrás solo si no son los de siempre (`#/cup?r=30d&e=dev`).
 Los enlaces de antes (`#torneo`, `#resumen`, `#juegos`) siguen sirviendo.
 
 | Dirección | Qué muestra |
 |---|---|
-| `#/ahora` | Lo que está en juego, sin depender del rango: salas en juego, partidas sin red, copas en curso y celulares conectados. Cada cifra filtra la lista de abajo, que junta copas, salas y partidas sin red de lo más reciente a lo más quieto. Debajo, las copas por empezar. |
-| `#/torneo` | Cifras de La Copa en el rango, la lista de copas con filtro por estado (en curso, por empezar, terminadas, laboratorio), por juego y por día. |
-| `#/torneo/<CÓDIGO>` | **Ficha de copa.** Cabecera (link propio, admin, idioma, audiencia, días, cuándo cierra cada día abierto, inscripción) y tres pestañas: **Tabla** completa, incluidos los días que los jugadores todavía no ven; **Día a día**, la grilla jugador × día con puntaje, tiempo, puntos, jugando ahora, sin terminar, no jugó, comodín y ×2; **Historia**, evento por evento (creada, inscripciones, empezó y terminó cada día, sin terminar, abrió y cerró cada día, fin), y aparte lo que la base guarda sin hora (comodín, retiros, inscripción cerrada). |
-| `#/juegos` | Los juegos de una partida: cifras, partidas por juego y modo (cada barra abre su ficha), jugadores por partida, por día y la bitácora de salas. |
-| `#/juego/<id>` | **Ficha de juego.** Partidas, en dos celulares, sin red, salas sin rival y duración típica de sus salas; por modo, por día, sus salas y sus partidas sin red con hora, quién jugó y cómo terminó (D-140, D-210). |
-| `#/sala/<CÓDIGO>[/<día>]` | **Ficha de sala.** Juego, creada, terminó, cuánto duró, quién ganó, versión y jugadores con su país; si sigue viva, jugadas, chat (solo cuántos) y quién está conectado. Los códigos se reciclan: con el día se pide una en particular. |
-| `#/trafico` | **Tráfico del sitio** (D-208): visitas, páginas vistas, cuántas llegan a jugar, visitas por día, de dónde llegan (por sitio, con sus dominios), por qué link (`de=link` de lo compartido, `utm_source`), páginas con sus entradas y cuántas juegan, aparato, primera vez o vuelve y país. |
-| `#/audiencia` | Cifras del rango, La Copa contra los otros juegos, de dónde (zona horaria), el país de los jugadores de salas, idiomas, hora y cuota. |
-| `#/salud` | **Lo que le falla a quien juega** (D-251): cargas que no arrancaron, cargas con fallas por día y por tipo, los errores juntados por qué son (página, navegador, versión, días), páginas con fallas, navegador de los errores y cuánto tarda cada página en poder jugar. |
+| `#/now` | Lo que está en juego, sin depender del rango: salas en juego, partidas sin red, copas en curso y celulares conectados. Cada cifra filtra la lista de abajo, que junta copas, salas y partidas sin red de lo más reciente a lo más quieto. Debajo, las copas por empezar. |
+| `#/cup` | Cifras de La Copa en el rango, la lista de copas con filtro por estado (en curso, por empezar, terminadas, laboratorio), por juego y por día. |
+| `#/cup/<CÓDIGO>` | **Ficha de copa.** Cabecera (link propio, admin, idioma, audiencia, días, cuándo cierra cada día abierto, inscripción) y tres pestañas: **Tabla** completa, incluidos los días que los jugadores todavía no ven; **Día a día**, la grilla jugador × día con puntaje, tiempo, puntos, jugando ahora, sin terminar, no jugó, comodín y ×2; **Historia**, evento por evento (creada, inscripciones, empezó y terminó cada día, sin terminar, abrió y cerró cada día, fin), y aparte lo que la base guarda sin hora (comodín, retiros, inscripción cerrada). |
+| `#/games` | Los juegos de una partida: cifras, partidas por juego y modo (cada barra abre su ficha), jugadores por partida, por día y la bitácora de salas. |
+| `#/game/<juego>` | **Ficha de juego.** Partidas, en dos celulares, sin red, salas sin rival y duración típica de sus salas; por modo, por día, sus salas y sus partidas sin red con hora, quién jugó y cómo terminó (D-140, D-210). |
+| `#/room/<CÓDIGO>[/<día>]` | **Ficha de sala.** Juego, creada, terminó, cuánto duró, quién ganó, versión y jugadores con su país; si sigue viva, jugadas, chat (solo cuántos) y quién está conectado. Los códigos se reciclan: con el día se pide una en particular. |
+| `#/traffic` | **Tráfico del sitio** (D-208): visitas, páginas vistas, cuántas llegan a jugar, visitas por día, de dónde llegan (por sitio, con sus dominios), por qué link (`from=link` de lo compartido, `utm_source`), páginas con sus entradas y cuántas juegan, aparato, primera vez o vuelve y país. |
+| `#/audience` | Cifras del rango, La Copa contra los otros juegos, de dónde (zona horaria), el país de los jugadores de salas, idiomas, hora y cuota. |
+| `#/health` | **Lo que le falla a quien juega** (D-251): cargas que no arrancaron, cargas con fallas por día y por tipo, los errores juntados por qué son (página, navegador, versión, días), páginas con fallas, navegador de los errores y cuánto tarda cada página en poder jugar. |
 
 Arriba, además del entorno y el rango, un **buscador**: un código de cinco letras o un link propio
 abre la ficha de esa copa; uno de cuatro, la de esa sala. No se busca por nombre de jugador:
@@ -86,7 +86,7 @@ una página que no arrancó y tiempos por página).
 
 ## Uno al día (D-230)
 
-En `#/juegos`, el bloque **📅 Uno al día**:
+En `#/games`, el bloque **📅 Uno al día**:
 - **Partidas de Uno al día**, de todos: las del modo `uno-al-dia` (`MODO_UNO_AL_DIA` en games.js),
   que cada juego manda al empezar el de hoy. Por día y por juego. En "Partidas por juego" aparece
   también como un modo más (📅).
@@ -97,7 +97,7 @@ En `#/juegos`, el bloque **📅 Uno al día**:
   aceptadas**. Las cuentas son `unoAlDiaDelRango` en aggregate.js.
 - **Qué se hace** y **Avisos**: las señales `uad/<evento>` de todos (`EVENTOS_UAD`
   en stats.js), y el tráfico de `/today/` (páginas vistas y visitas que entraron por ahí).
-- Los avisos de Uno al día salen en el bloque de avisos al celular (en `#/torneo`, abajo) como `uaddia`,
+- Los avisos de Uno al día salen en el bloque de avisos al celular (en `#/cup`, abajo) como `uaddia`,
   `uadracha`, `uadsemana` y `uadadios`.
 
 Con `window.__panel.seed({ …, uad: { historia, invitados, rachas } })` se dibuja con datos sembrados
@@ -105,12 +105,12 @@ Con `window.__panel.seed({ …, uad: { historia, invitados, rachas } })` se dibu
 
 ## Los avisos al celular (D-233)
 
-En `#/torneo`, debajo de las cifras de las copas, el bloque **🔔 Avisos al celular**:
+En `#/cup`, debajo de las cifras de las copas, el bloque **🔔 Avisos al celular**:
 
 - **Celulares con avisos:** las suscripciones vivas en la última vuelta de `tools/push/avisar.mjs`
   (`stats/prod/push/vivas`). Los celulares no se pueden leer uno por uno: `push/` no lo lee nadie.
 - **Mandados y tocados, por tipo:** `mandados/<tipo>` lo suma `avisar.mjs` (los que el servicio del
-  celular aceptó); `aviso/<tipo>`, la página que abrió el aviso (`&aviso=<tipo>` en su dirección).
+  celular aceptó); `aviso/<tipo>`, la página que abrió el aviso (`&notif=<tipo>` en su dirección, en inglés: `notif=deadline` se cuenta como `aviso/plazo`, D-266).
   El porcentaje es tocados sobre mandados en el rango. Los mandados son siempre del sitio publicado.
   Los tipos que no son de La Copa salen después, con su nombre: los de Uno al día son `uaddia`,
   `uadracha`, `uadsemana` y `uadadios` (D-230).
