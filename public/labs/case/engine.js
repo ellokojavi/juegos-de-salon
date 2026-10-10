@@ -48,5 +48,13 @@ export function marcar(caso, marcas, i, valor) {
   return valor === caso.v[i] ? 'ok' : 'error';
 }
 
+/**
+ * La ayuda (D-263), la misma de La Copa: a quién mirar (`i`) y qué pistas juntar (`quienes`), con
+ * las marcas del prototipo. `null` si no queda nadie por deducir.
+ */
+export const ayuda = (caso, marcas) => motor.ayuda(caso, marcas.map(i => ({ i, v: caso.v[i] })));
+/** "Ana, Beto y Cata", con la "e" antes de i. */
+export const lista = nombres => motor.lista(nombres, L);
+
 /** La semilla de un día: el mismo caso para todos ese día. */
 export const semillaDelDia = fecha => `dia:${fecha}`;

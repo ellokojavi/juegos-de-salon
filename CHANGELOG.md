@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.142.0 — 2026-10-10
+- **🔍 El caso: 💡 Ayuda** (D-263): si te trabas, te dice a quién mirar y qué pistas juntar, y las
+  destaca en la lista. Resta 15 puntos.
+- **🔍 El caso, más claro:** las pistas que comparan dos grupos ya no hablan de grupos que comparten
+  a alguien.
+
 ## 0.141.1 — 2026-10-10
 - **🧪 Laboratorio, solo con lo nuevo** (D-262): queda El caso. Se van la práctica de cada juego de
   La Copa, las demos, la Copa de 3 días, Uno al día, Agregar a inicio y el link viejo `/labs/de/`,

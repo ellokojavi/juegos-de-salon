@@ -43,9 +43,10 @@ export function desglose(id, e, { T, fmt, mmss, copa = true, lang = 'es' }) {
     ].filter(Boolean) : [T.bdNotSolved];
     case 'caso': return e.fin ? [
       T.bdStart100,
-      e.errores ? fmt(e.errores === 1 ? T.bdCasoMistakesOne : T.bdCasoMistakes, { n: e.errores, pts: 10 * e.errores }) : T.bdCasoNoMistakes,
+      e.errores ? fmt(e.errores === 1 ? T.bdCasoMistakesOne : T.bdCasoMistakes, { n: e.errores, pts: 10 * e.errores }) : e.ayudas ? null : T.bdCasoNoMistakes,
+      resta('bdCasoAyudas', e.ayudas || 0, { pts: 15 * (e.ayudas || 0) }),
       T.bdCasoFloor,
-    ] : [T.bdNotSolved];
+    ].filter(Boolean) : [T.bdNotSolved];
     case 'zip': case 'desenredo': return [
       fmt(e.hechos === 1 ? T.bdLevelsOne : T.bdLevels, { n: e.hechos || 0, pts: Math.min(100, 10 * (e.hechos || 0)) }),
       e.hechos ? fmt(copa ? T.bdLastLevel : T.bdLastLevelSolo, { t: mmss(e.ultimo || 0) }) : null,

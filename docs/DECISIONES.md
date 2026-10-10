@@ -68,7 +68,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216 |
-| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262 |
+| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263 |
 | Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249 |
 | Marketing | `marketing/README.md` | D-178 |
@@ -4506,7 +4506,7 @@ pantalla vacía); que cada juego arranque su propio reloj (el reloj es de la cá
 parte. Retomar una partida no cambia: el tablero vuelve de una y el reloj sigue donde estaba.
 
 ## D-259 · El caso, menos lineal: pistas que hay que combinar
-**Fecha:** 2026-10-10 · **Estado:** vigente · **Relación:** amplía D-257
+**Fecha:** 2026-10-10 · **Estado:** corregida por D-263 · **Relación:** amplía D-257
 **Decisión:** El generador de El caso elige las pistas para que haya que pensar más. Cada pista
 candidata recibe una nota (`notaPista`): vale más la que destapa a alguien **solo combinada con las
 pistas que ya se saben**, menos la que lo dice todo sola, y los tipos que piden razonar (más que,
@@ -4549,7 +4549,7 @@ Empezar o Probar primero no deja el botón trabado. `juegos.test.mjs` exige al m
 deducciones combinadas. El caso de una semilla cambia (El caso todavía no está en `POZO`).
 
 ## D-261 · El caso: marcar antes de tiempo cuenta como error
-**Fecha:** 2026-10-10 · **Estado:** vigente · **Relación:** corrige D-256 (el intento antes de tiempo)
+**Fecha:** 2026-10-10 · **Estado:** corregida por D-263 · **Relación:** corrige D-256 (el intento antes de tiempo)
 **Decisión:** En El caso (La Copa y el prototipo), marcar a alguien que todavía no se puede deducir
 no se acepta y **cuenta como error** (resta 10, como equivocarse), sin decir si lo marcado estaba
 bien. Se guarda como jugada `{ i, v, falta }` y la carta queda con ✕. El mensaje dice "Todavía no se
@@ -4575,4 +4575,23 @@ capturas del README (`?prueba&demo=<escena>`).
 **Consecuencias:** `cup/torneo.mjs` (parte `laboratorio`) prueba que la página tenga solo El caso;
 `uno-al-dia.mjs` prueba el botón al lado del dado con `?uad=boton`. Un juego nuevo que se pruebe
 antes de salir vuelve a tener su sección en `/labs/` y se saca al salir.
+
+## D-263 · El caso: comparaciones sin grupos que se cruzan, y una ayuda que cuesta 15
+**Fecha:** 2026-10-10 · **Estado:** vigente · **Relación:** corrige D-259 (las comparaciones) y D-261 (el puntaje)
+**Decisión:** Las comparaciones ("hay más criminales en la columna C que en la fila 3") ya no hablan
+de dos grupos que comparten a alguien. Y El caso (La Copa y el prototipo) suma **💡 Ayuda**: con un
+segundo toque para confirmar, elige entre quienes ya se pueden deducir al que pide menos pistas, lo
+deja elegido y dice cuáles juntar ("Mira a Pía: junta lo que dicen Bárbara y Nico."); esas pistas
+se destacan en la lista hasta marcarlo. Resta 15, como la pista de Tango, se guarda como jugada
+`{ ayuda: i }` y en la tarjeta su celda va en 🟨. Si se cierra el mensaje, "💡 Ver la ayuda" lo
+vuelve a mostrar sin cobrar. Se llama "Ayuda" (en alemán, "Tipp") porque "pista" ya es lo que dice
+cada sospechoso.
+**Por qué:** lo propuso Claude y lo aprobó el dueño. Con D-261 un paso trabado ya no se podía
+tantear, y la parte más confusa de los pasos difíciles era la persona que contaba en los dos lados
+de una comparación. Sin cruces el caso sigue igual de difícil (57 % de las deducciones combinan
+pistas, medido en 40 casos) y la ayuda evita quedarse atascado sin regalarle nada a quien no la usa.
+**Alternativas descartadas:** una ayuda gratis; una que diga directamente qué es alguien.
+**Consecuencias:** `juegos.test.mjs` prueba que la ayuda siempre señala a alguien deducible, que
+las pistas que nombra alcanzan y que no quedan comparaciones con grupos cruzados;
+`tools/e2e/case/lab.mjs`, el botón en el prototipo.
 

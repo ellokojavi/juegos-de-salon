@@ -170,8 +170,9 @@ por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
   o criminales; cada uno que se marca bien da su pista, y las pistas siempre dicen la verdad. Nunca
   hay que adivinar: el motor (`games/case/engine.js`) simula al jugador y arma las pistas para que en
   todo momento alguien más se pueda deducir. Marcar antes de tiempo no se acepta y cuenta como error
-  (se guarda como jugada `{ i, v, falta }`, D-261), sin decir si estaba bien. **100 puntos con el caso resuelto, menos 10 por error, hasta 10**; sin
-  resolver, 0. Las pistas son datos (`{ t, a, b, k, g, h }`) y la frase la arma `texto()` en el
+  (se guarda como jugada `{ i, v, falta }`, D-261), sin decir si estaba bien. **100 puntos con el caso resuelto, menos 10 por error y 15 por ayuda, hasta 10**; sin
+  resolver, 0. La **💡 Ayuda** (D-263, jugada `{ ayuda: i }`, `ayuda()` del motor) elige a alguien que ya se
+  puede deducir y dice qué pistas juntar; en la tarjeta su celda va en 🟨. Las pistas son datos (`{ t, a, b, k, g, h }`) y la frase la arma `texto()` en el
   idioma de quien juega, con las plantillas de `casoTexto` en `rules.js`: el caso es el mismo en los
   cuatro idiomas. La antesala muestra cartas de espaldas que se dan vuelta solas mientras una lupa
   las recorre (`portada()` de `games/case/ui.js`), y el título lleva la lupa y los colores que se
