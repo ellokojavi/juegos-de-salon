@@ -113,8 +113,9 @@ comparte los mensajes, **cierra o reabre la inscripción** y **mueve el inicio a
 mientras nadie haya jugado. En el laboratorio, `?prueba&demo=<escena>` abre una copa de ejemplo
 en cualquier punto (`public/cup/demo.js`).
 
-Al tocar Empezar, una **cuenta de 3 a 1** y "¡A jugar!" (D-105): recién ahí aparece el tablero y
-parte el reloj. Al terminar, el resultado explica **cómo se calculó el puntaje** línea por línea
+Al tocar Empezar, una **cuenta de 3 a 1** y "¡A jugar!" (D-105): recién ahí aparece el tablero, y
+el reloj parte cuando el "¡A jugar!" ya se fue y terminó la entrada del juego, si la tiene (las
+cartas de El caso): la cuenta no es tiempo de juego (D-258). Al terminar, el resultado explica **cómo se calculó el puntaje** línea por línea
 (`public/cup/desglose.js`, D-106), y abajo va la tabla del día. En la de 🏁 La Gran Final, cada
 jugador lleva además su tarjeta de cinco rondas (⏳75 🔢85 👑100 🔤60 📅90), para comparar ronda a
 ronda (#259); en la demo `podio` o `llena` se ve con datos.
