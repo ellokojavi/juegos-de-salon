@@ -63,6 +63,9 @@ export function titulo({ el, J }) {
 /** La prueba es un caso completo, igual de difícil que el de verdad: la antesala lo dice. */
 export const pruebaCompleta = true;
 
+/** Lo que tardan las cartas en darse vuelta al empezar (la última parte a los 480 ms y gira en 500): el reloj parte después. */
+export const entrada = () => (QUIETO() ? 0 : 60 + 7 * 60 + 550);
+
 export function montar(raiz, ctx) {
   const { p, T, el, SFX, vibrate } = ctx;
   const L = T.casoTexto;
