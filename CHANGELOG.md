@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.138.0 — 2026-10-09
+- **🔍 El caso, listo como juego de La Copa** (D-257), por ahora en el laboratorio: en español,
+  inglés, portugués y alemán, con su portada animada en la antesala (cartas que se dan vuelta solas y
+  una lupa que las recorre), la sesión de prueba y el desglose del puntaje: 100 con el caso resuelto,
+  menos 10 por error. Se juega en `/case/`; una copa todavía no lo puede elegir.
+
 ## 0.137.0 — 2026-10-09
 - **🔍 El caso, más vivo** (D-256): las cartas se dan vuelta al empezar para descubrir a los
   sospechosos; la elegida se acerca con un zoom suave; al marcar cae un sello (😇, 🔪 o ❌) con un
