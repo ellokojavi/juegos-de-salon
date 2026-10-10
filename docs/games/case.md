@@ -8,7 +8,7 @@ prototipo para probar con amigos (D-256) · **Idiomas:** solo español, por ahor
 
 > **Ya existe la versión de La Copa** (D-257): `public/cup/games/case/`, id `caso`, en los cuatro
 > idiomas, con su propio motor (las pistas como datos, la frase armada en cada idioma). Se juega
-> suelta en `/case/` y en la práctica del laboratorio, pero todavía no está en `POZO`. Está descrita
+> suelta en `/case/` (el laboratorio la abre con `/case/?labs`, D-262), pero todavía no está en `POZO`. Está descrita
 > en [cup.md](cup.md). Esta página documenta el prototipo de `/labs/case/`, que desde D-259 usa
 > ese mismo motor, adaptado al español; cuando El caso salga del laboratorio, el prototipo se va.
 
