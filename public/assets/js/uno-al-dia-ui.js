@@ -8,7 +8,7 @@ import { COMMON, SITIO, withLang } from './i18n.js';
 import { GAMES, SUELTOS, PORTADA, gameById } from './games.js';
 import { tirar, TEXTOS as AZAR } from './azar.js';
 import { botonCompartir, cabecera, laminaResultado, nombreArchivo, compartir } from './compartir.js';
-import { JUEGOS_DIA, estado, rutaDel, numeroDel, sumarDias, COMODINES_MAX, leer, anotar, unoAlDiaVisible, fechaLocal, juegoDel, semillaDel } from './uno-al-dia.js';
+import { JUEGOS_DIA, estado, rutaDel, numeroDel, sumarDias, COMODINES_MAX, leer, anotar, fechaLocal, juegoDel, semillaDel } from './uno-al-dia.js';
 import { UNO_AL_DIA } from './records.js';
 import { trackUnoAlDia } from './transport/stats.js';
 
@@ -297,7 +297,7 @@ const mmss = ms => { const t = Math.round((ms || 0) / 1000); return `${Math.floo
  * fecha del jugador, la semilla del día y si ya lo jugó (entonces esta partida es práctica).
  */
 export function modoHoy(id, { raiz = '../', loc = globalThis.location } = {}) {
-  if (!new URLSearchParams(loc.search).has('hoy') || !unoAlDiaVisible()) return null;
+  if (!new URLSearchParams(loc.search).has('hoy')) return null;
   const fecha = fechaLocal(), deHoy = juegoDel(fecha);
   if (deHoy !== id) { loc.replace(raiz + rutaHoy(deHoy)); return { fuera: true }; }
   return { id, fecha, semilla: semillaDel(fecha), ya: !!leer().dias[fecha], inicio: 0 };

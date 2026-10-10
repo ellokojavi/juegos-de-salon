@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.141.1 — 2026-10-10
+- **🧪 Laboratorio, solo con lo nuevo** (D-262): queda El caso. Se van la práctica de cada juego de
+  La Copa, las demos, la Copa de 3 días, Uno al día, Agregar a inicio y el link viejo `/labs/de/`,
+  que ya estaban para todos.
+
 ## 0.141.0 — 2026-10-10
 - **🔍 El caso, todavía más difícil** (D-260): pistas condicionales ("Si Óscar es criminal, Rodrigo es
   inocente") y de parejas ("Ana y Beto son los dos inocentes o los dos criminales"), y de cada semilla

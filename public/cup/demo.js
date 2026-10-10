@@ -1,7 +1,7 @@
 /**
- * Demos del laboratorio (D-110): una copa de ejemplo, ya en marcha, para mirar y tocar cada
- * vista de La Copa —del jugador y del admin— como en producción, sin armar una copa ni esperar
- * días. Solo en el modo de prueba (`?prueba&demo=<escena>`): siembra la copa en el almacén local,
+ * Demos (D-110): una copa de ejemplo, ya en marcha, para mirar y tocar cada vista de La Copa
+ * —del jugador y del admin— como en producción, sin armar una copa ni esperar días. Las usan las
+ * pruebas de punta a punta y las capturas del README; el laboratorio ya no las ofrece (D-262). Solo en el modo de prueba (`?prueba&demo=<escena>`): siembra la copa en el almacén local,
  * con una copa nueva cada vez, y deja la sesión del jugador que corresponde a la escena.
  */
 import { nuevaMeta, fechaEn, sumarDias, codigoAlAzar, ZONA, CALENDARIOS } from './engine.js';

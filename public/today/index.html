@@ -106,7 +106,7 @@
     import { juegosCopa } from '../cup/rules.js';
     import { gameById } from '../assets/js/games.js';
     import { mmss } from '../cup/engine.js';
-    import { estado, porJuego, juegoDia, faltaParaManana, unoAlDiaVisible, LANZAMIENTO, COMODINES_MAX } from '../assets/js/uno-al-dia.js';
+    import { estado, porJuego, juegoDia, faltaParaManana, LANZAMIENTO, COMODINES_MAX } from '../assets/js/uno-al-dia.js';
     import { fmt, tirarHoy, compartirHoy, jugarOtro, tarjetaInvitar, tarjetaDesafio } from '../assets/js/uno-al-dia-ui.js';
     import { UNO_AL_DIA } from '../assets/js/records.js';
 
@@ -135,149 +135,144 @@
       return (h ? fmt(T.horas, { h, m: m % 60 }) : fmt(T.minutos, { m })).replace(/(\d) /g, '$1\u00a0');
     };
 
-    // Mientras está en el laboratorio, la página lo dice y no muestra nada más (D-230)
-    if (!unoAlDiaVisible()) {
-      pagina.append(el('div', { class: 'panel center' }, el('p', { style: 'margin:0' }, T.enLabs)));
-    } else {
-      // Un link de invitación (`?inv=<jid>`): se recuerda quién invitó, para el duelo y su comodín
-      const inv = new URLSearchParams(location.search).get('inv');
-      const red = import('../assets/js/uno-al-dia-red.js');
-      const desafio = inv ? red.then(R => R.recordarInvitacion(inv)) : Promise.resolve(null);
-      let reloj = null;
+    // Un link de invitación (`?inv=<jid>`): se recuerda quién invitó, para el duelo y su comodín
+    const inv = new URLSearchParams(location.search).get('inv');
+    const red = import('../assets/js/uno-al-dia-red.js');
+    const desafio = inv ? red.then(R => R.recordarInvitacion(inv)) : Promise.resolve(null);
+    let reloj = null;
 
-      /** Todo lo de la página, con lo que haya en el celular; se vuelve a dibujar al llegar lo de Firebase. */
-      const dibujar = async ({ avisos = [] } = {}) => {
-        clearInterval(reloj);
-        pagina.replaceChildren();
-        const e = estado();
-        for (const a of avisos) pagina.append(el('p', { class: 'uad-aviso', 'data-aviso': 'aceptado' }, a));
+    /** Todo lo de la página, con lo que haya en el celular; se vuelve a dibujar al llegar lo de Firebase. */
+    const dibujar = async ({ avisos = [] } = {}) => {
+      clearInterval(reloj);
+      pagina.replaceChildren();
+      const e = estado();
+      for (const a of avisos) pagina.append(el('p', { class: 'uad-aviso', 'data-aviso': 'aceptado' }, a));
 
-        /* Hoy: el juego de hoy y su resultado; si falta, el dado (o el desafío de quien invitó) */
-        const hoy = el('section', { class: 'panel uad-hoy', id: 'uad-hoy' }, el('h2', {}, T.hoyTitulo));
-        const quien = await desafio;
-        if (!e.dia && quien) {
-          pagina.append(await tarjetaDesafio({ lang, raiz: '../', inv: quien, alTocar: tap }));
-        } else if (!e.dia) {
-          hoy.append(el('p', {}, T.hoyFalta),
-            el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-uad-jugar', onClick: () => { tap(); tirarHoy({ lang, raiz: '../' }); } }, `📅 ${T.jugar}`));
-          pagina.append(hoy);
-        } else {
-          const proximo = el('p', { class: 'uad-proximo', id: 'uad-proximo' });
-          const tic = () => { proximo.textContent = fmt(T.proximo, { t: falta(faltaParaManana()) }); };
-          tic(); reloj = setInterval(tic, 30000);
-          hoy.append(el('p', {}, fmt(T.hoyListo, { juego: `${juegoDia(e.dia.j)?.emoji || JC[e.dia.j]?.emoji || '🎲'} ${nombreDe(e.dia.j)}`, s: e.dia.s })), proximo,
-            el('div', { class: 'uad-acciones' },
-              compartirHoy({ lang, fecha: e.hoy, dia: e.dia, alTocar: tap, mmss }),
-              el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-uad-otro', onClick: () => { tap(); jugarOtro({ lang, raiz: '../' }); } }, T.jugarOtro)));
-          pagina.append(hoy);
-        }
+      /* Hoy: el juego de hoy y su resultado; si falta, el dado (o el desafío de quien invitó) */
+      const hoy = el('section', { class: 'panel uad-hoy', id: 'uad-hoy' }, el('h2', {}, T.hoyTitulo));
+      const quien = await desafio;
+      if (!e.dia && quien) {
+        pagina.append(await tarjetaDesafio({ lang, raiz: '../', inv: quien, alTocar: tap }));
+      } else if (!e.dia) {
+        hoy.append(el('p', {}, T.hoyFalta),
+          el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-uad-jugar', onClick: () => { tap(); tirarHoy({ lang, raiz: '../' }); } }, `📅 ${T.jugar}`));
+        pagina.append(hoy);
+      } else {
+        const proximo = el('p', { class: 'uad-proximo', id: 'uad-proximo' });
+        const tic = () => { proximo.textContent = fmt(T.proximo, { t: falta(faltaParaManana()) }); };
+        tic(); reloj = setInterval(tic, 30000);
+        hoy.append(el('p', {}, fmt(T.hoyListo, { juego: `${juegoDia(e.dia.j)?.emoji || JC[e.dia.j]?.emoji || '🎲'} ${nombreDe(e.dia.j)}`, s: e.dia.s })), proximo,
+          el('div', { class: 'uad-acciones' },
+            compartirHoy({ lang, fecha: e.hoy, dia: e.dia, alTocar: tap, mmss }),
+            el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-uad-otro', onClick: () => { tap(); jugarOtro({ lang, raiz: '../' }); } }, T.jugarOtro)));
+        pagina.append(hoy);
+      }
 
-        /* Entrar, antes de la racha que guarda (D-249): sin jugador, vive solo en este celular */
-        const { rankingsVisibles, leerYo } = await import('../assets/js/jugador.js');
-        const { bloqueRanking, bloqueJugador } = rankingsVisibles() ? await import('../assets/js/ranking.js') : {};
-        if (bloqueJugador && !leerYo()) pagina.append(bloqueJugador({ destacado: true, leyenda: T.guardaRacha, alTocar: tap }));
+      /* Entrar, antes de la racha que guarda (D-249): sin jugador, vive solo en este celular */
+      const { rankingsVisibles, leerYo } = await import('../assets/js/jugador.js');
+      const { bloqueRanking, bloqueJugador } = rankingsVisibles() ? await import('../assets/js/ranking.js') : {};
+      if (bloqueJugador && !leerYo()) pagina.append(bloqueJugador({ destacado: true, leyenda: T.guardaRacha, alTocar: tap }));
 
-        /* La racha y los comodines */
-        pagina.append(el('div', { class: 'uad-trio', id: 'uad-trio' },
-          el('div', {}, el('b', {}, `🔥 ${e.racha}`), el('small', {}, T.rachaLabel)),
-          el('div', {}, el('b', {}, String(e.mejor)), el('small', {}, T.mejorLabel)),
-          el('div', { id: 'uad-comodines' }, el('b', {}, `🧊 ${e.comodines}`), el('small', {}, T.comodinesLabel)),
-          el('div', {}, el('b', {}, String(e.jugados)), el('small', {}, T.jugadosLabel))));
-        if (!e.racha && e.mejor) pagina.append(el('p', { class: 'center uad-dice' }, fmt(T.rachaCortada, { n: e.mejor })));
-        if (e.jugados) pagina.append(el('p', { class: 'center uad-dice', id: 'uad-comodines-texto' }, fmt(T.comodinesTexto, { n: e.comodines })));
+      /* La racha y los comodines */
+      pagina.append(el('div', { class: 'uad-trio', id: 'uad-trio' },
+        el('div', {}, el('b', {}, `🔥 ${e.racha}`), el('small', {}, T.rachaLabel)),
+        el('div', {}, el('b', {}, String(e.mejor)), el('small', {}, T.mejorLabel)),
+        el('div', { id: 'uad-comodines' }, el('b', {}, `🧊 ${e.comodines}`), el('small', {}, T.comodinesLabel)),
+        el('div', {}, el('b', {}, String(e.jugados)), el('small', {}, T.jugadosLabel))));
+      if (!e.racha && e.mejor) pagina.append(el('p', { class: 'center uad-dice' }, fmt(T.rachaCortada, { n: e.mejor })));
+      if (e.jugados) pagina.append(el('p', { class: 'center uad-dice', id: 'uad-comodines-texto' }, fmt(T.comodinesTexto, { n: e.comodines })));
 
-        if (!e.jugados) {
-          pagina.append(el('p', { class: 'center uad-dice', id: 'uad-vacio' }, T.vacio));
-        } else {
-          /* El calendario del mes, con el emoji del juego en los días jugados y 🧊 en los salvados */
-          const cal = el('div', { class: 'uad-cal', id: 'uad-cal' });
-          const titulo = el('b', {});
-          const antes = el('button', { type: 'button', 'aria-label': T.mesAnterior }, '‹');
-          const despues = el('button', { type: 'button', 'aria-label': T.mesSiguiente }, '›');
-          const primero = [LANZAMIENTO, ...Object.keys(e.dias)].sort()[0].slice(0, 7);
-          let mes = e.hoy.slice(0, 7);
-          const pintarMes = () => {
-            const [y, m] = mes.split('-').map(Number);
-            const t = new Intl.DateTimeFormat(lang, { month: 'long', year: 'numeric' }).format(new Date(y, m - 1, 1));
-            titulo.textContent = t.charAt(0).toLocaleUpperCase(lang) + t.slice(1);
-            antes.disabled = mes <= primero; despues.disabled = mes >= e.hoy.slice(0, 7);
-            cal.replaceChildren();
-            // Los días de la semana, desde el lunes (el 5 de enero de 2026 fue lunes)
-            const sem = new Intl.DateTimeFormat(lang, { weekday: 'narrow' });
-            for (let i = 0; i < 7; i++) cal.append(el('span', { class: 'sem', 'aria-hidden': 'true' }, sem.format(new Date(2026, 0, 5 + i))));
-            const d1 = new Date(y, m - 1, 1), hueco = (d1.getDay() + 6) % 7;
-            for (let i = 0; i < hueco; i++) cal.append(el('span', { class: 'vacio' }));
-            const largo = new Date(y, m, 0).getDate();
-            for (let d = 1; d <= largo; d++) {
-              const f = `${mes}-${String(d).padStart(2, '0')}`, x = e.dias[f], salvado = e.salvados.includes(f);
-              const nivel = salvado ? 'salvado' : !x ? '' : x.s >= 80 ? 'l3' : x.s >= 50 ? 'l2' : 'l1';
-              cal.append(el('span', {
-                class: [nivel, f === e.hoy ? 'hoy' : ''].filter(Boolean).join(' ') || null,
-                title: x ? `${nombreDe(x.j)}: ${fmt(T.puntos, { s: x.s })}` : null,
-              }, salvado ? '🧊' : x
-                // El juego y, en una píldora como la de La Copa, el puntaje de 0 a 100
-                ? [el('span', { class: 'cal-emoji', 'aria-hidden': 'true' }, juegoDia(x.j)?.emoji || '•'), el('small', { class: 'cal-pts' }, String(x.s))]
-                : String(d)));
-            }
-          };
-          const mover = n => { const [y, m] = mes.split('-').map(Number); const d = new Date(y, m - 1 + n, 1); mes = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`; pintarMes(); };
-          antes.addEventListener('click', () => { tap(); mover(-1); });
-          despues.addEventListener('click', () => { tap(); mover(1); });
-          pintarMes();
-          pagina.append(el('section', { class: 'panel uad-bloque' }, el('h2', {}, T.calendario), el('div', { class: 'uad-cal-cab' }, antes, titulo, despues), cal));
+      if (!e.jugados) {
+        pagina.append(el('p', { class: 'center uad-dice', id: 'uad-vacio' }, T.vacio));
+      } else {
+        /* El calendario del mes, con el emoji del juego en los días jugados y 🧊 en los salvados */
+        const cal = el('div', { class: 'uad-cal', id: 'uad-cal' });
+        const titulo = el('b', {});
+        const antes = el('button', { type: 'button', 'aria-label': T.mesAnterior }, '‹');
+        const despues = el('button', { type: 'button', 'aria-label': T.mesSiguiente }, '›');
+        const primero = [LANZAMIENTO, ...Object.keys(e.dias)].sort()[0].slice(0, 7);
+        let mes = e.hoy.slice(0, 7);
+        const pintarMes = () => {
+          const [y, m] = mes.split('-').map(Number);
+          const t = new Intl.DateTimeFormat(lang, { month: 'long', year: 'numeric' }).format(new Date(y, m - 1, 1));
+          titulo.textContent = t.charAt(0).toLocaleUpperCase(lang) + t.slice(1);
+          antes.disabled = mes <= primero; despues.disabled = mes >= e.hoy.slice(0, 7);
+          cal.replaceChildren();
+          // Los días de la semana, desde el lunes (el 5 de enero de 2026 fue lunes)
+          const sem = new Intl.DateTimeFormat(lang, { weekday: 'narrow' });
+          for (let i = 0; i < 7; i++) cal.append(el('span', { class: 'sem', 'aria-hidden': 'true' }, sem.format(new Date(2026, 0, 5 + i))));
+          const d1 = new Date(y, m - 1, 1), hueco = (d1.getDay() + 6) % 7;
+          for (let i = 0; i < hueco; i++) cal.append(el('span', { class: 'vacio' }));
+          const largo = new Date(y, m, 0).getDate();
+          for (let d = 1; d <= largo; d++) {
+            const f = `${mes}-${String(d).padStart(2, '0')}`, x = e.dias[f], salvado = e.salvados.includes(f);
+            const nivel = salvado ? 'salvado' : !x ? '' : x.s >= 80 ? 'l3' : x.s >= 50 ? 'l2' : 'l1';
+            cal.append(el('span', {
+              class: [nivel, f === e.hoy ? 'hoy' : ''].filter(Boolean).join(' ') || null,
+              title: x ? `${nombreDe(x.j)}: ${fmt(T.puntos, { s: x.s })}` : null,
+            }, salvado ? '🧊' : x
+              // El juego y, en una píldora como la de La Copa, el puntaje de 0 a 100
+              ? [el('span', { class: 'cal-emoji', 'aria-hidden': 'true' }, juegoDia(x.j)?.emoji || '•'), el('small', { class: 'cal-pts' }, String(x.s))]
+              : String(d)));
+          }
+        };
+        const mover = n => { const [y, m] = mes.split('-').map(Number); const d = new Date(y, m - 1 + n, 1); mes = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`; pintarMes(); };
+        antes.addEventListener('click', () => { tap(); mover(-1); });
+        despues.addEventListener('click', () => { tap(); mover(1); });
+        pintarMes();
+        pagina.append(el('section', { class: 'panel uad-bloque' }, el('h2', {}, T.calendario), el('div', { class: 'uad-cal-cab' }, antes, titulo, despues), cal));
 
-          /* Por juego: cuántas veces, promedio, mejor, los últimos 8 y si va mejorando */
-          const juegos = porJuego(e.dias);
-          const linea = xs => {
-            const W = 64, H = 22, paso = xs.length > 1 ? (W - 4) / (xs.length - 1) : 0;
-            const pts = xs.map((s, i) => `${(2 + i * paso).toFixed(1)},${(H - 2 - (s / 100) * (H - 4)).toFixed(1)}`);
-            const ult = pts.at(-1).split(',');
-            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-            svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('aria-hidden', 'true');
-            svg.innerHTML = `<polyline fill="none" stroke="var(--cyan)" stroke-width="1.8" stroke-linejoin="round" points="${pts.join(' ')}"/><circle cx="${ult[0]}" cy="${ult[1]}" r="2.4" fill="var(--yellow)"/>`;
-            return svg;
-          };
-          const filas = juegos.map(g => el('div', { class: 'uad-fila', 'data-id': g.id },
-            el('div', {}, el('span', { class: 'nom' }, nombre(g.id)),
-              el('span', { class: 'nums' }, `${g.n} ${g.n === 1 ? T.vez : T.veces} · ${T.promedio} ${g.promedio} · ${T.mejor} ${g.mejor}`)),
-            linea(g.ultimos),
-            el('span', { class: `flecha ${g.tendencia > 0 ? 'sube' : g.tendencia < 0 ? 'baja' : ''}` },
-              g.tendencia === null ? '' : g.tendencia > 0 ? `▲ ${g.tendencia}` : g.tendencia < 0 ? `▼ ${-g.tendencia}` : '=')));
-          // Lo que dicen las flechas, en palabras: el que más mejoró o, si ninguno, el que más bajó
-          const conT = juegos.filter(g => g.tendencia);
-          const sube = conT.filter(g => g.tendencia > 0).sort((a, b) => b.tendencia - a.tendencia)[0];
-          const baja = conT.filter(g => g.tendencia < 0).sort((a, b) => a.tendencia - b.tendencia)[0];
-          const dice = sube || baja;
-          pagina.append(el('section', { class: 'panel uad-bloque', id: 'uad-por-juego' }, el('h2', {}, T.porJuego),
-            el('div', { class: 'uad-juegos' }, filas),
-            dice ? el('p', { class: 'uad-dice', id: 'uad-tendencia' }, fmt(sube ? T.mejorando : T.bajando, { juego: nombreDe(dice.id), a: dice.ultimos3, b: dice.antes })) : null));
+        /* Por juego: cuántas veces, promedio, mejor, los últimos 8 y si va mejorando */
+        const juegos = porJuego(e.dias);
+        const linea = xs => {
+          const W = 64, H = 22, paso = xs.length > 1 ? (W - 4) / (xs.length - 1) : 0;
+          const pts = xs.map((s, i) => `${(2 + i * paso).toFixed(1)},${(H - 2 - (s / 100) * (H - 4)).toFixed(1)}`);
+          const ult = pts.at(-1).split(',');
+          const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+          svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('aria-hidden', 'true');
+          svg.innerHTML = `<polyline fill="none" stroke="var(--cyan)" stroke-width="1.8" stroke-linejoin="round" points="${pts.join(' ')}"/><circle cx="${ult[0]}" cy="${ult[1]}" r="2.4" fill="var(--yellow)"/>`;
+          return svg;
+        };
+        const filas = juegos.map(g => el('div', { class: 'uad-fila', 'data-id': g.id },
+          el('div', {}, el('span', { class: 'nom' }, nombre(g.id)),
+            el('span', { class: 'nums' }, `${g.n} ${g.n === 1 ? T.vez : T.veces} · ${T.promedio} ${g.promedio} · ${T.mejor} ${g.mejor}`)),
+          linea(g.ultimos),
+          el('span', { class: `flecha ${g.tendencia > 0 ? 'sube' : g.tendencia < 0 ? 'baja' : ''}` },
+            g.tendencia === null ? '' : g.tendencia > 0 ? `▲ ${g.tendencia}` : g.tendencia < 0 ? `▼ ${-g.tendencia}` : '=')));
+        // Lo que dicen las flechas, en palabras: el que más mejoró o, si ninguno, el que más bajó
+        const conT = juegos.filter(g => g.tendencia);
+        const sube = conT.filter(g => g.tendencia > 0).sort((a, b) => b.tendencia - a.tendencia)[0];
+        const baja = conT.filter(g => g.tendencia < 0).sort((a, b) => a.tendencia - b.tendencia)[0];
+        const dice = sube || baja;
+        pagina.append(el('section', { class: 'panel uad-bloque', id: 'uad-por-juego' }, el('h2', {}, T.porJuego),
+          el('div', { class: 'uad-juegos' }, filas),
+          dice ? el('p', { class: 'uad-dice', id: 'uad-tendencia' }, fmt(sube ? T.mejorando : T.bajando, { juego: nombreDe(dice.id), a: dice.ultimos3, b: dice.antes })) : null));
 
-          pagina.append(tarjetaInvitar({ lang, alTocar: tap }));
-        }
+        pagina.append(tarjetaInvitar({ lang, alTocar: tap }));
+      }
 
-        /* Los avisos: el recordatorio de cada día, a la hora que elige (D-230) */
-        const Av = await import('../assets/js/uno-al-dia-avisos.js');
-        const campana = Av.bloque({ lang, alTocar: tap, redibujar: aviso => dibujar({ avisos: aviso ? [aviso] : [] }) });
-        if (campana) pagina.append(campana);
+      /* Los avisos: el recordatorio de cada día, a la hora que elige (D-230) */
+      const Av = await import('../assets/js/uno-al-dia-avisos.js');
+      const campana = Av.bloque({ lang, alTocar: tap, redibujar: aviso => dibujar({ avisos: aviso ? [aviso] : [] }) });
+      if (campana) pagina.append(campana);
 
-        /* El ranking de Uno al día y entrar con nombre y PIN (mientras los rankings se vean) */
-        if (bloqueRanking) pagina.append(bloqueRanking({ juego: UNO_AL_DIA, titulo: T.rankingTitulo, pestanas: ['hoy', 'semanaDia', 'rachas', 'amigosSemana'], alTocar: tap }));
-      };
+      /* El ranking de Uno al día y entrar con nombre y PIN (mientras los rankings se vean) */
+      if (bloqueRanking) pagina.append(bloqueRanking({ juego: UNO_AL_DIA, titulo: T.rankingTitulo, pestanas: ['hoy', 'semanaDia', 'rachas', 'amigosSemana'], alTocar: tap }));
+    };
 
-      /** Lo de Firebase (con jugador): la historia de otros celulares, los comodines por invitar y los desafíos aceptados. */
-      const sincronizar = async () => {
-        const R = await red;
-        // Los comodines que había antes: cada aceptado da uno mientras quede lugar bajo el tope
-        let libres = COMODINES_MAX - estado().comodines;
-        const { nuevos } = await R.sincronizar();
-        return nuevos.map(x => fmt(libres-- > 0 ? T.aceptado : T.aceptadoSin, { n: x.n || T.unAmigo }));
-      };
-      await dibujar();
-      import('../assets/js/uno-al-dia-avisos.js').then(Av => { Av.globo(); Av.refrescar({ lang }).catch(() => {}); }).catch(() => {});
-      sincronizar().then(avisos => dibujar({ avisos })).catch(() => {});
-      // Entrar con el jugador desde esta página trae lo suyo
-      import('../assets/js/jugador.js').then(async ({ jugador }) => (await jugador()).escuchar(yo => { if (yo) sincronizar().then(avisos => dibujar({ avisos })).catch(() => {}); })).catch(() => {});
-    }
+    /** Lo de Firebase (con jugador): la historia de otros celulares, los comodines por invitar y los desafíos aceptados. */
+    const sincronizar = async () => {
+      const R = await red;
+      // Los comodines que había antes: cada aceptado da uno mientras quede lugar bajo el tope
+      let libres = COMODINES_MAX - estado().comodines;
+      const { nuevos } = await R.sincronizar();
+      return nuevos.map(x => fmt(libres-- > 0 ? T.aceptado : T.aceptadoSin, { n: x.n || T.unAmigo }));
+    };
+    await dibujar();
+    import('../assets/js/uno-al-dia-avisos.js').then(Av => { Av.globo(); Av.refrescar({ lang }).catch(() => {}); }).catch(() => {});
+    sincronizar().then(avisos => dibujar({ avisos })).catch(() => {});
+    // Entrar con el jugador desde esta página trae lo suyo
+    import('../assets/js/jugador.js').then(async ({ jugador }) => (await jugador()).escuchar(yo => { if (yo) sincronizar().then(avisos => dibujar({ avisos })).catch(() => {}); })).catch(() => {});
   </script>
 </body>
 </html>

@@ -68,7 +68,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216 |
-| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261 |
+| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262 |
 | Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249 |
 | Marketing | `marketing/README.md` | D-178 |
@@ -1235,7 +1235,7 @@ Conexiones y la final) aparece con `?tres` en la URL o en el modo de prueba.
 portada la haría la opción por defecto de quien quiere algo corto.
 
 ## D-101 · La Copa se prueba en un laboratorio antes de llegar al menú
-**Fecha:** 2026-09-23 · **Estado:** corregida por D-112, D-175
+**Fecha:** 2026-09-23 · **Estado:** corregida por D-112, D-175, D-262
 **Decisión:** La Copa sale del menú como juego jugable: su tarjeta se sigue viendo, apagada y con
 "Próximamente" (`available: false`, `labs: true` en `games.js`), y se juega desde **`/labs/`**,
 una página que no está enlazada desde el menú ni se indexa. El laboratorio ofrece tres pasos:
@@ -1392,7 +1392,7 @@ acertado ninguna.
 lo que se decide no es lo que se publica. Y un reporte escrito es caro de conseguir: no se pierde.
 
 ## D-110 · El admin de una copa nueva, la inscripción, el inicio movible y las demos del laboratorio
-**Fecha:** 2026-09-23 · **Estado:** vigente
+**Fecha:** 2026-09-23 · **Estado:** corregida por D-262
 **Decisión:**
 - **Recién creada, la copa abre en Administrar**, con una guía de la primera vez (se ve mientras
   el admin siga solo y la copa no haya partido): compartir la invitación, esperar a que se
@@ -3038,7 +3038,7 @@ muesca. Tocar un tipo estando pegada lleva la lista filtrada a su primera tarjet
 filtrar a media lista se quedaba mirando el medio de una lista más corta.
 
 ## D-197 · El alemán sale del laboratorio
-**Fecha:** 2026-10-04 · **Estado:** vigente · **Relación:** cierra el paso de D-191 para el alemán; corrige D-47, D-48 y D-74
+**Fecha:** 2026-10-04 · **Estado:** corregida por D-262 · **Relación:** cierra el paso de D-191 para el alemán; corrige D-47, D-48 y D-74
 **Decisión:** El alemán se ofrece a todos, como el inglés y el portugués: `EN_LABS` queda vacío,
 el toggle muestra 🇩🇪 DE en cualquier dispositivo y hay puerta `/de/` con su tarjeta social
 (`menu-de.jpg`, `de_DE`). El link del laboratorio, `/labs/de/`, pasa a ser una página puente hacia
@@ -3853,7 +3853,7 @@ prueban a mano en Android: Chrome headless no los muestra. Si con el tope se pie
 avisos ya ese día), el del día siguiente o el de gracia lo cubren.
 
 ## D-230 · Uno al día: un juego por día, el mismo para todos, con racha y avisos que pide el jugador
-**Fecha:** 2026-10-05 · **Estado:** corregida por D-239 · **Relación:** amplía D-188 (el dado de Juego al azar abre el juego del día) y D-212 (un período nuevo, el del día, y la tabla de rachas); corrige D-221 (los avisos ya no son solo de La Copa: suma los que el jugador pide para Uno al día); completa RP-44
+**Fecha:** 2026-10-05 · **Estado:** corregida por D-239, D-262 · **Relación:** amplía D-188 (el dado de Juego al azar abre el juego del día) y D-212 (un período nuevo, el del día, y la tabla de rachas); corrige D-221 (los avisos ya no son solo de La Copa: suma los que el jugador pide para Uno al día); completa RP-44
 **Decisión:** Una modalidad nueva en la portada, junto a Juego al azar. Cada día, a la medianoche
 del jugador, sale un juego con su contenido, el mismo para todos, a partir de la fecha
 (`uno-al-dia:<fecha>`, como las semillas de La Copa, D-97). Entran todos los juegos que tienen modo
@@ -3943,7 +3943,7 @@ Apilarla mantiene el ancho y los 44 px de alto (C-8), así que la barra no cambi
 ven como dos letras (ES, GB…; CL hasta D-244) y se acepta, porque la app se juega en celulares. Hay un solo toggle en la app: el estándar queda en C-3.
 
 ## D-232 · Un globo en la portada invita a agregar la app a inicio (primero en el laboratorio; para todos desde v0.121.0)
-**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** completa D-221; reusa la hoja de pasos de D-223
+**Fecha:** 2026-10-05 · **Estado:** corregida por D-262 · **Relación:** completa D-221; reusa la hoja de pasos de D-223
 **Decisión:** La portada muestra, a los 2,5 segundos, un globo abajo con el ícono de la app,
 **"Juegos de Salón como app"**, una línea y el botón **Agregar**, que abre los pasos de ese
 celular en la hoja de abajo de los avisos (D-223).
@@ -4559,4 +4559,20 @@ por persona hasta dar con la que se deduce, sin pensar. Era lo que más hacía m
 **Alternativas descartadas:** medio error (5 puntos), y dejarlo gratis.
 **Consecuencias:** el puntaje premia estar seguro antes de marcar. `tools/e2e/case/lab.mjs` lo
 prueba.
+
+## D-262 · El laboratorio queda solo con lo que no ha salido
+**Fecha:** 2026-10-10 · **Estado:** vigente · **Relación:** corrige D-101, D-110, D-197, D-230 y D-232
+**Decisión:** `/labs/` ofrece solo lo que todavía no está en producción: hoy, El caso. Se van la
+práctica de cada juego de La Copa, las diez demos, el botón de la Copa de 3 días, las secciones de
+Uno al día y de Agregar a inicio, y el puente `/labs/de/`. Con ellas se van las puertas que ya
+estaban abiertas para todos (`UNO_AL_DIA_EN_LABS`, `INSTALAR_EN_LABS`) y la forma del acceso a Uno
+al día guardada en el celular: queda `?uad=boton|no` en el link. `?labs` en `/cup/` ya no ofrece la
+Copa de 3 días; sigue con `?tres` y en el modo de prueba (D-100).
+**Por qué:** lo pidió el dueño: lo que ya está en producción no se necesita en el laboratorio.
+**Alternativas descartadas:** borrar también las demos. Siguen en el código, sin link, porque las
+usan las pruebas de punta a punta (`cup/torneo.mjs`, `cup/avisos.mjs`, `idioma-por-url.mjs`) y las
+capturas del README (`?prueba&demo=<escena>`).
+**Consecuencias:** `cup/torneo.mjs` (parte `laboratorio`) prueba que la página tenga solo El caso;
+`uno-al-dia.mjs` prueba el botón al lado del dado con `?uad=boton`. Un juego nuevo que se pruebe
+antes de salir vuelve a tener su sección en `/labs/` y se saca al salir.
 

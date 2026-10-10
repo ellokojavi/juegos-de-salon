@@ -2,8 +2,7 @@
 // la línea de la intro, la tarjeta del resultado (racha, compartir sin decir el juego, jugar otro),
 // el segundo intento como práctica, el botón "Listo" y la página /today/ con su racha, su
 // calendario y cómo le va en cada juego, a 320 px y en los cuatro idiomas. El reloj de la página se
-// fija en el 6 de octubre de 2026 a mediodía, el día n.° 1, cuando toca Desenredo. En el sitio local
-// Uno al día sale sin pasar por /labs/.
+// fija en el 6 de octubre de 2026 a mediodía, el día n.° 1, cuando toca Desenredo.
 import { mkdtempSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
@@ -127,18 +126,12 @@ await ev(`document.querySelector('#uad-cal').previousElementSibling.firstElement
 ok(/septiembre/i.test(await texto('.uad-cal-cab')) && /👑/.test(await texto('#uad-cal')), 'el mes anterior muestra los días de septiembre');
 await b.shot('today');
 
-/* ---------- La forma de antes, a prueba desde /labs/: el botón al lado del dado ---------- */
-await b.go(`${SITIO}/labs/`, 1500);
-ok(await esperar(`!!document.querySelector('#uad-formas [data-forma="boton"]')`), 'el laboratorio deja elegir dónde va en la portada');
-ok(await ev(`document.querySelector('#uad-formas [data-forma="tarjeta"]').getAttribute('aria-pressed')`) === 'true', 'por defecto, junto a La Copa');
-await click('#uad-formas [data-forma="boton"]');
-await b.go(`${SITIO}/`, 1500);
+/* ---------- La forma de antes, con ?uad=boton: el botón al lado del dado ---------- */
+await b.go(`${SITIO}/?uad=boton`, 1500);
 await esperar(`!!document.getElementById('btn-uno-al-dia')`);
 ok(await ev(`!!document.querySelector('.azar-slot #btn-uno-al-dia') && !document.querySelector('.fila-alta')`), 'con "Al lado del dado", es un botón en la fila de Juego al azar');
 ok((await texto('.azar-slot .btn-azar')).replace(/\s+/g, ' ').trim() === '🎲 Al azar' && await sinDesborde(), 'y el dado se acorta a "🎲 Al azar"');
 await b.shot('portada-boton');
-await b.go(`${SITIO}/labs/`, 1200);
-await click('#uad-formas [data-forma="tarjeta"]');
 
 /* ---------- 320 px y los cuatro idiomas ---------- */
 await b.send('Emulation.setDeviceMetricsOverride', { width: 320, height: 640, deviceScaleFactor: 2, mobile: true });

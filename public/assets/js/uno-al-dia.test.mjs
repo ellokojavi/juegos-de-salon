@@ -4,7 +4,7 @@
 import assert from 'node:assert/strict';
 import {
   JUEGOS_DIA, LANZAMIENTO, SIN_REPETIR, DESDE_GRUPO, GRUPO, azarDel, puntajeAhorcado, puntajeNaval, puntajeDudo, CASILLAS_FLOTA, crearCalendario, juegoDel, semillaDel, numeroDel, sumarDias, diasEntre,
-  fechaLocal, faltaParaManana, racha, mejorRacha, recorrer, numDia, fechaDeNum, semanaDe, juntar, COMODINES_MAX, porJuego, anotar, leer, estado, rutaDel, unoAlDiaVisible, activarUnoAlDia, UNO_AL_DIA_EN_LABS, formaAcceso, elegirForma, KEY,
+  fechaLocal, faltaParaManana, racha, mejorRacha, recorrer, numDia, fechaDeNum, semanaDe, juntar, COMODINES_MAX, porJuego, anotar, leer, estado, rutaDel, formaAcceso, KEY,
 } from './uno-al-dia.js';
 import { JUEGOS } from '../../cup/games/index.js';
 import { esCodigo } from '../../cup/engine.js';
@@ -169,28 +169,12 @@ assert.equal(rutaDel('batalla-naval', slugs), 'battleship/?hoy');
 assert.equal(rutaDel('dudo', slugs), 'liars-dice/?hoy');
 for (const j of JUEGOS_DIA) assert.ok(slugs[j.id] || ['linea', 'numero'].includes(j.id), `${j.id}: sin página para jugarlo`);
 
-// El laboratorio: mientras Uno al día esté ahí, en el sitio publicado sale solo con la marca de /labs/
-const lab = almacen();
-if (UNO_AL_DIA_EN_LABS) {
-  assert.equal(unoAlDiaVisible({ storage: lab, loc: { hostname: 'juegosdesalon.cl', search: '' } }), false);
-  activarUnoAlDia(true, lab);
-  assert.equal(unoAlDiaVisible({ storage: lab, loc: { hostname: 'juegosdesalon.cl', search: '' } }), true);
-  activarUnoAlDia(false, lab);
-} else {
-  assert.equal(unoAlDiaVisible({ storage: lab, loc: { hostname: 'juegosdesalon.cl', search: '' } }), true, 'fuera del laboratorio, sale para todos');
-}
-assert.equal(unoAlDiaVisible({ storage: lab, loc: { hostname: 'localhost', search: '' } }), true, 'en el sitio local siempre');
-
-// Dónde va en la portada: junto a La Copa (D-239), salvo que se pruebe el botón desde /labs/ o con ?uad=
-const fm = almacen(), sinQ = { search: '' };
-assert.equal(formaAcceso({ storage: fm, loc: sinQ }), 'tarjeta');
-elegirForma('boton', fm);
-assert.equal(formaAcceso({ storage: fm, loc: sinQ }), 'boton');
-assert.equal(formaAcceso({ storage: fm, loc: { search: '?uad=tarjeta' } }), 'tarjeta', 'el link manda');
-elegirForma('tarjeta', fm);
-assert.equal(formaAcceso({ storage: fm, loc: { search: '?uad=boton' } }), 'boton');
-assert.equal(formaAcceso({ storage: fm, loc: sinQ }), 'tarjeta');
-assert.equal(formaAcceso({ storage: fm, loc: { search: '?uad=no' } }), 'no', 'las capturas del README lo esconden');
+// Dónde va en la portada: junto a La Copa (D-239), salvo que el link pida otra cosa con ?uad=
+const sinQ = { search: '' };
+assert.equal(formaAcceso({ loc: sinQ }), 'tarjeta');
+assert.equal(formaAcceso({ loc: { search: '?uad=boton' } }), 'boton');
+assert.equal(formaAcceso({ loc: { search: '?uad=otra' } }), 'tarjeta');
+assert.equal(formaAcceso({ loc: { search: '?uad=no' } }), 'no', 'las capturas del README lo esconden');
 
 // El azar del día: el mismo en todos los celulares, distinto para cada cosa que reparte
 const tira = (r, n = 5) => Array.from({ length: n }, () => r());

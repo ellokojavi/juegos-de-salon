@@ -384,7 +384,7 @@ Spec and design: [docs/games/julep.md](docs/games/julep.md)
 </table>
 <!-- /generado -->
 
-**On the menu since D-175**, after a stint in the lab (D-101). The lab at [`/labs/`](https://juegosdesalon.cl/labs/) stays for testing: practice each game on its own, simulate a whole cup on one computer, or run a real 3-day cup with close friends. A 🐞 button sends bug reports and comments with their context, no login needed.
+**On the menu since D-175**, after a stint in the lab (D-101). The 3-day cup, for testing with close friends, is offered with `?tres` in the link. A 🐞 button sends bug reports and comments with their context, no login needed.
 
 Not a game but a **tournament that lasts a week**. Someone creates a cup and shares the link with the group; everyone joins with their name and a 4-digit PIN, from any phone or computer. Every day a different game opens, **the same one for everybody**, and it can be played **once**. Your score only matters against the others: the day hands out points by position (10, 8, 6, 5, 4, 3, 2, 1), so every day weighs the same (and every game scores 0 to 100 anyway, D-113) and one crushing day does not decide the cup (D-94). The final day is worth double, everyone gets one ×2 wildcard, and whoever has the most points on day 7 lifts the cup.
 
@@ -528,7 +528,7 @@ How it is put together (canon C-3):
 - **A new language starts in the lab** (D-191): listed in `EN_LABS`, it is only offered on a device
   that came in through `/labs/<lang>/`, where every "‹ Menu" leads back to the lab and a 🐞 button
   sends comments, so native speakers can review the draft before everyone sees it. **German** went
-  through it and is now offered to everyone (D-197); the old `/labs/de/` link forwards to `/de/`.
+  through it and is now offered to everyone (D-197).
   Its glossary is in [docs/ALEMAN.md](docs/ALEMAN.md).
 - In The Cup, the screen follows each player's language, but the words of Connections and Word, the
   messages shared with the group and their link follow the language picked when the cup is created
@@ -735,7 +735,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   julep/                      Julep (engine.js + tests, game.js, rules.js)
   fourth-king/                Fourth King (engine.js + tests, game.js, rules.js)
   connections/ · queens/ …    The Cup's games played on their own, one page each (generated from cup/suelto/)
-  labs/                       The lab: games being tested before they reach the menu (not linked, not indexed); labs/de/ forwards to /de/ (German left the lab, D-197)
+  labs/                       The lab: games being tested before they reach the menu (not linked, not indexed); today only El caso (D-262)
     case/                     The Case: a mystery prototype in the style of Clues by Sam, Spanish only, for friends to try (D-256)
   records/                    Leaderboards: the All-Rounder, every game's table and The Cup's medal table (D-212)
   today/                      One a Day: today's game, your streak, a calendar and how you do in each game (D-230)

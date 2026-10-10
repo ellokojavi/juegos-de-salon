@@ -11,28 +11,13 @@
   <script src="../assets/js/vigia.js"></script>
   <link rel="stylesheet" href="../assets/css/base.css">
   <style>
-    .uad-formas { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .uad-formas .btn { font-size: 1rem; padding: 10px 8px; }
     .hero { text-align: center; padding: 6px 0 4px; }
     .hero .icon { font-size: 3.6rem; display: block; }
     .hero h1 { margin: 4px 0; }
     .aviso-labs { border-color: rgba(255, 122, 26, 0.55); }
     .seccion { display: grid; gap: 10px; }
     .seccion h2 { font-family: var(--font-display); font-size: 1.6rem; letter-spacing: 0.04em; margin: 0; }
-    .paso { display: grid; gap: 8px; }
-    .paso p { margin: 0; }
-    .paso .num { font: 900 0.8rem var(--font-num); color: var(--yellow); text-transform: uppercase; letter-spacing: 0.08em; }
-    .minis { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
-    .mini-juego {
-      display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 8px; text-decoration: none; color: var(--ink);
-      background: rgba(0,0,0,0.25); border: 2px solid var(--glass-border); border-radius: 14px; padding: 10px 12px; min-height: 52px; font-weight: 900;
-    }
-    .mini-juego span:first-child { font-size: 1.5rem; }
-    .demos { display: grid; grid-template-columns: 1fr; gap: 8px; }
-    @media (min-width: 520px) { .demos { grid-template-columns: 1fr 1fr; } }
-    .mini-juego small { display: block; color: var(--muted); font-weight: 700; font-size: 0.75rem; }
     .btn { text-decoration: none; display: flex; align-items: center; justify-content: center; }
-    ul.notas { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; }
   </style>
 </head>
 <body>
@@ -53,34 +38,6 @@
         <p style="margin:0">Lo que hay en el laboratorio todavía puede cambiar o romperse. Si algo falla o se te ocurre una mejora, usa el botón <b>🐞 Reportar un problema o dejar un comentario</b> que aparece en cada juego.</p>
       </div>
 
-      <section class="panel seccion">
-        <h2>🏆 La Copa</h2>
-        <p class="muted" style="margin:0">Un torneo entre amigos: cada día un juego distinto, el mismo para todos, que se juega una sola vez. Se prueba en tres pasos.</p>
-
-        <div class="paso">
-          <span class="num">Paso 1 · Cada juego por separado</span>
-          <p>Juega un juego suelto, sin copa y sin que cuente. Cada vez sale con otro contenido.</p>
-          <div class="minis" id="minis"></div>
-        </div>
-
-        <div class="paso">
-          <span class="num">Paso 2 · Cada vista de la copa, ya en marcha</span>
-          <p>Abre una copa de ejemplo en el punto que quieras, del lado del jugador o del admin, y tócala como en la versión final. Cada demo arma una copa nueva y no toca la base de verdad.</p>
-          <div class="demos" id="demos"></div>
-        </div>
-
-        <div class="paso">
-          <span class="num">Paso 3 · Una copa de verdad con amigos cercanos</span>
-          <p>Crea una <b>Copa de 3 días</b> (o de 7), comparte el link por WhatsApp y juéguenla en serio. Es una copa real: los días pasan de verdad y los resultados se guardan.</p>
-          <a class="btn btn--yellow" id="btn-copa-real" href="../cup/?labs">🏆 Crear o abrir una copa de prueba</a>
-        </div>
-
-        <ul class="notas muted">
-          <li>Las copas creadas acá son copas normales: quienes reciban el link entran igual que en la versión final.</li>
-          <li>La Copa ya está en el menú principal (D-175). Acá queda la Copa de 3 días para probar.</li>
-        </ul>
-      </section>
-
       <section class="panel seccion" id="seccion-caso">
         <h2>🔍 El caso</h2>
         <p class="muted" style="margin:0">Un misterio al estilo de <i>Clues by Sam</i>: veinte sospechosos y pistas que siempre dicen la verdad. Descubre quién es criminal sin adivinar. Ya es un juego de La Copa, en los cuatro idiomas, aunque una copa todavía no lo puede elegir (D-257).</p>
@@ -89,28 +46,6 @@
         <p class="muted" style="margin:0;font-size:0.85rem">El prototipo de antes: un caso por día, el mismo para todos, solo en español.</p>
         <a class="btn btn--ghost" id="btn-caso-dia" href="case/">📅 El caso del día (prototipo)</a>
       </section>
-
-      <section class="panel seccion" id="seccion-uno-al-dia">
-        <h2>📅 Uno al día</h2>
-        <p class="muted" style="margin:0">Cada día un juego sorpresa, el mismo desafío para todos, con racha y calendario (D-230). Ya está en la portada para todos, en una tarjeta junto a La Copa (D-239); aquí se puede probar la otra forma, al lado de Juego al azar.</p>
-        <p id="uad-estado" class="muted" style="margin:0"></p>
-        <button class="btn btn--yellow" id="btn-labs-uad" type="button">Activar en este celular</button>
-        <p id="uad-forma-titulo" class="muted" style="margin:0"><b>Dónde va en la portada:</b></p>
-        <div class="uad-formas" id="uad-formas" role="group" aria-labelledby="uad-forma-titulo">
-          <button class="btn btn--sm" type="button" data-forma="boton">Al lado del dado</button>
-          <button class="btn btn--sm" type="button" data-forma="tarjeta">Junto a La Copa</button>
-        </div>
-        <a class="btn btn--ghost" id="btn-labs-uad-ver" href="../today/">📅 Ver Uno al día</a>
-      </section>
-
-      <section class="panel seccion" id="seccion-instalar">
-        <h2>📲 Agregar a inicio</h2>
-        <p class="muted" style="margin:0">El globo de la portada que invita a agregar la app a la pantalla de inicio, con los pasos de Safari y Chrome en iPhone y en Android (D-232). Sale en el celular, no en el computador, y se va para siempre con la ✕.</p>
-        <p id="instalar-estado" class="muted" style="margin:0"></p>
-        <button class="btn btn--yellow" id="btn-labs-instalar" type="button">Activar en este celular</button>
-        <button class="btn btn--ghost" id="btn-instalar-otra-vez" type="button">Volver a mostrar el globo</button>
-      </section>
-
     </div>
     <footer class="muted" style="text-align:center;padding-top:24px;font-size:0.85rem">
       <p id="labs-version">Versión activa: …</p>
@@ -118,83 +53,16 @@
   </main>
 
   <script type="module">
-    import { sparkles, el, con } from '../assets/js/ui.js';
+    import { sparkles } from '../assets/js/ui.js';
     import { soundToggle, initSound, SFX } from '../assets/js/sound.js';
-    import { JUEGOS_COPA } from '../cup/rules.js';
-    import { gameById } from '../assets/js/games.js';
     import { versionOf, trackVisit } from '../assets/js/transport/stats.js';
     trackVisit(); // el tráfico del sitio (D-208)
     // La versión activa sale del import map que estampa set-version.py: la que de verdad cargó
     document.getElementById('labs-version').textContent = `Versión activa: v${versionOf(document.getElementById('importmap')?.textContent)}`;
     sparkles();
-    // El globo de agregar a inicio, solo en los celulares que lo activan aquí (D-232)
-    import('../assets/js/instalar.js').then(({ instalarEnLabs, activarInstalar, descartado, descartar, INSTALAR_EN_LABS }) => {
-      const b = document.getElementById('btn-labs-instalar'), otra = document.getElementById('btn-instalar-otra-vez');
-      const est = document.getElementById('instalar-estado');
-      const pintar = () => {
-        const on = instalarEnLabs();
-        b.textContent = on ? 'Desactivar en este celular' : 'Activar en este celular';
-        // Fuera del laboratorio sale para todos: aquí queda solo volver a mostrarlo
-        b.hidden = !INSTALAR_EN_LABS;
-        est.textContent = !INSTALAR_EN_LABS ? (descartado() ? 'Ya está para todos. Lo cerraste con la ✕ en este celular: vuelve a mostrarlo para verlo en la portada.' : 'Ya está para todos: abre la portada en el celular y espera unos segundos.') : !on ? '' : descartado() ? 'Activo, pero lo cerraste con la ✕: vuelve a mostrarlo para verlo en la portada.' : 'Activo: abre la portada y espera unos segundos.';
-        otra.hidden = !on || !descartado();
-      };
-      b.addEventListener('click', () => { SFX.tap(); activarInstalar(!instalarEnLabs()); pintar(); });
-      otra.addEventListener('click', () => { SFX.tap(); descartar(false); pintar(); });
-      pintar();
-    });
-    // Uno al día, solo en los celulares que lo activan aquí (D-230)
-    import('../assets/js/uno-al-dia.js').then(({ unoAlDiaVisible, activarUnoAlDia, formaAcceso, elegirForma, UNO_AL_DIA_EN_LABS }) => {
-      const b = document.getElementById('btn-labs-uad'), ver = document.getElementById('btn-labs-uad-ver');
-      const est = document.getElementById('uad-estado'), formas = document.getElementById('uad-formas');
-      const pintar = () => {
-        const on = unoAlDiaVisible();
-        b.textContent = on ? 'Desactivar en este celular' : 'Activar en este celular';
-        // Fuera del laboratorio (D-230) se ve para todos: aquí queda solo probar la otra forma (la bajada ya lo dice)
-        b.hidden = !UNO_AL_DIA_EN_LABS;
-        est.textContent = !UNO_AL_DIA_EN_LABS ? '' : on ? 'Activo: abre la portada y toca 📅 Uno al día.' : '';
-        ver.hidden = !on;
-        formas.hidden = document.getElementById('uad-forma-titulo').hidden = !on;
-        // La forma elegida va en amarillo; la otra, apagada
-        for (const x of formas.querySelectorAll('button')) {
-          const sel = x.dataset.forma === formaAcceso();
-          x.className = `btn btn--sm ${sel ? 'btn--yellow' : 'btn--ghost'}`;
-          x.setAttribute('aria-pressed', String(sel));
-        }
-      };
-      for (const x of formas.querySelectorAll('button')) x.addEventListener('click', () => { SFX.tap(); elegirForma(x.dataset.forma); pintar(); });
-      b.addEventListener('click', () => { SFX.tap(); activarUnoAlDia(!unoAlDiaVisible()); pintar(); });
-      pintar();
-    });
     initSound();
     document.getElementById('sound-slot').append(soundToggle());
     document.addEventListener('click', e => { if (e.target.closest('a')) SFX.tap(); });
-    // Las demos (D-110): cada una siembra una copa de ejemplo en el modo de prueba
-    const DEMOS = [
-      ['nueva', '🛠️', 'Admin: copa recién creada', 'la guía para invitar'],
-      ['invitado', '✉️', 'Alguien abre la invitación', 'inscribirse con nombre y PIN'],
-      ['espera', '⏳', 'Jugador: antes de que parta', 'el tablero esperando el día 1'],
-      ['sin-jugar', '📅', 'Admin: partió y nadie jugó', 'mover el inicio a hoy o mañana'],
-      ['jugador', '🎮', 'Jugador: día 4 de 7', 'tablero, tabla y gráfico'],
-      ['admin', '🛠️', 'Admin: día 4 de 7', 'mensajes y jugadores'],
-      ['final', '🏁', 'Jugador: el día de la final', 'la Gran Final por jugar'],
-      ['final-admin', '🏁', 'Admin: el día de la final', 'terminar la copa antes y exportar la tabla'],
-      ['podio', '🏆', 'Jugador: la copa terminó', 'podio y medallas'],
-      ['llena', '👥', 'Jugador: 10 jugadores, 7 días', 'el gráfico y la imagen, llenos'],
-    ];
-    const demos = document.getElementById('demos');
-    for (const [id, emoji, titulo, sub] of DEMOS) {
-      demos.append(el('a', { class: 'mini-juego', href: `../cup/?prueba&demo=${id}`, 'data-demo': id },
-        el('span', {}, emoji), el('span', {}, titulo, el('small', {}, sub))));
-    }
-    // Los juegos salen del registro de La Copa: uno nuevo aparece solo (C-16). Los que tienen
-    // página propia se juegan ahí (D-164), para que el link copiado traiga su tarjeta social.
-    const minis = document.getElementById('minis');
-    for (const [id, J] of Object.entries(JUEGOS_COPA)) {
-      const href = gameById(id)?.suelto ? `../${gameById(id).path}?labs` : `../cup/?practica=${id}&labs`;
-      minis.append(el('a', { class: 'mini-juego', href, 'data-id': id },
-        el('span', { class: con('', J.emoji) }, J.emoji), el('span', {}, J.nombre, el('small', {}, J.habilidad))));
-    }
   </script>
 </body>
 </html>
