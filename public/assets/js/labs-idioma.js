@@ -93,10 +93,13 @@ function contexto(idioma) {
 /** El formulario de comentarios, para un botón propio (la portada del laboratorio lo tiene). */
 export const abrirFeedback = () => abrir(TEXTOS[LABS_IDIOMA] || TEXTOS.de, LABS_IDIOMA || 'de');
 
-function abrir(T, idioma) {
+function abrir(T, idioma) { abrirComentario({ T, contexto: contexto(idioma) }); }
+
+/** El formulario de comentarios en una capa sobre la página: el 🐞 del laboratorio y el link al final de cada vista de un juego del laboratorio (D-268). */
+export function abrirComentario({ T, contexto: ctx, enviar = undefined }) {
   if (document.querySelector('.labs-capa')) return;
   let capa = null;
-  const caja = formularioComentario({ T, contexto: contexto(idioma), alCerrar: () => capa.remove() });
+  const caja = formularioComentario({ T, contexto: ctx, enviar, alCerrar: () => capa.remove() });
   caja.classList.add('labs-caja');
   caja.setAttribute('role', 'dialog');
   caja.setAttribute('aria-modal', 'true');
@@ -112,8 +115,9 @@ function abrir(T, idioma) {
  * `enviar`, `enviando`, `vacio`, `gracias`, `guardado`, `error`, `contexto` y, si se puede cerrar,
  * `cancelar` y `cerrar`); `contexto` va adjunto a la vista de quien escribe. Sin `alCerrar` no tiene
  * botón para cerrar: queda en la página, y después de enviar dice gracias en el mismo lugar.
+ * `enviar` lo reemplaza el modo de prueba de La Copa, que guarda en el celular y no en Firebase.
  */
-export function formularioComentario({ T, contexto: ctx, alCerrar = null }) {
+export function formularioComentario({ T, contexto: ctx, alCerrar = null, enviar: mandar = enviarReporte }) {
   let nombreGuardado = '';
   try { nombreGuardado = localStorage.getItem(NOMBRE) || ''; } catch (_) { /* nada */ }
   const err = el('div', { class: 'labs-error', role: 'alert' });
@@ -135,7 +139,7 @@ export function formularioComentario({ T, contexto: ctx, alCerrar = null }) {
     const fin = msg => caja.replaceChildren(el('p', { class: 'labs-aviso', role: 'status' }, msg),
       alCerrar ? el('button', { type: 'button', class: 'btn btn--yellow', onClick: alCerrar }, T.cerrar) : '');
     try {
-      await enviarReporte({
+      await mandar({
         texto: t.slice(0, 1000), nombre: n, contexto: JSON.stringify(ctx).slice(0, 500),
         v: versionOf(document.getElementById('importmap')?.textContent || '') || 'dev',
       });
