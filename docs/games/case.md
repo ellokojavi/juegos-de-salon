@@ -72,8 +72,8 @@ Caso del día (o ?c=) → marcar de a uno → ¡Caso resuelto! → Compartir · 
   partida) con "👁 Ver a quiénes nombra" (o "👁 Volver a ver a todos" si ya está iluminada), para iluminarla sin bajar a la lista. El reloj parte cuando termina la vuelta de las cartas, o con el primer toque.
 - **La última pista** va arriba de la lista, con borde amarillo, la etiqueta "Última" y letra más
   grande, y entra animada.
-- **"¿Cómo se juega?"** va al final; el link junto a la bajada lo abre. La lupa 🔍 se mece junto al
-  título.
+- **"¿Cómo se juega?"** va al final; el link junto a la bajada lo abre y baja hasta él con un
+  scroll suave (con `prefers-reduced-motion`, sin animación). La lupa 🔍 se mece junto al título.
 
 La partida se guarda por caso en el celular (C-6): marcas, errores, tiempo y pistas tachadas (el ✓ de
 cada pista la tacha, para llevar la cuenta). Tocar a alguien ya marcado muestra su pista bajo la grilla (#271).
