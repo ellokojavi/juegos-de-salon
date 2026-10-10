@@ -143,6 +143,17 @@ export function montar(raiz, ctx) {
   };
 
   /** Un mensaje con pista se toca para iluminar a quiénes nombra. */
+  /**
+   * El acierto, el error y el "todavía no se puede saber" se van solos (pedido del dueño, excepción a
+   * C-8b): el acierto a los 2,5 s y los otros dos a los 4 s, que hay que leerlos. El error igual queda
+   * marcado con ✕ en la carta y en la cuenta. El temporizador solo cierra su propio mensaje.
+   */
+  const caducar = (m, ms) => setTimeout(() => {
+    if (mensaje !== m || !raiz.isConnected) return;
+    accion.querySelector('.cs-msg')?.classList.add('se-va');
+    setTimeout(() => { if (mensaje !== m) return; mensaje = null; dibujarAccion(motor.estado(p, jugadas)); }, QUIETO() ? 0 : 350);
+  }, ms);
+
   const msg = m => el('button', {
     type: 'button', class: `cs-msg ${m.tipo}${m.de !== undefined && foco === m.de ? ' activa' : ''}`,
     onClick: ev => { ev.stopPropagation(); if (m.de !== undefined) enfocar(m.de); },
@@ -165,9 +176,8 @@ export function montar(raiz, ctx) {
     } else if (mensaje) {
       accion.append(msg(mensaje));
     } else {
-      // Al empezar (y al volver), la última pista sabida queda a la vista junto a la grilla
-      const ultima = e.marcas.length ? e.marcas.at(-1) : p.inicio;
-      accion.append(msg({ tipo: 'dato', texto: dice(ultima), de: ultima }), el('p', { class: 'cs-sub' }, T.casoToca));
+      // Las pistas están justo abajo, la última destacada: aquí no se repiten
+      accion.append(el('p', { class: 'cs-sub' }, T.casoToca));
     }
   };
 
@@ -177,7 +187,6 @@ export function montar(raiz, ctx) {
     const tachadas = ctx.tachadas || (ctx.tachadas = new Set());
     pistas.replaceChildren(
       el('h3', {}, `💬 ${fmt(T.casoPistas, { n: orden.length })}`),
-      el('p', { class: 'ayuda' }, T.casoAyuda),
       ...orden.map((i, k) => el('div', {
         class: 'cs-pista' + (k === 0 ? ' ultima' : '') + (nueva === i ? ' entra' : '') + (tachadas.has(i) ? ' tachada' : '') + (foco === i ? ' activa' : ''),
         'data-de': i,
@@ -233,6 +242,7 @@ export function montar(raiz, ctx) {
     const vars = { x: nombre(i), v: v ? criminal(i) : T.casoInocente };
     if (r === 'falta') {
       mensaje = { tipo: 'falta', texto: fmt(T.casoFalta, vars) };
+      caducar(mensaje, 4000);
       SFX.error(); vibrate([20, 30, 20]);
       dibujar(); sellar(i, '❔', 'duda');
       return;
@@ -241,12 +251,15 @@ export function montar(raiz, ctx) {
     ctx.guardar(jugadas);
     if (r === 'error') {
       mensaje = { tipo: 'error', texto: fmt(T.casoError, vars) };
+      caducar(mensaje, 4000);
       SFX.letterMiss(); vibrate([40, 40, 40]);
       dibujar(); sellar(i, '❌', 'fallo');
       return;
     }
     elegida = null; foco = null; nueva = i;
-    mensaje = { tipo: 'ok', texto: fmt(T.casoBien, { ...vars, p: frase(i) }), de: i };
+    // Solo el acierto: su pista entra destacada arriba de la lista, sin repetirse aquí
+    mensaje = { tipo: 'ok', texto: fmt(T.casoBien, vars) };
+    caducar(mensaje, 2500);
     const e = motor.estado(p, jugadas);
     if (e.fin) { SFX.win(); vibrate([30, 50, 30]); } else { SFX.letterHit(); vibrate(25); }
     dibujar(); sellar(i, v ? '🔪' : '😇', 'acierto');

@@ -180,7 +180,8 @@ por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
   recién cuando la cuenta del 3, 2, 1 se fue del documento, no mientras la tapa. Se juega suelto en
   `/case/` (el botón 🔍 de `/labs/` abre `/case/?labs`; el prototipo queda de segundo botón) y en la
   práctica del laboratorio, pero **todavía no está en `POZO`**: una copa no lo elige hasta que salga
-  del laboratorio. Su habilidad es `deducir`, la misma de Toque y Fama, para que el sorteo del
+  del laboratorio. Los mensajes de acierto y de error se van solos (2,5 s y 4 s, excepción a C-8b anotada en
+  [case.md](case.md)). Su habilidad es `deducir`, la misma de Toque y Fama, para que el sorteo del
   calendario no los ponga en días seguidos.
   **Las pistas se eligen para que haya que combinarlas** (D-259): `notaPista` premia la que destapa
   a alguien solo junto con las que ya se saben, castiga la que lo dice todo sola y prefiere las

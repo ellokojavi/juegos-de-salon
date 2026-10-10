@@ -155,6 +155,15 @@ function sellar(i, emoji, clase) {
 /** El texto de una pista con quien la dice, como se muestra bajo la grilla. */
 const dice = i => `${caso.nombres[i]} es ${caso.v[i] ? 'criminal' : 'inocente'} y dice: «${caso.pistas[i].texto}»`;
 
+/** El acierto, el error y el "todavía no" se van solos: a los 2,5 s el acierto y a los 4 s los otros (pedido del dueño). */
+function caducar(m, ms) {
+  setTimeout(() => {
+    if (mensaje !== m) return;
+    document.querySelector('.accion .msg')?.classList.add('se-va');
+    setTimeout(() => { if (mensaje !== m) return; mensaje = null; renderAccion(estado(caso, P.marcas)); }, QUIETO ? 0 : 350);
+  }, ms);
+}
+
 function renderAccion(e) {
   const box = $('#accion');
   box.replaceChildren();
@@ -175,9 +184,8 @@ function renderAccion(e) {
   } else if (mensaje) {
     box.append(msg(mensaje));
   } else {
-    // Al empezar (y al volver), la última pista queda a la vista junto a la grilla
-    const ultima = P.marcas.length ? P.marcas.at(-1) : caso.inicio;
-    box.append(msg({ tipo: 'dato', texto: dice(ultima), de: ultima }), el('p', { class: 'msg-sub' }, 'Toca a alguien para marcarlo.'));
+    // Las pistas están justo abajo, la última destacada: aquí no se repiten
+    box.append(el('p', { class: 'msg-sub' }, 'Toca a alguien para marcarlo.'));
   }
 }
 
@@ -194,7 +202,6 @@ function renderPistas(e) {
   const orden = [caso.inicio, ...P.marcas].reverse();
   $('#pistas').replaceChildren(
     el('h2', {}, `💬 Pistas (${orden.length})`),
-    el('p', { class: 'ayuda' }, 'Toca una pista para ver a quiénes nombra. Con ✓ la tachas cuando ya la usaste.'),
     ...orden.map((i, k) => el('div', {
       class: 'pista' + (k === 0 ? ' ultima' : '') + (nuevas.includes(i) ? ' entra' : '') + (P.tachadas.includes(i) ? ' tachada' : '') + (foco === i ? ' activa' : ''),
       'data-de': i,
@@ -243,11 +250,13 @@ function intentar(valor) {
   const r = marcar(caso, P.marcas, i, valor);
   if (r === 'falta') {
     mensaje = { tipo: 'falta', texto: `Con las pistas que hay, todavía no se puede saber qué es ${n}.` };
+    caducar(mensaje, 4000);
     SFX.error(); vibrate([20, 30, 20]);
     sellar(i, '❔', 'duda');
   } else if (r === 'error') {
     if (!P.errores.includes(i)) P.errores.push(i);
     mensaje = { tipo: 'error', texto: `${n} no es ${valor ? 'criminal' : 'inocente'}. Revisa las pistas.` };
+    caducar(mensaje, 4000);
     SFX.letterMiss(); vibrate([40, 40, 40]);
     guardar();
     renderMarcador(); renderGrilla(estado(caso, P.marcas)); renderAccion(estado(caso, P.marcas));
@@ -258,7 +267,8 @@ function intentar(valor) {
     nuevas = [i];
     elegida = null;
     foco = null;
-    mensaje = { tipo: 'ok', texto: `¡Bien! ${dice(i)}`, de: i };
+    mensaje = { tipo: 'ok', texto: `¡Bien! ${caso.nombres[i]} es ${valor ? 'criminal' : 'inocente'}.` };
+    caducar(mensaje, 2500);
     SFX.letterHit(); vibrate(25);
     if (estado(caso, P.marcas).terminado) { parar(); P.done = true; }
     guardar();
