@@ -20,6 +20,11 @@ ok(await ev(`document.querySelectorAll('.persona').length`) === 20, 'veinte sosp
 ok(await ev(`document.querySelectorAll('#pistas .pista').length`) === 1, 'se parte con una pista');
 await b.shot('01-inicio');
 
+// "¿Cómo se juega?" abre las reglas y baja hasta ellas, sin el salto del ancla
+await ev(`document.getElementById('ir-reglas').click(); 1`); await sleep(900);
+ok(await ev(`document.getElementById('reglas').open && !location.hash && scrollY > 0`), '"¿Cómo se juega?" abre las reglas y baja hasta ellas');
+await ev(`document.getElementById('reglas').open = false; scrollTo(0, 0); 1`); await sleep(200);
+
 // Tocar la pista ilumina en la grilla a las personas de las que habla, y la sacada de las otras
 await ev(`document.querySelector('#pistas .pista .texto').click(); 1`); await sleep(300);
 const foco = await ev(`JSON.stringify({ foco: document.querySelectorAll('.persona.foco').length, habla: document.querySelectorAll('.persona.habla').length, enfoque: document.getElementById('grilla').classList.contains('enfoque') })`).then(JSON.parse);
