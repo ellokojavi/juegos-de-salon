@@ -44,7 +44,7 @@ export function desglose(id, e, { T, fmt, mmss, copa = true, lang = 'es' }) {
     case 'caso': return e.fin ? [
       T.bdStart100,
       e.errores ? fmt(e.errores === 1 ? T.bdCasoMistakesOne : T.bdCasoMistakes, { n: e.errores, pts: 10 * e.errores }) : T.bdCasoNoMistakes,
-      T.bdFloor10,
+      T.bdCasoFloor,
     ] : [T.bdNotSolved];
     case 'zip': case 'desenredo': return [
       fmt(e.hechos === 1 ? T.bdLevelsOne : T.bdLevels, { n: e.hechos || 0, pts: Math.min(100, 10 * (e.hechos || 0)) }),
