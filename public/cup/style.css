@@ -614,8 +614,9 @@ input.fecha { width: 100%; min-height: 48px; border-radius: 12px; border: 1px so
 
 /* La grilla: las letras y los números van dentro de la misma grilla (C-8) */
 .cs-juego { gap: 8px; }
-.cs-grilla { display: grid; grid-template-columns: 14px repeat(4, minmax(0, 1fr)); gap: 6px; width: 100%; max-width: 440px; margin: 0 auto; }
-.cs-grilla .etq { display: grid; place-items: center; font: 900 0.72rem var(--font-num); color: var(--muted); }
+.cs-grilla { display: grid; grid-template-columns: 20px repeat(4, minmax(0, 1fr)); gap: 6px; width: 100%; max-width: 440px; margin: 0 auto; }
+/* Las letras y los números de la grilla, grandes: las pistas los nombran ("en la fila 3", "en la columna B") */
+.cs-grilla .etq { display: grid; place-items: center; font: 900 1.05rem var(--font-num); color: var(--ink); opacity: 0.85; }
 .cs-persona { position: relative; display: grid; padding: 0; border: 0; background: none; color: var(--ink); font-family: var(--font-body); cursor: pointer; min-width: 0; perspective: 700px; transition: transform 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.3), opacity 0.2s; -webkit-tap-highlight-color: transparent; }
 .cs-persona:disabled { cursor: default; }
 .cs-persona .giro { display: grid; transform-style: preserve-3d; transition: transform 0.5s cubic-bezier(0.3, 0.9, 0.3, 1.05); }
