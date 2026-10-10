@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.142.3 — 2026-10-10
+- **🎬 Marketing: teaser de El caso** (`marketing/caso-teaser/`): 6 s en vertical y un GIF para
+  WhatsApp, que invitan a probar el juego del laboratorio y a dejar un comentario.
+
 ## 0.142.2 — 2026-10-10
 - **🔍 El caso (laboratorio): "¿Qué te pareció?"** (D-265): al terminar el caso del día, un
   formulario para dejar un comentario, con el caso adjunto.
