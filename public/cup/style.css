@@ -582,7 +582,8 @@ input.fecha { width: 100%; min-height: 48px; border-radius: 12px; border: 1px so
 /* ---------- 🔍 El caso (D-257). La misma experiencia del prototipo del laboratorio (D-256) ---------- */
 /* El nombre en la antesala: la lupa al lado y los colores que se mueven, como en el prototipo */
 .cs-titulo { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
-.cs-titulo .rainbow { padding-top: 0.2em; margin-top: -0.2em; }
+/* La letra inclinada se pasa del borde de su caja y el degradado solo pinta dentro: sin este relleno, la última letra salía cortada (la O de "O Caso", la E de "The Case") */
+.cs-titulo .rainbow { padding: 0.2em 0.15em 0 0; margin: -0.2em -0.15em 0 0; }
 .cs-lupa { font-size: 2.1rem; line-height: 1; display: inline-block; transform-origin: 70% 70%; animation: cs-lupa 3.2s ease-in-out infinite; filter: drop-shadow(0 0 12px rgba(255, 210, 63, 0.45)); }
 @keyframes cs-lupa { 0%, 100% { transform: rotate(-8deg) translateX(0); } 50% { transform: rotate(10deg) translateX(3px); } }
 @media (prefers-reduced-motion: reduce) { .cs-lupa { animation: none; } }
