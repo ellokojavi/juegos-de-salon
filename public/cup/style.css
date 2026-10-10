@@ -664,7 +664,7 @@ input.fecha { width: 100%; min-height: 48px; border-radius: 12px; border: 1px so
 .cs-accion .btn-row .btn { min-height: 48px; font-size: 1rem; padding-left: 6px; padding-right: 6px; }
 .btn.cs-inocente { background: linear-gradient(180deg, #c6ff8a, var(--lime)); color: #173a00; box-shadow: 0 4px 0 #4f8f13; }
 .btn.cs-criminal { background: linear-gradient(180deg, #ff8fbf, #ff3d8b); color: #3a0018; box-shadow: 0 4px 0 #a3134f; }
-.cs-msg { display: grid; gap: 4px; width: 100%; text-align: center; font: 800 0.98rem/1.35 var(--font-body); color: var(--ink); margin: 0; padding: 9px 12px; border-radius: 12px; border: 2px solid transparent; background: rgba(0,0,0,0.25); cursor: default; }
+.cs-msg { display: grid; gap: 4px; align-content: center; width: 100%; text-align: center; font: 800 0.98rem/1.35 var(--font-body); color: var(--ink); margin: 0; padding: 9px 12px; border-radius: 12px; border: 2px solid transparent; background: rgba(0,0,0,0.25); cursor: default; }
 .cs-msg.ok { color: var(--lime); border-color: rgba(157, 255, 58, 0.45); cursor: pointer; }
 .cs-msg.error { color: var(--pink); border-color: rgba(255, 61, 139, 0.45); }
 .cs-msg.falta { color: var(--yellow); }

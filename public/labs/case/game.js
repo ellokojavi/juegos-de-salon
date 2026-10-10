@@ -175,9 +175,8 @@ function renderAccion(e) {
   } else if (mensaje) {
     box.append(msg(mensaje));
   } else {
-    // Al empezar (y al volver), la última pista queda a la vista junto a la grilla
-    const ultima = P.marcas.length ? P.marcas.at(-1) : caso.inicio;
-    box.append(msg({ tipo: 'dato', texto: dice(ultima), de: ultima }), el('p', { class: 'msg-sub' }, 'Toca a alguien para marcarlo.'));
+    // Las pistas están justo abajo, la última destacada: aquí no se repiten
+    box.append(el('p', { class: 'msg-sub' }, 'Toca a alguien para marcarlo.'));
   }
 }
 
@@ -194,7 +193,6 @@ function renderPistas(e) {
   const orden = [caso.inicio, ...P.marcas].reverse();
   $('#pistas').replaceChildren(
     el('h2', {}, `💬 Pistas (${orden.length})`),
-    el('p', { class: 'ayuda' }, 'Toca una pista para ver a quiénes nombra. Con ✓ la tachas cuando ya la usaste.'),
     ...orden.map((i, k) => el('div', {
       class: 'pista' + (k === 0 ? ' ultima' : '') + (nuevas.includes(i) ? ' entra' : '') + (P.tachadas.includes(i) ? ' tachada' : '') + (foco === i ? ' activa' : ''),
       'data-de': i,
@@ -258,7 +256,7 @@ function intentar(valor) {
     nuevas = [i];
     elegida = null;
     foco = null;
-    mensaje = { tipo: 'ok', texto: `¡Bien! ${dice(i)}`, de: i };
+    mensaje = { tipo: 'ok', texto: `¡Bien! ${caso.nombres[i]} es ${valor ? 'criminal' : 'inocente'}.` };
     SFX.letterHit(); vibrate(25);
     if (estado(caso, P.marcas).terminado) { parar(); P.done = true; }
     guardar();
