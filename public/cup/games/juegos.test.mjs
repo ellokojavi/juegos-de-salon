@@ -692,6 +692,10 @@ test('el caso: se resuelve sin adivinar, las pistas son verdad y se dicen en los
   assert.equal(caso.puntaje({ fin: true, errores: 3 }), 70);
   assert.equal(caso.puntaje({ fin: true, errores: 12 }), 10);
   assert.equal(caso.tarjeta({ conError: new Set([0]) }).split('\n')[0], '🟥🟩🟩🟩');
+  // En portugués, "criminoso" concuerda con quien es (U-3): "Ana é criminosa", "Beto é criminoso"
+  const directa = { ...p, nombres: ['Ana', 'Beto', ...p.nombres.slice(2)], pistas: [{ t: 'es', a: [0], k: 1 }, { t: 'es', a: [1], k: 1 }] };
+  assert.equal(caso.texto(directa, 0, LOCALES_COPA.pt.casoTexto), 'Ana é criminosa.');
+  assert.equal(caso.texto(directa, 1, LOCALES_COPA.pt.casoTexto), 'Beto é criminoso.');
 });
 
 test('las instrucciones de cada juego son concisas, en todos los idiomas (U-18, D-184)', () => {
