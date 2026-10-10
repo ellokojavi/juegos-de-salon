@@ -61,6 +61,13 @@ al día siguiente juega el mismo caso (#273); con `?c=CODIGO`, ese caso, y "🔍
 resultado se comparte con `compartir.js`: la cabecera, los errores, las ayudas y el tiempo, y una grilla de 🟩
 con 🟥 donde hubo error y 🟨 donde se pidió ayuda (C-7).
 
+Al final, debajo de los botones, va **"🐞 ¿Qué te pareció?"** (D-265): un formulario para que los
+amigos que lo prueban comenten, con nombre opcional. Es el de los comentarios del laboratorio
+(`formularioComentario` de `labs-idioma.js`), puesto en la página en vez de en una capa: va a
+`feedback/` con el caso, la semilla, los errores, las ayudas y el tiempo, se lee con
+`node tools/firebase/reportes.mjs`, y sin red queda en el celular y se reenvía (D-104, D-109).
+El juego de La Copa (`/case/`) ya tenía su "🐞 Reportar un problema o dejar un comentario" en el resultado.
+
 ## Flujo
 
 ```
