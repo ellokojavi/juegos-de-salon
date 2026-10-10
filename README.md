@@ -735,7 +735,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   julep/                      Julep (engine.js + tests, game.js, rules.js)
   fourth-king/                Fourth King (engine.js + tests, game.js, rules.js)
   connections/ · queens/ …    The Cup's games played on their own, one page each (generated from cup/suelto/)
-  labs/                       The lab: games being tested before they reach the menu (not linked, not indexed); today only El caso (D-262)
+  labs/                       The lab: games being tested before they reach the menu (not linked, not indexed); today only El caso (D-262), which ends with a "What did you think?" form for the friends testing it (D-265)
     case/                     The Case: a mystery prototype in the style of Clues by Sam, Spanish only, for friends to try (D-256)
   records/                    Leaderboards: the All-Rounder, every game's table and The Cup's medal table (D-212)
   today/                      One a Day: today's game, your streak, a calendar and how you do in each game (D-230)

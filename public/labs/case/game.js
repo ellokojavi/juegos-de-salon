@@ -10,6 +10,7 @@ import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
 import { compartir, cabecera } from '../../assets/js/compartir.js';
 import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/stats.js';
 import { fechaLocal } from '../../assets/js/uno-al-dia.js';
+import { formularioComentario } from '../../assets/js/labs-idioma.js';
 import { N, COLS, FILAS, LETRAS_COL, coord, generar, estado, marcar, semillaDelDia, ayuda, lista, sujetos } from './engine.js';
 
 trackVisit();   // el tráfico del sitio (D-208)
@@ -117,7 +118,7 @@ function renderMarcador() {
   $('#marcador').replaceChildren(
     el('span', {}, '✅ ', el('b', {}, `${P.marcas.length + 1}/${N}`)),
     el('span', {}, '✕ ', el('b', { id: 'errores' }, P.errores.length), P.errores.length === 1 ? ' error' : ' errores'),
-    P.ayudas.length ? el('span', {}, '💡 ', el('b', {}, P.ayudas.length), P.ayudas.length === 1 ? ' ayuda' : ' ayudas') : null,
+    P.ayudas.length ? el('span', {}, '💡 ', el('b', {}, P.ayudas.length), P.ayudas.length === 1 ? ' ayuda' : ' ayudas') : '',
     el('span', {}, '⏱ ', el('b', { id: 'reloj' }, mmss(tiempo()))),
   );
 }
@@ -336,6 +337,18 @@ const textoAyudas = () => {
   return n === 0 ? '' : ` y ${con}${n === 1 ? '1 ayuda' : `${n} ayudas`}`;
 };
 
+/** Lo que dice el formulario de comentarios del final (D-265): es para los amigos que lo prueban. */
+const COMENTARIO = {
+  titulo: '¿Qué te pareció?',
+  lead: 'Cuéntanos qué te costó, qué te gustó o qué cambiarías. También si algo falló o una pista no se entendía.',
+  ph: 'Por ejemplo: me trabé con la pista de Olivia; la ayuda me sirvió.',
+  nombre: 'Tu nombre (opcional)', enviar: 'Enviar comentario', enviando: 'Enviando…',
+  vacio: 'Escribe algo primero.', gracias: '¡Gracias! 🙌 Tu comentario llegó.',
+  guardado: 'Ahora no hay internet: tu comentario quedó en el celular y se envía solo después.',
+  error: 'No se pudo enviar. Prueba de nuevo en un rato.', contexto: 'Lo que se envía junto',
+};
+let comentario = null;   // se arma una vez: si la pantalla se redibuja, no se pierde lo escrito
+
 let celebrado = false;
 function renderFin() {
   const box = $('#fin');
@@ -359,6 +372,10 @@ function renderFin() {
     el('a', { class: 'btn btn--yellow', id: 'btn-otro', href: `?c=${Array.from({ length: 5 }, () => LETRAS[Math.floor(Math.random() * LETRAS.length)]).join('')}` }, '🔍 Otro caso'),
     codigo || (diaLink && diaLink !== fechaLocal()) ? el('a', { class: 'btn btn--ghost', href: location.pathname }, '📅 El caso de hoy') : null,
     el('a', { class: 'btn btn--ghost', href: '../' }, '‹ Volver al laboratorio'),
+    comentario ||= formularioComentario({ T: COMENTARIO, contexto: {
+      juego: GAME_ID, caso: nombreCaso, semilla, errores: P.errores.length, ayudas: P.ayudas.length, tiempo: mmss(P.ms),
+      url: location.pathname + location.search, pantallaTam: `${innerWidth}×${innerHeight}`, navegador: navigator.userAgent.slice(0, 160),
+    } }),
   );
   if (!celebrado) {
     celebrado = true;
