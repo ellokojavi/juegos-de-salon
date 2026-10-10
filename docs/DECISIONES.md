@@ -68,7 +68,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216 |
-| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250 |
+| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-258 |
 | Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249 |
 | Marketing | `marketing/README.md` | D-178 |
@@ -1330,7 +1330,7 @@ reporte. Que se puedan leer públicamente es el precio de no tener
 servidor; si eso cambia, se cierra la lectura al UID del dueño y se leen desde el panel.
 
 ## D-105 · Cuenta regresiva antes de cada juego con reloj
-**Fecha:** 2026-09-23 · **Estado:** vigente · **Relación:** desde la 0.46 la cuenta va de 3 a 1: con 5 se hacía larga
+**Fecha:** 2026-09-23 · **Estado:** corregida por D-258 · **Relación:** desde la 0.46 la cuenta va de 3 a 1: con 5 se hacía larga
 **Decisión:** Al tocar Empezar (el día, la sesión de prueba o la práctica) aparece una capa con
 el nombre del juego y una cuenta de 3 a 1, un número por segundo, con un tic y una vibración
 corta. Después dice **¡A jugar!** y se desvanece sola sobre el tablero. El tablero no se dibuja
@@ -4487,4 +4487,21 @@ van en singular masculino en la carta en alemán y portugués (Koch, criminoso) 
 que los hable los revise. El prototipo de `/labs/case/` sigue con su propio motor en español; cuando
 El caso salga del laboratorio, esa página se va o pasa a usar este motor. Ver
 [docs/games/cup.md](games/cup.md).
+
+## D-258 · El reloj parte con la pantalla de juego a la vista, no con la cuenta
+**Fecha:** 2026-10-10 · **Estado:** vigente · **Relación:** corrige D-105 (cuándo parte el reloj)
+**Decisión:** En todos los juegos de La Copa (el día, la sesión de prueba, la práctica y los
+juegos sueltos), el reloj parte cuando el "¡A jugar!" ya se fue de la pantalla, no cuando aparece.
+El tablero se sigue armando debajo con el "¡A jugar!" (`cuentaRegresiva` se resuelve ahí y
+devuelve cuánto falta para que la capa se vaya, `CUENTA_SALE_MS`), pero el reloj nace con ese
+retraso. Un juego con animación de entrada la declara con `entrada()` en su registro, y el reloj
+espera también eso: en El caso, lo que tardan las cartas en darse vuelta (unos 1.030 ms; 0 con
+movimiento reducido).
+**Por qué:** lo pidió el dueño: el tiempo de la cuenta no es tiempo de juego. Con D-105 el reloj
+partía con el "¡A jugar!", y los 0,9 s que tarda en irse (más la vuelta de las cartas en El caso)
+se contaban aunque todavía no se podía jugar.
+**Alternativas descartadas:** armar el tablero recién cuando se fue la capa (se ve un instante la
+pantalla vacía); que cada juego arranque su propio reloj (el reloj es de la cáscara, D-130).
+**Consecuencias:** como `reloj.leer` no cuenta tiempo negativo, el reloj marca 0:00 hasta que
+parte. Retomar una partida no cambia: el tablero vuelve de una y el reloj sigue donde estaba.
 
