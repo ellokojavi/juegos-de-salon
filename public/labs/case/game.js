@@ -329,7 +329,11 @@ const tarjeta = () => Array.from({ length: FILAS }, (_, f) => Array.from({ lengt
   return P.errores.includes(i) ? '🟥' : P.ayudas.includes(i) ? '🟨' : '🟩';
 }).join('')).join('\n');
 const textoErrores = n => (n === 0 ? 'sin errores' : n === 1 ? 'con 1 error' : `con ${n} errores`);
-const textoAyudas = () => (P.ayudas.length === 0 ? '' : P.ayudas.length === 1 ? ' y 1 ayuda' : ` y ${P.ayudas.length} ayudas`);
+// "Sin errores y con 1 ayuda": sin el "con", el "sin" se lleva también la ayuda
+const textoAyudas = () => {
+  const n = P.ayudas.length, con = P.errores.length ? '' : 'con ';
+  return n === 0 ? '' : ` y ${con}${n === 1 ? '1 ayuda' : `${n} ayudas`}`;
+};
 
 let celebrado = false;
 function renderFin() {
