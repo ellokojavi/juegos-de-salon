@@ -56,6 +56,8 @@ Los IDs no se reusan: un requerimiento que cambia conserva su ID y su texto se a
 | RP-46 | El panel muestra lo que le falla a quien juega: cargas que no arrancaron, errores sin atrapar juntados por qué son (página, navegador, versión, desde cuándo) y cuánto tarda cada página en poder jugar, con un aviso en la navegación si hoy o ayer alguna página no arrancó. Lo anota un script que carga antes que los módulos, así que avisa también cuando son ellos los que fallan. Sin IP, sin dirección completa y del navegador solo familia y versión (D-251). | ✅ v0.132.0 |
 | RP-47 | El botón de compartir de la portada muestra el video promocional y deja elegir entre invitar a jugar (el mensaje de la app con su tarjeta) o compartir el video, con su link de YouTube (D-253, PR #263). Solo en español, el idioma del video; en los demás, compartir directo como antes (D-254). | ✅ v0.133.0, v0.133.1 |
 | RP-48 | **El caso**, un misterio de deducción al estilo de *Clues by Sam*, para probar con amigos en el laboratorio (`/labs/case/`), solo en español: veinte sospechosos, pistas que siempre dicen la verdad y nunca hay que adivinar; un caso del día y casos con código, y el resultado se comparte. Si engancha, pasa a La Copa con los cuatro idiomas (D-256, [docs/games/case.md](games/case.md)). | ✅ v0.136.0 (en el laboratorio) |
+| RP-49 | **El caso como juego de La Copa**, en los cuatro idiomas, con portada animada en la antesala, sesión de prueba y desglose del puntaje; se juega suelto en `/case/` y en la práctica del laboratorio, sin entrar todavía al pozo de una copa (D-257). | ✅ v0.138.0 (en el laboratorio) |
+| RP-50 | Sumar El caso al pozo de La Copa (`POZO`) y sacarlo del laboratorio, cuando el dueño lo apruebe. | ⏳ pendiente |
 
 ## Cuarto Rey (CR)
 
