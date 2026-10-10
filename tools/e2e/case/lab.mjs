@@ -1,5 +1,5 @@
 // El caso (prototipo del laboratorio, D-256) de punta a punta: el laboratorio lo ofrece, marcar
-// antes de tiempo no se acepta y cuenta como error (D-261), un error se cuenta, la ayuda (D-263), el caso se resuelve
+// antes de tiempo no se acepta y cuenta como error (D-261), un error se cuenta, la ayuda (D-263), el formulario de comentarios del final (D-265), el caso se resuelve
 // entero sin adivinar y al recargar sigue donde estaba (C-6). Imprime ✗ si algo falla.
 import { launch, sleep } from '../cdp.mjs';
 const OUT = process.argv[2] || '/tmp/caso-lab';
@@ -18,6 +18,7 @@ await b.go(`${SITIO}/labs/case/?c=PRUEBA`);
 ok(await ev(`document.getElementById('caso-nombre').textContent`) === 'Caso PRUEBA', 'con ?c= es ese caso');
 ok(await ev(`document.querySelectorAll('.persona').length`) === 20, 'veinte sospechosos');
 ok(await ev(`document.querySelectorAll('#pistas .pista').length`) === 1, 'se parte con una pista');
+ok(!/null|undefined/.test(await ev(`document.getElementById('marcador').textContent`)), 'el marcador no muestra "null" sin ayudas');
 await b.shot('01-inicio');
 
 // "¿Cómo se juega?" abre las reglas y baja hasta ellas, sin el salto del ancla
@@ -87,6 +88,15 @@ ok(new RegExp(`${esperados === 1 ? 'con 1 error' : `con ${esperados} errores`} y
 await sleep(3000);
 await ev(`document.getElementById('fin').scrollIntoView(); 1`); await sleep(300);
 await b.shot('03-final');
+// Al final, el formulario para que los amigos comenten (D-265). El envío se intercepta: no llega a Firebase
+ok(await ev(`!!document.querySelector('#fin .comentario textarea')`), 'al final está el formulario de comentarios');
+await ev(`window.__enviados = []; window.fetch = async (u, o) => { window.__enviados.push({ u: String(u), o }); return { ok: true }; }; document.getElementById('btn-enviar-comentario').click(); 1`); await sleep(200);
+ok(/Escribe algo/.test(await ev(`document.querySelector('#fin .labs-error').textContent`)), 'vacío no se envía');
+await ev(`document.querySelector('#fin .comentario textarea').value = 'Me trabé con una pista'; document.getElementById('btn-enviar-comentario').click(); 1`); await sleep(400);
+const enviado = await ev(`JSON.stringify(window.__enviados.map(x => ({ u: x.u, b: JSON.parse(x.o.body) })))`).then(JSON.parse);
+ok(enviado.length === 1 && enviado[0].u.endsWith('/feedback.json') && enviado[0].b.texto === 'Me trabé con una pista' && /"juego":"caso"/.test(enviado[0].b.contexto), `el comentario va a feedback/ con el caso (${enviado[0]?.b.contexto})`);
+ok(/Gracias/.test(await ev(`document.querySelector('#fin .comentario').textContent`)), 'y da las gracias en el mismo lugar');
+await b.shot('04-comentario');
 ok(!b.errors.length, `sin errores en la página ${JSON.stringify(b.errors)}`);
 b.close();
 if (fallas) { console.log(`✗ ${fallas} fallas`); process.exit(1); }

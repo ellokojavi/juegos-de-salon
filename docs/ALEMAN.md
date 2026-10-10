@@ -14,7 +14,7 @@ idioma. El **glosario** sigue vigente: toda traducción al alemán lo respeta.
 |---|---|
 | `IDIOMAS` (todos los que tienen diccionario) y `LANGS` (los que se ofrecen aquí) | `public/assets/js/i18n.js` |
 | La marca del dispositivo: `juegos-de-salon:labs-idioma` = `de` | la pone `/labs/de/` o `?lang=de` |
-| Pestañas 🧪 (vuelve al laboratorio) y 🐞 (comentario) en todas las páginas | `public/assets/js/labs-idioma.js` |
+| Pestañas 🧪 (vuelve al laboratorio) y 🐞 (comentario) en todas las páginas; el formulario es `formularioComentario()`, que El caso del laboratorio pone también al final (D-265) | `public/assets/js/labs-idioma.js` |
 | Mientras se juega en alemán, los links al menú (`../`) y a `/labs/` llevan a `/labs/de/` (D-195) | el mismo módulo (un link con `data-labs-libre` pasa) |
 | Portada del laboratorio, en alemán, con todos los juegos | `public/labs/de/index.html` (borrada en D-262: el próximo idioma tendrá la suya) |
 | Salir: "Labor verlassen" saca la marca y deja la app en inglés | la misma portada |
