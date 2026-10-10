@@ -2159,8 +2159,10 @@ const volverDePractica = () => (LABS
 function practica(id) {
   const J = JUEGOS_COPA[id], mod = JUEGOS[id];
   if (!J || !mod) { if (SUELTO) location.replace(RAIZ); else portada(); return; }
-  if (!LABS) document.title = `${J.nombre} ${J.emoji} · ${(COMMON[LANG] || COMMON.es).appTitle}`;
-  if (SUELTO) $('#chip-juego').replaceChildren(...conEmoji(J.emoji, J.nombre));
+  // La página propia de un juego (también la del laboratorio, /labs/case/) lleva su nombre en la pestaña
+  if (!LABS || SUELTO) document.title = `${J.nombre} ${J.emoji} · ${(COMMON[LANG] || COMMON.es).appTitle}`;
+  // En el laboratorio, "‹ Laboratorio" es largo: bajo 400 px el chip queda solo con el emoji (U-12)
+  if (SUELTO) $('#chip-juego').replaceChildren(el('span', { class: con('', J.emoji) }, J.emoji), el('span', { class: LABS ? 'chip-txt chip-txt--lab' : 'chip-txt' }, ` ${J.nombre}`));
   if (HOY) {
     // Si hoy toca otro juego (un link de ayer, o pasó la medianoche), se va al de hoy
     const fecha = fechaLocal(), deHoy = juegoDel(fecha);
@@ -2196,7 +2198,8 @@ function practica(id) {
     // La misma antesala que un día de la copa (D-109): la sesión de prueba se elige antes de jugar
     mod.ensayo && LABS ? el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-ensayo', onClick: () => { SFX.tap(); ensayoPractica(id, semilla); } }, `🧪 ${T.tryFirst}`) : null,
     // Suelto no hace falta decir que no cuenta para una copa: no hay copa a la vista
-    LABS ? el('p', { class: 'muted center' }, T.practiceHint) : null,
+    // Un juego `diario` (El caso, D-267) no: lo abre un amigo que no sabe de copas, y arriba ya dice qué caso es (U-8)
+    LABS && !gameById(id)?.diario ? el('p', { class: 'muted center' }, T.practiceHint) : null,
     el('button', { class: 'btn btn--yellow', id: 'btn-empezar', onClick: () => { SFX.tap(); jugarPractica(id, semilla); } }, `${J.emoji} ${T.start}`),
     volverDePractica(),
     // Entrar, pegado a Empezar y a Volver (D-249): sin jugador, la partida no queda en ningún
