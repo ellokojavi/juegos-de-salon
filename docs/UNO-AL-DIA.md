@@ -407,8 +407,8 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   junto a La Copa, mitad y mitad, con el emoji a la izquierda del título y el título en celeste (el
   de La Copa, en dorado). Abajo, una píldora con el estado: **🔥 6 · Jugar el de hoy** (sin racha, solo
   **Jugar el de hoy**), o **✅ Listo · 🔥 6** ya jugado. La forma de antes, un botón en la misma fila que Juego al azar (**🎲 Al azar** y
-  **📅 Uno al día 🔥 6**), queda para probarla desde `/labs/` ("Al lado del dado") o con
-  `?uad=boton`.
+  **📅 Uno al día 🔥 6**), queda para probarla con `?uad=boton` (el laboratorio la ofreció
+  hasta D-262).
 - El CSS del dado pasó de la portada a `base.css`, para tirarlo desde cualquier página.
   El paso del dado al juego es el de Juego al azar (D-237): el juego abre con el mismo dado encima
   y el dado se desvanece cuando el juego está dibujado (`llegada.js`).
@@ -563,8 +563,9 @@ celular saca la palabra, la flota o los dados de la semilla del día.
 ### Lo que el PR 8 hizo (v0.121.0): sale del laboratorio
 
 - `UNO_AL_DIA_EN_LABS = false`: el botón de la portada, `/today/` y todo lo demás se ven para
-  todos. En `/labs/` queda solo probar la otra forma del acceso (la tarjeta junto a La Copa, que pasó a
-  ser la de todos en D-239; desde entonces en `/labs/` se prueba el botón al lado del dado).
+  todos. En `/labs/` quedó solo probar la otra forma del acceso (la tarjeta junto a La Copa, que pasó a
+  ser la de todos en D-239; después, el botón al lado del dado). D-262 sacó la sección y la puerta
+  `UNO_AL_DIA_EN_LABS`: la forma de antes se ve con `?uad=boton`.
 - **El n.° 1 pasó al 6 de octubre de 2026**, el día en que se abrió (decisión del dueño):
   `LANZAMIENTO` en uno-al-dia.js. El mazo es el mismo corrido un día (el 6 es Desenredo) y los de
   grupo siguen saliendo desde el mazo del 13. Desde ahora queda fijo: moverlo cambia el juego de
@@ -630,7 +631,7 @@ Botones (caben en 320 px, unos 18 caracteres): **Uno al día**, **Jugar el de ho
 **Tarde · 19:00**, **Silenciar** y **Probar los avisos** ("⏰ Agregar recordatorio", que pasaba de
 18 e iba en botón chico, se sacó: decisión 15). En la portada va una tarjeta al lado de La Copa
 (D-239), con su estado en una píldora: **🔥 6 · Jugar el de hoy** o **✅ Listo · 🔥 6**. Mientras falta
-jugar el de hoy brilla un punto; jugada, la tarjeta se pone cian. En `/labs/` se prueba la forma de
+jugar el de hoy brilla un punto; jugada, la tarjeta se pone cian. Con `?uad=boton` se ve la forma de
 antes, un botón en una línea, **📅 Uno al día 🔥 6**, al lado de **🎲 Al azar**.
 Lo que hace cada estado va en su `aria-label`. "Racha", "comodín" y "Silenciar" se dicen siempre así (U-5). Los
 textos los propone el agente de usabilidad y el dueño los corrige en el PR.

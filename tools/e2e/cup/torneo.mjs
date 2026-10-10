@@ -10,7 +10,6 @@
 import { launch, sleep } from '../cdp.mjs';
 import { mkdirSync } from 'node:fs';
 import { POZO } from '../../../public/cup/engine.js';
-import { JUEGOS_COPA } from '../../../public/cup/rules.js';
 
 const OUT = process.argv[2] || '/tmp/copa';
 const SIETE = !process.argv.includes('--tres');
@@ -629,14 +628,10 @@ if (corre('laboratorio')) {
   await b.go(`${BASE}?labs`, 1500);
   ok(await ev(`document.getElementById('btn-menu').href`) === `${SITIO}/labs/`, 'La Copa con ?labs vuelve al laboratorio');
   await b.go(`${SITIO}/labs/`, 1500);
-  // Todos los juegos de La Copa: el pozo, la final y los que todavía no entran al pozo (El caso, D-257)
-  const enLabs = Object.keys(JUEGOS_COPA).length;
-  ok(await ev(`document.querySelectorAll('#minis .mini-juego').length`) === enLabs && await ev(`!!document.querySelector('#minis [data-id="desenredo"]') && !!document.querySelector('#minis [data-id="caso"]')`), `el laboratorio ofrece los ${enLabs} juegos (con Desenredo y El caso)`);
+  // En el laboratorio queda solo lo que no ha salido: El caso (D-262)
+  ok(await ev(`[...document.querySelectorAll('section.seccion')].map(x => x.id).join()`) === 'seccion-caso'
+    && await ev(`document.getElementById('btn-caso').getAttribute('href')`) === '../case/?labs', 'el laboratorio ofrece solo El caso, que abre su página');
   await b.shot('10-labs');
-  // Los juegos con página propia se practican ahí, para que el link traiga su tarjeta (D-164)
-  ok(await ev(`document.querySelector('#minis [data-id="donde"]').getAttribute('href')`) === '../where/?labs'
-    && await ev(`document.querySelector('#minis [data-id="linea"]').getAttribute('href')`) === '../cup/?practica=linea&labs', 'laboratorio: ¿Dónde queda? abre su página; Línea Relámpago sigue en /cup/');
-  ok(await ev(`document.querySelector('#minis [data-id="zip"] span').classList.contains('emoji-claro')`), 'laboratorio: el 〰️ de Zip lleva contorno claro');
   await b.go(`${BASE}?practica=tango&prueba&labs&semilla=KQRST`, 1500); await preparar();
   ok(await ev(`location.pathname + location.search`) === '/tango/?labs&prueba&semilla=KQRST', 'laboratorio: el link viejo va a la página del juego con su semilla');
   ok(!!await ev(`document.getElementById('btn-ensayo')`) && await ev(`document.getElementById('btn-menu').href`) === `${SITIO}/labs/`, 'laboratorio: en la página del juego sigue la sesión de prueba y se vuelve al laboratorio');
@@ -921,10 +916,8 @@ if (corre('laboratorio')) {
   ok(await ev(`!!document.getElementById('btn-reporte-volver')`), 'después de enviar se agradece y se puede volver');
 }
 
-/* ---------- Las demos del laboratorio (D-110) ---------- */
+/* ---------- Las demos (D-110): copas sembradas en el modo de prueba, para las pruebas y las capturas (D-262) ---------- */
 if (corre('demos')) {
-  await b.go(`${SITIO}/labs/`, 1200);
-  ok(await ev(`document.querySelectorAll('[data-demo]').length`) === 10, 'el laboratorio ofrece las diez demos de la copa');
   const DEMOS = { nueva: 'admin', invitado: 'entrar', espera: 'tablero', 'sin-jugar': 'admin', jugador: 'tablero', admin: 'admin', final: 'tablero', 'final-admin': 'admin', podio: 'tablero', llena: 'tablero' };
   for (const [demo, pant] of Object.entries(DEMOS)) {
     await b.go(`${BASE}?prueba&demo=${demo}`, 1500); await preparar();

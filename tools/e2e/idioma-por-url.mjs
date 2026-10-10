@@ -34,9 +34,8 @@ for (const lang of OTROS) {
 await limpio('/?lang=fr');
 console.log('/?lang=fr (no está) →', JSON.stringify(await mirar()));
 
-/* 4. La puerta de entrada de cada idioma (/pt/, /en/, /de/…) lo deja elegido y manda a la portada.
-   /labs/de/ es el link viejo de los revisores del alemán, hoy una página puente hacia /de/ (D-197) */
-for (const ruta of [...OTROS.map(l => `/${l}/`), '/labs/de/']) {
+/* 4. La puerta de entrada de cada idioma (/pt/, /en/, /de/…) lo deja elegido y manda a la portada */
+for (const ruta of OTROS.map(l => `/${l}/`)) {
   const lang = ruta.split('/').at(-2);
   await limpio(ruta);
   await sleep(1600);
