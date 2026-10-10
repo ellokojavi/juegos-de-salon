@@ -706,6 +706,10 @@ test('el caso: se resuelve sin adivinar, las pistas son verdad y se dicen en los
   const e1 = caso.estado(p, [mal]);
   assert.equal(e1.errores, 1);
   assert.equal(caso.puntaje(e1), 0, 'sin resolver vale 0');
+  // Marcar antes de tiempo también es un error (D-261), y no marca a nadie
+  const ef = caso.estado(p, [{ i: mal.i, v: 1, falta: 1 }]);
+  assert.equal(ef.errores, 1);
+  assert.equal(ef.marcas.length, 0);
   assert.equal(caso.puntaje({ fin: true, errores: 3 }), 70);
   assert.equal(caso.puntaje({ fin: true, errores: 12 }), 10);
   assert.equal(caso.tarjeta({ conError: new Set([0]) }).split('\n')[0], '🟥🟩🟩🟩');

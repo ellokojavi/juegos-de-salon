@@ -33,9 +33,9 @@ pozo (RP-50).
 - **Marcar:** se toca a alguien y se elige "😇 es inocente" o "🔪 es criminal".
   - Si se podía deducir y está bien, queda marcado y su pista se suma a la lista.
   - Si se podía deducir y está mal, es un error: se cuenta y se marca con ✕ en la grilla.
-  - Si todavía no se puede deducir con las pistas que hay, no se acepta, **no** cuenta como error
-    y no dice si estaba bien ("Con las pistas que hay, todavía no se puede saber qué es Ana."). Así
-    probar las dos opciones no sirve para adivinar.
+  - Si todavía no se puede deducir con las pistas que hay, no se acepta, **cuenta como error**
+    (D-261) y no dice si estaba bien ("Todavía no se puede saber qué es Ana: cuenta como error.").
+    Así no se puede tantear persona por persona hasta dar con la que se deduce.
 - **Vecinos** son los 8 de alrededor, también en diagonal. Las filas van del 1 al 5 y las columnas
   de la A a la D, escritas en la grilla.
 - **Puntaje:** los errores; el tiempo (solo con la página a la vista) desempata.

@@ -497,6 +497,8 @@ export function estado(p, jugadas = []) {
   let errores = 0;
   for (const j of jugadas) {
     if (!j || x[j.i] !== -1) continue;
+    // Marcar a alguien que todavía no se podía deducir también es un error (D-261): no se tantea
+    if (j.falta) { errores++; conError.add(j.i); continue; }
     if (j.v === p.v[j.i]) { x[j.i] = p.v[j.i]; marcas.push(j.i); }
     else { errores++; conError.add(j.i); }
   }
@@ -507,7 +509,8 @@ export function estado(p, jugadas = []) {
 
 /**
  * Qué pasaría al marcar a `i` como `v`: 'ok' si se podía deducir y está bien, 'error' si se podía
- * deducir y está mal, 'falta' si todavía no se puede saber (no cuenta y no dice si estaba bien) o
+ * deducir y está mal, 'falta' si todavía no se puede saber (cuenta como error, D-261, y no dice si
+ * estaba bien) o
  * 'ya' si ya se sabía.
  */
 export function intento(p, jugadas, i, v) {

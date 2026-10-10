@@ -4,6 +4,8 @@
 - **🔍 El caso, todavía más difícil** (D-260): pistas condicionales ("Si Óscar es criminal, Rodrigo es
   inocente") y de parejas ("Ana y Beto son los dos inocentes o los dos criminales"), y de cada semilla
   se arman cuatro casos y se juega el que más hace pensar.
+- **🔍 El caso: no se tantea** (D-261): marcar a alguien que todavía no se puede deducir cuenta como
+  error, sin decir si estaba bien.
 
 ## 0.140.1 — 2026-10-10
 - **🔍 El caso, sin repetir:** al acertar, el mensaje dice solo "¡Bien! Tati es inocente."; su pista

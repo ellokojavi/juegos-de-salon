@@ -120,7 +120,7 @@ const ES = {
       como: [
         'Descubre quién es criminal y quién es inocente entre los 20 sospechosos.',
         'Cada persona que marcas bien suma su pista, y las pistas siempre dicen la verdad.',
-        'Nunca hay que adivinar: si todavía no se puede saber, no te deja marcar.',
+        'Nunca hay que adivinar. Marcar a alguien que todavía no se puede deducir cuenta como error.',
       ],
       puntaje: 'Resolverlo vale 100 puntos y cada error resta 10. El mínimo es 10.',
       desempate: 'Si empatas, gana quien tardó menos.',
@@ -631,7 +631,7 @@ const ES = {
   // 🔍 El caso
   casoEsInocente: '😇 {x} es inocente', casoEsCriminal: '🔪 {x} es criminal', casoEsCriminalF: '🔪 {x} es criminal',
   casoInocente: 'inocente', casoCriminal: 'criminal', casoCriminalF: 'criminal',
-  casoFalta: 'Con las pistas que hay, todavía no se puede saber qué es {x}.',
+  casoFalta: 'Todavía no se puede saber qué es {x}: cuenta como error.',
   casoError: '{x} no es {v}. Revisa las pistas.',
   casoBien: '¡Bien! {x} es {v}.', casoDice: '{x} es {v} y dice: «{p}»',
   casoToca: 'Toca a alguien para marcarlo.',
@@ -898,7 +898,7 @@ const EN = {
       como: [
         'Work out who is a criminal and who is innocent among the 20 suspects.',
         'Each person you mark correctly adds their clue, and clues always tell the truth.',
-        'You never have to guess: if it can\'t be known yet, it won\'t let you mark.',
+        'You never have to guess. Marking someone who can\'t be worked out yet counts as a mistake.',
       ],
       puntaje: 'Solving it is worth 100 points and each mistake takes off 10. The minimum is 10.',
       desempate: 'On a tie, the faster player wins.',
@@ -1401,7 +1401,7 @@ const EN = {
   // 🔍 The Case
   casoEsInocente: '😇 {x} is innocent', casoEsCriminal: '🔪 {x} is a criminal', casoEsCriminalF: '🔪 {x} is a criminal',
   casoInocente: 'innocent', casoCriminal: 'a criminal', casoCriminalF: 'a criminal',
-  casoFalta: 'With the clues so far, there\'s no way to know what {x} is yet.',
+  casoFalta: 'There\'s no way to know what {x} is yet: that counts as a mistake.',
   casoError: '{x} is not {v}. Check the clues.',
   casoBien: 'Nice! {x} is {v}.', casoDice: '{x} is {v} and says: “{p}”',
   casoToca: 'Tap someone to mark them.',
@@ -1665,7 +1665,7 @@ const PT = {
       como: [
         'Descubra quem é criminoso e quem é inocente entre os 20 suspeitos.',
         'Cada pessoa que você marca certo soma a pista dela, e as pistas sempre dizem a verdade.',
-        'Nunca precisa chutar: se ainda não dá para saber, não deixa marcar.',
+        'Nunca precisa chutar. Marcar alguém que ainda não dá para deduzir conta como erro.',
       ],
       puntaje: 'Resolver vale 100 pontos e cada erro tira 10. O mínimo é 10.',
       desempate: 'Se empatar, ganha quem levou menos tempo.',
@@ -2168,7 +2168,7 @@ const PT = {
   // 🔍 O Caso
   casoEsInocente: '😇 {x} é inocente', casoEsCriminal: '🔪 {x} é criminoso', casoEsCriminalF: '🔪 {x} é criminosa',
   casoInocente: 'inocente', casoCriminal: 'criminoso', casoCriminalF: 'criminosa',
-  casoFalta: 'Com as pistas que você tem, ainda não dá para saber o que {x} é.',
+  casoFalta: 'Ainda não dá para saber o que {x} é: conta como erro.',
   casoError: '{x} não é {v}. Revise as pistas.',
   casoBien: 'Boa! {x} é {v}.', casoDice: '{x} é {v} e diz: “{p}”',
   casoToca: 'Toque em alguém para marcar.',
@@ -2432,7 +2432,7 @@ const DE = {
       como: [
         'Finde heraus, wer von den 20 Verdächtigen kriminell ist und wer unschuldig.',
         'Jede Person, die du richtig markierst, gibt ihren Hinweis, und Hinweise sagen immer die Wahrheit.',
-        'Raten musst du nie: Wenn es sich noch nicht sagen lässt, kannst du nicht markieren.',
+        'Raten musst du nie. Wer jemanden markiert, der sich noch nicht ableiten lässt, macht einen Fehler.',
       ],
       puntaje: 'Lösen bringt 100 Punkte, jeder Fehler kostet 10. Das Minimum ist 10.',
       desempate: 'Bei Gleichstand gewinnt, wer schneller war.',
@@ -2935,7 +2935,7 @@ const DE = {
   // 🔍 Der Fall
   casoEsInocente: '😇 {x} ist unschuldig', casoEsCriminal: '🔪 {x} ist kriminell', casoEsCriminalF: '🔪 {x} ist kriminell',
   casoInocente: 'unschuldig', casoCriminal: 'kriminell', casoCriminalF: 'kriminell',
-  casoFalta: 'Mit den Hinweisen bisher lässt sich noch nicht sagen, was {x} ist.',
+  casoFalta: 'Was {x} ist, lässt sich noch nicht sagen: Das zählt als Fehler.',
   casoError: '{x} ist nicht {v}. Schau dir die Hinweise nochmal an.',
   casoBien: 'Gut! {x} ist {v}.', casoDice: '{x} ist {v} und sagt: „{p}“',
   casoToca: 'Tippe jemanden an, um ihn zu markieren.',
