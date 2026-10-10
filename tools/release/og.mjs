@@ -81,6 +81,7 @@ const paginas = () => [...PUERTAS.map(portada), ...conTarjeta.map(g => ({
   imagen: m.id,
   juego: m.id,
   suelto: true,
+  slug: m.slug,
   titulo: `${m.name.es} ${m.emoji} · Juegos de Salón`,
   descripcion: `${m.tagline.es} Un jugador, ${m.duration} min. Gratis, sin instalar y sin cuenta.`,
   alt: `${m.name.es}: ${m.tagline.es}`,
@@ -133,8 +134,9 @@ function paginaSuelta(p, bloqueOg) {
   // Sus etiquetas genéricas y el comentario que explica la página de todos
   html = html.replace(/^ {2}<!-- Los juegos de La Copa[\s\S]*?-->\n/m, '');
   html = html.replace(/^ {2}<meta (name="description"|property="og:[^"]*"|name="twitter:[^"]*").*\n/gm, '');
-  // Un nivel más arriba: las rutas relativas (href, src, el import map y el import) suben uno menos
-  html = html.replace(/(["'])\.\.\/\.\.\//g, '$1../');
+  // Un nivel más arriba: las rutas relativas (href, src, el import map y el import) suben uno menos.
+  // Los del laboratorio (/labs/case/, D-267) están a la misma altura que el molde y quedan igual
+  if (p.ruta.split('/').filter(Boolean).length === 1) html = html.replace(/(["'])\.\.\/\.\.\//g, '$1../');
   html = html.replace(/<title>.*<\/title>/, `<title>${escapa(p.titulo)}</title>\n${AVISO_COPIA()}`);
   html = html.replace('<body data-suelto>', `<body data-suelto="${p.juego}">`);
   return html.replace(/^( *<link rel="manifest".*\n)/m, `${bloqueOg}\n$1`);
@@ -159,8 +161,11 @@ const puentes = () => [
     .map(p => ({ ...p, viejo: `public/${p.juego}/index.html`, a: `..${p.ruta}` })),
   ...paginas().filter(p => p.suelto).flatMap(p => [
     { ...p, viejo: `public/minijuegos/${p.juego}/index.html`, a: `../..${p.ruta}` },
-    { ...p, viejo: `public/minigames/${p.ruta.split('/')[1]}/index.html`, a: `../..${p.ruta}` },
+    { ...p, viejo: `public/minigames/${p.slug}/index.html`, a: `../..${p.ruta}` },
   ]),
+  // Un juego del laboratorio vive en /labs/<slug>/ (D-267): /<slug>/ lleva ahí hasta que salga
+  ...paginas().filter(p => p.suelto && p.ruta !== `/${p.slug}/`)
+    .map(p => ({ ...p, viejo: `public/${p.slug}/index.html`, a: `..${p.ruta}` })),
   // Las páginas genéricas (/minijuegos/?reinas, /minigames/?reinas): el molde manda cada link a su lugar
   { viejo: 'public/minijuegos/index.html', a: '../cup/suelto/', titulo: 'Juegos de Salón 🎲' },
   { viejo: 'public/minigames/index.html', a: '../cup/suelto/', titulo: 'Juegos de Salón 🎲' },
