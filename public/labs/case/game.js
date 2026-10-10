@@ -162,7 +162,7 @@ function renderAccion(e) {
   const msg = m => el('button', {
     class: `msg ${m.tipo}${m.de !== undefined && foco === m.de ? ' activa' : ''}`, type: 'button',
     onClick: ev => { ev.stopPropagation(); if (m.de !== undefined) enfocar(m.de); },
-  }, m.texto, m.de !== undefined ? el('span', { class: 'ver' }, foco === m.de ? ' · 👁 ocultar' : ' · 👁 ver a quiénes') : null);
+  }, m.texto, m.de !== undefined ? el('span', { class: 'ver' }, foco === m.de ? '👁 Volver a ver a todos' : '👁 Ver a quiénes nombra') : null);
   if (elegida !== null && e.x[elegida] === -1) {
     const n = caso.nombres[elegida];
     // Lo que pasó al intentar marcarla (un error, o que todavía no se puede saber) queda arriba (C-8b)
@@ -193,7 +193,7 @@ function renderPistas(e) {
   const orden = [caso.inicio, ...P.marcas].reverse();
   $('#pistas').replaceChildren(
     el('h2', {}, `💬 Pistas (${orden.length})`),
-    el('p', { class: 'ayuda' }, 'Toca una pista para ver a quiénes nombra; ✓ la tacha cuando ya la usaste.'),
+    el('p', { class: 'ayuda' }, 'Toca una pista para ver a quiénes nombra. Con ✓ la tachas cuando ya la usaste.'),
     ...orden.map((i, k) => el('div', {
       class: 'pista' + (k === 0 ? ' ultima' : '') + (nuevas.includes(i) ? ' entra' : '') + (P.tachadas.includes(i) ? ' tachada' : '') + (foco === i ? ' activa' : ''),
       'data-de': i,
