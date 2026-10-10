@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Los reportes y comentarios que la gente mandó desde La Copa (D-104), leídos de `feedback/` en
+ * Los reportes y comentarios que la gente mandó desde La Copa (D-104) y el laboratorio (D-191, D-265), leídos de `feedback/` en
  * Firebase. Sin cuenta: el nodo se lee libre.
  *
  *   node tools/firebase/reportes.mjs              todos, del más nuevo al más viejo
@@ -26,7 +26,9 @@ console.log(`${lista.length} reporte(s)${dias ? ` en los últimos ${dias} días`
 for (const r of lista) {
   let ctx = {};
   try { ctx = JSON.parse(r.contexto || '{}'); } catch (_) { /* nada */ }
-  const donde = [ctx.labs && `🧪 labs ${ctx.labs}`, ctx.copa && `copa ${ctx.copa}`, ctx.dia && `día ${ctx.dia}`, ctx.juego, ctx.semilla && `semilla ${ctx.semilla}`, ctx.url, ctx.pantalla, ctx.pantallaTam].filter(Boolean).join(' · ');
+  const donde = [ctx.labs && `🧪 labs ${ctx.labs}`, ctx.copa && `copa ${ctx.copa}`, ctx.dia && `día ${ctx.dia}`, ctx.juego, ctx.semilla && `semilla ${ctx.semilla}`,
+    // Cómo le fue a quien comenta El caso (D-265)
+    ctx.errores !== undefined && `${ctx.errores} errores`, ctx.ayudas !== undefined && `${ctx.ayudas} ayudas`, ctx.tiempo, ctx.url, ctx.pantalla, ctx.pantallaTam].filter(Boolean).join(' · ');
   console.log(`── ${r.at ? fecha(r.at) : '(sin fecha)'} · ${r.nombre || 'anónimo'} · v${r.v || '?'}`);
   if (donde) console.log(`   ${donde}`);
   console.log(`   ${String(r.texto || '').replace(/\n/g, '\n   ')}`);
