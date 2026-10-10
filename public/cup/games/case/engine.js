@@ -155,7 +155,11 @@ export function texto(caso, i, L) {
     const x = caso.nombres[p.a[0]];
     return fmt(p.k ? (femenino(x) ? F.esCF : F.esC) : F.esI, { x });
   }
-  if (p.g.tipo === 'dos') return fmt(F.unoDeDos, { x: caso.nombres[p.g.de], y: caso.nombres[p.g.otro] });
+  if (p.g.tipo === 'dos') {
+    // Con dos mujeres concuerda en femenino: "Exactamente una de Ana y Cata"
+    const x = caso.nombres[p.g.de], y = caso.nombres[p.g.otro];
+    return fmt(femenino(x) && femenino(y) ? F.unaDeDos : F.unoDeDos, { x, y });
+  }
   const g = grupoTexto(p.g, caso, i, L);
   const n = p.a.length;
   switch (p.t) {
