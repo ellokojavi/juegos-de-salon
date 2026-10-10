@@ -143,7 +143,6 @@ export function pistasVerdaderas(caso, v, r) {
   return out;
 }
 
-/** La pista más directa, de respaldo: lo que es otra persona. */
 /**
  * A quiénes nombra una pista por su nombre (D-264): "a la izquierda de Omar" nombra a Omar, no a los
  * que están a su izquierda; "Ana es criminal", a Ana; "en la fila 2", a nadie. `a` sale del primer
@@ -157,6 +156,7 @@ export function sujetos(p) {
   return { a: de(p.g), b: de(p.h) };
 }
 
+/** La pista más directa, de respaldo: lo que es otra persona. */
 export const pistaDirecta = (caso, v, j) => ({ t: 'es', a: [j], k: v[j] });
 
 /* ------------------------------------------------------------------ */
