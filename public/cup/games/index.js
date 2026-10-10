@@ -4,8 +4,8 @@
  * { s: puntaje, t: tarjeta, resumen }.
  * Opcionales: `ejemplo` (el dibujo de cómo se juega), `portada` (lo de arriba de la antesala),
  * `titulo` (el nombre en la antesala), `entrada` (cuánto dura su animación de entrada, que no es
- * tiempo de juego), `pruebaCompleta` (la prueba es igual de larga y difícil que el juego) y
- * `pantallaCompleta`.
+ * tiempo de juego), `pruebaCompleta` (la prueba es igual de larga y difícil que el juego), `caro`
+ * (armarlo tarda: la antesala lo deja listo mientras se lee) y `pantallaCompleta`.
  *
  * Agregar un juego: su motor y su pantalla en esta carpeta, su texto en JUEGOS_COPA de
  * rules.js y una entrada acá. Para que se pueda elegir en una copa, sumarlo a POZO (engine.js).
@@ -50,7 +50,7 @@ const temaLibre = (codigo, aud = null) => {
   return decksDe({ aud }).map(d => d.id).find(id => !usados.includes(id));
 };
 
-const juego = (motor, ui, ensayo) => ({ generar: motor.generar, montar: ui.montar, resultado: ui.resultado, ejemplo: ui.ejemplo, portada: ui.portada, titulo: ui.titulo, entrada: ui.entrada, pruebaCompleta: !!ui.pruebaCompleta, pantallaCompleta: !!ui.pantallaCompleta, ensayo });
+const juego = (motor, ui, ensayo) => ({ generar: motor.generar, montar: ui.montar, resultado: ui.resultado, ejemplo: ui.ejemplo, portada: ui.portada, titulo: ui.titulo, entrada: ui.entrada, pruebaCompleta: !!ui.pruebaCompleta, caro: !!ui.caro, pantallaCompleta: !!ui.pantallaCompleta, ensayo });
 
 /**
  * `generar(código, día, opciones)` y `ensayo(código, día, opciones)` reciben el idioma (D-170):
