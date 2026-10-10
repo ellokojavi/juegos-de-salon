@@ -7,7 +7,7 @@
 import * as motor from '../../cup/games/case/engine.js';
 import { LOCALES } from '../../cup/rules.js';
 
-export { N, COLS, FILAS, LETRAS_COL, coord, vecinos, resolver, deducibles, pistasVerdaderas } from '../../cup/games/case/engine.js';
+export { N, COLS, FILAS, LETRAS_COL, coord, vecinos, resolver, deducibles, pistasVerdaderas, sujetos } from '../../cup/games/case/engine.js';
 
 const L = LOCALES.es.casoTexto;
 const { N, resolver } = motor;

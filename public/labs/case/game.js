@@ -10,7 +10,7 @@ import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
 import { compartir, cabecera } from '../../assets/js/compartir.js';
 import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/stats.js';
 import { fechaLocal } from '../../assets/js/uno-al-dia.js';
-import { N, COLS, FILAS, LETRAS_COL, coord, generar, estado, marcar, semillaDelDia, ayuda, lista } from './engine.js';
+import { N, COLS, FILAS, LETRAS_COL, coord, generar, estado, marcar, semillaDelDia, ayuda, lista, sujetos } from './engine.js';
 
 trackVisit();   // el tráfico del sitio (D-208)
 
@@ -63,7 +63,7 @@ let armado = false, armadoTimer = null;   // la ayuda pide un segundo toque, com
  */
 const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const cartas = [];
-let foco = null;      // la pista tocada: ilumina en la grilla a las personas de las que habla
+let foco = null;      // la pista tocada: ilumina en la grilla a quienes nombra por su nombre (D-264)
 
 function armarGrilla() {
   const g = $('#grilla');
@@ -124,7 +124,8 @@ function renderMarcador() {
 
 function renderGrilla(e) {
   const p = foco !== null ? caso.pistas[foco] : null;
-  const enFoco = new Set(p ? [...p.a, ...(p.b || [])] : []);
+  // Solo a quienes nombra ("a la izquierda de Omar": Omar), no a todo el grupo (D-264)
+  const s = sujetos(p), enFoco = new Set([...s.a, ...s.b]);
   $('#grilla').classList.toggle('enfoque', !!p);
   cartas.forEach((carta, i) => {
     const sabe = e.x[i] !== -1;
@@ -399,4 +400,4 @@ if (intro) setTimeout(correr, intro); else correr();
 setInterval(() => { const r = document.getElementById('reloj'); if (r && !P.done) r.textContent = mmss(tiempo()); }, 1000);
 
 // Ventana al estado para las pruebas (C-14)
-window.__caso = { caso: () => caso, partida: () => P, estado: () => estado(caso, P.marcas) };
+window.__caso = { sujetos, caso: () => caso, partida: () => P, estado: () => estado(caso, P.marcas) };
