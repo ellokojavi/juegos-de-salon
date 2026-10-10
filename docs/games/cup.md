@@ -182,6 +182,13 @@ por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
   práctica del laboratorio, pero **todavía no está en `POZO`**: una copa no lo elige hasta que salga
   del laboratorio. Su habilidad es `deducir`, la misma de Toque y Fama, para que el sorteo del
   calendario no los ponga en días seguidos.
+  **Las pistas se eligen para que haya que combinarlas** (D-259): `notaPista` premia la que destapa
+  a alguien solo junto con las que ya se saben, castiga la que lo dice todo sola y prefiere las
+  comparaciones, los pares e impares y "al menos / a lo más" a "hay exactamente N" en grupos chicos;
+  si en un paso todo sale de una sola pista, se cambia la del último que habló por una que obligue a
+  combinar. Un tipo propio, "Exactamente uno de Ana y Beto es criminal" (`g.tipo: 'dos'`, plantilla
+  `unoDeDos`), nunca nombra a quien habla. `juegos.test.mjs` frena un caso con menos de 25 % de
+  deducciones combinadas o más de 35 % de pistas "hay exactamente N".
 - **Línea y Año** usan temáticas distintas dentro de la misma copa (`temasDeLaCopa`), para que no
   sean dos días de lo mismo.
 - **Reinas, Zip y Tango** tienen solución única garantizada. Reinas ajusta las zonas de a una

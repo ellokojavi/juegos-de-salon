@@ -1,13 +1,16 @@
 # Prototipo: El caso 🔍
 
+> **Desde D-259 este prototipo usa el motor de La Copa** (`public/cup/games/case/engine.js`): su
+> `engine.js` solo lo adapta al español. Los dos tienen siempre la misma dificultad.
+
 **Ruta:** `/labs/case/` (laboratorio, sin entrada en `games.js`) · **Jugadores:** 1 · **Estado:**
 prototipo para probar con amigos (D-256) · **Idiomas:** solo español, por ahora
 
 > **Ya existe la versión de La Copa** (D-257): `public/cup/games/case/`, id `caso`, en los cuatro
 > idiomas, con su propio motor (las pistas como datos, la frase armada en cada idioma). Se juega
 > suelta en `/case/` y en la práctica del laboratorio, pero todavía no está en `POZO`. Está descrita
-> en [cup.md](cup.md). Esta página documenta el prototipo de `/labs/case/`, que sigue con su motor
-> en español hasta que El caso salga del laboratorio: entonces se va o pasa a usar el de La Copa.
+> en [cup.md](cup.md). Esta página documenta el prototipo de `/labs/case/`, que desde D-259 usa
+> ese mismo motor, adaptado al español; cuando El caso salga del laboratorio, el prototipo se va.
 
 En `/labs/`, el botón **🔍 Jugar El caso** (`#btn-caso`) abre la versión de La Copa
 (`/case/?labs`), con la experiencia completa: la portada, la prueba, el 3, 2, 1, el juego y el
