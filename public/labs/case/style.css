@@ -75,7 +75,8 @@
 .accion .msg.falta { color: var(--yellow); }
 .accion .msg.dato { text-align: left; border-color: rgba(255, 210, 63, 0.55); cursor: pointer; }
 .accion .msg.activa { box-shadow: 0 0 0 2px var(--yellow); }
-.accion .msg .ver { color: var(--cyan); font-weight: 900; font-size: 0.85rem; white-space: nowrap; }
+/* En su propia línea, con el emoji al inicio (U-2) */
+.accion .msg .ver { display: block; margin-top: 3px; color: var(--cyan); font-weight: 900; font-size: 0.85rem; }
 .accion .msg-sub { text-align: center; font-weight: 800; color: var(--muted); margin: 0; }
 .btn.marca-inocente { background: linear-gradient(180deg, #c6ff8a, var(--lime)); color: #173a00; box-shadow: 0 4px 0 #4f8f13; }
 .btn.marca-criminal { background: linear-gradient(180deg, #ff8fbf, #ff3d8b); color: #3a0018; box-shadow: 0 4px 0 #a3134f; }
