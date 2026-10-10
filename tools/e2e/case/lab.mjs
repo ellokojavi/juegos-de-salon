@@ -1,8 +1,8 @@
 // El caso (prototipo del laboratorio, D-256) de punta a punta: el laboratorio lo ofrece, marcar
-// antes de tiempo no se acepta y cuenta como error (D-261), un error se cuenta, el caso se resuelve
+// antes de tiempo no se acepta y cuenta como error (D-261), un error se cuenta, la ayuda (D-263), el caso se resuelve
 // entero sin adivinar y al recargar sigue donde estaba (C-6). Imprime ✗ si algo falla.
 import { launch, sleep } from '../cdp.mjs';
-const OUT = process.argv[2];
+const OUT = process.argv[2] || '/tmp/caso-lab';
 const b = await launch({ port: 9392, dir: `${OUT}/p`, out: OUT, width: 375, height: 812 });
 const ev = e => b.evaluate(e);
 const SITIO = process.env.SITIO || 'http://localhost:8765';
@@ -58,6 +58,20 @@ ok(await ev(`__caso.partida().marcas.length`) === 1, 'y después se puede marcar
 await b.go(`${SITIO}/labs/case/?c=PRUEBA`);
 ok(await ev(`document.querySelectorAll('.persona.marcada').length`) === 2, 'al recargar sigue donde estaba (C-6)');
 
+// La ayuda (D-263): pide un segundo toque, dice a quién mirar y qué pistas juntar, y la de ahora se vuelve a ver gratis
+await ev(`document.getElementById('btn-ayuda').click(); 1`); await sleep(150);
+ok(/Toca de nuevo/.test(await ev(`document.getElementById('btn-ayuda').textContent`)) && await ev(`(__caso.partida().ayudas || []).length`) === 0, 'la ayuda pide un segundo toque antes de anotarse');
+await ev(`document.getElementById('btn-ayuda').click(); 1`); await sleep(300);
+const guiada = await ev(`JSON.stringify({ msg: document.querySelector('.accion .msg')?.textContent, elegida: document.querySelector('.persona.elegida')?.dataset.i, ayudas: __caso.partida().ayudas, guia: document.querySelectorAll('#pistas .pista.guia').length })`).then(JSON.parse);
+ok(/^Mira a /.test(guiada.msg) && guiada.ayudas.length === 1 && String(guiada.ayudas[0]) === guiada.elegida, `la ayuda elige a quien mirar y lo dice: ${guiada.msg}`);
+ok(guiada.guia >= 1 || /varias pistas/.test(guiada.msg), `y destaca las pistas que hay que juntar (${guiada.guia})`);
+await b.shot('02b-ayuda');
+await ev(`document.querySelector('.marcador').click(); 1`); await sleep(150);
+ok(/Ver la ayuda/.test(await ev(`document.getElementById('btn-ayuda').textContent`)), 'cerrada, se vuelve a ver sin pagar otra vez');
+await ev(`document.getElementById('btn-ayuda').click(); 1`); await sleep(200);
+ok(await ev(`__caso.partida().ayudas.length`) === 1, 'y no se anota de nuevo');
+await ev(`document.querySelector('.marcador').click(); 1`); await sleep(150);
+
 // Resolverlo entero, siempre con lo que se puede deducir
 for (let g = 0; g < 40 && !(await ev(`__caso.estado().terminado`)); g++) {
   const d = await ev(`(async()=>{const {deducibles}=await import('/labs/case/engine.js');const e=__caso.estado();return JSON.stringify(deducibles(e.pistas,e.x))})()`).then(JSON.parse);
@@ -69,7 +83,7 @@ for (let g = 0; g < 40 && !(await ev(`__caso.estado().terminado`)); g++) {
 }
 await sleep(600);
 ok(await ev(`!document.getElementById('fin').hidden`), 'el caso se resuelve sin adivinar');
-ok(new RegExp(esperados === 1 ? 'con 1 error' : `con ${esperados} errores`, 'i').test(await ev(`document.querySelector('#fin .resumen').textContent`)), `el final dice los errores: ${await ev(`document.querySelector('#fin .resumen').textContent`)}`);
+ok(new RegExp(`${esperados === 1 ? 'con 1 error' : `con ${esperados} errores`} y 1 ayuda`, 'i').test(await ev(`document.querySelector('#fin .resumen').textContent`)), `el final dice los errores: ${await ev(`document.querySelector('#fin .resumen').textContent`)}`);
 await sleep(3000);
 await ev(`document.getElementById('fin').scrollIntoView(); 1`); await sleep(300);
 await b.shot('03-final');

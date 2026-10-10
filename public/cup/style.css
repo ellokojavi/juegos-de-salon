@@ -669,6 +669,9 @@ input.fecha { width: 100%; min-height: 48px; border-radius: 12px; border: 1px so
 .cs-msg.error { color: var(--pink); border-color: rgba(255, 61, 139, 0.45); }
 .cs-msg.falta { color: var(--yellow); }
 .cs-msg.dato { text-align: left; border-color: rgba(255, 210, 63, 0.55); cursor: pointer; }
+.cs-msg.ayuda { color: var(--yellow); border-color: rgba(255, 210, 63, 0.55); }
+.cs-pie { display: grid; justify-items: center; gap: 6px; }
+.cs-pie #btn-ayuda.armado { border-color: var(--yellow); color: var(--yellow); background: rgba(255, 210, 63, 0.12); }
 .cs-msg.se-va { opacity: 0; transition: opacity 0.35s; }
 .cs-msg.activa { box-shadow: 0 0 0 2px var(--yellow); }
 .cs-msg .ver { color: var(--cyan); font-weight: 900; font-size: 0.85rem; }
@@ -687,6 +690,7 @@ input.fecha { width: 100%; min-height: 48px; border-radius: 12px; border: 1px so
 .cs-pista.entra { animation: cs-entra 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.2) both; }
 @keyframes cs-entra { 0% { transform: translateY(-10px) scale(0.97); opacity: 0; } 100% { transform: none; opacity: 1; } }
 .cs-pista.activa { box-shadow: 0 0 0 2px var(--cyan); }
+.cs-pista.guia { box-shadow: 0 0 0 2px var(--yellow); }
 .cs-pista.tachada .texto { opacity: 0.4; text-decoration: line-through; }
 .cs-pista.tachada .tachar { color: var(--lime); }
 

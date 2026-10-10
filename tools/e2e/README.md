@@ -92,7 +92,7 @@ node tools/e2e/contacto.mjs cuarto-rey --salida /tmp/contacto
 | `liars-dice/online.mjs` | Tres celulares contra Firebase real: sala, destape verificado, recarga a mitad y revancha |
 | `generala/local.mjs` | Jugar solo entero, tres en un celular con recarga a mitad y la generala servida: nada elegido de antemano (C-8), los guardados no cambian y se anota lo que la planilla prometía |
 | `generala/online.mjs` | Dos celulares contra Firebase real: los dados de quien juega a la vista del otro, recarga a mitad, partida entera y revancha |
-| `case/lab.mjs` | El caso del laboratorio (D-256): tocar una pista ilumina a quiénes nombra, marcar antes de tiempo no es error, un error se cuenta, recargar sigue y el caso se resuelve sin adivinar |
+| `case/lab.mjs` | El caso del laboratorio (D-256): tocar una pista ilumina a quiénes nombra, marcar antes de tiempo cuenta como error (D-261), un error se cuenta, recargar sigue, la 💡 Ayuda pide un segundo toque, señala a alguien deducible, destaca sus pistas y se vuelve a ver sin cobrar (D-263), y el caso se resuelve sin adivinar |
 | `julep/local.mjs` | Mesa de tres contra el celular y partida en un celular, con retomar a mitad |
 | `julep/online.mjs` | Tres celulares contra Firebase real: reparto cerrado, sello de cartas verificadas, recarga a mitad y chat |
 | `timeline/local.mjs` | Un celular con tres jugadores, con retomar a mitad |

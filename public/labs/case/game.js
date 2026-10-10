@@ -10,7 +10,7 @@ import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
 import { compartir, cabecera } from '../../assets/js/compartir.js';
 import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/stats.js';
 import { fechaLocal } from '../../assets/js/uno-al-dia.js';
-import { N, COLS, FILAS, LETRAS_COL, coord, generar, estado, marcar, semillaDelDia } from './engine.js';
+import { N, COLS, FILAS, LETRAS_COL, coord, generar, estado, marcar, semillaDelDia, ayuda, lista } from './engine.js';
 
 trackVisit();   // el tráfico del sitio (D-208)
 
@@ -34,9 +34,9 @@ const nombreCaso = codigo ? `Caso ${codigo}` : `Caso del ${fechaBonita(hoy)}`;
 function cargar() {
   try {
     const g = JSON.parse(localStorage.getItem(CLAVE));
-    if (g && Array.isArray(g.marcas)) return { marcas: g.marcas, errores: g.errores || [], ms: g.ms || 0, tachadas: g.tachadas || [], done: !!g.done, empezo: !!g.empezo, reportado: !!g.reportado };
+    if (g && Array.isArray(g.marcas)) return { marcas: g.marcas, errores: g.errores || [], ayudas: g.ayudas || [], ms: g.ms || 0, tachadas: g.tachadas || [], done: !!g.done, empezo: !!g.empezo, reportado: !!g.reportado };
   } catch (_) { /* sin memoria, de cero */ }
-  return { marcas: [], errores: [], ms: 0, tachadas: [], done: false, empezo: false };
+  return { marcas: [], errores: [], ayudas: [], ms: 0, tachadas: [], done: false, empezo: false };
 }
 const P = cargar();
 const guardar = () => { try { localStorage.setItem(CLAVE, JSON.stringify(P)); } catch (_) { /* sin memoria igual se juega */ } };
@@ -51,6 +51,8 @@ document.addEventListener('visibilitychange', () => { if (document.visibilitySta
 let elegida = null;   // la celda tocada
 let mensaje = null;   // { tipo, texto } de la última marca
 let nuevas = [];      // la pista que acaba de aparecer, para que entre animada
+let guia = null;      // la ayuda pedida, { i, quienes }: sus pistas se destacan hasta marcar a i (D-263)
+let armado = false, armadoTimer = null;   // la ayuda pide un segundo toque, como en Tango
 
 /* ------------------------------------------------------------------ */
 /* Render                                                              */
@@ -106,6 +108,7 @@ function render() {
   renderMarcador();
   renderGrilla(e);
   renderAccion(e);
+  renderAyuda(e);
   renderPistas(e);
   if (e.terminado) renderFin();
 }
@@ -114,6 +117,7 @@ function renderMarcador() {
   $('#marcador').replaceChildren(
     el('span', {}, '✅ ', el('b', {}, `${P.marcas.length + 1}/${N}`)),
     el('span', {}, '✕ ', el('b', { id: 'errores' }, P.errores.length), P.errores.length === 1 ? ' error' : ' errores'),
+    P.ayudas.length ? el('span', {}, '💡 ', el('b', {}, P.ayudas.length), P.ayudas.length === 1 ? ' ayuda' : ' ayudas') : null,
     el('span', {}, '⏱ ', el('b', { id: 'reloj' }, mmss(tiempo()))),
   );
 }
@@ -189,6 +193,40 @@ function renderAccion(e) {
   }
 }
 
+/** El botón 💡: dice a quién mirar y qué pistas juntar. La de ahora, si ya se pidió, se vuelve a ver gratis. */
+function renderAyuda(e) {
+  const box = $('#ayuda');
+  if (guia && e.x[guia.i] !== -1) guia = null;
+  const a = e.terminado ? null : ayuda(caso, P.marcas);
+  const pagada = a && P.ayudas.includes(a.i);
+  box.replaceChildren(a ? el('button', {
+    type: 'button', id: 'btn-ayuda', class: 'btn btn--ghost btn--sm' + (armado ? ' armado' : ''),
+    onClick: ev => { ev.stopPropagation(); pedirAyuda(pagada); },
+  }, pagada ? '💡 Ver la ayuda' : armado ? 'Toca de nuevo para usar la ayuda' : '💡 Ayuda') : '');
+}
+
+function pedirAyuda(pagada) {
+  correr();
+  if (!pagada && !armado) {
+    armado = true; SFX.tap(); vibrate(15);
+    clearTimeout(armadoTimer);
+    armadoTimer = setTimeout(() => { armado = false; renderAyuda(estado(caso, P.marcas)); }, 3000);
+    renderAyuda(estado(caso, P.marcas));
+    return;
+  }
+  armado = false; clearTimeout(armadoTimer);
+  const a = ayuda(caso, P.marcas);
+  if (!a) return;
+  if (!pagada) { P.ayudas.push(a.i); guardar(); }
+  guia = a; elegida = a.i; foco = null;
+  const x = caso.nombres[a.i], q = lista(a.quienes.map(i => caso.nombres[i]));
+  const texto = !a.quienes.length ? `Mira a ${x}: hay que juntar varias pistas.` : a.quienes.length === 1 ? `Mira a ${x}: fíjate en lo que dice ${q}.` : `Mira a ${x}: junta lo que dicen ${q}.`;
+  mensaje = { tipo: 'ayuda', texto };
+  SFX.reveal(); vibrate(20);
+  render();
+  document.querySelector('.pista.guia')?.scrollIntoView({ block: 'nearest', behavior: QUIETO ? 'auto' : 'smooth' });
+}
+
 function enfocar(i) {
   foco = foco === i ? null : i;
   SFX.tap(); vibrate(8);
@@ -203,7 +241,7 @@ function renderPistas(e) {
   $('#pistas').replaceChildren(
     el('h2', {}, `💬 Pistas (${orden.length})`),
     ...orden.map((i, k) => el('div', {
-      class: 'pista' + (k === 0 ? ' ultima' : '') + (nuevas.includes(i) ? ' entra' : '') + (P.tachadas.includes(i) ? ' tachada' : '') + (foco === i ? ' activa' : ''),
+      class: 'pista' + (k === 0 ? ' ultima' : '') + (nuevas.includes(i) ? ' entra' : '') + (P.tachadas.includes(i) ? ' tachada' : '') + (foco === i ? ' activa' : '') + (guia?.quienes.includes(i) ? ' guia' : ''),
       'data-de': i,
     },
     el('button', { class: 'texto', type: 'button', onClick: ev => { ev.stopPropagation(); enfocar(i); } },
@@ -286,8 +324,16 @@ function intentar(valor) {
 /* El final                                                            */
 /* ------------------------------------------------------------------ */
 /** La tarjeta para compartir: una fila de cuadrados por fila de la grilla; rojo donde hubo error. */
-const tarjeta = () => Array.from({ length: FILAS }, (_, f) => Array.from({ length: COLS }, (_, c) => (P.errores.includes(f * COLS + c) ? '🟥' : '🟩')).join('')).join('\n');
+const tarjeta = () => Array.from({ length: FILAS }, (_, f) => Array.from({ length: COLS }, (_, c) => {
+  const i = f * COLS + c;
+  return P.errores.includes(i) ? '🟥' : P.ayudas.includes(i) ? '🟨' : '🟩';
+}).join('')).join('\n');
 const textoErrores = n => (n === 0 ? 'sin errores' : n === 1 ? 'con 1 error' : `con ${n} errores`);
+// "Sin errores y con 1 ayuda": sin el "con", el "sin" se lleva también la ayuda
+const textoAyudas = () => {
+  const n = P.ayudas.length, con = P.errores.length ? '' : 'con ';
+  return n === 0 ? '' : ` y ${con}${n === 1 ? '1 ayuda' : `${n} ayudas`}`;
+};
 
 let celebrado = false;
 function renderFin() {
@@ -297,14 +343,14 @@ function renderFin() {
   box.replaceChildren(
     el('div', { class: 'trofeo' }, P.errores.length ? '🔍' : '🏆'),
     el('h2', { class: 'display display--lg' }, '¡Caso resuelto!'),
-    el('p', { class: 'resumen' }, `${textoErrores(P.errores.length)[0].toUpperCase()}${textoErrores(P.errores.length).slice(1)}, en ${mmss(P.ms)}.`),
+    el('p', { class: 'resumen' }, `${textoErrores(P.errores.length)[0].toUpperCase()}${textoErrores(P.errores.length).slice(1)}${textoAyudas()}, en ${mmss(P.ms)}.`),
     el('div', { class: 'tarjeta', 'aria-hidden': 'true' }, ...tarjeta().split('\n').map(r => el('div', {}, r))),
     el('button', {
       class: 'btn btn--cyan', id: 'btn-compartir',
       onClick: async e => {
         SFX.tap();
         const reto = P.errores.length ? '🎯 ¿Lo resuelves con menos errores?' : '🎯 ¿Lo resuelves más rápido?';
-        const texto = [cabecera({ emoji: '🔍', titulo: 'El caso', contexto: nombreCaso }), `✅ Resuelto ${textoErrores(P.errores.length)} en ${mmss(P.ms)}.`, tarjeta(), reto].join('\n\n');
+        const texto = [cabecera({ emoji: '🔍', titulo: 'El caso', contexto: nombreCaso }), `✅ Resuelto ${textoErrores(P.errores.length)}${textoAyudas()} en ${mmss(P.ms)}.`, tarjeta(), reto].join('\n\n');
         const r = await compartir({ titulo: 'El caso', texto, url });
         if (r === 'copied') { e.target.textContent = '✅ Copiado'; setTimeout(() => { e.target.textContent = '📤 Compartir el resultado'; }, 2500); }
       },
@@ -315,7 +361,7 @@ function renderFin() {
   );
   if (!celebrado) {
     celebrado = true;
-    if (!P.reportado) { P.reportado = true; guardar(); trackFinish({ detalle: `${nombreCaso} · ${P.errores.length} errores · ${mmss(P.ms)}` }); }
+    if (!P.reportado) { P.reportado = true; guardar(); trackFinish({ detalle: `${nombreCaso} · ${P.errores.length} errores · ${P.ayudas.length} ayudas · ${mmss(P.ms)}` }); }
     SFX.win(); confetti({ count: 200, duration: 3000 });
     // Una ola por la grilla resuelta
     if (!QUIETO) cartas.forEach((c, i) => setTimeout(() => c.classList.add('ola'), (Math.floor(i / COLS) + (i % COLS)) * 70));

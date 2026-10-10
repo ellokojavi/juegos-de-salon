@@ -73,6 +73,9 @@
 .accion .msg.ok { color: var(--lime); border-color: rgba(157, 255, 58, 0.45); }
 .accion .msg.error { color: var(--pink); border-color: rgba(255, 61, 139, 0.45); }
 .accion .msg.falta { color: var(--yellow); }
+.accion .msg.ayuda { color: var(--yellow); border-color: rgba(255, 210, 63, 0.55); }
+.ayuda-slot { display: flex; justify-content: center; }
+.ayuda-slot .btn.armado { border-color: var(--yellow); color: var(--yellow); background: rgba(255, 210, 63, 0.12); }
 .accion .msg.dato { text-align: left; border-color: rgba(255, 210, 63, 0.55); cursor: pointer; }
 .accion .msg.activa { box-shadow: 0 0 0 2px var(--yellow); }
 /* En su propia línea, con el emoji al inicio (U-2) */
@@ -94,6 +97,7 @@
 .pista.entra { animation: entra 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.2) both; }
 @keyframes entra { 0% { transform: translateY(-10px) scale(0.97); opacity: 0; } 100% { transform: none; opacity: 1; } }
 .pista.activa { box-shadow: 0 0 0 2px var(--cyan); }
+.pista.guia { box-shadow: 0 0 0 2px var(--yellow); }
 .pista.tachada .texto { opacity: 0.4; text-decoration: line-through; }
 .pista.tachada .tachar { color: var(--lime); }
 
