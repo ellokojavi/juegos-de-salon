@@ -122,7 +122,7 @@ const ES = {
         'Cada persona que marcas bien suma su pista, y las pistas siempre dicen la verdad.',
         'Nunca hay que adivinar. Marcar a alguien que todavía no se puede deducir cuenta como error.',
       ],
-      puntaje: 'Resolverlo vale 100 puntos y cada error resta 10. El mínimo es 10.',
+      puntaje: 'Resolverlo vale 100 puntos. Cada error resta 10 y cada ayuda, 15. El mínimo es 10.',
       desempate: 'Si empatas, gana quien tardó menos.',
     },
     donde: {
@@ -643,6 +643,10 @@ const ES = {
   bdCasoMistakes: 'Tuviste {n} errores, a 10 puntos cada uno: se restan {pts} puntos.',
   bdCasoMistakesOne: 'Tuviste 1 error, que resta 10 puntos.', bdCasoNoMistakes: 'No te equivocaste nunca, así que no se resta nada.',
   bdCasoFloor: 'Si resuelves el caso, el puntaje nunca baja de 10.',
+  casoAyuda: 'Ayuda (−{n} puntos)', casoAyudaSure: 'Toca de nuevo para usar la ayuda (−{n})', casoAyudaVer: 'Ver la ayuda',
+  casoMira: 'Mira a {x}: junta lo que dicen {q}.', casoMiraUna: 'Mira a {x}: fíjate en lo que dice {q}.',
+  casoMiraVarias: 'Mira a {x}: hay que juntar varias pistas.', casoCuenta: 'Errores: {e} · Ayudas: {a}',
+  bdCasoAyudas: 'Pediste {n} ayudas, a 15 puntos cada una: se restan {pts} puntos.', bdCasoAyudasOne: 'Pediste 1 ayuda, que resta 15 puntos.',
   casoTexto: {
     grupo: {
       fila: 'en la fila {n}', col: 'en la columna {c}', oficio: 'entre los {oen}', borde: 'en el borde', esquinas: 'en las esquinas',
@@ -901,7 +905,7 @@ const EN = {
         'Each person you mark correctly adds their clue, and clues always tell the truth.',
         'You never have to guess. Marking someone who can\'t be worked out yet counts as a mistake.',
       ],
-      puntaje: 'Solving it is worth 100 points and each mistake takes off 10. The minimum is 10.',
+      puntaje: 'Solving it is worth 100 points. Each mistake takes off 10 and each hint, 15. The minimum is 10.',
       desempate: 'On a tie, the faster player wins.',
     },
     donde: {
@@ -1414,6 +1418,10 @@ const EN = {
   bdCasoMistakes: 'You made {n} mistakes, at 10 points each: {pts} points off.',
   bdCasoMistakesOne: 'You made 1 mistake, which takes off 10 points.', bdCasoNoMistakes: 'You never made a mistake, so nothing is taken off.',
   bdCasoFloor: 'If you solve the case, your score never goes below 10.',
+  casoAyuda: 'Hint (−{n} points)', casoAyudaSure: 'Tap again to use the hint (−{n})', casoAyudaVer: 'See the hint',
+  casoMira: 'Look at {x}: put together what {q} say.', casoMiraUna: 'Look at {x}: check what {q} says.',
+  casoMiraVarias: 'Look at {x}: you need to put several clues together.', casoCuenta: 'Mistakes: {e} · Hints: {a}',
+  bdCasoAyudas: 'You asked for {n} hints, at 15 points each: {pts} points off.', bdCasoAyudasOne: 'You asked for 1 hint, which takes off 15 points.',
   casoTexto: {
     grupo: {
       fila: 'in row {n}', col: 'in column {c}', oficio: 'among the {oen}', borde: 'on the edge', esquinas: 'in the corners',
@@ -1669,7 +1677,7 @@ const PT = {
         'Cada pessoa que você marca certo soma a pista dela, e as pistas sempre dizem a verdade.',
         'Nunca precisa chutar. Marcar alguém que ainda não dá para deduzir conta como erro.',
       ],
-      puntaje: 'Resolver vale 100 pontos e cada erro tira 10. O mínimo é 10.',
+      puntaje: 'Resolver vale 100 pontos. Cada erro tira 10 e cada ajuda, 15. O mínimo é 10.',
       desempate: 'Se empatar, ganha quem levou menos tempo.',
     },
     donde: {
@@ -2182,6 +2190,10 @@ const PT = {
   bdCasoMistakes: 'Você teve {n} erros, a 10 pontos cada: saem {pts} pontos.',
   bdCasoMistakesOne: 'Você teve 1 erro, que tira 10 pontos.', bdCasoNoMistakes: 'Você nunca errou, então não tira nada.',
   bdCasoFloor: 'Se você resolver o caso, a pontuação nunca fica abaixo de 10.',
+  casoAyuda: 'Ajuda (−{n} pontos)', casoAyudaSure: 'Toque de novo para usar a ajuda (−{n})', casoAyudaVer: 'Ver a ajuda',
+  casoMira: 'Olhe para {x}: junte o que dizem {q}.', casoMiraUna: 'Olhe para {x}: veja o que diz {q}.',
+  casoMiraVarias: 'Olhe para {x}: é preciso juntar várias pistas.', casoCuenta: 'Erros: {e} · Ajudas: {a}',
+  bdCasoAyudas: 'Você pediu {n} ajudas, a 15 pontos cada: tiram {pts} pontos.', bdCasoAyudasOne: 'Você pediu 1 ajuda, que tira 15 pontos.',
   casoTexto: {
     grupo: {
       fila: 'na linha {n}', col: 'na coluna {c}', oficio: 'entre os {oen}', borde: 'na borda', esquinas: 'nos cantos',
@@ -2437,7 +2449,7 @@ const DE = {
         'Jede Person, die du richtig markierst, gibt ihren Hinweis, und Hinweise sagen immer die Wahrheit.',
         'Raten musst du nie. Wer jemanden markiert, der sich noch nicht ableiten lässt, macht einen Fehler.',
       ],
-      puntaje: 'Lösen bringt 100 Punkte, jeder Fehler kostet 10. Das Minimum ist 10.',
+      puntaje: 'Lösen bringt 100 Punkte. Jeder Fehler kostet 10, jeder Tipp 15. Das Minimum ist 10.',
       desempate: 'Bei Gleichstand gewinnt, wer schneller war.',
     },
     donde: {
@@ -2950,6 +2962,10 @@ const DE = {
   bdCasoMistakes: 'Du hattest {n} Fehler, je 10 Punkte: Das kostet {pts} Punkte.',
   bdCasoMistakesOne: 'Du hattest 1 Fehler, der 10 Punkte kostet.', bdCasoNoMistakes: 'Du hast dich nie geirrt, also wird nichts abgezogen.',
   bdCasoFloor: 'Wenn du den Fall löst, fällt das Ergebnis nie unter 10.',
+  casoAyuda: 'Tipp (−{n} Punkte)', casoAyudaSure: 'Tippe nochmal für den Tipp (−{n})', casoAyudaVer: 'Tipp ansehen',
+  casoMira: 'Schau dir {x} an: Kombiniere, was {q} sagen.', casoMiraUna: 'Schau dir {x} an: Lies, was {q} sagt.',
+  casoMiraVarias: 'Schau dir {x} an: Du musst mehrere Hinweise kombinieren.', casoCuenta: 'Fehler: {e} · Tipps: {a}',
+  bdCasoAyudas: 'Du hast {n} Tipps genommen, je 15 Punkte: Es werden {pts} Punkte abgezogen.', bdCasoAyudasOne: 'Du hast 1 Tipp genommen, der 15 Punkte kostet.',
   casoTexto: {
     grupo: {
       fila: 'in Reihe {n}', col: 'in Spalte {c}', oficio: 'unter den {oen}', borde: 'am Rand', esquinas: 'in den Ecken',
