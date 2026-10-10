@@ -4542,8 +4542,10 @@ destapan a nadie, y si un paso destapa a muchos o todo sale de una sola pista, c
 **Por qué:** el dueño lo sentía monótono aun después de D-259. Medido en 40 casos: las deducciones que
 piden combinar pistas pasan de 51 % a 55 %, las personas deducibles por paso bajan de 1,66 a 1,50 y
 una de cada siete pistas es condicional o pareja.
-**Consecuencias:** un caso tarda unos 300 ms en armarse (antes 50 ms); en un celular puede llegar a un
-segundo, y se arma mientras se va el "¡A jugar!". `juegos.test.mjs` exige al menos 45 % de
+**Consecuencias:** un caso tarda unos 300 ms en armarse (antes 50 ms) y en un celular hasta un
+segundo. Por eso el motor guarda lo armado por semilla, y la antesala de La Copa (el día y la práctica)
+lo arma mientras se lee (`precalentar`, para los juegos que se marcan `caro` en el registro): tocar
+Empezar o Probar primero no deja el botón trabado. `juegos.test.mjs` exige al menos 45 % de
 deducciones combinadas. El caso de una semilla cambia (El caso todavía no está en `POZO`).
 
 ## D-261 · El caso: marcar antes de tiempo cuenta como error

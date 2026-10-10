@@ -179,6 +179,9 @@ export function texto(caso, i, L, { marcas = false } = {}) {
   return textoPlano(caso, i, L, marcas ? (t, l) => MARCA[l][0] + t + MARCA[l][1] : t => t);
 }
 
+/** "y" antes de un nombre que suena a i se dice "e" en español: "Gonzalo e Isabel" (pero "y Hierro"). */
+const conjuncion = (F, nombre) => (/^(h?[ií](?!e))/i.test(nombre) ? F.yI : F.y);
+
 function textoPlano(caso, i, L, m) {
   const p = caso.pistas[i];
   const F = L.frases;
@@ -191,13 +194,13 @@ function textoPlano(caso, i, L, m) {
     // "criminal" concuerda con el nombre (criminoso o criminosa en portugués)
     const cx = femenino(x) ? F.crimF : F.crim, cy = femenino(y) ? F.crimF : F.crim;
     // Con dos mujeres concuerda en femenino: "las dos inocentes o las dos criminales"
-    if (p.t === 'mismo') return fmt(femenino(x) && femenino(y) ? F.mismoF : F.mismo, { x: m(x, 'a'), y: m(y, 'a') });
+    if (p.t === 'mismo') return fmt(femenino(x) && femenino(y) ? F.mismoF : F.mismo, { x: m(x, 'a'), y: m(y, 'a'), c: conjuncion(F, y) });
     return fmt(F[`si${p.k}${p.j}`], { x: m(x, 'a'), y: m(y, 'b'), cx, cy });
   }
   if (p.g.tipo === 'dos') {
     // Con dos mujeres concuerda en femenino: "Exactamente una de Ana y Cata"
     const x = caso.nombres[p.g.de], y = caso.nombres[p.g.otro];
-    return fmt(femenino(x) && femenino(y) ? F.unaDeDos : F.unoDeDos, { x: m(x, 'a'), y: m(y, 'a') });
+    return fmt(femenino(x) && femenino(y) ? F.unaDeDos : F.unoDeDos, { x: m(x, 'a'), y: m(y, 'a'), c: conjuncion(F, y) });
   }
   const g = m(grupoTexto(p.g, caso, i, L), 'a');
   const n = p.a.length;
@@ -304,7 +307,18 @@ const barajar = (xs, r) => { const a = xs.slice(); for (let i = a.length - 1; i 
  * simula al jugador, y si en algún momento nadie más se puede deducir, cambia la última pista
  * repartida por una que destrabe; si no hay, prueba con otra solución.
  */
+/** Lo ya armado, por semilla: armar un caso cuesta (D-260), y la antesala lo deja listo antes (`precalentar`). */
+const HECHOS = new Map();
+
 export function deSemilla(semilla) {
+  if (HECHOS.has(semilla)) return HECHOS.get(semilla);
+  const caso = armarDeSemilla(semilla);
+  if (HECHOS.size > 8) HECHOS.delete(HECHOS.keys().next().value);
+  HECHOS.set(semilla, caso);
+  return caso;
+}
+
+function armarDeSemilla(semilla) {
   // Se arman varios casos y se queda el que más hace pensar (D-260): jugado de punta a punta,
   // el que más deducciones pide combinar pistas y menos personas deja deducibles a la vez
   let mejor = null, mejorNota = -Infinity, hechos = 0;

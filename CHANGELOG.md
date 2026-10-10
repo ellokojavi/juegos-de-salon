@@ -6,6 +6,8 @@
   se arman cuatro casos y se juega el que más hace pensar.
 - **🔍 El caso: no se tantea** (D-261): marcar a alguien que todavía no se puede deducir cuenta como
   error, sin decir si estaba bien.
+- **🔍 El caso:** el caso se arma mientras se lee la antesala, así que "Empezar" y "Probar primero" no
+  se traban; y "Gonzalo e Isabel", no "y Isabel".
 
 ## 0.140.1 — 2026-10-10
 - **🔍 El caso, sin repetir:** al acertar, el mensaje dice solo "¡Bien! Tati es inocente."; su pista
