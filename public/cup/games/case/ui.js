@@ -60,6 +60,9 @@ export function titulo({ el, J }) {
     el('span', { class: 'display display--lg rainbow' }, J.nombre));
 }
 
+/** La prueba es un caso completo, igual de difícil que el de verdad: la antesala lo dice. */
+export const pruebaCompleta = true;
+
 /** Lo que tardan las cartas en darse vuelta al empezar (la última parte a los 480 ms y gira en 500): el reloj parte después. */
 export const entrada = () => (QUIETO() ? 0 : 60 + 7 * 60 + 550);
 
@@ -77,7 +80,9 @@ export function montar(raiz, ctx) {
   // "criminosa" en portugués: el valor concuerda con quien es (en los otros idiomas, las dos claves dicen lo mismo)
   const criminal = i => (motor.femenino(nombre(i)) ? T.casoCriminalF : T.casoCriminal);
   const valor = i => (p.v[i] ? criminal(i) : T.casoInocente);
-  const frase = i => motor.texto(p, i, L);
+  const frase = i => motor.texto(p, i, L, { marcas: true });
+  /** Un texto con los grupos pintados como en la grilla: el primero en amarillo y el segundo en rosado (#282). */
+  const pintado = t => motor.trozos(t).map(([x, g]) => (g ? el('span', { class: `cs-g${g}` }, x) : x));
   const dice = i => fmt(T.casoDice, { x: nombre(i), v: valor(i), p: frase(i) });
 
   // La grilla se arma una vez: después solo cambian sus clases, así las animaciones no se cortan
@@ -114,7 +119,7 @@ export function montar(raiz, ctx) {
     // Terminado el caso, el tiempo se detiene aquí y no al tocar el botón (D-130)
     if (e.fin) ctx.pararReloj?.(e);
     const pf = foco !== null ? p.pistas[foco] : null;
-    const enFoco = new Set(pf ? [...pf.a, ...(pf.b || [])] : []);
+    const enFoco = new Set(pf ? pf.a : []), enFocoB = new Set(pf?.b || []);
     grilla.classList.toggle('enfoque', !!pf);
     cartas.forEach((carta, i) => {
       const sabe = e.x[i] !== -1, t = carta.classList;
@@ -124,6 +129,8 @@ export function montar(raiz, ctx) {
       t.toggle('elegida', elegida === i);
       t.toggle('equivoco', e.conError.has(i));
       t.toggle('foco', enFoco.has(i));
+      t.toggle('foco-b', enFocoB.has(i) && !enFoco.has(i));
+      t.toggle('foco-ab', enFocoB.has(i) && enFoco.has(i));
       t.toggle('habla', foco === i);
       carta.disabled = e.fin;
       carta.emo.textContent = sabe ? (e.x[i] ? '🔪' : '😇') : oficioDe(i).emoji;
@@ -139,7 +146,7 @@ export function montar(raiz, ctx) {
   const msg = m => el('button', {
     type: 'button', class: `cs-msg ${m.tipo}${m.de !== undefined && foco === m.de ? ' activa' : ''}`,
     onClick: ev => { ev.stopPropagation(); if (m.de !== undefined) enfocar(m.de); },
-  }, el('span', {}, m.texto), m.de !== undefined ? el('span', { class: 'ver' }, foco === m.de ? T.casoOcultar : T.casoVer) : null);
+  }, el('span', {}, ...pintado(m.texto)), m.de !== undefined ? el('span', { class: 'ver' }, foco === m.de ? T.casoOcultar : T.casoVer) : null);
 
   const dibujarAccion = e => {
     accion.replaceChildren();
@@ -177,7 +184,7 @@ export function montar(raiz, ctx) {
       },
       el('button', { type: 'button', class: 'texto', onClick: ev => { ev.stopPropagation(); enfocar(i); } },
         k === 0 ? el('span', { class: 'nueva-tag' }, T.casoUltima) : null,
-        el('span', { class: 'de' }, `${nombre(i)}:`), ' ', el('span', {}, frase(i))),
+        el('span', { class: 'de' }, `${nombre(i)}:`), ' ', el('span', {}, ...pintado(frase(i)))),
       el('button', {
         type: 'button', class: 'tachar', 'aria-label': tachadas.has(i) ? T.casoDestachar : T.casoTachar, 'aria-pressed': String(tachadas.has(i)),
         onClick: ev => { ev.stopPropagation(); tachadas.has(i) ? tachadas.delete(i) : tachadas.add(i); SFX.tap(); dibujarPistas(motor.estado(p, jugadas)); },
