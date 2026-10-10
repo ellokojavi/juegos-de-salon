@@ -165,9 +165,8 @@ export function montar(raiz, ctx) {
     } else if (mensaje) {
       accion.append(msg(mensaje));
     } else {
-      // Al empezar (y al volver), la última pista sabida queda a la vista junto a la grilla
-      const ultima = e.marcas.length ? e.marcas.at(-1) : p.inicio;
-      accion.append(msg({ tipo: 'dato', texto: dice(ultima), de: ultima }), el('p', { class: 'cs-sub' }, T.casoToca));
+      // Las pistas están justo abajo, la última destacada: aquí no se repiten
+      accion.append(el('p', { class: 'cs-sub' }, T.casoToca));
     }
   };
 
@@ -177,7 +176,6 @@ export function montar(raiz, ctx) {
     const tachadas = ctx.tachadas || (ctx.tachadas = new Set());
     pistas.replaceChildren(
       el('h3', {}, `💬 ${fmt(T.casoPistas, { n: orden.length })}`),
-      el('p', { class: 'ayuda' }, T.casoAyuda),
       ...orden.map((i, k) => el('div', {
         class: 'cs-pista' + (k === 0 ? ' ultima' : '') + (nueva === i ? ' entra' : '') + (tachadas.has(i) ? ' tachada' : '') + (foco === i ? ' activa' : ''),
         'data-de': i,
@@ -246,7 +244,8 @@ export function montar(raiz, ctx) {
       return;
     }
     elegida = null; foco = null; nueva = i;
-    mensaje = { tipo: 'ok', texto: fmt(T.casoBien, { ...vars, p: frase(i) }), de: i };
+    // Solo el acierto: su pista entra destacada arriba de la lista, sin repetirse aquí
+    mensaje = { tipo: 'ok', texto: fmt(T.casoBien, vars) };
     const e = motor.estado(p, jugadas);
     if (e.fin) { SFX.win(); vibrate([30, 50, 30]); } else { SFX.letterHit(); vibrate(25); }
     dibujar(); sellar(i, v ? '🔪' : '😇', 'acierto');
