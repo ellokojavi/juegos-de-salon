@@ -697,7 +697,7 @@ test('el caso: se resuelve sin adivinar, las pistas son verdad y se dicen en los
       for (const [i, v] of Object.entries(d)) { solas.has(Number(i)) ? simples++ : combinadas++; jugadas.push({ i: Number(i), v }); }
     }
   }
-  assert.ok(combinadas / (simples + combinadas) >= 0.25, `muy lineal: solo ${combinadas} de ${simples + combinadas} deducciones combinan pistas`);
+  assert.ok(combinadas / (simples + combinadas) >= 0.45, `muy lineal: solo ${combinadas} de ${simples + combinadas} deducciones combinan pistas`);
   assert.ok(eqs / todas <= 0.35, `demasiadas pistas de "hay exactamente N": ${eqs} de ${todas}`);
   // Un error resta 10, con mínimo 10; sin resolver, 0
   const p = caso.generar('KQRST', 1);

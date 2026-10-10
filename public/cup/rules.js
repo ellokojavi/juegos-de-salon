@@ -665,6 +665,8 @@ const ES = {
       gt: 'Hay más criminales {g} que {h}.', igual: 'Hay tantos criminales {g} como {h}.',
       esC: '{x} es criminal.', esCF: '{x} es criminal.', esI: '{x} es inocente.',
       unoDeDos: 'Exactamente uno de {x} y {y} es criminal.', unaDeDos: 'Exactamente una de {x} y {y} es criminal.',
+      crim: 'criminal', crimF: 'criminal', mismo: '{x} y {y} son los dos inocentes o los dos criminales.',
+      si11: 'Si {x} es {cx}, {y} también lo es.', si10: 'Si {x} es {cx}, {y} es inocente.', si01: 'Si {x} es inocente, {y} es {cy}.', si00: 'Si {x} es inocente, {y} también lo es.',
     },
     oficios: {
       chef: { uno: 'chef', varios: 'chefs', en: 'chefs' }, guardia: { uno: 'guardia', varios: 'guardias', en: 'guardias' },
@@ -1433,6 +1435,8 @@ const EN = {
       gt: 'There are more criminals {g} than {h}.', igual: 'There are as many criminals {g} as {h}.',
       esC: '{x} is a criminal.', esCF: '{x} is a criminal.', esI: '{x} is innocent.',
       unoDeDos: 'Exactly one of {x} and {y} is a criminal.', unaDeDos: 'Exactly one of {x} and {y} is a criminal.',
+      crim: 'a criminal', crimF: 'a criminal', mismo: '{x} and {y} are either both innocent or both criminals.',
+      si11: 'If {x} is {cx}, so is {y}.', si10: 'If {x} is {cx}, {y} is innocent.', si01: 'If {x} is innocent, {y} is {cy}.', si00: 'If {x} is innocent, so is {y}.',
     },
     oficios: {
       chef: { uno: 'chef', varios: 'chefs', en: 'chefs' }, guardia: { uno: 'guard', varios: 'guards', en: 'guards' },
@@ -2198,6 +2202,8 @@ const PT = {
       gt: 'Há mais criminosos {g} do que {h}.', igual: 'Há tantos criminosos {g} quanto {h}.',
       esC: '{x} é criminoso.', esCF: '{x} é criminosa.', esI: '{x} é inocente.',
       unoDeDos: 'Exatamente um de {x} e {y} é criminoso.', unaDeDos: 'Exatamente uma de {x} e {y} é criminosa.',
+      crim: 'criminoso', crimF: 'criminosa', mismo: '{x} e {y} são os dois inocentes ou os dois do crime.',
+      si11: 'Se {x} for {cx}, {y} também é.', si10: 'Se {x} for {cx}, {y} é inocente.', si01: 'Se {x} for inocente, {y} é {cy}.', si00: 'Se {x} for inocente, {y} também é.',
     },
     oficios: {
       chef: { uno: 'chef', varios: 'chefs', en: 'chefs' }, guardia: { uno: 'guarda', varios: 'guardas', en: 'guardas' },
@@ -2963,6 +2969,8 @@ const DE = {
       gt: 'Es gibt mehr Kriminelle {g} als {h}.', igual: 'Es gibt gleich viele Kriminelle {g} wie {h}.',
       esC: '{x} ist kriminell.', esCF: '{x} ist kriminell.', esI: '{x} ist unschuldig.',
       unoDeDos: 'Von {x} und {y} ist genau eine Person kriminell.', unaDeDos: 'Von {x} und {y} ist genau eine Person kriminell.',
+      crim: 'kriminell', crimF: 'kriminell', mismo: '{x} und {y} sind entweder beide unschuldig oder beide kriminell.',
+      si11: 'Wenn {x} {cx} ist, ist es {y} auch.', si10: 'Wenn {x} {cx} ist, ist {y} unschuldig.', si01: 'Wenn {x} unschuldig ist, ist {y} {cy}.', si00: 'Wenn {x} unschuldig ist, ist es {y} auch.',
     },
     oficios: {
       chef: { uno: 'Koch', varios: 'Köche', en: 'Köchen' }, guardia: { uno: 'Wache', varios: 'Wachen', en: 'Wachen' },
