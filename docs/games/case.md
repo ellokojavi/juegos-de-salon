@@ -9,8 +9,11 @@ prototipo para probar con amigos (D-256) · **Idiomas:** solo español, por ahor
 > en [cup.md](cup.md). Esta página documenta el prototipo de `/labs/case/`, que sigue con su motor
 > en español hasta que El caso salga del laboratorio: entonces se va o pasa a usar el de La Copa.
 
+En `/labs/`, el botón **🔍 Jugar El caso** (`#btn-caso`) abre la versión de La Copa
+(`/case/?labs`), con la experiencia completa: la portada, la prueba, el 3, 2, 1, el juego y el
+resultado con su desglose. Este prototipo queda como el segundo botón, **📅 El caso del día
+(prototipo)** (`#btn-caso-dia`). `tools/e2e/case/lab.mjs` comprueba los dos.
 
-En `/labs/`, el botón **🔍 Jugar El caso** abre la versión de La Copa (`/case/?labs`), con la experiencia completa: la portada, la prueba, el 3, 2, 1, el juego y el resultado. Este prototipo queda como el segundo botón, **📅 El caso del día**.
 ## Resumen
 
 Un misterio de deducción al estilo de *Clues by Sam*: veinte sospechosos en una grilla de 4 por 5,
