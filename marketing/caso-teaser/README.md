@@ -15,6 +15,14 @@ comentario al final. Sigue el modelo de [`../promo-video/`](../promo-video/READM
 | Lleva a | `juegosdesalon.cl/labs/case`, el caso del día, que termina con el formulario "¿Qué te pareció?" (D-265) |
 | App que muestra | 0.142.2 |
 
+En `output/` vive **solo la última versión**, y GitHub Pages la publica con el sitio
+(`juegosdesalon.cl/marketing/caso-teaser/output/…`). Las capturas de `capturas/` se rehacen y no
+van al repo.
+
+**Muestra un juego que no está en la portada, a propósito** (`"laboratorio": ["caso"]` en
+`registro.json`, U-34): `node tools/agents/marketing.mjs revisar` no lo marca como "ya no está".
+Cuando El caso salga del laboratorio, se saca ese campo y el link pasa a la ruta del juego.
+
 ## Lo que el dueño quiere
 
 - **6 segundos, en español**, para pasarlo a GIF y mandarlo por WhatsApp.

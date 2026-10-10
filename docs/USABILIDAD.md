@@ -102,7 +102,9 @@ nunca se usaron, y no se renumera.
   Rehacerlo lo decide el dueño: el revisor anota, no rehace. Un asset que muestra a propósito
   solo algunos juegos (`"seleccion": true` en `marketing/registro.json`; el video desde la v6, que
   el dueño pidió corto y con pocos juegos) no queda atrás porque falte uno nuevo, pero sí si sale
-  uno que ya no está o una pantalla que cambió.
+  uno que ya no está o una pantalla que cambió. Un juego que sale a propósito sin estar en la
+  portada, porque todavía está en el laboratorio (`"laboratorio": ["caso"]`; el teaser de El caso),
+  tampoco cuenta como "uno que ya no está".
 
 ## Resuelto con el dueño
 

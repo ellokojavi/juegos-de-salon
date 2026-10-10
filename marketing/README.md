@@ -10,7 +10,9 @@ rehacerse (D-178).
 | Teaser de El caso | 1 · 2026-10-10 · 6,0 s | [vertical](caso-teaser/output/el-caso-6s.mp4) · [GIF](caso-teaser/output/el-caso-6s.gif) | [caso-teaser/README.md](caso-teaser/README.md) |
 
 [`registro.json`](registro.json) es la misma lista para leer con código: versión, fecha,
-archivos, formatos, duración y estado de cada asset.
+archivos, formatos, duración y estado de cada asset, y qué juegos muestra: `juegos`, con
+`"seleccion": true` si son solo algunos a propósito y `"laboratorio"` para los que salen sin estar
+todavía en la portada (U-34).
 
 ## Reglas
 
