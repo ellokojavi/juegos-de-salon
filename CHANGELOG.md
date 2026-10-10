@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.140.1 — 2026-10-10
+- **🔍 El caso, sin repetir:** al acertar, el mensaje dice solo "¡Bien! Tati es inocente."; su pista
+  entra destacada arriba de la lista, sin repetirse debajo de la grilla. Se va la explicación de cómo
+  tocar las pistas y tacharlas: se entiende sola.
+
 ## 0.140.0 — 2026-10-10
 - **🔍 El caso, más difícil** (D-259): las pistas se eligen para que haya que combinarlas, con más
   comparaciones ("hay más criminales arriba de Ana que entre los vecinos de Beto"), pares e
