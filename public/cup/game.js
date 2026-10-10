@@ -1861,9 +1861,17 @@ function panelReglas(id, { copa = true, prueba = false } = {}) {
     el('p', { class: 'muted' }, puntajeTexto(J, copa))));
 }
 
+/** Lo que tarda en irse el "¡A jugar!" después de aparecer: el tablero ya está debajo. */
+const CUENTA_SALE_MS = 900;
+
+/**
+ * El 3, 2, 1, ¡A jugar! antes de cada juego (D-105). Se resuelve con el "¡A jugar!", para que el
+ * tablero se arme debajo mientras la capa se va, y devuelve cuánto falta para que se vaya: el reloj
+ * parte recién ahí, con la pantalla de juego a la vista. La cuenta no es tiempo de juego.
+ */
 function cuentaRegresiva(J) {
   // La Gran Final no la lleva: cada ronda ya parte con su propia presentación
-  if (J === JUEGOS_COPA.final) return Promise.resolve();
+  if (J === JUEGOS_COPA.final) return Promise.resolve(0);
   $('#jugar-head').replaceChildren(el('span', { class: 'jugar-titulo' }, conEmoji(J.emoji, J.nombre)));
   $('#jugar-body').innerHTML = '';
   return new Promise(listo => {
@@ -1879,8 +1887,8 @@ function cuentaRegresiva(J) {
       num.textContent = T.letsPlay;
       capa.classList.add('ya');
       SFX.turn(); vibrate([20, 40, 20]);
-      listo();
-      setTimeout(() => capa.remove(), 900);
+      listo(CUENTA_SALE_MS);
+      setTimeout(() => capa.remove(), CUENTA_SALE_MS);
     };
     paso();
   });
@@ -1895,7 +1903,7 @@ async function jugar(d) {
   mostrar('jugar');
   keepAwake();
   // La cuenta va solo al empezar: si se retoma una partida, el tablero vuelve de una
-  if (!guardado.reloj) await cuentaRegresiva(J);
+  const espera = guardado.reloj ? 0 : await cuentaRegresiva(J);
   // Conexiones necesita saber cuándo empezó su día, para no cambiar de grilla a mitad (D-128)
   // Los textos en el idioma de quien juega y las palabras en el de la copa (D-170)
   // El público de la copa decide qué contenido local entra (D-187)
@@ -1904,7 +1912,9 @@ async function jugar(d) {
   // El reloj se detiene cuando el tablero termina, no cuando se toca "Ver resultado" (D-130).
   // Detenido, queda así aunque se recargue la página.
   let detenido = !!guardado.detenido;
-  let rel = guardado.reloj ? (detenido ? guardado.reloj : reloj.seguir(guardado.reloj, now)) : reloj.nuevo(now);
+  // Uno nuevo parte cuando se fue la cuenta y terminó la entrada del juego (las cartas de El caso
+  // que se dan vuelta): ni la cuenta ni la entrada son tiempo de juego
+  let rel = guardado.reloj ? (detenido ? guardado.reloj : reloj.seguir(guardado.reloj, now)) : reloj.nuevo(now + espera + (mod.entrada?.() || 0));
   let jugadas = guardado.jugadas;
   // El resultado se envía apenas termina el tablero, no al tocar "Ver resultado" (D-150): si el
   // jugador cierra sin tocarlo y el día cierra, igual cuenta
@@ -2193,8 +2203,9 @@ const chipPrueba = () => {
  */
 async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false } = {}) {
   const J = JUEGOS_COPA[id], mod = JUEGOS[id];
-  await cuentaRegresiva(J);
-  let rel = reloj.nuevo(Date.now());
+  const espera = await cuentaRegresiva(J);
+  // Como en la copa: el reloj parte con la pantalla de juego a la vista, no con la cuenta
+  let rel = reloj.nuevo(Date.now() + espera + (mod.entrada?.() || 0));
   const head = $('#jugar-head');
   head.innerHTML = '';
   const cron = el('span', { class: 'cron' }, fmt(T.timer, { t: '0:00' }));
