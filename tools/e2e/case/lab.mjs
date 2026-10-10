@@ -18,6 +18,7 @@ await b.go(`${SITIO}/labs/case/?c=PRUEBA`);
 ok(await ev(`document.getElementById('caso-nombre').textContent`) === 'Caso PRUEBA', 'con ?c= es ese caso');
 ok(await ev(`document.querySelectorAll('.persona').length`) === 20, 'veinte sospechosos');
 ok(await ev(`document.querySelectorAll('#pistas .pista').length`) === 1, 'se parte con una pista');
+ok(!/null|undefined/.test(await ev(`document.getElementById('marcador').textContent`)), 'el marcador no muestra "null" sin ayudas');
 await b.shot('01-inicio');
 
 // "¿Cómo se juega?" abre las reglas y baja hasta ellas, sin el salto del ancla
