@@ -1,5 +1,5 @@
 // El caso (prototipo del laboratorio, D-256) de punta a punta: el laboratorio lo ofrece, marcar
-// antes de tiempo no se acepta ni cuenta como error, un error se cuenta, el caso se resuelve
+// antes de tiempo no se acepta y cuenta como error (D-261), un error se cuenta, el caso se resuelve
 // entero sin adivinar y al recargar sigue donde estaba (C-6). Imprime ✗ si algo falla.
 import { launch, sleep } from '../cdp.mjs';
 const OUT = process.argv[2];
