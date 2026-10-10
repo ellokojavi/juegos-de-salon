@@ -10,6 +10,7 @@
 import { launch, sleep } from '../cdp.mjs';
 import { mkdirSync } from 'node:fs';
 import { POZO } from '../../../public/cup/engine.js';
+import { JUEGOS_COPA } from '../../../public/cup/rules.js';
 
 const OUT = process.argv[2] || '/tmp/copa';
 const SIETE = !process.argv.includes('--tres');
@@ -628,8 +629,9 @@ if (corre('laboratorio')) {
   await b.go(`${BASE}?labs`, 1500);
   ok(await ev(`document.getElementById('btn-menu').href`) === `${SITIO}/labs/`, 'La Copa con ?labs vuelve al laboratorio');
   await b.go(`${SITIO}/labs/`, 1500);
-  // El pozo más la final, y el más nuevo entre ellos
-  ok(await ev(`document.querySelectorAll('#minis .mini-juego').length`) === POZO.length + 1 && await ev(`!!document.querySelector('#minis [data-id="desenredo"]')`), `el laboratorio ofrece los ${POZO.length + 1} juegos (con Desenredo)`);
+  // Todos los juegos de La Copa: el pozo, la final y los que todavía no entran al pozo (El caso, D-257)
+  const enLabs = Object.keys(JUEGOS_COPA).length;
+  ok(await ev(`document.querySelectorAll('#minis .mini-juego').length`) === enLabs && await ev(`!!document.querySelector('#minis [data-id="desenredo"]') && !!document.querySelector('#minis [data-id="caso"]')`), `el laboratorio ofrece los ${enLabs} juegos (con Desenredo y El caso)`);
   await b.shot('10-labs');
   // Los juegos con página propia se practican ahí, para que el link traiga su tarjeta (D-164)
   ok(await ev(`document.querySelector('#minis [data-id="donde"]').getAttribute('href')`) === '../where/?labs'
