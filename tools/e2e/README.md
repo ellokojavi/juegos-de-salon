@@ -121,7 +121,7 @@ node tools/e2e/contacto.mjs cuarto-rey --salida /tmp/contacto
 | `compartir-portada.mjs` | El botón de compartir de la portada (D-226, D-242), en los cuatro idiomas: en español abre la hoja con el video, sin cargarlo hasta que lo tocan, y "Compartir el video" manda el link de YouTube (D-253); en los demás comparte directo, sin hoja (D-254). En todos, la tarjeta social del idioma como imagen, el texto con su cabecera y el link a la portada de ese idioma; en un computador, solo el texto copiado y nada descargado |
 | `enlace-invitacion.mjs` | Quien llega por un enlace solo puede unirse a esa sala, en los cuatro juegos con sala |
 | `sala-error.mjs` | Sin llegar a Firebase: el mensaje de cada juego con sala, Toque y Fama en cada idioma y los demás repartidos entre ellos |
-| `idioma-por-url.mjs` | El idioma que viene en el link, en cada idioma: `?lang=`, las puertas (`/en/`, `/pt/`, `/de/`), el puente `/labs/de/` y las invitaciones a sala y a copa |
+| `idioma-por-url.mjs` | El idioma que viene en el link, en cada idioma: `?lang=`, las puertas (`/en/`, `/pt/`, `/de/`) y las invitaciones a sala y a copa |
 | `sala-tope.mjs` | Pasado el tope de salas por celular, avisa al instante y sin tocar la red |
 | `hangman/idiomas.mjs` | El Ahorcado en todos los idiomas: cada pantalla de `caminos.mjs` contra el español (D-199) |
 | `battleship/idiomas.mjs` | Batalla Naval en todos los idiomas: cada pantalla de `caminos.mjs` contra el español (D-199) |

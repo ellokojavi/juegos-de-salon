@@ -164,9 +164,6 @@ const puentes = () => [
   // Las páginas genéricas (/minijuegos/?reinas, /minigames/?reinas): el molde manda cada link a su lugar
   { viejo: 'public/minijuegos/index.html', a: '../cup/suelto/', titulo: 'Juegos de Salón 🎲' },
   { viejo: 'public/minigames/index.html', a: '../cup/suelto/', titulo: 'Juegos de Salón 🎲' },
-  // El laboratorio del alemán, que ya salió de ahí (D-197): sus revisores tienen ese link
-  ...paginas().filter(p => p.puerta && p.lang === 'de')
-    .map(p => ({ ...p, viejo: 'public/labs/de/index.html', a: `../..${p.ruta}` })),
 ];
 
 function paginaPuente(p) {
