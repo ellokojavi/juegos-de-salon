@@ -8,6 +8,8 @@ prototipo para probar con amigos (D-256) · **Idiomas:** solo español, por ahor
 > suelta en `/case/` y en la práctica del laboratorio, pero todavía no está en `POZO`. Está descrita
 > en [cup.md](cup.md). Esta página documenta el prototipo de `/labs/case/`, que sigue con su motor
 > en español hasta que El caso salga del laboratorio: entonces se va o pasa a usar el de La Copa.
+> Desde D-259 los dos generadores difieren: el de La Copa elige pistas que hay que combinar y
+> suma "Exactamente uno de Ana y Beto"; el prototipo sigue con el de antes.
 
 En `/labs/`, el botón **🔍 Jugar El caso** (`#btn-caso`) abre la versión de La Copa
 (`/case/?labs`), con la experiencia completa: la portada, la prueba, el 3, 2, 1, el juego y el
