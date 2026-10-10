@@ -1782,6 +1782,9 @@ function antesDeJugar(d) {
   const sinGente = faltaGente(Lc);
   const empezar = el('button', { class: 'btn btn--yellow', id: 'btn-empezar', disabled: sinGente }, `${J.emoji} ${T.start}`);
   if (sinGente) avisoError(err, T.needSecond);
+  precalentar(id,
+    () => JUEGOS[id].generar(S.code, d, { lang: LANG, palabras: palabrasDe(meta), aud: audienciaDe(meta) }),
+    () => JUEGOS[id].ensayo(S.code, d, { lang: LANG, palabras: palabrasDe(meta), aud: audienciaDe(meta) }));
   empezar.addEventListener('click', async () => {
     SFX.tap();
     empezar.disabled = true;
@@ -1829,6 +1832,17 @@ const avisoPalabras = meta => (palabrasDe(meta) === LANG ? null
 
 /** Lo de arriba de la antesala: la portada animada del juego si la tiene (el globo de ¿Dónde queda?), si no su emoji. */
 const heroe = (id, J) => JUEGOS[id]?.portada?.() ?? el('span', { class: con('icon', J.emoji) }, J.emoji);
+
+/**
+ * Un juego que tarda en armarse (`caro`, El caso, D-260) se arma mientras se lee la antesala, sin
+ * apuro: así tocar Empezar o Probar primero no deja el botón trabado. Lo armado queda guardado en el
+ * motor y el juego lo reusa. Si no alcanza, se arma igual al empezar.
+ */
+function precalentar(id, ...armar) {
+  if (!JUEGOS[id]?.caro) return;
+  const luego = globalThis.requestIdleCallback || (f => setTimeout(f, 300));
+  for (const f of armar) luego(() => { try { f(); } catch (_) { /* se arma al empezar */ } });
+}
 
 /** Lo que dice la antesala de la prueba: en El caso no es más corta, es un caso completo. */
 const notaPrueba = id => (JUEGOS[id]?.pruebaCompleta ? T.trialNoteFull : T.trialNote);
@@ -2142,6 +2156,7 @@ function practica(id) {
     S.hoy = { fecha, ya: !!leerUnoAlDia().dias[fecha] };
   }
   const semilla = HOY ? semillaDel(S.hoy.fecha) : esCodigo(SEMILLA) ? SEMILLA : codigoAlAzar();
+  precalentar(id, () => JUEGOS[id].generar(semilla, 1, { lang: LANG }), () => JUEGOS[id].ensayo?.(semilla, 1, { lang: LANG }));
   const zipSeg = new URLSearchParams(location.search).get('zipSeg');
   // Suelto, la semilla no va a la vista (D-142): el link queda en /queens/. Desde el
   // laboratorio sí, para poder repetir la partida.

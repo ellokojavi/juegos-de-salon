@@ -4,7 +4,7 @@
  * tocar una pista ilumina a las personas de las que habla.
  *
  * Las jugadas son los intentos de marcar que cuentan: `{ i, v }` (acierto o error). Un intento de
- * antes de tiempo no se guarda: no cuenta y no dice si estaba bien.
+ * antes de tiempo se guarda como `{ i, v, falta: 1 }`: cuenta como error y no dice si estaba bien (D-261).
  *
  * `portada()` es la portada animada de la antesala: cartas de espaldas que se dan vuelta solas
  * mientras una lupa las recorre.
@@ -59,6 +59,9 @@ export function titulo({ el, J }) {
     el('span', { class: 'cs-lupa', 'aria-hidden': 'true' }, '🔍'),
     el('span', { class: 'display display--lg rainbow' }, J.nombre));
 }
+
+/** Armar un caso tarda (D-260): la antesala lo deja listo mientras se lee, para que "Empezar" no se trabe. */
+export const caro = true;
 
 /** La prueba es un caso completo, igual de difícil que el de verdad: la antesala lo dice. */
 export const pruebaCompleta = true;
@@ -241,6 +244,9 @@ export function montar(raiz, ctx) {
     const r = motor.intento(p, jugadas, i, v);
     const vars = { x: nombre(i), v: v ? criminal(i) : T.casoInocente };
     if (r === 'falta') {
+      // Cuenta como error (D-261), pero no dice si lo que se marcó estaba bien
+      jugadas.push({ i, v, falta: 1 });
+      ctx.guardar(jugadas);
       mensaje = { tipo: 'falta', texto: fmt(T.casoFalta, vars) };
       caducar(mensaje, 4000);
       SFX.error(); vibrate([20, 30, 20]);

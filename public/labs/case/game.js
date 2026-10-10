@@ -249,12 +249,14 @@ function intentar(valor) {
   const n = caso.nombres[i];
   const r = marcar(caso, P.marcas, i, valor);
   if (r === 'falta') {
-    mensaje = { tipo: 'falta', texto: `Con las pistas que hay, todavía no se puede saber qué es ${n}.` };
+    // Cuenta como error (D-261), pero no dice si lo que se marcó estaba bien
+    P.errores.push(i);
+    mensaje = { tipo: 'falta', texto: `Todavía no se puede saber qué es ${n}: cuenta como error.` };
     caducar(mensaje, 4000);
     SFX.error(); vibrate([20, 30, 20]);
     sellar(i, '❔', 'duda');
   } else if (r === 'error') {
-    if (!P.errores.includes(i)) P.errores.push(i);
+    P.errores.push(i);
     mensaje = { tipo: 'error', texto: `${n} no es ${valor ? 'criminal' : 'inocente'}. Revisa las pistas.` };
     caducar(mensaje, 4000);
     SFX.letterMiss(); vibrate([40, 40, 40]);

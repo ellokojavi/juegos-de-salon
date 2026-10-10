@@ -120,7 +120,7 @@ const ES = {
       como: [
         'Descubre quién es criminal y quién es inocente entre los 20 sospechosos.',
         'Cada persona que marcas bien suma su pista, y las pistas siempre dicen la verdad.',
-        'Nunca hay que adivinar: si todavía no se puede saber, no te deja marcar.',
+        'Nunca hay que adivinar. Marcar a alguien que todavía no se puede deducir cuenta como error.',
       ],
       puntaje: 'Resolverlo vale 100 puntos y cada error resta 10. El mínimo es 10.',
       desempate: 'Si empatas, gana quien tardó menos.',
@@ -631,7 +631,7 @@ const ES = {
   // 🔍 El caso
   casoEsInocente: '😇 {x} es inocente', casoEsCriminal: '🔪 {x} es criminal', casoEsCriminalF: '🔪 {x} es criminal',
   casoInocente: 'inocente', casoCriminal: 'criminal', casoCriminalF: 'criminal',
-  casoFalta: 'Con las pistas que hay, todavía no se puede saber qué es {x}.',
+  casoFalta: 'Todavía no se puede saber qué es {x}: cuenta como error.',
   casoError: '{x} no es {v}. Revisa las pistas.',
   casoBien: '¡Bien! {x} es {v}.', casoDice: '{x} es {v} y dice: «{p}»',
   casoToca: 'Toca a alguien para marcarlo.',
@@ -664,7 +664,10 @@ const ES = {
       par: 'Hay un número par de criminales {g}.', impar: 'Hay un número impar de criminales {g}.',
       gt: 'Hay más criminales {g} que {h}.', igual: 'Hay tantos criminales {g} como {h}.',
       esC: '{x} es criminal.', esCF: '{x} es criminal.', esI: '{x} es inocente.',
-      unoDeDos: 'Exactamente uno de {x} y {y} es criminal.', unaDeDos: 'Exactamente una de {x} y {y} es criminal.',
+      unoDeDos: 'Exactamente uno de {x} {c} {y} es criminal.', unaDeDos: 'Exactamente una de {x} {c} {y} es criminal.',
+      y: 'y', yI: 'e',
+      crim: 'criminal', crimF: 'criminal', mismo: '{x} {c} {y} son los dos inocentes o los dos criminales.', mismoF: '{x} {c} {y} son las dos inocentes o las dos criminales.',
+      si11: 'Si {x} es {cx}, {y} también lo es.', si10: 'Si {x} es {cx}, {y} es inocente.', si01: 'Si {x} es inocente, {y} es {cy}.', si00: 'Si {x} es inocente, {y} también lo es.',
     },
     oficios: {
       chef: { uno: 'chef', varios: 'chefs', en: 'chefs' }, guardia: { uno: 'guardia', varios: 'guardias', en: 'guardias' },
@@ -896,7 +899,7 @@ const EN = {
       como: [
         'Work out who is a criminal and who is innocent among the 20 suspects.',
         'Each person you mark correctly adds their clue, and clues always tell the truth.',
-        'You never have to guess: if it can\'t be known yet, it won\'t let you mark.',
+        'You never have to guess. Marking someone who can\'t be worked out yet counts as a mistake.',
       ],
       puntaje: 'Solving it is worth 100 points and each mistake takes off 10. The minimum is 10.',
       desempate: 'On a tie, the faster player wins.',
@@ -1399,7 +1402,7 @@ const EN = {
   // 🔍 The Case
   casoEsInocente: '😇 {x} is innocent', casoEsCriminal: '🔪 {x} is a criminal', casoEsCriminalF: '🔪 {x} is a criminal',
   casoInocente: 'innocent', casoCriminal: 'a criminal', casoCriminalF: 'a criminal',
-  casoFalta: 'With the clues so far, there\'s no way to know what {x} is yet.',
+  casoFalta: 'There\'s no way to know what {x} is yet: that counts as a mistake.',
   casoError: '{x} is not {v}. Check the clues.',
   casoBien: 'Nice! {x} is {v}.', casoDice: '{x} is {v} and says: “{p}”',
   casoToca: 'Tap someone to mark them.',
@@ -1432,7 +1435,10 @@ const EN = {
       par: 'There is an even number of criminals {g}.', impar: 'There is an odd number of criminals {g}.',
       gt: 'There are more criminals {g} than {h}.', igual: 'There are as many criminals {g} as {h}.',
       esC: '{x} is a criminal.', esCF: '{x} is a criminal.', esI: '{x} is innocent.',
-      unoDeDos: 'Exactly one of {x} and {y} is a criminal.', unaDeDos: 'Exactly one of {x} and {y} is a criminal.',
+      unoDeDos: 'Exactly one of {x} {c} {y} is a criminal.', unaDeDos: 'Exactly one of {x} {c} {y} is a criminal.',
+      y: 'and', yI: 'and',
+      crim: 'a criminal', crimF: 'a criminal', mismo: '{x} {c} {y} are either both innocent or both criminals.', mismoF: '{x} {c} {y} are either both innocent or both criminals.',
+      si11: 'If {x} is {cx}, so is {y}.', si10: 'If {x} is {cx}, {y} is innocent.', si01: 'If {x} is innocent, {y} is {cy}.', si00: 'If {x} is innocent, so is {y}.',
     },
     oficios: {
       chef: { uno: 'chef', varios: 'chefs', en: 'chefs' }, guardia: { uno: 'guard', varios: 'guards', en: 'guards' },
@@ -1661,7 +1667,7 @@ const PT = {
       como: [
         'Descubra quem é criminoso e quem é inocente entre os 20 suspeitos.',
         'Cada pessoa que você marca certo soma a pista dela, e as pistas sempre dizem a verdade.',
-        'Nunca precisa chutar: se ainda não dá para saber, não deixa marcar.',
+        'Nunca precisa chutar. Marcar alguém que ainda não dá para deduzir conta como erro.',
       ],
       puntaje: 'Resolver vale 100 pontos e cada erro tira 10. O mínimo é 10.',
       desempate: 'Se empatar, ganha quem levou menos tempo.',
@@ -2164,7 +2170,7 @@ const PT = {
   // 🔍 O Caso
   casoEsInocente: '😇 {x} é inocente', casoEsCriminal: '🔪 {x} é criminoso', casoEsCriminalF: '🔪 {x} é criminosa',
   casoInocente: 'inocente', casoCriminal: 'criminoso', casoCriminalF: 'criminosa',
-  casoFalta: 'Com as pistas que você tem, ainda não dá para saber o que {x} é.',
+  casoFalta: 'Ainda não dá para saber o que {x} é: conta como erro.',
   casoError: '{x} não é {v}. Revise as pistas.',
   casoBien: 'Boa! {x} é {v}.', casoDice: '{x} é {v} e diz: “{p}”',
   casoToca: 'Toque em alguém para marcar.',
@@ -2197,7 +2203,10 @@ const PT = {
       par: 'Há um número par de criminosos {g}.', impar: 'Há um número ímpar de criminosos {g}.',
       gt: 'Há mais criminosos {g} do que {h}.', igual: 'Há tantos criminosos {g} quanto {h}.',
       esC: '{x} é criminoso.', esCF: '{x} é criminosa.', esI: '{x} é inocente.',
-      unoDeDos: 'Exatamente um de {x} e {y} é criminoso.', unaDeDos: 'Exatamente uma de {x} e {y} é criminosa.',
+      unoDeDos: 'Exatamente um de {x} {c} {y} é criminoso.', unaDeDos: 'Exatamente uma de {x} {c} {y} é criminosa.',
+      y: 'e', yI: 'e',
+      crim: 'criminoso', crimF: 'criminosa', mismo: '{x} {c} {y} são os dois inocentes ou os dois criminosos.', mismoF: '{x} {c} {y} são as duas inocentes ou as duas criminosas.',
+      si11: 'Se {x} for {cx}, {y} também é.', si10: 'Se {x} for {cx}, {y} é inocente.', si01: 'Se {x} for inocente, {y} é {cy}.', si00: 'Se {x} for inocente, {y} também é.',
     },
     oficios: {
       chef: { uno: 'chef', varios: 'chefs', en: 'chefs' }, guardia: { uno: 'guarda', varios: 'guardas', en: 'guardas' },
@@ -2426,7 +2435,7 @@ const DE = {
       como: [
         'Finde heraus, wer von den 20 Verdächtigen kriminell ist und wer unschuldig.',
         'Jede Person, die du richtig markierst, gibt ihren Hinweis, und Hinweise sagen immer die Wahrheit.',
-        'Raten musst du nie: Wenn es sich noch nicht sagen lässt, kannst du nicht markieren.',
+        'Raten musst du nie. Wer jemanden markiert, der sich noch nicht ableiten lässt, macht einen Fehler.',
       ],
       puntaje: 'Lösen bringt 100 Punkte, jeder Fehler kostet 10. Das Minimum ist 10.',
       desempate: 'Bei Gleichstand gewinnt, wer schneller war.',
@@ -2929,7 +2938,7 @@ const DE = {
   // 🔍 Der Fall
   casoEsInocente: '😇 {x} ist unschuldig', casoEsCriminal: '🔪 {x} ist kriminell', casoEsCriminalF: '🔪 {x} ist kriminell',
   casoInocente: 'unschuldig', casoCriminal: 'kriminell', casoCriminalF: 'kriminell',
-  casoFalta: 'Mit den Hinweisen bisher lässt sich noch nicht sagen, was {x} ist.',
+  casoFalta: 'Was {x} ist, lässt sich noch nicht sagen: Das zählt als Fehler.',
   casoError: '{x} ist nicht {v}. Schau dir die Hinweise nochmal an.',
   casoBien: 'Gut! {x} ist {v}.', casoDice: '{x} ist {v} und sagt: „{p}“',
   casoToca: 'Tippe jemanden an, um ihn zu markieren.',
@@ -2962,7 +2971,10 @@ const DE = {
       par: 'Die Zahl der Kriminellen {g} ist gerade.', impar: 'Die Zahl der Kriminellen {g} ist ungerade.',
       gt: 'Es gibt mehr Kriminelle {g} als {h}.', igual: 'Es gibt gleich viele Kriminelle {g} wie {h}.',
       esC: '{x} ist kriminell.', esCF: '{x} ist kriminell.', esI: '{x} ist unschuldig.',
-      unoDeDos: 'Von {x} und {y} ist genau eine Person kriminell.', unaDeDos: 'Von {x} und {y} ist genau eine Person kriminell.',
+      unoDeDos: 'Von {x} {c} {y} ist genau eine Person kriminell.', unaDeDos: 'Von {x} {c} {y} ist genau eine Person kriminell.',
+      y: 'und', yI: 'und',
+      crim: 'kriminell', crimF: 'kriminell', mismo: '{x} {c} {y} sind entweder beide unschuldig oder beide kriminell.', mismoF: '{x} {c} {y} sind entweder beide unschuldig oder beide kriminell.',
+      si11: 'Wenn {x} {cx} ist, ist es {y} auch.', si10: 'Wenn {x} {cx} ist, ist {y} unschuldig.', si01: 'Wenn {x} unschuldig ist, ist {y} {cy}.', si00: 'Wenn {x} unschuldig ist, ist es {y} auch.',
     },
     oficios: {
       chef: { uno: 'Koch', varios: 'Köche', en: 'Köchen' }, guardia: { uno: 'Wache', varios: 'Wachen', en: 'Wachen' },
