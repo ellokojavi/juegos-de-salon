@@ -26,7 +26,7 @@ for (const lang of ['es', 'en', 'pt', 'de']) {
   await b.go(`${SITIO}/labs/code/`);
   await ev(`localStorage.clear(); localStorage.setItem('juegos-de-salon:lang', '${lang}'); 1`);
   await b.go(`${SITIO}/labs/code/`, 900);
-  ok(await ev(`!!document.querySelector('#pie #btn-comentario')`) && await sinDesborde() && !await ev(`!!document.querySelector('[id^="btn-empezar-"]')`), `${lang}: la portada, una sola partida de 4 cartas, con el link al comentario al final`);
+  ok(await ev(`!!document.querySelector('#pie #btn-comentario')`) && await sinDesborde() && !await ev(`!!document.querySelector('#btn-empezar-8')`) && (lang !== 'es') !== await ev(`!!document.getElementById('btn-empezar-palabra')`), `${lang}: la portada (con Palabra solo en español), sin el modo de 8 cartas, con el link al comentario al final`);
   await clic('#btn-empezar'); await sleep(300);
   const { codigo, cartas } = await ev(`JSON.stringify(window.__clave.P.clave)`).then(JSON.parse);
   ok(cartas.length === n && await ev(`document.querySelectorAll('.carta').length`) === n, `${lang}: ${n} cartas en la bandeja`);
@@ -64,6 +64,36 @@ for (const lang of ['es', 'en', 'pt', 'de']) {
   const fin = await ev(`JSON.stringify({ c: document.getElementById('codigo')?.textContent, r: document.getElementById('resumen')?.textContent, f: document.querySelector('.resultado')?.lastElementChild?.classList.contains('comentario'), pie: document.getElementById('pie').children.length, s: !!document.getElementById('btn-compartir-resultado') })`).then(JSON.parse);
   ok(fin.c === codigo && fin.f && fin.pie === 0 && fin.s, `${lang}: el código bueno abre (${fin.r}), con compartir y el formulario al final`);
   if (lang === 'es') await b.shot('3-abierto');
+}
+// Palabra (solo en español): letras de catorce segmentos y cartas de dos caras
+{
+  await b.go(`${SITIO}/labs/code/`);
+  await ev(`localStorage.clear(); localStorage.setItem('juegos-de-salon:lang', 'es'); 1`);
+  await b.go(`${SITIO}/labs/code/`, 900);
+  await clic('#btn-empezar-palabra'); await sleep(300);
+  const { palabra, cartas } = await ev(`JSON.stringify(window.__clave.P.clave)`).then(JSON.parse);
+  const leePalabra = () => ev(`(()=>{const m=window.__clave.palabra,P=window.__clave.P;return m.juntos(P.clave,P.e,P.puestas).map(m.leer).map(x=>x??'·').join('')})()`);
+  for (let k = 0; k < cartas.length; k++) { await clic(`.carta[data-k="${k}"]`); await sleep(40); }
+  ok(await ev(`document.querySelectorAll('.carta .caras i').length`) === 8, 'palabra: cada carta muestra sus dos caras');
+  // Voltear cambia los trazos (la otra cara), no los refleja
+  const antes = await ev(`document.querySelector('#marco .capa[data-k="0"]').innerHTML`);
+  await clic('.carta[data-k="0"]'); await clic('#btn-voltear'); await sleep(350);
+  ok(await ev(`document.querySelector('#marco .capa[data-k="0"]').innerHTML`) !== antes && await ev(`window.__clave.P.e[0][0]`) === 1, 'palabra: voltear muestra la otra cara');
+  for (let k = 0; k < cartas.length; k++) {
+    await clic(`.carta[data-k="${k}"]`); await sleep(40);
+    const [cara, girada] = cartas[k].bien;
+    if (await ev(`window.__clave.P.e[${k}][0]`) !== cara) { await clic('#btn-voltear'); await sleep(300); }
+    if (await ev(`window.__clave.P.e[${k}][1]`) !== girada) { await clic('#btn-girar'); await sleep(60); }
+  }
+  await sleep(500);
+  ok(await leePalabra() === palabra && await ev(`document.querySelectorAll('#choques line.choque').length`) === 0, `palabra: con la cara y el giro buenos se lee ${palabra}, sin choques`);
+  ok(await sinDesborde(), 'palabra: el teclado de letras cabe a 320 px');
+  await b.shot('4-palabra');
+  const escribir = async v => { for (const d of v) await ev(`[...document.querySelectorAll('.keypad button')].find(b=>b.dataset.d==='${d}').click(); 1`); await clic('.keypad .ok'); await sleep(250); };
+  await escribir(palabra === 'ACERO' ? 'BARCO' : 'ACERO');
+  ok(await ev(`window.__clave.P.errores`) === 1, 'palabra: una palabra equivocada cuenta');
+  await escribir(palabra);
+  ok(await ev(`document.getElementById('codigo')?.textContent`) === palabra, 'palabra: la buena abre y la muestra');
 }
 ok(!b.errors.length, `sin errores en la página ${JSON.stringify(b.errors)}`);
 b.close();

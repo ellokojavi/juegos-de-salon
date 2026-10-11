@@ -4716,4 +4716,5 @@ no es una cifra), el brillo al calzar y la esquina cortada (regalan la orientaci
 carta (con 8, tocar es más rápido y cabe en el celular).
 **Consecuencias:** `engine.test.mjs` prueba el grupo de orientaciones y la lectura única;
 `tools/e2e/code/lab.mjs`, el juego entero con los choques. Después pidió una cifra más (5) y que las
-cartas flotaran y brillaran más al azar. Sin publicar hasta que el dueño lo apruebe.
+cartas flotaran y brillaran más al azar. Como el de cifras se volvió mecánico, se sumó **Palabra**
+(en español): letras de catorce segmentos y cartas de dos caras, donde voltear muestra otros trazos. Sin publicar hasta que el dueño lo apruebe.
