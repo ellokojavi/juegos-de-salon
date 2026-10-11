@@ -1,5 +1,5 @@
 {
-  "version": "0.156.3",
+  "version": "0.157.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -899,6 +899,9 @@
     "public/julep/engine.js",
     "public/julep/game.js",
     "public/julep/rules.js",
+    "public/labs/agents/engine.js",
+    "public/labs/agents/game.js",
+    "public/labs/agents/pistas.js",
     "public/labs/code/engine-palabra.js",
     "public/labs/code/engine.js",
     "public/labs/code/game.js",
@@ -954,6 +957,7 @@
     "public/generala/engine.test.mjs",
     "public/hangman/engine.test.mjs",
     "public/julep/engine.test.mjs",
+    "public/labs/agents/engine.test.mjs",
     "public/labs/code/engine-palabra.test.mjs",
     "public/labs/code/engine.test.mjs",
     "public/liars-dice/engine.test.mjs",
@@ -978,6 +982,7 @@
     "tools/release/version.test.mjs"
   ],
   "e2e": [
+    "agents/lab.mjs",
     "battleship/alineacion.mjs",
     "battleship/chat.mjs",
     "battleship/colocacion.mjs",
@@ -1084,6 +1089,10 @@
     {
       "ruta": "docs/USABILIDAD.md",
       "titulo": "Guía de usabilidad"
+    },
+    {
+      "ruta": "docs/games/agents.md",
+      "titulo": "🕵️ Agentes (prototipo del laboratorio, en Proyectos activos)"
     },
     {
       "ruta": "docs/games/battleship.md",

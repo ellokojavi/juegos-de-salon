@@ -1,0 +1,55 @@
+/* Agentes (laboratorio, D-286). Lo compartido vive en assets/css/base.css. */
+.portada { text-align: center; display: grid; gap: 10px; padding-top: 8px; }
+.titulo-agentes { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 0; }
+.titulo-agentes .rainbow { padding: 0.2em 0.12em 0 0; margin: -0.2em -0.12em 0 0; }
+.titulo-agentes .lupa { font-size: 2.4rem; display: inline-block; animation: ag-mira 3.6s ease-in-out infinite; }
+@keyframes ag-mira { 0%, 100% { transform: translateX(-2px) rotate(-6deg); } 50% { transform: translateX(3px) rotate(6deg); } }
+.credito { margin: 0; font-size: 0.85rem; color: var(--muted); }
+.credito a { color: var(--cyan); }
+/* La portada: cartas que se dan vuelta solas, de a una */
+.demo-cartas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; max-width: 300px; margin: 4px auto 0; }
+.demo-cartas span { aspect-ratio: 5 / 3; border-radius: 10px; display: grid; place-items: center; font: 900 0.8rem var(--font-body); letter-spacing: 0.04em;
+  background: rgba(255,255,255,0.08); border: 2px solid var(--glass-border); animation: ag-voltea 6s ease-in-out infinite; animation-delay: calc(var(--k) * 0.45s); }
+@keyframes ag-voltea { 0%, 60%, 100% { background: rgba(255,255,255,0.08); color: var(--ink); } 70%, 90% { background: var(--c); color: #160830; border-color: transparent; } }
+.pasos { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; text-align: left; }
+.pasos li { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: center; }
+.paso-ico { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: 1.1rem; background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border); }
+/* La pista en curso */
+.pista { text-align: center; padding: 12px 14px; border-radius: 18px; background: linear-gradient(160deg, rgba(255, 210, 63, 0.18), rgba(46, 230, 214, 0.10)); border: 2px solid rgba(255, 210, 63, 0.7); }
+.pista .de { margin: 0; font-weight: 800; color: var(--muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; }
+.pista .palabra { margin: 2px 0 0; font-family: var(--font-display); font-size: 2.4rem; letter-spacing: 0.06em; line-height: 1; }
+.pista .palabra b { color: var(--yellow); }
+.pista .falta { margin: 4px 0 0; font-weight: 800; }
+.pista.entra { animation: ag-entra 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.3); }
+@keyframes ag-entra { from { transform: scale(0.9); opacity: 0; } to { transform: none; opacity: 1; } }
+/* El tablero */
+.tablero { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; container-type: inline-size; }
+/* La letra se achica con el largo de la palabra (--n), para que ESPANTAPÁJAROS no se corte a la mitad a 320 px;
+   si igual no cabe, parte con guion en una sílaba (hyphens) antes que en cualquier letra */
+.carta { min-height: 64px; border-radius: 14px; border: 2px solid var(--glass-border); background: rgba(255,255,255,0.07); color: var(--ink);
+  font: 900 clamp(0.66rem, calc((33cqi - 18px) / (var(--n, 8) * 0.74)), 1rem) var(--font-body); letter-spacing: 0.01em; padding: 8px 4px; cursor: pointer;
+  hyphens: auto; overflow-wrap: anywhere;
+  transition: transform 0.12s, background 0.25s, border-color 0.25s; }
+.carta:active { transform: scale(0.95); }
+.carta:disabled { cursor: default; }
+.carta.agente { background: rgba(157, 255, 58, 0.22); border-color: var(--lime); }
+.carta.otra { background: rgba(46, 230, 214, 0.22); border-color: var(--cyan); }
+.carta.neutral { background: rgba(255,255,255,0.18); border-color: rgba(255,255,255,0.4); color: var(--muted); }
+.carta.asesino { background: #0c0414; border-color: #ff3d3d; color: #ff8a8a; }
+.carta.volteo { animation: ag-volteo 0.4s ease-out; }
+@keyframes ag-volteo { 0% { transform: rotateY(90deg); } 100% { transform: none; } }
+.carta.sin-tocar { opacity: 0.55; }
+.carta .de-pista { display: block; margin-top: 2px; font-size: 0.72rem; font-weight: 800; color: var(--muted); letter-spacing: 0.04em; }
+/* Dos líneas reservadas: el aviso más largo parte en dos a 320 px y el tablero no salta bajo el dedo */
+.aviso-ag { text-align: center; font-weight: 800; min-height: 2.8em; margin: 0; display: grid; place-items: center; line-height: 1.4; }
+.aviso-ag.bien { color: var(--lime); } .aviso-ag.mal { color: #ff8a8a; } .aviso-ag.otra { color: var(--cyan); }
+.resultado { text-align: center; display: grid; gap: 10px; }
+.resultado .score-big { font: 900 clamp(2.6rem, 14vw, 3.6rem)/1.1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35); }
+.resultado .trofeo { font-size: 3.4rem; animation: pop 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
+.resultado .tarjeta { font-size: 1.5rem; letter-spacing: 3px; line-height: 1.2; white-space: pre; }
+.resultado .comentario { text-align: left; }
+.desglose { text-align: left; margin: 0; padding-left: 1.2em; }
+.pie { text-align: center; padding: 16px 0 6px; }
+.link-btn { background: none; border: 0; color: var(--muted); font: 700 0.95rem var(--font-body); text-decoration: underline; cursor: pointer; min-height: 44px; margin: 0 auto; display: block; }
+.btn { text-decoration: none; }
+@media (prefers-reduced-motion: reduce) { .titulo-agentes .lupa, .demo-cartas span, .pista.entra, .carta.volteo { animation: none; } }
