@@ -63,7 +63,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Memoria de partida | C-6 | D-25, D-150 |
 | Interfaz táctil | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213 |
 | Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213 |
-| Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243, D-253, D-254, D-271 |
+| Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243, D-253, D-254, D-271, D-272 |
 | Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251 |
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213 |
@@ -4736,7 +4736,7 @@ cartas flotaran y brillaran más al azar. Como el de cifras se volvió mecánico
 dueño lo aprobó para el laboratorio (v0.147.0).
 
 ## D-271 · Los mensajes de la app nombran todo lo principal, y el agente de documentación los mantiene
-**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** amplía D-226 (el texto de la app) y D-172 (el agente de documentación); usa U-30
+**Fecha:** 2026-10-11 · **Estado:** corregida por D-272 · **Relación:** amplía D-226 (el texto de la app) y D-172 (el agente de documentación); usa U-30
 **Decisión:** El mensaje con que se comparte la app (`shareApp.lines`, el mismo en el celular y en
 el computador, donde se copia sin la tarjeta) nombra **todo lo principal**, una línea cada cosa y en
 los cuatro idiomas: 🏆 La Copa, 📅 Uno al día, 👥 jugar en grupo, 🧩 jugar solo, 🏅 rankings y
@@ -4758,3 +4758,18 @@ lo decide el agente, y la lista lo obliga a decirlo en un solo lugar). Un juego 
 principal: ya lo cuenta la cabecera ("15 juegos para el celular") y lo nombra la tarjeta.
 **Consecuencias:** el mensaje pasa de 4 a 6 líneas. La regla es U-35; el agente la sigue desde
 `.claude/agents/documentacion.md`, como excepción a "no tocas código de la app".
+
+## D-272 · Lo principal también es la app instalable con sus avisos y los cuatro idiomas
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** corrige D-271 (la lista de lo principal); usa D-221, D-224, D-230, D-232 y C-3
+**Decisión:** `LO_PRINCIPAL` suma 📲 la app instalable con sus avisos y 🌎 los cuatro idiomas, y el
+mensaje de compartir la app los nombra en dos líneas más, en los cuatro idiomas: "📲 Como app: la
+agregas a tu pantalla de inicio y, si quieres, te avisa cuando te toca jugar." y "🌎 En español,
+inglés, portugués y alemán.". El mensaje queda en 8 líneas.
+**Por qué:** el agente de documentación preguntó, al revisar D-271, si los idiomas, los avisos y la
+app instalable contaban como algo principal; el dueño: "Claro que cuenta". Instalar y los avisos van
+juntos porque los avisos se piden desde la app (en el iPhone, solo instalada, D-227).
+**Alternativas descartadas:** una línea para cada una de las tres (el mensaje pasaba de 9 líneas para
+un chat) y dejar los idiomas fuera del mensaje en español (quien lo recibe puede reenviarlo a quien
+no habla español).
+**Consecuencias:** el mensaje del video y la bajada de la tarjeta del link no cambian: la tarjeta ya
+dice "sin instalar", que se refiere a que no hay que bajar nada de una tienda.
