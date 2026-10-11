@@ -69,7 +69,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216 |
-| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282 |
+| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285 |
 | Agentes (usabilidad, documentación, procesos) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249 |
 | Marketing | `marketing/README.md` | D-178 |
@@ -5065,3 +5065,23 @@ rige cuando el sitio se publica. La etiqueta es pública (el repo lo es): inicia
 nombre completo. Una llave perdida no se recupera: se quita y se da otra.
 `tools/agents/llave-labs.test.mjs` prueba la herramienta, y `labs-puerta.test.mjs` que cada persona
 entre con la suya y que una quitada ya no abra.
+
+## D-285 · La Copa: un celular que perdió su asiento vuelve a entrar con su PIN
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** completa D-96 (qué pasa cuando un celular pierde su asiento)
+**Contexto:** el dueño entró a su copa desde el aviso del día, con el día abierto, y al tocar
+Empezar leyó "El tiempo para jugar este día ya se terminó.". Las reglas de Firebase niegan igual
+(PERMISSION_DENIED) un día cerrado que un celular que ya no está sentado como su jugador, y
+`store-firebase.js` traducía toda negación al empezar o al enviar como "ventana". El celular cree
+estar sentado porque lo recuerda en `localStorage`, pero el asiento es del `uid` anónimo de Firebase:
+se pierde si el navegador borra la sesión de Firebase y deja el `localStorage`, o si el admin le da
+un PIN nuevo al jugador.
+**Decisión:** ante una negación al empezar o al enviar el resultado, el almacén lee la copa y mira
+el día con la hora del servidor (y el cierre del admin, D-161). Si el día sigue abierto, la causa
+es el asiento (`permiso`), y la pantalla lleva a **Ya estoy inscrito** con el nombre del jugador ya
+elegido y la frase "Este celular dejó de entrar como {name}. Escribe tu PIN para seguir jugando."
+Con el PIN vuelve al tablero y juega; un resultado que no alcanzó a enviarse sigue guardado en el
+celular y se reenvía al volver al día. Si el día de verdad se cerró, el mensaje es el de siempre.
+Lo prueba `tools/e2e/cup/asiento.mjs`.
+**Alternativas descartadas:** leer el asiento antes de cada escritura (`torneoSeats` no se puede
+leer, a propósito); mostrar solo el aviso genérico de permiso (obligaba a buscar a mano dónde
+escribir el PIN).
