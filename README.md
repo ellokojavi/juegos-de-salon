@@ -151,18 +151,19 @@ You get events with no date on them and place them in the right spot on a shared
 <!-- generado: tematicas · written by python3 tools/release/readme.py actualizar -->
 | Theme | Cards | Years | What it covers |
 |---|---|---|---|
-| 📜 History | 98 | 2560 BC to 2022 | Milestones of humankind |
-| 🎵 Music | 89 | 1600 to 2023 | From Beethoven to TikTok |
-| 🇨🇱 Chile | 127 | 1520 to 2023 | From the 1960 quake to the uprising |
-| 🍿 Pop culture | 110 | 1928 to 2023 | Movies, memes and video games |
-| 🇧🇷 Brazil | 140 | 1500 to 2025 | From Cabral to COP30, telenovelas and carnival included |
-| ⚽ Soccer | 123 | 1863 to 2025 | World Cups, clubs, goals and transfers |
-| **Total** | **687** | | |
+| 📜 History | 96 | 2560 BC to 2022 | Milestones of humankind |
+| 🎵 Music | 91 | 1600 to 2023 | From Beethoven to Taylor Swift |
+| 🇨🇱 Chile | 120 | 1520 to 2023 | From the 1960 quake to the uprising |
+| 🍿 Pop culture | 108 | 1928 to 2023 | Movies, memes and video games |
+| 🇧🇷 Brazil | 139 | 1500 to 2025 | From Cabral to COP30, telenovelas and carnival included |
+| ⚽ Soccer | 121 | 1863 to 2025 | World Cups, clubs, goals and transfers |
+| **Total** | **675** | | |
 <!-- /generado -->
 
 - **📱 One phone:** two to six players, passing the phone around.
 - **📡 Several phones:** a room with a code and a QR, up to six players. The host starts the game once everyone is in, and each player sees their own hand.
 - **🧍 Play alone:** The Cup's Timeline Flash. Pick a theme and get ten events: the first one is already on the timeline and you place the other nine in any order. A wrong card lands in its right spot marked in red, and you keep going. You score 0 to 100 for the share you got right, with a clock and a record for your best score in each theme.
+- **💡 Every card tells you something** (D-277): a wrong card's verdict no longer says which events it went between (its big year already says that) but tells you a fact, a reason or an anecdote about it. A correct card leaves its fact in a strip above the place button that goes away on its own, and on the final timeline tapping an event shows its fact. Against the clock (Timeline Flash, and every event in the Cup's 📅 What year was it?) the clock pauses while you read, for up to 6 seconds. For now the Chile and History themes have them; a card with no fact still says where it went.
 - **🗂 All cards on the table (default):** twice the cards you need to win are dealt face up from the first turn (6, 10 or 14), and no new card enters for the rest of the game. Since the table only shrinks, the cards that are hard to place pile up for the end, on a timeline that by then is already crowded. The game gets harder on its own.
 - **🃏 Shared pool:** the same 6 cards face up for everyone, refilled from the deck, and whoever places the agreed number of cards first wins. It can also be played with **🙋 your own hand**, each player with private cards.
 - **💬 Room chat:** on several phones there is a chat to comment on the plays while waiting for your turn, and it stays alive on the final screen. New messages peek out for a few seconds next to the bubble.
@@ -462,8 +463,11 @@ Spec and design: [docs/games/cup.md](docs/games/cup.md)
   (this week, all time, friends and The Cup), with your neighbours when you are below the top ten.
   `/records/` (🏅 on the menu) adds the All-Rounder, the sum of your best score in every game, and
   The Cup's medal table; it opens with the overall ranking and the most games played, then a Games | Cups switch, and every name carries its country's flag (D-219). Group games keep a table of wins each (D-215) — in a room by your seat, against
-  the phone as the human, on one phone if you play under your own name — and Bulls and Cows alone and
-  Timeline Flash (one per theme) keep their 0–100 records. Two people may share a name; with
+  the phone as the human, on one phone if you play under your own name — and Bulls and Cows, Generala
+  and Hangman alone and Timeline Flash (one per theme) keep their 0–100 records; the first three show
+  their solo table first on their page, since that is how they are played most (D-274). Finish a game
+  without being signed in and, below the end buttons, a box asks whether you want that game to count:
+  sign in there and that game (or your win) is saved. Two people may share a name; with
   different PINs they are different players. Tapping **Playing as** on any page that shows it opens **Change PIN**, with a line on what the PIN
   is for, and **Sign out**; `/records/` lists **Your games**, how many times you played each one (D-236).
 - **One a Day** (D-230, open to everyone since v0.121.0; One a Day #1 was 6 October 2026): every day, at the player's own midnight, a new game and its content come out of the date, the same for everyone, and the Random game die rolls onto it. The deck holds every game that can be played alone — the seven solo games, Hangman with the phone's deck, and Battleship and Liar's Dice against the phone — and none repeats within a week; each scores 0–100. [`/today/`](https://juegosdesalon.cl/today/) keeps your streak (a 🧊 freeze for every 7 days in a row, up to 2), a calendar and how you do in each game. Signed in, you get the day's, the week's and the streaks leaderboards, and you can invite a friend to the same challenge: when they finish their first day, you earn a freeze. The shared result never names the game, so it does not spoil it. If you ask for them, notifications remind you every day at the hour you pick, warn you when your streak is about to break and sum up your week ([docs/UNO-AL-DIA.md](docs/UNO-AL-DIA.md)).

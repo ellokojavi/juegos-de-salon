@@ -69,19 +69,20 @@ Seis temáticas, cada una en su archivo dentro de `decks/`:
 
 | Temática | Archivo | Cartas | De qué va |
 |---|---|---|---|
-| 📜 Historia | `historia.js` | 98 | Hitos de la humanidad |
-| 🎵 Música | `musica.js` | 89 | De Beethoven a TikTok |
-| 🇨🇱 Chile | `chile.js` | 127 | Del terremoto del 60 al estallido |
-| 🍿 Cultura pop | `pop.js` | 110 | Cine, memes y videojuegos |
-| 🇧🇷 Brasil | `brasil.js` | 140 | De Cabral a la COP30, con novelas y carnaval |
-| ⚽ Fútbol | `futbol.js` | 123 | Mundiales, clubes, goles y fichajes |
+| 📜 Historia | `historia.js` | 96 | Hitos de la humanidad |
+| 🎵 Música | `musica.js` | 91 | De Beethoven a Taylor Swift |
+| 🇨🇱 Chile | `chile.js` | 120 | Del terremoto del 60 al estallido |
+| 🍿 Cultura pop | `pop.js` | 108 | Cine, memes y videojuegos |
+| 🇧🇷 Brasil | `brasil.js` | 139 | De Cabral a la COP30, con novelas y carnaval |
+| ⚽ Fútbol | `futbol.js` | 121 | Mundiales, clubes, goles y fichajes |
 
 ```js
 { id: 'luna', year: 1969, emoji: '🚀', es: 'El hombre llega a la Luna', en: 'Humans land on the Moon', pt: 'O homem chega à Lua', de: 'Der Mensch landet auf dem Mond' }
 ```
 
 - Hitos **reconocibles**, con años indiscutibles: si la fecha se discute, la carta no entra.
-- Y que se puedan **situar**: nada de “un gran incendio” o “manifestaciones” a secas, porque eso pasa cada pocos años. Superlativo, nombre propio o cifra que ancle el año (D-37).
+- Y que se puedan **situar**: nada de “un gran incendio”, “un terremoto” o “la era del swing”, porque eso pasa cada pocos años o dura una década. El ancla es algo que el jugador sabe (un nombre propio, un hecho único), no un superlativo o una cifra que solo la carta dice (“el mayor incendio de su historia”): si no la hay, la carta no entra (D-37, D-278).
+- Y que **no digan su año**, ni entero ni abreviado (“la Constitución de 1980”, “Italia 90”): el test del motor lo frena en los cuatro idiomas. Un año que no es el de la carta sí puede ir (*2001: Odisea del espacio*, de 1968).
 - Cada mazo trae al menos noventa cartas, bien repartidas en el tiempo.
 - Los mazos se registran en `decks/index.js` con su nombre, su pista y su emoji por idioma. El archivo
   nuevo entra solo al import map (C-11, D-192), así que el navegador no mezcla un índice nuevo con un
@@ -91,6 +92,36 @@ Seis temáticas, cada una en su archivo dentro de `decks/`:
   idiomas, y rechaza el apóstrofo recto en `pt` y en `de` (se usa ’).
 - Los mazos temáticos (Brasil, Fútbol) pueden repetir hitos de otros mazos (el Maracanazo, el Mundial
   del 62): cada mazo se juega solo, así que no hay choque de ids mientras lleven su prefijo (`br-`, `fut-`).
+
+#### El dato de cada carta (D-277)
+Cada carta puede llevar un `dato` en los cuatro idiomas: una frase, un porqué o una anécdota, que se
+lee en unos 3 segundos. Decir entre qué hitos iba una carta no enseña nada (el año grande ya lo
+dice); el dato deja algo aprendido en cada jugada, también en ¿En qué año? y en La Copa.
+
+```js
+{ id: 'muro', year: 1989, …, dato: { es: 'Lo abrió un error: un vocero anunció en la tele que la frontera se abría «de inmediato».', en: '…', pt: '…', de: '…' } }
+```
+
+- **Dónde se ve** (`public/assets/js/dato.js`): al **errar**, en el veredicto, que se queda hasta
+  tocarlo; al **acertar**, en una franja sobre el botón de colocar que no frena nada, sobrevive a
+  elegir la carta siguiente y se va sola a los 6 s (un toque la cierra antes); al **terminar**, en la
+  línea como quedó: los errores con su dato a la vista y el resto a un toque. En ¿En qué año? va bajo
+  el año de cada hito.
+- **El reloj se pausa mientras se lee un error** en Línea Relámpago (solo, práctica, Uno al día y
+  copa) y en cada hito de ¿En qué año?: el reloj de arriba marca ⏸ y una barra bajo el dato se vacía. La pausa tiene
+  **tope de 6 s** (`PAUSA_DATO_MS`) para que no sirva de tiempo para pensar; el veredicto tapa el
+  tablero, así que tampoco hay nada que estudiar. En el juego en grupo (un celular o varios) no hace
+  falta: el tiempo de cada turno parte cuando se cierra el veredicto (D-31), así que leer el dato ya
+  no cuenta.
+- **Reglas del texto**, que frena el test del motor: hasta 110 caracteres por idioma (≈90 en
+  español), **sin años** (ni el de la carta ni un número que sea el año de otra carta del mazo: le
+  regalaría la fecha al siguiente jugador) y sin repetir la carta. Exacto ante todo: un error se lee
+  como lección, y una tradición se dice como tradición.
+- **Mazos con datos:** los seis. El test exige el dato en todas las cartas de los mazos de
+  `CON_DATOS` (`engine.test.mjs`), así que un mazo nuevo o una carta nueva entra con el suyo. Una
+  carta sin dato (no debería haber) dice entre qué hitos iba, como antes.
+- **Los datos se verifican** contra fuentes antes de entrar: los de Música, Cultura pop, Brasil y
+  Fútbol pasaron por una revisión en la web, que cambió los que no se podían respaldar.
 
 #### Que no se repitan las cartas (D-34)
 Cada celular recuerda las cartas que ha visto por temática (`juegos-de-salon:linea-de-tiempo:vistas`).
@@ -134,6 +165,9 @@ y, si ganó, suma una victoria en la tabla `linea-de-tiempo_victorias` (semana y
 rol; contra el celular, la del humano; en un celular, la del jugador que se llama como él. Un
 empate no es victoria. La tabla (semana, siempre y amigos) va en la intro, debajo de los modos
 (`finDePartida` y `bloqueVictorias` de `public/assets/js/ranking.js`), y en `/records/`.
+Sin jugador abierto (D-274), `finDePartida` pone en la pantalla final, después de los botones
+(`#result-actions`), "¿Quieres que esta partida cuente en el ranking?" con el nombre y PIN de siempre
+y el nombre de su rol ya puesto: al entrar, se anota esa partida y la victoria, si fue suya.
 
 ### Jugar solo: la ⏳ Línea Relámpago de La Copa (D-142)
 
@@ -159,7 +193,9 @@ intentos, con nombre, forma de repartir y tamaño de mano (D-27, D-32, D-43); es
 - **Ranking (D-215):** una tabla por temática, `linea-de-tiempo_rel-<temática>`, con el mismo 0–100
   y el tiempo. Va debajo de Empezar y cambia al elegir otra temática. En el resultado, con un
   jugador de los rankings abierto, el aviso de los rankings (`avisoPartida`) reemplaza al récord del
-  celular. No suma al Todoterreno.
+  celular; sin jugador, después de los botones (`#sr-actions`) va "¿Quieres que esta partida cuente?"
+  con nombre y PIN, y al entrar se anota esa partida en la tabla de la temática (D-274). No suma al
+  Todoterreno.
 - **Semilla:** un código de 5 letras al azar (`codigoAlAzar` de `public/cup/engine.js`) y
   `generar(codigo, 1, { tema, lang, excluir })` de `public/cup/games/timeline/engine.js`. `excluir` deja fuera las
   cartas vistas hace poco (D-34); si con eso no alcanzan diez hitos de años separados, se reparte
@@ -189,9 +225,10 @@ Jugar solo: Intro → Temática y cómo se juega → Juego (screen-solo) → Res
 - El veredicto se dirige a quien jugó: “¡Te equivocaste!” para el que falló y “¡Cata se equivocó!” para el resto, con el fondo rojo solo en la pantalla del que falló (D-36).
 - Nada viene preseleccionado: hasta que el jugador toca una carta, las ranuras no reaccionan y el botón de confirmar está deshabilitado (D-38). El botón nombra la carta que va a colocar.
 - La carta se enciende **al apretar**, no al soltar el dedo. La carta elegida se marca en la propia mano (borde amarillo, el resto atenuado) y aparece dibujada dentro de la ranura elegida antes de confirmar. Se toca una ranura y luego **📍 Colocar aquí** (C-8), botón que flota abajo. Hubo una barra aparte que repetía la carta elegida sobre la línea; se quitó por redundante (D-33).
-- Al confirmar, la carta se revela con su año. Un **acierto** se muestra un par de segundos y se cierra solo.
-  Un **error** tiñe la pantalla de rojo, sacude la carta, suena distinto y explica entre qué hitos iba y entre
-  cuáles se puso; se queda hasta que el jugador toca. Mientras tanto, el celular no juega y las jugadas de
+- Al confirmar, la carta se revela con su año. Un **acierto** se muestra un par de segundos y se cierra solo,
+  y deja el dato de la carta en una franja sobre el botón de colocar (ver “El dato de cada carta”).
+  Un **error** tiñe la pantalla de rojo, sacude la carta, suena distinto y cuenta el dato de la carta (si
+  la carta no tiene, explica entre qué hitos iba y entre cuáles se puso); se queda hasta que el jugador toca. Mientras tanto, el celular no juega y las jugadas de
   otros esperan.
 - **Arrastrar** (D-85, `public/assets/js/arrastre.js`). La carta se puede sacar de la mano hacia abajo y
   soltarla sobre una ranura; mientras viaja se dibuja en grande —268 px, texto de 15 px— y 60 px por
