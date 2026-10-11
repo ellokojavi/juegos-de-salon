@@ -5,13 +5,38 @@ import { DECKS, getDeck } from './decks/index.js';
 
 // Mazos bien formados
 for (const d of DECKS) {
-  assert.ok(d.cards.length >= 80, `${d.id} tiene pocas cartas`);
+  assert.ok(d.cards.length >= 90, `${d.id} tiene pocas cartas`);
   assert.equal(new Set(d.cards.map(c => c.id)).size, d.cards.length, `${d.id} tiene ids repetidos`);
   for (const c of d.cards) {
     assert.ok(c.id && typeof c.year === 'number' && c.emoji && c.es && c.en && c.pt && c.de, `carta incompleta en ${d.id}: ${c.id}`);
     assert.ok(!/'/.test(c.pt), `apóstrofo recto en pt de ${d.id}: ${c.id}`);
     assert.ok(!/'/.test(c.de), `apóstrofo recto en de de ${d.id}: ${c.id}`);
     assert.ok(c.year > -4000 && c.year <= 2026, `año fuera de rango en ${d.id}: ${c.id}`);
+    // La carta no puede decir su año, ni entero ni abreviado ("de 1980", "Italia 90", "’92") (D-278)
+    if (c.year >= 1000) {
+      const yy = String(c.year % 100).padStart(2, '0');
+      const delata = new RegExp(`(^|[^0-9])(${c.year}|${yy})($|[^0-9])`);
+      for (const l of ['es', 'en', 'pt', 'de']) assert.ok(!delata.test(c[l]), `la carta dice su año en ${l} de ${d.id}: ${c.id}`);
+    }
+  }
+}
+// El dato de cada carta (D-277): una frase corta que se lee en el veredicto, en los cuatro idiomas.
+// No nombra años: le regalaría al siguiente jugador el de otra carta del mazo.
+const CON_DATOS = ['chile', 'historia'];   // los mazos que ya los tienen todos
+const DATO_MAX = 110;
+for (const d of DECKS) {
+  const anios = new Set(d.cards.filter(c => c.year >= 100).map(c => String(c.year)));
+  for (const c of d.cards) {
+    if (!c.dato) { assert.ok(!CON_DATOS.includes(d.id), `falta el dato de ${d.id}: ${c.id}`); continue; }
+    for (const l of ['es', 'en', 'pt', 'de']) {
+      const x = c.dato[l];
+      assert.ok(typeof x === 'string' && x.length >= 20, `dato sin ${l} en ${d.id}: ${c.id}`);
+      assert.ok(x.length <= DATO_MAX, `dato largo (${x.length}) en ${l} de ${d.id}: ${c.id}`);
+      assert.ok(!/'/.test(x), `apóstrofo recto en el dato ${l} de ${d.id}: ${c.id}`);
+      assert.ok(!/(^|[^0-9.,])(1[0-9]{3}|20[0-9]{2})($|[^0-9])/.test(x), `el dato nombra un año en ${l} de ${d.id}: ${c.id}`);
+      for (const n of x.match(/(?<![0-9.,])[0-9]{3,4}(?![0-9])/g) || []) assert.ok(!anios.has(n), `el dato dice ${n}, el año de otra carta, en ${l} de ${d.id}: ${c.id}`);
+      assert.notEqual(x, c[l], `el dato repite la carta en ${l} de ${d.id}: ${c.id}`);
+    }
   }
 }
 assert.equal(getDeck('musica').id, 'musica');

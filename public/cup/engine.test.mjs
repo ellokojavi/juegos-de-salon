@@ -5,7 +5,7 @@ import {
   CALENDARIOS, POZO, calendarioValido, calendarioAlAzar, PUNTOS, esCodigo, codigoAlAzar, pidAlAzar, PID, limpiarNombre, claveNombre, esPin, hashPin,
   fechaEn, sumarDias, medianoche, ventanas, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta,
   aliasLimpio, esAlias, menosJuegos, provisoria, ultimoDiaVisto, marcaDelDia, aliasHasta, ALIAS_LIBRE_MS,
-  estadoDia, puedeComodin, multiplicador, posicionesDelDia, tabla, desempate, faltan, medallas, reloj, mmss, juegoDelDia, evolucion,
+  estadoDia, puedeComodin, multiplicador, posicionesDelDia, tabla, desempate, faltan, medallas, reloj, pausaDeLectura, mmss, juegoDelDia, evolucion,
   cerrarEn, conCierre, cerradaAntes, anulado, puedeCerrar,
 } from './engine.js';
 
@@ -280,6 +280,16 @@ test('medallas', () => {
   assert.equal(m.farolito[0].name, 'Tomás');
   assert.equal(m.remontada.filas[0].name, 'Pancho');
   assert.equal(m.ganador.n, 1);
+});
+
+test('la pausa para leer un dato: una sola vez, al cerrar o al tope (D-277)', () => {
+  const log = [];
+  const fin = pausaDeLectura({ ms: 20, pausar: () => log.push('pausa'), seguir: () => log.push('sigue'), alCambiar: p => log.push(p) });
+  fin(); fin();
+  assert.deepEqual(log, ['pausa', true, 'sigue', false]);
+  const solo = [];
+  pausaDeLectura({ ms: 5, pausar: () => solo.push('pausa'), seguir: () => solo.push('sigue') });
+  setTimeout(() => assert.deepEqual(solo, ['pausa', 'sigue'], 'el tope la termina sola'), 30);
 });
 
 test('reloj activo', () => {

@@ -151,18 +151,19 @@ You get events with no date on them and place them in the right spot on a shared
 <!-- generado: tematicas · written by python3 tools/release/readme.py actualizar -->
 | Theme | Cards | Years | What it covers |
 |---|---|---|---|
-| 📜 History | 98 | 2560 BC to 2022 | Milestones of humankind |
-| 🎵 Music | 89 | 1600 to 2023 | From Beethoven to TikTok |
-| 🇨🇱 Chile | 127 | 1520 to 2023 | From the 1960 quake to the uprising |
-| 🍿 Pop culture | 110 | 1928 to 2023 | Movies, memes and video games |
-| 🇧🇷 Brazil | 140 | 1500 to 2025 | From Cabral to COP30, telenovelas and carnival included |
-| ⚽ Soccer | 123 | 1863 to 2025 | World Cups, clubs, goals and transfers |
-| **Total** | **687** | | |
+| 📜 History | 96 | 2560 BC to 2022 | Milestones of humankind |
+| 🎵 Music | 91 | 1600 to 2023 | From Beethoven to Taylor Swift |
+| 🇨🇱 Chile | 120 | 1520 to 2023 | From the 1960 quake to the uprising |
+| 🍿 Pop culture | 108 | 1928 to 2023 | Movies, memes and video games |
+| 🇧🇷 Brazil | 139 | 1500 to 2025 | From Cabral to COP30, telenovelas and carnival included |
+| ⚽ Soccer | 122 | 1863 to 2025 | World Cups, clubs, goals and transfers |
+| **Total** | **676** | | |
 <!-- /generado -->
 
 - **📱 One phone:** two to six players, passing the phone around.
 - **📡 Several phones:** a room with a code and a QR, up to six players. The host starts the game once everyone is in, and each player sees their own hand.
 - **🧍 Play alone:** The Cup's Timeline Flash. Pick a theme and get ten events: the first one is already on the timeline and you place the other nine in any order. A wrong card lands in its right spot marked in red, and you keep going. You score 0 to 100 for the share you got right, with a clock and a record for your best score in each theme.
+- **💡 Every card tells you something** (D-277): a wrong card's verdict no longer says which events it went between (its big year already says that) but tells you a fact, a reason or an anecdote about it. A correct card leaves its fact in a strip above the place button that goes away on its own, and on the final timeline tapping an event shows its fact. Against the clock (Timeline Flash, and every event in the Cup's 📅 What year was it?) the clock pauses while you read, for up to 6 seconds. For now the Chile and History themes have them; a card with no fact still says where it went.
 - **🗂 All cards on the table (default):** twice the cards you need to win are dealt face up from the first turn (6, 10 or 14), and no new card enters for the rest of the game. Since the table only shrinks, the cards that are hard to place pile up for the end, on a timeline that by then is already crowded. The game gets harder on its own.
 - **🃏 Shared pool:** the same 6 cards face up for everyone, refilled from the deck, and whoever places the agreed number of cards first wins. It can also be played with **🙋 your own hand**, each player with private cards.
 - **💬 Room chat:** on several phones there is a chat to comment on the plays while waiting for your turn, and it stays alive on the final screen. New messages peek out for a few seconds next to the bubble.
