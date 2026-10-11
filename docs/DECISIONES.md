@@ -4836,5 +4836,10 @@ registro de cuáles se atendieron: un reporte de un día sin ronda se perdía.
 **Alternativas descartadas:** el resumen del reporte en vez del texto (exige que la ronda corra en
 el Mac del dueño, con la app abierta); el texto con el nombre del jugador (el dueño prefirió dejarlo
 fuera).
+- **Los issues los abre el bot de los workflows, no la cuenta del dueño:** GitHub no avisa a
+  nadie de lo que hace su propia cuenta, y los agentes usan la del dueño. Por eso el feedback lo
+  sube `feedback.yml` y las decisiones de un toque las abre `decidir.yml` (que lanza
+  `procesos.mjs decidir`); `aprobar.mjs` acepta los issues del bot. El primer issue de decisiones
+  (#310) lo abrió la cuenta del dueño y no le llegó.
 **Consecuencias:** al empezar, los nueve reportes que ya había se suben juntos y la primera ronda
 cierra los que ya se resolvieron. GitHub le avisa al dueño por correo de cada issue nuevo.
