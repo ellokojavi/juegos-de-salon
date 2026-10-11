@@ -37,7 +37,7 @@
 .theme-card { display: grid; gap: 2px; justify-items: center; text-align: center; padding: 12px 8px; border-radius: 16px; background: rgba(0,0,0,0.3); border: 2px solid transparent; color: var(--ink); cursor: pointer; font-family: var(--font-body); }
 .theme-card .em { font-size: 1.8rem; }
 .theme-card b { font-size: 1rem; }
-.theme-card small { color: var(--muted); font-size: 0.75rem; font-weight: 700; }
+.theme-card small { color: var(--muted); font-size: 0.75rem; font-weight: 700; text-wrap: balance; }
 .theme-card.on { border-color: var(--yellow); background: rgba(255, 210, 63, 0.15); }
 .player-row { display: grid; grid-template-columns: 28px 1fr auto; gap: 8px; align-items: center; background: rgba(0,0,0,0.25); border-radius: 14px; padding: 6px 10px; margin-bottom: 6px; }
 .player-row .num { font-family: var(--font-display); font-size: 1.2rem; color: var(--yellow); text-align: center; }
