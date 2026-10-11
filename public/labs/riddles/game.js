@@ -29,15 +29,15 @@ const TEXTOS = {
     como: ['Resuelve los 5 acertijos.', 'Toca, arrastra y mira toda la pantalla: la trampa puede estar en cualquier parte.', 'Si te trabas, 💡 te da una pista.'],
     empezar: '🤔 Empezar', nivel: 'Acertijo {n} de {t}', pista: '💡 Pista', siguiente: 'Siguiente ›', verResultado: 'Ver cómo me fue',
     bien: ['¡Bien! Ese era fácil… ¿o no?', '¡Eso! Tienes buen ojo. 👀', '¡Lo pillaste! 🧠', 'Mmm… ¿ya lo conocías?', '¡Ja! No caíste.'],
-    mal: ['Nop. Piénsalo de nuevo.', 'Casi… pero no.', 'Ese es el truco fácil. Busca otro.'],
-    fin: '¡Terminaste!', resumen: '{l} de {t} sin pista · {e} errores · ⏱ {tiempo}',
+    mal: ['Nop. Piénsalo de nuevo.', 'Casi… pero no.', 'Mmm, no. Sigue buscando.'],
+    fin: '¡Terminaste!', resumen: '{l} de {t} sin pista · {e} {errores} · ⏱ {tiempo}', error1: 'error', errores: 'errores',
     otraVez: '🔁 Jugar de nuevo', comentarAbrir: '💬 Dejar un comentario',
-    l1: { q: 'Toca el animal más grande.', mal: 'Ese es el dibujo más grande, no el animal.', pista: 'No se trata del tamaño del dibujo.' },
+    l1: { q: 'Toca el animal más grande.', mal: 'Está dibujado grande, pero no es el animal más grande.', pista: 'No se trata del tamaño del dibujo.' },
     l2: { q: '¿Cuántos cuadrados hay?', mal: 'Cuéntalos de nuevo. ¿Todos, todos?', pista: 'El cuadrado de afuera también cuenta.' },
     l3: { q: 'Encuentra la llave.', nada: 'Ahí no está. 🙃', pista: '¿Y si la pregunta estorba?' },
     l4: { q: 'Tapa el sol.', quema: '¡Auch! Con el dedo no se tapa el sol. 🔥', pista: 'Algo se asoma por el borde.' },
     l5: { q: '¿Qué pesa más?', a: '🪶 1 kg de plumas', b: '🪨 1 kg de piedras', c: '⚖️ Pesan lo mismo', mal: 'Léelo de nuevo, despacio. 🤓', pista: 'Fíjate en cuánto hay de cada uno.' },
-    comentario: { titulo: '¿Qué te pareció?', lead: 'Cuéntanos qué acertijo te gustó, cuál fue muy fácil o muy difícil, o se te ocurre uno nuevo.', ph: 'Por ejemplo: el de la llave me encantó; el del kilo ya lo conocía.', nombre: 'Tu nombre (opcional)', enviar: 'Enviar comentario', enviando: 'Enviando…', vacio: 'Escribe algo primero.', gracias: '¡Gracias! 🙌 Tu comentario llegó.', guardado: 'Ahora no hay internet: tu comentario quedó en el celular y se envía solo después.', error: 'No se pudo enviar. Prueba de nuevo en un rato.', contexto: 'Lo que se envía junto', cancelar: 'Cancelar', cerrar: 'Cerrar' },
+    comentario: { titulo: '¿Qué te pareció?', lead: 'Cuéntanos qué acertijo te gustó, cuál fue muy fácil o muy difícil, o si se te ocurre uno nuevo.', ph: 'Por ejemplo: el de la llave me encantó; el del kilo ya lo conocía.', nombre: 'Tu nombre (opcional)', enviar: 'Enviar comentario', enviando: 'Enviando…', vacio: 'Escribe algo primero.', gracias: '¡Gracias! 🙌 Tu comentario llegó.', guardado: 'Ahora no hay internet: tu comentario quedó en el celular y se envía solo después.', error: 'No se pudo enviar. Prueba de nuevo en un rato.', contexto: 'Lo que se envía junto', cancelar: 'Cancelar', cerrar: 'Cerrar' },
   },
   en: {
     nombre: 'Tricky Riddles', laboratorio: '‹ Lab',
@@ -45,10 +45,10 @@ const TEXTOS = {
     como: ['Solve all 5 riddles.', 'Tap, drag and look at the whole screen: the trick can be anywhere.', 'If you get stuck, 💡 gives you a hint.'],
     empezar: '🤔 Start', nivel: 'Riddle {n} of {t}', pista: '💡 Hint', siguiente: 'Next ›', verResultado: 'See how I did',
     bien: ['Nice! That was easy… or was it?', 'Yes! You have a good eye. 👀', 'You got it! 🧠', 'Hmm… had you seen it before?', 'Ha! You didn’t fall for it.'],
-    mal: ['Nope. Think again.', 'Close… but no.', 'That’s the easy trick. Look for another.'],
-    fin: 'You finished!', resumen: '{l} of {t} without a hint · {e} mistakes · ⏱ {tiempo}',
+    mal: ['Nope. Think again.', 'Close… but no.', 'Hmm, no. Keep looking.'],
+    fin: 'You finished!', resumen: '{l} of {t} without a hint · {e} {errores} · ⏱ {tiempo}', error1: 'mistake', errores: 'mistakes',
     otraVez: '🔁 Play again', comentarAbrir: '💬 Leave a comment',
-    l1: { q: 'Tap the biggest animal.', mal: 'That’s the biggest drawing, not the biggest animal.', pista: 'It’s not about the size of the drawing.' },
+    l1: { q: 'Tap the biggest animal.', mal: 'It’s drawn big, but it’s not the biggest animal.', pista: 'It’s not about the size of the drawing.' },
     l2: { q: 'How many squares are there?', mal: 'Count again. All of them?', pista: 'The outer square counts too.' },
     l3: { q: 'Find the key.', nada: 'Not there. 🙃', pista: 'What if the question is in the way?' },
     l4: { q: 'Cover the sun.', quema: 'Ouch! You can’t cover the sun with your finger. 🔥', pista: 'Something is peeking in from the edge.' },
@@ -61,10 +61,10 @@ const TEXTOS = {
     como: ['Resolva os 5 enigmas.', 'Toque, arraste e olhe a tela toda: a pegadinha pode estar em qualquer lugar.', 'Se travar, 💡 dá uma dica.'],
     empezar: '🤔 Começar', nivel: 'Enigma {n} de {t}', pista: '💡 Dica', siguiente: 'Próximo ›', verResultado: 'Ver como fui',
     bien: ['Boa! Essa era fácil… ou não?', 'Isso! Você tem olho bom. 👀', 'Pegou! 🧠', 'Hmm… você já conhecia?', 'Rá! Não caiu.'],
-    mal: ['Não. Pense de novo.', 'Quase… mas não.', 'Essa é a pegadinha fácil. Procure outra.'],
-    fin: 'Você terminou!', resumen: '{l} de {t} sem dica · {e} erros · ⏱ {tiempo}',
+    mal: ['Não. Pense de novo.', 'Quase… mas não.', 'Hmm, não. Continue procurando.'],
+    fin: 'Você terminou!', resumen: '{l} de {t} sem dica · {e} {errores} · ⏱ {tiempo}', error1: 'erro', errores: 'erros',
     otraVez: '🔁 Jogar de novo', comentarAbrir: '💬 Deixar um comentário',
-    l1: { q: 'Toque no maior animal.', mal: 'Esse é o maior desenho, não o maior animal.', pista: 'Não é sobre o tamanho do desenho.' },
+    l1: { q: 'Toque no maior animal.', mal: 'Está desenhado grande, mas não é o maior animal.', pista: 'Não é sobre o tamanho do desenho.' },
     l2: { q: 'Quantos quadrados há?', mal: 'Conte de novo. Todos mesmo?', pista: 'O quadrado de fora também conta.' },
     l3: { q: 'Encontre a chave.', nada: 'Não está aí. 🙃', pista: 'E se a pergunta estiver atrapalhando?' },
     l4: { q: 'Tape o sol.', quema: 'Ai! Não dá para tapar o sol com o dedo. 🔥', pista: 'Tem algo aparecendo na borda.' },
@@ -77,10 +77,10 @@ const TEXTOS = {
     como: ['Löse alle 5 Rätsel.', 'Tippe, ziehe und schau dir den ganzen Bildschirm an: Der Trick kann überall stecken.', 'Wenn du nicht weiterkommst, gibt dir 💡 einen Tipp.'],
     empezar: '🤔 Los geht’s', nivel: 'Rätsel {n} von {t}', pista: '💡 Tipp', siguiente: 'Weiter ›', verResultado: 'Mein Ergebnis',
     bien: ['Gut! Das war leicht … oder?', 'Ja! Du hast ein gutes Auge. 👀', 'Erwischt! 🧠', 'Hm … kanntest du das schon?', 'Ha! Nicht reingefallen.'],
-    mal: ['Nö. Denk nochmal nach.', 'Fast … aber nein.', 'Das ist der einfache Trick. Such einen anderen.'],
-    fin: 'Geschafft!', resumen: '{l} von {t} ohne Tipp · {e} Fehler · ⏱ {tiempo}',
+    mal: ['Nö. Denk nochmal nach.', 'Fast … aber nein.', 'Hm, nein. Such weiter.'],
+    fin: 'Geschafft!', resumen: '{l} von {t} ohne Tipp · {e} {errores} · ⏱ {tiempo}', error1: 'Fehler', errores: 'Fehler',
     otraVez: '🔁 Nochmal spielen', comentarAbrir: '💬 Kommentar schreiben',
-    l1: { q: 'Tippe auf das größte Tier.', mal: 'Das ist die größte Zeichnung, nicht das größte Tier.', pista: 'Es geht nicht um die Größe der Zeichnung.' },
+    l1: { q: 'Tippe auf das größte Tier.', mal: 'Es ist groß gezeichnet, aber nicht das größte Tier.', pista: 'Es geht nicht um die Größe der Zeichnung.' },
     l2: { q: 'Wie viele Quadrate siehst du?', mal: 'Zähl nochmal. Wirklich alle?', pista: 'Das äußere Quadrat zählt auch.' },
     l3: { q: 'Finde den Schlüssel.', nada: 'Da ist er nicht. 🙃', pista: 'Was, wenn die Frage im Weg ist?' },
     l4: { q: 'Verdecke die Sonne.', quema: 'Autsch! Mit dem Finger verdeckst du die Sonne nicht. 🔥', pista: 'Am Rand schaut etwas herein.' },
@@ -120,7 +120,7 @@ const ACERTIJOS = [
     montar({ escena, bien, mal }) {
       const fila = el('div', { class: 'animales' });
       for (const [emoji, px] of [['🐭', 112], ['🐘', 30], ['🐈', 74], ['🐜', 92]]) {
-        fila.append(el('button', { type: 'button', class: 'cosa', style: `font-size:${px}px`, 'aria-label': emoji, onClick: () => (emoji === '🐘' ? bien() : mal(emoji === '🐭' || emoji === '🐜' ? T.l1.mal : null)) }, emoji));
+        fila.append(el('button', { type: 'button', class: 'cosa', style: `font-size:calc(${px} * var(--u))`, 'aria-label': emoji, onClick: () => (emoji === '🐘' ? bien() : mal(emoji === '🐭' || emoji === '🐜' ? T.l1.mal : null)) }, emoji));
       }
       escena.append(fila);
     },
@@ -139,7 +139,7 @@ const ACERTIJOS = [
     montar({ escena, pregunta, bien, mal }) {
       const cosas = [['🛋️', 30, 62], ['🪴', 78, 30], ['🖼️', 22, 24], ['🧸', 70, 74], ['📚', 50, 46]];
       for (const [emoji, x, y] of cosas) escena.append(el('button', { type: 'button', class: 'cosa', style: `font-size:52px;left:${x}%;top:${y}%;translate:-50% -50%`, onClick: () => mal(T.l3.nada) }, emoji));
-      const llave = el('button', { type: 'button', class: 'cosa', id: 'llave', style: 'font-size:34px;padding:0;left:50%;top:50%;translate:-50% -50%;position:absolute;z-index:1', 'aria-label': '🔑', onClick: bien }, '🔑');
+      const llave = el('button', { type: 'button', class: 'cosa', id: 'llave', style: 'font-size:34px;padding:0;min-width:44px;min-height:44px;left:50%;top:50%;translate:-50% -50%;position:absolute;z-index:1', 'aria-label': '🔑', onClick: bien }, '🔑');
       pregunta.parentElement.append(llave);
       pregunta.classList.add('movible');
       arrastrable(pregunta);
@@ -166,7 +166,7 @@ const ACERTIJOS = [
     id: 'kilo', t: T.l5,
     montar({ escena, abajo, bien, mal }) {
       escena.append(el('div', { style: 'font-size:84px' }, '⚖️'));
-      abajo.append(el('div', { class: 'opciones' },
+      abajo.append(el('div', { class: 'opciones opciones--lista' },
         el('button', { type: 'button', class: 'btn btn--ghost', 'data-op': 'a', onClick: () => mal(T.l5.mal) }, T.l5.a),
         el('button', { type: 'button', class: 'btn btn--ghost', 'data-op': 'b', onClick: () => mal(T.l5.mal) }, T.l5.b),
         el('button', { type: 'button', class: 'btn btn--ghost', 'data-op': 'c', onClick: bien }, T.l5.c)));
@@ -241,6 +241,7 @@ function acertijo() {
       SFX.tap();
       if (ultimo) resultado(); else { P.nivel++; acertijo(); }
     } }, ultimo ? T.verResultado : T.siguiente));
+    acciones.firstChild.scrollIntoView({ block: 'nearest', behavior: QUIETO ? 'auto' : 'smooth' });
   };
   const mal = texto => {
     if (resuelto) return;
@@ -270,7 +271,7 @@ function resultado() {
   vista.replaceChildren(el('div', { class: 'resultado' },
     el('div', { class: 'trofeo' }, limpios === ACERTIJOS.length && !errores ? '🏆' : '🤔'),
     el('h2', { class: 'display display--lg', style: 'margin:0' }, T.fin),
-    el('p', { class: 'lead', id: 'resumen', style: 'margin:0' }, fmt(T.resumen, { l: limpios, t: ACERTIJOS.length, e: errores, tiempo: mmss(P.ms) })),
+    el('p', { class: 'lead', id: 'resumen', style: 'margin:0' }, fmt(T.resumen, { l: limpios, t: ACERTIJOS.length, e: errores, errores: errores === 1 ? T.error1 : T.errores, tiempo: mmss(P.ms) })),
     el('div', { class: 'tarjeta', 'aria-hidden': 'true' }, tarjeta),
     botonResultadoSolo({ C: COMMON[lang] || COMMON.es, emoji: '🤔', juego: T.nombre, puntaje: `${limpios}/${ACERTIJOS.length}`, tiempo: mmss(P.ms), tarjeta, url: withLang(`${SITIO}labs/riddles/`, lang), alTocar: () => SFX.tap() }),
     el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-otra-vez', onClick: () => { SFX.tap(); empezar(); } }, T.otraVez),
