@@ -51,7 +51,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 
 | Tema | Regla de hoy (canon) | Decisiones vigentes que la explican |
 |---|---|---|
-| Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270 |
+| Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281 |
 | Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184 |
 | Mazos de cartas con fecha | `docs/games/timeline.md` | D-37, D-277, D-278 |
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270 |
@@ -1236,7 +1236,7 @@ Conexiones y la final) aparece con `?tres` en la URL o en el modo de prueba.
 portada la haría la opción por defecto de quien quiere algo corto.
 
 ## D-101 · La Copa se prueba en un laboratorio antes de llegar al menú
-**Fecha:** 2026-09-23 · **Estado:** corregida por D-112, D-175, D-262
+**Fecha:** 2026-09-23 · **Estado:** corregida por D-112, D-175, D-262, D-281
 **Decisión:** La Copa sale del menú como juego jugable: su tarjeta se sigue viendo, apagada y con
 "Próximamente" (`available: false`, `labs: true` en `games.js`), y se juega desde **`/labs/`**,
 una página que no está enlazada desde el menú ni se indexa. El laboratorio ofrece tres pasos:
@@ -4982,3 +4982,40 @@ entiende sola: pasa justo al marcar a alguien, U-8).
 sin guardarse al recargar, pero las que se tachan solas vuelven solas. `juegos.test.mjs` prueba
 `usadas()`; `tools/e2e/case/lab.mjs`, el tachado solo, el ✓ a mano y el destachar, y
 `tools/e2e/caminos.mjs` suma la toma `caso pistas`.
+
+## D-280 · El laboratorio tiene dos grupos: Proyectos activos y La Bodega
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** amplía D-262
+**Decisión:** `/labs/` se ordena en dos grupos: **🧪 Proyectos activos**, lo que se está probando
+ahora, y **📦 La Bodega**, los proyectos que no prosperaron. Los de La Bodega se siguen jugando en su
+página, pero ya no se trabajan. Hoy van a La Bodega El caso (`/labs/case/`) y La clave
+(`/labs/code/`), y Proyectos activos queda vacío, con un aviso que lo dice.
+**Por qué:** pedido del dueño: ni El caso ni La clave prosperaron, y el laboratorio tiene que
+mostrar de un vistazo qué está vivo. Borrarlos perdería el trabajo; dejarlos al lado de lo nuevo
+confunde a quien prueba.
+**Consecuencias:** un proyecto nuevo entra en Proyectos activos (y el aviso de vacío se saca);
+uno que se abandona pasa a La Bodega moviendo su `<section class="seccion">`. Los dos siguen con
+`labs: true` en `games.js`. Lo verifican `tools/e2e/case/lab.mjs` y `tools/e2e/code/lab.mjs`.
+
+## D-281 · El laboratorio tiene puerta: sin la llave se va al menú, y nada de él se indexa
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** corrige D-101
+**Decisión:** Cada página de `/labs/` carga primero `public/assets/js/labs-puerta.js`, un script
+clásico que esconde la página hasta comprobar la llave. La llave llega una vez en el link que
+manda el dueño (`/labs/?key=…`), se guarda en el celular y se borra del link; sin ella, o con una
+equivocada, la página manda al menú sin mostrarse. El código solo guarda la huella SHA-256 de la
+llave (`HUELLA`): la llave no está en el repo. En localhost y en Tailscale (`*.ts.net`, D-67) se
+abre sola, para los guiones y para el dueño.
+Además, nada del laboratorio se indexa: `/labs/case/` (que genera `og.mjs`) y las páginas puente
+que llevan ahí (`/case/`, `/minigames/case/`, `/minijuegos/caso/`) suman `noindex, nofollow`, como
+ya tenían `/labs/` y `/labs/code/`. La tabla de juegos del README nombra a los del laboratorio sin
+link.
+**Por qué:** pedido del dueño: que los robots no lleguen a Labs y tampoco gente que no fue
+invitada. D-101 solo lo sacaba del menú, pero `/labs/case/` y sus puentes se anunciaban con tarjeta
+y canonical, sin `noindex`, y el README los enlazaba. No se usa `robots.txt` con `Disallow`: un
+robot que no puede entrar no ve el `noindex` y la URL podría indexarse igual si alguien la enlaza.
+**Consecuencias:** es una puerta, no una cerradura: GitHub Pages sirve archivos estáticos, así que
+el código del laboratorio se puede bajar igual; frena a los curiosos y a los robots que corren
+JavaScript. Un cierre de verdad necesitaría un servidor delante (por ejemplo Cloudflare Access).
+Un link que comparte un juego del laboratorio (el "Compartir" de El caso) solo abre para quien ya
+tiene la llave. Para cambiarla: `printf %s 'llave-nueva' | sha256sum` y el resultado en `HUELLA`;
+quien tenía la vieja queda afuera. `public/assets/js/labs-puerta.test.mjs` prueba la puerta y
+exige que cada página de `/labs/` la cargue y que ninguna, ni sus puentes, se indexe.

@@ -33,6 +33,8 @@ const marcar = async (i, v) => {
 // El laboratorio lo ofrece, y /case/ (el link de antes) lleva a /labs/case/
 await b.go(`${SITIO}/labs/`);
 ok(await ev(`document.getElementById('btn-caso')?.getAttribute('href')`) === 'case/', 'el laboratorio ofrece El caso en /labs/case/');
+// Dos grupos (D-280): Proyectos activos, hoy vacío, y La Bodega, donde quedó El caso
+ok(await ev(`!!document.querySelector('#bodega #seccion-caso') && !document.querySelector('#activos section.seccion') && !!document.getElementById('activos-vacio')`), 'El caso está en La Bodega y Proyectos activos está vacío');
 await b.go(`${SITIO}/case/`, 1500);
 ok(await ev(`location.pathname`) === '/labs/case/', `/case/ lleva a /labs/case/ (${await ev('location.pathname')})`);
 
