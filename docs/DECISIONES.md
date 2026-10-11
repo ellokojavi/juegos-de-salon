@@ -69,7 +69,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | README y capturas | C-13 | D-51, D-76, D-78, D-213 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216 |
 | La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268 |
-| Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252 |
+| Agentes (usabilidad, documentación, procesos) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249 |
 | Marketing | `marketing/README.md` | D-178 |
 | App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
@@ -4773,3 +4773,44 @@ un chat) y dejar los idiomas fuera del mensaje en español (quien lo recibe pued
 no habla español).
 **Consecuencias:** el mensaje del video y la bajada de la tarjeta del link no cambian: la tarjeta ya
 dice "sin instalar", que se refiere a que no hay que bajar nada de una tienda.
+
+## D-273 · Un agente de procesos, y decisiones de un toque
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** completa D-132 y D-172 (los agentes de usabilidad y de documentación) y D-216 (el auto-merge)
+**Decisión:** Un tercer agente (`.claude/agents/procesos.md`) corre una vez al día y no arregla
+cosas sueltas: **cierra lo que quedó abierto** (PR que esperan, issues viejos, lo que los otros
+agentes arrastran de una ronda a otra) y **convierte cada error que se repite en un mecanismo**
+que lo frena solo. Una vez es un accidente; dos veces, un patrón. Construye a lo más un mecanismo
+por ronda, de preferencia un test, y si no, un dato leído del código, una comprobación, un paso de
+un workflow y, solo al final, una instrucción. Toca el taller (`tools/`, tests, workflows, guías
+de agentes), no el código de los juegos.
+- **Memoria:** `docs/procesos.json` (hasta qué commit miró, los patrones con sus veces, los
+  mecanismos con su PR y lo aprobado que ya hizo). **Señales:** `tools/agents/procesos.mjs revisar`.
+- **Decisiones de un toque:** lo que necesita al dueño va en **un** issue con la etiqueta
+  `procesos` y una casilla Sí y una No por decisión (`procesos.mjs decidir`). GitHub se lo manda
+  al correo; marcar una casilla despierta `.github/workflows/aprobar.yml`, que corre
+  `tools/agents/aprobar.mjs` y hace al instante lo que esa casilla dice, sin un modelo de por medio,
+  y anota el resultado al lado. Solo obedece al dueño, en un issue suyo, si el bloque de acciones
+  no cambió en la misma edición, una vez por decisión y con acciones de una lista cerrada:
+  `fusionar`, `cerrar-pr`, `cerrar-issue`, `comentar`, `correr` (e2e o publicar), `encolar` (para
+  la ronda siguiente) y `nada`. El agente deja el trabajo hecho antes de preguntar, para que el Sí
+  casi siempre sea "fusiónalo". Si una acción falla, la decisión no queda tomada: desmarcar y
+  volver a marcar la reintenta.
+- **Fusionar con el token del workflow** no despierta a `publicar.yml` ni a `e2e.yml` (GitHub no
+  encadena workflows con ese token): `fusionar` espera los checks obligatorios, fusiona y los
+  corre a mano. Por eso el aviso de `e2e.yml` ya no exige un push.
+- **El aviso "main en rojo" se cierra solo** cuando `main` vuelve a verde (`e2e.yml`, job
+  `cerrar-aviso`): el #276 quedó abierto un día después de arreglado.
+**Por qué:** lo pidió el dueño ("un jefe general cuyo propósito sea mantener automatización,
+semi-automatización y consistencia"), con el menor esfuerzo de su parte, y aprobar "con un tap en
+algún ícono" desde el correo. Al mirar el repo, lo que más inconsistencias dejaba no era lo que
+nadie detectaba sino lo detectado que no se cerraba: seis PR de las rondas de usabilidad y
+documentación esperando (el más viejo, del 5 de octubre), y el texto de compartir mantenido por
+una instrucción hasta que D-271 le puso un test.
+**Alternativas descartadas:** otro agente que patrulla y arregla (más PR esperando al dueño);
+cada dos días (con unas 20 fusiones diarias, lo abierto se pudre entre una ronda y otra; la
+memoria ya acumula los patrones); responder el correo con texto (hay que escribir); un link en el
+correo que aprueba al abrirse (los correos abren los links solos para revisarlos, y aprobarían sin
+el dueño; además pide un servidor con una llave de GitHub); un link firmado con página de
+confirmación en un Cloudflare Worker (son dos toques igual que la casilla, con un servidor más).
+**Consecuencias:** la ronda corre en la nube a las 4:30 hora del Pacífico, después de la de
+documentación (3:54). El correo llega solo los días con algo que decidir.
