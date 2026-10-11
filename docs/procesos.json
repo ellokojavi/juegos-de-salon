@@ -16,6 +16,22 @@
         "que": "version.test.mjs exige que el CHANGELOG vaya de la versión más nueva a la más vieja",
         "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/324"
       }
+    },
+    {
+      "clave": "decision-repetida-o-desordenada",
+      "que": "Al resolver conflictos de dos PR, D-277 quedó repetida y D-282 antes de D-280",
+      "vistos": [
+        {
+          "fecha": "2026-10-11",
+          "que": "Al resolver conflictos de dos PR, D-277 quedó repetida y D-282 antes de D-280",
+          "commit": null
+        }
+      ],
+      "mecanismo": {
+        "fecha": "2026-10-11",
+        "que": "documentar.test.mjs revisa docs/DECISIONES.md del repo en cada PR",
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/332"
+      }
     }
   ],
   "mecanismos": [
@@ -24,6 +40,12 @@
       "clave": "version-hacia-atras",
       "que": "version.test.mjs exige que el CHANGELOG vaya de la versión más nueva a la más vieja",
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/324"
+    },
+    {
+      "fecha": "2026-10-11",
+      "clave": "decision-repetida-o-desordenada",
+      "que": "documentar.test.mjs revisa docs/DECISIONES.md del repo en cada PR",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/332"
     }
   ],
   "colaHecha": [],
