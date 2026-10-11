@@ -77,6 +77,9 @@ export function montar(raiz, ctx) {
   // "Borrar todo" pide un segundo toque, como en Tango (D-169)
   let armado = false;
   let armadoTimer = null;
+  // Armado, Borrar todo guarda el ancho que tenía: su frase larga no lo baja de línea, así el segundo
+  // toque cae en el mismo botón y no en ↩️ Deshacer, que tomaría su lugar (U-3, D-283)
+  let anchoArmado = 0;
   // Dónde empieza cada gesto en la lista de jugadas, para deshacerlo entero (D-283)
   const historial = pasos();
   /** Suma una jugada; `nuevo` si empieza un gesto (un arrastre suma varias en el mismo). */
@@ -196,14 +199,15 @@ export function montar(raiz, ctx) {
         // Borrar todo deja el tablero en blanco; el reloj sigue (D-169). El primer toque solo lo arma.
         el('button', {
           type: 'button', class: 'btn btn--ghost btn--sm' + (armado ? ' armado' : ''), id: 'btn-borrar', disabled: vacio,
-          onClick: () => {
+          style: armado && anchoArmado ? `flex: 0 0 ${anchoArmado}px` : null,
+          onClick: ev => {
             clearTimeout(armadoTimer);
             if (armado) {
               armado = false;
               anotar(motor.BORRAR); SFX.splash(); vibrate([20, 30, 20]); dibujar();
               return;
             }
-            armado = true; SFX.tap(); vibrate(15);
+            armado = true; anchoArmado = ev.currentTarget.getBoundingClientRect().width; SFX.tap(); vibrate(15);
             armadoTimer = setTimeout(() => { armado = false; if (raiz.isConnected) dibujar(); }, CONFIRMAR_MS);
             dibujar();
           },

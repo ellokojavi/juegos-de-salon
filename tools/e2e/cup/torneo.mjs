@@ -688,8 +688,11 @@ if (corre('laboratorio')) {
     ok((await clases())[N + 6] === 'X', 'Reinas: el toque largo sigue poniendo la X');
     // Borrar todo pide un segundo toque y deja el tablero en blanco (D-169)
     const antesDeBorrar = await clases();
+    const lugarBorrar = `(()=>{const r=document.getElementById('btn-borrar').getBoundingClientRect();return [Math.round(r.x),Math.round(r.y),Math.round(r.width)].join()})()`;
+    const borrarAntes = await ev(lugarBorrar);
     await click('#btn-borrar'); await sleep(150);
     ok(/[RX]/.test(await clases()) && await ev(`document.getElementById('btn-borrar').classList.contains('armado')`), 'Reinas: el primer toque de Borrar todo solo lo arma');
+    ok(await ev(lugarBorrar) === borrarAntes, 'Reinas: armado, Borrar todo no se mueve: el segundo toque no cae en Deshacer (D-283)');
     await click('#btn-borrar'); await sleep(200);
     ok(!/[RX]/.test(await clases()) && await ev(`document.getElementById('btn-borrar').disabled`), 'Reinas: el segundo toque deja el tablero en blanco y el botón se apaga');
     await b.toque(xr, yr);
