@@ -273,8 +273,8 @@ El README no se mantiene a pulso: `python3 tools/release/readme.py` lo sostiene.
 - Una captura atrasada es un aviso en un PR cualquiera, no lo frena. Solo "actualiza el README"
   exige dejarlas todas al día (D-213).
 
-Lo que se atrasa igual lo recoge el agente `documentacion` (D-172): una ronda diaria sobre lo que
-entró a `main` y una revisión de cada PR antes de proponer su fusión, con
+Lo que se atrasa igual lo recoge el agente `documentacion` (D-172): una ronda sobre lo que
+entró a `main`, que lanza el agente de procesos los días que entró algo (D-276), y una revisión de cada PR antes de proponer su fusión, con
 `node tools/agents/documentar.mjs revisar` y su memoria en `docs/documentacion.json`. No reemplaza esta
 regla: quien cambia algo lo documenta en su mismo PR.
 
