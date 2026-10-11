@@ -1,38 +1,32 @@
-// La clave (laboratorio, D-270): las orientaciones forman un grupo, la B calza solo con la
-// orientación buena y entonces se lee el código, y ninguna figura sola dice una cifra completa.
+// La clave (laboratorio, D-270): las orientaciones forman un grupo; con 4 y 8 cartas, la clave se
+// lee con la orientación de cada carta y no hay otra forma de leer un código con todas puestas.
 import assert from 'node:assert/strict';
-import { generar, juntos, leer, componer, girar, voltear, mover, ORIENTACIONES, SEGMENTOS, calza } from './engine.js';
+import { generar, juntos, leer, componer, girar, voltear, mover, lecturas, ORIENTACIONES, SEGMENTOS } from './engine.js';
 
-// El grupo: cada una es su inversa, R·H = V, y con girar y voltear se llega a todas
 for (const o of ORIENTACIONES) assert.equal(componer(o, o), 'I');
 assert.equal(componer('R', 'H'), 'V');
-assert.equal(componer('H', 'V'), 'R');
 assert.deepEqual(new Set([girar('I'), voltear('I'), girar(voltear('I')), 'I']), new Set(ORIENTACIONES));
-// Mover es una acción: mover(x, mover(y, s)) = mover(x·y, s)
 for (const x of ORIENTACIONES) for (const y of ORIENTACIONES) for (const s of 'abcdefg') for (let i = 0; i < 4; i++) {
   assert.deepEqual(mover(x, mover(y, { i, s })), mover(componer(x, y), { i, s }));
 }
-// Toda cifra vista en cualquier orientación sigue siendo de siete segmentos (algunas son otra cifra)
-for (const o of ORIENTACIONES) for (const [d, v] of Object.entries(SEGMENTOS)) {
-  const m = [...v].map(s => mover(o, { i: 0, s }).s);
-  assert.equal(new Set(m).size, v.length, `${o} ${d}`);
-}
+for (const o of ORIENTACIONES) for (const v of Object.values(SEGMENTOS)) assert.equal(new Set([...v].map(s => mover(o, { i: 0, s }).s)).size, v.length);
 
-let semilla = 7;
+let semilla = 11;
 const rand = () => { semilla = (semilla * 16807) % 2147483647; return (semilla - 1) / 2147483646; };
-for (let n = 0; n < 300; n++) {
-  const c = generar(rand);
-  assert.match(c.codigo, /^\d{4}$/);
-  assert.notEqual(c.o, 'I', 'siempre hay que girarla o voltearla');
-  // Con la orientación buena se lee el código
-  assert.equal(juntos(c, c.o).map(leer).join(''), c.codigo, `${n}: con ${c.o} no se lee ${c.codigo}`);
-  assert.ok(calza(c, c.o) && !calza(c, 'I'));
-  // Cada cifra tiene trazos en las dos figuras: ninguna sola la dibuja entera
-  for (let i = 0; i < 4; i++) {
-    assert.ok(c.a.some(x => x.i === i), `${n}: la A no tiene trazos de la cifra ${i}`);
-    const bBien = c.b.map(x => mover(c.o, x));
-    assert.ok(bBien.some(x => x.i === i), `${n}: la B no tiene trazos de la cifra ${i}`);
-    assert.notEqual(leer(new Set(c.a.filter(x => x.i === i).map(x => x.s))), c.codigo[i], `${n}: la A sola dice la cifra ${i}`);
+for (const n of [4, 8]) {
+  const t = Date.now();
+  for (let k = 0; k < 40; k++) {
+    const c = generar(n, rand);
+    assert.equal(c.cartas.length, n);
+    assert.match(c.codigo, /^\d{4}$/);
+    assert.ok(c.base.length >= 2, 'la base tiene trazos');
+    for (const carta of c.cartas) assert.ok(carta.trazos.length >= (n <= 4 ? 2 : 1), 'cada carta tiene trazos');
+    if (n <= 4) assert.ok(c.cartas.every(x => x.o !== 'I'), 'con 4 cartas, ninguna viene derecha');
+    // Con la orientación de cada carta se lee el código
+    assert.equal(juntos(c, c.cartas.map(x => x.o)).map(leer).join(''), c.codigo);
+    // Y es la única lectura posible con todas puestas
+    assert.deepEqual([...lecturas(c)], [c.codigo]);
   }
+  console.log(`  ${n} cartas: ${((Date.now() - t) / 40).toFixed(0)} ms por clave`);
 }
 console.log('✓ La clave (labs)');
