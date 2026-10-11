@@ -182,8 +182,12 @@ con eso la pantalla entra también a las pruebas de idiomas. Para verlo en un ce
   Los dilemas son issues de GitHub: `node tools/agents/dilemas.mjs listar | ver <n> | crear <archivo.md> | resolver <n> "decisión" | archivar <n> "motivo" | reabrir <n>`;
   lo resuelto se anota en `docs/USABILIDAD.md`.
 - **Documentación** (D-172): ronda diaria a las 3:54 hora del Pacífico, revisión de cada PR y a
-  pedido ("documenta lo último"). Nunca fusiona ni toca código. Su memoria es
-  `docs/documentacion.json`: `node tools/agents/documentar.mjs revisar [--desde <commit>] | anotar --hasta <commit> [--pr <url>] [--pendiente "…"] | historial`.
+  pedido ("documenta lo último"). Nunca fusiona ni toca código, salvo los mensajes con que la app
+  se presenta (D-271, U-35). Su memoria es
+  `docs/documentacion.json`: `node tools/agents/documentar.mjs revisar [--desde <commit>] | anotar --hasta <commit> [--pr <url>] [--pendiente "…"] | historial`;
+  `revisar` termina mostrando esos mensajes (compartir la app, el video y la bajada de la tarjeta
+  del link) para leerlos contra lo que entró, y lo principal que nombran está en `LO_PRINCIPAL`
+  (`public/assets/js/compartir.js`).
 - **Marketing** (D-178): cada asset vive en `marketing/<asset>/` con un README que es su memoria.
   **Antes de trabajar en el video se lee `marketing/promo-video/README.md` entero** (el skill
   `promo-video` lo carga) y al terminar se anota la vuelta ahí y en `marketing/registro.json`.
