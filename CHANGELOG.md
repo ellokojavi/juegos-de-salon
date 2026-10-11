@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.154.0 — 2026-10-11
+- **🔍 El caso: las pistas usadas se tachan solas** (D-280): una pista se tacha sola cuando ya
+  marcaste a todas las personas que nombra. El ✓ sigue sirviendo para tachar antes o destachar.
+  Lo pidió un jugador por 🐞.
+
 ## 0.148.6 — 2026-10-11
 - **Herramientas: el feedback 🐞 dice quién lo mandó** (D-279): el issue de cada reporte suma el
   nombre que el jugador escribió, para hacerle seguimiento.
