@@ -1,4 +1,4 @@
-// La puerta del laboratorio (D-280): sin la llave se va al menú, con ella se abre y queda guardada,
+// La puerta del laboratorio (D-281): sin la llave se va al menú, con ella se abre y queda guardada,
 // y el link pierde la llave. Además, cada página de /labs/ (y las puentes que llevan ahí) carga la
 // puerta antes que nada y pide no indexarse: una página nueva del laboratorio que la olvide falla aquí.
 import assert from 'node:assert/strict';
