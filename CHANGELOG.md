@@ -1,10 +1,18 @@
 # Changelog
 
-## 0.146.0 — 2026-10-10
+## 0.147.0 — 2026-10-10
 - **🔐 La clave, en el laboratorio** (D-270): cuatro cartas transparentes esconden un código de 5 cifras. Hay que
   ponerlas sobre la base y girar y voltear cada una hasta que los trazos formen las cifras, sin trazos
   encima de otros (se ven rayados). En español, también con una palabra de letras de catorce
   segmentos y cartas de dos caras. En `juegosdesalon.cl/labs/code/`.
+
+## 0.146.1 — 2026-10-10
+- **🧪 Laboratorio:** se van los Acertijos (D-269): el dueño los probó y no le gustaron.
+
+## 0.145.0 — 2026-10-10
+- **🤔 Acertijos, en el laboratorio** (D-269): cinco acertijos con truco en los que la respuesta obvia
+  no es la buena. Hay que tocar, elegir y arrastrar, con pistas y un narrador burlón, y al final se
+  deja un comentario. En `juegosdesalon.cl/labs/riddles/`.
 
 ## 0.144.0 — 2026-10-10
 - **🔍 El caso, en un solo lugar** (D-267): `juegosdesalon.cl/labs/case/` es el juego completo, en

@@ -26,9 +26,11 @@ for (const lang of ['es', 'en', 'pt', 'de']) {
   await b.go(`${SITIO}/labs/code/`);
   await ev(`localStorage.clear(); localStorage.setItem('juegos-de-salon:lang', '${lang}'); 1`);
   await b.go(`${SITIO}/labs/code/`, 900);
+  ok(await ev(`!!document.querySelector('.portada .titulo-clave .rainbow') && !!document.querySelector('.demo .capa-demo') && document.querySelectorAll('.pasos li').length === 3`), `${lang}: la portada con el título en degradé, la ilustración animada y los tres pasos`);
   ok(await ev(`!!document.querySelector('#pie #btn-comentario')`) && await sinDesborde() && !await ev(`!!document.querySelector('#btn-empezar-8')`) && (lang !== 'es') !== await ev(`!!document.getElementById('btn-empezar-palabra')`), `${lang}: la portada (con Palabra solo en español), sin el modo de 8 cartas, con el link al comentario al final`);
   await clic('#btn-empezar'); await sleep(300);
   const { codigo, cartas } = await ev(`JSON.stringify(window.__clave.P.clave)`).then(JSON.parse);
+  ok(await ev(`!!document.querySelector('#vista > .titulo-clave .rainbow') && !!document.querySelector('.reglas-clave')`), `${lang}: el juego lleva el título y ¿Cómo se juega? al final`);
   ok(cartas.length === n && await ev(`document.querySelectorAll('.carta').length`) === n, `${lang}: ${n} cartas en la bandeja`);
   ok(await ev(`[...document.querySelectorAll('.controles button')].every(x => x.disabled)`), `${lang}: sin carta elegida, ↻ ⇋ ✕ no hacen nada`);
   // Tocar una carta la pone y la elige; ✕ la saca

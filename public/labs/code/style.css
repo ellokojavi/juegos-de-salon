@@ -100,3 +100,29 @@
 .capa.volteando { transform: var(--giro-capa, none) scaleX(0) !important; transition: transform 0.15s ease-in !important; }
 .keypad--letras button { min-height: 42px; font-size: 1.05rem; padding: 6px 0; }
 .keypad--letras .ok { grid-column: span 2; }
+
+/* ---------- Portada y título ---------- */
+.titulo-clave { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 0; }
+.titulo-clave .rainbow { padding: 0.2em 0.12em 0 0; margin: -0.2em -0.12em 0 0; }
+.titulo-clave .candado { font-size: 1.6rem; line-height: 1; display: inline-block; transform-origin: 50% 80%; animation: cl-candado 3.4s ease-in-out infinite; filter: drop-shadow(0 0 10px rgba(255, 210, 63, 0.45)); }
+.titulo-clave.grande .candado { font-size: 2.6rem; }
+@keyframes cl-candado { 0%, 100% { transform: rotate(-9deg); } 50% { transform: rotate(9deg) translateY(-2px); } }
+/* La ilustración: las cartas llegan volando, se posan, forman la clave y se van */
+.demo { position: relative; margin: 4px auto 0; width: min(100%, 320px); border-radius: 16px; padding: 10px; background: rgba(0,0,0,0.25);
+  border: 2px solid var(--glass-border); overflow: hidden; isolation: isolate; }
+.demo svg { display: block; width: 100%; height: auto; overflow: visible; }
+.demo .seg { stroke-width: 8; stroke-linecap: round; }
+.capa-demo { transform-box: view-box; transform-origin: 150px 70px; animation: cl-llega 7s cubic-bezier(0.3, 1.1, 0.4, 1) infinite; animation-delay: calc(var(--k) * 0.25s); }
+@keyframes cl-llega {
+  0% { transform: translate(var(--dx), var(--dy)) rotate(var(--rot)) scale(0.7); opacity: 0; }
+  12% { opacity: 0.9; }
+  32%, 78% { transform: none; opacity: 1; filter: drop-shadow(0 0 4px rgba(255,255,255,0.5)); }
+  92%, 100% { transform: translate(calc(var(--dx) * -1), calc(var(--dy) * -1)) rotate(calc(var(--rot) * -1)) scale(0.7); opacity: 0; }
+}
+.pasos { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.pasos li { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: center; text-align: left; }
+.paso-ico { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-weight: 900; font-size: 1.1rem;
+  background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border); }
+.reglas-clave summary { cursor: pointer; font-weight: 900; }
+.reglas-clave .pasos { margin-top: 10px; }
+@media (prefers-reduced-motion: reduce) { .titulo-clave .candado, .capa-demo { animation: none; } }
