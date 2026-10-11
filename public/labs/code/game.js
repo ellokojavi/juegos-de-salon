@@ -13,6 +13,8 @@ import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/s
 import { formularioComentario, abrirComentario } from '../../assets/js/labs-idioma.js';
 import { teclado, CIFRAS } from '../../assets/js/teclado.js';
 import { generar, girar, voltear, choques, CIFRAS_CODIGO } from './engine.js';
+import * as palabra from './engine-palabra.js';
+import { alfabeto } from '../../cup/games/word/engine.js';
 
 trackVisit();   // el tráfico del sitio (D-208)
 
@@ -24,9 +26,10 @@ const TEXTOS = {
   es: {
     nombre: 'La clave', laboratorio: '‹ Laboratorio',
     lema: 'Unas cartas transparentes esconden un código. Ninguna lo dice sola.',
-    como: ['Descubre el código de 5 cifras y escríbelo.', 'Toca una carta para ponerla sobre la base. ↻ la gira y ⇋ la voltea.', 'Con todas puestas y derechas, los trazos forman las cifras sin pisarse.'],
+    como: ['Descubre la clave y escríbela: una palabra de 5 letras o un código de 5 cifras.', 'Toca una carta para ponerla sobre la base. ↻ la gira y ⇋ la voltea; en Palabra, cada carta tiene dos caras distintas.', 'Con todas puestas y derechas, los trazos forman la clave sin pisarse.'],
+    palabra: '🔤 Palabra', cifras: '🔢 Cifras', caraDe: 'Cara {c} de 2',
     empezar: '🔐 Empezar', girar: '↻ Girar', voltear: '⇋ Voltear', ok: 'OK',
-    quitar: '✕ Quitar', elige: 'Toca una carta de abajo para ponerla.', elegida: 'Carta {n}', mal: 'Ese no es el código. 🔒',
+    quitar: '✕ Quitar', elige: 'Toca una carta de abajo para ponerla.', elegida: 'Carta {n}', mal: 'Ese no es el código. 🔒', malPalabra: 'Esa no es la palabra. 🔒',
     abierto: '¡Abierto!', resumen: 'En {tiempo}, con {e} intentos fallidos.', resumenSin: 'En {tiempo}, sin intentos fallidos.', resumenUno: 'En {tiempo}, con 1 intento fallido.',
     otra: '🔁 Otra clave', comentarAbrir: '💬 Dejar un comentario',
     comentario: { titulo: '¿Qué te pareció?', lead: 'Cuéntanos si se entendió, si fue fácil o difícil, y qué otras figuras te gustaría combinar.', ph: 'Por ejemplo: no me di cuenta de que se podía voltear; me gustaría con tres figuras.', nombre: 'Tu nombre (opcional)', enviar: 'Enviar comentario', enviando: 'Enviando…', vacio: 'Escribe algo primero.', gracias: '¡Gracias! 🙌 Tu comentario llegó.', guardado: 'Ahora no hay internet: tu comentario quedó en el celular y se envía solo después.', error: 'No se pudo enviar. Prueba de nuevo en un rato.', contexto: 'Lo que se envía junto', cancelar: 'Cancelar', cerrar: 'Cerrar' },
@@ -81,8 +84,14 @@ const TRAZO = {
 };
 /** Un color por carta, para seguirle la pista a sus trazos. */
 const COLORES = ['#ff6fa8', '#6ff3e8', '#ffd23f', '#9dff3a', '#ff9a4a', '#b18cff', '#5ab8ff', '#ff8f8f'];
-const lineas = (segs, color) => segs.map(({ i, s }) => {
-  const [x1, y1, x2, y2] = TRAZO[s];
+/** Las letras de catorce segmentos, en celdas del mismo tamaño que las cifras (D-270). */
+const TRAZO14 = {
+  T: [6, 0, 38, 0], TR: [44, 6, 44, 42], BR: [44, 48, 44, 84], B: [6, 90, 38, 90], BL: [0, 48, 0, 84], TL: [0, 6, 0, 42],
+  ML: [6, 45, 19, 45], MR: [25, 45, 38, 45], VT: [22, 8, 22, 39], VB: [22, 51, 22, 82],
+  DTL: [7, 9, 18, 38], DTR: [37, 9, 26, 38], DBL: [18, 52, 7, 81], DBR: [26, 52, 37, 81],
+};
+const lineas = (segs, color, geo = TRAZO) => segs.map(({ i, s }) => {
+  const [x1, y1, x2, y2] = geo[s];
   return svgEl('line', { x1: X0[i] + x1, y1: Y0 + y1, x2: X0[i] + x2, y2: Y0 + y2, class: 'seg', stroke: color });
 });
 const lamina = clase => svgEl('svg', { viewBox: '-8 -8 316 156', class: clase, 'aria-hidden': 'true' });
@@ -127,14 +136,18 @@ function portada() {
       el('p', { class: 'lead' }, T.lema),
       el('div', { style: 'display:flex;justify-content:center' }, langToggle())),
     el('div', { class: 'panel' }, el('ol', { class: 'rules-list', style: 'margin:0' }, ...T.como.map(x => el('li', {}, x)))),
-    el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-empezar', onClick: () => { SFX.tap(); empezar(); } }, T.empezar));
+    // La de palabra, por ahora solo en español (sus palabras son las de Toque y Fama: Palabra)
+    lang === 'es' ? el('div', { class: 'modos' },
+      el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-empezar-palabra', onClick: () => { SFX.tap(); empezarPalabra(); } }, T.palabra),
+      el('button', { type: 'button', class: 'btn btn--cyan', id: 'btn-empezar', onClick: () => { SFX.tap(); empezar(); } }, T.cifras))
+      : el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-empezar', onClick: () => { SFX.tap(); empezar(); } }, T.empezar));
   pieComentario('portada');
 }
 
 function empezar() {
   const clave = generar();
   const n = clave.cartas.length;
-  Object.assign(P, { clave, n, g: clave.cartas.map(() => 'I'), puestas: clave.cartas.map(() => false), elegida: null, errores: 0, desde: Date.now(), giros: 0, vueltas: 0 });
+  Object.assign(P, { modo: 'cifras', clave, n, g: clave.cartas.map(() => 'I'), puestas: clave.cartas.map(() => false), elegida: null, errores: 0, desde: Date.now(), giros: 0, vueltas: 0 });
   trackStart({ game: GAME_ID, mode: 'solo', players: 1 });
   jugar();
 }
@@ -241,6 +254,118 @@ function jugar() {
   pieComentario('juego');
 }
 
+/* ------------------------------------------------------------------ */
+/* Palabra: letras de catorce segmentos y cartas de dos caras (D-270)  */
+/* ------------------------------------------------------------------ */
+function empezarPalabra() {
+  const clave = palabra.generar();
+  Object.assign(P, { modo: 'palabra', clave, n: clave.cartas.length, e: clave.cartas.map(() => [0, false]), puestas: clave.cartas.map(() => false), elegida: null, errores: 0, desde: Date.now(), giros: 0, vueltas: 0 });
+  trackStart({ game: GAME_ID, mode: 'solo', players: 1 });
+  jugarPalabra();
+}
+
+function jugarPalabra() {
+  const { clave } = P;
+  const base = lamina('base');
+  base.append(svgEl('rect', { x: 0, y: 0, width: 300, height: 140, rx: 12, class: 'borde' }), ...lineas(clave.base, '#fff', TRAZO14));
+  const defs = svgEl('defs');
+  base.prepend(defs);
+  // Cada carta: lo que se ve de su cara de ahora; girar la anima de verdad y voltear la cierra y la abre
+  const vistaDe = clave.cartas.map(() => ({ rot: 0 }));
+  const pintar = (g, k) => g.replaceChildren(...lineas(clave.cartas[k].caras[P.e[k][0]], COLORES[k], TRAZO14));
+  const capas = clave.cartas.map((c, k) => {
+    const capa = svgEl('g', { class: 'capa', 'data-k': k, style: `--k:${k};--latido:${azar(2.4, 4.6)}s;--latido-desde:-${azar(0, 4)}s` });
+    pintar(capa, k);
+    base.append(capa);
+    return capa;
+  });
+  const capaChoques = svgEl('g', { class: 'choques', id: 'choques' });
+  base.append(capaChoques);
+  const rayado = capas => {
+    const colores = capas.map(c => (c === 'base' ? '#ffffff' : COLORES[c]));
+    const id = `rayas-${capas.join('-')}`;
+    if (!defs.querySelector(`#${id}`)) {
+      const ancho = 5, pat = svgEl('pattern', { id, patternUnits: 'userSpaceOnUse', width: ancho * colores.length, height: ancho * colores.length, patternTransform: 'rotate(45)' });
+      colores.forEach((c, k) => pat.append(svgEl('rect', { x: k * ancho, y: 0, width: ancho, height: ancho * colores.length, fill: c })));
+      defs.append(pat);
+    }
+    return id;
+  };
+  const miniaturas = clave.cartas.map((c, k) => {
+    const mini = lamina('mini');
+    mini.append(svgEl('rect', { x: 0, y: 0, width: 300, height: 140, rx: 12, class: 'borde' }));
+    const capa = svgEl('g', { class: 'capa' });
+    pintar(capa, k);
+    mini.append(capa);
+    const caras = el('span', { class: 'caras', 'aria-hidden': 'true' }, el('i'), el('i'));
+    return el('button', { type: 'button', class: 'carta', 'data-k': k, style: `--color:${COLORES[k]};--k:${k};${flotar()}`, 'aria-label': fmt(T.elegida, { n: k + 1 }), onClick: () => tocar(k) },
+      mini, el('span', { class: 'num' }, String(k + 1)), caras);
+  });
+  const titulo = el('p', { class: 'aviso-clave', id: 'aviso', 'aria-live': 'polite' }, T.elige);
+  const accion = (texto, id, cambio) => el('button', { type: 'button', class: 'btn btn--ghost btn--sm', id, disabled: true, onClick: () => {
+    if (P.elegida === null) return;
+    SFX.tap(); cambio(P.elegida); dibujar();
+  } }, texto);
+  const voltearCarta = k => {
+    P.e[k] = [1 - P.e[k][0], P.e[k][1]]; P.vueltas++;
+    // Se cierra de lado, cambia de cara y se abre: la otra cara trae otros trazos
+    for (const g of [capas[k], miniaturas[k].querySelector('.capa')]) {
+      g.classList.add('volteando');
+      setTimeout(() => { pintar(g, k); g.classList.remove('volteando'); }, QUIETO ? 0 : 160);
+    }
+    setTimeout(dibujar, QUIETO ? 0 : 170);
+  };
+  const controles = el('div', { class: 'controles' },
+    accion(T.girar, 'btn-girar', k => { P.e[k] = [P.e[k][0], !P.e[k][1]]; vistaDe[k].rot += 180; P.giros++; }),
+    accion(T.voltear, 'btn-voltear', k => voltearCarta(k)),
+    accion(T.quitar, 'btn-quitar', k => { P.puestas[k] = false; P.elegida = null; }));
+  const tocar = k => { SFX.tap(); vibrate(8); P.puestas[k] = true; P.elegida = k; dibujar(); };
+  const dibujar = () => {
+    clave.cartas.forEach((c, k) => {
+      const t = `rotate(${vistaDe[k].rot}deg)`;
+      capas[k].style.setProperty('--giro-capa', t);
+      capas[k].style.transform = t;
+      capas[k].classList.toggle('puesta', P.puestas[k]);
+      capas[k].classList.toggle('elegida', P.elegida === k);
+      miniaturas[k].querySelector('.capa').style.transform = t;
+      miniaturas[k].querySelector('.capa').style.setProperty('--giro-capa', t);
+      miniaturas[k].classList.toggle('puesta', P.puestas[k]);
+      miniaturas[k].classList.toggle('elegida', P.elegida === k);
+      miniaturas[k].setAttribute('aria-pressed', String(P.elegida === k));
+      miniaturas[k].querySelectorAll('.caras i').forEach((x, f) => x.classList.toggle('on', P.e[k][0] === f));
+    });
+    for (const b of controles.querySelectorAll('button')) b.disabled = P.elegida === null;
+    const ch = palabra.choques(clave, P.e, P.puestas);
+    capaChoques.replaceChildren(...ch.flatMap(x => {
+      const [fondo] = lineas([x], '#150726', TRAZO14), [rayas] = lineas([x], `url(#${rayado(x.capas)})`, TRAZO14);
+      fondo.setAttribute('class', 'seg choque-fondo');
+      rayas.setAttribute('class', 'seg choque');
+      return [fondo, rayas];
+    }));
+    P.choques = ch.length;
+    if (!titulo.classList.contains('mal')) titulo.textContent = P.elegida === null ? T.elige : `${fmt(T.elegida, { n: P.elegida + 1 })} · ${fmt(T.caraDe, { c: P.e[P.elegida][0] + 1 })}`;
+  };
+  const pad = teclado({
+    largo: palabra.LETRAS_PALABRA, teclas: alfabeto('en'), columnas: 10, acciones: 'abajo', submitLabel: T.ok,
+    valido: v => v.length === palabra.LETRAS_PALABRA, puede: v => v.length < palabra.LETRAS_PALABRA,
+    onSubmit: v => {
+      if (v === clave.palabra) { resultado(); return; }
+      P.errores++;
+      SFX.letterMiss(); vibrate([40, 40, 40]);
+      titulo.className = 'aviso-clave'; void titulo.offsetWidth;
+      titulo.className = 'aviso-clave mal'; titulo.textContent = T.malPalabra;
+      setTimeout(() => { if (!titulo.isConnected) return; titulo.className = 'aviso-clave'; dibujar(); }, 2500);
+    },
+  });
+  const bandeja = el('div', { class: 'bandeja', id: 'bandeja' }, ...miniaturas);
+  brillosAlAzar(bandeja);
+  vista.replaceChildren(
+    el('div', { class: 'tablero palabra' }, el('div', { class: 'marco', id: 'marco' }, base)),
+    titulo, controles, bandeja, pad);
+  dibujar();
+  pieComentario('juego-palabra');
+}
+
 function resultado() {
   const ms = Date.now() - P.desde;
   trackFinish({ detalle: `${P.errores} intentos fallidos · ${mmss(ms)}` });
@@ -250,10 +375,10 @@ function resultado() {
   vista.replaceChildren(el('div', { class: 'resultado' },
     el('div', { class: 'trofeo' }, '🔓'),
     el('h2', { class: 'display display--lg', style: 'margin:0' }, T.abierto),
-    el('div', { class: 'codigo', id: 'codigo' }, P.clave.codigo),
+    el('div', { class: 'codigo', id: 'codigo' }, P.modo === 'palabra' ? P.clave.palabra : P.clave.codigo),
     el('p', { class: 'lead', id: 'resumen', style: 'margin:0' }, fmt(P.errores > 1 ? T.resumen : P.errores ? T.resumenUno : T.resumenSin, { tiempo: mmss(ms), e: P.errores })),
     botonResultadoSolo({ C: COMMON[lang] || COMMON.es, emoji: '🔐', juego: T.nombre, puntaje: '🔓', tiempo: mmss(ms), url: withLang(`${SITIO}labs/code/`, lang), alTocar: () => SFX.tap() }),
-    el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-otra', onClick: () => { SFX.tap(); empezar(); } }, T.otra),
+    el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-otra', onClick: () => { SFX.tap(); if (P.modo === 'palabra') empezarPalabra(); else empezar(); } }, T.otra),
     el('a', { class: 'btn btn--ghost btn--sm', href: '../' }, T.laboratorio),
     // El comentario va abierto y al final de todo (D-265, D-268)
     formularioComentario({ T: T.comentario, contexto: contexto('resultado') })));
@@ -268,4 +393,4 @@ document.getElementById('sound-slot').append(soundToggle());
 initSound();
 sparkles();
 portada();
-window.__clave = { P };
+window.__clave = { P, palabra };

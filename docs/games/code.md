@@ -36,6 +36,22 @@ código en el teclado (D-270). Como las tarjetas transparentes de los juegos de 
   "🔁 Otra clave" y el formulario "¿Qué te pareció?" al final. **💬 Dejar un
   comentario** va al final de la portada y del juego (D-268).
 
+## Palabra (solo en español, por ahora)
+
+El modo que pidió el dueño cuando el de cifras se volvió mecánico ("se hace bastante aburrido una
+vez que ya se entiende el mecanismo"): una palabra de 5 letras de **catorce segmentos** (como las
+calculadoras viejas), de las de Toque y Fama: Palabra sin Ñ, repartida entre la base y 4 cartas de
+**dos caras**. La cara buena tiene trazos de la palabra; la otra, trazos que despistan (de las
+mismas letras en otro lugar y otros sueltos). **⇋ Voltear** cierra la carta de lado y la abre con la
+otra cara (dos puntitos bajo la miniatura dicen cuál se ve); **↻ Girar** le da media vuelta.
+
+- **Leer a medias ya sirve:** "LL_VE" es LLAVE, así que se puede arriesgar antes de terminar.
+- **Mirar una carta no dice lo que tiene la otra cara:** hay que voltearla, y el método de descartar
+  posiciones mirando las miniaturas pierde su certeza.
+- Igual que en cifras: un trazo encima de otro se ve rayado, y con todas las cartas puestas la única
+  lectura sin choques es la palabra. Motor: `engine-palabra.js` (`engine-palabra.test.mjs`); el
+  teclado es el de letras de Toque y Fama: Palabra.
+
 ## La onda espacial
 
 Animaciones pasivas, que no dicen nada del juego (pedido del dueño, "una onda más espacial"):
@@ -49,7 +65,8 @@ que nunca se repite igual. Todo en `style.css`; con movimiento reducido, quietas
 
 ```
 public/labs/code/index.html · style.css · game.js (pantalla y textos)
-public/labs/code/engine.js · engine.test.mjs (orientaciones, reparto, lectura única; sin DOM)
+public/labs/code/engine.js · engine.test.mjs (cifras: orientaciones, reparto, lectura única; sin DOM)
+public/labs/code/engine-palabra.js · engine-palabra.test.mjs (palabra: catorce segmentos y dos caras)
 tools/e2e/code/lab.mjs   poner, elegir, girar, voltear y quitar cartas; los choques rayados; leer y escribir el código, en los cuatro idiomas a 320 px
 ```
 
