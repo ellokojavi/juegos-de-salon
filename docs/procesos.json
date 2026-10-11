@@ -1,7 +1,32 @@
 {
   "revisadoHasta": null,
-  "patrones": [],
-  "mecanismos": [],
+  "patrones": [
+    {
+      "clave": "version-hacia-atras",
+      "que": "Dos PR fusionados a la vez: 0.148.6 quedó arriba de 0.153.0 y el sitio se publicó con una versión hacia atrás",
+      "vistos": [
+        {
+          "fecha": "2026-10-11",
+          "que": "Dos PR fusionados a la vez: 0.148.6 quedó arriba de 0.153.0 y el sitio se publicó con una versión hacia atrás",
+          "commit": null
+        }
+      ],
+      "mecanismo": {
+        "fecha": "2026-10-11",
+        "que": "version.test.mjs exige que el CHANGELOG vaya de la versión más nueva a la más vieja",
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/324"
+      }
+    }
+  ],
+  "mecanismos": [
+    {
+      "fecha": "2026-10-11",
+      "clave": "version-hacia-atras",
+      "que": "version.test.mjs exige que el CHANGELOG vaya de la versión más nueva a la más vieja",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/324"
+    }
+  ],
   "colaHecha": [],
+  "despachos": {},
   "rondas": []
 }
