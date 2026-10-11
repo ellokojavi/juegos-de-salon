@@ -48,6 +48,11 @@ export function casillas(cuerpo = '') {
 /** Las decisiones ya cumplidas (`<!-- hecho:1 -->`). */
 export const hechas = (cuerpo = '') => new Set([...cuerpo.matchAll(/<!-- hecho:(\d+) -->/g)].map(m => m[1]));
 
+/** El texto de la pregunta n (`### n. …`), para que el comentario se entienda sin abrir el issue. */
+export function pregunta(cuerpo = '', n) {
+  return cuerpo.match(new RegExp(`^###\\s+${n}\\.\\s+(.+)$`, 'm'))?.[1].trim() || `Decisión ${n}`;
+}
+
 /** Las opciones que pasaron de vacías a marcadas entre dos versiones del cuerpo. */
 export function recienMarcadas(antes, despues) {
   const a = casillas(antes), d = casillas(despues);
@@ -89,11 +94,11 @@ export function planear(evento, dueno = DUENO) {
   const yaHechas = hechas(antes), planes = [], avisos = [], tomadas = new Set();
   for (const op of recienMarcadas(antes, issue.body)) {
     const [decision, opcion] = op.split(':');
-    if (yaHechas.has(decision) || tomadas.has(decision)) { avisos.push(`La decisión ${decision} ya estaba tomada: no se hace "${opcion}".`); continue; }
+    if (yaHechas.has(decision) || tomadas.has(decision)) { avisos.push(`${pregunta(antes, decision)}: ya estaba respondida, así que el ${opcion === 'si' ? 'Sí' : 'No'} nuevo no se hizo.`); continue; }
     const lista = acciones[op];
-    if (!Array.isArray(lista)) { avisos.push(`La opción ${op} no tiene acciones.`); continue; }
+    if (!Array.isArray(lista)) { avisos.push(`${pregunta(antes, decision)}: el ${opcion === 'si' ? 'Sí' : 'No'} no tiene acciones.`); continue; }
     const malas = lista.map(invalida).filter(Boolean);
-    if (malas.length) { avisos.push(`La opción ${op} no se hace: ${malas.join('; ')}.`); continue; }
+    if (malas.length) { avisos.push(`${pregunta(antes, decision)}: el ${opcion === 'si' ? 'Sí' : 'No'} no se hizo (${malas.join('; ')}).`); continue; }
     tomadas.add(decision);
     planes.push({ decision, opcion, acciones: lista });
   }
@@ -134,7 +139,7 @@ function hacer(acc, repo) {
       catch (e) { throw new Error(`los checks de #${acc.pr} no pasaron`); }
       gh('pr', 'merge', String(acc.pr), ...R, '--merge', '--delete-branch');
       for (const w of WORKFLOWS) gh('workflow', 'run', w, ...R, '--ref', 'main');
-      return `#${acc.pr} fusionado; publicar.yml y e2e.yml corriendo en main`;
+      return `#${acc.pr} fusionado; se está publicando el sitio`;
     }
     case 'cerrar-pr':
       gh('pr', 'close', String(acc.pr), ...R, ...(acc.motivo ? ['--comment', acc.motivo] : []));
@@ -147,7 +152,7 @@ function hacer(acc, repo) {
       return `comentado en #${acc.en}`;
     case 'correr':
       gh('workflow', 'run', acc.workflow, ...R, '--ref', 'main');
-      return `${acc.workflow} corriendo en main`;
+      return acc.workflow === 'publicar.yml' ? 'se está publicando el sitio' : 'corriendo las pruebas de punta a punta';
     case 'encolar':
       return `en cola para la próxima ronda: ${acc.tarea}`;
     case 'nada':
@@ -178,11 +183,12 @@ function principal() {
       fallo = true; bien = false;
       resultado = `❌ ${[...hechos, String(e.message || e).split('\n')[0]].join('; ')}`;
     }
-    lineas.push(`**${decision} · ${opcion === 'si' ? 'Sí' : 'No'}:** ${resultado}`);
+    lineas.push(`**${pregunta(evento.issue.body, decision)}** ${opcion === 'si' ? 'Sí' : 'No'}. ${resultado}`);
     // Se relee el cuerpo antes de anotar: otra casilla pudo marcarse mientras esto corría.
     const cuerpo = JSON.parse(gh('issue', 'view', n, '-R', repo, '--json', 'body')).body;
     gh('issue', 'edit', n, '-R', repo, '--body', anotarHecho(cuerpo, decision, opcion, resultado.split(';')[0], bien));
   }
+  if (fallo) lineas.push('', 'Para reintentar lo que falló, desmarca la casilla y vuelve a marcarla.');
   gh('issue', 'comment', n, '-R', repo, '--body', lineas.join('\n'));
   console.log(lineas.join('\n'));
   if (fallo) process.exit(1);

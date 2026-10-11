@@ -1,6 +1,6 @@
 // Las decisiones de un toque (D-273): qué casilla cuenta, quién puede marcarla y qué acciones se aceptan.
 import assert from 'node:assert/strict';
-import { planear, casillas, recienMarcadas, leerAcciones, invalida, anotarHecho, hechas, DUENO } from './aprobar.mjs';
+import { planear, pregunta, casillas, recienMarcadas, leerAcciones, invalida, anotarHecho, hechas, DUENO } from './aprobar.mjs';
 import { cuerpoDecisiones } from './procesos.mjs';
 
 const decisiones = {
@@ -24,6 +24,12 @@ assert.deepEqual(casillas(cuerpo), { '1:si': false, '1:no': false, '2:si': false
 assert.deepEqual(leerAcciones(cuerpo)['1:si'], [{ tipo: 'fusionar', pr: 300 }]);
 assert.deepEqual(leerAcciones(cuerpo)['2:no'], [{ tipo: 'nada' }], 'un No sin acciones solo se anota');
 assert.match(cuerpo, /Fusionar la documentación del 11/);
+
+// Cada casilla dice qué hace, y el comentario nombra la pregunta
+assert.match(cuerpo, /^- \[ \] Sí: fusiona #300 <!-- op:1:si -->$/m);
+assert.match(cuerpo, /^- \[ \] No: cierra #300 <!-- op:1:no -->$/m);
+assert.equal(pregunta(cuerpo, 2), 'Cerrar el #276');
+assert.equal(pregunta(cuerpo, 7), 'Decisión 7');
 
 // Marcar una casilla: un plan con sus acciones
 const sí1 = marcar(cuerpo, '1:si');
@@ -51,7 +57,7 @@ assert.ok(hechas(hecho).has('1'));
 assert.match(hecho, /<!-- op:1:si --> — ✅ #300 fusionado <!-- hecho:1 -->/);
 const p = planear(evento(hecho, marcar(hecho, '1:no')));
 assert.equal(p.planes.length, 0);
-assert.match(p.avisos[0], /ya estaba tomada/);
+assert.match(p.avisos[0], /^Fusionar la documentación del 11: ya estaba respondida/);
 const ambos = planear(evento(cuerpo, marcar(sí1, '1:no')));
 assert.equal(ambos.planes.length, 1);
 assert.equal(ambos.avisos.length, 1);
