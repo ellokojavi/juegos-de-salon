@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.147.2 — 2026-10-10
+- **🔐 La clave:** en la animación de la portada también se mueven los trazos blancos de la base:
+  todo parte al azar y se va acomodando hasta formar la palabra.
+
 ## 0.147.1 — 2026-10-10
 - **🔐 La clave:** la animación de la portada termina en la clave dibujada con sus trazos, sin
   escribirla como texto (el título ya la dice).
