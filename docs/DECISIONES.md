@@ -62,7 +62,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246 |
 | Memoria de partida | C-6 | D-25, D-150 |
-| Interfaz táctil | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213 |
+| Interfaz táctil | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213, D-283 |
 | Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213, D-277 |
 | Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243, D-253, D-254, D-271, D-272 |
 | Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251 |
@@ -5019,3 +5019,32 @@ entiende sola: pasa justo al marcar a alguien, U-8).
 sin guardarse al recargar, pero las que se tachan solas vuelven solas. `juegos.test.mjs` prueba
 `usadas()`; `tools/e2e/case/lab.mjs`, el tachado solo, el ✓ a mano y el destachar, y
 `tools/e2e/caminos.mjs` suma la toma `caso pistas`.
+
+## D-283 · Reinas: ↩️ Deshacer el último gesto
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** amplía D-169 · cierra el dilema #301 (reporte 🐞 #319)
+**Decisión:** Bajo el tablero de Reinas, a la izquierda de 🧹 Borrar todo, va **↩️ Deshacer**
+(EN *Undo*, PT *Desfazer*, DE *Rückgängig*). Cada toque quita el último gesto y vuelve a dibujar,
+uno tras otro hasta el tablero del comienzo; sin nada que deshacer, el botón está apagado. Vale en
+La Copa (el día y la ronda de la final), en el juego suelto y en Uno al día, que usan la misma pantalla.
+- **Un gesto, un paso:** un toque, un toque largo, un arrastre entero (todas las X que pintó o
+  borró) o un Borrar todo, que así se puede deshacer. La pantalla anota dónde empieza cada gesto en
+  la lista de jugadas; esos cortes viven en memoria, así que después de recargar la partida
+  Deshacer quita una jugada por toque.
+- **Deshacer no es una jugada:** quita jugadas de la lista guardada y el motor no cambia. El reloj
+  sigue y el puntaje es el tiempo (D-107), así que no cambia cómo se cuenta. Los errores que se
+  deshacen dejan de contarse, pero en Reinas ya no restan.
+- **No pide confirmación**, a diferencia de Borrar todo y Rendirse (U-15): lo que deshace se rehace
+  con el mismo toque que lo hizo.
+- **La fila de botones:** Deshacer y Borrar todo juntos, y 🏳️ Rendirse, que es definitivo, en su
+  propia línea. Cada botón en una sola línea de texto; el que no cabe baja (a 320 px, en alemán, los
+  tres van uno bajo otro). Antes los dos botones partían sus palabras en sílabas.
+- **Hecho para repetirse:** el botón y los pasos viven en `public/cup/games/deshacer.js`
+  (`pasos()` y `botonDeshacer()`), para sumarlo después a Tango y Zip sin rehacerlo. Lo prueba
+  `public/cup/games/deshacer.test.mjs`, con el motor de Reinas.
+
+**Por qué:** Un jugador lo pidió con un 🐞 («Faltan boton UNDO> birrar todo es muy agresivo»): una
+suposición de varios pasos se desarmaba a mano o se borraba entera. El Queens de LinkedIn lo trae.
+El dueño aprobó la opción A del dilema.
+**Alternativas descartadas:** deshacer de a una jugada (un arrastre de ocho X pedía ocho toques);
+guardar Deshacer como jugada en la lista (agrandaba lo guardado sin necesidad: no hay nada que
+reproducir ni verificar fuera del celular); sumarlo a Tango en el mismo PR (queda para después).

@@ -477,6 +477,13 @@ body.pantalla-completa #jugar-reglas .reglas[open] > summary { position: sticky;
 .tan.revelada.choque { box-shadow: inset 0 0 0 3px var(--cyan), inset 0 0 0 6px var(--red); }
 .tango-acciones .btn, .zip-acciones .btn, .reinas-acciones .btn { white-space: normal; line-height: 1.15; }
 .tango-acciones .btn.armado, .zip-acciones .btn.armado, .reinas-acciones .btn.armado { border-color: var(--yellow); color: var(--yellow); background: rgba(255, 210, 63, 0.12); }
+/* Reinas lleva tres botones (D-283): Deshacer y Borrar todo juntos, y Rendirse, que es definitivo,
+   en su propia línea. Cada uno en una línea de texto: el que no cabe baja, en vez de partir las
+   palabras. Borrar todo armado sí parte su frase larga. */
+.reinas-acciones { flex-wrap: wrap; }
+.reinas-acciones .btn { flex: 1 1 auto; white-space: nowrap; padding-left: 14px; padding-right: 14px; }
+.reinas-acciones .btn.armado { white-space: normal; }
+.reinas-acciones #btn-rendirse { flex-basis: 100%; }
 /* Desenredo (D-179): hilos y nudos en un SVG de 1000 × 1000. Los trazos miden en píxeles de pantalla
    (non-scaling-stroke) para verse iguales en cualquier ancho; el radio de los nudos lo pone el código. */
 .des-tablero { display: block; width: 100%; max-width: 440px; aspect-ratio: 1; margin: 0 auto; border: 2px solid var(--glass-border); border-radius: 10px; background: rgba(255,255,255,0.03); touch-action: none; user-select: none; -webkit-user-select: none; }
