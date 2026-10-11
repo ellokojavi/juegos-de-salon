@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.151.0 — 2026-10-11
+- **⏳ Línea de Tiempo: los seis mazos cuentan su dato** (D-277). Música, Cultura pop, Brasil y Fútbol
+  suman un dato en cada carta, como Chile e Historia, revisados contra fuentes. Y el de Mekano ya no
+  dice que Viñuela llegó después: el programa partió con él y con Verónica Calabi. Sale la carta de
+  cuando la FA levantó la prohibición al fútbol femenino: las fuentes no se ponen de acuerdo en el año.
+
 ## 0.150.0 — 2026-10-11
 - **⏳ Línea de Tiempo, 📅 ¿En qué año? y La Copa: cada carta cuenta algo** (D-277). En vez de "iba
   entre 1925 y 1980", el veredicto de un error cuenta un dato del hecho, un porqué o una anécdota
