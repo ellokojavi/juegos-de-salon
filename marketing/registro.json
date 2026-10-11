@@ -117,6 +117,47 @@
           "Muestra el prototipo, que se borró (D-267): hoy /labs/case/ abre primero una antesala ('El caso de hoy es el mismo para todos') y una cuenta 3, 2, 1, y la pantalla del caso es la de La Copa: arriba '‹ Laboratorio' y el reloj, sin el marcador '✅ 1/20 · 0 errores' del video, y el botón dice '💡 Ayuda (-15 puntos)' (D-263), no '💡 Ayuda'."
         ]
       }
+    },
+    {
+      "id": "tutorial-compartir",
+      "tipo": "video",
+      "titulo": "Tutorial: cómo compartir Juegos de Salón (iOS)",
+      "carpeta": "marketing/share-tutorial/",
+      "memoria": "marketing/share-tutorial/README.md",
+      "version": 1,
+      "fecha": "2026-10-09",
+      "idioma": "es",
+      "app": "0.134.1",
+      "archivos": [
+        {
+          "ruta": "marketing/share-tutorial/output/compartir-vertical.mp4",
+          "formato": "9:16",
+          "ancho": 1080,
+          "alto": 1920,
+          "segundos": 6,
+          "uso": "estados de WhatsApp, Reels, Shorts"
+        },
+        {
+          "ruta": "marketing/share-tutorial/output/compartir-16x9.mp4",
+          "formato": "16:9",
+          "ancho": 1920,
+          "alto": 1080,
+          "segundos": 6,
+          "uso": "YouTube, presentaciones"
+        }
+      ],
+      "fuente": "marketing/share-tutorial/tutorial.html",
+      "construir": "marketing/share-tutorial/construir.sh",
+      "musica": null,
+      "juegos": [],
+      "seleccion": true,
+      "estado": "entregado al dueño",
+      "revision": {
+        "fecha": "2026-10-11",
+        "app": "0.148.6",
+        "al_dia": true,
+        "pendiente": []
+      }
     }
   ]
 }

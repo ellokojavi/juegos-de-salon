@@ -194,3 +194,7 @@ Las respuestas a dilemas (issues con la etiqueta `usabilidad`) se anotan aquí:
 - **Portada bajo 375 px: las acciones bajan a una segunda línea** (#250, opción A): entre 320 y 374
   px el idioma queda arriba a la izquierda y sonido, rankings y compartir bajan a la derecha. Se
   acepta la escalera antes que achicar los botones de idioma bajo 44 px (C-8) o volver atrás D-231.
+- **Los avisos de La Copa, en el próximo video y no en la portada** (#210, opciones C y A): la
+  versión 7 del video promocional muestra la notificación del día que se abre (anotado en
+  `marketing/promo-video/README.md`, "Pendiente: versión 7"). La bajada de La Copa en la portada
+  queda como está, hasta ver en el panel si la gente activa los avisos.
