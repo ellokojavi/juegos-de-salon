@@ -4696,3 +4696,18 @@ a terminar, pero sin estorbar la cuenta.
 **Consecuencias:** `tools/e2e/case/lab.mjs` prueba que esté al final de la antesala y del juego, que
 no esté en la cuenta, que abra y cierre la capa, y que el formulario sea lo último del resultado.
 
+## D-269 · Acertijos con truco, un prototipo en el laboratorio
+**Fecha:** 2026-10-10 · **Estado:** vigente · **Relación:** usa D-265 y D-268 (el comentario); excepción a C-3 como D-256
+**Decisión:** `/labs/riddles/` tiene cinco acertijos con truco al estilo de *Brain Test*: el animal
+más grande, los cuadrados, la llave bajo la pregunta, la nube que tapa el sol y el kilo de plumas.
+Cada uno con su gesto (tocar, elegir, arrastrar), un narrador burlón, 💡 Pista, un resultado con una
+casilla por acertijo y el comentario al final de cada vista. Solo acertijos que no dependen del
+idioma, para que se jueguen igual en los cuatro. Detalle en [games/riddles.md](games/riddles.md).
+**Por qué:** lo pidió el dueño después de la investigación de *Brainstorm Test: Tricky Puzzle*: un
+juego de niveles hechos a mano no calza con los juegos que arman su contenido solos, pero un
+"acertijo del día" corto sí podría; el prototipo es para ver si a los amigos les gusta.
+**Alternativas descartadas:** copiar acertijos de juegos de palabras (no se traducen) y armar el
+juego completo con cientos de niveles antes de saber si gusta.
+**Consecuencias:** `tools/e2e/riddles/lab.mjs` lo juega entero en los cuatro idiomas. Si gusta, los
+acertijos pasan a un registro con sus textos en `rules.js` y entran a Uno al día o a La Copa.
+
