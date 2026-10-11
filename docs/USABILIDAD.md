@@ -5,7 +5,7 @@ decidió. **Crece con cada dilema resuelto**: la respuesta del dueño se anota a
 issue, para no volver a preguntarla.
 
 Cada regla tiene un ID (U-n) para citarla en los PR y en los issues. Los IDs van por bloques
-(1–18 textos, pantallas y botones; 20–23 interacciones; 30–34 compartir y marketing): U-9 y U-19
+(1–18 textos, pantallas y botones; 20–23 interacciones; 30–35 compartir y marketing): U-9 y U-19
 nunca se usaron, y no se renumera.
 
 ## Textos
@@ -92,6 +92,11 @@ nunca se usaron, y no se renumera.
   falta y marca "(-1J)" a quien lleva menos juegos. Excepción: el resultado de Uno al día no
   nombra el juego de hoy (#215).
 - **U-32 · Sin spoilers:** lo que se comparte no revela respuestas ni los juegos que vienen.
+- **U-35 · La app se presenta entera:** el mensaje de compartir la app nombra todo lo principal
+  (`LO_PRINCIPAL` en `compartir.js`: La Copa, Uno al día, jugar en grupo, jugar solo, rankings y sin
+  cuenta), una línea cada cosa y en los cuatro idiomas; el del video y la bajada de la tarjeta del
+  link no dicen menos de lo que hay. Lo que entra a la app como algo principal se suma ahí en el mismo
+  PR, y el agente de documentación lo revisa en cada ronda y en cada PR (D-271).
 
 ## Marketing
 
