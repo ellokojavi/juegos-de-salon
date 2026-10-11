@@ -81,7 +81,22 @@ export function invalida(acc) {
  * Qué hacer con un evento `issues.edited`: `{ ignorar: motivo }` o `{ planes: [{ decision, opcion,
  * acciones }], avisos: [] }`. No toca nada: lo que decide se puede probar con eventos inventados.
  */
-export function planear(evento, dueno = DUENO) {
+/**
+ * Las casillas marcadas que todavía no tienen resultado al lado: las de una corrida que GitHub
+ * canceló. Con tres casillas marcadas casi juntas, GitHub deja una corrida en curso y una en espera,
+ * y cancela las del medio: sin esto, esas decisiones se perdían.
+ */
+export function marcadasSinResultado(cuerpo = '') {
+  const res = [];
+  for (const m of cuerpo.matchAll(/^\s*[-*] \[[xX]\] .*?<!-- op:(\d+:[a-z]+) -->(.*)$/gm)) if (!m[2].trim()) res.push(m[1]);
+  return res;
+}
+
+/**
+ * `actual` es el cuerpo como está al correr (puede ser más nuevo que el del evento): de ahí salen
+ * las decisiones ya tomadas y las casillas que quedaron sin resultado.
+ */
+export function planear(evento, dueno = DUENO, actual = evento?.issue?.body) {
   const { action, issue, sender, changes } = evento || {};
   if (action !== 'edited') return { ignorar: 'no es una edición' };
   if (!issue?.labels?.some(l => l.name === ETIQUETA)) return { ignorar: `el issue no tiene la etiqueta ${ETIQUETA}` };
@@ -94,8 +109,9 @@ export function planear(evento, dueno = DUENO) {
   if (!acciones) return { ignorar: 'el issue no tiene bloque de acciones' };
   if (JSON.stringify(leerAcciones(antes)) !== JSON.stringify(acciones)) return { ignorar: 'el bloque de acciones cambió en la misma edición' };
 
-  const yaHechas = hechas(antes), planes = [], avisos = [], tomadas = new Set();
-  for (const op of recienMarcadas(antes, issue.body)) {
+  const yaHechas = new Set([...hechas(antes), ...hechas(actual)]), planes = [], avisos = [], tomadas = new Set();
+  const ops = [...new Set([...recienMarcadas(antes, issue.body), ...marcadasSinResultado(actual)])];
+  for (const op of ops) {
     const [decision, opcion] = op.split(':');
     if (yaHechas.has(decision) || tomadas.has(decision)) { avisos.push(`${pregunta(antes, decision)}: ya estaba respondida, así que el ${opcion === 'si' ? 'Sí' : 'No'} nuevo no se hizo.`); continue; }
     const lista = acciones[op];
@@ -135,12 +151,14 @@ function hacer(acc, repo) {
     case 'fusionar': {
       const pr = JSON.parse(gh('pr', 'view', String(acc.pr), ...R, '--json', 'state,baseRefName'));
       if (pr.state === 'MERGED') return `#${acc.pr} ya estaba fusionado`;
-      if (pr.state !== 'OPEN') return `#${acc.pr} está cerrado: no se fusionó`;
+      if (pr.state !== 'OPEN') throw new Error(`#${acc.pr} está cerrado: no se fusionó`);
       if (pr.baseRefName !== 'main') throw new Error(`#${acc.pr} apunta a ${pr.baseRefName}, no a main`);
       // Espera los checks obligatorios (pruebas y punta-a-punta, D-216); si uno falla, no fusiona.
       try { gh('pr', 'checks', String(acc.pr), ...R, '--required', '--watch', '--fail-fast', '--interval', '30'); }
       catch (e) { throw new Error(`los checks de #${acc.pr} no pasaron`); }
-      gh('pr', 'merge', String(acc.pr), ...R, '--merge', '--delete-branch');
+      // Sin --delete-branch: la rama la borra GitHub (el repo lo tiene activado) y así pasa a main
+      // los PR montados sobre ella. Borrada a mano, GitHub los cierra (le pasó al #303).
+      gh('pr', 'merge', String(acc.pr), ...R, '--merge');
       for (const w of WORKFLOWS) gh('workflow', 'run', w, ...R, '--ref', 'main');
       return `#${acc.pr} fusionado; se está publicando el sitio`;
     }
@@ -169,7 +187,9 @@ function principal() {
   const ruta = simular ? process.argv[i + 1] : process.env.GITHUB_EVENT_PATH;
   if (!ruta) { console.error('Uso: node tools/agents/aprobar.mjs [--simular <evento.json>]'); process.exit(2); }
   const evento = JSON.parse(readFileSync(ruta, 'utf8'));
-  const plan = planear(evento);
+  // El cuerpo de ahora: una corrida anterior pudo anotar resultados después de este evento
+  const actual = simular ? evento.issue.body : JSON.parse(gh('issue', 'view', String(evento.issue.number), '-R', process.env.GITHUB_REPOSITORY, '--json', 'body')).body;
+  const plan = planear(evento, DUENO, actual);
   if (plan.ignorar) { console.log(`Nada que hacer: ${plan.ignorar}.`); return; }
   if (simular) { console.log(JSON.stringify(plan, null, 2)); return; }
 
