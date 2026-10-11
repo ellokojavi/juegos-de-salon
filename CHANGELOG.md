@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.145.0 — 2026-10-10
+- **🤔 Acertijos, en el laboratorio** (D-269): cinco acertijos con truco en los que la respuesta obvia
+  no es la buena. Hay que tocar, elegir y arrastrar, con pistas y un narrador burlón, y al final se
+  deja un comentario. En `juegosdesalon.cl/labs/riddles/`.
+
 ## 0.144.0 — 2026-10-10
 - **🔍 El caso, en un solo lugar** (D-267): `juegosdesalon.cl/labs/case/` es el juego completo, en
   los cuatro idiomas, y el prototipo se va. Sin elegir nada es el caso del día, el mismo para todos;
