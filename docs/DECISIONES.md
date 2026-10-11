@@ -4696,3 +4696,20 @@ a terminar, pero sin estorbar la cuenta.
 **Consecuencias:** `tools/e2e/case/lab.mjs` prueba que esté al final de la antesala y del juego, que
 no esté en la cuenta, que abra y cierre la capa, y que el formulario sea lo último del resultado.
 
+## D-270 · La clave: dos figuras transparentes que juntas dicen un código
+**Fecha:** 2026-10-10 · **Estado:** vigente · **Relación:** usa D-102 (el teclado compartido) y D-268 (el comentario); excepción a C-3 como D-269
+**Decisión:** `/labs/code/` es un prototipo en que un código de 4 cifras de siete segmentos se
+reparte entre dos tarjetas transparentes; la segunda aparece girada o volteada, y hay que
+arrastrarla encima de la primera y girarla (↻) o voltearla (⇋) hasta que los bordes —una esquina
+cortada— calcen. Ahí los trazos se juntan, brillan y se escribe el código en el teclado de Toque y
+Fama. Empieza con dos figuras. Detalle en [games/code.md](games/code.md).
+**Por qué:** lo pidió el dueño: "figures/shapes that combined in a specific set of positions create
+a code that can then be entered in a number or word pad… Start with two shapes", con libertad para
+jugar con las formas. La esquina cortada hace que la orientación se deduzca mirando los bordes, no
+probando a ciegas.
+**Alternativas descartadas:** girar de a 90° (una cifra de siete segmentos girada un cuarto de vuelta
+no es una cifra) y marcar la orientación con colores o flechas (regala la respuesta).
+**Consecuencias:** `engine.test.mjs` prueba el grupo de orientaciones y que solo la buena dice el
+código; `tools/e2e/code/lab.mjs`, el juego entero. Lo siguiente, si gusta: tres figuras, formas
+distintas y palabras.
+
