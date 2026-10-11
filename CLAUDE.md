@@ -199,7 +199,8 @@ con eso la pantalla entra también a las pruebas de idiomas. Para verlo en un ce
   necesita al dueño va en un issue `procesos` con casillas Sí/No, que abre el bot (`decidir.yml`) para
   que le llegue el correo: marcar una lo cumple al instante
   (`.github/workflows/aprobar.yml` → `tools/agents/aprobar.mjs`, con una lista cerrada de acciones).
-  Su memoria es `docs/procesos.json`: `node tools/agents/procesos.mjs revisar | decidir <archivo.json> | patron <clave> "…" | mecanismo <clave> "…" --pr <url> | anotar --hasta <commit> | historial`.
+  Su memoria es `docs/procesos.json`: `node tools/agents/procesos.mjs revisar | decidir <archivo.json> | patron <clave> "…" | mecanismo <clave> "…" --pr <url> | despacho <documentacion|usabilidad> <commit> | anotar --hasta <commit> | historial`
+  (`despacho` anota hasta qué commit de `main` lanzó a cada ejecutor).
 - **Marketing** (D-178): cada asset vive en `marketing/<asset>/` con un README que es su memoria.
   **Antes de trabajar en el video se lee `marketing/promo-video/README.md` entero** (el skill
   `promo-video` lo carga) y al terminar se anota la vuelta ahí y en `marketing/registro.json`.
