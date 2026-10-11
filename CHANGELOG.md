@@ -1,7 +1,7 @@
 # Changelog
 
-## 0.154.0 — 2026-10-11
-- **🔍 El caso: las pistas usadas se tachan solas** (D-280): una pista se tacha sola cuando ya
+## 0.155.0 — 2026-10-11
+- **🔍 El caso: las pistas usadas se tachan solas** (D-282): una pista se tacha sola cuando ya
   marcaste a todas las personas que nombra. El ✓ sigue sirviendo para tachar antes o destachar.
   Lo pidió un jugador por 🐞.
 
