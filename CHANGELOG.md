@@ -1,13 +1,25 @@
 # Changelog
 
+## 0.154.0 — 2026-10-11
+- **🧪 Laboratorio: Proyectos activos y La Bodega** (D-280). `/labs/` se ordena en dos grupos: lo que
+  se está probando y, en 📦 La Bodega, los proyectos que no prosperaron, que se siguen pudiendo jugar.
+  El caso y La clave pasan a La Bodega; Proyectos activos queda vacío por ahora.
+- **🧪 Laboratorio con puerta** (D-281). Sin la llave del link que manda el dueño, cualquier página de
+  `/labs/` lleva al menú sin mostrarse; la llave queda guardada en el celular. Nada del laboratorio
+  se indexa (tampoco `/labs/case/` ni sus puentes), y el README ya no lo enlaza.
+
+## 0.148.6 — 2026-10-11
+- **Herramientas: el feedback 🐞 dice quién lo mandó** (D-279): el issue de cada reporte suma el
+  nombre que el jugador escribió, para hacerle seguimiento.
+
 ## 0.153.0 — 2026-10-11
-- **⏳ Línea de Tiempo: los seis mazos cuentan su dato** (D-277). Música, Cultura pop, Brasil y Fútbol
+- **⏳ Línea de Tiempo: los seis mazos cuentan su dato** (D-279). Música, Cultura pop, Brasil y Fútbol
   suman un dato en cada carta, como Chile e Historia, revisados contra fuentes. Y el de Mekano ya no
   dice que Viñuela llegó después: el programa partió con él y con Verónica Calabi. Sale la carta de
   cuando la FA levantó la prohibición al fútbol femenino: las fuentes no se ponen de acuerdo en el año.
 
 ## 0.152.0 — 2026-10-11
-- **⏳ Línea de Tiempo, 📅 ¿En qué año? y La Copa: cada carta cuenta algo** (D-277). En vez de "iba
+- **⏳ Línea de Tiempo, 📅 ¿En qué año? y La Copa: cada carta cuenta algo** (D-279). En vez de "iba
   entre 1925 y 1980", el veredicto de un error cuenta un dato del hecho, un porqué o una anécdota
   ("El Muro lo abrió un error…"). Contra el reloj (⏳ Línea Relámpago y ¿En qué año?), el reloj se
   pausa mientras se lee, hasta 6 segundos. Al acertar, el dato aparece en una franja abajo que se va

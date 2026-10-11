@@ -149,7 +149,7 @@ function paginaSuelta(p, bloqueOg) {
   // Los del laboratorio (/labs/case/, D-267) están a la misma altura que el molde y quedan igual
   if (p.ruta.split('/').filter(Boolean).length === 1) html = html.replace(/(["'])\.\.\/\.\.\//g, '$1../');
   html = html.replace(/<title>.*<\/title>/, `<title>${escapa(p.titulo)}</title>\n${AVISO_COPIA()}`);
-  // Un juego del laboratorio no se indexa y sin la llave no se abre (D-280)
+  // Un juego del laboratorio no se indexa y sin la llave no se abre (D-281)
   if (p.ruta.startsWith('/labs/')) html = html.replace(AVISO_COPIA(), `${AVISO_COPIA()}\n${PUERTA_LABS(p.ruta)}`);
   html = html.replace('<body data-suelto>', `<body data-suelto="${p.juego}">`);
   return html.replace(/^( *<link rel="manifest".*\n)/m, `${bloqueOg}\n$1`);
@@ -184,7 +184,7 @@ const puentes = () => [
   { viejo: 'public/minigames/index.html', a: '../cup/suelto/', titulo: 'Juegos de Salón 🎲' },
 ];
 
-// La puente de un juego del laboratorio tampoco se indexa (D-280): lleva su tarjeta, pero no se anuncia
+// La puente de un juego del laboratorio tampoco se indexa (D-281): lleva su tarjeta, pero no se anuncia
 function paginaPuente(p) {
   const og = p.ruta ? `\n${bloque(p)}` : '';
   return `<!DOCTYPE html>

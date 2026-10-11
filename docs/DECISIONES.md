@@ -51,7 +51,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 
 | Tema | Regla de hoy (canon) | Decisiones vigentes que la explican |
 |---|---|---|
-| Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-279, D-280 |
+| Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281 |
 | Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184 |
 | Mazos de cartas con fecha | `docs/games/timeline.md` | D-37, D-277, D-278 |
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270 |
@@ -1236,7 +1236,7 @@ Conexiones y la final) aparece con `?tres` en la URL o en el modo de prueba.
 portada la haría la opción por defecto de quien quiere algo corto.
 
 ## D-101 · La Copa se prueba en un laboratorio antes de llegar al menú
-**Fecha:** 2026-09-23 · **Estado:** corregida por D-112, D-175, D-262, D-280
+**Fecha:** 2026-09-23 · **Estado:** corregida por D-112, D-175, D-262, D-281
 **Decisión:** La Copa sale del menú como juego jugable: su tarjeta se sigue viendo, apagada y con
 "Próximamente" (`available: false`, `labs: true` en `games.js`), y se juega desde **`/labs/`**,
 una página que no está enlazada desde el menú ni se indexa. El laboratorio ofrece tres pasos:
@@ -4839,7 +4839,7 @@ El bloque aparte lo pidió el dueño, para que quien no lo ve siempre lo note.
 final ofrezca que la partida cuente.
 
 ## D-275 · El feedback 🐞 llega como issues y lo atiende el agente de procesos
-**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** amplía D-273 (el agente de procesos) y D-104 (los reportes de La Copa); corrige D-273 en que no tocaba el código de los juegos, y D-132 en que los reportes 🐞 eran de la ronda de usabilidad
+**Fecha:** 2026-10-11 · **Estado:** corregida por D-279 · **Relación:** amplía D-273 (el agente de procesos) y D-104 (los reportes de La Copa); corrige D-273 en que no tocaba el código de los juegos, y D-132 en que los reportes 🐞 eran de la ronda de usabilidad
 **Decisión:** `.github/workflows/feedback.yml` sube cada hora los reportes nuevos de `feedback/`
 (`tools/agents/feedback.mjs`) como issues con la etiqueta `feedback`, uno por reporte y nunca dos
 veces el mismo. El agente de procesos los atiende en su ronda: arregla lo que tiene un arreglo
@@ -4950,7 +4950,19 @@ carta que dice su año no se juega: se lee.
 ser algo que el jugador sepa (un nombre, un hecho único), no un superlativo o una cifra que solo la
 carta dice. Si no la hay, la carta no entra.
 
-## D-279 · El laboratorio tiene dos grupos: Proyectos activos y La Bodega
+## D-279 · Los issues de feedback llevan el nombre de quien lo manda
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** corrige D-275 (el issue iba sin el nombre)
+**Decisión:** El issue de cada reporte 🐞 suma una línea **Quién** con el nombre que el jugador
+escribió en el formulario, si escribió uno. El navegador sigue fuera. Los nueve issues que ya
+estaban se completaron con su nombre.
+**Por qué:** lo pidió el dueño al ver los primeros issues: "no dice el nombre de quien reporta, lo
+que me ayudaría para hacer follow-up personal". El repo es público, así que el nombre queda a la
+vista, pero el nodo `feedback/` de Firebase ya se lee sin llave (`.read: true`): el issue no expone
+nada que no se pudiera ver. El nombre es opcional y lo elige el jugador (40 caracteres como mucho).
+**Alternativas descartadas:** dejarlo solo en `reportes.mjs` o en el panel (el dueño tendría que ir
+a buscarlo; el correo del issue es donde lee el reporte).
+
+## D-280 · El laboratorio tiene dos grupos: Proyectos activos y La Bodega
 **Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** amplía D-262
 **Decisión:** `/labs/` se ordena en dos grupos: **🧪 Proyectos activos**, lo que se está probando
 ahora, y **📦 La Bodega**, los proyectos que no prosperaron. Los de La Bodega se siguen jugando en su
@@ -4963,7 +4975,7 @@ confunde a quien prueba.
 uno que se abandona pasa a La Bodega moviendo su `<section class="seccion">`. Los dos siguen con
 `labs: true` en `games.js`. Lo verifican `tools/e2e/case/lab.mjs` y `tools/e2e/code/lab.mjs`.
 
-## D-280 · El laboratorio tiene puerta: sin la llave se va al menú, y nada de él se indexa
+## D-281 · El laboratorio tiene puerta: sin la llave se va al menú, y nada de él se indexa
 **Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** corrige D-101
 **Decisión:** Cada página de `/labs/` carga primero `public/assets/js/labs-puerta.js`, un script
 clásico que esconde la página hasta comprobar la llave. La llave llega una vez en el link que

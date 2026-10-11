@@ -1,5 +1,5 @@
 /**
- * La puerta del laboratorio (D-280). /labs/ no está en el menú ni en los buscadores (D-101), pero
+ * La puerta del laboratorio (D-281). /labs/ no está en el menú ni en los buscadores (D-101), pero
  * su dirección circula (el README, los links compartidos, /case/): sin la llave, quien llega ve el
  * menú. La llave viene una vez en el link que manda el dueño (`/labs/?key=…`), queda en el
  * celular y se borra del link; desde ahí se entra sin ella.
