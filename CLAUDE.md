@@ -188,9 +188,12 @@ con eso la pantalla entra también a las pruebas de idiomas. Para verlo en un ce
   `revisar` termina mostrando esos mensajes (compartir la app, el video y la bajada de la tarjeta
   del link) para leerlos contra lo que entró, y lo principal que nombran está en `LO_PRINCIPAL`
   (`public/assets/js/compartir.js`).
-- **Procesos** (D-273): ronda diaria a las 4:30 hora del Pacífico. Cierra lo que quedó abierto y
+- **Procesos** (D-273, D-275): ronda diaria a las 4:30 hora del Pacífico. Atiende el feedback 🐞,
+  que `.github/workflows/feedback.yml` sube cada hora como issues `feedback` (`tools/agents/feedback.mjs`,
+  sin el nombre del jugador). Cierra lo que quedó abierto y
   convierte un error que se repite en un mecanismo (un test antes que una instrucción). Lo que
-  necesita al dueño va en un issue `procesos` con casillas Sí/No: marcar una lo cumple al instante
+  necesita al dueño va en un issue `procesos` con casillas Sí/No, que abre el bot (`decidir.yml`) para
+  que le llegue el correo: marcar una lo cumple al instante
   (`.github/workflows/aprobar.yml` → `tools/agents/aprobar.mjs`, con una lista cerrada de acciones).
   Su memoria es `docs/procesos.json`: `node tools/agents/procesos.mjs revisar | decidir <archivo.json> | patron <clave> "…" | mecanismo <clave> "…" --pr <url> | anotar --hasta <commit> | historial`.
 - **Marketing** (D-178): cada asset vive en `marketing/<asset>/` con un README que es su memoria.
