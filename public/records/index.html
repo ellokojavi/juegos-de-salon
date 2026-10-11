@@ -137,10 +137,11 @@
 
     // Juegos de a uno: los sueltos (récord de 0 a 100), Toque y Fama solo y Línea Relámpago por temática
     const relampago = (LINEA[lang] || LINEA.es).soloTitle.replace(/^\S+\s+/, '');
-    const tyf = gameById('toque-y-fama');
+    // Los juegos de grupo que también se juegan solos, con su tabla `<id>_solo` (Ahorcado desde D-274)
+    const conSolo = ['toque-y-fama', 'ahorcado', 'generala'].map(gameById).filter(g => g?.available);
     const deUno = [
       ...juegos.map(g => ({ id: g.id, emoji: g.emoji, nombre: pickLang(g.name, lang) })),
-      ...(tyf ? [{ id: 'toque-y-fama_solo', emoji: tyf.emoji, nombre: pickLang(tyf.name, lang) }] : []),
+      ...conSolo.map(g => ({ id: `${g.id}_solo`, emoji: g.emoji, nombre: pickLang(g.name, lang) })),
       // Línea Relámpago es una ficha; sus temáticas se eligen adentro (una tabla por temática)
       ...(DECKS.length ? [{ id: 'linea-de-tiempo_rel', emoji: '⏳', nombre: relampago, temas: true }] : []),
     ];
