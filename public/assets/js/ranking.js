@@ -38,7 +38,7 @@ const errorDe = e => (e?.code === 'pin' ? R().loggedOut : R().errNet);
  * "Entrar" a la vista (D-249): plegada sigue siendo una sola fila, para no bajar Empezar (C-8).
  * `leyenda`: una línea bajo el título de la tarjeta (en Uno al día, que guarda la racha).
  */
-export function bloqueJugador({ abierto = false, destacado = false, leyenda = '', alTocar = () => {} } = {}) {
+export function bloqueJugador({ abierto = false, destacado = false, leyenda = '', alTocar = () => {}, nombre: sugerido = '' } = {}) {
   const caja = el('div', { class: 'rk-jugador' });
   let mensaje = '';
   const dibujar = () => {
@@ -68,7 +68,8 @@ export function bloqueJugador({ abierto = false, destacado = false, leyenda = ''
       ...(mensaje ? [el('p', { class: 'rk-ok', role: 'status' }, mensaje)] : []));
       return;
     }
-    const nombre = el('input', { id: 'rk-nombre', maxlength: '20', autocomplete: 'nickname', placeholder: T.namePh, 'aria-label': T.nameLabel });
+    // `nombre`: el que escribió para jugar, ya puesto (al terminar una partida sin haber entrado)
+    const nombre = el('input', { id: 'rk-nombre', maxlength: '20', autocomplete: 'nickname', placeholder: T.namePh, 'aria-label': T.nameLabel, value: limpiarNombre(sugerido || '') || '' });
     const pin = el('input', { id: 'rk-pin', class: 'rk-pin', type: 'password', inputmode: 'numeric', pattern: '[0-9]*', maxlength: '4', autocomplete: 'off', 'aria-label': T.pinLabel });
     const err = el('p', { class: 'rk-error', role: 'alert' }, mensaje);
     const b = el('button', { type: 'button', class: 'btn btn--cyan btn--sm rk-entrar', id: 'rk-entrar' }, T.join);
@@ -228,17 +229,49 @@ export function bloqueRanking({ juego, titulo = null, hint = null, pestanas = ['
 /* ------------------------------------------------------------------ */
 
 /**
- * Anota la partida (si hay jugador) y devuelve un nodo que dice cómo le fue contra su récord.
- * Sin jugador, invita a entrar. Nunca lanza: si algo falla, el nodo lo dice y nada más.
+ * Sin jugador abierto, al terminar una partida (D-274): "¿Quieres que esta partida cuente?" y el
+ * mismo formulario de nombre y PIN de siempre, con el nombre que escribió para jugar ya puesto. Al
+ * entrar (o crear su jugador), `alEntrar()` anota la partida recién jugada y lo dice en la misma caja.
  */
-export function avisoPartida({ juego, variante = '', s, ms, alAnotar = () => {} }) {
+/** El nombre que este celular escribió para jugar alguno de los juegos (`juegos-de-salon:<juego>:name`), o ''. */
+function nombreLocal() {
+  try {
+    for (let k = 0; k < localStorage.length; k++) {
+      const clave = localStorage.key(k);
+      if (/^juegos-de-salon:[^:]+:name$/.test(clave || '') && localStorage.getItem(clave)) return localStorage.getItem(clave);
+    }
+  } catch (_) { /* sin almacenamiento */ }
+  return '';
+}
+
+function ofrecerContar(caja, { nombre = '', alTocar = () => {}, alEntrar }) {
+  const T = R();
+  nombre = nombre || nombreLocal();
+  caja.classList.add('rk-contar');
+  caja.replaceChildren(el('p', { class: 'lead rk-contar-titulo' }, T.countThis), el('p', { class: 'muted rk-hint' }, T.countThisHint),
+    bloqueJugador({ destacado: true, nombre, alTocar }));
+  let hecho = false;
+  jugador().then(J => {
+    const off = J.escuchar(() => {
+      if (hecho || !leerYo()) return;
+      if (!caja.isConnected) { off?.(); return; }
+      hecho = true; off?.();
+      caja.classList.remove('rk-contar');
+      caja.replaceChildren();
+      alEntrar();
+    });
+  }).catch(() => {});
+}
+
+/**
+ * Anota la partida (si hay jugador) y devuelve un nodo que dice cómo le fue contra su récord.
+ * Sin jugador, le ofrece entrar ahí mismo para que esta partida cuente (D-274). Nunca lanza: si
+ * algo falla, el nodo lo dice y nada más.
+ */
+export function avisoPartida({ juego, variante = '', s, ms, alAnotar = () => {}, nombre = '', alTocar = () => {} }) {
   const T = R();
   const caja = el('div', { class: 'rk-resultado', 'aria-live': 'polite' });
-  if (!leerYo()) {
-    caja.append(el('p', { class: 'muted center' }, T.joinAfter));
-    return caja;
-  }
-  (async () => {
+  const anotar = async () => {
     try {
       const J = await jugador();
       const r = await J.anotar({ juego, variante, s, ms });
@@ -248,11 +281,15 @@ export function avisoPartida({ juego, variante = '', s, ms, alAnotar = () => {} 
       if (celebra && r.siempre.nuevo) caja.append(el('p', { class: 'rk-record pop' }, T.newRecord));
       else if (celebra && r.semana.nuevo) caja.append(el('p', { class: 'rk-record pop' }, T.newWeek));
       else if (r.siempre.antes) caja.append(el('p', { class: 'muted center' }, fmt(T.best, { s: r.siempre.antes.s, t: mmss(r.siempre.antes.ms) })));
+      else caja.append(el('p', { class: 'rk-ok center' }, T.countedGame));
       alAnotar(r);
     } catch (e) {
       caja.append(el('p', { class: 'rk-error' }, e?.code === 'pin' ? T.loggedOut : T.notSaved));
     }
-  })();
+  };
+  if (!rankingsVisibles()) return caja;
+  if (!leerYo()) ofrecerContar(caja, { nombre, alTocar, alEntrar: anotar });
+  else anotar();
   return caja;
 }
 
@@ -324,14 +361,32 @@ export function bloqueTabla({ tabla, titulo, hint = null, alTocar = () => {}, en
  * Al terminar una partida de un juego de grupo (una vez, no al volver a dibujar el final). El de
  * este celular es su rol en sala, el humano contra el celular o, en un solo celular, el jugador que
  * se llama como el jugador abierto. Un empate no es victoria. Nunca lanza ni se espera.
+ *
+ * Sin jugador abierto (D-274), pone en la pantalla final —después de `#result-actions`, que tienen
+ * todos los juegos de grupo— "¿Quieres que esta partida cuente?" con nombre y PIN: al entrar, se
+ * anota esta partida (y la victoria, si fue suya). Lo devuelve también, por si el juego lo pone en
+ * otro lado.
  */
-export function finDePartida({ juego, modo, rol = null, ganadores = [], nombres = {} }) {
+export function finDePartida({ juego, modo, rol = null, ganadores = [], nombres = {}, alTocar = () => {} }) {
   try {
-    const yo = leerYo();
-    if (!yo || modo === 'solo' || !rankingsVisibles()) return;
-    const mio = rol || Object.keys(nombres).find(r => claveNombre(nombres[r]) === claveNombre(yo.n));
-    if (!mio) return;
-    const gano = ganadores.length === 1 && ganadores[0] === mio;
-    jugador().then(J => J.anotarVictoria({ juego, gano })).catch(() => {});
-  } catch (_) { /* los rankings nunca frenan una partida */ }
+    if (modo === 'solo' || !rankingsVisibles()) return null;
+    const mioDe = yo => rol || Object.keys(nombres).find(r => claveNombre(nombres[r]) === claveNombre(yo.n));
+    const anotar = (caja = null) => {
+      const yo = leerYo();
+      const mio = yo && mioDe(yo);
+      if (!mio) { caja?.append(el('p', { class: 'muted center' }, R().notInGame)); return; }
+      const gano = ganadores.length === 1 && ganadores[0] === mio;
+      jugador().then(J => J.anotarVictoria({ juego, gano }))
+        .then(() => caja?.append(el('p', { class: 'rk-ok center' }, gano ? R().countedWin : R().countedGame)))
+        .catch(e => caja?.append(el('p', { class: 'rk-error' }, e?.code === 'pin' ? R().loggedOut : R().notSaved)));
+    };
+    if (leerYo()) { anotar(); return null; }
+    // El nombre que escribió para jugar: el de su rol (en sala o contra el celular)
+    const caja = el('div', { class: 'rk-resultado rk-fin-partida', 'aria-live': 'polite' });
+    ofrecerContar(caja, { nombre: rol ? nombres[rol] || '' : '', alTocar, alEntrar: () => anotar(caja) });
+    const acciones = globalThis.document?.querySelector('#screen-result #result-actions');
+    // Después de los botones, para que sigan a la vista sin desplazar (C-8)
+    if (acciones) { acciones.parentElement.querySelector('.rk-fin-partida')?.remove(); acciones.after(caja); }
+    return caja;
+  } catch (_) { return null; /* los rankings nunca frenan una partida */ }
 }

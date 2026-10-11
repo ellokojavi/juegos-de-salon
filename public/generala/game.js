@@ -452,6 +452,13 @@ function renderResultSolo(v, already) {
         ? avisoPartida({ juego: GAME_ID, variante: 'solo', s: total, ms: S.ms, alAnotar: () => tablaFin.recargar() })
         : S.recordNuevo ? el('p', { class: 'lead center' }, T.newRecord)
         : S.recordAntes ? el('p', { class: 'muted center', style: 'font-weight:900' }, fmt(T.prevRecord, { s: S.recordAntes.s })) : '');
+    // Sin jugador abierto, "¿quieres que esta partida cuente?" después de los botones (C-8, D-274)
+    $('#screen-result .rk-contar-solo')?.remove();
+    if (rankingsVisibles() && !leerYo()) {
+      const oferta = avisoPartida({ juego: GAME_ID, variante: 'solo', s: total, ms: S.ms, alAnotar: () => tablaFin.recargar(), nombre: M.names?.A || '', alTocar: () => SFX.tap() });
+      oferta.classList.add('rk-contar-solo');
+      $('#result-actions').after(oferta);
+    }
   }
   $('#result-tabla').replaceChildren(tablaPlanillas(v));
   // Jugando solo hay una planilla, la tuya (U-6)
@@ -816,8 +823,10 @@ function init() {
   if (HOY?.fuera) return;   // se va al juego de hoy
   if (HOY) return introDeHoy();
   renderModes();
-  // Las victorias de este juego y entrar con nombre y PIN (D-212, D-215)
-  $('#rk-slot')?.append(bloqueVictorias({ juego: GAME_ID, nombre: T.title, alTocar: () => SFX.tap() }));
+  // Los mejores puntajes jugando solo (D-274), y las victorias y entrar con nombre y PIN (D-212, D-215)
+  $('#rk-slot')?.append(
+    bloqueTabla({ tabla: TABLA_SOLO, titulo: `🧍 ${COMMON[lang].rk.soloOf}`, alTocar: () => SFX.tap(), entrar: false }),
+    bloqueVictorias({ juego: GAME_ID, nombre: T.title, alTocar: () => SFX.tap() }));
   renderResumeSlot();
   const sala = param('room');
   if (!sala || !/^[A-Z]{4}$/i.test(sala)) return;
