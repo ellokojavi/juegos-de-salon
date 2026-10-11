@@ -94,6 +94,24 @@ export function comparteArchivos() {
 }
 
 /**
+ * Lo principal de la app, que el mensaje de compartirla nombra siempre, una línea cada cosa y en
+ * cada idioma (`shareApp.lines`, D-271). Lo que entra a la app como algo principal (un modo de
+ * jugar, una sección de la portada, no un juego más: esos ya los cuenta la cabecera) se suma aquí
+ * y en el mensaje, en el mismo PR. Lo vigila el agente de documentación; la prueba frena un
+ * mensaje que se quedó sin alguna.
+ */
+export const LO_PRINCIPAL = [
+  { emoji: '🏆', que: 'La Copa', desde: 'D-226' },
+  { emoji: '📅', que: 'Uno al día', desde: 'D-230' },
+  { emoji: '👥', que: 'jugar en grupo', desde: 'D-226' },
+  { emoji: '🧩', que: 'jugar solo', desde: 'D-226' },
+  { emoji: '🏅', que: 'rankings', desde: 'D-212' },
+  { emoji: '🔓', que: 'sin cuenta', desde: 'D-226' },
+  { emoji: '📲', que: 'la app instalable y sus avisos', desde: 'D-272' },
+  { emoji: '🌎', que: 'los cuatro idiomas', desde: 'D-272' },
+];
+
+/**
  * Compartir la app desde la portada (D-226): la tarjeta social de la portada en el idioma en que
  * se mira (`assets/og/menu*.jpg`, D-72, D-74) y un texto que dice lo que la tarjeta no dice —la
  * cabecera con cuántos juegos hay y una idea por línea—. `C` son los textos comunes del idioma.
