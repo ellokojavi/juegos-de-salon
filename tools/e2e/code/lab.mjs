@@ -3,6 +3,7 @@
 // trazo encima de otro se ve rayado con los colores que chocan (sin texto); con todas derechas se lee el código (y no
 // antes) sin choques; uno equivocado cuenta y el bueno
 // abre; el link al comentario va al final de cada vista y el resultado termina con el formulario.
+// Y Palabra (solo en español): voltear muestra la otra cara y la palabra abre.
 // A 320 px y en los cuatro idiomas, sin desbordar. Imprime ✗ si algo falla.
 import { launch, sleep } from '../cdp.mjs';
 const OUT = process.argv[2] || '/tmp/clave-lab';
@@ -41,7 +42,7 @@ for (const lang of ['es', 'en', 'pt', 'de']) {
   // Ponerlas todas, sin orientar (ninguna viene derecha): no se lee el código
   for (let k = 0; k < n; k++) { await clic(`.carta[data-k="${k}"]`); await sleep(40); }
   ok(await lectura() !== codigo, `${lang}: puestas pero sin orientar, no se lee el código (${await lectura()})`);
-  // Una combinación con trazos encima de otros: se marcan en rojo y se dice
+  // Una combinación con trazos encima de otros: se ven rayados, sin texto
   const choque = await ev(`(async()=>{const m=await import('/labs/code/engine.js');const c=window.__clave.P.clave;const O=m.ORIENTACIONES;for(const a of O)for(const b of O)for(const d of O)for(const e of O){const g=[a,b,d,e];const ch=m.choques(c,g);if(ch.length)return JSON.stringify({g,n:ch.length})}return 'null'})()`).then(JSON.parse);
   if (choque) {
     const orientar = async g => { for (let k = 0; k < n; k++) { const ahora = await ev(`window.__clave.P.g[${k}]`); const falta = await ev(`(async()=>{const m=await import('/labs/code/engine.js');return m.componer('${ahora}','${g[k]}')})()`); await clic(`.carta[data-k="${k}"]`); for (const sel of PASOS[falta]) { await clic(sel); await sleep(30); } } };
