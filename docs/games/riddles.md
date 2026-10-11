@@ -7,7 +7,8 @@ acertijo es un minijuego con su propio gesto y un narrador que se burla un poco 
 ## Resumen
 
 - **Dónde:** `https://juegosdesalon.cl/labs/riddles/`, en el laboratorio (no está en el menú ni en
-  los buscadores). Id `acertijos` en la señal de uso del panel.
+  los buscadores). Id `acertijos` en la señal de uso; como no está en `games.js`, el panel lo
+  muestra con esa clave cruda (PANEL.md, "Cuando entra un juego").
 - **Para quién:** uno solo, 1–3 min. En los cuatro idiomas, con su propio diccionario en `game.js`.
 - **Estado:** prototipo para que lo prueben amigos y comenten. Si gusta, la idea es un "acertijo del
   día" con acertijos escritos a mano (para Uno al día o una ronda corta de La Copa).
