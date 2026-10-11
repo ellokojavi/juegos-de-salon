@@ -127,6 +127,8 @@ export const COMMON = {
         '🧩 Para jugar solo: minijuegos de palabras, lógica y cultura.',
         '🏅 Rankings: tus mejores puntajes contra los de tus amigos y los de todos.',
         '🔓 Sin cuenta: tocas el link y juegas.',
+        '📲 Como app: la agregas a tu pantalla de inicio y, si quieres, te avisa cuando te toca jugar.',
+        '🌎 En español, inglés, portugués y alemán.',
       ],
     },
     // La hoja del botón de compartir de la portada: el video y las dos maneras de compartir. Sale solo
@@ -360,6 +362,8 @@ export const COMMON = {
         '🧩 To play solo: word, logic and trivia minigames.',
         '🏅 Leaderboards: your best scores against your friends\' and everyone else\'s.',
         '🔓 No account: tap the link and play.',
+        '📲 Like an app: add it to your home screen and, if you want, it tells you when it\'s your turn to play.',
+        '🌎 In Spanish, English, Portuguese and German.',
       ],
     },
     // La hoja del botón de compartir de la portada: el video y las dos maneras de compartir
@@ -586,6 +590,8 @@ export const COMMON = {
         '🧩 Para jogar sozinho: minijogos de palavras, lógica e cultura.',
         '🏅 Rankings: as suas melhores pontuações contra as dos amigos e as de todo mundo.',
         '🔓 Sem conta: é só tocar no link e jogar.',
+        '📲 Como um app: você adiciona à tela inicial e, se quiser, ele avisa quando é a sua vez de jogar.',
+        '🌎 Em espanhol, inglês, português e alemão.',
       ],
     },
     // La hoja del botón de compartir de la portada: el video y las dos maneras de compartir
@@ -812,6 +818,8 @@ export const COMMON = {
         '🧩 Allein: Minispiele mit Wörtern, Logik und Wissen.',
         '🏅 Ranglisten: deine besten Punkte gegen die deiner Freunde und aller anderen.',
         '🔓 Ohne Konto: Link antippen und losspielen.',
+        '📲 Wie eine App: zum Startbildschirm hinzufügen und, wenn du willst, meldet sie sich, wenn du dran bist.',
+        '🌎 Auf Spanisch, Englisch, Portugiesisch und Deutsch.',
       ],
     },
     // La hoja del botón de compartir de la portada: el video y las dos maneras de compartir

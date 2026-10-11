@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.148.1 — 2026-10-11
+- **Compartir la app también cuenta la app instalable y los idiomas** (D-272): el mensaje de
+  "Invitar a jugar" suma 📲 que se agrega a la pantalla de inicio y avisa cuando te toca jugar, y 🌎
+  que está en español, inglés, portugués y alemán.
+
 ## 0.148.0 — 2026-10-11
 - **Compartir la app cuenta todo lo que hay** (D-271): el mensaje de "Invitar a jugar", en el
   celular y en el computador, suma 📅 Uno al día y 🏅 los rankings a La Copa, los juegos en grupo,
