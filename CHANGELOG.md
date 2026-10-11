@@ -3,9 +3,10 @@
 ## 0.150.0 — 2026-10-11
 - **⏳ Línea de Tiempo, 📅 ¿En qué año? y La Copa: cada carta cuenta algo** (D-277). En vez de "iba
   entre 1925 y 1980", el veredicto de un error cuenta un dato del hecho, un porqué o una anécdota
-  ("El Muro lo abrió un error…"), y el reloj se pausa mientras se lee, hasta 6 segundos. Al acertar,
-  el dato aparece en una franja abajo y se va sola, sin frenar el juego. Al terminar, tocar un hito
-  de la línea muestra su dato. Por ahora, en los mazos de Chile e Historia.
+  ("El Muro lo abrió un error…"). Contra el reloj (⏳ Línea Relámpago y ¿En qué año?), el reloj se
+  pausa mientras se lee, hasta 6 segundos. Al acertar, el dato aparece en una franja abajo que se va
+  sola, sin frenar el juego. Al terminar, tocar un hito de la línea muestra su dato. Por ahora, en
+  los mazos de Chile e Historia.
 
 ## 0.149.0 — 2026-10-11
 - **⏳ Línea de Tiempo, 📅 ¿En qué año? y La Copa: cartas que se pueden situar** (D-274). Salen 23

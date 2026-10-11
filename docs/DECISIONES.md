@@ -4877,8 +4877,8 @@ cierra los que ya se resolvieron. GitHub le avisa al dueño por correo de cada i
 **Decisión:** Cada carta de los mazos de Línea de Tiempo puede llevar un **dato** en los cuatro
 idiomas (un porqué o una anécdota de hasta 110 caracteres, sin años), y el veredicto lo cuenta en
 vez de decir entre qué hitos iba la carta:
-- **Al errar**, en el veredicto que se queda hasta tocarlo. En ⏳ Línea Relámpago (solo, práctica y
-  copa) y en cada hito de 📅 ¿En qué año?, el reloj se **pausa** mientras se lee, con **tope de 6 s**:
+- **Al errar**, en el veredicto que se queda hasta tocarlo. En ⏳ Línea Relámpago (solo, práctica,
+  Uno al día y copa) y en cada hito de 📅 ¿En qué año?, el reloj se **pausa** mientras se lee, con **tope de 6 s**:
   arriba marca ⏸ y una barra bajo el dato se vacía.
 - **Al acertar**, en una franja sobre el botón de colocar que no frena nada y se va sola a los 6 s.
 - **Al terminar**, la línea como quedó es el repaso: los errores con su dato a la vista y el resto a
