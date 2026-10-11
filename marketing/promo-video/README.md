@@ -141,6 +141,11 @@ node render.mjs --wide --fotos fotos --tiempos 18.5,34.0
 open promo.html                    # o ?wide: se reproduce en el navegador, sin música
 ```
 
+`render.mjs --pagina <archivo.html>` dibuja otra página en vez de `promo.html`, si cumple el mismo
+contrato (`render(t)`, `DURATION`, `FPS` y `#stage`). Así lo usa el tutorial de compartir
+([`../share-tutorial/`](../share-tutorial/README.md)): un cambio a `render.mjs` se prueba también
+con su `construir.sh`.
+
 **Antes de entregar se miran cuadros sueltos de las dos versiones** (`--tiempos` en los cortes y
 en medio de cada jugada) y la hoja de las capturas. Rehacerlas no es revisarlas (D-76).
 

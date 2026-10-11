@@ -1,6 +1,6 @@
 // Las decisiones de un toque (D-273): qué casilla cuenta, quién puede marcarla y qué acciones se aceptan.
 import assert from 'node:assert/strict';
-import { planear, pregunta, casillas, recienMarcadas, leerAcciones, invalida, anotarHecho, hechas, DUENO } from './aprobar.mjs';
+import { planear, marcadasSinResultado, pregunta, casillas, recienMarcadas, leerAcciones, invalida, anotarHecho, hechas, DUENO } from './aprobar.mjs';
 import { cuerpoDecisiones } from './procesos.mjs';
 
 const decisiones = {
@@ -79,5 +79,13 @@ assert.match(invalida({ tipo: 'correr', workflow: 'otro.yml' }), /solo/);
 assert.match(invalida({ tipo: 'borrar-rama', rama: 'main' }), /desconocida/);
 assert.match(invalida({ tipo: 'fusionar', pr: '3' }), /sin número/);
 assert.throws(() => cuerpoDecisiones({ titulo: 'x', decisiones: [{ pregunta: 'y', si: [{ tipo: 'shell', cmd: 'rm' }] }] }), /desconocida/);
+
+// Una corrida cancelada no pierde su decisión: la siguiente hace las marcadas sin resultado
+const tres = marcar(marcar(sí1, '2:si'), '2:si');
+const conUna = anotarHecho(tres, '1', 'si', '✅ #300 fusionado');
+assert.deepEqual(marcadasSinResultado(conUna), ['2:si']);
+const tarde = planear(evento(sí1, marcar(sí1, '2:si')), DUENO, conUna);
+assert.deepEqual(tarde.planes.map(p => `${p.decision}:${p.opcion}`), ['2:si'], 'la 1 ya la hizo otra corrida; la 2 se hace');
+assert.deepEqual(marcadasSinResultado(anotarHecho(conUna, '2', 'si', '❌ falló', false)), [], 'una que falló no se reintenta sola');
 
 console.log('aprobar: ok');
