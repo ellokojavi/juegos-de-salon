@@ -134,7 +134,7 @@
           "formato": "9:16",
           "ancho": 1080,
           "alto": 1920,
-          "segundos": 6.0,
+          "segundos": 6,
           "uso": "estados de WhatsApp, Reels, Shorts"
         },
         {
@@ -142,7 +142,7 @@
           "formato": "16:9",
           "ancho": 1920,
           "alto": 1080,
-          "segundos": 6.0,
+          "segundos": 6,
           "uso": "YouTube, presentaciones"
         }
       ],
@@ -153,8 +153,8 @@
       "seleccion": true,
       "estado": "entregado al dueño",
       "revision": {
-        "fecha": "2026-10-09",
-        "app": "0.134.1",
+        "fecha": "2026-10-11",
+        "app": "0.148.6",
         "al_dia": true,
         "pendiente": []
       }
