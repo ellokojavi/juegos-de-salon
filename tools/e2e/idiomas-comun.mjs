@@ -92,6 +92,12 @@ export async function revisarIdiomas(juego, { dicts = [], port, pantallas, permi
 
   // Lo que el idioma dice igual que el español a propósito ("Tango", un nombre propio)
   const delIdioma = Object.fromEntries(LANGS.map(l => [l, todos.flatMap(d => hojas(d[l]).map(([, v]) => v)).join('\n')]));
+  // Y sus plantillas ya armadas ("Entrar como {name}" sale "ENTRAR COMO JAVI" en un botón)
+  const escapar = t => t.replace(/[.*+?^$()|[\]\\]/g, '\\$&');
+  const plantillas = Object.fromEntries(LANGS.map(l => [l, todos.flatMap(d => hojas(d[l]).map(([, v]) => v))
+    .filter(v => typeof v === 'string' && /\{\w+\}/.test(v) && (v.replace(/\{\w+\}/g, '').match(/\p{L}{3,}/gu) || []).length >= 2)
+    .map(v => new RegExp(`^${escapar(v).replace(/\\?\{\w+\\?\}/g, '.+')}$`, 'iu'))]));
+  const esDelIdioma = (lang, l) => delIdioma[lang].includes(l) || plantillas[lang].some(re => re.test(l));
 
   const b = await launch({ port, dir: `${OUT}/perfil`, out: OUT, width: ancho, height: alto });
   let fallas = 0;
@@ -128,7 +134,7 @@ export async function revisarIdiomas(juego, { dicts = [], port, pantallas, permi
       const lineasEs = new Set(es.texto.split('\n').map(l => l.trim()));
       const iguales = m.texto.split('\n').map(l => l.trim())
         .filter(l => l.length >= LARGO_MINIMO && (l.match(/\p{L}{3,}/gu) || []).length >= 3 && lineasEs.has(l))
-        .filter(l => !delIdioma[lang].includes(l) && !permitidos.some(p => l.includes(p)));
+        .filter(l => !esDelIdioma(lang, l) && !permitidos.some(p => l.includes(p)));
       ok(!iguales.length, `${toma} · ${lang}: ninguna línea igual a la del español${iguales.length ? ': ' + iguales.slice(0, 3).map(t => JSON.stringify(t)).join(', ') : ''}`);
       ok(!m.scroll || es.scroll, `${toma} · ${lang}: sin scroll horizontal (C-8)`);
       const chicos = m.chicos.length - es.chicos.length;
