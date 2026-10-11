@@ -16,7 +16,7 @@ import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gsta
 import { firebaseConfig } from '../assets/js/firebase-config.js';
 import { OP_MS, waitConnected, withTimeout } from '../assets/js/transport/errors.js';
 import { enviarReporte } from './reportes.js';
-import { aliasHasta } from './engine.js';
+import { aliasHasta, abierto, conCierre } from './engine.js';
 
 const falla = code => Object.assign(new Error(code), { code });
 
@@ -123,10 +123,24 @@ export function createFirebaseStore() {
       try { return (await withTimeout(get(ref(db, ruta)), OP_MS)).exists(); } catch (_) { return false; }
     },
 
+    /**
+     * Las reglas niegan igual un día cerrado que un celular que dejó de estar sentado (perdió su
+     * sesión anónima, o el admin le dio un PIN nuevo al jugador). Si el día sigue abierto con la
+     * hora del servidor, no fue la hora: es el asiento, y hay que volver a entrar con el PIN.
+     */
+    async porQue(e, code, dia) {
+      if (e?.code !== 'ventana') return e;
+      try {
+        const L = conCierre((await withTimeout(get(ref(db, `torneos/${code}`)), OP_MS)).val());
+        if (L?.meta && abierto(L.meta, dia, this.now())) return falla('permiso');
+      } catch (_) { /* sin poder mirar, queda como estaba */ }
+      return e;
+    },
+
     async empezar(code, dia, pid) {
       try { await escribir({ [`torneos/${code}/started/${dia}/${pid}`]: serverTimestamp() }, 'ventana'); } catch (e) {
         if (await this.yaEsta(`torneos/${code}/started/${dia}/${pid}`)) return;
-        throw e;
+        throw await this.porQue(e, code, dia);
       }
     },
 
@@ -138,7 +152,7 @@ export function createFirebaseStore() {
       try { await escribir({ [`torneos/${code}/results/${dia}/${pid}`]: { ...r, at: serverTimestamp() } }, 'ventana'); } catch (e) {
         // Si el resultado ya quedó guardado (llegó aunque el celular no se enteró), cuenta como enviado
         if (await this.yaEsta(`torneos/${code}/results/${dia}/${pid}`)) throw Object.assign(new Error('ya-jugado'), { code: 'ya-jugado' });
-        throw e;
+        throw await this.porQue(e, code, dia);
       }
     },
 
