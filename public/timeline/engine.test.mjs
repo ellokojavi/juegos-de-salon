@@ -20,6 +20,25 @@ for (const d of DECKS) {
     }
   }
 }
+// El dato de cada carta (D-276): una frase corta que se lee en el veredicto, en los cuatro idiomas.
+// No nombra años: le regalaría al siguiente jugador el de otra carta del mazo.
+const CON_DATOS = ['chile', 'historia'];   // los mazos que ya los tienen todos
+const DATO_MAX = 110;
+for (const d of DECKS) {
+  const anios = new Set(d.cards.filter(c => c.year >= 100).map(c => String(c.year)));
+  for (const c of d.cards) {
+    if (!c.dato) { assert.ok(!CON_DATOS.includes(d.id), `falta el dato de ${d.id}: ${c.id}`); continue; }
+    for (const l of ['es', 'en', 'pt', 'de']) {
+      const x = c.dato[l];
+      assert.ok(typeof x === 'string' && x.length >= 20, `dato sin ${l} en ${d.id}: ${c.id}`);
+      assert.ok(x.length <= DATO_MAX, `dato largo (${x.length}) en ${l} de ${d.id}: ${c.id}`);
+      assert.ok(!/'/.test(x), `apóstrofo recto en el dato ${l} de ${d.id}: ${c.id}`);
+      assert.ok(!/(^|[^0-9.,])(1[0-9]{3}|20[0-9]{2})($|[^0-9])/.test(x), `el dato nombra un año en ${l} de ${d.id}: ${c.id}`);
+      for (const n of x.match(/(?<![0-9.,])[0-9]{3,4}(?![0-9])/g) || []) assert.ok(!anios.has(n), `el dato dice ${n}, el año de otra carta, en ${l} de ${d.id}: ${c.id}`);
+      assert.notEqual(x, c[l], `el dato repite la carta en ${l} de ${d.id}: ${c.id}`);
+    }
+  }
+}
 assert.equal(getDeck('musica').id, 'musica');
 assert.equal(getDeck('noexiste').id, DECKS[0].id, 'temática desconocida cae en la primera');
 

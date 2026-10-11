@@ -115,3 +115,17 @@ body.arrastrando .place-row { opacity: 0; pointer-events: none; }
 .lt-juego .status .sub { color: var(--muted); font-weight: 800; font-size: 0.9rem; }
 .lt-juego .line-wrap { padding: 2px; margin-top: 2px; }
 .event.fallo { border-color: rgba(255, 46, 136, 0.7); box-shadow: 0 0 10px rgba(255, 46, 136, 0.25); }
+
+/* El dato de la carta (D-276): en el veredicto, en la franja del acierto y en la línea final */
+.dato { max-width: 340px; text-align: center; color: var(--ink); font-weight: 700; font-size: 0.95rem; line-height: 1.45;
+  background: rgba(0, 0, 0, 0.3); border-radius: 14px; padding: 10px 14px; margin: 4px auto 0; display: grid; gap: 8px; }
+/* Lo que queda del tiempo gratis para leer: el reloj está en pausa mientras la barra se vacía */
+.dato-pausa { display: block; height: 3px; border-radius: 2px; background: var(--yellow); transform-origin: left;
+  animation: datoPausa linear both; opacity: 0.8; }
+@keyframes datoPausa { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+.dato-franja { width: 100%; max-width: none; margin: 0 0 8px; font: 700 0.85rem/1.4 var(--font-body); cursor: pointer;
+  border: 1px solid var(--glass-border); background: rgba(21, 7, 38, 0.94); animation: slideUp 0.25s both; transition: opacity 0.4s; }
+.dato-franja.sale { opacity: 0; }
+.event.con-dato { cursor: pointer; }
+.event .ev-dato { grid-column: 1 / -1; font-size: 0.8rem; font-weight: 700; line-height: 1.35; color: var(--muted); }
+.cron.en-pausa::before { content: '⏸ '; }

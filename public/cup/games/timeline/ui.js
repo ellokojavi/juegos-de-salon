@@ -2,7 +2,8 @@
  * ⏳ Línea Relámpago — pantalla. Es la del modo solo de Línea de Tiempo (D-102): la mano que se
  * desplaza a lo ancho, la línea con sus ranuras, el arrastre compartido (arrastrar es elegir,
  * nunca colocar: D-85), el botón que dice qué carta coloca y el veredicto de cada jugada, con
- * el error que se queda hasta tocarlo y dice dónde iba la carta (C-8b). Los estilos son los de
+ * el error que se queda hasta tocarlo y cuenta el dato de la carta, con el reloj en pausa mientras
+ * se lee (C-8b, D-276). Los estilos son los de
  * assets/css/linea.css y los textos, los de Línea de Tiempo.
  *
  * Las jugadas son `{ c: id de la carta, at: ranura }`, en orden.
@@ -12,6 +13,7 @@ import { anioLabel as anioDeLaCopa } from '../year/engine.js';
 import { crearArrastre } from '../../../assets/js/arrastre.js';
 import { showHandoff } from '../../../assets/js/handoff.js';
 import { LOCALES as LT_LOCALES } from '../../../timeline/rules.js';
+import { bloqueDato, franjaDato, conservarFranja, conDato, PAUSA_DATO_MS } from '../../../assets/js/dato.js';
 
 export function montar(raiz, ctx) {
   const { p, T, fmt, el, SFX, vibrate } = ctx;
@@ -64,8 +66,9 @@ export function montar(raiz, ctx) {
   };
 
   const pintarConfirmar = () => {
-    fila.innerHTML = '';
-    if (e().fin) return;
+    // Terminado el tablero, la franja de un acierto ya no tapa el repaso
+    if (e().fin) { fila.innerHTML = ''; return; }
+    conservarFranja(fila);
     const c = sel.carta ? porId(sel.carta) : null;
     fila.append(el('button', { class: 'btn btn--yellow', id: 'btn-colocar', disabled: sel.ranura === null || !c, onClick: colocar },
       LT.place, c && sel.ranura !== null ? el('small', {}, `${c.emoji} ${c.texto}`) : null));
@@ -104,14 +107,17 @@ export function montar(raiz, ctx) {
       onClick: conTeclado(() => { if (sel.carta) sel.ranura = sel.ranura === i ? null : i; }) }, contenidoRanura(i));
     if (!x.fin) linea.append(ranura(0));
     x.linea.forEach((c, i) => {
-      linea.append(el('div', { class: 'event' + (c.ok === false ? ' fallo' : ''), 'data-ev': i, 'data-year': c.year },
-        el('span', { class: 'y' }, anioLabel(c.year)), el('span', { class: 'em' }, c.emoji), el('span', { class: 't' }, c.texto)));
+      const fila = el('div', { class: 'event' + (c.ok === false ? ' fallo' : ''), 'data-ev': i, 'data-year': c.year },
+        el('span', { class: 'y' }, anioLabel(c.year)), el('span', { class: 'em' }, c.emoji), el('span', { class: 't' }, c.texto));
+      // Terminada, la línea es el repaso: los errores con su dato a la vista, el resto a un toque (D-276)
+      linea.append(x.fin ? conDato(fila, el, c.dato, { abierto: c.ok === false }) : fila);
       if (!x.fin) linea.append(ranura(i + 1));
     });
     // El cierre: el veredicto y el botón para seguir
     cierre.innerHTML = '';
     if (x.fin) {
       cierre.append(el('div', { class: 'aviso bien' }, fmt(T.lineaFin, { ok: x.aciertos, n: x.marcas.length })),
+        x.linea.some(c => c.dato) ? el('p', { class: 'muted center', style: 'margin:0' }, LT.datoTap) : null,
         el('button', { class: 'btn btn--yellow', id: 'btn-fin', onClick: () => { SFX.tap(); ctx.terminar(x); } }, ctx.textoFin || T.seeResults));
     }
     marcarMano(); pintarConfirmar(); marcarEstado();
@@ -141,9 +147,14 @@ export function montar(raiz, ctx) {
       el('div', { class: 'verdict' },
         el('div', { class: 'big ' + (ult.ok ? 'ok' : 'no') }, ult.ok ? LT.correct : LT.wrong),
         el('div', { class: 'card-big' }, el('span', { class: 'em' }, c.emoji), el('span', { class: 't' }, c.texto), el('span', { class: 'y' }, anioLabel(c.year))),
-        ult.ok ? null : el('div', { class: 'why', html: `${fmt(LT.whyWrong, { year: `<b>${anioLabel(c.year)}</b>`, where: donde(...ult.entre) })}<br>${fmt(LT.wherePlaced, { where: donde(...puesta) })}` })),
+        // El error cuenta el dato de la carta, con el reloj en pausa mientras se lee (D-276); una
+        // carta sin dato dice dónde iba
+        ult.ok ? null : c.dato ? bloqueDato(el, c.dato, { pausa: ctx.pausa ? PAUSA_DATO_MS : 0 })
+          : el('div', { class: 'why', html: `${fmt(LT.whyWrong, { year: `<b>${anioLabel(c.year)}</b>`, where: donde(...ult.entre) })}<br>${fmt(LT.wherePlaced, { where: donde(...puesta) })}` })),
       el('div', { class: 'hint', style: 'margin-top:14px' }, (ult.ok ? LT.hoContinue : LT.tapContinue) + ' ›'));
-    const siguiente = showHandoff([stage], () => dibujar());
+    const seguir = !ult.ok && c.dato ? ctx.pausa?.(PAUSA_DATO_MS) : null;
+    // El acierto no frena: su dato queda en una franja sobre el botón y se va sola
+    const siguiente = showHandoff([stage], () => { seguir?.(); dibujar(); if (ult.ok && !e().fin) franjaDato(fila, el, c.dato); });
     // El error se queda hasta tocarlo; el acierto se cierra solo (C-8b)
     setTimeout(() => document.getElementById('handoff').classList.toggle('bad', !ult.ok), 0);
     // Solo cierra su propio aviso: si ya hay otro (un error jugando rápido), se queda (C-8b)
