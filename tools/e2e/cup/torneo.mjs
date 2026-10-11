@@ -630,7 +630,7 @@ if (corre('laboratorio')) {
   ok(await ev(`document.getElementById('btn-menu').href`) === `${SITIO}/labs/`, 'La Copa con ?labs vuelve al laboratorio');
   await b.go(`${SITIO}/labs/`, 1500);
   // En el laboratorio queda solo lo que no ha salido (D-262): cada sección lleva a la página de su
-  // prototipo, en /labs/<carpeta>/ (El caso, D-267; los Acertijos, D-269…), y ya no está La Copa
+  // prototipo, en /labs/<carpeta>/ (El caso, D-267…), y ya no está La Copa
   const secciones = await ev(`JSON.stringify([...document.querySelectorAll('section.seccion')].map(x => [x.id, x.querySelector('a.btn')?.getAttribute('href')]))`).then(JSON.parse);
   ok(secciones.length >= 1 && secciones[0][0] === 'seccion-caso' && secciones[0][1] === 'case/' && secciones.every(([, h]) => /^[a-z-]+\/$/.test(h || '')) && !await ev(`!!document.getElementById('minis')`),
     `el laboratorio ofrece solo prototipos, cada uno en su carpeta (${secciones.map(([, h]) => h).join(' ')})`);
