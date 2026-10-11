@@ -1,6 +1,7 @@
 // Dibuja promo.html cuadro a cuadro (render(t) es determinista) y se los pasa a ffmpeg. Sin audio.
 //   node render.mjs [salida.mp4] [--wide] [--desde s] [--hasta s]
 //   node render.mjs --fotos <dir> (--cada n | --tiempos 1.5,20.3)   → PNG sueltos, para mirar
+//   --pagina <archivo.html>   otra página con el mismo contrato (render(t), DURATION, FPS, #stage); la usan otros assets de marketing/
 import { abrir } from './navegador.mjs';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
@@ -14,7 +15,7 @@ const fotos = flag('fotos'); const cada = Number(flag('cada', 15));
 const browser = await abrir();
 const wide = args.includes('--wide');
 const page = await browser.newPage({ viewport: wide ? { width: 1920, height: 1080 } : { width: 1080, height: 1920 }, deviceScaleFactor: 1 });
-await page.goto('file://' + path.join(dir, 'promo.html') + '?render' + (wide ? '&wide' : ''));
+await page.goto('file://' + path.resolve(flag('pagina', path.join(dir, 'promo.html'))) + '?render' + (wide ? '&wide' : ''));
 await page.evaluate(() => document.fonts.ready);
 const malas = await page.evaluate(() => Promise.all([...document.images].map(i => i.decode().then(() => null, () => i.src)))); if (malas.some(Boolean)) console.log('no cargan', malas.filter(Boolean));
 const FPS = await page.evaluate(() => window.FPS), DUR = await page.evaluate(() => window.DURATION);
