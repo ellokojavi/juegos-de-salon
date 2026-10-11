@@ -208,6 +208,11 @@ console.log('sin veredicto de ronda:', await b.evaluate(`document.getElementById
 console.log('hasta el resultado:', await hastaResultado(), '| pantalla:', await b.active());
 console.log('sin ranking de uno solo:', await b.evaluate(`document.getElementById('ranking-panel').hidden`));
 await sleep(2600); await b.shot('10-solo-result');
+// Jugando solo, el puntaje va a su tabla (D-274): sin jugador abierto, "¿quieres que cuente?" y la tabla
+{
+  const rk = await b.evaluate(`JSON.stringify({ pts: document.querySelector('.rk-solo-fin p')?.textContent || '', contar: !!document.querySelector('.rk-solo-fin .rk-contar'), tabla: !!document.querySelector('.rk-solo-fin .rk-ranking') })`).then(JSON.parse);
+  console.log(`${/\d+\/100/.test(rk.pts) && rk.contar && rk.tabla ? '✓' : '✗'} jugando solo: el puntaje (${rk.pts}), ¿quieres que cuente? y la tabla de jugar solo`);
+}
 console.log('resultado:', await b.evaluate(`document.getElementById('result-title').textContent+' | '+document.getElementById('result-sub').textContent`));
 console.log('la palabra:', await b.evaluate(`document.getElementById('result-words').innerText.replace(/\\n/g,' · ')`));
 console.log('errors:', JSON.stringify(b.errors), JSON.stringify(b.logs));
