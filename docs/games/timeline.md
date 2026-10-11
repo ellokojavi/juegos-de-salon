@@ -81,7 +81,7 @@ Seis temáticas, cada una en su archivo dentro de `decks/`:
 ```
 
 - Hitos **reconocibles**, con años indiscutibles: si la fecha se discute, la carta no entra.
-- Y que se puedan **situar**: nada de “un gran incendio”, “un terremoto” o “la era del swing”, porque eso pasa cada pocos años o dura una década. El ancla es algo que el jugador sabe (un nombre propio, un hecho único), no un superlativo o una cifra que solo la carta dice (“el mayor incendio de su historia”): si no la hay, la carta no entra (D-37, D-274).
+- Y que se puedan **situar**: nada de “un gran incendio”, “un terremoto” o “la era del swing”, porque eso pasa cada pocos años o dura una década. El ancla es algo que el jugador sabe (un nombre propio, un hecho único), no un superlativo o una cifra que solo la carta dice (“el mayor incendio de su historia”): si no la hay, la carta no entra (D-37, D-278).
 - Y que **no digan su año**, ni entero ni abreviado (“la Constitución de 1980”, “Italia 90”): el test del motor lo frena en los cuatro idiomas. Un año que no es el de la carta sí puede ir (*2001: Odisea del espacio*, de 1968).
 - Cada mazo trae al menos noventa cartas, bien repartidas en el tiempo.
 - Los mazos se registran en `decks/index.js` con su nombre, su pista y su emoji por idioma. El archivo
