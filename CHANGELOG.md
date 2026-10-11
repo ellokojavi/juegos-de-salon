@@ -16,6 +16,12 @@
   punk, la cumbia). Música suma 12 hitos puntuales, como la muerte de Freddie Mercury o el Nobel de
   Dylan, y su bajada pasa a ser "De Beethoven a Taylor Swift".
 
+## 0.150.0 — 2026-10-11
+- **🏅 Rankings: que cuente la partida que acabas de jugar** (D-274): si terminas sin haber entrado,
+  un bloque te ofrece entrar con tu nombre y un PIN, y esa partida (o tu victoria) se anota.
+- **Toque y Fama, Generala y Ahorcado** muestran en su portada los mejores puntajes jugando solo.
+- **🪢 Ahorcado jugando solo tiene ranking**: de 0 a 100 según las vidas que te quedaron.
+
 ## 0.148.4 — 2026-10-11
 - **Herramientas: el agente de procesos dirige a los otros** (D-276): una sola ronda diaria en el
   Mac lanza a los agentes de documentación y de usabilidad cuando hay algo que revisar, y revisa lo

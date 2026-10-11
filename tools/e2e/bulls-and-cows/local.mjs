@@ -58,6 +58,8 @@ await b.evaluate(`document.querySelector('#resume-slot .btn--cyan').click(); 1`)
 console.log('retomado en', await b.active(), 'con', await intentos(), 'intentos y reloj', await b.evaluate(`document.getElementById('solo-cron').textContent`));
 await b.typeNum(secreto); await sleep(600); await b.shot('11-solo-fin');
 await fin(); await b.shot('12-solo-result');
+// Sin jugador abierto, el final ofrece que la partida cuente (D-274)
+console.log(`${await b.evaluate(`!!document.querySelector('#solo-result .rk-contar')`) ? '✓' : '✗'} solo: ¿quieres que esta partida cuente?, con nombre y PIN`);
 console.log('solo resultado:', await resumen(), '| bajo 812 px:', JSON.stringify(await bajoLaLinea()), '| guardada done:', await b.evaluate(`__tyf.guardada().done`));
 
 // 2) Jugar otra vez y no sacarlo: 0/100, y el récord anterior a la vista
