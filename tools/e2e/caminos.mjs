@@ -373,6 +373,16 @@ export const CAMINOS = {
     'copa-dias': [SEMBRAR_PANEL('/cup/OFICI'), `[...document.querySelectorAll('.subtabs button')][1].click()`],
     'copa-historia': [SEMBRAR_PANEL('/cup/OFICI'), `[...document.querySelectorAll('.subtabs button')][2].click()`],
   },
+  /**
+   * Reinas, además del tablero recién empezado: con dos jugadas, para ver la fila de ↩️ Deshacer,
+   * 🧹 Borrar todo y 🏳️ Rendirse prendida (D-283), y con Borrar todo armado, su texto más largo.
+   */
+  reinas: {
+    intro: [],
+    juego: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, `1`, `1`],
+    jugadas: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, `1`, `document.querySelector('.rej[data-i="0"]').click()`, `document.querySelector('.rej[data-i="3"]').click()`],
+    borrar: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, `1`, `document.querySelector('.rej[data-i="0"]').click()`, `document.getElementById('btn-borrar').click()`],
+  },
 };
 
 /**

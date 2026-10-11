@@ -5,9 +5,11 @@
  * una X, las borra (D-168). Las
  * zonas se distinguen solo por el color, con la misma línea fina entre todas las casillas, como en
  * el juego original. Las reinas que chocan se ven en rojo en el acto. Las jugadas son los toques,
- * en orden (`'c' + i` el toque; el largo y cada X pintada, en negativo).
+ * en orden (`'c' + i` el toque; el largo y cada X pintada, en negativo). ↩️ Deshacer quita el último
+ * gesto: un toque, un toque largo, un arrastre entero o un Borrar todo (D-283).
  */
 import * as motor from './engine.js';
+import { pasos, botonDeshacer } from '../deshacer.js';
 
 /**
  * Colores de zona: claros, para que la reina negra y la X se lean encima (contraste ≥ 9:1), y
@@ -75,6 +77,13 @@ export function montar(raiz, ctx) {
   // "Borrar todo" pide un segundo toque, como en Tango (D-169)
   let armado = false;
   let armadoTimer = null;
+  // Dónde empieza cada gesto en la lista de jugadas, para deshacerlo entero (D-283)
+  const historial = pasos();
+  /** Suma una jugada; `nuevo` si empieza un gesto (un arrastre suma varias en el mismo). */
+  const anotar = (j, nuevo = true) => {
+    if (nuevo) historial.abrir(jugadas.length);
+    jugadas.push(j); ctx.guardar(jugadas);
+  };
 
   const celdaEn = (x, y) => {
     const d = document.elementFromPoint(x, y)?.closest('.rej');
@@ -88,7 +97,7 @@ export function montar(raiz, ctx) {
   const arrastrar = i => {
     const [antes, despues] = ARRASTRE[gesto.modo];
     if (marcas[i] !== antes) return;
-    jugadas.push(motor.toqueLargo(i)); ctx.guardar(jugadas);
+    anotar(motor.toqueLargo(i), !gesto.paso); gesto.paso = true;
     marcas[i] = despues;
     const b = raiz.querySelector(`.rej[data-i="${i}"]`);
     if (b) { b.classList.toggle('marca', despues === motor.MARCA); b.textContent = despues === motor.MARCA ? '✕' : ''; }
@@ -129,7 +138,7 @@ export function montar(raiz, ctx) {
       const r = Math.floor(i / n), c = i % n, z = zonas[i];
       const v = e.marcas[i];
       const jugar = j => {
-        jugadas.push(j); ctx.guardar(jugadas);
+        anotar(j);
         const x = motor.estado(p, jugadas);
         if (x.errores > e.errores) { SFX.error(); vibrate([40, 40, 40]); }
         else if (x.fin) { SFX.win(); vibrate([30, 50, 30]); }
@@ -154,7 +163,8 @@ export function montar(raiz, ctx) {
           gesto.timer = setTimeout(() => {
             if (!gesto) return;
             // Si el dedo sigue y se arrastra, esta casilla ya cambió y el arrastre sigue con las siguientes
-            gesto.timer = null; tragar = true; jugar(motor.toqueLargo(i));
+            // El toque largo abre el paso, y el arrastre que le siga se deshace junto con él
+            gesto.timer = null; tragar = true; gesto.paso = true; jugar(motor.toqueLargo(i));
           }, LARGO_MS);
           window.addEventListener('pointermove', mover);
           window.addEventListener('pointerup', soltar);
@@ -178,6 +188,11 @@ export function montar(raiz, ctx) {
     if (!e.fin) {
       const vacio = e.marcas.every(v => v === motor.VACIO);
       caja.append(el('div', { class: 'btn-row reinas-acciones' },
+        // Deshacer quita el último gesto; el reloj sigue (D-283)
+        botonDeshacer({ el, T, SFX, vibrate, puede: jugadas.length > 0, alDeshacer: () => {
+          clearTimeout(armadoTimer); armado = false;
+          jugadas = historial.deshacer(jugadas); ctx.guardar(jugadas); dibujar();
+        } }),
         // Borrar todo deja el tablero en blanco; el reloj sigue (D-169). El primer toque solo lo arma.
         el('button', {
           type: 'button', class: 'btn btn--ghost btn--sm' + (armado ? ' armado' : ''), id: 'btn-borrar', disabled: vacio,
@@ -185,7 +200,7 @@ export function montar(raiz, ctx) {
             clearTimeout(armadoTimer);
             if (armado) {
               armado = false;
-              jugadas.push(motor.BORRAR); ctx.guardar(jugadas); SFX.splash(); vibrate([20, 30, 20]); dibujar();
+              anotar(motor.BORRAR); SFX.splash(); vibrate([20, 30, 20]); dibujar();
               return;
             }
             armado = true; SFX.tap(); vibrate(15);
@@ -199,7 +214,7 @@ export function montar(raiz, ctx) {
           onClick: () => {
             SFX.tap();
             if (!confirm(T.giveUpConfirm)) return;
-            jugadas.push(motor.RENDIRSE); ctx.guardar(jugadas); SFX.error(); vibrate([40, 40, 40]); dibujar();
+            anotar(motor.RENDIRSE); SFX.error(); vibrate([40, 40, 40]); dibujar();
           },
         }, `🏳️ ${T.giveUp}`)));
     }
