@@ -1,5 +1,5 @@
 {
-  "version": "0.146.1",
+  "version": "0.147.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -895,6 +895,9 @@
     "public/julep/engine.js",
     "public/julep/game.js",
     "public/julep/rules.js",
+    "public/labs/code/engine-palabra.js",
+    "public/labs/code/engine.js",
+    "public/labs/code/game.js",
     "public/liars-dice/engine.js",
     "public/liars-dice/game.js",
     "public/liars-dice/rules.js",
@@ -945,6 +948,8 @@
     "public/generala/engine.test.mjs",
     "public/hangman/engine.test.mjs",
     "public/julep/engine.test.mjs",
+    "public/labs/code/engine-palabra.test.mjs",
+    "public/labs/code/engine.test.mjs",
     "public/liars-dice/engine.test.mjs",
     "public/panel/adapta.test.mjs",
     "public/panel/aggregate.test.mjs",
@@ -978,6 +983,7 @@
     "caminos.mjs",
     "case/lab.mjs",
     "ci.mjs",
+    "code/lab.mjs",
     "compartir-portada.mjs",
     "compartir-sala.mjs",
     "contacto.mjs",
@@ -1082,6 +1088,10 @@
     {
       "ruta": "docs/games/case.md",
       "titulo": "El caso"
+    },
+    {
+      "ruta": "docs/games/code.md",
+      "titulo": "🔐 La clave (prototipo del laboratorio)"
     },
     {
       "ruta": "docs/games/cup.md",
