@@ -1,5 +1,5 @@
 /**
- * La clave — prototipo de laboratorio (D-270). Un código de 4 cifras repartido entre una base fija y
+ * La clave — prototipo de laboratorio (D-270). Un código de 5 cifras repartido entre una base fija y
  * 4 cartas transparentes, cada una girada o volteada al azar. Se toca una carta para ponerla
  * sobre la base, y con ↻ y ⇋ se orienta; con todas puestas y derechas, los trazos forman el código,
  * que se escribe en el teclado. Nada avisa que una carta quedó bien: se sabe leyendo. El motor está
@@ -24,7 +24,7 @@ const TEXTOS = {
   es: {
     nombre: 'La clave', laboratorio: '‹ Laboratorio',
     lema: 'Unas cartas transparentes esconden un código. Ninguna lo dice sola.',
-    como: ['Descubre el código de 4 cifras y escríbelo.', 'Toca una carta para ponerla sobre la base. ↻ la gira y ⇋ la voltea.', 'Con todas puestas y derechas, los trazos forman las cifras sin pisarse.'],
+    como: ['Descubre el código de 5 cifras y escríbelo.', 'Toca una carta para ponerla sobre la base. ↻ la gira y ⇋ la voltea.', 'Con todas puestas y derechas, los trazos forman las cifras sin pisarse.'],
     empezar: '🔐 Empezar', girar: '↻ Girar', voltear: '⇋ Voltear', ok: 'OK',
     quitar: '✕ Quitar', elige: 'Toca una carta de abajo para ponerla.', elegida: 'Carta {n}', mal: 'Ese no es el código. 🔒',
     abierto: '¡Abierto!', resumen: 'En {tiempo}, con {e} intentos fallidos.', resumenSin: 'En {tiempo}, sin intentos fallidos.', resumenUno: 'En {tiempo}, con 1 intento fallido.',
@@ -34,7 +34,7 @@ const TEXTOS = {
   en: {
     nombre: 'The Code', laboratorio: '‹ Lab',
     lema: 'Some see-through cards hide a code. None shows it alone.',
-    como: ['Find the 4-digit code and type it in.', 'Tap a card to put it on the base. ↻ turns it and ⇋ flips it.', 'With all of them on and the right way round, the strokes form the digits without overlapping.'],
+    como: ['Find the 5-digit code and type it in.', 'Tap a card to put it on the base. ↻ turns it and ⇋ flips it.', 'With all of them on and the right way round, the strokes form the digits without overlapping.'],
     empezar: '🔐 Start', girar: '↻ Turn', voltear: '⇋ Flip', ok: 'OK',
     quitar: '✕ Remove', elige: 'Tap a card below to put it on.', elegida: 'Card {n}', mal: 'That’s not the code. 🔒',
     abierto: 'Unlocked!', resumen: 'In {tiempo}, with {e} wrong tries.', resumenSin: 'In {tiempo}, with no wrong tries.', resumenUno: 'In {tiempo}, with 1 wrong try.',
@@ -44,7 +44,7 @@ const TEXTOS = {
   pt: {
     nombre: 'A senha', laboratorio: '‹ Laboratório',
     lema: 'Cartas transparentes escondem uma senha. Nenhuma mostra sozinha.',
-    como: ['Descubra a senha de 4 dígitos e digite.', 'Toque numa carta para colocá-la sobre a base. ↻ gira e ⇋ vira.', 'Com todas colocadas e do jeito certo, os traços formam os dígitos sem se sobrepor.'],
+    como: ['Descubra a senha de 5 dígitos e digite.', 'Toque numa carta para colocá-la sobre a base. ↻ gira e ⇋ vira.', 'Com todas colocadas e do jeito certo, os traços formam os dígitos sem se sobrepor.'],
     empezar: '🔐 Começar', girar: '↻ Girar', voltear: '⇋ Virar', ok: 'OK',
     quitar: '✕ Tirar', elige: 'Toque numa carta abaixo para colocá-la.', elegida: 'Carta {n}', mal: 'Essa não é a senha. 🔒',
     abierto: 'Aberto!', resumen: 'Em {tiempo}, com {e} tentativas erradas.', resumenSin: 'Em {tiempo}, sem tentativas erradas.', resumenUno: 'Em {tiempo}, com 1 tentativa errada.',
@@ -54,7 +54,7 @@ const TEXTOS = {
   de: {
     nombre: 'Der Code', laboratorio: '‹ Labor',
     lema: 'Durchsichtige Karten verstecken einen Code. Keine zeigt ihn allein.',
-    como: ['Finde den 4-stelligen Code und tippe ihn ein.', 'Tippe auf eine Karte, um sie auf die Basis zu legen. ↻ dreht sie, ⇋ spiegelt sie.', 'Liegen alle richtig herum, ergeben die Striche die Ziffern, ohne sich zu überlagern.'],
+    como: ['Finde den 5-stelligen Code und tippe ihn ein.', 'Tippe auf eine Karte, um sie auf die Basis zu legen. ↻ dreht sie, ⇋ spiegelt sie.', 'Liegen alle richtig herum, ergeben die Striche die Ziffern, ohne sich zu überlagern.'],
     empezar: '🔐 Los geht’s', girar: '↻ Drehen', voltear: '⇋ Spiegeln', ok: 'OK',
     quitar: '✕ Entfernen', elige: 'Tippe unten auf eine Karte, um sie aufzulegen.', elegida: 'Karte {n}', mal: 'Das ist nicht der Code. 🔒',
     abierto: 'Offen!', resumen: 'In {tiempo}, mit {e} Fehlversuchen.', resumenSin: 'In {tiempo}, ohne Fehlversuch.', resumenUno: 'In {tiempo}, mit 1 Fehlversuch.',
@@ -69,13 +69,15 @@ const mmss = ms => { const t = Math.round((ms || 0) / 1000); return `${Math.floo
 /* ------------------------------------------------------------------ */
 /* Las cartas                                                          */
 /* ------------------------------------------------------------------ */
-// Base y cartas miden 300 × 140, con cuatro cifras de 50 × 90 simétricas al centro: así girar o
+// Base y cartas miden 300 × 140, con cinco cifras de 44 × 90 simétricas al centro: así girar o
 // voltear una carta deja cada trazo donde cae el de otra cifra (o el de la misma).
 const NS = 'http://www.w3.org/2000/svg';
 const svgEl = (tag, attrs = {}) => { const n = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v); return n; };
-const X0 = [20, 90, 160, 230], Y0 = 25;
+const ANCHO = 44, HUECO = 12;
+const X0 = Array.from({ length: CIFRAS_CODIGO }, (_, i) => (300 - (CIFRAS_CODIGO * ANCHO + (CIFRAS_CODIGO - 1) * HUECO)) / 2 + i * (ANCHO + HUECO)), Y0 = 25;
 const TRAZO = {
-  a: [6, 0, 44, 0], b: [50, 6, 50, 42], c: [50, 48, 50, 84], d: [6, 90, 44, 90], e: [0, 48, 0, 84], f: [0, 6, 0, 42], g: [6, 45, 44, 45],
+  a: [6, 0, ANCHO - 6, 0], b: [ANCHO, 6, ANCHO, 42], c: [ANCHO, 48, ANCHO, 84], d: [6, 90, ANCHO - 6, 90],
+  e: [0, 48, 0, 84], f: [0, 6, 0, 42], g: [6, 45, ANCHO - 6, 45],
 };
 /** Un color por carta, para seguirle la pista a sus trazos. */
 const COLORES = ['#ff6fa8', '#6ff3e8', '#ffd23f', '#9dff3a', '#ff9a4a', '#b18cff', '#5ab8ff', '#ff8f8f'];
@@ -84,6 +86,20 @@ const lineas = (segs, color) => segs.map(({ i, s }) => {
   return svgEl('line', { x1: X0[i] + x1, y1: Y0 + y1, x2: X0[i] + x2, y2: Y0 + y2, class: 'seg', stroke: color });
 });
 const lamina = clase => svgEl('svg', { viewBox: '-8 -8 316 156', class: clase, 'aria-hidden': 'true' });
+
+/* ------------------------------------------------------------------ */
+/* La onda espacial: cada carta flota y brilla a su manera              */
+/* ------------------------------------------------------------------ */
+const azar = (a, b) => (a + Math.random() * (b - a)).toFixed(2);
+/** El ritmo, la altura y el vaivén con que flota una carta, y cada cuánto la cruza el brillo. */
+const flotar = () => `--dur:${azar(3.2, 6.8)}s;--desde:-${azar(0, 6)}s;--alto:${azar(2, 5.5)}px;--giro:${azar(0.3, 1.4)}deg;--brillo:${azar(4.5, 11)}s;--brillo-desde:-${azar(0, 10)}s`;
+/** Al terminar cada pasada del brillo, la siguiente llega a otro ritmo: así nunca se repite igual. */
+function brillosAlAzar(raiz) {
+  raiz.addEventListener('animationiteration', e => {
+    if (e.animationName !== 'cl-tornasol' || !e.target.classList?.contains('carta')) return;
+    e.target.style.setProperty('--brillo', `${azar(4.5, 11)}s`);
+  });
+}
 
 /* ------------------------------------------------------------------ */
 /* La partida                                                          */
@@ -131,7 +147,7 @@ function jugar() {
   // Lo que se ve de cada carta, girado y volteado de verdad (la animación lo muestra)
   const vistaDe = clave.cartas.map(() => ({ rot: 0, sx: 1 }));
   const capas = clave.cartas.map((c, k) => {
-    const capa = svgEl('g', { class: 'capa', 'data-k': k, style: `--k:${k}` });
+    const capa = svgEl('g', { class: 'capa', 'data-k': k, style: `--k:${k};--latido:${azar(2.4, 4.6)}s;--latido-desde:-${azar(0, 4)}s` });
     capa.append(...lineas(c.trazos, COLORES[k]));
     base.append(capa);
     return capa;
@@ -158,7 +174,7 @@ function jugar() {
     const capa = svgEl('g', { class: 'capa' });
     capa.append(...lineas(c.trazos, COLORES[k]));
     mini.append(capa);
-    return el('button', { type: 'button', class: 'carta', 'data-k': k, style: `--color:${COLORES[k]};--k:${k}`, 'aria-label': fmt(T.elegida, { n: k + 1 }), onClick: () => tocar(k) },
+    return el('button', { type: 'button', class: 'carta', 'data-k': k, style: `--color:${COLORES[k]};--k:${k};${flotar()}`, 'aria-label': fmt(T.elegida, { n: k + 1 }), onClick: () => tocar(k) },
       mini, el('span', { class: 'num' }, String(k + 1)));
   });
   const titulo = el('p', { class: 'aviso-clave', id: 'aviso', 'aria-live': 'polite' }, T.elige);
@@ -214,10 +230,12 @@ function jugar() {
       setTimeout(() => { if (!titulo.isConnected) return; titulo.className = 'aviso-clave'; dibujar(); }, 2500);
     },
   });
+  const bandeja = el('div', { class: `bandeja n${clave.cartas.length}`, id: 'bandeja' }, ...miniaturas);
+  brillosAlAzar(bandeja);
   vista.replaceChildren(
     el('div', { class: 'tablero' }, el('div', { class: 'marco', id: 'marco' }, base)),
     titulo, controles,
-    el('div', { class: `bandeja n${clave.cartas.length}`, id: 'bandeja' }, ...miniaturas),
+    bandeja,
     pad);
   dibujar();
   pieComentario('juego');
