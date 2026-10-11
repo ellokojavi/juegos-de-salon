@@ -19,11 +19,13 @@
 .escena .cosa:active { transform: scale(0.92); }
 .escena .arrastrable { touch-action: none; user-select: none; cursor: grab; transition: none; }
 .animales { display: flex; align-items: flex-end; justify-content: center; gap: 4px; flex-wrap: nowrap; padding: 10px; }
-.animales .cosa { position: static; }
+.animales { --u: min(1px, (100vw - 130px) / 320); }
+.animales .cosa { position: static; min-width: 44px; min-height: 44px; padding: 2px; }
 .cuadrado-2x2 { width: 160px; height: 160px; display: grid; grid-template-columns: 1fr 1fr; border: 5px solid var(--cyan); }
 .cuadrado-2x2 span { border: 3px solid var(--cyan); }
 .opciones { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; }
 .opciones .btn { font-size: 1.05rem; }
+.opciones--lista { grid-template-columns: 1fr; }
 .narrador { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: center; padding: 10px 14px; border-radius: 16px;
   background: rgba(0,0,0,0.25); border: 2px solid transparent; font-weight: 800; min-height: 54px; }
 .narrador .cara { font-size: 1.9rem; }
