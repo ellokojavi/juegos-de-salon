@@ -178,17 +178,21 @@ con eso la pantalla entra también a las pruebas de idiomas. Para verlo en un ce
 
 ## Agentes y herramientas del dueño
 
-- **Usabilidad** (D-132): revisa cada PR y hace una ronda diaria a las 5:00 hora del Pacífico.
+- **Usabilidad** (D-132): revisa cada PR y hace su ronda cuando la lanza el agente de procesos (D-276).
   Los dilemas son issues de GitHub: `node tools/agents/dilemas.mjs listar | ver <n> | crear <archivo.md> | resolver <n> "decisión" | archivar <n> "motivo" | reabrir <n>`;
   lo resuelto se anota en `docs/USABILIDAD.md`.
-- **Documentación** (D-172): ronda diaria a las 3:54 hora del Pacífico, revisión de cada PR y a
+- **Documentación** (D-172): ronda cuando la lanza el agente de procesos (D-276), revisión de cada PR y a
   pedido ("documenta lo último"). Nunca fusiona ni toca código, salvo los mensajes con que la app
   se presenta (D-271, U-35). Su memoria es
   `docs/documentacion.json`: `node tools/agents/documentar.mjs revisar [--desde <commit>] | anotar --hasta <commit> [--pr <url>] [--pendiente "…"] | historial`;
   `revisar` termina mostrando esos mensajes (compartir la app, el video y la bajada de la tarjeta
   del link) para leerlos contra lo que entró, y lo principal que nombran está en `LO_PRINCIPAL`
   (`public/assets/js/compartir.js`).
-- **Procesos** (D-273, D-275): ronda diaria a las 4:30 hora del Pacífico. Atiende el feedback 🐞,
+- **Procesos** (D-273, D-275, D-276): **el jefe de los agentes.** Ronda diaria a las 4:30 hora del
+  Pacífico en el Mac mini del dueño (tarea programada de la app, no en la nube): lanza a los agentes
+  de documentación y de usabilidad cuando hay algo que revisar (`procesos.mjs revisar` dice a quién)
+  y revisa lo que entregan. Los encargos del dueño que ejecuta otro agente ("revisa la frescura del
+  README") se le piden a él: decide quién, lo lanza, comprueba y responde. Atiende el feedback 🐞,
   que `.github/workflows/feedback.yml` sube cada hora como issues `feedback` (`tools/agents/feedback.mjs`,
   sin el nombre del jugador). Cierra lo que quedó abierto y
   convierte un error que se repite en un mecanismo (un test antes que una instrucción). Lo que
