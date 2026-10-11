@@ -188,7 +188,7 @@ modo que el juego piensa tener.
 
 - Un error se muestra con una señal inconfundible (color, sacudida, sonido propio) y se queda en pantalla hasta que el jugador toca; nunca se cierra solo ni lo pisa la jugada de otro.
 - Esa señal es **para quien se equivocó**. A los demás el mismo hecho les llega como noticia, en tercera persona y sin el fondo rojo: “¡Cata se equivocó!”, no “¡Te equivocaste!” (D-36).
-- Va acompañado de una explicación corta y concreta de qué estuvo mal, con los datos del juego (por ejemplo, entre qué hitos iba la carta y entre cuáles se puso).
+- Va acompañado de una explicación corta y concreta de qué estuvo mal, con los datos del juego (por ejemplo, entre qué hitos iba la carta y entre cuáles se puso). **Excepción, cuando la respuesta ya se ve** (D-277): en Línea de Tiempo, ⏳ Línea Relámpago y 📅 ¿En qué año? el año de la carta, grande, ya dice qué estuvo mal; en vez de repetirlo, el veredicto cuenta el **dato** de la carta, algo que el jugador se lleva. Si el juego corre contra el reloj, el reloj se pausa mientras se lee, con tope. Una carta sin dato vuelve a decir entre qué hitos iba.
 - Un acierto o la jugada de otro puede cerrarse solo tras un par de segundos, si después no viene un pase de celular; un toque lo cierra antes. Si viene un pase, manda C-9 (D-213).
 - El temporizador que cierra un aviso solo puede cerrar ese aviso, no uno más nuevo.
 - **Excepción, cuando errar es la jugada normal** (D-56): en El Ahorcado, una letra que no está no abre un aviso que haya que cerrar en los modos donde el celular no cambia de mano; se señala por cuatro canales (color, sacudida, sonido y el dibujo que avanza) y el juego sigue. El veredicto de la ronda sí se queda hasta que el jugador toque.
