@@ -229,4 +229,4 @@ headless no los muestra. Deja capturas de cada hoja.
 `node tools/e2e/cup/asiento.mjs [salida]` le quita el asiento al celular de la demo `player` (como
 cuando pierde su sesión de Firebase o el admin da un PIN nuevo), entra por el aviso del día y toca
 Empezar: revisa que no diga que el día se cerró, que pida el PIN con el nombre ya elegido y que,
-con el PIN, el día empiece (D-284).
+con el PIN, el día empiece (D-285).

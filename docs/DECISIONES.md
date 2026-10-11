@@ -51,7 +51,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 
 | Tema | Regla de hoy (canon) | Decisiones vigentes que la explican |
 |---|---|---|
-| Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281 |
+| Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284 |
 | Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184 |
 | Mazos de cartas con fecha | `docs/games/timeline.md` | D-37, D-277, D-278 |
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270 |
@@ -69,7 +69,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216 |
-| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-284 |
+| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285 |
 | Agentes (usabilidad, documentación, procesos) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249 |
 | Marketing | `marketing/README.md` | D-178 |
@@ -4976,7 +4976,7 @@ uno que se abandona pasa a La Bodega moviendo su `<section class="seccion">`. Lo
 `labs: true` en `games.js`. Lo verifican `tools/e2e/case/lab.mjs` y `tools/e2e/code/lab.mjs`.
 
 ## D-281 · El laboratorio tiene puerta: sin la llave se va al menú, y nada de él se indexa
-**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** corrige D-101
+**Fecha:** 2026-10-11 · **Estado:** corregida por D-284 · **Relación:** corrige D-101
 **Decisión:** Cada página de `/labs/` carga primero `public/assets/js/labs-puerta.js`, un script
 clásico que esconde la página hasta comprobar la llave. La llave llega una vez en el link que
 manda el dueño (`/labs/?key=…`), se guarda en el celular y se borra del link; sin ella, o con una
@@ -5049,7 +5049,24 @@ El dueño aprobó la opción A del dilema.
 guardar Deshacer como jugada en la lista (agrandaba lo guardado sin necesidad: no hay nada que
 reproducir ni verificar fuera del celular); sumarlo a Tango en el mismo PR (queda para después).
 
-## D-284 · La Copa: un celular que perdió su asiento vuelve a entrar con su PIN
+## D-284 · Cada persona tiene su propia llave del laboratorio
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** corrige D-281
+**Decisión:** La puerta del laboratorio acepta una lista de llaves, una por persona, en vez de una
+sola: `HUELLAS` en `labs-puerta.js`, con una línea `'etiqueta': 'huella'` por cada una. Se dan y se
+quitan con `node tools/agents/llave-labs.mjs nueva <etiqueta> | quitar <etiqueta> | listar`: `nueva`
+crea una llave al azar, agrega su huella SHA-256 y muestra el link (`/labs/?key=…`) una sola vez;
+la llave no se guarda en ningún lado. La primera, además de la del dueño, es la de `MI`.
+**Por qué:** pedido del dueño, para darle acceso a otra persona con una URL única que ella guarde.
+Con una llave compartida, sacar a una persona obligaba a cambiarles la llave a todas; con una por
+persona se borra su línea y nadie más se entera. Una llave quitada deja de abrir aunque estuviera
+guardada en el celular, porque la puerta la compara de nuevo en cada visita.
+**Consecuencias:** cada llave nueva o quitada es un cambio a `labs-puerta.js` que entra con un PR, y
+rige cuando el sitio se publica. La etiqueta es pública (el repo lo es): iniciales o un apodo, no un
+nombre completo. Una llave perdida no se recupera: se quita y se da otra.
+`tools/agents/llave-labs.test.mjs` prueba la herramienta, y `labs-puerta.test.mjs` que cada persona
+entre con la suya y que una quitada ya no abra.
+
+## D-285 · La Copa: un celular que perdió su asiento vuelve a entrar con su PIN
 **Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** completa D-96 (qué pasa cuando un celular pierde su asiento)
 **Contexto:** el dueño entró a su copa desde el aviso del día, con el día abierto, y al tocar
 Empezar leyó "El tiempo para jugar este día ya se terminó.". Las reglas de Firebase niegan igual

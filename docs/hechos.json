@@ -1,5 +1,5 @@
 {
-  "version": "0.156.2",
+  "version": "0.156.3",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -966,6 +966,7 @@
     "tools/agents/documentar.test.mjs",
     "tools/agents/feedback.test.mjs",
     "tools/agents/limpiar-copias.test.mjs",
+    "tools/agents/llave-labs.test.mjs",
     "tools/agents/marketing.test.mjs",
     "tools/agents/procesos.test.mjs",
     "tools/e2e/cambios.test.mjs",
