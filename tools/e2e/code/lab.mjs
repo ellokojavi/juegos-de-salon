@@ -1,6 +1,6 @@
 // La clave (prototipo del laboratorio, D-270) de punta a punta, con sus 4 cartas: el laboratorio
 // la ofrece; tocar una carta la pone sobre la base y la elige; ↻ y ⇋ la orientan y ✕ la saca; un
-// trazo encima de otro se marca en rojo y se dice; con todas derechas se lee el código (y no
+// trazo encima de otro se ve rayado con los colores que chocan (sin texto); con todas derechas se lee el código (y no
 // antes) sin choques; uno equivocado cuenta y el bueno
 // abre; el link al comentario va al final de cada vista y el resultado termina con el formulario.
 // A 320 px y en los cuatro idiomas, sin desbordar. Imprime ✗ si algo falla.
@@ -44,7 +44,7 @@ for (const lang of ['es', 'en', 'pt', 'de']) {
   if (choque) {
     const orientar = async g => { for (let k = 0; k < n; k++) { const ahora = await ev(`window.__clave.P.g[${k}]`); const falta = await ev(`(async()=>{const m=await import('/labs/code/engine.js');return m.componer('${ahora}','${g[k]}')})()`); await clic(`.carta[data-k="${k}"]`); for (const sel of PASOS[falta]) { await clic(sel); await sleep(30); } } };
     await orientar(choque.g); await sleep(200);
-    ok(await ev(`document.querySelectorAll('#choques line.choque').length`) === choque.n && /⚠️/.test(await ev(`document.getElementById('aviso').textContent`)), `${lang}: ${choque.n} trazo(s) encima de otros, en rojo y avisado`);
+    ok(await ev(`document.querySelectorAll('#choques line.choque').length`) === choque.n && await ev(`[...document.querySelectorAll('#choques line.choque')].every(l => /^url\\(#rayas-/.test(l.getAttribute('stroke')))`) && !/⚠️/.test(await ev(`document.getElementById('aviso').textContent`)), `${lang}: ${choque.n} trazo(s) encima de otros, rayados con los colores que chocan y sin texto`);
     if (lang === 'es') await b.shot('1-choque');
   }
   // Orientar cada una a la buena

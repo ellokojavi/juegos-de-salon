@@ -740,7 +740,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   connections/ · queens/ …    The Cup's games played on their own, one page each (generated from cup/suelto/)
   labs/                       The lab: games being tested before they reach the menu (not linked, not indexed); today El caso (labs/case/, D-267) and The Code (labs/code/: 4 see-through cards that, laid on a base and each turned the right way, show a 4-digit code, D-270); each ends with a "What did you think?" form for the friends testing them (D-265, D-268)
     case/                     The Case: a mystery in the style of Clues by Sam, the full game in all four languages; today's case is the same for everyone (D-256, D-267)
-    code/                     The Code: a base and 4 see-through cards; put each one on, turn (↻) and flip (⇋) it until the strokes form a 4-digit code with no stroke on top of another (marked in red), typed on a keypad; all four languages, its texts in game.js (D-270)
+    code/                     The Code: a base and 4 see-through cards; put each one on, turn (↻) and flip (⇋) it until the strokes form a 4-digit code with no stroke on top of another (an overlap shows striped), typed on a keypad; all four languages, its texts in game.js (D-270)
   records/                    Leaderboards: the All-Rounder, every game's table and The Cup's medal table (D-212)
   today/                      One a Day: today's game, your streak, a calendar and how you do in each game (D-230)
   panel/                      Private owner dashboard: now, The Cup, games, traffic, audience and health, with a page per cup, game and room (Google sign-in; see docs/PANEL.md)

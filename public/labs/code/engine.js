@@ -113,15 +113,16 @@ export function juntos(clave, g, puestas = clave.cartas.map(() => true)) {
 }
 
 /**
- * Los trazos que quedan uno encima de otro con esas cartas puestas y orientadas: `{ i, s }` de cada
- * choque (la base cuenta como una capa más). Con la clave resuelta no hay ninguno.
+ * Los trazos que quedan uno encima de otro con esas cartas puestas y orientadas: `{ i, s, capas }`
+ * de cada choque, con las capas que lo pisan ('base' o el número de la carta). Con la clave
+ * resuelta no hay ninguno.
  */
 export function choques(clave, g, puestas = clave.cartas.map(() => true)) {
   const vistos = new Map();
-  const anotar = ({ i, s }) => { const k = `${i}${s}`; vistos.set(k, (vistos.get(k) || 0) + 1); };
-  clave.base.forEach(anotar);
-  clave.cartas.forEach((c, k) => { if (puestas[k]) c.trazos.forEach(x => anotar(mover(g[k], x))); });
-  return [...vistos].filter(([, n]) => n > 1).map(([k]) => ({ i: Number(k[0]), s: k[1] }));
+  const anotar = (capa, { i, s }) => { const k = `${i}${s}`; vistos.set(k, [...(vistos.get(k) || []), capa]); };
+  clave.base.forEach(x => anotar('base', x));
+  clave.cartas.forEach((c, k) => { if (puestas[k]) c.trazos.forEach(x => anotar(k, mover(g[k], x))); });
+  return [...vistos].filter(([, capas]) => capas.length > 1).map(([k, capas]) => ({ i: Number(k[0]), s: k[1], capas }));
 }
 
 /** La cifra que dibujan esos segmentos, o null si no es ninguna. */

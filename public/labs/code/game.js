@@ -24,9 +24,9 @@ const TEXTOS = {
   es: {
     nombre: 'La clave', laboratorio: '‹ Laboratorio',
     lema: 'Unas cartas transparentes esconden un código. Ninguna lo dice sola.',
-    como: ['Descubre el código de 4 cifras y escríbelo.', 'Toca una carta para ponerla sobre la base. ↻ la gira y ⇋ la voltea.', 'Con todas puestas y derechas, los trazos forman las cifras sin pisarse: un trazo en rojo está encima de otro.'],
+    como: ['Descubre el código de 4 cifras y escríbelo.', 'Toca una carta para ponerla sobre la base. ↻ la gira y ⇋ la voltea.', 'Con todas puestas y derechas, los trazos forman las cifras sin pisarse.'],
     empezar: '🔐 Empezar', girar: '↻ Girar', voltear: '⇋ Voltear', ok: 'OK',
-    quitar: '✕ Quitar', choque: '⚠️ Hay {n} trazos encima de otros: así no es.', choqueUno: '⚠️ Hay un trazo encima de otro: así no es.', elige: 'Toca una carta de abajo para ponerla.', elegida: 'Carta {n}', mal: 'Ese no es el código. 🔒',
+    quitar: '✕ Quitar', elige: 'Toca una carta de abajo para ponerla.', elegida: 'Carta {n}', mal: 'Ese no es el código. 🔒',
     abierto: '¡Abierto!', resumen: 'En {tiempo}, con {e} intentos fallidos.', resumenSin: 'En {tiempo}, sin intentos fallidos.', resumenUno: 'En {tiempo}, con 1 intento fallido.',
     otra: '🔁 Otra clave', comentarAbrir: '💬 Dejar un comentario',
     comentario: { titulo: '¿Qué te pareció?', lead: 'Cuéntanos si se entendió, si fue fácil o difícil, y qué otras figuras te gustaría combinar.', ph: 'Por ejemplo: no me di cuenta de que se podía voltear; me gustaría con tres figuras.', nombre: 'Tu nombre (opcional)', enviar: 'Enviar comentario', enviando: 'Enviando…', vacio: 'Escribe algo primero.', gracias: '¡Gracias! 🙌 Tu comentario llegó.', guardado: 'Ahora no hay internet: tu comentario quedó en el celular y se envía solo después.', error: 'No se pudo enviar. Prueba de nuevo en un rato.', contexto: 'Lo que se envía junto', cancelar: 'Cancelar', cerrar: 'Cerrar' },
@@ -34,9 +34,9 @@ const TEXTOS = {
   en: {
     nombre: 'The Code', laboratorio: '‹ Lab',
     lema: 'Some see-through cards hide a code. None shows it alone.',
-    como: ['Find the 4-digit code and type it in.', 'Tap a card to put it on the base. ↻ turns it and ⇋ flips it.', 'With all of them on and the right way round, the strokes form the digits without overlapping: a red stroke is on top of another.'],
+    como: ['Find the 4-digit code and type it in.', 'Tap a card to put it on the base. ↻ turns it and ⇋ flips it.', 'With all of them on and the right way round, the strokes form the digits without overlapping.'],
     empezar: '🔐 Start', girar: '↻ Turn', voltear: '⇋ Flip', ok: 'OK',
-    quitar: '✕ Remove', choque: '⚠️ {n} strokes are on top of others: that’s not it.', choqueUno: '⚠️ A stroke is on top of another: that’s not it.', elige: 'Tap a card below to put it on.', elegida: 'Card {n}', mal: 'That’s not the code. 🔒',
+    quitar: '✕ Remove', elige: 'Tap a card below to put it on.', elegida: 'Card {n}', mal: 'That’s not the code. 🔒',
     abierto: 'Unlocked!', resumen: 'In {tiempo}, with {e} wrong tries.', resumenSin: 'In {tiempo}, with no wrong tries.', resumenUno: 'In {tiempo}, with 1 wrong try.',
     otra: '🔁 Another code', comentarAbrir: '💬 Leave a comment',
     comentario: { titulo: 'What did you think?', lead: 'Tell us if it made sense, if it was easy or hard, and what other shapes you’d like to combine.', ph: 'For example: I didn’t realize I could flip it; I’d like it with three shapes.', nombre: 'Your name (optional)', enviar: 'Send comment', enviando: 'Sending…', vacio: 'Write something first.', gracias: 'Thanks! 🙌 Your comment arrived.', guardado: 'No internet right now: your comment is saved on your phone and will be sent later.', error: 'Couldn’t send it. Try again in a bit.', contexto: 'What gets sent with it', cancelar: 'Cancel', cerrar: 'Close' },
@@ -44,9 +44,9 @@ const TEXTOS = {
   pt: {
     nombre: 'A senha', laboratorio: '‹ Laboratório',
     lema: 'Cartas transparentes escondem uma senha. Nenhuma mostra sozinha.',
-    como: ['Descubra a senha de 4 dígitos e digite.', 'Toque numa carta para colocá-la sobre a base. ↻ gira e ⇋ vira.', 'Com todas colocadas e do jeito certo, os traços formam os dígitos sem se sobrepor: um traço vermelho está em cima de outro.'],
+    como: ['Descubra a senha de 4 dígitos e digite.', 'Toque numa carta para colocá-la sobre a base. ↻ gira e ⇋ vira.', 'Com todas colocadas e do jeito certo, os traços formam os dígitos sem se sobrepor.'],
     empezar: '🔐 Começar', girar: '↻ Girar', voltear: '⇋ Virar', ok: 'OK',
-    quitar: '✕ Tirar', choque: '⚠️ Há {n} traços em cima de outros: assim não é.', choqueUno: '⚠️ Há um traço em cima de outro: assim não é.', elige: 'Toque numa carta abaixo para colocá-la.', elegida: 'Carta {n}', mal: 'Essa não é a senha. 🔒',
+    quitar: '✕ Tirar', elige: 'Toque numa carta abaixo para colocá-la.', elegida: 'Carta {n}', mal: 'Essa não é a senha. 🔒',
     abierto: 'Aberto!', resumen: 'Em {tiempo}, com {e} tentativas erradas.', resumenSin: 'Em {tiempo}, sem tentativas erradas.', resumenUno: 'Em {tiempo}, com 1 tentativa errada.',
     otra: '🔁 Outra senha', comentarAbrir: '💬 Deixar um comentário',
     comentario: { titulo: 'O que você achou?', lead: 'Conte se deu para entender, se foi fácil ou difícil, e que outras figuras você gostaria de combinar.', ph: 'Por exemplo: não percebi que dava para virar; queria com três figuras.', nombre: 'Seu nome (opcional)', enviar: 'Enviar comentário', enviando: 'Enviando…', vacio: 'Escreva algo primeiro.', gracias: 'Obrigado! 🙌 Seu comentário chegou.', guardado: 'Sem internet agora: seu comentário ficou no celular e será enviado depois.', error: 'Não deu para enviar. Tente de novo daqui a pouco.', contexto: 'O que vai junto', cancelar: 'Cancelar', cerrar: 'Fechar' },
@@ -54,9 +54,9 @@ const TEXTOS = {
   de: {
     nombre: 'Der Code', laboratorio: '‹ Labor',
     lema: 'Durchsichtige Karten verstecken einen Code. Keine zeigt ihn allein.',
-    como: ['Finde den 4-stelligen Code und tippe ihn ein.', 'Tippe auf eine Karte, um sie auf die Basis zu legen. ↻ dreht sie, ⇋ spiegelt sie.', 'Liegen alle richtig herum, ergeben die Striche die Ziffern, ohne sich zu überlagern: Ein roter Strich liegt auf einem anderen.'],
+    como: ['Finde den 4-stelligen Code und tippe ihn ein.', 'Tippe auf eine Karte, um sie auf die Basis zu legen. ↻ dreht sie, ⇋ spiegelt sie.', 'Liegen alle richtig herum, ergeben die Striche die Ziffern, ohne sich zu überlagern.'],
     empezar: '🔐 Los geht’s', girar: '↻ Drehen', voltear: '⇋ Spiegeln', ok: 'OK',
-    quitar: '✕ Entfernen', choque: '⚠️ {n} Striche liegen übereinander: So ist es nicht.', choqueUno: '⚠️ Ein Strich liegt auf einem anderen: So ist es nicht.', elige: 'Tippe unten auf eine Karte, um sie aufzulegen.', elegida: 'Karte {n}', mal: 'Das ist nicht der Code. 🔒',
+    quitar: '✕ Entfernen', elige: 'Tippe unten auf eine Karte, um sie aufzulegen.', elegida: 'Karte {n}', mal: 'Das ist nicht der Code. 🔒',
     abierto: 'Offen!', resumen: 'In {tiempo}, mit {e} Fehlversuchen.', resumenSin: 'In {tiempo}, ohne Fehlversuch.', resumenUno: 'In {tiempo}, mit 1 Fehlversuch.',
     otra: '🔁 Neuer Code', comentarAbrir: '💬 Kommentar schreiben',
     comentario: { titulo: 'Wie fandest du es?', lead: 'Erzähl uns, ob es verständlich war, ob es leicht oder schwer war und welche Formen du gern kombinieren würdest.', ph: 'Zum Beispiel: Ich habe nicht gemerkt, dass man spiegeln kann; ich hätte gern drei Formen.', nombre: 'Dein Name (optional)', enviar: 'Kommentar senden', enviando: 'Wird gesendet …', vacio: 'Schreib erst etwas rein.', gracias: 'Danke! 🙌 Dein Kommentar ist angekommen.', guardado: 'Gerade kein Netz: Dein Kommentar ist auf dem Handy gespeichert und wird später automatisch gesendet.', error: 'Das hat nicht geklappt. Versuch es gleich nochmal.', contexto: 'Das wird mitgeschickt', cancelar: 'Abbrechen', cerrar: 'Schließen' },
@@ -138,7 +138,20 @@ function jugar() {
   });
   // Encima de todo, los trazos que quedaron uno sobre otro: así no vale (cada trazo va en una sola carta)
   const capaChoques = svgEl('g', { class: 'choques', id: 'choques' });
+  const defs = svgEl('defs');
+  base.prepend(defs);
   base.append(capaChoques);
+  /** Un rayado diagonal fino con los colores de esas capas, una vez por combinación. */
+  const rayado = capas => {
+    const colores = capas.map(c => (c === 'base' ? '#ffffff' : COLORES[c]));
+    const id = `rayas-${capas.join('-')}`;
+    if (!defs.querySelector(`#${id}`)) {
+      const ancho = 5, pat = svgEl('pattern', { id, patternUnits: 'userSpaceOnUse', width: ancho * colores.length, height: ancho * colores.length, patternTransform: 'rotate(45)' });
+      colores.forEach((c, k) => pat.append(svgEl('rect', { x: k * ancho, y: 0, width: ancho, height: ancho * colores.length, fill: c })));
+      defs.append(pat);
+    }
+    return id;
+  };
   const miniaturas = clave.cartas.map((c, k) => {
     const mini = lamina('mini');
     mini.append(svgEl('rect', { x: 0, y: 0, width: 300, height: 140, rx: 12, class: 'borde' }));
@@ -176,16 +189,17 @@ function jugar() {
       miniaturas[k].setAttribute('aria-pressed', String(P.elegida === k));
     });
     for (const b of controles.querySelectorAll('button')) b.disabled = P.elegida === null;
-    // Los choques se marcan en rojo y se dicen: no hay forma de que la clave tenga uno
+    // Un trazo pisado se ve rayado con los colores de las capas que chocan: así no es, y se nota
+    // sin decirlo (cada trazo del código va en una sola capa)
     const ch = choques(clave, P.g, P.puestas);
-    // Debajo, una franja oscura que tapa los colores; encima, una fila de puntos rojos que laten
-    capaChoques.replaceChildren(
-      ...lineas(ch, 'currentColor').map(l => { l.setAttribute('class', 'seg choque-fondo'); return l; }),
-      ...lineas(ch, 'currentColor').map(l => { l.setAttribute('class', 'seg choque'); return l; }));
+    capaChoques.replaceChildren(...ch.flatMap(x => {
+      const [fondo] = lineas([x], '#150726'), [rayas] = lineas([x], `url(#${rayado(x.capas)})`);
+      fondo.setAttribute('class', 'seg choque-fondo');
+      rayas.setAttribute('class', 'seg choque');
+      return [fondo, rayas];
+    }));
     P.choques = ch.length;
-    if (titulo.classList.contains('mal')) return;
-    titulo.classList.toggle('aviso-choque', ch.length > 0);
-    titulo.textContent = ch.length ? fmt(ch.length === 1 ? T.choqueUno : T.choque, { n: ch.length }) : P.elegida === null ? T.elige : fmt(T.elegida, { n: P.elegida + 1 });
+    if (!titulo.classList.contains('mal')) titulo.textContent = P.elegida === null ? T.elige : fmt(T.elegida, { n: P.elegida + 1 });
   };
 
   const pad = teclado({
