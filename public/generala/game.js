@@ -475,7 +475,8 @@ function renderResultSolo(v, already) {
       el('button', { class: 'btn btn--ghost btn--sm', onClick: () => { store.clear(); location.href = location.pathname; } }, T.changeMode),
       el('a', { class: 'btn btn--ghost btn--sm', href: '../' }, T.backMenu)),
   );
-  if (!already && S.tablaFin) acciones.after(S.tablaFin);
+  // La tabla, después de "¿quieres que cuente?" si está: los dos bajo los botones, en el orden de los otros juegos (D-274)
+  if (!already && S.tablaFin) ($('#screen-result .rk-contar-solo') || acciones).after(S.tablaFin);
   if (!S.shownWin) { S.shownWin = true; SFX.win(); if (S.recordNuevo) confetti({ count: 220, duration: 3500 }); }
 }
 

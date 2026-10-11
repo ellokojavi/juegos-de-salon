@@ -100,6 +100,9 @@ details.panel.rk-invita--destacada:not([open]) summary::after { content: none; }
 .rk-contar .rk-contar-titulo::before { content: '🏅 '; }
 .rk-contar .rk-hint { margin: 0 0 10px; }
 .rk-contar .rk-jugador { margin: 0; }
+/* Adentro, el formulario de siempre sin su caja ni su título: la pregunta y la bajada de arriba ya lo dicen (U-8) */
+.rk-contar .rk-invita { background: none; border: 0; box-shadow: none; padding: 0; margin: 0; backdrop-filter: none; -webkit-backdrop-filter: none; }
+.rk-contar .rk-invita > summary, .rk-contar .rk-invita > .rk-hint { display: none; }
 @keyframes rk-contar-entra { from { opacity: 0; transform: translateY(14px) scale(0.97); } to { opacity: 1; transform: none; } }
 @keyframes rk-contar-brilla {
   0%, 100% { box-shadow: 0 0 0 4px rgba(255, 210, 63, 0.10), 0 10px 26px rgba(0, 0, 0, 0.35), 0 0 22px rgba(255, 210, 63, 0.18); }
