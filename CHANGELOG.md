@@ -1,7 +1,7 @@
 # Changelog
 
 ## 0.146.0 — 2026-10-10
-- **🔐 La clave, en el laboratorio** (D-270): cuatro cartas transparentes esconden un código. Hay que
+- **🔐 La clave, en el laboratorio** (D-270): cuatro cartas transparentes esconden un código de 5 cifras. Hay que
   ponerlas sobre la base y girar y voltear cada una hasta que los trazos formen las cifras, sin trazos
   encima de otros (se ven rayados). En `juegosdesalon.cl/labs/code/`.
 

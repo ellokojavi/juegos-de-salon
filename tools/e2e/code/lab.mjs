@@ -58,7 +58,7 @@ for (const lang of ['es', 'en', 'pt', 'de']) {
   ok(await sinDesborde() && await ev(`!!document.querySelector('#pie #btn-comentario')`), `${lang}: el juego no desborda y termina con el link al comentario`);
   if (lang === 'es') await b.shot('2-derechas');
   // Un código equivocado cuenta; el bueno abre
-  await teclear(codigo === '0000' ? '1111' : '0000');
+  await teclear(codigo === '00000' ? '11111' : '00000');
   ok(await ev(`window.__clave.P.errores`) === 1, `${lang}: un código equivocado cuenta como intento fallido`);
   await teclear(codigo);
   const fin = await ev(`JSON.stringify({ c: document.getElementById('codigo')?.textContent, r: document.getElementById('resumen')?.textContent, f: document.querySelector('.resultado')?.lastElementChild?.classList.contains('comentario'), pie: document.getElementById('pie').children.length, s: !!document.getElementById('btn-compartir-resultado') })`).then(JSON.parse);

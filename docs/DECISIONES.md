@@ -4698,7 +4698,7 @@ no esté en la cuenta, que abra y cierre la capa, y que el formulario sea lo úl
 
 ## D-270 · La clave: cartas transparentes que juntas dicen un código
 **Fecha:** 2026-10-10 · **Estado:** vigente · **Relación:** usa D-102 (el teclado compartido) y D-268 (el comentario); excepción a C-3 como D-256
-**Decisión:** `/labs/code/` es un prototipo en que un código de 4 cifras de siete segmentos se
+**Decisión:** `/labs/code/` es un prototipo en que un código de 5 cifras de siete segmentos se
 reparte entre una base fija y 4 cartas transparentes, cada una girada o volteada al azar. Se
 toca una carta para ponerla sobre la base y elegirla, y con ↻ (media vuelta) y ⇋ (de lado) se
 orienta; con todas derechas los trazos forman el código, que se escribe en el teclado de Toque y
@@ -4715,4 +4715,5 @@ tocando ↻ y ⇋ a ciegas hasta que brillara (dilema #296). Después sacó el m
 no es una cifra), el brillo al calzar y la esquina cortada (regalan la orientación), y arrastrar cada
 carta (con 8, tocar es más rápido y cabe en el celular).
 **Consecuencias:** `engine.test.mjs` prueba el grupo de orientaciones y la lectura única;
-`tools/e2e/code/lab.mjs`, el juego entero con los choques. Sin publicar hasta que el dueño lo apruebe.
+`tools/e2e/code/lab.mjs`, el juego entero con los choques. Después pidió una cifra más (5) y que las
+cartas flotaran y brillaran más al azar. Sin publicar hasta que el dueño lo apruebe.

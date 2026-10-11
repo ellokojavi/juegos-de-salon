@@ -1,8 +1,8 @@
 # 🔐 La clave (prototipo del laboratorio)
 
-Un código de 4 cifras repartido entre una **base fija** y **4 cartas transparentes**. Cada carta
+Un código de 5 cifras repartido entre una **base fija** y **4 cartas transparentes**. Cada carta
 tiene unos pocos trazos de siete segmentos y aparece girada o volteada al azar. Hay que ponerlas
-todas sobre la base y orientar cada una hasta que los trazos formen las cuatro cifras, y escribir el
+todas sobre la base y orientar cada una hasta que los trazos formen las cinco cifras, y escribir el
 código en el teclado (D-270). Como las tarjetas transparentes de los juegos de escape.
 
 ## Resumen
@@ -29,7 +29,7 @@ código en el teclado (D-270). Como las tarjetas transparentes de los juegos de 
   ahí, sin texto ni rojo (pedido del dueño: "se ve visualmente que así no es"). Dice que algo está
   mal y entre qué cartas, no cuál hay que mover.
 - **Una sola lectura:** el motor arma la clave de modo que, con todas las cartas puestas, la única
-  combinación de orientaciones sin choques que forma cuatro cifras es la del código (lo revisa con
+  combinación de orientaciones sin choques que forma cinco cifras es la del código (lo revisa con
   las 256 combinaciones).
 - **El código:** el teclado de Toque y Fama (`teclado.js`). Uno equivocado cuenta como intento
   fallido; el bueno muestra "🔓 ¡Abierto!", el tiempo y los intentos, compartir,
@@ -40,9 +40,10 @@ código en el teclado (D-270). Como las tarjetas transparentes de los juegos de 
 
 Animaciones pasivas, que no dicen nada del juego (pedido del dueño, "una onda más espacial"):
 detrás de la base un cielo de estrellas que deriva despacio y una nebulosa violeta y celeste que
-respira; los trazos puestos laten como luces, cada carta a su ritmo, y los de la base titilan apenas;
-las cartas de la bandeja flotan en gravedad cero, cada una con su desfase, y un brillo tornasol las
-cruza de vez en cuando. Todo en `style.css`; con movimiento reducido, quietas.
+respira; los trazos puestos laten como luces, cada carta a un ritmo al azar, y los de la base titilan
+apenas; las cartas de la bandeja flotan en gravedad cero, cada una con su ritmo, altura y vaivén al
+azar, y un brillo tornasol las cruza a intervalos que cambian en cada pasada (`brillosAlAzar`), así
+que nunca se repite igual. Todo en `style.css`; con movimiento reducido, quietas.
 
 ## Archivos
 

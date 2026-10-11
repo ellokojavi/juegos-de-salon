@@ -65,26 +65,27 @@
 @keyframes cl-nebulosa { from { transform: translate(-12px, 6px) scale(1); opacity: 0.8; } to { transform: translate(12px, -6px) scale(1.08); opacity: 1; } }
 
 /* Los trazos puestos laten como luces, cada carta a su ritmo; los de la base titilan apenas */
-.marco .capa.puesta .seg { animation: cl-luz 3.2s ease-in-out infinite alternate; animation-delay: calc(var(--k, 0) * -0.8s); }
+.marco .capa.puesta .seg { animation: cl-luz var(--latido, 3.2s) ease-in-out infinite alternate; animation-delay: var(--latido-desde, 0s); }
 @keyframes cl-luz { from { filter: drop-shadow(0 0 1px rgba(255,255,255,0.25)); } to { filter: drop-shadow(0 0 5px rgba(255,255,255,0.55)); } }
 .marco svg > .seg { animation: cl-titila 4.5s ease-in-out infinite alternate; }
 @keyframes cl-titila { from { opacity: 0.8; } to { opacity: 1; } }
 
 /* Las cartas flotan en gravedad cero, cada una con su desfase, y un brillo tornasol las cruza */
-.carta { animation: cl-flota 4.6s ease-in-out infinite; animation-delay: calc(var(--k, 0) * -1.15s); }
+.carta { animation: cl-flota var(--dur, 4.6s) ease-in-out infinite; animation-delay: var(--desde, 0s); }
 @keyframes cl-flota {
-  0%, 100% { transform: translateY(0) rotate(-0.6deg); }
-  50% { transform: translateY(-3px) rotate(0.6deg); }
+  0%, 100% { transform: translateY(0) rotate(calc(var(--giro, 0.6deg) * -1)); }
+  35% { transform: translateY(calc(var(--alto, 3px) * -1)) rotate(var(--giro, 0.6deg)); }
+  70% { transform: translateY(calc(var(--alto, 3px) * -0.4)) rotate(calc(var(--giro, 0.6deg) * 0.3)); }
 }
 .carta::after {
   content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen;
   background: linear-gradient(105deg, transparent 38%, rgba(180, 220, 255, 0.30) 48%, rgba(255, 180, 240, 0.20) 53%, transparent 62%) no-repeat;
   background-size: 300% 100%; background-position: 100% 0;
-  animation: cl-tornasol 6s ease-in-out infinite; animation-delay: calc(var(--k, 0) * 1.3s);
+  animation: cl-tornasol var(--brillo, 6s) ease-in-out infinite; animation-delay: var(--brillo-desde, 0s);
 }
 @keyframes cl-tornasol { 0%, 55% { background-position: 100% 0; } 85%, 100% { background-position: 0% 0; } }
 .carta:active { animation-play-state: paused; }
-.carta.elegida { animation-duration: 2.4s; }
+
 
 @media (prefers-reduced-motion: reduce) {
   .tablero::before, .tablero::after, .marco .capa.puesta .seg, .marco svg > .seg, .carta, .carta::after { animation: none; }

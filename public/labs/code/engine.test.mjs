@@ -6,7 +6,7 @@ import { generar, juntos, leer, componer, girar, voltear, mover, lecturas, choqu
 for (const o of ORIENTACIONES) assert.equal(componer(o, o), 'I');
 assert.equal(componer('R', 'H'), 'V');
 assert.deepEqual(new Set([girar('I'), voltear('I'), girar(voltear('I')), 'I']), new Set(ORIENTACIONES));
-for (const x of ORIENTACIONES) for (const y of ORIENTACIONES) for (const s of 'abcdefg') for (let i = 0; i < 4; i++) {
+for (const x of ORIENTACIONES) for (const y of ORIENTACIONES) for (const s of 'abcdefg') for (let i = 0; i < 5; i++) {
   assert.deepEqual(mover(x, mover(y, { i, s })), mover(componer(x, y), { i, s }));
 }
 for (const o of ORIENTACIONES) for (const v of Object.values(SEGMENTOS)) assert.equal(new Set([...v].map(s => mover(o, { i: 0, s }).s)).size, v.length);
@@ -18,7 +18,7 @@ for (const n of [4]) {
   for (let k = 0; k < 200; k++) {
     const c = generar(n, rand);
     assert.equal(c.cartas.length, n);
-    assert.match(c.codigo, /^\d{4}$/);
+    assert.match(c.codigo, /^\d{5}$/);
     assert.ok(c.base.length >= 2, 'la base tiene trazos');
     for (const carta of c.cartas) assert.ok(carta.trazos.length >= (n <= 4 ? 2 : 1), 'cada carta tiene trazos');
     if (n <= 4) assert.ok(c.cartas.every(x => x.o !== 'I'), 'con 4 cartas, ninguna viene derecha');
