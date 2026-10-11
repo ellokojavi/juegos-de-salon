@@ -1,0 +1,40 @@
+# Las decisiones de un toque (D-273): el agente de procesos abre un issue con casillas Sí/No
+# (etiqueta `procesos`); cuando el dueño marca una, esto hace lo que la casilla dice, sin un modelo
+# de por medio. Las reglas de quién y qué están en tools/agents/aprobar.mjs y su prueba.
+#
+# Un merge hecho con el token del workflow no despierta a publicar.yml ni a e2e.yml: por eso
+# `fusionar` los corre a mano después (workflow_dispatch sí se puede con este token).
+
+name: Aprobar
+
+on:
+  issues:
+    types: [edited]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  actions: write
+  checks: read
+  statuses: read
+
+# Una decisión a la vez por issue, y la que está corriendo no se corta
+concurrency:
+  group: aprobar-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  aprobar:
+    # El primer filtro, para no prender una máquina por cada edición de cualquier issue
+    if: github.event.sender.login == 'ellokojavi' && contains(github.event.issue.labels.*.name, 'procesos')
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        run: node tools/agents/aprobar.mjs
