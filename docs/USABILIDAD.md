@@ -115,6 +115,10 @@ nunca se usaron, y no se renumera.
 
 Las respuestas a dilemas (issues con la etiqueta `usabilidad`) se anotan aquí:
 
+- **El caso: las pistas usadas se tachan solas** (#302, opción A, D-282; reporte 🐞 #320): una pista
+  se tacha sola cuando ya están marcados todos los que abarca, y se ve igual que una tachada a mano.
+  El ✓ sigue para tachar antes y para destachar. No se tacha la que "ya no aporta" según el motor:
+  sería una ayuda gratis.
 - **El caso, comparaciones en dos colores** (#282, D-259): en "Hay más criminales A que B", A se
   ilumina en amarillo y B en rosado, en la grilla y en la frase; quien está en los dos lleva los dos.
   Desde D-264, en la grilla se iluminan solo las personas que cada grupo nombra por su nombre

@@ -4,7 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
   <meta name="theme-color" content="#150726">
-  <!-- El laboratorio no se anuncia: no está en el menú ni en los buscadores (D-101) -->
+  <!-- El laboratorio no se anuncia: no está en el menú ni en los buscadores (D-101), y sin la llave no se entra (D-281) -->
+  <script src="../assets/js/labs-puerta.js"></script>
   <meta name="robots" content="noindex, nofollow">
   <title>Laboratorio 🧪 · Juegos de Salón</title>
   <link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
@@ -16,6 +17,10 @@
     .hero h1 { margin: 4px 0; }
     .aviso-labs { border-color: rgba(255, 122, 26, 0.55); }
     .seccion { display: grid; gap: 10px; }
+    .grupo { display: grid; gap: 12px; }
+    .grupo > h2 { font-family: var(--font-display); font-size: 2rem; letter-spacing: 0.04em; margin: 8px 0 0; }
+    .grupo > p { margin: 0; }
+    .vacio { text-align: center; }
     .seccion h2 { font-family: var(--font-display); font-size: 1.6rem; letter-spacing: 0.04em; margin: 0; }
     .btn { text-decoration: none; display: flex; align-items: center; justify-content: center; }
   </style>
@@ -38,17 +43,29 @@
         <p style="margin:0">Lo que hay en el laboratorio todavía puede cambiar o romperse. Si algo falla o se te ocurre una mejora, usa el botón <b>🐞 Reportar un problema o dejar un comentario</b> que aparece en cada juego.</p>
       </div>
 
-      <section class="panel seccion" id="seccion-caso">
-        <h2>🔍 El caso</h2>
-        <p class="muted" style="margin:0">Un misterio al estilo de <i>Clues by Sam</i>: veinte sospechosos y pistas que siempre dicen la verdad. Descubre quién es criminal sin adivinar. Ya es un juego de La Copa, en los cuatro idiomas, aunque una copa todavía no lo puede elegir.</p>
-        <p class="muted" style="margin:0;font-size:0.85rem">Es el caso del día, el mismo para todos; al terminar se puede jugar otro y dejar un comentario.</p>
-        <a class="btn btn--yellow" id="btn-caso" href="case/">🔍 Jugar El caso</a>
+      <!-- Dos grupos (D-280): lo que se está probando, y en La Bodega lo que no prosperó -->
+      <section class="grupo" id="activos">
+        <h2>🧪 Proyectos activos</h2>
+        <div class="panel vacio" id="activos-vacio">
+          <p class="muted" style="margin:0">Por ahora no hay ningún proyecto en prueba.</p>
+        </div>
       </section>
 
-      <section class="panel seccion" id="seccion-clave">
-        <h2>🔐 La clave</h2>
-        <p class="muted" style="margin:0">Unas cartas transparentes esconden una clave: una palabra de 5 letras (en español) o un código de 5 cifras. Hay que ponerlas sobre la base y girar y voltear cada una hasta que los trazos formen la clave sin pisarse; en Palabra, cada carta tiene dos caras distintas.</p>
-        <a class="btn btn--yellow" id="btn-clave" href="code/">🔐 Jugar La clave</a>
+      <section class="grupo" id="bodega">
+        <h2>📦 La Bodega</h2>
+        <p class="muted">Los proyectos que no prosperaron. Quedan guardados acá y se pueden seguir jugando, pero ya no se están trabajando.</p>
+        <section class="panel seccion" id="seccion-caso">
+          <h2>🔍 El caso</h2>
+          <p class="muted" style="margin:0">Un misterio al estilo de <i>Clues by Sam</i>: veinte sospechosos y pistas que siempre dicen la verdad. Descubre quién es criminal sin adivinar.</p>
+          <p class="muted" style="margin:0;font-size:0.85rem">Es el caso del día, el mismo para todos; al terminar se puede jugar otro.</p>
+          <a class="btn btn--yellow" id="btn-caso" href="case/">🔍 Jugar El caso</a>
+        </section>
+
+        <section class="panel seccion" id="seccion-clave">
+          <h2>🔐 La clave</h2>
+          <p class="muted" style="margin:0">Unas cartas transparentes esconden una clave: una palabra de 5 letras (en español) o un código de 5 cifras. Hay que ponerlas sobre la base y girar y voltear cada una hasta que los trazos formen la clave sin pisarse; en Palabra, cada carta tiene dos caras distintas.</p>
+          <a class="btn btn--yellow" id="btn-clave" href="code/">🔐 Jugar La clave</a>
+        </section>
       </section>
     </div>
     <footer class="muted" style="text-align:center;padding-top:24px;font-size:0.85rem">
