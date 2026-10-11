@@ -1,6 +1,6 @@
 /**
  * La clave — prototipo de laboratorio (D-270). Un código de 4 cifras repartido entre una base fija y
- * 4 u 8 cartas transparentes, cada una girada o volteada al azar. Se toca una carta para ponerla
+ * 4 cartas transparentes, cada una girada o volteada al azar. Se toca una carta para ponerla
  * sobre la base, y con ↻ y ⇋ se orienta; con todas puestas y derechas, los trazos forman el código,
  * que se escribe en el teclado. Nada avisa que una carta quedó bien: se sabe leyendo. El motor está
  * en engine.js; el teclado es el compartido (teclado.js).
@@ -12,7 +12,7 @@ import { botonResultadoSolo } from '../../assets/js/compartir.js';
 import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/stats.js';
 import { formularioComentario, abrirComentario } from '../../assets/js/labs-idioma.js';
 import { teclado, CIFRAS } from '../../assets/js/teclado.js';
-import { generar, girar, voltear, CIFRAS_CODIGO, CARTAS } from './engine.js';
+import { generar, girar, voltear, choques, CIFRAS_CODIGO } from './engine.js';
 
 trackVisit();   // el tráfico del sitio (D-208)
 
@@ -24,9 +24,9 @@ const TEXTOS = {
   es: {
     nombre: 'La clave', laboratorio: '‹ Laboratorio',
     lema: 'Unas cartas transparentes esconden un código. Ninguna lo dice sola.',
-    como: ['Descubre el código de 4 cifras y escríbelo.', 'Toca una carta para ponerla sobre la base. ↻ la gira y ⇋ la voltea.', 'Con todas puestas y bien orientadas, los trazos forman las cifras.'],
+    como: ['Descubre el código de 4 cifras y escríbelo.', 'Toca una carta para ponerla sobre la base. ↻ la gira y ⇋ la voltea.', 'Con todas puestas y derechas, los trazos forman las cifras sin pisarse: un trazo en rojo está encima de otro.'],
     empezar: '🔐 Empezar', girar: '↻ Girar', voltear: '⇋ Voltear', ok: 'OK',
-    cartas: '{n} cartas', quitar: '✕ Quitar', elige: 'Toca una carta de abajo para ponerla.', elegida: 'Carta {n}', mal: 'Ese no es el código. 🔒',
+    quitar: '✕ Quitar', choque: '⚠️ Hay {n} trazos encima de otros: así no es.', choqueUno: '⚠️ Hay un trazo encima de otro: así no es.', elige: 'Toca una carta de abajo para ponerla.', elegida: 'Carta {n}', mal: 'Ese no es el código. 🔒',
     abierto: '¡Abierto!', resumen: 'En {tiempo}, con {e} intentos fallidos.', resumenSin: 'En {tiempo}, sin intentos fallidos.', resumenUno: 'En {tiempo}, con 1 intento fallido.',
     otra: '🔁 Otra clave', comentarAbrir: '💬 Dejar un comentario',
     comentario: { titulo: '¿Qué te pareció?', lead: 'Cuéntanos si se entendió, si fue fácil o difícil, y qué otras figuras te gustaría combinar.', ph: 'Por ejemplo: no me di cuenta de que se podía voltear; me gustaría con tres figuras.', nombre: 'Tu nombre (opcional)', enviar: 'Enviar comentario', enviando: 'Enviando…', vacio: 'Escribe algo primero.', gracias: '¡Gracias! 🙌 Tu comentario llegó.', guardado: 'Ahora no hay internet: tu comentario quedó en el celular y se envía solo después.', error: 'No se pudo enviar. Prueba de nuevo en un rato.', contexto: 'Lo que se envía junto', cancelar: 'Cancelar', cerrar: 'Cerrar' },
@@ -34,9 +34,9 @@ const TEXTOS = {
   en: {
     nombre: 'The Code', laboratorio: '‹ Lab',
     lema: 'Some see-through cards hide a code. None shows it alone.',
-    como: ['Find the 4-digit code and type it in.', 'Tap a card to put it on the base. ↻ turns it and ⇋ flips it.', 'With all of them on and the right way round, the strokes form the digits.'],
+    como: ['Find the 4-digit code and type it in.', 'Tap a card to put it on the base. ↻ turns it and ⇋ flips it.', 'With all of them on and the right way round, the strokes form the digits without overlapping: a red stroke is on top of another.'],
     empezar: '🔐 Start', girar: '↻ Turn', voltear: '⇋ Flip', ok: 'OK',
-    cartas: '{n} cards', quitar: '✕ Remove', elige: 'Tap a card below to put it on.', elegida: 'Card {n}', mal: 'That’s not the code. 🔒',
+    quitar: '✕ Remove', choque: '⚠️ {n} strokes are on top of others: that’s not it.', choqueUno: '⚠️ A stroke is on top of another: that’s not it.', elige: 'Tap a card below to put it on.', elegida: 'Card {n}', mal: 'That’s not the code. 🔒',
     abierto: 'Unlocked!', resumen: 'In {tiempo}, with {e} wrong tries.', resumenSin: 'In {tiempo}, with no wrong tries.', resumenUno: 'In {tiempo}, with 1 wrong try.',
     otra: '🔁 Another code', comentarAbrir: '💬 Leave a comment',
     comentario: { titulo: 'What did you think?', lead: 'Tell us if it made sense, if it was easy or hard, and what other shapes you’d like to combine.', ph: 'For example: I didn’t realize I could flip it; I’d like it with three shapes.', nombre: 'Your name (optional)', enviar: 'Send comment', enviando: 'Sending…', vacio: 'Write something first.', gracias: 'Thanks! 🙌 Your comment arrived.', guardado: 'No internet right now: your comment is saved on your phone and will be sent later.', error: 'Couldn’t send it. Try again in a bit.', contexto: 'What gets sent with it', cancelar: 'Cancel', cerrar: 'Close' },
@@ -44,9 +44,9 @@ const TEXTOS = {
   pt: {
     nombre: 'A senha', laboratorio: '‹ Laboratório',
     lema: 'Cartas transparentes escondem uma senha. Nenhuma mostra sozinha.',
-    como: ['Descubra a senha de 4 dígitos e digite.', 'Toque numa carta para colocá-la sobre a base. ↻ gira e ⇋ vira.', 'Com todas colocadas e do jeito certo, os traços formam os dígitos.'],
+    como: ['Descubra a senha de 4 dígitos e digite.', 'Toque numa carta para colocá-la sobre a base. ↻ gira e ⇋ vira.', 'Com todas colocadas e do jeito certo, os traços formam os dígitos sem se sobrepor: um traço vermelho está em cima de outro.'],
     empezar: '🔐 Começar', girar: '↻ Girar', voltear: '⇋ Virar', ok: 'OK',
-    cartas: '{n} cartas', quitar: '✕ Tirar', elige: 'Toque numa carta abaixo para colocá-la.', elegida: 'Carta {n}', mal: 'Essa não é a senha. 🔒',
+    quitar: '✕ Tirar', choque: '⚠️ Há {n} traços em cima de outros: assim não é.', choqueUno: '⚠️ Há um traço em cima de outro: assim não é.', elige: 'Toque numa carta abaixo para colocá-la.', elegida: 'Carta {n}', mal: 'Essa não é a senha. 🔒',
     abierto: 'Aberto!', resumen: 'Em {tiempo}, com {e} tentativas erradas.', resumenSin: 'Em {tiempo}, sem tentativas erradas.', resumenUno: 'Em {tiempo}, com 1 tentativa errada.',
     otra: '🔁 Outra senha', comentarAbrir: '💬 Deixar um comentário',
     comentario: { titulo: 'O que você achou?', lead: 'Conte se deu para entender, se foi fácil ou difícil, e que outras figuras você gostaria de combinar.', ph: 'Por exemplo: não percebi que dava para virar; queria com três figuras.', nombre: 'Seu nome (opcional)', enviar: 'Enviar comentário', enviando: 'Enviando…', vacio: 'Escreva algo primeiro.', gracias: 'Obrigado! 🙌 Seu comentário chegou.', guardado: 'Sem internet agora: seu comentário ficou no celular e será enviado depois.', error: 'Não deu para enviar. Tente de novo daqui a pouco.', contexto: 'O que vai junto', cancelar: 'Cancelar', cerrar: 'Fechar' },
@@ -54,9 +54,9 @@ const TEXTOS = {
   de: {
     nombre: 'Der Code', laboratorio: '‹ Labor',
     lema: 'Durchsichtige Karten verstecken einen Code. Keine zeigt ihn allein.',
-    como: ['Finde den 4-stelligen Code und tippe ihn ein.', 'Tippe auf eine Karte, um sie auf die Basis zu legen. ↻ dreht sie, ⇋ spiegelt sie.', 'Liegen alle richtig herum, ergeben die Striche die Ziffern.'],
+    como: ['Finde den 4-stelligen Code und tippe ihn ein.', 'Tippe auf eine Karte, um sie auf die Basis zu legen. ↻ dreht sie, ⇋ spiegelt sie.', 'Liegen alle richtig herum, ergeben die Striche die Ziffern, ohne sich zu überlagern: Ein roter Strich liegt auf einem anderen.'],
     empezar: '🔐 Los geht’s', girar: '↻ Drehen', voltear: '⇋ Spiegeln', ok: 'OK',
-    cartas: '{n} Karten', quitar: '✕ Entfernen', elige: 'Tippe unten auf eine Karte, um sie aufzulegen.', elegida: 'Karte {n}', mal: 'Das ist nicht der Code. 🔒',
+    quitar: '✕ Entfernen', choque: '⚠️ {n} Striche liegen übereinander: So ist es nicht.', choqueUno: '⚠️ Ein Strich liegt auf einem anderen: So ist es nicht.', elige: 'Tippe unten auf eine Karte, um sie aufzulegen.', elegida: 'Karte {n}', mal: 'Das ist nicht der Code. 🔒',
     abierto: 'Offen!', resumen: 'In {tiempo}, mit {e} Fehlversuchen.', resumenSin: 'In {tiempo}, ohne Fehlversuch.', resumenUno: 'In {tiempo}, mit 1 Fehlversuch.',
     otra: '🔁 Neuer Code', comentarAbrir: '💬 Kommentar schreiben',
     comentario: { titulo: 'Wie fandest du es?', lead: 'Erzähl uns, ob es verständlich war, ob es leicht oder schwer war und welche Formen du gern kombinieren würdest.', ph: 'Zum Beispiel: Ich habe nicht gemerkt, dass man spiegeln kann; ich hätte gern drei Formen.', nombre: 'Dein Name (optional)', enviar: 'Kommentar senden', enviando: 'Wird gesendet …', vacio: 'Schreib erst etwas rein.', gracias: 'Danke! 🙌 Dein Kommentar ist angekommen.', guardado: 'Gerade kein Netz: Dein Kommentar ist auf dem Handy gespeichert und wird später automatisch gesendet.', error: 'Das hat nicht geklappt. Versuch es gleich nochmal.', contexto: 'Das wird mitgeschickt', cancelar: 'Abbrechen', cerrar: 'Schließen' },
@@ -111,15 +111,13 @@ function portada() {
       el('p', { class: 'lead' }, T.lema),
       el('div', { style: 'display:flex;justify-content:center' }, langToggle())),
     el('div', { class: 'panel' }, el('ol', { class: 'rules-list', style: 'margin:0' }, ...T.como.map(x => el('li', {}, x)))),
-    el('div', { class: 'modos' }, ...CARTAS.map(n => el('button', {
-      type: 'button', class: `btn ${n === CARTAS[0] ? 'btn--yellow' : 'btn--cyan'}`, id: `btn-empezar-${n}`, 'data-n': n,
-      onClick: () => { SFX.tap(); empezar(n); },
-    }, `🔐 ${fmt(T.cartas, { n })}`))));
+    el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-empezar', onClick: () => { SFX.tap(); empezar(); } }, T.empezar));
   pieComentario('portada');
 }
 
-function empezar(n) {
-  const clave = generar(n);
+function empezar() {
+  const clave = generar();
+  const n = clave.cartas.length;
   Object.assign(P, { clave, n, g: clave.cartas.map(() => 'I'), puestas: clave.cartas.map(() => false), elegida: null, errores: 0, desde: Date.now(), giros: 0, vueltas: 0 });
   trackStart({ game: GAME_ID, mode: 'solo', players: 1 });
   jugar();
@@ -138,6 +136,9 @@ function jugar() {
     base.append(capa);
     return capa;
   });
+  // Encima de todo, los trazos que quedaron uno sobre otro: así no vale (cada trazo va en una sola carta)
+  const capaChoques = svgEl('g', { class: 'choques', id: 'choques' });
+  base.append(capaChoques);
   const miniaturas = clave.cartas.map((c, k) => {
     const mini = lamina('mini');
     mini.append(svgEl('rect', { x: 0, y: 0, width: 300, height: 140, rx: 12, class: 'borde' }));
@@ -175,7 +176,16 @@ function jugar() {
       miniaturas[k].setAttribute('aria-pressed', String(P.elegida === k));
     });
     for (const b of controles.querySelectorAll('button')) b.disabled = P.elegida === null;
-    if (!titulo.classList.contains('mal')) titulo.textContent = P.elegida === null ? T.elige : fmt(T.elegida, { n: P.elegida + 1 });
+    // Los choques se marcan en rojo y se dicen: no hay forma de que la clave tenga uno
+    const ch = choques(clave, P.g, P.puestas);
+    // Debajo, una franja oscura que tapa los colores; encima, una fila de puntos rojos que laten
+    capaChoques.replaceChildren(
+      ...lineas(ch, 'currentColor').map(l => { l.setAttribute('class', 'seg choque-fondo'); return l; }),
+      ...lineas(ch, 'currentColor').map(l => { l.setAttribute('class', 'seg choque'); return l; }));
+    P.choques = ch.length;
+    if (titulo.classList.contains('mal')) return;
+    titulo.classList.toggle('aviso-choque', ch.length > 0);
+    titulo.textContent = ch.length ? fmt(ch.length === 1 ? T.choqueUno : T.choque, { n: ch.length }) : P.elegida === null ? T.elige : fmt(T.elegida, { n: P.elegida + 1 });
   };
 
   const pad = teclado({
@@ -201,7 +211,7 @@ function jugar() {
 
 function resultado() {
   const ms = Date.now() - P.desde;
-  trackFinish({ detalle: `${P.n} cartas · ${P.errores} intentos fallidos · ${mmss(ms)}` });
+  trackFinish({ detalle: `${P.errores} intentos fallidos · ${mmss(ms)}` });
   SFX.win();
   if (!QUIETO) confetti({ count: 180, duration: 2600 });
   pie.replaceChildren();
@@ -209,10 +219,9 @@ function resultado() {
     el('div', { class: 'trofeo' }, '🔓'),
     el('h2', { class: 'display display--lg', style: 'margin:0' }, T.abierto),
     el('div', { class: 'codigo', id: 'codigo' }, P.clave.codigo),
-    el('p', { class: 'lead', id: 'resumen', style: 'margin:0' }, `${fmt(T.cartas, { n: P.n })} · ${fmt(P.errores > 1 ? T.resumen : P.errores ? T.resumenUno : T.resumenSin, { tiempo: mmss(ms), e: P.errores })}`),
-    botonResultadoSolo({ C: COMMON[lang] || COMMON.es, emoji: '🔐', juego: T.nombre, puntaje: `🔓 ${fmt(T.cartas, { n: P.n })}`, tiempo: mmss(ms), url: withLang(`${SITIO}labs/code/`, lang), alTocar: () => SFX.tap() }),
-    el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-otra', onClick: () => { SFX.tap(); empezar(P.n); } }, T.otra),
-    el('button', { type: 'button', class: 'btn btn--cyan btn--sm', id: 'btn-otro-modo', onClick: () => { SFX.tap(); empezar(P.n === CARTAS[0] ? CARTAS[1] : CARTAS[0]); } }, `🔐 ${fmt(T.cartas, { n: P.n === CARTAS[0] ? CARTAS[1] : CARTAS[0] })}`),
+    el('p', { class: 'lead', id: 'resumen', style: 'margin:0' }, fmt(P.errores > 1 ? T.resumen : P.errores ? T.resumenUno : T.resumenSin, { tiempo: mmss(ms), e: P.errores })),
+    botonResultadoSolo({ C: COMMON[lang] || COMMON.es, emoji: '🔐', juego: T.nombre, puntaje: '🔓', tiempo: mmss(ms), url: withLang(`${SITIO}labs/code/`, lang), alTocar: () => SFX.tap() }),
+    el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-otra', onClick: () => { SFX.tap(); empezar(); } }, T.otra),
     el('a', { class: 'btn btn--ghost btn--sm', href: '../' }, T.laboratorio),
     // El comentario va abierto y al final de todo (D-265, D-268)
     formularioComentario({ T: T.comentario, contexto: contexto('resultado') })));

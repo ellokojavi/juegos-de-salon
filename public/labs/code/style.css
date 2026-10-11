@@ -3,7 +3,6 @@
 .portada .icono { font-size: 4rem; display: inline-block; animation: cl-gira 3s ease-in-out infinite; }
 @keyframes cl-gira { 0%, 100% { transform: rotate(-10deg); } 50% { transform: rotate(10deg) scale(1.06); } }
 .portada .lead { margin: 0; }
-.modos { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 /* La base, con las cartas puestas encima */
 .tablero { border-radius: 18px; background: rgba(0,0,0,0.22); border: 2px solid var(--glass-border); padding: 10px; }
 .marco svg { display: block; width: 100%; height: auto; overflow: visible; }
@@ -38,3 +37,10 @@
 .link-btn { background: none; border: 0; color: var(--muted); font: 700 0.95rem var(--font-body); text-decoration: underline; cursor: pointer; min-height: 44px; margin: 0 auto; display: block; }
 .btn { text-decoration: none; }
 @media (prefers-reduced-motion: reduce) { .portada .icono, .aviso-clave.mal { animation: none; } .capa { transition: none; } }
+/* Un trazo encima de otro: rojo, punteado y latiendo, porque así no vale */
+.choques { pointer-events: none; color: #ff3d3d; }
+.seg.choque { stroke-width: 16; stroke-linecap: round; stroke-dasharray: 0.1 11; opacity: 1; filter: drop-shadow(0 0 3px #000) drop-shadow(0 0 6px #ff3d3d); animation: cl-choque 0.7s ease-in-out infinite alternate; }
+.seg.choque-fondo { stroke: rgba(10, 2, 20, 0.85); stroke-width: 14; }
+@keyframes cl-choque { from { opacity: 0.55; } to { opacity: 1; } }
+.aviso-clave.aviso-choque { color: #ff8a8a; }
+@media (prefers-reduced-motion: reduce) { .seg.choque { animation: none; } }
