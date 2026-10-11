@@ -43,12 +43,28 @@ export const ARREGLO = /quedó atrás|quedaba atrás|atrasad|desactualizad|falta
 /* Lo puro (lo prueban aprobar.test.mjs y procesos.test.mjs)          */
 /* ------------------------------------------------------------------ */
 
+/** Qué hace una opción, en palabras, para la casilla: "fusiona #300", o '' si solo se anota. */
+export function queHace(lista = []) {
+  const frases = lista.map(a => {
+    switch (a.tipo) {
+      case 'fusionar': return `fusiona #${a.pr}`;
+      case 'cerrar-pr': return `cierra #${a.pr}`;
+      case 'cerrar-issue': return `cierra #${a.issue}`;
+      case 'comentar': return `comenta en #${a.en}`;
+      case 'correr': return a.workflow === 'publicar.yml' ? 'publica el sitio' : 'corre las pruebas de punta a punta';
+      case 'encolar': return 'queda para la próxima ronda';
+      default: return '';
+    }
+  }).filter(Boolean);
+  return frases.length > 1 ? `${frases.slice(0, -1).join(', ')} y ${frases.at(-1)}` : frases[0] || '';
+}
+
 /** El cuerpo del issue de decisiones: casillas `<!-- op:n:si -->` y el bloque de acciones al final. */
 export function cuerpoDecisiones({ resumen = '', decisiones }) {
   if (!decisiones?.length) throw new Error('No hay decisiones.');
   const acciones = {}, partes = [];
   if (resumen) partes.push(resumen.trim(), '');
-  partes.push('Marca **Sí** o **No**: se cumple apenas la marcas, y el resultado queda anotado al lado.', '');
+  partes.push('Marca **Sí** o **No** en cada una. Lo que marcas se hace en el momento y no se deshace; el resultado queda anotado al lado.', '');
   decisiones.forEach((d, i) => {
     const n = i + 1;
     for (const op of ['si', 'no']) {
@@ -59,7 +75,8 @@ export function cuerpoDecisiones({ resumen = '', decisiones }) {
     }
     partes.push(`### ${n}. ${d.pregunta}`);
     if (d.contexto) partes.push(d.contexto.trim());
-    partes.push(`- [ ] Sí <!-- op:${n}:si -->`, `- [ ] No <!-- op:${n}:no -->`, '');
+    const casilla = (op, nombre) => { const q = queHace(acciones[`${n}:${op}`]); return `- [ ] ${nombre}${q ? `: ${q}` : ''} <!-- op:${n}:${op} -->`; };
+    partes.push(casilla('si', 'Sí'), casilla('no', 'No'), '');
   });
   partes.push(`<!-- acciones ${JSON.stringify(acciones)} -->`);
   return partes.join('\n');
