@@ -4815,6 +4815,28 @@ confirmación en un Cloudflare Worker (son dos toques igual que la casilla, con 
 **Consecuencias:** la ronda corre en la nube a las 4:30 hora del Pacífico, después de la de
 documentación (3:54). El correo llega solo los días con algo que decidir.
 
+## D-274 · Rankings: que cuente la partida recién jugada, el solitario en la portada y Ahorcado solo
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** amplía D-212 y D-215
+**Decisión:** Tres cambios para que los rankings se llenen:
+- **"¿Quieres que esta partida cuente?"**: al terminar una partida sin jugador abierto (jugando solo
+  en Toque y Fama, Generala, Ahorcado y Línea Relámpago, y en todos los juegos de grupo contra el
+  celular, en sala o en un celular), sale un bloque aparte —fondo propio, borde dorado y una entrada
+  con un pequeño salto— con el formulario de nombre y PIN de siempre y el nombre que escribió para
+  jugar ya puesto. Al entrar o crear su jugador, se anota esa partida (y la victoria, si fue suya).
+  Va después de los botones del final, para que sigan a la vista (C-8). Lo hacen `avisoPartida` y
+  `finDePartida` de `ranking.js`; en los juegos de grupo se pone solo, después de `#result-actions`.
+- **La portada de Toque y Fama, Generala y Ahorcado** muestra la tabla de los mejores puntajes
+  jugando solo arriba de la de victorias: es como más se juegan.
+- **Ahorcado jugando solo tiene ranking** (`ahorcado_solo`): el puntaje de Uno al día (las vidas
+  que quedaron sobre las del principio, de 0 a 100), y el tiempo desempata. También en `/records/`.
+**Por qué:** el dueño vio vacío el ranking de Toque y Fama sabiendo que se juega mucho. Los datos
+(29 días): 43 partidas solo, 33 contra el celular y 23 salas, y en Firebase ni una victoria de
+juegos de grupo; de 31 jugadores registrados, 6 anotaron alguna vez. Los rankings se guardaban
+bien: lo que faltaba era que la gente entrara, y la portada mostraba la tabla que menos se usa.
+El bloque aparte lo pidió el dueño, para que quien no lo ve siempre lo note.
+**Consecuencias:** `tools/e2e/hangman/local.mjs` y `bulls-and-cows/local.mjs` prueban que el
+final ofrezca que la partida cuente.
+
 ## D-275 · El feedback 🐞 llega como issues y lo atiende el agente de procesos
 **Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** amplía D-273 (el agente de procesos) y D-104 (los reportes de La Copa); corrige D-273 en que no tocaba el código de los juegos, y D-132 en que los reportes 🐞 eran de la ronda de usabilidad
 **Decisión:** `.github/workflows/feedback.yml` sube cada hora los reportes nuevos de `feedback/`
