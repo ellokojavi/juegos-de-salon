@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.156.2 — 2026-10-11
+- **🧪 Laboratorio: una llave por persona** (D-284). Cada persona invitada entra con su propio link,
+  y sacarla ya no obliga a cambiarles la llave a las demás. Las llaves se dan y se quitan con
+  `tools/agents/llave-labs.mjs`.
+
 ## 0.156.1 — 2026-10-11
 - **Herramientas:** si una casilla de un toque no puede fusionar, dice por qué (por ejemplo, un
   conflicto con main) en vez de "Command failed". Y las pruebas frenan una decisión repetida o fuera
