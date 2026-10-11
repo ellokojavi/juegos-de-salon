@@ -1,5 +1,5 @@
 {
-  "version": "0.156.2",
+  "version": "0.156.3",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -998,6 +998,7 @@
     "compartir-sala.mjs",
     "contacto.mjs",
     "cup-games/idiomas.mjs",
+    "cup/asiento.mjs",
     "cup/avisos.mjs",
     "cup/copas-del-jugador.mjs",
     "cup/idiomas.mjs",
