@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.150.0 — 2026-10-11
+- **🏅 Rankings: que cuente la partida que acabas de jugar** (D-274): si terminas sin haber entrado,
+  un bloque te ofrece entrar con tu nombre y un PIN, y esa partida (o tu victoria) se anota.
+- **Toque y Fama, Generala y Ahorcado** muestran en su portada los mejores puntajes jugando solo.
+- **🪢 Ahorcado jugando solo tiene ranking**: de 0 a 100 según las vidas que te quedaron.
+
 ## 0.147.2 — 2026-10-10
 - **🔐 La clave:** en la animación de la portada también se mueven los trazos blancos de la base:
   todo parte al azar y se va acomodando hasta formar la palabra.
