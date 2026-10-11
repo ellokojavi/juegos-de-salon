@@ -42,6 +42,10 @@ public/<carpeta>/
   (reglas puras), `ui.js` (pantalla) y sus datos propios; lo común a todos queda en `games/`.
   Uno suelto que todavía está en el laboratorio (`labs: true` en `SUELTOS`) tiene su página en
   `/labs/<slug>/`, y `/<slug>/` es página puente hasta que salga (D-267).
+  Toda página de `/labs/` carga primero la puerta (`labs-puerta.js`) y lleva
+  `<meta name="robots" content="noindex, nofollow">`, y sus puentes también el `noindex`
+  (`og.mjs` los pone en las que genera; D-280). En `/labs/`, un proyecto va en **Proyectos
+  activos** mientras se prueba y en **La Bodega** si no prosperó (D-279).
 - El juego se registra en `public/assets/js/games.js` con `id`, `emoji`, `name` y `tagline` por idioma, `players`, `duration`, `path` y `available`. Con sala, también `jugadas`: los tipos de mensaje que hace una persona, que es lo que el panel cuenta como jugadas (D-138).
 - El `<head>` de cada página de la app lleva el manifest, el ícono y el nombre del iPhone
   (`apple-touch-icon` y `apple-mobile-web-app-title`), el script que elige el manifest del idioma
