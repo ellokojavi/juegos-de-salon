@@ -800,6 +800,9 @@ function entrar({ mantener = false } = {}) {
   );
   if (!puedeEntrar || entrarModo === 'inscrito' || (mio && entrarModo !== 'nuevo')) $('#tab-inscrito').click();
   else $('#tab-nuevo').click();
+  // Quien perdió su asiento llega desde Empezar: el porqué y su PIN quedan a la vista, no bajo
+  // "Te invitaron a una copa", que en un celular chico los deja fuera de la pantalla
+  if (deVuelta && !mantener) caja.scrollIntoView({ block: 'center' });
 }
 
 /**
