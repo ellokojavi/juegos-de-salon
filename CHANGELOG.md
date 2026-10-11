@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.151.0 — 2026-10-11
+## 0.153.0 — 2026-10-11
 - **⏳ Línea de Tiempo: los seis mazos cuentan su dato** (D-277). Música, Cultura pop, Brasil y Fútbol
   suman un dato en cada carta, como Chile e Historia, revisados contra fuentes. Y el de Mekano ya no
   dice que Viñuela llegó después: el programa partió con él y con Verónica Calabi. Sale la carta de
@@ -15,7 +15,7 @@
   los mazos de Chile e Historia.
 
 ## 0.149.0 — 2026-10-11
-- **⏳ Línea de Tiempo, 📅 ¿En qué año? y La Copa: cartas que se pueden situar** (D-274). Salen 23
+- **⏳ Línea de Tiempo, 📅 ¿En qué año? y La Copa: cartas que se pueden situar** (D-278). Salen 23
   cartas: las que decían su año (las Constituciones de 1833, 1925 y 1980, la final de Italia 90, la
   Eco-92) y las que no se podían situar, porque el hecho se repitió (el incendio de Valparaíso, los
   terremotos de Santiago y Valparaíso) o porque era una época y no un hecho (la era del swing, el

@@ -53,7 +53,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 |---|---|---|
 | Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270 |
 | Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184 |
-| Mazos de cartas con fecha | `docs/games/timeline.md` | D-37, D-274, D-277 |
+| Mazos de cartas con fecha | `docs/games/timeline.md` | D-37, D-278, D-277 |
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
@@ -283,7 +283,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 **Consecuencias:** El canon C-8b se precisa: la señal fuerte del error es para quien lo cometió. En un celular y en solitario no cambia nada, porque quien mira la pantalla es siempre quien acaba de jugar. Prueba: `tools/e2e/linea-de-tiempo-veredicto.mjs`.
 
 ## D-37 · Cartas que se puedan situar en el tiempo
-**Fecha:** 2026-09-10 · **Estado:** corregida por D-274
+**Fecha:** 2026-09-10 · **Estado:** corregida por D-278
 **Decisión:** Una carta no puede describir un hecho que se repite en la historia sin algo que la ancle a su año. Se sacó “un gran incendio golpea los cerros de Valparaíso” y “el terremoto de marzo sacude la zona central”; “el movimiento estudiantil se toma el año” pasó a nombrar a Camila Vallejo, y el incendio de Valparaíso a decir que fue el mayor de su historia y cuántas casas se llevó.
 **Por qué:** Chile tiene terremotos, incendios y marchas cada pocos años. Si la carta no dice cuál, el jugador no está pensando, está adivinando, y eso rompe el juego para todos.
 **Consecuencias:** Regla para escribir mazos: superlativo, nombre propio o cifra que ancle el año. Si no hay ninguno, la carta no entra. Vale también para los mazos futuros.
@@ -4816,7 +4816,7 @@ confirmación en un Cloudflare Worker (son dos toques igual que la casilla, con 
 **Consecuencias:** la ronda corre en la nube a las 4:30 hora del Pacífico, después de la de
 documentación (3:54). El correo llega solo los días con algo que decidir.
 
-## D-274 · Las cartas con fecha: ni dicen su año ni piden un dato que el jugador no sabe
+## D-278 · Las cartas con fecha: ni dicen su año ni piden un dato que el jugador no sabe
 **Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** corrige D-37
 **Decisión:** De los mazos de Línea de Tiempo (que también usan ¿En qué año?, Línea Relámpago y la
 final de La Copa) salen dos clases de cartas, y no se reescriben: se sacan.
@@ -4901,7 +4901,7 @@ Los días sin cambios, los ejecutores no corren. Revisar un PR antes de fusionar
 sesión dueña lanza a los dos agentes (CLAUDE.md).
 
 ## D-277 · El veredicto de una carta con fecha cuenta su dato, y leerlo no cuesta tiempo
-**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** excepción a C-8b (la explicación del error); completa D-95 (el tiempo activo) y D-274
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** excepción a C-8b (la explicación del error); completa D-95 (el tiempo activo) y D-278
 **Decisión:** Cada carta de los mazos de Línea de Tiempo puede llevar un **dato** en los cuatro
 idiomas (un porqué o una anécdota de hasta 110 caracteres, sin años), y el veredicto lo cuenta en
 vez de decir entre qué hitos iba la carta:
