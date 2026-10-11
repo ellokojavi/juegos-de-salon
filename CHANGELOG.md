@@ -1,9 +1,9 @@
 # Changelog
 
 ## 0.146.0 — 2026-10-10
-- **🔐 La clave, en el laboratorio** (D-270): dos figuras transparentes esconden un código. Hay que
-  ponerlas una encima de la otra, girar y voltear hasta que calcen, y escribir el código. En
-  `juegosdesalon.cl/labs/code/`.
+- **🔐 La clave, en el laboratorio** (D-270): unas cartas transparentes esconden un código. Hay que
+  ponerlas sobre la base y girar y voltear cada una hasta que los trazos formen las cifras, con 4 u
+  8 cartas. En `juegosdesalon.cl/labs/code/`.
 
 ## 0.144.0 — 2026-10-10
 - **🔍 El caso, en un solo lugar** (D-267): `juegosdesalon.cl/labs/case/` es el juego completo, en
