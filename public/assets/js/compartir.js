@@ -107,6 +107,8 @@ export const LO_PRINCIPAL = [
   { emoji: '🧩', que: 'jugar solo', desde: 'D-226' },
   { emoji: '🏅', que: 'rankings', desde: 'D-212' },
   { emoji: '🔓', que: 'sin cuenta', desde: 'D-226' },
+  { emoji: '📲', que: 'la app instalable y sus avisos', desde: 'D-272' },
+  { emoji: '🌎', que: 'los cuatro idiomas', desde: 'D-272' },
 ];
 
 /**
