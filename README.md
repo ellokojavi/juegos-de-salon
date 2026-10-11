@@ -437,7 +437,8 @@ Spec and design: [docs/games/cup.md](docs/games/cup.md)
   video" and only loads from `youtube-nocookie.com` when tapped, so opening the sheet downloads
   nothing from YouTube. **Invite to play** is the app's own message: on a phone it opens the share
   sheet with the menu's social card **as an image** and a short text — a header with how many games
-  there are, one line each for The Cup, playing in a group, playing alone and needing no account —
+  there are, one line each for The Cup, One a Day, playing in a group, playing alone, leaderboards and
+  needing no account (every main feature, `LO_PRINCIPAL` in `compartir.js`, D-271) —
   ending with the link to the front door of the language you are reading in: `/`, `/en/`, `/pt/` or
   `/de/`, card included (D-74, D-226). **Share the video** sends a short text ending with the
   video's YouTube link, and the chat builds the preview from its thumbnail. On a computer either
@@ -458,7 +459,7 @@ Spec and design: [docs/games/cup.md](docs/games/cup.md)
   PIN, the same idea as The Cup, that works on any phone. Until you do, a card with a **Sign in** button sits right under each game's Start and Back to menu buttons, under your score when you finish and, in One a Day, above the result's buttons (D-249). Signed in, every game played alone on its
   own page keeps your best score and counts your games. Each game's page shows its leaderboard
   (this week, all time, friends and The Cup), with your neighbours when you are below the top ten.
-  `/records/` (🏆 on the menu) adds the All-Rounder, the sum of your best score in every game, and
+  `/records/` (🏅 on the menu) adds the All-Rounder, the sum of your best score in every game, and
   The Cup's medal table; it opens with the overall ranking and the most games played, then a Games | Cups switch, and every name carries its country's flag (D-219). Group games keep a table of wins each (D-215) — in a room by your seat, against
   the phone as the human, on one phone if you play under your own name — and Bulls and Cows alone and
   Timeline Flash (one per theme) keep their 0–100 records. Two people may share a name; with
