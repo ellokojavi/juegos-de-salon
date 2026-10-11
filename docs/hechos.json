@@ -1,5 +1,5 @@
 {
-  "version": "0.148.6",
+  "version": "0.156.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -800,6 +800,7 @@
     "public/assets/js/jugador-local.js",
     "public/assets/js/jugador.js",
     "public/assets/js/labs-idioma.js",
+    "public/assets/js/labs-puerta.js",
     "public/assets/js/llegada.js",
     "public/assets/js/parametros.js",
     "public/assets/js/push.js",
@@ -928,6 +929,7 @@
     "public/assets/js/i18n.test.mjs",
     "public/assets/js/instalable.test.mjs",
     "public/assets/js/instalar.test.mjs",
+    "public/assets/js/labs-puerta.test.mjs",
     "public/assets/js/parametros.test.mjs",
     "public/assets/js/push.test.mjs",
     "public/assets/js/records.test.mjs",
@@ -1099,7 +1101,7 @@
     },
     {
       "ruta": "docs/games/code.md",
-      "titulo": "🔐 La clave (prototipo del laboratorio)"
+      "titulo": "🔐 La clave (prototipo del laboratorio, en La Bodega)"
     },
     {
       "ruta": "docs/games/cup.md",

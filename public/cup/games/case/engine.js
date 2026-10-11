@@ -156,6 +156,24 @@ export function sujetos(p) {
   return { a: de(p.g), b: de(p.h) };
 }
 
+/** Las personas que una pista abarca: las de sus grupos (`a` y `b`), sin repetir. */
+export const abarca = p => (p ? [...new Set([...p.a, ...(p.b || [])])] : []);
+
+/**
+ * Las pistas ya usadas (D-282): las de quienes ya hablaron y cuyos grupos ya están todos marcados.
+ * Devuelve el conjunto de quienes las dicen. Mira solo `x`, lo que el jugador ya marcó (y las marcas
+ * siempre son aciertos), nunca la solución: tacharlas no dice nada que la grilla no muestre. Una
+ * pista así ya no aporta nada, así que nunca es una de las que nombra la 💡 Ayuda.
+ */
+export function usadas(p, x) {
+  const out = new Set();
+  for (let i = 0; i < N; i++) {
+    const q = p.pistas[i];
+    if (x[i] !== -1 && q && abarca(q).every(j => x[j] !== -1)) out.add(i);
+  }
+  return out;
+}
+
 /** La pista más directa, de respaldo: lo que es otra persona. */
 export const pistaDirecta = (caso, v, j) => ({ t: 'es', a: [j], k: v[j] });
 
