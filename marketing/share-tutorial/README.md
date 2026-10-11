@@ -50,7 +50,7 @@ vertical el celular va al 120 %, para que se lea en la pantalla de un teléfono.
 ```bash
 python3 -m http.server 8765 -d public          # en otra terminal (o SITIO=… con otro puerto)
 marketing/share-tutorial/construir.sh          # ~1 min: capturas y los dos renders
-node ../promo-video/render.mjs --pagina tutorial.html --fotos fotos --tiempos 1.05,2.55,3.95,5.6
+node marketing/promo-video/render.mjs --pagina marketing/share-tutorial/tutorial.html --fotos /tmp/fotos --tiempos 1.05,2.55,3.95,5.6
 ```
 
 ## Trampas conocidas
