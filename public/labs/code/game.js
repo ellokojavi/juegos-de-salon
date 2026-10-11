@@ -32,7 +32,7 @@ const TEXTOS = {
     quitar: '✕ Quitar', elige: 'Toca una carta de abajo para ponerla.', elegida: 'Carta {n}', mal: 'Ese no es el código. 🔒', malPalabra: 'Esa no es la palabra. 🔒',
     abierto: '¡Abierto!', resumen: 'En {tiempo}, con {e} intentos fallidos.', resumenSin: 'En {tiempo}, sin intentos fallidos.', resumenUno: 'En {tiempo}, con 1 intento fallido.',
     otra: '🔁 Otra clave', comentarAbrir: '💬 Dejar un comentario',
-    comentario: { titulo: '¿Qué te pareció?', lead: 'Cuéntanos si se entendió, si fue fácil o difícil, y qué otras figuras te gustaría combinar.', ph: 'Por ejemplo: no me di cuenta de que se podía voltear; me gustaría con tres figuras.', nombre: 'Tu nombre (opcional)', enviar: 'Enviar comentario', enviando: 'Enviando…', vacio: 'Escribe algo primero.', gracias: '¡Gracias! 🙌 Tu comentario llegó.', guardado: 'Ahora no hay internet: tu comentario quedó en el celular y se envía solo después.', error: 'No se pudo enviar. Prueba de nuevo en un rato.', contexto: 'Lo que se envía junto', cancelar: 'Cancelar', cerrar: 'Cerrar' },
+    comentario: { titulo: '¿Qué te pareció?', lead: 'Cuéntanos si se entendió, si fue fácil o difícil y qué le cambiarías.', ph: 'Por ejemplo: no me di cuenta de que se podía voltear una carta.', nombre: 'Tu nombre (opcional)', enviar: 'Enviar comentario', enviando: 'Enviando…', vacio: 'Escribe algo primero.', gracias: '¡Gracias! 🙌 Tu comentario llegó.', guardado: 'Ahora no hay internet: tu comentario quedó en el celular y se envía solo después.', error: 'No se pudo enviar. Prueba de nuevo en un rato.', contexto: 'Lo que se envía junto', cancelar: 'Cancelar', cerrar: 'Cerrar' },
   },
   en: {
     nombre: 'The Code', laboratorio: '‹ Lab',
@@ -42,7 +42,7 @@ const TEXTOS = {
     comoSeJuega: 'How to play', quitar: '✕ Remove', elige: 'Tap a card below to put it on.', elegida: 'Card {n}', mal: 'That’s not the code. 🔒',
     abierto: 'Unlocked!', resumen: 'In {tiempo}, with {e} wrong tries.', resumenSin: 'In {tiempo}, with no wrong tries.', resumenUno: 'In {tiempo}, with 1 wrong try.',
     otra: '🔁 Another code', comentarAbrir: '💬 Leave a comment',
-    comentario: { titulo: 'What did you think?', lead: 'Tell us if it made sense, if it was easy or hard, and what other shapes you’d like to combine.', ph: 'For example: I didn’t realize I could flip it; I’d like it with three shapes.', nombre: 'Your name (optional)', enviar: 'Send comment', enviando: 'Sending…', vacio: 'Write something first.', gracias: 'Thanks! 🙌 Your comment arrived.', guardado: 'No internet right now: your comment is saved on your phone and will be sent later.', error: 'Couldn’t send it. Try again in a bit.', contexto: 'What gets sent with it', cancelar: 'Cancel', cerrar: 'Close' },
+    comentario: { titulo: 'What did you think?', lead: 'Tell us if it made sense, if it was easy or hard, and what you’d change.', ph: 'For example: I didn’t realize I could flip a card.', nombre: 'Your name (optional)', enviar: 'Send comment', enviando: 'Sending…', vacio: 'Write something first.', gracias: 'Thanks! 🙌 Your comment arrived.', guardado: 'No internet right now: your comment is saved on your phone and will be sent later.', error: 'Couldn’t send it. Try again in a bit.', contexto: 'What gets sent with it', cancelar: 'Cancel', cerrar: 'Close' },
   },
   pt: {
     nombre: 'A senha', laboratorio: '‹ Laboratório',
@@ -52,7 +52,7 @@ const TEXTOS = {
     comoSeJuega: 'Como se joga', quitar: '✕ Tirar', elige: 'Toque numa carta abaixo para colocá-la.', elegida: 'Carta {n}', mal: 'Essa não é a senha. 🔒',
     abierto: 'Aberto!', resumen: 'Em {tiempo}, com {e} tentativas erradas.', resumenSin: 'Em {tiempo}, sem tentativas erradas.', resumenUno: 'Em {tiempo}, com 1 tentativa errada.',
     otra: '🔁 Outra senha', comentarAbrir: '💬 Deixar um comentário',
-    comentario: { titulo: 'O que você achou?', lead: 'Conte se deu para entender, se foi fácil ou difícil, e que outras figuras você gostaria de combinar.', ph: 'Por exemplo: não percebi que dava para virar; queria com três figuras.', nombre: 'Seu nome (opcional)', enviar: 'Enviar comentário', enviando: 'Enviando…', vacio: 'Escreva algo primeiro.', gracias: 'Obrigado! 🙌 Seu comentário chegou.', guardado: 'Sem internet agora: seu comentário ficou no celular e será enviado depois.', error: 'Não deu para enviar. Tente de novo daqui a pouco.', contexto: 'O que vai junto', cancelar: 'Cancelar', cerrar: 'Fechar' },
+    comentario: { titulo: 'O que você achou?', lead: 'Conte se deu para entender, se foi fácil ou difícil e o que você mudaria.', ph: 'Por exemplo: não percebi que dava para virar uma carta.', nombre: 'Seu nome (opcional)', enviar: 'Enviar comentário', enviando: 'Enviando…', vacio: 'Escreva algo primeiro.', gracias: 'Obrigado! 🙌 Seu comentário chegou.', guardado: 'Sem internet agora: seu comentário ficou no celular e será enviado depois.', error: 'Não deu para enviar. Tente de novo daqui a pouco.', contexto: 'O que vai junto', cancelar: 'Cancelar', cerrar: 'Fechar' },
   },
   de: {
     nombre: 'Der Code', laboratorio: '‹ Labor',
@@ -62,7 +62,7 @@ const TEXTOS = {
     comoSeJuega: 'So wird gespielt', quitar: '✕ Entfernen', elige: 'Tippe unten auf eine Karte, um sie aufzulegen.', elegida: 'Karte {n}', mal: 'Das ist nicht der Code. 🔒',
     abierto: 'Offen!', resumen: 'In {tiempo}, mit {e} Fehlversuchen.', resumenSin: 'In {tiempo}, ohne Fehlversuch.', resumenUno: 'In {tiempo}, mit 1 Fehlversuch.',
     otra: '🔁 Neuer Code', comentarAbrir: '💬 Kommentar schreiben',
-    comentario: { titulo: 'Wie fandest du es?', lead: 'Erzähl uns, ob es verständlich war, ob es leicht oder schwer war und welche Formen du gern kombinieren würdest.', ph: 'Zum Beispiel: Ich habe nicht gemerkt, dass man spiegeln kann; ich hätte gern drei Formen.', nombre: 'Dein Name (optional)', enviar: 'Kommentar senden', enviando: 'Wird gesendet …', vacio: 'Schreib erst etwas rein.', gracias: 'Danke! 🙌 Dein Kommentar ist angekommen.', guardado: 'Gerade kein Netz: Dein Kommentar ist auf dem Handy gespeichert und wird später automatisch gesendet.', error: 'Das hat nicht geklappt. Versuch es gleich nochmal.', contexto: 'Das wird mitgeschickt', cancelar: 'Abbrechen', cerrar: 'Schließen' },
+    comentario: { titulo: 'Wie fandest du es?', lead: 'Erzähl uns, ob es verständlich war, ob es leicht oder schwer war und was du ändern würdest.', ph: 'Zum Beispiel: Ich habe nicht gemerkt, dass man eine Karte spiegeln kann.', nombre: 'Dein Name (optional)', enviar: 'Kommentar senden', enviando: 'Wird gesendet …', vacio: 'Schreib erst etwas rein.', gracias: 'Danke! 🙌 Dein Kommentar ist angekommen.', guardado: 'Gerade kein Netz: Dein Kommentar ist auf dem Handy gespeichert und wird später automatisch gesendet.', error: 'Das hat nicht geklappt. Versuch es gleich nochmal.', contexto: 'Das wird mitgeschickt', cancelar: 'Abbrechen', cerrar: 'Schließen' },
   },
 };
 const T = TEXTOS[lang] || TEXTOS.es;
@@ -129,22 +129,73 @@ const contexto = pantalla => ({
 });
 
 /**
- * La portada: las cartas llegan volando, se posan sobre la base y forman la clave (CLAVE en
- * español, un código en los otros idiomas); brillan un rato, se van y vuelven a llegar.
+ * La portada: las cartas, encima de la base, prueban combinaciones a toda velocidad —giran, se
+ * voltean, cambian de cara— y se van fijando una a una en la buena hasta que se lee la clave
+ * (CLAVE en español; un código en los otros idiomas). Ahí los trazos se apagan y la clave aparece
+ * escrita como texto. Se desarma y vuelve a empezar, mientras la portada esté a la vista.
  */
 function ilustracion() {
   const enPalabra = lang === 'es';
-  const clave = enPalabra ? palabra.generar(Math.random, { palabra: 'CLAVE' }) : generar();
   const geo = enPalabra ? TRAZO14 : TRAZO;
   const svg = lamina('demo');
-  svg.append(svgEl('rect', { x: 0, y: 0, width: 300, height: 140, rx: 12, class: 'borde' }), ...lineas(clave.base, '#fff', geo));
-  clave.cartas.forEach((c, k) => {
-    const trazos = enPalabra ? palabra.visibles(c, c.bien) : c.trazos.map(x => mover(c.o, x));
-    const capa = svgEl('g', { class: 'capa-demo', style: `--dx:${azar(-160, 160)}px;--dy:${azar(90, 160) * (k % 2 ? 1 : -1)}px;--rot:${[180, -180, 90, -90][k]}deg;--k:${k}` });
-    capa.append(...lineas(trazos, COLORES[k], geo));
-    svg.append(capa);
-  });
-  return el('div', { class: 'demo', 'aria-hidden': 'true' }, svg);
+  const texto = el('div', { class: 'demo-texto display rainbow' });
+  const caja = el('div', { class: 'demo', 'aria-hidden': 'true' }, svg, texto);
+  // Los estados de una carta y lo que se ve en cada uno
+  const ESTADOS = enPalabra ? palabra.ESTADOS : ['I', 'R', 'H', 'V'];
+  let clave, capas, buenos;
+  const ver = (k, e) => (enPalabra ? palabra.visibles(clave.cartas[k], e) : clave.cartas[k].trazos.map(x => mover(e, x)));
+  const poner = (k, e) => capas[k].replaceChildren(...lineas(ver(k, e), COLORES[k], geo));
+  const armar = () => {
+    clave = enPalabra ? palabra.generar(Math.random, { palabra: 'CLAVE' }) : generar();
+    buenos = clave.cartas.map(c => (enPalabra ? c.bien : c.o));
+    svg.replaceChildren(svgEl('rect', { x: 0, y: 0, width: 300, height: 140, rx: 12, class: 'borde' }), ...lineas(clave.base, '#fff', geo));
+    capas = clave.cartas.map((c, k) => { const g = svgEl('g', { class: 'capa-demo', 'data-k': k }); svg.append(g); return g; });
+    texto.textContent = enPalabra ? clave.palabra : clave.codigo;
+  };
+  const al = arr => arr[Math.floor(Math.random() * arr.length)];
+  const otro = (k, actual) => al(ESTADOS.filter(e => String(e) !== String(actual)));
+  const espera = ms => new Promise(r => setTimeout(r, ms));
+  const vivo = () => caja.isConnected;
+  armar();
+  if (QUIETO) { buenos.forEach((e, k) => poner(k, e)); caja.classList.add('lista'); return caja; }
+  (async () => {
+    await espera(60);
+    while (vivo()) {
+      caja.classList.remove('lista', 'escrita');
+      const actual = clave.cartas.map(() => al(ESTADOS));
+      actual.forEach((e, k) => poner(k, e));
+      const fijas = new Set();
+      // Prueba combinaciones: cada carta que no se fijó cambia de estado cada tanto, y se van fijando
+      const orden = [0, 1, 2, 3].sort(() => Math.random() - 0.5);
+      let paso = 0;
+      while (fijas.size < capas.length && vivo()) {
+        for (let k = 0; k < capas.length; k++) {
+          if (fijas.has(k) || Math.random() < 0.25) continue;
+          actual[k] = otro(k, actual[k]);
+          poner(k, actual[k]);
+          capas[k].classList.remove('salta'); void capas[k].getBoundingClientRect(); capas[k].classList.add('salta');
+        }
+        paso++;
+        // Después de un rato, una carta encuentra su lugar cada pocos pasos
+        if (paso > 12 && paso % 5 === 0) {
+          const k = orden[fijas.size];
+          fijas.add(k);
+          poner(k, buenos[k]);
+          capas[k].classList.remove('salta'); capas[k].classList.add('fija');
+        }
+        await espera(95);
+      }
+      if (!vivo()) return;
+      caja.classList.add('lista');      // todas en su lugar: brillan
+      await espera(900);
+      caja.classList.add('escrita');    // los trazos se apagan y la clave aparece como texto
+      await espera(2200);
+      caja.classList.remove('escrita');
+      await espera(500);
+      capas.forEach(g => g.classList.remove('fija'));
+    }
+  })();
+  return caja;
 }
 
 /** Cómo se juega, con un dibujo por paso: tocar, girar y voltear, leer y escribir. */
