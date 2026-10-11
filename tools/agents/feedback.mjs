@@ -3,7 +3,8 @@
  * El feedback 🐞 como issues de GitHub (D-275): cada reporte que la gente manda desde La Copa o
  * el laboratorio (`feedback/` en Firebase, D-104, D-191, D-265) se vuelve un issue con la etiqueta
  * `feedback`, y el agente de procesos lo atiende en su ronda. Lo corre cada hora
- * `.github/workflows/feedback.yml` (la ronda en la nube no llega a Firebase; GitHub sí).
+ * `.github/workflows/feedback.yml`: así cada reporte le llega por correo al dueño y queda enlazado
+ * con su respuesta y su arreglo.
  *
  *   node tools/agents/feedback.mjs sincronizar [--simular]   # crea los issues que faltan
  *
