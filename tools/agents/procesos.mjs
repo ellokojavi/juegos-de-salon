@@ -4,7 +4,7 @@
  * convierte un error que se repite en un mecanismo que lo frena solo.
  *
  *   node tools/agents/procesos.mjs revisar                  # las señales de hoy
- *   node tools/agents/procesos.mjs decidir <archivo.json>   # abre el issue de decisiones de un toque
+ *   node tools/agents/procesos.mjs decidir <archivo.json> [--directo]   # abre el issue de decisiones de un toque
  *   node tools/agents/procesos.mjs patron <clave> "qué pasó" [--commit <sha>]   # anota una vez que se vio
  *   node tools/agents/procesos.mjs mecanismo <clave> "qué lo frena ahora" --pr <url>
  *   node tools/agents/procesos.mjs anotar --hasta <commit> [--issue <url>] [--pr <url>] [--nota "…"]
@@ -196,7 +196,17 @@ function decidir(archivo) {
   const cuerpo = cuerpoDecisiones(d);
   const hay = gh('label', 'list', '--limit', '200', '--json', 'name').some(l => l.name === ETIQUETA);
   if (!hay) sh('gh', ['label', 'create', ETIQUETA, '-R', REPO, '--color', '5319e7', '--description', 'Decisiones de un toque del agente de procesos (D-273)']);
-  console.log(sh('gh', ['issue', 'create', '-R', REPO, '--title', d.titulo, '--label', ETIQUETA, '--body', cuerpo]).trim());
+  // Lo abre el bot (decidir.yml): GitHub no le avisa a nadie de lo que hace su propia cuenta, y
+  // los agentes usan la del dueño. Con --directo, lo abre esa cuenta (sin correo).
+  if (process.argv.includes('--directo')) return console.log(sh('gh', ['issue', 'create', '-R', REPO, '--title', d.titulo, '--label', ETIQUETA, '--body', cuerpo]).trim());
+  const antes = new Date().toISOString();
+  sh('gh', ['workflow', 'run', 'decidir.yml', '-R', REPO, '--ref', 'main', '-f', `titulo=${d.titulo}`, '-f', `cuerpo=${cuerpo}`]);
+  for (let i = 0; i < 24; i++) {
+    execFileSync('sleep', ['5']);
+    const [nuevo] = gh('issue', 'list', '--label', ETIQUETA, '--state', 'all', '--limit', '5', '--json', 'url,title,createdAt').filter(x => x.title === d.titulo && x.createdAt >= antes.slice(0, 19));
+    if (nuevo) return console.log(nuevo.url);
+  }
+  throw new Error('decidir.yml no abrió el issue en dos minutos: mira Actions → Decidir.');
 }
 
 const valor = (args, flag) => { const i = args.indexOf(flag); return i >= 0 ? args[i + 1] : null; };

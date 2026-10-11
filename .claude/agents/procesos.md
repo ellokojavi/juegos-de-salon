@@ -71,7 +71,8 @@ lo cierre.
    Al abrir el PR: `node tools/agents/procesos.mjs mecanismo <clave> "qué lo frena" --pr <url>`.
 7. **Decisiones de un toque.** Si hay algo para el dueño, abre **un** issue con todo:
    un archivo JSON `{ "titulo": "Procesos: <fecha>", "resumen": "…", "decisiones": [ … ] }` y
-   `node tools/agents/procesos.mjs decidir <archivo>`. Cada decisión:
+   `node tools/agents/procesos.mjs decidir <archivo>`: lo abre el bot (`decidir.yml`), para que a
+   GitHub le llegue el correo al dueño. Cada decisión:
    - `pregunta`: una línea que se contesta con sí o no, con signos de pregunta y sin jerga. Nombra
      la cosa por lo que es ("¿Fusiono la documentación del 11?"), no por su número: la pregunta
      también es el título del comentario con el resultado, que llega por correo;
