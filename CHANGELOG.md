@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.156.1 — 2026-10-11
+- **Herramientas:** si una casilla de un toque no puede fusionar, dice por qué (por ejemplo, un
+  conflicto con main) en vez de "Command failed". Y las pruebas frenan una decisión repetida o fuera
+  de orden en `docs/DECISIONES.md`.
+
 ## 0.156.0 — 2026-10-11
 - **👑 Reinas: ↩️ Deshacer** (D-283): quita el último gesto (un toque, un arrastre o un Borrar
   todo), uno a uno hasta el comienzo, sin tocar el reloj. En La Copa, en el juego suelto y en Uno al

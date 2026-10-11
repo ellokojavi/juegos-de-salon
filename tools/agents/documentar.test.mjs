@@ -1,6 +1,9 @@
 // Las comprobaciones y la memoria del agente de documentación (D-172).
 // Uso: node tools/agents/documentar.test.mjs
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import {
   decisionesEscritas, decisionesCitadas, sinMencionar, changelogTiene, versionDe, memoriaNueva, anotarRonda, separar, rango,
   requerimientosRepetidos, usabilidadRepetidas, entradas, leerEstado, corregidas, problemasDeEstado, rutasCitadas,
@@ -159,6 +162,15 @@ caso('una ronda mira main desde la memoria; un PR, su rama desde la base', () =>
   const memoria = { revisadoHasta: 'r0' };
   assert.deepEqual(rango({ desde: null, memoria, main: 'm1', head: 'h1' }), { inicio: 'r0', punta: 'm1', donde: 'main' });
   assert.deepEqual(rango({ desde: 'origin/main', memoria, main: 'm1', head: 'h1' }), { inicio: 'origin/main', punta: 'h1', donde: 'esta rama' });
+});
+
+// En el repo de verdad, no en ejemplos: dos PR que se fusionan a la vez dejaron una decisión
+// repetida (D-277) y otra fuera de orden (D-282 antes de D-280), y nada lo frenaba en GitHub.
+caso('docs/DECISIONES.md del repo: sin decisiones repetidas ni fuera de orden', () => {
+  const texto = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '../../docs/DECISIONES.md'), 'utf8');
+  const { repetidos, desordenados } = decisionesEscritas(texto);
+  assert.deepEqual(repetidos, [], `decisiones repetidas: ${repetidos.map(n => `D-${n}`).join(', ')} (renumera la tuya)`);
+  assert.deepEqual(desordenados, [], `fuera de orden: ${desordenados.map(([n, a]) => `D-${n} después de D-${a}`).join(', ')}`);
 });
 
 console.log(`documentar: ${n} casos en verde`);
