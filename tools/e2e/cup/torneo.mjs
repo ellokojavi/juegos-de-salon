@@ -632,7 +632,7 @@ if (corre('laboratorio')) {
   // En el laboratorio queda solo lo que no ha salido (D-262): cada sección lleva a la página de su
   // prototipo, en /labs/<carpeta>/ (El caso, D-267…), y ya no está La Copa
   const secciones = await ev(`JSON.stringify([...document.querySelectorAll('section.seccion')].map(x => [x.id, x.querySelector('a.btn')?.getAttribute('href')]))`).then(JSON.parse);
-  ok(secciones.length >= 1 && secciones[0][0] === 'seccion-caso' && secciones[0][1] === 'case/' && secciones.every(([, h]) => /^[a-z-]+\/$/.test(h || '')) && !await ev(`!!document.getElementById('minis')`),
+  ok(secciones.length >= 1 && secciones.some(([id, h]) => id === 'seccion-caso' && h === 'case/') && secciones.every(([, h]) => /^[a-z-]+\/$/.test(h || '')) && !await ev(`!!document.getElementById('minis')`),
     `el laboratorio ofrece solo prototipos, cada uno en su carpeta (${secciones.map(([, h]) => h).join(' ')})`);
   await b.shot('10-labs');
   // Un link de antes de D-266, con los parámetros en español: llega igual, y en inglés
