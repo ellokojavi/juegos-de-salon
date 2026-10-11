@@ -56,8 +56,12 @@ lo cierre.
 6. **Decisiones de un toque.** Si hay algo para el dueño, abre **un** issue con todo:
    un archivo JSON `{ "titulo": "Procesos: <fecha>", "resumen": "…", "decisiones": [ … ] }` y
    `node tools/agents/procesos.mjs decidir <archivo>`. Cada decisión:
-   - `pregunta`: una línea que se contesta con sí o no, sin jerga;
-   - `contexto`: dos o tres líneas con el porqué y tu recomendación, y el link a lo que se aprueba;
+   - `pregunta`: una línea que se contesta con sí o no, con signos de pregunta y sin jerga. Nombra
+     la cosa por lo que es ("¿Fusiono la documentación del 11?"), no por su número: la pregunta
+     también es el título del comentario con el resultado, que llega por correo;
+   - `contexto`: dos o tres líneas, **tu recomendación primero** y después el porqué y el link a
+     lo que se aprueba. No repitas lo que hace cada casilla: `decidir` lo escribe al lado
+     ("Sí: fusiona #300", "No: cierra #300");
    - `si` y `no`: las acciones de cada respuesta, de la lista cerrada de `tools/agents/aprobar.mjs`:
      `fusionar` (pr), `cerrar-pr` (pr, motivo), `cerrar-issue` (issue, motivo), `comentar` (en,
      texto), `correr` (workflow: `e2e.yml` o `publicar.yml`), `encolar` (tarea para tu próxima
