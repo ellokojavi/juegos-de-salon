@@ -201,6 +201,10 @@ por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
   casilla hasta que el resolvedor encuentra una sola solución; Tango suma pistas hasta que es única
   y después saca las que sobran; Zip suma números sobre un camino al azar y después saca los que
   sobran (quedan 7 a 12 en 6 × 6).
+- **Reinas** tiene bajo el tablero **↩️ Deshacer**, **🧹 Borrar todo** (dos toques, D-169) y, en su
+  propia línea, **🏳️ Rendirse** (D-110). Deshacer quita el último gesto (un toque, un toque largo,
+  un arrastre entero o un Borrar todo) hasta el comienzo, sin pedir confirmación, y el reloj sigue
+  (D-283). El botón y sus pasos están en `games/deshacer.js`, listos para Tango y Zip.
 - **Tango** no cuenta como error pasar por el sol para llegar a la luna: solo dejar la casilla
   rompiendo una regla (D-102). La pantalla dice lo mismo: el choque se pinta en rojo recién cuando
   el jugador toca otra casilla, nunca por tiempo; con el tablero lleno se muestra sin contarse,

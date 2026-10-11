@@ -100,7 +100,11 @@ de 🟩 con 🟥 donde hubo error y 🟨 donde se pidió ayuda.
   quienes nombra por su nombre (D-264: "a la izquierda de Omar" ilumina a Omar, no a los de su
   izquierda; "en la fila 2", a nadie), en celeste a quien la dice, y apaga a los demás; en una
   comparación, quien nombra el segundo grupo va en rosado (#282). Ver a quiénes abarca el grupo
-  queda para el jugador. Tocarla otra vez o tocar fuera lo apaga. El ✓ a su derecha la tacha.
+  queda para el jugador. Tocarla otra vez o tocar fuera lo apaga.
+- **Tachar una pista:** se tacha sola cuando ya están marcadas todas las personas que abarca (su
+  grupo, o los dos de una comparación; D-282), y se ve igual que una tachada a mano. El ✓ a su
+  derecha la tacha antes, a mano, y la destacha, también a una tachada sola. Lo tachado solo sale
+  de lo que el jugador ya marcó (`usadas()` del motor), nunca de la solución, así que no regala nada.
 - **La última pista** va arriba de la lista, destacada, y entra animada.
 - **Los mensajes** de acierto se van solos a los 2,5 s, y los de error y "todavía no se puede
   saber" a los 4 s (ver Excepciones).
@@ -110,7 +114,8 @@ de 🟩 con 🟥 donde hubo error y 🟨 donde se pidió ayuda.
 No tiene: es de un jugador y sin red. Las jugadas son `{ i, v }` (acierto o error), `{ i, v, falta:
 1 }` (marcar antes de tiempo, D-261) y `{ ayuda: i }` (D-263). Lo guardado para seguir al
 recargar está en `juegos-de-salon:diario:caso:<semilla>` como `{ jugadas, ms }`; las pistas
-tachadas no se guardan. Si el almacenamiento está bloqueado, se juega igual sin guardar.
+tachadas a mano (y las destachadas) no se guardan, pero las que se tachan solas vuelven solas,
+porque salen de las jugadas (D-282). Si el almacenamiento está bloqueado, se juega igual sin guardar.
 
 Manda la señal de uso del panel con el juego `caso` y el modo `solo` al empezar, y cómo salió al
 terminar (D-44, D-210). Es el único juego que cuenta desde el laboratorio: es lo que se quiere
@@ -126,7 +131,7 @@ public/cup/game.js                lo de `diario`: el caso del día, seguir al re
 public/cup/games/juegos.test.mjs  sus pruebas, con las de los demás juegos de La Copa
 public/labs/case/index.html       generada por node tools/release/og.mjs tarjetas desde public/cup/suelto/: no se edita
 public/case/index.html            página puente a /labs/case/, también generada
-tools/e2e/case/lab.mjs            de punta a punta: el laboratorio lo ofrece, /case/ lleva ahí, el caso del día, marcar antes de tiempo, recargar, resolverlo entero, compartir, otro caso, el de hoy y el comentario
+tools/e2e/case/lab.mjs            de punta a punta: el laboratorio lo ofrece, /case/ lleva ahí, el caso del día, marcar antes de tiempo, recargar, las pistas que se tachan solas y el ✓, resolverlo entero, compartir, otro caso, el de hoy y el comentario
 ```
 
 **El generador** (`deSemilla`) elige nombres (uno por letra de la A a la T, en orden alfabético

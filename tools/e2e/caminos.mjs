@@ -357,6 +357,22 @@ export const CAMINOS = {
     choque: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, TAN_LLENAR(true)],
   },
   /**
+   * 🔍 El caso del día. `pistas` es el caso a medio resolver, con lo que se puede deducir marcado
+   * hasta que hay pistas tachadas solas (D-282) y una más tachada a mano con el ✓.
+   */
+  caso: {
+    intro: [],
+    juego: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, `1`, `1`],
+    pistas: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, `1`, `1`,
+      `(async()=>{const m=await import('/cup/games/case/engine.js');const s=__copa.estado.juego.semilla;const p=m.generar(s,1);
+        const jug=()=>(JSON.parse(localStorage.getItem('juegos-de-salon:diario:caso:'+s)||'null')||{}).jugadas||[];
+        for(let k=0;k<12;k++){const e=m.estado(p,jug());if(m.usadas(p,e.x).size>=3)break;const d=m.deducibles(e.pistas,e.x);const [i,v]=Object.entries(d)[0]||[];if(i===undefined)break;
+          document.querySelector('.cs-persona[data-i="'+i+'"]').click();document.getElementById(+v?'btn-criminal':'btn-inocente').click();}
+        [...document.querySelectorAll('.cs-pista:not(.tachada) .tachar')].at(-1)?.click();document.body.click();})()`,
+      `1`, `1`, `1`, `1`,   // que se vayan el sello y el mensaje del acierto
+    ],
+  },
+  /**
    * El panel del dueño no es un juego, pero se mira igual: `window.__panel.seed` lo dibuja
    * con datos sembrados, sin entrar con Google ni tocar la base (C-14). Los datos traen a
    * propósito un juego (`juego-nuevo`), un modo (`equipos`) y un idioma (`fr`) que no están
@@ -372,6 +388,16 @@ export const CAMINOS = {
     // Las otras dos pestañas de la ficha de una copa (D-207)
     'copa-dias': [SEMBRAR_PANEL('/cup/OFICI'), `[...document.querySelectorAll('.subtabs button')][1].click()`],
     'copa-historia': [SEMBRAR_PANEL('/cup/OFICI'), `[...document.querySelectorAll('.subtabs button')][2].click()`],
+  },
+  /**
+   * Reinas, además del tablero recién empezado: con dos jugadas, para ver la fila de ↩️ Deshacer,
+   * 🧹 Borrar todo y 🏳️ Rendirse prendida (D-283), y con Borrar todo armado, su texto más largo.
+   */
+  reinas: {
+    intro: [],
+    juego: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, `1`, `1`],
+    jugadas: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, `1`, `document.querySelector('.rej[data-i="0"]').click()`, `document.querySelector('.rej[data-i="3"]').click()`],
+    borrar: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, `1`, `document.querySelector('.rej[data-i="0"]').click()`, `document.getElementById('btn-borrar').click()`],
   },
 };
 

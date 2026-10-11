@@ -228,7 +228,17 @@ export function montar(raiz, ctx) {
   const dibujarPistas = e => {
     // La más nueva arriba, destacada; las demás en el orden en que se fueron sabiendo, al revés
     const orden = [p.inicio, ...e.marcas].reverse();
-    const tachadas = ctx.tachadas || (ctx.tachadas = new Set());
+    // Tachada a mano con el ✓, o sola cuando ya está marcado todo lo que abarca (D-282). El ✓ también
+    // destacha una de esas, y queda a la vista aunque siga usada
+    const aMano = ctx.tachadas || (ctx.tachadas = new Set());
+    const destachadas = ctx.destachadas || (ctx.destachadas = new Set());
+    const usadas = motor.usadas(p, e.x);
+    const tachadas = { has: i => aMano.has(i) || (usadas.has(i) && !destachadas.has(i)) };
+    const alternar = i => {
+      if (tachadas.has(i)) { aMano.delete(i); if (usadas.has(i)) destachadas.add(i); }
+      else if (usadas.has(i)) destachadas.delete(i);
+      else aMano.add(i);
+    };
     pistas.replaceChildren(
       el('h3', {}, `💬 ${fmt(T.casoPistas, { n: orden.length })}`),
       ...orden.map((i, k) => el('div', {
@@ -240,7 +250,7 @@ export function montar(raiz, ctx) {
         el('span', { class: 'de' }, `${nombre(i)}:`), ' ', el('span', {}, ...pintado(frase(i)))),
       el('button', {
         type: 'button', class: 'tachar', 'aria-label': tachadas.has(i) ? T.casoDestachar : T.casoTachar, 'aria-pressed': String(tachadas.has(i)),
-        onClick: ev => { ev.stopPropagation(); tachadas.has(i) ? tachadas.delete(i) : tachadas.add(i); SFX.tap(); dibujarPistas(motor.estado(p, jugadas)); },
+        onClick: ev => { ev.stopPropagation(); alternar(i); SFX.tap(); dibujarPistas(motor.estado(p, jugadas)); },
       }, '✓'))));
     nueva = null;
   };

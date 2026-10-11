@@ -5,6 +5,16 @@
   conflicto con main) en vez de "Command failed". Y las pruebas frenan una decisión repetida o fuera
   de orden en `docs/DECISIONES.md`.
 
+## 0.156.0 — 2026-10-11
+- **👑 Reinas: ↩️ Deshacer** (D-283): quita el último gesto (un toque, un arrastre o un Borrar
+  todo), uno a uno hasta el comienzo, sin tocar el reloj. En La Copa, en el juego suelto y en Uno al
+  día. Rendirse pasa a su propia línea. Lo pidió un jugador por 🐞.
+
+## 0.155.0 — 2026-10-11
+- **🔍 El caso: las pistas usadas se tachan solas** (D-282): una pista se tacha sola cuando ya
+  marcaste a todas las personas que nombra. El ✓ sigue sirviendo para tachar antes o destachar.
+  Lo pidió un jugador por 🐞.
+
 ## 0.154.0 — 2026-10-11
 - **🧪 Laboratorio: Proyectos activos y La Bodega** (D-280). `/labs/` se ordena en dos grupos: lo que
   se está probando y, en 📦 La Bodega, los proyectos que no prosperaron, que se siguen pudiendo jugar.

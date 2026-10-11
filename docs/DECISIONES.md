@@ -62,14 +62,14 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246 |
 | Memoria de partida | C-6 | D-25, D-150 |
-| Interfaz táctil | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213 |
+| Interfaz táctil | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213, D-283 |
 | Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213, D-277 |
 | Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243, D-253, D-254, D-271, D-272 |
 | Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251 |
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216 |
-| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268 |
+| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282 |
 | Agentes (usabilidad, documentación, procesos) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249 |
 | Marketing | `marketing/README.md` | D-178 |
@@ -4998,3 +4998,53 @@ Un link que comparte un juego del laboratorio (el "Compartir" de El caso) solo a
 tiene la llave. Para cambiarla: `printf %s 'llave-nueva' | sha256sum` y el resultado en `HUELLA`;
 quien tenía la vieja queda afuera. `public/assets/js/labs-puerta.test.mjs` prueba la puerta y
 exige que cada página de `/labs/` la cargue y que ninguna, ni sus puentes, se indexe.
+
+## D-282 · El caso: las pistas ya usadas se tachan solas
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** amplía D-256 (el ✓ que tacha una pista); respeta D-261 y D-263
+**Decisión:** En El caso, una pista se tacha sola cuando **ya están marcadas todas las personas
+que abarca** (las de su grupo, o de sus dos grupos en una comparación). Se ve igual que una tachada
+a mano. El ✓ sigue: tacha antes a mano y destacha, también una tachada sola, que entonces queda a
+la vista. Lo calcula `usadas()` del motor, que mira solo lo que el jugador ya marcó, nunca la
+solución; como lo tachado sale de la grilla, si alguien que la pista abarca volviera a quedar sin
+marcar, la pista volvería a aparecer, y una tachada a mano no.
+**Por qué:** lo pidió un jugador por el 🐞 (#320: «Se podrian auto tachar las pistas ya usadas») y el
+dueño eligió la lectura del dilema #302 que no regala nada: una pista cuyo grupo ya está todo
+marcado no puede aportar, y eso ya se ve en la grilla. Con 20 personas y una pista por acierto la
+lista crecía y había que ir tachando a mano.
+**Alternativas descartadas:** tachar la que el motor sabe que ya no aporta (sería una ayuda gratis,
+y la 💡 Ayuda cuesta 15, D-263); dejar solo el ✓ a mano; pintar distinto la tachada sola (se
+entiende sola: pasa justo al marcar a alguien, U-8).
+**Consecuencias:** las pistas que abarcan a casi todos ("hay más criminales en la fila 1 que en la
+2") se tachan tarde. Una pista tachada sola nunca es de las que nombra la ayuda. Las tachadas siguen
+sin guardarse al recargar, pero las que se tachan solas vuelven solas. `juegos.test.mjs` prueba
+`usadas()`; `tools/e2e/case/lab.mjs`, el tachado solo, el ✓ a mano y el destachar, y
+`tools/e2e/caminos.mjs` suma la toma `caso pistas`.
+
+## D-283 · Reinas: ↩️ Deshacer el último gesto
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** amplía D-169 · cierra el dilema #301 (reporte 🐞 #319)
+**Decisión:** Bajo el tablero de Reinas, a la izquierda de 🧹 Borrar todo, va **↩️ Deshacer**
+(EN *Undo*, PT *Desfazer*, DE *Rückgängig*). Cada toque quita el último gesto y vuelve a dibujar,
+uno tras otro hasta el tablero del comienzo; sin nada que deshacer, el botón está apagado. Vale en
+La Copa (el día y la ronda de la final), en el juego suelto y en Uno al día, que usan la misma pantalla.
+- **Un gesto, un paso:** un toque, un toque largo, un arrastre entero (todas las X que pintó o
+  borró) o un Borrar todo, que así se puede deshacer. La pantalla anota dónde empieza cada gesto en
+  la lista de jugadas; esos cortes viven en memoria, así que después de recargar la partida
+  Deshacer quita una jugada por toque.
+- **Deshacer no es una jugada:** quita jugadas de la lista guardada y el motor no cambia. El reloj
+  sigue y el puntaje es el tiempo (D-107), así que no cambia cómo se cuenta. Los errores que se
+  deshacen dejan de contarse, pero en Reinas ya no restan.
+- **No pide confirmación**, a diferencia de Borrar todo y Rendirse (U-15): lo que deshace se rehace
+  con el mismo toque que lo hizo.
+- **La fila de botones:** Deshacer y Borrar todo juntos, y 🏳️ Rendirse, que es definitivo, en su
+  propia línea. Cada botón en una sola línea de texto; el que no cabe baja (a 320 px, en alemán, los
+  tres van uno bajo otro). Antes los dos botones partían sus palabras en sílabas.
+- **Hecho para repetirse:** el botón y los pasos viven en `public/cup/games/deshacer.js`
+  (`pasos()` y `botonDeshacer()`), para sumarlo después a Tango y Zip sin rehacerlo. Lo prueba
+  `public/cup/games/deshacer.test.mjs`, con el motor de Reinas.
+
+**Por qué:** Un jugador lo pidió con un 🐞 («Faltan boton UNDO> birrar todo es muy agresivo»): una
+suposición de varios pasos se desarmaba a mano o se borraba entera. El Queens de LinkedIn lo trae.
+El dueño aprobó la opción A del dilema.
+**Alternativas descartadas:** deshacer de a una jugada (un arrastre de ocho X pedía ocho toques);
+guardar Deshacer como jugada en la lista (agrandaba lo guardado sin necesidad: no hay nada que
+reproducir ni verificar fuera del celular); sumarlo a Tango en el mismo PR (queda para después).

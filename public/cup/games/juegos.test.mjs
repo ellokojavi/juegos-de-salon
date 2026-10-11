@@ -741,6 +741,38 @@ test('el caso: se resuelve sin adivinar, las pistas son verdad y se dicen en los
   assert.deepEqual(caso.sujetos({ t: 'gt', a: [1], b: [2], g: { tipo: 'vecinos', de: 5 }, h: { tipo: 'col', c: 'A' } }), { a: [5], b: [] });
   assert.deepEqual(caso.sujetos({ t: 'si', a: [4, 9], k: 1, j: 0, g: { tipo: 'si', de: 4, otro: 9 } }), { a: [4, 9], b: [] });
   assert.deepEqual(caso.sujetos({ t: 'es', a: [7], k: 1 }), { a: [7], b: [] });
+  // Una pista se tacha sola cuando ya está marcado todo lo que abarca (D-282)
+  assert.deepEqual(caso.abarca({ t: 'gt', a: [1, 2], b: [2, 6] }), [1, 2, 6]);
+  assert.deepEqual(caso.abarca(undefined), []);
+  {
+    const x = new Array(caso.N).fill(-1);
+    const q = { pistas: [{ t: 'eq', a: [1, 2], k: 1 }, { t: 'gt', a: [0], b: [3] }, { t: 'es', a: [0], k: 0 }] };
+    x[2] = 1;
+    assert.deepEqual([...caso.usadas(q, x)], [], 'sin hablar no hay pista que tachar');
+    x[0] = 0; x[1] = 0;
+    assert.deepEqual([...caso.usadas(q, x)], [0, 2], 'la de 0 abarca a 1 y 2, y la de 2 a 0: todos marcados');
+    x[3] = 1;
+    assert.deepEqual([...caso.usadas(q, x)], [0, 1, 2], 'la comparación mira los dos grupos');
+    x[1] = -1;
+    assert.deepEqual([...caso.usadas(q, x)], [2], 'si alguien que abarca vuelve a estar sin marcar, su pista vuelve a aparecer');
+  }
+  for (const c of ['TACH1', 'TACH2', 'TACH3']) {
+    const q = caso.generar(c, 4), jugadas = [];
+    let alguna = false;
+    for (let vuelta = 0; vuelta <= caso.N; vuelta++) {
+      const e = caso.estado(q, jugadas);
+      const u = caso.usadas(q, e.x);
+      // Solo mira lo marcado: una usada abarca solo a marcados y la dice alguien marcado
+      for (const i of u) assert.ok(e.x[i] !== -1 && caso.abarca(q.pistas[i]).every(j => e.x[j] !== -1), `${c}: ${i} tachada sin estar usada`);
+      if (e.fin) { assert.equal(u.size, e.conocidas.filter(i => q.pistas[i]).length, `${c}: resuelto, todas usadas`); break; }
+      alguna ||= u.size > 0;
+      // Una usada ya no aporta: nunca es de las que nombra la ayuda
+      const a = caso.ayuda(q, jugadas);
+      for (const i of a.quienes) assert.ok(!u.has(i), `${c}: la ayuda nombra una pista tachada sola`);
+      jugadas.push({ i: a.i, v: q.v[a.i] });
+    }
+    assert.ok(alguna, `${c}: ninguna pista se tachó sola antes del final`);
+  }
   // En portugués, "criminoso" concuerda con quien es (U-3): "Ana é criminosa", "Beto é criminoso"
   const directa = { ...p, nombres: ['Ana', 'Beto', ...p.nombres.slice(2)], pistas: [{ t: 'es', a: [0], k: 1 }, { t: 'es', a: [1], k: 1 }] };
   assert.equal(caso.texto(directa, 0, LOCALES_COPA.pt.casoTexto), 'Ana é criminosa.');
