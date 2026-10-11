@@ -606,6 +606,7 @@ node public/fourth-king/engine.test.mjs
 node public/generala/engine.test.mjs
 node public/hangman/engine.test.mjs
 node public/julep/engine.test.mjs
+node public/labs/code/engine.test.mjs
 node public/liars-dice/engine.test.mjs
 node public/timeline/engine.test.mjs
 node public/assets/js/arrastre.test.mjs
@@ -737,7 +738,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   julep/                      Julep (engine.js + tests, game.js, rules.js)
   fourth-king/                Fourth King (engine.js + tests, game.js, rules.js)
   connections/ · queens/ …    The Cup's games played on their own, one page each (generated from cup/suelto/)
-  labs/                       The lab: games being tested before they reach the menu (not linked, not indexed); today only El caso (D-262), which ends with a "What did you think?" form for the friends testing it (D-265)
+  labs/                       The lab: games being tested before they reach the menu (not linked, not indexed); today El caso (labs/case/, D-267) and The Code (labs/code/: two see-through shapes that, laid one on the other and turned the right way, show a 4-digit code, D-270); each ends with a "What did you think?" form for the friends testing them (D-265, D-268)
     case/                     The Case: a mystery prototype in the style of Clues by Sam, Spanish only, for friends to try (D-256)
   records/                    Leaderboards: the All-Rounder, every game's table and The Cup's medal table (D-212)
   today/                      One a Day: today's game, your streak, a calendar and how you do in each game (D-230)
@@ -789,6 +790,7 @@ These documents are in Spanish, like the rest of the project.
 - [Toque y Fama: estudio de factibilidad y propuesta de mecánica](docs/games/bulls-and-cows-factibilidad.md)
 - [Especificación: Toque y Fama](docs/games/bulls-and-cows.md)
 - [El caso](docs/games/case.md)
+- [🔐 La clave (prototipo del laboratorio)](docs/games/code.md)
 - [La Copa](docs/games/cup.md)
 - [Especificación: Cuarto Rey](docs/games/fourth-king.md)
 - [Diseño: Generala](docs/games/generala.md)
