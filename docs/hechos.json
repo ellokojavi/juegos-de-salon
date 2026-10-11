@@ -695,7 +695,7 @@
       "pista": {
         "es": "De Beethoven a Taylor Swift",
         "en": "From Beethoven to Taylor Swift",
-        "pt": "De Beethoven a Taylor Swift",
+        "pt": "De Beethoven até Taylor Swift",
         "de": "Von Beethoven bis Taylor Swift"
       },
       "cartas": 91,
@@ -958,6 +958,7 @@
     "public/timeline/engine.test.mjs",
     "tools/agents/aprobar.test.mjs",
     "tools/agents/documentar.test.mjs",
+    "tools/agents/feedback.test.mjs",
     "tools/agents/limpiar-copias.test.mjs",
     "tools/agents/marketing.test.mjs",
     "tools/agents/procesos.test.mjs",
