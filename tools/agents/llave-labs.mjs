@@ -49,7 +49,8 @@ export function llaveNueva() {
 export function agregar(fuente, etiqueta, llave) {
   if (!ETIQUETA.test(etiqueta)) throw new Error(`etiqueta no válida: "${etiqueta}" (letras, números, espacio, . _ -; hasta 24)`);
   const llaves = leer(fuente);
-  if (llaves.some(l => l.etiqueta.toLowerCase() === etiqueta.toLowerCase())) throw new Error(`"${etiqueta}" ya tiene llave: quítala antes de darle otra`);
+  const ya = llaves.find(l => l.etiqueta.toLowerCase() === etiqueta.toLowerCase());
+  if (ya) throw new Error(`"${ya.etiqueta}" ya tiene llave: quítala antes de darle otra`);
   return escribir(fuente, [...llaves, { etiqueta, huella: huella(llave) }]);
 }
 
@@ -73,10 +74,11 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
       writeFileSync(PUERTA, agregar(fuente, etiqueta, llave));
       console.log(`Llave para ${etiqueta}. Se muestra solo esta vez: cópiala ahora.\n`);
       console.log(`  ${SITIO}/labs/?key=${llave}\n`);
-      console.log('Abre cuando el cambio a labs-puerta.js se fusione y el sitio se publique.');
+      console.log('El link abre recién cuando el cambio a public/assets/js/labs-puerta.js entre con un PR y el sitio se publique.');
     } else if (cmd === 'quitar' && etiqueta) {
+      const nombre = leer(fuente).find(l => l.etiqueta.toLowerCase() === etiqueta.toLowerCase())?.etiqueta ?? etiqueta;
       writeFileSync(PUERTA, quitar(fuente, etiqueta));
-      console.log(`${etiqueta} ya no entra al laboratorio (cuando el cambio se publique).`);
+      console.log(`Llave de ${nombre} quitada. Deja de entrar cuando el cambio a public/assets/js/labs-puerta.js entre con un PR y el sitio se publique.`);
     } else {
       console.log('Uso: node tools/agents/llave-labs.mjs nueva <etiqueta> | quitar <etiqueta> | listar');
       process.exit(cmd ? 1 : 0);
