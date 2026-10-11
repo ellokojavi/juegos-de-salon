@@ -194,7 +194,7 @@ con eso la pantalla entra también a las pruebas de idiomas. Para verlo en un ce
   y revisa lo que entregan. Los encargos del dueño que ejecuta otro agente ("revisa la frescura del
   README") se le piden a él: decide quién, lo lanza, comprueba y responde. Atiende el feedback 🐞,
   que `.github/workflows/feedback.yml` sube cada hora como issues `feedback` (`tools/agents/feedback.mjs`,
-  sin el nombre del jugador). Cierra lo que quedó abierto y
+  con el nombre que puso el jugador y sin su navegador, D-279). Cierra lo que quedó abierto y
   convierte un error que se repite en un mecanismo (un test antes que una instrucción). Lo que
   necesita al dueño va en un issue `procesos` con casillas Sí/No, que abre el bot (`decidir.yml`) para
   que le llegue el correo: marcar una lo cumple al instante

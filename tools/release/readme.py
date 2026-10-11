@@ -104,7 +104,7 @@ def bloque_juegos(H, C):
     for m in H.get('sueltos', []):
         nombres = ' / '.join(dict.fromkeys([m['nombre']['en'], m['nombre']['es'], m['nombre']['pt']]))
         estado = '🧪 lab' if m['labs'] else 'Also in The Cup'
-        # Uno del laboratorio va sin link: el laboratorio no se anuncia (D-280)
+        # Uno del laboratorio va sin link: el laboratorio no se anuncia (D-281)
         nombre = nombres if m['labs'] else f"[{nombres}](https://juegosdesalon.cl/{m['path']})"
         filas.append(f"| {m['emoji']} {nombre} | 1 "
                      f"| Play alone | {estado} |")

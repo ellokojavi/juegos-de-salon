@@ -20,7 +20,7 @@ const PASOS = { I: [], R: ['#btn-girar'], H: ['#btn-voltear'], V: ['#btn-girar',
 const sinDesborde = () => ev(`document.documentElement.scrollWidth <= innerWidth`);
 
 await b.go(`${SITIO}/labs/`);
-ok(await ev(`document.querySelector('#bodega #btn-clave')?.getAttribute('href')`) === 'code/', 'el laboratorio ofrece La clave, en La Bodega (D-279)');
+ok(await ev(`document.querySelector('#bodega #btn-clave')?.getAttribute('href')`) === 'code/', 'el laboratorio ofrece La clave, en La Bodega (D-280)');
 
 for (const lang of ['es', 'en', 'pt', 'de']) {
   const n = 4;
