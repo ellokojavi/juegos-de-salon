@@ -9,8 +9,10 @@ código en el teclado (D-270). Como las tarjetas transparentes de los juegos de 
 
 - **Dónde:** `https://juegosdesalon.cl/labs/code/`, en el laboratorio. Id `clave` en la señal de uso.
 - **Para quién:** uno solo. En los cuatro idiomas, con su diccionario en `game.js`.
+- **Modos:** 🔢 Cifras (en los cuatro idiomas) y 🔤 Palabra (solo en español, más abajo).
 - **Cartas:** 4, ninguna viene derecha. Hubo un modo de 8 y el dueño lo sacó: demasiado complejo.
-- **Estado:** prototipo, sin publicar: la v1 de dos figuras se probó y el dueño pidió más cartas.
+- **Estado:** prototipo en el laboratorio desde v0.147.0, aprobado por el dueño. Empezó como una v1
+  de dos figuras que se arrastraban una sobre otra; la historia está en D-270.
 
 ## Portada
 
