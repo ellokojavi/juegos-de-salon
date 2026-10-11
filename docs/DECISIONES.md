@@ -53,6 +53,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 |---|---|---|
 | Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270 |
 | Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184 |
+| Mazos de cartas con fecha | `docs/games/timeline.md` | D-37, D-272 |
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
@@ -282,7 +283,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 **Consecuencias:** El canon C-8b se precisa: la señal fuerte del error es para quien lo cometió. En un celular y en solitario no cambia nada, porque quien mira la pantalla es siempre quien acaba de jugar. Prueba: `tools/e2e/linea-de-tiempo-veredicto.mjs`.
 
 ## D-37 · Cartas que se puedan situar en el tiempo
-**Fecha:** 2026-09-10 · **Estado:** vigente
+**Fecha:** 2026-09-10 · **Estado:** corregida por D-272
 **Decisión:** Una carta no puede describir un hecho que se repite en la historia sin algo que la ancle a su año. Se sacó “un gran incendio golpea los cerros de Valparaíso” y “el terremoto de marzo sacude la zona central”; “el movimiento estudiantil se toma el año” pasó a nombrar a Camila Vallejo, y el incendio de Valparaíso a decir que fue el mayor de su historia y cuántas casas se llevó.
 **Por qué:** Chile tiene terremotos, incendios y marchas cada pocos años. Si la carta no dice cuál, el jugador no está pensando, está adivinando, y eso rompe el juego para todos.
 **Consecuencias:** Regla para escribir mazos: superlativo, nombre propio o cifra que ancle el año. Si no hay ninguno, la carta no entra. Vale también para los mazos futuros.
@@ -4758,3 +4759,30 @@ lo decide el agente, y la lista lo obliga a decirlo en un solo lugar). Un juego 
 principal: ya lo cuenta la cabecera ("15 juegos para el celular") y lo nombra la tarjeta.
 **Consecuencias:** el mensaje pasa de 4 a 6 líneas. La regla es U-35; el agente la sigue desde
 `.claude/agents/documentacion.md`, como excepción a "no tocas código de la app".
+
+## D-272 · Las cartas con fecha: ni dicen su año ni piden un dato que el jugador no sabe
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** corrige D-37
+**Decisión:** De los mazos de Línea de Tiempo (que también usan ¿En qué año?, Línea Relámpago y la
+final de La Copa) salen dos clases de cartas, y no se reescriben: se sacan.
+- **Las que dicen su año**: las Constituciones de 1833, 1925 y 1980, la final de Italia 90 y la
+  Eco-92. El test del motor ya no deja entrar una carta que diga su año, entero o abreviado ("90",
+  "’92"), en ninguno de los cuatro idiomas. Un año que no es el de la carta sí puede ir (*2001:
+  Odisea del espacio*, *1989* de Taylor Swift): es una trampa legítima.
+- **Las que no se pueden situar**: un hecho que se repitió (el incendio de Valparaíso, los
+  incendios forestales de 2017, los terremotos de Santiago de 1647 y de Valparaíso de 1906, "la
+  crisis financiera") o un proceso sin fecha (la era del swing, la bossa nova, la cumbia, el reggae,
+  la salsa, el punk, el Auto-Tune, la electrónica en los festivales, TikTok como fábrica de éxitos,
+  Bad Bunny como el más escuchado, el perro Doge, Baby Shark, el comienzo de las independencias
+  latinoamericanas).
+
+Salieron 23 cartas. Música, que ya tenía 89, recibió 12 hitos puntuales y conocidos (la muerte de
+Lennon, Freddie Mercury y Kurt Cobain, el Nobel de Dylan…) y queda en 91. El test exige ahora 90
+cartas por mazo, lo que ya pedía la guía.
+**Por qué:** El incendio de Valparaíso ya se había anclado como pedía D-37 ("el mayor de su
+historia, casi 3.000 casas") y seguía sin poder situarse: el superlativo y la cifra son datos que
+la carta le enseña al jugador, no algo que él sepa. Reescribir una carta para anclarla agrega una
+pregunta de trivia al juego; el juego es ordenar hechos que uno reconoce. En el otro extremo, una
+carta que dice su año no se juega: se lee.
+**Consecuencias:** La regla para escribir cartas, en `docs/games/timeline.md`: el ancla tiene que
+ser algo que el jugador sepa (un nombre, un hecho único), no un superlativo o una cifra que solo la
+carta dice. Si no la hay, la carta no entra.

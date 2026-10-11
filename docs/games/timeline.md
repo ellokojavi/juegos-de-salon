@@ -69,19 +69,20 @@ Seis temáticas, cada una en su archivo dentro de `decks/`:
 
 | Temática | Archivo | Cartas | De qué va |
 |---|---|---|---|
-| 📜 Historia | `historia.js` | 98 | Hitos de la humanidad |
-| 🎵 Música | `musica.js` | 89 | De Beethoven a TikTok |
-| 🇨🇱 Chile | `chile.js` | 127 | Del terremoto del 60 al estallido |
-| 🍿 Cultura pop | `pop.js` | 110 | Cine, memes y videojuegos |
-| 🇧🇷 Brasil | `brasil.js` | 140 | De Cabral a la COP30, con novelas y carnaval |
-| ⚽ Fútbol | `futbol.js` | 123 | Mundiales, clubes, goles y fichajes |
+| 📜 Historia | `historia.js` | 96 | Hitos de la humanidad |
+| 🎵 Música | `musica.js` | 91 | De Beethoven a Taylor Swift |
+| 🇨🇱 Chile | `chile.js` | 120 | Del terremoto del 60 al estallido |
+| 🍿 Cultura pop | `pop.js` | 108 | Cine, memes y videojuegos |
+| 🇧🇷 Brasil | `brasil.js` | 139 | De Cabral a la COP30, con novelas y carnaval |
+| ⚽ Fútbol | `futbol.js` | 122 | Mundiales, clubes, goles y fichajes |
 
 ```js
 { id: 'luna', year: 1969, emoji: '🚀', es: 'El hombre llega a la Luna', en: 'Humans land on the Moon', pt: 'O homem chega à Lua', de: 'Der Mensch landet auf dem Mond' }
 ```
 
 - Hitos **reconocibles**, con años indiscutibles: si la fecha se discute, la carta no entra.
-- Y que se puedan **situar**: nada de “un gran incendio” o “manifestaciones” a secas, porque eso pasa cada pocos años. Superlativo, nombre propio o cifra que ancle el año (D-37).
+- Y que se puedan **situar**: nada de “un gran incendio”, “un terremoto” o “la era del swing”, porque eso pasa cada pocos años o dura una década. El ancla es algo que el jugador sabe (un nombre propio, un hecho único), no un superlativo o una cifra que solo la carta dice (“el mayor incendio de su historia”): si no la hay, la carta no entra (D-37, D-272).
+- Y que **no digan su año**, ni entero ni abreviado (“la Constitución de 1980”, “Italia 90”): el test del motor lo frena en los cuatro idiomas. Un año que no es el de la carta sí puede ir (*2001: Odisea del espacio*, de 1968).
 - Cada mazo trae al menos noventa cartas, bien repartidas en el tiempo.
 - Los mazos se registran en `decks/index.js` con su nombre, su pista y su emoji por idioma. El archivo
   nuevo entra solo al import map (C-11, D-192), así que el navegador no mezcla un índice nuevo con un
