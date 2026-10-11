@@ -34,7 +34,7 @@ for (const n of [4]) {
 // Un choque se ve: la misma carta dos veces encima de sí misma no, pero una carta sobre la base sí
 {
   const c = { base: [{ i: 0, s: 'a' }], cartas: [{ o: 'I', trazos: [{ i: 0, s: 'a' }, { i: 1, s: 'b' }] }, { o: 'I', trazos: [{ i: 1, s: 'b' }] }] };
-  assert.deepEqual(choques(c, ['I', 'I']).map(x => `${x.i}${x.s}`).sort(), ['0a', '1b']);
+  assert.deepEqual(choques(c, ['I', 'I']).map(x => `${x.i}${x.s}:${x.capas.join('+')}`).sort(), ['0a:base+0', '1b:0+1']);
   assert.deepEqual(choques(c, ['I', 'I'], [true, false]).map(x => `${x.i}${x.s}`), ['0a']);
   assert.deepEqual(choques(c, ['V', 'I'], [true, false]), [], 'girada, la a pasa a ser la d');
 }
