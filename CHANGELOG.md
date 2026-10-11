@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.156.0 — 2026-10-11
+- **👑 Reinas: ↩️ Deshacer** (D-283): quita el último gesto (un toque, un arrastre o un Borrar
+  todo), uno a uno hasta el comienzo, sin tocar el reloj. En La Copa, en el juego suelto y en Uno al
+  día. Rendirse pasa a su propia línea. Lo pidió un jugador por 🐞.
+
 ## 0.148.6 — 2026-10-11
 - **Herramientas: el feedback 🐞 dice quién lo mandó** (D-279): el issue de cada reporte suma el
   nombre que el jugador escribió, para hacerle seguimiento.
