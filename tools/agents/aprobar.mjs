@@ -158,6 +158,9 @@ function hacer(acc, repo) {
       catch (e) { throw new Error(`los checks de #${acc.pr} no pasaron`); }
       // Sin --delete-branch: la rama la borra GitHub (el repo lo tiene activado) y así pasa a main
       // los PR montados sobre ella. Borrada a mano, GitHub los cierra (le pasó al #303).
+      // Un conflicto con main se dice como tal: antes salía "Command failed" sin la causa (#331).
+      const estado = JSON.parse(gh('pr', 'view', String(acc.pr), ...R, '--json', 'mergeable')).mergeable;
+      if (estado === 'CONFLICTING') throw new Error(`#${acc.pr} tiene conflicto con main: hay que ponerlo al día`);
       gh('pr', 'merge', String(acc.pr), ...R, '--merge');
       for (const w of WORKFLOWS) gh('workflow', 'run', w, ...R, '--ref', 'main');
       return `#${acc.pr} fusionado; se está publicando el sitio`;
@@ -204,7 +207,9 @@ function principal() {
       resultado = `✅ ${hechos.join('; ')}`;
     } catch (e) {
       fallo = true; bien = false;
-      resultado = `❌ ${[...hechos, String(e.message || e).split('\n')[0]].join('; ')}`;
+      // El porqué está en lo que gh escribió en stderr, no en "Command failed: …"
+      const porque = String(e.stderr || '').trim().split('\n').filter(Boolean).pop() || String(e.message || e).split('\n')[0];
+      resultado = `❌ ${[...hechos, porque].join('; ')}`;
     }
     lineas.push(`**${pregunta(evento.issue.body, decision)}** ${opcion === 'si' ? 'Sí' : 'No'}. ${resultado}`);
     // Se relee el cuerpo antes de anotar: otra casilla pudo marcarse mientras esto corría.
