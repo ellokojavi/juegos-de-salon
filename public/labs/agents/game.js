@@ -22,18 +22,19 @@ const T = {
   nombre: 'Agentes', lema: 'El juego te da una pista; tú encuentras a tus agentes entre 12 palabras.',
   hoy: 'El tablero de hoy es el mismo para todos.',
   como: [
-    ['🕵️', 'Llegan 3 pistas, de a una, con su número: «MAR · 3» quiere decir que 3 palabras van con MAR. Toca las que creas.'],
-    ['⚠️', `Hay 2 palabras neutrales (−${RESTA_NEUTRAL}) y un asesino (−${RESTA_ASESINO}) que se parece a una pista: tocarlos corta la pista.`],
-    ['⏭️', 'Si dudas, pasa a la siguiente pista. Cada agente que encuentras suma.'],
+    ['🕵️', 'Toca las palabras que van con la pista: «MAR · 3» quiere decir que 3 van con MAR. Llegan 3 pistas, de a una.'],
+    ['⚠️', `Evita las 2 palabras neutrales (−${RESTA_NEUTRAL}) y al asesino (−${RESTA_ASESINO}), que se parece a una pista: tocar uno corta la pista.`],
+    ['⏭️', 'Si dudas, pasa a la siguiente pista. Cada agente suma, aunque sea de otra pista.'],
   ],
   empezar: '🕵️ Empezar', pista: 'Pista {n} de {t}', faltan: 'Te faltan {n}', faltaUna: 'Te falta 1',
-  pasar: '⏭️ Siguiente pista', terminar: '🏁 Terminar',
+  pasar: '⏭️ Siguiente pista', terminar: '🏁 Terminar', seguro: '🏁 Sí, terminar',
+  quedan: ['Queda 1 agente sin encontrar. ¿Terminas igual?', 'Quedan {n} agentes sin encontrar. ¿Terminas igual?'],
   bien: '¡Bien! Es de los tuyos.', otra: '¡Es de los tuyos! Pero de otra pista: igual suma.',
   neutral: `Neutral: −${RESTA_NEUTRAL}. Se corta la pista.`, asesino: `¡El asesino! −${RESTA_ASESINO}. Se corta la pista.`,
   fin: '¡Misión cumplida!', finMal: 'Misión terminada',
-  desglose: ['Encontraste {n} de {t} agentes: {pts} puntos.', 'Tocaste {n} neutral(es): −{pts}.', 'Tocaste al asesino: −{pts}.'],
-  total: 'Total: {s}/100 en {t}.',
-  pistasEran: 'Las pistas eran', otraVez: '🔁 Otro tablero', deHoy: '📅 El de hoy', laboratorio: '‹ Volver al laboratorio',
+  desglose: ['Encontraste {n} de {t} agentes: {pts} puntos.', ['Tocaste 1 neutral: −{pts}.', 'Tocaste {n} neutrales: −{pts}.'], 'Tocaste al asesino: −{pts}.'],
+  tiempo: 'Tiempo: {t}.',
+  otraVez: '🔁 Otro tablero', deHoy: '📅 El de hoy', laboratorio: '‹ Volver al laboratorio',
   comentarAbrir: '💬 Dejar un comentario',
   comentario: { titulo: '¿Qué te pareció?', lead: 'Cuéntanos si las pistas se entendían, si alguna palabra era injusta y qué le cambiarías.', ph: 'Por ejemplo: la pista FUEGO con BOMBERO me costó; el asesino me engañó.', nombre: 'Tu nombre (opcional)', enviar: 'Enviar comentario', enviando: 'Enviando…', vacio: 'Escribe algo primero.', gracias: '¡Gracias! 🙌 Tu comentario llegó.', guardado: 'Ahora no hay internet: tu comentario quedó en el celular y se envía solo después.', error: 'No se pudo enviar. Prueba de nuevo en un rato.', contexto: 'Lo que se envía junto', cancelar: 'Cancelar', cerrar: 'Cerrar' },
 };
@@ -90,8 +91,10 @@ function jugar() {
   const aviso = el('p', { class: 'aviso-ag', 'aria-live': 'polite' }, '');
   const caja = el('div', { class: 'pista', id: 'pista' });
   const botones = el('div', { class: 'stack' });
-  const cartas = t.cartas.map((c, i) => el('button', { type: 'button', class: 'carta', 'data-i': i, onClick: () => tocar(i) }, c.w));
+  const cartas = t.cartas.map((c, i) => el('button', { type: 'button', class: 'carta', 'data-i': i, style: `--n:${c.w.length}`, onClick: () => tocar(i) }, c.w));
   let antes = 0;
+  // Terminar deja agentes sin encontrar y no se deshace: el primer toque avisa cuántos quedan y pide otro (U-15)
+  let confirmando = false;
   const decir = (clase, texto) => { aviso.className = `aviso-ag ${clase}`; aviso.textContent = texto; };
   const dibujar = () => {
     const e = estado(t, P.jugadas);
@@ -110,8 +113,20 @@ function jugar() {
       el('p', { class: 'de' }, fmt(T.pista, { n: e.actual + 1, t: t.pistas.length })),
       el('p', { class: 'palabra' }, p.pista, ' · ', el('b', {}, String(p.n))),
       el('p', { class: 'falta' }, e.faltan === 1 ? T.faltaUna : fmt(T.faltan, { n: e.faltan })));
-    botones.replaceChildren(el('button', { type: 'button', class: 'btn btn--ghost btn--sm', id: 'btn-pasar', onClick: () => { SFX.tap(); P.jugadas.push({ pasar: true }); decir('', ''); dibujar(); } },
-      e.actual === t.pistas.length - 1 ? T.terminar : T.pasar));
+    const ultima = e.actual === t.pistas.length - 1;
+    confirmando = false;
+    const boton = el('button', { type: 'button', class: 'btn btn--ghost btn--sm', id: 'btn-pasar', onClick: () => {
+      SFX.tap();
+      if (ultima && !confirmando) {
+        confirmando = true;
+        const quedan = AGENTES - estado(t, P.jugadas).encontrados;
+        decir('', quedan === 1 ? T.quedan[0] : fmt(T.quedan[1], { n: quedan }));
+        boton.textContent = T.seguro;
+        return;
+      }
+      P.jugadas.push({ pasar: true }); decir('', ''); dibujar();
+    } }, ultima ? T.terminar : T.pasar);
+    botones.replaceChildren(boton);
   };
   const tocar = i => {
     const e0 = estado(t, P.jugadas);
@@ -142,20 +157,22 @@ function resultado() {
   if (!QUIETO && s >= 70) confetti({ count: 160, duration: 2400 });
   pie.replaceChildren();
   const lineas = [fmt(T.desglose[0], { n: e.encontrados, t: AGENTES, pts: Math.round(100 * e.encontrados / AGENTES) })];
-  if (e.neutrales) lineas.push(fmt(T.desglose[1], { n: e.neutrales, pts: RESTA_NEUTRAL * e.neutrales }));
+  if (e.neutrales) lineas.push(fmt(T.desglose[1][e.neutrales === 1 ? 0 : 1], { n: e.neutrales, pts: RESTA_NEUTRAL * e.neutrales }));
   if (e.asesino) lineas.push(fmt(T.desglose[2], { pts: RESTA_ASESINO }));
   // El tablero entero, con lo que era cada carta
   const tablero = el('div', { class: 'tablero', id: 'tablero-fin' }, ...t.cartas.map((c, i) => el('div', {
     class: `carta ${c.tipo === 'agente' ? 'agente' : c.tipo}${e.tocadas.has(i) ? '' : ' sin-tocar'}`,
-  }, c.tipo === 'agente' ? `${c.w} · ${t.pistas[c.p].pista}` : c.tipo === 'asesino' ? `💀 ${c.w}` : c.w)));
+    style: `--n:${c.w.length}`,
+  }, c.tipo === 'asesino' ? `💀 ${c.w}` : c.w,
+  // Bajo cada agente, su pista: así el tablero dice también cuáles eran las pistas
+  c.tipo === 'agente' ? el('span', { class: 'de-pista' }, t.pistas[c.p].pista) : null)));
   vista.replaceChildren(el('div', { class: 'resultado' },
     el('div', { class: 'trofeo' }, e.asesino ? '💀' : s >= 70 ? '🏆' : '🕵️'),
     el('h2', { class: 'display display--lg', style: 'margin:0' }, s >= 70 ? T.fin : T.finMal),
     el('div', { class: 'score-big', id: 'puntaje' }, `${s}/100`),
     el('ul', { class: 'desglose muted' }, ...lineas.map(x => el('li', {}, x))),
-    el('p', { class: 'lead', style: 'margin:0' }, fmt(T.total, { s, t: mmss(ms) })),
+    el('p', { class: 'lead', style: 'margin:0' }, fmt(T.tiempo, { t: mmss(ms) })),
     el('div', { class: 'tarjeta', 'aria-hidden': 'true' }, tarjeta(t, e)),
-    el('p', { class: 'muted', style: 'margin:0' }, `${T.pistasEran}: ${t.pistas.map(p => p.pista).join(' · ')}`),
     tablero,
     botonResultadoSolo({ C: COMMON.es, emoji: '🕵️', juego: T.nombre, puntaje: `${s}/100`, tiempo: mmss(ms), tarjeta: tarjeta(t, e), url: `${SITIO}labs/agents/${SEMILLA_URL ? `?seed=${encodeURIComponent(SEMILLA_URL)}` : ''}`, alTocar: () => SFX.tap() }),
     el('a', { class: 'btn btn--yellow', id: 'btn-otro', href: `?seed=${Math.random().toString(36).slice(2, 8)}` }, T.otraVez),
