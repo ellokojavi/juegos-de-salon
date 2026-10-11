@@ -33,7 +33,10 @@ D-212, abiertos a todos desde D-217), cada partida terminada se cuenta en `jugad
 y, si ganó, suma una victoria en la tabla `toque-y-fama_victorias` (semana y siempre): en sala, la de su
 rol; contra el celular, la del humano; en un celular, la del jugador que se llama como él. Un
 empate no es victoria. La tabla (semana, siempre y amigos) va en la intro, debajo de los modos
-(`finDePartida` y `bloqueVictorias` de `public/assets/js/ranking.js`), y en `/records/`. Jugar solo tiene su propio
+(`finDePartida` y `bloqueVictorias` de `public/assets/js/ranking.js`), y en `/records/`. Sin jugador
+abierto (D-274), `finDePartida` pone en la pantalla final, después de los botones (`#result-actions`),
+"¿Quieres que esta partida cuente en el ranking?" con el nombre y PIN de siempre y el nombre de su
+rol ya puesto: al entrar, se anota esa partida y la victoria, si fue suya. Jugar solo tiene su propio
 ranking (ver abajo).
 
 ### Jugar solo (D-142)
@@ -64,8 +67,11 @@ juego 🔢 de La Copa, con sus reglas, su pantalla y su puntaje, pero en el idio
   más puntos y, a igualdad, menos tiempo. Un 0 no se anota. La clave vieja (`…:record`, por
   intentos) queda sin uso.
 - **Ranking (D-215):** la tabla `toque-y-fama_solo`, con el mismo 0–100 y el tiempo, debajo de
-  Empezar y al pie del resultado. En el resultado, con un jugador de los rankings abierto, el aviso
-  de los rankings (`avisoPartida`) reemplaza al récord del celular. No suma al Todoterreno.
+  Empezar, al pie del resultado y en la portada del juego, arriba de las victorias (D-274: es como
+  más se juega). En el resultado, con un jugador de los rankings abierto, el aviso de los rankings
+  (`avisoPartida`) reemplaza al récord del celular; sin jugador, después de los botones va
+  "¿Quieres que esta partida cuente?" con nombre y PIN, y al entrar se anota esa partida (D-274).
+  No suma al Todoterreno.
 - **Panel:** `trackStart({ game, mode: 'solo', players: 1 })` al empezar, no al retomar.
 
 ### Pendientes / ideas

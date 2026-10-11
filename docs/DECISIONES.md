@@ -53,6 +53,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 |---|---|---|
 | Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270 |
 | Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184 |
+| Mazos de cartas con fecha | `docs/games/timeline.md` | D-37, D-277, D-278 |
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
@@ -62,7 +63,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246 |
 | Memoria de partida | C-6 | D-25, D-150 |
 | Interfaz táctil | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213 |
-| Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213 |
+| Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213, D-277 |
 | Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243, D-253, D-254, D-271, D-272 |
 | Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251 |
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218 |
@@ -282,7 +283,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 **Consecuencias:** El canon C-8b se precisa: la señal fuerte del error es para quien lo cometió. En un celular y en solitario no cambia nada, porque quien mira la pantalla es siempre quien acaba de jugar. Prueba: `tools/e2e/linea-de-tiempo-veredicto.mjs`.
 
 ## D-37 · Cartas que se puedan situar en el tiempo
-**Fecha:** 2026-09-10 · **Estado:** vigente
+**Fecha:** 2026-09-10 · **Estado:** corregida por D-278
 **Decisión:** Una carta no puede describir un hecho que se repite en la historia sin algo que la ancle a su año. Se sacó “un gran incendio golpea los cerros de Valparaíso” y “el terremoto de marzo sacude la zona central”; “el movimiento estudiantil se toma el año” pasó a nombrar a Camila Vallejo, y el incendio de Valparaíso a decir que fue el mayor de su historia y cuántas casas se llevó.
 **Por qué:** Chile tiene terremotos, incendios y marchas cada pocos años. Si la carta no dice cuál, el jugador no está pensando, está adivinando, y eso rompe el juego para todos.
 **Consecuencias:** Regla para escribir mazos: superlativo, nombre propio o cifra que ancle el año. Si no hay ninguno, la carta no entra. Vale también para los mazos futuros.
@@ -4815,8 +4816,30 @@ confirmación en un Cloudflare Worker (son dos toques igual que la casilla, con 
 **Consecuencias:** la ronda corre en la nube a las 4:30 hora del Pacífico, después de la de
 documentación (3:54). El correo llega solo los días con algo que decidir.
 
+## D-274 · Rankings: que cuente la partida recién jugada, el solitario en la portada y Ahorcado solo
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** amplía D-212 y D-215
+**Decisión:** Tres cambios para que los rankings se llenen:
+- **"¿Quieres que esta partida cuente?"**: al terminar una partida sin jugador abierto (jugando solo
+  en Toque y Fama, Generala, Ahorcado y Línea Relámpago, y en todos los juegos de grupo contra el
+  celular, en sala o en un celular), sale un bloque aparte —fondo propio, borde dorado y una entrada
+  con un pequeño salto— con el formulario de nombre y PIN de siempre y el nombre que escribió para
+  jugar ya puesto. Al entrar o crear su jugador, se anota esa partida (y la victoria, si fue suya).
+  Va después de los botones del final, para que sigan a la vista (C-8). Lo hacen `avisoPartida` y
+  `finDePartida` de `ranking.js`; en los juegos de grupo se pone solo, después de `#result-actions`.
+- **La portada de Toque y Fama, Generala y Ahorcado** muestra la tabla de los mejores puntajes
+  jugando solo arriba de la de victorias: es como más se juegan.
+- **Ahorcado jugando solo tiene ranking** (`ahorcado_solo`): el puntaje de Uno al día (las vidas
+  que quedaron sobre las del principio, de 0 a 100), y el tiempo desempata. También en `/records/`.
+**Por qué:** el dueño vio vacío el ranking de Toque y Fama sabiendo que se juega mucho. Los datos
+(29 días): 43 partidas solo, 33 contra el celular y 23 salas, y en Firebase ni una victoria de
+juegos de grupo; de 31 jugadores registrados, 6 anotaron alguna vez. Los rankings se guardaban
+bien: lo que faltaba era que la gente entrara, y la portada mostraba la tabla que menos se usa.
+El bloque aparte lo pidió el dueño, para que quien no lo ve siempre lo note.
+**Consecuencias:** `tools/e2e/hangman/local.mjs` y `bulls-and-cows/local.mjs` prueban que el
+final ofrezca que la partida cuente.
+
 ## D-275 · El feedback 🐞 llega como issues y lo atiende el agente de procesos
-**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** amplía D-273 (el agente de procesos) y D-104 (los reportes de La Copa); corrige D-273 en que no tocaba el código de los juegos, y D-132 en que los reportes 🐞 eran de la ronda de usabilidad
+**Fecha:** 2026-10-11 · **Estado:** corregida por D-279 · **Relación:** amplía D-273 (el agente de procesos) y D-104 (los reportes de La Copa); corrige D-273 en que no tocaba el código de los juegos, y D-132 en que los reportes 🐞 eran de la ronda de usabilidad
 **Decisión:** `.github/workflows/feedback.yml` sube cada hora los reportes nuevos de `feedback/`
 (`tools/agents/feedback.mjs`) como issues con la etiqueta `feedback`, uno por reporte y nunca dos
 veces el mismo. El agente de procesos los atiende en su ronda: arregla lo que tiene un arreglo
@@ -4871,3 +4894,70 @@ capturas).
 **Consecuencias:** si la app de Claude no está abierta en el Mac mini, la ronda corre al abrirla.
 Los días sin cambios, los ejecutores no corren. Revisar un PR antes de fusionarlo sigue igual: la
 sesión dueña lanza a los dos agentes (CLAUDE.md).
+
+## D-277 · El veredicto de una carta con fecha cuenta su dato, y leerlo no cuesta tiempo
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** excepción a C-8b (la explicación del error); completa D-95 (el tiempo activo) y D-278
+**Decisión:** Cada carta de los mazos de Línea de Tiempo puede llevar un **dato** en los cuatro
+idiomas (un porqué o una anécdota de hasta 110 caracteres, sin años), y el veredicto lo cuenta en
+vez de decir entre qué hitos iba la carta:
+- **Al errar**, en el veredicto que se queda hasta tocarlo. En ⏳ Línea Relámpago (solo, práctica,
+  Uno al día y copa) y en cada hito de 📅 ¿En qué año?, el reloj se **pausa** mientras se lee, con **tope de 6 s**:
+  arriba marca ⏸ y una barra bajo el dato se vacía.
+- **Al acertar**, en una franja sobre el botón de colocar que no frena nada y se va sola a los 6 s.
+- **Al terminar**, la línea como quedó es el repaso: los errores con su dato a la vista y el resto a
+  un toque.
+
+Entraron con datos Chile e Historia, y en el PR siguiente Música, Cultura pop, Brasil y Fútbol; una
+carta sin dato dice dónde iba, como antes.
+**Por qué:** lo pidió el dueño al ver "Fue en 1738: iba antes de 1925 · … Tú la pusiste entre 1980
+y 1989 · …": que un año está entre otros dos no le enseña nada a nadie, y el año grande de la carta
+ya dice qué estuvo mal. Un dato sí deja algo, al errar y al acertar. Lo que lo complica es el
+reloj: si leer cuesta tiempo, el jugador aprende a saltárselo; si la pausa no tiene fin, sirve para
+pensar la jugada siguiente. Con tope de 6 s alcanza para leer una frase y no para otra cosa, y el
+veredicto tapa el tablero.
+**Alternativas descartadas:** el dato en el acierto dentro del veredicto, alargando su cierre
+(frena el juego en cada carta: la franja lo deja leer sin pedirlo); pausar el reloj sin tope;
+reescribir el "iba entre…" más corto (sigue sin enseñar nada).
+**Consecuencias:** el test del motor frena un dato largo, con año o con el año de otra carta, y
+exige el dato en todas las cartas de los mazos que ya los tienen (`CON_DATOS`). Los datos se
+escriben verificados: un error en un dato se lee como lección. La regla para escribirlos está en
+`docs/games/timeline.md`.
+
+## D-278 · Las cartas con fecha: ni dicen su año ni piden un dato que el jugador no sabe
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** corrige D-37
+**Decisión:** De los mazos de Línea de Tiempo (que también usan ¿En qué año?, Línea Relámpago y la
+final de La Copa) salen dos clases de cartas, y no se reescriben: se sacan.
+- **Las que dicen su año**: las Constituciones de 1833, 1925 y 1980, la final de Italia 90 y la
+  Eco-92. El test del motor ya no deja entrar una carta que diga su año, entero o abreviado ("90",
+  "’92"), en ninguno de los cuatro idiomas. Un año que no es el de la carta sí puede ir (*2001:
+  Odisea del espacio*, *1989* de Taylor Swift): es una trampa legítima.
+- **Las que no se pueden situar**: un hecho que se repitió (el incendio de Valparaíso, los
+  incendios forestales de 2017, los terremotos de Santiago de 1647 y de Valparaíso de 1906, "la
+  crisis financiera") o un proceso sin fecha (la era del swing, la bossa nova, la cumbia, el reggae,
+  la salsa, el punk, el Auto-Tune, la electrónica en los festivales, TikTok como fábrica de éxitos,
+  Bad Bunny como el más escuchado, el perro Doge, Baby Shark, el comienzo de las independencias
+  latinoamericanas).
+
+Salieron 23 cartas. Música, que ya tenía 89, recibió 12 hitos puntuales y conocidos (la muerte de
+Lennon, Freddie Mercury y Kurt Cobain, el Nobel de Dylan…) y queda en 91. El test exige ahora 90
+cartas por mazo, lo que ya pedía la guía.
+**Por qué:** El incendio de Valparaíso ya se había anclado como pedía D-37 ("el mayor de su
+historia, casi 3.000 casas") y seguía sin poder situarse: el superlativo y la cifra son datos que
+la carta le enseña al jugador, no algo que él sepa. Reescribir una carta para anclarla agrega una
+pregunta de trivia al juego; el juego es ordenar hechos que uno reconoce. En el otro extremo, una
+carta que dice su año no se juega: se lee.
+**Consecuencias:** La regla para escribir cartas, en `docs/games/timeline.md`: el ancla tiene que
+ser algo que el jugador sepa (un nombre, un hecho único), no un superlativo o una cifra que solo la
+carta dice. Si no la hay, la carta no entra.
+
+## D-279 · Los issues de feedback llevan el nombre de quien lo manda
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** corrige D-275 (el issue iba sin el nombre)
+**Decisión:** El issue de cada reporte 🐞 suma una línea **Quién** con el nombre que el jugador
+escribió en el formulario, si escribió uno. El navegador sigue fuera. Los nueve issues que ya
+estaban se completaron con su nombre.
+**Por qué:** lo pidió el dueño al ver los primeros issues: "no dice el nombre de quien reporta, lo
+que me ayudaría para hacer follow-up personal". El repo es público, así que el nombre queda a la
+vista, pero el nodo `feedback/` de Firebase ya se lee sin llave (`.read: true`): el issue no expone
+nada que no se pudiera ver. El nombre es opcional y lo elige el jugador (40 caracteres como mucho).
+**Alternativas descartadas:** dejarlo solo en `reportes.mjs` o en el panel (el dueño tendría que ir
+a buscarlo; el correo del issue es donde lee el reporte).
