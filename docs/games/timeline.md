@@ -74,7 +74,7 @@ Seis temáticas, cada una en su archivo dentro de `decks/`:
 | 🇨🇱 Chile | `chile.js` | 120 | Del terremoto del 60 al estallido |
 | 🍿 Cultura pop | `pop.js` | 108 | Cine, memes y videojuegos |
 | 🇧🇷 Brasil | `brasil.js` | 139 | De Cabral a la COP30, con novelas y carnaval |
-| ⚽ Fútbol | `futbol.js` | 122 | Mundiales, clubes, goles y fichajes |
+| ⚽ Fútbol | `futbol.js` | 121 | Mundiales, clubes, goles y fichajes |
 
 ```js
 { id: 'luna', year: 1969, emoji: '🚀', es: 'El hombre llega a la Luna', en: 'Humans land on the Moon', pt: 'O homem chega à Lua', de: 'Der Mensch landet auf dem Mond' }
@@ -117,9 +117,11 @@ dice); el dato deja algo aprendido en cada jugada, también en ¿En qué año? y
   español), **sin años** (ni el de la carta ni un número que sea el año de otra carta del mazo: le
   regalaría la fecha al siguiente jugador) y sin repetir la carta. Exacto ante todo: un error se lee
   como lección, y una tradición se dice como tradición.
-- **Mazos con datos:** Chile e Historia. El test exige el dato en todas las cartas de los mazos de
-  `CON_DATOS` (`engine.test.mjs`); los demás se van sumando, y mientras tanto sus errores dicen
-  entre qué hitos iba la carta.
+- **Mazos con datos:** los seis. El test exige el dato en todas las cartas de los mazos de
+  `CON_DATOS` (`engine.test.mjs`), así que un mazo nuevo o una carta nueva entra con el suyo. Una
+  carta sin dato (no debería haber) dice entre qué hitos iba, como antes.
+- **Los datos se verifican** contra fuentes antes de entrar: los de Música, Cultura pop, Brasil y
+  Fútbol pasaron por una revisión en la web, que cambió los que no se podían respaldar.
 
 #### Que no se repitan las cartas (D-34)
 Cada celular recuerda las cartas que ha visto por temática (`juegos-de-salon:linea-de-tiempo:vistas`).

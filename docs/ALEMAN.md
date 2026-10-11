@@ -32,7 +32,7 @@ que los amigos del dueño van a corregir.
 | Textos de los 8 juegos (`rules.js`) y comunes (`COMMON`, `games.js`, `azar.js`) | ~50.000 caracteres | traducidos |
 | Frases de carga (`frases.js`) | 100 | adaptadas, no calcadas |
 | Cuarto Rey: penitencias, categorías, "Ich hab noch nie", minijuegos | ~4.000 caracteres | adaptados a un grupo alemán (Bundesliga, Späti, Schlagerstars) |
-| Cartas de Línea de Tiempo | 687 cartas, 26.000 caracteres | traducidas, con títulos alemanes de películas y canciones |
+| Cartas de Línea de Tiempo | 675 cartas, 26.000 caracteres, y su dato (57.000, D-277) | traducidas, con títulos alemanes de películas y canciones |
 | Palabras del Ahorcado | 100 palabras con pista | elegidas en alemán, sin Ä, Ö, Ü ni ß |
 | Conexiones (`public/cup/games/connections/grillas-de.js`) | 15 grillas y la de ensayo | escritas en alemán, con distractores propios (KIEFER, SCHLOSS, BANK) |
 | Palabra (`PALABRAS_DE`) | 162 palabras de cinco letras distintas | escritas en alemán, sin Ä, Ö, Ü ni ß |
