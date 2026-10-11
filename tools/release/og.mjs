@@ -51,6 +51,16 @@ const PUERTAS = [
 ];
 /** El cierre de la bajada. Es la única frase que no sale de la app: se dice a los robots. */
 const GRATIS = { es: 'Gratis, sin instalar y sin cuenta.', en: 'Free, no install, no account.', pt: 'De graça, sem instalar e sem conta.', de: 'Kostenlos, ohne Installation und ohne Konto.' };
+/**
+ * Lo que la lista de juegos no dice: Uno al día y los minijuegos para jugar solo (D-271). Sin esto,
+ * la tarjeta de la portada contaba solo los juegos de grupo. El nombre de Uno al día sale de la app.
+ */
+const ADEMAS = {
+  es: n => `Además, ${n} y minijuegos para jugar solo.`,
+  en: n => `Plus ${n} and minigames to play solo.`,
+  pt: n => `E ainda ${n} e minijogos para jogar sozinho.`,
+  de: n => `Dazu das ${n} und Minispiele zum Alleinspielen.`,
+};
 /** "A, B y C" en cada idioma. */
 const lista = lang => disponibles.map(g => g.name[lang]).join(', ')
   .replace(/, ([^,]*)$/, ` ${{ es: 'y', en: 'and', pt: 'e', de: 'und' }[lang]} $1`);
@@ -60,7 +70,7 @@ const portada = p => ({
   // Sin decir cuántos son: el número cambia cada vez que entra un juego, y una frase que
   // envejece sola es peor que una que no cuenta nada. La lista sí se arma de games.js.
   titulo: `${COMMON[p.lang].appTitle} 🎲`,
-  descripcion: `${COMMON[p.lang].appSub.replace(/\.$/, '')}: ${lista(p.lang)}. ${GRATIS[p.lang]}`,
+  descripcion: `${COMMON[p.lang].appSub.replace(/\.$/, '')}: ${lista(p.lang)}. ${ADEMAS[p.lang](COMMON[p.lang].uad.nombre)} ${GRATIS[p.lang]}`,
   alt: `${COMMON[p.lang].appTitle}: ` + disponibles.map(g => g.emoji).join(' '),
   puerta: true,
 });
