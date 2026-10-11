@@ -39,6 +39,7 @@ assert.deepEqual(planear(evento(cuerpo, sí1)).planes, [{ decision: '1', opcion:
 // Solo el dueño, en un issue suyo, con la etiqueta y abierto
 assert.match(planear({ ...evento(cuerpo, sí1), sender: { login: 'otro' } }).ignorar, /otro/);
 assert.match(planear(evento(cuerpo, sí1, { issue: { ...evento(cuerpo, sí1).issue, user: { login: 'otro' } } })).ignorar, /es de otro/);
+assert.equal(planear(evento(cuerpo, sí1, { issue: { ...evento(cuerpo, sí1).issue, user: { login: 'github-actions[bot]' } } })).planes.length, 1, 'el bot abre los issues de decisiones');
 assert.match(planear(evento(cuerpo, sí1, { issue: { ...evento(cuerpo, sí1).issue, labels: [] } })).ignorar, /etiqueta/);
 assert.match(planear(evento(cuerpo, sí1, { issue: { ...evento(cuerpo, sí1).issue, state: 'closed' } })).ignorar, /cerrado/);
 assert.match(planear({ ...evento(cuerpo, sí1), action: 'opened' }).ignorar, /edición/);

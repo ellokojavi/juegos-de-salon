@@ -1,0 +1,30 @@
+# Abre el issue de decisiones de un toque del agente de procesos (D-273), con el bot de los
+# workflows y no con la cuenta del dueño: GitHub no avisa a nadie de lo que hace su propia cuenta,
+# y así el dueño recibe el correo. Lo lanza `node tools/agents/procesos.mjs decidir <archivo.json>`.
+
+name: Decidir
+
+on:
+  workflow_dispatch:
+    inputs:
+      titulo:
+        description: 'Título del issue'
+        required: true
+      cuerpo:
+        description: 'Cuerpo, con las casillas y el bloque de acciones (lo arma procesos.mjs)'
+        required: true
+
+permissions:
+  issues: write
+
+jobs:
+  abrir:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      # Los textos pasan por variables de entorno, nunca pegados en el script
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          TITULO: ${{ inputs.titulo }}
+          CUERPO: ${{ inputs.cuerpo }}
+        run: gh issue create -R "$GITHUB_REPOSITORY" --title "$TITULO" --label procesos --body "$CUERPO"
