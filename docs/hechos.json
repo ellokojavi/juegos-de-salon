@@ -1,5 +1,5 @@
 {
-  "version": "0.149.0",
+  "version": "0.150.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -695,7 +695,7 @@
       "pista": {
         "es": "De Beethoven a Taylor Swift",
         "en": "From Beethoven to Taylor Swift",
-        "pt": "De Beethoven a Taylor Swift",
+        "pt": "De Beethoven até Taylor Swift",
         "de": "Von Beethoven bis Taylor Swift"
       },
       "cartas": 91,
@@ -786,6 +786,7 @@
     "public/assets/js/compartir-portada.js",
     "public/assets/js/compartir.js",
     "public/assets/js/dado3d.js",
+    "public/assets/js/dato.js",
     "public/assets/js/favoritos.js",
     "public/assets/js/firebase-config.js",
     "public/assets/js/frases.js",
@@ -958,6 +959,7 @@
     "public/timeline/engine.test.mjs",
     "tools/agents/aprobar.test.mjs",
     "tools/agents/documentar.test.mjs",
+    "tools/agents/feedback.test.mjs",
     "tools/agents/limpiar-copias.test.mjs",
     "tools/agents/marketing.test.mjs",
     "tools/agents/procesos.test.mjs",
@@ -1021,6 +1023,7 @@
     "sala-tope.mjs",
     "timeline/arrastre.mjs",
     "timeline/chat.mjs",
+    "timeline/dato.mjs",
     "timeline/eleccion.mjs",
     "timeline/empate.mjs",
     "timeline/error.mjs",
