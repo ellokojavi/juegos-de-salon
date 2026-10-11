@@ -57,9 +57,9 @@ const GRATIS = { es: 'Gratis, sin instalar y sin cuenta.', en: 'Free, no install
  */
 const ADEMAS = {
   es: n => `Además, ${n} y minijuegos para jugar solo.`,
-  en: n => `Plus ${n} and minigames to play alone.`,
+  en: n => `Plus ${n} and minigames to play solo.`,
   pt: n => `E ainda ${n} e minijogos para jogar sozinho.`,
-  de: n => `Dazu ${n} und Minispiele für allein.`,
+  de: n => `Dazu das ${n} und Minispiele zum Alleinspielen.`,
 };
 /** "A, B y C" en cada idioma. */
 const lista = lang => disponibles.map(g => g.name[lang]).join(', ')
