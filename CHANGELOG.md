@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.150.0 — 2026-10-11
+## 0.152.0 — 2026-10-11
 - **⏳ Línea de Tiempo, 📅 ¿En qué año? y La Copa: cada carta cuenta algo** (D-277). En vez de "iba
   entre 1925 y 1980", el veredicto de un error cuenta un dato del hecho, un porqué o una anécdota
   ("El Muro lo abrió un error…"). Contra el reloj (⏳ Línea Relámpago y ¿En qué año?), el reloj se
@@ -8,8 +8,8 @@
   sola, sin frenar el juego. Al terminar, tocar un hito de la línea muestra su dato. Por ahora, en
   los mazos de Chile e Historia.
 
-## 0.149.0 — 2026-10-11
-- **⏳ Línea de Tiempo, 📅 ¿En qué año? y La Copa: cartas que se pueden situar** (D-274). Salen 23
+## 0.151.0 — 2026-10-11
+- **⏳ Línea de Tiempo, 📅 ¿En qué año? y La Copa: cartas que se pueden situar** (D-278). Salen 23
   cartas: las que decían su año (las Constituciones de 1833, 1925 y 1980, la final de Italia 90, la
   Eco-92) y las que no se podían situar, porque el hecho se repitió (el incendio de Valparaíso, los
   terremotos de Santiago y Valparaíso) o porque era una época y no un hecho (la era del swing, el
