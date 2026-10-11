@@ -4697,12 +4697,12 @@ a terminar, pero sin estorbar la cuenta.
 no esté en la cuenta, que abra y cierre la capa, y que el formulario sea lo último del resultado.
 
 ## D-269 · Acertijos con truco, un prototipo en el laboratorio
-**Fecha:** 2026-10-10 · **Estado:** vigente · **Relación:** usa D-265 y D-268 (el comentario); excepción a C-3 como D-256
+**Fecha:** 2026-10-10 · **Estado:** derogada · **Relación:** el dueño lo probó y no le gustó: se sacó el mismo día (v0.146.1); usa D-265 y D-268 (el comentario); excepción a C-3 como D-256
 **Decisión:** `/labs/riddles/` tiene cinco acertijos con truco al estilo de *Brain Test*: el animal
 más grande, los cuadrados, la llave bajo la pregunta, la nube que tapa el sol y el kilo de plumas.
 Cada uno con su gesto (tocar, elegir, arrastrar), un narrador burlón, 💡 Pista, un resultado con una
 casilla por acertijo y el comentario al final de cada vista. Solo acertijos que no dependen del
-idioma, para que se jueguen igual en los cuatro. Detalle en [games/riddles.md](games/riddles.md).
+idioma, para que se jueguen igual en los cuatro. (El doc del juego, `docs/games/riddles.md`, se borró con él.)
 **Por qué:** lo pidió el dueño después de la investigación de *Brainstorm Test: Tricky Puzzle*: un
 juego de niveles hechos a mano no calza con los juegos que arman su contenido solos, pero un
 "acertijo del día" corto sí podría; el prototipo es para ver si a los amigos les gusta.

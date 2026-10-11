@@ -1,5 +1,5 @@
 {
-  "version": "0.145.0",
+  "version": "0.146.1",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -895,7 +895,6 @@
     "public/julep/engine.js",
     "public/julep/game.js",
     "public/julep/rules.js",
-    "public/labs/riddles/game.js",
     "public/liars-dice/engine.js",
     "public/liars-dice/game.js",
     "public/liars-dice/rules.js",
@@ -1010,7 +1009,6 @@
     "liars-dice/online.mjs",
     "memoria-de-partida.mjs",
     "mirar.mjs",
-    "riddles/lab.mjs",
     "sala-error.mjs",
     "sala-tope.mjs",
     "timeline/arrastre.mjs",
@@ -1108,10 +1106,6 @@
     {
       "ruta": "docs/games/liars-dice.md",
       "titulo": "Diseño: Dudo"
-    },
-    {
-      "ruta": "docs/games/riddles.md",
-      "titulo": "🤔 Acertijos (prototipo del laboratorio)"
     },
     {
       "ruta": "docs/games/timeline.md",
