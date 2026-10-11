@@ -53,7 +53,9 @@ Un PR que solo trae documentación (`docs/`, `marketing/`, `.claude/` y los `.md
 y de esta carpeta) no corre ningún guion: `ci.mjs --lista --cambios <archivo>` sale vacía, y
 [`cambios.mjs`](cambios.mjs) decide qué cuenta como documentación (D-205; lo prueba
 `node tools/e2e/cambios.test.mjs`). Si las pruebas salen
-en rojo en `main`, el job `avisar` abre un issue "main en rojo: Punta a punta".
+en rojo en `main` (en un push o en una corrida a mano, como la que lanza una fusión de un toque),
+el job `avisar` abre un issue "main en rojo: Punta a punta", y cuando `main` vuelve a verde el job
+`cerrar-aviso` lo cierra con el link a la corrida (D-273).
 
 ```bash
 node tools/e2e/ci.mjs              # todos los de CI, uno tras otro, con resumen

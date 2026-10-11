@@ -642,9 +642,12 @@ node public/panel/adapta.test.mjs
 node public/panel/aggregate.test.mjs
 node public/panel/copas.test.mjs
 node public/panel/rutas.test.mjs
+node tools/agents/aprobar.test.mjs
 node tools/agents/documentar.test.mjs
+node tools/agents/feedback.test.mjs
 node tools/agents/limpiar-copias.test.mjs
 node tools/agents/marketing.test.mjs
+node tools/agents/procesos.test.mjs
 node tools/e2e/cambios.test.mjs
 node tools/firebase/rankings-historia.test.mjs
 node tools/push/avisar.test.mjs
@@ -764,10 +767,10 @@ tools/
   release/                    Publishing: set-version.py (version stamp, at publish time), readme.py + hechos.mjs (this README), og.mjs (social cards and bridge pages), iconos.mjs (the app icons, from assets/icon.svg)
   firebase/                   reglas.mjs (publish the rules), reportes.mjs (The Cup bug reports), en-curso.mjs (anyone playing?), rankings-historia.mjs (The Cup's history into the leaderboards, and each player's cups)
   generators/                 mapa.mjs (the world of Where is it?), flota.py (the Battleship fleet)
-  agents/                     dilemas.mjs (usability dilemmas as issues, D-132), documentar.mjs (the documentation agent, D-172), limpiar-copias.mjs (removes merged, empty and abandoned worktrees at session start, D-218, D-252)
+  agents/                     dilemas.mjs (usability dilemmas as issues, D-132), documentar.mjs (the documentation agent, D-172), limpiar-copias.mjs (removes merged, empty and abandoned worktrees at session start, D-218, D-252), procesos.mjs (the process agent, D-273), aprobar.mjs (one-tap Yes/No decisions in issues, D-273), feedback.mjs (players' 🐞 reports as issues, D-275)
   e2e/                        Full games in headless Chrome, one folder per game; the screenshots come from here
 marketing/                  The promo video and its memory
-.claude/                    The project's agents (usabilidad, documentacion) and skills
+.claude/                    The project's agents (usabilidad, documentacion, procesos) and skills
 ```
 
 ## Contributing
