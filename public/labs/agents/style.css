@@ -23,9 +23,12 @@
 .pista.entra { animation: ag-entra 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.3); }
 @keyframes ag-entra { from { transform: scale(0.9); opacity: 0; } to { transform: none; opacity: 1; } }
 /* El tablero */
-.tablero { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.tablero { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; container-type: inline-size; }
+/* La letra se achica con el largo de la palabra (--n), para que ESPANTAPÁJAROS no se corte a la mitad a 320 px;
+   si igual no cabe, parte con guion en una sílaba (hyphens) antes que en cualquier letra */
 .carta { min-height: 64px; border-radius: 14px; border: 2px solid var(--glass-border); background: rgba(255,255,255,0.07); color: var(--ink);
-  font: 900 clamp(0.78rem, 3.6vw, 1rem) var(--font-body); letter-spacing: 0.02em; padding: 8px 4px; cursor: pointer; overflow-wrap: anywhere;
+  font: 900 clamp(0.66rem, calc((33cqi - 18px) / (var(--n, 8) * 0.74)), 1rem) var(--font-body); letter-spacing: 0.01em; padding: 8px 4px; cursor: pointer;
+  hyphens: auto; overflow-wrap: anywhere;
   transition: transform 0.12s, background 0.25s, border-color 0.25s; }
 .carta:active { transform: scale(0.95); }
 .carta:disabled { cursor: default; }
@@ -36,9 +39,12 @@
 .carta.volteo { animation: ag-volteo 0.4s ease-out; }
 @keyframes ag-volteo { 0% { transform: rotateY(90deg); } 100% { transform: none; } }
 .carta.sin-tocar { opacity: 0.55; }
-.aviso-ag { text-align: center; font-weight: 800; min-height: 1.4em; margin: 0; }
+.carta .de-pista { display: block; margin-top: 2px; font-size: 0.72rem; font-weight: 800; color: var(--muted); letter-spacing: 0.04em; }
+/* Dos líneas reservadas: el aviso más largo parte en dos a 320 px y el tablero no salta bajo el dedo */
+.aviso-ag { text-align: center; font-weight: 800; min-height: 2.8em; margin: 0; display: grid; place-items: center; line-height: 1.4; }
 .aviso-ag.bien { color: var(--lime); } .aviso-ag.mal { color: #ff8a8a; } .aviso-ag.otra { color: var(--cyan); }
 .resultado { text-align: center; display: grid; gap: 10px; }
+.resultado .score-big { font: 900 clamp(2.6rem, 14vw, 3.6rem)/1.1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35); }
 .resultado .trofeo { font-size: 3.4rem; animation: pop 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
 .resultado .tarjeta { font-size: 1.5rem; letter-spacing: 3px; line-height: 1.2; white-space: pre; }
 .resultado .comentario { text-align: left; }
