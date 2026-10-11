@@ -4699,18 +4699,20 @@ no esté en la cuenta, que abra y cierre la capa, y que el formulario sea lo úl
 ## D-270 · La clave: cartas transparentes que juntas dicen un código
 **Fecha:** 2026-10-10 · **Estado:** vigente · **Relación:** usa D-102 (el teclado compartido) y D-268 (el comentario); excepción a C-3 como D-256
 **Decisión:** `/labs/code/` es un prototipo en que un código de 4 cifras de siete segmentos se
-reparte entre una base fija y 4 u 8 cartas transparentes, cada una girada o volteada al azar. Se
+reparte entre una base fija y 4 cartas transparentes, cada una girada o volteada al azar. Se
 toca una carta para ponerla sobre la base y elegirla, y con ↻ (media vuelta) y ⇋ (de lado) se
 orienta; con todas derechas los trazos forman el código, que se escribe en el teclado de Toque y
-Fama. Nada avisa que una carta quedó bien, y el motor garantiza que con todas puestas no hay otra
-forma de leer cuatro cifras. Detalle en [games/code.md](games/code.md).
+Fama. Nada avisa que una carta quedó bien; un trazo encima de otro sí se marca (puntos rojos y un
+aviso), porque cada trazo del código está en una sola capa y la solución nunca tiene choques. El
+motor garantiza que con todas puestas no hay otra forma sin choques de leer cuatro cifras. Detalle en [games/code.md](games/code.md).
 **Por qué:** lo pidió el dueño: "figures/shapes that combined in a specific set of positions create
 a code that can then be entered in a number or word pad… Start with two shapes". Probó la v1 de
 dos figuras (una se arrastraba sobre la otra hasta que los bordes cortados calzaran, con un brillo
 al calzar) y pidió "4 u 8 cartas girables y flipeables en vez de 2": con dos se resolvía en segundos
-tocando ↻ y ⇋ a ciegas hasta que brillara (dilema #296).
+tocando ↻ y ⇋ a ciegas hasta que brillara (dilema #296). Después sacó el modo de 8 cartas
+("demasiado compleja") y pidió que un trazo encima de otro se notara y no valiera.
 **Alternativas descartadas:** girar de a 90° (una cifra de siete segmentos girada un cuarto de vuelta
 no es una cifra), el brillo al calzar y la esquina cortada (regalan la orientación), y arrastrar cada
 carta (con 8, tocar es más rápido y cabe en el celular).
 **Consecuencias:** `engine.test.mjs` prueba el grupo de orientaciones y la lectura única;
-`tools/e2e/code/lab.mjs`, el juego entero con 4 y 8 cartas. Sin publicar hasta que el dueño lo apruebe.
+`tools/e2e/code/lab.mjs`, el juego entero con los choques. Sin publicar hasta que el dueño lo apruebe.
