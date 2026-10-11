@@ -1,5 +1,5 @@
 {
-  "version": "0.150.0",
+  "version": "0.151.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -774,7 +774,7 @@
         "pt": "Copas, clubes, gols e contratações",
         "de": "WMs, Vereine, Tore und Transfers"
       },
-      "cartas": 122,
+      "cartas": 121,
       "desde": 1863,
       "hasta": 2025
     }

@@ -156,8 +156,8 @@ You get events with no date on them and place them in the right spot on a shared
 | 🇨🇱 Chile | 120 | 1520 to 2023 | From the 1960 quake to the uprising |
 | 🍿 Pop culture | 108 | 1928 to 2023 | Movies, memes and video games |
 | 🇧🇷 Brazil | 139 | 1500 to 2025 | From Cabral to COP30, telenovelas and carnival included |
-| ⚽ Soccer | 122 | 1863 to 2025 | World Cups, clubs, goals and transfers |
-| **Total** | **676** | | |
+| ⚽ Soccer | 121 | 1863 to 2025 | World Cups, clubs, goals and transfers |
+| **Total** | **675** | | |
 <!-- /generado -->
 
 - **📱 One phone:** two to six players, passing the phone around.
