@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.154.0 — 2026-10-11
+- **🧪 Laboratorio: Proyectos activos y La Bodega** (D-280). `/labs/` se ordena en dos grupos: lo que
+  se está probando y, en 📦 La Bodega, los proyectos que no prosperaron, que se siguen pudiendo jugar.
+  El caso y La clave pasan a La Bodega; Proyectos activos queda vacío por ahora.
+- **🧪 Laboratorio con puerta** (D-281). Sin la llave del link que manda el dueño, cualquier página de
+  `/labs/` lleva al menú sin mostrarse; la llave queda guardada en el celular. Nada del laboratorio
+  se indexa (tampoco `/labs/case/` ni sus puentes), y el README ya no lo enlaza.
+
 ## 0.153.2 — 2026-10-11
 - **Herramientas: las casillas de un toque, más firmes** (D-273): marcar varias casi juntas ya no
   pierde ninguna, fusionar un PR ya no cierra el que estaba montado sobre él, y un PR que no se
