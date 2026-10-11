@@ -109,10 +109,11 @@ jobs:
 
   # En main nadie mira el check: si sale en rojo, abre un issue (o comenta el que ya está abierto)
   # con los guiones que fallaron y el link a la corrida, donde están sus capturas (D-205). No frena
-  # la publicación, que corre aparte en publicar.yml.
+  # la publicación, que corre aparte en publicar.yml. También después de una fusión de un toque,
+  # que corre este workflow a mano (D-273).
   avisar:
     needs: [lista, e2e]
-    if: failure() && github.event_name == 'push'
+    if: failure() && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       actions: read
@@ -133,3 +134,20 @@ jobs:
           else
             gh issue create -R "$GITHUB_REPOSITORY" --title "$titulo" --body "$cuerpo"
           fi
+
+  # Y si main vuelve a verde, cierra ese issue: antes quedaba abierto días después de arreglado (D-273).
+  cerrar-aviso:
+    needs: [lista, e2e]
+    if: needs.e2e.result == 'success' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          CORRIDA: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          titulo="main en rojo: Punta a punta"
+          for n in $(gh issue list -R "$GITHUB_REPOSITORY" --state open --search "\"$titulo\" in:title" --json number --jq '.[].number'); do
+            gh issue close "$n" -R "$GITHUB_REPOSITORY" --comment "main volvió a verde en ${GITHUB_SHA:0:7}: $CORRIDA"
+          done
