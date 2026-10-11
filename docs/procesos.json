@@ -30,7 +30,7 @@
       "mecanismo": {
         "fecha": "2026-10-11",
         "que": "documentar.test.mjs revisa docs/DECISIONES.md del repo en cada PR",
-        "pr": "pendiente"
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/332"
       }
     }
   ],
@@ -45,7 +45,7 @@
       "fecha": "2026-10-11",
       "clave": "decision-repetida-o-desordenada",
       "que": "documentar.test.mjs revisa docs/DECISIONES.md del repo en cada PR",
-      "pr": "pendiente"
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/332"
     }
   ],
   "colaHecha": [],
