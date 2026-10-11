@@ -160,7 +160,7 @@ export function sujetos(p) {
 export const abarca = p => (p ? [...new Set([...p.a, ...(p.b || [])])] : []);
 
 /**
- * Las pistas ya usadas (D-280): las de quienes ya hablaron y cuyos grupos ya están todos marcados.
+ * Las pistas ya usadas (D-282): las de quienes ya hablaron y cuyos grupos ya están todos marcados.
  * Devuelve el conjunto de quienes las dicen. Mira solo `x`, lo que el jugador ya marcó (y las marcas
  * siempre son aciertos), nunca la solución: tacharlas no dice nada que la grilla no muestre. Una
  * pista así ya no aporta nada, así que nunca es una de las que nombra la 💡 Ayuda.

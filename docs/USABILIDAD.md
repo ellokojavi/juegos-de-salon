@@ -115,7 +115,7 @@ nunca se usaron, y no se renumera.
 
 Las respuestas a dilemas (issues con la etiqueta `usabilidad`) se anotan aquí:
 
-- **El caso: las pistas usadas se tachan solas** (#302, opción A, D-280; reporte 🐞 #320): una pista
+- **El caso: las pistas usadas se tachan solas** (#302, opción A, D-282; reporte 🐞 #320): una pista
   se tacha sola cuando ya están marcados todos los que abarca, y se ve igual que una tachada a mano.
   El ✓ sigue para tachar antes y para destachar. No se tacha la que "ya no aporta" según el motor:
   sería una ayuda gratis.

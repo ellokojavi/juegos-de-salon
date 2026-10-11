@@ -228,7 +228,7 @@ export function montar(raiz, ctx) {
   const dibujarPistas = e => {
     // La más nueva arriba, destacada; las demás en el orden en que se fueron sabiendo, al revés
     const orden = [p.inicio, ...e.marcas].reverse();
-    // Tachada a mano con el ✓, o sola cuando ya está marcado todo lo que abarca (D-280). El ✓ también
+    // Tachada a mano con el ✓, o sola cuando ya está marcado todo lo que abarca (D-282). El ✓ también
     // destacha una de esas, y queda a la vista aunque siga usada
     const aMano = ctx.tachadas || (ctx.tachadas = new Set());
     const destachadas = ctx.destachadas || (ctx.destachadas = new Set());

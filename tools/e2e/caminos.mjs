@@ -358,7 +358,7 @@ export const CAMINOS = {
   },
   /**
    * 🔍 El caso del día. `pistas` es el caso a medio resolver, con lo que se puede deducir marcado
-   * hasta que hay pistas tachadas solas (D-280) y una más tachada a mano con el ✓.
+   * hasta que hay pistas tachadas solas (D-282) y una más tachada a mano con el ✓.
    */
   caso: {
     intro: [],
