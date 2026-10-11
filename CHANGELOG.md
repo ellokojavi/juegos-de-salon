@@ -8,6 +8,12 @@
   punk, la cumbia). Música suma 12 hitos puntuales, como la muerte de Freddie Mercury o el Nobel de
   Dylan, y su bajada pasa a ser "De Beethoven a Taylor Swift".
 
+## 0.148.2 — 2026-10-11
+- **Herramientas: un agente de procesos** (D-273): una ronda diaria cierra lo que quedó abierto
+  (PR que esperan, avisos viejos) y convierte un error que se repite en una prueba que lo frena
+  sola. Lo que necesita al dueño llega en un issue con casillas Sí/No: marcar una lo cumple al
+  instante. El aviso "main en rojo" se cierra solo cuando main vuelve a verde.
+
 ## 0.148.1 — 2026-10-11
 - **Compartir la app también cuenta la app instalable y los idiomas** (D-272): el mensaje de
   "Invitar a jugar" suma 📲 que se agrega a la pantalla de inicio y avisa cuando te toca jugar, y 🌎
