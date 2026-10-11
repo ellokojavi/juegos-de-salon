@@ -131,7 +131,7 @@ function jugar() {
   // Lo que se ve de cada carta, girado y volteado de verdad (la animación lo muestra)
   const vistaDe = clave.cartas.map(() => ({ rot: 0, sx: 1 }));
   const capas = clave.cartas.map((c, k) => {
-    const capa = svgEl('g', { class: 'capa', 'data-k': k });
+    const capa = svgEl('g', { class: 'capa', 'data-k': k, style: `--k:${k}` });
     capa.append(...lineas(c.trazos, COLORES[k]));
     base.append(capa);
     return capa;
@@ -158,7 +158,7 @@ function jugar() {
     const capa = svgEl('g', { class: 'capa' });
     capa.append(...lineas(c.trazos, COLORES[k]));
     mini.append(capa);
-    return el('button', { type: 'button', class: 'carta', 'data-k': k, style: `--color:${COLORES[k]}`, 'aria-label': fmt(T.elegida, { n: k + 1 }), onClick: () => tocar(k) },
+    return el('button', { type: 'button', class: 'carta', 'data-k': k, style: `--color:${COLORES[k]};--k:${k}`, 'aria-label': fmt(T.elegida, { n: k + 1 }), onClick: () => tocar(k) },
       mini, el('span', { class: 'num' }, String(k + 1)));
   });
   const titulo = el('p', { class: 'aviso-clave', id: 'aviso', 'aria-live': 'polite' }, T.elige);
