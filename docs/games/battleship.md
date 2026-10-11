@@ -38,6 +38,9 @@ y, si ganó, suma una victoria en la tabla `batalla-naval_victorias` (semana y s
 rol; contra el celular, la del humano; en un celular, la del jugador que se llama como él. Un
 empate no es victoria. La tabla (semana, siempre y amigos) va en la intro, debajo de los modos
 (`finDePartida` y `bloqueVictorias` de `public/assets/js/ranking.js`), y en `/records/`.
+Sin jugador abierto (D-274), `finDePartida` pone en la pantalla final, después de los botones
+(`#result-actions`), "¿Quieres que esta partida cuente en el ranking?" con el nombre y PIN de siempre
+y el nombre de su rol ya puesto: al entrar, se anota esa partida y la victoria, si fue suya.
 
 ### IA “contra el celular”
 
