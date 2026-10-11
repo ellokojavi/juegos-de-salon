@@ -58,6 +58,7 @@ Los IDs no se reusan: un requerimiento que cambia conserva su ID y su texto se a
 | RP-48 | **El caso**, un misterio de deducción al estilo de *Clues by Sam*, para probar con amigos en el laboratorio (`/labs/case/`), solo en español: veinte sospechosos, pistas que siempre dicen la verdad y nunca hay que adivinar; un caso del día y casos con código, y el resultado se comparte. Si engancha, pasa a La Copa con los cuatro idiomas (D-256, [docs/games/case.md](games/case.md)). | ✅ v0.136.0 (en el laboratorio) |
 | RP-49 | **El caso como juego de La Copa**, en los cuatro idiomas, con portada animada en la antesala, sesión de prueba y desglose del puntaje; se juega suelto en `/case/` y en la práctica del laboratorio, sin entrar todavía al pozo de una copa (D-257). | ✅ v0.138.0 (en el laboratorio) |
 | RP-50 | Sumar El caso al pozo de La Copa (`POZO`) y sacarlo del laboratorio, cuando el dueño lo apruebe. | ⏳ pendiente |
+| RP-52 | **La clave**, un prototipo del laboratorio (`/labs/code/`) para probar con amigos: dos figuras transparentes reparten los trazos de un código de 4 cifras; hay que ponerlas una encima de la otra, girarlas y voltearlas hasta que los bordes calcen, y escribir el código en el teclado. Empieza con dos figuras, en los cuatro idiomas; si gusta, tres figuras, otras formas y palabras (D-270, [docs/games/code.md](games/code.md)). | ✅ v0.146.0 (en el laboratorio) |
 
 ## Cuarto Rey (CR)
 
