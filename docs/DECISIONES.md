@@ -69,7 +69,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | README y capturas | C-13 | D-51, D-76, D-78, D-213 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216 |
 | La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268 |
-| Agentes (usabilidad, documentación, procesos) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275 |
+| Agentes (usabilidad, documentación, procesos) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249 |
 | Marketing | `marketing/README.md` | D-178 |
 | App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
@@ -1684,7 +1684,7 @@ no abre. Una leyenda debajo explica los estados.
 **Por qué:** pedido del dueño: que cada uno vea su grilla completa y qué le queda.
 
 ## D-132 · Un agente de usabilidad con ronda diaria y dilemas como issues
-**Fecha:** 2026-09-25 · **Estado:** corregida por D-204, D-213, D-275
+**Fecha:** 2026-09-25 · **Estado:** corregida por D-204, D-213, D-275, D-276
 **Decisión:** Un subagente (`.claude/agents/usabilidad.md`) revisa solo usabilidad: textos,
 botones, interacciones, navegación y mensajes para compartir, con la guía `docs/USABILIDAD.md`
 (reglas U-n, que crecen con cada decisión del dueño).
@@ -2558,7 +2558,7 @@ el resumen final no repitan la imagen. Si la imagen no se puede compartir (un co
 descarga y el texto se copia igual: la imagen sigue llegando.
 
 ## D-172 · Un agente de documentación con ronda diaria en la nube
-**Fecha:** 2026-10-02 · **Estado:** vigente
+**Fecha:** 2026-10-02 · **Estado:** corregida por D-276
 **Decisión:** Un subagente (`.claude/agents/documentacion.md`) revisa una vez al día lo que entró
 a `main` y deja la documentación al día: `CHANGELOG.md`, decisiones, requerimientos, la doc de
 cada juego, `CLAUDE.md`, el README con sus capturas y las tarjetas sociales.
@@ -4775,7 +4775,7 @@ no habla español).
 dice "sin instalar", que se refiere a que no hay que bajar nada de una tienda.
 
 ## D-273 · Un agente de procesos, y decisiones de un toque
-**Fecha:** 2026-10-11 · **Estado:** corregida por D-275 · **Relación:** completa D-132 y D-172 (los agentes de usabilidad y de documentación) y D-216 (el auto-merge)
+**Fecha:** 2026-10-11 · **Estado:** corregida por D-275, D-276 · **Relación:** completa D-132 y D-172 (los agentes de usabilidad y de documentación) y D-216 (el auto-merge)
 **Decisión:** Un tercer agente (`.claude/agents/procesos.md`) corre una vez al día y no arregla
 cosas sueltas: **cierra lo que quedó abierto** (PR que esperan, issues viejos, lo que los otros
 agentes arrastran de una ronda a otra) y **convierte cada error que se repite en un mecanismo**
@@ -4865,3 +4865,31 @@ fuera).
   (#310) lo abrió la cuenta del dueño y no le llegó.
 **Consecuencias:** al empezar, los nueve reportes que ya había se suben juntos y la primera ronda
 cierra los que ya se resolvieron. GitHub le avisa al dueño por correo de cada issue nuevo.
+
+## D-276 · El agente de procesos es el jefe de los otros agentes, y todo corre en el Mac mini
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** corrige D-132 y D-172 (cada uno con su hora) y D-273 (su ronda en la nube)
+**Decisión:** El agente de procesos **responde** por lo que hacen los agentes de documentación y de
+usabilidad, que **ejecutan**:
+- **Encargos del dueño:** lo que el dueño pide y ejecuta otro agente ("revisa la frescura del
+  README") se le pide al de procesos. Él decide a quién le toca, escribe el encargo con criterios
+  de aceptación que se puedan comprobar, lo lanza, comprueba el resultado él mismo (lo devuelve una
+  vez si falta algo) y le responde al dueño con la evidencia.
+- **Despacho:** los otros dos ya no tienen hora propia. La ronda diaria del de procesos los lanza
+  cuando hay algo que revisar: a documentación si entró algo a `main` desde su última ronda; a
+  usabilidad si cambió algo de `public/` desde su último despacho, y una vez por semana aunque no
+  (`procesos.mjs revisar` lo calcula; `procesos.mjs despacho` lo anota). Revisa lo que entregan.
+- **Dónde:** una sola tarea programada de la app de Claude en el Mac mini del dueño, a las 4:30 hora
+  del Pacífico, en vez de tres rutinas (documentación en la nube a las 3:54, usabilidad en el Mac a
+  las 5:07 y procesos en la nube a las 4:30). Las otras se apagan.
+**Por qué:** lo pidió el dueño: "si yo quisiera hacer una revisión de frescura de la documentación
+[…] me gustaría que tú fueses el jefe encargado y yo básicamente te pido responsabilidad a ti. Pero
+el que ejecuta es el agente de documentación", y que el de procesos determine "cuándo es el momento
+correcto para echarlo a correr". Lanzar a los otros como subagentes exige que corran en el mismo
+lugar, y en el Mac se llega a Firebase, a Chrome y a la llave del dueño (en la nube no). El Mac
+mini está siempre despierto.
+**Alternativas descartadas:** dejar las tres rutinas y que el de procesos solo supervise (el
+calendario no quedaba en sus manos); todo en la nube (sin Firebase ni un Chrome confiable para las
+capturas).
+**Consecuencias:** si la app de Claude no está abierta en el Mac mini, la ronda corre al abrirla.
+Los días sin cambios, los ejecutores no corren. Revisar un PR antes de fusionarlo sigue igual: la
+sesión dueña lanza a los dos agentes (CLAUDE.md).
