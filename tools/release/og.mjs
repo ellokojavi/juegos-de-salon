@@ -139,6 +139,7 @@ const atrasada = (p, huellas = leerHuellas()) => !existsSync(join(RAIZ, `public/
  * import map lo pone set-version.py al publicar (D-205).
  */
 const AVISO_COPIA = () => `  <!-- Generada por node tools/release/og.mjs tarjetas a partir de public/cup/suelto/index.html: no se edita a mano (D-162). -->`;
+const PUERTA_LABS = ruta => `  <script src="${'../'.repeat(ruta.split('/').filter(Boolean).length)}assets/js/labs-puerta.js"></script>\n  <meta name="robots" content="noindex, nofollow">`;
 function paginaSuelta(p, bloqueOg) {
   let html = readFileSync(join(RAIZ, 'public/cup/suelto/index.html'), 'utf8');
   // Sus etiquetas genéricas y el comentario que explica la página de todos
@@ -148,6 +149,8 @@ function paginaSuelta(p, bloqueOg) {
   // Los del laboratorio (/labs/case/, D-267) están a la misma altura que el molde y quedan igual
   if (p.ruta.split('/').filter(Boolean).length === 1) html = html.replace(/(["'])\.\.\/\.\.\//g, '$1../');
   html = html.replace(/<title>.*<\/title>/, `<title>${escapa(p.titulo)}</title>\n${AVISO_COPIA()}`);
+  // Un juego del laboratorio no se indexa y sin la llave no se abre (D-281)
+  if (p.ruta.startsWith('/labs/')) html = html.replace(AVISO_COPIA(), `${AVISO_COPIA()}\n${PUERTA_LABS(p.ruta)}`);
   html = html.replace('<body data-suelto>', `<body data-suelto="${p.juego}">`);
   return html.replace(/^( *<link rel="manifest".*\n)/m, `${bloqueOg}\n$1`);
 }
@@ -181,6 +184,7 @@ const puentes = () => [
   { viejo: 'public/minigames/index.html', a: '../cup/suelto/', titulo: 'Juegos de Salón 🎲' },
 ];
 
+// La puente de un juego del laboratorio tampoco se indexa (D-281): lleva su tarjeta, pero no se anuncia
 function paginaPuente(p) {
   const og = p.ruta ? `\n${bloque(p)}` : '';
   return `<!DOCTYPE html>
@@ -189,7 +193,7 @@ function paginaPuente(p) {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${escapa(p.titulo)}</title>
-  <!-- Página puente (D-192): esta ruta se mudó a ${p.a.replace(/^(\.\.\/)+/, '/')}. La genera node tools/release/og.mjs tarjetas: no se edita a mano. -->${og}
+  <!-- Página puente (D-192): esta ruta se mudó a ${p.a.replace(/^(\.\.\/)+/, '/')}. La genera node tools/release/og.mjs tarjetas: no se edita a mano. -->${p.ruta?.startsWith('/labs/') ? '\n  <meta name="robots" content="noindex, nofollow">' : ''}${og}
   <script>try { if (sessionStorage.getItem('juegos-de-salon:ref') === null) sessionStorage.setItem('juegos-de-salon:ref', document.referrer); } catch (e) {} location.replace('${p.a}' + location.search + location.hash);</script>
   <noscript><meta http-equiv="refresh" content="0; url=${p.a}"></noscript>
 </head>
