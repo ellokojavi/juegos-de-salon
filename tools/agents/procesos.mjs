@@ -17,6 +17,7 @@
  *   - los dilemas de usabilidad que esperan al dueño hace más de tres días;
  *   - lo que la memoria del agente de documentación arrastra de una ronda a otra;
  *   - los commits de main desde la última ronda que arreglan algo que quedó atrás;
+ *   - el feedback 🐞 sin atender (issues `feedback` abiertos, D-275);
  *   - las decisiones que el dueño aprobó como "en cola" y siguen sin hacerse;
  *   - los patrones vistos dos veces o más que todavía no tienen mecanismo.
  *
@@ -158,6 +159,11 @@ function revisar() {
   const dilemas = issues.filter(i => i.labels.some(l => l.name === 'usabilidad') && Date.now() - Date.parse(i.createdAt) > 3 * DIA);
   for (const i of dilemas) console.log(`- dilema #${i.number} espera al dueño desde ${i.createdAt.slice(0, 10)}: ${i.title}`);
   if (!dilemas.length && !issues.some(i => /^main en rojo/.test(i.title))) console.log('Nada atrasado.');
+
+  titulo('Feedback 🐞 sin atender');
+  const feedback = issues.filter(i => i.labels.some(l => l.name === 'feedback'));
+  for (const i of feedback.reverse()) console.log(`- #${i.number} (${i.createdAt.slice(0, 10)}) ${i.title}`);
+  if (!feedback.length) console.log('Nada.');
 
   titulo('Lo que el agente de documentación arrastra');
   const doc = JSON.parse(readFileSync(join(RAIZ, 'docs/documentacion.json'), 'utf8'));
