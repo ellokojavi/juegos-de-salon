@@ -12,6 +12,9 @@ El video y su memoria viven en `marketing/promo-video/` (D-178).
    canción, las trampas conocidas y la historia. Lee también `marketing/README.md` (las reglas
    de los assets) y `marketing/registro.json`. Un video nuevo desde cero parte igual: lo que el
    dueño quiere vale para todos.
+   **Si el asset es otro** (`marketing/share-tutorial/`, `marketing/caso-teaser/`…), su README es la
+   memoria que se lee entero; `promo-video/render.mjs --pagina <página>` renderiza cualquiera que
+   cumpla el mismo contrato (`render(t)`, `DURATION`, `FPS`, `#stage`).
 2. **Trabaja como dice el README:** `jugar.mjs` para las jugadas (azar fijo, se revisa con
    `hoja.py`), `promo.html` para el guion, `render.mjs --fotos … --tiempos …` para mirar cuadros
    sueltos de **las dos versiones** (vertical y `--wide`) antes de renderizar completo, y
