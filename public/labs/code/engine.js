@@ -1,6 +1,6 @@
 /**
  * La clave — el motor del prototipo de laboratorio (D-270). Un código de 4 cifras de siete
- * segmentos repartido entre una base fija y 4 u 8 cartas transparentes. Cada carta tiene unos pocos
+ * segmentos repartido entre una base fija y 4 cartas transparentes. Cada carta tiene unos pocos
  * trazos y aparece girada o volteada al azar; hay que ponerlas todas sobre la base y orientar cada
  * una hasta que los trazos se junten en cuatro cifras. La base no se mueve: es la que dice cuál es
  * el derecho, así que el código no se puede leer "dado vuelta".
@@ -10,7 +10,8 @@
  * que con "girar" y "voltear" se llega a todas. Sin DOM: lo prueba engine.test.mjs.
  */
 export const CIFRAS_CODIGO = 4;
-export const CARTAS = [4, 8];
+/** Cuántas cartas: 4 (con 8 era demasiado, pidió el dueño). */
+export const CARTAS = 4;
 
 /** Los segmentos de cada cifra: a arriba, b arriba a la derecha, c abajo a la derecha, d abajo, e abajo a la izquierda, f arriba a la izquierda, g al medio. */
 export const SEGMENTOS = {
@@ -52,6 +53,8 @@ const barajar = (xs, r) => { const a = xs.slice(); for (let i = a.length - 1; i 
 /**
  * Los códigos que se pueden leer poniendo todas las cartas en alguna orientación. Una clave buena
  * tiene uno solo: el suyo (varias orientaciones pueden dar el mismo dibujo si una carta es simétrica).
+ * Dos trazos encima del otro no valen (D-270): cada trazo del código está en una sola carta, así
+ * que una combinación con un choque nunca es la buena.
  */
 export function lecturas(clave) {
   const base = mascaras(clave.base);
@@ -63,7 +66,7 @@ export function lecturas(clave) {
       if (d.every(x => x !== null)) out.add(d.join(''));
       return;
     }
-    for (const op of opciones[k]) ir(k + 1, m.map((x, i) => x | op[i]));
+    for (const op of opciones[k]) if (m.every((x, i) => !(x & op[i]))) ir(k + 1, m.map((x, i) => x | op[i]));
   };
   ir(0, base);
   return out;
@@ -74,7 +77,7 @@ export function lecturas(clave) {
  * muestran (`trazos`), y la orientación que la arregla (`o`). Cada carta tiene al menos un trazo (dos
  * con 4 cartas) y la base unos pocos; con todas las cartas puestas, solo el código bueno se lee.
  */
-export function generar(n = 4, r = Math.random) {
+export function generar(n = CARTAS, r = Math.random) {
   for (let intento = 0; intento < 400; intento++) {
     const codigo = Array.from({ length: CIFRAS_CODIGO }, () => Math.floor(r() * 10));
     const trazos = barajar(codigo.flatMap((d, i) => [...SEGMENTOS[d]].map(s => ({ i, s }))), r);
@@ -107,6 +110,18 @@ export function juntos(clave, g, puestas = clave.cartas.map(() => true)) {
     for (const x of c.trazos) { const m = mover(g[k], x); out[m.i].add(m.s); }
   });
   return out;
+}
+
+/**
+ * Los trazos que quedan uno encima de otro con esas cartas puestas y orientadas: `{ i, s }` de cada
+ * choque (la base cuenta como una capa más). Con la clave resuelta no hay ninguno.
+ */
+export function choques(clave, g, puestas = clave.cartas.map(() => true)) {
+  const vistos = new Map();
+  const anotar = ({ i, s }) => { const k = `${i}${s}`; vistos.set(k, (vistos.get(k) || 0) + 1); };
+  clave.base.forEach(anotar);
+  clave.cartas.forEach((c, k) => { if (puestas[k]) c.trazos.forEach(x => anotar(mover(g[k], x))); });
+  return [...vistos].filter(([, n]) => n > 1).map(([k]) => ({ i: Number(k[0]), s: k[1] }));
 }
 
 /** La cifra que dibujan esos segmentos, o null si no es ninguna. */
