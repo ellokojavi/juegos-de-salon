@@ -5,7 +5,7 @@ decidió. **Crece con cada dilema resuelto**: la respuesta del dueño se anota a
 issue, para no volver a preguntarla.
 
 Cada regla tiene un ID (U-n) para citarla en los PR y en los issues. Los IDs van por bloques
-(1–18 textos, pantallas y botones; 20–23 interacciones; 30–34 compartir y marketing): U-9 y U-19
+(1–18 textos, pantallas y botones; 20–23 interacciones; 30–35 compartir y marketing): U-9 y U-19
 nunca se usaron, y no se renumera.
 
 ## Textos
@@ -67,8 +67,9 @@ nunca se usaron, y no se renumera.
 
 ## Interacciones
 
-- **U-20 · El reloj corre solo mientras se juega:** parte con la cuenta regresiva, se pausa con la
-  pantalla oculta y se detiene al terminar el tablero (D-105, D-130).
+- **U-20 · El reloj corre solo mientras se juega:** parte con la pantalla de juego a la vista (después
+  de la cuenta regresiva y de la entrada del juego, si la tiene), se pausa con la pantalla oculta y se
+  detiene al terminar el tablero (D-105, D-130, D-258).
 - **U-21 · Nada cambia a mitad de un día:** contenido, grilla o reglas nuevas entran para los días
   que todavía no empiezan (D-128).
 - **U-22 · Un reintento nunca traba:** si algo llegó aunque el celular mostró error, el segundo
@@ -91,6 +92,11 @@ nunca se usaron, y no se renumera.
   falta y marca "(-1J)" a quien lleva menos juegos. Excepción: el resultado de Uno al día no
   nombra el juego de hoy (#215).
 - **U-32 · Sin spoilers:** lo que se comparte no revela respuestas ni los juegos que vienen.
+- **U-35 · La app se presenta entera:** el mensaje de compartir la app nombra todo lo principal
+  (`LO_PRINCIPAL` en `compartir.js`: La Copa, Uno al día, jugar en grupo, jugar solo, rankings, sin
+  cuenta, la app instalable con sus avisos y los cuatro idiomas), una línea cada cosa y en los cuatro idiomas; el del video y la bajada de la tarjeta del
+  link no dicen menos de lo que hay. Lo que entra a la app como algo principal se suma ahí en el mismo
+  PR, y el agente de documentación lo revisa en cada ronda y en cada PR (D-271, D-272).
 
 ## Marketing
 
@@ -101,12 +107,22 @@ nunca se usaron, y no se renumera.
   Rehacerlo lo decide el dueño: el revisor anota, no rehace. Un asset que muestra a propósito
   solo algunos juegos (`"seleccion": true` en `marketing/registro.json`; el video desde la v6, que
   el dueño pidió corto y con pocos juegos) no queda atrás porque falte uno nuevo, pero sí si sale
-  uno que ya no está o una pantalla que cambió.
+  uno que ya no está o una pantalla que cambió. Un juego que sale a propósito sin estar en la
+  portada, porque todavía está en el laboratorio (`"laboratorio": ["caso"]`; el teaser de El caso),
+  tampoco cuenta como "uno que ya no está".
 
 ## Resuelto con el dueño
 
 Las respuestas a dilemas (issues con la etiqueta `usabilidad`) se anotan aquí:
 
+- **El caso, comparaciones en dos colores** (#282, D-259): en "Hay más criminales A que B", A se
+  ilumina en amarillo y B en rosado, en la grilla y en la frase; quien está en los dos lleva los dos.
+  Desde D-264, en la grilla se iluminan solo las personas que cada grupo nombra por su nombre
+  ("junto a Omar": Omar, en el color de su grupo; "en la columna A": nadie); la frase sigue igual.
+- **El caso (laboratorio, D-256):** tocar a alguien ya marcado muestra su pista bajo la grilla
+  (#271); "número par de criminales" no sale cuando son cero, porque ahí ya está "No hay
+  criminales" (#272); el link del caso del día lleva su fecha (`?day=`), así un amigo que lo abre al
+  día siguiente juega el mismo (#273). Las tres con la recomendación del agente, en el PR #270.
 - **Reinas sin bordes gruesos entre zonas** (D-134): decisión del dueño, sabiendo lo de C-8. No
   marcarlo.
 - **Textos del dibujo de Reinas:** "Así: una reina por fila, por columna y por color." y "Así no:

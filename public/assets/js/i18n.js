@@ -48,12 +48,12 @@ export function setLang(lang) {
 
 /**
  * El idioma también puede venir en el link: `juegosdesalon.cl/?lang=pt`, o pegado a la
- * invitación de una sala, `/liars-dice/?sala=WFBN&lang=pt`. Quien comparte elige el idioma con el que
+ * invitación de una sala, `/liars-dice/?room=WFBN&lang=pt`. Quien comparte elige el idioma con el que
  * va a llegar el que recibe, que es lo mismo que hace el toggle pero para otra persona: sigue
  * sin detectarse nada del navegador (D-47, D-74).
  *
  * Se aplica al cargar cualquier página, se guarda como cualquier elección, y el parámetro se
- * saca de la barra de direcciones: lo que circula es la URL de siempre y el `?sala=` queda
+ * saca de la barra de direcciones: lo que circula es la URL de siempre y el `?room=` queda
  * intacto.
  */
 /**
@@ -116,14 +116,19 @@ export const COMMON = {
     code: 'código en GitHub', menu: 'Menú', soon: 'Próximamente', or: 'o',
     share: 'Compartir Juegos de Salón',
     // Compartir la app (D-226): va con la tarjeta de la portada, que ya dice el nombre, la bajada,
-    // "gratis, sin instalar" y el link. El texto cuenta lo demás, una idea por línea (U-30)
+    // "gratis, sin instalar" y el link. El texto cuenta lo demás, una idea por línea (U-30), y nombra
+    // todo lo principal de la app (LO_PRINCIPAL en compartir.js, D-271): una línea por cada cosa
     shareApp: {
       context: '{n} juegos para el celular',
       lines: [
         '🏆 La Copa: un torneo de una semana entre amigos, con un juego distinto cada día.',
+        '📅 Uno al día: un desafío nuevo cada día, el mismo para todos. ¿Hasta dónde llega tu racha?',
         '👥 Para jugar en grupo: en un celular o cada uno en el suyo.',
         '🧩 Para jugar solo: minijuegos de palabras, lógica y cultura.',
+        '🏅 Rankings: tus mejores puntajes contra los de tus amigos y los de todos.',
         '🔓 Sin cuenta: tocas el link y juegas.',
+        '📲 Como app: la agregas a tu pantalla de inicio y, si quieres, te avisa cuando te toca jugar.',
+        '🌎 En español, inglés, portugués y alemán.',
       ],
     },
     // La hoja del botón de compartir de la portada: el video y las dos maneras de compartir. Sale solo
@@ -139,7 +144,7 @@ export const COMMON = {
       copied: '✅ Copiado',
       close: 'Cerrar',
       videoContext: 'Mira el video',
-      videoLines: ['🎲 Los juegos de toda la vida, en tu celular, gratis y sin cuenta.', '🏆 Para jugar en grupo, solo o en un torneo de una semana.'],
+      videoLines: ['🎲 Los juegos de toda la vida, en tu celular, gratis y sin cuenta.', '🏆 En grupo, solo, en un torneo de una semana o con un desafío nuevo cada día.'],
     },
     // La invitación a una sala: quién invita, a qué y adónde. Es el texto que más se lee de
     // toda la app, porque llega por WhatsApp a gente que todavía no la conoce.
@@ -195,7 +200,6 @@ export const COMMON = {
       mejorando: 'En {juego} vas mejorando: tus últimas 3 promedian {a} y las de antes, {b}.',
       bajando: 'En {juego} bajaste un poco: tus últimas 3 promedian {a} y las de antes, {b}.',
       vacio: 'Todavía no juegas ningún Uno al día. El primero te espera.',
-      enLabs: 'Uno al día todavía se está probando en el laboratorio.',
       // Con jugador e invitaciones (PR 3)
       pct: 'Hoy: {s} puntos · mejor que el {p} % de los que jugaron.',
       comodinUsado: '🧊 Usaste un comodín ayer y tu racha sigue: {n} días.',
@@ -313,7 +317,6 @@ export const COMMON = {
       newRecord: '🏆 ¡Récord nuevo!', newWeek: '🏆 ¡Tu mejor puntaje de la semana!',
       best: 'Tu mejor puntaje: {s} en {t}.',
       notSaved: 'Esta vez no se pudo guardar en el ranking.',
-      joinAfter: 'Entra con tu nombre y PIN para que tus puntajes cuenten en el ranking.',
       allRounder: 'Todoterreno', allRounderHint: 'Suma tu mejor puntaje en cada juego: gana quien juega bien a todo.',
       champions: 'Campeones de La Copa', championsHint: 'Medallas de las copas terminadas: oro, plata y bronce.',
       noChampions: 'Todavía no termina ninguna copa.',
@@ -330,6 +333,7 @@ export const COMMON = {
       legacyClaimed: '¡Listo, {name}! Tus puntajes de La Copa ya son tuyos.',
       winsOf: 'Más victorias en {game}', wins: 'Victorias', soloRecords: 'Jugar solo',
       winsHint: 'Cada partida que ganas con tu nombre y PIN suma una. En un solo celular, juega con ese nombre para que cuente.',
+      soloOf: "Mejores puntajes jugando solo", countThis: "¿Quieres que esta partida cuente en el ranking?", countThisHint: "Entra con tu nombre y un PIN de 4 números. Si es la primera vez, se crea tu jugador.", countedGame: "✅ Listo: esta partida quedó anotada.", countedWin: "🏆 Listo: tu victoria quedó anotada.", notInGame: "Ese nombre no está en esta partida: cuenta desde la próxima.",
       general: 'Ranking general', playsTitle: 'Más partidas jugadas',
       playsHint: 'Cuenta cada partida que terminas con tu nombre y PIN, en cualquier juego.',
       tabGames: '🎮 Juegos', tabCups: '🏆 Copas', groupOne: 'De a uno', groupMany: 'En grupo',
@@ -353,9 +357,13 @@ export const COMMON = {
       context: '{n} games for your phone',
       lines: [
         '🏆 The Cup: a week-long tournament among friends, with a different game every day.',
+        '📅 One a Day: a new challenge every day, the same for everyone. How long can your streak go?',
         '👥 To play in a group: on one phone or each on their own phone.',
         '🧩 To play solo: word, logic and trivia minigames.',
+        '🏅 Leaderboards: your best scores against your friends\' and everyone else\'s.',
         '🔓 No account: tap the link and play.',
+        '📲 Like an app: add it to your home screen and, if you want, it tells you when it\'s your turn to play.',
+        '🌎 In Spanish, English, Portuguese and German.',
       ],
     },
     // La hoja del botón de compartir de la portada: el video y las dos maneras de compartir
@@ -370,7 +378,7 @@ export const COMMON = {
       copied: '✅ Copied',
       close: 'Close',
       videoContext: 'Watch the video',
-      videoLines: ['🎲 Classic party games on your phone, free and with no account.', '🏆 Play in a group, solo or in a week-long tournament.'],
+      videoLines: ['🎲 Classic party games on your phone, free and with no account.', '🏆 In a group, solo, in a week-long tournament or with a new challenge every day.'],
     },
     invite: '{emoji} *{game}* · Room {code}\n\n👋 {name} invites you to play at juegosdesalon.cl.',
     shareResult: '📤 Share my result',
@@ -421,7 +429,6 @@ export const COMMON = {
       mejorando: "You're improving at {juego}: your last 3 average {a}, the ones before, {b}.",
       bajando: 'You dipped a little at {juego}: your last 3 average {a}, the ones before, {b}.',
       vacio: "You haven't played any One a Day yet. The first one is waiting.",
-      enLabs: 'One a Day is still being tested in the lab.',
       // With a player and invitations (PR 3)
       pct: 'Today: {s} points · better than {p}% of those who played.',
       comodinUsado: '🧊 You used a freeze yesterday and your streak goes on: {n} days.',
@@ -538,7 +545,6 @@ export const COMMON = {
       newRecord: '🏆 New record!', newWeek: '🏆 Your best score this week!',
       best: 'Your best score: {s} in {t}.',
       notSaved: 'This time it couldn\'t be saved to the leaderboard.',
-      joinAfter: 'Sign in with your name and PIN so your scores count on the leaderboard.',
       allRounder: 'All-Rounder', allRounderHint: 'Adds up your best score in each game: whoever is good at everything wins.',
       champions: 'Cup Champions', championsHint: 'Medals from finished cups: gold, silver and bronze.',
       noChampions: 'No cup has finished yet.',
@@ -555,6 +561,7 @@ export const COMMON = {
       legacyClaimed: 'All set, {name}! Your Cup scores are yours now.',
       winsOf: 'Most wins: {game}', wins: 'Wins', soloRecords: 'Play alone',
       winsHint: 'Every game you win with your name and PIN adds one. On a single phone, play under that name for it to count.',
+      soloOf: "Best scores playing alone", countThis: "Want this game to count on the leaderboard?", countThisHint: "Sign in with your name and a 4-digit PIN. First time? Your player is created.", countedGame: "✅ Done: this game was saved.", countedWin: "🏆 Done: your win was saved.", notInGame: "That name isn't in this game: it counts from the next one.",
       general: 'Overall ranking', playsTitle: 'Most games played',
       playsHint: 'Counts every game you finish signed in with your name and PIN, in any game.',
       tabGames: '🎮 Games', tabCups: '🏆 Cups', groupOne: 'Solo', groupMany: 'Group games',
@@ -578,9 +585,13 @@ export const COMMON = {
       context: '{n} jogos para o celular',
       lines: [
         '🏆 A Copa: um torneio de uma semana entre amigos, com um jogo diferente por dia.',
+        '📅 Um por dia: um desafio novo todo dia, o mesmo para todos. Até onde vai a sua sequência?',
         '👥 Para jogar em grupo: num celular só ou cada um no seu.',
         '🧩 Para jogar sozinho: minijogos de palavras, lógica e cultura.',
+        '🏅 Rankings: as suas melhores pontuações contra as dos amigos e as de todo mundo.',
         '🔓 Sem conta: é só tocar no link e jogar.',
+        '📲 Como um app: você adiciona à tela inicial e, se quiser, ele avisa quando é a sua vez de jogar.',
+        '🌎 Em espanhol, inglês, português e alemão.',
       ],
     },
     // La hoja del botón de compartir de la portada: el video y las dos maneras de compartir
@@ -595,7 +606,7 @@ export const COMMON = {
       copied: '✅ Copiado',
       close: 'Fechar',
       videoContext: 'Veja o vídeo',
-      videoLines: ['🎲 Os jogos de sempre, no celular, grátis e sem conta.', '🏆 Para jogar em grupo, sozinho ou num torneio de uma semana.'],
+      videoLines: ['🎲 Os jogos de sempre, no celular, grátis e sem conta.', '🏆 Em grupo, sozinho, num torneio de uma semana ou com um desafio novo todo dia.'],
     },
     invite: '{emoji} *{game}* · Sala {code}\n\n👋 {name} te convida pra jogar em juegosdesalon.cl.',
     shareResult: '📤 Compartilhar resultado',
@@ -646,7 +657,6 @@ export const COMMON = {
       mejorando: 'Em {juego} você está melhorando: suas últimas 3 têm média {a} e as de antes, {b}.',
       bajando: 'Em {juego} você caiu um pouco: suas últimas 3 têm média {a} e as de antes, {b}.',
       vacio: 'Você ainda não jogou nenhum Um por dia. O primeiro está esperando.',
-      enLabs: 'O Um por dia ainda está em teste no laboratório.',
       // Com jogador e convites (PR 3)
       pct: 'Hoje: {s} pontos · melhor que {p} % de quem jogou.',
       comodinUsado: '🧊 Você usou um coringa ontem e sua sequência continua: {n} dias.',
@@ -763,7 +773,6 @@ export const COMMON = {
       newRecord: '🏆 Novo recorde!', newWeek: '🏆 Sua melhor pontuação da semana!',
       best: 'Sua melhor pontuação: {s} em {t}.',
       notSaved: 'Desta vez não deu para salvar no ranking.',
-      joinAfter: 'Entre com seu nome e PIN para seus pontos contarem no ranking.',
       allRounder: 'Faz-Tudo', allRounderHint: 'Soma sua melhor pontuação em cada jogo: ganha quem joga bem tudo.',
       champions: 'Campeões da Copa', championsHint: 'Medalhas das copas terminadas: ouro, prata e bronze.',
       noChampions: 'Nenhuma copa terminou ainda.',
@@ -780,6 +789,7 @@ export const COMMON = {
       legacyClaimed: 'Pronto, {name}! Suas pontuações da Copa agora são suas.',
       winsOf: 'Mais vitórias: {game}', wins: 'Vitórias', soloRecords: 'Jogar sozinho',
       winsHint: 'Cada partida que você ganha com seu nome e PIN soma uma. Num celular só, jogue com esse nome para que conte.',
+      soloOf: "Melhores pontuações jogando sozinho", countThis: "Quer que esta partida conte no ranking?", countThisHint: "Entre com seu nome e um PIN de 4 números. Se for a primeira vez, seu jogador é criado.", countedGame: "✅ Pronto: esta partida foi anotada.", countedWin: "🏆 Pronto: sua vitória foi anotada.", notInGame: "Esse nome não está nesta partida: conta a partir da próxima.",
       general: 'Ranking geral', playsTitle: 'Mais partidas jogadas',
       playsHint: 'Conta cada partida que você termina com seu nome e PIN, em qualquer jogo.',
       tabGames: '🎮 Jogos', tabCups: '🏆 Copas', groupOne: 'Sozinho', groupMany: 'Em grupo',
@@ -803,9 +813,13 @@ export const COMMON = {
       context: '{n} Spiele fürs Handy',
       lines: [
         '🏆 Der Pokal: ein Turnier unter Freunden, eine Woche lang, mit einem anderen Spiel pro Tag.',
+        '📅 Spiel des Tages: jeden Tag eine neue Aufgabe, für alle dieselbe. Wie lang wird deine Serie?',
         '👥 In der Gruppe: auf einem Handy oder jeder auf seinem.',
         '🧩 Allein: Minispiele mit Wörtern, Logik und Wissen.',
+        '🏅 Ranglisten: deine besten Punkte gegen die deiner Freunde und aller anderen.',
         '🔓 Ohne Konto: Link antippen und losspielen.',
+        '📲 Wie eine App: zum Startbildschirm hinzufügen und, wenn du willst, meldet sie sich, wenn du dran bist.',
+        '🌎 Auf Spanisch, Englisch, Portugiesisch und Deutsch.',
       ],
     },
     // La hoja del botón de compartir de la portada: el video y las dos maneras de compartir
@@ -820,7 +834,7 @@ export const COMMON = {
       copied: '✅ Kopiert',
       close: 'Schließen',
       videoContext: 'Video ansehen',
-      videoLines: ['🎲 Die Spieleklassiker auf dem Handy, kostenlos und ohne Konto.', '🏆 In der Gruppe, allein oder in einem Turnier über eine Woche.'],
+      videoLines: ['🎲 Die Spieleklassiker auf dem Handy, kostenlos und ohne Konto.', '🏆 In der Gruppe, allein, in einem Turnier über eine Woche oder mit einer neuen Aufgabe jeden Tag.'],
     },
     invite: '{emoji} *{game}* · Raum {code}\n\n👋 {name} lädt dich zum Spielen auf juegosdesalon.cl ein.',
     shareResult: '📤 Ergebnis teilen',
@@ -871,7 +885,6 @@ export const COMMON = {
       mejorando: 'Bei {juego} wirst du besser: Deine letzten 3 liegen im Schnitt bei {a}, die davor bei {b}.',
       bajando: 'Bei {juego} bist du etwas schwächer: Deine letzten 3 liegen im Schnitt bei {a}, die davor bei {b}.',
       vacio: 'Du hast noch kein Spiel des Tages gespielt. Das erste wartet.',
-      enLabs: 'Das Spiel des Tages wird noch im Labor getestet.',
       // Mit Spieler und Einladungen (PR 3)
       pct: 'Heute: {s} Punkte · besser als {p} % derer, die gespielt haben.',
       comodinUsado: '🧊 Du hast gestern einen Joker eingesetzt, deine Serie läuft weiter: {n} Tage.',
@@ -988,7 +1001,6 @@ export const COMMON = {
       newRecord: '🏆 Neuer Rekord!', newWeek: '🏆 Deine beste Punktzahl der Woche!',
       best: 'Deine beste Punktzahl: {s} in {t}.',
       notSaved: 'Diesmal konnte es nicht in der Rangliste gespeichert werden.',
-      joinAfter: 'Melde dich mit Name und PIN an, damit deine Punkte in der Rangliste zählen.',
       allRounder: 'Allrounder', allRounderHint: 'Zählt deine beste Punktzahl in jedem Spiel zusammen: Es gewinnt, wer alles gut kann.',
       champions: 'Pokalsieger', championsHint: 'Medaillen aus beendeten Pokalen: Gold, Silber und Bronze.',
       noChampions: 'Noch kein Pokal ist zu Ende.',
@@ -1005,6 +1017,7 @@ export const COMMON = {
       legacyClaimed: 'Fertig, {name}! Deine Pokal-Punkte gehören jetzt dir.',
       winsOf: 'Meiste Siege: {game}', wins: 'Siege', soloRecords: 'Allein spielen',
       winsHint: 'Jeder Sieg mit deinem Namen und deiner PIN zählt. Auf einem einzigen Handy: Spiel unter diesem Namen, damit er zählt.',
+      soloOf: "Bestwerte allein", countThis: "Soll dieses Spiel in der Rangliste zählen?", countThisHint: "Melde dich mit deinem Namen und einer 4-stelligen PIN an. Beim ersten Mal wird dein Spieler angelegt.", countedGame: "✅ Fertig: Dieses Spiel wurde eingetragen.", countedWin: "🏆 Fertig: Dein Sieg wurde eingetragen.", notInGame: "Dieser Name spielt hier nicht mit: Ab dem nächsten Spiel zählt es.",
       general: 'Gesamtrangliste', playsTitle: 'Meiste gespielte Partien',
       playsHint: 'Zählt jede Partie, die du mit Name und PIN beendest, in jedem Spiel.',
       tabGames: '🎮 Spiele', tabCups: '🏆 Pokale', groupOne: 'Allein', groupMany: 'In der Gruppe',

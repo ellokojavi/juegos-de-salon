@@ -9,13 +9,15 @@ import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../assets/js/
 import { botonInvitar } from '../assets/js/compartir.js';
 import { gameById, MODO_UNO_AL_DIA } from '../assets/js/games.js';
 import { getLang, langToggle, applyStatic, COMMON, withLang } from '../assets/js/i18n.js';
+import { param } from '../assets/js/parametros.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { failWith } from '../assets/js/transport/errors.js';
 import { showHandoff, passBlock, showCover } from '../assets/js/handoff.js';
 import { createChat } from '../assets/js/chat.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
 import { trackStart, trackVisit, trackFinish } from '../assets/js/transport/stats.js';
-import { finDePartida, bloqueVictorias } from '../assets/js/ranking.js';
+import { finDePartida, bloqueVictorias, bloqueTabla, avisoPartida } from '../assets/js/ranking.js';
+import { rankingsVisibles } from '../assets/js/jugador.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import { modoHoy, introHoy, terminarHoy, ponerTarjeta } from '../assets/js/uno-al-dia-ui.js';
 import { azarDel, puntajeAhorcado } from '../assets/js/uno-al-dia.js';
@@ -41,7 +43,7 @@ const SUGGEST_N = 6;
 const FLASH_MS = 2000;
 const store = createSessionStore(GAME_ID);
 const nameStore = createNameStore(GAME_ID);
-/** Uno al día (D-230): con `?hoy`, la palabra del día con el mazo del celular, sin elegir modo. */
+/** Uno al día (D-230): con `?today`, la palabra del día con el mazo del celular, sin elegir modo. */
 const HOY = modoHoy(GAME_ID);
 
 /** De dónde sale la palabra, en el orden en que se muestra en la configuración (D-53). */
@@ -349,7 +351,7 @@ function renderLobby() {
   showScreen('screen-lobby');
   const box = $('#lobby-box'); box.innerHTML = '';
   // Con el idioma pegado: quien reciba la invitación abre la app como quien la mandó (D-74)
-  const url = withLang(`${location.origin}${location.pathname}?sala=${S.code}`);
+  const url = withLang(`${location.origin}${location.pathname}?room=${S.code}`);
   const joined = ROLES.filter(r => M.names[r]);
   box.append(
     el('div', { class: 'muted', style: 'font-weight:800' }, T.lobbyCode),
@@ -764,6 +766,12 @@ function roundVerdict(role, v, nextName) {
   return stage;
 }
 
+/**
+ * La tabla de jugar solo en los rankings (D-274): `ahorcado_solo`. El puntaje es el de Uno al día:
+ * las vidas que quedaron sobre las del principio, de 0 a 100; el tiempo desempata.
+ */
+const TABLA_SOLO = `${GAME_ID}_solo`;
+
 /* ---------- Resultado ---------- */
 function renderResult(v) {
   const already = $('#screen-result').classList.contains('active');
@@ -788,6 +796,18 @@ function renderResult(v) {
   // Jugando solo no se le gana a nadie: la partida sale o no sale, y no hay ranking que mostrar
   const soloYo = M.players.length === 1;
   const mia = soloYo ? v.st[M.players[0]] : null;
+  // Jugando solo (no el de hoy, que tiene su tabla): el puntaje a los rankings, o "¿quieres que
+  // cuente?" sin jugador abierto, y la tabla, después de los botones para que sigan a la vista (C-8, D-274)
+  if (!already && soloYo && !S.hoy && rankingsVisibles()) {
+    $('#screen-result .rk-solo-fin')?.remove();
+    const s = puntajeAhorcado({ vidas: mia.solved ? mia.score : 0, total: M.config.lives });
+    const tablaFin = bloqueTabla({ tabla: TABLA_SOLO, titulo: `🧍 ${COMMON[lang].rk.soloOf}`, alTocar: () => SFX.tap(), entrar: false });
+    const caja = el('div', { class: 'rk-solo-fin stack' },
+      el('p', { class: 'muted center', style: 'margin:0' }, fmt(T.soloPoints, { s })),
+      avisoPartida({ juego: GAME_ID, variante: 'solo', s, ms: mia.ms || 0, alAnotar: () => tablaFin.recargar(), nombre: M.names?.A || '', alTocar: () => SFX.tap() }),
+      tablaFin);
+    $('#result-actions').after(caja);
+  }
   $('#result-title').textContent = soloYo ? (mia.solved ? T.solvedTitle : T.hangedTitle)
     : nadie ? T.winTitleNone
     : many ? T.winTitleMany
@@ -864,7 +884,7 @@ const freshConfig = config => ({ ...config, seed: randomSeed() });
 /* ---------- Varios celulares ---------- */
 async function startOnline(transport, code, role, name, config, secrets = {}) {
   startSession({ mode: 'online', transport, roles: [role], config, names: { [role]: name }, code, role, secrets });
-  history.replaceState(null, '', `${location.pathname}?sala=${code}`);
+  history.replaceState(null, '', `${location.pathname}?room=${code}`);
   keepAwake();
   saveSession();
   render();
@@ -1062,10 +1082,12 @@ function init() {
   if (HOY?.fuera) return;   // se va al juego de hoy
   if (HOY) return introDeHoy();
   renderModes();
-  // Las victorias de este juego y entrar con nombre y PIN (D-212); en el laboratorio, solo donde se activaron
-  $('#rk-slot')?.append(bloqueVictorias({ juego: GAME_ID, nombre: T.title, alTocar: () => SFX.tap() }));
+  // Los mejores puntajes jugando solo (D-274), y las victorias y entrar con nombre y PIN (D-212)
+  $('#rk-slot')?.append(
+    bloqueTabla({ tabla: TABLA_SOLO, titulo: `🧍 ${COMMON[lang].rk.soloOf}`, alTocar: () => SFX.tap(), entrar: false }),
+    bloqueVictorias({ juego: GAME_ID, nombre: T.title, alTocar: () => SFX.tap() }));
   renderResumeSlot();
-  const code = new URLSearchParams(location.search).get('sala');
+  const code = param('room');
   if (code && /^[A-Z]{4}$/i.test(code)) {
     const saved = loadSession();
     if (saved && saved.mode === 'online' && saved.code === code.toUpperCase() && !saved.done) {

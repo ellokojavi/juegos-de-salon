@@ -84,7 +84,7 @@ const ES = {
   // pase del celular
   hoPass: 'Pásale el celular a', hoReady: '¡Listo, soy yo!', hoContinue: 'Seguir', tapContinue: 'Toca para seguir',
   // resultado
-  soloWordWas: 'La palabra era', soloScore: 'Te quedaron {n} vidas y la sacaste en {letters} letras.', soloScoreOne: 'Te quedó 1 vida y la sacaste en {letters} letras.',
+  soloWordWas: 'La palabra era', soloScore: 'Te quedaron {n} vidas y la sacaste en {letters} letras.', soloScoreOne: 'Te quedó 1 vida y la sacaste en {letters} letras.', soloPoints: 'Para el ranking: {s}/100.',
   winTitle: '¡Ganó {name}!', winTitleMany: '¡Empate!', winTitleNone: 'No la sacó nadie', youWin: '¡Ganaste!', youLose: 'Perdiste… esta vez.',
   rankLine: '{n} vidas · {letters} letras', rankLineOne: '1 vida · {letters} letras', rankHanged: 'Colgado · {letters} letras', rankBought: 'compradas: {n}',
   wordsWere: 'Las palabras eran', verified: 'verificado ✅', notVerified: '⚠️ no coincide (¿trampa?)',
@@ -143,7 +143,7 @@ const EN = {
   solvedTitle: 'You cracked it!', hangedTitle: 'You hanged', solvedOther: '{name} cracked it!', hangedOther: '{name} hanged',
   wordWas: 'The word was', scoreWas: '{n} lives left', scoreZero: 'No lives left', scoreWasOne: '1 life left',
   hoPass: 'Pass the phone to', hoReady: 'Got it, my turn!', hoContinue: 'Keep going', tapContinue: 'Tap to continue',
-  soloWordWas: 'The word was', soloScore: 'You had {n} lives left and cracked it in {letters} letters.', soloScoreOne: 'You had 1 life left and cracked it in {letters} letters.',
+  soloWordWas: 'The word was', soloScore: 'You had {n} lives left and cracked it in {letters} letters.', soloScoreOne: 'You had 1 life left and cracked it in {letters} letters.', soloPoints: 'For the leaderboard: {s}/100.',
   winTitle: '{name} wins!', winTitleMany: 'It is a tie!', winTitleNone: 'Nobody cracked it', youWin: 'You win!', youLose: 'You lost… this time.',
   rankLine: '{n} lives · {letters} letters', rankLineOne: '1 life · {letters} letters', rankHanged: 'Hanged · {letters} letters', rankBought: 'bought: {n}',
   wordsWere: 'The words were', verified: 'verified ✅', notVerified: '⚠️ does not match (cheating?)',
@@ -201,7 +201,7 @@ const PT = {
   solvedTitle: 'Você tirou!', hangedTitle: 'Te enforcaram', solvedOther: '{name} tirou!', hangedOther: 'Enforcaram {name}',
   wordWas: 'A palavra era', scoreWas: 'Sobraram {n} vidas', scoreZero: 'Sem vidas', scoreWasOne: 'Sobrou 1 vida',
   hoPass: 'Passa o celular para', hoReady: 'Pronto, sou eu!', hoContinue: 'Seguir', tapContinue: 'Toque para seguir',
-  soloWordWas: 'A palavra era', soloScore: 'Sobraram {n} vidas e você tirou em {letters} letras.', soloScoreOne: 'Sobrou 1 vida e você tirou em {letters} letras.',
+  soloWordWas: 'A palavra era', soloScore: 'Sobraram {n} vidas e você tirou em {letters} letras.', soloScoreOne: 'Sobrou 1 vida e você tirou em {letters} letras.', soloPoints: 'Para o ranking: {s}/100.',
   winTitle: '{name} ganhou!', winTitleMany: 'Empate!', winTitleNone: 'Ninguém tirou', youWin: 'Você ganhou!', youLose: 'Você perdeu… dessa vez.',
   rankLine: '{n} vidas · {letters} letras', rankLineOne: '1 vida · {letters} letras', rankHanged: 'Enforcado · {letters} letras', rankBought: 'compradas: {n}',
   wordsWere: 'As palavras eram', verified: 'verificado ✅', notVerified: '⚠️ não bate (trapaça?)',
@@ -266,7 +266,7 @@ const DE = {
   // Handy weitergeben
   hoPass: 'Gib das Handy an', hoReady: 'Bereit, ich bin’s!', hoContinue: 'Weiter', tapContinue: 'Tippen zum Weitermachen',
   // Ergebnis
-  soloWordWas: 'Das Wort war', soloScore: 'Dir blieben {n} Leben und du hast es mit {letters} Buchstaben geschafft.', soloScoreOne: 'Dir blieb 1 Leben und du hast es mit {letters} Buchstaben geschafft.',
+  soloWordWas: 'Das Wort war', soloScore: 'Dir blieben {n} Leben und du hast es mit {letters} Buchstaben geschafft.', soloScoreOne: 'Dir blieb 1 Leben und du hast es mit {letters} Buchstaben geschafft.', soloPoints: 'Für die Rangliste: {s}/100.',
   winTitle: '{name} gewinnt!', winTitleMany: 'Unentschieden!', winTitleNone: 'Keiner hat es geschafft', youWin: 'Du hast gewonnen!', youLose: 'Verloren… diesmal.',
   rankLine: '{n} Leben · {letters} Buchstaben', rankLineOne: '1 Leben · {letters} Buchstaben', rankHanged: 'Gehängt · {letters} Buchstaben', rankBought: 'gekauft: {n}',
   wordsWere: 'Die Wörter waren', verified: 'geprüft ✅', notVerified: '⚠️ passt nicht (geschummelt?)',

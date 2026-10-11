@@ -219,7 +219,22 @@ export const SUELTOS = [
     tipos: ['trivia'],
     duration: '2–5',
   },
-].map(m => ({ ...m, players: '1', path: `${m.slug}/`, available: !m.labs, suelto: true }));
+  {
+    // En el laboratorio (D-257): tiene página y tarjeta, pero no sale en la portada. Su página es
+    // /labs/case/ (D-267); `diario`: sin semilla en el link se juega el caso del día, el mismo para
+    // todos, y al recargar sigue donde iba
+    id: 'caso',
+    slug: 'case',
+    emoji: '🔍',
+    name: { es: 'El caso', en: 'The Case', pt: 'O Caso', de: 'Der Fall' },
+    tagline: { es: 'Descubre quién es criminal entre 20 sospechosos. Las pistas nunca mienten.', en: 'Find out who the criminals are among 20 suspects. The clues never lie.', pt: 'Descubra quem é criminoso entre 20 suspeitos. As pistas nunca mentem.', de: 'Finde heraus, wer von 20 Verdächtigen kriminell ist. Die Hinweise lügen nie.' },
+    tipos: ['logic'],
+    duration: '5–10',
+    labs: true,
+    diario: true,
+  },
+  // Los del laboratorio viven en /labs/<slug>/ (D-267): al salir pasan a /<slug>/
+].map(m => ({ ...m, players: '1', path: `${m.labs ? 'labs/' : ''}${m.slug}/`, available: !m.labs, suelto: true }));
 
 /**
  * Los tipos de juego con que se filtra la portada (D-142), en el orden en que se ofrecen.
@@ -237,10 +252,19 @@ export const TIPOS = {
 export const TIPOS_VIEJOS = { palabras: 'words', logica: 'logic', cultura: 'trivia', mesa: 'tabletop' };
 
 /**
- * Todo lo que ofrece la portada: los juegos de GAMES y, después, los de La Copa. Los que vienen
+ * El orden de la portada (D-255): de lo más jugado a lo menos, contando las partidas de todos los
+ * modos, las de las copas y las de Uno al día (del 11 de septiembre al 9 de octubre de 2026).
+ * Se rehace a mano cuando el dueño lo pide. Un juego que no está en la lista va después de los
+ * que sí, en el orden de GAMES y SUELTOS.
+ */
+export const POPULARIDAD = ['copa', 'toque-y-fama', 'linea-de-tiempo', 'reinas', 'tango', 'ahorcado', 'batalla-naval', 'donde', 'letras', 'zip', 'conexiones', 'anio', 'dudo', 'desenredo', 'julepe', 'cuarto-rey', 'generala'];
+const puesto = id => { const i = POPULARIDAD.indexOf(id); return i < 0 ? POPULARIDAD.length : i; };
+
+/**
+ * Todo lo que ofrece la portada, de lo más jugado a lo menos (D-255). Los que vienen
  * "Próximamente" van al final, con y sin filtro: no se abren y no deben tapar a los que sí.
  */
-const OFRECIDOS = [...GAMES, ...SUELTOS.filter(m => !m.labs)];
+const OFRECIDOS = [...GAMES, ...SUELTOS.filter(m => !m.labs)].sort((a, b) => puesto(a.id) - puesto(b.id));
 export const PORTADA = [...OFRECIDOS.filter(g => g.available), ...OFRECIDOS.filter(g => !g.available)];
 
 /** Cuántos juegan como mínimo y como máximo ("1–6" → [1, 6]; "1" → [1, 1]). */
@@ -270,6 +294,19 @@ const BY_ID = Object.fromEntries([...GAMES, ...SUELTOS].map(g => [g.id, g]));
 
 /** El juego con ese id, o `null` si no está registrado. */
 export const gameById = id => BY_ID[id] || null;
+
+/**
+ * Cómo se nombra un juego en una URL (C-18, D-266): en inglés, como su carpeta (`reinas` →
+ * `queens`). Los de La Copa que no tienen página propia llevan el suyo. El id no cambia (lo
+ * guardan las salas, el panel y el celular): solo lo que se ve en la dirección.
+ */
+export const SLUGS_SIN_PAGINA = { linea: 'timeline-flash', numero: 'number' };
+const SLUG_DE = { ...Object.fromEntries([...GAMES, ...SUELTOS].map(g => [g.id, g.slug || String(g.path || '').replace(/\/$/, '') || g.id])), ...SLUGS_SIN_PAGINA };
+const ID_DE = Object.fromEntries(Object.entries(SLUG_DE).map(([id, slug]) => [slug, id]));
+/** El nombre en la URL de un juego; un id que no está en la lista queda igual. */
+export const slugDe = id => (Object.hasOwn(SLUG_DE, id) ? SLUG_DE[id] : id);
+/** El id de un juego desde su nombre en la URL, o desde su id (los links de antes de D-266). */
+export const idDeSlug = s => (Object.hasOwn(SLUG_DE, s) ? s : Object.hasOwn(ID_DE, s) ? ID_DE[s] : s);
 
 /**
  * Cómo se nombra un juego fuera del menú (el panel, por ejemplo).

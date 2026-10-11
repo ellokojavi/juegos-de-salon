@@ -18,6 +18,8 @@
  *   - cada guion de tools/e2e/ aparece en tools/e2e/README.md;
  *   - la versión publicada tiene su entrada en CHANGELOG.md.
  * Lo demás (que la prosa diga lo que el código hace) lo lee el agente. Sale con 1 si algo falta.
+ * Al final muestra los mensajes con que la app se presenta (compartirla, el video y la tarjeta del
+ * link, D-271) tal como salen, para que el agente los lea contra lo que entró.
  *
  * `anotar` cierra una ronda: guarda hasta dónde se revisó, el PR y lo que quedó pendiente, que la
  * ronda siguiente muestra primero. Así el agente recuerda lo que no alcanzó a hacer.
@@ -26,6 +28,9 @@ import { execFileSync } from 'node:child_process';
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { compartirApp, LO_PRINCIPAL } from '../../public/assets/js/compartir.js';
+import { COMMON } from '../../public/assets/js/i18n.js';
+import { PORTADA } from '../../public/assets/js/games.js';
 
 export const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 export const MEMORIA = join(RAIZ, 'docs/documentacion.json');
@@ -249,6 +254,23 @@ export function comprobar() {
   return problemas;
 }
 
+/**
+ * Los mensajes con que la app se presenta, tal como salen en español (D-271): el de compartirla
+ * (el mismo en el celular y en el computador), el del video y la bajada de la tarjeta del link. Si
+ * entró algo principal que no nombran, se suma a LO_PRINCIPAL y a los cuatro idiomas.
+ */
+function mensajesApp() {
+  const C = COMMON.es;
+  const { texto } = compartirApp({ C, lang: 'es', juegos: PORTADA.filter(g => g.available).length });
+  const bajada = readFileSync(join(RAIZ, 'public/index.html'), 'utf8').match(/<meta name="description" content="([^"]*)"/)?.[1];
+  const sangria = t => t.split('\n').map(l => `    ${l}`).join('\n');
+  console.log('\nAsí se presenta la app (D-271). ¿Entró algo principal que no nombra?');
+  console.log(`  Lo principal: ${LO_PRINCIPAL.map(p => `${p.emoji} ${p.que}`).join(' · ')}`);
+  console.log(`  Compartir la app (shareApp en i18n.js):\n${sangria(texto)}`);
+  console.log(`  El video (shareSheet.videoLines):\n${sangria(C.shareSheet.videoLines.join('\n'))}`);
+  console.log(`  La tarjeta del link (og.mjs):\n${sangria(bajada || '(sin bajada)')}`);
+}
+
 function revisar(desde) {
   const m = leerMemoria();
   // Con --desde es el modo PR: lo que trae esta rama desde su base, no lo que entró a main
@@ -276,6 +298,7 @@ function revisar(desde) {
     console.log('\nYa conocidos (esperan al dueño, en "conocidos" de docs/documentacion.json):');
     for (const p of viejos) console.log(`  · ${p}`);
   }
+  mensajesApp();
   if (!desde) console.log(`\nAl cerrar la ronda: node tools/agents/documentar.mjs anotar --hasta ${punta.slice(0, 7)} [--pendiente "…"], y con el PR abierto: anotar --hasta ${punta.slice(0, 7)} --pr <url>`);
   return nuevos.length ? 1 : 0;
 }

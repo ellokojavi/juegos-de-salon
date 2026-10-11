@@ -27,7 +27,7 @@
  *   vistas/<página>: cada vez que se abre una página (`hangman`, `cup`, `inicio`…)
  *   entradas/<página>: visitas, por la página donde empezaron (una por pestaña)
  *   ref/<dominio>: de dónde llegó la visita (`google_com`, `directo`); solo el dominio
- *   via/<canal>: la marca del enlace (`?de=compartir`, `utm_source`), si traía una
+ *   via/<canal>: la marca del enlace (`?from=link`, `utm_source`), si traía una
  *   retorno/<nueva|vuelve>: si este navegador ya había venido (una marca local, sin id)
  *   disp/<celular|tableta|computador>, pais/<CL>: de la visita
  *   juegan/<página>: visitas que llegaron a empezar algo, por su página de entrada
@@ -45,6 +45,7 @@ import { firebaseConfig } from '../firebase-config.js';
 import { dayOf } from './cleanup.js';
 import { getLang } from '../i18n.js';
 import { isLocalMode, MAX_PLAYERS, MODES } from '../games.js';
+import { param, tiene, nombres, normalizarUrl, AVISO_CLAVE } from '../parametros.js';
 
 // 'lab' salió con el laboratorio (D-67); queda en el panel para leer lo que quedó guardado
 export const ENVS = ['prod', 'dev'];
@@ -440,23 +441,25 @@ export function origenDe(referrer, propio = '') {
   return k || 'directo';
 }
 
-/** La marca del enlace: `?de=compartir` o `?utm_source=instagram`. Vacía si no trae. */
+/** La marca del enlace: `?from=link` (o `?de=` de un link viejo, D-266) o `?utm_source=instagram`. Vacía si no trae. */
 export function canalDe(search = '') {
   let q;
   try { q = new URLSearchParams(String(search || '')); } catch (_) { return ''; }
-  return clave(q.get('de') || q.get('utm_source') || '', 20);
+  return clave(param('from', q) || q.get('utm_source') || '', 20);
 }
 
 /**
- * El aviso de La Copa que abrió esta página (`?aviso=dia`, D-233): lo pone avisar.mjs en la
- * dirección de cada aviso, así el panel cuenta cuántos se tocan, por tipo. Vacío si no viene de uno.
+ * El aviso que abrió esta página (`?notif=day`, D-233, D-266): lo pone avisar.mjs en la
+ * dirección de cada aviso, así el panel cuenta cuántos se tocan, por tipo. Devuelve la clave del
+ * panel, que sigue siendo la de antes (`notif=deadline` → 'plazo'), y lee también los links viejos
+ * (`?aviso=plazo`). Vacío si no viene de uno.
  */
 // Los de Uno al día (D-230) van con `uad` pegado, sin guion: las reglas piden solo letras
 export const TIPOS_AVISO = ['dia', 'plazo', 'final', 'fin', 'insc', 'copas', 'prueba', 'uaddia', 'uadracha', 'uadsemana', 'uadadios'];
 export function avisoDe(search = '') {
   let q;
   try { q = new URLSearchParams(String(search || '')); } catch (_) { return ''; }
-  const t = clave(q.get('aviso'), 12);
+  const t = AVISO_CLAVE[clave(param('notif', q), 12)] || '';
   return TIPOS_AVISO.includes(t) ? t : '';
 }
 
@@ -471,12 +474,12 @@ export function pwaDe(search = '', ua = '') {
   return /Android/i.test(ua) ? 'android' : /iPhone|iPad|iPod|Macintosh/i.test(ua) ? 'ios' : 'otro';
 }
 
-/** La búsqueda sin `pwa` ni `aviso`: contadas una vez, salen de la dirección para que recargar o volver no las sume de nuevo. */
+/** La búsqueda sin `pwa` ni `notif`: contadas una vez, salen de la dirección para que recargar o volver no las sume de nuevo. */
 export function sinMarcas(search = '') {
   let q;
   try { q = new URLSearchParams(String(search || '')); } catch (_) { return String(search || ''); }
-  if (!q.has('pwa') && !q.has('aviso')) return String(search || '');
-  q.delete('pwa'); q.delete('aviso');
+  if (!q.has('pwa') && !tiene('notif', q)) return String(search || '');
+  for (const k of ['pwa', ...nombres('notif')]) q.delete(k);
   // Sin '=' de más: `?K7Q2X` sigue siendo `?K7Q2X`, no `?K7Q2X=`
   const s = [...q].map(([k, v]) => (v === '' ? encodeURIComponent(k) : `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)).join('&');
   return s ? `?${s}` : '';
@@ -575,6 +578,8 @@ export function trackUnoAlDia(evento) {
  */
 export function trackVisit() {
   try { globalThis.__vigia?.listo?.(); } catch (_) { /* sin vigía, nada */ }
+  // Un link viejo (`?sala=`, `?prueba`) queda escrito en inglés en la barra (D-266)
+  normalizarUrl();
   try { const s = stats(); return noteVisit(s.api, s.fp); } catch (_) { return Promise.resolve(); }
 }
 

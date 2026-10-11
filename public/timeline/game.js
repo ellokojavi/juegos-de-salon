@@ -11,6 +11,7 @@ import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../assets/js/
 import { botonInvitar, botonResultadoSolo } from '../assets/js/compartir.js';
 import { gameById } from '../assets/js/games.js';
 import { getLang, langToggle, applyStatic, COMMON, withLang, SITIO } from '../assets/js/i18n.js';
+import { param } from '../assets/js/parametros.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { failWith } from '../assets/js/transport/errors.js';
 import { showHandoff, passBlock } from '../assets/js/handoff.js';
@@ -21,6 +22,7 @@ import { finDePartida, bloqueVictorias, bloqueTabla, avisoPartida } from '../ass
 import { rankingsVisibles, leerYo } from '../assets/js/jugador.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import { crearArrastre } from '../assets/js/arrastre.js';
+import { datoDe, bloqueDato, franjaDato, conservarFranja, conDato } from '../assets/js/dato.js';
 import { buildState, correctSlot, randomSeed, yearLabel, timeLabel } from './engine.js';
 import { generar as generarLinea, CARTAS as CARTAS_SOLO } from '../cup/games/timeline/engine.js';
 import * as uiLinea from '../cup/games/timeline/ui.js';
@@ -253,7 +255,7 @@ function renderLobby() {
   showScreen('screen-lobby');
   const box = $('#lobby-box'); box.innerHTML = '';
   // Con el idioma pegado: quien reciba la invitación abre la app como quien la mandó (D-74)
-  const url = withLang(`${location.origin}${location.pathname}?sala=${S.code}`);
+  const url = withLang(`${location.origin}${location.pathname}?room=${S.code}`);
   const joined = ROLES.filter(r => M.names[r]);
   const host = 'A';
   box.append(
@@ -311,7 +313,7 @@ function renderPlay(v) {
     const stage = verdictStage(last, v, null);
     const gen = (S.verdictGen = (S.verdictGen || 0) + 1);
     S.sticky = mine && !last.ok;
-    const next = showHandoff([stage], () => { if (S.verdictGen === gen) S.sticky = false; S.selCard = null; S.selSlot = null; render(); });
+    const next = showHandoff([stage], () => { if (S.verdictGen === gen) S.sticky = false; S.selCard = null; S.selSlot = null; render(); if (last.ok) franja(last, v); });
     // Solo el temporizador del veredicto vigente puede cerrarlo; un error propio se queda hasta tocar
     if (!S.sticky) setTimeout(() => { if (S.verdictGen === gen && !$('#handoff').hidden) next(); }, 2400);
     return;
@@ -323,7 +325,7 @@ function renderPlay(v) {
     S.lastShown = v.history.length - 1;
     const turnPasses = v.current !== last.from;
     const stage = verdictStage(last, v, turnPasses ? M.names[v.current] : null);
-    showHandoff([stage], () => { S.uiRole = v.current; S.selCard = null; S.selSlot = null; render(); }, { tapAdvances: !turnPasses });
+    showHandoff([stage], () => { S.uiRole = v.current; S.selCard = null; S.selSlot = null; render(); if (last.ok) franja(last, v); }, { tapAdvances: !turnPasses });
     return;
   }
   if (S.mode === 'local' && S.uiRole !== v.current) {
@@ -536,7 +538,7 @@ function montarArrastre() {
 
 /** El botón que confirma: dice sobre qué carta actúa, nunca sólo la acción (C-8, D-38). */
 function pintarConfirmar(v, isLocalTurn) {
-  const row = $('#place-row'); row.innerHTML = '';
+  const row = $('#place-row'); conservarFranja(row);
   if (!isLocalTurn) return;
   const elegida = S.selCard ? v.byId[S.selCard] : null;
   row.append(el('button', { class: 'btn btn--yellow', disabled: S.selSlot === null || !S.selCard, onClick: () => {
@@ -544,6 +546,12 @@ function pintarConfirmar(v, isLocalTurn) {
     S.transport.send({ t: 'place', from: v.current, card: S.selCard, slot: S.selSlot, ms: S.turnStart ? Date.now() - S.turnStart : 0 });
     S.selCard = null; S.selSlot = null;
   } }, T.place, elegida && S.selSlot !== null ? el('small', {}, `${elegida.emoji} ${elegida[lang]}`) : null));
+}
+
+/** El dato de un acierto, en la franja sobre el botón: lo ven todos y no frena a nadie (D-277). */
+function franja(last, v) {
+  const c = v.byId[last.card];
+  if (c) franjaDato($('#place-row'), el, datoDe(c, lang));
 }
 
 function playVerdictSound(ok) { if (ok) { SFX.reveal(); vibrate([30, 30]); } else { SFX.timeUp(); vibrate([120, 60, 120, 60, 200]); } }
@@ -569,7 +577,9 @@ function verdictStage(last, v, nextName) {
       el('div', { class: 'big ' + (last.ok ? 'ok' : 'no') }, titulo),
       el('div', { class: 'card-big' }, el('span', { class: 'em' }, c.emoji), el('span', { class: 't' }, c[lang]), el('span', { class: 'y' }, yearLabel(c.year, lang))),
       el('div', { class: 'note' }, last.ok ? `${quien} 👏` : (mine ? `${quien} · ${T.drewNew}` : `${quien} · ${T.drewNewOther}`)),
-      last.ok ? null : el('div', { class: 'why', html: `${fmt(T.whyWrong, { year: `<b>${yearLabel(c.year, lang)}</b>`, where: whereText(last.correctBetween, v.byId) })}<br>${fmt(mine ? T.wherePlaced : T.wherePlacedOther, { where: whereText(last.placedBetween, v.byId) })}` }),
+      // El error cuenta el dato de la carta (D-277); una carta sin dato dice dónde iba
+      last.ok ? null : datoDe(c, lang) ? bloqueDato(el, datoDe(c, lang))
+        : el('div', { class: 'why', html: `${fmt(T.whyWrong, { year: `<b>${yearLabel(c.year, lang)}</b>`, where: whereText(last.correctBetween, v.byId) })}<br>${fmt(mine ? T.wherePlaced : T.wherePlacedOther, { where: whereText(last.placedBetween, v.byId) })}` }),
     ),
   );
   // El fondo rojo del error es solo para el que se equivocó: al resto le llega como noticia
@@ -634,7 +644,9 @@ function renderResult(v) {
     ));
   });
   const rline = $('#result-line'); rline.innerHTML = '';
-  v.line.forEach(id => rline.append(eventRow(id, v.byId)));
+  // La línea final es el repaso: cada hito muestra su dato con un toque (D-277)
+  if (v.line.some(id => datoDe(v.byId[id], lang))) rline.append(el('p', { class: 'muted center', style: 'margin:4px 0' }, T.datoTap));
+  v.line.forEach(id => rline.append(conDato(eventRow(id, v.byId), el, datoDe(v.byId[id], lang))));
   if (!already) { $('#result-replay').open = false; if (!meRole || winners.includes(meRole)) { confetti({ count: 220, duration: 3500 }); SFX.win(); } else SFX.timeUp(); }
 
   const box = $('#result-actions'); box.innerHTML = '';
@@ -673,7 +685,7 @@ async function rematch() {
 /* ---------- Varios celulares ---------- */
 async function startOnline(transport, code, role, name, config) {
   startSession({ mode: 'online', transport, roles: [role], config, names: { [role]: name }, code, role });
-  history.replaceState(null, '', `${location.pathname}?sala=${code}`);
+  history.replaceState(null, '', `${location.pathname}?room=${code}`);
   keepAwake();
   saveSession();
   render();
@@ -916,6 +928,7 @@ function montarSolo(partida) {
     guardar: ({ jugadas, ms }) => { partida.jugadas = jugadas; partida.ms = ms; store.save(partida); },
     alTerminar: r => terminarSolo(partida, p, r),
     cron: t => { $('#solo-cron').textContent = t; },
+    pausado: si => $('#solo-cron').classList.toggle('en-pausa', si),
   });
 }
 
@@ -944,13 +957,20 @@ function terminarSolo(partida, p, { s, t, ms, estado }) {
     const aviso = avisoPartida({ juego: GAME_ID, variante: `rel-${partida.tema}`, s, ms, alAnotar: () => tablaFin.recargar() });
     aviso.id = 'sr-rk-aviso';
     $('#sr-record').after(aviso);
+  } else if (rankingsVisibles()) {
+    // Sin jugador abierto, "¿quieres que esta partida cuente?" después de los botones (C-8, D-274)
+    const aviso = avisoPartida({ juego: GAME_ID, variante: `rel-${partida.tema}`, s, ms, alAnotar: () => tablaFin.recargar(), alTocar: () => SFX.tap() });
+    aviso.id = 'sr-rk-aviso';
+    $('#sr-actions').after(aviso);
   }
   $('#sr-tarjeta').textContent = t;
   // La línea como quedó, con los errores en rojo; plegada, para que los botones se vean (C-8)
   const linea = $('#sr-line'); linea.innerHTML = '';
+  // Con el dato de cada hito a un toque, y el de los errores a la vista (D-277)
+  if (estado.linea.some(c => c.dato)) linea.append(el('p', { class: 'muted center', style: 'margin:4px 0' }, T.datoTap));
   for (const c of estado.linea) {
-    linea.append(el('div', { class: 'event' + (c.ok === false ? ' fallo' : '') },
-      el('span', { class: 'y' }, yearLabel(c.year, lang)), el('span', { class: 'em' }, c.emoji), el('span', { class: 't' }, c.texto)));
+    linea.append(conDato(el('div', { class: 'event' + (c.ok === false ? ' fallo' : '') },
+      el('span', { class: 'y' }, yearLabel(c.year, lang)), el('span', { class: 'em' }, c.emoji), el('span', { class: 't' }, c.texto)), el, c.dato, { abierto: c.ok === false }));
   }
   $('#sr-replay').open = false;
   if (s >= 50 || celebrar) { confetti({ count: s === 100 || celebrar ? 220 : 120, duration: 3000 }); SFX.win(); } else SFX.timeUp();
@@ -979,7 +999,7 @@ function init() {
   $('#rk-slot')?.append(bloqueVictorias({ juego: GAME_ID, nombre: T.title, alTocar: () => SFX.tap() }));
   renderResumeSlot();
   montarArrastre();
-  const code = new URLSearchParams(location.search).get('sala');
+  const code = param('room');
   if (code && /^[A-Z]{4}$/i.test(code)) {
     const saved = loadSession();
     if (saved && saved.mode === 'online' && saved.code === code.toUpperCase() && !saved.done) joinOnline(saved.code, saved.name, saved.role).catch(() => { clearSession(); renderSetup('online', code.toUpperCase()); });

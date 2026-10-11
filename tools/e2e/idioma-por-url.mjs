@@ -34,9 +34,8 @@ for (const lang of OTROS) {
 await limpio('/?lang=fr');
 console.log('/?lang=fr (no está) →', JSON.stringify(await mirar()));
 
-/* 4. La puerta de entrada de cada idioma (/pt/, /en/, /de/…) lo deja elegido y manda a la portada.
-   /labs/de/ es el link viejo de los revisores del alemán, hoy una página puente hacia /de/ (D-197) */
-for (const ruta of [...OTROS.map(l => `/${l}/`), '/labs/de/']) {
+/* 4. La puerta de entrada de cada idioma (/pt/, /en/, /de/…) lo deja elegido y manda a la portada */
+for (const ruta of OTROS.map(l => `/${l}/`)) {
   const lang = ruta.split('/').at(-2);
   await limpio(ruta);
   await sleep(1600);
@@ -51,7 +50,7 @@ console.log('y a la vuelta       →', JSON.stringify(await mirar()));
 
 /* 6. La invitación a una sala llega en el idioma de quien la mandó */
 for (const lang of OTROS) {
-  await limpio(`/liars-dice/?sala=WFBN&lang=${lang}`);
+  await limpio(`/liars-dice/?room=WFBN&lang=${lang}`);
   const sala = JSON.parse(await b.evaluate(`JSON.stringify({
     lang: document.documentElement.lang,
     url: location.pathname + location.search,
@@ -59,24 +58,32 @@ for (const lang of OTROS) {
     codigo: document.querySelector('#setup-actions input.code')?.value,
   })`));
   console.log(`sala en ${lang}`.padEnd(20) + '→', JSON.stringify(sala));
-  if (sala.lang !== lang || sala.url !== '/liars-dice/?sala=WFBN') mal(`la invitación a una sala con ?lang=${lang} no llega en ${lang}`);
+  if (sala.lang !== lang || sala.url !== '/liars-dice/?room=WFBN') mal(`la invitación a una sala con ?lang=${lang} no llega en ${lang}`);
+}
+
+/* 6b. Una invitación de antes de D-266 (`?sala=`) entra igual, y la barra queda en inglés */
+await limpio('/liars-dice/?sala=WFBN&lang=pt');
+{
+  const vieja = await b.evaluate(`location.pathname + location.search`);
+  console.log('sala con ?sala='.padEnd(20) + '→', vieja);
+  if (vieja !== '/liars-dice/?room=WFBN') mal(`la invitación vieja con ?sala= no queda en ?room= (${vieja})`);
 }
 
 /* 7. Y el link que arma el juego para compartir lleva el idioma pegado */
 console.log('link que se comparte→', await b.evaluate(`(async () => {
   const { withLang } = await import('/assets/js/i18n.js');
-  return withLang('https://juegosdesalon.cl/liars-dice/?sala=WFBN');
+  return withLang('https://juegosdesalon.cl/liars-dice/?room=WFBN');
 })()`));
 
 /* 8. La invitación a una copa en otro idioma (D-170): el link sigue llevando a la copa. Sacar el
    lang= no puede tocar el resto (antes `?K7Q2X&lang=pt` quedaba en `?K7Q2X=` y abría la portada) */
-await b.go(`${SITIO}/cup/?prueba&demo=invitado`, 2500);
+await b.go(`${SITIO}/cup/?test&demo=guest`, 2500);
 const copa = await b.evaluate('__copa.estado.code');
 for (const lang of OTROS) {
-  await b.go(`${SITIO}/cup/?prueba&${copa}&lang=${lang}`, 2500);
+  await b.go(`${SITIO}/cup/?test&${copa}&lang=${lang}`, 2500);
   const inv = JSON.parse(await b.evaluate(`JSON.stringify({ lang: document.documentElement.lang, url: location.search, pantalla: __copa.estado.pantalla })`));
   console.log(`copa en ${lang}`.padEnd(20) + '→', JSON.stringify(inv));
-  if (inv.pantalla !== 'entrar' || inv.lang !== lang || inv.url !== `?prueba&${copa}`) mal(`la invitación a una copa con ?lang=${lang} no abre la copa`);
+  if (inv.pantalla !== 'entrar' || inv.lang !== lang || inv.url !== `?test&${copa}`) mal(`la invitación a una copa con ?lang=${lang} no abre la copa`);
 }
 
 console.log('errors:', JSON.stringify(b.errors), JSON.stringify(b.logs.filter(l => !/vibrate/i.test(l))));

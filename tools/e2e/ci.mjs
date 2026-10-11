@@ -29,8 +29,8 @@ const CON_FIREBASE = /(^|\/)(online|chat)\.mjs$/;
 const TAMBIEN_FIREBASE = new Set([
   'versionado.mjs',                // abre una sala para ver que firebase.js carga versionado
   'compartir-sala.mjs',            // abre una sala de Línea de Tiempo
-  'enlace-invitacion.mjs',         // entra a ?sala= en los cuatro juegos con sala
-  'idioma-por-url.mjs',            // abre /liars-dice/?sala=WFBN
+  'enlace-invitacion.mjs',         // entra a ?room= en los cuatro juegos con sala
+  'idioma-por-url.mjs',            // abre /liars-dice/?room=WFBN
   'timeline/veredicto.mjs',        // dos celulares en una sala
   'timeline/pozo.mjs',             // la segunda mitad juega en una sala
 ]);

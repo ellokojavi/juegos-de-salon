@@ -15,8 +15,11 @@ viven en un solo lugar** (D-213), y este archivo dice dónde.
   `public/copa/`, `public/minijuegos/…`, `public/minigames/…`) son páginas puente generadas: no se editan.
 - **El taller**, al lado: `docs/`, `firebase/`, `marketing/` y `tools/` por función (`release/`,
   `firebase/`, `generators/`, `agents/`, `e2e/<juego>/`).
-- Las carpetas nuevas van en inglés. La documentación, los mensajes y los nombres de archivo de las
-  herramientas siguen en español. El README va en inglés (C-13, D-78).
+- Las carpetas nuevas van en inglés, y **todo lo que se ve en una URL también**: nombres de los
+  parámetros y sus valores (`?room=`, `?seed=`, `?test`, `&demo=podium`), leídos con
+  `public/assets/js/parametros.js`, que guarda los nombres de antes como alias (C-18, D-266). Los
+  nombres de las variables del código, la documentación, los mensajes y los nombres de archivo de
+  las herramientas siguen en español. El README va en inglés (C-13, D-78).
 
 ## Dónde está cada regla (D-213)
 
@@ -175,12 +178,29 @@ con eso la pantalla entra también a las pruebas de idiomas. Para verlo en un ce
 
 ## Agentes y herramientas del dueño
 
-- **Usabilidad** (D-132): revisa cada PR y hace una ronda diaria a las 5:00 hora del Pacífico.
+- **Usabilidad** (D-132): revisa cada PR y hace su ronda cuando la lanza el agente de procesos (D-276).
   Los dilemas son issues de GitHub: `node tools/agents/dilemas.mjs listar | ver <n> | crear <archivo.md> | resolver <n> "decisión" | archivar <n> "motivo" | reabrir <n>`;
   lo resuelto se anota en `docs/USABILIDAD.md`.
-- **Documentación** (D-172): ronda diaria a las 3:54 hora del Pacífico, revisión de cada PR y a
-  pedido ("documenta lo último"). Nunca fusiona ni toca código. Su memoria es
-  `docs/documentacion.json`: `node tools/agents/documentar.mjs revisar [--desde <commit>] | anotar --hasta <commit> [--pr <url>] [--pendiente "…"] | historial`.
+- **Documentación** (D-172): ronda cuando la lanza el agente de procesos (D-276), revisión de cada PR y a
+  pedido ("documenta lo último"). Nunca fusiona ni toca código, salvo los mensajes con que la app
+  se presenta (D-271, U-35). Su memoria es
+  `docs/documentacion.json`: `node tools/agents/documentar.mjs revisar [--desde <commit>] | anotar --hasta <commit> [--pr <url>] [--pendiente "…"] | historial`;
+  `revisar` termina mostrando esos mensajes (compartir la app, el video y la bajada de la tarjeta
+  del link) para leerlos contra lo que entró, y lo principal que nombran está en `LO_PRINCIPAL`
+  (`public/assets/js/compartir.js`).
+- **Procesos** (D-273, D-275, D-276): **el jefe de los agentes.** Ronda diaria a las 4:30 hora del
+  Pacífico en el Mac mini del dueño (tarea programada de la app, no en la nube): lanza a los agentes
+  de documentación y de usabilidad cuando hay algo que revisar (`procesos.mjs revisar` dice a quién)
+  y revisa lo que entregan. Los encargos del dueño que ejecuta otro agente ("revisa la frescura del
+  README") se le piden a él: decide quién, lo lanza, comprueba y responde. Atiende el feedback 🐞,
+  que `.github/workflows/feedback.yml` sube cada hora como issues `feedback` (`tools/agents/feedback.mjs`,
+  con el nombre que puso el jugador y sin su navegador, D-279). Cierra lo que quedó abierto y
+  convierte un error que se repite en un mecanismo (un test antes que una instrucción). Lo que
+  necesita al dueño va en un issue `procesos` con casillas Sí/No, que abre el bot (`decidir.yml`) para
+  que le llegue el correo: marcar una lo cumple al instante
+  (`.github/workflows/aprobar.yml` → `tools/agents/aprobar.mjs`, con una lista cerrada de acciones).
+  Su memoria es `docs/procesos.json`: `node tools/agents/procesos.mjs revisar | decidir <archivo.json> | patron <clave> "…" | mecanismo <clave> "…" --pr <url> | despacho <documentacion|usabilidad> <commit> | anotar --hasta <commit> | historial`
+  (`despacho` anota hasta qué commit de `main` lanzó a cada ejecutor).
 - **Marketing** (D-178): cada asset vive en `marketing/<asset>/` con un README que es su memoria.
   **Antes de trabajar en el video se lee `marketing/promo-video/README.md` entero** (el skill
   `promo-video` lo carga) y al terminar se anota la vuelta ahí y en `marketing/registro.json`.
@@ -189,14 +209,16 @@ con eso la pantalla entra también a las pruebas de idiomas. Para verlo en un ce
   lo dibuja con datos sembrados sin entrar. Ver [docs/PANEL.md](docs/PANEL.md).
 - **Reportes de La Copa** (D-104): `node tools/firebase/reportes.mjs [--dias 3] [--json]`.
 - **Rankings** (D-212): `records.js` (lógica), `jugador.js` (el jugador y su almacén:
-  `jugador-firebase.js`, o `jugador-local.js` en pruebas y con `?prueba`; `?records=firebase` fuerza
+  `jugador-firebase.js`, o `jugador-local.js` en pruebas y con `?test`; `?records=firebase` fuerza
   Firebase) y `ranking.js` + `ranking.css` (pantalla). Abiertos a todos desde D-217 (la puerta del
   laboratorio, `RANKINGS_EN_LABS`, queda en `false`). La
   historia de La Copa (podios, la pestaña "Copa" y las copas de cada jugador para "Tus copas", D-220,
 con jugadores heredados que cada uno reclama):
   `node tools/firebase/rankings-historia.mjs [--con-laboratorio] [--escribir]`. Los juegos de grupo
   anotan victorias con `finDePartida` (`ranking.js`) al terminar, y muestran su tabla con
-  `bloqueVictorias` en la intro (D-215). Uno al día (D-230) anota con `anotarDia` de `jugador.js` en
+  `bloqueVictorias` en la intro (D-215); los que se juegan solos (Toque y Fama, Generala, Ahorcado)
+  ponen arriba su tabla `<id>_solo` con `bloqueTabla` (D-274). Sin jugador abierto, `finDePartida` y
+  `avisoPartida` ofrecen al final, después de los botones, entrar para que esa partida cuente (D-274). Uno al día (D-230) anota con `anotarDia` de `jugador.js` en
   `unoAlDia/<jid>/<n>` y en las tablas `uno-al-dia` (período del día `d<n>` y semana) y
   `uno-al-dia-racha`; su red (invitaciones, el dato de quien invita) está en `uno-al-dia-red.js`.
 

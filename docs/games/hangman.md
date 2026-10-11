@@ -120,20 +120,23 @@ que te quedaron, y el reloj solo desempata.
 saca. No hay rival: la máquina no adivina nada (D-65). Como la palabra sale del mazo y no la escribe
 nadie, tampoco hay secreto que comprometer, así que este es el único modo que anda sin https.
 
-La pantalla final es distinta: no hay ranking ni "ganó fulano", solo si la sacaste y con cuántas
-vidas, y debajo la palabra que era.
+La pantalla final es distinta: no hay "ganó fulano", solo si la sacaste y con cuántas vidas, la
+palabra que era y, después de los botones, el puntaje para el ranking de jugar solo (D-274).
 
 **Rankings (D-215):** con un jugador de los rankings abierto en el celular (nombre y PIN,
 D-212, abiertos a todos desde D-217), cada partida terminada se cuenta en `jugadores/<jid>/juegos/ahorcado`
 y, si ganó, suma una victoria en la tabla `ahorcado_victorias` (semana y siempre): en sala, la de su
 rol; contra el celular, la del humano; en un celular, la del jugador que se llama como él. Un
 empate no es victoria. La tabla (semana, siempre y amigos) va en la intro, debajo de los modos
-(`finDePartida` y `bloqueVictorias` de `public/assets/js/ranking.js`), y en `/records/`. Jugando
-solo no se anota nada: no hay rival a quien ganarle.
+(`finDePartida` y `bloqueVictorias` de `public/assets/js/ranking.js`), y en `/records/`. **Jugando
+solo** (D-274) el puntaje va a `ahorcado_solo`: el de Uno al día (las vidas que quedaron sobre las
+del principio, de 0 a 100), con el tiempo de desempate; la tabla va en la portada, arriba de las
+victorias, y en la pantalla final, después de los botones. Sin jugador abierto, el final ofrece
+entrar para que la partida cuente.
 
-### Uno al día (`/hangman/?hoy`, D-230)
+### Uno al día (`/hangman/?today`, D-230)
 
-Cuando El Ahorcado es el juego de Uno al día, `/hangman/?hoy` no ofrece modos: la intro lleva la
+Cuando El Ahorcado es el juego de Uno al día, `/hangman/?today` no ofrece modos: la intro lleva la
 línea de Uno al día y un solo botón, **Jugar el de hoy**, que abre directo 🧍 Jugar solo con el
 🎴 mazo del celular (Mezcla, 6 vidas y comprar letras, lo de siempre) y el nombre que se recuerda
 (o "Jugador 1"). La palabra sale de la semilla del día (`semillaDel` → `azarDel(semilla, 'ahorcado')`

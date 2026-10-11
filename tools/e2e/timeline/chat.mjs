@@ -52,7 +52,7 @@ await A.evaluate(`(()=>{const b=[...document.querySelectorAll('.seg button')].fi
 await clickText(A, '#setup-actions .btn', 'Crear'); await sleep(5000);
 const code = await A.evaluate(`document.querySelector('.code-big')?.textContent`);
 console.log('sala:', code);
-await B.go(`${hosts[1]}/timeline/?sala=${code}`, 2000);
+await B.go(`${hosts[1]}/timeline/?room=${code}`, 2000);
 await setName(B, 'Cata');
 await clickText(B, '#setup-actions .btn', 'Unirse'); await sleep(5000);
 console.log('B entró como', await B.evaluate(`window.__ldt.session().role`), '| pantalla:', await B.active());
@@ -101,7 +101,7 @@ await A.shot('chat-06-veredicto');
 for (const k of ['A', 'B']) await closeVerdict(devs[k]);
 
 // --- reconexión: vuelve la historia del chat, sin sonido ni globito ---
-await B.go(`${hosts[1]}/timeline/?sala=${code}`, 8000);
+await B.go(`${hosts[1]}/timeline/?room=${code}`, 8000);
 const cRe = await chat(B);
 console.log('B tras recargar → pantalla:', await B.active(), '| mensajes recuperados:', cRe.mensajes.length, '| no leídos:', cRe.noLeidos, '(debe ser 0)');
 await B.shot('chat-06b-reconexion');

@@ -1,0 +1,32 @@
+# El feedback 🐞 como issues (D-275): cada hora sube a GitHub los reportes nuevos de `feedback/`
+# en Firebase, con la etiqueta `feedback`, para que el agente de procesos los atienda en su ronda.
+# Como issue, cada reporte le llega por correo al dueño y queda enlazado con su respuesta y su
+# arreglo, aunque la ronda (en el Mac mini, D-276) podría leer Firebase directo. El nodo se lee sin llave.
+
+name: Feedback
+
+on:
+  schedule:
+    - cron: '41 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: feedback
+  cancel-in-progress: false
+
+jobs:
+  sincronizar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        run: node tools/agents/feedback.mjs sincronizar
