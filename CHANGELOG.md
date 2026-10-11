@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.147.0 — 2026-10-10
+- **🔐 La clave, en el laboratorio** (D-270): cuatro cartas transparentes esconden un código de 5 cifras. Hay que
+  ponerlas sobre la base y girar y voltear cada una hasta que los trazos formen las cifras, sin trazos
+  encima de otros (se ven rayados). En español, también con una palabra de letras de catorce
+  segmentos y cartas de dos caras. En `juegosdesalon.cl/labs/code/`.
+
 ## 0.146.1 — 2026-10-10
 - **🧪 Laboratorio:** se van los Acertijos (D-269): el dueño los probó y no le gustaron.
 

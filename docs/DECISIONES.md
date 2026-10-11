@@ -51,9 +51,9 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 
 | Tema | Regla de hoy (canon) | Decisiones vigentes que la explican |
 |---|---|---|
-| Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269 |
+| Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270 |
 | Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184 |
-| Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269 |
+| Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
 | Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255 |
@@ -4711,3 +4711,26 @@ juego completo con cientos de niveles antes de saber si gusta.
 **Consecuencias:** `tools/e2e/riddles/lab.mjs` lo juega entero en los cuatro idiomas. Si gusta, los
 acertijos pasan a un registro con sus textos en `rules.js` y entran a Uno al día o a La Copa.
 
+## D-270 · La clave: cartas transparentes que juntas dicen un código
+**Fecha:** 2026-10-10 · **Estado:** vigente · **Relación:** usa D-102 (el teclado compartido) y D-268 (el comentario); excepción a C-3 como D-256
+**Decisión:** `/labs/code/` es un prototipo en que un código de 5 cifras de siete segmentos se
+reparte entre una base fija y 4 cartas transparentes, cada una girada o volteada al azar. Se
+toca una carta para ponerla sobre la base y elegirla, y con ↻ (media vuelta) y ⇋ (de lado) se
+orienta; con todas derechas los trazos forman el código, que se escribe en el teclado de Toque y
+Fama. Nada avisa que una carta quedó bien; un trazo encima de otro sí se nota (se ve rayado con los
+colores de las cartas que chocan, sin texto), porque cada trazo del código está en una sola capa y la solución nunca tiene choques. El
+motor garantiza que con todas puestas no hay otra forma sin choques de leer la clave. Detalle en [games/code.md](games/code.md).
+**Por qué:** lo pidió el dueño: "figures/shapes that combined in a specific set of positions create
+a code that can then be entered in a number or word pad… Start with two shapes". Probó la v1 de
+dos figuras (una se arrastraba sobre la otra hasta que los bordes cortados calzaran, con un brillo
+al calzar) y pidió "4 u 8 cartas girables y flipeables en vez de 2": con dos se resolvía en segundos
+tocando ↻ y ⇋ a ciegas hasta que brillara (dilema #296). Después sacó el modo de 8 cartas
+("demasiado compleja") y pidió que un trazo encima de otro se notara y no valiera.
+**Alternativas descartadas:** girar de a 90° (una cifra de siete segmentos girada un cuarto de vuelta
+no es una cifra), el brillo al calzar y la esquina cortada (regalan la orientación), y arrastrar cada
+carta (con 8, tocar es más rápido y cabe en el celular).
+**Consecuencias:** `engine.test.mjs` prueba el grupo de orientaciones y la lectura única;
+`tools/e2e/code/lab.mjs`, el juego entero con los choques. Después pidió una cifra más (5) y que las
+cartas flotaran y brillaran más al azar. Como el de cifras se volvió mecánico, se sumó **Palabra**
+(en español): letras de catorce segmentos y cartas de dos caras, donde voltear muestra otros trazos. El
+dueño lo aprobó para el laboratorio (v0.147.0).
