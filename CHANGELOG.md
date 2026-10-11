@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.148.5 — 2026-10-11
+- **Herramientas: las casillas de un toque, más firmes** (D-273): marcar varias casi juntas ya no
+  pierde ninguna, fusionar un PR ya no cierra el que estaba montado sobre él, y un PR que no se
+  pudo fusionar se informa como falla.
+
 ## 0.148.4 — 2026-10-11
 - **Herramientas: el agente de procesos dirige a los otros** (D-276): una sola ronda diaria en el
   Mac lanza a los agentes de documentación y de usabilidad cuando hay algo que revisar, y revisa lo
