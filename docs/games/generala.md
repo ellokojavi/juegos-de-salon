@@ -65,7 +65,11 @@ abrirlo, igual que Julepe (C-17); la página `/generala/` funciona entera para q
 **Rankings (D-215):** con un jugador abierto, cada partida de grupo terminada cuenta en
 `jugadores/<jid>/juegos/generala` y, si ganó solo (un empate no es victoria), suma en
 `generala_victorias`. La tabla de victorias va en la intro, debajo de los modos; la de jugar solo,
-debajo de Empezar y en el final.
+arriba de ella en la intro (D-274: es como más se juega), debajo de Empezar, en el final y en
+`/records/`. Sin jugador abierto (D-274), el final ofrece, después de los botones (`#result-actions`),
+"¿Quieres que esta partida cuente en el ranking?" con nombre y PIN y el nombre de quien jugó ya
+puesto: al entrar, se anota esa partida (jugando solo, el puntaje; en grupo, la victoria si fue suya;
+`avisoPartida` y `finDePartida` de `ranking.js`).
 
 ### De dónde salen los dados (D-246)
 
