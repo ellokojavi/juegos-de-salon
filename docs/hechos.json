@@ -1,5 +1,5 @@
 {
-  "version": "0.150.0",
+  "version": "0.152.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -679,7 +679,7 @@
         "pt": "Marcos da humanidade",
         "de": "Meilensteine der Menschheit"
       },
-      "cartas": 98,
+      "cartas": 96,
       "desde": -2560,
       "hasta": 2022
     },
@@ -693,12 +693,12 @@
         "de": "Musik"
       },
       "pista": {
-        "es": "De Beethoven a TikTok",
-        "en": "From Beethoven to TikTok",
-        "pt": "De Beethoven ao TikTok",
-        "de": "Von Beethoven bis TikTok"
+        "es": "De Beethoven a Taylor Swift",
+        "en": "From Beethoven to Taylor Swift",
+        "pt": "De Beethoven até Taylor Swift",
+        "de": "Von Beethoven bis Taylor Swift"
       },
-      "cartas": 89,
+      "cartas": 91,
       "desde": 1600,
       "hasta": 2023
     },
@@ -717,7 +717,7 @@
         "pt": "Do terremoto de 1960 aos protestos de 2019",
         "de": "Vom Erdbeben 1960 bis zu den Protesten 2019"
       },
-      "cartas": 127,
+      "cartas": 120,
       "desde": 1520,
       "hasta": 2023
     },
@@ -736,7 +736,7 @@
         "pt": "Cinema, memes e videogames",
         "de": "Filme, Memes und Videospiele"
       },
-      "cartas": 110,
+      "cartas": 108,
       "desde": 1928,
       "hasta": 2023
     },
@@ -755,7 +755,7 @@
         "pt": "De Cabral à COP30, com novela e carnaval",
         "de": "Von Cabral bis zur COP30, mit Telenovelas und Karneval"
       },
-      "cartas": 140,
+      "cartas": 139,
       "desde": 1500,
       "hasta": 2025
     },
@@ -774,7 +774,7 @@
         "pt": "Copas, clubes, gols e contratações",
         "de": "WMs, Vereine, Tore und Transfers"
       },
-      "cartas": 123,
+      "cartas": 122,
       "desde": 1863,
       "hasta": 2025
     }
@@ -786,6 +786,7 @@
     "public/assets/js/compartir-portada.js",
     "public/assets/js/compartir.js",
     "public/assets/js/dado3d.js",
+    "public/assets/js/dato.js",
     "public/assets/js/favoritos.js",
     "public/assets/js/firebase-config.js",
     "public/assets/js/frases.js",
@@ -1022,6 +1023,7 @@
     "sala-tope.mjs",
     "timeline/arrastre.mjs",
     "timeline/chat.mjs",
+    "timeline/dato.mjs",
     "timeline/eleccion.mjs",
     "timeline/empate.mjs",
     "timeline/error.mjs",
