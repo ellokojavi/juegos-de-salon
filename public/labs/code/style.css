@@ -1,0 +1,127 @@
+/* La clave (laboratorio, D-270). El teclado es el compartido (assets/css/teclado.css). */
+.portada { text-align: center; display: grid; gap: 10px; padding-top: 8px; }
+.portada .icono { font-size: 4rem; display: inline-block; animation: cl-gira 3s ease-in-out infinite; }
+@keyframes cl-gira { 0%, 100% { transform: rotate(-10deg); } 50% { transform: rotate(10deg) scale(1.06); } }
+.portada .lead { margin: 0; }
+/* La base, con las cartas puestas encima */
+.tablero { border-radius: 18px; background: rgba(0,0,0,0.22); border: 2px solid var(--glass-border); padding: 10px; }
+.marco svg { display: block; width: 100%; height: auto; overflow: visible; }
+.borde { fill: rgba(255, 255, 255, 0.05); stroke: rgba(255, 255, 255, 0.35); stroke-width: 3; }
+.seg { stroke-width: 9; stroke-linecap: round; }
+.capa { transform-box: view-box; transform-origin: 150px 70px; transition: transform 0.35s cubic-bezier(0.3, 1.2, 0.4, 1), opacity 0.2s; }
+.marco .capa { opacity: 0; }
+.marco .capa.puesta { opacity: 0.92; }
+.marco .capa.elegida .seg { stroke-width: 11; filter: drop-shadow(0 0 4px currentColor); }
+/* La bandeja: una miniatura por carta, con su color; las puestas, con su número encendido */
+.bandeja { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.carta { position: relative; border: 2px solid rgba(255,255,255,0.18); border-radius: 10px; background: rgba(0,0,0,0.25); padding: 7px 4px; min-height: 44px; cursor: pointer; transition: transform 0.12s, border-color 0.15s; }
+.carta:active { transform: scale(0.95); }
+.carta svg { display: block; width: 100%; height: auto; }
+.carta .seg { stroke-width: 12; }
+.carta .num { position: absolute; top: -7px; left: -7px; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center;
+  font: 900 0.72rem var(--font-num); background: rgba(0,0,0,0.6); color: var(--muted); border: 1px solid rgba(255,255,255,0.25); }
+.carta.puesta { border-color: var(--color); }
+.carta.puesta .num { background: var(--color); color: #1a0830; }
+.carta.elegida { border-color: var(--color); box-shadow: 0 0 0 2px var(--color), 0 0 14px var(--color); }
+.controles { display: flex; justify-content: center; gap: 8px; }
+.controles .btn { flex: 1 1 0; min-width: 0; padding-left: 4px; padding-right: 4px; font-size: 0.95rem; white-space: nowrap; }
+.aviso-clave { text-align: center; font-weight: 800; min-height: 1.4em; margin: 0; }
+.aviso-clave.mal { color: #ffb3d1; animation: cl-sacude 0.35s; }
+.aviso-clave.bien { color: var(--yellow); }
+@keyframes cl-sacude { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+.resultado { text-align: center; display: grid; gap: 10px; }
+.resultado .trofeo { font-size: 3.6rem; animation: pop 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
+.resultado .codigo { font: 900 2.4rem var(--font-num); letter-spacing: 0.3em; color: var(--yellow); }
+.resultado .comentario { text-align: left; }
+.pie { text-align: center; padding: 16px 0 6px; }
+.link-btn { background: none; border: 0; color: var(--muted); font: 700 0.95rem var(--font-body); text-decoration: underline; cursor: pointer; min-height: 44px; margin: 0 auto; display: block; }
+.btn { text-decoration: none; }
+@media (prefers-reduced-motion: reduce) { .portada .icono, .aviso-clave.mal { animation: none; } .capa { transition: none; } }
+/* Un trazo encima de otro: rayado con los colores que chocan, con un brillo suave que respira */
+.choques { pointer-events: none; }
+.seg.choque-fondo { stroke-width: 11; }
+.seg.choque { stroke-width: 9; animation: cl-choque 1.6s ease-in-out infinite alternate; }
+@keyframes cl-choque { from { opacity: 0.75; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .seg.choque { animation: none; } }
+
+/* ---------- La onda espacial: animaciones pasivas (no dicen nada del juego) ---------- */
+/* Detrás de la base, un cielo de estrellas que deriva despacio y una nebulosa que respira */
+.tablero { position: relative; overflow: hidden; isolation: isolate; }
+.tablero::before, .tablero::after { content: ''; position: absolute; inset: -40px; z-index: -1; pointer-events: none; }
+.tablero::before {
+  background-image:
+    radial-gradient(1px 1px at 12% 22%, #fff 50%, transparent 51%), radial-gradient(1px 1px at 33% 78%, #cfe9ff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 58% 34%, #fff 50%, transparent 51%), radial-gradient(1px 1px at 81% 62%, #ffe6f3 50%, transparent 51%),
+    radial-gradient(1px 1px at 91% 14%, #fff 50%, transparent 51%), radial-gradient(1.5px 1.5px at 6% 88%, #d9ffe9 50%, transparent 51%),
+    radial-gradient(1px 1px at 46% 8%, #fff 50%, transparent 51%), radial-gradient(1px 1px at 70% 92%, #fff 50%, transparent 51%);
+  background-size: 180px 180px; opacity: 0.55; animation: cl-estrellas 60s linear infinite;
+}
+.tablero::after {
+  background: radial-gradient(60% 50% at 30% 40%, rgba(138, 77, 255, 0.22), transparent 70%),
+              radial-gradient(50% 45% at 75% 65%, rgba(46, 230, 214, 0.16), transparent 70%);
+  animation: cl-nebulosa 14s ease-in-out infinite alternate;
+}
+@keyframes cl-estrellas { to { background-position: 180px -180px; } }
+@keyframes cl-nebulosa { from { transform: translate(-12px, 6px) scale(1); opacity: 0.8; } to { transform: translate(12px, -6px) scale(1.08); opacity: 1; } }
+
+/* Los trazos puestos laten como luces, cada carta a su ritmo; los de la base titilan apenas */
+.marco .capa.puesta .seg { animation: cl-luz var(--latido, 3.2s) ease-in-out infinite alternate; animation-delay: var(--latido-desde, 0s); }
+@keyframes cl-luz { from { filter: drop-shadow(0 0 1px rgba(255,255,255,0.25)); } to { filter: drop-shadow(0 0 5px rgba(255,255,255,0.55)); } }
+.marco svg > .seg { animation: cl-titila 4.5s ease-in-out infinite alternate; }
+@keyframes cl-titila { from { opacity: 0.8; } to { opacity: 1; } }
+
+/* Las cartas flotan en gravedad cero, cada una con su desfase, y un brillo tornasol las cruza */
+.carta { animation: cl-flota var(--dur, 4.6s) ease-in-out infinite; animation-delay: var(--desde, 0s); }
+@keyframes cl-flota {
+  0%, 100% { transform: translateY(0) rotate(calc(var(--giro, 0.6deg) * -1)); }
+  35% { transform: translateY(calc(var(--alto, 3px) * -1)) rotate(var(--giro, 0.6deg)); }
+  70% { transform: translateY(calc(var(--alto, 3px) * -0.4)) rotate(calc(var(--giro, 0.6deg) * 0.3)); }
+}
+.carta::after {
+  content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen;
+  background: linear-gradient(105deg, transparent 38%, rgba(180, 220, 255, 0.30) 48%, rgba(255, 180, 240, 0.20) 53%, transparent 62%) no-repeat;
+  background-size: 300% 100%; background-position: 100% 0;
+  animation: cl-tornasol var(--brillo, 6s) ease-in-out infinite; animation-delay: var(--brillo-desde, 0s);
+}
+@keyframes cl-tornasol { 0%, 55% { background-position: 100% 0; } 85%, 100% { background-position: 0% 0; } }
+.carta:active { animation-play-state: paused; }
+
+
+@media (prefers-reduced-motion: reduce) {
+  .tablero::before, .tablero::after, .marco .capa.puesta .seg, .marco svg > .seg, .carta, .carta::after { animation: none; }
+}
+
+/* ---------- Palabra: dos caras por carta ---------- */
+.modos { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.tablero.palabra .seg { stroke-width: 7; }
+.carta .caras { position: absolute; bottom: -6px; right: 6px; display: flex; gap: 3px; }
+.carta .caras i { width: 7px; height: 7px; border-radius: 50%; border: 1px solid var(--color); background: rgba(0,0,0,0.5); }
+.carta .caras i.on { background: var(--color); }
+.capa.volteando { transform: var(--giro-capa, none) scaleX(0) !important; transition: transform 0.15s ease-in !important; }
+.keypad--letras button { min-height: 44px; font-size: 1.05rem; padding: 6px 0; }
+.keypad--letras .ok { grid-column: span 2; }
+
+/* ---------- Portada y título ---------- */
+.titulo-clave { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 0; }
+.titulo-clave .rainbow { padding: 0.2em 0.12em 0 0; margin: -0.2em -0.12em 0 0; }
+.titulo-clave .candado { font-size: 1.6rem; line-height: 1; display: inline-block; transform-origin: 50% 80%; animation: cl-candado 3.4s ease-in-out infinite; filter: drop-shadow(0 0 10px rgba(255, 210, 63, 0.45)); }
+.titulo-clave.grande .candado { font-size: 2.6rem; }
+@keyframes cl-candado { 0%, 100% { transform: rotate(-9deg); } 50% { transform: rotate(9deg) translateY(-2px); } }
+/* La ilustración: las cartas prueban combinaciones, se fijan una a una y la clave queda escrita */
+.demo { position: relative; margin: 4px auto 0; width: min(100%, 320px); border-radius: 16px; padding: 10px; background: rgba(0,0,0,0.25);
+  border: 2px solid var(--glass-border); overflow: hidden; isolation: isolate; }
+.demo svg { display: block; width: 100%; height: auto; overflow: visible; transition: opacity 0.5s, filter 0.5s; }
+.demo .seg { stroke-width: 8; stroke-linecap: round; }
+.capa-demo { transform-box: view-box; transform-origin: 150px 70px; opacity: 0.85; }
+.capa-demo.salta { animation: cl-salta 0.12s ease-out; }
+@keyframes cl-salta { from { transform: scale(0.94) rotate(-2deg); opacity: 0.5; } to { transform: none; opacity: 0.85; } }
+.capa-demo.fija { opacity: 1; filter: drop-shadow(0 0 4px rgba(255,255,255,0.6)); }
+.demo.lista svg { filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.55)); }
+.demo.lista .capa-demo, .demo.lista svg > .seg { animation: cl-luz 0.9s ease-in-out infinite alternate; }
+.pasos { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.pasos li { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: center; text-align: left; }
+.paso-ico { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-weight: 900; font-size: 1.1rem;
+  background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border); }
+.reglas-clave summary { cursor: pointer; font-weight: 900; min-height: 44px; }
+.reglas-clave .pasos { margin-top: 10px; }
+@media (prefers-reduced-motion: reduce) { .titulo-clave .candado, .capa-demo { animation: none; } }

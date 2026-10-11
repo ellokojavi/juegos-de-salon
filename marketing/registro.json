@@ -41,11 +41,12 @@
       ],
       "estado": "en YouTube (@eljotairi), no listado: 16:9 https://youtu.be/fQ4uFaPX_4g y Short https://youtube.com/shorts/RYAvj2MTRPQ",
       "revision": {
-        "fecha": "2026-10-08",
-        "app": "0.129.1",
+        "fecha": "2026-10-09",
+        "app": "0.135.0",
         "al_dia": false,
         "pendiente": [
-          "Zip (escena de los cuatro juegos, ~14-16 s): el encabezado del video dice 'Nivel 1 · 4 × 4'; desde 0.130.0 (D-250) dice 'Nivel 1 de 10' (diez niveles fijos). Se corrige en la próxima vuelta, no amerita rehacer la v6."
+          "Zip (escena de los cuatro juegos, ~14-16 s): el encabezado del video dice 'Nivel 1 · 4 × 4'; desde 0.130.0 (D-250) dice 'Nivel 1 de 10' (diez niveles fijos). Se corrige en la próxima vuelta, no amerita rehacer la v6.",
+          "Uno al día (~21 s, el dedo toca la tarjeta de la portada): bajo la fila de La Copa y Uno al día se ve Línea de Tiempo; desde D-255 la portada va por popularidad y ahí va Toque y Fama. Menor: se corrige en la próxima vuelta."
         ]
       },
       "seleccion": true,
@@ -70,6 +71,52 @@
         "tango",
         "desenredo"
       ]
+    },
+    {
+      "id": "caso-teaser",
+      "tipo": "video",
+      "titulo": "Teaser de El caso (invitación a probarlo)",
+      "carpeta": "marketing/caso-teaser/",
+      "memoria": "marketing/caso-teaser/README.md",
+      "version": 1,
+      "fecha": "2026-10-10",
+      "idioma": "es",
+      "app": "0.142.2",
+      "archivos": [
+        {
+          "ruta": "marketing/caso-teaser/output/el-caso-6s.mp4",
+          "formato": "9:16",
+          "ancho": 1080,
+          "alto": 1920,
+          "segundos": 6,
+          "uso": "WhatsApp, estados, redes"
+        },
+        {
+          "ruta": "marketing/caso-teaser/output/el-caso-6s.gif",
+          "formato": "9:16",
+          "ancho": 540,
+          "alto": 960,
+          "segundos": 6,
+          "uso": "GIF para WhatsApp"
+        }
+      ],
+      "fuente": "marketing/caso-teaser/teaser.html",
+      "construir": "marketing/caso-teaser/construir.sh",
+      "juegos": [
+        "caso"
+      ],
+      "seleccion": true,
+      "laboratorio": [
+        "caso"
+      ],
+      "revision": {
+        "fecha": "2026-10-11",
+        "app": "0.147.2",
+        "al_dia": false,
+        "pendiente": [
+          "Muestra el prototipo, que se borró (D-267): hoy /labs/case/ abre primero una antesala ('El caso de hoy es el mismo para todos') y una cuenta 3, 2, 1, y la pantalla del caso es la de La Copa: arriba '‹ Laboratorio' y el reloj, sin el marcador '✅ 1/20 · 0 errores' del video, y el botón dice '💡 Ayuda (-15 puntos)' (D-263), no '💡 Ayuda'."
+        ]
+      }
     },
     {
       "id": "tutorial-compartir",

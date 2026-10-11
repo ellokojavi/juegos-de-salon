@@ -13,6 +13,8 @@ import { PALABRAS, PALABRAS_EN, PALABRAS_PT, PALABRAS_DE } from './word/palabras
 import * as conexiones from './connections/engine.js';
 import * as final from './final/engine.js';
 import * as donde from './where/engine.js';
+import * as caso from './case/engine.js';
+import { LOCALES as LOCALES_COPA } from '../rules.js';
 import { CIUDADES } from './where/ciudades.js';
 import { MAPA } from './where/mapa.js';
 import { GRILLAS } from './connections/grillas.js';
@@ -584,12 +586,14 @@ test('final: cinco rondas, promedio de 0 a 100', () => {
     desenredo: { hechos: 4, ultimo: 151000 },
     anio: anio.estado(pa, pa.hitos.map(h => h.year + 3)),
     final: { reinas: { fin: true, errores: 0 } },
+    caso: { fin: true, errores: 1, ayudas: 2 },
   };
   for (const [id, e] of Object.entries(casos)) {
     const l = desglose(id, e, { T, fmt, mmss });
     assert.ok(l.length && l.every(x => typeof x === 'string' && x.length > 10 && !x.includes('{') && !x.includes('undefined')), id);
   }
   assert.match(desglose('tango', casos.tango, { T, fmt, mmss }).join(' '), /se restan 20 .*1 pista, que resta 15/);
+  assert.match(desglose('caso', casos.caso, { T, fmt, mmss }).join(' '), /1 error, que resta 10.*2 ayudas.*se restan 30/);
   assert.match(desglose('zip', casos.zip, { T, fmt, mmss }).join(' '), /3 niveles.*30 puntos.*2:05/);
   assert.deepEqual(desglose('reinas', { fin: false, errores: 0 }, { T, fmt, mmss }), [T.bdNotSolved]);
   n++;
@@ -652,6 +656,95 @@ test('el público de la copa decide qué contenido local entra (D-186, D-187)', 
   assert.equal(audienciaDe({ aud: 'xx' }), null);
   assert.ok(codigos.some(c => Object.values(temasDeLaCopa(c)).includes('chile')));
   assert.ok(!codigos.some(c => Object.values(temasDeLaCopa(c)).includes('brasil')));
+});
+
+test('el caso: se resuelve sin adivinar, las pistas son verdad y se dicen en los cuatro idiomas (D-257)', () => {
+  let directas = 0, total = 0;
+  for (const c of CODIGOS) {
+    const p = caso.generar(c, 3);
+    assert.deepEqual(caso.generar(c, 3).v, p.v, `${c}: el mismo caso para todos`);
+    assert.ok(caso.resolver(p.pistas, p.v.slice()), `${c}: alguna pista es falsa`);
+    // Se resuelve marcando siempre lo que se puede deducir, y nunca hay que adivinar
+    const jugadas = [];
+    for (let vuelta = 0; vuelta < caso.N; vuelta++) {
+      const e = caso.estado(p, jugadas);
+      if (e.fin) break;
+      const d = caso.deducibles(e.pistas, e.x);
+      assert.ok(Object.keys(d).length, `${c}: el caso se traba`);
+      for (const [i, v] of Object.entries(d)) { assert.equal(caso.intento(p, jugadas, Number(i), v), 'ok'); jugadas.push({ i: Number(i), v }); }
+    }
+    const e = caso.estado(p, jugadas);
+    assert.ok(e.fin && e.errores === 0 && caso.puntaje(e) === 100, `${c}: resuelto sin errores vale 100`);
+    for (const lang of Object.keys(LOCALES_COPA)) {
+      for (let i = 0; i < caso.N; i++) {
+        const t = caso.texto(p, i, LOCALES_COPA[lang].casoTexto);
+        assert.ok(t && !/undefined|\{|\}|NaN/.test(t), `${c} ${lang}: la pista de ${i} sale mal: "${t}"`);
+      }
+    }
+    directas += p.pistas.filter(x => x.t === 'es').length; total += p.pistas.length;
+  }
+  assert.ok(directas / total < 0.1, `demasiadas pistas directas: ${directas} de ${total}`);
+  // Que no sea lineal (D-259): una buena parte de lo que se deduce pide combinar pistas, y la
+  // mayoría de las pistas no son "hay exactamente N"
+  let simples = 0, combinadas = 0, eqs = 0, todas = 0;
+  for (const c of CODIGOS) {
+    const p = caso.generar(c, 5);
+    eqs += p.pistas.filter(x => x.t === 'eq' && x.g?.tipo !== 'dos').length; todas += p.pistas.length;
+    const jugadas = [];
+    for (let vuelta = 0; vuelta < caso.N; vuelta++) {
+      const e = caso.estado(p, jugadas);
+      if (e.fin) break;
+      const d = caso.deducibles(e.pistas, e.x);
+      const solas = new Set(e.pistas.flatMap(q => Object.keys(caso.deducibles([q], e.x) || {}).map(Number)));
+      for (const [i, v] of Object.entries(d)) { solas.has(Number(i)) ? simples++ : combinadas++; jugadas.push({ i: Number(i), v }); }
+    }
+  }
+  assert.ok(combinadas / (simples + combinadas) >= 0.45, `muy lineal: solo ${combinadas} de ${simples + combinadas} deducciones combinan pistas`);
+  assert.ok(eqs / todas <= 0.35, `demasiadas pistas de "hay exactamente N": ${eqs} de ${todas}`);
+  // Un error resta 10, con mínimo 10; sin resolver, 0
+  const p = caso.generar('KQRST', 1);
+  const mal = { i: [...Array(caso.N).keys()].find(i => i !== p.inicio), v: 0 };
+  mal.v = 1 - p.v[mal.i];
+  const e1 = caso.estado(p, [mal]);
+  assert.equal(e1.errores, 1);
+  assert.equal(caso.puntaje(e1), 0, 'sin resolver vale 0');
+  // Marcar antes de tiempo también es un error (D-261), y no marca a nadie
+  const ef = caso.estado(p, [{ i: mal.i, v: 1, falta: 1 }]);
+  assert.equal(ef.errores, 1);
+  assert.equal(ef.marcas.length, 0);
+  assert.equal(caso.puntaje({ fin: true, errores: 3 }), 70);
+  assert.equal(caso.puntaje({ fin: true, errores: 12 }), 10);
+  assert.equal(caso.tarjeta({ conError: new Set([0]) }).split('\n')[0], '🟥🟩🟩🟩');
+  // La ayuda (D-263): resta 15, señala a alguien que ya se puede deducir y nombra pistas que alcanzan
+  assert.equal(caso.puntaje({ fin: true, errores: 1, ayudas: 2 }), 60);
+  assert.equal(caso.tarjeta({ conError: new Set([0]), conAyuda: new Set([0, 1]) }).split('\n')[0], '🟥🟨🟩🟩');
+  for (const c of ['AYU01', 'AYU02', 'AYU03']) {
+    const q = caso.generar(c, 2), jugadas = [];
+    for (let vuelta = 0; vuelta < caso.N; vuelta++) {
+      if (caso.estado(q, jugadas).fin) break;
+      const a = caso.ayuda(q, jugadas);
+      assert.equal(caso.intento(q, jugadas, a.i, q.v[a.i]), 'ok', `${c}: la ayuda señala a alguien que todavía no se puede deducir`);
+      const x = caso.estado(q, jugadas).x.slice(); x[a.i] = 1 - q.v[a.i];
+      if (a.quienes.length) assert.equal(caso.resolver(a.quienes.map(i => q.pistas[i]), x), null, `${c}: las pistas que nombra no alcanzan`);
+      jugadas.push({ ayuda: a.i }, { i: a.i, v: q.v[a.i] });
+    }
+    const e = caso.estado(q, jugadas);
+    assert.ok(e.fin && e.errores === 0 && e.ayudas === e.marcas.length, `${c}: la ayuda resuelve el caso entero`);
+    assert.equal(caso.puntaje(e), 10, 'todo con ayuda: el mínimo');
+    // Las comparaciones no hablan de dos grupos que comparten a alguien (D-263)
+    for (const pista of q.pistas) if (pista.b) assert.ok(!pista.a.some(i => pista.b.includes(i)), `${c}: ${pista.t} entre grupos que se cruzan`);
+  }
+  assert.equal(caso.lista(['Ana', 'Beto', 'Isabel'], LOCALES_COPA.es.casoTexto), 'Ana, Beto e Isabel');
+  // Tocar una pista ilumina solo a quienes nombra (D-264), no al grupo
+  assert.deepEqual(caso.sujetos({ t: 'eq', a: [0, 1, 2], k: 3, g: { tipo: 'izq', de: 3 } }), { a: [3], b: [] });
+  assert.deepEqual(caso.sujetos({ t: 'eq', a: [0, 1, 2, 3], k: 1, g: { tipo: 'fila', n: 1 } }), { a: [], b: [] });
+  assert.deepEqual(caso.sujetos({ t: 'gt', a: [1], b: [2], g: { tipo: 'vecinos', de: 5 }, h: { tipo: 'col', c: 'A' } }), { a: [5], b: [] });
+  assert.deepEqual(caso.sujetos({ t: 'si', a: [4, 9], k: 1, j: 0, g: { tipo: 'si', de: 4, otro: 9 } }), { a: [4, 9], b: [] });
+  assert.deepEqual(caso.sujetos({ t: 'es', a: [7], k: 1 }), { a: [7], b: [] });
+  // En portugués, "criminoso" concuerda con quien es (U-3): "Ana é criminosa", "Beto é criminoso"
+  const directa = { ...p, nombres: ['Ana', 'Beto', ...p.nombres.slice(2)], pistas: [{ t: 'es', a: [0], k: 1 }, { t: 'es', a: [1], k: 1 }] };
+  assert.equal(caso.texto(directa, 0, LOCALES_COPA.pt.casoTexto), 'Ana é criminosa.');
+  assert.equal(caso.texto(directa, 1, LOCALES_COPA.pt.casoTexto), 'Beto é criminoso.');
 });
 
 test('las instrucciones de cada juego son concisas, en todos los idiomas (U-18, D-184)', () => {

@@ -13,7 +13,7 @@ const code = await b.evaluate(`document.querySelector('.code-big')?.textContent`
 console.log('sala:', code, '| sin navigator.share, el botón dice:', await btnText());
 // Simular un celular con diálogo nativo
 await b.evaluate(`navigator.share = async d => { window.__shared = d; }; 1`);
-await b.go(`${SITIO}/timeline/?sala=${code}`, 4500);
+await b.go(`${SITIO}/timeline/?room=${code}`, 4500);
 await b.evaluate(`navigator.share = async d => { window.__shared = d; }; 1`);
 // forzar re-render de la sala (presencia) sin tocar el estado
 await b.evaluate(`window.__ldt.session().transport.onPresence(p => {}); 1`); await sleep(300);

@@ -48,8 +48,8 @@ for (const l of IDIOMAS) {
 }
 // El idioma del link se saca sin tocar lo demás: un parámetro suelto no gana un "=" (D-170)
 assert.equal(sinLang('?pirata&lang=pt'), '?pirata');
-assert.equal(sinLang('?K7Q2X&prueba&lang=en'), '?K7Q2X&prueba');
-assert.equal(sinLang('?lang=pt&sala=WFBN'), '?sala=WFBN');
+assert.equal(sinLang('?K7Q2X&test&lang=en'), '?K7Q2X&test');
+assert.equal(sinLang('?lang=pt&room=WFBN'), '?room=WFBN');
 assert.equal(sinLang('?lang=pt'), '');
 assert.equal(sinLang('?type=logic&LANG=en'), '?type=logic');
 same('COMMON', COMMON);

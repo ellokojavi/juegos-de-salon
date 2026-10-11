@@ -1,0 +1,341 @@
+/**
+ * 🔍 El caso — pantalla en La Copa (D-257). La misma experiencia del prototipo del laboratorio
+ * (D-256): las cartas se dan vuelta al empezar, la elegida se acerca, al marcar cae un sello y
+ * tocar una pista ilumina a quienes nombra por su nombre (D-264).
+ *
+ * Las jugadas son los intentos de marcar que cuentan: `{ i, v }` (acierto o error). Un intento de
+ * antes de tiempo se guarda como `{ i, v, falta: 1 }`: cuenta como error y no dice si estaba bien (D-261).
+ * Una ayuda se guarda como `{ ayuda: i }` (D-263): resta 15 y dice a quién mirar y qué pistas juntar.
+ *
+ * `portada()` es la portada animada de la antesala: cartas de espaldas que se dan vuelta solas
+ * mientras una lupa las recorre.
+ */
+import * as motor from './engine.js';
+
+const QUIETO = () => !!globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+const fmt = (s, o = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (o[k] ?? ''));
+
+/** El dibujo de las reglas: tres cartas (inocente, criminal, sin saber) y una pista. */
+export function ejemplo({ el, T }) {
+  const L = T.casoTexto;
+  const carta = (emo, nom, clase) => el('span', { class: `cs-mini ${clase}` }, el('span', {}, emo), el('b', {}, nom));
+  return el('div', { class: 'rej-ejemplo cs-ejemplo' },
+    el('figure', {}, el('div', { class: 'cs-mini-fila', 'aria-hidden': 'true' },
+      carta('😇', 'Ana', 'inocente'), carta('🔪', 'Beto', 'criminal'), carta('🎨', 'Cata', '')),
+    el('figcaption', {}, T.casoExUno)),
+    el('figure', {}, el('div', { class: 'cs-globo', 'aria-hidden': 'true' },
+      `«${fmt(L.frases.cero, { g: fmt(L.grupo.fila, { n: 1 }) })}»`),
+    el('figcaption', {}, `✅ ${T.casoExDos}`)));
+}
+
+/**
+ * La portada de la antesala: doce cartas de espaldas que se dan vuelta de a una, mostrando a un
+ * inocente o a un criminal, mientras una lupa pasa por encima. Quieta con movimiento reducido.
+ */
+export function portada() {
+  const caja = document.createElement('div');
+  caja.className = 'cs-portada' + (QUIETO() ? ' quieta' : '');
+  caja.setAttribute('aria-hidden', 'true');
+  const caras = ['😇', '🔪', '😇', '😇', '🔪', '😇', '🔪', '😇', '😇', '🔪', '😇', '😇'];
+  caras.forEach((cara, k) => {
+    const c = document.createElement('span');
+    c.className = `cs-p-carta ${cara === '🔪' ? 'criminal' : 'inocente'}`;
+    c.style.setProperty('--d', `${(k * 7) % 12 * 0.45}s`);
+    c.innerHTML = `<span class="cs-p-giro"><span class="cs-p-cara frente">${cara}</span><span class="cs-p-cara dorso">?</span></span>`;
+    caja.append(c);
+  });
+  const lupa = document.createElement('span');
+  lupa.className = 'cs-p-lupa';
+  lupa.textContent = '🔍';
+  caja.append(lupa);
+  return caja;
+}
+
+/**
+ * El nombre en la antesala, como en el prototipo: la lupa al lado y el título con los colores que
+ * se mueven (`.rainbow`). La lupa va fuera del degradado: dentro, el emoji saldría transparente.
+ */
+export function titulo({ el, J }) {
+  return el('h2', { class: 'cs-titulo' },
+    el('span', { class: 'cs-lupa', 'aria-hidden': 'true' }, '🔍'),
+    el('span', { class: 'display display--lg rainbow' }, J.nombre));
+}
+
+/** Armar un caso tarda (D-260): la antesala lo deja listo mientras se lee, para que "Empezar" no se trabe. */
+export const caro = true;
+
+/** La prueba es un caso completo, igual de difícil que el de verdad: la antesala lo dice. */
+export const pruebaCompleta = true;
+
+/** Lo que tardan las cartas en darse vuelta al empezar (la última parte a los 480 ms y gira en 500): el reloj parte después. */
+export const entrada = () => (QUIETO() ? 0 : 60 + 7 * 60 + 550);
+
+export function montar(raiz, ctx) {
+  const { p, T, el, SFX, vibrate } = ctx;
+  const L = T.casoTexto;
+  let jugadas = Array.isArray(ctx.jugadas) ? ctx.jugadas.slice() : [];
+  let elegida = null;   // la persona tocada
+  let foco = null;      // la pista tocada: ilumina a quienes nombra por su nombre (D-264)
+  let mensaje = null;   // { tipo, texto, de? } de la última marca
+  let nueva = null;     // la pista que acaba de aparecer, para que entre animada
+  let guia = null;      // la ayuda pedida, { i, quienes }: sus pistas se destacan hasta marcar a i
+  let armado = false, armadoTimer = null;   // la ayuda pide un segundo toque, como en Tango
+
+  const nombre = i => p.nombres[i];
+  const oficioDe = i => motor.oficio(p.oficioDe[i]);
+  // "criminosa" en portugués: el valor concuerda con quien es (en los otros idiomas, las dos claves dicen lo mismo)
+  const criminal = i => (motor.femenino(nombre(i)) ? T.casoCriminalF : T.casoCriminal);
+  const valor = i => (p.v[i] ? criminal(i) : T.casoInocente);
+  const frase = i => motor.texto(p, i, L, { marcas: true });
+  /** Un texto con los grupos pintados como en la grilla: el primero en amarillo y el segundo en rosado (#282). */
+  const pintado = t => motor.trozos(t).map(([x, g]) => (g ? el('span', { class: `cs-g${g}` }, x) : x));
+  const dice = i => fmt(T.casoDice, { x: nombre(i), v: valor(i), p: frase(i) });
+
+  // La grilla se arma una vez: después solo cambian sus clases, así las animaciones no se cortan
+  raiz.innerHTML = '';
+  const caja = el('div', { class: 'stack cs-juego' });
+  const grilla = el('div', { class: 'cs-grilla', role: 'group', 'aria-label': T.casoSospechosos });
+  const accion = el('div', { class: 'cs-accion', 'aria-live': 'polite' });
+  const pie = el('div', { class: 'cs-pie' });
+  const pistas = el('section', { class: 'cs-pistas' });
+  caja.append(grilla, accion, pie, pistas);
+  raiz.append(caja);
+
+  grilla.append(el('span', {}), ...motor.LETRAS_COL.map(l => el('span', { class: 'etq' }, l)));
+  const cartas = [];
+  for (let f = 0; f < motor.FILAS; f++) {
+    grilla.append(el('span', { class: 'etq' }, f + 1));
+    for (let c = 0; c < motor.COLS; c++) {
+      const i = f * motor.COLS + c;
+      const of = oficioDe(i);
+      const emo = el('span', { class: 'emo' }, of.emoji);
+      const carta = el('button', { type: 'button', class: 'cs-persona', 'data-i': i, onClick: ev => { ev.stopPropagation(); tocar(i); } },
+        el('span', { class: 'giro' },
+          el('span', { class: 'cara frente' }, emo, el('span', { class: 'nom' }, nombre(i)), el('span', { class: 'ofi' }, L.oficios[of.id].uno),
+            el('span', { class: 'dice', 'aria-hidden': 'true' }, '💬')),
+          el('span', { class: 'cara dorso', 'aria-hidden': 'true' }, '🔍')));
+      carta.emo = emo;
+      cartas[i] = carta;
+      grilla.append(carta);
+    }
+  }
+
+  const dibujar = () => {
+    const e = motor.estado(p, jugadas);
+    // Terminado el caso, el tiempo se detiene aquí y no al tocar el botón (D-130)
+    if (e.fin) ctx.pararReloj?.(e);
+    const pf = foco !== null ? p.pistas[foco] : null;
+    // Solo a quienes nombra ("a la izquierda de Omar": Omar), no a todo el grupo (D-264)
+    const suj = motor.sujetos(pf), enFoco = new Set(suj.a), enFocoB = new Set(suj.b);
+    grilla.classList.toggle('enfoque', !!pf);
+    cartas.forEach((carta, i) => {
+      const sabe = e.x[i] !== -1, t = carta.classList;
+      t.toggle('inocente', sabe && !e.x[i]);
+      t.toggle('criminal', sabe && !!e.x[i]);
+      t.toggle('marcada', sabe);
+      t.toggle('elegida', elegida === i);
+      t.toggle('equivoco', e.conError.has(i));
+      t.toggle('foco', enFoco.has(i));
+      t.toggle('foco-b', enFocoB.has(i) && !enFoco.has(i));
+      t.toggle('foco-ab', enFocoB.has(i) && enFoco.has(i));
+      t.toggle('habla', foco === i);
+      carta.disabled = e.fin;
+      carta.emo.textContent = sabe ? (e.x[i] ? '🔪' : '😇') : oficioDe(i).emoji;
+      carta.setAttribute('aria-label', `${nombre(i)}, ${L.oficios[oficioDe(i).id].uno}, ${motor.coord(i)}${sabe ? `, ${valor(i)}` : ''}`);
+      carta.setAttribute('aria-pressed', String(elegida === i));
+    });
+    dibujarAccion(e);
+    if (guia && e.x[guia.i] !== -1) guia = null;
+    dibujarPie(e);
+    dibujarPistas(e);
+  };
+
+  /** Un mensaje con pista se toca para iluminar a quiénes nombra. */
+  /**
+   * El acierto, el error y el "todavía no se puede saber" se van solos (pedido del dueño, excepción a
+   * C-8b): el acierto a los 2,5 s y los otros dos a los 4 s, que hay que leerlos. El error igual queda
+   * marcado con ✕ en la carta y en la cuenta. El temporizador solo cierra su propio mensaje.
+   */
+  const caducar = (m, ms) => setTimeout(() => {
+    if (mensaje !== m || !raiz.isConnected) return;
+    accion.querySelector('.cs-msg')?.classList.add('se-va');
+    setTimeout(() => { if (mensaje !== m) return; mensaje = null; dibujarAccion(motor.estado(p, jugadas)); }, QUIETO() ? 0 : 350);
+  }, ms);
+
+  const msg = m => el('button', {
+    type: 'button', class: `cs-msg ${m.tipo}${m.de !== undefined && foco === m.de ? ' activa' : ''}`,
+    onClick: ev => { ev.stopPropagation(); if (m.de !== undefined) enfocar(m.de); },
+  }, el('span', {}, ...pintado(m.texto)), m.de !== undefined ? el('span', { class: 'ver' }, foco === m.de ? T.casoOcultar : T.casoVer) : null);
+
+  const dibujarAccion = e => {
+    accion.replaceChildren();
+    if (e.fin) {
+      accion.append(el('div', { class: 'aviso bien' }, `🎉 ${T.casoOk}`),
+        el('button', { class: 'btn btn--yellow', id: 'btn-fin', onClick: () => { SFX.tap(); ctx.terminar(e); } }, ctx.textoFin || T.seeResults));
+      return;
+    }
+    if (elegida !== null && e.x[elegida] === -1) {
+      // Lo que pasó al intentar marcarla (un error, o que todavía no se puede saber) queda arriba (C-8b)
+      if (mensaje) accion.append(msg(mensaje));
+      // El botón dice sobre quién actúa (C-8): "😇 Ana es inocente"
+      accion.append(el('div', { class: 'btn-row' },
+        el('button', { type: 'button', class: 'btn cs-inocente', id: 'btn-inocente', onClick: ev => { ev.stopPropagation(); intentar(0); } }, fmt(T.casoEsInocente, { x: nombre(elegida) })),
+        el('button', { type: 'button', class: 'btn cs-criminal', id: 'btn-criminal', onClick: ev => { ev.stopPropagation(); intentar(1); } }, fmt(motor.femenino(nombre(elegida)) ? T.casoEsCriminalF : T.casoEsCriminal, { x: nombre(elegida) }))));
+    } else if (mensaje) {
+      accion.append(msg(mensaje));
+    } else {
+      // Las pistas están justo abajo, la última destacada: aquí no se repiten
+      accion.append(el('p', { class: 'cs-sub' }, T.casoToca));
+    }
+  };
+
+  /** La cuenta de errores y ayudas, y el botón 💡 de la ayuda. */
+  const dibujarPie = e => {
+    const cuenta = e.ayudas ? fmt(T.casoCuenta, { e: e.errores, a: e.ayudas }) : e.errores ? fmt(T.casoErrores, { e: e.errores }) : null;
+    // Si la ayuda de ahora ya se pagó (se cerró el mensaje, o se recargó), se vuelve a ver gratis
+    const a = e.fin ? null : motor.ayuda(p, jugadas);
+    const pagada = a && e.conAyuda.has(a.i);
+    pie.replaceChildren(
+      cuenta ? el('p', { class: 'muted center', style: 'margin:0' }, cuenta) : '',
+      a ? el('button', {
+        type: 'button', id: 'btn-ayuda', class: 'btn btn--ghost btn--sm' + (armado ? ' armado' : ''),
+        onClick: ev => { ev.stopPropagation(); pedirAyuda(pagada); },
+      }, pagada ? `💡 ${T.casoAyudaVer}` : armado ? fmt(T.casoAyudaSure, { n: motor.COSTO_AYUDA }) : `💡 ${fmt(T.casoAyuda, { n: motor.COSTO_AYUDA })}`) : '');
+  };
+
+  const pedirAyuda = pagada => {
+    if (!pagada && !armado) {
+      armado = true; SFX.tap(); vibrate(15);
+      clearTimeout(armadoTimer);
+      armadoTimer = setTimeout(() => { armado = false; if (raiz.isConnected) dibujarPie(motor.estado(p, jugadas)); }, 3000);
+      dibujarPie(motor.estado(p, jugadas));
+      return;
+    }
+    armado = false; clearTimeout(armadoTimer);
+    const a = motor.ayuda(p, jugadas);
+    if (!a) return;
+    if (!pagada) { jugadas.push({ ayuda: a.i }); ctx.guardar(jugadas); }
+    guia = a; elegida = a.i; foco = null;
+    const q = motor.lista(a.quienes.map(nombre), L);
+    const clave = !a.quienes.length ? 'casoMiraVarias' : a.quienes.length === 1 ? 'casoMiraUna' : 'casoMira';
+    mensaje = { tipo: 'ayuda', texto: fmt(T[clave], { x: nombre(a.i), q }) };
+    SFX.reveal(); vibrate(20);
+    dibujar();
+    // Las pistas que hay que juntar se destacan: que se vean aunque estén más abajo
+    pistas.querySelector('.cs-pista.guia')?.scrollIntoView?.({ block: 'nearest', behavior: QUIETO() ? 'auto' : 'smooth' });
+  };
+
+  const dibujarPistas = e => {
+    // La más nueva arriba, destacada; las demás en el orden en que se fueron sabiendo, al revés
+    const orden = [p.inicio, ...e.marcas].reverse();
+    const tachadas = ctx.tachadas || (ctx.tachadas = new Set());
+    pistas.replaceChildren(
+      el('h3', {}, `💬 ${fmt(T.casoPistas, { n: orden.length })}`),
+      ...orden.map((i, k) => el('div', {
+        class: 'cs-pista' + (k === 0 ? ' ultima' : '') + (nueva === i ? ' entra' : '') + (tachadas.has(i) ? ' tachada' : '') + (foco === i ? ' activa' : '') + (guia?.quienes.includes(i) ? ' guia' : ''),
+        'data-de': i,
+      },
+      el('button', { type: 'button', class: 'texto', onClick: ev => { ev.stopPropagation(); enfocar(i); } },
+        k === 0 ? el('span', { class: 'nueva-tag' }, T.casoUltima) : null,
+        el('span', { class: 'de' }, `${nombre(i)}:`), ' ', el('span', {}, ...pintado(frase(i)))),
+      el('button', {
+        type: 'button', class: 'tachar', 'aria-label': tachadas.has(i) ? T.casoDestachar : T.casoTachar, 'aria-pressed': String(tachadas.has(i)),
+        onClick: ev => { ev.stopPropagation(); tachadas.has(i) ? tachadas.delete(i) : tachadas.add(i); SFX.tap(); dibujarPistas(motor.estado(p, jugadas)); },
+      }, '✓'))));
+    nueva = null;
+  };
+
+  /** Un sello que cae sobre la carta: 😇 o 🔪 si acertó, ❌ si no, ❔ si todavía no se podía saber. */
+  const sellar = (i, emoji, clase) => {
+    const carta = cartas[i];
+    carta.classList.remove('acierto', 'fallo', 'duda');
+    void carta.offsetWidth;
+    carta.classList.add(clase);
+    if (QUIETO()) return;
+    const sello = el('span', { class: 'sello', 'aria-hidden': 'true' }, emoji);
+    carta.append(sello);
+    setTimeout(() => { sello.remove(); carta.classList.remove(clase); }, 900);
+  };
+
+  const enfocar = i => {
+    foco = foco === i ? null : i;
+    SFX.tap(); vibrate(8);
+    dibujar();
+  };
+
+  const tocar = i => {
+    const e = motor.estado(p, jugadas);
+    if (e.fin) return;
+    if (e.x[i] !== -1) {
+      // Alguien ya marcado: su pista bajo la grilla, iluminando a quiénes nombra
+      elegida = null; foco = i;
+      mensaje = { tipo: 'dato', texto: dice(i), de: i };
+      SFX.tap(); dibujar();
+      return;
+    }
+    elegida = elegida === i ? null : i;
+    mensaje = null;
+    SFX.tap(); vibrate(10);
+    dibujar();
+  };
+
+  const intentar = v => {
+    const i = elegida;
+    if (i === null) return;
+    const r = motor.intento(p, jugadas, i, v);
+    const vars = { x: nombre(i), v: v ? criminal(i) : T.casoInocente };
+    if (r === 'falta') {
+      // Cuenta como error (D-261), pero no dice si lo que se marcó estaba bien
+      jugadas.push({ i, v, falta: 1 });
+      ctx.guardar(jugadas);
+      mensaje = { tipo: 'falta', texto: fmt(T.casoFalta, vars) };
+      caducar(mensaje, 4000);
+      SFX.error(); vibrate([20, 30, 20]);
+      dibujar(); sellar(i, '❔', 'duda');
+      return;
+    }
+    jugadas.push({ i, v });
+    ctx.guardar(jugadas);
+    if (r === 'error') {
+      mensaje = { tipo: 'error', texto: fmt(T.casoError, vars) };
+      caducar(mensaje, 4000);
+      SFX.letterMiss(); vibrate([40, 40, 40]);
+      dibujar(); sellar(i, '❌', 'fallo');
+      return;
+    }
+    elegida = null; foco = null; nueva = i;
+    // Solo el acierto: su pista entra destacada arriba de la lista, sin repetirse aquí
+    mensaje = { tipo: 'ok', texto: fmt(T.casoBien, vars) };
+    caducar(mensaje, 2500);
+    const e = motor.estado(p, jugadas);
+    if (e.fin) { SFX.win(); vibrate([30, 50, 30]); } else { SFX.letterHit(); vibrate(25); }
+    dibujar(); sellar(i, v ? '🔪' : '😇', 'acierto');
+  };
+
+  // Un toque fuera suelta a la persona elegida y apaga la pista iluminada (C-8)
+  raiz.addEventListener('click', ev => {
+    if ((elegida !== null || foco !== null) && !ev.target.closest('.cs-persona, .cs-accion, .cs-pista')) { elegida = null; foco = null; dibujar(); }
+  });
+
+  dibujar();
+  // "Girar para descubrir": la primera vez, las cartas parten de espaldas y se dan vuelta en ola,
+  // pero recién cuando se fue la cuenta del 3, 2, 1: si no, la ola pasa tapada por el "¡A jugar!"
+  if (!jugadas.length && !QUIETO()) {
+    cartas.forEach(c => c.classList.add('tapada'));
+    const ola = () => {
+      if (!raiz.isConnected) return;
+      void grilla.offsetWidth;
+      cartas.forEach((c, i) => setTimeout(() => { c.classList.remove('tapada'); if (i % 4 === 0) SFX.tap(); },
+        60 + (motor.fila(i) + motor.col(i)) * 60));
+    };
+    const cuenta = () => document.getElementById('cuenta');
+    if (!cuenta()) ola();
+    else {
+      // La cuenta se saca del documento al terminar de desvanecerse: ahí parte la ola
+      const vigia = new MutationObserver(() => { if (!cuenta()) { vigia.disconnect(); ola(); } });
+      vigia.observe(document.body, { childList: true });
+    }
+  }
+}
+
+export const resultado = e => ({ s: motor.puntaje(e), t: motor.tarjeta(e), resumen: `${motor.puntaje(e)}/100` });

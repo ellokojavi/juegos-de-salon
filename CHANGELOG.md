@@ -1,5 +1,193 @@
 # Changelog
 
+## 0.148.6 — 2026-10-11
+- **Herramientas: el feedback 🐞 dice quién lo mandó** (D-279): el issue de cada reporte suma el
+  nombre que el jugador escribió, para hacerle seguimiento.
+
+## 0.153.0 — 2026-10-11
+- **⏳ Línea de Tiempo: los seis mazos cuentan su dato** (D-279). Música, Cultura pop, Brasil y Fútbol
+  suman un dato en cada carta, como Chile e Historia, revisados contra fuentes. Y el de Mekano ya no
+  dice que Viñuela llegó después: el programa partió con él y con Verónica Calabi. Sale la carta de
+  cuando la FA levantó la prohibición al fútbol femenino: las fuentes no se ponen de acuerdo en el año.
+
+## 0.152.0 — 2026-10-11
+- **⏳ Línea de Tiempo, 📅 ¿En qué año? y La Copa: cada carta cuenta algo** (D-279). En vez de "iba
+  entre 1925 y 1980", el veredicto de un error cuenta un dato del hecho, un porqué o una anécdota
+  ("El Muro lo abrió un error…"). Contra el reloj (⏳ Línea Relámpago y ¿En qué año?), el reloj se
+  pausa mientras se lee, hasta 6 segundos. Al acertar, el dato aparece en una franja abajo que se va
+  sola, sin frenar el juego. Al terminar, tocar un hito de la línea muestra su dato. Por ahora, en
+  los mazos de Chile e Historia.
+
+## 0.151.0 — 2026-10-11
+- **⏳ Línea de Tiempo, 📅 ¿En qué año? y La Copa: cartas que se pueden situar** (D-278). Salen 23
+  cartas: las que decían su año (las Constituciones de 1833, 1925 y 1980, la final de Italia 90, la
+  Eco-92) y las que no se podían situar, porque el hecho se repitió (el incendio de Valparaíso, los
+  terremotos de Santiago y Valparaíso) o porque era una época y no un hecho (la era del swing, el
+  punk, la cumbia). Música suma 12 hitos puntuales, como la muerte de Freddie Mercury o el Nobel de
+  Dylan, y su bajada pasa a ser "De Beethoven a Taylor Swift".
+
+## 0.150.0 — 2026-10-11
+- **🏅 Rankings: que cuente la partida que acabas de jugar** (D-274): si terminas sin haber entrado,
+  un bloque te ofrece entrar con tu nombre y un PIN, y esa partida (o tu victoria) se anota.
+- **Toque y Fama, Generala y Ahorcado** muestran en su portada los mejores puntajes jugando solo.
+- **🪢 Ahorcado jugando solo tiene ranking**: de 0 a 100 según las vidas que te quedaron.
+
+## 0.148.4 — 2026-10-11
+- **Herramientas: el agente de procesos dirige a los otros** (D-276): una sola ronda diaria en el
+  Mac lanza a los agentes de documentación y de usabilidad cuando hay algo que revisar, y revisa lo
+  que entregan. Lo que el dueño encarga pasa por él.
+
+## 0.148.3 — 2026-10-11
+- **Herramientas: el feedback 🐞 lo atiende el agente de procesos** (D-275): cada reporte que llega
+  desde la app se vuelve un issue (con el texto, sin el nombre de quien lo manda), y la ronda diaria
+  lo arregla, lo pregunta o lo cierra diciendo por qué.
+
+## 0.148.2 — 2026-10-11
+- **Herramientas: un agente de procesos** (D-273): una ronda diaria cierra lo que quedó abierto
+  (PR que esperan, avisos viejos) y convierte un error que se repite en una prueba que lo frena
+  sola. Lo que necesita al dueño llega en un issue con casillas Sí/No: marcar una lo cumple al
+  instante. El aviso "main en rojo" se cierra solo cuando main vuelve a verde.
+
+## 0.148.1 — 2026-10-11
+- **Compartir la app también cuenta la app instalable y los idiomas** (D-272): el mensaje de
+  "Invitar a jugar" suma 📲 que se agrega a la pantalla de inicio y avisa cuando te toca jugar, y 🌎
+  que está en español, inglés, portugués y alemán.
+
+## 0.148.0 — 2026-10-11
+- **Compartir la app cuenta todo lo que hay** (D-271): el mensaje de "Invitar a jugar", en el
+  celular y en el computador, suma 📅 Uno al día y 🏅 los rankings a La Copa, los juegos en grupo,
+  los de jugar solo y el "sin cuenta". El del video suma el desafío de cada día, y la tarjeta del
+  link nombra Uno al día y los minijuegos. El agente de documentación los revisa en cada ronda para
+  que no se queden atrás.
+
+## 0.147.2 — 2026-10-10
+- **🔐 La clave:** en la animación de la portada también se mueven los trazos blancos de la base:
+  todo parte al azar y se va acomodando hasta formar la palabra.
+
+## 0.147.1 — 2026-10-10
+- **🔐 La clave:** la animación de la portada termina en la clave dibujada con sus trazos, sin
+  escribirla como texto (el título ya la dice).
+
+## 0.147.0 — 2026-10-10
+- **🔐 La clave, en el laboratorio** (D-270): cuatro cartas transparentes esconden un código de 5 cifras. Hay que
+  ponerlas sobre la base y girar y voltear cada una hasta que los trazos formen las cifras, sin trazos
+  encima de otros (se ven rayados). En español, también con una palabra de letras de catorce
+  segmentos y cartas de dos caras. En `juegosdesalon.cl/labs/code/`.
+
+## 0.146.1 — 2026-10-10
+- **🧪 Laboratorio:** se van los Acertijos (D-269): el dueño los probó y no le gustaron.
+
+## 0.145.0 — 2026-10-10
+- **🤔 Acertijos, en el laboratorio** (D-269): cinco acertijos con truco en los que la respuesta obvia
+  no es la buena. Hay que tocar, elegir y arrastrar, con pistas y un narrador burlón, y al final se
+  deja un comentario. En `juegosdesalon.cl/labs/riddles/`.
+
+## 0.144.0 — 2026-10-10
+- **🔍 El caso, en un solo lugar** (D-267): `juegosdesalon.cl/labs/case/` es el juego completo, en
+  los cuatro idiomas, y el prototipo se va. Sin elegir nada es el caso del día, el mismo para todos;
+  al recargar sigue donde ibas; al terminar se comparte el mismo caso, se juega otro o el de hoy, y
+  se deja un comentario. `/case/` lleva ahí.
+- **🔍 El caso: "💬 Dejar un comentario"** (D-268): al final de la portada, de la prueba y del juego
+  (no durante la cuenta); en el resultado, el formulario abierto, al final de todo.
+
+## 0.143.0 — 2026-10-10
+- **🔗 Los links, en inglés** (C-18, D-266): además de las carpetas, los parámetros y sus valores.
+  Una sala es `?room=ABCD`, una partida repetible `?seed=K7Q2X`, el modo de prueba `?test`, Uno al
+  día `?today`, y los avisos abren `&day=3`, `&mute` y `&notif=deadline`. Los links de antes
+  (`?sala=`, `?semilla=`, `?prueba`, `?hoy`…) siguen funcionando y quedan en inglés en la barra al
+  abrirse. El panel también: `#/cup/OFICI`, `#/game/hangman`, `#/room/ABCD`.
+
+## 0.142.3 — 2026-10-10
+- **🎬 Marketing: teaser de El caso** (`marketing/caso-teaser/`): 6 s en vertical y un GIF para
+  WhatsApp, que invitan a probar el juego del laboratorio y a dejar un comentario.
+
+## 0.142.2 — 2026-10-10
+- **🔍 El caso (laboratorio): "¿Qué te pareció?"** (D-265): al terminar el caso del día, un
+  formulario para dejar un comentario, con el caso adjunto.
+- **🔍 El caso (laboratorio):** el marcador ya no muestra "null" cuando no se ha pedido ayuda.
+
+## 0.142.1 — 2026-10-10
+- **🔍 El caso, más para pensar** (D-264): tocar una pista ilumina solo a quien nombra ("a la
+  izquierda de Omar": Omar), no a todo el grupo.
+
+## 0.142.0 — 2026-10-10
+- **🔍 El caso: 💡 Ayuda** (D-263): si te trabas, te dice a quién mirar y qué pistas juntar, y las
+  destaca en la lista. Resta 15 puntos.
+- **🔍 El caso, más claro:** las pistas que comparan dos grupos ya no hablan de grupos que comparten
+  a alguien.
+
+## 0.141.1 — 2026-10-10
+- **🧪 Laboratorio, solo con lo nuevo** (D-262): queda El caso. Se van la práctica de cada juego de
+  La Copa, las demos, la Copa de 3 días, Uno al día, Agregar a inicio y el link viejo `/labs/de/`,
+  que ya estaban para todos.
+
+## 0.141.0 — 2026-10-10
+- **🔍 El caso, todavía más difícil** (D-260): pistas condicionales ("Si Óscar es criminal, Rodrigo es
+  inocente") y de parejas ("Ana y Beto son los dos inocentes o los dos criminales"), y de cada semilla
+  se arman cuatro casos y se juega el que más hace pensar.
+- **🔍 El caso: no se tantea** (D-261): marcar a alguien que todavía no se puede deducir cuenta como
+  error, sin decir si estaba bien.
+- **🔍 El caso:** el caso se arma mientras se lee la antesala, así que "Empezar" y "Probar primero" no
+  se traban; y "Gonzalo e Isabel", no "y Isabel".
+
+## 0.140.1 — 2026-10-10
+- **🔍 El caso, sin repetir:** al acertar, el mensaje dice solo "¡Bien! Tati es inocente."; su pista
+  entra destacada arriba de la lista, sin repetirse debajo de la grilla. Se va la explicación de cómo
+  tocar las pistas y tacharlas: se entiende sola. Los mensajes de acierto y de error se van solos (el
+  acierto a los 2,5 s, el error a los 4 s).
+
+## 0.140.0 — 2026-10-10
+- **🔍 El caso, más difícil** (D-259): las pistas se eligen para que haya que combinarlas, con más
+  comparaciones ("hay más criminales arriba de Ana que entre los vecinos de Beto"), pares e
+  impares, y una nueva: "Exactamente uno de Ana y Beto es criminal". Sigue sin haber que adivinar nunca.
+- **🔍 El caso:** el prototipo del laboratorio tiene la misma dificultad que el juego de La Copa (usa el
+  mismo motor), la prueba de La Copa es un caso completo y lo dice, y en una comparación cada lado se
+  ilumina con su color, en la grilla y en la frase.
+
+## 0.139.0 — 2026-10-10
+- **La cuenta del 3, 2, 1 ya no es tiempo de juego** (D-258): en todos los juegos de La Copa, el
+  reloj parte cuando el "¡A jugar!" se fue de la pantalla y el tablero está a la vista; en El caso,
+  además, cuando las cartas terminaron de darse vuelta.
+- **🔍 El caso:** las letras y los números de la grilla, más grandes.
+
+## 0.138.3 — 2026-10-09
+- **🔍 El caso, más cuidado al empezar** (D-257): en la antesala, el título lleva la lupa y los
+  colores que se mueven, como en el prototipo; y las cartas se dan vuelta recién cuando se fue el
+  "3, 2, 1, ¡A jugar!", no mientras la cuenta las tapa.
+
+## 0.138.2 — 2026-10-09
+- **🔍 El caso:** el link "¿Cómo se juega?" de arriba abre las reglas y baja hasta ellas con un
+  scroll suave, en vez del salto del ancla (sin animación si el celular pide reducir movimiento).
+
+## 0.138.1 — 2026-10-09
+- **🔍 El caso, con toda la experiencia en el laboratorio** (D-257): el botón de El caso en `/labs/`
+  abre el juego de La Copa, con su portada animada, la prueba, el 3, 2, 1, el juego y el resultado
+  con su desglose. El caso del día del prototipo queda como segundo botón.
+
+## 0.138.0 — 2026-10-09
+- **🔍 El caso, listo como juego de La Copa** (D-257), por ahora en el laboratorio: en español,
+  inglés, portugués y alemán, con su portada animada en la antesala (cartas que se dan vuelta solas y
+  una lupa que las recorre), la sesión de prueba y el desglose del puntaje: 100 con el caso resuelto,
+  menos 10 por error. Se juega en `/case/`; una copa todavía no lo puede elegir.
+
+## 0.137.0 — 2026-10-09
+- **🔍 El caso, más vivo** (D-256): las cartas se dan vuelta al empezar para descubrir a los
+  sospechosos; la elegida se acerca con un zoom suave; al marcar cae un sello (😇, 🔪 o ❌) con un
+  destello verde, rosado o rojo; y al resolver el caso pasa una ola por la grilla. **Tocar una pista
+  ilumina en la grilla a las personas de las que habla**, y la última pista va arriba y destacada,
+  con letra más grande. Las reglas pasan al final, y la lupa acompaña al título.
+
+## 0.136.0 — 2026-10-09
+- **🔍 El caso, en el laboratorio** (D-256): un prototipo de misterio para probar con amigos, solo en
+  español. Veinte sospechosos y pistas que siempre dicen la verdad: descubre quién es criminal sin
+  adivinar. Hay un caso nuevo cada día, el mismo para todos, y el resultado se comparte. Está en
+  `/labs/case/`.
+
+## 0.135.0 — 2026-10-09
+- **La portada, de lo más jugado a lo menos** (D-255): después de La Copa vienen Toque y Fama,
+  Línea de Tiempo, Reinas y Tango, y así hasta los que menos se juegan; los que vienen
+  "Próximamente" siguen al final.
+
 ## 0.134.1 — 2026-10-09
 - **🏅 Rankings con medalla**: el botón de rankings de la portada, la página de rankings y el ranking
   de Uno al día pasan del 🏆 a la 🏅, para no confundirlos con La Copa, que sigue con su 🏆.

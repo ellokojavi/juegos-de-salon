@@ -8,25 +8,11 @@
  *   abre ese dialogo; si no, la hoja con los pasos del menú.
  * - Dentro de WhatsApp, Instagram u otra app no se puede agregar a inicio: la hoja pide abrir el
  *   link en Safari o en Chrome.
- * - Mientras se prueba, solo en los celulares que lo activan en /labs/ y en el sitio local (como
- *   los avisos y los rankings, D-212, D-223).
  */
 import { el } from './ui.js';
-import { envOf } from './transport/stats.js';
 
-export const INSTALAR_EN_LABS = false;
-export const LABS_INSTALAR_KEY = 'juegos-de-salon:labs-instalar';
 /** La marca de "no mostrar más": la ✕, "Ya la agregué" o la app ya instalada. */
 export const INSTALAR_NO_KEY = 'juegos-de-salon:instalar:no';
-
-export function instalarEnLabs({ storage = globalThis.localStorage, loc = globalThis.location } = {}) {
-  if (!INSTALAR_EN_LABS) return true;
-  try { return envOf(loc || {}) === 'dev' || storage.getItem(LABS_INSTALAR_KEY) === '1'; } catch (_) { return false; }
-}
-
-export function activarInstalar(si, storage = globalThis.localStorage) {
-  try { if (si) storage.setItem(LABS_INSTALAR_KEY, '1'); else storage.removeItem(LABS_INSTALAR_KEY); } catch (_) { /* sin memoria */ }
-}
 
 export const descartado = (storage = globalThis.localStorage) => { try { return storage.getItem(INSTALAR_NO_KEY) === '1'; } catch (_) { return false; } };
 export function descartar(si = true, storage = globalThis.localStorage) {
@@ -81,7 +67,7 @@ const conNegritas = texto => String(texto).split(/\*\*(.+?)\*\*/).map((t, i) => 
 export function globoInstalar({ T, url: enlace = '.', tap = () => {}, espera = 2500, doc = globalThis.document, nav = globalThis.navigator, win = globalThis.window } = {}) {
   const t = T.ins;
   const pasos = pasosDe({ nav, win });
-  if (!pasos || !instalarEnLabs() || descartado()) return null;
+  if (!pasos || descartado()) return null;
 
   // Chrome en Android ofrece su propio dialogo: se guarda para abrirlo con "Agregar"
   let dialogo = null;

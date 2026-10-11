@@ -2,8 +2,8 @@
 
 Juegos de Salón en alemán (**Salonspiele**). **Salió del laboratorio** (D-197): se ofrece a
 todos en el toggle, con su puerta `https://juegosdesalon.cl/de/` y su tarjeta social, como el
-inglés y el portugués. El link del laboratorio, `/labs/de/`, quedó como página puente hacia `/de/`
-para quienes lo revisaron.
+inglés y el portugués. El link del laboratorio, `/labs/de/`, fue una página puente hacia `/de/`
+hasta D-262, que la sacó.
 
 Lo de abajo cuenta cómo se hizo y cómo pasó por el laboratorio (D-191), que queda para el próximo
 idioma. El **glosario** sigue vigente: toda traducción al alemán lo respeta.
@@ -14,9 +14,9 @@ idioma. El **glosario** sigue vigente: toda traducción al alemán lo respeta.
 |---|---|
 | `IDIOMAS` (todos los que tienen diccionario) y `LANGS` (los que se ofrecen aquí) | `public/assets/js/i18n.js` |
 | La marca del dispositivo: `juegos-de-salon:labs-idioma` = `de` | la pone `/labs/de/` o `?lang=de` |
-| Pestañas 🧪 (vuelve al laboratorio) y 🐞 (comentario) en todas las páginas | `public/assets/js/labs-idioma.js` |
+| Pestañas 🧪 (vuelve al laboratorio) y 🐞 (comentario) en todas las páginas; el formulario es `formularioComentario()`, que El caso del laboratorio pone también al final (D-265) | `public/assets/js/labs-idioma.js` |
 | Mientras se juega en alemán, los links al menú (`../`) y a `/labs/` llevan a `/labs/de/` (D-195) | el mismo módulo (un link con `data-labs-libre` pasa) |
-| Portada del laboratorio, en alemán, con todos los juegos | `public/labs/de/index.html` |
+| Portada del laboratorio, en alemán, con todos los juegos | `public/labs/de/index.html` (borrada en D-262: el próximo idioma tendrá la suya) |
 | Salir: "Labor verlassen" saca la marca y deja la app en inglés | la misma portada |
 
 Las pruebas de paridad (`node public/assets/js/i18n.test.mjs`) recorren `IDIOMAS`, así que el alemán
@@ -32,7 +32,7 @@ que los amigos del dueño van a corregir.
 | Textos de los 8 juegos (`rules.js`) y comunes (`COMMON`, `games.js`, `azar.js`) | ~50.000 caracteres | traducidos |
 | Frases de carga (`frases.js`) | 100 | adaptadas, no calcadas |
 | Cuarto Rey: penitencias, categorías, "Ich hab noch nie", minijuegos | ~4.000 caracteres | adaptados a un grupo alemán (Bundesliga, Späti, Schlagerstars) |
-| Cartas de Línea de Tiempo | 687 cartas, 26.000 caracteres | traducidas, con títulos alemanes de películas y canciones |
+| Cartas de Línea de Tiempo | 675 cartas, 26.000 caracteres, y su dato (57.000, D-277) | traducidas, con títulos alemanes de películas y canciones |
 | Palabras del Ahorcado | 100 palabras con pista | elegidas en alemán, sin Ä, Ö, Ü ni ß |
 | Conexiones (`public/cup/games/connections/grillas-de.js`) | 15 grillas y la de ensayo | escritas en alemán, con distractores propios (KIEFER, SCHLOSS, BANK) |
 | Palabra (`PALABRAS_DE`) | 162 palabras de cinco letras distintas | escritas en alemán, sin Ä, Ö, Ü ni ß |
@@ -58,7 +58,7 @@ las pantallas de `tools/e2e/mirar.mjs` a 320 px, y después con los textos alema
   palabras de La Copa, y los nombres de ¿Dónde queda?.
 - **Firebase**: una copa con palabras en alemán guarda `lang: "de"`, que las reglas no dejaban
   escribir. Se publican después de fusionar con `node tools/firebase/reglas.mjs publicar` (D-122).
-- `mirar.mjs --idioma de` funciona: pone la marca del laboratorio igual que `/labs/de/`.
+- `mirar.mjs --idioma de` funciona: pone la marca del laboratorio igual que lo hacía `/labs/de/`.
 
 ## Decidido con el dueño (D-194)
 

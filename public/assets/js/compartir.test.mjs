@@ -2,7 +2,7 @@
 // pasa cuando hay menú del sistema, cuando no, y cuando va una imagen.
 // Uso: node public/assets/js/compartir.test.mjs
 import assert from 'node:assert/strict';
-import { cabecera, conLink, compartir, puntajeYTiempo, nombreArchivo, textoResultadoSolo, marcarCompartido, compartirApp } from './compartir.js';
+import { cabecera, conLink, compartir, puntajeYTiempo, nombreArchivo, textoResultadoSolo, marcarCompartido, compartirApp, LO_PRINCIPAL } from './compartir.js';
 import { COMMON, IDIOMAS } from './i18n.js';
 
 let n = 0;
@@ -50,26 +50,26 @@ const imagen = { name: 'copa-x-dia-1.png' };
 await caso('con menú: el texto lleva el link adentro y no como `url`', async () => {
   const r = navegador();
   assert.equal(await compartir({ titulo: 'X', texto: 'hola', url: 'https://a.b/' }), 'shared');
-  assert.deepEqual(r.compartido, [{ title: 'X', text: 'hola\n\n🔗 https://a.b/?de=link' }]);
+  assert.deepEqual(r.compartido, [{ title: 'X', text: 'hola\n\n🔗 https://a.b/?from=link' }]);
 });
 
 await caso('con imagen y un celular que comparte archivos: la imagen y el texto juntos', async () => {
   const r = navegador();
   assert.equal(await compartir({ titulo: 'X', texto: 'hola', url: 'https://a.b/', imagen }), 'shared');
-  assert.deepEqual(r.compartido, [{ files: [imagen], title: 'X', text: 'hola\n\n🔗 https://a.b/?de=link' }]);
+  assert.deepEqual(r.compartido, [{ files: [imagen], title: 'X', text: 'hola\n\n🔗 https://a.b/?from=link' }]);
 });
 
 await caso('sin menú: se copia el mensaje entero', async () => {
   const r = navegador({ share: false, archivos: false });
   assert.equal(await compartir({ titulo: 'X', texto: 'hola', url: 'https://a.b/' }), 'copied');
-  assert.deepEqual(r.copiado, ['hola\n\n🔗 https://a.b/?de=link']);
+  assert.deepEqual(r.copiado, ['hola\n\n🔗 https://a.b/?from=link']);
 });
 
 await caso('con imagen y sin compartir archivos: se descarga y el texto queda copiado', async () => {
   const r = navegador({ archivos: false });
   assert.equal(await compartir({ titulo: 'X', texto: 'hola', url: 'https://a.b/', imagen }), 'downloaded');
   assert.deepEqual(r.descargado, ['copa-x-dia-1.png']);
-  assert.deepEqual(r.copiado, ['hola\n\n🔗 https://a.b/?de=link']);
+  assert.deepEqual(r.copiado, ['hola\n\n🔗 https://a.b/?from=link']);
   assert.deepEqual(r.compartido, [], 'no manda el texto solo, sin la imagen');
 });
 
@@ -86,13 +86,25 @@ await caso('jugando solo, el texto no repite lo que dice la imagen (D-171)', () 
 });
 
 await caso('el link compartido lleva su marca, al final y sin pisar lo que ya trae (D-208)', () => {
-  assert.equal(marcarCompartido('https://juegosdesalon.cl/'), 'https://juegosdesalon.cl/?de=link');
+  assert.equal(marcarCompartido('https://juegosdesalon.cl/'), 'https://juegosdesalon.cl/?from=link');
   // Un código de copa o un link propio se leen sin `=`: la marca va detrás y no los confunde
-  assert.equal(marcarCompartido('https://juegosdesalon.cl/cup/?oficina'), 'https://juegosdesalon.cl/cup/?oficina&de=link');
-  assert.equal(marcarCompartido('https://juegosdesalon.cl/battleship/?sala=ABCD#x'), 'https://juegosdesalon.cl/battleship/?sala=ABCD&de=link#x');
-  assert.equal(marcarCompartido('https://juegosdesalon.cl/?de=instagram'), 'https://juegosdesalon.cl/?de=instagram', 'una marca puesta a mano se respeta');
+  assert.equal(marcarCompartido('https://juegosdesalon.cl/cup/?oficina'), 'https://juegosdesalon.cl/cup/?oficina&from=link');
+  assert.equal(marcarCompartido('https://juegosdesalon.cl/battleship/?room=ABCD#x'), 'https://juegosdesalon.cl/battleship/?room=ABCD&from=link#x');
+  assert.equal(marcarCompartido('https://juegosdesalon.cl/?from=instagram'), 'https://juegosdesalon.cl/?from=instagram', 'una marca puesta a mano se respeta');
+  assert.equal(marcarCompartido('https://juegosdesalon.cl/?de=instagram'), 'https://juegosdesalon.cl/?de=instagram', 'también con el nombre de antes de D-266');
   assert.equal(marcarCompartido(''), '');
   assert.equal(marcarCompartido('no es un link'), 'no es un link');
+});
+
+await caso('compartir la app nombra todo lo principal, una línea cada cosa y en cada idioma (D-271)', () => {
+  for (const lang of IDIOMAS) {
+    const lineas = COMMON[lang].shareApp.lines;
+    for (const { emoji, que } of LO_PRINCIPAL) {
+      assert.equal(lineas.filter(l => l.startsWith(emoji)).length, 1, `${lang}: el mensaje de la app no nombra ${que} (${emoji})`);
+    }
+    // Ni una línea suelta que la lista no conozca: si es principal, va en LO_PRINCIPAL
+    for (const l of lineas) assert.ok(LO_PRINCIPAL.some(p => l.startsWith(p.emoji)), `${lang}: "${l}" no está en LO_PRINCIPAL`);
+  }
 });
 
 await caso('compartir la app: la tarjeta de la portada y el texto, en el idioma en que se mira (D-226)', async () => {
@@ -119,7 +131,7 @@ await caso('compartir la app: la tarjeta de la portada y el texto, en el idioma 
   assert.equal(await compartir({ titulo, texto, url: 'https://juegosdesalon.cl/de/', imagen: f }), 'shared');
   assert.deepEqual(r.compartido[0].files, [f]);
   assert.ok(r.compartido[0].text.startsWith('🎲 *Salonspiele* · 15 Spiele'));
-  assert.ok(r.compartido[0].text.endsWith('🔗 https://juegosdesalon.cl/de/?de=link'));
+  assert.ok(r.compartido[0].text.endsWith('🔗 https://juegosdesalon.cl/de/?from=link'));
 });
 
 console.log(`compartir: ${n} casos en verde`);

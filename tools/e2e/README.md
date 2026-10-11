@@ -53,7 +53,9 @@ Un PR que solo trae documentación (`docs/`, `marketing/`, `.claude/` y los `.md
 y de esta carpeta) no corre ningún guion: `ci.mjs --lista --cambios <archivo>` sale vacía, y
 [`cambios.mjs`](cambios.mjs) decide qué cuenta como documentación (D-205; lo prueba
 `node tools/e2e/cambios.test.mjs`). Si las pruebas salen
-en rojo en `main`, el job `avisar` abre un issue "main en rojo: Punta a punta".
+en rojo en `main` (en un push o en una corrida a mano, como la que lanza una fusión de un toque),
+el job `avisar` abre un issue "main en rojo: Punta a punta", y cuando `main` vuelve a verde el job
+`cerrar-aviso` lo cierra con el link a la corrida (D-273).
 
 ```bash
 node tools/e2e/ci.mjs              # todos los de CI, uno tras otro, con resumen
@@ -92,6 +94,8 @@ node tools/e2e/contacto.mjs cuarto-rey --salida /tmp/contacto
 | `liars-dice/online.mjs` | Tres celulares contra Firebase real: sala, destape verificado, recarga a mitad y revancha |
 | `generala/local.mjs` | Jugar solo entero, tres en un celular con recarga a mitad y la generala servida: nada elegido de antemano (C-8), los guardados no cambian y se anota lo que la planilla prometía |
 | `generala/online.mjs` | Dos celulares contra Firebase real: los dados de quien juega a la vista del otro, recarga a mitad, partida entera y revancha |
+| `case/lab.mjs` | El caso en `/labs/case/` (D-267): el laboratorio lo ofrece y `/case/` lleva ahí; sin semilla es el caso del día y el link queda limpio; con la pantalla de La Copa, marcar antes de tiempo cuenta como error (D-261), al recargar sigue donde iba sin la cuenta, y el caso se resuelve sin adivinar; el final ofrece compartir, otro caso, el de hoy y el formulario de comentarios, con el envío interceptado (D-265) |
+| `code/lab.mjs` | La clave del laboratorio (D-270): el laboratorio la ofrece; la portada (título, ilustración y tres pasos, Palabra solo en español, sin el modo de 8); tocar una carta la pone y la elige, ✕ la saca, y sin orientar no se lee el código; un trazo encima de otro se ve rayado, sin texto; con las 4 derechas se lee el código sin choques; uno equivocado cuenta y el bueno abre con compartir y el formulario; en Palabra, voltear muestra la otra cara y la palabra se lee y abre. A 320 px y en los cuatro idiomas |
 | `julep/local.mjs` | Mesa de tres contra el celular y partida en un celular, con retomar a mitad |
 | `julep/online.mjs` | Tres celulares contra Firebase real: reparto cerrado, sello de cartas verificadas, recarga a mitad y chat |
 | `timeline/local.mjs` | Un celular con tres jugadores, con retomar a mitad |
@@ -100,6 +104,7 @@ node tools/e2e/contacto.mjs cuarto-rey --salida /tmp/contacto
 | `timeline/online.mjs` | Tres celulares contra Firebase real, recarga y revancha |
 | `bulls-and-cows/chat.mjs` | Chat de sala en Toque y Fama: no leídos, etiqueta, y que muera con la partida |
 | `timeline/eleccion.mjs` | Que se coloque la carta elegida y que sin elegir no se pueda colocar nada |
+| `timeline/dato.mjs` | El dato de cada carta en Línea Relámpago (D-277): el error lo cuenta con el reloj en pausa y tope de 6 s, el acierto lo deja en una franja que se va sola, el final es el repaso, y en inglés |
 | `timeline/veredicto.mjs` | Que el veredicto hable en tercera persona cuando se equivocó otro |
 | `timeline/mazos.mjs` | Todas las temáticas y que diez partidas seguidas no repitan cartas |
 | `timeline/pozo.mjs` | Pozo común: tira de 6, reposición por el final, meta y ajuste que viaja en la sala |
@@ -114,13 +119,13 @@ node tools/e2e/contacto.mjs cuarto-rey --salida /tmp/contacto
 | `uno-al-dia.mjs` | Uno al día (D-230): con el reloj fijo en el día n.° 1, la tarjeta de la portada junto a La Copa (D-239: las píldoras de las dos en una línea, el dado que vuelve a decir "Juego al azar" y el botón al lado del dado desde `/labs/`), el dado que cae en el juego de hoy, la línea de la intro, un link de otro juego que se va al de hoy, la tarjeta del resultado (racha, compartir sin decir el juego, con imagen), sin el ranking del juego, el segundo intento como práctica, el botón "Listo" y `/today/` con su racha ("Hoy jugaste" con el emoji del juego y "Próximo juego en…"), su calendario (el emoji y el puntaje en una píldora) y la tendencia de cada juego, a 320 px y en los cuatro idiomas |
 | `uno-al-dia-jugador.mjs` | Uno al día con jugador (D-230), con el almacén de prueba: Sara juega el de hoy, entra y su día sube a la historia y a los rankings (del día y de rachas); `/today/` muestra el ranking con sus cuatro pestañas y los comodines dicen para qué sirven; invitar manda su link en primera persona; Pedro, en otro "celular", ve "🔥 Sara te desafía", juega, ve el duelo y le da un comodín a Sara, que lo ve una vez al volver |
 | `uno-al-dia-avisos.mjs` | Los avisos de Uno al día (D-230), con un servicio de avisos falso: la oferta con las tres horas la segunda vez que se termina, elegir una suscribe y guarda `pushDia`, la campana de `/today/` (hora, interruptores, Silenciar), que no haya recordatorio en el calendario (el recordatorio es el aviso diario, decisión 15 de D-230), los avisos bloqueados, y los caminos de iPhone en Safari y dentro de WhatsApp |
-| `uno-al-dia-grupo.mjs` | Uno al día con El Ahorcado, Batalla Naval y Dudo (D-230): con el reloj fijo en un día en que toca cada uno, que `?hoy` abra directo el modo para uno, la línea de la intro, que la palabra, la flota del celular y los dados salgan de la semilla del día, el puntaje de su fórmula, la tarjeta arriba de los botones del juego, sin revancha (#226), el segundo intento como práctica, un link de otro juego que se va al de hoy, `/today/` y el dado que nombra a los de grupo |
+| `uno-al-dia-grupo.mjs` | Uno al día con El Ahorcado, Batalla Naval y Dudo (D-230): con el reloj fijo en un día en que toca cada uno, que `?today` abra directo el modo para uno, la línea de la intro, que la palabra, la flota del celular y los dados salgan de la semilla del día, el puntaje de su fórmula, la tarjeta arriba de los botones del juego, sin revancha (#226), el segundo intento como práctica, un link de otro juego que se va al de hoy, `/today/` y el dado que nombra a los de grupo |
 | `compartir-sala.mjs` | Botón de compartir: diálogo nativo si existe, copiar si no |
 | `favoritos.mjs` | Los favoritos de la portada (D-238, D-241): la ⭐ se toca con el dedo y marca sin abrir el juego, la ficha ⭐ Favoritos sale con el primero y deja ver solo esos (y va en la URL), desmarcar ahí no saca la tarjeta de la vista, se recuerdan al recargar, `?type=favorites` sin favoritos muestra todos, y dónde va ⭐ Favoritos (D-241): primera en la fila de tipos a 390 px y en un computador, y a 320 px donde quepa (en su línea si no), siempre con los tipos en una fila y sin salirse, en los cuatro idiomas |
 | `compartir-portada.mjs` | El botón de compartir de la portada (D-226, D-242), en los cuatro idiomas: en español abre la hoja con el video, sin cargarlo hasta que lo tocan, y "Compartir el video" manda el link de YouTube (D-253); en los demás comparte directo, sin hoja (D-254). En todos, la tarjeta social del idioma como imagen, el texto con su cabecera y el link a la portada de ese idioma; en un computador, solo el texto copiado y nada descargado |
 | `enlace-invitacion.mjs` | Quien llega por un enlace solo puede unirse a esa sala, en los cuatro juegos con sala |
 | `sala-error.mjs` | Sin llegar a Firebase: el mensaje de cada juego con sala, Toque y Fama en cada idioma y los demás repartidos entre ellos |
-| `idioma-por-url.mjs` | El idioma que viene en el link, en cada idioma: `?lang=`, las puertas (`/en/`, `/pt/`, `/de/`), el puente `/labs/de/` y las invitaciones a sala y a copa |
+| `idioma-por-url.mjs` | El idioma que viene en el link, en cada idioma: `?lang=`, las puertas (`/en/`, `/pt/`, `/de/`) y las invitaciones a sala y a copa |
 | `sala-tope.mjs` | Pasado el tope de salas por celular, avisa al instante y sin tocar la red |
 | `hangman/idiomas.mjs` | El Ahorcado en todos los idiomas: cada pantalla de `caminos.mjs` contra el español (D-199) |
 | `battleship/idiomas.mjs` | Batalla Naval en todos los idiomas: cada pantalla de `caminos.mjs` contra el español (D-199) |
@@ -217,6 +222,6 @@ prueba, la clave VAPID de `vapid.js` (D-225) y un servicio de avisos falso (nada
 esta copa", los avisos bloqueados, y el camino de iPhone (agregar a inicio, dentro de Instagram, y
 los pasos que dan el código de la copa, porque iOS abre la app en la portada, D-227, y la app
 instalada que abre con el nombre ya elegido si la dirección lleva `&app=`). También lo que abre un
-aviso (D-229): `&dia=<d>` parte en ese día listo para empezar (o en el tablero, si no se puede
-jugar) y `&silenciar` silencia la copa. Los botones del aviso en Android se prueban a mano: Chrome
+aviso (D-229): `&day=<d>` parte en ese día listo para empezar (o en el tablero, si no se puede
+jugar) y `&mute` silencia la copa. Los botones del aviso en Android se prueban a mano: Chrome
 headless no los muestra. Deja capturas de cada hoja.

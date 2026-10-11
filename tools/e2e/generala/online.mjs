@@ -32,8 +32,8 @@ const code = await A.evaluate(`document.querySelector('.code-big')?.textContent`
 ok(/^[A-Z]{4}$/.test(code || ''), `sala ${code}`);
 
 // B entra por el enlace de invitación, que es como llega de verdad (RP-18)
-await B.go(`${hosts[1]}/generala/?sala=${code}`); await B.evaluate(`localStorage.clear(); 1`);
-await B.go(`${hosts[1]}/generala/?sala=${code}`); await sleep(1000);
+await B.go(`${hosts[1]}/generala/?room=${code}`); await B.evaluate(`localStorage.clear(); 1`);
+await B.go(`${hosts[1]}/generala/?room=${code}`); await sleep(1000);
 ok(!(await B.evaluate(`!!document.querySelector('#setup-form .switch')`)), 'quien llega por el enlace no ve los ajustes');
 await setName(B, 'Cata');
 await B.evaluate(`[...document.querySelectorAll('#setup-actions .btn')].find(x=>/Unirse/i.test(x.textContent)).click(); 1`);
@@ -63,7 +63,7 @@ while (g++ < 60) {
   if (!recargado && n === 8) {
     // B recarga a mitad de partida y vuelve solo a la misma sala (C-6)
     recargado = true;
-    await B.go(`${hosts[1]}/generala/?sala=${code}`);
+    await B.go(`${hosts[1]}/generala/?room=${code}`);
     ok(await esperar(async () => (await pantalla(B)) === 'screen-play' && (await vista(B))?.n === 8, 12000), 'B recarga y vuelve a la misma partida, en el mismo punto');
     ok(await B.evaluate(`__generala.session().role`) === rolDe.B, 'con el mismo rol');
   }

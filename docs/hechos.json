@@ -1,5 +1,5 @@
 {
-  "version": "0.133.0",
+  "version": "0.153.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -62,6 +62,8 @@
         "public/cup/engine.js",
         "public/cup/game.js",
         "public/cup/games/audiencia.js",
+        "public/cup/games/case/engine.js",
+        "public/cup/games/case/ui.js",
         "public/cup/games/connections/engine.js",
         "public/cup/games/connections/grillas-de.js",
         "public/cup/games/connections/grillas-en.js",
@@ -643,6 +645,22 @@
       "duracion": "2–5",
       "labs": false,
       "path": "where/"
+    },
+    {
+      "id": "caso",
+      "emoji": "🔍",
+      "nombre": {
+        "es": "El caso",
+        "en": "The Case",
+        "pt": "O Caso",
+        "de": "Der Fall"
+      },
+      "tipos": [
+        "logic"
+      ],
+      "duracion": "5–10",
+      "labs": true,
+      "path": "labs/case/"
     }
   ],
   "tematicas": [
@@ -661,7 +679,7 @@
         "pt": "Marcos da humanidade",
         "de": "Meilensteine der Menschheit"
       },
-      "cartas": 98,
+      "cartas": 96,
       "desde": -2560,
       "hasta": 2022
     },
@@ -675,12 +693,12 @@
         "de": "Musik"
       },
       "pista": {
-        "es": "De Beethoven a TikTok",
-        "en": "From Beethoven to TikTok",
-        "pt": "De Beethoven ao TikTok",
-        "de": "Von Beethoven bis TikTok"
+        "es": "De Beethoven a Taylor Swift",
+        "en": "From Beethoven to Taylor Swift",
+        "pt": "De Beethoven até Taylor Swift",
+        "de": "Von Beethoven bis Taylor Swift"
       },
-      "cartas": 89,
+      "cartas": 91,
       "desde": 1600,
       "hasta": 2023
     },
@@ -699,7 +717,7 @@
         "pt": "Do terremoto de 1960 aos protestos de 2019",
         "de": "Vom Erdbeben 1960 bis zu den Protesten 2019"
       },
-      "cartas": 127,
+      "cartas": 120,
       "desde": 1520,
       "hasta": 2023
     },
@@ -718,7 +736,7 @@
         "pt": "Cinema, memes e videogames",
         "de": "Filme, Memes und Videospiele"
       },
-      "cartas": 110,
+      "cartas": 108,
       "desde": 1928,
       "hasta": 2023
     },
@@ -737,7 +755,7 @@
         "pt": "De Cabral à COP30, com novela e carnaval",
         "de": "Von Cabral bis zur COP30, mit Telenovelas und Karneval"
       },
-      "cartas": 140,
+      "cartas": 139,
       "desde": 1500,
       "hasta": 2025
     },
@@ -756,7 +774,7 @@
         "pt": "Copas, clubes, gols e contratações",
         "de": "WMs, Vereine, Tore und Transfers"
       },
-      "cartas": 123,
+      "cartas": 121,
       "desde": 1863,
       "hasta": 2025
     }
@@ -768,6 +786,7 @@
     "public/assets/js/compartir-portada.js",
     "public/assets/js/compartir.js",
     "public/assets/js/dado3d.js",
+    "public/assets/js/dato.js",
     "public/assets/js/favoritos.js",
     "public/assets/js/firebase-config.js",
     "public/assets/js/frases.js",
@@ -781,6 +800,7 @@
     "public/assets/js/jugador.js",
     "public/assets/js/labs-idioma.js",
     "public/assets/js/llegada.js",
+    "public/assets/js/parametros.js",
     "public/assets/js/push.js",
     "public/assets/js/ranking.js",
     "public/assets/js/records.js",
@@ -816,6 +836,8 @@
     "public/cup/engine.js",
     "public/cup/game.js",
     "public/cup/games/audiencia.js",
+    "public/cup/games/case/engine.js",
+    "public/cup/games/case/ui.js",
     "public/cup/games/connections/engine.js",
     "public/cup/games/connections/grillas-de.js",
     "public/cup/games/connections/grillas-en.js",
@@ -874,6 +896,9 @@
     "public/julep/engine.js",
     "public/julep/game.js",
     "public/julep/rules.js",
+    "public/labs/code/engine-palabra.js",
+    "public/labs/code/engine.js",
+    "public/labs/code/game.js",
     "public/liars-dice/engine.js",
     "public/liars-dice/game.js",
     "public/liars-dice/rules.js",
@@ -901,6 +926,7 @@
     "public/assets/js/i18n.test.mjs",
     "public/assets/js/instalable.test.mjs",
     "public/assets/js/instalar.test.mjs",
+    "public/assets/js/parametros.test.mjs",
     "public/assets/js/push.test.mjs",
     "public/assets/js/records.test.mjs",
     "public/assets/js/transport/cleanup.test.mjs",
@@ -923,15 +949,20 @@
     "public/generala/engine.test.mjs",
     "public/hangman/engine.test.mjs",
     "public/julep/engine.test.mjs",
+    "public/labs/code/engine-palabra.test.mjs",
+    "public/labs/code/engine.test.mjs",
     "public/liars-dice/engine.test.mjs",
     "public/panel/adapta.test.mjs",
     "public/panel/aggregate.test.mjs",
     "public/panel/copas.test.mjs",
     "public/panel/rutas.test.mjs",
     "public/timeline/engine.test.mjs",
+    "tools/agents/aprobar.test.mjs",
     "tools/agents/documentar.test.mjs",
+    "tools/agents/feedback.test.mjs",
     "tools/agents/limpiar-copias.test.mjs",
     "tools/agents/marketing.test.mjs",
+    "tools/agents/procesos.test.mjs",
     "tools/e2e/cambios.test.mjs",
     "tools/firebase/rankings-historia.test.mjs",
     "tools/push/avisar.test.mjs",
@@ -954,7 +985,9 @@
     "cambios.mjs",
     "cambios.test.mjs",
     "caminos.mjs",
+    "case/lab.mjs",
     "ci.mjs",
+    "code/lab.mjs",
     "compartir-portada.mjs",
     "compartir-sala.mjs",
     "contacto.mjs",
@@ -990,6 +1023,7 @@
     "sala-tope.mjs",
     "timeline/arrastre.mjs",
     "timeline/chat.mjs",
+    "timeline/dato.mjs",
     "timeline/eleccion.mjs",
     "timeline/empate.mjs",
     "timeline/error.mjs",
@@ -1055,6 +1089,14 @@
     {
       "ruta": "docs/games/bulls-and-cows.md",
       "titulo": "Especificación: Toque y Fama"
+    },
+    {
+      "ruta": "docs/games/case.md",
+      "titulo": "El caso"
+    },
+    {
+      "ruta": "docs/games/code.md",
+      "titulo": "🔐 La clave (prototipo del laboratorio)"
     },
     {
       "ruta": "docs/games/cup.md",

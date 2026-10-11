@@ -51,6 +51,16 @@ const PUERTAS = [
 ];
 /** El cierre de la bajada. Es la única frase que no sale de la app: se dice a los robots. */
 const GRATIS = { es: 'Gratis, sin instalar y sin cuenta.', en: 'Free, no install, no account.', pt: 'De graça, sem instalar e sem conta.', de: 'Kostenlos, ohne Installation und ohne Konto.' };
+/**
+ * Lo que la lista de juegos no dice: Uno al día y los minijuegos para jugar solo (D-271). Sin esto,
+ * la tarjeta de la portada contaba solo los juegos de grupo. El nombre de Uno al día sale de la app.
+ */
+const ADEMAS = {
+  es: n => `Además, ${n} y minijuegos para jugar solo.`,
+  en: n => `Plus ${n} and minigames to play solo.`,
+  pt: n => `E ainda ${n} e minijogos para jogar sozinho.`,
+  de: n => `Dazu das ${n} und Minispiele zum Alleinspielen.`,
+};
 /** "A, B y C" en cada idioma. */
 const lista = lang => disponibles.map(g => g.name[lang]).join(', ')
   .replace(/, ([^,]*)$/, ` ${{ es: 'y', en: 'and', pt: 'e', de: 'und' }[lang]} $1`);
@@ -60,7 +70,7 @@ const portada = p => ({
   // Sin decir cuántos son: el número cambia cada vez que entra un juego, y una frase que
   // envejece sola es peor que una que no cuenta nada. La lista sí se arma de games.js.
   titulo: `${COMMON[p.lang].appTitle} 🎲`,
-  descripcion: `${COMMON[p.lang].appSub.replace(/\.$/, '')}: ${lista(p.lang)}. ${GRATIS[p.lang]}`,
+  descripcion: `${COMMON[p.lang].appSub.replace(/\.$/, '')}: ${lista(p.lang)}. ${ADEMAS[p.lang](COMMON[p.lang].uad.nombre)} ${GRATIS[p.lang]}`,
   alt: `${COMMON[p.lang].appTitle}: ` + disponibles.map(g => g.emoji).join(' '),
   puerta: true,
 });
@@ -81,6 +91,7 @@ const paginas = () => [...PUERTAS.map(portada), ...conTarjeta.map(g => ({
   imagen: m.id,
   juego: m.id,
   suelto: true,
+  slug: m.slug,
   titulo: `${m.name.es} ${m.emoji} · Juegos de Salón`,
   descripcion: `${m.tagline.es} Un jugador, ${m.duration} min. Gratis, sin instalar y sin cuenta.`,
   alt: `${m.name.es}: ${m.tagline.es}`,
@@ -133,8 +144,9 @@ function paginaSuelta(p, bloqueOg) {
   // Sus etiquetas genéricas y el comentario que explica la página de todos
   html = html.replace(/^ {2}<!-- Los juegos de La Copa[\s\S]*?-->\n/m, '');
   html = html.replace(/^ {2}<meta (name="description"|property="og:[^"]*"|name="twitter:[^"]*").*\n/gm, '');
-  // Un nivel más arriba: las rutas relativas (href, src, el import map y el import) suben uno menos
-  html = html.replace(/(["'])\.\.\/\.\.\//g, '$1../');
+  // Un nivel más arriba: las rutas relativas (href, src, el import map y el import) suben uno menos.
+  // Los del laboratorio (/labs/case/, D-267) están a la misma altura que el molde y quedan igual
+  if (p.ruta.split('/').filter(Boolean).length === 1) html = html.replace(/(["'])\.\.\/\.\.\//g, '$1../');
   html = html.replace(/<title>.*<\/title>/, `<title>${escapa(p.titulo)}</title>\n${AVISO_COPIA()}`);
   html = html.replace('<body data-suelto>', `<body data-suelto="${p.juego}">`);
   return html.replace(/^( *<link rel="manifest".*\n)/m, `${bloqueOg}\n$1`);
@@ -147,7 +159,7 @@ function paginaSuelta(p, bloqueOg) {
  * Las carpetas pasaron al inglés (D-192): /ahorcado/ es /hangman/. Pero los links viejos siguen
  * circulando —las invitaciones a una sala por WhatsApp, el link propio de una copa
  * (/copa/?pirata), los marcadores—, así que cada ruta vieja queda como una página puente que manda
- * a la nueva con lo mismo detrás (?sala=…, ?pirata, &lang=…, #…). Lleva la tarjeta de la página
+ * a la nueva con lo mismo detrás (?room=…, ?pirata, &lang=…, #…). Lleva la tarjeta de la página
  * nueva: un robot de chat no corre JavaScript y lee lo que encuentra en la vieja.
  *
  * La ruta vieja sale del id, que era la carpeta (/<id>/ y /minijuegos/<id>/): un juego nuevo con su
@@ -159,14 +171,14 @@ const puentes = () => [
     .map(p => ({ ...p, viejo: `public/${p.juego}/index.html`, a: `..${p.ruta}` })),
   ...paginas().filter(p => p.suelto).flatMap(p => [
     { ...p, viejo: `public/minijuegos/${p.juego}/index.html`, a: `../..${p.ruta}` },
-    { ...p, viejo: `public/minigames/${p.ruta.split('/')[1]}/index.html`, a: `../..${p.ruta}` },
+    { ...p, viejo: `public/minigames/${p.slug}/index.html`, a: `../..${p.ruta}` },
   ]),
+  // Un juego del laboratorio vive en /labs/<slug>/ (D-267): /<slug>/ lleva ahí hasta que salga
+  ...paginas().filter(p => p.suelto && p.ruta !== `/${p.slug}/`)
+    .map(p => ({ ...p, viejo: `public/${p.slug}/index.html`, a: `..${p.ruta}` })),
   // Las páginas genéricas (/minijuegos/?reinas, /minigames/?reinas): el molde manda cada link a su lugar
   { viejo: 'public/minijuegos/index.html', a: '../cup/suelto/', titulo: 'Juegos de Salón 🎲' },
   { viejo: 'public/minigames/index.html', a: '../cup/suelto/', titulo: 'Juegos de Salón 🎲' },
-  // El laboratorio del alemán, que ya salió de ahí (D-197): sus revisores tienen ese link
-  ...paginas().filter(p => p.puerta && p.lang === 'de')
-    .map(p => ({ ...p, viejo: 'public/labs/de/index.html', a: `../..${p.ruta}` })),
 ];
 
 function paginaPuente(p) {
