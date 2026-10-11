@@ -1,4 +1,4 @@
-// El feedback 🐞 como issues (D-275): sin nombre ni navegador, sin menciones, y nunca dos veces el mismo reporte.
+// El feedback 🐞 como issues (D-275, D-277): con el nombre y sin el navegador, sin menciones, y nunca dos veces el mismo reporte.
 import assert from 'node:assert/strict';
 import { titulo, cuerpo, pendientes, subidos, marca, donde } from './feedback.mjs';
 
@@ -9,7 +9,8 @@ const r = {
 };
 
 const c = cuerpo(r);
-assert.doesNotMatch(c, /admirador/, 'sin el nombre del jugador');
+assert.match(c, /\*\*Quién:\*\* Tu admirador secreto/, 'con el nombre, para el seguimiento (D-277)');
+assert.doesNotMatch(cuerpo({ ...r, nombre: undefined }), /Quién/, 'sin nombre, sin la línea');
 assert.doesNotMatch(c, /Mozilla|Android/, 'sin el navegador');
 assert.match(c, /^> Se podrian auto tachar/, 'el texto tal cual, citado');
 assert.match(c, /\*\*Juego:\*\* caso/);

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.148.6 — 2026-10-11
+- **Herramientas: el feedback 🐞 dice quién lo mandó** (D-277): el issue de cada reporte suma el
+  nombre que el jugador escribió, para hacerle seguimiento.
+
 ## 0.153.0 — 2026-10-11
 - **⏳ Línea de Tiempo: los seis mazos cuentan su dato** (D-277). Música, Cultura pop, Brasil y Fútbol
   suman un dato en cada carta, como Chile e Historia, revisados contra fuentes. Y el de Mekano ya no
