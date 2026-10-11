@@ -22,7 +22,7 @@ for (const d of DECKS) {
 }
 // El dato de cada carta (D-277): una frase corta que se lee en el veredicto, en los cuatro idiomas.
 // No nombra años: le regalaría al siguiente jugador el de otra carta del mazo.
-const CON_DATOS = ['chile', 'historia'];   // los mazos que ya los tienen todos
+const CON_DATOS = ['historia', 'musica', 'chile', 'pop', 'brasil', 'futbol'];   // los mazos que ya los tienen todos: un mazo nuevo entra con sus datos
 const DATO_MAX = 110;
 for (const d of DECKS) {
   const anios = new Set(d.cards.filter(c => c.year >= 100).map(c => String(c.year)));

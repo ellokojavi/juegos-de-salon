@@ -4907,7 +4907,7 @@ vez de decir entre qué hitos iba la carta:
 - **Al terminar**, la línea como quedó es el repaso: los errores con su dato a la vista y el resto a
   un toque.
 
-Entran con datos Chile e Historia; los otros cuatro mazos se suman después, y mientras tanto una
+Entraron con datos Chile e Historia, y en el PR siguiente Música, Cultura pop, Brasil y Fútbol; una
 carta sin dato dice dónde iba, como antes.
 **Por qué:** lo pidió el dueño al ver "Fue en 1738: iba antes de 1925 · … Tú la pusiste entre 1980
 y 1989 · …": que un año está entre otros dos no le enseña nada a nadie, y el año grande de la carta
