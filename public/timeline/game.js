@@ -957,6 +957,11 @@ function terminarSolo(partida, p, { s, t, ms, estado }) {
     const aviso = avisoPartida({ juego: GAME_ID, variante: `rel-${partida.tema}`, s, ms, alAnotar: () => tablaFin.recargar() });
     aviso.id = 'sr-rk-aviso';
     $('#sr-record').after(aviso);
+  } else if (rankingsVisibles()) {
+    // Sin jugador abierto, "¿quieres que esta partida cuente?" después de los botones (C-8, D-274)
+    const aviso = avisoPartida({ juego: GAME_ID, variante: `rel-${partida.tema}`, s, ms, alAnotar: () => tablaFin.recargar(), alTocar: () => SFX.tap() });
+    aviso.id = 'sr-rk-aviso';
+    $('#sr-actions').after(aviso);
   }
   $('#sr-tarjeta').textContent = t;
   // La línea como quedó, con los errores en rojo; plegada, para que los botones se vean (C-8)
