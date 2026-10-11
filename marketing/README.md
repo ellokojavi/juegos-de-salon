@@ -26,7 +26,7 @@ todavía en la portada (U-34).
   quedan en la historia de git. Lo que se rehace solo (capturas, cuadros sueltos, intermedios)
   no va al repo.
 - Todo lo de esta carpeta se publica con el sitio (GitHub Pages): nada privado acá.
-- **El agente de usabilidad revisa cada asset en su ronda diaria** (U-34): `node tools/agents/marketing.mjs
+- **El agente de usabilidad revisa cada asset en su ronda** (U-34; la lanza el agente de procesos, D-276): `node tools/agents/marketing.mjs
   revisar` dice qué quedó atrás de la app (un juego nuevo que no sale, una versión vieja, commits
   que tocaron lo que muestra) y lo anota en el campo `revision` de `registro.json`. Rehacerlo lo
   decide el dueño.
