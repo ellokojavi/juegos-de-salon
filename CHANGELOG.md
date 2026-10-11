@@ -1,12 +1,17 @@
 # Changelog
 
 ## 0.149.0 — 2026-10-11
-- **⏳ Línea de Tiempo, 📅 ¿En qué año? y La Copa: cartas que se pueden situar** (D-272). Salen 23
+- **⏳ Línea de Tiempo, 📅 ¿En qué año? y La Copa: cartas que se pueden situar** (D-274). Salen 23
   cartas: las que decían su año (las Constituciones de 1833, 1925 y 1980, la final de Italia 90, la
   Eco-92) y las que no se podían situar, porque el hecho se repitió (el incendio de Valparaíso, los
   terremotos de Santiago y Valparaíso) o porque era una época y no un hecho (la era del swing, el
   punk, la cumbia). Música suma 12 hitos puntuales, como la muerte de Freddie Mercury o el Nobel de
   Dylan, y su bajada pasa a ser "De Beethoven a Taylor Swift".
+
+## 0.148.1 — 2026-10-11
+- **Compartir la app también cuenta la app instalable y los idiomas** (D-272): el mensaje de
+  "Invitar a jugar" suma 📲 que se agrega a la pantalla de inicio y avisa cuando te toca jugar, y 🌎
+  que está en español, inglés, portugués y alemán.
 
 ## 0.148.0 — 2026-10-11
 - **Compartir la app cuenta todo lo que hay** (D-271): el mensaje de "Invitar a jugar", en el
