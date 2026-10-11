@@ -17,6 +17,7 @@ import { firebaseConfig } from '../../public/assets/js/firebase-config.js';
 
 export const ETIQUETA = 'feedback';
 const REPO = process.env.GITHUB_REPOSITORY || 'ellokojavi/juegos-de-salon';
+const SITIO = 'https://juegosdesalon.cl';
 
 /* ------------------------------------------------------------------ */
 /* Lo puro (lo prueba tools/agents/feedback.test.mjs)                 */
@@ -53,14 +54,14 @@ export function cuerpo(r) {
   const datos = [
     ['Juego', c.juego], ['Laboratorio', c.labs], ['Copa', c.copa], ['Día', c.dia], ['Semilla', c.semilla],
     ['Resultado', c.resumen ?? c.puntaje], ['Errores', c.errores], ['Ayudas', c.ayudas], ['Tiempo', c.tiempo],
-    ['Página', c.url], ['Pantalla', c.pantalla], ['Tamaño', c.pantallaTam], ['Versión', r.v && `v${r.v}`], ['Fecha', fecha],
+    ['Página', c.url && (String(c.url).startsWith('/') ? `${SITIO}${c.url}` : c.url)], ['Pantalla', c.pantalla], ['Ventana', c.pantallaTam], ['Versión', r.v && `v${r.v}`], ['Fecha', fecha],
   ].filter(([, v]) => v !== undefined && v !== null && v !== '');
   return [
     inerte(String(r.texto).trim()).split('\n').map(l => `> ${l}`).join('\n'),
     '',
     datos.map(([k, v]) => `- **${k}:** ${inerte(v)}`).join('\n'),
     '',
-    'Llegó por 🐞 (D-275). El agente de procesos lo atiende en su ronda.',
+    'Llegó por el botón 🐞 de la app (D-275). Lo atiende el agente de procesos en su ronda.',
     marca(r.id),
   ].join('\n');
 }
