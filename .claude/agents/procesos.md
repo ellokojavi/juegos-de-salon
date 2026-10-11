@@ -144,6 +144,13 @@ también fuera de eso (después de un juego nuevo, de un cambio grande de textos
      `fusionar` (pr), `cerrar-pr` (pr, motivo), `cerrar-issue` (issue, motivo), `comentar` (en,
      texto), `correr` (workflow: `e2e.yml` o `publicar.yml`), `encolar` (tarea para tu próxima
      ronda) y `nada`. Sin `no`, el No solo se anota.
+   **Lo que sigue a la respuesta es tuyo** (D-276, pedido del dueño): en cada ronda, y apenas
+   sepas que el dueño contestó, mira los issues de decisiones abiertos. Si un Sí o un No quedó con
+   ❌, a medias o con un efecto que nadie quería (un PR que se cerró en vez de fusionarse, una
+   corrida cancelada), **lo terminas tú sin volver a preguntar**: su respuesta ya es el permiso para
+   hacer lo que la casilla decía, y nada más que eso. Lo cuentas en un comentario del issue, y si
+   fue una falla de `aprobar.mjs`, la arreglas con su test. Cuando todas las decisiones de un issue
+   están cumplidas, lo cierras. Nunca le pidas al dueño que desmarque y vuelva a marcar.
    **Deja el trabajo hecho antes de preguntar**: si la respuesta es un cambio, ábrelo como PR y que
    el Sí sea `fusionar`. `encolar` es para lo que no conviene hacer antes de saber la respuesta.
    Un dueño que contesta desde el celular: pocas decisiones (hasta cinco) y que se entiendan sin
