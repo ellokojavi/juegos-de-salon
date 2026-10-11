@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.147.1 — 2026-10-10
+- **🔐 La clave:** la animación de la portada termina en la clave dibujada con sus trazos, sin
+  escribirla como texto (el título ya la dice).
+
 ## 0.147.0 — 2026-10-10
 - **🔐 La clave, en el laboratorio** (D-270): cuatro cartas transparentes esconden un código de 5 cifras. Hay que
   ponerlas sobre la base y girar y voltear cada una hasta que los trazos formen las cifras, sin trazos
