@@ -634,6 +634,7 @@ node public/assets/js/uno-al-dia-avisos.test.mjs
 node public/assets/js/uno-al-dia-jugador.test.mjs
 node public/assets/js/uno-al-dia.test.mjs
 node public/assets/js/vigia.test.mjs
+node public/cup/games/deshacer.test.mjs
 node public/cup/games/juegos.test.mjs
 node public/cup/planilla.test.mjs
 node public/cup/reportes.test.mjs
@@ -738,7 +739,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   index.html                  Main menu (generated from assets/js/games.js)
   en/ · pt/ · de/             Language doors: they set the language and send you to the menu
   cup/                        The Cup: tournament engine, avisos.js (the notifications bell and sheets, D-223), stores (Firebase and local test), desglose.js (score breakdown), planilla.js (final table as CSV), reportes.js (auth-free bug reports), demo.js (lab demos)
-    games/                    The games: one folder each (engine.js + ui.js + its own word content in each language); solo.js mounts one as the play-alone mode of another game
+    games/                    The games: one folder each (engine.js + ui.js + its own word content in each language); solo.js mounts one as the play-alone mode of another game; deshacer.js is the shared ↩️ Undo button
   timeline/                   Timeline (engine.js + tests, game.js, rules.js, decks/)
   bulls-and-cows/             Bulls and Cows (engine.js + tests, game.js, rules.js)
   hangman/                    Hangman (engine.js + tests, game.js, rules.js, decks/)

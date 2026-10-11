@@ -198,3 +198,7 @@ Las respuestas a dilemas (issues con la etiqueta `usabilidad`) se anotan aquí:
   versión 7 del video promocional muestra la notificación del día que se abre (anotado en
   `marketing/promo-video/README.md`, "Pendiente: versión 7"). La bajada de La Copa en la portada
   queda como está, hasta ver en el panel si la gente activa los avisos.
+- **Reinas: ↩️ Deshacer** (#301, opción A, reporte 🐞 #319; D-283): a la izquierda de 🧹 Borrar
+  todo, sin confirmación, quita el último gesto (un arrastre entero es uno) hasta el comienzo; el
+  reloj sigue. 🏳️ Rendirse baja a su propia línea. Tango y Zip pueden sumarlo con
+  `public/cup/games/deshacer.js` para los días que todavía no empiezan (U-21).
