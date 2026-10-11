@@ -185,6 +185,9 @@ pareció?" del final de El caso del laboratorio (D-265) escriben en `feedback/<i
 `texto` (hasta 1000 caracteres), `nombre` opcional, `contexto` (JSON, hasta 500), `v` y `at` del
 servidor. Se escribe una sola vez y **se lee sin cuenta**: `node tools/firebase/reportes.mjs` los muestra
 (`--dias 3` para los recientes). No llevan PIN ni datos de la cuenta.
+Cada hora, `.github/workflows/feedback.yml` (`tools/agents/feedback.mjs`) sube los nuevos como
+issues de GitHub con la etiqueta `feedback`, sin el nombre ni el navegador, y el agente de procesos
+los atiende (D-275).
 
 ## La papelera (`cleanup`)
 
