@@ -12,7 +12,7 @@ for (const d of DECKS) {
     assert.ok(!/'/.test(c.pt), `apóstrofo recto en pt de ${d.id}: ${c.id}`);
     assert.ok(!/'/.test(c.de), `apóstrofo recto en de de ${d.id}: ${c.id}`);
     assert.ok(c.year > -4000 && c.year <= 2026, `año fuera de rango en ${d.id}: ${c.id}`);
-    // La carta no puede decir su año, ni entero ni abreviado ("de 1980", "Italia 90", "’92") (D-272)
+    // La carta no puede decir su año, ni entero ni abreviado ("de 1980", "Italia 90", "’92") (D-274)
     if (c.year >= 1000) {
       const yy = String(c.year % 100).padStart(2, '0');
       const delata = new RegExp(`(^|[^0-9])(${c.year}|${yy})($|[^0-9])`);
