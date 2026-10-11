@@ -1,7 +1,7 @@
 # El caso 🔍
 
 **Ruta:** `/labs/case/` (id `caso`, en `SUELTOS` con `labs: true` y `diario: true`; `/case/` lleva
-ahí) · **Jugadores:** 1 · **Estado:** juego de La Copa en el laboratorio, todavía fuera de `POZO`
+ahí) · **Jugadores:** 1 · **Estado:** en La Bodega del laboratorio (D-279): no prosperó; sigue jugable, fuera de `POZO`
 (D-257, D-267; RP-50) · **Idiomas:** es, en, pt y de
 
 Esta página describe El caso tal como se prueba hoy. Lo que comparte con los demás juegos de La
@@ -16,7 +16,8 @@ cada uno inocente o criminal. Se parte sabiendo qué es uno y lo que dice; cada 
 bien da su pista. Las pistas siempre dicen la verdad y **nunca hay que adivinar**: en todo momento
 hay al menos una persona más que se puede deducir con lo que ya se sabe.
 
-Está en el laboratorio para mostrárselo a amigos y ver si engancha. Ya es un juego de La Copa
+Estuvo en el laboratorio para mostrárselo a amigos y ver si engancha, y no prosperó: desde D-279
+está en La Bodega, y sin la llave del laboratorio no se abre (D-280). Ya es un juego de La Copa
 completo; falta que el dueño lo sume al pozo (RP-50). **Hay una sola versión para probar**
 (D-267): `https://juegosdesalon.cl/labs/case/`, con la pantalla de La Copa.
 
