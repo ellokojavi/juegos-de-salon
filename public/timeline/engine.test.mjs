@@ -20,7 +20,7 @@ for (const d of DECKS) {
     }
   }
 }
-// El dato de cada carta (D-276): una frase corta que se lee en el veredicto, en los cuatro idiomas.
+// El dato de cada carta (D-277): una frase corta que se lee en el veredicto, en los cuatro idiomas.
 // No nombra años: le regalaría al siguiente jugador el de otra carta del mazo.
 const CON_DATOS = ['chile', 'historia'];   // los mazos que ya los tienen todos
 const DATO_MAX = 110;

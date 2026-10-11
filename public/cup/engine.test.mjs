@@ -282,7 +282,7 @@ test('medallas', () => {
   assert.equal(m.ganador.n, 1);
 });
 
-test('la pausa para leer un dato: una sola vez, al cerrar o al tope (D-276)', () => {
+test('la pausa para leer un dato: una sola vez, al cerrar o al tope (D-277)', () => {
   const log = [];
   const fin = pausaDeLectura({ ms: 20, pausar: () => log.push('pausa'), seguir: () => log.push('sigue'), alCambiar: p => log.push(p) });
   fin(); fin();

@@ -3,7 +3,7 @@
  * desplaza a lo ancho, la línea con sus ranuras, el arrastre compartido (arrastrar es elegir,
  * nunca colocar: D-85), el botón que dice qué carta coloca y el veredicto de cada jugada, con
  * el error que se queda hasta tocarlo y cuenta el dato de la carta, con el reloj en pausa mientras
- * se lee (C-8b, D-276). Los estilos son los de
+ * se lee (C-8b, D-277). Los estilos son los de
  * assets/css/linea.css y los textos, los de Línea de Tiempo.
  *
  * Las jugadas son `{ c: id de la carta, at: ranura }`, en orden.
@@ -109,7 +109,7 @@ export function montar(raiz, ctx) {
     x.linea.forEach((c, i) => {
       const fila = el('div', { class: 'event' + (c.ok === false ? ' fallo' : ''), 'data-ev': i, 'data-year': c.year },
         el('span', { class: 'y' }, anioLabel(c.year)), el('span', { class: 'em' }, c.emoji), el('span', { class: 't' }, c.texto));
-      // Terminada, la línea es el repaso: los errores con su dato a la vista, el resto a un toque (D-276)
+      // Terminada, la línea es el repaso: los errores con su dato a la vista, el resto a un toque (D-277)
       linea.append(x.fin ? conDato(fila, el, c.dato, { abierto: c.ok === false }) : fila);
       if (!x.fin) linea.append(ranura(i + 1));
     });
@@ -147,7 +147,7 @@ export function montar(raiz, ctx) {
       el('div', { class: 'verdict' },
         el('div', { class: 'big ' + (ult.ok ? 'ok' : 'no') }, ult.ok ? LT.correct : LT.wrong),
         el('div', { class: 'card-big' }, el('span', { class: 'em' }, c.emoji), el('span', { class: 't' }, c.texto), el('span', { class: 'y' }, anioLabel(c.year))),
-        // El error cuenta el dato de la carta, con el reloj en pausa mientras se lee (D-276); una
+        // El error cuenta el dato de la carta, con el reloj en pausa mientras se lee (D-277); una
         // carta sin dato dice dónde iba
         ult.ok ? null : c.dato ? bloqueDato(el, c.dato, { pausa: ctx.pausa ? PAUSA_DATO_MS : 0 })
           : el('div', { class: 'why', html: `${fmt(LT.whyWrong, { year: `<b>${anioLabel(c.year)}</b>`, where: donde(...ult.entre) })}<br>${fmt(LT.wherePlaced, { where: donde(...puesta) })}` })),

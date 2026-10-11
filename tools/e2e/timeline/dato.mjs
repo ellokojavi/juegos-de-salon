@@ -1,5 +1,5 @@
 /**
- * El dato de cada carta en ⏳ Línea Relámpago, el modo solo de Línea de Tiempo (D-276).
+ * El dato de cada carta en ⏳ Línea Relámpago, el modo solo de Línea de Tiempo (D-277).
  *
  *   1. al errar, el veredicto cuenta el dato (y ya no "iba entre…") y el reloj se pausa: ⏸ arriba,
  *      la barra que se vacía, y el tiempo quieto mientras se lee

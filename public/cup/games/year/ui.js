@@ -14,7 +14,7 @@ export function montar(raiz, ctx) {
   let jugadas = Array.isArray(ctx.jugadas) ? ctx.jugadas.slice() : [];
   let ac = false;
   let revelado = null;
-  let seguir = null;   // termina la pausa del reloj mientras se lee el dato (D-276)
+  let seguir = null;   // termina la pausa del reloj mientras se lee el dato (D-277)
   const leido = () => { seguir?.(); seguir = null; };
 
   const dibujar = () => {
@@ -54,7 +54,7 @@ export function montar(raiz, ctx) {
           ctx.guardar(jugadas);
           ac = false;
           revelado = jugadas.length - 1;
-          // Con el año a la vista viene el dato del hito, y el reloj se pausa mientras se lee (D-276)
+          // Con el año a la vista viene el dato del hito, y el reloj se pausa mientras se lee (D-277)
           if (h.dato && jugadas.length < p.hitos.length) seguir = ctx.pausa?.(PAUSA_DATO_MS) || null;
           const pts = motor.puntos(h.year, valor);
           if (pts >= 80) SFX.reveal(); else if (pts >= 20) SFX.tap(); else SFX.error();
