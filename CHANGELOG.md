@@ -3,7 +3,8 @@
 ## 0.146.0 — 2026-10-10
 - **🔐 La clave, en el laboratorio** (D-270): cuatro cartas transparentes esconden un código de 5 cifras. Hay que
   ponerlas sobre la base y girar y voltear cada una hasta que los trazos formen las cifras, sin trazos
-  encima de otros (se ven rayados). En `juegosdesalon.cl/labs/code/`.
+  encima de otros (se ven rayados). En español, también con una palabra de letras de catorce
+  segmentos y cartas de dos caras. En `juegosdesalon.cl/labs/code/`.
 
 ## 0.144.0 — 2026-10-10
 - **🔍 El caso, en un solo lugar** (D-267): `juegosdesalon.cl/labs/case/` es el juego completo, en
