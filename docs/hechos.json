@@ -1,5 +1,5 @@
 {
-  "version": "0.153.0",
+  "version": "0.148.6",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -70,6 +70,7 @@
         "public/cup/games/connections/grillas-pt.js",
         "public/cup/games/connections/grillas.js",
         "public/cup/games/connections/ui.js",
+        "public/cup/games/deshacer.js",
         "public/cup/games/final/engine.js",
         "public/cup/games/final/ui.js",
         "public/cup/games/index.js",
@@ -844,6 +845,7 @@
     "public/cup/games/connections/grillas-pt.js",
     "public/cup/games/connections/grillas.js",
     "public/cup/games/connections/ui.js",
+    "public/cup/games/deshacer.js",
     "public/cup/games/final/engine.js",
     "public/cup/games/final/ui.js",
     "public/cup/games/index.js",
@@ -941,6 +943,7 @@
     "public/battleship/engine.test.mjs",
     "public/bulls-and-cows/engine.test.mjs",
     "public/cup/engine.test.mjs",
+    "public/cup/games/deshacer.test.mjs",
     "public/cup/games/juegos.test.mjs",
     "public/cup/planilla.test.mjs",
     "public/cup/reportes.test.mjs",
