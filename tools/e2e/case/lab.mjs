@@ -1,8 +1,9 @@
 // El caso del laboratorio (D-267) de punta a punta, en /labs/case/: el laboratorio lo ofrece y
 // /case/ lleva ahí; sin semilla es el caso del día (el link queda limpio); se juega con la pantalla
 // de La Copa (D-257), marcar antes de tiempo cuenta como error (D-261), al recargar sigue donde iba,
-// se resuelve entero sin adivinar y el final ofrece compartir el mismo caso, otro caso, el de hoy y
-// el comentario (D-265), que en el modo de prueba queda en el celular. Imprime ✗ si algo falla.
+// las pistas usadas se tachan solas (D-280), se resuelve entero sin adivinar y el final ofrece
+// compartir el mismo caso, otro caso, el de hoy y el comentario (D-265), que en el modo de prueba
+// queda en el celular. Imprime ✗ si algo falla.
 import { launch, sleep } from '../cdp.mjs';
 const OUT = process.argv[2] || '/tmp/caso-lab';
 const b = await launch({ port: 9392, dir: `${OUT}/p`, out: OUT, width: 375, height: 812 });
@@ -74,12 +75,42 @@ await esperar(`!!document.getElementById('btn-empezar')`);
 await ev(`document.getElementById('btn-empezar').click(); 1`); await sleep(600);
 ok(await ev(`document.querySelectorAll('.cs-persona.marcada').length`) === 2 && !await ev(`!!document.getElementById('cuenta')`), 'al recargar sigue donde iba, sin la cuenta (D-267)');
 
+// Las pistas usadas se tachan solas (D-280): las que ya tienen marcado todo lo que abarcan, según
+// el motor y lo que la página guardó. El ✓ tacha a mano una que no lo está, y destacha una tachada sola
+const usadas = () => ev(`(async()=>{const m=await import('/cup/games/case/engine.js');const p=m.generar('${SEMILLA}',1);const j=(JSON.parse(localStorage.getItem('${CLAVE}')||'null')||{}).jugadas||[];return [...m.usadas(p,m.estado(p,j).x)]})()`);
+const tachadasDom = () => ev(`[...document.querySelectorAll('.cs-pista.tachada')].map(x => +x.dataset.de).sort((a, b) => a - b)`);
+const tocarTachar = i => ev(`document.querySelector('.cs-pista[data-de="${i}"] .tachar').click(); 1`);
+const libre = (await ev(`[...document.querySelectorAll('.cs-pista:not(.tachada)')].map(x => +x.dataset.de)`))[0];
+const usadasAntes = await usadas();
+const aMano = usadasAntes.includes(libre) ? null : libre;
+if (aMano !== null && aMano !== undefined) {
+  await tocarTachar(aMano); await sleep(80);
+  ok((await tachadasDom()).includes(aMano) && await ev(`document.querySelector('.cs-pista[data-de="${aMano}"] .tachar').getAttribute('aria-pressed')`) === 'true', 'el ✓ tacha a mano una pista');
+}
+let destachada = null, solas = 0, desfases = [];
+const revisarTachadas = async () => {
+  const u = await usadas();
+  if (destachada === null) {
+    const otra = u.find(i => i !== aMano);
+    if (otra !== undefined) {
+      await tocarTachar(otra); await sleep(80);
+      destachada = otra;
+      ok(!(await tachadasDom()).includes(otra), 'el ✓ destacha una pista tachada sola');
+    }
+  }
+  solas = Math.max(solas, u.filter(i => i !== destachada && i !== aMano).length);
+  const espera = [...new Set([...u.filter(i => i !== destachada), ...(aMano != null ? [aMano] : [])])].sort((a, b) => a - b);
+  const hay = await tachadasDom();
+  if (JSON.stringify(espera) !== JSON.stringify(hay)) desfases.push({ espera, hay });
+};
+
 // Resolverlo entero, siempre con lo que se puede deducir
 for (let g = 0; g < 40; g++) {
   const s = await deducibles();
   if (s.fin || !Object.keys(s.d).length) break;
-  for (const [i, v] of Object.entries(s.d)) await marcar(i, v);
+  for (const [i, v] of Object.entries(s.d)) { await marcar(i, v); await revisarTachadas(); }
 }
+ok(solas > 0 && !desfases.length, `las pistas usadas se tachan solas, y las de a mano y la destachada quedan como las dejó el jugador (${solas} solas a la vez; ${JSON.stringify(desfases.slice(0, 2))})`);
 ok(await esperar(`!!document.getElementById('btn-fin')`), 'el caso se resuelve sin adivinar');
 await ev(`document.getElementById('btn-fin').click(); 1`);
 ok(await esperar(`!!document.querySelector('.score-big')`), `el resultado: ${await ev(`document.querySelector('.score-big')?.textContent`)}`);
