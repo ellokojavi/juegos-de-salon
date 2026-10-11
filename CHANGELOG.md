@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.156.1 — 2026-10-11
+- **Herramientas:** si una casilla de un toque no puede fusionar, dice por qué (por ejemplo, un
+  conflicto con main) en vez de "Command failed". Y las pruebas frenan una decisión repetida o fuera
+  de orden en `docs/DECISIONES.md`.
+
 ## 0.154.0 — 2026-10-11
 - **🧪 Laboratorio: Proyectos activos y La Bodega** (D-280). `/labs/` se ordena en dos grupos: lo que
   se está probando y, en 📦 La Bodega, los proyectos que no prosperaron, que se siguen pudiendo jugar.
