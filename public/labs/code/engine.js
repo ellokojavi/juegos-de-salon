@@ -1,5 +1,5 @@
 /**
- * La clave — el motor del prototipo de laboratorio (D-270). Un código de 4 cifras de siete
+ * La clave — el motor del prototipo de laboratorio (D-270). Un código de 5 cifras de siete
  * segmentos repartido entre una base fija y 4 cartas transparentes. Cada carta tiene unos pocos
  * trazos y aparece girada o volteada al azar; hay que ponerlas todas sobre la base y orientar cada
  * una hasta que los trazos se junten en cuatro cifras. La base no se mueve: es la que dice cuál es
@@ -9,7 +9,7 @@
  * (volteada de lado) y V (volteada de arriba abajo). Cada una es su propia inversa y R·H = V, así
  * que con "girar" y "voltear" se llega a todas. Sin DOM: lo prueba engine.test.mjs.
  */
-export const CIFRAS_CODIGO = 4;
+export const CIFRAS_CODIGO = 5;
 /** Cuántas cartas: 4 (con 8 era demasiado, pidió el dueño). */
 export const CARTAS = 4;
 
@@ -44,7 +44,7 @@ export const girar = o => componer(o, 'R');
 export const voltear = o => componer(o, 'H');
 
 /** Las máscaras de las cuatro cifras de unos trazos. */
-const mascaras = segs => { const m = [0, 0, 0, 0]; for (const { i, s } of segs) m[i] |= bit(s); return m; };
+const mascaras = segs => { const m = new Array(CIFRAS_CODIGO).fill(0); for (const { i, s } of segs) m[i] |= bit(s); return m; };
 /** La cifra de una máscara, o null. */
 export const cifraDe = m => MASCARA[m] ?? null;
 
