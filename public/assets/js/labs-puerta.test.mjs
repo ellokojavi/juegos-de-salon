@@ -12,11 +12,12 @@ const AQUI = dirname(fileURLToPath(import.meta.url));
 const PUBLIC = join(AQUI, '../..');
 const fuente = readFileSync(join(AQUI, 'labs-puerta.js'), 'utf8');
 
-// La llave de verdad no está en el repo: la prueba pone una huella propia
-const LLAVE = 'llave-de-prueba';
-const huella = createHash('sha256').update(LLAVE).digest('hex');
-const codigo = fuente.replace(/var HUELLA = '[0-9a-f]{64}'/, `var HUELLA = '${huella}'`);
-assert.notEqual(codigo, fuente, 'la puerta declara su HUELLA');
+// Las llaves de verdad no están en el repo: la prueba pone huellas propias, una por persona (D-284)
+const LLAVE = 'llave-de-prueba', OTRA = 'llave-de-otra';
+const huella = k => createHash('sha256').update(k).digest('hex');
+const conHuellas = (...llaves) => fuente.replace(/var HUELLAS = \{[\s\S]*?\};/, `var HUELLAS = { ${llaves.map((k, i) => `'p${i}': '${huella(k)}',`).join(' ')} };`);
+let codigo = conHuellas(LLAVE, OTRA);
+assert.notEqual(codigo, fuente, 'la puerta declara sus HUELLAS');
 
 async function visitar(url, guardada = null) {
   const u = new URL(url);
@@ -56,6 +57,16 @@ assert.ok(r.a === null && r.visible, 'con la llave guardada se entra sin ella en
 
 r = await visitar(`${SITIO}/labs/`, 'vieja');
 assert.ok(r.a === '/' && r.guardada === null, 'una llave guardada que ya no sirve se borra');
+
+r = await visitar(`${SITIO}/labs/?key=${OTRA}`);
+assert.ok(r.a === null && r.visible && r.guardada === OTRA, 'cada persona entra con su propia llave');
+
+// Sacar a una persona: su llave guardada ya no abre, y la de las demás sigue abriendo
+codigo = conHuellas(LLAVE);
+r = await visitar(`${SITIO}/labs/`, OTRA);
+assert.ok(r.a === '/' && r.guardada === null, 'una llave quitada ya no abre, aunque estuviera guardada');
+r = await visitar(`${SITIO}/labs/`, LLAVE);
+assert.ok(r.a === null && r.visible, 'y las demás siguen entrando');
 
 for (const local of ['http://localhost:8765/labs/', 'http://127.0.0.1:8765/labs/', 'https://mac-mini.tail1234.ts.net/labs/']) {
   r = await visitar(local);
