@@ -69,7 +69,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | README y capturas | C-13 | D-51, D-76, D-78, D-213 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216 |
 | La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268 |
-| Agentes (usabilidad, documentación, procesos) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273 |
+| Agentes (usabilidad, documentación, procesos) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249 |
 | Marketing | `marketing/README.md` | D-178 |
 | App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
@@ -1684,7 +1684,7 @@ no abre. Una leyenda debajo explica los estados.
 **Por qué:** pedido del dueño: que cada uno vea su grilla completa y qué le queda.
 
 ## D-132 · Un agente de usabilidad con ronda diaria y dilemas como issues
-**Fecha:** 2026-09-25 · **Estado:** corregida por D-204, D-213
+**Fecha:** 2026-09-25 · **Estado:** corregida por D-204, D-213, D-275
 **Decisión:** Un subagente (`.claude/agents/usabilidad.md`) revisa solo usabilidad: textos,
 botones, interacciones, navegación y mensajes para compartir, con la guía `docs/USABILIDAD.md`
 (reglas U-n, que crecen con cada decisión del dueño).
@@ -4814,3 +4814,27 @@ el dueño; además pide un servidor con una llave de GitHub); un link firmado co
 confirmación en un Cloudflare Worker (son dos toques igual que la casilla, con un servidor más).
 **Consecuencias:** la ronda corre en la nube a las 4:30 hora del Pacífico, después de la de
 documentación (3:54). El correo llega solo los días con algo que decidir.
+
+## D-275 · El feedback 🐞 llega como issues y lo atiende el agente de procesos
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** amplía D-273 (el agente de procesos) y D-104 (los reportes de La Copa); corrige D-132 en que los reportes 🐞 eran de la ronda de usabilidad
+**Decisión:** `.github/workflows/feedback.yml` sube cada hora los reportes nuevos de `feedback/`
+(`tools/agents/feedback.mjs`) como issues con la etiqueta `feedback`, uno por reporte y nunca dos
+veces el mismo. El agente de procesos los atiende en su ronda: arregla lo que tiene un arreglo
+claro (en su PR, con `Closes #n`), pregunta con una decisión de un toque lo que es una idea o un
+pedido, y cierra lo resuelto, repetido o que no se entiende, diciendo por qué. Para eso puede tocar
+el código de la app, con los cánones, los cuatro idiomas, la prueba de punta a punta del juego y su
+entrada del `CHANGELOG.md`.
+- **Privacidad:** el repo es público. El issue lleva el texto tal cual, el juego, la versión y la
+  pantalla, pero **no el nombre** que puso el jugador **ni su navegador**. Un @ o un # del texto no
+  menciona a nadie ni enlaza nada.
+- **Por qué en GitHub y no leyendo Firebase:** la ronda corre en la nube, y desde ahí no se llega a
+  Firebase (el proxy responde 403); GitHub sí llega. Además, cada reporte queda con su respuesta y
+  su arreglo enlazados.
+**Por qué:** lo pidió el dueño: que el agente de procesos "evalúe y resuelva los ítems de feedback
+que vayan llegando". Hasta ahora los leía la ronda de usabilidad (`reportes.mjs --dias 2`), sin
+registro de cuáles se atendieron: un reporte de un día sin ronda se perdía.
+**Alternativas descartadas:** el resumen del reporte en vez del texto (exige que la ronda corra en
+el Mac del dueño, con la app abierta); el texto con el nombre del jugador (el dueño prefirió dejarlo
+fuera).
+**Consecuencias:** al empezar, los nueve reportes que ya había se suben juntos y la primera ronda
+cierra los que ya se resolvieron. GitHub le avisa al dueño por correo de cada issue nuevo.
