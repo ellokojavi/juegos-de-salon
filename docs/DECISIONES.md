@@ -53,7 +53,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 |---|---|---|
 | Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270 |
 | Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184 |
-| Mazos de cartas con fecha | `docs/games/timeline.md` | D-37, D-278, D-277 |
+| Mazos de cartas con fecha | `docs/games/timeline.md` | D-37, D-277, D-278 |
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
@@ -4816,32 +4816,27 @@ confirmación en un Cloudflare Worker (son dos toques igual que la casilla, con 
 **Consecuencias:** la ronda corre en la nube a las 4:30 hora del Pacífico, después de la de
 documentación (3:54). El correo llega solo los días con algo que decidir.
 
-## D-278 · Las cartas con fecha: ni dicen su año ni piden un dato que el jugador no sabe
-**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** corrige D-37
-**Decisión:** De los mazos de Línea de Tiempo (que también usan ¿En qué año?, Línea Relámpago y la
-final de La Copa) salen dos clases de cartas, y no se reescriben: se sacan.
-- **Las que dicen su año**: las Constituciones de 1833, 1925 y 1980, la final de Italia 90 y la
-  Eco-92. El test del motor ya no deja entrar una carta que diga su año, entero o abreviado ("90",
-  "’92"), en ninguno de los cuatro idiomas. Un año que no es el de la carta sí puede ir (*2001:
-  Odisea del espacio*, *1989* de Taylor Swift): es una trampa legítima.
-- **Las que no se pueden situar**: un hecho que se repitió (el incendio de Valparaíso, los
-  incendios forestales de 2017, los terremotos de Santiago de 1647 y de Valparaíso de 1906, "la
-  crisis financiera") o un proceso sin fecha (la era del swing, la bossa nova, la cumbia, el reggae,
-  la salsa, el punk, el Auto-Tune, la electrónica en los festivales, TikTok como fábrica de éxitos,
-  Bad Bunny como el más escuchado, el perro Doge, Baby Shark, el comienzo de las independencias
-  latinoamericanas).
-
-Salieron 23 cartas. Música, que ya tenía 89, recibió 12 hitos puntuales y conocidos (la muerte de
-Lennon, Freddie Mercury y Kurt Cobain, el Nobel de Dylan…) y queda en 91. El test exige ahora 90
-cartas por mazo, lo que ya pedía la guía.
-**Por qué:** El incendio de Valparaíso ya se había anclado como pedía D-37 ("el mayor de su
-historia, casi 3.000 casas") y seguía sin poder situarse: el superlativo y la cifra son datos que
-la carta le enseña al jugador, no algo que él sepa. Reescribir una carta para anclarla agrega una
-pregunta de trivia al juego; el juego es ordenar hechos que uno reconoce. En el otro extremo, una
-carta que dice su año no se juega: se lee.
-**Consecuencias:** La regla para escribir cartas, en `docs/games/timeline.md`: el ancla tiene que
-ser algo que el jugador sepa (un nombre, un hecho único), no un superlativo o una cifra que solo la
-carta dice. Si no la hay, la carta no entra.
+## D-274 · Rankings: que cuente la partida recién jugada, el solitario en la portada y Ahorcado solo
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** amplía D-212 y D-215
+**Decisión:** Tres cambios para que los rankings se llenen:
+- **"¿Quieres que esta partida cuente?"**: al terminar una partida sin jugador abierto (jugando solo
+  en Toque y Fama, Generala, Ahorcado y Línea Relámpago, y en todos los juegos de grupo contra el
+  celular, en sala o en un celular), sale un bloque aparte —fondo propio, borde dorado y una entrada
+  con un pequeño salto— con el formulario de nombre y PIN de siempre y el nombre que escribió para
+  jugar ya puesto. Al entrar o crear su jugador, se anota esa partida (y la victoria, si fue suya).
+  Va después de los botones del final, para que sigan a la vista (C-8). Lo hacen `avisoPartida` y
+  `finDePartida` de `ranking.js`; en los juegos de grupo se pone solo, después de `#result-actions`.
+- **La portada de Toque y Fama, Generala y Ahorcado** muestra la tabla de los mejores puntajes
+  jugando solo arriba de la de victorias: es como más se juegan.
+- **Ahorcado jugando solo tiene ranking** (`ahorcado_solo`): el puntaje de Uno al día (las vidas
+  que quedaron sobre las del principio, de 0 a 100), y el tiempo desempata. También en `/records/`.
+**Por qué:** el dueño vio vacío el ranking de Toque y Fama sabiendo que se juega mucho. Los datos
+(29 días): 43 partidas solo, 33 contra el celular y 23 salas, y en Firebase ni una victoria de
+juegos de grupo; de 31 jugadores registrados, 6 anotaron alguna vez. Los rankings se guardaban
+bien: lo que faltaba era que la gente entrara, y la portada mostraba la tabla que menos se usa.
+El bloque aparte lo pidió el dueño, para que quien no lo ve siempre lo note.
+**Consecuencias:** `tools/e2e/hangman/local.mjs` y `bulls-and-cows/local.mjs` prueban que el
+final ofrezca que la partida cuente.
 
 ## D-275 · El feedback 🐞 llega como issues y lo atiende el agente de procesos
 **Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** amplía D-273 (el agente de procesos) y D-104 (los reportes de La Copa); corrige D-273 en que no tocaba el código de los juegos, y D-132 en que los reportes 🐞 eran de la ronda de usabilidad
@@ -4927,3 +4922,30 @@ reescribir el "iba entre…" más corto (sigue sin enseñar nada).
 exige el dato en todas las cartas de los mazos que ya los tienen (`CON_DATOS`). Los datos se
 escriben verificados: un error en un dato se lee como lección. La regla para escribirlos está en
 `docs/games/timeline.md`.
+
+## D-278 · Las cartas con fecha: ni dicen su año ni piden un dato que el jugador no sabe
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** corrige D-37
+**Decisión:** De los mazos de Línea de Tiempo (que también usan ¿En qué año?, Línea Relámpago y la
+final de La Copa) salen dos clases de cartas, y no se reescriben: se sacan.
+- **Las que dicen su año**: las Constituciones de 1833, 1925 y 1980, la final de Italia 90 y la
+  Eco-92. El test del motor ya no deja entrar una carta que diga su año, entero o abreviado ("90",
+  "’92"), en ninguno de los cuatro idiomas. Un año que no es el de la carta sí puede ir (*2001:
+  Odisea del espacio*, *1989* de Taylor Swift): es una trampa legítima.
+- **Las que no se pueden situar**: un hecho que se repitió (el incendio de Valparaíso, los
+  incendios forestales de 2017, los terremotos de Santiago de 1647 y de Valparaíso de 1906, "la
+  crisis financiera") o un proceso sin fecha (la era del swing, la bossa nova, la cumbia, el reggae,
+  la salsa, el punk, el Auto-Tune, la electrónica en los festivales, TikTok como fábrica de éxitos,
+  Bad Bunny como el más escuchado, el perro Doge, Baby Shark, el comienzo de las independencias
+  latinoamericanas).
+
+Salieron 23 cartas. Música, que ya tenía 89, recibió 12 hitos puntuales y conocidos (la muerte de
+Lennon, Freddie Mercury y Kurt Cobain, el Nobel de Dylan…) y queda en 91. El test exige ahora 90
+cartas por mazo, lo que ya pedía la guía.
+**Por qué:** El incendio de Valparaíso ya se había anclado como pedía D-37 ("el mayor de su
+historia, casi 3.000 casas") y seguía sin poder situarse: el superlativo y la cifra son datos que
+la carta le enseña al jugador, no algo que él sepa. Reescribir una carta para anclarla agrega una
+pregunta de trivia al juego; el juego es ordenar hechos que uno reconoce. En el otro extremo, una
+carta que dice su año no se juega: se lee.
+**Consecuencias:** La regla para escribir cartas, en `docs/games/timeline.md`: el ancla tiene que
+ser algo que el jugador sepa (un nombre, un hecho único), no un superlativo o una cifra que solo la
+carta dice. Si no la hay, la carta no entra.
