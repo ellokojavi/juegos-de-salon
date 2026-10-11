@@ -18,7 +18,7 @@ dice en la portada, en el final y en el laboratorio.
 - **Tablero:** 12 palabras: 9 agentes (3 pistas de 3), 2 neutrales y 1 asesino.
 - **Pistas:** llegan de a una, «MAR · 3». Tocar un agente de la pista suma; uno de otra pista
   también suma y no corta. Un neutral (−15) o el asesino (−40) cortan la pista y pasa la
-  siguiente. "⏭️ Siguiente pista" se planta; en la última dice "🏁 Terminar".
+  siguiente. "⏭️ Siguiente pista" se planta; en la última dice "🏁 Terminar", que si faltan agentes pregunta primero ("¿Terminas igual?", U-15).
 - **Puntaje:** 100 × agentes encontrados / 9, menos las restas, nunca bajo 0.
 - **El día:** sin `?seed=` es el tablero de hoy (`dia:<fecha>`), el mismo para todos. "🔁 Otro
   tablero" abre uno al azar con su semilla en el link, para compartirlo.
