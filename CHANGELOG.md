@@ -16,6 +16,11 @@
   punk, la cumbia). Música suma 12 hitos puntuales, como la muerte de Freddie Mercury o el Nobel de
   Dylan, y su bajada pasa a ser "De Beethoven a Taylor Swift".
 
+## 0.148.4 — 2026-10-11
+- **Herramientas: el agente de procesos dirige a los otros** (D-276): una sola ronda diaria en el
+  Mac lanza a los agentes de documentación y de usabilidad cuando hay algo que revisar, y revisa lo
+  que entregan. Lo que el dueño encarga pasa por él.
+
 ## 0.148.3 — 2026-10-11
 - **Herramientas: el feedback 🐞 lo atiende el agente de procesos** (D-275): cada reporte que llega
   desde la app se vuelve un issue (con el texto, sin el nombre de quien lo manda), y la ronda diaria

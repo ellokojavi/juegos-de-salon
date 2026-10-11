@@ -1,6 +1,6 @@
 // El agente de procesos (D-273): qué PR cuentan como "esperando", la cola de lo aprobado y los patrones.
 import assert from 'node:assert/strict';
-import { esperas, enCola, anotarPatron, cuerpoDecisiones, ARREGLO } from './procesos.mjs';
+import { esperas, enCola, anotarPatron, cuerpoDecisiones, ARREGLO, porDespachar } from './procesos.mjs';
 import { anotarHecho } from './aprobar.mjs';
 
 const ahora = Date.parse('2026-10-11T12:00:00Z');
@@ -38,5 +38,12 @@ assert.ok(ARREGLO.test('Marketing: el video quedó atrás de ¿Dónde queda?'));
 assert.ok(ARREGLO.test('Ronda de usabilidad: marketing al día con D-203'));
 assert.ok(!ARREGLO.test('Zip: diez niveles nuevos'));
 assert.ok(!ARREGLO.test('Uno al día con jugador: historia en Firebase'));
+
+// A quién despachar (D-276)
+assert.deepEqual(porDespachar({ commitsDoc: 0, commitsPublic: 0, diasUsabilidad: 2 }), [], 'sin cambios no se lanza a nadie');
+assert.deepEqual(porDespachar({ commitsDoc: 3, commitsPublic: 0, diasUsabilidad: 2 }).map(d => d.agente), ['documentacion']);
+assert.deepEqual(porDespachar({ commitsDoc: 0, commitsPublic: 2, diasUsabilidad: 1 }).map(d => d.agente), ['usabilidad']);
+assert.match(porDespachar({ commitsDoc: 0, commitsPublic: null, diasUsabilidad: null })[0].motivo, /nunca/);
+assert.match(porDespachar({ commitsDoc: 0, commitsPublic: 0, diasUsabilidad: 7 })[0].motivo, /semana/);
 
 console.log('procesos: ok');

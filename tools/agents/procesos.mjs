@@ -7,6 +7,7 @@
  *   node tools/agents/procesos.mjs decidir <archivo.json> [--directo]   # abre el issue de decisiones de un toque
  *   node tools/agents/procesos.mjs patron <clave> "qué pasó" [--commit <sha>]   # anota una vez que se vio
  *   node tools/agents/procesos.mjs mecanismo <clave> "qué lo frena ahora" --pr <url>
+ *   node tools/agents/procesos.mjs despacho <documentacion|usabilidad> <commit>   # lo lanzó hasta ese commit de main
  *   node tools/agents/procesos.mjs anotar --hasta <commit> [--issue <url>] [--pr <url>] [--nota "…"]
  *   node tools/agents/procesos.mjs historial
  *
@@ -19,7 +20,9 @@
  *   - los commits de main desde la última ronda que arreglan algo que quedó atrás;
  *   - el feedback 🐞 sin atender (issues `feedback` abiertos, D-275);
  *   - las decisiones que el dueño aprobó como "en cola" y siguen sin hacerse;
- *   - los patrones vistos dos veces o más que todavía no tienen mecanismo.
+ *   - los patrones vistos dos veces o más que todavía no tienen mecanismo;
+ *   - a quién despachar hoy (D-276): al agente de documentación si entró algo a main desde su
+ *     última ronda, y al de usabilidad si cambió algo de public/ desde la última vez que se lo lanzó.
  *
  * `decidir` recibe `{ titulo, resumen, decisiones: [{ pregunta, contexto?, si: [acciones], no?: [acciones] }] }`
  * y abre un issue con una casilla Sí y una No por decisión; marcar una la cumple al instante
@@ -110,6 +113,23 @@ export function esperas(pr, ahora = Date.now()) {
   return m;
 }
 
+/** Los ejecutores (D-276). */
+export const EJECUTORES = ['documentacion', 'usabilidad'];
+
+/**
+ * A quién despachar hoy y por qué: `[{ agente, motivo }]`. `documentacion` recibe los commits de
+ * main desde su `revisadoHasta`; `usabilidad`, los que tocaron public/ desde su último despacho
+ * (o `null` si nunca se lo lanzó) y los días desde entonces: una vez por semana va igual.
+ */
+export function porDespachar({ commitsDoc, commitsPublic, diasUsabilidad }) {
+  const res = [];
+  if (commitsDoc > 0) res.push({ agente: 'documentacion', motivo: `${commitsDoc} commit(s) en main desde su última ronda` });
+  if (commitsPublic === null) res.push({ agente: 'usabilidad', motivo: 'nunca se lo despachó' });
+  else if (commitsPublic > 0) res.push({ agente: 'usabilidad', motivo: `${commitsPublic} commit(s) que cambian public/ desde su último despacho` });
+  else if (diasUsabilidad >= 7) res.push({ agente: 'usabilidad', motivo: `una semana sin ronda (${diasUsabilidad} días)` });
+  return res;
+}
+
 /** Anota que un patrón se vio otra vez (o la primera). Devuelve cuántas veces va. */
 export function anotarPatron(memoria, clave, que, { fecha, commit = null }) {
   let p = memoria.patrones.find(x => x.clave === clave);
@@ -124,7 +144,7 @@ export function anotarPatron(memoria, clave, que, { fecha, commit = null }) {
 
 const sh = (cmd, args) => execFileSync(cmd, args, { cwd: RAIZ, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
 const gh = (...args) => JSON.parse(sh('gh', [...args, '-R', REPO]));
-const vacia = () => ({ revisadoHasta: null, patrones: [], mecanismos: [], colaHecha: [], rondas: [] });
+const vacia = () => ({ revisadoHasta: null, patrones: [], mecanismos: [], colaHecha: [], despachos: {}, rondas: [] });
 export const leerMemoria = () => (existsSync(MEMORIA) ? { ...vacia(), ...JSON.parse(readFileSync(MEMORIA, 'utf8')) } : vacia());
 const guardar = m => writeFileSync(MEMORIA, JSON.stringify(m, null, 2) + '\n');
 const hoy = () => new Date().toISOString().slice(0, 10);
@@ -176,6 +196,17 @@ function revisar() {
   const commits = sh('git', ['log', '--no-merges', '--format=%h %ad %s', '--date=short', ...rango]).split('\n').filter(l => ARREGLO.test(l));
   for (const c of commits) console.log(`- ${c}`);
   if (!commits.length) console.log('Ninguno.');
+
+  titulo('A quién despachar hoy (D-276)');
+  const cuenta = (...a) => Number(sh('git', ['rev-list', '--count', ...a]).trim());
+  const ultimo = m.despachos.usabilidad;
+  const plan = porDespachar({
+    commitsDoc: doc.revisadoHasta ? cuenta(`${doc.revisadoHasta}..origin/main`) : 1,
+    commitsPublic: ultimo ? cuenta(`${ultimo.hasta}..origin/main`, '--', 'public/') : null,
+    diasUsabilidad: ultimo ? Math.floor((Date.now() - Date.parse(ultimo.fecha)) / DIA) : null,
+  });
+  for (const d of plan) console.log(`- ${d.agente}: ${d.motivo}  (al lanzarlo: despacho ${d.agente} ${punta.slice(0, 7)})`);
+  if (!plan.length) console.log('Nadie: no cambió nada que revisar.');
 
   titulo('Aprobado y en cola');
   const procesos = gh('issue', 'list', '--label', ETIQUETA, '--state', 'all', '--limit', '30', '--json', 'number,body');
@@ -244,13 +275,20 @@ function principal([orden, ...args]) {
       guardar(m);
       return console.log(`${clave}: frenado por ${que}.`);
     }
+    case 'despacho': {
+      const [agente, hasta] = args;
+      if (!EJECUTORES.includes(agente) || !hasta) throw new Error(`Uso: despacho <${EJECUTORES.join('|')}> <commit>`);
+      m.despachos[agente] = { fecha: hoy(), hasta };
+      guardar(m);
+      return console.log(`${agente}: despachado hasta ${hasta}.`);
+    }
     case 'anotar': return anotar(args);
     case 'historial':
       for (const r of m.rondas) console.log(`${r.fecha} · ${r.desde?.slice(0, 7) || '—'}..${r.hasta.slice(0, 7)}${r.issue ? ` · ${r.issue}` : ''}${r.pr ? ` · ${r.pr}` : ''}${r.nota ? ` · ${r.nota}` : ''}`);
       for (const x of m.mecanismos) console.log(`mecanismo ${x.fecha} · ${x.clave}: ${x.que} (${x.pr})`);
       return;
     default:
-      console.error('Uso: node tools/agents/procesos.mjs revisar | decidir <archivo.json> | patron <clave> "…" | mecanismo <clave> "…" --pr <url> | anotar --hasta <commit> | historial');
+      console.error('Uso: node tools/agents/procesos.mjs revisar | decidir <archivo.json> | patron <clave> "…" | mecanismo <clave> "…" --pr <url> | despacho <agente> <commit> | anotar --hasta <commit> | historial');
       process.exit(2);
   }
 }
