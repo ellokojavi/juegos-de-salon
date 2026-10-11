@@ -24,9 +24,10 @@ código en el teclado (D-270). Como las tarjetas transparentes de los juegos de 
   cartas mal puestas a veces aparece una cifra falsa, que despista.
 - **Un trazo encima de otro no vale:** cada trazo del código está en una sola capa (la base o una
   carta), así que la solución nunca tiene choques. Cuando dos capas ponen un trazo en el mismo
-  lugar, se tapa con una franja oscura con puntos rojos que laten, y arriba dice "⚠️ Hay 3 trazos
-  encima de otros: así no es." (pedido del dueño). Es una pista honesta: dice que algo está mal,
-  no qué carta.
+  lugar, ese trazo se ve **rayado en diagonal con los colores de las capas que chocan** (blanco si
+  una es la base), con un borde oscuro y un brillo que respira despacio: se nota que hay dos cosas
+  ahí, sin texto ni rojo (pedido del dueño: "se ve visualmente que así no es"). Dice que algo está
+  mal y entre qué cartas, no cuál hay que mover.
 - **Una sola lectura:** el motor arma la clave de modo que, con todas las cartas puestas, la única
   combinación de orientaciones sin choques que forma cuatro cifras es la del código (lo revisa con
   las 256 combinaciones).
@@ -40,7 +41,7 @@ código en el teclado (D-270). Como las tarjetas transparentes de los juegos de 
 ```
 public/labs/code/index.html · style.css · game.js (pantalla y textos)
 public/labs/code/engine.js · engine.test.mjs (orientaciones, reparto, lectura única; sin DOM)
-tools/e2e/code/lab.mjs   poner, elegir, girar, voltear y quitar cartas; los choques en rojo; leer y escribir el código, en los cuatro idiomas a 320 px
+tools/e2e/code/lab.mjs   poner, elegir, girar, voltear y quitar cartas; los choques rayados; leer y escribir el código, en los cuatro idiomas a 320 px
 ```
 
 ## Excepciones a los cánones

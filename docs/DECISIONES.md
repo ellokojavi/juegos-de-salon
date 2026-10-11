@@ -4702,8 +4702,8 @@ no esté en la cuenta, que abra y cierre la capa, y que el formulario sea lo úl
 reparte entre una base fija y 4 cartas transparentes, cada una girada o volteada al azar. Se
 toca una carta para ponerla sobre la base y elegirla, y con ↻ (media vuelta) y ⇋ (de lado) se
 orienta; con todas derechas los trazos forman el código, que se escribe en el teclado de Toque y
-Fama. Nada avisa que una carta quedó bien; un trazo encima de otro sí se marca (puntos rojos y un
-aviso), porque cada trazo del código está en una sola capa y la solución nunca tiene choques. El
+Fama. Nada avisa que una carta quedó bien; un trazo encima de otro sí se nota (se ve rayado con los
+colores de las cartas que chocan, sin texto), porque cada trazo del código está en una sola capa y la solución nunca tiene choques. El
 motor garantiza que con todas puestas no hay otra forma sin choques de leer cuatro cifras. Detalle en [games/code.md](games/code.md).
 **Por qué:** lo pidió el dueño: "figures/shapes that combined in a specific set of positions create
 a code that can then be entered in a number or word pad… Start with two shapes". Probó la v1 de
