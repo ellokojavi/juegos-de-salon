@@ -93,6 +93,33 @@ Seis temáticas, cada una en su archivo dentro de `decks/`:
 - Los mazos temáticos (Brasil, Fútbol) pueden repetir hitos de otros mazos (el Maracanazo, el Mundial
   del 62): cada mazo se juega solo, así que no hay choque de ids mientras lleven su prefijo (`br-`, `fut-`).
 
+#### El dato de cada carta (D-276)
+Cada carta puede llevar un `dato` en los cuatro idiomas: una frase, un porqué o una anécdota, que se
+lee en unos 3 segundos. Decir entre qué hitos iba una carta no enseña nada (el año grande ya lo
+dice); el dato deja algo aprendido en cada jugada, también en ¿En qué año? y en La Copa.
+
+```js
+{ id: 'muro', year: 1989, …, dato: { es: 'Lo abrió un error: un vocero anunció en la tele que la frontera se abría «de inmediato».', en: '…', pt: '…', de: '…' } }
+```
+
+- **Dónde se ve** (`public/assets/js/dato.js`): al **errar**, en el veredicto, que se queda hasta
+  tocarlo; al **acertar**, en una franja sobre el botón de colocar que no frena nada, sobrevive a
+  elegir la carta siguiente y se va sola a los 6 s (un toque la cierra antes); al **terminar**, en la
+  línea como quedó: los errores con su dato a la vista y el resto a un toque. En ¿En qué año? va bajo
+  el año de cada hito.
+- **El reloj se pausa mientras se lee un error** en Línea Relámpago (solo, práctica y copa) y en cada
+  hito de ¿En qué año?: el reloj de arriba marca ⏸ y una barra bajo el dato se vacía. La pausa tiene
+  **tope de 6 s** (`PAUSA_DATO_MS`) para que no sirva de tiempo para pensar; el veredicto tapa el
+  tablero, así que tampoco hay nada que estudiar. En varios celulares no hace falta: ya se mide solo
+  el turno de cada uno (D-31).
+- **Reglas del texto**, que frena el test del motor: hasta 110 caracteres por idioma (≈90 en
+  español), **sin años** (ni el de la carta ni un número que sea el año de otra carta del mazo: le
+  regalaría la fecha al siguiente jugador) y sin repetir la carta. Exacto ante todo: un error se lee
+  como lección, y una tradición se dice como tradición.
+- **Mazos con datos:** Chile e Historia. El test exige el dato en todas las cartas de los mazos de
+  `CON_DATOS` (`engine.test.mjs`); los demás se van sumando, y mientras tanto sus errores dicen
+  entre qué hitos iba la carta.
+
 #### Que no se repitan las cartas (D-34)
 Cada celular recuerda las cartas que ha visto por temática (`juegos-de-salon:linea-de-tiempo:vistas`).
 Al armar una partida, las más recientes se excluyen del mazo y la lista viaja en `config.skip`, así
@@ -190,9 +217,10 @@ Jugar solo: Intro → Temática y cómo se juega → Juego (screen-solo) → Res
 - El veredicto se dirige a quien jugó: “¡Te equivocaste!” para el que falló y “¡Cata se equivocó!” para el resto, con el fondo rojo solo en la pantalla del que falló (D-36).
 - Nada viene preseleccionado: hasta que el jugador toca una carta, las ranuras no reaccionan y el botón de confirmar está deshabilitado (D-38). El botón nombra la carta que va a colocar.
 - La carta se enciende **al apretar**, no al soltar el dedo. La carta elegida se marca en la propia mano (borde amarillo, el resto atenuado) y aparece dibujada dentro de la ranura elegida antes de confirmar. Se toca una ranura y luego **📍 Colocar aquí** (C-8), botón que flota abajo. Hubo una barra aparte que repetía la carta elegida sobre la línea; se quitó por redundante (D-33).
-- Al confirmar, la carta se revela con su año. Un **acierto** se muestra un par de segundos y se cierra solo.
-  Un **error** tiñe la pantalla de rojo, sacude la carta, suena distinto y explica entre qué hitos iba y entre
-  cuáles se puso; se queda hasta que el jugador toca. Mientras tanto, el celular no juega y las jugadas de
+- Al confirmar, la carta se revela con su año. Un **acierto** se muestra un par de segundos y se cierra solo,
+  y deja el dato de la carta en una franja sobre el botón de colocar (ver “El dato de cada carta”).
+  Un **error** tiñe la pantalla de rojo, sacude la carta, suena distinto y cuenta el dato de la carta (si
+  la carta no tiene, explica entre qué hitos iba y entre cuáles se puso); se queda hasta que el jugador toca. Mientras tanto, el celular no juega y las jugadas de
   otros esperan.
 - **Arrastrar** (D-85, `public/assets/js/arrastre.js`). La carta se puede sacar de la mano hacia abajo y
   soltarla sobre una ranura; mientras viaja se dibuja en grande —268 px, texto de 15 px— y 60 px por
