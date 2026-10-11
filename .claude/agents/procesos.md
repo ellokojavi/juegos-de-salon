@@ -63,16 +63,25 @@ también fuera de eso (después de un juego nuevo, de un cambio grande de textos
   propia copia (`git worktree add`); base del PR `main`." Criterios: su PR abierto (o "nada que
   documentar" si no entró nada), `documentar.mjs revisar` sin ✗ nuevos y `readme.py revisar` sin
   ERROR en su rama, y su memoria (`docs/documentacion.json`) avanzada en ese PR.
-- **`usabilidad`, modo ronda:** "Haz tu ronda diaria según tu guía. Tu copia:
-  `git worktree add /private/tmp/usabilidad-<fecha> origin/main --detach`, base del PR `main`.
-  Sírvela en el puerto 8799 y corre `SITIO=http://localhost:8799 PUERTO_CDP=9499 node
-  tools/e2e/cup/torneo.mjs /private/tmp/usabilidad-<fecha>-capturas`; si tienes que matar Chrome,
-  solo el tuyo (`pkill -f "remote-debugging-port=949[9]"`), y al final detén el servidor y quita la
-  copia. Sin versión ni CHANGELOG si no tocas `public/`. Los reportes 🐞 son míos (D-275): míralos
-  solo como contexto. Antes de abrir un dilema, `dilemas.mjs listar --todos`." Criterios: las
-  pantallas que miró, su PR con base `main` (si arregló algo), los dilemas sin repetir, y la
-  anotación de marketing (`marketing.mjs`) si cambió algo.
-- Al lanzarlos, anota el despacho (`despacho <agente> <commit de main>`). Mientras corren, sigues
+- **`usabilidad`, modo ronda:** "Haz tu ronda diaria según tu guía (`.claude/agents/usabilidad.md`),
+  sin la carpeta principal del repo. Tu copia: `git fetch -q origin`, quita las de rondas
+  anteriores (`git worktree list`; `git worktree remove --force` las de `/private/tmp/usabilidad-*`)
+  y `git worktree add /private/tmp/usabilidad-<fecha> origin/main --detach`; si arreglas algo, rama
+  `usabilidad-<fecha>` y PR con base `main`, que no fusionas. Sírvela en el puerto 8799 y corre
+  `SITIO=http://localhost:8799 PUERTO_CDP=9499 node tools/e2e/cup/torneo.mjs
+  /private/tmp/usabilidad-<fecha>-capturas`. Cada Chrome muere con su guion (D-213); si quedara
+  uno, búscalo por su perfil, nunca con `pkill` a secas. Si el guion se corta sin un ✗, otra
+  sesión pudo matar Chrome: repítelo una vez. Al final detén el servidor y quita la copia (la
+  rama y el PR quedan). Sin versión ni CHANGELOG (D-205). Los reportes 🐞 son míos (D-275):
+  míralos solo como contexto. Antes de abrir un dilema, `dilemas.mjs listar --todos`. La
+  anotación de marketing (`marketing.mjs anotar`) va en tu PR; si no arreglaste nada y cambió
+  esa anotación, abre uno solo con ella." Criterios: `torneo.mjs` sin ✗ (o cada ✗ explicado como
+  hallazgo de la app o del guion), las pantallas que miró nombradas en su informe, su PR con base
+  `main` y pruebas en verde (si arregló algo), cada dilema nuevo sin uno igual en `listar --todos`,
+  `marketing.mjs revisar` y `og.mjs revisar` corridos y su anotación en el PR si cambió algo.
+- Al lanzarlos, anota el despacho (`despacho <agente> <commit de main>`). Va en `docs/procesos.json`:
+  una ronda que despachó deja PR aunque no tenga otra cosa (paso 8), o mañana `revisar` lo vuelve
+  a pedir. Mientras corren, sigues
   con tu ronda; al final revisas lo que entregaron (paso 3 de los encargos) y lo cuentas en tu
   informe.
 
@@ -140,8 +149,8 @@ también fuera de eso (después de un juego nuevo, de un cambio grande de textos
    Un dueño que contesta desde el celular: pocas decisiones (hasta cinco) y que se entiendan sin
    abrir nada más.
 8. **Cierra la ronda:** `node tools/agents/procesos.mjs anotar --hasta <commit> [--issue <url>]
-   [--pr <url>] [--nota "…"]`, en el commit de tu PR. Si la ronda no dejó PR, no anotas: la
-   siguiente parte del mismo commit y no se pierde nada.
+   [--pr <url>] [--nota "…"]`, en el commit de tu PR. Si la ronda no dejó PR ni despachó a
+   nadie, no anotas: la siguiente parte del mismo commit y no se pierde nada.
 
 ## Qué tocas y qué no
 
@@ -167,7 +176,7 @@ Sí del dueño.
 - Pruebas sin navegador en verde. Si tocaste un workflow, que el YAML se lea.
 - Tu PR con auto-merge (`gh pr merge <n> --auto --merge`, D-216): lo tuyo no espera al dueño. Lo
   que necesita su opinión va en el issue de decisiones, no en el PR.
-- Si no hay nada que cerrar, ningún patrón nuevo ni decisiones: terminas sin PR ni issue, y lo dices en una línea.
+- Si no hay nada que cerrar, ningún patrón nuevo, decisiones ni despachos: terminas sin PR ni issue, y lo dices en una línea.
 
 ## Tu informe
 
