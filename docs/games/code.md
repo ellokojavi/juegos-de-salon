@@ -12,6 +12,13 @@ código en el teclado (D-270). Como las tarjetas transparentes de los juegos de 
 - **Cartas:** 4, ninguna viene derecha. Hubo un modo de 8 y el dueño lo sacó: demasiado complejo.
 - **Estado:** prototipo, sin publicar: la v1 de dos figuras se probó y el dueño pidió más cartas.
 
+## Portada
+
+El título con el degradé que se mueve (`.rainbow`) y un 🔐 que se mece, una ilustración en que las
+cuatro cartas llegan volando, se posan sobre la base y forman CLAVE (en los otros idiomas, un
+código), brillan y se van, y "¿Cómo se juega?" en tres pasos con su ícono. En el juego, el título va
+arriba y "¿Cómo se juega?" plegado al final.
+
 ## Cómo funciona
 
 - **La base** tiene unos pocos trazos blancos y no se mueve: dice cuál es el derecho, así que el

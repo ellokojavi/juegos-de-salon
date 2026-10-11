@@ -73,9 +73,9 @@ export function lecturas(clave) {
  * trazos de la palabra (girados si hay que girarla); la otra, trazos que despistan: algunos de la
  * palabra en otro lugar y otros sueltos, para que se vea como una cara posible.
  */
-export function generar(r = Math.random) {
+export function generar(r = Math.random, { palabra: fija = null } = {}) {
   for (let intento = 0; intento < 600; intento++) {
-    const palabra = PALABRAS_CLAVE[Math.floor(r() * PALABRAS_CLAVE.length)];
+    const palabra = fija || PALABRAS_CLAVE[Math.floor(r() * PALABRAS_CLAVE.length)];
     const trazos = barajar([...palabra].flatMap((l, i) => LETRAS[l].split(' ').map(s => ({ i, s }))), r);
     const enBase = Math.max(3, Math.round(trazos.length / 6));
     const base = trazos.slice(0, enBase), resto = trazos.slice(enBase);

@@ -12,7 +12,7 @@ import { botonResultadoSolo } from '../../assets/js/compartir.js';
 import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/stats.js';
 import { formularioComentario, abrirComentario } from '../../assets/js/labs-idioma.js';
 import { teclado, CIFRAS } from '../../assets/js/teclado.js';
-import { generar, girar, voltear, choques, CIFRAS_CODIGO } from './engine.js';
+import { generar, girar, voltear, choques, mover, CIFRAS_CODIGO } from './engine.js';
 import * as palabra from './engine-palabra.js';
 import { alfabeto } from '../../cup/games/word/engine.js';
 
@@ -25,9 +25,9 @@ const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const TEXTOS = {
   es: {
     nombre: 'La clave', laboratorio: '‹ Laboratorio',
-    lema: 'Unas cartas transparentes esconden un código. Ninguna lo dice sola.',
+    lema: 'Unas cartas transparentes esconden una clave. Ninguna la dice sola.',
     como: ['Descubre la clave y escríbela: una palabra de 5 letras o un código de 5 cifras.', 'Toca una carta para ponerla sobre la base. ↻ la gira y ⇋ la voltea; en Palabra, cada carta tiene dos caras distintas.', 'Con todas puestas y derechas, los trazos forman la clave sin pisarse.'],
-    palabra: '🔤 Palabra', cifras: '🔢 Cifras', caraDe: 'Cara {c} de 2',
+    comoSeJuega: '¿Cómo se juega?', palabra: '🔤 Palabra', cifras: '🔢 Cifras', caraDe: 'Cara {c} de 2',
     empezar: '🔐 Empezar', girar: '↻ Girar', voltear: '⇋ Voltear', ok: 'OK',
     quitar: '✕ Quitar', elige: 'Toca una carta de abajo para ponerla.', elegida: 'Carta {n}', mal: 'Ese no es el código. 🔒', malPalabra: 'Esa no es la palabra. 🔒',
     abierto: '¡Abierto!', resumen: 'En {tiempo}, con {e} intentos fallidos.', resumenSin: 'En {tiempo}, sin intentos fallidos.', resumenUno: 'En {tiempo}, con 1 intento fallido.',
@@ -39,7 +39,7 @@ const TEXTOS = {
     lema: 'Some see-through cards hide a code. None shows it alone.',
     como: ['Find the 5-digit code and type it in.', 'Tap a card to put it on the base. ↻ turns it and ⇋ flips it.', 'With all of them on and the right way round, the strokes form the digits without overlapping.'],
     empezar: '🔐 Start', girar: '↻ Turn', voltear: '⇋ Flip', ok: 'OK',
-    quitar: '✕ Remove', elige: 'Tap a card below to put it on.', elegida: 'Card {n}', mal: 'That’s not the code. 🔒',
+    comoSeJuega: 'How to play', quitar: '✕ Remove', elige: 'Tap a card below to put it on.', elegida: 'Card {n}', mal: 'That’s not the code. 🔒',
     abierto: 'Unlocked!', resumen: 'In {tiempo}, with {e} wrong tries.', resumenSin: 'In {tiempo}, with no wrong tries.', resumenUno: 'In {tiempo}, with 1 wrong try.',
     otra: '🔁 Another code', comentarAbrir: '💬 Leave a comment',
     comentario: { titulo: 'What did you think?', lead: 'Tell us if it made sense, if it was easy or hard, and what other shapes you’d like to combine.', ph: 'For example: I didn’t realize I could flip it; I’d like it with three shapes.', nombre: 'Your name (optional)', enviar: 'Send comment', enviando: 'Sending…', vacio: 'Write something first.', gracias: 'Thanks! 🙌 Your comment arrived.', guardado: 'No internet right now: your comment is saved on your phone and will be sent later.', error: 'Couldn’t send it. Try again in a bit.', contexto: 'What gets sent with it', cancelar: 'Cancel', cerrar: 'Close' },
@@ -49,7 +49,7 @@ const TEXTOS = {
     lema: 'Cartas transparentes escondem uma senha. Nenhuma mostra sozinha.',
     como: ['Descubra a senha de 5 dígitos e digite.', 'Toque numa carta para colocá-la sobre a base. ↻ gira e ⇋ vira.', 'Com todas colocadas e do jeito certo, os traços formam os dígitos sem se sobrepor.'],
     empezar: '🔐 Começar', girar: '↻ Girar', voltear: '⇋ Virar', ok: 'OK',
-    quitar: '✕ Tirar', elige: 'Toque numa carta abaixo para colocá-la.', elegida: 'Carta {n}', mal: 'Essa não é a senha. 🔒',
+    comoSeJuega: 'Como se joga', quitar: '✕ Tirar', elige: 'Toque numa carta abaixo para colocá-la.', elegida: 'Carta {n}', mal: 'Essa não é a senha. 🔒',
     abierto: 'Aberto!', resumen: 'Em {tiempo}, com {e} tentativas erradas.', resumenSin: 'Em {tiempo}, sem tentativas erradas.', resumenUno: 'Em {tiempo}, com 1 tentativa errada.',
     otra: '🔁 Outra senha', comentarAbrir: '💬 Deixar um comentário',
     comentario: { titulo: 'O que você achou?', lead: 'Conte se deu para entender, se foi fácil ou difícil, e que outras figuras você gostaria de combinar.', ph: 'Por exemplo: não percebi que dava para virar; queria com três figuras.', nombre: 'Seu nome (opcional)', enviar: 'Enviar comentário', enviando: 'Enviando…', vacio: 'Escreva algo primeiro.', gracias: 'Obrigado! 🙌 Seu comentário chegou.', guardado: 'Sem internet agora: seu comentário ficou no celular e será enviado depois.', error: 'Não deu para enviar. Tente de novo daqui a pouco.', contexto: 'O que vai junto', cancelar: 'Cancelar', cerrar: 'Fechar' },
@@ -59,7 +59,7 @@ const TEXTOS = {
     lema: 'Durchsichtige Karten verstecken einen Code. Keine zeigt ihn allein.',
     como: ['Finde den 5-stelligen Code und tippe ihn ein.', 'Tippe auf eine Karte, um sie auf die Basis zu legen. ↻ dreht sie, ⇋ spiegelt sie.', 'Liegen alle richtig herum, ergeben die Striche die Ziffern, ohne sich zu überlagern.'],
     empezar: '🔐 Los geht’s', girar: '↻ Drehen', voltear: '⇋ Spiegeln', ok: 'OK',
-    quitar: '✕ Entfernen', elige: 'Tippe unten auf eine Karte, um sie aufzulegen.', elegida: 'Karte {n}', mal: 'Das ist nicht der Code. 🔒',
+    comoSeJuega: 'So wird gespielt', quitar: '✕ Entfernen', elige: 'Tippe unten auf eine Karte, um sie aufzulegen.', elegida: 'Karte {n}', mal: 'Das ist nicht der Code. 🔒',
     abierto: 'Offen!', resumen: 'In {tiempo}, mit {e} Fehlversuchen.', resumenSin: 'In {tiempo}, ohne Fehlversuch.', resumenUno: 'In {tiempo}, mit 1 Fehlversuch.',
     otra: '🔁 Neuer Code', comentarAbrir: '💬 Kommentar schreiben',
     comentario: { titulo: 'Wie fandest du es?', lead: 'Erzähl uns, ob es verständlich war, ob es leicht oder schwer war und welche Formen du gern kombinieren würdest.', ph: 'Zum Beispiel: Ich habe nicht gemerkt, dass man spiegeln kann; ich hätte gern drei Formen.', nombre: 'Dein Name (optional)', enviar: 'Kommentar senden', enviando: 'Wird gesendet …', vacio: 'Schreib erst etwas rein.', gracias: 'Danke! 🙌 Dein Kommentar ist angekommen.', guardado: 'Gerade kein Netz: Dein Kommentar ist auf dem Handy gespeichert und wird später automatisch gesendet.', error: 'Das hat nicht geklappt. Versuch es gleich nochmal.', contexto: 'Das wird mitgeschickt', cancelar: 'Abbrechen', cerrar: 'Schließen' },
@@ -128,14 +128,40 @@ const contexto = pantalla => ({
   idioma: lang, url: location.pathname + location.search, pantallaTam: `${innerWidth}×${innerHeight}`, navegador: navigator.userAgent.slice(0, 160),
 });
 
+/**
+ * La portada: las cartas llegan volando, se posan sobre la base y forman la clave (CLAVE en
+ * español, un código en los otros idiomas); brillan un rato, se van y vuelven a llegar.
+ */
+function ilustracion() {
+  const enPalabra = lang === 'es';
+  const clave = enPalabra ? palabra.generar(Math.random, { palabra: 'CLAVE' }) : generar();
+  const geo = enPalabra ? TRAZO14 : TRAZO;
+  const svg = lamina('demo');
+  svg.append(svgEl('rect', { x: 0, y: 0, width: 300, height: 140, rx: 12, class: 'borde' }), ...lineas(clave.base, '#fff', geo));
+  clave.cartas.forEach((c, k) => {
+    const trazos = enPalabra ? palabra.visibles(c, c.bien) : c.trazos.map(x => mover(c.o, x));
+    const capa = svgEl('g', { class: 'capa-demo', style: `--dx:${azar(-160, 160)}px;--dy:${azar(90, 160) * (k % 2 ? 1 : -1)}px;--rot:${[180, -180, 90, -90][k]}deg;--k:${k}` });
+    capa.append(...lineas(trazos, COLORES[k], geo));
+    svg.append(capa);
+  });
+  return el('div', { class: 'demo', 'aria-hidden': 'true' }, svg);
+}
+
+/** Cómo se juega, con un dibujo por paso: tocar, girar y voltear, leer y escribir. */
+const pasos = () => el('ol', { class: 'pasos' }, ...T.como.map((x, k) => el('li', {}, el('span', { class: 'paso-ico', 'aria-hidden': 'true' }, ['🎯', '👆', '✨'][k] || '•'), el('span', {}, x))));
+const tituloJuego = (grande = false) => el(grande ? 'h1' : 'h2', { class: `titulo-clave${grande ? ' grande' : ''}` },
+  el('span', { class: 'candado', 'aria-hidden': 'true' }, '🔐'), el('span', { class: `display ${grande ? 'display--lg' : 'display--md'} rainbow` }, T.nombre));
+/** "¿Cómo se juega?" plegado al final del juego, para volver a mirarlo sin salir. */
+const reglasPlegadas = () => el('details', { class: 'panel reglas-clave' }, el('summary', {}, `🔐 ${T.comoSeJuega}`), pasos());
+
 function portada() {
   vista.replaceChildren(
     el('div', { class: 'portada' },
-      el('span', { class: 'icono', 'aria-hidden': 'true' }, '🔐'),
-      el('h1', { class: 'display display--lg rainbow', style: 'margin:0' }, T.nombre),
+      tituloJuego(true),
+      ilustracion(),
       el('p', { class: 'lead' }, T.lema),
       el('div', { style: 'display:flex;justify-content:center' }, langToggle())),
-    el('div', { class: 'panel' }, el('ol', { class: 'rules-list', style: 'margin:0' }, ...T.como.map(x => el('li', {}, x)))),
+    el('div', { class: 'panel' }, el('p', { class: 'lead', style: 'margin:0 0 6px' }, T.comoSeJuega), pasos()),
     // La de palabra, por ahora solo en español (sus palabras son las de Toque y Fama: Palabra)
     lang === 'es' ? el('div', { class: 'modos' },
       el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-empezar-palabra', onClick: () => { SFX.tap(); empezarPalabra(); } }, T.palabra),
@@ -246,10 +272,11 @@ function jugar() {
   const bandeja = el('div', { class: `bandeja n${clave.cartas.length}`, id: 'bandeja' }, ...miniaturas);
   brillosAlAzar(bandeja);
   vista.replaceChildren(
+    tituloJuego(),
     el('div', { class: 'tablero' }, el('div', { class: 'marco', id: 'marco' }, base)),
     titulo, controles,
     bandeja,
-    pad);
+    pad, reglasPlegadas());
   dibujar();
   pieComentario('juego');
 }
@@ -360,8 +387,9 @@ function jugarPalabra() {
   const bandeja = el('div', { class: 'bandeja', id: 'bandeja' }, ...miniaturas);
   brillosAlAzar(bandeja);
   vista.replaceChildren(
+    tituloJuego(),
     el('div', { class: 'tablero palabra' }, el('div', { class: 'marco', id: 'marco' }, base)),
-    titulo, controles, bandeja, pad);
+    titulo, controles, bandeja, pad, reglasPlegadas());
   dibujar();
   pieComentario('juego-palabra');
 }
