@@ -4839,7 +4839,7 @@ El bloque aparte lo pidió el dueño, para que quien no lo ve siempre lo note.
 final ofrezca que la partida cuente.
 
 ## D-275 · El feedback 🐞 llega como issues y lo atiende el agente de procesos
-**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** amplía D-273 (el agente de procesos) y D-104 (los reportes de La Copa); corrige D-273 en que no tocaba el código de los juegos, y D-132 en que los reportes 🐞 eran de la ronda de usabilidad
+**Fecha:** 2026-10-11 · **Estado:** corregida por D-277 · **Relación:** amplía D-273 (el agente de procesos) y D-104 (los reportes de La Copa); corrige D-273 en que no tocaba el código de los juegos, y D-132 en que los reportes 🐞 eran de la ronda de usabilidad
 **Decisión:** `.github/workflows/feedback.yml` sube cada hora los reportes nuevos de `feedback/`
 (`tools/agents/feedback.mjs`) como issues con la etiqueta `feedback`, uno por reporte y nunca dos
 veces el mismo. El agente de procesos los atiende en su ronda: arregla lo que tiene un arreglo
@@ -4949,3 +4949,15 @@ carta que dice su año no se juega: se lee.
 **Consecuencias:** La regla para escribir cartas, en `docs/games/timeline.md`: el ancla tiene que
 ser algo que el jugador sepa (un nombre, un hecho único), no un superlativo o una cifra que solo la
 carta dice. Si no la hay, la carta no entra.
+
+## D-277 · Los issues de feedback llevan el nombre de quien lo manda
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** corrige D-275 (el issue iba sin el nombre)
+**Decisión:** El issue de cada reporte 🐞 suma una línea **Quién** con el nombre que el jugador
+escribió en el formulario, si escribió uno. El navegador sigue fuera. Los nueve issues que ya
+estaban se completaron con su nombre.
+**Por qué:** lo pidió el dueño al ver los primeros issues: "no dice el nombre de quien reporta, lo
+que me ayudaría para hacer follow-up personal". El repo es público, así que el nombre queda a la
+vista, pero el nodo `feedback/` de Firebase ya se lee sin llave (`.read: true`): el issue no expone
+nada que no se pudiera ver. El nombre es opcional y lo elige el jugador (40 caracteres como mucho).
+**Alternativas descartadas:** dejarlo solo en `reportes.mjs` o en el panel (el dueño tendría que ir
+a buscarlo; el correo del issue es donde lee el reporte).

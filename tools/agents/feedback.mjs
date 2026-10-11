@@ -9,7 +9,8 @@
  *   node tools/agents/feedback.mjs sincronizar [--simular]   # crea los issues que faltan
  *
  * El repo es público: el issue lleva el texto tal cual, el juego, la versión y la pantalla, pero
- * no el nombre que puso el jugador ni su navegador (lo decidió el dueño). Cada issue lleva
+ * el nombre que puso el jugador, para que el dueño le haga seguimiento (D-277), pero no su
+ * navegador. Cada issue lleva
  * `<!-- feedback:<id> -->`, así un reporte nunca se sube dos veces, aunque su issue esté cerrado.
  */
 import { execFileSync } from 'node:child_process';
@@ -48,12 +49,12 @@ export function titulo(r) {
   return `🐞 ${donde(r)}: ${t.length > 70 ? `${t.slice(0, 69)}…` : t}`;
 }
 
-/** El cuerpo: el texto tal cual y el contexto, sin el nombre ni el navegador. */
+/** El cuerpo: el texto tal cual, quién lo mandó y el contexto, sin el navegador. */
 export function cuerpo(r) {
   const c = contexto(r);
   const fecha = r.at ? new Date(r.at).toISOString().slice(0, 16).replace('T', ' ') + ' UTC' : 'sin fecha';
   const datos = [
-    ['Juego', c.juego], ['Laboratorio', c.labs], ['Copa', c.copa], ['Día', c.dia], ['Semilla', c.semilla],
+    ['Quién', r.nombre && String(r.nombre).trim()], ['Juego', c.juego], ['Laboratorio', c.labs], ['Copa', c.copa], ['Día', c.dia], ['Semilla', c.semilla],
     ['Resultado', c.resumen ?? c.puntaje], ['Errores', c.errores], ['Ayudas', c.ayudas], ['Tiempo', c.tiempo],
     ['Página', c.url && (String(c.url).startsWith('/') ? `${SITIO}${c.url}` : c.url)], ['Pantalla', c.pantalla], ['Ventana', c.pantallaTam], ['Versión', r.v && `v${r.v}`], ['Fecha', fecha],
   ].filter(([, v]) => v !== undefined && v !== null && v !== '');
