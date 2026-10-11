@@ -53,7 +53,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 |---|---|---|
 | Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270 |
 | Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184 |
-| Mazos de cartas con fecha | `docs/games/timeline.md` | D-37, D-274 |
+| Mazos de cartas con fecha | `docs/games/timeline.md` | D-37, D-274, D-276 |
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
@@ -63,7 +63,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246 |
 | Memoria de partida | C-6 | D-25, D-150 |
 | Interfaz táctil | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213 |
-| Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213 |
+| Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213, D-276 |
 | Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243, D-253, D-254, D-271, D-272 |
 | Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251 |
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218 |
@@ -4842,3 +4842,31 @@ carta que dice su año no se juega: se lee.
 **Consecuencias:** La regla para escribir cartas, en `docs/games/timeline.md`: el ancla tiene que
 ser algo que el jugador sepa (un nombre, un hecho único), no un superlativo o una cifra que solo la
 carta dice. Si no la hay, la carta no entra.
+
+## D-276 · El veredicto de una carta con fecha cuenta su dato, y leerlo no cuesta tiempo
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** excepción a C-8b (la explicación del error); completa D-95 (el tiempo activo) y D-274
+**Decisión:** Cada carta de los mazos de Línea de Tiempo puede llevar un **dato** en los cuatro
+idiomas (un porqué o una anécdota de hasta 110 caracteres, sin años), y el veredicto lo cuenta en
+vez de decir entre qué hitos iba la carta:
+- **Al errar**, en el veredicto que se queda hasta tocarlo. En ⏳ Línea Relámpago (solo, práctica y
+  copa) y en cada hito de 📅 ¿En qué año?, el reloj se **pausa** mientras se lee, con **tope de 6 s**:
+  arriba marca ⏸ y una barra bajo el dato se vacía.
+- **Al acertar**, en una franja sobre el botón de colocar que no frena nada y se va sola a los 6 s.
+- **Al terminar**, la línea como quedó es el repaso: los errores con su dato a la vista y el resto a
+  un toque.
+
+Entran con datos Chile e Historia; los otros cuatro mazos se suman después, y mientras tanto una
+carta sin dato dice dónde iba, como antes.
+**Por qué:** lo pidió el dueño al ver "Fue en 1738: iba antes de 1925 · … Tú la pusiste entre 1980
+y 1989 · …": que un año está entre otros dos no le enseña nada a nadie, y el año grande de la carta
+ya dice qué estuvo mal. Un dato sí deja algo, al errar y al acertar. Lo que lo complica es el
+reloj: si leer cuesta tiempo, el jugador aprende a saltárselo; si la pausa no tiene fin, sirve para
+pensar la jugada siguiente. Con tope de 6 s alcanza para leer una frase y no para otra cosa, y el
+veredicto tapa el tablero.
+**Alternativas descartadas:** el dato en el acierto dentro del veredicto, alargando su cierre
+(frena el juego en cada carta: la franja lo deja leer sin pedirlo); pausar el reloj sin tope;
+reescribir el "iba entre…" más corto (sigue sin enseñar nada).
+**Consecuencias:** el test del motor frena un dato largo, con año o con el año de otra carta, y
+exige el dato en todas las cartas de los mazos que ya los tienen (`CON_DATOS`). Los datos se
+escriben verificados: un error en un dato se lee como lección. La regla para escribirlos está en
+`docs/games/timeline.md`.

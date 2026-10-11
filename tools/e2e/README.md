@@ -104,6 +104,7 @@ node tools/e2e/contacto.mjs cuarto-rey --salida /tmp/contacto
 | `timeline/online.mjs` | Tres celulares contra Firebase real, recarga y revancha |
 | `bulls-and-cows/chat.mjs` | Chat de sala en Toque y Fama: no leídos, etiqueta, y que muera con la partida |
 | `timeline/eleccion.mjs` | Que se coloque la carta elegida y que sin elegir no se pueda colocar nada |
+| `timeline/dato.mjs` | El dato de cada carta en Línea Relámpago (D-276): el error lo cuenta con el reloj en pausa y tope de 6 s, el acierto lo deja en una franja que se va sola, el final es el repaso, y en inglés |
 | `timeline/veredicto.mjs` | Que el veredicto hable en tercera persona cuando se equivocó otro |
 | `timeline/mazos.mjs` | Todas las temáticas y que diez partidas seguidas no repitan cartas |
 | `timeline/pozo.mjs` | Pozo común: tira de 6, reposición por el final, meta y ajuste que viaja en la sala |
