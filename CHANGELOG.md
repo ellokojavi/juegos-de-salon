@@ -5,8 +5,6 @@
   marcaste a todas las personas que nombra. El ✓ sigue sirviendo para tachar antes o destachar.
   Lo pidió un jugador por 🐞.
 
-## 0.148.6 — 2026-10-11
-
 ## 0.153.2 — 2026-10-11
 - **Herramientas: las casillas de un toque, más firmes** (D-273): marcar varias casi juntas ya no
   pierde ninguna, fusionar un PR ya no cierra el que estaba montado sobre él, y un PR que no se
