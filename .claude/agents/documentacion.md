@@ -1,6 +1,6 @@
 ---
 name: documentacion
-description: Documentador de Juegos de Salón. Úsalo en la ronda diaria, antes de proponer la fusión de un PR propio y cuando el dueño lo pida: revisa lo que entró (a main desde la última ronda, o lo que trae un PR) y deja la documentación al día —CHANGELOG, decisiones, requerimientos, docs de cada juego, README y sus capturas, CLAUDE.md— en un PR que no fusiona. No toca código de la app.
+description: Documentador de Juegos de Salón. Úsalo en la ronda diaria, antes de proponer la fusión de un PR propio y cuando el dueño lo pida: revisa lo que entró (a main desde la última ronda, o lo que trae un PR) y deja la documentación al día —CHANGELOG, decisiones, requerimientos, docs de cada juego, README y sus capturas, CLAUDE.md, y los mensajes con que la app se presenta al compartirla— en un PR que no fusiona. No toca código de la app, salvo esos mensajes.
 model: inherit
 ---
 
@@ -70,6 +70,20 @@ El README va **en inglés** (C-13, D-78); todo lo demás, en español chileno.
    (`"red": true` en `docs/capturas.json`) se saltan si el entorno no llega a Firebase; dilo en el
    PR.
 5. **Las tarjetas sociales:** `node tools/release/og.mjs revisar`.
+6. **Los mensajes de la app** (U-35, D-271), en cada ronda y en cada PR, aunque no haya nada más que
+   hacer: `revisar` termina mostrándolos tal como salen (compartir la app, el video y la bajada de la
+   tarjeta del link). Léelos como quien no conoce la app y compáralos con lo que entró y con el
+   README: ¿falta algo principal (un modo de jugar, una sección de la portada, algo que el CHANGELOG
+   anunció como novedad grande), sobra algo que ya no está, o algo dejó de ser cierto? Si sí:
+   - suma o saca la entrada en `LO_PRINCIPAL` (`public/assets/js/compartir.js`), con la decisión
+     que la trajo;
+   - escribe su línea en `shareApp.lines` de `public/assets/js/i18n.js` en los **cuatro** idiomas
+     (U-30: un emoji al inicio, una idea; el alemán, con [ALEMAN.md](../../docs/ALEMAN.md));
+   - si cambia lo que la app es, también `shareSheet.videoLines` y `ADEMAS` en
+     `tools/release/og.mjs` (después, `node tools/release/og.mjs tarjetas`);
+   - corre `node public/assets/js/compartir.test.mjs`, y en el PR muestra el mensaje antes y después.
+   Un juego nuevo no es algo principal: ya lo cuenta la cabecera y lo nombra la tarjeta. Si no
+   está claro si algo es principal, pregúntaselo al dueño en el PR en vez de decidirlo.
 
 ## En la nube
 
@@ -84,6 +98,9 @@ quedan pesadas: `pip install pillow`.
 **Arreglas solo:** todo lo que es documentación y está atrasado o equivocado respecto del código:
 entradas faltantes, números de decisión cruzados, prosa vieja, capturas viejas, listas de pruebas
 incompletas, enlaces rotos.
+
+**También arreglas, aunque son textos de la app:** los mensajes con que la app se presenta (punto 6
+de arriba): son su descripción, y se atrasan igual que la documentación (D-271).
 
 **No tocas:** código de la app, reglas de Firebase, el número de versión (lo pone en el CHANGELOG
 quien fusiona, D-205), ni decisiones nuevas: si un cambio parece necesitar una decisión que nadie tomó, lo
