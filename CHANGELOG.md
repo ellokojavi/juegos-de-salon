@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.146.1 — 2026-10-10
+- **🧪 Laboratorio:** se van los Acertijos (D-269): el dueño los probó y no le gustaron.
+
 ## 0.145.0 — 2026-10-10
 - **🤔 Acertijos, en el laboratorio** (D-269): cinco acertijos con truco en los que la respuesta obvia
   no es la buena. Hay que tocar, elegir y arrastrar, con pistas y un narrador burlón, y al final se
