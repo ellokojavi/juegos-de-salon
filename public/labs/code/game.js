@@ -131,15 +131,15 @@ const contexto = pantalla => ({
 /**
  * La portada: las cartas, encima de la base, prueban combinaciones a toda velocidad —giran, se
  * voltean, cambian de cara— y se van fijando una a una en la buena hasta que se lee la clave
- * (CLAVE en español; un código en los otros idiomas). Ahí los trazos se apagan y la clave aparece
- * escrita como texto. Se desarma y vuelve a empezar, mientras la portada esté a la vista.
+ * (CLAVE en español; un código en los otros idiomas), en trazos de display, que brillan un rato. Se
+ * desarma y vuelve a empezar, mientras la portada esté a la vista. El título ya dice el nombre: aquí
+ * no se escribe como texto.
  */
 function ilustracion() {
   const enPalabra = lang === 'es';
   const geo = enPalabra ? TRAZO14 : TRAZO;
   const svg = lamina('demo');
-  const texto = el('div', { class: 'demo-texto display rainbow' });
-  const caja = el('div', { class: 'demo', 'aria-hidden': 'true' }, svg, texto);
+  const caja = el('div', { class: 'demo', 'aria-hidden': 'true' }, svg);
   // Los estados de una carta y lo que se ve en cada uno
   const ESTADOS = enPalabra ? palabra.ESTADOS : ['I', 'R', 'H', 'V'];
   let clave, capas, buenos;
@@ -150,7 +150,6 @@ function ilustracion() {
     buenos = clave.cartas.map(c => (enPalabra ? c.bien : c.o));
     svg.replaceChildren(svgEl('rect', { x: 0, y: 0, width: 300, height: 140, rx: 12, class: 'borde' }), ...lineas(clave.base, '#fff', geo));
     capas = clave.cartas.map((c, k) => { const g = svgEl('g', { class: 'capa-demo', 'data-k': k }); svg.append(g); return g; });
-    texto.textContent = enPalabra ? clave.palabra : clave.codigo;
   };
   const al = arr => arr[Math.floor(Math.random() * arr.length)];
   const otro = (k, actual) => al(ESTADOS.filter(e => String(e) !== String(actual)));
@@ -161,7 +160,7 @@ function ilustracion() {
   (async () => {
     await espera(60);
     while (vivo()) {
-      caja.classList.remove('lista', 'escrita');
+      caja.classList.remove('lista');
       const actual = clave.cartas.map(() => al(ESTADOS));
       actual.forEach((e, k) => poner(k, e));
       const fijas = new Set();
@@ -186,12 +185,8 @@ function ilustracion() {
         await espera(95);
       }
       if (!vivo()) return;
-      caja.classList.add('lista');      // todas en su lugar: brillan
-      await espera(900);
-      caja.classList.add('escrita');    // los trazos se apagan y la clave aparece como texto
-      await espera(2200);
-      caja.classList.remove('escrita');
-      await espera(500);
+      caja.classList.add('lista');      // todas en su lugar: la clave brilla en sus trazos
+      await espera(2600);
       capas.forEach(g => g.classList.remove('fija'));
     }
   })();
