@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.148.2 — 2026-10-11
+- **Herramientas: un agente de procesos** (D-273): una ronda diaria cierra lo que quedó abierto
+  (PR que esperan, avisos viejos) y convierte un error que se repite en una prueba que lo frena
+  sola. Lo que necesita al dueño llega en un issue con casillas Sí/No: marcar una lo cumple al
+  instante. El aviso "main en rojo" se cierra solo cuando main vuelve a verde.
+
 ## 0.148.0 — 2026-10-11
 - **Compartir la app cuenta todo lo que hay** (D-271): el mensaje de "Invitar a jugar", en el
   celular y en el computador, suma 📅 Uno al día y 🏅 los rankings a La Copa, los juegos en grupo,
