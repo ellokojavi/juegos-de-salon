@@ -5,13 +5,19 @@ import { DECKS, getDeck } from './decks/index.js';
 
 // Mazos bien formados
 for (const d of DECKS) {
-  assert.ok(d.cards.length >= 80, `${d.id} tiene pocas cartas`);
+  assert.ok(d.cards.length >= 90, `${d.id} tiene pocas cartas`);
   assert.equal(new Set(d.cards.map(c => c.id)).size, d.cards.length, `${d.id} tiene ids repetidos`);
   for (const c of d.cards) {
     assert.ok(c.id && typeof c.year === 'number' && c.emoji && c.es && c.en && c.pt && c.de, `carta incompleta en ${d.id}: ${c.id}`);
     assert.ok(!/'/.test(c.pt), `apóstrofo recto en pt de ${d.id}: ${c.id}`);
     assert.ok(!/'/.test(c.de), `apóstrofo recto en de de ${d.id}: ${c.id}`);
     assert.ok(c.year > -4000 && c.year <= 2026, `año fuera de rango en ${d.id}: ${c.id}`);
+    // La carta no puede decir su año, ni entero ni abreviado ("de 1980", "Italia 90", "’92") (D-272)
+    if (c.year >= 1000) {
+      const yy = String(c.year % 100).padStart(2, '0');
+      const delata = new RegExp(`(^|[^0-9])(${c.year}|${yy})($|[^0-9])`);
+      for (const l of ['es', 'en', 'pt', 'de']) assert.ok(!delata.test(c[l]), `la carta dice su año en ${l} de ${d.id}: ${c.id}`);
+    }
   }
 }
 assert.equal(getDeck('musica').id, 'musica');
