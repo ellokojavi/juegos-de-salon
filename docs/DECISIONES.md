@@ -5050,7 +5050,7 @@ guardar Deshacer como jugada en la lista (agrandaba lo guardado sin necesidad: n
 reproducir ni verificar fuera del celular); sumarlo a Tango en el mismo PR (queda para después).
 
 ## D-284 · La Copa: un celular que perdió su asiento vuelve a entrar con su PIN
-**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** corrige el mensaje de D-96 al empezar y al enviar
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** completa D-96 (qué pasa cuando un celular pierde su asiento)
 **Contexto:** el dueño entró a su copa desde el aviso del día, con el día abierto, y al tocar
 Empezar leyó "El tiempo para jugar este día ya se terminó.". Las reglas de Firebase niegan igual
 (PERMISSION_DENIED) un día cerrado que un celular que ya no está sentado como su jugador, y

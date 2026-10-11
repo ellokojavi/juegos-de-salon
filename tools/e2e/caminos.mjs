@@ -135,6 +135,14 @@ export const CAMINOS = {
     'final-tabla': [`location.href='/cup/?test&demo=full'`, `1`, `1`,
       `[...document.querySelectorAll('.md-fila')].pop().click()`,
       `document.querySelector('.screen.active .fila')?.scrollIntoView({ block: 'start' })`],
+    // Un celular que perdió su asiento con el día abierto: Empezar lo lleva a escribir su PIN,
+    // con su nombre ya elegido (D-284; la prueba entera es cup/asiento.mjs)
+    'sentarse-de-nuevo': [`location.href='/cup/?test&demo=player'`, `1`, `1`,
+      `(async()=>{const { hashPin } = await import('/cup/engine.js'); const code=__copa.estado.code;
+        const k='juegos-de-salon:copa:prueba', db=JSON.parse(localStorage.getItem(k));
+        db[code]._keys.javi02 = await hashPin(code, 'javi02', '4321'); db[code]._seats.javi02 = {};
+        localStorage.setItem(k, JSON.stringify(db)); location.href='/cup/?'+code+'&test&day=4'})()`,
+      `1`, `1`, `window.confirm=()=>true; document.getElementById('btn-empezar').click()`, `1`],
   },
   dudo: {
     intro: [],

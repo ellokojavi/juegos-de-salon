@@ -4,7 +4,8 @@
 - **🏆 La Copa: si el celular dejó de entrar como tu jugador, te pide el PIN** (D-284). Antes, con el
   día abierto, Empezar podía decir "El tiempo para jugar este día ya se terminó." cuando lo que
   pasaba era que el celular había perdido su sesión (o el admin te dio un PIN nuevo). Ahora lleva a
-  escribir el PIN con tu nombre ya elegido, y con eso juegas.
+  escribir el PIN con tu nombre ya elegido, y con eso juegas; si ya habías jugado y el resultado no
+  alcanzó a enviarse, sigue guardado en el celular y se envía al volver al día.
 
 ## 0.156.1 — 2026-10-11
 - **Herramientas:** si una casilla de un toque no puede fusionar, dice por qué (por ejemplo, un
