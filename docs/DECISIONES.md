@@ -51,10 +51,10 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 
 | Tema | Regla de hoy (canon) | Decisiones vigentes que la explican |
 |---|---|---|
-| Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284 |
+| Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284, D-286 |
 | Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184 |
 | Mazos de cartas con fecha | `docs/games/timeline.md` | D-37, D-277, D-278 |
-| Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270 |
+| Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
 | Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255 |
@@ -5085,3 +5085,31 @@ Lo prueba `tools/e2e/cup/asiento.mjs`.
 **Alternativas descartadas:** leer el asiento antes de cada escritura (`torneoSeats` no se puede
 leer, a propósito); mostrar solo el aviso genérico de permiso (obligaba a buscar a mano dónde
 escribir el PIN).
+
+## D-286 · Agentes: un Codenames mini, para uno solo, en Proyectos activos del laboratorio
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** amplía D-280 (el primer proyecto activo del laboratorio)
+**Contexto:** el dueño pidió investigar *Codenames* (Vlaada Chvátil, Czech Games Edition, 2015) y
+ver si una versión mini podía entrar a La Copa. El original es de equipos: un jefe de espías da una
+palabra y un número, y su equipo busca a sus agentes entre 25 palabras sin tocar al asesino. En La
+Copa no hay jefe de espías: cada uno juega solo, contra el reloj del día.
+**Decisión:** el juego da las pistas y el jugador adivina. Un tablero de **12 palabras**: 9 agentes
+(3 pistas de 3), 2 neutrales y 1 asesino. Las pistas llegan de a una, con su número («MAR · 3»).
+Un agente de la pista suma; uno de otra pista también suma y no corta; un neutral (−15) o el
+asesino (−40) cortan la pista. "Siguiente pista" se planta y pasa. Puntaje 0–100: 100 × agentes/9,
+menos las restas. Las pistas son una lista curada (`pistas.js`, 40 en español de Chile), cada una
+con 9 asociaciones fuertes y 3 tentaciones; el generador elige 3 pistas que no se pisen, ninguna
+palabra del tablero es una de las pistas, el asesino sale de las tentaciones (por eso engaña) y los
+neutrales de otras pistas. Sin semilla es el tablero del día, el mismo para todos. Entra al
+laboratorio como **proyecto activo**, solo en español, con el formulario de comentarios al final
+(D-265, D-268). **La portada y el final dicen de dónde viene**: "Inspirado en Codenames, de Vlaada
+Chvátil (Czech Games Edition).", con un link a la página oficial (pedido del dueño: ser honestos
+con el origen); el laboratorio lo dice también.
+**Por qué:** el juego da las pistas porque una IA o un rival no caben en La Copa, y una lista curada
+asegura que las pistas sean justas: el test revisa 300 tableros. 12 palabras caben en un celular
+sin scroll de lado y se juegan en un par de minutos, como los otros juegos de la copa.
+**Alternativas descartadas:** el tablero de 25 (no cabe y dura mucho); que el jugador dé las pistas
+(no hay quién adivine); generar las pistas con un modelo de lenguaje en vivo (costoso y sin garantía
+de que sean justas).
+**Consecuencias:** `public/labs/agents/engine.test.mjs` prueba la lista y que cada tablero sea
+justo; `tools/e2e/agents/lab.mjs`, la partida entera. Si a los amigos les gusta, el paso siguiente
+es llevarlo a La Copa en los cuatro idiomas (una lista de pistas por idioma).

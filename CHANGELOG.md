@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.157.0 — 2026-10-11
+- **🕵️ Laboratorio: Agentes, un Codenames mini** (D-286), el primer proyecto activo. El juego te da
+  una pista con su número («MAR · 3») y tú encuentras a tus agentes entre 12 palabras, sin tocar
+  las neutrales ni al asesino. Tres pistas, puntaje de 0 a 100, el mismo tablero para todos cada
+  día. La portada dice que está inspirado en Codenames, con el link a su página oficial. Solo en
+  español, para probarlo con amigos.
+
 ## 0.156.3 — 2026-10-11
 - **🏆 La Copa: si el celular dejó de entrar como tu jugador, te pide el PIN** (D-285). Antes, con el
   día abierto, Empezar podía decir "El tiempo para jugar este día ya se terminó." cuando lo que
