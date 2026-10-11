@@ -1,5 +1,5 @@
 /**
- * El dato de una carta con fecha (D-276): una frase que cuenta algo del hecho, un porqué o una
+ * El dato de una carta con fecha (D-277): una frase que cuenta algo del hecho, un porqué o una
  * anécdota, para que cada jugada deje algo aprendido. Lo usan Línea de Tiempo, ⏳ Línea
  * Relámpago y 📅 ¿En qué año?. Los estilos están en assets/css/linea.css.
  *

@@ -1,7 +1,7 @@
 # Changelog
 
 ## 0.150.0 — 2026-10-11
-- **⏳ Línea de Tiempo, 📅 ¿En qué año? y La Copa: cada carta cuenta algo** (D-276). En vez de "iba
+- **⏳ Línea de Tiempo, 📅 ¿En qué año? y La Copa: cada carta cuenta algo** (D-277). En vez de "iba
   entre 1925 y 1980", el veredicto de un error cuenta un dato del hecho, un porqué o una anécdota
   ("El Muro lo abrió un error…"), y el reloj se pausa mientras se lee, hasta 6 segundos. Al acertar,
   el dato aparece en una franja abajo y se va sola, sin frenar el juego. Al terminar, tocar un hito

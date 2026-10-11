@@ -1966,7 +1966,7 @@ async function jugar(d) {
   clearInterval(S.reloj);
   S.reloj = setInterval(() => { if (S.pantalla === 'jugar') cron.textContent = fmt(T.timer, { t: mmss(reloj.leer(rel, ahora())) }); }, 1000);
   S.visibilidad && document.removeEventListener('visibilitychange', S.visibilidad);
-  // Mientras se lee el dato de un error el reloj está en pausa, y volver a la pestaña no lo anda (D-276)
+  // Mientras se lee el dato de un error el reloj está en pausa, y volver a la pestaña no lo anda (D-277)
   let leyendo = null;
   S.visibilidad = () => {
     if (detenido) return;
