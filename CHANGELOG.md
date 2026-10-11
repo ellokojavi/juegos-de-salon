@@ -6,17 +6,24 @@
   día. Rendirse pasa a su propia línea. Lo pidió un jugador por 🐞.
 
 ## 0.148.6 — 2026-10-11
+
+## 0.153.2 — 2026-10-11
+- **Herramientas: las casillas de un toque, más firmes** (D-273): marcar varias casi juntas ya no
+  pierde ninguna, fusionar un PR ya no cierra el que estaba montado sobre él, y un PR que no se
+  pudo fusionar se informa como falla.
+
+## 0.153.1 — 2026-10-11
 - **Herramientas: el feedback 🐞 dice quién lo mandó** (D-279): el issue de cada reporte suma el
   nombre que el jugador escribió, para hacerle seguimiento.
 
 ## 0.153.0 — 2026-10-11
-- **⏳ Línea de Tiempo: los seis mazos cuentan su dato** (D-279). Música, Cultura pop, Brasil y Fútbol
+- **⏳ Línea de Tiempo: los seis mazos cuentan su dato** (D-277). Música, Cultura pop, Brasil y Fútbol
   suman un dato en cada carta, como Chile e Historia, revisados contra fuentes. Y el de Mekano ya no
   dice que Viñuela llegó después: el programa partió con él y con Verónica Calabi. Sale la carta de
   cuando la FA levantó la prohibición al fútbol femenino: las fuentes no se ponen de acuerdo en el año.
 
 ## 0.152.0 — 2026-10-11
-- **⏳ Línea de Tiempo, 📅 ¿En qué año? y La Copa: cada carta cuenta algo** (D-279). En vez de "iba
+- **⏳ Línea de Tiempo, 📅 ¿En qué año? y La Copa: cada carta cuenta algo** (D-277). En vez de "iba
   entre 1925 y 1980", el veredicto de un error cuenta un dato del hecho, un porqué o una anécdota
   ("El Muro lo abrió un error…"). Contra el reloj (⏳ Línea Relámpago y ¿En qué año?), el reloj se
   pausa mientras se lee, hasta 6 segundos. Al acertar, el dato aparece en una franja abajo que se va
