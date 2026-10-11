@@ -17,7 +17,7 @@ bien da su pista. Las pistas siempre dicen la verdad y **nunca hay que adivinar*
 hay al menos una persona más que se puede deducir con lo que ya se sabe.
 
 Estuvo en el laboratorio para mostrárselo a amigos y ver si engancha, y no prosperó: desde D-280
-está en La Bodega, y sin la llave del laboratorio no se abre (D-281). Es un juego de La Copa
+está en La Bodega, y sin una llave del laboratorio no se abre (D-281, D-284). Es un juego de La Copa
 completo, pero no entra al pozo (RP-50 quedó descartado con D-280). **Hay una sola versión para probar**
 (D-267): `https://juegosdesalon.cl/labs/case/`, con la pantalla de La Copa.
 

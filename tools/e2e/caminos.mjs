@@ -136,7 +136,7 @@ export const CAMINOS = {
       `[...document.querySelectorAll('.md-fila')].pop().click()`,
       `document.querySelector('.screen.active .fila')?.scrollIntoView({ block: 'start' })`],
     // Un celular que perdió su asiento con el día abierto: Empezar lo lleva a escribir su PIN,
-    // con su nombre ya elegido (D-284; la prueba entera es cup/asiento.mjs)
+    // con su nombre ya elegido (D-285; la prueba entera es cup/asiento.mjs)
     'sentarse-de-nuevo': [`location.href='/cup/?test&demo=player'`, `1`, `1`,
       `(async()=>{const { hashPin } = await import('/cup/engine.js'); const code=__copa.estado.code;
         const k='juegos-de-salon:copa:prueba', db=JSON.parse(localStorage.getItem(k));

@@ -12,8 +12,8 @@ código en el teclado (D-270). Como las tarjetas transparentes de los juegos de 
 - **Modos:** 🔢 Cifras (en los cuatro idiomas) y 🔤 Palabra (solo en español, más abajo).
 - **Cartas:** 4, ninguna viene derecha. Hubo un modo de 8 y el dueño lo sacó: demasiado complejo.
 - **Estado:** prototipo en el laboratorio desde v0.147.0, aprobado por el dueño; no prosperó y
-  desde D-280 está en La Bodega, jugable pero sin trabajarse. Sin la llave del laboratorio no se
-  abre (D-281). Empezó como una v1
+  desde D-280 está en La Bodega, jugable pero sin trabajarse. Sin una llave del laboratorio (cada
+  persona tiene la suya) no se abre (D-281, D-284). Empezó como una v1
   de dos figuras que se arrastraban una sobre otra; la historia está en D-270.
 
 ## Portada

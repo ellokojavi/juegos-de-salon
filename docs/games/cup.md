@@ -67,7 +67,7 @@ nadie puede leer.
 El celular recuerda con quién está sentado en `localStorage`, pero el asiento es del `uid`: si el
 navegador pierde la sesión de Firebase, o el admin le da un PIN nuevo al jugador, las reglas niegan
 empezar o enviar aunque el día esté abierto. Entonces la copa pide el PIN de nuevo, con el nombre
-ya elegido, en vez de decir que el día se cerró (D-284).
+ya elegido, en vez de decir que el día se cerró (D-285).
 
 **Con los rankings (D-212).** Si en el celular hay un jugador de los rankings (nombre y PIN para
 toda la app), al inscribirse el nombre viene puesto, y al abrir la copa su jugador queda enlazado
