@@ -17,8 +17,9 @@ código en el teclado (D-270). Como las tarjetas transparentes de los juegos de 
 ## Portada
 
 El título con el degradé que se mueve (`.rainbow`) y un 🔐 que se mece, una ilustración en que las
-cuatro cartas llegan volando, se posan sobre la base y forman CLAVE (en los otros idiomas, un
-código), brillan y se van, y "¿Cómo se juega?" en tres pasos con su ícono. En el juego, el título va
+cuatro cartas, encima de la base, prueban combinaciones a toda velocidad (giran, se voltean,
+cambian de cara), se fijan una a una en la buena hasta formar CLAVE (en los otros idiomas, un
+código), y los trazos se apagan para dejar la clave escrita como texto en degradé; después vuelve a empezar, y "¿Cómo se juega?" en tres pasos con su ícono. En el juego, el título va
 arriba y "¿Cómo se juega?" plegado al final.
 
 ## Cómo funciona
