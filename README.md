@@ -437,8 +437,9 @@ Spec and design: [docs/games/cup.md](docs/games/cup.md)
   video" and only loads from `youtube-nocookie.com` when tapped, so opening the sheet downloads
   nothing from YouTube. **Invite to play** is the app's own message: on a phone it opens the share
   sheet with the menu's social card **as an image** and a short text — a header with how many games
-  there are, one line each for The Cup, One a Day, playing in a group, playing alone, leaderboards and
-  needing no account (every main feature, `LO_PRINCIPAL` in `compartir.js`, D-271) —
+  there are, one line each for The Cup, One a Day, playing in a group, playing alone, leaderboards,
+  needing no account, installing it as an app with its notifications, and the four languages (every
+  main feature, `LO_PRINCIPAL` in `compartir.js`, D-271, D-272) —
   ending with the link to the front door of the language you are reading in: `/`, `/en/`, `/pt/` or
   `/de/`, card included (D-74, D-226). **Share the video** sends a short text ending with the
   video's YouTube link, and the chat builds the preview from its thumbnail. On a computer either
