@@ -9,7 +9,7 @@
  *   node tools/agents/feedback.mjs sincronizar [--simular]   # crea los issues que faltan
  *
  * El repo es público: el issue lleva el texto tal cual, el juego, la versión y la pantalla, pero
- * el nombre que puso el jugador, para que el dueño le haga seguimiento (D-277), pero no su
+ * el nombre que puso el jugador, para que el dueño le haga seguimiento (D-279), pero no su
  * navegador. Cada issue lleva
  * `<!-- feedback:<id> -->`, así un reporte nunca se sube dos veces, aunque su issue esté cerrado.
  */
