@@ -18,7 +18,7 @@ código en el teclado (D-270). Como las tarjetas transparentes de los juegos de 
 
 El título con el degradé que se mueve (`.rainbow`) y un 🔐 que se mece, una ilustración en que las
 cuatro cartas, encima de la base, prueban combinaciones a toda velocidad (giran, se voltean,
-cambian de cara), se fijan una a una en la buena hasta formar CLAVE (en los otros idiomas, un
+cambian de cara) mientras los trazos blancos de la base saltan al azar, todo se fija capa por capa en un orden al azar, se fijan una a una en la buena hasta formar CLAVE (en los otros idiomas, un
 código), que brilla en sus trazos de display (el nombre ya está en el título: no se escribe como texto);
 después vuelve a empezar, y "¿Cómo se juega?" en tres pasos con su ícono. En el juego, el título va
 arriba y "¿Cómo se juega?" plegado al final.

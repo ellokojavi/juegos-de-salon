@@ -142,13 +142,19 @@ function ilustracion() {
   const caja = el('div', { class: 'demo', 'aria-hidden': 'true' }, svg);
   // Los estados de una carta y lo que se ve en cada uno
   const ESTADOS = enPalabra ? palabra.ESTADOS : ['I', 'R', 'H', 'V'];
-  let clave, capas, buenos;
+  let clave, capas, buenos, baseCapa;
   const ver = (k, e) => (enPalabra ? palabra.visibles(clave.cartas[k], e) : clave.cartas[k].trazos.map(x => mover(e, x)));
   const poner = (k, e) => capas[k].replaceChildren(...lineas(ver(k, e), COLORES[k], geo));
+  const CIFRAS_DEMO = enPalabra ? palabra.LETRAS_PALABRA : CIFRAS_CODIGO;
+  /** La base: en su lugar, o tantos trazos como tiene repartidos al azar por las cinco casillas. */
+  const ponerBase = enSuLugar => baseCapa.replaceChildren(...lineas(enSuLugar ? clave.base
+    : clave.base.map(() => ({ i: Math.floor(Math.random() * CIFRAS_DEMO), s: al(Object.keys(geo)) })), '#fff', geo));
   const armar = () => {
     clave = enPalabra ? palabra.generar(Math.random, { palabra: 'CLAVE' }) : generar();
     buenos = clave.cartas.map(c => (enPalabra ? c.bien : c.o));
-    svg.replaceChildren(svgEl('rect', { x: 0, y: 0, width: 300, height: 140, rx: 12, class: 'borde' }), ...lineas(clave.base, '#fff', geo));
+    // Los trazos blancos de la base también se mueven en la animación (en el juego están quietos)
+    baseCapa = svgEl('g', { class: 'capa-demo base-demo' });
+    svg.replaceChildren(svgEl('rect', { x: 0, y: 0, width: 300, height: 140, rx: 12, class: 'borde' }), baseCapa);
     capas = clave.cartas.map((c, k) => { const g = svgEl('g', { class: 'capa-demo', 'data-k': k }); svg.append(g); return g; });
   };
   const al = arr => arr[Math.floor(Math.random() * arr.length)];
@@ -156,38 +162,43 @@ function ilustracion() {
   const espera = ms => new Promise(r => setTimeout(r, ms));
   const vivo = () => caja.isConnected;
   armar();
-  if (QUIETO) { buenos.forEach((e, k) => poner(k, e)); caja.classList.add('lista'); return caja; }
+  if (QUIETO) { ponerBase(true); buenos.forEach((e, k) => poner(k, e)); caja.classList.add('lista'); return caja; }
   (async () => {
     await espera(60);
     while (vivo()) {
       caja.classList.remove('lista');
       const actual = clave.cartas.map(() => al(ESTADOS));
       actual.forEach((e, k) => poner(k, e));
+      ponerBase(false);
+      baseCapa.classList.remove('fija');
       const fijas = new Set();
-      // Prueba combinaciones: cada carta que no se fijó cambia de estado cada tanto, y se van fijando
-      const orden = [0, 1, 2, 3].sort(() => Math.random() - 0.5);
+      // Prueba combinaciones: cada carta que no se fijó cambia de estado cada tanto, la base reparte
+      // sus trazos al azar, y todas se van fijando en un orden al azar (la base también)
+      const orden = [0, 1, 2, 3, 'base'].sort(() => Math.random() - 0.5);
+      const salta = g => { g.classList.remove('salta'); void g.getBoundingClientRect(); g.classList.add('salta'); };
       let paso = 0;
-      while (fijas.size < capas.length && vivo()) {
+      while (fijas.size < orden.length && vivo()) {
         for (let k = 0; k < capas.length; k++) {
           if (fijas.has(k) || Math.random() < 0.25) continue;
           actual[k] = otro(k, actual[k]);
           poner(k, actual[k]);
-          capas[k].classList.remove('salta'); void capas[k].getBoundingClientRect(); capas[k].classList.add('salta');
+          salta(capas[k]);
         }
+        if (!fijas.has('base') && Math.random() < 0.75) { ponerBase(false); salta(baseCapa); }
         paso++;
-        // Después de un rato, una carta encuentra su lugar cada pocos pasos
+        // Después de un rato, una capa encuentra su lugar cada pocos pasos
         if (paso > 12 && paso % 5 === 0) {
           const k = orden[fijas.size];
           fijas.add(k);
-          poner(k, buenos[k]);
-          capas[k].classList.remove('salta'); capas[k].classList.add('fija');
+          if (k === 'base') { ponerBase(true); baseCapa.classList.remove('salta'); baseCapa.classList.add('fija'); }
+          else { poner(k, buenos[k]); capas[k].classList.remove('salta'); capas[k].classList.add('fija'); }
         }
         await espera(95);
       }
       if (!vivo()) return;
       caja.classList.add('lista');      // todas en su lugar: la clave brilla en sus trazos
       await espera(2600);
-      capas.forEach(g => g.classList.remove('fija'));
+      [...capas, baseCapa].forEach(g => g.classList.remove('fija'));
     }
   })();
   return caja;
