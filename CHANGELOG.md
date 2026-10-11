@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.155.0 — 2026-10-11
+- **🔍 El caso: las pistas usadas se tachan solas** (D-282): una pista se tacha sola cuando ya
+  marcaste a todas las personas que nombra. El ✓ sigue sirviendo para tachar antes o destachar.
+  Lo pidió un jugador por 🐞.
+
 ## 0.154.0 — 2026-10-11
 - **🧪 Laboratorio: Proyectos activos y La Bodega** (D-280). `/labs/` se ordena en dos grupos: lo que
   se está probando y, en 📦 La Bodega, los proyectos que no prosperaron, que se siguen pudiendo jugar.
