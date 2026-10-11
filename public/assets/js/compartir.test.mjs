@@ -2,7 +2,7 @@
 // pasa cuando hay menú del sistema, cuando no, y cuando va una imagen.
 // Uso: node public/assets/js/compartir.test.mjs
 import assert from 'node:assert/strict';
-import { cabecera, conLink, compartir, puntajeYTiempo, nombreArchivo, textoResultadoSolo, marcarCompartido, compartirApp } from './compartir.js';
+import { cabecera, conLink, compartir, puntajeYTiempo, nombreArchivo, textoResultadoSolo, marcarCompartido, compartirApp, LO_PRINCIPAL } from './compartir.js';
 import { COMMON, IDIOMAS } from './i18n.js';
 
 let n = 0;
@@ -94,6 +94,17 @@ await caso('el link compartido lleva su marca, al final y sin pisar lo que ya tr
   assert.equal(marcarCompartido('https://juegosdesalon.cl/?de=instagram'), 'https://juegosdesalon.cl/?de=instagram', 'también con el nombre de antes de D-266');
   assert.equal(marcarCompartido(''), '');
   assert.equal(marcarCompartido('no es un link'), 'no es un link');
+});
+
+await caso('compartir la app nombra todo lo principal, una línea cada cosa y en cada idioma (D-271)', () => {
+  for (const lang of IDIOMAS) {
+    const lineas = COMMON[lang].shareApp.lines;
+    for (const { emoji, que } of LO_PRINCIPAL) {
+      assert.equal(lineas.filter(l => l.startsWith(emoji)).length, 1, `${lang}: el mensaje de la app no nombra ${que} (${emoji})`);
+    }
+    // Ni una línea suelta que la lista no conozca: si es principal, va en LO_PRINCIPAL
+    for (const l of lineas) assert.ok(LO_PRINCIPAL.some(p => l.startsWith(p.emoji)), `${lang}: "${l}" no está en LO_PRINCIPAL`);
+  }
 });
 
 await caso('compartir la app: la tarjeta de la portada y el texto, en el idioma en que se mira (D-226)', async () => {

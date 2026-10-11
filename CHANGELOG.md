@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.148.0 — 2026-10-11
+- **Compartir la app cuenta todo lo que hay** (D-271): el mensaje de "Invitar a jugar", en el
+  celular y en el computador, suma 📅 Uno al día y 🏅 los rankings a La Copa, los juegos en grupo,
+  los de jugar solo y el "sin cuenta". El del video suma el desafío de cada día, y la tarjeta del
+  link nombra Uno al día y los minijuegos. El agente de documentación los revisa en cada ronda para
+  que no se queden atrás.
+
 ## 0.147.2 — 2026-10-10
 - **🔐 La clave:** en la animación de la portada también se mueven los trazos blancos de la base:
   todo parte al azar y se va acomodando hasta formar la palabra.

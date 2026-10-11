@@ -116,13 +116,16 @@ export const COMMON = {
     code: 'código en GitHub', menu: 'Menú', soon: 'Próximamente', or: 'o',
     share: 'Compartir Juegos de Salón',
     // Compartir la app (D-226): va con la tarjeta de la portada, que ya dice el nombre, la bajada,
-    // "gratis, sin instalar" y el link. El texto cuenta lo demás, una idea por línea (U-30)
+    // "gratis, sin instalar" y el link. El texto cuenta lo demás, una idea por línea (U-30), y nombra
+    // todo lo principal de la app (LO_PRINCIPAL en compartir.js, D-271): una línea por cada cosa
     shareApp: {
       context: '{n} juegos para el celular',
       lines: [
         '🏆 La Copa: un torneo de una semana entre amigos, con un juego distinto cada día.',
+        '📅 Uno al día: un desafío nuevo cada día, el mismo para todos. ¿Hasta dónde llega tu racha?',
         '👥 Para jugar en grupo: en un celular o cada uno en el suyo.',
         '🧩 Para jugar solo: minijuegos de palabras, lógica y cultura.',
+        '🏅 Rankings: tus mejores puntajes contra los de tus amigos y los de todos.',
         '🔓 Sin cuenta: tocas el link y juegas.',
       ],
     },
@@ -139,7 +142,7 @@ export const COMMON = {
       copied: '✅ Copiado',
       close: 'Cerrar',
       videoContext: 'Mira el video',
-      videoLines: ['🎲 Los juegos de toda la vida, en tu celular, gratis y sin cuenta.', '🏆 Para jugar en grupo, solo o en un torneo de una semana.'],
+      videoLines: ['🎲 Los juegos de toda la vida, en tu celular, gratis y sin cuenta.', '🏆 En grupo, solo, en un torneo de una semana o con un desafío nuevo cada día.'],
     },
     // La invitación a una sala: quién invita, a qué y adónde. Es el texto que más se lee de
     // toda la app, porque llega por WhatsApp a gente que todavía no la conoce.
@@ -352,8 +355,10 @@ export const COMMON = {
       context: '{n} games for your phone',
       lines: [
         '🏆 The Cup: a week-long tournament among friends, with a different game every day.',
+        '📅 One a Day: a new challenge every day, the same for everyone. How long can your streak go?',
         '👥 To play in a group: on one phone or each on their own phone.',
         '🧩 To play solo: word, logic and trivia minigames.',
+        '🏅 Leaderboards: your best scores against your friends\' and everyone else\'s.',
         '🔓 No account: tap the link and play.',
       ],
     },
@@ -369,7 +374,7 @@ export const COMMON = {
       copied: '✅ Copied',
       close: 'Close',
       videoContext: 'Watch the video',
-      videoLines: ['🎲 Classic party games on your phone, free and with no account.', '🏆 Play in a group, solo or in a week-long tournament.'],
+      videoLines: ['🎲 Classic party games on your phone, free and with no account.', '🏆 In a group, solo, in a week-long tournament or with a new challenge every day.'],
     },
     invite: '{emoji} *{game}* · Room {code}\n\n👋 {name} invites you to play at juegosdesalon.cl.',
     shareResult: '📤 Share my result',
@@ -576,8 +581,10 @@ export const COMMON = {
       context: '{n} jogos para o celular',
       lines: [
         '🏆 A Copa: um torneio de uma semana entre amigos, com um jogo diferente por dia.',
+        '📅 Um por dia: um desafio novo todo dia, o mesmo para todos. Até onde vai a sua sequência?',
         '👥 Para jogar em grupo: num celular só ou cada um no seu.',
         '🧩 Para jogar sozinho: minijogos de palavras, lógica e cultura.',
+        '🏅 Rankings: as suas melhores pontuações contra as dos amigos e as de todo mundo.',
         '🔓 Sem conta: é só tocar no link e jogar.',
       ],
     },
@@ -593,7 +600,7 @@ export const COMMON = {
       copied: '✅ Copiado',
       close: 'Fechar',
       videoContext: 'Veja o vídeo',
-      videoLines: ['🎲 Os jogos de sempre, no celular, grátis e sem conta.', '🏆 Para jogar em grupo, sozinho ou num torneio de uma semana.'],
+      videoLines: ['🎲 Os jogos de sempre, no celular, grátis e sem conta.', '🏆 Em grupo, sozinho, num torneio de uma semana ou com um desafio novo todo dia.'],
     },
     invite: '{emoji} *{game}* · Sala {code}\n\n👋 {name} te convida pra jogar em juegosdesalon.cl.',
     shareResult: '📤 Compartilhar resultado',
@@ -800,8 +807,10 @@ export const COMMON = {
       context: '{n} Spiele fürs Handy',
       lines: [
         '🏆 Der Pokal: ein Turnier unter Freunden, eine Woche lang, mit einem anderen Spiel pro Tag.',
+        '📅 Spiel des Tages: jeden Tag eine neue Aufgabe, für alle dieselbe. Wie lang wird deine Serie?',
         '👥 In der Gruppe: auf einem Handy oder jeder auf seinem.',
         '🧩 Allein: Minispiele mit Wörtern, Logik und Wissen.',
+        '🏅 Ranglisten: deine besten Punkte gegen die deiner Freunde und aller anderen.',
         '🔓 Ohne Konto: Link antippen und losspielen.',
       ],
     },
@@ -817,7 +826,7 @@ export const COMMON = {
       copied: '✅ Kopiert',
       close: 'Schließen',
       videoContext: 'Video ansehen',
-      videoLines: ['🎲 Die Spieleklassiker auf dem Handy, kostenlos und ohne Konto.', '🏆 In der Gruppe, allein oder in einem Turnier über eine Woche.'],
+      videoLines: ['🎲 Die Spieleklassiker auf dem Handy, kostenlos und ohne Konto.', '🏆 In der Gruppe, allein, in einem Turnier über eine Woche oder mit einer neuen Aufgabe jeden Tag.'],
     },
     invite: '{emoji} *{game}* · Raum {code}\n\n👋 {name} lädt dich zum Spielen auf juegosdesalon.cl ein.',
     shareResult: '📤 Ergebnis teilen',
