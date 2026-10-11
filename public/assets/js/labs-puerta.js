@@ -1,8 +1,9 @@
 /**
  * La puerta del laboratorio (D-281). /labs/ no está en el menú ni en los buscadores (D-101), pero
- * su dirección circula (el README, los links compartidos, /case/): sin la llave, quien llega ve el
- * menú. La llave viene una vez en el link que manda el dueño (`/labs/?key=…`), queda en el
- * celular y se borra del link; desde ahí se entra sin ella.
+ * su dirección circula (el README, los links compartidos, /case/): sin una llave, quien llega ve
+ * el menú. La llave viene una vez en el link que manda el dueño (`/labs/?key=…`), queda en el
+ * celular y se borra del link; desde ahí se entra sin ella. Cada persona tiene la suya (D-284),
+ * para poder sacar a una sin cambiarles la llave a las demás.
  *
  * Es una puerta, no una cerradura: el sitio es estático y sus archivos se pueden bajar igual. Frena
  * a los curiosos y a los robots que corren JavaScript; los que no lo corren los frena el
@@ -11,11 +12,16 @@
  * Va como script clásico y primero en el <head>, para que la página no se alcance a ver. En
  * localhost (los guiones de punta a punta) y en Tailscale (D-67) se abre sola.
  *
- * Cambiar la llave: `printf %s 'llave-nueva' | sha256sum` y poner el resultado en HUELLA. Quien
- * tenía la vieja queda afuera hasta recibir el link nuevo.
+ * Las llaves se dan y se quitan con `node tools/agents/llave-labs.mjs nueva <etiqueta> | quitar
+ * <etiqueta> | listar`, que edita HUELLAS: aquí solo está la huella SHA-256 de cada llave, nunca la
+ * llave. La etiqueta es pública (el repo lo es): iniciales o un apodo, no un nombre completo.
  */
 (function () {
-  var HUELLA = '867ef25adf5e043b13378e8c3ca53f1b53b5dc4ee8df926e74b7448b2f5b7417';
+  // Una línea por persona: 'etiqueta': 'huella'. La edita llave-labs.mjs
+  var HUELLAS = {
+    'dueño': '867ef25adf5e043b13378e8c3ca53f1b53b5dc4ee8df926e74b7448b2f5b7417',
+    'MI': 'f01eea37a3c990f60b252663ada208c1d8c83cb858d891b35bf3dee78a3e877d',
+  };
   var GUARDADA = 'juegos-de-salon:labs-llave';
   var h = document.documentElement;
   var abrir = function () { h.style.visibility = ''; };
@@ -38,7 +44,9 @@
     if (!llave || !window.crypto || !crypto.subtle) return fuera();
     crypto.subtle.digest('SHA-256', new TextEncoder().encode(llave)).then(function (b) {
       var hex = Array.prototype.map.call(new Uint8Array(b), function (x) { return (x < 16 ? '0' : '') + x.toString(16); }).join('');
-      if (hex !== HUELLA) return fuera();
+      var vale = false;
+      for (var k in HUELLAS) if (Object.prototype.hasOwnProperty.call(HUELLAS, k) && HUELLAS[k] === hex) vale = true;
+      if (!vale) return fuera();
       try { localStorage.setItem(GUARDADA, llave); } catch (e) { /* entra igual, esta vez */ }
       abrir();
     }, fuera);
