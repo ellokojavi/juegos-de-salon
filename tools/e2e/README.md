@@ -93,7 +93,6 @@ node tools/e2e/contacto.mjs cuarto-rey --salida /tmp/contacto
 | `generala/local.mjs` | Jugar solo entero, tres en un celular con recarga a mitad y la generala servida: nada elegido de antemano (C-8), los guardados no cambian y se anota lo que la planilla prometía |
 | `generala/online.mjs` | Dos celulares contra Firebase real: los dados de quien juega a la vista del otro, recarga a mitad, partida entera y revancha |
 | `case/lab.mjs` | El caso en `/labs/case/` (D-267): el laboratorio lo ofrece y `/case/` lleva ahí; sin semilla es el caso del día y el link queda limpio; con la pantalla de La Copa, marcar antes de tiempo cuenta como error (D-261), al recargar sigue donde iba sin la cuenta, y el caso se resuelve sin adivinar; el final ofrece compartir, otro caso, el de hoy y el formulario de comentarios, con el envío interceptado (D-265) |
-| `riddles/lab.mjs` | Acertijos del laboratorio (D-269): los cinco con el puntero de verdad (tocar, elegir, arrastrar la pregunta y la nube), la respuesta obvia como error, la pista, el comentario al final de cada vista y el resultado, a 320 px y en los cuatro idiomas |
 | `julep/local.mjs` | Mesa de tres contra el celular y partida en un celular, con retomar a mitad |
 | `julep/online.mjs` | Tres celulares contra Firebase real: reparto cerrado, sello de cartas verificadas, recarga a mitad y chat |
 | `timeline/local.mjs` | Un celular con tres jugadores, con retomar a mitad |
