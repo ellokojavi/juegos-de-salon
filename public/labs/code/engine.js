@@ -2,7 +2,7 @@
  * La clave — el motor del prototipo de laboratorio (D-270). Un código de 5 cifras de siete
  * segmentos repartido entre una base fija y 4 cartas transparentes. Cada carta tiene unos pocos
  * trazos y aparece girada o volteada al azar; hay que ponerlas todas sobre la base y orientar cada
- * una hasta que los trazos se junten en cuatro cifras. La base no se mueve: es la que dice cuál es
+ * una hasta que los trazos se junten en las cinco cifras. La base no se mueve: es la que dice cuál es
  * el derecho, así que el código no se puede leer "dado vuelta".
  *
  * Las orientaciones son las de una tarjeta rectangular: I (como está), R (girada 180°), H
@@ -43,7 +43,7 @@ export function componer(x, y) {
 export const girar = o => componer(o, 'R');
 export const voltear = o => componer(o, 'H');
 
-/** Las máscaras de las cuatro cifras de unos trazos. */
+/** Las máscaras de las cifras de unos trazos. */
 const mascaras = segs => { const m = new Array(CIFRAS_CODIGO).fill(0); for (const { i, s } of segs) m[i] |= bit(s); return m; };
 /** La cifra de una máscara, o null. */
 export const cifraDe = m => MASCARA[m] ?? null;
