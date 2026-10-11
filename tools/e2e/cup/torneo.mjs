@@ -648,6 +648,7 @@ if (corre('laboratorio')) {
     const N = await ev(`Math.round(Math.sqrt(document.querySelectorAll('.rej').length))`);
     const centro = i => ev(`(()=>{const r=document.querySelector('.rej[data-i="${i}"]').getBoundingClientRect();return [Math.round(r.x+r.width/2),Math.round(r.y+r.height/2)]})()`);
     const clases = () => ev(`[...document.querySelectorAll('.rej')].map(x=>x.classList.contains('reina')?'R':x.classList.contains('marca')?'X':'.').join('')`);
+    ok(await ev(`document.getElementById('btn-deshacer')?.disabled`) === true, 'Reinas: sin jugadas, Deshacer está apagado (D-283)');
     const [x0, y0] = await centro(0), [x1, y1] = await centro(N - 1);
     await b.arrastre(x0, y0, x1, y1, 3);
     let t = await clases();
@@ -686,12 +687,30 @@ if (corre('laboratorio')) {
     await b.send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: xl, y: yl, button: 'left', clickCount: 1, buttons: 0 }); await sleep(200);
     ok((await clases())[N + 6] === 'X', 'Reinas: el toque largo sigue poniendo la X');
     // Borrar todo pide un segundo toque y deja el tablero en blanco (D-169)
+    const antesDeBorrar = await clases();
+    const lugarBorrar = `(()=>{const r=document.getElementById('btn-borrar').getBoundingClientRect();return [Math.round(r.x),Math.round(r.y),Math.round(r.width)].join()})()`;
+    const borrarAntes = await ev(lugarBorrar);
     await click('#btn-borrar'); await sleep(150);
     ok(/[RX]/.test(await clases()) && await ev(`document.getElementById('btn-borrar').classList.contains('armado')`), 'Reinas: el primer toque de Borrar todo solo lo arma');
+    ok(await ev(lugarBorrar) === borrarAntes, 'Reinas: armado, Borrar todo no se mueve: el segundo toque no cae en Deshacer (D-283)');
     await click('#btn-borrar'); await sleep(200);
     ok(!/[RX]/.test(await clases()) && await ev(`document.getElementById('btn-borrar').disabled`), 'Reinas: el segundo toque deja el tablero en blanco y el botón se apaga');
     await b.toque(xr, yr);
     ok((await clases())[N] === 'R', 'Reinas: después de borrar todo se sigue jugando');
+    // ↩️ Deshacer (D-283): quita el último gesto, uno por toque, también Borrar todo y un arrastre entero
+    const deshacer = async () => { await click('#btn-deshacer'); await sleep(150); return clases(); };
+    t = await deshacer();
+    ok(!/[RX]/.test(t), 'Reinas: Deshacer quita la última reina');
+    t = await deshacer();
+    ok(t === antesDeBorrar, 'Reinas: Deshacer devuelve el tablero de antes de Borrar todo');
+    t = await deshacer();
+    ok(t[N + 6] === '.' && t[N] === 'R', 'Reinas: Deshacer quita la X del toque largo y nada más');
+    t = await deshacer();
+    ok(t[1] === 'X' && t[N] === 'R', 'Reinas: Deshacer devuelve la X que borró el último arrastre');
+    t = await deshacer();
+    ok(t.slice(0, N) === 'X'.repeat(N), 'Reinas: un arrastre que borró varias X se deshace entero, de un toque');
+    for (let k = 0; k < 40 && !await ev(`document.getElementById('btn-deshacer').disabled`); k++) t = await deshacer();
+    ok(!/[RX]/.test(t) && await ev(`document.getElementById('btn-deshacer').disabled`), 'Reinas: Deshacer llega hasta el comienzo y ahí se apaga');
   }
   // Rendirse en Reinas: dos toques, la solución a la vista y 0 puntos (D-110)
   await b.go(`${BASE}?practice=queens&test&labs`, 1200); await preparar();
