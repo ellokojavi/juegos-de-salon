@@ -10,7 +10,8 @@
  * El issue lleva cada opción en una línea `- [ ] Sí <!-- op:1:si -->` y, al final, las acciones
  * de cada opción en un bloque `<!-- acciones {...} -->` (lo escribe `procesos.mjs decidir`).
  * Solo se obedece si:
- *   - quien marcó la casilla es el dueño (DUENO), y el issue es suyo y tiene la etiqueta `procesos`;
+ *   - quien marcó la casilla es el dueño (DUENO), el issue tiene la etiqueta `procesos` y lo abrió
+ *     el bot de los workflows (`decidir.yml`, para que GitHub le avise al dueño por correo) o el dueño;
  *   - el bloque de acciones no cambió en la misma edición (una casilla marcada no puede traer
  *     acciones nuevas);
  *   - la decisión no se había tomado antes (`<!-- hecho:1 -->`);
@@ -23,6 +24,8 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 export const DUENO = 'ellokojavi';
+/** Quién puede abrir un issue de decisiones: el bot (así GitHub le avisa al dueño) o el dueño. */
+export const AUTORES = [DUENO, 'github-actions[bot]', 'app/github-actions'];
 export const ETIQUETA = 'procesos';
 /** Los workflows que una casilla puede volver a correr en main. */
 export const WORKFLOWS = ['e2e.yml', 'publicar.yml'];
@@ -84,7 +87,7 @@ export function planear(evento, dueno = DUENO) {
   if (!issue?.labels?.some(l => l.name === ETIQUETA)) return { ignorar: `el issue no tiene la etiqueta ${ETIQUETA}` };
   if (issue.state !== 'open') return { ignorar: 'el issue está cerrado' };
   if (sender?.login !== dueno) return { ignorar: `lo editó ${sender?.login}, no ${dueno}` };
-  if (issue.user?.login !== dueno) return { ignorar: `el issue es de ${issue.user?.login}, no de ${dueno}` };
+  if (![dueno, ...AUTORES.slice(1)].includes(issue.user?.login)) return { ignorar: `el issue es de ${issue.user?.login}: solo valen los que abre el bot o ${dueno}` };
   const antes = changes?.body?.from;
   if (typeof antes !== 'string') return { ignorar: 'la edición no cambió el cuerpo' };
   const acciones = leerAcciones(issue.body);
