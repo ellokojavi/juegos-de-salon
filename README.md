@@ -612,6 +612,7 @@ node public/fourth-king/engine.test.mjs
 node public/generala/engine.test.mjs
 node public/hangman/engine.test.mjs
 node public/julep/engine.test.mjs
+node public/labs/agents/engine.test.mjs
 node public/labs/code/engine.test.mjs
 node public/liars-dice/engine.test.mjs
 node public/timeline/engine.test.mjs
@@ -751,7 +752,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   julep/                      Julep (engine.js + tests, game.js, rules.js)
   fourth-king/                Fourth King (engine.js + tests, game.js, rules.js)
   connections/ · queens/ …    The Cup's games played on their own, one page each (generated from cup/suelto/)
-  labs/                       The lab: games being tested before they reach the menu (not linked, not indexed, and behind a key: each invited person gets their own link, and without one every lab page sends you to the menu, D-281, D-284), in two groups, Active projects (empty today) and the Storeroom, for the ones that didn't take off (D-280): El caso (labs/case/, D-267) and The Code (labs/code/: 4 see-through cards that, laid on a base and each turned the right way, show a 5-digit code, or in Spanish a 5-letter word, D-270); each ends with a "What did you think?" form for the friends testing them (D-265, D-268)
+  labs/                       The lab: games being tested before they reach the menu (not linked, not indexed, and behind a key: each invited person gets their own link, and without one every lab page sends you to the menu, D-281, D-284), in two groups, Active projects, today 🕵️ Agentes (labs/agents/: a mini Codenames for one player, where the game gives the clues and you find your agents among 12 words, D-286), and the Storeroom, for the ones that didn't take off (D-280): El caso (labs/case/, D-267) and The Code (labs/code/: 4 see-through cards that, laid on a base and each turned the right way, show a 5-digit code, or in Spanish a 5-letter word, D-270); each ends with a "What did you think?" form for the friends testing them (D-265, D-268)
     case/                     The Case: a mystery in the style of Clues by Sam, the full game in all four languages; today's case is the same for everyone (D-256, D-267)
     code/                     The Code: a base and 4 see-through cards; put each one on, turn (↻) and flip (⇋) it until the strokes form a 5-digit code with no stroke on top of another (an overlap shows striped), typed on a keypad; in Spanish there is also Word, with 14-segment letters and two-sided cards (flipping shows the other side); all four languages, its texts in game.js (D-270)
   records/                    Leaderboards: the All-Rounder, every game's table and The Cup's medal table (D-212)
@@ -800,6 +801,7 @@ These documents are in Spanish, like the rest of the project.
 - [Panel del dueño](docs/PANEL.md)
 - [Pruebas de punta a punta (Chrome headless por CDP)](tools/e2e/README.md)
 - [Firebase](firebase/README.md)
+- [🕵️ Agentes (prototipo del laboratorio, en Proyectos activos)](docs/games/agents.md)
 - [Diseño: Batalla Naval](docs/games/battleship.md)
 - [Toque y Fama: estudio de factibilidad y propuesta de mecánica](docs/games/bulls-and-cows-factibilidad.md)
 - [Especificación: Toque y Fama](docs/games/bulls-and-cows.md)
