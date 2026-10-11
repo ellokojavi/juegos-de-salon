@@ -4696,20 +4696,21 @@ a terminar, pero sin estorbar la cuenta.
 **Consecuencias:** `tools/e2e/case/lab.mjs` prueba que esté al final de la antesala y del juego, que
 no esté en la cuenta, que abra y cierre la capa, y que el formulario sea lo último del resultado.
 
-## D-270 · La clave: dos figuras transparentes que juntas dicen un código
-**Fecha:** 2026-10-10 · **Estado:** vigente · **Relación:** usa D-102 (el teclado compartido) y D-268 (el comentario); excepción a C-3 como D-269
+## D-270 · La clave: cartas transparentes que juntas dicen un código
+**Fecha:** 2026-10-10 · **Estado:** vigente · **Relación:** usa D-102 (el teclado compartido) y D-268 (el comentario); excepción a C-3 como D-256
 **Decisión:** `/labs/code/` es un prototipo en que un código de 4 cifras de siete segmentos se
-reparte entre dos tarjetas transparentes; la segunda aparece girada o volteada, y hay que
-arrastrarla encima de la primera y girarla (↻) o voltearla (⇋) hasta que los bordes —una esquina
-cortada— calcen. Ahí los trazos se juntan, brillan y se escribe el código en el teclado de Toque y
-Fama. Empieza con dos figuras. Detalle en [games/code.md](games/code.md).
+reparte entre una base fija y 4 u 8 cartas transparentes, cada una girada o volteada al azar. Se
+toca una carta para ponerla sobre la base y elegirla, y con ↻ (media vuelta) y ⇋ (de lado) se
+orienta; con todas derechas los trazos forman el código, que se escribe en el teclado de Toque y
+Fama. Nada avisa que una carta quedó bien, y el motor garantiza que con todas puestas no hay otra
+forma de leer cuatro cifras. Detalle en [games/code.md](games/code.md).
 **Por qué:** lo pidió el dueño: "figures/shapes that combined in a specific set of positions create
-a code that can then be entered in a number or word pad… Start with two shapes", con libertad para
-jugar con las formas. La esquina cortada hace que la orientación se deduzca mirando los bordes, no
-probando a ciegas.
+a code that can then be entered in a number or word pad… Start with two shapes". Probó la v1 de
+dos figuras (una se arrastraba sobre la otra hasta que los bordes cortados calzaran, con un brillo
+al calzar) y pidió "4 u 8 cartas girables y flipeables en vez de 2": con dos se resolvía en segundos
+tocando ↻ y ⇋ a ciegas hasta que brillara (dilema #296).
 **Alternativas descartadas:** girar de a 90° (una cifra de siete segmentos girada un cuarto de vuelta
-no es una cifra) y marcar la orientación con colores o flechas (regala la respuesta).
-**Consecuencias:** `engine.test.mjs` prueba el grupo de orientaciones y que solo la buena dice el
-código; `tools/e2e/code/lab.mjs`, el juego entero. Lo siguiente, si gusta: tres figuras, formas
-distintas y palabras.
-
+no es una cifra), el brillo al calzar y la esquina cortada (regalan la orientación), y arrastrar cada
+carta (con 8, tocar es más rápido y cabe en el celular).
+**Consecuencias:** `engine.test.mjs` prueba el grupo de orientaciones y la lectura única;
+`tools/e2e/code/lab.mjs`, el juego entero con 4 y 8 cartas. Sin publicar hasta que el dueño lo apruebe.
