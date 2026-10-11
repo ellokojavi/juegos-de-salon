@@ -683,7 +683,7 @@ input.fecha { width: 100%; min-height: 48px; border-radius: 12px; border: 1px so
 .cs-pistas { display: grid; gap: 7px; }
 .cs-pistas h3 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 4px 4px 0; }
 .cs-pista { display: grid; grid-template-columns: 1fr 44px; align-items: stretch; border-radius: 12px; background: rgba(0,0,0,0.25); border: 2px solid transparent; overflow: hidden; }
-.cs-pista .texto { text-align: left; padding: 10px 12px; border: 0; background: none; color: var(--ink); font: 700 1rem/1.4 var(--font-body); cursor: pointer; }
+.cs-pista .texto { min-height: 44px; text-align: left; padding: 10px 12px; border: 0; background: none; color: var(--ink); font: 700 1rem/1.4 var(--font-body); cursor: pointer; }
 .cs-pista .de { font-weight: 900; color: var(--cyan); }
 .cs-pista .tachar { border: 0; border-left: 1px solid var(--glass-border); background: none; color: var(--muted); font: 900 1.1rem var(--font-body); cursor: pointer; }
 .cs-pista.ultima { border-color: var(--yellow); background: rgba(255, 210, 63, 0.12); }
