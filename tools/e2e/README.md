@@ -225,3 +225,8 @@ instalada que abre con el nombre ya elegido si la dirección lleva `&app=`). Tam
 aviso (D-229): `&day=<d>` parte en ese día listo para empezar (o en el tablero, si no se puede
 jugar) y `&mute` silencia la copa. Los botones del aviso en Android se prueban a mano: Chrome
 headless no los muestra. Deja capturas de cada hoja.
+
+`node tools/e2e/cup/asiento.mjs [salida]` le quita el asiento al celular de la demo `player` (como
+cuando pierde su sesión de Firebase o el admin da un PIN nuevo), entra por el aviso del día y toca
+Empezar: revisa que no diga que el día se cerró, que pida el PIN con el nombre ya elegido y que,
+con el PIN, el día empiece (D-284).
