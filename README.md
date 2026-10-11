@@ -463,8 +463,11 @@ Spec and design: [docs/games/cup.md](docs/games/cup.md)
   (this week, all time, friends and The Cup), with your neighbours when you are below the top ten.
   `/records/` (🏅 on the menu) adds the All-Rounder, the sum of your best score in every game, and
   The Cup's medal table; it opens with the overall ranking and the most games played, then a Games | Cups switch, and every name carries its country's flag (D-219). Group games keep a table of wins each (D-215) — in a room by your seat, against
-  the phone as the human, on one phone if you play under your own name — and Bulls and Cows alone and
-  Timeline Flash (one per theme) keep their 0–100 records. Two people may share a name; with
+  the phone as the human, on one phone if you play under your own name — and Bulls and Cows, Generala
+  and Hangman alone and Timeline Flash (one per theme) keep their 0–100 records; the first three show
+  their solo table first on their page, since that is how they are played most (D-274). Finish a game
+  without being signed in and, below the end buttons, a box asks whether you want that game to count:
+  sign in there and that game (or your win) is saved. Two people may share a name; with
   different PINs they are different players. Tapping **Playing as** on any page that shows it opens **Change PIN**, with a line on what the PIN
   is for, and **Sign out**; `/records/` lists **Your games**, how many times you played each one (D-236).
 - **One a Day** (D-230, open to everyone since v0.121.0; One a Day #1 was 6 October 2026): every day, at the player's own midnight, a new game and its content come out of the date, the same for everyone, and the Random game die rolls onto it. The deck holds every game that can be played alone — the seven solo games, Hangman with the phone's deck, and Battleship and Liar's Dice against the phone — and none repeats within a week; each scores 0–100. [`/today/`](https://juegosdesalon.cl/today/) keeps your streak (a 🧊 freeze for every 7 days in a row, up to 2), a calendar and how you do in each game. Signed in, you get the day's, the week's and the streaks leaderboards, and you can invite a friend to the same challenge: when they finish their first day, you earn a freeze. The shared result never names the game, so it does not spoil it. If you ask for them, notifications remind you every day at the hour you pick, warn you when your streak is about to break and sum up your week ([docs/UNO-AL-DIA.md](docs/UNO-AL-DIA.md)).
