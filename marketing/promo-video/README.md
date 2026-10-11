@@ -23,6 +23,16 @@ los mp4 también quedan en `juegosdesalon.cl/marketing/promo-video/output/…`.
 nuevo en la portada no deja atrás al video; `node tools/agents/marketing.mjs revisar` solo avisa si
 uno de los que salen ya no está, o si la app cambió de versión.
 
+## Pendiente: versión 7
+
+Sin empezar hasta que el dueño la pida.
+
+- **Los avisos de La Copa** (#210, el dueño eligió C y A el 2026-10-11): un plano corto de la
+  notificación que llega al celular el día que se abre un juego de la copa (la campana 🔔 y la
+  tarjeta "¿Te avisamos…?"). En iPhone el aviso pide tener la app en inicio: se graba en Android o
+  se muestra la notificación sin el paso de instalar.
+- **Zip** dice "Nivel 1 de 10" desde la 0.130.0 (D-250); en la v6 sale "Nivel 1 · 4 × 4".
+
 ## Lo que el dueño quiere
 
 Lo que fue pidiendo en cada vuelta, para no tener que volver a preguntarlo:
