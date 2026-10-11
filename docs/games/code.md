@@ -36,6 +36,14 @@ código en el teclado (D-270). Como las tarjetas transparentes de los juegos de 
   "🔁 Otra clave" y el formulario "¿Qué te pareció?" al final. **💬 Dejar un
   comentario** va al final de la portada y del juego (D-268).
 
+## La onda espacial
+
+Animaciones pasivas, que no dicen nada del juego (pedido del dueño, "una onda más espacial"):
+detrás de la base un cielo de estrellas que deriva despacio y una nebulosa violeta y celeste que
+respira; los trazos puestos laten como luces, cada carta a su ritmo, y los de la base titilan apenas;
+las cartas de la bandeja flotan en gravedad cero, cada una con su desfase, y un brillo tornasol las
+cruza de vez en cuando. Todo en `style.css`; con movimiento reducido, quietas.
+
 ## Archivos
 
 ```
