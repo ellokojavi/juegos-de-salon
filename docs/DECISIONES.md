@@ -4962,27 +4962,6 @@ nada que no se pudiera ver. El nombre es opcional y lo elige el jugador (40 cara
 **Alternativas descartadas:** dejarlo solo en `reportes.mjs` o en el panel (el dueño tendría que ir
 a buscarlo; el correo del issue es donde lee el reporte).
 
-## D-282 · El caso: las pistas ya usadas se tachan solas
-**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** amplía D-256 (el ✓ que tacha una pista); respeta D-261 y D-263
-**Decisión:** En El caso, una pista se tacha sola cuando **ya están marcadas todas las personas
-que abarca** (las de su grupo, o de sus dos grupos en una comparación). Se ve igual que una tachada
-a mano. El ✓ sigue: tacha antes a mano y destacha, también una tachada sola, que entonces queda a
-la vista. Lo calcula `usadas()` del motor, que mira solo lo que el jugador ya marcó, nunca la
-solución; como lo tachado sale de la grilla, si alguien que la pista abarca volviera a quedar sin
-marcar, la pista volvería a aparecer, y una tachada a mano no.
-**Por qué:** lo pidió un jugador por el 🐞 (#320: «Se podrian auto tachar las pistas ya usadas») y el
-dueño eligió la lectura del dilema #302 que no regala nada: una pista cuyo grupo ya está todo
-marcado no puede aportar, y eso ya se ve en la grilla. Con 20 personas y una pista por acierto la
-lista crecía y había que ir tachando a mano.
-**Alternativas descartadas:** tachar la que el motor sabe que ya no aporta (sería una ayuda gratis,
-y la 💡 Ayuda cuesta 15, D-263); dejar solo el ✓ a mano; pintar distinto la tachada sola (se
-entiende sola: pasa justo al marcar a alguien, U-8).
-**Consecuencias:** las pistas que abarcan a casi todos ("hay más criminales en la fila 1 que en la
-2") se tachan tarde. Una pista tachada sola nunca es de las que nombra la ayuda. Las tachadas siguen
-sin guardarse al recargar, pero las que se tachan solas vuelven solas. `juegos.test.mjs` prueba
-`usadas()`; `tools/e2e/case/lab.mjs`, el tachado solo, el ✓ a mano y el destachar, y
-`tools/e2e/caminos.mjs` suma la toma `caso pistas`.
-
 ## D-280 · El laboratorio tiene dos grupos: Proyectos activos y La Bodega
 **Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** amplía D-262
 **Decisión:** `/labs/` se ordena en dos grupos: **🧪 Proyectos activos**, lo que se está probando
@@ -5019,3 +4998,24 @@ Un link que comparte un juego del laboratorio (el "Compartir" de El caso) solo a
 tiene la llave. Para cambiarla: `printf %s 'llave-nueva' | sha256sum` y el resultado en `HUELLA`;
 quien tenía la vieja queda afuera. `public/assets/js/labs-puerta.test.mjs` prueba la puerta y
 exige que cada página de `/labs/` la cargue y que ninguna, ni sus puentes, se indexe.
+
+## D-282 · El caso: las pistas ya usadas se tachan solas
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** amplía D-256 (el ✓ que tacha una pista); respeta D-261 y D-263
+**Decisión:** En El caso, una pista se tacha sola cuando **ya están marcadas todas las personas
+que abarca** (las de su grupo, o de sus dos grupos en una comparación). Se ve igual que una tachada
+a mano. El ✓ sigue: tacha antes a mano y destacha, también una tachada sola, que entonces queda a
+la vista. Lo calcula `usadas()` del motor, que mira solo lo que el jugador ya marcó, nunca la
+solución; como lo tachado sale de la grilla, si alguien que la pista abarca volviera a quedar sin
+marcar, la pista volvería a aparecer, y una tachada a mano no.
+**Por qué:** lo pidió un jugador por el 🐞 (#320: «Se podrian auto tachar las pistas ya usadas») y el
+dueño eligió la lectura del dilema #302 que no regala nada: una pista cuyo grupo ya está todo
+marcado no puede aportar, y eso ya se ve en la grilla. Con 20 personas y una pista por acierto la
+lista crecía y había que ir tachando a mano.
+**Alternativas descartadas:** tachar la que el motor sabe que ya no aporta (sería una ayuda gratis,
+y la 💡 Ayuda cuesta 15, D-263); dejar solo el ✓ a mano; pintar distinto la tachada sola (se
+entiende sola: pasa justo al marcar a alguien, U-8).
+**Consecuencias:** las pistas que abarcan a casi todos ("hay más criminales en la fila 1 que en la
+2") se tachan tarde. Una pista tachada sola nunca es de las que nombra la ayuda. Las tachadas siguen
+sin guardarse al recargar, pero las que se tachan solas vuelven solas. `juegos.test.mjs` prueba
+`usadas()`; `tools/e2e/case/lab.mjs`, el tachado solo, el ✓ a mano y el destachar, y
+`tools/e2e/caminos.mjs` suma la toma `caso pistas`.
