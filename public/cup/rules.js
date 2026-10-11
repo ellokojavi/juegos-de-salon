@@ -3089,7 +3089,7 @@ const DE = {
   avOfferStart: "🔔 Der Pokal startet am {fecha}. Sollen wir dir an dem Tag Bescheid geben?",
   avOfferApp: "🔔 Letzter Schritt: Mitteilungen einschalten.",
   avAppWelcome: "Du bist {name} in diesem Pokal. Gib deine PIN ein, um weiterzumachen.",
-  seatLost: 'Dieses Handy ist nicht mehr als {name} angemeldet. Gib deine PIN ein, um weiterzuspielen.',
+  seatLost: 'Auf diesem Handy bist du nicht mehr als {name} drin. Gib deine PIN ein, um weiterzuspielen.',
   avOfferSub: "Du bekommst morgens eine Mitteilung, und eine weitere vor Tagesschluss, wenn du noch nicht gespielt hast.",
   avOfferAppSub: "Dein Handy fragt dich, ob du Mitteilungen erlaubst.",
   avYes: "Bescheid geben",
