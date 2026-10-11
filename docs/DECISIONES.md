@@ -4775,7 +4775,7 @@ no habla español).
 dice "sin instalar", que se refiere a que no hay que bajar nada de una tienda.
 
 ## D-273 · Un agente de procesos, y decisiones de un toque
-**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** completa D-132 y D-172 (los agentes de usabilidad y de documentación) y D-216 (el auto-merge)
+**Fecha:** 2026-10-11 · **Estado:** corregida por D-275 · **Relación:** completa D-132 y D-172 (los agentes de usabilidad y de documentación) y D-216 (el auto-merge)
 **Decisión:** Un tercer agente (`.claude/agents/procesos.md`) corre una vez al día y no arregla
 cosas sueltas: **cierra lo que quedó abierto** (PR que esperan, issues viejos, lo que los otros
 agentes arrastran de una ronda a otra) y **convierte cada error que se repite en un mecanismo**
@@ -4816,7 +4816,7 @@ confirmación en un Cloudflare Worker (son dos toques igual que la casilla, con 
 documentación (3:54). El correo llega solo los días con algo que decidir.
 
 ## D-275 · El feedback 🐞 llega como issues y lo atiende el agente de procesos
-**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** amplía D-273 (el agente de procesos) y D-104 (los reportes de La Copa); corrige D-132 en que los reportes 🐞 eran de la ronda de usabilidad
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** amplía D-273 (el agente de procesos) y D-104 (los reportes de La Copa); corrige D-273 en que no tocaba el código de los juegos, y D-132 en que los reportes 🐞 eran de la ronda de usabilidad
 **Decisión:** `.github/workflows/feedback.yml` sube cada hora los reportes nuevos de `feedback/`
 (`tools/agents/feedback.mjs`) como issues con la etiqueta `feedback`, uno por reporte y nunca dos
 veces el mismo. El agente de procesos los atiende en su ronda: arregla lo que tiene un arreglo
