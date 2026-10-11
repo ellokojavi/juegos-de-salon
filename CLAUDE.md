@@ -205,6 +205,10 @@ con eso la pantalla entra también a las pruebas de idiomas. Para verlo en un ce
   **Antes de trabajar en el video se lee `marketing/promo-video/README.md` entero** (el skill
   `promo-video` lo carga) y al terminar se anota la vuelta ahí y en `marketing/registro.json`.
   `node tools/agents/marketing.mjs revisar` dice qué asset quedó atrás (U-34).
+- **Llaves del laboratorio** (D-281, D-284): cada persona que entra a `/labs/` tiene su link.
+  `node tools/agents/llave-labs.mjs nueva <etiqueta> | quitar <etiqueta> | listar` edita `HUELLAS` en
+  `labs-puerta.js`; el link sale una sola vez y la llave no se guarda. La etiqueta es pública
+  (iniciales), y el cambio entra con un PR.
 - **Panel** (`public/panel/`, D-44, D-207): `window.__panel.seed({ rooms, days, torneos, push, vista })`
   lo dibuja con datos sembrados sin entrar. Ver [docs/PANEL.md](docs/PANEL.md).
 - **Reportes de La Copa** (D-104): `node tools/firebase/reportes.mjs [--dias 3] [--json]`.
