@@ -134,7 +134,7 @@ async function abrirStore() {
 }
 
 /** Estado de la pantalla: la copa abierta, quién soy en ella y qué se está mirando. */
-const S = { code: null, L: null, yo: null, pantalla: null, off: null, juego: null, reloj: null, tic: null };
+const S = { code: null, L: null, yo: null, reentrar: null, pantalla: null, off: null, juego: null, reloj: null, tic: null };
 
 // El link de una copa: su nombre propio si lo tiene (?pirata), si no su código. Sin &labs: la
 // copa ya sabe por dentro si es del laboratorio (D-121)
@@ -680,7 +680,8 @@ function entrar({ mantener = false } = {}) {
   const puedeEntrar = inscripcionAbierta(meta, now, L().closed) && jug.length < MAX_JUGADORES;
   // El jugador de este celular, si la copa ya lo tiene enlazado (D-220)
   const yoJ = leerYo();
-  const mio = (appPid && players[appPid] && !players[appPid].out ? appPid : null)
+  const deVuelta = S.reentrar && players[S.reentrar] && !players[S.reentrar].out ? S.reentrar : null;
+  const mio = deVuelta || (appPid && players[appPid] && !players[appPid].out ? appPid : null)
     || (yoJ && Object.keys(players).find(pid => !players[pid].out && players[pid].j === yoJ.jid));
 
   const caja = el('div', { class: 'stack' });
@@ -760,6 +761,7 @@ function entrar({ mantener = false } = {}) {
         await store.sentarse(S.code, elegido, await hashPin(S.code, elegido, p.input.value));
         cuenta.recordar(S.code, elegido, { nombre: players[elegido].name, copa: meta.name, fin: meta.end });
         S.yo = elegido;
+        S.reentrar = null;
         SFX.reveal();
         tablero();
       } catch (e) {
@@ -770,7 +772,10 @@ function entrar({ mantener = false } = {}) {
     // Con un jugador en este celular hay dos PIN: aquí va el de la copa (D-96, D-220)
     // Desde la app instalada en iPhone (D-223): ya se sabe quién es, falta solo el PIN
     const desdeApp = appPid && elegido === appPid;
-    poner(caja, el('div', { class: 'panel' }, el('p', { class: 'lead', id: desdeApp ? 'bienvenida-app' : null }, desdeApp ? fmt(T.avAppWelcome, { name: players[appPid].name }) : T.pickName), nombres, p.nodo,
+    // Este celular dejó de estar sentado como su jugador: se le dice por qué le piden el PIN
+    const lead = deVuelta && elegido === deVuelta ? el('p', { class: 'lead', id: 'sentarse-de-nuevo' }, fmt(T.seatLost, { name: players[deVuelta].name }))
+      : el('p', { class: 'lead', id: desdeApp ? 'bienvenida-app' : null }, desdeApp ? fmt(T.avAppWelcome, { name: players[appPid].name }) : T.pickName);
+    poner(caja, el('div', { class: 'panel' }, lead, nombres, p.nodo,
       yoJ ? el('small', { class: 'muted' }, T.pinCopaHint) : null), err, b);
   };
 
@@ -795,6 +800,18 @@ function entrar({ mantener = false } = {}) {
   );
   if (!puedeEntrar || entrarModo === 'inscrito' || (mio && entrarModo !== 'nuevo')) $('#tab-inscrito').click();
   else $('#tab-nuevo').click();
+}
+
+/**
+ * Las reglas dejaron de reconocer a este celular como su jugador (perdió su sesión anónima, o el
+ * admin le dio un PIN nuevo): se vuelve a entrar con el PIN, con el nombre ya elegido. El intento
+ * del día no se pierde: se guarda por jugador y se retoma al volver.
+ */
+function sentarseDeNuevo() {
+  S.reentrar = S.yo;
+  S.yo = null;
+  entrarModo = 'inscrito';
+  entrar();
 }
 
 /* ------------------------------------------------------------------ */
@@ -1806,7 +1823,10 @@ function antesDeJugar(d) {
       // Las del laboratorio sí: hoy son las copas reales con amigos (D-101).
       if (!PRUEBA) trackStart({ game: GAME_ID, mode: GAME_ID, players: 1 });
       jugar(d);
-    } catch (e) { avisoError(err, errorDe(e)); empezar.disabled = false; }
+    } catch (e) {
+      if (e?.code === 'permiso') { sentarseDeNuevo(); return; }
+      avisoError(err, errorDe(e)); empezar.disabled = false;
+    }
   });
   poner(body, el('div', { class: 'stack' },
     el('div', { class: 'intro-hero' }, heroe(id, J),
@@ -2029,6 +2049,7 @@ async function enviar(d, fin, envio = null) {
   try {
     await (envio || mandar(d, fin));
   } catch (e) {
+    if (e?.code === 'permiso') { sentarseDeNuevo(); return; }
     body.innerHTML = '';
     const err = el('div', { class: 'form-error', role: 'alert' });
     poner(body, err, el('button', { class: 'btn btn--yellow', onClick: () => enviar(d, fin) }, T.retry),
