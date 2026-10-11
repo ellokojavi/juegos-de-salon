@@ -19,6 +19,10 @@
 .escenario.abierta .seg { stroke: #fff; filter: drop-shadow(0 0 6px rgba(255,255,255,0.9)); }
 .escenario.abierta .borde { stroke: var(--yellow); }
 .escenario.abierta { border-color: var(--yellow); box-shadow: 0 0 24px rgba(255, 210, 63, 0.35); }
+/* El teclado compartido, un poco más bajo: con el escenario arriba, OK cabe en 390 × 844 */
+#vista .entry { margin: 2px 0 8px; }
+#vista .entry .box { aspect-ratio: 5 / 6; }
+#vista .keypad button { min-height: 50px; padding: 8px 0; }
 .controles { display: flex; justify-content: center; gap: 8px; }
 .controles .btn { min-width: 120px; }
 .aviso-clave { text-align: center; font-weight: 800; min-height: 1.4em; margin: 0; }

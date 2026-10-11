@@ -161,10 +161,15 @@ function jugar() {
     W = Math.min(ancho - 24, 320); H = W * 156 / 316;
     ax = (ancho - W) / 2;
     for (const f of [fija, movil]) f.style.width = `${W}px`;
-    escenario.style.height = `${Math.round(ay + H + 26 + H + 14)}px`;
+    escenario.style.height = `${Math.round(ay + H + 14 + H + 10)}px`;
     fija.style.transform = `translate(${ax}px, ${ay}px)`;
   };
-  const poner = (x, y) => { bx = x; by = y; movil.style.transform = `translate(${bx}px, ${by}px)`; };
+  // Siempre dentro del escenario: soltada afuera, se perdía y no había cómo traerla de vuelta
+  const poner = (x, y) => {
+    bx = Math.max(0, Math.min(x, escenario.clientWidth - W));
+    by = Math.max(0, Math.min(y, escenario.clientHeight - H));
+    movil.style.transform = `translate(${bx}px, ${by}px)`;
+  };
   const revisar = () => {
     movil.classList.toggle('encajada', P.encajada);
     const ahora = P.encajada && calza(P.clave, P.g);
@@ -201,7 +206,7 @@ function jugar() {
   });
   vista.replaceChildren(escenario, controles, aviso, pad);
   medir();
-  poner(ax, ay + H + 26);
+  poner(ax, ay + H + 14);
   orientar();
   addEventListener('resize', () => { if (!escenario.isConnected) return; medir(); if (P.encajada) poner(ax, ay); });
   pieComentario('juego');
