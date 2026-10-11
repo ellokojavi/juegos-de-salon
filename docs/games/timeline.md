@@ -93,7 +93,7 @@ Seis temáticas, cada una en su archivo dentro de `decks/`:
 - Los mazos temáticos (Brasil, Fútbol) pueden repetir hitos de otros mazos (el Maracanazo, el Mundial
   del 62): cada mazo se juega solo, así que no hay choque de ids mientras lleven su prefijo (`br-`, `fut-`).
 
-#### El dato de cada carta (D-276)
+#### El dato de cada carta (D-277)
 Cada carta puede llevar un `dato` en los cuatro idiomas: una frase, un porqué o una anécdota, que se
 lee en unos 3 segundos. Decir entre qué hitos iba una carta no enseña nada (el año grande ya lo
 dice); el dato deja algo aprendido en cada jugada, también en ¿En qué año? y en La Copa.

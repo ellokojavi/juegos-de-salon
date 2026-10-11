@@ -19,7 +19,7 @@ export { mmss };
  * - `guardar({ jugadas, ms })`: después de cada jugada y al pausar el reloj.
  * - `alTerminar({ s, t, resumen, ms, estado })`: cuando el jugador toca "Ver resultado".
  * - `cron(texto)`: opcional, se llama cada segundo con el tiempo ("1:07").
- * - `pausado(si)`: opcional, avisa cuando el reloj se pausa para leer un dato y cuando sigue (D-276).
+ * - `pausado(si)`: opcional, avisa cuando el reloj se pausa para leer un dato y cuando sigue (D-277).
  *
  * Devuelve `soltar()`, que detiene el reloj y los oyentes (al salir de la pantalla).
  */
@@ -32,7 +32,7 @@ export function jugarSolo(raiz, { mod, p, lang, T, fmt, el, SFX, vibrate, jugada
   const escribir = () => guardar({ jugadas: actuales, ms: leer() });
   const tic = cron ? setInterval(() => cron(mmss(leer())), 1000) : null;
   cron?.(mmss(leer()));
-  let leyendo = null;   // la pausa para leer el dato de un error (D-276)
+  let leyendo = null;   // la pausa para leer el dato de un error (D-277)
   const visibilidad = () => {
     if (detenido) return;
     rel = document.hidden || leyendo ? reloj.pausar(rel, Date.now()) : reloj.seguir(rel, Date.now());

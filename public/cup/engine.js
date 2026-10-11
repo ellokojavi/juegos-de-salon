@@ -512,7 +512,7 @@ export const reloj = {
 };
 
 /**
- * La pausa para leer el dato de un error (D-276): detiene el reloj y lo vuelve a andar al cerrar
+ * La pausa para leer el dato de un error (D-277): detiene el reloj y lo vuelve a andar al cerrar
  * el veredicto o cuando se cumple el tope, lo que pase primero. Devuelve la función que la
  * termina; llamarla dos veces no hace nada. `pausar` y `seguir` son los del reloj de cada pantalla.
  */

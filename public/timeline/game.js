@@ -548,7 +548,7 @@ function pintarConfirmar(v, isLocalTurn) {
   } }, T.place, elegida && S.selSlot !== null ? el('small', {}, `${elegida.emoji} ${elegida[lang]}`) : null));
 }
 
-/** El dato de un acierto, en la franja sobre el botón: lo ven todos y no frena a nadie (D-276). */
+/** El dato de un acierto, en la franja sobre el botón: lo ven todos y no frena a nadie (D-277). */
 function franja(last, v) {
   const c = v.byId[last.card];
   if (c) franjaDato($('#place-row'), el, datoDe(c, lang));
@@ -577,7 +577,7 @@ function verdictStage(last, v, nextName) {
       el('div', { class: 'big ' + (last.ok ? 'ok' : 'no') }, titulo),
       el('div', { class: 'card-big' }, el('span', { class: 'em' }, c.emoji), el('span', { class: 't' }, c[lang]), el('span', { class: 'y' }, yearLabel(c.year, lang))),
       el('div', { class: 'note' }, last.ok ? `${quien} 👏` : (mine ? `${quien} · ${T.drewNew}` : `${quien} · ${T.drewNewOther}`)),
-      // El error cuenta el dato de la carta (D-276); una carta sin dato dice dónde iba
+      // El error cuenta el dato de la carta (D-277); una carta sin dato dice dónde iba
       last.ok ? null : datoDe(c, lang) ? bloqueDato(el, datoDe(c, lang))
         : el('div', { class: 'why', html: `${fmt(T.whyWrong, { year: `<b>${yearLabel(c.year, lang)}</b>`, where: whereText(last.correctBetween, v.byId) })}<br>${fmt(mine ? T.wherePlaced : T.wherePlacedOther, { where: whereText(last.placedBetween, v.byId) })}` }),
     ),
@@ -644,7 +644,7 @@ function renderResult(v) {
     ));
   });
   const rline = $('#result-line'); rline.innerHTML = '';
-  // La línea final es el repaso: cada hito muestra su dato con un toque (D-276)
+  // La línea final es el repaso: cada hito muestra su dato con un toque (D-277)
   if (v.line.some(id => datoDe(v.byId[id], lang))) rline.append(el('p', { class: 'muted center', style: 'margin:4px 0' }, T.datoTap));
   v.line.forEach(id => rline.append(conDato(eventRow(id, v.byId), el, datoDe(v.byId[id], lang))));
   if (!already) { $('#result-replay').open = false; if (!meRole || winners.includes(meRole)) { confetti({ count: 220, duration: 3500 }); SFX.win(); } else SFX.timeUp(); }
@@ -961,7 +961,7 @@ function terminarSolo(partida, p, { s, t, ms, estado }) {
   $('#sr-tarjeta').textContent = t;
   // La línea como quedó, con los errores en rojo; plegada, para que los botones se vean (C-8)
   const linea = $('#sr-line'); linea.innerHTML = '';
-  // Con el dato de cada hito a un toque, y el de los errores a la vista (D-276)
+  // Con el dato de cada hito a un toque, y el de los errores a la vista (D-277)
   if (estado.linea.some(c => c.dato)) linea.append(el('p', { class: 'muted center', style: 'margin:4px 0' }, T.datoTap));
   for (const c of estado.linea) {
     linea.append(conDato(el('div', { class: 'event' + (c.ok === false ? ' fallo' : '') },
