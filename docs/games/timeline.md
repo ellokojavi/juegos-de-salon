@@ -135,6 +135,9 @@ y, si ganó, suma una victoria en la tabla `linea-de-tiempo_victorias` (semana y
 rol; contra el celular, la del humano; en un celular, la del jugador que se llama como él. Un
 empate no es victoria. La tabla (semana, siempre y amigos) va en la intro, debajo de los modos
 (`finDePartida` y `bloqueVictorias` de `public/assets/js/ranking.js`), y en `/records/`.
+Sin jugador abierto (D-274), `finDePartida` pone en la pantalla final, después de los botones
+(`#result-actions`), "¿Quieres que esta partida cuente en el ranking?" con el nombre y PIN de siempre
+y el nombre de su rol ya puesto: al entrar, se anota esa partida y la victoria, si fue suya.
 
 ### Jugar solo: la ⏳ Línea Relámpago de La Copa (D-142)
 
@@ -160,7 +163,9 @@ intentos, con nombre, forma de repartir y tamaño de mano (D-27, D-32, D-43); es
 - **Ranking (D-215):** una tabla por temática, `linea-de-tiempo_rel-<temática>`, con el mismo 0–100
   y el tiempo. Va debajo de Empezar y cambia al elegir otra temática. En el resultado, con un
   jugador de los rankings abierto, el aviso de los rankings (`avisoPartida`) reemplaza al récord del
-  celular. No suma al Todoterreno.
+  celular; sin jugador, después de los botones (`#sr-actions`) va "¿Quieres que esta partida cuente?"
+  con nombre y PIN, y al entrar se anota esa partida en la tabla de la temática (D-274). No suma al
+  Todoterreno.
 - **Semilla:** un código de 5 letras al azar (`codigoAlAzar` de `public/cup/engine.js`) y
   `generar(codigo, 1, { tema, lang, excluir })` de `public/cup/games/timeline/engine.js`. `excluir` deja fuera las
   cartas vistas hace poco (D-34); si con eso no alcanzan diez hitos de años separados, se reparte
