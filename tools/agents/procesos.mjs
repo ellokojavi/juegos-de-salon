@@ -4,7 +4,7 @@
  * convierte un error que se repite en un mecanismo que lo frena solo.
  *
  *   node tools/agents/procesos.mjs revisar                  # las señales de hoy
- *   node tools/agents/procesos.mjs decidir <archivo.json>   # abre el issue de decisiones de un toque
+ *   node tools/agents/procesos.mjs decidir <archivo.json> [--directo]   # abre el issue de decisiones de un toque
  *   node tools/agents/procesos.mjs patron <clave> "qué pasó" [--commit <sha>]   # anota una vez que se vio
  *   node tools/agents/procesos.mjs mecanismo <clave> "qué lo frena ahora" --pr <url>
  *   node tools/agents/procesos.mjs anotar --hasta <commit> [--issue <url>] [--pr <url>] [--nota "…"]
@@ -17,6 +17,7 @@
  *   - los dilemas de usabilidad que esperan al dueño hace más de tres días;
  *   - lo que la memoria del agente de documentación arrastra de una ronda a otra;
  *   - los commits de main desde la última ronda que arreglan algo que quedó atrás;
+ *   - el feedback 🐞 sin atender (issues `feedback` abiertos, D-275);
  *   - las decisiones que el dueño aprobó como "en cola" y siguen sin hacerse;
  *   - los patrones vistos dos veces o más que todavía no tienen mecanismo.
  *
@@ -159,6 +160,11 @@ function revisar() {
   for (const i of dilemas) console.log(`- dilema #${i.number} espera al dueño desde ${i.createdAt.slice(0, 10)}: ${i.title}`);
   if (!dilemas.length && !issues.some(i => /^main en rojo/.test(i.title))) console.log('Nada atrasado.');
 
+  titulo('Feedback 🐞 sin atender');
+  const feedback = issues.filter(i => i.labels.some(l => l.name === 'feedback'));
+  for (const i of feedback.reverse()) console.log(`- #${i.number} (${i.createdAt.slice(0, 10)}) ${i.title}`);
+  if (!feedback.length) console.log('Nada.');
+
   titulo('Lo que el agente de documentación arrastra');
   const doc = JSON.parse(readFileSync(join(RAIZ, 'docs/documentacion.json'), 'utf8'));
   const ultima = doc.rondas.at(-1);
@@ -190,7 +196,17 @@ function decidir(archivo) {
   const cuerpo = cuerpoDecisiones(d);
   const hay = gh('label', 'list', '--limit', '200', '--json', 'name').some(l => l.name === ETIQUETA);
   if (!hay) sh('gh', ['label', 'create', ETIQUETA, '-R', REPO, '--color', '5319e7', '--description', 'Decisiones de un toque del agente de procesos (D-273)']);
-  console.log(sh('gh', ['issue', 'create', '-R', REPO, '--title', d.titulo, '--label', ETIQUETA, '--body', cuerpo]).trim());
+  // Lo abre el bot (decidir.yml): GitHub no le avisa a nadie de lo que hace su propia cuenta, y
+  // los agentes usan la del dueño. Con --directo, lo abre esa cuenta (sin correo).
+  if (process.argv.includes('--directo')) return console.log(sh('gh', ['issue', 'create', '-R', REPO, '--title', d.titulo, '--label', ETIQUETA, '--body', cuerpo]).trim());
+  const antes = new Date().toISOString();
+  sh('gh', ['workflow', 'run', 'decidir.yml', '-R', REPO, '--ref', 'main', '-f', `titulo=${d.titulo}`, '-f', `cuerpo=${cuerpo}`]);
+  for (let i = 0; i < 24; i++) {
+    execFileSync('sleep', ['5']);
+    const [nuevo] = gh('issue', 'list', '--label', ETIQUETA, '--state', 'all', '--limit', '5', '--json', 'url,title,createdAt').filter(x => x.title === d.titulo && x.createdAt >= antes.slice(0, 19));
+    if (nuevo) return console.log(nuevo.url);
+  }
+  throw new Error('decidir.yml no abrió el issue en dos minutos: mira Actions → Decidir.');
 }
 
 const valor = (args, flag) => { const i = args.indexOf(flag); return i >= 0 ? args[i + 1] : null; };
