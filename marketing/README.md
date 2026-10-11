@@ -8,9 +8,12 @@ rehacerse (D-178).
 |---|---|---|---|
 | Video promocional | 6 · 2026-10-08 · 39,2 s | [16:9 para YouTube](promo-video/output/promo-youtube-16x9.mp4) · [vertical](promo-video/output/promo-vertical.mp4) | [promo-video/README.md](promo-video/README.md) |
 | Tutorial: cómo compartir (iOS) | 1 · 2026-10-09 · 6,0 s, sin audio | [vertical](share-tutorial/output/compartir-vertical.mp4) · [16:9](share-tutorial/output/compartir-16x9.mp4) | [share-tutorial/README.md](share-tutorial/README.md) |
+| Teaser de El caso | 1 · 2026-10-10 · 6,0 s | [vertical](caso-teaser/output/el-caso-6s.mp4) · [GIF](caso-teaser/output/el-caso-6s.gif) | [caso-teaser/README.md](caso-teaser/README.md) |
 
 [`registro.json`](registro.json) es la misma lista para leer con código: versión, fecha,
-archivos, formatos, duración y estado de cada asset.
+archivos, formatos, duración y estado de cada asset, y qué juegos muestra: `juegos`, con
+`"seleccion": true` si son solo algunos a propósito y `"laboratorio"` para los que salen sin estar
+todavía en la portada (U-34).
 
 ## Reglas
 
@@ -24,7 +27,7 @@ archivos, formatos, duración y estado de cada asset.
   quedan en la historia de git. Lo que se rehace solo (capturas, cuadros sueltos, intermedios)
   no va al repo.
 - Todo lo de esta carpeta se publica con el sitio (GitHub Pages): nada privado acá.
-- **El agente de usabilidad revisa cada asset en su ronda diaria** (U-34): `node tools/agents/marketing.mjs
+- **El agente de usabilidad revisa cada asset en su ronda** (U-34; la lanza el agente de procesos, D-276): `node tools/agents/marketing.mjs
   revisar` dice qué quedó atrás de la app (un juego nuevo que no sale, una versión vieja, commits
   que tocaron lo que muestra) y lo anota en el campo `revision` de `registro.json`. Rehacerlo lo
   decide el dueño.

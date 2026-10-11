@@ -48,7 +48,7 @@ const ES = {
   slotFirst: '↑ Antes de todo', slotLast: '↓ Después de todo', slotBetween: 'Aquí',
   correct: '¡Correcto!', wrong: '¡Te equivocaste!', correctOther: '¡{name} acertó!', wrongOther: '¡{name} se equivocó!',
   wasYear: 'Era {year}', goesHere: 'Iba aquí ↓', drewNew: 'La carta se descarta y robas una nueva.', drewNewOther: 'La carta se descarta y roba una nueva.',
-  whyWrong: 'Fue en {year}: iba {where}.', wherePlaced: 'Tú la pusiste {where}.', wherePlacedOther: 'La puso {where}.', between: 'entre {a} y {b}', beforeOf: 'antes de {b}', afterOf: 'después de {a}', tapContinue: 'Toca para seguir',
+  whyWrong: 'Fue en {year}: iba {where}.', wherePlaced: 'Tú la pusiste {where}.', wherePlacedOther: 'La puso {where}.', between: 'entre {a} y {b}', beforeOf: 'antes de {b}', afterOf: 'después de {a}', tapContinue: 'Toca para seguir', datoTap: '💡 Toca un hito para saber más',
   hoPass: 'Pásale el celular a', hoReady: '¡Listo, soy yo!', hoContinue: 'Seguir',
   // resultado
   winTitle: '¡Ganó {name}!', winTitleMany: '¡Empate!', youWin: '¡Ganaste!', youLose: 'Perdiste… esta vez.',
@@ -109,7 +109,7 @@ const EN = {
   slotFirst: '↑ Before everything', slotLast: '↓ After everything', slotBetween: 'Here',
   correct: 'Correct!', wrong: 'Wrong!', correctOther: '{name} nailed it!', wrongOther: '{name} got it wrong!',
   wasYear: 'It was {year}', goesHere: 'It goes here ↓', drewNew: 'The card is discarded and you draw a new one.', drewNewOther: 'The card is discarded and they draw a new one.',
-  whyWrong: 'It happened in {year}: it belongs {where}.', wherePlaced: 'You put it {where}.', wherePlacedOther: 'They put it {where}.', between: 'between {a} and {b}', beforeOf: 'before {b}', afterOf: 'after {a}', tapContinue: 'Tap to continue',
+  whyWrong: 'It happened in {year}: it belongs {where}.', wherePlaced: 'You put it {where}.', wherePlacedOther: 'They put it {where}.', between: 'between {a} and {b}', beforeOf: 'before {b}', afterOf: 'after {a}', tapContinue: 'Tap to continue', datoTap: '💡 Tap an event to learn more',
   hoPass: 'Pass the phone to', hoReady: 'Ready, it\'s me!', hoContinue: 'Continue',
   winTitle: '{name} wins!', winTitleMany: 'It\'s a tie!', youWin: 'You win!', youLose: 'You lose… this time.',
   wonOnTime: '⚡ Tied with no cards: the fastest one wins', wonOnTimeShared: '⚡ Tied: the fastest one wins',
@@ -172,7 +172,7 @@ const PT = {
   slotFirst: '↑ Antes de tudo', slotLast: '↓ Depois de tudo', slotBetween: 'Aqui',
   correct: 'Correto!', wrong: 'Você errou!', correctOther: '{name} acertou!', wrongOther: '{name} errou!',
   wasYear: 'Foi em {year}', goesHere: 'Ia aqui ↓', drewNew: 'A carta é descartada e você compra uma nova.', drewNewOther: 'A carta é descartada e quem jogou compra uma nova.',
-  whyWrong: 'Foi em {year}: ia {where}.', wherePlaced: 'Você colocou {where}.', wherePlacedOther: 'Foi colocada {where}.', between: 'entre {a} e {b}', beforeOf: 'antes de {b}', afterOf: 'depois de {a}', tapContinue: 'Toque para continuar',
+  whyWrong: 'Foi em {year}: ia {where}.', wherePlaced: 'Você colocou {where}.', wherePlacedOther: 'Foi colocada {where}.', between: 'entre {a} e {b}', beforeOf: 'antes de {b}', afterOf: 'depois de {a}', tapContinue: 'Toque para continuar', datoTap: '💡 Toque num marco para saber mais',
   hoPass: 'Passe o celular para', hoReady: 'Pronto, sou eu!', hoContinue: 'Continuar',
   // resultado
   winTitle: '{name} ganhou!', winTitleMany: 'Empate!', youWin: 'Você ganhou!', youLose: 'Você perdeu… desta vez.',
@@ -235,7 +235,7 @@ const DE = {
   slotFirst: '↑ Ganz am Anfang', slotLast: '↓ Ganz am Ende', slotBetween: 'Hier',
   correct: 'Richtig!', wrong: 'Daneben!', correctOther: '{name} liegt richtig!', wrongOther: '{name} liegt daneben!',
   wasYear: 'Es war {year}', goesHere: 'Gehörte hierhin ↓', drewNew: 'Die Karte fliegt raus und du ziehst eine neue.', drewNewOther: 'Die Karte fliegt raus und es wird eine neue gezogen.',
-  whyWrong: 'Das war {year}: Die Karte gehörte {where}.', wherePlaced: 'Du hast sie {where} gelegt.', wherePlacedOther: 'Gelegt wurde sie {where}.', between: 'zwischen {a} und {b}', beforeOf: 'vor {b}', afterOf: 'nach {a}', tapContinue: 'Tippen zum Weitermachen',
+  whyWrong: 'Das war {year}: Die Karte gehörte {where}.', wherePlaced: 'Du hast sie {where} gelegt.', wherePlacedOther: 'Gelegt wurde sie {where}.', between: 'zwischen {a} und {b}', beforeOf: 'vor {b}', afterOf: 'nach {a}', tapContinue: 'Tippen zum Weitermachen', datoTap: '💡 Tippe auf ein Ereignis, um mehr zu erfahren',
   hoPass: 'Gib das Handy an', hoReady: 'Bereit, ich bin’s!', hoContinue: 'Weiter',
   // Ergebnis
   winTitle: '{name} gewinnt!', winTitleMany: 'Unentschieden!', youWin: 'Du hast gewonnen!', youLose: 'Verloren… diesmal.',

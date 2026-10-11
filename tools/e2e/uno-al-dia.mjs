@@ -2,8 +2,7 @@
 // la línea de la intro, la tarjeta del resultado (racha, compartir sin decir el juego, jugar otro),
 // el segundo intento como práctica, el botón "Listo" y la página /today/ con su racha, su
 // calendario y cómo le va en cada juego, a 320 px y en los cuatro idiomas. El reloj de la página se
-// fija en el 6 de octubre de 2026 a mediodía, el día n.° 1, cuando toca Desenredo. En el sitio local
-// Uno al día sale sin pasar por /labs/.
+// fija en el 6 de octubre de 2026 a mediodía, el día n.° 1, cuando toca Desenredo.
 import { mkdtempSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
@@ -50,17 +49,17 @@ ok(await esperar(`!!document.querySelector('.azar-capa')`, 12), 'tocarlo tira el
 ok(await esperar(`/Hoy te toca/.test(document.querySelector('.azar-nombre')?.innerText||'')`, 16), `el dado dice el número y el juego (${(await texto('.azar-nombre')).replace(/\n/g, ' ')})`);
 ok(/n\.° 1/.test(await texto('.azar-nombre')) && /Desenredo/.test(await texto('.azar-nombre')), 'Uno al día n.° 1, Desenredo');
 await b.shot('dado');
-ok(await esperar(`location.pathname === '/untangle/' && location.search === '?hoy'`, 20), `y abre el juego de hoy (${await ev('location.pathname + location.search')})`);
+ok(await esperar(`location.pathname === '/untangle/' && location.search === '?today'`, 20), `y abre el juego de hoy (${await ev('location.pathname + location.search')})`);
 ok(await esperar(`!!document.getElementById('uad-intro')`), 'la intro lleva la línea de Uno al día');
 ok(/hoy todos juegan el mismo desafío/.test(await texto('#uad-intro')), `"${await texto('#uad-intro')}"`);
 
 /* ---------- Un link de otro juego lleva al de hoy ---------- */
-await b.go(`${SITIO}/queens/?hoy`, 1500);
+await b.go(`${SITIO}/queens/?today`, 1500);
 ok(await esperar(`location.pathname === '/untangle/'`), 'un link de Uno al día de otro juego se va al de hoy');
 
 /* ---------- Jugar el de hoy (el reloj de Desenredo, acortado, se acaba) ---------- */
 const jugar = async () => {
-  await b.go(`${SITIO}/untangle/?hoy&prueba&zipSeg=3`, 1200);
+  await b.go(`${SITIO}/untangle/?today&test&timer=3`, 1200);
   await esperar(`!!document.getElementById('btn-empezar')`);
   ok(await ev(`__copa.estado.juego?.semilla`) === await ev(`(async()=>{const m=await import('/assets/js/uno-al-dia.js');return m.semillaDel('${HOY}')})()`), 'el contenido sale de la semilla del día');
   await click('#btn-empezar');
@@ -91,7 +90,7 @@ await jugar();
 ok(/práctica/.test(await texto('#uad-tarjeta')), 'el segundo intento dice que fue práctica');
 m = await memoria();
 ok(m.dias[HOY].n === 2 && m.dias[HOY].s === s1, 'y el resultado del día queda el del primero');
-await b.go(`${SITIO}/untangle/?hoy`, 1200);
+await b.go(`${SITIO}/untangle/?today`, 1200);
 ok(/práctica/.test(await texto('#uad-intro')), 'la intro de un segundo intento avisa que es práctica');
 
 /* ---------- La portada después de jugar ---------- */
@@ -127,18 +126,12 @@ await ev(`document.querySelector('#uad-cal').previousElementSibling.firstElement
 ok(/septiembre/i.test(await texto('.uad-cal-cab')) && /👑/.test(await texto('#uad-cal')), 'el mes anterior muestra los días de septiembre');
 await b.shot('today');
 
-/* ---------- La forma de antes, a prueba desde /labs/: el botón al lado del dado ---------- */
-await b.go(`${SITIO}/labs/`, 1500);
-ok(await esperar(`!!document.querySelector('#uad-formas [data-forma="boton"]')`), 'el laboratorio deja elegir dónde va en la portada');
-ok(await ev(`document.querySelector('#uad-formas [data-forma="tarjeta"]').getAttribute('aria-pressed')`) === 'true', 'por defecto, junto a La Copa');
-await click('#uad-formas [data-forma="boton"]');
-await b.go(`${SITIO}/`, 1500);
+/* ---------- La forma de antes, con ?daily=button: el botón al lado del dado ---------- */
+await b.go(`${SITIO}/?daily=button`, 1500);
 await esperar(`!!document.getElementById('btn-uno-al-dia')`);
 ok(await ev(`!!document.querySelector('.azar-slot #btn-uno-al-dia') && !document.querySelector('.fila-alta')`), 'con "Al lado del dado", es un botón en la fila de Juego al azar');
 ok((await texto('.azar-slot .btn-azar')).replace(/\s+/g, ' ').trim() === '🎲 Al azar' && await sinDesborde(), 'y el dado se acorta a "🎲 Al azar"');
 await b.shot('portada-boton');
-await b.go(`${SITIO}/labs/`, 1200);
-await click('#uad-formas [data-forma="tarjeta"]');
 
 /* ---------- 320 px y los cuatro idiomas ---------- */
 await b.send('Emulation.setDeviceMetricsOverride', { width: 320, height: 640, deviceScaleFactor: 2, mobile: true });

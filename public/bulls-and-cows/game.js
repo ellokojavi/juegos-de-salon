@@ -12,6 +12,7 @@ import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../assets/js/
 import { botonInvitar, botonResultadoSolo } from '../assets/js/compartir.js';
 import { gameById } from '../assets/js/games.js';
 import { getLang, langToggle, applyStatic, COMMON, withLang, SITIO } from '../assets/js/i18n.js';
+import { param } from '../assets/js/parametros.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { failWith } from '../assets/js/transport/errors.js';
 import { score, isValid, sha256, randomNonce, verifyPlayer } from './engine.js';
@@ -352,7 +353,7 @@ function renderLobby() {
   const box = $('#lobby-box');
   box.innerHTML = '';
   // Con el idioma pegado: quien reciba la invitación abre la app como quien la mandó (D-74)
-  const url = withLang(`${location.origin}${location.pathname}?sala=${S.code}`);
+  const url = withLang(`${location.origin}${location.pathname}?room=${S.code}`);
   const joined = M.names.A && M.names.B;
   box.append(
     el('div', { class: 'muted', style: 'font-weight:800' }, T.lobbyCode),
@@ -592,7 +593,7 @@ function startLocalMode(mode, names, config) {
 
 async function startOnline(transport, code, role, name, config) {
   startSession({ mode: 'online', transport, roles: [role], config, names: { [role]: name }, code, role });
-  history.replaceState(null, '', `${location.pathname}?sala=${code}`);
+  history.replaceState(null, '', `${location.pathname}?room=${code}`);
   keepAwake();
   saveSession();
   render();
@@ -709,7 +710,9 @@ function soloFin(codigo, p, { s, t, ms, estado }) {
       el('button', { class: 'btn btn--yellow', onClick: () => { SFX.tap(); soloNueva(); } }, T.playAgain),
       el('button', { class: 'btn btn--ghost', onClick: () => { SFX.tap(); clearSession(); location.href = location.pathname; } }, T.changeMode),
       el('a', { class: 'btn btn--ghost', href: '../' }, T.backMenu)),
-    // En el resultado, solo la tabla: entrar se ofrece en la antesala (C-8, los botones a la vista)
+    // Sin jugador abierto, "¿quieres que esta partida cuente?" en su propio bloque, después de los
+    // botones para que sigan a la vista (C-8, D-274); y la tabla
+    !conRanking && rankingsVisibles() ? avisoPartida({ juego: GAME_ID, variante: 'solo', s, ms, alAnotar: () => tablaFin.recargar(), alTocar: () => SFX.tap() }) : null,
     tablaFin,
   );
   if (estado.resuelto) { confetti({ count: 220, duration: 3500 }); SFX.win(); vibrate([30, 50, 30]); } else { SFX.timeUp(); vibrate(60); }
@@ -810,10 +813,12 @@ function init() {
   initSound();
   sparkles(12);
   renderModes();
-  // Las victorias de este juego y entrar con nombre y PIN (D-212); en el laboratorio, solo donde se activaron
-  $('#rk-slot')?.append(bloqueVictorias({ juego: GAME_ID, nombre: T.title, alTocar: () => SFX.tap() }));
+  // Los mejores puntajes jugando solo, que es como más se juega (D-274), y las victorias y entrar con nombre y PIN (D-212)
+  $('#rk-slot')?.append(
+    bloqueTabla({ tabla: TABLA_SOLO, titulo: `🧍 ${COMMON[lang].rk.soloOf}`, alTocar: () => SFX.tap(), entrar: false }),
+    bloqueVictorias({ juego: GAME_ID, nombre: T.title, alTocar: () => SFX.tap() }));
   renderResumeSlot();
-  const code = new URLSearchParams(location.search).get('sala');
+  const code = param('room');
   if (code && /^[A-Z]{4}$/i.test(code)) {
     const saved = loadSession();
     if (saved && saved.code === code.toUpperCase() && !saved.done) { joinOnline(saved.code, saved.name, saved.role, saved.secret, saved.notes).catch(() => { clearSession(); renderSetup('online', code.toUpperCase()); }); }

@@ -55,6 +55,12 @@ Los IDs no se reusan: un requerimiento que cambia conserva su ID y su texto se a
 | RP-45 | Marcar juegos como favoritos en la portada con una ⭐ en cada tarjeta, y una ficha "⭐ Favoritos" que deja ver solo esos. Se guardan en el navegador, sin cuenta (D-238, #233). | ✅ v0.122.0 |
 | RP-46 | El panel muestra lo que le falla a quien juega: cargas que no arrancaron, errores sin atrapar juntados por qué son (página, navegador, versión, desde cuándo) y cuánto tarda cada página en poder jugar, con un aviso en la navegación si hoy o ayer alguna página no arrancó. Lo anota un script que carga antes que los módulos, así que avisa también cuando son ellos los que fallan. Sin IP, sin dirección completa y del navegador solo familia y versión (D-251). | ✅ v0.132.0 |
 | RP-47 | El botón de compartir de la portada muestra el video promocional y deja elegir entre invitar a jugar (el mensaje de la app con su tarjeta) o compartir el video, con su link de YouTube (D-253, PR #263). Solo en español, el idioma del video; en los demás, compartir directo como antes (D-254). | ✅ v0.133.0, v0.133.1 |
+| RP-48 | **El caso**, un misterio de deducción al estilo de *Clues by Sam*, para probar con amigos en el laboratorio (`/labs/case/`), solo en español: veinte sospechosos, pistas que siempre dicen la verdad y nunca hay que adivinar; un caso del día y casos con código, y el resultado se comparte. Si engancha, pasa a La Copa con los cuatro idiomas (D-256, [docs/games/case.md](games/case.md)). | ✅ v0.136.0 (en el laboratorio) |
+| RP-49 | **El caso como juego de La Copa**, en los cuatro idiomas, con portada animada en la antesala, sesión de prueba y desglose del puntaje; se juega suelto en `/case/` y en la práctica del laboratorio, sin entrar todavía al pozo de una copa (D-257). | ✅ v0.138.0 (en el laboratorio) |
+| RP-50 | Sumar El caso al pozo de La Copa (`POZO`) y sacarlo del laboratorio, cuando el dueño lo apruebe. | ⏳ pendiente |
+| RP-51 | **Acertijos con truco**, al estilo de *Brain Test*, para probar con amigos en el laboratorio (`/labs/riddles/`): cinco acertijos en los que la respuesta obvia no es la buena, cada uno con su gesto (tocar, elegir, arrastrar), pista, narrador burlón y comentario, en los cuatro idiomas. Si gusta, un "acertijo del día" para Uno al día o La Copa (D-269). | ❌ se sacó en v0.146.1: el dueño lo probó y no le gustó |
+| RP-52 | **La clave**, un prototipo del laboratorio (`/labs/code/`) para probar con amigos: una base y 4 cartas transparentes reparten los trazos de un código de 5 cifras; hay que ponerlas todas, girar y voltear cada una hasta que formen las cifras, y escribir el código en el teclado. En español también hay **Palabra**: una palabra de 5 letras de catorce segmentos, con cartas de dos caras. Empezó con dos figuras; el dueño pidió más cartas, sacó el modo de 8, pidió marcar los trazos encima de otros y sumó Palabra cuando el de cifras se volvió mecánico; en los cuatro idiomas (D-270, [docs/games/code.md](games/code.md)). | ✅ v0.147.0 (en el laboratorio) |
+| RP-53 | Que los rankings se llenen: al terminar una partida sin haber entrado, un bloque a la vista ofrece entrar con nombre y PIN para que esa partida (o la victoria) cuente; la portada de Toque y Fama, Generala y Ahorcado muestra primero los mejores puntajes jugando solo; Ahorcado solo tiene su tabla de 0 a 100, también en `/records/` (D-274). | ✅ v0.150.0 |
 
 ## Cuarto Rey (CR)
 
@@ -114,7 +120,7 @@ Los IDs no se reusan: un requerimiento que cambia conserva su ID y su texto se a
 | GE-06 | Jugar solo con récord del celular y tabla de rankings `generala_solo` (D-212). | ✅ |
 | GE-07 | Memoria de partida en todos los modos, con los dados guardados a medio turno (C-6). | ✅ |
 | GE-08 | Textos en español, inglés, portugués ("General") y alemán (C-3). | ✅ |
-| GE-09 | Uno al día, con los dados de la semilla del día (D-247). Listo en `/generala/?hoy`; entra al mazo al salir de próximamente (D-248). | ⏳ pendiente |
+| GE-09 | Uno al día, con los dados de la semilla del día (D-247). Listo en `/generala/?today`; entra al mazo al salir de próximamente (D-248). | ⏳ pendiente |
 | GE-11 | En la portada, como "Próximamente" mientras no se abre (D-248). | ✅ v0.128.0 |
 | GE-12 | Abrir Generala desde la portada (`available: true`) y sumarla al mazo de Uno al día. | ⏳ pendiente |
 | GE-10 | Victorias en los rankings (`generala_victorias`, D-215). | ✅ |
@@ -223,6 +229,7 @@ Los IDs no se reusan: un requerimiento que cambia conserva su ID y su texto se a
 - **Rendimiento:** carga inicial < 200 KB sin contar fuentes web; sin frameworks.
 - **Privacidad:** la partida vive en `localStorage` del dispositivo; a Firebase van la sala (modos de varios celulares) y señales de uso para el panel del dueño: contadores por juego, modo, jugadores, zona horaria, idioma y hora (D-44). De una sala, además, el país y quién ganó (D-79); de una partida sin red, quién juega (el nombre que ya usa en la app) y cómo terminó (D-210). Esos nombres solo los lee el dueño. Nunca IP, secretos ni chat.
 - **Responsabilidad:** el menú incluye un mensaje de consumo responsable.
+- **URL en inglés:** carpetas, parámetros y sus valores; los links de antes, en español, siguen funcionando (C-18, D-266). ✅ v0.143.0
 
 ## Toque y Fama (TF) — ver [especificación](games/bulls-and-cows.md) y [estudio de factibilidad](games/bulls-and-cows-factibilidad.md)
 

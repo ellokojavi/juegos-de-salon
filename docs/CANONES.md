@@ -40,6 +40,8 @@ public/<carpeta>/
   página puente (la genera `node tools/release/og.mjs tarjetas`).
 - Los juegos de La Copa siguen la misma idea en `public/cup/games/<carpeta>/`: `engine.js`
   (reglas puras), `ui.js` (pantalla) y sus datos propios; lo común a todos queda en `games/`.
+  Uno suelto que todavía está en el laboratorio (`labs: true` en `SUELTOS`) tiene su página en
+  `/labs/<slug>/`, y `/<slug>/` es página puente hasta que salga (D-267).
 - El juego se registra en `public/assets/js/games.js` con `id`, `emoji`, `name` y `tagline` por idioma, `players`, `duration`, `path` y `available`. Con sala, también `jugadas`: los tipos de mensaje que hace una persona, que es lo que el panel cuenta como jugadas (D-138).
 - El `<head>` de cada página de la app lleva el manifest, el ícono y el nombre del iPhone
   (`apple-touch-icon` y `apple-mobile-web-app-title`), el script que elige el manifest del idioma
@@ -139,7 +141,7 @@ modo que el juego piensa tener.
 - Interfaz del transporte: `create`, `join`, `send`, `onMessage`, `onPresence`, `leave`, `dispose`.
 - **Campos reservados del transporte:** `from`, `at` (marca de tiempo) e `id`. Un juego que necesite enviar una posición o una cantidad usa otro nombre, o el transporte se lo pisará sin avisar.
 - **Firebase no guarda una lista vacía:** el campo simplemente no queda. Una lista que puede ir vacía viaja como texto (`"1,4,8"`, o `""`) y el motor la lee aceptando la cadena, la lista cruda del transporte local y el campo ausente (D-60).
-- Salas: código de 4 letras mayúsculas sin I ni O, QR con `?sala=CÓDIGO`, campo `game` para separar juegos, caducidad de media hora sin jugadas y de 6 horas en total (D-89). Roles de A a F (hasta seis jugadores).
+- Salas: código de 4 letras mayúsculas sin I ni O, QR con `?room=CÓDIGO`, campo `game` para separar juegos, caducidad de media hora sin jugadas y de 6 horas en total (D-89). Roles de A a F (hasta seis jugadores).
 - **Antes de tocar la sala se espera la conexión.** Crear o entrar espera a `.info/connected` (8 s) y corre con tope (12 s), y el tope de salas por celular se revisa antes de la red (`errors.js`, `ratelimit.js`). Sin eso, quedarse sin señal se ve como un botón pegado para siempre.
 - **Un celular no puede abrir salas sin parar:** 20 por hora y 80 por día (D-41). El tope está sobre el uso legítimo más intenso, no sobre el promedio, porque la revancha abre sala nueva. Si `localStorage` falla, se deja crear: bloquear a un jugador legítimo es peor que dejar pasar a un abusivo.
 - **Cada partida deja una señal de uso para el panel del dueño** (`public/assets/js/transport/stats.js`, D-44). El transporte apunta las salas solo; los modos sin red llaman `trackStart({ game, mode, players })` al empezar (no al retomar) y `trackFinish({ ganador, empate, detalle })` al terminar. Es un `fetch` por REST, sin SDK, mejor esfuerzo: nunca se espera ni se muestra. Un modo sin red manda quién juega —los nombres que la partida ya tiene (`nombres` en `trackStart`) o, si no hay, el último que la persona escribió en la app (`nombreDelCelular`)— y cómo terminó, una sola vez (D-210), además del idioma elegido en la app (D-211). Nunca sale un secreto, el chat ni una IP. Quien **entra a propósito** con su nombre y PIN para los rankings (D-212) manda además su mejor puntaje y sus partidas a su jugador; sin entrar, nada de eso. De una **sala** quedan además el país del celular y quién ganó, que es lo que el panel muestra como bitácora (D-79). Una partida sin red se ve en vivo en el panel porque `trackStart` le arranca un latido (D-140): el juego no tiene que hacer nada más.
@@ -151,9 +153,9 @@ modo que el juego piensa tener.
 - **Las salas vencidas se borran solas.** Al crear o entrar a una sala, el celular la apunta en la papelera (`cleanup/days/<día>`) y de vez en cuando barre los días pendientes borrando lo vencido (`public/assets/js/transport/cleanup.js`, D-39). Nada de esto se le muestra al jugador ni puede voltear una partida: si falla, barre el celular siguiente.
 - Con más de dos jugadores, el reparto de roles es una carrera: se escribe el rol con un identificador de dispositivo y se relee para confirmar quién lo obtuvo. Nunca se asume que el primer rol libre que se leyó sigue libre.
 - Cuando hay más de dos jugadores, uno es anfitrión (rol A) y abre la partida cuando están todos.
-- Quien abre un enlace de sala (`?sala=CÓDIGO`) llega a una pantalla que **solo** deja unirse a esa sala: título propio de invitación, nada de botón para crear otra, el código va fijo y de solo lectura, y los ajustes de la partida no se muestran porque los fija el anfitrión. Ofrecer las dos cosas confunde a quien fue invitado.
+- Quien abre un enlace de sala (`?room=CÓDIGO`) llega a una pantalla que **solo** deja unirse a esa sala: título propio de invitación, nada de botón para crear otra, el código va fijo y de solo lectura, y los ajustes de la partida no se muestran porque los fija el anfitrión. Ofrecer las dos cosas confunde a quien fue invitado.
 - El enlace de la sala se comparte con el diálogo nativo del sistema (`botonInvitar` en `public/assets/js/compartir.js`); copiar al portapapeles es solo el respaldo cuando el navegador no tiene ese diálogo. El diálogo del celular ya incluye copiar, así que no se pierde nada.
-- **Todo lo que se comparte** pasa por `public/assets/js/compartir.js` y sigue su estándar (D-165, U-30, U-33): cabecera `{emoji} *{título}* · {contexto}`, una idea por línea y el link solo al final; si va imagen, lleva arriba la misma cabecera y abajo el mismo link (`lamina`, `laminaResultado`), y se manda junto con su texto. Las invitaciones van solo con texto; la app, desde la portada, con su tarjeta social del idioma como imagen (`compartirApp`, D-226). Un juego nuevo no arma su propio mensaje ni su propio botón.
+- **Todo lo que se comparte** pasa por `public/assets/js/compartir.js` y sigue su estándar (D-165, U-30, U-33): cabecera `{emoji} *{título}* · {contexto}`, una idea por línea y el link solo al final; si va imagen, lleva arriba la misma cabecera y abajo el mismo link (`lamina`, `laminaResultado`), y se manda junto con su texto. Las invitaciones van solo con texto; la app, desde la portada, con su tarjeta social del idioma como imagen (`compartirApp`, D-226) y un texto que nombra todo lo principal, una línea cada cosa (`LO_PRINCIPAL`, D-271, U-35). Un juego nuevo no arma su propio mensaje ni su propio botón.
 - Se muestra cuando el rival se desconecta y se retoma solo cuando vuelve.
 - La revancha crea una sala nueva y mueve a los dos jugadores; parte quien perdió.
 
@@ -186,7 +188,7 @@ modo que el juego piensa tener.
 
 - Un error se muestra con una señal inconfundible (color, sacudida, sonido propio) y se queda en pantalla hasta que el jugador toca; nunca se cierra solo ni lo pisa la jugada de otro.
 - Esa señal es **para quien se equivocó**. A los demás el mismo hecho les llega como noticia, en tercera persona y sin el fondo rojo: “¡Cata se equivocó!”, no “¡Te equivocaste!” (D-36).
-- Va acompañado de una explicación corta y concreta de qué estuvo mal, con los datos del juego (por ejemplo, entre qué hitos iba la carta y entre cuáles se puso).
+- Va acompañado de una explicación corta y concreta de qué estuvo mal, con los datos del juego (por ejemplo, entre qué hitos iba la carta y entre cuáles se puso). **Excepción, cuando la respuesta ya se ve** (D-277): en Línea de Tiempo, ⏳ Línea Relámpago y 📅 ¿En qué año? el año de la carta, grande, ya dice qué estuvo mal; en vez de repetirlo, el veredicto cuenta el **dato** de la carta, algo que el jugador se lleva. Si el juego corre contra el reloj, el reloj se pausa mientras se lee, con tope. Una carta sin dato vuelve a decir entre qué hitos iba.
 - Un acierto o la jugada de otro puede cerrarse solo tras un par de segundos, si después no viene un pase de celular; un toque lo cierra antes. Si viene un pase, manda C-9 (D-213).
 - El temporizador que cierra un aviso solo puede cerrar ese aviso, no uno más nuevo.
 - **Excepción, cuando errar es la jugada normal** (D-56): en El Ahorcado, una letra que no está no abre un aviso que haya que cerrar en los modos donde el celular no cambia de mano; se señala por cuatro canales (color, sacudida, sonido y el dibujo que avanza) y el juego sigue. El veredicto de la ronda sí se queda hasta que el jugador toque.
@@ -271,8 +273,8 @@ El README no se mantiene a pulso: `python3 tools/release/readme.py` lo sostiene.
 - Una captura atrasada es un aviso en un PR cualquiera, no lo frena. Solo "actualiza el README"
   exige dejarlas todas al día (D-213).
 
-Lo que se atrasa igual lo recoge el agente `documentacion` (D-172): una ronda diaria sobre lo que
-entró a `main` y una revisión de cada PR antes de proponer su fusión, con
+Lo que se atrasa igual lo recoge el agente `documentacion` (D-172): una ronda sobre lo que
+entró a `main`, que lanza el agente de procesos los días que entró algo (D-276), y una revisión de cada PR antes de proponer su fusión, con
 `node tools/agents/documentar.mjs revisar` y su memoria en `docs/documentacion.json`. No reemplaza esta
 regla: quien cambia algo lo documenta en su mismo PR.
 
@@ -344,9 +346,10 @@ La portada (`public/index.html`) es la lista de juegos y las maneras de elegir u
 salieron de varias decisiones que se fueron corrigiendo; aquí está lo vigente, y cada punto dice
 de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
 
-- **Qué se ofrece y en qué orden.** Las tarjetas salen de `PORTADA` en `games.js`: primero los
-  juegos de `GAMES` (La Copa, la primera, en media fila junto a Uno al día) y después los juegos de La Copa sueltos (`SUELTOS`,
-  aparte solo por cómo están hechos, D-198), sin lista propia en la página (D-142, D-149). Un
+- **Qué se ofrece y en qué orden.** Las tarjetas salen de `PORTADA` en `games.js`: los juegos
+  de `GAMES` y los juegos de La Copa sueltos (`SUELTOS`, aparte solo por cómo están hechos, D-198)
+  van mezclados, de lo más jugado a lo menos, según la lista `POPULARIDAD` (D-255), sin lista
+  propia en la página (D-142, D-149). La Copa va primera, en media fila junto a Uno al día. Un
   juego que no está disponible se ve, con "Próximamente" al lado del nombre, pero no se abre, ni
   con el teclado (`available` en `games.js`, C-2; D-142), y va al final de la lista, con y sin
   filtro (v0.128.2). La tarjeta dice jugadores y duración,
@@ -409,6 +412,30 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
   `idioma-por-url.mjs`. `window.__portada` dice el filtro, las tarjetas que se ven y los
   favoritos. Un cambio que se ve rehace la captura `docs/screenshots/menu.png` (C-13).
 
+## C-18 · Las URL, en inglés
+
+Todo lo que se ve en una dirección va en inglés: las carpetas (`/hangman/`, C-2, D-192), los
+nombres de los parámetros (`?room=`, `?seed=`, `?test`) y sus valores en palabras (`?type=logic`,
+`&demo=podium`, `&notif=deadline`, `?practice=queens`), también en el `#` del panel (`#/cup/OFICI`).
+Los nombres de antes se siguen leyendo como alias: un link que ya circula no se rompe (D-214, D-266).
+
+- **Se lee y se escribe con `parametros.js`.** `param('room')` lee el nombre nuevo o el de antes y
+  devuelve el valor en inglés; `tiene('test')` hace lo mismo con una bandera. Un parámetro nuevo
+  se agrega ahí, en inglés, y uno que cambia de nombre deja el viejo en `ALIAS`, `BANDERAS` o
+  `VALORES`. Nada lee `location.search` a mano con un nombre en español.
+- **Lo que la app genera va siempre con el nombre nuevo:** invitaciones, links compartidos, avisos al
+  celular (`tools/push/`), lo que deja en la barra con `history.replaceState`. Al abrir una página,
+  `trackVisit()` reescribe en inglés una dirección vieja (`normalizarUrl`).
+- **El juego en la URL va con el nombre de su carpeta** (`slugDe` / `idDeSlug` en `games.js`): el id
+  (`reinas`) no cambia, porque lo guardan las salas, el panel y el celular, pero no se ve.
+- **Una clave que se guarda no cambia por esto:** el panel sigue contando `aviso/plazo` aunque la URL
+  diga `notif=deadline` (`AVISO_CLAVE`).
+- **Lo que no es palabra queda como es:** códigos (`?K7Q2X`, `?c=`), el link propio de una copa
+  (`?pirata`, que elige quien la crea; las palabras de las banderas están reservadas) y los nombres
+  de las variables del código, que siguen en español.
+- **Lo frena una prueba:** `node public/assets/js/parametros.test.mjs` busca en `public/` y en
+  `tools/push/` una URL armada con un nombre de antes.
+
 ---
 
 ## Lista de chequeo antes de dar por listo un juego
@@ -428,6 +455,7 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
 - [ ] Lo que comparte (sala, resultado) sale de `compartir.js`, con la cabecera del estándar, y un resultado va con su imagen (C-7, D-165).
 - [ ] Registro en el menú, README, especificación, requerimientos y decisiones (C-2, C-13). En la portada, con su tipo, entra al dado y a los favoritos y cabe a 320 px (C-17).
 - [ ] Las excepciones a los cánones están escritas en su especificación (C-13).
+- [ ] Sus URL van en inglés: carpeta, parámetros y valores, leídos con `parametros.js`, con los nombres de antes como alias (C-18).
 - [ ] Su `index.html` lleva el vigía antes de las hojas de estilo y llama `trackVisit()` al cargar: `node public/assets/js/vigia.test.mjs` en verde (C-7, D-251).
 - [ ] El panel lo muestra sin haberlo tocado: `node public/panel/adapta.test.mjs` en verde y una mirada a `node tools/e2e/mirar.mjs panel datos` (C-16).
 - [ ] Capturas del README rehechas y miradas, y `python3 tools/release/readme.py revisar` en verde (C-13).

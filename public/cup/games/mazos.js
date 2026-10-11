@@ -7,6 +7,7 @@
 import { DECKS as TODOS } from '../../timeline/decks/index.js';
 import { azar } from './semilla.js';
 import { fuera as fueraPara } from './audiencia.js';
+import { datoDe } from '../../assets/js/dato.js';
 
 /**
  * Las temáticas que entran a la copa. Brasil queda fuera (D-111): la copa es de un grupo chileno
@@ -42,7 +43,7 @@ export function cartas(a, deckId, n, { separacion = 0, lang = 'es', excluir = nu
   const todas = mazo(deckId).cards.filter(c => !(fuera && fuera.has(c.id)) && !fueraPara(c.local, aud));
   for (const c of a.barajar(todas)) {
     if (out.some(o => Math.abs(o.year - c.year) <= separacion - 1 || o.year === c.year)) continue;
-    out.push({ id: c.id, year: c.year, emoji: c.emoji, texto: c[lang] || c.es });
+    out.push({ id: c.id, year: c.year, emoji: c.emoji, texto: c[lang] || c.es, dato: datoDe(c, lang) });
     if (out.length === n) break;
   }
   return out;

@@ -31,7 +31,7 @@ import {
   groupDays, localLog, paisesDeSalas, paisesDelRango, salaDe, mediana, idiomasDeSalas, idiomasDelRango, trafico, origenesAgrupados, origenLabel, dayLabel,
   avisosDelRango, AVISO_TIPOS, vueltaAtrasada, unoAlDiaDelRango, salud, TRAMOS, navegadorLabel,
 } from './aggregate.js';
-import { SECCIONES, leerRuta, rutaA, seccionDe } from './rutas.js';
+import { SECCIONES, leerRuta, rutaA, rutaEnIngles, seccionDe } from './rutas.js';
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -975,7 +975,7 @@ function vistaTrafico(now) {
     el('div', { class: 'grid2' },
       bloque('De dónde llegan', 'El sitio desde el que tocaron el link. WhatsApp y casi todas las apps de chat no lo dicen: esas visitas caen en "Directo o sin dato", junto con quien escribió la dirección o la tenía guardada.',
         lista(origenes.map(([k, v]) => bar(k, [seg(C_TOTAL, v)], maxO, { sub: dominiosDe(k) })), 'Nada todavía.', 'bars')),
-      bloque('Por qué link', 'Lo que la app comparte lleva su marca (?de=link): así se sabe cuántas visitas llegaron por una invitación aunque el chat no lo diga. También cuenta utm_source o ?de= si se los pones a mano a un link.',
+      bloque('Por qué link', 'Lo que la app comparte lleva su marca (?from=link): así se sabe cuántas visitas llegaron por una invitación aunque el chat no lo diga. También cuenta utm_source o ?from= si se los pones a mano a un link.',
         lista(canales.map(([k, v]) => bar(canalLabel(k), [seg(C_TORNEO, v)], maxC)), 'Ninguna visita con marca en este rango.', 'bars'),
         t.visitas ? el('p', { class: 'muted small', style: 'margin-top:8px' }, `Sin marca: ${n(Math.max(0, t.visitas - canales.reduce((k, [, v]) => k + v, 0)))} visitas.`) : null),
     ),
@@ -1201,6 +1201,7 @@ function render() {
 
 /** La URL cambió (un enlace, Atrás, una dirección pegada): se dibuja esa vista desde arriba. */
 function alCambiarRuta() {
+  enIngles();
   const antes = S.ruta;
   S.ruta = leerRuta(location.hash);
   if (S.ruta.r && S.ruta.r !== S.range && RANGOS.some(r => r.id === S.ruta.r)) cambiarRango(S.ruta.r, false);
@@ -1215,6 +1216,13 @@ function alCambiarRuta() {
   render();
   if (otra) window.scrollTo(0, 0);
 }
+
+/** Una dirección de antes (`#/torneo/OFICI`) queda escrita en inglés, sin sumar un paso (C-18, D-266). */
+function enIngles() {
+  const nueva = rutaEnIngles(location.hash);
+  if (nueva && nueva !== location.hash) try { history.replaceState(history.state, '', nueva); } catch (_) { /* queda como venía */ }
+}
+enIngles();
 
 /** Deja la URL al día con el rango y el entorno, sin sumar un paso al historial. */
 function anotarEnUrl() {

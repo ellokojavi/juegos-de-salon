@@ -10,17 +10,17 @@ quien suma más al cierre. Es la primera modalidad de la app que no es una parti
 serie de partidas en el tiempo (un macro-juego). El diseño completo, con la revisión y el plan
 de construcción, se discutió en el documento *La Copa — requisitos del torneo de varios días*.
 
-- **Estado:** en el menú desde v0.83.0 (D-175). **`/labs/`** sigue para probar: la Copa de 3 días, la
-  práctica con semilla y las demos (D-101).
-- **URL:** `/cup/` (portada) · `/cup/?K7Q2X` (una copa) · `/cup/?labs` (copa real con la Copa
-  de 3 días, D-100; `?tres` sigue funcionando) · `?prueba` (almacén local y reloj adelantable, sin
-  Firebase) · `/cup/?K7Q2X&dia=3` (abre el día 3 listo para empezar, si se puede jugar; lo usan
-  los avisos, D-229) · `/cup/?K7Q2X&silenciar` (silencia los avisos de esa copa: el botón del aviso
-  en Android) · `/cup/?practica=<id>&labs&semilla=K7Q2X` (un juego suelto del laboratorio,
-  repetible; los que tienen página se van a `/<slug>/?labs&semilla=K7Q2X`, D-164). Desde la portada el juego suelto es `/<slug>/` (D-142, D-149, D-162, D-198): la misma
+- **Estado:** en el menú desde v0.83.0 (D-175). `/labs/` ya no tiene nada de La Copa salvo El caso,
+  que todavía no entra al pozo (D-262).
+- **URL:** `/cup/` (portada) · `/cup/?K7Q2X` (una copa) · `/cup/?three` (ofrece la Copa de 3 días,
+  D-100, D-262) · `?test` (almacén local y reloj adelantable, sin
+  Firebase) · `/cup/?K7Q2X&day=3` (abre el día 3 listo para empezar, si se puede jugar; lo usan
+  los avisos, D-229) · `/cup/?K7Q2X&mute` (silencia los avisos de esa copa: el botón del aviso
+  en Android) · `/cup/?practice=<juego>&labs&seed=K7Q2X` (un juego suelto con la semilla a la vista,
+  repetible; los que tienen página se van a `/<slug>/?labs&seed=K7Q2X`, D-164). Desde la portada el juego suelto es `/<slug>/` (D-142, D-149, D-162, D-198; uno del laboratorio, `/labs/<slug>/`, D-267): la misma
   pantalla, sin "copa" en el link, que vuelve al menú, sin sesión de prueba ni semilla a la vista, y
-  con su señal de uso. `/cup/?practica=<id>` sin `&labs` lleva ahí. `/<slug>/?hoy` (o
-  `/cup/suelto/?<id>&hoy` para los que no tienen página) es el juego de Uno al día, con la semilla
+  con su señal de uso. `/cup/?practice=<juego>` sin `&labs` lleva ahí. `/<slug>/?today` (o
+  `/cup/suelto/?<juego>&today` para los que no tienen página) es el juego de Uno al día, con la semilla
   de la fecha del jugador; si hoy toca otro juego, se va a ese (D-230, [UNO-AL-DIA.md](../UNO-AL-DIA.md)).
   Bajo su resultado no va el ranking del juego, solo el de Uno al día (el primer intento igual entra al del juego).
 - **Jugadores:** de 2 a 10 por copa (`MIN_JUGADORES` y `MAX_JUGADORES` en `engine.js`, D-118). Con
@@ -46,7 +46,7 @@ panel del dueño (D-137).
 | Días | El día 1 parte a las 00:00 del día de inicio, en la zona de la copa (`meta.tz`: hora del Pacífico en las nuevas, D-113; hora de Chile en las anteriores). Cada día termina a las 23:59. |
 | Día de gracia | Un día se puede jugar ese día o el siguiente, con puntaje completo. La final no tiene gracia: la copa cierra a las 23:59 del último día, y ahí vence también la gracia del penúltimo. |
 | Un intento | "Cómo se juega" no cuenta. El intento empieza al tocar **Empezar**; recargar retoma el mismo intento (C-6). |
-| Puntos del día | Por posición entre quienes jugaron: 10-8-6-5-4-3-2-1-1-1. Manda el puntaje del juego; a igual puntaje, el menor **tiempo activo** (D-95). Empate total: comparten la mejor posición. |
+| Puntos del día | Por posición entre quienes jugaron: 10-8-6-5-4-3-2-1-1-1. Manda el puntaje del juego; a igual puntaje, el menor **tiempo activo** (D-95). Leer el dato de un error en Línea Relámpago o de cada hito en ¿En qué año? no cuenta, hasta 6 s cada vez (D-277). Empate total: comparten la mejor posición. |
 | Comodín ×2 | Uno por jugador y copa. Se activa antes de Empezar (el servidor lo rechaza después). No vale en la final. |
 | Final ×2 | El último día vale doble para todos. |
 | Resultados ocultos | Los puntajes de un día se ven después de jugarlo o cuando cierra. La tabla y el gráfico tampoco lo delatan: suman solo los días que ya puedes ver. |
@@ -110,14 +110,17 @@ Todos los juegos puntúan **de 0 a 100** (D-113). Igual lo que decide la copa es
 
 Recién creada, la copa abre en **Administrar** con una guía para invitar (D-110). Ahí el admin
 comparte los mensajes, **cierra o reabre la inscripción** y **mueve el inicio a hoy o mañana**
-mientras nadie haya jugado. En el laboratorio, `?prueba&demo=<escena>` abre una copa de ejemplo
-en cualquier punto (`public/cup/demo.js`).
+mientras nadie haya jugado. `?test&demo=<escena>` abre una copa de ejemplo en cualquier
+punto (`public/cup/demo.js`: `new`, `guest`, `waiting`, `not-started`, `player`, `admin`, `final`,
+`final-admin`, `podium`, `full`; los nombres en español de antes de D-266 se leen igual); el laboratorio ya no las ofrece, pero las usan las pruebas y las capturas (D-262).
 
-Al tocar Empezar, una **cuenta de 3 a 1** y "¡A jugar!" (D-105): recién ahí aparece el tablero y
-parte el reloj. Al terminar, el resultado explica **cómo se calculó el puntaje** línea por línea
+Al tocar Empezar, una **cuenta de 3 a 1** y "¡A jugar!" (D-105): recién ahí aparece el tablero, y
+el reloj parte cuando el "¡A jugar!" ya se fue y terminó la entrada del juego, si la tiene (las
+cartas de El caso, con `entrada()` en su registro): la cuenta no es tiempo de juego (D-258). Al
+terminar, el resultado explica **cómo se calculó el puntaje** línea por línea
 (`public/cup/desglose.js`, D-106), y abajo va la tabla del día. En la de 🏁 La Gran Final, cada
 jugador lleva además su tarjeta de cinco rondas (⏳75 🔢85 👑100 🔤60 📅90), para comparar ronda a
-ronda (#259); en la demo `podio` o `llena` se ve con datos.
+ronda (#259); en la demo `podium` o `full` se ve con datos.
 
 Antes de Empezar cada día se puede jugar una **sesión de prueba** (D-103): la misma mecánica con
 otro contenido (código derivado con `codigoEnsayo`, otra temática, una grilla fuera del sorteo,
@@ -163,6 +166,35 @@ por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
   y el reloj sigue; está apagado mientras no se haya movido nada. Su habilidad es
   `espacial`, propia, para que el sorteo del calendario la pueda separar de Reinas, Zip y Tango.
 
+- **🔍 El caso** (D-257, en el laboratorio; su página propia es [case.md](case.md)): un misterio de
+  deducción al estilo de *Clues by Sam*. Veinte sospechosos en una grilla de 4 × 5, inocentes
+  o criminales; cada uno que se marca bien da su pista, y las pistas siempre dicen la verdad. Nunca
+  hay que adivinar: el motor (`games/case/engine.js`) simula al jugador y arma las pistas para que en
+  todo momento alguien más se pueda deducir. Marcar antes de tiempo no se acepta y cuenta como error
+  (se guarda como jugada `{ i, v, falta }`, D-261), sin decir si estaba bien. **100 puntos con el caso resuelto, menos 10 por error y 15 por ayuda, hasta 10**; sin
+  resolver, 0. La **💡 Ayuda** (D-263, jugada `{ ayuda: i }`, `ayuda()` del motor) elige a alguien que ya se
+  puede deducir y dice qué pistas juntar; en la tarjeta su celda va en 🟨. Las pistas son datos (`{ t, a, b, k, g, h }`) y la frase la arma `texto()` en el
+  idioma de quien juega, con las plantillas de `casoTexto` en `rules.js`: el caso es el mismo en los
+  cuatro idiomas. La antesala muestra cartas de espaldas que se dan vuelta solas mientras una lupa
+  las recorre (`portada()` de `games/case/ui.js`), y el título lleva la lupa y los colores que se
+  mueven (`titulo()`, un gancho opcional de `games/index.js` que la antesala y la práctica usan si
+  el juego lo trae; los demás muestran su nombre como siempre). Las cartas del tablero se dan vuelta
+  recién cuando la cuenta del 3, 2, 1 se fue del documento, no mientras la tapa. Se juega suelto en
+  `/labs/case/` (D-267: los juegos del laboratorio viven en `/labs/<slug>/` y `/case/` es puente; el
+  botón 🔍 de `/labs/` lleva ahí, y desde D-262 es lo único del laboratorio), con `diario: true`: sin
+  semilla es el caso del día, sigue al recargar y su final ofrece otro caso, el de hoy y el comentario
+  (el detalle, en [case.md](case.md)). **Todavía no está en `POZO`**: una copa no lo elige hasta que salga
+  del laboratorio. Los mensajes de acierto y de error se van solos (2,5 s y 4 s, excepción a C-8b anotada en
+  [case.md](case.md)). Suma condicionales y parejas, y de cada semilla se queda con el más difícil de cuatro casos
+  (`dificultad`, D-260). Su habilidad es `deducir`, la misma de Toque y Fama, para que el sorteo del
+  calendario no los ponga en días seguidos.
+  **Las pistas se eligen para que haya que combinarlas** (D-259): `notaPista` premia la que destapa
+  a alguien solo junto con las que ya se saben, castiga la que lo dice todo sola y prefiere las
+  comparaciones, los pares e impares y "al menos / a lo más" a "hay exactamente N" en grupos chicos;
+  si en un paso todo sale de una sola pista, se cambia la del último que habló por una que obligue a
+  combinar. Un tipo propio, "Exactamente uno de Ana y Beto es criminal" (`g.tipo: 'dos'`, plantilla
+  `unoDeDos`), nunca nombra a quien habla. `juegos.test.mjs` frena un caso con menos de 25 % de
+  deducciones combinadas o más de 35 % de pistas "hay exactamente N".
 - **Línea y Año** usan temáticas distintas dentro de la misma copa (`temasDeLaCopa`), para que no
   sean dos días de lo mismo.
 - **Reinas, Zip y Tango** tienen solución única garantizada. Reinas ajusta las zonas de a una
@@ -195,12 +227,15 @@ además **sueltos**, de un jugador y sin copa, desde la portada (`/<slug>/`, D-1
 
 ### Laboratorio, práctica y reportes
 
-`/labs/` (D-101) ofrece la práctica de cada juego, la copa simulada y la copa real. La práctica
-arma el contenido con una semilla al azar como si fuera el día 1 de una copa con ese código, y la
-muestra al final. El botón **🐞 Reportar un problema o dejar un comentario** (práctica, tablero y
-resultado) guarda en `feedback/<id>`, por REST y sin cuenta (D-104), el texto, un nombre opcional, la versión
+`/labs/` (D-101) ofrecía la práctica de cada juego, las demos y la copa real; desde D-262 tiene
+solo El caso, que vive en `/labs/case/` (D-267). La práctica (`?practice=<juego>&labs`, que sigue funcionando) arma el contenido con una semilla al azar como si fuera el día 1 de una copa con ese código, y la
+muestra al final (salvo en un juego `diario`, cuya semilla va en el link de compartir). Un juego
+jugado desde el laboratorio (`?labs` o `/labs/<slug>/`) termina con el formulario
+**"¿Qué te pareció?"** abierto (`formularioComentario` de `labs-idioma.js`, D-265, D-267) en vez
+del botón 🐞. El botón **🐞 Reportar un problema o dejar un comentario** (práctica, tablero y
+resultado de la copa) guarda en `feedback/<id>`, por REST y sin cuenta (D-104), el texto, un nombre opcional, la versión
 y un contexto en JSON: copa, jugador, pantalla, día, juego, semilla, URL y navegador. Se leen con
-`node tools/firebase/reportes.mjs`; en `?prueba` queda en `localStorage` (`juegos-de-salon:copa:prueba:reportes`).
+`node tools/firebase/reportes.mjs`; en `?test` queda en `localStorage` (`juegos-de-salon:copa:prueba:reportes`).
 
 ### Avisos al celular (D-223, D-224, D-225, D-227, D-228)
 
@@ -230,9 +265,9 @@ Abiertos a todos desde D-228: se ven en cualquier celular que pueda recibirlos, 
   cierra de noche), **La Gran Final** (con su lugar en la tabla), **terminó la copa** y, al admin
   que activó avisos, **quién se inscribió**. A lo más uno por copa y celular en cada vuelta, y dos
   por copa en un día (D-229). Los textos son los `avMsg*` de `rules.js`. Al tocarlo abre ese día
-  (`&dia=<d>`) o, el del cierre, el podio; en Android trae **Jugar** y **Silenciar esta copa**
-  (`&silenciar`). Los días nuevos de varias copas van juntos en un aviso, y un empate arriba nombra
-  a todos los que ganaron (D-229). Cada dirección lleva `&aviso=<tipo>`, que la página cuenta al
+  (`&day=<d>`) o, el del cierre, el podio; en Android trae **Jugar** y **Silenciar esta copa**
+  (`&mute`). Los días nuevos de varias copas van juntos en un aviso, y un empate arriba nombra
+  a todos los que ganaron (D-229). Cada dirección lleva `&notif=<tipo>` (en inglés, D-266: `day`, `deadline`, `end`…), que la página cuenta al
   abrirse y saca de la dirección; el panel muestra mandados y tocados por tipo (D-233).
 
 ## Flujo
@@ -276,14 +311,14 @@ Todo bajo `public/cup/`:
 | Archivo | Qué hace |
 |---|---|
 | `engine.js` | Calendario, ventanas con zona horaria, puntos, tabla, evolución, medallas, reloj activo |
-| `games/<carpeta>/engine.js` | Motor puro de cada juego (`connections`, `final`, `number`, `queens`, `tango`, `timeline`, `untangle`, `where`, `word`, `year`, `zip`), con sus datos propios al lado |
+| `games/<carpeta>/engine.js` | Motor puro de cada juego (`case`, `connections`, `final`, `number`, `queens`, `tango`, `timeline`, `untangle`, `where`, `word`, `year`, `zip`), con sus datos propios al lado |
 | `games/<carpeta>/ui.js` | La pantalla de cada juego |
 | `games/index.js` · `games/semilla.js` · `games/mazos.js` · `games/audiencia.js` · `games/solo.js` | Lo común a los juegos: el registro, la semilla, los mazos, el público y el modo suelto con su récord |
-| `store-firebase.js` · `store-local.js` | El mismo almacén contra Firebase o contra localStorage (`?prueba`) |
+| `store-firebase.js` · `store-local.js` | El mismo almacén contra Firebase o contra localStorage (`?test`) |
 | `cuenta.js` | Con quién está sentado este celular, el intento a medio jugar, los avisos de cada copa (D-223) y "Tus copas" (las del celular más las del jugador, `juntarCopas`, D-220) |
 | `avisos.js` | Los avisos al celular en pantalla: la campana, la tarjeta y sus hojas (D-223; la lógica del navegador está en `assets/js/push.js`). El estilo de la hoja de abajo (`.hoja`) es de todo el sitio y vive en `assets/css/base.css` (D-232); `style.css` guarda solo lo propio de los avisos |
 | `desglose.js` | Cómo se calculó el puntaje, línea por línea (D-106) |
-| `demo.js` | Las escenas de ejemplo del laboratorio |
+| `demo.js` | Las escenas de ejemplo de `?test&demo=`, para las pruebas y las capturas |
 | `reportes.js` | El botón 🐞 y los reportes que esperan reenvío |
 | `planilla.js` | La tabla final como CSV (D-161) |
 | `rules.js` | Textos (`LOCALES` es, en, pt, de, también los de los avisos al celular, `avMsg*`) y la explicación de cada juego |

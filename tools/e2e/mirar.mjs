@@ -57,7 +57,7 @@ const b = await launch({ port: 9451, dir: `${salida}/perfil`, out: salida, width
 await b.go(`${base}/${ruta}`, 1500);
 // El idioma se guarda como texto pelado: getLang() compara contra ['es','en','pt'] y un
 // JSON.stringify le dejaba las comillas dentro, así que --idioma no hacía nada.
-// Un idioma del laboratorio (D-191) se ofrece solo con su marca puesta, como al entrar por /labs/de/
+// Un idioma del laboratorio (D-191) se ofrece solo con su marca puesta, como al entrar por su puerta del laboratorio
 const labs = EN_LABS.includes(idioma) ? `localStorage.setItem('${LABS_KEY}', '${idioma}');` : '';
 await b.evaluate(`localStorage.clear(); localStorage.setItem('juegos-de-salon:lang', '${idioma}'); ${labs} 1`);
 await b.go(`${base}/${ruta}`, 1500);

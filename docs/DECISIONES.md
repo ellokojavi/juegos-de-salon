@@ -51,25 +51,26 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 
 | Tema | Regla de hoy (canon) | Decisiones vigentes que la explican |
 |---|---|---|
-| Estructura y rutas | C-2 | D-01, D-02, D-03, D-24, D-192, D-198 |
+| Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270 |
 | Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184 |
-| Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244 |
+| Mazos de cartas con fecha | `docs/games/timeline.md` | D-37, D-277, D-278 |
+| Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
-| Portada: filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241 |
+| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255 |
 | Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247 |
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246 |
 | Memoria de partida | C-6 | D-25, D-150 |
 | Interfaz táctil | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213 |
-| Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213 |
-| Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243, D-253, D-254 |
+| Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213, D-277 |
+| Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243, D-253, D-254, D-271, D-272 |
 | Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251 |
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216 |
-| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250 |
-| Agentes (usabilidad, documentación) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252 |
+| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268 |
+| Agentes (usabilidad, documentación, procesos) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249 |
 | Marketing | `marketing/README.md` | D-178 |
 | App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
@@ -229,7 +230,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 **Consecuencias:** Queda como canon C-15 para los demás juegos con salas; en v0.11 se enciende también en Toque y Fama, donde la espera del número secreto del rival es el rato más muerto de todos. En el celular, el teclado no achica la ventana: el panel se levanta con `visualViewport` y el campo usa 16 px exactos para que iOS no haga zoom. Se agregan límites (120 caracteres, un mensaje cada 1,2 s) y las reglas de Firebase validan el largo del texto. La sala se lee con solo saber el código de cuatro letras: el chat **no es privado** y así se documenta.
 
 ## D-29 · El enlace de sala solo deja unirse
-**Fecha:** 2026-09-09 · **Estado:** vigente
+**Fecha:** 2026-09-09 · **Estado:** corregida por D-266
 **Decisión:** Al abrir un enlace `?sala=CÓDIGO`, la pantalla de datos se titula "¡Invitado a jugar!" y muestra únicamente el bloque para unirse a esa sala: sin botón de "Crear sala", con el código fijo y de solo lectura, y sin los ajustes de la partida. Vale para los tres juegos con salas.
 **Por qué:** Quien recibe una invitación veía la misma pantalla que quien empieza de cero, con "Crear sala" arriba y el código abajo. Tocar el botón de arriba abre una sala **distinta**, y los dos quedan esperándose en salas separadas sin entender por qué. Los ajustes (dígitos, temática, cartas en mano, reglas de disparo) tenían el mismo problema al revés: se podían tocar y no hacían nada, porque la configuración es la del anfitrión.
 **Consecuencias:** Queda en el canon C-7. La pantalla del invitado dice de quién es la sala y que la partida la configura quien invitó. Prueba: `tools/e2e/enlace-invitacion.mjs`.
@@ -282,7 +283,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 **Consecuencias:** El canon C-8b se precisa: la señal fuerte del error es para quien lo cometió. En un celular y en solitario no cambia nada, porque quien mira la pantalla es siempre quien acaba de jugar. Prueba: `tools/e2e/linea-de-tiempo-veredicto.mjs`.
 
 ## D-37 · Cartas que se puedan situar en el tiempo
-**Fecha:** 2026-09-10 · **Estado:** vigente
+**Fecha:** 2026-09-10 · **Estado:** corregida por D-278
 **Decisión:** Una carta no puede describir un hecho que se repite en la historia sin algo que la ancle a su año. Se sacó “un gran incendio golpea los cerros de Valparaíso” y “el terremoto de marzo sacude la zona central”; “el movimiento estudiantil se toma el año” pasó a nombrar a Camila Vallejo, y el incendio de Valparaíso a decir que fue el mayor de su historia y cuántas casas se llevó.
 **Por qué:** Chile tiene terremotos, incendios y marchas cada pocos años. Si la carta no dice cuál, el jugador no está pensando, está adivinando, y eso rompe el juego para todos.
 **Consecuencias:** Regla para escribir mazos: superlativo, nombre propio o cifra que ancle el año. Si no hay ninguno, la carta no entra. Vale también para los mazos futuros.
@@ -1228,14 +1229,14 @@ compartir ya llega a WhatsApp y el grupo es donde se juega la pica. La tarjeta e
 **Consecuencias:** LIG-33 (avisos automáticos) queda para después.
 
 ## D-100 · La Copa de 3 días es solo para probar
-**Fecha:** 2026-09-23 · **Estado:** vigente
+**Fecha:** 2026-09-23 · **Estado:** corregida por D-266
 **Decisión:** La portada y el formulario ofrecen solo la Copa de 7 días. La de 3 días (Línea,
 Conexiones y la final) aparece con `?tres` en la URL o en el modo de prueba.
 **Por qué:** el dueño la quiere para probar con amigos, no como producto. Promocionarla en la
 portada la haría la opción por defecto de quien quiere algo corto.
 
 ## D-101 · La Copa se prueba en un laboratorio antes de llegar al menú
-**Fecha:** 2026-09-23 · **Estado:** corregida por D-112, D-175
+**Fecha:** 2026-09-23 · **Estado:** corregida por D-112, D-175, D-262
 **Decisión:** La Copa sale del menú como juego jugable: su tarjeta se sigue viendo, apagada y con
 "Próximamente" (`available: false`, `labs: true` en `games.js`), y se juega desde **`/labs/`**,
 una página que no está enlazada desde el menú ni se indexa. El laboratorio ofrece tres pasos:
@@ -1330,7 +1331,7 @@ reporte. Que se puedan leer públicamente es el precio de no tener
 servidor; si eso cambia, se cierra la lectura al UID del dueño y se leen desde el panel.
 
 ## D-105 · Cuenta regresiva antes de cada juego con reloj
-**Fecha:** 2026-09-23 · **Estado:** vigente · **Relación:** desde la 0.46 la cuenta va de 3 a 1: con 5 se hacía larga
+**Fecha:** 2026-09-23 · **Estado:** corregida por D-258 · **Relación:** desde la 0.46 la cuenta va de 3 a 1: con 5 se hacía larga
 **Decisión:** Al tocar Empezar (el día, la sesión de prueba o la práctica) aparece una capa con
 el nombre del juego y una cuenta de 3 a 1, un número por segundo, con un tic y una vibración
 corta. Después dice **¡A jugar!** y se desvanece sola sobre el tablero. El tablero no se dibuja
@@ -1392,7 +1393,7 @@ acertado ninguna.
 lo que se decide no es lo que se publica. Y un reporte escrito es caro de conseguir: no se pierde.
 
 ## D-110 · El admin de una copa nueva, la inscripción, el inicio movible y las demos del laboratorio
-**Fecha:** 2026-09-23 · **Estado:** vigente
+**Fecha:** 2026-09-23 · **Estado:** corregida por D-262, D-266
 **Decisión:**
 - **Recién creada, la copa abre en Administrar**, con una guía de la primera vez (se ve mientras
   el admin siga solo y la copa no haya partido): compartir la invitación, esperar a que se
@@ -1684,7 +1685,7 @@ no abre. Una leyenda debajo explica los estados.
 **Por qué:** pedido del dueño: que cada uno vea su grilla completa y qué le queda.
 
 ## D-132 · Un agente de usabilidad con ronda diaria y dilemas como issues
-**Fecha:** 2026-09-25 · **Estado:** corregida por D-204, D-213
+**Fecha:** 2026-09-25 · **Estado:** corregida por D-204, D-213, D-275, D-276
 **Decisión:** Un subagente (`.claude/agents/usabilidad.md`) revisa solo usabilidad: textos,
 botones, interacciones, navegación y mensajes para compartir, con la guía `docs/USABILIDAD.md`
 (reglas U-n, que crecen con cada decisión del dueño).
@@ -1857,7 +1858,7 @@ podio con gráfico); con esta ningún cambio de lugar queda fuera, y el dueño p
 todos.
 
 ## D-142 · Los minijuegos de La Copa se juegan sueltos, y la portada se filtra
-**Fecha:** 2026-09-25 · **Estado:** corregida por D-149, D-170, D-214 · **Relación:** reemplaza el solitario de D-27 y D-129; D-149 quita el filtro de cuántos juegan y saca los sueltos de `/copa/`
+**Fecha:** 2026-09-25 · **Estado:** corregida por D-149, D-170, D-214, D-255, D-266 · **Relación:** reemplaza el solitario de D-27 y D-129; D-149 quita el filtro de cuántos juegan y saca los sueltos de `/copa/`
 **Decisión:** Tres cambios que van juntos:
 1. **La portada ofrece los minijuegos de La Copa sueltos**, de un jugador: Conexiones, Toque y
    Fama: Palabra, ¿En qué año?, Reinas, Tango y Zip. Viven en `SUELTOS` de `assets/js/games.js`
@@ -1997,7 +1998,7 @@ reglas (`node tools/reglas.mjs publicar`) para que el botón funcione en las cop
 de prueba (almacén local) funciona sin eso.
 
 ## D-149 · La portada se filtra solo por tipo, y los minijuegos sueltos salen de /copa/
-**Fecha:** 2026-09-26 · **Estado:** corregida por D-162, D-198, D-214
+**Fecha:** 2026-09-26 · **Estado:** corregida por D-162, D-198, D-214, D-255
 **Decisión:** Dos cambios:
 1. **Se va el filtro de cuántos juegan** (Todos · Solo · Con amigos, D-142). La portada se filtra
    solo por tipo (Palabras, Lógica, Cultura, Cartas/Dados), igual que antes: se prende y se
@@ -2323,7 +2324,7 @@ las reglas de Firebase tampoco (aceptan cualquier texto de hasta 100 caracteres)
 final dejó de decir "una de cada minijuego de la copa". `CALENDARIOS` queda para las demos.
 
 ## D-164 · El 〰️ de Zip lleva contorno claro, y el laboratorio juega en las páginas de cada minijuego
-**Fecha:** 2026-09-30 · **Estado:** vigente
+**Fecha:** 2026-09-30 · **Estado:** corregida por D-266
 **Decisión:** Dos cambios:
 1. **Emojis oscuros con contorno claro.** El 〰️ de Zip se dibuja casi negro y sobre el fondo
    morado no se veía. Sigue siendo el mismo emoji, con un contorno blanco (`.emoji-claro` en
@@ -2558,7 +2559,7 @@ el resumen final no repitan la imagen. Si la imagen no se puede compartir (un co
 descarga y el texto se copia igual: la imagen sigue llegando.
 
 ## D-172 · Un agente de documentación con ronda diaria en la nube
-**Fecha:** 2026-10-02 · **Estado:** vigente
+**Fecha:** 2026-10-02 · **Estado:** corregida por D-276
 **Decisión:** Un subagente (`.claude/agents/documentacion.md`) revisa una vez al día lo que entró
 a `main` y deja la documentación al día: `CHANGELOG.md`, decisiones, requerimientos, la doc de
 cada juego, `CLAUDE.md`, el README con sus capturas y las tarjetas sociales.
@@ -3038,7 +3039,7 @@ muesca. Tocar un tipo estando pegada lleva la lista filtrada a su primera tarjet
 filtrar a media lista se quedaba mirando el medio de una lista más corta.
 
 ## D-197 · El alemán sale del laboratorio
-**Fecha:** 2026-10-04 · **Estado:** vigente · **Relación:** cierra el paso de D-191 para el alemán; corrige D-47, D-48 y D-74
+**Fecha:** 2026-10-04 · **Estado:** corregida por D-262 · **Relación:** cierra el paso de D-191 para el alemán; corrige D-47, D-48 y D-74
 **Decisión:** El alemán se ofrece a todos, como el inglés y el portugués: `EN_LABS` queda vacío,
 el toggle muestra 🇩🇪 DE en cualquier dispositivo y hay puerta `/de/` con su tarjeta social
 (`menu-de.jpg`, `de_DE`). El link del laboratorio, `/labs/de/`, pasa a ser una página puente hacia
@@ -3251,7 +3252,7 @@ lo que de verdad está abierto. La regla la escribió una sesión del 2026-10-04
 rama que nunca se subió (ese número quedó para el alemán); se rescató al limpiar las carpetas.
 
 ## D-207 · El panel se navega: secciones, fichas y la hora del Pacífico
-**Fecha:** 2026-10-04 · **Estado:** vigente · **Relación:** reemplaza las tres vistas de D-137
+**Fecha:** 2026-10-04 · **Estado:** corregida por D-266 · **Relación:** reemplaza las tres vistas de D-137
 **Decisión:** El panel deja de ser una página larga con tres pestañas y pasa a navegarse como un
 sitio: cuatro secciones (Ahora, La Copa, Juegos, Audiencia) y una ficha por cada cosa que existe.
 La de una copa tiene la tabla completa, la grilla jugador × día (puntaje, tiempo, puntos, jugando,
@@ -3285,7 +3286,7 @@ app, los reportes en el panel (LIG-44), una sección de salud de los datos y se�
 (cuándo entró el rival, cuándo cerró el admin la inscripción).
 
 ## D-208 · El tráfico del sitio, aunque nadie juegue
-**Fecha:** 2026-10-04 · **Estado:** vigente · **Relación:** completa D-44
+**Fecha:** 2026-10-04 · **Estado:** corregida por D-266 · **Relación:** completa D-44
 **Decisión:** Cada página que se abre manda una señal, aunque nadie llegue a jugar, y el panel
 la muestra en una sección nueva, **Tráfico** (`#/trafico`). Una **visita** es una pestaña: se
 cuenta una vez, en la página donde empezó, con de dónde llegó (solo el dominio: `google_com`,
@@ -3824,7 +3825,7 @@ tocan) es el PR 4 de [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md). `tools/e2e/
 cambia: en el sitio local los avisos ya se veían sin el laboratorio.
 
 ## D-229 · Los avisos: tope de 2 al día, empates en plural, el día exacto, botones y copas juntas
-**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** corrige D-224 (sin tope, un ganador, abría el tablero, sin botones ni copas juntas)
+**Fecha:** 2026-10-05 · **Estado:** corregida por D-266 · **Relación:** corrige D-224 (sin tope, un ganador, abría el tablero, sin botones ni copas juntas)
 **Decisión:** Lo que D-224 dejó afuera del plan de [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md),
 en `tools/push/calendario.mjs`, `avisar.mjs`, `public/sw.js` y la copa:
 - **Tope:** a lo más **2 avisos por copa y celular en un día** de quien recibe (`TOPE`). Cuenta
@@ -3853,7 +3854,7 @@ prueban a mano en Android: Chrome headless no los muestra. Si con el tope se pie
 avisos ya ese día), el del día siguiente o el de gracia lo cubren.
 
 ## D-230 · Uno al día: un juego por día, el mismo para todos, con racha y avisos que pide el jugador
-**Fecha:** 2026-10-05 · **Estado:** corregida por D-239 · **Relación:** amplía D-188 (el dado de Juego al azar abre el juego del día) y D-212 (un período nuevo, el del día, y la tabla de rachas); corrige D-221 (los avisos ya no son solo de La Copa: suma los que el jugador pide para Uno al día); completa RP-44
+**Fecha:** 2026-10-05 · **Estado:** corregida por D-239, D-262, D-266 · **Relación:** amplía D-188 (el dado de Juego al azar abre el juego del día) y D-212 (un período nuevo, el del día, y la tabla de rachas); corrige D-221 (los avisos ya no son solo de La Copa: suma los que el jugador pide para Uno al día); completa RP-44
 **Decisión:** Una modalidad nueva en la portada, junto a Juego al azar. Cada día, a la medianoche
 del jugador, sale un juego con su contenido, el mismo para todos, a partir de la fecha
 (`uno-al-dia:<fecha>`, como las semillas de La Copa, D-97). Entran todos los juegos que tienen modo
@@ -3943,7 +3944,7 @@ Apilarla mantiene el ancho y los 44 px de alto (C-8), así que la barra no cambi
 ven como dos letras (ES, GB…; CL hasta D-244) y se acepta, porque la app se juega en celulares. Hay un solo toggle en la app: el estándar queda en C-3.
 
 ## D-232 · Un globo en la portada invita a agregar la app a inicio (primero en el laboratorio; para todos desde v0.121.0)
-**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** completa D-221; reusa la hoja de pasos de D-223
+**Fecha:** 2026-10-05 · **Estado:** corregida por D-262 · **Relación:** completa D-221; reusa la hoja de pasos de D-223
 **Decisión:** La portada muestra, a los 2,5 segundos, un globo abajo con el ícono de la app,
 **"Juegos de Salón como app"**, una línea y el botón **Agregar**, que abre los pasos de ese
 celular en la hoja de abajo de los avisos (D-223).
@@ -3972,7 +3973,7 @@ celular, la ✕, el diálogo de Chrome y los cuatro idiomas a 320 px); en iPhone
 prueba a mano desde `/labs/`. **Sale del laboratorio en v0.121.0** (decisión del dueño, 2026-10-06): `INSTALAR_EN_LABS = false`, así que el globo sale en la portada de todos los celulares donde se puede agregar la app; en `/labs/` queda solo el botón para volver a mostrarlo después de cerrarlo con la ✕.
 
 ## D-233 · Los avisos se miden en el panel: mandados, tocados, la app instalada y la última vuelta
-**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** completa D-224 y D-228; el PR 4 de [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md); señales como D-44 y D-208
+**Fecha:** 2026-10-05 · **Estado:** corregida por D-266 · **Relación:** completa D-224 y D-228; el PR 4 de [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md); señales como D-44 y D-208
 **Decisión:** El panel (`#/torneo`) suma el bloque "🔔 Avisos al celular". Lo que lo alimenta:
 - **Tocados:** la dirección de cada aviso lleva `&aviso=<tipo>` (`dia`, `plazo`, `final`, `fin`,
   `insc`, `copas`, `prueba`). La página lo cuenta al abrirse en `stats/<env>/days/<día>/aviso/<tipo>`,
@@ -4107,7 +4108,7 @@ encontró que la portada ya se corría de lado en alemán en el Chrome de Linux,
 del ancho de la pantalla (`minmax(0, 1fr)`) y el nombre se parte aunque falte el diccionario.
 
 ## D-239 · La Copa y Uno al día, mitad y mitad en la portada
-**Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** corrige D-230 (dónde va el acceso a Uno al día)
+**Fecha:** 2026-10-06 · **Estado:** corregida por D-266 · **Relación:** corrige D-230 (dónde va el acceso a Uno al día)
 **Decisión:** En la portada, Uno al día deja de ser un botón al lado de Juego al azar y pasa a una
 tarjeta de media fila junto a La Copa: los dos son accesos de más jerarquía que los juegos, en una
 fila de dos tarjetas (`.fila-alta`, `.game-card.alta`).
@@ -4428,3 +4429,535 @@ basta el compartir de siempre hasta que haya versiones del video en otros idioma
 **Alternativas descartadas:** mostrar el video en español con el aviso en los otros idiomas (lo de
 D-253; no le sirve a quien no habla español).
 
+## D-255 · La portada, de lo más jugado a lo menos
+**Fecha:** 2026-10-09 · **Estado:** vigente · **Relación:** cambia el orden de D-142 y D-149 (primero `GAMES`, después `SUELTOS`)
+**Decisión:** Los juegos disponibles de la portada van ordenados por cuántas partidas se jugaron,
+de más a menos, con los de `GAMES` y los de La Copa sueltos mezclados. El orden es una lista fija,
+`POPULARIDAD` en `games.js`; los que vienen "Próximamente" siguen al final. La primera vuelta
+cuenta las partidas de producción del 11 de septiembre al 9 de octubre de 2026 (todo lo que
+guarda `stats/prod/days`): las de cada modo sin red, una por sala de dos celulares, las de cada
+día de las copas (`torneos/<código>/results`) y las de Uno al día. La Copa va primera (209 días
+de copa jugados); después Toque y Fama (87), Línea de Tiempo (84, con el día "Línea" de las
+copas), Reinas (73), Tango (57), Ahorcado (54), Batalla Naval (47), ¿Dónde queda? (38), Letras
+(33), Zip (30), Conexiones (29), Año (21), Dudo (15), Desenredo (12) y Cuarto Rey (2). Julepe (4) y
+Generala (1) también están en la lista, aunque hoy van al final por "Próximamente".
+**Por qué:** lo pidió el dueño: que lo que más se juega quede arriba.
+**Alternativas descartadas:** ordenar en vivo con los datos de Firebase (la portada tendría que
+leer la base antes de dibujarse, y el orden cambiaría solo de un día a otro).
+**Consecuencias:** el orden no se actualiza solo: se rehace la cuenta y la lista cuando el dueño
+lo pide. Un juego nuevo que no está en la lista va después de los que sí.
+
+## D-256 · El caso: un prototipo de misterio en el laboratorio, solo en español
+**Fecha:** 2026-10-09 · **Estado:** reemplazada por D-261, D-264, D-267 · **Relación:** excepción a C-3 (idiomas) y C-2 (estructura); ampliada por D-257 (la versión de La Copa); D-261 y D-264 corrigieron partes de sus reglas, y D-267 borró el prototipo
+**Decisión:** Se prueba en `/labs/case/` un juego de deducción al estilo de *Clues by Sam*: veinte
+sospechosos, pistas que siempre dicen la verdad, y nunca hay que adivinar. Solo en español y fuera de
+`games.js`, para mostrárselo a amigos. Hay un caso del día (la semilla es la fecha) y casos con código
+(`?c=`). Marcar a alguien que todavía no se puede deducir no se acepta ni cuenta como error, y no dice
+si estaba bien. El puntaje son los errores; el tiempo desempata.
+**Por qué:** lo pidió el dueño, después de la lista de candidatos de misterio y acertijos: es el que
+más se parece a lo que ya funciona (un puzzle que sale de una semilla, como Reinas o Tango), cuesta
+poco en idiomas (las pistas salen de plantillas) y no compite con nada de la app. Probarlo primero
+con amigos dice si engancha antes de pagar los cuatro idiomas y La Copa.
+**Alternativas descartadas:** hacerlo de una vez juego de La Copa (obliga a los cuatro idiomas y a
+su puntaje de 0 a 100 antes de saber si gusta); contar como error el intento antes de tiempo (castiga
+probar, y el original tampoco deja adivinar).
+**Consecuencias:** no está en el menú ni en el README como juego; el laboratorio lo ofrece en su
+propia sección. Si entra, pasa a `cup/games/` con su id y esta página se va. Ver
+[docs/games/case.md](games/case.md).
+
+## D-257 · El caso como juego de La Copa, en el laboratorio y en los cuatro idiomas
+**Fecha:** 2026-10-09 · **Estado:** corregida por D-267 · **Relación:** amplía D-256
+**Decisión:** El caso pasa a ser un juego de La Copa (`public/cup/games/case/`, id `caso`, 🔍): se
+juega suelto en `/case/` (con `labs: true` en `SUELTOS`, así que tiene página y tarjeta pero no sale
+en la portada) y en la práctica del laboratorio, pero **no entra a `POZO`** hasta que el dueño lo
+saque del laboratorio: una copa todavía no lo puede elegir. Puntúa 100 con el caso resuelto, menos
+10 por error, con mínimo 10, y 0 sin resolver; el tiempo desempata. Las pistas dejan de ser frases y
+pasan a ser datos (`{ t, a, b, k, g, h }`); la frase la arma `texto()` en el idioma de quien juega
+con las plantillas de `casoTexto` (es, en, pt, de), y quien habla de sí mismo lo hace en primera
+persona. La antesala tiene una portada animada: cartas que se dan vuelta solas y una lupa que las
+recorre. La pantalla repite la del prototipo (cartas que giran al empezar, zoom a la elegida,
+sellos al marcar, la pista que ilumina a quiénes nombra).
+**Por qué:** lo pidió el dueño mientras prueba el prototipo con amigos: tenerlo listo como juego de
+La Copa para sumarlo apenas lo apruebe. Dejarlo fuera de `POZO` permite probarlo de punta a punta
+(antesala, prueba, juego, desglose) sin que caiga en una copa de verdad.
+**Alternativas descartadas:** traducir las frases ya armadas (no se puede: cada idioma arma la
+oración distinto y en alemán el oficio cambia de caso); un puntaje por tiempo como Reinas (aquí lo
+difícil es no equivocarse, no ir rápido).
+**Consecuencias:** los nombres de los sospechosos son los mismos en todos los idiomas. Los oficios
+van en singular masculino en la carta en alemán y portugués (Koch, criminoso) y conviene que alguien
+que los hable los revise. El prototipo de `/labs/case/` sigue con su propio motor en español; cuando
+El caso salga del laboratorio, esa página se va o pasa a usar este motor. Ver
+[docs/games/cup.md](games/cup.md).
+
+## D-258 · El reloj parte con la pantalla de juego a la vista, no con la cuenta
+**Fecha:** 2026-10-10 · **Estado:** vigente · **Relación:** corrige D-105 (cuándo parte el reloj)
+**Decisión:** En todos los juegos de La Copa (el día, la sesión de prueba, la práctica y los
+juegos sueltos), el reloj parte cuando el "¡A jugar!" ya se fue de la pantalla, no cuando aparece.
+El tablero se sigue armando debajo con el "¡A jugar!" (`cuentaRegresiva` se resuelve ahí y
+devuelve cuánto falta para que la capa se vaya, `CUENTA_SALE_MS`), pero el reloj nace con ese
+retraso. Un juego con animación de entrada la declara con `entrada()` en su registro, y el reloj
+espera también eso: en El caso, lo que tardan las cartas en darse vuelta (unos 1.030 ms; 0 con
+movimiento reducido).
+**Por qué:** lo pidió el dueño: el tiempo de la cuenta no es tiempo de juego. Con D-105 el reloj
+partía con el "¡A jugar!", y los 0,9 s que tarda en irse (más la vuelta de las cartas en El caso)
+se contaban aunque todavía no se podía jugar.
+**Alternativas descartadas:** armar el tablero recién cuando se fue la capa (se ve un instante la
+pantalla vacía); que cada juego arranque su propio reloj (el reloj es de la cáscara, D-130).
+**Consecuencias:** como `reloj.leer` no cuenta tiempo negativo, el reloj marca 0:00 hasta que
+parte. Retomar una partida no cambia: el tablero vuelve de una y el reloj sigue donde estaba.
+
+## D-259 · El caso, menos lineal: pistas que hay que combinar
+**Fecha:** 2026-10-10 · **Estado:** corregida por D-263, D-264 · **Relación:** amplía D-257
+**Decisión:** El generador de El caso elige las pistas para que haya que pensar más. Cada pista
+candidata recibe una nota (`notaPista`): vale más la que destapa a alguien **solo combinada con las
+pistas que ya se saben**, menos la que lo dice todo sola, y los tipos que piden razonar (más que,
+tantos como, par o impar, al menos, a lo más) valen más que "hay exactamente N" en grupos chicos.
+Si en un paso todo lo que se deduce sale de una sola pista, se busca otra pista para el último que
+habló que obligue a combinar. Se suma un tipo nuevo: "Exactamente uno de Ana y Beto es criminal".
+Se miran más candidatas (36, y 60 para destrabar), y cada caso sale en unos 65 ms.
+**Por qué:** lo pidió el dueño: el caso era muy lineal, con deducciones simples. Medido en 40 casos,
+el 88 % de las deducciones salía de una sola pista y el 65 % de las pistas eran "hay exactamente N".
+Ahora, cerca de un tercio de las deducciones pide combinar pistas y "hay exactamente N" baja a
+menos de un cuarto. Sigue sin haber que adivinar nunca.
+**Alternativas descartadas:** dar menos pistas (el juego dejaría de garantizar que nunca hay que
+adivinar); esconder lo que es quien habla (rompe la regla de que lo marcado se sabe).
+**Consecuencias:** `juegos.test.mjs` frena un caso muy lineal (menos de 25 % de deducciones
+combinadas) o con demasiadas pistas de "hay exactamente N" (más de 35 %). Las copas ya jugadas no
+cambian (El caso todavía no está en `POZO`); el caso de una semilla dada sí cambia. **El prototipo de
+`/labs/case/` usa el mismo motor** (su `engine.js` solo adapta el de La Copa al español), así que los dos
+tienen la misma dificultad; lo guardado en el prototipo pasa a `juegos-de-salon:caso:v2:<semilla>`. **La
+prueba de La Copa no es más fácil**: es un caso completo, y la antesala lo dice (`trialNoteFull`, con
+`pruebaCompleta` en el registro). En una comparación, los dos grupos se iluminan en dos colores, amarillo
+y rosado, y la frase los pinta igual (#282). "Tantos como" no sale con cero y cero.
+
+## D-260 · El caso: condicionales, parejas y el más difícil de varios candidatos
+**Fecha:** 2026-10-10 · **Estado:** vigente · **Relación:** amplía D-259
+**Decisión:** El caso suma dos tipos de pista que solas no destapan a nadie y piden otro razonamiento:
+**condicionales** ("Si Óscar es criminal, Rodrigo es inocente", con sus cuatro combinaciones) y
+**parejas** ("Ana y Beto son los dos inocentes o los dos criminales"). Nunca nombran a quien habla ni a
+alguien que ya se sabe. El generador arma **4 casos por semilla y se queda con el que más hace pensar**
+(`dificultad`: jugado de punta a punta, suma por cada deducción que pide combinar pistas y resta por
+cada paso con varias personas deducibles a la vez). Al repartir, prefiere pistas que todavía no
+destapan a nadie, y si un paso destapa a muchos o todo sale de una sola pista, cambia la pista del
+último que habló.
+**Por qué:** el dueño lo sentía monótono aun después de D-259. Medido en 40 casos: las deducciones que
+piden combinar pistas pasan de 51 % a 55 %, las personas deducibles por paso bajan de 1,66 a 1,50 y
+una de cada siete pistas es condicional o pareja.
+**Consecuencias:** un caso tarda unos 300 ms en armarse (antes 50 ms) y en un celular hasta un
+segundo. Por eso el motor guarda lo armado por semilla, y la antesala de La Copa (el día y la práctica)
+lo arma mientras se lee (`precalentar`, para los juegos que se marcan `caro` en el registro): tocar
+Empezar o Probar primero no deja el botón trabado. `juegos.test.mjs` exige al menos 45 % de
+deducciones combinadas. El caso de una semilla cambia (El caso todavía no está en `POZO`).
+
+## D-261 · El caso: marcar antes de tiempo cuenta como error
+**Fecha:** 2026-10-10 · **Estado:** corregida por D-263 · **Relación:** corrige D-256 (el intento antes de tiempo)
+**Decisión:** En El caso (La Copa y el prototipo), marcar a alguien que todavía no se puede deducir
+no se acepta y **cuenta como error** (resta 10, como equivocarse), sin decir si lo marcado estaba
+bien. Se guarda como jugada `{ i, v, falta }` y la carta queda con ✕. El mensaje dice "Todavía no se
+puede saber qué es Ana: cuenta como error.", y la regla de "Cómo se juega" lo explica.
+**Por qué:** lo eligió el dueño: con D-256 el intento no costaba nada, y se podía tantear persona
+por persona hasta dar con la que se deduce, sin pensar. Era lo que más hacía monótono el juego.
+**Alternativas descartadas:** medio error (5 puntos), y dejarlo gratis.
+**Consecuencias:** el puntaje premia estar seguro antes de marcar. `tools/e2e/case/lab.mjs` lo
+prueba.
+
+## D-262 · El laboratorio queda solo con lo que no ha salido
+**Fecha:** 2026-10-10 · **Estado:** vigente · **Relación:** corrige D-101, D-110, D-197, D-230 y D-232
+**Decisión:** `/labs/` ofrece solo lo que todavía no está en producción: hoy, El caso. Se van la
+práctica de cada juego de La Copa, las diez demos, el botón de la Copa de 3 días, las secciones de
+Uno al día y de Agregar a inicio, y el puente `/labs/de/`. Con ellas se van las puertas que ya
+estaban abiertas para todos (`UNO_AL_DIA_EN_LABS`, `INSTALAR_EN_LABS`) y la forma del acceso a Uno
+al día guardada en el celular: queda `?uad=boton|no` en el link. `?labs` en `/cup/` ya no ofrece la
+Copa de 3 días; sigue con `?tres` y en el modo de prueba (D-100).
+**Por qué:** lo pidió el dueño: lo que ya está en producción no se necesita en el laboratorio.
+**Alternativas descartadas:** borrar también las demos. Siguen en el código, sin link, porque las
+usan las pruebas de punta a punta (`cup/torneo.mjs`, `cup/avisos.mjs`, `idioma-por-url.mjs`) y las
+capturas del README (`?prueba&demo=<escena>`).
+**Consecuencias:** `cup/torneo.mjs` (parte `laboratorio`) prueba que la página tenga solo El caso;
+`uno-al-dia.mjs` prueba el botón al lado del dado con `?uad=boton`. Un juego nuevo que se pruebe
+antes de salir vuelve a tener su sección en `/labs/` y se saca al salir.
+
+## D-263 · El caso: comparaciones sin grupos que se cruzan, y una ayuda que cuesta 15
+**Fecha:** 2026-10-10 · **Estado:** vigente · **Relación:** corrige D-259 (las comparaciones) y D-261 (el puntaje)
+**Decisión:** Las comparaciones ("hay más criminales en la columna C que en la fila 3") ya no hablan
+de dos grupos que comparten a alguien. Y El caso (La Copa y el prototipo) suma **💡 Ayuda**: con un
+segundo toque para confirmar, elige entre quienes ya se pueden deducir al que pide menos pistas, lo
+deja elegido y dice cuáles juntar ("Mira a Pía: junta lo que dicen Bárbara y Nico."); esas pistas
+se destacan en la lista hasta marcarlo. Resta 15, como la pista de Tango, se guarda como jugada
+`{ ayuda: i }` y en la tarjeta su celda va en 🟨. Si se cierra el mensaje, "💡 Ver la ayuda" lo
+vuelve a mostrar sin cobrar. Se llama "Ayuda" (en alemán, "Tipp") porque "pista" ya es lo que dice
+cada sospechoso.
+**Por qué:** lo propuso Claude y lo aprobó el dueño. Con D-261 un paso trabado ya no se podía
+tantear, y la parte más confusa de los pasos difíciles era la persona que contaba en los dos lados
+de una comparación. Sin cruces el caso sigue igual de difícil (57 % de las deducciones combinan
+pistas, medido en 40 casos) y la ayuda evita quedarse atascado sin regalarle nada a quien no la usa.
+**Alternativas descartadas:** una ayuda gratis; una que diga directamente qué es alguien.
+**Consecuencias:** `juegos.test.mjs` prueba que la ayuda siempre señala a alguien deducible, que
+las pistas que nombra alcanzan y que no quedan comparaciones con grupos cruzados;
+`tools/e2e/case/lab.mjs`, el botón en el prototipo.
+
+## D-264 · El caso: tocar una pista ilumina solo a quien nombra
+**Fecha:** 2026-10-10 · **Estado:** vigente · **Relación:** corrige D-256 (lo que ilumina una pista) y D-259 (en una comparación, los dos colores
+de la grilla quedan para quienes nombra, no para los dos grupos)
+**Decisión:** Tocar una pista (La Copa y el prototipo) ya no ilumina a todo el grupo del que habla,
+sino solo a las personas que nombra por su nombre: "Todos los que están a la izquierda de Omar son
+criminales" ilumina a Omar; "Si Ana es criminal, Beto es inocente", a Ana y a Beto; "En la fila 2
+hay tres criminales", a nadie. Quien la dice sigue en celeste. Lo calcula `sujetos()` del motor.
+**Por qué:** lo pidió el dueño: ver a quiénes abarca el grupo es parte de pensar el caso, y la
+grilla lo estaba haciendo por el jugador.
+**Consecuencias:** `tools/e2e/case/lab.mjs` prueba que se ilumine exactamente a quienes nombra;
+`juegos.test.mjs`, `sujetos()`.
+
+## D-265 · El caso del laboratorio termina con un formulario para comentar
+**Fecha:** 2026-10-10 · **Estado:** corregida por D-267 · **Relación:** amplía D-256; reusa el formulario de D-191 y el envío de D-104
+**Decisión:** El final del prototipo de El caso (`/labs/case/`) suma, debajo de los botones, el
+formulario "🐞 ¿Qué te pareció?", abierto en la página y no detrás de un botón. Es el mismo de los
+comentarios del laboratorio del alemán, que pasa a ser `formularioComentario()` en `labs-idioma.js`
+(la capa del 🐞 lo usa igual), y manda a `feedback/` el texto, el nombre opcional y el caso con sus
+errores, ayudas y tiempo.
+**Por qué:** lo pidió el dueño, para que los amigos que lo prueban comenten. Recién terminado es
+cuando más se acuerdan de dónde se trabaron.
+**Consecuencias:** se lee con `node tools/firebase/reportes.mjs`. `tools/e2e/case/lab.mjs` lo
+prueba con el envío interceptado, sin escribir en Firebase.
+
+## D-266 · Las URL, en inglés: carpetas, parámetros y sus valores
+**Fecha:** 2026-10-10 · **Estado:** vigente · **Relación:** sigue a D-192 (las carpetas) y D-214 (`?type=`); corrige D-29, D-100, D-110, D-142, D-164, D-207, D-208, D-229, D-230, D-233 y D-239 (el nombre de sus parámetros)
+**Decisión:** Todo lo que se ve en una dirección va en inglés: las carpetas (ya desde D-192), los
+nombres de los parámetros y sus valores en palabras (C-18). Lo que la app escribe o genera (las
+invitaciones, los links que se comparten, los avisos al celular, los de Uno al día, lo que deja en
+la barra) usa siempre el nombre nuevo; los de antes se siguen leyendo, porque ya circulan por
+WhatsApp, y al abrir la página `trackVisit()` los reescribe en inglés en la barra.
+
+| Antes | Ahora | Qué es |
+|---|---|---|
+| `?sala=ABCD` | `?room=ABCD` | la invitación a una sala |
+| `?semilla=K7Q2X` | `?seed=K7Q2X` | el contenido de una partida suelta |
+| `/cup/?practica=reinas` | `/cup/?practice=queens` | un juego suelto desde el laboratorio |
+| `?prueba` | `?test` | el almacén local, para los guiones |
+| `?tres` | `?three` | ofrece La Copa de 3 días |
+| `?hoy` | `?today` | Uno al día |
+| `&dia=3` (La Copa), `?dia=AAAA-MM-DD` (El caso) | `&day=3`, `?day=AAAA-MM-DD` | el día que abre un aviso, el caso de esa fecha |
+| `&silenciar` | `&mute` | el botón del aviso que silencia la copa |
+| `&aviso=plazo` | `&notif=deadline` | qué aviso abrió la página |
+| `?de=link` | `?from=link` | la marca de lo compartido |
+| `&zipSeg=8` | `&timer=8` | solo en prueba: el reloj de Zip y Desenredo |
+| `?uad=boton` · `tarjeta` · `no` | `?daily=button` · `card` · `off` | dónde va Uno al día en la portada |
+| `&demo=nueva`, `invitado`, `espera`, `sin-jugar`, `jugador`, `podio`, `llena` | `&demo=new`, `guest`, `waiting`, `not-started`, `player`, `podium`, `full` | las escenas de prueba de La Copa |
+| `&aviso=dia`, `plazo`, `fin`, `insc`, `copas`, `prueba`, `uaddia`, `uadracha`, `uadsemana`, `uadadios` | `&notif=day`, `deadline`, `end`, `signup`, `cups`, `test`, `dailyday`, `dailystreak`, `dailyweek`, `dailybye` | los tipos de aviso |
+| `/cup/suelto/?linea&hoy`, `?practica=<id>` | `/cup/suelto/?timeline-flash&today`, `?practice=<carpeta>` | el juego, con el nombre de su carpeta; los que no tienen página: `timeline-flash`, `number` |
+| `#/ahora`, `#/torneo/OFICI`, `#/juegos`, `#/juego/ahorcado`, `#/sala/ABCD`, `#/trafico`, `#/audiencia`, `#/salud` | `#/now`, `#/cup/OFICI`, `#/games`, `#/game/hangman`, `#/room/ABCD`, `#/traffic`, `#/audience`, `#/health` | las direcciones del panel |
+
+Siguen igual los que ya estaban en inglés o no son palabras: `lang`, `type`, `labs`, `c`, `inv`,
+`app`, `pwa`, `records=firebase`, `utm_source`, los del panel `r` y `e`, el código de una copa
+(`?K7Q2X`) y su link propio (`?pirata`, que lo elige quien la crea).
+**Cómo:** `public/assets/js/parametros.js` tiene la tabla y lo usa todo el sitio: `param('room')` lee
+`?room=` o `?sala=`, `tiene('test')` lee `?test` o `?prueba`, los valores salen siempre en inglés, y
+`enIngles()` reescribe una búsqueda vieja sin tocar lo demás (las palabras sueltas de La Copa solo
+cambian si son una bandera). El juego en la URL sale de `slugDe()` / `idDeSlug()` en `games.js`; el
+id del juego no cambia (lo guardan las salas, el panel y el celular). Las claves que cuenta el panel
+tampoco: `notif=deadline` se cuenta en `aviso/plazo`, como siempre (`AVISO_CLAVE`), así las cifras
+no se cortan. Las palabras nuevas quedan reservadas para el link propio de una copa (ninguna copa
+usaba una).
+**Por qué:** lo pidió el dueño ("you are still creating labels in Spanish for URLs and variables"):
+el sitio ya tenía las carpetas en inglés, pero `/case/?labs&semilla=LBWDC` seguía mezclando idiomas.
+Con una tabla de alias no se rompe ningún link que ya circula.
+**Consecuencias:** `node public/assets/js/parametros.test.mjs` prueba los alias, la reescritura y los
+juegos, y además busca en `public/` y `tools/push/` una URL armada con un nombre de antes. Los
+nombres de las variables del código siguen en español: la regla es sobre lo que se ve en la URL.
+Las páginas puente no cambian (pasan la búsqueda tal cual y la página nueva la traduce), ni el
+`?juego=` de `tools/release/og/tarjeta.html`, que es una herramienta y no una página del sitio.
+
+## D-267 · El caso se prueba en un solo lugar: /labs/case/, con el juego completo
+**Fecha:** 2026-10-10 · **Estado:** vigente · **Relación:** reemplaza el prototipo de D-256; corrige D-257 (dónde vive), D-265 (el comentario va en la pantalla de La Copa)
+**Decisión:** El caso tiene una sola versión para probar: `https://juegosdesalon.cl/labs/case/`, la
+pantalla de La Copa (portada, prueba, 3, 2, 1, juego, ayuda, resultado con su desglose, en los
+cuatro idiomas). El prototipo de `/labs/case/` se borra y lo que solo él tenía pasa al juego:
+- **El caso del día:** sin semilla en el link se juega el del día, el mismo para todos
+  (`semillaDel(fecha)`), y el link queda limpio; la antesala lo dice.
+- **Sigue donde iba al recargar:** las jugadas y el tiempo por caso, en el celular, sin repetir la cuenta.
+- **El final:** compartir lleva la semilla (quien lo recibe juega el mismo caso, también al día
+  siguiente), "🔍 Otro caso" abre uno al azar, "📅 El caso de hoy" vuelve al del día y el formulario
+  "¿Qué te pareció?" va abierto al final de todo juego que se juega desde el laboratorio.
+Lo activa `diario: true` en `games.js`. Los juegos del laboratorio viven en `/labs/<slug>/`
+(`games.js` arma el `path`) y `/<slug>/` queda como página puente hasta que salgan (`og.mjs`).
+**Por qué:** lo pidió el dueño: "No quiero dos versiones de prueba para testear el juego, el caso."
+Con dos, los amigos probaban cosas distintas y lo que se arreglaba en una no se veía en la otra.
+**Consecuencias:** `tools/e2e/case/lab.mjs` prueba la página nueva entera. Al salir del
+laboratorio se saca `labs: true` y la página pasa a `/case/`; `diario` puede quedarse.
+
+## D-268 · En el laboratorio, el link al comentario va al final de cada vista
+**Fecha:** 2026-10-10 · **Estado:** vigente · **Relación:** amplía D-265 y D-267
+**Decisión:** Un juego que se juega desde el laboratorio (hoy El caso, en `/labs/case/`) termina
+cada vista con "💬 Dejar un comentario": la antesala (con la portada), la prueba y el juego. Abre
+el formulario de comentarios en una capa (`abrirComentario` de `labs-idioma.js`) con el juego, la
+semilla y la vista. Durante la cuenta del 3, 2, 1 no está. En el resultado el formulario va abierto
+y es lo último de la pantalla, debajo de "Volver al laboratorio".
+**Por qué:** lo pidió el dueño: que quien prueba pueda comentar en cualquier momento, sin esperar
+a terminar, pero sin estorbar la cuenta.
+**Consecuencias:** `tools/e2e/case/lab.mjs` prueba que esté al final de la antesala y del juego, que
+no esté en la cuenta, que abra y cierre la capa, y que el formulario sea lo último del resultado.
+
+## D-269 · Acertijos con truco, un prototipo en el laboratorio
+**Fecha:** 2026-10-10 · **Estado:** derogada · **Relación:** el dueño lo probó y no le gustó: se sacó el mismo día (v0.146.1); usa D-265 y D-268 (el comentario); excepción a C-3 como D-256
+**Decisión:** `/labs/riddles/` tiene cinco acertijos con truco al estilo de *Brain Test*: el animal
+más grande, los cuadrados, la llave bajo la pregunta, la nube que tapa el sol y el kilo de plumas.
+Cada uno con su gesto (tocar, elegir, arrastrar), un narrador burlón, 💡 Pista, un resultado con una
+casilla por acertijo y el comentario al final de cada vista. Solo acertijos que no dependen del
+idioma, para que se jueguen igual en los cuatro. (El doc del juego, `docs/games/riddles.md`, se borró con él.)
+**Por qué:** lo pidió el dueño después de la investigación de *Brainstorm Test: Tricky Puzzle*: un
+juego de niveles hechos a mano no calza con los juegos que arman su contenido solos, pero un
+"acertijo del día" corto sí podría; el prototipo es para ver si a los amigos les gusta.
+**Alternativas descartadas:** copiar acertijos de juegos de palabras (no se traducen) y armar el
+juego completo con cientos de niveles antes de saber si gusta.
+**Consecuencias:** `tools/e2e/riddles/lab.mjs` lo juega entero en los cuatro idiomas. Si gusta, los
+acertijos pasan a un registro con sus textos en `rules.js` y entran a Uno al día o a La Copa.
+
+## D-270 · La clave: cartas transparentes que juntas dicen un código
+**Fecha:** 2026-10-10 · **Estado:** vigente · **Relación:** usa D-102 (el teclado compartido) y D-268 (el comentario); excepción a C-3 como D-256
+**Decisión:** `/labs/code/` es un prototipo en que un código de 5 cifras de siete segmentos se
+reparte entre una base fija y 4 cartas transparentes, cada una girada o volteada al azar. Se
+toca una carta para ponerla sobre la base y elegirla, y con ↻ (media vuelta) y ⇋ (de lado) se
+orienta; con todas derechas los trazos forman el código, que se escribe en el teclado de Toque y
+Fama. Nada avisa que una carta quedó bien; un trazo encima de otro sí se nota (se ve rayado con los
+colores de las cartas que chocan, sin texto), porque cada trazo del código está en una sola capa y la solución nunca tiene choques. El
+motor garantiza que con todas puestas no hay otra forma sin choques de leer la clave. Detalle en [games/code.md](games/code.md).
+**Por qué:** lo pidió el dueño: "figures/shapes that combined in a specific set of positions create
+a code that can then be entered in a number or word pad… Start with two shapes". Probó la v1 de
+dos figuras (una se arrastraba sobre la otra hasta que los bordes cortados calzaran, con un brillo
+al calzar) y pidió "4 u 8 cartas girables y flipeables en vez de 2": con dos se resolvía en segundos
+tocando ↻ y ⇋ a ciegas hasta que brillara (dilema #296). Después sacó el modo de 8 cartas
+("demasiado compleja") y pidió que un trazo encima de otro se notara y no valiera.
+**Alternativas descartadas:** girar de a 90° (una cifra de siete segmentos girada un cuarto de vuelta
+no es una cifra), el brillo al calzar y la esquina cortada (regalan la orientación), y arrastrar cada
+carta (con 8, tocar es más rápido y cabe en el celular).
+**Consecuencias:** `engine.test.mjs` prueba el grupo de orientaciones y la lectura única;
+`tools/e2e/code/lab.mjs`, el juego entero con los choques. Después pidió una cifra más (5) y que las
+cartas flotaran y brillaran más al azar. Como el de cifras se volvió mecánico, se sumó **Palabra**
+(en español): letras de catorce segmentos y cartas de dos caras, donde voltear muestra otros trazos. El
+dueño lo aprobó para el laboratorio (v0.147.0).
+
+## D-271 · Los mensajes de la app nombran todo lo principal, y el agente de documentación los mantiene
+**Fecha:** 2026-10-11 · **Estado:** corregida por D-272 · **Relación:** amplía D-226 (el texto de la app) y D-172 (el agente de documentación); usa U-30
+**Decisión:** El mensaje con que se comparte la app (`shareApp.lines`, el mismo en el celular y en
+el computador, donde se copia sin la tarjeta) nombra **todo lo principal**, una línea cada cosa y en
+los cuatro idiomas: 🏆 La Copa, 📅 Uno al día, 👥 jugar en grupo, 🧩 jugar solo, 🏅 rankings y
+🔓 sin cuenta. La lista vive en `LO_PRINCIPAL` (`compartir.js`) y `compartir.test.mjs` frena un
+mensaje al que le falte una o que tenga una línea que la lista no conoce. El mensaje del video
+(`shareSheet.videoLines`) suma "un desafío nuevo cada día", y la bajada de la tarjeta del link
+(`og.mjs`), que se armaba solo con los juegos de grupo, suma Uno al día y los minijuegos para jugar
+solo. **El agente de documentación los mantiene** (U-35): `documentar.mjs revisar` los muestra tal
+como salen, y si entró algo principal que no nombran, los actualiza en los cuatro idiomas, en su
+PR, aunque sean textos de la app.
+**Por qué:** lo pidió el dueño: revisar los textos de compartir y "asegúrate que el agente de
+documentación siempre actualice estos mensajes para mantenerlos frescos y evitar que queden antiguos
+o bien muestren una versión parcial del set de features". El mensaje era de D-226 (5 de octubre) y
+no decía nada de Uno al día (abierto a todos desde v0.121.0) ni de los rankings (D-217); la tarjeta
+del link no nombraba los minijuegos.
+**Alternativas descartadas:** dejarlo solo como instrucción al agente (una prueba no se olvida) y
+detectar sola una "novedad principal" en los commits (no hay cómo distinguirla de un cambio chico:
+lo decide el agente, y la lista lo obliga a decirlo en un solo lugar). Un juego nuevo no es algo
+principal: ya lo cuenta la cabecera ("15 juegos para el celular") y lo nombra la tarjeta.
+**Consecuencias:** el mensaje pasa de 4 a 6 líneas. La regla es U-35; el agente la sigue desde
+`.claude/agents/documentacion.md`, como excepción a "no tocas código de la app".
+
+## D-272 · Lo principal también es la app instalable con sus avisos y los cuatro idiomas
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** corrige D-271 (la lista de lo principal); usa D-221, D-224, D-230, D-232 y C-3
+**Decisión:** `LO_PRINCIPAL` suma 📲 la app instalable con sus avisos y 🌎 los cuatro idiomas, y el
+mensaje de compartir la app los nombra en dos líneas más, en los cuatro idiomas: "📲 Como app: la
+agregas a tu pantalla de inicio y, si quieres, te avisa cuando te toca jugar." y "🌎 En español,
+inglés, portugués y alemán.". El mensaje queda en 8 líneas.
+**Por qué:** el agente de documentación preguntó, al revisar D-271, si los idiomas, los avisos y la
+app instalable contaban como algo principal; el dueño: "Claro que cuenta". Instalar y los avisos van
+juntos porque los avisos se piden desde la app (en el iPhone, solo instalada, D-227).
+**Alternativas descartadas:** una línea para cada una de las tres (el mensaje pasaba de 9 líneas para
+un chat) y dejar los idiomas fuera del mensaje en español (quien lo recibe puede reenviarlo a quien
+no habla español).
+**Consecuencias:** el mensaje del video y la bajada de la tarjeta del link no cambian: la tarjeta ya
+dice "sin instalar", que se refiere a que no hay que bajar nada de una tienda.
+
+## D-273 · Un agente de procesos, y decisiones de un toque
+**Fecha:** 2026-10-11 · **Estado:** corregida por D-275, D-276 · **Relación:** completa D-132 y D-172 (los agentes de usabilidad y de documentación) y D-216 (el auto-merge)
+**Decisión:** Un tercer agente (`.claude/agents/procesos.md`) corre una vez al día y no arregla
+cosas sueltas: **cierra lo que quedó abierto** (PR que esperan, issues viejos, lo que los otros
+agentes arrastran de una ronda a otra) y **convierte cada error que se repite en un mecanismo**
+que lo frena solo. Una vez es un accidente; dos veces, un patrón. Construye a lo más un mecanismo
+por ronda, de preferencia un test, y si no, un dato leído del código, una comprobación, un paso de
+un workflow y, solo al final, una instrucción. Toca el taller (`tools/`, tests, workflows, guías
+de agentes), no el código de los juegos.
+- **Memoria:** `docs/procesos.json` (hasta qué commit miró, los patrones con sus veces, los
+  mecanismos con su PR y lo aprobado que ya hizo). **Señales:** `tools/agents/procesos.mjs revisar`.
+- **Decisiones de un toque:** lo que necesita al dueño va en **un** issue con la etiqueta
+  `procesos` y una casilla Sí y una No por decisión (`procesos.mjs decidir`). GitHub se lo manda
+  al correo; marcar una casilla despierta `.github/workflows/aprobar.yml`, que corre
+  `tools/agents/aprobar.mjs` y hace al instante lo que esa casilla dice, sin un modelo de por medio,
+  y anota el resultado al lado. Solo obedece al dueño, en un issue suyo, si el bloque de acciones
+  no cambió en la misma edición, una vez por decisión y con acciones de una lista cerrada:
+  `fusionar`, `cerrar-pr`, `cerrar-issue`, `comentar`, `correr` (e2e o publicar), `encolar` (para
+  la ronda siguiente) y `nada`. El agente deja el trabajo hecho antes de preguntar, para que el Sí
+  casi siempre sea "fusiónalo". Si una acción falla, la decisión no queda tomada: desmarcar y
+  volver a marcar la reintenta.
+- **Fusionar con el token del workflow** no despierta a `publicar.yml` ni a `e2e.yml` (GitHub no
+  encadena workflows con ese token): `fusionar` espera los checks obligatorios, fusiona y los
+  corre a mano. Por eso el aviso de `e2e.yml` ya no exige un push.
+- **El aviso "main en rojo" se cierra solo** cuando `main` vuelve a verde (`e2e.yml`, job
+  `cerrar-aviso`): el #276 quedó abierto un día después de arreglado.
+**Por qué:** lo pidió el dueño ("un jefe general cuyo propósito sea mantener automatización,
+semi-automatización y consistencia"), con el menor esfuerzo de su parte, y aprobar "con un tap en
+algún ícono" desde el correo. Al mirar el repo, lo que más inconsistencias dejaba no era lo que
+nadie detectaba sino lo detectado que no se cerraba: seis PR de las rondas de usabilidad y
+documentación esperando (el más viejo, del 5 de octubre), y el texto de compartir mantenido por
+una instrucción hasta que D-271 le puso un test.
+**Alternativas descartadas:** otro agente que patrulla y arregla (más PR esperando al dueño);
+cada dos días (con unas 20 fusiones diarias, lo abierto se pudre entre una ronda y otra; la
+memoria ya acumula los patrones); responder el correo con texto (hay que escribir); un link en el
+correo que aprueba al abrirse (los correos abren los links solos para revisarlos, y aprobarían sin
+el dueño; además pide un servidor con una llave de GitHub); un link firmado con página de
+confirmación en un Cloudflare Worker (son dos toques igual que la casilla, con un servidor más).
+**Consecuencias:** la ronda corre en la nube a las 4:30 hora del Pacífico, después de la de
+documentación (3:54). El correo llega solo los días con algo que decidir.
+
+## D-274 · Rankings: que cuente la partida recién jugada, el solitario en la portada y Ahorcado solo
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** amplía D-212 y D-215
+**Decisión:** Tres cambios para que los rankings se llenen:
+- **"¿Quieres que esta partida cuente?"**: al terminar una partida sin jugador abierto (jugando solo
+  en Toque y Fama, Generala, Ahorcado y Línea Relámpago, y en todos los juegos de grupo contra el
+  celular, en sala o en un celular), sale un bloque aparte —fondo propio, borde dorado y una entrada
+  con un pequeño salto— con el formulario de nombre y PIN de siempre y el nombre que escribió para
+  jugar ya puesto. Al entrar o crear su jugador, se anota esa partida (y la victoria, si fue suya).
+  Va después de los botones del final, para que sigan a la vista (C-8). Lo hacen `avisoPartida` y
+  `finDePartida` de `ranking.js`; en los juegos de grupo se pone solo, después de `#result-actions`.
+- **La portada de Toque y Fama, Generala y Ahorcado** muestra la tabla de los mejores puntajes
+  jugando solo arriba de la de victorias: es como más se juegan.
+- **Ahorcado jugando solo tiene ranking** (`ahorcado_solo`): el puntaje de Uno al día (las vidas
+  que quedaron sobre las del principio, de 0 a 100), y el tiempo desempata. También en `/records/`.
+**Por qué:** el dueño vio vacío el ranking de Toque y Fama sabiendo que se juega mucho. Los datos
+(29 días): 43 partidas solo, 33 contra el celular y 23 salas, y en Firebase ni una victoria de
+juegos de grupo; de 31 jugadores registrados, 6 anotaron alguna vez. Los rankings se guardaban
+bien: lo que faltaba era que la gente entrara, y la portada mostraba la tabla que menos se usa.
+El bloque aparte lo pidió el dueño, para que quien no lo ve siempre lo note.
+**Consecuencias:** `tools/e2e/hangman/local.mjs` y `bulls-and-cows/local.mjs` prueban que el
+final ofrezca que la partida cuente.
+
+## D-275 · El feedback 🐞 llega como issues y lo atiende el agente de procesos
+**Fecha:** 2026-10-11 · **Estado:** corregida por D-279 · **Relación:** amplía D-273 (el agente de procesos) y D-104 (los reportes de La Copa); corrige D-273 en que no tocaba el código de los juegos, y D-132 en que los reportes 🐞 eran de la ronda de usabilidad
+**Decisión:** `.github/workflows/feedback.yml` sube cada hora los reportes nuevos de `feedback/`
+(`tools/agents/feedback.mjs`) como issues con la etiqueta `feedback`, uno por reporte y nunca dos
+veces el mismo. El agente de procesos los atiende en su ronda: arregla lo que tiene un arreglo
+claro (en su PR, con `Closes #n`), pregunta con una decisión de un toque lo que es una idea o un
+pedido, y cierra lo resuelto, repetido o que no se entiende, diciendo por qué. Para eso puede tocar
+el código de la app, con los cánones, los cuatro idiomas, la prueba de punta a punta del juego y su
+entrada del `CHANGELOG.md`.
+- **Privacidad:** el repo es público. El issue lleva el texto tal cual, el juego, la versión y la
+  pantalla, pero **no el nombre** que puso el jugador **ni su navegador**. Un @ o un # del texto no
+  menciona a nadie ni enlaza nada.
+- **Por qué en GitHub y no leyendo Firebase:** la ronda corre en la nube, y desde ahí no se llega a
+  Firebase (el proxy responde 403); GitHub sí llega. Además, cada reporte queda con su respuesta y
+  su arreglo enlazados.
+**Por qué:** lo pidió el dueño: que el agente de procesos "evalúe y resuelva los ítems de feedback
+que vayan llegando". Hasta ahora los leía la ronda de usabilidad (`reportes.mjs --dias 2`), sin
+registro de cuáles se atendieron: un reporte de un día sin ronda se perdía.
+**Alternativas descartadas:** el resumen del reporte en vez del texto (exige que la ronda corra en
+el Mac del dueño, con la app abierta); el texto con el nombre del jugador (el dueño prefirió dejarlo
+fuera).
+- **Los issues los abre el bot de los workflows, no la cuenta del dueño:** GitHub no avisa a
+  nadie de lo que hace su propia cuenta, y los agentes usan la del dueño. Por eso el feedback lo
+  sube `feedback.yml` y las decisiones de un toque las abre `decidir.yml` (que lanza
+  `procesos.mjs decidir`); `aprobar.mjs` acepta los issues del bot. El primer issue de decisiones
+  (#310) lo abrió la cuenta del dueño y no le llegó.
+**Consecuencias:** al empezar, los nueve reportes que ya había se suben juntos y la primera ronda
+cierra los que ya se resolvieron. GitHub le avisa al dueño por correo de cada issue nuevo.
+
+## D-276 · El agente de procesos es el jefe de los otros agentes, y todo corre en el Mac mini
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** corrige D-132 y D-172 (cada uno con su hora) y D-273 (su ronda en la nube)
+**Decisión:** El agente de procesos **responde** por lo que hacen los agentes de documentación y de
+usabilidad, que **ejecutan**:
+- **Encargos del dueño:** lo que el dueño pide y ejecuta otro agente ("revisa la frescura del
+  README") se le pide al de procesos. Él decide a quién le toca, escribe el encargo con criterios
+  de aceptación que se puedan comprobar, lo lanza, comprueba el resultado él mismo (lo devuelve una
+  vez si falta algo) y le responde al dueño con la evidencia.
+- **Despacho:** los otros dos ya no tienen hora propia. La ronda diaria del de procesos los lanza
+  cuando hay algo que revisar: a documentación si entró algo a `main` desde su última ronda; a
+  usabilidad si cambió algo de `public/` desde su último despacho, y una vez por semana aunque no
+  (`procesos.mjs revisar` lo calcula; `procesos.mjs despacho` lo anota). Revisa lo que entregan.
+- **Dónde:** una sola tarea programada de la app de Claude en el Mac mini del dueño, a las 4:30 hora
+  del Pacífico, en vez de tres rutinas (documentación en la nube a las 3:54, usabilidad en el Mac a
+  las 5:07 y procesos en la nube a las 4:30). Las otras se apagan.
+**Por qué:** lo pidió el dueño: "si yo quisiera hacer una revisión de frescura de la documentación
+[…] me gustaría que tú fueses el jefe encargado y yo básicamente te pido responsabilidad a ti. Pero
+el que ejecuta es el agente de documentación", y que el de procesos determine "cuándo es el momento
+correcto para echarlo a correr". Lanzar a los otros como subagentes exige que corran en el mismo
+lugar, y en el Mac se llega a Firebase, a Chrome y a la llave del dueño (en la nube no). El Mac
+mini está siempre despierto.
+**Alternativas descartadas:** dejar las tres rutinas y que el de procesos solo supervise (el
+calendario no quedaba en sus manos); todo en la nube (sin Firebase ni un Chrome confiable para las
+capturas).
+**Consecuencias:** si la app de Claude no está abierta en el Mac mini, la ronda corre al abrirla.
+Los días sin cambios, los ejecutores no corren. Revisar un PR antes de fusionarlo sigue igual: la
+sesión dueña lanza a los dos agentes (CLAUDE.md).
+
+## D-277 · El veredicto de una carta con fecha cuenta su dato, y leerlo no cuesta tiempo
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** excepción a C-8b (la explicación del error); completa D-95 (el tiempo activo) y D-278
+**Decisión:** Cada carta de los mazos de Línea de Tiempo puede llevar un **dato** en los cuatro
+idiomas (un porqué o una anécdota de hasta 110 caracteres, sin años), y el veredicto lo cuenta en
+vez de decir entre qué hitos iba la carta:
+- **Al errar**, en el veredicto que se queda hasta tocarlo. En ⏳ Línea Relámpago (solo, práctica,
+  Uno al día y copa) y en cada hito de 📅 ¿En qué año?, el reloj se **pausa** mientras se lee, con **tope de 6 s**:
+  arriba marca ⏸ y una barra bajo el dato se vacía.
+- **Al acertar**, en una franja sobre el botón de colocar que no frena nada y se va sola a los 6 s.
+- **Al terminar**, la línea como quedó es el repaso: los errores con su dato a la vista y el resto a
+  un toque.
+
+Entraron con datos Chile e Historia, y en el PR siguiente Música, Cultura pop, Brasil y Fútbol; una
+carta sin dato dice dónde iba, como antes.
+**Por qué:** lo pidió el dueño al ver "Fue en 1738: iba antes de 1925 · … Tú la pusiste entre 1980
+y 1989 · …": que un año está entre otros dos no le enseña nada a nadie, y el año grande de la carta
+ya dice qué estuvo mal. Un dato sí deja algo, al errar y al acertar. Lo que lo complica es el
+reloj: si leer cuesta tiempo, el jugador aprende a saltárselo; si la pausa no tiene fin, sirve para
+pensar la jugada siguiente. Con tope de 6 s alcanza para leer una frase y no para otra cosa, y el
+veredicto tapa el tablero.
+**Alternativas descartadas:** el dato en el acierto dentro del veredicto, alargando su cierre
+(frena el juego en cada carta: la franja lo deja leer sin pedirlo); pausar el reloj sin tope;
+reescribir el "iba entre…" más corto (sigue sin enseñar nada).
+**Consecuencias:** el test del motor frena un dato largo, con año o con el año de otra carta, y
+exige el dato en todas las cartas de los mazos que ya los tienen (`CON_DATOS`). Los datos se
+escriben verificados: un error en un dato se lee como lección. La regla para escribirlos está en
+`docs/games/timeline.md`.
+
+## D-278 · Las cartas con fecha: ni dicen su año ni piden un dato que el jugador no sabe
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** corrige D-37
+**Decisión:** De los mazos de Línea de Tiempo (que también usan ¿En qué año?, Línea Relámpago y la
+final de La Copa) salen dos clases de cartas, y no se reescriben: se sacan.
+- **Las que dicen su año**: las Constituciones de 1833, 1925 y 1980, la final de Italia 90 y la
+  Eco-92. El test del motor ya no deja entrar una carta que diga su año, entero o abreviado ("90",
+  "’92"), en ninguno de los cuatro idiomas. Un año que no es el de la carta sí puede ir (*2001:
+  Odisea del espacio*, *1989* de Taylor Swift): es una trampa legítima.
+- **Las que no se pueden situar**: un hecho que se repitió (el incendio de Valparaíso, los
+  incendios forestales de 2017, los terremotos de Santiago de 1647 y de Valparaíso de 1906, "la
+  crisis financiera") o un proceso sin fecha (la era del swing, la bossa nova, la cumbia, el reggae,
+  la salsa, el punk, el Auto-Tune, la electrónica en los festivales, TikTok como fábrica de éxitos,
+  Bad Bunny como el más escuchado, el perro Doge, Baby Shark, el comienzo de las independencias
+  latinoamericanas).
+
+Salieron 23 cartas. Música, que ya tenía 89, recibió 12 hitos puntuales y conocidos (la muerte de
+Lennon, Freddie Mercury y Kurt Cobain, el Nobel de Dylan…) y queda en 91. El test exige ahora 90
+cartas por mazo, lo que ya pedía la guía.
+**Por qué:** El incendio de Valparaíso ya se había anclado como pedía D-37 ("el mayor de su
+historia, casi 3.000 casas") y seguía sin poder situarse: el superlativo y la cifra son datos que
+la carta le enseña al jugador, no algo que él sepa. Reescribir una carta para anclarla agrega una
+pregunta de trivia al juego; el juego es ordenar hechos que uno reconoce. En el otro extremo, una
+carta que dice su año no se juega: se lee.
+**Consecuencias:** La regla para escribir cartas, en `docs/games/timeline.md`: el ancla tiene que
+ser algo que el jugador sepa (un nombre, un hecho único), no un superlativo o una cifra que solo la
+carta dice. Si no la hay, la carta no entra.
+
+## D-279 · Los issues de feedback llevan el nombre de quien lo manda
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** corrige D-275 (el issue iba sin el nombre)
+**Decisión:** El issue de cada reporte 🐞 suma una línea **Quién** con el nombre que el jugador
+escribió en el formulario, si escribió uno. El navegador sigue fuera. Los nueve issues que ya
+estaban se completaron con su nombre.
+**Por qué:** lo pidió el dueño al ver los primeros issues: "no dice el nombre de quien reporta, lo
+que me ayudaría para hacer follow-up personal". El repo es público, así que el nombre queda a la
+vista, pero el nodo `feedback/` de Firebase ya se lee sin llave (`.read: true`): el issue no expone
+nada que no se pudiera ver. El nombre es opcional y lo elige el jugador (40 caracteres como mucho).
+**Alternativas descartadas:** dejarlo solo en `reportes.mjs` o en el panel (el dueño tendría que ir
+a buscarlo; el correo del issue es donde lee el reporte).
