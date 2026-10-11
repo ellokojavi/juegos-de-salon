@@ -1,4 +1,4 @@
-# 🔐 La clave (prototipo del laboratorio)
+# 🔐 La clave (prototipo del laboratorio, en La Bodega)
 
 Un código de 5 cifras repartido entre una **base fija** y **4 cartas transparentes**. Cada carta
 tiene unos pocos trazos de siete segmentos y aparece girada o volteada al azar. Hay que ponerlas
@@ -11,7 +11,9 @@ código en el teclado (D-270). Como las tarjetas transparentes de los juegos de 
 - **Para quién:** uno solo. En los cuatro idiomas, con su diccionario en `game.js`.
 - **Modos:** 🔢 Cifras (en los cuatro idiomas) y 🔤 Palabra (solo en español, más abajo).
 - **Cartas:** 4, ninguna viene derecha. Hubo un modo de 8 y el dueño lo sacó: demasiado complejo.
-- **Estado:** prototipo en el laboratorio desde v0.147.0, aprobado por el dueño. Empezó como una v1
+- **Estado:** prototipo en el laboratorio desde v0.147.0, aprobado por el dueño; no prosperó y
+  desde D-279 está en La Bodega, jugable pero sin trabajarse. Sin la llave del laboratorio no se
+  abre (D-280). Empezó como una v1
   de dos figuras que se arrastraban una sobre otra; la historia está en D-270.
 
 ## Portada
