@@ -1,7 +1,7 @@
 // El caso del laboratorio (D-267) de punta a punta, en /labs/case/: el laboratorio lo ofrece y
 // /case/ lleva ahí; sin semilla es el caso del día (el link queda limpio); se juega con la pantalla
 // de La Copa (D-257), marcar antes de tiempo cuenta como error (D-261), al recargar sigue donde iba,
-// las pistas usadas se tachan solas (D-280), se resuelve entero sin adivinar y el final ofrece
+// las pistas usadas se tachan solas (D-282), se resuelve entero sin adivinar y el final ofrece
 // compartir el mismo caso, otro caso, el de hoy y el comentario (D-265), que en el modo de prueba
 // queda en el celular. Imprime ✗ si algo falla.
 import { launch, sleep } from '../cdp.mjs';
@@ -75,7 +75,7 @@ await esperar(`!!document.getElementById('btn-empezar')`);
 await ev(`document.getElementById('btn-empezar').click(); 1`); await sleep(600);
 ok(await ev(`document.querySelectorAll('.cs-persona.marcada').length`) === 2 && !await ev(`!!document.getElementById('cuenta')`), 'al recargar sigue donde iba, sin la cuenta (D-267)');
 
-// Las pistas usadas se tachan solas (D-280): las que ya tienen marcado todo lo que abarcan, según
+// Las pistas usadas se tachan solas (D-282): las que ya tienen marcado todo lo que abarcan, según
 // el motor y lo que la página guardó. El ✓ tacha a mano una que no lo está, y destacha una tachada sola
 const usadas = () => ev(`(async()=>{const m=await import('/cup/games/case/engine.js');const p=m.generar('${SEMILLA}',1);const j=(JSON.parse(localStorage.getItem('${CLAVE}')||'null')||{}).jugadas||[];return [...m.usadas(p,m.estado(p,j).x)]})()`);
 const tachadasDom = () => ev(`[...document.querySelectorAll('.cs-pista.tachada')].map(x => +x.dataset.de).sort((a, b) => a - b)`);

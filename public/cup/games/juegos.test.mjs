@@ -741,7 +741,7 @@ test('el caso: se resuelve sin adivinar, las pistas son verdad y se dicen en los
   assert.deepEqual(caso.sujetos({ t: 'gt', a: [1], b: [2], g: { tipo: 'vecinos', de: 5 }, h: { tipo: 'col', c: 'A' } }), { a: [5], b: [] });
   assert.deepEqual(caso.sujetos({ t: 'si', a: [4, 9], k: 1, j: 0, g: { tipo: 'si', de: 4, otro: 9 } }), { a: [4, 9], b: [] });
   assert.deepEqual(caso.sujetos({ t: 'es', a: [7], k: 1 }), { a: [7], b: [] });
-  // Una pista se tacha sola cuando ya está marcado todo lo que abarca (D-280)
+  // Una pista se tacha sola cuando ya está marcado todo lo que abarca (D-282)
   assert.deepEqual(caso.abarca({ t: 'gt', a: [1, 2], b: [2, 6] }), [1, 2, 6]);
   assert.deepEqual(caso.abarca(undefined), []);
   {

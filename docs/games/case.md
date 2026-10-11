@@ -101,7 +101,7 @@ de 🟩 con 🟥 donde hubo error y 🟨 donde se pidió ayuda.
   comparación, quien nombra el segundo grupo va en rosado (#282). Ver a quiénes abarca el grupo
   queda para el jugador. Tocarla otra vez o tocar fuera lo apaga.
 - **Tachar una pista:** se tacha sola cuando ya están marcadas todas las personas que abarca (su
-  grupo, o los dos de una comparación; D-280), y se ve igual que una tachada a mano. El ✓ a su
+  grupo, o los dos de una comparación; D-282), y se ve igual que una tachada a mano. El ✓ a su
   derecha la tacha antes, a mano, y la destacha, también a una tachada sola. Lo tachado solo sale
   de lo que el jugador ya marcó (`usadas()` del motor), nunca de la solución, así que no regala nada.
 - **La última pista** va arriba de la lista, destacada, y entra animada.
@@ -114,7 +114,7 @@ No tiene: es de un jugador y sin red. Las jugadas son `{ i, v }` (acierto o erro
 1 }` (marcar antes de tiempo, D-261) y `{ ayuda: i }` (D-263). Lo guardado para seguir al
 recargar está en `juegos-de-salon:diario:caso:<semilla>` como `{ jugadas, ms }`; las pistas
 tachadas a mano (y las destachadas) no se guardan, pero las que se tachan solas vuelven solas,
-porque salen de las jugadas (D-280). Si el almacenamiento está bloqueado, se juega igual sin guardar.
+porque salen de las jugadas (D-282). Si el almacenamiento está bloqueado, se juega igual sin guardar.
 
 Manda la señal de uso del panel con el juego `caso` y el modo `solo` al empezar, y cómo salió al
 terminar (D-44, D-210). Es el único juego que cuenta desde el laboratorio: es lo que se quiere
