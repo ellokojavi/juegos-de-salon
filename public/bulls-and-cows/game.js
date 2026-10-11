@@ -710,7 +710,9 @@ function soloFin(codigo, p, { s, t, ms, estado }) {
       el('button', { class: 'btn btn--yellow', onClick: () => { SFX.tap(); soloNueva(); } }, T.playAgain),
       el('button', { class: 'btn btn--ghost', onClick: () => { SFX.tap(); clearSession(); location.href = location.pathname; } }, T.changeMode),
       el('a', { class: 'btn btn--ghost', href: '../' }, T.backMenu)),
-    // En el resultado, solo la tabla: entrar se ofrece en la antesala (C-8, los botones a la vista)
+    // Sin jugador abierto, "¿quieres que esta partida cuente?" en su propio bloque, después de los
+    // botones para que sigan a la vista (C-8, D-274); y la tabla
+    !conRanking && rankingsVisibles() ? avisoPartida({ juego: GAME_ID, variante: 'solo', s, ms, alAnotar: () => tablaFin.recargar(), alTocar: () => SFX.tap() }) : null,
     tablaFin,
   );
   if (estado.resuelto) { confetti({ count: 220, duration: 3500 }); SFX.win(); vibrate([30, 50, 30]); } else { SFX.timeUp(); vibrate(60); }
@@ -811,8 +813,10 @@ function init() {
   initSound();
   sparkles(12);
   renderModes();
-  // Las victorias de este juego y entrar con nombre y PIN (D-212); en el laboratorio, solo donde se activaron
-  $('#rk-slot')?.append(bloqueVictorias({ juego: GAME_ID, nombre: T.title, alTocar: () => SFX.tap() }));
+  // Los mejores puntajes jugando solo, que es como más se juega (D-274), y las victorias y entrar con nombre y PIN (D-212)
+  $('#rk-slot')?.append(
+    bloqueTabla({ tabla: TABLA_SOLO, titulo: `🧍 ${COMMON[lang].rk.soloOf}`, alTocar: () => SFX.tap(), entrar: false }),
+    bloqueVictorias({ juego: GAME_ID, nombre: T.title, alTocar: () => SFX.tap() }));
   renderResumeSlot();
   const code = param('room');
   if (code && /^[A-Z]{4}$/i.test(code)) {
