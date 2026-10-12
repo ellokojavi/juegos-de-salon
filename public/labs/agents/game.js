@@ -36,6 +36,8 @@ const T = {
   sello: { completa: 'Completa', cortada: 'Cortada', pasada: 'Pasada' }, clasificado: 'Clasificado',
   desglose: ['Encontraste {n} de {t} agentes: {pts} puntos.', ['Tocaste 1 neutral: −{pts}.', 'Tocaste {n} neutrales: −{pts}.'], 'Tocaste al asesino: −{pts}.'],
   tiempo: 'Tiempo: {t}.',
+  // La trampa, explicada: con qué pista tentaba el asesino
+  trampa: ['💀 Caíste con {w}: tentaba con {p}, pero no era de los tuyos.', '💀 Esquivaste al asesino: {w}, que tentaba con {p}.'], tienta: '≈ {p}',
   otraVez: '🔁 Otro tablero', deHoy: '📅 El de hoy', laboratorio: '‹ Volver al laboratorio',
   comentarAbrir: '💬 Dejar un comentario',
   comentario: { titulo: '¿Qué te pareció?', lead: 'Cuéntanos si las pistas se entendían, si alguna palabra era injusta y qué le cambiarías.', ph: 'Por ejemplo: la pista FUEGO con BOMBERO me costó; el asesino me engañó.', nombre: 'Tu nombre (opcional)', enviar: 'Enviar comentario', enviando: 'Enviando…', vacio: 'Escribe algo primero.', gracias: '¡Gracias! 🙌 Tu comentario llegó.', guardado: 'Ahora no hay internet: tu comentario quedó en el celular y se envía solo después.', error: 'No se pudo enviar. Prueba de nuevo en un rato.', contexto: 'Lo que se envía junto', cancelar: 'Cancelar', cerrar: 'Cerrar' },
@@ -264,8 +266,10 @@ function resultado() {
     class: `carta ${c.tipo === 'agente' ? 'agente' : c.tipo}${e.tocadas.has(i) ? '' : ' sin-tocar'}`,
     style: `--n:${c.w.length};--k:${i}`,
   }, c.tipo === 'asesino' ? `💀 ${c.w}` : c.w,
+  c.tipo === 'asesino' && t.pistas[c.tienta] ? el('span', { class: 'de-pista' }, fmt(T.tienta, { p: t.pistas[c.tienta].pista })) : null,
   // Bajo cada agente, su pista: así el tablero dice también cuáles eran las pistas
   c.tipo === 'agente' ? el('span', { class: 'de-pista' }, t.pistas[c.p].pista) : null)));
+  const asesino = t.cartas.find(c => c.tipo === 'asesino');
   const nodoPuntaje = el('div', { class: 'score-big', id: 'puntaje', 'data-final': s }, QUIETO ? `${s}/100` : '0/100');
   vista.replaceChildren(el('div', { class: `resultado resultado--${cara}` },
     el('div', { class: 'trofeo' }, { victoria: '🏆', medias: '🕵️', fracaso: '😵', asesino: '💀' }[cara]),
@@ -273,6 +277,8 @@ function resultado() {
     nodoPuntaje,
     el('ul', { class: 'desglose muted' }, ...lineas.map(x => el('li', {}, x))),
     el('p', { class: 'lead', style: 'margin:0' }, fmt(T.tiempo, { t: mmss(ms) })),
+    asesino && t.pistas[asesino.tienta] ? el('p', { class: `trampa${e.asesino ? ' trampa--mal' : ''}`, id: 'trampa' },
+      fmt(T.trampa[e.asesino ? 0 : 1], { w: asesino.w, p: t.pistas[asesino.tienta].pista })) : null,
     // La tarjeta de emojis va solo en el mensaje para compartir: aquí ya está el tablero con cada carta (pedido del dueño)
     tablero,
     botonResultadoSolo({ C: COMMON.es, emoji: '🕵️', juego: T.nombre, puntaje: `${s}/100`, tiempo: mmss(ms), tarjeta: tarjeta(t, e), url: `${SITIO}labs/agents/${SEMILLA_URL ? `?seed=${encodeURIComponent(SEMILLA_URL)}` : ''}`, alTocar: () => SFX.tap() }),
