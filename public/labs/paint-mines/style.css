@@ -22,6 +22,11 @@ button.casilla:not(:disabled):active { transform: scale(0.92); }
 .casilla.tinta { background: var(--c); border-color: var(--c); color: #160830; }
 .casilla.fondo { background: rgba(255,255,255,0.16); border-color: rgba(255,255,255,0.22); color: rgba(255,255,255,0.85); }
 .casilla.error { box-shadow: inset 0 0 0 3px #ff4d5e; }
+/* La ayuda: la casilla que se puede deducir late en amarillo, y los números que lo explican se marcan */
+.casilla.pista-objetivo { box-shadow: 0 0 0 3px var(--yellow), 0 0 14px rgba(255, 210, 63, 0.7); animation: pm-late 1s ease-in-out infinite; }
+.casilla.pista-razon { box-shadow: inset 0 0 0 3px var(--yellow); }
+@keyframes pm-late { 50% { transform: scale(0.9); } }
+#btn-ayuda { justify-self: center; }
 .casilla.pop { animation: pop 0.35s ease-out; }
 .casilla.shake { animation: shake 0.45s ease-in-out; }
 /* Al terminar: los números se van, el fondo se apaga y la tinta brilla: aparece el dibujo */
@@ -36,7 +41,7 @@ button.casilla:not(:disabled):active { transform: scale(0.92); }
 .marcador { margin: 0; text-align: center; font-weight: 800; color: var(--muted); }
 .marcador .parte { white-space: nowrap; }
 .aviso-pm { margin: 0; min-height: 1.5em; text-align: center; font-weight: 800; }
-.aviso-pm.mal { color: #ff8a8a; } .aviso-pm.era { color: var(--yellow); font-size: 1.2rem; }
+.aviso-pm.mal { color: #ff8a8a; } .aviso-pm.ayuda { color: var(--yellow); } .aviso-pm.era { color: var(--yellow); font-size: 1.2rem; }
 /* El pincel: cada botón tiene el color que pinta (la tinta del dibujo o el gris del fondo), y el elegido se nota */
 .pinceles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .pinceles.tres { grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
@@ -77,13 +82,19 @@ button.casilla:not(:disabled):active { transform: scale(0.92); }
   background: radial-gradient(circle at 35% 35%, #ff8a8a, #c4142b); box-shadow: 0 2px 3px rgba(0,0,0,0.5); }
 .placa .rayo { position: absolute; font-size: 1rem; opacity: 0; pointer-events: none; }
 .placa .r1 { top: -10px; left: -8px; } .placa .r2 { top: 6px; right: -12px; } .placa .r3 { bottom: -8px; left: 6px; }
-.interruptor.on { border-color: #2ee6d6; background: rgba(46, 230, 214, 0.08); }
+/* Encendido, el rectángulo entero brilla y parpadea al azar, como una luz con mal contacto: game.js mueve
+   --brillo (de 0 a 1) a destiempo, y aquí se convierte en resplandor y borde */
+.interruptor.on { --brillo: 0.7; background: rgba(46, 230, 214, calc(0.04 + 0.08 * var(--brillo)));
+  border-color: rgba(143, 247, 238, calc(0.35 + 0.65 * var(--brillo)));
+  box-shadow: 0 0 calc(4px + 26px * var(--brillo)) rgba(46, 230, 214, calc(0.15 + 0.7 * var(--brillo))),
+    0 0 calc(2px + 6px * var(--brillo)) rgba(255, 210, 63, calc(0.4 * var(--brillo))) inset;
+  transition: box-shadow 0.05s, border-color 0.05s, background 0.05s; }
 .interruptor.on .palanca { transform: rotate(38deg); }
 /* Electrificada: la placa titila con un brillo celeste y amarillo, y las chispas saltan */
-.interruptor.on .placa { border-color: #8ff7ee; animation: pm-electrica 1.6s steps(1) infinite; }
+.interruptor.on .placa { border-color: #8ff7ee; }
 .interruptor.on .rayo { animation: pm-chispa 1.6s ease-out infinite; }
 .interruptor.on .r2 { animation-delay: 0.45s; } .interruptor.on .r3 { animation-delay: 0.9s; }
-.interruptor.chispa .placa { animation: pm-descarga 0.5s ease-out, pm-electrica 1.6s steps(1) 0.5s infinite; }
+.interruptor.chispa .placa { animation: pm-descarga 0.5s ease-out; }
 @keyframes pm-electrica {
   0%, 100% { box-shadow: 0 0 10px #2ee6d6, 0 0 22px rgba(46, 230, 214, 0.5), inset 0 2px 4px rgba(255,255,255,0.15); }
   20% { box-shadow: 0 0 4px #ffd23f, 0 0 12px rgba(255, 210, 63, 0.6), inset 0 0 8px rgba(255, 210, 63, 0.5); }
@@ -99,5 +110,5 @@ button.casilla:not(:disabled):active { transform: scale(0.92); }
   .interruptor.on .placa, .interruptor.on .rayo, .interruptor.chispa .placa { animation: none !important; }
   .interruptor.on .placa { box-shadow: 0 0 10px #2ee6d6; }
   .interruptor.on .rayo { opacity: 1; }
-  .titulo-pm .brocha, .casilla.pop, .casilla.shake, .grilla.revelada .casilla.tinta, .sello-pm { animation: none !important; }
+  .casilla.pista-objetivo, .titulo-pm .brocha, .casilla.pop, .casilla.shake, .grilla.revelada .casilla.tinta, .sello-pm { animation: none !important; }
 }

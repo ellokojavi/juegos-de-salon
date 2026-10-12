@@ -13,7 +13,7 @@ import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/s
 import { formularioComentario, abrirComentario } from '../../assets/js/labs-idioma.js';
 import { fechaLocal } from '../../assets/js/uno-al-dia.js';
 import { cuentaRegresiva } from '../../assets/js/cuenta-regresiva.js';
-import { generar, estado, puntaje, maximo, tarjeta, numero, RESTA_ERROR, PREMIO_DIFICIL } from './engine.js';
+import { generar, estado, puntaje, maximo, tarjeta, numero, ayuda, RESTA_ERROR, RESTA_AYUDA, PREMIO_DIFICIL } from './engine.js';
 
 trackVisit();   // el tráfico del sitio (D-208)
 
@@ -35,6 +35,8 @@ const T = {
   // Los pinceles (pedido del dueño): «Pinta» con el color del tablero, y «No pinta», gris como las que no se pintan
   tinta: 'Pinta {c}', fondo: 'No pinta', pincel: 'Pincel',
   errores: ['Sin errores', '1 error', '{n} errores'], quedan: 'Faltan {n}',
+  // La ayuda (D-292): señala una casilla que se puede deducir y los números que lo explican, sin decir el color
+  ayuda: '💡 Ayuda (−{pts})', ayudaDice: '💡 Esta casilla se puede deducir: mira los números marcados.', ayudas: ['💡 1 ayuda: −{pts}.', '💡 {n} ayudas: −{pts}.'],
   mal: { 1: '❌ Se pintaba de {c}: −{pts}.', 0: '❌ No se pintaba: −{pts}.' },
   fin: { perfecto: '¡Perfecto!', listo: '¡Pintado!' }, era: '¡Era {d}!',
   desglose: ['Sin errores: 100 puntos.', ['1 error: −{pts}.', '{n} errores: −{pts}.']], desglosePremio: '⚡ Modo difícil: ×{x}.',
@@ -125,7 +127,7 @@ function interruptor() {
       try { localStorage.setItem(GUARDADO, P.dificil ? '1' : '0'); } catch { /* sin almacenamiento: solo esta vez */ }
       caja.classList.toggle('on', P.dificil); caja.setAttribute('aria-checked', String(P.dificil));
       estado.textContent = T.dificilEstado[+P.dificil];
-      if (P.dificil) { SFX.error(); vibrate([15, 30, 15, 30, 40]); caja.classList.remove('chispa'); void caja.offsetWidth; caja.classList.add('chispa'); }
+      if (P.dificil) { SFX.error(); vibrate([15, 30, 15, 30, 40]); caja.classList.remove('chispa'); void caja.offsetWidth; caja.classList.add('chispa'); parpadear(caja); }
       else { SFX.tap(); vibrate(10); }
     },
   },
@@ -133,7 +135,30 @@ function interruptor() {
     el('span', { class: 'rayo r1' }, '⚡'), el('span', { class: 'rayo r2' }, '⚡'), el('span', { class: 'rayo r3' }, '⚡'),
     el('span', { class: 'palanca' }, el('span', { class: 'mango' })), el('span', { class: 'eje' })),
   el('span', { class: 'rotulo' }, el('b', {}, `⚡ ${T.dificil}`), el('span', { class: 'muted' }, fmt(T.dificilSub, { x: PREMIO_DIFICIL })), estado));
+  if (P.dificil) parpadear(caja);
   return caja;
+}
+
+/**
+ * Mientras el modo difícil está encendido, el brillo del interruptor sube y baja a destiempo: a veces
+ * se sostiene, a veces da una ráfaga de chispazos, a veces casi se apaga (pedido del dueño). Con
+ * movimiento reducido queda encendido y quieto.
+ */
+let parpadeoVez = 0;
+function parpadear(caja) {
+  const vez = ++parpadeoVez;
+  if (QUIETO) return;
+  const paso = () => {
+    if (vez !== parpadeoVez || !caja.isConnected || !P.dificil) { caja.style.removeProperty('--brillo'); return; }
+    const r = Math.random();
+    // Casi siempre encendido; de vez en cuando un bajón o una ráfaga corta
+    const brillo = r < 0.12 ? 0.05 + Math.random() * 0.2 : r < 0.3 ? 1 : 0.45 + Math.random() * 0.45;
+    caja.style.setProperty('--brillo', brillo.toFixed(2));
+    const espera = r < 0.3 ? 40 + Math.random() * 90 : 120 + Math.random() * 900;
+    setTimeout(paso, espera);
+  };
+  // Parte en el cuadro siguiente: al cargar la portada, el interruptor todavía no está en la página
+  setTimeout(paso, 30);
 }
 
 function empezar() {
@@ -161,6 +186,7 @@ function jugar() {
   }, k ? fmt(T.tinta, { c: t.dibujo.pinturas[k - 1].nombre }) : T.fondo);
   const pinceles = el('div', { class: `pinceles${t.colores === 2 ? ' tres' : ''}`, role: 'group', 'aria-label': T.pincel, style: estiloPinturas(t) },
     ...[...t.dibujo.pinturas.keys()].map(k => botonPincel(k + 1)), botonPincel(0));
+  const botonAyuda = el('button', { type: 'button', class: 'btn btn--ghost btn--sm', id: 'btn-ayuda', onClick: () => pedirAyuda() }, fmt(T.ayuda, { pts: RESTA_AYUDA }));
   const dibujar = () => {
     const e = estado(t, P.jugadas);
     casillas.forEach((b, i) => {
@@ -175,6 +201,19 @@ function jugar() {
     const partes = [t.colores === 2 ? fmt(T.dificilJuego, { x: PREMIO_DIFICIL }) : null, nErrores(e.errores.size), fmt(T.quedan, { n: t.sol.length - e.conocidas.size })].filter(Boolean);
     marcador.replaceChildren(...partes.flatMap((x, j) => [j ? ' · ' : '', el('span', { class: 'parte' }, x)]));
     return e;
+  };
+  // La ayuda: marca la casilla que se puede deducir y los números que la explican, y resta
+  const pedirAyuda = () => {
+    const e0 = estado(t, P.jugadas);
+    if (e0.fin) return;
+    const a = ayuda(t.sol, e0.conocidas);
+    if (!a) return;
+    SFX.tap(); vibrate(10);
+    P.jugadas.push({ ayuda: true });
+    dibujar();
+    casillas[a.celda].classList.add('pista-objetivo');
+    for (const i of a.por) casillas[i].classList.add('pista-razon');
+    aviso.className = 'aviso-pm ayuda'; aviso.textContent = T.ayudaDice;
   };
   const tocar = i => {
     const e0 = estado(t, P.jugadas);
@@ -196,12 +235,12 @@ function jugar() {
   // Al terminar: los números se van, el fondo se apaga, la tinta brilla y se dice qué era
   const revelar = e => {
     tablero.classList.add('revelada');
-    pinceles.remove();
+    pinceles.remove(); botonAyuda.remove();
     aviso.className = 'aviso-pm era'; aviso.textContent = `${t.dibujo.emoji} ${fmt(T.era, { d: t.dibujo.nombre.toLowerCase() })}`;
     SFX.reveal();
     setTimeout(() => resultado(e), QUIETO ? 600 : 2200);
   };
-  vista.replaceChildren(tituloJuego(), marcador, tablero, aviso, pinceles);
+  vista.replaceChildren(tituloJuego(), marcador, tablero, aviso, pinceles, botonAyuda);
   dibujar();
   pieComentario('juego');
 }
@@ -217,12 +256,13 @@ const enlace = semilla => {
 function resultado(e) {
   const { t } = P;
   const s = puntaje(e, { colores: t.colores }), max = maximo(t.colores), ms = Date.now() - P.desde;
-  trackFinish({ detalle: `${s}/${max}${t.colores === 2 ? ' · difícil' : ''} · ${e.errores.size} errores · ${t.dibujo.nombre} · ${mmss(ms)}` });
+  trackFinish({ detalle: `${s}/${max}${t.colores === 2 ? ' · difícil' : ''} · ${e.errores.size} errores · ${e.ayudas} ayudas · ${t.dibujo.nombre} · ${mmss(ms)}` });
   SFX.win();
   if (!QUIETO && s >= 0.7 * max) confetti({ count: 160, duration: 2400 });
   pie.replaceChildren();
   const n = e.errores.size;
   const lineas = [n === 0 ? T.desglose[0] : fmt(T.desglose[1][n === 1 ? 0 : 1], { n, pts: Math.min(100, RESTA_ERROR * n) })];
+  if (e.ayudas) lineas.push(fmt(T.ayudas[e.ayudas === 1 ? 0 : 1], { n: e.ayudas, pts: RESTA_AYUDA * e.ayudas }));
   if (t.colores === 2) lineas.push(fmt(T.desglosePremio, { x: PREMIO_DIFICIL }));
   vista.replaceChildren(el('div', { class: 'resultado' },
     el('div', { class: 'dibujo-fin' }, grilla(t, { numeros: false, clase: 'revelada fin' })),

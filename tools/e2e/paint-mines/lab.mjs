@@ -3,7 +3,8 @@
 // por la cuenta 3, 2, 1; con semilla se juega entero comparando con el motor: acertar muestra el
 // número, errar resta y destapa el color verdadero, el pincel cambia; al terminar aparece el dibujo y
 // el resultado trae el puntaje, compartir, otro tablero y el comentario tras una línea. El modo
-// difícil (D-291): el interruptor lo enciende, y con dos colores y sin errores paga 150. Imprime ✗ si
+// difícil (D-291): el interruptor lo enciende, y con dos colores y sin errores paga 150. La ayuda
+// (D-292) marca una casilla deducible y resta 10. Imprime ✗ si
 // algo falla.
 import { launch, sleep } from '../cdp.mjs';
 const OUT = process.argv[2] || '/tmp/pintaminas-lab';
@@ -54,11 +55,17 @@ ok(await ev(`document.getElementById('btn-${t.sol[libres[0]] ? 'tinta' : 'fondo'
 await pintar(libres[1], 1 - t.sol[libres[1]]);
 ok(await ev(`${casilla(libres[1])}.classList.contains('error') && ${casilla(libres[1])}.classList.contains('${t.sol[libres[1]] ? 'tinta' : 'fondo'}')`), 'errar destapa el color verdadero, marcado como error');
 ok(/(Se pintaba de \w+|No se pintaba): −15/.test(await ev(`document.querySelector('.aviso-pm').textContent`)) && /1 error/.test(await ev(`document.getElementById('marcador').textContent`)), 'y lo dice: −15, 1 error');
+// La ayuda: marca la casilla que se puede deducir y los números que lo explican, sin pintarla, y resta
+await ev(`document.getElementById('btn-ayuda').click(); 1`); await sleep(150);
+const objetivo = await ev(`[...document.querySelectorAll('#tablero .casilla.pista-objetivo')].map(b => +b.dataset.i)`);
+ok(objetivo.length === 1 && await ev(`document.querySelectorAll('#tablero .casilla.pista-razon').length`) > 0 && !await ev(`${casilla(objetivo[0] ?? 0)}.classList.contains('tinta') || ${casilla(objetivo[0] ?? 0)}.classList.contains('fondo')`), 'la ayuda marca una casilla sin pintar y los números que la explican');
+ok(/se puede deducir/.test(await ev(`document.querySelector('.aviso-pm').textContent`)), 'y lo dice');
 await b.shot('02-juego');
 for (const i of libres.slice(2)) await pintar(i, t.sol[i]);
 ok(await esperar(`document.getElementById('tablero')?.classList.contains('revelada')`, 2000), 'al terminar aparece el dibujo');
 ok((await ev(`document.querySelector('.aviso-pm').textContent`)).includes(t.dibujo.nombre.toLowerCase()), `y dice qué era: ${t.dibujo.nombre}`);
-ok(await esperar(`document.getElementById('puntaje')?.textContent === '85/100'`, 5000), 'el resultado: 85/100 con un error');
+ok(await esperar(`document.getElementById('puntaje')?.textContent === '75/100'`, 5000), 'el resultado: 75/100 con un error y una ayuda');
+ok(/1 ayuda: −10/.test(await ev(`document.querySelector('.desglose').textContent`)), 'el desglose cuenta la ayuda');
 ok(await ev(`!!document.getElementById('btn-compartir-resultado')`), 'se puede compartir el resultado');
 const otro = await ev(`document.getElementById('btn-otro')?.getAttribute('href') || ''`);
 ok(/seed=/.test(otro) && !otro.includes(SEMILLA), `"Otro tablero" abre uno nuevo (${otro})`);
