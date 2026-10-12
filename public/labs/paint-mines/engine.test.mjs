@@ -2,7 +2,7 @@
 // —con las dadas, `resolver` lo deduce entero— y el estado y el puntaje se calculan bien.
 import assert from 'node:assert/strict';
 import { DIBUJOS, DIBUJOS2, PALETA } from './dibujos.js';
-import { generar, resolver, estado, puntaje, tarjeta, numero, VECINAS, LADO, RESTA_ERROR } from './engine.js';
+import { generar, resolver, ayuda, estado, puntaje, tarjeta, numero, VECINAS, LADO, RESTA_ERROR, RESTA_AYUDA } from './engine.js';
 
 for (const d of DIBUJOS) {
   assert.equal(d.filas.length, LADO, `${d.nombre}: filas`);
@@ -73,4 +73,23 @@ assert.equal(puntaje({ errores: { size: 0 } }, { colores: 2 }), 150);
 assert.equal(puntaje({ errores: { size: 1 } }, { colores: 2 }), 128);
 assert.equal(tarjeta(t, e).split('\n').length, LADO);
 assert.ok(numero(t.sol, 0) <= 3);
+// La ayuda (D-292): siempre hay una casilla que se puede deducir hasta terminar, la casilla está sin
+// conocer, y los números que la explican son conocidos y vecinos suyos. Jugando solo con ayudas se termina
+for (const [semilla, colores] of [['ayuda-1', 1], ['ayuda-2', 2], ['ayuda-3', 2]]) {
+  const t = generar(semilla, { colores });
+  const sabidas = new Set(t.dadas);
+  while (sabidas.size < t.sol.length) {
+    const a = ayuda(t.sol, sabidas);
+    assert.ok(a, `${semilla}: la ayuda no encontró nada con ${sabidas.size} conocidas`);
+    assert.ok(!sabidas.has(a.celda), `${semilla}: la ayuda señala una casilla conocida`);
+    assert.ok(a.por.length && a.por.every(i => sabidas.has(i)), `${semilla}: la explicación no es de conocidas`);
+    sabidas.add(a.celda);
+  }
+  assert.equal(ayuda(t.sol, sabidas), null);
+}
+// Cada ayuda resta, antes del premio del modo difícil
+const tA = generar('ayuda-puntaje'), libresA = tA.sol.map((_, i) => i).filter(i => !tA.dadas.includes(i));
+const eA = estado(tA, [{ ayuda: true }, { ayuda: true }, ...libresA.map(i => ({ i, color: tA.sol[i] }))]);
+assert.ok(eA.fin && eA.ayudas === 2 && puntaje(eA) === 100 - 2 * RESTA_AYUDA);
+assert.equal(puntaje(eA, { colores: 2 }), Math.round((100 - 2 * RESTA_AYUDA) * 1.5));
 console.log('✓ Pintaminas (labs)');
