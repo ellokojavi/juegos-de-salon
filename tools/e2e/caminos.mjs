@@ -410,9 +410,14 @@ export const CAMINOS = {
   /**
    * Los juegos del laboratorio que no son de La Copa se piden por su carpeta: `mirar` abre
    * `/<clave>/` cuando la clave no es un id del registro: la portada del laboratorio, Agentes
-   * (D-286), Pintaminas (D-289) y Rutas rotas (D-293).
+   * (D-286), Pintaminas (D-289), Rutas rotas (D-293) y Números explosivos (D-297).
    */
-  labs: { intro: [] },
+  labs: {
+    intro: [],
+    // La Bodega plegada al título, y con El caso abierto
+    bodega: [`document.getElementById('bodega').scrollIntoView(); 1`],
+    'bodega-abierta': [`document.querySelector('#seccion-caso summary').click(); document.getElementById('bodega').scrollIntoView(); 1`],
+  },
   'labs/agents': {
     intro: [],
     juego: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, `1`, `1`],
@@ -422,6 +427,10 @@ export const CAMINOS = {
     juego: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, `1`, `1`],
   },
   'labs/routes': {
+    intro: [],
+    juego: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, `1`, `1`],
+  },
+  'labs/exploding-numbers': {
     intro: [],
     juego: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, `1`, `1`],
   },

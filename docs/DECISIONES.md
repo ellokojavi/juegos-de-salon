@@ -51,17 +51,18 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 
 | Tema | Regla de hoy (canon) | Decisiones vigentes que la explican |
 |---|---|---|
-| Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284, D-286, D-289, D-293 |
+| Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284, D-286, D-289, D-293, D-297 |
 | Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184 |
 | Mazos de cartas con fecha | `docs/games/timeline.md` | D-37, D-277, D-278 |
 | 🕵️ Agentes, el juego del laboratorio (tablero, pistas, trampas) | `docs/games/agents.md` | D-286, D-287, D-288 |
-| 🖌️ Pintaminas, el Buscaminas de colores del laboratorio (dibujos, pinceles, tablero sin adivinar, modo difícil, ayuda) | `docs/games/paint-mines.md` | D-289, D-290, D-291, D-292 |
+| 🖌️ Pintaminas, el Buscaminas de colores del laboratorio (dibujos y sus colores, pinceles, tablero sin adivinar, modo difícil, ayuda, rendirse) | `docs/games/paint-mines.md` | D-289, D-290, D-291, D-292, D-296, D-298 |
 | 🚇 Rutas rotas (antes Rutas), el plano de metro del laboratorio (giros de rectángulos, mínimo exacto, cinco etapas, reloj de 7 minutos y puntaje por capas) | `docs/games/routes.md` | D-293, D-294, D-295 |
-| Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293 |
+| 💥 Números explosivos, el solitario de números del laboratorio (pares iguales o que suman 10, filas que se van, ➕, tablero con salida, explosiones) | `docs/games/exploding-numbers.md` | D-297 |
+| Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
-| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-298 |
-| Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-298 |
+| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305 |
+| Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305 |
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246 |
 | Memoria de partida | C-6 | D-25, D-150 |
@@ -4977,6 +4978,10 @@ confunde a quien prueba.
 **Consecuencias:** un proyecto nuevo entra en Proyectos activos (y el aviso de vacío se saca);
 uno que se abandona pasa a La Bodega moviendo su `<section class="seccion">`. Los dos siguen con
 `labs: true` en `games.js`. Lo verifican `tools/e2e/case/lab.mjs` y `tools/e2e/code/lab.mjs`.
+**La Bodega, plegada (v0.168.2, pedido del dueño):** cada juego de La Bodega se muestra solo con su
+título, dentro de un `<details class="plegada">` atenuado, y un toque lo abre con su descripción y
+su botón; los proyectos activos van abiertos. Así lo guardado no pesa lo mismo que lo vivo. Pasar
+un proyecto a La Bodega es, entonces, moverlo y envolverlo así. Lo verifica `tools/e2e/case/lab.mjs`.
 
 ## D-281 · El laboratorio tiene puerta: sin la llave se va al menú, y nada de él se indexa
 **Fecha:** 2026-10-11 · **Estado:** corregida por D-284 · **Relación:** corrige D-101
@@ -5192,7 +5197,7 @@ entera. Si gusta, el paso siguiente es La Copa (junto a Tango, que también es d
 que no se sientan repetidos).
 
 ## D-290 · Pintaminas: «Pinta» y «No pinta», un color al azar por tablero y dibujos irregulares
-**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** corrige D-289
+**Fecha:** 2026-10-11 · **Estado:** corregida por D-298 · **Relación:** corrige D-289; corregida por D-298 (el color ya no sale al azar: cada dibujo trae el suyo)
 **Contexto:** el dueño probó Pintaminas en el teléfono: «tinta o fondo» era un mal nombre, y los
 dibujos simétricos (corazón, estrella, árbol…) se adivinaban por espejo, sin deducir.
 **Decisión:** los pinceles se llaman **«Pinta {color}»**, con un color que cada tablero toma al azar
@@ -5207,7 +5212,7 @@ por el color); seguir llamándolos tinta y fondo.
 **Consecuencias:** `engine.test.mjs` revisa la paleta y la asimetría de cada dibujo.
 
 ## D-291 · Pintaminas: un modo difícil de dos colores, con un interruptor eléctrico y premio ×1.5
-**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** amplía D-289; ampliada por D-292 (la ayuda y el brillo del interruptor)
+**Fecha:** 2026-10-11 · **Estado:** corregida por D-298 · **Relación:** amplía D-289; corregida por D-298 (los dos colores son los del dibujo, ya no al azar); ampliada por D-292 (la ayuda y el brillo del interruptor)
 **Contexto:** el dueño preguntó qué pasaría con un segundo color. Con dos colores, un número que se
 cumple solo dice que las demás vecinas *no son de ese color* (pueden ser del otro o sin pintar): hay
 que cruzar más números. Pidió probarlo como modo difícil, que se active con un interruptor eléctrico
@@ -5342,7 +5347,58 @@ etapas hechas).
 **Consecuencias:** `engine.test.mjs` revisa el avance y el puntaje al rendirse;
 `tools/e2e/paint-mines/lab.mjs` se rinde a mitad de partida.
 
-## D-298 · Las píldoras de La Copa y Uno al día, abajo a la izquierda
+## D-297 · Números explosivos: prototipo del laboratorio, inspirado en Number Match
+**Fecha:** 2026-10-12 · **Estado:** vigente · **Relación:** como D-289 (Pintaminas) y D-293 (Rutas)
+**Contexto:** el dueño pidió evaluar Number Match (Easybrain, 50 M+ descargas) y, si valía la pena,
+hacer un prototipo; el nombre y las explosiones también los pidió él.
+**Decisión:** un juego para uno solo en `/labs/exploding-numbers/` (id `numeros-explosivos`), en
+Proyectos activos. Las reglas son las del juego de lápiz y papel del que viene Number Match (Take
+Ten): grilla de 9 columnas con números del 1 al 9; se tachan de a pares dos **iguales o que suman
+10**, si están **juntos de lado, de arriba abajo o en diagonal** (lo estallado no estorba) o uno al
+final de una fila y el otro al comienzo de la siguiente. Una fila estallada entera se va. **➕** copia
+al final los números que quedan, 3 veces por partida; con pares a la vista pide un segundo toque.
+- **Tablero del día** (36 números, 4 filas), el mismo para todos; `?seed=` da otro. Se arma con una
+  salida: sus pares van anidados como paréntesis en el orden de lectura, así que se limpia entero sin
+  ➕. Un mal orden igual puede trabarlo.
+- **Puntaje sobre 100:** limpiar vale 70 y cada ➕ sin usar 10; si no se limpia (rendirse, o sin
+  pares ni ➕), la parte estallada de los 70, contando lo agregado. La 💡 ayuda (dos toques, como en
+  Pintaminas) marca un par y resta 10. 🏳️ Rendirse con dos toques.
+- **Las explosiones** (pedido del dueño): cada par estalla con una onda, un destello, un 💥 de
+  historieta, chispas de su color y pedazos del número; el tablero tiembla. Una fila entera explota
+  de punta a punta y se aplasta; al limpiarlo todo, el resumen aparece de inmediato (una sola pantalla
+  final, como los otros juegos) y tres estallidos grandes salen de su puntaje, con confeti. Cada número
+  lleva en el borde el color de su familia (1 y 9, 2 y 8…). Con movimiento reducido, sin explosiones.
+- **La portada** juega sola un tablero chico de 2 filas en su orden, hasta «¡Limpio!».
+**Por qué:** es un solitario corto, de reglas que caben en tres líneas, que se juega con el pulgar y
+tiene la vuelta diaria de los otros del laboratorio. Las explosiones le dan lo que el original no
+tiene. Un tablero que siempre tiene salida evita la frustración de los tableros imposibles.
+**Alternativas descartadas:** el puntaje sin tope del original (+1 por par, +10 por fila, +150 al
+limpiar), que no se compara entre amigos; ➕ sin límite (vuelve el tablero infinito); tableros al azar
+(pueden no tener salida).
+**Consecuencias:** `engine.test.mjs` limpia 400 tableros con su orden; `tools/e2e/exploding-numbers/lab.mjs`
+juega uno entero. Las casillas miden menos de 44 px a 375 px de ancho (9 columnas, como el original).
+
+## D-298 · Pintaminas: cada dibujo se pinta con sus colores de verdad
+**Fecha:** 2026-10-12 · **Estado:** vigente · **Relación:** corrige D-290 (un color al azar por tablero) y D-291 (dos colores al azar en el modo difícil)
+**Contexto:** desde v0.167.2 las cerezas salían rojas con el tallo verde, como son, y los otros
+dibujos seguían con colores al azar de `PALETA`: un cactus morado, una bota azul. El dueño pidió que
+todos salgan con sus colores de verdad.
+**Decisión:** cada dibujo de `DIBUJOS` y `DIBUJOS2` trae sus colores en `colores` (`dibujos.js`): uno
+en el modo normal, dos en el difícil (la luna amarilla, el cactus verde, la bota café; la frutilla
+roja con hojas verdes, el árbol verde con el tronco café). El tablero se pinta con ellos y el pincel
+dice ese color («Pinta café»). `PALETA` suma **café, blanco y rosado** (9 colores). Amarillo y
+naranjo siguen sin ir juntos en un dibujo: lo revisa el test, ya no el generador. Los tableros no
+cambian: `generar` sigue sacando la baraja de antes sin usarla, para que el azar de las dadas sea el
+mismo y los links de antes den el mismo tablero.
+**Por qué:** un dibujo con sus colores se reconoce y se disfruta más al destaparse. D-290 había
+descartado el color fijo porque delataba el dibujo; el dueño prefiere el dibujo reconocible.
+**Alternativas descartadas:** seguir al azar con excepciones dibujo por dibujo (como las cerezas);
+cambiar el azar del generador (rompía los links de tableros ya jugados).
+**Consecuencias:** `engine.test.mjs` exige que cada dibujo traiga sus colores (de `PALETA`, uno por
+color del dibujo, distintos, nunca amarillo con naranjo) y que el tablero salga con ellos. Un dibujo
+nuevo tiene que traer `colores`.
+
+## D-305 · Las píldoras de La Copa y Uno al día, abajo a la izquierda
 **Fecha:** 2026-10-12 · **Estado:** vigente · **Relación:** completa D-239 (cómo se ordena la tarjeta de media fila)
 **Decisión:** en las dos tarjetas de media fila de la portada, las píldoras (👥 jugadores y ⏱ días
 en La Copa; la racha o cómo va hoy en Uno al día) van abajo a la izquierda de la tarjeta, aparte de
