@@ -11,6 +11,7 @@ import { botonResultadoSolo } from '../../assets/js/compartir.js';
 import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/stats.js';
 import { formularioComentario, abrirComentario } from '../../assets/js/labs-idioma.js';
 import { fechaLocal } from '../../assets/js/uno-al-dia.js';
+import { LONG_PRESS_MS } from '../../assets/js/teclado.js';   // el toque largo de las notas de Toque y Fama
 import { generar, estado, puntaje, tarjeta, AGENTES, RESTA_NEUTRAL, RESTA_ASESINO } from './engine.js';
 
 trackVisit();   // el tráfico del sitio (D-208)
@@ -29,6 +30,9 @@ const T = {
   empezar: '🕵️ Empezar', pista: 'Pista {n} de {t}', faltan: 'Te faltan {n}', faltaUna: 'Te falta 1',
   pasar: '⏭️ Siguiente pista', terminar: '🏁 Terminar', seguro: '🏁 Sí, terminar',
   quedan: ['Queda 1 agente sin encontrar. ¿Terminas igual?', 'Quedan {n} agentes sin encontrar. ¿Terminas igual?'],
+  // Las marcas (como las notas de Toque y Fama): un toque largo marca 📌, otro 🚫, otro la quita
+  marcas: '💡 Mantén apretada una carta para marcarla como sospecha 📌. Repite para descartarla 🚫 y otra vez para quitar la marca.',
+  descartada: 'La descartaste 🚫: mantenla apretada para quitarle la marca.',
   bien: '¡Bien! Es de los tuyos.', otra: '¡Es de los tuyos! Pero de otra pista: igual suma.',
   neutral: `Neutral: −${RESTA_NEUTRAL}. Se corta la pista.`, asesino: `¡El asesino! −${RESTA_ASESINO}. Se corta la pista.`,
   // El final tiene tres caras: victoria (70 o más), a medias y fracaso (el asesino, o menos de 35)
@@ -37,7 +41,7 @@ const T = {
   desglose: ['Encontraste {n} de {t} agentes: {pts} puntos.', ['Tocaste 1 neutral: −{pts}.', 'Tocaste {n} neutrales: −{pts}.'], 'Tocaste al asesino: −{pts}.'],
   tiempo: 'Tiempo: {t}.',
   // La trampa, explicada: con qué pista tentaba el asesino
-  trampa: ['💀 Caíste con {w}: tentaba con {p}, pero no era de los tuyos.', '💀 Esquivaste al asesino: {w}, que tentaba con {p}.'], tienta: '≈ {p}',
+  trampa: ['💀 Caíste con {w}: parecía de {p}, pero no era de los tuyos.', '💀 Esquivaste al asesino: {w}, que parecía de {p}.'], tienta: '≈ {p}',
   otraVez: '🔁 Otro tablero', deHoy: '📅 El de hoy', laboratorio: '‹ Volver al laboratorio',
   comentarAbrir: '💬 Dejar un comentario',
   comentario: { titulo: '¿Qué te pareció?', lead: 'Cuéntanos si las pistas se entendían, si alguna palabra era injusta y qué le cambiarías.', ph: 'Por ejemplo: la pista FUEGO con BOMBERO me costó; el asesino me engañó.', nombre: 'Tu nombre (opcional)', enviar: 'Enviar comentario', enviando: 'Enviando…', vacio: 'Escribe algo primero.', gracias: '¡Gracias! 🙌 Tu comentario llegó.', guardado: 'Ahora no hay internet: tu comentario quedó en el celular y se envía solo después.', error: 'No se pudo enviar. Prueba de nuevo en un rato.', contexto: 'Lo que se envía junto', cancelar: 'Cancelar', cerrar: 'Cerrar' },
@@ -49,7 +53,7 @@ const vista = document.getElementById('vista');
 const pie = document.getElementById('pie');
 const params = new URLSearchParams(location.search);
 const SEMILLA_URL = (params.get('seed') || '').trim();
-const P = { semilla: '', t: null, jugadas: [], desde: 0 };
+const P = { semilla: '', t: null, jugadas: [], desde: 0, marcas: new Map(), marcadas: 0 };
 
 function pieComentario(pantalla) {
   pie.replaceChildren(el('button', {
@@ -58,7 +62,7 @@ function pieComentario(pantalla) {
   }, T.comentarAbrir));
 }
 const contexto = pantalla => ({
-  juego: GAME_ID, pantalla, semilla: P.semilla, pistas: P.t?.pistas.map(p => p.pista).join(','), jugadas: P.jugadas.length,
+  juego: GAME_ID, pantalla, semilla: P.semilla, pistas: P.t?.pistas.map(p => p.pista).join(','), jugadas: P.jugadas.length, marcas: P.marcadas,
   url: location.pathname + location.search, pantallaTam: `${innerWidth}×${innerHeight}`, navegador: navigator.userAgent.slice(0, 160),
 });
 
@@ -145,6 +149,7 @@ function empezar() {
   P.semilla = SEMILLA_URL || `dia:${fechaLocal()}`;
   P.t = generar(P.semilla);
   P.jugadas = [];
+  P.marcas = new Map(); P.marcadas = 0;
   P.desde = Date.now();
   trackStart({ game: GAME_ID, mode: 'solo', players: 1 });
   jugar();
@@ -155,7 +160,31 @@ function jugar() {
   const aviso = el('p', { class: 'aviso-ag', 'aria-live': 'polite' }, '');
   const caja = el('div', { class: 'pista', id: 'pista' });
   const botones = el('div', { class: 'stack' });
-  const cartas = t.cartas.map((c, i) => el('button', { type: 'button', class: 'carta', 'data-i': i, style: `--n:${c.w.length}`, onClick: () => tocar(i) }, c.w));
+  const ayuda = el('p', { class: 'muted ayuda-marcas', id: 'ayuda-marcas' }, T.marcas);
+  // Un toque largo marca la carta sin destaparla: nada → 📌 → 🚫 → nada. El toque que sigue no la destapa
+  const cartas = t.cartas.map((c, i) => {
+    let reloj = null, largo = false;
+    const corta = () => { if (reloj) { clearTimeout(reloj); reloj = null; } };
+    return el('button', {
+      type: 'button', class: 'carta', 'data-i': i, style: `--n:${c.w.length}`,
+      onClick: () => { if (largo) { largo = false; return; } tocar(i); },
+      onPointerdown: () => {
+        largo = false;
+        reloj = setTimeout(() => { reloj = null; largo = true; marcar(i); }, LONG_PRESS_MS);
+      },
+      onPointerup: corta, onPointerleave: corta, onPointercancel: corta,
+      onContextmenu: ev => ev.preventDefault(),
+    }, c.w);
+  });
+  const marcar = i => {
+    if (estado(t, P.jugadas).tocadas.has(i) || cartas[i].disabled) return;
+    const m = P.marcas.get(i);
+    if (!m) P.marcas.set(i, 'sospecha'); else if (m === 'sospecha') P.marcas.set(i, 'descarte'); else P.marcas.delete(i);
+    P.marcadas++;
+    vibrate([30, 40, 30]); SFX.dice();
+    ayuda.hidden = true;
+    dibujar();
+  };
   let antes = -1;
   const tablero = el('div', { class: 'tablero', id: 'tablero' }, ...cartas);
   // Terminar deja agentes sin encontrar y no se deshace: el primer toque avisa cuántos quedan y pide otro (U-15)
@@ -166,7 +195,9 @@ function jugar() {
     cartas.forEach((b, i) => {
       const c = t.cartas[i], tocada = e.tocadas.has(i);
       b.disabled = tocada || e.fin;
-      b.className = 'carta' + (tocada ? ` ${c.tipo}` : '');
+      const m = !tocada && P.marcas.get(i);
+      b.className = 'carta' + (tocada ? ` ${c.tipo}` : '') + (m ? ` marca-${m}` : '');
+      b.setAttribute('aria-label', c.w + (m === 'sospecha' ? ' (sospecha)' : m === 'descarte' ? ' (descartada)' : ''));
     });
     if (e.fin) return revelar(e);
     // Una pista nueva entra girando y su palabra se descifra. El aviso de cómo terminó la anterior
@@ -224,6 +255,11 @@ function jugar() {
   const tocar = i => {
     const e0 = estado(t, P.jugadas);
     if (e0.fin || e0.tocadas.has(i)) return;
+    // Una descartada no se destapa por error: se sacude, como una tecla tachada
+    if (P.marcas.get(i) === 'descarte') {
+      cartas[i].classList.remove('shake'); void cartas[i].offsetWidth; cartas[i].classList.add('shake');
+      vibrate([20, 30, 20]); decir('', T.descartada); return;
+    }
     const c = t.cartas[i];
     P.jugadas.push({ i });
     const e1 = estado(t, P.jugadas);
@@ -242,7 +278,7 @@ function jugar() {
     // Si la pista se cortó o se completó, el sello se ve un momento antes de la siguiente
     if (cambia) cerrarPista(c.tipo === 'agente' ? 'completa' : 'cortada');
   };
-  vista.replaceChildren(tituloJuego(), caja, aviso, tablero, botones);
+  vista.replaceChildren(tituloJuego(), caja, aviso, tablero, ayuda, botones);
   dibujar();
   pieComentario('juego');
 }
@@ -251,7 +287,7 @@ function resultado() {
   const { t } = P;
   const e = estado(t, P.jugadas);
   const s = puntaje(e), ms = Date.now() - P.desde;
-  trackFinish({ detalle: `${s}/100 · ${e.encontrados}/${AGENTES} agentes · ${e.neutrales} neutrales${e.asesino ? ' · asesino' : ''} · ${mmss(ms)}` });
+  trackFinish({ detalle: `${s}/100 · ${e.encontrados}/${AGENTES} agentes · ${e.neutrales} neutrales${e.asesino ? ' · asesino' : ''} · ${P.marcadas} marcas · ${mmss(ms)}` });
   // Tres caras: victoria, a medias y fracaso (con el asesino, o con muy poco)
   const cara = s >= 70 ? 'victoria' : e.asesino ? 'asesino' : s < 35 ? 'fracaso' : 'medias';
   const mal = cara === 'asesino' || cara === 'fracaso';

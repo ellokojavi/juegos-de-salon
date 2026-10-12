@@ -45,6 +45,28 @@ const sello = () => ev(`document.querySelector('#pista .sello--pista')?.textCont
 ok(await llega(0), `la primera pista es ${t.pistas[0].pista}`);
 await b.shot('02-tablero');
 
+// Las marcas: un toque largo marca 📌, otro 🚫 y otro la quita; el toque que sigue al largo no destapa,
+// y una 🚫 no se destapa por error
+const largo = async i => {
+  await ev(`(()=>{const b=document.querySelector('#tablero .carta[data-i="${i}"]');b.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true}));return 1})()`);
+  await sleep(600);
+  await ev(`(()=>{const b=document.querySelector('#tablero .carta[data-i="${i}"]');b.dispatchEvent(new PointerEvent('pointerup',{bubbles:true}));b.click();return 1})()`);
+  await sleep(100);
+};
+const clase = i => ev(`document.querySelector('#tablero .carta[data-i="${i}"]').className`);
+ok(await ev(`!!document.getElementById('ayuda-marcas') && !document.getElementById('ayuda-marcas').hidden`), 'el tablero dice cómo marcar');
+const m = de(null, 'neutral')[1];
+await largo(m);
+ok(/marca-sospecha/.test(await clase(m)) && !/neutral/.test(await clase(m)), 'un toque largo marca 📌 sin destapar');
+ok(await ev(`document.getElementById('ayuda-marcas').hidden`), 'y la ayuda se va');
+await largo(m);
+ok(/marca-descarte/.test(await clase(m)), 'otro la pasa a 🚫');
+await ev(`document.querySelector('#tablero .carta[data-i="${m}"]').click(); 1`); await sleep(150);
+ok(!/neutral/.test(await clase(m)) && /descartaste/.test(await ev(`document.querySelector('.aviso-ag').textContent`)), 'una 🚫 no se destapa al tocarla');
+await largo(m);
+ok(!/marca-/.test(await clase(m)), 'y otro toque largo la deja sin marca');
+await largo(m); await largo(m);   // queda 🚫 hasta el final: así ningún toque del guion la destapa
+
 // Pista 1: un agente propio, uno de la pista 3 (suma sin cortar) y luego el asesino (corta)
 await tocar(de(0)[0]);
 ok(/de los tuyos/i.test(await ev(`document.querySelector('.aviso-ag').textContent`)), 'un agente de la pista suma');
