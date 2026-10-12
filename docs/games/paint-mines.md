@@ -38,13 +38,27 @@ tres pasos y Empezar, que pasa por la cuenta 3, 2, 1 compartida (`assets/js/cuen
   arruinárselo a quien juega el mismo tablero.
 - **El día:** sin `?seed=` es el tablero de hoy (`dia:<fecha>`), el mismo para todos.
 
+## Modo difícil (D-291)
+
+- **El interruptor:** en la portada, antes de Empezar, una palanca sobre una placa de metal («⚡ Modo
+  difícil · Dos colores · puntaje ×1.5»). Al subirla la placa se electrifica: titila en celeste y
+  amarillo, saltan chispas ⚡, suena y vibra. Es un `role="switch"`; el celular recuerda su posición
+  (`juegos-de-salon:pintaminas:dificil`) y el link lo trae con `?colors=2`.
+- **El tablero:** dos colores al azar de `PALETA`, con los dibujos de `DIBUJOS2` (de dos colores), un
+  borde eléctrico y tres pinceles («Pinta rojo», «Pinta verde», «No pinta»). El marcador dice
+  «⚡ Modo difícil ×1.5». Un número cumplido ya no dice de qué color son las demás: solo que no son del
+  suyo.
+- **El puntaje:** (100 − 15 por error) × 1,5, hasta 150. El desglose lo dice («⚡ Modo difícil: ×1.5.»),
+  el confeti sale desde el 70 % del máximo y «Otro tablero» sigue en el modo difícil.
+
 ## Cómo funciona
 
 - `dibujos.js`: 17 dibujos de 7×7 (`#` se pinta, `.` no), cada uno con nombre y emoji, todos
   irregulares: uno simétrico se adivina por espejo y el test lo rechaza (D-290). Un dibujo nuevo tiene
   que reconocerse a 7×7 y tener entre 12 y 40 pintadas. `PALETA`: los 6 colores con su nombre y su
   emoji cuadrado.
-- `engine.js`: `resolver(sol, dadas)` deduce como un jugador: cada casilla conocida dice cuántas de sus
+- `engine.js`: `resolver(sol, dadas)` deduce como un jugador, con los colores que todavía puede tener
+  cada casilla (sirve para uno o dos colores): cada casilla conocida dice cuántas de sus
   vecinas desconocidas se pintan; si son todas o ninguna, se saben; y si las desconocidas de una
   están todas entre las de otra, la diferencia también. Cada deducida suma su número y se sigue.
   `generar(semilla)` elige un dibujo (quizás espejado), agrega dadas al azar hasta que `resolver` lo
