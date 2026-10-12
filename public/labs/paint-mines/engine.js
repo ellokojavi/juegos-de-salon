@@ -89,12 +89,18 @@ export function resolver(sol, dadas) {
  * Con `colores: 2` (el modo difícil) usa los dibujos de dos colores. El dibujo puede salir espejado,
  * y sus colores salen al azar de PALETA. Con las dadas se resuelve entero.
  */
+/** Los pares de PALETA que no comparten tablero en el modo difícil. */
+const PARECIDOS = [['amarillo', 'naranjo']];
+
 export function generar(semilla, { colores = 1 } = {}) {
   const r = azar(String(semilla));
   const lista = colores === 2 ? DIBUJOS2 : DIBUJOS;
   const d = lista[Math.floor(r() * lista.length)];
   const espejo = r() < 0.5;
-  const pinturas = barajar(PALETA, r).slice(0, colores);
+  // Dos colores que se confunden a simple vista (amarillo y naranjo) no van juntos: el segundo es el
+  // siguiente de la baraja que se distinga del primero
+  const baraja = barajar(PALETA, r);
+  const pinturas = [baraja[0], ...baraja.slice(1).filter(p => !PARECIDOS.some(par => par.includes(p.nombre) && par.includes(baraja[0].nombre)))].slice(0, colores);
   const valor = { '#': 1, '+': 2, '.': 0 };
   const sol = d.filas.flatMap(fila => [...(espejo ? [...fila].reverse().join('') : fila)].map(x => valor[x]));
   const todas = [...sol.keys()];
