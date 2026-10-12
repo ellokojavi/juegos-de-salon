@@ -55,7 +55,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184 |
 | Mazos de cartas con fecha | `docs/games/timeline.md` | D-37, D-277, D-278 |
 | 🕵️ Agentes, el juego del laboratorio (tablero, pistas, trampas) | `docs/games/agents.md` | D-286, D-287, D-288 |
-| 🖌️ Pintaminas, el Buscaminas de colores del laboratorio (dibujos, pinceles, tablero sin adivinar, modo difícil) | `docs/games/paint-mines.md` | D-289, D-290, D-291 |
+| 🖌️ Pintaminas, el Buscaminas de colores del laboratorio (dibujos, pinceles, tablero sin adivinar, modo difícil, ayuda) | `docs/games/paint-mines.md` | D-289, D-290, D-291, D-292 |
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
@@ -5164,7 +5164,7 @@ revisa un año de tableros del día: ninguno al azar, todos con las pistas del c
 antes de 15 días, y que en el año salgan las 100.
 
 ## D-289 · Pintaminas: un Buscaminas de colores en Proyectos activos del laboratorio
-**Fecha:** 2026-10-11 · **Estado:** corregida por D-290 · **Relación:** amplía D-280 (un segundo proyecto activo); ampliada por D-291 (el modo difícil)
+**Fecha:** 2026-10-11 · **Estado:** corregida por D-290 · **Relación:** amplía D-280 (un segundo proyecto activo); ampliada por D-291 (el modo difícil) y D-292 (la ayuda)
 **Contexto:** el dueño pidió investigar *ColorSweeper* (ARRKKA, publicado por Com2uS en 2026): un
 Buscaminas en que cada casilla tiene un color y su número dice cuántas de sus 8 vecinas son de su
 mismo color, con puzzles que se resuelven sin adivinar y, al terminar, un dibujo (como los
@@ -5206,7 +5206,7 @@ por el color); seguir llamándolos tinta y fondo.
 **Consecuencias:** `engine.test.mjs` revisa la paleta y la asimetría de cada dibujo.
 
 ## D-291 · Pintaminas: un modo difícil de dos colores, con un interruptor eléctrico y premio ×1.5
-**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** amplía D-289
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** amplía D-289; ampliada por D-292 (la ayuda y el brillo del interruptor)
 **Contexto:** el dueño preguntó qué pasaría con un segundo color. Con dos colores, un número que se
 cumple solo dice que las demás vecinas *no son de ese color* (pueden ser del otro o sin pintar): hay
 que cruzar más números. Pidió probarlo como modo difícil, que se active con un interruptor eléctrico
@@ -5226,3 +5226,23 @@ puntos (×1.5 escala con lo bien que se juega).
 **Consecuencias:** `engine.test.mjs` revisa los dibujos de dos colores (irregulares, con al menos 4
 casillas de cada color) y 300 tableros difíciles que se resuelven sin adivinar (en promedio con 5
 dadas); `tools/e2e/paint-mines/lab.mjs` enciende y apaga el interruptor y juega una partida difícil.
+
+## D-292 · Pintaminas: la ayuda 💡, y el brillo del interruptor que parpadea al azar
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** amplía D-289 y D-291
+**Contexto:** el dueño se trabó en un tablero difícil: la siguiente jugada salía de cruzar tres
+números (una regla dentro de otra). Pidió una ayuda. Pidió también que el brillo del modo difícil
+cubra el rectángulo entero del interruptor y se prenda y apague al azar.
+**Decisión:** un botón **«💡 Ayuda (−10)»** bajo los pinceles. Al tocarlo, el solucionador
+(`ayuda(sol, conocidas)`, el mismo que asegura que nunca se adivina) busca la primera casilla que se
+puede deducir con lo que se ve: esa casilla late en amarillo y los números que la explican quedan
+marcados, sin decir de qué color es. Cada ayuda resta 10 (antes del ×1.5 del modo difícil) y el
+desglose las cuenta. El interruptor encendido brilla entero (borde, resplandor y fondo) con una
+intensidad que `game.js` cambia a destiempo: casi siempre encendido, a veces una ráfaga corta, a
+veces un bajón, como una luz con mal contacto. Con movimiento reducido queda encendido y quieto.
+**Por qué:** igual que en El caso (D-263), una ayuda que señala dónde mirar y deja la deducción al
+jugador destraba sin regalar la partida.
+**Alternativas descartadas:** que la ayuda pinte la casilla (regala la jugada); dar una casilla más al
+empezar (no ayuda a quien se traba a mitad de camino).
+**Consecuencias:** `engine.test.mjs` juega tableros de uno y dos colores solo con ayudas hasta el final
+(siempre hay una casilla que se puede deducir); `tools/e2e/paint-mines/lab.mjs` pide una ayuda y
+revisa el puntaje y el desglose.

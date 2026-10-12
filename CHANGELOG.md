@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.163.0 — 2026-10-11
+- **🖌️ Pintaminas (laboratorio): 💡 Ayuda** (D-292). Si te trabas, la ayuda marca una casilla que se
+  puede deducir y los números que lo explican, por 10 puntos. Y el interruptor del modo difícil brilla
+  entero y parpadea al azar.
+
 ## 0.162.0 — 2026-10-11
 - **🖌️ Pintaminas (laboratorio): modo difícil** (D-291). Un interruptor de palanca en la portada que,
   al subirlo, se electrifica: el tablero pasa a dos colores, con tres pinceles, y el puntaje vale
