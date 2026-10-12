@@ -58,7 +58,11 @@
 .carta:active { transform: scale(0.95); }
 /* Las marcas: un toque largo (como las notas de Toque y Fama). Sin selección ni menú del celular al mantener */
 .carta { position: relative; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
-.carta.marca-sospecha { border-color: var(--yellow); border-style: dashed; background: rgba(255, 210, 63, 0.12); }
+/* La sospecha no se rellena: con fondo parecía una carta elegida (un toque largo sin querer) */
+.carta.marca-sospecha { border-color: var(--yellow); border-style: dashed; }
+/* Mientras se mantiene apretada, el borde se llena en lo que dura el toque largo: se ve venir la marca */
+.carta.apretando { animation: ag-apretando var(--largo, 450ms) linear forwards; }
+@keyframes ag-apretando { 0%, 30% { box-shadow: inset 0 0 0 0 rgba(255, 210, 63, 0); } 100% { box-shadow: inset 0 0 0 4px rgba(255, 210, 63, 0.9); } }
 /* La 🚫 apaga la palabra, no la marca: con opacity la marca también se borraba */
 .carta.marca-descarte { color: rgba(255, 255, 255, 0.4); border-color: rgba(255, 255, 255, 0.1); text-decoration: line-through; }
 .carta.marca-sospecha::after, .carta.marca-descarte::after { position: absolute; top: -8px; right: -6px; font-size: 1rem; animation: pop 0.3s ease-out both; }
@@ -84,7 +88,7 @@
 .carta .de-pista { display: block; margin-top: 2px; font-size: 0.72rem; font-weight: 800; color: var(--muted); letter-spacing: 0.04em; }
 /* Dos líneas reservadas: el aviso más largo parte en dos a 320 px y el tablero no salta bajo el dedo */
 .aviso-ag { text-align: center; font-weight: 800; min-height: 2.8em; margin: 0; display: grid; place-items: center; line-height: 1.4; }
-.aviso-ag.bien { color: var(--lime); } .aviso-ag.mal { color: #ff8a8a; } .aviso-ag.otra { color: var(--cyan); }
+.aviso-ag.bien { color: var(--lime); } .aviso-ag.marca { color: var(--yellow); } .aviso-ag.mal { color: #ff8a8a; } .aviso-ag.otra { color: var(--cyan); }
 .resultado { text-align: center; display: grid; gap: 10px; }
 .resultado .score-big { font: 900 clamp(2.6rem, 14vw, 3.6rem)/1.1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35); }
 .resultado .trofeo { font-size: 3.4rem; animation: pop 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
