@@ -107,17 +107,19 @@ export async function revisarIdiomas(juego, { dicts = [], port, pantallas, permi
   for (const toma of tomas) {
     let es = null;
     for (const lang of ['es', ...LANGS.filter(l => l !== 'es')]) {
-      await b.go(`${SITIO}/${ruta}`, 800);
+      // Sin pausas fijas (D-307): cada espera termina cuando la página cargó y dejó de cambiar, con
+      // el tope que antes era la pausa entera (800, 1500 y 700 ms)
+      await b.abrir(`${SITIO}/${ruta}`, 800);
       const labs = EN_LABS.includes(lang) ? `localStorage.setItem('${LABS_KEY}', '${lang}');` : '';
       await b.evaluate(`localStorage.clear(); sessionStorage.clear(); localStorage.setItem('juegos-de-salon:lang', '${lang}'); ${labs} 1`);
-      await b.go(`${SITIO}/${ruta}`, 1500);
+      await b.abrir(`${SITIO}/${ruta}`, 1500);
       const antes = b.errors.length;
       for (const paso of caminos[toma]) {
         try { await b.evaluate(`(()=>{ ${paso} ; return 1})()`); }
         catch (e) { ok(false, `${toma} · ${lang}: un paso del camino falló (${e.message.split('\n')[0]})`); }
-        await sleep(700);
+        await b.asentar(700);
       }
-      await sleep(500);
+      await b.asentar(500);
       const m = await b.evaluate(MEDIR);
       await b.shot(`${toma}-${lang}`);
       const nuevos = b.errors.slice(antes);
