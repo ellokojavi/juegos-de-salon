@@ -21,8 +21,9 @@
 .tramo { opacity: 0.9; }
 .estacion { fill: #fff; stroke: #0b0f1d; stroke-width: 2; }
 /* El rectángulo que se está marcando */
-.seleccion { position: absolute; border: 3px solid var(--yellow); border-radius: 10px; background: rgba(255, 210, 63, 0.14);
-  box-shadow: 0 0 16px rgba(255, 210, 63, 0.5); pointer-events: none; opacity: 0; transition: opacity 0.12s; z-index: 2; }
+/* Blanco: el amarillo se confundía con la línea amarilla */
+.seleccion { position: absolute; border: 3px solid #fff; border-radius: 10px; background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 16px rgba(255, 255, 255, 0.45); pointer-events: none; opacity: 0; transition: opacity 0.12s; z-index: 2; }
 .seleccion.ve { opacity: 1; }
 /* Resuelto: las líneas brillan */
 .tablero-rt.resuelto .tramo { opacity: 1; filter: drop-shadow(0 0 4px currentColor); }
@@ -32,6 +33,17 @@
 .aviso-rt { margin: 0; min-height: 1.5em; text-align: center; font-weight: 800; color: var(--muted); }
 .aviso-rt.bien { color: var(--lime); font-size: 1.15rem; }
 #btn-reiniciar { justify-self: center; }
+#btn-reiniciar:disabled { opacity: 0.4; }
+/* La etapa: su número, los puntos del avance y de qué se trata */
+.cabeza-etapa { display: grid; justify-items: center; gap: 4px; }
+.cabeza-etapa.entra { animation: pop 0.45s ease-out both; }
+.n-etapa { margin: 0; font: 1.4rem var(--font-display); letter-spacing: 0.06em; }
+.de-etapa { margin: 0; font-size: 0.9rem; }
+.etapas { display: flex; gap: 8px; }
+.etapas .punto { width: 14px; height: 14px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.35); }
+.etapas .actual { border-color: #fff; background: rgba(255,255,255,0.25); box-shadow: 0 0 8px rgba(255,255,255,0.5); }
+.etapas .hecha { background: var(--lime); border-color: var(--lime); }
+.etapas .perfecta { background: var(--yellow); border-color: var(--yellow); }
 
 .resultado { text-align: center; display: grid; gap: 10px; }
 .resultado .score-big { font: 900 clamp(2.6rem, 14vw, 3.6rem)/1.1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35); }
@@ -44,6 +56,6 @@
 .link-btn { background: none; border: 0; color: var(--muted); font: 700 0.95rem var(--font-body); text-decoration: underline; cursor: pointer; min-height: 44px; margin: 0 auto; display: block; }
 .btn { text-decoration: none; }
 @media (prefers-reduced-motion: reduce) {
-  .titulo-rt .metro, .sello-rt { animation: none !important; }
+  .titulo-rt .metro, .sello-rt, .cabeza-etapa.entra { animation: none !important; }
   .pieza { transition: none; }
 }

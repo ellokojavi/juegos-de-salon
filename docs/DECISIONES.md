@@ -5272,3 +5272,26 @@ los reinicios en el puntaje (castiga probar, que es el juego).
 **Consecuencias:** `public/labs/routes/engine.test.mjs` revisa los giros, el mínimo contra una búsqueda
 simple y 60 tableros (justos y con mínimo de 3 a 5); `tools/e2e/routes/lab.mjs` arrastra, reinicia y
 termina una partida.
+
+## D-294 · Rutas: cinco etapas de dificultad creciente
+**Fecha:** 2026-10-12 · **Estado:** vigente · **Relación:** corrige D-293
+**Contexto:** el dueño pidió que Rutas sea un juego de etapas con dificultad creciente, en vez de un
+solo tablero.
+**Decisión:** cada partida son **5 etapas** (`ETAPAS`): 3 líneas y mínimo 2; 4 líneas y mínimo 3;
+4 y 4; 5 y 4; 5 y 5. El mínimo de cada etapa es **exacto**: el generador rehace el tablero hasta que
+dé justo el que pide. Arriba, «Etapa n de 5», cinco puntos (verde la hecha, dorada la hecha en el
+mínimo, blanca la actual) y «4 líneas · mínimo 3 giros». Al unir las líneas de una etapa se dice
+«🚇 ¡Etapa 2 lista!» (o «…en el mínimo!») y llega la siguiente. Cada etapa se puntúa como antes (100
+en el mínimo, −15 por giro de más, nunca menos de 10) y la partida vale **el promedio**. El resultado
+muestra cada etapa («Etapa 3: 5 giros (mínimo 4) · 85») y la tarjeta para compartir, una línea por
+etapa (🟩 en el mínimo, 🟨 si no) sin delatar los tableros. Cada etapa sale de la semilla de la
+partida con su número (`dia:<fecha>:etapa-3`). Además, de la revisión de usabilidad: el lema ya no
+repite el paso del mínimo, Reiniciar se apaga sin giros y se va al terminar la etapa, el marco que
+marca el rectángulo es blanco (el amarillo se confundía con la línea amarilla) y en los cruces hay una
+sola estación.
+**Por qué:** subir de a poco enseña a ver los giros antes de que lleguen los tableros difíciles, y el
+promedio premia jugar bien todas las etapas.
+**Alternativas descartadas:** sumar los puntajes (la escala dejaría de ser 0 a 100, como en La Copa);
+etapas con mínimo 6 o más (calcularlo exacto en el celular se pone lento).
+**Consecuencias:** `engine.test.mjs` revisa que cada etapa tenga su mínimo exacto y sus líneas, y que
+la dificultad no baje; `tools/e2e/routes/lab.mjs` juega las cinco etapas.
