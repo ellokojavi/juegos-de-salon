@@ -1,7 +1,9 @@
 # Publica el sitio en GitHub Pages en cada fusión a main (D-192). Se publica solo public/ —sin las
 # pruebas—: docs/, tools/, marketing/ y lo demás del repo no son parte del sitio. La versión se
 # estampa aquí, en la copia que se publica (D-205).
-# Antes corren las pruebas (pruebas.yml): con una en rojo, el sitio publicado no cambia.
+# Antes corren las pruebas (pruebas.yml) y las de punta a punta (e2e.yml, D-302): con una en rojo,
+# el sitio publicado no cambia. La versión es la del CHANGELOG más las entradas de changelog/ que
+# todavía no se juntaron, en el orden en que llegaron a main (D-300).
 #
 # Requiere, una sola vez, Settings → Pages → Source: "GitHub Actions" (no "Deploy from a branch").
 # El dominio juegosdesalon.cl se configura ahí mismo y se mantiene; public/CNAME queda por si acaso.
@@ -28,12 +30,21 @@ jobs:
   pruebas:
     uses: ./.github/workflows/pruebas.yml
 
+  # Las de punta a punta, todas, sobre lo que se va a publicar (D-302): antes corrían aparte y el
+  # sitio salía aunque fallaran. Si fallan dos veces, su job `avisar` abre el issue "main en rojo".
+  e2e:
+    uses: ./.github/workflows/e2e.yml
+    permissions:
+      contents: read
+      actions: read
+      issues: write
+
   # Las reglas de Firebase se publican solas (D-218), antes que el sitio: el código nuevo puede
   # necesitarlas. `reglas.mjs publicar` no sube nada si ya están, y las verifica después de subirlas;
   # si Firebase las rechaza, el sitio no se publica. Necesita el secreto FIREBASE_ADMIN_JSON (la
   # llave de la cuenta de servicio); sin él, avisa y sigue, y las reglas se publican a mano.
   reglas:
-    needs: pruebas
+    needs: [pruebas, e2e]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -54,7 +65,7 @@ jobs:
           FIREBASE_LLAVE="$RUNNER_TEMP/llave.json" node tools/firebase/reglas.mjs publicar
 
   publicar:
-    needs: [pruebas, reglas]
+    needs: [pruebas, e2e, reglas]
     runs-on: ubuntu-latest
     timeout-minutes: 10
     environment:
@@ -62,14 +73,24 @@ jobs:
       url: ${{ steps.publicar.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          filter: blob:none
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
 
       - name: Armar el sitio (public/ sin las pruebas)
         run: rsync -a --exclude='*.test.mjs' public/ _site/
 
       # La versión no está en git: se estampa aquí, solo en la copia que se publica (D-205). El
-      # número sale de la primera entrada de CHANGELOG.md, y la clave de caché lleva el commit.
+      # número es la primera entrada de CHANGELOG.md subida por las pendientes de changelog/ (D-300),
+      # y la clave de caché lleva el commit. El resumen de la corrida dice qué número le tocó a cada una.
       - name: Estampar la versión
-        run: python3 tools/release/set-version.py --sitio _site --commit "$GITHUB_SHA"
+        run: |
+          python3 tools/release/set-version.py --sitio _site --commit "$GITHUB_SHA"
+          node tools/release/changelog.mjs ver >> "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/configure-pages@v5
 

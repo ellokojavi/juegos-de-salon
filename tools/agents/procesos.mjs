@@ -171,9 +171,15 @@ function revisar() {
     console.log(`- ${w}: ${r ? `${r.conclusion || r.status} (${r.createdAt.slice(0, 16)})${r.conclusion === 'failure' ? ` ${r.url}` : ''}` : 'sin corridas'}`);
   }
 
+  titulo('CHANGELOG por juntar y reservas de decisión (D-300, D-301)');
+  const porJuntar = sh('git', ['ls-tree', '--name-only', 'origin/main', 'changelog/']).split('\n').filter(f => f.endsWith('.md') && !f.endsWith('README.md'));
+  console.log(porJuntar.length ? `- ${porJuntar.length} entrada(s) en changelog/ de main: júntalas en tu PR (node tools/release/changelog.mjs juntar)` : '- changelog/ de main, vacío.');
+  try { console.log(sh('node', [join(RAIZ, 'tools/agents/decision.mjs'), 'limpiar']).trim() || '- Sin reservas abiertas.'); } catch (e) { console.log(`- reservas: ${String(e.message).split('\n')[0]}`); }
+
   titulo('Issues');
   const issues = gh('issue', 'list', '--state', 'open', '--limit', '100', '--json', 'number,title,createdAt,labels,body');
-  const verdeE2E = gh('run', 'list', '--workflow', 'e2e.yml', '--branch', 'main', '--status', 'completed', '--limit', '1', '--json', 'conclusion')[0]?.conclusion === 'success';
+  // En main, la punta a punta corre dentro de publicar.yml (D-302): su última corrida terminada dice si main está en verde
+  const verdeE2E = gh('run', 'list', '--workflow', 'publicar.yml', '--branch', 'main', '--status', 'completed', '--limit', '1', '--json', 'conclusion')[0]?.conclusion === 'success';
   for (const i of issues.filter(i => /^main en rojo/.test(i.title)))
     console.log(`- #${i.number} ${i.title} (${i.createdAt.slice(0, 10)})${verdeE2E ? ': main ya está en verde, se puede cerrar' : ': sigue en rojo'}`);
   const dilemas = issues.filter(i => i.labels.some(l => l.name === 'usabilidad') && Date.now() - Date.parse(i.createdAt) > 3 * DIA);
