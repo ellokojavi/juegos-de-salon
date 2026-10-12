@@ -159,10 +159,11 @@ function casillas(p, { botones = false } = {}) {
 // estalla, las filas se van, y al limpiarse dice «¡Limpio!». Después, otro tablero.
 let demoVez = 0;
 function portada() {
-  const caja = el('div', { class: 'demo', 'aria-hidden': 'true' });
-  const rotulo = el('p', { class: 'demo-rotulo', 'aria-hidden': 'true' }, '');
+  // El tablero chico y, encima, al centro, el «¡Limpio!» que lo reemplaza al terminar (pedido del dueño)
+  const caja = el('div', { class: 'demo-tablero' });
+  const rotulo = el('p', { class: 'demo-rotulo' }, '');
   vista.replaceChildren(...[
-    el('div', { class: 'portada' }, tituloJuego(), el('p', { class: 'lead', style: 'margin:0' }, T.lema), credito(), caja, rotulo),
+    el('div', { class: 'portada' }, tituloJuego(), el('p', { class: 'lead', style: 'margin:0' }, T.lema), credito(), el('div', { class: 'demo', 'aria-hidden': 'true' }, caja, rotulo)),
     el('div', { class: 'panel' }, el('ol', { class: 'pasos' }, ...T.como.map(([ico, x]) => el('li', {}, el('span', { class: 'paso-ico', 'aria-hidden': 'true' }, ...conMas(ico)), el('span', {}, ...conMas(x)))))),
     SEMILLA_URL ? null : el('p', { class: 'muted center', style: 'margin:0' }, `📅 ${T.hoy}`),
     el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-empezar', onClick: () => { SFX.tap(); empezar(); } }, T.empezar),
@@ -202,6 +203,7 @@ function partidaDemo(caja, rotulo) {
       }
       if (!sigue()) return;
       rotulo.textContent = `💥 ${T.fin.limpio}`; rotulo.className = 'demo-rotulo ve';
+      estallar(rotulo, { fuerza: 0.5, color: '#ffd23f' });
       await espera(2200);
     }
   })();
