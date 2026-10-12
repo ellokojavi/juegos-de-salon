@@ -22,6 +22,7 @@
     'dueño': '867ef25adf5e043b13378e8c3ca53f1b53b5dc4ee8df926e74b7448b2f5b7417',
     'MI': 'f01eea37a3c990f60b252663ada208c1d8c83cb858d891b35bf3dee78a3e877d',
     'Chanicua': '441119bfd83362159a827adaabe0d71a43ec146fca8cb02109521fa624f8b874',
+    'Pepembau': '5468c6279bf6e74a99b2edc3d4bce3fcb7bbfd3508dcc4442aaa21f33bbf9165',
   };
   var GUARDADA = 'juegos-de-salon:labs-llave';
   var h = document.documentElement;
