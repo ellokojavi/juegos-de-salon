@@ -1,5 +1,5 @@
 {
-  "version": "0.157.0",
+  "version": "0.158.1",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -786,6 +786,7 @@
     "public/assets/js/chat.js",
     "public/assets/js/compartir-portada.js",
     "public/assets/js/compartir.js",
+    "public/assets/js/cuenta-regresiva.js",
     "public/assets/js/dado3d.js",
     "public/assets/js/dato.js",
     "public/assets/js/favoritos.js",
