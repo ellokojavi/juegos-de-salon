@@ -245,7 +245,9 @@ jugado desde el laboratorio (`?labs` o `/labs/<slug>/`) termina con el formulari
 **"¿Qué te pareció?"** abierto (`formularioComentario` de `labs-idioma.js`, D-265, D-267) en vez
 del botón 🐞. El botón **🐞 Reportar un problema o dejar un comentario** (práctica, tablero y
 resultado de la copa) guarda en `feedback/<id>`, por REST y sin cuenta (D-104), el texto, un nombre opcional, la versión
-y un contexto en JSON: copa, jugador, pantalla, día, juego, semilla, URL y navegador. Se leen con
+y un contexto en JSON: copa, jugador, pantalla, día, juego, semilla, URL y navegador. El contexto
+no se muestra en el formulario, y quien entró al laboratorio con su llave manda también su etiqueta
+(`tester`, nunca la llave; D-306). Se leen con
 `node tools/firebase/reportes.mjs`; en `?test` queda en `localStorage` (`juegos-de-salon:copa:prueba:reportes`).
 
 ### Avisos al celular (D-223, D-224, D-225, D-227, D-228)

@@ -11,6 +11,7 @@ const r = {
 const c = cuerpo(r);
 assert.match(c, /\*\*Quién:\*\* Tu admirador secreto/, 'con el nombre, para el seguimiento (D-279)');
 assert.doesNotMatch(cuerpo({ ...r, nombre: undefined }), /Quién/, 'sin nombre, sin la línea');
+assert.match(cuerpo({ ...r, tester: 'ratoncito' }), /\*\*Llave:\*\* ratoncito/, 'con la etiqueta de la llave del laboratorio (D-306)');
 assert.doesNotMatch(c, /Mozilla|Android/, 'sin el navegador');
 assert.match(c, /^> Se podrian auto tachar/, 'el texto tal cual, citado');
 assert.match(c, /\*\*Juego:\*\* caso/);
