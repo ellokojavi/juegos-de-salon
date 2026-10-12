@@ -13,7 +13,7 @@ pueda ir y volver sin perderse, y que los mensajes para compartir se lean bien e
 
 1. `docs/USABILIDAD.md` (reglas U-n y las decisiones ya tomadas con el dueño). Léela entera.
 2. `docs/CANONES.md` (C-n) y `docs/DECISIONES.md` (D-n): lo decidido no se re-discute.
-3. `CLAUDE.md` del repo: cómo se prueba y se publica. La versión no es tuya: la pone quien fusiona (D-205).
+3. `CLAUDE.md` del repo: cómo se prueba y se publica. La versión no es tuya: se pone sola al fusionar (D-205, D-300).
 
 ## Dos modos
 
@@ -21,6 +21,14 @@ pueda ir y volver sin perderse, y que los mensajes para compartir se lean bien e
   que más corre, así que se mide en minutos, no en una copa entera:
   1. `git diff --stat origin/main...HEAD`. Si no toca nada que el jugador vea o lea (solo
      `docs/`, `tools/`, `marketing/`, pruebas, workflows), termina ahí: "sin cambios visibles".
+     Si no, **la etapa** (D-304), que `node tools/agents/portadas.mjs revisar` dice en su primera línea:
+     - 🧪 **Solo del laboratorio:** revisión corta: el paso 5 (portadas) y las pantallas que
+       cambiaron a 320 px (paso 2 sin el de 390 ni otros idiomas). Nada más.
+     - 🎓 **Un juego sale del laboratorio:** **pasada completa al juego entero**, no al diff (que
+       puede ser una línea): todas sus pantallas en los cuatro idiomas a 390 y a 320 px, sus
+       textos y mensajes para compartir (puntos 3 a 5 de abajo), su portada (paso 5) y su lugar y
+       su tarjeta en la portada general (`/`, a 390 y a 320 px). Es cuando llega a todos.
+     - **Del sitio:** los pasos de abajo, como siempre.
   2. Las pantallas que cambiaron, con `node tools/e2e/mirar.mjs <juego> <pantalla>` en 390 y en
      320 de ancho (los caminos están en `tools/e2e/caminos.mjs`; si falta uno, se suma ahí). Si
      cambió un texto traducido, también `--idioma de`: es el más largo.
@@ -85,12 +93,17 @@ la regla de abajo no lo convierte en dilema. Salvo lo que una copa esté jugando
   (D-135, D-213). Si te lanzó la sesión dueña del PR, ese es el permiso; si te lanzó otra, se lo
   pides antes con SendMessage. Trabajas en el checkout de esa sesión a la vez que el agente de
   documentación, así que haces commit **solo de tus archivos, nombrados uno por uno**
-  (`git add <archivo>`, nunca `git add -A` ni `.`) y haces `git pull` antes del push. Commits
-  aparte, con la regla U-n de cada arreglo y capturas de antes y después en el comentario del PR.
+  (`git add <archivo>`, nunca `git add -A` ni `.`). Commits aparte, con la regla U-n de cada
+  arreglo, **sin push**: la sesión dueña del PR sube todo junto en un solo push cuando terminan los
+  dos agentes (D-303); cada push relanza la punta a punta entera. Las capturas de antes y después
+  van en tu informe, para el comentario del PR.
 - **Arreglos de la ronda:** en una copia aparte del repo (`git worktree add`) desde `main`, y
   **un PR que nunca fusionas**, con capturas de antes y después y la regla U-n de cada arreglo.
+  Commits en local y un solo push al terminar (D-303).
 - En los dos casos, pruebas unitarias en verde (y `node tools/e2e/cup/torneo.mjs` si tocaste La
-  Copa) y **sin versión ni entrada de `CHANGELOG.md`**: la pone quien fusiona (D-205). Si otra copia del repo ya ocupa el puerto 8765, sirve la tuya en otro puerto y
+  Copa) y **sin versión**: se pone sola (D-300). El PR de tu ronda lleva su entrada sin número en
+  `changelog/usabilidad-<fecha>.md` (`node tools/release/changelog.mjs nueva`); en el PR de otra
+  sesión, la entrada es de ella. Si otra copia del repo ya ocupa el puerto 8765, sirve la tuya en otro puerto y
   corre el guion con `SITIO=http://localhost:<puerto>` (los puertos de Chrome se eligen solos; ver
   `tools/e2e/README.md`).
 - **Dilemas:** un archivo `.md` por dilema (primera línea `# Título`; luego contexto, captura o

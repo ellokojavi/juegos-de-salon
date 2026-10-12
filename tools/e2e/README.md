@@ -49,11 +49,18 @@ reparte en partes (`PARTES` en `ci.mjs`, D-204): `cup/torneo.mjs` en `copa`, `la
 `cup-games/idiomas.mjs` en un job por juego. Cada parte le llega al guion como `--parte <nombre>`;
 sin parte, el guion corre entero (así lo corren `readme.py capturas` y quien lo prueba a mano).
 
-Un PR que solo trae documentación (`docs/`, `marketing/`, `.claude/` y los `.md` fuera de `public/`
-y de esta carpeta) no corre ningún guion: `ci.mjs --lista --cambios <archivo>` sale vacía, y
-[`cambios.mjs`](cambios.mjs) decide qué cuenta como documentación (D-205; lo prueba
-`node tools/e2e/cambios.test.mjs`). Si las pruebas salen
-en rojo en `main` (en un push o en una corrida a mano, como la que lanza una fusión de un toque),
+Un PR que no toca nada del navegador (`docs/`, `marketing/`, `.claude/`, los `.md` fuera de `public/`
+y de esta carpeta, `tools/agents/`, `tools/firebase/`, `firebase/` y los workflows que no son
+`e2e.yml`) no corre ningún guion: `ci.mjs --lista --cambios <archivo>` sale vacía, y
+[`cambios.mjs`](cambios.mjs) decide qué cuenta (D-205, D-299; lo prueba
+`node tools/e2e/cambios.test.mjs`).
+
+Un guion que falla se repite **una vez** en el mismo job (D-299). Si pasa al segundo intento, el
+job queda en verde con un aviso ⚠️ **Intermitente** que lo nombra, y las capturas del primer intento
+quedan como artefacto: hay que mirar por qué falla a veces, no darlo por bueno. Si falla dos
+veces, el job sale en rojo. Si las pruebas salen
+en rojo en `main` (dentro de `publicar.yml`, que las corre antes de publicar y no publica si fallan,
+D-302, o en una corrida a mano),
 el job `avisar` abre un issue "main en rojo: Punta a punta", y cuando `main` vuelve a verde el job
 `cerrar-aviso` lo cierra con el link a la corrida (D-273).
 

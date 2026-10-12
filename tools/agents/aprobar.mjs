@@ -143,7 +143,8 @@ const gh = (...args) => execFileSync('gh', args, { encoding: 'utf8', stdio: ['ig
 
 /**
  * Una acción, con el token del workflow. Un merge hecho con ese token no despierta a publicar.yml
- * ni a e2e.yml (GitHub no encadena workflows con él), así que `fusionar` los corre a mano después.
+ * (GitHub no encadena workflows con él), así que `fusionar` lo corre a mano después; publicar.yml
+ * ya corre la punta a punta antes de publicar (D-302).
  */
 function hacer(acc, repo) {
   const R = ['-R', repo];
@@ -162,7 +163,8 @@ function hacer(acc, repo) {
       const estado = JSON.parse(gh('pr', 'view', String(acc.pr), ...R, '--json', 'mergeable')).mergeable;
       if (estado === 'CONFLICTING') throw new Error(`#${acc.pr} tiene conflicto con main: hay que ponerlo al día`);
       gh('pr', 'merge', String(acc.pr), ...R, '--merge');
-      for (const w of WORKFLOWS) gh('workflow', 'run', w, ...R, '--ref', 'main');
+      // publicar.yml corre las pruebas y la punta a punta antes de publicar (D-302): con eso basta
+      gh('workflow', 'run', 'publicar.yml', ...R, '--ref', 'main');
       return `#${acc.pr} fusionado; se está publicando el sitio`;
     }
     case 'cerrar-pr':

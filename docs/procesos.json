@@ -44,6 +44,38 @@
         }
       ],
       "mecanismo": null
+    },
+    {
+      "clave": "e2e-intermitente",
+      "que": "main en rojo por un guion que pasó en la corrida siguiente sin tocar su juego (5 de 7 rojos del 4 al 12/10: torneo:laboratorio, instalar, hangman/idiomas, uno-al-dia, generala/idiomas)",
+      "vistos": [
+        {
+          "fecha": "2026-10-12",
+          "que": "main en rojo por un guion que pasó en la corrida siguiente sin tocar su juego (5 de 7 rojos del 4 al 12/10: torneo:laboratorio, instalar, hangman/idiomas, uno-al-dia, generala/idiomas)",
+          "commit": "5c8ba02"
+        }
+      ],
+      "mecanismo": {
+        "fecha": "2026-10-12",
+        "que": "e2e.yml repite una vez el guion que falla y deja un aviso Intermitente (D-299)",
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/375"
+      }
+    },
+    {
+      "clave": "conflicto-changelog-decision",
+      "que": "PR que tuvo que traer main y resolver a mano CHANGELOG (64) o DECISIONES (52) en 89 sincronizaciones del 3 al 12/10; 10 renumeraron D-n o versión; hoy #372 y #374 traen el mismo número de decisión",
+      "vistos": [
+        {
+          "fecha": "2026-10-12",
+          "que": "PR que tuvo que traer main y resolver a mano CHANGELOG (64) o DECISIONES (52) en 89 sincronizaciones del 3 al 12/10; 10 renumeraron D-n o versión; hoy #372 y #374 traen el mismo número de decisión",
+          "commit": null
+        }
+      ],
+      "mecanismo": {
+        "fecha": "2026-10-12",
+        "que": "CHANGELOG por archivo (D-300), reserva de D-n y driver de DECISIONES.md (D-301)",
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/375"
+      }
     }
   ],
   "mecanismos": [
@@ -58,6 +90,18 @@
       "clave": "decision-repetida-o-desordenada",
       "que": "documentar.test.mjs revisa docs/DECISIONES.md del repo en cada PR",
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/332"
+    },
+    {
+      "fecha": "2026-10-12",
+      "clave": "e2e-intermitente",
+      "que": "e2e.yml repite una vez el guion que falla y deja un aviso Intermitente (D-299)",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/375"
+    },
+    {
+      "fecha": "2026-10-12",
+      "clave": "conflicto-changelog-decision",
+      "que": "CHANGELOG por archivo (D-300), reserva de D-n y driver de DECISIONES.md (D-301)",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/375"
     }
   ],
   "colaHecha": [],
@@ -79,6 +123,50 @@
       "issue": null,
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/353",
       "nota": "Despachados documentación (#354) y usabilidad (#353), revisados contra sus criterios. #321:3 sigue en cola: el permiso automático bloqueó editar las guías de los agentes."
+    }
+  ],
+  "decisionesDelDueno": [
+    {
+      "fecha": "2026-10-12",
+      "que": "CHANGELOG por archivo, versión al fusionar (D-300)",
+      "respuesta": "sí",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/375"
+    },
+    {
+      "fecha": "2026-10-12",
+      "que": "Reservar los números de decisión y driver de DECISIONES.md (D-301)",
+      "respuesta": "sí",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/375"
+    },
+    {
+      "fecha": "2026-10-12",
+      "que": "Un solo push al terminar, sin la espera de 3 min en lista (D-303)",
+      "respuesta": "sí (la espera, no por ahora)",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/375"
+    },
+    {
+      "fecha": "2026-10-12",
+      "que": "Publicar espera la punta a punta de main (D-302)",
+      "respuesta": "sí",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/375"
+    },
+    {
+      "fecha": "2026-10-12",
+      "que": "Juntar los 58 guiones en ~14 grupos de hasta 5,5 min (8,2 → ~6 min por PR)",
+      "respuesta": "no por ahora",
+      "pr": null
+    },
+    {
+      "fecha": "2026-10-12",
+      "que": "Agentes según la etapa del juego (D-304)",
+      "respuesta": "sí",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/375"
+    },
+    {
+      "fecha": "2026-10-12",
+      "que": "Elegir los guiones de punta a punta por juego según el diff (~6 % menos, con riesgo)",
+      "respuesta": "no por ahora",
+      "pr": null
     }
   ]
 }

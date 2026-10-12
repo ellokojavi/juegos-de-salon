@@ -1,5 +1,5 @@
 {
-  "version": "0.168.4",
+  "version": "0.168.5",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -978,6 +978,7 @@
     "public/panel/rutas.test.mjs",
     "public/timeline/engine.test.mjs",
     "tools/agents/aprobar.test.mjs",
+    "tools/agents/decision.test.mjs",
     "tools/agents/documentar.test.mjs",
     "tools/agents/feedback.test.mjs",
     "tools/agents/limpiar-copias.test.mjs",
@@ -991,6 +992,7 @@
     "tools/push/calendario.test.mjs",
     "tools/push/uno-al-dia.test.mjs",
     "tools/push/webpush.test.mjs",
+    "tools/release/changelog.test.mjs",
     "tools/release/version.test.mjs"
   ],
   "e2e": [

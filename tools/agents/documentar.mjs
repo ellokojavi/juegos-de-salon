@@ -228,7 +228,8 @@ export function comprobar() {
   const { huecos, desordenados } = decisionesEscritas(leer('docs/DECISIONES.md'));
   // Un número que falta aquí puede ser el de un PR abierto (CLAUDE.md, D-135): ese no es un hueco
   const ramas = git('for-each-ref', '--format=%(refname)', 'refs/remotes').split('\n').filter(r => r && !r.endsWith('/HEAD'));
-  const enOtraRama = n => { try { return !!git('grep', '-l', '-E', `^## D-[0]*${n} `, ...ramas, '--', 'docs/DECISIONES.md'); } catch (_) { return false; } };
+  // …o uno reservado con `decision.mjs reservar` (D-301): su rama `reserva/D-n` dice que alguien lo está escribiendo
+  const enOtraRama = n => ramas.some(r => r.endsWith(`/reserva/D-${n}`)) || (() => { try { return !!git('grep', '-l', '-E', `^## D-[0]*${n} `, ...ramas, '--', 'docs/DECISIONES.md'); } catch (_) { return false; } })();
   for (const n of huecos.filter(n => !enOtraRama(n))) problemas.push(`D-${n} falta en docs/DECISIONES.md: un número que no se usó se anota "## D-${n} · (número sin usar)"`);
   for (const [n, antes] of desordenados) problemas.push(`D-${n} está fuera de orden en docs/DECISIONES.md (viene después de D-${antes})`);
   problemas.push(...problemasDeEstado(leer('docs/DECISIONES.md')));
