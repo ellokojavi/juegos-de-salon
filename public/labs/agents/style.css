@@ -55,6 +55,14 @@
   hyphens: auto; overflow-wrap: anywhere;
   transition: transform 0.12s, background 0.25s, border-color 0.25s; }
 .carta:active { transform: scale(0.95); }
+/* Las marcas: un toque largo (como las notas de Toque y Fama). Sin selección ni menú del celular al mantener */
+.carta { position: relative; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.carta.marca-sospecha { border-color: var(--yellow); border-style: dashed; background: rgba(255, 210, 63, 0.12); }
+.carta.marca-descarte { opacity: 0.45; text-decoration: line-through; }
+.carta.marca-sospecha::after, .carta.marca-descarte::after { position: absolute; top: -8px; right: -6px; font-size: 1rem; animation: pop 0.3s ease-out both; }
+.carta.marca-sospecha::after { content: '📌'; }
+.carta.marca-descarte::after { content: '🚫'; }
+.ayuda-marcas { text-align: center; margin: 0; font-size: 0.85rem; }
 .carta:disabled { cursor: default; }
 .carta.agente { background: rgba(157, 255, 58, 0.34); border-color: var(--lime); color: #f2ffe0; }
 .carta.otra { background: rgba(46, 230, 214, 0.3); border-color: var(--cyan); }
@@ -105,6 +113,6 @@
 .link-btn { background: none; border: 0; color: var(--muted); font: 700 0.95rem var(--font-body); text-decoration: underline; cursor: pointer; min-height: 44px; margin: 0 auto; display: block; }
 .btn { text-decoration: none; }
 @media (prefers-reduced-motion: reduce) {
-  .titulo-agentes .lupa, .demo-cartas .dc, .pista.entra, .pista.sale, .carta.volteo, .tablero.tiembla, .sello, .sello-fin, .tablero--fin .carta,
+  .titulo-agentes .lupa, .demo-cartas .dc, .pista.entra, .pista.sale, .carta.volteo, .tablero.tiembla, .sello, .carta::after, .sello-fin, .tablero--fin .carta,
   .resultado .trofeo { animation: none !important; }
 }
