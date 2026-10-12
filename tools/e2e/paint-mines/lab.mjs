@@ -30,17 +30,18 @@ await ev(`localStorage.removeItem('juegos-de-salon:pintaminas:dificil'); 1`);
 await b.go(`${SITIO}/labs/paint-mines/?test`, 1200);
 ok(await ev(`document.getElementById('btn-dificil')?.getAttribute('aria-checked')`) === 'false', 'el modo difícil parte apagado');
 ok(/Modo fácil/.test(await ev(`document.querySelector('#btn-dificil .rotulo').textContent`)) && await ev(`!!document.querySelector('#btn-dificil .recorrido .ranura')`), 'la palanca dice «Modo fácil» y la placa tiene grabado su recorrido');
+// El destello dura 0,6 s: se anota cuando aparece, para no depender de mirarlo a tiempo
+await ev(`window.__destellos = 0; new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(n => { if (n.classList?.contains('relampago')) window.__destellos++; }))).observe(document.body, { childList: true }); 1`);
 await ev(`document.getElementById('btn-dificil').click(); 1`); await sleep(200);
 ok(await ev(`document.getElementById('btn-dificil').getAttribute('aria-checked') === 'true' && document.getElementById('btn-dificil').classList.contains('on')`), 'el interruptor lo enciende y se electrifica');
 ok(await ev(`document.body.classList.contains('modo-dificil')`), 'y cambia el fondo de la página');
-ok(await ev(`!!document.querySelector('.relampago')`), 'y un destello cubre toda la vista');
+ok(await ev(`window.__destellos`) === 1, 'y un destello cubre toda la vista');
 ok(/Modo difícil/.test(await ev(`document.querySelector('#btn-dificil .rotulo').textContent`)), 'y el rótulo pasa a «⚡ Modo difícil»');
 ok(await esperar(`document.querySelectorAll('.demo .casilla.p2').length > 0`, 9000), 'y la partida de la portada pasa a dos colores');
 await b.shot('01b-dificil');
-await esperar(`!document.querySelector('.relampago')`, 2000);   // que se vaya el destello de encenderlo
 await ev(`document.getElementById('btn-dificil').click(); 1`); await sleep(100);
 ok(await ev(`document.getElementById('btn-dificil').getAttribute('aria-checked') === 'false' && !document.body.classList.contains('modo-dificil')`), 'y lo apaga, con el fondo de siempre');
-ok(!await ev(`!!document.querySelector('.relampago')`), 'volver al modo fácil no lleva destello');
+ok(await ev(`window.__destellos`) === 1, 'volver al modo fácil no lleva destello');
 await b.shot('01-portada');
 
 await b.go(`${SITIO}/labs/paint-mines/?seed=${SEMILLA}&test`, 1200);
@@ -104,6 +105,22 @@ for (const i of t2.sol.map((_, i) => i).filter(i => !t2.dadas.includes(i))) { aw
 ok(await esperar(`document.getElementById('puntaje')?.textContent === '150/150'`, 5000), 'sin errores, el modo difícil paga 150/150');
 ok(/colors=2/.test(await ev(`document.getElementById('btn-otro').getAttribute('href')`)), '"Otro tablero" sigue en el modo difícil');
 await b.shot('04-dificil');
+
+// Rendirse (D-296): pide un segundo toque, destapa el dibujo y el puntaje vale la parte pintada
+await b.go(`${SITIO}/labs/paint-mines/?seed=${SEMILLA}&colors=1&test`, 1200);
+await esperar(`!!document.getElementById('btn-empezar')`);
+await ev(`document.getElementById('btn-empezar').click(); 1`);
+await esperar(`!!document.getElementById('btn-rendirse') && !document.getElementById('cuenta')`, 8000);
+const t3 = await ev(`JSON.stringify(window.__pintaminas.P.t)`).then(JSON.parse);
+const libres3 = t3.sol.map((_, i) => i).filter(i => !t3.dadas.includes(i));
+for (const i of libres3.slice(0, 10)) await pintar(i, t3.sol[i]);
+ok(await ev(`[...document.querySelectorAll('.acciones-pm .btn')].map(b => b.id).join()`) === 'btn-ayuda,btn-rendirse', 'bajo los pinceles: la ayuda y Rendirse, en una fila');
+await ev(`document.getElementById('btn-rendirse').click(); 1`); await sleep(150);
+ok(/Seguro/.test(await ev(`document.getElementById('btn-rendirse').textContent`)) && !await ev(`document.getElementById('tablero').classList.contains('revelada')`), 'rendirse pide un segundo toque');
+await ev(`document.getElementById('btn-rendirse').click(); 1`);
+ok(await esperar(`document.getElementById('tablero')?.classList.contains('revelada') && document.querySelectorAll('#tablero .casilla.sin-hacer').length === ${libres3.length - 10}`, 3000), 'con el segundo, se destapa el dibujo y lo que faltaba se ve apagado');
+const esp3 = Math.round(100 * 10 / libres3.length);
+ok(await esperar(`document.getElementById('puntaje')?.textContent === '${esp3}/100'`, 5000) && /Te rendiste/.test(await ev(`document.querySelector('.sello-pm').textContent`)), `el puntaje vale la parte pintada: ${esp3}/100, «Te rendiste»`);
 ok(!b.errors.length, `sin errores en la página ${JSON.stringify(b.errors)}`);
 b.close();
 if (fallas) { console.log(`✗ ${fallas} fallas`); process.exit(1); }
