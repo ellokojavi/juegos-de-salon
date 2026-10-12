@@ -18,6 +18,10 @@ for (let n = 0; n < 300; n++) {
   assert.equal(t.cartas.length, AGENTES + NEUTRALES + 1);
   assert.equal(new Set(t.cartas.map(c => c.w)).size, AGENTES + NEUTRALES + 1, `${n}: palabras repetidas`);
   const elegidas = t.pistas.map(p => PISTAS.find(x => x.pista === p.pista));
+  // Cada pista dice cuántos agentes tiene, y suman AGENTES (una es más corta)
+  t.pistas.forEach((p, k) => assert.equal(t.cartas.filter(c => c.tipo === 'agente' && c.p === k).length, p.n, `${n}: ${p.pista} no tiene ${p.n}`));
+  assert.equal(t.pistas.reduce((a, p) => a + p.n, 0), AGENTES);
+  assert.deepEqual(t.pistas.map(p => p.n).sort(), [2, 3, 3, 3]);
   for (const c of t.cartas) {
     const van = elegidas.map((x, p) => (x.si.includes(c.w) ? p : -1)).filter(p => p >= 0);
     if (c.tipo === 'agente') assert.deepEqual(van, [c.p], `${n}: ${c.w} va con ${van}`);
@@ -48,6 +52,6 @@ assert.equal(e.actual, 1); assert.equal(puntaje(e), 0);
 // El asesino resta 40
 // (todas las pistas menos la última completas, y en la última el asesino: se acaba)
 e = estado(t, [...[...Array(CUANTAS - 1).keys()].flatMap(p => de(p).map(i => ({ i }))), { i: asesino }]);
-assert.ok(e.fin && e.asesino); assert.equal(puntaje(e), Math.round(100 * (AGENTES - 3) / AGENTES) - 40);
+assert.ok(e.fin && e.asesino); assert.equal(puntaje(e), Math.max(0, Math.round(100 * (AGENTES - t.pistas.at(-1).n) / AGENTES) - 40));
 assert.equal(tarjeta(t, e).split('\n').length, (AGENTES + NEUTRALES + 1) / 3);
 console.log('✓ Agentes (labs)');
