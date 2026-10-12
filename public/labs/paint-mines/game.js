@@ -105,13 +105,22 @@ function portada() {
     el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-empezar', onClick: () => { SFX.tap(); empezar(); } }, T.empezar),
   ].filter(Boolean));
   pieComentario('portada');
-  if (QUIETO) { const t = generar('portada-demo'); caja.replaceChildren(grilla(t, { clase: 'chica' })); return; }
+  // Con el modo difícil encendido, la partida de la portada es de dos colores: se ve a qué se enfrenta
+  // (pedido del dueño). Mover la palanca la vuelve a empezar con el modo nuevo
+  reiniciarDemo = () => partidaDemo(caja, rotulo);
+  reiniciarDemo();
+}
+
+let reiniciarDemo = null;
+function partidaDemo(caja, rotulo) {
+  const colores = P.dificil ? 2 : 1;
+  if (QUIETO) { const t = generar('portada-demo', { colores }); caja.replaceChildren(grilla(t, { clase: 'chica' })); return; }
   const vez = ++demoVez;
   const sigue = () => vez === demoVez && caja.isConnected;
   const espera = ms => new Promise(r => setTimeout(r, ms));
   (async () => {
     for (let ronda = 0; sigue(); ronda++) {
-      const t = generar(`portada-demo-${ronda % 6}`);
+      const t = generar(`portada-demo-${ronda % 6}`, { colores });
       // El orden de una partida real: cada vez, la casilla que se puede deducir con lo que se ve
       const sabidas = new Set(t.dadas), orden = [];
       for (let a = ayuda(t.sol, sabidas); a; a = ayuda(t.sol, sabidas)) { orden.push(a.celda); sabidas.add(a.celda); }
@@ -154,6 +163,7 @@ function interruptor() {
       try { localStorage.setItem(GUARDADO, P.dificil ? '1' : '0'); } catch { /* sin almacenamiento: solo esta vez */ }
       caja.classList.toggle('on', P.dificil); caja.setAttribute('aria-checked', String(P.dificil));
       rotular();
+      reiniciarDemo?.();
       // Un destello corto en toda la vista marca el paso al modo difícil (pedido del dueño), y después sigue
       // el brillo; volver al fácil no lleva destello
       if (P.dificil) relampago();

@@ -35,6 +35,7 @@ ok(await ev(`document.getElementById('btn-dificil').getAttribute('aria-checked')
 ok(await ev(`document.body.classList.contains('modo-dificil')`), 'y cambia el fondo de la página');
 ok(await ev(`!!document.querySelector('.relampago')`), 'y un destello cubre toda la vista');
 ok(/Modo difícil/.test(await ev(`document.querySelector('#btn-dificil .rotulo').textContent`)), 'y el rótulo pasa a «⚡ Modo difícil»');
+ok(await esperar(`document.querySelectorAll('.demo .casilla.p2').length > 0`, 9000), 'y la partida de la portada pasa a dos colores');
 await b.shot('01b-dificil');
 await esperar(`!document.querySelector('.relampago')`, 2000);   // que se vaya el destello de encenderlo
 await ev(`document.getElementById('btn-dificil').click(); 1`); await sleep(100);
