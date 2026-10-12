@@ -5359,7 +5359,8 @@ al final los números que quedan, 3 veces por partida; con pares a la vista pide
   Pintaminas) marca un par y resta 10. 🏳️ Rendirse con dos toques.
 - **Las explosiones** (pedido del dueño): cada par estalla con una onda, un destello, un 💥 de
   historieta, chispas de su color y pedazos del número; el tablero tiembla. Una fila entera explota
-  de punta a punta y se aplasta; al limpiarlo todo, tres estallidos grandes y confeti. Cada número
+  de punta a punta y se aplasta; al limpiarlo todo, el resumen aparece de inmediato (una sola pantalla
+  final, como los otros juegos) y tres estallidos grandes salen de su puntaje, con confeti. Cada número
   lleva en el borde el color de su familia (1 y 9, 2 y 8…). Con movimiento reducido, sin explosiones.
 - **La portada** juega sola un tablero chico de 2 filas en su orden, hasta «¡Limpio!».
 **Por qué:** es un solitario corto, de reglas que caben en tres líneas, que se juega con el pulgar y

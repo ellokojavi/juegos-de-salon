@@ -351,25 +351,11 @@ function jugar() {
     decir(T.ayudaDice, 'ayuda');
   }
 
-  async function terminar(motivo) {
+  // Un solo final, como en los otros juegos: el resumen aparece de inmediato, y al limpiar el
+  // tablero las explosiones grandes estallan sobre él (pedido del dueño)
+  function terminar(motivo) {
     if (P.fin) return;
     P.fin = motivo;
-    acciones.remove();
-    if (motivo === 'limpio') {
-      // Todo explota
-      SFX.win(); vibrate([40, 30, 40, 30, 120]);
-      if (!QUIETO) {
-        const centro = el('span', { class: 'num', 'data-v': '5', style: 'position:fixed;left:calc(50% - 30px);top:calc(40% - 30px);width:60px;height:60px;opacity:0' });
-        document.body.append(centro);
-        for (let k = 0; k < 3; k++) setTimeout(() => estallar(centro, { fuerza: 2.4 - k * 0.5, color: ['#ffd23f', '#ff2e88', '#2ee6d6'][k] }), k * 160);
-        setTimeout(() => centro.remove(), 1200);
-        confetti({ count: 180, duration: 2400 });
-      }
-      decir(`💥 ${T.fin.limpio}`, 'fila');
-    } else if (motivo === 'trabado') {
-      SFX.error(); decir(`${T.trabadoDice}`, 'mal');
-    } else SFX.tap();
-    await espera(QUIETO ? 400 : 1600);
     resultado();
   }
 
@@ -393,7 +379,10 @@ function resultado() {
   if (limpio) {
     lineas.push(T.desglose.limpio);
     lineas.push(fmt(T.desglose.mas[Math.min(p.mas, 2)], { n: p.mas, u: PUNTOS_MAS, pts: p.mas * PUNTOS_MAS }));
-  } else lineas.push(fmt(T.desglose.parte, { p: Math.round(100 * avance(p)), pts: Math.round(PUNTOS_LIMPIO * avance(p)) }));
+  } else {
+    if (P.fin === 'trabado') lineas.push(T.trabadoDice);
+    lineas.push(fmt(T.desglose.parte, { p: Math.round(100 * avance(p)), pts: Math.round(PUNTOS_LIMPIO * avance(p)) }));
+  }
   if (p.ayudas) lineas.push(fmt(T.desglose.ayudas[p.ayudas === 1 ? 0 : 1], { n: p.ayudas, pts: RESTA_AYUDA * p.ayudas }));
   vista.replaceChildren(el('div', { class: 'resultado' },
     tituloJuego(true),
@@ -408,8 +397,21 @@ function resultado() {
     // Una línea separa lo del juego del comentario para quienes lo prueban, como en los otros del laboratorio
     el('hr', { class: 'divisor' }),
     formularioComentario({ T: T.comentario, contexto: contexto('resultado') })));
-  if (limpio && !QUIETO) confetti({ count: 120, duration: 2000 });
   scrollTo(0, 0);
+  if (limpio) {
+    // Todo explota, sobre el puntaje
+    SFX.win(); vibrate([40, 30, 40, 30, 120]);
+    if (!QUIETO) {
+      // Un punto de 60 px en el centro del puntaje: de ahí salen los tres estallidos
+      const r = document.getElementById('puntaje').getBoundingClientRect();
+      const centro = el('span', { 'aria-hidden': 'true', style: `position:fixed;left:${r.left + r.width / 2 - 30}px;top:${r.top + r.height / 2 - 30}px;width:60px;height:60px;pointer-events:none` });
+      document.body.append(centro);
+      for (let k = 0; k < 3; k++) setTimeout(() => estallar(centro, { fuerza: 2.4 - k * 0.5, color: ['#ffd23f', '#ff2e88', '#2ee6d6'][k] }), 120 + k * 160);
+      setTimeout(() => centro.remove(), 1000);
+      confetti({ count: 180, duration: 2400 });
+    }
+  } else if (P.fin === 'trabado') SFX.error();
+  else SFX.tap();
 }
 
 document.getElementById('sound-slot').append(soundToggle());

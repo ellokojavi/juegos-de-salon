@@ -53,8 +53,9 @@ copia abajo los que quedan.».
   cercano que se puede hacer estallar («💡 Esos dos estallan juntos.»); mientras ese par siga en el
   tablero, «💡 Ver la ayuda» lo vuelve a marcar sin cobrar.
 - **🏳️ Rendirse:** pide un segundo toque («🏳️ ¿Seguro?»).
-- **El final:** al limpiarlo todo, tres estallidos grandes y confeti («¡Limpio!»). Sin pares ni ➕, se
-  acaba («Sin jugadas»: «No quedan pares ni ➕.»).
+- **El final:** una sola pantalla, como en los otros juegos: al terminar aparece de inmediato el
+  resumen (pedido del dueño). Al limpiarlo todo, tres estallidos grandes salen del puntaje, con confeti
+  («¡Limpio!»). Sin pares ni ➕, se acaba («Sin jugadas», y el desglose dice «No quedan pares ni ➕.»).
 - **Puntaje, sobre 100:** limpiar vale 70 y cada ➕ sin usar 10. Si no se limpia (al rendirse o sin
   jugadas), la parte estallada de los 70, contando lo agregado con ➕. Cada ayuda resta 10; nunca bajo 0.
 - **El resultado:** el sello (¡Limpio!, Sin jugadas o Te rendiste), el puntaje, el desglose
