@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.168.0 — 2026-10-12
+- **💥 Números explosivos (laboratorio, nuevo)** (D-297), inspirado en Number Match: haz estallar de a
+  pares los números iguales o que suman 10, si están juntos en línea, hasta dejar el tablero limpio.
+  Sin pares, ➕ copia abajo los que quedan (3 por partida). Cada par estalla, una fila entera explota
+  y se va, y al limpiarlo todo explota. El tablero del día siempre tiene salida.
+
 ## 0.167.1 — 2026-10-12
 - **🧪 Laboratorio: las portadas al día.** Pintaminas cuenta el modo de dos colores y la ayuda; Rutas,
   que las piezas quedan al revés y que deshacer y reiniciar son gratis; Agentes, las marcas 📌. Las
