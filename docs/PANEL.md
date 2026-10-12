@@ -356,5 +356,5 @@ panel, y porque lo de un juego que ya se fue del menú queda guardado igual.
 - Duración de la partida y cuántos intentos tomó: no interesa por ahora. Quién ganó sí se
   anota, desde la 0.33.6 (D-79).
 - Uso real de la cuota de Firebase (conexiones, descarga): no se lee desde el navegador.
-  Sigue pendiente RP-22 con Cloud Monitoring.
+  Las conexiones las vigila una alerta de Cloud Monitoring (RP-22); la descarga, todavía no.
 - Geolocalización por IP: descartada a propósito; la zona horaria alcanza.
