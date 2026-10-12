@@ -332,6 +332,8 @@ function resultado() {
     SEMILLA_URL ? el('a', { class: 'btn btn--ghost btn--sm', id: 'btn-de-hoy', href: location.pathname }, T.deHoy) : null,
     el('a', { class: 'btn btn--ghost btn--sm', href: '../' }, T.laboratorio),
     // El comentario va abierto y al final de todo (D-265, D-268)
+    // Una línea separa lo del juego del comentario para quienes lo prueban (pedido del dueño)
+    el('hr', { class: 'divisor' }),
     formularioComentario({ T: T.comentario, contexto: contexto('resultado') })));
   scrollTo(0, 0);
   if (!QUIETO) contar(nodoPuntaje, s);
