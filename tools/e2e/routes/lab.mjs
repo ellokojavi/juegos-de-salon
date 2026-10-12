@@ -1,4 +1,4 @@
-// Rutas del laboratorio (D-293, D-294, D-295) de punta a punta, en /labs/routes/: el laboratorio lo ofrece en
+// Rutas rotas del laboratorio (D-293, D-294, D-295) de punta a punta, en /labs/routes/: el laboratorio lo ofrece en
 // Proyectos activos con el crédito a Junction Nine, que también está en la portada; Empezar pasa por la
 // cuenta 3, 2, 1 y parte en la etapa 1 de 5; arrastrar marca un rectángulo y al soltar gira media vuelta
 // (las piezas cambian de lugar como dice el motor); reiniciar vuelve al comienzo y no cuenta los giros;
@@ -18,7 +18,7 @@ const esperar = async (expr, ms = 8000) => { for (let t = 0; t < ms; t += 100) {
 const SEMILLA = 'e2e1';
 
 await b.go(`${SITIO}/labs/`);
-ok(await ev(`document.querySelector('#activos #seccion-rutas #btn-rutas')?.getAttribute('href')`) === 'routes/', 'el laboratorio ofrece Rutas en Proyectos activos');
+ok(await ev(`document.querySelector('#activos #seccion-rutas #btn-rutas')?.getAttribute('href')`) === 'routes/', 'el laboratorio ofrece Rutas rotas en Proyectos activos');
 ok(await ev(`/Junction Nine/.test(document.querySelector('#seccion-rutas a[href*="junction"]')?.textContent || '')`), 'y da el crédito a Junction Nine, con su link');
 
 await b.go(`${SITIO}/labs/routes/?test`, 1200);

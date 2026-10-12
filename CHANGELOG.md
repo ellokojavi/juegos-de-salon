@@ -1,9 +1,14 @@
 # Changelog
 
-## 0.168.2 — 2026-10-12
+## 0.167.4 — 2026-10-12
 - **Portada: las píldoras de La Copa y Uno al día, abajo a la izquierda** (D-298). Los jugadores y
   los días de La Copa, y la racha o cómo vas hoy en Uno al día, quedan al pie de cada tarjeta y a la
   misma altura en las dos, aparte del texto de arriba.
+
+## 0.167.3 — 2026-10-12
+- **🚇 Rutas pasa a llamarse Rutas rotas** (pedido del dueño): las líneas parten cortadas y hay que
+  unirlas. Cambia el nombre en la portada, el laboratorio y lo que se comparte; el link
+  (`/labs/routes/`) y su señal de uso siguen iguales.
 
 ## 0.167.2 — 2026-10-12
 - **🖌️ Pintaminas (laboratorio):** en el modo difícil, las cerezas salen rojas con el tallo verde,
