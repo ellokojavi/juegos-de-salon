@@ -23,4 +23,16 @@ assert.deepEqual(enviados.map(r => r.texto), ['uno', 'dos']);
 assert.ok(enviados.every(r => r.at['.sv'] === 'timestamp'));
 assert.equal(a.getItem('juegos-de-salon:copa:reportes-pendientes'), null);
 
+// Quien entró al laboratorio con su llave manda su etiqueta, nunca la llave (D-306)
+const conLlave = almacen();
+conLlave.setItem('juegos-de-salon:labs-quien', 'ratoncito');
+conLlave.setItem('juegos-de-salon:labs-llave', 'ratoncito-secreta');
+const conTester = [];
+await enviarReporte({ texto: 'hola' }, anda(conTester), conLlave);
+assert.equal(conTester[0].tester, 'ratoncito');
+assert.ok(!JSON.stringify(conTester[0]).includes('secreta'), 'la llave no viaja');
+const sinTester = [];
+await enviarReporte({ texto: 'hola' }, anda(sinTester), almacen());
+assert.ok(!('tester' in sinTester[0]), 'sin llave, no va el campo');
+
 console.log('copa/reportes: OK');

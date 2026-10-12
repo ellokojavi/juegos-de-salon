@@ -28,10 +28,12 @@
     'el_mas_lindo': 'dc1e85d247f1ace88abd7129c0fdba64e43bd78d27b60c4761f5c125900d3734',
   };
   var GUARDADA = 'juegos-de-salon:labs-llave';
+  // La etiqueta de esa llave, para que el feedback 🐞 diga quién lo manda (cup/reportes.js)
+  var QUIEN = 'juegos-de-salon:labs-quien';
   var h = document.documentElement;
   var abrir = function () { h.style.visibility = ''; };
   var fuera = function () {
-    try { localStorage.removeItem(GUARDADA); } catch (e) { /* sin almacenamiento */ }
+    try { localStorage.removeItem(GUARDADA); localStorage.removeItem(QUIEN); } catch (e) { /* sin almacenamiento */ }
     location.replace('/');
   };
   h.style.visibility = 'hidden';
@@ -49,10 +51,10 @@
     if (!llave || !window.crypto || !crypto.subtle) return fuera();
     crypto.subtle.digest('SHA-256', new TextEncoder().encode(llave)).then(function (b) {
       var hex = Array.prototype.map.call(new Uint8Array(b), function (x) { return (x < 16 ? '0' : '') + x.toString(16); }).join('');
-      var vale = false;
-      for (var k in HUELLAS) if (Object.prototype.hasOwnProperty.call(HUELLAS, k) && HUELLAS[k] === hex) vale = true;
-      if (!vale) return fuera();
-      try { localStorage.setItem(GUARDADA, llave); } catch (e) { /* entra igual, esta vez */ }
+      var quien = null;
+      for (var k in HUELLAS) if (Object.prototype.hasOwnProperty.call(HUELLAS, k) && HUELLAS[k] === hex) quien = k;
+      if (quien === null) return fuera();
+      try { localStorage.setItem(GUARDADA, llave); localStorage.setItem(QUIEN, quien); } catch (e) { /* entra igual, esta vez */ }
       abrir();
     }, fuera);
   } catch (e) { fuera(); }
