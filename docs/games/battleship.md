@@ -53,7 +53,7 @@ Promedio esperado: 45 a 55 disparos para hundir la flota (un humano promedio ron
 
 Cuando Batalla Naval es el juego de Uno al día, `/battleship/?today` no ofrece modos: la intro lleva
 la línea de Uno al día, "Todos se enfrentan a la misma flota del celular.", y un solo botón,
-**Jugar el de hoy**, que abre directo 🤖 Contra el celular con los ajustes de siempre y el nombre
+**Jugar hoy**, que abre directo 🤖 Contra el celular con los ajustes de siempre y el nombre
 que se recuerda (o "Jugador 1"). El jugador coloca su flota como siempre. **La flota del celular
 sale de la semilla del día** (`randomLayout(N, azarDel(semilla, 'flota'))`; `randomLayout` acepta
 el azar desde D-230): la misma para todos. Es una partida local, así que la semilla no adelanta
