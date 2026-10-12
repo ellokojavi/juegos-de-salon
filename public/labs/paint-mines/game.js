@@ -25,9 +25,9 @@ const T = {
   lema: 'Pinta la grilla y descubre el dibujo escondido.',  // la regla de los números la dice el paso 1 (U-8)
   hoy: 'El tablero de hoy es el mismo para todos.',
   como: [
-    ['🔢', 'Cada número dice cuántas de sus 8 vecinas son como ella: pintadas o sin pintar.'],
-    ['🖌️', 'Elige «Pinta» o «No pinta» y toca una casilla. Si aciertas, aparece su número y te da más pistas.'],
-    ['🧠', `Nunca hay que adivinar: todo se deduce. Cada error resta ${RESTA_ERROR}.`],
+    ['🔢', 'Cada número dice cuántas de sus 8 vecinas son iguales a ella: del mismo color, o sin pintar.'],
+    ['🖌️', 'Elige «Pinta» o «No pinta» y toca una casilla. Si aciertas, aparece su número.'],
+    ['🧠', `Nunca hay que adivinar. Cada error resta ${RESTA_ERROR}; si te trabas, la 💡 ayuda muestra dónde mirar.`],
   ],
   empezar: '🖌️ Empezar', aJugar: '¡A pintar!',
   // El modo difícil: un interruptor de palanca que al activarse se electrifica (pedido del dueño)
