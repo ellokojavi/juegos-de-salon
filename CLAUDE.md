@@ -243,7 +243,10 @@ con eso la pantalla entra también a las pruebas de idiomas. Para verlo en un ce
 - **Llaves del laboratorio** (D-281, D-284): cada persona que entra a `/labs/` tiene su link.
   `node tools/agents/llave-labs.mjs nueva <etiqueta> | quitar <etiqueta> | listar` edita `HUELLAS` en
   `labs-puerta.js`; el link sale una sola vez y la llave no se guarda. La etiqueta es pública
-  (iniciales), y el cambio entra con un PR.
+  (iniciales), y el cambio entra con un PR. **Pedir una llave es pedir que funcione** (D-284, pedido
+  del dueño): la misma sesión crea la llave, abre el PR y le activa el auto-merge
+  (`gh pr merge <n> --auto --merge`) sin esperar otra orden, sin CHANGELOG ni agentes, y entrega el
+  link avisando que abre cuando el sitio se publique.
 - **Panel** (`public/panel/`, D-44, D-207): `window.__panel.seed({ rooms, days, torneos, push, vista })`
   lo dibuja con datos sembrados sin entrar. Ver [docs/PANEL.md](docs/PANEL.md).
 - **Reportes de La Copa** (D-104): `node tools/firebase/reportes.mjs [--dias 3] [--json]`.

@@ -35,7 +35,7 @@ await ev(`(()=>{localStorage.clear();localStorage.setItem('juegos-de-salon:insta
 await b.go(`${SITIO}/`, 1500);
 ok(await esperar(`!!document.getElementById('btn-uno-al-dia')`), 'la portada tiene la tarjeta de Uno al día');
 ok(await ev(`document.getElementById('btn-uno-al-dia').parentElement.querySelector('.game-card.torneo') !== null`), 'va en la misma fila que La Copa, mitad y mitad (D-239)');
-ok(/Jugar el de hoy/.test(await texto('#btn-uno-al-dia .uad-card-estado')), `dice "Jugar el de hoy", sin racha todavía (${await texto('#btn-uno-al-dia .uad-card-estado')})`);
+ok(/Jugar hoy/.test(await texto('#btn-uno-al-dia .uad-card-estado')), `dice "Jugar hoy", sin racha todavía (${await texto('#btn-uno-al-dia .uad-card-estado')})`);
 ok((await texto('.azar-slot .btn-azar')).replace(/\s+/g, ' ').trim() === '🎲 Juego al azar', `y el dado sigue diciendo "🎲 Juego al azar" (${await texto('.azar-slot .btn-azar')})`);
 ok(await ev(`(()=>{const s=[...document.querySelectorAll('.game-card.torneo .meta > span')];return s.length===2&&s[0].getBoundingClientRect().top===s[1].getBoundingClientRect().top})()`), 'jugadores y duración de La Copa, en una línea');
 ok(/abrir el juego de hoy/.test(await ev(`document.getElementById('btn-uno-al-dia').getAttribute('aria-label')`)), 'lo que hace va en aria-label');
@@ -57,7 +57,7 @@ ok(/hoy todos juegan el mismo desafío/.test(await texto('#uad-intro')), `"${awa
 await b.go(`${SITIO}/queens/?today`, 1500);
 ok(await esperar(`location.pathname === '/untangle/'`), 'un link de Uno al día de otro juego se va al de hoy');
 
-/* ---------- Jugar el de hoy (el reloj de Desenredo, acortado, se acaba) ---------- */
+/* ---------- Jugar hoy (el reloj de Desenredo, acortado, se acaba) ---------- */
 const jugar = async () => {
   await b.go(`${SITIO}/untangle/?today&test&timer=3`, 1200);
   await esperar(`!!document.getElementById('btn-empezar')`);
