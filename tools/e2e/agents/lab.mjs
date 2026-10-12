@@ -106,7 +106,7 @@ ok(await ev(`!!document.getElementById('btn-compartir-resultado')`), 'se puede c
 const otro = await ev(`document.getElementById('btn-otro')?.getAttribute('href') || ''`);
 ok(/seed=/.test(otro) && !otro.includes(SEMILLA), `"Otro tablero" abre uno nuevo (${otro})`);
 ok(await ev(`!!document.getElementById('btn-de-hoy')`), 'y como no era el de hoy, ofrece el de hoy');
-ok(await ev(`!!document.querySelector('#link-codenames')`), 'el crédito a Codenames también está al final');
+ok(!await ev(`!!document.querySelector('.resultado #link-codenames')`), 'el crédito a Codenames va en la portada, no en el resultado (pedido del dueño)');
 ok(await ev(`(()=>{const k=[...document.querySelector('.resultado').children].filter(x=>x.offsetParent!==null);return k.at(-1)?.classList.contains('comentario')})()`), 'el comentario es lo último del resultado (D-268)');
 ok(await ev(`document.documentElement.scrollWidth <= innerWidth`), 'sin scroll de lado a 375 px');
 await b.shot('03-final');

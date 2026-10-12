@@ -3,7 +3,7 @@
 Un *Codenames* mini para uno solo (D-286, D-287): el juego da una pista con su número y el jugador
 encuentra a sus agentes entre 15 palabras, sin tocar las neutrales ni al asesino. **Inspirado en
 [Codenames](https://czechgames.com/en/codenames/), de Vlaada Chvátil (Czech Games Edition)**, y lo
-dice en la portada, en el final y en el laboratorio.
+dice en la portada y en el laboratorio (en el resultado estuvo hasta v0.160.0: el dueño lo sacó, D-288).
 
 ## Resumen
 
