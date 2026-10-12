@@ -551,7 +551,7 @@ function pintarConfirmar(v, isLocalTurn) {
 /** El dato de un acierto, en la franja sobre el botón: lo ven todos y no frena a nadie (D-277). */
 function franja(last, v) {
   const c = v.byId[last.card];
-  if (c) franjaDato($('#place-row'), el, datoDe(c, lang));
+  if (c) franjaDato($('#place-row'), el, datoDe(c, lang), { de: c[lang] });
 }
 
 function playVerdictSound(ok) { if (ok) { SFX.reveal(); vibrate([30, 30]); } else { SFX.timeUp(); vibrate([120, 60, 120, 60, 200]); } }
