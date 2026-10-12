@@ -5204,3 +5204,25 @@ distinto aunque repita dibujo. Un dibujo irregular obliga a deducir cada casilla
 **Alternativas descartadas:** un color fijo por dibujo (el corazón siempre rojo: delataba el dibujo
 por el color); seguir llamándolos tinta y fondo.
 **Consecuencias:** `engine.test.mjs` revisa la paleta y la asimetría de cada dibujo.
+
+## D-291 · Pintaminas: un modo difícil de dos colores, con un interruptor eléctrico y premio ×1.5
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** amplía D-289
+**Contexto:** el dueño preguntó qué pasaría con un segundo color. Con dos colores, un número que se
+cumple solo dice que las demás vecinas *no son de ese color* (pueden ser del otro o sin pintar): hay
+que cruzar más números. Pidió probarlo como modo difícil, que se active con un interruptor eléctrico
+de palanca que se electrifique al activarse, y que pague 1,5 veces el puntaje.
+**Decisión:** en la portada, un **interruptor de palanca** («⚡ Modo difícil · Dos colores · puntaje
+×1.5»): una placa de metal con una palanca de mango rojo; al subirla, la placa titila en celeste y
+amarillo y saltan chispas ⚡, con un zumbido y una vibración. Encendido, el tablero usa **dos colores**
+(dos de `PALETA` al azar) y 10 dibujos propios de dos colores (`DIBUJOS2`: una frutilla, unas cerezas,
+un helado…), con **tres pinceles** («Pinta rojo», «Pinta verde», «No pinta») y un borde eléctrico.
+El puntaje se multiplica por **1,5** (`PREMIO_DIFICIL`): sin errores son 150. El link lo lleva
+(`?colors=2`), «Otro tablero» lo conserva y el celular recuerda la posición del interruptor.
+**Por qué:** el modo normal queda para aprender; el difícil, para quien ya lo domina, con un premio
+que lo hace valer. El solucionador pasa a llevar, por casilla, los colores que todavía puede tener:
+el mismo razonamiento sirve para uno o dos colores, y el generador sigue asegurando que nunca se adivina.
+**Alternativas descartadas:** dos colores siempre (abruma al que recién aprende); un premio fijo en
+puntos (×1.5 escala con lo bien que se juega).
+**Consecuencias:** `engine.test.mjs` revisa los dibujos de dos colores (irregulares, con al menos 4
+casillas de cada color) y 300 tableros difíciles que se resuelven sin adivinar (en promedio con 5
+dadas); `tools/e2e/paint-mines/lab.mjs` enciende y apaga el interruptor y juega una partida difícil.
