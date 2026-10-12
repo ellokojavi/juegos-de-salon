@@ -33,10 +33,13 @@ ok(/Modo fácil/.test(await ev(`document.querySelector('#btn-dificil .rotulo').t
 await ev(`document.getElementById('btn-dificil').click(); 1`); await sleep(200);
 ok(await ev(`document.getElementById('btn-dificil').getAttribute('aria-checked') === 'true' && document.getElementById('btn-dificil').classList.contains('on')`), 'el interruptor lo enciende y se electrifica');
 ok(await ev(`document.body.classList.contains('modo-dificil')`), 'y cambia el fondo de la página');
+ok(await ev(`!!document.querySelector('.relampago')`), 'y un destello cubre toda la vista');
 ok(/Modo difícil/.test(await ev(`document.querySelector('#btn-dificil .rotulo').textContent`)), 'y el rótulo pasa a «⚡ Modo difícil»');
 await b.shot('01b-dificil');
+await esperar(`!document.querySelector('.relampago')`, 2000);   // que se vaya el destello de encenderlo
 await ev(`document.getElementById('btn-dificil').click(); 1`); await sleep(100);
 ok(await ev(`document.getElementById('btn-dificil').getAttribute('aria-checked') === 'false' && !document.body.classList.contains('modo-dificil')`), 'y lo apaga, con el fondo de siempre');
+ok(!await ev(`!!document.querySelector('.relampago')`), 'volver al modo fácil no lleva destello');
 await b.shot('01-portada');
 
 await b.go(`${SITIO}/labs/paint-mines/?seed=${SEMILLA}&test`, 1200);
