@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.168.2 — 2026-10-12
+- **🧪 Laboratorio: La Bodega, plegada.** Sus juegos se ven solo con su título y un toque los abre
+  para ver de qué se tratan y jugarlos; así no tienen el mismo peso que los proyectos activos.
+
 ## 0.167.2 — 2026-10-12
 - **🖌️ Pintaminas (laboratorio):** en el modo difícil, las cerezas salen rojas con el tallo verde,
   como son; los otros dibujos siguen con colores al azar.
