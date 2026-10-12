@@ -22,7 +22,7 @@ const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const COLORSWEEPER = 'https://store.steampowered.com/app/3128730/ColorSweeper/';
 const T = {
   nombre: 'Pintaminas',
-  lema: 'Pinta la grilla y descubre el dibujo escondido. Cada número cuenta cuántas de sus vecinas son como ella: pintadas o no.',
+  lema: 'Pinta la grilla y descubre el dibujo escondido.',  // la regla de los números la dice el paso 1 (U-8)
   hoy: 'El tablero de hoy es el mismo para todos.',
   como: [
     ['🔢', 'Cada número dice cuántas de sus 8 vecinas son como ella: pintadas o sin pintar.'],
@@ -31,7 +31,7 @@ const T = {
   ],
   empezar: '🖌️ Empezar', aJugar: '¡A pintar!',
   // El modo difícil: un interruptor de palanca que al activarse se electrifica (pedido del dueño)
-  dificil: 'Modo difícil', dificilSub: 'Dos colores · puntaje ×{x}', dificilJuego: '⚡ Modo difícil ×{x}',
+  dificil: 'Modo difícil', dificilEstado: ['Apagado', 'Encendido'], dificilSub: 'Dos colores · puntaje ×{x}', dificilJuego: '⚡ Modo difícil ×{x}',
   // Los pinceles (pedido del dueño): «Pinta» con el color del tablero, y «No pinta», gris como las que no se pintan
   tinta: 'Pinta {c}', fondo: 'No pinta', pincel: 'Pincel',
   errores: ['Sin errores', '1 error', '{n} errores'], quedan: 'Faltan {n}',
@@ -116,12 +116,15 @@ function portada() {
  * (chispas y un brillo que titila) y el juego pasa a dos colores con el puntaje ×1.5.
  */
 function interruptor() {
+  // Lo que dice si está encendido: la palanca sola no lo deja claro
+  const estado = el('span', { class: 'estado', 'aria-hidden': 'true' }, T.dificilEstado[+P.dificil]);
   const caja = el('button', {
     type: 'button', class: `interruptor${P.dificil ? ' on' : ''}`, id: 'btn-dificil', role: 'switch', 'aria-checked': String(P.dificil),
     onClick: () => {
       P.dificil = !P.dificil;
       try { localStorage.setItem(GUARDADO, P.dificil ? '1' : '0'); } catch { /* sin almacenamiento: solo esta vez */ }
       caja.classList.toggle('on', P.dificil); caja.setAttribute('aria-checked', String(P.dificil));
+      estado.textContent = T.dificilEstado[+P.dificil];
       if (P.dificil) { SFX.error(); vibrate([15, 30, 15, 30, 40]); caja.classList.remove('chispa'); void caja.offsetWidth; caja.classList.add('chispa'); }
       else { SFX.tap(); vibrate(10); }
     },
@@ -129,7 +132,7 @@ function interruptor() {
   el('span', { class: 'placa', 'aria-hidden': 'true' },
     el('span', { class: 'rayo r1' }, '⚡'), el('span', { class: 'rayo r2' }, '⚡'), el('span', { class: 'rayo r3' }, '⚡'),
     el('span', { class: 'palanca' }, el('span', { class: 'mango' })), el('span', { class: 'eje' })),
-  el('span', { class: 'rotulo' }, el('b', {}, `⚡ ${T.dificil}`), el('span', { class: 'muted' }, fmt(T.dificilSub, { x: PREMIO_DIFICIL }))));
+  el('span', { class: 'rotulo' }, el('b', {}, `⚡ ${T.dificil}`), el('span', { class: 'muted' }, fmt(T.dificilSub, { x: PREMIO_DIFICIL })), estado));
   return caja;
 }
 
@@ -168,7 +171,9 @@ function jugar() {
       b.setAttribute('aria-label', sabe ? `${k ? `pintada de ${t.dibujo.pinturas[k - 1].nombre}` : 'sin pintar'}, ${numero(t.sol, i)}` : 'por descubrir');
     });
     pinceles.querySelectorAll('.pincel').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.k === P.pincel)));
-    marcador.textContent = `${t.colores === 2 ? `${fmt(T.dificilJuego, { x: PREMIO_DIFICIL })} · ` : ''}${nErrores(e.errores.size)} · ${fmt(T.quedan, { n: t.sol.length - e.conocidas.size })}`;
+    // Cada parte entera en su línea: a 320 px no se corta «Faltan 23» en dos
+    const partes = [t.colores === 2 ? fmt(T.dificilJuego, { x: PREMIO_DIFICIL }) : null, nErrores(e.errores.size), fmt(T.quedan, { n: t.sol.length - e.conocidas.size })].filter(Boolean);
+    marcador.replaceChildren(...partes.flatMap((x, j) => [j ? ' · ' : '', el('span', { class: 'parte' }, x)]));
     return e;
   };
   const tocar = i => {
