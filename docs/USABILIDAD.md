@@ -5,8 +5,8 @@ decidió. **Crece con cada dilema resuelto**: la respuesta del dueño se anota a
 issue, para no volver a preguntarla.
 
 Cada regla tiene un ID (U-n) para citarla en los PR y en los issues. Los IDs van por bloques
-(1–18 textos, pantallas y botones; 20–23 interacciones; 30–35 compartir y marketing): U-9 y U-19
-nunca se usaron, y no se renumera.
+(1–18 textos, pantallas y botones; 20–23 interacciones; 30–35 compartir y marketing; la U-36,
+la portada al día, va con los textos): U-9 y U-19 nunca se usaron, y no se renumera.
 
 ## Textos
 
@@ -43,6 +43,12 @@ nunca se usaron, y no se renumera.
   - **Tope que vigila una prueba** (`public/cup/games/juegos.test.mjs`), en los cuatro idiomas: a
     lo más 3 puntos y 280 caracteres para "Cómo se juega", y 170 para el puntaje. Además frena un
     primer punto que describe la pantalla ("Hay…", "There is…", "Há…", "Es gibt…"). Es un techo, no una meta: la mitad de los juegos queda bajo 210.
+- **U-36 · La portada al día:** si un PR cambia las reglas, los controles, el puntaje, los modos o
+  los tiempos de un juego, el mismo PR relee y corrige lo que el jugador lee antes de jugar: el lema,
+  los pasos de «Cómo se juega» (U-18) y su tarjeta en el laboratorio o el menú. Pasó con Pintaminas:
+  sumó un modo de dos colores, la ayuda y rendirse, y su portada siguió diciendo lo del primer día.
+  `node tools/agents/portadas.mjs revisar` muestra, por cada juego que toca el PR, su portada, y avisa
+  ⚠️ si el juego cambió y su portada no.
 
 ## Pantallas y botones
 
