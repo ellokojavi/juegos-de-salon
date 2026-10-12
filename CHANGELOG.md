@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.157.1 — 2026-10-11
+- **🕵️ Agentes (laboratorio): portada y animaciones.** La portada juega sola una pista: la lupa
+  encuentra a los agentes y al final aparece el asesino. Entre pistas, a la que se cierra le cae un
+  sello (Completa, Cortada o Pasada) y la siguiente llega girando, con su palabra descifrándose. El
+  asesino sacude el tablero con un destello rojo. El final es un sello según cómo salió: ¡Misión
+  cumplida! con confeti, Misión a medias, o en rojo Misión fracasada o Te descubrió el asesino. Y
+  con un link de semilla, la portada ya no escribe "null".
+
 ## 0.157.0 — 2026-10-11
 - **🕵️ Laboratorio: Agentes, un Codenames mini** (D-286), el primer proyecto activo. El juego te da
   una pista con su número («MAR · 3») y tú encuentras a tus agentes entre 12 palabras, sin tocar
