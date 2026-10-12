@@ -40,10 +40,13 @@ function escribir(fuente, llaves) {
 
 export const huella = llave => createHash('sha256').update(llave).digest('hex');
 
-/** Una llave al azar: 20 letras y números en minúscula, fácil de copiar y sin ambigüedad de mayúsculas. */
-export function llaveNueva() {
+/** Una llave al azar: 20 letras y números en minúscula, fácil de copiar y sin ambigüedad de mayúsculas.
+ *  Con etiqueta, la llave empieza con ella (`ratoncito-…`), para que cada uno reconozca su link. */
+export function llaveNueva(etiqueta = '') {
   const A = 'abcdefghijkmnpqrstuvwxyz23456789';
-  return Array.from({ length: 20 }, () => A[randomInt(A.length)]).join('');
+  const azar = Array.from({ length: 20 }, () => A[randomInt(A.length)]).join('');
+  const prefijo = etiqueta.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase().replace(/[^a-z0-9_.-]+/g, '_');
+  return prefijo ? `${prefijo}-${azar}` : azar;
 }
 
 export function agregar(fuente, etiqueta, llave) {
@@ -70,7 +73,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     if (cmd === 'listar') {
       for (const l of leer(fuente)) console.log(`${l.etiqueta.padEnd(24)} ${l.huella.slice(0, 12)}…`);
     } else if (cmd === 'nueva' && etiqueta) {
-      const llave = llaveNueva();
+      const llave = llaveNueva(etiqueta);
       writeFileSync(PUERTA, agregar(fuente, etiqueta, llave));
       console.log(`Llave para ${etiqueta}. Se muestra solo esta vez: cópiala ahora.\n`);
       console.log(`  ${SITIO}/labs/?key=${llave}\n`);
