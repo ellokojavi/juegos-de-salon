@@ -10,7 +10,6 @@
  * filas), la pieza que hay y si está dada vuelta: `{ p, v }`.
  */
 export const LADO = 3;
-export const RESTA_GIRO = 15;
 const LADOS = ['N', 'E', 'S', 'O'];
 const OPUESTO = { N: 'S', S: 'N', E: 'O', O: 'E' };
 export const COLORES = [
@@ -201,8 +200,23 @@ export function generar(semilla, { lineas = 4, giros = 5, minimo: pedido = null 
 /** El tablero de una etapa (0 a 4) de una partida: la semilla de la partida, con su número. */
 export const generarEtapa = (semilla, n) => generar(`${semilla}:etapa-${n + 1}`, ETAPAS[n]);
 
-/** De 0 a 100 por tablero: 100 si se iguala el mínimo; cada giro de más resta RESTA_GIRO. Nunca baja de 10 si se resolvió. */
-export const puntaje = (giros, min) => Math.max(10, 100 - RESTA_GIRO * Math.max(0, giros - min));
-
-/** El puntaje de la partida: el promedio de sus etapas, redondeado. */
-export const puntajeTotal = puntajes => Math.round(puntajes.reduce((a, b) => a + b, 0) / puntajes.length);
+/**
+ * El puntaje de la partida (D-295), por capas y en este orden: completar, la velocidad y los giros.
+ * Cada etapa completada vale PUNTOS_ETAPA (17; las cinco, 85). Encima, un bono de hasta 15 —menos que
+ * una etapa, así que completar más siempre gana—: hasta 10 por velocidad (10 si las cinco se terminan
+ * en RAPIDO_S o menos, 0 si se acaba el reloj, en línea recta entre medio; solo si se completan todas)
+ * y hasta 5 por giros (5 si todas las etapas hechas fueron en el mínimo, 0 con el doble o más).
+ * `hechas`: [{ giros, minimo }] de las etapas completadas; `segundos`: el tiempo usado.
+ */
+export const TIEMPO_S = 7 * 60, RAPIDO_S = 60;
+export const PUNTOS_ETAPA = 17, BONO_VELOCIDAD = 10, BONO_GIROS = 5;
+const entre01 = x => Math.max(0, Math.min(1, x));
+export function puntajePartida(hechas, segundos) {
+  const completa = hechas.length === ETAPAS.length;
+  const base = PUNTOS_ETAPA * hechas.length;
+  const velocidad = completa ? entre01((TIEMPO_S - segundos) / (TIEMPO_S - RAPIDO_S)) : 0;
+  const giros = hechas.reduce((a, h) => a + h.giros, 0), minimos = hechas.reduce((a, h) => a + h.minimo, 0);
+  const eficiencia = hechas.length ? entre01((minimos / giros - 0.5) / 0.5) : 0;
+  const ptsVelocidad = Math.round(BONO_VELOCIDAD * velocidad), ptsGiros = Math.round(BONO_GIROS * eficiencia);
+  return { total: base + ptsVelocidad + ptsGiros, base, ptsVelocidad, ptsGiros, giros, minimos, completa };
+}
