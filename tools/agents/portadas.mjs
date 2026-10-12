@@ -26,6 +26,16 @@ export function portadaDe(fuente) {
   return { lema, pasos };
 }
 
+/**
+ * Los pasos con sus `${…}` resueltos contra las constantes del juego (las de su engine.js), y su
+ * largo junto, como lo cuenta la prueba de U-18 para los juegos de La Copa: el laboratorio no la tiene.
+ */
+export function pasosResueltos(pasos, constantes) {
+  const nombres = Object.keys(constantes), valores = Object.values(constantes);
+  const resueltos = pasos.map(p => p.replace(/\$\{([^}]+)\}/g, (_, expr) => String(new Function(...nombres, `return (${expr})`)(...valores))));
+  return { resueltos, largo: resueltos.map(p => p.replace(/^\S+ /, '')).join(' ').length };
+}
+
 /** Los juegos que tocan los archivos cambiados: los del laboratorio por su carpeta, y el resto aparte. */
 export function juegosTocados(archivos) {
   const labs = new Set(), otros = new Set();
@@ -54,11 +64,14 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     const codigo = archivos.filter(f => f.startsWith(`public/labs/${slug}/`) && !f.endsWith('.css'));
     console.log(`\n🕹️  ${slug} — cambiaron: ${codigo.join(', ') || '(solo estilos)'}`);
     console.log(`   lema: ${lema ?? '(sin lema)'}`);
-    pasos.forEach((p, k) => console.log(`   ${k + 1}. ${p}`));
+    const motor = join(RAIZ, `public/labs/${slug}/engine.js`);
+    const { resueltos, largo } = pasosResueltos(pasos, existsSync(motor) ? { ...(await import(motor)) } : {});
+    resueltos.forEach((p, k) => console.log(`   ${k + 1}. ${p}`));
+    console.log(`   ${largo <= 280 && pasos.length <= 3 ? '✓' : '⚠️ '} ${pasos.length} pasos, ${largo} caracteres (U-18: hasta 3 y 280)`);
     const tarjeta = (indice.match(new RegExp(`href="${slug}/"`)) && indice.split(`href="${slug}/"`)[0].split('<section').pop().replace(/^[^>]*>/, '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()) || '';
     if (tarjeta) console.log(`   tarjeta del laboratorio: ${tarjeta.replace(/\s*<a class.*$/, '').slice(0, 400)}`);
     if (codigo.some(f => /(engine|game)\.js$/.test(f)) && !tocoPortada) console.log('   ⚠️  el juego cambió y su portada no: relee que el lema, los pasos y la tarjeta digan cómo se juega hoy (U-36)');
-    else console.log('   ✓ la portada cambió en este PR: relee que esté completa (U-18: ≤3 pasos, ≤280 caracteres)');
+    else console.log('   ✓ la portada cambió en este PR: relee que esté completa y diga cómo se juega hoy');
   }
   for (const id of otros) console.log(`\n🕹️  ${id} (menú o La Copa): relee su intro y sus reglas (las de la copa en public/cup/rules.js) contra lo que cambió (U-36)`);
 }

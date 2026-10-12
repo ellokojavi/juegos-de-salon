@@ -25,9 +25,9 @@ const T = {
   lema: 'Cada palabra es el nombre en clave de un espía. Con las pistas, encuentra a los tuyos.',
   hoy: 'El tablero de hoy es el mismo para todos.',
   como: [
-    ['🕵️', `Toca las palabras que van con la pista: «MAR · 3» son 3 palabras. Llegan ${CUANTAS} pistas, de a una.`],
+    ['🕵️', `Toca las palabras que van con la pista: «MAR · 3» son 3. Llegan ${CUANTAS} pistas, de a una.`],
     ['⚠️', `Evita las ${NEUTRALES} neutrales (−${RESTA_NEUTRAL}) y al asesino (−${RESTA_ASESINO}): se parecen a una pista y la cortan.`],
-    ['📌', 'Si dudas, mantén apretada una carta para marcarla 📌. Un agente de otra pista también suma.'],
+    ['📌', 'Si dudas de una carta, mantenla apretada para marcarla, o pasa de pista. Un agente de otra pista también suma.'],
   ],
   empezar: '🕵️ Empezar', aJugar: '¡A jugar!', pista: 'Pista {n} de {t}', faltan: 'Te faltan {n}', faltaUna: 'Te falta 1',
   pasar: '⏭️ Siguiente pista', terminar: '🏁 Terminar', seguro: '🏁 Sí, terminar',

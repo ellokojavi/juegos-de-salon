@@ -27,7 +27,7 @@ const T = {
   como: [
     ['🔄', 'Arrastra de una pieza a otra: el rectángulo da media vuelta y sus piezas quedan al revés. Un toque gira una sola.'],
     ['🚇', 'Une todas las líneas, sin cortes de pieza en pieza.'],
-    ['⛳', `${ETAPAS.length} etapas, ${TIEMPO_S / 60} minutos. Cuenta completarlas, la rapidez y el mínimo de giros; deshacer y reiniciar son gratis.`],
+    ['⛳', `Son ${ETAPAS.length} etapas en ${TIEMPO_S / 60} minutos. Cuenta completarlas, luego la rapidez y los giros; deshacer y reiniciar son gratis.`],
   ],
   empezar: '🚇 Empezar', aJugar: '¡A girar!',
   // Las etapas (D-294): cinco tableros de dificultad creciente
