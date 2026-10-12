@@ -48,6 +48,8 @@ tres pasos y Empezar, que pasa por la cuenta 3, 2, 1 compartida (`assets/js/cuen
   difícil · Dos colores · puntaje ×1.5»). Bajo el título dice «APAGADO» o «ENCENDIDO». Al subirla, el rectángulo entero brilla y parpadea al azar, como una luz con mal contacto (D-292; con movimiento reducido queda encendido y quieto), y la placa se electrifica: titila en celeste y
   amarillo, saltan chispas ⚡, suena y vibra. Es un `role="switch"`; el celular recuerda su posición
   (`juegos-de-salon:pintaminas:dificil`) y el link lo trae con `?colors=2`.
+- **El fondo:** encendido, toda la página pasa de su morado de siempre a un azul noche con
+  resplandores celestes (`body.modo-dificil`), en la portada, el juego y el resultado (pedido del dueño).
 - **El tablero:** dos colores al azar de `PALETA` (nunca amarillo con naranjo juntos: se confundían), con los dibujos de `DIBUJOS2` (de dos colores), un
   borde eléctrico y tres pinceles («Pinta rojo», «Pinta verde», «No pinta»). El marcador dice
   «⚡ Modo difícil ×1.5». Un número cumplido ya no dice de qué color son las demás: solo que no son del
