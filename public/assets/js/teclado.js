@@ -12,7 +12,8 @@
 import { el, vibrate } from './ui.js';
 import { SFX } from './sound.js';
 
-const LONG_PRESS_MS = 450;
+// El toque largo de las notas: lo usan también las marcas de Agentes
+export const LONG_PRESS_MS = 450;
 
 /**
  * @param {object} o
