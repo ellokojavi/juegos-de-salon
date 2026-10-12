@@ -114,23 +114,43 @@ function crearTablero(t, { interactivo = false, alGirar } = {}) {
   const angulo = t.piezas.map(() => 0);
   const piezas = t.piezas.map((p, i) => el('div', { class: 'pieza', 'data-p': i }, dibujoPieza(p)));
   caja.append(...piezas, marco);
-  const poner = (estado, animar = true) => {
+  // Cada pieza tiene dos capas: la de afuera va en su lugar y solo gira mientras se juega una jugada; la de
+  // adentro (el dibujo) lleva la orientación que dice el motor: dada vuelta (v), media vuelta
+  const colocar = estado => {
     estado.forEach(({ p, v }, lugar) => {
       const n = piezas[p];
-      // Lo que se ve es lo que dice el motor: una pieza dada vuelta (v) se dibuja girada media vuelta,
-      // también al empezar (la revuelta deja piezas dadas vuelta), al reiniciar y en el tablero del final
-      if ((angulo[p] / 180) % 2 !== v) angulo[p] += 180;
-      n.classList.toggle('sin-animar', !animar);
+      n.classList.add('sin-animar');
+      n.style.transform = ''; n.style.transformOrigin = '';
       n.style.left = `${(lugar % LADO) * 100 / LADO}%`;
       n.style.top = `${Math.floor(lugar / LADO) * 100 / LADO}%`;
-      n.style.transform = `rotate(${angulo[p]}deg)`;
+      n.firstChild.style.transform = v ? 'rotate(180deg)' : '';
       n.dataset.lugar = lugar;
     });
   };
+  /**
+   * Una jugada: el rectángulo gira media vuelta como un bloque (pedido del dueño), alrededor de su centro.
+   * Cada pieza orbita ese centro, sin girar por su cuenta; al terminar queda en su lugar nuevo con su
+   * orientación nueva, sin salto. Una jugada que llega antes de que termine la anterior la cierra de una.
+   */
+  let pendiente = null;
   const aplicar = (estado, rect, animar = true) => {
+    pendiente?.();
     const nuevo = girar(estado, rect);
-    for (let f = rect.f1; f <= rect.f2; f++) for (let c = rect.c1; c <= rect.c2; c++) angulo[estado[f * LADO + c].p] += 180;
-    poner(nuevo, animar && !QUIETO);
+    if (!animar || QUIETO) { colocar(nuevo); return nuevo; }
+    const cx = (rect.c1 + rect.c2 + 1) / 2, cy = (rect.f1 + rect.f2 + 1) / 2;
+    const moviendo = [];
+    for (let f = rect.f1; f <= rect.f2; f++) for (let c = rect.c1; c <= rect.c2; c++) {
+      const n = piezas[estado[f * LADO + c].p];
+      n.style.transformOrigin = `${(cx - c) * 100}% ${(cy - f) * 100}%`;
+      void n.offsetWidth;
+      n.classList.remove('sin-animar');
+      n.classList.add('girando');
+      n.style.transform = 'rotate(180deg)';
+      moviendo.push(n);
+    }
+    const cerrar = () => { clearTimeout(reloj); pendiente = null; moviendo.forEach(n => n.classList.remove('girando')); colocar(nuevo); };
+    const reloj = setTimeout(cerrar, 460);
+    pendiente = cerrar;
     return nuevo;
   };
   if (interactivo) {
@@ -163,6 +183,8 @@ function crearTablero(t, { interactivo = false, alGirar } = {}) {
     Object.assign(marco.style, { left: `${r.c1 * 100 / LADO}%`, top: `${r.f1 * 100 / LADO}%`, width: `${(r.c2 - r.c1 + 1) * 100 / LADO}%`, height: `${(r.f2 - r.f1 + 1) * 100 / LADO}%` });
     marco.classList.add('ve');
   };
+  // Poner un estado de una (al empezar, al reiniciar): si una jugada estaba girando, se cierra antes
+  const poner = estado => { pendiente?.(); colocar(estado); };
   return { caja, poner, aplicar, marcar };
 }
 

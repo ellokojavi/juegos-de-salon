@@ -30,7 +30,7 @@ la cuenta 3, 2, 1 compartida (`assets/js/cuenta-regresiva.js`).
   la siguiente.
 
 - **Girar:** se arrastra de una pieza a otra y queda marcado en blanco el rectángulo entre las dos (el amarillo se confundía con la línea amarilla);
-  al soltar, gira media vuelta: cada pieza viaja a su lugar espejo y se da vuelta. Un toque gira una
+  al soltar, gira media vuelta **como un solo bloque**, alrededor de su centro: cada pieza orbita a su lugar espejo y por eso queda dada vuelta (no gira por su cuenta mientras se desliza). Un toque gira una
   sola pieza (la deja dada vuelta en su lugar).
 - **La meta:** que todas las líneas sigan sin cortes de pieza en pieza. Vale cualquier orden en que
   todos los bordes calcen, aunque no sea el original.

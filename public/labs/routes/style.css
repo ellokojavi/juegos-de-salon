@@ -15,7 +15,9 @@
   background: #0b0f1d; box-shadow: 0 0 0 2px rgba(255,255,255,0.12), 0 10px 30px rgba(0,0,0,0.4); overflow: hidden; -webkit-user-select: none; user-select: none; }
 .tablero-rt.chico { max-width: 220px; }
 .pieza { position: absolute; width: calc(100% / 3); height: calc(100% / 3); box-sizing: border-box; border: 1px solid rgba(255,255,255,0.07);
-  transition: left 0.45s cubic-bezier(0.5, 0, 0.3, 1), top 0.45s cubic-bezier(0.5, 0, 0.3, 1), transform 0.45s cubic-bezier(0.5, 0, 0.3, 1); }
+  transition: transform 0.45s cubic-bezier(0.5, 0, 0.3, 1); }
+/* Mientras gira, la pieza va por encima de las demás: el bloque se ve entero */
+.pieza.girando { z-index: 1; }
 .pieza.sin-animar { transition: none; }
 .pieza-svg { width: 100%; height: 100%; display: block; }
 .tramo { opacity: 0.9; }
