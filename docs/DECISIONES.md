@@ -56,7 +56,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Mazos de cartas con fecha | `docs/games/timeline.md` | D-37, D-277, D-278 |
 | 🕵️ Agentes, el juego del laboratorio (tablero, pistas, trampas) | `docs/games/agents.md` | D-286, D-287, D-288 |
 | 🖌️ Pintaminas, el Buscaminas de colores del laboratorio (dibujos, pinceles, tablero sin adivinar, modo difícil, ayuda) | `docs/games/paint-mines.md` | D-289, D-290, D-291, D-292 |
-| 🚇 Rutas, el plano de metro del laboratorio (giros de rectángulos, mínimo exacto, puntaje tipo golf, cinco etapas) | `docs/games/routes.md` | D-293, D-294 |
+| 🚇 Rutas, el plano de metro del laboratorio (giros de rectángulos, mínimo exacto, cinco etapas, reloj de 7 minutos y puntaje por capas) | `docs/games/routes.md` | D-293, D-294, D-295 |
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
@@ -5313,10 +5313,10 @@ entre medio; solo si se completan todas) y hasta **5 por giros** (5 si todas las
 en el mínimo, 0 con el doble o más). Al acabarse el reloj se acaba la partida y cuentan las etapas
 hechas. **🏳️ Rendirse** pide un segundo toque («Toca de nuevo para rendirte», como la ayuda de
 Pintaminas) y cuenta igual las etapas hechas. El resultado muestra las tres capas («🚇 5 de 5 etapas:
-85 puntos», «⏱ Rapidez (2:10): +8», «🔄 Giros (24; el mínimo era 18): +2») y cada etapa; el sello dice
+85 puntos (17 cada una).», «⏱ Rapidez (2:10): +8.», «🔄 Giros (24; el mínimo era 18): +3.») y cada etapa; el sello dice
 «Se acabó el tiempo» o «Te rendiste» si no se completó.
 **Por qué:** con el bono menor que una etapa, el orden completar > rapidez > giros se cumple siempre
-(4 etapas perfectas dan como máximo 83; 5 lentas y con el doble de giros, 85), y la rapidez pesa el
+(4 etapas en el mínimo dan como máximo 73, porque la rapidez solo cuenta con las cinco; 5 lentas y con el doble de giros, 85), y la rapidez pesa el
 doble que los giros. Reiniciar sigue gratis en puntos, pero el reloj corre.
 **Alternativas descartadas:** el promedio de puntajes por etapa (D-294: no premiaba la rapidez);
 bono de rapidez por etapa (se podía alcanzar a quien completaba más).
