@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.162.0 — 2026-10-11
+- **🖌️ Pintaminas (laboratorio): modo difícil** (D-291). Un interruptor de palanca en la portada que,
+  al subirlo, se electrifica: el tablero pasa a dos colores, con tres pinceles, y el puntaje vale
+  ×1.5 (hasta 150).
+
 ## 0.161.1 — 2026-10-11
 - **🖌️ Pintaminas (laboratorio):** los pinceles dicen «Pinta» (con un color que cambia en cada
   tablero) y «No pinta», y los dibujos ahora son irregulares: ya no se adivinan por espejo (D-290).
