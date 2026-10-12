@@ -96,6 +96,8 @@
 /* Dos líneas reservadas: el aviso más largo parte en dos a 320 px y el tablero no salta bajo el dedo */
 .aviso-ag { text-align: center; font-weight: 800; min-height: 2.8em; margin: 0; display: grid; place-items: center; line-height: 1.4; }
 .aviso-ag.bien { color: var(--lime); } .aviso-ag.marca { color: var(--yellow); } .aviso-ag.mal { color: #ff8a8a; } .aviso-ag.otra { color: var(--cyan); }
+/* Un agente encontrado: el aviso va en el color de su pista */
+.aviso-ag.g0 { color: rgb(157, 255, 58); } .aviso-ag.g1 { color: rgb(46, 230, 214); } .aviso-ag.g2 { color: rgb(255, 111, 168); } .aviso-ag.g3 { color: rgb(180, 139, 255); }
 .resultado { text-align: center; display: grid; gap: 10px; }
 .resultado .score-big { font: 900 clamp(2.6rem, 14vw, 3.6rem)/1.1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35); }
 .resultado .trofeo { font-size: 3.4rem; animation: pop 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }

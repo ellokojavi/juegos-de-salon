@@ -1,7 +1,7 @@
 /**
  * Agentes — el motor del prototipo de laboratorio (D-286): un Codenames de uno, donde el juego da
  * las pistas y tú adivinas. Un tablero de 15 palabras: 4 grupos de agentes (uno por pista; tres de 3 y uno de 2, cuál cambia
- * cada día), 3
+ * con cada tablero), 3
  * neutrales y 1 asesino que tienta. Las pistas llegan de a una, con su número. Tocar un agente suma
  * (también si es de otra pista: es de los tuyos); una neutral o el asesino restan y cortan la pista.
  * Se puede pasar a la siguiente pista cuando quieras. Sin DOM: lo prueba engine.test.mjs.
