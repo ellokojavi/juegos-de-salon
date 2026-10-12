@@ -33,6 +33,15 @@
 .aviso-rt { margin: 0; min-height: 1.5em; text-align: center; font-weight: 800; color: var(--muted); }
 .aviso-rt.bien { color: var(--lime); font-size: 1.15rem; }
 #btn-reiniciar { justify-self: center; }
+/* El reloj, junto al marcador; en el último minuto, rojo */
+.fila-marcador { display: flex; justify-content: center; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+.reloj-rt { margin: 0; font: 800 1.05rem var(--font-num); font-variant-numeric: tabular-nums; }
+.reloj-rt.poco { color: #ff8a8a; animation: rt-pulso 1s ease-in-out infinite; }
+@keyframes rt-pulso { 50% { opacity: 0.55; } }
+.acciones-rt { display: grid; justify-items: center; gap: 2px; }
+.rendirse { font-size: 0.9rem; }
+.rendirse.armado { color: #ff8a8a; text-decoration: none; font-weight: 800; }
+.sello-rt.mal { color: #ff8a8a; }
 #btn-reiniciar:disabled { opacity: 0.4; }
 /* La etapa: su número, los puntos del avance y de qué se trata */
 .cabeza-etapa { display: grid; justify-items: center; gap: 4px; }
@@ -56,6 +65,6 @@
 .link-btn { background: none; border: 0; color: var(--muted); font: 700 0.95rem var(--font-body); text-decoration: underline; cursor: pointer; min-height: 44px; margin: 0 auto; display: block; }
 .btn { text-decoration: none; }
 @media (prefers-reduced-motion: reduce) {
-  .titulo-rt .metro, .sello-rt, .cabeza-etapa.entra { animation: none !important; }
+  .titulo-rt .metro, .sello-rt, .cabeza-etapa.entra, .reloj-rt.poco { animation: none !important; }
   .pieza { transition: none; }
 }

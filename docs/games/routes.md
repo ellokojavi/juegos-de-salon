@@ -36,10 +36,15 @@ la cuenta 3, 2, 1 compartida (`assets/js/cuenta-regresiva.js`).
   giros, gratis; sin giros está apagado y al terminar la etapa se va.
 - **Al unirlas:** las líneas brillan, el tablero se marca en verde («🚇 ¡Etapa 2 lista!», o «🚇 ¡Etapa 2 en
   el mínimo!»), el punto de la etapa se pinta y llega la siguiente; después de la quinta, el resultado.
-- **Puntaje:** por etapa, 100 si se iguala el mínimo, −15 por cada giro de más, nunca menos de 10; la
-  partida, el promedio. Con 70 o más, confeti.
-- **El final:** el último tablero resuelto, un sello (¡Todas en el mínimo! o ¡Rutas unidas!), el
-  puntaje, el desglose (cada etapa: «🟨 Etapa 3: 5 giros (mínimo 4) · 85/100», y cuántas veces reiniciaste),
+- **Reloj** (D-295): 7 minutos para las cinco etapas, arriba junto al marcador («⏱ 6:42»), en rojo el
+  último minuto. Al acabarse, se acaba la partida y cuentan las etapas hechas.
+- **🏳️ Rendirse:** bajo Reiniciar; pide un segundo toque («Toca de nuevo para rendirte») y cuenta las
+  etapas hechas.
+- **Puntaje por capas** (D-295): 17 por etapa completada (85 las cinco) + hasta 10 por rapidez (solo
+  completando las cinco: 10 en un minuto o menos, 0 al acabarse el reloj) + hasta 5 por giros (5 en el
+  mínimo, 0 con el doble o más). Completar más siempre gana. Con 70 o más, confeti.
+- **El final:** el último tablero, un sello (¡Todas en el mínimo!, ¡Rutas unidas!, Se acabó el tiempo o
+  Te rendiste), el puntaje, el desglose (las tres capas y cada etapa: «🟨 Etapa 3: 5 giros (mínimo 4) · 85/100», y cuántas veces reiniciaste),
   el tiempo, compartir (una línea por etapa: «🟩 1: 2/2»), otro tablero, el de hoy (si se jugó con semilla) y, tras una línea, el
   formulario de comentarios (D-265, D-268).
 - **El día:** sin `?seed=` es el tablero de hoy (`dia:<fecha>`), el mismo para todos.
