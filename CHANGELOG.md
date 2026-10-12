@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.159.0 — 2026-10-11
+- **🕵️ Agentes (laboratorio): más difícil y con colores** (D-287). El tablero pasa a 15 cartas, con
+  4 pistas, una de ellas de solo 2 agentes. Las 3 neutrales y el asesino se parecen a alguna pista,
+  así que ya no se descartan a primera vista. Cada pista tiene su color: el cartel y sus agentes lo
+  llevan, y los de pistas ya cerradas se apagan.
+
 ## 0.158.2 — 2026-10-11
 - **🕵️ Agentes (laboratorio): un toque que dura de más ya no confunde.** Mantener apretada una
   carta la marca 📌 sin destaparla, y si el toque duraba un poco más de la cuenta la carta quedaba
