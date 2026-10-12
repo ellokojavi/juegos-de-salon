@@ -5088,7 +5088,7 @@ leer, a propósito); mostrar solo el aviso genérico de permiso (obligaba a busc
 escribir el PIN).
 
 ## D-286 · Agentes: un Codenames mini, para uno solo, en Proyectos activos del laboratorio
-**Fecha:** 2026-10-11 · **Estado:** corregida por D-287 · **Relación:** amplía D-280 (el primer proyecto activo del laboratorio)
+**Fecha:** 2026-10-11 · **Estado:** corregida por D-287 y D-288 · **Relación:** amplía D-280 (el primer proyecto activo del laboratorio)
 **Contexto:** el dueño pidió investigar *Codenames* (Vlaada Chvátil, Czech Games Edition, 2015) y
 ver si una versión mini podía entrar a La Copa. El original es de equipos: un jefe de espías da una
 palabra y un número, y su equipo busca a sus agentes entre 25 palabras sin tocar al asesino. En La
@@ -5158,6 +5158,6 @@ sin conocer *Codenames*. Con 100 pistas y el calendario, una pista vuelve entre 
 **Alternativas descartadas:** hablar solo de «palabras» y dejar el tema en el título (el asesino
 quedaba sin sentido); cambiar el nombre del juego; ventanas por ronda fija de 25 días (en el cambio de
 ronda una pista podía volver al día siguiente).
-**Consecuencias:** cambia el tablero de los días ya jugados (es un prototipo). `engine.test.mjs`
+**Consecuencias:** el crédito a *Codenames* sale del resultado (pedido del dueño: repetido ahí sobraba) y queda en la portada y en el laboratorio, que es donde se decide jugar. Cambia el tablero de los días ya jugados (es un prototipo). `engine.test.mjs`
 revisa un año de tableros del día: ninguno al azar, todos con las pistas del calendario, ninguna pista
 antes de 15 días, y que en el año salgan las 100.
