@@ -1,6 +1,6 @@
 /**
  * Pintaminas — prototipo de laboratorio (D-289), inspirado en ColorSweeper (ARRKKA): un Buscaminas de
- * colores. Cada casilla se pinta (de un color que cambia con cada tablero) o no, y su número dice
+ * colores. Cada casilla se pinta (del color de verdad de su dibujo) o no, y su número dice
  * cuántas de sus 8 vecinas son como ella; al pintarlo entero aparece un dibujo. Solo en español, para probar con amigos. Sin
  * `?seed=` es el tablero de hoy, el mismo para todos. El motor está en engine.js y los dibujos en
  * dibujos.js.
