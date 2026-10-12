@@ -29,9 +29,9 @@ const REPO = process.env.REPO || 'ellokojavi/juegos-de-salon';
 const ARCHIVO = 'docs/DECISIONES.md';
 
 /** Los números de los encabezados "## D-n" de un texto. */
-export const numeros = texto => [...texto.matchAll(/^## D-0*(\d+)\b/gm)].map(m => Number(m[1]));
+export const numeros = texto => [...texto.matchAll(/^## D-[0]*(\d+)\b/gm)].map(m => Number(m[1]));
 /** Los números de las líneas agregadas "+## D-n" de un diff. */
-export const numerosAgregados = patch => [...(patch || '').matchAll(/^\+## D-0*(\d+)\b/gm)].map(m => Number(m[1]));
+export const numerosAgregados = patch => [...(patch || '').matchAll(/^\+## D-[0]*(\d+)\b/gm)].map(m => Number(m[1]));
 /** El siguiente libre: uno más que el más alto de todos. */
 export const siguienteLibre = (...listas) => Math.max(0, ...listas.flat()) + 1;
 
@@ -42,7 +42,7 @@ export function partir(texto) {
   const partes = texto.split(/^(?=## D-\d+ )/m);
   const decisiones = new Map();
   for (const p of partes.slice(1)) {
-    const n = Number(p.match(/^## D-0*(\d+)/)[1]);
+    const n = Number(p.match(/^## D-[0]*(\d+)/)[1]);
     if (decisiones.has(n)) return null; // un número repetido: que lo vea una persona
     decisiones.set(n, p);
   }
