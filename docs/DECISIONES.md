@@ -60,8 +60,8 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
-| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255 |
-| Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247 |
+| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-298 |
+| Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-298 |
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246 |
 | Memoria de partida | C-6 | D-25, D-150 |
@@ -5340,3 +5340,14 @@ Sin confeti.
 etapas hechas).
 **Consecuencias:** `engine.test.mjs` revisa el avance y el puntaje al rendirse;
 `tools/e2e/paint-mines/lab.mjs` se rinde a mitad de partida.
+
+## D-298 · Las píldoras de La Copa y Uno al día, abajo a la izquierda
+**Fecha:** 2026-10-12 · **Estado:** vigente · **Relación:** completa D-239 (cómo se ordena la tarjeta de media fila)
+**Decisión:** en las dos tarjetas de media fila de la portada, las píldoras (👥 jugadores y ⏱ días
+en La Copa; la racha o cómo va hoy en Uno al día) van abajo a la izquierda de la tarjeta, aparte de
+la bajada. La última fila de la grilla (`grid-template-rows: auto auto 1fr`) se lleva el alto que
+sobra y las píldoras se apoyan en su borde de abajo (`align-self: end`), así quedan a la misma
+altura en las dos tarjetas aunque una bajada sea más larga que la otra. Lo pidió el dueño: antes la
+píldora de Uno al día quedaba pegada a su bajada, a media tarjeta, y se leía como parte del texto.
+**Alternativas descartadas:** una línea o un fondo que separe las píldoras (más ruido en una
+tarjeta chica); igualar el largo de las bajadas (cambia con el idioma).
