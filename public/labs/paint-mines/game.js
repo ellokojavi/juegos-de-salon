@@ -154,8 +154,9 @@ function interruptor() {
       try { localStorage.setItem(GUARDADO, P.dificil ? '1' : '0'); } catch { /* sin almacenamiento: solo esta vez */ }
       caja.classList.toggle('on', P.dificil); caja.setAttribute('aria-checked', String(P.dificil));
       rotular();
-      // Un destello corto en toda la vista marca el cambio (pedido del dueño), y después sigue el brillo
-      relampago(P.dificil);
+      // Un destello corto en toda la vista marca el paso al modo difícil (pedido del dueño), y después sigue
+      // el brillo; volver al fácil no lleva destello
+      if (P.dificil) relampago();
       fondoDificil();
       if (P.dificil) { SFX.error(); vibrate([15, 30, 15, 30, 40]); caja.classList.remove('chispa'); void caja.offsetWidth; caja.classList.add('chispa'); parpadear(caja); }
       else { SFX.tap(); vibrate(10); }
@@ -172,10 +173,10 @@ function interruptor() {
   return caja;
 }
 
-/** El destello de toda la vista al mover la palanca: celeste al encender el modo difícil, suave al apagarlo. */
-function relampago(encendido) {
+/** El destello de toda la vista al pasar al modo difícil, blanco y celeste. */
+function relampago() {
   if (QUIETO) return;
-  const x = el('div', { class: `relampago${encendido ? ' on' : ''}`, 'aria-hidden': 'true' });
+  const x = el('div', { class: 'relampago', 'aria-hidden': 'true' });
   document.body.append(x);
   setTimeout(() => x.remove(), 600);
 }

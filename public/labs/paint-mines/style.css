@@ -107,9 +107,9 @@ body.modo-dificil {
 .placa .recorrido { position: absolute; inset: 0; pointer-events: none; }
 .placa .recorrido svg { width: 100%; height: 100%; display: block; }
 .placa .ranura { fill: none; stroke: rgba(0, 0, 0, 0.5); stroke-width: 7; stroke-linecap: round; filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.18)); }
-/* El destello de toda la vista al mover la palanca */
-.relampago { position: fixed; inset: 0; z-index: 60; pointer-events: none; background: rgba(255, 255, 255, 0.55); animation: pm-relampago 0.55s ease-out forwards; }
-.relampago.on { background: radial-gradient(circle at 50% 70%, rgba(255, 255, 255, 0.95), rgba(46, 230, 214, 0.75) 45%, rgba(46, 230, 214, 0.35)); }
+/* El destello de toda la vista al pasar al modo difícil (no al volver al fácil) */
+.relampago { position: fixed; inset: 0; z-index: 60; pointer-events: none; animation: pm-relampago 0.55s ease-out forwards;
+  background: radial-gradient(circle at 50% 70%, rgba(255, 255, 255, 0.95), rgba(46, 230, 214, 0.75) 45%, rgba(46, 230, 214, 0.35)); }
 @keyframes pm-relampago { 0% { opacity: 0; } 12% { opacity: 1; } 100% { opacity: 0; } }
 .placa .r1 { top: -10px; left: -8px; } .placa .r2 { top: 6px; right: -12px; } .placa .r3 { bottom: -8px; left: 6px; }
 /* Encendido, el rectángulo entero brilla y parpadea al azar, como una luz con mal contacto: game.js mueve
