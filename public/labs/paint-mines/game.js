@@ -1,7 +1,7 @@
 /**
  * Pintaminas — prototipo de laboratorio (D-289), inspirado en ColorSweeper (ARRKKA): un Buscaminas de
- * colores. Cada casilla es de tinta o de fondo y su número dice cuántas de sus 8 vecinas son de su
- * mismo color; al pintarlo entero aparece un dibujo. Solo en español, para probar con amigos. Sin
+ * colores. Cada casilla se pinta (de un color que cambia con cada tablero) o no, y su número dice
+ * cuántas de sus 8 vecinas son como ella; al pintarlo entero aparece un dibujo. Solo en español, para probar con amigos. Sin
  * `?seed=` es el tablero de hoy, el mismo para todos. El motor está en engine.js y los dibujos en
  * dibujos.js.
  */
@@ -13,7 +13,7 @@ import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/s
 import { formularioComentario, abrirComentario } from '../../assets/js/labs-idioma.js';
 import { fechaLocal } from '../../assets/js/uno-al-dia.js';
 import { cuentaRegresiva } from '../../assets/js/cuenta-regresiva.js';
-import { generar, estado, puntaje, tarjeta, numero, LADO, RESTA_ERROR } from './engine.js';
+import { generar, estado, puntaje, maximo, tarjeta, numero, RESTA_ERROR, PREMIO_DIFICIL } from './engine.js';
 
 trackVisit();   // el tráfico del sitio (D-208)
 
@@ -22,19 +22,22 @@ const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const COLORSWEEPER = 'https://store.steampowered.com/app/3128730/ColorSweeper/';
 const T = {
   nombre: 'Pintaminas',
-  lema: 'Pinta la grilla y descubre el dibujo escondido. Cada número cuenta cuántas de sus vecinas son de su mismo color.',
+  lema: 'Pinta la grilla y descubre el dibujo escondido.',  // la regla de los números la dice el paso 1 (U-8)
   hoy: 'El tablero de hoy es el mismo para todos.',
   como: [
-    ['🔢', 'Cada número dice cuántas de sus 8 vecinas son de su mismo color: tinta o fondo.'],
-    ['🖌️', 'Elige 🎨 Tinta o ⬜ Fondo y toca una casilla. Si aciertas, aparece su número y te da más pistas.'],
+    ['🔢', 'Cada número dice cuántas de sus 8 vecinas son como ella: pintadas o sin pintar.'],
+    ['🖌️', 'Elige «Pinta» o «No pinta» y toca una casilla. Si aciertas, aparece su número y te da más pistas.'],
     ['🧠', `Nunca hay que adivinar: todo se deduce. Cada error resta ${RESTA_ERROR}.`],
   ],
   empezar: '🖌️ Empezar', aJugar: '¡A pintar!',
-  tinta: '🎨 Tinta', fondo: '⬜ Fondo', pincel: 'Pincel',
+  // El modo difícil: un interruptor de palanca que al activarse se electrifica (pedido del dueño)
+  dificil: 'Modo difícil', dificilEstado: ['Apagado', 'Encendido'], dificilSub: 'Dos colores · puntaje ×{x}', dificilJuego: '⚡ Modo difícil ×{x}',
+  // Los pinceles (pedido del dueño): «Pinta» con el color del tablero, y «No pinta», gris como las que no se pintan
+  tinta: 'Pinta {c}', fondo: 'No pinta', pincel: 'Pincel',
   errores: ['Sin errores', '1 error', '{n} errores'], quedan: 'Faltan {n}',
-  bien: '', mal: { 1: '❌ Era tinta: −{pts}.', 0: '❌ Era fondo: −{pts}.' },
+  mal: { 1: '❌ Se pintaba de {c}: −{pts}.', 0: '❌ No se pintaba: −{pts}.' },
   fin: { perfecto: '¡Perfecto!', listo: '¡Pintado!' }, era: '¡Era {d}!',
-  desglose: ['Sin errores: 100 puntos.', ['1 error: −{pts}.', '{n} errores: −{pts}.']],
+  desglose: ['Sin errores: 100 puntos.', ['1 error: −{pts}.', '{n} errores: −{pts}.']], desglosePremio: '⚡ Modo difícil: ×{x}.',
   tiempo: 'Tiempo: {t}.',
   otraVez: '🔁 Otro tablero', deHoy: '📅 El de hoy', laboratorio: '‹ Volver al laboratorio',
   comentarAbrir: '💬 Dejar un comentario',
@@ -48,7 +51,11 @@ const vista = document.getElementById('vista');
 const pie = document.getElementById('pie');
 const params = new URLSearchParams(location.search);
 const SEMILLA_URL = (params.get('seed') || '').trim();
-const P = { semilla: '', t: null, jugadas: [], desde: 0, pincel: 1 };
+// El modo difícil viene en el link (?colors=2) o lo deja el interruptor; el celular lo recuerda
+const GUARDADO = 'juegos-de-salon:pintaminas:dificil';
+const leerDificil = () => { try { return localStorage.getItem(GUARDADO) === '1'; } catch { return false; } };
+const P = { semilla: '', t: null, jugadas: [], desde: 0, pincel: 1, dificil: params.get('colors') === '2' || (!params.has('colors') && leerDificil()) };
+const colores = () => (P.dificil ? 2 : 1);
 
 function pieComentario(pantalla) {
   pie.replaceChildren(el('button', {
@@ -67,11 +74,14 @@ const tituloJuego = () => el('h1', { class: 'titulo-pm' },
 const credito = () => el('p', { class: 'credito' }, 'Inspirado en ',
   el('a', { href: COLORSWEEPER, target: '_blank', rel: 'noopener', id: 'link-colorsweeper' }, 'ColorSweeper'), ', de ARRKKA.');
 
+/** Los colores del tablero, como variables (--p1, --p2) para las casillas y los pinceles. */
+const estiloPinturas = t => t.dibujo.pinturas.map((p, k) => `--p${k + 1}:${p.color}`).join(';');
+const claseColor = k => (k ? ` tinta p${k}` : ' fondo');
 /** Una grilla de casillas (el tablero, la portada y el final usan la misma). */
 function grilla(t, { conocidas = new Set(t.sol.keys()), numeros = true, clase = '' } = {}) {
-  return el('div', { class: `grilla ${clase}`, style: `--tinta:${t.dibujo.color}` }, ...t.sol.map((k, i) => {
+  return el('div', { class: `grilla ${clase}`, style: estiloPinturas(t) }, ...t.sol.map((k, i) => {
     const sabe = conocidas.has(i);
-    return el('span', { class: `casilla${sabe ? (k ? ' tinta' : ' fondo') : ''}`, 'data-i': i, style: `--k:${i}` }, sabe && numeros ? String(numero(t.sol, i)) : '');
+    return el('span', { class: `casilla${sabe ? claseColor(k) : ''}`, 'data-i': i, style: `--k:${i}` }, sabe && numeros ? String(numero(t.sol, i)) : '');
   }));
 }
 
@@ -83,6 +93,7 @@ function portada() {
   vista.replaceChildren(...[
     el('div', { class: 'portada' }, tituloJuego(), el('p', { class: 'lead', style: 'margin:0' }, T.lema), credito(), caja),
     el('div', { class: 'panel' }, el('ol', { class: 'pasos' }, ...T.como.map(([ico, x]) => el('li', {}, el('span', { class: 'paso-ico', 'aria-hidden': 'true' }, ico), el('span', {}, x))))),
+    interruptor(),
     SEMILLA_URL ? null : el('p', { class: 'muted center', style: 'margin:0' }, `📅 ${T.hoy}`),
     el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-empezar', onClick: () => { SFX.tap(); empezar(); } }, T.empezar),
   ].filter(Boolean));
@@ -100,12 +111,37 @@ function portada() {
   paso();
 }
 
+/**
+ * El interruptor del modo difícil: una palanca sobre una placa. Al subirla, la placa se electrifica
+ * (chispas y un brillo que titila) y el juego pasa a dos colores con el puntaje ×1.5.
+ */
+function interruptor() {
+  // Lo que dice si está encendido: la palanca sola no lo deja claro
+  const estado = el('span', { class: 'estado', 'aria-hidden': 'true' }, T.dificilEstado[+P.dificil]);
+  const caja = el('button', {
+    type: 'button', class: `interruptor${P.dificil ? ' on' : ''}`, id: 'btn-dificil', role: 'switch', 'aria-checked': String(P.dificil),
+    onClick: () => {
+      P.dificil = !P.dificil;
+      try { localStorage.setItem(GUARDADO, P.dificil ? '1' : '0'); } catch { /* sin almacenamiento: solo esta vez */ }
+      caja.classList.toggle('on', P.dificil); caja.setAttribute('aria-checked', String(P.dificil));
+      estado.textContent = T.dificilEstado[+P.dificil];
+      if (P.dificil) { SFX.error(); vibrate([15, 30, 15, 30, 40]); caja.classList.remove('chispa'); void caja.offsetWidth; caja.classList.add('chispa'); }
+      else { SFX.tap(); vibrate(10); }
+    },
+  },
+  el('span', { class: 'placa', 'aria-hidden': 'true' },
+    el('span', { class: 'rayo r1' }, '⚡'), el('span', { class: 'rayo r2' }, '⚡'), el('span', { class: 'rayo r3' }, '⚡'),
+    el('span', { class: 'palanca' }, el('span', { class: 'mango' })), el('span', { class: 'eje' })),
+  el('span', { class: 'rotulo' }, el('b', {}, `⚡ ${T.dificil}`), el('span', { class: 'muted' }, fmt(T.dificilSub, { x: PREMIO_DIFICIL })), estado));
+  return caja;
+}
+
 function empezar() {
   P.semilla = SEMILLA_URL || `dia:${fechaLocal()}`;
-  P.t = generar(P.semilla);
+  P.t = generar(P.semilla, { colores: colores() });
   P.jugadas = [];
   P.pincel = 1;
-  trackStart({ game: GAME_ID, mode: 'solo', players: 1 });
+  trackStart({ game: GAME_ID, mode: P.dificil ? 'dificil' : 'solo', players: 1 });
   // El 3, 2, 1 de La Copa (D-105): el tablero se arma con el "¡A pintar!", y el tiempo corre desde ahí
   vista.replaceChildren(); pie.replaceChildren();
   cuentaRegresiva({ titulo: '🖌️ Pintaminas', ya: T.aJugar }).then(() => { P.desde = Date.now(); jugar(); });
@@ -115,25 +151,29 @@ function jugar() {
   const { t } = P;
   const marcador = el('p', { class: 'marcador', id: 'marcador' });
   const aviso = el('p', { class: 'aviso-pm', 'aria-live': 'polite' }, '');
-  const tablero = el('div', { class: 'grilla tablero', id: 'tablero', style: `--tinta:${t.dibujo.color}` });
+  const tablero = el('div', { class: `grilla tablero${t.colores === 2 ? ' dificil' : ''}`, id: 'tablero', style: estiloPinturas(t) });
   const casillas = t.sol.map((_, i) => el('button', { type: 'button', class: 'casilla', 'data-i': i, onClick: () => tocar(i) }));
   tablero.append(...casillas);
+  // Un pincel por color, y «No pinta» al final
   const botonPincel = k => el('button', {
-    type: 'button', class: `pincel pincel--${k ? 'tinta' : 'fondo'}`, id: k ? 'btn-tinta' : 'btn-fondo',
-    style: `--tinta:${t.dibujo.color}`, onClick: () => { SFX.tap(); P.pincel = k; dibujar(); },
-  }, k ? T.tinta : T.fondo);
-  const pinceles = el('div', { class: 'pinceles', role: 'group', 'aria-label': T.pincel }, botonPincel(1), botonPincel(0));
+    type: 'button', class: `pincel ${k ? `pincel--tinta p${k}` : 'pincel--fondo'}`, id: k ? (k === 1 ? 'btn-tinta' : `btn-tinta${k}`) : 'btn-fondo', 'data-k': k,
+    onClick: () => { SFX.tap(); P.pincel = k; dibujar(); },
+  }, k ? fmt(T.tinta, { c: t.dibujo.pinturas[k - 1].nombre }) : T.fondo);
+  const pinceles = el('div', { class: `pinceles${t.colores === 2 ? ' tres' : ''}`, role: 'group', 'aria-label': T.pincel, style: estiloPinturas(t) },
+    ...[...t.dibujo.pinturas.keys()].map(k => botonPincel(k + 1)), botonPincel(0));
   const dibujar = () => {
     const e = estado(t, P.jugadas);
     casillas.forEach((b, i) => {
       const sabe = e.conocidas.has(i), k = t.sol[i];
-      b.className = 'casilla' + (sabe ? (k ? ' tinta' : ' fondo') : '') + (e.errores.has(i) ? ' error' : '');
+      b.className = 'casilla' + (sabe ? claseColor(k) : '') + (e.errores.has(i) ? ' error' : '');
       b.textContent = sabe ? String(numero(t.sol, i)) : '';
       b.disabled = sabe || e.fin;
-      b.setAttribute('aria-label', sabe ? `${k ? 'tinta' : 'fondo'}, ${numero(t.sol, i)}` : 'sin pintar');
+      b.setAttribute('aria-label', sabe ? `${k ? `pintada de ${t.dibujo.pinturas[k - 1].nombre}` : 'sin pintar'}, ${numero(t.sol, i)}` : 'por descubrir');
     });
-    pinceles.querySelectorAll('.pincel').forEach((b, k) => b.setAttribute('aria-pressed', String((1 - k) === P.pincel)));
-    marcador.textContent = `${nErrores(e.errores.size)} · ${fmt(T.quedan, { n: t.sol.length - e.conocidas.size })}`;
+    pinceles.querySelectorAll('.pincel').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.k === P.pincel)));
+    // Cada parte entera en su línea: a 320 px no se corta «Faltan 23» en dos
+    const partes = [t.colores === 2 ? fmt(T.dificilJuego, { x: PREMIO_DIFICIL }) : null, nErrores(e.errores.size), fmt(T.quedan, { n: t.sol.length - e.conocidas.size })].filter(Boolean);
+    marcador.replaceChildren(...partes.flatMap((x, j) => [j ? ' · ' : '', el('span', { class: 'parte' }, x)]));
     return e;
   };
   const tocar = i => {
@@ -144,7 +184,7 @@ function jugar() {
     const b = casillas[i];
     if (e.errores.has(i)) {
       SFX.error(); vibrate([60, 40, 60]);
-      aviso.className = 'aviso-pm mal'; aviso.textContent = fmt(T.mal[t.sol[i]], { pts: RESTA_ERROR });
+      aviso.className = 'aviso-pm mal'; aviso.textContent = fmt(T.mal[t.sol[i] ? 1 : 0], { pts: RESTA_ERROR, c: t.sol[i] ? t.dibujo.pinturas[t.sol[i] - 1].nombre : '' });
       b.classList.add('shake');
     } else {
       SFX.letterHit(); vibrate(12);
@@ -166,25 +206,34 @@ function jugar() {
   pieComentario('juego');
 }
 
+/** El link de un tablero: su semilla y, si es difícil, `colors=2`. */
+const enlace = semilla => {
+  const q = new URLSearchParams();
+  if (semilla) q.set('seed', semilla);
+  if (P.t?.colores === 2) q.set('colors', '2');
+  return q.toString() ? `?${q}` : '';
+};
+
 function resultado(e) {
   const { t } = P;
-  const s = puntaje(e), ms = Date.now() - P.desde;
-  trackFinish({ detalle: `${s}/100 · ${e.errores.size} errores · ${t.dibujo.nombre} · ${mmss(ms)}` });
+  const s = puntaje(e, { colores: t.colores }), max = maximo(t.colores), ms = Date.now() - P.desde;
+  trackFinish({ detalle: `${s}/${max}${t.colores === 2 ? ' · difícil' : ''} · ${e.errores.size} errores · ${t.dibujo.nombre} · ${mmss(ms)}` });
   SFX.win();
-  if (!QUIETO && s >= 70) confetti({ count: 160, duration: 2400 });
+  if (!QUIETO && s >= 0.7 * max) confetti({ count: 160, duration: 2400 });
   pie.replaceChildren();
   const n = e.errores.size;
   const lineas = [n === 0 ? T.desglose[0] : fmt(T.desglose[1][n === 1 ? 0 : 1], { n, pts: Math.min(100, RESTA_ERROR * n) })];
+  if (t.colores === 2) lineas.push(fmt(T.desglosePremio, { x: PREMIO_DIFICIL }));
   vista.replaceChildren(el('div', { class: 'resultado' },
     el('div', { class: 'dibujo-fin' }, grilla(t, { numeros: false, clase: 'revelada fin' })),
     el('h2', { class: 'display display--lg', style: 'margin:0' }, `${t.dibujo.emoji} ${t.dibujo.nombre}`),
     el('p', { class: 'sello-pm' }, n === 0 ? T.fin.perfecto : T.fin.listo),
-    el('div', { class: 'score-big', id: 'puntaje' }, `${s}/100`),
+    el('div', { class: 'score-big', id: 'puntaje' }, `${s}/${max}`),
     el('ul', { class: 'desglose muted' }, ...lineas.map(x => el('li', {}, x))),
     el('p', { class: 'lead', style: 'margin:0' }, fmt(T.tiempo, { t: mmss(ms) })),
-    botonResultadoSolo({ C: COMMON.es, emoji: '🖌️', juego: T.nombre, puntaje: `${s}/100`, tiempo: mmss(ms), tarjeta: tarjeta(t, e), url: `${SITIO}labs/paint-mines/${SEMILLA_URL ? `?seed=${encodeURIComponent(SEMILLA_URL)}` : ''}`, alTocar: () => SFX.tap() }),
-    el('a', { class: 'btn btn--yellow', id: 'btn-otro', href: `?seed=${Math.random().toString(36).slice(2, 8)}` }, T.otraVez),
-    SEMILLA_URL ? el('a', { class: 'btn btn--ghost btn--sm', id: 'btn-de-hoy', href: location.pathname }, T.deHoy) : null,
+    botonResultadoSolo({ C: COMMON.es, emoji: '🖌️', juego: T.nombre, puntaje: `${s}/${max}`, tiempo: mmss(ms), tarjeta: tarjeta(t, e), url: `${SITIO}labs/paint-mines/${enlace(SEMILLA_URL)}`, alTocar: () => SFX.tap() }),
+    el('a', { class: 'btn btn--yellow', id: 'btn-otro', href: enlace(Math.random().toString(36).slice(2, 8)) || '?' }, T.otraVez),
+    SEMILLA_URL ? el('a', { class: 'btn btn--ghost btn--sm', id: 'btn-de-hoy', href: location.pathname + enlace('') }, T.deHoy) : null,
     el('a', { class: 'btn btn--ghost btn--sm', href: '../' }, T.laboratorio),
     // Una línea separa lo del juego del comentario para quienes lo prueban, como en Agentes
     el('hr', { class: 'divisor' }),
