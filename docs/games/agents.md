@@ -21,7 +21,7 @@ nombre en clave de un espía. Con las pistas, encuentra a los tuyos.» Después 
 demostración que juega sola: llega una pista que se descifra letra a letra («MAR · 3»), una 🔍
 recorre las cartas y destapa a sus 3 agentes, y al final se destapa el asesino, que se parece a la
 pista (RÍO). Después, otra pista (NOCHE, CIRCO) y vuelve a empezar. Con movimiento reducido queda la
-primera, resuelta. Luego el lema, los tres pasos y Empezar.
+primera, resuelta. Luego los tres pasos y Empezar.
 
 ## Cómo se juega
 
@@ -74,7 +74,8 @@ primera, resuelta. Luego el lema, los tres pasos y Empezar.
 - `engine.js`: `pistasDelDia(n)` es el calendario: camina día a día desde el 1 de octubre de 2026 con
   una cola de vueltas barajadas (`vuelta:<k>`) y deja fuera las pistas de los últimos `SIN_REPETIR`
   (15) días; `generar` la usa para las semillas `dia:<fecha>` y elige al azar si un día no se arma.
-- `engine.js`: `generar(semilla)` elige 4 pistas que no se pisen (ninguna es palabra o tentación de
+  Una pista vuelve entre 16 y 37 días después, 25 en promedio.
+  `generar(semilla)` elige 4 pistas que no se pisen (ninguna es palabra o tentación de
   otra) y, al azar, la que lleva un agente menos; los agentes de cada una (3, o 2 la corta) que no
   sean de otra elegida; el asesino de las tentaciones, que no sea agente de ninguna, y los 3
   neutrales también de las tentaciones, de preferencia de otra pista que la del asesino. El asesino
@@ -83,7 +84,8 @@ primera, resuelta. Luego el lema, los tres pasos y Empezar.
   textos de la portada las toman de ahí.
   `estado(t, jugadas)` reconstruye la partida desde las jugadas (`{i}` o `{pasar:true}`).
 - `engine.test.mjs` revisa la lista y 300 tableros (cada pista con los agentes que dice, 11 en
-  total, y que el asesino y las neutrales tienten a la pista que dicen); `tools/e2e/agents/lab.mjs`, la partida entera.
+  total, y que el asesino y las neutrales tienten a la pista que dicen), y un año de tableros del
+  día (todos con las pistas del calendario, ninguna antes de 15 días y las 100 en el año); `tools/e2e/agents/lab.mjs`, la partida entera.
 
 ## Excepciones a los cánones
 
