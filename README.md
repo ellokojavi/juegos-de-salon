@@ -650,6 +650,7 @@ node public/panel/aggregate.test.mjs
 node public/panel/copas.test.mjs
 node public/panel/rutas.test.mjs
 node tools/agents/aprobar.test.mjs
+node tools/agents/decision.test.mjs
 node tools/agents/documentar.test.mjs
 node tools/agents/feedback.test.mjs
 node tools/agents/limpiar-copias.test.mjs
@@ -663,6 +664,7 @@ node tools/push/avisar.test.mjs
 node tools/push/calendario.test.mjs
 node tools/push/uno-al-dia.test.mjs
 node tools/push/webpush.test.mjs
+node tools/release/changelog.test.mjs
 node tools/release/version.test.mjs
 ```
 <!-- /generado -->

@@ -11,8 +11,8 @@ import { numeros, numerosAgregados, siguienteLibre, partir, armar, fusionar, fus
 
 const AQUI = dirname(fileURLToPath(import.meta.url));
 
-assert.deepEqual(numeros('## D-01 · a\n## D-299 · b\n### D-5 no\n'), [1, 299]);
-assert.deepEqual(numerosAgregados('@@\n+## D-298 · x\n ## D-297 · y\n-## D-1 · z'), [298]);
+assert.deepEqual(numeros('## D-01 · a\n## D-12 · b\n### D-5 no\n'), [1, 12]);
+assert.deepEqual(numerosAgregados('@@\n+## D-12 · x\n ## D-11 · y\n-## D-1 · z'), [12]);
 assert.equal(siguienteLibre([1, 296], [298, 297], [299]), 300);
 assert.equal(siguienteLibre([], []), 1);
 
