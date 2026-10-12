@@ -4,6 +4,8 @@
 - **Portada: las píldoras de La Copa y Uno al día, abajo a la izquierda** (D-298). Los jugadores y
   los días de La Copa, y la racha o cómo vas hoy en Uno al día, quedan al pie de cada tarjeta y a la
   misma altura en las dos, aparte del texto de arriba.
+- **Uno al día: "Jugar el de hoy" pasa a "Jugar hoy"** (D-298), en la portada, en el desafío de un
+  amigo y en los juegos que abren con el de hoy. Cabe en la píldora también en un celular angosto.
 
 ## 0.167.3 — 2026-10-12
 - **🚇 Rutas pasa a llamarse Rutas rotas** (pedido del dueño): las líneas parten cortadas y hay que
