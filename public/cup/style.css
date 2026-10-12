@@ -519,19 +519,7 @@ body.pantalla-completa #jugar-reglas .reglas[open] > summary { position: sticky;
 .jugar-head .chip { margin-left: auto; margin-right: 8px; }
 @keyframes pulse { 50% { opacity: 0.55; } }
 
-/* Cuenta regresiva antes de jugar (D-105) */
-.cuenta {
-  position: fixed; inset: 0; z-index: 50; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
-  background: rgba(20, 8, 40, 0.88); backdrop-filter: blur(4px); color: var(--ink);
-}
-.cuenta-juego { margin: 0; font-size: 1.2rem; opacity: .8; }
-.cuenta-num { font-family: var(--font-display, inherit); font-size: clamp(5rem, 30vw, 9rem); font-weight: 800; line-height: 1; color: var(--yellow, #ffd23f); text-align: center; }
-.cuenta-num.late { animation: cuenta-late .9s ease-out both; }
-.cuenta.ya .cuenta-num { font-size: clamp(3rem, 16vw, 5.5rem); }
-.cuenta.ya { animation: cuenta-fuera .9s ease-in forwards; pointer-events: none; }
-@keyframes cuenta-late { 0% { transform: scale(1.6); opacity: 0; } 25% { transform: scale(1); opacity: 1; } 100% { transform: scale(.85); opacity: .9; } }
-@keyframes cuenta-fuera { 0%, 45% { opacity: 1; } 100% { opacity: 0; } }
-@media (prefers-reduced-motion: reduce) { .cuenta-num.late { animation: none; } }
+/* La cuenta regresiva antes de jugar (D-105) está en assets/css/base.css: la comparten los juegos del laboratorio */
 
 /* Cómo se calculó el puntaje (D-106) */
 .explicacion ul { margin: 6px 0; padding-left: 20px; display: grid; gap: 4px; }

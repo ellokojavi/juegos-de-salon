@@ -548,3 +548,17 @@ body.azar-abierto { overflow: hidden; }
 .uad-hora { display: grid; gap: 8px; margin-bottom: 8px; }
 /* "Repetir el de hoy": el mismo enlace discreto de La Copa (cup/style.css), también en los juegos de grupo */
 .uad-tarjeta .link-btn { background: none; border: 0; color: var(--muted); font: 700 0.85rem var(--font-body); text-decoration: underline; cursor: pointer; min-height: 44px; margin: 8px auto 0; display: block; }
+
+/* Cuenta regresiva antes de jugar (D-105), de assets/js/cuenta-regresiva.js: La Copa y el laboratorio */
+.cuenta {
+  position: fixed; inset: 0; z-index: 50; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+  background: rgba(20, 8, 40, 0.88); backdrop-filter: blur(4px); color: var(--ink);
+}
+.cuenta-juego { margin: 0; font-size: 1.2rem; opacity: .8; }
+.cuenta-num { font-family: var(--font-display, inherit); font-size: clamp(5rem, 30vw, 9rem); font-weight: 800; line-height: 1; color: var(--yellow, #ffd23f); text-align: center; }
+.cuenta-num.late { animation: cuenta-late .9s ease-out both; }
+.cuenta.ya .cuenta-num { font-size: clamp(3rem, 16vw, 5.5rem); }
+.cuenta.ya { animation: cuenta-fuera .9s ease-in forwards; pointer-events: none; }
+@keyframes cuenta-late { 0% { transform: scale(1.6); opacity: 0; } 25% { transform: scale(1); opacity: 1; } 100% { transform: scale(.85); opacity: .9; } }
+@keyframes cuenta-fuera { 0%, 45% { opacity: 1; } 100% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .cuenta-num.late { animation: none; } }
