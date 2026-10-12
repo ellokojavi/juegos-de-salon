@@ -34,6 +34,7 @@ button.casilla:not(:disabled):active { transform: scale(0.92); }
 .grilla.fin { max-width: 200px; }
 
 .marcador { margin: 0; text-align: center; font-weight: 800; color: var(--muted); }
+.marcador .parte { white-space: nowrap; }
 .aviso-pm { margin: 0; min-height: 1.5em; text-align: center; font-weight: 800; }
 .aviso-pm.mal { color: #ff8a8a; } .aviso-pm.era { color: var(--yellow); font-size: 1.2rem; }
 /* El pincel: cada botón tiene el color que pinta (la tinta del dibujo o el gris del fondo), y el elegido se nota */
@@ -41,7 +42,7 @@ button.casilla:not(:disabled):active { transform: scale(0.92); }
 .pinceles.tres { grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
 .pinceles.tres .pincel { font-size: 1rem; padding: 0 4px; }
 .pincel { min-height: 54px; border-radius: 16px; border: 3px solid transparent; color: var(--ink);
-  font: 1.25rem var(--font-display); letter-spacing: 0.04em; cursor: pointer; opacity: 0.45; transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s; }
+  font: 1.25rem var(--font-display); letter-spacing: 0.04em; cursor: pointer; opacity: 0.65; transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s; }
 .pincel--tinta { background: var(--c); color: #160830; }
 .pincel--fondo { background: rgba(255,255,255,0.16); }
 .pincel[aria-pressed="true"] { opacity: 1; transform: translateY(-2px); border-color: #fff; box-shadow: 0 0 0 2px rgba(255,255,255,0.35), 0 6px 18px rgba(0,0,0,0.35); }
@@ -62,6 +63,9 @@ button.casilla:not(:disabled):active { transform: scale(0.92); }
 .interruptor .rotulo { display: grid; gap: 2px; }
 .interruptor .rotulo b { font: 1.25rem var(--font-display); letter-spacing: 0.05em; }
 .interruptor .rotulo .muted { font-size: 0.85rem; }
+.interruptor .estado { justify-self: start; margin-top: 4px; padding: 1px 10px; border-radius: 999px; font: 800 0.8rem var(--font-body);
+  letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--glass-border); }
+.interruptor.on .estado { color: #160830; background: #2ee6d6; border-color: #2ee6d6; }
 .placa { position: relative; width: 74px; height: 64px; border-radius: 12px; background: linear-gradient(160deg, #4a4f5c, #23262e);
   border: 2px solid #6b7180; box-shadow: inset 0 2px 4px rgba(255,255,255,0.15), inset 0 -3px 6px rgba(0,0,0,0.5); }
 .placa .eje { position: absolute; left: 50%; bottom: 12px; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%;
