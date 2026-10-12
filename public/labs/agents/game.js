@@ -21,7 +21,8 @@ const GAME_ID = 'agentes';
 const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const CODENAMES = 'https://czechgames.com/en/codenames/';
 const T = {
-  nombre: 'Agentes', lema: 'El juego te da una pista; tú encuentras a tus agentes entre 15 palabras.',
+  nombre: 'Agentes', // El cuento de Codenames en una línea: sin él, «agente» no se entiende (pedido del dueño)
+  lema: 'Cada palabra es el nombre en clave de un espía. Con las pistas, encuentra a los tuyos.',
   hoy: 'El tablero de hoy es el mismo para todos.',
   como: [
     ['🕵️', `Toca las palabras que van con la pista: «MAR · 3» quiere decir 3. Llegan ${CUANTAS} pistas, de a una.`],
@@ -95,7 +96,7 @@ function portada() {
   vista.replaceChildren(...[
     el('div', { class: 'portada' },
       el('div', { class: 'titulo-sello' }, tituloJuego(), el('span', { class: 'sello sello--rojo sello--titulo' }, T.clasificado)),
-      credito(), demo, el('p', { class: 'lead', style: 'margin:0' }, T.lema)),
+      el('p', { class: 'lead', style: 'margin:0' }, T.lema), credito(), demo),
     el('div', { class: 'panel' }, el('ol', { class: 'pasos' }, ...T.como.map(([ico, x]) => el('li', {}, el('span', { class: 'paso-ico', 'aria-hidden': 'true' }, ico), el('span', {}, x))))),
     SEMILLA_URL ? null : el('p', { class: 'muted center', style: 'margin:0' }, `📅 ${T.hoy}`),
     el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-empezar', onClick: () => { SFX.tap(); empezar(); } }, T.empezar),

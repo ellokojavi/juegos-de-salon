@@ -5139,3 +5139,25 @@ difícil, pero las neutrales no tentaban); 2 asesinos (castiga demasiado: −80)
 **Consecuencias:** `engine.test.mjs` revisa en 300 tableros que cada pista tenga los agentes que dice,
 que sumen 11, y que el asesino y las neutrales tienten a la pista que dicen; `tools/e2e/agents/lab.mjs`
 juega una partida de 4 pistas. La tarjeta y el video de `marketing/agentes-tarjeta/` dicen 15 palabras.
+
+## D-288 · Agentes: el cuento de los espías en la portada, 100 pistas y un calendario sin repeticiones
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** amplía D-286 y D-287
+**Contexto:** el dueño preguntó por qué cada carta es un «agente»: no se entendía. En *Codenames*
+cada palabra es el nombre en clave de un espía, pero el prototipo nunca lo contaba. Además pidió
+variedad para quien juega todos los días: con 40 pistas y 4 al azar por día, una misma pista salía
+hasta 7 veces en 30 días.
+**Decisión:** la portada cuenta el juego en una línea, bajo el título: «Cada palabra es el nombre en
+clave de un espía. Con las pistas, encuentra a los tuyos.» Las pistas pasan de 40 a **100** (60
+nuevas, con 10 palabras y 3 tentaciones cada una). El tablero del día sale de un **calendario**
+(`pistasDelDia`): recorre todas las pistas en vueltas barajadas, día a día desde el 1 de octubre de
+2026, y una pista no vuelve antes de **15 días**. Es determinista, así que el tablero de hoy sigue
+siendo el mismo para todos. «Otro tablero» sigue al azar.
+**Por qué:** el cuento convierte «agente», «asesino» y el sello de Clasificado en algo que se entiende
+sin conocer *Codenames*. Con 100 pistas y el calendario, una pista vuelve como mucho cada 16 a 25
+días, y como cada una tiene más palabras de las que usa el tablero, tampoco vuelven los mismos agentes.
+**Alternativas descartadas:** hablar solo de «palabras» y dejar el tema en el título (el asesino
+quedaba sin sentido); cambiar el nombre del juego; ventanas por ronda fija de 25 días (en el cambio de
+ronda una pista podía volver al día siguiente).
+**Consecuencias:** cambia el tablero de los días ya jugados (es un prototipo). `engine.test.mjs`
+revisa un año de tableros del día: ninguno al azar, todos con las pistas del calendario, ninguna pista
+antes de 15 días, y que en el año salgan las 100.
