@@ -44,6 +44,34 @@
         }
       ],
       "mecanismo": null
+    },
+    {
+      "clave": "e2e-intermitente",
+      "que": "main en rojo por un guion que pasó en la corrida siguiente sin tocar su juego (5 de 7 rojos del 4 al 12/10: torneo:laboratorio, instalar, hangman/idiomas, uno-al-dia, generala/idiomas)",
+      "vistos": [
+        {
+          "fecha": "2026-10-12",
+          "que": "main en rojo por un guion que pasó en la corrida siguiente sin tocar su juego (5 de 7 rojos del 4 al 12/10: torneo:laboratorio, instalar, hangman/idiomas, uno-al-dia, generala/idiomas)",
+          "commit": "5c8ba02"
+        }
+      ],
+      "mecanismo": {
+        "fecha": "2026-10-12",
+        "que": "e2e.yml repite una vez el guion que falla y deja un aviso Intermitente (D-299)",
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/375"
+      }
+    },
+    {
+      "clave": "conflicto-changelog-decision",
+      "que": "PR que tuvo que traer main y resolver a mano CHANGELOG (64) o DECISIONES (52) en 89 sincronizaciones del 3 al 12/10; 10 renumeraron D-n o versión; hoy #372 y #374 traen los dos D-298",
+      "vistos": [
+        {
+          "fecha": "2026-10-12",
+          "que": "PR que tuvo que traer main y resolver a mano CHANGELOG (64) o DECISIONES (52) en 89 sincronizaciones del 3 al 12/10; 10 renumeraron D-n o versión; hoy #372 y #374 traen los dos D-298",
+          "commit": null
+        }
+      ],
+      "mecanismo": null
     }
   ],
   "mecanismos": [
@@ -58,6 +86,12 @@
       "clave": "decision-repetida-o-desordenada",
       "que": "documentar.test.mjs revisa docs/DECISIONES.md del repo en cada PR",
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/332"
+    },
+    {
+      "fecha": "2026-10-12",
+      "clave": "e2e-intermitente",
+      "que": "e2e.yml repite una vez el guion que falla y deja un aviso Intermitente (D-299)",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/375"
     }
   ],
   "colaHecha": [],
