@@ -24,6 +24,23 @@ export const DIBUJOS = [
   { nombre: 'Una taza', emoji: '☕', filas: ['.......', '#####..', '######.', '#####.#', '######.', '#####..', '.###...'] },
 ];
 
+/**
+ * Los del modo difícil (D-291): dos colores, `#` el primero y `+` el segundo. También irregulares, con
+ * al menos 4 casillas de cada color.
+ */
+export const DIBUJOS2 = [
+  { nombre: 'Una frutilla', emoji: '🍓', filas: ['...+...', '.+++.+.', '.#####.', '#######', '.######', '..###..', '...#...'] },
+  { nombre: 'Un pez', emoji: '🐠', filas: ['..++...', '.###..+', '#.####+', '######+', '.###..+', '..++...', '.......'] },
+  { nombre: 'Unas cerezas', emoji: '🍒', filas: ['.....+.', '....++.', '...+.+.', '..+..+.', '###.###', '###.###', '.#...#.'] },
+  { nombre: 'Un helado', emoji: '🍦', filas: ['..##...', '.####..', '######.', '.+++++.', '..+++..', '..++...', '...+...'] },
+  { nombre: 'Un árbol', emoji: '🌳', filas: ['..###..', '.#####.', '######.', '.####..', '...+...', '...+...', '..+++..'] },
+  { nombre: 'Un cohete', emoji: '🚀', filas: ['.....##', '....###', '...###.', '.####..', '..##...', '.++#...', '++.....'] },
+  { nombre: 'Una casa', emoji: '🏠', filas: ['.....#.', '..+++#.', '.+++++.', '+++++++', '.#####.', '.##.##.', '.##.##.'] },
+  { nombre: 'Un pato', emoji: '🦆', filas: ['...##..', '..###++', '...##..', '.#####.', '#######', '.#####.', '..+.+..'] },
+  { nombre: 'Un lápiz', emoji: '✏️', filas: ['.....##', '....###', '...###.', '..###..', '.###...', '++.....', '++.....'] },
+  { nombre: 'Una zanahoria', emoji: '🥕', filas: ['....+.+', '....++.', '...##..', '..###..', '..##...', '.##....', '#......'] },
+];
+
 /** Los colores con que se pinta: cada tablero toma uno al azar. `cuadro` es su emoji para compartir. */
 export const PALETA = [
   { nombre: 'azul', color: '#4da3ff', cuadro: '🟦' },
