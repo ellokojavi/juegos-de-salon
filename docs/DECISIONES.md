@@ -71,7 +71,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251 |
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213 |
-| Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216 |
+| Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216, D-299 |
 | La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285 |
 | Agentes (usabilidad, documentación, procesos) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249 |
@@ -3211,7 +3211,7 @@ revisión de usabilidad de cada PR jugaba la copa entera aunque el PR fuera de o
 poder correr solas, sin depender del estado que dejó la anterior.
 
 ## D-205 · La versión se estampa al publicar, no en git
-**Fecha:** 2026-10-04 · **Estado:** vigente · **Relación:** reemplaza el estampado a mano de C-11; corrige D-22, D-51, D-72, D-181 y D-192; amplía D-193 y D-204
+**Fecha:** 2026-10-04 · **Estado:** corregida por D-299 · **Relación:** reemplaza el estampado a mano de C-11; corrige D-22, D-51, D-72, D-181 y D-192; amplía D-193 y D-204
 **Decisión:** Las páginas de `public/` en git ya no llevan versión: ni import map, ni `?v=` en las
 hojas de estilo y las imágenes de las tarjetas, y el pie del menú dice `v0.0.0`.
 - **El número es la primera entrada de `CHANGELOG.md`** (`## X.Y.Z — fecha`), que se escribe al
@@ -5341,3 +5341,31 @@ Sin confeti.
 etapas hechas).
 **Consecuencias:** `engine.test.mjs` revisa el avance y el puntaje al rendirse;
 `tools/e2e/paint-mines/lab.mjs` se rinde a mitad de partida.
+
+## D-299 · La punta a punta no corre en lo que no llega al navegador, y un guion que falla se repite una vez
+**Fecha:** 2026-10-12 · **Estado:** vigente · **Relación:** corrige D-205; amplía D-193
+**Contexto:** el dueño pidió que publicar sea eficaz, sin errores y con el menor cómputo posible.
+Medido en GitHub del 2 al 12 de octubre: 712 corridas de `Punta a punta` (58 jobs cada una cuando
+corre entera), unos 56.700 minutos de runner. De los 143 PR fusionados desde el 5 de octubre, 9
+corrieron los 58 guiones sin tocar nada que un guion mire (`tools/agents/`, workflows, reglas de
+Firebase). Y de las 7 veces que `main` salió en rojo, 5 volvieron a verde en la corrida siguiente
+sin que nadie tocara ese juego: cada una abrió un issue "main en rojo" y se investigó a mano.
+**Decisión:**
+- **`tools/e2e/cambios.mjs` (`sinNavegador`) salta también** `tools/agents/`, `tools/firebase/`,
+  `firebase/` (los guiones de CI no abren salas, D-193) y `.github/` salvo `e2e.yml`. El resto del
+  taller (`tools/e2e/`, `tools/release/`, `tools/push/`, `tools/generators/`) sigue corriendo todo:
+  ante la duda, se corren.
+- **Un guion que falla se repite una vez en su job** (`e2e.yml`). Si pasa al segundo intento, el job
+  queda en verde con un aviso ⚠️ "Intermitente" que nombra el guion, y las capturas del primer
+  intento quedan como artefacto. Si falla dos veces, el job sale en rojo, como antes.
+**Por qué:** un PR del taller esperaba ~8 min y ocupaba 58 de los 20 runners que GitHub da a la vez,
+retrasando a los PR que sí tocan el sitio. Un rojo intermitente en un PR obligaba a repetir la
+corrida entera (58 jobs) o a empujar un commit vacío; en `main` abría un issue falso. Repetir solo el
+guion que falló cuesta su minuto y medio.
+**Alternativas descartadas:** repetir hasta tres veces (esconde lo que falla seguido); repetir la
+corrida entera desde un workflow (58 jobs por un guion); elegir los guiones por juego según el diff
+(de 195 PR desde el 3 de octubre, solo 11 tocaban juegos aislados sin nada compartido: queda como
+opción para el dueño, con sus riesgos).
+**Consecuencias:** un aviso "Intermitente" es un guion para arreglar: el agente de procesos los cuenta
+como patrón (`e2e-intermitente-<guion>`). `cambios.test.mjs` fija qué se salta y qué no.
+
