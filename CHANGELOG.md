@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.165.1 — 2026-10-12
+- **🚇 Rutas (laboratorio):** mientras se juega no se muestra el título, y Reiniciar y Rendirse van en
+  una fila, así se ven sin bajar en un celular chico. La tarjeta para compartir muestra también las
+  etapas que faltaron.
+
 ## 0.165.0 — 2026-10-12
 - **🚇 Rutas (laboratorio): reloj y puntaje por capas** (D-295). Siete minutos para las cinco etapas.
   Cada etapa completada vale 17 y, encima, hasta 10 por rapidez y 5 por giros: completar más siempre
