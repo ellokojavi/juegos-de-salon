@@ -161,7 +161,7 @@
     },
     {
       "id": "agentes-tarjeta",
-      "tipo": "imagen",
+      "tipo": "imagen y video",
       "titulo": "Tarjeta de Agentes (invitación a probarlo)",
       "carpeta": "marketing/agentes-tarjeta/",
       "memoria": "marketing/agentes-tarjeta/README.md",
@@ -176,10 +176,26 @@
           "ancho": 1200,
           "alto": 630,
           "uso": "WhatsApp y vista previa del link de /labs/agents/"
+        },
+        {
+          "ruta": "marketing/agentes-tarjeta/output/agentes-6s.mp4",
+          "formato": "1.91:1",
+          "ancho": 1200,
+          "alto": 630,
+          "segundos": 6,
+          "uso": "WhatsApp, estados"
+        },
+        {
+          "ruta": "marketing/agentes-tarjeta/output/agentes-6s.gif",
+          "formato": "1.91:1",
+          "ancho": 600,
+          "alto": 315,
+          "segundos": 6,
+          "uso": "GIF para WhatsApp"
         }
       ],
-      "fuente": "marketing/agentes-tarjeta/tarjeta.html",
-      "construir": "marketing/agentes-tarjeta/construir.mjs",
+      "fuente": "marketing/agentes-tarjeta/tarjeta.html y animada.html",
+      "construir": "marketing/agentes-tarjeta/construir.mjs y construir-video.mjs",
       "juegos": [
         "agentes"
       ],
