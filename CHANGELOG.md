@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.160.1 — 2026-10-11
+- **🕵️ Agentes (laboratorio):** al final, una línea separa el resultado del formulario de comentarios.
+
 ## 0.160.0 — 2026-10-11
 - **🕵️ Agentes (laboratorio): se entiende y varía** (D-288). La portada cuenta el juego en una
   línea: «Cada palabra es el nombre en clave de un espía. Con las pistas, encuentra a los tuyos.»
