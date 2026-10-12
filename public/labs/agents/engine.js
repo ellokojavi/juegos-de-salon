@@ -31,10 +31,45 @@ const barajar = (xs, r) => { const a = xs.slice(); for (let i = a.length - 1; i 
  * parecen a una (salen de sus tentaciones, `casi`) pero no van con ninguna: así las tres cartas que
  * no son tuyas parecen de alguna pista. Las neutrales llevan también `tienta`.
  */
+/** Si en el grupo hay una pista que es palabra (o tentación) de otra: no van juntas. */
+const sePisan = grupo => {
+  const si = new Set(grupo.flatMap(x => x.si)), casi = new Set(grupo.flatMap(x => x.casi));
+  return grupo.some(x => si.has(x.pista) || casi.has(x.pista));
+};
+
+/**
+ * El calendario (D-288): los tableros del día recorren todas las pistas en vueltas barajadas, y una
+ * pista no vuelve antes de SIN_REPETIR días. Se calcula día a día desde ANCLA (lo que pasó antes
+ * decide lo que queda), así que es igual en todos los celulares. `null` si un día no se puede armar,
+ * o es anterior a ANCLA: entonces se elige al azar, como «Otro tablero».
+ */
+export const SIN_REPETIR = 15;
+const ANCLA = Math.floor(Date.UTC(2026, 9, 1) / 864e5);
+export function pistasDelDia(n) {
+  if (n < ANCLA) return null;
+  let cola = [], vuelta = 0, grupo = null;
+  const recientes = [];
+  for (let d = ANCLA; d <= n; d++) {
+    if (cola.length < PISTAS.length / 2) cola = cola.concat(barajar(PISTAS, azar(`vuelta:${vuelta++}`)).filter(x => !cola.includes(x)));
+    const bloqueadas = new Set(recientes.flat());
+    grupo = [];
+    for (const x of cola) { if (grupo.length === CUANTAS) break; if (!bloqueadas.has(x) && !sePisan([...grupo, x])) grupo.push(x); }
+    if (grupo.length < CUANTAS) grupo = null; else cola = cola.filter(x => !grupo.includes(x));
+    recientes.push(grupo || []);
+    if (recientes.length > SIN_REPETIR) recientes.shift();
+  }
+  return grupo;
+}
+const DIA = /^dia:(\d{4})-(\d{2})-(\d{2})$/;
+/** El número de día de una semilla `dia:AAAA-MM-DD` (días desde 1970), o null. */
+export const numeroDeDia = semilla => { const m = DIA.exec(String(semilla)); return m ? Math.floor(Date.UTC(+m[1], +m[2] - 1, +m[3]) / 864e5) : null; };
+
 export function generar(semilla) {
   const r = azar(String(semilla));
+  const dia = numeroDeDia(semilla), fijas = dia === null ? null : pistasDelDia(dia);
   for (let intento = 0; intento < 500; intento++) {
-    const elegidas = barajar(PISTAS, r).slice(0, CUANTAS);
+    // El tablero del día usa las pistas del calendario; si con ellas no se arma (raro), se eligen al azar
+    const elegidas = fijas && intento < 60 ? fijas : barajar(PISTAS, r).slice(0, CUANTAS);
     const si = new Set(elegidas.flatMap(x => x.si)), casi = new Set(elegidas.flatMap(x => x.casi));
     if (elegidas.some(x => si.has(x.pista) || casi.has(x.pista))) continue;
     // Una pista nunca está en su propio tablero (PLAYA es pista y también va con MAR)

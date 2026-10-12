@@ -54,7 +54,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284, D-286 |
 | Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184 |
 | Mazos de cartas con fecha | `docs/games/timeline.md` | D-37, D-277, D-278 |
-| 🕵️ Agentes, el juego del laboratorio (tablero, pistas, trampas) | `docs/games/agents.md` | D-286, D-287 |
+| 🕵️ Agentes, el juego del laboratorio (tablero, pistas, trampas) | `docs/games/agents.md` | D-286, D-287, D-288 |
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
@@ -5088,7 +5088,7 @@ leer, a propósito); mostrar solo el aviso genérico de permiso (obligaba a busc
 escribir el PIN).
 
 ## D-286 · Agentes: un Codenames mini, para uno solo, en Proyectos activos del laboratorio
-**Fecha:** 2026-10-11 · **Estado:** corregida por D-287 · **Relación:** amplía D-280 (el primer proyecto activo del laboratorio)
+**Fecha:** 2026-10-11 · **Estado:** corregida por D-287 y D-288 · **Relación:** amplía D-280 (el primer proyecto activo del laboratorio)
 **Contexto:** el dueño pidió investigar *Codenames* (Vlaada Chvátil, Czech Games Edition, 2015) y
 ver si una versión mini podía entrar a La Copa. El original es de equipos: un jefe de espías da una
 palabra y un número, y su equipo busca a sus agentes entre 25 palabras sin tocar al asesino. En La
@@ -5139,3 +5139,25 @@ difícil, pero las neutrales no tentaban); 2 asesinos (castiga demasiado: −80)
 **Consecuencias:** `engine.test.mjs` revisa en 300 tableros que cada pista tenga los agentes que dice,
 que sumen 11, y que el asesino y las neutrales tienten a la pista que dicen; `tools/e2e/agents/lab.mjs`
 juega una partida de 4 pistas. La tarjeta y el video de `marketing/agentes-tarjeta/` dicen 15 palabras.
+
+## D-288 · Agentes: el cuento de los espías en la portada, 100 pistas y un calendario sin repeticiones
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** amplía D-286 y D-287
+**Contexto:** el dueño preguntó por qué cada carta es un «agente»: no se entendía. En *Codenames*
+cada palabra es el nombre en clave de un espía, pero el prototipo nunca lo contaba. Además pidió
+variedad para quien juega todos los días: con 40 pistas y 4 al azar por día, una misma pista salía
+hasta 7 veces en 30 días.
+**Decisión:** la portada cuenta el juego en una línea, bajo el título: «Cada palabra es el nombre en
+clave de un espía. Con las pistas, encuentra a los tuyos.» Las pistas pasan de 40 a **100** (60
+nuevas, con 10 palabras y 3 tentaciones cada una). El tablero del día sale de un **calendario**
+(`pistasDelDia`): recorre todas las pistas en vueltas barajadas, día a día desde el 1 de octubre de
+2026, y una pista no vuelve antes de **15 días**. Es determinista, así que el tablero de hoy sigue
+siendo el mismo para todos. «Otro tablero» sigue al azar.
+**Por qué:** el cuento convierte «agente», «asesino» y el sello de Clasificado en algo que se entiende
+sin conocer *Codenames*. Con 100 pistas y el calendario, una pista vuelve entre 16 y 37 días después
+(25 en promedio), y como cada una tiene más palabras de las que usa el tablero, tampoco vuelven los mismos agentes.
+**Alternativas descartadas:** hablar solo de «palabras» y dejar el tema en el título (el asesino
+quedaba sin sentido); cambiar el nombre del juego; ventanas por ronda fija de 25 días (en el cambio de
+ronda una pista podía volver al día siguiente).
+**Consecuencias:** el crédito a *Codenames* sale del resultado (pedido del dueño: repetido ahí sobraba) y queda en la portada y en el laboratorio, que es donde se decide jugar. Cambia el tablero de los días ya jugados (es un prototipo). `engine.test.mjs`
+revisa un año de tableros del día: ninguno al azar, todos con las pistas del calendario, ninguna pista
+antes de 15 días, y que en el año salgan las 100.
