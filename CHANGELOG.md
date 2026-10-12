@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.161.0 — 2026-10-11
+- **🖌️ Laboratorio: Pintaminas, un Buscaminas de colores** (D-289), el segundo proyecto activo.
+  Cada número dice cuántas de sus 8 vecinas son de su mismo color: tinta o fondo. Pinta la grilla
+  sin adivinar y aparece un dibujo. El tablero de cada día es el mismo para todos. Inspirado en
+  ColorSweeper, con el link en la portada.
+
 ## 0.160.1 — 2026-10-11
 - **🕵️ Agentes (laboratorio):** al final, una línea separa el resultado del formulario de comentarios.
 
