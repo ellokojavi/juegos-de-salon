@@ -55,7 +55,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184 |
 | Mazos de cartas con fecha | `docs/games/timeline.md` | D-37, D-277, D-278 |
 | 🕵️ Agentes, el juego del laboratorio (tablero, pistas, trampas) | `docs/games/agents.md` | D-286, D-287, D-288 |
-| 🖌️ Pintaminas, el Buscaminas de colores del laboratorio (dibujos, tablero sin adivinar) | `docs/games/paint-mines.md` | D-289 |
+| 🖌️ Pintaminas, el Buscaminas de colores del laboratorio (dibujos, pinceles, tablero sin adivinar, modo difícil) | `docs/games/paint-mines.md` | D-289, D-290, D-291 |
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
@@ -5164,7 +5164,7 @@ revisa un año de tableros del día: ninguno al azar, todos con las pistas del c
 antes de 15 días, y que en el año salgan las 100.
 
 ## D-289 · Pintaminas: un Buscaminas de colores en Proyectos activos del laboratorio
-**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** amplía D-280 (un segundo proyecto activo)
+**Fecha:** 2026-10-11 · **Estado:** corregida por D-290 · **Relación:** amplía D-280 (un segundo proyecto activo); ampliada por D-291 (el modo difícil)
 **Contexto:** el dueño pidió investigar *ColorSweeper* (ARRKKA, publicado por Com2uS en 2026): un
 Buscaminas en que cada casilla tiene un color y su número dice cuántas de sus 8 vecinas son de su
 mismo color, con puzzles que se resuelven sin adivinar y, al terminar, un dibujo (como los
@@ -5189,3 +5189,40 @@ o Mosaico (lo eligió el dueño).
 resuelven sin adivinar, sin dadas de sobra); `tools/e2e/paint-mines/lab.mjs` juega una partida
 entera. Si gusta, el paso siguiente es La Copa (junto a Tango, que también es de dos colores: cuidar
 que no se sientan repetidos).
+
+## D-290 · Pintaminas: «Pinta» y «No pinta», un color al azar por tablero y dibujos irregulares
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** corrige D-289
+**Contexto:** el dueño probó Pintaminas en el teléfono: «tinta o fondo» era un mal nombre, y los
+dibujos simétricos (corazón, estrella, árbol…) se adivinaban por espejo, sin deducir.
+**Decisión:** los pinceles se llaman **«Pinta {color}»**, con un color que cada tablero toma al azar
+de `PALETA` (azul, rojo, verde, amarillo, naranjo, morado), y **«No pinta»**, gris como las casillas
+que no se pintan. El error lo dice así: «❌ Se pintaba de morado: −15.» o «❌ No se pintaba: −15.».
+Los 17 dibujos pasan a ser **irregulares** (un pez, una bota, un rayo, un perro, un cohete, una
+guitarra…), y el test rechaza uno simétrico de lado a lado o de arriba abajo.
+**Por qué:** «pintar o no» es lo que hace el jugador, y el color al azar hace que cada tablero se vea
+distinto aunque repita dibujo. Un dibujo irregular obliga a deducir cada casilla.
+**Alternativas descartadas:** un color fijo por dibujo (el corazón siempre rojo: delataba el dibujo
+por el color); seguir llamándolos tinta y fondo.
+**Consecuencias:** `engine.test.mjs` revisa la paleta y la asimetría de cada dibujo.
+
+## D-291 · Pintaminas: un modo difícil de dos colores, con un interruptor eléctrico y premio ×1.5
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** amplía D-289
+**Contexto:** el dueño preguntó qué pasaría con un segundo color. Con dos colores, un número que se
+cumple solo dice que las demás vecinas *no son de ese color* (pueden ser del otro o sin pintar): hay
+que cruzar más números. Pidió probarlo como modo difícil, que se active con un interruptor eléctrico
+de palanca que se electrifique al activarse, y que pague 1,5 veces el puntaje.
+**Decisión:** en la portada, un **interruptor de palanca** («⚡ Modo difícil · Dos colores · puntaje
+×1.5»): una placa de metal con una palanca de mango rojo; al subirla, la placa titila en celeste y
+amarillo y saltan chispas ⚡, con un zumbido y una vibración. Encendido, el tablero usa **dos colores**
+(dos de `PALETA` al azar) y 10 dibujos propios de dos colores (`DIBUJOS2`: una frutilla, unas cerezas,
+un helado…), con **tres pinceles** («Pinta rojo», «Pinta verde», «No pinta») y un borde eléctrico.
+El puntaje se multiplica por **1,5** (`PREMIO_DIFICIL`): sin errores son 150. El link lo lleva
+(`?colors=2`), «Otro tablero» lo conserva y el celular recuerda la posición del interruptor.
+**Por qué:** el modo normal queda para aprender; el difícil, para quien ya lo domina, con un premio
+que lo hace valer. El solucionador pasa a llevar, por casilla, los colores que todavía puede tener:
+el mismo razonamiento sirve para uno o dos colores, y el generador sigue asegurando que nunca se adivina.
+**Alternativas descartadas:** dos colores siempre (abruma al que recién aprende); un premio fijo en
+puntos (×1.5 escala con lo bien que se juega).
+**Consecuencias:** `engine.test.mjs` revisa los dibujos de dos colores (irregulares, con al menos 4
+casillas de cada color) y 300 tableros difíciles que se resuelven sin adivinar (en promedio con 5
+dadas); `tools/e2e/paint-mines/lab.mjs` enciende y apaga el interruptor y juega una partida difícil.
