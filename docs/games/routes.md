@@ -40,9 +40,10 @@ la cuenta 3, 2, 1 compartida (`assets/js/cuenta-regresiva.js`).
   el mínimo!»), el punto de la etapa se pinta y llega la siguiente; después de la quinta, el resultado.
 - **Reloj** (D-295): 7 minutos para las cinco etapas, arriba junto al marcador («⏱ 6:42»), en rojo el
   último minuto. Al acabarse, se acaba la partida y cuentan las etapas hechas.
-- **🏳️ Rendirse:** junto a Reiniciar, en la misma fila (mientras se juega no se muestra el título, así
-  los dos se ven sin bajar en un celular chico, #360); pide un segundo toque («Toca de nuevo para rendirte») y cuenta las
-  etapas hechas.
+- **Bajo el tablero, tres botones iguales en una fila**, en este orden: **↩ Deshacer** (deshace el último
+  giro, que no cuenta; se apaga sin giros), **↺ Reiniciar** y **🏳️ Rendirse** (pide un segundo toque:
+  «🏳️ ¿Seguro?», y cuenta las etapas hechas). Mientras se juega no se muestra el título, así los tres se
+  ven sin bajar en un celular chico (#360).
 - **Puntaje por capas** (D-295): 17 por etapa completada (85 las cinco) + hasta 10 por rapidez (solo
   completando las cinco: 10 en un minuto o menos, 0 al acabarse el reloj) + hasta 5 por giros (5 en el
   mínimo, 0 con el doble o más). Completar más siempre gana. Con 70 o más, confeti.
