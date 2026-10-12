@@ -98,9 +98,14 @@ button.num:not(:disabled):active { transform: scale(0.9); }
 .tablero-ne.chico .num { font-size: 0.95rem; border-radius: 6px; border-width: 1.5px; }
 .tablero-ne.chico.entra { animation: ne-entra 0.4s ease-out; }
 @keyframes ne-entra { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: none; } }
-.demo { min-height: 64px; }
-.demo-rotulo { margin: 0; min-height: 1.6em; font: 1.3rem var(--font-display); letter-spacing: 0.04em; color: var(--yellow); opacity: 0; transition: opacity 0.3s; }
-.demo-rotulo.ve { opacity: 1; animation: pop 0.5s ease-out; }
+/* El alto de un tablero de 2 filas, fijo: al irse las filas no se encoge, y el «¡Limpio!» queda al
+   centro del espacio que dejó el tablero, grande, en su lugar */
+.demo { position: relative; width: 100%; max-width: 260px; aspect-ratio: 260 / 56; margin: 0 auto; }
+.demo-rotulo { position: absolute; inset: 0; margin: 0; display: grid; place-items: center; pointer-events: none;
+  font: 2.4rem var(--font-display); letter-spacing: 0.05em; color: var(--yellow); text-shadow: 0 3px 0 rgba(0,0,0,0.35), 0 0 18px rgba(255, 210, 63, 0.45);
+  opacity: 0; transition: opacity 0.3s; }
+.demo-rotulo.ve { opacity: 1; animation: ne-limpio 0.55s cubic-bezier(.3,1.6,.6,1); }
+@keyframes ne-limpio { from { transform: scale(0.3); opacity: 0; } to { transform: none; opacity: 1; } }
 
 .resultado { text-align: center; display: grid; gap: 10px; }
 .resultado .score-big { font: 900 clamp(2.6rem, 14vw, 3.6rem)/1.1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35); }
