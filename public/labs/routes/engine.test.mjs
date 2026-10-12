@@ -2,7 +2,7 @@
 // mínimo es exacto (se compara con una búsqueda simple) y cada tablero es justo: no viene resuelto y su
 // mínimo está entre 3 y los giros con que se desordenó.
 import assert from 'node:assert/strict';
-import { generar, girar, resuelto, minimo, bordesUnidos, puntaje, RECTANGULOS, LADO, RESTA_GIRO } from './engine.js';
+import { generar, girar, resuelto, minimo, bordesUnidos, puntaje, RECTANGULOS, LADO, RESTA_GIRO, TODO } from './engine.js';
 
 assert.equal(RECTANGULOS.length, 36);
 const META = Array.from({ length: 9 }, (_, p) => ({ p, v: 0 }));
@@ -40,6 +40,20 @@ for (let n = 0; n < 60; n++) {
   assert.ok(t.minimo >= 3 && t.minimo <= 5, `${n}: mínimo ${t.minimo}`);
   assert.ok(resuelto(t.piezas, [...t.revuelta].reverse().reduce(girar, t.inicio)), `${n}: deshacer la revuelta no lo resuelve`);
   suma += t.minimo;
+}
+// El tablero entero dado vuelta también une todas las líneas: cuenta como solución
+{ const t = generar('prueba-0'); assert.ok(resuelto(t.piezas, girar(META, TODO))); }
+// El mínimo es exacto: con un giro menos no se llega a ninguna solución (búsqueda simple, en 12 tableros)
+for (let n = 0; n < 12; n++) {
+  const t = generar(`exacto-${n}`);
+  let frente = [t.inicio]; const vistos = new Set([clave(t.inicio)]);
+  for (let d = 0; d < t.minimo; d++) {
+    assert.ok(!frente.some(e => resuelto(t.piezas, e)), `exacto-${n}: se resuelve en ${d}, pero el mínimo dice ${t.minimo}`);
+    if (d === t.minimo - 1) break;
+    const sig = [];
+    for (const e of frente) for (const r of RECTANGULOS) { const x = girar(e, r), k = clave(x); if (!vistos.has(k)) { vistos.add(k); sig.push(x); } }
+    frente = sig;
+  }
 }
 console.log(`  (mínimo promedio: ${(suma / 60).toFixed(1)} giros)`);
 assert.equal(puntaje(4, 4), 100);
