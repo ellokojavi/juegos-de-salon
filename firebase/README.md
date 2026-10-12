@@ -182,12 +182,13 @@ El dueño (su UID) puede escribir y borrar en todas estas ramas, para moderar.
 
 El botón 🐞 de La Copa (D-101, D-104), el del laboratorio de un idioma (D-191) y el "¿Qué te
 pareció?" del final de El caso del laboratorio (D-265) escriben en `feedback/<id>` **por REST y sin cuenta**:
-`texto` (hasta 1000 caracteres), `nombre` opcional, `contexto` (JSON, hasta 500), `v` y `at` del
+`texto` (hasta 1000 caracteres), `nombre` opcional, `tester` (la etiqueta de la llave del laboratorio
+con que se entró, hasta 24; nunca la llave, D-306), `contexto` (JSON, hasta 500), `v` y `at` del
 servidor. Se escribe una sola vez y **se lee sin cuenta**: `node tools/firebase/reportes.mjs` los muestra
 (`--dias 3` para los recientes). No llevan PIN ni datos de la cuenta.
-Cada hora, `.github/workflows/feedback.yml` (`tools/agents/feedback.mjs`) sube los nuevos como
-issues de GitHub con la etiqueta `feedback`, sin el nombre ni el navegador, y el agente de procesos
-los atiende (D-275).
+Cada 15 minutos, `.github/workflows/feedback.yml` (`tools/agents/feedback.mjs`) sube los nuevos como
+issues de GitHub con la etiqueta `feedback`, con el nombre y la llave (D-279, D-306) y sin el
+navegador, y el agente de procesos los atiende (D-275).
 
 ## La papelera (`cleanup`)
 
