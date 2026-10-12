@@ -659,6 +659,8 @@ node tools/agents/marketing.test.mjs
 node tools/agents/portadas.test.mjs
 node tools/agents/procesos.test.mjs
 node tools/e2e/cambios.test.mjs
+node tools/e2e/grupos.test.mjs
+node tools/e2e/ya-probado.test.mjs
 node tools/firebase/rankings-historia.test.mjs
 node tools/push/avisar.test.mjs
 node tools/push/calendario.test.mjs
