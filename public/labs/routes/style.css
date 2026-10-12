@@ -1,4 +1,4 @@
-/* Rutas (laboratorio, D-293). Lo compartido vive en assets/css/base.css. */
+/* Rutas rotas (laboratorio, D-293). Lo compartido vive en assets/css/base.css. */
 .portada { text-align: center; display: grid; gap: 10px; padding-top: 8px; }
 .titulo-rt { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 0; }
 .titulo-rt .rainbow { padding: 0.2em 0.12em 0 0; margin: -0.2em -0.12em 0 0; }
