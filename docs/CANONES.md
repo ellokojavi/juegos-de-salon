@@ -45,7 +45,7 @@ public/<carpeta>/
   Toda página de `/labs/` carga primero la puerta (`labs-puerta.js`) y lleva
   `<meta name="robots" content="noindex, nofollow">`, y sus puentes también el `noindex`
   (`og.mjs` los pone en las que genera; D-281). En `/labs/`, un proyecto va en **Proyectos
-  activos** mientras se prueba y en **La Bodega** si no prosperó (D-280).
+  activos** mientras se prueba y en **La Bodega** si no prosperó, plegado a su título (D-280).
 - El juego se registra en `public/assets/js/games.js` con `id`, `emoji`, `name` y `tagline` por idioma, `players`, `duration`, `path` y `available`. Con sala, también `jugadas`: los tipos de mensaje que hace una persona, que es lo que el panel cuenta como jugadas (D-138).
 - El `<head>` de cada página de la app lleva el manifest, el ícono y el nombre del iPhone
   (`apple-touch-icon` y `apple-mobile-web-app-title`), el script que elige el manifest del idioma
@@ -369,7 +369,7 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
   Copa en dorado, Uno al día en celeste; los juegos van en blanco. Para que jugadores y duración
   quepan en una línea, la píldora dice "👥 2–10" y "jugadores" queda solo para el lector de
   pantalla (`.unidad`); la tarjeta ancha de un juego sí lo muestra (D-239). Las píldoras van
-  abajo a la izquierda, aparte de la bajada y a la misma altura en las dos tarjetas (D-298).
+  abajo a la izquierda, aparte de la bajada y a la misma altura en las dos tarjetas (D-305).
 - **Se filtra por tipo o por favoritos, y por nada más.** Un tipo a la vez (`TIPOS`), que
   se prende y se apaga con un toque. Solo hay fichas de tipos que tienen algún juego que se
   puede abrir, así la lista nunca queda vacía. Cuántos juegan no se filtra: cada juego lo
