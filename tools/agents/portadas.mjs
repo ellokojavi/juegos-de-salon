@@ -55,8 +55,8 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     console.log(`\n🕹️  ${slug} — cambiaron: ${codigo.join(', ') || '(solo estilos)'}`);
     console.log(`   lema: ${lema ?? '(sin lema)'}`);
     pasos.forEach((p, k) => console.log(`   ${k + 1}. ${p}`));
-    const tarjeta = (indice.match(new RegExp(`href="${slug}/"`)) && indice.split(`href="${slug}/"`)[0].split('<section').pop().replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()) || '';
-    if (tarjeta) console.log(`   tarjeta del laboratorio: ${tarjeta.slice(0, 400)}`);
+    const tarjeta = (indice.match(new RegExp(`href="${slug}/"`)) && indice.split(`href="${slug}/"`)[0].split('<section').pop().replace(/^[^>]*>/, '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()) || '';
+    if (tarjeta) console.log(`   tarjeta del laboratorio: ${tarjeta.replace(/\s*<a class.*$/, '').slice(0, 400)}`);
     if (codigo.some(f => /(engine|game)\.js$/.test(f)) && !tocoPortada) console.log('   ⚠️  el juego cambió y su portada no: relee que el lema, los pasos y la tarjeta digan cómo se juega hoy (U-36)');
     else console.log('   ✓ la portada cambió en este PR: relee que esté completa (U-18: ≤3 pasos, ≤280 caracteres)');
   }

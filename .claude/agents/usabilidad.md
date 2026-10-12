@@ -29,6 +29,10 @@ pueda ir y volver sin perderse, y que los mensajes para compartir se lean bien e
      tabla y mensajes), `--parte laboratorio` (prácticas de cada juego y reportes) o
      `--parte demos` (las demos y el admin). Entero, solo si cambia algo de todo el torneo.
   4. Los textos y mensajes para compartir nuevos o cambiados (puntos 3 y 4 de abajo).
+  5. **La portada al día (U-36):** `node tools/agents/portadas.mjs revisar`. Por cada juego que toca el
+     PR muestra el lema, los pasos y su tarjeta; si cambiaron las reglas, los controles, el puntaje,
+     los modos o los tiempos, relee que digan cómo se juega hoy y corrígelos en el mismo PR (un ⚠️
+     es un juego que cambió con la portada de antes). No es opcional: es lo que se escapa.
   No corres lo que GitHub ya corre en el PR (todos los guiones de `tools/e2e/ci.mjs`, los
   `*.test.mjs` y `og.mjs revisar`): si el check `Punta a punta` está en rojo, mira qué falló ahí.
   Los reportes 🐞 y el marketing (puntos 1 y 6) son de la ronda, no del PR. Corres a la vez que el

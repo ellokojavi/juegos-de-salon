@@ -92,6 +92,12 @@ nunca se usaron, y no se renumera.
   falta y marca "(-1J)" a quien lleva menos juegos. Excepción: el resultado de Uno al día no
   nombra el juego de hoy (#215).
 - **U-32 · Sin spoilers:** lo que se comparte no revela respuestas ni los juegos que vienen.
+- **U-36 · La portada al día:** si un PR cambia las reglas, los controles, el puntaje, los modos o
+  los tiempos de un juego, el mismo PR relee y corrige lo que el jugador lee antes de jugar: el lema,
+  los pasos de «Cómo se juega» (U-18) y su tarjeta en el laboratorio o el menú. Pasó con Pintaminas:
+  sumó un modo de dos colores, la ayuda y rendirse, y su portada siguió diciendo lo del primer día.
+  `node tools/agents/portadas.mjs revisar` muestra, por cada juego que toca el PR, su portada, y avisa
+  ⚠️ si el juego cambió y su portada no.
 - **U-35 · La app se presenta entera:** el mensaje de compartir la app nombra todo lo principal
   (`LO_PRINCIPAL` en `compartir.js`: La Copa, Uno al día, jugar en grupo, jugar solo, rankings, sin
   cuenta, la app instalable con sus avisos y los cuatro idiomas), una línea cada cosa y en los cuatro idiomas; el del video y la bajada de la tarjeta del
