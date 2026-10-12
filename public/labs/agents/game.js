@@ -275,8 +275,8 @@ function jugar() {
     const cambia = e1.fin || e1.actual !== e0.actual;
     if (cambia) cartas[i].className = `carta ${c.tipo}${c.tipo === 'agente' ? ` g${c.p}` : ''}`; else dibujar();
     cartas[i].classList.add('volteo', c.tipo === 'agente' ? 'acierto' : 'falla');
-    if (c.tipo === 'agente' && c.p === e0.actual) { SFX.letterHit(); vibrate(20); decir('bien', T.bien); }
-    else if (c.tipo === 'agente') { SFX.letterHit(); vibrate(20); decir('otra', T.otra); }
+    if (c.tipo === 'agente' && c.p === e0.actual) { SFX.letterHit(); vibrate(20); decir(`bien g${c.p}`, T.bien); }
+    else if (c.tipo === 'agente') { SFX.letterHit(); vibrate(20); decir(`otra g${c.p}`, T.otra); }
     else if (c.tipo === 'neutral') { SFX.letterMiss(); vibrate([30, 30]); decir('mal', T.neutral); }
     else {
       SFX.error(); vibrate([60, 40, 60]); decir('mal', T.asesino);
