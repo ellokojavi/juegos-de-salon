@@ -154,7 +154,7 @@ export function montar(raiz, ctx) {
       el('div', { class: 'hint', style: 'margin-top:14px' }, (ult.ok ? LT.hoContinue : LT.tapContinue) + ' ›'));
     const seguir = !ult.ok && c.dato ? ctx.pausa?.(PAUSA_DATO_MS) : null;
     // El acierto no frena: su dato queda en una franja sobre el botón y se va sola
-    const siguiente = showHandoff([stage], () => { seguir?.(); dibujar(); if (ult.ok && !e().fin) franjaDato(fila, el, c.dato); });
+    const siguiente = showHandoff([stage], () => { seguir?.(); dibujar(); if (ult.ok && !e().fin) franjaDato(fila, el, c.dato, { de: c.texto }); });
     // El error se queda hasta tocarlo; el acierto se cierra solo (C-8b)
     setTimeout(() => document.getElementById('handoff').classList.toggle('bad', !ult.ok), 0);
     // Solo cierra su propio aviso: si ya hay otro (un error jugando rápido), se queda (C-8b)

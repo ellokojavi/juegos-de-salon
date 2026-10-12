@@ -23,6 +23,8 @@
     .vacio { text-align: center; }
     .seccion h2 { font-family: var(--font-display); font-size: 1.6rem; letter-spacing: 0.04em; margin: 0; }
     .btn { text-decoration: none; display: flex; align-items: center; justify-content: center; }
+    /* El crédito al juego original: el azul del navegador no se lee sobre el morado (U-12) */
+    .seccion p a { color: var(--cyan); }
   </style>
 </head>
 <body>
@@ -48,7 +50,7 @@
         <h2>🧪 Proyectos activos</h2>
         <section class="panel seccion" id="seccion-agentes">
           <h2>🕵️ Agentes</h2>
-          <p class="muted" style="margin:0">Inspirado en <a href="https://czechgames.com/en/codenames/" target="_blank" rel="noopener">Codenames</a>: cada palabra es el nombre en clave de un espía, y con las pistas encuentras a los tuyos entre 15 palabras, sin tocar las neutrales ni al asesino. Para jugar solo; si gusta, entra a La Copa.</p>
+          <p class="muted" style="margin:0">Inspirado en <a href="https://czechgames.com/en/codenames/" target="_blank" rel="noopener">Codenames</a>: cada palabra es el nombre en clave de un espía, y con las pistas encuentras a los tuyos entre 15 palabras, sin tocar las neutrales ni al asesino. Se juega solo; si gusta, pasará a La Copa.</p>
           <p class="muted" style="margin:0;font-size:0.85rem">Es el tablero del día, el mismo para todos; al terminar se puede jugar otro.</p>
           <a class="btn btn--yellow" id="btn-agentes" href="agents/">🕵️ Jugar Agentes</a>
         </section>
