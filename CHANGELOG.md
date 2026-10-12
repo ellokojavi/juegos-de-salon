@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.158.0 — 2026-10-11
+- **🕵️ Agentes: marcas antes de arriesgar.** Mantén apretada una carta para marcarla sin
+  destaparla: 📌 sospecha, otra vez 🚫 descartada (ya no se destapa por error), otra vez sin marca.
+  Como las notas de Toque y Fama.
+
 ## 0.157.2 — 2026-10-11
 - **🕵️ Agentes (laboratorio):** el resultado ya no muestra la grilla de emojis, que repetía el
   tablero de abajo; va solo en el mensaje para compartir.
