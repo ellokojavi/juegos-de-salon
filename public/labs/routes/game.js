@@ -34,9 +34,11 @@ const T = {
   etapa: 'Etapa {n} de {t}', etapaLista: '🚇 ¡Etapa {n} lista!', etapaPerfecta: '🚇 ¡Etapa {n} en el mínimo!',
   filaEtapa: '{c} Etapa {n}: {g} giros (mínimo {m})',
   // El reloj y el puntaje por capas (D-295): completar, la rapidez y los giros
-  reloj: '⏱ {t}', rendirse: '🏳️ Rendirse', rendirseSeguro: 'Toca de nuevo para rendirte',
+  reloj: '⏱ {t}', rendirse: '🏳️ Rendirse', rendirseSeguro: '🏳️ ¿Seguro?',
   capas: { etapas: '🚇 Etapas ({n} de {t}): +{p}.', rapidez: '⏱ Rapidez ({t}): +{p}.', sinRapidez: '⏱ Rapidez: +0 (faltaron etapas).', giros: '🔄 Giros ({g}, mínimo {m}): +{p}.' },
   finPor: { tiempo: 'Se acabó el tiempo', rendido: 'Te rendiste' },
+  // Los tres botones bajo el tablero, en este orden (pedido del dueño): deshacer, reiniciar, rendirse
+  deshacer: '↩ Deshacer', deshecho: 'Deshiciste el último giro: no cuenta.',
   marcador: 'Giros: {g} · Mínimo: {m}', reiniciar: '↺ Reiniciar', reiniciado: 'De vuelta al comienzo: los giros vuelven a 0.',
   unidas: '🚇 ¡Todas las líneas unidas!',
   fin: { perfecto: '¡Todas en el mínimo!', listo: '¡Rutas unidas!' },
@@ -114,23 +116,43 @@ function crearTablero(t, { interactivo = false, alGirar } = {}) {
   const angulo = t.piezas.map(() => 0);
   const piezas = t.piezas.map((p, i) => el('div', { class: 'pieza', 'data-p': i }, dibujoPieza(p)));
   caja.append(...piezas, marco);
-  const poner = (estado, animar = true) => {
+  // Cada pieza tiene dos capas: la de afuera va en su lugar y solo gira mientras se juega una jugada; la de
+  // adentro (el dibujo) lleva la orientación que dice el motor: dada vuelta (v), media vuelta
+  const colocar = estado => {
     estado.forEach(({ p, v }, lugar) => {
       const n = piezas[p];
-      // Lo que se ve es lo que dice el motor: una pieza dada vuelta (v) se dibuja girada media vuelta,
-      // también al empezar (la revuelta deja piezas dadas vuelta), al reiniciar y en el tablero del final
-      if ((angulo[p] / 180) % 2 !== v) angulo[p] += 180;
-      n.classList.toggle('sin-animar', !animar);
+      n.classList.add('sin-animar');
+      n.style.transform = ''; n.style.transformOrigin = '';
       n.style.left = `${(lugar % LADO) * 100 / LADO}%`;
       n.style.top = `${Math.floor(lugar / LADO) * 100 / LADO}%`;
-      n.style.transform = `rotate(${angulo[p]}deg)`;
+      n.firstChild.style.transform = v ? 'rotate(180deg)' : '';
       n.dataset.lugar = lugar;
     });
   };
+  /**
+   * Una jugada: el rectángulo gira media vuelta como un bloque (pedido del dueño), alrededor de su centro.
+   * Cada pieza orbita ese centro, sin girar por su cuenta; al terminar queda en su lugar nuevo con su
+   * orientación nueva, sin salto. Una jugada que llega antes de que termine la anterior la cierra de una.
+   */
+  let pendiente = null;
   const aplicar = (estado, rect, animar = true) => {
+    pendiente?.();
     const nuevo = girar(estado, rect);
-    for (let f = rect.f1; f <= rect.f2; f++) for (let c = rect.c1; c <= rect.c2; c++) angulo[estado[f * LADO + c].p] += 180;
-    poner(nuevo, animar && !QUIETO);
+    if (!animar || QUIETO) { colocar(nuevo); return nuevo; }
+    const cx = (rect.c1 + rect.c2 + 1) / 2, cy = (rect.f1 + rect.f2 + 1) / 2;
+    const moviendo = [];
+    for (let f = rect.f1; f <= rect.f2; f++) for (let c = rect.c1; c <= rect.c2; c++) {
+      const n = piezas[estado[f * LADO + c].p];
+      n.style.transformOrigin = `${(cx - c) * 100}% ${(cy - f) * 100}%`;
+      void n.offsetWidth;
+      n.classList.remove('sin-animar');
+      n.classList.add('girando');
+      n.style.transform = 'rotate(180deg)';
+      moviendo.push(n);
+    }
+    const cerrar = () => { clearTimeout(reloj); pendiente = null; moviendo.forEach(n => n.classList.remove('girando')); colocar(nuevo); };
+    const reloj = setTimeout(cerrar, 460);
+    pendiente = cerrar;
     return nuevo;
   };
   if (interactivo) {
@@ -163,6 +185,8 @@ function crearTablero(t, { interactivo = false, alGirar } = {}) {
     Object.assign(marco.style, { left: `${r.c1 * 100 / LADO}%`, top: `${r.f1 * 100 / LADO}%`, width: `${(r.c2 - r.c1 + 1) * 100 / LADO}%`, height: `${(r.f2 - r.f1 + 1) * 100 / LADO}%` });
     marco.classList.add('ve');
   };
+  // Poner un estado de una (al empezar, al reiniciar): si una jugada estaba girando, se cierra antes
+  const poner = estado => { pendiente?.(); colocar(estado); };
   return { caja, poner, aplicar, marcar };
 }
 
@@ -258,6 +282,7 @@ function jugar() {
   const pintar = () => {
     marcador.textContent = fmt(T.marcador, { g: P.giros, m: t.minimo });
     reiniciar.disabled = !P.giros || P.terminado;
+    deshacer.disabled = !historial.length || P.terminado;
   };
   // Los bordes que ya calzan
   const unir = () => {
@@ -269,7 +294,7 @@ function jugar() {
     alGirar: r => {
       if (P.terminado) return;
       P.estado = tab.aplicar(P.estado, r);
-      P.giros++;
+      P.giros++; historial.push(r);
       SFX.flip(); vibrate(15);
       aviso.className = 'aviso-rt'; aviso.textContent = '';
       pintar();
@@ -277,10 +302,22 @@ function jugar() {
       if (resuelto(t.piezas, P.estado)) terminar();
     },
   });
+  // Deshacer: el mismo giro lo deshace (girar dos veces deja igual); el giro deshecho no cuenta, como
+  // reiniciar es gratis: el golf cuenta los giros que quedan
+  const historial = [];
+  const deshacer = el('button', { type: 'button', class: 'btn btn--ghost btn--sm', id: 'btn-deshacer', onClick: () => {
+    if (P.terminado || !historial.length) return;
+    SFX.tap(); vibrate(10);
+    P.estado = tab.aplicar(P.estado, historial.pop());
+    P.giros--;
+    pintar();
+    setTimeout(unir, QUIETO ? 0 : 450);
+    aviso.className = 'aviso-rt'; aviso.textContent = T.deshecho;
+  } }, T.deshacer);
   const reiniciar = el('button', { type: 'button', class: 'btn btn--ghost btn--sm', id: 'btn-reiniciar', onClick: () => {
     if (P.terminado || !P.giros) return;
     SFX.tap(); vibrate(10);
-    P.estado = t.inicio; P.giros = 0; P.reinicios++;
+    P.estado = t.inicio; P.giros = 0; P.reinicios++; historial.length = 0;
     tab.poner(P.estado, !QUIETO);
     pintar(); unir();
     aviso.className = 'aviso-rt'; aviso.textContent = T.reiniciado;
@@ -293,7 +330,7 @@ function jugar() {
     if (P.hechas.length === ETAPAS.length) { P.segundos = usado(); clearInterval(P.reloj); }
     tab.caja.classList.add('bloqueado');
     // Reiniciar y Rendirse se van con la etapa hecha: rendirse en la pausa no tiene sentido
-    reiniciar.remove(); rendirse.remove();
+    acciones.remove();
     setTimeout(() => {
       tab.caja.classList.add('resuelto');
       aviso.className = 'aviso-rt bien';
@@ -308,7 +345,7 @@ function jugar() {
   };
   // Rendirse: con un segundo toque, como la ayuda de Pintaminas; cuentan las etapas ya hechas
   let armado = false, armadoTimer = null;
-  const rendirse = el('button', { type: 'button', class: 'link-btn rendirse', id: 'btn-rendirse', onClick: () => {
+  const rendirse = el('button', { type: 'button', class: 'btn btn--ghost btn--sm rendirse', id: 'btn-rendirse', onClick: () => {
     if (P.acabado) return;
     if (!armado) {
       armado = true; SFX.tap(); vibrate(15); rendirse.textContent = T.rendirseSeguro; rendirse.classList.add('armado');
@@ -321,7 +358,8 @@ function jugar() {
   } }, T.rendirse);
   tab.poner(P.estado, false);
   // Sin el título mientras se juega (#360): la barra de arriba ya muestra 🚇, y así Reiniciar y Rendirse se ven sin bajar en un celular chico
-  vista.replaceChildren(cabeza, el('div', { class: 'fila-marcador' }, reloj, marcador), tab.caja, aviso, el('div', { class: 'acciones-rt' }, reiniciar, rendirse));
+  const acciones = el('div', { class: 'acciones-rt' }, deshacer, reiniciar, rendirse);
+  vista.replaceChildren(cabeza, el('div', { class: 'fila-marcador' }, reloj, marcador), tab.caja, aviso, acciones);
   tic();
   pintar(); unir();
   pieComentario('juego');

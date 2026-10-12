@@ -39,7 +39,7 @@ ok(await ev(`document.getElementById('btn-reiniciar').disabled`), 'sin giros, Re
 ok(/⏱ [67]:\d\d/.test(await ev(`document.getElementById('reloj').textContent`)), 'el reloj parte en 7 minutos y baja');
 const lugares = () => ev(`JSON.stringify([...document.querySelectorAll('#tablero .pieza')].map(n => [+n.dataset.p, +n.dataset.lugar]))`).then(JSON.parse);
 // Lo que se ve es lo que dice el motor: cada pieza dada vuelta (v) se dibuja girada media vuelta
-const comoElMotor = async (sel, estado) => (await ev(`JSON.stringify([...document.querySelectorAll('${sel} .pieza')].map(n => [+n.dataset.lugar, Math.round(parseFloat(n.style.transform.slice(7)) / 180) % 2]))`).then(JSON.parse)).every(([l, v]) => estado[l].v === v);
+const comoElMotor = async (sel, estado) => (await ev(`JSON.stringify([...document.querySelectorAll('${sel} .pieza')].map(n => [+n.dataset.lugar, (n.firstChild.style.transform.includes('180') ? 1 : 0)]))`).then(JSON.parse)).every(([l, v]) => estado[l].v === v);
 ok(await comoElMotor('#tablero', t.inicio), 'al empezar, cada pieza se dibuja como dice el motor (las dadas vuelta, giradas)');
 // Arrastrar de la esquina de arriba a la izquierda al centro: gira ese bloque de 2×2
 const arrastrar = (c1, f1, c2, f2) => ev(`(()=>{const t=document.getElementById('tablero'),b=t.getBoundingClientRect(),at=(c,f)=>({clientX:b.left+b.width*(c+0.5)/3,clientY:b.top+b.height*(f+0.5)/3,bubbles:true,pointerId:1});t.dispatchEvent(new PointerEvent('pointerdown',at(${c1},${f1})));t.dispatchEvent(new PointerEvent('pointermove',at(${c2},${f2})));t.dispatchEvent(new PointerEvent('pointerup',at(${c2},${f2})));return 1})()`);
@@ -50,6 +50,13 @@ const hay = await lugares();
 ok(hay.every(([p, l]) => esperado[l].p === p) && await comoElMotor('#tablero', esperado), 'arrastrar marca un rectángulo y al soltar gira: cada pieza queda donde y como dice el motor');
 ok(/Giros: 1/.test(await ev(`document.getElementById('marcador').textContent`)), 'y cuenta el giro');
 await b.shot('02-juego');
+// Deshacer: vuelve al estado de antes del giro, que no cuenta
+ok(!await ev(`document.getElementById('btn-deshacer').disabled`), 'con un giro, Deshacer se enciende');
+await ev(`document.getElementById('btn-deshacer').click(); 1`); await sleep(600);
+ok(/Giros: 0/.test(await ev(`document.getElementById('marcador').textContent`)) && (await lugares()).every(([p, l]) => t.inicio[l].p === p) && await comoElMotor('#tablero', t.inicio), 'deshacer vuelve a como estaba, y el giro no cuenta');
+ok(await ev(`document.getElementById('btn-deshacer').disabled`), 'y sin más giros, Deshacer se apaga');
+ok(await ev(`[...document.querySelectorAll('.acciones-rt .btn')].map(b => b.id).join()`) === 'btn-deshacer,btn-reiniciar,btn-rendirse', 'los botones van en orden: Deshacer, Reiniciar, Rendirse');
+await arrastrar(0, 0, 1, 1); await sleep(600);
 await ev(`document.getElementById('btn-reiniciar').click(); 1`); await sleep(500);
 ok(/Giros: 0/.test(await ev(`document.getElementById('marcador').textContent`)) && (await lugares()).every(([p, l]) => t.inicio[l].p === p) && await comoElMotor('#tablero', t.inicio), 'reiniciar vuelve al comienzo con 0 giros');
 // Cada etapa: deshacer su revuelta al revés une todas las líneas, y pasa a la siguiente
@@ -84,7 +91,7 @@ const oculta = v => ev(`Object.defineProperty(document, 'hidden', { configurable
 const d0 = await ev(`window.__rutas.P.desde`); await oculta(true); await sleep(1500); await oculta(false);
 ok(await ev(`window.__rutas.P.desde`) - d0 >= 1400, 'con la pantalla oculta, el reloj se pausa');
 await ev(`document.getElementById('btn-rendirse').click(); 1`); await sleep(150);
-ok(/Toca de nuevo/.test(await ev(`document.getElementById('btn-rendirse').textContent`)) && !await ev(`!!document.getElementById('puntaje')`), 'rendirse pide un segundo toque');
+ok(/Seguro/.test(await ev(`document.getElementById('btn-rendirse').textContent`)) && !await ev(`!!document.getElementById('puntaje')`), 'rendirse pide un segundo toque');
 await ev(`document.getElementById('btn-rendirse').click(); 1`);
 ok(await esperar(`document.getElementById('puntaje')?.textContent === '0/100'`, 4000) && /Te rendiste/.test(await ev(`document.querySelector('.sello-rt').textContent`)), 'y con el segundo se acaba: 0/100 sin etapas, «Te rendiste»');
 

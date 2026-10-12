@@ -15,7 +15,9 @@
   background: #0b0f1d; box-shadow: 0 0 0 2px rgba(255,255,255,0.12), 0 10px 30px rgba(0,0,0,0.4); overflow: hidden; -webkit-user-select: none; user-select: none; }
 .tablero-rt.chico { max-width: 220px; }
 .pieza { position: absolute; width: calc(100% / 3); height: calc(100% / 3); box-sizing: border-box; border: 1px solid rgba(255,255,255,0.07);
-  transition: left 0.45s cubic-bezier(0.5, 0, 0.3, 1), top 0.45s cubic-bezier(0.5, 0, 0.3, 1), transform 0.45s cubic-bezier(0.5, 0, 0.3, 1); }
+  transition: transform 0.45s cubic-bezier(0.5, 0, 0.3, 1); }
+/* Mientras gira, la pieza va por encima de las demás: el bloque se ve entero */
+.pieza.girando { z-index: 1; }
 .pieza.sin-animar { transition: none; }
 .pieza-svg { width: 100%; height: 100%; display: block; }
 .tramo { opacity: 0.9; }
@@ -37,18 +39,18 @@
 .marcador { margin: 0; text-align: center; font-weight: 800; font-size: 1.05rem; }
 .aviso-rt { margin: 0; min-height: 1.5em; text-align: center; font-weight: 800; color: var(--muted); }
 .aviso-rt.bien { color: var(--lime); font-size: 1.15rem; }
-#btn-reiniciar { justify-self: center; }
 /* El reloj, junto al marcador; en el último minuto, rojo */
 .fila-marcador { display: flex; justify-content: center; align-items: baseline; gap: 14px; flex-wrap: wrap; }
 .reloj-rt { margin: 0; font: 800 1.05rem var(--font-num); font-variant-numeric: tabular-nums; }
 .reloj-rt.poco { color: #ff8a8a; animation: rt-pulso 1s ease-in-out infinite; }
 @keyframes rt-pulso { 50% { opacity: 0.55; } }
 /* Reiniciar y Rendirse en una fila: así los dos se ven sin bajar en un celular chico (#360) */
-.acciones-rt { display: flex; justify-content: center; align-items: center; gap: 18px; flex-wrap: wrap; }
-.rendirse { font-size: 0.9rem; }
-.rendirse.armado { color: #ff8a8a; text-decoration: none; font-weight: 800; }
+/* Deshacer, Reiniciar y Rendirse: tres botones iguales en una fila, del mismo ancho */
+.acciones-rt { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.acciones-rt .btn { width: 100%; min-width: 0; min-height: 44px; padding: 0 4px; font-size: 0.92rem; white-space: nowrap; }
+.acciones-rt .btn:disabled { opacity: 0.4; }
+.rendirse.armado { color: #ff8a8a; border-color: #ff8a8a; }
 .sello-rt.mal { color: #ff8a8a; }
-#btn-reiniciar:disabled { opacity: 0.4; }
 /* La etapa: su número, los puntos del avance y de qué se trata */
 .cabeza-etapa { display: grid; justify-items: center; gap: 4px; }
 .cabeza-etapa.entra { animation: pop 0.45s ease-out both; }
