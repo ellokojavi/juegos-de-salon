@@ -29,9 +29,11 @@ ok(/mismo para todos/.test(await ev(`document.body.textContent`)), 'sin semilla 
 await ev(`localStorage.removeItem('juegos-de-salon:pintaminas:dificil'); 1`);
 await b.go(`${SITIO}/labs/paint-mines/?test`, 1200);
 ok(await ev(`document.getElementById('btn-dificil')?.getAttribute('aria-checked')`) === 'false', 'el modo difícil parte apagado');
+ok(/Modo fácil/.test(await ev(`document.querySelector('#btn-dificil .rotulo').textContent`)) && await ev(`!!document.querySelector('#btn-dificil .recorrido .flecha')`), 'la palanca dice «Modo fácil» y una flecha muestra hacia dónde va');
 await ev(`document.getElementById('btn-dificil').click(); 1`); await sleep(200);
 ok(await ev(`document.getElementById('btn-dificil').getAttribute('aria-checked') === 'true' && document.getElementById('btn-dificil').classList.contains('on')`), 'el interruptor lo enciende y se electrifica');
 ok(await ev(`document.body.classList.contains('modo-dificil')`), 'y cambia el fondo de la página');
+ok(/Modo difícil/.test(await ev(`document.querySelector('#btn-dificil .rotulo').textContent`)), 'y el rótulo pasa a «⚡ Modo difícil»');
 await b.shot('01b-dificil');
 await ev(`document.getElementById('btn-dificil').click(); 1`); await sleep(100);
 ok(await ev(`document.getElementById('btn-dificil').getAttribute('aria-checked') === 'false' && !document.body.classList.contains('modo-dificil')`), 'y lo apaga, con el fondo de siempre');
