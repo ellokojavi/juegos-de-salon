@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.168.2 — 2026-10-12
+- **🧪 Laboratorio: La Bodega, plegada.** Sus juegos se ven solo con su título y un toque los abre
+  para ver de qué se tratan y jugarlos; así no tienen el mismo peso que los proyectos activos.
+
 ## 0.168.0 — 2026-10-12
 - **💥 Números explosivos (laboratorio, nuevo)** (D-297), inspirado en Number Match: haz estallar de a
   pares los números iguales o que suman 10, si están juntos en línea, hasta dejar el tablero limpio.
