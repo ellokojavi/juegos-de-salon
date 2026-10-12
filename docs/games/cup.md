@@ -119,7 +119,9 @@ mientras nadie haya jugado. `?test&demo=<escena>` abre una copa de ejemplo en cu
 punto (`public/cup/demo.js`: `new`, `guest`, `waiting`, `not-started`, `player`, `admin`, `final`,
 `final-admin`, `podium`, `full`; los nombres en español de antes de D-266 se leen igual); el laboratorio ya no las ofrece, pero las usan las pruebas y las capturas (D-262).
 
-Al tocar Empezar, una **cuenta de 3 a 1** y "¡A jugar!" (D-105): recién ahí aparece el tablero, y
+Al tocar Empezar, una **cuenta de 3 a 1** y "¡A jugar!" (D-105; la capa es
+`assets/js/cuenta-regresiva.js`, con sus estilos `.cuenta` en `assets/css/base.css`, y la usa
+también Agentes del laboratorio): recién ahí aparece el tablero, y
 el reloj parte cuando el "¡A jugar!" ya se fue y terminó la entrada del juego, si la tiene (las
 cartas de El caso, con `entrada()` en su registro): la cuenta no es tiempo de juego (D-258). Al
 terminar, el resultado explica **cómo se calculó el puntaje** línea por línea

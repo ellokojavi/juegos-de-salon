@@ -34,7 +34,9 @@ await b.go(`${SITIO}/labs/agents/?seed=${SEMILLA}&test`, 1200);
 await esperar(`!!document.getElementById('btn-empezar')`);
 ok(!await ev(`document.getElementById('vista').textContent.includes('null')`), 'con semilla, la portada no escribe "null"');
 await ev(`document.getElementById('btn-empezar').click(); 1`);
-ok(await esperar(`document.querySelectorAll('#tablero .carta').length === 12`), 'Empezar abre el tablero de 12 cartas');
+// Antes del tablero, el 3, 2, 1 de La Copa (D-105)
+ok(await esperar(`/3|2|1/.test(document.querySelector('#cuenta .cuenta-num')?.textContent || '')`, 2000), 'Empezar abre la cuenta 3, 2, 1');
+ok(await esperar(`document.querySelectorAll('#tablero .carta').length === 12 && !document.getElementById('cuenta')`, 8000), 'y después el tablero de 12 cartas');
 const t = await ev(`JSON.stringify(window.__agentes.P.t)`).then(JSON.parse);
 const de = (p, tipo = 'agente') => t.cartas.map((c, i) => ({ ...c, i })).filter(c => c.tipo === tipo && (p == null || c.p === p)).map(c => c.i);
 const tocar = async i => { await ev(`document.querySelector('#tablero .carta[data-i="${i}"]').click(); 1`); await sleep(250); };

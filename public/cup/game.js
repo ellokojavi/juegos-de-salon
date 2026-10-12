@@ -36,6 +36,7 @@ import { crearAvisos } from './avisos.js';
 import { fechaLocal, juegoDel, semillaDel, anotar as anotarUnoAlDia, leer as leerUnoAlDia } from '../assets/js/uno-al-dia.js';
 import { tarjetaResultado, rutaHoy } from '../assets/js/uno-al-dia-ui.js';
 import { formularioComentario, abrirComentario } from '../assets/js/labs-idioma.js';
+import { cuentaRegresiva as cuentaComun } from '../assets/js/cuenta-regresiva.js';
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
 trackVisit();
@@ -1913,37 +1914,16 @@ function panelReglas(id, { copa = true, prueba = false } = {}) {
     el('p', { class: 'muted' }, puntajeTexto(J, copa))));
 }
 
-/** Lo que tarda en irse el "¡A jugar!" después de aparecer: el tablero ya está debajo. */
-const CUENTA_SALE_MS = 900;
-
 /**
- * El 3, 2, 1, ¡A jugar! antes de cada juego (D-105). Se resuelve con el "¡A jugar!", para que el
- * tablero se arme debajo mientras la capa se va, y devuelve cuánto falta para que se vaya: el reloj
- * parte recién ahí, con la pantalla de juego a la vista. La cuenta no es tiempo de juego.
+ * El 3, 2, 1, ¡A jugar! antes de cada juego (D-105), el de assets/js/cuenta-regresiva.js. Devuelve
+ * cuánto falta para que se vaya la capa: el reloj parte recién ahí.
  */
 function cuentaRegresiva(J) {
   // La Gran Final no la lleva: cada ronda ya parte con su propia presentación
   if (J === JUEGOS_COPA.final) return Promise.resolve(0);
   $('#jugar-head').replaceChildren(el('span', { class: 'jugar-titulo' }, conEmoji(J.emoji, J.nombre)));
   $('#jugar-body').innerHTML = '';
-  return new Promise(listo => {
-    const num = el('span', { class: 'cuenta-num' });
-    const capa = el('div', { class: 'cuenta', id: 'cuenta', role: 'status', 'aria-live': 'assertive' },
-      el('p', { class: 'cuenta-juego' }, conEmoji(J.emoji, J.nombre)), num);
-    document.body.append(capa);
-    let n = 3;
-    const paso = () => {
-      if (!capa.isConnected) return;
-      num.classList.remove('late'); void num.offsetWidth; num.classList.add('late');
-      if (n > 0) { num.textContent = String(n); SFX.tick(); vibrate(10); n--; setTimeout(paso, 1000); return; }
-      num.textContent = T.letsPlay;
-      capa.classList.add('ya');
-      SFX.turn(); vibrate([20, 40, 20]);
-      listo(CUENTA_SALE_MS);
-      setTimeout(() => capa.remove(), CUENTA_SALE_MS);
-    };
-    paso();
-  });
+  return cuentaComun({ titulo: conEmoji(J.emoji, J.nombre), ya: T.letsPlay });
 }
 
 async function jugar(d) {

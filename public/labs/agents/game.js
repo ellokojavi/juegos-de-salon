@@ -11,6 +11,7 @@ import { botonResultadoSolo } from '../../assets/js/compartir.js';
 import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/stats.js';
 import { formularioComentario, abrirComentario } from '../../assets/js/labs-idioma.js';
 import { fechaLocal } from '../../assets/js/uno-al-dia.js';
+import { cuentaRegresiva } from '../../assets/js/cuenta-regresiva.js';
 import { LONG_PRESS_MS } from '../../assets/js/teclado.js';   // el toque largo de las notas de Toque y Fama
 import { generar, estado, puntaje, tarjeta, AGENTES, RESTA_NEUTRAL, RESTA_ASESINO } from './engine.js';
 
@@ -27,7 +28,7 @@ const T = {
     ['⚠️', `Evita las 2 palabras neutrales (−${RESTA_NEUTRAL}) y al asesino (−${RESTA_ASESINO}), que se parece a una pista: tocar uno corta la pista.`],
     ['⏭️', 'Si dudas, pasa a la siguiente pista. Cada agente suma, aunque sea de otra pista.'],
   ],
-  empezar: '🕵️ Empezar', pista: 'Pista {n} de {t}', faltan: 'Te faltan {n}', faltaUna: 'Te falta 1',
+  empezar: '🕵️ Empezar', aJugar: '¡A jugar!', pista: 'Pista {n} de {t}', faltan: 'Te faltan {n}', faltaUna: 'Te falta 1',
   pasar: '⏭️ Siguiente pista', terminar: '🏁 Terminar', seguro: '🏁 Sí, terminar',
   quedan: ['Queda 1 agente sin encontrar. ¿Terminas igual?', 'Quedan {n} agentes sin encontrar. ¿Terminas igual?'],
   // Las marcas (como las notas de Toque y Fama): un toque largo marca 📌, otro 🚫, otro la quita
@@ -150,9 +151,10 @@ function empezar() {
   P.t = generar(P.semilla);
   P.jugadas = [];
   P.marcas = new Map(); P.marcadas = 0;
-  P.desde = Date.now();
   trackStart({ game: GAME_ID, mode: 'solo', players: 1 });
-  jugar();
+  // El 3, 2, 1 de La Copa (D-105): el tablero se arma debajo con el "¡A jugar!", y el tiempo corre desde ahí
+  vista.replaceChildren(); pie.replaceChildren();
+  cuentaRegresiva({ titulo: '🕵️ Agentes', ya: T.aJugar }).then(() => { P.desde = Date.now(); jugar(); });
 }
 
 function jugar() {
