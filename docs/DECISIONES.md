@@ -5069,7 +5069,9 @@ Con una llave compartida, sacar a una persona obligaba a cambiarles la llave a t
 persona se borra su línea y nadie más se entera. Una llave quitada deja de abrir aunque estuviera
 guardada en el celular, porque la puerta la compara de nuevo en cada visita.
 **Consecuencias:** cada llave nueva o quitada es un cambio a `labs-puerta.js` que entra con un PR, y
-rige cuando el sitio se publica. La etiqueta es pública (el repo lo es): iniciales o un apodo, no un
+rige cuando el sitio se publica. Pedir una llave es pedir que funcione (pedido del dueño,
+2026-10-12): quien la crea abre ese PR y le activa el auto-merge en el mismo movimiento, sin
+esperar otra orden; un PR de solo llaves no lleva CHANGELOG ni pasa por los agentes. La etiqueta es pública (el repo lo es): iniciales o un apodo, no un
 nombre completo. Una llave perdida no se recupera: se quita y se da otra.
 `tools/agents/llave-labs.test.mjs` prueba la herramienta, y `labs-puerta.test.mjs` que cada persona
 entre con la suya y que una quitada ya no abra.
