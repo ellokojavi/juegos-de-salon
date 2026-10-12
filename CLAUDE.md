@@ -180,7 +180,9 @@ con eso la pantalla entra también a las pruebas de idiomas. Para verlo en un ce
 
 - **Usabilidad** (D-132): revisa cada PR y hace su ronda cuando la lanza el agente de procesos (D-276).
   Los dilemas son issues de GitHub: `node tools/agents/dilemas.mjs listar | ver <n> | crear <archivo.md> | resolver <n> "decisión" | archivar <n> "motivo" | reabrir <n>`;
-  lo resuelto se anota en `docs/USABILIDAD.md`.
+  lo resuelto se anota en `docs/USABILIDAD.md`. En cada PR corre `node tools/agents/portadas.mjs revisar [base]`,
+  que muestra el lema, los pasos y la tarjeta de cada juego que toca el PR y avisa ⚠️ si el juego
+  cambió y su portada no (U-36).
 - **Documentación** (D-172): ronda cuando la lanza el agente de procesos (D-276), revisión de cada PR y a
   pedido ("documenta lo último"). Nunca fusiona ni toca código, salvo los mensajes con que la app
   se presenta (D-271, U-35). Su memoria es
