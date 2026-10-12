@@ -2,7 +2,7 @@
 /**
  * El feedback 🐞 como issues de GitHub (D-275): cada reporte que la gente manda desde La Copa o
  * el laboratorio (`feedback/` en Firebase, D-104, D-191, D-265) se vuelve un issue con la etiqueta
- * `feedback`, y el agente de procesos lo atiende en su ronda. Lo corre cada hora
+ * `feedback`, y el agente de procesos lo atiende en su ronda. Lo corre cada 15 minutos
  * `.github/workflows/feedback.yml`: así cada reporte le llega por correo al dueño y queda enlazado
  * con su respuesta y su arreglo.
  *
@@ -54,7 +54,7 @@ export function cuerpo(r) {
   const c = contexto(r);
   const fecha = r.at ? new Date(r.at).toISOString().slice(0, 16).replace('T', ' ') + ' UTC' : 'sin fecha';
   const datos = [
-    ['Quién', r.nombre && String(r.nombre).trim()], ['Juego', c.juego], ['Laboratorio', c.labs], ['Copa', c.copa], ['Día', c.dia], ['Semilla', c.semilla],
+    ['Quién', r.nombre && String(r.nombre).trim()], ['Llave', r.tester && String(r.tester).trim()], ['Juego', c.juego], ['Laboratorio', c.labs], ['Copa', c.copa], ['Día', c.dia], ['Semilla', c.semilla],
     ['Resultado', c.resumen ?? c.puntaje], ['Errores', c.errores], ['Ayudas', c.ayudas], ['Tiempo', c.tiempo],
     ['Página', c.url && (String(c.url).startsWith('/') ? `${SITIO}${c.url}` : c.url)], ['Pantalla', c.pantalla], ['Ventana', c.pantallaTam], ['Versión', r.v && `v${r.v}`], ['Fecha', fecha],
   ].filter(([, v]) => v !== undefined && v !== null && v !== '');

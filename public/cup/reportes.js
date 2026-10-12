@@ -7,12 +7,17 @@
  * dispositivo y se reintenta la próxima vez que se abra La Copa (D-109): un reporte escrito no
  * se pierde.
  *
+ * Quien entró al laboratorio con su llave (D-284) manda también su etiqueta (`tester`), la que
+ * el dueño le puso al darle el link: así sabe de quién es el comentario aunque no escriba su nombre.
+ * Nunca la llave.
+ *
  * Módulo aparte y sin el SDK de Firebase: la práctica del laboratorio lo usa sin cargar nada más.
  */
 import { firebaseConfig } from '../assets/js/firebase-config.js';
 import { OP_MS, withTimeout } from '../assets/js/transport/errors.js';
 
 const PENDIENTES = 'juegos-de-salon:copa:reportes-pendientes';
+const QUIEN = 'juegos-de-salon:labs-quien';   // la pone labs-puerta.js
 const MAX_PENDIENTES = 20;
 
 const leer = almacen => { try { return JSON.parse(almacen.getItem(PENDIENTES) || '[]'); } catch (_) { return []; } };
@@ -35,6 +40,9 @@ async function publicar(r, doFetch) {
  * (`guardado` dice si quedó en el dispositivo).
  */
 export async function enviarReporte(r, doFetch = globalThis.fetch, almacen = globalThis.localStorage) {
+  let tester = '';
+  try { tester = (almacen?.getItem(QUIEN) || '').slice(0, 24); } catch (_) { /* sin almacenamiento */ }
+  if (tester && !r.tester) r = { ...r, tester };
   if (await publicar(r, doFetch)) return;
   let guardado = false;
   if (almacen) { escribir(almacen, [...leer(almacen), r]); guardado = leer(almacen).length > 0; }

@@ -34,7 +34,7 @@ async function visitar(url, guardada = null) {
   ctx.window = ctx;
   vm.runInNewContext(codigo, ctx);
   await new Promise(res => setTimeout(res, 20));
-  return { ...r, visible: html.style.visibility !== 'hidden', guardada: almacen.get('juegos-de-salon:labs-llave') ?? null };
+  return { ...r, visible: html.style.visibility !== 'hidden', guardada: almacen.get('juegos-de-salon:labs-llave') ?? null, quien: almacen.get('juegos-de-salon:labs-quien') ?? null };
 }
 
 const SITIO = 'https://juegosdesalon.cl';
@@ -60,11 +60,12 @@ assert.ok(r.a === '/' && r.guardada === null, 'una llave guardada que ya no sirv
 
 r = await visitar(`${SITIO}/labs/?key=${OTRA}`);
 assert.ok(r.a === null && r.visible && r.guardada === OTRA, 'cada persona entra con su propia llave');
+assert.equal(r.quien, 'p1', 'y queda su etiqueta, para su feedback (D-306)');
 
 // Sacar a una persona: su llave guardada ya no abre, y la de las demás sigue abriendo
 codigo = conHuellas(LLAVE);
 r = await visitar(`${SITIO}/labs/`, OTRA);
-assert.ok(r.a === '/' && r.guardada === null, 'una llave quitada ya no abre, aunque estuviera guardada');
+assert.ok(r.a === '/' && r.guardada === null && r.quien === null, 'una llave quitada ya no abre, aunque estuviera guardada');
 r = await visitar(`${SITIO}/labs/`, LLAVE);
 assert.ok(r.a === null && r.visible, 'y las demás siguen entrando');
 

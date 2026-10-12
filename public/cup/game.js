@@ -2482,8 +2482,8 @@ function anotarPais(Lc) {
 
 /**
  * El formulario va en su propia pantalla y vuelve a la que se estaba mirando. Además del
- * texto se manda el contexto, a la vista de quien reporta: copa, día, pantalla, versión y
- * navegador. Nunca el PIN ni lo que se está jugando.
+ * texto se manda el contexto (copa, día, pantalla, versión y navegador), sin mostrarlo: es para
+ * el dueño (D-306). Nunca el PIN ni lo que se está jugando.
  */
 function reportar(extra = {}) {
   const volverA = S.pantalla;
@@ -2539,8 +2539,7 @@ function reportar(extra = {}) {
     el('p', { class: 'muted' }, T.reportLead),
     el('div', { class: 'panel stack' }, texto,
       el('label', { class: 'lead', for: 'reporte-nombre', style: 'margin:0' }, T.reportNameLabel), nombre,
-      el('p', { class: 'muted', style: 'margin:0' }, T.reportNameKeep),
-      el('details', {}, el('summary', { class: 'muted' }, T.reportContext), el('pre', { class: 'reporte-contexto' }, JSON.stringify(contexto, null, 1)))),
+      el('p', { class: 'muted', style: 'margin:0' }, T.reportNameKeep)),
     err, enviarBtn,
     el('button', { class: 'btn btn--ghost btn--sm', onClick: () => { SFX.tap(); volver(); } }, T.reportCancel));
   texto.focus();
