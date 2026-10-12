@@ -44,7 +44,7 @@ la cuenta 3, 2, 1 compartida (`assets/js/cuenta-regresiva.js`).
   completando las cinco: 10 en un minuto o menos, 0 al acabarse el reloj) + hasta 5 por giros (5 en el
   mínimo, 0 con el doble o más). Completar más siempre gana. Con 70 o más, confeti.
 - **El final:** el último tablero, un sello (¡Todas en el mínimo!, ¡Rutas unidas!, Se acabó el tiempo o
-  Te rendiste), el puntaje, el desglose (las tres capas y cada etapa: «🚇 5 de 5 etapas: 85 puntos (17 cada una).», «⏱ Rapidez (2:10): +8.», «🔄 Giros (24; el mínimo era 18): +3.» y «🟨 Etapa 3: 5 giros (mínimo 4)»; sin las cinco, «⏱ Rapidez: +0 (solo si completas las 5 etapas).», y cuántas veces reiniciaste),
+  Te rendiste), el puntaje, el desglose (las tres capas y cada etapa: «🚇 Etapas (5 de 5): +85.», «⏱ Rapidez (2:10): +8.», «🔄 Giros (24, mínimo 18): +3.» y «🟨 Etapa 3: 5 giros (mínimo 4)»; sin las cinco, «⏱ Rapidez: +0 (faltaron etapas).», y cuántas veces reiniciaste),
   el tiempo, compartir (una línea por etapa: «🟩 1: 2/2»), otro tablero, el de hoy (si se jugó con semilla) y, tras una línea, el
   formulario de comentarios (D-265, D-268).
 - **El día:** sin `?seed=` es el tablero de hoy (`dia:<fecha>`), el mismo para todos.
