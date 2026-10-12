@@ -1,7 +1,7 @@
 # 🖌️ Pintaminas (prototipo del laboratorio, en Proyectos activos)
 
-Un Buscaminas de colores para uno solo (D-289): cada casilla **se pinta** (de un color que cambia con
-cada tablero) **o no**, y su número dice cuántas de sus 8 vecinas son como ella (D-290). Al pintarlo entero aparece un dibujo.
+Un Buscaminas de colores para uno solo (D-289): cada casilla **se pinta** (del color del dibujo,
+D-298) **o no**, y su número dice cuántas de sus 8 vecinas son como ella (D-290). Al pintarlo entero aparece un dibujo.
 **Inspirado en [ColorSweeper](https://store.steampowered.com/app/3128730/ColorSweeper/), de ARRKKA**,
 y lo dice en la portada y en el laboratorio.
 
@@ -29,7 +29,7 @@ La tarjeta del laboratorio agrega, desde v0.167.1, «Con un modo difícil de dos
 ## Cómo se juega
 
 - **Tablero:** 7×7. Algunas casillas vienen dadas, con su color y su número.
-- **Pincel:** dos botones, «Pinta {color}» (el color del tablero, al azar de `PALETA`) y «No pinta»
+- **Pincel:** dos botones, «Pinta {color}» (el color del dibujo: desde v0.168.3 cada dibujo se pinta con sus colores de verdad, `colores` en `dibujos.js`, D-298) y «No pinta»
   (gris, como las casillas sin pintar); el elegido se nota. Tocar una
   casilla sin pintar la pinta con el pincel.
 - **Acertar:** aparece su número, que da más pistas. **Errar:** la casilla se destapa igual con su
@@ -63,8 +63,8 @@ La tarjeta del laboratorio agrega, desde v0.167.1, «Con un modo difícil de dos
   resplandores celestes (`body.modo-dificil`), en la portada, el juego y el resultado (pedido del dueño).
 - **La trama del segundo color** (#349): en el modo difícil, las casillas del segundo color y su pincel
   llevan rayas finas, para quien no distingue bien los colores; al revelarse el dibujo se van.
-- **El tablero:** dos colores al azar de `PALETA` (nunca amarillo con naranjo juntos: se confundían; un dibujo puede traer los suyos en `colores`, y las cerezas salen siempre rojas con el tallo verde, desde v0.167.2, pedido del dueño), con los dibujos de `DIBUJOS2` (de dos colores), un
-  borde eléctrico y tres pinceles («Pinta rojo», «Pinta verde», «No pinta»). El marcador dice
+- **El tablero:** los dos colores de verdad del dibujo (`colores`: la frutilla roja con hojas verdes, el árbol verde con el tronco café; nunca amarillo con naranjo juntos, se confunden; las cerezas desde v0.167.2 y todos desde v0.168.3, D-298), con los dibujos de `DIBUJOS2` (de dos colores), un
+  borde eléctrico y tres pinceles (con la frutilla, «Pinta rojo», «Pinta verde», «No pinta»). El marcador dice
   «⚡ Modo difícil ×1.5». Un número cumplido ya no dice de qué color son las demás: solo que no son del
   suyo.
 - **El puntaje:** (100 − 15 por error − 10 por ayuda) × 1,5, hasta 150. El desglose lo dice («⚡ Modo difícil: ×1.5.»),
@@ -76,13 +76,15 @@ La tarjeta del laboratorio agrega, desde v0.167.1, «Con un modo difícil de dos
   irregulares: uno simétrico se adivina por espejo y el test lo rechaza (D-290). Un dibujo nuevo tiene
   que reconocerse a 7×7 y tener entre 12 y 40 pintadas. `DIBUJOS2`: los 10 del modo difícil (`#` y
   `+`, un color cada uno), también irregulares y con al menos 4 casillas de cada color (D-291).
-  `PALETA`: los 6 colores con su nombre y su emoji cuadrado.
+  `PALETA`: los 9 colores con su nombre y su emoji (café, blanco y rosado desde v0.168.3). Cada dibujo
+  trae sus colores de verdad en `colores`, uno o dos de `PALETA`, nunca amarillo con naranjo (D-298).
 - `engine.js`: `resolver(sol, dadas)` deduce como un jugador, con los colores que todavía puede tener
   cada casilla (sirve para uno o dos colores): cada casilla conocida dice cuántas de sus
   vecinas desconocidas se pintan; si son todas o ninguna, se saben; y si las desconocidas de una
   están todas entre las de otra, la diferencia también. Cada deducida suma su número y se sigue.
-  `generar(semilla, { colores })` elige un dibujo (de `DIBUJOS2` con `colores: 2`; quizás espejado) y sus
-  colores al azar de `PALETA`, agrega dadas al azar hasta que `resolver` lo
+  `generar(semilla, { colores })` elige un dibujo (de `DIBUJOS2` con `colores: 2`; quizás espejado) y
+  sus colores (`colores`; saca igual la baraja de colores de antes, sin usarla, para que los links
+  viejos den el mismo tablero), agrega dadas al azar hasta que `resolver` lo
   termina y saca las que sobran (en promedio quedan 1 o 2: el resto se deduce en cadena).
   `ayuda(sol, conocidas)` usa la misma deducción y se detiene en la primera casilla que sabe: devuelve
   `{ celda, por }` (la casilla y las conocidas cuyas reglas la dedujeron) o `null` (D-292).
