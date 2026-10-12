@@ -20,9 +20,18 @@ for (const d of DIBUJOS2) {
   assert.ok(de('#') >= 4 && de('+') >= 4 && de('#') + de('+') >= 12 && de('#') + de('+') <= 40, `${d.nombre}: colores mal repartidos`);
   assert.ok(!d.filas.every(f => f === [...f].reverse().join('')) && d.filas.join() !== [...d.filas].reverse().join(), `${d.nombre}: es simétrico`);
 }
-// Los dibujos con colores propios nombran colores de PALETA, distintos, uno por color del dibujo
-for (const d of [...DIBUJOS, ...DIBUJOS2].filter(d => d.colores)) {
-  assert.ok(d.colores.every(n => PALETA.some(p => p.nombre === n)) && new Set(d.colores).size === d.colores.length, `${d.nombre}: colores`);
+// Cada dibujo trae sus colores de verdad (pedido del dueño): de PALETA, uno por color del dibujo,
+// distintos, y nunca amarillo con naranjo (se confunden a simple vista)
+for (const [lista, n] of [[DIBUJOS, 1], [DIBUJOS2, 2]]) for (const d of lista) {
+  assert.ok(Array.isArray(d.colores) && d.colores.length === n, `${d.nombre}: le faltan sus colores`);
+  assert.ok(d.colores.every(c => PALETA.some(p => p.nombre === c)) && new Set(d.colores).size === n, `${d.nombre}: colores`);
+  assert.notDeepEqual([...d.colores].sort(), ['amarillo', 'naranjo'], `${d.nombre}: amarillo con naranjo`);
+}
+// Y el tablero sale con ellos
+for (let n = 0; n < 60; n++) for (const colores of [1, 2]) {
+  const t = generar(`colores-${n}`, { colores });
+  const d = (colores === 2 ? DIBUJOS2 : DIBUJOS).find(d => d.emoji === t.dibujo.emoji && d.nombre === t.dibujo.nombre);
+  assert.deepEqual(t.dibujo.pinturas.map(p => p.nombre), d.colores, `${t.dibujo.nombre}: sus colores`);
 }
 // Las cerezas salen rojas con el tallo verde (pedido del dueño)
 let cerezas = 0;
