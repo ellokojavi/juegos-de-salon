@@ -1,7 +1,7 @@
 /**
  * Pintaminas — prototipo de laboratorio (D-289), inspirado en ColorSweeper (ARRKKA): un Buscaminas de
- * colores. Cada casilla es de tinta o de fondo y su número dice cuántas de sus 8 vecinas son de su
- * mismo color; al pintarlo entero aparece un dibujo. Solo en español, para probar con amigos. Sin
+ * colores. Cada casilla se pinta (de un color que cambia con cada tablero) o no, y su número dice
+ * cuántas de sus 8 vecinas son como ella; al pintarlo entero aparece un dibujo. Solo en español, para probar con amigos. Sin
  * `?seed=` es el tablero de hoy, el mismo para todos. El motor está en engine.js y los dibujos en
  * dibujos.js.
  */
@@ -22,17 +22,18 @@ const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const COLORSWEEPER = 'https://store.steampowered.com/app/3128730/ColorSweeper/';
 const T = {
   nombre: 'Pintaminas',
-  lema: 'Pinta la grilla y descubre el dibujo escondido. Cada número cuenta cuántas de sus vecinas son de su mismo color.',
+  lema: 'Pinta la grilla y descubre el dibujo escondido. Cada número cuenta cuántas de sus vecinas son como ella: pintadas o no.',
   hoy: 'El tablero de hoy es el mismo para todos.',
   como: [
-    ['🔢', 'Cada número dice cuántas de sus 8 vecinas son de su mismo color: tinta o fondo.'],
-    ['🖌️', 'Elige 🎨 Tinta o ⬜ Fondo y toca una casilla. Si aciertas, aparece su número y te da más pistas.'],
+    ['🔢', 'Cada número dice cuántas de sus 8 vecinas son como ella: pintadas o sin pintar.'],
+    ['🖌️', 'Elige «Pinta» o «No pinta» y toca una casilla. Si aciertas, aparece su número y te da más pistas.'],
     ['🧠', `Nunca hay que adivinar: todo se deduce. Cada error resta ${RESTA_ERROR}.`],
   ],
   empezar: '🖌️ Empezar', aJugar: '¡A pintar!',
-  tinta: '🎨 Tinta', fondo: '⬜ Fondo', pincel: 'Pincel',
+  // Los pinceles (pedido del dueño): «Pinta» con el color del tablero, y «No pinta», gris como las que no se pintan
+  tinta: 'Pinta {c}', fondo: 'No pinta', pincel: 'Pincel',
   errores: ['Sin errores', '1 error', '{n} errores'], quedan: 'Faltan {n}',
-  bien: '', mal: { 1: '❌ Era tinta: −{pts}.', 0: '❌ Era fondo: −{pts}.' },
+  mal: { 1: '❌ Se pintaba de {c}: −{pts}.', 0: '❌ No se pintaba: −{pts}.' },
   fin: { perfecto: '¡Perfecto!', listo: '¡Pintado!' }, era: '¡Era {d}!',
   desglose: ['Sin errores: 100 puntos.', ['1 error: −{pts}.', '{n} errores: −{pts}.']],
   tiempo: 'Tiempo: {t}.',
@@ -121,7 +122,7 @@ function jugar() {
   const botonPincel = k => el('button', {
     type: 'button', class: `pincel pincel--${k ? 'tinta' : 'fondo'}`, id: k ? 'btn-tinta' : 'btn-fondo',
     style: `--tinta:${t.dibujo.color}`, onClick: () => { SFX.tap(); P.pincel = k; dibujar(); },
-  }, k ? T.tinta : T.fondo);
+  }, k ? fmt(T.tinta, { c: t.dibujo.pintura }) : T.fondo);
   const pinceles = el('div', { class: 'pinceles', role: 'group', 'aria-label': T.pincel }, botonPincel(1), botonPincel(0));
   const dibujar = () => {
     const e = estado(t, P.jugadas);
@@ -130,7 +131,7 @@ function jugar() {
       b.className = 'casilla' + (sabe ? (k ? ' tinta' : ' fondo') : '') + (e.errores.has(i) ? ' error' : '');
       b.textContent = sabe ? String(numero(t.sol, i)) : '';
       b.disabled = sabe || e.fin;
-      b.setAttribute('aria-label', sabe ? `${k ? 'tinta' : 'fondo'}, ${numero(t.sol, i)}` : 'sin pintar');
+      b.setAttribute('aria-label', sabe ? `${k ? `pintada de ${t.dibujo.pintura}` : 'sin pintar'}, ${numero(t.sol, i)}` : 'por descubrir');
     });
     pinceles.querySelectorAll('.pincel').forEach((b, k) => b.setAttribute('aria-pressed', String((1 - k) === P.pincel)));
     marcador.textContent = `${nErrores(e.errores.size)} · ${fmt(T.quedan, { n: t.sol.length - e.conocidas.size })}`;
@@ -144,7 +145,7 @@ function jugar() {
     const b = casillas[i];
     if (e.errores.has(i)) {
       SFX.error(); vibrate([60, 40, 60]);
-      aviso.className = 'aviso-pm mal'; aviso.textContent = fmt(T.mal[t.sol[i]], { pts: RESTA_ERROR });
+      aviso.className = 'aviso-pm mal'; aviso.textContent = fmt(T.mal[t.sol[i]], { pts: RESTA_ERROR, c: t.dibujo.pintura });
       b.classList.add('shake');
     } else {
       SFX.letterHit(); vibrate(12);
