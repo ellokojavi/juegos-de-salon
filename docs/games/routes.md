@@ -22,8 +22,9 @@ la cuenta 3, 2, 1 compartida (`assets/js/cuenta-regresiva.js`).
 ## Cómo se juega
 
 - **Etapas** (D-294): cada partida son 5 tableros, cada uno más difícil: 3 líneas y mínimo 2; 4 y 3;
-  4 y 4; 5 y 4; 5 y 5. Arriba, «Etapa n de 5», cinco puntos (verde la hecha, dorada en el mínimo,
-  blanca la actual) y «4 líneas · mínimo 3 giros». Al unir una etapa, «🚇 ¡Etapa 2 lista!» y llega
+  4 y 4; 5 y 4; 5 y 5. Arriba, «Etapa n de 5», cinco puntos (verde la hecha en el mínimo, amarilla
+  la hecha con giros de más, blanca la actual), como la tarjeta para compartir; el mínimo lo dice el
+  marcador de abajo. Al unir una etapa, «🚇 ¡Etapa 2 lista!» y llega
   la siguiente. La partida vale el promedio de las etapas.
 
 - **Girar:** se arrastra de una pieza a otra y queda marcado en blanco el rectángulo entre las dos (el amarillo se confundía con la línea amarilla);
@@ -38,7 +39,7 @@ la cuenta 3, 2, 1 compartida (`assets/js/cuenta-regresiva.js`).
 - **Puntaje:** por etapa, 100 si se iguala el mínimo, −15 por cada giro de más, nunca menos de 10; la
   partida, el promedio. Con 70 o más, confeti.
 - **El final:** el último tablero resuelto, un sello (¡Todas en el mínimo! o ¡Rutas unidas!), el
-  puntaje, el desglose (cada etapa: «Etapa 3: 5 giros (mínimo 4) · 85», y cuántas veces reiniciaste),
+  puntaje, el desglose (cada etapa: «🟨 Etapa 3: 5 giros (mínimo 4) · 85/100», y cuántas veces reiniciaste),
   el tiempo, compartir (una línea por etapa: «🟩 1: 2/2»), otro tablero, el de hoy (si se jugó con semilla) y, tras una línea, el
   formulario de comentarios (D-265, D-268).
 - **El día:** sin `?seed=` es el tablero de hoy (`dia:<fecha>`), el mismo para todos.
