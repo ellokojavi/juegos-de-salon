@@ -24,8 +24,8 @@ const T = {
   nombre: 'Agentes', lema: 'El juego te da una pista; tú encuentras a tus agentes entre 15 palabras.',
   hoy: 'El tablero de hoy es el mismo para todos.',
   como: [
-    ['🕵️', `Toca las palabras que van con la pista: «MAR · 3» quiere decir que 3 van con MAR. Llegan ${CUANTAS} pistas, de a una.`],
-    ['⚠️', `Evita las ${NEUTRALES} palabras neutrales (−${RESTA_NEUTRAL}) y al asesino (−${RESTA_ASESINO}): todas se parecen a alguna pista. Tocar una corta la pista.`],
+    ['🕵️', `Toca las palabras que van con la pista: «MAR · 3» quiere decir 3. Llegan ${CUANTAS} pistas, de a una.`],
+    ['⚠️', `Evita las ${NEUTRALES} neutrales (−${RESTA_NEUTRAL}) y al asesino (−${RESTA_ASESINO}): se parecen a alguna pista y tocarlos corta la pista.`],
     ['⏭️', 'Si dudas, pasa a la siguiente pista. Cada agente suma, aunque sea de otra pista.'],
   ],
   empezar: '🕵️ Empezar', aJugar: '¡A jugar!', pista: 'Pista {n} de {t}', faltan: 'Te faltan {n}', faltaUna: 'Te falta 1',
