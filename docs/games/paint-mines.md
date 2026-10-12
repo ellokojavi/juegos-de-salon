@@ -16,8 +16,7 @@ y lo dice en la portada y en el laboratorio.
 
 ## Portada
 
-El título con una 🖌️ que pinta, el lema («Pinta la grilla y descubre el dibujo escondido. Cada número
-cuenta cuántas de sus vecinas son como ella: pintadas o no.»), el crédito, y un tablero chico que se pinta
+El título con una 🖌️ que pinta, el lema («Pinta la grilla y descubre el dibujo escondido.»), el crédito, y un tablero chico que se pinta
 solo hasta mostrar su dibujo y vuelve a empezar (con movimiento reducido queda pintado). Después los
 tres pasos y Empezar, que pasa por la cuenta 3, 2, 1 compartida (`assets/js/cuenta-regresiva.js`).
 
@@ -42,10 +41,10 @@ tres pasos y Empezar, que pasa por la cuenta 3, 2, 1 compartida (`assets/js/cuen
 ## Modo difícil (D-291)
 
 - **El interruptor:** en la portada, antes de Empezar, una palanca sobre una placa de metal («⚡ Modo
-  difícil · Dos colores · puntaje ×1.5»). Al subirla la placa se electrifica: titila en celeste y
+  difícil · Dos colores · puntaje ×1.5»). Bajo el título dice «APAGADO» o «ENCENDIDO». Al subirla la placa se electrifica: titila en celeste y
   amarillo, saltan chispas ⚡, suena y vibra. Es un `role="switch"`; el celular recuerda su posición
   (`juegos-de-salon:pintaminas:dificil`) y el link lo trae con `?colors=2`.
-- **El tablero:** dos colores al azar de `PALETA`, con los dibujos de `DIBUJOS2` (de dos colores), un
+- **El tablero:** dos colores al azar de `PALETA` (nunca amarillo con naranjo juntos: se confundían), con los dibujos de `DIBUJOS2` (de dos colores), un
   borde eléctrico y tres pinceles («Pinta rojo», «Pinta verde», «No pinta»). El marcador dice
   «⚡ Modo difícil ×1.5». Un número cumplido ya no dice de qué color son las demás: solo que no son del
   suyo.
