@@ -65,7 +65,7 @@ const P = await ev(`JSON.stringify({ hechas: window.__rutas.P.hechas, segundos: 
 const esp = puntajePartida(P.hechas, P.segundos);
 ok(P.hechas.length === 5 && esp.completa, `las 5 etapas anotadas (${P.hechas.map(h => `${h.giros}/${h.minimo}`).join(' ')}, en ${Math.round(P.segundos)} s)`);
 ok(await esperar(`document.getElementById('puntaje')?.textContent === '${esp.total}/100'`, 6000), `el resultado: ${esp.total}/100 = ${esp.base} + ${esp.ptsVelocidad} de rapidez + ${esp.ptsGiros} de giros`);
-ok(/5 de 5 etapas: 85 puntos/.test(await ev(`document.getElementById('desglose').textContent`)) && /Rapidez/.test(await ev(`document.getElementById('desglose').textContent`)), 'el desglose muestra las tres capas');
+ok(/Etapas \(5 de 5\): \+85/.test(await ev(`document.getElementById('desglose').textContent`)) && /Rapidez/.test(await ev(`document.getElementById('desglose').textContent`)), 'el desglose muestra las tres capas');
 ok(await ev(`document.querySelectorAll('#desglose li').length`) >= 5, 'el desglose muestra cada etapa');
 ok(/Reiniciaste 1 vez/.test(await ev(`document.querySelector('.desglose').textContent`)), 'el desglose cuenta el reinicio');
 ok(await ev(`!!document.getElementById('btn-compartir-resultado')`), 'se puede compartir el resultado');
@@ -79,6 +79,10 @@ await b.go(`${SITIO}/labs/routes/?seed=${SEMILLA}&test`, 1200);
 await esperar(`!!document.getElementById('btn-empezar')`);
 await ev(`document.getElementById('btn-empezar').click(); 1`);
 await esperar(`!!document.getElementById('btn-rendirse') && !document.getElementById('cuenta')`, 8000);
+// El reloj se pausa con la pantalla oculta (U-20): el rato oculto no cuenta
+const oculta = v => ev(`Object.defineProperty(document, 'hidden', { configurable: true, get: () => ${v} }); document.dispatchEvent(new Event('visibilitychange')); 1`);
+const d0 = await ev(`window.__rutas.P.desde`); await oculta(true); await sleep(1500); await oculta(false);
+ok(await ev(`window.__rutas.P.desde`) - d0 >= 1400, 'con la pantalla oculta, el reloj se pausa');
 await ev(`document.getElementById('btn-rendirse').click(); 1`); await sleep(150);
 ok(/Toca de nuevo/.test(await ev(`document.getElementById('btn-rendirse').textContent`)) && !await ev(`!!document.getElementById('puntaje')`), 'rendirse pide un segundo toque');
 await ev(`document.getElementById('btn-rendirse').click(); 1`);
