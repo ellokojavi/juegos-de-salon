@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.163.1 — 2026-10-11
+- **🖌️ Pintaminas (laboratorio):** el modo difícil también cambia el fondo de la página, a un azul noche
+  eléctrico.
+
 ## 0.163.0 — 2026-10-11
 - **🖌️ Pintaminas (laboratorio): 💡 Ayuda** (D-292). Si te trabas, la ayuda marca una casilla que se
   puede deducir y los números que lo explican, por 10 puntos. Y el interruptor del modo difícil brilla
