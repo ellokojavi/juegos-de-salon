@@ -285,11 +285,11 @@ function jugar() {
     const i = indice(p, sel), j = indice(p, id);
     const u = une(p, i, j);
     if (!u.ok) {
-      // No se unen: tiemblan los dos, dice por qué, y queda elegido el nuevo
+      // No se unen: tiemblan los dos, dice por qué y se sueltan: la jugada siguiente parte de cero
       SFX.error(); vibrate([40, 30, 40]);
       for (const n of [nodo(sel), b]) { n?.classList.remove('sel', 'no'); void n?.offsetWidth; n?.classList.add('no'); }
       decir(fmt(T.no[u.motivo], { a: p.celdas[i].v, b: p.celdas[j].v }), 'mal');
-      sel = id; b.classList.add('sel');
+      sel = null;
       return;
     }
     explotar(sel, id);
