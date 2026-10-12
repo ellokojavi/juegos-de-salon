@@ -74,7 +74,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | README y capturas | C-13 | D-51, D-76, D-78, D-213 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216, D-299 |
 | La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285 |
-| Agentes (usabilidad, documentación, procesos) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-301, D-303, D-304 |
+| Agentes (usabilidad, documentación, procesos) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249 |
 | Marketing | `marketing/README.md` | D-178 |
 | App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
@@ -1320,7 +1320,7 @@ errores: todos los que terminan sacan 100 y el tiempo ordena el día.
 es uno solo. Y un tablero que no dice por qué no terminó parece roto.
 
 ## D-104 · Los reportes se mandan sin cuenta y se leen sin cuenta
-**Fecha:** 2026-09-23 · **Estado:** vigente
+**Fecha:** 2026-09-23 · **Estado:** corregida por D-306
 **Decisión:** El botón 🐞 de La Copa manda el reporte por REST a `feedback/`, sin sesión anónima ni
 PIN (`copa/reportes.js`). Las reglas dejan escribir a cualquiera (una sola vez por reporte, con el
 largo validado) y **leer a cualquiera**, para que `node tools/reportes.mjs` los traiga sin la
@@ -2900,7 +2900,7 @@ vueltas de las cuerdas (D-182, D-183, D-185) y de las instrucciones (D-184).
 puede caer en él. La captura del menú en el README se rehace.
 
 ## D-191 · Un idioma nuevo entra por el laboratorio: el alemán
-**Fecha:** 2026-10-03 · **Estado:** corregida por D-195, D-197, D-231
+**Fecha:** 2026-10-03 · **Estado:** corregida por D-195, D-197, D-231, D-306
 **Decisión:** El alemán (**Salonspiele**) se suma completo —los textos de los ocho juegos, las
 frases, los mazos, las grillas y palabras de La Copa y los nombres de ¿Dónde queda?— pero **solo
 se ofrece en el laboratorio**: en el dispositivo que entra por `/labs/de/` o por un link con
@@ -4965,6 +4965,7 @@ vista, pero el nodo `feedback/` de Firebase ya se lee sin llave (`.read: true`):
 nada que no se pudiera ver. El nombre es opcional y lo elige el jugador (40 caracteres como mucho).
 **Alternativas descartadas:** dejarlo solo en `reportes.mjs` o en el panel (el dueño tendría que ir
 a buscarlo; el correo del issue es donde lee el reporte).
+**Después:** D-306 suma la etiqueta de la llave del laboratorio, que llega aunque no se escriba nombre.
 
 ## D-280 · El laboratorio tiene dos grupos: Proyectos activos y La Bodega
 **Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** amplía D-262
@@ -5564,3 +5565,28 @@ píldora de Uno al día quedaba pegada a su bajada, a media tarjeta, y se leía 
   (Ahorcado, Generala, Batalla Naval y Dudo): una acción, una palabra (U-5).
 **Alternativas descartadas:** una línea o un fondo que separe las píldoras (más ruido en una
 tarjeta chica); igualar el largo de las bajadas (cambia con el idioma).
+
+## D-306 · El feedback dice con qué llave se entró, no muestra su JSON y se sube cada 15 minutos
+**Fecha:** 2026-10-12 · **Estado:** vigente · **Relación:** amplía D-279 (quién manda el feedback) y D-284 (una llave por persona); corrige D-104 y D-191 en que el contexto se mostraba
+**Decisión:** tres cambios al feedback 🐞, los tres pedidos por el dueño:
+- **Quien entró al laboratorio con su llave manda también su etiqueta.** Cuando una llave abre la
+  puerta, `labs-puerta.js` guarda su etiqueta (`juegos-de-salon:labs-quien`, nunca la llave) y
+  `enviarReporte` (`cup/reportes.js`) la agrega al reporte como `tester`, en todos los formularios
+  (el 🐞, el del final de cada juego del laboratorio y el de La Copa). El issue la muestra en una
+  línea **Llave** y `reportes.mjs` entre paréntesis. Las reglas de `feedback/` aceptan `tester`
+  (hasta 24 letras, como una etiqueta).
+- **El formulario ya no muestra el contexto.** El desplegable "Lo que se envía junto" mostraba el
+  JSON tal cual (`labs`, `pantallaTam`, `navegador`…): la estructura interna, en una pantalla que
+  ve cualquier jugador. El contexto se sigue mandando igual; solo se deja de mostrar, y se van sus
+  textos en los cuatro idiomas.
+**Por qué:** el nombre escrito es opcional y a veces es un apodo ("Tu admirador secreto"); la
+etiqueta la puso el dueño al dar el link, así que sabe a quién preguntarle. No revela nada privado:
+la etiqueta ya es pública en el repo (D-284) y nunca viaja la llave. Mostrar el JSON servía para
+depurar, pero en una app de cara al jugador deja ver cómo está armada por dentro.
+- **El feedback se sube cada 15 minutos, no cada hora** (`feedback.yml`, cron `7,22,37,52`): el
+  dueño pidió que cada comentario quede como issue. Eso ya pasaba (D-275), pero GitHub atrasa los
+  horarios y con uno por hora el workflow corrió unas 4 veces al día. Instantáneo no se puede sin
+  servidor: el sitio es estático y el formulario no tiene con qué abrir un issue.
+**Alternativas descartadas:** meter la etiqueta dentro de `contexto` (no tocaba las reglas, pero el
+contexto se corta a 500 letras y lo último se pierde); mostrar el contexto en palabras ("se envía la
+página y el tamaño de la pantalla"), que suma texto a un formulario que debe ser corto.
