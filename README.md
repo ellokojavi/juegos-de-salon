@@ -202,7 +202,7 @@ Spec and design: [docs/games/timeline.md](docs/games/timeline.md)
 <table>
   <tr>
     <td align="center"><img src="docs/screenshots/hangman/01-intro.png" width="180" alt="Game modes"><br><sub>Game modes</sub></td>
-    <td align="center"><img src="docs/screenshots/hangman/02-configuracion.png" width="180" alt="Word, lives and who plays"><br><sub>Word, lives and who plays</sub></td>
+    <td align="center"><img src="docs/screenshots/hangman/02-configuracion.png" width="180" alt="Theme and who plays"><br><sub>Theme and who plays</sub></td>
     <td align="center"><img src="docs/screenshots/hangman/03-escribir.png" width="180" alt="Each player writes for the next"><br><sub>Each player writes for the next</sub></td>
     <td align="center"><img src="docs/screenshots/hangman/04-juego.png" width="180" alt="Gallows, clue, word and keyboard"><br><sub>Gallows, clue, word and keyboard</sub></td>
   </tr>
@@ -293,7 +293,7 @@ Spec and design: [docs/games/liars-dice.md](docs/games/liars-dice.md)
   <tr>
     <td align="center"><img src="docs/screenshots/generala/online-02-mirando.png" width="180" alt="Several phones: watching who rolls"><br><sub>Several phones: watching who rolls</sub></td>
     <td align="center"><img src="docs/screenshots/generala/07-servida.png" width="180" alt="Generala on the first roll wins"><br><sub>Generala on the first roll wins</sub></td>
-    <td align="center"><img src="docs/screenshots/generala/06-final.png" width="180" alt="Standings and every score card"><br><sub>Standings and every score card</sub></td>
+    <td align="center"><img src="docs/screenshots/generala/06-final.png" width="180" alt="Final standings"><br><sub>Final standings</sub></td>
     <td align="center"><img src="docs/screenshots/generala/03-final-solo.png" width="180" alt="Solo score and record"><br><sub>Solo score and record</sub></td>
   </tr>
 </table>
