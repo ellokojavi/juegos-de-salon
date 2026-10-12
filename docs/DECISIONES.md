@@ -5312,8 +5312,8 @@ rapidez** (10 si las cinco se terminan en un minuto o menos, 0 al acabarse el re
 entre medio; solo si se completan todas) y hasta **5 por giros** (5 si todas las etapas hechas fueron
 en el mínimo, 0 con el doble o más). Al acabarse el reloj se acaba la partida y cuentan las etapas
 hechas. **🏳️ Rendirse** pide un segundo toque («Toca de nuevo para rendirte», como la ayuda de
-Pintaminas) y cuenta igual las etapas hechas. El resultado muestra las tres capas («🚇 5 de 5 etapas:
-85 puntos (17 cada una).», «⏱ Rapidez (2:10): +8.», «🔄 Giros (24; el mínimo era 18): +3.») y cada etapa; el sello dice
+Pintaminas) y cuenta igual las etapas hechas. El resultado muestra las tres capas («🚇 Etapas (5 de 5):
++85.», «⏱ Rapidez (2:10): +8.», «🔄 Giros (24, mínimo 18): +3.») y cada etapa; el sello dice
 «Se acabó el tiempo» o «Te rendiste» si no se completó.
 **Por qué:** con el bono menor que una etapa, el orden completar > rapidez > giros se cumple siempre
 (4 etapas en el mínimo dan como máximo 73, porque la rapidez solo cuenta con las cinco; 5 lentas y con el doble de giros, 85), y la rapidez pesa el
