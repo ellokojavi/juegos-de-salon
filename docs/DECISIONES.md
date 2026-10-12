@@ -5189,3 +5189,18 @@ o Mosaico (lo eligió el dueño).
 resuelven sin adivinar, sin dadas de sobra); `tools/e2e/paint-mines/lab.mjs` juega una partida
 entera. Si gusta, el paso siguiente es La Copa (junto a Tango, que también es de dos colores: cuidar
 que no se sientan repetidos).
+
+## D-290 · Pintaminas: «Pinta» y «No pinta», un color al azar por tablero y dibujos irregulares
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** corrige D-289
+**Contexto:** el dueño probó Pintaminas en el teléfono: «tinta o fondo» era un mal nombre, y los
+dibujos simétricos (corazón, estrella, árbol…) se adivinaban por espejo, sin deducir.
+**Decisión:** los pinceles se llaman **«Pinta {color}»**, con un color que cada tablero toma al azar
+de `PALETA` (azul, rojo, verde, amarillo, naranjo, morado), y **«No pinta»**, gris como las casillas
+que no se pintan. El error lo dice así: «❌ Se pintaba de morado: −15.» o «❌ No se pintaba: −15.».
+Los 17 dibujos pasan a ser **irregulares** (un pez, una bota, un rayo, un perro, un cohete, una
+guitarra…), y el test rechaza uno simétrico de lado a lado o de arriba abajo.
+**Por qué:** «pintar o no» es lo que hace el jugador, y el color al azar hace que cada tablero se vea
+distinto aunque repita dibujo. Un dibujo irregular obliga a deducir cada casilla.
+**Alternativas descartadas:** un color fijo por dibujo (el corazón siempre rojo: delataba el dibujo
+por el color); seguir llamándolos tinta y fondo.
+**Consecuencias:** `engine.test.mjs` revisa la paleta y la asimetría de cada dibujo.

@@ -1,7 +1,7 @@
 # 🖌️ Pintaminas (prototipo del laboratorio, en Proyectos activos)
 
-Un Buscaminas de colores para uno solo (D-289): cada casilla es de **tinta** o de **fondo**, y su
-número dice cuántas de sus 8 vecinas son de su mismo color. Al pintarlo entero aparece un dibujo.
+Un Buscaminas de colores para uno solo (D-289): cada casilla **se pinta** (de un color que cambia con
+cada tablero) **o no**, y su número dice cuántas de sus 8 vecinas son como ella (D-290). Al pintarlo entero aparece un dibujo.
 **Inspirado en [ColorSweeper](https://store.steampowered.com/app/3128730/ColorSweeper/), de ARRKKA**,
 y lo dice en la portada y en el laboratorio.
 
@@ -23,11 +23,12 @@ tres pasos y Empezar, que pasa por la cuenta 3, 2, 1 compartida (`assets/js/cuen
 ## Cómo se juega
 
 - **Tablero:** 7×7. Algunas casillas vienen dadas, con su color y su número.
-- **Pincel:** dos botones, 🎨 Tinta (del color del dibujo) y ⬜ Fondo; el elegido se nota. Tocar una
+- **Pincel:** dos botones, «Pinta {color}» (el color del tablero, al azar de `PALETA`) y «No pinta»
+  (gris, como las casillas sin pintar); el elegido se nota. Tocar una
   casilla sin pintar la pinta con el pincel.
 - **Acertar:** aparece su número, que da más pistas. **Errar:** la casilla se destapa igual con su
-  color verdadero, con un borde rojo, y resta 15 («❌ Era tinta: −15.»). Arriba: errores y cuántas faltan.
-- **Al terminar:** los números se van, el fondo se apaga, la tinta brilla y se dice qué era
+  color verdadero, con un borde rojo, y resta 15 («❌ Se pintaba de morado: −15.» o «❌ No se pintaba: −15.»). Arriba: errores y cuántas faltan.
+- **Al terminar:** los números se van, las sin pintar se apagan, las pintadas brillan y se dice qué era
   («🐟 ¡Era un pez!»).
 - **Puntaje:** 100 − 15 por error, nunca bajo 0. Con 70 o más, confeti.
 - **El final:** el dibujo, su nombre, un sello (¡Perfecto! sin errores, si no ¡Pintado!), el puntaje
@@ -39,11 +40,12 @@ tres pasos y Empezar, que pasa por la cuenta 3, 2, 1 compartida (`assets/js/cuen
 
 ## Cómo funciona
 
-- `dibujos.js`: 17 dibujos de 7×7 (`#` tinta, `.` fondo), cada uno con nombre, emoji, color y el
-  emoji cuadrado de su color. Un dibujo nuevo tiene que reconocerse a 7×7 y tener entre 12 y 40 de
-  tinta (lo revisa el test).
+- `dibujos.js`: 17 dibujos de 7×7 (`#` se pinta, `.` no), cada uno con nombre y emoji, todos
+  irregulares: uno simétrico se adivina por espejo y el test lo rechaza (D-290). Un dibujo nuevo tiene
+  que reconocerse a 7×7 y tener entre 12 y 40 pintadas. `PALETA`: los 6 colores con su nombre y su
+  emoji cuadrado.
 - `engine.js`: `resolver(sol, dadas)` deduce como un jugador: cada casilla conocida dice cuántas de sus
-  vecinas desconocidas son de tinta; si son todas o ninguna, se saben; y si las desconocidas de una
+  vecinas desconocidas se pintan; si son todas o ninguna, se saben; y si las desconocidas de una
   están todas entre las de otra, la diferencia también. Cada deducida suma su número y se sigue.
   `generar(semilla)` elige un dibujo (quizás espejado), agrega dadas al azar hasta que `resolver` lo
   termina y saca las que sobran (en promedio quedan 1 o 2: el resto se deduce en cadena).

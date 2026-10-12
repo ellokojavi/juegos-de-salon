@@ -1,7 +1,7 @@
 // Pintaminas (laboratorio, D-289): los dibujos son de 7×7, cada tablero se resuelve sin adivinar
 // —con las dadas, `resolver` lo deduce entero— y el estado y el puntaje se calculan bien.
 import assert from 'node:assert/strict';
-import { DIBUJOS } from './dibujos.js';
+import { DIBUJOS, PALETA } from './dibujos.js';
 import { generar, resolver, estado, puntaje, tarjeta, numero, VECINAS, LADO, RESTA_ERROR } from './engine.js';
 
 for (const d of DIBUJOS) {
@@ -9,8 +9,12 @@ for (const d of DIBUJOS) {
   for (const f of d.filas) assert.match(f, /^[#.]{7}$/, `${d.nombre}: ${f}`);
   const tinta = d.filas.join('').split('#').length - 1;
   assert.ok(tinta >= 12 && tinta <= 40, `${d.nombre}: ${tinta} de tinta, demasiado o muy poco`);
-  assert.ok(d.nombre && d.emoji && d.color && d.cuadro, `${d.nombre}: le falta algo`);
+  assert.ok(d.nombre && d.emoji, `${d.nombre}: le falta algo`);
+  // Irregulares: uno simétrico (de lado a lado o de arriba abajo) se adivina por espejo
+  assert.ok(!d.filas.every(f => f === [...f].reverse().join('')), `${d.nombre}: es simétrico de lado a lado`);
+  assert.ok(d.filas.join() !== [...d.filas].reverse().join(), `${d.nombre}: es simétrico de arriba abajo`);
 }
+for (const p of PALETA) assert.ok(p.nombre && /^#[0-9a-f]{6}$/.test(p.color) && p.cuadro, `${p.nombre}: color`);
 assert.deepEqual(VECINAS[0].sort((a, b) => a - b), [1, 7, 8]);
 assert.equal(VECINAS[24].length, 8);
 

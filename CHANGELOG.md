@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.161.1 — 2026-10-11
+- **🖌️ Pintaminas (laboratorio):** los pinceles dicen «Pinta» (con un color que cambia en cada
+  tablero) y «No pinta», y los dibujos ahora son irregulares: ya no se adivinan por espejo (D-290).
+
 ## 0.161.0 — 2026-10-11
 - **🖌️ Laboratorio: Pintaminas, un Buscaminas de colores** (D-289), el segundo proyecto activo.
   Cada número dice cuántas de sus 8 vecinas son de su mismo color: tinta o fondo. Pinta la grilla
