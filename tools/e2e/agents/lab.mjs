@@ -1,8 +1,8 @@
 // Agentes del laboratorio (D-286) de punta a punta, en /labs/agents/: el laboratorio lo ofrece en
-// Proyectos activos, la portada dice de dónde viene (Codenames, con su link), sin semilla es el
-// tablero de hoy; con semilla se juega entero: un agente suma, uno de otra pista suma sin cortar,
+// Proyectos activos, la portada dice de dónde viene (Codenames, con su link) y juega sola una pista,
+// sin semilla es el tablero de hoy; con semilla se juega entero: un agente suma, uno de otra pista suma sin cortar,
 // el asesino y los neutrales cortan la pista (sello Cortada), completarla pasa a la siguiente (sello Completa), y el final muestra el puntaje que dice el
-// motor, el tablero destapado, compartir y el comentario al final. Imprime ✗ si algo falla.
+// motor con su sello, el tablero destapado, compartir y el comentario al final. Imprime ✗ si algo falla.
 import { launch, sleep } from '../cdp.mjs';
 const OUT = process.argv[2] || '/tmp/agentes-lab';
 const b = await launch({ dir: `${OUT}/p`, out: OUT, width: 375, height: 812 });
