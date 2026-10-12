@@ -406,7 +406,7 @@ celular saca la palabra, la flota o los dados de la semilla del día.
 - **Dónde va en la portada** (D-239, decisión del dueño, 2026-10-06): en una tarjeta de media fila
   junto a La Copa, mitad y mitad, con el emoji a la izquierda del título y el título en celeste (el
   de La Copa, en dorado). Abajo a la izquierda, al pie de la tarjeta y a la misma altura que las de La
-  Copa (D-298), una píldora con el estado: **🔥 6 · Jugar hoy** (sin racha, solo
+  Copa (D-305), una píldora con el estado: **🔥 6 · Jugar hoy** (sin racha, solo
   **Jugar hoy**), o **✅ Listo · 🔥 6** ya jugado. La forma de antes, un botón en la misma fila que Juego al azar (**🎲 Al azar** y
   **📅 Uno al día 🔥 6**), queda para probarla con `?daily=button` (el laboratorio la ofreció
   hasta D-262).
@@ -641,7 +641,7 @@ textos los propone el agente de usabilidad y el dueño los corrige en el PR.
 
 | Antes | Ahora | Por qué |
 |---|---|---|
-| **Juega el de hoy** (portada) y **Jugar el de hoy** (amigo) | **Jugar hoy** en los dos (fue "Jugar el de hoy" hasta D-298, que lo acortó para que quepa en la píldora a 320 px) | Una acción, una palabra (U-5), y en infinitivo como los demás botones |
+| **Juega el de hoy** (portada) y **Jugar el de hoy** (amigo) | **Jugar hoy** en los dos (fue "Jugar el de hoy" hasta D-305, que lo acortó para que quepa en la píldora a 320 px) | Una acción, una palabra (U-5), y en infinitivo como los demás botones |
 | **¿Otro más?** | **🎲 Jugar otro** | Verbo y objeto (U-17); el dado dice que es al azar |
 | **Agregar a mi calendario** / **Al calendario** | **Agregar al calendario**, botón chico (desde el PR 6, **⏰ Agregar recordatorio**) | "Al calendario" no tiene verbo (U-17) |
 | "📅 Uno al día · el mismo desafío para todos hoy" | "📅 Uno al día: hoy todos juegan el mismo desafío." | Frase completa (U-1) |
