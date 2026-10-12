@@ -407,6 +407,20 @@ export const CAMINOS = {
     jugadas: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, `1`, `document.querySelector('.rej[data-i="0"]').click()`, `document.querySelector('.rej[data-i="3"]').click()`],
     borrar: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, `1`, `document.querySelector('.rej[data-i="0"]').click()`, `document.getElementById('btn-borrar').click()`],
   },
+  /**
+   * Los juegos del laboratorio que no son de La Copa se piden por su carpeta: `mirar` abre
+   * `/<clave>/` cuando la clave no es un id del registro: la portada del laboratorio, Agentes
+   * (D-286) y Pintaminas (D-289).
+   */
+  labs: { intro: [] },
+  'labs/agents': {
+    intro: [],
+    juego: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, `1`, `1`],
+  },
+  'labs/paint-mines': {
+    intro: [],
+    juego: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, `1`, `1`],
+  },
 };
 
 /**
