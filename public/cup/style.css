@@ -291,7 +291,6 @@ button.md-fila { cursor: pointer; }
 .reporte-btn { margin-top: 14px; }
 .reporte-texto { width: 100%; font: 700 1rem/1.4 var(--font-body); color: var(--ink); background: rgba(0,0,0,0.3); border: 2px solid transparent; border-radius: 14px; padding: 12px 14px; outline: none; resize: vertical; }
 .reporte-texto:focus { border-color: var(--cyan); }
-#reporte-body details summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; }
 
 /* ---------- Juegos de la v2 (D-102) ---------- */
 
