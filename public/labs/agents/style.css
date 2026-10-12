@@ -120,6 +120,7 @@
 /* El tablero final se destapa de a una carta */
 .tablero--fin .carta { animation: ag-volteo 0.4s ease-out both; animation-delay: calc(0.9s + var(--k) * 0.07s); }
 .resultado .comentario { text-align: left; }
+.divisor { width: 100%; border: 0; height: 2px; margin: 18px 0 6px; border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45) 15%, rgba(255, 255, 255, 0.45) 85%, transparent); }
 .trampa { margin: 0; padding: 8px 12px; border-radius: 12px; font-weight: 700; background: rgba(255,255,255,0.06); border: 1px solid var(--glass-border); }
 .trampa--mal { border-color: rgba(255, 77, 94, 0.6); background: rgba(255, 77, 94, 0.1); }
 .carta.asesino .de-pista { color: #ff8a8a; }
