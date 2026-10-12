@@ -1,0 +1,62 @@
+// Pintaminas del laboratorio (D-289) de punta a punta, en /labs/paint-mines/: el laboratorio lo ofrece
+// en Proyectos activos con el crédito a ColorSweeper; la portada lo dice y se pinta sola; Empezar pasa
+// por la cuenta 3, 2, 1; con semilla se juega entero comparando con el motor: acertar muestra el
+// número, errar resta y destapa el color verdadero, el pincel cambia; al terminar aparece el dibujo y
+// el resultado trae el puntaje, compartir, otro tablero y el comentario tras una línea. Imprime ✗ si
+// algo falla.
+import { launch, sleep } from '../cdp.mjs';
+const OUT = process.argv[2] || '/tmp/pintaminas-lab';
+const b = await launch({ dir: `${OUT}/p`, out: OUT, width: 375, height: 812 });
+const ev = e => b.evaluate(e);
+const SITIO = process.env.SITIO || 'http://localhost:8765';
+let fallas = 0;
+const ok = (cond, msg) => { console.log(`${cond ? '✓' : '✗'} ${msg}`); if (!cond) fallas++; };
+const esperar = async (expr, ms = 8000) => { for (let t = 0; t < ms; t += 100) { if (await ev(expr)) return true; await sleep(100); } return false; };
+const SEMILLA = 'e2e1';
+
+await b.go(`${SITIO}/labs/`);
+ok(await ev(`document.querySelector('#activos #seccion-pintaminas #btn-pintaminas')?.getAttribute('href')`) === 'paint-mines/', 'el laboratorio ofrece Pintaminas en Proyectos activos');
+ok(await ev(`/ColorSweeper/.test(document.querySelector('#seccion-pintaminas a[href*="ColorSweeper"]')?.textContent || '')`), 'y dice que está inspirado en ColorSweeper, con su link');
+
+await b.go(`${SITIO}/labs/paint-mines/?test`, 1200);
+ok(await esperar(`!!document.getElementById('btn-empezar')`), 'la portada tiene Empezar');
+ok(/Inspirado en ColorSweeper/.test(await ev(`document.querySelector('.credito')?.textContent || ''`)) && !!await ev(`document.getElementById('link-colorsweeper')?.href`), 'la portada da el crédito a ColorSweeper con su link');
+ok(await esperar(`document.querySelectorAll('.demo .casilla.tinta').length > 3`, 6000), 'el tablero de la portada se pinta solo');
+ok(/mismo para todos/.test(await ev(`document.body.textContent`)), 'sin semilla es el tablero de hoy');
+await b.shot('01-portada');
+
+await b.go(`${SITIO}/labs/paint-mines/?seed=${SEMILLA}&test`, 1200);
+await esperar(`!!document.getElementById('btn-empezar')`);
+ok(!await ev(`document.getElementById('vista').textContent.includes('null')`), 'con semilla, la portada no escribe "null"');
+await ev(`document.getElementById('btn-empezar').click(); 1`);
+ok(await esperar(`/3|2|1/.test(document.querySelector('#cuenta .cuenta-num')?.textContent || '')`, 2000), 'Empezar abre la cuenta 3, 2, 1');
+ok(await esperar(`document.querySelectorAll('#tablero .casilla').length === 49 && !document.getElementById('cuenta')`, 8000), 'y después el tablero de 7×7');
+const t = await ev(`JSON.stringify(window.__pintaminas.P.t)`).then(JSON.parse);
+const { numero } = await import('../../../public/labs/paint-mines/engine.js');
+const casilla = i => `document.querySelector('#tablero .casilla[data-i="${i}"]')`;
+ok(await ev(`[...document.querySelectorAll('#tablero .casilla.tinta, #tablero .casilla.fondo')].length`) === t.dadas.length, `las dadas se ven pintadas (${t.dadas.length})`);
+const pintar = async (i, color) => { await ev(`document.getElementById('${color ? 'btn-tinta' : 'btn-fondo'}').click(); ${casilla(i)}.click(); 1`); await sleep(40); };
+const libres = t.sol.map((_, i) => i).filter(i => !t.dadas.includes(i));
+// Un acierto muestra su número; un error resta y destapa el color verdadero
+await pintar(libres[0], t.sol[libres[0]]);
+ok(await ev(`${casilla(libres[0])}.textContent`) === String(numero(t.sol, libres[0])), 'acertar muestra el número de la casilla');
+ok(await ev(`document.getElementById('btn-${t.sol[libres[0]] ? 'tinta' : 'fondo'}').getAttribute('aria-pressed')`) === 'true', 'el pincel elegido se nota');
+await pintar(libres[1], 1 - t.sol[libres[1]]);
+ok(await ev(`${casilla(libres[1])}.classList.contains('error') && ${casilla(libres[1])}.classList.contains('${t.sol[libres[1]] ? 'tinta' : 'fondo'}')`), 'errar destapa el color verdadero, marcado como error');
+ok(/Era (tinta|fondo): −15/.test(await ev(`document.querySelector('.aviso-pm').textContent`)) && /1 error/.test(await ev(`document.getElementById('marcador').textContent`)), 'y lo dice: −15, 1 error');
+await b.shot('02-juego');
+for (const i of libres.slice(2)) await pintar(i, t.sol[i]);
+ok(await esperar(`document.getElementById('tablero')?.classList.contains('revelada')`, 2000), 'al terminar aparece el dibujo');
+ok((await ev(`document.querySelector('.aviso-pm').textContent`)).includes(t.dibujo.nombre.toLowerCase()), `y dice qué era: ${t.dibujo.nombre}`);
+ok(await esperar(`document.getElementById('puntaje')?.textContent === '85/100'`, 5000), 'el resultado: 85/100 con un error');
+ok(await ev(`!!document.getElementById('btn-compartir-resultado')`), 'se puede compartir el resultado');
+const otro = await ev(`document.getElementById('btn-otro')?.getAttribute('href') || ''`);
+ok(/seed=/.test(otro) && !otro.includes(SEMILLA), `"Otro tablero" abre uno nuevo (${otro})`);
+ok(await ev(`!!document.getElementById('btn-de-hoy')`), 'y como no era el de hoy, ofrece el de hoy');
+ok(await ev(`(()=>{const k=[...document.querySelector('.resultado').children].filter(x=>x.offsetParent!==null);return k.at(-1)?.classList.contains('comentario') && k.at(-2)?.classList.contains('divisor')})()`), 'el comentario es lo último, separado por una línea');
+ok(await ev(`document.documentElement.scrollWidth <= innerWidth`), 'sin scroll de lado a 375 px');
+await b.shot('03-final');
+ok(!b.errors.length, `sin errores en la página ${JSON.stringify(b.errors)}`);
+b.close();
+if (fallas) { console.log(`✗ ${fallas} fallas`); process.exit(1); }
+console.log('✓ pintaminas (labs)');
