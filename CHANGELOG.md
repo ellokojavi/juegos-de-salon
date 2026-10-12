@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.166.1 — 2026-10-12
+- **🚇 Rutas (laboratorio):** al girar, el rectángulo da media vuelta como un solo bloque, alrededor de
+  su centro, y así se ve por qué las cartas quedan dadas vuelta. Las reglas no cambian.
+
 ## 0.166.0 — 2026-10-12
 - **🚇 Rutas (laboratorio): la portada enseña a jugar.** El tablero parte desordenado y se arma en 5 o 6
   jugadas, mostrando las dos clases: girar una carta sola o cambiar de lugar dos vecinas. Al armarse,
