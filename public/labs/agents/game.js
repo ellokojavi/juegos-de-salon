@@ -167,9 +167,10 @@ function jugar() {
       b.className = 'carta' + (tocada ? ` ${c.tipo}` : '');
     });
     if (e.fin) return revelar(e);
-    // Una pista nueva entra girando y su palabra se descifra
+    // Una pista nueva entra girando y su palabra se descifra. El aviso de cómo terminó la anterior
+    // ("¡El asesino! −40…") queda hasta el próximo toque: el sello dura un segundo y no alcanza a leerse
     const nueva = e.actual !== antes;
-    if (nueva) { caja.className = 'pista'; void caja.offsetWidth; caja.classList.add('entra'); if (antes >= 0) decir('', ''); antes = e.actual; }
+    if (nueva) { caja.className = 'pista'; void caja.offsetWidth; caja.classList.add('entra'); antes = e.actual; }
     const p = t.pistas[e.actual];
     const palabra = el('span', { class: 'pp' }, p.pista);
     caja.replaceChildren(
