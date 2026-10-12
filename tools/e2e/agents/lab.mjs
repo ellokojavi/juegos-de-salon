@@ -68,6 +68,10 @@ ok(await esperar(`!!document.getElementById('puntaje')`), 'un neutral corta la �
 const esp = Math.max(0, Math.round(100 * 6 / 9) - 15 - 40);
 ok(await esperar(`document.getElementById('puntaje').textContent === '${esp}/100'`, 4000), `el puntaje sube hasta el del motor (${esp}/100)`);
 ok(/descubrió el asesino/i.test(await ev(`document.querySelector('.sello-fin')?.textContent || ''`)), 'con el asesino, el final es el sello rojo "Te descubrió el asesino"');
+const trampa = await ev(`document.getElementById('trampa')?.textContent || ''`);
+const asesino = t.cartas.find(c => c.tipo === 'asesino');
+ok(trampa.includes(asesino.w) && trampa.includes(t.pistas[asesino.tienta].pista) && /Caíste/.test(trampa), `explica la trampa: ${trampa}`);
+ok((await ev(`[...document.querySelectorAll('#tablero-fin .carta.asesino .de-pista')].map(x => x.textContent).join()`)).includes(t.pistas[asesino.tienta].pista), 'y bajo el asesino, la pista con que tentaba');
 ok(await ev(`document.querySelectorAll('#tablero-fin .carta').length`) === 12, 'muestra el tablero entero destapado');
 ok(await ev(`!!document.getElementById('btn-compartir-resultado')`), 'se puede compartir el resultado');
 const otro = await ev(`document.getElementById('btn-otro')?.getAttribute('href') || ''`);
