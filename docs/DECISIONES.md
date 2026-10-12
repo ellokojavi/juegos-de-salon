@@ -1331,7 +1331,7 @@ reporte. Que se puedan leer públicamente es el precio de no tener
 servidor; si eso cambia, se cierra la lectura al UID del dueño y se leen desde el panel.
 
 ## D-105 · Cuenta regresiva antes de cada juego con reloj
-**Fecha:** 2026-09-23 · **Estado:** corregida por D-258 · **Relación:** desde la 0.46 la cuenta va de 3 a 1: con 5 se hacía larga
+**Fecha:** 2026-09-23 · **Estado:** corregida por D-258 · **Relación:** desde la 0.46 la cuenta va de 3 a 1: con 5 se hacía larga. Desde la 0.158.1 la capa es compartida (`assets/js/cuenta-regresiva.js`, D-102) y la usa también Agentes (D-286)
 **Decisión:** Al tocar Empezar (el día, la sesión de prueba o la práctica) aparece una capa con
 el nombre del juego y una cuenta de 3 a 1, un número por segundo, con un tic y una vibración
 corta. Después dice **¡A jugar!** y se desvanece sola sobre el tablero. El tablero no se dibuja

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.158.1 — 2026-10-11
+- **🕵️ Agentes (laboratorio): la cuenta 3, 2, 1 antes de jugar**, la misma de La Copa, que ahora
+  vive en `assets/js/cuenta-regresiva.js` para que la usen también los juegos del laboratorio.
+
 ## 0.158.0 — 2026-10-11
 - **🕵️ Agentes (laboratorio): marcas antes de arriesgar.** Mantén apretada una carta para marcarla
   sin destaparla: 📌 sospecha, otra vez 🚫 descartada (así no la destapas por error), otra vez sin marca.
