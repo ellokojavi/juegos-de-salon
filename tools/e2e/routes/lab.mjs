@@ -1,10 +1,11 @@
-// Rutas del laboratorio (D-293, D-294) de punta a punta, en /labs/routes/: el laboratorio lo ofrece en
+// Rutas del laboratorio (D-293, D-294, D-295) de punta a punta, en /labs/routes/: el laboratorio lo ofrece en
 // Proyectos activos con el crédito a Junction Nine, que también está en la portada; Empezar pasa por la
 // cuenta 3, 2, 1 y parte en la etapa 1 de 5; arrastrar marca un rectángulo y al soltar gira media vuelta
 // (las piezas cambian de lugar como dice el motor); reiniciar vuelve al comienzo y no cuenta los giros;
 // en cada una de las cinco etapas, deshaciendo la revuelta se unen todas las líneas y llega la siguiente,
-// y el resultado da el promedio de las etapas, el desglose, compartir, otro tablero y el comentario tras
-// una línea. Imprime ✗ si algo falla.
+// y el resultado da el puntaje por capas del motor, el desglose, compartir, otro tablero y el comentario
+// tras una línea; rendirse pide un segundo toque, y con un reloj de prueba de 12 s cuentan las etapas
+// hechas. Imprime ✗ si algo falla.
 import { launch, sleep } from '../cdp.mjs';
 import { girar, puntajePartida, ETAPAS, PUNTOS_ETAPA } from '../../../public/labs/routes/engine.js';
 const OUT = process.argv[2] || '/tmp/rutas-lab';
