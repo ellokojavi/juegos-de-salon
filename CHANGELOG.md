@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.165.2 — 2026-10-12
+- **🧪 Laboratorio:** una línea separa los proyectos activos de La Bodega.
+
 ## 0.165.1 — 2026-10-12
 - **🚇 Rutas (laboratorio):** mientras se juega no se muestra el título, y Reiniciar y Rendirse van en
   una fila, así se ven sin bajar en un celular chico. La tarjeta para compartir muestra también las
