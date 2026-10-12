@@ -62,7 +62,7 @@ ok(await ev(`${casilla(libres[0])}.textContent`) === String(numero(t.sol, libres
 ok(await ev(`document.getElementById('btn-${t.sol[libres[0]] ? 'tinta' : 'fondo'}').getAttribute('aria-pressed')`) === 'true', 'el pincel elegido se nota');
 await pintar(libres[1], 1 - t.sol[libres[1]]);
 ok(await ev(`${casilla(libres[1])}.classList.contains('error') && ${casilla(libres[1])}.classList.contains('${t.sol[libres[1]] ? 'tinta' : 'fondo'}')`), 'errar destapa el color verdadero, marcado como error');
-ok(/(Se pintaba de \w+|No se pintaba): −15/.test(await ev(`document.querySelector('.aviso-pm').textContent`)) && /1 error/.test(await ev(`document.getElementById('marcador').textContent`)), 'y lo dice: −15, 1 error');
+ok(/(Se pintaba de \p{L}+|No se pintaba): −15/u.test(await ev(`document.querySelector('.aviso-pm').textContent`)) && /1 error/.test(await ev(`document.getElementById('marcador').textContent`)), 'y lo dice: −15, 1 error');
 // La ayuda: marca la casilla que se puede deducir y los números que lo explican, sin pintarla, y resta
 await ev(`document.getElementById('btn-ayuda').click(); 1`); await sleep(150);
 // El primer toque solo pide confirmar (#351): no marca ni cobra
