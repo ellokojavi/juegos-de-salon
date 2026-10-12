@@ -23,8 +23,11 @@
     .vacio { text-align: center; }
     .seccion h2 { font-family: var(--font-display); font-size: 1.6rem; letter-spacing: 0.04em; margin: 0; }
     .btn { text-decoration: none; display: flex; align-items: center; justify-content: center; }
-    /* El crédito al juego original: el azul del navegador no se lee sobre el morado (U-12) */
-    .seccion p a { color: var(--cyan); }
+    /* Los links del texto (el crédito al juego original): un celeste claro, en negrita y subrayado, que se
+       lea bien sobre el morado y dentro de un párrafo apagado (U-12, pedido del dueño) */
+    .stack p a { color: #a8fff6; font-weight: 800; text-decoration: underline; text-decoration-thickness: 2px;
+      text-underline-offset: 3px; text-decoration-color: rgba(168, 255, 246, 0.6); }
+    .stack p a:active { color: #fff; }
   </style>
 </head>
 <body>
