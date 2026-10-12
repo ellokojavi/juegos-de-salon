@@ -44,6 +44,11 @@ button.casilla:not(:disabled):active { transform: scale(0.92); }
 @keyframes pm-brilla { 0% { transform: scale(0.6); } 70% { transform: scale(1.08); } 100% { transform: none; } }
 .grilla.chica { max-width: 210px; gap: 3px; }
 .grilla.chica .casilla { font-size: 0.72rem; border-radius: 5px; border-width: 1px; }
+/* La portada: el tablero entra, se pinta de a una casilla y al terminar dice qué era */
+.grilla.chica.entra { animation: pm-entra 0.4s ease-out; }
+@keyframes pm-entra { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: none; } }
+.demo-rotulo { margin: 0; min-height: 1.6em; font: 1.2rem var(--font-display); letter-spacing: 0.04em; color: var(--yellow); opacity: 0; transition: opacity 0.3s; }
+.demo-rotulo.ve { opacity: 1; animation: pop 0.5s ease-out; }
 .grilla.fin { max-width: 200px; }
 
 .marcador { margin: 0; text-align: center; font-weight: 800; color: var(--muted); }
@@ -87,19 +92,28 @@ body.modo-dificil {
 .interruptor .rotulo { display: grid; gap: 2px; }
 .interruptor .rotulo b { font: 1.25rem var(--font-display); letter-spacing: 0.05em; }
 .interruptor .rotulo .muted { font-size: 0.85rem; }
-.interruptor .estado { justify-self: start; margin-top: 4px; padding: 1px 10px; border-radius: 999px; font: 800 0.8rem var(--font-body);
-  letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--glass-border); }
-.interruptor.on .estado { color: #160830; background: #2ee6d6; border-color: #2ee6d6; }
 .placa { position: relative; width: 74px; height: 64px; border-radius: 12px; background: linear-gradient(160deg, #4a4f5c, #23262e);
   border: 2px solid #6b7180; box-shadow: inset 0 2px 4px rgba(255,255,255,0.15), inset 0 -3px 6px rgba(0,0,0,0.5); }
-.placa .eje { position: absolute; left: 50%; bottom: 12px; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%;
+/* Centrado en la placa: del borde de arriba de la ranura a la base del eje queda el mismo margen. La
+   ranura (game.js) es un arco con el mismo centro (la base de la palanca) y el mismo radio (39 px) que
+   recorre la bola: la bola va siempre por el medio del carril */
+.placa .eje { position: absolute; left: 50%; bottom: 4.75px; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%;
   background: radial-gradient(circle at 35% 35%, #d9dde5, #7b8190); box-shadow: 0 1px 2px rgba(0,0,0,0.6); }
-.placa .palanca { position: absolute; left: 50%; bottom: 20px; width: 8px; height: 38px; margin-left: -4px; border-radius: 4px;
+.placa .palanca { position: absolute; left: 50%; bottom: 12.75px; width: 8px; height: 38px; margin-left: -4px; border-radius: 4px;
   background: linear-gradient(90deg, #aeb4c0, #e6e9ef, #9aa0ad); transform-origin: 50% 100%; transform: rotate(-38deg);
   transition: transform 0.35s cubic-bezier(0.3, 1.6, 0.5, 1); }
 .placa .mango { position: absolute; left: 50%; top: -9px; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%;
   background: radial-gradient(circle at 35% 35%, #ff8a8a, #c4142b); box-shadow: 0 2px 3px rgba(0,0,0,0.5); }
 .placa .rayo { position: absolute; font-size: 1rem; opacity: 0; pointer-events: none; }
+/* El recorrido de la bola, grabado en la placa: una ranura oscura en arco, de un lado al otro, que
+   muestra hacia dónde se mueve la palanca */
+.placa .recorrido { position: absolute; inset: 0; pointer-events: none; }
+.placa .recorrido svg { width: 100%; height: 100%; display: block; }
+.placa .ranura { fill: none; stroke: rgba(0, 0, 0, 0.5); stroke-width: 7; stroke-linecap: round; filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.18)); }
+/* El destello de toda la vista al pasar al modo difícil (no al volver al fácil) */
+.relampago { position: fixed; inset: 0; z-index: 60; pointer-events: none; animation: pm-relampago 0.55s ease-out forwards;
+  background: radial-gradient(circle at 50% 70%, rgba(255, 255, 255, 0.95), rgba(46, 230, 214, 0.75) 45%, rgba(46, 230, 214, 0.35)); }
+@keyframes pm-relampago { 0% { opacity: 0; } 12% { opacity: 1; } 100% { opacity: 0; } }
 .placa .r1 { top: -10px; left: -8px; } .placa .r2 { top: 6px; right: -12px; } .placa .r3 { bottom: -8px; left: 6px; }
 /* Encendido, el rectángulo entero brilla y parpadea al azar, como una luz con mal contacto: game.js mueve
    --brillo (de 0 a 1) a destiempo, y aquí se convierte en resplandor y borde */
