@@ -1,0 +1,57 @@
+/* Pintaminas (laboratorio, D-289). Lo compartido vive en assets/css/base.css. */
+.portada { text-align: center; display: grid; gap: 10px; padding-top: 8px; }
+.titulo-pm { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 0; }
+.titulo-pm .rainbow { padding: 0.2em 0.12em 0 0; margin: -0.2em -0.12em 0 0; }
+.titulo-pm .brocha { font-size: 2.3rem; display: inline-block; animation: pm-pinta 2.8s ease-in-out infinite; }
+@keyframes pm-pinta { 0%, 100% { transform: rotate(-12deg) translateX(-2px); } 50% { transform: rotate(10deg) translateX(3px); } }
+.credito { margin: 0; font-size: 0.85rem; color: var(--muted); }
+.credito a { color: var(--cyan); }
+.pasos { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; text-align: left; }
+.pasos li { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: center; }
+.paso-ico { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: 1.1rem; background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border); }
+
+/* La grilla: 7×7. Sin pintar es oscura; la tinta lleva el color del dibujo (--tinta) y el fondo es gris claro */
+.grilla { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; width: 100%; max-width: 360px; margin: 0 auto; }
+.casilla { aspect-ratio: 1; border-radius: 8px; border: 2px solid var(--glass-border); background: rgba(255,255,255,0.05);
+  display: grid; place-items: center; font: 900 1.05rem var(--font-num); color: var(--ink); padding: 0;
+  -webkit-user-select: none; user-select: none; transition: background 0.25s, border-color 0.25s, opacity 0.6s; }
+button.casilla { cursor: pointer; }
+button.casilla:not(:disabled):active { transform: scale(0.92); }
+.casilla.tinta { background: var(--tinta); border-color: var(--tinta); color: #160830; }
+.casilla.fondo { background: rgba(255,255,255,0.16); border-color: rgba(255,255,255,0.22); color: rgba(255,255,255,0.85); }
+.casilla.error { box-shadow: inset 0 0 0 3px #ff4d5e; }
+.casilla.pop { animation: pop 0.35s ease-out; }
+.casilla.shake { animation: shake 0.45s ease-in-out; }
+/* Al terminar: los números se van, el fondo se apaga y la tinta brilla: aparece el dibujo */
+.grilla.revelada .casilla { color: transparent; }
+.grilla.revelada .casilla.fondo { opacity: 0.12; border-color: transparent; }
+.grilla.revelada .casilla.tinta { box-shadow: 0 0 12px var(--tinta); animation: pm-brilla 0.6s ease-out both; animation-delay: calc(var(--k, 0) * 12ms); }
+@keyframes pm-brilla { 0% { transform: scale(0.6); } 70% { transform: scale(1.08); } 100% { transform: none; } }
+.grilla.chica { max-width: 210px; gap: 3px; }
+.grilla.chica .casilla { font-size: 0.72rem; border-radius: 5px; border-width: 1px; }
+.grilla.fin { max-width: 200px; }
+
+.marcador { margin: 0; text-align: center; font-weight: 800; color: var(--muted); }
+.aviso-pm { margin: 0; min-height: 1.5em; text-align: center; font-weight: 800; }
+.aviso-pm.mal { color: #ff8a8a; } .aviso-pm.era { color: var(--yellow); font-size: 1.2rem; }
+/* El pincel: cada botón tiene el color que pinta (la tinta del dibujo o el gris del fondo), y el elegido se nota */
+.pinceles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.pincel { min-height: 54px; border-radius: 16px; border: 3px solid transparent; color: var(--ink);
+  font: 1.25rem var(--font-display); letter-spacing: 0.04em; cursor: pointer; opacity: 0.45; transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s; }
+.pincel--tinta { background: var(--tinta); color: #160830; }
+.pincel--fondo { background: rgba(255,255,255,0.16); }
+.pincel[aria-pressed="true"] { opacity: 1; transform: translateY(-2px); border-color: #fff; box-shadow: 0 0 0 2px rgba(255,255,255,0.35), 0 6px 18px rgba(0,0,0,0.35); }
+
+.resultado { text-align: center; display: grid; gap: 10px; }
+.resultado .score-big { font: 900 clamp(2.6rem, 14vw, 3.6rem)/1.1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35); }
+.sello-pm { justify-self: center; margin: 0; font: 1.3rem var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--lime);
+  padding: 2px 12px; border: 3px solid currentColor; border-radius: 10px; transform: rotate(-5deg); animation: pop 0.5s ease-out 0.3s both; }
+.resultado .comentario { text-align: left; }
+.divisor { width: 100%; border: 0; height: 2px; margin: 18px 0 6px; border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45) 15%, rgba(255, 255, 255, 0.45) 85%, transparent); }
+.desglose { text-align: left; margin: 0 auto; padding-left: 1.2em; }
+.pie { text-align: center; padding: 16px 0 6px; }
+.link-btn { background: none; border: 0; color: var(--muted); font: 700 0.95rem var(--font-body); text-decoration: underline; cursor: pointer; min-height: 44px; margin: 0 auto; display: block; }
+.btn { text-decoration: none; }
+@media (prefers-reduced-motion: reduce) {
+  .titulo-pm .brocha, .casilla.pop, .casilla.shake, .grilla.revelada .casilla.tinta, .sello-pm { animation: none !important; }
+}

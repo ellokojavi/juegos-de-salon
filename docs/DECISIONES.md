@@ -51,11 +51,12 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 
 | Tema | Regla de hoy (canon) | Decisiones vigentes que la explican |
 |---|---|---|
-| Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284, D-286 |
+| Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284, D-286, D-289 |
 | Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184 |
 | Mazos de cartas con fecha | `docs/games/timeline.md` | D-37, D-277, D-278 |
 | 🕵️ Agentes, el juego del laboratorio (tablero, pistas, trampas) | `docs/games/agents.md` | D-286, D-287, D-288 |
-| Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286 |
+| 🖌️ Pintaminas, el Buscaminas de colores del laboratorio (dibujos, tablero sin adivinar) | `docs/games/paint-mines.md` | D-289 |
+| Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
 | Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255 |
@@ -5088,7 +5089,7 @@ leer, a propósito); mostrar solo el aviso genérico de permiso (obligaba a busc
 escribir el PIN).
 
 ## D-286 · Agentes: un Codenames mini, para uno solo, en Proyectos activos del laboratorio
-**Fecha:** 2026-10-11 · **Estado:** corregida por D-287 y D-288 · **Relación:** amplía D-280 (el primer proyecto activo del laboratorio)
+**Fecha:** 2026-10-11 · **Estado:** corregida por D-287, D-288 · **Relación:** amplía D-280 (el primer proyecto activo del laboratorio)
 **Contexto:** el dueño pidió investigar *Codenames* (Vlaada Chvátil, Czech Games Edition, 2015) y
 ver si una versión mini podía entrar a La Copa. El original es de equipos: un jefe de espías da una
 palabra y un número, y su equipo busca a sus agentes entre 25 palabras sin tocar al asesino. En La
@@ -5161,3 +5162,30 @@ ronda una pista podía volver al día siguiente).
 **Consecuencias:** el crédito a *Codenames* sale del resultado (pedido del dueño: repetido ahí sobraba) y queda en la portada y en el laboratorio, que es donde se decide jugar. Cambia el tablero de los días ya jugados (es un prototipo). `engine.test.mjs`
 revisa un año de tableros del día: ninguno al azar, todos con las pistas del calendario, ninguna pista
 antes de 15 días, y que en el año salgan las 100.
+
+## D-289 · Pintaminas: un Buscaminas de colores en Proyectos activos del laboratorio
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** amplía D-280 (un segundo proyecto activo)
+**Contexto:** el dueño pidió investigar *ColorSweeper* (ARRKKA, publicado por Com2uS en 2026): un
+Buscaminas en que cada casilla tiene un color y su número dice cuántas de sus 8 vecinas son de su
+mismo color, con puzzles que se resuelven sin adivinar y, al terminar, un dibujo (como los
+nonogramas). Pidió un prototipo y eligió el nombre entre cuatro: **Pintaminas**.
+**Decisión:** una grilla de **7×7 con 2 colores**, tinta y fondo, que esconde un dibujo (17 dibujos
+hechos a mano, que pueden salir espejados). Se dan algunas casillas con su color y su número; el
+jugador elige pincel (🎨 Tinta o ⬜ Fondo) y toca una casilla: si acierta, aparece su número y da
+más pistas; si erra, la casilla se destapa con su color verdadero, marcada, y resta 15. Puntaje
+100 − 15 por error. El generador agrega casillas dadas hasta que un solucionador que razona como un
+jugador (todas o ninguna, y una regla dentro de otra) lo resuelve entero, y después saca las que
+sobran: nunca hay que adivinar. Sin semilla es el tablero del día. Usa la cuenta 3, 2, 1 compartida,
+la línea antes del comentario y el crédito honesto: «Inspirado en ColorSweeper, de ARRKKA.», con link,
+en la portada y en el laboratorio. Solo en español. La tarjeta para compartir muestra dónde se
+equivocó, no el dibujo, para no arruinarlo a quien juega el mismo día.
+**Por qué:** es deducción pura para uno, dura unos minutos y tiene un final que premia (el dibujo):
+lo que funciona en La Copa. El pincel en dos botones se entiende mejor que un toque largo, y que el
+error destape la casilla deja seguir jugando.
+**Alternativas descartadas:** 4 colores (más difícil de leer en un celular); perder al primer error,
+como en el Buscaminas (castiga demasiado a quien recién aprende); llamarlo Vecinas, Minas y colores
+o Mosaico (lo eligió el dueño).
+**Consecuencias:** `public/labs/paint-mines/engine.test.mjs` revisa los dibujos y 300 tableros (se
+resuelven sin adivinar, sin dadas de sobra); `tools/e2e/paint-mines/lab.mjs` juega una partida
+entera. Si gusta, el paso siguiente es La Copa (junto a Tango, que también es de dos colores: cuidar
+que no se sientan repetidos).
