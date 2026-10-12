@@ -26,12 +26,14 @@ export const DIBUJOS = [
 
 /**
  * Los del modo difícil (D-291): dos colores, `#` el primero y `+` el segundo. También irregulares, con
- * al menos 4 casillas de cada color.
+ * al menos 4 casillas de cada color. Sus colores salen al azar, salvo que el dibujo diga los suyos
+ * (`colores`, nombres de PALETA en el orden `#`, `+`), para los que se ven mejor como son.
  */
 export const DIBUJOS2 = [
   { nombre: 'Una frutilla', emoji: '🍓', filas: ['...+...', '.+++.+.', '.#####.', '#######', '.######', '..###..', '...#...'] },
   { nombre: 'Un pez', emoji: '🐠', filas: ['..++...', '.###..+', '#.####+', '######+', '.###..+', '..++...', '.......'] },
-  { nombre: 'Unas cerezas', emoji: '🍒', filas: ['.....+.', '....++.', '...+.+.', '..+..+.', '###.###', '###.###', '.#...#.'] },
+  // Sus colores de verdad (pedido del dueño): la fruta roja y el tallo verde
+  { nombre: 'Unas cerezas', emoji: '🍒', colores: ['rojo', 'verde'], filas: ['.....+.', '....++.', '...+.+.', '..+..+.', '###.###', '###.###', '.#...#.'] },
   { nombre: 'Un helado', emoji: '🍦', filas: ['..##...', '.####..', '######.', '.+++++.', '..+++..', '..++...', '...+...'] },
   { nombre: 'Un árbol', emoji: '🌳', filas: ['..###..', '.#####.', '######.', '.####..', '...+...', '...+...', '..+++..'] },
   { nombre: 'Un cohete', emoji: '🚀', filas: ['.....##', '....###', '...###.', '.####..', '..##...', '.++#...', '++.....'] },
