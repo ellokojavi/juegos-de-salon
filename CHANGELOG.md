@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.167.0 — 2026-10-12
+- **🖌️ Pintaminas (laboratorio): 🏳️ Rendirse** (D-296), junto a la ayuda. Pide un segundo toque,
+  destapa el dibujo y el puntaje vale la parte que alcanzaste a pintar.
+
 ## 0.166.1 — 2026-10-12
 - **🚇 Rutas (laboratorio):** al girar, el rectángulo da media vuelta como un solo bloque, alrededor de
   su centro, y así se ve por qué las cartas quedan dadas vuelta. Las reglas no cambian. Y un botón

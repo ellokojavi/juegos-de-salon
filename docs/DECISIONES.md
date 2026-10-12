@@ -5324,3 +5324,18 @@ bono de rapidez por etapa (se podía alcanzar a quien completaba más).
 `tools/e2e/routes/lab.mjs` revisa el puntaje contra el motor, rendirse y el final por tiempo (con
 `?test&time=12`, que solo vale en el modo de prueba). En La Copa, con el mismo puntaje desempata quien
 terminó antes, como en Desenredo y Zip.
+
+## D-296 · Pintaminas: rendirse, y el puntaje vale la parte pintada
+**Fecha:** 2026-10-12 · **Estado:** vigente · **Relación:** amplía D-289
+**Contexto:** el dueño pidió un botón para rendirse en Pintaminas, como el de Rutas (D-295).
+**Decisión:** bajo los pinceles, **🏳️ Rendirse** junto a la 💡 ayuda, en una fila de dos botones
+iguales. Pide un segundo toque («🏳️ ¿Seguro?», 3 segundos), como en Rutas. Al rendirse se destapa el
+dibujo entero (lo que no se alcanzó a pintar, más apagado), el sello dice «Te rendiste» y el puntaje
+**vale la parte pintada**: (100 − errores − ayudas) × lo pintado de lo que había que pintar (× 1,5 en
+el modo difícil). El desglose lo dice («🏳️ Te rendiste con el 33 % pintado: el puntaje vale ese 33 %.»).
+Sin confeti.
+**Por qué:** como en Rutas, rendirse se lleva lo que alcanzó a hacer; así nunca vale más que terminar.
+**Alternativas descartadas:** 0 al rendirse (castiga probar y dejar; en Rutas también cuentan las
+etapas hechas).
+**Consecuencias:** `engine.test.mjs` revisa el avance y el puntaje al rendirse;
+`tools/e2e/paint-mines/lab.mjs` se rinde a mitad de partida.
