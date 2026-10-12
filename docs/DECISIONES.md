@@ -54,7 +54,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284, D-286 |
 | Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184 |
 | Mazos de cartas con fecha | `docs/games/timeline.md` | D-37, D-277, D-278 |
-| 🕵️ Agentes, el juego del laboratorio (tablero, pistas, trampas) | `docs/games/agents.md` | D-286, D-287 |
+| 🕵️ Agentes, el juego del laboratorio (tablero, pistas, trampas) | `docs/games/agents.md` | D-286, D-287, D-288 |
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
@@ -5153,8 +5153,8 @@ nuevas, con 10 palabras y 3 tentaciones cada una). El tablero del día sale de u
 2026, y una pista no vuelve antes de **15 días**. Es determinista, así que el tablero de hoy sigue
 siendo el mismo para todos. «Otro tablero» sigue al azar.
 **Por qué:** el cuento convierte «agente», «asesino» y el sello de Clasificado en algo que se entiende
-sin conocer *Codenames*. Con 100 pistas y el calendario, una pista vuelve como mucho cada 16 a 25
-días, y como cada una tiene más palabras de las que usa el tablero, tampoco vuelven los mismos agentes.
+sin conocer *Codenames*. Con 100 pistas y el calendario, una pista vuelve entre 16 y 37 días después
+(25 en promedio), y como cada una tiene más palabras de las que usa el tablero, tampoco vuelven los mismos agentes.
 **Alternativas descartadas:** hablar solo de «palabras» y dejar el tema en el título (el asesino
 quedaba sin sentido); cambiar el nombre del juego; ventanas por ronda fija de 25 días (en el cambio de
 ronda una pista podía volver al día siguiente).
