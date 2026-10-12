@@ -102,18 +102,11 @@ body.modo-dificil {
 .placa .mango { position: absolute; left: 50%; top: -9px; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%;
   background: radial-gradient(circle at 35% 35%, #ff8a8a, #c4142b); box-shadow: 0 2px 3px rgba(0,0,0,0.5); }
 .placa .rayo { position: absolute; font-size: 1rem; opacity: 0; pointer-events: none; }
-/* El recorrido de la bola, grabado en la placa: una ranura en arco, de un lado al otro, y en el modo fácil
-   una flecha amarilla que corre por ella hacia donde va a ir la palanca */
+/* El recorrido de la bola, grabado en la placa: una ranura oscura en arco, de un lado al otro, que
+   muestra hacia dónde se mueve la palanca */
 .placa .recorrido { position: absolute; inset: 0; pointer-events: none; }
 .placa .recorrido svg { width: 100%; height: 100%; display: block; }
 .placa .ranura { fill: none; stroke: rgba(0, 0, 0, 0.5); stroke-width: 7; stroke-linecap: round; filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.18)); }
-.placa .flecha { fill: none; stroke: var(--yellow); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; transition: opacity 0.2s; }
-.placa .flecha:not(.punta) { stroke-dasharray: 4 5; animation: pm-avanza 0.9s linear infinite; }
-.placa .flecha.punta { animation: pm-empuja 1.6s ease-in-out infinite; }
-@keyframes pm-avanza { to { stroke-dashoffset: -9; } }
-/* La punta empuja en la dirección de la curva al final: abajo a la derecha */
-@keyframes pm-empuja { 0%, 100% { transform: none; } 50% { transform: translate(1.3px, 0.8px); } }
-.interruptor.on .flecha { opacity: 0; }
 /* El destello de toda la vista al mover la palanca */
 .relampago { position: fixed; inset: 0; z-index: 60; pointer-events: none; background: rgba(255, 255, 255, 0.55); animation: pm-relampago 0.55s ease-out forwards; }
 .relampago.on { background: radial-gradient(circle at 50% 70%, rgba(255, 255, 255, 0.95), rgba(46, 230, 214, 0.75) 45%, rgba(46, 230, 214, 0.35)); }
@@ -139,7 +132,7 @@ body.modo-dificil {
 .grilla.tablero.dificil { padding: 6px; border-radius: 14px; box-shadow: 0 0 0 2px rgba(46, 230, 214, 0.6), 0 0 18px rgba(46, 230, 214, 0.35); }
 
 @media (prefers-reduced-motion: reduce) {
-  .interruptor.on .placa, .interruptor.on .rayo, .interruptor.chispa .placa, .placa .flecha { animation: none !important; }
+  .interruptor.on .placa, .interruptor.on .rayo, .interruptor.chispa .placa { animation: none !important; }
   .interruptor.on .placa { box-shadow: 0 0 10px #2ee6d6; }
   .interruptor.on .rayo { opacity: 1; }
   .casilla.pista-objetivo, .titulo-pm .brocha, .casilla.pop, .casilla.shake, .grilla.revelada .casilla.tinta, .sello-pm { animation: none !important; }
