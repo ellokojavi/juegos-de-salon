@@ -23,9 +23,9 @@ recorre las cartas y destapa a sus 3 agentes, y al final se destapa el asesino, 
 pista (RÍO). Después, otra pista (NOCHE, CIRCO) y vuelve a empezar. Con movimiento reducido queda la
 primera, resuelta. Luego los tres pasos (desde v0.167.1, U-36) y Empezar:
 
-1. 🕵️ Toca las palabras que van con la pista: «MAR · 3» son 3 palabras. Llegan 4 pistas, de a una.
+1. 🕵️ Toca las palabras que van con la pista: «MAR · 3» son 3. Llegan 4 pistas, de a una.
 2. ⚠️ Evita las 3 neutrales (−15) y al asesino (−40): se parecen a una pista y la cortan.
-3. 📌 Si dudas, mantén apretada una carta para marcarla 📌. Un agente de otra pista también suma.
+3. 📌 Si dudas de una carta, mantenla apretada para marcarla, o pasa de pista. Un agente de otra pista también suma.
 
 Los números salen de las constantes de `engine.js` (`CUANTAS`, `NEUTRALES`, `RESTA_NEUTRAL`, `RESTA_ASESINO`).
 

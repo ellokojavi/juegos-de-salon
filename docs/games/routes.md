@@ -24,9 +24,9 @@ pasos (desde v0.167.1, U-36) y Empezar, que pasa por la cuenta 3, 2, 1 compartid
 
 1. 🔄 Arrastra de una pieza a otra: el rectángulo da media vuelta y sus piezas quedan al revés. Un toque gira una sola.
 2. 🚇 Une todas las líneas, sin cortes de pieza en pieza.
-3. ⛳ 5 etapas, 7 minutos. Cuenta completarlas, la rapidez y el mínimo de giros; deshacer y reiniciar son gratis.
+3. ⛳ Son 5 etapas en 7 minutos. Cuenta completarlas, luego la rapidez y los giros; deshacer y reiniciar son gratis.
 
-La tarjeta del laboratorio termina, desde v0.167.1, en «…en el mínimo de giros: cinco etapas, contra el reloj.».
+La tarjeta del laboratorio termina, desde v0.167.1, en «…en el mínimo de giros. Son cinco etapas contra el reloj.».
 
 ## Cómo se juega
 
