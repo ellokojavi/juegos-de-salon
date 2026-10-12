@@ -65,8 +65,10 @@ Para mirar una pantalla suelta: `node tools/e2e/mirar.mjs <juego> <pantalla> --a
 
 ## Lo que hace el dueño al fusionar (no lo hagas en tu PR)
 
-- **El número de versión**, que es su entrada en `CHANGELOG.md` (D-205): se asigna al
-  fusionar, en el orden en que entran los PR. Describe tu cambio en el PR y basta.
+- **El número de versión** (D-205, D-300): se asigna solo al fusionar, en el orden en que entran
+  los PR. Tu PR trae su entrada **sin número** en `changelog/<tu-rama>.md` (primera línea
+  `nivel: parche` o `nivel: menor`, y después las líneas `- …` que cuentan qué cambió); no toques
+  `CHANGELOG.md`.
 - **El número de las decisiones** (D-n): si tu cambio necesita una, escríbela como `D-??` y se
   numera al fusionar.
 - **Publicar las reglas de Firebase** (`firebase/database.rules.json`): necesitan una llave que

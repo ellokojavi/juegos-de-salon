@@ -3,7 +3,7 @@
 // Uso:
 //   node tools/e2e/ci.mjs                 # todas, una tras otra, con el resumen al final
 //   node tools/e2e/ci.mjs --lista         # los guiones que corren, en JSON (para la matriz de GitHub)
-//   node tools/e2e/ci.mjs --lista --cambios <archivo>   # [] si el PR solo trae documentación (D-205)
+//   node tools/e2e/ci.mjs --lista --cambios <archivo>   # [] si el PR no toca nada del navegador (D-205, D-299)
 //   node tools/e2e/ci.mjs cup/torneo.mjs  # solo esos (la ruta desde tools/e2e/)
 //   node tools/e2e/ci.mjs cup/torneo.mjs:copa   # solo una parte de un guion largo (ver PARTES)
 //
@@ -16,7 +16,7 @@ import { readdirSync, readFileSync, statSync, mkdirSync, appendFileSync } from '
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SUELTOS } from '../../public/assets/js/games.js';
-import { soloDocumentos } from './cambios.mjs';
+import { sinNavegador } from './cambios.mjs';
 
 const AQUI = dirname(fileURLToPath(import.meta.url));
 const SALIDA = process.env.SALIDA_E2E || '/tmp/e2e';
@@ -104,8 +104,8 @@ const args = process.argv.slice(2);
 if (args.includes('--lista')) {
   // Los archivos que trae el PR, uno por línea: si nada llega al navegador, no hay qué correr
   const cambios = args.includes('--cambios') ? readFileSync(args[args.indexOf('--cambios') + 1], 'utf8').split('\n') : null;
-  if (cambios && soloDocumentos(cambios)) {
-    console.error('el PR solo trae documentación: sin pruebas de punta a punta (D-205)');
+  if (cambios && sinNavegador(cambios)) {
+    console.error('el PR no toca nada que llegue al navegador: sin pruebas de punta a punta (D-205, D-299)');
     console.log('[]');
   } else console.log(JSON.stringify(trabajos()));
 } else {

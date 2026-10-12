@@ -12,8 +12,8 @@ cincuenta `index.html` que antes se reestampaban en cada uno.
   twitter:image), para que un cambio de dibujo no se quede pegado en la caché de WhatsApp (D-72).
 - Pone el número de versión en el pie del menú.
 
-El número es el de la primera entrada de CHANGELOG.md (`## X.Y.Z — fecha`), que se escribe al
-fusionar. La CLAVE de caché es ese número más el commit (`0.98.1-09eb4db`): cada publicación
+El número es la primera entrada de CHANGELOG.md (`## X.Y.Z — fecha`) subida por cada entrada de
+changelog/ que todavía no se juntó, en el orden en que entraron a main (D-300). La CLAVE de caché es ese número más el commit (`0.98.1-09eb4db`): cada publicación
 invalida la caché aunque alguien fusione sin subir la versión. `versionOf` (stats.js) lee igual el
 X.Y.Z del principio.
 
@@ -32,11 +32,17 @@ OG = re.compile(r'(/assets/og/[^"?]+\.jpg)(\?v=[^"]*)?"')
 
 
 def version():
-    """La de la primera entrada del CHANGELOG: `## 0.98.1 — 2026-10-04`."""
-    m = re.search(r'^## (\d+\.\d+\.\d+)\b', CHANGELOG.read_text(), re.M)
-    if not m:
+    """La de hoy (D-300): la primera entrada del CHANGELOG (`## 0.98.1 — 2026-10-04`) subida por las
+    entradas pendientes de changelog/, en el orden en que llegaron a main. La calcula
+    tools/release/changelog.mjs, para que haya una sola cuenta."""
+    if not re.search(r'^## (\d+\.\d+\.\d+)\b', CHANGELOG.read_text(), re.M):
         sys.exit('CHANGELOG.md no tiene ninguna entrada "## X.Y.Z — fecha"')
-    return m.group(1)
+    r = subprocess.run(['node', str(ROOT / 'tools/release/changelog.mjs'), 'version'], cwd=ROOT, capture_output=True, text=True)
+    if r.returncode or not re.fullmatch(r'\d+\.\d+\.\d+', r.stdout.strip()):
+        sys.exit(f'changelog.mjs version falló: {r.stderr.strip() or r.stdout.strip()}')
+    if r.stderr.strip():
+        print(r.stderr.strip(), file=sys.stderr)
+    return r.stdout.strip()
 
 
 def modulos(sitio):
@@ -80,7 +86,7 @@ def main(args):
         return
     if '--sitio' not in args or args.index('--sitio') + 1 >= len(args):
         sys.exit(__doc__ + '\nLa versión ya no se estampa en public/ antes de commitear (D-205): '
-                 'se escribe la entrada en CHANGELOG.md y publicar.yml estampa al publicar.')
+                 'se escribe la entrada en changelog/<rama>.md y publicar.yml estampa al publicar (D-300).')
     sitio = pathlib.Path(args[args.index('--sitio') + 1]).resolve()
     if sitio == (ROOT / 'public').resolve():
         sys.exit('public/ no se estampa: es lo que está en git (D-205). Copia el sitio y estampa la copia.')

@@ -2,8 +2,9 @@
 # (etiqueta `procesos`); cuando el dueño marca una, esto hace lo que la casilla dice, sin un modelo
 # de por medio. Las reglas de quién y qué están en tools/agents/aprobar.mjs y su prueba.
 #
-# Un merge hecho con el token del workflow no despierta a publicar.yml ni a e2e.yml: por eso
-# `fusionar` los corre a mano después (workflow_dispatch sí se puede con este token).
+# Un merge hecho con el token del workflow no despierta a publicar.yml: por eso `fusionar` lo corre
+# a mano después (workflow_dispatch sí se puede con este token), y publicar.yml corre la punta a
+# punta antes de publicar (D-302).
 
 name: Aprobar
 

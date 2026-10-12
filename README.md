@@ -650,6 +650,7 @@ node public/panel/aggregate.test.mjs
 node public/panel/copas.test.mjs
 node public/panel/rutas.test.mjs
 node tools/agents/aprobar.test.mjs
+node tools/agents/decision.test.mjs
 node tools/agents/documentar.test.mjs
 node tools/agents/feedback.test.mjs
 node tools/agents/limpiar-copias.test.mjs
@@ -663,6 +664,7 @@ node tools/push/avisar.test.mjs
 node tools/push/calendario.test.mjs
 node tools/push/uno-al-dia.test.mjs
 node tools/push/webpush.test.mjs
+node tools/release/changelog.test.mjs
 node tools/release/version.test.mjs
 ```
 <!-- /generado -->
@@ -698,7 +700,7 @@ It is the whole app over HTTPS, so the modes that need a secure context work too
 
 ## Publishing a version
 
-The version is the top entry of `CHANGELOG.md`, written when a pull request is merged. Pages in git carry no version: the publish workflow stamps it into the copy it uploads (import maps, stylesheets and social card images get `?v=<version>-<commit>`), so the browser never mixes old and new files and two open pull requests never clash over it. To try the stamp locally, on a copy:
+Each pull request leaves its changelog entry, without a number, in `changelog/<branch>.md`; the version is the top entry of `CHANGELOG.md` bumped once per pending entry, in the order the pull requests reached `main`, so it is assigned on merge. Pages in git carry no version: the publish workflow stamps it into the copy it uploads (import maps, stylesheets and social card images get `?v=<version>-<commit>`), so the browser never mixes old and new files and two open pull requests never clash over it. To try the stamp locally, on a copy:
 
 ```bash
 python3 tools/release/set-version.py --sitio /tmp/site

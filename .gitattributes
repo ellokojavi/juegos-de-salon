@@ -1,0 +1,3 @@
+# DECISIONES.md se fusiona decisión por decisión (D-301): `node tools/agents/decision.mjs instalar`
+# configura el driver en la copia (reservar lo hace solo). Sin él, git usa el merge de siempre.
+docs/DECISIONES.md merge=decisiones
