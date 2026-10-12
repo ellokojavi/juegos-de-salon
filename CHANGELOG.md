@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.167.3 — 2026-10-12
+- **🚇 Rutas pasa a llamarse Rutas rotas** (pedido del dueño): las líneas parten cortadas y hay que
+  unirlas. Cambia el nombre en la portada, el laboratorio y lo que se comparte; el link
+  (`/labs/routes/`) y su señal de uso siguen iguales.
+
 ## 0.167.2 — 2026-10-12
 - **🖌️ Pintaminas (laboratorio):** en el modo difícil, las cerezas salen rojas con el tallo verde,
   como son; los otros dibujos siguen con colores al azar.
