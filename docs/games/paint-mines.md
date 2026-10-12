@@ -16,7 +16,7 @@ y lo dice en la portada y en el laboratorio.
 
 ## Portada
 
-El título con una 🖌️ que pinta, el lema («Pinta la grilla y descubre el dibujo escondido.»), el crédito, y una partida de verdad en chico: parte con las casillas dadas y se pinta de a una, en el orden en que un jugador las deduciría (el de la ayuda), cada una con su número; al completarse aparece el dibujo y dice qué era («🐟 ¡Era un pez!»), y sigue con otro tablero
+El título con una 🖌️ que pinta, el lema («Pinta la grilla y descubre el dibujo escondido.»), el crédito, y una partida de verdad en chico: parte con las casillas dadas y se pinta de a una, en el orden en que un jugador las deduciría (el de la ayuda), cada una con su número; al completarse aparece el dibujo y dice qué era («🐟 ¡Era un pez!»), y sigue con otro tablero. Con el modo difícil encendido, la partida de la portada es de dos colores, y mover la palanca la vuelve a empezar con el modo nuevo
 tres pasos y Empezar, que pasa por la cuenta 3, 2, 1 compartida (`assets/js/cuenta-regresiva.js`).
 
 ## Cómo se juega
