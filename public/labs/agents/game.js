@@ -13,7 +13,7 @@ import { formularioComentario, abrirComentario } from '../../assets/js/labs-idio
 import { fechaLocal } from '../../assets/js/uno-al-dia.js';
 import { cuentaRegresiva } from '../../assets/js/cuenta-regresiva.js';
 import { LONG_PRESS_MS } from '../../assets/js/teclado.js';   // el toque largo de las notas de Toque y Fama
-import { generar, estado, puntaje, tarjeta, AGENTES, RESTA_NEUTRAL, RESTA_ASESINO } from './engine.js';
+import { generar, estado, puntaje, tarjeta, AGENTES, CUANTAS, NEUTRALES, RESTA_NEUTRAL, RESTA_ASESINO } from './engine.js';
 
 trackVisit();   // el tráfico del sitio (D-208)
 
@@ -21,11 +21,11 @@ const GAME_ID = 'agentes';
 const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const CODENAMES = 'https://czechgames.com/en/codenames/';
 const T = {
-  nombre: 'Agentes', lema: 'El juego te da una pista; tú encuentras a tus agentes entre 12 palabras.',
+  nombre: 'Agentes', lema: 'El juego te da una pista; tú encuentras a tus agentes entre 15 palabras.',
   hoy: 'El tablero de hoy es el mismo para todos.',
   como: [
-    ['🕵️', 'Toca las palabras que van con la pista: «MAR · 3» quiere decir que 3 van con MAR. Llegan 3 pistas, de a una.'],
-    ['⚠️', `Evita las 2 palabras neutrales (−${RESTA_NEUTRAL}) y al asesino (−${RESTA_ASESINO}), que se parece a una pista: tocar uno corta la pista.`],
+    ['🕵️', `Toca las palabras que van con la pista: «MAR · 3» quiere decir 3. Llegan ${CUANTAS} pistas, de a una.`],
+    ['⚠️', `Evita las ${NEUTRALES} neutrales (−${RESTA_NEUTRAL}) y al asesino (−${RESTA_ASESINO}): se parecen a alguna pista y tocarlos corta la pista.`],
     ['⏭️', 'Si dudas, pasa a la siguiente pista. Cada agente suma, aunque sea de otra pista.'],
   ],
   empezar: '🕵️ Empezar', aJugar: '¡A jugar!', pista: 'Pista {n} de {t}', faltan: 'Te faltan {n}', faltaUna: 'Te falta 1',
@@ -203,14 +203,16 @@ function jugar() {
       const c = t.cartas[i], tocada = e.tocadas.has(i);
       b.disabled = tocada || e.fin;
       const m = !tocada && P.marcas.get(i);
-      b.className = 'carta' + (tocada ? ` ${c.tipo}` : '') + (m ? ` marca-${m}` : '');
+      // Cada agente toma el color de su pista; los de pistas ya cerradas se apagan: ya no cuentan para la jugada
+      const grupo = tocada && c.tipo === 'agente' ? ` g${c.p}${e.fin || c.p >= e.actual ? '' : ' cerrada'}` : '';
+      b.className = 'carta' + (tocada ? ` ${c.tipo}` : '') + grupo + (m ? ` marca-${m}` : '');
       b.setAttribute('aria-label', c.w + (m === 'sospecha' ? ' (sospecha)' : m === 'descarte' ? ' (descartada)' : ''));
     });
     if (e.fin) return revelar(e);
     // Una pista nueva entra girando y su palabra se descifra. El aviso de cómo terminó la anterior
     // ("¡El asesino! −40…") queda hasta el próximo toque: el sello dura un segundo y no alcanza a leerse
     const nueva = e.actual !== antes;
-    if (nueva) { caja.className = 'pista'; void caja.offsetWidth; caja.classList.add('entra'); antes = e.actual; }
+    if (nueva) { caja.className = `pista g${e.actual}`; void caja.offsetWidth; caja.classList.add('entra'); antes = e.actual; }
     const p = t.pistas[e.actual];
     const palabra = el('span', { class: 'pp' }, p.pista);
     caja.replaceChildren(
@@ -271,10 +273,10 @@ function jugar() {
     P.jugadas.push({ i });
     const e1 = estado(t, P.jugadas);
     const cambia = e1.fin || e1.actual !== e0.actual;
-    if (cambia) cartas[i].className = `carta ${c.tipo}`; else dibujar();
+    if (cambia) cartas[i].className = `carta ${c.tipo}${c.tipo === 'agente' ? ` g${c.p}` : ''}`; else dibujar();
     cartas[i].classList.add('volteo', c.tipo === 'agente' ? 'acierto' : 'falla');
-    if (c.tipo === 'agente' && c.p === e0.actual) { SFX.letterHit(); vibrate(20); decir('bien', T.bien); }
-    else if (c.tipo === 'agente') { SFX.letterHit(); vibrate(20); decir('otra', T.otra); }
+    if (c.tipo === 'agente' && c.p === e0.actual) { SFX.letterHit(); vibrate(20); decir(`bien g${c.p}`, T.bien); }
+    else if (c.tipo === 'agente') { SFX.letterHit(); vibrate(20); decir(`otra g${c.p}`, T.otra); }
     else if (c.tipo === 'neutral') { SFX.letterMiss(); vibrate([30, 30]); decir('mal', T.neutral); }
     else {
       SFX.error(); vibrate([60, 40, 60]); decir('mal', T.asesino);
@@ -306,10 +308,10 @@ function resultado() {
   if (e.asesino) lineas.push(fmt(T.desglose[2], { pts: RESTA_ASESINO }));
   // El tablero entero, con lo que era cada carta
   const tablero = el('div', { class: 'tablero tablero--fin', id: 'tablero-fin' }, ...t.cartas.map((c, i) => el('div', {
-    class: `carta ${c.tipo === 'agente' ? 'agente' : c.tipo}${e.tocadas.has(i) ? '' : ' sin-tocar'}`,
+    class: `carta ${c.tipo === 'agente' ? `agente g${c.p}` : c.tipo}${e.tocadas.has(i) ? '' : ' sin-tocar'}`,
     style: `--n:${c.w.length};--k:${i}`,
   }, c.tipo === 'asesino' ? `💀 ${c.w}` : c.w,
-  c.tipo === 'asesino' && t.pistas[c.tienta] ? el('span', { class: 'de-pista' }, fmt(T.tienta, { p: t.pistas[c.tienta].pista })) : null,
+  c.tipo !== 'agente' && t.pistas[c.tienta] ? el('span', { class: 'de-pista' }, fmt(T.tienta, { p: t.pistas[c.tienta].pista })) : null,
   // Bajo cada agente, su pista: así el tablero dice también cuáles eran las pistas
   c.tipo === 'agente' ? el('span', { class: 'de-pista' }, t.pistas[c.p].pista) : null)));
   const asesino = t.cartas.find(c => c.tipo === 'asesino');

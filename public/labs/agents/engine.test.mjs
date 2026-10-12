@@ -2,7 +2,7 @@
 // tienta pero no va con ninguna, las neutrales no tientan— y el estado y el puntaje se calculan bien.
 import assert from 'node:assert/strict';
 import { PISTAS } from './pistas.js';
-import { generar, estado, puntaje, tarjeta, AGENTES } from './engine.js';
+import { generar, estado, puntaje, tarjeta, AGENTES, CUANTAS, NEUTRALES } from './engine.js';
 
 const nombres = PISTAS.map(x => x.pista);
 assert.equal(new Set(nombres).size, nombres.length, 'pistas repetidas');
@@ -15,15 +15,19 @@ for (const x of PISTAS) {
 for (let n = 0; n < 300; n++) {
   const t = generar(`prueba-${n}`);
   assert.deepEqual(generar(`prueba-${n}`), t, 'la misma semilla, el mismo tablero');
-  assert.equal(t.cartas.length, 12);
-  assert.equal(new Set(t.cartas.map(c => c.w)).size, 12, `${n}: palabras repetidas`);
+  assert.equal(t.cartas.length, AGENTES + NEUTRALES + 1);
+  assert.equal(new Set(t.cartas.map(c => c.w)).size, AGENTES + NEUTRALES + 1, `${n}: palabras repetidas`);
   const elegidas = t.pistas.map(p => PISTAS.find(x => x.pista === p.pista));
+  // Cada pista dice cuántos agentes tiene, y suman AGENTES (una es más corta)
+  t.pistas.forEach((p, k) => assert.equal(t.cartas.filter(c => c.tipo === 'agente' && c.p === k).length, p.n, `${n}: ${p.pista} no tiene ${p.n}`));
+  assert.equal(t.pistas.reduce((a, p) => a + p.n, 0), AGENTES);
+  assert.deepEqual(t.pistas.map(p => p.n).sort(), [2, 3, 3, 3]);
   for (const c of t.cartas) {
     const van = elegidas.map((x, p) => (x.si.includes(c.w) ? p : -1)).filter(p => p >= 0);
     if (c.tipo === 'agente') assert.deepEqual(van, [c.p], `${n}: ${c.w} va con ${van}`);
     else assert.deepEqual(van, [], `${n}: la ${c.tipo} ${c.w} va con una pista`);
     if (c.tipo === 'asesino') assert.ok(elegidas[c.tienta]?.casi.includes(c.w), `${n}: el asesino ${c.w} no tienta a la pista que dice`);
-    if (c.tipo === 'neutral') assert.ok(!elegidas.some(x => x.casi.includes(c.w)), `${n}: la neutral ${c.w} tienta`);
+    if (c.tipo === 'neutral') assert.ok(elegidas[c.tienta]?.casi.includes(c.w), `${n}: la neutral ${c.w} no tienta a la pista que dice`);
   }
   assert.ok(!t.cartas.some(c => t.pistas.some(p => p.pista === c.w)), `${n}: una pista está en el tablero`);
 }
@@ -33,7 +37,7 @@ const t = generar('prueba-estado');
 const de = p => t.cartas.map((c, i) => [c, i]).filter(([c]) => c.tipo === 'agente' && c.p === p).map(([, i]) => i);
 const neutral = t.cartas.findIndex(c => c.tipo === 'neutral'), asesino = t.cartas.findIndex(c => c.tipo === 'asesino');
 // Todo perfecto: 100
-const perfecto = [0, 1, 2].flatMap(p => de(p).map(i => ({ i })));
+const perfecto = [...Array(CUANTAS).keys()].flatMap(p => de(p).map(i => ({ i })));
 let e = estado(t, perfecto);
 assert.ok(e.fin && e.encontrados === AGENTES && puntaje(e) === 100);
 // Un agente de otra pista suma y no corta: queda menos para esa pista
@@ -46,7 +50,8 @@ assert.equal(e.actual, 1); assert.equal(e.neutrales, 1);
 e = estado(t, [{ pasar: true }]);
 assert.equal(e.actual, 1); assert.equal(puntaje(e), 0);
 // El asesino resta 40
-e = estado(t, [...de(0).map(i => ({ i })), ...de(1).map(i => ({ i })), { i: asesino }]);
-assert.ok(e.fin && e.asesino); assert.equal(puntaje(e), Math.round(100 * 6 / 9) - 40);
-assert.equal(tarjeta(t, e).split('\n').length, 4);
+// (todas las pistas menos la última completas, y en la última el asesino: se acaba)
+e = estado(t, [...[...Array(CUANTAS - 1).keys()].flatMap(p => de(p).map(i => ({ i }))), { i: asesino }]);
+assert.ok(e.fin && e.asesino); assert.equal(puntaje(e), Math.max(0, Math.round(100 * (AGENTES - t.pistas.at(-1).n) / AGENTES) - 40));
+assert.equal(tarjeta(t, e).split('\n').length, (AGENTES + NEUTRALES + 1) / 3);
 console.log('✓ Agentes (labs)');
