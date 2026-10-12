@@ -7,6 +7,7 @@
   asesino sacude el tablero con un destello rojo. El final es un sello según cómo salió: ¡Misión
   cumplida! con confeti, Misión a medias, o en rojo Misión fracasada o Te descubrió el asesino. Y
   con un link de semilla, la portada ya no escribe "null".
+  El resultado ya no muestra la grilla de emojis, que repetía el tablero: va solo al compartir.
 
 ## 0.157.0 — 2026-10-11
 - **🕵️ Laboratorio: Agentes, un Codenames mini** (D-286), el primer proyecto activo. El juego te da

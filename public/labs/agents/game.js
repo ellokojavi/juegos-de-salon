@@ -273,7 +273,7 @@ function resultado() {
     nodoPuntaje,
     el('ul', { class: 'desglose muted' }, ...lineas.map(x => el('li', {}, x))),
     el('p', { class: 'lead', style: 'margin:0' }, fmt(T.tiempo, { t: mmss(ms) })),
-    el('div', { class: 'tarjeta', 'aria-hidden': 'true' }, tarjeta(t, e)),
+    // La tarjeta de emojis va solo en el mensaje para compartir: aquí ya está el tablero con cada carta (pedido del dueño)
     tablero,
     botonResultadoSolo({ C: COMMON.es, emoji: '🕵️', juego: T.nombre, puntaje: `${s}/100`, tiempo: mmss(ms), tarjeta: tarjeta(t, e), url: `${SITIO}labs/agents/${SEMILLA_URL ? `?seed=${encodeURIComponent(SEMILLA_URL)}` : ''}`, alTocar: () => SFX.tap() }),
     el('a', { class: 'btn btn--yellow', id: 'btn-otro', href: `?seed=${Math.random().toString(36).slice(2, 8)}` }, T.otraVez),
