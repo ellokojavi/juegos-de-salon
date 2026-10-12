@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.165.0 — 2026-10-12
+- **🚇 Rutas (laboratorio): reloj y puntaje por capas** (D-295). Siete minutos para las cinco etapas.
+  Cada etapa completada vale 17 y, encima, hasta 10 por rapidez y 5 por giros: completar más siempre
+  gana. Y un botón para rendirse.
+
 ## 0.164.0 — 2026-10-12
 - **🚇 Laboratorio: Rutas** (D-293, D-294), el tercer proyecto activo. Nueve piezas de un plano de
   metro: arrastra para marcar un rectángulo y, al soltar, gira media vuelta. Une todas las líneas en el
