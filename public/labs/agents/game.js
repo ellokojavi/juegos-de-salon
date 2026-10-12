@@ -34,6 +34,8 @@ const T = {
   // Las marcas (como las notas de Toque y Fama): un toque largo marca 📌, otro 🚫, otro la quita
   marcas: '💡 Mantén apretada una carta para marcarla como sospecha 📌. Repite para descartarla 🚫 y otra vez para quitar la marca.',
   descartada: 'La descartaste 🚫: mantenla apretada para quitarle la marca.',
+  // Lo que dice cada marca al ponerla: un toque que duró de más marca en vez de destapar, y sin aviso parecía elegida
+  marcada: { sospecha: '📌 Marcada, sin destapar. Tócala para destaparla.', descarte: '🚫 Descartada: así no la destapas por error.', nada: 'Sin marca.' },
   bien: '¡Bien! Es de los tuyos.', otra: '¡Es de los tuyos! Pero de otra pista: igual suma.',
   neutral: `Neutral: −${RESTA_NEUTRAL}. Se corta la pista.`, asesino: `¡El asesino! −${RESTA_ASESINO}. Se corta la pista.`,
   // El final tiene tres caras: victoria (70 o más), a medias y fracaso (el asesino, o menos de 35)
@@ -166,13 +168,15 @@ function jugar() {
   // Un toque largo marca la carta sin destaparla: nada → 📌 → 🚫 → nada. El toque que sigue no la destapa
   const cartas = t.cartas.map((c, i) => {
     let reloj = null, largo = false;
-    const corta = () => { if (reloj) { clearTimeout(reloj); reloj = null; } };
+    // Mientras se mantiene apretada, un borde se va llenando: se ve que viene una marca y no un destape
+    const corta = () => { if (reloj) { clearTimeout(reloj); reloj = null; } cartas[i]?.classList.remove('apretando'); };
     return el('button', {
-      type: 'button', class: 'carta', 'data-i': i, style: `--n:${c.w.length}`,
+      type: 'button', class: 'carta', 'data-i': i, style: `--n:${c.w.length};--largo:${LONG_PRESS_MS}ms`,
       onClick: () => { if (largo) { largo = false; return; } tocar(i); },
       onPointerdown: () => {
         largo = false;
-        reloj = setTimeout(() => { reloj = null; largo = true; marcar(i); }, LONG_PRESS_MS);
+        if (!cartas[i].disabled) cartas[i].classList.add('apretando');
+        reloj = setTimeout(() => { reloj = null; largo = true; cartas[i].classList.remove('apretando'); marcar(i); }, LONG_PRESS_MS);
       },
       onPointerup: corta, onPointerleave: corta, onPointercancel: corta,
       onContextmenu: ev => ev.preventDefault(),
@@ -184,6 +188,7 @@ function jugar() {
     if (!m) P.marcas.set(i, 'sospecha'); else if (m === 'sospecha') P.marcas.set(i, 'descarte'); else P.marcas.delete(i);
     P.marcadas++;
     vibrate([30, 40, 30]); SFX.dice();
+    decir('marca', T.marcada[P.marcas.get(i) || 'nada']);
     ayuda.hidden = true;
     dibujar();
   };

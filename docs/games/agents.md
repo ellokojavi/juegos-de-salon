@@ -33,7 +33,10 @@ primera, resuelta. Luego el lema, los tres pasos y Empezar.
 - **Marcas:** mantener apretada una carta (450 ms, el gesto de las notas de Toque y Fama: no se
   inventa UX, D-102) la marca sin
   destaparla: 📌 sospecha, otra vez 🚫 descartada, otra vez sin marca. Una 🚫 no se destapa al
-  tocarla (se sacude), para no tocar por error al asesino que ya se adivinó. Bajo el tablero, una
+  tocarla (se sacude), para no tocar por error al asesino que ya se adivinó. Mientras se mantiene apretada, el borde se
+  va llenando (se ve venir la marca), y al marcar la línea de avisos lo dice («📌 Marcada, sin
+  destapar. Tócala para destaparla.»): un toque que duraba de más marcaba en silencio y la carta
+  parecía elegida, así que la pista no avanzaba y no se entendía por qué. La sospecha va sin relleno, solo el borde punteado. Bajo el tablero, una
   línea lo explica hasta la primera marca. La señal de uso cuenta cuántas marcas se hicieron.
 - **Entre pistas:** a la pista que se cierra le cae un sello (**Completa** en verde, **Cortada**
   en rojo, **Pasada** en amarillo), se va girando hacia atrás y la siguiente llega girando, con su

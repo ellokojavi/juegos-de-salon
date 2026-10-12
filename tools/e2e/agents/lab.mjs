@@ -60,6 +60,7 @@ ok(await ev(`!!document.getElementById('ayuda-marcas') && !document.getElementBy
 const m = de(null, 'neutral')[1];
 await largo(m);
 ok(/marca-sospecha/.test(await clase(m)) && !/neutral/.test(await clase(m)), 'un toque largo marca 📌 sin destapar');
+ok(/Marcada, sin destapar/.test(await ev(`document.querySelector('.aviso-ag').textContent`)), 'y lo dice: quedó marcada, sin destapar (un toque que duró de más no parece elegido)');
 ok(await ev(`document.getElementById('ayuda-marcas').hidden`), 'y la ayuda se va');
 await largo(m);
 ok(/marca-descarte/.test(await clase(m)), 'otro la pasa a 🚫');
