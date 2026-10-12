@@ -12,9 +12,10 @@
   animation: ag-sello 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; pointer-events: none; }
 @keyframes ag-sello { 0% { transform: scale(2.6) rotate(-16deg); opacity: 0; } 60% { opacity: 1; } 100% { transform: scale(1) rotate(-9deg); opacity: 0.92; } }
 .sello--rojo { color: #ff4d5e; } .sello--verde { color: var(--lime); } .sello--amarillo { color: var(--yellow); }
-/* El sello cuelga bajo el título: el margen le hace lugar para que no tape el crédito */
-.titulo-sello { position: relative; display: grid; justify-items: center; margin-bottom: 14px; }
-.sello--titulo { position: absolute; right: 2%; bottom: -10px; font-size: 0.72rem; animation-delay: 0.5s; background: rgba(22, 8, 48, 0.55); }
+/* El sello pisa la esquina inferior derecha de AGENTES: la caja mide lo que el título, y el margen
+   le hace lugar para que no tape el crédito */
+.titulo-sello { position: relative; display: grid; justify-items: center; width: fit-content; margin: 0 auto 14px; }
+.sello--titulo { position: absolute; right: -8px; bottom: -4px; font-size: 0.72rem; animation-delay: 0.5s; background: rgba(22, 8, 48, 0.85); }
 /* La portada juega sola: la pista, la lupa que encuentra a los agentes y el asesino al final */
 .demo { display: grid; gap: 8px; max-width: 300px; margin: 6px auto 0; width: 100%; }
 .demo-pista { justify-self: center; font: 1.4rem var(--font-display); letter-spacing: 0.08em; padding: 2px 14px; border-radius: 12px;
@@ -58,7 +59,8 @@
 /* Las marcas: un toque largo (como las notas de Toque y Fama). Sin selección ni menú del celular al mantener */
 .carta { position: relative; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 .carta.marca-sospecha { border-color: var(--yellow); border-style: dashed; background: rgba(255, 210, 63, 0.12); }
-.carta.marca-descarte { opacity: 0.45; text-decoration: line-through; }
+/* La 🚫 apaga la palabra, no la marca: con opacity la marca también se borraba */
+.carta.marca-descarte { color: rgba(255, 255, 255, 0.4); border-color: rgba(255, 255, 255, 0.1); text-decoration: line-through; }
 .carta.marca-sospecha::after, .carta.marca-descarte::after { position: absolute; top: -8px; right: -6px; font-size: 1rem; animation: pop 0.3s ease-out both; }
 .carta.marca-sospecha::after { content: '📌'; }
 .carta.marca-descarte::after { content: '🚫'; }
