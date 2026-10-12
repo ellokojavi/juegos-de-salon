@@ -331,7 +331,6 @@ function resultado() {
     el('a', { class: 'btn btn--yellow', id: 'btn-otro', href: `?seed=${Math.random().toString(36).slice(2, 8)}` }, T.otraVez),
     SEMILLA_URL ? el('a', { class: 'btn btn--ghost btn--sm', id: 'btn-de-hoy', href: location.pathname }, T.deHoy) : null,
     el('a', { class: 'btn btn--ghost btn--sm', href: '../' }, T.laboratorio),
-    credito(),
     // El comentario va abierto y al final de todo (D-265, D-268)
     formularioComentario({ T: T.comentario, contexto: contexto('resultado') })));
   scrollTo(0, 0);
