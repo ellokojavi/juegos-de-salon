@@ -405,7 +405,8 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   flecha, más la frase del que más mejoró o, si ninguno, del que más bajó.
 - **Dónde va en la portada** (D-239, decisión del dueño, 2026-10-06): en una tarjeta de media fila
   junto a La Copa, mitad y mitad, con el emoji a la izquierda del título y el título en celeste (el
-  de La Copa, en dorado). Abajo, una píldora con el estado: **🔥 6 · Jugar el de hoy** (sin racha, solo
+  de La Copa, en dorado). Abajo a la izquierda, al pie de la tarjeta y a la misma altura que las de La
+  Copa (D-298), una píldora con el estado: **🔥 6 · Jugar el de hoy** (sin racha, solo
   **Jugar el de hoy**), o **✅ Listo · 🔥 6** ya jugado. La forma de antes, un botón en la misma fila que Juego al azar (**🎲 Al azar** y
   **📅 Uno al día 🔥 6**), queda para probarla con `?daily=button` (el laboratorio la ofreció
   hasta D-262).
