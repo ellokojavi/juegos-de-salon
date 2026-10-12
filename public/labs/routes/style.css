@@ -39,18 +39,18 @@
 .marcador { margin: 0; text-align: center; font-weight: 800; font-size: 1.05rem; }
 .aviso-rt { margin: 0; min-height: 1.5em; text-align: center; font-weight: 800; color: var(--muted); }
 .aviso-rt.bien { color: var(--lime); font-size: 1.15rem; }
-#btn-reiniciar { justify-self: center; }
 /* El reloj, junto al marcador; en el último minuto, rojo */
 .fila-marcador { display: flex; justify-content: center; align-items: baseline; gap: 14px; flex-wrap: wrap; }
 .reloj-rt { margin: 0; font: 800 1.05rem var(--font-num); font-variant-numeric: tabular-nums; }
 .reloj-rt.poco { color: #ff8a8a; animation: rt-pulso 1s ease-in-out infinite; }
 @keyframes rt-pulso { 50% { opacity: 0.55; } }
 /* Reiniciar y Rendirse en una fila: así los dos se ven sin bajar en un celular chico (#360) */
-.acciones-rt { display: flex; justify-content: center; align-items: center; gap: 18px; flex-wrap: wrap; }
-.rendirse { font-size: 0.9rem; }
-.rendirse.armado { color: #ff8a8a; text-decoration: none; font-weight: 800; }
+/* Deshacer, Reiniciar y Rendirse: tres botones iguales en una fila, del mismo ancho */
+.acciones-rt { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.acciones-rt .btn { width: 100%; min-width: 0; min-height: 44px; padding: 0 4px; font-size: 0.92rem; white-space: nowrap; }
+.acciones-rt .btn:disabled { opacity: 0.4; }
+.rendirse.armado { color: #ff8a8a; border-color: #ff8a8a; }
 .sello-rt.mal { color: #ff8a8a; }
-#btn-reiniciar:disabled { opacity: 0.4; }
 /* La etapa: su número, los puntos del avance y de qué se trata */
 .cabeza-etapa { display: grid; justify-items: center; gap: 4px; }
 .cabeza-etapa.entra { animation: pop 0.45s ease-out both; }

@@ -50,6 +50,13 @@ const hay = await lugares();
 ok(hay.every(([p, l]) => esperado[l].p === p) && await comoElMotor('#tablero', esperado), 'arrastrar marca un rectángulo y al soltar gira: cada pieza queda donde y como dice el motor');
 ok(/Giros: 1/.test(await ev(`document.getElementById('marcador').textContent`)), 'y cuenta el giro');
 await b.shot('02-juego');
+// Deshacer: vuelve al estado de antes del giro, que no cuenta
+ok(!await ev(`document.getElementById('btn-deshacer').disabled`), 'con un giro, Deshacer se enciende');
+await ev(`document.getElementById('btn-deshacer').click(); 1`); await sleep(600);
+ok(/Giros: 0/.test(await ev(`document.getElementById('marcador').textContent`)) && (await lugares()).every(([p, l]) => t.inicio[l].p === p) && await comoElMotor('#tablero', t.inicio), 'deshacer vuelve a como estaba, y el giro no cuenta');
+ok(await ev(`document.getElementById('btn-deshacer').disabled`), 'y sin más giros, Deshacer se apaga');
+ok(await ev(`[...document.querySelectorAll('.acciones-rt .btn')].map(b => b.id).join()`) === 'btn-deshacer,btn-reiniciar,btn-rendirse', 'los botones van en orden: Deshacer, Reiniciar, Rendirse');
+await arrastrar(0, 0, 1, 1); await sleep(600);
 await ev(`document.getElementById('btn-reiniciar').click(); 1`); await sleep(500);
 ok(/Giros: 0/.test(await ev(`document.getElementById('marcador').textContent`)) && (await lugares()).every(([p, l]) => t.inicio[l].p === p) && await comoElMotor('#tablero', t.inicio), 'reiniciar vuelve al comienzo con 0 giros');
 // Cada etapa: deshacer su revuelta al revés une todas las líneas, y pasa a la siguiente
@@ -84,7 +91,7 @@ const oculta = v => ev(`Object.defineProperty(document, 'hidden', { configurable
 const d0 = await ev(`window.__rutas.P.desde`); await oculta(true); await sleep(1500); await oculta(false);
 ok(await ev(`window.__rutas.P.desde`) - d0 >= 1400, 'con la pantalla oculta, el reloj se pausa');
 await ev(`document.getElementById('btn-rendirse').click(); 1`); await sleep(150);
-ok(/Toca de nuevo/.test(await ev(`document.getElementById('btn-rendirse').textContent`)) && !await ev(`!!document.getElementById('puntaje')`), 'rendirse pide un segundo toque');
+ok(/Seguro/.test(await ev(`document.getElementById('btn-rendirse').textContent`)) && !await ev(`!!document.getElementById('puntaje')`), 'rendirse pide un segundo toque');
 await ev(`document.getElementById('btn-rendirse').click(); 1`);
 ok(await esperar(`document.getElementById('puntaje')?.textContent === '0/100'`, 4000) && /Te rendiste/.test(await ev(`document.querySelector('.sello-rt').textContent`)), 'y con el segundo se acaba: 0/100 sin etapas, «Te rendiste»');
 

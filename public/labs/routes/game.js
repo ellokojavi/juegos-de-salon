@@ -34,9 +34,11 @@ const T = {
   etapa: 'Etapa {n} de {t}', etapaLista: '🚇 ¡Etapa {n} lista!', etapaPerfecta: '🚇 ¡Etapa {n} en el mínimo!',
   filaEtapa: '{c} Etapa {n}: {g} giros (mínimo {m})',
   // El reloj y el puntaje por capas (D-295): completar, la rapidez y los giros
-  reloj: '⏱ {t}', rendirse: '🏳️ Rendirse', rendirseSeguro: 'Toca de nuevo para rendirte',
+  reloj: '⏱ {t}', rendirse: '🏳️ Rendirse', rendirseSeguro: '🏳️ ¿Seguro?',
   capas: { etapas: '🚇 Etapas ({n} de {t}): +{p}.', rapidez: '⏱ Rapidez ({t}): +{p}.', sinRapidez: '⏱ Rapidez: +0 (faltaron etapas).', giros: '🔄 Giros ({g}, mínimo {m}): +{p}.' },
   finPor: { tiempo: 'Se acabó el tiempo', rendido: 'Te rendiste' },
+  // Los tres botones bajo el tablero, en este orden (pedido del dueño): deshacer, reiniciar, rendirse
+  deshacer: '↩ Deshacer', deshecho: 'Deshiciste el último giro: no cuenta.',
   marcador: 'Giros: {g} · Mínimo: {m}', reiniciar: '↺ Reiniciar', reiniciado: 'De vuelta al comienzo: los giros vuelven a 0.',
   unidas: '🚇 ¡Todas las líneas unidas!',
   fin: { perfecto: '¡Todas en el mínimo!', listo: '¡Rutas unidas!' },
@@ -280,6 +282,7 @@ function jugar() {
   const pintar = () => {
     marcador.textContent = fmt(T.marcador, { g: P.giros, m: t.minimo });
     reiniciar.disabled = !P.giros || P.terminado;
+    deshacer.disabled = !historial.length || P.terminado;
   };
   // Los bordes que ya calzan
   const unir = () => {
@@ -291,7 +294,7 @@ function jugar() {
     alGirar: r => {
       if (P.terminado) return;
       P.estado = tab.aplicar(P.estado, r);
-      P.giros++;
+      P.giros++; historial.push(r);
       SFX.flip(); vibrate(15);
       aviso.className = 'aviso-rt'; aviso.textContent = '';
       pintar();
@@ -299,10 +302,22 @@ function jugar() {
       if (resuelto(t.piezas, P.estado)) terminar();
     },
   });
+  // Deshacer: el mismo giro lo deshace (girar dos veces deja igual); el giro deshecho no cuenta, como
+  // reiniciar es gratis: el golf cuenta los giros que quedan
+  const historial = [];
+  const deshacer = el('button', { type: 'button', class: 'btn btn--ghost btn--sm', id: 'btn-deshacer', onClick: () => {
+    if (P.terminado || !historial.length) return;
+    SFX.tap(); vibrate(10);
+    P.estado = tab.aplicar(P.estado, historial.pop());
+    P.giros--;
+    pintar();
+    setTimeout(unir, QUIETO ? 0 : 450);
+    aviso.className = 'aviso-rt'; aviso.textContent = T.deshecho;
+  } }, T.deshacer);
   const reiniciar = el('button', { type: 'button', class: 'btn btn--ghost btn--sm', id: 'btn-reiniciar', onClick: () => {
     if (P.terminado || !P.giros) return;
     SFX.tap(); vibrate(10);
-    P.estado = t.inicio; P.giros = 0; P.reinicios++;
+    P.estado = t.inicio; P.giros = 0; P.reinicios++; historial.length = 0;
     tab.poner(P.estado, !QUIETO);
     pintar(); unir();
     aviso.className = 'aviso-rt'; aviso.textContent = T.reiniciado;
@@ -315,7 +330,7 @@ function jugar() {
     if (P.hechas.length === ETAPAS.length) { P.segundos = usado(); clearInterval(P.reloj); }
     tab.caja.classList.add('bloqueado');
     // Reiniciar y Rendirse se van con la etapa hecha: rendirse en la pausa no tiene sentido
-    reiniciar.remove(); rendirse.remove();
+    acciones.remove();
     setTimeout(() => {
       tab.caja.classList.add('resuelto');
       aviso.className = 'aviso-rt bien';
@@ -330,7 +345,7 @@ function jugar() {
   };
   // Rendirse: con un segundo toque, como la ayuda de Pintaminas; cuentan las etapas ya hechas
   let armado = false, armadoTimer = null;
-  const rendirse = el('button', { type: 'button', class: 'link-btn rendirse', id: 'btn-rendirse', onClick: () => {
+  const rendirse = el('button', { type: 'button', class: 'btn btn--ghost btn--sm rendirse', id: 'btn-rendirse', onClick: () => {
     if (P.acabado) return;
     if (!armado) {
       armado = true; SFX.tap(); vibrate(15); rendirse.textContent = T.rendirseSeguro; rendirse.classList.add('armado');
@@ -343,7 +358,8 @@ function jugar() {
   } }, T.rendirse);
   tab.poner(P.estado, false);
   // Sin el título mientras se juega (#360): la barra de arriba ya muestra 🚇, y así Reiniciar y Rendirse se ven sin bajar en un celular chico
-  vista.replaceChildren(cabeza, el('div', { class: 'fila-marcador' }, reloj, marcador), tab.caja, aviso, el('div', { class: 'acciones-rt' }, reiniciar, rendirse));
+  const acciones = el('div', { class: 'acciones-rt' }, deshacer, reiniciar, rendirse);
+  vista.replaceChildren(cabeza, el('div', { class: 'fila-marcador' }, reloj, marcador), tab.caja, aviso, acciones);
   tic();
   pintar(); unir();
   pieComentario('juego');
