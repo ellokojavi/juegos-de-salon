@@ -410,7 +410,7 @@ export const CAMINOS = {
   /**
    * Los juegos del laboratorio que no son de La Copa se piden por su carpeta: `mirar` abre
    * `/<clave>/` cuando la clave no es un id del registro: la portada del laboratorio, Agentes
-   * (D-286), Pintaminas (D-289) y Rutas (D-293).
+   * (D-286), Pintaminas (D-289) y Rutas rotas (D-293).
    */
   labs: { intro: [] },
   'labs/agents': {
