@@ -29,14 +29,16 @@
     .stack p a:active { color: #fff; }
     /* La Bodega, plegada al título (pedido del dueño): no tiene la jerarquía de los proyectos activos.
        Un toque la abre y muestra de qué se trata y su botón */
-    .plegada { padding-top: 12px; padding-bottom: 12px; opacity: 0.85; }
-    .plegada summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 10px; cursor: pointer; min-height: 44px; }
+    /* Toda la tarjeta se toca: el relleno va en el título, no en la tarjeta. Abierta, sin el apagado:
+       la opacidad de la tarjeta no la anula un hijo, por eso :has */
+    .plegada { padding: 0; opacity: 0.85; }
+    .plegada:has(details[open]) { opacity: 1; }
+    .plegada summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 10px; cursor: pointer; min-height: 44px; padding: 12px 18px; }
     .plegada summary::-webkit-details-marker { display: none; }
     .plegada summary h2 { font-size: 1.25rem; }
-    .plegada .flecha { font-size: 1.6rem; line-height: 1; color: var(--muted); transition: transform 0.2s; }
+    .plegada .flecha { font: 900 1.9rem/1 var(--font-body); color: #fff; transition: transform 0.2s; }
     .plegada details[open] .flecha { transform: rotate(90deg); }
-    .plegada .detalle { display: grid; gap: 10px; padding-top: 6px; }
-    .plegada details[open] { opacity: 1; }
+    .plegada .detalle { display: grid; gap: 10px; padding: 0 18px 18px; }
     .divisor { width: 100%; border: 0; height: 2px; margin: 18px 0 6px; border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45) 15%, rgba(255, 255, 255, 0.45) 85%, transparent); }
   </style>
 </head>
