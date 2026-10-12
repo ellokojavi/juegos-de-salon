@@ -35,6 +35,11 @@ await b.go(`${SITIO}/labs/`);
 ok(await ev(`document.getElementById('btn-caso')?.getAttribute('href')`) === 'case/', 'el laboratorio ofrece El caso en /labs/case/');
 // Dos grupos (D-280): Proyectos activos y La Bodega, donde quedó El caso
 ok(await ev(`!!document.querySelector('#bodega #seccion-caso') && !document.querySelector('#activos #seccion-caso')`), 'El caso está en La Bodega, no en Proyectos activos');
+// La Bodega va plegada al título (pedido del dueño): un toque la abre y muestra su botón
+ok(await ev(`[...document.querySelectorAll('#bodega details')].every(d => !d.open) && !document.getElementById('btn-caso').checkVisibility()`), 'La Bodega viene plegada: solo los títulos');
+ok(await ev(`[...document.querySelectorAll('#activos .seccion')].every(x => !x.querySelector('details'))`), 'los proyectos activos van abiertos');
+await ev(`document.querySelector('#seccion-caso summary').click(); 1`); await sleep(100);
+ok(await ev(`document.querySelector('#seccion-caso details').open && document.getElementById('btn-caso').checkVisibility()`), 'un toque en el título la abre y muestra Jugar');
 await b.go(`${SITIO}/case/`, 1500);
 ok(await ev(`location.pathname`) === '/labs/case/', `/case/ lleva a /labs/case/ (${await ev('location.pathname')})`);
 

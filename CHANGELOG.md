@@ -1,9 +1,13 @@
 # Changelog
 
-## 0.168.1 — 2026-10-12
+## 0.168.3 — 2026-10-12
 - **🖌️ Pintaminas (laboratorio): cada dibujo con sus colores de verdad** (pedido del dueño): la luna
   amarilla, el cactus verde, la bota café, la frutilla roja con hojas verdes, el árbol verde con el
   tronco café. Se suman el café, el blanco y el rosado. Los tableros (y sus links) son los mismos.
+
+## 0.168.2 — 2026-10-12
+- **🧪 Laboratorio: La Bodega, plegada.** Sus juegos se ven solo con su título y un toque los abre
+  para ver de qué se tratan y jugarlos; así no tienen el mismo peso que los proyectos activos.
 
 ## 0.168.0 — 2026-10-12
 - **💥 Números explosivos (laboratorio, nuevo)** (D-297), inspirado en Number Match: haz estallar de a
