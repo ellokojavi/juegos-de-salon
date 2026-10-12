@@ -1,9 +1,12 @@
 # Las pruebas de punta a punta en Chrome, en cada PR y en cada fusión a main (D-193). En main las
 # llama publicar.yml antes de publicar (D-302): si fallan, el sitio no cambia.
-# Cada guion de tools/e2e/ corre en su propio job, en paralelo, y los largos se reparten en partes
-# (`cup/torneo.mjs:copa`): el job más lento marca cuánto espera el PR. Los que abren salas en el
-# Firebase de producción quedan fuera y siguen a mano: la lista la decide tools/e2e/ci.mjs,
-# así que un guion nuevo entra solo.
+# Los guiones van en grupos parejos (D-307), un job por grupo y todos a la vez: los arma
+# tools/e2e/grupos.mjs con lo que tardó cada guion (duraciones.json), para que ninguno pase de
+# ~4,5 min y quepan de una en los 20 runners. Dentro del grupo, cada guion corre solo, con su
+# segundo intento si falla (D-299) y su fila en la tabla del resumen. Los que abren salas en el
+# Firebase de producción quedan fuera y siguen a mano: la lista la decide tools/e2e/ci.mjs, así
+# que un guion nuevo entra solo. Cada corrida que pasa deja la marca del árbol que probó, para
+# que publicar.yml no lo pruebe dos veces (D-308).
 
 name: Punta a punta
 
@@ -22,37 +25,41 @@ jobs:
   lista:
     runs-on: ubuntu-latest
     outputs:
-      guiones: ${{ steps.lista.outputs.guiones }}
+      grupos: ${{ steps.lista.outputs.grupos }}
+      arbol: ${{ steps.lista.outputs.arbol }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 24
       # En un PR que no toca nada del navegador (documentación, marketing, los agentes, el taller que
-      # ningún guion importa, las reglas y los otros workflows; tools/e2e/cambios.mjs) la lista sale
-      # vacía y no corre ningún guion: el check queda en verde en segundos (D-205, D-299)
+      # ningún guion importa, las reglas y los otros workflows; tools/e2e/cambios.mjs) no hay grupos
+      # y no corre ningún guion: el check queda en verde en segundos (D-205, D-299). El árbol es el
+      # de lo que se prueba (en un PR, el merge de prueba con main que arma GitHub)
       - id: lista
         env:
           GH_TOKEN: ${{ github.token }}
           PR: ${{ github.event.pull_request.number }}
         run: |
+          echo "arbol=$(git rev-parse 'HEAD^{tree}')" >> "$GITHUB_OUTPUT"
           if [ -n "$PR" ]; then
             gh api "repos/$GITHUB_REPOSITORY/pulls/$PR/files" --paginate --jq '.[].filename' > "$RUNNER_TEMP/cambios"
-            echo "guiones=$(node tools/e2e/ci.mjs --lista --cambios "$RUNNER_TEMP/cambios")" >> "$GITHUB_OUTPUT"
+            echo "grupos=$(node tools/e2e/ci.mjs --grupos --cambios "$RUNNER_TEMP/cambios")" >> "$GITHUB_OUTPUT"
           else
-            echo "guiones=$(node tools/e2e/ci.mjs --lista)" >> "$GITHUB_OUTPUT"
+            echo "grupos=$(node tools/e2e/ci.mjs --grupos)" >> "$GITHUB_OUTPUT"
           fi
 
   e2e:
     needs: lista
-    if: needs.lista.outputs.guiones != '[]'
+    if: needs.lista.outputs.grupos != '[]'
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    # Un grupo dura ~4,5 min; el tope deja lugar para un segundo intento largo
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
-        guion: ${{ fromJson(needs.lista.outputs.guiones) }}
-    name: ${{ matrix.guion }}
+        grupo: ${{ fromJson(needs.lista.outputs.grupos) }}
+    name: ${{ matrix.grupo.nombre }}
     steps:
       - uses: actions/checkout@v4
 
@@ -77,39 +84,24 @@ jobs:
           # El primer arranque en un runner recién encendido es lento: se paga aquí, no en la prueba
           timeout 60 "$RUNNER_TEMP/chrome" --headless=new --dump-dom about:blank > /dev/null 2>&1 || true
 
-      - name: ${{ matrix.guion }}
-        id: primero
-        continue-on-error: true
+      # Uno tras otro, cada uno con su segundo intento si falla (CI_REINTENTOS, D-299): si pasa al
+      # segundo, queda en verde con un aviso ⚠️ "Intermitente" que lo nombra. El resumen de la
+      # corrida trae la tabla con cada guion, su tiempo y su resultado.
+      - name: Guiones
         env:
           SALIDA_E2E: ${{ runner.temp }}/e2e
-        run: node tools/e2e/ci.mjs ${{ matrix.guion }}
+          CI_REINTENTOS: 1
+          GUIONES: ${{ matrix.grupo.guiones }}
+        run: node tools/e2e/ci.mjs $GUIONES
 
-      # Un segundo intento, solo para el guion que falló (D-299): de las 7 veces que main salió en
-      # rojo entre el 4 y el 12 de octubre, 5 volvieron a verde en la corrida siguiente sin que nadie
-      # tocara ese juego. Si pasa al segundo, el job queda en verde con un aviso ⚠️ "Intermitente"
-      # que dice cuál fue: se ve en el PR y no se esconde. Si falla dos veces, es rojo de verdad.
-      - name: ${{ matrix.guion }} (segundo intento)
-        if: steps.primero.outcome == 'failure'
-        env:
-          SALIDA_E2E: ${{ runner.temp }}/e2e/segundo-intento
-          GUION: ${{ matrix.guion }}
-        run: |
-          echo "::warning title=Intermitente::$GUION falló al primer intento; se repite una vez (D-299)"
-          node tools/e2e/ci.mjs "$GUION"
-          echo "::warning title=Intermitente::$GUION pasó al segundo intento: falla a veces (capturas del primero en el artefacto)"
-
-      # Las capturas de lo que falló, para mirarlas sin repetir la corrida. El nombre de un
-      # artefacto no admite "/" ni ":", y los guiones van en carpetas por juego, con su parte
-      # (cup/torneo.mjs:copa). También las del primer intento de un guion que pasó al segundo.
-      - if: failure() || steps.primero.outcome == 'failure'
-        env:
-          GUION: ${{ matrix.guion }}
-        run: echo "ARTEFACTO=capturas-${GUION//[\/:]/-}" >> "$GITHUB_ENV"
-      - if: failure() || steps.primero.outcome == 'failure'
+      # Las capturas de lo que falló o pasó al segundo intento, cada guion en su carpeta (ci.mjs
+      # borra las de lo que pasó al primero), para mirarlas sin repetir la corrida
+      - if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.ARTEFACTO }}
+          name: capturas-g${{ strategy.job-index }}
           path: ${{ runner.temp }}/e2e
+          if-no-files-found: ignore
           retention-days: 7
 
   # Un solo check que resume todos los guiones (D-216): es el que `main` exige junto a `pruebas`,
@@ -124,6 +116,15 @@ jobs:
           echo "lista: ${{ needs.lista.result }} · guiones: ${{ needs.e2e.result }}"
           [ "${{ needs.lista.result }}" = success ] || exit 1
           case "${{ needs.e2e.result }}" in success|skipped) ;; *) exit 1 ;; esac
+          echo "probado" > "$RUNNER_TEMP/marca"
+      # La marca del árbol que pasó, con guiones de verdad: publicar.yml la busca para no repetir
+      # la punta a punta sobre lo mismo (tools/e2e/ya-probado.mjs, D-308)
+      - if: needs.e2e.result == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-arbol-${{ needs.lista.outputs.arbol }}
+          path: ${{ runner.temp }}/marca
+          retention-days: 7
 
   # En main nadie mira el check: si sale en rojo, abre un issue (o comenta el que ya está abierto)
   # con los guiones que fallaron y el link a la corrida, donde están sus capturas (D-205). En main

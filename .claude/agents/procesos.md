@@ -169,6 +169,8 @@ también fuera de eso (después de un juego nuevo, de un cambio grande de textos
    `revisar` ya borró las reservas `reserva/D-n` que están en `main`; una que lleva más de una
    semana sin PR se anota `## D-n · (número sin usar)` en tu PR y se borra
    (`git push origin --delete reserva/D-n`).
+   Y los grupos de la punta a punta (D-307): una vez por semana, `node tools/e2e/grupos.mjs medir`
+   en tu copia; si `duraciones.json` cambió, va en tu PR (los grupos se rearman solos con eso).
 9. **Cierra la ronda:** `node tools/agents/procesos.mjs anotar --hasta <commit> [--issue <url>]
    [--pr <url>] [--nota "…"]`, en el commit de tu PR. Si la ronda no dejó PR ni despachó a
    nadie, no anotas: la siguiente parte del mismo commit y no se pierde nada.

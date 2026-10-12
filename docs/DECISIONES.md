@@ -70,9 +70,9 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213, D-277 |
 | Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243, D-253, D-254, D-271, D-272 |
 | Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251 |
-| Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302 |
+| Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213 |
-| Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216, D-299 |
+| Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307 |
 | La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285 |
 | Agentes (usabilidad, documentación, procesos) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249 |
@@ -2977,7 +2977,7 @@ un link viejo pegado en un chat quedaba sin tarjeta y Google veía 404); cambiar
 carpeta `juegos/` para todos (cambiaba las URL sin ganar nada a cambio).
 
 ## D-193 · Las pruebas de punta a punta corren solas en GitHub
-**Fecha:** 2026-10-02 · **Estado:** corregida por D-216, D-302 · **Relación:** completa D-143
+**Fecha:** 2026-10-02 · **Estado:** corregida por D-216, D-302, D-307 · **Relación:** completa D-143
 **Decisión:** `.github/workflows/e2e.yml` corre las pruebas de `tools/e2e/` en Chrome en cada PR
 y en cada fusión a main, un job por guion y en paralelo. El PR muestra cuál falló y deja sus
 capturas como artefacto. `tools/e2e/ci.mjs` decide cuáles: todos los guiones menos las
@@ -3190,7 +3190,7 @@ devuelve a la pantalla de jugar. Si no cabe, `ajustarCabeza` deja la píldora de
 (`.justo`) y, si ni así, la saca (`.sin-chip`); el reloj no se parte (`nowrap`).
 
 ## D-204 · Publicar más rápido: los guiones largos en partes y la revisión de un PR, acotada
-**Fecha:** 2026-10-04 · **Estado:** corregida por D-213, D-304 · **Relación:** amplía D-132, D-172 y D-193
+**Fecha:** 2026-10-04 · **Estado:** corregida por D-213, D-304, D-307 · **Relación:** amplía D-132, D-172 y D-193
 **Decisión:** Lo que hace esperar un PR se acorta sin sacar ninguna revisión:
 - **CI en partes.** El check `Punta a punta` tarda lo que su job más lento. `cup/torneo.mjs`
   (9 min) se corre en tres jobs (`--parte copa`, `laboratorio`, `demos`) y `cup-games/idiomas.mjs`
@@ -5404,7 +5404,7 @@ color del dibujo, distintos, nunca amarillo con naranjo) y que el tablero salga 
 nuevo tiene que traer `colores`.
 
 ## D-299 · La punta a punta no corre en lo que no llega al navegador, y un guion que falla se repite una vez
-**Fecha:** 2026-10-12 · **Estado:** vigente · **Relación:** corrige D-205; amplía D-193
+**Fecha:** 2026-10-12 · **Estado:** corregida por D-307 · **Relación:** corrige D-205; amplía D-193
 **Contexto:** el dueño pidió que publicar sea eficaz, sin errores y con el menor cómputo posible.
 Medido en GitHub del 2 al 12 de octubre: 712 corridas de `Punta a punta` (58 jobs cada una cuando
 corre entera), unos 56.700 minutos de runner. De los 143 PR fusionados desde el 5 de octubre, 9
@@ -5498,7 +5498,7 @@ por decisión (el cambio más grande, y el índice seguiría siendo uno).
 `decision.test.mjs` prueba el driver con git de verdad.
 
 ## D-302 · Publicar espera la punta a punta de main
-**Fecha:** 2026-10-12 · **Estado:** vigente · **Relación:** corrige D-205 y D-193 (la punta a punta de `main` corría aparte y no frenaba la publicación) y D-273 (la fusión de un toque corría los dos workflows)
+**Fecha:** 2026-10-12 · **Estado:** corregida por D-308 · **Relación:** corrige D-205 y D-193 (la punta a punta de `main` corría aparte y no frenaba la publicación) y D-273 (la fusión de un toque corría los dos workflows)
 **Contexto:** `main` no exige estar al día antes de fusionar, así que lo fusionado se prueba de
 verdad recién en `main`, y `publicar.yml` no lo esperaba: de los 7 rojos de `main` del 4 al 12 de
 octubre, los 7 se publicaron igual. Con el segundo intento de D-299, un rojo ya no es una falla
@@ -5591,3 +5591,65 @@ depurar, pero en una app de cara al jugador deja ver cómo está armada por dent
 **Alternativas descartadas:** meter la etiqueta dentro de `contexto` (no tocaba las reglas, pero el
 contexto se corta a 500 letras y lo último se pierde); mostrar el contexto en palabras ("se envía la
 página y el tamaño de la pantalla"), que suma texto a un formulario que debe ser corto.
+
+## D-307 · La punta a punta en grupos parejos, y los guiones esperan a una condición, no una pausa fija
+**Fecha:** 2026-10-12 · **Estado:** vigente · **Relación:** corrige D-193 y D-204 (un job por guion) y D-299 (dónde se repite un guion que falla)
+**Contexto:** el dueño pidió acelerar el CI. Medido en las últimas 60 corridas de PR: la punta a
+punta tardaba 9,7 min de mediana (16,9 en el p90). Eran 58 jobs, uno por guion, para 20 runners: la
+mitad esperaba en la cola, y cada job pagaba ~17 s de preparación. Y el camino crítico eran dos
+guiones de 5 min (`cup/idiomas.mjs` y `cup/torneo.mjs:copa`), hechos casi todo de pausas fijas
+(`sleep`, `go(url, 1500)`, 700 ms entre paso y paso de `caminos.mjs`).
+**Decisión:**
+- **Grupos:** `tools/e2e/grupos.mjs` reparte los guiones en grupos parejos según lo que tardó cada
+  uno (`tools/e2e/duraciones.json`): el más largo primero, al grupo más liviano, los grupos que hagan
+  falta para no pasar de ~4,5 min (o del guion más largo), hasta 18. `e2e.yml` corre un job por
+  grupo (`ci.mjs --grupos`), todos a la vez. Cada job deja un aviso "Duraciones" con lo que tardó
+  cada guion, y `grupos.mjs medir` lo pasa a `duraciones.json` (la ronda de procesos, una vez por
+  semana). Un guion nuevo cuenta como 90 s hasta que se mide.
+- **Dentro del grupo, lo de cada guion:** la tabla del resumen nombra cada guion con su tiempo y su
+  resultado (⚠️ si pasó al segundo intento); el segundo intento es por guion, en el acto
+  (`CI_REINTENTOS=1` en `ci.mjs`, en vez de un paso del workflow); el artefacto `capturas-g<n>` trae
+  una carpeta por guion, solo de lo que falló o pasó al segundo intento; y un guion que falla dos
+  veces deja un aviso que lo nombra.
+- **Esperas por condición:** `cdp.mjs` suma `abrir(url, tope)` (navega, espera el `load` y que la
+  página se asiente), `asentar(tope)` (sin cambios en el DOM por 150 ms y las animaciones finitas
+  terminadas) y `hasta(expr, tope)`. El tope es la pausa de antes: nunca se espera más, y casi
+  siempre mucho menos. Los usan los guiones de idiomas (`idiomas-comun.mjs`), `cup/idiomas.mjs` y la
+  vuelta de cada día de `cup/torneo.mjs`. Un paso `1` de `caminos.mjs` sigue siendo una espera de
+  700 ms a propósito (que pase el confeti, que el celular juegue). Ningún chequeo se sacó.
+**Por qué:** pedido del dueño; los números van en Consecuencias.
+**Alternativas descartadas:** un job por guion con más runners (GitHub da 20 a un repo gratis);
+acortar la cuenta de 3 a 1 en el modo de prueba (es código de la app, y la cuenta es parte de lo
+que se prueba); cambiar `go()` para todos los guiones de una vez (algunos esperan a propósito a que
+pase algo con el reloj: se cambian de a uno, mirándolos).
+**Consecuencias:** medido aquí, guion por guion: `cup/torneo.mjs:copa` de 294 a 237 s,
+`cup/idiomas.mjs` de 304 a 173 s, `hangman/idiomas.mjs` de 128 a 61 s, `generala/idiomas.mjs` de
+162 a 90 s, `cup-games/idiomas.mjs:queens` de 117 a 81 s; los 221 chequeos de la copa y los de cada
+idioma, iguales. Los 59 trabajos quedan en 13 grupos de ~4,4 min (`grupos.mjs ver`): 13 jobs en vez
+de 58, todos de una en los runners. Lo medido en GitHub antes y después va en el PR.
+Un guion nuevo usa `abrir`, `asentar` y `hasta`; `sleep` queda para lo que de verdad depende del reloj.
+
+## D-308 · Publicar no repite la punta a punta de lo que ya pasó en el PR
+**Fecha:** 2026-10-12 · **Estado:** vigente · **Relación:** corrige D-302 (publicar corría la punta a punta entera en cada fusión)
+**Contexto:** desde D-302, publicar esperaba la punta a punta de `main`: la primera publicación así
+tardó 8 min (antes, ~2). Pero casi siempre era la misma prueba dos veces: de los 96 últimos PR
+fusionados, en 79 el árbol que llegó a `main` era idéntico, archivo por archivo, al merge de prueba
+que su punta a punta ya había pasado (`main` no exige ramas al día, así que en los otros 9 con
+guiones `main` había avanzado entre la prueba y la fusión; en los 8 restantes, el PR no tenía
+guiones o no tenía corrida).
+**Decisión:** cada corrida de `e2e.yml` que pasa con guiones sube una marca, el artefacto
+`e2e-arbol-<árbol>` (7 días), con el SHA del árbol que probó. `publicar.yml` corre primero
+`tools/e2e/ya-probado.mjs`: si el árbol del commit que publica tiene marca de una corrida de este
+repo (no de un fork, que corre su propia versión del workflow), salta la punta a punta; si solo
+cambia lo que no llega al navegador (`cambios.mjs`) sobre un padre con marca, también, y deja la
+suya. Si no, o si algo falla al preguntar, la corre entera, como en D-302. Las pruebas sin
+navegador corren siempre.
+**Por qué:** pedido del dueño: no pagar dos veces la misma prueba, sin publicar nada que no se haya
+probado igual.
+**Alternativas descartadas:** exigir ramas al día en `main` (la marca serviría siempre, pero cada PR
+tendría que traer `main` y correr todo otra vez cada vez que entra otro: se le deja al dueño);
+comparar el commit del PR en vez del árbol (un merge de prueba y la fusión de verdad son commits
+distintos con el mismo contenido).
+**Consecuencias:** publicar tarda ~2 min cuando el árbol ya pasó (lo de antes de D-302) y ~8 cuando
+no. Una marca dura 7 días: un PR que se fusiona más tarde sin volver a correr la punta a punta la
+corre en `main`. `ya-probado.test.mjs` prueba la decisión, y que una marca de un fork no vale.
